@@ -2171,9 +2171,12 @@ function eventPointsOf(result: SimResult, ctx: MetricContext): EventPoint[] {
       return result.instants
         .filter((x) => x.slotIndex === slotIndex && x.effect.kind === 'currentHpDown')
         .map((x) => at(x.frame));
+    // V-0742: 枠の通常攻撃の発（録画では、照準の左か枠アイコンの上の残弾が減ったフレーム）
+    case 'shot':
+      return slotOf(result.shots, ctx).frames.map(at);
     default:
       throw new Error(
-        `event は skillHit・dot・dotApply・dotTick・burstHit・activation・heal・stateEnd・currentHpDown（${String(ctx.args.event)}）`,
+        `event は skillHit・dot・dotApply・dotTick・burstHit・activation・heal・stateEnd・currentHpDown・shot（${String(ctx.args.event)}）`,
       );
   }
 }

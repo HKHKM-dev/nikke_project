@@ -1,0 +1,60 @@
+{
+  "verification": "V-0742",
+  "note": "録画 0755 の編成: ラム（822・枠 1）・デルタ（20・枠 2）・シンデレラ（511・枠 3・操作）・ミハラ：ボンディングチェーン（162・枠 4・AI）。射撃場 3 分・灼熱タブの BigArms・スペック固定 ON・オート射撃 ON・オートバースト ON（V-0548 の撮影 C）。仮説 Delay13（0754 と同じ約 13f の遅れが 0755 にもある）はモデルの設定で表せないので、値は検証記録の「予測」に手で書いた（Model の値 + 13）",
+  "team": [
+    {
+      "rid": 822,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 511,
+      "controlled": true
+    },
+    {
+      "rid": 162,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "Model",
+      "note": "いまのモデル。1 本目のマガジンはフルバーストの前に撃ち終わり、リロードの後の 2 本目のマガジンの最初の発がフルバーストの窓の中の最初の発になる"
+    }
+  ],
+  "targets": [
+    {
+      "id": "mag2-start",
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 4,
+        "event": "shot",
+        "anchor": "fullBurst:0",
+        "count": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "1 回目のフルバーストの始まり（III のタイマーの 00.00。`0755-03`）から、その後のミハラ：ボンディングチェーンの最初の発（2 本目のマガジンの 1 発目）までの動画のフレーム数。録画は枠アイコンの上の残弾（AI）が 300 から減った最初のフレーム。幅 2 は、残弾の表示と発の 1〜2f のずれ"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-12",
+    "commit": "b1482c93340162337ef0462938ea57b9f3a66951",
+    "values": {
+      "Model": {
+        "mag2-start": [110]
+      }
+    }
+  }
+}

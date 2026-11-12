@@ -321,5 +321,99 @@
       "slot": 4,
       "source": "dot"
     }
+  },
+  {
+    "id": "0754-16",
+    "recording": "0754",
+    "source": "V-0742",
+    "readAt": "2026-11-12",
+    "kind": "timing",
+    "use": "compare",
+    "value": [107],
+    "unit": "f",
+    "description": "1 回目のフルバーストの始まり（III のタイマーの 00.00。f1345。`0754-03`）から、その後のミハラ：ボンディングチェーンの最初の発（2 本目のマガジンの 1 発目。f1452）までの動画のフレーム数",
+    "method": {
+      "tool": "reticle-ammo.ts --mode series",
+      "note": "照準の左の残弾（操作キャラ）が 300 から 299 に減ったフレームを 2 本目のマガジンの 1 発目にした。1 本目のマガジンはフルバーストの前に撃ち切っている（`0754-18`）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 4,
+        "event": "shot",
+        "anchor": "fullBurst:0",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0754-17",
+    "recording": "0754",
+    "source": "V-0742",
+    "readAt": "2026-11-12",
+    "kind": "timing",
+    "use": "compare",
+    "value": [593],
+    "unit": "f",
+    "description": "戦闘開始（残り時間の 02:59 が出たフレーム。f859）から、ミハラ：ボンディングチェーンの 2 本目のマガジンの 1 発目（f1452）までの動画のフレーム数（301 発目）",
+    "method": {
+      "tool": "timer.ts --mode runs・reticle-ammo.ts --mode series",
+      "note": "戦闘開始は timer.ts の既定（C-0078）。2 本目のマガジンの 1 発目は `0754-16` と同じ読み"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 4,
+        "event": "shot",
+        "anchor": "start",
+        "skip": 300,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0754-18",
+    "recording": "0754",
+    "source": "V-0742",
+    "readAt": "2026-11-12",
+    "kind": "timing",
+    "use": "record",
+    "value": [859, 871, 1257, 1345, 1452],
+    "unit": "f",
+    "description": "戦闘開始（残り時間の 02:59）・ミハラ：ボンディングチェーンの最初の発・1 本目のマガジンの最後の発・1 回目のフルバーストの始まり（`0754-03`）・2 本目のマガジンの最初の発の動画のフレーム。戦闘開始からは 12・398・486・593f、1 本目のマガジンの最後の発から 2 本目のマガジンの最初の発までは 195f",
+    "method": {
+      "tool": "timer.ts --mode runs・reticle-ammo.ts --mode series",
+      "note": "照準の左の残弾（操作キャラ）の減り。1 本目のマガジンの残弾 1 の表示が f1256 で、0 の表示はリロード中に暗くなり読めないので、MG の 1f に 1 発の連射の次のフレーム（f1257）を最後の発にした"
+    },
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    }
   }
 ]
