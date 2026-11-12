@@ -1,0 +1,46 @@
+{
+  "verification": "V-0751",
+  "note": "H0（いまのモデル。放熱のゲージ速度▲を定義していない）だけ。H1・H1b・H3 は定義やコードの切り替えが要るので、検証記録の「予測」に手で書いた",
+  "team": [
+    {
+      "rid": 836
+    },
+    {
+      "rid": 514,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "効かない（いまの定義。514.json の skill1 の notes[0]）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "timeout-full-shots",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "chainTimeoutToGaugeFullShots",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "note": "1 回目のチェーンの切れ目（放熱の付き始めとほぼ同じフレーム）から次の満タンまでの、鈴原サクラの発の数"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-12",
+    "commit": "3fa103aa5079d7dd5ae5a1e98879299c7c2285c6",
+    "values": {
+      "H0": {
+        "timeout-full-shots": 228
+      }
+    }
+  }
+}

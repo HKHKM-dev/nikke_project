@@ -56,3 +56,5 @@
 2026-11-12 02:42 に、録画 1090 を 1093 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`range/20261112-1093_sr_ade-agent-bunny_near1-pause.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
 
 2026-11-12 02:50 に、録画 1094・1095 の名前を、E: の代わりのクラウドの置き場所と Drive（受け口の move）で `range/20261112-1094_sr_ade-agent-bunny_midfar-start.mp4`・`range/20261112-1095_sr_ade-agent-bunny_midfar-start.mp4` に変えた（取り込みの時の名前は `..._near1-pause.mp4`）。Drive の record に別の撮影の録画が混ざって上がっていて、撮った時刻の順で V-0728 の 3 本とみて取り込んだが、オート射撃のボタンの画で V-0731 の撮り方（戦闘の始まりから撃たない）と分かったため。台帳の `autoFire`・`conditionNote` も直した。中身は変えていないので sha256 は台帳のまま。
+
+2026-11-12 14:44 に、録画 1113 を 1125 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`range/20261112-1125_grave-sakura-heat.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 1 件。中身は変えていないので sha256 は台帳のまま）。
