@@ -272,6 +272,7 @@ for (let f = 0; f < frames; f++) {
 ### 6.3 速さ
 
 - [design-first-pass-perf.md](design-first-pass-perf.md) 1.1 節と同じ: 4 編成で、`planTeamRun` と `runFirstPass` を、main（worktree から import）と段の後を同じプロセスで交互に 25 回回し、最初の 5 回を捨てた中央値を比べる。表を PR の本文に書く。
+- 揺れを抑えるため、1 回ごとに測る前に GC を回し（`node --expose-gc`）、プロセスを 3 回起こして、編成ごとの比の中央値で論点 6 の幅を見る（同じコードどうしでも、1 プロセスの比は GC を回さないと ±17%、回しても ±6% ほど揺れた）。
 
 ### 6.4 移したことの確かめ
 
@@ -294,6 +295,14 @@ for (let f = 0; f < frames; f++) {
 - テストの分割。
 - 範囲の外の長い関数（`skills/catalogDoc.ts` の `renderSkillCatalog`・`records/observations/teamInput.ts` の `buildTeamInput`・`skills/parse/` の残り。パーサは [design-split-long-functions.md](design-split-long-functions.md) の段 P2）。
 
-## 9. 経過
+## 9. 作り
+
+### 9.1 段 H1（2026-11-12）
+
+- `holders.ts` の関数の外を、型と小さな公開の関数を `holders/types.ts`、件を作る純粋な関数（段の印と状態の付与の組の決め方を含む）を `holders/items.ts`、ループの後に履歴を読む関数を `holders/history.ts` に移した。`holders.ts` には `createHolderLists` を残し、前と同じ名前を再公開する。
+- ほかのファイルから読まれる内部の宣言にだけ `export` を付けた。本文は、`export` を付けて 1 行に収まらなくなった 1 つ（`RemoveSource`）の折り返しのほかは、構文木で宣言ごとに比べて文字単位で同じ。
+- 移した関数を `skills/holders.ts の …` と指していたコメントは、移した先のファイルを指すように直した。
+
+## 10. 経過
 
 - 2026-11-12: 起案。オーナーが 4 節の論点をすべて推奨の案で承認した。
