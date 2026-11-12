@@ -223,12 +223,14 @@ export function createGaugeEffects({
       },
     ];
   });
+  /** 枠ごとに、自分のほかに持つ枠があるか（無ければその枠の回は足す先が無いので数えない） */
+  const receives = slots.map((_, i) => allyAdders.some((a) => a.slotIndex !== i));
   /** フレーム → 枠ごとの、そのフレームに着くゲージの回数（期待値） */
   const pendingAllyHits = new Map<number, number[]>();
   const reserveAllyHits = (i: number, at: number, hits: number): void => {
     if (allyAdders.length === 0) return;
     for (const a of allyAdders) if (a.slotIndex === i && (a.landing === null || at < a.landing)) a.landing = at;
-    if (hits <= 0 || at >= frames) return;
+    if (hits <= 0 || at >= frames || !receives[i]) return;
     let row = pendingAllyHits.get(at);
     if (row === undefined) pendingAllyHits.set(at, (row = slots.map(() => 0)));
     row[i]! += hits;
@@ -513,13 +515,15 @@ export function createGaugeEffects({
     if (row === undefined) return gauge;
     pendingAllyHits.delete(f);
     for (const a of allyAdders) {
+      if (row.every((hits, i) => i === a.slotIndex || hits === 0)) continue;
       if (a.whileState !== null && !lists.selfStateAt(a.slotIndex, a.whileState, f)) continue;
       const amount = a.landing !== null && f >= a.landing ? a.after : a.before;
-      row.forEach((hits, i) => {
-        if (i === a.slotIndex || hits === 0) return;
-        gauge += hits * amount;
-        allyGauges.push({ slotIndex: i, holderIndex: a.slotIndex, frame: f, energy: hits * amount });
-      });
+      for (const [i, hits] of row.entries()) {
+        if (i === a.slotIndex || hits === 0) continue;
+        const energy = hits * amount;
+        gauge += energy;
+        allyGauges.push({ slotIndex: i, holderIndex: a.slotIndex, frame: f, energy });
+      }
     }
     return gauge;
   };

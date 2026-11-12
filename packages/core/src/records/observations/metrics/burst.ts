@@ -15,14 +15,7 @@ import type { SimResult } from '../../../sim/engine.ts';
 import { itemsOf } from '../../../skills/holders.ts';
 import type { NamedStateId } from '../../../skills/states.ts';
 import { gameSecondsToFrame, gameSecondsToFrames } from '../../../time.ts';
-import {
-  eachOrOne,
-  type Metric,
-  type MetricContext,
-  nthActivationOf,
-  slotIndexOf,
-  slotOf,
-} from './context.ts';
+import { eachOrOne, type Metric, type MetricContext, nthActivationOf, slotIndexOf, slotOf } from './context.ts';
 
 export const burstMetrics: Readonly<Record<string, Metric>> = {
   fullBurstCount: {
@@ -408,26 +401,27 @@ function shotGaugeRatioInHolderState(result: SimResult, ctx: MetricContext): num
   const slotIndex = slotIndexOf(ctx);
   const holder = Number(ctx.args.holder) - 1;
   const state = String(ctx.args.state);
-  const windows = itemsOf(result.history, { holder, state: state as NamedStateId })
-    .map((it) => ({ start: it.start, end: it.end }))
-    .sort((x, y) => x.start - y.start);
+  // 1 パス目が足す窓（selfStateAt）と同じく、付いた次のフレームから外れるフレームの前まで
+  const windows = itemsOf(result.history, { holder, state: state as NamedStateId });
   const n = ctx.args.n === undefined ? null : Number(ctx.args.n);
   if (n !== null && windows[n] === undefined) throw new Error(`枠 ${holder + 1} の ${state} の ${n} 回目が無い`);
-  const within = (w: { start: number; end: number }, f: number) => w.start <= f && f < w.end;
-  const sideOf = (f: number) =>
-    !windows.some((w) => within(w, f)) ? sums.out : n === null || within(windows[n]!, f) ? sums.in : null;
+  const within = (w: { start: number; end: number }, f: number) => w.start < f && f < w.end;
   const sums = { in: { own: 0, all: 0 }, out: { own: 0, all: 0 } };
-  for (const g of result.shotGauges) {
-    const side = g.slotIndex === slotIndex ? sideOf(g.frame) : null;
-    if (side === null) continue;
-    side.own += g.energy;
-    side.all += g.energy;
-  }
-  for (const g of result.allyGauges) {
-    const side = g.slotIndex === slotIndex ? sideOf(g.frame) : null;
-    if (side !== null) side.all += g.energy;
-  }
-  if (sums.in.own === 0 || sums.out.own === 0) throw new Error(`枠 ${holder + 1} の ${state} の間か、ほかの時の回が無い`);
+  /** 窓の中なら in（n があれば n 回目の窓だけ。ほかの窓は数えない）、外なら out */
+  const sideOf = (f: number) =>
+    windows.some((w) => within(w, f)) ? (n === null || within(windows[n]!, f) ? sums.in : null) : sums.out;
+  const add = (gauges: readonly { slotIndex: number; frame: number; energy: number }[], own: boolean) => {
+    for (const g of gauges) {
+      const side = g.slotIndex === slotIndex ? sideOf(g.frame) : null;
+      if (side === null) continue;
+      side.all += g.energy;
+      if (own) side.own += g.energy;
+    }
+  };
+  add(result.shotGauges, true);
+  add(result.allyGauges, false);
+  if (sums.in.own === 0 || sums.out.own === 0)
+    throw new Error(`枠 ${holder + 1} の ${state} の間か、ほかの時の回が無い`);
   return Math.round((sums.in.all / sums.in.own / (sums.out.all / sums.out.own)) * 10_000) / 10_000;
 }
 
