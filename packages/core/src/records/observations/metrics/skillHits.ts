@@ -30,8 +30,9 @@ export const skillHitsMetrics: Readonly<Record<string, Metric>> = {
   // 枠が出した回復のフレームの数（同じフレームの回復は 1 つ）（V-0501）。録画では、回復の数字が出たフレームの数と比べる
   // （同じフレームに 2 つの回復が重なっても数字の出始めは 1 つ）
   healFrameCount: { args: ['slot'], sim: (r, c) => healFramesOf(r, c).length },
-  // 枠 windowSlot の HP の割合が 1 未満の窓（最大HP のみ▲ の間など）ごとに、枠が出した回復のうち窓の中で最初に当たったものの対象の枠
-  // （1 始まり）の並び。回復の来ない窓は飛ばし、skip・count で切る（V-0752）。録画では、窓の中で最初に HP のバーが伸びた枠
+  // 枠 windowSlot の HP の割合が下がった窓（最大HP のみ▲ の間など）ごとに、枠が出した回復のうち窓の中で最初に当たったものの対象の枠
+  // （1 始まり）の並び。回復の来ない窓は飛ばし、skip・count で切る（V-0752）。録画では、窓の中で最初に HP のバーが伸びた枠。窓は
+  // 時刻で録画と対応させない（モデルと録画で窓の数・時刻がずれる）ので、どの窓でも同じ枠になる問いに使う
   windowFirstHealTargets: {
     args: ['slot', 'windowSlot'],
     sim: (r, c) => firstCount(windowFirstHeals(r, c), c, '回復の来た窓'),
@@ -80,31 +81,32 @@ function healFramesOf(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
- * 枠 windowSlot の HP の割合が 1 未満の窓ごとの、枠が出した最初の回復の対象の枠（1 始まり）。窓は HP の割合の段（history.hpRatios）の
- * 1 未満の続きで、回復は当たったフレームの割合で窓に入れる（V-0752）
+ * 枠 windowSlot の HP の割合が下がった窓ごとの、枠が出した最初の回復の対象の枠（1 始まり）。窓は HP の割合の段（history.hpRatios）の、
+ * 割合の下がった段から次に上がる段の前まで（割合が 1 に戻らない間の窓も分ける）。回復は当たったフレームの段で窓に入れる。窓の最初の回復の
+ * フレームに対象が 2 機以上あれば誤り（V-0752）
  */
 function windowFirstHeals(result: SimResult, ctx: MetricContext): number[] {
   const slotIndex = slotIndexOf(ctx);
   const steps = result.history.hpRatios[Number(ctx.args.windowSlot) - 1];
   if (steps === undefined) throw new Error(`枠 ${String(ctx.args.windowSlot)} が無い`);
-  // 段ごとの窓の番号（1 未満の段の続きの、頭の段の番号。1 以上の段は -1）
+  // 段ごとの窓の番号（割合の下がった段の番号。同じ割合の段は前の段の番号、上がった段と先頭の段は -1）
   const windowOf: number[] = [];
   steps.ratios.forEach((ratio, k) => {
-    const prev = windowOf[k - 1] ?? -1;
-    windowOf.push(ratio >= 1 ? -1 : prev >= 0 ? prev : k);
+    const prev = steps.ratios[k - 1] ?? Infinity;
+    windowOf.push(ratio < prev && k > 0 ? k : ratio === prev ? windowOf[k - 1]! : -1);
   });
-  const heals = result.history.heals
-    .filter((h) => h.sourceSlotIndex === slotIndex)
-    .sort((a, b) => a.frame - b.frame || a.slotIndex - b.slotIndex);
+  const heals = result.history.heals.filter((h) => h.sourceSlotIndex === slotIndex).sort((a, b) => a.frame - b.frame);
   // 回復はフレームの順なので、同じ窓の回復は続けて来る
   const targets: number[] = [];
   let last = -1;
-  for (const h of heals) {
-    const window = windowOf[hpRatioStepIndexOf(steps, h.frame)]!;
-    if (window < 0 || window === last) continue;
+  heals.forEach((h, i) => {
+    const window = windowOf[hpRatioStepIndexOf(steps, h.frame)] ?? -1;
+    if (window < 0 || window === last) return;
+    if (heals[i + 1]?.frame === h.frame)
+      throw new Error(`枠 ${String(ctx.args.slot)} の f${h.frame} の回復は対象が 2 機以上`);
     last = window;
     targets.push(h.slotIndex + 1);
-  }
+  });
   return targets;
 }
 

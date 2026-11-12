@@ -2,7 +2,7 @@
 // ミルク・ミサト・マスト。マストのバーストの最大HP のみ▲ の間にミサトの S1 の回復）のモデルで見る
 import { describe, expect, it } from 'vitest';
 import { loadRecordingsFile, loadRecordsData, recordingMap } from '../../../scripts/records-data.ts';
-import { runSimulation } from '../../sim/engine.ts';
+import { runSimulation, type SimResult } from '../../sim/engine.ts';
 import { METRICS } from '../observations/metrics/index.ts';
 import type { CompareSetup } from '../observations/setup.ts';
 import { buildTeamInput } from '../observations/teamInput.ts';
@@ -24,7 +24,7 @@ const all = run({}) as number[];
 
 describe('windowFirstHealTargets', () => {
   it('takes the first heal of each window where the window slot is below full', () => {
-    // マストの窓 10 回とも回復が来て、割合の最も低い 2 機（ノワール・ミルク。51.09%）のうち枠の若いノワールに当たる
+    // モデルのマストの窓（録画とは数・時刻がずれる）は 10 回とも回復が来て、割合の最も低い 2 機（ノワール・ミルク。51.09%）のうち枠の若いノワールに当たる
     expect(all).toEqual(Array(10).fill(2));
     expect(metric.occurrences!(result, { args: mastWindows, input })).toBe(all.length);
   });
@@ -37,5 +37,23 @@ describe('windowFirstHealTargets', () => {
   it('gives nothing when the window slot never drops below full', () => {
     // フラワー（1 枠目）には最大HP のみ▲ が付かない
     expect(run({ windowSlot: 1 })).toEqual([]);
+  });
+
+  it('splits windows at each drop even when the ratio never returns to full, and refuses multi-target heals', () => {
+    // 割合 1 → 0.5（窓）→ 0.9（上がった。窓の外）→ 0.5（窓）→ 0.9
+    const hpRatios = [{ frames: [0, 100, 200, 300, 400], ratios: [1, 0.5, 0.9, 0.5, 0.9] }];
+    const fake = (heals: { frame: number; slotIndex: number }[]) =>
+      ({ history: { hpRatios, heals: heals.map((h) => ({ ...h, sourceSlotIndex: 1 })) } }) as unknown as SimResult;
+    const args = { slot: 2, windowSlot: 1 };
+    const heals = [
+      { frame: 150, slotIndex: 1 },
+      { frame: 160, slotIndex: 2 },
+      { frame: 250, slotIndex: 0 },
+      { frame: 350, slotIndex: 3 },
+    ];
+    expect(metric.sim(fake(heals), { args, input })).toEqual([2, 4]);
+    expect(() => metric.sim(fake([...heals, { frame: 350, slotIndex: 4 }]), { args, input })).toThrow(
+      '対象が 2 機以上',
+    );
   });
 });
