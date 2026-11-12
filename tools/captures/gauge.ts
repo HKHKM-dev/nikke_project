@@ -1,4 +1,4 @@
-// 画面右の「BURST」ゲージバーを画素で読み、フレームごとの充填率を出す（Stage 7 のゲージ較正用）。
+// 画面右の「BURST」ゲージバーを画素で読み、フレームごとの充填率を出す（ゲージの較正用）。
 //   node tools/captures/gauge.ts <動画> [--from N] [--to N] [--step 1] [--mode series|jumps|events] [--side right|left] [--subpixel]
 //
 // バーは 1920×1080 で x 1793〜1905・y 442（113px）。充填部は輝度 約 171、未充填部は 約 110 なので、

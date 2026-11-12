@@ -1,21 +1,19 @@
-// 編成の条件（バースト段階の構成 burstStepMix: plan/design-anis-star-s1.md 2.1 節、同じ部隊の味方 squad: plan/design-ram-s1.md
-// 2.1 節）。編成で決まる静的な条件なので、宝物版の差し替え（skills/treasure.ts）と同じく最上位で 1 回だけ、満たさない効果を
-// 定義から外す。外した後の定義には満たした効果だけが残るので、2 回通しても結果は同じ。
-// 防御力無視ダメージ編（plan/design-true-damage-element.md 3.3・3.6 節）: 編成に特定のキャラがいる条件 withCharacter と、
-// 敵の属性の条件 enemyElement も、同じく静的な条件としてここで外す。
-// 対象の語彙編（plan/design-target-vocab.md 2.2・2.3 節）: 編成で決まる対象（targetSquad・longestChargeTime）の枠も、ここで
-// 効果の fixedTargets に書く（skills/targets.ts が絞る）。何度通しても同じ枠になる。
-// ペルソナ編（plan/design-persona.md 3.2 節）: 「ペルソナ状態の」（targetState）・「基本バースト段階が N の」
-// （targetBurstStep）・allies の「自分を除く」（excludeSelf: always）も、編成で決まる対象としてここで枠を決める。
-// 名前の付いた状態の語彙編（plan/design-named-state.md 3.4 節・実装の別紙 1.3 節）: 枠の状態は、その枠の定義の静的な状態
-// （staticStatesOf。2 段目の段 1 で状態ごとの決め方にした）から取る。静的な付与にも編成の条件を書けるので、効果を外した後の定義から集める
-// （applyCompositionToTeam: 編成の条件で外す → 静的な状態を集める → 対象の枠を決める）。付与（state）の対象も timed と同じに決める。
-// 2 段目の段 1（plan/design-skill-stage1.md 1.1 節）: 自分の状態の条件（selfState）のうち、編成で決まるもの（自分の定義の静的な状態と、
-// どの枠の定義も付けない状態）も、ここで決める（満たせば条件から落とし、満たさなければ効果を外す）。
-// 2 段目の段 6（plan/design-skill-stage6.md 1.4 節）: 自分の HP の割合の条件（selfHp）も、枠の HP の割合の想定（TeamSlotInput.hpRatio。
-// 戦闘中一定）で、ここで決める（applyCompositionToTeam の枠ごとの段。最小構成の検査など、枠の入力の無い所は想定の既定（満タン）とみなす）。
-// HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.1 節）: ただし決めるのは、HP の割合が戦闘中に動かない枠（hpRatioMovesOf）
-// だけ。動きうる枠の常時の selfHp は残し、件の一覧が区間の件（skills/resolve.ts の resolveHpWhileEffects）にする。
+// 編成で決まる静的な条件と対象を、最上位で 1 回だけ決める（applyCompositionToTeam。宝物版の差し替え skills/treasure.ts と同じ位置）。
+// 順番: 編成の条件で満たさない効果を定義から外す → 枠の静的な状態を集める → 対象の枠を決める。外した後の定義には満たした効果だけが
+// 残るので、何度通しても結果は同じ。
+//   - 外す条件: バースト段階の構成（burstStepMix。plan/design-anis-star-s1.md 2.1 節）、同じ部隊の味方（squad。
+//     plan/design-ram-s1.md 2.1 節）、編成に特定のキャラがいる（withCharacter）、敵の属性（enemyElement。
+//     plan/design-true-damage-element.md 3.3・3.6 節）。
+//   - 自分の状態の条件（selfState）のうち編成で決まるもの（自分の定義の静的な状態と、どの枠の定義も付けない状態）は、満たせば
+//     条件から落とし、満たさなければ効果を外す（plan/design-skill-stage1.md 1.1 節）。
+//   - 自分の HP の割合の条件（selfHp）は、HP の割合が戦闘中に動かない枠（hpRatioMovesOf）だけ、枠の HP の割合の想定
+//     （TeamSlotInput.hpRatio。枠の入力の無い所は満タン）で決める。動きうる枠の常時の selfHp は残し、件の一覧が区間の件にする
+//     （skills/resolve.ts の resolveHpWhileEffects。plan/design-hp-ratio-readers.md 2.1 節）。
+//   - 枠の状態は、その枠の定義の静的な状態（staticStatesOf）から取る。静的な付与にも編成の条件を書けるので、効果を外した後の定義から
+//     集める（plan/design-named-state.md 3.4 節）。
+//   - 編成で決まる対象（targetSquad・longestChargeTime・targetState・targetBurstStep・allies の excludeSelf: always）の枠は、
+//     効果の fixedTargets に書く（skills/targets.ts が絞る。plan/design-target-vocab.md 2.2・2.3 節）。付与（state）の対象も
+//     timed と同じに決める。
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { BurstStep, CharacterData, Element } from '../types.ts';
 import { skillValue, type SkillLevels } from './resolve.ts';

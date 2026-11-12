@@ -1,7 +1,6 @@
-// Stage 2: 通常攻撃のみの静的 DPS。Stage 4 で常時発動パッシブのバフ（buffs）を差し込めるようにした。
-// Stage 5 で「1 トリガーの式」（computeTriggerDamage）を発射サイクルから切り離し、sim がフレームごとに使えるようにした。
-// フルバースト区間は condition.fullBurst で倍率グループに +0.5 が乗る。時間変化するバフはまだ含まない。
-// Stage 11 モダニア: 射撃ごとの倍率ダメージ（「通常攻撃が命中した時、最終攻撃力の X% の追加ダメージ」）を 1 トリガーの値に足す（perShot）。
+// 通常攻撃のダメージの式。1 トリガーの期待ダメージ（computeTriggerDamage）は sim の 2 パス目が区間ごとに使う。
+// 常時・持続のバフ（buffs）を差し込める。フルバースト区間は condition.fullBurst で倍率グループに +0.5 が乗る。
+// 射撃ごとの倍率ダメージ（「通常攻撃が命中した時、最終攻撃力の X% の追加ダメージ」）は 1 トリガーの値に足す（perShot）。
 // 使用武器の変更（殲滅モード）が効いている区間は、武器倍率・コア倍率を変更後の武器（buffs.weapon）から取る。
 import { computeCadence, type CadenceResult } from './cadence.ts';
 import type { FiringParams } from './frame/firing.ts';

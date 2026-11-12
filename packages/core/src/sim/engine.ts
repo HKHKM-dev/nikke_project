@@ -1,18 +1,12 @@
-// Stage 5: 最小フレームシミュレータ（ヘッドレス・純関数）。
-// 60fps で戦闘時間ぶんのフレームを回し、各枠の通常射撃（shooter.ts）と固定サイクルのバースト（burst/fixedCycle.ts）を逐次処理する。
-// 1 トリガーのダメージは computeTriggerDamage の期待値（乱数なし）。バーストスキルは computeBurstHit。
-// Stage 6: 持続バフを skills/timeline.ts の区間に載せた。区間ごとの 1 トリガー値を先に計算しておく（毎フレーム式を評価しない）。
-// Stage 7: 時刻表を動的サイクル（burst/dynamic.ts。射手を回してゲージを溜め、状態機械で発動を決める）にした。
-// 射撃は時刻表に依存しないので 2 パス（1 パス目で時刻表、2 パス目で集計）で済む。
-// Stage 8: 1 パス目を frame/plan.ts の planTeamRun（射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動）にまとめた。
-// 射撃は 1 パス目の射撃の列（frame/shots.ts）をそのまま使い、倍率ダメージ（damage）は発動フレームで足す。
-// Stage 10: 1 パス目の射撃の列と時刻表は frame/firstPass.ts のフレームループ（射撃に効くバフ・CT 短縮・弾丸チャージ込み）で作る。
-// 2 パス目は射撃の列を読み、区間ごとの 1 トリガー値を足す。
-// Stage 16-B（plan/design-stage16.md 9 節）: 敵の出来事は 1 パス目で効く。タイムラインの表示用に 1 秒ごとのダメージを足し上げる。
-// Stage 18-C（plan/design-stage18.md 12.3 節）: 条件が自動の枠は、区間の着地点の条件で 1 トリガーの値を出す。
-// 計算の入口は runSimulation だけ（画面・CLI・records 層は simTeamResult(input, runSimulation(input))。plan/design-unify-sim-calc.md 5.2 節）。
-// 2 パス目は、区間ごとに射撃の列から二分探索で発数を引き（countShotsInRanges）、1 秒ごとのダメージは射撃の列・バーストのヒット・倍率ダメージの
-// 列から直接足す。フレームループは trace（出来事の列）のときだけ回し、値は作らない（__tests__/calcShots.test.ts で一致を固定）。
+// 計算の入口 runSimulation（ヘッドレス・純関数）。画面・CLI・records 層は simTeamResult(input, runSimulation(input)) を使う
+// （plan/design-unify-sim-calc.md 5.2 節）。
+// 1 パス目（frame/plan.ts の planTeamRun）の結果を、2 パス目（ここ）で集計する:
+//   - 通常攻撃: 区間ごとに 1 トリガーの値（computeTriggerDamage の期待値。乱数なし）を先に出し、射撃の列から二分探索で引いた区間の
+//     発数（countShotsInRanges）を掛ける。条件が自動の枠は、区間の着地点の条件で 1 トリガーの値を出す（plan/design-stage18.md 12.3 節）。
+//   - バーストスキル（computeBurstHit）と倍率ダメージ（damage）は、1 パス目の発動の列のとおりに足す。
+//   - 1 秒ごとのダメージ（タイムラインの表示用）は、射撃の列・バーストのヒット・倍率ダメージの列から直接足す。
+// 敵の出来事（狙えない窓など）は 1 パス目で効く（plan/design-stage16.md 9 節）。フレームループは trace（出来事の列）のときだけ回し、
+// 値は作らない（__tests__/calcShots.test.ts で一致を固定）。
 import { hitFramesOf, type BurstActivation, type BurstSchedule, type BurstStepKey } from '../burst/schedule.ts';
 import { computeCadence, type CadenceResult } from '../cadence.ts';
 import {

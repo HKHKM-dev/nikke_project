@@ -1,5 +1,5 @@
-// 画面上部中央の HUD の総ダメージ（例: 79,851,043）を全フレーム読み、値の列・増分・最終値を出す（Stage 19-D。
-// plan/design-stage19.md 2.7 節）。Stage 11 モダニア・17・18 で使い捨てのスクリプトで読んでいた読み方をツールにしたもの。
+// 画面上部中央の HUD の総ダメージ（例: 79,851,043）を全フレーム読み、値の列・増分・最終値を出す
+// （plan/design-stage19.md 2.7 節）。
 //   node tools/captures/hud.ts <動画> [--mode final|jumps|series] [--from N] [--to N] [--crop 810,34,300,38] [--fallback]
 //   node tools/captures/hud.ts <動画> --make-templates 6000:39174344,11400:79851043,...   # テンプレートを作り直す
 //   node tools/captures/hud.ts <動画> --screen interception [--mode ...]   # 迎撃戦の段階の数値（V-0462）

@@ -1,6 +1,5 @@
-// 持ち主ごとの一覧編（plan/design-holder-effects.md 段 D の 6）: 画面に出す、枠ごとの持続の効果と循環の間隔の変更のまとめ（純関数）。
-// 段 D の 5 までは、画面が窓（TeamSlotResult の windows・stateWindows・cycleWindows）と記録（conditionSkips）からまとめていた。
-// まとめ方は同じで、入力を履歴（値の小片・件・判定の記録）にした。
+// 画面に出す、枠ごとの持続の効果と循環の間隔の変更のまとめ（純関数）。入力は 1 パス目の履歴（値の小片・件・判定の記録）
+// （plan/design-holder-effects.md 2.9 節）。
 import { isStateContent, type ItemEffect } from './resolve.ts';
 import { itemsOf, valuePiecesOf, type HolderHistory } from './holders.ts';
 import type { ConditionSkip } from './timeline.ts';

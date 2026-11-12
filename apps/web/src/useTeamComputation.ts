@@ -1,7 +1,7 @@
-// (B) の段 B-2（plan/design-unify-sim-calc.md 6.2 節）: 画面の計算を Web Worker で回す。
+// 画面の計算を Web Worker で回す（plan/design-unify-sim-calc.md 6.2 節）。
 // 計算が終わるまでは前の結果を出したまま computing を立てる。最初の結果が届くまでは shown が null。
 // 結果は、その計算の元（source。画面では CalcView）と組で返す。前の入力の結果を出している間に、いまの入力の値と
-// 混ぜて描かないため（編成を切り替えた直後に、前の編成のキャラにいまの編成の宝物の段階を当てて落ちていた）
+// 混ぜて描かないため（混ぜると、編成を切り替えた直後に、前の編成のキャラにいまの編成の宝物の段階を当てて落ちる）
 import { startTransition, useEffect, useMemo, useRef, useState } from 'react';
 import {
   LatestComputeQueue,

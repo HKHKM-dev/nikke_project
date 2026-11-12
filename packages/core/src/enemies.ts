@@ -1,7 +1,7 @@
-// Stage 15: 敵のプリセット（data/enemies.json）の検証と、計算の入力（EnemyInput）への変換（plan/design-stage12.md 5.2 節）。
+// 敵のプリセット（data/enemies.json）の検証と、計算の入力（EnemyInput）への変換（plan/design-stage12.md 5.2 節）。
 // 画面（射撃場の敵の属性）と CLI（--enemy）がプリセットを選ぶ。
-// Stage 16-B（plan/design-stage16.md 9.2 節）: 敵の出来事のセット（eventSets）を周期で書き、戦闘時間ぶんの EnemyEvent に展開する。
-// Stage 18-C（plan/design-stage18.md 12.2 節）: 的の条件の表（targetProfiles）と、出来事のセットの区間ごとの着地点（landings）。
+// 敵の出来事のセット（eventSets）は周期で書き、戦闘時間ぶんの EnemyEvent に展開する（plan/design-stage16.md 9.2 節）。
+// 的の条件の表（targetProfiles）と、出来事のセットの区間ごとの着地点（landings）も持つ（plan/design-stage18.md 12.2 節）。
 import type { EnemyEvent, EnemyEventKind, EnemyInput, LandingSpan } from './damage.ts';
 import { ELEMENTS } from './element.ts';
 import type {

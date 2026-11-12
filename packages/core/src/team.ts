@@ -1,4 +1,4 @@
-// Stage 3〜: 編成の入力（枠・条件・スキル）と結果の型、入力の検証。結果（TeamResult）は sim/teamResult.ts の simTeamResult が作る。
+// 編成の入力（枠・条件・スキル）と結果の型、入力の検証。結果（TeamResult）は sim/teamResult.ts の simTeamResult が作る。
 // 1 パス目は frame/plan.ts、計算の入口は sim/engine.ts の runSimulation。
 import type { BurstSchedule, BurstScheduleModel, BurstSummary } from './burst/schedule.ts';
 import type { CadenceResult } from './cadence.ts';

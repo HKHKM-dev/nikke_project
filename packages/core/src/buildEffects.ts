@@ -1,8 +1,8 @@
-// Stage 13: 育成入力の拡張 B — 効果層（plan/design-stage12.md 3・12 節）。OL 装備のオプション・キューブの固有効果・
+// 育成入力の効果層（plan/design-stage12.md 3・12 節）。OL 装備のオプション・キューブの固有効果・
 // コレクション（R / SR）の武器種効果を、枠の常時バフ（BuffTotals の比率の加算）に写す。
 // どれも「戦闘開始時」の無期限の効果なので、スキルの passive と同じく区間を割らない。計算側（sim）はマスタを知らず、
 // 呼び出し側（画面・CLI の --build・records 層）が resolveBuildEffects の結果を TeamSlotInput.buildEffects に入れる
-// （Stage 12 の attackOverride と同じ流儀）。スキル側の分配は skills/timeline.ts の resolvePassiveStates。
+// （attackOverride と同じ流儀）。スキル側の分配は skills/timeline.ts の resolvePassiveStates。
 //
 // キューブとコレクションのスキルは説明文を読まず、スキル ID ごとの対応表（CUBE_SKILL_EFFECTS / COLLECTION_SKILL_EFFECTS）で
 // stat と数値の番号（description_value_NN）を決める。表に無い ID はマスタが増えたということなので「未定義」として知らせる。

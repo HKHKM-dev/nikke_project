@@ -1,8 +1,7 @@
 // マガジン 1 周期（1 発目までの遅延 + 発射 × 装弾数 + リロード）をフレーム単位で離散化し、平均の秒間トリガー数を求める。
-// モデルは 2026-09-22 の射撃場録画（AR / SR / RL / MG）で較正済み。plan/verification.md 参照。
-// Stage 10: 射撃に効くバフの実効値（frame/firing.ts の FiringParams）を受け取れるようにした。省略は基礎値（Stage 9 と同じ）。
-// Stage 21-C3: rpm の蓄積をゲーム内の時計にし（C-0058）、AR・SMG・SG のリロード明けの遅れを足した（C-0059。
-// plan/design-stage21.md 8.8 節、V-0011）。
+// モデルは射撃場の録画（AR / SR / RL / MG）で較正した（plan/verification.md）。
+// 射撃に効くバフの実効値（frame/firing.ts の FiringParams）を受け取る。省略は基礎値。
+// rpm の蓄積はゲーム内の時計で数え（C-0058）、AR・SMG・SG はリロード明けに遅れがある（C-0059。plan/design-stage21.md 8.8 節、V-0011）。
 import { chargeShotIntervalFrames, firingParams, type FiringParams } from './frame/firing.ts';
 import type { ShotParams } from './types.ts';
 import { framesToGameSeconds } from './time.ts';

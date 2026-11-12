@@ -1,15 +1,11 @@
-// 効果の対象判定。段階 B 以降で「自分以外の味方」「最終攻撃力が最も高い味方 N 機」などを足すときはここに述語を増やし、
-// 計算の本体（runSimulation）側は触らない。
-// Stage 11: 発火のたびに対象が変わるもの（「直前にバーストスキルを使用した味方」）のために、発火の文脈を受ける。
-// Stage 11 アリス編: 「最終攻撃力が最も高い味方 N 機」（topAttack）も文脈（攻撃力の順位）で決める（skills/ranking.ts）。
-// アスカ（plan/design-asuka.md 2.2 節）: 「〈コード〉コードの味方」（targetElement）。武器種と同じく、対象の枠のキャラで絞る。
-// 2 段目の段 9（plan/design-skill-stage9.md 1.1 節）: 「〈クラス〉型の味方」（targetClass）も同じ。
-// 対象の語彙編（plan/design-target-vocab.md 2 節）: 編成で決まる対象（targetSquad・longestChargeTime）は、最上位の
-// skills/composition.ts が決めた枠（fixedTargets）で絞る。「自分を除く」（excludeSelf）は順位（skills/ranking.ts）で外す。
-// ペルソナ編（plan/design-persona.md 3.2 節）: 「ペルソナ状態の」「基本バースト段階が N の」と allies の「自分を除く」も、編成で決まる
-// 対象として fixedTargets で絞る。名前の付いた状態の語彙編: 「〈名前〉状態の」は目録の id（静的な状態。skills/composition.ts）。
-// 2 段目の段 8（plan/design-skill-stage8.md 1.1 節）: 「残りの HP の割合が最も低い味方 N 機」（lowestHpRatio）も編成で決まる対象で、
-// fixedTargets（HP の割合の想定の低い順。同値は枠の若い順）の先頭 targetCount 枠に掛ける。
+// 効果の対象判定。対象の種類を足すときはここに述語を増やし、計算の本体（runSimulation）側は触らない。
+//   - 発火のたびに対象が変わるもの（「直前にバーストスキルを使用した味方」）は、発火の文脈を受けて決める。
+//   - 「最終攻撃力が最も高い味方 N 機」（topAttack）は、文脈（攻撃力の順位）で決める（skills/ranking.ts）。
+//   - 「〈武器種〉の味方」「〈コード〉コードの味方」（targetElement）「〈クラス〉型の味方」（targetClass）は、対象の枠のキャラで絞る。
+//   - 編成で決まる対象は、最上位の skills/composition.ts が決めた枠（fixedTargets）で絞る（どれが編成で決まるかは composition.ts）。
+//     それ以外の「自分を除く」（excludeSelf）は順位（skills/ranking.ts）で外す。
+//   - 「残りの HP の割合が最も低い味方 N 機」（lowestHpRatio）は、fixedTargets（HP の割合の想定の低い順。同値は枠の若い順）の
+//     先頭 targetCount 枠に掛ける（plan/design-skill-stage8.md 1.1 節）。
 import type { Element, NikkeClass, WeaponType } from '../types.ts';
 import type { NamedStateId } from './states.ts';
 import type { BasicBurstStep, BuffTarget, ExcludeSelf, TargetDefense, TargetSquad } from './types.ts';

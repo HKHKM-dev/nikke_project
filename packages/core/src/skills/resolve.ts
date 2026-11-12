@@ -1,8 +1,7 @@
 // スキル定義の ref を Lv の数値に解決する。単位変換（% → 比率）はここで一律に行う。
-// Stage 11 モダニア: スタックの最大数・「▼」・条件・使用武器の変更（stat 'weapon' の持続効果として解決する）を足した。
-// 名前の付いた状態の語彙編（plan/design-named-state.md 実装の別紙 1.2 節）: 付与（resolveStateGrants）と中身（resolveStateContents）を
-// 足した。resolveTimed は今のまま（timed と weaponChange。どれもトリガーを持つ）で、付与も中身も混ぜない。静的な付与の中身は
-// resolvePassives が常時パッシブとして集める。
+// 使用武器の変更は stat 'weapon' の持続効果として解決する。resolveTimed は timed と weaponChange（どれもトリガーを持つ）だけで、
+// 状態の付与（resolveStateGrants）と中身（resolveStateContents）は別に解決する（plan/design-named-state-impl.md 1.2 節）。
+// 静的な付与の中身は resolvePassives が常時パッシブとして集める。
 import type {
   CharacterData,
   Element,

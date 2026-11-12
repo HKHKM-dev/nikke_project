@@ -1,29 +1,29 @@
-// Stage 5: 1 体の通常射撃をフレームごとに進める状態機械。
-// cadence.ts と同じ規則（レート蓄積、チャージ + 解放遅延、リロード = 回数 × リロード時間（分割リロードは C-0154）、MG の初弾遅延）を逐次処理で書き直したもので、
+// 1 体の通常射撃をフレームごとに進める状態機械。
+// cadence.ts と同じ規則（レート蓄積、チャージ + 解放遅延、リロード = 回数 × リロード時間（分割リロードは C-0154）、MG の初弾遅延）を逐次処理で回す。
 // 発射フレーム列は k × cycleFrames + firstShotFrames + shotFrames[i] と 1 フレームもずれない（sim/__tests__/shooter.test.ts で固定）。
 //
 // wait は「撃てないフレームがあと何個残っているか」。stepShooter は先に判定してから減らす:
 //   戦闘開始        wait = firstShotFrames                        → AR・SMG・SG・MG は f=12、1 秒チャージの RL は f=71・SR は f=70 に 1 発目
-//                   （ハイドから構え 12f（SR は 11f）+ チャージ + 満ちてから撃つまで 1f − 1。C-0232。押下チャージ型は Stage 22-A の
-//                    発と発の間 82f − 構え解除 13f。C-0537。Stage 22-C: チャージの無い武器は構え 12f の後。C-0114）
+//                   （ハイドから構え 12f（SR は 11f）+ チャージ + 満ちてから撃つまで 1f − 1。C-0232。押下チャージ型は
+//                    発と発の間 82f − 構え解除 13f。C-0537。チャージの無い武器は構え 12f の後。C-0114）
 //   チャージ武器    発射したフレーム S で wait = charge + release − 1 → 次弾は S + 82
 //                   （チャージの途中でチャージ時間が変われば、S からの経過を持ち越して決め直す。C-0541・C-0542・C-0523）
 //   リロード        最終弾のフレーム L から、1 回分ずつ込めて最後の 1 回分を込め終えたところで 1 発目の遅延につなぐ
-//                   → 次のマガジンの 1 発目は L + reload × chunks + reloadFirst（Stage 21-C3: AR・SMG・SG は 22f。C-0059。MG は 20f）
+//                   → 次のマガジンの 1 発目は L + reload × chunks + reloadFirst（AR・SMG・SG は 22f。C-0059。MG は 20f）
 //                   分割リロードは、込め始めの前に弾を込めない 1 段を待ち、段は切り上げた整数（C-0154）
 //                   → L + ceil(段) × (chunks + 1) + reloadFirst
 //
-// Stage 10: 射撃に効くバフ（最大装弾数・リロード速度・チャージ速度）を FiringParams として毎フレーム受け取る（frame/firing.ts）。
+// 射撃に効くバフは FiringParams（frame/firing.ts）として毎フレーム受け取る。
 // 分割リロードは 1 回分ずつ込め、1 回分の弾数は込めるたびにその時点の最大装弾数で決める（録画 0037: 3 → 10 → 17 → 20、
 // 録画 0019: 0 → 5 → 8 → 9）。最大装弾数が増えても残弾は増えない（録画 0037）。
 // つなぎ目の −1 は「最終弾の直後」の 1 回だけにする（plan/design-stage10.md 3.3 節）。1 回分の完了ごとに −1 すると
 // 1 回分につき 1 フレームずつ早くなる。
 //
-// Stage 11 モダニア: 装弾数無限（FiringParams.infiniteAmmo）の間は撃っても残弾を減らさない。使用武器の変更（殲滅モード）は
+// 装弾数無限（FiringParams.infiniteAmmo）の間は撃っても残弾を減らさない。使用武器の変更（殲滅モード）は
 // frame/firstPass.ts が別の射手の状態で撃ち、終わったら resumeShooter で基礎の武器の状態に戻す（plan/design-stage11-modernia.md 3.4 節）。
 //
-// Stage 16-B: 敵を狙えない窓（敵のジャンプ）の間は撃たない（stepShooter の blocked）。待ち・リロードは進む。
-// 窓に入ったら hideShooter、明けたら unhideShooter（plan/design-stage16.md 9.3 節。2026-09-26 ユーザー確認の仕様）:
+// 敵を狙えない窓（敵のジャンプ）の間は撃たない（stepShooter の blocked）。待ち・リロードは進む。
+// 窓に入ったら hideShooter、明けたら unhideShooter（plan/design-stage16.md 9.3 節）:
 //   攻撃できる敵がいないとハイドし、できればリロードする。窓の間に込め終われば満タンで、終わらなければ込め直しは無かったことになる。
 import {
   ACC_EPSILON,
