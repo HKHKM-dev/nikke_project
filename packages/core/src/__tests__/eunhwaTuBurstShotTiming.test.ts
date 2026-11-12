@@ -8,7 +8,7 @@ import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { flightFramesAt, landingFrameSpans, slotWeaponChangeFirstHitsOf } from '../frame/landing.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { METRICS } from '../records/observations.ts';
+import { METRICS } from '../records/observations/metrics/index.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';

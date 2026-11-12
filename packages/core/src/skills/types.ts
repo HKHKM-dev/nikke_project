@@ -264,7 +264,7 @@ export const FLAG_STATS = [
  * ドロシー：セレンディピティ編（plan/design-dorothy-serendipity.md 2.1・2.2 節）: 1 発のペレットの数を変える stat。timed の self だけに書ける。
  * 1 パス目（frame/firstPass.ts）が窓を追い、ペレットの命中の量（pelletHit）とゲージを実効のペレットの数で数える。1 発の総ダメージは
  * 変えない（固定は 1 個に総ダメージが乗り C-1074、▲は総ダメージをペレットで分ける C-1076）。区間の buffs にも入り、照合の 1 ペレットの値
- * （records/observations.ts の hitDamage）が割る数を決める
+ * （records/observations/metrics/damage.ts の hitDamage）が割る数を決める
  */
 export const PELLET_STATS = ['pelletCount', 'singlePellet'] as const satisfies readonly BuffStat[];
 

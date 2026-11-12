@@ -25,7 +25,7 @@ import {
 } from './pellets.ts';
 import { findJumpBoundaries, intervalName, splitIntervals, type Interval, type TriggerGroup } from './triggers.ts';
 import { observation, roundTo, type Recipe, type RecipeContext, type RecipeObservation } from './types.ts';
-import type { Observation } from '../../../packages/core/src/records/observations.ts';
+import type { Observation } from '../../../packages/core/src/records/observations/types.ts';
 
 const OBSERVATIONS_DIR = new URL('../../../records/observations/', import.meta.url);
 

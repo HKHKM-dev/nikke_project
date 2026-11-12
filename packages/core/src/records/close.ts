@@ -1,7 +1,7 @@
 // 検証記録を閉じる前の検査（plan/design-records-automation.md 3.7 節）。npm run records:close の純粋な部分。
 import { gradeAboveCandidate, type Claim, type ClaimGrade, type JudgmentOverride } from './claims.ts';
 import { summarizeWarnings, type PairWarning } from './relevance.ts';
-import type { Observation } from './observations.ts';
+import type { Observation } from './observations/types.ts';
 import type { Verification } from './verifications.ts';
 
 export type CloseInput = {

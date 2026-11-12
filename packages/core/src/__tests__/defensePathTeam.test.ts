@@ -15,7 +15,7 @@ import {
   FIXED_SPEC_ENEMY_DEFENCE,
 } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { METRICS } from '../records/observations.ts';
+import { METRICS } from '../records/observations/metrics/index.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';

@@ -12,7 +12,7 @@ import {
   loadRecordingsFile,
   loadVerifications,
 } from '../../../scripts/records-data.ts';
-import type { Observation } from '../observations.ts';
+import type { Observation } from '../observations/types.ts';
 import { verificationExtraLines } from '../extras.ts';
 import { idReferencesIn } from '../references.ts';
 import {

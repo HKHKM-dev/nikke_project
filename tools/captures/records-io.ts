@@ -8,7 +8,7 @@ import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { observationIdsInBranches } from '../../packages/core/scripts/records-data.ts';
-import type { Observation } from '../../packages/core/src/records/observations.ts';
+import type { Observation } from '../../packages/core/src/records/observations/types.ts';
 import { isLegacy, type RecordingEntry } from '../../packages/core/src/records/recordings.ts';
 import { capturesDir, legacyVideoPath } from './dirs.ts';
 

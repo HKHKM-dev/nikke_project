@@ -3,7 +3,7 @@
 // 合わない行は黙って読み飛ばさずに問題として返す。ID の結び付きは片側だけに書き、逆向きは一覧の生成で引く。
 import { CLAIM_TOPICS, type Claim } from './claims.ts';
 import { ID_DIGITS, V_ID, V_ID_IN_TEXT } from './ids.ts';
-import type { Observation } from './observations.ts';
+import type { Observation } from './observations/types.ts';
 
 export const VERIFICATION_STATES = ['調査中', '保留', '完了', '打ち切り'] as const;
 export type VerificationState = (typeof VERIFICATION_STATES)[number];

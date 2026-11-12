@@ -1,7 +1,7 @@
 # 設計書: 観測値の照合のコード（records/observations.ts）を役割ごとのファイルに分ける
 
 - 対象: `packages/core/src/records/observations.ts` と、それを import するファイル（core の src・テスト・scripts、`tools/captures/`）
-- 状態: 設計中（オーナーの承認待ち。8 節）
+- 状態: 実装済み（9 節）
 - 関連: [design-stage19.md](design-stage19.md) 2.3〜2.5 節（このファイルの元の設計）、[design-records-automation.md](design-records-automation.md) 3.4 節（観測値の形）、[design-workflow-simplification-8.md](design-workflow-simplification-8.md) 2 節（予測値の覚え）
 - 作成日: 2026-11-12
 
@@ -61,7 +61,7 @@
 <!-- prettier-ignore -->
 | ファイル | 中身 | 大きさの見込み |
 | --- | --- | --- |
-| `observations/types.ts` | 観測値の型と語彙・`validateScope`・`invalidReasonsOf`・`recordingOrder` | 約 10KB |
+| `observations/types.ts` | 観測値の型と語彙・`validateScope`・`invalidReasonsOf` | 約 10KB |
 | `observations/setup.ts` | `CompareSetup` とその部品（`BurstDelayOverrideSetup`・`burstDelayOverrideOf`・`AddedEffect`・`withAddedEffects`・`DroppedEffect`・着地点の語彙と `landingFixed`）と、設定が ID で指す観測値の値の読み（`jumpWindowsOf`・`manualBurstsOf`・`holdFireRangesOf`） | 約 17KB |
 | `observations/metrics/context.ts` | `Metric`・`MetricContext` と、テーマをまたいで使う小さな補助（`slotOf`・`frameArgOf`・`eachOrOne`・`firstCount`・`withArgs`・`median`・`nthActivationOf`・`atShotFrame` など） | 約 5KB |
 | `observations/metrics/skillHits.ts` | スキルのヒット・持続ダメージ・回復・出来事（`skillHit*`・`dot*` の時刻・`heal*`・`eventFrames`・`eventCount`・`eventTallies`） | 約 28KB |
@@ -170,3 +170,5 @@
 ## 9. 経過
 
 - 2026-11-12: 起案。
+- 2026-11-12: 8 節の 4 点とも推奨案で承認（オーナー）。
+- 2026-11-12: 3.1 節の案 A のとおりに分け、使う側の import を直した。検証だけが使う `recordingOrder` は `validate.ts` に置いた。4 節の 1〜3 で、比べる観測値の全部の照合の結果・壊した観測値を混ぜた検証のメッセージ・指標の名前と必須の引数が、分ける前と同じことを確かめた（移した宣言の本文も、`export` を付けて折り返した 1 か所のほかは同じ）。

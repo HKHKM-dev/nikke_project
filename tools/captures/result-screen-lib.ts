@@ -6,7 +6,7 @@
 //   (b) 戦闘履歴のパネル（射撃場と同じ）: 合計交戦時間と、枠ごとの名前・LV・⚔・与ダメージ・盾の欄・回復の欄
 // 数字は読まない（OCR は実用にならなかった。design-stage12.md 0.3 節）。探して切り出すまでが機械、読字は 2 セッションが
 // 独立に行い、一致した欄だけを観測値にする。
-import type { Observation } from '../../packages/core/src/records/observations.ts';
+import type { Observation } from '../../packages/core/src/records/observations/types.ts';
 import type { Crop } from './ffmpeg.ts';
 
 /** 座標の基準の大きさ。ほかの大きさの録画は比で直す */

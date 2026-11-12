@@ -9,7 +9,7 @@ import { hexagonFrameOf, hitFrameOf } from '../burst/schedule.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { METRICS } from '../records/observations.ts';
+import { METRICS } from '../records/observations/metrics/index.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { itemsOf, valuePiecesOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
@@ -172,7 +172,7 @@ describe('damage の条件のスタック数（frame/plan.ts）', () => {
   });
 });
 
-describe('スタックの指標（records/observations.ts。V-0437 の比べ）', () => {
+describe('スタックの指標（records/observations/metrics/buffs.ts。V-0437 の比べ）', () => {
   const input = recordingTeam();
   const sim = runSimulation(input);
   const plan = planTeamRun(input);

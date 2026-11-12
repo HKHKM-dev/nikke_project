@@ -26,7 +26,7 @@ export type ShotLog = {
   lastShotFrames?: number[];
   /**
    * グレイブ編（V-0735）: 残弾数減少で残弾が 0 になってリロードを始めた時の、その前の最後の発のフレーム（frames の部分列。昇順）。
-   * 1 パス目が書き、照合の指標のリロードの回（records/observations.ts の reloadsAt）が最後の弾丸の発と同じに読む。省略は無し
+   * 1 パス目が書き、照合の指標のリロードの回（records/observations/metrics/firing.ts の reloadsAt）が最後の弾丸の発と同じに読む。省略は無し
    */
   drainReloadShotFrames?: number[];
   /**

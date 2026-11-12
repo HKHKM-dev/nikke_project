@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Claim } from '../claims.ts';
 import { closeChecks, markState, prBody, prTitle, residualCounts, type CloseInput } from '../close.ts';
-import type { Observation } from '../observations.ts';
+import type { Observation } from '../observations/types.ts';
 import { parseVerification } from '../verifications.ts';
 
 const doc = (extra: string[] = [], sections: Partial<Record<string, string>> = {}) =>

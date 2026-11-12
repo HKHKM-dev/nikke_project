@@ -35,7 +35,7 @@ import {
   validateRuns,
 } from '../src/records/claims.ts';
 import { claimDraft, nextId, verificationFileName, verificationTemplate } from '../src/records/drafts.ts';
-import { invalidReasonsOf } from '../src/records/observations.ts';
+import { invalidReasonsOf } from '../src/records/observations/types.ts';
 import { comparePredictions, todayLocal } from '../src/records/predictions.ts';
 import { relevanceOf } from '../src/records/relevance.ts';
 import { withFreshSensitivity } from '../src/records/sensitivity.ts';

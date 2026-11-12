@@ -1,6 +1,7 @@
 // plan/verifications.md の検証記録の項に足す行（予測との比べ）を 1 か所で組む（records-check とテストが共有）。
 // 最小構成の警告は plan/minimal.md に移した（plan/design-minimal-relevance.md 5 節）。
-import type { Observation, RecordsData } from './observations.ts';
+import type { Observation } from './observations/types.ts';
+import type { RecordsData } from './observations/teamInput.ts';
 import {
   comparePredictions,
   predictionStaleness,

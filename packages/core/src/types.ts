@@ -172,7 +172,7 @@ export type CharacterData = CharacterSummary & {
   treasure: TreasureData | null;
   /**
    * 比べる設定の拡張（plan/design-compare-setup-extension.md 2.2 節）: バーストの遅れの表（burst/landing.ts）の上書き。
-   * 照合ランナー（records/observations.ts の buildTeamInput）だけが付ける。データとアプリには無い
+   * 照合ランナー（records/observations/teamInput.ts の buildTeamInput）だけが付ける。データとアプリには無い
    */
   burstDelayOverride?: BurstDelayOverride;
 };

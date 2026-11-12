@@ -11,7 +11,7 @@ import {
 } from './claims.ts';
 import { ID_DIGITS } from './ids.ts';
 import { summarizeWarnings, type PairWarning } from './relevance.ts';
-import type { Observation } from './observations.ts';
+import type { Observation } from './observations/types.ts';
 import type { PredictionComparison } from './predictions.ts';
 
 /** 既存の ID（V-0012・C-0159 など）から、同じ接頭辞の次の空き番号 */

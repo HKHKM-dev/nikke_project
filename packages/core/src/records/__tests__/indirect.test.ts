@@ -6,7 +6,7 @@ import { loadClaims, loadRecordsData, loadRecordingsFile, recordingMap } from '.
 import { parseSkillDefinition, type SkillDefinition } from '../../skills/types.ts';
 import type { ClaimState } from '../claims.ts';
 import { mechanismConfirmed } from '../minimal.ts';
-import type { Observation } from '../observations.ts';
+import type { Observation } from '../observations/types.ts';
 import type { RecordingEntry } from '../recordings.ts';
 import { elementsOf, notRelevantReason, unconfirmedReason, type RelevanceContext } from '../relevance.ts';
 import { renderSkills } from '../skills.ts';

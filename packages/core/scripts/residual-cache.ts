@@ -1,19 +1,19 @@
 // 観測値の予測値の覚え（plan/design-workflow-simplification-8.md 2 節）。records:check・npm test などが runObservations を回すたびに、
 // 比べる観測値の全部をモデルで回し直さないよう、予測値を node_modules/.cache/residuals/ に覚える（追跡しない）。
 // 覚えはモデルのコードとデータ（MODEL_ROOTS の全部のファイルの中身。テストは除く）の hash ごとに分け、
-// その中で観測値ごとの鍵（records/observations.ts の predictionKey）で引く。コードかデータが 1 字でも変われば、別の覚えになる。
+// その中で観測値ごとの鍵（records/observations/run.ts の predictionKey）で引く。コードかデータが 1 字でも変われば、別の覚えになる。
 // NIKKE_NO_RESIDUAL_CACHE=1 で覚えを使わない（読みも書きもしない）。
 import { createHash } from 'node:crypto';
 import { mkdirSync, readdirSync, readFileSync, renameSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   runObservations,
-  type Observation,
   type Prediction,
   type PredictionMemo,
-  type RecordsData,
   type Residual,
-} from '../src/records/observations.ts';
+} from '../src/records/observations/run.ts';
+import type { Observation } from '../src/records/observations/types.ts';
+import type { RecordsData } from '../src/records/observations/teamInput.ts';
 import type { RecordingEntry } from '../src/records/recordings.ts';
 import { ROOT, SKILL_SUPPORT_PATH } from './records-data.ts';
 
