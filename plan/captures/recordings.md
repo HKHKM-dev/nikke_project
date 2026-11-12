@@ -1096,7 +1096,6 @@
 | 1122 | `20261112-1122_smg+sr+rl_liter+delta+a2_fire.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎A2（811、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | 出撃画面の表示はスペック固定 ON（撮影の依頼は OFF。V-0750）。A2 の 1 ヒットと B モードの間の発の間もスペック固定 ON の録画 1084・1085 と同じ値 |
 | 1123 | `20261112-1123_smg+rl+rl+rl_liter+yuni+raven+a2_fire.mp4` | リター（82、SMG・鉄甲・SSR） + ユニ（160、RL・灼熱・SSR） + レイヴン（851、RL・鉄甲・SSR） + ◎A2（811、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0749。バーストは手で リター → ユニ → レイヴン（A2 のバーストは押さない） |
 | 1124 | `20261112-1124_smg+sr+rl_liter+delta+a2_fire.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎A2（811、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | OFF（育成 2026-11-08-2） | ON / ON |  |
-| 1125 | `20261112-1125_grave-sakura-heat.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + ◎グレイブ（514、AR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0751 の撮影。III がいないので、チェーンは II の後に切れる |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
