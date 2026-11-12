@@ -384,8 +384,8 @@ const KNOWN_FIRE_TYPES: readonly string[] = ['Instant', 'ProjectileDirect', 'Hom
 /** 二丁持ち（weapons.ts の DUAL_WIELD_WEAPONS）の近似の注記 */
 const DUAL_WIELD_NOTES: Record<DualWieldWeapon, { ja: string; en: string }> = {
   SMG: {
-    ja: '二丁持ちの SMG は 1 発 2 ヒットで、2 ヒットともゲージを溜める（C-1023）。二丁持ちの近のコア命中率の行は仮説（C-1022）',
-    en: 'Dual-wield SMG: 2 hits per shot, both building burst gauge (C-1023); its near-range core hit rate is a hypothesis (C-1022)',
+    ja: '二丁持ちの SMG は 1 発 2 ヒットで、2 ヒットともゲージを溜める（C-1023）。二丁持ちの近のコア命中率の行は、近の着地点（近 A・近 B）を分けない値（近 B が高い。C-1137）',
+    en: 'Dual-wield SMG: 2 hits per shot, both building burst gauge (C-1023); its near-range core hit rate does not separate the two near landings (higher at near B; C-1137)',
   },
   RL: {
     ja: '二丁持ちの RL は 1 発 2 ヒットで、2 ヒットともゲージを溜める（C-1019）。コア命中率は銃口 1 つの RL の行（着地点ごとに見分けられない。C-1030 は仮説）',
