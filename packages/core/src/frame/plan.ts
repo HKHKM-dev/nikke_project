@@ -869,7 +869,7 @@ function damageConditionHolds(
 
 /**
  * 2 パス目の条件 enemyState: 敵の状態の区間 enemySpans のうち、state に当たる状態（家族の根なら家族のどの状態でも。1 パス目の
- * skills/holders.ts の enemyStateAt と同じ stateMatches の規則）の区間が frame を含むか
+ * skills/holders/views.ts の enemyStateAt と同じ stateMatches の規則）の区間が frame を含むか
  */
 export function enemyStateSpansHold(
   enemySpans: ReadonlyMap<NamedStateId, readonly { start: number; end: number }[]>,

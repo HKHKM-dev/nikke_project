@@ -142,7 +142,7 @@ function validateNoSelfReference(fields: GrantTimedFields, state: NamedStateId, 
   )
     fail(`${path}.trigger`, `a grant of "${state}" cannot be triggered by its own state`);
   // 自分の状態の窓で数える付与の条件は、自分の状態があるか（selfState。スタック数・否定なし）だけ（数える発を条件で選ぶ。
-  // skills/holders.ts の stateWindowFires。plan/design-grave.md 2.4 節）
+  // skills/holders/sources.ts の stateWindowFires。plan/design-grave.md 2.4 節）
   if (isShotCountTrigger(t) && isStateCountWindow(t.during) && fields.condition !== undefined) {
     const self = fields.condition.selfState;
     if (
@@ -573,7 +573,7 @@ export function parseCounterChangeEffect(v: Record<string, Json>, path: string):
   if (v.condition !== undefined) {
     effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.counterChange, true);
     validateUsedBurst(effect.condition, trigger, `${path}.condition`);
-    // 増減の判定（skills/holders.ts の counterConditionHolds）は状態が付いているかだけを見る。スタック数の条件は使うキャラが無いので拒否する
+    // 増減の判定（skills/holders/conditions.ts の counterConditionHolds）は状態が付いているかだけを見る。スタック数の条件は使うキャラが無いので拒否する
     if (isStacksCondition(effect.condition.selfState)) {
       fail(`${path}.condition.selfState`, 'a stack count condition is not supported in counterChange (only presence)');
     }

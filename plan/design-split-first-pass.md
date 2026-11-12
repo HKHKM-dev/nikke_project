@@ -304,7 +304,23 @@ for (let f = 0; f < frames; f++) {
 - 移した関数を `skills/holders.ts の …` と指していたコメントは、移した先のファイルを指すように直した。
 - 見直し（`/simplify`）で足した直し: 履歴を読む関数だけが使う `SKILL_ORDER`・`compareKeys` は `holders/history.ts` の内部に置いた（main と同じく export しない）。状態の付与の組の作り方と段の印（`stateGroupsOf`・`appliedStagesOf`・`stageOfTimed`・`STAGE_RANK` など）は、出どころの準備・見る側・履歴の読みが共有するので `holders/items.ts` に置いたままにし、段 H2 の `holders/sources.ts` などはここから import する（二度移さない）。`createHolderLists` だけが使う配列の道具（`insertSorted`・`lastAtOrBefore`・`setLength`）と `ALL_READS`、出どころの型は、段 H2 で層のファイルから読むので、いまの置き場所のままにした。
 
+### 9.2 段 H2（2026-11-12）
+
+- `createHolderLists` の直下の文を、8 つの層の作り手（`holders/records.ts`・`fires.ts`・`sources.ts`・`read.ts`・`views.ts`・`conditions.ts`・`fire.ts`・`register.ts`）に写した。作り手は前の層の名前を引数の所で分割代入して受け、後の層と入口が読む名前を返す。入口の `createHolderLists` は、前の層までを積んだオブジェクトを次の作り手に渡しながら順に呼び、`late` を埋め、問い合わせを組む。文の本文は、後の層を読む所を `late.X` にしたほかは変えていない（構文木で文ごとに比べた）。
+- 層は 3.3 節の表と次の所が違う。
+  - 見る側（`views.ts`）に HP・防御力・順位を入れて、判定（`conditions.ts`）より前に作る（発火の文脈の判定が HP の割合を読むため）。
+  - 自分に付いた記録（`ownApplied`・`sinceFires`・`stateWindowFires`）は、出どころの準備（`sources.ts`）に残した。`fires.ts` に移すと、`stateWindowFires` が読む状態の件の列（`stateTracks`。件の列が出そろってから作る）を後で読むことになり、後で埋める口の数は変わらないため。`stateTracks` は `sources.ts` の末尾で作る（`views.ts` から移した）。
+  - 条件で落とした記録（`skipGrant`・`skipEffect`）は、{ applied } の出どころが読むので `fire.ts` に置いた。`appliedFrom` は登録だけが読み書きするので `register.ts` に置いた。
+  - 動かした文は、どれも副作用の無い宣言（関数・空の入れ物・件の列から作る索引）で、文の順の入れ替えで準備の結果は変わらない。
+  - `sources.ts` は、出どころの種類ごとの関数には分けていない（本文の書き換えになるため。見出しのコメントで分かれている）。数行を超える問い合わせ（`applyHeal`・`damageBuffsAt`・`consumeFullStacks` など）も、入口の問い合わせの中に残した（同じ理由）。
+- 前の層が後の層を読む口（`LateReaders`）は 6 つで、受けるのは `fires.ts` と `sources.ts` だけ: `endedAt`・`stateWindowFires`・`selfHpAtMostAt`（発火の読み → 判定・出どころ・見る側）、`selfHpRatioAt`・`readItems`・`activeAt`（出どころ → 見る側・件の読み）。2.1 節に挙げた所のほか、HP の while の可否（`updateHpAtLeast`）が HP の割合を読む所。
+- `register`（1 フレームの登録）は、手順の関数（`registerEnds`・`registerStage1`・`registerEnemyStates`・`registerStage15`・`registerStage2`・`registerRemoveDebuffs`・`registerAmplifiers`）に分け、手順が共有する値（出来事・フレーム・戦闘開始時か・きっかけの絞り込み・{ applied } の記録の始まり）を 1 つのオブジェクトで渡す。本文の行は変えていない。
+- 移した名前を `skills/holders.ts の …` と指していたコメントは、層のファイルを指すように直した（`HolderLists` の問い合わせは入口のまま）。
+- 見直し（`/simplify`）で、入口の層の展開の並び（積んだオブジェクトにした）・`late` を受ける層（後の層を読む層だけにした）・`stateTracks` の置き場所・敵の状態の手順（`registerStage1` から分けた）を直した。見送り: 作り手の引数の型（前の層の型の交わり）を `Pick` にすること（読む名前は分割代入に出ている）、`LateReaders` を後の層の型から導くこと（型が循環する。入口の `satisfies` がずれを拾う）、`registerCounters` を手順のオブジェクトで呼ぶこと（本文の書き換えになる）。
+- 見直し（`/code-review high`）: 正しさの指摘は無し。手順の関数の説明の置き場所と、層のファイルの冒頭が指す節を直した。見送り: `late` を埋める前に読んだ時の守り（今の閉包の中で宣言より前に呼んだ時と同じく、実行時に落ちる。7 節）、入口で積んだオブジェクトを層ごとに写し直すこと（作る時に 1 回だけで、速さに出ない）、手順のオブジェクトの `f`（`ev.frame` と同じ値。本文を変えないために持たせた）。
+
 ## 10. 経過
 
 - 2026-11-12: 起案。オーナーが 4 節の論点をすべて推奨の案で承認した。
 - 2026-11-12: 段 H1 を実装した（9.1 節）。
+- 2026-11-12: 段 H2 を実装した（9.2 節）。

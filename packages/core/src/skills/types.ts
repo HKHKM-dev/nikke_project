@@ -270,7 +270,7 @@ export function isEnemyHeldStat(stat: string): boolean {
 
 /**
  * 味方に付く▼（decrease で、敵が持つ stat でない）か（plan/design-debuff-removal-timed.md 2.1 節）。timed のこれはデバフ解除で
- * 外れる（定義の検証・skills/holders.ts の fireRemoveDebuff・最小構成の読む側の印）
+ * 外れる（定義の検証・skills/holders/fire.ts の fireRemoveDebuff・最小構成の読む側の印）
  */
 export function isAllyDecrease(effect: { stat: string; decrease?: true }): boolean {
   return effect.decrease === true && !isEnemyHeldStat(effect.stat);
@@ -640,7 +640,7 @@ export type ShotCountWindow = 'fullBurst';
  * 自分のその状態が付いている間の発だけを数え、その状態が付くたびに 0 から数え直す窓
  * （「〈状態〉なら、通常攻撃が命中した時…攻撃命中回数別の効果」。plan/design-grave.md 2.4 節）。
  * 状態の付与にだけ書ける。見る状態は、同じ定義の自分に付ける付与の
- * あるもの。発火は 1 パス目の件の一覧が追う（skills/holders.ts の firesOf）
+ * あるもの。発火は 1 パス目の件の一覧が追う（skills/holders/fires.ts の firesOf）
  */
 export type StateCountWindow = { state: NamedStateId };
 
@@ -1050,7 +1050,7 @@ export type CounterEmptyUntil = { counterEmpty: CounterId };
 
 /**
  * 状態の付与の維持の「自分の HP が X% 以下の時、〈状態〉解除」（plan/design-hp-down-interval.md 2.2 節）。X は % の
- * description_value_NN。付いたフレームの次のフレームから、持ち主（自分）の HP の割合（skills/holders.ts の selfHpRatioAt。現在の HP▼ は
+ * description_value_NN。付いたフレームの次のフレームから、持ち主（自分）の HP の割合（skills/holders/views.ts の selfHpRatioAt。現在の HP▼ は
  * 発火の次のフレームから読む）が閾値以下と読めたフレーム g に、件を g + 1 で閉じる（g には付いている。解除 removeState と同じ）。それまでは
  * 戦闘の終わりまで。発火のフレームにすでに閾値以下なら付かない（V-0729）。自分にだけ付き、スタックせず、条件を持たない
  */
@@ -1126,7 +1126,7 @@ export type SelfCounterCondition = { counter: CounterId; atLeast?: number; below
  * atLeast = 説明文に即値で書かれた X（% 表記。ミルクの基礎版の S2 の
  * 「自分の HP が 80% 以上の時のみ」。plan/design-skill-stage15.md 2.1 節）。atLeastRef とちょうど 1 つ。
  * atMostRef・atMost = 「自分の HP が X% 以下の場合」（timed だけ。発火のフレームの HP の割合
- * （skills/holders.ts の selfHpRatioAt）で見る。編成の段では決めない。plan/design-scarlet.md 2.2 節）。
+ * （skills/holders/views.ts の selfHpRatioAt）で見る。編成の段では決めない。plan/design-scarlet.md 2.2 節）。
  * passive は atLeast の形だけ、timed は atMost の形だけ書ける。
  * damage は atLeast の形だけ（「自分の HP が最大の場合」は atLeast 100。発火のフレームで見る。plan/design-soline.md 2.1 節）
  */
@@ -1163,7 +1163,7 @@ export function selfHpThreshold(hp: SelfHpCondition, valueOf: (ref: number) => n
 export function conditionReadsItems(condition: EffectCondition | undefined): boolean {
   if (condition === undefined) return false;
   // passive の selfHp は編成の段で決まる（件を見ない）。timed の selfHp（以下）は最大HP の件の列を読むが、発火のフレームより
-  // 前に始まった件だけなので段を上げない（skills/holders.ts の fireContextHolds）
+  // 前に始まった件だけなので段を上げない（skills/holders/conditions.ts の fireContextHolds）
   // burstStep も発火の文脈だけで決まる
   return Object.keys(condition).some((key) => key !== 'usedBurst' && key !== 'selfHp' && key !== 'burstStep');
 }
@@ -1615,7 +1615,7 @@ export type AmmoDecreaseEffect = TargetCountFields & {
 /**
  * 「現在のHP X%▼」（plan/design-scarlet.md 2.1 節）。発火のたびに、自分の現在の HP を X% 下げる（HP の割合に (1 − X) を掛ける。
  * 最大HP は変えない。即時効果）。自分の HP の割合を読む効果（きっかけ { selfHpAtMostRef }・条件 selfHp の atMost）が、発火の次のフレーム
- * から読む（skills/holders.ts の selfHpRatioAt）。回復で戻る分は扱わない。対象は自分だけ。
+ * から読む（skills/holders/views.ts の selfHpRatioAt）。回復で戻る分は扱わない。対象は自分だけ。
  * 「1 秒間隔」は、状態の付いた時から数える周期 { everySeconds, since } で書く
  * （付いたフレームにも起きるなら atStart。plan/design-hp-down-interval.md 2.1 節。V-0729）
  */

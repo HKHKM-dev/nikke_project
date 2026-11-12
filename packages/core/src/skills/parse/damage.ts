@@ -338,7 +338,7 @@ function parseDamageGaugePerHit(v: Record<string, Json>, effect: DamageEffect, p
     fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with a periodShorten window');
   // 1 パス目は発火のフレームより後のゲージだけを予約できる。条件は 1 パス目の後に絞るので組み合わせない
   if (effect.delayFrames === undefined) fail(`${path}.gaugePerHit`, 'gaugePerHit needs delayFrames');
-  // エレグの S1（C-0773）: 射撃の回数のきっかけなら、条件 enemyState だけは 1 パス目が発火のフレームで見る（skills/holders.ts の enemyStateAt）
+  // エレグの S1（C-0773）: 射撃の回数のきっかけなら、条件 enemyState だけは 1 パス目が発火のフレームで見る（skills/holders/views.ts の enemyStateAt）
   const enemyOnly =
     isShotCountTrigger(trigger) &&
     effect.condition !== undefined &&
