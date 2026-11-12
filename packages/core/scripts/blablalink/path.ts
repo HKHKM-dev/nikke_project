@@ -3,7 +3,6 @@
 // "<2文字>-<2桁>"（フルパスの djb2 ハッシュ、セグメント位置ごとの素数でソルト）、
 // 最後のセグメントは "<md5(フルパス)>.<元の拡張子>" に置き換える。
 import { createHash } from 'node:crypto';
-import { costumeCode } from '../../src/characterImage.ts';
 
 export const CDN_BASE_URL = 'https://sg-tools-cdn.blablalink.com';
 
@@ -113,5 +112,5 @@ export type CharacterImageKind = 'si' | 'mi';
 
 /** costume はコスチュームの番号（0 が初期の絵。1 から順にコスチューム違い） */
 export function characterImagePath(resourceId: number, kind: CharacterImageKind, costume = 0): string {
-  return `/character/${kind}/${kind}_c${String(resourceId).padStart(3, '0')}_${costumeCode(costume)}_s.webp`;
+  return `/character/${kind}/${kind}_c${String(resourceId).padStart(3, '0')}_${String(costume).padStart(2, '0')}_s.webp`;
 }

@@ -37,32 +37,32 @@ const jobs = index.characters.flatMap((c) => kinds.map((kind) => ({ character: c
 const MAX_MISSES = 3;
 
 let fetched = 0;
-/** キャラ × 種類ごとの、置いてある絵の数（初期の絵とコスチューム）と、初期の絵があるか */
-const results = await mapWithConcurrency(jobs, Number(args.concurrency), async ({ character, kind }) => {
-  let count = 0;
+/** 置いてある絵の数（初期の絵とコスチューム） */
+let present = 0;
+/** キャラ × 種類ごとに、初期の絵があるか */
+const found = await mapWithConcurrency(jobs, Number(args.concurrency), async ({ character, kind }) => {
   for (let costume = 0, misses = 0; misses < MAX_MISSES; costume++) {
     const file = path.join(CHARACTERS_DIR, KIND_DIRS[kind], characterImageFile(character.resourceId, costume));
     if (args.refresh || !existsSync(file)) {
       const bytes = await fetchCdnBytes(characterImagePath(character.resourceId, kind, costume));
       if (bytes === null) {
-        if (costume === 0) return { count, hasDefault: false };
+        if (costume === 0) return false;
         misses++;
         continue;
       }
       await writeFile(file, bytes);
       fetched++;
     }
-    count++;
+    present++;
     misses = 0;
   }
-  return { count, hasDefault: true };
+  return true;
 });
 
-const total = results.reduce((a, r) => a + r.count, 0);
 const missing = jobs
-  .filter((_, i) => !results[i]?.hasDefault)
+  .filter((_, i) => !found[i])
   .map((j) => `${j.kind} ${j.character.resourceId} ${j.character.name.ja}`);
 console.log(
-  `fetched ${fetched} images; ${total} present (${jobs.length - missing.length} of ${jobs.length} with the default)`,
+  `fetched ${fetched} images; ${present} present (${jobs.length - missing.length} of ${jobs.length} with the default)`,
 );
 if (missing.length > 0) console.log(`not on CDN (shown as fallback cards):\n  ${missing.join('\n  ')}`);
