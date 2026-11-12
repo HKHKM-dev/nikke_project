@@ -1,0 +1,67 @@
+[
+  {
+    "id": "1120-01",
+    "recording": "1120",
+    "source": "V-0748",
+    "readAt": "2026-11-12",
+    "use": "compare",
+    "kind": "timing",
+    "value": 1959,
+    "unit": "f",
+    "description": "撮り方 B2（ミハラ：ボンディングチェーン単騎（操作））の、戦闘開始から 1 回目にバーストゲージが満タンになる（BURST バーが消える。C-0083）までの動画のフレーム",
+    "method": {
+      "tool": "gauge.ts --mode events・timer.ts --mode runs",
+      "note": "バー消失 f2732 − 戦闘開始 f773（残り時間の 02:59 が出たフレーム。C-0078）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "1120-02",
+    "recording": "1120",
+    "source": "V-0748",
+    "readAt": "2026-11-12",
+    "use": "compare",
+    "kind": "count",
+    "value": 954,
+    "unit": "発",
+    "description": "撮り方 B2（ミハラ：ボンディングチェーン単騎（操作））の、戦闘の始まりから 1 回目にゲージが満タンになった（BURST バーが消えた）フレームまでのミハラ：ボンディングチェーンの発の数",
+    "method": {
+      "tool": "reticle-ammo.ts（照準の左の残弾）・gauge.ts --mode events",
+      "note": "残弾の減りの和。1〜3 本目のマガジンは 300 発ずつ撃ち切り（最後の 0 は読めないが、次の最大の表示まで残弾 1 から減った）、4 本目のマガジンはバー消失 f2732 の表示が 246（300 − 246 = 54 発）。表示は発と 1〜2f ずれうる（MG は約 1f に 1 発）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  }
+]

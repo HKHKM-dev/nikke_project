@@ -14,13 +14,17 @@
       "slot": 1,
       "rid": 511,
       "name": "シンデレラ",
-      "controlled": false
+      "controlled": false,
+      "bursts": false
     },
     {
       "slot": 2,
       "rid": 308,
       "name": "I-DOLL・サン",
-      "controlled": true
+      "controlled": true,
+      "fires": false,
+      "note": "操作・撃たない（オート射撃 OFF）",
+      "bursts": false
     }
   ],
   "target": {
