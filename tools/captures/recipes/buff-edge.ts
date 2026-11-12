@@ -184,7 +184,7 @@ function loadPrediction(id: string): PredictionFile {
 }
 
 /** モデルを回す条件: 観測値の ID（compare の setup）、V-NNNN:<指標 id>、省略なら --source の予測ファイルの最初の指標 */
-function resolveSetup(text: string | undefined, source: string): CompareSetup {
+export function resolveSetup(text: string | undefined, source: string): CompareSetup {
   if (text !== undefined && /^\d+-\d+$/.test(text)) {
     const c = loadObservation(text).compare;
     if (c === undefined) throw new Error(`観測値 ${text} に compare が無い`);
