@@ -246,6 +246,16 @@ export function isPelletStat(stat: BuffStat | 'weapon'): boolean {
   return (PELLET_STATS as readonly string[]).includes(stat);
 }
 
+/**
+ * timed（と自分に付く状態の中身）にだけ書ける、自分にだけ・重ねない・条件なしの stat。チャージ時間の固定（秒）と射撃の姿勢の長さの
+ * 倍率（plan/design-a2-bmode-stance.md 3.1 節）は、足し合わせると意味が無くなる（skills/parse/timed.ts の validateSelfOnlyStat）
+ */
+export const SELF_ONLY_TIMED_STATS = ['fixedChargeTime', 'fireStanceScale'] as const satisfies readonly BuffStat[];
+
+export function isSelfOnlyTimedStat(stat: BuffStat): boolean {
+  return (SELF_ONLY_TIMED_STATS as readonly string[]).includes(stat);
+}
+
 /** passive に書けるフラグの stat（ref を書かない。値 1） */
 export const PASSIVE_FLAG_STATS = ['elementAdvantage', 'pierce'] as const satisfies readonly BuffStat[];
 

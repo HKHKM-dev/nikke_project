@@ -64,19 +64,18 @@ describe('射撃の姿勢の長さの倍率', () => {
   const scaleIndex = (raw.skills.burst.effects[grant] as { contents: { stat: string }[] }).contents.findIndex(
     (c) => c.stat === 'fireStanceScale',
   );
-  const withScale = (item: Record<string, unknown>, grantPatch: Record<string, unknown> = {}) => {
+  const withScale = (item: Record<string, unknown>) => {
     const copy = structuredClone(raw);
     const g = copy.skills.burst.effects[grant] as { contents: Record<string, unknown>[] };
     g.contents[scaleIndex] = item;
-    Object.assign(g, grantPatch);
     return () => parseSkillDefinition(copy);
   };
 
   it('takes a constant value in (0, 1] on self, without ref or scaling', () => {
     expect(scaleIndex).toBeGreaterThanOrEqual(0);
     expect(withScale({ stat: 'fireStanceScale', value: 1 })).not.toThrow();
-    expect(withScale({ stat: 'fireStanceScale', value: 0 })).toThrow(/expected a number in \(0, 1\]/);
-    expect(withScale({ stat: 'fireStanceScale', value: 1.5 })).toThrow(/expected a number in \(0, 1\]/);
+    expect(withScale({ stat: 'fireStanceScale', value: 0 })).toThrow(/expected a positive finite number/);
+    expect(withScale({ stat: 'fireStanceScale', value: 1.5 })).toThrow(/expected at most 1/);
     expect(withScale({ stat: 'fireStanceScale', ref: 4 })).toThrow(/write value, not ref/);
     expect(withScale({ stat: 'fireStanceScale', value: 0.5, scaling: 'ratio' })).toThrow(/takes no scaling/);
     expect(withScale({ stat: 'chargeSpeed', value: 0.5 })).toThrow(/value is only allowed for fireStanceScale/);
