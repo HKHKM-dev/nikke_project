@@ -1,0 +1,47 @@
+{
+  "id": "1122",
+  "date": "2026-11-12",
+  "folder": "range",
+  "file": "20261112-1122_smg+sr+rl_liter+delta+a2_fire.mp4",
+  "original": "2026-11-12_22-48-23.mp4",
+  "durationSec": 202.3,
+  "frames": 12135,
+  "fps": 60,
+  "sizeMB": 245,
+  "sha256": "ed914a2df900",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 811,
+      "name": "A2",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "buildSnapshot": "2026-11-08-2",
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-12T22:53+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
