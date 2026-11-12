@@ -92,6 +92,10 @@ function fieldErrors(o: Observation, recordings: ReadonlyMap<string, RecordingEn
   if (o.invalid !== undefined && (o.invalid.reason.trim() === '' || !isDate(o.invalid.date)))
     errors.push(`${at}: invalid には reason と date（YYYY-MM-DD）が要る`);
   if (o.scope !== undefined) errors.push(...validateScope(o.scope, recordings.get(o.recording)?.team.length, at));
+  // 記録だけの値（record）は、入れ子・オブジェクト・読めなかった要素の null を持ってよい
+  const finite = (x: unknown) => typeof x === 'number' && Number.isFinite(x);
+  if (o.use !== 'record' && !(finite(o.value) || (Array.isArray(o.value) && o.value.every(finite))))
+    errors.push(`${at}: use が ${o.use} の value は数か数の配列`);
   if (o.use === 'compare' && o.compare === undefined) errors.push(`${at}: use が compare なら compare が要る`);
   if (o.use !== 'compare' && o.compare !== undefined) errors.push(`${at}: compare は use が compare のときだけ`);
   return errors;

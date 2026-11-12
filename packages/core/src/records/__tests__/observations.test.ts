@@ -1158,6 +1158,8 @@ describe('観測値の形の拡張（Stage 20-E）', () => {
           spread: { kind: 'range', low: 0.2, high: 0.4 },
           readAt: '2026-09-27',
         },
+        { ...compared, id: '0047-88', value: [1, null] as unknown as number[] },
+        { ...record, id: '0047-89', value: [1, null] as unknown as number[] },
       ],
       recordings,
       data.enemies,
@@ -1172,6 +1174,7 @@ describe('観測値の形の拡張（Stage 20-E）', () => {
       '0047-85: 値が spread の外にある',
       '0047-86: readAt は YYYY-MM-DD',
       '0047-86: invalid には reason と date（YYYY-MM-DD）が要る',
+      '0047-88: use が compare の value は数か数の配列',
     ]);
   });
 
