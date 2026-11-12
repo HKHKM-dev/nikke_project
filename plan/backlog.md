@@ -82,7 +82,7 @@
 
 ## 5. 道具・記録の整備
 
-（なし）
+- 観測値の `value` の型（`packages/core/src/records/observations/types.ts`）を `use` で分ける: 型は数か数の配列だが、`record` の観測値は入れ子の配列・オブジェクト・文字列・読めなかった要素の `null` を持つ。`record` の `value` を JSON の値の型にし、読む側（`packages/core/src/records/predictions.ts`・`packages/core/scripts/records-data.ts` の `observationValues`・`packages/core/src/records/observations/teamInput.ts` など）を `use` の絞り込みで直す。`compare`・`input` の値が数か数の配列であることは `npm run records:check` が確かめている
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
 
@@ -117,6 +117,7 @@
 - アニス：スター（17）のバーストのコアの経路（2026-10-05）→ 一部完了: [design-anis-star-core-path.md](design-anis-star-core-path.md)。残りは 6 節
 - 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは 3 節
 - 戦闘力による一覧の並び替え（2026-11-07 起票）→ 一部完了: [design-combat-power-sort.md](design-combat-power-sort.md)。残りは 4 節
+- 1 パス目の分割で見送った整理（2026-11-12 起票）→ 未着手: [design-split-first-pass.md](design-split-first-pass.md) 11 節
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
