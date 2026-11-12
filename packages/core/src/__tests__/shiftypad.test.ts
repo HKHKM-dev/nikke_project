@@ -3,13 +3,14 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { validateBuild } from '../build.ts';
 import { MASTER_FILES } from '../load.ts';
-import { readBuildSnapshot } from '../buildSnapshot.ts';
+import { BUILD_SNAPSHOT_FORMAT_VERSION, readBuildSnapshot } from '../buildSnapshot.ts';
 import {
   diffSnapshots,
   gameCombatPowers,
   rosterMarkdown,
   stripAccountFields,
   toBuildSnapshot,
+  treasureLevelOfPhase,
   treasurePhaseOfLevel,
   type ShiftyPadDetail,
   type ShiftyPadRaw,
@@ -190,6 +191,19 @@ describe('toBuildSnapshot', () => {
 
   it('maps treasure levels 1 and 2 to phases 2 and 3 and leaves level 0 undecided (C-0744)', () => {
     expect([0, 1, 2, 3].map(treasurePhaseOfLevel)).toEqual([null, 2, 3, null]);
+  });
+
+  it('writes the level of a phase chosen on screen: the inverse for phases 2 and 3, level 0 for phase 1', () => {
+    expect(([1, 2, 3] as const).map(treasureLevelOfPhase)).toEqual([0, 1, 2]);
+    for (const phase of [2, 3] as const) expect(treasurePhaseOfLevel(treasureLevelOfPhase(phase))).toBe(phase);
+    // 取得した Lv 0 は段階 1 に読み替えない
+    expect(treasurePhaseOfLevel(treasureLevelOfPhase(1))).toBeNull();
+  });
+
+  it('writes the current format version, and the snapshot reads back', () => {
+    expect(snap.formatVersion).toBe(BUILD_SNAPSHOT_FORMAT_VERSION);
+    const r = readBuildSnapshot(JSON.stringify(snap), INDEX);
+    expect(r.ok && r.snapshot).toEqual(snap);
   });
 
   it('produces builds that pass validateBuild', () => {

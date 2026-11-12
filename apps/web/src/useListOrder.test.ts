@@ -43,7 +43,7 @@ const entry: SnapshotCharacter = {
 };
 /** 戦闘力を出せる SSR と、キャラのデータに無い 1 体 */
 const ROSTER: BuildSnapshot = {
-  formatVersion: 1,
+  formatVersion: 2,
   fetchedAt: '2026-10-29T00:00:00Z',
   synchroLevel: 300,
   recycleRoom: {},

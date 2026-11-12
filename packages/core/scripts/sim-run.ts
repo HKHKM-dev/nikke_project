@@ -33,7 +33,12 @@ import { parseArgs } from 'node:util';
 import { slotsByStep } from '../src/burst/schedule.ts';
 import { computeCombatAttack, computeCombatStat, emptyBuild, type BuildInput } from '../src/build.ts';
 import { resolveBuildEffects } from '../src/buildEffects.ts';
-import { isBuildSnapshotShaped, readBuildSnapshotValue, type SnapshotTreasure } from '../src/buildSnapshot.ts';
+import {
+  cliSnapshotNotices,
+  isBuildSnapshotShaped,
+  readBuildSnapshotValue,
+  type SnapshotTreasure,
+} from '../src/buildSnapshot.ts';
 import {
   computeFixedSpecAttack,
   computeFixedSpecDefence,
@@ -222,7 +227,7 @@ function readBuildFile(path: string): BuildFile {
     for (const e of read.errors) console.error(`  ${e}`);
     process.exit(1);
   }
-  for (const n of read.notices) console.warn(`--build: ${n}`);
+  for (const n of cliSnapshotNotices(read)) console.warn(`--build: ${n}`);
   return read.snapshot.characters;
 }
 const buildFile = values.build === undefined ? {} : readBuildFile(values.build);
@@ -285,7 +290,7 @@ const slots: TeamSlotInput[] = ids.map((id) => {
       ...(fixedSpec ? {} : buildFile[String(id)]?.skillLevels),
       ...skillLevelsById.get(id),
     },
-    // --treasure が無ければ、育成データのスナップショットの段階（API の Lv から決めたもの。C-0744）
+    // --treasure が無ければ、育成データのスナップショットの段階（API の Lv から決めたもの（C-0744）か、画面の編集で選んだもの）
     treasurePhase: (treasurePhases.get(id) ??
       (fixedSpec ? undefined : buildFile[String(id)]?.treasure?.phase) ??
       0) as TreasurePhase,

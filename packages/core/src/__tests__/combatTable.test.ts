@@ -81,7 +81,7 @@ it('snapshotCombatPowers: 表から引いて全キャラの戦闘力を出し、
     ...over,
   });
   const snapshot: BuildSnapshot = {
-    formatVersion: 1,
+    formatVersion: 2,
     fetchedAt: '2026-10-29T00:00:00Z',
     synchroLevel: 300,
     recycleRoom: {},

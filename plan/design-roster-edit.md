@@ -2,7 +2,7 @@
 
 - 何のための文書か: 画面に読み込んだ育成状況（アカウントの全キャラの育成）を、画面で直せるようにする変更の、決めたこと・形・作り・段
 - 対象: 育成状況の JSON の形（`packages/core/src/buildSnapshot.ts`）、画面の育成状況（`apps/web/src/roster.ts`・`useRoster.ts`・`components/RosterSettings.tsx`）、スロットの育成の欄（`components/BuildSection.tsx`・`SkillSection.tsx`・`modern/SlotBuildModal.tsx`・`SlotCard.tsx`）、共通育成（`components/TeamSettingsForm.tsx`）
-- 状態: 承認（3 節）。未実装（段は 10 節）
+- 状態: 承認（3 節）。段 1 は実装済み（8.1 節）、段 2 は未実装（10 節）
 - 関連: [design-combat-power-sort.md](design-combat-power-sort.md) 5 節（育成状況の JSON の入出力）、[design-build-snapshot.md](design-build-snapshot.md)（育成データのスナップショット）、[design-unreadable-team-save.md](design-unreadable-team-save.md)（読めない保存の扱い）、[design-modern-ui.md](design-modern-ui.md)、C-0744（宝物の Lv と段階）
 - 作成日: 2026-11-12
 - 調べた時点: main の 3ebc0833
@@ -200,11 +200,12 @@
 
 ### 8.1 段 1（core と CLI）
 
-- `packages/core/src/buildSnapshot.ts`: 版 2（読める版の一覧・版ごとの宝物の段階の検査・`editedAt`）。`BuildSnapshot` に `editedAt?` を足す。
-- `packages/core/src/shiftypad.ts`: 段階から Lv への写し（`treasurePhaseOfLevel` の逆）。`toBuildSnapshot` が書く版（今は 1 を直に書いている）を、版の定数（2）にする。
-- `packages/core/scripts/sim-run.ts`・`tools/builds/combat-power.ts`: `editedAt` の 1 行。
-- テスト（作った値で）: 版 1 が今までどおり読める・版 2 の Lv 0 の段階 1 が通る・版 1 の段階 1 と版 2 の Lv 1 の段階 1 が止まる・知らない版が止まる・`editedAt` の形。
+- `packages/core/src/buildSnapshot.ts`: 版 2（読める版の範囲・版ごとの宝物の段階の検査 `allowedTreasurePhases`・`editedAt`）。`BuildSnapshot` に `editedAt?` を足す。CLI が出す知らせは `cliSnapshotNotices`（読み込みの知らせに、`editedAt` があれば 1 行を足す）。
+- `packages/core/src/shiftypad.ts`: 段階から Lv への写し（`treasureLevelOfPhase`）。版 2 の検査は、これが書く Lv と段階の組を通す。`toBuildSnapshot` は版 2 を書く。
+- `packages/core/scripts/sim-run.ts`・`tools/builds/combat-power.ts`: `cliSnapshotNotices` で知らせを出す。
+- テスト（作った値で）: 版 1 が今までどおり読める・版 2 の Lv 0 の段階 1 が通る・版 1 の段階 1 と版 2 の Lv 1 の段階 1 が止まる・知らない版が止まる・`editedAt` の形・CLI の知らせ・写しが版 2 を書いて読み戻せる。
 - この段では画面は変わらない（画面の読み込みが版 2 も通すようになるだけ）。
+- `tools/builds/store.ts`・`dirs.ts`（前回との差・所持の一覧・取り込み）は、`private/builds/` のスナップショットを検査せずに読む（版を見ない）ので、変えていない。
 
 ### 8.2 段 2（画面）
 
@@ -259,3 +260,4 @@
 ## 12. 経過
 
 - 2026-11-12: 起票。オーナーとの対話で 3 節を決めた。
+- 2026-11-12: 段 1（JSON の版 2。8.1 節）を実装した。手元の版 1 のスナップショットで、`build:combat-power` と `sim-run.ts --build` の出力が変更の前と同じことを確かめた。

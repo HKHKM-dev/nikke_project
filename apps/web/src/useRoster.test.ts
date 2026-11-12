@@ -17,7 +17,7 @@ import { useRoster } from './useRoster.ts';
 
 const INDEX = [{ resourceId: 82, rarity: 'SSR' }] as CharacterIndexEntry[];
 const ROSTER: BuildSnapshot = {
-  formatVersion: 1,
+  formatVersion: 2,
   fetchedAt: '2026-10-28T20:00:00.000Z',
   synchroLevel: 400,
   recycleRoom: { '1001': 30 },
@@ -128,12 +128,12 @@ describe('useRoster', () => {
 
   it('shows the errors of a file that does not read, without saving', async () => {
     const { result, dispatch } = render();
-    await act(() => result.current.controls.importFile(file('{"formatVersion":2,"characters":{}}')));
+    await act(() => result.current.controls.importFile(file('{"formatVersion":3,"characters":{}}')));
     expect(localStorage.getItem(ROSTER_STORAGE_KEY)).toBeNull();
     expect(dispatch).not.toHaveBeenCalled();
     expect(result.current.controls.message).toEqual({
       kind: 'error',
-      lines: ['この版の育成状況は読めない（formatVersion 2）'],
+      lines: ['この版の育成状況は読めない（formatVersion 3）'],
     });
   });
 
