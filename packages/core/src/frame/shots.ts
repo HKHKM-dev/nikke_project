@@ -1,4 +1,4 @@
-// Stage 8: 各枠の射撃の列（純関数）。sim と calc が共有する 1 パス目の土台。
+// Stage 8: 各枠の射撃の列（純関数）。1 パス目の土台。
 // Stage 8 の範囲では射撃のタイミングがバフにもバーストにも依存しない（弾数・リロード・チャージ速度のバフは Stage 10）ので、
 // 射撃の列は編成だけで決まる。ゲージ（burst/dynamic.ts）も、回数トリガー（skills/timeline.ts）も、sim の本体（engine.ts）も
 // この列を読む（plan/design-stage8.md 1 節・3.1 節）。
@@ -121,7 +121,7 @@ export function planShots(
 /**
  * Stage 10: 射撃の列 frames（昇順）のうち、区間の列 ranges（[start, end)、昇順・重なりなし）に入る発数。
  * 区間は BuffTimeline の [0, frames) を隙間・重なりなく覆う区間から作るので、どの射撃もちょうど 1 つの区間に入る
- * （一本化の段 A-2 で calc/model.ts から移した。sim の 2 パス目が区間ごとに引く）
+ * （sim の 2 パス目が区間ごとに引く）
  */
 export function countShotsInRanges(
   frames: readonly number[],

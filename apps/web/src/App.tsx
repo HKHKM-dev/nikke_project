@@ -156,10 +156,8 @@ export function App() {
       }),
     [team, cache.characters, skillsStatuses, masters, enemyMaster],
   );
-  // 一本化の段 A-2（plan/design-unify-sim-calc.md 5.3 節）: 計算は runSimulation → simTeamResult の 1 本。
-  // 2026-10-27 までは calc と sim の切り替え（保存キー nikke-web.model）があり、sim の表示では 1 パス目を 2 回回していた
-  // (B) の段 B-2（6.2 節）: 計算は Web Worker で回し、欄の表示は計算を待たない。計算中は前の結果を出したまま印を出し、
-  // 古い入力の結果は捨てる（compute.ts の LatestComputeQueue）。B-1 の useDeferredValue では計算がメインスレッドを塞いでいた。
+  // 計算は Web Worker で回す（plan/design-unify-sim-calc.md 6.2 節）。欄の表示は計算を待たない。計算中は前の結果を出したまま印を出し、
+  // 古い入力の結果は捨てる（compute.ts の LatestComputeQueue）。
   // 結果はその計算の元（shown.source）と組で届く。結果の詳細はその元から読み、スロットの欄は slotResultFor で合わせる
   // 計算の結果を入力ごとに覚える（compute.ts の ComputeCache）。今の編成と全編成の合計で共有し、編成を切り替えたときや
   // 今の編成だけを変えたときに、中身の変わらない編成を計算し直さない

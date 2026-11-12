@@ -510,7 +510,7 @@ export function defenceAfterDown(enemy: EnemyInput, buffs: BuffTotals): number {
   return rounding === 'round' ? Math.round(settled) : Math.ceil(settled);
 }
 
-/** 1 トリガーの期待ダメージ。sim はフレームごとにこの値を加算し、calc は秒間トリガー数を掛ける */
+/** 1 トリガーの期待ダメージ。sim の 2 パス目は、区間の発数にこの値を掛ける */
 export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const { character, enemy, condition } = input;
   const buffs = input.buffs ?? ZERO_BUFFS;
@@ -649,7 +649,7 @@ function perShotDamage(
   return total;
 }
 
-/** 1 区間の静的 DPS。1 トリガーの式 × 発射サイクルの平均トリガー数 × 秒数 */
+/** 1 区間の静的 DPS。1 トリガーの式 × 発射サイクルの平均トリガー数 × 秒数。いまはテストだけが呼ぶ */
 export function computeDamage(input: DamageInput): DamageResult {
   const { character, condition } = input;
   const model = input.model ?? DEFAULT_WEAPON_MODEL;

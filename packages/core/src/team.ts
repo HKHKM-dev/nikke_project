@@ -1,6 +1,5 @@
 // Stage 3〜: 編成の入力（枠・条件・スキル）と結果の型、入力の検証。結果（TeamResult）は sim/teamResult.ts の simTeamResult が作る。
-// Stage 16（plan/design-stage16.md 2 節）: 1 パス目は frame/plan.ts、calc モデルは calc/model.ts に分けた。
-// 一本化の段 A-2（plan/design-unify-sim-calc.md 5.2 節）: calc/model.ts は消し、計算は runSimulation（sim/engine.ts）の 1 本になった。
+// 1 パス目は frame/plan.ts、計算の入口は sim/engine.ts の runSimulation。
 import type { BurstSchedule, BurstScheduleModel, BurstSummary } from './burst/schedule.ts';
 import type { CadenceResult } from './cadence.ts';
 import {
@@ -226,8 +225,7 @@ export type SlotSegmentResult = {
   /** 1 パス目の射撃の列のうち、このグループに入る発数（整数） */
   triggers: number;
   /**
-   * Stage 10: トリガー数の出どころ。'shots' = 1 パス目の射撃の列の発数を数えた。'average'（平均レート × 秒数）は、一本化の段 A-1
-   * （plan/design-unify-sim-calc.md 5.1 節）で calc からも無くなり、段 A-2 で型からも消した
+   * Stage 10: トリガー数の出どころ。'shots' = 1 パス目の射撃の列の発数を数えた
    */
   triggerSource: 'shots';
   damage: number;
@@ -318,7 +316,7 @@ export type TeamResult = {
   enemyNotes: ModelNote[];
   /** Stage 18-C: 着地点の区間（フレーム）。条件が自動の枠が無い、または的の表の無い敵では空 */
   landings: LandingFrameSpan[];
-  /** Stage 16-B: 1 秒ごとのダメージ（編成の合計と枠ごと。一本化の段 A-2 までは calc では null） */
+  /** Stage 16-B: 1 秒ごとのダメージ（編成の合計と枠ごと） */
   damagePerSecond: DamagePerSecond;
 };
 

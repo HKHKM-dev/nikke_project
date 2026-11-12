@@ -1,20 +1,17 @@
 // Stage 5: 最小フレームシミュレータ（ヘッドレス・純関数）。
 // 60fps で戦闘時間ぶんのフレームを回し、各枠の通常射撃（shooter.ts）と固定サイクルのバースト（burst/fixedCycle.ts）を逐次処理する。
-// 1 トリガーのダメージは calc と同じ computeTriggerDamage の期待値（乱数なし）。バーストスキルは同じ computeBurstHit。
-// Stage 6: 持続バフを skills/timeline.ts の区間に載せた。区間ごとの 1 トリガー値を先に計算しておき、
-// フレームループは「区間をまたいだら参照を差し替える」だけにする（毎フレーム式を評価しない）。
+// 1 トリガーのダメージは computeTriggerDamage の期待値（乱数なし）。バーストスキルは computeBurstHit。
+// Stage 6: 持続バフを skills/timeline.ts の区間に載せた。区間ごとの 1 トリガー値を先に計算しておく（毎フレーム式を評価しない）。
 // Stage 7: 時刻表を動的サイクル（burst/dynamic.ts。射手を回してゲージを溜め、状態機械で発動を決める）にした。
-// 射撃は時刻表に依存しないので 2 パス（1 パス目 = planTeamSchedule で時刻表、2 パス目 = 下のフレームループ）で済む。
-// 当時の calc（calc/model.ts）はこの sim の期待値モデルで、両者の差は発射サイクルの離散化（マガジンの位相と端数）だけだった（今は __tests__/cadenceConvergence.test.ts が平均レートとの差を見る）。
+// 射撃は時刻表に依存しないので 2 パス（1 パス目で時刻表、2 パス目で集計）で済む。
 // Stage 8: 1 パス目を frame/plan.ts の planTeamRun（射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動）にまとめた。
 // 射撃は 1 パス目の射撃の列（frame/shots.ts）をそのまま使い、倍率ダメージ（damage）は発動フレームで足す。
 // Stage 10: 1 パス目の射撃の列と時刻表は frame/firstPass.ts のフレームループ（射撃に効くバフ・CT 短縮・弾丸チャージ込み）で作る。
-// 2 パス目は変えない（射撃の列を読み、区間ごとの 1 トリガー値を足す）。
+// 2 パス目は射撃の列を読み、区間ごとの 1 トリガー値を足す。
 // Stage 16-B（plan/design-stage16.md 9 節）: 敵の出来事は 1 パス目で効く。タイムラインの表示用に 1 秒ごとのダメージを足し上げる。
-// Stage 18-C（plan/design-stage18.md 12.3 節）: 条件が自動の枠は、区間の着地点の条件で 1 トリガーの値を出す（calc と同じ関数）。
-// 一本化の段 A-2（plan/design-unify-sim-calc.md 5.2 節。2026-10-27 オーナー決定）: 計算の入口はこの runSimulation だけになった
-// （画面・CLI・records 層は simTeamResult(input, runSimulation(input))。calc/model.ts は消した）。2 パス目はフレームループをやめ、
-// 区間ごとに射撃の列から二分探索で発数を引き（countShotsInRanges）、1 秒ごとのダメージは射撃の列・バーストのヒット・倍率ダメージの
+// Stage 18-C（plan/design-stage18.md 12.3 節）: 条件が自動の枠は、区間の着地点の条件で 1 トリガーの値を出す。
+// 計算の入口は runSimulation だけ（画面・CLI・records 層は simTeamResult(input, runSimulation(input))。plan/design-unify-sim-calc.md 5.2 節）。
+// 2 パス目は、区間ごとに射撃の列から二分探索で発数を引き（countShotsInRanges）、1 秒ごとのダメージは射撃の列・バーストのヒット・倍率ダメージの
 // 列から直接足す。フレームループは trace（出来事の列）のときだけ回し、値は作らない（__tests__/calcShots.test.ts で一致を固定）。
 import { hitFramesOf, type BurstActivation, type BurstSchedule, type BurstStepKey } from '../burst/schedule.ts';
 import { computeCadence, type CadenceResult } from '../cadence.ts';
@@ -126,10 +123,10 @@ export type SimSlotResult = {
     damage: number;
     /** Stage 16: 発動ごとの内訳（activations と同じ順） */ hits: BurstHitResult[];
   };
-  /** Stage 8: 倍率ダメージ（damage）の発動フレームと合計（calc と同じ発動列） */
+  /** Stage 8: 倍率ダメージ（damage）の発動フレームと合計 */
   skillHits: { frames: number[]; damage: number };
   totalDamage: number;
-  /** Stage 18-C: 条件が自動の枠で使った条件の平均（発数の重み。calc と同じ値）。手入力の枠は null */
+  /** Stage 18-C: 条件が自動の枠で使った条件の平均（発数の重み）。手入力の枠は null */
   autoCondition: AutoConditionSummary | null;
 };
 
@@ -142,7 +139,7 @@ export type SimResult = {
   shots: (ShotLog | null)[];
   /** Stage 10: 即時効果（CT 短縮・弾丸チャージ）を当てた記録（1 パス目） */
   instants: InstantApplication[];
-  /** Stage 16: 倍率ダメージの発動（1 パス目。calc と同じ列） */
+  /** Stage 16: 倍率ダメージの発動（1 パス目） */
   skillHits: SkillHitEvent[];
   slots: (SimSlotResult | null)[];
   totalDamage: number;
@@ -431,13 +428,13 @@ export function runSimulation(simInput: SimInput): SimResult {
     ? traceEvents(frames, schedule, timeline, history, burstHits, burstHitDamages, skillHits, instants, runners)
     : [];
 
-  // 枠 0 から順に加算する（calc と同じ流儀）
+  // 枠 0 から順に加算する
   let totalDamage = 0;
   const results = runners.map((runner) => {
     if (runner === null) return null;
     const r = runner.result;
     for (const segment of r.segments) r.normalDamage += segment.damage;
-    // 分かれたヒット編: バーストの合計は発動ごとの値（当たったヒットの和）を順に足す（calc と同じ足し方）
+    // 分かれたヒット編: バーストの合計は発動ごとの値（当たったヒットの和）を順に足す
     for (const hit of r.burst.hits) r.burst.damage += hit.perActivation;
     r.totalDamage = r.normalDamage + r.burst.damage + r.skillHits.damage;
     totalDamage += r.totalDamage;
@@ -649,8 +646,8 @@ export type SimIntervalTotals = { triggers: number; damage: number };
 export type SimGroupTotals = SimIntervalTotals & { key: string; fullBurst: boolean; seconds: number };
 
 /**
- * sim の区間を calc と同じグループ（同じバフ状態）単位に集計する。
- * calc の TeamSlotResult.segments と同じ順番になるので、整合テストはこの単位で突き合わせる。
+ * sim の区間を、同じバフ状態のグループ（groupTimeline）単位に集計する。
+ * 画面の形（simTeamResult の TeamSlotResult.segments）と同じ順番。テストがこの単位で突き合わせる。
  */
 export function simGroupTotals(result: SimResult, slotIndex: number): SimGroupTotals[] {
   const slot = result.slots[slotIndex];

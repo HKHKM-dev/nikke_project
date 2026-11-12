@@ -1,5 +1,5 @@
 // Stage 15: 敵のプリセット（data/enemies.json）の検証と、計算の入力（EnemyInput）への変換（plan/design-stage12.md 5.2 節）。
-// calc の敵フォームで選び、値はそのあと上書きできる。
+// 画面（射撃場の敵の属性）と CLI（--enemy）がプリセットを選ぶ。
 // Stage 16-B（plan/design-stage16.md 9.2 節）: 敵の出来事のセット（eventSets）を周期で書き、戦闘時間ぶんの EnemyEvent に展開する。
 // Stage 18-C（plan/design-stage18.md 12.2 節）: 的の条件の表（targetProfiles）と、出来事のセットの区間ごとの着地点（landings）。
 import type { EnemyEvent, EnemyEventKind, EnemyInput, LandingSpan } from './damage.ts';
@@ -674,7 +674,7 @@ export function enemyInputOf(preset: EnemyPreset): EnemyInput {
   return { defence: preset.defence, element: preset.element, hasCore: preset.hasCore };
 }
 
-/** 入力と同じ値のプリセット（calc の選択欄の表示用。上書きして一致しなければ undefined = カスタム） */
+/** 入力と同じ値のプリセット（上書きして一致しなければ undefined = カスタム）。いまはテストだけが呼ぶ */
 export function matchingEnemyPreset(presets: readonly EnemyPreset[], enemy: EnemyInput): EnemyPreset | undefined {
   return presets.find((p) => p.defence === enemy.defence && p.element === enemy.element && p.hasCore === enemy.hasCore);
 }

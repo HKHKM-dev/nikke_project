@@ -1,4 +1,4 @@
-// Stage 5: ヘッドレスの実行口。枠別・区間別の内訳を表で出す（一本化の段 A-2 までは sim と calc を並べていた）。
+// Stage 5: ヘッドレスの実行口。枠別・区間別の内訳を表で出す。
 //   node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--controlled 3] [--defence 100] [--element Fire] [--build builds.json]
 // Stage 7: バーストは既定で動的サイクル（ゲージ・CT・チェーン）。--fixed-cycle で Stage 5 / 6 の固定 20 秒サイクル。
 // --controlled は操作キャラの枠（1 始まり）。省略は全員 AI 扱い（SR / RL のフルチャージ倍率がゲージに乗らない）。
@@ -19,9 +19,6 @@
 // --mid-far A|B|C で中遠の着地点を 1 か所に固定する（録画と比べるとき用。省略は 3 か所の配分）。--near A,B で近の 1 回目・2 回目の
 // 着地点を固定する（C-0155。省略は 2 か所の配分）。--far A,B で遠の 1 回目・2 回目の着地点を固定する（C-0477。省略は 2 か所の
 // 配分）。自動の枠は、使った条件の発数平均を出す。
-// 一本化の段 A-1（plan/design-unify-sim-calc.md 5.1 節）: calc は全グループを射撃の列から数える（sim と同じ数）。数え方を選ぶ
-// --shot-counting（plan/design-calc-hybrid.md）は 2026-10-27 に消した。
-// 一本化の段 A-2（同 5.2 節）: 計算は runSimulation → simTeamResult の 1 本で、sim と calc を並べる列（同じ値）は消した。
 // --skill-levels resourceId:slot=Lv をカンマ区切り（slot は skill1・skill2・burst。例 191:skill2=4,260:burst=4）。省略は全部 Lv10
 // （実ビルドの録画と比べるとき用。V-0065）。
 // --jump-windows で、出来事のセットの狙えない窓と着地点の区間の切れ目を、録画で読んだ窓に置き換える（V-0088。照合の
@@ -334,7 +331,7 @@ function withBuild(
     console.warn(
       `build ${character.name.ja}: 宝物 Lv${treasure.level} の段階は未確定（API の Lv 1・2 だけが段階 2・3 と分かっている。C-0744）。--treasure で指定する`,
     );
-  // 書かれていない項目・部位は空の育成で埋める（Stage 14: calc の育成の JSON の取り込みと同じ）
+  // 書かれていない項目・部位は空の育成で埋める
   const empty = emptyBuild();
   const build: BuildInput = { ...empty, ...rest, gear: { ...empty.gear, ...rest.gear } };
   const combat = computeCombatAttack(character, growth, build, masters, { treasurePhase: skills.treasurePhase });
@@ -670,8 +667,7 @@ const noteLines = result.slots.flatMap((c, i) =>
 );
 if (noteLines.length > 0) console.log(`condition notes\n${noteLines.join('\n')}`);
 
-// Stage 6: バフ状態ごとの区間表（枠ごと）。発数は 1 パス目の射撃の列から数えた数（一本化の段 A-1 から。2026-10-27 までの calc は
-// レート × 秒数と、持続の射撃バフの区間の発数）
+// Stage 6: バフ状態ごとの区間表（枠ごと）。発数は 1 パス目の射撃の列から数えた数
 for (const [i, slot] of slots.entries()) {
   const c = result.slots[i];
   if (!c) continue;
