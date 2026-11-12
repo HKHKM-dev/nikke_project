@@ -2,7 +2,7 @@
 
 - 何のための文書か: 1 パス目の中心の長い関数（件の一覧の `createHolderLists` と、フレームループの `runFirstPassOnce`）と、その周りの長い関数を、動きと速さを変えずに読める単位に分ける変更の、今の構造・分け方の案と得失・段・確かめ方
 - 対象: `skills/holders.ts` の `createHolderLists`、`frame/firstPass.ts` の `runFirstPassOnce`。範囲に入れるかを 4 節で決めるもの: `frame/plan.ts` の `planSkillHits`、`sim/engine.ts` の `runSimulation`
-- 状態: 進行中（4 節の決定。段は 5 節）
+- 状態: 完了（4 節の決定。段は 5 節。作りは 9 節）
 - 関連: [design-split-long-functions.md](design-split-long-functions.md)（パーサと画面の分割。9 節で、この文書の対象を「速さと結果の一致の確かめ方が別に要る」として外した）、[design-split-skill-holders.md](design-split-skill-holders.md)（衝突を減らすための分割は見送った。4.4 節の案 3 が、移すだけでは `createHolderLists` が短くならないことを書いている）、[design-holder-effects.md](design-holder-effects.md)（件の一覧の元の設計。2.4 節がフレームの中の順番）、[design-first-pass-perf.md](design-first-pass-perf.md)（1 パス目の速さの測り方と、結果の一致の確かめ方）、[design-code-comments.md](design-code-comments.md)（段 3 が同じファイルのコメントを直している）
 - 作成日: 2026-11-12
 - 調べた時点: main の b7afcabf。行番号はその時点のファイルの行
@@ -344,8 +344,10 @@ for (let f = 0; f < frames; f++) {
 
 ### 9.5 段 S（2026-11-12）
 
-- `planSkillHits`（`frame/plan.ts`）: 枠ごとの無名関数の本文を、同じファイルの `slotReadersOf`（枠の読み口・ヒットを積む `push`・間隔の変更の読み口。定義の無い枠は null）・`damageEffectHits`（倍率ダメージ）・`dotHits`（持続ダメージ）・`cycleHits`（段の循環）に写した。枠をまたいで共有するものと引数は `SkillHitsContext` で渡す。3.5 節の `ownReadersOf` は、`push` と間隔の変更の読み口と一緒に `slotReadersOf` にした（3 つが同じ枠の局所を読むため）。本文で変えたのは、定義の無い枠の `return` を `return null` にした 1 行と、字下げが浅くなったことによる prettier の折り返し。
-- `runSimulation`（`sim/engine.ts`）: 枠の区間ごとの読み手を作る無名関数を `createRunner` に、バーストのヒットの値の無名関数を `burstHitDamageOf` に写した（同じファイル。共有するものは `RunnerContext`・`BurstHitContext` で渡す）。
+- `planSkillHits`（`frame/plan.ts`）: 枠ごとの無名関数の本文を、同じファイルの `slotReadersOf`（枠の読み口・ヒットを積む `push`・間隔の変更の読み口と、同じ発動の順のバーストの検査。定義の無い枠は null）・`damageEffectHits`（倍率ダメージ）・`dotHits`（持続ダメージ）・`cycleHits`（段の循環）に写した。枠をまたいで共有するものと引数は `SkillHitsContext` で渡す。3.5 節の `ownReadersOf` は、`push` と間隔の変更の読み口と一緒に `slotReadersOf` にした（3 つが同じ枠の局所を読むため）。使う側が 1 つだけの読み口（`mine`・`everyAtFor`・`cooldownFiresOf` は倍率ダメージ、`dotApplicationFrames` は持続ダメージ）は、その関数の頭に移した（どれも作っても何も起こさない宣言で、検査の順は変わらない）。本文で変えたのは、定義の無い枠の `return` を `return null` にした 1 行と、字下げが浅くなったことによる prettier の折り返し。
+- `runSimulation`（`sim/engine.ts`）: 枠の区間ごとの読み手を作る無名関数を `createRunner` に、バーストのヒットの値の無名関数を `burstHitDamageOf` に写した（同じファイル。共有するものは `RunnerContext`・`BurstHitContext` で渡し、`slots`・`enemy` は入力から取り出す）。
+- 速さ（6.3 節。別のプロセスで交互に 6 回ずつ、`planTeamRun` の中央値の比）: LRNAM 1.001・主力 0.967・Stage 8 の 5 人 0.994。録画 0037 は 6 回ずつで 1.056 だったので 12 回ずつで測り直し、0.999。同じプロセスの測り方でも、どの編成も 1.05 以下（`runSimulation` も）。
+- 見直し（`/simplify`）で、使う側が 1 つの読み口の置き場所・文脈の引数の名前（写した本文の `(c) => …` が隠さないよう `ctx`）・型（`Pick` と読み取りの型）・説明を直した。移した持続ダメージの読み口が `history` を受け取り忘れ、DOM の `history` を読んでいたのを型検査が拾ったので直した。`/code-review high`: 正しさの指摘は無し。見送り（本文か受け口の書き換えになる）: `push` が積んだヒットを返す形にすること、`selfStateHolds`・`counterAt` と `self` の二重の受け渡し、`SlotReaders` の型を名前で書くこと、`planSkillHits` がオブジェクトで受けること、`computeTriggerDamage` の入力を組む所が 3 か所あること。
 
 ## 10. 経過
 
