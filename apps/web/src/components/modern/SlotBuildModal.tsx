@@ -1,33 +1,23 @@
-import {
-  AFFECTION_RANK_MIN,
-  affectionRankMax,
-  growthLimits,
-  type BuildInput,
-  type BuildMasters,
-  type CharacterData,
-  type GrowthInput,
-  type SkillLevels,
-  type TreasurePhase,
-} from '@nikke/core';
-import { useEffect, type Dispatch } from 'react';
-import type { SlotGrowth, SlotState, TeamAction } from '../../team.ts';
-import { BuildSection } from '../BuildSection.tsx';
-import { IntInput } from '../IntInput.tsx';
-import { SkillSection } from '../SkillSection.tsx';
+import type { BuildMasters, CharacterData } from '@nikke/core';
+import type { Dispatch } from 'react';
+import { growthFieldsActions, type SlotGrowthFields, type SlotState, type TeamAction } from '../../team.ts';
+import { GrowthEditor, type ShownGrowth } from '../GrowthEditor.tsx';
+import { RosterRevertButton } from '../RosterRevertButton.tsx';
 import { SlotOptions } from '../SlotOptions.tsx';
+import { useEscapeKey } from '../useEscapeKey.ts';
 
 type Props = {
   slotIndex: number;
   slot: SlotState;
   character: CharacterData | undefined;
   fixedSpec: boolean;
-  effectiveGrowth: GrowthInput;
-  effectiveSkillLevels: SkillLevels;
-  effectiveBuild: BuildInput;
-  treasurePhase: TreasurePhase;
+  /** 計算に使う育成（スペック固定なら固定の値。calcView.ts） */
+  shown: ShownGrowth;
   masters: BuildMasters | null;
   mastersError: string | null;
   usesHpRatio: boolean;
+  /** 育成状況のこのニケの育成（育成状況にいなければ null）。あれば「育成状況の値に戻す」を出す */
+  rosterGrowth: SlotGrowthFields | null;
   dispatch: Dispatch<TeamAction>;
   onClose: () => void;
 };
@@ -37,40 +27,19 @@ export function SlotBuildModal({
   slot,
   character,
   fixedSpec,
-  effectiveGrowth,
-  effectiveSkillLevels,
-  effectiveBuild,
-  treasurePhase,
+  shown,
   masters,
   mastersError,
   usesHpRatio,
+  rosterGrowth,
   dispatch,
   onClose,
 }: Props) {
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
+  useEscapeKey(onClose);
 
   if (!character) return null;
 
-  const limits = growthLimits(character);
-
-  const growthField = (key: keyof SlotGrowth, name: string, min: number, max: number) => (
-    <label className="field">
-      <span>{name}</span>
-      <IntInput
-        value={effectiveGrowth[key]}
-        min={min}
-        max={max}
-        disabled={fixedSpec}
-        onCommit={(n) => dispatch({ type: 'setGrowth', index: slotIndex, growth: { ...slot.growth, [key]: n } })}
-      />
-    </label>
-  );
+  const setGrowth = (fields: Partial<SlotGrowthFields>) => growthFieldsActions(slotIndex, fields).forEach(dispatch);
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -96,40 +65,19 @@ export function SlotBuildModal({
             <SlotOptions slotIndex={slotIndex} slot={slot} usesHpRatio={usesHpRatio} dispatch={dispatch} />
           </fieldset>
 
-          <div className="growth-row">
-            <label className="field">
-              <span>好感度</span>
-              <IntInput
-                value={effectiveBuild.affectionRank}
-                min={AFFECTION_RANK_MIN}
-                max={affectionRankMax(character)}
-                disabled={fixedSpec}
-                onCommit={(rank) =>
-                  dispatch({ type: 'setBuild', index: slotIndex, build: { ...slot.build, affectionRank: rank } })
-                }
-              />
-            </label>
-            {growthField('grade', '限界突破', 0, limits.gradeMax)}
-            {growthField('core', 'コア強化', 0, limits.coreMax)}
-          </div>
-
-          <SkillSection slotIndex={slotIndex} levels={effectiveSkillLevels} disabled={fixedSpec} dispatch={dispatch} />
-
-          <BuildSection
-            slotIndex={slotIndex}
+          <GrowthEditor
             character={character}
-            build={slot.build}
-            effectiveBuild={effectiveBuild}
-            growth={effectiveGrowth}
-            treasurePhase={treasurePhase}
+            fields={slot}
+            shown={shown}
             masters={masters}
             mastersError={mastersError}
             disabled={fixedSpec}
-            dispatch={dispatch}
+            onChange={setGrowth}
           />
         </div>
 
         <div className="modal-footer">
+          <RosterRevertButton fields={slot} rosterGrowth={rosterGrowth} fixedSpec={fixedSpec} onRevert={setGrowth} />
           <button type="button" onClick={onClose}>
             完了
           </button>

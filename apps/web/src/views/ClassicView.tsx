@@ -7,6 +7,7 @@ import { PartyTabs } from '../components/PartyTabs.tsx';
 import { SlotCard } from '../components/SlotCard.tsx';
 import { TeamSettingsForm } from '../components/TeamSettingsForm.tsx';
 import { LIST_DIRECTION_MARK, LIST_ORDER_LABEL, listOrderLabel } from '../listOrder.ts';
+import { commonGrowthOf, rosterGrowthOf } from '../roster.ts';
 import { takenResourceIds } from '../team.ts';
 import type { ViewProps } from './ViewProps.ts';
 
@@ -27,6 +28,7 @@ export function ClassicView({
   totals,
   totalsPending,
   summarySlots,
+  roster,
   listOrder,
 }: ViewProps) {
   return (
@@ -38,6 +40,7 @@ export function ClassicView({
         synchroLevel={team.synchroLevel}
         durationSeconds={team.durationSeconds}
         rangeJump={team.rangeJump}
+        rosterCommon={roster && commonGrowthOf(roster)}
         dispatch={dispatch}
       />
       {/* 全編成の合計は、編成のタブの上（どの編成を開いていても見える） */}
@@ -60,7 +63,7 @@ export function ClassicView({
       </div>
       <section className="slots" aria-label="編成">
         {team.slots.map((slot, i) => {
-          const { character, growth, build, skillLevels, treasurePhase, usesHpRatio } = calc.slots[i]!;
+          const shown = calc.slots[i]!;
           return (
             <SlotCard
               key={i}
@@ -71,17 +74,15 @@ export function ClassicView({
               excludeIds={takenResourceIds(team, i)}
               otherPartyIds={otherPartyIds}
               fullySupported={fullySupported}
-              character={character}
+              character={shown.character}
               error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
               fixedSpec={team.fixedSpec}
-              effectiveGrowth={growth}
-              effectiveBuild={build}
-              treasurePhase={treasurePhase}
+              shown={shown}
               masters={masters}
               mastersError={mastersError}
-              effectiveSkillLevels={skillLevels}
               slotResult={slotResults[i] ?? null}
-              usesHpRatio={usesHpRatio}
+              usesHpRatio={shown.usesHpRatio}
+              rosterGrowth={rosterGrowthOf(roster, slot.resourceId)}
               dispatch={dispatch}
             />
           );

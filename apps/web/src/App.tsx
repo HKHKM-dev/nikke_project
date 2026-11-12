@@ -11,6 +11,8 @@ import { ComputeCache } from './compute.ts';
 import { buildCalcView, slotResultFor } from './calcView.ts';
 import { type NotesSummarySlot } from './components/NotesSummary.tsx';
 import { AccountMenu } from './components/AccountMenu.tsx';
+import { BadgeSprite } from './components/modern/BadgeIcon.tsx';
+import { RosterEditModal } from './components/RosterEditModal.tsx';
 import { SettingsMenu } from './components/SettingsMenu.tsx';
 import { UnreadableSavesNotice } from './components/UnreadableSavesNotice.tsx';
 import { INITIAL_TEAM_STATE, STORAGE_KEY, serializeTeamState, teamReducer } from './team.ts';
@@ -102,6 +104,9 @@ export function App() {
 
   // 育成状況（roster.ts）。キャラをスロットに入れる操作は、育成状況の育成を写す dispatch を通す
   const { controls: rosterControls, dispatchWithRoster } = useRoster({ index, team, parties, dispatch, setParties });
+  // 育成状況の編集画面を開いているか（アカウントのメニューの「編集」。plan/design-roster-edit.md 6 節）
+  const [rosterEditing, setRosterEditing] = useState(false);
+  const closeRosterEdit = useCallback(() => setRosterEditing(false), []);
   // 一覧の並び（listOrder.ts）。並べたキャラの一覧を画面に渡し、トレイと選択肢はその順のまま出す
   const { controls: listOrderControls, state: listOrder } = useListOrder(
     rosterControls.roster,
@@ -228,10 +233,12 @@ export function App() {
 
   return (
     <main className="app">
+      {/* バッジ（BadgeIcon）が <use> で引くスプライト。モダン UI のほか、育成状況の編集画面（クラシックでも開く）が使う */}
+      <BadgeSprite />
       <header className="app-header">
         <h1>NIKKE ダメージ計算</h1>
         <div className="app-header-actions">
-          <AccountMenu roster={rosterControls} />
+          <AccountMenu roster={rosterControls} onEditRoster={() => setRosterEditing(true)} />
           <SettingsMenu uiMode={uiMode} onSelectUiMode={setUiMode} />
         </div>
       </header>
@@ -242,6 +249,18 @@ export function App() {
         <ListOrderContext value={listOrder}>
           {uiMode === 'modern' ? <ModernView {...viewProps} /> : <ClassicView {...viewProps} />}
         </ListOrderContext>
+      )}
+      {rosterEditing && rosterControls.editor !== null && orderedIndex !== null && (
+        <RosterEditModal
+          editor={rosterControls.editor}
+          hasEdits={rosterControls.hasEdits}
+          revertAll={rosterControls.revertAll}
+          index={orderedIndex}
+          masters={masters}
+          mastersError={mastersError}
+          baseUrl={BASE_URL}
+          onClose={closeRosterEdit}
+        />
       )}
     </main>
   );

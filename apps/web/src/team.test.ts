@@ -4,6 +4,8 @@ import { describe, expect, it } from 'vitest';
 import {
   INITIAL_TEAM_STATE,
   emptyConsole,
+  growthFieldsActions,
+  sameConsole,
   recycleRoomFromConsole,
   enemyForCalc,
   enemyWithEvents,
@@ -641,5 +643,33 @@ describe('synchro level (2026-10-31)', () => {
     const old = JSON.parse(serializeTeamState(withCharacters([10]))) as Record<string, unknown>;
     delete old.synchroLevel;
     expect(parseTeamState(JSON.stringify(old), index)?.synchroLevel).toBe(200);
+  });
+});
+
+describe('育成の欄の変更をスロットの操作にする（growthFieldsActions）・sameConsole', () => {
+  it('変えた項目だけを操作にし、順に当てるとスロットの育成になる', () => {
+    expect(growthFieldsActions(1, {})).toEqual([]);
+    expect(growthFieldsActions(1, { growth: { grade: 1, core: 0 } })).toEqual([
+      { type: 'setGrowth', index: 1, growth: { grade: 1, core: 0 } },
+    ]);
+    const slot = initialTeamState().slots[0]!;
+    const fields = {
+      growth: { grade: 2, core: 5 },
+      build: { ...slot.build, affectionRank: 30 },
+      skillLevels: { skill1: 4, skill2: 5, burst: 6 },
+      treasurePhase: 2 as const,
+    };
+    // 全部の項目を渡すと、スロットの育成をまとめて置き換える（「育成状況の値に戻す」）
+    const next = growthFieldsActions(0, fields).reduce(teamReducer, initialTeamState());
+    expect(next.slots[0]).toEqual({ ...slot, ...fields });
+    expect(next.slots[1]).toEqual(initialTeamState().slots[1]);
+  });
+
+  it('sameConsole は研究の Lv を 1 つずつ比べる', () => {
+    const a = emptyConsole();
+    expect(sameConsole(a, emptyConsole())).toBe(true);
+    expect(sameConsole(a, { ...a, personal: 1 })).toBe(false);
+    expect(sameConsole(a, { ...a, class: { ...a.class, Attacker: 1 } })).toBe(false);
+    expect(sameConsole(a, { ...a, corporation: { ...a.corporation, TETRA: 1 } })).toBe(false);
   });
 });

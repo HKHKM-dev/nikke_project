@@ -2,15 +2,12 @@ import { useDroppable } from '@dnd-kit/core';
 import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
 import { useMemo, useState } from 'react';
 import {
-  BADGE_KINDS,
-  filterButtonValues,
   matchesBadgeFilters,
-  toggleBadgeFilter,
   trayCollectionBadge,
-  type BadgeFilters,
-  type BadgeKind,
+  type BadgeFilters as BadgeFilterValues,
   TREASURE_FILTER_BADGE,
 } from './badges.ts';
+import { BadgeFilters } from './BadgeFilter.tsx';
 import { BadgeIcon } from './BadgeIcon.tsx';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
 import { activeDragData, type OverDragData } from './dropIntent.ts';
@@ -51,36 +48,6 @@ type Props = {
   onSelectCharacter: (resourceId: number) => void;
 };
 
-/** 1 種類のバッジを並べた絞り込み（同じ種類でも複数選べる。押したときの切り替えは toggleBadgeFilter） */
-function BadgeFilter({
-  kind,
-  values,
-  onToggle,
-}: {
-  kind: BadgeKind;
-  values: readonly string[] | undefined;
-  onToggle: (value: string) => void;
-}) {
-  return (
-    <div className="char-tray-badge-filter" role="group" aria-label={`${kind.name}で絞り込み`}>
-      {filterButtonValues(kind).map((v) => {
-        const { name, label } = kind.badges[v]!;
-        return (
-          <button
-            key={v}
-            type="button"
-            className="char-tray-badge-button"
-            aria-pressed={values?.includes(v) ?? false}
-            onClick={() => onToggle(v)}
-          >
-            <BadgeIcon className="char-badge" name={name} label={label} />
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
 export function CharacterTray({
   index,
   takenIds,
@@ -94,7 +61,7 @@ export function CharacterTray({
   onToggleShape,
   onSelectCharacter,
 }: Props) {
-  const [filters, setFilters] = useState<BadgeFilters>({});
+  const [filters, setFilters] = useState<BadgeFilterValues>({});
   /** 宝物のあるニケだけにする（バッジの絞り込みと AND） */
   const [treasureOnly, setTreasureOnly] = useState(false);
   const filtering = treasureOnly || Object.keys(filters).length > 0;
@@ -121,14 +88,7 @@ export function CharacterTray({
       <div className="char-tray-header">
         <div className="char-tray-filters">
           <div className="char-tray-filter-group">
-            {BADGE_KINDS.map((kind) => (
-              <BadgeFilter
-                key={kind.key}
-                kind={kind}
-                values={filters[kind.key]}
-                onToggle={(value) => setFilters((f) => toggleBadgeFilter(f, kind.key, value))}
-              />
-            ))}
+            <BadgeFilters filters={filters} onChange={setFilters} />
             <div className="char-tray-badge-filter" role="group" aria-label="宝物で絞り込み">
               <button
                 type="button"

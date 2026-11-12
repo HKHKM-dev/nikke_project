@@ -1559,3 +1559,151 @@ html:has(.modern-view-container) {
 .unreadable-saves p {
   margin: 0 0 4px;
 }
+
+/* 育成状況の編集画面（RosterEditModal.tsx。plan/design-roster-edit.md 6 節）。左に一覧、右に編集欄 */
+.modal-container.roster-edit-modal {
+  max-width: 1040px;
+  height: 90vh;
+}
+.roster-edit-body {
+  display: grid;
+  grid-template-columns: minmax(240px, 340px) minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+}
+.roster-edit-list-pane {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--app-border);
+}
+.roster-edit-filters {
+  justify-content: flex-start;
+  padding: 8px;
+  border-bottom: 1px solid var(--app-border);
+}
+/* 一覧のバッジの絞り込みは、ニケ一覧より小さくする（左の枠は狭い） */
+.roster-edit-filters .char-tray-badge-filter {
+  --badge-w: 18px;
+}
+.roster-edit-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+/* 一覧の 1 行: 顔の絵・名前・限界突破とコア強化・編集済みの印 */
+.roster-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 3px 8px;
+  border: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--app-fg) 10%, transparent);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.roster-edit-row:hover {
+  background: color-mix(in srgb, var(--app-fg) 6%, transparent);
+}
+.roster-edit-row[aria-current='true'] {
+  background: color-mix(in srgb, var(--app-fg) 14%, transparent);
+}
+.roster-edit-row-account {
+  padding: 10px 8px;
+  font-weight: bold;
+}
+.roster-edit-row-visual {
+  flex: none;
+  width: 44px;
+}
+/* 行の絵は小さいので、絵の上のバッジは出さない（絞り込みで探す） */
+.roster-edit-row-visual .char-visual-badges,
+.roster-edit-row-visual .char-visual-corner-badge {
+  display: none;
+}
+.roster-edit-row-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.roster-edit-row-growth {
+  flex: none;
+  --growth-star-w: 10px;
+  --growth-core-w: 20px;
+  text-shadow: none;
+}
+.roster-edit-row-growth .growth-marks-core {
+  margin-top: 0;
+  font-size: 0.55rem;
+}
+.roster-edit-mark {
+  flex: none;
+  width: 1.2em;
+  text-align: center;
+}
+.roster-edit-form-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  padding: 12px 16px;
+  overflow-y: auto;
+}
+.roster-edit-form-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.roster-edit-form-header h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+.roster-edit-synchro {
+  grid-template-columns: max-content 6em;
+  justify-content: start;
+}
+/* 「一覧へ」は狭い画面でだけ出す */
+.roster-edit-back {
+  display: none;
+  align-self: flex-start;
+}
+.roster-edit-footer {
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+/* スロットの育成のモーダルの「育成状況の値に戻す」は左へ寄せる */
+.modal-footer .roster-revert-button {
+  margin-right: auto;
+}
+.slot-settings-body .roster-revert-button {
+  margin-top: 6px;
+}
+/* アカウントのメニューの「全部を読み込んだ値に戻す」の行 */
+.roster-revert-all-row {
+  margin-top: 6px;
+}
+/* 狭い画面: 一覧と編集欄を切り替える（data-pane が、いま出す方） */
+@media (max-width: 699px) {
+  .roster-edit-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .roster-edit-body[data-pane='list'] .roster-edit-form-pane,
+  .roster-edit-body[data-pane='form'] .roster-edit-list-pane {
+    display: none;
+  }
+  .roster-edit-list-pane {
+    border-right: none;
+  }
+  .roster-edit-back {
+    display: inline-block;
+  }
+}

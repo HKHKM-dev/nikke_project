@@ -166,7 +166,16 @@ export function recycleRoomFromConsole(
   };
 }
 
-/** 育成状況（roster.ts）からスロットへ写す育成 */
+/** コンソールどうしが同じか（共通育成の「育成状況の値に戻す」を押せるか） */
+export function sameConsole(a: ConsoleInput, b: ConsoleInput): boolean {
+  return (
+    a.personal === b.personal &&
+    CONSOLE_CLASSES.every((c) => a.class[c] === b.class[c]) &&
+    CONSOLE_CORPORATIONS.every((c) => a.corporation[c] === b.corporation[c])
+  );
+}
+
+/** スロットの育成（育成の欄が出す値。育成状況（roster.ts）からスロットへ写す育成もこの形） */
 export type SlotGrowthFields = Pick<SlotState, 'growth' | 'build' | 'skillLevels' | 'treasurePhase'>;
 
 export type TeamAction =
@@ -191,6 +200,20 @@ export type TeamAction =
   | { type: 'setSynchroLevel'; synchroLevel: number }
   | { type: 'setRangeJump'; rangeJump: boolean }
   | { type: 'replace'; state: TeamState };
+
+/**
+ * 育成の欄の変更（スロットの育成の一部。components/GrowthEditor.tsx）を、スロット index の操作にする。全部の項目を渡せば、
+ * スロットの育成をまとめて置き換える（「育成状況の値に戻す」）
+ */
+export function growthFieldsActions(index: number, fields: Partial<SlotGrowthFields>): TeamAction[] {
+  const { treasurePhase, growth, build, skillLevels } = fields;
+  return [
+    ...(treasurePhase === undefined ? [] : [{ type: 'setTreasurePhase' as const, index, treasurePhase }]),
+    ...(growth === undefined ? [] : [{ type: 'setGrowth' as const, index, growth }]),
+    ...(build === undefined ? [] : [{ type: 'setBuild' as const, index, build }]),
+    ...(skillLevels === undefined ? [] : [{ type: 'setSkillLevels' as const, index, skillLevels }]),
+  ];
+}
 
 export function emptySlot(): SlotState {
   return {

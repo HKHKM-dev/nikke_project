@@ -1,6 +1,4 @@
 import { SKILL_LEVEL_MAX, SKILL_LEVEL_MIN, SKILL_SLOTS, type SkillLevels, type SkillSlot } from '@nikke/core';
-import type { Dispatch } from 'react';
-import type { TeamAction } from '../team.ts';
 import { IntInput } from './IntInput.tsx';
 
 const SHORT_SKILL_LABEL: Record<SkillSlot, string> = {
@@ -10,18 +8,14 @@ const SHORT_SKILL_LABEL: Record<SkillSlot, string> = {
 };
 
 type InputProps = {
-  slotIndex: number;
-  /** 実際に計算へ渡す Lv（スペック固定なら全部 10） */
+  /** 欄に出す Lv（スロットは計算へ渡す値。スペック固定なら全部 10） */
   levels: SkillLevels;
   disabled: boolean;
-  dispatch: Dispatch<TeamAction>;
+  onChange: (levels: SkillLevels) => void;
 };
 
-/** 枠の「育成」の中のスキル LV の入力（スキル 1・スキル 2・バースト） */
-export function SkillSection({ slotIndex, levels, disabled, dispatch }: InputProps) {
-  const setLevel = (slot: SkillSlot, level: number) =>
-    dispatch({ type: 'setSkillLevels', index: slotIndex, skillLevels: { ...levels, [slot]: level } });
-
+/** 育成の欄のスキル LV の入力（スキル 1・スキル 2・バースト） */
+export function SkillSection({ levels, disabled, onChange }: InputProps) {
   return (
     <div className="growth-row">
       {SKILL_SLOTS.map((slot) => (
@@ -32,7 +26,7 @@ export function SkillSection({ slotIndex, levels, disabled, dispatch }: InputPro
             min={SKILL_LEVEL_MIN}
             max={SKILL_LEVEL_MAX}
             disabled={disabled}
-            onCommit={(level) => setLevel(slot, level)}
+            onCommit={(level) => onChange({ ...levels, [slot]: level })}
           />
         </label>
       ))}

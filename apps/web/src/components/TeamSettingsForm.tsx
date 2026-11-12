@@ -1,16 +1,13 @@
 import { ELEMENTS, ELEMENT_LABEL, FIXED_SPEC_LEVEL, type Element } from '@nikke/core';
 import type { Dispatch } from 'react';
-import { CLASS_LABEL } from '../skillLabels.ts';
-import {
-  CONSOLE_CLASSES,
-  CONSOLE_CORPORATIONS,
-  CORPORATION_LABEL,
-  SHOOTING_RANGE_ENEMY,
-  type ConsoleInput,
-  type TeamAction,
-} from '../team.ts';
+import type { RosterCommonGrowth } from '../roster.ts';
+import { SHOOTING_RANGE_ENEMY, emptyConsole, sameConsole, type ConsoleInput, type TeamAction } from '../team.ts';
+import { ConsoleFields } from './ConsoleFields.tsx';
 import { IntInput } from './IntInput.tsx';
 import { Popover } from './Popover.tsx';
+
+/** スペック固定の間にリサイクルルームの欄に出す値（計算は研究なし） */
+const NO_CONSOLE = emptyConsole();
 
 type Props = {
   element: Element | null;
@@ -22,6 +19,11 @@ type Props = {
   /** 2026-10-31: 詳細設定（ポップアップ）の欄 */
   durationSeconds: number;
   rangeJump: boolean;
+  /**
+   * 育成状況のシンクロ LV・リサイクルルーム（育成状況が無ければ null）。あれば「育成状況の値に戻す」を出す
+   * （plan/design-roster-edit.md 7 節）
+   */
+  rosterCommon: RosterCommonGrowth | null;
   dispatch: Dispatch<TeamAction>;
 };
 
@@ -38,16 +40,14 @@ export function TeamSettingsForm({
   synchroLevel,
   durationSeconds,
   rangeJump,
+  rosterCommon,
   dispatch,
 }: Props) {
-  const setConsole = (next: ConsoleInput) => dispatch({ type: 'setConsole', console: next });
-  // スペック固定の間は、計算に使う値（シンクロ LV は 400、リサイクルルームはなし）を暗くして出す。保存している値は残す
-  const levelField = (key: string, label: string, value: number, onLevel: (lv: number) => void) => (
-    <label key={key} className="field">
-      <span>{label}</span>
-      <IntInput value={fixedSpec ? 0 : value} min={0} disabled={fixedSpec} onCommit={onLevel} />
-    </label>
-  );
+  // 育成状況の値に戻せるか: スペック固定の間と、いまの値が育成状況と同じときは押せない
+  const canRevert =
+    rosterCommon !== null &&
+    !fixedSpec &&
+    !(synchroLevel === rosterCommon.synchroLevel && sameConsole(consoleInput, rosterCommon.console));
   return (
     // 敵情報と共通育成は横に並べる（狭い画面では縦）
     <div className="settings-row">
@@ -128,23 +128,28 @@ export function TeamSettingsForm({
           <Popover button="詳細設定" buttonClassName="advanced-settings-button" label="共通育成の詳細設定" align="left">
             <fieldset className="popover-group console-settings">
               <legend>リサイクルルーム</legend>
-              <div className="console-grid">
-                {levelField('personal', '共通', consoleInput.personal, (lv) =>
-                  setConsole({ ...consoleInput, personal: lv }),
-                )}
-                {CONSOLE_CLASSES.map((c) =>
-                  levelField(`class-${c}`, CLASS_LABEL[c], consoleInput.class[c], (lv) =>
-                    setConsole({ ...consoleInput, class: { ...consoleInput.class, [c]: lv } }),
-                  ),
-                )}
-                {CONSOLE_CORPORATIONS.map((c) =>
-                  levelField(`corp-${c}`, CORPORATION_LABEL[c], consoleInput.corporation[c], (lv) =>
-                    setConsole({ ...consoleInput, corporation: { ...consoleInput.corporation, [c]: lv } }),
-                  ),
-                )}
-              </div>
+              {/* スペック固定の間は、計算に使う値（研究なし）を暗くして出す。保存している値は残す */}
+              <ConsoleFields
+                value={fixedSpec ? NO_CONSOLE : consoleInput}
+                disabled={fixedSpec}
+                onChange={(next: ConsoleInput) => dispatch({ type: 'setConsole', console: next })}
+              />
             </fieldset>
           </Popover>
+          {rosterCommon !== null && (
+            <button
+              type="button"
+              className="advanced-settings-button"
+              aria-disabled={!canRevert}
+              onClick={() => {
+                if (!canRevert) return;
+                dispatch({ type: 'setSynchroLevel', synchroLevel: rosterCommon.synchroLevel });
+                dispatch({ type: 'setConsole', console: rosterCommon.console });
+              }}
+            >
+              育成状況の値に戻す
+            </button>
+          )}
         </div>
       </fieldset>
     </div>

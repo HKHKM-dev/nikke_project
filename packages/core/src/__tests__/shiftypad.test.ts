@@ -7,6 +7,7 @@ import { BUILD_SNAPSHOT_FORMAT_VERSION, readBuildSnapshot } from '../buildSnapsh
 import {
   diffSnapshots,
   gameCombatPowers,
+  recycleRoomOfResearch,
   rosterMarkdown,
   stripAccountFields,
   toBuildSnapshot,
@@ -325,5 +326,24 @@ describe('diffSnapshots and rosterMarkdown', () => {
     expect(rows[2]).toBe('| 10 | ニケ10 | 2 | 0 | 10/10/10 | - | R Lv3 |');
     expect(rows[3]).toBe('| 30 | ニケ30 | 3 | 2 | 10/10/10 | - | 宝物 Lv1（段階 2） |');
     expect(rows[4]).toBe('| 82 | ニケ82 | 3 | 7 | 10/4/7 | Bキューブ Lv15 | SR Lv15 |');
+  });
+});
+
+it('recycleRoomOfResearch: 研究（tid → Lv）のうち、そのキャラのクラスと企業に効く 3 つ。無い研究・知らない企業は 0', () => {
+  const research = new Map([
+    [1001, 340],
+    [1102, 223],
+    [1203, 195],
+  ]);
+  const lvOf = (tid: number) => research.get(tid);
+  expect(recycleRoomOfResearch(lvOf, { class: 'Defender', corporation: 'TETRA' })).toEqual({
+    personal: 340,
+    class: 223,
+    corporation: 195,
+  });
+  expect(recycleRoomOfResearch(lvOf, { class: 'Attacker', corporation: 'UNKNOWN' })).toEqual({
+    personal: 340,
+    class: 0,
+    corporation: 0,
   });
 });
