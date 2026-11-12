@@ -1,5 +1,5 @@
 // 1 パス目の入口（planTeamRun）。射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動を作り、2 パス目（sim/engine.ts）に渡す。
-// 射撃に効くバフと CT 短縮で射撃の列と時刻表が循環するので、射撃の列と時刻表は frame/firstPass.ts のフレームループで作る。
+// 射撃の列と時刻表は frame/firstPass.ts のフレームループで作る。
 // バフの区間は、そのループの件の一覧の履歴（TeamPlan.history）から作る（plan/design-holder-effects.md 2.7 節）。
 // 倍率ダメージの発動は、確定した射撃の列と時刻表から作る。
 import { burstDelaysOf, isSplit, sameActivationBuffsOnHit } from '../burst/landing.ts';

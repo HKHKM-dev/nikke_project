@@ -1,6 +1,5 @@
-// 各枠の射撃の列（純関数）。planShots はバフなし（基礎値）の列で、射撃に効く効果の無い編成では、1 パス目のフレームループ
-// （frame/firstPass.ts）が作る列と 1 フレームも違わない。射撃に効くバフがあると射撃の列はバフに依存するので、1 パス目の列は
-// firstPass.ts が作る。ゲージ・回数トリガー・sim の 2 パス目は 1 パス目の列を読む（plan/design-stage8.md 1 節・3.1 節）。
+// 各枠の射撃の列（純関数）。射撃の列の型（ShotLog）、バフなし（基礎値）の列を作る planShots、区間の発数を二分探索で数える
+// countShotsInRanges を置く。1 パス目の列は frame/firstPass.ts が作る（planShots と同じになる条件は、その冒頭）。
 import type { CharacterData } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
 import { firingParams } from './firing.ts';

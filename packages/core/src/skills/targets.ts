@@ -2,11 +2,10 @@
 //   - 発火のたびに対象が変わるもの（「直前にバーストスキルを使用した味方」）は、発火の文脈を受けて決める。
 //   - 「最終攻撃力が最も高い味方 N 機」（topAttack）は、文脈（攻撃力の順位）で決める（skills/ranking.ts）。
 //   - 「〈武器種〉の味方」「〈コード〉コードの味方」（targetElement）「〈クラス〉型の味方」（targetClass）は、対象の枠のキャラで絞る。
-//   - 編成で決まる対象（targetSquad・longestChargeTime・「ペルソナ状態の」「基本バースト段階が N の」・allies の「自分を除く」・
-//     「〈名前〉状態の」）は、最上位の skills/composition.ts が決めた枠（fixedTargets）で絞る（plan/design-target-vocab.md 2 節）。
-//     「〈名前〉状態の」は目録の id（静的な状態）。それ以外の「自分を除く」（excludeSelf）は順位（skills/ranking.ts）で外す。
-//   - 「残りの HP の割合が最も低い味方 N 機」（lowestHpRatio）も編成で決まる対象で、fixedTargets（HP の割合の想定の低い順。同値は
-//     枠の若い順）の先頭 targetCount 枠に掛ける（plan/design-skill-stage8.md 1.1 節）。
+//   - 編成で決まる対象は、最上位の skills/composition.ts が決めた枠（fixedTargets）で絞る（どれが編成で決まるかは composition.ts）。
+//     それ以外の「自分を除く」（excludeSelf）は順位（skills/ranking.ts）で外す。
+//   - 「残りの HP の割合が最も低い味方 N 機」（lowestHpRatio）は、fixedTargets（HP の割合の想定の低い順。同値は枠の若い順）の
+//     先頭 targetCount 枠に掛ける（plan/design-skill-stage8.md 1.1 節）。
 import type { Element, NikkeClass, WeaponType } from '../types.ts';
 import type { NamedStateId } from './states.ts';
 import type { BasicBurstStep, BuffTarget, ExcludeSelf, TargetDefense, TargetSquad } from './types.ts';

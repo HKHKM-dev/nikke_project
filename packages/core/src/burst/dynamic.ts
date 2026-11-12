@@ -1,6 +1,6 @@
 // 動的サイクルの時刻表（純関数）。射撃の列（frame/shots.ts の planShots。省略時はここで回す）の撃ったフレームにゲージを入れて、
-// 状態機械（controller.ts）を進める。射撃がバフにもバーストにも依存しない編成の時刻表で、1 パス目のフレームループ
-// （frame/firstPass.ts）は、射撃に効く効果・即時効果・予約したゲージが無い編成でこれと 1 フレームも違わない。
+// 状態機械（controller.ts）を進める。射撃がバフにもバーストにも依存しない編成の時刻表（1 パス目の
+// frame/firstPass.ts と同じになる条件は、その冒頭）。
 // バーストの候補の決め方（burstCandidateOf など）は、firstPass.ts もここから使う。
 // 常時のゲージ速度（burstGaugeSpeed。マナ S2）は枠ごとの 1 トリガーのゲージに (1 + 速度) を掛ける。
 import { planShots, type ShotLog } from '../frame/shots.ts';

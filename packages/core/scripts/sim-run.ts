@@ -1,38 +1,8 @@
 // ヘッドレスの実行口。編成を runSimulation → simTeamResult で計算し、枠別・区間別の内訳を表で出す。
 // 枠ごとに、効果層（OL・キューブ・コレクション）、CT 短縮・弾丸チャージ（即時効果）の記録、バフ状態ごとの区間表を出す。
-//   node scripts/sim-run.ts --ids 271,870 [オプション]
-// 育成値は、--build に無いキャラは Lv200・3 凸・コア 0。スキル定義は data/skills/ にあるものを読む（無ければ定義なし = 通常攻撃のみ、味方のバフは受ける）。
-//
-// オプション（使い方の出力と同じ並び）:
-//   --fixed-spec          射撃場の「スペック固定」の育成値にする（fixedSpec.ts。--build は使わない）
-//   --duration 180        戦闘時間（秒）
-//   --no-burst            バーストを回さない
-//   --fixed-cycle         バーストを固定 20 秒サイクルにする（既定は動的サイクル: ゲージ・CT・チェーン）
-//   --controlled 3        操作キャラの枠（1 始まり）。省略は全員 AI 扱い（SR / RL のフルチャージ倍率がゲージに乗らない）
-//   --treasure 101:3      宝物の段階（resourceId:段階 をカンマ区切り）。省略は --build のスナップショットの段階、それも無ければ 0
-//   --build builds.json   resourceId → 育成入力（BuildInput の各項目と任意の growth。gear の OL 装備に overload
-//                         （[{ option, level }]、最大 3 行））の JSON。育成データのスナップショット（npm run build:import が
-//                         private/builds/ に書くもの）もそのまま渡せ、1 件に skillLevels があればスキル Lv の既定にする
-//                         （--skill-levels が優先。plan/design-build-snapshot.md 3 節）
-//   --condition auto|manual  条件の決め方。既定は auto（射撃場の表と着地点の時間割りでコア命中率・距離ボーナス・弾丸命中率を決める。
-//                         射撃場のプリセットと、--enemy を省いた属性なしの射撃場の的で効く。ほかの敵では手入力の値と注記）。
-//                         --core-hit-rate か --hit-rate を指定したら manual（距離ボーナスあり・フルチャージ）。自動の枠は、
-//                         使った条件の発数平均を出す
-//   --core-hit-rate 1     手入力のコア命中率（省略 1）
-//   --hit-rate 0.8        手入力の命中率（射撃場 = 1 の相対値。全枠共通。省略 1）
-//   --enemy <id>          敵のプリセット（data/enemies.json。--defence / --element より優先）。省略は --defence 100・--element の的
-//   --events <id,…>       出来事のセット（data/enemies.json）。敵のプリセット（--enemy か、--enemy を省いた敵にあたるプリセット。
-//                         presetForEnemy）が持つものだけ効く。省略は、そのプリセットの出来事のセットを全部入れる（射撃場の敵では
-//                         ジャンプあり。画面の既定と同じ。plan/design-ui-rebuild.md 5.2 節）
-//   --no-jump             出来事を入れない
-//   --mid-far A|B|C       中遠の着地点を 1 か所に固定する（録画と比べるとき用。省略は 3 か所の配分）
-//   --near A,B            近の 1 回目・2 回目の着地点を固定する（C-0155。省略は 2 か所の配分）
-//   --far A,B             遠の 1 回目・2 回目の着地点を固定する（C-0477。省略は 2 か所の配分）
-//   --skill-levels 191:skill2=4  スキル Lv（resourceId:slot=Lv をカンマ区切り。slot は skill1・skill2・burst）。省略は全部 Lv10
-//                         （実ビルドの録画と比べるとき用。V-0065）
-//   --jump-windows <…>    出来事のセットの狙えない窓と着地点の区間の切れ目を、録画で読んだ窓に置き換える（V-0088。照合の
-//                         setup.jumpWindows と同じ）。観測値の id（例 0056-11）か、[始まり, 終わり, …] の秒をカンマ区切りで渡す。
-//                         --events に狙えない窓を持つ出来事のセットが要る
+//   node scripts/sim-run.ts --ids 271,870 [オプション]（オプションの説明は下の parseArgs の定義）
+// 育成値は、--build に無いキャラは Lv200・3 凸・コア 0。スキル定義は data/skills/ にあるものを読む（無ければ定義なし = 通常攻撃のみ、
+// 味方のバフは受ける）。
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -141,32 +111,53 @@ function triggerLabel(t: ResolvedTrigger): string {
 
 const { values } = parseArgs({
   options: {
+    // 編成（resourceId をカンマ区切り。1〜5 体）
     ids: { type: 'string' },
+    // 射撃場の「スペック固定」の育成値にする（fixedSpec.ts。--build は使わない）
     'fixed-spec': { type: 'boolean', default: false },
+    // 戦闘時間（秒）
     duration: { type: 'string', default: '180' },
+    // バーストを回さない
     'no-burst': { type: 'boolean', default: false },
+    // バーストを固定 20 秒サイクルにする（既定は動的サイクル: ゲージ・CT・チェーン）
     'fixed-cycle': { type: 'boolean', default: false },
+    // 操作キャラの枠（1 始まり）。省略は全員 AI 扱い（SR / RL のフルチャージ倍率がゲージに乗らない）
     controlled: { type: 'string' },
+    // --enemy を省いたときの敵の防御力と属性
     defence: { type: 'string', default: '100' },
     element: { type: 'string' },
+    // 手入力のコア命中率（省略 1）。指定すると条件は manual
     'core-hit-rate': { type: 'string' },
-    // Stage 9: 宝物の段階（resourceId:段階 をカンマ区切り。省略は --build のスナップショットの段階、それも無ければ 0）
+    // 宝物の段階（resourceId:段階 をカンマ区切り。省略は --build のスナップショットの段階、それも無ければ 0）
     treasure: { type: 'string' },
-    // Stage 12: 育成入力の JSON ファイル
+    // resourceId → 育成入力（BuildInput の各項目と任意の growth。gear の OL 装備に overload（[{ option, level }]、最大 3 行））の
+    // JSON。育成データのスナップショット（npm run build:import が private/builds/ に書くもの）もそのまま渡せ、1 件に skillLevels が
+    // あればスキル Lv の既定にする（--skill-levels が優先。plan/design-build-snapshot.md 3 節）
     build: { type: 'string' },
-    // Stage 15: 命中率（射撃場 = 1 の相対値。全枠共通）と敵のプリセット（data/enemies.json の id。--defence / --element より優先）
+    // 手入力の命中率（射撃場 = 1 の相対値。全枠共通。省略 1）。指定すると条件は manual
     'hit-rate': { type: 'string' },
+    // 敵のプリセット（data/enemies.json の id。--defence / --element より優先）
     enemy: { type: 'string' },
+    // 出来事のセット（data/enemies.json。カンマ区切り）。敵のプリセット（--enemy か、--enemy を省いた敵にあたるプリセット。
+    // presetForEnemy）が持つものだけ効く。省略は、そのプリセットの出来事のセットを全部入れる（射撃場の敵ではジャンプあり。画面の
+    // 既定と同じ。plan/design-ui-rebuild.md 5.2 節）
     events: { type: 'string' },
+    // 出来事を入れない
     'no-jump': { type: 'boolean', default: false },
-    // Stage 18-C: 条件の決め方（auto | manual。18-C2 から既定 auto）と、中遠の着地点の固定（A | B | C）
+    // 条件の決め方（auto | manual）。既定は auto（射撃場の表と着地点の時間割りでコア命中率・距離ボーナス・弾丸命中率を決める。
+    // 射撃場のプリセットと、--enemy を省いた属性なしの射撃場の的で効く。ほかの敵では手入力の値と注記）。--core-hit-rate か
+    // --hit-rate を指定したら manual（距離ボーナスあり・フルチャージ）。自動の枠は、使った条件の発数平均を出す
     condition: { type: 'string' },
+    // 着地点の固定（録画と比べるとき用）。中遠は A | B | C の 1 か所（省略は 3 か所の配分）、近（C-0155）・遠（C-0477）は
+    // 1 回目・2 回目を A,B で（省略は 2 か所の配分）
     'mid-far': { type: 'string' },
     near: { type: 'string' },
     far: { type: 'string' },
-    // 実ビルドの録画と比べるときのスキル Lv（resourceId:slot=Lv をカンマ区切り。省略は全部 Lv10）
+    // スキル Lv（resourceId:slot=Lv をカンマ区切り。slot は skill1・skill2・burst。例 191:skill2=4,260:burst=4）。省略は全部 Lv10
+    // （実ビルドの録画と比べるとき用。V-0065）
     'skill-levels': { type: 'string' },
-    // 録画で読んだ的のジャンプの窓（観測値の id か秒の並び。V-0088）
+    // 出来事のセットの狙えない窓と着地点の区間の切れ目を、録画で読んだ窓に置き換える（V-0088。照合の setup.jumpWindows と同じ）。
+    // 観測値の id（例 0056-11）か、[始まり, 終わり, …] の秒をカンマ区切りで渡す。--events に狙えない窓を持つ出来事のセットが要る
     'jump-windows': { type: 'string' },
   },
 });
