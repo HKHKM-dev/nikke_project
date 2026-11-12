@@ -221,5 +221,75 @@
       "slot": 4,
       "source": "normal"
     }
+  },
+  {
+    "id": "0304-09",
+    "recording": "0304",
+    "source": "V-0739",
+    "readAt": "2026-11-12",
+    "kind": "interval",
+    "use": "compare",
+    "value": 114,
+    "unit": "f",
+    "description": "ユニの S1（フルバーストの始まりに味方全体へチャージ速度 8.97%▲、10 秒）の窓の中の、レイヴン（AI）のフルチャージの発と発の間の中央値（最頻値も同じ）。113f 2・114f 20・115f 4・116f 1（27 個。平均 114.15）。発のフレームは 1345・1458・1572・1686・1800（1 回目）、10982・11095・11209・11323・11438（9 回目）など",
+    "method": {
+      "tool": "recipe:hud-jumps@3 と格子（手）",
+      "note": "HUD の総ダメージの増分（キャッシュ hud-jumps@3）のうち、レイヴンのフルチャージの 1 発の値（`0303` と同じ値）に ±3 で合うものをレイヴンの発とした。窓の中の値（フルバースト補正の乗った値）の発どうし、窓の外の値の発どうしの、続いた 2 発の間（135f 未満。的のジャンプ・窓の端・リロードを挟む間は入らない）を数えた。窓の中の 2 発目は、前の発が窓の中なのでチャージの全部が▲の間"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervalMean",
+      "args": {
+        "slot": 2,
+        "from": 430,
+        "to": 900
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0304-10",
+    "recording": "0304",
+    "source": "V-0739",
+    "readAt": "2026-11-12",
+    "kind": "interval",
+    "use": "compare",
+    "value": 119,
+    "unit": "f",
+    "description": "ユニの S1（フルバーストの始まりに味方全体へチャージ速度 8.97%▲、10 秒）の窓の外の、レイヴン（AI）のフルチャージの発と発の間の中央値（最頻値も同じ）。119f 6・120f 1・121f 1（8 個）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 と格子（手）",
+      "note": "HUD の総ダメージの増分（キャッシュ hud-jumps@3）のうち、レイヴンのフルチャージの 1 発の値（`0303` と同じ値）に ±3 で合うものをレイヴンの発とした。窓の中の値（フルバースト補正の乗った値）の発どうし、窓の外の値の発どうしの、続いた 2 発の間（135f 未満。的のジャンプ・窓の端・リロードを挟む間は入らない）を数えた。窓の中の 2 発目は、前の発が窓の中なのでチャージの全部が▲の間"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervalMean",
+      "args": {
+        "slot": 2,
+        "from": 2210,
+        "to": 2590
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
   }
 ]
