@@ -17,7 +17,16 @@ import {
   type WhileCondition,
   type WithCharacterCondition,
 } from '../types.ts';
-import { fail, isRecord, type Json, oneOf, parseNamedStateId, parsePositiveInt, parseRef } from './common.ts';
+import {
+  fail,
+  isRecord,
+  type Json,
+  oneOf,
+  parseNamedStateId,
+  parsePositiveInt,
+  parseRef,
+  rejectUnknownKeys,
+} from './common.ts';
 
 /**
  * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: 状態の間だけ効く常時の効果の条件 { selfState }。selfState は条件と同じ形で
@@ -25,11 +34,8 @@ import { fail, isRecord, type Json, oneOf, parseNamedStateId, parsePositiveInt, 
  */
 export function parseWhileCondition(v: Json, path: string): WhileCondition {
   if (!isRecord(v)) fail(path, 'expected { selfState } or { selfCounter }');
-  const keys = Object.keys(v);
-  for (const key of keys)
-    if (key !== 'selfState' && key !== 'selfCounter')
-      fail(`${path}.${key}`, 'unknown field (allowed: selfState, selfCounter)');
-  if (keys.length !== 1) fail(path, 'expected exactly one of selfState and selfCounter');
+  rejectUnknownKeys(v, ['selfState', 'selfCounter'], path, 'unknown field (allowed: selfState, selfCounter)');
+  if (Object.keys(v).length !== 1) fail(path, 'expected exactly one of selfState and selfCounter');
   if (v.selfCounter !== undefined) {
     const c = parseSelfCounterCondition(v.selfCounter, `${path}.selfCounter`);
     if (c.atLeast === undefined || c.atLeast < 1)
@@ -155,8 +161,7 @@ export function parseCondition(
 /** 2 段目の段 10: 自分のカウンタの値の条件。{ counter, atLeast } か { counter, below }（ちょうど片方。0 と上限の間の整数） */
 function parseSelfCounterCondition(v: Json, path: string): SelfCounterCondition {
   if (!isRecord(v)) fail(path, 'expected { counter, atLeast } or { counter, below }');
-  for (const key of Object.keys(v))
-    if (!['counter', 'atLeast', 'below'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+  rejectUnknownKeys(v, ['counter', 'atLeast', 'below'], path);
   const counter = oneOf(COUNTER_IDS, v.counter, `${path}.counter`);
   if ((v.atLeast === undefined) === (v.below === undefined)) fail(path, 'expected exactly one of atLeast and below');
   const key = v.atLeast !== undefined ? 'atLeast' : 'below';
@@ -171,8 +176,7 @@ function parseSelfCounterCondition(v: Json, path: string): SelfCounterCondition 
 function parseSelfHpCondition(v: Json, path: string): SelfHpCondition {
   const keys = ['atLeastRef', 'atLeast', 'atMostRef', 'atMost'] as const;
   if (!isRecord(v)) fail(path, 'expected { atLeastRef }, { atLeast }, { atMostRef } or { atMost }');
-  for (const key of Object.keys(v))
-    if (!(keys as readonly string[]).includes(key)) fail(`${path}.${key}`, 'unknown field');
+  rejectUnknownKeys(v, keys, path);
   const present = keys.filter((key) => v[key] !== undefined);
   if (present.length !== 1) fail(path, `write exactly one of ${keys.join(', ')}`);
   const key = present[0]!;
@@ -192,10 +196,7 @@ function parseSelfHpCondition(v: Json, path: string): SelfHpCondition {
 function parseSelfStateCondition(v: Json, path: string): SelfStateCondition {
   if (typeof v === 'string') return { state: parseNamedStateId(v, path, 'ally'), present: true };
   if (!isRecord(v)) fail(path, 'expected a state id or { state, present } or { state, stacks }');
-  for (const key of Object.keys(v)) {
-    if (!['state', 'present', 'stacks', 'stacksRef', 'sameFiring'].includes(key))
-      fail(`${path}.${key}`, 'unknown field');
-  }
+  rejectUnknownKeys(v, ['state', 'present', 'stacks', 'stacksRef', 'sameFiring'], path);
   if (v.sameFiring !== undefined) {
     if (v.sameFiring !== true) fail(`${path}.sameFiring`, 'expected true');
     if (v.stacks === undefined && v.stacksRef === undefined)
@@ -220,7 +221,7 @@ function parseSelfStateCondition(v: Json, path: string): SelfStateCondition {
 /** 防御力無視ダメージ編: 編成に特定のキャラがいる条件 */
 export function parseWithCharacterCondition(v: Json, path: string): WithCharacterCondition {
   if (!isRecord(v)) fail(path, 'expected an object');
-  for (const key of Object.keys(v)) if (key !== 'rid' && key !== 'present') fail(`${path}.${key}`, 'unknown field');
+  rejectUnknownKeys(v, ['rid', 'present'], path);
   const rid = parsePositiveInt(v.rid, `${path}.rid`);
   if (typeof v.present !== 'boolean') fail(`${path}.present`, `expected a boolean, got ${JSON.stringify(v.present)}`);
   return { rid, present: v.present };
@@ -229,9 +230,7 @@ export function parseWithCharacterCondition(v: Json, path: string): WithCharacte
 /** アニス：スター編: バースト段階の構成の条件 */
 export function parseBurstStepMixCondition(v: Json, path: string): BurstStepMixCondition {
   if (!isRecord(v)) fail(path, 'expected an object');
-  for (const key of Object.keys(v)) {
-    if (key !== 'otherBurstStep' && key !== 'present') fail(`${path}.${key}`, 'unknown field');
-  }
+  rejectUnknownKeys(v, ['otherBurstStep', 'present'], path);
   const otherBurstStep = oneOf(BASIC_BURST_STEPS, v.otherBurstStep, `${path}.otherBurstStep`);
   if (typeof v.present !== 'boolean') fail(`${path}.present`, `expected a boolean, got ${JSON.stringify(v.present)}`);
   return { otherBurstStep, present: v.present };
@@ -240,7 +239,7 @@ export function parseBurstStepMixCondition(v: Json, path: string): BurstStepMixC
 /** ラム編: 同じ部隊の味方の条件 */
 export function parseSquadCondition(v: Json, path: string): SquadCondition {
   if (!isRecord(v)) fail(path, 'expected an object');
-  for (const key of Object.keys(v)) if (key !== 'present') fail(`${path}.${key}`, 'unknown field');
+  rejectUnknownKeys(v, ['present'], path);
   if (typeof v.present !== 'boolean') fail(`${path}.present`, `expected a boolean, got ${JSON.stringify(v.present)}`);
   return { present: v.present };
 }

@@ -5,19 +5,22 @@ import {
   DOT_FIRST_TICKS,
   type DotEffect,
   type DotFirstTick,
+  isCounterFullTrigger,
   isShotCountTrigger,
   type StateEndUntil,
 } from '../types.ts';
 import {
+  assertPositiveFinite,
   fail,
   isRecord,
   type Json,
   oneOf,
+  parseAssumes,
   parseDuration,
-  parseLocalizedText,
   parseNamedStateId,
   parsePositiveInt,
   parseRef,
+  rejectUnknownKeys,
 } from './common.ts';
 import { CONDITION_KEYS_OF, parseCondition } from './condition.ts';
 import {
@@ -71,48 +74,43 @@ function validateAppliedDot(
     if (v[key] !== undefined) fail(`${path}.${key}`, `a dot on { applied } cannot have ${key}`);
 }
 
+/** dot に書ける欄 */
+const DOT_KEYS: readonly string[] = [
+  'kind',
+  'trigger',
+  'ref',
+  'intervalSeconds',
+  'durationRef',
+  'durationSeconds',
+  'firstTick',
+  'state',
+  'maxStacksRef',
+  'gaugeOnApply',
+  'gaugeOnApplyDelayFrames',
+  'tickDelayFrames',
+  'gaugeOnTick',
+  'durationUntil',
+  'tickIntervalFrames',
+  'hitOnApply',
+  'perCount',
+  'perCountIntervalFrames',
+  'delayFrames',
+  'stacksFrom',
+  'copyEachTick',
+  'sustained',
+  'condition',
+  'assumes',
+  'claims',
+];
+
 /**
  * ニヒリスター編: 持続ダメージ。間隔は正の有限数。維持時間との比較（間隔 ≤ 維持）は、durationRef なら Lv で決まるので解決時に見る
- * （skills/burstDamage.ts の resolveDotEffects）
+ * （skills/burstDamage.ts の resolveDotEffects）。欄のまとまりごとの関数を決まった順に呼ぶ（plan/design-split-long-functions.md 3.1 節）
  */
 export function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
-  for (const key of Object.keys(v)) {
-    if (
-      ![
-        'kind',
-        'trigger',
-        'ref',
-        'intervalSeconds',
-        'durationRef',
-        'durationSeconds',
-        'firstTick',
-        'state',
-        'maxStacksRef',
-        'gaugeOnApply',
-        'gaugeOnApplyDelayFrames',
-        'tickDelayFrames',
-        'gaugeOnTick',
-        'durationUntil',
-        'tickIntervalFrames',
-        'hitOnApply',
-        'perCount',
-        'perCountIntervalFrames',
-        'delayFrames',
-        'stacksFrom',
-        'copyEachTick',
-        'sustained',
-        'condition',
-        'assumes',
-        'claims',
-      ].includes(key)
-    ) {
-      fail(`${path}.${key}`, 'unknown field');
-    }
-  }
+  rejectUnknownKeys(v, DOT_KEYS, path);
   const interval = v.intervalSeconds;
-  if (typeof interval !== 'number' || !Number.isFinite(interval) || interval <= 0) {
-    fail(`${path}.intervalSeconds`, `expected a positive finite number, got ${JSON.stringify(interval)}`);
-  }
+  assertPositiveFinite(interval, `${path}.intervalSeconds`);
   const counterFull = parseCounterFullTrigger(v.trigger, `${path}.trigger`);
   // 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 4）: 「〈状態〉が適用された時」の「〈状態〉解除まで」
   const applied = parseAppliedTrigger(v.trigger, `${path}.trigger`);
@@ -121,22 +119,41 @@ export function parseDotEffect(v: Record<string, Json>, path: string): DotEffect
   const stateEnd = typeof durationUntil === 'object' ? durationUntil : undefined;
   const effect: DotEffect = {
     kind: 'dot',
-    trigger: counterFull ?? applied ?? parseTrigger(v.trigger, `${path}.trigger`, true),
+    trigger: counterFull ?? applied ?? parseTrigger(v.trigger, `${path}.trigger`, { timer: true }),
     ref: parseRef(v.ref, `${path}.ref`),
     intervalSeconds: interval,
     ...(durationUntil !== undefined ? { durationUntil } : parseDuration(v, path)),
   };
   validateAppliedDot(v, applied, stateEnd, path);
-  // 2 段目の段 17 の PR 4: 付くフレームの条件（自分の状態だけ）。絞るのは frame/plan.ts の付くフレーム（damage と同じ判定）だけなので、
-  // 付くフレームをほかで追うもの（ゲージを溜める dot は 1 パス目、敵の状態を付ける dot は件の一覧、{ counterFull } はカウンタの経路）とは組まない
-  if (v.condition !== undefined) {
-    effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.dot);
-    for (const key of ['gaugeOnApply', 'gaugeOnTick', 'gaugeOnApplyDelayFrames'])
-      if (v[key] !== undefined) fail(`${path}.${key}`, 'a dot with a condition cannot charge the gauge');
-    if (v.state !== undefined) fail(`${path}.state`, 'a dot with a condition cannot apply a state');
-    if (counterFull !== undefined) fail(`${path}.trigger`, 'a dot with a condition cannot use { counterFull }');
-  }
-  if (effect.durationSeconds !== undefined && effect.durationSeconds < interval) {
+  parseDotCondition(v, effect, path);
+  parseDotIntervalAndFirstTick(v, effect, path);
+  // クルミ編: 状態異常の名前。名前の付いた状態の語彙編: 目録の id（持ち主が敵の状態。status を改めた）
+  if (v.state !== undefined) effect.state = parseNamedStateId(v.state, `${path}.state`, 'enemy');
+  parseDotTickShape(v, effect, path);
+  parseDotCounter(v, effect, path);
+  parseDotStacks(v, effect, path);
+  parseDotGauge(v, effect, path);
+  parseAssumes(v, effect, path);
+  return effect;
+}
+
+/**
+ * 2 段目の段 17 の PR 4: 付くフレームの条件（自分の状態だけ）。絞るのは frame/plan.ts の付くフレーム（damage と同じ判定）だけなので、
+ * 付くフレームをほかで追うもの（ゲージを溜める dot は 1 パス目、敵の状態を付ける dot は件の一覧、{ counterFull } はカウンタの経路）とは組まない
+ */
+function parseDotCondition(v: Record<string, Json>, effect: DotEffect, path: string): void {
+  if (v.condition === undefined) return;
+  effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.dot);
+  for (const key of ['gaugeOnApply', 'gaugeOnTick', 'gaugeOnApplyDelayFrames'])
+    if (v[key] !== undefined) fail(`${path}.${key}`, 'a dot with a condition cannot charge the gauge');
+  if (v.state !== undefined) fail(`${path}.state`, 'a dot with a condition cannot apply a state');
+  if (isCounterFullTrigger(effect.trigger))
+    fail(`${path}.trigger`, 'a dot with a condition cannot use { counterFull }');
+}
+
+/** 間隔と秒の維持の比べと、最初の刻み（firstTick） */
+function parseDotIntervalAndFirstTick(v: Record<string, Json>, effect: DotEffect, path: string): void {
+  if (effect.durationSeconds !== undefined && effect.durationSeconds < effect.intervalSeconds) {
     fail(`${path}.intervalSeconds`, `must not exceed the duration (${effect.durationSeconds} s)`);
   }
   if (v.firstTick !== undefined) {
@@ -145,16 +162,20 @@ export function parseDotEffect(v: Record<string, Json>, path: string): DotEffect
     }
     effect.firstTick = v.firstTick as DotFirstTick;
   }
-  // クルミ編: 状態異常の名前。名前の付いた状態の語彙編: 目録の id（持ち主が敵の状態。status を改めた）
-  if (v.state !== undefined) effect.state = parseNamedStateId(v.state, `${path}.state`, 'enemy');
+}
+
+/**
+ * 刻みの形: スタックの上限（maxStacksRef）と、2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.3 節）のチェーンバインドの形
+ * （付けるたびに刻みを付け直す持続。halfAfterLatest・刻みのフレーム・付けた時のヒット）
+ */
+function parseDotTickShape(v: Record<string, Json>, effect: DotEffect, path: string): void {
   if (v.maxStacksRef !== undefined) {
     effect.maxStacksRef = parseRef(v.maxStacksRef, `${path}.maxStacksRef`);
     if (effect.firstTick !== 'afterInterval' && effect.firstTick !== 'halfAfterLatest')
       fail(`${path}.maxStacksRef`, 'needs firstTick afterInterval or halfAfterLatest');
   }
-  // 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.3 節）: チェーンバインドの形（付けるたびに刻みを付け直す持続）
   const latest = effect.firstTick === 'halfAfterLatest';
-  if (latest !== (durationUntil === 'battleEnd'))
+  if (latest !== (effect.durationUntil === 'battleEnd'))
     fail(`${path}.firstTick`, 'halfAfterLatest goes with durationUntil "battleEnd"');
   if (v.tickIntervalFrames !== undefined) {
     const n = v.tickIntervalFrames;
@@ -168,21 +189,29 @@ export function parseDotEffect(v: Record<string, Json>, path: string): DotEffect
     if (!latest) fail(`${path}.hitOnApply`, 'needs firstTick halfAfterLatest');
     effect.hitOnApply = true;
   }
+}
+
+/** { counterFull } のきっかけの dot: カウンタの値だけのヒット（perCount・perCountIntervalFrames）と遅れ（delayFrames） */
+function parseDotCounter(v: Record<string, Json>, effect: DotEffect, path: string): void {
+  const counterFull = isCounterFullTrigger(effect.trigger);
   if (v.perCount !== undefined) {
     const per = v.perCount;
-    if (counterFull === undefined) fail(`${path}.perCount`, 'perCount needs the trigger { counterFull }');
+    if (!counterFull) fail(`${path}.perCount`, 'perCount needs the trigger { counterFull }');
     if (!isRecord(per) || per.counter === undefined || Object.keys(per).length !== 1)
       fail(`${path}.perCount`, 'expected { counter }');
     effect.perCount = { counter: oneOf(COUNTER_IDS, per.counter, `${path}.perCount.counter`) };
     if (v.perCountIntervalFrames === undefined) fail(`${path}.perCount`, 'perCount needs perCountIntervalFrames');
     effect.perCountIntervalFrames = parsePositiveInt(v.perCountIntervalFrames, `${path}.perCountIntervalFrames`);
   } else if (v.perCountIntervalFrames !== undefined) fail(`${path}.perCountIntervalFrames`, 'needs perCount');
-  if (counterFull !== undefined && effect.perCount === undefined)
-    fail(`${path}.trigger`, '{ counterFull } needs perCount');
+  if (counterFull && effect.perCount === undefined) fail(`${path}.trigger`, '{ counterFull } needs perCount');
   if (v.delayFrames !== undefined) {
-    if (counterFull === undefined) fail(`${path}.delayFrames`, 'delayFrames needs the trigger { counterFull }');
+    if (!counterFull) fail(`${path}.delayFrames`, 'delayFrames needs the trigger { counterFull }');
     effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
   }
+}
+
+/** 敵の状態のスタック数から取るスタック（stacksFrom）と、マスト編（plan/design-mast.md 2.3 節）の tick ごとに写し直す印・持続ダメージでない印 */
+function parseDotStacks(v: Record<string, Json>, effect: DotEffect, path: string): void {
   if (v.stacksFrom !== undefined) {
     const from = v.stacksFrom;
     if (!isRecord(from) || from.enemyState === undefined || Object.keys(from).length !== 1)
@@ -191,7 +220,6 @@ export function parseDotEffect(v: Record<string, Json>, path: string): DotEffect
       fail(`${path}.stacksFrom`, 'stacksFrom cannot be used with maxStacksRef or perCount');
     effect.stacksFrom = { enemyState: parseNamedStateId(from.enemyState, `${path}.stacksFrom.enemyState`, 'enemy') };
   }
-  // マスト編（plan/design-mast.md 2.3 節）: tick ごとに写し直す印と、持続ダメージでない印
   if (v.copyEachTick !== undefined) {
     if (v.copyEachTick !== true) fail(`${path}.copyEachTick`, 'expected true');
     if (effect.stacksFrom === undefined) fail(`${path}.copyEachTick`, 'copyEachTick needs stacksFrom');
@@ -201,6 +229,10 @@ export function parseDotEffect(v: Record<string, Json>, path: string): DotEffect
     if (v.sustained !== false) fail(`${path}.sustained`, 'expected false (omit it for sustained damage)');
     effect.sustained = false;
   }
+}
+
+/** ゲージ: 付けた時（gaugeOnApply とその遅れ）と刻みごと（gaugeOnTick）。刻みの遅れ（tickDelayFrames）も射撃の回数のきっかけだけ */
+function parseDotGauge(v: Record<string, Json>, effect: DotEffect, path: string): void {
   for (const key of ['gaugeOnApply', 'gaugeOnTick'] as const) {
     if (v[key] === undefined) continue;
     if (v[key] !== true) fail(`${path}.${key}`, 'expected true');
@@ -232,6 +264,4 @@ export function parseDotEffect(v: Record<string, Json>, path: string): DotEffect
   if (effect.gaugeOnTick === true && effect.firstTick !== 'afterInterval') {
     fail(`${path}.gaugeOnTick`, 'needs firstTick afterInterval');
   }
-  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
-  return effect;
 }

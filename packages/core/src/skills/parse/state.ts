@@ -34,11 +34,13 @@ import {
   isRecord,
   type Json,
   oneOf,
+  parseAssumes,
   parseClaimRefs,
-  parseLocalizedText,
   parseNamedStateId,
   parsePositiveInt,
   parseRef,
+  parseTrue,
+  rejectUnknownKeys,
 } from './common.ts';
 import { CONDITION_KEYS_OF, parseCondition, validateUsedBurst } from './condition.ts';
 import { type GrantTimedFields, parseTimedEffect, parseTimedFields } from './timed.ts';
@@ -65,9 +67,7 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
     if (v[key] !== undefined) fail(`${path}.${key}`, `a state grant has no value (write ${key} in contents)`);
   }
   if (v.amplifies !== undefined) fail(`${path}.amplifies`, 'amplifies is not allowed in a state grant');
-  for (const key of Object.keys(v)) {
-    if (!STATE_GRANT_KEYS.includes(key)) fail(`${path}.${key}`, 'unknown field');
-  }
+  rejectUnknownKeys(v, STATE_GRANT_KEYS, path);
   // エレグのバースト編: target: "enemy" は敵に付く状態の付与。敵の件の timed と同じく target: "allies" に読み替えて残りの欄を読む。
   // マスト編（plan/design-mast.md 2.1 節）: スタック（maxStacks・maxStacksRef）は書ける（件は味方の状態と同じ stackItems で作る）
   const onEnemy = v.target === 'enemy';
@@ -158,18 +158,14 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
   }
   // 2 段目の段 1（plan/design-skill-stage1.md 1.3 節）: 解除不可の印
   if (v.undispellable !== undefined) {
-    if (v.undispellable !== true)
-      fail(`${path}.undispellable`, `expected true, got ${JSON.stringify(v.undispellable)}`);
-    effect.undispellable = true;
+    effect.undispellable = parseTrue(v.undispellable, `${path}.undispellable`);
   }
   if (v.stacksFrom !== undefined) {
     // 2 段目の段 10: スタックの数をカウンタの値か、自分の状態のスタック数（PR 3）から取る
     const from = v.stacksFrom;
     if (!isRecord(from) || Object.keys(from).length !== 1)
       fail(`${path}.stacksFrom`, 'expected { counter } or { state }');
-    for (const key of Object.keys(from)) {
-      if (key !== 'counter' && key !== 'state') fail(`${path}.stacksFrom.${key}`, 'unknown field');
-    }
+    rejectUnknownKeys(from, ['counter', 'state'], `${path}.stacksFrom`);
     if (from.state !== undefined) {
       const source = parseNamedStateId(from.state, `${path}.stacksFrom.state`, 'ally');
       if (source === state) fail(`${path}.stacksFrom.state`, `a grant of "${state}" cannot count its own stacks`);
@@ -203,8 +199,7 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
   }
   // ナユタ編（plan/design-nayuta.md 2.5 節）: スタック量増減効果無効（同じ定義の stackChange は validateStackChanges が弾く）
   if (v.stackImmutable !== undefined) {
-    if (v.stackImmutable !== true)
-      fail(`${path}.stackImmutable`, `expected true, got ${JSON.stringify(v.stackImmutable)}`);
+    parseTrue(v.stackImmutable, `${path}.stackImmutable`);
     if (effect.maxStacks === undefined && effect.maxStacksRef === undefined)
       fail(`${path}.stackImmutable`, 'stackImmutable needs maxStacks or maxStacksRef');
     effect.stackImmutable = true;
@@ -398,9 +393,7 @@ function parseStateContentItem(
   if (item.maxStacksUp !== undefined) return parseMaxStacksUpItem(item, grant, path, onEnemy);
   // 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: 「スキル N クールタイム X%▼」（維持の付いた形）
   if (item.skillCooldownDown !== undefined) return parseSkillCooldownDownItem(item, grant, path, onEnemy);
-  for (const key of Object.keys(item)) {
-    if (!['stat', 'ref', 'scaling', 'decrease', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
-  }
+  rejectUnknownKeys(item, ['stat', 'ref', 'scaling', 'decrease', 'claims'], path);
   const timed = parseTimedEffect(contentAsTimed(grant, item), path);
   // HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 9 節）: 発動者の最大HP 基準は、timed の件の列を持ち主ごとに作る時に直すので、
   // 状態の中身には書けない（使い手がいない）
@@ -433,18 +426,14 @@ function parseSkillCooldownDownItem(
   path: string,
   onEnemy: boolean,
 ): SkillCooldownDownContentItem {
-  for (const key of Object.keys(item)) {
-    if (key !== 'skillCooldownDown' && key !== 'claims') fail(`${path}.${key}`, 'unknown field');
-  }
+  rejectUnknownKeys(item, ['skillCooldownDown', 'claims'], path);
   if (onEnemy) fail(`${path}.skillCooldownDown`, 'skillCooldownDown is only allowed in a state of an ally');
   // スタックの数で縮め方が変わるかは確かめていない（1 パス目は付いているかだけを見る）
   if (grant.maxStacks !== undefined || grant.maxStacksRef !== undefined || grant.stacksPerFireRef !== undefined)
     fail(`${path}.skillCooldownDown`, 'skillCooldownDown is not allowed in a stacking grant');
   const down = item.skillCooldownDown;
   if (!isRecord(down)) fail(`${path}.skillCooldownDown`, 'expected { slot, percentRef }');
-  for (const key of Object.keys(down)) {
-    if (key !== 'slot' && key !== 'percentRef') fail(`${path}.skillCooldownDown.${key}`, 'unknown field');
-  }
+  rejectUnknownKeys(down, ['slot', 'percentRef'], `${path}.skillCooldownDown`);
   const slot = oneOf(['skill1', 'skill2'] as const, down.slot, `${path}.skillCooldownDown.slot`);
   const out: SkillCooldownDownContentItem = {
     skillCooldownDown: { slot, percentRef: parseRef(down.percentRef, `${path}.skillCooldownDown.percentRef`) },
@@ -464,16 +453,12 @@ function parseMaxStacksUpItem(
   path: string,
   onEnemy: boolean,
 ): MaxStacksUpContentItem {
-  for (const key of Object.keys(item)) {
-    if (key !== 'maxStacksUp' && key !== 'claims') fail(`${path}.${key}`, 'unknown field');
-  }
+  rejectUnknownKeys(item, ['maxStacksUp', 'claims'], path);
   if (onEnemy || grant.target !== 'self')
     fail(`${path}.maxStacksUp`, 'maxStacksUp is only allowed in a grant on "self"');
   const up = item.maxStacksUp;
   if (!isRecord(up)) fail(`${path}.maxStacksUp`, 'expected { state, amountRef }');
-  for (const key of Object.keys(up)) {
-    if (key !== 'state' && key !== 'amountRef') fail(`${path}.maxStacksUp.${key}`, 'unknown field');
-  }
+  rejectUnknownKeys(up, ['state', 'amountRef'], `${path}.maxStacksUp`);
   const state = parseNamedStateId(up.state, `${path}.maxStacksUp.state`, 'ally');
   if (state === grant.state) fail(`${path}.maxStacksUp.state`, `a state cannot raise its own max stacks (${state})`);
   const out: MaxStacksUpContentItem = {
@@ -534,24 +519,11 @@ export function contentAsTimed(grant: Record<string, Json>, item: Record<string,
 
 /** 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの増減。対象は自分だけ */
 export function parseCounterChangeEffect(v: Record<string, Json>, path: string): CounterChangeEffect {
-  for (const key of Object.keys(v)) {
-    if (
-      ![
-        'kind',
-        'counter',
-        'trigger',
-        'target',
-        'amount',
-        'amountRef',
-        'decrease',
-        'condition',
-        'assumes',
-        'claims',
-      ].includes(key)
-    ) {
-      fail(`${path}.${key}`, 'unknown field');
-    }
-  }
+  rejectUnknownKeys(
+    v,
+    ['kind', 'counter', 'trigger', 'target', 'amount', 'amountRef', 'decrease', 'condition', 'assumes', 'claims'],
+    path,
+  );
   const counter = oneOf(COUNTER_IDS, v.counter, `${path}.counter`);
   let trigger: EffectTrigger | EndedTrigger | CounterFullTrigger;
   const ended = parseEndedTrigger(v.trigger, `${path}.trigger`);
@@ -565,7 +537,9 @@ export function parseCounterChangeEffect(v: Record<string, Json>, path: string):
   } else {
     // 同（論点 2）: 状態の付いた時から数える周期（変身の間 0.2 秒ごとの▼）。2 段目の段 16 の PR 1（plan/design-skill-stage16.md 2.1 節）:
     // 時間の周期のきっかけも（千束の超感覚の 2 秒ごとの▼）
-    trigger = parseSinceTimerTrigger(v.trigger, `${path}.trigger`) ?? parseTrigger(v.trigger, `${path}.trigger`, true);
+    trigger =
+      parseSinceTimerTrigger(v.trigger, `${path}.trigger`) ??
+      parseTrigger(v.trigger, `${path}.trigger`, { timer: true });
   }
   if (v.target !== 'self') fail(`${path}.target`, `expected "self", got ${JSON.stringify(v.target)}`);
   const effect: CounterChangeEffect = { kind: 'counterChange', counter, trigger, target: 'self' };
@@ -574,8 +548,7 @@ export function parseCounterChangeEffect(v: Record<string, Json>, path: string):
   if (v.amount !== undefined) effect.amount = parsePositiveInt(v.amount, `${path}.amount`);
   else effect.amountRef = parseRef(v.amountRef, `${path}.amountRef`);
   if (v.decrease !== undefined) {
-    if (v.decrease !== true) fail(`${path}.decrease`, `expected true, got ${JSON.stringify(v.decrease)}`);
-    effect.decrease = true;
+    effect.decrease = parseTrue(v.decrease, `${path}.decrease`);
   }
   if (v.condition !== undefined) {
     effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.counterChange, true);
@@ -585,7 +558,7 @@ export function parseCounterChangeEffect(v: Record<string, Json>, path: string):
       fail(`${path}.condition.selfState`, 'a stack count condition is not supported in counterChange (only presence)');
     }
   }
-  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  parseAssumes(v, effect, path);
   return effect;
 }
 
@@ -594,25 +567,23 @@ export function parseCounterChangeEffect(v: Record<string, Json>, path: string):
  * 同じ。同じ定義にその状態をスタックで付ける付与が要ること（validateStackChanges）は、定義全体で見る
  */
 export function parseStackChangeEffect(v: Record<string, Json>, path: string): StackChangeEffect {
-  for (const key of Object.keys(v)) {
-    if (
-      ![
-        'kind',
-        'state',
-        'trigger',
-        'target',
-        'amount',
-        'amountRef',
-        'decrease',
-        'closesAtZero',
-        'condition',
-        'assumes',
-        'claims',
-      ].includes(key)
-    ) {
-      fail(`${path}.${key}`, 'unknown field');
-    }
-  }
+  rejectUnknownKeys(
+    v,
+    [
+      'kind',
+      'state',
+      'trigger',
+      'target',
+      'amount',
+      'amountRef',
+      'decrease',
+      'closesAtZero',
+      'condition',
+      'assumes',
+      'claims',
+    ],
+    path,
+  );
   if (v.target !== 'self' && v.target !== 'enemy') {
     fail(
       `${path}.target`,
@@ -622,7 +593,7 @@ export function parseStackChangeEffect(v: Record<string, Json>, path: string): S
   const target = v.target;
   const state = parseNamedStateId(v.state, `${path}.state`, target === 'enemy' ? 'enemy' : 'ally');
   // 2 段目の段 13 の PR 3: 敵の持続ダメージのスタック量▲は、フルバーストの中の命中を数える（during）
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`, false, target === 'enemy');
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, { during: target === 'enemy' });
   const effect: StackChangeEffect = { kind: 'stackChange', state, trigger, target };
   if ((v.amount === undefined) === (v.amountRef === undefined))
     fail(path, 'expected exactly one of amount and amountRef');
@@ -630,12 +601,11 @@ export function parseStackChangeEffect(v: Record<string, Json>, path: string): S
   else effect.amountRef = parseRef(v.amountRef, `${path}.amountRef`);
   // 2 段目の段 3（plan/design-skill-stage3.md 1.5 節）: スタック量の減少
   if (v.decrease !== undefined) {
-    if (v.decrease !== true) fail(`${path}.decrease`, `expected true, got ${JSON.stringify(v.decrease)}`);
-    effect.decrease = true;
+    effect.decrease = parseTrue(v.decrease, `${path}.decrease`);
   }
   // 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。論点 6）: 減少で 0 になったら件を閉じる（使用回数を使い切った時）
   if (v.closesAtZero !== undefined) {
-    if (v.closesAtZero !== true) fail(`${path}.closesAtZero`, `expected true, got ${JSON.stringify(v.closesAtZero)}`);
+    parseTrue(v.closesAtZero, `${path}.closesAtZero`);
     if (!effect.decrease || target !== 'self')
       fail(`${path}.closesAtZero`, 'closesAtZero needs decrease on target "self"');
     effect.closesAtZero = true;
@@ -652,7 +622,7 @@ export function parseStackChangeEffect(v: Record<string, Json>, path: string): S
     validateUsedBurst(condition, trigger, `${path}.condition`);
     effect.condition = condition;
   }
-  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  parseAssumes(v, effect, path);
   return effect;
 }
 
@@ -662,13 +632,9 @@ export function parseStackChangeEffect(v: Record<string, Json>, path: string): S
  * f の判定には付いている）
  */
 export function parseRemoveStateEffect(v: Record<string, Json>, path: string): RemoveStateEffect {
-  for (const key of Object.keys(v)) {
-    if (!['kind', 'state', 'trigger', 'target', 'condition', 'assumes', 'claims'].includes(key)) {
-      fail(`${path}.${key}`, 'unknown field');
-    }
-  }
+  rejectUnknownKeys(v, ['kind', 'state', 'trigger', 'target', 'condition', 'assumes', 'claims'], path);
   const state = parseNamedStateId(v.state, `${path}.state`, 'ally');
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`, false, false, false, false, false, true);
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, { reloadEnd: true });
   if (v.target !== 'self') {
     fail(
       `${path}.target`,
@@ -683,7 +649,7 @@ export function parseRemoveStateEffect(v: Record<string, Json>, path: string): R
     validateUsedBurst(condition, trigger, `${path}.condition`);
     effect.condition = condition;
   }
-  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  parseAssumes(v, effect, path);
   return effect;
 }
 
@@ -692,24 +658,12 @@ export function parseRemoveStateEffect(v: Record<string, Json>, path: string): R
  * きっかけにだけ書ける
  */
 export function parseRemoveDebuffEffect(v: Record<string, Json>, path: string): RemoveDebuffEffect {
-  for (const key of Object.keys(v)) {
-    if (
-      ![
-        'kind',
-        'trigger',
-        'target',
-        'count',
-        'targetCount',
-        'targetCountRef',
-        'delayFrames',
-        'assumes',
-        'claims',
-      ].includes(key)
-    ) {
-      fail(`${path}.${key}`, 'unknown field');
-    }
-  }
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`, true);
+  rejectUnknownKeys(
+    v,
+    ['kind', 'trigger', 'target', 'count', 'targetCount', 'targetCountRef', 'delayFrames', 'assumes', 'claims'],
+    path,
+  );
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, { timer: true });
   const target = oneOf(['allies', 'debuffedRandom'] as const, v.target, `${path}.target`);
   const effect: RemoveDebuffEffect = {
     kind: 'removeDebuff',
@@ -720,7 +674,7 @@ export function parseRemoveDebuffEffect(v: Record<string, Json>, path: string): 
   };
   const delayFrames = parseTimerDelayFrames(v.delayFrames, trigger, `${path}.delayFrames`);
   if (delayFrames !== undefined) effect.delayFrames = delayFrames;
-  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  parseAssumes(v, effect, path);
   return effect;
 }
 
@@ -729,10 +683,7 @@ export function parseRemoveDebuffEffect(v: Record<string, Json>, path: string): 
  * 対象は敵。解除不可の件も閉じる
  */
 export function parseCancelStateEffect(v: Record<string, Json>, path: string): CancelStateEffect {
-  for (const key of Object.keys(v)) {
-    if (!['kind', 'state', 'trigger', 'target', 'condition', 'assumes', 'claims'].includes(key))
-      fail(`${path}.${key}`, 'unknown field');
-  }
+  rejectUnknownKeys(v, ['kind', 'state', 'trigger', 'target', 'condition', 'assumes', 'claims'], path);
   // ミント・プリカ編（plan/design-mint-prika.md 2.1 節）: self は自分の状態の消去（解除と同じ書き方。解除不可の件も閉じる）
   if (v.target === 'self') {
     const { kind: _, ...rest } = parseRemoveStateEffect({ ...v, kind: 'removeState' }, path);
@@ -743,7 +694,7 @@ export function parseCancelStateEffect(v: Record<string, Json>, path: string): C
   const state = parseNamedStateId(v.state, `${path}.state`, 'enemy');
   const trigger = parseTrigger(v.trigger, `${path}.trigger`);
   const effect: CancelStateEffect = { kind: 'cancelState', state, trigger, target: 'enemy' };
-  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  parseAssumes(v, effect, path);
   return effect;
 }
 
@@ -752,10 +703,7 @@ export function parseCancelStateEffect(v: Record<string, Json>, path: string): C
  * 自分の状態だけ
  */
 export function parseStateExtendEffect(v: Record<string, Json>, path: string): StateExtendEffect {
-  for (const key of Object.keys(v)) {
-    if (!['kind', 'state', 'trigger', 'target', 'secondsRef', 'condition', 'assumes', 'claims'].includes(key))
-      fail(`${path}.${key}`, 'unknown field');
-  }
+  rejectUnknownKeys(v, ['kind', 'state', 'trigger', 'target', 'secondsRef', 'condition', 'assumes', 'claims'], path);
   const state = parseNamedStateId(v.state, `${path}.state`, 'ally');
   const trigger = parseAppliedTrigger(v.trigger, `${path}.trigger`) ?? parseTrigger(v.trigger, `${path}.trigger`);
   if (isAppliedTrigger(trigger) && trigger.applied === state)
@@ -770,6 +718,6 @@ export function parseStateExtendEffect(v: Record<string, Json>, path: string): S
   };
   if (v.condition !== undefined)
     effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.selfStateOnly);
-  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  parseAssumes(v, effect, path);
   return effect;
 }

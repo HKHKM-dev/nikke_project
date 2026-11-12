@@ -11,7 +11,7 @@ import {
   type SkillNote,
   type Unknown,
 } from '../types.ts';
-import { fail, isRecord, type Json, oneOf, parseClaimRefs, parseLocalizedText } from './common.ts';
+import { fail, isRecord, type Json, oneOf, parseClaimRefs, parseLocalizedText, rejectUnknownKeys } from './common.ts';
 
 export function parseNote(v: Json, path: string): SkillNote {
   const text = parseLocalizedText(v, path);
@@ -40,10 +40,7 @@ export function parseNote(v: Json, path: string): SkillNote {
     if (note.refers !== undefined) fail(`${path}.reads`, 'a modeling note with refers: write reads in the effect');
     note.reads = parseIndirectReads(v.reads, `${path}.reads`);
   }
-  for (const key of Object.keys(v)) {
-    if (!['ja', 'en', 'kind', 'claims', 'refers', 'effect', 'path', 'reads'].includes(key))
-      fail(`${path}.${key}`, 'unknown field');
-  }
+  rejectUnknownKeys(v, ['ja', 'en', 'kind', 'claims', 'refers', 'effect', 'path', 'reads'], path);
   return note;
 }
 
@@ -62,8 +59,7 @@ export const NOTE_REFERS = /^effects\[(\d+)\]$/;
 /** notes の effect（plan/design-minimal-relevance.md 3.3 節）。各欄は語彙か 'unknown' */
 function parseNoteEffect(v: Json, path: string): NoteEffect {
   if (!isRecord(v)) fail(path, 'expected an object');
-  for (const key of Object.keys(v))
-    if (!['kind', 'stat', 'target', 'trigger'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+  rejectUnknownKeys(v, ['kind', 'stat', 'target', 'trigger'], path);
   const orUnknown = <T extends string>(allowed: readonly T[], value: Json, at: string): T | Unknown =>
     value === 'unknown' ? 'unknown' : oneOf(allowed, value, at);
   const effect: NoteEffect = { kind: orUnknown(SKILL_EFFECT_KINDS, v.kind, `${path}.kind`) };

@@ -9,38 +9,43 @@ import {
   type SkillSlot,
   type SummonEffect,
 } from '../types.ts';
-import { fail, type Json, oneOf, parseDuration, parseLocalizedText, parseRef } from './common.ts';
+import {
+  assertPositiveFinite,
+  fail,
+  type Json,
+  oneOf,
+  parseAssumes,
+  parseDuration,
+  parseRef,
+  rejectUnknownKeys,
+} from './common.ts';
 import { parseAppliedTrigger, parseTrigger } from './trigger.ts';
 
 /** アニス：スター S2・バースト編: 周期の自動攻撃。検証の規則は dot の同じ欄と同じ */
 export function parseAutoAttackEffect(v: Record<string, Json>, path: string): AutoAttackEffect {
-  for (const key of Object.keys(v)) {
-    if (
-      ![
-        'kind',
-        'trigger',
-        'ref',
-        'intervalSeconds',
-        'durationRef',
-        'durationSeconds',
-        'firstTick',
-        'gaugePerHit',
-        'projectileExplosion',
-        'core',
-        'assumes',
-        'claims',
-      ].includes(key)
-    ) {
-      fail(`${path}.${key}`, 'unknown field');
-    }
-  }
+  rejectUnknownKeys(
+    v,
+    [
+      'kind',
+      'trigger',
+      'ref',
+      'intervalSeconds',
+      'durationRef',
+      'durationSeconds',
+      'firstTick',
+      'gaugePerHit',
+      'projectileExplosion',
+      'core',
+      'assumes',
+      'claims',
+    ],
+    path,
+  );
   const interval = v.intervalSeconds;
-  if (typeof interval !== 'number' || !Number.isFinite(interval) || interval <= 0) {
-    fail(`${path}.intervalSeconds`, `expected a positive finite number, got ${JSON.stringify(interval)}`);
-  }
+  assertPositiveFinite(interval, `${path}.intervalSeconds`);
   const effect: AutoAttackEffect = {
     kind: 'autoAttack',
-    trigger: parseTrigger(v.trigger, `${path}.trigger`, true),
+    trigger: parseTrigger(v.trigger, `${path}.trigger`, { timer: true }),
     ref: parseRef(v.ref, `${path}.ref`),
     intervalSeconds: interval,
     ...parseDuration(v, path),
@@ -72,7 +77,7 @@ export function parseAutoAttackEffect(v: Record<string, Json>, path: string): Au
     if (v.core !== true) fail(`${path}.core`, 'expected true');
     effect.core = true;
   }
-  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  parseAssumes(v, effect, path);
   return effect;
 }
 
@@ -81,11 +86,7 @@ export function parseAutoAttackEffect(v: Record<string, Json>, path: string): Au
  * （burst スロットだけ。framesOnLastShot は書けない。plan/design-privaty-burst-pause.md 2 節）
  */
 export function parseShotPauseEffect(v: Record<string, Json>, path: string, slot: SkillSlot): ShotPauseEffect {
-  for (const key of Object.keys(v)) {
-    if (!['kind', 'trigger', 'frames', 'framesOnLastShot', 'assumes', 'claims'].includes(key)) {
-      fail(`${path}.${key}`, 'unknown field');
-    }
-  }
+  rejectUnknownKeys(v, ['kind', 'trigger', 'frames', 'framesOnLastShot', 'assumes', 'claims'], path);
   let trigger: ShotPauseEffect['trigger'];
   const applied = parseAppliedTrigger(v.trigger, `${path}.trigger`);
   if (applied !== undefined) {
@@ -115,15 +116,13 @@ export function parseShotPauseEffect(v: Record<string, Json>, path: string, slot
   if (v.framesOnLastShot !== undefined) {
     effect.framesOnLastShot = positive(v.framesOnLastShot, `${path}.framesOnLastShot`);
   }
-  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  parseAssumes(v, effect, path);
   return effect;
 }
 
 /** アインのニアフェザー編（plan/design-ein-near-feather.md 1.1 節）: 召喚の展開。burstUse はバーストにだけ書ける */
 export function parseSummonEffect(v: Record<string, Json>, path: string, slot: SkillSlot): SummonEffect {
-  for (const key of Object.keys(v))
-    if (!['kind', 'summon', 'trigger', 'lifetimesSeconds', 'assumes', 'claims'].includes(key))
-      fail(`${path}.${key}`, 'unknown field');
+  rejectUnknownKeys(v, ['kind', 'summon', 'trigger', 'lifetimesSeconds', 'assumes', 'claims'], path);
   const summon = oneOf(SUMMON_IDS, v.summon, `${path}.summon`);
   const trigger = oneOf(['battleStart', 'burstUse'] as const, v.trigger, `${path}.trigger`);
   if (trigger === 'burstUse' && slot !== 'burst') fail(`${path}.trigger`, 'burstUse is only allowed in burst');
@@ -137,6 +136,6 @@ export function parseSummonEffect(v: Record<string, Json>, path: string, slot: S
     return x;
   });
   const effect: SummonEffect = { kind: 'summon', summon, trigger, lifetimesSeconds };
-  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  parseAssumes(v, effect, path);
   return effect;
 }

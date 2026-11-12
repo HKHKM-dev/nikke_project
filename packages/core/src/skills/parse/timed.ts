@@ -41,11 +41,12 @@ import {
   type Json,
   objectUntil,
   oneOf,
+  parseAssumes,
   parseDuration,
-  parseLocalizedText,
   parseNamedStateId,
   parsePositiveInt,
   parseRef,
+  parseTrue,
 } from './common.ts';
 import {
   CONDITION_KEYS_OF,
@@ -155,7 +156,7 @@ function validateAttackSpeed(stat: BuffStat, target: BuffTarget, v: Record<strin
 /** Stage 11 モダニア: decrease（「▼」）は true だけ・scaling が ratio / flat のときだけ */
 function parseDecrease(v: Record<string, Json>, scaling: BuffScaling | undefined, path: string): boolean {
   if (v.decrease === undefined) return false;
-  if (v.decrease !== true) fail(`${path}.decrease`, `expected true, got ${JSON.stringify(v.decrease)}`);
+  parseTrue(v.decrease, `${path}.decrease`);
   if (scaling !== undefined && scaling !== 'ratio' && scaling !== 'flat') {
     fail(`${path}.decrease`, `only allowed with scaling "ratio" or "flat", got "${scaling}"`);
   }
@@ -234,16 +235,12 @@ export function parseTimedFields(
       : (parseCoverHealedTrigger(v.trigger, `${path}.trigger`) ??
         parseSelfHpAtMostTrigger(v.trigger, `${path}.trigger`))) ??
     // グレイブ編（同 2.4 節）: 自分の状態の間だけ数える窓（during: { state }）は状態の付与だけ
-    parseTrigger(
-      v.trigger,
-      `${path}.trigger`,
-      'withStart',
-      stat === undefined ? 'withState' : true,
-      allowChance,
-      false,
-      false,
-      true,
-    );
+    parseTrigger(v.trigger, `${path}.trigger`, {
+      timer: 'withStart',
+      during: stat === undefined ? 'withState' : true,
+      chance: allowChance,
+      reloadEnd: true,
+    });
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   if (target === 'lowestHpRatio') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);
   // 同: { applied } の効果は順位の対象・強化を書けない（使い手がいない。論点 6）。ミント・プリカ編（plan/design-mint-prika.md 2.3 節）:
@@ -467,7 +464,7 @@ export function parseTimedFields(
     validateFixedChargeTime(timed, path);
     validateChanceTimed(timed, path);
   }
-  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  parseAssumes(v, effect, path);
   return effect;
 }
 
@@ -754,6 +751,6 @@ export function parsePassiveEffect(v: Record<string, Json>, path: string): Passi
     if (isFirstPassTrackedStat(stat) && stat !== 'attack' && stat !== 'defense')
       fail(at, `selfHp is not supported for "${stat}" (it moves the HP ratio, or the first pass reads it at a shot)`);
   }
-  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  parseAssumes(v, effect, path);
   return effect;
 }

@@ -8,14 +8,12 @@ import {
   isShotCountTrigger,
   isTimerTrigger,
 } from '../types.ts';
-import { fail, type Json, oneOf, parseLocalizedText } from './common.ts';
+import { fail, type Json, oneOf, parseAssumes, parseLocalizedText, rejectUnknownKeys } from './common.ts';
 import { parseTrigger } from './trigger.ts';
 
 export function parseBurstGaugeHitEffect(v: Record<string, Json>, path: string): BurstGaugeHitEffect {
-  for (const key of Object.keys(v)) {
-    if (!['kind', 'trigger', 'delayFrames', 'assumes', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
-  }
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`, true);
+  rejectUnknownKeys(v, ['kind', 'trigger', 'delayFrames', 'assumes', 'claims'], path);
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, { timer: true });
   // モラン編（plan/design-moran.md 2 節）: 射撃の回数のトリガーも書ける。during・chance は parseTrigger が弾く
   if (!isTimerTrigger(trigger) && !isShotCountTrigger(trigger)) {
     fail(
@@ -36,45 +34,35 @@ export function parseBurstGaugeHitEffect(v: Record<string, Json>, path: string):
     }
     effect.delayFrames = d;
   }
-  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  parseAssumes(v, effect, path);
   return effect;
 }
 
 export function parseBurstReentryEffect(v: Record<string, Json>, path: string): BurstReentryEffect {
-  for (const key of Object.keys(v)) {
-    if (!['kind', 'step', 'burstStepMix', 'squad', 'assumes', 'claims'].includes(key)) {
-      fail(`${path}.${key}`, 'unknown field');
-    }
-  }
+  rejectUnknownKeys(v, ['kind', 'step', 'burstStepMix', 'squad', 'assumes', 'claims'], path);
   const effect: BurstReentryEffect = { kind: 'burstReentry', step: oneOf(BASIC_BURST_STEPS, v.step, `${path}.step`) };
-  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  parseAssumes(v, effect, path);
   return effect;
 }
 
 export function parseBurstStepChangeEffect(v: Record<string, Json>, path: string): BurstStepChangeEffect {
-  for (const key of Object.keys(v)) {
-    if (!['kind', 'step', 'name', 'burstStepMix', 'squad', 'assumes', 'claims'].includes(key)) {
-      fail(`${path}.${key}`, 'unknown field');
-    }
-  }
+  rejectUnknownKeys(v, ['kind', 'step', 'name', 'burstStepMix', 'squad', 'assumes', 'claims'], path);
   const effect: BurstStepChangeEffect = {
     kind: 'burstStepChange',
     step: oneOf(BASIC_BURST_STEPS, v.step, `${path}.step`),
   };
   if (v.name !== undefined) effect.name = parseLocalizedText(v.name, `${path}.name`);
-  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  parseAssumes(v, effect, path);
   return effect;
 }
 
 export function parseAllyGaugeAddEffect(v: Record<string, Json>, path: string): AllyGaugeAddEffect {
-  for (const key of Object.keys(v)) {
-    if (!['kind', 'ref', 'assumes', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
-  }
+  rejectUnknownKeys(v, ['kind', 'ref', 'assumes', 'claims'], path);
   const ref = v.ref;
   if (typeof ref !== 'number' || !Number.isInteger(ref) || ref < 1) {
     fail(`${path}.ref`, `expected a positive integer, got ${JSON.stringify(ref)}`);
   }
   const effect: AllyGaugeAddEffect = { kind: 'allyGaugeAdd', ref };
-  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  parseAssumes(v, effect, path);
   return effect;
 }

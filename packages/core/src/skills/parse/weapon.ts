@@ -1,52 +1,53 @@
 // スキル定義の読み込みの検査のうち、使用武器の変更（weaponChange）の読み込み。型は ../types.ts
 import type { WeaponChangeEffect } from '../types.ts';
 import {
+  assertPositiveFinite,
   fail,
   type Json,
+  parseAssumes,
   parseDuration,
-  parseLocalizedText,
   parseNamedStateId,
   parseNonNegativeInt,
   parsePositiveInt,
   parseRef,
+  parseTrue,
+  rejectUnknownKeys,
 } from './common.ts';
 import { CONDITION_KEYS_OF, parseCondition, validateBurstStep } from './condition.ts';
 import { parseTrigger } from './trigger.ts';
 
 /** Stage 11 モダニア: 使用武器の変更 */
 export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponChangeEffect {
-  for (const key of Object.keys(v)) {
-    if (
-      ![
-        'kind',
-        'trigger',
-        'damageRef',
-        'hitsPerShot',
-        'trueDamage',
-        'projectileExplosion',
-        'pierce',
-        'shotCount',
-        'chargeTimeSeconds',
-        'chargeTimeFixed',
-        'fullChargeDamage',
-        'chargeReleaseSeconds',
-        'maxAmmoRef',
-        'durationRef',
-        'durationSeconds',
-        'rateOfFire',
-        'instantFire',
-        'firstShotDelayFrames',
-        'firstShotAfterSwapFrames',
-        'infiniteAmmo',
-        'state',
-        'condition',
-        'assumes',
-        'claims',
-      ].includes(key)
-    ) {
-      fail(`${path}.${key}`, 'unknown field');
-    }
-  }
+  rejectUnknownKeys(
+    v,
+    [
+      'kind',
+      'trigger',
+      'damageRef',
+      'hitsPerShot',
+      'trueDamage',
+      'projectileExplosion',
+      'pierce',
+      'shotCount',
+      'chargeTimeSeconds',
+      'chargeTimeFixed',
+      'fullChargeDamage',
+      'chargeReleaseSeconds',
+      'maxAmmoRef',
+      'durationRef',
+      'durationSeconds',
+      'rateOfFire',
+      'instantFire',
+      'firstShotDelayFrames',
+      'firstShotAfterSwapFrames',
+      'infiniteAmmo',
+      'state',
+      'condition',
+      'assumes',
+      'claims',
+    ],
+    path,
+  );
   // 使用武器変更の武器のパラメータ編: 最大装弾数を書いた変更は撃ち切りで終わる（維持の欄を書かない。design-true-damage-element.md 9 節）
   const untilEmpty = v.maxAmmoRef !== undefined;
   if (untilEmpty && (v.durationRef !== undefined || v.durationSeconds !== undefined)) {
@@ -58,37 +59,30 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
   const effect: WeaponChangeEffect = {
     kind: 'weaponChange',
     // 2 段目の段 11: 状態のフルスタックで起こす変更（plan/design-skill-stage11.md 2.1 節）
-    trigger: parseTrigger(v.trigger, `${path}.trigger`, false, false, false, true),
+    trigger: parseTrigger(v.trigger, `${path}.trigger`, { fullStack: true }),
     damageRef: parseRef(v.damageRef, `${path}.damageRef`),
     ...(untilEmpty ? { maxAmmoRef: parseRef(v.maxAmmoRef, `${path}.maxAmmoRef`) } : parseDuration(v, path)),
   };
   if (v.chargeTimeSeconds !== undefined) {
     const seconds = v.chargeTimeSeconds;
-    if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
-      fail(`${path}.chargeTimeSeconds`, `expected a positive finite number, got ${JSON.stringify(seconds)}`);
-    }
+    assertPositiveFinite(seconds, `${path}.chargeTimeSeconds`);
     effect.chargeTimeSeconds = seconds;
   }
   // ナユタ編（plan/design-nayuta.md 2.4 節）: チャージ時間の固定（チャージ速度▲を受けない）
   if (v.chargeTimeFixed !== undefined) {
-    if (v.chargeTimeFixed !== true)
-      fail(`${path}.chargeTimeFixed`, `expected true, got ${JSON.stringify(v.chargeTimeFixed)}`);
+    parseTrue(v.chargeTimeFixed, `${path}.chargeTimeFixed`);
     if (effect.chargeTimeSeconds === undefined)
       fail(`${path}.chargeTimeFixed`, 'chargeTimeFixed needs chargeTimeSeconds');
     effect.chargeTimeFixed = true;
   }
   if (v.fullChargeDamage !== undefined) {
     const percent = v.fullChargeDamage;
-    if (typeof percent !== 'number' || !Number.isFinite(percent) || percent <= 0) {
-      fail(`${path}.fullChargeDamage`, `expected a positive finite number, got ${JSON.stringify(percent)}`);
-    }
+    assertPositiveFinite(percent, `${path}.fullChargeDamage`);
     effect.fullChargeDamage = percent;
   }
   if (v.chargeReleaseSeconds !== undefined) {
     const seconds = v.chargeReleaseSeconds;
-    if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
-      fail(`${path}.chargeReleaseSeconds`, `expected a positive finite number, got ${JSON.stringify(seconds)}`);
-    }
+    assertPositiveFinite(seconds, `${path}.chargeReleaseSeconds`);
     effect.chargeReleaseSeconds = seconds;
   }
   if (v.hitsPerShot !== undefined) effect.hitsPerShot = parsePositiveInt(v.hitsPerShot, `${path}.hitsPerShot`);
@@ -101,7 +95,7 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
   // 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: CDN に無い変更後の武器の形（録画で読む即値）
   if (v.rateOfFire !== undefined) effect.rateOfFire = parsePositiveInt(v.rateOfFire, `${path}.rateOfFire`);
   if (v.instantFire !== undefined) {
-    if (v.instantFire !== true) fail(`${path}.instantFire`, `expected true, got ${JSON.stringify(v.instantFire)}`);
+    parseTrue(v.instantFire, `${path}.instantFire`);
     if (effect.chargeTimeSeconds !== undefined || effect.fullChargeDamage !== undefined) {
       fail(`${path}.instantFire`, 'instantFire cannot be combined with chargeTimeSeconds or fullChargeDamage');
     }
@@ -121,15 +115,14 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
   }
 
   if (v.infiniteAmmo !== undefined) {
-    if (v.infiniteAmmo !== true) fail(`${path}.infiniteAmmo`, `expected true, got ${JSON.stringify(v.infiniteAmmo)}`);
+    parseTrue(v.infiniteAmmo, `${path}.infiniteAmmo`);
     if (untilEmpty) fail(`${path}.infiniteAmmo`, 'infiniteAmmo cannot be combined with maxAmmoRef');
     effect.infiniteAmmo = true;
   }
   // ツバイ編（plan/design-zwei.md 2.1 節）: 追加効果「貫通特化」（pierce）も、true だけを受ける旗
   for (const key of ['trueDamage', 'projectileExplosion', 'pierce'] as const) {
     if (v[key] === undefined) continue;
-    if (v[key] !== true) fail(`${path}.${key}`, `expected true, got ${JSON.stringify(v[key])}`);
-    effect[key] = true;
+    effect[key] = parseTrue(v[key], `${path}.${key}`);
   }
   // ツバイ編（plan/design-zwei.md 2.2 節）: 持ち替えた武器の弾の数（録画で読む即値）
   if (v.shotCount !== undefined) effect.shotCount = parsePositiveInt(v.shotCount, `${path}.shotCount`);
@@ -139,6 +132,6 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
       fail(`${path}.state`, 'state cannot be combined with maxAmmoRef (the window ends on the last shot)');
     effect.state = parseNamedStateId(v.state, `${path}.state`, 'ally');
   }
-  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  parseAssumes(v, effect, path);
   return effect;
 }

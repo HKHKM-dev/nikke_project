@@ -12,19 +12,18 @@ import {
   isRecord,
   type Json,
   oneOf,
+  parseAssumes,
   parseDuration,
   parseGaugeHits,
-  parseLocalizedText,
   parsePositiveInt,
   parseRef,
+  rejectUnknownKeys,
 } from './common.ts';
 import { parseTrigger } from './trigger.ts';
 
 /** Stage 11 紅蓮BS: 段の循環 */
 export function parseCycleEffect(v: Record<string, Json>, path: string): CycleEffect {
-  for (const key of Object.keys(v)) {
-    if (!['kind', 'trigger', 'steps', 'assumes', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
-  }
+  rejectUnknownKeys(v, ['kind', 'trigger', 'steps', 'assumes', 'claims'], path);
   const trigger = parseTrigger(v.trigger, `${path}.trigger`);
   if (!isShotCountTrigger(trigger)) fail(`${path}.trigger`, 'a cycle needs a shot count trigger');
   if (trigger.count === 'lastShot') fail(`${path}.trigger.count`, 'lastShot is not allowed in a cycle');
@@ -35,11 +34,7 @@ export function parseCycleEffect(v: Record<string, Json>, path: string): CycleEf
   const steps = v.steps.map((raw, i): CycleStep => {
     const stepPath = `${path}.steps[${i}]`;
     if (!isRecord(raw)) fail(stepPath, 'expected an object');
-    for (const key of Object.keys(raw)) {
-      if (!['kind', 'ref', 'damageType', 'gaugeHits', 'delayFrames', 'assumes'].includes(key)) {
-        fail(`${stepPath}.${key}`, 'unknown field');
-      }
-    }
+    rejectUnknownKeys(raw, ['kind', 'ref', 'damageType', 'gaugeHits', 'delayFrames', 'assumes'], stepPath);
     if (raw.kind !== 'damage') fail(`${stepPath}.kind`, `expected "damage", got ${JSON.stringify(raw.kind)}`);
     const step: CycleStep = {
       kind: 'damage',
@@ -48,34 +43,32 @@ export function parseCycleEffect(v: Record<string, Json>, path: string): CycleEf
     };
     if (raw.gaugeHits !== undefined) step.gaugeHits = parseGaugeHits(raw.gaugeHits, `${stepPath}.gaugeHits`, 1);
     if (raw.delayFrames !== undefined) step.delayFrames = parsePositiveInt(raw.delayFrames, `${stepPath}.delayFrames`);
-    if (raw.assumes !== undefined) step.assumes = parseLocalizedText(raw.assumes, `${stepPath}.assumes`);
+    parseAssumes(raw, step, stepPath);
     return step;
   });
   const effect: CycleEffect = { kind: 'cycle', trigger, steps };
-  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  parseAssumes(v, effect, path);
   return effect;
 }
 
 /** Stage 11 紅蓮BS: 循環の間隔の変更。slot に cycle がちょうど 1 つあるかは定義全体で見る（validateCycles） */
 export function parseCycleEveryEffect(v: Record<string, Json>, path: string): CycleEveryEffect {
-  for (const key of Object.keys(v)) {
-    if (
-      ![
-        'kind',
-        'trigger',
-        'slot',
-        'every',
-        'decreaseRef',
-        'burstStepMix',
-        'durationRef',
-        'durationSeconds',
-        'assumes',
-        'claims',
-      ].includes(key)
-    ) {
-      fail(`${path}.${key}`, 'unknown field');
-    }
-  }
+  rejectUnknownKeys(
+    v,
+    [
+      'kind',
+      'trigger',
+      'slot',
+      'every',
+      'decreaseRef',
+      'burstStepMix',
+      'durationRef',
+      'durationSeconds',
+      'assumes',
+      'claims',
+    ],
+    path,
+  );
   const trigger = parseTrigger(v.trigger, `${path}.trigger`);
   // 自分の射撃で自分の循環を速めると判定が循環するので、射撃の回数トリガーは書けない（plan/design-stage11-scarlet-bs.md 2.2 節）
   if (isShotCountTrigger(trigger)) fail(`${path}.trigger`, 'cycleEvery cannot be triggered by a shot count');
@@ -90,6 +83,6 @@ export function parseCycleEveryEffect(v: Record<string, Json>, path: string): Cy
       : { decreaseRef: parseRef(v.decreaseRef, `${path}.decreaseRef`) }),
     ...parseDuration(v, path),
   };
-  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  parseAssumes(v, effect, path);
   return effect;
 }
