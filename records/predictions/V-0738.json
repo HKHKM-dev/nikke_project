@@ -1,0 +1,139 @@
+{
+  "verification": "V-0738",
+  "note": "読み直し（撮影なし）。録画 0896・0897: リター（82・I・AI。1 枠目）+ マスト（350・II・操作。2 枠目）。射撃場 3 分・灼熱タブの BigArms・スペック固定 ON・オート射撃 ON・オートバースト ON。III を置かないのでフルバーストにならない（V-0623 の撮影 B）",
+  "team": [
+    {
+      "rid": 82,
+      "controlled": false
+    },
+    {
+      "rid": 350,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル。マストの S2 のクリティカル確率▲（戦闘開始から 30 秒）とバーストの最大HP のみ▲（発動者基準・7 秒）は、自分と、自分を除く最終攻撃力が最も高い味方（リター）に付く"
+    },
+    {
+      "id": "H1",
+      "note": "S2 のクリティカル確率▲とバーストの最大HP のみ▲ は、マスト自身にだけ付く（リターの分を外す）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 350,
+            "skill": "skill2",
+            "index": 1
+          },
+          {
+            "rid": 350,
+            "skill": "burst",
+            "index": 4
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "B-liter-crit-in",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 0.05
+      },
+      "note": "リターの通常攻撃の会心率（約 10 秒。S2 の▲の 30 秒の中）。録画では、最初の発から 30 秒のリターの会心の発の割合"
+    },
+    {
+      "id": "B-liter-crit-out",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 3600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 0.05
+      },
+      "note": "リターの通常攻撃の会心率（約 60 秒。S2 の▲の切れた後）。録画では、30 秒より後のリターの会心の発の割合"
+    },
+    {
+      "id": "B-mast-crit-in",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 2,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 0.05
+      },
+      "note": "マストの通常攻撃の会心率（約 10 秒。S2 の▲の中）。2 人の発が同じフレームに重なって分けられないときは、リターと足した割合で比べる"
+    },
+    {
+      "id": "B-mast-crit-out",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 2,
+        "frame": 3600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 0.05
+      },
+      "note": "マストの通常攻撃の会心率（約 60 秒。S2 の▲の切れた後）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-12",
+    "commit": "4ae72fc547bea2c9ba5adf3cfbc76bbc16615a19",
+    "values": {
+      "H0": {
+        "B-liter-crit-in": 0.38559999999999994,
+        "B-liter-crit-out": 0.15,
+        "B-mast-crit-in": 0.38559999999999994,
+        "B-mast-crit-out": 0.15
+      },
+      "H1": {
+        "B-liter-crit-in": 0.15,
+        "B-liter-crit-out": 0.15,
+        "B-mast-crit-in": 0.38559999999999994,
+        "B-mast-crit-out": 0.15
+      }
+    }
+  }
+}
