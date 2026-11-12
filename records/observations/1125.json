@@ -100,5 +100,149 @@
       "tool": "hud.ts --mode jumps と gauge.ts --mode series --subpixel",
       "note": "HUD の増分を数えた。グレイブの完全計算の発は 1 ヒット 10 万を超える値で分けた"
     }
+  },
+  {
+    "id": "1125-07",
+    "recording": "1125",
+    "source": "V-0751",
+    "readAt": "2026-11-12",
+    "kind": "rate",
+    "use": "compare",
+    "value": 2.74,
+    "unit": "比",
+    "description": "鈴原サクラの通常攻撃 1 回あたりの右の BURST バーの伸びの、グレイブの 1 回目の放熱の窓（1125-04 の 1 回目。0.739px）の、放熱の外（1125-05 の 0.270px）に対する比。1px の換算（C-0084）に左右されない。効かないなら 1、掛け算（× 1.3896）なら 1.39、グレイブの burstEnergyPerShot（4,500）× 38.96% を足す形なら 1.88、targetBurstEnergyPerShot（9,000）× 38.96% を足す形なら 2.75",
+    "method": {
+      "tool": "gauge.ts --mode series --subpixel と hud.ts --mode jumps",
+      "note": "1125-04 と 1125-05 の傾きの比。許容 ±0.2 は、対照の区間（47 回で 13px）の読みの ±1px の幅"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotGaugeRatioInHolderState",
+      "args": {
+        "slot": 1,
+        "holder": 2,
+        "state": "heatEmission",
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0.2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1125-08",
+    "recording": "1125",
+    "source": "V-0751",
+    "readAt": "2026-11-12",
+    "kind": "rate",
+    "use": "compare",
+    "value": 2.74,
+    "unit": "比",
+    "description": "鈴原サクラの通常攻撃 1 回あたりの右の BURST バーの伸びの、グレイブの 2 回目の放熱の窓（1125-04 の 2 回目。0.741px）の、放熱の外（1125-05 の 0.270px）に対する比。1px の換算（C-0084）に左右されない。効かないなら 1、掛け算（× 1.3896）なら 1.39、グレイブの burstEnergyPerShot（4,500）× 38.96% を足す形なら 1.88、targetBurstEnergyPerShot（9,000）× 38.96% を足す形なら 2.75",
+    "method": {
+      "tool": "gauge.ts --mode series --subpixel と hud.ts --mode jumps",
+      "note": "1125-04 と 1125-05 の傾きの比。許容 ±0.2 は、対照の区間（47 回で 13px）の読みの ±1px の幅"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotGaugeRatioInHolderState",
+      "args": {
+        "slot": 1,
+        "holder": 2,
+        "state": "heatEmission",
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 0.2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1125-09",
+    "recording": "1125",
+    "source": "V-0751",
+    "readAt": "2026-11-12",
+    "kind": "rate",
+    "use": "compare",
+    "value": 2.74,
+    "unit": "比",
+    "description": "鈴原サクラの通常攻撃 1 回あたりの右の BURST バーの伸びの、グレイブの 3 回目の放熱の窓（1125-04 の 3 回目。0.741px）の、放熱の外（1125-05 の 0.270px）に対する比。1px の換算（C-0084）に左右されない。効かないなら 1、掛け算（× 1.3896）なら 1.39、グレイブの burstEnergyPerShot（4,500）× 38.96% を足す形なら 1.88、targetBurstEnergyPerShot（9,000）× 38.96% を足す形なら 2.75",
+    "method": {
+      "tool": "gauge.ts --mode series --subpixel と hud.ts --mode jumps",
+      "note": "1125-04 と 1125-05 の傾きの比。許容 ±0.2 は、対照の区間（47 回で 13px）の読みの ±1px の幅"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotGaugeRatioInHolderState",
+      "args": {
+        "slot": 1,
+        "holder": 2,
+        "state": "heatEmission",
+        "n": 2
+      },
+      "tolerance": {
+        "abs": 0.2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1125-10",
+    "recording": "1125",
+    "source": "V-0751",
+    "readAt": "2026-11-12",
+    "kind": "rate",
+    "use": "compare",
+    "value": 2.73,
+    "unit": "比",
+    "description": "鈴原サクラの通常攻撃 1 回あたりの右の BURST バーの伸びの、グレイブの 4 回目の放熱の窓（1125-04 の 4 回目。0.736px）の、放熱の外（1125-05 の 0.270px）に対する比。1px の換算（C-0084）に左右されない。効かないなら 1、掛け算（× 1.3896）なら 1.39、グレイブの burstEnergyPerShot（4,500）× 38.96% を足す形なら 1.88、targetBurstEnergyPerShot（9,000）× 38.96% を足す形なら 2.75",
+    "method": {
+      "tool": "gauge.ts --mode series --subpixel と hud.ts --mode jumps",
+      "note": "1125-04 と 1125-05 の傾きの比。許容 ±0.2 は、対照の区間（47 回で 13px）の読みの ±1px の幅"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotGaugeRatioInHolderState",
+      "args": {
+        "slot": 1,
+        "holder": 2,
+        "state": "heatEmission",
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 0.2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

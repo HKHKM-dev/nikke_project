@@ -216,6 +216,8 @@ export type TeamPlan = {
   dotGauges: FirstPassResult['dotGauges'];
   /** 発のゲージ（着弾のフレーム。1 パス目の記録。frame/firstPass.ts） */
   shotGauges: FirstPassResult['shotGauges'];
+  /** 味方のゲージ（allyGaugeAdd）で足したゲージ（1 パス目の記録。照合用） */
+  allyGauges: FirstPassResult['allyGauges'];
   /** 周期のゲージ（1 パス目の記録。V-0483） */
   timerGauges: FirstPassResult['timerGauges'];
   /** 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 蓄積爆破の爆発（1 パス目の記録。テスト用） */
@@ -300,7 +302,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
       return { value, attack: trigger.attack };
     },
   });
-  const { shots, schedule, instants, cycleGaugeHits, dotGauges, shotGauges, timerGauges } = first;
+  const { shots, schedule, instants, cycleGaugeHits, dotGauges, shotGauges, allyGauges, timerGauges } = first;
   // バフの区間は、1 パス目の件の一覧の履歴から作る（plan/design-holder-effects.md 2.7 節）
   const sustainedHitRateUp = input.sustainedHitRateUp ?? true;
   const timeline = buffTimelineOf(first.history, schedule, landing, sustainedHitRateUp);
@@ -330,6 +332,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     cycleGaugeHits,
     dotGauges,
     shotGauges,
+    allyGauges,
     timerGauges,
     accumulateReleases: first.accumulateReleases,
     history: first.history,

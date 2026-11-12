@@ -46,7 +46,7 @@ const STAT_INFO: Record<string, readonly [label: string, status: Status | null, 
   burstGaugeSpeed: [
     'バーストゲージのチャージ速度',
     null,
-    'burstGaugeSpeed（2 段目の段 1 で timed・状態の中身にも）。アニス：スター S1 の味方の分は allyGaugeAdd（1 回ごとに足す形）',
+    'burstGaugeSpeed（2 段目の段 1 で timed・状態の中身にも）。アニス：スター S1 とグレイブ S1（放熱の間。while）の味方の分は allyGaugeAdd（1 回ごとに足す形）',
   ],
   defense: ['防御力', null, '味方▲は防御系。敵▼は enemyDefenseDown（2 段目の段 2）'],
   maxHp: ['最大HP', 'indirect', 'HP の経路（HP 基準の攻撃力▲・ダメージ、HP の割合、HP 順の対象、バリアの量）'],
@@ -519,7 +519,7 @@ function statStatus(e: CatalogEffect): readonly [Status, string] {
   if (c === 'burstGaugeSpeed')
     return [
       'ok',
-      'burstGaugeSpeed（2 段目の段 1 で timed・状態の中身にも）。アニス：スター S1 の味方の分は allyGaugeAdd',
+      'burstGaugeSpeed（2 段目の段 1 で timed・状態の中身にも）。アニス：スター S1 とグレイブ S1 の味方の分は allyGaugeAdd',
     ];
   if (enemy && info?.[1] === 'ok') return ['nodmg', '敵への同じ stat'];
   return [info?.[1] ?? 'check', info?.[2] ?? 'なし'];

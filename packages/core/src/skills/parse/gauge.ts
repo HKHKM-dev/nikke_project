@@ -9,6 +9,7 @@ import {
   isTimerTrigger,
 } from '../types.ts';
 import { fail, type Json, oneOf, parseAssumes, parseLocalizedText, rejectUnknownKeys } from './common.ts';
+import { parseWhileCondition } from './condition.ts';
 import { parseTrigger } from './trigger.ts';
 
 export function parseBurstGaugeHitEffect(v: Record<string, Json>, path: string): BurstGaugeHitEffect {
@@ -57,12 +58,20 @@ export function parseBurstStepChangeEffect(v: Record<string, Json>, path: string
 }
 
 export function parseAllyGaugeAddEffect(v: Record<string, Json>, path: string): AllyGaugeAddEffect {
-  rejectUnknownKeys(v, ['kind', 'ref', 'assumes', 'claims'], path);
+  rejectUnknownKeys(v, ['kind', 'ref', 'while', 'assumes', 'claims'], path);
   const ref = v.ref;
   if (typeof ref !== 'number' || !Number.isInteger(ref) || ref < 1) {
     fail(`${path}.ref`, `expected a positive integer, got ${JSON.stringify(ref)}`);
   }
   const effect: AllyGaugeAddEffect = { kind: 'allyGaugeAdd', ref };
+  if (v.while !== undefined) {
+    const w = parseWhileCondition(v.while, `${path}.while`);
+    if (!('selfState' in w)) fail(`${path}.while`, 'allyGaugeAdd while needs { selfState }');
+    const { stacks, stacksRef, sameFiring } = w.selfState;
+    if (stacks !== undefined || stacksRef !== undefined || sameFiring !== undefined)
+      fail(`${path}.while.selfState`, 'allyGaugeAdd while does not take stack conditions');
+    effect.while = w;
+  }
   parseAssumes(v, effect, path);
   return effect;
 }

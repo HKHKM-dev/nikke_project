@@ -41,7 +41,8 @@ describe('アニス：スター（17）の定義', () => {
     ]);
     expect(passives[0]!.value).toBeCloseTo(0.06, 12);
     expect(passives[1]!.value).toBeCloseTo(0.4001, 12);
-    expect(resolveAllyGaugeAdd(def, anis, MAX_SKILL_LEVELS)).toBeCloseTo(0.06, 12);
+    expect(resolveAllyGaugeAdd(def, anis, MAX_SKILL_LEVELS)?.ratio).toBeCloseTo(0.06, 12);
+    expect(resolveAllyGaugeAdd(def, anis, MAX_SKILL_LEVELS)?.whileState).toBeNull();
   });
 
   it('resolves the Burst cooldown cut at battle start and at the end of Full Burst, and the S2 heal', () => {

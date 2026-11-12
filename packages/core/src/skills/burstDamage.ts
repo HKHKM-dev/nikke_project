@@ -557,20 +557,21 @@ export function resolveBurstUsePause(def: SkillDefinition): number {
 }
 
 /**
- * 定義の allyGaugeAdd の割合（説明文の % を 100 で割った値。アニス：スター S1 の味方のゲージ。plan/design-anis-star-ally-gauge.md 2 節）。
+ * 定義の allyGaugeAdd の割合（説明文の % を 100 で割った値。plan/design-anis-star-ally-gauge.md 2 節）と、足す窓の状態
+ * （while の selfState。無ければ null で常に足す。plan/design-grave-heat-gauge.md 2.1 節）。
  * 無ければ null（parseSkillDefinition が 1 つまでに限っている）
  */
 export function resolveAllyGaugeAdd(
   def: SkillDefinition,
   character: CharacterData,
   levels: SkillLevels,
-): number | null {
+): { ratio: number; whileState: NamedStateId | null } | null {
   for (const slot of SKILL_SLOTS) {
     for (const effect of def.skills[slot].effects) {
       if (effect.kind !== 'allyGaugeAdd') continue;
       const raw = skillValue(character.skills[slot], effect.ref, levels[slot]);
       if (raw < 0) throw new RangeError(`skill ${character.skills[slot].id}: allyGaugeAdd must be >= 0, got ${raw}`);
-      return raw / 100;
+      return { ratio: raw / 100, whileState: effect.while?.selfState.state ?? null };
     }
   }
   return null;

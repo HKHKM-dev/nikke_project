@@ -42,7 +42,9 @@ describe.each(Object.entries(TEAMS))('編成: %s', (name, input) => {
 
   it('applies Prediction for 10 seconds on each burst use', () => {
     expect(prediction.length).toBeGreaterThan(1);
-    for (const w of prediction) expect(w.end - w.start).toBe(prediction[0]!.end - prediction[0]!.start);
+    // 戦闘の終わりで切れた窓は比べない
+    for (const w of prediction.filter((p) => p.end < plan.frames))
+      expect(w.end - w.start).toBe(prediction[0]!.end - prediction[0]!.start);
   });
 
   it('empties the ammo and applies Heat Emission when Prediction ends, until the reload completes', () => {
