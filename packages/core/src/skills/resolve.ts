@@ -442,16 +442,21 @@ function staticContentsOf(
   });
 }
 
-/** 中身の 1 項目の値（timed と同じ。フラグの stat は 1） */
+/**
+ * timed と状態の中身の 1 項目の値。定数 value の stat（fireStanceScale）はその値、フラグの stat は 1、ほかは説明文の値（ref）。
+ * kind は ref の無い時の知らせに出す
+ */
 function contentValue(
-  item: { stat: BuffStat; ref?: number; scaling?: BuffScaling; decrease?: true },
+  item: { stat: BuffStat; ref?: number; value?: number; scaling?: BuffScaling; decrease?: true },
   character: CharacterData,
   slot: SkillSlot,
   level: number,
+  kind = 'state content',
 ): number {
   const skill = character.skills[slot];
+  if (item.value !== undefined) return item.value;
   if (item.ref === undefined) {
-    if (!isFlagStat(item.stat)) throw new RangeError(`skill ${skill.id}: state content ${item.stat} needs ref`);
+    if (!isFlagStat(item.stat)) throw new RangeError(`skill ${skill.id}: ${kind} ${item.stat} needs ref`);
     return 1;
   }
   return scaledValue(skillValue(skill, item.ref, level), item.stat, item.scaling, character, item.decrease);
@@ -623,18 +628,7 @@ export function resolveTimed(
       const value =
         effect.amplifies !== undefined
           ? effect.amplifies.percent / 100 // 参照する効果の値に掛ける割合（窓ごとの値は skills/holders/history.ts の amplify）
-          : effect.ref === undefined
-            ? 1 // フラグの stat（装弾数無限）
-            : scaledValue(
-                skillValue(skill, effect.ref, levels[slot]),
-                effect.stat,
-                effect.scaling,
-                character,
-                effect.decrease,
-              );
-      if (effect.ref === undefined && effect.amplifies === undefined && !isFlagStat(effect.stat)) {
-        throw new RangeError(`skill ${skill.id}: timed ${effect.stat} needs ref`);
-      }
+          : contentValue(effect, character, slot, levels[slot], 'timed');
       const r: ResolvedTimedEffect = { ...window, stat: effect.stat, scaling: effect.scaling ?? 'ratio', value };
       if (effect.amplifies !== undefined) r.amplifies = effect.amplifies;
       if (effect.edgeShift !== undefined) r.edgeShift = effect.edgeShift;

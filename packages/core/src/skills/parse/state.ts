@@ -412,7 +412,7 @@ function parseStateContentItem(
   if (item.maxStacksUp !== undefined) return parseMaxStacksUpItem(item, grant, path, onEnemy);
   // 「スキル N クールタイム X%▼」（維持の付いた形。plan/design-arcana-magician.md 2.1 節）
   if (item.skillCooldownDown !== undefined) return parseSkillCooldownDownItem(item, grant, path, onEnemy);
-  rejectUnknownKeys(item, ['stat', 'ref', 'scaling', 'decrease', 'claims'], path);
+  rejectUnknownKeys(item, ['stat', 'ref', 'value', 'scaling', 'decrease', 'claims'], path);
   const timed = parseTimedEffect(contentAsTimed(grant, item), path);
   // 発動者の最大HP 基準は、timed の件の列を持ち主ごとに作る時に直すので、
   // 状態の中身には書けない（使い手がいない。plan/design-hp-ratio-readers.md 9 節）
@@ -429,6 +429,7 @@ function parseStateContentItem(
   if (isPelletStat(timed.stat)) fail(`${path}.stat`, `${timed.stat} is only allowed in timed`);
   const out: StatContentItem = { stat: timed.stat };
   if (timed.ref !== undefined) out.ref = timed.ref;
+  if (timed.value !== undefined) out.value = timed.value;
   if (timed.scaling !== undefined) out.scaling = timed.scaling;
   if (timed.decrease) out.decrease = true;
   if (item.claims !== undefined) out.claims = parseClaimRefs(item.claims, `${path}.claims`);

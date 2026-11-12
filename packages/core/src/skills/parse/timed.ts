@@ -24,6 +24,9 @@ import {
   isMaxHpStat,
   isPassiveFlagStat,
   isPelletStat,
+  CONSTANT_VALUE_STATS,
+  isConstantValueStat,
+  isSelfOnlyTimedStat,
   STATIC_PASSIVE_FLAG_STATS,
   isSelfHpAtMostTrigger,
   isSelfHpAtMost,
@@ -35,6 +38,7 @@ import {
   type TimedEffect,
 } from '../types.ts';
 import {
+  assertPositiveFinite,
   fail,
   isRecord,
   type Json,
@@ -244,7 +248,7 @@ export function parseTimedFields(
   if (stat !== undefined) {
     // 値のある timed の維持は DurationUntil だけ（{ counterEmpty } は付与だけ。parseTimedDuration）
     const timed = { kind: 'timed', ...(effect as TimedFields), stat } as const;
-    validateFixedChargeTime(timed, path);
+    validateSelfOnlyStat(timed, path);
     validateChanceTimed(timed, path);
   }
   parseAssumes(v, effect, path);
@@ -368,6 +372,8 @@ function parseTimedValue(
   validateFlatChargeTime(stat, scaling, v, path);
   validateDamageTaken(stat, target, v, path);
   validateAttackSpeed(stat, target, v, path);
+  if (v.value !== undefined && !isConstantValueStat(stat))
+    fail(`${path}.value`, `value is only allowed for ${CONSTANT_VALUE_STATS.join(', ')} (use ref)`);
   // 値は参照する効果から取る
   if (v.amplifies !== undefined) {
     effect.amplifies = parseAmplifies(v, stat, target, `${path}.amplifies`);
@@ -376,6 +382,15 @@ function parseTimedValue(
   else if (isFlagStat(stat)) {
     if (v.ref !== undefined) fail(`${path}.ref`, `${stat} has no value (do not write ref)`);
     if (scaling !== undefined) fail(`${path}.scaling`, `${stat} has no value (do not write scaling)`);
+  }
+  // 射撃の姿勢の長さの倍率は説明文に無い値なので、ref の代わりに定数を書く（plan/design-a2-bmode-stance.md 3.1 節）
+  else if (isConstantValueStat(stat)) {
+    if (v.ref !== undefined) fail(`${path}.ref`, `${stat} takes a constant value (write value, not ref)`);
+    if (scaling !== undefined) fail(`${path}.scaling`, `${stat} takes no scaling`);
+    const value = v.value;
+    assertPositiveFinite(value, `${path}.value`);
+    if (value > 1) fail(`${path}.value`, `expected at most 1, got ${value}`);
+    effect.value = value;
   } else {
     effect.ref = parseRef(v.ref, `${path}.ref`);
   }
@@ -634,16 +649,21 @@ function parseAmplifies(v: Record<string, Json>, stat: BuffStat, target: BuffTar
 }
 
 /**
- * fixedChargeTime（チャージ時間の固定）は値が秒で、足し合わせると意味が無くなるので、
- * 自分にだけ・倍率の書き方なし・スタックなし・条件なしで書ける（plan/design-anis-star-s2-burst.md 2.3 節）
+ * 足し合わせると意味が無くなる stat（SELF_ONLY_TIMED_STATS）は、自分にだけ・減らす書き方なし・スタックなし・条件なしで書ける。
+ * チャージ時間の固定は秒なので倍率の書き方も無い（plan/design-anis-star-s2-burst.md 2.3 節）。射撃の姿勢の長さの倍率は掛け合わせる
+ * 定数（plan/design-a2-bmode-stance.md 3.1 節）で、射撃姿勢維持型の武器のキャラだけに書けることは definitions.test.ts が確かめる
  */
-function validateFixedChargeTime(effect: TimedEffect, path: string): void {
-  if (effect.stat !== 'fixedChargeTime') return;
-  if (effect.target !== 'self') fail(`${path}.target`, `fixedChargeTime is only allowed with target "self"`);
-  if (effect.scaling !== undefined) fail(`${path}.scaling`, 'fixedChargeTime is in seconds (do not write scaling)');
-  if (effect.decrease) fail(`${path}.decrease`, 'fixedChargeTime cannot be decreased');
-  if (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined) fail(path, 'fixedChargeTime cannot stack');
-  if (effect.condition !== undefined) fail(`${path}.condition`, 'fixedChargeTime cannot have a condition');
+function validateSelfOnlyStat(effect: TimedEffect, path: string): void {
+  const { stat } = effect;
+  if (!isSelfOnlyTimedStat(stat)) return;
+  if (effect.target !== 'self') fail(`${path}.target`, `${stat} is only allowed with target "self"`);
+  if (stat === 'fixedChargeTime' && effect.scaling !== undefined)
+    fail(`${path}.scaling`, 'fixedChargeTime is in seconds (do not write scaling)');
+  if (effect.decrease) fail(`${path}.decrease`, `${stat} cannot be decreased`);
+  if (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined) fail(path, `${stat} cannot stack`);
+  if (effect.condition !== undefined) fail(`${path}.condition`, `${stat} cannot have a condition`);
+  // 数に比例して値を掛ける perCount は、足し合わせない stat には意味が無い
+  if (effect.perCount !== undefined) fail(`${path}.perCount`, `${stat} cannot have perCount`);
 }
 
 /**
@@ -786,7 +806,7 @@ export function parsePassiveEffect(v: Record<string, Json>, path: string): Passi
   if (v.name !== undefined) fail(`${path}.name`, NAME_REPLACED);
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
   const passiveFlag = isPassiveFlagStat(stat);
-  if ((isFlagStat(stat) && !passiveFlag) || stat === 'fixedChargeTime' || isPelletStat(stat))
+  if ((isFlagStat(stat) && !passiveFlag) || isSelfOnlyTimedStat(stat) || isPelletStat(stat))
     fail(`${path}.stat`, `${stat} is only allowed in timed`);
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
   validateScaling(scaling, stat, path);

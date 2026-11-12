@@ -183,6 +183,11 @@ export type BuffTotals = {
    */
   fixedChargeTime: number;
   /**
+   * 射撃の姿勢の長さの倍率（掛け合わせ。1 は縮めない。plan/design-a2-bmode-stance.md 3.2 節）。射撃姿勢維持型の武器の姿勢と満ちてから
+   * 撃つまでを、丸める前の長さに掛けて縮める（frame/firing.ts の stanceFrames）。ダメージの式は読まない
+   */
+  fireStanceScale: number;
+  /**
    * 命中率の加算。ダメージの式も射手も読まない（全弾命中の前提）。区間の鍵にも入れず、
    * 「自分が命中率増加状態なら」の条件（timed の condition）と表示にだけ使う
    */
@@ -276,6 +281,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   spinUpSpeed: 0,
   chargeTimeFlat: 0,
   fixedChargeTime: 0,
+  fireStanceScale: 1,
   hitRate: 0,
   hitRateUp: 0,
   infiniteAmmo: 0,
@@ -311,6 +317,7 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attack
   sequentialAttackDamage: 'sequentialAttackDamage',
   accumulateRatio: 'accumulateRatio',
   fixedChargeTime: 'fixedChargeTime',
+  fireStanceScale: 'fireStanceScale',
   burstGaugeSpeed: 'burstGaugeSpeed',
   burstCooldown: 'burstCooldown',
   maxAmmo: 'maxAmmoRatio',
@@ -465,6 +472,13 @@ export function applyResolvedEffect(
   // 「チャージ時間 X 秒▼」（chargeSpeed の flat。値は秒）は、発動者基準のチャージ速度と同じく秒数を引く
   if (effect.scaling === 'flat' && effect.stat === 'chargeSpeed') {
     return { totals: { ...totals, chargeTimeFlat: totals.chargeTimeFlat + effect.value }, appliedAmount: effect.value };
+  }
+  // 射撃の姿勢の長さの倍率は足し合わせず掛け合わせる（plan/design-a2-bmode-stance.md 3.2 節。スタックは書けない）
+  if (effect.stat === 'fireStanceScale') {
+    return {
+      totals: { ...totals, fireStanceScale: totals.fireStanceScale * effect.value },
+      appliedAmount: effect.value,
+    };
   }
   // チャージ時間の固定は秒を足し合わせない（plan/design-skill-stage14.md 2.7 節）。状態の中身の固定（whileState を持つ。
   // セブンスドワーフ・フルアクティブの 3.2 秒）は上書きし、timed の固定（S2 の戦闘開始時の 1.2 秒）は固定がまだ無い時だけ入れる。どちらも

@@ -209,6 +209,7 @@ const BUFF_FIELDS = [
   'spinUpSpeed',
   'chargeTimeFlat',
   'fixedChargeTime',
+  'fireStanceScale',
   // 装弾数無限は射撃が変わるので鍵に入れる。命中率（hitRate）は条件が自動の枠だけ keyOf で足す
   'infiniteAmmo',
   // 効果層（常時）では区間を割らないが、スキルの timed にも書けるので鍵に入れる

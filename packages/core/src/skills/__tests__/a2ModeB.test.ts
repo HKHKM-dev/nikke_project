@@ -2,7 +2,7 @@
 // HP の割合で解除される状態の付与（durationUntil: { selfHpAtMostRef }）の語彙の検証と解決
 import { describe, expect, it } from 'vitest';
 import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
-import { MAX_SKILL_LEVELS, resolveInstant, resolveStateGrants } from '../resolve.ts';
+import { MAX_SKILL_LEVELS, resolveInstant, resolveStateContents, resolveStateGrants } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
@@ -56,6 +56,84 @@ describe('語彙の検証', () => {
       amount: 1,
     });
     expect(() => parseSkillDefinition(copy)).toThrow(/atStart/);
+  });
+});
+
+// 射撃の姿勢の長さの倍率（plan/design-a2-bmode-stance.md 3.1 節）: 説明文に無い定数を value で書く。自分にだけ・0 より大きく 1 以下
+describe('射撃の姿勢の長さの倍率', () => {
+  const scaleIndex = (raw.skills.burst.effects[grant] as { contents: { stat: string }[] }).contents.findIndex(
+    (c) => c.stat === 'fireStanceScale',
+  );
+  const withScale = (item: Record<string, unknown>) => {
+    const copy = structuredClone(raw);
+    const g = copy.skills.burst.effects[grant] as { contents: Record<string, unknown>[] };
+    g.contents[scaleIndex] = item;
+    return () => parseSkillDefinition(copy);
+  };
+
+  it('takes a constant value in (0, 1] on self, without ref or scaling', () => {
+    expect(scaleIndex).toBeGreaterThanOrEqual(0);
+    expect(withScale({ stat: 'fireStanceScale', value: 1 })).not.toThrow();
+    expect(withScale({ stat: 'fireStanceScale', value: 0 })).toThrow(/expected a positive finite number/);
+    expect(withScale({ stat: 'fireStanceScale', value: 1.5 })).toThrow(/expected at most 1/);
+    expect(withScale({ stat: 'fireStanceScale', ref: 4 })).toThrow(/write value, not ref/);
+    expect(withScale({ stat: 'fireStanceScale', value: 0.5, scaling: 'ratio' })).toThrow(/takes no scaling/);
+    expect(withScale({ stat: 'chargeSpeed', value: 0.5 })).toThrow(/value is only allowed for fireStanceScale/);
+  });
+
+  it('is only on self in timed', () => {
+    const timed = (target: string) => {
+      const copy = structuredClone(raw);
+      copy.skills.burst.effects.push({
+        kind: 'timed',
+        trigger: 'burstUse',
+        target,
+        stat: 'fireStanceScale',
+        value: 0.5,
+        durationSeconds: 5,
+      });
+      return () => parseSkillDefinition(copy);
+    };
+    expect(timed('self')).not.toThrow();
+    expect(timed('allies')).toThrow(/only allowed with target "self"/);
+  });
+
+  it('takes no perCount and cannot be read as a buff state', () => {
+    const copy = structuredClone(raw);
+    copy.skills.burst.effects.push({
+      kind: 'timed',
+      trigger: 'burstUse',
+      target: 'self',
+      stat: 'fireStanceScale',
+      value: 0.5,
+      durationSeconds: 5,
+      perCount: { state: 'modeB' },
+    });
+    expect(() => parseSkillDefinition(copy)).toThrow(/cannot have perCount/);
+    const buffed = structuredClone(raw);
+    buffed.skills.burst.effects.push({
+      kind: 'timed',
+      trigger: 'burstUse',
+      target: 'self',
+      stat: 'attack',
+      ref: 3,
+      durationSeconds: 5,
+      condition: { selfBuffed: 'fireStanceScale' },
+    });
+    expect(() => parseSkillDefinition(buffed)).toThrow(/a multiplier, not a buff state/);
+  });
+
+  it('is not allowed in passive', () => {
+    const copy = structuredClone(raw);
+    copy.skills.skill1.effects.push({ kind: 'passive', target: 'self', stat: 'fireStanceScale', value: 0.5 });
+    expect(() => parseSkillDefinition(copy)).toThrow(/only allowed in timed/);
+  });
+
+  it('resolves the constant as is (0.5) while Mode B', () => {
+    const items = resolveStateContents(parseSkillDefinition(raw), character, MAX_SKILL_LEVELS).filter(
+      (c) => c.stat === 'fireStanceScale',
+    );
+    expect(items.map((c) => [c.value, c.whileState])).toEqual([[0.5, 'modeB']]);
   });
 });
 

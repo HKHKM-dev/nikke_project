@@ -132,6 +132,9 @@ export function parseCondition(
     if (isFlagStat(selfBuffed)) fail(`${path}.selfBuffed`, `${selfBuffed} is not a buff state`);
     // 受けるダメージ▲は敵が持つ（自分の増加状態ではない。plan/design-holder-effects.md 2.8 節）
     if (selfBuffed === 'damageTaken') fail(`${path}.selfBuffed`, 'damageTaken is held by the enemy, not by the caster');
+    // 射撃の姿勢の長さの倍率は既定が 1 の掛け合わせで、「和 > 0 で増加状態」と読めない（plan/design-a2-bmode-stance.md 3.1 節）
+    if (selfBuffed === 'fireStanceScale')
+      fail(`${path}.selfBuffed`, 'fireStanceScale is a multiplier, not a buff state');
     condition.selfBuffed = selfBuffed;
   }
   if (c.inFullBurst !== undefined) {

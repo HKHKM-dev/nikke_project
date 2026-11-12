@@ -2,7 +2,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeCadence } from '../cadence.ts';
-import { firingParams, stanceFrames } from '../frame/firing.ts';
+import { chargeShotIntervalFrames, firingParams, stanceFrames, ZERO_FIRING_BUFFS } from '../frame/firing.ts';
 import {
   beginHide,
   hideShooter,
@@ -25,6 +25,25 @@ describe('姿勢の長さと満ちてから撃つまで（設計書 3.3 節）',
     expect(stanceFrames(character(851).shot)).toEqual({ frames: 49, holdFrames: 16 });
     expect(stanceFrames(character(811).shot)).toEqual({ frames: 50, holdFrames: 24 });
     expect(stanceFrames(character(304).shot)).toBeNull();
+  });
+});
+
+describe('射撃の姿勢の長さの倍率（plan/design-a2-bmode-stance.md 3.2 節）', () => {
+  it('scales S before rounding: A2 in Mode B is 25f and 12f (1084-15・1124-12)', () => {
+    expect(stanceFrames(character(811).shot, 0.5)).toEqual({ frames: 25, holdFrames: 12 });
+    expect(stanceFrames(character(811).shot, 1)).toEqual(stanceFrames(character(811).shot));
+    expect(stanceFrames(character(304).shot, 0.5)).toBeNull();
+  });
+
+  it('fires A2 in Mode B every 74f (35.88%) and 82f (23.02%) (1084-11・1124-11)', () => {
+    const shot = character(811).shot;
+    const interval = (chargeSpeed: number) =>
+      chargeShotIntervalFrames(
+        firingParams(shot, { ...ZERO_FIRING_BUFFS, chargeSpeed, fireStanceScale: 0.5 }),
+        DEFAULT_WEAPON_MODEL,
+      );
+    expect(interval(0.3588)).toBe(74);
+    expect(interval(0.2302)).toBe(82);
   });
 });
 
