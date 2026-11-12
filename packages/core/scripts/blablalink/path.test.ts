@@ -36,6 +36,12 @@ describe('obfuscatePath', () => {
     expect(characterImagePath(14, 'mi')).toBe('/character/mi/mi_c014_00_s.webp');
   });
 
+  // 2026-11-12 に CDN から 200 が返り、同じキャラの服違いの絵であることを確認した
+  it('コスチューム違いの絵は、_00 の番号を変える', () => {
+    expect(characterImagePath(10, 'mi', 2)).toBe('/character/mi/mi_c010_02_s.webp');
+    expect(characterImagePath(191, 'si', 1)).toBe('/character/si/si_c191_01_s.webp');
+  });
+
   // Stage 9: 2026-09-23 に CDN から 200 が返ることを確認した
   it('favorite rare map and favorite item (ja)', () => {
     expect(obfuscatePath(favoriteRareMapPath())).toBe('yb-61/eaff19debcb789edef7e1e8a377e12e5.json');

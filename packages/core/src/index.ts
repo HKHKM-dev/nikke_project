@@ -8,6 +8,7 @@ export * from './weapons.ts';
 export * from './time.ts';
 export * from './load.ts';
 export * from './cadence.ts';
+export * from './characterImage.ts';
 export * from './damage.ts';
 export * from './fixedSpec.ts';
 export * from './build.ts';

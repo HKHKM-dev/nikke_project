@@ -1,4 +1,4 @@
-import type { CharacterIndexEntry } from '@nikke/core';
+import { characterImageFile, type CharacterIndexEntry } from '@nikke/core';
 import { useReducer, type ReactNode } from 'react';
 import informationIcon from '../../assets/badges/ui_information.svg';
 import { maskIconStyle } from '../maskIcon.ts';
@@ -43,7 +43,7 @@ export function CharacterVisual({
   badges = true,
 }: Props) {
   const imageDir = size === 'portrait' || size === 'tall' ? 'portraits' : 'images';
-  const imageSrc = `${BASE_URL}characters/${imageDir}/${character.resourceId}.webp`;
+  const imageSrc = `${BASE_URL}characters/${imageDir}/${characterImageFile(character.resourceId)}`;
   // 画像が読めなかったキャラ（画像の無い配信・CDN に無いキャラ）は、絵の枠とバッジだけを出す。名前は絵の外（ニケ一覧の四角は絵の下、
   // 縦長は下部に重ねる名前）にあるので、絵の中には出さない（オーナーの指示）
   const failed = failedImages.has(imageSrc);
