@@ -33,7 +33,7 @@ export type DualGrid = {
 export type DualCandidate = { hits: number; cores: number; crits: number; crit: number; dist: number };
 
 /** 距離帯ごとの距離ボーナスの有無の候補（中遠は着地点で付くか付かないか） */
-const DIST_OF: Record<Band, readonly number[]> = { near: [1], midNear: [1], far: [0], midFar: [0, 1] };
+export const DIST_OF: Record<Band, readonly number[]> = { near: [1], midNear: [1], far: [0], midFar: [0, 1] };
 
 /** 1 発の増分を格子で読む（候補が無ければ空）。許しは tol + 0.5 ×（ヒットの数 − 1）（ヒットごとの丸め） */
 export function readDualIncrement(
@@ -97,7 +97,21 @@ const bandRecord = (f: (b: Band) => number): Record<Band, number> => ({
 
 const bandOf = (segment: number): Band => BANDS[Math.min(segment, BANDS.length - 1)]!;
 /** 区間の番号（0 始まり。6 区間目より後も 6 区間目） */
-const segmentIn = (frame: number, cuts: readonly number[]) => Math.min(segmentOf(frame, cuts), BANDS.length - 1);
+export const segmentIn = (frame: number, cuts: readonly number[]) => Math.min(segmentOf(frame, cuts), BANDS.length - 1);
+
+/** 1 ヒット以上当たった発の当たったヒットの数の平均 = muzzles × q ÷ (1 − (1 − q)^muzzles) を q について二分法で解く */
+export function solveQ(meanHits: number, muzzles: number): number {
+  if (!(meanHits > 1)) return 1e-6;
+  if (meanHits >= muzzles) return 1;
+  let lo = 1e-9;
+  let hi = 1;
+  for (let i = 0; i < 60; i++) {
+    const mid = (lo + hi) / 2;
+    if ((muzzles * mid) / (1 - (1 - mid) ** muzzles) < meanHits) lo = mid;
+    else hi = mid;
+  }
+  return (lo + hi) / 2;
+}
 
 /** EM で、距離帯ごとのコア命中率・命中率と、会心の版ごとの会心率・割合を最尤で決める。最後に区間ごとのコア命中率も決める */
 export function fitDual(rows: readonly DualRow[], muzzles: number, critVersions: number, iterations = 400): DualFit {
@@ -158,19 +172,6 @@ export function fitDual(rows: readonly DualRow[], muzzles: number, critVersions:
     return acc;
   };
   const sumBand = (xs: readonly number[], b: Band) => xs.reduce((a, x, k) => a + (bandOf(k) === b ? x : 0), 0);
-  const solveQ = (meanHits: number) => {
-    // 1 ヒット以上当たった発の当たったヒットの数の平均 = muzzles × q ÷ (1 − (1 − q)^muzzles) を q について二分法で解く
-    if (!(meanHits > 1)) return 1e-6;
-    if (meanHits >= muzzles) return 1;
-    let lo = 1e-9;
-    let hi = 1;
-    for (let i = 0; i < 60; i++) {
-      const mid = (lo + hi) / 2;
-      if ((muzzles * mid) / (1 - (1 - mid) ** muzzles) < meanHits) lo = mid;
-      else hi = mid;
-    }
-    return (lo + hi) / 2;
-  };
   for (let it = 0; it < iterations; it++) {
     const s = step((r) => bandP[bandOf(r.segment)]);
     bandP = bandRecord((b) => {
@@ -179,7 +180,7 @@ export function fitDual(rows: readonly DualRow[], muzzles: number, critVersions:
     });
     bandQ = bandRecord((b) => {
       const n = sumBand(s.shots, b);
-      return n > 0 ? solveQ(sumBand(s.hits, b) / n) : 0.8;
+      return n > 0 ? solveQ(sumBand(s.hits, b) / n, muzzles) : 0.8;
     });
     critRate = s.crits.map((c, v) => (s.critHits[v]! > 0 ? c / s.critHits[v]! : critRate[v]!));
     const total = s.share.reduce((a, b) => a + b, 0);

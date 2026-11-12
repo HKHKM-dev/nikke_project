@@ -20,12 +20,14 @@
 import { loadRecordingsFile, loadRecordsData } from '../../../packages/core/scripts/records-data.ts';
 import { buildTeamInput, METRICS, type CompareSpec } from '../../../packages/core/src/records/observations.ts';
 import type { RecordingEntry } from '../../../packages/core/src/records/recordings.ts';
+import { bulletHitRateWithHitRateUp, coreHitRateWithHitRateUp } from '../../../packages/core/src/frame/landing.ts';
 import { valuePiecesOf } from '../../../packages/core/src/skills/holders.ts';
 import { runSimulation } from '../../../packages/core/src/sim/engine.ts';
 import { resolveSetup } from './buff-edge.ts';
+import { DIST_OF, segmentIn, solveQ } from './dual-smg-cores.ts';
 import { loadHudJumps } from './hud-jumps.ts';
-import { BAND_JA, BANDS, longGaps, parseList, type Band } from './smg-cores.ts';
-import { estimateInterval, groupMagazines, segmentOf, type HudIncrement } from './smg-hits.ts';
+import { BAND_JA, BANDS, longGaps, parseList } from './smg-cores.ts';
+import { estimateInterval, groupMagazines, type HudIncrement } from './smg-hits.ts';
 import { observation, roundTo, type Recipe, type RecipeObservation } from './types.ts';
 
 /** 1 ヒットのモデルの値。values[距離ボーナスの有無][コア × 2 + 会心] */
@@ -44,16 +46,13 @@ export type ModelShot = { mag: number; hits: readonly [HitModel, HitModel] };
 /** 増分の候補。hits は当たったヒット（0 = 1 ヒット目、1 = 2 ヒット目）ごとのコア・会心 */
 export type StageCandidate = { hits: { which: 0 | 1; core: 0 | 1; crit: 0 | 1 }[] };
 
-/** 距離帯ごとの距離ボーナスの有無の候補（中遠は着地点で付くか付かないか） */
-const DIST_OF: Record<Band, readonly (0 | 1)[]> = { near: [1], midNear: [1], far: [0], midFar: [0, 1] };
-
 const CELLS = [0, 1, 2, 3] as const;
 
 /** 1 発の増分を、その発のモデルの 2 ヒットの格子で読む（候補が無ければ空）。許しは tol + 0.5 ×（ヒットの数 − 1） */
 export function readStageIncrement(
   increment: number,
   shot: ModelShot,
-  dists: readonly (0 | 1)[],
+  dists: readonly number[],
   tol: number,
 ): StageCandidate[] {
   const found = new Map<string, StageCandidate>();
@@ -67,7 +66,7 @@ export function readStageIncrement(
     crit: (cell & 1) as 0 | 1,
   });
   for (const d of dists) {
-    const [a, b] = [shot.hits[0].values[d], shot.hits[1].values[d]];
+    const [a, b] = [shot.hits[0].values[d as 0 | 1], shot.hits[1].values[d as 0 | 1]];
     for (const i of CELLS) {
       add([hit(0, i)], a[i]!);
       add([hit(1, i)], b[i]!);
@@ -83,7 +82,6 @@ export type StageRow = { segment: number; shot: number; candidates: StageCandida
 export type AssignStats = {
   magazines: number;
   used: number;
-  unfit: number;
   lumped: number;
   /** 前の発の次から ahead 発先までに合わず、前後 resync 発の中で合わせ直した増分 */
   resynced: number;
@@ -111,7 +109,7 @@ export function assignShots(
 ): { rows: StageRow[]; stats: AssignStats } {
   const mags = groupMagazines(rows);
   const out: StageRow[] = [];
-  const stats: AssignStats = { magazines: mags.length, used: 0, unfit: 0, lumped: 0, resynced: 0, unfitFrames: [] };
+  const stats: AssignStats = { magazines: mags.length, used: 0, lumped: 0, resynced: 0, unfitFrames: [] };
   const shotsOf = (g: readonly HudIncrement[]) => Math.round((g.at(-1)!.frame - g[0]!.frame) / opts.interval) + 1;
   mags.forEach((g, k) => {
     let start: number;
@@ -127,14 +125,14 @@ export function assignShots(
     let last = start - 1;
     let lastFrame = g[0]!.frame;
     for (const r of g) {
-      const segment = Math.min(segmentOf(r.frame, opts.cuts), BANDS.length - 1);
+      const segment = segmentIn(r.frame, opts.cuts);
+      const dt = r.frame - lastFrame;
+      lastFrame = r.frame;
       if (r.readGap !== 1 && r !== g[0]) {
         stats.lumped++;
-        last += Math.max(1, Math.round((r.frame - lastFrame) / opts.interval));
-        lastFrame = r.frame;
+        last += Math.max(1, Math.round(dt / opts.interval));
         continue;
       }
-      lastFrame = r.frame;
       let read: StageRow | undefined;
       for (const s of searchOrder(last, opts.ahead, opts.resync)) {
         const shot = model[s];
@@ -147,7 +145,6 @@ export function assignShots(
         }
       }
       if (read === undefined) {
-        stats.unfit++;
         stats.unfitFrames.push(r.frame);
         last++;
         continue;
@@ -163,11 +160,11 @@ export function assignShots(
  * 発の番号を探す順: 前の発の次から ahead 発先まで（2 ヒットとも外れた発を飛ばす）、合わなければ前の発の前後 resync 発の中で近い順
  * （数発のまとまりの空きから進めた数がずれると、積み上がりの途中の増分が合わなくなり、段が満ちるまで戻らない）
  */
-export function searchOrder(last: number, ahead: number, resync: number): number[] {
+function searchOrder(last: number, ahead: number, resync: number): number[] {
   const order = Array.from({ length: ahead }, (_, k) => last + 1 + k);
   for (let d = 1; d <= resync; d++) {
-    if (last + 1 - d < last + 1) order.push(last + 1 - d);
-    if (last + d > last + ahead) order.push(last + d);
+    order.push(last + 1 - d);
+    if (d > ahead) order.push(last + d);
   }
   return order;
 }
@@ -179,22 +176,25 @@ export function bandOfN(n: number, upper: readonly number[]): number {
 }
 
 /** 命中率▲がコア命中率に効く形（p0 は元の値。上限 1） */
+// 和はモデルの式（coreHitRateWithHitRateUp）、指数・和は弾丸命中率の H2 の式（bulletHitRateWithHitRateUp）。積の形は同じ式に
+// 1 − Π(1 − Nᵢ) を N として渡す
 export const FORMS = {
-  sum: { ja: '和', f: (p0: number, h: HitModel) => Math.min(1, p0 / (1 - h.n) ** 2) },
-  product: { ja: '積', f: (p0: number, h: HitModel) => Math.min(1, p0 / productOf(h) ** 2) },
-  expSum: { ja: '指数・和', f: (p0: number, h: HitModel) => 1 - (1 - p0) ** (1 / (1 - h.n) ** 2) },
-  expProduct: { ja: '指数・積', f: (p0: number, h: HitModel) => 1 - (1 - p0) ** (1 / productOf(h) ** 2) },
+  sum: { ja: '和', f: (p0: number, h: HitModel) => coreHitRateWithHitRateUp(p0, h.n) },
+  product: { ja: '積', f: (p0: number, h: HitModel) => coreHitRateWithHitRateUp(p0, productN(h)) },
+  expSum: { ja: '指数・和', f: (p0: number, h: HitModel) => bulletHitRateWithHitRateUp(p0, h.n) },
+  expProduct: { ja: '指数・積', f: (p0: number, h: HitModel) => bulletHitRateWithHitRateUp(p0, productN(h)) },
   linear: { ja: 'p0 ÷ (1 − N)', f: (p0: number, h: HitModel) => Math.min(1, p0 / (1 - h.n)) },
 } as const;
-export type FormName = keyof typeof FORMS;
-export const FORM_NAMES = Object.keys(FORMS) as FormName[];
+type FormName = keyof typeof FORMS;
+const FORM_NAMES = Object.keys(FORMS) as FormName[];
 
-function productOf(h: HitModel): number {
-  return h.parts.reduce((a, x) => a * (1 - x), 1);
+/** 効果ごとの命中率▲を掛けた形の N（1 − Π(1 − Nᵢ)） */
+function productN(h: HitModel): number {
+  return 1 - h.parts.reduce((a, x) => a * (1 - x), 1);
 }
 
 /** 当てはめの値。キーは区間と N（HitModel の n を丸めた文字列） */
-export type StageFit = {
+type StageFit = {
   /** 区間 → N のキー → コア命中率 */
   core: Map<number, Map<string, number>>;
   /** 区間 → N のキー → 当たったヒットの数・コアのヒットの数の期待値 */
@@ -242,7 +242,10 @@ const add2 = <K>(m: Map<number, Map<K, number>>, a: number, b: K, x: number) => 
   inner.set(b, (inner.get(b) ?? 0) + x);
 };
 
-/** E ステップ。pOf はヒットのコア命中率（区間・N のキー）、qOf は区間・帯のヒットの命中率 */
+/**
+ * E ステップ。pOf はヒットのコア命中率（区間・N のキー）、qOf は区間・帯のヒットの命中率。コア命中率は [1e-9, 1 − 1e-9] に丸める
+ * （上限 1 の形で、非コアのヒットの尤度を 0 にして組を落とさない）
+ */
 function expect(
   groups: readonly Grouped[],
   pOf: (segment: number, key: string) => number,
@@ -259,7 +262,7 @@ function expect(
     const ws = g.cands.map((c) => {
       let w = (c.pattern === 3 ? q * q : q * (1 - q)) / any;
       for (const h of c.hits) {
-        const p = pOf(g.segment, h.key);
+        const p = Math.min(1 - 1e-9, Math.max(1e-9, pOf(g.segment, h.key)));
         w *= (h.core ? p : 1 - p) * (h.crit ? h.cr : 1 - h.cr);
       }
       return w;
@@ -280,20 +283,6 @@ function expect(
   return { hits, cores, shotHits, shots, llBySegment };
 }
 
-/** 1 ヒット以上当たった発の当たったヒットの数の平均 = 2q ÷ (1 − (1 − q)²) を q について解く */
-function solveQ(meanHits: number): number {
-  if (!(meanHits > 1)) return 1e-6;
-  if (meanHits >= 2) return 1;
-  let lo = 1e-9;
-  let hi = 1;
-  for (let i = 0; i < 60; i++) {
-    const mid = (lo + hi) / 2;
-    if ((2 * mid) / (1 - (1 - mid) ** 2) < meanHits) lo = mid;
-    else hi = mid;
-  }
-  return (lo + hi) / 2;
-}
-
 /** 区間 × N ごとのコア命中率と、区間 × 帯ごとのヒットの命中率を EM で最尤に決める */
 export function fitStages(
   rows: readonly StageRow[],
@@ -302,48 +291,44 @@ export function fitStages(
   iterations = 300,
 ): { fit: StageFit; groups: Grouped[] } {
   const groups = groupRows(rows, model, upper);
+  // 始めは値が空で、既定値（コア 0.3・命中 0.8）から
   let core = new Map<number, Map<string, number>>();
   let hitRate = new Map<number, Map<number, number>>();
-  let e = expect(
-    groups,
-    () => 0.3,
-    () => 0.8,
-  );
-  for (let it = 0; it < iterations; it++) {
+  for (let it = 0; ; it++) {
+    const [c, q] = [core, hitRate];
+    const e = expect(
+      groups,
+      (s, k) => get2(c, s, k, 0.3),
+      (s, b) => get2(q, s, b, 0.8),
+    );
+    if (it === iterations) {
+      const ll = [...e.llBySegment.values()].reduce((a, b) => a + b, 0);
+      return { fit: { core, hits: e.hits, cores: e.cores, hitRate, logLikelihood: ll }, groups };
+    }
     core = new Map();
     for (const [s, inner] of e.hits)
       for (const [k, h] of inner) add2(core, s, k, h > 0 ? get2(e.cores, s, k, 0) / h : 0);
     hitRate = new Map();
     for (const [s, inner] of e.shots)
-      for (const [b, n] of inner) add2(hitRate, s, b, solveQ(get2(e.shotHits, s, b, 0) / n));
-    const c = core;
-    const q = hitRate;
-    e = expect(
-      groups,
-      (s, k) => get2(c, s, k, 0.3),
-      (s, b) => get2(q, s, b, 0.8),
-    );
+      for (const [b, n] of inner) add2(hitRate, s, b, solveQ(get2(e.shotHits, s, b, 0) / n, 2));
   }
-  const ll = [...e.llBySegment.values()].reduce((a, b) => a + b, 0);
-  return { fit: { core, hits: e.hits, cores: e.cores, hitRate, logLikelihood: ll }, groups };
 }
 
-/** 区間の対数尤度（コア命中率を pOf にし、命中率は当てはめの値に固定） */
-function segmentLL(groups: readonly Grouped[], fit: StageFit, segment: number, pOf: (key: string) => number): number {
-  const mine = groups.filter((g) => g.segment === segment);
+/** 1 つの区間の組（mine）の対数尤度（コア命中率を pOf にし、命中率は当てはめの値に固定） */
+function segmentLL(mine: readonly Grouped[], fit: StageFit, pOf: (key: string) => number): number {
   const e = expect(
     mine,
     (_, k) => pOf(k),
     (s, b) => get2(fit.hitRate, s, b, 0.8),
   );
-  return e.llBySegment.get(segment) ?? 0;
+  return [...e.llBySegment.values()].reduce((a, b) => a + b, 0);
 }
 
 /**
  * σ の代わり: 対数尤度が最大 x から 0.5 下がる左右の点の幅の半分（上限 1 に掛かる形は対数尤度が折れるので、2 階微分を使わない）。
  * 範囲 [lo, hi] の端まで下がらなければ、その端までで測る
  */
-export function halfWidth(ll: (x: number) => number, x: number, lo: number, hi: number): number {
+function halfWidth(ll: (x: number) => number, x: number, lo: number, hi: number): number {
   const top = ll(x);
   const edge = (inside: number, outside: number) => {
     if (top - ll(outside) < 0.5) return outside;
@@ -360,9 +345,9 @@ export function halfWidth(ll: (x: number) => number, x: number, lo: number, hi: 
 }
 
 /** 区間の帯ごとの値: コア命中率（期待値の比）・当たったヒットの数・σ（帯の中の N を 1 つの値に揃えた対数尤度が 0.5 下がる幅の半分）・ヒットの重みの N の平均 */
-export type BandValue = { core: number; hits: number; sigma: number; meanN: number };
+type BandValue = { core: number; hits: number; sigma: number; meanN: number };
 
-export function bandValues(
+function bandValues(
   groups: readonly Grouped[],
   fit: StageFit,
   segment: number,
@@ -371,6 +356,7 @@ export function bandValues(
   const hits = fit.hits.get(segment) ?? new Map<string, number>();
   const cores = fit.cores.get(segment) ?? new Map<string, number>();
   const free = fit.core.get(segment) ?? new Map<string, number>();
+  const mine = groups.filter((g) => g.segment === segment);
   return keysByBand.map((keys) => {
     const h = keys.reduce((a, k) => a + (hits.get(k) ?? 0), 0);
     const c = keys.reduce((a, k) => a + (cores.get(k) ?? 0), 0);
@@ -378,13 +364,13 @@ export function bandValues(
     const meanN = h > 0 ? keys.reduce((a, k) => a + Number(k) * (hits.get(k) ?? 0), 0) / h : 0;
     if (!(h > 0)) return { core: p, hits: h, sigma: NaN, meanN };
     const inBand = new Set(keys);
-    const ll = (x: number) => segmentLL(groups, fit, segment, (k) => (inBand.has(k) ? x : (free.get(k) ?? 0)));
+    const ll = (x: number) => segmentLL(mine, fit, (k) => (inBand.has(k) ? x : (free.get(k) ?? 0)));
     return { core: p, hits: h, sigma: halfWidth(ll, Math.min(1 - 1e-6, Math.max(1e-6, p)), 1e-6, 1 - 1e-6), meanN };
   });
 }
 
 /** 形ごとの比べ: p0 を最尤にした値と σ、そのときと（あれば）与えた p0 での、自由な値との対数尤度の差と帯ごとの予測 */
-export type FormResult = {
+type FormResult = {
   form: FormName;
   p0: number;
   sigma: number;
@@ -402,24 +388,35 @@ export function compareForms(
   nMax = Infinity,
 ): FormResult[] {
   const free = fit.core.get(segment) ?? new Map<string, number>();
-  const llFree = segmentLL(groups, fit, segment, (k) => free.get(k) ?? 0);
-  // nMax より上の N は自由な値のまま（形に置き換えない）
+  const mine = groups.filter((g) => g.segment === segment);
+  const llFree = segmentLL(mine, fit, (k) => free.get(k) ?? 0);
   const hits = fit.hits.get(segment) ?? new Map<string, number>();
+  // nMax より上の N は自由な値のまま（形に置き換えない）
+  const above = new Set([...hitsByKey.keys()].filter((k) => Number(k) > nMax + 1e-9));
   return FORM_NAMES.map((form) => {
     const f = FORMS[form].f;
     const ll = (p0: number) =>
-      segmentLL(groups, fit, segment, (k) =>
-        Number(k) > nMax + 1e-9 ? (free.get(k) ?? 0) : Math.min(1 - 1e-9, Math.max(1e-9, f(p0, hitsByKey.get(k)!))),
-      );
-    // 黄金分割で最大を探す
+      segmentLL(mine, fit, (k) => (above.has(k) ? (free.get(k) ?? 0) : f(p0, hitsByKey.get(k)!)));
+    // 黄金分割で最大を探す（前の回の内側の点を 1 つ使い回す）
     let lo = 0.005;
     let hi = 0.95;
     const g = (Math.sqrt(5) - 1) / 2;
+    let a = hi - g * (hi - lo);
+    let b = lo + g * (hi - lo);
+    let la = ll(a);
+    let lb = ll(b);
     for (let i = 0; i < 80; i++) {
-      const a = hi - g * (hi - lo);
-      const b = lo + g * (hi - lo);
-      if (ll(a) < ll(b)) lo = a;
-      else hi = b;
+      if (la < lb) {
+        lo = a;
+        [a, la] = [b, lb];
+        b = lo + g * (hi - lo);
+        lb = ll(b);
+      } else {
+        hi = b;
+        [b, lb] = [a, la];
+        a = hi - g * (hi - lo);
+        la = ll(a);
+      }
     }
     const p0 = (lo + hi) / 2;
     const out: FormResult = {
@@ -470,18 +467,14 @@ function modelShots(
       parts: [...parts.values()],
     };
   };
-  // モデルのマガジン（40f を超える空きで分ける）の 1 つ目と 2 つ目だけを作る
-  const mags: number[] = [0];
-  for (let i = 1; i < frames.length && mags.length < 3; i++) if (frames[i]! - frames[i - 1]! > 40) mags.push(i);
-  if (mags.length < 3) throw new Error('モデルのマガジンが 2 つに満たない');
-  const end = mags[2]!;
-  const hitModels = frames.slice(0, end).map(hitAt);
-  const shots = hitModels.map((h, i): ModelShot => {
-    const mag = i < mags[1]! ? 0 : 1;
-    const next = i + 1 < end && (i + 1 < mags[1]! ? 0 : 1) === mag ? hitModels[i + 1]! : h;
-    return { mag, hits: [h, next] };
+  // モデルのマガジン（録画と同じ groupMagazines の切り方）の 1 つ目と 2 つ目だけを作る
+  const [m0, m1] = groupMagazines(frames.map((frame) => ({ frame })));
+  if (m0 === undefined || m1 === undefined) throw new Error('モデルのマガジンが 2 つに満たない');
+  const shots = [m0, m1].flatMap((m, mag) => {
+    const hs = m.map((x) => hitAt(x.frame));
+    return hs.map((h, i): ModelShot => ({ mag, hits: [h, hs[i + 1] ?? h] }));
   });
-  return { shots, starts: [0, mags[1]!] };
+  return { shots, starts: [0, m0.length] };
 }
 
 const DEFAULT_UPPER = [0.136, 0.272, 0.407, 0.571];
@@ -513,22 +506,23 @@ export const dualSmgStages: Recipe = {
     if (given.length > 0 && given.length !== segments.length) throw new Error('--opt p0 は segments と同じ数');
     const upper = ctx.options.bands === undefined ? DEFAULT_UPPER : parseList(ctx.options.bands, 'bands');
     const rows: HudIncrement[] = (await loadHudJumps(ctx)).rows.map((r) => ({ ...r, readGap: r.readGap ?? 1 }));
-    const interval = estimateInterval(rows, 120);
     const cutsGiven = parseList(ctx.options.cuts, 'cuts');
     const cuts = cutsGiven.length > 0 ? cutsGiven : longGaps(rows).map((g) => g.frame);
     if (cuts.length < 4 || cuts.length > 5)
       throw new Error(`区間の切れ目が ${cuts.length} 個（4〜5 個が要る。--opt cuts）: ${cuts.join(',')}`);
     const { shots, starts } = modelShots(ctx.recording, setupId, ctx.source);
-    const { rows: read, stats } = assignShots(rows, shots, starts, {
+    const opts = {
       cuts,
-      interval,
+      // 装弾数はモデルの 1 つ目のマガジンの発の数
+      interval: estimateInterval(rows, starts[1]),
       tol: num('tol', 2),
       carry: num('carry', 21),
       reload: num('reload', 100),
       ahead: num('ahead', 3),
       resync: num('resync', 8),
-    });
-    if (stats.unfit > 0) ctx.log(`格子に乗らない増分のフレーム: ${stats.unfitFrames.join(' ')}`);
+    };
+    const { rows: read, stats } = assignShots(rows, shots, starts, opts);
+    if (stats.unfitFrames.length > 0) ctx.log(`格子に乗らない増分のフレーム: ${stats.unfitFrames.join(' ')}`);
     const { fit, groups } = fitStages(read, shots, upper);
     const hitsByKey = new Map<string, HitModel>();
     for (const s of shots) for (const h of s.hits) hitsByKey.set(nKey(h.n), h);
@@ -540,8 +534,8 @@ export const dualSmgStages: Recipe = {
     const who = ctx.recording.team.map((m) => m.name).join('・');
     const note =
       `モデル（--opt setup ${setupId}）の 1 つ目・2 つ目のマガジンの発ごとの 1 ヒットの格子（hitDamage のコア × 会心 × 距離。2 ヒット目は次の発）に、` +
-      `差 ${num('tol', 2)}（ヒットごとに +0.5）以内で当てた。使ったマガジン ${stats.used} / ${stats.magazines}（戦闘の初めと、前のマガジンを ${num('carry', 21)} 発以上撃って ${num('reload', 100)}f 以下の空きで始まったもの）、` +
-      `読めた増分 ${read.length}（うち前後 ${num('resync', 8)} 発の中で合わせ直した増分 ${stats.resynced}）、数発のまとまり ${stats.lumped}、格子に乗らない増分 ${stats.unfit}。区間の切れ目 ${cuts.map((c) => `f${c}`).join('・')}。` +
+      `差 ${opts.tol}（ヒットごとに +0.5）以内で当てた。使ったマガジン ${stats.used} / ${stats.magazines}（戦闘の初めと、前のマガジンを ${opts.carry} 発以上撃って ${opts.reload}f 以下の空きで始まったもの）、` +
+      `読めた増分 ${read.length}（うち前後 ${opts.resync} 発の中で合わせ直した増分 ${stats.resynced}）、数発のまとまり ${stats.lumped}、格子に乗らない増分 ${stats.unfitFrames.length}。区間の切れ目 ${cuts.map((c) => `f${c}`).join('・')}。` +
       `会心率はモデルの値に固定し、区間 × N ごとのコア命中率と区間 × 帯ごとのヒットの命中率を EM で最尤に決めた（対数尤度 ${roundTo(fit.logLikelihood, 1)}）`;
     const nMaxes = [...parseList(ctx.options.nmax, 'nmax'), Infinity];
     const out: RecipeObservation[] = [];

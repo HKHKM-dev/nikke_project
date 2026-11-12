@@ -63,7 +63,7 @@ function stagedModel(): ModelShot[] {
 
 describe('assignShots', () => {
   const model = stagedModel();
-  const opts = { cuts: [100000], interval: 2.5, tol: 2, carry: 15, reload: 100, ahead: 3 };
+  const opts = { cuts: [100000], interval: 2.5, tol: 2, carry: 15, reload: 100, ahead: 3, resync: 8 };
   const twoBody = (s: number, t: number) => (10000 + 1000 * s + 10000 + 1000 * t) * 1.3;
 
   it('2 ヒットとも外れた発を値で飛ばし、リロードの後のマガジンを 2 つ目に当てる', () => {
@@ -83,7 +83,7 @@ describe('assignShots', () => {
         readGap: 1,
       });
     const { rows: read, stats } = assignShots(rows, model, [0, 20], opts);
-    expect(stats).toMatchObject({ used: 2, unfit: 0 });
+    expect(stats).toMatchObject({ used: 2, unfitFrames: [] });
     expect(read.map((r) => r.shot)).toEqual([0, 1, ...Array.from({ length: 17 }, (_, k) => k + 3), 20, 21, 22, 23]);
   });
 
