@@ -318,8 +318,8 @@ export type Tolerance = { rel: number } | { abs: number };
 
 export type CompareSpec = {
   /**
-   * モデル。sim だけ（一本化の段 A-3。plan/design-unify-sim-calc.md 8 節）。2026-10-27 までは calc も書けた（使う指定は無かった）。
-   * 観測値・予測の全件が "sim" を書いているので、欄は残し、ほかの値は検査で落とす
+   * モデル。sim だけ（plan/design-unify-sim-calc.md 8 節）。
+   * 観測値・予測の全件が "sim" を書いているので、欄は残し、ほかの値（古い "calc" など）は検査で落とす
    */
   model: 'sim';
   metric: string;
@@ -2651,7 +2651,7 @@ export function validateObservations(
     }
     for (const name of metric.args)
       if (c.args[name] === undefined) errors.push(`${at}: ${c.metric} の引数 ${name} が無い`);
-    // 一本化の段 A-3: calc の経路は消した（2026-10-27）
+    // model は sim だけを受ける（古い calc の指定を弾く）
     if (c.model !== 'sim') errors.push(`${at}: model は sim だけ（calc は 2026-10-27 の一本化で消した）`);
     const preset = enemies.enemies.find((e) => e.id === c.setup.enemy);
     if (preset === undefined) errors.push(`${at}: 敵のプリセット ${c.setup.enemy} が無い`);

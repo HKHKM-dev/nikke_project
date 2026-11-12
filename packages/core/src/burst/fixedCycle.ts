@@ -1,4 +1,4 @@
-// Stage 5: 固定バーストサイクルの時刻表（純関数）。sim と calc が同じ時刻表を使う。
+// Stage 5: 固定バーストサイクルの時刻表（純関数）。
 // サイクル k は [cycleFrames × k, cycleFrames × (k + 1))。前半 normalFrames が通常区間、後半 fullBurstFrames がフルバースト区間。
 // 各サイクルの通常区間の終わり（= フルバースト区間の始まり）にバースト I → II → III が同一フレームで発動する。
 // バースト CT・ゲージ蓄積は Stage 7（dynamic.ts）。ここでは毎サイクル必ず発動する。

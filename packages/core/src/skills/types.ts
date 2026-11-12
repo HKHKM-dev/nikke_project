@@ -2602,7 +2602,7 @@ export type Unknown = 'unknown';
 
 /**
  * 最小構成の検査編（plan/design-minimal-relevance.md 3.3 節）: 未対応・前提の外の notes（と、指す効果の無い補足）が、効いたとしたら
- * どんな効果かを定義の効果と同じ語彙で書いたもの。計算（calc・sim）は読まない。対応状況（support）の決め方も変えない。
+ * どんな効果かを定義の効果と同じ語彙で書いたもの。計算（sim）は読まない。対応状況（support）の決め方も変えない。
  * stat・target は passive と timed で、trigger は timed で必須（ほかの種類では書いても書かなくてもよい）
  */
 export type NoteEffect = {

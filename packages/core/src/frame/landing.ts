@@ -1,5 +1,5 @@
 // Stage 18-C（plan/design-stage18.md 12.3 節）: 条件が「自動」の枠の、着地点ごとの条件（コア命中率・距離ボーナス・弾丸命中率）。
-// calc と sim で共通。着地点は敵の出来事（的のジャンプ）だけで決まり、射撃やバフには依らないので、1 パス目の前に決まる。
+// 着地点は敵の出来事（的のジャンプ）だけで決まり、射撃やバフには依らないので、1 パス目の前に決まる。
 //
 // - 距離ボーナス: 着地点の距離の範囲が、キャラの bonusRange に丸ごと入るか（C-0026・C-0031・C-0044）。
 // - コア命中率: 的の表の値 p（着地点の id → 帯 → all の順で引く）に、命中率▲ N で min(1, p ÷ (1 − N)²)。N ≥ 1 なら 1
@@ -728,7 +728,7 @@ export function autoConditionSummary(
 }
 
 /**
- * 枠の条件の注記（calc と sim で共通）。弾丸命中率の近似（damage.ts の conditionNotes）は、自動の枠なら使った弾丸命中率の
+ * 枠の条件の注記。弾丸命中率の近似（damage.ts の conditionNotes）は、自動の枠なら使った弾丸命中率の
  * 発数平均で出す。自動の枠の注記（landingNotes）を続ける
  */
 export function slotConditionNotes(

@@ -1,4 +1,4 @@
-// Stage 7: 動的サイクルの時刻表（純関数）。sim と calc が同じ時刻表を使う。
+// Stage 7: 動的サイクルの時刻表（純関数）。
 // 各枠の射手（frame/shooter.ts）を 1 フレームずつ回し、撃ったフレームにゲージを入れて状態機械（controller.ts）を進める。
 // Stage 7 の範囲では射撃のタイミングがバフにもバーストにも依存しない（弾数・リロード・チャージ速度のバフは段階 C / D）ので、
 // 時刻表は編成だけで決まり、sim の本体（2 パス目）の射撃列とも 1 フレームも違わない。
@@ -100,7 +100,7 @@ export function burstUnitOf(
 }
 
 export type DynamicScheduleOptions = {
-  /** 射撃の列（planShots の結果）。省略時はここで回す。sim / calc は 1 パス目の列を渡して共有する */
+  /** 射撃の列（planShots の結果）。省略時はここで回す */
   shots?: readonly (ShotLog | null)[];
   /** 枠ごとのゲージ速度 Σ burstGaugeSpeed（常時パッシブ）。省略は全員 0 */
   gaugeSpeed?: readonly number[];

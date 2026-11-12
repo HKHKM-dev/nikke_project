@@ -1,4 +1,4 @@
-// Stage 10: 1 パス目のフレームループ（純関数。sim と calc で共有）。plan/design-stage10.md 1 節。
+// Stage 10: 1 パス目のフレームループ（純関数）。plan/design-stage10.md 1 節。
 // 射撃に効くバフ（最大装弾数・リロード速度・チャージ速度）と CT 短縮が入ると、射撃の列 → 時刻表 → バフ → 射撃の列…と循環する。
 // ここではフレームを 1 つずつ進め、射手・ゲージ・バーストの状態機械・射撃に効く効果を同時に回して循環をほどく。
 //
@@ -13,7 +13,7 @@
 //
 // 持ち主ごとの一覧編（plan/design-holder-effects.md 段 A・B）: 射撃に効かない効果（攻撃力・会心など）も、すべて件の一覧で持つ。
 // ループの後の区間は、planTeamRun が履歴から作る（skills/holders.ts の buffTimelineOf。2 パス目の作り直しはやめ、段 B で 2 パス目の
-// 入口 planBuffTimeline も消した）。読む側（calc・sim・観測値の指標・画面）は履歴を読む（段 D。段 E で窓と記録の書き出しを消した）。
+// 入口 planBuffTimeline も消した）。読む側（sim・観測値の指標・画面）は履歴を読む（段 D。段 E で窓と記録の書き出しを消した）。
 // 射撃に効く効果も即時効果も無い編成では、射撃の列は planShots、時刻表は planDynamicSchedule と 1 フレームも違わない（1.3 節）。
 //
 // Stage 11（plan/design-stage11.md 3 節）: 対象 burstUsers（「直前にバーストスキルを使用した味方」）は発火ごとに対象が変わるので、

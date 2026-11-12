@@ -146,7 +146,7 @@ export function validatePredictions(
       const metric = METRICS[t.metric];
       if (metric === undefined) errors.push(`${at}: 指標 ${t.id} の metric ${t.metric} が語彙に無い`);
       else {
-        // 一本化の段 A-3: calc の経路は消した（2026-10-27）
+        // model は sim だけを受ける（古い calc の指定を弾く）
         if (t.model !== 'sim')
           errors.push(`${at}: 指標 ${t.id} の model は sim だけ（calc は 2026-10-27 の一本化で消した）`);
         for (const a of metric.args) {

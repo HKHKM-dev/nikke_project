@@ -1,6 +1,4 @@
-// 1 パス目（calc と sim で共通）。射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動。
-// Stage 8: 1 パス目を planTeamRun にまとめ、sim と calc が同じものを使う。
-// 射撃の回数トリガーの窓と倍率ダメージ（damage）の発動は sim と厳密一致し、calc が期待値で置くのは通常攻撃のトリガー数だけ。
+// 1 パス目の入口（planTeamRun）。射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動を作り、2 パス目（sim/engine.ts）に渡す。
 // Stage 10: 射撃に効くバフと CT 短縮で射撃の列と時刻表が循環するので、1 パス目の射撃の列と時刻表は frame/firstPass.ts の
 // フレームループで作る。バフの区間と倍率ダメージは Stage 8 のまま、確定した射撃の列と時刻表から作る。
 // Stage 16（plan/design-stage16.md 2 節）: team.ts から分けた。
@@ -139,7 +137,7 @@ import {
 import type { ShotLog } from './shots.ts';
 import type { SkillSlot } from '../types.ts';
 
-/** Stage 8: 倍率ダメージ 1 回の発動（1 パス目で決まる。sim と calc で共通） */
+/** Stage 8: 倍率ダメージ 1 回の発動（1 パス目で決まる） */
 export type SkillHitEvent = {
   frame: number;
   slotIndex: number;
@@ -208,7 +206,7 @@ export function slotTriggerDamage(
   );
 }
 
-/** バーストの時刻表（sim と calc で共通）。burst が false なら null。options は動的サイクルの射撃の列とゲージ速度（Stage 8） */
+/** バーストの時刻表。burst が false なら null。options は動的サイクルの射撃の列とゲージ速度（Stage 8） */
 export function planTeamSchedule(
   slots: readonly (TeamSlotInput | null)[],
   frames: number,
@@ -228,7 +226,7 @@ export function planTeamSchedule(
   return planDynamicSchedule(slots, frames, model, undefined, controlledSlot, options);
 }
 
-/** 1 パス目の結果（sim と calc で共通） */
+/** 1 パス目の結果 */
 export type TeamPlan = {
   frames: number;
   /** 各枠の射撃の列（空枠は null） */
