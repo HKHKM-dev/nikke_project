@@ -32,8 +32,10 @@ export function validateObservations(
   const byId = new Map<string, Observation>();
   for (const o of observations) if (!byId.has(o.id)) byId.set(o.id, o);
   const errors: string[] = [];
+  const seen = new Set<string>();
   for (const o of observations) {
-    if (byId.get(o.id) !== o) errors.push(`${o.id}: id が重複している`);
+    if (seen.has(o.id)) errors.push(`${o.id}: id が重複している`);
+    seen.add(o.id);
     errors.push(...fieldErrors(o, recordings));
     if (o.compare !== undefined) errors.push(...compareErrors(o, o.compare, byId, recordings, enemies));
   }

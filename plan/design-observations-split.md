@@ -69,7 +69,7 @@
 | `observations/metrics/firing.ts` | 射撃の刻み・マガジン・リロード・狙えない窓（`shotCount`・`shotIntervals`・`magazineShots`・`reload*`・`maxAmmoAt` など） | 約 29KB |
 | `observations/metrics/burst.ts` | バーストの時刻表・ゲージ・CT（`fullBurst*`・`burstActivation*`・`gaugeFull*`・`cooldownCutFrames`・`burstEffectDelay` など） | 約 30KB |
 | `observations/metrics/buffs.ts` | バフの区間・状態のスタック・確率（`buffWindow*`・`buffEdge*`・`chance*`・`stateStack*`・`counterAtBursts` など） | 約 28KB |
-| `observations/metrics/index.ts` | テーマごとの表をつないだ `METRICS`（同じ名前が 2 つのテーマにあれば読み込みで止める） | 1KB 未満 |
+| `observations/metrics/index.ts` | テーマごとの表をつないだ `METRICS`（同じ名前が 2 つのテーマにあれば読み込みで止める） | 約 1KB |
 | `observations/validate.ts` | `validateObservations`・`validateScope` | 約 11KB |
 | `observations/teamInput.ts` | `RecordsData`・`withoutEffects`・`buildTeamInput` と、その中だけで使う関数 | 約 13KB |
 | `observations/run.ts` | `Residual`・`compareValue`・`Prediction`・`PredictionMemo`・`predictionKey`・`runObservations` | 約 6KB |
