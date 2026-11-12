@@ -13,7 +13,7 @@ import {
   type SkillSupportGap,
   type SkillSupportIndex,
 } from '../types.ts';
-import { fail, isRecord, parseNonNegativeInt, type Json } from './common.ts';
+import { fail, isRecord, type Json, parseNonNegativeInt, rejectUnknownKeys } from './common.ts';
 import { validateBurstHitTriggers, validateCrossChecks } from './crossChecks.ts';
 import { parseEffect } from './effect.ts';
 import { NOTE_REFERS, parseNote } from './notes.ts';
@@ -110,9 +110,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
     fail('checkedAt', 'expected a YYYY-MM-DD string');
   }
   if (!isRecord(raw.skills)) fail('skills', 'expected an object');
-  for (const key of Object.keys(raw.skills)) {
-    if (!(SKILL_SLOTS as readonly string[]).includes(key)) fail(`skills.${key}`, 'unknown skill slot');
-  }
+  rejectUnknownKeys(raw.skills, SKILL_SLOTS, 'skills', 'unknown skill slot');
   const skills = {} as Record<SkillSlot, SkillEntry>;
   for (const slot of SKILL_SLOTS) skills[slot] = parseEntry(raw.skills[slot], slot);
   // アニス：スター編: バースト再突入は 1 つの定義に 1 つまで（次の段階は 1 つしか持てない）。2 段目の段 12: バースト段階の変更も

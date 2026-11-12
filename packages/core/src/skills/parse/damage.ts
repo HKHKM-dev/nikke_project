@@ -61,11 +61,13 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
   parseHitShape(v, effect, path);
   parseValueTiming(v, effect, path);
   // 同 5.3 節: 「〈状態〉再発動周期 N 秒▼」
-  if (v.periodShorten !== undefined) effect.periodShorten = parsePeriodShorten(v.periodShorten, trigger, path);
+  if (v.periodShorten !== undefined)
+    effect.periodShorten = parsePeriodShorten(v.periodShorten, trigger, `${path}.periodShorten`);
   parseDamageGaugePerHit(v, effect, path);
   // 同 5.4 節: 「コア命中ダメージ」
   if (v.coreHit !== undefined) effect.coreHit = parseTrue(v.coreHit, `${path}.coreHit`);
   parsePerCountSplit(v, effect, path);
+  validateGaugePerHitSplit(effect, path);
   parseHitMarks(v, effect, path);
   parseAssumes(v, effect, path);
   return effect;
@@ -200,7 +202,7 @@ function parseHitShape(v: Record<string, Json>, effect: DamageEffect, path: stri
     if (effect.delayFrames !== undefined) fail(`${path}.perBurstHit`, 'perBurstHit cannot be used with delayFrames');
     effect.perBurstHit = true;
   }
-  if (v.perCount !== undefined) effect.perCount = parseDamagePerCount(v.perCount, trigger, path);
+  if (v.perCount !== undefined) effect.perCount = parseDamagePerCount(v.perCount, trigger, `${path}.perCount`);
   // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.2 節）: 「N 回順番に攻撃」
   if (v.hitsRef !== undefined) {
     if (isShotCountTrigger(trigger)) fail(`${path}.hitsRef`, 'hitsRef cannot be used with a shot count trigger');
@@ -245,22 +247,18 @@ function parseHitShape(v: Record<string, Json>, effect: DamageEffect, path: stri
  * 段 11 の PR 5（plan/design-skill-stage11.md 2.5 節）: 値 × カウンタの値（ラプラス：アルティメットヒーロー）。
  * 段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: フルバーストの始まり（ラピ：レッドフードの粘着榴弾の起爆）も
  */
-function parseDamagePerCount(per: Json, trigger: EffectTrigger, path: string): NonNullable<DamageEffect['perCount']> {
-  if (!isRecord(per)) fail(`${path}.perCount`, 'expected an object');
+function parseDamagePerCount(per: Json, trigger: EffectTrigger, at: string): NonNullable<DamageEffect['perCount']> {
+  if (!isRecord(per)) fail(at, 'expected an object');
   // 段 13 の PR 1（plan/design-skill-stage13.md 2.2 節）: カウンタが上限に届いた時（ミハラ：ボンディングチェーンのチェーンの数だけの攻撃）も。
   // 段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: フルチャージして攻撃した時（オートファイアの装填数分の順番の攻撃）も
   const fullChargeShot = isShotCountTrigger(trigger) && trigger.count === 'fullChargeShot';
   if (trigger !== 'burstUse' && trigger !== 'fullBurstStart' && !isCounterFullTrigger(trigger) && !fullChargeShot)
-    fail(
-      `${path}.perCount`,
-      'perCount needs the trigger "burstUse", "fullBurstStart", { counterFull } or { count: "fullChargeShot" }',
-    );
-  rejectUnknownKeys(per, ['state', 'counter'], `${path}.perCount`);
-  if ((per.state === undefined) === (per.counter === undefined))
-    fail(`${path}.perCount`, 'expected exactly one of state and counter');
+    fail(at, 'perCount needs the trigger "burstUse", "fullBurstStart", { counterFull } or { count: "fullChargeShot" }');
+  rejectUnknownKeys(per, ['state', 'counter'], at);
+  if ((per.state === undefined) === (per.counter === undefined)) fail(at, 'expected exactly one of state and counter');
   return per.state !== undefined
-    ? { state: parseNamedStateId(per.state, `${path}.perCount.state`, 'ally') }
-    : { counter: oneOf(COUNTER_IDS, per.counter, `${path}.perCount.counter`) };
+    ? { state: parseNamedStateId(per.state, `${at}.state`, 'ally') }
+    : { counter: oneOf(COUNTER_IDS, per.counter, `${at}.counter`) };
 }
 
 /** 値を決める時: 発火ごとの値（perTrigger）と、発火の前の値（valueBeforeFire） */
@@ -283,30 +281,30 @@ function parseValueTiming(v: Record<string, Json>, effect: DamageEffect, path: s
 }
 
 /** 「〈状態〉再発動周期 N 秒▼」（periodShorten）。状態の間か、名前の無い窓（きっかけから N 秒）の間だけ周期を縮める */
-function parsePeriodShorten(p: Json, trigger: EffectTrigger, path: string): PeriodShorten {
-  if (!isTimerTrigger(trigger)) fail(`${path}.periodShorten`, 'periodShorten needs a timer trigger ({ everySeconds })');
-  if (!isRecord(p)) fail(`${path}.periodShorten`, 'expected an object');
-  rejectUnknownKeys(p, ['state', 'window', 'slot', 'ref'], `${path}.periodShorten`);
-  if ((p.state === undefined) === (p.window === undefined))
-    fail(`${path}.periodShorten`, 'expected exactly one of state and window');
-  const slot = oneOf(SKILL_SLOTS, p.slot, `${path}.periodShorten.slot`);
-  const ref = parseRef(p.ref, `${path}.periodShorten.ref`);
+function parsePeriodShorten(p: Json, trigger: EffectTrigger, at: string): PeriodShorten {
+  if (!isTimerTrigger(trigger)) fail(at, 'periodShorten needs a timer trigger ({ everySeconds })');
+  if (!isRecord(p)) fail(at, 'expected an object');
+  rejectUnknownKeys(p, ['state', 'window', 'slot', 'ref'], at);
+  if ((p.state === undefined) === (p.window === undefined)) fail(at, 'expected exactly one of state and window');
+  const slot = oneOf(SKILL_SLOTS, p.slot, `${at}.slot`);
+  const ref = parseRef(p.ref, `${at}.ref`);
   if (p.state !== undefined) {
-    return { state: parseNamedStateId(p.state, `${path}.periodShorten.state`, 'ally'), slot, ref };
+    return { state: parseNamedStateId(p.state, `${at}.state`, 'ally'), slot, ref };
   }
   // 2 段目の段 15 の PR 3（論点 7）: 名前の無い窓（きっかけから N 秒）。きっかけはいまはバースト使用時だけ
   const w = p.window;
-  const at = `${path}.periodShorten.window`;
-  if (!isRecord(w)) fail(at, 'expected an object');
-  rejectUnknownKeys(w, ['trigger', 'durationRef', 'elapsed'], at);
-  if (w.trigger !== 'burstUse') fail(`${at}.trigger`, `expected "burstUse", got ${JSON.stringify(w.trigger)}`);
+  const windowAt = `${at}.window`;
+  if (!isRecord(w)) fail(windowAt, 'expected an object');
+  rejectUnknownKeys(w, ['trigger', 'durationRef', 'elapsed'], windowAt);
+  if (w.trigger !== 'burstUse') fail(`${windowAt}.trigger`, `expected "burstUse", got ${JSON.stringify(w.trigger)}`);
   // 2 段目の段 18 の PR 1: 経過で縮める窓（ドロシーの発現）。端数を持ち越す周期とは組まない
-  if (w.elapsed !== undefined) parseTrue(w.elapsed, `${at}.elapsed`);
-  if (w.elapsed === true && trigger.carry === true) fail(`${at}.elapsed`, 'elapsed cannot be used with a carry timer');
+  if (w.elapsed !== undefined) parseTrue(w.elapsed, `${windowAt}.elapsed`);
+  if (w.elapsed === true && trigger.carry === true)
+    fail(`${windowAt}.elapsed`, 'elapsed cannot be used with a carry timer');
   return {
     window: {
       trigger: 'burstUse',
-      durationRef: parseRef(w.durationRef, `${at}.durationRef`),
+      durationRef: parseRef(w.durationRef, `${windowAt}.durationRef`),
       ...(w.elapsed === true ? { elapsed: true as const } : {}),
     },
     slot,
@@ -382,14 +380,19 @@ function parsePerCountSplit(v: Record<string, Json>, effect: DamageEffect, path:
       fail(`${path}.sequentialAttack`, 'sequentialAttack needs perCountIntervalSeconds or perCountIntervalFrames');
     effect.sequentialAttack = true;
   }
-  // 射撃の回数のきっかけのヒットごとのゲージは、1 パス目が数えられるヒット（1 つずつ出すなら perCount の { state }）だけ
-  if (effect.gaugePerHit !== undefined && isShotCountTrigger(effect.trigger) && effect.perCount !== undefined) {
-    if (!('state' in effect.perCount) || !splitsPerCount(effect))
-      fail(
-        `${path}.gaugePerHit`,
-        'gaugePerHit with perCount needs perCount { state } split by perCountIntervalSeconds or perCountIntervalFrames',
-      );
-  }
+}
+
+/**
+ * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 射撃の回数のきっかけのヒットごとのゲージは、1 パス目が数えられるヒット
+ * （1 つずつ出すなら perCount の { state }）だけ。perCount の分け方（parsePerCountSplit）を読んだ後に見る
+ */
+function validateGaugePerHitSplit(effect: DamageEffect, path: string): void {
+  if (effect.gaugePerHit === undefined || !isShotCountTrigger(effect.trigger) || effect.perCount === undefined) return;
+  if (!('state' in effect.perCount) || !splitsPerCount(effect))
+    fail(
+      `${path}.gaugePerHit`,
+      'gaugePerHit with perCount needs perCount { state } split by perCountIntervalSeconds or perCountIntervalFrames',
+    );
 }
 
 /** 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2・2.3 節）: 1 ヒットの印（コア・距離ボーナス・発射体の爆発・付着） */

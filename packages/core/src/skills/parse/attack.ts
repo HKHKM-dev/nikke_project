@@ -9,7 +9,16 @@ import {
   type SkillSlot,
   type SummonEffect,
 } from '../types.ts';
-import { fail, type Json, oneOf, parseAssumes, parseDuration, parseRef, rejectUnknownKeys } from './common.ts';
+import {
+  assertPositiveFinite,
+  fail,
+  type Json,
+  oneOf,
+  parseAssumes,
+  parseDuration,
+  parseRef,
+  rejectUnknownKeys,
+} from './common.ts';
 import { parseAppliedTrigger, parseTrigger } from './trigger.ts';
 
 /** アニス：スター S2・バースト編: 周期の自動攻撃。検証の規則は dot の同じ欄と同じ */
@@ -33,9 +42,7 @@ export function parseAutoAttackEffect(v: Record<string, Json>, path: string): Au
     path,
   );
   const interval = v.intervalSeconds;
-  if (typeof interval !== 'number' || !Number.isFinite(interval) || interval <= 0) {
-    fail(`${path}.intervalSeconds`, `expected a positive finite number, got ${JSON.stringify(interval)}`);
-  }
+  assertPositiveFinite(interval, `${path}.intervalSeconds`);
   const effect: AutoAttackEffect = {
     kind: 'autoAttack',
     trigger: parseTrigger(v.trigger, `${path}.trigger`, { timer: true }),

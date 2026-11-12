@@ -97,7 +97,7 @@ export function parseGaugeHits(v: Json, path: string, minDelay: 0 | 1): number[]
 /** 2 段目の段 19 の PR 1: durationUntil の 1 つの欄のオブジェクト（{ counterEmpty }・{ stateEnd }）の値。ほかの形なら expected で落とす */
 export function objectUntil(u: Json, field: string, path: string, expected: string): Json {
   if (!isRecord(u)) fail(path, expected);
-  for (const key of Object.keys(u)) if (key !== field) fail(`${path}.${key}`, 'unknown field');
+  rejectUnknownKeys(u, [field], path);
   return u[field];
 }
 
@@ -129,4 +129,11 @@ export function parseTrue(v: Json, path: string): true {
 /** 効果の assumes（いつも満たすとみなした条件）。書いてあれば読んで effect に足す */
 export function parseAssumes(v: Record<string, Json>, effect: { assumes?: LocalizedText }, path: string): void {
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+}
+
+/** 正の有限の数。ほかの値なら「expected a positive finite number, got …」で落とす */
+export function assertPositiveFinite(v: Json, path: string): asserts v is number {
+  if (typeof v !== 'number' || !Number.isFinite(v) || v <= 0) {
+    fail(path, `expected a positive finite number, got ${JSON.stringify(v)}`);
+  }
 }

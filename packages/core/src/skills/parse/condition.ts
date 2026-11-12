@@ -34,11 +34,8 @@ import {
  */
 export function parseWhileCondition(v: Json, path: string): WhileCondition {
   if (!isRecord(v)) fail(path, 'expected { selfState } or { selfCounter }');
-  const keys = Object.keys(v);
-  for (const key of keys)
-    if (key !== 'selfState' && key !== 'selfCounter')
-      fail(`${path}.${key}`, 'unknown field (allowed: selfState, selfCounter)');
-  if (keys.length !== 1) fail(path, 'expected exactly one of selfState and selfCounter');
+  rejectUnknownKeys(v, ['selfState', 'selfCounter'], path, 'unknown field (allowed: selfState, selfCounter)');
+  if (Object.keys(v).length !== 1) fail(path, 'expected exactly one of selfState and selfCounter');
   if (v.selfCounter !== undefined) {
     const c = parseSelfCounterCondition(v.selfCounter, `${path}.selfCounter`);
     if (c.atLeast === undefined || c.atLeast < 1)

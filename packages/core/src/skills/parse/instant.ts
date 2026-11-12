@@ -10,10 +10,12 @@ import {
   type HealEffect,
   type InstantEffect,
   type InstantKind,
+  isAppliedTrigger,
   isEndedTrigger,
   isWeaponChangeEndTrigger,
 } from '../types.ts';
 import {
+  assertPositiveFinite,
   fail,
   type Json,
   oneOf,
@@ -82,7 +84,7 @@ const INSTANT_COMMON_KEYS = [
 ];
 
 /** 即時効果の種類ごとに足して書ける欄 */
-const INSTANT_KEYS_OF: Record<InstantKind, readonly string[]> = {
+const INSTANT_KIND_KEYS: Record<InstantKind, readonly string[]> = {
   // 編成の条件（burstStepMix・squad）。2 段目の段 12: 直書きの秒数（seconds。PR 3）と発火の条件（condition。PR 4。
   // plan/design-skill-stage12.md 2.6 節）。レッドフード編（plan/design-red-hood.md 2.3 節）: 戦闘中の発火の回数の上限（maxFires）。
   // ミント・プリカ編: CT▲（increase）
@@ -109,9 +111,14 @@ const INSTANT_KEYS_OF: Record<InstantKind, readonly string[]> = {
   currentHpDown: [],
 };
 
+/** 即時効果の種類ごとに書ける欄（どの種類にも書ける欄と、種類ごとの欄） */
+const INSTANT_KEYS_OF = {} as Record<InstantKind, readonly string[]>;
+for (const kind of Object.keys(INSTANT_KIND_KEYS) as InstantKind[])
+  INSTANT_KEYS_OF[kind] = [...INSTANT_COMMON_KEYS, ...INSTANT_KIND_KEYS[kind]];
+
 /** 即時効果。欄のまとまりごとの関数を決まった順に呼ぶ（plan/design-split-long-functions.md 3.1 節） */
 export function parseInstantEffect(v: Record<string, Json>, path: string, kind: InstantKind): InstantEffect {
-  rejectUnknownKeys(v, [...INSTANT_COMMON_KEYS, ...INSTANT_KEYS_OF[kind]], path);
+  rejectUnknownKeys(v, INSTANT_KEYS_OF[kind], path);
   // ミント・プリカ編（plan/design-mint-prika.md 2.6 節）: CT▼▲は「〈状態〉が適用された時」（{ applied }）も書ける（対象は自分・条件は selfState だけ）
   const applied = kind === 'cooldownReduction' ? parseAppliedTrigger(v.trigger, `${path}.trigger`) : undefined;
   if (applied !== undefined && v.target !== 'self')
@@ -122,14 +129,12 @@ export function parseInstantEffect(v: Record<string, Json>, path: string, kind: 
   const targetElement = parseTargetElement(v, target, path);
   const targetClass = parseTargetClass(v, target, path);
   const count = parseTargetCount(v, target, path);
-  // burstGauge は上で対象を allies に限り、絞り込みの欄も弾いてある
+  // burstGauge・fullBurstExtend は parseInstantTarget が対象を allies に限り、絞り込みの欄も弾いてある
   // 2 段目の段 12: cooldownReduction は直書きの秒数（seconds）も書ける（ref とちょうど片方）
   const seconds = v.seconds;
   if (seconds !== undefined) {
     if (v.ref !== undefined) fail(path, 'exactly one of ref and seconds is required');
-    if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
-      fail(`${path}.seconds`, `expected a positive finite number, got ${JSON.stringify(seconds)}`);
-    }
+    assertPositiveFinite(seconds, `${path}.seconds`);
   }
   const effect = (
     seconds !== undefined
@@ -144,7 +149,7 @@ export function parseInstantEffect(v: Record<string, Json>, path: string, kind: 
   if (step !== undefined) (effect as HealEffect).targetBurstStep = step;
   // 2 段目の段 8: heal も N 機の対象（lowestHpRatio）の N を持つ
   Object.assign(effect, count);
-  parseInstantKindFields(v, effect, applied !== undefined, path);
+  parseInstantKindFields(v, effect, path);
   parseAssumes(v, effect, path);
   return effect;
 }
@@ -217,8 +222,8 @@ function parseInstantTarget(
   return target;
 }
 
-/** 種類ごとの欄（書ける種類は INSTANT_KEYS_OF で限ってある）: 維持・弾丸チャージの発数・遅れ・発火の条件・CT▲・発火の回数の上限 */
-function parseInstantKindFields(v: Record<string, Json>, effect: InstantEffect, applied: boolean, path: string): void {
+/** 種類ごとの欄（書ける種類は INSTANT_KIND_KEYS で限ってある）: 維持・弾丸チャージの発数・遅れ・発火の条件・CT▲・発火の回数の上限 */
+function parseInstantKindFields(v: Record<string, Json>, effect: InstantEffect, path: string): void {
   if (v.durationRef !== undefined || v.durationSeconds !== undefined) Object.assign(effect, parseDuration(v, path));
   if (v.scaling !== undefined) {
     if (v.scaling !== 'flat') fail(`${path}.scaling`, `ammoRefill only takes "flat", got ${JSON.stringify(v.scaling)}`);
@@ -234,7 +239,7 @@ function parseInstantKindFields(v: Record<string, Json>, effect: InstantEffect, 
       v.condition,
       `${path}.condition`,
       // CT▼▲（{ applied } のほか）は使った段階も。ほか（フルバーストタイムの延長・回復・{ applied } の CT▼▲）は自分の状態だけ
-      effect.kind === 'cooldownReduction' && !applied
+      effect.kind === 'cooldownReduction' && !isAppliedTrigger(effect.trigger)
         ? CONDITION_KEYS_OF.cooldownReduction
         : CONDITION_KEYS_OF.selfStateOnly,
     );

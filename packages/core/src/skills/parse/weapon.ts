@@ -1,6 +1,7 @@
 // スキル定義の読み込みの検査のうち、使用武器の変更（weaponChange）の読み込み。型は ../types.ts
 import type { WeaponChangeEffect } from '../types.ts';
 import {
+  assertPositiveFinite,
   fail,
   type Json,
   parseAssumes,
@@ -64,9 +65,7 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
   };
   if (v.chargeTimeSeconds !== undefined) {
     const seconds = v.chargeTimeSeconds;
-    if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
-      fail(`${path}.chargeTimeSeconds`, `expected a positive finite number, got ${JSON.stringify(seconds)}`);
-    }
+    assertPositiveFinite(seconds, `${path}.chargeTimeSeconds`);
     effect.chargeTimeSeconds = seconds;
   }
   // ナユタ編（plan/design-nayuta.md 2.4 節）: チャージ時間の固定（チャージ速度▲を受けない）
@@ -78,16 +77,12 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
   }
   if (v.fullChargeDamage !== undefined) {
     const percent = v.fullChargeDamage;
-    if (typeof percent !== 'number' || !Number.isFinite(percent) || percent <= 0) {
-      fail(`${path}.fullChargeDamage`, `expected a positive finite number, got ${JSON.stringify(percent)}`);
-    }
+    assertPositiveFinite(percent, `${path}.fullChargeDamage`);
     effect.fullChargeDamage = percent;
   }
   if (v.chargeReleaseSeconds !== undefined) {
     const seconds = v.chargeReleaseSeconds;
-    if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
-      fail(`${path}.chargeReleaseSeconds`, `expected a positive finite number, got ${JSON.stringify(seconds)}`);
-    }
+    assertPositiveFinite(seconds, `${path}.chargeReleaseSeconds`);
     effect.chargeReleaseSeconds = seconds;
   }
   if (v.hitsPerShot !== undefined) effect.hitsPerShot = parsePositiveInt(v.hitsPerShot, `${path}.hitsPerShot`);
@@ -127,8 +122,7 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
   // ツバイ編（plan/design-zwei.md 2.1 節）: 追加効果「貫通特化」（pierce）も、true だけを受ける旗
   for (const key of ['trueDamage', 'projectileExplosion', 'pierce'] as const) {
     if (v[key] === undefined) continue;
-    parseTrue(v[key], `${path}.${key}`);
-    effect[key] = true;
+    effect[key] = parseTrue(v[key], `${path}.${key}`);
   }
   // ツバイ編（plan/design-zwei.md 2.2 節）: 持ち替えた武器の弾の数（録画で読む即値）
   if (v.shotCount !== undefined) effect.shotCount = parsePositiveInt(v.shotCount, `${path}.shotCount`);

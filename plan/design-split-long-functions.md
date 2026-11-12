@@ -165,6 +165,7 @@
 - `parseDamageEffect` は 3.3 節のとおり。名前は `parseGaugeHitsAndCondition`（ゲージのヒットと条件）・`parseDamagePerCount`（perCount の値。`parseHitShape` から呼ぶ）にした。coreHit は今の順（ヒットごとのゲージの後、perCount の間隔の前）を守るため、`parseDamageEffect` に 1 行で残した。
 - `parseDotEffect` は `parseDotCondition`・`parseDotFirstTick`（間隔と秒の維持の比べ・firstTick）・`parseDotTickShape`・`parseDotCounter`・`parseDotStacks`・`parseDotGauge` に分けた。敵の状態（state）は今の順（firstTick の後、maxStacksRef の前）を守るため、`parseDotEffect` に 1 行で残した。
 - `parseInstantEffect` は、書ける欄を `INSTANT_COMMON_KEYS` と `INSTANT_KEYS_OF` の表にし、`parseInstantTrigger`・`parseInstantTarget`・`parseInstantKindFields` に分けた。heal の healed の検査は、残弾数減少・現在の HP▼ の対象の検査より前に移した（種類が違うので、同じ定義で両方が落ちることはない）。
+- 見直し（`/simplify`）で足した直し: true だけのきっかけの 4 つ（weaponChangeEnd・reloadEnd・coverHealed・chargeFull）を `parseTrueOnlyTrigger` にそろえた。数える窓と発火の窓の組めない検査を `rejectWindowCombos` に、文が全く同じ「正の有限の数」の検査（8 か所）を `assertPositiveFinite` にまとめた（3.2 節で部品にしないとしたのは文の違う形）。`parseInstantKindFields`・`parseDotCondition`・`parseDotCounter` は、呼ぶ側の局所の値を引数で受けず、`effect.trigger` から読む。perCount と gaugePerHit の組の検査は `validateGaugePerHitSplit` に出した。`condition.ts`・`definition.ts`・`objectUntil` に残っていた不明な欄の検査も `rejectUnknownKeys` にした。
 - 確かめ: 6.1 節のとおり。全部の定義の読み込みの結果と、`npm test` の間に出たエラー文の列（並べ替えて比べた）が main と一致した。
 
 ## 9. 扱わないもの

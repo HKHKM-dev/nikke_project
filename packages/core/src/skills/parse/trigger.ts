@@ -29,6 +29,7 @@ import {
   type TimerTrigger,
 } from '../types.ts';
 import {
+  assertPositiveFinite,
   fail,
   isRecord,
   type Json,
@@ -128,12 +129,8 @@ export function parseTrigger(v: Json, path: string, options: TriggerOptions = {}
   );
 }
 
-/** { weaponChangeEnd: true }・{ reloadEnd: true }: 欄はその 1 つで、値は true だけ */
-function parseTrueOnlyTrigger<K extends 'weaponChangeEnd' | 'reloadEnd'>(
-  v: Record<string, Json>,
-  key: K,
-  path: string,
-): Record<K, true> {
+/** { weaponChangeEnd: true }・{ reloadEnd: true }・{ coverHealed: true }・{ chargeFull: true }: 欄はその 1 つで、値は true だけ */
+function parseTrueOnlyTrigger<K extends string>(v: Record<string, Json>, key: K, path: string): Record<K, true> {
   rejectUnknownKeys(v, [key], path);
   parseTrue(v[key], `${path}.${key}`);
   return { [key]: true } as Record<K, true>;
@@ -152,9 +149,7 @@ function parseTimerTrigger(v: Record<string, Json>, path: string, allowTimer: bo
     allowTimer === 'withStart' ? (['atStart', 'carry', 'cooldown'] as const) : (['carry', 'cooldown'] as const);
   rejectUnknownKeys(v, ['everySeconds', ...flags], path);
   const seconds = v.everySeconds;
-  if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
-    fail(`${path}.everySeconds`, `expected a positive finite number, got ${JSON.stringify(seconds)}`);
-  }
+  assertPositiveFinite(seconds, `${path}.everySeconds`);
   const timer: TimerTrigger = { everySeconds: seconds };
   for (const flag of flags) {
     if (v[flag] === undefined) continue;
@@ -190,10 +185,9 @@ function parseShotCountTrigger(v: Record<string, Json>, path: string, options: T
   if (v.every !== undefined) trigger.every = parsePositiveInt(v.every, `${path}.every`);
   if (v.everyRef !== undefined) trigger.everyRef = parseRef(v.everyRef, `${path}.everyRef`);
   if (v.stacksRef !== undefined) trigger.stacksRef = parseRef(v.stacksRef, `${path}.stacksRef`);
-  parseCountingWindow(v, trigger, path, options.during ?? false);
-  parseFiringWindow(v, trigger, path, options.during ?? false);
-  // ソルジャーE.G. 編: 確率のきっかけ（plan/design-soldier-eg.md 3.1 節）
-  if (v.chance !== undefined || v.chanceRef !== undefined) parseChance(v, trigger, path, options.chance ?? false);
+  parseCountingWindow(v, trigger, path, options);
+  parseFiringWindow(v, trigger, path, options);
+  parseChance(v, trigger, path, options);
   return trigger;
 }
 
@@ -202,9 +196,10 @@ function parseCountingWindow(
   v: Record<string, Json>,
   trigger: ShotCountTrigger,
   path: string,
-  allowDuring: boolean | 'withState',
+  options: TriggerOptions,
 ): void {
   if (v.during === undefined && v.reset === undefined) return;
+  const allowDuring = options.during ?? false;
   if (!allowDuring) fail(`${path}.during`, 'a counting window (during) is only allowed in damage, timed and state');
   if (v.during === undefined) fail(`${path}.reset`, 'reset needs during');
   if (isRecord(v.during)) {
@@ -220,9 +215,14 @@ function parseCountingWindow(
     if (v.reset === undefined) fail(`${path}.reset`, 'during needs reset (fullBurstStart or never)');
     trigger.reset = oneOf(SHOT_COUNT_RESETS, v.reset, `${path}.reset`);
   }
-  if (trigger.stacksRef !== undefined) fail(`${path}.during`, 'during cannot be used with stacksRef');
-  if (trigger.count === 'lastShot') fail(`${path}.during`, 'during cannot be used with lastShot');
-  if (trigger.count === 'weaponChangeShot') fail(`${path}.during`, 'during cannot be used with weaponChangeShot');
+  rejectWindowCombos(trigger, 'during', path);
+}
+
+/** 数える窓（during）と発火の窓（firesDuring）は、スタック・最後の発・使用武器の変更の発と組まない */
+function rejectWindowCombos(trigger: ShotCountTrigger, key: 'during' | 'firesDuring', path: string): void {
+  if (trigger.stacksRef !== undefined) fail(`${path}.${key}`, `${key} cannot be used with stacksRef`);
+  if (trigger.count === 'lastShot') fail(`${path}.${key}`, `${key} cannot be used with lastShot`);
+  if (trigger.count === 'weaponChangeShot') fail(`${path}.${key}`, `${key} cannot be used with weaponChangeShot`);
 }
 
 /**
@@ -233,19 +233,15 @@ function parseFiringWindow(
   v: Record<string, Json>,
   trigger: ShotCountTrigger,
   path: string,
-  allowDuring: boolean | 'withState',
+  options: TriggerOptions,
 ): void {
   if (v.firesDuring !== undefined) {
-    if (!allowDuring) {
+    if (!options.during) {
       fail(`${path}.firesDuring`, 'a firing window (firesDuring) is only allowed in damage, timed and state');
     }
     if (v.during !== undefined) fail(`${path}.firesDuring`, 'firesDuring cannot be used with during');
     trigger.firesDuring = oneOf(FIRING_WINDOWS, v.firesDuring, `${path}.firesDuring`);
-    if (trigger.stacksRef !== undefined) fail(`${path}.firesDuring`, 'firesDuring cannot be used with stacksRef');
-    if (trigger.count === 'lastShot') fail(`${path}.firesDuring`, 'firesDuring cannot be used with lastShot');
-    if (trigger.count === 'weaponChangeShot') {
-      fail(`${path}.firesDuring`, 'firesDuring cannot be used with weaponChangeShot');
-    }
+    rejectWindowCombos(trigger, 'firesDuring', path);
   }
   if (v.firesOutside !== undefined) {
     if (v.firesOutside !== 'weaponChange') {
@@ -262,8 +258,9 @@ function parseFiringWindow(
 }
 
 /** ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 確率のきっかけ（chance か chanceRef のちょうど片方） */
-function parseChance(v: Record<string, Json>, trigger: ShotCountTrigger, path: string, allowChance: boolean): void {
-  if (!allowChance) fail(`${path}.chance`, 'a chance trigger (chance / chanceRef) is only allowed in timed');
+function parseChance(v: Record<string, Json>, trigger: ShotCountTrigger, path: string, options: TriggerOptions): void {
+  if (v.chance === undefined && v.chanceRef === undefined) return;
+  if (!options.chance) fail(`${path}.chance`, 'a chance trigger (chance / chanceRef) is only allowed in timed');
   if (v.chance !== undefined && v.chanceRef !== undefined) fail(path, 'at most one of chance and chanceRef');
   if (!(CHANCE_COUNT_KINDS as readonly string[]).includes(trigger.count)) {
     fail(`${path}.count`, `a chance trigger needs count ${CHANCE_COUNT_KINDS.join(' or ')}, got "${trigger.count}"`);
@@ -358,9 +355,7 @@ export function parseSelfHpAtMostTrigger(v: Json, path: string): SelfHpAtMostTri
 /** 2 段目の段 17 の PR 1: { coverHealed: true }。ほかのきっかけなら undefined（状態の付与では読まず、parseTrigger が落とす） */
 export function parseCoverHealedTrigger(v: Json, path: string): CoverHealedTrigger | undefined {
   if (!isRecord(v) || v.coverHealed === undefined) return undefined;
-  rejectUnknownKeys(v, ['coverHealed'], path);
-  parseTrue(v.coverHealed, `${path}.coverHealed`);
-  return { coverHealed: true };
+  return parseTrueOnlyTrigger(v, 'coverHealed', path);
 }
 
 /**
@@ -370,9 +365,7 @@ export function parseCoverHealedTrigger(v: Json, path: string): CoverHealedTrigg
 export function parseChargeTrigger(v: Json, path: string): ChargeTickTrigger | ChargeFullTrigger | undefined {
   if (!isRecord(v)) return undefined;
   if (v.chargeFull !== undefined) {
-    rejectUnknownKeys(v, ['chargeFull'], path);
-    parseTrue(v.chargeFull, `${path}.chargeFull`);
-    return { chargeFull: true };
+    return parseTrueOnlyTrigger(v, 'chargeFull', path);
   }
   if (v.chargeTick === undefined) return undefined;
   rejectUnknownKeys(v, ['chargeTick'], path);
@@ -380,9 +373,7 @@ export function parseChargeTrigger(v: Json, path: string): ChargeTickTrigger | C
   if (!isRecord(tick)) fail(`${path}.chargeTick`, 'expected { everySeconds }');
   rejectUnknownKeys(tick, ['everySeconds'], `${path}.chargeTick`);
   const seconds = tick.everySeconds;
-  if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
-    fail(`${path}.chargeTick.everySeconds`, `expected a positive finite number, got ${JSON.stringify(seconds)}`);
-  }
+  assertPositiveFinite(seconds, `${path}.chargeTick.everySeconds`);
   return { chargeTick: { everySeconds: seconds } };
 }
 

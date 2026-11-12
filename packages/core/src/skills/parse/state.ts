@@ -158,8 +158,7 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
   }
   // 2 段目の段 1（plan/design-skill-stage1.md 1.3 節）: 解除不可の印
   if (v.undispellable !== undefined) {
-    parseTrue(v.undispellable, `${path}.undispellable`);
-    effect.undispellable = true;
+    effect.undispellable = parseTrue(v.undispellable, `${path}.undispellable`);
   }
   if (v.stacksFrom !== undefined) {
     // 2 段目の段 10: スタックの数をカウンタの値か、自分の状態のスタック数（PR 3）から取る
@@ -549,8 +548,7 @@ export function parseCounterChangeEffect(v: Record<string, Json>, path: string):
   if (v.amount !== undefined) effect.amount = parsePositiveInt(v.amount, `${path}.amount`);
   else effect.amountRef = parseRef(v.amountRef, `${path}.amountRef`);
   if (v.decrease !== undefined) {
-    parseTrue(v.decrease, `${path}.decrease`);
-    effect.decrease = true;
+    effect.decrease = parseTrue(v.decrease, `${path}.decrease`);
   }
   if (v.condition !== undefined) {
     effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.counterChange, true);
@@ -603,8 +601,7 @@ export function parseStackChangeEffect(v: Record<string, Json>, path: string): S
   else effect.amountRef = parseRef(v.amountRef, `${path}.amountRef`);
   // 2 段目の段 3（plan/design-skill-stage3.md 1.5 節）: スタック量の減少
   if (v.decrease !== undefined) {
-    parseTrue(v.decrease, `${path}.decrease`);
-    effect.decrease = true;
+    effect.decrease = parseTrue(v.decrease, `${path}.decrease`);
   }
   // 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。論点 6）: 減少で 0 になったら件を閉じる（使用回数を使い切った時）
   if (v.closesAtZero !== undefined) {

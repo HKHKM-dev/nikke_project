@@ -2,14 +2,15 @@
 import { COUNTER_IDS } from '../counters.ts';
 import {
   type AppliedTrigger,
-  type CounterFullTrigger,
   DOT_FIRST_TICKS,
   type DotEffect,
   type DotFirstTick,
+  isCounterFullTrigger,
   isShotCountTrigger,
   type StateEndUntil,
 } from '../types.ts';
 import {
+  assertPositiveFinite,
   fail,
   isRecord,
   type Json,
@@ -109,9 +110,7 @@ const DOT_KEYS = [
 export function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
   rejectUnknownKeys(v, DOT_KEYS, path);
   const interval = v.intervalSeconds;
-  if (typeof interval !== 'number' || !Number.isFinite(interval) || interval <= 0) {
-    fail(`${path}.intervalSeconds`, `expected a positive finite number, got ${JSON.stringify(interval)}`);
-  }
+  assertPositiveFinite(interval, `${path}.intervalSeconds`);
   const counterFull = parseCounterFullTrigger(v.trigger, `${path}.trigger`);
   // 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 4）: 「〈状態〉が適用された時」の「〈状態〉解除まで」
   const applied = parseAppliedTrigger(v.trigger, `${path}.trigger`);
@@ -126,12 +125,12 @@ export function parseDotEffect(v: Record<string, Json>, path: string): DotEffect
     ...(durationUntil !== undefined ? { durationUntil } : parseDuration(v, path)),
   };
   validateAppliedDot(v, applied, stateEnd, path);
-  parseDotCondition(v, effect, counterFull, path);
-  parseDotFirstTick(v, effect, path);
+  parseDotCondition(v, effect, path);
+  parseDotIntervalAndFirstTick(v, effect, path);
   // クルミ編: 状態異常の名前。名前の付いた状態の語彙編: 目録の id（持ち主が敵の状態。status を改めた）
   if (v.state !== undefined) effect.state = parseNamedStateId(v.state, `${path}.state`, 'enemy');
   parseDotTickShape(v, effect, path);
-  parseDotCounter(v, effect, counterFull, path);
+  parseDotCounter(v, effect, path);
   parseDotStacks(v, effect, path);
   parseDotGauge(v, effect, path);
   parseAssumes(v, effect, path);
@@ -142,22 +141,18 @@ export function parseDotEffect(v: Record<string, Json>, path: string): DotEffect
  * 2 段目の段 17 の PR 4: 付くフレームの条件（自分の状態だけ）。絞るのは frame/plan.ts の付くフレーム（damage と同じ判定）だけなので、
  * 付くフレームをほかで追うもの（ゲージを溜める dot は 1 パス目、敵の状態を付ける dot は件の一覧、{ counterFull } はカウンタの経路）とは組まない
  */
-function parseDotCondition(
-  v: Record<string, Json>,
-  effect: DotEffect,
-  counterFull: CounterFullTrigger | undefined,
-  path: string,
-): void {
+function parseDotCondition(v: Record<string, Json>, effect: DotEffect, path: string): void {
   if (v.condition === undefined) return;
   effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.dot);
   for (const key of ['gaugeOnApply', 'gaugeOnTick', 'gaugeOnApplyDelayFrames'])
     if (v[key] !== undefined) fail(`${path}.${key}`, 'a dot with a condition cannot charge the gauge');
   if (v.state !== undefined) fail(`${path}.state`, 'a dot with a condition cannot apply a state');
-  if (counterFull !== undefined) fail(`${path}.trigger`, 'a dot with a condition cannot use { counterFull }');
+  if (isCounterFullTrigger(effect.trigger))
+    fail(`${path}.trigger`, 'a dot with a condition cannot use { counterFull }');
 }
 
 /** 間隔と秒の維持の比べと、最初の刻み（firstTick） */
-function parseDotFirstTick(v: Record<string, Json>, effect: DotEffect, path: string): void {
+function parseDotIntervalAndFirstTick(v: Record<string, Json>, effect: DotEffect, path: string): void {
   if (effect.durationSeconds !== undefined && effect.durationSeconds < effect.intervalSeconds) {
     fail(`${path}.intervalSeconds`, `must not exceed the duration (${effect.durationSeconds} s)`);
   }
@@ -197,25 +192,20 @@ function parseDotTickShape(v: Record<string, Json>, effect: DotEffect, path: str
 }
 
 /** { counterFull } のきっかけの dot: カウンタの値だけのヒット（perCount・perCountIntervalFrames）と遅れ（delayFrames） */
-function parseDotCounter(
-  v: Record<string, Json>,
-  effect: DotEffect,
-  counterFull: CounterFullTrigger | undefined,
-  path: string,
-): void {
+function parseDotCounter(v: Record<string, Json>, effect: DotEffect, path: string): void {
+  const counterFull = isCounterFullTrigger(effect.trigger);
   if (v.perCount !== undefined) {
     const per = v.perCount;
-    if (counterFull === undefined) fail(`${path}.perCount`, 'perCount needs the trigger { counterFull }');
+    if (!counterFull) fail(`${path}.perCount`, 'perCount needs the trigger { counterFull }');
     if (!isRecord(per) || per.counter === undefined || Object.keys(per).length !== 1)
       fail(`${path}.perCount`, 'expected { counter }');
     effect.perCount = { counter: oneOf(COUNTER_IDS, per.counter, `${path}.perCount.counter`) };
     if (v.perCountIntervalFrames === undefined) fail(`${path}.perCount`, 'perCount needs perCountIntervalFrames');
     effect.perCountIntervalFrames = parsePositiveInt(v.perCountIntervalFrames, `${path}.perCountIntervalFrames`);
   } else if (v.perCountIntervalFrames !== undefined) fail(`${path}.perCountIntervalFrames`, 'needs perCount');
-  if (counterFull !== undefined && effect.perCount === undefined)
-    fail(`${path}.trigger`, '{ counterFull } needs perCount');
+  if (counterFull && effect.perCount === undefined) fail(`${path}.trigger`, '{ counterFull } needs perCount');
   if (v.delayFrames !== undefined) {
-    if (counterFull === undefined) fail(`${path}.delayFrames`, 'delayFrames needs the trigger { counterFull }');
+    if (!counterFull) fail(`${path}.delayFrames`, 'delayFrames needs the trigger { counterFull }');
     effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
   }
 }
