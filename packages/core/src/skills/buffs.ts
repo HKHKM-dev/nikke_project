@@ -473,14 +473,17 @@ export function applyResolvedEffect(
   if (effect.scaling === 'flat' && effect.stat === 'chargeSpeed') {
     return { totals: { ...totals, chargeTimeFlat: totals.chargeTimeFlat + effect.value }, appliedAmount: effect.value };
   }
+  // 射撃の姿勢の長さの倍率は足し合わせず掛け合わせる（plan/design-a2-bmode-stance.md 3.2 節。スタックは書けない）
+  if (effect.stat === 'fireStanceScale') {
+    return {
+      totals: { ...totals, fireStanceScale: totals.fireStanceScale * effect.value },
+      appliedAmount: effect.value,
+    };
+  }
   // チャージ時間の固定は秒を足し合わせない（plan/design-skill-stage14.md 2.7 節）。状態の中身の固定（whileState を持つ。
   // セブンスドワーフ・フルアクティブの 3.2 秒）は上書きし、timed の固定（S2 の戦闘開始時の 1.2 秒）は固定がまだ無い時だけ入れる。どちらも
   // 自分にだけ付き、1 つの定義に 1 つずつまで（skills/parse/crossChecks.ts の validateFixedChargeTimeCount）なので、当てる順によらず「状態が付いている間は状態の秒」になる。
   // 状態のスタック（使用回数）の段の数だけ当てても同じ値
-  // 射撃の姿勢の長さの倍率は足し合わせず掛け合わせる（plan/design-a2-bmode-stance.md 3.2 節）
-  if (effect.stat === 'fireStanceScale') {
-    return { totals: { ...totals, fireStanceScale: totals.fireStanceScale * effect.value }, appliedAmount: effect.value };
-  }
   if (effect.stat === 'fixedChargeTime') {
     const fixed =
       effect.whileState !== undefined || totals.fixedChargeTime === 0 ? effect.value : totals.fixedChargeTime;

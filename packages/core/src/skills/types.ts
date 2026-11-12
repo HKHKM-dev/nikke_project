@@ -256,6 +256,15 @@ export function isSelfOnlyTimedStat(stat: BuffStat): boolean {
   return (SELF_ONLY_TIMED_STATS as readonly string[]).includes(stat);
 }
 
+/**
+ * 説明文に無い値を定数 value で書く stat（ref を書かない。plan/design-a2-bmode-stance.md 3.1 節）。値は 0 より大きく 1 以下
+ */
+export const CONSTANT_VALUE_STATS = ['fireStanceScale'] as const satisfies readonly BuffStat[];
+
+export function isConstantValueStat(stat: BuffStat): boolean {
+  return (CONSTANT_VALUE_STATS as readonly string[]).includes(stat);
+}
+
 /** passive に書けるフラグの stat（ref を書かない。値 1） */
 export const PASSIVE_FLAG_STATS = ['elementAdvantage', 'pierce'] as const satisfies readonly BuffStat[];
 
@@ -951,10 +960,10 @@ export type TimedEffect = TargetCountFields &
     scaling?: BuffScaling;
     /**
      * description_value_NN の NN（1 始まり）。値は % 表記。100 で割るのは resolveTimed の責務。
-     * フラグの stat（infiniteAmmo）と、定数 value を書く stat（fireStanceScale）は書かない（値 1）
+     * フラグの stat（infiniteAmmo。値 1）と、定数 value を書く stat（CONSTANT_VALUE_STATS）は書かない
      */
     ref?: number;
-    /** 説明文に無い値の定数（fireStanceScale の倍率だけ。ref と片方。plan/design-a2-bmode-stance.md 3.1 節） */
+    /** 説明文に無い値の定数（CONSTANT_VALUE_STATS だけ。ref の代わり。plan/design-a2-bmode-stance.md 3.1 節） */
     value?: number;
     /** 「▼」。値の符号を反転する（scaling が ratio / flat のときだけ） */
     decrease?: true;

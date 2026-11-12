@@ -24,6 +24,8 @@ import {
   isMaxHpStat,
   isPassiveFlagStat,
   isPelletStat,
+  CONSTANT_VALUE_STATS,
+  isConstantValueStat,
   isSelfOnlyTimedStat,
   STATIC_PASSIVE_FLAG_STATS,
   isSelfHpAtMostTrigger,
@@ -370,8 +372,8 @@ function parseTimedValue(
   validateFlatChargeTime(stat, scaling, v, path);
   validateDamageTaken(stat, target, v, path);
   validateAttackSpeed(stat, target, v, path);
-  if (v.value !== undefined && stat !== 'fireStanceScale')
-    fail(`${path}.value`, `value is only allowed for fireStanceScale (use ref)`);
+  if (v.value !== undefined && !isConstantValueStat(stat))
+    fail(`${path}.value`, `value is only allowed for ${CONSTANT_VALUE_STATS.join(', ')} (use ref)`);
   // 値は参照する効果から取る
   if (v.amplifies !== undefined) {
     effect.amplifies = parseAmplifies(v, stat, target, `${path}.amplifies`);
@@ -382,7 +384,7 @@ function parseTimedValue(
     if (scaling !== undefined) fail(`${path}.scaling`, `${stat} has no value (do not write scaling)`);
   }
   // 射撃の姿勢の長さの倍率は説明文に無い値なので、ref の代わりに定数を書く（plan/design-a2-bmode-stance.md 3.1 節）
-  else if (stat === 'fireStanceScale') {
+  else if (isConstantValueStat(stat)) {
     if (v.ref !== undefined) fail(`${path}.ref`, `${stat} takes a constant value (write value, not ref)`);
     if (scaling !== undefined) fail(`${path}.scaling`, `${stat} takes no scaling`);
     const value = v.value;
@@ -660,6 +662,8 @@ function validateSelfOnlyStat(effect: TimedEffect, path: string): void {
   if (effect.decrease) fail(`${path}.decrease`, `${stat} cannot be decreased`);
   if (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined) fail(path, `${stat} cannot stack`);
   if (effect.condition !== undefined) fail(`${path}.condition`, `${stat} cannot have a condition`);
+  // 数に比例して値を掛ける perCount は、足し合わせない stat には意味が無い
+  if (effect.perCount !== undefined) fail(`${path}.perCount`, `${stat} cannot have perCount`);
 }
 
 /**

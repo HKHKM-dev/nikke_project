@@ -98,6 +98,31 @@ describe('射撃の姿勢の長さの倍率', () => {
     expect(timed('allies')).toThrow(/only allowed with target "self"/);
   });
 
+  it('takes no perCount and cannot be read as a buff state', () => {
+    const copy = structuredClone(raw);
+    copy.skills.burst.effects.push({
+      kind: 'timed',
+      trigger: 'burstUse',
+      target: 'self',
+      stat: 'fireStanceScale',
+      value: 0.5,
+      durationSeconds: 5,
+      perCount: { state: 'modeB' },
+    });
+    expect(() => parseSkillDefinition(copy)).toThrow(/cannot have perCount/);
+    const buffed = structuredClone(raw);
+    buffed.skills.burst.effects.push({
+      kind: 'timed',
+      trigger: 'burstUse',
+      target: 'self',
+      stat: 'attack',
+      ref: 3,
+      durationSeconds: 5,
+      condition: { selfBuffed: 'fireStanceScale' },
+    });
+    expect(() => parseSkillDefinition(buffed)).toThrow(/a multiplier, not a buff state/);
+  });
+
   it('is not allowed in passive', () => {
     const copy = structuredClone(raw);
     copy.skills.skill1.effects.push({ kind: 'passive', target: 'self', stat: 'fireStanceScale', value: 0.5 });
