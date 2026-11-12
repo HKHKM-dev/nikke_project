@@ -50,7 +50,12 @@ export type LandingSummary = {
 export function summarizeLanding(rows: readonly AimTargetRow[]): LandingSummary {
   const used = rows.filter(
     (r) =>
-      r.top !== undefined && r.top >= POSE_TOP_MIN && r.fx !== undefined && r.fx < FX_HIDDEN && r.bandW !== undefined,
+      r.top !== undefined &&
+      r.top >= POSE_TOP_MIN &&
+      r.fx !== undefined &&
+      r.fx < FX_HIDDEN &&
+      r.bandW !== undefined &&
+      Number.isFinite(r.bandW),
   );
   const width = median(used.map((r) => r.bandW!));
   return {
