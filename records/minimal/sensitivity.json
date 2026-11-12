@@ -1818,6 +1818,38 @@
       "plus": null
     },
     {
+      "observation": "0099-15",
+      "element": "ルドミラ：ウィンターオーナー skill1.effects[0]",
+      "key": "351e39bf60527bce",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0099-15",
+      "element": "ルドミラ：ウィンターオーナー skill1.effects[1]",
+      "key": "351e39bf60527bce",
+      "effective": true,
+      "minus": 16,
+      "plus": null
+    },
+    {
+      "observation": "0099-15",
+      "element": "ルドミラ：ウィンターオーナー skill1.effects[2]",
+      "key": "351e39bf60527bce",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0099-15",
+      "element": "ルドミラ：ウィンターオーナー skill2.effects[0]",
+      "key": "351e39bf60527bce",
+      "effective": true,
+      "minus": 16,
+      "plus": null
+    },
+    {
       "observation": "0123-24",
       "element": "A2 skill2.effects[0]",
       "key": "0b646a0aa5c64329",
@@ -8400,6 +8432,102 @@
       "key": "8964d10f07beea74",
       "effective": false,
       "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0440-03",
+      "element": "ルドミラ：ウィンターオーナー skill1.effects[0]",
+      "key": "79b72945dc62c8a6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0440-03",
+      "element": "ルドミラ：ウィンターオーナー skill1.effects[1]",
+      "key": "79b72945dc62c8a6",
+      "effective": true,
+      "minus": 16,
+      "plus": null
+    },
+    {
+      "observation": "0440-03",
+      "element": "ルドミラ：ウィンターオーナー skill1.effects[2]",
+      "key": "79b72945dc62c8a6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0440-03",
+      "element": "ルドミラ：ウィンターオーナー skill2.effects[0]",
+      "key": "79b72945dc62c8a6",
+      "effective": true,
+      "minus": 16,
+      "plus": null
+    },
+    {
+      "observation": "0441-03",
+      "element": "ルドミラ：ウィンターオーナー skill1.effects[0]",
+      "key": "861718090525a9b2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0441-03",
+      "element": "ルドミラ：ウィンターオーナー skill1.effects[1]",
+      "key": "861718090525a9b2",
+      "effective": true,
+      "minus": 16,
+      "plus": null
+    },
+    {
+      "observation": "0441-03",
+      "element": "ルドミラ：ウィンターオーナー skill1.effects[2]",
+      "key": "861718090525a9b2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0441-03",
+      "element": "ルドミラ：ウィンターオーナー skill2.effects[0]",
+      "key": "861718090525a9b2",
+      "effective": true,
+      "minus": 16,
+      "plus": null
+    },
+    {
+      "observation": "0442-03",
+      "element": "ルドミラ：ウィンターオーナー skill1.effects[0]",
+      "key": "23749d9541677362",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0442-03",
+      "element": "ルドミラ：ウィンターオーナー skill1.effects[1]",
+      "key": "23749d9541677362",
+      "effective": true,
+      "minus": 16,
+      "plus": null
+    },
+    {
+      "observation": "0442-03",
+      "element": "ルドミラ：ウィンターオーナー skill1.effects[2]",
+      "key": "23749d9541677362",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0442-03",
+      "element": "ルドミラ：ウィンターオーナー skill2.effects[0]",
+      "key": "23749d9541677362",
+      "effective": true,
+      "minus": 16,
       "plus": null
     },
     {

@@ -558,10 +558,10 @@ notes の種類: 未対応 37・前提の外 58・計算に無関係 47・補足
 
 - **skill1**: supported
   - effects[0] timed・normalHit・damageTaken: C-0138（確定）、C-0257（仮説）、C-0251（確定）、C-0645（確定）
-  - effects[1] damage・normalHit・additional: C-0163（確定）、C-0257（仮説）、C-0251（確定）
+  - effects[1] damage・normalHit・additional: C-0163（確定）、C-0257（仮説）、C-0251（確定）、C-1144（確定）
   - effects[2] ammoRefill・normalHit: C-0257（仮説）、C-0251（確定）、C-0256（確定）
 - **skill2**: supported
-  - effects[0] damage・coreHit・additional: C-0249（仮説）、C-0251（確定）
+  - effects[0] damage・coreHit・additional: C-0249（仮説）、C-0251（確定）、C-1144（確定）
   - effects[1] timed・fullBurstStart・critRate: C-0249（仮説）
 - **burst**: supported
   - effects[0] timed・burstUse・attack: C-0250（仮説）、C-0252（確定）、C-0510（確定）
