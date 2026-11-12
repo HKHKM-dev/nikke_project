@@ -4,7 +4,6 @@ import { ZERO_BUFFS } from '../../skills/buffs.ts';
 import { type AccumulateRelease } from '../firstPass.ts';
 import type { FirstPassBase } from './base.ts';
 import type { Gauge } from './gauge.ts';
-import type { GaugeEffects } from './gaugeEffects.ts';
 
 /** 蓄積爆破の蓄積と爆発を追う */
 export function createAccumulate({
@@ -16,7 +15,7 @@ export function createAccumulate({
   passive,
   shotEvents,
   windowsOf,
-}: FirstPassBase & Gauge & GaugeEffects) {
+}: FirstPassBase & Gauge) {
   // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.3・2.4 節）: 蓄積爆破（damage の accumulate の self）。フルチャージの発で、
   // 付いていなければ付ける（付けた発は溜めない）。付けた後、切れる capDelayFrames 前までの発（C-0927）の値 × (割合 + 蓄積割合▲) を、
   // 次のフレームの頭に（その発のフレームまでに付いた件と、2 パス目と同じ 1 発の値の関数で）数えて溜め、最大量に届いた発の

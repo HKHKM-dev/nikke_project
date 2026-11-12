@@ -1,7 +1,8 @@
 // 1 パス目のフレームループ（純関数。plan/design-stage10.md 1 節）。
 // 射撃に効くバフ（frame/firing.ts の FiringParams）と CT 短縮があると、射撃の列 → 時刻表 → バフ → 射撃の列…と循環する。
 // ここではフレームを 1 つずつ進め、射手・ゲージ・バーストの状態機械・スキルの効果を同時に回して循環をほどく。
-// 効果はすべて持ち主ごとの件の一覧（skills/holders.ts）で持つ。ループの後の区間は planTeamRun が履歴から作り（skills/holders/history.ts の buffTimelineOf）、
+// 効果はすべて持ち主ごとの件の一覧（skills/holders.ts）で持つ。ゲージの系（ゲージの量・ゲージを溜める効果・蓄積爆破・召喚）の
+// 準備とフレームの中の手順は frame/firstPass/ の作り手（gauge.ts・gaugeEffects.ts・accumulate.ts・summons.ts）に置く。ループの後の区間は planTeamRun が履歴から作り（skills/holders/history.ts の buffTimelineOf）、
 // 読む側（sim・観測値の指標・画面）は履歴を読む（plan/design-holder-effects.md 2.9 節）。
 //
 // フレーム f の中の順番:
@@ -49,6 +50,7 @@ import {
 import { burstCandidateOf, burstUnitOf, partialGaugeRatio } from '../burst/dynamic.ts';
 import {
   resolveAppliedPauses,
+  resolveDamageEffects,
   resolveBurstUsePause,
   resolveShotPauses,
   type ResolvedDamageEffect,
@@ -79,7 +81,7 @@ import {
 import { healFrameOf } from '../skills/heals.ts';
 import { createHolderLists, type HolderHistory, type LeadShots } from '../skills/holders.ts';
 import { isEffectTarget, type FireContext } from '../skills/targets.ts';
-import { resolvePassiveStates, triggerFrames, type TimelineSlot } from '../skills/timeline.ts';
+import { resolvePassiveStates, triggerFrames, type FrameRange, type TimelineSlot } from '../skills/timeline.ts';
 import {
   advanceShotCount,
   burstStepHolds,
@@ -94,7 +96,6 @@ import {
 import { chargeTriggersOf, hasReloadEndEffect, isEndedTrigger, type ShotCountKind } from '../skills/types.ts';
 import type { SummonId } from '../skills/summons.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
-import { type FrameRange } from '../skills/timeline.ts';
 import { firingParams, isZeroFiring, type FiringParams } from './firing.ts';
 import {
   beginHide,
@@ -588,6 +589,10 @@ function runFirstPassOnce(
   const flights = slots.map((_, i) => options.flights?.[i] ?? null);
   const shotFlightAt = (i: number, f: number): number => flightFramesAt(flights[i]?.shot, f);
   const shotEvents: (ShotEvent | null)[] = slots.map(() => null);
+  /** 枠ごとの倍率ダメージ（ヒットごとのゲージ・蓄積爆破・召喚の攻撃が読む。枠ごとに 1 回だけ解く） */
+  const damageEffects = slots.map((slot) =>
+    slot === null || slot.definition === null ? [] : resolveDamageEffects(slot.definition, slot.character, slot.levels),
+  );
   const layerBase: FirstPassBase = {
     slots,
     options,
@@ -601,8 +606,10 @@ function runFirstPassOnce(
     shotEvents,
     activationsOf,
     windowsOf,
+    damageEffects,
   };
-  const gaugeLayer = createGauge({ ...layerBase });
+  // ゲージの系の作り手を、文の順のとおりに呼ぶ（plan/design-split-first-pass.md 3.4 節・9.3 節）
+  const upToGauge = { ...layerBase, ...createGauge(layerBase) };
   const {
     chargeGaugeOf,
     energyAt,
@@ -611,9 +618,9 @@ function runFirstPassOnce(
     obstacleEnergyAt,
     obstacles,
     pelletsAt,
-    shotCounts,
     updateTimedGaugeSpeed,
-  } = gaugeLayer;
+  } = upToGauge;
+  const shotCounts = slots.map(() => 0);
   /**
    * フレーム f に始まった枠 i の使用武器変更（識別子
    * `<resourceId>.<スロット>.<効果の番号>`）の最初の発を撃つフレーム
@@ -641,7 +648,7 @@ function runFirstPassOnce(
     const swap = opened?.startsFullBurst ? Math.max(f, hexagonFrameOf(opened)) : f;
     return weaponFreeFrameAtSwap(shooters[i]!, logs[i]?.frames.at(-1), swap, model) + after;
   };
-  const gaugeEffectsLayer = createGaugeEffects({ ...layerBase, ...gaugeLayer });
+  const upToGaugeEffects = { ...upToGauge, ...createGaugeEffects(upToGauge) };
   const {
     addAllyGauge,
     addShotGauges,
@@ -658,7 +665,7 @@ function runFirstPassOnce(
     takeReservedGauge,
     timerGauges,
     trackDotBurstUse,
-  } = gaugeEffectsLayer;
+  } = upToGaugeEffects;
   // V-0534（ラピ：レッドフード S2 の粘着榴弾。C-0717・C-0718）: 射撃の止まり（shotPause）。射撃を数えて、発火した射撃の次のフレームから
   // 止めるフレーム数のあいだ射手を進めない（pauseLeft。手順 1 で減らす）。発火した射撃がマガジンの最後の弾丸なら framesOnLastShot
   // 回数の間隔の変更（cycleEvery の shotCounts）の窓の中は、通算の回数が窓の
@@ -696,10 +703,8 @@ function runFirstPassOnce(
       ? []
       : resolveAppliedPauses(slot.definition).map((p) => ({ ...p, was: false })),
   );
-  const accumulateLayer = createAccumulate({ ...layerBase, ...gaugeLayer, ...gaugeEffectsLayer });
-  const { accumulateReleases, addAccumulatedGauge, recordAccumulatorShots } = accumulateLayer;
-  const summonsLayer = createSummons({ ...layerBase, ...gaugeLayer, ...gaugeEffectsLayer, ...accumulateLayer });
-  const { countSummons, summonHits } = summonsLayer;
+  const { accumulateReleases, addAccumulatedGauge, recordAccumulatorShots } = createAccumulate(upToGauge);
+  const { countSummons, summonHits } = createSummons(upToGaugeEffects);
   /** 先のフレームに効果が発火するバーストの発動（フレーム → 発動） */
   const pendingBurstEffects = new Map<number, BurstActivation[]>();
   /** 先のフレームのバーストのヒット（トリガー burstHit。plan/design-elegg.md 8.9 節） */

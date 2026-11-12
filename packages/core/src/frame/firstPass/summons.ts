@@ -9,7 +9,6 @@ import { type FirstPassResult } from '../firstPass.ts';
 import type { FirstPassBase } from './base.ts';
 import type { Gauge } from './gauge.ts';
 import type { GaugeEffects } from './gaugeEffects.ts';
-import type { Accumulate } from './accumulate.ts';
 
 /** 召喚の攻撃を追う */
 export function createSummons({
@@ -19,7 +18,7 @@ export function createSummons({
   hitGaugeEnergy,
   reserveTimerGauge,
   slots,
-}: FirstPassBase & Gauge & GaugeEffects & Accumulate) {
+}: FirstPassBase & Gauge & GaugeEffects) {
   // 召喚の機数と攻撃の進み（plan/design-ein-near-feather.md 1.2・1.3 節）。展開（戦闘開始と、その枠のバーストの
   // 効果のフレーム）で組を置き換えて進みを 0 に戻し、フレームごとに、いまの機数の間隔の逆数を進みに積む。1 に届いたフレームに攻撃が
   // 発火し（余りは持ち越す）、gaugePerHit の効果はそのフレームのゲージに射手の 1 ヒットぶん × 倍数を足す

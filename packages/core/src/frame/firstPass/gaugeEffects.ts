@@ -6,7 +6,6 @@ import { resolveCycleEvery, resolveCycles } from '../../skills/cycles.ts';
 import {
   damageHitFramesOf,
   effectHitFrames,
-  resolveDamageEffects,
   resolveDamageGauges,
   resolveAllyGaugeAdd,
   resolveDotEffects,
@@ -16,11 +15,10 @@ import {
 } from '../../skills/burstDamage.ts';
 import { type BurstActivation } from '../../burst/schedule.ts';
 import { isResolvedShotCount, isResolvedTimer, resolveSkillCooldownDowns } from '../../skills/resolve.ts';
-import { cooldownTimer, shortenedTimer } from '../../skills/timeline.ts';
+import { cooldownTimer, shortenedTimer, timerFramesOf } from '../../skills/timeline.ts';
 import { advanceShotCount, type ShotCountEveryAt, shotCountWeight } from '../../skills/triggers.ts';
 import { isSummonAttackTrigger, isTimerTrigger, SKILL_SLOTS, type ShotCountKind } from '../../skills/types.ts';
 import { dotTickTracker, groupDotsByState, type DotTickTracker } from '../dot.ts';
-import { timerFramesOf } from '../../skills/timeline.ts';
 import { flightFramesAt, type FlightFrameSpan } from '../landing.ts';
 import type { SkillSlot } from '../../types.ts';
 import type { NamedStateId } from '../../skills/states.ts';
@@ -47,6 +45,8 @@ type CycleGaugeTracker = {
 
 /** ゲージを溜める効果を追い、そのゲージをフレームに予約して足す */
 export function createGaugeEffects({
+  damageEffects,
+  hitGaugeEnergy,
   flights,
   frames,
   gaugeScale,
@@ -320,17 +320,13 @@ export function createGaugeEffects({
     every: number;
     /**
      * V-0692（ラピ：レッドフードの粘着榴弾の付着。C-0991）: 回数の間隔の変更（cycleEvery の shotCounts）の窓の中の間隔。射撃の止まり
-     * （shotPauseTrackers）と同じく、窓の中は通算の回数が窓の間隔の倍数に届いた発で発火する（C-0727）
+     * （../firstPass.ts の shotPauseTrackers）と同じく、窓の中は通算の回数が窓の間隔の倍数に届いた発で発火する（C-0727）
      */
     everyAt: ShotCountEveryAt | undefined;
     n: number;
     /** エレグの S1（C-0773）: 条件 enemyState（発火のフレームに敵がその状態なら予約する） */
     enemyState?: NamedStateId;
   }[] = [];
-  /** 枠ごとの倍率ダメージ（ヒットごとのゲージと召喚の攻撃が読む。枠ごとに 1 回だけ解く） */
-  const damageEffects = slots.map((slot) =>
-    slot === null || slot.definition === null ? [] : resolveDamageEffects(slot.definition, slot.character, slot.levels),
-  );
   damageEffects.forEach((effects, i) => {
     for (const effect of effects) {
       if (effect.gaugePerHit === undefined || isSummonAttackTrigger(effect.trigger)) continue;
@@ -357,8 +353,6 @@ export function createGaugeEffects({
       }
     }
   });
-  /** 枠 i のヒットごとのゲージの、このフレームの 1 ヒットの量 */
-  const hitGaugeEnergy = (i: number): number => targetEnergyNow(i, targetEnergies[i]! * (1 + gaugeSpeed[i]!));
   /**
    * フレーム f の終わりに、印のある周期の発火を決める（f に付いた縮める状態の件も見る）。発火したら記録し、その枠の
    * 印のある burstGaugeHit のゲージを遅れの後のフレームに予約する（ループの前の予約と同じ量）
@@ -520,9 +514,7 @@ export function createGaugeEffects({
     countCycles,
     countDamageHitGauges,
     cycleGaugeHits,
-    damageEffects,
     dotGauges,
-    hitGaugeEnergy,
     landingGauge,
     reserveBurstUseDotTicks,
     reserveTimerGauge,
