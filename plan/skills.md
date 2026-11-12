@@ -989,13 +989,13 @@ notes の種類: 未対応 37・前提の外 58・計算に無関係 47・補足
   - notes[1] 未対応: 回復で現在の HP が戻って HP の割合が 70% を上回る分（最大HP のみ▲ の間に回復を受けた時）は扱わない（HP の割合は最大HP▲・最大HP のみ▲ だけで下げる）: 根拠なし
 - **skill2**: supported
   - effects[0] timed・battleStart・critRate: C-0859（確定）
-  - effects[1] timed・battleStart・critRate: C-0863（確定）
+  - effects[1] timed・battleStart・critRate: C-0863（仮説）
 - **burst**: supported
   - effects[0] timed・burstUse・critDamage: C-0861（確定）
   - effects[1] timed・burstUse・critDamage: C-0861（確定）
   - effects[2] dot・burstUse: C-0860（確定）
   - effects[3] timed・burstUse・maxHpOnly: C-0862（確定）
-  - effects[4] timed・burstUse・maxHpOnly: C-0863（確定）、C-1107（確定）
+  - effects[4] timed・burstUse・maxHpOnly: C-0863（仮説）、C-1107（確定）
   - notes[0] 補足: 暴風は説明文で「持続ダメージ」でなく「ダメージ」なので、持続ダメージ▲を掛けない。確かめた編成は無い（持続ダメージ▲の使い手を混ぜていない。plan/design-mast.md 2.3 節）: 根拠なし
 
 ## 352 ヘルム
