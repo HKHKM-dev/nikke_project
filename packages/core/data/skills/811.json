@@ -84,8 +84,8 @@
             }
           ],
           "assumes": {
-            "ja": "チャージ速度▲は、いまの規則（チャージの長さだけを縮める）で効かせる。同じ射撃姿勢維持型のレイヴンはこの規則で合う（C-1136）が、A2 では、B モードの間の実測の発と発の間がモデルより短い（許容外の残差 1084-11・1085-11。plan/backlog.md 3 節）",
-            "en": "Charge speed up uses the existing rule (it shortens only the charge). Raven (same fire-stance type) matches this rule (C-1136), but for A2 the measured shot interval in Mode B is shorter than the model (residuals 1084-11 and 1085-11 out of tolerance; plan/backlog.md section 3)"
+            "ja": "チャージ速度▲は、いまの規則（チャージの長さだけを縮める）で効かせる。同じ射撃姿勢維持型のレイヴンはこの規則で合う（C-1136）が、A2 では、B モードの間の実測の発と発の間が、▲の大きさに依らずモデルより一定の 25f 短い（C-1103。許容外の残差 1084-11・1085-11・1122-08。plan/backlog.md 3 節）",
+            "en": "Charge speed up uses the existing rule (it shortens only the charge). Raven (same fire-stance type) matches this rule (C-1136), but for A2 the measured shot interval in Mode B is a constant 25f shorter than the model regardless of the buff size (C-1103; residuals 1084-11, 1085-11 and 1122-08 out of tolerance; plan/backlog.md section 3)"
           },
           "claims": [
             "C-1100"
