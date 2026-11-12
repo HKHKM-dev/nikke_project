@@ -370,6 +370,11 @@ export const NAMED_STATES = {
    * 使用武器の変更の「過電流の段階別の効果」（チャージ時間）が見る（plan/design-maxwell-om.md 2.2 節）
    */
   overcurrent: { name: { ja: '過電流', en: 'Overcurrent' }, holder: 'ally' },
+  /**
+   * アリス：ワンダーランドバニーの S1 のニンジンパーティー（味方全体・5 スタック・5 秒。中身の阻止部位の攻撃ダメージ▲は前提の外なので
+   * 書かない。S1 のスタック量▲と、バーストの「自分がニンジンパーティーのフルスタック状態なら」が見る）
+   */
+  carrotParty: { name: { ja: 'ニンジンパーティー', en: 'Carrot Party' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;
