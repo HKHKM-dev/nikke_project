@@ -128,6 +128,7 @@ describe('computeTriggerDamage', () => {
       spinUpSpeed: 0,
       chargeTimeFlat: 0,
       fixedChargeTime: 0,
+      fireStanceScale: 1,
       hitRate: 0,
       hitRateUp: 0,
       infiniteAmmo: 0,

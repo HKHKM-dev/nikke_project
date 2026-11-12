@@ -27,6 +27,7 @@ export type FiringBuffs = Pick<
   | 'spinUpSpeed'
   | 'chargeTimeFlat'
   | 'fixedChargeTime'
+  | 'fireStanceScale'
   | 'infiniteAmmo'
   | 'weapon'
 >;
@@ -41,6 +42,7 @@ export const ZERO_FIRING_BUFFS: Readonly<FiringBuffs> = Object.freeze({
   spinUpSpeed: 0,
   chargeTimeFlat: 0,
   fixedChargeTime: 0,
+  fireStanceScale: 1,
   infiniteAmmo: 0,
   weapon: null,
 });
@@ -120,6 +122,7 @@ export function isZeroFiring(buffs: FiringBuffs): boolean {
     buffs.spinUpSpeed === 0 &&
     buffs.chargeTimeFlat === 0 &&
     buffs.fixedChargeTime === 0 &&
+    buffs.fireStanceScale === 1 &&
     buffs.infiniteAmmo === 0 &&
     buffs.weapon === null
   );
@@ -137,11 +140,13 @@ export type StanceFrames = {
  * 射撃姿勢維持型（maintainFireStance > 0）のチャージ武器の姿勢。ほかは null。
  * 項目を持つのは紅蓮：ブラックシャドウ（13.53f → 14・1）・A2（49.41f → 50・24）・レイヴン（48.82f → 49・16）の 3 体だけで、
  * 3 体とも発と発の間・ハイドからの 1 発目が実測とフレーム単位で合う（C-0149・C-0216・C-0218）。丸め（切り上げ）は 3 体に合うものを
- * 選んだ（四捨五入では A2 が 1f 合わない。設計書 3.3 節）。割り算の誤差で整数のすぐ上に出た値を切り上げないよう、ごく小さな幅を引く
+ * 選んだ（四捨五入では A2 が 1f 合わない。設計書 3.3 節）。割り算の誤差で整数のすぐ上に出た値を切り上げないよう、ごく小さな幅を引く。
+ * scale は射撃の姿勢の長さの倍率（BuffTotals.fireStanceScale）で、丸める前の S に掛ける（A2 の B モードの 0.5 で 25・12。C-1155。
+ * plan/design-a2-bmode-stance.md 3.2 節）
  */
-export function stanceFrames(shot: ShotParams): StanceFrames | null {
+export function stanceFrames(shot: ShotParams, scale = 1): StanceFrames | null {
   if (!isChargeWeapon(shot) || shot.maintainFireStance <= 0) return null;
-  const s = shot.maintainFireStance / 100 / GAME_SECONDS_PER_FRAME;
+  const s = (shot.maintainFireStance / 100 / GAME_SECONDS_PER_FRAME) * scale;
   return {
     frames: Math.ceil(s - 1e-9),
     holdFrames: Math.max(1, Math.ceil((s * shot.uptypeFireTiming) / 10000 - 1e-9)),
@@ -173,7 +178,7 @@ export function firingParams(
   model: Pick<WeaponModel, 'stanceReloadExtraFrames'> = DEFAULT_WEAPON_MODEL,
 ): FiringParams {
   const shot = buffs.weapon?.shot ?? base;
-  const stance = stanceFrames(shot);
+  const stance = stanceFrames(shot, buffs.fireStanceScale);
   return {
     maxAmmo: effectiveMaxAmmo(shot.maxAmmo, buffs),
     reloadChunkFrames:

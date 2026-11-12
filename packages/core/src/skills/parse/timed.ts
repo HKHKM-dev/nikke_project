@@ -245,6 +245,7 @@ export function parseTimedFields(
     // 値のある timed の維持は DurationUntil だけ（{ counterEmpty } は付与だけ。parseTimedDuration）
     const timed = { kind: 'timed', ...(effect as TimedFields), stat } as const;
     validateFixedChargeTime(timed, path);
+    validateFireStanceScale(timed, path);
     validateChanceTimed(timed, path);
   }
   parseAssumes(v, effect, path);
@@ -368,6 +369,8 @@ function parseTimedValue(
   validateFlatChargeTime(stat, scaling, v, path);
   validateDamageTaken(stat, target, v, path);
   validateAttackSpeed(stat, target, v, path);
+  if (v.value !== undefined && stat !== 'fireStanceScale')
+    fail(`${path}.value`, `value is only allowed for fireStanceScale (use ref)`);
   // 値は参照する効果から取る
   if (v.amplifies !== undefined) {
     effect.amplifies = parseAmplifies(v, stat, target, `${path}.amplifies`);
@@ -376,6 +379,15 @@ function parseTimedValue(
   else if (isFlagStat(stat)) {
     if (v.ref !== undefined) fail(`${path}.ref`, `${stat} has no value (do not write ref)`);
     if (scaling !== undefined) fail(`${path}.scaling`, `${stat} has no value (do not write scaling)`);
+  }
+  // 射撃の姿勢の長さの倍率は説明文に無い値なので、ref の代わりに定数を書く（plan/design-a2-bmode-stance.md 3.1 節）
+  else if (stat === 'fireStanceScale') {
+    if (v.ref !== undefined) fail(`${path}.ref`, `${stat} takes a constant value (write value, not ref)`);
+    if (scaling !== undefined) fail(`${path}.scaling`, `${stat} takes no scaling`);
+    const value = v.value;
+    if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0 || value > 1)
+      fail(`${path}.value`, `expected a number in (0, 1], got ${JSON.stringify(value)}`);
+    effect.value = value;
   } else {
     effect.ref = parseRef(v.ref, `${path}.ref`);
   }
@@ -647,6 +659,18 @@ function validateFixedChargeTime(effect: TimedEffect, path: string): void {
 }
 
 /**
+ * 射撃の姿勢の長さの倍率（plan/design-a2-bmode-stance.md 3.1 節）は掛け合わせる倍率なので、自分にだけ・減らす書き方なし・
+ * スタックなし・条件なしで書ける。射撃姿勢維持型の武器のキャラだけに書けることは、キャラの武器を見る definitions.test.ts が確かめる
+ */
+function validateFireStanceScale(effect: TimedEffect, path: string): void {
+  if (effect.stat !== 'fireStanceScale') return;
+  if (effect.target !== 'self') fail(`${path}.target`, `fireStanceScale is only allowed with target "self"`);
+  if (effect.decrease) fail(`${path}.decrease`, 'fireStanceScale cannot be decreased');
+  if (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined) fail(path, 'fireStanceScale cannot stack');
+  if (effect.condition !== undefined) fail(`${path}.condition`, 'fireStanceScale cannot have a condition');
+}
+
+/**
  * timed の維持。秒（durationRef / durationSeconds）か発数（durationShots / durationShotsRef）のちょうど 1 つ。
  * 発数の窓は 1 パス目の射撃の列から後で決めるので、1 パス目のループの中で窓を追う stat には書けない
  */
@@ -786,7 +810,12 @@ export function parsePassiveEffect(v: Record<string, Json>, path: string): Passi
   if (v.name !== undefined) fail(`${path}.name`, NAME_REPLACED);
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
   const passiveFlag = isPassiveFlagStat(stat);
-  if ((isFlagStat(stat) && !passiveFlag) || stat === 'fixedChargeTime' || isPelletStat(stat))
+  if (
+    (isFlagStat(stat) && !passiveFlag) ||
+    stat === 'fixedChargeTime' ||
+    stat === 'fireStanceScale' ||
+    isPelletStat(stat)
+  )
     fail(`${path}.stat`, `${stat} is only allowed in timed`);
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
   validateScaling(scaling, stat, path);

@@ -4,6 +4,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { burstDelaysOf } from '../../burst/landing.ts';
+import { stanceFrames } from '../../frame/firing.ts';
 import type { CharacterData } from '../../types.ts';
 import {
   resolveBurstDamage,
@@ -148,6 +149,19 @@ describe('data/skills', () => {
           expect(ATTACK_SPEED_WEAPONS as readonly string[], `${slot}: attackSpeed on self`).toContain(
             character.weaponType,
           );
+        }
+      }
+    });
+
+    // A2 の B モード編（plan/design-a2-bmode-stance.md 3.1 節）: 射撃の姿勢の長さの倍率は、射撃姿勢維持型の武器のキャラにだけ効く
+    it('writes fireStanceScale only for a fire-stance character', () => {
+      for (const slot of SKILL_SLOTS) {
+        for (const effect of def.skills[slot].effects) {
+          const scale =
+            ('stat' in effect && effect.stat === 'fireStanceScale') ||
+            (effect.kind === 'state' && statContentsOf(effect.contents).some((c) => c.stat === 'fireStanceScale'));
+          if (!scale) continue;
+          expect(stanceFrames(character.shot), `${slot}: fireStanceScale needs a fire-stance weapon`).not.toBeNull();
         }
       }
     });

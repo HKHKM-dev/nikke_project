@@ -93,6 +93,7 @@ const STAT_CLASS: Record<BuffStat, ElementClass> = {
   // チャージ速度の超過分の変換（フルチャージの発の値）
   chargeSpeedOverflow: 'damageValue',
   fixedChargeTime: 'firing',
+  fireStanceScale: 'firing',
   trueDamage: 'damageValue',
   trueDamageConversion: 'damageValue',
   sustainedDamage: 'damageValue',

@@ -12,9 +12,7 @@
           "stat": "chargeDamage",
           "ref": 1,
           "durationRef": 2,
-          "claims": [
-            "C-1102"
-          ]
+          "claims": ["C-1102"]
         }
       ],
       "notes": [
@@ -44,9 +42,7 @@
             "ja": "フルチャージの通常攻撃 1 発ごとに 1 回（全弾命中の前提）",
             "en": "Once per full-charge normal shot (every shot is assumed to hit)"
           },
-          "claims": [
-            "C-0407"
-          ]
+          "claims": ["C-0407"]
         }
       ],
       "notes": [
@@ -57,9 +53,7 @@
           "effect": {
             "kind": "unknown"
           },
-          "claims": [
-            "C-0443"
-          ]
+          "claims": ["C-0443"]
         }
       ]
     },
@@ -81,15 +75,18 @@
             {
               "stat": "chargeSpeed",
               "ref": 4
+            },
+            {
+              "stat": "fireStanceScale",
+              "value": 0.5,
+              "claims": ["C-1155"]
             }
           ],
           "assumes": {
-            "ja": "チャージ速度▲は、いまの規則（チャージの長さだけを縮める）で効かせる。同じ射撃姿勢維持型のレイヴンはこの規則で合う（C-1136）が、A2 の B モードの間は、射撃の姿勢の長さが半分になり、実測の発と発の間がモデルより 25f 短い（C-1155。姿勢の長さの縮みは未実装。許容外の残差 1084-11・1085-11・1122-08。plan/backlog.md 3 節）",
-            "en": "Charge speed up uses the existing rule (it shortens only the charge). Raven (same fire-stance type) matches this rule (C-1136), but during A2 Mode B the fire stance is halved and the measured shot interval is 25f shorter than the model (C-1155; the stance reduction is not implemented; residuals 1084-11, 1085-11 and 1122-08 out of tolerance; plan/backlog.md section 3)"
+            "ja": "チャージ速度▲は、いまの規則（チャージの長さだけを縮める）で効かせる（C-1136・C-1153）。射撃の姿勢の長さの倍率 0.5 は説明文に無く、録画で読んだ（B モードの間は姿勢が半分。C-1155。倍率は 0.486〜0.506 の幅でしか決まらない）。姿勢の縮みを確かめたのはマガジンの中の発と発の間だけで、リロード明けとハイドからの 1 発目にも同じ姿勢を使う（確かめていない）",
+            "en": "Charge speed up uses the existing rule (it shortens only the charge; C-1136, C-1153). The fire stance scale 0.5 is not in the description and was read from recordings (the stance is halved during Mode B; C-1155; the scale is only bounded to 0.486-0.506). The halved stance was verified only for shot intervals within a magazine; the same stance is used after a reload and for the first shot after hiding (unverified)"
           },
-          "claims": [
-            "C-1100"
-          ]
+          "claims": ["C-1100"]
         },
         {
           "kind": "currentHpDown",
@@ -102,9 +99,7 @@
           },
           "target": "self",
           "ref": 2,
-          "claims": [
-            "C-1101"
-          ],
+          "claims": ["C-1101"],
           "assumes": {
             "ja": "回復で現在の HP が戻る分は扱わない（A2 は回復を持たない。味方の回復で 40% より上に戻った時に B モードがまた付くかは確かめていない）",
             "en": "HP restored by heals is not modeled (A2 has no heal; whether Mode B can be applied again after an ally heals her above 40% is unverified)"

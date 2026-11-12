@@ -442,14 +442,15 @@ function staticContentsOf(
   });
 }
 
-/** 中身の 1 項目の値（timed と同じ。フラグの stat は 1） */
+/** 中身の 1 項目の値（timed と同じ。フラグの stat は 1、定数 value の stat はその値） */
 function contentValue(
-  item: { stat: BuffStat; ref?: number; scaling?: BuffScaling; decrease?: true },
+  item: { stat: BuffStat; ref?: number; value?: number; scaling?: BuffScaling; decrease?: true },
   character: CharacterData,
   slot: SkillSlot,
   level: number,
 ): number {
   const skill = character.skills[slot];
+  if (item.value !== undefined) return item.value;
   if (item.ref === undefined) {
     if (!isFlagStat(item.stat)) throw new RangeError(`skill ${skill.id}: state content ${item.stat} needs ref`);
     return 1;
@@ -623,16 +624,23 @@ export function resolveTimed(
       const value =
         effect.amplifies !== undefined
           ? effect.amplifies.percent / 100 // 参照する効果の値に掛ける割合（窓ごとの値は skills/holders/history.ts の amplify）
-          : effect.ref === undefined
-            ? 1 // フラグの stat（装弾数無限）
-            : scaledValue(
-                skillValue(skill, effect.ref, levels[slot]),
-                effect.stat,
-                effect.scaling,
-                character,
-                effect.decrease,
-              );
-      if (effect.ref === undefined && effect.amplifies === undefined && !isFlagStat(effect.stat)) {
+          : effect.value !== undefined
+            ? effect.value // 説明文に無い値の定数（fireStanceScale。plan/design-a2-bmode-stance.md 3.1 節）
+            : effect.ref === undefined
+              ? 1 // フラグの stat（装弾数無限）
+              : scaledValue(
+                  skillValue(skill, effect.ref, levels[slot]),
+                  effect.stat,
+                  effect.scaling,
+                  character,
+                  effect.decrease,
+                );
+      if (
+        effect.ref === undefined &&
+        effect.value === undefined &&
+        effect.amplifies === undefined &&
+        !isFlagStat(effect.stat)
+      ) {
         throw new RangeError(`skill ${skill.id}: timed ${effect.stat} needs ref`);
       }
       const r: ResolvedTimedEffect = { ...window, stat: effect.stat, scaling: effect.scaling ?? 'ratio', value };

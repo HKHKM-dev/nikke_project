@@ -51,6 +51,9 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * 窓のあいだ、自分の通常攻撃の 1 発の基礎を max(1, 攻撃力 − 防御力) から max(1, 攻撃力) にする
  * sustainedDamage = 持続ダメージ▲（plan/design-sustained-damage-up.md 3 節）。その枠の持続ダメージ（dot）の tick に
  * だけ掛ける（autoAttack には掛けない）。式の中の置き場所は skills/burstDamage.ts の SUSTAINED_DAMAGE_PLACEMENT
+ * fireStanceScale = 射撃の姿勢の長さの倍率（plan/design-a2-bmode-stance.md 3.1 節）。射撃姿勢維持型の武器の姿勢（満ちてから 100% に
+ * 戻るまで）と満ちてから撃つまでを、丸める前の長さに倍率を掛けて縮める（frame/firing.ts の stanceFrames）。説明文に無い値なので ref の
+ * 代わりに定数 value（0 より大きく 1 以下）を書く。timed の self と、自分に付く状態の中身にだけ書ける。重なれば掛け合わせる。射撃に効く
  * attackSpeed = 攻撃速度▲（比率。plan/design-skill-stage9.md 1.2 節）。レートを蓄積して撃つ武器（AR・SMG・SG）の
  * マガジンの中の発と発の間を、レート × (1 + Σ) にする（V-0458。C-0600）。リロード・リロード明けの 1 発目の待ち・構えは変えない。射撃に効く
  * chargeSpeedOverflow = 「チャージ速度 100% を超えた場合、超過した値をチャージダメージに
@@ -109,7 +112,8 @@ export type BuffStat =
   | 'pierce'
   | 'pierceDamage'
   | 'pelletCount'
-  | 'singlePellet';
+  | 'singlePellet'
+  | 'fireStanceScale';
 export const BUFF_STATS = [
   'attack',
   'critRate',
@@ -177,6 +181,8 @@ export const BUFF_STATS = [
   // ペレット数▲（個。flat）・ペレットの数を 1 個に固定（フラグ。plan/design-dorothy-serendipity.md 2.1・2.2 節）
   'pelletCount',
   'singlePellet',
+  // 射撃の姿勢の長さの倍率（説明文に無い定数 value。plan/design-a2-bmode-stance.md 3.1 節）
+  'fireStanceScale',
 ] as const satisfies readonly BuffStat[];
 
 /** 射撃に効く stat（射手の実効値を変える） */
@@ -189,6 +195,7 @@ export const FIRING_STATS = [
   'fixedChargeTime',
   'attackSpeed',
   'spinUpSpeed',
+  'fireStanceScale',
 ] as const satisfies readonly BuffStat[];
 
 /** 射撃に効くか。解決後の使用武器の変更（stat 'weapon'。skills/resolve.ts の EffectStat）も射撃に効く */
@@ -934,9 +941,11 @@ export type TimedEffect = TargetCountFields &
     scaling?: BuffScaling;
     /**
      * description_value_NN の NN（1 始まり）。値は % 表記。100 で割るのは resolveTimed の責務。
-     * フラグの stat（infiniteAmmo）だけは書かない（値 1）
+     * フラグの stat（infiniteAmmo）と、定数 value を書く stat（fireStanceScale）は書かない（値 1）
      */
     ref?: number;
+    /** 説明文に無い値の定数（fireStanceScale の倍率だけ。ref と片方。plan/design-a2-bmode-stance.md 3.1 節） */
+    value?: number;
     /** 「▼」。値の符号を反転する（scaling が ratio / flat のときだけ） */
     decrease?: true;
     /**
@@ -2084,7 +2093,7 @@ export type BurstStepChangeEffect = {
 export type StateContentItem = StatContentItem | MaxStacksUpContentItem | SkillCooldownDownContentItem;
 
 /** stat の▲▼の中身の項目 */
-export type StatContentItem = Pick<TimedEffect, 'stat' | 'ref' | 'scaling' | 'decrease'> & ClaimRefs;
+export type StatContentItem = Pick<TimedEffect, 'stat' | 'ref' | 'value' | 'scaling' | 'decrease'> & ClaimRefs;
 
 /**
  * 「〈状態〉の最大スタック数 N▲」（セブンスドワーフ・フルアクティブの効果 3「オートファイア準備 最大装填数
