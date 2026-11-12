@@ -1,8 +1,7 @@
 import type { BuildMasters, BuildSnapshot, CharacterData, CharacterIndexEntry } from '@nikke/core';
 import type { Dispatch } from 'react';
-import type { CalcView, SlotResultView } from '../calcView.ts';
+import type { CalcView, NotesSummarySlot, SlotResultView } from '../calcView.ts';
 import type { Shown } from '../compute.ts';
-import type { NotesSummarySlot } from '../components/NotesSummary.tsx';
 import type { OtherParties, PartiesState } from '../parties.ts';
 import type { PartyTotal } from '../partyTotals.ts';
 import type { TeamAction, TeamState } from '../team.ts';

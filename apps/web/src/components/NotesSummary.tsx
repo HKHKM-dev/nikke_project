@@ -1,28 +1,10 @@
 // 未対応・近似・仮定の一覧を 1 画面にまとめる（plan/design-stage12.md 4.2 節。「未対応は明示」の原則）。
 // スキル・育成・計算の注記を出すのはここだけ。画面に欄の無い入力の既定もここに出す（plan/design-ui-rebuild.md 5.2 節）。
-import {
-  SKILL_SLOTS,
-  applyTreasure,
-  type BuildEffectNote,
-  type CharacterData,
-  type ModelNote,
-  type TreasurePhase,
-} from '@nikke/core';
+import { SKILL_SLOTS, applyTreasure, type ModelNote } from '@nikke/core';
 import { useContext } from 'react';
 import { SKILL_SLOT_LABEL, formatBuildEffectSource } from '../skillLabels.ts';
 import { ListOrderContext } from '../useListOrder.ts';
-import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
-
-export type NotesSummarySlot = {
-  index: number;
-  character: CharacterData;
-  skills: SlotSkillsStatus;
-  treasurePhase: TreasurePhase;
-  /** 計算のモデルの注記（複数銃口・射撃の刻みの較正など）。計算前なら空 */
-  modelNotes: readonly ModelNote[];
-  /** 育成の効果層で計算に入らないもの（未対応だけ。ダメージに無関係なものは出さない） */
-  buildNotes: readonly BuildEffectNote[];
-};
+import type { NotesSummarySlot } from '../calcView.ts';
 
 type Item = {
   level: 'unsupported' | 'outOfScope' | 'approx' | 'assumed' | 'noDamage' | 'modeling' | 'default';

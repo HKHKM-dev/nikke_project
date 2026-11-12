@@ -1,7 +1,7 @@
 // キャラ一覧の読み込みと、保存した編成（選んでいる編成と、ソロレイド用の編成 01〜05）の復元・保存。読めなかった保存の退避と知らせ
 // （savedTeams.ts。plan/design-unreadable-team-save.md）もここで回す
 import { loadCharacterIndex, type CharacterIndexEntry } from '@nikke/core';
-import { useEffect, useState, type Dispatch } from 'react';
+import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 import { PARTIES_STORAGE_KEY, serializeParties, type PartiesState } from './parties.ts';
 import { writeStorage } from './storage.ts';
 import { STORAGE_KEY, serializeTeamState, type TeamAction, type TeamState } from './team.ts';
@@ -12,7 +12,8 @@ type Params = {
   team: TeamState;
   dispatch: Dispatch<TeamAction>;
   parties: PartiesState;
-  setParties: (parties: PartiesState) => void;
+  /** useState の setter（参照が変わらないものを渡す。読み込みの effect の deps に入る） */
+  setParties: Dispatch<SetStateAction<PartiesState>>;
 };
 
 export function useSavedTeam({ baseUrl, team, dispatch, parties, setParties }: Params) {

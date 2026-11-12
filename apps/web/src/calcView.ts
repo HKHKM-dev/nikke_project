@@ -33,9 +33,9 @@ import {
   type SkillLevels,
   type TeamInput,
   type TeamSlotInput,
+  type ModelNote,
   type TreasurePhase,
 } from '@nikke/core';
-import type { NotesSummarySlot } from './components/NotesSummary.tsx';
 import type { ScreenSlotResult, Shown } from './compute.ts';
 import {
   DEFAULT_CONDITION_MODE,
@@ -263,6 +263,18 @@ export function slotResultFor(shown: Shown<CalcView> | null, view: CalcView, ind
   if (result === null || result.resourceId !== view.slots[index]?.character?.resourceId) return null;
   return { result, stale: shown.source !== view };
 }
+
+/** 未対応の一覧（components/NotesSummary.tsx）の 1 枠の材料 */
+export type NotesSummarySlot = {
+  index: number;
+  character: CharacterData;
+  skills: SlotSkillsStatus;
+  treasurePhase: TreasurePhase;
+  /** 計算のモデルの注記（複数銃口・射撃の刻みの較正など）。計算前なら空 */
+  modelNotes: readonly ModelNote[];
+  /** 育成の効果層で計算に入らないもの（未対応だけ。ダメージに無関係なものは出さない） */
+  buildNotes: readonly BuildEffectNote[];
+};
 
 /** 未対応の一覧の材料（NotesSummary）。育成の注記は buildCalcView が未対応だけにしたもの（スペック固定では効果層が空） */
 export function notesSummarySlots(
