@@ -12,6 +12,7 @@ import {
   resolveShotGauges,
   resolveTimerGauges,
   type ResolvedDamageEffect,
+  resolveDamageEffects,
 } from '../../skills/burstDamage.ts';
 import { type BurstActivation } from '../../burst/schedule.ts';
 import { isResolvedShotCount, isResolvedTimer, resolveSkillCooldownDowns } from '../../skills/resolve.ts';
@@ -43,23 +44,8 @@ type CycleGaugeTracker = {
   fullChargeOnly: boolean;
 };
 
-/** ゲージを溜める効果を追い、そのゲージをフレームに予約して足す */
-export function createGaugeEffects({
-  damageEffects,
-  hitGaugeEnergy,
-  flights,
-  frames,
-  gaugeScale,
-  gaugeSpeed,
-  lists,
-  logs,
-  shotEvents,
-  shotFlightAt,
-  slots,
-  targetEnergies,
-  targetEnergyNow,
-  timedGauge,
-}: FirstPassBase & Gauge) {
+/** 射撃の回数で溜まるゲージ（段の循環・倍率ダメージのゲージ・射撃の回数のゲージ）の追跡を作る */
+export function createShotGaugeTrackers({ gaugeSpeed, logs, slots }: FirstPassBase & Gauge) {
   // V-0030: 段のヒットでゲージを溜める循環。溜めるゲージは当たるフレームに予約する（pendingGauge）
   const cycleTrackers: CycleGaugeTracker[] = [];
   slots.forEach((slot, i) => {
@@ -138,6 +124,30 @@ export function createGaugeEffects({
       });
     }
   });
+  return { cycleTrackers, damageGaugeTrackers, shotGaugeTrackers };
+}
+
+export type ShotGaugeTrackers = ReturnType<typeof createShotGaugeTrackers>;
+
+/** ゲージを溜める効果を追い、そのゲージをフレームに予約して足す */
+export function createGaugeEffects({
+  cycleTrackers,
+  damageGaugeTrackers,
+  shotGaugeTrackers,
+  hitGaugeEnergy,
+  flights,
+  frames,
+  gaugeScale,
+  gaugeSpeed,
+  lists,
+  logs,
+  shotEvents,
+  shotFlightAt,
+  slots,
+  targetEnergies,
+  targetEnergyNow,
+  timedGauge,
+}: FirstPassBase & Gauge & ShotGaugeTrackers) {
   // ゲージを溜める持続ダメージ（dot の gaugeOnApply・gaugeOnTick。plan/design-raven-s1.md 4 節）。射撃を数えて
   // 発火を追い、付けたときの分は発火のフレームに、tick の分は dotTickTracker が返した tick のフレームに予約する。
   // V-0113（10 節）: バースト使用時に付く効果（burstUse。クルミのハッキング）も同じまとまりの発火として、手順 3 の出来事で追う
@@ -327,6 +337,10 @@ export function createGaugeEffects({
     /** エレグの S1（C-0773）: 条件 enemyState（発火のフレームに敵がその状態なら予約する） */
     enemyState?: NamedStateId;
   }[] = [];
+  /** 枠ごとの倍率ダメージ（ヒットごとのゲージ・蓄積爆破・召喚の攻撃が読む。枠ごとに 1 回だけ解く） */
+  const damageEffects = slots.map((slot) =>
+    slot === null || slot.definition === null ? [] : resolveDamageEffects(slot.definition, slot.character, slot.levels),
+  );
   damageEffects.forEach((effects, i) => {
     for (const effect of effects) {
       if (effect.gaugePerHit === undefined || isSummonAttackTrigger(effect.trigger)) continue;
@@ -486,7 +500,6 @@ export function createGaugeEffects({
     }
     return gauge;
   };
-  /** 味方のゲージ（allyGaugeAdd）を足す */
   const addAllyGauge = (gauge: number, f: number): number => {
     // 味方のゲージ（allyGaugeAdd）: このフレームに着いたほかの枠のゲージの回数に、このフレームの量を足す
     if (allyAdd !== null) {
@@ -498,7 +511,6 @@ export function createGaugeEffects({
     }
     return gauge;
   };
-  /** バースト使用時に付く持続ダメージの、延びた tick のゲージを予約する（V-0113） */
   const reserveBurstUseDotTicks = (f: number, burstEffects: readonly BurstActivation[]): void => {
     // V-0113: バースト使用時に付く持続ダメージ（クルミのハッキング）。付け直しと同じで、延びた tick のゲージを予約する
     // （burstUse のトリガーの判定と同じく、このフレームの効果の発火 burstEffects で見る）
@@ -508,6 +520,7 @@ export function createGaugeEffects({
   };
   return {
     addAllyGauge,
+    damageEffects,
     addShotGauges,
     cooldownTrackers,
     countCooldownTimers,

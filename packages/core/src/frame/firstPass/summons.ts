@@ -5,7 +5,7 @@ import { type ResolvedDamageEffect } from '../../skills/burstDamage.ts';
 import { effectFrameOf } from '../../burst/schedule.ts';
 import { isSummonAttackTrigger, SKILL_SLOTS, type SummonAttackTrigger, type SummonEffect } from '../../skills/types.ts';
 import type { SummonId } from '../../skills/summons.ts';
-import { type FirstPassResult } from '../firstPass.ts';
+import type { FirstPassResult } from '../firstPass.ts';
 import type { FirstPassBase } from './base.ts';
 import type { Gauge } from './gauge.ts';
 import type { GaugeEffects } from './gaugeEffects.ts';

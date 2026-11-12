@@ -3,7 +3,6 @@
 import type { BurstActivation, FullBurstWindow } from '../../burst/schedule.ts';
 import type { HolderLists } from '../../skills/holders.ts';
 import type { resolvePassiveStates, TimelineSlot } from '../../skills/timeline.ts';
-import type { ResolvedDamageEffect } from '../../skills/burstDamage.ts';
 import type { ShotEvent } from '../../skills/triggers.ts';
 import type { FirstPassOptions } from '../firstPass.ts';
 import type { ShotLog } from '../shots.ts';
@@ -23,6 +22,4 @@ export type FirstPassBase = {
   shotEvents: (ShotEvent | null)[];
   activationsOf: () => readonly BurstActivation[];
   windowsOf: () => readonly FullBurstWindow[];
-  /** 枠ごとの倍率ダメージ（枠ごとに 1 回だけ解く） */
-  damageEffects: ResolvedDamageEffect[][];
 };

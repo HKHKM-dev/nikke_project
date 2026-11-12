@@ -48,13 +48,7 @@ import {
   type BurstTiming,
 } from '../burst/controller.ts';
 import { burstCandidateOf, burstUnitOf, partialGaugeRatio } from '../burst/dynamic.ts';
-import {
-  resolveAppliedPauses,
-  resolveDamageEffects,
-  resolveBurstUsePause,
-  resolveShotPauses,
-  type ResolvedDamageEffect,
-} from '../skills/burstDamage.ts';
+import { type ResolvedDamageEffect } from '../skills/burstDamage.ts';
 import {
   effectFrameOf,
   hexagonFrameOf,
@@ -83,17 +77,14 @@ import { createHolderLists, type HolderHistory, type LeadShots } from '../skills
 import { isEffectTarget, type FireContext } from '../skills/targets.ts';
 import { resolvePassiveStates, triggerFrames, type FrameRange, type TimelineSlot } from '../skills/timeline.ts';
 import {
-  advanceShotCount,
   burstStepHolds,
   createTriggerTracker,
   fireContextOf,
   type FrameEvents,
-  type ShotCountEveryAt,
   type ShotEvent,
-  shotCountWeight,
   type TriggerTracker,
 } from '../skills/triggers.ts';
-import { chargeTriggersOf, hasReloadEndEffect, isEndedTrigger, type ShotCountKind } from '../skills/types.ts';
+import { chargeTriggersOf, hasReloadEndEffect, isEndedTrigger } from '../skills/types.ts';
 import type { SummonId } from '../skills/summons.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
 import { firingParams, isZeroFiring, type FiringParams } from './firing.ts';
@@ -122,7 +113,8 @@ import { unionRanges } from './events.ts';
 import { reloadStartOffset } from '../cadence.ts';
 import type { FirstPassBase } from './firstPass/base.ts';
 import { createGauge } from './firstPass/gauge.ts';
-import { createGaugeEffects } from './firstPass/gaugeEffects.ts';
+import { createGaugeEffects, createShotGaugeTrackers } from './firstPass/gaugeEffects.ts';
+import { createShotPauses } from './firstPass/shotPauses.ts';
 import { createAccumulate } from './firstPass/accumulate.ts';
 import { createSummons } from './firstPass/summons.ts';
 
@@ -589,10 +581,6 @@ function runFirstPassOnce(
   const flights = slots.map((_, i) => options.flights?.[i] ?? null);
   const shotFlightAt = (i: number, f: number): number => flightFramesAt(flights[i]?.shot, f);
   const shotEvents: (ShotEvent | null)[] = slots.map(() => null);
-  /** 枠ごとの倍率ダメージ（ヒットごとのゲージ・蓄積爆破・召喚の攻撃が読む。枠ごとに 1 回だけ解く） */
-  const damageEffects = slots.map((slot) =>
-    slot === null || slot.definition === null ? [] : resolveDamageEffects(slot.definition, slot.character, slot.levels),
-  );
   const layerBase: FirstPassBase = {
     slots,
     options,
@@ -606,7 +594,6 @@ function runFirstPassOnce(
     shotEvents,
     activationsOf,
     windowsOf,
-    damageEffects,
   };
   // ゲージの系の作り手を、文の順のとおりに呼ぶ（plan/design-split-first-pass.md 3.4 節・9.3 節）
   const upToGauge = { ...layerBase, ...createGauge(layerBase) };
@@ -648,7 +635,9 @@ function runFirstPassOnce(
     const swap = opened?.startsFullBurst ? Math.max(f, hexagonFrameOf(opened)) : f;
     return weaponFreeFrameAtSwap(shooters[i]!, logs[i]?.frames.at(-1), swap, model) + after;
   };
-  const upToGaugeEffects = { ...upToGauge, ...createGaugeEffects(upToGauge) };
+  const upToShotGauges = { ...upToGauge, ...createShotGaugeTrackers(upToGauge) };
+  const { appliedPauses, burstPauseAim, burstUsePause, countShotPauses, pauseLeft } = createShotPauses(layerBase);
+  const upToGaugeEffects = { ...upToShotGauges, ...createGaugeEffects(upToShotGauges) };
   const {
     addAllyGauge,
     addShotGauges,
@@ -666,44 +655,7 @@ function runFirstPassOnce(
     timerGauges,
     trackDotBurstUse,
   } = upToGaugeEffects;
-  // V-0534（ラピ：レッドフード S2 の粘着榴弾。C-0717・C-0718）: 射撃の止まり（shotPause）。射撃を数えて、発火した射撃の次のフレームから
-  // 止めるフレーム数のあいだ射手を進めない（pauseLeft。手順 1 で減らす）。発火した射撃がマガジンの最後の弾丸なら framesOnLastShot
-  // 回数の間隔の変更（cycleEvery の shotCounts）の窓の中は、通算の回数が窓の
-  // 間隔の倍数に届いた発で止める（C-0727。plan/design-skill-stage12.md 2.4 節）。
-  // 窓の件はこのフレームに付いたものも見るので、段の循環と同じく手順 3 の後に数える（countShotPauses）
-  const shotPauseTrackers: {
-    slotIndex: number;
-    everyAt: ShotCountEveryAt | undefined;
-    count: ShotCountKind;
-    every: number;
-    frames: number;
-    framesOnLastShot: number;
-    n: number;
-  }[] = [];
-  slots.forEach((slot, i) => {
-    if (slot === null || slot.definition === null) return;
-    for (const t of resolveShotPauses(slot.definition, slot.character, slot.levels)) {
-      if (t.count === 'fullChargeShot' && !logs[i]!.fullCharge) continue;
-      const { skill, ...rest } = t;
-      shotPauseTrackers.push({ slotIndex: i, ...rest, everyAt: lists.shotCountEveryOf(i, skill), n: 0 });
-    }
-  });
-  const pauseLeft = slots.map(() => 0);
-  // 自分のバーストの発動の次のフレームから止めるフレーム数（手順 3 で立てる）
-  // 立っている止まりの、明けで構え直すときに unhideShooter に渡す止めたフレーム数（0 は立っていない。
-  // 射撃の回数の止まりと区別する。plan/design-privaty-burst-pause.md 2 節）
-  const burstPauseAim = slots.map(() => 0);
-  const burstUsePause = slots.map((slot) =>
-    slot === null || slot.definition === null ? 0 : resolveBurstUsePause(slot.definition),
-  );
-  // 状態が付いた時の止まり（気絶。plan/design-maids.md 2.2 節）。手順 1 で、前のフレームに無かった状態が付いていれば立て、
-  // 明けまでバーストの候補からも外す（論点 2）。明けは、バーストの発動の止まりと同じく構え直す
-  const appliedPauses = slots.map((slot) =>
-    slot === null || slot.definition === null
-      ? []
-      : resolveAppliedPauses(slot.definition).map((p) => ({ ...p, was: false })),
-  );
-  const { accumulateReleases, addAccumulatedGauge, recordAccumulatorShots } = createAccumulate(upToGauge);
+  const { accumulateReleases, addAccumulatedGauge, recordAccumulatorShots } = createAccumulate(upToGaugeEffects);
   const { countSummons, summonHits } = createSummons(upToGaugeEffects);
   /** 先のフレームに効果が発火するバーストの発動（フレーム → 発動） */
   const pendingBurstEffects = new Map<number, BurstActivation[]>();
@@ -711,20 +663,6 @@ function runFirstPassOnce(
   const pendingBurstHits = new Map<number, BurstActivation[]>();
   /** 先のフレームの段階のきっかけ（stageEnterFrameOf。段階 3 は替わり目） */
   const pendingStageEntries = new Map<number, BurstStepKey[]>();
-
-  /**
-   * V-0534: 射撃の止まり。このフレームの射撃で発火したら、次のフレームから止める。回数の間隔の変更の窓を
-   * このフレームに付いたものも見るので、手順 3 の後に呼ぶ（止まりは次のフレームからなので、数える位置で射撃は変わらない）
-   */
-  const countShotPauses = (f: number): void => {
-    for (const t of shotPauseTrackers) {
-      const shot = shotEvents[t.slotIndex];
-      if (shot === null || shot === undefined) continue;
-      const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), t.everyAt?.(f) ?? t.every);
-      t.n = counted.count;
-      if (counted.fired) pauseLeft[t.slotIndex] = shot.lastShot ? t.framesOnLastShot : t.frames;
-    }
-  };
 
   let nextActivation = 0;
   let nextWindowStart = 0;
