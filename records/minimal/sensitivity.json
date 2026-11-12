@@ -15793,6 +15793,14 @@
       "plus": 0
     },
     {
+      "observation": "0754-17",
+      "element": "シンデレラ skill1.effects[1]",
+      "key": "113ca3a468fe7583",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "0755-08",
       "element": "シンデレラ skill1.effects[1]",
       "key": "21b3768d71937292",
@@ -15804,6 +15812,14 @@
       "observation": "0755-11",
       "element": "シンデレラ skill1.effects[1]",
       "key": "38b4c0490355af80",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0755-17",
+      "element": "シンデレラ skill1.effects[1]",
+      "key": "f7839b3ca43fcd63",
       "effective": false,
       "minus": 0,
       "plus": 0

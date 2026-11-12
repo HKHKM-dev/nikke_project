@@ -57,6 +57,15 @@ describe('eventFrames', () => {
     expect(Math.max(...inside)).toBeLessThan(Math.min(...after));
   });
 
+  it('gives the slot shots as video frames (V-0742)', () => {
+    // 枠の発の列を動画のフレームにしたもの。戦闘の始めからは、発の列の頭と同じ順で並ぶ
+    const shots = frames({ event: 'shot' }) as number[];
+    expect(shots.length).toBe(result.shots[2]!.frames.length);
+    expect(frames({ event: 'shot', skip: 3, count: 2 })).toEqual(shots.slice(3, 5));
+    // フルバーストの窓の始まりからの最初の発は 0 以上
+    expect((frames({ event: 'shot', anchor: 'fullBurst:0', count: 1 }) as number[])[0]).toBeGreaterThanOrEqual(0);
+  });
+
   it('skips the head and cuts to count, and refuses when too few', () => {
     const all = frames({
       event: 'skillHit',
@@ -79,7 +88,7 @@ describe('eventFrames', () => {
   });
 
   it('refuses unknown events and anchors, and ranges that do not fit the anchor', () => {
-    expect(() => frames({ event: 'shot' })).toThrow(/event は/);
+    expect(() => frames({ event: 'reload' })).toThrow(/event は/);
     expect(() => frames({ event: 'skillHit', anchor: 'jump:0' })).toThrow(/anchor は/);
     expect(() => frames({ event: 'skillHit', within: 'window' })).toThrow(/within は使えない/);
     expect(() => frames({ event: 'skillHit', anchor: 'activation:0', within: 'window' })).toThrow(/untilNext だけ/);
