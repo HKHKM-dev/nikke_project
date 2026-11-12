@@ -1160,6 +1160,7 @@ describe('観測値の形の拡張（Stage 20-E）', () => {
         },
         { ...compared, id: '0047-88', value: [1, null] as unknown as number[] },
         { ...record, id: '0047-89', value: [1, null] as unknown as number[] },
+        { ...record, id: '0047-90', use: 'input', value: [[1, 2]] as unknown as number[] },
       ],
       recordings,
       data.enemies,
@@ -1175,6 +1176,7 @@ describe('観測値の形の拡張（Stage 20-E）', () => {
       '0047-86: readAt は YYYY-MM-DD',
       '0047-86: invalid には reason と date（YYYY-MM-DD）が要る',
       '0047-88: use が compare の value は数か数の配列',
+      '0047-90: use が input の value は数か数の配列',
     ]);
   });
 
@@ -1200,7 +1202,7 @@ describe('観測値の形の拡張（Stage 20-E）', () => {
     );
     // 実際の観測値の全部が落ちずに書ける
     const others = observations.filter((o) => o.use !== 'compare');
-    expect(renderOtherRows(others).join('\n')).not.toContain('[object Object]');
+    expect(renderOtherRows(others).join('\n')).not.toMatch(/\[object Object\]|undefined|NaN/);
   });
 
   it('keeps an invalid basis on a claim, but fails a 確定 claim with no valid basis left', () => {
