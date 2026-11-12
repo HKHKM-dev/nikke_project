@@ -1,0 +1,383 @@
+{
+  "verification": "V-0757",
+  "note": "撮影 A（ボリューム単騎・操作・オートバースト ON）と撮影 B（ボリューム + デルタ + I-DOLL・サン（操作）・オートバースト ON）の予測。どちらも灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。モデルは A でバーストを 4 回使い（f1698・4201・6598・9100）、窓（5 秒 = 294f）は 1 回目: クリティカルダメージ▲ 10.77%・2 回目: + 12.46%・3・4 回目: + 14.42%（どれもバーストのクリティカル確率▲ 31.9% と一緒）。B ではボリュームがチェーンの切れた後にも I を使うので、使用の 2 回目（f1692）はチェーンの外。critHitRatio のフレームは窓の中の代表で、値はその窓の状態だけで決まる（録画の窓の時刻がモデルとずれても、同じ回の窓の中の 1 ヒットと比べる）。回数を編成全体のバーストの使用で数える読み（H3）は override で書けないので、検証記録に手で書いた",
+  "team": [
+    {
+      "rid": 431,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S2 の effects[0]〜[2]: フルバーストの 1・2・3 回目以降に味方全体の CT 2.34・2.7・3.17 秒▼、effects[3]〜[5]: 自分のバースト使用の 1・2・3 回目以降に味方全体のクリティカルダメージ▲ 5 秒。どちらも下位効果のスタック適用（atLeast）。burst の effects[0]: 味方全体のクリティカル確率▲ 5 秒）"
+    },
+    {
+      "id": "H0-burst",
+      "note": "バーストのクリティカル確率▲（burst の effects[0]）が無い",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 431,
+            "skill": "burst",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-s2-crit",
+      "note": "S2 の使用回数別のクリティカルダメージ▲（skill2 の effects[3]〜[5]）が無い",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 431,
+            "skill": "skill2",
+            "index": 3
+          },
+          {
+            "rid": 431,
+            "skill": "skill2",
+            "index": 4
+          },
+          {
+            "rid": 431,
+            "skill": "skill2",
+            "index": 5
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2",
+      "note": "回数別の効果が下位効果を含まない（2 回目は 2 回の値だけ、3 回目以降は 3 回の値だけ）。CT▼ とクリティカルダメージ▲の両方",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 431,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "cooldownReduction",
+              "trigger": {
+                "count": "fullBurstStart",
+                "atLeast": 1,
+                "atMost": 1
+              },
+              "target": "allies",
+              "ref": 1
+            }
+          },
+          {
+            "rid": 431,
+            "skill": "skill2",
+            "replace": 1,
+            "effect": {
+              "kind": "cooldownReduction",
+              "trigger": {
+                "count": "fullBurstStart",
+                "atLeast": 2,
+                "atMost": 2
+              },
+              "target": "allies",
+              "ref": 2
+            }
+          },
+          {
+            "rid": 431,
+            "skill": "skill2",
+            "replace": 3,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "burstUse",
+                "atLeast": 1,
+                "atMost": 1
+              },
+              "target": "allies",
+              "stat": "critDamage",
+              "ref": 4,
+              "durationRef": 5
+            }
+          },
+          {
+            "rid": 431,
+            "skill": "skill2",
+            "replace": 4,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "burstUse",
+                "atLeast": 2,
+                "atMost": 2
+              },
+              "target": "allies",
+              "stat": "critDamage",
+              "ref": 6,
+              "durationRef": 7
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-win1-crit-ratio",
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 1,
+        "frame": 1850,
+        "core": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.003
+      },
+      "note": "撮影 A: 1 回目の窓の、会心した 1 ヒットと会心しない 1 ヒットの比（S2 の 1 回目のクリティカルダメージ▲）。攻撃力の項は比で消える"
+    },
+    {
+      "id": "A-win2-crit-ratio",
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 1,
+        "frame": 4350,
+        "core": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.003
+      },
+      "note": "撮影 A: 2 回目の窓の会心の比。下位効果のスタック適用なら 1 回目の▲も乗る"
+    },
+    {
+      "id": "A-win3-crit-ratio",
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 1,
+        "frame": 6750,
+        "core": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.003
+      },
+      "note": "撮影 A: 3 回目の窓の会心の比"
+    },
+    {
+      "id": "A-win4-crit-ratio",
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 1,
+        "frame": 9250,
+        "core": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.003
+      },
+      "note": "撮影 A: 4 回目の窓の会心の比（3 回目と同じ見込み。録画の中の再現）"
+    },
+    {
+      "id": "A-win3-late-crit-ratio",
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 1,
+        "frame": 6878,
+        "core": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "撮影 A: 3 回目の窓の終わりの直前（最後の 0.5 秒）の会心の比。窓が 5 秒続くか"
+    },
+    {
+      "id": "A-after3-crit-ratio",
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 1,
+        "frame": 6908,
+        "core": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "撮影 A: 3 回目の窓が切れた後の会心の比（1.5 の見込み）"
+    },
+    {
+      "id": "A-crit-rate-win",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 1850
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.07
+      },
+      "note": "撮影 A: 窓の中の通常攻撃の 1 ヒットのうち会心の割合（4 回の窓をまとめて数える。どの窓も同じ値）"
+    },
+    {
+      "id": "A-crit-rate-base",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 3000
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.03
+      },
+      "note": "撮影 A: 窓の外の会心の割合（対照。素の 15%）"
+    },
+    {
+      "id": "B-ct-cut",
+      "model": "sim",
+      "metric": "cooldownCutFrames",
+      "team": [
+        {
+          "rid": 431
+        },
+        {
+          "rid": 20
+        },
+        {
+          "rid": 308,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "n": "0,1,2,3"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "note": "撮影 B: 1〜4 回目のフルバーストの入りに、III（I-DOLL・サン）の残りの CT が縮んだフレーム数"
+    },
+    {
+      "id": "B-win2-crit-ratio",
+      "model": "sim",
+      "metric": "critHitRatio",
+      "team": [
+        {
+          "rid": 431
+        },
+        {
+          "rid": 20
+        },
+        {
+          "rid": 308,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 1850,
+        "core": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.003
+      },
+      "note": "撮影 B: ボリュームの使用の 2 回目（チェーンが切れた後の I。フルバーストの外）の窓の、ボリュームの会心の比。回数を自分の使用で数えるなら 2 回目の値、編成全体のバーストの使用で数える読み（H3。手で書く）なら 3 回目以降の値"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-12",
+    "commit": "791c24fd5c9567a5c79bedf77340f7d761d157b4",
+    "values": {
+      "H1": {
+        "A-win1-crit-ratio": 1.6076999999999997,
+        "A-win2-crit-ratio": 1.7323,
+        "A-win3-crit-ratio": 1.8765,
+        "A-win4-crit-ratio": 1.8765,
+        "A-win3-late-crit-ratio": 1.8765,
+        "A-after3-crit-ratio": 1.5,
+        "A-crit-rate-win": 0.469,
+        "A-crit-rate-base": 0.15,
+        "B-ct-cut": [137, 295, 481, 481],
+        "B-win2-crit-ratio": 1.7323
+      },
+      "H0-burst": {
+        "A-win1-crit-ratio": 1.6076999999999997,
+        "A-win2-crit-ratio": 1.7323,
+        "A-win3-crit-ratio": 1.8765,
+        "A-win4-crit-ratio": 1.8765,
+        "A-win3-late-crit-ratio": 1.8765,
+        "A-after3-crit-ratio": 1.5,
+        "A-crit-rate-win": 0.15,
+        "A-crit-rate-base": 0.15,
+        "B-ct-cut": [137, 295, 481, 481],
+        "B-win2-crit-ratio": 1.7323
+      },
+      "H0-s2-crit": {
+        "A-win1-crit-ratio": 1.5,
+        "A-win2-crit-ratio": 1.5,
+        "A-win3-crit-ratio": 1.5,
+        "A-win4-crit-ratio": 1.5,
+        "A-win3-late-crit-ratio": 1.5,
+        "A-after3-crit-ratio": 1.5,
+        "A-crit-rate-win": 0.469,
+        "A-crit-rate-base": 0.15,
+        "B-ct-cut": [137, 295, 481, 481],
+        "B-win2-crit-ratio": 1.5
+      },
+      "H2": {
+        "A-win1-crit-ratio": 1.6076999999999997,
+        "A-win2-crit-ratio": 1.6246,
+        "A-win3-crit-ratio": 1.6441999999999999,
+        "A-win4-crit-ratio": 1.6441999999999999,
+        "A-win3-late-crit-ratio": 1.6441999999999999,
+        "A-after3-crit-ratio": 1.5,
+        "A-crit-rate-win": 0.469,
+        "A-crit-rate-base": 0.15,
+        "B-ct-cut": [137, 158, 186, 186],
+        "B-win2-crit-ratio": 1.6246
+      }
+    }
+  }
+}

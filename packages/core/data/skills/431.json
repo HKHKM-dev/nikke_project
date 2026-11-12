@@ -1,0 +1,124 @@
+{
+  "formatVersion": 1,
+  "resourceId": 431,
+  "checkedAt": "2026-11-12",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "敵を倒した時の自分の攻撃力▲（5 秒）は、射撃場の的が倒れないので起きない（敵 1 体の前提。要件 4.2 節）",
+          "en": "ATK up for self (5 s) when defeating an enemy does not occur, since the range target is never defeated (a single enemy; requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "unknown"
+          },
+          "claims": ["C-0443"]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "cooldownReduction",
+          "trigger": {
+            "count": "fullBurstStart",
+            "atLeast": 1
+          },
+          "target": "allies",
+          "ref": 1,
+          "assumes": {
+            "ja": "開始回数別の効果（下位効果のスタック適用）の 1 回目から。回数はフルバーストの回数（編成全体）で数える",
+            "en": "From the first entry of the per-entry effects (lower effects stack). Entries are counted as full bursts (team-wide)"
+          }
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": {
+            "count": "fullBurstStart",
+            "atLeast": 2
+          },
+          "target": "allies",
+          "ref": 2,
+          "assumes": {
+            "ja": "開始回数別の効果の 2 回目から",
+            "en": "From the second entry of the per-entry effects"
+          }
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": {
+            "count": "fullBurstStart",
+            "atLeast": 3
+          },
+          "target": "allies",
+          "ref": 3,
+          "assumes": {
+            "ja": "開始回数別の効果の 3 回目から",
+            "en": "From the third entry of the per-entry effects"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 1
+          },
+          "target": "allies",
+          "stat": "critDamage",
+          "ref": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "使用回数別の効果（下位効果のスタック適用）の 1 回目から。回数は自分のバーストスキルの使用回数で数える",
+            "en": "From the first use of the per-use effects (lower effects stack). Uses are counted as her own Burst Skill uses"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 2
+          },
+          "target": "allies",
+          "stat": "critDamage",
+          "ref": 6,
+          "durationRef": 7,
+          "assumes": {
+            "ja": "使用回数別の効果の 2 回目から",
+            "en": "From the second use of the per-use effects"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 3
+          },
+          "target": "allies",
+          "stat": "critDamage",
+          "ref": 8,
+          "durationRef": 9,
+          "assumes": {
+            "ja": "使用回数別の効果の 3 回目から",
+            "en": "From the third use of the per-use effects"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "critRate",
+          "ref": 1,
+          "durationRef": 2
+        }
+      ]
+    }
+  }
+}
