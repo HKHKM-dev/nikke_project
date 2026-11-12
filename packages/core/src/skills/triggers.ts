@@ -233,7 +233,7 @@ export function createTriggerTracker(
   let lastEventFrame: number | undefined;
   const t = trigger;
   if (isResolvedShotCount(t)) {
-    // 自分の状態の間だけ数える窓は、1 パス目の件の一覧が追う（skills/holders.ts の firesOf。plan/design-grave.md 2.4 節）
+    // 自分の状態の間だけ数える窓は、1 パス目の件の一覧が追う（skills/holders/fires.ts の firesOf。plan/design-grave.md 2.4 節）
     if (isStateCountWindow(t.during)) {
       throw new RangeError(
         `a count during a state (${t.during.state}) is not tracked per event; the holder lists track it`,
@@ -281,7 +281,7 @@ export function createTriggerTracker(
   if (isResolvedReloadEnd(t)) return (ev) => (ev.reloadEnds ?? []).includes(slotIndex);
   // 遮蔽物 HP 回復を受けた時（1 パス目が当てた遮蔽物 HP 回復の受け手）
   if (isResolvedCoverHealed(t)) return (ev) => ev.coverHealed?.[slotIndex] === true;
-  // 自分の HP の割合の窓は 1 パス目の件の一覧が追う（skills/holders.ts の firesOf。plan/design-mast.md 8 節）。出来事の列では追わない
+  // 自分の HP の割合の窓は 1 パス目の件の一覧が追う（skills/holders/fires.ts の firesOf。plan/design-mast.md 8 節）。出来事の列では追わない
   if (isResolvedSelfHpAtMost(t)) {
     throw new RangeError('a selfHpAtMost trigger is not tracked per event; the holder lists track it');
   }
@@ -295,11 +295,11 @@ export function createTriggerTracker(
   if (isResolvedApplied(t)) {
     throw new RangeError(`an applied trigger (${t.applied}) is not tracked per event; use appliedFrames`);
   }
-  // カウンタが上限に届いた時は 1 パス目のカウンタの記録で決まる（skills/holders.ts の firesOf と、skills/holders/types.ts の counterFullFrames）
+  // カウンタが上限に届いた時は 1 パス目のカウンタの記録で決まる（skills/holders/fires.ts の firesOf と、skills/holders/types.ts の counterFullFrames）
   if (isCounterFullTrigger(t)) {
     throw new RangeError(`a counterFull trigger (${t.counterFull}) is not tracked per event; use counterFullFrames`);
   }
-  // 状態の終わりは 1 パス目の件の一覧が追う（skills/holders.ts の endedAt。plan/design-grave.md 2.1 節）。出来事の列では追わない
+  // 状態の終わりは 1 パス目の件の一覧が追う（skills/holders/conditions.ts の endedAt。plan/design-grave.md 2.1 節）。出来事の列では追わない
   if (isEndedTrigger(t)) {
     throw new RangeError(`an ended trigger (${t.ended}) is not tracked per event; the holder lists track it`);
   }

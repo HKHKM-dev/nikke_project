@@ -68,7 +68,7 @@ export type TeamSlotInput = {
    * その枠の HP の割合の想定（現在の HP ÷ 最終最大HP。0 より大きく 1 以下）。省略は 1（満タン。plan/design-skill-stage6.md 1.4 節）。
    * 被弾の時刻はモデルに持たないので戦闘中は一定とみなし、passive の HP の割合の条件（condition.selfHp の「以上」）は編成の段で決まる
    * （damage の「以上」は発火のフレームで見る）。
-   * 最大HP のみ▲・現在の HP▼で下がる分は skills/holders.ts の selfHpRatioAt が時間で求める
+   * 最大HP のみ▲・現在の HP▼で下がる分は skills/holders/views.ts の selfHpRatioAt が時間で求める
    */
   hpRatio?: number;
   /** 省略は { definition: null, levels: 全部 10 } と同じ（自分のスキルなし、味方の効果は受ける） */

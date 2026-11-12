@@ -62,7 +62,7 @@ export type TimelineSlot = {
   baseDefence?: number;
   /**
    * 枠の HP の割合の想定（TeamSlotInput.hpRatio。省略 1。plan/design-mast.md 8 節）。HP の割合の窓のきっかけ（{ selfHpAtMost }）が、
-   * 最大HP▲・最大HP のみ▲ の件で割合を下げて読む（skills/holders.ts の selfHpRatioAt）
+   * 最大HP▲・最大HP のみ▲ の件で割合を下げて読む（skills/holders/views.ts の selfHpRatioAt）
    */
   hpRatio?: number;
   /** 育成入力の効果層（OL・キューブ・コレクション）。自分だけに効く常時バフ。省略は無し */

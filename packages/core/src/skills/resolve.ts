@@ -103,10 +103,10 @@ export type ResolvedTrigger =
   // 召喚の攻撃。1 パス目が機数と進みを追って発火を決める（frame/firstPass.ts）ので、出来事の列では追わない
   | SummonAttackTrigger
   // 自分の HP の割合が閾値（比率。説明文の X% ÷ 100。plan/design-mast.md 8 節）以下に下がった時。timed だけ。1 パス目の件の一覧が
-  // 追う（skills/holders.ts の firesOf）ので、出来事の列では追わない
+  // 追う（skills/holders/fires.ts の firesOf）ので、出来事の列では追わない
   | { selfHpAtMost: number }
   // 自分のその状態の件が外れた時（plan/design-grave.md 2.1 節）。ammoDecrease・状態の付与（と counterChange）だけ。1 パス目の件の一覧が
-  // 追う（skills/holders.ts の endedAt）ので、出来事の列では追わない
+  // 追う（skills/holders/conditions.ts の endedAt）ので、出来事の列では追わない
   | EndedTrigger;
 
 /** 自分の HP の割合の窓のきっかけ（{ selfHpAtMost }）か */
@@ -488,11 +488,11 @@ export type ResolvedTimedEffect = ResolvedEffect & {
   edgeShift?: EdgeShift;
   /** 定義の delayFrames を写したもの（skills/holders/items.ts の startOfFire。plan/design-shot-count-trigger-frame.md 6 節） */
   delayFrames?: number;
-  /** 定義の perCount を写したもの（値 × 発火のフレームのスタック数。skills/holders.ts の fireTimed。plan/design-maids.md 2.1 節） */
+  /** 定義の perCount を写したもの（値 × 発火のフレームのスタック数。skills/holders/fire.ts の fireTimed。plan/design-maids.md 2.1 節） */
   perCount?: { state: NamedStateId };
   /**
    * 定義の decrease（▼）を写したもの（値は負にした後。plan/design-debuff-removal-timed.md 2.1 節）。味方に付く▼はデバフ
-   * 解除で外れる（skills/holders.ts の fireRemoveDebuff）
+   * 解除で外れる（skills/holders/fire.ts の fireRemoveDebuff）
    */
   decrease?: true;
   /**
@@ -727,7 +727,7 @@ export type ResolvedStateGrant = ResolvedItemFields & {
    * maxStacks 以下。plan/design-skill-stage14.md 2.7 節）。無ければ 1（stacksFrom があればその数）
    */
   stacksPerFire?: number;
-  /** 徹甲炸裂弾の▲の付く時刻（plan/design-explosive-round-lead.md 3 節）: 定義の leadFrames を写したもの（skills/holders.ts の fireGrant） */
+  /** 徹甲炸裂弾の▲の付く時刻（plan/design-explosive-round-lead.md 3 節）: 定義の leadFrames を写したもの（skills/holders/fire.ts の fireGrant） */
   leadFrames?: number;
   /** 敵に付く状態の付与（件の列の持ち主は敵。target は "allies" に読み替えてある。plan/design-elegg.md 8.2 節） */
   enemy?: true;
@@ -735,7 +735,7 @@ export type ResolvedStateGrant = ResolvedItemFields & {
   stackRefresh?: 'each';
   /**
    * 定義の durationUntil: { counterEmpty } のカウンタ（plan/design-skill-stage19.md 2.1 節）。持ち主（自分）のそのカウンタが 0 に
-   * 届いたフレームで件の列を閉じる（skills/holders.ts の registerCounters。durationFrames は BATTLE_END_FRAMES）
+   * 届いたフレームで件の列を閉じる（skills/holders/register.ts の registerCounters。durationFrames は BATTLE_END_FRAMES）
    */
   untilCounterEmpty?: CounterId;
   /**
