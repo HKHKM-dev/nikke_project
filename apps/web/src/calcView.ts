@@ -35,6 +35,7 @@ import {
   type TeamSlotInput,
   type TreasurePhase,
 } from '@nikke/core';
+import type { NotesSummarySlot } from './components/NotesSummary.tsx';
 import type { ScreenSlotResult, Shown } from './compute.ts';
 import {
   DEFAULT_CONDITION_MODE,
@@ -261,4 +262,23 @@ export function slotResultFor(shown: Shown<CalcView> | null, view: CalcView, ind
   const result = shown.computed.result.slots[index] ?? null;
   if (result === null || result.resourceId !== view.slots[index]?.character?.resourceId) return null;
   return { result, stale: shown.source !== view };
+}
+
+/** 未対応の一覧の材料（NotesSummary）。育成の注記は buildCalcView が未対応だけにしたもの（スペック固定では効果層が空） */
+export function notesSummarySlots(
+  view: CalcView,
+  slotResults: readonly (SlotResultView | null)[],
+): (NotesSummarySlot | null)[] {
+  return view.slots.map((slot, i) =>
+    slot.character === undefined
+      ? null
+      : {
+          index: i,
+          character: slot.character,
+          skills: slot.skillsStatus ?? { kind: 'loading' },
+          treasurePhase: slot.treasurePhase,
+          modelNotes: slotResults[i]?.result.notes ?? [],
+          buildNotes: slot.buildNotes,
+        },
+  );
 }

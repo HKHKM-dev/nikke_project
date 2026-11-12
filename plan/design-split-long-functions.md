@@ -144,7 +144,7 @@
 ### 6.2 画面
 
 - `npm test`（`RosterEditModal.test.tsx`・`SlotCard.test.tsx` ほか）・`npm run typecheck`・`npm run lint` が通る。
-- 画面を起動し（`.claude/launch.json` の web）、Playwright で次の操作の列を main と段の後で同じように回し、各手のスクリーンショットの画素が一致する（アニメーションは終わった後を撮る）。スクリーンショットはスクラッチパッドに置き、コミットしない。
+- 画面を起動し（`.claude/launch.json` の web）、Playwright で次の操作の列を main と段の後で同じように回し、各手の DOM（style の属性を除く）と入力欄の値が一致する（アニメーションは終わった後に写す）。スクリーンショットの画素は、同じ版を 2 回回しても絵の読み込みと計算の時刻で揃わないので比べない。写しとスクリーンショットはスクラッチパッドに置き、コミットしない。
   - モダン UI: 一覧のクリックで空き枠に置く・枠が埋まったときのクリックで待つ → スロットのクリックで置く・一覧からスロットへドラッグ・スロットどうしの入れ替え・スロットから一覧へ戻す・操作の印のドラッグ・育成のモーダルで装備・OL の行・キューブ・コレクション（宝物）を変える・一覧の絞り込み・並べ替え・形の切り替え
   - クラシック: 同じ育成の欄を変える
   - 育成状況の編集: 一覧の絞り込み・編集済みのみ・ニケの選択・前後のニケ・欄の確定・読み込んだ値に戻す・全部を戻す
@@ -174,6 +174,12 @@
 - `parseStateGrantEffect` は `validateNoSelfReference`（循環の禁止）・`parseGrantStacks`（中で `parseStacksFrom`）・`parseLeadFrames`・`parseGrantContents` に分け、敵への付与で書けない欄を定数 `ENEMY_GRANT_FORBIDDEN_KEYS` にした（検査は今のとおり定数の順に見る）。
 - 確かめ: 6.1 節のとおり、読み込みの結果とエラー文の列が main と一致した。
 
+### 8.3 段 W1（2026-11-12）
+
+- `ModernView` は 3.5 節のとおり。`dropAnimation.ts`（離したときのアニメーションと `slotCardAt`）・`useSlotPlacement.ts`（置く・外すと飛ぶ絵。`trayVisualAt` もここ）・`useSlotDrag.ts`（センサー・持ち上げている間の状態・始め・終わり・取りやめ）・`SlotDragOverlay.tsx`・`slotBadges.ts`（`slotGrowthMarks`・`slotCollectionBadge`）に分けた。
+- `App` は `useMasters`・`useSavedTeam`（キャラ一覧の読み込み・保存の復元と保存・読めなかった保存の退避）・`usePartyTotals` に分け、未対応の一覧の材料を `calcView.ts` の `notesSummarySlots` にした。effect の順（敵のプリセット・育成のマスタ・キャラ一覧・編成の保存・全編成の保存）は変えていない。
+- 確かめ: 6.2 節のとおり、操作の列の 36 手の DOM と入力欄の値が main と一致した。`npm test` の画面のテストも通る。
+
 ## 9. 扱わないもの
 
 - 対象の外の長い関数: `frame/firstPass.ts` の `runFirstPassOnce`、`skills/holders.ts` の `createHolderLists`、`frame/plan.ts` の `planSkillHits`、`sim/engine.ts` の `runSimulation`、`skills/catalogDoc.ts` の `renderSkillCatalog`、`records/observations.ts` の `validateObservations`、`apps/web/src/useRoster.ts` の `useRoster`、`skills/parse/weapon.ts` の `parseWeaponChangeEffect`。計算の中心（1 パス目・2 パス目）は、分けるときに速さと結果の一致の確かめ方が別に要る。
@@ -185,3 +191,4 @@
 - 2026-11-12: 起票。オーナーが 4 節の論点をすべて推奨の案で承認した。
 - 2026-11-12: 段 P1 を実装した（8.1 節）。
 - 2026-11-12: 段 P2 を実装した（8.2 節）。
+- 2026-11-12: 段 W1 を実装した（8.3 節）。
