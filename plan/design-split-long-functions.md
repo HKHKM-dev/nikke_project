@@ -77,8 +77,8 @@
 
 - **`parseTrigger`**: 引数を `parseTrigger(v, path, options)` にし、`options` は `{ timer?: boolean | 'withStart'; during?: boolean | 'withState'; chance?; fullStack?; weaponChangeEnd?; reloadEnd? }`（省いたら false。今の既定と同じ）。中身は、`parseTimerTrigger`（時間の周期）・`parseShotCountTrigger`（射撃の回数。中で `parseCountingWindow`（during・firesDuring・firesOutside）と `parseChanceFields` に分ける）・`parseEventCountTrigger`（出来事の回数）に分ける。書ける所の決まった形の 7 つは、`parseTrigger` の冒頭に残す（どれも数行）。
 - **`parseDamageEffect`**: 早い return の 2 つを `parseSummonDamage`・`parseAccumulateDamage` にする。残りは `parseGaugeHitsAndCondition`（ゲージのヒットと条件）・`parseDamageDelay`・`parseHitShape`（perBurstHit・perCount・hitsRef・hitIntervalFrames・hitOffsetFrames・valueDelayFrames）・`parseValueTiming`（perTrigger・valueBeforeFire）・`parsePeriodShorten`・`parseDamageGaugePerHit`・`parsePerCountSplit`（perCount の間隔・順番の攻撃）・`validateGaugePerHitSplit`（ゲージと perCount の組）・`parseHitMarks`（1 ヒットの印）に分け、`parseDamageEffect` は順に呼ぶだけにする。
-- **`parseTimedFields`**: `parseTimedTrigger`（読める形を順に試す所）・`parseTimedTarget`（対象と絞り込みと、stat と対象の組の検査。絞り込みの欄は値の後に足すので、ここでは読んで返し、足すのは呼ぶ側）・`parseTimedValue`（scaling・amplifies・ref・decrease）・`validateHpTrigger`（維持と HP のきっかけの組）・`parseTimedStacks`・`parseTimedCondition`・`parseTimedDelay`・`parseTimedPerCount`・`parseHolderHit` に分ける。今の欄の順（trigger・target・amplifies か ref・絞り込み・数・scaling・decrease・維持・スタック・条件・遅れ・perCount・holderHit・assumes）を呼ぶ側で守る。
-- **`parseStateGrantEffect`**: `rejectEnemyGrantFields`・`validateNoSelfReference`（循環の禁止）・`parseGrantStacks`（stacksFrom・stacksPerFireRef・stackRefresh・stackImmutable）・`parseLeadFrames`・`parseGrantContents`（中身と維持 0 秒）に分ける。
+- **`parseTimedFields`**: `parseTimedTrigger`（読める形を順に試す所）・`parseTimedTarget`（対象と絞り込みと、stat と対象の組の検査。絞り込みの欄は値の後に足すので、ここでは読んで返し、足すのは呼ぶ側）・`parseTimedValue`（scaling の検査・amplifies・ref。scaling と decrease は絞り込みと数の後に足すので、呼ぶ側に残す）・`validateHpTrigger`（維持と HP のきっかけの組）・`parseTimedStacks`・`parseTimedCondition`・`parseTimedDelay`・`parseTimedPerCount`・`parseHolderHit` に分ける。今の欄の順（trigger・target・amplifies か ref・絞り込み・数・scaling・decrease・維持・スタック・条件・遅れ・perCount・holderHit・assumes）を呼ぶ側で守る。
+- **`parseStateGrantEffect`**: `validateNoSelfReference`（循環の禁止）・`parseGrantStacks`（stacksFrom・stacksPerFireRef・stackRefresh・stackImmutable）・`parseLeadFrames`・`parseGrantContents`（中身と維持 0 秒）に分ける。敵への付与で書けない欄は、定数 `ENEMY_GRANT_FORBIDDEN_KEYS` にして呼ぶ側に残す（数行で、残りの欄を味方への付与として読み替える所と組なので）。
 - **`parseInstantEffect`**: 種類ごとの書ける欄を表（`INSTANT_FIELDS_OF: Record<InstantKind, …>`）にし、`parseInstantTrigger`（種類ごとのきっかけ）・`parseInstantTarget`（種類ごとの対象の規則）・`parseInstantKindFields`（維持・遅れ・条件・CT の欄）に分ける。不明な欄の文の順（`Object.keys(v)` の順に見る）は変えない。
 - **`parseDotEffect`**: 書ける欄を定数 `DOT_KEYS` にし、`parseDotCondition`・`parseDotIntervalAndFirstTick`・`parseDotTickShape`（刻み）・`parseDotCounter`（perCount と遅れ）・`parseDotStacks`（stacksFrom・copyEachTick・sustained）・`parseDotGauge`（ゲージと刻みの遅れ）に分ける。
 
@@ -168,6 +168,12 @@
 - 見直し（`/simplify`）で足した直し: true だけのきっかけの 4 つ（weaponChangeEnd・reloadEnd・coverHealed・chargeFull）を `parseTrueOnlyTrigger` にそろえた。数える窓と発火の窓の組めない検査を `rejectWindowCombos` に、文が全く同じ「正の有限の数」の検査（8 か所）を `assertPositiveFinite` にまとめた（3.2 節で部品にしないとしたのは文の違う形）。`parseInstantKindFields`・`parseDotCondition`・`parseDotCounter` は、呼ぶ側の局所の値を引数で受けず、`effect.trigger` から読む。perCount と gaugePerHit の組の検査は `validateGaugePerHitSplit` に出した。`condition.ts`・`definition.ts`・`objectUntil` に残っていた不明な欄の検査も `rejectUnknownKeys` にした。
 - 確かめ: 6.1 節のとおり。全部の定義の読み込みの結果と、`npm test` の間に出たエラー文の列（並べ替えて比べた）が main と一致した。
 
+### 8.2 段 P2（2026-11-12）
+
+- `parseTimedFields` は 3.3 節のとおり `parseTimedTrigger`・`parseTimedTarget`・`parseTimedValue`・`validateHpTrigger`・`parseTimedStacks`・`parseTimedCondition`・`parseTimedDelay`・`parseTimedPerCount`・`parseHolderHit` に分けた。`parseTimedTarget` は絞り込みの欄（`TimedNarrowing`）と数を読んで返し、足すのは `parseTimedFields`（値の欄・名前の検査の後に足す今の順を守る）。`parseTimedValue` は scaling を返し、足すのは絞り込みと数の後。
+- `parseStateGrantEffect` は `validateNoSelfReference`（循環の禁止）・`parseGrantStacks`（中で `parseStacksFrom`）・`parseLeadFrames`・`parseGrantContents` に分け、敵への付与で書けない欄を定数 `ENEMY_GRANT_FORBIDDEN_KEYS` にした（検査は今のとおり定数の順に見る）。
+- 確かめ: 6.1 節のとおり、読み込みの結果とエラー文の列が main と一致した。
+
 ## 9. 扱わないもの
 
 - 対象の外の長い関数: `frame/firstPass.ts` の `runFirstPassOnce`、`skills/holders.ts` の `createHolderLists`、`frame/plan.ts` の `planSkillHits`、`sim/engine.ts` の `runSimulation`、`skills/catalogDoc.ts` の `renderSkillCatalog`、`records/observations.ts` の `validateObservations`、`apps/web/src/useRoster.ts` の `useRoster`、`skills/parse/weapon.ts` の `parseWeaponChangeEffect`。計算の中心（1 パス目・2 パス目）は、分けるときに速さと結果の一致の確かめ方が別に要る。
@@ -178,3 +184,4 @@
 
 - 2026-11-12: 起票。オーナーが 4 節の論点をすべて推奨の案で承認した。
 - 2026-11-12: 段 P1 を実装した（8.1 節）。
+- 2026-11-12: 段 P2 を実装した（8.2 節）。
