@@ -7,6 +7,7 @@ import {
   videoFrameOf,
 } from '../../../burst/schedule.ts';
 import { unionRanges } from '../../../frame/events.ts';
+import { lowerBound } from '../../../frame/shots.ts';
 import type { SimResult } from '../../../sim/engine.ts';
 import { itemsOf } from '../../../skills/holders.ts';
 import { isResolvedShotCount } from '../../../skills/resolve.ts';
@@ -30,6 +31,13 @@ export const skillHitsMetrics: Readonly<Record<string, Metric>> = {
   // 枠が出した回復のフレームの数（同じフレームの回復は 1 つ）（V-0501）。録画では、回復の数字が出たフレームの数と比べる
   // （同じフレームに 2 つの回復が重なっても数字の出始めは 1 つ）
   healFrameCount: { args: ['slot'], sim: (r, c) => healFramesOf(r, c).length },
+  // 枠 windowSlot の HP の割合が 1 未満の窓（最大HP のみ▲ の間など）ごとに、枠が出した回復のうち窓の中で最初に当たったものの対象の枠
+  // （1 始まり）の並び。回復の来ない窓は飛ばし、skip・count で切る（V-0752）。録画では、窓の中で最初に HP のバーが伸びた枠
+  windowFirstHealTargets: {
+    args: ['slot', 'windowSlot'],
+    sim: (r, c) => firstCount(windowFirstHeals(r, c), c, '回復の来た窓'),
+    occurrences: (r, c) => windowFirstHeals(r, c).length,
+  },
   dotTickOffsets: { args: ['slot', 'n'], sim: dotTickOffsets },
   // 持続ダメージの、付けた時の 1 スタックのヒット（kind apply）か、スタックの tick（kind tick）の、録画の
   // 動画のフレーム（戦闘開始から）の頭の count 個（V-0546）
@@ -70,6 +78,33 @@ function healFramesOf(result: SimResult, ctx: MetricContext): number[] {
   const slotIndex = slotIndexOf(ctx);
   const frames = result.history.heals.filter((h) => h.sourceSlotIndex === slotIndex).map((h) => h.frame);
   return [...new Set(frames)].sort((a, b) => a - b);
+}
+
+/**
+ * 枠 windowSlot の HP の割合が 1 未満の窓ごとの、枠が出した最初の回復の対象の枠（1 始まり）。窓は HP の割合の段（history.hpRatios）の
+ * 1 未満の続きで、回復は当たったフレームの割合で窓に入れる（V-0752）
+ */
+function windowFirstHeals(result: SimResult, ctx: MetricContext): number[] {
+  const slotIndex = slotIndexOf(ctx);
+  const steps = result.history.hpRatios[Number(ctx.args.windowSlot) - 1];
+  if (steps === undefined) throw new Error(`枠 ${String(ctx.args.windowSlot)} が無い`);
+  // 段ごとの窓の番号（1 未満の段の続きの、頭の段の番号。1 以上の段は -1）
+  const windowOf: number[] = [];
+  steps.ratios.forEach((ratio, k) => {
+    windowOf.push(ratio >= 1 ? -1 : k > 0 && windowOf[k - 1]! >= 0 ? windowOf[k - 1]! : k);
+  });
+  const heals = result.history.heals
+    .filter((h) => h.sourceSlotIndex === slotIndex)
+    .sort((a, b) => a.frame - b.frame || a.slotIndex - b.slotIndex);
+  const seen = new Set<number>();
+  const targets: number[] = [];
+  for (const h of heals) {
+    const window = windowOf[lowerBound(steps.frames, h.frame + 1) - 1]!;
+    if (window < 0 || seen.has(window)) continue;
+    seen.add(window);
+    targets.push(h.slotIndex + 1);
+  }
+  return targets;
 }
 
 /** 枠が出した n 回目（0 始まり）の回復のフレームを、動画のフレームにする（V-0501） */
