@@ -1,0 +1,44 @@
+{
+  "id": "1113",
+  "date": "2026-11-12",
+  "folder": "range",
+  "file": "20261112-1113_cinderella-ai-sun-nofire-1.mp4",
+  "original": "2026-11-12_22-12-07.mp4",
+  "durationSec": 71.2,
+  "frames": 4272,
+  "fps": 60,
+  "sizeMB": 86.3,
+  "sha256": "08b2b5d3823a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 511,
+      "name": "シンデレラ",
+      "controlled": false,
+      "bursts": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": true,
+      "fires": false,
+      "note": "操作・撃たない（オート射撃 OFF）",
+      "bursts": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。V-0748 の撮り方 A1: シンデレラ（AI）・I-DOLL・サン（操作。ゲームの 3 枠目・オート射撃 OFF で撃たない。一時停止の画面の与ダメージ 0）。オートバースト ON（I 段がいないのでバーストは撃たれない）。ゲージが満タンになった後、一時停止の画面を映して止めた。枠順は一時停止の画面で確かめた",
+  "backup": {
+    "at": "2026-11-12T22:29+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

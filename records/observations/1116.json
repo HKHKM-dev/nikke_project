@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1116-01",
+    "recording": "1116",
+    "source": "V-0748",
+    "readAt": "2026-11-12",
+    "use": "compare",
+    "kind": "timing",
+    "value": 2200,
+    "unit": "f",
+    "description": "撮り方 A2（シンデレラ単騎（操作））の、戦闘開始から 1 回目にバーストゲージが満タンになる（BURST バーが消える。C-0083）までの動画のフレーム",
+    "method": {
+      "tool": "gauge.ts --mode events・timer.ts --mode runs",
+      "note": "バー消失 f2980 − 戦闘開始 f780（残り時間の 02:59 が出たフレーム。C-0078）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  }
+]
