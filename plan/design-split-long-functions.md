@@ -2,7 +2,7 @@
 
 - 何のための文書か: スキル定義のパーサ（`packages/core/src/skills/parse/`）と Web 画面（`apps/web/src/`）の長い関数・コンポーネントを、動きを変えずに分ける変更の、今の構造・分け方・段・確かめ方
 - 対象: パーサの `parseDamageEffect`・`parseTimedFields`・`parseTrigger`・`parseStateGrantEffect`・`parseInstantEffect`・`parseDotEffect` と、その間で繰り返している欄の検査。画面の `ModernView`・`App`・`BuildSection`・`CharacterTray`・`RosterEditModal`
-- 状態: 進行中（4 節の決定。段は 5 節）
+- 状態: 完了（段 P1・P2・W1・W2。8 節）
 - 関連: [skills-guide.md](skills-guide.md) 1.4 節（語彙を足すときの手順。パーサの入口は `parseSkillDefinition`）、[design-roster-edit.md](design-roster-edit.md)（育成状況の編集。`RosterEditModal`・`useRoster` を足した）、[design-modern-ui.md](design-modern-ui.md)
 - 作成日: 2026-11-12
 - 調べた時点: main の 6884f8e1
@@ -199,4 +199,4 @@
 - 2026-11-12: 段 P1 を実装した（8.1 節）。
 - 2026-11-12: 段 P2 を実装した（8.2 節）。
 - 2026-11-12: 段 W1 を実装した（8.3 節）。
-- 2026-11-12: 段 W2 を実装した（8.4 節）。
+- 2026-11-12: 段 W2 を実装した（8.4 節）。4 つの段を終え、課題を閉じた。
