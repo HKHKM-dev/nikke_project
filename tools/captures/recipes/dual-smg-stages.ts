@@ -128,9 +128,10 @@ export function assignShots(
       const segment = segmentIn(r.frame, opts.cuts);
       const dt = r.frame - lastFrame;
       lastFrame = r.frame;
-      if (r.readGap !== 1 && r !== g[0]) {
+      if (r.readGap !== 1) {
+        // 数発のまとまり。マガジンの頭なら何発かが分からないので進めず、次の増分を先の数と探し直しの幅で探す
         stats.lumped++;
-        last += Math.max(1, Math.round(dt / opts.interval));
+        if (r !== g[0]) last += Math.max(1, Math.round(dt / opts.interval));
         continue;
       }
       let read: StageRow | undefined;
@@ -246,7 +247,7 @@ const add2 = <K>(m: Map<number, Map<K, number>>, a: number, b: K, x: number) => 
  * E ステップ。pOf はヒットのコア命中率（区間・N のキー）、qOf は区間・帯のヒットの命中率。コア命中率は [1e-9, 1 − 1e-9] に丸める
  * （上限 1 の形で、非コアのヒットの尤度を 0 にして組を落とさない）
  */
-function expect(
+function eStep(
   groups: readonly Grouped[],
   pOf: (segment: number, key: string) => number,
   qOf: (segment: number, band: number) => number,
@@ -257,7 +258,8 @@ function expect(
   const shots = new Map<number, Map<number, number>>();
   const llBySegment = new Map<number, number>();
   for (const g of groups) {
-    const q = qOf(g.segment, g.band);
+    // 命中率も丸める（1 だと 1 ヒットだけの組の尤度が 0 になり、組ごと落ちる）
+    const q = Math.min(1 - 1e-9, Math.max(1e-9, qOf(g.segment, g.band)));
     const any = 1 - (1 - q) ** 2;
     const ws = g.cands.map((c) => {
       let w = (c.pattern === 3 ? q * q : q * (1 - q)) / any;
@@ -296,7 +298,7 @@ export function fitStages(
   let hitRate = new Map<number, Map<number, number>>();
   for (let it = 0; ; it++) {
     const [c, q] = [core, hitRate];
-    const e = expect(
+    const e = eStep(
       groups,
       (s, k) => get2(c, s, k, 0.3),
       (s, b) => get2(q, s, b, 0.8),
@@ -316,7 +318,7 @@ export function fitStages(
 
 /** 1 つの区間の組（mine）の対数尤度（コア命中率を pOf にし、命中率は当てはめの値に固定） */
 function segmentLL(mine: readonly Grouped[], fit: StageFit, pOf: (key: string) => number): number {
-  const e = expect(
+  const e = eStep(
     mine,
     (_, k) => pOf(k),
     (s, b) => get2(fit.hitRate, s, b, 0.8),
@@ -500,8 +502,14 @@ export const dualSmgStages: Recipe = {
   async run(ctx) {
     const setupId = ctx.options.setup;
     if (setupId === undefined) throw new Error('--opt setup=<観測値の ID> が要る');
-    const num = (k: string, d: number) => (ctx.options[k] === undefined ? d : Number(ctx.options[k]));
+    const num = (k: string, d: number) => {
+      const v = ctx.options[k] === undefined ? d : Number(ctx.options[k]);
+      if (!Number.isFinite(v)) throw new Error(`--opt ${k} は数: ${ctx.options[k]}`);
+      return v;
+    };
     const segments = parseList(ctx.options.segments ?? '2,5', 'segments').map((s) => s - 1);
+    if (segments.some((s) => !Number.isInteger(s) || s < 0 || s >= BANDS.length))
+      throw new Error(`--opt segments は 1〜${BANDS.length}: ${ctx.options.segments}`);
     const given = parseList(ctx.options.p0, 'p0');
     if (given.length > 0 && given.length !== segments.length) throw new Error('--opt p0 は segments と同じ数');
     const upper = ctx.options.bands === undefined ? DEFAULT_UPPER : parseList(ctx.options.bands, 'bands');
@@ -525,7 +533,15 @@ export const dualSmgStages: Recipe = {
     if (stats.unfitFrames.length > 0) ctx.log(`格子に乗らない増分のフレーム: ${stats.unfitFrames.join(' ')}`);
     const { fit, groups } = fitStages(read, shots, upper);
     const hitsByKey = new Map<string, HitModel>();
-    for (const s of shots) for (const h of s.hits) hitsByKey.set(nKey(h.n), h);
+    for (const s of shots)
+      for (const h of s.hits) {
+        const k = nKey(h.n);
+        const seen = hitsByKey.get(k);
+        // N をキーにするので、N が同じで効果ごとの内訳の違う発は分けられない（積の形が取り違える）
+        if (seen !== undefined && Math.abs(productN(seen) - productN(h)) > 1e-9)
+          throw new Error(`N ${k} の発に、効果ごとの内訳の違うものがある`);
+        hitsByKey.set(k, h);
+      }
     const keys = [...hitsByKey.keys()].sort();
     const keysByBand = Array.from({ length: upper.length + 1 }, (_, b) =>
       keys.filter((k) => bandOfN(Number(k), upper) === b),
