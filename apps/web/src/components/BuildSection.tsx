@@ -26,7 +26,6 @@ import {
   type TreasurePhase,
 } from '@nikke/core';
 import { UNKNOWN_TREASURE_OPTION, collectionPatch, treasureOptionValue } from '../collectionChoice.ts';
-import { errorMessage } from '../compute.ts';
 import { GEAR_PART_LABEL, treasurePhaseLabel } from '../skillLabels.ts';
 import { clampInt, type SlotBuild, type SlotGrowthFields } from '../team.ts';
 import { IntInput } from './IntInput.tsx';
@@ -120,7 +119,7 @@ function combatErrorOf(
     computeCombatAttack(character, growth, build, masters, { treasurePhase: treasurePhase ?? 0 });
     return null;
   } catch (e) {
-    return errorMessage(e);
+    return e instanceof Error ? e.message : String(e);
   }
 }
 
@@ -184,7 +183,7 @@ function GearField({
               position={i}
               line={line}
               masters={masters}
-              selectable={!disabled && masters !== null && isOverload}
+              isOverload={isOverload}
               disabled={disabled}
               onChange={(next) => isOverload && setOverload(gear, i, next)}
             />
@@ -200,18 +199,19 @@ function OverloadLineField({
   position,
   line,
   masters,
-  selectable,
+  isOverload,
   disabled,
   onChange,
 }: {
   position: number;
   line: OverloadLine | undefined;
   masters: BuildMasters | null;
-  /** オプションを選べる（装備が OL で、マスタを読めていて、入力を止めていない） */
-  selectable: boolean;
+  /** 装備が OL か（OL でなければ、欄だけ出して選べない） */
+  isOverload: boolean;
   disabled: boolean;
   onChange: (line: OverloadLine | null) => void;
 }) {
+  const selectable = !disabled && masters !== null && isOverload;
   const values = line && masters?.overload.options.find((o) => o.option === line.option)?.values;
   return (
     <span className="gear-inputs">
@@ -238,6 +238,7 @@ function OverloadLineField({
         {...inertControlProps(disabled || line === undefined)}
         onChange={(e) =>
           !disabled &&
+          isOverload &&
           line &&
           onChange({ ...line, level: clampInt(Number(e.target.value), OVERLOAD_LEVEL_MIN, OVERLOAD_LEVEL_MAX) })
         }

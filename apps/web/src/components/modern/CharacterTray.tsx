@@ -1,6 +1,6 @@
 import { useDroppable } from '@dnd-kit/core';
 import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type Dispatch, type SetStateAction } from 'react';
 import {
   matchesBadgeFilters,
   trayCollectionBadge,
@@ -143,7 +143,7 @@ function TrayFilters({
   onFiltersChange: (filters: BadgeFilterValues) => void;
   /** 宝物のあるニケだけにする（バッジの絞り込みと AND） */
   treasureOnly: boolean;
-  onTreasureOnlyChange: (treasureOnly: boolean) => void;
+  onTreasureOnlyChange: Dispatch<SetStateAction<boolean>>;
 }) {
   const filtering = treasureOnly || Object.keys(filters).length > 0;
   return (
@@ -154,7 +154,7 @@ function TrayFilters({
           type="button"
           className="char-tray-badge-button"
           aria-pressed={treasureOnly}
-          onClick={() => onTreasureOnlyChange(!treasureOnly)}
+          onClick={() => onTreasureOnlyChange((t) => !t)}
         >
           <BadgeIcon className="char-badge" name={TREASURE_FILTER_BADGE} label="宝物のあるニケ" />
         </button>
