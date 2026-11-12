@@ -7163,6 +7163,22 @@
       }
     },
     {
+      "observation": "0303-06",
+      "element": "ノワール burst.effects[1]",
+      "key": "c76f4fa77af87bee",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0303-07",
+      "element": "ノワール burst.effects[1]",
+      "key": "7124ded0a9bc9733",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "0304-03",
       "element": "ノワール burst.effects[1]",
       "key": "ea0ce3c93940bb6e",
@@ -7174,6 +7190,22 @@
       "observation": "0304-04",
       "element": "ノワール burst.effects[1]",
       "key": "4b67fe18c7a493c7",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0304-09",
+      "element": "ノワール burst.effects[1]",
+      "key": "97c94ca7204939c0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0304-10",
+      "element": "ノワール burst.effects[1]",
+      "key": "c29fa3d073372fb5",
       "effective": false,
       "minus": 0,
       "plus": 0
