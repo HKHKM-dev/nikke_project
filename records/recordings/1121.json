@@ -1,0 +1,59 @@
+{
+  "id": "1121",
+  "date": "2026-11-12",
+  "folder": "range",
+  "file": "20261112-1121_smg_misato.mp4",
+  "original": "2026-11-12_22-41-16.mp4",
+  "durationSec": 200.2,
+  "frames": 12014,
+  "fps": 60,
+  "sizeMB": 242.7,
+  "sha256": "f295b3c38a65",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 141,
+      "name": "ミルク",
+      "controlled": true,
+      "treasurePhase": 3
+    },
+    {
+      "slot": 4,
+      "rid": 833,
+      "name": "ミサト",
+      "controlled": false
+    },
+    {
+      "slot": 5,
+      "rid": 350,
+      "name": "マスト",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "操作のミルク（3 枠目）は撃たない。オートバースト OFF で I-DOLL・フラワー → マストの順にだけ手で使った（V-0752）",
+  "backup": {
+    "at": "2026-11-12T22:46+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

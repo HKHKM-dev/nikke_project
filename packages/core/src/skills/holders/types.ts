@@ -187,7 +187,12 @@ export type HpRatioSteps = { frames: readonly number[]; ratios: readonly number[
 export function selfHpRatioOf(history: Pick<HolderHistory, 'hpRatios'>, slotIndex: number, frame: number): number {
   const steps = history.hpRatios[slotIndex];
   if (steps === undefined) throw new RangeError(`selfHpRatioOf: no slot ${slotIndex}`);
-  return steps.ratios[lowerBound(steps.frames, frame + 1) - 1]!;
+  return steps.ratios[hpRatioStepIndexOf(steps, frame)]!;
+}
+
+/** フレーム frame が入る HP の割合の段の番号 */
+export function hpRatioStepIndexOf(steps: HpRatioSteps, frame: number): number {
+  return lowerBound(steps.frames, frame + 1) - 1;
 }
 
 /**
