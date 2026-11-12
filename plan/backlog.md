@@ -117,11 +117,11 @@
 - アニス：スター（17）のバーストのコアの経路（2026-10-05）→ 一部完了: [design-anis-star-core-path.md](design-anis-star-core-path.md)。残りは 6 節
 - 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは 3 節
 - 戦闘力による一覧の並び替え（2026-11-07 起票）→ 一部完了: [design-combat-power-sort.md](design-combat-power-sort.md)。残りは 4 節
-- コードのコメントを、いまの状態の説明に直す（2026-11-12 起票）→ 進行中: [design-code-comments.md](design-code-comments.md)
 - 長い関数の分割（スキル定義のパーサと画面）（2026-11-12 起票）→ 進行中（設計の承認待ち）: [design-split-long-functions.md](design-split-long-functions.md)
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
+- コードのコメントを、いまの状態の説明に直す（2026-11-12 起票）→ 完了（2026-11-12）: [design-code-comments.md](design-code-comments.md)
 - 観測値の照合のコード（records/observations.ts）を役割ごとのファイルに分ける（2026-11-12 起票）→ 完了（2026-11-12）: [design-observations-split.md](design-observations-split.md)
 - 育成状況の編集（2026-11-12 起票）→ 完了（2026-11-12）: [design-roster-edit.md](design-roster-edit.md)
 - ネオン：ビジョン・アイの S1 の火力爆発のゲージ（2026-11-08 起票）→ 完了（2026-11-08。S1 の火力爆発のゲージと弾の飛ぶ時間を入れた。2-59 を閉じた）: [design-neon-ve-s1-gauge.md](design-neon-ve-s1-gauge.md) 5 節
