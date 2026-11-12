@@ -3,6 +3,7 @@
 // "<2文字>-<2桁>"（フルパスの djb2 ハッシュ、セグメント位置ごとの素数でソルト）、
 // 最後のセグメントは "<md5(フルパス)>.<元の拡張子>" に置き換える。
 import { createHash } from 'node:crypto';
+import { costumeCode } from '../../src/characterImage.ts';
 
 export const CDN_BASE_URL = 'https://sg-tools-cdn.blablalink.com';
 
@@ -110,6 +111,7 @@ export function equipOptionTablePath(locale: CdnLocale): string {
 /** 画面のキャラ画像の種類。si は顔のアイコン（128×128）、mi は縦長の絵（256×512）（モダン UI の CharacterVisual。plan/design-modern-ui.md） */
 export type CharacterImageKind = 'si' | 'mi';
 
-export function characterImagePath(resourceId: number, kind: CharacterImageKind): string {
-  return `/character/${kind}/${kind}_c${String(resourceId).padStart(3, '0')}_00_s.webp`;
+/** costume はコスチュームの番号（0 が初期の絵。1 から順にコスチューム違い） */
+export function characterImagePath(resourceId: number, kind: CharacterImageKind, costume = 0): string {
+  return `/character/${kind}/${kind}_c${String(resourceId).padStart(3, '0')}_${costumeCode(costume)}_s.webp`;
 }
