@@ -2,7 +2,7 @@
 
 - 何のための文書か: 1 パス目の中心の長い関数（件の一覧の `createHolderLists` と、フレームループの `runFirstPassOnce`）と、その周りの長い関数を、動きと速さを変えずに読める単位に分ける変更の、今の構造・分け方の案と得失・段・確かめ方
 - 対象: `skills/holders.ts` の `createHolderLists`、`frame/firstPass.ts` の `runFirstPassOnce`。範囲に入れるかを 4 節で決めるもの: `frame/plan.ts` の `planSkillHits`、`sim/engine.ts` の `runSimulation`
-- 状態: 決定（4 節。段は 5 節。論点 5 により、コードのコメントの段 3 のマージを待ってから段 H1 に入る）
+- 状態: 進行中（4 節の決定。段は 5 節）
 - 関連: [design-split-long-functions.md](design-split-long-functions.md)（パーサと画面の分割。9 節で、この文書の対象を「速さと結果の一致の確かめ方が別に要る」として外した）、[design-split-skill-holders.md](design-split-skill-holders.md)（衝突を減らすための分割は見送った。4.4 節の案 3 が、移すだけでは `createHolderLists` が短くならないことを書いている）、[design-holder-effects.md](design-holder-effects.md)（件の一覧の元の設計。2.4 節がフレームの中の順番）、[design-first-pass-perf.md](design-first-pass-perf.md)（1 パス目の速さの測り方と、結果の一致の確かめ方）、[design-code-comments.md](design-code-comments.md)（段 3 が同じファイルのコメントを直している）
 - 作成日: 2026-11-12
 - 調べた時点: main の b7afcabf。行番号はその時点のファイルの行
@@ -307,3 +307,4 @@ for (let f = 0; f < frames; f++) {
 ## 10. 経過
 
 - 2026-11-12: 起案。オーナーが 4 節の論点をすべて推奨の案で承認した。
+- 2026-11-12: 段 H1 を実装した（9.1 節）。

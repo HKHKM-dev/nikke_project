@@ -260,7 +260,7 @@ export function resolveSelfState<E extends SkillEffect>(effect: E, lookup: SelfS
   const has = lookup(self.state);
   if (has === undefined) return effect;
   // スタック数の条件は、付けうる枠が無ければ満たさない（plan/design-skill-stage3.md 1.4 節）。静的な状態（1 段）は
-  // 件を見る段（skills/holders.ts・frame/plan.ts の stacksHold）で決める
+  // 件を見る段（skills/holders.ts・frame/plan.ts。skills/holders/items.ts の stacksHold）で決める
   if (isStacksCondition(self)) return has ? effect : null;
   if (has !== self.present) return null;
   const { selfState: _selfState, ...rest } = condition;
