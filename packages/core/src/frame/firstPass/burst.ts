@@ -10,10 +10,10 @@ import {
   type BurstControllerState,
 } from '../../burst/controller.ts';
 import { burstCandidateOf, burstUnitOf } from '../../burst/dynamic.ts';
-import { type BurstActivation, type BurstSchedule } from '../../burst/schedule.ts';
-import { type TimelineSlot } from '../../skills/timeline.ts';
+import type { BurstActivation, BurstSchedule, BurstScheduleModel } from '../../burst/schedule.ts';
+import type { TimelineSlot } from '../../skills/timeline.ts';
 import type { FirstPassBase } from './base.ts';
-import { type FirstPassOptions, type InstantApplication } from '../firstPass.ts';
+import type { FirstPassOptions, InstantApplication } from '../firstPass.ts';
 import type { InstantSources } from './instants.ts';
 
 /** バーストの状態機械（動的）か固定サイクルの時刻表を作り、発動・窓・ゲージの満タンの読み口を返す */
@@ -22,8 +22,11 @@ export function createBurstSchedule({
   frames,
   options,
   slots,
-}: { slots: readonly TimelineSlot[]; options: FirstPassOptions; frames: number } & {
-  burstModel: NonNullable<FirstPassOptions['burstModel']>;
+}: {
+  slots: readonly TimelineSlot[];
+  options: FirstPassOptions;
+  frames: number;
+  burstModel: BurstScheduleModel;
 }) {
   // ---- バーストの状態機械（件の一覧がフルバーストの窓を読むので、効果の準備の前に作る） ----
   let controller: BurstControllerState | null = null;
@@ -64,11 +67,7 @@ export function createBurstStep({
   lists,
   passive,
   untargetable,
-}: Pick<FirstPassBase, 'lists' | 'passive'> &
-  Pick<InstantSources, 'activationExtensions'> &
-  Pick<BurstScheduleLayer, 'controller'> & { instants: InstantApplication[] } & {
-    untargetable: NonNullable<FirstPassOptions['untargetable']>;
-  }) {
+}: FirstPassBase & InstantSources & BurstScheduleLayer) {
   // T4 の▼ の件を持ちうる枠の、最後の発動（発動の後に付いた▼ の縮めた長さを足す先）
   const lastActivationOf = new Map<number, BurstActivation>();
   // まだ窓に足していない延長（予約）の記録。窓を作ったら残し、窓を作らずにチェーンが切れたら（状態機械が予約を捨てる）か

@@ -327,9 +327,24 @@ for (let f = 0; f < frames; f++) {
 - 段 F2 への申し送り: 3.4 節の `shooters.ts` は作り手 1 つにならない。射撃の記録とチャージの見張りは件の一覧より前に要り、射手の手順はゲージの量とゲージを溜める効果を読むので、それより後に要る。記録の作り手と射手の作り手の 2 つに分ける。`activationsOf`・`windowsOf` は `burst.ts`、`logs` は記録の作り手が返す物になり、共通の入力はそれらから組む。
 - 見直し（`/simplify`）で、入口の組み方（積んだオブジェクト）・`shotCounts` の置き場所・`hitGaugeEnergy` の置き場所・使わない層の型・コメントを直した。`/code-review high` で、準備の検査が投げる順（射撃の止まりと倍率ダメージの解決が前後していた）・型だけの import・二重の説明を直した。見送り（`/code-review`）: 4 つの追跡の `energy` の欄を `hitGaugeEnergy` に寄せること・`reserveTimerGauges` の式（本文の書き換えになる）、`gauge.ts` の「今までと同じ値」のコメント（元からある文）。見送り: 作り手の引数の型を `Pick` にすること（段 H2 と同じ）、`cooldownTrackers` を記録の形で返すこと（本文の書き換えになる）、手順の後に数える 5 つの呼び出しが 2 か所にあること（段 F2 でまとめる）。
 
+### 9.4 段 F2（2026-11-12）
+
+- `runFirstPassOnce` の残りの準備の文とループの中のひと続きを、作り手に写した。3.4 節の表と次の所が違う（どれも、準備の文の順（検査が投げる順）と、作り手の間で状態を共有しないことを守るため）。
+  - `burst.ts`: 時刻表を作る `createBurstSchedule`（件の一覧の前）と、状態機械を進める手順・狙えない窓・発動の延長の `createBurstStep`（ゲージの系の後）の 2 つ。
+  - `instants.ts`: 即時効果の出どころの `createInstantSources`（件の一覧の前。件の一覧は発火の時に `InstantLate` から読む）と、ゲージのチャージ・ほかの即時効果を当てる手順の `createInstants` の 2 つ。
+  - `shotLogs.ts`: 射撃の記録とチャージの見張り（件の一覧の前に要る。9.3 節の申し送り）。
+  - `shooters.ts`: 射手の実効値と状態の `createShooterStates` と、枠の射手を進める手順の `createShooters` の 2 つ。
+  - `frameEvents.ts`: 出来事を集める手順と、回復を当てる手順（3.4 節では即時効果の 3b）。回復の出来事の印（`healedDirty` など）は、出来事を集める時と回復を当てる時の両方が書き換えるので、同じ作り手に置いた。
+- 作り手が使う `firstPass.ts` の小さな宣言は、使う所に移した（`InstantSource`・`AMMO_REFILL_ROUNDING`・`refillRounds` は `instants.ts`、`SlotBlock`・`slotBlockRanges`・`WEAPON_CHANGE_END_DELAY` は `shooters.ts`）。`AMMO_REFILL_ROUNDING` は `firstPass.ts` から同じ名前で再公開する。
+- 共通の入力（`FirstPassBase`）に、入力を整えた値（`model`・`untargetable`・`burstModel`）と当てた即時効果の記録（`instants`）を足した。入口は、件の一覧の後に共通の入力を組み、前の作り手までを積んだオブジェクトを渡す。
+- ループは手順の関数を順に呼ぶ形になった（`blockedAt` → ゲージ → `stepShooters` → ゲージ → `stepBurst` → 出来事を追う編成だけ `collectFrameEvents`・`applyHeals`・`registerFrame`・`applyInstants` → 手順の後に数える 5 つ）。出来事を追わない編成の `continue` は、手順 3 を if で囲む形にした（数える 5 つの呼び出しが 1 か所になる）。本文で変えた行は、件の一覧を `late.lists` から読む 3 行と、ループの `burstEffects` を `ev.burstEffects`（同じ配列）にした 1 行と、戦闘の終わりに窓の開かなかった発動の延長を捨てる 1 行を作り手の関数（`discardPendingExtensions`）にした所。
+- 速さ: 6.3 節の測り方（同じプロセスで main と交互）では小さい編成で 1.05 を超えた（録画 0037 で約 1.12）が、編成ごとに別のプロセスで main と段の後を交互に 6 回ずつ回すと、段の後のほうが速かった（録画 0037 の 1 回の `planTeamRun` の中央値は main 35.1 ms・段の後 32.7 ms、Stage 8 の 5 人は 45.3 ms・43.1 ms）。同じプロセスに 2 つの版の作り手を読み込むと、互いの最適化を乱すとみて、この段からは別のプロセスで測った値で論点 6 の幅を見る。
+- 見直し（`/simplify`）で、入口の組み方（積んだオブジェクト）・共通の入力・受け口の型・型だけの import・ループの形・冒頭のコメントを直し、射手の手順だけが読む `changedShooters`・`activeWeapon` を `createShooters` に移した。
+
 ## 10. 経過
 
 - 2026-11-12: 起案。オーナーが 4 節の論点をすべて推奨の案で承認した。
 - 2026-11-12: 段 H1 を実装した（9.1 節）。
 - 2026-11-12: 段 H2 を実装した（9.2 節）。
 - 2026-11-12: 段 F1 を実装した（9.3 節）。
+- 2026-11-12: 段 F2 を実装した（9.4 節）。

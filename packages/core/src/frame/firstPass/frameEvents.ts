@@ -12,7 +12,6 @@ import { type ResolvedInstantEffect } from '../../skills/resolve.ts';
 import { healFrameOf } from '../../skills/heals.ts';
 import { fireContextOf, type FrameEvents } from '../../skills/triggers.ts';
 import type { FirstPassBase } from './base.ts';
-import { type FirstPassOptions, type InstantApplication } from '../firstPass.ts';
 import type { InstantSources } from './instants.ts';
 import type { BurstScheduleLayer } from './burst.ts';
 import type { ShotPauses } from './shotPauses.ts';
@@ -35,12 +34,7 @@ export function createFrameEvents({
   slots,
   targetsAt,
   windowsOf,
-}: FirstPassBase &
-  InstantSources &
-  BurstScheduleLayer &
-  Pick<ShotPauses, 'burstUsePause' | 'burstPauseAim' | 'pauseLeft'> & {
-    burstModel: NonNullable<FirstPassOptions['burstModel']>;
-  } & { instants: InstantApplication[] }) {
+}: FirstPassBase & InstantSources & BurstScheduleLayer & ShotPauses) {
   /** 先のフレームに効果が発火するバーストの発動（フレーム → 発動） */
   const pendingBurstEffects = new Map<number, BurstActivation[]>();
   /** 先のフレームのバーストのヒット（トリガー burstHit。plan/design-elegg.md 8.9 節） */

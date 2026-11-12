@@ -1,8 +1,8 @@
 // 1 パス目のフレームループ（純関数。plan/design-stage10.md 1 節）。
 // 射撃に効くバフ（frame/firing.ts の FiringParams）と CT 短縮があると、射撃の列 → 時刻表 → バフ → 射撃の列…と循環する。
 // ここではフレームを 1 つずつ進め、射手・ゲージ・バーストの状態機械・スキルの効果を同時に回して循環をほどく。
-// 効果はすべて持ち主ごとの件の一覧（skills/holders.ts）で持つ。ゲージの系（ゲージの量・ゲージを溜める効果・蓄積爆破・召喚）の
-// 準備とフレームの中の手順は frame/firstPass/ の作り手（gauge.ts・gaugeEffects.ts・accumulate.ts・summons.ts）に置く。ループの後の区間は planTeamRun が履歴から作り（skills/holders/history.ts の buffTimelineOf）、
+// 効果はすべて持ち主ごとの件の一覧（skills/holders.ts）で持つ。仕組みごとの準備とフレームの中の手順は frame/firstPass/ の作り手に置き、
+// ここはそれを準備の文の順に作って、フレームのループで手順を呼ぶ。ループの後の区間は planTeamRun が履歴から作り（skills/holders/history.ts の buffTimelineOf）、
 // 読む側（sim・観測値の指標・画面）は履歴を読む（plan/design-holder-effects.md 2.9 節）。
 //
 // フレーム f の中の順番:
@@ -37,7 +37,7 @@ import { type ResolvedDamageEffect } from '../skills/burstDamage.ts';
 import { type BurstSchedule, type BurstScheduleModel } from '../burst/schedule.ts';
 import { type BuffTotals, type HitRateN } from '../skills/buffs.ts';
 import { type ResolvedInstantEffect } from '../skills/resolve.ts';
-import { createHolderLists, type HolderHistory, type HolderLists, type LeadShots } from '../skills/holders.ts';
+import { createHolderLists, type HolderHistory, type LeadShots } from '../skills/holders.ts';
 import { resolvePassiveStates, type FrameRange, type TimelineSlot } from '../skills/timeline.ts';
 import { type ShotEvent } from '../skills/triggers.ts';
 import type { SummonId } from '../skills/summons.ts';
@@ -53,7 +53,7 @@ import { createShotPauses } from './firstPass/shotPauses.ts';
 import { createAccumulate } from './firstPass/accumulate.ts';
 import { createSummons } from './firstPass/summons.ts';
 import { createBurstSchedule, createBurstStep } from './firstPass/burst.ts';
-import { createInstantSources, createInstants } from './firstPass/instants.ts';
+import { createInstantSources, createInstants, type InstantLate } from './firstPass/instants.ts';
 export { AMMO_REFILL_ROUNDING } from './firstPass/instants.ts';
 import { createShotLogs } from './firstPass/shotLogs.ts';
 import { createShooterStates, createShooters } from './firstPass/shooters.ts';
@@ -250,13 +250,14 @@ function runFirstPassOnce(
   const controlledSlot = options.controlledSlot ?? null;
   const untargetable = options.untargetable ?? [];
   const scheduleModel: BurstScheduleModel | null = options.burst ? burstModel : null;
+  // 仕組みごとの作り手は、準備の文の順のとおりに呼ぶ（準備の中の検査が投げる順を変えない。plan/design-split-first-pass.md 3.1 節・3.4 節）
   const burstScheduleLayer = createBurstSchedule({ slots, options, frames, burstModel });
   const { activationsOf, controller, fixed, windowsOf } = burstScheduleLayer;
 
   // ---- 効果の準備 ----
   const passive = resolvePassiveStates(slots);
   // 件の一覧は即時効果の出どころの後に作るので、出どころは発火の時に instantLate から読む
-  const instantLate = {} as { lists: HolderLists };
+  const instantLate = {} as InstantLate;
   const instantSourcesLayer = createInstantSources({ slots, frames, scheduleModel, late: instantLate });
   const { instant } = instantSourcesLayer;
   const shotLogsLayer = createShotLogs({ slots });
@@ -275,11 +276,11 @@ function runFirstPassOnce(
   const trackEvents = lists.hasSources || instant.length > 0;
   // 戦闘開始時の件と周期のトリガーの atStart は、ループの前に登録する（1 発目のマガジンから効く）
   lists.registerBattleStart();
-  const shooterStatesLayer = createShooterStates({ slots, lists, model, passive });
   // plan/design-anis-star-gauge-timing.md 3 節: 枠 i がフレーム f に撃った発の飛ぶ時間（ゲージはその後のフレームに溜まる）
   const flights = slots.map((_, i) => options.flights?.[i] ?? null);
   const shotFlightAt = (i: number, f: number): number => flightFramesAt(flights[i]?.shot, f);
   const shotEvents: (ShotEvent | null)[] = slots.map(() => null);
+  const instants: InstantApplication[] = [];
   const layerBase: FirstPassBase = {
     slots,
     options,
@@ -288,17 +289,22 @@ function runFirstPassOnce(
     lists,
     logs,
     controlledSlot,
+    model,
+    untargetable,
+    burstModel,
     flights,
     shotFlightAt,
     shotEvents,
+    instants,
     activationsOf,
     windowsOf,
   };
-  // ゲージの系の作り手を、文の順のとおりに呼ぶ（plan/design-split-first-pass.md 3.4 節・9.3 節）
+  const shooterStatesLayer = createShooterStates(layerBase);
   const upToGauge = { ...layerBase, ...createGauge(layerBase) };
   const { updateTimedGaugeSpeed } = upToGauge;
   const upToShotGauges = { ...upToGauge, ...createShotGaugeTrackers(upToGauge) };
-  const { appliedPauses, burstPauseAim, burstUsePause, countShotPauses, pauseLeft } = createShotPauses(layerBase);
+  const shotPausesLayer = createShotPauses(layerBase);
+  const { countShotPauses } = shotPausesLayer;
   const upToGaugeEffects = { ...upToShotGauges, ...createGaugeEffects(upToShotGauges) };
   const {
     addAllyGauge,
@@ -318,58 +324,20 @@ function runFirstPassOnce(
   } = upToGaugeEffects;
   const { accumulateReleases, addAccumulatedGauge, recordAccumulatorShots } = createAccumulate(upToGaugeEffects);
   const { countSummons, summonHits } = createSummons(upToGaugeEffects);
-  const shootersLayer = createShooters({
+  const upToShooters = {
     ...upToGaugeEffects,
+    ...shotPausesLayer,
     ...shotLogsLayer,
     ...shooterStatesLayer,
     ...burstScheduleLayer,
-    appliedPauses,
-    burstPauseAim,
-    pauseLeft,
-    model,
-    untargetable,
-  });
-  const { stepShooters } = shootersLayer;
-
-  const instants: InstantApplication[] = [];
-  const burstStepLayer = createBurstStep({
-    ...layerBase,
     ...instantSourcesLayer,
-    ...burstScheduleLayer,
-    instants,
-    untargetable,
-  });
-  const { blockedAt, discardedExtensions, discardPendingExtensions, stepBurst } = burstStepLayer;
-  const instantsLayer = createInstants({
-    ...layerBase,
-    ...instantSourcesLayer,
-    ...shooterStatesLayer,
-    ...burstScheduleLayer,
-    ...burstStepLayer,
-    model,
-    instants,
-  });
-  const { addGaugeCharges, applyInstants } = instantsLayer;
-  const frameEventsLayer = createFrameEvents({
-    ...layerBase,
-    ...instantSourcesLayer,
-    ...burstScheduleLayer,
-    burstUsePause,
-    burstPauseAim,
-    pauseLeft,
-    burstModel,
-    instants,
-  });
-  const { applyHeals, collectFrameEvents } = frameEventsLayer;
-
-  /** 手順 3 の後に数えるもの（段の循環・射撃の止まり・倍率ダメージのゲージ・CT の時間・召喚）。出来事を追わない編成も同じ順に数える */
-  const countAfterFrame = (f: number): void => {
-    countCycles(f);
-    countShotPauses(f);
-    countDamageHitGauges(f);
-    countCooldownTimers(f);
-    countSummons(f);
   };
+  const { stepShooters } = createShooters(upToShooters);
+  const burstStepLayer = createBurstStep(upToShooters);
+  const { blockedAt, discardedExtensions, discardPendingExtensions, stepBurst } = burstStepLayer;
+  const { addGaugeCharges, applyInstants } = createInstants({ ...upToShooters, ...burstStepLayer });
+  const { applyHeals, collectFrameEvents } = createFrameEvents(upToShooters);
+
   for (let f = 0; f < frames; f++) {
     // 狙えない窓（バーストの制御が見る。射手のハイドは枠ごとの slotBlocks で、下の射手の中）
     const blocked = blockedAt(f);
@@ -387,20 +355,21 @@ function runFirstPassOnce(
     // 2. ゲージと状態機械（planDynamicSchedule と同じく、このフレームの射撃のゲージを枠順に足してから 1 フレーム進める）
     stepBurst(gauge, f, blocked);
     // 2b. V-0030: 段の循環の射撃は、手順 3 の後に数える（countCycles）
-    if (!trackEvents && !trackDotBurstUse) {
-      countAfterFrame(f);
-      continue;
+    if (trackEvents || trackDotBurstUse) {
+      // 3. 出来事 → 射撃に効く窓の登録 → 即時効果
+      const ev = collectFrameEvents(f);
+      reserveBurstUseDotTicks(f, ev.burstEffects);
+      applyHeals(ev, f);
+
+      // 持ち主ごとの件の一覧: 段 1 → 段 1.5 → 段 2 → 強化の順に件を登録する（plan/design-holder-effects.md 2.4 節）
+      lists.registerFrame(ev);
+      applyInstants(ev, f);
     }
-
-    // 3. 出来事 → 射撃に効く窓の登録 → 即時効果
-    const ev = collectFrameEvents(f);
-    reserveBurstUseDotTicks(f, ev.burstEffects);
-    applyHeals(ev, f);
-
-    // 持ち主ごとの件の一覧: 段 1 → 段 1.5 → 段 2 → 強化の順に件を登録する（plan/design-holder-effects.md 2.4 節）
-    lists.registerFrame(ev);
-    applyInstants(ev, f);
-    countAfterFrame(f);
+    countCycles(f);
+    countShotPauses(f);
+    countDamageHitGauges(f);
+    countCooldownTimers(f);
+    countSummons(f);
   }
 
   const leadShots = lists.leadShots();

@@ -27,7 +27,6 @@ import type { FrameRange } from '../../skills/timeline.ts';
 import type { HoldFire } from '../../team.ts';
 import { unionRanges } from '../events.ts';
 import type { FirstPassBase } from './base.ts';
-import { type FirstPassOptions } from '../firstPass.ts';
 import type { Gauge } from './gauge.ts';
 import type { GaugeEffects } from './gaugeEffects.ts';
 import type { ShotLogs } from './shotLogs.ts';
@@ -62,12 +61,7 @@ function slotBlockRanges(
 export const WEAPON_CHANGE_END_DELAY = 1;
 
 /** 射手の実効値と、射手の状態（基礎の武器・使用武器の変更）を作る */
-export function createShooterStates({
-  lists,
-  model,
-  passive,
-  slots,
-}: Pick<FirstPassBase, 'slots' | 'lists' | 'passive'> & { model: NonNullable<FirstPassOptions['model']> }) {
+export function createShooterStates({ lists, model, passive, slots }: FirstPassBase) {
   // ---- 射手 ----
   const passiveFiring = passive.map((s) => s?.buffs ?? ZERO_BUFFS);
   const baseParams = slots.map((slot, i) =>
@@ -87,15 +81,12 @@ export function createShooterStates({
   const shooters: (ShooterState | null)[] = slots.map((slot, i) =>
     slot === null ? null : initialShooter(slot.character.shot, model, paramsAt(i, 0)),
   );
-  /** 使用武器の変更中の射手の状態と、その武器の識別子（変更していなければ null） */
-  const changedShooters: (ShooterState | null)[] = slots.map(() => null);
-  const activeWeapon: (string | null)[] = slots.map(() => null);
   /**
    * 撃ち切りで終わった使用武器の変更の、最後の発の本当の発の時刻の、そのフレームからのずれ（変更後の武器の発射レートの蓄積の余りから。
    * 撃ち切りの残弾数減少のリロードの始まりに使う。plan/design-reload-rounding.md 案 F）
    */
   const weaponChangeEndOffset: number[] = slots.map(() => 0);
-  return { activeWeapon, changedShooters, paramsAt, passiveFiring, shooters, weaponChangeEndOffset };
+  return { paramsAt, passiveFiring, shooters, weaponChangeEndOffset };
 }
 
 export type ShooterStates = ReturnType<typeof createShooterStates>;
@@ -103,10 +94,8 @@ export type ShooterStates = ReturnType<typeof createShooterStates>;
 /** 枠ごとの射手を進める手順と、使用武器の変更の補助・発の番号・枠の撃たない区間を作る */
 export function createShooters({
   activationsOf,
-  activeWeapon,
   appliedPauses,
   burstPauseAim,
-  changedShooters,
   chargeGaugeOf,
   chargeWatches,
   controlledSlot,
@@ -133,15 +122,10 @@ export function createShooters({
   watchCharge,
   weaponChangeEndOffset,
   writesReloadEnds,
-}: FirstPassBase &
-  Gauge &
-  GaugeEffects &
-  ShotLogs &
-  ShooterStates &
-  Pick<BurstScheduleLayer, 'controller'> &
-  Pick<ShotPauses, 'appliedPauses' | 'burstPauseAim' | 'pauseLeft'> & {
-    model: NonNullable<FirstPassOptions['model']>;
-  } & { untargetable: NonNullable<FirstPassOptions['untargetable']> }) {
+}: FirstPassBase & Gauge & GaugeEffects & ShotLogs & ShooterStates & BurstScheduleLayer & ShotPauses) {
+  /** 使用武器の変更中の射手の状態と、その武器の識別子（変更していなければ null） */
+  const changedShooters: (ShooterState | null)[] = slots.map(() => null);
+  const activeWeapon: (string | null)[] = slots.map(() => null);
   const shotCounts = slots.map(() => 0);
   /**
    * フレーム f に始まった枠 i の使用武器変更（識別子

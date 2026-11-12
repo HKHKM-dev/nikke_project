@@ -26,11 +26,9 @@ import {
 import { isEndedTrigger } from '../../skills/types.ts';
 import { refillAmmo, drainAmmo, resumeAfterLastShotRefill } from '../shooter.ts';
 import type { FirstPassBase } from './base.ts';
-import { type FirstPassOptions, type InstantApplication } from '../firstPass.ts';
 import type { HolderLists } from '../../skills/holders.ts';
 import type { ShooterStates } from './shooters.ts';
-import type { BurstScheduleLayer } from './burst.ts';
-import type { BurstStep } from './burst.ts';
+import type { BurstScheduleLayer, BurstStep } from './burst.ts';
 import { WEAPON_CHANGE_END_DELAY } from './shooters.ts';
 
 type InstantSource = {
@@ -50,14 +48,20 @@ function refillRounds(maxAmmo: number, ratio: number): number {
   return AMMO_REFILL_ROUNDING === 'floor' ? Math.floor(raw + 1e-9) : Math.round(raw);
 }
 
+/** 即時効果の出どころが発火の時に読む件の一覧（件の一覧は出どころの後に作るので、作った後に埋める） */
+export type InstantLate = { lists: Pick<HolderLists, 'appliedAt' | 'endedAt' | 'sinceFires'> };
+
 /** 即時効果の出どころ（回復・遮蔽物 HP 回復・ゲージのチャージ・発動の延長・ほか）と発火の追跡を作る。件の一覧はこの後に作るので、発火の時に late から読む */
 export function createInstantSources({
   frames,
   scheduleModel,
   slots,
   late,
-}: { slots: readonly TimelineSlot[]; frames: number; scheduleModel: BurstScheduleModel | null } & {
-  late: { lists: HolderLists };
+}: {
+  slots: readonly TimelineSlot[];
+  frames: number;
+  scheduleModel: BurstScheduleModel | null;
+  late: InstantLate;
 }) {
   const instant: InstantSource[] = [];
   /** 発火の文脈 context のとき、効果 e が掛かる枠（burstUsers は発火ごとに変わる） */
@@ -158,13 +162,7 @@ export function createInstants({
   slots,
   targetsAt,
   weaponChangeEndOffset,
-}: FirstPassBase &
-  InstantSources &
-  ShooterStates &
-  Pick<BurstScheduleLayer, 'controller'> &
-  Pick<BurstStep, 'reserveExtension'> & { model: NonNullable<FirstPassOptions['model']> } & {
-    instants: InstantApplication[];
-  }) {
+}: FirstPassBase & InstantSources & ShooterStates & BurstScheduleLayer & BurstStep) {
   // 戦闘中の発火の回数に上限（maxFires）のある即時効果の、効いた発火の回数（plan/design-red-hood.md 2.3 節）
   const instantFireCounts = new Map<object, number>();
   /** 次のフレーム以降にゲージへ足すチャージ（射撃の回数トリガーでない burstGauge）。フレーム → 効果 */
