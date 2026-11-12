@@ -73,212 +73,309 @@ export function BuildSection({
 }: Props) {
   const set = (patch: Partial<SlotBuild>) => onChange({ build: { ...build, ...patch } });
   const setGear = (part: GearPart, gear: SlotBuild['gear'][GearPart]) => set({ gear: { ...build.gear, [part]: gear } });
-
-  const setOverload = (part: GearPart, gear: NonNullable<GearInput>, i: number, line: OverloadLine | null) => {
-    const overload = withOverloadLine(gear.overload ?? [], i, line);
-    setGear(part, overload.length === 0 ? { type: gear.type, level: gear.level } : { ...gear, overload });
-  };
-
   // 攻撃力は出さないが、計算に使えない育成入力はここで知らせる
-  let combatError: string | null = null;
-  if (masters) {
-    try {
-      computeCombatAttack(character, growth, effectiveBuild, masters, { treasurePhase: treasurePhase ?? 0 });
-    } catch (e) {
-      combatError = e instanceof Error ? e.message : String(e);
-    }
-  }
+  const combatError = masters ? combatErrorOf(character, growth, effectiveBuild, masters, treasurePhase) : null;
   const shown = effectiveBuild;
-  const hasTreasure = character.treasure !== null && treasurePhase !== 0;
 
   return (
     <div className="build">
       {mastersError && <p className="error">育成のマスタの読み込みに失敗しました: {mastersError}</p>}
       {!masters && !mastersError && <p className="hint">育成のマスタを読み込み中…</p>}
       <div className="build-grid">
-        {GEAR_PARTS.map((part) => {
-          const gear = shown.gear[part];
-          return (
-            <div className="field gear" key={part}>
-              <span>装備 {GEAR_PART_LABEL[part]}</span>
-              <span className="gear-inputs">
-                <select
-                  value={gear?.type ?? ''}
-                  {...inertControlProps(disabled)}
-                  onChange={(e) => {
-                    // aria-disabled の欄も、タッチの端末では選択肢が開くことがある（inertControl.ts）
-                    if (disabled) return;
-                    const type = e.target.value as GearType | '';
-                    const overload = type === 'OL' ? gear?.overload : undefined;
-                    setGear(
-                      part,
-                      type === '' ? null : { type, level: gear?.level ?? 0, ...(overload?.length ? { overload } : {}) },
-                    );
-                  }}
-                >
-                  <option value="">なし</option>
-                  {GEAR_TYPES.map((t) => (
-                    <option key={t} value={t}>
-                      {GEAR_TYPE_LABEL[t]}
-                    </option>
-                  ))}
-                </select>
-                <IntInput
-                  value={gear?.level ?? 0}
-                  min={0}
-                  max={GEAR_LEVEL_MAX}
-                  disabled={disabled || gear === null}
-                  onCommit={(level) => gear && setGear(part, { ...gear, level })}
-                />
-              </span>
-              {/* OL のオプションは、装備が OL でないときも欄だけ出す（選べない。欄の並びを変えない） */}
-              <span className="ol-lines">
-                {Array.from({ length: OVERLOAD_LINE_MAX }, (_, i) => {
-                  const isOverload = gear?.type === 'OL';
-                  const lines = (isOverload && gear.overload) || [];
-                  const line = lines.find((l, j) => overloadLinePosition(l, j) === i);
-                  return (
-                    <span className="gear-inputs" key={i}>
-                      <select
-                        value={line?.option ?? ''}
-                        {...inertControlProps(disabled || !masters || !isOverload)}
-                        onChange={(e) => {
-                          if (disabled || !masters || !isOverload) return;
-                          const option = e.target.value as OverloadOption | '';
-                          setOverload(
-                            part,
-                            gear,
-                            i,
-                            option === '' ? null : { option, level: line?.level ?? OVERLOAD_LEVEL_MIN },
-                          );
-                        }}
-                      >
-                        <option value="">オプション {i + 1}: なし</option>
-                        {(masters?.overload.options ?? []).map((o) => (
-                          <option key={o.option} value={o.option}>
-                            {o.name.ja}
-                          </option>
-                        ))}
-                      </select>
-                      {/* OL の行は Lv ではなく上昇する % で選ぶ（値は overload.json の values。保存は Lv のまま） */}
-                      <select
-                        aria-label={`オプション ${i + 1} の上昇値`}
-                        value={line?.level ?? OVERLOAD_LEVEL_MIN}
-                        {...inertControlProps(disabled || line === undefined)}
-                        onChange={(e) =>
-                          !disabled &&
-                          isOverload &&
-                          line &&
-                          setOverload(part, gear, i, {
-                            ...line,
-                            level: clampInt(Number(e.target.value), OVERLOAD_LEVEL_MIN, OVERLOAD_LEVEL_MAX),
-                          })
-                        }
-                      >
-                        {(() => {
-                          const values =
-                            line && masters?.overload.options.find((o) => o.option === line.option)?.values;
-                          if (!values) return <option value={OVERLOAD_LEVEL_MIN}>—</option>;
-                          return values.map((v, lv) => (
-                            <option key={lv} value={lv + OVERLOAD_LEVEL_MIN}>
-                              {v.toFixed(2)}%
-                            </option>
-                          ));
-                        })()}
-                      </select>
-                    </span>
-                  );
-                })}
-              </span>
-            </div>
-          );
-        })}
-        <div className="field gear">
-          <span>キューブ</span>
-          <span className="gear-inputs">
-            <select
-              value={shown.cube?.id ?? ''}
-              {...inertControlProps(disabled || !masters)}
-              onChange={(e) => {
-                if (disabled || !masters) return;
-                const id = e.target.value === '' ? null : Number(e.target.value);
-                set({ cube: id === null ? null : { id, level: shown.cube?.level ?? CUBE_LEVEL_MIN } });
-              }}
-            >
-              <option value="">なし</option>
-              {(masters?.cubes.cubes ?? []).map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name.ja}
-                </option>
-              ))}
-            </select>
-            <IntInput
-              value={shown.cube?.level ?? CUBE_LEVEL_MIN}
-              min={CUBE_LEVEL_MIN}
-              max={CUBE_LEVEL_MAX}
-              disabled={disabled || shown.cube === null}
-              onCommit={(level) => shown.cube && set({ cube: { ...shown.cube, level } })}
-            />
-          </span>
-        </div>
-        <div className="field gear">
-          <span>コレクション</span>
-          <span className="gear-inputs">
-            {/* 宝物の段階はここで選ぶ（宝物はコレクションの枠に付ける）。
-                宝物はスペック固定でも選べる */}
-            <select
-              value={
-                !hasTreasure
-                  ? (shown.collection?.rarity ?? '')
-                  : treasurePhase === null
-                    ? UNKNOWN_TREASURE_OPTION
-                    : treasureOptionValue(treasurePhase)
-              }
-              {...inertControlProps(disabled && character.treasure === null)}
-              onChange={(e) => {
-                if (disabled && character.treasure === null) return;
-                // スペック固定の間（disabled）は宝物の段階だけを変え、保存している育成には触れない
-                onChange(
-                  collectionPatch(e.target.value, {
-                    fixedSpec: disabled,
-                    hasTreasure,
-                    build,
-                    level: shown.collection?.level ?? 0,
-                  }),
-                );
-              }}
-            >
-              {/* いまの値として出すだけ（ほかの値から選び直すことはできない） */}
-              {hasTreasure && treasurePhase === null && (
-                <option value={UNKNOWN_TREASURE_OPTION} disabled>
-                  宝物（段階は未確定）
-                </option>
-              )}
-              <option value="">なし</option>
-              <option value="R" disabled={disabled}>
-                R
-              </option>
-              <option value="SR" disabled={disabled}>
-                SR
-              </option>
-              {character.treasure &&
-                Array.from({ length: TREASURE_PHASE_MAX }, (_, i) => i + 1).map((phase) => (
-                  <option key={phase} value={treasureOptionValue(phase)}>
-                    宝物 {treasurePhaseLabel(character.treasure!.unlockOrder, phase)}
-                  </option>
-                ))}
-            </select>
-            <IntInput
-              value={hasTreasure ? COLLECTION_LEVEL_MAX : (shown.collection?.level ?? 0)}
-              min={0}
-              max={COLLECTION_LEVEL_MAX}
-              disabled={disabled || hasTreasure || shown.collection === null}
-              onCommit={(level) => shown.collection && set({ collection: { ...shown.collection, level } })}
-            />
-          </span>
-        </div>
+        {GEAR_PARTS.map((part) => (
+          <GearField
+            key={part}
+            part={part}
+            gear={shown.gear[part]}
+            masters={masters}
+            disabled={disabled}
+            onChange={(gear) => setGear(part, gear)}
+          />
+        ))}
+        <CubeField cube={shown.cube} masters={masters} disabled={disabled} onChange={(cube) => set({ cube })} />
+        <CollectionField
+          character={character}
+          build={build}
+          collection={shown.collection}
+          treasurePhase={treasurePhase}
+          disabled={disabled}
+          onChange={onChange}
+        />
       </div>
       {combatError && <p className="error">育成入力を計算に使えません: {combatError}</p>}
+    </div>
+  );
+}
+
+/** 計算に使えない育成入力の知らせ（戦闘力の攻撃力を出してみて、投げた文。使えれば null） */
+function combatErrorOf(
+  character: CharacterData,
+  growth: GrowthInput,
+  build: BuildInput,
+  masters: BuildMasters,
+  treasurePhase: TreasurePhase | null,
+): string | null {
+  try {
+    computeCombatAttack(character, growth, build, masters, { treasurePhase: treasurePhase ?? 0 });
+    return null;
+  } catch (e) {
+    return e instanceof Error ? e.message : String(e);
+  }
+}
+
+/** 装備 1 部位: 種類・Lv と、OL のオプションの行 */
+function GearField({
+  part,
+  gear,
+  masters,
+  disabled,
+  onChange,
+}: {
+  part: GearPart;
+  gear: GearInput;
+  masters: BuildMasters | null;
+  disabled: boolean;
+  onChange: (gear: GearInput) => void;
+}) {
+  const setOverload = (gear: NonNullable<GearInput>, i: number, line: OverloadLine | null) => {
+    const overload = withOverloadLine(gear.overload ?? [], i, line);
+    onChange(overload.length === 0 ? { type: gear.type, level: gear.level } : { ...gear, overload });
+  };
+  const isOverload = gear?.type === 'OL';
+  const lines = (isOverload && gear.overload) || [];
+  return (
+    <div className="field gear">
+      <span>装備 {GEAR_PART_LABEL[part]}</span>
+      <span className="gear-inputs">
+        <select
+          value={gear?.type ?? ''}
+          {...inertControlProps(disabled)}
+          onChange={(e) => {
+            // aria-disabled の欄も、タッチの端末では選択肢が開くことがある（inertControl.ts）
+            if (disabled) return;
+            const type = e.target.value as GearType | '';
+            const overload = type === 'OL' ? gear?.overload : undefined;
+            onChange(type === '' ? null : { type, level: gear?.level ?? 0, ...(overload?.length ? { overload } : {}) });
+          }}
+        >
+          <option value="">なし</option>
+          {GEAR_TYPES.map((t) => (
+            <option key={t} value={t}>
+              {GEAR_TYPE_LABEL[t]}
+            </option>
+          ))}
+        </select>
+        <IntInput
+          value={gear?.level ?? 0}
+          min={0}
+          max={GEAR_LEVEL_MAX}
+          disabled={disabled || gear === null}
+          onCommit={(level) => gear && onChange({ ...gear, level })}
+        />
+      </span>
+      {/* OL のオプションは、装備が OL でないときも欄だけ出す（選べない。欄の並びを変えない） */}
+      <span className="ol-lines">
+        {Array.from({ length: OVERLOAD_LINE_MAX }, (_, i) => {
+          const line = lines.find((l, j) => overloadLinePosition(l, j) === i);
+          return (
+            <OverloadLineField
+              key={i}
+              position={i}
+              line={line}
+              masters={masters}
+              isOverload={isOverload}
+              disabled={disabled}
+              onChange={(next) => isOverload && setOverload(gear, i, next)}
+            />
+          );
+        })}
+      </span>
+    </div>
+  );
+}
+
+/** OL のオプションの 1 行: オプションと、上昇する % */
+function OverloadLineField({
+  position,
+  line,
+  masters,
+  isOverload,
+  disabled,
+  onChange,
+}: {
+  position: number;
+  line: OverloadLine | undefined;
+  masters: BuildMasters | null;
+  /** 装備が OL か（OL でなければ、欄だけ出して選べない） */
+  isOverload: boolean;
+  disabled: boolean;
+  onChange: (line: OverloadLine | null) => void;
+}) {
+  const selectable = !disabled && masters !== null && isOverload;
+  const values = line && masters?.overload.options.find((o) => o.option === line.option)?.values;
+  return (
+    <span className="gear-inputs">
+      <select
+        value={line?.option ?? ''}
+        {...inertControlProps(!selectable)}
+        onChange={(e) => {
+          if (!selectable) return;
+          const option = e.target.value as OverloadOption | '';
+          onChange(option === '' ? null : { option, level: line?.level ?? OVERLOAD_LEVEL_MIN });
+        }}
+      >
+        <option value="">オプション {position + 1}: なし</option>
+        {(masters?.overload.options ?? []).map((o) => (
+          <option key={o.option} value={o.option}>
+            {o.name.ja}
+          </option>
+        ))}
+      </select>
+      {/* OL の行は Lv ではなく上昇する % で選ぶ（値は overload.json の values。保存は Lv のまま） */}
+      <select
+        aria-label={`オプション ${position + 1} の上昇値`}
+        value={line?.level ?? OVERLOAD_LEVEL_MIN}
+        {...inertControlProps(disabled || line === undefined)}
+        onChange={(e) =>
+          !disabled &&
+          isOverload &&
+          line &&
+          onChange({ ...line, level: clampInt(Number(e.target.value), OVERLOAD_LEVEL_MIN, OVERLOAD_LEVEL_MAX) })
+        }
+      >
+        {!values ? (
+          <option value={OVERLOAD_LEVEL_MIN}>—</option>
+        ) : (
+          values.map((v, lv) => (
+            <option key={lv} value={lv + OVERLOAD_LEVEL_MIN}>
+              {v.toFixed(2)}%
+            </option>
+          ))
+        )}
+      </select>
+    </span>
+  );
+}
+
+/** キューブ: 種類と Lv */
+function CubeField({
+  cube,
+  masters,
+  disabled,
+  onChange,
+}: {
+  cube: BuildInput['cube'];
+  masters: BuildMasters | null;
+  disabled: boolean;
+  onChange: (cube: BuildInput['cube']) => void;
+}) {
+  return (
+    <div className="field gear">
+      <span>キューブ</span>
+      <span className="gear-inputs">
+        <select
+          value={cube?.id ?? ''}
+          {...inertControlProps(disabled || !masters)}
+          onChange={(e) => {
+            if (disabled || !masters) return;
+            const id = e.target.value === '' ? null : Number(e.target.value);
+            onChange(id === null ? null : { id, level: cube?.level ?? CUBE_LEVEL_MIN });
+          }}
+        >
+          <option value="">なし</option>
+          {(masters?.cubes.cubes ?? []).map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name.ja}
+            </option>
+          ))}
+        </select>
+        <IntInput
+          value={cube?.level ?? CUBE_LEVEL_MIN}
+          min={CUBE_LEVEL_MIN}
+          max={CUBE_LEVEL_MAX}
+          disabled={disabled || cube === null}
+          onCommit={(level) => cube && onChange({ ...cube, level })}
+        />
+      </span>
+    </div>
+  );
+}
+
+/** コレクション: R・SR の Lv と、宝物の段階（宝物はコレクションの枠に付ける） */
+function CollectionField({
+  character,
+  build,
+  collection,
+  treasurePhase,
+  disabled,
+  onChange,
+}: {
+  character: CharacterData;
+  /** 保存している入力（宝物の選択で、保存している育成のコレクションを変える） */
+  build: SlotBuild;
+  /** 出す値（スペック固定なら fixedSpecBuild のもの） */
+  collection: BuildInput['collection'];
+  treasurePhase: TreasurePhase | null;
+  disabled: boolean;
+  onChange: Props['onChange'];
+}) {
+  const hasTreasure = character.treasure !== null && treasurePhase !== 0;
+  return (
+    <div className="field gear">
+      <span>コレクション</span>
+      <span className="gear-inputs">
+        {/* 宝物の段階はここで選ぶ（宝物はコレクションの枠に付ける）。
+            宝物はスペック固定でも選べる */}
+        <select
+          value={
+            !hasTreasure
+              ? (collection?.rarity ?? '')
+              : treasurePhase === null
+                ? UNKNOWN_TREASURE_OPTION
+                : treasureOptionValue(treasurePhase)
+          }
+          {...inertControlProps(disabled && character.treasure === null)}
+          onChange={(e) => {
+            if (disabled && character.treasure === null) return;
+            // スペック固定の間（disabled）は宝物の段階だけを変え、保存している育成には触れない
+            onChange(
+              collectionPatch(e.target.value, {
+                fixedSpec: disabled,
+                hasTreasure,
+                build,
+                level: collection?.level ?? 0,
+              }),
+            );
+          }}
+        >
+          {/* いまの値として出すだけ（ほかの値から選び直すことはできない） */}
+          {hasTreasure && treasurePhase === null && (
+            <option value={UNKNOWN_TREASURE_OPTION} disabled>
+              宝物（段階は未確定）
+            </option>
+          )}
+          <option value="">なし</option>
+          <option value="R" disabled={disabled}>
+            R
+          </option>
+          <option value="SR" disabled={disabled}>
+            SR
+          </option>
+          {character.treasure &&
+            Array.from({ length: TREASURE_PHASE_MAX }, (_, i) => i + 1).map((phase) => (
+              <option key={phase} value={treasureOptionValue(phase)}>
+                宝物 {treasurePhaseLabel(character.treasure!.unlockOrder, phase)}
+              </option>
+            ))}
+        </select>
+        <IntInput
+          value={hasTreasure ? COLLECTION_LEVEL_MAX : (collection?.level ?? 0)}
+          min={0}
+          max={COLLECTION_LEVEL_MAX}
+          disabled={disabled || hasTreasure || collection === null}
+          onCommit={(level) => collection && onChange({ build: { ...build, collection: { ...collection, level } } })}
+        />
+      </span>
     </div>
   );
 }

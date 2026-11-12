@@ -2,7 +2,7 @@
 
 - 何のための文書か: スキル定義のパーサ（`packages/core/src/skills/parse/`）と Web 画面（`apps/web/src/`）の長い関数・コンポーネントを、動きを変えずに分ける変更の、今の構造・分け方・段・確かめ方
 - 対象: パーサの `parseDamageEffect`・`parseTimedFields`・`parseTrigger`・`parseStateGrantEffect`・`parseInstantEffect`・`parseDotEffect` と、その間で繰り返している欄の検査。画面の `ModernView`・`App`・`BuildSection`・`CharacterTray`・`RosterEditModal`
-- 状態: 進行中（4 節の決定。段は 5 節）
+- 状態: 完了（段 P1・P2・W1・W2。8 節）
 - 関連: [skills-guide.md](skills-guide.md) 1.4 節（語彙を足すときの手順。パーサの入口は `parseSkillDefinition`）、[design-roster-edit.md](design-roster-edit.md)（育成状況の編集。`RosterEditModal`・`useRoster` を足した）、[design-modern-ui.md](design-modern-ui.md)
 - 作成日: 2026-11-12
 - 調べた時点: main の 6884f8e1
@@ -180,6 +180,13 @@
 - `App` は `useMasters`・`useSavedTeam`（キャラ一覧の読み込み・保存の復元と保存・読めなかった保存の退避）・`usePartyTotals` に分け、未対応の一覧の材料を `calcView.ts` の `notesSummarySlots` にした。effect の順（敵のプリセット・育成のマスタ・キャラ一覧・編成の保存・全編成の保存）は変えていない。
 - 確かめ: 6.2 節の画素の比べは、同じ版を 2 回回しても絵の読み込みと計算の時刻で揃わなかったので、代わりに各手の DOM（style の属性を除く）と入力欄の値を main と比べ、36 手とも一致した。style を除くと持ち上げた絵の大きさと位置を見落とすので、持ち上げている途中の絵（スロットから・一覧から・操作の印）を style ごと写して比べ、一致した（操作の印の始まりの位置は回すたびに画面のスクロールで変わるので、2 回回して確かめた）。`npm test` の画面のテストも通る。
 
+### 8.4 段 W2（2026-11-12）
+
+- `BuildSection` は同じファイルに `GearField`・`OverloadLineField`・`CubeField`・`CollectionField` を置き、計算に使えない入力の知らせを `combatErrorOf` にした。
+- `CharacterTray` は同じファイルに `TrayFilters`・`TraySortMenu`・`TrayShapeToggle` を置いた。
+- `RosterEditModal` は同じファイルに `useRosterEditSelection`（一覧の固定・選択・絞り込み・狭い画面の切り替え・前後のニケ）・`RosterEditList`・`RosterEditFooter` を置いた。
+- 確かめ: 8.3 節と同じ方法で、DOM と入力欄の値と持ち上げている途中の絵が main と一致した（操作の印の始まりの位置は回すたびに変わるので、それを除いて比べた）。`npm test` の画面のテストも通る。
+
 ## 9. 扱わないもの
 
 - 対象の外の長い関数: `frame/firstPass.ts` の `runFirstPassOnce`、`skills/holders.ts` の `createHolderLists`、`frame/plan.ts` の `planSkillHits`、`sim/engine.ts` の `runSimulation`、`skills/catalogDoc.ts` の `renderSkillCatalog`、`records/observations.ts` の `validateObservations`、`apps/web/src/useRoster.ts` の `useRoster`、`skills/parse/weapon.ts` の `parseWeaponChangeEffect`。計算の中心（1 パス目・2 パス目）は、分けるときに速さと結果の一致の確かめ方が別に要る。
@@ -192,3 +199,4 @@
 - 2026-11-12: 段 P1 を実装した（8.1 節）。
 - 2026-11-12: 段 P2 を実装した（8.2 節）。
 - 2026-11-12: 段 W1 を実装した（8.3 節）。
+- 2026-11-12: 段 W2 を実装した（8.4 節）。4 つの段を終え、課題を閉じた。
