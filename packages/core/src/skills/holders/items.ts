@@ -20,7 +20,7 @@ import { stackItems, STACK_REFRESH, type MaxStacksAt, type StackDecrease } from 
 import type { NamedStateId } from '../states.ts';
 import { dependsOnDefense, dependsOnRank } from '../targets.ts';
 import type { ShotCountEveryAt, TriggerTracker } from '../triggers.ts';
-import { SKILL_SLOTS, conditionReadsItems, type EdgeShift, type EffectCondition } from '../types.ts';
+import { conditionReadsItems, type EdgeShift, type EffectCondition } from '../types.ts';
 import {
   effectItems,
   holderHitStarts,
@@ -529,17 +529,6 @@ export function lastAtOrBefore(xs: readonly number[], x: number): number | undef
 
 /** 段の印の並び（同じフレームの件の並び。段 → 出どころの枠 → 定義の順） */
 export const STAGE_RANK: Record<HeldStage, number> = { 1: 0, 1.5: 1, 2: 2, 2.5: 3 };
-
-export const SKILL_ORDER = Object.fromEntries(SKILL_SLOTS.map((s, i) => [s, i])) as Record<string, number>;
-
-export function compareKeys(a: readonly number[], b: readonly number[]): number {
-  const n = Math.min(a.length, b.length);
-  for (let i = 0; i < n; i++) {
-    const d = a[i]! - b[i]!;
-    if (d !== 0) return d;
-  }
-  return a.length - b.length;
-}
 
 /** 出どころ × 状態ごとに、時間で変わる状態の付与をまとめる（静的な付与は常時パッシブ） */
 export function stateGroupsOf(

@@ -302,6 +302,7 @@ for (let f = 0; f < frames; f++) {
 - `holders.ts` の関数の外を、型と小さな公開の関数を `holders/types.ts`、件を作る純粋な関数（段の印と状態の付与の組の決め方を含む）を `holders/items.ts`、ループの後に履歴を読む関数を `holders/history.ts` に移した。`holders.ts` には `createHolderLists` を残し、前と同じ名前を再公開する。
 - ほかのファイルから読まれる内部の宣言にだけ `export` を付けた。本文は、`export` を付けて 1 行に収まらなくなった 1 つ（`RemoveSource`）の折り返しのほかは、構文木で宣言ごとに比べて文字単位で同じ。
 - 移した関数を `skills/holders.ts の …` と指していたコメントは、移した先のファイルを指すように直した。
+- 見直し（`/simplify`）で足した直し: 履歴を読む関数だけが使う `SKILL_ORDER`・`compareKeys` は `holders/history.ts` の内部に置いた（main と同じく export しない）。状態の付与の組の作り方と段の印（`stateGroupsOf`・`appliedStagesOf`・`stageOfTimed`・`STAGE_RANK` など）は、出どころの準備・見る側・履歴の読みが共有するので `holders/items.ts` に置いたままにし、段 H2 の `holders/sources.ts` などはここから import する（二度移さない）。`createHolderLists` だけが使う配列の道具（`insertSorted`・`lastAtOrBefore`・`setLength`）と `ALL_READS`、出どころの型は、段 H2 で層のファイルから読むので、いまの置き場所のままにした。
 
 ## 10. 経過
 

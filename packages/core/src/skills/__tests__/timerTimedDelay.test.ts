@@ -1,5 +1,5 @@
 // V-0602: 時間の周期のきっかけ（{ everySeconds }）の timed に delayFrames を書ける。窓は周期の発火の delayFrames 後から
-// （skills/holders.ts の startOfFire）。定義はエーテル（291）の S2 の防御力▼（S2 のヒットの次のフレームから。C-0832・C-0453）
+// （skills/holders/items.ts の startOfFire）。定義はエーテル（291）の S2 の防御力▼（S2 のヒットの次のフレームから。C-0832・C-0453）
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { CharacterData } from '../../types.ts';

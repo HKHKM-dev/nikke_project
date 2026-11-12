@@ -670,7 +670,7 @@ export type SegmentInput = {
   sustainedHitRateUp: boolean;
 };
 
-/** 区間に足す値の小片の形（skills/holders.ts の ValuePiece）。値を足す枠に、出どころの枠の効果が [start, end) で効く */
+/** 区間に足す値の小片の形（skills/holders/history.ts の ValuePiece）。値を足す枠に、出どころの枠の効果が [start, end) で効く */
 export type SegmentPiece = {
   slotIndex: number;
   sourceSlotIndex: number;

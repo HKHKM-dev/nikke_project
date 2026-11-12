@@ -5,7 +5,7 @@ import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, fixedAttackBaseOf, type 
 import { isStateContent, type AppliedEffect, isTimedItem, type ItemEffect } from '../resolve.ts';
 import type { NamedStateId } from '../states.ts';
 import { isEffectTarget } from '../targets.ts';
-import { isMaxHpStat, isStateStat, type BuffStat } from '../types.ts';
+import { SKILL_SLOTS, isMaxHpStat, isStateStat, type BuffStat } from '../types.ts';
 import type { SkillSlot } from '../../types.ts';
 import {
   buildSegments,
@@ -27,7 +27,18 @@ import {
   type HolderHistory,
   isEnemyEffect,
 } from './types.ts';
-import { SKILL_ORDER, STAGE_RANK, compareKeys, scaledEffect, valueOf } from './items.ts';
+import { STAGE_RANK, scaledEffect, valueOf } from './items.ts';
+
+const SKILL_ORDER = Object.fromEntries(SKILL_SLOTS.map((s, i) => [s, i])) as Record<string, number>;
+
+function compareKeys(a: readonly number[], b: readonly number[]): number {
+  const n = Math.min(a.length, b.length);
+  for (let i = 0; i < n; i++) {
+    const d = a[i]! - b[i]!;
+    if (d !== 0) return d;
+  }
+  return a.length - b.length;
+}
 
 // ---- 履歴を読む（plan/design-holder-effects.md 2.9 節） ----
 

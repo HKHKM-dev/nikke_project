@@ -48,7 +48,7 @@ export type SlotStateSummary = {
   undispellable: boolean;
 };
 
-/** まとめる値の小片の形（skills/holders.ts の ValuePiece） */
+/** まとめる値の小片の形（skills/holders/history.ts の ValuePiece） */
 export type SummaryPiece = { slotIndex: number; sourceSlotIndex: number; effect: ItemEffect; stack?: number };
 
 /** まとめる循環の件の形 */

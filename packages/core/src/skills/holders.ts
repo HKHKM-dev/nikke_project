@@ -9,7 +9,7 @@
 // 履歴を閉じる時に決める（amplify。ループの中で強化の件を読む所は無い）。ループの後は、履歴の値の小片から区間を作る（buffTimelineOf。
 // 2.9 節）。値の小片の並びは時刻の順（論点 5）。件を作るのはここだけで、読む側は履歴を直接読む。
 // ここには件の一覧を作る createHolderLists を置き、型は holders/types.ts、件を作る純粋な関数は holders/items.ts、ループの後に
-// 履歴を読む関数は holders/history.ts に置く（どれもここから同じ名前で再公開する）。
+// 履歴を読む関数は holders/history.ts に置く（外から使う名前は、ここから同じ名前で再公開する）。
 import { groupDotsByState } from '../frame/dot.ts';
 import { lowerBound, type ShotLog } from '../frame/shots.ts';
 import { resolveDotEffects } from './burstDamage.ts';
