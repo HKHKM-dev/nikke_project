@@ -31,9 +31,8 @@
 // までは撃ち続ける（plan/design-hide-reload-detect.md 10 節）。
 // 射撃に効く効果も即時効果も予約したゲージも無い編成では、射撃の列は planShots、時刻表は planDynamicSchedule と 1 フレームも違わない
 // （plan/design-stage10.md 1.3 節）。
-import { burstDelaysOf } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
-import { FRAMES_PER_GAME_SECOND, gameSecondsToFirstFrame, gameSecondsToFrames } from '../time.ts';
+import { gameSecondsToFrames } from '../time.ts';
 import {
   DEFAULT_BURST_TIMING,
   finishSchedule,
@@ -47,27 +46,11 @@ import {
   type BurstControllerState,
   type BurstTiming,
 } from '../burst/controller.ts';
+import { burstCandidateOf, burstUnitOf, partialGaugeRatio } from '../burst/dynamic.ts';
 import {
-  SG_PELLET_GAUGE_HIT_RATE,
-  burstCandidateOf,
-  burstUnitOf,
-  energyPerTrigger,
-  fullChargeGaugeOf,
-  partialGaugeRatio,
-} from '../burst/dynamic.ts';
-import { resolveCycleEvery, resolveCycles } from '../skills/cycles.ts';
-import {
-  damageHitFramesOf,
-  effectHitFrames,
-  resolveDamageEffects,
-  resolveDamageGauges,
-  resolveAllyGaugeAdd,
-  resolveDotEffects,
-  resolveShotGauges,
   resolveAppliedPauses,
   resolveBurstUsePause,
   resolveShotPauses,
-  resolveTimerGauges,
   type ResolvedDamageEffect,
 } from '../skills/burstDamage.ts';
 import {
@@ -80,7 +63,7 @@ import {
   type BurstScheduleModel,
   type BurstStepKey,
 } from '../burst/schedule.ts';
-import { capCritRate, pelletsPerShot, ZERO_BUFFS, type BuffTotals, type HitRateN } from '../skills/buffs.ts';
+import { capCritRate, ZERO_BUFFS, type BuffTotals, type HitRateN } from '../skills/buffs.ts';
 import {
   firesChargeShots,
   isResolvedShotCount,
@@ -89,7 +72,6 @@ import {
   isResolvedWeaponChangeEnd,
   resolveCoverHeals,
   resolveInstant,
-  resolveSkillCooldownDowns,
   type ResolvedCoverHeal,
   type ResolvedInstantEffect,
   type ResolvedTrigger,
@@ -97,13 +79,7 @@ import {
 import { healFrameOf } from '../skills/heals.ts';
 import { createHolderLists, type HolderHistory, type LeadShots } from '../skills/holders.ts';
 import { isEffectTarget, type FireContext } from '../skills/targets.ts';
-import {
-  cooldownTimer,
-  resolvePassiveStates,
-  shortenedTimer,
-  triggerFrames,
-  type TimelineSlot,
-} from '../skills/timeline.ts';
+import { resolvePassiveStates, triggerFrames, type TimelineSlot } from '../skills/timeline.ts';
 import {
   advanceShotCount,
   burstStepHolds,
@@ -115,21 +91,10 @@ import {
   shotCountWeight,
   type TriggerTracker,
 } from '../skills/triggers.ts';
-import {
-  chargeTriggersOf,
-  hasReloadEndEffect,
-  isEndedTrigger,
-  isSummonAttackTrigger,
-  isTimerTrigger,
-  SKILL_SLOTS,
-  type ShotCountKind,
-  type SummonAttackTrigger,
-  type SummonEffect,
-} from '../skills/types.ts';
+import { chargeTriggersOf, hasReloadEndEffect, isEndedTrigger, type ShotCountKind } from '../skills/types.ts';
 import type { SummonId } from '../skills/summons.ts';
-import { dotTickTracker, groupDotsByState, type DotTickTracker } from './dot.ts';
-import { DEFAULT_WEAPON_MODEL, isChargeWeapon, muzzleHitsOf, type WeaponModel } from '../weapons.ts';
-import { timerFramesOf, type FrameRange } from '../skills/timeline.ts';
+import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
+import { type FrameRange } from '../skills/timeline.ts';
 import { firingParams, isZeroFiring, type FiringParams } from './firing.ts';
 import {
   beginHide,
@@ -151,10 +116,14 @@ import {
 import type { ShotLog } from './shots.ts';
 import { flightFramesAt, type FlightFrameSpan, type LandingHitRateSpan, type SlotFlight } from './landing.ts';
 import type { SkillSlot } from '../types.ts';
-import type { NamedStateId } from '../skills/states.ts';
 import type { HoldFire, ObstacleBreak, PelletHits } from '../team.ts';
 import { unionRanges } from './events.ts';
 import { reloadStartOffset } from '../cadence.ts';
+import type { FirstPassBase } from './firstPass/base.ts';
+import { createGauge } from './firstPass/gauge.ts';
+import { createGaugeEffects } from './firstPass/gaugeEffects.ts';
+import { createAccumulate } from './firstPass/accumulate.ts';
+import { createSummons } from './firstPass/summons.ts';
 
 export type FirstPassOptions = {
   frames: number;
@@ -303,23 +272,6 @@ export type FirstPassResult = {
    * （skills/holders/history.ts の buffTimelineOf）
    */
   history: HolderHistory;
-};
-
-/**
- * V-0030: ゲージを溜める段の循環を 1 パス目で追う状態。規則は skills/cycles.ts の cycleFires と同じ
- * （通算の射撃回数 n、間隔の変更の件の中は件の every。件は持ち主ごとの一覧の、循環の間隔の変更）
- */
-type CycleGaugeTracker = {
-  slotIndex: number;
-  /** 段の循環のスロット（間隔の変更の件を引く） */
-  skill: SkillSlot;
-  every: number;
-  gaugeHits: number[][];
-  energy: number;
-  count: number;
-  step: number;
-  /** fullChargeShot の循環は部分チャージの発を数えない */
-  fullChargeOnly: boolean;
 };
 
 type InstantSource = {
@@ -632,97 +584,36 @@ function runFirstPassOnce(
    * 撃ち切りの残弾数減少のリロードの始まりに使う。plan/design-reload-rounding.md 案 F）
    */
   const weaponChangeEndOffset: number[] = slots.map(() => 0);
-
-  // ---- バースト ----
-  const gaugeSpeed = passive.map((s) => s?.buffs.burstGaugeSpeed ?? 0);
-  // 時間で変わるゲージ速度（timed・状態の中身）の件を持ちうる枠は、フレームの頭で
-  // (1 + 常時の速度 + 効いている件の速度) を読み（f − 1 までに付いた件。射手と同じ見え方。
-  // plan/design-skill-stage1.md 1.6 節）、そのフレームに溜めるゲージに掛ける。
-  // 持たない枠は常時の値だけで、今までと同じ値（下の energies などを前もって作る）
-  const timedGauge = slots.map((_, i) => lists.hasGaugeSpeedTracks(i));
-  const timedGaugeSlots = slots.flatMap((_, i) => (timedGauge[i] ? [i] : []));
-  const gaugeScale = slots.map((_, i) => 1 + gaugeSpeed[i]!);
-  const targetEnergies = slots.map((slot) => slot?.character.shot.targetBurstEnergyPerShot ?? 0);
-  /** 枠 i の、射手の 1 ヒットぶんのゲージ（targetBurstEnergyPerShot）のこのフレームの量。前もって作った値 fixed は速度が変わらない枠の分 */
-  const targetEnergyNow = (i: number, fixed: number): number =>
-    timedGauge[i] ? targetEnergies[i]! * gaugeScale[i]! : fixed;
-  // 弾丸命中率が着地点で変わる枠は、1 発のゲージを命中率 1 で持ち、撃ったフレームの区間の命中率を掛ける。
-  // SG はペレットの割合も 1 で持ち、区間の弾丸命中率が的の表の値ならそのまま（当たったペレットの割合。C-0150）、
-  // 手入力の値なら置き値 SG_PELLET_GAUGE_HIT_RATE を掛ける（plan/design-sg-hit-rate.md 3 節）
-  const hitRateSpans = slots.map((_, i) => options.hitRates?.[i] ?? null);
-  const hitRateAt = slots.map(() => 0);
-  // 二丁持ち（muzzleHitsOf）は 1 発 2 ヒットで、2 ヒットともゲージを溜める（plan/design-quency-eq.md 2 節の論点 1。SMG は C-1023、RL は C-1019）
-  const muzzleHits = slots.map((slot) =>
-    slot === null ? 1 : muzzleHitsOf(slot.character.weaponType, slot.character.shot),
-  );
-  const baseEnergies = slots.map((slot, i) =>
-    slot === null
-      ? 0
-      : hitRateSpans[i]
-        ? energyPerTrigger(slot.character.shot, i === controlledSlot, 1, 1, muzzleHits[i])
-        : energyPerTrigger(
-            slot.character.shot,
-            i === controlledSlot,
-            slot.hitRate ?? 1,
-            SG_PELLET_GAUGE_HIT_RATE,
-            muzzleHits[i],
-          ),
-  );
-  const energies = baseEnergies.map((e, i) => e * (1 + gaugeSpeed[i]!));
-  const pellets = slots.map((slot) => slot !== null && slot.character.shot.shotCount > 1);
-  /** 枠 i のフレーム f の弾丸命中率の区間（自動でない枠は undefined。f は単調に増える） */
-  const spanAt = (i: number, f: number): LandingHitRateSpan | undefined => {
-    const spans = hitRateSpans[i];
-    if (!spans) return undefined;
-    while (hitRateAt[i]! + 1 < spans.length && spans[hitRateAt[i]!]!.end <= f) hitRateAt[i]! += 1;
-    return spans[hitRateAt[i]!];
-  };
-  /** 枠 i がフレーム f の区間の値（持続の命中率▲が効いていれば出し直した値。▲は件の一覧の当たりの件。スタックは段の数だけ） */
-  const spanValueAt = (
-    i: number,
-    f: number,
-  ): LandingHitRateSpan | { hitRate: number; coreHits: number } | undefined => {
-    const span = spanAt(i, f);
-    if (span === undefined || options.hitRateWith === undefined || !lists.hasHitTracks) return span;
-    return options.hitRateWith(i, span, lists.hitRateAt(i, f));
-  };
-  /**
-   * 枠 i のフレーム f の発の、基礎のペレットの数に対する実効のペレットの数の比（固定なら 1 ÷ 基礎、▲なら (基礎 + Σ) ÷ 基礎。
-   * plan/design-dorothy-serendipity.md 2.1・2.2 節）。ゲージとペレットの命中の量は、当たったペレットの数に比例する（C-0150・C-1075）。
-   * ペレットの数の件の無い枠は 1。同じ発のゲージとペレットの命中の量が同じフレームで読むので、枠ごとに最後の値を覚える
-   */
-  const pelletTracked = slots.map((_, i) => pellets[i]! && lists.hasPelletTracks(i));
-  const lastPelletRatio = slots.map(() => ({ frame: -1, ratio: 1 }));
-  const pelletRatioAt = (i: number, f: number): number => {
-    if (!pelletTracked[i]) return 1;
-    const last = lastPelletRatio[i]!;
-    if (last.frame !== f) {
-      const count = slots[i]!.character.shot.shotCount;
-      last.frame = f;
-      last.ratio = pelletsPerShot(count, lists.pelletsAt(i, f)) / count;
-    }
-    return last.ratio;
-  };
-  /** 枠 i がフレーム f に撃った 1 発のゲージ */
-  const energyAt = (i: number, f: number): number => {
-    const energy = (timedGauge[i] ? baseEnergies[i]! * gaugeScale[i]! : energies[i]!) * pelletRatioAt(i, f);
-    if (!hitRateSpans[i]) return energy;
-    const span = spanAt(i, f);
-    const pelletRate = pellets[i] && span?.measured !== true ? SG_PELLET_GAUGE_HIT_RATE : 1;
-    return energy * (spanValueAt(i, f)?.hitRate ?? 1) * pelletRate;
-  };
-  /** 枠 i の 1 発のゲージに乗るフルチャージ倍率（C-0007。操作キャラのチャージ武器だけ。energyPerTrigger が掛ける値） */
-  const chargeGaugeOf = (i: number): number => fullChargeGaugeOf(slots[i]!.character.shot, i === controlledSlot);
-  /**
-   * 枠 i の 1 発のゲージ（energyAt の値）が、ゲージ何回ぶんか（弾のヒットの期待値。SG は当たった
-   * ペレットの数）。1 回のゲージ（targetBurstEnergyPerShot × フルチャージ倍率 × いまのゲージ速度）で割る
-   */
-  const gaugeHitsOf = (i: number, shotEnergy: number): number => {
-    const unit = targetEnergies[i]! * chargeGaugeOf(i) * (timedGauge[i] ? gaugeScale[i]! : 1 + gaugeSpeed[i]!);
-    return unit > 0 ? shotEnergy / unit : 0;
-  };
   // plan/design-anis-star-gauge-timing.md 3 節: 枠 i がフレーム f に撃った発の飛ぶ時間（ゲージはその後のフレームに溜まる）
   const flights = slots.map((_, i) => options.flights?.[i] ?? null);
+  const shotFlightAt = (i: number, f: number): number => flightFramesAt(flights[i]?.shot, f);
+  const shotEvents: (ShotEvent | null)[] = slots.map(() => null);
+  const layerBase: FirstPassBase = {
+    slots,
+    options,
+    frames,
+    passive,
+    lists,
+    logs,
+    controlledSlot,
+    flights,
+    shotFlightAt,
+    shotEvents,
+    activationsOf,
+    windowsOf,
+  };
+  const gaugeLayer = createGauge({ ...layerBase });
+  const {
+    chargeGaugeOf,
+    energyAt,
+    gaugeHitsOf,
+    hitsAt,
+    obstacleEnergyAt,
+    obstacles,
+    pelletsAt,
+    shotCounts,
+    updateTimedGaugeSpeed,
+  } = gaugeLayer;
   /**
    * フレーム f に始まった枠 i の使用武器変更（識別子
    * `<resourceId>.<スロット>.<効果の番号>`）の最初の発を撃つフレーム
@@ -750,124 +641,24 @@ function runFirstPassOnce(
     const swap = opened?.startsFullBurst ? Math.max(f, hexagonFrameOf(opened)) : f;
     return weaponFreeFrameAtSwap(shooters[i]!, logs[i]?.frames.at(-1), swap, model) + after;
   };
-  const shotFlightAt = (i: number, f: number): number => flightFramesAt(flights[i]?.shot, f);
-  // 同 2 節（C-0177・C-0243）: 枠ごとの「発の番号 → 壊した障害物の数」と、物 1 個のゲージ
-  const obstacles = slots.map(() => new Map<number, number>());
-  for (const b of options.obstacleBreaks ?? []) obstacles[b.slotIndex]?.set(b.shot, b.count);
-  const obstacleBases = slots.map((slot, i) =>
-    slot === null ? 0 : slot.character.shot.burstEnergyPerShot * chargeGaugeOf(i),
-  );
-  const obstacleEnergies = obstacleBases.map((e, i) => e * (1 + gaugeSpeed[i]!));
-  const obstacleEnergyAt = (i: number): number =>
-    timedGauge[i] ? obstacleBases[i]! * gaugeScale[i]! : obstacleEnergies[i]!;
-  const shotCounts = slots.map(() => 0);
-  // 発ごとの命中・コアの命中の期待値（plan/design-ludmilla-wo.md 2.2・2.3 節）。
-  // 区間はゲージと同じ値（常時の命中率▲ + 効いている持続の▲）。SG の命中は 1 トリガーを 1 回（ペレットのどれかが当たる）
-  const enemyHasCore = options.enemyHasCore ?? true;
-  const hitsAt = (i: number, f: number): { hits: number; coreHits: number } => {
-    const slot = slots[i]!;
-    const span = spanValueAt(i, f);
-    const hitRate = span?.hitRate ?? slot.hitRate ?? 1;
-    const coreHits = span !== undefined ? span.coreHits : (slot.hitRate ?? 1) * (slot.coreHitRate ?? 0);
-    // 二丁持ちは 1 発 2 ヒット（命中・コアの命中の期待値もヒットごと）
-    const m = muzzleHits[i]!;
-    return { hits: pellets[i] ? 1 : hitRate * m, coreHits: enemyHasCore ? coreHits * m : 0 };
-  };
-  // 発ごとに的に当たったペレットの数（plan/design-pellet-hit.md 2・3 節）。録画で数えた入力があればその数、
-  // 無ければ期待値（SG は shotCount × 当たったペレットの割合。割合はゲージと同じ: 的の表の区間はその値、手入力は
-  // 弾丸命中率 × SG_PELLET_GAUGE_HIT_RATE。C-0150。SG 以外は命中の期待値と同じ）
-  const pelletInputs = slots.map(() => new Map<number, number>());
-  for (const p of options.pelletHits ?? []) p.counts.forEach((n, k) => pelletInputs[p.slotIndex]?.set(k, n));
-  const pelletsAt = (i: number, f: number, k: number, hits: number): number => {
-    const input = pelletInputs[i]!.get(k);
-    if (input !== undefined) return input;
-    if (!pellets[i]) return hits;
-    const slot = slots[i]!;
-    const span = spanAt(i, f);
-    const rate =
-      span === undefined
-        ? (slot.hitRate ?? 1) * SG_PELLET_GAUGE_HIT_RATE
-        : (spanValueAt(i, f)?.hitRate ?? 1) * (span.measured === true ? 1 : SG_PELLET_GAUGE_HIT_RATE);
-    return slot.character.shot.shotCount * pelletRatioAt(i, f) * rate;
-  };
-  // V-0030: 段のヒットでゲージを溜める循環。溜めるゲージは当たるフレームに予約する（pendingGauge）
-  const cycleTrackers: CycleGaugeTracker[] = [];
-  slots.forEach((slot, i) => {
-    if (slot === null || slot.definition === null) return;
-    const log = logs[i]!;
-    for (const cycle of resolveCycles(slot.definition, slot.character, slot.levels)) {
-      if (cycle.gaugeHits.every((d) => d.length === 0)) continue;
-      if (cycle.trigger.count === 'fullChargeShot' && !log.fullCharge) continue;
-      for (const e of resolveCycleEvery(slot.definition, slot.character, slot.levels)) {
-        if (e.targetSkill !== cycle.source.skill) continue;
-        if (e.trigger !== 'burstUse') {
-          throw new RangeError(`cycle gauge hits support only a burstUse cycleEvery, got ${JSON.stringify(e.trigger)}`);
-        }
-        // 循環の窓は発動のフレームから数えるので、効果の発火が遅れるキャラ（burst/landing.ts）には使えない
-        if (burstDelaysOf(slot.character).effectFrames !== 0) {
-          throw new RangeError('cycleEvery is not supported for a character with a burst effect delay');
-        }
-      }
-      cycleTrackers.push({
-        slotIndex: i,
-        skill: cycle.source.skill,
-        every: cycle.trigger.every,
-        gaugeHits: cycle.gaugeHits,
-        energy: slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!),
-        count: 0,
-        step: 0,
-        fullChargeOnly: cycle.trigger.count === 'fullChargeShot',
-      });
-    }
-  });
-  // ゲージを溜める倍率ダメージ（damage の gaugeHits。V-0034）。射撃を数えて、段と同じく当たるフレームに予約する
-  const damageGaugeTrackers: {
-    slotIndex: number;
-    count: ShotCountKind;
-    every: number;
-    gaugeHits: number[];
-    energy: number;
-    n: number;
-  }[] = [];
-  slots.forEach((slot, i) => {
-    if (slot === null || slot.definition === null) return;
-    for (const g of resolveDamageGauges(slot.definition, slot.character, slot.levels)) {
-      if (g.trigger.count === 'fullChargeShot' && !logs[i]!.fullCharge) continue;
-      damageGaugeTrackers.push({
-        slotIndex: i,
-        count: g.trigger.count,
-        every: g.trigger.every,
-        gaugeHits: g.gaugeHits,
-        energy: slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!),
-        n: 0,
-      });
-    }
-  });
-  // 射撃の回数でゲージだけを溜める効果（burstGaugeHit。plan/design-moran.md 3 節）。射撃を数えて、発火した射撃の
-  // フレームのゲージに足す（付けるのは撃った時でヒットではないので、飛ぶ時間は足さない）。回数トリガーの遅れ編
-  // （plan/design-shot-count-trigger-frame.md 6 節）: delayFrames があれば、発火した射撃の delayFrames 後のゲージに足す（C-0480）
-  const shotGaugeTrackers: {
-    slotIndex: number;
-    count: ShotCountKind;
-    every: number;
-    energy: number;
-    n: number;
-    delayFrames: number;
-  }[] = [];
-  slots.forEach((slot, i) => {
-    if (slot === null || slot.definition === null) return;
-    for (const t of resolveShotGauges(slot.definition, slot.character, slot.levels)) {
-      if (t.count === 'fullChargeShot' && !logs[i]!.fullCharge) continue;
-      shotGaugeTrackers.push({
-        slotIndex: i,
-        count: t.count,
-        every: t.every,
-        energy: slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!),
-        n: 0,
-        delayFrames: t.delayFrames ?? 0,
-      });
-    }
-  });
+  const gaugeEffectsLayer = createGaugeEffects({ ...layerBase, ...gaugeLayer });
+  const {
+    addAllyGauge,
+    addShotGauges,
+    cooldownTrackers,
+    countCooldownTimers,
+    countCycles,
+    countDamageHitGauges,
+    cycleGaugeHits,
+    dotGauges,
+    landingGauge,
+    reserveBurstUseDotTicks,
+    reserveTimerGauges,
+    shotGauges,
+    takeReservedGauge,
+    timerGauges,
+    trackDotBurstUse,
+  } = gaugeEffectsLayer;
   // V-0534（ラピ：レッドフード S2 の粘着榴弾。C-0717・C-0718）: 射撃の止まり（shotPause）。射撃を数えて、発火した射撃の次のフレームから
   // 止めるフレーム数のあいだ射手を進めない（pauseLeft。手順 1 で減らす）。発火した射撃がマガジンの最後の弾丸なら framesOnLastShot
   // 回数の間隔の変更（cycleEvery の shotCounts）の窓の中は、通算の回数が窓の
@@ -905,460 +696,16 @@ function runFirstPassOnce(
       ? []
       : resolveAppliedPauses(slot.definition).map((p) => ({ ...p, was: false })),
   );
-  // ゲージを溜める持続ダメージ（dot の gaugeOnApply・gaugeOnTick。plan/design-raven-s1.md 4 節）。射撃を数えて
-  // 発火を追い、付けたときの分は発火のフレームに、tick の分は dotTickTracker が返した tick のフレームに予約する。
-  // V-0113（10 節）: バースト使用時に付く効果（burstUse。クルミのハッキング）も同じまとまりの発火として、手順 3 の出来事で追う
-  const dotGaugeTrackers: {
-    slotIndex: number;
-    effects: { count: ShotCountKind; every: number; n: number; onApply: boolean }[];
-    /** 付けたときのゲージを発火の何フレーム後に足すか（0 は発火のフレーム。C-0181） */
-    applyDelay: number;
-    /** tick の刻みを発火の何フレーム後から数えるか（skills/types.ts の DotEffect.tickDelayFrames。0 は発火のフレーム） */
-    tickDelay: number;
-    onBurstUse: boolean;
-    tracker: DotTickTracker;
-    onTick: boolean;
-    energy: number;
-    /** 自動攻撃のヒットの飛ぶ時間（plan/design-anis-star-gauge-timing.md 4 節。持続ダメージ・表に無いものは null） */
-    flight: FlightFrameSpan[] | null;
-  }[] = [];
-  slots.forEach((slot, i) => {
-    if (slot === null || slot.definition === null) return;
-    for (const group of groupDotsByState(resolveDotEffects(slot.definition, slot.character, slot.levels))) {
-      const dot = group[0]!.dot!;
-      // tick のゲージは同じ状態でそろっている（groupDotsByState）。付けたときのゲージは効果ごと
-      const onTick = dot.gaugeOnTick === true;
-      if (!onTick && !group.some((e) => e.dot!.gaugeOnApply === true)) continue;
-      const effects: { count: ShotCountKind; every: number; n: number; onApply: boolean }[] = [];
-      let onBurstUse = false;
-      for (const e of group) {
-        if (isResolvedShotCount(e.trigger)) {
-          effects.push({ count: e.trigger.count, every: e.trigger.every, n: 0, onApply: e.dot!.gaugeOnApply === true });
-        } else if (e.trigger === 'burstUse' && e.dot!.gaugeOnApply !== true) {
-          onBurstUse = true;
-        } else {
-          throw new RangeError('a dot with gauge needs shot count triggers or burstUse (without the apply gauge)');
-        }
-      }
-      if (!onBurstUse && effects.every((e) => e.count === 'fullChargeShot') && !logs[i]!.fullCharge) continue;
-      dotGaugeTrackers.push({
-        slotIndex: i,
-        effects,
-        applyDelay: Math.max(0, ...group.map((e) => e.dot!.gaugeOnApplyDelayFrames ?? 0)),
-        tickDelay: dot.tickDelayFrames ?? 0,
-        onBurstUse,
-        tracker: dotTickTracker(dot.intervalSeconds, dot.durationSeconds, frames, dot.firstTick),
-        onTick,
-        energy: slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!),
-        flight: dot.autoAttack === true ? (flights[i]?.autoAttacks[group[0]!.source.skill] ?? null) : null,
-      });
-    }
-  });
-  const dotGauges: FirstPassResult['dotGauges'] = [];
-  const pendingGauge = new Map<number, number>();
-  const shotGauges: FirstPassResult['shotGauges'] = [];
-  // allyGaugeAdd を持つ枠（1 つまで。plan/design-anis-star-ally-gauge.md 3 節）は、ほかの枠の
-  // ゲージ 1 回（弾のヒット・射撃ごとの倍率ダメージのゲージのヒット）ごとに、自分の 1 発のゲージ × 割合を足す。1 発のゲージは自分の
-  // 最初の発の着弾のフレームから targetBurstEnergyPerShot、その前は burstEnergyPerShot（C-0246・C-0620）。回数は着くフレームに数え、
-  // そのフレームの射撃の後に、そのフレームの量で足す（着弾と同じフレームの回は切り替わった後の量。境のフレームは確かめていない）
-  const allyAdd = (() => {
-    for (const [i, slot] of slots.entries()) {
-      if (slot === null || slot.definition === null) continue;
-      const ratio = resolveAllyGaugeAdd(slot.definition, slot.character, slot.levels);
-      if (ratio === null || ratio === 0) continue;
-      const shot = slot.character.shot;
-      return { slotIndex: i, before: shot.burstEnergyPerShot * ratio, after: shot.targetBurstEnergyPerShot * ratio };
-    }
-    return null;
-  })();
-  /** 持つ枠の最初の発の着弾のフレーム（まだ撃っていなければ null） */
-  let allyAddLanding: number | null = null;
-  /** フレーム → そのフレームに着く、ほかの枠のゲージの回数（期待値） */
-  const pendingAllyHits = new Map<number, number>();
-  const reserveAllyHits = (i: number, at: number, hits: number): void => {
-    if (allyAdd === null) return;
-    if (i === allyAdd.slotIndex) {
-      if (allyAddLanding === null || at < allyAddLanding) allyAddLanding = at;
-      return;
-    }
-    if (hits > 0 && at < frames) pendingAllyHits.set(at, (pendingAllyHits.get(at) ?? 0) + hits);
-  };
-  /** 枠 i の発のゲージを、着弾のフレーム（f + 飛ぶ時間）に入れる。f のフレームならこのフレームのゲージに返す。hits はその回数（期待値） */
-  const landingGauge = (i: number, at: number, f: number, energy: number, hits: number): number => {
-    reserveAllyHits(i, at, hits);
-    if (energy > 0 && at < frames) shotGauges.push({ slotIndex: i, shotFrame: f, frame: at, energy });
-    if (at === f) return energy;
-    if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
-    return 0;
-  };
-  const trackDotBurstUse = dotGaugeTrackers.some((t) => t.onBurstUse);
-  /** 持続ダメージがフレーム f に付いた。新しく決まった tick の分を、tick のフレームに予約する（どれも f より後） */
-  const reserveDotTicks = (t: (typeof dotGaugeTrackers)[number], f: number): void => {
-    const { ticks } = t.tracker.fire(f + t.tickDelay);
-    if (!t.onTick) return;
-    // 時間で変わるゲージ速度は、付いたフレームの速度で tick の分も決める
-    const energy = targetEnergyNow(t.slotIndex, t.energy);
-    for (const tick of ticks) {
-      if (tick <= f) throw new RangeError(`dot gauge tick at ${tick} is not after the fire at ${f}`);
-      // 自動攻撃のヒットは、刻みのフレーム + 飛ぶ時間に着く（C-0504。ダメージの tick のフレームは変えない）
-      const at = tick + flightFramesAt(t.flight, tick);
-      pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
-      dotGauges.push({ slotIndex: t.slotIndex, kind: 'tick', frame: at, energy });
-    }
-  };
-  // クールタイムの印のある周期は、枠 × スロットごとに発火をフレームの順に追う
-  // （cooldownTimer。plan/design-arcana-magician.md 2.1 節）。縮めるのは、
-  // 編成のどれかの定義の状態の中身の「スキル N クールタイム X%▼」で、そのフレームまでに登録した状態の件で決める。
-  // 縮める状態が無ければ静的な周期と同じ列になる。2 パス目とゲージはこの記録だけを読む
-  const cooldownDowns = slots.flatMap((slot) =>
-    slot === null || slot.definition === null
-      ? []
-      : resolveSkillCooldownDowns(slot.definition, slot.character, slot.levels),
-  );
-  const cooldownTrackers: {
-    slotIndex: number;
-    skill: SkillSlot;
-    /** そのスロットを縮める状態と、その縮めた周期（フレーム） */
-    downs: { state: NamedStateId; short: number }[];
-    tick: (f: number, started: number | undefined, held: () => number | undefined) => boolean;
-    /** 同じスロットの印のある burstGaugeHit の遅れ（ループの前の予約の代わりに、発火で予約する） */
-    gaugeDelays: number[];
-    fires: number[];
-  }[] = [];
-  slots.forEach((slot, slotIndex) => {
-    if (slot === null || slot.definition === null) return;
-    for (const skill of SKILL_SLOTS) {
-      const marked = slot.definition.skills[skill].effects.filter(
-        (e) => 'trigger' in e && isTimerTrigger(e.trigger) && e.trigger.cooldown === true,
-      );
-      const first = marked[0];
-      if (first === undefined || !('trigger' in first) || !isTimerTrigger(first.trigger)) continue;
-      const { everySeconds } = first.trigger;
-      cooldownTrackers.push({
-        slotIndex,
-        skill,
-        downs: cooldownDowns
-          .filter((d) => d.slot === skill)
-          .map((d) => ({ state: d.state, short: gameSecondsToFirstFrame(everySeconds * (1 - d.percent / 100)) })),
-        tick: cooldownTimer(gameSecondsToFirstFrame(everySeconds)),
-        gaugeDelays: marked.flatMap((e) => (e.kind === 'burstGaugeHit' ? [e.delayFrames!] : [])),
-        fires: [],
-      });
-    }
-  });
-  // 周期のゲージ（burstGaugeHit）。射撃に依らないので、発火のフレームにループの前に予約する。
-  // delayFrames があれば発火の後のヒットのフレームに足し、戦闘の終わりを越えるものは足さない（C-0453。plan/design-timer-ceil.md 7 節）
-  // 時間で変わるゲージ速度の枠の周期のゲージは、発火のフレームの頭でその速度で予約する（発火のフレーム → 枠と遅れ）
-  const timedTimerGauges = new Map<number, { slotIndex: number; delayFrames: number }[]>();
-  const timerGauges: FirstPassResult['timerGauges'] = [];
-  /** 周期のゲージを、発火 fireFrame の後のフレーム at のゲージに予約する（timerGauges にも残す） */
-  const reserveTimerGauge = (slotIndex: number, fireFrame: number, at: number, energy: number): void => {
-    timerGauges.push({ slotIndex, fireFrame, frame: at, energy });
-    pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
-  };
-  slots.forEach((slot, i) => {
-    if (slot === null || slot.definition === null) return;
-    const energy = slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!);
-    for (const { delayFrames, ...timer } of resolveTimerGauges(slot.definition)) {
-      // クールタイムの印のある周期は、ループの中で発火を追って予約する（countCooldownTimers）
-      if (timer.cooldown === true) continue;
-      for (const fire of timerFramesOf(timer, frames)) {
-        const at = fire + delayFrames;
-        if (at >= frames) continue;
-        if (timedGauge[i])
-          timedTimerGauges.set(fire, [...(timedTimerGauges.get(fire) ?? []), { slotIndex: i, delayFrames }]);
-        else reserveTimerGauge(i, fire, at, energy);
-      }
-    }
-  });
-  // V-0545（plan/design-new-chars-1029.md 11.2 節の b）: 周期の倍率ダメージのヒットごとのゲージ（gaugePerHit）。発火をフレームの順に
-  // 追い（periodShorten の短縮は、そのフレームまでに登録した自分の状態で決める。2 パス目の shortenedTimerFrames と同じ規則）、
-  // N ヒットのフレームのゲージに予約する（delayFrames は 1 以上なので、どのヒットも発火より後のフレーム）
-  const damageTimerGauges: { slotIndex: number; effect: ResolvedDamageEffect; fires: (f: number) => boolean }[] = [];
-  // 射撃の回数のきっかけの倍率ダメージのヒットごとのゲージ
-  // （gaugePerHit。オートファイア。plan/design-skill-stage14.md 2.5 節。C-0426）。射撃を数えて発火を追い、
-  // ヒットのフレーム（perCount { state } の数だけ 1 つずつ出すヒットは、発火の
-  // フレームより前に付いたスタック数。2 パス目の planSkillHits と同じ見え方）のゲージに予約する（delayFrames は 1 以上なので、どのヒットも
-  // 発火より後のフレーム）。射撃ごとの倍率ダメージのゲージと同じく発のゲージの記録（shotGauges）に残し、味方のゲージの回数にも数える
-  const shotDamageGauges: {
-    slotIndex: number;
-    effect: ResolvedDamageEffect;
-    count: ShotCountKind;
-    every: number;
-    /**
-     * V-0692（ラピ：レッドフードの粘着榴弾の付着。C-0991）: 回数の間隔の変更（cycleEvery の shotCounts）の窓の中の間隔。射撃の止まり
-     * （shotPauseTrackers）と同じく、窓の中は通算の回数が窓の間隔の倍数に届いた発で発火する（C-0727）
-     */
-    everyAt: ShotCountEveryAt | undefined;
-    n: number;
-    /** エレグの S1（C-0773）: 条件 enemyState（発火のフレームに敵がその状態なら予約する） */
-    enemyState?: NamedStateId;
-  }[] = [];
-  /** 枠ごとの倍率ダメージ（ヒットごとのゲージと召喚の攻撃が読む。枠ごとに 1 回だけ解く） */
-  const damageEffects = slots.map((slot) =>
-    slot === null || slot.definition === null ? [] : resolveDamageEffects(slot.definition, slot.character, slot.levels),
-  );
-  damageEffects.forEach((effects, i) => {
-    for (const effect of effects) {
-      if (effect.gaugePerHit === undefined || isSummonAttackTrigger(effect.trigger)) continue;
-      const { trigger } = effect;
-      if (isResolvedTimer(trigger)) {
-        // periodShorten の名前の無い窓（window）は gaugePerHit と組まない（読み込みで落とす）ので、鍵は状態だけ
-        const shorten = effect.periodShorten;
-        const state = shorten?.state;
-        const shortened = (frame: number) => state !== undefined && lists.selfStateAt(i, state, frame);
-        const fires = shortenedTimer(trigger, shorten?.seconds ?? 0, frames, shortened);
-        damageTimerGauges.push({ slotIndex: i, effect, fires });
-      } else if (isResolvedShotCount(trigger)) {
-        if (trigger.count === 'fullChargeShot' && !logs[i]!.fullCharge) continue;
-        const enemyState = effect.condition?.enemyState;
-        shotDamageGauges.push({
-          slotIndex: i,
-          effect,
-          count: trigger.count,
-          every: trigger.every,
-          everyAt: lists.shotCountEveryOf(i, effect.source.skill),
-          n: 0,
-          ...(enemyState === undefined ? {} : { enemyState }),
-        });
-      }
-    }
-  });
-  /** 枠 i のヒットごとのゲージの、このフレームの 1 ヒットの量 */
-  const hitGaugeEnergy = (i: number): number => targetEnergyNow(i, targetEnergies[i]! * (1 + gaugeSpeed[i]!));
-  // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.3・2.4 節）: 蓄積爆破（damage の accumulate の self）。フルチャージの発で、
-  // 付いていなければ付ける（付けた発は溜めない）。付けた後、切れる capDelayFrames 前までの発（C-0927）の値 × (割合 + 蓄積割合▲) を、
-  // 次のフレームの頭に（その発のフレームまでに付いた件と、2 パス目と同じ 1 発の値の関数で）数えて溜め、最大量に届いた発の
-  // capDelayFrames 後に最大量を出して解除する。付くのは付けた発の applyDelayFrames 後で、最大量はそのフレームの値で決め（C-0916）、
-  // 届かなければ付いてから窓の長さで切れ、射手の 1 ヒットぶんのゲージを溜める（C-0430）。付くまでの発は、最大量が決まってから溜める
-  const accumulators = damageEffects.flatMap((effects, slotIndex) =>
-    effects.flatMap((effect) => {
-      const acc = effect.accumulate;
-      if (acc?.source !== 'self') return [];
-      return [
-        {
-          slotIndex,
-          effect,
-          acc,
-          active: null as null | {
-            applied: number;
-            expire: number;
-            cap: number | null;
-            stored: number;
-            reached: number | null;
-          },
-          pending: [] as { frame: number; progress: number | undefined }[],
-        },
-      ];
-    }),
-  );
-  const shotValueAt = options.shotValueAt;
-  if (accumulators.length > 0 && shotValueAt === undefined) throw new Error('accumulate (self) needs shotValueAt');
-  const accumulateReleases: AccumulateRelease[] = [];
-  /** 枠 i がフレーム frame に撃った発の値と最終攻撃力、そのフレームの件の合計（frame より後のフレームに呼ぶ） */
-  const accumulateShotAt = (i: number, frame: number, progress: number | undefined) => {
-    let buffs = lists.damageBuffsAt(i, frame, passive[i]?.buffs ?? ZERO_BUFFS);
-    // 持続の命中率▲を区間に足すとき（2 パス目の区間と同じ。frame/plan.ts の planTeamRun が hitRateWith を渡す時）
-    if (options.hitRateWith !== undefined && lists.hasHitTracks) {
-      const timed = lists.hitRateAt(i, frame);
-      buffs = { ...buffs, hitRate: buffs.hitRate + timed.n, hitRateUp: buffs.hitRateUp + timed.up };
-    }
-    // 時間で変わる適正最小射程距離▲も、2 パス目の区間と同じに足す（距離ボーナスの出し直し）
-    const range = lists.minEffectiveRangeAt(i, frame);
-    if (range !== 0) buffs = { ...buffs, minEffectiveRange: buffs.minEffectiveRange + range };
-    const fullBurst = windowsOf().some((w) => w.start <= frame && frame < w.end);
-    return { ...shotValueAt!(i, frame, buffs, fullBurst, progress), buffs };
-  };
-  /** フレーム f の頭: 前のフレームまでの発を溜め、爆発があれば記録する。切れたら溜めるゲージを返す */
-  const stepAccumulator = (a: (typeof accumulators)[number], f: number): number => {
-    const s = a.active;
-    if (s === null) return 0;
-    if (s.cap === null) {
-      const attached = s.applied + a.acc.applyDelayFrames;
-      if (f <= attached) return 0;
-      const at = accumulateShotAt(a.slotIndex, attached, undefined);
-      s.cap = at.attack * a.effect.multiplier * (1 + at.buffs.distributedDamage);
-    }
-    // 切れるフレームの capDelayFrames 前より後に撃った発は溜めない（C-0927。発が溜まるのは約 13f 後とみた形）
-    const lastStored = s.expire - a.acc.capDelayFrames;
-    for (const p of a.pending) {
-      if (s.reached !== null || p.frame > lastStored) break;
-      const at = accumulateShotAt(a.slotIndex, p.frame, p.progress);
-      s.stored += at.value * (a.acc.ratio + at.buffs.accumulateRatio);
-      if (s.stored >= s.cap) s.reached = p.frame;
-    }
-    a.pending.length = 0;
-    // 届いた発が付くより前でも、爆発は届いた発の capDelayFrames 後（最大量が決まったフレームより前なら、そのフレーム）
-    const capped = s.reached !== null && f >= s.reached + a.acc.capDelayFrames;
-    if (!capped && (s.reached !== null || f !== s.expire)) return 0;
-    accumulateReleases.push({
-      slotIndex: a.slotIndex,
-      effect: a.effect,
-      applied: s.applied,
-      end: (capped ? s.reached! : lastStored) + 1,
-      frame: f,
-      capped,
-      cap: s.cap,
-      stored: s.stored,
-    });
-    a.active = null;
-    return capped ? 0 : hitGaugeEnergy(a.slotIndex);
-  };
-  // 召喚の機数と攻撃の進み（plan/design-ein-near-feather.md 1.2・1.3 節）。展開（戦闘開始と、その枠のバーストの
-  // 効果のフレーム）で組を置き換えて進みを 0 に戻し、フレームごとに、いまの機数の間隔の逆数を進みに積む。1 に届いたフレームに攻撃が
-  // 発火し（余りは持ち越す）、gaugePerHit の効果はそのフレームのゲージに射手の 1 ヒットぶん × 倍数を足す
-  const summonHits: FirstPassResult['summonHits'] = [];
-  const summonTrackers: {
-    slotIndex: number;
-    summon: SummonId;
-    onBurstUse: SummonEffect | undefined;
-    /** 機数ごとの、1 フレームに積む進み（間隔の逆数） */
-    ratePerFrame: Readonly<Record<number, number>>;
-    delayFrames: number;
-    /** ヒットごとのゲージの倍数（gaugePerHit の効果ごと） */
-    gaugeScales: number[];
-    /** 進みを積み始めるフレーム（展開 + 遅れ。この後のフレームから積む）。展開の前は null */
-    activeFrom: number | null;
-    /** いまの組の、1 機ずつの消えるフレーム（昇順。消えない機は入れない）と、消えない機の数 */
-    expiries: number[];
-    stays: number;
-    progress: number;
-    /** 次に見るバーストの発動（activationsOf() の添字） */
-    nextActivation: number;
-  }[] = [];
-  const deploySummon = (t: (typeof summonTrackers)[number], at: number, effect: SummonEffect): void => {
-    const finite = effect.lifetimesSeconds.filter((x): x is number => x !== null);
-    t.activeFrom = at + t.delayFrames;
-    t.expiries = finite.map((x) => at + gameSecondsToFrames(x)).sort((a, b) => a - b);
-    t.stays = effect.lifetimesSeconds.length - finite.length;
-    t.progress = 0;
-  };
-  damageEffects.forEach((effects, i) => {
-    const byId = new Map<SummonId, ResolvedDamageEffect[]>();
-    for (const e of effects) {
-      if (isSummonAttackTrigger(e.trigger)) byId.set(e.trigger.summon, [...(byId.get(e.trigger.summon) ?? []), e]);
-    }
-    if (byId.size === 0) return;
-    const deploys = SKILL_SLOTS.flatMap((s) => slots[i]!.definition!.skills[s].effects).filter(
-      (e): e is SummonEffect => e.kind === 'summon',
-    );
-    for (const [summon, attacks] of byId) {
-      const trigger = attacks[0]!.trigger as SummonAttackTrigger;
-      const t: (typeof summonTrackers)[number] = {
-        slotIndex: i,
-        summon,
-        onBurstUse: deploys.find((d) => d.summon === summon && d.trigger === 'burstUse'),
-        ratePerFrame: Object.fromEntries(
-          Object.entries(trigger.intervalSeconds).map(([n, sec]) => [Number(n), 1 / (sec * FRAMES_PER_GAME_SECOND)]),
-        ),
-        delayFrames: gameSecondsToFrames(trigger.startDelaySeconds),
-        gaugeScales: attacks.flatMap((e) => (e.gaugePerHit === undefined ? [] : [e.gaugePerHit])),
-        activeFrom: null,
-        expiries: [],
-        stays: 0,
-        progress: 0,
-        nextActivation: 0,
-      };
-      // 戦闘開始時の展開はフレーム 0（フレーム 0 の終わりに、次のフレームの進みから積む）
-      const atStart = deploys.find((d) => d.summon === summon && d.trigger === 'battleStart');
-      if (atStart !== undefined) deploySummon(t, 0, atStart);
-      summonTrackers.push(t);
-    }
-  });
-  /** フレーム f の終わりに、f のバーストの展開を入れ、次のフレームの攻撃の進みを積む（発火したら次のフレームのゲージに予約する） */
-  const countSummons = (f: number): void => {
-    const activations = activationsOf();
-    const g = f + 1;
-    for (const t of summonTrackers) {
-      while (t.nextActivation < activations.length) {
-        const a = activations[t.nextActivation]!;
-        if (a.slotIndex === t.slotIndex) {
-          const at = effectFrameOf(a);
-          if (at > f) break;
-          if (t.onBurstUse !== undefined) deploySummon(t, at, t.onBurstUse);
-        }
-        t.nextActivation += 1;
-      }
-      if (g >= frames || t.activeFrom === null || g <= t.activeFrom) continue;
-      while (t.expiries.length > 0 && t.expiries[0]! <= g) t.expiries.shift();
-      const n = t.expiries.length + t.stays;
-      if (n === 0) continue;
-      t.progress += t.ratePerFrame[n]!;
-      if (t.progress < 1 - 1e-9) continue;
-      t.progress -= 1;
-      summonHits.push({ slotIndex: t.slotIndex, summon: t.summon, frame: g });
-      for (const scale of t.gaugeScales) reserveTimerGauge(t.slotIndex, f, g, hitGaugeEnergy(t.slotIndex) * scale);
-    }
-  };
-  /**
-   * フレーム f の終わりに、印のある周期の発火を決める（f に付いた縮める状態の件も見る）。発火したら記録し、その枠の
-   * 印のある burstGaugeHit のゲージを遅れの後のフレームに予約する（ループの前の予約と同じ量）
-   */
-  const countCooldownTimers = (f: number): void => {
-    for (const t of cooldownTrackers) {
-      const i = t.slotIndex;
-      const started = t.downs.find((d) => lists.stateStartedAt(i, d.state, f))?.short;
-      const held = (): number | undefined => {
-        const on = t.downs.filter((d) => lists.stateHeldAt(i, d.state, f));
-        // 同じスロットを縮める状態が 2 つ同時に効く時の重ね方は確かめていない（使い手がいない。設計書 2.1 節）
-        if (on.length > 1)
-          throw new RangeError(`two or more states shorten the cooldown of ${t.skill} at once (not implemented)`);
-        return on[0]?.short;
-      };
-      if (!t.tick(f, started, held)) continue;
-      t.fires.push(f);
-      const energy = hitGaugeEnergy(i);
-      for (const d of t.gaugeDelays) if (f + d < frames) reserveTimerGauge(i, f, f + d, energy);
-    }
-  };
-  const countDamageHitGauges = (f: number): void => {
-    for (const t of damageTimerGauges) {
-      if (!t.fires(f)) continue;
-      const energy = hitGaugeEnergy(t.slotIndex) * t.effect.gaugePerHit!;
-      for (const at of damageHitFramesOf(t.effect, f, frames)) reserveTimerGauge(t.slotIndex, f, at, energy);
-    }
-    for (const t of shotDamageGauges) {
-      const shot = shotEvents[t.slotIndex];
-      if (shot === null || shot === undefined) continue;
-      const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), t.everyAt?.(f) ?? t.every);
-      t.n = counted.count;
-      if (!counted.fired) continue;
-      if (t.enemyState !== undefined && !lists.enemyStateAt(t.enemyState, f)) continue;
-      const per = t.effect.perCount;
-      const count = per !== undefined && 'state' in per ? lists.selfStackCountAt(t.slotIndex, per.state, f) : undefined;
-      const energy = hitGaugeEnergy(t.slotIndex) * t.effect.gaugePerHit!;
-      for (const hit of effectHitFrames(t.effect, f, count, frames)) landingGauge(t.slotIndex, hit, f, energy, 1);
-    }
-  };
+  const accumulateLayer = createAccumulate({ ...layerBase, ...gaugeLayer, ...gaugeEffectsLayer });
+  const { accumulateReleases, addAccumulatedGauge, recordAccumulatorShots } = accumulateLayer;
+  const summonsLayer = createSummons({ ...layerBase, ...gaugeLayer, ...gaugeEffectsLayer, ...accumulateLayer });
+  const { countSummons, summonHits } = summonsLayer;
   /** 先のフレームに効果が発火するバーストの発動（フレーム → 発動） */
   const pendingBurstEffects = new Map<number, BurstActivation[]>();
   /** 先のフレームのバーストのヒット（トリガー burstHit。plan/design-elegg.md 8.9 節） */
   const pendingBurstHits = new Map<number, BurstActivation[]>();
   /** 先のフレームの段階のきっかけ（stageEnterFrameOf。段階 3 は替わり目） */
   const pendingStageEntries = new Map<number, BurstStepKey[]>();
-  const cycleGaugeHits: FirstPassResult['cycleGaugeHits'] = [];
-  /**
-   * V-0030: 段の循環。このフレームの射撃を数え、段のヒットのゲージを当たるフレームに予約する。間隔の変更の件は、このフレームに
-   * 付いたもの（発動のフレームから）も見るので、手順 3 の後に呼ぶ
-   */
-  const countCycles = (f: number): void => {
-    for (const t of cycleTrackers) {
-      const ev = shotEvents[t.slotIndex];
-      if (ev === null || ev === undefined) continue;
-      if (t.fullChargeOnly && !ev.fullCharge) continue;
-      t.count += 1;
-      let e = t.every;
-      for (const every of lists.cycleEveryAt(t.slotIndex, t.skill, f)) e = Math.min(e, every);
-      if (t.count % e !== 0) continue;
-      const energy = targetEnergyNow(t.slotIndex, t.energy);
-      for (const d of t.gaugeHits[t.step]!) {
-        const at = f + d;
-        cycleGaugeHits.push({ slotIndex: t.slotIndex, shotFrame: f, frame: at, energy });
-        if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
-      }
-      t.step = (t.step + 1) % t.gaugeHits.length;
-    }
-  };
 
   /**
    * V-0534: 射撃の止まり。このフレームの射撃で発火したら、次のフレームから止める。回数の間隔の変更の窓を
@@ -1427,7 +774,6 @@ function runFirstPassOnce(
   /** このフレームに遮蔽物 HP 回復を受けた枠（FrameEvents.coverHealed）。healed と同じく使い回す */
   const coverHealed: boolean[] = slots.map(() => false);
   let coverHealedDirty = false;
-  const shotEvents: (ShotEvent | null)[] = slots.map(() => null);
 
   /** いま見ている（または次に来る）狙えない窓の添字 */
   let nextBlock = 0;
@@ -1441,14 +787,11 @@ function runFirstPassOnce(
     const block = untargetable[nextBlock];
     const blocked = block !== undefined && block.start <= f && f < block.end;
     // 時間で変わるゲージ速度の枠の、このフレームの (1 + 速度)（f − 1 までに付いた件）と、その速度の周期のゲージ
-    for (const i of timedGaugeSlots) gaugeScale[i] = 1 + gaugeSpeed[i]! + lists.gaugeSpeedAt(i, f);
-    for (const t of timedTimerGauges.get(f) ?? []) {
-      reserveTimerGauge(t.slotIndex, f, f + t.delayFrames, targetEnergies[t.slotIndex]! * gaugeScale[t.slotIndex]!);
-    }
+    updateTimedGaugeSpeed(f);
+    reserveTimerGauges(f);
     // 1. 射手（V-0030: 前のフレームまでに予約した段のヒットのゲージも、このフレームのゲージに入れる）
-    let gauge = pendingGauge.get(f) ?? 0;
-    pendingGauge.delete(f);
-    for (const a of accumulators) gauge += stepAccumulator(a, f);
+    let gauge = takeReservedGauge(f);
+    gauge = addAccumulatedGauge(gauge, f);
     slots.forEach((slot, i) => {
       shotEvents[i] = null;
       if (slot === null || !shooters[i]) return;
@@ -1593,78 +936,8 @@ function runFirstPassOnce(
         (obstacles[i]!.get(shotCounts[i]!) ?? 0) * obstacleEnergyAt(i);
       gauge += landingGauge(i, f + shotFlightAt(i, f), f, energy, gaugeHitsOf(i, shotEnergy));
     });
-    // 蓄積爆破: 付いていなければフルチャージの発で付け、付いていれば発を次のフレームの頭に溜める（最大量に届いた後の発は溜めない）
-    for (const a of accumulators) {
-      const shot = shotEvents[a.slotIndex];
-      if (shot === null || shot === undefined) continue;
-      if (a.active === null) {
-        if (shot.fullCharge)
-          a.active = {
-            applied: f,
-            expire: f + a.acc.applyDelayFrames + a.acc.durationFrames,
-            cap: null,
-            stored: 0,
-            reached: null,
-          };
-      } else if (a.active.reached === null) {
-        const last = logs[a.slotIndex]!.partialShots?.at(-1);
-        a.pending.push({ frame: f, progress: last?.frame === f ? last.progress : undefined });
-      }
-    }
-    // ゲージを溜める倍率ダメージ。遅れ 0（V-0035 のモダニア。発と同じフレームに当たる）はこのフレームのゲージに足す
-    for (const t of damageGaugeTrackers) {
-      const shot = shotEvents[t.slotIndex];
-      if (shot === null || shot === undefined) continue;
-      const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), t.every);
-      t.n = counted.count;
-      if (!counted.fired) continue;
-      // 射撃ごとの倍率ダメージのヒット（S1 の追加ダメージなど）も、発の着弾から数える（飛ぶ時間。plan/design-anis-star-gauge-timing.md 3.1 節）
-      const flight = shotFlightAt(t.slotIndex, f);
-      const energy = targetEnergyNow(t.slotIndex, t.energy);
-      for (const d of t.gaugeHits) gauge += landingGauge(t.slotIndex, f + flight + d, f, energy, 1);
-    }
-    // 射撃の回数でゲージだけを溜める効果。発火した射撃のフレームのゲージに足す（遅れがあれば、そのフレームに予約する）
-    for (const t of shotGaugeTrackers) {
-      const shot = shotEvents[t.slotIndex];
-      if (shot === null || shot === undefined) continue;
-      const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), t.every);
-      t.n = counted.count;
-      if (!counted.fired) continue;
-      const energy = targetEnergyNow(t.slotIndex, t.energy);
-      if (t.delayFrames === 0) gauge += energy;
-      else if (f + t.delayFrames < frames) {
-        pendingGauge.set(f + t.delayFrames, (pendingGauge.get(f + t.delayFrames) ?? 0) + energy);
-      }
-    }
-    // ゲージを溜める持続ダメージ。この射撃で付いたら、付けたときの分はこのフレームのゲージに足し、
-    // 新しく決まった tick の分は tick のフレームに予約する（どれもこのフレームより後。resolveDotEffects が形を限っている）
-    for (const t of dotGaugeTrackers) {
-      const shot = shotEvents[t.slotIndex];
-      if (shot === null || shot === undefined) continue;
-      let fired = false;
-      let apply = false;
-      for (const e of t.effects) {
-        const counted = advanceShotCount(e.n, shotCountWeight(e.count, shot), e.every);
-        e.n = counted.count;
-        if (!counted.fired) continue;
-        fired = true;
-        if (e.onApply) apply = true;
-      }
-      if (!fired) continue;
-      if (apply) {
-        const energy = targetEnergyNow(t.slotIndex, t.energy);
-        // 付けたのは撃った 6f 後（C-0181。plan/design-shot-count-trigger-frame.md 6.6 節）。
-        // モデルの射撃のフレームは撃ったフレーム（C-0661）なので、その applyDelay 後のゲージに足す
-        if (t.applyDelay === 0) {
-          gauge += energy;
-          dotGauges.push({ slotIndex: t.slotIndex, kind: 'apply', frame: f, energy });
-        } else if (f + t.applyDelay < frames) {
-          pendingGauge.set(f + t.applyDelay, (pendingGauge.get(f + t.applyDelay) ?? 0) + energy);
-          dotGauges.push({ slotIndex: t.slotIndex, kind: 'apply', frame: f + t.applyDelay, energy });
-        }
-      }
-      reserveDotTicks(t, f);
-    }
+    recordAccumulatorShots(f);
+    gauge = addShotGauges(gauge, f);
     // バーストゲージのチャージ（最大値 × X%）。射撃の回数トリガーはこのフレームの射撃で発火し、このフレームのゲージに足す
     // （V-0034: バーは発のフレームで 1 回に跳ぶ）。ほかのトリガーは前のフレームまでに発火したものを足す
     const charges = pendingGaugeCharges.get(f) ?? [];
@@ -1699,14 +972,7 @@ function runFirstPassOnce(
         });
       }
     }
-    // 味方のゲージ（allyGaugeAdd）: このフレームに着いたほかの枠のゲージの回数に、このフレームの量を足す
-    if (allyAdd !== null) {
-      const hits = pendingAllyHits.get(f);
-      if (hits !== undefined) {
-        pendingAllyHits.delete(f);
-        gauge += hits * (allyAddLanding !== null && f >= allyAddLanding ? allyAdd.after : allyAdd.before);
-      }
-    }
+    gauge = addAllyGauge(gauge, f);
     // 2. ゲージと状態機械（planDynamicSchedule と同じく、このフレームの射撃のゲージを枠順に足してから 1 フレーム進める）
     if (controller !== null) {
       const before = controller.activations.length;
@@ -1879,11 +1145,7 @@ function runFirstPassOnce(
       ...(chargeFulls.length > 0 ? { chargeFulls } : {}),
       ...(stageEntries !== undefined ? { stageEntries } : {}),
     };
-    // V-0113: バースト使用時に付く持続ダメージ（クルミのハッキング）。付け直しと同じで、延びた tick のゲージを予約する
-    // （burstUse のトリガーの判定と同じく、このフレームの効果の発火 burstEffects で見る）
-    for (const t of dotGaugeTrackers) {
-      if (t.onBurstUse && burstEffects.some((a) => a.slotIndex === t.slotIndex)) reserveDotTicks(t, f);
-    }
+    reserveBurstUseDotTicks(f, burstEffects);
 
     // 回復を先に当てる。射撃の回数起点は、撃った枠より後ろの枠にはこのフレーム、ほかの枠には次のフレームに送り（V-0490）、
     // それ以外はこのフレームの healed に立てる。対象の順位（topAttack）は、このフレームの件を登録する前に出す（回復を受けた時の
