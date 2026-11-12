@@ -18,7 +18,9 @@
 // - 形の比べ: 区間の N ごとのコア命中率を形 f(p0, N) に置き換え（命中率は EM の値に固定）、p0 を最尤にした値と σ、自由な値との対数尤度の差を
 //   出す。--opt p0 を与えたら、その p0 での対数尤度の差と帯ごとの予測も出す。
 import { loadRecordingsFile, loadRecordsData } from '../../../packages/core/scripts/records-data.ts';
-import { buildTeamInput, METRICS, type CompareSpec } from '../../../packages/core/src/records/observations.ts';
+import { buildTeamInput } from '../../../packages/core/src/records/observations/teamInput.ts';
+import { METRICS } from '../../../packages/core/src/records/observations/metrics/index.ts';
+import type { CompareSpec } from '../../../packages/core/src/records/observations/types.ts';
 import type { RecordingEntry } from '../../../packages/core/src/records/recordings.ts';
 import { bulletHitRateWithHitRateUp, coreHitRateWithHitRateUp } from '../../../packages/core/src/frame/landing.ts';
 import { valuePiecesOf } from '../../../packages/core/src/skills/holders.ts';

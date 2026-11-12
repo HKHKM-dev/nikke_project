@@ -126,7 +126,7 @@ export type DecidedOn = { recording: string; role: DecidedRole };
 export type RunRepeat = { recording: string; decided?: string; reproduced: string; observations: string[] };
 
 /**
- * 定義に結び付かない結論の機構の名前（plan/design-minimal-relevance.md 3.2 節）。観測量の出どころ（records/observations.ts の
+ * 定義に結び付かない結論の機構の名前（plan/design-minimal-relevance.md 3.2 節）。観測量の出どころ（records/observations/types.ts の
  * OBSERVATION_SOURCES）の firing・gauge・burstChain・clock・target に、damageFormula（1 ヒットの式）・targetTable（的の表のコア命中率・
  * 弾丸命中率）を足したもの
  */

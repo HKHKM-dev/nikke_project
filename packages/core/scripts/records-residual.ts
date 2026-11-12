@@ -3,7 +3,8 @@
 // 引いた観測値のうち比べるものはモデルと比べて residuals.md と同じ列で、比べないものは値を出す。
 import { claimsByObservation } from '../src/records/claims.ts';
 import { V_ID } from '../src/records/ids.ts';
-import { renderOtherRows, renderResidualRows, type Observation } from '../src/records/observations.ts';
+import { renderOtherRows, renderResidualRows } from '../src/records/observations/render.ts';
+import type { Observation } from '../src/records/observations/types.ts';
 import { loadClaims, loadObservations, loadRecordsData, loadRecordingsFile, recordingMap } from './records-data.ts';
 import { runObservationsCached } from './residual-cache.ts';
 

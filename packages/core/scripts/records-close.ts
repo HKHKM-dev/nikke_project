@@ -14,7 +14,7 @@ import { closeChecks, markState, prBody, prTitle, residualCounts } from '../src/
 import { V_ID } from '../src/records/ids.ts';
 import { relevanceOf } from '../src/records/relevance.ts';
 import { withFreshSensitivity } from '../src/records/sensitivity.ts';
-import { invalidReasonsOf } from '../src/records/observations.ts';
+import { invalidReasonsOf } from '../src/records/observations/types.ts';
 import { comparePredictions } from '../src/records/predictions.ts';
 import {
   RESIDUALS_PATH,

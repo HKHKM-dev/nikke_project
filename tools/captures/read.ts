@@ -17,7 +17,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import type { Observation } from '../../packages/core/src/records/observations.ts';
+import type { Observation } from '../../packages/core/src/records/observations/types.ts';
 import { todayLocal } from '../../packages/core/src/records/predictions.ts';
 import { capturesDir } from './dirs.ts';
 import { RECIPES, findRecipe } from './recipes/index.ts';

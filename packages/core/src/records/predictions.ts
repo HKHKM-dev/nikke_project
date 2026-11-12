@@ -6,16 +6,11 @@
 import { runSimulation, type SimResult } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';
 import { V_ID } from './ids.ts';
-import {
-  buildTeamInput,
-  compareValue,
-  METRICS,
-  type CompareSetup,
-  type CompareSpec,
-  type Observation,
-  type RecordsData,
-  type Tolerance,
-} from './observations.ts';
+import { buildTeamInput, type RecordsData } from './observations/teamInput.ts';
+import { compareValue } from './observations/run.ts';
+import { METRICS } from './observations/metrics/index.ts';
+import type { CompareSetup } from './observations/setup.ts';
+import type { CompareSpec, Observation, Tolerance } from './observations/types.ts';
 import {
   validateRecordingBuild,
   type LegacyRecording,

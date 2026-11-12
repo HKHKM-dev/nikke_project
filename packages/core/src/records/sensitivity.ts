@@ -7,7 +7,10 @@
 // records/minimal/sensitivity.json に置く。records:check はそれを読む。
 import { runSimulation, type SimResult } from '../sim/engine.ts';
 import { isStatContent, type EdgeShift, type SkillDefinition, type SkillEffect } from '../skills/types.ts';
-import { METRICS, buildTeamInput, compareValue, type Observation, type RecordsData } from './observations.ts';
+import { METRICS } from './observations/metrics/index.ts';
+import { buildTeamInput, type RecordsData } from './observations/teamInput.ts';
+import { compareValue } from './observations/run.ts';
+import type { Observation } from './observations/types.ts';
 import type { RecordingEntry } from './recordings.ts';
 import {
   edgeRangeOf,

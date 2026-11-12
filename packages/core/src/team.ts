@@ -135,20 +135,20 @@ export type TeamInput = {
   /**
    * 比べる設定の拡張（plan/design-compare-setup-extension.md 3 節）: 手で撃ったチェーンの始まり（I の本当の発動）のゲーム内の
    * フレームの並び（昇順）。満タンの後の I をこのフレーム（満タンの 23f 後より前なら 23f 後）で撃ち、並びが尽きたら撃たない。
-   * II・III はオートと同じ。burst が true の動的サイクルだけ。録画の照合（records/observations.ts）だけが使う。利用者の計算には出さない
+   * II・III はオートと同じ。burst が true の動的サイクルだけ。録画の照合（records/observations/teamInput.ts）だけが使う。利用者の計算には出さない
    */
   manualBursts?: readonly number[];
   /**
    * 語彙はあるのに撮っていない効果の撮影（plan/design-skill-unrecorded.md 5 節）: バーストを使わない枠（0 始まり）。オートバースト OFF で
    * 手で撃たなかった枠（録画 0507 のナガ）を、チェーンの候補から外す。burst が true の動的サイクルだけ。録画の照合
-   * （records/observations.ts）と、画面のスロットの詳細設定「バーストしない」（apps/web の calcView.ts の buildCalcView）が使う
+   * （records/observations/teamInput.ts）と、画面のスロットの詳細設定「バーストしない」（apps/web の calcView.ts の buildCalcView）が使う
    */
   noBurstSlots?: readonly number[];
   /**
    * V-0605: 枠ごとの、オート射撃を手で OFF にしていた時間（ゲーム内のフレームの [start, end)。昇順・重なりなし）。その枠だけ、敵を
    * 狙えない窓（frame/firstPass.ts の untargetable）と同じくハイドする（撃たず、ハイド中のリロードをし、明けから構えてチャージし直す）。
    * 狙えない窓と違い、入るフレームに部分チャージの発を撃たない（録画 0860・0861 の OFF の 4 回）。ゲージとバーストの使用は止めない。
-   * 録画の照合（records/observations.ts）だけが使う。利用者の計算には出さない
+   * 録画の照合（records/observations/teamInput.ts）だけが使う。利用者の計算には出さない
    */
   holdFire?: readonly HoldFire[];
 };

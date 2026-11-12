@@ -26,7 +26,9 @@ import {
   validatePredictions,
 } from '../src/records/predictions.ts';
 import { RESULTS_MARKERS } from '../src/records/drafts.ts';
-import { invalidReasonsOf, renderResiduals, validateObservations } from '../src/records/observations.ts';
+import { invalidReasonsOf } from '../src/records/observations/types.ts';
+import { renderResiduals } from '../src/records/observations/render.ts';
+import { validateObservations } from '../src/records/observations/validate.ts';
 import { replaceGeneratedSection } from '../src/records/recordings.ts';
 import { definitionPlacesByClaim, renderSkills, validateSkillClaims } from '../src/records/skills.ts';
 import { renderSkillSupportIndex } from '../src/skills/support.ts';

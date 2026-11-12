@@ -2,7 +2,7 @@
 // チャージしない武器からチャージ武器への変更の語彙の検証と、Lv ごとの解決値
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { withAddedEffects } from '../../records/observations.ts';
+import { withAddedEffects } from '../../records/observations/setup.ts';
 import type { CharacterData } from '../../types.ts';
 import { isChargeWeapon } from '../../weapons.ts';
 import { firesChargeShots, MAX_SKILL_LEVELS, resolveStateGrants, resolveTimed } from '../resolve.ts';

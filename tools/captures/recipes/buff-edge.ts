@@ -21,13 +21,10 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadRecordingsFile, loadRecordsData } from '../../../packages/core/scripts/records-data.ts';
-import {
-  buildTeamInput,
-  METRICS,
-  type CompareSetup,
-  type CompareSpec,
-  type Observation,
-} from '../../../packages/core/src/records/observations.ts';
+import { buildTeamInput } from '../../../packages/core/src/records/observations/teamInput.ts';
+import { METRICS } from '../../../packages/core/src/records/observations/metrics/index.ts';
+import type { CompareSetup } from '../../../packages/core/src/records/observations/setup.ts';
+import type { CompareSpec, Observation } from '../../../packages/core/src/records/observations/types.ts';
 import { V_ID } from '../../../packages/core/src/records/ids.ts';
 import type { PredictionFile } from '../../../packages/core/src/records/predictions.ts';
 import type { RecordingEntry } from '../../../packages/core/src/records/recordings.ts';

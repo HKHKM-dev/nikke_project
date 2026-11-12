@@ -1,0 +1,5 @@
+{
+  "section": "8.2",
+  "order": -22,
+  "text": "観測値の照合のコード（records/observations.ts）を役割ごとのファイルに分ける（2026-11-12 起票）→ 完了（2026-11-12）: [design-observations-split.md](design-observations-split.md)"
+}

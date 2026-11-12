@@ -25,7 +25,8 @@ import type { TreasurePhase } from '../skills/treasure.ts';
 import type { SkillSlot } from '../types.ts';
 import { markElements, type Claim, type ClaimState, type ClaimWhen } from './claims.ts';
 import { normalConditionMeasured } from './minimal.ts';
-import type { Observation, ObservationKind, ObservationSource, RecordsData } from './observations.ts';
+import type { Observation, ObservationKind, ObservationSource } from './observations/types.ts';
+import type { RecordsData } from './observations/teamInput.ts';
 import type { RecordingEntry } from './recordings.ts';
 import type { SkillRoot } from './skills.ts';
 

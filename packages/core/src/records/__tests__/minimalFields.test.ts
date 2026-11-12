@@ -10,7 +10,8 @@ import {
 } from '../../../scripts/records-data.ts';
 import { parseSkillDefinition } from '../../skills/types.ts';
 import { validateMinimalFields, type Claim } from '../claims.ts';
-import { validateObservations, validateScope, type Observation } from '../observations.ts';
+import type { Observation } from '../observations/types.ts';
+import { validateObservations, validateScope } from '../observations/validate.ts';
 import { validateRecordings, type RecordingEntry } from '../recordings.ts';
 import { validateClaimSubjects, type DefinedCharacter } from '../skills.ts';
 

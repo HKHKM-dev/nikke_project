@@ -5,7 +5,11 @@ import { describe, expect, it } from 'vitest';
 import { loadRecordingsFile, loadRecordsData, recordingMap } from '../../../scripts/records-data.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput } from '../../team.ts';
-import { buildTeamInput, METRICS, validateObservations, type CompareSetup, type Observation } from '../observations.ts';
+import { buildTeamInput } from '../observations/teamInput.ts';
+import { METRICS } from '../observations/metrics/index.ts';
+import { validateObservations } from '../observations/validate.ts';
+import type { CompareSetup } from '../observations/setup.ts';
+import type { Observation } from '../observations/types.ts';
 
 const file = loadRecordingsFile();
 const recordings = recordingMap(file);

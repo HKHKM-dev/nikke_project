@@ -1,7 +1,7 @@
 // 対象の語彙編（plan/design-target-vocab.md 4 節）: 予測の仮説の override で定義に効果を足す（CompareSetup.addEffects）
 import { describe, expect, it } from 'vitest';
 import { loadSkillDefinitions } from '../../../scripts/records-data.ts';
-import { withAddedEffects } from '../observations.ts';
+import { withAddedEffects } from '../observations/setup.ts';
 
 const effect = { kind: 'passive', target: 'self', stat: 'attack', ref: 1 };
 

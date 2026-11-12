@@ -13,7 +13,8 @@ import {
 } from '../src/records/backlog.ts';
 import { toClaims, type Claim, type ClaimFile } from '../src/records/claims.ts';
 import { V_ID } from '../src/records/ids.ts';
-import type { Observation, RecordsData } from '../src/records/observations.ts';
+import type { Observation } from '../src/records/observations/types.ts';
+import type { RecordsData } from '../src/records/observations/teamInput.ts';
 import { sortRecordings, type RecordingEntry, type RecordingsFile } from '../src/records/recordings.ts';
 import { sensitivityId, type SensitivityEntry } from '../src/records/relevance.ts';
 import type { DefinedCharacter } from '../src/records/skills.ts';

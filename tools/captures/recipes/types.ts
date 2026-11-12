@@ -1,7 +1,7 @@
 // 読み取りのレシピ（plan/design-records-automation.md 3.4 節）。
 // レシピは「録画 → 観測値の列」の手順を 1 つのモジュールにしたもの。名前と版を持ち、出力の観測値の method.tool に
 // `recipe:<名前>@<版>` を書く。目で数える値はレシピの外（観測値の method.note に書く）。
-import type { Observation, ObservationKind } from '../../../packages/core/src/records/observations.ts';
+import type { Observation, ObservationKind } from '../../../packages/core/src/records/observations/types.ts';
 import type { RecordingEntry } from '../../../packages/core/src/records/recordings.ts';
 
 /** レシピに渡す文脈 */

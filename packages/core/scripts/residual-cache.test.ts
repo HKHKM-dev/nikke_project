@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { predictionKey, runObservations, type Prediction } from '../src/records/observations.ts';
+import { predictionKey, runObservations, type Prediction } from '../src/records/observations/run.ts';
 import { loadObservations, loadRecordingsFile, loadRecordsData, recordingMap } from './records-data.ts';
 import { MODEL_ROOTS, modelHash, openPredictionMemo, runObservationsCached } from './residual-cache.ts';
 

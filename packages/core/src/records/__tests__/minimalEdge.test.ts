@@ -11,7 +11,8 @@ import {
 import { runSimulation } from '../../sim/engine.ts';
 import { itemsOf, shiftEdges } from '../../skills/holders.ts';
 import { validateMinimalFields, type Claim } from '../claims.ts';
-import { buildTeamInput, type Observation } from '../observations.ts';
+import { buildTeamInput } from '../observations/teamInput.ts';
+import type { Observation } from '../observations/types.ts';
 import { edgeRangeOf, elementsOf, relevanceOf, sensitivityKey, type SensitivityEntry } from '../relevance.ts';
 import { edgeDefinition, edgeShiftOf, sensitivityOf } from '../sensitivity.ts';
 

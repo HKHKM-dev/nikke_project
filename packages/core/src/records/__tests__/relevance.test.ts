@@ -12,7 +12,7 @@ import {
   recordingMap,
 } from '../../../scripts/records-data.ts';
 import type { Claim } from '../claims.ts';
-import type { Observation } from '../observations.ts';
+import type { Observation } from '../observations/types.ts';
 import type { RecordingEntry } from '../recordings.ts';
 import {
   classOf,

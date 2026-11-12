@@ -5,7 +5,7 @@
 //   文の一致で対応づけ、分かれ目の版の印からいつも計算し直す）
 import type { SkillDefinition, SkillNote } from '../skills/types.ts';
 import { markElements, type Claim, type ClaimFile, type MinimalMark } from './claims.ts';
-import type { Observation } from './observations.ts';
+import type { Observation } from './observations/types.ts';
 import { elementsOf, type MarkRef, type RelevanceContext } from './relevance.ts';
 import { entriesOf } from './skills.ts';
 

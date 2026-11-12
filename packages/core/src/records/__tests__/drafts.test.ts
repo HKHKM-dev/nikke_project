@@ -14,7 +14,7 @@ import {
 } from '../drafts.ts';
 import { mechanismConfirmed, normalConditionMeasured } from '../minimal.ts';
 import { elementsOf } from '../relevance.ts';
-import type { Observation } from '../observations.ts';
+import type { Observation } from '../observations/types.ts';
 import { parseVerification } from '../verifications.ts';
 import type { SkillDefinition } from '../../skills/types.ts';
 

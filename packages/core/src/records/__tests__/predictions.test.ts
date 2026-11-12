@@ -12,7 +12,7 @@ import {
 } from '../../../scripts/records-data.ts';
 import { gradeCandidate, type Claim } from '../claims.ts';
 import { openStaleness, openVerificationIds, verificationExtraLines } from '../extras.ts';
-import type { Observation } from '../observations.ts';
+import type { Observation } from '../observations/types.ts';
 import {
   comparePredictions,
   indistinguishableTargets,

@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { loadObservations, loadRecordingsFile, loadRecordsData, recordingMap } from '../../../scripts/records-data.ts';
 import { planTeamRun } from '../../frame/plan.ts';
 import { gameSecondsToFrames } from '../../time.ts';
-import { buildTeamInput } from '../observations.ts';
+import { buildTeamInput } from '../observations/teamInput.ts';
 import { piecesOf } from '../../__tests__/historyHelpers.ts';
 
 const file = loadRecordingsFile();

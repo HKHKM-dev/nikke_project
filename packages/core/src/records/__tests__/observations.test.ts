@@ -36,19 +36,13 @@ import { coreHitRateWithHitRateUp } from '../../frame/landing.ts';
 import { computeBurstHit } from '../../skills/burstDamage.ts';
 import { runSimulation, type SimResult } from '../../sim/engine.ts';
 import type { TeamInput } from '../../team.ts';
-import {
-  METRICS,
-  buildTeamInput,
-  compareValue,
-  invalidReasonsOf,
-  renderOtherRows,
-  renderResiduals,
-  runObservations,
-  validateObservations,
-  withoutEffects,
-  type Observation,
-  jumpWindowsOf,
-} from '../observations.ts';
+import { METRICS } from '../observations/metrics/index.ts';
+import { buildTeamInput, withoutEffects } from '../observations/teamInput.ts';
+import { compareValue, runObservations } from '../observations/run.ts';
+import { invalidReasonsOf, type Observation } from '../observations/types.ts';
+import { renderOtherRows, renderResiduals } from '../observations/render.ts';
+import { validateObservations } from '../observations/validate.ts';
+import { jumpWindowsOf } from '../observations/setup.ts';
 import { extractGeneratedSection, type ProjectRecording } from '../recordings.ts';
 import { relevanceCounts, relevanceOf } from '../relevance.ts';
 import { definitionPlacesByClaim } from '../skills.ts';

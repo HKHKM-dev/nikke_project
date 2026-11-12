@@ -9,7 +9,8 @@ import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.t
 import { planTeamRun } from '../frame/plan.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
-import { buildTeamInput, METRICS } from '../records/observations.ts';
+import { buildTeamInput } from '../records/observations/teamInput.ts';
+import { METRICS } from '../records/observations/metrics/index.ts';
 import { shotCountWeight } from '../skills/triggers.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { loadRecordingsFile, loadRecordsData, recordingMap } from '../../scripts/records-data.ts';

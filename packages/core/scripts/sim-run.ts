@@ -60,7 +60,7 @@ import {
   type FarLanding,
   type MidFarLanding,
   type NearLanding,
-} from '../src/records/observations.ts';
+} from '../src/records/observations/setup.ts';
 import { ENEMY_PRESETS_PATH, MASTER_FILES } from '../src/load.ts';
 import type { GrowthInput } from '../src/stats.ts';
 import { runSimulation, simIntervalTotals } from '../src/sim/engine.ts';
