@@ -15,6 +15,7 @@ import {
   partialChargeTriggerDamage,
   type ModelNote,
   type TriggerDamage,
+  type EnemyInput,
 } from '../damage.ts';
 import {
   autoAttackCoreRowNotes,
@@ -215,109 +216,8 @@ export function runSimulation(simInput: SimInput): SimResult {
   // 出し、バフも着弾のフレームの区間で引く（本体は発射のフレームのまま）
   const flights = slotFlightsOf(slots, enemy, frames);
   const segmentEnds = timeline.segments.map((s) => s.end);
-  const runners: (Runner | null)[] = slots.map((slot, index) => {
-    if (slot === null) return null;
-    const base = {
-      character: slot.character,
-      growth: slot.growth,
-      enemy,
-      attackOverride: slot.attackOverride,
-      attackRounding: input.attackRounding,
-    };
-    const passive = timeline.passive[index] ?? EMPTY_BUFF_STATE;
-    const perShot = perShotDamageOf(slot);
-    const shotFrames = shots[index]?.frames ?? [];
-    const flight = flights[index]?.shot ?? null;
-    const landAt = flight === null || perShot.length === 0 ? null : (f: number) => f + flightFramesAt(flight, f);
-    // 戦闘の終わりの後に着く発の射撃ごとの倍率ダメージは出さない
-    const landings =
-      landAt === null
-        ? []
-        : shotFrames
-            .map(landAt)
-            .filter((f) => f < frames)
-            .sort((a, b) => a - b);
-    // 区間ごとの 1 トリガー値と発数。発数は射撃の列から二分探索で引く（区間は [0, frames) を隙間なく覆う）
-    const segments: SimSlotSegment[] = timeline.segments.map((segment) => {
-      const state = segment.slots[index] ?? EMPTY_BUFF_STATE;
-      const trigger = slotTriggerDamage(
-        slot,
-        index,
-        enemy,
-        landing,
-        segment.landing,
-        state.buffs,
-        segment.fullBurst,
-        perShot,
-        input.attackRounding,
-      );
-      const range = [{ start: segment.start, end: segment.end }];
-      const triggers = countShotsInRanges(shotFrames, range);
-      // 部分チャージの発（C-1001。値は C-0855）は、その発のチャージの進みで値を出し直す
-      const partial = partialShotsInRanges(shots[index]?.partialShots, range);
-      const partialDamage = partial.reduce((sum, p) => sum + partialChargeTriggerDamage(trigger, p).perTrigger, 0);
-      const landed = landAt === null ? undefined : countShotsInRanges(landings, range);
-      // 着弾で出す枠は、射撃ごとの倍率ダメージを撃った数から着いた数に置き換える
-      const damage =
-        trigger.perTrigger * (triggers - partial.length) +
-        partialDamage +
-        (landed === undefined ? 0 : trigger.perShot * (landed - triggers));
-      return {
-        start: segment.start,
-        end: segment.end,
-        seconds: segment.seconds,
-        fullBurst: segment.fullBurst,
-        buffs: state.buffs,
-        passiveEffects: state.passiveEffects,
-        timedEffects: state.timedEffects,
-        trigger,
-        triggers,
-        damage,
-        ...(partial.length > 0 ? { partialCharge: { triggers: partial.length, damage: partialDamage } } : {}),
-        ...(landed === undefined ? {} : { landedShots: landed }),
-      };
-    });
-    const autoCondition = autoConditionSummary(landing, slot, index, shotFrames, hitRateNSpansOf(timeline, index));
-    return {
-      index,
-      shots: shotFrames,
-      partial: new Map((shots[index]?.partialShots ?? []).map((p) => [p.frame, p.progress])),
-      landAt,
-      result: {
-        index,
-        character: slot.character,
-        baseAttack: baseAttackOf(slot),
-        notes: [
-          ...modelNotes(slot.character),
-          ...slotConditionNotes(landing, slot, index, enemy, autoCondition),
-          ...autoAttackCoreRowNotes(slot, enemy),
-          ...removeDebuffNotes(history, index),
-        ],
-        passiveBuffs: passive.buffs,
-        passiveEffects: passive.passiveEffects,
-        buildEffects: passive.buildEffects,
-        segments,
-        normalDamage: 0,
-        // 代表値（1 発動の内訳）は割当に関係なく出す。発動があれば 1 回目のスナップショットで上書きする
-        burst: {
-          activations: [],
-          hit: slotBurstHit(
-            slot.skills?.definition,
-            slot.skills?.levels ?? MAX_SKILL_LEVELS,
-            slot.character,
-            enemy,
-            computeTriggerDamage({ ...base, buffs: passive.buffs, condition: { ...slot.condition, fullBurst: false } }),
-            passive.buffs,
-          ),
-          damage: 0,
-          hits: [],
-        },
-        skillHits: { frames: [], damage: 0 },
-        totalDamage: 0,
-        autoCondition,
-      },
-    };
-  });
+  const runnerContext: RunnerContext = { enemy, input, timeline, shots, flights, frames, landing, history };
+  const runners: (Runner | null)[] = slots.map((slot, index) => createRunner(runnerContext, slot, index));
 
   // バーストの倍率ダメージはヒットのフレーム（発動 + 遅れ）に出す。遅れの無いキャラは発動のフレーム（時刻表の順のまま）。
   // 分かれたヒットはヒットごとに、倍率の share ぶんを出す（plan/design-burst-split-hits.md 4 節）
@@ -331,53 +231,17 @@ export function runSimulation(simInput: SimInput): SimResult {
   // 発動ごとの、当たったヒットの部分（結果の burst.hits は発動ごとに 1 つで、値はその和）
   const burstParts = new Map<BurstActivation, { index: number; parts: { hit: BurstHitResult; share: number }[] }>();
   // バーストのヒット（ヒットのフレーム順。同じフレームなら時刻表の順 = I → II → III）。値は burstHits と同じ並び（出さないヒットは null）
-  const burstHitDamages = burstHits.map(({ activation, frame: f, share }): number | null => {
-    const index = activation.slotIndex;
-    const runner = runners[index];
-    if (!runner) return null;
-    const slot = slots[index]!;
-    const buffs = burstHitBuffs(
-      timeline,
-      activation.frame,
-      f,
-      index,
-      BURST_HIT_USES_PRE_ACTIVATION_BUFFS,
-      sameActivationPiecesOf(history, slot.character),
-      enemy.burstHitEnemyDebuffs,
-    );
-    const trigger = computeTriggerDamage({
-      character: slot.character,
-      growth: slot.growth,
-      enemy,
-      attackOverride: slot.attackOverride,
-      attackRounding: input.attackRounding,
-      buffs,
-      condition: { ...slot.condition, fullBurst: false },
-    });
-    const hit = slotBurstHit(
-      slot.skills?.definition,
-      slot.skills?.levels ?? MAX_SKILL_LEVELS,
-      slot.character,
-      enemy,
-      trigger,
-      buffs,
-    );
-    if (hit === null) return null;
-    const result = runner.result.burst;
-    let entry = burstParts.get(activation);
-    if (entry === undefined) {
-      entry = { index: result.activations.length, parts: [] };
-      burstParts.set(activation, entry);
-      result.activations.push(f);
-    }
-    entry.parts.push({ hit, share });
-    const combined = combineBurstHitParts(entry.parts);
-    result.hits[entry.index] = combined;
-    if (entry.index === 0) result.hit = combined;
-    const damage = hit.perActivation * share;
-    addPerSecond(index, f, damage);
-    return damage;
-  });
+  const burstHitContext: BurstHitContext = {
+    runners,
+    slots,
+    timeline,
+    history,
+    enemy,
+    input,
+    burstParts,
+    addPerSecond,
+  };
+  const burstHitDamages = burstHits.map((hit) => burstHitDamageOf(burstHitContext, hit));
   const addSkillHit = (h: SkillHitEvent): void => {
     if (h.frame >= frames) return;
     const runner = runners[h.slotIndex];
@@ -448,6 +312,185 @@ export function runSimulation(simInput: SimInput): SimResult {
     history,
     events,
   };
+}
+
+type RunnerContext = {
+  enemy: EnemyInput;
+  input: SimInput;
+  timeline: TeamPlan['timeline'];
+  shots: TeamPlan['shots'];
+  flights: ReturnType<typeof slotFlightsOf>;
+  frames: number;
+  landing: TeamPlan['landing'];
+  history: TeamPlan['history'];
+};
+
+/** 枠の区間ごとの読み手を作る（2 パス目。区間の発数とダメージ・1 秒ごとのダメージを引く） */
+function createRunner(c: RunnerContext, slot: SimInput['slots'][number], index: number) {
+  const { enemy, input, timeline, shots, flights, frames, landing, history } = c;
+  if (slot === null) return null;
+  const base = {
+    character: slot.character,
+    growth: slot.growth,
+    enemy,
+    attackOverride: slot.attackOverride,
+    attackRounding: input.attackRounding,
+  };
+  const passive = timeline.passive[index] ?? EMPTY_BUFF_STATE;
+  const perShot = perShotDamageOf(slot);
+  const shotFrames = shots[index]?.frames ?? [];
+  const flight = flights[index]?.shot ?? null;
+  const landAt = flight === null || perShot.length === 0 ? null : (f: number) => f + flightFramesAt(flight, f);
+  // 戦闘の終わりの後に着く発の射撃ごとの倍率ダメージは出さない
+  const landings =
+    landAt === null
+      ? []
+      : shotFrames
+          .map(landAt)
+          .filter((f) => f < frames)
+          .sort((a, b) => a - b);
+  // 区間ごとの 1 トリガー値と発数。発数は射撃の列から二分探索で引く（区間は [0, frames) を隙間なく覆う）
+  const segments: SimSlotSegment[] = timeline.segments.map((segment) => {
+    const state = segment.slots[index] ?? EMPTY_BUFF_STATE;
+    const trigger = slotTriggerDamage(
+      slot,
+      index,
+      enemy,
+      landing,
+      segment.landing,
+      state.buffs,
+      segment.fullBurst,
+      perShot,
+      input.attackRounding,
+    );
+    const range = [{ start: segment.start, end: segment.end }];
+    const triggers = countShotsInRanges(shotFrames, range);
+    // 部分チャージの発（C-1001。値は C-0855）は、その発のチャージの進みで値を出し直す
+    const partial = partialShotsInRanges(shots[index]?.partialShots, range);
+    const partialDamage = partial.reduce((sum, p) => sum + partialChargeTriggerDamage(trigger, p).perTrigger, 0);
+    const landed = landAt === null ? undefined : countShotsInRanges(landings, range);
+    // 着弾で出す枠は、射撃ごとの倍率ダメージを撃った数から着いた数に置き換える
+    const damage =
+      trigger.perTrigger * (triggers - partial.length) +
+      partialDamage +
+      (landed === undefined ? 0 : trigger.perShot * (landed - triggers));
+    return {
+      start: segment.start,
+      end: segment.end,
+      seconds: segment.seconds,
+      fullBurst: segment.fullBurst,
+      buffs: state.buffs,
+      passiveEffects: state.passiveEffects,
+      timedEffects: state.timedEffects,
+      trigger,
+      triggers,
+      damage,
+      ...(partial.length > 0 ? { partialCharge: { triggers: partial.length, damage: partialDamage } } : {}),
+      ...(landed === undefined ? {} : { landedShots: landed }),
+    };
+  });
+  const autoCondition = autoConditionSummary(landing, slot, index, shotFrames, hitRateNSpansOf(timeline, index));
+  return {
+    index,
+    shots: shotFrames,
+    partial: new Map((shots[index]?.partialShots ?? []).map((p) => [p.frame, p.progress])),
+    landAt,
+    result: {
+      index,
+      character: slot.character,
+      baseAttack: baseAttackOf(slot),
+      notes: [
+        ...modelNotes(slot.character),
+        ...slotConditionNotes(landing, slot, index, enemy, autoCondition),
+        ...autoAttackCoreRowNotes(slot, enemy),
+        ...removeDebuffNotes(history, index),
+      ],
+      passiveBuffs: passive.buffs,
+      passiveEffects: passive.passiveEffects,
+      buildEffects: passive.buildEffects,
+      segments,
+      normalDamage: 0,
+      // 代表値（1 発動の内訳）は割当に関係なく出す。発動があれば 1 回目のスナップショットで上書きする
+      burst: {
+        activations: [],
+        hit: slotBurstHit(
+          slot.skills?.definition,
+          slot.skills?.levels ?? MAX_SKILL_LEVELS,
+          slot.character,
+          enemy,
+          computeTriggerDamage({ ...base, buffs: passive.buffs, condition: { ...slot.condition, fullBurst: false } }),
+          passive.buffs,
+        ),
+        damage: 0,
+        hits: [],
+      },
+      skillHits: { frames: [], damage: 0 },
+      totalDamage: 0,
+      autoCondition,
+    },
+  };
+}
+
+type BurstHitContext = {
+  runners: readonly (Runner | null)[];
+  slots: SimInput['slots'];
+  timeline: TeamPlan['timeline'];
+  history: TeamPlan['history'];
+  enemy: EnemyInput;
+  input: SimInput;
+  burstParts: Map<BurstActivation, { index: number; parts: { hit: BurstHitResult; share: number }[] }>;
+  addPerSecond: (slotIndex: number, frame: number, damage: number) => void;
+};
+
+/** バーストのヒット 1 つの値（出さないヒットは null）。発動ごとの当たったヒットの部分（burstParts）に足す */
+function burstHitDamageOf(c: BurstHitContext, hitAt: BurstHitAt): number | null {
+  const { runners, slots, timeline, history, enemy, input, burstParts, addPerSecond } = c;
+  const { activation, frame: f, share } = hitAt;
+  const index = activation.slotIndex;
+  const runner = runners[index];
+  if (!runner) return null;
+  const slot = slots[index]!;
+  const buffs = burstHitBuffs(
+    timeline,
+    activation.frame,
+    f,
+    index,
+    BURST_HIT_USES_PRE_ACTIVATION_BUFFS,
+    sameActivationPiecesOf(history, slot.character),
+    enemy.burstHitEnemyDebuffs,
+  );
+  const trigger = computeTriggerDamage({
+    character: slot.character,
+    growth: slot.growth,
+    enemy,
+    attackOverride: slot.attackOverride,
+    attackRounding: input.attackRounding,
+    buffs,
+    condition: { ...slot.condition, fullBurst: false },
+  });
+  const hit = slotBurstHit(
+    slot.skills?.definition,
+    slot.skills?.levels ?? MAX_SKILL_LEVELS,
+    slot.character,
+    enemy,
+    trigger,
+    buffs,
+  );
+  if (hit === null) return null;
+  const result = runner.result.burst;
+  let entry = burstParts.get(activation);
+  if (entry === undefined) {
+    entry = { index: result.activations.length, parts: [] };
+    burstParts.set(activation, entry);
+    result.activations.push(f);
+  }
+  entry.parts.push({ hit, share });
+  const combined = combineBurstHitParts(entry.parts);
+  result.hits[entry.index] = combined;
+  if (entry.index === 0) result.hit = combined;
+  const damage = hit.perActivation * share;
+  addPerSecond(index, f, damage);
+  return damage;
 }
 
 type BurstHitAt = { activation: BurstActivation; frame: number; share: number };
