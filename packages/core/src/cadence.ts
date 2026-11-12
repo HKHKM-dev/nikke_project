@@ -228,6 +228,10 @@ export function ceilChunkFrames(params: FiringParams): number {
   return Math.ceil(params.reloadChunkFrames - 1e-9);
 }
 
+/**
+ * マガジン 1 周期から出す平均レート（閉じた式）。本番の計算は呼ばない（射撃の列は frame/shooter.ts が同じ部品から作る）。
+ * 射撃場の録画で較正した式として、射手の検算（__tests__/cadenceConvergence.test.ts）の基準に使う
+ */
 export function computeCadence(
   shot: ShotParams,
   model: WeaponModel = DEFAULT_WEAPON_MODEL,

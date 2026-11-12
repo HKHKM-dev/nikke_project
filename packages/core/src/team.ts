@@ -1,7 +1,6 @@
 // 編成の入力（枠・条件・スキル）と結果の型、入力の検証。結果（TeamResult）は sim/teamResult.ts の simTeamResult が作る。
 // 1 パス目は frame/plan.ts、計算の入口は sim/engine.ts の runSimulation。
 import type { BurstSchedule, BurstScheduleModel, BurstSummary } from './burst/schedule.ts';
-import type { CadenceResult } from './cadence.ts';
 import {
   baseAttackOf,
   baseDefenceOf,
@@ -257,8 +256,6 @@ export type TeamSlotResult = {
   character: CharacterData;
   /** バフ前の攻撃力（素、またはスペック固定値）。区間に依らない */
   baseAttack: number;
-  /** 発射サイクル（平均レート）。Stage 10: 常時分の射撃バフを畳み込んだもの（持続分は含まない。表示用） */
-  cadence: CadenceResult;
   notes: ModelNote[];
   /** 常時パッシブだけのバフ合計（Stage 4 互換の表示用） */
   passiveBuffs: BuffTotals;

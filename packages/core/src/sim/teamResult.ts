@@ -63,7 +63,6 @@ export function simTeamResult(teamInput: TeamInput, sim: SimResult): TeamResult 
       index,
       character: slot.character,
       baseAttack: slot.baseAttack,
-      cadence: slot.cadence,
       notes: slot.notes,
       passiveBuffs: slot.passiveBuffs,
       passiveEffects: slot.passiveEffects,

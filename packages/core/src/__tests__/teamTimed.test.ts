@@ -13,6 +13,7 @@ import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { type SlotCondition, type TeamSlotInput } from '../team.ts';
 import type { SkillRaw } from '../types.ts';
+import { averageCadence } from './averageRate.ts';
 import { makeCharacter } from './fixtures.ts';
 import { FIXED_BURST_CYCLE } from '../burst/fixedCycle.ts';
 import { battleSecondsToFrames, framesToGameSeconds, gameSecondsToFrames } from '../time.ts';
@@ -167,7 +168,9 @@ describe('6.2 degeneration: without timed effects the model is Stage 5’s two i
         expect(s.segments[i]!.triggers).toBe(count);
         expect(s.segments[i]!.damage).toBeCloseTo(count * s.segments[i]!.trigger.perTrigger, 6);
         // Stage 5 の 2 区間の期待値（平均レート × 秒数）とは 1 マガジン未満の離散化の差だけ
-        expect(Math.abs(count - s.cadence.triggersPerSecond * secs[i]!)).toBeLessThanOrEqual(s.character.shot.maxAmmo);
+        expect(Math.abs(count - averageCadence(s).triggersPerSecond * secs[i]!)).toBeLessThanOrEqual(
+          s.character.shot.maxAmmo,
+        );
       }
       expect(s.segments[1]!.trigger.boost.fullBurst).toBe(0.5);
       expect(s.normalDamage + s.burst.totalDamage).toBeCloseTo(s.totalDamage, 6);

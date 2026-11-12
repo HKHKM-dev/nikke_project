@@ -1,4 +1,4 @@
-// 1 体が受けるバフの合計と、ダメージ式への適用（純関数）。computeDamage はここの関数を呼ぶだけにする。
+// 1 体が受けるバフの合計と、ダメージ式への適用（純関数）。computeTriggerDamage（damage.ts）はここの関数を呼ぶだけにする。
 import type { CharacterData, ShotParams } from '../types.ts';
 import type { ResolvedEffect } from './resolve.ts';
 import type { BuffStat } from './types.ts';
