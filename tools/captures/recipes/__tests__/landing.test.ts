@@ -36,6 +36,16 @@ describe('summarizeLanding', () => {
     expect(s).toMatchObject({ width: 368, used: 3, total: 6, top: 306, aimY: 475, landing: 'A' });
   });
 
+  it('幅の読めなかったフレーム（NaN）を除いて中央値を取る', () => {
+    const rows = [
+      row({ frame: 0, bandW: 360 }),
+      row({ frame: 20, bandW: Number.NaN }),
+      row({ frame: 40, bandW: 368 }),
+      row({ frame: 60, bandW: 370 }),
+    ];
+    expect(summarizeLanding(rows)).toMatchObject({ width: 368, used: 3, total: 4, landing: 'A' });
+  });
+
   it('使えるフレームが無ければ幅は出ない', () => {
     expect(summarizeLanding([row({ top: 170 })]).width).toBeUndefined();
   });
