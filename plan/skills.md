@@ -1151,7 +1151,7 @@ notes の種類: 未対応 37・前提の外 58・計算に無関係 47・補足
   - effects[1] passive・exploreRouteStage2 のフルスタックの間・coreDamage: C-1010（確定）
   - effects[2] passive・exploreRouteStage3 のフルスタックの間・critRate: C-1010（確定）
 - **skill2**: supported
-  - effects[0] state・normalShot・exploreRouteStage1（hitRate・attack）: C-1009（確定）、C-1024（仮説）、C-1029（仮説）、C-1138（仮説）
+  - effects[0] state・normalShot・exploreRouteStage1（hitRate・attack）: C-1009（確定）、C-1024（仮説）、C-1029（仮説）、C-1145（仮説）
   - effects[1] state・normalShot・exploreRouteStage2（hitRate・attack）: C-1009（確定）
   - effects[2] state・normalShot・exploreRouteStage3（hitRate・attack）: C-1009（確定）
 - **burst**: supported
