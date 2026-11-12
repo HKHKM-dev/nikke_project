@@ -34,11 +34,10 @@
     "element": "Fire"
   },
   "mode": "range-3min",
-  "fixedSpec": false,
-  "buildSnapshot": "2026-11-08-2",
+  "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "",
+  "conditionNote": "出撃画面の表示はスペック固定 ON（撮影の依頼は OFF。V-0750）。A2 の 1 ヒットと B モードの間の発の間もスペック固定 ON の録画 1084・1085 と同じ値",
   "backup": {
     "at": "2026-11-12T22:53+09:00",
     "via": "cloud-move",
