@@ -107,3 +107,26 @@ export function parseRef(v: Json, path: string): number {
   }
   return v;
 }
+
+/**
+ * 書ける欄の一覧に無い欄を落とす（plan/design-split-long-functions.md 3.2 節）。欄は Object.keys の順に見る。message は落とすときの文
+ */
+export function rejectUnknownKeys(
+  v: Record<string, Json>,
+  allowed: readonly string[],
+  path: string,
+  message = 'unknown field',
+): void {
+  for (const key of Object.keys(v)) if (!allowed.includes(key)) fail(`${path}.${key}`, message);
+}
+
+/** true だけを書ける欄。ほかの値なら「expected true, got …」で落とす */
+export function parseTrue(v: Json, path: string): true {
+  if (v !== true) fail(path, `expected true, got ${JSON.stringify(v)}`);
+  return true;
+}
+
+/** 効果の assumes（いつも満たすとみなした条件）。書いてあれば読んで effect に足す */
+export function parseAssumes(v: Record<string, Json>, effect: { assumes?: LocalizedText }, path: string): void {
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+}

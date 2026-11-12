@@ -2,7 +2,7 @@
 
 - 何のための文書か: スキル定義のパーサ（`packages/core/src/skills/parse/`）と Web 画面（`apps/web/src/`）の長い関数・コンポーネントを、動きを変えずに分ける変更の、今の構造・分け方・段・確かめ方
 - 対象: パーサの `parseDamageEffect`・`parseTimedFields`・`parseTrigger`・`parseStateGrantEffect`・`parseInstantEffect`・`parseDotEffect` と、その間で繰り返している欄の検査。画面の `ModernView`・`App`・`BuildSection`・`CharacterTray`・`RosterEditModal`
-- 状態: 承認待ち（4 節の論点）
+- 状態: 進行中（4 節の決定。段は 5 節）
 - 関連: [skills-guide.md](skills-guide.md) 1.4 節（語彙を足すときの手順。パーサの入口は `parseSkillDefinition`）、[design-roster-edit.md](design-roster-edit.md)（育成状況の編集。`RosterEditModal`・`useRoster` を足した）、[design-modern-ui.md](design-modern-ui.md)
 - 作成日: 2026-11-12
 - 調べた時点: main の 6884f8e1
@@ -106,9 +106,11 @@
 - **`CharacterTray`**: 同じファイルに `TrayFilters`（バッジ・宝物・クリア）・`TraySortMenu`（並べ替えのポップアップと知らせ）・`TrayShapeToggle` を置く。
 - **`RosterEditModal`**: 同じファイルに `RosterEditList`（左の一覧と絞り込み）と `RosterEditFooter`（全部を戻す・閉じる）を置き、選択・前後のニケ・狭い画面の切り替えは `useRosterEditSelection` のフック（同じファイル）にする。
 
-## 4. 論点（オーナーの判断）
+## 4. 決めたこと（2026-11-12、オーナー）
 
-| #   | 論点                                           | 推奨                                                                                                                               | ほかの案                                                                                           |
+論点を推奨の案で出し、オーナーがすべて推奨のとおり承認した。
+
+| #   | 論点                                           | 決定                                                                                                                               | 選ばなかった案                                                                                     |
 | --- | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | 1   | 設計書と段                                     | 設計書は 1 本。段は 4 つ（5 節）で、段ごとに 1 PR                                                                                  | パーサと画面で設計書を 2 本に分ける（どちらも動きを変えない分割で、論点が共通なので 1 本で足りる） |
 | 2   | 共通の部品を使う範囲                           | `parse/` の全部のファイル（対象の 6 関数のほかの `attack.ts`・`weapon.ts`・`condition.ts` なども）                                 | 対象の 6 関数だけ（差分は小さいが、同じ形が 2 通りの書き方で残る）                                 |
@@ -156,14 +158,22 @@
 
 ## 8. 作り
 
-（実装の段で書く）
+### 8.1 段 P1（2026-11-12）
+
+- 共通の部品 `rejectUnknownKeys`・`parseTrue`・`parseAssumes` を `common.ts` に足し、`parse/` の全部のファイルの同じ形を置き換えた。文の違う不明な欄の検査（召喚の攻撃・蓄積して爆発）は `message` で渡した。不明な欄と許す欄を同じ式で見ていない時間の周期の検査は、許す欄を並べ直して部品にした（`everySeconds` と印）。
+- `parseTrigger` は `TriggerOptions` を受け、`parseTimerTrigger`・`parseShotCountTrigger`（中で `parseCountingWindow`・`parseFiringWindow`・`parseChance`）・`parseEventCountTrigger` に分けた。true だけの形の 2 つ（weaponChangeEnd・reloadEnd）は `parseTrueOnlyTrigger` にまとめた。
+- `parseDamageEffect` は 3.3 節のとおり。名前は `parseGaugeHitsAndCondition`（ゲージのヒットと条件）・`parseDamagePerCount`（perCount の値。`parseHitShape` から呼ぶ）にした。coreHit は今の順（ヒットごとのゲージの後、perCount の間隔の前）を守るため、`parseDamageEffect` に 1 行で残した。
+- `parseDotEffect` は `parseDotCondition`・`parseDotFirstTick`（間隔と秒の維持の比べ・firstTick）・`parseDotTickShape`・`parseDotCounter`・`parseDotStacks`・`parseDotGauge` に分けた。敵の状態（state）は今の順（firstTick の後、maxStacksRef の前）を守るため、`parseDotEffect` に 1 行で残した。
+- `parseInstantEffect` は、書ける欄を `INSTANT_COMMON_KEYS` と `INSTANT_KEYS_OF` の表にし、`parseInstantTrigger`・`parseInstantTarget`・`parseInstantKindFields` に分けた。heal の healed の検査は、残弾数減少・現在の HP▼ の対象の検査より前に移した（種類が違うので、同じ定義で両方が落ちることはない）。
+- 確かめ: 6.1 節のとおり。全部の定義の読み込みの結果と、`npm test` の間に出たエラー文の列（並べ替えて比べた）が main と一致した。
 
 ## 9. 扱わないもの
 
-- 対象の外の長い関数: `frame/firstPass.ts` の `runFirstPassOnce`、`skills/holders.ts` の `createHolderLists`、`frame/plan.ts` の `planSkillHits`、`sim/engine.ts` の `runSimulation`、`skills/catalogDoc.ts` の `renderSkillCatalog`、`records/observations.ts` の `validateObservations`、`apps/web/src/useRoster.ts` の `useRoster`。計算の中心（1 パス目・2 パス目）は、分けるときに速さと結果の一致の確かめ方が別に要る。
+- 対象の外の長い関数: `frame/firstPass.ts` の `runFirstPassOnce`、`skills/holders.ts` の `createHolderLists`、`frame/plan.ts` の `planSkillHits`、`sim/engine.ts` の `runSimulation`、`skills/catalogDoc.ts` の `renderSkillCatalog`、`records/observations.ts` の `validateObservations`、`apps/web/src/useRoster.ts` の `useRoster`、`skills/parse/weapon.ts` の `parseWeaponChangeEffect`。計算の中心（1 パス目・2 パス目）は、分けるときに速さと結果の一致の確かめ方が別に要る。
 - 語彙・検査の規則・エラー文・画面の見た目の変更。
 - テストの長い `describe` の分割。
 
 ## 10. 経過
 
-- 2026-11-12: 起票。
+- 2026-11-12: 起票。オーナーが 4 節の論点をすべて推奨の案で承認した。
+- 2026-11-12: 段 P1 を実装した（8.1 節）。
