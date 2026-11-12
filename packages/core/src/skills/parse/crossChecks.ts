@@ -467,7 +467,7 @@ function validateWhileEffects(entries: Partial<Record<SkillSlot, SkillEntry>>, r
   );
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
-      if (e.kind !== 'passive' || e.while === undefined) return;
+      if ((e.kind !== 'passive' && e.kind !== 'allyGaugeAdd') || e.while === undefined) return;
       // カウンタの while は、同じ定義にそのカウンタを増やす counterChange が要る
       if ('selfCounter' in e.while) {
         const { counter } = e.while.selfCounter;

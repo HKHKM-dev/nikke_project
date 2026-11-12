@@ -10,8 +10,11 @@ import {
   hitFramesOf,
   videoFrameOf,
 } from '../../../burst/schedule.ts';
+import { unionRanges } from '../../../frame/events.ts';
 import { landingFrameSpans } from '../../../frame/landing.ts';
 import type { SimResult } from '../../../sim/engine.ts';
+import { itemsOf } from '../../../skills/holders.ts';
+import type { NamedStateId } from '../../../skills/states.ts';
 import { gameSecondsToFrame, gameSecondsToFrames } from '../../../time.ts';
 import { eachOrOne, type Metric, type MetricContext, nthActivationOf, slotIndexOf, slotOf } from './context.ts';
 
@@ -138,6 +141,9 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
   shotGauge: { args: ['slot', 'n'], sim: shotGauge },
   // フルバーストの終わりから frames の間に撃った発の 1 発のゲージの、ほかの時の 1 発に対する比（V-0638）
   shotGaugeRatioAfterFullBurst: { args: ['slot', 'frames'], sim: shotGaugeRatioAfterFullBurst },
+  // 枠 holder に状態 state が付いている間（n で n 回目の窓だけ）に着いた、枠の 1 回のゲージ（味方のゲージで足した量を入れる）の、
+  // ほかの時に対する比（V-0751）
+  shotGaugeRatioInHolderState: { args: ['slot', 'holder', 'state'], sim: shotGaugeRatioInHolderState },
   // 枠の n 回目（1 始まり）の周期のゲージ（burstGaugeHit）の量（バーの最大に対する %）（V-0483）
   timerGauge: {
     args: ['slot', 'n'],
@@ -383,6 +389,42 @@ function shotGaugeRatioAfterFullBurst(result: SimResult, ctx: MetricContext): nu
   if (inside.length === 0 || outside.length === 0) throw new Error('フルバーストの後か、ほかの時の発が無い');
   const mean = (a: number[]) => a.reduce((x, y) => x + y, 0) / a.length;
   return Math.round((mean(inside) / mean(outside)) * 10_000) / 10_000;
+}
+
+/**
+ * 枠の 1 回のゲージ（着弾の記録の発のゲージに、味方のゲージ（allyGaugeAdd）で足した量を入れる）の、枠 holder に状態 state が付いている
+ * 間に着いた回と、ほかの時（状態の付いていない時）に着いた回の比（小数 4 桁。plan/design-grave-heat-gauge.md 2.3 節）。どちらも、
+ * 足した量（持つ枠 holder の分だけ）を入れた合計を発のゲージだけの合計で割り、その 2 つを比べる（1 回の発のゲージが一定なら、1 回のゲージの平均の比と同じ。
+ * 命中の期待値が着地点で変わっても動かない）。n（0 始まり）を書くと、付いている間は n 回目の窓（重なる・接する件はまとめる）だけ。録画では、その枠だけが当たる
+ * 区間のバーの 1 回の伸びの比と比べる。どちらかに回が無ければ誤り
+ */
+function shotGaugeRatioInHolderState(result: SimResult, ctx: MetricContext): number {
+  const slotIndex = slotIndexOf(ctx);
+  const holder = Number(ctx.args.holder) - 1;
+  const state = String(ctx.args.state);
+  // 件が重なる・接するときは 1 つの窓にまとめる。1 パス目が足す窓（selfStateAt）と同じく、付いた次のフレームから外れるフレームの前まで
+  const windows = unionRanges(itemsOf(result.history, { holder, state: state as NamedStateId }));
+  const n = ctx.args.n === undefined ? null : Number(ctx.args.n);
+  if (n !== null && windows[n] === undefined) throw new Error(`枠 ${holder + 1} の ${state} の ${n} 回目が無い`);
+  const within = (w: { start: number; end: number }, f: number) => w.start < f && f < w.end;
+  const sums = { in: { own: 0, all: 0 }, out: { own: 0, all: 0 } };
+  /** 窓の中なら in（n があれば n 回目の窓だけ。ほかの窓は数えない）、外なら out */
+  const sideOf = (f: number) =>
+    windows.some((w) => within(w, f)) ? (n === null || within(windows[n]!, f) ? sums.in : null) : sums.out;
+  for (const g of result.shotGauges) {
+    const side = g.slotIndex === slotIndex ? sideOf(g.frame) : null;
+    if (side === null) continue;
+    side.own += g.energy;
+    side.all += g.energy;
+  }
+  // 足した量は、持つ枠 holder の分だけ（ほかの持つ枠の分は比に混ぜない）
+  for (const g of result.allyGauges) {
+    const side = g.slotIndex === slotIndex && g.holderIndex === holder ? sideOf(g.frame) : null;
+    if (side !== null) side.all += g.energy;
+  }
+  if (sums.in.own === 0 || sums.out.own === 0)
+    throw new Error(`枠 ${holder + 1} の ${state} の間か、ほかの時の回が無い`);
+  return Math.round((sums.in.all / sums.in.own / (sums.out.all / sums.out.own)) * 10_000) / 10_000;
 }
 
 /**

@@ -182,6 +182,11 @@ export type FirstPassResult = {
    */
   shotGauges: { slotIndex: number; shotFrame: number; frame: number; energy: number }[];
   /**
+   * 味方のゲージ（allyGaugeAdd）で足したゲージ（足した順）。slotIndex は回を出した枠、holderIndex は足した持つ枠、frame は着いたフレーム。
+   * 照合用（plan/design-grave-heat-gauge.md 2.3 節）
+   */
+  allyGauges: { slotIndex: number; holderIndex: number; frame: number; energy: number }[];
+  /**
    * 周期のゲージ（burstGaugeHit）で溜めたゲージ（予約した順。V-0483）。fireFrame は発火、frame は足すフレーム（発火 +
    * delayFrames）。照合用
    */
@@ -306,6 +311,7 @@ function runFirstPassOnce(
   const {
     addAllyGauge,
     addShotGauges,
+    allyGauges,
     cooldownTrackers,
     countCooldownTimers,
     countCycles,
@@ -382,6 +388,7 @@ function runFirstPassOnce(
     cycleGaugeHits,
     dotGauges,
     shotGauges,
+    allyGauges,
     timerGauges,
     summonHits,
     accumulateReleases,

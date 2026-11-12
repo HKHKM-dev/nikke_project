@@ -142,6 +142,8 @@ export type SimResult = {
   damagePerSecond: DamagePerSecond;
   /** 発のゲージ（着弾のフレーム。1 パス目の記録。照合用） */
   shotGauges: TeamPlan['shotGauges'];
+  /** 味方のゲージ（allyGaugeAdd）で足したゲージ（1 パス目の記録。照合用） */
+  allyGauges: TeamPlan['allyGauges'];
   /** 周期のゲージ（1 パス目の記録（V-0483）。照合用） */
   timerGauges: TeamPlan['timerGauges'];
   /** 1 パス目の件の一覧の履歴（観測値の指標が読む。plan/design-holder-effects.md 段 D の 5） */
@@ -181,6 +183,7 @@ export function runSimulation(simInput: SimInput): SimResult {
     untargetable,
     landing,
     shotGauges,
+    allyGauges,
     timerGauges,
     history,
   } = planTeamRun({
@@ -305,6 +308,7 @@ export function runSimulation(simInput: SimInput): SimResult {
     landings: landing?.spans ?? [],
     damagePerSecond: perSecond,
     shotGauges,
+    allyGauges,
     timerGauges,
     history,
     events,

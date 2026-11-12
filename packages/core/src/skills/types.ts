@@ -2013,11 +2013,14 @@ export type ShotPauseEffect = {
  * 「味方全体のバーストゲージのチャージ速度 N%▲」の味方の分（plan/design-anis-star-ally-gauge.md 2 節）。
  * 持つ枠のほかの枠のゲージ 1 回（通常攻撃の弾のヒットと、射撃ごとの倍率ダメージのゲージのヒット）ごとに、持つ枠の 1 発のゲージ × N%
  * （ref）を足す。持つ枠の 1 発のゲージは、持つ枠の最初の発が着弾する前は burstEnergyPerShot、着弾から targetBurstEnergyPerShot
- * （C-0244・C-0245・C-0246・C-0620）。持つ枠自身の分は passive の burstGaugeSpeed（対象 self）で書く。1 つの定義に 1 つまで
+ * （C-0244・C-0245・C-0246・C-0620）。持つ枠自身の分は passive の burstGaugeSpeed（対象 self）で書く。1 つの定義に 1 つまで。
+ * while があれば、持つ枠にその状態が付いている間（条件 selfState と同じ見え方）に着いた回にだけ足す（グレイブの S1 の放熱。
+ * plan/design-grave-heat-gauge.md 2.1 節）。状態はスタックの条件を持たない
  */
 export type AllyGaugeAddEffect = {
   kind: 'allyGaugeAdd';
   ref: number;
+  while?: { selfState: SelfStateCondition };
   assumes?: LocalizedText;
 };
 

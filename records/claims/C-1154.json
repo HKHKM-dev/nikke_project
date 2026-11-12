@@ -1,0 +1,23 @@
+{
+  "id": "C-1154",
+  "text": "グレイブの S1 の「放熱状態の時に限り、味方全体にバーストゲージのチャージ速度 38.96%▲（Lv10）」は、放熱の間（完全計算の終わりから込め終わりまで）に着いた味方の通常攻撃のゲージ 1 回ごとに、グレイブの 1 発のゲージ（target_burst_energy_pershot 9,000）× 38.96% = 3,506 を足す（アニス：スターの S1 の味方の分と同じ形。C-0244）。味方のゲージを × 1.3896 にする掛け算ではなく、込めていて撃たない間も量の元は burst_energy_pershot（4,500）でなく target_burst_energy_pershot。放熱の外では足さない",
+  "state": "確定",
+  "topic": "バーストゲージ",
+  "grade": "反復実測",
+  "basis": "`1125-07`（1 回目の放熱の窓の、鈴原サクラの通常攻撃 1 回あたりの BURST バーの伸びの、放熱の外に対する比が、1 回 3,506 を足すモデルと許容内。掛け算（1.39）・burst_energy_pershot を元にする形（1.88）・効かない形（1）は許容の外）、`1125-08`〜`1125-10`（2〜4 回目の窓も同じ）、`1125-04`・`1125-05`（窓の中と外の 1 回の伸び。1px ≈ 本当の 0.74% で約 5,470 と 2,000）、`1125-06`（チェーンの切れ目からバーが出る（本当の 12.6%）までの回の数が、4 回とも 1 回 5,506 の 23 回の前後。2,000 なら 63 回）。足す形を入れると、V-0735 の `1101-22`・`1102-21`（SR の味方の編成のフルバーストの始まりから満タンまで）の残差も縮む。V-0751",
+  "model": "反映（data/skills/514.json の skill1 の effects[3]（allyGaugeAdd・ref 4・while: { selfState: heatEmission }）。足すのは frame/firstPass/gaugeEffects.ts の addAllyGauge（持つ枠ごと。窓は lists.selfStateAt）。plan/design-grave-heat-gauge.md）",
+  "replaces": ["C-1122"],
+  "updated": "2026-11-12",
+  "subject": {
+    "places": ["data/skills/514.json の skill1 の effects[3]"]
+  },
+  "decidedOn": [],
+  "runs": [
+    {
+      "recording": "1125",
+      "reproduced": "2〜4 回目の放熱の窓",
+      "observations": ["1125-08", "1125-09", "1125-10"]
+    }
+  ],
+  "parameterFree": "1 回の量 = グレイブの target_burst_energy_pershot（CDN 9,000）× 説明文の Lv10 の 38.96%。1 回ごとに足す形は C-0244・C-0245（アニス：スター）、窓は放熱（C-1120）。仮説は撮る前に V-0751 で立て、録画 1125 で値を合わせていない"
+}
