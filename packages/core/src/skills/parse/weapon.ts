@@ -1,5 +1,5 @@
 // スキル定義の読み込みの検査のうち、使用武器の変更（weaponChange）の読み込み。型は ../types.ts
-import type { WeaponChangeEffect } from '../types.ts';
+import { isStacksCondition, type WeaponChangeEffect } from '../types.ts';
 import {
   assertPositiveFinite,
   fail,
@@ -30,6 +30,7 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
       'pierce',
       'shotCount',
       'chargeTimeSeconds',
+      'chargeTimeRef',
       'chargeTimeFixed',
       'fullChargeDamage',
       'chargeReleaseSeconds',
@@ -68,11 +69,17 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
     assertPositiveFinite(seconds, `${path}.chargeTimeSeconds`);
     effect.chargeTimeSeconds = seconds;
   }
+  // チャージ時間を説明文の値で書く（plan/design-maxwell-om.md 2.1 節）
+  if (v.chargeTimeRef !== undefined) {
+    if (effect.chargeTimeSeconds !== undefined)
+      fail(`${path}.chargeTimeRef`, 'expected at most one of chargeTimeSeconds and chargeTimeRef');
+    effect.chargeTimeRef = parseRef(v.chargeTimeRef, `${path}.chargeTimeRef`);
+  }
   // チャージ時間の固定（チャージ速度▲を受けない。plan/design-nayuta.md 2.4 節）
   if (v.chargeTimeFixed !== undefined) {
     parseTrue(v.chargeTimeFixed, `${path}.chargeTimeFixed`);
-    if (effect.chargeTimeSeconds === undefined)
-      fail(`${path}.chargeTimeFixed`, 'chargeTimeFixed needs chargeTimeSeconds');
+    if (effect.chargeTimeSeconds === undefined && effect.chargeTimeRef === undefined)
+      fail(`${path}.chargeTimeFixed`, 'chargeTimeFixed needs chargeTimeSeconds or chargeTimeRef');
     effect.chargeTimeFixed = true;
   }
   if (v.fullChargeDamage !== undefined) {
@@ -86,18 +93,31 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
     effect.chargeReleaseSeconds = seconds;
   }
   if (v.hitsPerShot !== undefined) effect.hitsPerShot = parsePositiveInt(v.hitsPerShot, `${path}.hitsPerShot`);
-  // 使った段階（『バーストⅢで使用時』）の条件だけ（plan/design-red-hood.md 2.1 節）
+  // 使った段階（『バーストⅢで使用時』。plan/design-red-hood.md 2.1 節）と、自分の状態のスタック数（「過電流の段階別の効果」。
+  // plan/design-maxwell-om.md 2.2 節）の条件
   if (v.condition !== undefined) {
     const condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.weaponChange);
     validateBurstStep(condition, effect.trigger, `${path}.condition`);
+    if (condition.selfState !== undefined && !isStacksCondition(condition.selfState))
+      fail(
+        `${path}.condition.selfState`,
+        'a weapon change can only look at a stack count (stacks, stacksRef or stacksBelow)',
+      );
     effect.condition = condition;
   }
   // CDN に無い変更後の武器の形（録画で読む即値。plan/design-skill-stage11.md 2.1 節）
   if (v.rateOfFire !== undefined) effect.rateOfFire = parsePositiveInt(v.rateOfFire, `${path}.rateOfFire`);
   if (v.instantFire !== undefined) {
     parseTrue(v.instantFire, `${path}.instantFire`);
-    if (effect.chargeTimeSeconds !== undefined || effect.fullChargeDamage !== undefined) {
-      fail(`${path}.instantFire`, 'instantFire cannot be combined with chargeTimeSeconds or fullChargeDamage');
+    if (
+      effect.chargeTimeSeconds !== undefined ||
+      effect.chargeTimeRef !== undefined ||
+      effect.fullChargeDamage !== undefined
+    ) {
+      fail(
+        `${path}.instantFire`,
+        'instantFire cannot be combined with chargeTimeSeconds, chargeTimeRef or fullChargeDamage',
+      );
     }
     effect.instantFire = true;
   }

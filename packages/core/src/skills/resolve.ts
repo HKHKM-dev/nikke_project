@@ -1402,10 +1402,13 @@ export function firesChargeShots(def: SkillDefinition | null, character: Charact
   // チャージしない基礎の武器は、チャージ時間を書いた使用武器の変更だけがチャージ武器になる（resolveWeaponChange の toChargeWeapon）
   return (
     def !== null &&
-    SKILL_SLOTS.some((slot) =>
-      def.skills[slot].effects.some((e) => e.kind === 'weaponChange' && e.chargeTimeSeconds !== undefined),
-    )
+    SKILL_SLOTS.some((slot) => def.skills[slot].effects.some((e) => e.kind === 'weaponChange' && setsChargeTime(e)))
   );
+}
+
+/** 使用武器の変更が変更後の武器のチャージ時間を書くか（即値か説明文の値） */
+function setsChargeTime(effect: { chargeTimeSeconds?: number; chargeTimeRef?: number }): boolean {
+  return effect.chargeTimeSeconds !== undefined || effect.chargeTimeRef !== undefined;
 }
 
 /** 使用武器の変更を、自分に付く stat 'weapon' の持続効果に解決する */
@@ -1424,7 +1427,7 @@ function resolveWeaponChange(
   }
   // チャージ武器にする変更は、発の間をチャージ時間で決める（レートを使わない）ので、レートは
   // 基礎の武器のまま（書かない。plan/design-nayuta.md 2.6 節）
-  const toChargeWeapon = !isChargeWeapon(character.shot) && effect.chargeTimeSeconds !== undefined;
+  const toChargeWeapon = !isChargeWeapon(character.shot) && setsChargeTime(effect);
   const rateOfFire = cdn?.rateOfFire ?? effect.rateOfFire ?? (toChargeWeapon ? character.shot.rateOfFire : undefined);
   if (rateOfFire === undefined) {
     throw new RangeError(
@@ -1434,20 +1437,18 @@ function resolveWeaponChange(
   const damage = skillValue(skill, effect.damageRef, level) / 100;
   const hits = effect.hitsPerShot ?? 1;
   const overrides: ChangedWeaponOverrides = {};
-  if (
-    effect.chargeTimeSeconds !== undefined ||
-    effect.fullChargeDamage !== undefined ||
-    effect.chargeReleaseSeconds !== undefined
-  ) {
+  if (setsChargeTime(effect) || effect.fullChargeDamage !== undefined || effect.chargeReleaseSeconds !== undefined) {
     // チャージしない基礎の武器（SMG の記憶燃焼）は、チャージ時間を書けば変更後の武器を
     // チャージ武器（入力 UP）にする（plan/design-nayuta.md 2.6 節。論点 4）
     if (!isChargeWeapon(character.shot) && !toChargeWeapon) {
       throw new RangeError(
-        `skill ${skill.id}: fullChargeDamage/chargeReleaseSeconds need a charge weapon (or chargeTimeSeconds to make the changed weapon one)`,
+        `skill ${skill.id}: fullChargeDamage/chargeReleaseSeconds need a charge weapon (or a charge time to make the changed weapon one)`,
       );
     }
     if (toChargeWeapon) overrides.chargeInput = true;
+    // 説明文の値（chargeTimeRef）は Lv の値（plan/design-maxwell-om.md 2.1 節）
     if (effect.chargeTimeSeconds !== undefined) overrides.chargeTime = effect.chargeTimeSeconds;
+    else if (effect.chargeTimeRef !== undefined) overrides.chargeTime = skillValue(skill, effect.chargeTimeRef, level);
     if (effect.fullChargeDamage !== undefined) overrides.fullChargeDamage = effect.fullChargeDamage / 100;
   }
   if (effect.maxAmmoRef !== undefined) {
@@ -1492,8 +1493,9 @@ function resolveWeaponChange(
   };
   // 撃ち切りで終わる変更は、窓の終わりを 1 パス目の最後の弾丸の発で決める（論点 8）
   if (untilEmpty) r.durationUntil = 'ammoSpent';
-  // 使った段階の条件（件を見ないので段 1 のまま。plan/design-red-hood.md 2.1 節）
-  if (effect.condition) r.condition = effect.condition;
+  // 使った段階の条件（件を見ないので段 1 のまま。plan/design-red-hood.md 2.1 節）と、自分の状態のスタック数の条件（段 1.5。
+  // plan/design-maxwell-om.md 2.2 節）
+  if (effect.condition) r.condition = resolveCondition(effect.condition, skill, level);
   if (effect.assumes) r.assumes = effect.assumes;
   return r;
 }

@@ -48,9 +48,12 @@ describe('語彙の検証', () => {
     );
   });
 
-  it('takes only burstStep as the condition of a weapon change', () => {
+  it('takes burstStep and a stack count of a state as the condition of a weapon change', () => {
+    expect(patched('burst', burstIndex('weaponChange', 'Step3'), { condition: { inFullBurst: true } })).toThrow(
+      /unknown field \(allowed: burstStep, selfState\)/,
+    );
     expect(patched('burst', burstIndex('weaponChange', 'Step3'), { condition: { selfState: 'redWolf' } })).toThrow(
-      /unknown field \(allowed: burstStep\)/,
+      /a weapon change can only look at a stack count/,
     );
   });
 
