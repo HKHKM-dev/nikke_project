@@ -1448,7 +1448,11 @@ function resolveWeaponChange(
     if (toChargeWeapon) overrides.chargeInput = true;
     // 説明文の値（chargeTimeRef）は Lv の値（plan/design-maxwell-om.md 2.1 節）
     if (effect.chargeTimeSeconds !== undefined) overrides.chargeTime = effect.chargeTimeSeconds;
-    else if (effect.chargeTimeRef !== undefined) overrides.chargeTime = skillValue(skill, effect.chargeTimeRef, level);
+    else if (effect.chargeTimeRef !== undefined) {
+      const seconds = skillValue(skill, effect.chargeTimeRef, level);
+      if (!(seconds > 0)) throw new RangeError(`skill ${skill.id}: charge time must be positive, got ${seconds}`);
+      overrides.chargeTime = seconds;
+    }
     if (effect.fullChargeDamage !== undefined) overrides.fullChargeDamage = effect.fullChargeDamage / 100;
   }
   if (effect.maxAmmoRef !== undefined) {

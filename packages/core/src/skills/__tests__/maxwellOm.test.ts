@@ -78,16 +78,35 @@ describe('語彙の検証', () => {
     expect(() => parseSkillDefinition(inWhile)).toThrow(/stacksBelow is not allowed in while/);
   });
 
-  it('rejects overlapping stage ranges and stage changes without a stack count condition', () => {
-    expect(() => parseSkillDefinition(withStage(1, { ...conditionOf(1), stacks: 1 }))).toThrow(
-      /stack ranges of weapon changes overlap/,
-    );
-    expect(() => parseSkillDefinition(withChange(4, { condition: undefined }))).toThrow(
-      /weapon changes with the same trigger need stack count conditions/,
-    );
+  it('rejects weapon changes with the same trigger that can apply together', () => {
+    const together = /weapon changes with the same trigger .* must not apply together/;
+    // 区間が重なる・スタック数の条件が無い・Lv で区間の動く stacksRef
+    expect(() => parseSkillDefinition(withStage(1, { ...conditionOf(1), stacks: 1 }))).toThrow(together);
+    expect(() => parseSkillDefinition(withChange(4, { condition: undefined }))).toThrow(together);
     expect(() => parseSkillDefinition(withStage(4, { ...conditionOf(4), stacks: undefined, stacksRef: 6 }))).toThrow(
-      /weapon changes with the same trigger need stack count conditions/,
+      together,
     );
+    // 使った段階が片方にだけあっても、同じバーストで付きうる
+    expect(() => parseSkillDefinition(withChange(4, { condition: { burstStep: 'Step2' } }))).toThrow(together);
+    // ほかのスロットの同じきっかけの変更も見る
+    const otherSlot = edited((c) => c.skills.skill2.effects.push({ ...c.skills.burst.effects[changes[0]!]! }));
+    expect(() => parseSkillDefinition(otherSlot)).toThrow(together);
+  });
+
+  it('takes stacksBelow without stacksRef', () => {
+    expect(() => parseSkillDefinition(withStage(1, { state: 'overcurrent', stacksRef: 6, stacksBelow: 3 }))).toThrow(
+      /stacksBelow cannot be combined with stacksRef/,
+    );
+  });
+
+  it('rejects a charge time reference whose value is not positive', () => {
+    // skill2 の description_value_04 はどの Lv も 0（burst の 1〜4 番は正）
+    const zero = edited((c) => {
+      const change = c.skills.burst.effects[changes[0]!]!;
+      c.skills.burst.effects = [{ ...change, condition: undefined, chargeTimeRef: 10 }];
+    });
+    const def = parseSkillDefinition(zero);
+    expect(() => resolveTimed(def, character, MAX_SKILL_LEVELS)).toThrow();
   });
 
   it('rejects sameFiring on a weapon change (the stage-1 grant of the same frame is already counted)', () => {

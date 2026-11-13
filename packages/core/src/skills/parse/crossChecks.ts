@@ -168,39 +168,37 @@ function validateInstantFireCoreHits(entries: Partial<Record<SkillSlot, SkillEnt
 }
 
 /**
- * 同じスロット・同じきっかけの使用武器の変更が 2 つ以上なら（「段階別の効果」「各段階の効果のみ適用」。plan/design-maxwell-om.md 2.2 節）、
- * どれも同じ状態のスタック数の条件（stacks の数か stacksBelow。stacksRef・'full' は Lv で区間が動くので書けない）を持ち、
- * [stacks, stacksBelow) の区間が重ならない（射手は変更の武器を 1 つしか持てない）。使った段階（burstStep）で分ける変更は区間を見ない
+ * 同じきっかけの使用武器の変更が 2 つ以上なら（「段階別の効果」「各段階の効果のみ適用」。plan/design-maxwell-om.md 2.2 節）、
+ * どの 2 つも、同じフレームに付かないことが条件から分かる（射手は変更の武器を 1 つしか持てない）。スロットをまたいでも見る。
+ * 分かるのは、使った段階（burstStep）が両方にあって違うときと、同じ状態のスタック数の条件（stacks の数か stacksBelow。
+ * stacksRef・'full' は Lv で区間が動くので数えない）の区間 [stacks, stacksBelow) が重ならないときだけ
  */
 function validateWeaponChangeStages(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
-  for (const slot of SKILL_SLOTS) {
-    const changes = (entries[slot]?.effects ?? []).flatMap((e, i) => (e.kind === 'weaponChange' ? [{ e, i }] : []));
-    const groups = new Map<string, typeof changes>();
-    for (const c of changes) {
-      const key = JSON.stringify([c.e.trigger, c.e.condition?.burstStep ?? null]);
-      let group = groups.get(key);
-      if (group === undefined) groups.set(key, (group = []));
-      group.push(c);
+  const changes = SKILL_SLOTS.flatMap((slot) =>
+    (entries[slot]?.effects ?? []).flatMap((e, i) =>
+      e.kind === 'weaponChange'
+        ? [{ e, path: `${root}.${slot}.effects[${i}]`, trigger: JSON.stringify(e.trigger) }]
+        : [],
+    ),
+  );
+  const rangeOf = (e: (typeof changes)[number]['e']) => {
+    const self = e.condition?.selfState;
+    if (self === undefined || self.stacksRef !== undefined || self.stacks === 'full') return null;
+    return { state: self.state, from: self.stacks ?? 0, to: self.stacksBelow ?? Infinity };
+  };
+  changes.forEach((a, k) => {
+    for (const b of changes.slice(0, k)) {
+      if (a.trigger !== b.trigger) continue;
+      const [sa, sb] = [a.e.condition?.burstStep, b.e.condition?.burstStep];
+      if (sa !== undefined && sb !== undefined && sa !== sb) continue;
+      const [ra, rb] = [rangeOf(a.e), rangeOf(b.e)];
+      if (ra !== null && rb !== null && ra.state === rb.state && (ra.to <= rb.from || rb.to <= ra.from)) continue;
+      fail(
+        `${a.path}.condition`,
+        `weapon changes with the same trigger (${b.path}) must not apply together: give them different burstStep or non-overlapping stack ranges of the same state (stacks as a number or stacksBelow)`,
+      );
     }
-    for (const group of groups.values()) {
-      if (group.length < 2) continue;
-      const ranges = group.map(({ e, i }) => {
-        const self = e.condition?.selfState;
-        const path = `${root}.${slot}.effects[${i}].condition.selfState`;
-        if (self === undefined || self.stacksRef !== undefined || self.stacks === 'full')
-          fail(
-            path,
-            'weapon changes with the same trigger need stack count conditions (stacks as a number or stacksBelow)',
-          );
-        if (self.state !== group[0]!.e.condition?.selfState?.state)
-          fail(path, 'weapon changes with the same trigger must look at the same state');
-        return { from: self.stacks ?? 0, to: self.stacksBelow ?? Infinity, path };
-      });
-      ranges.sort((a, b) => a.from - b.from);
-      for (let k = 1; k < ranges.length; k++)
-        if (ranges[k]!.from < ranges[k - 1]!.to) fail(ranges[k]!.path, 'stack ranges of weapon changes overlap');
-    }
-  }
+  });
 }
 
 /**

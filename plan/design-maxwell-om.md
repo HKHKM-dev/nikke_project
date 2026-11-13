@@ -46,7 +46,7 @@
 
 - `weaponChange` の条件に `selfState`（スタック数の形）を足す。判定は、ほかの timed と同じく段 1.5 の `holdsAt`（発火のフレームで 1 回。付いた変更は撃ち切りまで続く）。
 - `selfState` に上の端 `stacksBelow`（「N スタック未満なら」。カウンタの条件 `selfCounter.below` と同じ読み）を足す。`stacks`（以上）と組めば「ちょうど N 段階」、`stacksBelow` だけなら「N−1 段階以下」（状態が無い 0 段階も入る）。`stacks: "full"` とは組まない。判定は `stacksHold`（段 1.5）と、倍率ダメージの条件の判定（`frame/plan.ts` の `selfStateHolds`）の両方に入れる。
-- 「各段階の効果のみ適用」は、段階ごとの weaponChange の条件が互いに重ならないこと（`stacks`・`stacksBelow` の区間）で書く。同じきっかけで 2 つの変更が同時に付くと射手が 1 つしか持てないので、読み込みで「同じスロット・同じきっかけの weaponChange が 2 つ以上なら、どれもスタック数の条件を持ち、区間が重ならない」を確かめる。
+- 「各段階の効果のみ適用」は、段階ごとの weaponChange の条件が互いに重ならないこと（`stacks`・`stacksBelow` の区間）で書く。同じきっかけで 2 つの変更が同時に付くと射手が 1 つしか持てないので、読み込みで「同じきっかけの weaponChange どうしは、スロットをまたいでも、使った段階（`burstStep`）が違うか、同じ状態のスタック数の区間が重ならない」を確かめる。`stacksBelow` は、Lv で値が動く `stacksRef` と組ませない（解いた後に区間が空になりうる）。
 - バーストの定義の形（段階ごとに 1 つ。値は Lv10）:
 
 <!-- prettier-ignore -->

@@ -1212,7 +1212,7 @@ export type SelfStateCondition = {
   stacksRef?: number;
   /**
    * 「N スタック未満なら」（上の端。plan/design-maxwell-om.md 2.2 節）。stacks（以上）と組めば「ちょうど N 段階」、
-   * これだけなら状態が無い 0 段も入る。stacks: 'full' とは組まない。while には書けない
+   * これだけなら状態が無い 0 段も入る。stacks: 'full'・stacksRef とは組まない。while には書けない
    */
   stacksBelow?: number;
   /**
@@ -1791,8 +1791,8 @@ export type WeaponChangeEffect = {
   infiniteAmmo?: true;
   /**
    * 発火の条件。鍵は使った段階（burstStep。plan/design-red-hood.md 2.1 節）と、自分の状態のスタック数（selfState の stacks・
-   * stacksBelow。段 1.5 で判定し、段 1 の状態の件は同じフレームの付与も見る。plan/design-maxwell-om.md 2.2・2.3 節）。同じスロット・同じきっかけの変更が 2 つ以上なら、どれもスタック数の
-   * 条件を持ち、区間が重ならない（parse/crossChecks.ts の validateWeaponChangeStages）
+   * stacksBelow。段 1.5 で判定し、段 1 の状態の件は同じフレームの付与も見る。plan/design-maxwell-om.md 2.2・2.3 節）。同じきっかけの変更どうしは、
+   * 使った段階が違うか、同じ状態のスタック数の区間が重ならない（parse/crossChecks.ts の validateWeaponChangeStages）
    */
   condition?: EffectCondition;
   /**

@@ -195,7 +195,7 @@ function parseSelfHpCondition(v: Json, path: string): SelfHpCondition {
 /**
  * 自分の状態の条件。"<id>"（付いていれば）か { state, present }。
  * { state, stacks: "full" | N }・{ state, stacksRef }（N スタック以上。present は省略か true。plan/design-skill-stage3.md 1.4 節）。
- * stacksBelow（N スタック未満。stacks の数・stacksRef と組める。plan/design-maxwell-om.md 2.2 節）
+ * stacksBelow（N スタック未満。stacks の数と組める。plan/design-maxwell-om.md 2.2 節）
  */
 function parseSelfStateCondition(v: Json, path: string): SelfStateCondition {
   if (typeof v === 'string') return { state: parseNamedStateId(v, path, 'ally'), present: true };
@@ -222,6 +222,8 @@ function parseSelfStateCondition(v: Json, path: string): SelfStateCondition {
   if (v.stacksBelow !== undefined) {
     const below = parsePositiveInt(v.stacksBelow, `${path}.stacksBelow`);
     if (condition.stacks === 'full') fail(`${path}.stacksBelow`, 'stacksBelow cannot be combined with stacks: "full"');
+    // stacksRef は Lv で値が動き、解いた後に区間が空になりうるので組ませない
+    if (condition.stacksRef !== undefined) fail(`${path}.stacksBelow`, 'stacksBelow cannot be combined with stacksRef');
     if (typeof condition.stacks === 'number' && below <= condition.stacks)
       fail(`${path}.stacksBelow`, `stacksBelow must be greater than stacks (${condition.stacks}), got ${below}`);
     condition.stacksBelow = below;
