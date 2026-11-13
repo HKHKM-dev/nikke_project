@@ -71,11 +71,9 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, maxwell }) =
       (w) => !jumps.some((e) => gameSecondsToFrames(e.start) <= w.end && w.start < gameSecondsToFrames(e.end)),
     );
     expect(clear.length).toBeGreaterThanOrEqual(2);
-    for (const a of clear)
-      for (const b of clear) {
-        const charge = (w: typeof a) => gameSecondsToFrames(CHARGE_SECONDS[effectIndexOf(w)]!);
-        expect(delayOf(a) - delayOf(b)).toBe(charge(a) - charge(b));
-      }
+    const charge = (w: (typeof weapon)[number]) => gameSecondsToFrames(CHARGE_SECONDS[effectIndexOf(w)]!);
+    // 待ちからチャージ時間を引いた残りが、どの回も同じ
+    expect(new Set(clear.map((w) => delayOf(w) - charge(w))).size).toBe(1);
   });
 
   it('adds one Overcurrent stack per Burst up to 5 and keeps it to the end', () => {

@@ -178,7 +178,9 @@ function validateWeaponChangeStages(entries: Partial<Record<SkillSlot, SkillEntr
     const groups = new Map<string, typeof changes>();
     for (const c of changes) {
       const key = JSON.stringify([c.e.trigger, c.e.condition?.burstStep ?? null]);
-      groups.set(key, [...(groups.get(key) ?? []), c]);
+      let group = groups.get(key);
+      if (group === undefined) groups.set(key, (group = []));
+      group.push(c);
     }
     for (const group of groups.values()) {
       if (group.length < 2) continue;

@@ -4,7 +4,7 @@ import { statTotal } from '../buffs.ts';
 import { type ResolvedTrigger } from '../resolve.ts';
 import { statesMatching, type NamedStateId } from '../states.ts';
 import { fireContextOf, burstStepHolds, type FrameEvents } from '../triggers.ts';
-import { type EndedTrigger, type EffectCondition } from '../types.ts';
+import { isStacksCondition, type EndedTrigger, type EffectCondition } from '../types.ts';
 import { type HeldTrack } from './types.ts';
 import { stacksHold, valueOf } from './items.ts';
 import type { HolderBase, Records } from './records.ts';
@@ -35,12 +35,12 @@ export function createConditions({
   const holdsAt = (condition: EffectCondition | undefined, sourceSlotIndex: number, frame: number): boolean => {
     if (condition === undefined) return true;
     if (condition.selfState !== undefined) {
-      const { state, present, stacks, stacksBelow, sameFiring } = condition.selfState;
+      const { state, present, sameFiring } = condition.selfState;
       // 家族の根なら、家族のどの状態でも当たる（plan/design-skill-stage5.md 1.2 節）
       const family = statesMatching(state);
       const isStatic = family.some((s) => staticStates[sourceSlotIndex]?.has(s) === true);
       const own = family.flatMap((s) => stateTracks[sourceSlotIndex]?.get(s) ?? []);
-      if (stacks === undefined && stacksBelow === undefined) {
+      if (!isStacksCondition(condition.selfState)) {
         const has = isStatic || own.some((t) => selfStateItemsAt(t, frame).length > 0);
         if (has !== present) return false;
       } else if (

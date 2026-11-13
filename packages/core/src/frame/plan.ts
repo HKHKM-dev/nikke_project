@@ -75,6 +75,7 @@ import {
   ENEMY_HELD_STATS,
   isEnemyHeldStat,
   isFixedAttackScaling,
+  isStacksCondition,
   isStateStat,
   selfHpHolds,
   splitsPerCount,
@@ -503,8 +504,7 @@ function slotReadersOf(ctx: SkillHitsContext, slot: TeamSlotInput | null, slotIn
     const active = ownStateItems.filter(
       (i) => i.origin.kind === 'state' && stateMatches(self.state, i.origin.state) && i.start < frame && frame < i.end,
     );
-    if (self.stacks === undefined && self.stacksBelow === undefined)
-      return (isStatic || active.length > 0) === self.present;
+    if (!isStacksCondition(self)) return (isStatic || active.length > 0) === self.present;
     return stacksHold(
       self,
       isStatic,

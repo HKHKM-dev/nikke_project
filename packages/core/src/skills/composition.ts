@@ -266,15 +266,15 @@ export function resolveSelfState<E extends SkillEffect>(effect: E, lookup: SelfS
   if (isStacksCondition(self)) {
     if (has) return effect;
     if (self.stacks !== undefined || self.stacksRef !== undefined) return null;
-    return dropSelfState(effect, condition);
+    return dropConditionKey(effect, condition, 'selfState');
   }
   if (has !== self.present) return null;
-  return dropSelfState(effect, condition);
+  return dropConditionKey(effect, condition, 'selfState');
 }
 
-/** 条件から selfState を落とした効果（ほかの鍵が無ければ条件ごと落とす） */
-function dropSelfState<E extends SkillEffect>(effect: E, condition: EffectCondition): E {
-  const { selfState: _selfState, ...rest } = condition;
+/** 条件から鍵 key を落とした効果（ほかの鍵が無ければ条件ごと落とす） */
+function dropConditionKey<E extends SkillEffect>(effect: E, condition: EffectCondition, key: keyof EffectCondition): E {
+  const { [key]: _dropped, ...rest } = condition;
   const { condition: _condition, ...without } = effect as E & { condition?: unknown };
   return (Object.keys(rest).length > 0 ? { ...without, condition: rest } : without) as E;
 }
@@ -295,9 +295,7 @@ export function resolveSelfHp<E extends SkillEffect>(
   // 発火のフレームの HP の割合で見るので、ここでは決めない
   if (effect.kind !== 'passive' || condition === undefined || hp === undefined) return effect;
   if (hpRatio < threshold(hp)) return null;
-  const { selfHp: _selfHp, ...rest } = condition;
-  const { condition: _condition, ...without } = effect as E & { condition?: unknown };
-  return (Object.keys(rest).length > 0 ? { ...without, condition: rest } : without) as E;
+  return dropConditionKey(effect, condition, 'selfHp');
 }
 
 /**

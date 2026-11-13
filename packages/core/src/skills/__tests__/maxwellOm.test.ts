@@ -1,8 +1,7 @@
 // マクスウェル：オーディナリーメカニック編（plan/design-maxwell-om.md 2 節）: 使用武器の変更のチャージ時間を説明文の値で書く
 // chargeTimeRef・使用武器の変更の条件の自分の状態のスタック数（上の端 stacksBelow）の語彙の検証と、Lv ごとの解決値
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import type { CharacterData } from '../../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { stacksHold } from '../holders.ts';
 import {
   MAX_SKILL_LEVELS,
@@ -13,15 +12,11 @@ import {
 } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
 type Effects = { effects: Record<string, unknown>[] };
 type Raw = { skills: { skill1: Effects; skill2: Effects; burst: Effects } };
 const MAXWELL = 105;
-const raw = readJson<Raw>(`../../../data/skills/${MAXWELL}.json`);
-const character = readJson<CharacterData>(`../../../data/characters/${MAXWELL}.json`);
+const raw = rawDefinition<Raw>(MAXWELL);
+const character = characterOf(MAXWELL);
 const changes = raw.skills.burst.effects.flatMap((e, i) => (e.kind === 'weaponChange' ? [i] : []));
 
 const edited = (edit: (copy: Raw) => void) => {
