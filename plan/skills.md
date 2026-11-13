@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 103・効果 726（根拠あり 706）・notes 235（根拠あり 102）
+件数: キャラ 104・効果 737（根拠あり 717）・notes 236（根拠あり 102）
 
-notes の種類: 未対応 37・前提の外 58・計算に無関係 48・補足 32・間接 60
+notes の種類: 未対応 37・前提の外 58・計算に無関係 48・補足 33・間接 60
 
-スロット: supported 266・partial 25・unsupported 8・noEffect 37
+スロット: supported 269・partial 25・unsupported 8・noEffect 37
 
 ## 10 ラピ
 
@@ -363,6 +363,24 @@ notes の種類: 未対応 37・前提の外 58・計算に無関係 48・補足
   - effects[0] timed・burstUse・attack: C-0682（確定）
   - effects[1] burstDamage・skill: C-0682（確定）、C-0683（確定）
   - effects[2] damage・burstUse・additional: C-0707（確定）
+
+## 105 マクスウェル：オーディナリーメカニック
+
+- **skill1**: supported
+  - effects[0] timed・fullChargeShot・maxHp: C-1158（確定）
+  - effects[1] timed・burstStage3Enter・attackDamage: C-1158（確定）
+- **skill2**: supported
+  - effects[0] timed・burstUse・attack（読む: HP）: C-1158（確定）
+  - effects[1] state・burstUse・overcurrent（attack）: C-1158（確定）
+  - effects[2] burstGauge・fullChargeShot: C-1159（確定）
+  - notes[0] 補足: 説明文に出てこない数値（description_value_03。ゲージのチャージと同じ値）は使っていない: 根拠なし
+- **burst**: supported
+  - effects[0] weaponChange・burstUse: C-1157（確定）
+  - effects[1] weaponChange・burstUse: C-1157（確定）
+  - effects[2] weaponChange・burstUse: C-1157（確定）
+  - effects[3] weaponChange・burstUse: C-1157（確定）
+  - effects[4] weaponChange・burstUse: C-1157（確定）
+  - effects[5] timed・burstUse・attackDamage: C-1158（確定）
 
 ## 121 エヌ : ミラクルフェアリー
 
