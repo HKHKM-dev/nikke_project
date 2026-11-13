@@ -1105,7 +1105,7 @@ export function isStateEndUntil(u: unknown): u is StateEndUntil {
  * キーは 1 つ以上で、すべてを満たすときだけ発火する（AND）。どの効果がどのキーを受けるかは効果の種類ごと（CONDITION_KEYS_OF）。
  * selfBuffed = 自分がその stat の増加状態なら（timed・付与）。
  * inFullBurst = 発火の瞬間がフルバーストタイムの中なら（plan/design-true-damage-element.md 3.4 節。
- * 1 パス目で窓を追う stat には書けない。damage にも書ける。窓 [start, end) の中）。
+ * 1 パス目で窓を追う stat には、攻撃力のほかは書けない。damage にも書ける。窓 [start, end) の中）。
  * enemyState = 敵（1 体の前提）にその状態が付いているなら（damage。付いている区間は
  * 同じ状態の dot の最初の発火から最後の tick まで。編成のどの枠の dot でもよい）。
  * timed・付与にも書け、敵に付く状態の付与（エレグのブームインストール）の窓も見る（damage も同じ。そのフレームに付いた件も入れる。
@@ -1130,7 +1130,7 @@ export type EffectCondition = {
   selfBuffed?: BuffStat;
   /**
    * true = 発火の瞬間がフルバーストタイムの中なら。false = フルバーストタイムの
-   * 外なら（counterChange だけ。plan/design-skill-stage12.md 2.2 節。粘着榴弾の付着している数は、フルバーストの外で付いたものだけを数える）
+   * 外なら（counterChange・removeState・stat のある timed。plan/design-skill-stage12.md 2.2 節・plan/design-velvet.md 2.1 節）
    */
   inFullBurst?: boolean;
   enemyState?: NamedStateId;

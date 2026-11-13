@@ -139,6 +139,8 @@
     | バーストスキルクールタイム X 秒▲（即時） | `cooldownReduction` の `increase: true` | 走っている CT の残りに足す（明けていれば何もしない）。`{ applied }` のきっかけでは対象は自分だけ。例: アンコールの効果 4 | 同 2.6 節 |
     | 自分が〈状態〉なら（回復） | `heal` の `condition.selfState` | 例: ミントの S1 のダンスエフェクト | 同 2.7 節 |
     | 自分の HP が最大の場合（倍率ダメージ） | damage の `condition.selfHp: { "atLeast": 100 }` | バーストを使ったフレームなど、発火のフレームの HP の割合で見る（最大HP のみ▲ で下がると出ない）。`perBurstHit` ならヒットの全部に同じ結果を使う。例: ソリンのバースト | [design-soline.md](design-soline.md) 2.1 節 |
+    | フルバースト状態でなければ（timed）／フルバーストタイム中のみ（攻撃力▲） | timed の `condition.inFullBurst: false`／攻撃力の timed の `condition.inFullBurst` | 発火のフレームがフルバーストの窓 [始まり, 終わり) の外か中か。`false` は状態の付与には書けない。1 パス目で窓を追う stat のうち、条件 `inFullBurst` を書けるのは攻撃力だけ。例: ベルベットの S1・S2 | [design-velvet.md](design-velvet.md) 2.1・2.2 節 |
+    | 〈カウンタ〉の弾薬消費 N 発（足りなければ起きない） | `counterChange` の `decrease` と、消費と同じ行の効果の全部に `condition.selfCounter: { "atLeast": N }` | 前のフレームの終わりの値で見るので、同じ発の消費と強化はどちらも消費の前の値で判定する。例: ベルベットの弾丸ポーチ | 同 1・2.3 節 |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。

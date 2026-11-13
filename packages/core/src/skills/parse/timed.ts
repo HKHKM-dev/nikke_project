@@ -458,8 +458,14 @@ function parseTimedCondition(
     v.condition,
     `${path}.condition`,
     isAppliedTrigger(trigger) ? CONDITION_KEYS_OF.selfStateOnly : CONDITION_KEYS_OF.timed,
+    true,
   );
-  if (condition.inFullBurst === true && stat !== undefined && isFirstPassTrackedStat(stat)) {
+  // 「フルバースト状態でなければ」（inFullBurst: false）は stat のある timed だけ（状態の付与は使い手がいない。plan/design-velvet.md 2.1 節）
+  if (condition.inFullBurst === false && stat === undefined)
+    fail(`${path}.condition.inFullBurst`, 'expected true (a state grant cannot have inFullBurst: false)');
+  // 1 パス目で窓を追う stat のうち、攻撃力は条件 inFullBurst を書ける（件の一覧の段 1.5 が発火のフレームの窓を見る。
+  // plan/design-velvet.md 2.2 節）。ほかは使い手がいない
+  if (condition.inFullBurst !== undefined && stat !== undefined && stat !== 'attack' && isFirstPassTrackedStat(stat)) {
     fail(
       `${path}.condition`,
       `inFullBurst is not supported for "${stat}" (its window is tracked inside the first pass)`,

@@ -64,7 +64,7 @@ describe('語彙の検証', () => {
     expect(withEffect('skill2', detonation, { perCountIntervalSeconds: 0 })).toThrow(/expected a positive number/);
   });
 
-  it('allows inFullBurst: false only in counterChange', () => {
+  it('rejects inFullBurst: false in damage', () => {
     expect(withEffect('skill2', detonation, { condition: { inFullBurst: false } })).toThrow(/expected true/);
     expect(withEffect('skill2', counter, { condition: { inFullBurst: 'no' } })).toThrow(/expected a boolean/);
   });

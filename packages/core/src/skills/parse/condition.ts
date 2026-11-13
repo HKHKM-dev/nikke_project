@@ -113,13 +113,13 @@ export function validateUsedBurst(
 
 /**
  * 発火の条件（timed・付与・damage で 1 つの型）。キーは allowed のうち 1 つ以上で、どれも満たすときだけ発火する（AND）。
- * 効果の種類ごとの規則（1 パス目で窓を追う stat には inFullBurst を書けない など）は呼ぶ側で見る
+ * 効果の種類ごとの規則（1 パス目で窓を追う stat には攻撃力のほか inFullBurst を書けない など）は呼ぶ側で見る
  */
 export function parseCondition(
   c: Json,
   path: string,
   allowed: readonly ConditionKey[],
-  /** inFullBurst に false（フルバーストタイムの外なら）を書けるか（counterChange と removeState） */
+  /** inFullBurst に false（フルバーストタイムの外なら）を書けるか（counterChange・removeState・timed。付与は呼ぶ側で弾く） */
   outsideFullBurst = false,
 ): EffectCondition {
   if (!isRecord(c)) fail(path, `expected an object with ${allowed.join(' / ')}`);
