@@ -28,6 +28,7 @@ import {
   statContentsOf,
   staticStatesOf,
   type BurstStepMixCondition,
+  type EffectCondition,
   type SelfHpCondition,
   type SkillDefinition,
   type SkillEffect,
@@ -260,10 +261,20 @@ export function resolveSelfState<E extends SkillEffect>(effect: E, lookup: SelfS
   const has = lookup(self.state);
   if (has === undefined) return effect;
   // スタック数の条件は、付けうる枠が無ければ満たさない（plan/design-skill-stage3.md 1.4 節）。静的な状態（1 段）は
-  // 件を見る段（skills/holders.ts・frame/plan.ts。skills/holders/items.ts の stacksHold）で決める
-  if (isStacksCondition(self)) return has ? effect : null;
+  // 件を見る段（skills/holders.ts・frame/plan.ts。skills/holders/items.ts の stacksHold）で決める。上の端（stacksBelow）だけの条件は、
+  // 付けうる枠が無ければ 0 段で満たす（plan/design-maxwell-om.md 2.2 節）
+  if (isStacksCondition(self)) {
+    if (has) return effect;
+    if (self.stacks !== undefined || self.stacksRef !== undefined) return null;
+    return dropConditionKey(effect, condition, 'selfState');
+  }
   if (has !== self.present) return null;
-  const { selfState: _selfState, ...rest } = condition;
+  return dropConditionKey(effect, condition, 'selfState');
+}
+
+/** 条件から鍵 key を落とした効果（ほかの鍵が無ければ条件ごと落とす） */
+function dropConditionKey<E extends SkillEffect>(effect: E, condition: EffectCondition, key: keyof EffectCondition): E {
+  const { [key]: _dropped, ...rest } = condition;
   const { condition: _condition, ...without } = effect as E & { condition?: unknown };
   return (Object.keys(rest).length > 0 ? { ...without, condition: rest } : without) as E;
 }
@@ -284,9 +295,7 @@ export function resolveSelfHp<E extends SkillEffect>(
   // 発火のフレームの HP の割合で見るので、ここでは決めない
   if (effect.kind !== 'passive' || condition === undefined || hp === undefined) return effect;
   if (hpRatio < threshold(hp)) return null;
-  const { selfHp: _selfHp, ...rest } = condition;
-  const { condition: _condition, ...without } = effect as E & { condition?: unknown };
-  return (Object.keys(rest).length > 0 ? { ...without, condition: rest } : without) as E;
+  return dropConditionKey(effect, condition, 'selfHp');
 }
 
 /**

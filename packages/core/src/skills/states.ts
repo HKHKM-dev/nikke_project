@@ -365,6 +365,11 @@ export const NAMED_STATES = {
   performance: { name: { ja: 'パフォーマンス', en: 'Performance' }, holder: 'ally' },
   /** 同: アンコール（プリカの S2。項目ごとに対象が違うので、付いた記録だけの名前） */
   encore: { name: { ja: 'アンコール', en: 'Encore' }, holder: 'ally' },
+  /**
+   * 過電流（マクスウェル：オーディナリーメカニックの S2。バースト使用時に自分に付く攻撃力▲・最大 5 段階・持続）。バーストの
+   * 使用武器の変更の「過電流の段階別の効果」（チャージ時間）が見る（plan/design-maxwell-om.md 2.2 節）
+   */
+  overcurrent: { name: { ja: '過電流', en: 'Overcurrent' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

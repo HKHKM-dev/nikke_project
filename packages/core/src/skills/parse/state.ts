@@ -149,8 +149,7 @@ function validateNoSelfReference(fields: GrantTimedFields, state: NamedStateId, 
       Object.keys(fields.condition).some((key) => key !== 'selfState') ||
       self === undefined ||
       !self.present ||
-      self.stacks !== undefined ||
-      self.stacksRef !== undefined
+      isStacksCondition(self)
     )
       fail(
         `${path}.condition`,

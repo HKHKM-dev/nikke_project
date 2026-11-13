@@ -1,0 +1,515 @@
+[
+  {
+    "id": "1130-01",
+    "recording": "1130",
+    "kind": "total",
+    "use": "record",
+    "value": 268454341,
+    "description": "I-DOLL・フラワー・ソルジャーE.G.・マクスウェル：オーディナリーメカニック の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11424。増分は 1849 個"
+    },
+    "source": "V-0764",
+    "readAt": "2026-11-13"
+  },
+  {
+    "id": "1130-02",
+    "recording": "1130",
+    "kind": "count",
+    "use": "record",
+    "value": 198,
+    "unit": "トリガー",
+    "description": "I-DOLL・フラワー・ソルジャーE.G.・マクスウェル：オーディナリーメカニック のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 1849 個。前の増分から 30f 未満の増分（1822 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 52.5f）から発の数を決めた（2 発になった組 23 個）"
+    },
+    "source": "V-0764",
+    "readAt": "2026-11-13"
+  },
+  {
+    "id": "1130-03",
+    "recording": "1130",
+    "kind": "timing",
+    "use": "record",
+    "value": [1170, 2371, 3551, 4752, 5931, 7132, 8311, 9554, 10734],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・26・0・25・0・25・0・26f"
+    },
+    "source": "V-0764",
+    "readAt": "2026-11-13"
+  },
+  {
+    "id": "1130-04",
+    "recording": "1130",
+    "kind": "timing",
+    "use": "record",
+    "value": [1199, 2401, 3580, 4781, 5960, 7161, 8340, 9583, 10763],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・6・24・0・25・0・25・0・24f"
+    },
+    "source": "V-0764",
+    "readAt": "2026-11-13"
+  },
+  {
+    "id": "1130-05",
+    "recording": "1130",
+    "kind": "timing",
+    "use": "record",
+    "value": [1228, 3609, 5989, 8369, 10792],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0764",
+    "readAt": "2026-11-13"
+  },
+  {
+    "id": "1130-06",
+    "recording": "1130",
+    "kind": "timing",
+    "use": "record",
+    "value": [1837, 4218, 6598, 8978, 11401],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0764",
+    "readAt": "2026-11-13"
+  },
+  {
+    "id": "1130-07",
+    "recording": "1130",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0764",
+    "readAt": "2026-11-13"
+  },
+  {
+    "id": "1130-08",
+    "recording": "1130",
+    "kind": "timing",
+    "use": "record",
+    "value": [2365, 3544, 4746, 5925, 7126, 8305, 10727],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f9506"
+    },
+    "source": "V-0764",
+    "readAt": "2026-11-13"
+  },
+  {
+    "id": "1130-09",
+    "recording": "1130",
+    "kind": "timing",
+    "use": "record",
+    "value": [2394, 3573, 4775, 5954, 7155, 8334, 10756],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0764",
+    "readAt": "2026-11-13"
+  },
+  {
+    "id": "1130-10",
+    "recording": "1130",
+    "kind": "timing",
+    "use": "record",
+    "value": [3602, 5982, 8362],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0764",
+    "readAt": "2026-11-13"
+  },
+  {
+    "id": "1130-11",
+    "recording": "1130",
+    "source": "V-0764",
+    "readAt": "2026-11-13",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 180,
+    "description": "マクスウェルの 1 回目のバースト（過電流 1 段階の見込み。フルバーストに入る回）の六角形の替わり目 f1199 から、メティスバスターバスターの発 f1401 まで（フルバーストの入りの止まり 22f を引いたゲーム内のフレーム）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、バースト欄の II → III の替わり目（1130-04）",
+      "note": "変更後の武器の発は、替わり目から 320f の中で最も大きい増分（500 万を超える。基礎の SR のフルチャージは 200 万に届かない）。発がフルバーストの 00.00（1130-05）より後なので、C-0260 の入りの止まり 22f を引いた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "weaponChange": true
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1130-12",
+    "recording": "1130",
+    "source": "V-0764",
+    "readAt": "2026-11-13",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 150,
+    "description": "マクスウェルの 2 回目のバースト（過電流 2 段階の見込み。バースト II で止まる回）の六角形の替わり目 f2401 から、メティスバスターバスターの発 f2551 まで（ゲーム内のフレーム。止まりは無い）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、バースト欄の II → III の替わり目（1130-04）",
+      "note": "変更後の武器の発は、替わり目から 320f の中で最も大きい増分（500 万を超える。基礎の SR のフルチャージは 200 万に届かない）。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "weaponChange": true
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1130-13",
+    "recording": "1130",
+    "source": "V-0764",
+    "readAt": "2026-11-13",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 120,
+    "description": "マクスウェルの 3 回目のバースト（過電流 3 段階の見込み。フルバーストに入る回）の六角形の替わり目 f3580 から、メティスバスターバスターの発 f3722 まで（フルバーストの入りの止まり 22f を引いたゲーム内のフレーム）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、バースト欄の II → III の替わり目（1130-04）",
+      "note": "変更後の武器の発は、替わり目から 320f の中で最も大きい増分（500 万を超える。基礎の SR のフルチャージは 200 万に届かない）。発がフルバーストの 00.00（1130-05）より後なので、C-0260 の入りの止まり 22f を引いた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "weaponChange": true
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1130-14",
+    "recording": "1130",
+    "source": "V-0764",
+    "readAt": "2026-11-13",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 91,
+    "description": "マクスウェルの 4 回目のバースト（過電流 4 段階の見込み。バースト II で止まる回）の六角形の替わり目 f4781 から、メティスバスターバスターの発 f4872 まで（ゲーム内のフレーム。止まりは無い）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、バースト欄の II → III の替わり目（1130-04）",
+      "note": "変更後の武器の発は、替わり目から 320f の中で最も大きい増分（500 万を超える。基礎の SR のフルチャージは 200 万に届かない）。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "weaponChange": true
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1130-15",
+    "recording": "1130",
+    "source": "V-0764",
+    "readAt": "2026-11-13",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 27,
+    "description": "マクスウェルの 5 回目のバースト（過電流 5 段階の見込み。バースト II で止まる回）の六角形の替わり目 f5960 から、メティスバスターバスターの発 f5987 まで（ゲーム内のフレーム。止まりは無い）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、バースト欄の II → III の替わり目（1130-04）",
+      "note": "変更後の武器の発は、替わり目から 320f の中で最も大きい増分（500 万を超える。基礎の SR のフルチャージは 200 万に届かない）。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "weaponChange": true
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1130-16",
+    "recording": "1130",
+    "source": "V-0764",
+    "readAt": "2026-11-13",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 26,
+    "description": "マクスウェルの 6 回目のバースト（過電流 5 段階（2 回目）の見込み。バースト II で止まる回）の六角形の替わり目 f7161 から、メティスバスターバスターの発 f7187 まで（ゲーム内のフレーム。止まりは無い）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、バースト欄の II → III の替わり目（1130-04）",
+      "note": "変更後の武器の発は、替わり目から 320f の中で最も大きい増分（500 万を超える。基礎の SR のフルチャージは 200 万に届かない）。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 5,
+        "weaponChange": true
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1130-17",
+    "recording": "1130",
+    "source": "V-0764",
+    "readAt": "2026-11-13",
+    "kind": "timing",
+    "use": "compare",
+    "value": 333,
+    "unit": "f",
+    "description": "マクスウェル（3 枠目・SR）の 1 発目の増分から、1 回目のフルバーストの開始（III のタイマーの 00.00。1130-05）までの動画のフレーム（f895 → f1228）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、burst-panel の 00.00",
+      "note": "マクスウェルの発は 344,596（コア）の増分（82f ごと）で、即着弾の SR なので増分のフレームが発のフレーム。1 回目のフルバーストの入りの前に入りの止まりは無い。S2 の「フルチャージして攻撃した時、味方全体にバーストゲージのチャージ」を見分ける（モデルは、このチャージが無ければ 413f）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstStartFromFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1130-18",
+    "recording": "1130",
+    "source": "V-0764",
+    "readAt": "2026-11-13",
+    "kind": "hit",
+    "use": "compare",
+    "value": 5707706,
+    "unit": "ダメージ",
+    "description": "マクスウェルの 1 回目のバースト（フルバーストの中）のメティスバスターバスターの 1 発（f1401。コア・会心なし・距離なし）。過電流 1 段階の攻撃力▲・S2 の攻撃力▲（最終最大HP の 1%。S1 の最大HP▲ のスタックを読む）・バーストと S1 の攻撃ダメージ▲が乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、recipe:buff-edge の区間の一覧（モデルの枠 3 の変更後の武器の区間の胴体）",
+      "note": "変更後の武器の発は、II → III の替わり目から 320f の中で最も大きい増分。モデルの変更後の武器の区間（f450）の胴体 × 格子（1 + コア 1 + 会心 0.5 + 距離 0.3、フルバーストの中は胴体にフルバースト補正が入る）に 1 未満で当たる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 450,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1130-19",
+    "recording": "1130",
+    "source": "V-0764",
+    "readAt": "2026-11-13",
+    "kind": "hit",
+    "use": "compare",
+    "value": 5509738,
+    "unit": "ダメージ",
+    "description": "マクスウェルの 2 回目のバースト（バースト II で止まる回）のメティスバスターバスターの 1 発（f2551。コア・会心なし・距離なし）。過電流 2 段階の攻撃力▲・S2 の攻撃力▲（最終最大HP の 1%。S1 の最大HP▲ のスタックを読む）・バーストと S1 の攻撃ダメージ▲が乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、recipe:buff-edge の区間の一覧（モデルの枠 3 の変更後の武器の区間の胴体）",
+      "note": "変更後の武器の発は、II → III の替わり目から 320f の中で最も大きい増分。モデルの変更後の武器の区間（f1600）の胴体 × 格子（1 + コア 1 + 会心 0.5 + 距離 0.3、フルバーストの中は胴体にフルバースト補正が入る）に 1 未満で当たる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1130-20",
+    "recording": "1130",
+    "source": "V-0764",
+    "readAt": "2026-11-13",
+    "kind": "hit",
+    "use": "compare",
+    "value": 8056042,
+    "unit": "ダメージ",
+    "description": "マクスウェルの 3 回目のバースト（フルバーストの中）のメティスバスターバスターの 1 発（f3722。コア・会心なし・距離なし）。過電流 3 段階の攻撃力▲・S2 の攻撃力▲（最終最大HP の 1%。S1 の最大HP▲ のスタックを読む）・バーストと S1 の攻撃ダメージ▲が乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、recipe:buff-edge の区間の一覧（モデルの枠 3 の変更後の武器の区間の胴体）",
+      "note": "変更後の武器の発は、II → III の替わり目から 320f の中で最も大きい増分。モデルの変更後の武器の区間（f2800）の胴体 × 格子（1 + コア 1 + 会心 0.5 + 距離 0.3、フルバーストの中は胴体にフルバースト補正が入る）に 1 未満で当たる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2800,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1130-21",
+    "recording": "1130",
+    "source": "V-0764",
+    "readAt": "2026-11-13",
+    "kind": "hit",
+    "use": "compare",
+    "value": 7337292,
+    "unit": "ダメージ",
+    "description": "マクスウェルの 4 回目のバースト（バースト II で止まる回）のメティスバスターバスターの 1 発（f4872。コア・会心なし・距離なし）。過電流 4 段階の攻撃力▲・S2 の攻撃力▲（最終最大HP の 1%。S1 の最大HP▲ のスタックを読む）・バーストと S1 の攻撃ダメージ▲が乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、recipe:buff-edge の区間の一覧（モデルの枠 3 の変更後の武器の区間の胴体）",
+      "note": "変更後の武器の発は、II → III の替わり目から 320f の中で最も大きい増分。モデルの変更後の武器の区間（f3950）の胴体 × 格子（1 + コア 1 + 会心 0.5 + 距離 0.3、フルバーストの中は胴体にフルバースト補正が入る）に 1 未満で当たる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3950,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "id": "C-1158",
+  "text": "マクスウェル：オーディナリーメカニックの S1・S2・バーストの▲は説明文どおり: S2 の過電流はバースト使用ごとに 1 段階（最大 5 段階・持続）で、1 段階ごとに攻撃力 30%▲。S2 の攻撃力▲はマクスウェルの最終最大HP の 1% で、効いている間の最終最大HP（S1 のフルチャージごとの最大HP▲ 1%・30 スタックを含む）を読み直す。S1 のバースト 3 段階突入時の攻撃ダメージ 10%▲（5 秒）は、III を使わずにバースト II で止まる回にも付く。バーストの攻撃ダメージ 25%▲（10 秒）は味方全体に付く",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1128-18`・`1128-19`・`1128-20`・`1128-21`・`1130-18`・`1130-19`・`1130-20`・`1130-21`。V-0764",
+  "model": "data/skills/105.json（skill1 の最大HP▲（casterMaxHp・30 スタック）と攻撃ダメージ▲、skill2 の攻撃力▲（casterFinalMaxHp）と過電流の付与（状態 overcurrent）、burst の攻撃ダメージ▲）",
+  "replaces": [],
+  "updated": "2026-11-13",
+  "subject": {
+    "places": [
+      "data/skills/105.json の skill1 の effects[0]",
+      "data/skills/105.json の skill1 の effects[1]",
+      "data/skills/105.json の skill2 の effects[0]",
+      "data/skills/105.json の skill2 の effects[1]",
+      "data/skills/105.json の burst の effects[5]"
+    ]
+  },
+  "decidedOn": [],
+  "parameterFree": "1 発の値は、説明文の値（スキル Lv10）とスペック固定の攻撃力・最大HP と、確定の 1 発の式（会心・コア・距離・フルバースト補正）だけで決まり、合わせた定数は無い"
+}

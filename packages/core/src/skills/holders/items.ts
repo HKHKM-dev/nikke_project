@@ -194,10 +194,10 @@ function pushMerged(out: HeldItem[], item: HeldItem): void {
 /**
  * スタック数の条件を満たすか（plan/design-skill-stage3.md 1.4 節）。tracks は、持ち主のその状態の件の列ごとの出どころと、
  * そのフレームに効いている件。N はスタックの段の最大が N 以上、'full' はどれかの件の列の段の最大がその付与の上限に届いている。
- * 静的な状態（isStatic）は 1 段
+ * below は段の最大が below 未満（状態が無ければ 0 段。plan/design-maxwell-om.md 2.2 節）。静的な状態（isStatic）は 1 段
  */
 export function stacksHold(
-  stacks: 'full' | number,
+  { stacks, stacksBelow: below }: { stacks?: 'full' | number; stacksBelow?: number },
   isStatic: boolean,
   tracks: readonly { origin: HeldOrigin; items: readonly HeldItem[] }[],
 ): boolean {
@@ -209,7 +209,7 @@ export function stacksHold(
   }
   let level = isStatic ? 1 : 0;
   for (const { items } of tracks) for (const it of items) level = Math.max(level, it.stack ?? 1);
-  return level >= stacks;
+  return level >= (stacks ?? 0) && (below === undefined || level < below);
 }
 
 /**

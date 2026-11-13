@@ -168,6 +168,40 @@ function validateInstantFireCoreHits(entries: Partial<Record<SkillSlot, SkillEnt
 }
 
 /**
+ * 同じきっかけの使用武器の変更が 2 つ以上なら（「段階別の効果」「各段階の効果のみ適用」。plan/design-maxwell-om.md 2.2 節）、
+ * どの 2 つも、同じフレームに付かないことが条件から分かる（射手は変更の武器を 1 つしか持てない）。スロットをまたいでも見る。
+ * 分かるのは、使った段階（burstStep）が両方にあって違うときと、同じ状態のスタック数の条件（stacks の数か stacksBelow。
+ * stacksRef・'full' は Lv で区間が動くので数えない）の区間 [stacks, stacksBelow) が重ならないときだけ
+ */
+function validateWeaponChangeStages(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const changes = SKILL_SLOTS.flatMap((slot) =>
+    (entries[slot]?.effects ?? []).flatMap((e, i) =>
+      e.kind === 'weaponChange'
+        ? [{ e, path: `${root}.${slot}.effects[${i}]`, trigger: JSON.stringify(e.trigger) }]
+        : [],
+    ),
+  );
+  const rangeOf = (e: (typeof changes)[number]['e']) => {
+    const self = e.condition?.selfState;
+    if (self === undefined || self.stacksRef !== undefined || self.stacks === 'full') return null;
+    return { state: self.state, from: self.stacks ?? 0, to: self.stacksBelow ?? Infinity };
+  };
+  changes.forEach((a, k) => {
+    for (const b of changes.slice(0, k)) {
+      if (a.trigger !== b.trigger) continue;
+      const [sa, sb] = [a.e.condition?.burstStep, b.e.condition?.burstStep];
+      if (sa !== undefined && sb !== undefined && sa !== sb) continue;
+      const [ra, rb] = [rangeOf(a.e), rangeOf(b.e)];
+      if (ra !== null && rb !== null && ra.state === rb.state && (ra.to <= rb.from || rb.to <= ra.from)) continue;
+      fail(
+        `${a.path}.condition`,
+        `weapon changes with the same trigger (${b.path}) must not apply together: give them different burstStep or non-overlapping stack ranges of the same state (stacks as a number or stacksBelow)`,
+      );
+    }
+  });
+}
+
+/**
  * フルスタックの消費のきっかけは、同じ定義にその状態を自分にスタックで付ける付与が
  * 要り、その状態の付与はどれも射撃の回数のきっかけ（フルスタックになる件が、回復を当てる前のフレームまでに登録される。plan/design-skill-stage3.md 1.3 節）
  */
@@ -574,6 +608,7 @@ export function validateCrossChecks(entries: Partial<Record<SkillSlot, SkillEntr
     validateCycles,
     validateFixedChargeTimeCount,
     validateInstantFireCoreHits,
+    validateWeaponChangeStages,
     validateStateGrants,
     validateStackChanges,
     validateStateContentKinds,

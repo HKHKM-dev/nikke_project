@@ -44,6 +44,7 @@ export function parseWhileCondition(v: Json, path: string): WhileCondition {
   }
   const selfState = parseSelfStateCondition(v.selfState, `${path}.selfState`);
   if (!selfState.present) fail(`${path}.selfState.present`, 'while needs the state (present: false is not supported)');
+  if (selfState.stacksBelow !== undefined) fail(`${path}.selfState.stacksBelow`, 'stacksBelow is not allowed in while');
   return { selfState };
 }
 
@@ -78,8 +79,8 @@ export const CONDITION_KEYS_OF = {
   counterChange: ['selfState', 'selfCounter', 'inFullBurst', 'usedBurst'],
   // クールタイム▼は自分の状態と使った段階（burstStep）だけ（plan/design-skill-stage12.md 2.6 節）
   cooldownReduction: ['selfState', 'burstStep'],
-  // 使用武器の変更は使った段階だけ
-  weaponChange: ['burstStep'],
+  // 使用武器の変更は使った段階と、自分の状態のスタック数（plan/design-maxwell-om.md 2.2 節。parse/weapon.ts がスタック数の形に限る）
+  weaponChange: ['burstStep', 'selfState'],
   // フルバーストタイムの延長は自分の状態だけ（plan/design-skill-stage21.md 2.1 節）。{ applied } の効果・状態の維持の延長・
   // 回復も（plan/design-mint-prika.md 2.3・2.5・2.7 節）
   selfStateOnly: ['selfState'],
@@ -193,19 +194,20 @@ function parseSelfHpCondition(v: Json, path: string): SelfHpCondition {
 
 /**
  * 自分の状態の条件。"<id>"（付いていれば）か { state, present }。
- * { state, stacks: "full" | N }・{ state, stacksRef }（N スタック以上。present は省略か true。plan/design-skill-stage3.md 1.4 節）
+ * { state, stacks: "full" | N }・{ state, stacksRef }（N スタック以上。present は省略か true。plan/design-skill-stage3.md 1.4 節）。
+ * stacksBelow（N スタック未満。stacks の数と組める。plan/design-maxwell-om.md 2.2 節）
  */
 function parseSelfStateCondition(v: Json, path: string): SelfStateCondition {
   if (typeof v === 'string') return { state: parseNamedStateId(v, path, 'ally'), present: true };
   if (!isRecord(v)) fail(path, 'expected a state id or { state, present } or { state, stacks }');
-  rejectUnknownKeys(v, ['state', 'present', 'stacks', 'stacksRef', 'sameFiring'], path);
+  rejectUnknownKeys(v, ['state', 'present', 'stacks', 'stacksRef', 'stacksBelow', 'sameFiring'], path);
   if (v.sameFiring !== undefined) {
     if (v.sameFiring !== true) fail(`${path}.sameFiring`, 'expected true');
-    if (v.stacks === undefined && v.stacksRef === undefined)
-      fail(`${path}.sameFiring`, 'needs a stack count (stacks or stacksRef)');
+    if (v.stacks === undefined && v.stacksRef === undefined && v.stacksBelow === undefined)
+      fail(`${path}.sameFiring`, 'needs a stack count (stacks, stacksRef or stacksBelow)');
   }
   const state = parseNamedStateId(v.state, `${path}.state`, 'ally');
-  if (v.stacks === undefined && v.stacksRef === undefined) {
+  if (v.stacks === undefined && v.stacksRef === undefined && v.stacksBelow === undefined) {
     if (typeof v.present !== 'boolean') fail(`${path}.present`, `expected a boolean, got ${JSON.stringify(v.present)}`);
     return { state, present: v.present };
   }
@@ -215,7 +217,17 @@ function parseSelfStateCondition(v: Json, path: string): SelfStateCondition {
   if (v.stacks !== undefined && v.stacksRef !== undefined) fail(path, 'expected at most one of stacks and stacksRef');
   const condition: SelfStateCondition = { state, present: true };
   if (v.stacksRef !== undefined) condition.stacksRef = parseRef(v.stacksRef, `${path}.stacksRef`);
-  else condition.stacks = v.stacks === 'full' ? 'full' : parsePositiveInt(v.stacks, `${path}.stacks`);
+  else if (v.stacks !== undefined)
+    condition.stacks = v.stacks === 'full' ? 'full' : parsePositiveInt(v.stacks, `${path}.stacks`);
+  if (v.stacksBelow !== undefined) {
+    const below = parsePositiveInt(v.stacksBelow, `${path}.stacksBelow`);
+    if (condition.stacks === 'full') fail(`${path}.stacksBelow`, 'stacksBelow cannot be combined with stacks: "full"');
+    // stacksRef は Lv で値が動き、解いた後に区間が空になりうるので組ませない
+    if (condition.stacksRef !== undefined) fail(`${path}.stacksBelow`, 'stacksBelow cannot be combined with stacksRef');
+    if (typeof condition.stacks === 'number' && below <= condition.stacks)
+      fail(`${path}.stacksBelow`, `stacksBelow must be greater than stacks (${condition.stacks}), got ${below}`);
+    condition.stacksBelow = below;
+  }
   if (v.sameFiring === true) condition.sameFiring = true;
   return condition;
 }

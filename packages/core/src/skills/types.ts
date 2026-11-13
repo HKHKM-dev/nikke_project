@@ -1211,6 +1211,11 @@ export type SelfStateCondition = {
   stacks?: 'full' | number;
   stacksRef?: number;
   /**
+   * 「N スタック未満なら」（上の端。plan/design-maxwell-om.md 2.2 節）。stacks（以上）と組めば「ちょうど N 段階」、
+   * これだけなら状態が無い 0 段も入る。stacks: 'full'・stacksRef とは組まない。while には書けない
+   */
+  stacksBelow?: number;
+  /**
    * 「下位効果のスタック適用」の段階（plan/design-quency-eq.md 2 節の論点 3）。同じ発火で、同じスロットの
    * 前に書いた同じきっかけの付与が付ける分も数えてスタックを見る（下の段階が満ちた発火で上の段階も付く）。状態の付与の、スタックの
    * 条件にだけ書ける（parse/crossChecks.ts の validateSameFiring）
@@ -1218,9 +1223,11 @@ export type SelfStateCondition = {
   sameFiring?: true;
 };
 
-/** スタック数を見る自分の状態の条件か（stacks か stacksRef を持つ） */
+/** スタック数を見る自分の状態の条件か（stacks・stacksRef・stacksBelow を持つ） */
 export function isStacksCondition(self: SelfStateCondition | undefined): boolean {
-  return self !== undefined && (self.stacks !== undefined || self.stacksRef !== undefined);
+  return (
+    self !== undefined && (self.stacks !== undefined || self.stacksRef !== undefined || self.stacksBelow !== undefined)
+  );
 }
 
 /** 条件のキー */
@@ -1729,8 +1736,13 @@ export type WeaponChangeEffect = {
    */
   chargeTimeSeconds?: number;
   /**
+   * 変更後の武器のチャージ時間（秒）の description_value_NN（plan/design-maxwell-om.md 2.1 節）。chargeTimeSeconds とちょうど片方。
+   * 解決は chargeTimeSeconds と同じ
+   */
+  chargeTimeRef?: number;
+  /**
    * 説明文の「チャージ時間：N 秒固定」（plan/design-nayuta.md 2.4 節。V-0666）。変更後の武器のチャージ時間を、チャージ速度▲を受けずに
-   * chargeTimeSeconds のままにする（stat fixedChargeTime と同じ読み。C-0214）。chargeTimeSeconds と組む
+   * chargeTimeSeconds（chargeTimeRef）のままにする（stat fixedChargeTime と同じ読み。C-0214）。chargeTimeSeconds か chargeTimeRef と組む
    */
   chargeTimeFixed?: true;
   /** 同: 変更後の武器のフルチャージダメージ（%・即値。300 = 300%）。省略は基礎の武器のまま。チャージ武器にだけ書ける */
@@ -1777,7 +1789,11 @@ export type WeaponChangeEffect = {
    * 説明文に「装弾数無限」の行が無い変更で、録画で読む（たきなのバースト。C-0708）。維持の欄（durationRef・durationSeconds）の変更にだけ書ける
    */
   infiniteAmmo?: true;
-  /** 発火の条件（plan/design-red-hood.md 2.1 節）。鍵は使った段階（burstStep）だけ */
+  /**
+   * 発火の条件。鍵は使った段階（burstStep。plan/design-red-hood.md 2.1 節）と、自分の状態のスタック数（selfState の stacks・
+   * stacksBelow。段 1.5 で判定し、段 1 の状態の件は同じフレームの付与も見る。plan/design-maxwell-om.md 2.2・2.3 節）。同じきっかけの変更どうしは、
+   * 使った段階が違うか、同じ状態のスタック数の区間が重ならない（parse/crossChecks.ts の validateWeaponChangeStages）
+   */
   condition?: EffectCondition;
   /**
    * 変更の窓の間だけ自分に付く状態の id（「記憶燃焼：使用武器変更」の記憶燃焼。plan/design-nayuta.md 2.5 節。論点 2）。
