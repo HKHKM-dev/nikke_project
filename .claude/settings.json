@@ -54,7 +54,7 @@
     ],
     "PostToolUse": [
       {
-        "matcher": "Skill|Bash|mcp__github__create_pull_request",
+        "matcher": "Skill|Bash|mcp__github__enable_pr_auto_merge",
         "hooks": [
           {
             "type": "command",

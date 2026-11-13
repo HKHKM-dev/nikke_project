@@ -32,10 +32,12 @@
 ## 3. 止めずに進める仕組み
 
 - メモリの文では止まりが直らなかったので、Claude Code のフックで止める（`tools/git/review-flow.ts`・`review-flow-lib.ts`。`.claude/settings.json` の PostToolUse と Stop）。
-  - PostToolUse（Skill・Bash・GitHub の MCP の `create_pull_request`）: 見直しのスキル（`simplify`・`code-review`）を呼んだら、git のディレクトリに印（ブランチと時刻）を置く。`gh pr create` か `create_pull_request` で PR を作ったら消す。
+  - PostToolUse（Skill・Bash・GitHub の MCP の `enable_pr_auto_merge`）: 今のブランチの差分の見直しのスキル（`simplify`・`code-review`。PR の番号を対象にしたものは除く）を呼んだら、git のディレクトリに印（ブランチと時刻）を置く。自動マージを予約したら（`gh pr merge --auto` か `enable_pr_auto_merge`）消す。終わりを PR の作成でなく予約にするのは、AGENTS.md の範囲が「自動マージを予約するまで」だから。
   - Stop: 今のブランチの印があれば、応答の終わりを止め（`decision: block`）、PR まで続けるよう理由を返す。
-  - 通すもの: 一度止めた後の終わり（`stop_hook_active`。オーナーの判断がどうしても要るとき）、別のブランチの印、6 時間より古い印。
-- 裏のエージェントを待つ間の止まりは、フックでは防げない（待つ間は応答を終えるしかない）。止めた理由の文で、`/simplify` のエージェントを `run_in_background: false` で並べて呼ぶよう知らせる。
+  - 通すもの: 一度止めた後の終わり（`stop_hook_active`。オーナーの判断がどうしても要るとき。通したら印を消し、次の応答からは止めない）、別のブランチの印、6 時間より古い印。
+  - 判定に要らない Bash では git を呼ばない（PostToolUse は Bash のたびに node を 1 回起こす）。
+  - 既知の穴: オーナーが自分で `/simplify`・`/code-review` を打ったときは Skill のツールを通らないので印が付かない。
+- 裏のエージェントを待つ間の止まりは、フックでは防げない（待つ間は応答を終えるしかない）。Claude Code では `/simplify` のエージェントを `run_in_background: false` で並べて呼ぶ（Claude Code のメモリに置く）。
 
 ## 4. 経過
 
