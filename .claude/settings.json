@@ -52,7 +52,28 @@
         ]
       }
     ],
+    "PostToolUse": [
+      {
+        "matcher": "Skill|Bash|mcp__github__enable_pr_auto_merge",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/tools/git/review-flow.ts\" --post",
+            "timeout": 20
+          }
+        ]
+      }
+    ],
     "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/tools/git/review-flow.ts\" --stop",
+            "timeout": 20
+          }
+        ]
+      },
       {
         "hooks": [
           {
