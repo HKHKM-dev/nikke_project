@@ -19,7 +19,10 @@
           "assumes": {
             "ja": "「スキル発動者基準」の量は、マクスウェルのバフ前の最大HP × X を 1 スタックごとに対象の最大HP に足す（エード・マストと同じ）。フルチャージの発（バーストの使用武器の変更の発を含む）ごとに 1 スタック。自分にも付き、S2 の攻撃力▲の量（自分の最終最大HP）を上げる",
             "en": "The amount based on the skill user is Maxwell's pre-buff max HP × X added to the target's max HP per stack (as Ade and Mast). One stack per fully charged shot (including the burst's changed-weapon shot). It also applies to herself and raises the amount of the S2 ATK up (her final max HP)"
-          }
+          },
+          "claims": [
+            "C-1158"
+          ]
         },
         {
           "kind": "timed",
@@ -27,7 +30,10 @@
           "target": "allies",
           "stat": "attackDamage",
           "ref": 4,
-          "durationRef": 5
+          "durationRef": 5,
+          "claims": [
+            "C-1158"
+          ]
         }
       ]
     },
@@ -41,11 +47,16 @@
           "scaling": "casterFinalMaxHp",
           "ref": 1,
           "durationRef": 2,
-          "reads": ["hp"],
+          "reads": [
+            "hp"
+          ],
           "assumes": {
             "ja": "量は、効いている間のマクスウェルの最終最大HP（S1 のスタックを含む）を読み直す（発火の瞬間の値で固定しない。ラプラス：アルティメットヒーロー・シンデレラと同じ読み）",
             "en": "The amount re-reads Maxwell's final max HP (including the S1 stacks) while it lasts, not fixed at the moment it fires (as Laplace: Ultimate Hero and Cinderella)"
-          }
+          },
+          "claims": [
+            "C-1158"
+          ]
         },
         {
           "kind": "state",
@@ -59,6 +70,9 @@
               "stat": "attack",
               "ref": 5
             }
+          ],
+          "claims": [
+            "C-1158"
           ]
         },
         {
@@ -71,7 +85,10 @@
           "assumes": {
             "ja": "フルチャージの発（バーストの使用武器の変更の発を含む）ごとに、編成の 1 本のゲージに足す",
             "en": "Added to the team's single gauge on each fully charged shot (including the burst's changed-weapon shot)"
-          }
+          },
+          "claims": [
+            "C-1159"
+          ]
         }
       ],
       "notes": [
@@ -94,6 +111,7 @@
           "fullChargeDamage": 300,
           "maxAmmoRef": 6,
           "pierce": true,
+          "firstShotDelayFrames": 183,
           "condition": {
             "selfState": {
               "state": "overcurrent",
@@ -101,9 +119,12 @@
             }
           },
           "assumes": {
-            "ja": "過電流の段階別の効果（1 段階以下）。段階は、同じバーストで S2 が付けた過電流を数える（1 回目のバーストが 1 段階。H1。S2 の付与は条件の無い段 1 の件で、段 1.5 の変更の条件は同じフレームの付与も見る）。最大装弾数 1 発を撃ち切って基礎の SR に戻る。最初の発までの待ち・変更後の発のバーストゲージ・撃ち切りの後の基礎の SR の戻り方は、ウンファ：タクティカル・アップのバーストと同じいまのモデルの形（録画で読む）",
-            "en": "The Overcurrent stage effect (stage 1 or below). The stage counts the Overcurrent that S2 grants at the same burst (the first burst is stage 1; H1; the S2 grant has no condition, so the change condition sees the grant of the same frame). Fires its single round and returns to the base SR. The wait to the first shot, the burst gauge of the changed shot and how the base SR resumes follow the current model, as Eunhwa: Tactical Upgrade's burst (to be read from recordings)"
-          }
+            "ja": "過電流の段階別の効果（1 段階以下）。段階は、同じバーストで S2 が付けた過電流を数える（1 回目のバーストが 1 段階。H1。S2 の付与は条件の無い段 1 の件で、段 1.5 の変更の条件は同じフレームの付与も見る）。最大装弾数 1 発を撃ち切って基礎の SR に戻る。最初の発までの待ちは録画で読んだ即値で、六角形の替わり目からほぼ段階のチャージ時間の後（V-0764。どの段階も既定の待ちより 5f 短い）。変更後の発のバーストゲージと、撃ち切りの後の基礎の SR の戻り方は、ウンファ：タクティカル・アップのバーストと同じいまのモデルの形（確かめていない）",
+            "en": "The Overcurrent stage effect (stage 1 or below). The stage counts the Overcurrent that S2 grants at the same burst (the first burst is stage 1; H1; the S2 grant has no condition, so the change condition sees the grant of the same frame). Fires its single round and returns to the base SR. The wait to the first shot is read from recordings: about the stage charge time after the hexagon change (V-0764; 5 f shorter than the default wait at every stage). The burst gauge of the changed shot and how the base SR resumes follow the current model, as Eunhwa: Tactical Upgrade's burst (unverified)"
+          },
+          "claims": [
+            "C-1157"
+          ]
         },
         {
           "kind": "weaponChange",
@@ -114,6 +135,7 @@
           "fullChargeDamage": 300,
           "maxAmmoRef": 6,
           "pierce": true,
+          "firstShotDelayFrames": 154,
           "condition": {
             "selfState": {
               "state": "overcurrent",
@@ -124,7 +146,10 @@
           "assumes": {
             "ja": "過電流の段階別の効果（2 段階）。ほかは 1 段階以下の変更と同じ",
             "en": "The Overcurrent stage effect (stage 2). Otherwise the same as the stage-1 change"
-          }
+          },
+          "claims": [
+            "C-1157"
+          ]
         },
         {
           "kind": "weaponChange",
@@ -135,6 +160,7 @@
           "fullChargeDamage": 300,
           "maxAmmoRef": 6,
           "pierce": true,
+          "firstShotDelayFrames": 124,
           "condition": {
             "selfState": {
               "state": "overcurrent",
@@ -145,7 +171,10 @@
           "assumes": {
             "ja": "過電流の段階別の効果（3 段階）。ほかは 1 段階以下の変更と同じ",
             "en": "The Overcurrent stage effect (stage 3). Otherwise the same as the stage-1 change"
-          }
+          },
+          "claims": [
+            "C-1157"
+          ]
         },
         {
           "kind": "weaponChange",
@@ -156,6 +185,7 @@
           "fullChargeDamage": 300,
           "maxAmmoRef": 6,
           "pierce": true,
+          "firstShotDelayFrames": 95,
           "condition": {
             "selfState": {
               "state": "overcurrent",
@@ -166,7 +196,10 @@
           "assumes": {
             "ja": "過電流の段階別の効果（4 段階）。ほかは 1 段階以下の変更と同じ",
             "en": "The Overcurrent stage effect (stage 4). Otherwise the same as the stage-1 change"
-          }
+          },
+          "claims": [
+            "C-1157"
+          ]
         },
         {
           "kind": "weaponChange",
@@ -177,6 +210,7 @@
           "fullChargeDamage": 300,
           "maxAmmoRef": 6,
           "pierce": true,
+          "firstShotDelayFrames": 30,
           "condition": {
             "selfState": {
               "state": "overcurrent",
@@ -186,7 +220,10 @@
           "assumes": {
             "ja": "過電流の段階別の効果（5 段階以上）。ほかは 1 段階以下の変更と同じ",
             "en": "The Overcurrent stage effect (stage 5 or above). Otherwise the same as the stage-1 change"
-          }
+          },
+          "claims": [
+            "C-1157"
+          ]
         },
         {
           "kind": "timed",
@@ -194,7 +231,10 @@
           "target": "allies",
           "stat": "attackDamage",
           "ref": 7,
-          "durationRef": 8
+          "durationRef": 8,
+          "claims": [
+            "C-1158"
+          ]
         }
       ]
     }
