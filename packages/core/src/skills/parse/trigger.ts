@@ -94,10 +94,11 @@ export function parseTrigger(v: Json, path: string, options: TriggerOptions = {}
   if (v.ended !== undefined) {
     fail(path, 'an ended trigger ({ ended }) is only allowed in counterChange, ammoDecrease and state grants');
   }
-  // フルスタックの消費のきっかけは heal と weaponChange だけ（plan/design-skill-stage3.md 1.3 節、
-  // plan/design-skill-stage11.md 2.1 節）
+  // フルスタックの消費のきっかけは heal・weaponChange・ammoRefill・timed だけ（plan/design-skill-stage3.md 1.3 節、
+  // plan/design-skill-stage11.md 2.1 節、plan/design-diesel.md 2.1 節）
   if (v.fullStack !== undefined) {
-    if (!options.fullStack) fail(path, 'a full-stack trigger ({ fullStack }) is only allowed in heal and weaponChange');
+    if (!options.fullStack)
+      fail(path, 'a full-stack trigger ({ fullStack }) is only allowed in heal, weaponChange, ammoRefill and timed');
     rejectUnknownKeys(v, ['fullStack'], path);
     return { fullStack: parseNamedStateId(v.fullStack, `${path}.fullStack`, 'ally') };
   }

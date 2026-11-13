@@ -789,7 +789,8 @@ export type AppliedTrigger = { applied: NamedStateId };
 /**
  * 「〈名前〉のフルスタック状態の時、スタック解除後」（plan/design-skill-stage3.md 1.3 節）。持ち主（自分）のその状態の件が
  * フルスタックになったフレームに発火し、その状態のスタックを全部外す（次のフレームで閉じる。同じフレームに付いた件も外す）。
- * 回復（heal）にだけ書ける（1 パス目が回復の前にフルスタックを見つける。frame/firstPass.ts）。その状態は、同じ定義の付与で
+ * 回復（heal）・使用武器の変更・弾丸チャージ（ammoRefill）・timed に書ける（1 パス目が回復の前にフルスタックを見つける。
+ * frame/firstPass.ts。弾丸チャージは外した後の最大装弾数で数える。plan/design-diesel.md 2.1 節）。その状態は、同じ定義の付与で
  * 自分にスタックで付き、付与はどれも射撃の回数のきっかけ（フルスタックになる件が前のフレームまでに登録される）
  */
 export type FullStackTrigger = { fullStack: NamedStateId };

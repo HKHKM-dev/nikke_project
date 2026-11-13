@@ -142,7 +142,8 @@ export type FrameEvents = {
   /**
    * このフレームにフルスタックになって外れた状態（持ち主の枠と状態。plan/design-skill-stage3.md 1.3 節）。1 パス目が
    * 回復の前に件の一覧から出す（skills/holders.ts の consumeFullStacks）。流し直し（replayEvents）では作らないので、
-   * フルスタックの消費のきっかけは 1 パス目で当てる回復にだけ書ける。省略は無し
+   * フルスタックの消費のきっかけは 1 パス目で当てる効果（回復・使用武器の変更・弾丸チャージ・1 パス目が件を登録する timed）にだけ書ける。
+   * 省略は無し
    */
   fullStacks?: readonly FullStackEvent[];
   /**

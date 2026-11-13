@@ -6,6 +6,7 @@ import { type BurstScheduleModel } from '../../burst/schedule.ts';
 import {
   isResolvedShotCount,
   isResolvedApplied,
+  isResolvedFullStack,
   isResolvedTimer,
   isResolvedWeaponChangeEnd,
   resolveCoverHeals,
@@ -310,8 +311,14 @@ export function createInstants({
           continue;
         }
         // 射撃の回数のきっかけの弾丸チャージは、同じ発のきっかけで付く件（f + 1 から。`{ applied }` の
-        // 付与で付く応急改造を含む。C-0561。仮説）を入れた最大装弾数で数える。残弾に足すのは発のフレーム f のまま
-        const params = paramsAt(target, isResolvedShotCount(src.effect.trigger) ? f + 1 : f);
+        // 付与で付く応急改造を含む。C-0561。仮説）を入れた最大装弾数で数える。フルスタックの消費のきっかけの弾丸チャージは、
+        // 外したスタック（f + 1 で閉じる）を除いた最大装弾数で数え、残弾もそこで止める（「スタック解除後」。plan/design-diesel.md
+        // 2.1 節）。残弾に足すのは発のフレーム f のまま
+        const fullStack = isResolvedFullStack(src.effect.trigger);
+        const params = paramsAt(target, fullStack || isResolvedShotCount(src.effect.trigger) ? f + 1 : f);
+        // 外した後の最大装弾数を超える残弾は、ここで削る（次のフレームの射手の削り MAX_AMMO_CLAMP_ON_DECREASE と同じ結果。
+        // 記録の量を弾丸チャージの分だけにする）
+        if (fullStack && state.ammo > params.maxAmmo) state.ammo = params.maxAmmo;
         const before = state.ammo;
         // 発数の弾丸チャージ（scaling 'flat'）は値をそのまま足す
         const rounds =

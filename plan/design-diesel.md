@@ -5,7 +5,7 @@
 - 前提の語彙: [design-skill-stage3.md](design-skill-stage3.md) 1.1・1.3 節（`stackChange`・フルスタックの消費のきっかけ `{ fullStack }`）、[design-skill-stage4.md](design-skill-stage4.md) 1.2 節（弾丸チャージ `ammoRefill`）、[design-skill-stage17.md](design-skill-stage17.md) 2.1 節（1 パス目だけが作るきっかけを timed に書く形。`{ coverHealed }`）、[design-agent-bunny.md](design-agent-bunny.md) 2.3 節（貫通ダメージ▲ `pierceDamage`）、[design-skill-stage19.md](design-skill-stage19.md) 2.2 節（スタック可能バフ効果のスタック量▲を自分の状態の分だけ書く形）
 - 検証記録: V-0763
 - 作成日: 2026-11-12
-- 状態: 起案（7 節の論点の承認待ち）
+- 状態: 撮影待ち（V-0763）
 
 ## 0. 範囲
 
@@ -29,7 +29,7 @@
 | 宝物 | S2 | 同じ時、味方全体に「貫通ダメージ 30%▲」「10 秒間維持」 | 語彙を足す（2.1） | timed（`{ fullStack: "strawberryCandy" }`・`allies`・`pierceDamage`・`ref: 6`・`durationRef: 7`・`reads: ["pierce"]`）。貫通特化の無い味方の発には乗らない |
 | 両方 | バースト | 最終攻撃力が最も高い敵 5 機に「最終攻撃力の 299.66% のダメージ」 | 語彙にある | burstDamage（`ref: 2`・`skill`）。単体ボスで 1 ヒット（`assumes`） |
 | 基礎 | バースト | 同じ敵に「挑発」「5.06 秒間維持」 | 計算に無関係（`noDamage`） | notes。付けるのはチェーンの間 |
-| 宝物 | バースト | 自分に「最大HP のみ 100.05%▲」「10 秒間維持」 | 間接（`hp`） | notes（「最大HP のみ▲」は形を足すまで notes。[skills-guide.md](skills-guide.md) 1.4 節の表） |
+| 宝物 | バースト | 自分に「最大HP のみ 100.05%▲」「10 秒間維持」 | 間接（`hp`） | notes。読む側（HP の割合を見る効果）が定義に無いので、防御力▲と同じく間接の notes |
 | 宝物 | バースト | 自分に「ヘイト：敵全体を挑発」「10 秒間維持」 | 語彙にある（状態の付与） | 状態 `attract` の付与（`burstUse`・`self`・`durationRef: 5`・中身なし）。S1 の条件が読む。挑発そのものはダメージに関係しない（ティアの S2 と同じ自分にヘイトの形で、付けた時にゲージを溜めない。C-0505。チェーンの間に付く） |
 
 - 状態の名前は、英語版の状態名（Strawberry Candy・Attract）から目録（`skills/states.ts`）に `strawberryCandy`（イチゴキャンディ）・`attract`（ヘイト）を足す。ヘイトはティア・ノアなどの説明文にもある名前で、今は notes だけで書かれている（読む側が無かった）。
@@ -50,7 +50,7 @@
 
 - **S1 の 150 回の数え方の別の読み**: 「ヘイト状態の間の命中だけを数える」読み（グレイブの S2 の `during: { state }` の形）は、`stackChange` には書けない。定義は「命中は戦闘を通して数え、150 回目にヘイト状態なら足す」（今の回数のきっかけと条件の意味）で書き、撮影で見分ける（論点 3）。合わなければ、そのとき `stackChange` に `during: { state }` を開く。
 - **スタック可能バフ効果のスタック量▲の、ほかの味方のスキルのスタック**: 未対応の notes（論点 3）。
-- **最大HP のみ▲**: notes のまま。
+- **最大HP のみ▲**: 読む側が無いので間接の notes（stat `maxHpOnly` の効果にはしない）。
 
 ## 3. 定義の案（`data/skills/72.json`）
 
@@ -87,3 +87,4 @@
 ## 経過
 
 - 2026-11-12: 起案。V-0763 を起こした。
+- 2026-11-13: 7 節の論点 1〜4 をオーナーが推奨どおり承認した。2.1 節の語彙と定義を実装し、V-0763 の撮影を依頼した。

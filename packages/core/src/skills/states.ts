@@ -380,6 +380,13 @@ export const NAMED_STATES = {
    * バーストの「フルスタック状態なら」が見る）
    */
   collectHackingCode: { name: { ja: 'ハッキングコード収集', en: 'Collect Hacking Code' }, holder: 'ally' },
+  /**
+   * イチゴキャンディ（ディーゼルの S2。命中 N 回ごとに 1 スタック・10 スタック・10 秒。中身は最大装弾数▲。フルスタックで外れ、
+   * 弾丸チャージ（宝物版は貫通ダメージ▲も）が出る。宝物版 S1 のスタック量▲が足す。plan/design-diesel.md 1 節）
+   */
+  strawberryCandy: { name: { ja: 'イチゴキャンディ', en: 'Strawberry Candy' }, holder: 'ally' },
+  /** ヘイト（敵全体を挑発。ディーゼルの宝物版バースト。自分・10 秒・中身なし。宝物版 S1 の「自分がヘイト状態なら」が見る） */
+  attract: { name: { ja: 'ヘイト', en: 'Attract' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

@@ -43,9 +43,28 @@ describe('フルスタックの消費のきっかけの読み込み', () => {
     expect(parse([relax, heal]).skills.skill1.effects[1]).toEqual(heal);
   });
 
-  it('rejects it outside heal, without a stacking grant, and with a grant not on a shot count', () => {
-    const timed = { kind: 'timed', trigger: { fullStack: 'camouflage' }, target: 'self', stat: 'attack', ref: 1 };
-    expect(() => parse([relax, { ...timed, durationSeconds: 1 }])).toThrow(/only allowed in heal/);
+  it('reads it in ammoRefill and timed too (plan/design-diesel.md 2.1)', () => {
+    const refill = { kind: 'ammoRefill', trigger: { fullStack: 'camouflage' }, target: 'allies', ref: 1 };
+    const timed = {
+      kind: 'timed',
+      trigger: { fullStack: 'camouflage' },
+      target: 'allies',
+      stat: 'pierceDamage',
+      ref: 1,
+      durationSeconds: 1,
+    };
+    expect(parse([relax, refill, timed]).skills.skill1.effects.slice(1)).toEqual([refill, timed]);
+  });
+
+  it('rejects it outside heal / weaponChange / ammoRefill / timed, without a stacking grant, and with a grant not on a shot count', () => {
+    const grant = {
+      kind: 'state',
+      state: 'decoy',
+      trigger: { fullStack: 'camouflage' },
+      target: 'self',
+      durationSeconds: 1,
+    };
+    expect(() => parse([relax, grant])).toThrow(/only allowed in heal, weaponChange, ammoRefill and timed/);
     expect(() => parse([heal])).toThrow(/needs grants of the same state on self with maxStacks/);
     const { maxStacks: _, ...single } = relax;
     expect(() => parse([single, heal])).toThrow(/needs grants of the same state on self with maxStacks/);
