@@ -142,7 +142,7 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
   // フルバーストの終わりから frames の間に撃った発の 1 発のゲージの、ほかの時の 1 発に対する比（V-0638）
   shotGaugeRatioAfterFullBurst: { args: ['slot', 'frames'], sim: shotGaugeRatioAfterFullBurst },
   // 枠 holder に状態 state が付いている間（n で n 回目の窓だけ）に着いた、枠の 1 回のゲージ（味方のゲージで足した量を入れる）の、
-  // ほかの時に対する比（V-0751）
+  // ほかの時に対する比（V-0751）。added が all なら、ほかの持つ枠が足した量も入れる
   shotGaugeRatioInHolderState: { args: ['slot', 'holder', 'state'], sim: shotGaugeRatioInHolderState },
   // 枠の n 回目（1 始まり）の周期のゲージ（burstGaugeHit）の量（バーの最大に対する %）（V-0483）
   timerGauge: {
@@ -394,8 +394,8 @@ function shotGaugeRatioAfterFullBurst(result: SimResult, ctx: MetricContext): nu
 /**
  * 枠の 1 回のゲージ（着弾の記録の発のゲージに、味方のゲージ（allyGaugeAdd）で足した量を入れる）の、枠 holder に状態 state が付いている
  * 間に着いた回と、ほかの時（状態の付いていない時）に着いた回の比（小数 4 桁。plan/design-grave-heat-gauge.md 2.3 節）。どちらも、
- * 足した量（持つ枠 holder の分だけ）を入れた合計を発のゲージだけの合計で割り、その 2 つを比べる（1 回の発のゲージが一定なら、1 回のゲージの平均の比と同じ。
- * 命中の期待値が着地点で変わっても動かない）。n（0 始まり）を書くと、付いている間は n 回目の窓（重なる・接する件はまとめる）だけ。録画では、その枠だけが当たる
+ * 足した量（持つ枠 holder の分だけ。added が all なら、すべての持つ枠の分）を入れた合計を発のゲージだけの合計で割り、その 2 つを比べる（1 回の発の
+ * ゲージが一定なら、1 回のゲージの平均の比と同じ。命中の期待値が着地点で変わっても動かない）。n（0 始まり）を書くと、付いている間は n 回目の窓（重なる・接する件はまとめる）だけ。録画では、その枠だけが当たる
  * 区間のバーの 1 回の伸びの比と比べる。どちらかに回が無ければ誤り
  */
 function shotGaugeRatioInHolderState(result: SimResult, ctx: MetricContext): number {
@@ -405,6 +405,8 @@ function shotGaugeRatioInHolderState(result: SimResult, ctx: MetricContext): num
   // 件が重なる・接するときは 1 つの窓にまとめる。1 パス目が足す窓（selfStateAt）と同じく、付いた次のフレームから外れるフレームの前まで
   const windows = unionRanges(itemsOf(result.history, { holder, state: state as NamedStateId }));
   const n = ctx.args.n === undefined ? null : Number(ctx.args.n);
+  const added = ctx.args.added === undefined ? 'holder' : String(ctx.args.added);
+  if (added !== 'holder' && added !== 'all') throw new Error(`added は holder か all（${added}）`);
   if (n !== null && windows[n] === undefined) throw new Error(`枠 ${holder + 1} の ${state} の ${n} 回目が無い`);
   const within = (w: { start: number; end: number }, f: number) => w.start < f && f < w.end;
   const sums = { in: { own: 0, all: 0 }, out: { own: 0, all: 0 } };
@@ -417,9 +419,9 @@ function shotGaugeRatioInHolderState(result: SimResult, ctx: MetricContext): num
     side.own += g.energy;
     side.all += g.energy;
   }
-  // 足した量は、持つ枠 holder の分だけ（ほかの持つ枠の分は比に混ぜない）
+  // 足した量は、持つ枠 holder の分だけ（added が all なら、ほかの持つ枠の分も。録画のバーの伸びは、すべての持つ枠の分を含む）
   for (const g of result.allyGauges) {
-    const side = g.slotIndex === slotIndex && g.holderIndex === holder ? sideOf(g.frame) : null;
+    const side = g.slotIndex === slotIndex && (added === 'all' || g.holderIndex === holder) ? sideOf(g.frame) : null;
     if (side !== null) side.all += g.energy;
   }
   if (sums.in.own === 0 || sums.out.own === 0)

@@ -1,0 +1,121 @@
+{
+  "verification": "V-0768",
+  "note": "H0（いまのモデル。2 人の量を足し合わせる）だけ。H1〜H4b は 1 パス目の足し方の切り替えが要るので、検証記録の「予測」に手で書いた",
+  "team": [
+    {
+      "rid": 836
+    },
+    {
+      "rid": 17
+    },
+    {
+      "rid": 514,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "足し合う（いまのモデル。514.json の skill1 の effects[3] の assumes）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "heat-ratio-1",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "shotGaugeRatioInHolderState",
+      "args": {
+        "slot": 1,
+        "holder": 3,
+        "state": "heatEmission",
+        "added": "all",
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0.1
+      },
+      "note": "鈴原サクラの 1 回のゲージ（足された量をすべて入れる）の、グレイブの 1 回目の放熱の窓の中の、窓の外に対する比"
+    },
+    {
+      "id": "heat-ratio-2",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "shotGaugeRatioInHolderState",
+      "args": {
+        "slot": 1,
+        "holder": 3,
+        "state": "heatEmission",
+        "added": "all",
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 0.1
+      },
+      "note": "鈴原サクラの 1 回のゲージ（足された量をすべて入れる）の、グレイブの 2 回目の放熱の窓の中の、窓の外に対する比"
+    },
+    {
+      "id": "heat-ratio-3",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "shotGaugeRatioInHolderState",
+      "args": {
+        "slot": 1,
+        "holder": 3,
+        "state": "heatEmission",
+        "added": "all",
+        "n": 2
+      },
+      "tolerance": {
+        "abs": 0.1
+      },
+      "note": "鈴原サクラの 1 回のゲージ（足された量をすべて入れる）の、グレイブの 3 回目の放熱の窓の中の、窓の外に対する比"
+    },
+    {
+      "id": "heat-ratio-4",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "shotGaugeRatioInHolderState",
+      "args": {
+        "slot": 1,
+        "holder": 3,
+        "state": "heatEmission",
+        "added": "all",
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 0.1
+      },
+      "note": "鈴原サクラの 1 回のゲージ（足された量をすべて入れる）の、グレイブの 4 回目の放熱の窓の中の、窓の外に対する比"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-13",
+    "commit": "b6312a443a398c2e6420f2bea44febef64057474",
+    "values": {
+      "H0": {
+        "heat-ratio-1": 1.9577,
+        "heat-ratio-2": 1.9577,
+        "heat-ratio-3": 1.9577,
+        "heat-ratio-4": 1.9577
+      }
+    }
+  }
+}
