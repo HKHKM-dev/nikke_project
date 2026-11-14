@@ -29435,6 +29435,30 @@
       "plus": null
     },
     {
+      "observation": "1126-03",
+      "element": "マルチャーナ skill2.effects[0]",
+      "key": "fda4a67e1192a653",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1126-04",
+      "element": "マルチャーナ skill2.effects[0]",
+      "key": "e12e61298bb75bc0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1126-05",
+      "element": "マルチャーナ skill2.effects[0]",
+      "key": "82e71fe55c41e4ce",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "1134-03",
       "element": "ベルベット skill2.effects[0]",
       "key": "a0b1d82963ab5bc0",
@@ -29833,6 +29857,70 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "1146-11",
+      "element": "ソリン burst.effects[1]",
+      "key": "6bf891ed7cc95238",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1146-12",
+      "element": "ソリン burst.effects[1]",
+      "key": "e30b635e1b4118bd",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1146-13",
+      "element": "ソリン burst.effects[1]",
+      "key": "149952fb19260860",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1146-14",
+      "element": "ソリン burst.effects[1]",
+      "key": "3bbf565f5aaa57d8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1147-11",
+      "element": "ソリン burst.effects[1]",
+      "key": "088a82647c0a06e9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1147-12",
+      "element": "ソリン burst.effects[1]",
+      "key": "143e738dbf191898",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1147-13",
+      "element": "ソリン burst.effects[1]",
+      "key": "92a8666f3f16c17a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1147-14",
+      "element": "ソリン burst.effects[1]",
+      "key": "baa7ef431d4b4b1a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "1149-06",
@@ -29857,6 +29945,134 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "1153-06",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "fea1b8d9df6b39b6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1153-06",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "fea1b8d9df6b39b6",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "1153-06",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "fea1b8d9df6b39b6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1153-07",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "b6ea53facba68d9b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1153-07",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "b6ea53facba68d9b",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "1153-07",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "b6ea53facba68d9b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1153-08",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "fd3f0b5775fbd44c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1153-08",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "fd3f0b5775fbd44c",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "1153-08",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "fd3f0b5775fbd44c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1153-09",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "b3b079e83b13c371",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1153-09",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "b3b079e83b13c371",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "1153-09",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "b3b079e83b13c371",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }
