@@ -1,0 +1,56 @@
+[
+  {
+    "id": "1186-01",
+    "recording": "1186",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1254988,
+    "unit": "ダメージ",
+    "description": "撮影 B（エクシアのバーストだけ）の 1 回目のバーストの後の、エクシアのコアの 1 ヒット。宝物版 S2 のバリア適用時の攻撃力▲（スキル発動者基準 45.12%）が乗る。乗らなければ 1,071,274",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "バースト欄の I → II の替わり目（1186-01 の f1519）から +342 の増分。同じ窓の 2〜4 回目のバーストの後は 1,278,601・1,278,588（攻撃力▲とエクシアの timed 5 段）、窓の後は 1,094,932・927,545"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1022,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0001
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [2, 3]
+      }
+    },
+    "source": "V-0776",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1186-02",
+    "recording": "1186",
+    "kind": "hit",
+    "use": "record",
+    "value": 760,
+    "unit": "f",
+    "description": "撮影 B の 2 回目のバースト（f4042）の後、羽の形のバフのアイコン（防御力無視ダメージ▲）が消えた時刻（バーストからの動画のフレーム。+700 では点滅、+760 で無い）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "顔のカードの下のアイコン（640,1025 から 420×50）を -30・+10・+100・+140・+560・+620・+700・+760 で見た。+10〜+100 は HP のバーの右に水色の部分（最大HP のみ▲ で割合が下がる）とバリアのアイコン、+140 で戻る。最大HP のみ▲ の終わり（+117）から 585f で +702"
+    },
+    "source": "V-0776",
+    "readAt": "2026-11-14"
+  }
+]
