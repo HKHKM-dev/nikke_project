@@ -21,7 +21,6 @@ const TEAMS = {
   '実戦寄り（リター + クラウン + ミルク：BB + グレイブ）': fixedTeam([82, 330, MILK_BB, 514], 2),
 };
 
-type Plan = ReturnType<typeof planTeamRun>;
 const s2 = rawDefinition<{
   skills: { skill2: { effects: { trigger: { everySeconds: number }; delayFrames: number }[] } };
 }>(MILK_BB).skills.skill2.effects[0]!;
