@@ -139,6 +139,6 @@ describe('data: which burstDamage get the oneEnemy mark', () => {
       for (const [label, d, c] of variants)
         if (resolveBurstDamage(d, c, MAX_SKILL_LEVELS).some((r) => r.oneEnemy === true)) marked.push(label);
     }
-    expect(marked).toEqual(['10', '141', '141t', '202', '304', '352', '352t', '400', '500']);
+    expect(marked).toEqual(['10', '141', '141t', '202', '304', '352', '352t', '400', '500', '515']);
   });
 });

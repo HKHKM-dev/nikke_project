@@ -320,7 +320,11 @@ const TRIG_INFO: Record<string, Info> = {
     'check',
     '{ reloadEnd }（最大弾数のリロード完了。removeState（2 段目の段 16）と、timed・状態の付与（段 17））だけ',
   ],
-  teamAmmo: ['味方の消費した弾の合計', 'gap'],
+  teamAmmo: [
+    '味方の消費した弾の合計',
+    'ok',
+    'burstGauge の { count: "teamAmmo", every }（自分を含む全員の発。シンデレラ：クリスタルウェーブ編）',
+  ],
   fullStackConsume: [
     'フルスタックでスタック解除後',
     'ok',
@@ -385,7 +389,7 @@ const COND_INFO: Record<string, Info> = {
   usedBurst: [
     '直前に自分がバーストを使用していれば・いなければ',
     'ok',
-    'usedBurst（2 段目の段 1。いなければは false。ディーゼル：ウィンタースイーツ編）',
+    'usedBurst（2 段目の段 1。いなければは false。ディーゼル：ウィンタースイーツ編。damage はシンデレラ：クリスタルウェーブ編）',
   ],
   firstEvent: [
     '初めてフルバーストタイムが発動した時',

@@ -1,0 +1,151 @@
+[
+  {
+    "id": "1192-01",
+    "recording": "1192",
+    "kind": "hit",
+    "use": "compare",
+    "value": 30333396,
+    "description": "バーストスキルダメージ（会心なし。1 回目の発動）",
+    "method": {
+      "tool": "hud.ts --mode jumps・series",
+      "note": "f1290 の増分（前後のフレームは同じ値で、1 ヒットだけ）。同じ発動の攻撃力▲65%・攻撃ダメージ▲92% が乗った値（乗らなければ約 1,158 万）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0782",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1192-02",
+    "recording": "1192",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [-1],
+    "description": "1 回目のバーストスキルダメージのヒットの、III のタイマーの 00.00 からの動画のフレーム（2〜5 回目も 0〜2f 前。読み方の注記）",
+    "method": {
+      "tool": "hud.ts --mode jumps・recipe:burst-panel@4",
+      "note": "00.00: 1291・3671・6065・8535・10913。ヒット: 1290・3669・6064・8534・10912"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "burstHit",
+        "anchor": "fullBurst:0",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0782",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1192-03",
+    "recording": "1192",
+    "kind": "hit",
+    "use": "compare",
+    "value": 11634174,
+    "description": "S2 のフルバーストの開始の効果（狙撃モードでない時のコア命中ダメージ。会心なし。1 回目のフルバースト）",
+    "method": {
+      "tool": "hud.ts --mode jumps・series",
+      "note": "f1318前後の増分（フルバーストの入りの止まりで HUD が 25f 読めず、その明けの 1 つの増分。前後に MG の増分は無い）。バーストの▲・コア（ピンポイント込み）・フルバースト補正が乗った値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2",
+        "core": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0782",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1192-04",
+    "recording": "1192",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [461],
+    "description": "戦闘開始から 1 回目の III の発動（タイマーの 00.00。フルバーストの始まり）までの動画のフレーム",
+    "method": {
+      "tool": "recipe:burst-panel@4・timer.ts --mode changes",
+      "note": "00.00 f1291 − 戦闘開始 f830。自分の弾だけを数えるモデルでは 483f、数えないモデルでは 595f 前後。2 回目からは録画が 28〜214f 遅く、I・II の CT とチェーンの切れ方のずれが乗るので比べない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "activation",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0782",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1192-05",
+    "recording": "1192",
+    "kind": "count",
+    "use": "record",
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "value": {
+      "snipeShots": 0
+    },
+    "description": "シンデレラ：クリスタルウェーブの狙撃モードの発は 180 秒に 1 つも無い。100 万を超える増分は、どれもバーストスキルダメージ・フルバーストの開始のコア命中ダメージ・5 秒ごとの倍率ダメージ（ほかの 1 ヒットとの和を含む）に当たる",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "100 万を超える増分を、バーストスキルダメージ（30,333,396。会心 45,500,095）・コア命中ダメージ（11,634,174）・5 秒ごとの倍率ダメージ（窓の外 1,736,529・窓の中 6,825,014 と会心）に、同じフレームのほかの 1 ヒットを足した値で当てた"
+    },
+    "source": "V-0782",
+    "readAt": "2026-11-14"
+  }
+]

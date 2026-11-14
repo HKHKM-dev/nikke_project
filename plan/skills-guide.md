@@ -149,6 +149,8 @@
     | スキル対象の説明部分が『〜敵1機に』で終わるバーストスキルダメージ▲ | stat `oneEnemyBurstDamage`（timed。当てはまる burstDamage は説明文の対象の句から解決が決める） | ジャッカルのバースト | [design-jackal.md](design-jackal.md) 2 節 |
     | 使用武器変更の「初回ダメージ：最終攻撃力の X% のダメージ」（変更後の武器の発とは別の 1 ヒット） | burst の `burstDamage`（遅れの表の hitFrames） | ラプラスのバースト（C-1204） | [design-laplace.md](design-laplace.md) 8 節 |
     | 自分が〈状態〉のフルスタック状態なら、（使用武器変更の）通常ダメージを防御力無視ダメージとして適用（バーストを使った時に判定） | 変更を 2 つにし、条件 `selfState` の `stacks`（`trueDamage` あり）と `stacksBelow` で分ける | ラプラスの宝物版のバースト（C-1200） | 同 8 節 |
+    | 味方が消費した弾の合計が N 発ごとに（バーストゲージのチャージ） | burstGauge のきっかけ `{ "count": "teamAmmo", "everyRef": N }`（自分を含む全員の発） | シンデレラ：クリスタルウェーブの S1 | [design-cinderella-cw.md](design-cinderella-cw.md) 7 節 |
+    | フルバーストタイムが発動した時、直前に自分がバーストを使用していれば（倍率ダメージ） | damage の `condition.usedBurst: true` | シンデレラ：クリスタルウェーブの S2 | 同上 |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。

@@ -1,0 +1,20 @@
+{
+  "id": "C-1248",
+  "text": "シンデレラ：クリスタルウェーブの戦闘開始時の、S1 の攻撃ダメージ▲（24%）・S2 の攻撃力▲（29%）・S2 のピンポイント（コアダメージ▲ 26%）は、説明文どおり戦闘開始から持続で乗る（MG の 1 ヒットの格子と 5 秒ごとの倍率ダメージの値が、3 つが乗った値と 1 未満で合う）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1190-02`・`1190-03`・`1191-02`・`1191-03`。V-0782",
+  "model": "data/skills/515.json（skill1 の effects[0]・skill2 の effects[0]・skill2 の effects[1]。どれも戦闘開始時の持続の timed）",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": [
+      "data/skills/515.json の skill1 の effects[0]",
+      "data/skills/515.json の skill2 の effects[0]",
+      "data/skills/515.json の skill2 の effects[1]"
+    ]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値（24%・29%・26%）と確定の 1 ヒットの式だけ"
+}

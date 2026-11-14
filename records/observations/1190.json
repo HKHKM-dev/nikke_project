@@ -1,0 +1,206 @@
+[
+  {
+    "id": "1190-01",
+    "recording": "1190",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [
+      301, 595, 889, 1183, 1477, 1771, 2065, 2359, 2654, 2948, 3242, 3536, 3830, 4124, 4418, 4712, 5007, 5301, 5595,
+      5890, 6184, 6478, 6772, 7066, 7360, 7654, 7948, 8242, 8537, 8830, 9125, 9419, 9713, 10007, 10301
+    ],
+    "description": "S1 の 5 秒ごとの倍率ダメージ（照準線に最も近い敵 1 機）の 1〜35 回目のヒットの増分の、戦闘開始（timer.ts）からの動画のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps・timer.ts --mode changes",
+      "note": "戦闘開始は f781（残り時間の 02:59 が出たフレーム。C-0078）。増分が 100 万を超えるフレーム（1,736,440 か、同じフレームの MG の 1 ヒットとの和・会心の 2,604,660）− 戦闘開始。間隔は 294f と 295f の繰り返し（端数の持ち越し）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 1,
+        "event": "skillHit",
+        "skill": "skill1",
+        "count": 35
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0782",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1190-02",
+    "recording": "1190",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1736440,
+    "description": "S1 の 5 秒ごとの倍率ダメージの 1 ヒット（会心なし。1 回目）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f1082 の増分（同じフレームの MG の 1 ヒット 24,287 を引いた。1 ヒットだけのフレームでも 1,736,440）。戦闘開始時の攻撃力▲（S2）・攻撃ダメージ▲（S1）が乗った値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false,
+        "skill": "skill1"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0782",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1190-03",
+    "recording": "1190",
+    "kind": "hit",
+    "use": "compare",
+    "value": 24287,
+    "description": "MG の 1 ヒット（コア・会心なし・距離ボーナスなし。1 区間目）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "1 区間目にいちばん多い増分。コア + ピンポイント（S2 のコアダメージ▲）・攻撃力▲・攻撃ダメージ▲が乗った値。ほかの格子（胴体 10,747・距離ボーナス 13,971・コア + 距離 27,511・コア + 会心 29,661・コア + 会心 + 距離 32,885）も同じ▲で合う"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0782",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1190-04",
+    "recording": "1190",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 1254,
+    "description": "戦闘開始から 1 回目にバーストゲージが満タンになる（BURST バーが消える。C-0083）までの動画のフレーム",
+    "method": {
+      "tool": "gauge.ts --mode events・timer.ts --mode changes",
+      "note": "バー消失 f2035 − 戦闘開始 f781。モデルの MG の発はマガジン 1 本で約 6f 録画より早く（既存の発の間隔のずれ）、その分を許しに入れた。味方が消費した弾の合計を数えないモデルでは約 31 秒（1,840f 前後）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 8
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0782",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1190-05",
+    "recording": "1190",
+    "kind": "gauge",
+    "use": "record",
+    "value": {
+      "jumps": [1079, 1536, 1736],
+      "roundsByHud": [197, 394, 592]
+    },
+    "description": "BURST バーが 1 フレームで約 12%（バーの 16px。1px ≈ 0.74%）跳ねたフレーム。自分の 200・400・600 発目の頃で、3 回目（f1736）はマガジン 2 本目の最後の弾丸",
+    "method": {
+      "tool": "gauge.ts --mode jumps・hud.ts --mode jumps",
+      "note": "バーの +14.2%（16px）の増え。roundsByHud は、そのフレームまでの MG の増分の数（HUD の読み落としで数発少なく出る）。5 秒ごとの倍率ダメージのフレームにはバーの跳ねが無い"
+    },
+    "source": "V-0782",
+    "readAt": "2026-11-14",
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "1190-06",
+    "recording": "1190",
+    "kind": "count",
+    "use": "record",
+    "value": {
+      "snipeShots": 0,
+      "reloadBars": "reload-segments のバーの長さは 2 回目以降 159f（1 回目 181f）",
+      "hideReloads": [2464, 4616]
+    },
+    "description": "狙撃モードの発（1 発 30 万を超える通常攻撃の増分）は 180 秒に 1 つも無い。1 回目のジャンプ（f2464。f2452 のリロード完了の直後の変更準備の間・残弾 299）と 2 回目のジャンプ（f4616。残弾 37）でハイドのリロードが始まり（RELOADING のバー）、的が戻ると込め終わらずに止まって、残弾のまま撃ち直した（f2615 で残弾 298、f4760 で 035）",
+    "method": {
+      "tool": "hud.ts --mode jumps・ffmpeg で切り出した照準の下の残弾（AMMO）と RELOADING のバーを目で読んだ",
+      "note": "増分は 5 秒ごとの倍率ダメージ（100 万以上）と MG の格子（10,747〜32,885）だけ。2 回目以降のリロードのバーは変更準備の 3 秒（約 190f）でなく基礎の 2.5 秒（159f）"
+    },
+    "source": "V-0782",
+    "readAt": "2026-11-14",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "1190-07",
+    "recording": "1190",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "value": 159,
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "description": "2 本目のマガジンの最終弾（f1736）からリロード完了（RELOADING のバーが消えた f1895）まで。撃ち切りのリロードはどの回も 158〜159f で、変更準備の「リロード時間を 3 秒に固定」（約 176f）の長さの回は無い",
+    "method": {
+      "tool": "recipe:reload-segments@2",
+      "note": "取り消し・窓をまたいだ回を除いた撃ち切りのリロードの完了のフレーム: 1338・1895・2452・4255・5020・6135・8013・9752・10309。最終弾 → 完了はどの回も 158〜159f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "reloadFramesAt",
+      "args": {
+        "slot": 1,
+        "frame": 980
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0782",
+    "readAt": "2026-11-14"
+  }
+]

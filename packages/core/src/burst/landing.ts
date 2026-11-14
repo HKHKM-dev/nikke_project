@@ -189,6 +189,8 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // ラプラス：アルティメットヒーロー: III のタイマーの 00.00 の 1〜2f 前にヒット（雪子と同じく遅れ 0）。ヒットに同じ発動の攻撃力▲が乗る
   // （C-0682。ソーダ：トゥインクルバニーと同じ印）
   { resourceIds: [103], sameActivationBuffsOnHit: true, delays: { hitFrames: 0, effectFrames: 0 }, claim: 'C-0683' },
+  // シンデレラ：クリスタルウェーブ: III のタイマーの 00.00 の 0〜2f 前にヒット（遅れ 0）。ヒットに同じ発動の攻撃力▲・攻撃ダメージ▲が乗る（V-0782）
+  { resourceIds: [515], sameActivationBuffsOnHit: true, delays: { hitFrames: 0, effectFrames: 0 }, claim: 'C-1251' },
   // プリバティ：アンカインド・メイド: III のタイマーの 00.00 から 1 ヒット目まで 26f（動画で 48〜49f。止まり 22f を含む）、2 ヒット目は 21f 後で、
   // バーストスキルダメージを 2 等分する。ヒットに同じ発動の攻撃ダメージ▲・クリティカルダメージ▲が乗る（C-0679）
   {

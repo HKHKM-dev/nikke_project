@@ -474,8 +474,15 @@ export function sameEdgeRange(a: EdgeRange | undefined, b: EdgeRange | undefined
   return JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
 }
 
-/** 撃つ枠の溜めで起きるきっかけ（撃たない枠では起きない。射撃の回数のきっかけと同じ扱い） */
-const SHOT_TRIGGERS: ReadonlySet<string> = new Set([...SHOT_COUNT_KINDS, 'chargeTick', 'chargeFull']);
+/**
+ * 撃つ枠の溜めで起きるきっかけ（撃たない枠では起きない。射撃の回数のきっかけと同じ扱い）。味方が消費した弾の合計（teamAmmo）は
+ * 味方の発でも起きるので入れない（plan/design-cinderella-cw.md 2.3 節）
+ */
+const SHOT_TRIGGERS: ReadonlySet<string> = new Set([
+  ...SHOT_COUNT_KINDS.filter((k) => k !== 'teamAmmo'),
+  'chargeTick',
+  'chargeFull',
+]);
 const FULL_BURST_TRIGGERS: ReadonlySet<string> = new Set([
   'fullBurstStart',
   'fullBurstEnd',

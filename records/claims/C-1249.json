@@ -1,0 +1,20 @@
+{
+  "id": "C-1249",
+  "text": "シンデレラ：クリスタルウェーブの S1 の 5 秒ごとの倍率ダメージは、戦闘開始から 5 秒ごと（端数を持ち越す。動画で 294f と 295f の繰り返し）に、周期の 6f 後に 1 ヒット出て、バーストゲージを溜めない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1190-01`・`1191-01`・`1190-02`・`1191-02`。V-0782",
+  "model": "data/skills/515.json（skill1 の effects[1]。きっかけ { everySeconds: 5, carry: true }・delayFrames 6・ゲージなし）",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": ["data/skills/515.json の skill1 の effects[1]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1190",
+      "role": "値を合わせた"
+    }
+  ]
+}

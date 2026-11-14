@@ -169,6 +169,8 @@ function parseInstantTrigger(v: Record<string, Json>, kind: InstantKind, path: s
       // 弾丸チャージも（plan/design-diesel.md 2.1 節）
       fullStack: kind === 'heal' || kind === 'ammoRefill',
       weaponChangeEnd: kind === 'ammoDecrease',
+      // 味方が消費した弾の合計（plan/design-cinderella-cw.md 2.3 節）
+      teamAmmo: kind === 'burstGauge',
     });
   // 残弾数減少は自分にだけ。きっかけは使用武器の変更の終わり（plan/design-skill-stage11.md 2.2 節）と、
   // バースト使用時（ジルのバースト。100% で残弾 0 になり、リロードを始める。plan/design-skill-stage17.md 2.2 節）
