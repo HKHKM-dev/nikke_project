@@ -100,10 +100,12 @@ describe('「後列に配置されている時」（row）', () => {
   });
 
   it('is only allowed as front or back in passive, timed and state grants', () => {
-    expect(() => parseSkillDefinition(definitionWith({ ...grant, row: 'middle' }))).toThrow(/row/);
+    expect(() => parseSkillDefinition(definitionWith({ ...grant, row: 'middle' }))).toThrow(/row: expected one of/);
+    expect(effectOf({ kind: 'passive', target: 'self', stat: 'attack', ref: 1, row: 'back' })).toMatchObject({
+      row: 'back',
+    });
+    // ほかの種類は、その種類の欄の検査が知らない欄として落とす
     const reduction = { kind: 'cooldownReduction', trigger: 'burstUse', target: 'allies', ref: 1, row: 'back' };
-    expect(() => parseSkillDefinition(definitionWith(reduction))).toThrow(
-      /row: (only allowed in passive, timed and state|unknown field)/,
-    );
+    expect(() => parseSkillDefinition(definitionWith(reduction))).toThrow(/row: unknown field/);
   });
 });

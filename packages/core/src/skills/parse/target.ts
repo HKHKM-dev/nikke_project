@@ -40,7 +40,7 @@ export type PersonaTargetFields = {
 
 /**
  * targetState・targetAdjacent・targetBurstStep は target が allies のときだけ（targetBurstStep は burstUsers も）。
- * targetAdjacent は targetState・targetBurstStep と組まない（plan/design-rouge.md 2.1 節）
+ * targetAdjacent は targetState・targetBurstStep・targetSquad・excludeSelf と組まない（使い手がいない。plan/design-rouge.md 2.1 節）
  */
 export function parsePersonaTargetFields(
   v: Record<string, Json>,
@@ -53,7 +53,7 @@ export function parsePersonaTargetFields(
   if (v.targetAdjacent !== undefined) {
     if (v.targetAdjacent !== true) fail(`${path}.targetAdjacent`, 'must be true');
     if (target !== 'allies') fail(`${path}.targetAdjacent`, `only allowed with target "allies", got "${target}"`);
-    for (const key of ['targetState', 'targetBurstStep'] as const) {
+    for (const key of ['targetState', 'targetBurstStep', 'targetSquad', 'excludeSelf'] as const) {
       if (v[key] !== undefined) fail(`${path}.targetAdjacent`, `cannot be combined with ${key}`);
     }
     out.targetAdjacent = true;

@@ -344,12 +344,6 @@ function parseTimedTarget(
     narrowing.excludeSelf = excludeSelf;
   }
   Object.assign(narrowing, parsePersonaTargetFields(v, target, path));
-  // 「両隣の味方」は枠の並びだけで決める（部隊・自分を除くとは組まない。使い手がいない。plan/design-rouge.md 2.1 節）
-  if (narrowing.targetAdjacent) {
-    for (const key of ['targetSquad', 'excludeSelf'] as const) {
-      if (v[key] !== undefined) fail(`${path}.targetAdjacent`, `cannot be combined with ${key}`);
-    }
-  }
   // 「自分より最終防御力が低い味方」は allies だけ（自分を除く・状態・段階・部隊の
   // 絞り込みとは組み合わせない。使い手がいない。plan/design-skill-stage7.md 1.4 節）
   if (v.targetDefense !== undefined) {
