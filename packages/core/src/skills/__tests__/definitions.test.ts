@@ -303,7 +303,15 @@ describe('data/skills', () => {
     it('finds the description line of every burstDamage ref (its target phrase)', () => {
       for (const effect of def.skills.burst.effects) {
         if (effect.kind !== 'burstDamage') continue;
-        expect(targetPhraseOf(character.skills.burst, effect.ref, SKILL_LEVEL_MAX), `burst ref ${effect.ref}`).toBeDefined();
+        expect(
+          targetPhraseOf(character.skills.burst, effect.ref, SKILL_LEVEL_MAX),
+          `burst ref ${effect.ref}`,
+        ).toBeDefined();
+        // 値が 2 つの行に載っていると、最初の行の対象の句で決まってしまう
+        const lines = character.skills.burst.description.ja
+          .split('■')
+          .filter((l) => l.includes(`{description_value_${String(effect.ref).padStart(2, '0')}}`));
+        expect(lines, `burst ref ${effect.ref}`).toHaveLength(1);
       }
     });
 

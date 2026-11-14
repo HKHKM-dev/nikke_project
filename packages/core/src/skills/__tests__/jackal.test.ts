@@ -1,12 +1,14 @@
 // plan/design-jackal.md 2 節: 「スキル対象の説明部分が『〜敵1機に』で終わるバーストスキルダメージ▲」（oneEnemyBurstDamage）。
 // 説明文の対象の句から burstDamage に印 oneEnemy を付け、印の付いたヒットにだけ攻撃ダメージ▲と同じ和で掛ける
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import type { EnemyInput } from '../../damage.ts';
-import type { SkillRaw } from '../../types.ts';
+import type { CharacterData, SkillRaw } from '../../types.ts';
 import { computeBurstHit, resolveBurstDamage, type ResolvedSkillDamage } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, targetPhraseOf } from '../resolve.ts';
-import type { SkillDefinition } from '../types.ts';
+import { applyTreasure, TREASURE_PHASE_MAX } from '../treasure.ts';
+import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 
 const same = (v: string) => Array.from({ length: 10 }, () => v);
 const empty: SkillRaw = { id: 0, name: { ja: '', en: '' }, description: { ja: '', en: '' }, values: [] };
@@ -116,5 +118,27 @@ describe('computeBurstHit: oneEnemyBurstDamage', () => {
 
   it('is 1 without the buff', () => {
     expect(hit(1).oneEnemyBurstDamageMultiplier).toBe(1);
+  });
+});
+
+describe('data: which burstDamage get the oneEnemy mark', () => {
+  // 説明文を取り込み直して対象の句が変わったら、ここで気づく（plan/design-jackal.md 2.2 節。宝物版は宝物の説明文で決まる）
+  it('marks the 敵1機に bursts of the defined characters, base and treasure', () => {
+    const dir = new URL('../../../data/', import.meta.url);
+    const read = (path: string): unknown => JSON.parse(readFileSync(new URL(path, dir), 'utf8'));
+    const ids = (read('skills/index.json') as { resourceIds: number[] }).resourceIds;
+    const marked: string[] = [];
+    for (const id of ids) {
+      const def = parseSkillDefinition(read(`skills/${id}.json`));
+      const character = read(`characters/${id}.json`) as CharacterData;
+      const variants: [string, SkillDefinition, CharacterData][] = [[`${id}`, def, character]];
+      if (def.treasureSkills !== undefined && character.treasure !== null) {
+        const applied = applyTreasure(character, def, TREASURE_PHASE_MAX);
+        variants.push([`${id}t`, applied.definition!, applied.character]);
+      }
+      for (const [label, d, c] of variants)
+        if (resolveBurstDamage(d, c, MAX_SKILL_LEVELS).some((r) => r.oneEnemy === true)) marked.push(label);
+    }
+    expect(marked).toEqual(['10', '141', '141t', '202', '304', '352', '352t', '400', '500']);
   });
 });
