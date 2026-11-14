@@ -31923,6 +31923,262 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "1188-09",
+      "element": "エレグ skill1.effects[0]",
+      "key": "9a31050eb642acf1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1188-09",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "9a31050eb642acf1",
+      "effective": true,
+      "minus": -122996.78428950004,
+      "plus": 0
+    },
+    {
+      "observation": "1188-10",
+      "element": "エレグ skill1.effects[0]",
+      "key": "8f03b36da424a27a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1188-10",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "8f03b36da424a27a",
+      "effective": true,
+      "minus": -122996.78428950004,
+      "plus": 0
+    },
+    {
+      "observation": "1188-11",
+      "element": "エレグ skill1.effects[0]",
+      "key": "e1a574803075ccf3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1188-11",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "e1a574803075ccf3",
+      "effective": true,
+      "minus": -122996.78428950004,
+      "plus": 0
+    },
+    {
+      "observation": "1188-12",
+      "element": "エレグ skill1.effects[0]",
+      "key": "e48ab082ba2b1f3d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1188-12",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "e48ab082ba2b1f3d",
+      "effective": true,
+      "minus": -122996.78428950004,
+      "plus": 0
+    },
+    {
+      "observation": "1188-13",
+      "element": "エレグ skill1.effects[0]",
+      "key": "4a34b9e4a9abe09f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1188-13",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "4a34b9e4a9abe09f",
+      "effective": true,
+      "minus": -122996.78428950004,
+      "plus": 0
+    },
+    {
+      "observation": "1188-14",
+      "element": "エレグ skill1.effects[0]",
+      "key": "f52180a634824859",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1188-14",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "f52180a634824859",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1188-15",
+      "element": "エレグ skill1.effects[0]",
+      "key": "d041c98af0239413",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1188-15",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "d041c98af0239413",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1188-16",
+      "element": "エレグ skill1.effects[0]",
+      "key": "7446887a24b745a5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1188-16",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "7446887a24b745a5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1189-08",
+      "element": "エレグ skill1.effects[0]",
+      "key": "feee5ad46e93a73d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1189-08",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "feee5ad46e93a73d",
+      "effective": true,
+      "minus": -122996.78428950004,
+      "plus": 0
+    },
+    {
+      "observation": "1189-09",
+      "element": "エレグ skill1.effects[0]",
+      "key": "9e41975789cd8c46",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1189-09",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "9e41975789cd8c46",
+      "effective": true,
+      "minus": -122996.78428950004,
+      "plus": 0
+    },
+    {
+      "observation": "1189-10",
+      "element": "エレグ skill1.effects[0]",
+      "key": "92a657325e14689f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1189-10",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "92a657325e14689f",
+      "effective": true,
+      "minus": -122996.78428950004,
+      "plus": 0
+    },
+    {
+      "observation": "1189-11",
+      "element": "エレグ skill1.effects[0]",
+      "key": "4c80eabee4de54f3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1189-11",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "4c80eabee4de54f3",
+      "effective": true,
+      "minus": -122996.78428950004,
+      "plus": 0
+    },
+    {
+      "observation": "1189-12",
+      "element": "エレグ skill1.effects[0]",
+      "key": "197dc4ecba5c8d35",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1189-12",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "197dc4ecba5c8d35",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1189-13",
+      "element": "エレグ skill1.effects[0]",
+      "key": "d2851ae97af59b7c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1189-13",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "d2851ae97af59b7c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1189-14",
+      "element": "エレグ skill1.effects[0]",
+      "key": "999f108f44c0eb3e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1189-14",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "999f108f44c0eb3e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1189-15",
+      "element": "エレグ skill1.effects[0]",
+      "key": "bf4bcce78e2a8556",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1189-15",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "bf4bcce78e2a8556",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }

@@ -122,6 +122,10 @@
       "unimplemented": 1,
       "assumed": 5
     },
+    "111": {
+      "unimplemented": 1,
+      "assumed": 0
+    },
     "141": {
       "unimplemented": 1,
       "assumed": 3
