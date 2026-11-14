@@ -404,7 +404,7 @@ const TGT_INFO: Record<string, Info> = {
   'ally:alliesFiltered': ['絞った味方全体（絞り方を読み取れなかったもの）', 'check'],
   'ally:filter:weapon': ['〈武器〉を所持する味方', 'ok'],
   'ally:filter:element': ['〈コード〉の味方', 'ok'],
-  'ally:filter:class': ['〈クラス〉型の味方', 'gap'],
+  'ally:filter:class': ['〈クラス〉型の味方', 'ok'],
   'ally:filter:squad': ['同じ部隊の味方', 'ok'],
   'ally:filter:burstStep': ['基本バースト段階が N の味方', 'ok'],
   'ally:filter:state': ['〈状態〉状態の味方', 'check'],
