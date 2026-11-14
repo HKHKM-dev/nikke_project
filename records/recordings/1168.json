@@ -1,0 +1,35 @@
+{
+  "id": "1168",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1168_centi-solo-wind.mp4",
+  "original": "2026-11-14_20-49-10.mp4",
+  "durationSec": 197.9,
+  "frames": 11872,
+  "fps": 60,
+  "sizeMB": 239.8,
+  "sha256": "0721de35c6f3",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 80,
+      "name": "センチ",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（風圧・3 分モード・スペック固定 ON）。V-0773 の撮影 C: センチ単騎（操作）・オート射撃 ON・オートバースト OFF",
+  "backup": {
+    "at": "2026-11-14T21:00+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
