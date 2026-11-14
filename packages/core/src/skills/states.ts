@@ -403,6 +403,11 @@ export const NAMED_STATES = {
   frenzy: { name: { ja: '狂気', en: 'Frenzy' }, holder: 'ally' },
   /** ソードコイン（ルージュの S2。戦闘開始時に後列なら自分と両隣に付く。攻撃ダメージ▲・持続。plan/design-rouge.md 2.3 節） */
   swordCoin: { name: { ja: 'ソードコイン', en: 'Sword Coin' }, holder: 'ally' },
+  /**
+   * バブル（リトルマーメイドの S2。敵が出現した時に敵に付く。受けるダメージ▲・持続。通常攻撃の命中 50 回目でバブルバーストに替わる。
+   * plan/design-little-mermaid.md 2.2 節）
+   */
+  bubble: { name: { ja: 'バブル', en: 'Bubble' }, holder: 'enemy' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

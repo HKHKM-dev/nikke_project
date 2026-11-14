@@ -1,0 +1,138 @@
+{
+  "formatVersion": 1,
+  "resourceId": 513,
+  "checkedAt": "2026-11-14",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "cooldownReduction",
+          "trigger": "fullBurstEnd",
+          "target": "allies",
+          "ref": 1,
+          "assumes": {
+            "ja": "フルバーストタイムが終了したフレームに、味方全体のバーストの CT の残りを縮める（アニス：スターの S1 と同じ形）",
+            "en": "On the frame Full Burst ends, shortens the remaining burst cooldown of all allies (same form as Anis: Star's S1)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 2,
+          "durationRef": 3
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フォーカス状態（操作キャラ）の時の、味方全体の射撃集中は、敵 1 体の前提では与ダメージを変えない（狙う敵をそろえる効果。敵の構造に関わる）",
+          "en": "The Focus Fire on all allies while this unit is Focusing (controlled) does not change damage with a single enemy (it aligns the allies' targets; it concerns enemy structure)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "state",
+            "target": "allies",
+            "trigger": "unknown"
+          }
+        },
+        {
+          "ja": "味方が消費した弾の合計が 400 発ごとの、味方全体のバーストゲージのチャージは未対応（味方の消費した弾の合計のきっかけの語彙が無い。plan/design-little-mermaid.md 2.1 節）",
+          "en": "The Burst Gauge fill on all allies every 400 rounds of total ammo expended by allies is not modeled (no vocabulary for the allies' total ammo trigger; plan/design-little-mermaid.md 2.1)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "burstGauge",
+            "target": "allies",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "bubble",
+          "trigger": "battleStart",
+          "target": "enemy",
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "damageTaken",
+              "ref": 1
+            }
+          ],
+          "assumes": {
+            "ja": "敵が出現した時を、戦闘開始とみなす（射撃場の的はターゲットで、戦闘の始めからいる。エレグの S2 と同じ読み）。持続なので戦闘の終わりまで。通常攻撃の命中 50 回目でバブルバースト（同じ値の受けるダメージ▲・持続）に替わるので、敵の受けるダメージ▲は戦闘の終わりまで同じ値で続く（notes の補足）",
+            "en": "Treats the enemy appearance as the start of battle (the shooting-range target is a stage target present from the start; same reading as Elegg's S2). It lasts until the end of battle. At the 50th normal attack hit it is replaced by Explosive Bubble (the same Damage Taken increase, continuous), so the enemy's Damage Taken increase stays at the same value until the end of battle (see notes)"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "everySeconds": 1,
+            "carry": true
+          },
+          "condition": {
+            "inFullBurst": true
+          },
+          "damageType": "skill",
+          "ref": 5,
+          "hitsRef": 6,
+          "assumes": {
+            "ja": "フルバーストタイム中のみの 1 秒ごとの攻撃。周期は戦闘開始から 1 秒ごと（端数を持ち越す）に数え続け、フルバーストの窓の中の回だけ出す（エイダの S2 と同じ形）。ランダムな敵は敵 1 体の前提で的。4 ヒットとも発動の時点のバフで出す。ヒットの遅れと間隔は録画で読む（撮影の前は発動と同じフレームに 4 ヒット）",
+            "en": "The attack every second only during Full Burst. The period counts every 1 s from the start of battle (carrying the fraction) and fires only inside the Full Burst window (same form as Ada's S2). The random enemy is the target (one enemy). All 4 hits use the buffs at activation. The hit delay and interval are read from recordings (before recording, 4 hits on the activation frame)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "バブルバースト（通常攻撃が 50 回命中した時、対象がバブル状態なら、受けるダメージ▲・持続とバブル解除）は、バブルと同じ値の受けるダメージ▲に替わるだけなので、敵の受けるダメージ▲の窓は effects[0] のまま変わらない",
+          "en": "Explosive Bubble (after landing 50 normal attacks, if the target has Bubble: Damage Taken increase, continuous, and Bubble removal) only replaces Bubble with a Damage Taken increase of the same value, so the enemy's Damage Taken window stays as in effects[0]",
+          "kind": "modeling",
+          "refers": "effects[0]"
+        },
+        {
+          "ja": "バブルバーストの気絶（3 秒）は、それ自体は与ダメージを変えない",
+          "en": "The stun of Explosive Bubble (3 s) does not change damage by itself",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "味方が消費した弾の合計が 500 発ごとの、ランダムな敵へのバブルバラージ（10 回順番に攻撃）は未対応（味方の消費した弾の合計のきっかけの語彙が無い。plan/design-little-mermaid.md 2.1 節）",
+          "en": "Bubble Barrage on a random enemy every 500 rounds of total ammo expended by allies (10 sequential attacks) is not modeled (no vocabulary for the allies' total ammo trigger; plan/design-little-mermaid.md 2.1)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 1,
+          "durationRef": 2
+        },
+        {
+          "kind": "ammoRefill",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 3
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 4,
+          "durationRef": 5
+        }
+      ]
+    }
+  }
+}

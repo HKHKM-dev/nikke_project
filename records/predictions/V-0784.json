@@ -1,0 +1,114 @@
+{
+  "verification": "V-0784",
+  "note": "撮る前の予測。513.json の撮影の前の定義（味方が消費した弾の合計の 2 つの効果は未対応で入っていない）。H1 は定義のまま（バブルは戦闘開始から持続）、H0 はバブルが付かない形。弾の消費のきっかけの仮説（G0・G1・G2）はモデルで書けないので検証記録の「予測」に手で書く",
+  "team": [
+    {
+      "rid": 513,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "敵の出現（戦闘開始）でバブル（受けるダメージ▲）が付き、命中 50 回目のバブルバーストで同じ値に替わって戦闘の終わりまで続く"
+    },
+    {
+      "id": "H0",
+      "note": "射撃場の的にはバブルが付かない（敵の出現が起きない）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 513,
+            "skill": "skill2",
+            "index": 0
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "solo-hit-by-shot",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      },
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": "1,40,80,200",
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A。リトルマーメイドの 1 発の胴体（会心・コア・距離ボーナスなし）を発の番号ごとに。命中 50 回目（およそ 53 発目）の前（1・40 発目）と後（80・200 発目）。最初のバーストの前"
+    },
+    {
+      "id": "solo-burst-count",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      },
+      "metric": "burstActivationCount",
+      "args": {
+        "slot": 1
+      },
+      "note": "撮影 A。180 秒のバーストの回数。弾の消費のゲージ（S1）が入っていないモデルの値で、G1 ならこれより多い（検証記録の「予測」）"
+    },
+    {
+      "id": "team-fb-skill-hit",
+      "model": "sim",
+      "team": [
+        {
+          "rid": 513,
+          "controlled": true
+        },
+        {
+          "rid": 20
+        },
+        {
+          "rid": 308
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      },
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "note": "撮影 B。1 回目のフルバーストの最初の 1 秒ごとのダメージの 1 ヒット（会心なし）。H0 はバブルの受けるダメージ▲の分だけ小さい"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-14",
+    "commit": "94148c706f327d895b7b66610b990f7559d94c22",
+    "values": {
+      "H1": {
+        "solo-hit-by-shot": [10683.152193999997, 10683.152193999997, 10683.152193999997, 10683.152193999997],
+        "solo-burst-count": 4,
+        "team-fb-skill-hit": 134311.42416713468
+      },
+      "H0": {
+        "solo-hit-by-shot": [10169.587999999998, 10169.587999999998, 10169.587999999998, 10169.587999999998],
+        "solo-burst-count": 4,
+        "team-fb-skill-hit": 127854.75884544
+      }
+    }
+  }
+}
