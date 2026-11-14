@@ -9,8 +9,9 @@
 // 検出（暗幕 + 青いヘッダー帯の AND）は probe-result-lib.ts にある。
 //
 // パネルは録画を止める前に映す（plan/captures/protocol.md「撮る（射撃場）」の 3）ので、まず末尾の --tail 秒だけを走査し、
-// 見つからなければ頭から全部を走査する（--full で初めから全部。plan/design-workflow-simplification-14.md 2 節）。
-// フレームの番号は、どちらでも録画の頭から数える。
+// 見つからなければ頭から全部を走査する（--full で初めから全部。plan/design-workflow-simplification-14.md 2 節）。末尾で見つかったときは
+// 末尾の区間だけを出すので、途中の一時停止のパネルも見るときは --full。フレームの番号は、どちらでも録画の頭から数える（末尾の走査は
+// ffprobe の全体の枚数から引く。全体の枚数が分からない録画は頭から全部を走査する）。
 //
 // 切り出した画像の文字は OCR せず目視で読む。名前欄は長いと横スクロールで切れるので
 // （録画 0021 のクイーン（真）は「ーン（真）」しか写らないフレームがある）、
@@ -66,9 +67,14 @@ const tailSeconds = Number(values.tail);
 
 const FRAME_BYTES = PANEL_DETECT.w * PANEL_DETECT.h * 3;
 
+/** 縮小した rgb24 の画を読む ffmpeg の引数。seek は -i の前の引数、select は縮小の前のフィルタ */
+function detectArgs(video: string, seek: string[], select: string[]): string[] {
+  const filters = [...select, `scale=${PANEL_DETECT.w}:${PANEL_DETECT.h}`, 'format=rgb24'];
+  return ['-v', 'error', ...seek, '-i', video, '-vf', filters.join(','), '-fps_mode', 'vfr', '-f', 'rawvideo', '-'];
+}
+
 async function scan(video: string): Promise<Sample[]> {
-  const filters = [`select='not(mod(n,${step}))'`, `scale=${PANEL_DETECT.w}:${PANEL_DETECT.h}`, 'format=rgb24'];
-  const args = ['-v', 'error', '-i', video, '-vf', filters.join(','), '-fps_mode', 'vfr', '-f', 'rawvideo', '-'];
+  const args = detectArgs(video, [], [`select='not(mod(n,${step}))'`]);
   const samples: Sample[] = [];
   let index = 0;
   for await (const frame of rawFrames(args, FRAME_BYTES)) {
@@ -87,22 +93,7 @@ async function scanTail(
   seconds: number,
   totalFrames: number,
 ): Promise<{ samples: Sample[]; offset: number } | null> {
-  const filters = [`scale=${PANEL_DETECT.w}:${PANEL_DETECT.h}`, 'format=rgb24'];
-  const args = [
-    '-v',
-    'error',
-    '-sseof',
-    `-${seconds}`,
-    '-i',
-    video,
-    '-vf',
-    filters.join(','),
-    '-fps_mode',
-    'vfr',
-    '-f',
-    'rawvideo',
-    '-',
-  ];
+  const args = detectArgs(video, ['-sseof', `-${seconds}`], []);
   const local: Sample[] = [];
   let index = 0;
   for await (const frame of rawFrames(args, FRAME_BYTES)) {
@@ -142,7 +133,7 @@ for (const video of positionals) {
 
   // 末尾で見つかったときだけ、切り出しも末尾から読む（頭から数えた番号を、末尾の走査の番号に戻して渡す）
   let tail: { samples: Sample[]; offset: number } | null = null;
-  if (!values.full && tailSeconds > 0) {
+  if (!values.full && tailSeconds > 0 && probe.nbFrames > 0) {
     tail = await scanTail(video, tailSeconds, probe.nbFrames);
     if (tail !== null && toRuns(tail.samples).length === 0) {
       console.log(`末尾の ${tailSeconds} 秒にパネルが無いので、頭から全部を走査する`);
