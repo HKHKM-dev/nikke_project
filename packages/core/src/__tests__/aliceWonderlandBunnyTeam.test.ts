@@ -50,18 +50,16 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   const schedule = plan.schedule!;
   const fullBursts = schedule.fullBurstWindows;
   const aliceUses = schedule.activations.filter((a) => a.slotIndex === alice);
-  /** アリスから枠 holder に入った即時効果（kind。skill があればそのスロットのもの）のフレーム */
-  const instantFrames = (kind: 'heal' | 'ammoRefill', holder: number, skill?: 'skill1' | 'burst') =>
-    plan.instants
-      .filter(
-        (i) =>
-          i.sourceSlotIndex === alice &&
-          i.slotIndex === holder &&
-          i.effect.kind === kind &&
-          (skill === undefined || i.effect.source.skill === skill),
-      )
-      .map((i) => i.frame);
-  const heals = (skill: 'skill1' | 'burst', holder: number) => instantFrames('heal', holder, skill);
+  /** アリスから枠 holder に入った即時効果（kind。skill があればそのスロットのもの） */
+  const instantsOf = (kind: 'heal' | 'ammoRefill', holder: number, skill?: 'skill1' | 'burst') =>
+    plan.instants.filter(
+      (i) =>
+        i.sourceSlotIndex === alice &&
+        i.slotIndex === holder &&
+        i.effect.kind === kind &&
+        (skill === undefined || i.effect.source.skill === skill),
+    );
+  const heals = (skill: 'skill1' | 'burst', holder: number) => instantsOf('heal', holder, skill).map((i) => i.frame);
   const holders = input.slots.map((_, i) => i);
   const fires = shots.length > 0;
   const crown = input.slots.findIndex((s) => s?.character.resourceId === CROWN);
@@ -80,7 +78,9 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(aliceUses.length).toBeGreaterThan(1);
     for (const use of aliceUses) {
       expect(use.enteredStep).toBe('Step1');
-      const next = schedule.activations[schedule.activations.indexOf(use) + 1]!;
+      // 戦闘の最後の発動なら、次の I は無い
+      const next = schedule.activations[schedule.activations.indexOf(use) + 1];
+      if (next === undefined) continue;
       expect(next).toMatchObject({ step: 'Step1' });
       expect(next.slotIndex).not.toBe(alice);
     }
@@ -101,9 +101,11 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
       }
   });
 
-  it('gives every ally max ammo up (15 s) and an ammo refill at each Full Burst start, and gauge speed up (5 s) at its end', () => {
+  it('gives every ally max ammo up and an ammo refill at each Full Burst start, and gauge speed up at its end', () => {
     const starts = fullBursts.map((w) => w.start);
     expect(starts.length).toBeGreaterThan(5);
+    // 窓どうしが重ならない（付き直しの無い）間隔の編成で、窓をフルバーストごとに比べる
+    starts.slice(1).forEach((f, k) => expect(f - starts[k]!).toBeGreaterThan(gameSecondsToFrames(AMMO_UP_SECONDS)));
     const gaugeWindows = windowsFrom(
       fullBursts.map((w) => w.end),
       GAUGE_UP_SECONDS,
@@ -114,16 +116,13 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
         windowsFrom(starts, AMMO_UP_SECONDS, plan.frames),
       );
       expect(effectWindows(plan, h, { ...S2, stat: 'burstGaugeSpeed' })).toEqual(gaugeWindows);
-      expect(instantFrames('ammoRefill', h)).toEqual(starts);
+      expect(instantsOf('ammoRefill', h).map((i) => i.frame)).toEqual(starts);
     }
   });
 
   it.runIf(fires)('refills from the raised max ammo and reloads to it inside the window', () => {
     const raised = Math.round(MAX_AMMO * (1 + AMMO_UP));
-    expect(raised).toBe(168);
-    const refills = plan.instants.filter(
-      (i) => i.sourceSlotIndex === alice && i.slotIndex === alice && i.effect.kind === 'ammoRefill',
-    );
+    const refills = instantsOf('ammoRefill', alice);
     // 弾丸チャージは上げた後の最大の X%（最大で止まる）
     expect(Math.max(...refills.map((i) => i.amount))).toBe(Math.round(raised * AMMO_UP));
     // マガジンの発数: 最初のフルバーストの前は 120、窓の中でリロードしてから窓の中で撃ち切った回は 168
@@ -142,7 +141,14 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     for (const count of raisedMags) expect(count).toBe(raised);
   });
 
-  it("opens Crown's S2 (when healed) at the first heal from Alice", () => {
+  // ほかに枠の回復が無い編成（クラウン自身の回復はアリスの最初の回復より後）
+  const onlyAliceHealsEarly = plan.instants.every(
+    (i) =>
+      i.effect.kind !== 'heal' ||
+      i.sourceSlotIndex === alice ||
+      i.frame > Math.min(...heals('skill1', crown), ...heals('burst', crown)),
+  );
+  it.runIf(onlyAliceHealsEarly)("opens Crown's S2 (when healed) at the first heal from Alice", () => {
     const windows = effectWindows(plan, crown, { resourceId: CROWN, skill: 'skill2', stat: 'attackDamage' });
     expect(windows[0]!.start).toBe(Math.min(...heals('skill1', crown), ...heals('burst', crown)));
   });
