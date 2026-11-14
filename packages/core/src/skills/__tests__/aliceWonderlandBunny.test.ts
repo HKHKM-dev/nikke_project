@@ -26,16 +26,17 @@ describe('アリス：ワンダーランドバニー（195）の定義', () => {
   });
 
   it('heals all allies every 60 normal attacks and on the burst use', () => {
-    for (const levels of [MAX_SKILL_LEVELS, OWNER]) {
+    for (const [levels, values] of [
+      [MAX_SKILL_LEVELS, [0.074, 0.27]],
+      [OWNER, [0.06, 0.1731]],
+    ] as const) {
       const heals = resolveInstant(def, alice, levels).filter((e) => e.kind === 'heal');
       expect(heals.map((h) => [h.source.skill, h.trigger, h.target])).toEqual([
         ['skill1', { count: 'normalShot', every: 60 }, 'allies'],
         ['burst', 'burstUse', 'allies'],
       ]);
+      heals.forEach((h, i) => expect(h.value).toBeCloseTo(values[i]!, 10));
     }
-    const [s1, burst] = resolveInstant(def, alice, OWNER).filter((e) => e.kind === 'heal');
-    expect(s1!.value).toBeCloseTo(0.06, 10);
-    expect(burst!.value).toBeCloseTo(0.1731, 10);
   });
 
   it('grants Carrot Party (5 stacks, 5 s on the game clock) to all allies on the same shots as the heal, without contents', () => {

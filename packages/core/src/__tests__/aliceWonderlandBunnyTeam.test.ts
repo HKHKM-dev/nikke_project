@@ -5,7 +5,14 @@ import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { stateItemsOf } from './historyHelpers.ts';
-import { describeEveryShotInOneGroup, effectWindows, fixedTeam, skillValueOf, windowsFrom } from './teamHelpers.ts';
+import {
+  characterOf,
+  describeEveryShotInOneGroup,
+  effectWindows,
+  fixedTeam,
+  skillValueOf,
+  windowsFrom,
+} from './teamHelpers.ts';
 
 const ALICE_WB = 195;
 const CROWN = 330;
@@ -30,27 +37,34 @@ const TEAMS: Record<string, TeamInput> = {
   ),
 };
 
-const MAX_AMMO = 120;
+const MAX_AMMO = characterOf(ALICE_WB).shot.maxAmmo;
 const AMMO_UP = skillValueOf(ALICE_WB, 'skill2', 3) / 100;
+const AMMO_UP_SECONDS = skillValueOf(ALICE_WB, 'skill2', 4);
+const GAUGE_UP_SECONDS = skillValueOf(ALICE_WB, 'skill2', 2);
+const S2 = { resourceId: ALICE_WB, skill: 'skill2' };
 
-describe.each(Object.entries(TEAMS))('編成: %s', (name, input) => {
+describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   const plan = planTeamRun(input);
   const alice = input.slots.findIndex((s) => s?.character.resourceId === ALICE_WB);
   const shots = plan.shots[alice]!.frames;
   const schedule = plan.schedule!;
   const fullBursts = schedule.fullBurstWindows;
   const aliceUses = schedule.activations.filter((a) => a.slotIndex === alice);
-  const heals = (skill: 'skill1' | 'burst', holder: number) =>
+  /** アリスから枠 holder に入った即時効果（kind。skill があればそのスロットのもの）のフレーム */
+  const instantFrames = (kind: 'heal' | 'ammoRefill', holder: number, skill?: 'skill1' | 'burst') =>
     plan.instants
       .filter(
         (i) =>
           i.sourceSlotIndex === alice &&
           i.slotIndex === holder &&
-          i.effect.kind === 'heal' &&
-          i.effect.source.skill === skill,
+          i.effect.kind === kind &&
+          (skill === undefined || i.effect.source.skill === skill),
       )
       .map((i) => i.frame);
+  const heals = (skill: 'skill1' | 'burst', holder: number) => instantFrames('heal', holder, skill);
   const holders = input.slots.map((_, i) => i);
+  const fires = shots.length > 0;
+  const crown = input.slots.findIndex((s) => s?.character.resourceId === CROWN);
 
   it('heals every ally on every 60th normal attack (S1), on the shot frame or the next', () => {
     const sixtieth = shots.filter((_, i) => (i + 1) % 60 === 0);
@@ -59,8 +73,7 @@ describe.each(Object.entries(TEAMS))('編成: %s', (name, input) => {
       expect(frames).toHaveLength(sixtieth.length);
       frames.forEach((f, k) => expect(f - sixtieth[k]!).toBeOneOf([0, 1]));
     }
-    if (name.startsWith('撮影 B')) expect(shots).toEqual([]);
-    else expect(sixtieth.length).toBeGreaterThan(10);
+    if (fires) expect(sixtieth.length).toBeGreaterThan(10);
   });
 
   it('re-enters stage 1 after each burst of hers, and another I bursts next (I → I → II → III)', () => {
@@ -77,40 +90,35 @@ describe.each(Object.entries(TEAMS))('編成: %s', (name, input) => {
     for (const h of holders) expect(heals('burst', h)).toEqual(aliceUses.map((a) => a.frame));
   });
 
-  it('gives every ally Carrot Party with up to 5 stacks while she fires', () => {
+  it('gives every ally Carrot Party with up to 5 stacks only while she fires', () => {
     const items = stateItemsOf(plan).filter((i) => i.state === 'carrotParty');
-    if (name.startsWith('撮影 B')) {
-      expect(items).toEqual([]);
-      return;
-    }
-    for (const h of holders) {
-      const own = items.filter((i) => i.slotIndex === h);
-      expect(own[0]!.start - heals('skill1', h)[0]!).toBeOneOf([0, 1]);
-      expect(Math.max(...own.map((i) => i.stack ?? 1))).toBe(5);
-    }
+    if (!fires) expect(items).toEqual([]);
+    else
+      for (const h of holders) {
+        const own = items.filter((i) => i.slotIndex === h);
+        expect(own[0]!.start - heals('skill1', h)[0]!).toBeOneOf([0, 1]);
+        expect(Math.max(...own.map((i) => i.stack ?? 1))).toBe(5);
+      }
   });
 
   it('gives every ally max ammo up (15 s) and an ammo refill at each Full Burst start, and gauge speed up (5 s) at its end', () => {
     const starts = fullBursts.map((w) => w.start);
     expect(starts.length).toBeGreaterThan(5);
+    const gaugeWindows = windowsFrom(
+      fullBursts.map((w) => w.end),
+      GAUGE_UP_SECONDS,
+      plan.frames,
+    ).filter((w) => w.start < w.end);
     for (const h of holders) {
-      const source = { resourceId: ALICE_WB, skill: 'skill2' };
-      expect(effectWindows(plan, h, { ...source, stat: 'maxAmmo' })).toEqual(windowsFrom(starts, 15, plan.frames));
-      expect(effectWindows(plan, h, { ...source, stat: 'burstGaugeSpeed' })).toEqual(
-        windowsFrom(
-          fullBursts.map((w) => w.end),
-          5,
-          plan.frames,
-        ).filter((w) => w.start < w.end),
+      expect(effectWindows(plan, h, { ...S2, stat: 'maxAmmo' })).toEqual(
+        windowsFrom(starts, AMMO_UP_SECONDS, plan.frames),
       );
-      const refills = plan.instants.filter(
-        (i) => i.sourceSlotIndex === alice && i.slotIndex === h && i.effect.kind === 'ammoRefill',
-      );
-      expect(refills.map((i) => i.frame)).toEqual(starts);
+      expect(effectWindows(plan, h, { ...S2, stat: 'burstGaugeSpeed' })).toEqual(gaugeWindows);
+      expect(instantFrames('ammoRefill', h)).toEqual(starts);
     }
   });
 
-  it.runIf(name.startsWith('撮影 A'))('refills from the raised max ammo and reloads to it inside the window', () => {
+  it.runIf(fires)('refills from the raised max ammo and reloads to it inside the window', () => {
     const raised = Math.round(MAX_AMMO * (1 + AMMO_UP));
     expect(raised).toBe(168);
     const refills = plan.instants.filter(
@@ -123,7 +131,7 @@ describe.each(Object.entries(TEAMS))('編成: %s', (name, input) => {
     const ends = plan.shots[alice]!.lastShotFrames!;
     expect(ends[0]!).toBeLessThan(fullBursts[0]!.start);
     expect(shots.filter((f) => f <= ends[0]!)).toHaveLength(MAX_AMMO);
-    const window = gameSecondsToFrames(15);
+    const window = gameSecondsToFrames(AMMO_UP_SECONDS);
     const inWindow = (f: number) => fullBursts.some((w) => w.start <= f && f < w.start + window);
     const raisedMags = ends.slice(1).flatMap((end, k) => {
       const prev = ends[k]!;
@@ -134,11 +142,9 @@ describe.each(Object.entries(TEAMS))('編成: %s', (name, input) => {
     for (const count of raisedMags) expect(count).toBe(raised);
   });
 
-  it.runIf(name.startsWith('撮影'))("opens Crown's S2 (when healed) at the first heal from Alice", () => {
-    const crown = input.slots.findIndex((s) => s?.character.resourceId === CROWN);
+  it("opens Crown's S2 (when healed) at the first heal from Alice", () => {
     const windows = effectWindows(plan, crown, { resourceId: CROWN, skill: 'skill2', stat: 'attackDamage' });
-    const first = name.startsWith('撮影 A') ? heals('skill1', crown)[0]! : aliceUses[0]!.frame;
-    expect(windows[0]!.start).toBe(first);
+    expect(windows[0]!.start).toBe(Math.min(...heals('skill1', crown), ...heals('burst', crown)));
   });
 });
 
