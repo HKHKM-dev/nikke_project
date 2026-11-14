@@ -52,5 +52,44 @@
     },
     "source": "V-0776",
     "readAt": "2026-11-14"
+  },
+  {
+    "id": "1186-03",
+    "recording": "1186",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1278601,
+    "unit": "ダメージ",
+    "description": "撮影 B の 2 回目のバーストの後の、エクシアのコアの 1 ヒット（バリア適用時の攻撃力▲とエクシアの timed 5 段が乗る。攻撃力▲が無ければ 1,094,932）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "バースト欄の I → II の替わり目（f4042）から +284 の増分。+366・+448 も 1,278,601・1,278,588"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3454,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0001
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [2, 3]
+      }
+    },
+    "source": "V-0776",
+    "readAt": "2026-11-14"
   }
 ]

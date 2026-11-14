@@ -142,5 +142,81 @@
     },
     "source": "V-0776",
     "readAt": "2026-11-14"
+  },
+  {
+    "id": "1184-06",
+    "recording": "1184",
+    "kind": "hit",
+    "use": "compare",
+    "value": 418636,
+    "unit": "ダメージ",
+    "description": "撮影 A の戦闘開始の直後のベスティー：TU の S2 の防御力無視ダメージ（非会心）の 1 ヒット。S2 の防御力無視ダメージ▲（30.97%）が乗る（▲なしは 319,643）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f1001 の 537,286 から、ベスティー：TU の最初の発の通常攻撃のコアの 1 ヒット 107,529 とフローラのコアの 1 ヒット 11,121 を引いた。同じ塊の f1177 も▲あり"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 140,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "source": "V-0776",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1184-07",
+    "recording": "1184",
+    "kind": "hit",
+    "use": "compare",
+    "value": 319643,
+    "unit": "ダメージ",
+    "description": "撮影 A の戦闘開始から約 10 秒の後のベスティー：TU の S2 の防御力無視ダメージ（非会心）の 1 ヒット。▲が外れている",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "1184-04（f2490 の 427,172）から、通常攻撃のコアの 1 ヒット 107,529 を引いた（フローラのリロード中で、フローラの 1 ヒットは混ざらない）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 1600,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "source": "V-0776",
+    "readAt": "2026-11-14"
   }
 ]

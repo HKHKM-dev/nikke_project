@@ -50,5 +50,79 @@
     },
     "source": "V-0776",
     "readAt": "2026-11-14"
+  },
+  {
+    "id": "1187-03",
+    "recording": "1187",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2005715,
+    "unit": "ダメージ",
+    "description": "撮影 C の 1 回目のフルバーストの中のエクシアのコアの 1 ヒット（フローラのバーストの攻撃力▲が乗る）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "バースト欄の I → II の替わり目（f1495）から +446 の増分。+363 は会心の 2,406,876"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1043,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0001
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0776",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1187-04",
+    "recording": "1187",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2762482,
+    "unit": "ダメージ",
+    "description": "撮影 C の 1 回目のフルバーストの中のベスティー：TU の S2 の防御力無視ダメージ（非会心）の 1 ヒット。フローラのバーストの防御力無視ダメージ▲（42.39%）が乗る（無ければ 2,260,660）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "1187-02（3,191,597。+511・+531・+550 の 3 回）から、通常攻撃のコアの 1 ヒット 429,115 を引いた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 700,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0776",
+    "readAt": "2026-11-14"
   }
 ]
