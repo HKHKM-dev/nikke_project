@@ -26,7 +26,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": false,
-  "conditionNote": "BigArms（灼熱・3 分モード・スペック固定 ON）。V-0773 の撮影 A: センチ単騎（操作）・オート射撃 ON・オートバースト OFF",
+  "conditionNote": "BigArms（灼熱・3 分モード・スペック固定 ON）。V-0773 の撮影 A: センチ単騎（操作）・オート射撃 ON・オートバースト OFF。単騎・操作は戦闘履歴の画面で確かめた",
   "backup": {
     "at": "2026-11-14T20:57+09:00",
     "via": "cloud-move",

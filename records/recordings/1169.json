@@ -21,7 +21,8 @@
       "rid": 80,
       "name": "センチ",
       "controlled": true,
-      "treasurePhase": 3
+      "treasurePhase": 3,
+      "note": "操作。ゲームの 3 枠目（2 枠目は空き）"
     }
   ],
   "target": {
@@ -32,7 +33,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "BigArms（灼熱・3 分モード・スペック固定 ON）。V-0773 の撮影 D: プロダクト08（ゲームの 1 枠目）・センチ（操作。ゲームの 3 枠目）・オート射撃 ON・オートバースト ON（III がいないのでチェーンは II で止まる）",
+  "conditionNote": "BigArms（灼熱・3 分モード・スペック固定 ON）。V-0773 の撮影 D: プロダクト08（ゲームの 1 枠目）・センチ（操作。ゲームの 3 枠目）・オート射撃 ON・オートバースト ON（III がいないのでチェーンは II で止まる）。枠順と操作は出撃画面と戦闘履歴の画面で確かめた",
   "backup": {
     "at": "2026-11-14T21:01+09:00",
     "via": "cloud-move",
