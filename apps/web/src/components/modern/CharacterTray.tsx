@@ -1,6 +1,6 @@
 import { useDroppable } from '@dnd-kit/core';
 import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
-import { useMemo, useState, type Dispatch, type SetStateAction } from 'react';
+import { memo, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
 import {
   matchesBadgeFilters,
   trayCollectionBadge,
@@ -81,7 +81,8 @@ export function CharacterTray({
   return (
     <section
       ref={setNodeRef}
-      className={`char-tray-panel ${returning ? 'char-tray-returning' : ''}`}
+      // 持ち上げている間は、一覧の名前を流さない（流れる名前の層が多いと、ドラッグの描き直しのたびに合成の組み直しが重くなる）
+      className={`char-tray-panel ${returning ? 'char-tray-returning' : ''} ${active !== null ? 'char-tray-dragging' : ''}`}
       aria-label="ニケ一覧パレット"
     >
       <div className="char-tray-header">
@@ -104,33 +105,75 @@ export function CharacterTray({
         </div>
       </div>
 
-      <div className={`char-tray-list ${pendingId !== null ? 'char-tray-list-pending' : ''}`}>
-        {filteredCharacters.length === 0 ? (
-          <p className="char-tray-empty">該当するニケが見つかりませんでした。</p>
-        ) : (
-          filteredCharacters.map((char) => {
-            const isTaken = takenIds.has(char.resourceId);
-            return (
-              <CharacterTrayItem
-                key={char.resourceId}
-                character={char}
-                isTaken={isTaken}
-                otherParties={otherPartyIds.get(char.resourceId) ?? NO_PARTIES}
-                unsupportedNote={unsupportedNote(char.resourceId)}
-                isPending={pendingId === char.resourceId}
-                growthMarks={trayGrowthMarks(char, roster, fixedSpec)}
-                // コレクションのバッジは縦長の絵にだけ出す
-                collectionBadge={shape === 'tall' ? trayCollectionBadge(char, roster, fixedSpec) : null}
-                shape={shape}
-                onClick={() => onSelectCharacter(char.resourceId)}
-              />
-            );
-          })
-        )}
-      </div>
+      <TrayList
+        characters={filteredCharacters}
+        takenIds={takenIds}
+        otherPartyIds={otherPartyIds}
+        unsupportedNote={unsupportedNote}
+        pendingId={pendingId}
+        roster={roster}
+        fixedSpec={fixedSpec}
+        shape={shape}
+        onSelectCharacter={onSelectCharacter}
+      />
     </section>
   );
 }
+
+type TrayListProps = Pick<
+  Props,
+  | 'takenIds'
+  | 'otherPartyIds'
+  | 'unsupportedNote'
+  | 'pendingId'
+  | 'roster'
+  | 'fixedSpec'
+  | 'shape'
+  | 'onSelectCharacter'
+> & { characters: readonly CharacterIndexEntry[] };
+
+/**
+ * 一覧の項目の並び。持ち上げている間は、ドラッグの状態（useDroppable）が動くたびに CharacterTray が描き直されるので、
+ * memo で項目の並びまで描き直さないようにする
+ */
+const TrayList = memo(function TrayList({
+  characters,
+  takenIds,
+  otherPartyIds,
+  unsupportedNote,
+  pendingId,
+  roster,
+  fixedSpec,
+  shape,
+  onSelectCharacter,
+}: TrayListProps) {
+  return (
+    <div className={`char-tray-list ${pendingId !== null ? 'char-tray-list-pending' : ''}`}>
+      {characters.length === 0 ? (
+        <p className="char-tray-empty">該当するニケが見つかりませんでした。</p>
+      ) : (
+        characters.map((char) => {
+          const isTaken = takenIds.has(char.resourceId);
+          return (
+            <CharacterTrayItem
+              key={char.resourceId}
+              character={char}
+              isTaken={isTaken}
+              otherParties={otherPartyIds.get(char.resourceId) ?? NO_PARTIES}
+              unsupportedNote={unsupportedNote(char.resourceId)}
+              isPending={pendingId === char.resourceId}
+              growthMarks={trayGrowthMarks(char, roster, fixedSpec)}
+              // コレクションのバッジは縦長の絵にだけ出す
+              collectionBadge={shape === 'tall' ? trayCollectionBadge(char, roster, fixedSpec) : null}
+              shape={shape}
+              onClick={() => onSelectCharacter(char.resourceId)}
+            />
+          );
+        })
+      )}
+    </div>
+  );
+});
 
 /** バッジ・宝物の絞り込みと、全部を外すボタン */
 function TrayFilters({

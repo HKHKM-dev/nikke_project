@@ -1,5 +1,5 @@
 import { useDraggable } from '@dnd-kit/core';
-import type { ReactNode } from 'react';
+import { memo, type ReactNode } from 'react';
 import checkIcon from '../../assets/badges/ui_check.svg';
 import { maskIconStyle } from '../maskIcon.ts';
 import type { CharacterIndexEntry } from '@nikke/core';
@@ -151,27 +151,53 @@ export function CharacterTrayItem({
       aria-disabled={undefined}
       {...listeners}
     >
-      <TrayItemFace
+      <TrayItemContent
         character={character}
+        isTaken={isTaken}
+        otherParties={otherParties}
         unsupportedNote={unsupportedNote}
         growthMarks={growthMarks}
         collectionBadge={collectionBadge}
         shape={shape}
-        overlay={
-          isTaken ? (
-            // ✓ はバッジの絵（ui_check.svg）を型に、水色で塗る（白い縁取りは外側の箱に付ける。型で切ると縁取りも切れるので）
-            <span className="char-tray-item-check" aria-hidden="true">
-              <span className="mask-icon" style={maskIconStyle(checkIcon)} />
-            </span>
-          ) : (
-            // 四角の絵で限界突破・コア強化を出すときは、その下に置く
-            <OtherPartyBadges
-              parties={otherParties}
-              className={`char-tray-item-parties ${shape === 'square' && growthMarks ? 'char-tray-item-parties-below-growth' : ''}`}
-            />
-          )
-        }
       />
     </button>
   );
 }
+
+/**
+ * 一覧の項目の中身（絵と、配置中の ✓ かほかの編成の札）。持ち上げている間は、ドラッグの状態（useDraggable）が動くたびに
+ * どの項目も描き直されるので、memo で中身まで描き直さないようにする
+ */
+const TrayItemContent = memo(function TrayItemContent({
+  character,
+  isTaken,
+  otherParties,
+  unsupportedNote,
+  growthMarks,
+  collectionBadge,
+  shape,
+}: Omit<Props, 'isPending' | 'onClick'>) {
+  return (
+    <TrayItemFace
+      character={character}
+      unsupportedNote={unsupportedNote}
+      growthMarks={growthMarks}
+      collectionBadge={collectionBadge}
+      shape={shape}
+      overlay={
+        isTaken ? (
+          // ✓ はバッジの絵（ui_check.svg）を型に、水色で塗る（白い縁取りは外側の箱に付ける。型で切ると縁取りも切れるので）
+          <span className="char-tray-item-check" aria-hidden="true">
+            <span className="mask-icon" style={maskIconStyle(checkIcon)} />
+          </span>
+        ) : (
+          // 四角の絵で限界突破・コア強化を出すときは、その下に置く
+          <OtherPartyBadges
+            parties={otherParties}
+            className={`char-tray-item-parties ${shape === 'square' && growthMarks ? 'char-tray-item-parties-below-growth' : ''}`}
+          />
+        )
+      }
+    />
+  );
+});

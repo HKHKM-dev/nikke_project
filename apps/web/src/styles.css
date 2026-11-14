@@ -1033,6 +1033,10 @@ header h1 {
 .scrolling-name .scrolling-name-track {
   animation: scrolling-name var(--name-duration) linear infinite;
 }
+/* 一覧から持ち上げている間は、一覧の名前を流さない（CharacterTray の char-tray-dragging。流れる名前の層が多いと、ドラッグの描き直しが重い） */
+.char-tray-dragging .scrolling-name .scrolling-name-track {
+  animation: none;
+}
 @keyframes scrolling-name {
   from {
     transform: translateX(0);
@@ -1424,7 +1428,9 @@ html:has(.modern-view-container) {
   text-align: center;
   width: 100%;
   white-space: nowrap;
-  overflow: hidden;
+  /* 横だけ切る（上下も切ると、流れる名前ごとに合成の層の組み直しが重くなり、ドラッグが重い。縦長の名前の .modern-slot-char-name と同じ） */
+  overflow-x: clip;
+  overflow-y: visible;
 }
 /* 絵の枠。いまの編成にいるニケは、実機の部隊編成と同じく水色の枠・薄い水色の重ね・✓ を絵に重ねる */
 .char-tray-item-visual {
