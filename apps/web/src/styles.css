@@ -687,11 +687,6 @@ header h1 {
      useSlotFit が並びに縮めた値を置く（上限は useSlotFit.ts の PORTRAIT_MAX_H と同じ） */
   --slot-portrait-h: 256px;
 }
-/* 置き先待ちのスロット（カードでなく立ち絵の枠）の水色の実線の枠 */
-.modern-slot-card.modern-slot-awaiting .modern-slot-char-area {
-  outline: 3px solid var(--placing-blue);
-  outline-offset: -1px;
-}
 /* 置き先待ちのスロットの立ち絵と、いまの編成にいるニケの絵に重ねる薄い水色 */
 .modern-slot-card.modern-slot-awaiting .modern-slot-char-area::after,
 .char-tray-item-taken .char-tray-item-visual::after {
@@ -1451,7 +1446,9 @@ html:has(.modern-view-container) {
   width: 100%;
   max-width: var(--tray-visual-w);
 }
-/* いまの編成にいるニケと、置き先待ちのニケ（クリックしたニケ）の絵の水色の枠。置き先待ちは枠だけで、薄い水色は重ねない */
+/* いまの編成にいるニケ・置き先待ちのニケ（クリックしたニケ）の絵と、置き先待ちのスロットの立ち絵の枠の水色の枠。
+   置き先待ちのニケは枠だけで、薄い水色は重ねない */
+.modern-slot-card.modern-slot-awaiting .modern-slot-char-area::after,
 .char-tray-item-taken .char-tray-item-visual::after,
 .char-tray-item-pending .char-tray-item-visual::after {
   /* 絵の枠（1px の枠線）と外形がそろうように、絵の箱と同じ大きさに描く */
