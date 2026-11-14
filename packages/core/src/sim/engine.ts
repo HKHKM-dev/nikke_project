@@ -8,14 +8,7 @@
 // 敵の出来事（狙えない窓など）は 1 パス目で効く（plan/design-stage16.md 9 節）。フレームループは trace（出来事の列）のときだけ回し、
 // 値は作らない（__tests__/calcShots.test.ts で一致を固定）。
 import { hitFramesOf, type BurstActivation, type BurstSchedule, type BurstStepKey } from '../burst/schedule.ts';
-import {
-  baseAttackOf,
-  computeTriggerDamage,
-  modelNotes,
-  partialChargeTriggerDamage,
-  type ModelNote,
-  type TriggerDamage,
-} from '../damage.ts';
+import { baseAttackOf, modelNotes, partialChargeTriggerDamage, type ModelNote, type TriggerDamage } from '../damage.ts';
 import {
   autoAttackCoreRowNotes,
   autoConditionSummary,
@@ -40,6 +33,7 @@ import {
   burstHitBuffs,
   perShotDamageOf,
   planTeamRun,
+  slotHitTriggerDamage,
   slotTriggerDamage,
   sameActivationPiecesOf,
   type SkillHitEvent,
@@ -326,13 +320,6 @@ function createRunner(c: RunnerContext, slot: SimInput['slots'][number], index: 
   const { input, timeline, shots, flights, frames, landing, history } = c;
   const { enemy } = input;
   if (slot === null) return null;
-  const base = {
-    character: slot.character,
-    growth: slot.growth,
-    enemy,
-    attackOverride: slot.attackOverride,
-    attackRounding: input.attackRounding,
-  };
   const passive = timeline.passive[index] ?? EMPTY_BUFF_STATE;
   const perShot = perShotDamageOf(slot);
   const shotFrames = shots[index]?.frames ?? [];
@@ -415,7 +402,7 @@ function createRunner(c: RunnerContext, slot: SimInput['slots'][number], index: 
           slot.skills?.levels ?? MAX_SKILL_LEVELS,
           slot.character,
           enemy,
-          computeTriggerDamage({ ...base, buffs: passive.buffs, condition: { ...slot.condition, fullBurst: false } }),
+          slotHitTriggerDamage(slot, enemy, passive.buffs, input.attackRounding),
           passive.buffs,
         ),
         damage: 0,
@@ -459,15 +446,7 @@ function burstHitDamageOf(c: BurstHitContext, hitAt: BurstHitAt): number | null 
     sameActivationPiecesOf(history, slot.character),
     enemy.burstHitEnemyDebuffs,
   );
-  const trigger = computeTriggerDamage({
-    character: slot.character,
-    growth: slot.growth,
-    enemy,
-    attackOverride: slot.attackOverride,
-    attackRounding: input.attackRounding,
-    buffs,
-    condition: { ...slot.condition, fullBurst: false },
-  });
+  const trigger = slotHitTriggerDamage(slot, enemy, buffs, input.attackRounding);
   const hit = slotBurstHit(
     slot.skills?.definition,
     slot.skills?.levels ?? MAX_SKILL_LEVELS,
