@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 117・効果 833（根拠あり 813）・notes 293（根拠あり 120）
+件数: キャラ 116・効果 825（根拠あり 805）・notes 293（根拠あり 120）
 
 notes の種類: 未対応 44・前提の外 77・計算に無関係 63・補足 33・間接 76
 
-スロット: supported 307・partial 31・unsupported 9・noEffect 46
+スロット: supported 304・partial 31・unsupported 9・noEffect 46
 
 ## 10 ラピ
 
@@ -678,20 +678,6 @@ notes の種類: 未対応 44・前提の外 77・計算に無関係 63・補足
   - effects[0] burstReentry: C-1169（確定）
   - effects[1] heal・burstUse: C-1170（仮説）
   - notes[0] 間接（HP）: 自分がニンジンパーティーのフルスタック状態の時の、味方全体の受ける HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
-
-## 202 ドラー
-
-- **skill1**: supported
-  - effects[0] timed・10 秒ごと・attack: C-1213（確定）
-- **skill2**: supported
-  - effects[0] cooldownReduction・fullBurstStart: C-1214（確定）
-  - effects[1] cooldownReduction・fullBurstStart: C-1214（確定）
-  - effects[2] cooldownReduction・fullBurstStart: C-1214（確定）
-  - effects[3] timed・burstUse・attack: C-1215（確定）、C-1217（確定）
-  - effects[4] timed・burstUse・critRate: C-1216（仮説）、C-1217（確定）
-  - effects[5] timed・burstUse・critDamage: C-1215（確定）、C-1217（確定）
-- **burst**: supported
-  - effects[0] burstDamage・skill: C-1217（確定）
 
 ## 210 エクシア
 
