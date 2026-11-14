@@ -626,5 +626,208 @@
     },
     "source": "V-0775",
     "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-18",
+    "recording": "1179",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 0.2041,
+    "description": "ビスケットの S1 の窓（フルバーストの終わりから 10 秒。4 回）の中の、ソルジャーE.G.（火力型）の通常攻撃の 1 ヒットのうち会心の割合（70/343。回ごとに 23/93・16/73・23/95・8/82）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）の増分ごとの当て方",
+      "note": "ソルジャーE.G. の 1 ヒットだけに合った増分（レシピ buff-edge の --opt grid。自分の S1 の有無 × フルバーストの有無の 4 つの格子。ほかの枠の発と同じフレームの和は数えない）を、格子のセル（胴体 11,400.36 に対する 1 + コア + 会心 + 距離ボーナス（+ フルバースト補正）の倍率）で会心の有無に分けた。フルバーストの中か外かは `1179-03` の 00.00 と `1179-04` の終わり（5 回目は 00.00 + 609f）で、S1 の窓はフルバーストの終わりから 600f（同じ録画のアイコンの付いた・消えたフレームの観測値で 10 秒と確かめた）。許容は 343 ヒットの二項の 2σ（会心率 0.2077 で 0.044）。▲が付かないなら 0.15"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 3,
+        "frame": 1300
+      },
+      "tolerance": {
+        "abs": 0.044
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          },
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstEnd",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-19",
+    "recording": "1179",
+    "kind": "rate",
+    "use": "record",
+    "unit": "割合",
+    "value": 0.1709,
+    "description": "S1 の窓の外・フルバーストの外の、ソルジャーE.G. の通常攻撃の 1 ヒットのうち会心の割合（155/907）。モデルは 0.15",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）の増分ごとの当て方",
+      "note": "ソルジャーE.G. の 1 ヒットだけに合った増分（レシピ buff-edge の --opt grid。自分の S1 の有無 × フルバーストの有無の 4 つの格子。ほかの枠の発と同じフレームの和は数えない）を、格子のセル（胴体 11,400.36 に対する 1 + コア + 会心 + 距離ボーナス（+ フルバースト補正）の倍率）で会心の有無に分けた。フルバーストの中か外かは `1179-03` の 00.00 と `1179-04` の終わり（5 回目は 00.00 + 609f）で、S1 の窓はフルバーストの終わりから 600f（同じ録画のアイコンの付いた・消えたフレームの観測値で 10 秒と確かめた）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-20",
+    "recording": "1179",
+    "kind": "rate",
+    "use": "record",
+    "unit": "割合",
+    "value": 0.1315,
+    "description": "フルバーストの中の、ソルジャーE.G. の通常攻撃の 1 ヒットのうち会心の割合（48/365）。モデルは 0.15",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）の増分ごとの当て方",
+      "note": "ソルジャーE.G. の 1 ヒットだけに合った増分（レシピ buff-edge の --opt grid。自分の S1 の有無 × フルバーストの有無の 4 つの格子。ほかの枠の発と同じフレームの和は数えない）を、格子のセル（胴体 11,400.36 に対する 1 + コア + 会心 + 距離ボーナス（+ フルバースト補正）の倍率）で会心の有無に分けた。フルバーストの中か外かは `1179-03` の 00.00 と `1179-04` の終わり（5 回目は 00.00 + 609f）で、S1 の窓はフルバーストの終わりから 600f（同じ録画のアイコンの付いた・消えたフレームの観測値で 10 秒と確かめた）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-21",
+    "recording": "1179",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [2049, 4471, 7045, 9513],
+    "description": "ソルジャーE.G. の枠の下に、通常攻撃のクリティカル確率▲（剣の形）と持続回復（＋）のアイコンが 2 つ同時に付いたフレーム。どの回もフルバーストの終わり（`1179-04`）の 6f 後。フラワー・ビスケット・ココアの枠のアイコンの数は、フルバーストの終わりの前後で変わらない",
+    "method": {
+      "tool": "使い捨てのスクリプト（枠の下のアイコンの列の青の画素）",
+      "note": "1920×1080 の y 1048〜1068 を、枠ごとに最初のアイコンの左端（660・780・911・1044）から 20.5px おきに 5 つ、16px 幅で切り、B > 90・B − R > 50・B ≥ G の画素の数を全フレームで数えた（V-0451 と同じ読み方）。60 を超えるアイコンの数が増えた・減ったフレーム。どのアイコンかは切り出しの画で確かめた（1179 の 2040・2048・2240・2480・2630・2650f）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-22",
+    "recording": "1179",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [2638, 5059, 7634, 10101],
+    "description": "同じ 2 つのアイコンが同時に消えたフレーム。付いてから 589・588・589・588f（10 秒。持続回復のアイコンが消えるまでの長さは V-0451 の鈴原サクラの 587〜589f と同じ）",
+    "method": {
+      "tool": "使い捨てのスクリプト（枠の下のアイコンの列の青の画素）",
+      "note": "付いたフレームと同じ読み方。消える前の暗くなったアイコンも数に入る（閾値 60）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-23",
+    "recording": "1179",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 40605,
+    "description": "ビスケットのバーストの窓の中・フルバーストの中のソルジャーE.G.（火力型）のコアの 1 ヒット（1553f ほか。会心あり・距離ボーナスあり・自分の S1 の攻撃力▲あり）。ビスケットの攻撃力▲なし（付けば約 56,800）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、各枠の 1 ヒットの格子に ±1.5 で当てた。比べるモデルは、ソルジャーE.G. の S1 をフルバーストの始まりと終わりから 5 秒の窓に置き換えたもの（このフレームでは S1 あり）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          },
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstEnd",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
   }
 ]
