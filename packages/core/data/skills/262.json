@@ -1,0 +1,211 @@
+{
+  "formatVersion": 1,
+  "resourceId": 262,
+  "checkedAt": "2026-11-14",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-1241"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "coreHit"
+          },
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "押下チャージ型でどの発もフルチャージなので、コアの命中（期待値。1 発ごとに弾丸命中率 × コア命中率を足し、累計が整数を越えた発）をフルチャージ攻撃のコアの命中とみる。付くのは発の次のフレームから",
+            "en": "Every shot of this charge-on-press weapon is a full charge, so core hits (expected values: each shot adds bullet hit rate × core hit rate; fires on the shot where the total passes an integer) are taken as full-charge core hits. Applies from the frame after the shot"
+          },
+          "claims": [
+            "C-1237"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "damageType": "additional",
+          "ref": 5,
+          "delayFrames": 12,
+          "gaugePerHit": true,
+          "assumes": {
+            "ja": "「5回発動」は、フルチャージの発ごとに、発の 12・18・24・30・36f 後に 1 ヒットずつ（effects[2]〜[6]）。どのヒットも 40.5% で、射手の 1 ヒットぶんのバーストゲージを溜める（全弾命中の前提）",
+            "en": "\"Activates 5 times\": one hit each at 12, 18, 24, 30 and 36 f after every full-charge shot (effects[2]–[6]). Each hit is the full 40.5% and charges the shooter's per-hit burst gauge (every shot is assumed to hit)"
+          },
+          "claims": [
+            "C-1238",
+            "C-1239"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "damageType": "additional",
+          "ref": 5,
+          "delayFrames": 18,
+          "gaugePerHit": true,
+          "claims": [
+            "C-1238",
+            "C-1239"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "damageType": "additional",
+          "ref": 5,
+          "delayFrames": 24,
+          "gaugePerHit": true,
+          "claims": [
+            "C-1238",
+            "C-1239"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "damageType": "additional",
+          "ref": 5,
+          "delayFrames": 30,
+          "gaugePerHit": true,
+          "claims": [
+            "C-1238",
+            "C-1239"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "damageType": "additional",
+          "ref": 5,
+          "delayFrames": 36,
+          "gaugePerHit": true,
+          "claims": [
+            "C-1238",
+            "C-1239"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルバーストタイムが発動した時の、最終攻撃力が一番低い基本バースト段階 III の味方 1 機へのスキル発動者基準のチャージ速度▲（10 秒）は未対応（最終攻撃力が一番低い味方の対象の語彙が無い）。基本バースト段階 III が自分だけの編成では自分が対象で、S2 のチャージ速度増加効果無効で効かない。自分より最終攻撃力の低い III の味方（チャージ武器）のいる編成でだけ効く",
+          "en": "The charge speed increase (10 s, based on the caster) to the Burst III ally with the lowest final ATK on entering Full Burst is not modeled (no vocabulary for the lowest-final-ATK ally target). With no other Burst III ally the target is self, and the S2 charge speed increase immunity cancels it. It matters only with a Burst III ally (charge weapon) whose final ATK is lower than hers",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "chargeSpeed",
+            "target": "allies",
+            "trigger": "fullBurstStart"
+          },
+          "claims": [
+            "C-1242"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "ragingCurrent",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "self",
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "attackDamage",
+              "ref": 1
+            }
+          ],
+          "assumes": {
+            "ja": "射撃場の敵は「ターゲット」とみる（ネオン：ビジョン・アイの S1 と同じ読み）。最初のフルチャージの発の次のフレームから戦闘の終わりまで（全弾命中の前提）。対になる緩流が付かないので、緩流解除は何も外さない",
+            "en": "The range enemy is taken as the \"stage target\" (as Neon: Vision Eye S1). From the frame after the first full-charge shot to the end of battle (every shot is assumed to hit). Gentle Current never applies, so removing it does nothing"
+          },
+          "claims": [
+            "C-1237"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルチャージ攻撃が「ターゲット」でないラプチャーに命中した時の緩流（チャージ時間 1 秒で固定・持続。激流解除）は、敵が「ターゲット」の単体ボスだけの前提では起きない",
+          "en": "Gentle Current (charge time fixed at 1 s, continuous; removes Raging Current) on landing a full-charge attack on a Rapture that is not the stage target does not occur under the premise of a single boss that is the stage target",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "state",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "fullChargeShot"
+          }
+        },
+        {
+          "ja": "戦闘開始時からの、自分へのチャージ速度増加効果・減少効果の無効（持続・解除不可）は未対応（効果の無効の語彙が無い。自分にチャージ速度▲▼を付ける味方のいる編成でだけ効く。S1 のチャージ速度▲が自分に付いたときも、これで効かない）",
+          "en": "The immunity to charge speed increases and decreases on self from battle start (continuous, cannot be removed) is not modeled (no vocabulary for effect immunity; it matters only with an ally giving her charge speed changes, including her own S1 charge speed increase when she is its target)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "chargeSpeed",
+            "target": "self",
+            "trigger": "battleStart"
+          },
+          "claims": [
+            "C-1242"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-1241"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 3,
+          "damageType": "additional",
+          "delayFrames": 60,
+          "assumes": {
+            "ja": "敵全体は単体ボス 1 体。発動の 60f 後（III のタイマーの 00.00 から動画で 76f。フルバーストの入りの止まりの後）に 1 ヒットで、その時のバフ（S1 のフルバーストの攻撃力▲・同じ発動の攻撃ダメージ▲）とフルバースト補正で出る",
+            "en": "All enemies are the single boss. One hit 60 f after activation (76 video frames after the Burst III timer reads 00.00, after the Full Burst entry stop), with the buffs at that frame (the S1 Full Burst ATK up and the attack damage up from the same activation) and the Full Burst bonus"
+          },
+          "claims": [
+            "C-1240"
+          ]
+        }
+      ]
+    }
+  }
+}
