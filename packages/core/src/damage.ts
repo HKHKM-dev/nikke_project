@@ -274,6 +274,8 @@ export type TriggerDamageInput = {
   buffs?: BuffTotals;
   /** その枠の射撃ごとの倍率ダメージ（resolvePerShotDamage の結果）。省略は無し */
   perShot?: readonly ResolvedSkillDamage[];
+  /** その枠の与えたダメージ量の X% の固定ダメージの X/100 の和（resolveFixedShare の結果）。省略は 0 */
+  fixedShare?: number;
   /** 攻撃力▲の丸め（TeamInput.attackRounding）。省略は ATTACK_ROUNDING（いまのモデル） */
   attackRounding?: AttackRounding;
 };
@@ -555,7 +557,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
     damageTakenMultiplier *
     element;
   // 固定ダメージは通常攻撃の値（命中率・会心とコアの期待値を含む）の X%。フルチャージの発にだけ出る（きっかけが fullChargeShot）
-  const fixedShare = charge ? normal * fixedShareOf(input.perShot) : 0;
+  const fixedShare = charge ? normal * (input.fixedShare ?? 0) : 0;
   const perShot =
     hitRate *
     perShotDamage(
@@ -630,16 +632,6 @@ function perShotDamage(
   const common = baseHit * boost * applyAttackDamageBuffs(buffs) * (1 + buffs.damageTaken) * element;
   const distributed = distributedHitMultiplier(1 + buffs.distributedDamage, 1 + buffs.damageTaken);
   let total = 0;
-  for (const e of effects) {
-    if (e.damageType === 'fixedShare') continue;
-    total += common * e.multiplier * (e.damageType === 'distributed' ? distributed : 1);
-  }
-  return total;
-}
-
-/** 与えたダメージ量の X% の固定ダメージの X/100 の和（plan/design-emilia.md 2.2 節） */
-function fixedShareOf(effects: readonly ResolvedSkillDamage[] | undefined): number {
-  let total = 0;
-  for (const e of effects ?? []) if (e.damageType === 'fixedShare') total += e.multiplier;
+  for (const e of effects) total += common * e.multiplier * (e.damageType === 'distributed' ? distributed : 1);
   return total;
 }

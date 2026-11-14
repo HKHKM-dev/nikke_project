@@ -31,7 +31,7 @@ import { EMPTY_BUFF_STATE, type BuffTimeline } from '../skills/timeline.ts';
 import {
   BURST_HIT_USES_PRE_ACTIVATION_BUFFS,
   burstHitBuffs,
-  perShotDamageOf,
+  shotSkillDamageOf,
   planTeamRun,
   slotHitTriggerDamage,
   slotTriggerDamage,
@@ -321,12 +321,11 @@ function createRunner(c: RunnerContext, slot: SimInput['slots'][number], index: 
   const { enemy } = input;
   if (slot === null) return null;
   const passive = timeline.passive[index] ?? EMPTY_BUFF_STATE;
-  const perShot = perShotDamageOf(slot);
+  const shotSkills = shotSkillDamageOf(slot);
+  const { perShot } = shotSkills;
   const shotFrames = shots[index]?.frames ?? [];
   const flight = flights[index]?.shot ?? null;
-  // 固定ダメージ（fixedShare）は撃った区間の値なので、着弾で出し直さない
-  const landsLate = perShot.some((e) => e.damageType !== 'fixedShare');
-  const landAt = flight === null || !landsLate ? null : (f: number) => f + flightFramesAt(flight, f);
+  const landAt = flight === null || perShot.length === 0 ? null : (f: number) => f + flightFramesAt(flight, f);
   // 戦闘の終わりの後に着く発の射撃ごとの倍率ダメージは出さない
   const landings =
     landAt === null
@@ -346,7 +345,7 @@ function createRunner(c: RunnerContext, slot: SimInput['slots'][number], index: 
       segment.landing,
       state.buffs,
       segment.fullBurst,
-      perShot,
+      shotSkills,
       input.attackRounding,
     );
     const range = [{ start: segment.start, end: segment.end }];

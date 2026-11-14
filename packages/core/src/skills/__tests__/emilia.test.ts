@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { computeTriggerDamage, partialChargeTriggerDamage } from '../../damage.ts';
 import type { CharacterData } from '../../types.ts';
 import { applyChargeBuffs, applyResolvedEffect, PER_MAX_AMMO_CAP, ZERO_BUFFS } from '../buffs.ts';
-import { resolvePerShotDamage } from '../burstDamage.ts';
+import { resolveFixedShare, resolvePerShotDamage } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 
@@ -103,6 +103,7 @@ describe('damageType fixedShare（plan/design-emilia.md 2.2 節）', () => {
   const emilia = readJson<CharacterData>('../../../data/characters/821.json');
   const definition = parseSkillDefinition(readJson<unknown>('../../../data/skills/821.json'));
   const perShot = resolvePerShotDamage(definition, emilia, MAX_SKILL_LEVELS);
+  const fixedShare = resolveFixedShare(definition, emilia, MAX_SKILL_LEVELS);
   const input = {
     character: emilia,
     growth: { level: 400, grade: 0, core: 0 },
@@ -110,10 +111,13 @@ describe('damageType fixedShare（plan/design-emilia.md 2.2 節）', () => {
     enemy: { defence: 100, element: null, hasCore: true },
     buffs: { ...ZERO_BUFFS, attackDamage: 0.3, damageTaken: 0.2 },
     perShot,
+    fixedShare,
   };
 
   it('is X% of the normal attack of the trigger, with nothing applied again (Lv10: 58.99%)', () => {
-    expect(perShot).toEqual([expect.objectContaining({ damageType: 'fixedShare', multiplier: 0.5899 })]);
+    // 射撃ごとの倍率ダメージの列には入らず、比率の和で渡す
+    expect(perShot).toEqual([]);
+    expect(fixedShare).toBeCloseTo(0.5899, 12);
     const condition = { coreHitRate: 0.5, distanceBonus: false, fullCharge: true, hitRate: 1 };
     const t = computeTriggerDamage({ ...input, condition });
     expect(t.perShot).toBe(0);

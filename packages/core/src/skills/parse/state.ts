@@ -44,7 +44,7 @@ import {
   rejectUnknownKeys,
 } from './common.ts';
 import { CONDITION_KEYS_OF, parseCondition, validateUsedBurst } from './condition.ts';
-import { type GrantTimedFields, parseTimedEffect, parseTimedFields } from './timed.ts';
+import { type GrantTimedFields, parseTimedEffect, parseTimedFields, rejectTimedOnlyScaling } from './timed.ts';
 import { parseTargetClass, parseTargetCount, parseTargetElement, parseTargetWeapon } from './target.ts';
 import {
   parseAppliedTrigger,
@@ -417,10 +417,7 @@ function parseStateContentItem(
   if (item.skillCooldownDown !== undefined) return parseSkillCooldownDownItem(item, grant, path, onEnemy);
   rejectUnknownKeys(item, ['stat', 'ref', 'value', 'scaling', 'decrease', 'claims'], path);
   const timed = parseTimedEffect(contentAsTimed(grant, item), path);
-  // 発動者の最大HP 基準は、timed の件の列を持ち主ごとに作る時に直すので、
-  // 状態の中身には書けない（使い手がいない。plan/design-hp-ratio-readers.md 9 節）
-  if (timed.scaling === 'casterMaxHp' || timed.scaling === 'perFinalMaxAmmo')
-    fail(`${path}.scaling`, `${timed.scaling} is only allowed in timed`);
+  rejectTimedOnlyScaling(timed.scaling, path);
   // 味方の状態の中身に敵の件（受けるダメージ▲）は書けない（plan/design-holder-effects.md 2.8 節）。
   // 敵に付く状態の中身は、敵が持つ stat だけ
   if (onEnemy) {
