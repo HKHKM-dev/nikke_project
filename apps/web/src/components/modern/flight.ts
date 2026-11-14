@@ -134,3 +134,19 @@ export function flyToTray(content: Element, to: DOMRect | null): void {
     )
     .finished.then(remove, remove);
 }
+
+/**
+ * 操作の印を、離した位置（from。持ち上げた印の箱）から、移した先のスロット（card。描き直しの後に引く）の印の場所へ滑り込ませる。
+ * 印は描き直しの後に移した先へ出るので、次の描画で、その印を離した位置から元の場所へ動かす
+ */
+export function flyControllerInto(from: DOMRect, card: () => Element | null): void {
+  requestAnimationFrame(() => {
+    const icon = card()?.querySelector('.modern-slot-focus-handle');
+    if (!icon) return;
+    const to = icon.getBoundingClientRect();
+    icon.animate(
+      [{ transform: `translate(${from.left - to.left}px, ${from.top - to.top}px)` }, { transform: 'none' }],
+      { duration: FLIGHT.duration, easing: FLIGHT.easing },
+    );
+  });
+}
