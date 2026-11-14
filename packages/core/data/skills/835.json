@@ -1,0 +1,276 @@
+{
+  "formatVersion": 1,
+  "resourceId": 835,
+  "checkedAt": "2026-11-14",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "damageType": "additional",
+          "ref": 2,
+          "claims": [
+            "C-1264"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 4
+          },
+          "condition": {
+            "selfState": "annihilationState"
+          },
+          "damageType": "skill",
+          "ref": 6,
+          "delayFrames": 3,
+          "valueBeforeFire": true,
+          "assumes": {
+            "ja": "殲滅態勢の追加効果のダメージ。射撃は戦闘を通して数え、10 の倍数に届いた発が殲滅態勢の間なら起きる。ヒットは届いた発の 3f 後で、値は発火の前のもの（同じ発で付くアンチA.T.フィールドのスタックは乗らない）",
+            "en": "Damage of the Annihilation State additional effect. Shots are counted through the battle; it fires when a multiple of 10 is reached during Annihilation State. The hit lands 3 frames after that shot with the value from before the fire (the Anti A.T. Field stack added by the same shot does not apply)"
+          },
+          "claims": [
+            "C-1265",
+            "C-1266"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "antiATField",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 4
+          },
+          "condition": {
+            "selfState": "annihilationState"
+          },
+          "target": "enemy",
+          "maxStacksRef": 8,
+          "durationRef": 9,
+          "contents": [
+            {
+              "stat": "damageTaken",
+              "ref": 7
+            }
+          ],
+          "assumes": {
+            "ja": "殲滅態勢の追加効果のアンチA.T.フィールド。上のダメージと同じ発で付き、届いた発の次のフレームから乗る（録画ではダメージのヒットと同じ 3f 後から乗る。間の 2 発に早く乗るぶんは直さない）",
+            "en": "Anti A.T. Field from the Annihilation State additional effect. Applied by the same shot as the damage above; it applies from the frame after that shot (in the recordings it applies 3 frames later, with the damage hit; the two shots in between that get it early are not corrected)"
+          },
+          "claims": [
+            "C-1265",
+            "C-1266"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "殲滅態勢の追加効果の対象「照準線に最も近い攻撃範囲内の敵 2 機」は、敵 1 体の前提で 1 機（ダメージ・アンチA.T.フィールドとも）",
+          "en": "The Annihilation State additional effect's target \"2 enemies nearest to the crosshair\" is 1 enemy under the single-enemy assumption (both the damage and Anti A.T. Field)",
+          "kind": "modeling",
+          "refers": "effects[1]",
+          "claims": [
+            "C-1265"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "condition": {
+            "selfState": "annihilationState"
+          },
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "自分がバーストを撃った回は、バースト使用時に付いた殲滅態勢がフルバーストの開始に見える",
+            "en": "When this unit used its Burst, Annihilation State applied on Burst use is visible at the Full Burst start"
+          },
+          "claims": [
+            "C-1263"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "ended": "annihilationState"
+          },
+          "target": "self",
+          "stat": "spinUpSpeed",
+          "decrease": true,
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "緊急修復。殲滅の効果発動時を、殲滅態勢が終了した時と読む（射撃場では殲滅態勢の間に必ずアンチA.T.フィールドが付くので殲滅が起きる）",
+            "en": "Emergency Repair. \"When using Annihilation\" is read as when Annihilation State ends (on the range Anti A.T. Field is always applied during Annihilation State, so Annihilation happens)"
+          },
+          "claims": [
+            "C-1269"
+          ]
+        },
+        {
+          "kind": "ammoDecrease",
+          "trigger": {
+            "ended": "annihilationState"
+          },
+          "target": "self",
+          "ref": 5,
+          "assumes": {
+            "ja": "緊急修復の残弾数 100% 減少。残弾は 0 になり、リロードを始める",
+            "en": "Emergency Repair removes 100% of ammo: the ammo becomes 0 and a reload starts"
+          },
+          "claims": [
+            "C-1268"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "ended": "annihilationState"
+          },
+          "target": "self",
+          "stat": "reloadSpeed",
+          "ref": 8,
+          "durationUntil": "reloadEnd",
+          "assumes": {
+            "ja": "緊急修復のリロード速度 60% 増加（1 発間維持）。1 発間の窓が効くのは、残弾数減少で始まる込めだけなので、その込めが最大装弾数まで込め終わるまでとして書く。「固定」は下の notes",
+            "en": "Emergency Repair reload speed up 60% (for 1 round). The only reload inside that 1-round window is the one started by the ammo removal, so it is written as lasting until that reload completes. \"Fixed\" is in the notes below"
+          },
+          "claims": [
+            "C-1268"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "緊急修復の持続回復（自分の最終最大HP の 3.77%・1 秒間隔・3 秒）は、ダメージに関係しない（自分にだけ付き、アスカ：WILLE に回復を受けた時の効果は無い）",
+          "en": "Emergency Repair HP regeneration (3.77% of own final max HP every second for 3 s) does not affect damage (it is only on self, and Asuka: WILLE has no effect on receiving healing)",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "緊急修復のリロード速度の「増加状態で固定」（ほかのリロード速度▲▼を無視する）は未対応。ほかのリロード速度▲▼と足し合わせる。アスカ：WILLE にリロード速度▲▼を付ける味方のいない編成では同じ値",
+          "en": "The reload speed being \"fixed\" in Emergency Repair (ignoring other reload speed ups/downs) is not modeled; it is added to other reload speed changes. Same value in teams where no ally changes Asuka: WILLE's reload speed",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "reloadSpeed",
+            "target": "self",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "annihilationState",
+          "trigger": "burstUse",
+          "target": "self",
+          "durationRef": 8,
+          "assumes": {
+            "ja": "殲滅態勢そのものの維持は説明文に無く、項目の維持（9 秒）と同じと読む",
+            "en": "The description gives no duration for Annihilation State itself; it is read as the items' duration (9 s)"
+          },
+          "claims": [
+            "C-1262",
+            "C-1267"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "normalAttackDamage",
+          "decrease": true,
+          "ref": 7,
+          "durationRef": 8,
+          "assumes": {
+            "ja": "通常攻撃ダメージ 40% 倍率▼。通常攻撃の武器倍率に (1 − 0.4) を掛けて四捨五入する（C-0121 の形）",
+            "en": "Normal attack damage multiplier down 40%: multiplies the normal attack weapon multiplier by (1 − 0.4) and rounds (the C-0121 form)"
+          },
+          "claims": [
+            "C-1262"
+          ]
+        },
+        {
+          "kind": "ammoRefill",
+          "trigger": "burstUse",
+          "target": "self",
+          "ref": 1,
+          "claims": [
+            "C-1262"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 2,
+          "durationRef": 3,
+          "claims": [
+            "C-1262"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 4,
+          "durationRef": 5,
+          "claims": [
+            "C-1262"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "ended": "annihilationState"
+          },
+          "damageType": "additional",
+          "ref": 6,
+          "perCount": {
+            "enemyState": "antiATField"
+          },
+          "delayFrames": 5,
+          "assumes": {
+            "ja": "殲滅。殲滅態勢が終了した時、敵に付いているアンチA.T.フィールドのスタックの数を倍率に掛ける（0 なら出ない）。ヒットは終了の 5f 後で、値はヒットのフレームのもの（殲滅態勢の▲は乗らず、アンチA.T.フィールドの受けるダメージ▲は乗る。消すのはヒットの後）",
+            "en": "Annihilation. When Annihilation State ends, the multiplier is multiplied by the Anti A.T. Field stacks on the enemy (none if 0). The hit lands 5 frames after the end with the value at that frame (Annihilation State buffs do not apply; Anti A.T. Field damage taken up does, as it is removed after the hit)"
+          },
+          "claims": [
+            "C-1267"
+          ]
+        },
+        {
+          "kind": "cancelState",
+          "state": "antiATField",
+          "trigger": {
+            "ended": "annihilationState"
+          },
+          "target": "enemy",
+          "delayFrames": 5,
+          "assumes": {
+            "ja": "殲滅の「効果適用後、アンチA.T.フィールド解除」。殲滅のヒット（終了の 5f 後）の判定の後に消す",
+            "en": "Annihilation's \"Anti A.T. Field is removed after this effect\": removed after the Annihilation hit (5 frames after the end) is judged"
+          },
+          "claims": [
+            "C-1267"
+          ]
+        }
+      ]
+    }
+  }
+}

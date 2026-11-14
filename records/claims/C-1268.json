@@ -1,0 +1,24 @@
+{
+  "id": "C-1268",
+  "text": "アスカ：WILLEの緊急修復の残弾数 100% 減少とリロード速度 60%▲（1 発間）は、殲滅態勢が終了したフレームに起き、残弾を 0 にして込め始め、その込めに▲が効く（込めは 2.33 秒 × 0.4）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1196-13`・`1197-09`（込め直しの後の 1・2 発目がモデルと 3f 以内。録画では、殲滅態勢の▲の乗った最後の発の次のフレームから残弾の表示が読めなくなり、00.00 から 614f に 300 が出て、12f 後に撃つ）。V-0781",
+  "model": "反映（`data/skills/835.json` の skill2 の effects[2]（`ammoDecrease` の `{ ended }`）と effects[3]（timed の `{ ended }`・`durationUntil: \"reloadEnd\"`））",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": ["data/skills/835.json の skill2 の effects[2]", "data/skills/835.json の skill2 の effects[3]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値（残弾数 100% 減少・リロード速度 60%）と、リロードの時間の確定の式（C-0013）",
+  "minimal": [
+    {
+      "element": ["アスカ：WILLE skill2.notes[1]"],
+      "reason": "この編成にアスカ：WILLE のリロード速度を変える味方はいない（固定と足し合わせが同じ値）",
+      "decided": "2026-11-14",
+      "observations": ["1196-13", "1197-09"]
+    }
+  ]
+}

@@ -137,6 +137,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // グレイブ: II の発動（六角形が II から III に替わるフレーム）の 1f 前から効果（完全計算・装弾数無限・貫通特化・▲）。六角形の 2f 前の発には
   // 乗らず、1f 前の発には乗る（C-1119）。バーストの倍率ダメージは無い
   { resourceIds: [514], delays: { hitFrames: 0, effectFrames: -1 }, claim: 'C-1119' },
+  // アスカ：WILLE: III のタイマーの 00.00 の 1f 前から効果（殲滅態勢・通常攻撃ダメージ倍率▼・攻撃力▲・攻撃ダメージ▲）。00.00 の 2f 前の発には
+  // 乗らず、1f 前の発には乗る（8 回のうち 7 回。V-0781）。バーストの倍率ダメージは無い
+  { resourceIds: [835], delays: { hitFrames: 0, effectFrames: -1 }, claim: 'C-1262' },
   // ソルジャーE.G.: III のタイマーの 00.00 からヒットまで 7f（動画で 29f。止まり 22f を含む）。バースト使用時の効果は無い（V-0247・V-0242）
   { resourceIds: [300], delays: { hitFrames: 7, effectFrames: 0 }, claim: 'C-0370' },
   // エヌ：ミラクルフェアリー: II の発動（六角形が II から III に替わるフレーム）から効果（火力型の味方の攻撃力▲）まで、

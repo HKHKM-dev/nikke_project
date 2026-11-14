@@ -1,0 +1,530 @@
+[
+  {
+    "id": "1196-01",
+    "recording": "1196",
+    "kind": "hit",
+    "use": "compare",
+    "value": 13106,
+    "unit": "ダメージ",
+    "description": "2 回目のフルバーストの III のタイマーの 00.00（f4459）の 2f 前のアスカ：WILLE の発（コア・非会心。バーストの効果なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "00.00 はレシピ burst-panel@4 の読み（記録しない。04・05 の終わりは殲滅の演出で欄が隠れて早く拾うので使わない）。f4457 の増分"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "fullBurst": 1,
+        "frame": -2,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0781",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1196-02",
+    "recording": "1196",
+    "kind": "hit",
+    "use": "compare",
+    "value": 15694,
+    "unit": "ダメージ",
+    "description": "2 回目のフルバーストの 00.00 の 1f 前のアスカ：WILLE の発（コア・非会心）。通常攻撃ダメージ倍率▼・攻撃力▲・攻撃ダメージ 36%▲ が乗り、フルバースト補正と S2 の▲は乗らない",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f4458 の増分。ほかの回も 00.00 の 1f 前の発に乗り 2f 前の発に乗らない（1196 の 1 回目だけ 2f 前の発 f1622 にも乗る）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "fullBurst": 1,
+        "frame": -1,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0781",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1196-03",
+    "recording": "1196",
+    "kind": "hit",
+    "use": "compare",
+    "value": 24084,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの入りの止まりの後の、アンチA.T.フィールドが付く前のアスカ：WILLE の発（コア・非会心。殲滅態勢の▲・フルバースト補正・S2 の攻撃ダメージ▲が乗る）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1651〜f1656 の増分（どれも同じ値）。f1658 から 24,284（1 スタック）、以後 10 発ごとに約 200（0.83%）ずつ上がる"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "fullBurst": 0,
+        "frame": 1,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0781",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1196-04",
+    "recording": "1196",
+    "kind": "hit",
+    "use": "compare",
+    "value": 68817,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの、殲滅態勢の追加効果のダメージ（最終攻撃力の 15.62%）の 1 回目（非会心。アンチA.T.フィールドのスタック 0）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1657 の 93,101 から、同じフレームの発 24,284（1 スタック）を引いた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill1",
+        "percent": 15.62,
+        "fullBurst": 0,
+        "frame": 0
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0781",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1196-05",
+    "recording": "1196",
+    "kind": "hit",
+    "use": "compare",
+    "value": 71101,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの、殲滅態勢の追加効果のダメージの 5 回目（非会心。アンチA.T.フィールドのスタック 4 の受けるダメージ▲が乗る）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1697 の 96,185 から、同じフレームの発 25,084（5 スタック）を引いた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "crit": false,
+        "skill": "skill1",
+        "percent": 15.62,
+        "fullBurst": 0,
+        "frame": 0
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0781",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1196-06",
+    "recording": "1196",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2130627,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの中の、通常攻撃 50 回の命中ごとの追加ダメージ（最終攻撃力の 471.86%。非会心。アンチA.T.フィールドのスタック 3）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1677 の 2,248,590 から、同じフレームの殲滅態勢の追加効果のダメージ（会心。スタック 2）93,279 と発 24,684（スタック 3）を引いた。次の回は f1727（50 発後）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill1",
+        "percent": 471.86,
+        "fullBurst": 0,
+        "frame": 0
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0781",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1196-07",
+    "recording": "1196",
+    "kind": "hit",
+    "use": "compare",
+    "value": 716823,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの殲滅（最終攻撃力の 6.62% × アンチA.T.フィールドのスタック 28。会心）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f2179（00.00 の 555f 後）の増分。同じフレームにほかの増分は無い。殲滅態勢の▲（攻撃力・攻撃ダメージ 36%）は乗らず、S2 の攻撃ダメージ▲・フルバースト補正・受けるダメージ▲（28 スタック）が乗る値"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0781",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1196-08",
+    "recording": "1196",
+    "kind": "hit",
+    "use": "compare",
+    "value": 716823,
+    "unit": "ダメージ",
+    "description": "4 回目のフルバーストの殲滅（スタック 28。会心）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f10640（00.00 の 555f 後）の増分。2 回目は 384,204（21 スタック・非会心）、3 回目は 537,617（28 スタック・非会心）。どの回もスタックの数を整数にして式と合う（スタックの数は、回の中の発の数で回ごとに変わる）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": true,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0781",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1196-09",
+    "recording": "1196",
+    "kind": "timing",
+    "use": "compare",
+    "value": [555],
+    "unit": "f",
+    "description": "1 回目のフルバーストの III のタイマーの 00.00 から、殲滅のヒットまでの動画のフレーム",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "00.00 は f1624（burst-panel@4）。殲滅は f2179。殲滅態勢の▲の乗った最後の発は f2171、残弾の表示は f2172 の 210 を最後に読めなくなる（0 になって込め始める）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFramesFromFullBurst",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "fullBurst": 0,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0781",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1196-10",
+    "recording": "1196",
+    "kind": "timing",
+    "use": "compare",
+    "value": [555],
+    "unit": "f",
+    "description": "2 回目のフルバーストの 00.00 から殲滅のヒットまで",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "00.00 は f4459、殲滅は f5014"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFramesFromFullBurst",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "fullBurst": 1,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0781",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1196-11",
+    "recording": "1196",
+    "kind": "timing",
+    "use": "compare",
+    "value": [555],
+    "unit": "f",
+    "description": "3 回目のフルバーストの 00.00 から殲滅のヒットまで",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "00.00 は f7256、殲滅は f7811"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFramesFromFullBurst",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "fullBurst": 2,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0781",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1196-12",
+    "recording": "1196",
+    "kind": "timing",
+    "use": "compare",
+    "value": [555],
+    "unit": "f",
+    "description": "4 回目のフルバーストの 00.00 から殲滅のヒットまで",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "00.00 は f10085、殲滅は f10640"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFramesFromFullBurst",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "fullBurst": 3,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0781",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1196-13",
+    "recording": "1196",
+    "kind": "timing",
+    "use": "compare",
+    "value": [626, 685, 744, 766, 780, 790, 797, 804, 809, 814, 819, 821, 825, 828],
+    "unit": "f",
+    "description": "1 回目のフルバーストの後（殲滅の残弾数減少で込め直した後）の、アスカ：WILLE の最初の 14 発の、00.00 からの動画のフレーム",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "照準の左の残弾が減ったフレーム。300 の表示は f2238（00.00 の 614f 後）。間は 59・59・22・14・10・7・7・5・5・5・2・4・3f。4 回目（f10085 から）も 626・685・744・766・780・791・798f と同じ形"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "shot",
+        "anchor": "fullBurst:0",
+        "within": "afterWindow",
+        "count": 14
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0781",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1196-14",
+    "recording": "1196",
+    "kind": "count",
+    "use": "record",
+    "value": [
+      {
+        "fullBurst": 1,
+        "refill": "129→191",
+        "damageAmmoMod10": 7,
+        "ammoAtEnd": 210
+      },
+      {
+        "fullBurst": 2,
+        "refill": "149→210",
+        "damageAmmoMod10": 0,
+        "ammoAtEnd": 300
+      },
+      {
+        "fullBurst": 3,
+        "refill": "1→63",
+        "damageAmmoMod10": 0,
+        "ammoAtEnd": 17
+      },
+      {
+        "fullBurst": 4,
+        "refill": "154→216",
+        "damageAmmoMod10": 6,
+        "ammoAtEnd": 235
+      }
+    ],
+    "unit": "発",
+    "description": "フルバーストごとの、弾丸チャージの前後の残弾・殲滅態勢の追加効果のダメージが出たフレームの残弾の 1 の位（どの回も回の中では一定）・殲滅の直前の残弾（緊急修復で捨てる弾）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "ダメージのフレームの残弾は表示のまま（表示の遅れはどの回も同じ）。殲滅態勢が付いてから数える読み（K1）なら、弾丸チャージの後の残弾とダメージの残弾の差の 1 の位がどの回も同じになるはずだが、5・2・4・1 とそろわない。戦闘を通して数える読み（K2）では、回の間の発の数（捨てた弾と弾丸チャージ 63 発を入れる）から次の回の 1 の位が決まり、1→2 回目と 3→4 回目が合う（2 回目は的のジャンプで撃てないまま殲滅に入り、表示の 300 が捨てた弾か読めない）。1 の位は、立ち上がりの遅い頭の数回（表示が遅れる）を除いて見た"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0781",
+    "readAt": "2026-11-14"
+  }
+]

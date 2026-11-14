@@ -18,6 +18,7 @@ import {
   unhideShooter,
   weaponChangeShooter,
   weaponFreeFrameAtSwap,
+  spunBeforeLastShot,
   type ShooterState,
 } from '../shooter.ts';
 import { flightFramesAt } from '../landing.ts';
@@ -265,7 +266,7 @@ export function createShooters({
         lists.openWeaponChange(i, params.weapon.id, f + WEAPON_CHANGE_END_DELAY)
       ) {
         (log.weaponChangeEnds ??= []).push(f + WEAPON_CHANGE_END_DELAY);
-        weaponChangeEndOffset[i] = reloadStartOffset(shot, model, params, state.acc, state.shotsInMagazine - 1);
+        weaponChangeEndOffset[i] = reloadStartOffset(shot, model, params, state.acc, spunBeforeLastShot(state, params));
       }
       const isPartial = partial !== null && partial < 1;
       if (isPartial) (log.partialShots ??= []).push({ frame: f, progress: partial });

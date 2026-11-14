@@ -95,9 +95,13 @@ export function parseTrigger(v: Json, path: string, options: TriggerOptions = {}
   if (v.applied !== undefined) {
     fail(path, 'an applied trigger ({ applied }) is only allowed in damage, timed and state grants');
   }
-  // 状態の終わりのきっかけは counterChange・ammoDecrease・状態の付与だけ（parseEndedTrigger で先に読む。plan/design-grave.md 2.1 節）
+  // 状態の終わりのきっかけは counterChange・ammoDecrease・状態の付与・damage・timed・敵の状態の消去だけ（parseEndedTrigger で
+  // 先に読む。plan/design-grave.md 2.1 節・plan/design-asuka-wille.md 2.1 節）
   if (v.ended !== undefined) {
-    fail(path, 'an ended trigger ({ ended }) is only allowed in counterChange, ammoDecrease and state grants');
+    fail(
+      path,
+      'an ended trigger ({ ended }) is only allowed in counterChange, ammoDecrease, state grants, damage, timed and cancelState on the enemy',
+    );
   }
   // フルスタックの消費のきっかけは heal・weaponChange・ammoRefill・timed だけ（plan/design-skill-stage3.md 1.3 節、
   // plan/design-skill-stage11.md 2.1 節、plan/design-diesel.md 2.1 節）

@@ -7,7 +7,7 @@ import { counterMax, type CounterId } from '../counters.ts';
 import { dependsOnDefense } from '../targets.ts';
 import { fireContextOf, type FrameEvents } from '../triggers.ts';
 import { isEndedTrigger } from '../types.ts';
-import { type GrantSource, type HeldStage, type HolderLists, type TimedSource, leadShotKey } from './types.ts';
+import { ENEMY, type GrantSource, type HeldStage, type HolderLists, type TimedSource, leadShotKey } from './types.ts';
 import { atBattleStart, grantStartOf, insertSorted, lastAtOrBefore, startOfFire } from './items.ts';
 import type { HolderBase, Records } from './records.ts';
 import type { Fires } from './fires.ts';
@@ -282,8 +282,25 @@ export function createRegister({
         if (at < frames) insertSorted(e.track.starts, at);
       }
     }
-    // 消去（f の判定には付いている。dotActiveSpans が f + 1 で切る）
-    if (!battleStartOnly) for (const c of dotCancelSources) if (c.fires(ev)) insertSorted(c.track.closes, f);
+    // 消去（f の判定には付いている。dotActiveSpans が f + 1 で切る）。敵に付けた状態の付与は、同じ枠のその状態の件の列を
+    // 解除と同じく、遅れ d の後の f + d + 1 で閉じる（closedStateItems。plan/design-asuka-wille.md 2.3 節）
+    if (!battleStartOnly)
+      for (const c of dotCancelSources) {
+        if (!c.fires(ev)) continue;
+        if (c.track !== null) {
+          insertSorted(c.track.closes, f);
+          continue;
+        }
+        // 件の列は組み立ての後に増えないので、初めての消去で集める
+        c.grantTracks ??= tracks.filter(
+          (t) =>
+            t.holder === ENEMY &&
+            t.sourceSlotIndex === c.sourceSlotIndex &&
+            t.origin.kind === 'state' &&
+            t.origin.state === c.state,
+        );
+        for (const track of c.grantTracks) closeTrack(track, f + c.delayFrames);
+      }
     if (!battleStartOnly) {
       // 循環の間隔の変更はループの中でしか読まないので、戦闘開始時もフレーム 0 の出来事で登録する
       for (const c of cycleSources) {

@@ -284,9 +284,9 @@ describe('5.6 マシンガン立ち上げ速度▲（spinUpSpeed）', () => {
 
   it('scales the rise per shot by (1 + Σ), up to the top rate', () => {
     const shot = { ...character().shot, ...mg };
-    expect(rateAfterShots(shot, 10, 1, 1.5)).toBe(60 + 10 * 100 * 1.5);
+    expect(rateAfterShots(shot, 10 * 1.5)).toBe(60 + 10 * 100 * 1.5);
     // 頭打ち（最高レートか 1 フレーム 1 発）は変えない
-    expect(rateAfterShots(shot, 100, 1, 1.5)).toBe(rateAfterShots(shot, 1000));
+    expect(rateAfterShots(shot, 100 * 1.5)).toBe(rateAfterShots(shot, 1000));
     expect(firingParams(shot, { ...ZERO_BUFFS, spinUpSpeed: 0.5 }).spinUpScale).toBe(1.5);
     // スピンアップの無い武器には効かない
     expect(firingParams(character().shot, { ...ZERO_BUFFS, spinUpSpeed: 0.5 }).spinUpScale).toBe(1);
