@@ -23,7 +23,7 @@ import {
 import type { ListOrderControls } from '../../useListOrder.ts';
 import { TRAY_SHAPE_LABEL, type TrayShape } from '../../trayShape.ts';
 import type { OtherParties } from '../../parties.ts';
-import { NO_PARTIES } from './OtherPartyBadges.tsx';
+import { NO_PARTIES } from './PartyNumberBadges.tsx';
 import { Popover } from '../Popover.tsx';
 import returnIcon from '../../assets/badges/ui_return.svg';
 import { maskIconStyle } from '../maskIcon.ts';
@@ -32,6 +32,8 @@ type Props = {
   index: readonly CharacterIndexEntry[];
   takenIds: ReadonlySet<number>;
   otherPartyIds: OtherParties;
+  /** いまの編成の番号（1 から。いまの編成にいるニケに P○ のバッジを出す） */
+  activeParty: number;
   /** 未対応の印の知らせ（useSkillDefinitions の unsupportedNoteOf。完全対応なら null） */
   unsupportedNote: (resourceId: number) => string | null;
   /** 置くスロットのクリックを待っているニケ */
@@ -52,6 +54,7 @@ export function CharacterTray({
   index,
   takenIds,
   otherPartyIds,
+  activeParty,
   unsupportedNote,
   pendingId,
   roster,
@@ -108,6 +111,7 @@ export function CharacterTray({
         characters={filteredCharacters}
         takenIds={takenIds}
         otherPartyIds={otherPartyIds}
+        activeParty={activeParty}
         unsupportedNote={unsupportedNote}
         pendingId={pendingId}
         roster={roster}
@@ -123,6 +127,7 @@ type TrayListProps = Pick<
   Props,
   | 'takenIds'
   | 'otherPartyIds'
+  | 'activeParty'
   | 'unsupportedNote'
   | 'pendingId'
   | 'roster'
@@ -139,6 +144,7 @@ const TrayList = memo(function TrayList({
   characters,
   takenIds,
   otherPartyIds,
+  activeParty,
   unsupportedNote,
   pendingId,
   roster,
@@ -146,6 +152,8 @@ const TrayList = memo(function TrayList({
   shape,
   onSelectCharacter,
 }: TrayListProps) {
+  // いまの編成にいるニケの P○ のバッジ（項目の memo のため、編成が変わるまで同じ配列）
+  const activeParties = useMemo(() => [activeParty], [activeParty]);
   return (
     <div className={`char-tray-list ${pendingId !== null ? 'char-tray-list-pending' : ''}`}>
       {characters.length === 0 ? (
@@ -153,12 +161,14 @@ const TrayList = memo(function TrayList({
       ) : (
         characters.map((char) => {
           const isTaken = takenIds.has(char.resourceId);
+          const otherParties = otherPartyIds.get(char.resourceId) ?? NO_PARTIES;
           return (
             <CharacterTrayItem
               key={char.resourceId}
               character={char}
               isTaken={isTaken}
-              otherParties={otherPartyIds.get(char.resourceId) ?? NO_PARTIES}
+              otherParties={otherParties}
+              partyNumbers={isTaken ? activeParties : otherParties}
               unsupportedNote={unsupportedNote(char.resourceId)}
               isPending={pendingId === char.resourceId}
               growthMarks={trayGrowthMarks(char, roster, fixedSpec)}

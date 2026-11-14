@@ -1485,7 +1485,7 @@ html:has(.modern-view-container) {
   flex: 1;
   color: var(--placing-blue);
 }
-/* ほかの編成で使用中のニケの編成の番号（P1・P2）。絵の右上に縦に並べ、四角の絵で限界突破・コア強化を出すときはその下に置く */
+/* ニケを選んでいる編成の番号（P1・P2）。絵の右上に縦に並べ、四角の絵で限界突破・コア強化を出すときはその下に置く */
 .char-tray-item-parties {
   position: absolute;
   top: 2px;
