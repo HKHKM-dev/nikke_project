@@ -6,6 +6,7 @@ import { effectFrameOf, hexagonFrameOf, hitFrameOf } from '../burst/schedule.ts'
 import { runSimulation } from '../sim/engine.ts';
 import { activeItemsAt } from '../skills/holders.ts';
 import { timerFramesOf } from '../skills/timeline.ts';
+import type { BuffStat } from '../skills/types.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import {
@@ -33,7 +34,7 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   const schedule = sim.schedule!;
   const uses = schedule.activations.filter((a) => a.slotIndex === dolla);
   const allies = input.slots.map((_, i) => i);
-  const upsAt = (holder: number, frame: number, stat: string) =>
+  const upsAt = (holder: number, frame: number, stat: BuffStat) =>
     activeItemsAt(sim.history, holder, frame, { sourceSlotIndex: dolla, skill: 'skill2', stat }).length;
 
   it('gives every ally the S1 ATK up for 5 s every 10 s from 10 s (not at the start of combat)', () => {
