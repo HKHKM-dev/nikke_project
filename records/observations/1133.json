@@ -4,16 +4,7 @@
     "recording": "1133",
     "kind": "timing",
     "use": "record",
-    "value": [
-      1615,
-      2932,
-      4291,
-      5652,
-      7010,
-      8277,
-      9692,
-      10959
-    ],
+    "value": [1615, 2932, 4291, 5652, 7010, 8277, 9692, 10959],
     "unit": "f",
     "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
     "method": {
@@ -32,16 +23,7 @@
     "recording": "1133",
     "kind": "timing",
     "use": "record",
-    "value": [
-      1644,
-      2962,
-      4320,
-      5681,
-      7039,
-      8305,
-      9721,
-      10988
-    ],
+    "value": [1644, 2962, 4320, 5681, 7039, 8305, 9721, 10988],
     "unit": "f",
     "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
     "method": {
@@ -63,16 +45,7 @@
     "kind": "timing",
     "use": "input",
     "unit": "f",
-    "value": [
-      800,
-      2115,
-      3472,
-      4831,
-      6187,
-      7452,
-      8865,
-      10130
-    ],
+    "value": [800, 2115, 3472, 4831, 6187, 7452, 8865, 10130],
     "spread": {
       "kind": "range",
       "low": -2,
@@ -114,19 +87,14 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "manualBursts": "1133-03"
       }
     },
     "scope": {
       "slot": 2,
       "source": "firing",
-      "frames": [
-        943,
-        943
-      ]
+      "frames": [943, 943]
     }
   },
   {
@@ -155,19 +123,14 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "manualBursts": "1133-03"
       }
     },
     "scope": {
       "slot": 2,
       "source": "firing",
-      "frames": [
-        1012,
-        1012
-      ]
+      "frames": [1012, 1012]
     }
   },
   {
@@ -196,19 +159,14 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "manualBursts": "1133-03"
       }
     },
     "scope": {
       "slot": 2,
       "source": "firing",
-      "frames": [
-        1078,
-        1078
-      ]
+      "frames": [1078, 1078]
     }
   },
   {
@@ -237,19 +195,14 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "manualBursts": "1133-03"
       }
     },
     "scope": {
       "slot": 2,
       "source": "firing",
-      "frames": [
-        1152,
-        1152
-      ]
+      "frames": [1152, 1152]
     }
   },
   {
@@ -278,19 +231,14 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "manualBursts": "1133-03"
       }
     },
     "scope": {
       "slot": 2,
       "source": "firing",
-      "frames": [
-        1458,
-        1458
-      ]
+      "frames": [1458, 1458]
     }
   },
   {
@@ -319,19 +267,14 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "manualBursts": "1133-03"
       }
     },
     "scope": {
       "slot": 2,
       "source": "firing",
-      "frames": [
-        1533,
-        1533
-      ]
+      "frames": [1533, 1533]
     }
   },
   {
@@ -360,19 +303,14 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "manualBursts": "1133-03"
       }
     },
     "scope": {
       "slot": 2,
       "source": "firing",
-      "frames": [
-        1603,
-        1603
-      ]
+      "frames": [1603, 1603]
     }
   },
   {
@@ -401,19 +339,14 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "manualBursts": "1133-03"
       }
     },
     "scope": {
       "slot": 2,
       "source": "firing",
-      "frames": [
-        1675,
-        1675
-      ]
+      "frames": [1675, 1675]
     }
   },
   {
@@ -442,19 +375,14 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "manualBursts": "1133-03"
       }
     },
     "scope": {
       "slot": 2,
       "source": "firing",
-      "frames": [
-        1760,
-        1760
-      ]
+      "frames": [1760, 1760]
     }
   },
   {
@@ -483,19 +411,14 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "manualBursts": "1133-03"
       }
     },
     "scope": {
       "slot": 2,
       "source": "firing",
-      "frames": [
-        1796,
-        1796
-      ]
+      "frames": [1796, 1796]
     }
   },
   {
@@ -524,19 +447,14 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "manualBursts": "1133-03"
       }
     },
     "scope": {
       "slot": 2,
       "source": "firing",
-      "frames": [
-        1906,
-        1906
-      ]
+      "frames": [1906, 1906]
     }
   },
   {
@@ -566,9 +484,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "manualBursts": "1133-03"
       }
     },
@@ -584,24 +500,7 @@
     "id": "1133-16",
     "kind": "count",
     "use": "record",
-    "value": [
-      600,
-      750,
-      900,
-      1500,
-      1650,
-      2250,
-      2550,
-      3300,
-      3450,
-      4350,
-      5100,
-      5250,
-      6000,
-      6150,
-      6300,
-      6900
-    ],
+    "value": [600, 750, 900, 1500, 1650, 2250, 2550, 3300, 3450, 4350, 5100, 5250, 6000, 6150, 6300, 6900],
     "unit": "発",
     "description": "ヘイトの窓（II の替わり目から 588f。8 回）の中で、70 の刻みの外で最大装弾数が 1 段上がった発（戦闘の始めから。数えた発を近くの 70 の刻みでずれを直した値）。どれも 150 の倍数。5250・6300 は 70 の刻みと重なり 2 段一度に上がった。窓の外の 150 の倍数（150・300・450・1050・1200 など）では 70 の刻みのほかに上がらない。ヘイトの間だけ数える読みなら、1 回目の窓（499 発目から）で 649・799 に上がるはずで、上がっていない",
     "method": {
@@ -611,10 +510,7 @@
     "scope": {
       "slot": 2,
       "source": "firing",
-      "frames": [
-        1644,
-        11419
-      ]
+      "frames": [1644, 11419]
     }
   },
   {
@@ -624,10 +520,7 @@
     "id": "1133-17",
     "kind": "count",
     "use": "record",
-    "value": [
-      2400,
-      3600
-    ],
+    "value": [2400, 3600],
     "unit": "発",
     "description": "ヘイトの窓の中の 150 の倍数の発のうち、イチゴキャンディが 0 段（直前の 2380・3570 発目でフルスタックになって外れた）だった発。どちらも最大装弾数は 300 のままで、次の 70 の刻み（2450・3640 発目）で 470 になった（窓の中の 150 の倍数で、段が付いていた発では、どれも 1 段上がった）",
     "method": {
@@ -637,10 +530,7 @@
     "scope": {
       "slot": 2,
       "source": "firing",
-      "frames": [
-        4456,
-        6274
-      ]
+      "frames": [4456, 6274]
     }
   },
   {
@@ -650,16 +540,7 @@
     "id": "1133-18",
     "kind": "count",
     "use": "record",
-    "value": [
-      300,
-      300,
-      300,
-      300,
-      300,
-      300,
-      300,
-      300
-    ],
+    "value": [300, 300, 300, 300, 300, 300, 300, 300],
     "unit": "発",
     "description": "フルスタックで最大装弾数が 300 に戻った直後の残弾（8 回。f1780・2578・3586・4456・5401・6203・7075・8152）。直前の残弾は 647〜1062 発で、どの回も 300 に削られ、弾丸チャージで 300 を超えない",
     "method": {
@@ -669,10 +550,7 @@
     "scope": {
       "slot": 2,
       "source": "firing",
-      "frames": [
-        1780,
-        8152
-      ]
+      "frames": [1780, 8152]
     }
   }
 ]
