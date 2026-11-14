@@ -874,8 +874,7 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
   const sequential =
     (input.attackDamageMultiplier + (input.sequentialAttackDamage ?? 0)) / input.attackDamageMultiplier;
   // 「〜敵1機に」で終わるバーストスキルダメージ▲も攻撃ダメージ▲と同じ和に足す（plan/design-jackal.md 2.3 節。論点 3）
-  const oneEnemy =
-    (input.attackDamageMultiplier + (input.oneEnemyBurstDamage ?? 0)) / input.attackDamageMultiplier;
+  const oneEnemy = (input.attackDamageMultiplier + (input.oneEnemyBurstDamage ?? 0)) / input.attackDamageMultiplier;
   // 分配ダメージ▲は受けるダメージ▲と 1 つの和（common に掛けた受けるダメージ▲に対する比。damage.ts の distributedHitMultiplier。C-0767）
   const distributedFactor = distributedHitMultiplier(distributed, damageTaken);
   const perEffect = input.effects.map((effect) => ({
