@@ -2,9 +2,9 @@
 // （savedTeams.ts。plan/design-unreadable-team-save.md）もここで回す
 import { loadCharacterIndex, type CharacterIndexEntry } from '@nikke/core';
 import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
-import { PARTIES_STORAGE_KEY, serializeParties, type PartiesState } from './parties.ts';
+import { PARTIES_STORAGE_KEY, serializeParties, withoutCrossPartyDuplicates, type PartiesState } from './parties.ts';
 import { writeStorage } from './storage.ts';
-import { STORAGE_KEY, serializeTeamState, type TeamAction, type TeamState } from './team.ts';
+import { INITIAL_TEAM_STATE, STORAGE_KEY, serializeTeamState, type TeamAction, type TeamState } from './team.ts';
 import { useUnreadableSaves } from './useUnreadableSaves.ts';
 
 type Params = {
@@ -32,8 +32,12 @@ export function useSavedTeam({ baseUrl, team, dispatch, parties, setParties }: P
         setIndex(i.characters);
         // 読めなかった保存は、ここで同期して退避してから保存を始める（下の effect が上書きする前に）
         const saved = restore(i.characters);
-        if (saved.team) dispatch({ type: 'replace', state: saved.team });
-        if (saved.parties) setParties(saved.parties);
+        // 同じニケが 2 つ以上の編成にいたら、番号の小さい編成にだけ残す（parties.ts の withoutCrossPartyDuplicates）
+        const next = saved.parties
+          ? withoutCrossPartyDuplicates(saved.parties, saved.team ?? INITIAL_TEAM_STATE)
+          : { parties: null, team: saved.team };
+        if (saved.team && next.team) dispatch({ type: 'replace', state: next.team });
+        if (next.parties) setParties(next.parties);
         if (saved.unsaved.length === 0) setRestored(true);
       })
       .catch((e: unknown) => {

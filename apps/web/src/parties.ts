@@ -7,9 +7,11 @@ import {
   INITIAL_TEAM_STATE,
   TEAM_FORMAT_VERSION,
   TEAM_SHAPE_ERROR,
+  clearedSlot,
   isRecord,
   parseTeamObject,
   readVersionedJson,
+  type SlotState,
   type TeamState,
 } from './team.ts';
 
@@ -39,8 +41,8 @@ export function partyHasCharacters(party: Party): boolean {
 /** ニケ → そのニケを選んでいるほかの編成の番号（1 から。小さい順） */
 export type OtherParties = ReadonlyMap<number, readonly number[]>;
 /**
- * ほかの編成（選んでいる編成のほか）で選んでいるニケ。キャラの選択肢とトレイに「ほかの編成で使用中」の印を出す
- * （ソロレイドでは同じニケを 2 つの編成に入れられない。plan/design-ui-rebuild.md 5.2 節）
+ * ほかの編成（選んでいる編成のほか）で選んでいるニケ。このニケはいまの編成に入れられない（App の dispatch が止める）。
+ * キャラの選択肢とトレイでは選べなくし、「ほかの編成で使用中」と出す（ソロレイドでは同じニケを 2 つの編成に入れられない）
  */
 export function otherPartyResourceIds(state: PartiesState): OtherParties {
   const ids = new Map<number, number[]>();
@@ -54,6 +56,47 @@ export function otherPartyResourceIds(state: PartiesState): OtherParties {
     }
   });
   return ids;
+}
+
+/**
+ * 同じニケを 2 つ以上の編成に入れていたら、番号の小さい編成にだけ残し、後の編成のスロットからは外す（読み込んだ保存に使う。
+ * ソロレイドでは同じニケを 2 つの編成に入れられない）。選んでいる編成（state.active）の中身は team。
+ * 外したものが無ければ、受け取ったものをそのまま返す
+ */
+export function withoutCrossPartyDuplicates(
+  state: PartiesState,
+  team: TeamState,
+): { parties: PartiesState; team: TeamState } {
+  const seen = new Set<number>();
+  const dedupe = (slots: readonly SlotState[]): SlotState[] | null => {
+    let changed = false;
+    const next = slots.map((s) => {
+      if (s.resourceId === null) return s;
+      if (!seen.has(s.resourceId)) {
+        seen.add(s.resourceId);
+        return s;
+      }
+      changed = true;
+      return clearedSlot(s);
+    });
+    return changed ? next : null;
+  };
+  let nextTeam = team;
+  let changed = false;
+  const parties = state.parties.map((p, i) => {
+    if (i === state.active) {
+      const slots = dedupe(team.slots);
+      if (slots) nextTeam = { ...team, slots };
+      return p;
+    }
+    if (p === null) return p;
+    const slots = dedupe(p.slots);
+    if (!slots) return p;
+    changed = true;
+    return { ...p, slots };
+  });
+  if (!changed && nextTeam === team) return { parties: state, team };
+  return { parties: changed ? { ...state, parties } : state, team: nextTeam };
 }
 
 /** 全編成で共通の設定だけを取り出す */

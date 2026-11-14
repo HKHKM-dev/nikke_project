@@ -1426,6 +1426,14 @@ html:has(.modern-view-container) {
 .char-tray-list-pending .char-tray-item:not(.char-tray-item-pending) {
   filter: brightness(0.4);
 }
+/* ほかの編成で使っているニケは選べない。絵と名前を薄くし（P○ のバッジはそのまま）、押せない形のカーソルにする */
+.char-tray-item.char-tray-item-other-party {
+  cursor: not-allowed;
+}
+.char-tray-item-other-party .char-tray-item-visual > :not(.char-tray-item-parties),
+.char-tray-item-other-party .char-tray-item-name {
+  opacity: 0.35;
+}
 /* 四角の絵の下の名前。収まらない名前は流す（.scrolling-name。useScrollingName.tsx） */
 .char-tray-item-name {
   font-size: 0.75rem;

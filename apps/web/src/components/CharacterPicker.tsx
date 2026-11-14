@@ -8,7 +8,7 @@ type Props = {
   excludeIds: ReadonlySet<number>;
   /** すべてのスロットに未実装が無いキャラ。ほかのキャラの名前に「（未）」を付ける。読み込み前は null（印を付けない） */
   fullySupported: ReadonlySet<number> | null;
-  /** ほかの編成で選んでいるニケ。名前に「（ほかの編成で使用中）」を付ける（選べる） */
+  /** ほかの編成で選んでいるニケ。名前に「（ほかの編成で使用中）」を付け、選べなくする */
   otherPartyIds: OtherParties;
   value: number | null;
   onSelect: (resourceId: number) => void;
@@ -42,7 +42,7 @@ export function CharacterPicker({ index, excludeIds, fullySupported, otherPartyI
       >
         <option value="">なし</option>
         {options.map((entry) => (
-          <option key={entry.resourceId} value={entry.resourceId}>
+          <option key={entry.resourceId} value={entry.resourceId} disabled={otherPartyIds.has(entry.resourceId)}>
             {characterLabel(
               entry,
               fullySupported !== null && !fullySupported.has(entry.resourceId),

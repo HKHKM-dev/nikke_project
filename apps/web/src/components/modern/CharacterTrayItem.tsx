@@ -128,27 +128,30 @@ export function CharacterTrayItem({
   shape,
   onClick,
 }: Props) {
+  const inOtherParty = otherParties.length > 0;
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `tray-${character.resourceId}`,
     data: {
       type: 'tray-character',
       character,
     } satisfies ActiveDragData,
-    disabled: isTaken,
+    // いまの編成にいるニケと、ほかの編成で使っているニケは持ち上げられない
+    disabled: isTaken || inOtherParty,
   });
   // いまの編成にいるニケは、実機の部隊編成と同じく水色の枠と ✓ を重ねて示す（文字の札は出さない）
   return (
     <button
       ref={setNodeRef}
       type="button"
-      className={`char-tray-item ${isTaken ? 'char-tray-item-taken' : ''} ${isDragging ? 'char-tray-item-dragging' : ''} ${isPending ? 'char-tray-item-pending' : ''}`}
+      className={`char-tray-item ${isTaken ? 'char-tray-item-taken' : ''} ${inOtherParty ? 'char-tray-item-other-party' : ''} ${isDragging ? 'char-tray-item-dragging' : ''} ${isPending ? 'char-tray-item-pending' : ''}`}
       // いまの編成にいるニケは、クリックでスロットから外す（ModernView）。ドラッグはできない（useDraggable の disabled）が、
-      // クリックはできるので aria-disabled は付けない（attributes が付けるものを打ち消す）
+      // クリックはできるので aria-disabled は付けない（attributes が付けるものを打ち消す）。ほかの編成で使っているニケは、クリックしても
+      // 何もしない（ModernView）ので aria-disabled を付ける
       // スロットとの間を動くアニメーションが、このニケの絵を探す（ModernView の trayVisualAt）
       data-resource-id={character.resourceId}
       onClick={onClick}
       {...attributes}
-      aria-disabled={undefined}
+      aria-disabled={inOtherParty || undefined}
       {...listeners}
     >
       <TrayItemContent

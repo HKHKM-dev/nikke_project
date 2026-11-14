@@ -215,6 +215,11 @@ export function growthFieldsActions(index: number, fields: Partial<SlotGrowthFie
   ];
 }
 
+/** ニケを外したスロット（育成・スキル・条件は残し、キャラごとの宝物の段階と HP の割合の想定は既定に戻す） */
+export function clearedSlot(s: SlotState): SlotState {
+  return { ...s, resourceId: null, treasurePhase: DEFAULT_TREASURE_PHASE, hpRatio: DEFAULT_HP_RATIO };
+}
+
 export function emptySlot(): SlotState {
   return {
     resourceId: null,
@@ -275,12 +280,7 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
       );
     }
     case 'clearSlot':
-      return updateSlot(state, action.index, (s) => ({
-        ...s,
-        resourceId: null,
-        treasurePhase: DEFAULT_TREASURE_PHASE,
-        hpRatio: DEFAULT_HP_RATIO,
-      }));
+      return updateSlot(state, action.index, clearedSlot);
     case 'swapSlots': {
       if (action.fromIndex === action.toIndex) return state;
       if (
