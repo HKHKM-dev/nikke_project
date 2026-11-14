@@ -1160,6 +1160,8 @@
 | 1189 | `20261114-1189_rl_jackal.mp4` | ジャッカル（111、RL・鉄甲・SSR） + 紅蓮（222、AR・電撃・SSR） + ◎エレグ（500、MG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0778 の撮影。ジャッカル（I・AI）・紅蓮（III・AI）・エレグ（II・操作・オート射撃 ON）。オートバースト ON |
 | 1190 | `20261115-1190_mg_cinderella-crystal-wave.mp4` | ◎シンデレラ：クリスタルウェーブ（515、MG・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0782 の撮影 A。シンデレラ：クリスタルウェーブ（III・操作・オート射撃 ON）の単騎。オートバースト OFF |
 | 1191 | `20261115-1191_mg_cinderella-crystal-wave.mp4` | ◎シンデレラ：クリスタルウェーブ（515、MG・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0782 の撮影 A。シンデレラ：クリスタルウェーブ（III・操作・オート射撃 ON）の単騎。オートバースト OFF |
+| 1192 | `20261115-1192_mg_cinderella-crystal-wave_auto-burst.mp4` | ルドミラ（190、SMG・水冷・SSR） + デルタ（20、SR・風圧・SR） + ◎シンデレラ：クリスタルウェーブ（515、MG・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0782 の撮影 B。ルドミラ（I・AI）・デルタ（II・AI）・シンデレラ：クリスタルウェーブ（III・操作・オート射撃 ON）。オートバースト ON |
+| 1193 | `20261115-1193_mg_cinderella-crystal-wave_auto-burst.mp4` | ルドミラ（190、SMG・水冷・SSR） + デルタ（20、SR・風圧・SR） + ◎シンデレラ：クリスタルウェーブ（515、MG・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0782 の撮影 B。ルドミラ（I・AI）・デルタ（II・AI）・シンデレラ：クリスタルウェーブ（III・操作・オート射撃 ON）。オートバースト ON |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 

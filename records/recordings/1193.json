@@ -1,0 +1,46 @@
+{
+  "id": "1193",
+  "date": "2026-11-15",
+  "folder": "range",
+  "file": "20261115-1193_mg_cinderella-crystal-wave_auto-burst.mp4",
+  "original": "2026-11-15_01-06-23.mp4",
+  "durationSec": 201.2,
+  "frames": 12069,
+  "fps": 60,
+  "sizeMB": 243.9,
+  "sha256": "b9ba1bf9bf97",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 190,
+      "name": "ルドミラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 515,
+      "name": "シンデレラ：クリスタルウェーブ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0782 の撮影 B。ルドミラ（I・AI）・デルタ（II・AI）・シンデレラ：クリスタルウェーブ（III・操作・オート射撃 ON）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-15T01:13+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
