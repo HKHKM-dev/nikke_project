@@ -1,6 +1,6 @@
 // ベルベット（316）を含む編成（plan/design-velvet.md）。語彙と単騎の S1 は skills/__tests__/velvet.test.ts。ここでは味方と組んだ時に:
 // S1: フルバーストの外のフルチャージだけで起き、S2: フルバーストの中のフルチャージと 50 回の命中だけで起きる。弾丸ポーチはバースト 2 段階
-// 突入時に満タンに戻る。バースト: 10 秒の使用武器変更（発動の 12f 後から 1 フレーム 1 発。V-0767）。射撃の列のグループ分け。
+// 突入時に満タンに戻る。バースト: 10 秒の使用武器変更（発動の 13f 後から 1 フレーム 1 発。V-0767）。射撃の列のグループ分け。
 import { describe, expect, it } from 'vitest';
 import { isInFullBurst } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -63,7 +63,7 @@ describe('プロダクト08 + ベルベット + アリス', () => {
     }
   });
 
-  it('fires one shot per frame for 10 s from 12 frames after her burst (weapon change. V-0767)', () => {
+  it('fires one shot per frame for 10 s from 13 frames after her burst (wait 12 from the frame the shooter sees the change. V-0767)', () => {
     const changed = plan.shots[v]!.weaponChangeShotFrames ?? [];
     const bursts = plan.schedule!.activations.filter((a) => a.slotIndex === v);
     const duration = gameSecondsToFrames(skillValueOf(VELVET, 'burst', 2));
@@ -101,6 +101,31 @@ describe('プロダクト08 + グレイブ + ベルベット + アリス（ベ�
 
   it('gives the S1 up only from full charges outside Full Burst', () => {
     expectFiredOnShots(plan, v, 'skill1', 'attack', false);
+  });
+
+  // 窓は付き直しでまとまるので、延長した発火は窓の始まりに出ない。条件で発火しなかった記録で、どのフルチャージも S1 と S2 の
+  // 片方だけを起こすことを見る（フルバーストの中は S1 の攻撃力▲を、外は S2 の攻撃力▲を飛ばす）
+  it('skips the S1 attack up on every full charge inside Full Burst, and the S2 one on every full charge outside', () => {
+    const effectIndexOf = (skill: 'skill1' | 'skill2') =>
+      rawDefinition<{ skills: Record<string, { effects: { kind: string; stat?: string }[] }> }>(VELVET).skills[
+        skill
+      ]!.effects.findIndex((e) => e.kind === 'timed' && e.stat === 'attack');
+    const skippedAt = (skill: 'skill1' | 'skill2') =>
+      new Set(
+        plan.history.conditionSkips
+          .filter(
+            (x) =>
+              x.sourceSlotIndex === v &&
+              x.effect.source.skill === skill &&
+              x.effect.effectIndex === effectIndexOf(skill),
+          )
+          .map((x) => x.frame),
+      );
+    const s1 = skippedAt('skill1');
+    const s2 = skippedAt('skill2');
+    const shots = plan.shots[v]!.frames;
+    expect(shots.some((f) => isInFullBurst(plan.schedule!, f))).toBe(true);
+    for (const f of shots) expect(isInFullBurst(plan.schedule!, f) ? s1.has(f) : s2.has(f)).toBe(true);
   });
 });
 

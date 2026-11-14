@@ -30,7 +30,7 @@
             "en": "\"When entering Burst Stage 2\" is when an activation moves the chain to stage 2 (usually the frame of the Burst I activation), whoever uses it; the pouch is refilled to full"
           },
           "claims": [
-            "C-1162"
+            "C-1164"
           ]
         },
         {
@@ -129,7 +129,7 @@
             "en": "\"Only during Full Burst Time\" means inside the Full Burst window [start, end); each full-charge shot triggers either S1 or S2. She does not full-charge during her own weapon change, so in a Full Burst where she used her burst, this only occurs after the weapon change ends (plan/design-velvet.md 3)"
           },
           "claims": [
-            "C-1163"
+            "C-1165"
           ]
         },
         {
@@ -195,7 +195,7 @@
             "en": "Hits are counted through the battle, and it occurs only when a multiple of 50 is reached inside Full Burst (the same reading as Soda: Twinkling Bunny S1). If it falls on the same frame as the full-charge cost with only 300 left, both see the previous frame value and occur, and the pouch stops at 0 (plan/design-velvet.md 1)"
           },
           "claims": [
-            "C-1162"
+            "C-1164"
           ]
         },
         {
