@@ -428,6 +428,11 @@ export const NAMED_STATES = {
    * バーストの殲滅がスタックを写し、その後に消す。plan/design-asuka-wille.md 2.2・2.3 節）
    */
   antiATField: { name: { ja: 'アンチA.T.フィールド', en: 'Anti A.T. Field' }, holder: 'enemy' },
+  /**
+   * バブル（リトルマーメイドの S2。敵が出現した時に敵に付く。受けるダメージ▲・持続。通常攻撃の命中 50 回目でバブルバーストに替わる。
+   * plan/design-little-mermaid.md 2.2 節）
+   */
+  bubble: { name: { ja: 'バブル', en: 'Bubble' }, holder: 'enemy' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;
