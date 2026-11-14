@@ -72,7 +72,10 @@ export type ShotEvent = {
    * （weaponChangeShot の回数に足す。plan/design-true-damage-element.md 9.6 節）。省略は false
    */
   weaponChange?: boolean;
-  /** この射撃で減らした残弾（teamAmmo の回数に足す。plan/design-cinderella-cw.md 2.3 節）。省略は 1、装弾数無限の発は 0 */
+  /**
+   * この射撃で減らした残弾（teamAmmo の回数に足す。plan/design-cinderella-cw.md 2.3 節）。省略は 1、装弾数無限の発は 0。1 パス目の射手だけが
+   * 書く（流し直しの replayEvents は射撃の列に装弾数無限の印が無いので書かない。teamAmmo を書ける burstGauge は 1 パス目だけが読む）
+   */
   ammo?: number;
 };
 
@@ -266,11 +269,13 @@ export function createTriggerTracker(
         if (t.during === 'fullBurst' && !inFullBurst) return false;
       }
       // 味方が消費した弾の合計は、自分を含む全員の発の残弾の減りを足す（自分が撃たないフレームも数える。plan/design-cinderella-cw.md 2.3 節）
+      // 1 フレームの量（同じフレームに撃った枠の数）が N を超えても、N の倍数を越えたら 1 回だけ発火する
       if (t.count === 'teamAmmo') {
         const weight = ev.shots.reduce((sum, x) => sum + (x ? shotCountWeight('teamAmmo', x) : 0), 0);
-        const next = advanceShotCount(count, weight, everyAt?.(ev.frame) ?? t.every);
-        count = next.count;
-        return next.fired;
+        const every = everyAt?.(ev.frame) ?? t.every;
+        const fired = Math.floor((count + weight) / every) > Math.floor(count / every);
+        count += weight;
+        return fired;
       }
       const shot = ev.shots[slotIndex];
       if (!shot) return false;

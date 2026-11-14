@@ -78,6 +78,14 @@ describe('teamAmmo の数え方', () => {
     expect(fires(frame(3, [shot(0), shot()]))).toBe(false); // 4（装弾数無限の発は数えない）
     expect(fires(frame(4, [shot(), shot()]))).toBe(true); // 6
   });
+
+  it('fires once when the shots of one frame pass N', () => {
+    const trigger = resolveTrigger({ count: 'teamAmmo', every: 2 }, character.skills.skill1, MAX_SKILL_LEVELS.skill1);
+    const fires = createTriggerTracker(trigger, 0, null);
+    expect(fires(frame(1, [shot(), shot(), shot(), shot(), shot()]))).toBe(true); // 5
+    expect(fires(frame(2, [shot()]))).toBe(true); // 6
+    expect(fires(frame(3, [shot()]))).toBe(false); // 7
+  });
 });
 
 describe('damage の usedBurst', () => {
