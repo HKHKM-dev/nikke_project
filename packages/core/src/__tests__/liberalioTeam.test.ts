@@ -1,6 +1,6 @@
 // リバーレリオ（262。V-0780）を含む編成: S2 の激流（最初のフルチャージの発の次のフレームから戦闘の終わりまで。C-1237）、S1 のコア命中の
 // 攻撃ダメージ▲（C-1237）、フルチャージの発ごとの 12・18・24・30・36f 後の 5 ヒットの追加ダメージ（C-1238）、フルバーストの入りからの
-// 攻撃力▲（3 秒）、バーストの攻撃ダメージ▲（10 秒）と追加ダメージ。射撃の列のグループ分け
+// 攻撃力▲（3 秒）・バーストの攻撃ダメージ▲（10 秒。C-1241）と、発動の 60f 後のバーストの追加ダメージ（C-1240）。射撃の列のグループ分け
 import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
 import { describeEveryShotInOneGroup, effectWindows, fixedTeam, skillValueOf, windowsFrom } from './teamHelpers.ts';
@@ -9,6 +9,7 @@ const LIBERALIO = 262;
 const COCOA = 311;
 const SOLDIER_FA = 301;
 const ADDITIONAL_DELAYS = [12, 18, 24, 30, 36];
+const BURST_HIT_DELAY = 60;
 
 const TEAMS = {
   単騎: fixedTeam([LIBERALIO], 0),
@@ -43,7 +44,7 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(hits).toEqual(expected);
   });
 
-  it('gives the S1 attack up for 3 s from every Full Burst start and the burst attack damage up for 10 s', () => {
+  it('gives the S1 attack up for 3 s from every Full Burst start, the burst attack damage up for 10 s and the burst hit 60 f after use', () => {
     const fullBursts = plan.schedule?.fullBurstWindows ?? [];
     const uses = (plan.schedule?.activations ?? []).filter((a) => a.slotIndex === s).map((a) => a.frame);
     if (input.slots.length === 1) {
@@ -64,7 +65,7 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
       windowsFrom(uses, skillValueOf(LIBERALIO, 'burst', 2), plan.frames),
     );
     const burstHits = plan.skillHits.filter((h) => h.slotIndex === s && h.effect.source.skill === 'burst');
-    expect(burstHits.map((h) => h.frame)).toEqual(uses);
+    expect(burstHits.map((h) => h.frame)).toEqual(uses.map((u) => u + BURST_HIT_DELAY));
   });
 });
 
