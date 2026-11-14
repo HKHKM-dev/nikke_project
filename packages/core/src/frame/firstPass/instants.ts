@@ -25,7 +25,7 @@ import {
   type TriggerTracker,
 } from '../../skills/triggers.ts';
 import { isEndedTrigger } from '../../skills/types.ts';
-import { refillAmmo, drainAmmo, resumeAfterLastShotRefill } from '../shooter.ts';
+import { clampAmmoToMax, refillAmmo, drainAmmo, resumeAfterLastShotRefill } from '../shooter.ts';
 import type { FirstPassBase } from './base.ts';
 import type { HolderLists } from '../../skills/holders.ts';
 import type { ShooterStates } from './shooters.ts';
@@ -316,9 +316,8 @@ export function createInstants({
         // 2.1 節）。残弾に足すのは発のフレーム f のまま
         const fullStack = isResolvedFullStack(src.effect.trigger);
         const params = paramsAt(target, fullStack || isResolvedShotCount(src.effect.trigger) ? f + 1 : f);
-        // 外した後の最大装弾数を超える残弾は、ここで削る（次のフレームの射手の削り MAX_AMMO_CLAMP_ON_DECREASE と同じ結果。
-        // 記録の量を弾丸チャージの分だけにする）
-        if (fullStack && state.ammo > params.maxAmmo) state.ammo = params.maxAmmo;
+        // 外した後の最大装弾数を超える残弾は、次のフレームの射手と同じくここで削る（記録の量を弾丸チャージの分だけにする）
+        if (fullStack) clampAmmoToMax(state, params);
         const before = state.ammo;
         // 発数の弾丸チャージ（scaling 'flat'）は値をそのまま足す
         const rounds =
