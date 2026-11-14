@@ -20,6 +20,16 @@ type Plan = ReturnType<typeof planTeamRun>;
 const windowsOf = (plan: Plan, slot: number, skill: string, stat: string) =>
   effectWindows(plan, slot, { resourceId: LIBERALIO, skill, stat });
 
+const { 単騎: SOLO, ...WITH_BURST } = TEAMS;
+
+describe('単騎', () => {
+  it('never enters Full Burst (a lone Burst III), so the S1 attack up never applies', () => {
+    const plan = planTeamRun(SOLO);
+    expect(plan.schedule?.fullBurstWindows ?? []).toEqual([]);
+    expect(windowsOf(plan, 0, 'skill1', 'attack')).toEqual([]);
+  });
+});
+
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   const s = input.slots.findIndex((x) => x?.character.resourceId === LIBERALIO);
   const plan = planTeamRun(input);
@@ -43,16 +53,15 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
       .sort((a, b) => a - b);
     expect(hits).toEqual(expected);
   });
+});
+
+describe.each(Object.entries(WITH_BURST))('編成: %s', (_name, input) => {
+  const s = input.slots.findIndex((x) => x?.character.resourceId === LIBERALIO);
+  const plan = planTeamRun(input);
 
   it('gives the S1 attack up for 3 s from every Full Burst start, the burst attack damage up for 10 s and the burst hit 60 f after use', () => {
     const fullBursts = plan.schedule?.fullBurstWindows ?? [];
     const uses = (plan.schedule?.activations ?? []).filter((a) => a.slotIndex === s).map((a) => a.frame);
-    if (input.slots.length === 1) {
-      // 単騎のバースト III はフルバーストに入らない
-      expect(fullBursts).toEqual([]);
-      expect(windowsOf(plan, s, 'skill1', 'attack')).toEqual([]);
-      return;
-    }
     expect(fullBursts.length).toBeGreaterThan(3);
     expect(windowsOf(plan, s, 'skill1', 'attack')).toEqual(
       windowsFrom(
