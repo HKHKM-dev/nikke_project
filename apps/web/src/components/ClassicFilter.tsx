@@ -69,7 +69,8 @@ export function ClassicFilter({
                 aria-pressed={filters[kind.key]?.includes(v) ?? false}
                 onClick={() => setFilters((f) => toggleBadgeFilter(f, kind.key, v))}
               >
-                {kind.badges[v]!.label}
+                {/* 武器種はアルファベットの略称（値のまま。AR・SMG など）、ほかはバッジの名前 */}
+                {kind.key === 'weaponType' ? v : kind.badges[v]!.label}
               </button>
             ))}
           </div>
