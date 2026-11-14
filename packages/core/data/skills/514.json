@@ -57,13 +57,14 @@
             "selfState": "heatEmission"
           },
           "assumes": {
-            "ja": "放熱の間（完全計算の終わりから込め終わりまで）に着いた味方（自分以外の枠）のゲージ 1 回（通常攻撃の弾のヒットと、射撃ごとの倍率ダメージのゲージのヒット）ごとに、自分の 1 発のゲージ × 38.96% を足す（target_burst_energy_pershot 9,000 の 38.96% = 3,506。込めていて撃たない間も、この元の量）。次は確かめておらず、モデルの置き方: 弾と射撃ごとの倍率ダメージのヒットのほかのゲージには足さない。足す量に受け手のゲージ速度▲を掛けない。アニス：スターの S1 の味方のゲージと同じ編成では、2 人の量を足し合わせる。放熱の付き始めと外れのフレームの回は、ほかの selfState の条件と同じ見え方（付いた次のフレームから）（plan/design-grave-heat-gauge.md 2 節）",
-            "en": "For each ally (other slots) gauge event (a normal-attack bullet hit, or a per-shot multiplier damage hit that charges gauge) that lands during Heat Emission (from the end of Full Calculation to the end of the reload), adds 38.96% of her own per-shot gauge (38.96% of target_burst_energy_pershot 9,000 = 3,506; the same base while she reloads and does not fire). Not verified, and modeled as follows: nothing is added for other gauge sources; the receiver’s own gauge speed up does not scale it; in a team with Anis: Star’s S1 ally gauge, the two amounts add up; the frames where Heat Emission starts and ends follow the other selfState conditions (from the frame after it is applied) (plan/design-grave-heat-gauge.md 2)"
+            "ja": "放熱の間（完全計算の終わりから込め終わりまで）に着いた味方（自分以外の枠）のゲージ 1 回（通常攻撃の弾のヒットと、射撃ごとの倍率ダメージのゲージのヒット）ごとに、自分の 1 発のゲージ × 38.96% を足す（target_burst_energy_pershot 9,000 の 38.96% = 3,506。込めていて撃たない間も、この元の量）。次は確かめておらず、モデルの置き方: 弾と射撃ごとの倍率ダメージのヒットのほかのゲージには足さない。足す量に受け手のゲージ速度▲を掛けない。放熱の付き始めと外れのフレームの回は、ほかの selfState の条件と同じ見え方（付いた次のフレームから）（plan/design-grave-heat-gauge.md 2 節）",
+            "en": "For each ally (other slots) gauge event (a normal-attack bullet hit, or a per-shot multiplier damage hit that charges gauge) that lands during Heat Emission (from the end of Full Calculation to the end of the reload), adds 38.96% of her own per-shot gauge (38.96% of target_burst_energy_pershot 9,000 = 3,506; the same base while she reloads and does not fire). Not verified, and modeled as follows: nothing is added for other gauge sources; the receiver’s own gauge speed up does not scale it; the frames where Heat Emission starts and ends follow the other selfState conditions (from the frame after it is applied) (plan/design-grave-heat-gauge.md 2)"
           },
           "claims": [
             "C-1154",
             "C-1120",
-            "C-0244"
+            "C-0244",
+            "C-1186"
           ]
         }
       ],

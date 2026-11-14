@@ -205,7 +205,7 @@ export function createGaugeEffects({
   // ゲージのヒット）ごとに、自分の 1 発のゲージ × 割合を足す。1 発のゲージは自分の最初の発の着弾のフレームから
   // targetBurstEnergyPerShot、その前は burstEnergyPerShot（C-0246・C-0620）。回数は着くフレームに数え、そのフレームの射撃の後に、
   // そのフレームの量で足す（着弾と同じフレームの回は切り替わった後の量。境のフレームは確かめていない）。持つ枠が 2 つ以上なら、
-  // 持つ枠ごとの量を足し合わせる（確かめていない）。while の状態があれば、持つ枠にその状態が付いているフレーム（selfStateAt。
+  // 持つ枠ごとの量を足し合わせる（C-1186）。while の状態があれば、持つ枠にその状態が付いているフレーム（selfStateAt。
   // そのフレームより前に付いた件）に着いた回にだけ足す（plan/design-grave-heat-gauge.md 2.1・2.2 節）
   const allyAdders = slots.flatMap((slot, i) => {
     if (slot === null || slot.definition === null) return [];

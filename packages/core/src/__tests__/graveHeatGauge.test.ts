@@ -116,6 +116,27 @@ describe('グレイブ S1 の放熱の味方のゲージ（allyGaugeAdd の whil
       expect(p.allyGauges.some((g) => g.slotIndex === 0 && g.holderIndex === 2)).toBe(true);
       expect(ratio(p, team)).toBe(expected);
     });
+
+    it('with added: all, also counts the other holder’s additions (Anis: Star’s)', () => {
+      const team: TeamInput = { ...TEAM, slots: [...TEAM.slots, slot(17)], controlledSlot: 1 };
+      const p = planTeamRun(team);
+      const all = (q: ReturnType<typeof planTeamRun>, args: Record<string, unknown>) =>
+        METRICS.shotGaugeRatioInHolderState!.sim(q as unknown as SimResult, {
+          args: { slot: 1, holder: 2, state: HEAT, added: 'all', ...args },
+          input: team,
+        });
+      // 窓の中も外も、アニス：スターの撃っている時の量（6% × 28,000）が足される（窓の外の最初の着弾の前の 840 の回は、比を少し動かす）
+      const anis = 0.06 * 28_000;
+      expect(all(p, {})).toBeCloseTo((2_000 + anis + GRAVE_ADD) / (2_000 + anis), 1);
+      // 持つ枠 1 つの編成では、holder の分だけと同じ
+      expect(
+        METRICS.shotGaugeRatioInHolderState!.sim(plan as unknown as SimResult, {
+          args: { slot: 1, holder: 2, state: HEAT, added: 'all' },
+          input: TEAM,
+        }),
+      ).toBe(expected);
+      expect(() => all(p, { added: 'others' })).toThrow(/added は holder か all/);
+    });
   });
 
   it('rejects stack conditions, a counter, and a state without a grant in while', () => {

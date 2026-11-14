@@ -1,0 +1,46 @@
+{
+  "id": "1153",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1153_anis-star-grave-sakura-heat.mp4",
+  "original": "2026-11-14_11-03-35.mp4",
+  "durationSec": 202.5,
+  "frames": 12147,
+  "fps": 60,
+  "sizeMB": 245.3,
+  "sha256": "d918ad9ce781",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "鈴原サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 514,
+      "name": "グレイブ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0768 の撮影。III がいないので、チェーンは II の後に切れる。アニス：スターも AI で撃つ",
+  "backup": {
+    "at": "2026-11-14T11:08+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
