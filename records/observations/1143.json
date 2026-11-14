@@ -123,7 +123,7 @@
     "id": "1143-09",
     "recording": "1143",
     "kind": "timing",
-    "use": "record",
+    "use": "compare",
     "value": -49.5,
     "unit": "f",
     "spread": {
@@ -141,6 +141,32 @@
     "scope": {
       "slot": [1, 2, 5],
       "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "attackDamage",
+        "from": 4,
+        "n": 0,
+        "edge": "start",
+        "held": true
+      },
+      "tolerance": {
+        "abs": 25.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "holdFire": [
+          {
+            "slot": 3,
+            "frames": "1143-13"
+          }
+        ]
+      }
     }
   },
   {
@@ -204,6 +230,60 @@
     "method": {
       "tool": "目視（バースト欄の切り出し）",
       "note": "I → II の替わり目（1143-01）の 12f 前の右の欄に、I の六角形と、アリスの顔の CT と、フラワーの顔が並ぶ"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burst"
+    }
+  },
+  {
+    "id": "1143-13",
+    "recording": "1143",
+    "source": "V-0766",
+    "readAt": "2026-11-14",
+    "kind": "timing",
+    "use": "input",
+    "value": [0, 10800],
+    "unit": "f",
+    "description": "アリス：ワンダーランドバニー（3 枠目・操作）がオート射撃 OFF で撃たなかった時間（ゲーム内のフレーム。戦闘開始から最後まで。setup の holdFire に使う）",
+    "method": {
+      "tool": "台帳の autoFire（false）と目視",
+      "note": "戦闘の全体で撃っていない（戦闘履歴の与ダメージ 0）。10800 は戦闘の終わりより後"
+    }
+  },
+  {
+    "id": "1143-14",
+    "recording": "1143",
+    "source": "V-0766",
+    "readAt": "2026-11-14",
+    "kind": "count",
+    "use": "compare",
+    "value": [3, 4, 1, 2, 4, 1, 5, 3, 4, 1, 2, 4, 1, 5, 3, 4, 1, 2, 4, 1, 5, 3, 4, 1, 2, 4, 1, 5, 3, 4, 1, 2],
+    "unit": "枠",
+    "description": "最初の 32 回のバーストの発動の枠（1 始まり。9 回のチェーン）。奇数回目のチェーンはアリス（3）→ I-DOLL・フラワー（4）→ クラウン（1）→ I-DOLL・サン（2）、偶数回目はフラワー → クラウン → ソルジャーE.G.（5）",
+    "method": {
+      "tool": "目視（バースト欄の切り出し）と burst-panel@4",
+      "note": "奇数回目のアリス → フラワーの I は 1143-12（I → II の 12f 前に、アリスの顔に CT が出て段が I のまま）。偶数回目は、アリス（CT 40 秒）が明けていないのでフラワーから。III はサン（CT 40 秒）とソルジャーE.G. が交互（ほかに III がいない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 32
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "holdFire": [
+          {
+            "slot": 3,
+            "frames": "1143-13"
+          }
+        ]
+      }
     },
     "scope": {
       "slot": "all",

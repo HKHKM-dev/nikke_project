@@ -239,7 +239,7 @@
     "id": "1142-14",
     "recording": "1142",
     "kind": "timing",
-    "use": "record",
+    "use": "compare",
     "value": 0.5,
     "unit": "f",
     "spread": {
@@ -257,6 +257,25 @@
     "scope": {
       "slot": [1, 2, 5],
       "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "attackDamage",
+        "from": 3,
+        "shot": 60,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
     }
   },
   {
@@ -276,6 +295,39 @@
     "scope": {
       "slot": "all",
       "source": "normal"
+    }
+  },
+  {
+    "id": "1142-16",
+    "recording": "1142",
+    "source": "V-0766",
+    "readAt": "2026-11-14",
+    "kind": "count",
+    "use": "compare",
+    "value": [3, 4, 1, 2, 4, 1, 5, 3, 4, 1, 2, 4, 1, 5, 3, 4, 1, 2, 4, 1, 5, 3, 4, 1, 2, 4, 1, 5, 3, 4, 1, 2],
+    "unit": "枠",
+    "description": "最初の 32 回のバーストの発動の枠（1 始まり。9 回のチェーン）。奇数回目のチェーンはアリス（3）→ I-DOLL・フラワー（4）→ クラウン（1）→ I-DOLL・サン（2）、偶数回目はフラワー → クラウン → ソルジャーE.G.（5）",
+    "method": {
+      "tool": "目視（バースト欄の切り出し）と burst-panel@4",
+      "note": "奇数回目のアリス → フラワーの I は 1142-11（I → II の 12f 前に、アリスの顔に CT が出て段が I のまま）。偶数回目は、アリス（CT 40 秒）が明けていないのでフラワーから。III はサン（CT 40 秒）とソルジャーE.G. が交互（ほかに III がいない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 32
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burst"
     }
   }
 ]
