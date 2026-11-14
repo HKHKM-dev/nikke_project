@@ -687,17 +687,10 @@ header h1 {
      useSlotFit が並びに縮めた値を置く（上限は useSlotFit.ts の PORTRAIT_MAX_H と同じ） */
   --slot-portrait-h: 256px;
 }
-/* 置き先待ちのスロット（カードでなく立ち絵の枠）・ニケの水色の実線の枠 */
-.modern-slot-card.modern-slot-awaiting .modern-slot-char-area,
-.char-tray-item.char-tray-item-pending {
-  outline: 3px solid var(--placing-blue);
-}
+/* 置き先待ちのスロット（カードでなく立ち絵の枠）の水色の実線の枠 */
 .modern-slot-card.modern-slot-awaiting .modern-slot-char-area {
+  outline: 3px solid var(--placing-blue);
   outline-offset: -1px;
-}
-/* ニケ一覧の枠は、項目の間が狭いのでスロットより 1px 内側に寄せる */
-.char-tray-item.char-tray-item-pending {
-  outline-offset: -2px;
 }
 /* 置き先待ちのスロットの立ち絵と、いまの編成にいるニケの絵に重ねる薄い水色 */
 .modern-slot-card.modern-slot-awaiting .modern-slot-char-area::after,
@@ -1458,9 +1451,19 @@ html:has(.modern-view-container) {
   width: 100%;
   max-width: var(--tray-visual-w);
 }
-.char-tray-item-taken .char-tray-item-visual::after {
+/* いまの編成にいるニケと、置き先待ちのニケ（クリックしたニケ）の絵の水色の枠。置き先待ちは枠だけで、薄い水色は重ねない */
+.char-tray-item-taken .char-tray-item-visual::after,
+.char-tray-item-pending .char-tray-item-visual::after {
   /* 絵の枠（1px の枠線）と外形がそろうように、絵の箱と同じ大きさに描く */
   border: 2px solid var(--placing-blue);
+}
+.char-tray-item-pending .char-tray-item-visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 2;
 }
 .char-tray-item-check {
   position: absolute;
