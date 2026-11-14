@@ -1,6 +1,6 @@
 // 証拠フレームの置き場所（<録画の置き場所>/frames/）に書いたファイルを、Drive の nikke_project_captures/frames/ にも上げる
 // （道具の終わりの同期。plan/design-cloud-environment.md 4.2 節）。上げられなくても書き出しは済んでいて、次の同期で上がる。
-// frames/ の外のファイルは何もしない。still.ts と result-screen.ts が使う。
+// frames/ の外のファイルは何もしない。still.ts が使う。
 import { join } from 'node:path';
 import { driveCaptures, driveUnavailable, rclone } from '../drive/rclone.ts';
 import { relUnder } from '../drive/sync-lib.ts';

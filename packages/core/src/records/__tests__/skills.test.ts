@@ -1,8 +1,7 @@
-// スキル定義の根拠（plan/skills-guide.md 3 節）: 定義の claims と結論の突き合わせと、plan/skills.md が最新であること。
+// スキル定義の根拠（plan/skills-guide.md 3 節）: 定義の claims と結論の突き合わせ。
 // 件数や ID の一覧は直書きしない（plan/design-stage20.md 3.6 節）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { SKILLS_DOC_PATH, loadClaims, loadSkillDefinitions } from '../../../scripts/records-data.ts';
+import { loadClaims, loadSkillDefinitions } from '../../../scripts/records-data.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../../skills/types.ts';
 import type { Claim } from '../claims.ts';
 import {
@@ -21,10 +20,6 @@ const claims = loadClaims();
 describe('スキル定義の claims（実データ）', () => {
   it('points only to existing claims that are not 棄却, and agrees with the places in the claims’ model', () => {
     expect(validateSkillClaims(characters, claims)).toEqual([]);
-  });
-
-  it('matches plan/skills.md (npm run records:check)', () => {
-    expect(readFileSync(SKILLS_DOC_PATH, 'utf8')).toBe(renderSkills(characters, claims));
   });
 });
 

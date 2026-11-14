@@ -1,18 +1,12 @@
-// Stage 19-B・19-C: 観測値（records/observations/）・結論（plan/claims.md）の検証と照合ランナー、残差の一覧（plan/residuals.md）が最新であること。
+// Stage 19-B・19-C: 観測値（records/observations/）・結論（plan/claims.md）の検証と照合ランナー。
 // 確定の結論にひもづく観測値だけ、許容幅の外なら落とす（design-stage19.md 2.5 節）。
 // Stage 20-A: 件数や ID の一覧は直書きしない（plan/design-stage20.md 3.6 節）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
-  CLAIMS_PATH,
-  RESIDUALS_PATH,
   loadClaims,
-  loadSensitivity,
   loadObservations,
   loadRecordingsFile,
   loadRecordsData,
-  loadSkillDefinitions,
-  loadVerifications,
   misplacedClaims,
   misplacedObservations,
   recordingMap,
@@ -20,9 +14,7 @@ import {
 import { runObservationsCached } from '../../../scripts/residual-cache.ts';
 import {
   CLAIM_TOPICS,
-  claimsByObservation,
   gatedObservations,
-  gradeCandidate,
   observationIdsIn,
   renderClaims,
   supportedObservations,
@@ -30,7 +22,6 @@ import {
   validateClaims,
   type Claim,
   type ClaimFile,
-  type ClaimGrade,
 } from '../claims.ts';
 import { coreHitRateWithHitRateUp } from '../../frame/landing.ts';
 import { computeBurstHit } from '../../skills/burstDamage.ts';
@@ -43,10 +34,7 @@ import { invalidReasonsOf, type Observation } from '../observations/types.ts';
 import { renderOtherRows, renderResiduals } from '../observations/render.ts';
 import { validateObservations } from '../observations/validate.ts';
 import { jumpWindowsOf } from '../observations/setup.ts';
-import { extractGeneratedSection, type ProjectRecording } from '../recordings.ts';
-import { relevanceCounts, relevanceOf } from '../relevance.ts';
-import { definitionPlacesByClaim } from '../skills.ts';
-import { verificationsByClaim } from '../verifications.ts';
+import { type ProjectRecording } from '../recordings.ts';
 
 const file = loadRecordingsFile();
 const recordings = recordingMap(file);
@@ -84,19 +72,6 @@ describe('records/observations', () => {
     const failing = residuals.filter((r) => gated.has(r.observation.id) && r.status !== 'ok');
     expect(failing.map((r) => `${r.observation.id}: ${r.status} ${r.message ?? ''}`)).toEqual([]);
   });
-
-  it('matches plan/residuals.md (npm run records:check)', () => {
-    const doc = readFileSync(RESIDUALS_PATH, 'utf8');
-    const section = extractGeneratedSection(doc, 'residuals');
-    const expected = renderResiduals(
-      residuals,
-      observations,
-      claimsByObservation(claims),
-      new Map(loadVerifications().map((v) => [v.id, v.topic])),
-    );
-    // prettier の対象外なので、生成の結果と 1 字まで同じ（plan/design-generated-table-width.md）
-    expect(section).toBe(`\n\n${expected}\n\n`);
-  });
 });
 
 describe('records/claims・plan/claims.md', () => {
@@ -104,32 +79,6 @@ describe('records/claims・plan/claims.md', () => {
     expect(claims.length).toBeGreaterThanOrEqual(30);
     expect(misplacedClaims()).toEqual([]);
     expect(validateClaims(claims, new Set(observations.map((o) => o.id)), new Set(invalidReasons.keys()))).toEqual([]);
-  });
-
-  it('matches plan/claims.md (npm run records:check)', () => {
-    // Stage 20-D: 検証記録の「結論」から逆に引いた結び付きも載る。スキル定義の claims から逆に引いた場所も載る。
-    // 等級の候補（機械。plan/design-records-automation.md 3.5 節）も載る
-    const residualOf = new Map(
-      residuals.map((r) => [
-        r.observation.id,
-        { status: r.status, diff: r.diff, value: r.observation.value, metric: r.observation.compare?.metric },
-      ]),
-    );
-    const gradeCandidates = new Map<string, ClaimGrade>();
-    for (const c of claims) {
-      const g = gradeCandidate(c, residualOf, new Set(invalidReasons.keys()));
-      if (g !== undefined) gradeCandidates.set(c.id, g);
-    }
-    expect(readFileSync(CLAIMS_PATH, 'utf8')).toBe(
-      renderClaims(
-        claims,
-        verificationsByClaim(loadVerifications()),
-        invalidReasons,
-        definitionPlacesByClaim(loadSkillDefinitions()),
-        gradeCandidates,
-        relevanceCounts(relevanceOf(claims, observations, { recordings, ...data, claims }, loadSensitivity())),
-      ),
-    );
   });
 
   it('ties every observation compared under manual conditions to a 確定 or 仮説 claim (Stage 20-A)', () => {

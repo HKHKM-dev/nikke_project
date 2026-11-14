@@ -6,7 +6,7 @@
 // 台帳に書く前の裏取りに使う。戦闘中に ESC で出る「一時停止」と、戦闘終了後の
 // 「戦闘履歴」はレイアウトが同じで、画面上の位置もほぼ固定。
 //
-// 検出（暗幕 + 青いヘッダー帯の AND）は result-screen-lib.ts にあり、result-screen.ts（リザルト画面の読み取り）と共通。
+// 検出（暗幕 + 青いヘッダー帯の AND）は probe-result-lib.ts にある。
 //
 // 切り出した画像の文字は OCR せず目視で読む。名前欄は長いと横スクロールで切れるので
 // （録画 0021 のクイーン（真）は「ーン（真）」しか写らないフレームがある）、
@@ -25,7 +25,7 @@ import {
   scaleCrop,
   type PanelFeatures,
   type Run as Span,
-} from './result-screen-lib.ts';
+} from './probe-result-lib.ts';
 
 type Sample = { frame: number } & PanelFeatures;
 type Run = Span & PanelFeatures;

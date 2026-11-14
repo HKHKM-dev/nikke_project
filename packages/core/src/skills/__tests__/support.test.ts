@@ -1,7 +1,5 @@
-// スキル定義の対応状況の索引（data/skills/support.json。skills/support.ts）: 完全対応の判定と、生成物が最新であること
-import { readFileSync } from 'node:fs';
+// スキル定義の対応状況の索引（data/skills/support.json。skills/support.ts）: 完全対応の判定
 import { describe, expect, it } from 'vitest';
-import { SKILL_SUPPORT_PATH, skillSupportIndexOfData } from '../../../scripts/records-data.ts';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import type { CharacterData, SkillRaw } from '../../types.ts';
 import { buildSkillSupportIndex, renderSkillSupportIndex } from '../support.ts';
@@ -121,11 +119,5 @@ describe('buildSkillSupportIndex', () => {
     expect(() => parseSkillSupportIndex({ formatVersion: 2, fullySupported: [] })).toThrow(/formatVersion/);
     expect(() => parseSkillSupportIndex({ formatVersion: 1, fullySupported: [0] })).toThrow(/positive integers/);
     expect(() => parseSkillSupportIndex([])).toThrow(/object/);
-  });
-});
-
-describe('data/skills/support.json（実データ）', () => {
-  it('matches the definitions (npm run records:check)', () => {
-    expect(readFileSync(SKILL_SUPPORT_PATH, 'utf8')).toBe(renderSkillSupportIndex(skillSupportIndexOfData()));
   });
 });

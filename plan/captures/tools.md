@@ -13,6 +13,7 @@
 
 どれも `node tools/captures/<名前>.ts`。
 
+<!-- prettier-ignore -->
 | ツール             | 何をするか                                                                                                                                                                      |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `intake.ts`        | 録画の取り込み（リネーム・移動・素性・`records/recordings/NNNN.json`・Drive への同期）。クラウドは `drive:<パス>`                                                               |
@@ -20,7 +21,6 @@
 | `fetch.ts`         | Drive から録画などを取り寄せる（[storage.md](storage.md)「クラウド環境での取り寄せ」）                                                                                          |
 | `probe.ts`         | ディレクトリの中の `.mp4` の素性と sha256 を表で出す（写しの突き合わせ）                                                                                                        |
 | `probe-result.ts`  | 一時停止・戦闘履歴のパネルを探して切り出す（キャラ同定。[index.md](index.md)「誰が写っているかの確かめ方」）                                                                    |
-| `result-screen.ts` | リザルト画面（迎撃戦の TOTAL DAMAGE・戦闘履歴のパネル）を探して切り出し、2 セッションの独立読字の一致を観測値にする（[../design-result-screen.md](../design-result-screen.md)） |
 | `still.ts`         | フレーム番号で静止画を切り出す（`frames/` に切り出したら Drive にも上げる）                                                                                                     |
 | `hud.ts`           | HUD の総ダメージ（最後の値・増分）。`--screen interception` で迎撃戦の段階の数値（V-0462）                                                                                      |
 | `gauge.ts`         | 右の BURST バーの充填率（V-0483 の `--subpixel` も）                                                                                                                            |

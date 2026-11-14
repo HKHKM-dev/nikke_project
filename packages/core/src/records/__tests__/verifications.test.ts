@@ -1,19 +1,16 @@
-// Stage 20-D: 検証記録（records/verifications/）の書式・状態の規則・一覧（plan/verifications.md）と、
+// Stage 20-D: 検証記録（records/verifications/）の書式・状態の規則と、
 // 文書の中の ID の参照がどれも実在すること（plan/design-stage20.md 3.2・3.2.1・3.6 節）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   ROOT,
-  VERIFICATIONS_PATH,
   documentPaths,
   loadClaims,
   loadObservations,
-  loadPredictions,
   loadRecordingsFile,
   loadVerifications,
 } from '../../../scripts/records-data.ts';
 import type { Observation } from '../observations/types.ts';
-import { verificationExtraLines } from '../extras.ts';
 import { idReferencesIn } from '../references.ts';
 import {
   VERIFICATION_SECTIONS,
@@ -52,12 +49,9 @@ const check = (list: Verification[], obs: readonly Observation[] = []) =>
   validateVerifications(list, { claims, recordingIds, observations: obs });
 
 describe('records/verifications・plan/verifications.md', () => {
-  it('passes validation and matches plan/verifications.md (npm run records:check)', () => {
+  it('passes validation', () => {
     expect(validateVerifications(verifications, { claims, recordingIds, observations })).toEqual([]);
     expect(unlistedConfirmedClaims(claims, verifications, observations)).toEqual([]);
-    // 予測との比べ（plan/design-records-automation.md 3.5 節）も載る。最小構成の警告は plan/minimal.md に移した（design-minimal-relevance.md 5 節）
-    const extra = verificationExtraLines(observations, loadPredictions());
-    expect(readFileSync(VERIFICATIONS_PATH, 'utf8')).toBe(renderVerifications(verifications, observations, extra));
   });
 
   it('reads the header items, id lists and sections', () => {

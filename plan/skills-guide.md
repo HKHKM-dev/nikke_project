@@ -58,89 +58,89 @@
   - 数値は書かず、`ref` で説明文の値を指す。
   - スロットの対応状況（`support`）は書かない。効果の有無と、未対応（`unimplemented`）の notes の有無から読み込みで決まる（`supported`・`partial`・`unsupported`・`noEffect`。[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.2 節）。効果の無いスロットには、理由の notes が要る。
   - いつも満たすとみなした条件は、効果の `assumes` に書く。
-  - 説明文の言い回しと語彙の対応は下の表。欄の条件・組み合わせの制約・既定は `skills/types.ts` の注記と、表の設計書の節にある（ここには書き写さない）。語彙を足したら、表に 1 行足す。
+  - 説明文の言い回しと語彙の対応は下の表。決まり（欄の条件・組み合わせの制約・既定）は `skills/types.ts` の注記と、表の設計書の節にだけ書く。語彙を足したら、注記に決まりを書き、表に 1 行（言い回し・書き方・例・設計書）足す。
 
     <!-- prettier-ignore -->
-    | 言い回し | 書き方 | 決まり・例 | 設計書 |
+    | 言い回し | 書き方 | 例 | 設計書 |
     | --- | --- | --- | --- |
-    | スキル発動者の最終最大HP の X% 分の攻撃力▲ | `scaling: "casterFinalMaxHp"` | 例: ラプラス：アルティメットヒーローの S1 | [design-skill-stage6.md](design-skill-stage6.md) |
-    | スキル発動者基準で最大HP（のみ）X%▲（味方に付く） | timed の `scaling: "casterMaxHp"` | 発動者のバフ前の最大HP × X を対象の最大HP に足す（対象の比率は発動者との最大HP の比で変わる）。自分にだけ付く効果には書かない。例: エードの S2・バースト、マストのバーストの味方への効果 | [design-hp-ratio-readers.md](design-hp-ratio-readers.md) 9 節 |
-    | 自分の HP が X% 以上なら | `condition.selfHp: { "atLeastRef": N }`（説明文に即値で書かれた X は `{ "atLeast": X }`） | HP は被弾で減りうるので `assumes` で決めない（[design-skill-catalog.md](design-skill-catalog.md) の論点 12）。HP の割合が動きうる枠（最大HP のみ▲ の対象・現在の HP▼ を持つ枠）では、割合が閾値を下回る間だけ外れる区間の件になる（1 パス目が射撃の時に読む stat と、最大HP の stat には書けない）。例: ノワールの S1・ミルクの S2 | 同上、[design-hp-ratio-readers.md](design-hp-ratio-readers.md) 2.1 節 |
-    | 最大HP▲ | `stat: "maxHp"` | 「最大HP のみ▲」は形を足すまで notes のまま（`definitions.test.ts` が見張る）。例: シンデレラの美しさ | 同上 |
+    | スキル発動者の最終最大HP の X% 分の攻撃力▲ | `scaling: "casterFinalMaxHp"` | ラプラス：アルティメットヒーローの S1 | [design-skill-stage6.md](design-skill-stage6.md) |
+    | スキル発動者基準で最大HP（のみ）X%▲（味方に付く） | timed の `scaling: "casterMaxHp"` | エードの S2・バースト、マストのバーストの味方への効果 | [design-hp-ratio-readers.md](design-hp-ratio-readers.md) 9 節 |
+    | 自分の HP が X% 以上なら | `condition.selfHp: { "atLeastRef": N }`（説明文に即値で書かれた X は `{ "atLeast": X }`） | ノワールの S1・ミルクの S2 | 同上、[design-hp-ratio-readers.md](design-hp-ratio-readers.md) 2.1 節 |
+    | 最大HP▲ | `stat: "maxHp"` | シンデレラの美しさ | 同上 |
     | デコイ・デコイが存在する時 | 目録の `decoy`・`condition.selfState: "decoy"` | — | 同上 |
-    | 自分と自分より最終防御力が低い味方 | `target: "allies"` と `targetDefense: "lowerThanSelf"` | 読む側の印 `reads: ["defense"]` も書く。例: アニス：スターの S2 | [design-skill-stage7.md](design-skill-stage7.md) |
-    | 防御力▲ | `stat: "defense"` | 効果にするのは、比べの自分の側と、読む側と組む録画が読み直せたものだけ。ほかは間接の notes（段 7 の論点 4）。例: デルタの S2 | 同上 |
-    | 〈クラス〉型の味方 | `targetClass` | 例: エヌ：ミラクルフェアリーの S1・バースト | [design-skill-stage9.md](design-skill-stage9.md) |
-    | 残りの HP の割合が最も低い味方 N 機 | `target: "lowestHpRatio"` と `targetCount`（`targetCountRef`） | 回復の発火のフレームの HP の割合（最大HP のみ▲・現在の HP▼ で下げた割合）で選ぶ。被弾した味方が選ばれうることと、回復で割合が戻る分は扱わないことを `assumes` に書く。例: ミサトの S1 | [design-skill-stage8.md](design-skill-stage8.md)、[design-hp-ratio-readers.md](design-hp-ratio-readers.md) 2.2 節 |
-    | 「〈名前〉」：機能…・〜状態の味方 | 状態の付与 `kind: "state"` と `contents`。名前は目録（`skills/states.ts`）の id | 目録に無い状態は id を足す（英語版の状態名の lowerCamelCase）。ほかから参照されない名前も付与で書く（[design-skill-catalog.md](design-skill-catalog.md) の論点 4） | [design-named-state.md](design-named-state.md) 5 節・[design-skill-stage1.md](design-skill-stage1.md) 1.4 節 |
+    | 自分と自分より最終防御力が低い味方 | `target: "allies"` と `targetDefense: "lowerThanSelf"` | アニス：スターの S2 | [design-skill-stage7.md](design-skill-stage7.md) |
+    | 防御力▲ | `stat: "defense"` | デルタの S2 | 同上 |
+    | 〈クラス〉型の味方 | `targetClass` | エヌ：ミラクルフェアリーの S1・バースト | [design-skill-stage9.md](design-skill-stage9.md) |
+    | 残りの HP の割合が最も低い味方 N 機 | `target: "lowestHpRatio"` と `targetCount`（`targetCountRef`） | ミサトの S1 | [design-skill-stage8.md](design-skill-stage8.md)、[design-hp-ratio-readers.md](design-hp-ratio-readers.md) 2.2 節 |
+    | 「〈名前〉」：機能…・〜状態の味方 | 状態の付与 `kind: "state"` と `contents`。名前は目録（`skills/states.ts`）の id | — | [design-named-state.md](design-named-state.md) 5 節・[design-skill-stage1.md](design-skill-stage1.md) 1.4 節 |
     | 自分が〈状態〉なら・でなければ／解除不可 | `condition.selfState`／付与の `undispellable: true` | — | [design-skill-stage1.md](design-skill-stage1.md) 1.1・1.3 節 |
-    | 〈名前〉解除／直前に自分がバーストを使用していれば | `kind: "removeState"`／`condition.usedBurst: true` | 例: マナの S2 | 同 1.2・1.4・1.5 節 |
-    | 初めてフルバーストタイムが発動した時／直前に自分がバーストを使用していなければ | 出来事の回数のきっかけ `{ "count": "fullBurstStart", "atLeast": 1, "atMost": 1 }`／`condition.usedBurst: false` | 回数は条件と関係なく戦闘を通して数える（`maxFires` とは別物）。`usedBurst` は出来事の回数のきっかけ（フルバーストの開始・終了）にも書ける。例: ディーゼル：ウィンタースイーツの S1 | [design-diesel-ws.md](design-diesel-ws.md) 2.1・2.2 節 |
+    | 〈名前〉解除／直前に自分がバーストを使用していれば | `kind: "removeState"`／`condition.usedBurst: true` | マナの S2 | 同 1.2・1.4・1.5 節 |
+    | 初めてフルバーストタイムが発動した時／直前に自分がバーストを使用していなければ | 出来事の回数のきっかけ `{ "count": "fullBurstStart", "atLeast": 1, "atMost": 1 }`／`condition.usedBurst: false` | ディーゼル：ウィンタースイーツの S1 | [design-diesel-ws.md](design-diesel-ws.md) 2.1・2.2 節 |
     | 〈名前〉のスタック量 N 個▲ | `kind: "stackChange"` | — | [design-skill-stage3.md](design-skill-stage3.md) 1.1 節 |
-    | フルバーストタイム持続中に N 回／窓の外の発も数え、付くのは窓の中だけ | 回数のきっかけの `during: "fullBurst"` と `reset`／`firesDuring: "fullBurst"` | 例: ソーダ：トゥインクルバニーの S1 | 同 1.2・1.6 節 |
-    | 〈名前〉のフルスタック状態の時、スタック解除後（回復） | トリガー `{ "fullStack": "<id>" }` | 例: クラウンの S2 | 同 1.3 節 |
-    | 自分が武器変更状態の場合、通常攻撃が N 回命中した時 | 回数のきっかけの `firesDuring: "weaponChange"` | 命中は変更の外の発も数え、出るのは使用武器の変更の発だけ（H1）。例: モランの S1 | [design-skill-stage11.md](design-skill-stage11.md) 2.3・3.3 節 |
-    | 〈名前〉：バーストスキルクールタイム X 秒▼（持続・維持の付いた形。T4） | 状態の中身（か timed）の `stat: "burstCooldown"`・`scaling: "flat"` | 値は縮める秒で、効いている間に使ったバーストの CT と、付いた時に走っている CT（同じ発動から付いたものも）を縮める。即時の CT▼ は `cooldownReduction`。例: モランの宝物版 S1 の熱血・ミルクの宝物版 S1・ティアの S1 | 同 3.3 節・[design-skill-stage15.md](design-skill-stage15.md) 2.2 節 |
-    | 遮蔽物の HP を回復した時／遮蔽物 HP 回復 | timed のきっかけ `{ "coverHealed": true }`／`kind: "coverHeal"`（対象は `self` だけ） | 読み込みが、同じ定義のただ 1 つの `coverHeal` のきっかけに置き換える。味方の遮蔽物 HP 回復は間接の notes（読む側に `reads: ["cover"]`）。例: ティアの S1・S2 | [design-skill-stage15.md](design-skill-stage15.md) 2.2 節 |
-    | 〈名前〉が適用される時・適用された時／〈名前〉：弾丸チャージ X% | トリガー `{ "applied": "<id>" }`／即時効果と、維持 0 秒の付与 | 例: トーブの宝物版 S1 | [design-skill-stage4.md](design-skill-stage4.md) 1.1・1.2 節 |
-    | 自分がバリア適用状態なら／バリア・共用バリア | `condition.selfState: "barrier"`／付与の `state: "barrier"` | 例: ラムのバースト・アスカの S2 | [design-skill-stage5.md](design-skill-stage5.md) 1.1・1.2 節 |
-    | 自分と〈状態〉の味方 | `targetState` と `includeSelf: true` | 家族の根を指せば家族のどれにも当たる。例: ラプンツェル：サンクチュアリの「自分と臨戦状態の味方」 | [design-new-chars-1029.md](design-new-chars-1029.md) 5.1・8 節 |
-    | N 回順番に攻撃（バースト以外）／順番攻撃ダメージ X%▲ | damage の `hitsRef`・`hitIntervalFrames`／stat `sequentialAttackDamage` | 例: マリアン：クイーンの S1・S2 | 同 5.2・5.5 節 |
-    | 〈状態〉再発動周期 N 秒▼／バーストを使用した時、〈スキル〉の発動間隔 N 秒▼（N 秒間維持） | 周期の damage の `periodShorten`（`state`／名前の無い窓 `window: { "trigger": "burstUse", "durationRef": N }`） | 状態は、前の発動の時点で状態があり、縮めた次の発動まで続くときだけ縮む。窓は、縮めた次の発動が窓の中なら縮む（前の発動は見ない。`gaugePerHit` とは組めない）。例: マリアン：クイーンの S2・エイダの S2 | 同 5.3 節・10.2 節の f・[design-skill-stage15.md](design-skill-stage15.md) 2.3 節 |
-    | 〈名前〉：スキル N クールタイム X%▼（N 秒間維持。味方に付く） | 状態の中身 `{ "skillCooldownDown": { "slot": "skill2", "percentRef": N } }`／相手の周期のきっかけの印 `cooldown: true` | 持ち主の印のある周期（damage・burstGaugeHit）を窓の間だけ 25% などに縮める。付いたフレームから縮めた周期で次が来て（もとの予定が早ければそのまま）、窓の中の発動の次は縮めた周期、窓の終わりを越えて来る発動も縮めた周期。印は、説明文にきっかけの無い CT ごとのアクティブの周期に付ける。例: アルカナの S1 の魔術師のカード（相手はイサベルの S2） | [design-arcana-magician.md](design-arcana-magician.md) 2 節 |
-    | フルバーストタイム発動中、N 秒ごとに | 周期のきっかけ（`everySeconds`）の damage と `condition.inFullBurst: true` | 周期は戦闘開始から数え続け、窓の中の回だけ出る（窓ごとに数え直さない）。例: エイダの S2 | [design-skill-stage15.md](design-skill-stage15.md) 2.3 節 |
-    | 最終攻撃力の X% の防御力無視ダメージ（倍率ダメージ） | damage の `damageType: "true"` | 防御力を引かず、防御力無視ダメージ▲を攻撃ダメージ▲と同じ和に足す。射撃ごとの damage（フルチャージごとなど）は通常攻撃に畳み込まず、倍率ダメージのヒットとして出す。例: エイダの S2・ベスティー：タクティカル・アップの S2 | 同上 |
-    | 直前にバーストスキルを使用した基本バースト段階が N の味方全体 | `target: "burstUsers"` と `targetBurstStep`（timed・付与・heal） | 例: エイダの S1 | 同上 |
-    | 「〈名前〉」：N 発間維持のチャージ速度▼ | 付与の `durationShotsRef` と中身の `stat: "chargeSpeed"` | 射撃に効く stat のうち、発数の維持はチャージ速度だけ書ける。溜めの途中で付いても、それまでに溜めたフレームは残る。例: エイダの特殊改造 | 同上 |
-    | 再発動周期 N 秒（端数を持ち越す）／命中した時に付く（周期の付与の遅れ） | 周期のきっかけの `carry: true`／周期の付与の `delayFrames` | `hitsRef` の damage は N ヒットとも発動の時点のバフ。例: マリアン：クイーンの S1 の槍と弱点露出 | 同 10.2 節の a・d・e |
-    | 周期のスキルのヒットから付く▲▼ | 周期のきっかけの timed の `delayFrames` | 窓を周期の発火の d 後から始める。ヒットそのものに乗らないなら、ヒットの遅れ + 1。1 パス目で窓を追う stat（攻撃力・射撃に効く stat など）には書けない。例: エーテルの S2 の防御力▼ | V-0602 |
-    | コア命中ダメージ | damage の `coreHit: true` | 例: マリアン：クイーンの S2 | 同 5.4 節 |
-    | マシンガン立ち上げ速度 X%▲ | stat `spinUpSpeed` | 例: マリアン：クイーンのバースト | 同 5.6 節 |
-    | 通常攻撃が N 回クリティカル命中した時／自分が使用武器変更状態でなければ | 回数の種類 `critHit`／回数のきっかけの `firesOutside: "weaponChange"` | 例: 紅蓮：神殺の S2 | 同 5.7 節 |
-    | N 秒ごとに〈カウンタ〉N%▼／〈カウンタ〉の N% 以上の時（下位効果のスタック適用） | `counterChange` の時間の周期のきっかけ（`{ "everySeconds": N, "carry": true }`・`decrease`）／`passive` の `while.selfCounter`（閾値ごとに 1 つ） | 周期は戦闘開始から数える。閾値ごとに別々に付くので、高い段階では下位の効果も乗る。例: 千束の S1 の超感覚 | [design-skill-stage16.md](design-skill-stage16.md) 2.1 節 |
-    | 防御力無視バーストスキルダメージ | burstDamage の `damageType: "true"` | 式は倍率ダメージの防御力無視ダメージと同じ。同じ発動の防御力無視ダメージ▲が乗るかは、着地点の表（`burst/landing.ts`）の `sameActivationBuffsOnHit`。例: ベスティー：タクティカル・アップのバースト | [design-skill-stage16.md](design-skill-stage16.md) 2.2 節 |
-    | 最大弾数のリロードが完了した時、〈状態〉解除／自分が〈状態〉でない時（その状態の付与の条件） | `removeState` のきっかけ `{ "reloadEnd": true }`（removeState にだけ書ける）／付与の `condition.selfState: { "state": 〈状態〉, "present": false }`（自分の状態を見る付与は `present: false` だけ） | 例: ベスティー：タクティカル・アップの S1 のミサイルガイド | 同上 |
-    | 対象に「〈名前〉：…」「N スタック」（敵に付く状態のスタック）／スキル発動者基準で防御力 X%▼ | 付与の `target: "enemy"` と `maxStacksRef`／中身の `stat: "enemyDefenseDown"`・`scaling: "casterDefence"` | 発動者基準の▼は、発動者のバフ前防御力 × X% を 1 スタックごとに敵の防御力から引き、割合の▼の後に 0 で止める（順と 0 で止めるのは未確定）。例: マストの S1 の海風 | [design-mast.md](design-mast.md) 2.1・2.2 節 |
-    | 〈状態〉の対象に「最終攻撃力の X% のダメージ」「〈状態〉スタックコピー」「1 秒間隔」 | dot の `stacksFrom: { enemyState }`（元は dot か、敵にスタックで付く状態の付与）と `sustained: false` | 付けた時に 1 回写す（`copyEachTick` は tick ごとに写し直す仮説の形）。「持続ダメージ」でない周期のダメージは持続ダメージ▲を掛けない。例: マストのバーストの暴風 | [design-mast.md](design-mast.md) 2.3 節 |
-    | 自分の HP が X% 以下である限り | timed のきっかけ `{ "selfHpAtMostRef": N }` と `durationUntil: "selfHpAbove"` | HP の割合は枠の想定を最大HP▲・最大HP のみ▲ の件で下げた値で、同じフレームに付いた件は次のフレームから。回復で HP が戻る分は扱わない。例: マストの S1（バーストの最大HP のみ▲ の間） | [design-mast.md](design-mast.md) 8 節 |
-    | 自分の HP が X% 以下の時（N 秒間維持） | timed のきっかけ `{ "selfHpAtMostRef": N }` と `durationRef`（即値なら `durationSeconds`） | 割合が閾値以下に下がったフレームの次から N 秒。閾値以下のまま、さらに下がっても上がっても付き直さない。攻撃力にも書ける（最大HP▲・最大HP のみ▲ は書けない）。例: エードの S1 | [design-ade.md](design-ade.md) 2.1 節 |
-    | 〈カウンタ〉が 100% になった時、〈状態〉（解除条件：〈カウンタ〉が 0% になった時） | 付与のきっかけ `{ "counterFull": 〈カウンタ〉 }` と `durationUntil: { "counterEmpty": 〈カウンタ〉 }`（同じカウンタで組む。自分にだけ・スタックなし） | 付くのは届いたフレームの次、外れるのは 0 に届いたフレームの次（解除不可でも外れる）。例: アークレンジャー・ブラックの変身 | [design-skill-stage19.md](design-skill-stage19.md) 2.1 節 |
-    | 〈状態〉の間、N 秒間隔で〈カウンタ〉N%▼／〈状態〉の後、〈カウンタ〉N%▼ | `counterChange` の周期のきっかけ `{ "everySeconds": N, "carry": true, "since": { "applied": 〈状態〉 } }`／`counterChange` のきっかけ `{ "applied": 〈状態〉 }` | 周期は状態の付いたフレームから数え、外れたら止まる。どちらも、その状態を自分に付ける付与が同じ定義に要る | 同上 |
-    | 〈状態〉が適用された時、〈状態〉解除までの持続ダメージ | dot のきっかけ `{ "applied": 〈状態〉 }` と `durationUntil: { "stateEnd": 〈状態〉 }`（同じ状態で組む） | 付いたフレームを含む自分の件の終わりまで tick を出す。ゲージ・敵の状態・スタック・条件とは組めない | 同上 |
-    | 『バースト〈段階〉で使用時：〈モード〉』／バーストスキルクールタイム X 秒▼「戦闘中 1 回発動」 | burstUse の効果の `condition.burstStep`（モードの名前は維持 0 秒の付与）／`cooldownReduction` の `maxFires: 1` | burstStep は全段階（AllStep）のキャラだけ（`definitions.test.ts`）。全段階の枠は CT が明けていれば同じチェーンで撃ち直す。例: レッドフードのバースト | [design-red-hood.md](design-red-hood.md) 2.1〜2.3 節・7.1 節 |
-    | チャージ速度 100% を超えた場合、超過した値をチャージダメージに変換・超過した値の X% のチャージダメージ▲ | passive の stat `chargeSpeedOverflow`（`self` だけ） | フルチャージの発で、チャージ速度▲の比率の和の 1 を超えた分 × X をチャージダメージ▲に足す。例: レッドフードの S1 | 同 2.4 節 |
-    | 使用武器変更の解放の長さ・装弾数無限（説明文に無く、録画で読む） | `weaponChange` の `chargeReleaseSeconds`・`infiniteAmmo` | 解放の秒の端数は射手が発ごとに持ち越す。確かめたのはチャージが 0 のときだけ。例: レッドフードのレッドウルフ | 同 7.1 節の論点 10・11 |
-    | 「スタック量増減効果無効」 | 付与の `stackImmutable: true` | スタックを持つ付与だけ。同じ定義のその状態への `stackChange` は読み込みで弾く。例: ナユタの記憶吸収 | [design-nayuta.md](design-nayuta.md) 2.5 節 |
-    | 「〈名前〉：使用武器変更」（自分が〈名前〉状態なら） | `weaponChange` の `state` と、読む側の `condition.selfState` | 読み込みが、同じきっかけ・維持・条件の中身の無い付与（`weaponChangeOf` の印）を足す。付与は発火のフレームから、変更は次のフレームから。`maxAmmoRef` とは組まない | 同上 |
-    | チャージしない武器から、チャージ時間 N 秒のチャージ武器への使用武器変更 | `weaponChange` の `chargeTimeSeconds`（基礎の武器がチャージしなくても書ける）と、最初の発の `firstShotDelayFrames`・的の表の `coreHitRate.weaponChanges`・`bulletHitRate.weaponChanges` の行 | 変更後の武器を押下チャージ型（`DOWN_Charge`。発と発の間はチャージ時間だけ）にし、その発だけを `fullChargeShot` に数える。レートは書かない。例: ナユタの記憶燃焼（C-0936） | 同 2.6 節 |
-    | 「チャージ時間：N 秒固定」（使用武器変更の武器） | `weaponChange` の `chargeTimeFixed: true` | 変更後の武器のチャージ時間がチャージ速度▲を受けない（timed の `fixedChargeTime` と同じ読み。C-0214）。`chargeTimeSeconds` と組む。例: ナユタの記憶燃焼（確かめていない。C-0939） | 同 2.4 節 |
-    | 使用武器変更の「チャージ時間：N 秒」（N が説明文の値） | `weaponChange` の `chargeTimeRef` | `chargeTimeSeconds`（即値）とちょうど片方。`chargeTimeFixed` はどちらとも組む。例: マクスウェル：オーディナリーメカニックのバースト | [design-maxwell-om.md](design-maxwell-om.md) 2.1 節 |
-    | 〈状態〉の段階別の効果・各段階の効果のみ適用（使用武器変更のチャージ時間） | 段階ごとの `weaponChange` と、条件 `selfState` の `stacks`・`stacksBelow`（N スタック未満） | 同じきっかけの変更どうしは、スロットをまたいでも、使った段階（`burstStep`）が違うか、同じ状態のスタック数の条件（数の `stacks` か `stacksBelow`）の区間が重ならない（読み込みが確かめる）。`stacksBelow` は `stacksRef` と組めない。`stacksBelow` だけなら状態の無い 0 段も入る。段 1 の状態の付与（条件なし）は、同じきっかけの変更の条件が同じフレームから数える。例: マクスウェル：オーディナリーメカニックのバーストの過電流 | 同 2.2 節 |
-    | 現在のHP X%▼ | 即時効果 `kind: "currentHpDown"`（自分だけ） | 発火の発のフレームに HP の割合に 1 − X を掛ける（最大HP は変えない）。HP の割合を読む効果（`{ selfHpAtMostRef }`・`selfHp` の `atMostRef`）は次のフレームから読む。回復で戻る分は扱わない。例: 紅蓮の S1 | [design-scarlet.md](design-scarlet.md) 2.1 節 |
-    | 自分の HP が X% 以下の場合（発火で付く効果） | timed の `condition.selfHp: { "atMostRef": N }`（即値は `atMost`） | 発火のフレームの HP の割合で見る（付いた後は維持の終わりまで続く）。passive は「以上」の形だけ、timed は「以下」の形だけ。1 パス目で窓を追う stat には書けない。例: 紅蓮のバースト | 同 2.2 節 |
-    | 段階別の効果・下位効果のスタック適用（N 段階：N−1 段階フルスタック状態なら） | 段階ごとの状態の付与（同じきっかけ）と、上の段階の条件 `selfState` の `stacks: "full"`・`sameFiring: true` | 下の段階が満ちた発火で上の段階も付く（同じスロットの前に書いた同じきっかけの付与の分を数える）。例: クエンシー：エスケープクイーンの S2 | [design-quency-eq.md](design-quency-eq.md) 2 節の論点 3 |
-    | 適正最小射程距離 X%▲／フルチャージ攻撃が適正射程距離内の対象に命中した時 | stat `minEffectiveRange`（状態だけの stat）／fullChargeShot の timed の `condition.inEffectiveRange: true` | 下端を 下端 × (1 − Σ) に縮め、着地点の代表の距離で距離ボーナスと条件を決める（式は仮説 C-1033）。条件は距離ボーナスの乗る着地点と同じ判定。例: エード：エージェントバニーの S1・S2・バースト | [design-agent-bunny.md](design-agent-bunny.md) 2.1・2.2 節 |
-    | 貫通特化／貫通ダメージ X%▲ | フラグの stat `pierce`（timed・passive（`while` も書ける）・状態の中身）／stat `pierceDamage` | 貫通ダメージ▲は、貫通特化の効いている枠の通常攻撃にだけ、攻撃ダメージ▲と同じ和で乗る（C-1031）。読む側に `reads: ["pierce"]`。例: エード：エージェントバニーの S2・バースト | 同 2.3 節 |
-    | 使用武器変更の「追加効果：貫通特化」／変更後の武器の 1 発の弾の数（説明文に無く、録画で読む） | `weaponChange` の `pierce: true`／`shotCount` | 変更後の武器の発に貫通ダメージ▲が乗る。銃口の数は基礎の武器のまま（二丁持ちの SG の 1 弾 × 2 銃口）。例: ツバイのバースト | [design-zwei.md](design-zwei.md) 2.1・2.2 節 |
-    | 「N スタック」「N 発間維持」 | timed の `maxStacksRef` と `durationShotsRef` | 付くたびに 1 段増え、持ち主の N 発目で全部切れる（持ち主の発で数える）。例: ツバイの宝物版 S1 | 同 2.3 節 |
-    | デバフ効果解除 N 個（味方全体／デバフのかかった味方からランダムに N 機） | `removeDebuff`（`target: "allies"`／`"debuffedRandom"` と `targetCount`） | 外すのは、目録でデバフの印の付いた状態と、味方に付く timed の▼（`decrease`）。1 個は状態か▼の効果 1 つで、スタックごと外す。▲は外れない。恩恵の▼（受けるダメージ▼など）を味方の timed の `decrease` で書くと外れてしまうので、notes か状態の中身で書く。例: ココアの S1・バースト | [design-debuff-removal.md](design-debuff-removal.md) 2.2 節・[design-debuff-removal-timed.md](design-debuff-removal-timed.md) 2.1 節 |
-    | ペレットの数を 1 個に固定／ペレット数 N 個▲（N 発間維持の貫通特化・命中率▲） | フラグの stat `singlePellet`／stat `pelletCount` と `scaling: "flat"`（どちらも timed の self だけ）／`durationShotsRef` を `hitRate`・`pierce`・`singlePellet` にも書ける | 固定の発は 1 個のペレットに 1 発の総ダメージが乗り、ペレットの命中とゲージは 1 個と数える（C-1074・C-1075）。▲は総ダメージを変えずペレットで分け、固定は▲に勝つ（C-1076・C-1077）。例: ドロシー：セレンディピティの S1・バースト | [design-dorothy-serendipity.md](design-dorothy-serendipity.md) 2 節 |
-    | 〈状態〉が終了した時（残弾数減少・状態の付与） | きっかけ `{ "ended": 〈状態〉 }`（counterChange・ammoDecrease・状態の付与） | 自分のその状態の件が外れた最初のフレーム。見る状態を自分に付ける付与が同じ定義に要る。例: グレイブの S1 | [design-grave.md](design-grave.md) 2.1 節 |
-    | 〈状態〉：…「最大装弾リロード完了時に解除」 | 状態の付与の `durationUntil: "reloadEnd"` | 自分にだけ・スタックなし。込めの途中で装弾数無限が付くとそこで込め終わる（C-1124）。例: グレイブの S2 の過熱I | 同 2.2 節 |
-    | リロード比率 X%▼ | stat `reloadRatio`（`decrease`） | 分割リロードの 1 段の割合（reloadBullet）に (1 + Σ) を掛ける。分割リロードでない武器には効かない。例: グレイブの S1 の放熱 | 同 2.3 節 |
-    | 〈状態〉なら、命中した時「攻撃命中回数別の効果」（N 回：〈状態〉かつ〈下位の状態〉の時に限り） | 回数のきっかけの `during: { "state": 〈状態〉 }` と付与の条件 `selfState` | 状態の件の間で、条件を満たす（その発で付いた状態も入れる）発だけを数え、件が始まるたびに数え直す。状態の付与にだけ書ける。例: グレイブの S2 の過熱II・III | 同 2.4 節・C-1123 |
-    | 〈状態〉の時に限り…「持続」（状態の付与） | 状態の付与の `durationUntil: { "stateEnd": 〈状態〉 }` | 見る状態の件が外れたフレームで閉じる。自分にだけ・スタックなし。例: グレイブの S2 の過熱II・III | 同 2.5 節 |
-    | 「貫通特化」「1 発間維持」 | timed の `stat: "pierce"` と `durationShots: 1` | きっかけの発の次の 1 発に付く（きっかけの発自身には付かない）。例: D：キラーワイフの S1 | [design-killer-wife.md](design-killer-wife.md) 2.1・10 節 |
-    | 〈状態〉の対象に命中させた味方に（〈状態〉N 秒間維持） | timed の `holderHit: { withinRef: N }` と秒の維持 | 発火から N 秒の間の、対象の枠の最初の射撃の次のフレームから維持の秒だけ付き、続く命中では付き直さない。敵の状態は、ほかに読む効果が無ければ付与で書かず modeling の notes にする。例: D：キラーワイフのバースト | 同 2.2・10 節 |
-    | 〈名前〉消去（自分の状態） | `cancelState` の `target: "self"`（条件は解除と同じ鍵） | 解除と同じく次のフレームで閉じ、解除不可の件も閉じる。例: ミントの S2 | [design-mint-prika.md](design-mint-prika.md) 2.1 節 |
-    | 条件に合う〈組の状態〉のみ適用 | 目録の `group`（同じ組の状態の付与） | 組の状態が付くと、組のほかの状態の件を次のフレームで閉じる（解除不可も）。同じフレームに付いたら `{ applied }` の付与を後とみなして残す。例: ミントのバースト | 同 2.2 節 |
-    | 〈状態〉が適用された時、自分が〈状態〉なら／〈状態〉のスキル発動者に | `{ applied }` の効果の `condition.selfState`／`target: "appliedCaster"`（`{ applied }` の timed・付与だけ） | 条件は selfState だけ。発動者は、そのフレームにきっかけの状態を付けた枠。例: プリカの S2 のアンコール | 同 2.3・2.4 節 |
-    | 〈状態〉維持時間 X 秒▲ | `kind: "stateExtend"`（`secondsRef`） | 付いていて後まで続く件の終わりを延ばす（後から付く件は延ばさない）。中身と、その状態を見る `while` も延びる。例: アンコールの効果 2 | 同 2.5 節 |
-    | バーストスキルクールタイム X 秒▲（即時） | `cooldownReduction` の `increase: true` | 走っている CT の残りに足す（明けていれば何もしない）。`{ applied }` のきっかけでは対象は自分だけ。例: アンコールの効果 4 | 同 2.6 節 |
-    | 自分が〈状態〉なら（回復） | `heal` の `condition.selfState` | 例: ミントの S1 のダンスエフェクト | 同 2.7 節 |
-    | 自分の HP が最大の場合（倍率ダメージ） | damage の `condition.selfHp: { "atLeast": 100 }` | バーストを使ったフレームなど、発火のフレームの HP の割合で見る（最大HP のみ▲ で下がると出ない）。`perBurstHit` ならヒットの全部に同じ結果を使う。例: ソリンのバースト | [design-soline.md](design-soline.md) 2.1 節 |
-    | フルバースト状態でなければ（timed）／フルバーストタイム中のみ（攻撃力▲） | timed の `condition.inFullBurst: false`／攻撃力の timed の `condition.inFullBurst` | 発火のフレームがフルバーストの窓 [始まり, 終わり) の外か中か。`false` は状態の付与には書けない。1 パス目で窓を追う stat のうち、条件 `inFullBurst` を書けるのは攻撃力だけ。例: ベルベットの S1・S2 | [design-velvet.md](design-velvet.md) 2.1・2.2 節 |
-    | 〈カウンタ〉の弾薬消費 N 発（足りなければ起きない） | `counterChange` の `decrease` と、消費と同じ行の効果の全部に `condition.selfCounter: { "atLeast": N }` | 前のフレームの終わりの値で見るので、同じ発の消費と強化はどちらも消費の前の値で判定する。例: ベルベットの弾丸ポーチ | 同 1・2.3 節 |
+    | フルバーストタイム持続中に N 回／窓の外の発も数え、付くのは窓の中だけ | 回数のきっかけの `during: "fullBurst"` と `reset`／`firesDuring: "fullBurst"` | ソーダ：トゥインクルバニーの S1 | 同 1.2・1.6 節 |
+    | 〈名前〉のフルスタック状態の時、スタック解除後（回復） | トリガー `{ "fullStack": "<id>" }` | クラウンの S2 | 同 1.3 節 |
+    | 自分が武器変更状態の場合、通常攻撃が N 回命中した時 | 回数のきっかけの `firesDuring: "weaponChange"` | モランの S1 | [design-skill-stage11.md](design-skill-stage11.md) 2.3・3.3 節 |
+    | 〈名前〉：バーストスキルクールタイム X 秒▼（持続・維持の付いた形。T4） | 状態の中身（か timed）の `stat: "burstCooldown"`・`scaling: "flat"` | モランの宝物版 S1 の熱血・ミルクの宝物版 S1・ティアの S1 | 同 3.3 節・[design-skill-stage15.md](design-skill-stage15.md) 2.2 節 |
+    | 遮蔽物の HP を回復した時／遮蔽物 HP 回復 | timed のきっかけ `{ "coverHealed": true }`／`kind: "coverHeal"` | ティアの S1・S2 | [design-skill-stage15.md](design-skill-stage15.md) 2.2 節 |
+    | 〈名前〉が適用される時・適用された時／〈名前〉：弾丸チャージ X% | トリガー `{ "applied": "<id>" }`／即時効果と、維持 0 秒の付与 | トーブの宝物版 S1 | [design-skill-stage4.md](design-skill-stage4.md) 1.1・1.2 節 |
+    | 自分がバリア適用状態なら／バリア・共用バリア | `condition.selfState: "barrier"`／付与の `state: "barrier"` | ラムのバースト・アスカの S2 | [design-skill-stage5.md](design-skill-stage5.md) 1.1・1.2 節 |
+    | 自分と〈状態〉の味方 | `targetState` と `includeSelf: true` | ラプンツェル：サンクチュアリの「自分と臨戦状態の味方」 | [design-new-chars-1029.md](design-new-chars-1029.md) 5.1・8 節 |
+    | N 回順番に攻撃（バースト以外）／順番攻撃ダメージ X%▲ | damage の `hitsRef`・`hitIntervalFrames`／stat `sequentialAttackDamage` | マリアン：クイーンの S1・S2 | 同 5.2・5.5 節 |
+    | 〈状態〉再発動周期 N 秒▼／バーストを使用した時、〈スキル〉の発動間隔 N 秒▼（N 秒間維持） | 周期の damage の `periodShorten`（`state`／名前の無い窓 `window: { "trigger": "burstUse", "durationRef": N }`） | マリアン：クイーンの S2・エイダの S2 | 同 5.3 節・10.2 節の f・[design-skill-stage15.md](design-skill-stage15.md) 2.3 節 |
+    | 〈名前〉：スキル N クールタイム X%▼（N 秒間維持。味方に付く） | 状態の中身 `{ "skillCooldownDown": { "slot": "skill2", "percentRef": N } }`／相手の周期のきっかけの印 `cooldown: true` | アルカナの S1 の魔術師のカード（相手はイサベルの S2） | [design-arcana-magician.md](design-arcana-magician.md) 2 節 |
+    | フルバーストタイム発動中、N 秒ごとに | 周期のきっかけ（`everySeconds`）の damage と `condition.inFullBurst: true` | エイダの S2 | [design-skill-stage15.md](design-skill-stage15.md) 2.3 節 |
+    | 最終攻撃力の X% の防御力無視ダメージ（倍率ダメージ） | damage の `damageType: "true"` | エイダの S2・ベスティー：タクティカル・アップの S2 | 同上 |
+    | 直前にバーストスキルを使用した基本バースト段階が N の味方全体 | `target: "burstUsers"` と `targetBurstStep`（timed・付与・heal） | エイダの S1 | 同上 |
+    | 「〈名前〉」：N 発間維持のチャージ速度▼ | 付与の `durationShotsRef` と中身の `stat: "chargeSpeed"` | エイダの特殊改造 | 同上 |
+    | 再発動周期 N 秒（端数を持ち越す）／命中した時に付く（周期の付与の遅れ） | 周期のきっかけの `carry: true`／周期の付与の `delayFrames` | マリアン：クイーンの S1 の槍と弱点露出 | 同 10.2 節の a・d・e |
+    | 周期のスキルのヒットから付く▲▼ | 周期のきっかけの timed の `delayFrames` | エーテルの S2 の防御力▼ | V-0602 |
+    | コア命中ダメージ | damage の `coreHit: true` | マリアン：クイーンの S2 | 同 5.4 節 |
+    | マシンガン立ち上げ速度 X%▲ | stat `spinUpSpeed` | マリアン：クイーンのバースト | 同 5.6 節 |
+    | 通常攻撃が N 回クリティカル命中した時／自分が使用武器変更状態でなければ | 回数の種類 `critHit`／回数のきっかけの `firesOutside: "weaponChange"` | 紅蓮：神殺の S2 | 同 5.7 節 |
+    | N 秒ごとに〈カウンタ〉N%▼／〈カウンタ〉の N% 以上の時（下位効果のスタック適用） | `counterChange` の時間の周期のきっかけ（`{ "everySeconds": N, "carry": true }`・`decrease`）／`passive` の `while.selfCounter`（閾値ごとに 1 つ） | 千束の S1 の超感覚 | [design-skill-stage16.md](design-skill-stage16.md) 2.1 節 |
+    | 防御力無視バーストスキルダメージ | burstDamage の `damageType: "true"` | ベスティー：タクティカル・アップのバースト | [design-skill-stage16.md](design-skill-stage16.md) 2.2 節 |
+    | 最大弾数のリロードが完了した時、〈状態〉解除／自分が〈状態〉でない時（その状態の付与の条件） | `removeState` のきっかけ `{ "reloadEnd": true }`／付与の `condition.selfState: { "state": 〈状態〉, "present": false }`（自分の状態を見る付与は `present: false` だけ） | ベスティー：タクティカル・アップの S1 のミサイルガイド | 同上 |
+    | 対象に「〈名前〉：…」「N スタック」（敵に付く状態のスタック）／スキル発動者基準で防御力 X%▼ | 付与の `target: "enemy"` と `maxStacksRef`／中身の `stat: "enemyDefenseDown"`・`scaling: "casterDefence"` | マストの S1 の海風 | [design-mast.md](design-mast.md) 2.1・2.2 節 |
+    | 〈状態〉の対象に「最終攻撃力の X% のダメージ」「〈状態〉スタックコピー」「1 秒間隔」 | dot の `stacksFrom: { enemyState }`（元は dot か、敵にスタックで付く状態の付与）と `sustained: false` | マストのバーストの暴風 | [design-mast.md](design-mast.md) 2.3 節 |
+    | 自分の HP が X% 以下である限り | timed のきっかけ `{ "selfHpAtMostRef": N }` と `durationUntil: "selfHpAbove"` | マストの S1（バーストの最大HP のみ▲ の間） | [design-mast.md](design-mast.md) 8 節 |
+    | 自分の HP が X% 以下の時（N 秒間維持） | timed のきっかけ `{ "selfHpAtMostRef": N }` と `durationRef`（即値なら `durationSeconds`） | エードの S1 | [design-ade.md](design-ade.md) 2.1 節 |
+    | 〈カウンタ〉が 100% になった時、〈状態〉（解除条件：〈カウンタ〉が 0% になった時） | 付与のきっかけ `{ "counterFull": 〈カウンタ〉 }` と `durationUntil: { "counterEmpty": 〈カウンタ〉 }`（同じカウンタで組む。自分にだけ・スタックなし） | アークレンジャー・ブラックの変身 | [design-skill-stage19.md](design-skill-stage19.md) 2.1 節 |
+    | 〈状態〉の間、N 秒間隔で〈カウンタ〉N%▼／〈状態〉の後、〈カウンタ〉N%▼ | `counterChange` の周期のきっかけ `{ "everySeconds": N, "carry": true, "since": { "applied": 〈状態〉 } }`／`counterChange` のきっかけ `{ "applied": 〈状態〉 }` | — | 同上 |
+    | 〈状態〉が適用された時、〈状態〉解除までの持続ダメージ | dot のきっかけ `{ "applied": 〈状態〉 }` と `durationUntil: { "stateEnd": 〈状態〉 }`（同じ状態で組む） | — | 同上 |
+    | 『バースト〈段階〉で使用時：〈モード〉』／バーストスキルクールタイム X 秒▼「戦闘中 1 回発動」 | burstUse の効果の `condition.burstStep`（モードの名前は維持 0 秒の付与）／`cooldownReduction` の `maxFires: 1` | レッドフードのバースト | [design-red-hood.md](design-red-hood.md) 2.1〜2.3 節・7.1 節 |
+    | チャージ速度 100% を超えた場合、超過した値をチャージダメージに変換・超過した値の X% のチャージダメージ▲ | passive の stat `chargeSpeedOverflow`（`self` だけ） | レッドフードの S1 | 同 2.4 節 |
+    | 使用武器変更の解放の長さ・装弾数無限（説明文に無く、録画で読む） | `weaponChange` の `chargeReleaseSeconds`・`infiniteAmmo` | レッドフードのレッドウルフ | 同 7.1 節の論点 10・11 |
+    | 「スタック量増減効果無効」 | 付与の `stackImmutable: true` | ナユタの記憶吸収 | [design-nayuta.md](design-nayuta.md) 2.5 節 |
+    | 「〈名前〉：使用武器変更」（自分が〈名前〉状態なら） | `weaponChange` の `state` と、読む側の `condition.selfState` | — | 同上 |
+    | チャージしない武器から、チャージ時間 N 秒のチャージ武器への使用武器変更 | `weaponChange` の `chargeTimeSeconds`（基礎の武器がチャージしなくても書ける）と、最初の発の `firstShotDelayFrames`・的の表の `coreHitRate.weaponChanges`・`bulletHitRate.weaponChanges` の行 | ナユタの記憶燃焼 | 同 2.6 節 |
+    | 「チャージ時間：N 秒固定」（使用武器変更の武器） | `weaponChange` の `chargeTimeFixed: true` | ナユタの記憶燃焼 | 同 2.4 節 |
+    | 使用武器変更の「チャージ時間：N 秒」（N が説明文の値） | `weaponChange` の `chargeTimeRef` | マクスウェル：オーディナリーメカニックのバースト | [design-maxwell-om.md](design-maxwell-om.md) 2.1 節 |
+    | 〈状態〉の段階別の効果・各段階の効果のみ適用（使用武器変更のチャージ時間） | 段階ごとの `weaponChange` と、条件 `selfState` の `stacks`・`stacksBelow`（N スタック未満） | マクスウェル：オーディナリーメカニックのバーストの過電流 | 同 2.2 節 |
+    | 現在のHP X%▼ | 即時効果 `kind: "currentHpDown"`（自分だけ） | 紅蓮の S1 | [design-scarlet.md](design-scarlet.md) 2.1 節 |
+    | 自分の HP が X% 以下の場合（発火で付く効果） | timed の `condition.selfHp: { "atMostRef": N }`（即値は `atMost`） | 紅蓮のバースト | 同 2.2 節 |
+    | 段階別の効果・下位効果のスタック適用（N 段階：N−1 段階フルスタック状態なら） | 段階ごとの状態の付与（同じきっかけ）と、上の段階の条件 `selfState` の `stacks: "full"`・`sameFiring: true` | クエンシー：エスケープクイーンの S2 | [design-quency-eq.md](design-quency-eq.md) 2 節の論点 3 |
+    | 適正最小射程距離 X%▲／フルチャージ攻撃が適正射程距離内の対象に命中した時 | stat `minEffectiveRange`（状態だけの stat）／fullChargeShot の timed の `condition.inEffectiveRange: true` | エード：エージェントバニーの S1・S2・バースト | [design-agent-bunny.md](design-agent-bunny.md) 2.1・2.2 節 |
+    | 貫通特化／貫通ダメージ X%▲ | フラグの stat `pierce`（timed・passive（`while` も書ける）・状態の中身）／stat `pierceDamage` | エード：エージェントバニーの S2・バースト | 同 2.3 節 |
+    | 使用武器変更の「追加効果：貫通特化」／変更後の武器の 1 発の弾の数（説明文に無く、録画で読む） | `weaponChange` の `pierce: true`／`shotCount` | ツバイのバースト | [design-zwei.md](design-zwei.md) 2.1・2.2 節 |
+    | 「N スタック」「N 発間維持」 | timed の `maxStacksRef` と `durationShotsRef` | ツバイの宝物版 S1 | 同 2.3 節 |
+    | デバフ効果解除 N 個（味方全体／デバフのかかった味方からランダムに N 機） | `removeDebuff`（`target: "allies"`／`"debuffedRandom"` と `targetCount`） | ココアの S1・バースト | [design-debuff-removal.md](design-debuff-removal.md) 2.2 節・[design-debuff-removal-timed.md](design-debuff-removal-timed.md) 2.1 節 |
+    | ペレットの数を 1 個に固定／ペレット数 N 個▲（N 発間維持の貫通特化・命中率▲） | フラグの stat `singlePellet`／stat `pelletCount` と `scaling: "flat"`（どちらも timed の self だけ）／`durationShotsRef` を `hitRate`・`pierce`・`singlePellet` にも書ける | ドロシー：セレンディピティの S1・バースト | [design-dorothy-serendipity.md](design-dorothy-serendipity.md) 2 節 |
+    | 〈状態〉が終了した時（残弾数減少・状態の付与） | きっかけ `{ "ended": 〈状態〉 }`（counterChange・ammoDecrease・状態の付与） | グレイブの S1 | [design-grave.md](design-grave.md) 2.1 節 |
+    | 〈状態〉：…「最大装弾リロード完了時に解除」 | 状態の付与の `durationUntil: "reloadEnd"` | グレイブの S2 の過熱I | 同 2.2 節 |
+    | リロード比率 X%▼ | stat `reloadRatio`（`decrease`） | グレイブの S1 の放熱 | 同 2.3 節 |
+    | 〈状態〉なら、命中した時「攻撃命中回数別の効果」（N 回：〈状態〉かつ〈下位の状態〉の時に限り） | 回数のきっかけの `during: { "state": 〈状態〉 }` と付与の条件 `selfState` | グレイブの S2 の過熱II・III | 同 2.4 節・C-1123 |
+    | 〈状態〉の時に限り…「持続」（状態の付与） | 状態の付与の `durationUntil: { "stateEnd": 〈状態〉 }` | グレイブの S2 の過熱II・III | 同 2.5 節 |
+    | 「貫通特化」「1 発間維持」 | timed の `stat: "pierce"` と `durationShots: 1` | D：キラーワイフの S1 | [design-killer-wife.md](design-killer-wife.md) 2.1・10 節 |
+    | 〈状態〉の対象に命中させた味方に（〈状態〉N 秒間維持） | timed の `holderHit: { withinRef: N }` と秒の維持 | D：キラーワイフのバースト | 同 2.2・10 節 |
+    | 〈名前〉消去（自分の状態） | `cancelState` の `target: "self"`（条件は解除と同じ鍵） | ミントの S2 | [design-mint-prika.md](design-mint-prika.md) 2.1 節 |
+    | 条件に合う〈組の状態〉のみ適用 | 目録の `group`（同じ組の状態の付与） | ミントのバースト | 同 2.2 節 |
+    | 〈状態〉が適用された時、自分が〈状態〉なら／〈状態〉のスキル発動者に | `{ applied }` の効果の `condition.selfState`／`target: "appliedCaster"`（`{ applied }` の timed・付与だけ） | プリカの S2 のアンコール | 同 2.3・2.4 節 |
+    | 〈状態〉維持時間 X 秒▲ | `kind: "stateExtend"`（`secondsRef`） | アンコールの効果 2 | 同 2.5 節 |
+    | バーストスキルクールタイム X 秒▲（即時） | `cooldownReduction` の `increase: true` | アンコールの効果 4 | 同 2.6 節 |
+    | 自分が〈状態〉なら（回復） | `heal` の `condition.selfState` | ミントの S1 のダンスエフェクト | 同 2.7 節 |
+    | 自分の HP が最大の場合（倍率ダメージ） | damage の `condition.selfHp: { "atLeast": 100 }` | ソリンのバースト | [design-soline.md](design-soline.md) 2.1 節 |
+    | フルバースト状態でなければ（timed）／フルバーストタイム中のみ（攻撃力▲） | timed の `condition.inFullBurst: false`／攻撃力の timed の `condition.inFullBurst` | ベルベットの S1・S2 | [design-velvet.md](design-velvet.md) 2.1・2.2 節 |
+    | 〈カウンタ〉の弾薬消費 N 発（足りなければ起きない） | `counterChange` の `decrease` と、消費と同じ行の効果の全部に `condition.selfCounter: { "atLeast": N }` | ベルベットの弾丸ポーチ | 同 1・2.3 節 |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。

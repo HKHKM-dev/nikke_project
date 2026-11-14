@@ -2,7 +2,7 @@ import type { CharacterIndexEntry } from '@nikke/core';
 import { describe, expect, it } from 'vitest';
 import { characterLabel } from './components/CharacterPicker.tsx';
 
-// 未対応の項目があるかは data/skills/support.json（生成物。packages/core/src/skills/__tests__/support.test.ts）で決まる
+// 未対応の項目があるかは data/skills/support.json（生成物。packages/core/src/skills/support.ts の buildSkillSupportIndex が作る）で決まる
 describe('characterLabel', () => {
   it('formats characterLabel with or without (未)', () => {
     const dummy: CharacterIndexEntry = {

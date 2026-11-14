@@ -1,7 +1,5 @@
 // 残っている仕事の一覧（plan/backlog.md）を課題のファイルと雛形から作る（plan/design-backlog-files.md）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { BACKLOG_PATH, renderBacklogOfData } from '../../../scripts/records-data.ts';
 import { parseBacklogTemplate, renderBacklog, validateBacklog, type BacklogItem } from '../backlog.ts';
 
 const TEMPLATE = [
@@ -122,11 +120,5 @@ describe('validateBacklog', () => {
       'records/backlog/refs.json: V-0009 が無い',
       'records/backlog/refs.json: リンクの先 design-missing.md（plan/ からの相対パス）が無い',
     ]);
-  });
-});
-
-describe('plan/backlog.md', () => {
-  it('is generated from records/backlog/ and the template (run npm run records:check)', () => {
-    expect(readFileSync(BACKLOG_PATH, 'utf8')).toBe(renderBacklogOfData());
   });
 });

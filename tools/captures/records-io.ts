@@ -1,4 +1,4 @@
-// 録画の台帳と観測値のファイルの読み書き（read.ts と result-screen.ts が使う）。
+// 録画の台帳と観測値のファイルの読み書き（read.ts が使う）。
 // - 録画の実体は records/recordings/<録画 id>.json から引く（このリポジトリの録画は置き場所の <folder>/<file>、旧の録画は path）。
 // - 観測値の id は次の空き番号。どれかのブランチ（手元か origin。main を含む）がこの録画に足したことのある番号を避ける
 //   （並行する読み取りが同じ番号を取らない。plan/design-investigation-review.md 4.3 節）。

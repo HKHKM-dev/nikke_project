@@ -16,7 +16,7 @@
 //    見る。設定を変えたブランチは全部。plan/design-workflow-simplification-8.md 1 節）。npm run ci のほかの段（型・テスト・ビルド）は
 //    全部。確認は作り直した生成物の上で回す（GitHub の CI も作り直してから回す）。
 // 6. 生成物を main の版に戻し、ブランチが変えていたら「生成物を main の版に戻す」の commit を足す（スカッシュマージなので、途中の
-//    コミットの生成物は合っていなくてよい）。作業ツリーの生成物も main の版になるので、手元で npm test を回すなら作り直す。
+//    コミットの生成物は合っていなくてよい）。作業ツリーの生成物も main の版になる。
 //    --push なら git push --force-with-lease -u origin HEAD。
 // 7. push の前に、ブランチで変えた手書きの .md が大きさの目安（50KB。検証記録は 30KB）を超えていたら知らせる（止めない。
 //    plan/design-workflow-simplification-10.md 1 節）。撮影と読み取りの手引き（plan/captures/guide.md）で足すか変えた項目が 600 バイトを
@@ -274,7 +274,6 @@ if (tryGit(['diff', '--cached', '--quiet']) !== 0) {
   git(['commit', '--quiet', '-m', '生成物を main の版に戻す']);
   console.log('生成物を main の版に戻した（マージの後に CI が main で作り直す）');
 }
-console.log('作業ツリーの生成物は main の版。手元で npm test を回すなら npm run records:minimal で作り直す');
 
 const oversized = branchOversizedDocs('origin/main', gitRaw, GENERATED_PATHS, (p) =>
   existsSync(join(ROOT, p)) ? statSync(join(ROOT, p)).size : undefined,
