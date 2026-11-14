@@ -1149,6 +1149,9 @@
 | 1178 | `20261114-1178_centi-solo-electric.mp4` | ◎センチ（80、RL・鉄甲・SSR、宝物 3） | BigArms・電撃 | 射撃場 3 分 | ON | ON / OFF | BigArms（電撃・3 分モード・スペック固定 ON）。V-0773 の撮影 C（撮り直し）: センチ単騎（操作）・オート射撃 ON・オートバースト OFF。単騎・操作は戦闘履歴の画面、電撃のタブは出撃画面で確かめた |
 | 1179 | `20261114-1179_rl+rl+ar+sr_i-doll-flower+biscuit+soldier-eg+cocoa_fire.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ビスケット（381、RL・電撃・SSR） + ◎ソルジャーE.G.（300、AR・電撃・R） + ココア（311、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1180 | `20261114-1180_rl+rl+ar+sr_i-doll-flower+biscuit+soldier-eg+cocoa_fire.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ビスケット（381、RL・電撃・SSR） + ◎ソルジャーE.G.（300、AR・電撃・R） + ココア（311、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1181 | `20261114-1181_rouge-flower-fa-delta.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ルージュ（272、SR・電撃・SSR） + ◎ソルジャーF.A.（301、SG・鉄甲・R） + デルタ（20、SR・風圧・SR） | BigArms・電撃 | 射撃場 3 分 | ON | ON / OFF | ルージュが後列の 2 枠目（V-0777 の撮影 A）。敵は電撃（依頼は灼熱。出撃画面の属性タブが電撃） |
+| 1182 | `20261114-1182_rouge-flower-fa-delta.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ルージュ（272、SR・電撃・SSR） + ◎ソルジャーF.A.（301、SG・鉄甲・R） + デルタ（20、SR・風圧・SR） | BigArms・電撃 | 射撃場 3 分 | ON | ON / OFF | ルージュが後列の 2 枠目（V-0777 の撮影 A）。敵は電撃（依頼は灼熱。出撃画面の属性タブが電撃） |
+| 1183 | `20261114-1183_rouge-fa-sun.mp4` | ソルジャーF.A.（301、SG・鉄甲・R） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ルージュ（272、SR・電撃・SSR） | BigArms・電撃 | 射撃場 3 分 | ON | ON / ON | ルージュが前列の 3 枠目（V-0777 の撮影 B）。敵は電撃（依頼は灼熱。出撃画面の属性タブが電撃） |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 

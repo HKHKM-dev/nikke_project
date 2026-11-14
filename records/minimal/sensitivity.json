@@ -31795,6 +31795,134 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "1181-03",
+      "element": "ルージュ skill1.effects[0]",
+      "key": "256b0ccaaf56b9ad",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1181-04",
+      "element": "ルージュ skill1.effects[0]",
+      "key": "affb4c52fb4b28fd",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1181-05",
+      "element": "ルージュ skill1.effects[0]",
+      "key": "e93c413d17e3961e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1181-06",
+      "element": "ルージュ skill1.effects[0]",
+      "key": "b872d2ad316f4ef6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1181-07",
+      "element": "ルージュ skill1.effects[0]",
+      "key": "06e0f1c49f9286cb",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1181-08",
+      "element": "ルージュ skill1.effects[0]",
+      "key": "d5c89010aed488bb",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1182-03",
+      "element": "ルージュ skill1.effects[0]",
+      "key": "5434a48d903be716",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1182-04",
+      "element": "ルージュ skill1.effects[0]",
+      "key": "61d700fdd4e6b00e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1182-05",
+      "element": "ルージュ skill1.effects[0]",
+      "key": "90ef9a1a7a1698c5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1182-06",
+      "element": "ルージュ skill1.effects[0]",
+      "key": "e0bcf1e2309cbf35",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1182-07",
+      "element": "ルージュ skill1.effects[0]",
+      "key": "f94a019bb71aa778",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1182-08",
+      "element": "ルージュ skill1.effects[0]",
+      "key": "12d8f769bb404a9c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1183-08",
+      "element": "ルージュ skill1.effects[0]",
+      "key": "ed6df71c8d22201d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1183-11",
+      "element": "ルージュ skill1.effects[0]",
+      "key": "cfd2e5a7f8886744",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1183-12",
+      "element": "ルージュ skill1.effects[0]",
+      "key": "d0a7c34b17e192d0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1183-13",
+      "element": "ルージュ skill1.effects[0]",
+      "key": "95c1db3899518191",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }
