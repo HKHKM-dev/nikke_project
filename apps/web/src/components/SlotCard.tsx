@@ -59,7 +59,6 @@ export function SlotCard({
   const damageText = formatDamage(character && slotResult ? slotResult.result.totalDamage : null);
   const setGrowth = (fields: Partial<SlotGrowthFields>) => growthFieldsActions(slotIndex, fields).forEach(dispatch);
 
-  // 枠の育成（好感度・限界突破・コア強化／スキル LV／装備・キューブ・コレクション）は「育成」の折りたたみ 1 つにまとめる。
   // 射撃条件は画面で選ばず、既定値で計算する（calcView.ts）
 
   return (
@@ -79,21 +78,57 @@ export function SlotCard({
           操作
         </label>
       </legend>
-      {/* キャラの選択の右に、スロットの詳細設定（バーストしない・想定 HP）のポップアップ。設定中の印と、ポップアップの説明文は
-          出さない（設定はポップアップのボタンの色で分かる） */}
-      <div className="picker-row">
-        <CharacterPicker
-          index={index}
-          excludeIds={excludeIds}
-          fullySupported={fullySupported}
-          otherPartyIds={otherPartyIds}
-          value={slot.resourceId}
-          onSelect={(resourceId) => dispatch({ type: 'selectCharacter', index: slotIndex, resourceId })}
-          onClear={() => dispatch({ type: 'clearSlot', index: slotIndex })}
-        />
+      {/* 上から、キャラの選択・ボタン（外す・育成・詳細）・ダメージ。キャラのいないスロットも、外す・育成のボタンとダメージを
+          薄くして出す（枠の大きさをそろえる） */}
+      <CharacterPicker
+        index={index}
+        excludeIds={excludeIds}
+        fullySupported={fullySupported}
+        otherPartyIds={otherPartyIds}
+        value={slot.resourceId}
+        onSelect={(resourceId) => dispatch({ type: 'selectCharacter', index: slotIndex, resourceId })}
+        onClear={() => dispatch({ type: 'clearSlot', index: slotIndex })}
+      />
+      <div className="slot-buttons">
+        <button
+          type="button"
+          className="slot-button"
+          disabled={!character}
+          onClick={() => dispatch({ type: 'clearSlot', index: slotIndex })}
+        >
+          外す
+        </button>
+        {/* 枠の育成（好感度・限界突破・コア強化／スキル LV／装備・キューブ・コレクション）のポップアップ。
+            見出しの横に対応状況の印は出さない（未対応はキャラ名の「（未）」と「未対応・近似・仮定の一覧」に出る） */}
+        {character ? (
+          <Popover button="育成" buttonClassName="slot-button" label={`スロット ${slotIndex + 1} の育成`} align="left">
+            <div className="slot-growth-panel">
+              <GrowthEditor
+                character={character}
+                fields={slot}
+                shown={shown}
+                masters={masters}
+                mastersError={mastersError}
+                disabled={fixedSpec}
+                onChange={setGrowth}
+              />
+              <RosterRevertButton
+                fields={slot}
+                rosterGrowth={rosterGrowth}
+                fixedSpec={fixedSpec}
+                onRevert={setGrowth}
+              />
+            </div>
+          </Popover>
+        ) : (
+          <button type="button" className="slot-button" disabled>
+            育成
+          </button>
+        )}
+        {/* スロットの詳細設定（バーストしない・想定 HP）。設定中の印は出さない（設定はポップアップのボタンの色で分かる） */}
         <Popover
-          button="詳細設定"
-          buttonClassName="slot-settings-button"
+          button="詳細"
+          buttonClassName="slot-button"
           label={`スロット ${slotIndex + 1} の詳細設定`}
           align="right"
         >
@@ -101,7 +136,6 @@ export function SlotCard({
         </Popover>
       </div>
       {error && <p className="error">読み込みに失敗しました: {error}</p>}
-      {/* キャラのいないスロットも、ダメージと育成の欄を薄くして出す（枠の大きさをそろえる） */}
       <div
         className="slot-damage-display"
         data-computing={slotResult?.stale ?? false}
@@ -111,32 +145,6 @@ export function SlotCard({
           {damageText}
         </span>
       </div>
-      {!character && (
-        <details className="slot-settings" data-placeholder="true" aria-disabled="true">
-          <summary tabIndex={-1} onClick={(e) => e.preventDefault()}>
-            育成
-          </summary>
-        </details>
-      )}
-      {character && (
-        <details className="slot-settings">
-          {/* 見出しの横に対応状況の印（対応・一部対応・未対応・未定義）は出さない。未対応はキャラ名の
-              「（未）」と「未対応・近似・仮定の一覧」に出る */}
-          <summary>育成</summary>
-          <div className="slot-settings-body">
-            <GrowthEditor
-              character={character}
-              fields={slot}
-              shown={shown}
-              masters={masters}
-              mastersError={mastersError}
-              disabled={fixedSpec}
-              onChange={setGrowth}
-            />
-            <RosterRevertButton fields={slot} rosterGrowth={rosterGrowth} fixedSpec={fixedSpec} onRevert={setGrowth} />
-          </div>
-        </details>
-      )}
     </fieldset>
   );
 }
