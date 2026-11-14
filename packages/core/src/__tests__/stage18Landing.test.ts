@@ -28,6 +28,8 @@ import {
   hitRateUpRaisesBulletHitRate,
   landingBandOf,
   landingMix,
+  landingPartsWith,
+  planLandings,
   projectileKeyOf,
   projectileRowListedUnmeasured,
   rateRowOf,
@@ -605,6 +607,25 @@ describe('編成（自動の条件）', () => {
     enemy: e,
     durationSeconds: 180,
     burst,
+  });
+
+  it('re-derives the near core rate with the segment N: exponent form for a single-muzzle SMG, the sum for a dual-wield SMG (C-1109)', () => {
+    const slots = [slot(SMG, true), slot(DUAL_SMG, true)];
+    const plan = planLandings(slots, enemy(), battleSecondsToFrames(180), [null, null])!;
+    const n = upOnly(0.42);
+    const single = landingPartsWith(plan, slots[0]!, 0, 'near', n);
+    expect(single.map((p) => [p.landing?.id, p.condition.coreHitRate])).toEqual([
+      ['nearA', exponentSumHitRateUp(0.2113, 0.42)],
+      ['nearB', exponentSumHitRateUp(0.2709, 0.42)],
+    ]);
+    const dual = landingPartsWith(plan, slots[1]!, 1, 'near', n);
+    expect(dual.map((p) => [p.landing?.id, p.condition.coreHitRate])).toEqual([
+      ['nearA', coreHitRateWithHitRateUp(0.2142, 0.42)],
+      ['nearB', coreHitRateWithHitRateUp(0.2885, 0.42)],
+    ]);
+    // 遠は銃口 1 つでも和
+    const far = landingPartsWith(plan, slots[0]!, 0, 'far', n);
+    for (const p of far) expect(p.condition.coreHitRate).toBe(coreHitRateWithHitRateUp(0.0342, 0.42));
   });
 
   it('changes nothing for manual slots, even with the target profile attached', () => {

@@ -22,7 +22,7 @@ import { buildTeamInput } from '../../../packages/core/src/records/observations/
 import { METRICS } from '../../../packages/core/src/records/observations/metrics/index.ts';
 import type { CompareSpec } from '../../../packages/core/src/records/observations/types.ts';
 import type { RecordingEntry } from '../../../packages/core/src/records/recordings.ts';
-import { bulletHitRateWithHitRateUp, coreHitRateWithHitRateUp } from '../../../packages/core/src/frame/landing.ts';
+import { coreHitRateWithHitRateUp, exponentSumHitRateUp } from '../../../packages/core/src/frame/landing.ts';
 import { valuePiecesOf } from '../../../packages/core/src/skills/holders.ts';
 import { runSimulation } from '../../../packages/core/src/sim/engine.ts';
 import { resolveSetup } from './buff-edge.ts';
@@ -179,13 +179,13 @@ export function bandOfN(n: number, upper: readonly number[]): number {
 }
 
 /** 命中率▲がコア命中率に効く形（p0 は元の値。上限 1） */
-// 和はモデルの式（coreHitRateWithHitRateUp）、指数・和は弾丸命中率の H2 の式（bulletHitRateWithHitRateUp）。積の形は同じ式に
+// 和は coreHitRateWithHitRateUp、指数・和は exponentSumHitRateUp（弾丸命中率の H2 と、銃口 1 つの SMG の近のコア命中率のモデルの式）。積の形は同じ式に
 // 1 − Π(1 − Nᵢ) を N として渡す
 export const FORMS = {
   sum: { ja: '和', f: (p0: number, h: HitModel) => coreHitRateWithHitRateUp(p0, h.n) },
   product: { ja: '積', f: (p0: number, h: HitModel) => coreHitRateWithHitRateUp(p0, productN(h)) },
-  expSum: { ja: '指数・和', f: (p0: number, h: HitModel) => bulletHitRateWithHitRateUp(p0, h.n) },
-  expProduct: { ja: '指数・積', f: (p0: number, h: HitModel) => bulletHitRateWithHitRateUp(p0, productN(h)) },
+  expSum: { ja: '指数・和', f: (p0: number, h: HitModel) => exponentSumHitRateUp(p0, h.n) },
+  expProduct: { ja: '指数・積', f: (p0: number, h: HitModel) => exponentSumHitRateUp(p0, productN(h)) },
   linear: { ja: 'p0 ÷ (1 − N)', f: (p0: number, h: HitModel) => Math.min(1, p0 / (1 - h.n)) },
 } as const;
 type FormName = keyof typeof FORMS;
