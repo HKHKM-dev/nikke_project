@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`1194-09`・`1194-10`。V-0783",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "`data/skills/143.json`（skill1 の effects[0] の貫通特化、burst の effects[1]・[2]）。貫通ダメージ▲は `damage.ts` の normalAttackDamageGroup",
   "replaces": [],
   "updated": "2026-11-14",
   "subject": {

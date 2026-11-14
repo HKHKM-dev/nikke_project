@@ -1,11 +1,11 @@
 {
   "id": "C-1243",
   "text": "貫通特化の枠の倍率ダメージ（ミルク：ブルーミングバニーの S2 の分配ダメージ）の 1 ヒットには、貫通ダメージ▲が乗らない（攻撃ダメージ▲の和に足さない。通常攻撃の和とは違う）。値は最終攻撃力（バーストの攻撃力▲込み）の 447.7% にフルバースト補正を掛けた値",
-  "state": "仮説",
+  "state": "確定",
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`1194-08`。V-0783",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "`data/skills/143.json`（skill2 の effects[0]）。式は `skills/burstDamage.ts` の computeSkillHit（攻撃ダメージ▲の和を applyAttackDamageBuffs で取り、通常攻撃の和 normalAttackDamageGroup の貫通ダメージ▲を足さない。この検証で直した）",
   "replaces": [],
   "updated": "2026-11-14",
   "subject": {

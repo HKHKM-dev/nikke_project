@@ -73,7 +73,7 @@ describe.each(Object.entries(TEAMS))('%s', (_name, input) => {
   });
 
   // V-0783 の編成には攻撃ダメージ▲が無いので、乗数が 1 なら貫通ダメージ▲（窓の中は 117.64%）が足されていない
-  it.runIf(_name.includes('V-0783'))('does not add the pierce damage up to the S2 hits (C-1237)', () => {
+  it.runIf(_name.includes('V-0783'))('does not add the pierce damage up to the S2 hits (C-1243)', () => {
     for (const h of s2Hits) expect(h.hit.attackDamageMultiplier).toBe(1);
   });
 

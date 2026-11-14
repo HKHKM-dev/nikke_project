@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
   "basis": "`1194-11`・`1194-12`・`1194-13`・`1194-14`。V-0783",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "`data/skills/143.json`（skill2 の effects[0]。トリガー { everySeconds: 2, carry: true }・条件 selfState overconfidentHuh・delayFrames 6。burst の effects[0] の状態の付与 10 秒）。周期は `skills/timeline.ts` の timerDamageFrames、条件は `frame/plan.ts` の damageConditionHolds",
   "replaces": [],
   "updated": "2026-11-14",
   "subject": {
