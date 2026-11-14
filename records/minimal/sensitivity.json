@@ -32499,6 +32499,75 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "1194-08",
+      "element": "ミルク：ブルーミングバニー skill2.effects[0]",
+      "key": "6d31fc8f2f2b8bb8",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1194-09",
+      "element": "ミルク：ブルーミングバニー skill2.effects[0]",
+      "key": "159591caeb3a95d5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1194-10",
+      "element": "ミルク：ブルーミングバニー skill2.effects[0]",
+      "key": "02bfe92213991e63",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1194-11",
+      "element": "ミルク：ブルーミングバニー skill2.effects[0]",
+      "key": "c604158da98c794e",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "1194-12",
+      "element": "ミルク：ブルーミングバニー skill2.effects[0]",
+      "key": "683c69c0831ed435",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "1194-13",
+      "element": "ミルク：ブルーミングバニー skill2.effects[0]",
+      "key": "83b69dba7463c0e7",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "1194-14",
+      "element": "ミルク：ブルーミングバニー skill2.effects[0]",
+      "key": "398bec49338c5816",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "1194-16",
+      "element": "ミルク：ブルーミングバニー skill2.effects[0]",
+      "key": "be96568f86981004",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }
