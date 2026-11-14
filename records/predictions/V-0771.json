@@ -133,6 +133,86 @@
   ],
   "targets": [
     {
+      "id": "A-s1-interval",
+      "model": "sim",
+      "metric": "buffWindowStartIntervalMean",
+      "team": [
+        {
+          "rid": 202,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "attack",
+        "count": 17
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "撮影 A（後から足した。S1 の周期を録画で読んでから定義に入れた後）: S1 の攻撃力▲の窓の始まりの間隔（1〜17 回目の 16 間隔の平均。ゲーム内のティック）",
+      "observations": ["1174-01", "1175-01"]
+    },
+    {
+      "id": "A-base-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 202,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "撮影 A（後から足した）: S1 の窓の外の、ドラーのコアに当たった会心しない（距離ボーナスなし） 1 ヒット（対照）",
+      "observations": ["1174-03", "1175-03"]
+    },
+    {
+      "id": "A-s1-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 202,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "撮影 A（後から足した）: S1 の窓の中の、ドラーのコアに当たった会心しない（距離ボーナスなし） 1 ヒット（攻撃力 16.16%▲）",
+      "observations": ["1174-04", "1175-04"]
+    },
+    {
       "id": "B-ct-cut",
       "model": "sim",
       "metric": "cooldownCutFrames",
@@ -147,7 +227,8 @@
       "tolerance": {
         "abs": 6
       },
-      "note": "撮影 B: 1〜4 回目のフルバーストの入りに、III（I-DOLL・サン）の残りの CT が縮んだフレーム数"
+      "note": "撮影 B: 1〜4 回目のフルバーストの入りに、III（I-DOLL・サン）の残りの CT が縮んだフレーム数",
+      "observations": ["1176-06", "1177-08"]
     },
     {
       "id": "B-base-hit",
@@ -206,7 +287,8 @@
       "tolerance": {
         "abs": 0.003
       },
-      "note": "撮影 B: ドラーの使用の 2 回目の窓の、ココアの会心の比。回数を自分の使用で数えるなら 1.5（クリティカルダメージ▲はまだ無い）、編成全体のバーストの使用で数える読み（H3。手で書く）なら 3 回目以降の値"
+      "note": "撮影 B: ドラーの使用の 2 回目の窓の、ココアの会心の比。回数を自分の使用で数えるなら 1.5（クリティカルダメージ▲はまだ無い）、編成全体のバーストの使用で数える読み（H3。手で書く）なら 3 回目以降の値",
+      "observations": ["1176-10", "1177-12"]
     },
     {
       "id": "B-win4-hit",
@@ -245,7 +327,8 @@
       "tolerance": {
         "abs": 0.003
       },
-      "note": "撮影 B: ドラーの使用の 4 回目の窓の、ココアの会心の比（3 回目以降のクリティカルダメージ▲）"
+      "note": "撮影 B: ドラーの使用の 4 回目の窓の、ココアの会心の比（3 回目以降のクリティカルダメージ▲）",
+      "observations": ["1176-11", "1177-13"]
     },
     {
       "id": "B-crit-rate-win",
@@ -262,7 +345,8 @@
       "tolerance": {
         "abs": 0.02
       },
-      "note": "撮影 B: 2 回目以降の使用の窓の、サンの通常攻撃の 1 ヒットのうち会心の割合（サンの S2 の確率の攻撃力▲（C-0551）は会心の判定に効かない。窓をまとめて数える。どの窓も同じ値。▲が 4.21% と小さいので、2 本を合わせて見る）"
+      "note": "撮影 B: 2 回目以降の使用の窓の、サンの通常攻撃の 1 ヒットのうち会心の割合（サンの S2 の確率の攻撃力▲（C-0551）は会心の判定に効かない。窓をまとめて数える。どの窓も同じ値。▲が 4.21% と小さいので、2 本を合わせて見る）",
+      "observations": ["1176-12", "1177-14"]
     },
     {
       "id": "B-crit-rate-base",
@@ -279,7 +363,8 @@
       "tolerance": {
         "abs": 0.02
       },
-      "note": "撮影 B: 窓の外の会心の割合（対照。素の 15%）"
+      "note": "撮影 B: 窓の外の会心の割合（対照。素の 15%）",
+      "observations": ["1176-13", "1177-15"]
     },
     {
       "id": "B-burst-hit-2",
@@ -302,58 +387,73 @@
   ],
   "predicted": {
     "at": "2026-11-14",
-    "commit": "ea929d8c5c741485e060b60f1cd74ddfe19e13e9",
+    "commit": "9f079ad2474ea2e9f48f0fb675ed13374717ba58",
     "values": {
       "H1": {
+        "A-s1-interval": 589,
+        "A-base-hit": 172297.95,
+        "A-s1-hit": 200169.398,
         "B-ct-cut": [107, 236, 388, 388],
         "B-base-hit": 172297.95,
-        "B-win2-hit": 185612.314,
+        "B-win2-hit": 213483.762,
         "B-win2-crit-ratio": 1.5,
-        "B-win4-hit": 185612.314,
-        "B-win4-crit-ratio": 1.6321999999999999,
+        "B-win4-hit": 213483.762,
+        "B-win4-crit-ratio": 1.6322,
         "B-crit-rate-win": 0.1921,
         "B-crit-rate-base": 0.15,
         "B-burst-hit-2": 733404.2925000001
       },
       "H0-s2-atk": {
+        "A-s1-interval": 589,
+        "A-base-hit": 172297.95,
+        "A-s1-hit": 200169.398,
         "B-ct-cut": [107, 236, 388, 388],
         "B-base-hit": 172297.95,
-        "B-win2-hit": 172297.95,
-        "B-win2-crit-ratio": 1.5,
-        "B-win4-hit": 172297.95,
+        "B-win2-hit": 200169.398,
+        "B-win2-crit-ratio": 1.4999999999999998,
+        "B-win4-hit": 200169.398,
         "B-win4-crit-ratio": 1.6322,
         "B-crit-rate-win": 0.1921,
         "B-crit-rate-base": 0.15,
         "B-burst-hit-2": 733404.2925000001
       },
       "H0-s2-crit-rate": {
+        "A-s1-interval": 589,
+        "A-base-hit": 172297.95,
+        "A-s1-hit": 200169.398,
         "B-ct-cut": [107, 236, 388, 388],
         "B-base-hit": 172297.95,
-        "B-win2-hit": 185612.314,
+        "B-win2-hit": 213483.762,
         "B-win2-crit-ratio": 1.5,
-        "B-win4-hit": 185612.314,
-        "B-win4-crit-ratio": 1.6321999999999999,
+        "B-win4-hit": 213483.762,
+        "B-win4-crit-ratio": 1.6322,
         "B-crit-rate-win": 0.15,
         "B-crit-rate-base": 0.15,
         "B-burst-hit-2": 733404.2925000001
       },
       "H0-s2-crit-dmg": {
+        "A-s1-interval": 589,
+        "A-base-hit": 172297.95,
+        "A-s1-hit": 200169.398,
         "B-ct-cut": [107, 236, 388, 388],
         "B-base-hit": 172297.95,
-        "B-win2-hit": 185612.314,
+        "B-win2-hit": 213483.762,
         "B-win2-crit-ratio": 1.5,
-        "B-win4-hit": 185612.314,
+        "B-win4-hit": 213483.762,
         "B-win4-crit-ratio": 1.5,
         "B-crit-rate-win": 0.1921,
         "B-crit-rate-base": 0.15,
         "B-burst-hit-2": 733404.2925000001
       },
       "H2": {
+        "A-s1-interval": 589,
+        "A-base-hit": 172297.95,
+        "A-s1-hit": 200169.398,
         "B-ct-cut": [107, 129, 152, 152],
         "B-base-hit": 172297.95,
-        "B-win2-hit": 172297.95,
-        "B-win2-crit-ratio": 1.5,
-        "B-win4-hit": 172297.95,
+        "B-win2-hit": 200169.398,
+        "B-win2-crit-ratio": 1.4999999999999998,
+        "B-win4-hit": 200169.398,
         "B-win4-crit-ratio": 1.6322,
         "B-crit-rate-win": 0.1921,
         "B-crit-rate-base": 0.15,

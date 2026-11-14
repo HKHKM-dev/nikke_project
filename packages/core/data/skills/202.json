@@ -4,18 +4,23 @@
   "checkedAt": "2026-11-14",
   "skills": {
     "skill1": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "味方全体への攻撃力▲（5 秒）は未対応（きっかけの書かれていない CT ごとのアクティブで、周期と 1 回目の時刻を録画で読んでいない）",
-          "en": "The ATK up (5 s) on all allies is not modeled (an active skill on its own cooldown with no trigger written; its interval and first activation have not been read from a recording)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "allies",
-            "trigger": "unknown"
-          }
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 10
+          },
+          "target": "allies",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から 10 秒ごとに発動する（1 回目も 10 秒。左のスキルの帯の間隔は 588〜592 ティック）",
+            "en": "The description gives no trigger. It is an active skill on a cooldown, activating every 10 s from the start of combat (the first also at 10 s; the skill banners are 588-592 ticks apart)"
+          },
+          "claims": [
+            "C-1213"
+          ]
         }
       ]
     },
@@ -28,7 +33,10 @@
             "atLeast": 1
           },
           "target": "allies",
-          "ref": 1
+          "ref": 1,
+          "claims": [
+            "C-1214"
+          ]
         },
         {
           "kind": "cooldownReduction",
@@ -37,7 +45,10 @@
             "atLeast": 2
           },
           "target": "allies",
-          "ref": 2
+          "ref": 2,
+          "claims": [
+            "C-1214"
+          ]
         },
         {
           "kind": "cooldownReduction",
@@ -46,7 +57,10 @@
             "atLeast": 3
           },
           "target": "allies",
-          "ref": 3
+          "ref": 3,
+          "claims": [
+            "C-1214"
+          ]
         },
         {
           "kind": "timed",
@@ -57,7 +71,11 @@
           "target": "allies",
           "stat": "attack",
           "ref": 4,
-          "durationRef": 5
+          "durationRef": 5,
+          "claims": [
+            "C-1215",
+            "C-1217"
+          ]
         },
         {
           "kind": "timed",
@@ -68,7 +86,11 @@
           "target": "allies",
           "stat": "critRate",
           "ref": 6,
-          "durationRef": 7
+          "durationRef": 7,
+          "claims": [
+            "C-1216",
+            "C-1217"
+          ]
         },
         {
           "kind": "timed",
@@ -79,7 +101,11 @@
           "target": "allies",
           "stat": "critDamage",
           "ref": 8,
-          "durationRef": 9
+          "durationRef": 9,
+          "claims": [
+            "C-1215",
+            "C-1217"
+          ]
         }
       ]
     },
@@ -92,7 +118,10 @@
           "assumes": {
             "ja": "最終防御力が最も高い敵 1 機は、敵 1 体の前提でその敵",
             "en": "The enemy with the highest final DEF is that enemy, given one enemy"
-          }
+          },
+          "claims": [
+            "C-1217"
+          ]
         }
       ]
     }

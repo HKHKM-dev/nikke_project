@@ -1,5 +1,5 @@
 // ドラー（202）: S2 のフルバーストの開始回数別の CT▼ と、自分のバースト使用回数別の攻撃力▲・クリティカル確率▲・クリティカルダメージ▲
-// （どちらも下位効果のスタック適用）、バーストのバーストスキルダメージの解決（V-0771）
+// （どちらも下位効果のスタック適用）、S1 の 10 秒ごとの味方全体の攻撃力▲の解決（V-0771）
 import { describe, expect, it } from 'vitest';
 import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolveTimed, type SkillLevels } from '../resolve.ts';
@@ -21,14 +21,9 @@ describe('ドラー（202）の定義', () => {
 
   it('resolves the S2 ATK, crit rate and crit damage ups by her own Burst uses (5 s each)', () => {
     const at = (levels: SkillLevels) =>
-      resolveTimed(def, dolla, levels).map((e) => [
-        e.source.skill,
-        e.stat,
-        e.trigger,
-        e.target,
-        e.value,
-        e.durationFrames,
-      ]);
+      resolveTimed(def, dolla, levels)
+        .filter((e) => e.source.skill === 'skill2')
+        .map((e) => [e.source.skill, e.stat, e.trigger, e.target, e.value, e.durationFrames]);
     // 5 秒（ゲーム内の時計）= 294f
     const expected = (v: number[]) => [
       ['skill2', 'attack', { count: 'burstUse', atLeast: 1 }, 'allies', expect.closeTo(v[0]!, 12), 294],
@@ -39,8 +34,11 @@ describe('ドラー（202）の定義', () => {
     expect(at({ skill1: 1, skill2: 4, burst: 1 })).toEqual(expected([0.0336, 0.021, 0.0698]));
   });
 
-  it('leaves the S1 ATK up unmodeled until its interval is read', () => {
-    expect(def.skills.skill1.effects).toEqual([]);
-    expect(def.skills.skill1.notes?.map((n) => n.kind)).toEqual(['unimplemented']);
+  it('resolves the S1 ATK up every 10 s for all allies (5 s)', () => {
+    const s1 = resolveTimed(def, dolla, MAX_SKILL_LEVELS).filter((e) => e.source.skill === 'skill1');
+    expect(s1.map((e) => [e.stat, e.trigger, e.target, e.durationFrames])).toEqual([
+      ['attack', { everySeconds: 10 }, 'allies', 294],
+    ]);
+    expect(s1[0]!.value).toBeCloseTo(0.1616, 12);
   });
 });
