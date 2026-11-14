@@ -1102,6 +1102,10 @@
 | 1134 | `20261114-1134_velvet-solo.mp4` | ◎ベルベット（316、SR・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
 | 1135 | `20261114-1135_velvet-p08-alice.mp4` | プロダクト08（302、SR・電撃・R） + ベルベット（316、SR・風圧・SSR） + ◎アリス（191、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1136 | `20261114-1136_velvet-p08-grave-alice.mp4` | プロダクト08（302、SR・電撃・R） + グレイブ（514、AR・灼熱・SSR） + ◎ベルベット（316、SR・風圧・SSR） + アリス（191、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | オートバースト OFF。プロダクト08 → グレイブ → アリス の順に手でバースト（ベルベットのバーストは使わない） |
+| 1137 | `20261114-1137_smg_volume_fire.mp4` | ◎ボリューム（431、SMG・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1138 | `20261114-1138_smg_volume_fire.mp4` | ◎ボリューム（431、SMG・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1139 | `20261114-1139_smg+sr+ar_volume+delta+i-doll-sun_fire.mp4` | ボリューム（431、SMG・風圧・SSR） + デルタ（20、SR・風圧・SR） + ◎I-DOLL・サン（308、AR・鉄甲・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1140 | `20261114-1140_smg+sr+ar_volume+delta+i-doll-sun_fire.mp4` | ボリューム（431、SMG・風圧・SSR） + デルタ（20、SR・風圧・SR） + ◎I-DOLL・サン（308、AR・鉄甲・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
