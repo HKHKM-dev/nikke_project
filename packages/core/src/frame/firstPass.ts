@@ -318,7 +318,7 @@ function runFirstPassOnce(
     addAllyGauge,
     addShotGauges,
     allyGauges,
-    cooldownTrackers,
+    cooldownTimerFires,
     countCooldownTimers,
     countCycles,
     countDamageHitGauges,
@@ -402,7 +402,7 @@ function runFirstPassOnce(
     timerGauges,
     summonHits,
     accumulateReleases,
-    cooldownTimerFires: cooldownTrackers.map((t) => ({ slotIndex: t.slotIndex, skill: t.skill, frames: t.fires })),
+    cooldownTimerFires,
     history,
   };
   return { result, leadShots };
