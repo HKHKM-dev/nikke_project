@@ -5,7 +5,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, effectWindows, fixedTeam, skillValueOf } from './teamHelpers.ts';
+import { characterOf, describeEveryShotInOneGroup, effectWindows, fixedTeam, skillValueOf } from './teamHelpers.ts';
 
 const POLI = 30;
 const LITER = 82;
@@ -15,6 +15,20 @@ function team(ids: number[], controlled: number, poli: number, phase: TreasurePh
   input.slots[poli]!.skills!.treasurePhase = phase;
   return input;
 }
+
+// 下のテストは基礎版の値（skillValueOf）で窓を確かめる。宝物版の同じ値（S1 の回数・維持、バーストの維持）が同じであることを先に見る
+describe('treasure values', () => {
+  it('has the same S1 count and duration and burst duration as the base version', () => {
+    const c = characterOf(POLI);
+    const t = c.treasure!.skills;
+    for (const [slot, refs] of [
+      ['skill1', [1, 3]],
+      ['burst', [4]],
+    ] as const) {
+      for (const ref of refs) expect(t[slot]!.values[ref - 1]).toEqual(c.skills[slot].values[ref - 1]);
+    }
+  });
+});
 
 const TEAMS = {
   'リター + ポリ（宝物の段階 3）': team([LITER, POLI], 1, 1, 3),
@@ -43,14 +57,17 @@ describe.each(Object.entries(TEAMS))('%s', (_name, input) => {
     );
   });
 
-  it('gives the burst attack up to all allies for 10 s from each of her bursts', () => {
+  it('gives the burst attack up to all allies for 10 s from the frame of each of her bursts', () => {
     const bursts = plan.schedule!.activations.filter((a) => a.slotIndex === p);
     const duration = gameSecondsToFrames(skillValueOf(POLI, 'burst', 4));
     expect(bursts.length).toBeGreaterThan(1);
     input.slots.forEach((_, i) => {
       const windows = effectWindows(plan, i, { resourceId: POLI, skill: 'burst', stat: 'attack' });
       expect(windows.length).toBe(bursts.length);
-      windows.forEach((w) => expect(w.end - w.start).toBe(duration));
+      windows.forEach((w, k) => {
+        expect(w.start).toBe(bursts[k]!.frame);
+        expect(w.end - w.start).toBe(duration);
+      });
     });
   });
 });
