@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 316,
-  "checkedAt": "2026-11-13",
+  "checkedAt": "2026-11-14",
   "skills": {
     "skill1": {
       "effects": [
@@ -216,9 +216,10 @@
           "durationRef": 2,
           "instantFire": true,
           "infiniteAmmo": true,
+          "firstShotDelayFrames": 12,
           "assumes": {
-            "ja": "変更後の武器（4200rpm）は、チャージしない即着弾・10 秒の間は装弾数無限・1 発 1 ヒット・コア倍率は基礎の武器と同じ・最初の発の待ちは既定のまま（どれも録画で読んでいない仮説。plan/design-velvet.md 3 節）",
-            "en": "The changed weapon (4200 rpm) fires without charging with an instant hit, has infinite ammo for the 10 s, hits once per shot, keeps the core multiplier of the base weapon, and keeps the default delay of the first shot (all hypotheses not yet read from a recording; plan/design-velvet.md 3)"
+            "ja": "残弾の表示は 999 発だが、10 秒に約 600 発しか撃たないので撃ち切らず、装弾数無限と同じに書く（infiniteAmmo）。1 発 1 ヒットで、コア・会心・距離ボーナスは基礎の SR と同じ（V-0767）",
+            "en": "The ammo display shows 999 rounds, but she fires only about 600 in the 10 s, so it never runs out and is written as infinite ammo (infiniteAmmo). One hit per shot, with the same core, crit and distance bonus as the base SR (V-0767)"
           }
         },
         {

@@ -1,0 +1,148 @@
+[
+  {
+    "id": "1134-01",
+    "recording": "1134",
+    "kind": "total",
+    "use": "record",
+    "value": 49878526,
+    "description": "ベルベット の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11314。増分は 101 個"
+    },
+    "source": "V-0767",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1134-02",
+    "recording": "1134",
+    "kind": "count",
+    "use": "record",
+    "value": 101,
+    "unit": "トリガー",
+    "description": "ベルベット のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 101 個。前の増分から 30f 未満の増分（0 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 31f）から発の数を決めた（2 発になった組 0 個）"
+    },
+    "source": "V-0767",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1134-03",
+    "recording": "1134",
+    "source": "V-0767",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 344596,
+    "unit": "ダメージ",
+    "description": "ベルベットの S1 の▲の無いコアの 1 ヒット（会心なし・距離ボーナスなし）。どのマガジンも 1 発目（前のマガジンの最後のフルチャージから 3 秒より後）はこの値（1 マガジン目 831f・2 マガジン目 1441f ほか）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を目で読んだ",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、マガジンの切れ目（約 200f の空き）で分けて読んだ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 30,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1134-04",
+    "recording": "1134",
+    "source": "V-0767",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 586992,
+    "unit": "ダメージ",
+    "description": "ベルベットの S1 の▲（攻撃力 30.5%・攻撃ダメージ 30.5%）の乗ったコアの 1 ヒット（会心なし・距離ボーナスなし）。1〜11 マガジン目の 2 発目からの値（距離ボーナスの乗る区間は 675,041）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を目で読んだ",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）。会心の乗った値（733,740）とは 1.25 倍で分かれる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1134-05",
+    "recording": "1134",
+    "source": "V-0767",
+    "readAt": "2026-11-14",
+    "kind": "timing",
+    "use": "compare",
+    "value": 205,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 164,
+      "high": 246
+    },
+    "description": "60 回目のフルチャージ（7176f。11 マガジン目の 2 発目）から、S1 の▲の切れ目までの動画のフレームの幅。7258f・7340f の発は▲あり、7422f の発から最後まで▲なし（61 回目のフルチャージからポーチを払えない）。数えるフルチャージから、的のジャンプで溜めきらずに放った 2 発（2246f の 282,695・6715f の 621,173。照準の CHARGE が 250% に届く前に残弾が減った）を除き、HUD に増分の出ない 1 発（1605f。障害物に当たった発。残弾 004 → 003）を足した",
+    "method": {
+      "tool": "recipe:hud-jumps@3 と目視",
+      "note": "HUD の増分の▲の有無と、照準の残弾（AMMO）と CHARGE の表示をマガジンごとに切り出して数えた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "attack",
+        "from": 1,
+        "shot": 60,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 41
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  }
+]

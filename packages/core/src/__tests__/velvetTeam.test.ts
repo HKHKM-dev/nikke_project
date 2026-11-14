@@ -1,10 +1,10 @@
 // ベルベット（316）を含む編成（plan/design-velvet.md）。語彙と単騎の S1 は skills/__tests__/velvet.test.ts。ここでは味方と組んだ時に:
 // S1: フルバーストの外のフルチャージだけで起き、S2: フルバーストの中のフルチャージと 50 回の命中だけで起きる。弾丸ポーチはバースト 2 段階
-// 突入時に満タンに戻る。バースト: 10 秒の使用武器変更（1 フレーム 1 発の仮説）。射撃の列のグループ分け。
+// 突入時に満タンに戻る。バースト: 10 秒の使用武器変更（発動の 12f 後から 1 フレーム 1 発。V-0767）。射撃の列のグループ分け。
 import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, effectWindows, fixedTeam, skillValueOf } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, effectWindows, fixedTeam, rawDefinition, skillValueOf } from './teamHelpers.ts';
 
 const VELVET = 316;
 
@@ -42,13 +42,13 @@ describe('プロダクト08 + ベルベット + アリス', () => {
     }
   });
 
-  it('fires the S2 additional damage every 50 hits inside Full Burst only, as often in each Full Burst (refill at stage 2)', () => {
+  it('fires the S2 additional damage every 50 hits inside Full Burst only, 10 or more times in each Full Burst (refill at stage 2)', () => {
     const every = skillValueOf(VELVET, 'skill2', 6);
     expect(hits.length).toBeGreaterThan(0);
     expect(hits.every((h) => inside(fullBursts, h.frame))).toBe(true);
     const perFullBurst = fullBursts.map((w) => hits.filter((h) => w.start <= h.frame && h.frame < w.end));
-    // 補充が無ければ、2 回目からのフルバーストはポーチが尽きて減る
-    expect(new Set(perFullBurst.map((hs) => hs.length)).size).toBe(1);
+    // 回数は 50 の倍数の位相で 10〜12 回に揺れる。補充が無ければ、2 回目からのフルバーストはポーチが尽きて 3 回以下になる
+    expect(perFullBurst.every((hs) => hs.length >= 10)).toBe(true);
     for (const hs of perFullBurst) {
       for (let k = 1; k < hs.length; k++) {
         expect(shots.filter((f) => hs[k - 1]!.frame < f && f <= hs[k]!.frame)).toHaveLength(every);
@@ -56,14 +56,17 @@ describe('プロダクト08 + ベルベット + アリス', () => {
     }
   });
 
-  it('fires one shot per frame for 10 s after her burst (weapon change)', () => {
+  it('fires one shot per frame for 10 s from 12 frames after her burst (weapon change. V-0767)', () => {
     const changed = plan.shots[v]!.weaponChangeShotFrames ?? [];
     const bursts = plan.schedule!.activations.filter((a) => a.slotIndex === v);
     const duration = gameSecondsToFrames(skillValueOf(VELVET, 'burst', 2));
+    const delay = rawDefinition<{ skills: { burst: { effects: { firstShotDelayFrames?: number }[] } } }>(VELVET).skills
+      .burst.effects[0]!.firstShotDelayFrames!;
     expect(bursts.length).toBeGreaterThan(0);
     for (const b of bursts) {
       const own = changed.filter((f) => b.frame <= f && f < b.frame + duration);
-      expect(own.length).toBeGreaterThan(duration - 5);
+      expect(own[0]).toBe(b.frame + 1 + delay);
+      expect(own.length).toBeGreaterThan(duration - delay - 5);
       own.slice(1).forEach((f, k) => expect(f - own[k]!).toBe(1));
     }
   });
