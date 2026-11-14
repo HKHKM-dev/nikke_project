@@ -84,8 +84,15 @@ const VALUE_LIMITS: Partial<Record<string, number>> = {
   elementDamage: 200,
 };
 
-/** 上の上限を超える値（resourceId:スロット:ref → 上限）。ディーゼル：ウィンタースイーツ: S1 のクライマックスの持続ダメージ▲は Lv10 で 235.03%、S2 のフルチャージの持続ダメージ▲は 318.14% */
-const VALUE_LIMIT_EXCEPTIONS: Partial<Record<string, number>> = { '75:skill1:5': 300, '75:skill2:2': 400 };
+/**
+ * 上の上限を超える値（resourceId:スロット:ref → 上限）。ディーゼル：ウィンタースイーツ: S1 のクライマックスの持続ダメージ▲は
+ * Lv10 で 235.03%、S2 のフルチャージの持続ダメージ▲は 318.14%。リバーレリオ: S2 の激流の攻撃ダメージ▲は Lv10 で 231%（C-1237）
+ */
+const VALUE_LIMIT_EXCEPTIONS: Partial<Record<string, number>> = {
+  '75:skill1:5': 300,
+  '75:skill2:2': 400,
+  '262:skill2:1': 300,
+};
 
 /** 状態の中身の項目が説明文を指す ref（stat の ref・最大スタック数▲の amountRef・スキルのクールタイム▼の percentRef） */
 function contentRefsOf(c: StateContentItem): number[] {
