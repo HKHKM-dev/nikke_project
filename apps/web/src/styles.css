@@ -307,12 +307,13 @@ header h1 {
 }
 
 /* 枠カード */
-/* 枠は幅を --slot-w までにして、収まるだけ横に並べる（並びは左に寄せる） */
+/* 枠は幅を --slot-w までにして、収まるだけ横に並べ、並びを中央に寄せる（auto-fit で空の列を詰める） */
 .slots {
   --slot-w: 12rem;
   display: grid;
   gap: 10px;
-  grid-template-columns: repeat(auto-fill, minmax(0, var(--slot-w)));
+  grid-template-columns: repeat(auto-fit, minmax(0, var(--slot-w)));
+  justify-content: center;
   margin: 12px 0;
 }
 .slot {
