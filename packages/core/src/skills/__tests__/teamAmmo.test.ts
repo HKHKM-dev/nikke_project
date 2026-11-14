@@ -89,7 +89,13 @@ describe('teamAmmo の数え方', () => {
 });
 
 describe('damage の usedBurst', () => {
-  const damage = { kind: 'damage', trigger: 'fullBurstStart', ref: 7, damageType: 'skill', condition: { usedBurst: true } };
+  const damage = {
+    kind: 'damage',
+    trigger: 'fullBurstStart',
+    ref: 7,
+    damageType: 'skill',
+    condition: { usedBurst: true },
+  };
 
   it('reads it with a Full Burst start or end trigger only', () => {
     expect(withSkill1Effects([damage]).skills.skill1.effects[0]).toMatchObject({ condition: { usedBurst: true } });
