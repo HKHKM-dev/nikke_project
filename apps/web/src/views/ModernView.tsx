@@ -16,7 +16,6 @@ import { useSlotDrag } from '../components/modern/useSlotDrag.ts';
 import { useSlotPlacement } from '../components/modern/useSlotPlacement.ts';
 import { commonGrowthOf, rosterGrowthOf } from '../roster.ts';
 import { useTrayShape } from '../trayShape.ts';
-import { NO_PARTIES } from '../components/modern/OtherPartyBadges.tsx';
 
 export function ModernView({
   team,
@@ -141,7 +140,6 @@ export function ModernView({
                 growthMarks={slotGrowthMarks(calc, team, roster, i)}
                 collectionBadge={slotCollectionBadge(calc, i)}
                 controlled={team.controlledSlot === i}
-                otherParties={(slot.resourceId !== null && otherPartyIds.get(slot.resourceId)) || NO_PARTIES}
                 onPlacePending={pendingId !== null ? () => handlePlacePending(i) : undefined}
                 onOpenBuildModal={() => setEditingSlotIndex(i)}
                 onClear={() => clearSlot(i)}
