@@ -22,6 +22,19 @@
           "stat": "attackDamage",
           "ref": 2,
           "durationRef": 3
+        },
+        {
+          "kind": "burstGauge",
+          "trigger": {
+            "count": "teamAmmo",
+            "everyRef": 4
+          },
+          "target": "allies",
+          "ref": 5,
+          "assumes": {
+            "ja": "味方が消費した弾の合計は、自分を含む編成の全員の発（1 発 1）を数え、合計が 400 の倍数に届いた発で、編成の 1 本のゲージに足す（シンデレラ：クリスタルウェーブの S1 と同じ数え方）",
+            "en": "The total ammo expended by allies counts every shot of the whole team including self (1 per round), and on the shot where the total reaches a multiple of 400 it adds to the team gauge (same counting as Cinderella: Crystal Wave S1)"
+          }
         }
       ],
       "notes": [
@@ -31,16 +44,6 @@
           "kind": "outOfScope",
           "effect": {
             "kind": "state",
-            "target": "allies",
-            "trigger": "unknown"
-          }
-        },
-        {
-          "ja": "味方が消費した弾の合計が 400 発ごとの、味方全体のバーストゲージのチャージは未対応（味方の消費した弾の合計のきっかけの語彙が無い。plan/design-little-mermaid.md 2.1 節）",
-          "en": "The Burst Gauge fill on all allies every 400 rounds of total ammo expended by allies is not modeled (no vocabulary for the allies' total ammo trigger; plan/design-little-mermaid.md 2.1)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "burstGauge",
             "target": "allies",
             "trigger": "unknown"
           }
@@ -75,13 +78,31 @@
           "condition": {
             "inFullBurst": true
           },
+          "delayFrames": 6,
           "damageType": "skill",
           "ref": 5,
           "hitsRef": 6,
+          "hitIntervalFrames": 12,
           "assumes": {
-            "ja": "フルバーストタイム中のみの 1 秒ごとの攻撃。周期は戦闘開始から 1 秒ごと（端数を持ち越す）に数え続け、フルバーストの窓の中の回だけ出す（エイダの S2 と同じ形）。ランダムな敵は敵 1 体の前提で的。4 ヒットとも発動の時点のバフで出す。ヒットの遅れと間隔は録画で読む（撮影の前は発動と同じフレームに 4 ヒット）",
-            "en": "The attack every second only during Full Burst. The period counts every 1 s from the start of battle (carrying the fraction) and fires only inside the Full Burst window (same form as Ada's S2). The random enemy is the target (one enemy). All 4 hits use the buffs at activation. The hit delay and interval are read from recordings (before recording, 4 hits on the activation frame)"
+            "ja": "フルバーストタイム中のみの 1 秒ごとの攻撃。周期は戦闘開始から 1 秒ごと（端数を持ち越す）に数え続け、フルバーストの窓の中の回だけ出す（エイダの S2 と同じ形）。ランダムな敵は敵 1 体の前提で的。周期の 6f 後に 1 ヒット目、12f おきに 4 ヒット。4 ヒットとも発動の時点のバフで出す。コアには当たらない。フルバーストの中なのでゲージは溜まらない",
+            "en": "The attack every second only during Full Burst. The period counts every 1 s from the start of battle (carrying the fraction) and fires only inside the Full Burst window (same form as Ada S2). The random enemy is the target (one enemy). The first hit comes 6 frames after the period, then 4 hits 12 frames apart, all with the buffs at activation. No core. No burst gauge inside Full Burst"
           }
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "teamAmmo",
+            "everyRef": 7
+          },
+          "damageType": "skill",
+          "ref": 8,
+          "hitsRef": 9,
+          "hitIntervalFrames": 12,
+          "assumes": {
+            "ja": "バブルバラージ。味方が消費した弾の合計（skill1 の burstGauge と同じ数え方）が 500 の倍数に届いた発の 6f 後から、ランダムな敵（敵 1 体の前提で的）に 12f おきに 10 回順番に攻撃する（録画の間隔は 11〜13f で、0.2 秒に近い）。10 ヒットとも発動の時点のバフで出す。コアには当たらない。バーストゲージを溜めるかは確かめていない（溜めない扱い）",
+            "en": "Bubble Barrage. From 6 frames after the shot where the total ammo expended by allies (counted as the skill1 burstGauge) reaches a multiple of 500, 10 sequential attacks 12 frames apart on a random enemy (the target, one enemy; the recorded spacing is 11 to 13 frames, close to 0.2 s). All 10 hits use the buffs at activation. No core. Whether it charges the burst gauge is unverified (treated as not charging)"
+          },
+          "delayFrames": 6
         }
       ],
       "notes": [
@@ -95,15 +116,6 @@
           "ja": "バブルバーストの気絶（3 秒）は、それ自体は与ダメージを変えない",
           "en": "The stun of Explosive Bubble (3 s) does not change damage by itself",
           "kind": "noDamage"
-        },
-        {
-          "ja": "味方が消費した弾の合計が 500 発ごとの、ランダムな敵へのバブルバラージ（10 回順番に攻撃）は未対応（味方の消費した弾の合計のきっかけの語彙が無い。plan/design-little-mermaid.md 2.1 節）",
-          "en": "Bubble Barrage on a random enemy every 500 rounds of total ammo expended by allies (10 sequential attacks) is not modeled (no vocabulary for the allies' total ammo trigger; plan/design-little-mermaid.md 2.1)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
-            "trigger": "unknown"
-          }
         }
       ]
     },

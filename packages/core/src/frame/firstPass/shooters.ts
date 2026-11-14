@@ -254,6 +254,7 @@ export function createShooters({
       log.frames.push(f);
       if (state.lastShot) log.lastShotFrames!.push(f);
       if (params.weapon !== null) (log.weaponChangeShotFrames ??= []).push(f);
+      if (params.infiniteAmmo) (log.infiniteAmmoShotFrames ??= []).push(f);
       // チャージしない変更後の武器の発は fullChargeShot に数えない。チャージ武器への変更を持つチャージしない基礎の武器の発も
       // 数えない（どちらも、発の武器がチャージ武器でない。plan/design-nayuta.md 2.6 節）
       const uncharged = log.fullCharge && !isChargeWeapon(shot);

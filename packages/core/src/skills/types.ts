@@ -623,7 +623,8 @@ export const BURST_USERS_TRIGGERS = ['fullBurstStart', 'fullBurstEnd'] as const 
  * 1 発の量が N を超えてはいけないので every か everyRef が要り、循環には書けない。
  * teamAmmo = 味方が消費した弾の合計（plan/design-cinderella-cw.md 2.3 節。C-1250）。自分を含む編成の全員の発の、減らした残弾
  * （1 発 1。装弾数無限の発は 0）を足し、累計が N の倍数に届いた発で発火する。自分が撃たないフレームでも、味方の発で発火する。
- * burstGauge にだけ書け、every か everyRef が要る
+ * burstGauge と damage（N 回順番に攻撃の hitsRef も書ける。gaugePerHit は書けない。plan/design-little-mermaid.md 2.1 節）にだけ書け、
+ * every か everyRef が要る。装弾数無限の発は、流し直しも射撃の列の infiniteAmmoShotFrames で 0 にする
  */
 export type ShotCountKind =
   | 'normalShot'
@@ -1485,7 +1486,8 @@ export type DamageEffect = {
    * 「N 回順番に攻撃」の回数の description_value_NN（plan/design-new-chars-1029.md 5.2 節）。1 回の発動を
    * N ヒットに分け、どのヒットも ref の値で出す（バーストの hitsRef と同じく、ref は 1 ヒットの値）。N ヒットとも発火のフレームのバフと
    * フルバースト補正で出す（同 10.2 節の d。C-0735）。順番攻撃ダメージ▲（sequentialAttackDamage）
-   * はこのヒットにだけ乗る。射撃の回数のきっかけ・perBurstHit とは組み合わせない
+   * はこのヒットにだけ乗る。射撃の回数のきっかけ（味方が消費した弾の合計 teamAmmo を除く。plan/design-little-mermaid.md 2.1 節）・
+   * perBurstHit とは組み合わせない
    */
   hitsRef?: number;
   /**

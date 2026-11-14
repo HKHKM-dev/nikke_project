@@ -1,0 +1,229 @@
+[
+  {
+    "id": "1202-01",
+    "recording": "1202",
+    "kind": "timing",
+    "use": "record",
+    "value": [1343, 2499, 3677, 4998, 6176, 7442, 8620, 9579, 10756],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・0・25・5・24・5・25f"
+    },
+    "source": "V-0784",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1202-02",
+    "recording": "1202",
+    "kind": "timing",
+    "use": "record",
+    "value": [1372, 3706, 6205, 8649, 10785],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25・24・25f"
+    },
+    "source": "V-0784",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1202-03",
+    "recording": "1202",
+    "kind": "timing",
+    "use": "record",
+    "value": [1401, 3735, 6234, 8678, 10814],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0784",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1202-04",
+    "recording": "1202",
+    "kind": "timing",
+    "use": "record",
+    "value": [2011, 4344, 6843, 9286, 11423],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0784",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1202-05",
+    "recording": "1202",
+    "kind": "interval",
+    "use": "record",
+    "value": [610, 609, 609, 608, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0784",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1202-06",
+    "recording": "1202",
+    "kind": "timing",
+    "use": "record",
+    "value": [3671, 6170, 8613, 10750],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0784",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1202-07",
+    "recording": "1202",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [568, 2902],
+    "description": "戦闘開始から 1・2 回目の III の発動（タイマーの 00.00。フルバーストの始まり）までの動画のフレーム",
+    "method": {
+      "tool": "recipe:burst-panel@4・timer.ts --mode changes",
+      "note": "00.00 f1401・f3735（1202-03）− 戦闘開始 f833。1 回目は、味方が消費した弾の合計（3 人の発）の 400 発ごとのゲージで早まる。2 回目は I の CT の明けで決まり、フルバーストの終わりの CT▼ を外したモデルでは 2945f。3 回目からは録画が 90〜240f ずれ（的のジャンプとチェーンの切れ方の揺れ）、比べない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "activation",
+        "count": 2
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      }
+    },
+    "source": "V-0784",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1202-08",
+    "recording": "1202",
+    "kind": "hit",
+    "use": "compare",
+    "value": 134311,
+    "description": "1 回目のフルバーストの、1 秒ごとのダメージの 1 ヒット（会心なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f1452（戦闘開始から 619f）の増分。1 ヒットだけのフレーム。フルバーストの開始の攻撃ダメージ▲（S1）・バブルの受けるダメージ▲（S2）・フルバースト補正が乗った値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      }
+    },
+    "source": "V-0784",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1202-09",
+    "recording": "1202",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [619, 631, 643, 655, 678, 690, 702, 714],
+    "description": "1 回目のフルバーストの、1 秒ごとのダメージの最初の 2 回（4 ヒットずつ）の、戦闘開始からの動画のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps・timer.ts --mode changes",
+      "note": "値が 134,311 の増分 − 戦闘開始 f833。4 ヒットは 12f おき。どの回も、戦闘開始から 1 秒ごとに数える周期（エイダの S2 と同じ形）の 6f 後に 1 ヒット目が出る（モデルのフレームと合う）。3 回目からも 59f おきに 4 ヒット（同じフレームのほかのヒットとの和を含む）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 1,
+        "event": "skillHit",
+        "skill": "skill2",
+        "count": 8
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      }
+    },
+    "source": "V-0784",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1202-10",
+    "recording": "1202",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": 1018,
+    "description": "1 回目のバブルバラージの 1 ヒット目の、戦闘開始からの動画のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f1851 の増分（240,246。フルバーストの中で、1 秒ごとのダメージと重なる）− 戦闘開始 f833。12f おきに 10 ヒット。単騎（1200・1201）の 1485f より早く、3 人の発の合計が 500 発に届いた頃（モデルも 1018f）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0784",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1202-11",
+    "recording": "1202",
+    "kind": "timing",
+    "use": "record",
+    "value": 13,
+    "description": "I を単独で使った時（f2499 に II の段に替わった）の、II の段のデルタのバーストの CT の残り秒の表示（f2530）",
+    "method": {
+      "tool": "目で読む（still）",
+      "note": "デルタの II の発動（f1343〜1372）から約 19.7 秒。CT 40 秒から引くと、フルバーストの終わりの CT▼ が無ければ 20 か 21、7.48 秒▼ なら 13 か 12 と出る"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burstChain"
+    },
+    "source": "V-0784",
+    "readAt": "2026-11-14"
+  }
+]

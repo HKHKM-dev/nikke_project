@@ -73,8 +73,8 @@ export type ShotEvent = {
    */
   weaponChange?: boolean;
   /**
-   * この射撃で減らした残弾（teamAmmo の回数に足す。plan/design-cinderella-cw.md 2.3 節）。省略は 1、装弾数無限の発は 0。1 パス目の射手だけが
-   * 書く（流し直しの replayEvents は射撃の列に装弾数無限の印が無いので書かない。teamAmmo を書ける burstGauge は 1 パス目だけが読む）
+   * この射撃で減らした残弾（teamAmmo の回数に足す。plan/design-cinderella-cw.md 2.3 節）。省略は 1、装弾数無限の発は 0。1 パス目の射手と、
+   * 流し直し（replayEvents。射撃の列の infiniteAmmoShotFrames）が書く
    */
   ammo?: number;
 };
@@ -447,6 +447,7 @@ export function replayEvents(
     if (!log) return;
     const last = new Set(log.lastShotFrames ?? []);
     const changed = new Set(log.weaponChangeShotFrames ?? []);
+    const infinite = new Set(log.infiniteAmmoShotFrames ?? []);
     const full = fullChargeFrameSet(log);
     log.frames.forEach((f, k) => {
       if (f >= frames) return;
@@ -461,6 +462,7 @@ export function replayEvents(
       const pellets = log.pelletHits?.[k];
       if (pellets !== undefined) shot.pellets = pellets;
       if (changed.has(f)) shot.weaponChange = true;
+      if (infinite.has(f)) shot.ammo = 0;
       (at(f).shots as (ShotEvent | null)[])[slotIndex] = shot;
     });
     // 使用武器の変更の終わり（トリガー { weaponChangeEnd }）

@@ -232,7 +232,9 @@ function parseHitShape(v: Record<string, Json>, effect: DamageEffect, path: stri
   if (v.perCount !== undefined) effect.perCount = parseDamagePerCount(v.perCount, trigger, `${path}.perCount`);
   // 「N 回順番に攻撃」（plan/design-new-chars-1029.md 5.2 節）
   if (v.hitsRef !== undefined) {
-    if (isShotCountTrigger(trigger)) fail(`${path}.hitsRef`, 'hitsRef cannot be used with a shot count trigger');
+    // 味方が消費した弾の合計は、自分の発に付くヒットではないので N 回順番に攻撃を書ける（バブルバラージ。plan/design-little-mermaid.md 2.1 節）
+    if (isShotCountTrigger(trigger) && trigger.count !== 'teamAmmo')
+      fail(`${path}.hitsRef`, 'hitsRef cannot be used with a shot count trigger (except teamAmmo)');
     if (effect.perBurstHit === true) fail(`${path}.hitsRef`, 'hitsRef cannot be used with perBurstHit');
     effect.hitsRef = parseRef(v.hitsRef, `${path}.hitsRef`);
   }
@@ -372,6 +374,9 @@ function parseDamageGaugePerHit(v: Record<string, Json>, effect: DamageEffect, p
       'gaugePerHit needs a timer trigger ({ everySeconds }), { counterFull } or a shot count trigger without a counting window',
     );
   if (effect.gaugeHits !== undefined) fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with gaugeHits');
+  // 味方が消費した弾の合計の倍率ダメージがゲージを溜めるかは確かめていない（plan/design-little-mermaid.md 2.1 節）
+  if (isShotCountTrigger(trigger) && trigger.count === 'teamAmmo')
+    fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with a teamAmmo count');
   // 1 パス目は名前の無い窓の短縮を追わない（使い手のエイダの S2 はゲージを溜めるかを確かめていない）
   if (effect.periodShorten?.window !== undefined)
     fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with a periodShorten window');

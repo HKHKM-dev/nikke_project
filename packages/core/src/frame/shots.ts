@@ -48,6 +48,11 @@ export type ShotLog = {
    */
   weaponChangeShotFrames?: number[];
   /**
+   * 装弾数無限で撃った射撃のフレーム（frames の部分列。残弾を減らさないので、味方が消費した弾の合計 teamAmmo に数えない。
+   * plan/design-little-mermaid.md 2.1 節）。1 パス目が書き、流し直し（skills/triggers.ts の replayEvents）が読む。省略は無し
+   */
+  infiniteAmmoShotFrames?: number[];
+  /**
    * きっかけ { chargeTick } の間隔ごとの、溜めの周期の発火のフレーム（昇順。plan/design-skill-stage14.md 2.1 節）。
    * 定義にそのきっかけを持つ枠だけ、1 パス目が溜めの進み（frame/shooter.ts の chargeProgressFrames）から書く。流し直し
    * （skills/triggers.ts の replayEvents）も同じ列を読む。省略は無し
