@@ -976,7 +976,8 @@ export type EffectTrigger =
   | CounterFullTrigger
   // { summon }（damage だけが受ける。parseSummonAttackTrigger）
   | SummonAttackTrigger
-  // { ended }（counterChange・ammoDecrease・状態の付与だけが受ける。plan/design-grave.md 2.1 節）
+  // { ended }（counterChange・ammoDecrease・状態の付与・damage・timed・敵の状態の消去だけが受ける。plan/design-grave.md 2.1 節・
+  // plan/design-asuka-wille.md 2.1 節）
   | EndedTrigger;
 
 export function isAppliedTrigger(t: unknown): t is AppliedTrigger {
@@ -1475,9 +1476,11 @@ export type DamageEffect = {
    * 状態のスタック数（発火のフレームより前に付いた件。条件 selfState と同じ見え方）を掛ける。0 なら出さない。trigger が burstUse の
    * ときだけ書ける（シンデレラのバーストの追加ダメージ。V-0502）。{ counter } は
    * 発火のフレームの自分のそのカウンタの値（前のフレームの終わりの値。条件 selfCounter と同じ見え方）を掛ける（ラプラス：アルティメット
-   * ヒーローのバーストの追加ダメージ。V-0532。plan/design-skill-stage11.md 2.5 節）
+   * ヒーローのバーストの追加ダメージ。V-0532。plan/design-skill-stage11.md 2.5 節）。{ enemyState } は発火のフレームに敵に付いている
+   * 同じ枠のその状態のスタック数（条件 enemyState と同じ見え方。trigger が { ended } のときだけ。同じ定義に、敵にスタックで付ける
+   * その状態の付与が要る。殲滅。plan/design-asuka-wille.md 2.2 節）
    */
-  perCount?: { state: NamedStateId } | { counter: CounterId };
+  perCount?: { state: NamedStateId } | { counter: CounterId } | { enemyState: NamedStateId };
   /**
    * 「N 回順番に攻撃」の回数の description_value_NN（plan/design-new-chars-1029.md 5.2 節）。1 回の発動を
    * N ヒットに分け、どのヒットも ref の値で出す（バーストの hitsRef と同じく、ref は 1 ヒットの値）。N ヒットとも発火のフレームのバフと
@@ -2477,6 +2480,11 @@ export type CancelStateEffect = {
   target: 'enemy' | 'self';
   /** self の発火の条件（解除と同じ鍵） */
   condition?: EffectCondition;
+  /**
+   * 敵の状態の消去の、発火から消すまでのフレーム（1 以上の整数。きっかけが { ended } で、敵にスタックで付ける付与の状態のときだけ。
+   * 殲滅のヒットの後に消す。plan/design-asuka-wille.md 2.3 節）
+   */
+  delayFrames?: number;
   assumes?: LocalizedText;
 };
 
@@ -2612,7 +2620,8 @@ export type CounterChangeEffect = {
 
 /**
  * 「〈名前〉状態が終了した時」（plan/design-skill-stage4.md 1.3 節の形）。自分のその状態の件（段によらない）が外れた最初の
- * フレームに発火する。counterChange・ammoDecrease・状態の付与に書ける（plan/design-grave.md 2.1 節）。見る状態は、同じ定義の
+ * フレームに発火する。counterChange・ammoDecrease・状態の付与・damage・timed・敵の状態の消去に書ける（plan/design-grave.md 2.1 節・
+ * plan/design-asuka-wille.md 2.1 節）。見る状態は、同じ定義の
  * 自分に付ける付与のあるもの
  */
 export type EndedTrigger = { ended: NamedStateId };

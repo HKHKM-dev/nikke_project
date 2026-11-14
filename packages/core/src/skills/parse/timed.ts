@@ -294,9 +294,10 @@ function parseTimedTrigger(
     parseChargeTrigger(v.trigger, at) ??
     // 両隣の味方の HP の割合（timed と付与。plan/design-adjacent-allies.md 2.3・2.4 節）
     parseAdjacentHpTrigger(v.trigger, at) ??
+    // 「〈状態〉が終了した時」（{ ended }。付与と timed。plan/design-grave.md 2.1 節・plan/design-asuka-wille.md 2.1 節）
+    parseEndedTrigger(v.trigger, at) ??
     (stat === undefined
-      ? // 「〈状態〉が終了した時」（{ ended }）も状態の付与だけ（plan/design-grave.md 2.1 節）
-        (parseCounterFullTrigger(v.trigger, at) ?? parseEndedTrigger(v.trigger, at))
+      ? parseCounterFullTrigger(v.trigger, at)
       : (parseCoverHealedTrigger(v.trigger, at) ??
         parseSelfHpAtMostTrigger(v.trigger, at) ??
         parseSkillFiredTrigger(v.trigger, at))) ??

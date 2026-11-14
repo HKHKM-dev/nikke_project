@@ -301,10 +301,13 @@ function validateOwnStateTriggers(entries: Partial<Record<SkillSlot, SkillEntry>
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
       const at = `${root}.${slot}.effects[${i}]`;
-      // 状態の終わりのきっかけ・自分の状態の窓で数える回数・ほかの状態の終わりまでの維持（plan/design-grave.md 2.1・2.4・2.5 節）
+      // 状態の終わりのきっかけ（counterChange のほか。counterChange は parse/state.ts が見る。plan/design-grave.md 2.1 節・
+      // plan/design-asuka-wille.md 2.1 節）
+      if (e.kind !== 'counterChange' && 'trigger' in e && isEndedTrigger(e.trigger))
+        needGrant(e.trigger.ended, `${at}.trigger`, e.kind);
+      // 自分の状態の窓で数える回数・ほかの状態の終わりまでの維持（plan/design-grave.md 2.4・2.5 節）
       if (e.kind === 'ammoDecrease' || e.kind === 'state') {
         const t = e.trigger;
-        if (isEndedTrigger(t)) needGrant(t.ended, `${at}.trigger`, e.kind);
         if (e.kind === 'state' && isShotCountTrigger(t) && isStateCountWindow(t.during))
           needGrant(t.during.state, `${at}.trigger.during`, e.kind);
         const until = e.kind === 'state' ? e.durationUntil : undefined;
@@ -443,7 +446,8 @@ function validateSummons(entries: Partial<Record<SkillSlot, SkillEntry>>, root: 
 /**
  * 消去（cancelState）と敵のスタック量▲（stackChange の target
  * enemy）は、同じ定義の firstTick halfAfterLatest の dot の state を指す（消去で tick を止めるのは、付けるたびに刻みを付け直す形だけ。frame/dot.ts の latestDotTicks。plan/design-skill-stage13.md 2.4・2.5 節）。dot の stacksFrom の
- * enemyState も、同じ定義の dot の state を指す
+ * enemyState も、同じ定義の dot の state を指す。消去は、敵にスタックで付ける付与の状態も指せ、damage の perCount の enemyState は
+ * それを指す（plan/design-asuka-wille.md 2.2・2.3 節）
  */
 function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   const dots = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
@@ -452,7 +456,21 @@ function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, r
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
       const onDot = (e.kind === 'cancelState' || e.kind === 'stackChange') && e.target === 'enemy';
-      if (onDot && !dots.some((d) => d.state === e.state && d.firstTick === 'halfAfterLatest'))
+      // 消去は、敵にスタックで付ける付与の状態も指せる（アンチA.T.フィールド。plan/design-asuka-wille.md 2.3 節）
+      const onGrant =
+        e.kind === 'cancelState' && e.target === 'enemy' && hasSelfStackingGrant(entries, e.state, 'enemy');
+      // 「〈状態〉が終了した時」の消去と遅れは、敵に付けた付与の状態だけ（持続ダメージの消去は出来事の列で発火する）
+      if (
+        e.kind === 'cancelState' &&
+        e.target === 'enemy' &&
+        !onGrant &&
+        (isEndedTrigger(e.trigger) || e.delayFrames !== undefined)
+      )
+        fail(
+          `${root}.${slot}.effects[${i}]`,
+          `a cancel triggered by { ended } or with delayFrames needs a grant of "${e.state}" on the enemy with stacks`,
+        );
+      if (onDot && !onGrant && !dots.some((d) => d.state === e.state && d.firstTick === 'halfAfterLatest'))
         fail(
           `${root}.${slot}.effects[${i}]`,
           `${e.kind} of "${e.state}" needs a dot of the same state with firstTick halfAfterLatest in the definition`,
@@ -463,6 +481,13 @@ function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, r
         fail(
           `${root}.${slot}.effects[${i}].stacksFrom`,
           `stacksFrom needs a dot of the state "${from}", or a grant of it on the enemy with stacks, in the definition`,
+        );
+      // damage の perCount { enemyState } は、敵にスタックで付ける付与の状態（plan/design-asuka-wille.md 2.2 節）
+      const per = e.kind === 'damage' ? e.perCount : undefined;
+      if (per !== undefined && 'enemyState' in per && !hasSelfStackingGrant(entries, per.enemyState, 'enemy'))
+        fail(
+          `${root}.${slot}.effects[${i}].perCount`,
+          `perCount { enemyState } needs a grant of "${per.enemyState}" on the enemy with stacks in the definition`,
         );
     });
   }

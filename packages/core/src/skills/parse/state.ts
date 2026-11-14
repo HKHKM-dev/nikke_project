@@ -77,6 +77,9 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
     for (const key of ENEMY_GRANT_FORBIDDEN_KEYS) {
       if (v[key] !== undefined) fail(`${path}.${key}`, 'not allowed in a grant on the enemy (target "enemy")');
     }
+    // 条件は自分の状態（selfState）だけ（アンチA.T.フィールドの「自分が殲滅態勢状態の時に限り」。plan/design-asuka-wille.md 2.4 節）
+    if (isRecord(v.condition) && Object.keys(v.condition).some((key) => key !== 'selfState'))
+      fail(`${path}.condition`, 'a grant on the enemy can only have the condition selfState');
     v = { ...v, target: 'allies' };
   }
   const state = parseNamedStateId(v.state, `${path}.state`, onEnemy ? 'enemy' : 'ally');
@@ -128,7 +131,6 @@ const ENEMY_GRANT_FORBIDDEN_KEYS: readonly string[] = [
   'undispellable',
   'stacksFrom',
   'stackImmutable',
-  'condition',
 ];
 
 /**
@@ -757,11 +759,11 @@ export function parseRemoveDebuffEffect(v: Record<string, Json>, path: string): 
 }
 
 /**
- * 消去（plan/design-skill-stage13.md 2.5 節）。いまは敵の持続ダメージの状態（同じ定義の dot の state）だけで、
- * 対象は敵。解除不可の件も閉じる
+ * 消去（plan/design-skill-stage13.md 2.5 節）。敵の状態（同じ定義の dot の state か、敵にスタックで付ける付与の状態。
+ * plan/design-asuka-wille.md 2.3 節）で、対象は敵。解除不可の件も閉じる。「〈状態〉が終了した時」（{ ended }）も書ける
  */
 export function parseCancelStateEffect(v: Record<string, Json>, path: string): CancelStateEffect {
-  rejectUnknownKeys(v, ['kind', 'state', 'trigger', 'target', 'condition', 'assumes', 'claims'], path);
+  rejectUnknownKeys(v, ['kind', 'state', 'trigger', 'target', 'condition', 'delayFrames', 'assumes', 'claims'], path);
   // self は自分の状態の消去（解除と同じ書き方。解除不可の件も閉じる。plan/design-mint-prika.md 2.1 節）
   if (v.target === 'self') {
     const { kind: _, ...rest } = parseRemoveStateEffect({ ...v, kind: 'removeState' }, path);
@@ -770,8 +772,13 @@ export function parseCancelStateEffect(v: Record<string, Json>, path: string): C
   if (v.condition !== undefined) fail(`${path}.condition`, 'a cancel on the enemy cannot have a condition');
   if (v.target !== 'enemy') fail(`${path}.target`, `expected "enemy" or "self", got ${JSON.stringify(v.target)}`);
   const state = parseNamedStateId(v.state, `${path}.state`, 'enemy');
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
+  const trigger = parseEndedTrigger(v.trigger, `${path}.trigger`) ?? parseTrigger(v.trigger, `${path}.trigger`);
   const effect: CancelStateEffect = { kind: 'cancelState', state, trigger, target: 'enemy' };
+  // 「〈状態〉が終了した時」から消すまでの遅れ（殲滅のヒットの後に消す。plan/design-asuka-wille.md 2.3 節）
+  if (v.delayFrames !== undefined) {
+    if (!isEndedTrigger(trigger)) fail(`${path}.delayFrames`, 'delayFrames of a cancel needs the trigger { ended }');
+    effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
+  }
   parseAssumes(v, effect, path);
   return effect;
 }

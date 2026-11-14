@@ -8,6 +8,7 @@ import {
   type EffectTrigger,
   isAppliedTrigger,
   isCounterFullTrigger,
+  isEndedTrigger,
   isSelfHpAtMost,
   isShotCountTrigger,
   isSummonAttackTrigger,
@@ -31,7 +32,7 @@ import {
   rejectUnknownKeys,
 } from './common.ts';
 import { CONDITION_KEYS_OF, parseCondition, validateUsedBurst } from './condition.ts';
-import { parseDamageTrigger, parseShotCountDelay } from './trigger.ts';
+import { parseDamageTrigger, parseEndedTrigger, parseShotCountDelay } from './trigger.ts';
 
 export function parseBurstDamageEffect(v: Record<string, Json>, path: string): BurstDamageEffect {
   const damageType = oneOf(BURST_DAMAGE_TYPES, v.damageType, `${path}.damageType`);
@@ -50,7 +51,8 @@ const isGaugeScale = (x: Json): x is number => Number.isInteger(x) && (x as numb
  * plan/design-split-long-functions.md 3.1 節）
  */
 export function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect {
-  const trigger = parseDamageTrigger(v.trigger, `${path}.trigger`);
+  // 「〈状態〉が終了した時」（殲滅。plan/design-asuka-wille.md 2.1 節）
+  const trigger = parseEndedTrigger(v.trigger, `${path}.trigger`) ?? parseDamageTrigger(v.trigger, `${path}.trigger`);
   // 射撃ごと（every = 1）の倍率ダメージも書ける。1 トリガーの値に畳み込む（skills/burstDamage.ts の resolvePerShotDamage）
   const damageType = oneOf(DAMAGE_EFFECT_TYPES, v.damageType, `${path}.damageType`);
   const effect: DamageEffect = { kind: 'damage', trigger, ref: parseRef(v.ref, `${path}.ref`), damageType };
@@ -189,7 +191,8 @@ function parseGaugeHitsAndCondition(v: Record<string, Json>, effect: DamageEffec
  * 発動からヒットまでの遅れ（delayFrames）。書けるきっかけは、バースト使用時（plan/design-delayed-skill-hit.md 3.1 節）と、
  * 「〈効果名〉が適用された時」（クイーン（真）S1 の追撃。plan/design-persona.md 9.3 節）と、
  * 周期のスキルの発動（時間の周期のトリガー。C-0453。plan/design-timer-ceil.md 2 節の論点 4）と、
- * 射撃の回数のきっかけ（確率を除く。plan/design-shot-count-trigger-frame.md 6.6 節）と、カウンタが上限に届いた時（{ counterFull }）
+ * 射撃の回数のきっかけ（確率を除く。plan/design-shot-count-trigger-frame.md 6.6 節）と、カウンタが上限に届いた時（{ counterFull }）と、
+ * 〈状態〉が終了した時（{ ended }）
  */
 function parseDamageDelay(v: Record<string, Json>, effect: DamageEffect, path: string): void {
   if (v.delayFrames === undefined) return;
@@ -200,15 +203,17 @@ function parseDamageDelay(v: Record<string, Json>, effect: DamageEffect, path: s
     if (effect.gaugeHits !== undefined) fail(`${path}.delayFrames`, 'delayFrames cannot be used with gaugeHits');
     return;
   }
+  // 「〈状態〉が終了した時」から殲滅のヒットまで（plan/design-asuka-wille.md 2.1 節）
   if (
     trigger !== 'burstUse' &&
     !isAppliedTrigger(trigger) &&
     !isTimerTrigger(trigger) &&
-    !isCounterFullTrigger(trigger)
+    !isCounterFullTrigger(trigger) &&
+    !isEndedTrigger(trigger)
   ) {
     fail(
       `${path}.delayFrames`,
-      'delayFrames needs the trigger "burstUse", { applied }, { everySeconds }, { counterFull } or a shot count trigger',
+      'delayFrames needs the trigger "burstUse", { applied }, { everySeconds }, { counterFull }, { ended } or a shot count trigger',
     );
   }
   effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
@@ -273,6 +278,13 @@ function parseHitShape(v: Record<string, Json>, effect: DamageEffect, path: stri
  */
 function parseDamagePerCount(per: Json, trigger: EffectTrigger, at: string): NonNullable<DamageEffect['perCount']> {
   if (!isRecord(per)) fail(at, 'expected an object');
+  // 「個別対象ごとに〈名前〉スタックコピー」の 1 回のヒット。敵に付いた状態のスタック数を掛ける。きっかけは「〈状態〉が終了した時」
+  // だけ（殲滅。plan/design-asuka-wille.md 2.2 節）
+  if (per.enemyState !== undefined) {
+    rejectUnknownKeys(per, ['enemyState'], at);
+    if (!isEndedTrigger(trigger)) fail(at, 'perCount { enemyState } needs the trigger { ended }');
+    return { enemyState: parseNamedStateId(per.enemyState, `${at}.enemyState`, 'enemy') };
+  }
   const fullChargeShot = isShotCountTrigger(trigger) && trigger.count === 'fullChargeShot';
   if (trigger !== 'burstUse' && trigger !== 'fullBurstStart' && !isCounterFullTrigger(trigger) && !fullChargeShot)
     fail(at, 'perCount needs the trigger "burstUse", "fullBurstStart", { counterFull } or { count: "fullChargeShot" }');

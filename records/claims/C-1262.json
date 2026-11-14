@@ -1,0 +1,40 @@
+{
+  "id": "C-1262",
+  "text": "アスカ：WILLEのバーストの効果（殲滅態勢・通常攻撃ダメージ 40% 倍率▼・弾丸チャージ・発動者基準の攻撃力▲・攻撃ダメージ▲）は説明文どおりで、III のタイマーの 00.00 の 1f 前から付く（00.00 の 2f 前の発には乗らず、1f 前の発には乗る）。通常攻撃ダメージ倍率▼は、通常攻撃の武器倍率に (1 − 0.4) を掛ける",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1196-01`・`1196-02`（2 回目の発動の、00.00 の 2f 前の発に▲が無く 1f 前の発に乗る。付き始めを決めた回）、`1197-01`（再現）。▲の値は 00.00 の 1f 前の発（フルバースト補正と S2 の▲の前）で、武器倍率 547 × 0.6 = 328 と攻撃力 46.8%▲・攻撃ダメージ 36%▲で 1 の位まで合う。ほかの回も 1f 前の発に乗り 2f 前の発に乗らない（1196 の 1 回目だけ 2f 前の発にも乗る）。弾丸チャージは 1 回 62〜63 発（照準の左の残弾）。V-0781",
+  "model": "反映（`data/skills/835.json` の burst の effects[0]〜[4]、`burst/landing.ts` の `MEASURED_BURST_DELAYS` のアスカ：WILLE の行（effectFrames −1。00.00 から数える。窓はそこから 9 秒））",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": [
+      "data/skills/835.json の burst の effects[0]",
+      "data/skills/835.json の burst の effects[1]",
+      "data/skills/835.json の burst の effects[2]",
+      "data/skills/835.json の burst の effects[3]",
+      "data/skills/835.json の burst の effects[4]"
+    ]
+  },
+  "decidedOn": [
+    {
+      "recording": "1196",
+      "role": "値を合わせた"
+    }
+  ],
+  "minimal": [
+    {
+      "observations": ["1196-01", "1196-02", "1197-01"],
+      "element": ["アスカ：WILLE skill2.effects[0]"],
+      "reason": "比べた発はフルバーストの始まり（00.00）より前で、S2 の▲はまだ付いていない",
+      "decided": "2026-11-14"
+    },
+    {
+      "observations": ["1197-01"],
+      "element": ["アスカ：WILLE skill1.effects[2]"],
+      "reason": "比べた発は殲滅態勢が付いた次のフレームで、アンチA.T.フィールドはまだ付いていない",
+      "decided": "2026-11-14"
+    }
+  ]
+}

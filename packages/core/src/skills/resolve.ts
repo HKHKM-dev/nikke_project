@@ -1196,9 +1196,9 @@ export function resolveRemoveDebuffs(
 
 /**
  * 解決した消去（cancelState。plan/design-skill-stage13.md 2.5 節）。消す状態は、同じ定義の firstTick halfAfterLatest
- * の dot の state（定義の読みで見る。skills/parse/crossChecks.ts の validateDotStateRefs）。frame/plan.ts の planSkillHits と skills/holders.ts の敵の状態の件が読む
+ * の dot の state か、敵にスタックで付ける付与の状態（delayFrames は付与の状態だけ。plan/design-asuka-wille.md 2.3 節。定義の読みで見る。skills/parse/crossChecks.ts の validateDotStateRefs）。frame/plan.ts の planSkillHits と skills/holders.ts の敵の状態の件が読む
  */
-export type ResolvedDotCancel = { state: NamedStateId; trigger: ResolvedTrigger };
+export type ResolvedDotCancel = { state: NamedStateId; trigger: ResolvedTrigger; delayFrames?: number };
 
 export function resolveDotCancels(
   def: SkillDefinition,
@@ -1208,7 +1208,13 @@ export function resolveDotCancels(
   return SKILL_SLOTS.flatMap((slot) =>
     def.skills[slot].effects.flatMap((effect) =>
       effect.kind === 'cancelState' && effect.target === 'enemy'
-        ? [{ state: effect.state, trigger: resolveTrigger(effect.trigger, character.skills[slot], levels[slot]) }]
+        ? [
+            {
+              state: effect.state,
+              trigger: resolveTrigger(effect.trigger, character.skills[slot], levels[slot]),
+              delayFrames: effect.delayFrames,
+            },
+          ]
         : [],
     ),
   );

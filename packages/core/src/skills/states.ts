@@ -418,6 +418,16 @@ export const NAMED_STATES = {
    * S2 の「何見てんだよお前ら！！状態の時のみ、2 秒ごとに」が見る）
    */
   overconfidentHuh: { name: { ja: '何見てんだよお前ら！！', en: 'Overconfident, Huh?!' }, holder: 'ally' },
+  /**
+   * 殲滅態勢（アスカ：WILLE のバースト。自分・中身なし・9 秒。S1 の 10 発ごとの効果の条件、S2 の「フルバーストが発動した時、殲滅態勢
+   * なら」、殲滅と緊急修復の「殲滅態勢が終了した時」が見る。plan/design-asuka-wille.md 1 節）
+   */
+  annihilationState: { name: { ja: '殲滅態勢', en: 'Annihilation State' }, holder: 'ally' },
+  /**
+   * アンチA.T.フィールド（アスカ：WILLE の S1。殲滅態勢の間の 10 発ごとに敵に 1 スタック・30 スタック・30 秒。中身は受けるダメージ▲。
+   * バーストの殲滅がスタックを写し、その後に消す。plan/design-asuka-wille.md 2.2・2.3 節）
+   */
+  antiATField: { name: { ja: 'アンチA.T.フィールド', en: 'Anti A.T. Field' }, holder: 'enemy' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

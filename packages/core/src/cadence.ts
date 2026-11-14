@@ -43,12 +43,14 @@ export function reloadChunks(shot: Pick<ShotParams, 'maxAmmo' | 'reloadBullet'>)
 
 /**
  * i 発目を撃った直後の発射レート（rpm）。MG は 1 発ごとに上昇し 1 フレーム 1 発（MAX_RPM）で頭打ち。
- * rateScale（攻撃速度▲の 1 + Σ。frame/firing.ts の FiringParams）を掛けてから頭打ちにする（C-0600）
+ * rateScale（攻撃速度▲の 1 + Σ。frame/firing.ts の FiringParams）を掛けてから頭打ちにする（C-0600）。
+ * spun はマガジンの立ち上がりの進み（発ごとにその発の立ち上げ速度 (1 + Σ) を積んだもの。frame/shooter.ts の ShooterState.spunShots。
+ * 立ち上げ速度が一定なら撃った数 × (1 + Σ)）
  */
-export function rateAfterShots(shot: ShotParams, shotsFired: number, rateScale = 1, spinUpScale = 1): number {
+export function rateAfterShots(shot: ShotParams, spun: number, rateScale = 1): number {
   // 立ち上げ速度▲は 1 発ごとの上がり幅に掛ける（plan/design-new-chars-1029.md 5.6 節）
   const rpm = hasSpinUp(shot)
-    ? Math.min(shot.endRateOfFire, shot.rateOfFire + shotsFired * shot.rateOfFireChangePerShot * spinUpScale)
+    ? Math.min(shot.endRateOfFire, shot.rateOfFire + spun * shot.rateOfFireChangePerShot)
     : shot.rateOfFire;
   return Math.min(MAX_RPM, rpm * rateScale);
 }
@@ -113,7 +115,7 @@ function simulateMagazine(
   let t = 0;
   while (frames.length < params.maxAmmo) {
     t += 1;
-    acc += rateAfterShots(shot, frames.length, params.rateScale, params.spinUpScale) / MAX_RPM;
+    acc += rateAfterShots(shot, frames.length * params.spinUpScale, params.rateScale) / MAX_RPM;
     if (acc >= 1 - ACC_EPSILON) {
       acc -= 1;
       frames.push(t);
@@ -207,7 +209,7 @@ function reloadWaitOutsideChargeFrames(shot: ShotParams, model: WeaponModel, par
 /**
  * 全弾リロードの始まりの、最終弾のフレームからのずれ（負は前。V-0681）。入力が UP のチャージ武器（射撃姿勢維持型を含む）は
  * upChargeReloadStartFrames、押下チャージ型は 0。チャージの無い武器は、最終弾の本当の発の時刻（最終弾のフレームの発射レートの蓄積の
- * 余り acc を、そのフレームの 1 フレームぶんの蓄積で割ったぶん前。lastShotIndex は最終弾がマガジンの何発目か（0 始まり））。
+ * 余り acc を、そのフレームの 1 フレームぶんの蓄積で割ったぶん前。spunBeforeLast は最終弾の前までのマガジンの立ち上がりの進み（frame/shooter.ts の ShooterState.spunShots。立ち上げ速度が一定なら最終弾がマガジンの何発目か（0 始まり）× (1 + Σ)））。
  * 毎フレーム撃つ速さ（MG）では 0
  */
 export function reloadStartOffset(
@@ -215,10 +217,10 @@ export function reloadStartOffset(
   model: WeaponModel,
   params: FiringParams,
   acc: number,
-  lastShotIndex: number,
+  spunBeforeLast: number,
 ): number {
   if (isChargeWeapon(shot)) return params.downCharge ? 0 : model.upChargeReloadStartFrames;
-  const inc = rateAfterShots(shot, lastShotIndex, params.rateScale, params.spinUpScale) / MAX_RPM;
+  const inc = rateAfterShots(shot, spunBeforeLast, params.rateScale) / MAX_RPM;
   return inc >= 1 - ACC_EPSILON || inc <= 0 ? 0 : -acc / inc;
 }
 
@@ -252,7 +254,7 @@ export function computeCadence(
         shot,
         model,
         params,
-        reloadStartOffset(shot, model, params, magazine.lastAcc, shotFrames.length - 1),
+        reloadStartOffset(shot, model, params, magazine.lastAcc, (shotFrames.length - 1) * params.spinUpScale),
       );
   // 1 周期 = リロード明けの 1 発目の遅れ + マガジン + リロード。戦闘開始のマガジンだけ first から始まる
   const cycleFrames = reloadFirst + magazineFrames + reloadFrames;

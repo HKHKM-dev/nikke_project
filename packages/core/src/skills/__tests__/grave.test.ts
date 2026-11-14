@@ -35,7 +35,7 @@ describe('語彙の検証', () => {
     expect(() => parseSkillDefinition(raw)).not.toThrow();
   });
 
-  it('takes { ended } on ammoDecrease and state grants for an own state only', () => {
+  it('takes { ended } for an own state only, and not on every kind', () => {
     expect(patched('skill1', AMMO, { trigger: { ended: 'modeB' } })).toThrow(/needs a grant of the same state on self/);
     expect(patched('skill1', HEAT, { trigger: { ended: 'modeB' } })).toThrow(/needs a grant of the same state on self/);
     expect(patched('skill1', HEAT, { trigger: { ended: 'heatEmission' } })).toThrow(
@@ -44,14 +44,12 @@ describe('語彙の検証', () => {
     expect(patched('skill1', AMMO, { trigger: { ended: 'prediction', count: 'normalHit' } })).toThrow(/unknown field/);
     expect(
       added('skill1', {
-        kind: 'timed',
+        kind: 'ammoRefill',
         trigger: { ended: 'prediction' },
         target: 'self',
-        stat: 'attack',
         ref: 2,
-        durationSeconds: 1,
       }),
-    ).toThrow(/only allowed in counterChange, ammoDecrease and state grants/);
+    ).toThrow(/only allowed in counterChange, ammoDecrease, state grants, damage, timed and cancelState/);
   });
 
   it('takes the reload end on a grant on self that does not stack', () => {

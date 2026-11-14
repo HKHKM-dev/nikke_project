@@ -594,8 +594,8 @@
       "metric": "shotIntervals",
       "args": {
         "slot": 3,
-        "from": 1445,
-        "to": 1519
+        "from": 1440,
+        "to": 1514
       },
       "tolerance": {
         "abs": 1

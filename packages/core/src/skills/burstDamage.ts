@@ -21,7 +21,6 @@ import { gameSecondsToFrames } from '../time.ts';
 import type { CharacterData, LocalizedText } from '../types.ts';
 import { applyAttackDamageBuffs, applyCritBuffs, type BuffTotals } from './buffs.ts';
 import type { NamedStateId } from './states.ts';
-import type { CounterId } from './counters.ts';
 import {
   isAppliedTrigger,
   isShotCountTrigger,
@@ -164,8 +163,8 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
    * 召喚の攻撃は 2 以上の数も書ける）
    */
   gaugePerHit?: number;
-  /** 倍率に掛ける、発火のフレームの自分のその状態のスタック数か、カウンタの値（frame/plan.ts の planSkillHits） */
-  perCount?: { state: NamedStateId } | { counter: CounterId };
+  /** 倍率に掛ける、発火のフレームの自分のその状態のスタック数・カウンタの値・敵のその状態のスタック数（frame/plan.ts の planSkillHits） */
+  perCount?: DamageEffect['perCount'];
   /** perCount の数だけ、倍率を掛けずに 1 つずつこの間隔（秒）で出す（frame/plan.ts の planSkillHits） */
   perCountIntervalSeconds?: number;
   /**

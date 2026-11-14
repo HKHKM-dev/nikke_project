@@ -585,10 +585,20 @@ function createHealTracks({ newTrack, slots }: SourceDeps) {
   return { healKey, healTracks };
 }
 
-/** 持続ダメージが付ける敵の状態（出どころ × 状態ごとに 1 つの件の列。持ち主は敵）と、その消去 */
+/** 持続ダメージが付ける敵の状態（出どころ × 状態ごとに 1 つの件の列。持ち主は敵）と、敵の状態（持続ダメージか、敵に付けた付与）の消去 */
 function createEnemyStateSources({ firesOf, newTrack, slots }: SourceDeps) {
   const enemyStateSources: EnemyStateSource[] = [];
-  const dotCancelSources: { track: HeldTrack; fires: TriggerTracker }[] = [];
+  // track は持続ダメージの状態の件の列。null なら、敵にスタックで付ける付与の状態（register.ts が同じ枠のその状態の件の列を閉じる。
+  // plan/design-asuka-wille.md 2.3 節）
+  const dotCancelSources: {
+    track: HeldTrack | null;
+    sourceSlotIndex: number;
+    state: NamedStateId;
+    delayFrames: number;
+    fires: TriggerTracker;
+    /** 付与の状態の、閉じる件の列（register.ts が初めての消去で集める） */
+    grantTracks?: HeldTrack[];
+  }[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const group of groupDotsByState(resolveDotEffects(slot.definition, slot.character, slot.levels))) {
@@ -599,15 +609,22 @@ function createEnemyStateSources({ firesOf, newTrack, slots }: SourceDeps) {
         track: newTrack(ENEMY, sourceSlotIndex, { kind: 'enemyState', state, effects: group }, 1),
       });
     }
-    // 消去（cancelState）は、同じ枠の持続ダメージの状態の件を閉じる（plan/design-skill-stage13.md 2.5 節）
+    // 消去（cancelState）は、同じ枠の持続ダメージの状態の件か、敵に付けた状態の付与の件を閉じる（plan/design-skill-stage13.md 2.5 節・
+    // plan/design-asuka-wille.md 2.3 節）
     for (const cancel of resolveDotCancels(slot.definition, slot.character, slot.levels)) {
       const source = enemyStateSources.find(
         ({ track }) =>
           track.sourceSlotIndex === sourceSlotIndex &&
           track.origin.kind === 'enemyState' &&
           track.origin.state === cancel.state,
-      )!;
-      dotCancelSources.push({ track: source.track, fires: firesOf(cancel.trigger, sourceSlotIndex) });
+      );
+      dotCancelSources.push({
+        track: source?.track ?? null,
+        sourceSlotIndex,
+        state: cancel.state,
+        delayFrames: cancel.delayFrames ?? 0,
+        fires: firesOf(cancel.trigger, sourceSlotIndex),
+      });
     }
   });
   return { dotCancelSources, enemyStateSources };

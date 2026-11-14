@@ -75,6 +75,7 @@ import { stateMatches, statesMatching, type NamedStateId } from '../skills/state
 import { everyAtOf, type ShotCountEveryAt } from '../skills/triggers.ts';
 import {
   isCounterFullTrigger,
+  isEndedTrigger,
   isSummonAttackTrigger,
   burstUsersEventOf,
   ENEMY_HELD_STATS,
@@ -100,7 +101,7 @@ import {
   type TeamInput,
   type TeamSlotInput,
 } from '../team.ts';
-import { untargetableRanges } from './events.ts';
+import { unionRanges, untargetableRanges } from './events.ts';
 import type { FrameRange } from '../skills/timeline.ts';
 import { dotStacksAt, dotTicks, groupDotsByState } from './dot.ts';
 export {
@@ -593,6 +594,19 @@ function slotReadersOf(ctx: SkillHitsContext, slot: TeamSlotInput | null, slotIn
   };
 }
 
+/**
+ * 「〈状態〉が終了した時」の発火のフレーム。持ち主のその状態（家族も）の件が外れた最初のフレームで、そのフレームにほかの件が
+ * 付いていないもの（1 パス目の skills/holders/conditions.ts の endedAt と同じ見え方。plan/design-asuka-wille.md 2.1 節）
+ */
+function endedFramesOf(items: readonly HeldItemView[], state: NamedStateId, frames: number): number[] {
+  const own = items
+    .filter((i) => i.origin.kind === 'state' && stateMatches(state, i.origin.state))
+    .sort((x, y) => x.start - y.start);
+  return unionRanges(own)
+    .map((r) => r.end)
+    .filter((f) => f < frames);
+}
+
 /** 枠 slotIndex のヒットを ctx.hits に積む関数を作る。同じ発動の順のバーストの検査もここで行う */
 function slotHitPusherOf(
   ctx: SkillHitsContext,
@@ -695,8 +709,10 @@ function slotHitPusherOf(
 
 /** 枠の倍率ダメージ（damage）のヒットを積む */
 function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
-  const { history, schedule, frames, shots, summonHits, accumulateReleases, enemySpans, cooldownTimerFires } = ctx;
+  const { history, schedule, frames, shots, summonHits, accumulateReleases, enemySpans, enemyGrantStacksAt } = ctx;
+  const { cooldownTimerFires } = ctx;
   const { slot, slotIndex, definition, levels, sequential, selfStackCount, ownCounters, self, push, everyWindows } = s;
+  const { ownStateItems } = s;
   // 自分の発動（perBurstHit の damage が、発火のフレームからヒットのフレームの列を引く）
   const mine = (schedule?.activations ?? []).filter((a) => a.slotIndex === slotIndex);
   const everyAtFor = (skill: SkillSlot): ShotCountEveryAt | undefined => everyAtOf(everyWindows('shotCounts', skill));
@@ -748,14 +764,17 @@ function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
         ? counterFullFrames(ownCounters, slotIndex, t.counterFull)
         : isResolvedApplied(t)
           ? appliedFrames(history, t.applied, slotIndex)
-          : isResolvedTimer(t)
-            ? // クールタイムの印のある周期は 1 パス目の記録（plan/design-arcana-magician.md 2.1 節）
-              t.cooldown === true
-              ? cooldownFiresOf(slotIndex, effect.source.skill)
-              : timerDamageFrames(t, shorten, frames, schedule, slotIndex, (state, f) =>
-                  self.stateHolds({ state, present: true }, f),
-                )
-            : triggerFrames(t, schedule, slotIndex, frames, shots, undefined, everyAtFor(effect.source.skill));
+          : // 「〈状態〉が終了した時」は自分のその状態の件が外れた最初のフレーム（plan/design-asuka-wille.md 2.1 節）
+            isEndedTrigger(t)
+            ? endedFramesOf(ownStateItems, t.ended, frames)
+            : isResolvedTimer(t)
+              ? // クールタイムの印のある周期は 1 パス目の記録（plan/design-arcana-magician.md 2.1 節）
+                t.cooldown === true
+                ? cooldownFiresOf(slotIndex, effect.source.skill)
+                : timerDamageFrames(t, shorten, frames, schedule, slotIndex, (state, f) =>
+                    self.stateHolds({ state, present: true }, f),
+                  )
+              : triggerFrames(t, schedule, slotIndex, frames, shots, undefined, everyAtFor(effect.source.skill));
     for (const frame of fires) {
       if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, self)) continue;
       if (!usedBurstHolds(effect.condition, t, frame, schedule, slotIndex)) continue;
@@ -780,14 +799,17 @@ function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
       }
       // 「〈名前〉スタックコピー」は発火のフレームのスタック数を倍率に掛ける
       // （条件 selfState と同じく、発火のフレームより前に付いた件の段の最大。0 なら出さない。V-0502。plan/design-skill-stage10.md 2.1 節）。「× オーバー
-      // エネルギー段階」は発火のフレームのカウンタの値（V-0532）
+      // エネルギー段階」は発火のフレームのカウンタの値（V-0532）。敵の状態のスタックコピーは、発火のフレームに敵に付いている
+      // 同じ枠のその状態のスタック数（条件 enemyState と同じ見え方。殲滅。plan/design-asuka-wille.md 2.2 節）
       const per = effect.perCount;
       const copied =
         per === undefined
           ? undefined
           : 'state' in per
             ? selfStackCount(per.state, frame)
-            : self.counterAt(per.counter, frame);
+            : 'enemyState' in per
+              ? enemyGrantStacksAt(slotIndex, per.enemyState, frame)
+              : self.counterAt(per.counter, frame);
       if (copied === 0) continue;
       // 数だけのヒットを、倍率を掛けずに 1 つずつ間隔を空けて出す
       // （粘着榴弾の起爆・キャプチャーチェーンの攻撃。perCountFrames。それぞれのフレームのバフとフルバースト補正。plan/design-skill-stage12.md 2.2 節）。
