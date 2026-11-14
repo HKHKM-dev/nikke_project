@@ -1,0 +1,41 @@
+{
+  "id": "1173",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1173_sg_poli.mp4",
+  "original": "2026-11-14_21-07-22.mp4",
+  "durationSec": 198.5,
+  "frames": 11908,
+  "fps": 60,
+  "sizeMB": 240.6,
+  "sha256": "ff701d5f8bab",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 30,
+      "name": "ポリ",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0770 の撮影。リター（AI）・ポリ（操作・オート射撃 ON・宝物版）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-14T21:24+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

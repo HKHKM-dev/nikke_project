@@ -1,0 +1,170 @@
+{
+  "formatVersion": 1,
+  "resourceId": 30,
+  "checkedAt": "2026-11-14",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "allies",
+          "stat": "attack",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "「通常攻撃で 5 回攻撃した時」は撃った通常攻撃の発（SG の 1 発は 10 ペレットで 1 回）の通算で数え、5 発ごとに発火する。発火のたびに 10 秒を数え直す（重ならない）。基礎版は撮れない（スペック固定でも宝物版が出る）ので、根拠は宝物版の同じ行の録画",
+            "en": "\"After performing 5 normal attacks\" counts fired normal shots (one SG shot of 10 pellets counts once); every 5th shot fires it and restarts the 10 s (no stacking). The base version cannot be recorded (the treasure version shows even with fixed spec), so the evidence is the recordings of the same line in the treasure version"
+          },
+          "claims": [
+            "C-1211"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分と、自分を除く残りの HP の値が最も低い味方 2 機への防御力▲（10 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "The DEF increase on self and the 2 allies with the lowest remaining HP (excluding self, 10 s) does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
+        },
+        {
+          "ja": "自分と、自分を除く残りの HP の値が最も低い味方 2 機への受けるダメージ均等分配（10 秒）は防御系でダメージに関係しない",
+          "en": "Equal sharing of damage taken among self and the 2 allies with the lowest remaining HP (excluding self, 10 s) is defensive and does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "基礎版は撮れない（スペック固定でも宝物版が出る）ので、根拠は宝物版の同じ行の録画",
+            "en": "The base version cannot be recorded (the treasure version shows even with fixed spec), so the evidence is the recordings of the same line in the treasure version"
+          },
+          "claims": [
+            "C-1212"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "自分に張る味方共用バリア（最終最大HP の X%・10 秒）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは味方がバリア適用状態にならない。バリアの量は要件 5.2 節の外）",
+          "en": "The shared barrier for allies placed on self (X% of final max HP, 10 s) does not change damage by itself (it matters only with an effect reading barriers in the team; this barrier is not defined, so the model does not put allies in a barrier state; the barrier amount is out of scope, requirements 5.2)",
+          "kind": "indirect",
+          "path": "barrier",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  },
+  "treasureSkills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "allies",
+          "stat": "attack",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "「通常攻撃を 5 回行った時」は撃った通常攻撃の発（SG の 1 発は 10 ペレットで 1 回）の通算で数え、5 発ごとに発火する。発火のたびに 10 秒を数え直す（重ならない）",
+            "en": "\"After performing 5 normal attacks\" counts fired normal shots (one SG shot of 10 pellets counts once); every 5th shot fires it and restarts the 10 s (no stacking)"
+          },
+          "claims": [
+            "C-1211"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "戦闘開始時に自分に付くポリスバッジ（最終最大HP の X% のバリア・10 秒）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは自分がバリア適用状態にならない。バリアの量は要件 5.2 節の外）。ポリスバッジを読むのは、バーストの不屈と、S2 の終了時の持続回復だけ（どちらもダメージに関係しない）",
+          "en": "Police Badge on self at the start of battle (a barrier of X% of final max HP, 10 s) does not change damage by itself (it matters only with an effect reading barriers in the team; this grant is not defined, so the model does not put self in a barrier state; the barrier amount is out of scope, requirements 5.2). Only the Burst's Indomitability and the Skill 2 heal over time when it ends read Police Badge (neither affects damage)",
+          "kind": "indirect",
+          "path": "barrier",
+          "effect": {
+            "kind": "state",
+            "target": "self",
+            "trigger": "battleStart"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "20 秒ごとの、自分と、自分を除く HP が最も低い味方 2 機への防御力▲（10 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "The DEF increase every 20 s on self and the 2 allies with the lowest HP (excluding self, 10 s) does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
+        },
+        {
+          "ja": "20 秒ごとの、自分と、自分を除く HP が最も低い味方 2 機への受けるダメージ均等分配（10 秒）は防御系でダメージに関係しない",
+          "en": "Equal sharing of damage taken every 20 s among self and the 2 allies with the lowest HP (excluding self, 10 s) is defensive and does not affect damage",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "ポリスバッジ状態が終了した時の自分の持続回復（最終最大HP の X%・1 秒間隔・5 秒）は、ダメージに関係しない（自分にだけ付き、ポリに回復を受けた時の効果は無いので、どの味方のスキルの発動も変えない）",
+          "en": "The heal over time on self when Police Badge ends (X% of final max HP every 1 s for 5 s) does not affect damage (it lands only on self, and Poli has no effect on being healed, so it changes no ally's skill activation)",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-1212"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "自分がポリスバッジ状態の時の、自分への不屈（5 秒）とポリスバッジ解除はダメージに関係しない（解除で早く終わったポリスバッジは S2 の持続回復を起こすだけ）",
+          "en": "Indomitability on self (5 s) and the removal of Police Badge while in the Police Badge state do not affect damage (an early end of Police Badge only triggers the Skill 2 heal over time)",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "自分に張る味方共用バリア（最終最大HP の X%・10 秒）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは味方がバリア適用状態にならない。バリアの量は要件 5.2 節の外）",
+          "en": "The shared barrier for allies placed on self (X% of final max HP, 10 s) does not change damage by itself (it matters only with an effect reading barriers in the team; this barrier is not defined, so the model does not put allies in a barrier state; the barrier amount is out of scope, requirements 5.2)",
+          "kind": "indirect",
+          "path": "barrier",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}
