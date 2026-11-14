@@ -34,17 +34,17 @@ describe('similarDefined', () => {
 
   it('ranks the defined characters by the kinds they share', () => {
     const effects = [
-      effect(1, 'stat', false),
+      effect(1, 'damage:skill', false),
       effect(1, 'damage:burst', false),
-      effect(2, 'stat', true),
-      effect(3, 'stat', true),
+      effect(2, 'damage:skill', true),
+      effect(3, 'damage:skill', true),
       effect(3, 'damage:burst', true),
       effect(4, 'damage:burst', false),
       effect(5, 'heal', true),
     ];
     expect(similarDefined(1, effects)).toEqual([
-      { rid: 3, name: 'c3', shared: ['damage:burst', 'stat'] },
-      { rid: 2, name: 'c2', shared: ['stat'] },
+      { rid: 3, name: 'c3', shared: ['damage:burst', 'damage:skill'] },
+      { rid: 2, name: 'c2', shared: ['damage:skill'] },
     ]);
   });
 });

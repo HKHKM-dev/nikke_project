@@ -53,12 +53,12 @@ function sameValue(a: JsonValue, b: JsonValue): boolean {
 
 /**
  * 下書きに id・recording・source・readAt を付ける。既にある同じ道具の値は足さない（違えば process.exitCode = 2）。
- * tool は既存の観測値の method.tool と比べる名前（無ければ下書きごとの method.tool）
+ * 同じ道具かは、下書きと既存の観測値の method.tool で見る
  */
 export function prepareObservations(
   recordingId: string,
   produced: readonly ObservationDraft[],
-  opts: { tool?: string; source: string; readAt: string },
+  opts: { source: string; readAt: string },
 ): { existing: Observation[]; finished: Observation[] } {
   const existing = loadObservations(recordingId);
   const branches = observationIdsInBranches(recordingId);
@@ -69,7 +69,7 @@ export function prepareObservations(
     const prior = existing.find(
       (o) =>
         o.invalid === undefined &&
-        o.method?.tool === (opts.tool ?? p.method?.tool) &&
+        o.method?.tool === p.method?.tool &&
         o.kind === p.kind &&
         o.description === p.description,
     );

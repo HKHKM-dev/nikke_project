@@ -21,7 +21,7 @@ import type { Observation } from '../../packages/core/src/records/observations/t
 import { todayLocal } from '../../packages/core/src/records/predictions.ts';
 import { capturesDir } from './dirs.ts';
 import { RECIPES, findRecipe } from './recipes/index.ts';
-import { toolName, type RecipeContext, type RecipeObservation } from './recipes/types.ts';
+import { type RecipeContext, type RecipeObservation } from './recipes/types.ts';
 import {
   existingVideoOf,
   loadObservations,
@@ -95,11 +95,7 @@ for (const recording of recordings) {
     log: (m) => console.error(m),
   };
   const produced = await recipe.run(ctx);
-  const { existing, finished } = prepareObservations(id, produced, {
-    tool: toolName(recipe),
-    source: ctx.source,
-    readAt: ctx.readAt,
-  });
+  const { existing, finished } = prepareObservations(id, produced, { source: ctx.source, readAt: ctx.readAt });
   console.log(JSON.stringify(finished, null, 2));
   if (values.against) {
     const want = values.against.split(',').map((s) => s.trim());
