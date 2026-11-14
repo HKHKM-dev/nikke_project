@@ -29721,6 +29721,142 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "1141-09",
+      "element": "アリス：ワンダーランドバニー burst.effects[1]",
+      "key": "07a6d04bf12bb4d6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1141-09",
+      "element": "アリス：ワンダーランドバニー skill2.effects[0]",
+      "key": "07a6d04bf12bb4d6",
+      "effective": true,
+      "minus": 0,
+      "plus": -6
+    },
+    {
+      "observation": "1141-14",
+      "element": "アリス：ワンダーランドバニー burst.effects[1]",
+      "key": "9bb9ed468070698b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1141-14",
+      "element": "アリス：ワンダーランドバニー skill2.effects[0]",
+      "key": "9bb9ed468070698b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1141-16",
+      "element": "アリス：ワンダーランドバニー burst.effects[1]",
+      "key": "4c3d9db3984993d2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1141-16",
+      "element": "アリス：ワンダーランドバニー skill2.effects[0]",
+      "key": "4c3d9db3984993d2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1142-09",
+      "element": "アリス：ワンダーランドバニー burst.effects[1]",
+      "key": "44c53153e0092a9e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1142-09",
+      "element": "アリス：ワンダーランドバニー skill2.effects[0]",
+      "key": "44c53153e0092a9e",
+      "effective": true,
+      "minus": 0,
+      "plus": -6
+    },
+    {
+      "observation": "1142-14",
+      "element": "アリス：ワンダーランドバニー burst.effects[1]",
+      "key": "7c46c24083c52ad1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1142-14",
+      "element": "アリス：ワンダーランドバニー skill2.effects[0]",
+      "key": "7c46c24083c52ad1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1142-16",
+      "element": "アリス：ワンダーランドバニー burst.effects[1]",
+      "key": "63f7c56b5148ec7a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1142-16",
+      "element": "アリス：ワンダーランドバニー skill2.effects[0]",
+      "key": "63f7c56b5148ec7a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1143-14",
+      "element": "アリス：ワンダーランドバニー burst.effects[1]",
+      "key": "6a1b0fc205424e51",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1143-14",
+      "element": "アリス：ワンダーランドバニー skill2.effects[0]",
+      "key": "6a1b0fc205424e51",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1149-06",
+      "element": "ルマニ burst.effects[0]",
+      "key": "7fb627bf728a6aa4",
+      "effective": true,
+      "minus": -8553.434399999984,
+      "plus": 0
+    },
+    {
+      "observation": "1149-07",
+      "element": "ルマニ burst.effects[0]",
+      "key": "e071bd7040ce7863",
+      "effective": true,
+      "minus": -11119.46471999996,
+      "plus": 0
+    },
+    {
+      "observation": "1149-08",
+      "element": "ルマニ burst.effects[0]",
+      "key": "7a235074a6dc7a3f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }

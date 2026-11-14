@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 106・効果 757（根拠あり 737）・notes 238（根拠あり 103）
+件数: キャラ 108・効果 765（根拠あり 745）・notes 246（根拠あり 105）
 
-notes の種類: 未対応 37・前提の外 59・計算に無関係 49・補足 33・間接 60
+notes の種類: 未対応 38・前提の外 61・計算に無関係 51・補足 33・間接 63
 
-スロット: supported 274・partial 25・unsupported 8・noEffect 38
+スロット: supported 277・partial 26・unsupported 8・noEffect 40
 
 ## 10 ラピ
 
@@ -585,6 +585,22 @@ notes の種類: 未対応 37・前提の外 59・計算に無関係 49・補足
   - effects[0] timed・burstUse・attack: C-0250（仮説）、C-0252（確定）、C-0510（確定）
   - effects[1] timed・burstUse・reloadSpeed: C-0250（仮説）、C-0252（確定）
 
+## 195 アリス：ワンダーランドバニー
+
+- **skill1**: partial
+  - effects[0] heal・normalShot: C-1166（確定）
+  - effects[1] state・normalShot・carrotParty: C-1166（確定）
+  - notes[0] 前提の外: ニンジンパーティーの阻止部位の攻撃ダメージ▲は、射撃場の敵に阻止部位が無いのでダメージに関係しない（要件 5.2 節）: C-0443（範囲外）
+  - notes[1] 未対応: 通常攻撃 90 回ごとの、水冷コードの味方全体（自分を含む）のスタック可能バフ効果のスタック量▲は未対応（stackChange は同じ定義で自分に付けた状態にしか書けず、ほかの味方のどのバフのスタックを足すかを読む語彙が無い。自分のニンジンパーティーの分はダメージに効かない）: 根拠なし
+- **skill2**: supported
+  - effects[0] timed・fullBurstEnd・burstGaugeSpeed: C-1168（仮説）
+  - effects[1] timed・fullBurstStart・maxAmmo: C-1167（確定）
+  - effects[2] ammoRefill・fullBurstStart: C-1167（確定）
+- **burst**: supported
+  - effects[0] burstReentry: C-1169（確定）
+  - effects[1] heal・burstUse: C-1170（仮説）
+  - notes[0] 間接（HP）: 自分がニンジンパーティーのフルスタック状態の時の、味方全体の受ける HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+
 ## 222 紅蓮
 
 - **skill1**: supported
@@ -701,6 +717,18 @@ notes の種類: 未対応 37・前提の外 59・計算に無関係 49・補足
   - effects[0] timed・burstUse・attackSpeed: C-1078（確定）
   - effects[1] timed・burstUse・attack: C-1078（確定）
   - effects[2] timed・burstUse・pelletCount: C-1076（確定）、C-1077（確定）
+
+## 240 ルマニ
+
+- **skill1**: noEffect
+  - notes[0] 間接（HP）: フルチャージして攻撃した時の、自分へのマッスルアップ（最大HP▲・5 スタック・2 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）。フルスタックかを読むのは、バーストの受けるダメージ▼の条件だけ: 根拠なし
+  - notes[1] 計算に無関係: フルバーストタイムの持続中にフルチャージ攻撃が命中した時の、対象への挑発（5 秒）はダメージに関係しない。付けるのはフルバーストの間だけで、その間はゲージが溜まらないので、ゲージにも出ない: C-0264（仮説）
+- **skill2**: noEffect
+  - notes[0] 前提の外: 対象のパーツに 5 回命中した時の、味方全体のパーツダメージ▲（5 秒）は、射撃場の的にパーツが無いので効かない: 根拠なし
+- **burst**: supported
+  - effects[0] timed・burstUse・normalAttackDamage: C-1176（確定）、C-1177（確定）、C-1178（仮説）
+  - notes[0] 間接（HP）: 自分の最大HP▲（10 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+  - notes[1] 計算に無関係: 自分がマッスルアップのフルスタック状態の時の、自分の受けるダメージ▼（10 秒）は防御系でダメージに関係しない: 根拠なし
 
 ## 242 フォルクヴァン
 
