@@ -15,7 +15,10 @@
           "assumes": {
             "ja": "自分と両隣の味方（左右の枠。1・5 枠なら 1 機）への持続回復（1 秒間隔・持続）。付いた時に 1 回だけ「回復効果が適用された時」を起こし、1 秒ごとの刻みでは起こさない（ゲーム内の用語のツールチップの読み。エマ：タクティカル・アップの S1 と同じ）。回復量はダメージに関係しない。「自分が生存状態の時に限り」は、味方が倒れない前提でいつも満たす",
             "en": "Heal over time (every 1 s, continuous) on self and both adjacent allies (the slots left and right; one ally in slot 1 or 5). It triggers \"when healed\" once when applied, not on each 1 s tick (the in-game term tooltip reading; same as Emma: Tactical Upgrade S1). The amount does not affect damage. \"As long as this unit is alive\" always holds (allies do not fall)"
-          }
+          },
+          "claims": [
+            "C-1236"
+          ]
         },
         {
           "kind": "stackChange",
@@ -30,7 +33,10 @@
           "assumes": {
             "ja": "通常攻撃 値 03（100）回ごとに、電撃コードの味方（自分も入る）が持つ、上限のある状態と timed のスタックのバフの全部に、付いていれば 1 段足す（付いていなければ足さない。ディーゼルの宝物版 S1 と同じ読み。C-1182）。足すと全部の段の維持を付け直す（付与と同じに数える。確かめていない）",
             "en": "Every value 03 (100) normal attacks, adds one stack to every stackable buff (states and timed buffs with a stack cap) held by Electric Code allies (self included), only if present (not when absent; same reading as Diesel treasure S1, C-1182). Adding refreshes the duration of all stacks (counted like an application; unverified)"
-          }
+          },
+          "claims": [
+            "C-1236"
+          ]
         }
       ],
       "notes": [
@@ -55,7 +61,10 @@
           "assumes": {
             "ja": "両隣の味方（左右の枠）のどちらかの HP の割合が 値 01（90）% 以下に下がったフレームに、味方全体にバリア（中身なし。バリアの量はダメージに関係しない）。割合を下げるのは最大HP のみ▲ と現在の HP▼ だけ（被弾なし・回復で戻る分は扱わない）。被弾でバリアが尽きる分は扱わず、維持の終わりまで付いているとみなす。「生存状態かつ」はいつも満たす",
             "en": "A barrier on all allies (no contents; the amount does not affect damage) on the frame either adjacent ally’s HP ratio drops to value 01 (90)% or below. Only Max HP-only increases and current HP decreases lower the ratio (no damage taken; recovery by healing is not modeled). Being broken by hits is not modeled; it lasts its full duration. \"While still alive\" always holds"
-          }
+          },
+          "claims": [
+            "C-1236"
+          ]
         },
         {
           "kind": "timed",
@@ -69,7 +78,10 @@
           "assumes": {
             "ja": "両隣の味方のどちらかの HP の割合が 100% 未満から 100% に戻ったフレーム（被弾なしでは、最大HP のみ▲ が外れた時）と、割合が 100% のまま回復を受けたフレーム（戦闘開始時のフローラの持続回復など）に、味方全体に防御力無視ダメージ▲（5 秒）。持続回復の 1 秒ごとの刻みでは起きない",
             "en": "True Damage up for all allies (5 s) on the frame either adjacent ally’s HP ratio rises from below 100% back to 100% (with no damage taken, when a Max HP-only increase ends), and on the frame either is healed while at 100% (such as Flora’s heal over time at the start of battle). Not on each 1 s tick of the heal over time"
-          }
+          },
+          "claims": [
+            "C-1236"
+          ]
         }
       ],
       "notes": [
@@ -96,7 +108,10 @@
           "assumes": {
             "ja": "味方全体の回復。回復量はダメージに関係せず、受けた味方の「回復効果が適用された時」を起こす",
             "en": "Heal on all allies. The amount does not affect damage; it triggers \"when healed\" on the allies that receive it"
-          }
+          },
+          "claims": [
+            "C-1236"
+          ]
         },
         {
           "kind": "timed",
@@ -104,7 +119,10 @@
           "target": "allies",
           "stat": "trueDamage",
           "ref": 2,
-          "durationRef": 3
+          "durationRef": 3,
+          "claims": [
+            "C-1236"
+          ]
         }
       ],
       "notes": []
@@ -124,7 +142,10 @@
           "assumes": {
             "ja": "心の平和（中身なし。持続回復は effects[1] の heal で書く）を、戦闘開始時に自分と両隣の味方に付け、戦闘の終わりまで続く。「心の平和状態の味方全体」（effects[3]・S2 の effects[2]）はこの 3 機（1・5 枠なら 2 機）",
             "en": "Peace of Mind (no contents; the heal over time is effects[1]) on self and both adjacent allies at the start of battle, until the end of battle. \"All allies in the Peace of Mind state\" (effects[3], S2 effects[2]) are these three (two in slot 1 or 5)"
-          }
+          },
+          "claims": [
+            "C-1232"
+          ]
         },
         {
           "kind": "heal",
@@ -136,7 +157,10 @@
           "assumes": {
             "ja": "自分と両隣の味方（左右の枠。1・5 枠なら 1 機）への持続回復（1 秒間隔・持続）。付いた時に 1 回だけ「回復効果が適用された時」を起こし、1 秒ごとの刻みでは起こさない（ゲーム内の用語のツールチップの読み。エマ：タクティカル・アップの S1 と同じ）。回復量はダメージに関係しない。「自分が生存状態の時に限り」は、味方が倒れない前提でいつも満たす",
             "en": "Heal over time (every 1 s, continuous) on self and both adjacent allies (the slots left and right; one ally in slot 1 or 5). It triggers \"when healed\" once when applied, not on each 1 s tick (the in-game term tooltip reading; same as Emma: Tactical Upgrade S1). The amount does not affect damage. \"As long as this unit is alive\" always holds (allies do not fall)"
-          }
+          },
+          "claims": [
+            "C-1234"
+          ]
         },
         {
           "kind": "stackChange",
@@ -151,7 +175,10 @@
           "assumes": {
             "ja": "通常攻撃 値 03（100）回ごとに、電撃コードの味方（自分も入る）が持つ、上限のある状態と timed のスタックのバフの全部に、付いていれば 1 段足す（付いていなければ足さない。ディーゼルの宝物版 S1 と同じ読み。C-1182）。足すと全部の段の維持を付け直す（付与と同じに数える。確かめていない）",
             "en": "Every value 03 (100) normal attacks, adds one stack to every stackable buff (states and timed buffs with a stack cap) held by Electric Code allies (self included), only if present (not when absent; same reading as Diesel treasure S1, C-1182). Adding refreshes the duration of all stacks (counted like an application; unverified)"
-          }
+          },
+          "claims": [
+            "C-1231"
+          ]
         },
         {
           "kind": "timed",
@@ -165,7 +192,10 @@
           "assumes": {
             "ja": "バースト 2 段階突入時（だれのバーストでも）、心の平和の味方に、フローラのバフ前の最大HP × 値 07 を最大HP に足す（HP は足さない。V-0730 の発動者基準）。両隣の HP の割合を下げ、S2 のバリア（effects[0]）と、外れた時の防御力無視ダメージ▲（effects[1]）のきっかけになる",
             "en": "On entering Burst Stage 2 (anyone’s Burst), adds Flora’s pre-buff max HP × value 07 to the max HP of Peace of Mind allies (without restoring HP; caster-based as in V-0730). It lowers the adjacent allies’ HP ratio, triggering the S2 barrier (effects[0]) and, when it ends, the True Damage increase (effects[1])"
-          }
+          },
+          "claims": [
+            "C-1232"
+          ]
         }
       ],
       "notes": [
@@ -190,7 +220,10 @@
           "assumes": {
             "ja": "両隣の味方（左右の枠）のどちらかの HP の割合が 値 01（90）% 以下に下がったフレームに、味方全体にバリア（中身なし。バリアの量はダメージに関係しない）。割合を下げるのは最大HP のみ▲ と現在の HP▼ だけ（被弾なし・回復で戻る分は扱わない）。被弾でバリアが尽きる分は扱わず、維持の終わりまで付いているとみなす。「生存状態かつ」はいつも満たす",
             "en": "A barrier on all allies (no contents; the amount does not affect damage) on the frame either adjacent ally’s HP ratio drops to value 01 (90)% or below. Only Max HP-only increases and current HP decreases lower the ratio (no damage taken; recovery by healing is not modeled). Being broken by hits is not modeled; it lasts its full duration. \"While still alive\" always holds"
-          }
+          },
+          "claims": [
+            "C-1232"
+          ]
         },
         {
           "kind": "timed",
@@ -204,7 +237,10 @@
           "assumes": {
             "ja": "両隣の味方のどちらかの HP の割合が 100% 未満から 100% に戻ったフレーム（被弾なしでは、最大HP のみ▲ が外れた時）と、割合が 100% のまま回復を受けたフレーム（戦闘開始時のフローラの持続回復など）に、味方全体に防御力無視ダメージ▲（10 秒）。持続回復の 1 秒ごとの刻みでは起きない",
             "en": "True Damage up for all allies (10 s) on the frame either adjacent ally’s HP ratio rises from below 100% back to 100% (with no damage taken, when a Max HP-only increase ends), and on the frame either is healed while at 100% (such as Flora’s heal over time at the start of battle). Not on each 1 s tick of the heal over time"
-          }
+          },
+          "claims": [
+            "C-1234"
+          ]
         },
         {
           "kind": "timed",
@@ -223,7 +259,10 @@
           "assumes": {
             "ja": "「バリア適用時」は、編成のどの枠の付与でも、フローラにバリア（家族 barrier）が付いたフレームで発火する（ナガの S1 と同じ読み。C-0671。英語の説明文は「自分の前にバリアが張られた時」）。対象は心の平和の味方",
             "en": "\"When a shield is placed\" fires on the frame a barrier (family barrier) lands on Flora, from any slot (same reading as Naga S1, C-0671; the English text says \"in front of this unit\"). Targets are the Peace of Mind allies"
-          }
+          },
+          "claims": [
+            "C-1232"
+          ]
         }
       ],
       "notes": [
@@ -250,7 +289,10 @@
           "assumes": {
             "ja": "味方全体の回復。回復量はダメージに関係せず、受けた味方の「回復効果が適用された時」を起こす",
             "en": "Heal on all allies. The amount does not affect damage; it triggers \"when healed\" on the allies that receive it"
-          }
+          },
+          "claims": [
+            "C-1235"
+          ]
         },
         {
           "kind": "timed",
@@ -258,7 +300,10 @@
           "target": "allies",
           "stat": "trueDamage",
           "ref": 2,
-          "durationRef": 3
+          "durationRef": 3,
+          "claims": [
+            "C-1235"
+          ]
         },
         {
           "kind": "timed",
@@ -267,7 +312,10 @@
           "stat": "attack",
           "scaling": "casterAttack",
           "ref": 4,
-          "durationRef": 5
+          "durationRef": 5,
+          "claims": [
+            "C-1233"
+          ]
         }
       ],
       "notes": []

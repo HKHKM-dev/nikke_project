@@ -92,35 +92,13 @@
     "id": "1187-04",
     "recording": "1187",
     "kind": "hit",
-    "use": "compare",
+    "use": "record",
     "value": 2762482,
     "unit": "ダメージ",
     "description": "撮影 C の 1 回目のフルバーストの中のベスティー：TU の S2 の防御力無視ダメージ（非会心）の 1 ヒット。フローラのバーストの防御力無視ダメージ▲（42.39%）が乗る（無ければ 2,260,660）",
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps",
-      "note": "1187-02（3,191,597。+511・+531・+550 の 3 回）から、通常攻撃のコアの 1 ヒット 429,115 を引いた"
-    },
-    "scope": {
-      "slot": 3,
-      "source": "skill"
-    },
-    "compare": {
-      "model": "sim",
-      "metric": "skillHitDamage",
-      "args": {
-        "slot": 3,
-        "n": 0,
-        "frame": 700,
-        "crit": false,
-        "skill": "skill2"
-      },
-      "tolerance": {
-        "rel": 0.0005
-      },
-      "setup": {
-        "enemy": "range-bigarms-electric",
-        "events": ["range-3min-jump"]
-      }
+      "note": "1187-02（3,191,597。+511・+531・+550 の 3 回）から、通常攻撃のコアの 1 ヒット 429,115 を引いた。フルバーストの中は入りの止まりで動画とモデルの時刻がそろわず、モデルの同じ回の値（バーストの▲・S2 の▲・ベスティー：TU のバーストの▲の重なり方で 2,265,815〜2,762,463）を決められないので比べない"
     },
     "source": "V-0776",
     "readAt": "2026-11-14"

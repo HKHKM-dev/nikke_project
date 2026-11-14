@@ -1,0 +1,19 @@
+{
+  "id": "C-1235",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "decidedOn": [],
+  "text": "フローラの宝物版バーストの「味方全体に発動者の最終最大HP の X% 回復」と「防御力無視ダメージ▲（10 秒）」は、説明文どおりフローラのバーストの使用から味方全体に付く（回復は受けた味方の「回復効果が適用された時」を起こす）",
+  "basis": "説明文（`data/characters/411.json` の treasure.skills の burst）。撮影 C（`1187`）のフルバーストの中のベスティー：TU の増分は、バーストの▲の乗った防御力無視ダメージと通常攻撃のコアの和と読める（`1187-02`・`1187-04`。記録）が、入りの止まりで時刻がそろわず、モデルの同じ回と比べていない。回復を読む効果は編成に無い。V-0776",
+  "model": "反映（`data/skills/411.json` の treasureSkills.burst の effects[0]・effects[1]）",
+  "subject": {
+    "places": [
+      "data/skills/411.json の treasureSkills.burst の effects[0]",
+      "data/skills/411.json の treasureSkills.burst の effects[1]"
+    ]
+  },
+  "gradeReason": "防御力無視ダメージ▲は録画の値の読みだけで、モデルと比べていない。回復は読む側のいる編成を撮っていない"
+}

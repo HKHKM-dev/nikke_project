@@ -1,0 +1,30 @@
+{
+  "id": "C-1233",
+  "text": "フローラの宝物版バーストの「味方全体にスキル発動者基準で攻撃力▲（10 秒）」は、説明文どおりフローラのバーストの使用から味方全体に付く",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1187-01`・`1187-03`。V-0776",
+  "model": "`data/skills/411.json` の treasureSkills.burst の effects[2]（timed の `casterAttack`）",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": ["data/skills/411.json の treasureSkills.burst の effects[2]"]
+  },
+  "decidedOn": [],
+  "runs": [
+    {
+      "recording": "1187",
+      "reproduced": "2",
+      "observations": ["1187-01", "1187-03"]
+    }
+  ],
+  "minimal": [
+    {
+      "observations": ["1187-01", "1187-03"],
+      "element": ["フローラ treasureSkills.skill2.notes[0]"],
+      "reason": "被弾の防御力無視ダメージ▲はエクシアの通常攻撃に乗らない。被弾で付きうるバリアと攻撃力▲は、比べた発がバースト 2 段階突入のバリアの窓の中なので付き直しになるだけ",
+      "decided": "2026-11-14"
+    }
+  ]
+}

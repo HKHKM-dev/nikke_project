@@ -1,0 +1,41 @@
+{
+  "id": "C-1234",
+  "text": "フローラの S2 の「自分の両隣の味方のうち 1 機の HP が最大になった時、味方全体に防御力無視ダメージ▲」は、両隣の味方の HP の割合が 100% 未満から 100% に戻った時（被弾なしでは、宝物版 S1 の最大HP のみ▲ が外れた時）と、割合が 100% のまま回復を受けた時（戦闘開始時に付くフローラの S1 の持続回復）に起きる。持続回復の 1 秒ごとの刻みでは起きない（バーストの無い録画で、戦闘開始から約 10 秒の後は▲が乗らない）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1184-06`・`1184-07`・`1185-06`・`1185-07`。V-0776。割合が戻った時に起きることは、撮影 B のバフのアイコンの消える時刻でも見た（`1186-02`。記録）。被弾から最大に戻った時にも起きる（`1185-05`。前提の外。S2 の notes）",
+  "model": "`data/skills/411.json` の treasureSkills.skill2 の effects[1]（きっかけ `{ adjacentHpFull }`。`skills/holders/fires.ts` の割合の戻りと、割合 100% のままの `healed`）と、treasureSkills.skill1 の effects[1]（戦闘開始時の持続回復の `healed`）。plan/design-adjacent-allies.md 2.4 節・9 節の論点 7",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": [
+      "data/skills/411.json の treasureSkills.skill2 の effects[1]",
+      "data/skills/411.json の treasureSkills.skill1 の effects[1]"
+    ]
+  },
+  "decidedOn": [
+    {
+      "recording": "1184",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "1185",
+      "role": "仮説の出どころ"
+    }
+  ],
+  "minimal": [
+    {
+      "observations": ["1184-06", "1184-07", "1185-06", "1185-07"],
+      "element": ["フローラ treasureSkills.burst.effects[1]", "ベスティー：タクティカル・アップ burst.notes[0]"],
+      "reason": "撮影 A はバーストを一度も使わない",
+      "decided": "2026-11-14"
+    },
+    {
+      "observations": ["1184-06", "1184-07", "1185-06", "1185-07"],
+      "element": ["フローラ treasureSkills.skill2.notes[0]"],
+      "reason": "比べた塊の前後に被弾の窓は無い（戦闘開始の直後の塊と、▲の無い塊。1185 の最初の被弾は f2680）",
+      "decided": "2026-11-14"
+    }
+  ]
+}

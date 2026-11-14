@@ -1,0 +1,23 @@
+{
+  "id": "C-1236",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "decidedOn": [],
+  "text": "フローラの基礎版のスキルの説明文は、宝物版だけの行（S1 の心の平和の名前とバースト 2 段階突入の最大HP のみ▲、S2 のバリア適用時の攻撃力▲、バーストの攻撃力▲）と S2 の防御力無視ダメージ▲の維持（5 秒）のほかは宝物版と同じ文で、同じ形に読む（S1 の自分と両隣への持続回復・スタック量▲、S2 のバリアと防御力無視ダメージ▲、バーストの回復と防御力無視ダメージ▲）。値はどれも説明文の値",
+  "basis": "説明文（`data/characters/411.json` の skills と treasure.skills）。同じ文の読みは宝物版の録画で確かめた（C-1231・C-1232・C-1234・C-1235）。基礎版では、両隣の HP の割合を下げる効果がフローラ自身に無いので、S2 のバリアと割合が戻った時の▲は、ほかの味方の最大HP のみ▲・現在の HP▼ のある編成でだけ起きる。基礎版の録画は撮れない（宝物を外せない。エクシアの C-1193 と同じ）。V-0776",
+  "model": "反映（`data/skills/411.json` の skills の skill1 の effects[0]・[1]、skill2 の effects[0]・[1]、burst の effects[0]・[1]）。形は treasureSkills と同じで、値は基礎版の説明文の値",
+  "subject": {
+    "places": [
+      "data/skills/411.json の skill1 の effects[0]",
+      "data/skills/411.json の skill1 の effects[1]",
+      "data/skills/411.json の skill2 の effects[0]",
+      "data/skills/411.json の skill2 の effects[1]",
+      "data/skills/411.json の burst の effects[0]",
+      "data/skills/411.json の burst の effects[1]"
+    ]
+  },
+  "gradeReason": "基礎版は撮れないので、宝物版の録画で確かめた読みを同じ文に当てた推論にとどめる"
+}
