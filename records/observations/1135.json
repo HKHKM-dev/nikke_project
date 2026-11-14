@@ -1,0 +1,471 @@
+[
+  {
+    "id": "1135-01",
+    "recording": "1135",
+    "kind": "total",
+    "use": "record",
+    "value": 385723895,
+    "description": "プロダクト08・ベルベット・アリス の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11489。増分は 4972 個"
+    },
+    "source": "V-0767",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1135-02",
+    "recording": "1135",
+    "kind": "count",
+    "use": "record",
+    "value": 215,
+    "unit": "トリガー",
+    "description": "プロダクト08・ベルベット・アリス のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 4972 個。前の増分から 30f 未満の増分（4897 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 44f）から発の数を決めた（2 発になった組 27 個）"
+    },
+    "source": "V-0767",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1135-03",
+    "recording": "1135",
+    "kind": "timing",
+    "use": "record",
+    "value": [1164, 2434, 3613, 4815, 5994, 7195, 8374, 9586, 10766],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・14・5・26・0・27・0・25f"
+    },
+    "source": "V-0767",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1135-04",
+    "recording": "1135",
+    "kind": "timing",
+    "use": "record",
+    "value": [1193, 2463, 3642, 4844, 6023, 7224, 8403, 9615, 10795],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・25・6・25・0・25・0・24f"
+    },
+    "source": "V-0767",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1135-05",
+    "recording": "1135",
+    "kind": "timing",
+    "use": "record",
+    "value": [1222, 3672, 6052, 8432, 10824],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0767",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1135-06",
+    "recording": "1135",
+    "kind": "timing",
+    "use": "record",
+    "value": [1831, 4280, 7162, 9041, 11433],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0767",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1135-07",
+    "recording": "1135",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 608, 1110, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0767",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1135-08",
+    "recording": "1135",
+    "kind": "timing",
+    "use": "record",
+    "value": [3607, 4808, 5988, 7189, 8368, 10759],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f2359"
+    },
+    "source": "V-0767",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1135-09",
+    "recording": "1135",
+    "kind": "timing",
+    "use": "record",
+    "value": [4837, 6017, 7218, 8397, 10788],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f9598"
+    },
+    "source": "V-0767",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1135-10",
+    "recording": "1135",
+    "kind": "timing",
+    "use": "record",
+    "value": [6045, 8425],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f10805"
+    },
+    "source": "V-0767",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1135-11",
+    "recording": "1135",
+    "source": "V-0767",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 43224,
+    "unit": "ダメージ",
+    "description": "ベルベットの使用武器変更の発のコアの 1 ヒット（1 回目のフルバーストの入りの止まりの後、50 回目の命中の前。会心なし・距離ボーナスなし）。フルバーストの前の発は 34,580（胴体は 17,290。変更の最初の 7 発）。会心の発は 1.2 倍（56,594 ほか）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を目で読んだ",
+      "note": "1 フレームに 1 つずつ出る小さな増分（1251〜1267f）。ほかの枠の SR の発（30 万以上）とは大きさで分かれる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 414,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1135-12",
+    "recording": "1135",
+    "source": "V-0767",
+    "readAt": "2026-11-14",
+    "kind": "timing",
+    "use": "compare",
+    "value": -21,
+    "unit": "f",
+    "description": "1 回目のフルバーストの始まり（III のタイマーの 00.00。`1135-05` の 1222f）から、使用武器変更の最初の発（1201f）までの動画のフレーム。最初の発は、どのバーストの回（9 回）も II の六角形の替わり目（`1135-04`）の 7〜12f 後（多くは 8f）で、そこから約 600f のあいだ 1 フレームに 1 発撃つ",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を目で読んだ",
+      "note": "六角形の替わり目の後の、最初の 12 万未満の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstToWeaponChangeShot",
+      "args": {
+        "slot": 2,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1135-13",
+    "recording": "1135",
+    "source": "V-0767",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1072042,
+    "unit": "ダメージ",
+    "description": "S2 の 50 回の命中ごとの追加ダメージ（最終攻撃力の 400.92%。会心なし）の 4 回目。HUD の増分 1,103,238（1368f）から、同じフレームのベルベットのコアの 1 発 31,196 を引いた値。5〜11 回目も、同じフレームの発（31,196・37,435・24,957）を引くとどれも 1,072,042",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を目で読んだ",
+      "note": "50f ごとに出る 110 万前後の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "1135-14",
+    "recording": "1135",
+    "source": "V-0767",
+    "readAt": "2026-11-14",
+    "kind": "timing",
+    "use": "compare",
+    "value": [46, 96, 146, 196, 246, 296, 346, 396, 447, 497, 547],
+    "unit": "f",
+    "description": "1 回目のフルバーストの始まり（1222f）から、S2 の追加ダメージの 11 回の動画のフレーム（50f ごと = 使用武器変更の 50 発ごと）。フルバーストの外の使用武器変更（チェーンが II で切れた 4 回）では出ない",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を目で読んだ",
+      "note": "50f ごとに並ぶ 100 万以上の増分の列"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFramesFromFullBurst",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "fullBurst": 0,
+        "count": 11
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "1135-15",
+    "recording": "1135",
+    "source": "V-0767",
+    "readAt": "2026-11-14",
+    "kind": "timing",
+    "use": "record",
+    "value": [46, 31, 73, 58],
+    "unit": "f",
+    "description": "1〜4 回目のフルバーストの始まりから、S2 の追加ダメージの 1 回目までの動画のフレーム。以後どれも 50f ごとで、回数は 11・11・10・10 回（5 回目のフルバーストは HUD の読めない間が多く、46・95・145f の後が読めない）。1 回目の位置がフルバーストごとに変わるので、命中を戦闘を通して数えている（フルバーストの中だけ数え直すなら、どれも入りの止まりの後の 50 発目）。回数がどのフルバーストでも変わらないので、ポーチはバースト 2 段階突入時に戻っている（戻らないモデルでは 11・3・0・0・0 回）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を目で読んだ",
+      "note": "50f ごとに並ぶ 100 万以上の増分の列（フルバーストごと）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "1135-16",
+    "recording": "1135",
+    "source": "V-0767",
+    "readAt": "2026-11-14",
+    "kind": "count",
+    "use": "record",
+    "value": 999,
+    "unit": "発",
+    "description": "使用武器変更の間のベルベットの残弾の表示の最大（999/999）。表示はバーストの後に 2/6 から 999/999 に替わり、約 0.25 秒後から 3f に 3 発ずつ減る（1 フレームに 1 発）。10 秒で約 600 発なので撃ち切らない",
+    "method": {
+      "tool": "目視",
+      "note": "ベルベットの枠の上の残弾の表示を 0.05 秒ごとに切り出した（19.5〜21.1 秒）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1135-17",
+    "recording": "1135",
+    "source": "V-0767",
+    "readAt": "2026-11-14",
+    "kind": "timing",
+    "use": "compare",
+    "value": -21,
+    "unit": "f",
+    "description": "2 回目のフルバーストの始まり（`1135-05` の 3672f）から、使用武器変更の最初の発（3651f）までの動画のフレーム（1 回目で決めた待ちの再現）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を目で読んだ",
+      "note": "六角形の替わり目の後の、最初の 12 万未満の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstToWeaponChangeShot",
+      "args": {
+        "slot": 2,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1135-18",
+    "recording": "1135",
+    "source": "V-0767",
+    "readAt": "2026-11-14",
+    "kind": "timing",
+    "use": "compare",
+    "value": -21,
+    "unit": "f",
+    "description": "4 回目のフルバーストの始まり（`1135-05` の 8432f）から、使用武器変更の最初の発（8411f）までの動画のフレーム（1 回目で決めた待ちの再現）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を目で読んだ",
+      "note": "六角形の替わり目の後の、最初の 12 万未満の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstToWeaponChangeShot",
+      "args": {
+        "slot": 2,
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1135-19",
+    "recording": "1135",
+    "source": "V-0767",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 43224,
+    "unit": "ダメージ",
+    "description": "2 回目のフルバーストの、50 回目の命中の前のベルベットの使用武器変更の発のコアの 1 ヒット（3700〜3702f。会心なし・距離ボーナスなし）。追加ダメージ（3703f）の後は 47,161（S2 の攻撃ダメージ 15.03%▲）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を目で読んだ",
+      "note": "1 フレームに 1 つずつ出る小さな増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 2765,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1135-20",
+    "recording": "1135",
+    "source": "V-0767",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1072042,
+    "unit": "ダメージ",
+    "description": "2 回目のフルバーストの S2 の追加ダメージの 4 回目（会心なし）。HUD の増分 1,109,477（3753f）から、同じフレームのベルベットの会心のコアの 1 発 37,435 を引いた値",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を目で読んだ",
+      "note": "50f ごとに出る 110 万前後の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 14,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    }
+  }
+]

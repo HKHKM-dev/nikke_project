@@ -97,14 +97,32 @@ describe('durationUntil・inFullBurst・atStart の検証', () => {
     );
   });
 
-  it('parses inFullBurst and rejects it for first-pass stats', () => {
+  it('parses inFullBurst true and false, and rejects it for first-pass stats but attack', () => {
     const effect = { ...conversion, trigger: { count: 'fullChargeShot' }, condition: { inFullBurst: true } };
     const def = parseSkillDefinition(withSkill2([effect]));
     expect(def.skills.skill2.effects[0]).toMatchObject({ condition: { inFullBurst: true } });
-    expect(() =>
-      parseSkillDefinition(withSkill2([{ ...effect, stat: 'attack', ref: 1, target: 'self', durationRef: 1 }])),
-    ).toThrow(/inFullBurst is not supported for "attack"/);
-    expect(() => parseSkillDefinition(withSkill2([{ ...effect, condition: { inFullBurst: false } }]))).toThrow(
+    const outside = parseSkillDefinition(withSkill2([{ ...effect, condition: { inFullBurst: false } }]));
+    expect(outside.skills.skill2.effects[0]).toMatchObject({ condition: { inFullBurst: false } });
+    const attack = { ...effect, stat: 'attack', ref: 1, target: 'self', durationRef: 1 };
+    for (const inFullBurst of [true, false]) {
+      expect(() => parseSkillDefinition(withSkill2([{ ...attack, condition: { inFullBurst } }]))).not.toThrow();
+      expect(() =>
+        parseSkillDefinition(withSkill2([{ ...attack, stat: 'chargeSpeed', condition: { inFullBurst } }])),
+      ).toThrow(/inFullBurst is not supported for "chargeSpeed"/);
+    }
+  });
+
+  it('rejects inFullBurst: false on a state grant', () => {
+    const grant = {
+      kind: 'state',
+      state: 'highwayToHell1',
+      trigger: { count: 'fullChargeShot' },
+      target: 'self',
+      durationRef: 1,
+      contents: [{ stat: 'attackDamage', ref: 1 }],
+    };
+    expect(() => parseSkillDefinition(withSkill2([{ ...grant, condition: { inFullBurst: true } }]))).not.toThrow();
+    expect(() => parseSkillDefinition(withSkill2([{ ...grant, condition: { inFullBurst: false } }]))).toThrow(
       /condition\.inFullBurst: expected true/,
     );
   });

@@ -1,0 +1,52 @@
+{
+  "id": "1136",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1136_velvet-p08-grave-alice.mp4",
+  "original": "2026-11-14_09-33-52.mp4",
+  "durationSec": 206.2,
+  "frames": 12369,
+  "fps": 60,
+  "sizeMB": 249.9,
+  "sha256": "943fae6119f6",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 302,
+      "name": "プロダクト08",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 514,
+      "name": "グレイブ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 316,
+      "name": "ベルベット",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 191,
+      "name": "アリス",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "オートバースト OFF。プロダクト08 → グレイブ → アリス の順に手でバースト（ベルベットのバーストは使わない）",
+  "backup": {
+    "at": "2026-11-14T09:52+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

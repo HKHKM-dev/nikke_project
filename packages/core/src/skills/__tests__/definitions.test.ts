@@ -25,6 +25,7 @@ import {
   resolveTimed,
   skillValue,
 } from '../resolve.ts';
+import { counterMax } from '../counters.ts';
 import { SKILL_LEVEL_MAX } from '../resolve.ts';
 import { ATTACK_SPEED_WEAPONS } from '../parse/timed.ts';
 import { applyTreasure, TREASURE_PHASE_MAX } from '../treasure.ts';
@@ -245,8 +246,10 @@ describe('data/skills', () => {
                     : effect.kind === 'state'
                       ? statContentsOf(effect.contents).find((c) => c.ref === ref)?.stat
                       : undefined;
+                // カウンタの増減の量は割合でなく、カウンタの上限で見る（ベルベットの弾丸ポーチは 6000 発）
                 const limit =
                   VALUE_LIMIT_EXCEPTIONS[`${resourceId}:${slot}:${ref}`] ??
+                  (effect.kind === 'counterChange' ? counterMax(effect.counter) : undefined) ??
                   (stat === undefined ? undefined : VALUE_LIMITS[stat]) ??
                   100;
                 expect(v).toBeLessThanOrEqual(limit);

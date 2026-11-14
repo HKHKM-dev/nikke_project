@@ -44,6 +44,11 @@ export const COUNTERS = {
    * 増え（変身状態でなければ 100、変身状態なら 50）、変身の間 0.2 秒ごとに 1 減る。100 で変身が付き、0 で外れる。上限 100（説明文の「最大100％」）
    */
   battery: { name: { ja: 'バッテリー', en: 'Battery' }, max: 100 },
+  /**
+   * 弾丸ポーチ（ベルベットの S1・S2。plan/design-velvet.md 2.3 節）。戦闘開始時とバースト 2 段階突入時に 6000、フルチャージの発と
+   * フルバーストの中の通常攻撃 50 回の命中で消費する（足りなければ効果ごと起きない）。上限 6000（説明文の「最大6000発保存」）
+   */
+  ammoPouch: { name: { ja: '弾丸ポーチ', en: 'Ammo Pouch' }, max: 6000 },
 } as const satisfies Record<string, CounterInfo>;
 
 export type CounterId = keyof typeof COUNTERS;

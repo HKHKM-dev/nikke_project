@@ -1,0 +1,15 @@
+{
+  "id": "C-1165",
+  "text": "ベルベットの S2 の「フルチャージして攻撃した時、フルバーストタイム中のみ」（Lv10）は、1 回ごとに弾丸ポーチから 300 発を消費し、ポーチが 300 発に足りなければ味方への▲も起きない",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "なし（V-0767 の録画 1136 では、フルバーストの中のフルチャージがポーチを尽きさせない。消費の量は説明文の値）。V-0767",
+  "model": "反映（data/skills/316.json の skill2 の effects[0]。条件 inFullBurst: true・selfCounter: { atLeast: 300 }）",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": ["data/skills/316.json の skill2 の effects[0]"]
+  },
+  "decidedOn": []
+}

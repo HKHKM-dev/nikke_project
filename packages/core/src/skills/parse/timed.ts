@@ -458,12 +458,13 @@ function parseTimedCondition(
     v.condition,
     `${path}.condition`,
     isAppliedTrigger(trigger) ? CONDITION_KEYS_OF.selfStateOnly : CONDITION_KEYS_OF.timed,
+    // 「フルバースト状態でなければ」（inFullBurst: false）は stat のある timed だけ（状態の付与は使い手がいない。plan/design-velvet.md 2.1 節）
+    stat !== undefined,
   );
-  if (condition.inFullBurst === true && stat !== undefined && isFirstPassTrackedStat(stat)) {
-    fail(
-      `${path}.condition`,
-      `inFullBurst is not supported for "${stat}" (its window is tracked inside the first pass)`,
-    );
+  // 1 パス目で窓を追う stat のうち、攻撃力は条件 inFullBurst を書ける（件の一覧の段 1.5 が発火のフレームの窓を見る。
+  // plan/design-velvet.md 2.2 節）。ほかは使い手がいない
+  if (condition.inFullBurst !== undefined && stat !== undefined && stat !== 'attack' && isFirstPassTrackedStat(stat)) {
+    fail(`${path}.condition`, `inFullBurst is not supported for "${stat}" (no definition uses it on this stat yet)`);
   }
   // 条件付きの効果が状態を作ると連鎖するので、同じ stat と状態だけの stat は出せない（plan/design-stage11-modernia.md 2.4 節）
   if (
