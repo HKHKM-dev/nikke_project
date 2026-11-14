@@ -1158,6 +1158,8 @@
 | 1187 | `20261114-1187_mg_flora_auto-burst.mp4` | エクシア（210、SR・電撃・SSR、宝物 3） + フローラ（411、MG・電撃・SSR、宝物 3） + ◎ベスティー：タクティカル・アップ（94、RL・灼熱・SSR） | BigArms・電撃 | 射撃場 3 分 | ON | ON / ON | V-0776 撮影 C（オートバースト ON） |
 | 1188 | `20261114-1188_rl_jackal.mp4` | ジャッカル（111、RL・鉄甲・SSR） + 紅蓮（222、AR・電撃・SSR） + ◎エレグ（500、MG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0778 の撮影。ジャッカル（I・AI）・紅蓮（III・AI）・エレグ（II・操作・オート射撃 ON）。オートバースト ON |
 | 1189 | `20261114-1189_rl_jackal.mp4` | ジャッカル（111、RL・鉄甲・SSR） + 紅蓮（222、AR・電撃・SSR） + ◎エレグ（500、MG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0778 の撮影。ジャッカル（I・AI）・紅蓮（III・AI）・エレグ（II・操作・オート射撃 ON）。オートバースト ON |
+| 1196 | `20261115-1196_team_asuka-wille.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎アスカ：WILLE（835、MG・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0781 の撮影。I-DOLL・フラワー（I）・デルタ（II）・アスカ：WILLE（III・操作）。オートバースト ON |
+| 1197 | `20261115-1197_team_asuka-wille.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎アスカ：WILLE（835、MG・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0781 の撮影。I-DOLL・フラワー（I）・デルタ（II）・アスカ：WILLE（III・操作）。オートバースト ON |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 

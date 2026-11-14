@@ -1,0 +1,46 @@
+{
+  "id": "1197",
+  "date": "2026-11-15",
+  "folder": "range",
+  "file": "20261115-1197_team_asuka-wille.mp4",
+  "original": "2026-11-15_01-20-59.mp4",
+  "durationSec": 203.3,
+  "frames": 12195,
+  "fps": 60,
+  "sizeMB": 246.2,
+  "sha256": "494ab25496f2",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 835,
+      "name": "アスカ：WILLE",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0781 の撮影。I-DOLL・フラワー（I）・デルタ（II）・アスカ：WILLE（III・操作）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-15T01:26+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
