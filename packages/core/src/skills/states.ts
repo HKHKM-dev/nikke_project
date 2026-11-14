@@ -387,6 +387,13 @@ export const NAMED_STATES = {
   strawberryCandy: { name: { ja: 'イチゴキャンディ', en: 'Strawberry Candy' }, holder: 'ally' },
   /** ヘイト（敵全体を挑発。ディーゼルの宝物版バースト。自分・10 秒・中身なし。宝物版 S1 の「自分がヘイト状態なら」が見る） */
   attract: { name: { ja: 'ヘイト', en: 'Attract' }, holder: 'ally' },
+  /**
+   * 隠れ身（ロザンナの S1（命中 N 回ごと）・S2（戦闘開始時）。自分・中身なし。バーストの「自分が隠れ身の状態なら」が見る。
+   * 単一攻撃対象からの除外と、直接攻撃を受けた時の解除は前提の外）
+   */
+  concealment: { name: { ja: '隠れ身', en: 'Concealment' }, holder: 'ally' },
+  /** 狂気（ロザンナの S2。宝物版の命中 N 回ごとの付与。攻撃力▲・10 スタック・30 秒。味方の戦闘不能時の付与は前提の外） */
+  frenzy: { name: { ja: '狂気', en: 'Frenzy' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

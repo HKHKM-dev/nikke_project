@@ -1,0 +1,320 @@
+{
+  "formatVersion": 1,
+  "resourceId": 280,
+  "checkedAt": "2026-11-14",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "concealment",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "self",
+          "durationRef": 2,
+          "assumes": {
+            "ja": "命中 値 01（120）回ごと（通算 120・240…回目）に付く。付いている間にまた付いたら維持を付け直す。被弾で外れない（前提の外。下の notes）",
+            "en": "Granted every value 01 (120) hits (the 120th, 240th... overall). Re-granting while active refreshes the duration. It is not removed by hits (outside the model's assumptions; see notes)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "self",
+          "stat": "critRate",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "命中 値 01（120）回ごとに付き、きっかけの発の次の発から乗る。付いている間にまた付いたら維持を付け直す（重ならない）",
+            "en": "Granted every value 01 (120) hits and applies from the shot after the triggering one. Re-granting while active refreshes the duration (no stacking)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "隠れ身の単一攻撃対象からの除外と、直接攻撃を受けた時の解除は起きない（被弾しない前提）。射撃場の 3 分モードでは的が攻撃してくるので、解除が起きうる（次の命中 120 回目でまた付く）",
+          "en": "Concealment's exclusion from single-target attacks and its removal on a direct hit do not happen (no damage taken is assumed). In the shooting range's 3-minute mode the target attacks, so removal can happen (it is re-granted at the next 120th hit)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "damaged"
+          },
+          "claims": [
+            "C-0551"
+          ]
+        },
+        {
+          "ja": "通常攻撃 10 回で、最終攻撃力が最も高い敵のバフ効果を解除する（戦闘中 1 回）。敵はバフを持たない前提なので効かない",
+          "en": "Every 10 normal attacks, removes buffs from the enemy with the highest final ATK (once per battle). Enemies are assumed to have no buffs, so it has no effect",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "unknown",
+            "target": "enemy",
+            "trigger": "normalShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "concealment",
+          "trigger": "battleStart",
+          "target": "self",
+          "durationRef": 1
+        }
+      ],
+      "notes": [
+        {
+          "ja": "隠れ身の単一攻撃対象からの除外と、直接攻撃を受けた時の解除は起きない（被弾しない前提）",
+          "en": "Concealment's exclusion from single-target attacks and its removal on a direct hit do not happen (no damage taken is assumed)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "damaged"
+          },
+          "claims": [
+            "C-0551"
+          ]
+        },
+        {
+          "ja": "ニケの誰かが戦闘不能の時の狂気（攻撃力▲・10 スタック・30 秒）とバーストゲージのチャージは、味方が倒れないので起きない",
+          "en": "Frenzy (ATK up, 10 stacks, 30 s) and the Burst Gauge charge when a Nikke is incapacitated do not occur because allies are never incapacitated",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "unknown"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "優先的に火力型の敵 2 機は敵 1 体",
+            "en": "The 2 enemies (Attacker-type first) are the lone enemy"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 3,
+          "damageType": "additional",
+          "condition": {
+            "selfState": "concealment"
+          },
+          "assumes": {
+            "ja": "バーストスキルダメージと同じフレームに 1 ヒット。発動の時点で隠れ身なら出る",
+            "en": "One hit on the same frame as the Burst skill damage. Dealt when Concealment is active at the activation"
+          }
+        }
+      ],
+      "notes": []
+    }
+  },
+  "treasureSkills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "concealment",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "self",
+          "durationRef": 2,
+          "assumes": {
+            "ja": "命中 値 01（120）回ごと（通算 120・240…回目）に付く。付いている間にまた付いたら維持を付け直す。被弾で外れない（前提の外。下の notes）",
+            "en": "Granted every value 01 (120) hits (the 120th, 240th... overall). Re-granting while active refreshes the duration. It is not removed by hits (outside the model's assumptions; see notes)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "self",
+          "stat": "critRate",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "命中 値 01（120）回ごとに付き、きっかけの発の次の発から乗る。付いている間にまた付いたら維持を付け直す（重ならない）",
+            "en": "Granted every value 01 (120) hits and applies from the shot after the triggering one. Re-granting while active refreshes the duration (no stacking)"
+          }
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "elementDamage",
+          "ref": 8,
+          "assumes": {
+            "ja": "ターゲットが出現した時を、戦闘開始とみなす（射撃場の的はターゲットで、戦闘の始めからいる。エレグの S2 と同じ読み）。持続なので戦闘の終わりまで。有利コード（水冷）の敵にだけ効く",
+            "en": "Treats the appearance of the stage target as the start of battle (the shooting-range target is a stage target present from the start; same reading as Elegg's S2). It lasts until the end of battle. Only affects enemies of the advantaged code (Water)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "隠れ身の単一攻撃対象からの除外と、直接攻撃を受けた時の解除は起きない（被弾しない前提）。射撃場の 3 分モードでは的が攻撃してくるので、解除が起きうる（次の命中 120 回目でまた付く）",
+          "en": "Concealment's exclusion from single-target attacks and its removal on a direct hit do not happen (no damage taken is assumed). In the shooting range's 3-minute mode the target attacks, so removal can happen (it is re-granted at the next 120th hit)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "damaged"
+          },
+          "claims": [
+            "C-0551"
+          ]
+        },
+        {
+          "ja": "通常攻撃 10 回で、最終攻撃力が最も高い敵のバフ効果を解除する（戦闘中 1 回）。敵はバフを持たない前提なので効かない",
+          "en": "Every 10 normal attacks, removes buffs from the enemy with the highest final ATK (once per battle). Enemies are assumed to have no buffs, so it has no effect",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "unknown",
+            "target": "enemy",
+            "trigger": "normalShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "concealment",
+          "trigger": "battleStart",
+          "target": "self",
+          "durationRef": 1
+        },
+        {
+          "kind": "state",
+          "state": "frenzy",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 6
+          },
+          "target": "self",
+          "maxStacksRef": 8,
+          "durationRef": 9,
+          "contents": [
+            {
+              "stat": "attack",
+              "ref": 7
+            }
+          ],
+          "assumes": {
+            "ja": "命中 値 06（500）回ごと（通算 500・1000…回目）に 1 スタック。射撃場の的は「ターゲット」とみる（ネオン：ビジョン・アイの S1 と同じ読み）。付くたびに全部のスタックの維持を付け直す",
+            "en": "One stack every value 06 (500) hits (the 500th, 1000th... overall). The shooting-range target is treated as a stage target (same reading as Neon: Vision Eye's S1). Each application refreshes the duration of all stacks"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "隠れ身の単一攻撃対象からの除外と、直接攻撃を受けた時の解除は起きない（被弾しない前提）",
+          "en": "Concealment's exclusion from single-target attacks and its removal on a direct hit do not happen (no damage taken is assumed)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "damaged"
+          },
+          "claims": [
+            "C-0551"
+          ]
+        },
+        {
+          "ja": "ニケの誰かが戦闘不能の時の狂気（攻撃力▲・10 スタック・30 秒）とバーストゲージのチャージは、味方が倒れないので起きない",
+          "en": "Frenzy (ATK up, 10 stacks, 30 s) and the Burst Gauge charge when a Nikke is incapacitated do not occur because allies are never incapacitated",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "unknown"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        },
+        {
+          "ja": "味方の誰かが戦闘不能の時の、優先的に火力型の敵 1 機への最終攻撃力の 値 11 % のダメージは、味方が倒れないので起きない",
+          "en": "The damage of value 11 % of final ATK to 1 enemy (Attacker-type first) when an ally is incapacitated does not occur because allies are never incapacitated",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "damage",
+            "target": "enemy",
+            "trigger": "unknown"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "アサルト。優先的に火力型の敵 2 機は敵 1 体",
+            "en": "Assault. The 2 enemies (Attacker-type first) are the lone enemy"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 3,
+          "damageType": "additional",
+          "condition": {
+            "selfState": "concealment"
+          },
+          "assumes": {
+            "ja": "バーストスキルダメージと同じフレームに 1 ヒット。発動の時点で隠れ身なら出る",
+            "en": "One hit on the same frame as the Burst skill damage. Dealt when Concealment is active at the activation"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 5,
+          "durationRef": 6,
+          "enemyElement": "Water",
+          "assumes": {
+            "ja": "アサルトの命中した対象（敵 1 体）が水冷コードなら付く。射撃場の的は「ターゲット」とみる。同じバーストのアサルトと追加ダメージには乗らない（発動の時点の値。C-0795）",
+            "en": "Applied when the target hit by Assault (the lone enemy) is Water code. The shooting-range target is treated as a stage target. It does not apply to the same Burst's Assault and additional damage (values at the activation; C-0795)"
+          }
+        }
+      ],
+      "notes": []
+    }
+  }
+}
