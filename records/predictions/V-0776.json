@@ -97,9 +97,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "tolerance": {
@@ -120,9 +118,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "tolerance": {
@@ -143,9 +139,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "tolerance": {
@@ -166,13 +160,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noBurstSlots": [
-          2,
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noBurstSlots": [2, 3],
         "burst": true
       },
       "tolerance": {
@@ -193,13 +182,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noBurstSlots": [
-          2,
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noBurstSlots": [2, 3],
         "burst": true
       },
       "tolerance": {
@@ -220,13 +204,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noBurstSlots": [
-          2,
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noBurstSlots": [2, 3],
         "burst": true
       },
       "tolerance": {
@@ -247,13 +226,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noBurstSlots": [
-          2,
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noBurstSlots": [2, 3],
         "burst": true
       },
       "tolerance": {
@@ -274,13 +248,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noBurstSlots": [
-          2,
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noBurstSlots": [2, 3],
         "burst": true
       },
       "tolerance": {
@@ -301,9 +270,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "rel": 0.001
