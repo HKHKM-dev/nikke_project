@@ -1,0 +1,154 @@
+{
+  "formatVersion": 1,
+  "resourceId": 195,
+  "checkedAt": "2026-11-12",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "heal",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "allies",
+          "ref": 2,
+          "assumes": {
+            "ja": "通常攻撃 60 発ごと（通算 60・120・180…発目。リロードをまたいで数える）に味方全体が 1 回の回復を受け、そのたびに「回復効果が適用された時」を起こす（HP が満タンでも適用とみなす）。回復量はダメージに関係しない",
+            "en": "Every 60 normal attacks (the 60th, 120th, 180th... overall, counted across reloads) all allies receive a one-off heal, triggering \"when healed\" each time (it counts as applied even at full HP). The healed amount does not affect damage"
+          },
+          "claims": [
+            "C-1166"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "carrotParty",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "allies",
+          "maxStacksRef": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "回復と同じ発で、味方全体に 1 スタック付き、付くたびに全部のスタックの維持を付け直す。中身（阻止部位の攻撃ダメージ▲）は notes[0]",
+            "en": "On the same shot as the heal, all allies get one stack, and each application refreshes the duration of all stacks. Its contents (damage to interruption parts up) are notes[0]"
+          },
+          "claims": [
+            "C-1166"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "ニンジンパーティーの阻止部位の攻撃ダメージ▲は、射撃場の敵に阻止部位が無いのでダメージに関係しない（要件 5.2 節）",
+          "en": "Carrot Party's damage to interruption parts up does not affect damage, since the range enemy has no interruption parts (requirements 5.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "normalShot"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        },
+        {
+          "ja": "通常攻撃 90 回ごとの、水冷コードの味方全体（自分を含む）のスタック可能バフ効果のスタック量▲は未対応（stackChange は同じ定義で自分に付けた状態にしか書けず、ほかの味方のどのバフのスタックを足すかを読む語彙が無い。自分のニンジンパーティーの分はダメージに効かない）",
+          "en": "The stack count increase of stackable buffs on all Water Code allies (herself included) every 90 normal attacks is not modeled (stackChange can only target a state the definition grants to self, and there is no vocabulary for which buffs of other allies get the stack; the part on her own Carrot Party does not affect damage)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "stackChange",
+            "target": "allies",
+            "trigger": "normalShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstEnd",
+          "target": "allies",
+          "stat": "burstGaugeSpeed",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "対象の枠ごとに、その枠の射撃で溜まるゲージに掛かる",
+            "en": "Applies, per recipient, to the gauge charged by that unit's shots"
+          },
+          "claims": [
+            "C-1168"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "maxAmmo",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "最大装弾数は C-0017 の形（加算して四捨五入）",
+            "en": "Max ammo follows C-0017 (additive ratio, rounded)"
+          },
+          "claims": [
+            "C-1167"
+          ]
+        },
+        {
+          "kind": "ammoRefill",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "ref": 5,
+          "assumes": {
+            "ja": "同じフレームに、上げた後の最大装弾数の X% を足す（ノワールの S2 の C-0395 と同じ順）",
+            "en": "On the same frame, adds X% of the raised max ammo (same order as Noir's S2, C-0395)"
+          },
+          "claims": [
+            "C-1167"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstReentry",
+          "step": "Step1",
+          "assumes": {
+            "ja": "「バースト再突入 1 段階」。CDN の次の段階（Step1）と同じ",
+            "en": "\"Burst Re-entry Stage 1\". Same as the CDN next stage (Step1)"
+          },
+          "claims": [
+            "C-1169"
+          ]
+        },
+        {
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 1,
+          "assumes": {
+            "ja": "味方全体への 1 回の回復で、HP が満タンの味方にも「回復効果が適用された時」を起こす。回復量はダメージに関係しない",
+            "en": "A one-off heal on all allies that triggers \"when healed\" even on allies at full HP. The healed amount does not affect damage"
+          },
+          "claims": [
+            "C-1170"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "自分がニンジンパーティーのフルスタック状態の時の、味方全体の受ける HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "HP recovery taken up for all allies, when she has Carrot Party at max stacks, does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    }
+  }
+}
