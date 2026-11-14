@@ -794,15 +794,15 @@ header h1 {
 .modern-slot-card.drag-source-returning .modern-slot-char-area {
   opacity: 0.35;
 }
-/* 「操作」のコントローラーのアイコンの段。アイコン（30px）を、カードの上の余白（8px）へ 6px 寄せて置く。並びの中で取る高さは
-   30px のままで、段は中身が無くても置くので、アイコンの有無でカードの高さは変わらない */
+/* 「操作」のコントローラーのアイコンの段。アイコン（30px）を、上はカードの上の余白（8px）へ 6px 寄せ、下は立ち絵の枠との間を 4px にする
+   （.modern-slot-card の gap 8px へ 4px 食い込ませる）。段は中身が無くても置くので、アイコンの有無でカードの高さは変わらない */
 .modern-slot-header {
   position: relative;
   z-index: 2;
   display: flex;
   justify-content: center;
   height: 30px;
-  margin: -6px 0 6px;
+  margin: -6px 0 -4px;
 }
 /* 操作キャラの印（コントローラーの絵。badges-src/ui_controller.svg）。白一色の絵を形だけ使い、文字色で塗る（テーマに従う） */
 /* 絵（SVG）を型にして文字の色で塗るアイコン（components/maskIcon.ts の maskIconStyle が --icon に絵を渡す） */
