@@ -96,7 +96,50 @@ header h1 {
 }
 /* クラシックのスロットの上の並べ替え（ClassicView） */
 .classic-list-order {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
   margin: 8px 0;
+}
+/* 絞り込み中は「絞り込み」のボタンと、押しているバースト段階のボタンを青くする */
+.classic-burst-filter {
+  display: flex;
+  gap: 2px;
+}
+.classic-burst-button {
+  min-width: 2.2em;
+}
+.classic-burst-button[aria-pressed='true'] {
+  border-color: var(--placing-blue);
+  background: color-mix(in srgb, var(--placing-blue) 35%, transparent);
+}
+.classic-list-order-button.classic-filter-active {
+  border-color: var(--placing-blue);
+  color: var(--placing-blue);
+}
+/* 絞り込みのポップアップ: 種類ごとのバッジのボタンを 1 行ずつ並べ、押しているボタンは青い枠と青い地にする（ClassicFilter.tsx） */
+.classic-filter-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+.classic-filter-panel .char-tray-badge-filter {
+  padding-right: 0;
+  border-right: none;
+}
+.classic-filter-panel .char-tray-badge-button[aria-pressed='true'] {
+  border-color: var(--placing-blue);
+  background: color-mix(in srgb, var(--placing-blue) 35%, transparent);
+}
+.classic-filter-panel .char-tray-badge-filter:has([aria-pressed='true']) .char-tray-badge-button[aria-pressed='false'] {
+  opacity: 1;
+}
+.classic-filter-clear {
+  align-self: flex-end;
+  padding: 2px 10px;
+  font: inherit;
+  font-size: 0.8rem;
 }
 .classic-list-order-button {
   padding: 4px 10px;

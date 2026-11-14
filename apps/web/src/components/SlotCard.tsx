@@ -17,6 +17,8 @@ type Props = {
   controlled: boolean;
   index: readonly CharacterIndexEntry[];
   excludeIds: ReadonlySet<number>;
+  /** 絞り込みに合うニケ（null は絞り込まない。CharacterPicker） */
+  visibleIds: ReadonlySet<number> | null;
   /** ほかの編成で選んでいるニケ（選択肢に印を付ける） */
   otherPartyIds: OtherParties;
   /** キャラの選択肢の印（useSkillDefinitions の fullySupported） */
@@ -43,6 +45,7 @@ export function SlotCard({
   controlled,
   index,
   excludeIds,
+  visibleIds,
   otherPartyIds,
   fullySupported,
   character,
@@ -83,6 +86,7 @@ export function SlotCard({
       <CharacterPicker
         index={index}
         excludeIds={excludeIds}
+        visibleIds={visibleIds}
         fullySupported={fullySupported}
         otherPartyIds={otherPartyIds}
         value={slot.resourceId}
