@@ -26,7 +26,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "burst": true
       }
     },
@@ -79,7 +78,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "burst": true
       }
     },
@@ -113,7 +111,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "burst": true
       }
     },
@@ -146,7 +143,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "burst": true
       }
     },

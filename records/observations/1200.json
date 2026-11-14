@@ -26,7 +26,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "burst": true
       }
     },
@@ -79,7 +78,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "burst": true
       }
     },
@@ -113,7 +111,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "burst": true
       }
     },
@@ -146,7 +143,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "burst": true
       }
     },
@@ -178,17 +174,17 @@
     "kind": "hit",
     "use": "compare",
     "value": 89730,
-    "description": "3 回目のバブルバラージの 1 ヒット（会心なし。バーストの窓の外）",
+    "description": "4 回目のバブルバラージの 1 ヒット（会心なし。バーストの窓の外）",
     "method": {
       "tool": "hud.ts --mode jumps",
-      "note": "f5576〜5660 の 1 ヒットだけのフレームの増分（同じフレームに通常攻撃の 10,683 が重なると 100,413）"
+      "note": "f7125〜7231 の 1 ヒットだけのフレームの増分（同じフレームに通常攻撃の 10,683 が重なると 100,413。会心は 134,595）。3 回目（f5575〜）も同じ値"
     },
     "compare": {
       "model": "sim",
       "metric": "skillHitDamage",
       "args": {
         "slot": 1,
-        "n": 20,
+        "n": 30,
         "crit": false,
         "skill": "skill2"
       },
@@ -198,7 +194,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "burst": true
       }
     },
