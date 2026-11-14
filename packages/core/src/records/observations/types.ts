@@ -122,7 +122,10 @@ export function isObservationValue(value: JsonValue): value is ObservationValue 
   return typeof value === 'number' || isNumberArray(value);
 }
 
-/** 値が数か数の配列の観測値（compare・input と、record の一部） */
+/**
+ * 値が数か数の配列の観測値（compare・input と、record の一部）。record の観測値も数として読む所（予測の指標・比べる設定が ID で指す値）で
+ * 絞り込む。compare・input だけを読む所は use で絞り込む
+ */
 export type MeasuredObservation = Observation & { value: ObservationValue };
 
 export function isMeasured(o: Observation): o is MeasuredObservation {

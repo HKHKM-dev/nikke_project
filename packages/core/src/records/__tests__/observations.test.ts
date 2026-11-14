@@ -1064,6 +1064,7 @@ describe('照合の部品', () => {
     expect(() => buildTeamInput(rec074, { ...setup, jumpWindows: '0074-98' }, withValues)).toThrow(/jumpWindows/);
     const base = observations.find((o) => o.id === '0074-08')!;
     const ref = observations.find((o) => o.id === '0102-15')!;
+    const { compare: _compare, ...withoutCompare } = base;
     const withRef = (jumpWindows: string, id: string): Observation => ({
       ...base,
       id,
@@ -1077,6 +1078,17 @@ describe('照合の部品', () => {
           withRef('0074-97', '0074-91'),
           withRef('0102-15', '0074-92'),
           withRef('0102-98', '0074-93'),
+          // 値が数か数の配列でない record の観測値（入れ子の配列）
+          {
+            ...withoutCompare,
+            id: '0074-96',
+            use: 'record',
+            value: [
+              [1, 2],
+              [3, 4],
+            ],
+          },
+          withRef('0074-96', '0074-94'),
         ],
         recordings,
         data.enemies,
@@ -1086,6 +1098,7 @@ describe('照合の部品', () => {
       '0074-92: jumpWindows の観測値は同じ録画のもの',
       '0074-93: jumpWindows の観測値は同じ録画のもの',
       '0074-93: jumpWindows の観測値 0102-98 は [始まり, 終わり, …] の昇順の窓の並びでない',
+      '0074-94: jumpWindows の観測値 0074-96 は [始まり, 終わり, …] の昇順の窓の並びでない',
     ]);
   });
 });
