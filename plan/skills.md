@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 122・効果 866（根拠あり 844）・notes 314（根拠あり 122）
+件数: キャラ 123・効果 876（根拠あり 854）・notes 317（根拠あり 124）
 
-notes の種類: 未対応 45・前提の外 85・計算に無関係 65・補足 33・間接 86
+notes の種類: 未対応 47・前提の外 86・計算に無関係 65・補足 33・間接 86
 
-スロット: supported 322・partial 32・unsupported 9・noEffect 51
+スロット: supported 323・partial 34・unsupported 9・noEffect 51
 
 ## 10 ラピ
 
@@ -925,6 +925,25 @@ notes の種類: 未対応 45・前提の外 85・計算に無関係 65・補足
   - effects[0] burstDamage・skill: C-0089（確定）、C-0219（確定）
   - effects[1] dot・burstUse: C-0100（確定）、C-0101（確定）、C-0111（確定）、C-0112（確定）、C-0129（確定）、C-0219（確定）
   - effects[2] timed・burstUse・maxAmmo: C-0089（確定）
+
+## 262 リバーレリオ
+
+- **skill1**: partial
+  - effects[0] timed・fullBurstStart・attack: C-1241（確定）
+  - effects[1] timed・coreHit・attackDamage: C-1237（確定）
+  - effects[2] damage・fullChargeShot・additional: C-1238（確定）、C-1239（確定）
+  - effects[3] damage・fullChargeShot・additional: C-1238（確定）、C-1239（確定）
+  - effects[4] damage・fullChargeShot・additional: C-1238（確定）、C-1239（確定）
+  - effects[5] damage・fullChargeShot・additional: C-1238（確定）、C-1239（確定）
+  - effects[6] damage・fullChargeShot・additional: C-1238（確定）、C-1239（確定）
+  - notes[0] 未対応: フルバーストタイムが発動した時の、最終攻撃力が一番低い基本バースト段階 III の味方 1 機へのスキル発動者基準のチャージ速度▲（10 秒）は未対応（最終攻撃力が一番低い味方の対象の語彙が無い）。基本バースト段階 III が自分だけの編成では自分が対象で、S2 のチャージ速度増加効果無効で効かない。自分より最終攻撃力の低い III の味方（チャージ武器）のいる編成でだけ効く: C-1242（仮説）
+- **skill2**: partial
+  - effects[0] state・fullChargeShot・ragingCurrent（attackDamage）: C-1237（確定）
+  - notes[0] 前提の外: フルチャージ攻撃が「ターゲット」でないラプチャーに命中した時の緩流（チャージ時間 1 秒で固定・持続。激流解除）は、敵が「ターゲット」の単体ボスだけの前提では起きない: 根拠なし
+  - notes[1] 未対応: 戦闘開始時からの、自分へのチャージ速度増加効果・減少効果の無効（持続・解除不可）は未対応（効果の無効の語彙が無い。自分にチャージ速度▲▼を付ける味方のいる編成でだけ効く。S1 のチャージ速度▲が自分に付いたときも、これで効かない）: C-1242（仮説）
+- **burst**: supported
+  - effects[0] timed・burstUse・attackDamage: C-1241（確定）
+  - effects[1] damage・burstUse・additional: C-1240（確定）
 
 ## 270 ブラン
 
