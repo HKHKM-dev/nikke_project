@@ -65,6 +65,7 @@ const STAT_CLASS: Record<BuffStat, ElementClass> = {
   chargeDamage: 'damageValue',
   distributedDamage: 'damageValue',
   sequentialAttackDamage: 'damageValue',
+  oneEnemyBurstDamage: 'damageValue',
   // 蓄積爆破の蓄積割合▲: 爆発のヒットの値に効く
   accumulateRatio: 'damageValue',
   burstGaugeSpeed: 'burstTiming',

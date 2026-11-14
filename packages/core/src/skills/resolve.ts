@@ -1751,6 +1751,19 @@ export function fillSkillDescription(
     .replace(TAG, '');
 }
 
+/**
+ * 説明文（日本語）の ■ の行のうち description_value_<ref> が載っている行の、対象の句（行の頭から最初の「 まで）。Lv の値を入れ、
+ * タグ・空白・改行を除く。載っている行が無ければ undefined（plan/design-jackal.md 2.2 節）
+ */
+export function targetPhraseOf(skill: SkillRaw, ref: number, level: number): string | undefined {
+  const line = skill.description.ja
+    .split('■')
+    .find((l) => [...l.matchAll(PLACEHOLDER)].some((m) => Number(m[1]) === ref));
+  if (line === undefined) return undefined;
+  const head = line.split('「')[0]!;
+  return renderSkillDescription({ ...skill, description: { ja: head, en: '' } }, level, 'ja').replace(/\s+/g, '');
+}
+
 /** 説明文の {description_value_NN} を Lv の値に置き換え、<color> / <word_group> タグを除いた文字列（UI の確認用）。値が無い箇所は "?" */
 export function renderSkillDescription(skill: SkillRaw, level: number, locale: Locale): string {
   validateSkillLevel(level);

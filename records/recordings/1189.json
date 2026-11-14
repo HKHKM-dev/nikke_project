@@ -1,0 +1,46 @@
+{
+  "id": "1189",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1189_rl_jackal.mp4",
+  "original": "2026-11-14_22-56-02.mp4",
+  "durationSec": 203.9,
+  "frames": 12231,
+  "fps": 60,
+  "sizeMB": 247,
+  "sha256": "2ceccc4f22c2",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 111,
+      "name": "ジャッカル",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 222,
+      "name": "紅蓮",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 500,
+      "name": "エレグ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0778 の撮影。ジャッカル（I・AI）・紅蓮（III・AI）・エレグ（II・操作・オート射撃 ON）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-14T23:04+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
