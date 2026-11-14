@@ -4,7 +4,7 @@
 - 関連: [design-target-vocab.md](design-target-vocab.md) 2.2・2.3 節（編成で決まる対象の `fixedTargets`）、[design-new-chars-1029.md](design-new-chars-1029.md) 5.1 節（「自分と〈状態〉の味方」の `includeSelf`）、[design-ram-s1.md](design-ram-s1.md) 2.1 節（編成で決まる静的な条件 `squad`）、[design-mint-prika.md](design-mint-prika.md) 2.2 節（状態の切り替えの組）、[design-killer-wife.md](design-killer-wife.md) 1 節（「フルチャージで N 回攻撃した時」の CT▼）、[design-skill-catalog-tooltips.md](design-skill-catalog-tooltips.md) 4 節（ツールチップの「両隣・後列」）
 - 検証: V-0777
 - 作成日: 2026-11-14
-- 状態: 撮影待ち（6 節）
+- 状態: 完了（7 節）
 
 ## 0. 範囲
 
@@ -97,6 +97,11 @@
    - 推奨: 機構が確定したキャラで、撮影 A を I-DOLL・フラワー（RL）＋ルージュ＋ソルジャーF.A.（SG）＋デルタ（SR）、撮影 B をソルジャーF.A.（II）＋I-DOLL・サン（III）＋ルージュ（3 枠目・前列）にする。撮影 A の両隣と隣でない枠を武器種で分け、スキルが通常攻撃にほぼ効かないキャラにした。
    - 代わりの案: 撮影 B を撮らず、バーストの攻撃力▲と S1 の CT▼ を `仮説` の結論のまま入れる。
 
-## 6. 経過
+## 6. 決めたこと
+
+- コインは重なる（K1。C-1226）。シールドコイン・ダブルソードコインは notes のままにし、目録に足さない。
+
+## 7. 経過
 
 - 2026-11-14: 起案。オーナーが 5 節の論点を決めた。語彙（2.1〜2.3 節。K1）と定義の下書きを実装し、撮影を頼んだ（V-0777）。
+- 2026-11-14: 録画 1181〜1183 を読み、S2・バースト・S1 の読みを確かめて定義に結び付けた（V-0777、C-1226・C-1227。S1 の CT▼ は仮説の C-1228）。

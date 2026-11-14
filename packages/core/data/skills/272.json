@@ -16,7 +16,10 @@
           "assumes": {
             "ja": "「フルチャージで 8 回攻撃した時」は、フルチャージの発を戦闘を通して数え、8 の倍数に届いた発で起きる（D：キラーワイフの S2 と同じ読み）。味方全体の、いま残っているバーストのクールタイムを減らす",
             "en": "\"After performing 8 Full Charge attacks\" counts full-charge shots over the whole battle and fires on every 8th (same reading as D: Killer Wife's S2). It reduces the remaining burst cooldown of all allies"
-          }
+          },
+          "claims": [
+            "C-1228"
+          ]
         }
       ],
       "notes": [
@@ -48,7 +51,10 @@
           "assumes": {
             "ja": "後列は 2・4 枠目、両隣は編成の枠の順で左右の枠（ゲーム内の用語のツールチップ）。ソードコインは、シールドコインが付いた後も戦闘の終わりまで続く（説明文に解除が無い）",
             "en": "The back row is slots 2 and 4, and adjacent means the slots to the left and right in the formation order (in-game term tooltip). Sword Coin lasts until the end of battle even after Shield Coin is applied (the description has no removal)"
-          }
+          },
+          "claims": [
+            "C-1226"
+          ]
         }
       ],
       "notes": [
@@ -74,7 +80,10 @@
           "stat": "attack",
           "scaling": "casterAttack",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-1227"
+          ]
         }
       ],
       "notes": [

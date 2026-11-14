@@ -1,0 +1,322 @@
+[
+  {
+    "id": "1183-01",
+    "recording": "1183",
+    "kind": "total",
+    "use": "record",
+    "value": 107995818,
+    "description": "ソルジャーF.A.・I-DOLL・サン・ルージュ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11440。増分は 1783 個"
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1183-02",
+    "recording": "1183",
+    "kind": "count",
+    "use": "record",
+    "value": 258,
+    "unit": "トリガー",
+    "description": "ソルジャーF.A.・I-DOLL・サン・ルージュ のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 1783 個。前の増分から 30f 未満の増分（1746 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 39f）から発の数を決めた（2 発になった組 26 個）"
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1183-03",
+    "recording": "1183",
+    "kind": "timing",
+    "use": "record",
+    "value": [1170, 2289, 3780, 4827, 5848, 7540, 9034, 10089, 11050],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・5・0・25・0・6・0・25・0f"
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1183-04",
+    "recording": "1183",
+    "kind": "timing",
+    "use": "record",
+    "value": [1199, 2317, 3809, 4856, 5877, 7569, 9063, 10118, 11079],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・0・25・0・0・0・25・0f"
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1183-05",
+    "recording": "1183",
+    "kind": "timing",
+    "use": "record",
+    "value": [1228, 2896, 4885, 6464, 8019, 10147],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1183-06",
+    "recording": "1183",
+    "kind": "timing",
+    "use": "record",
+    "value": [1837, 3479, 5494, 7049, 8603, 10756],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1183-07",
+    "recording": "1183",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 583, 609, 585, 584, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1183-08",
+    "recording": "1183",
+    "kind": "hit",
+    "use": "compare",
+    "value": 354728,
+    "unit": "ダメージ",
+    "description": "前列（3 枠目）のルージュの、最初のバーストより前のコアの 1 ヒット（f1059。会心なし・距離ボーナスなし）。ソードコインの▲なし",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 FA=1@200/x10;サ=2@200;ル=3@200 に当てた。f977 の 443,410（コア・距離ボーナス）も▲なしの格子に合う"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1183-09",
+    "recording": "1183",
+    "kind": "timing",
+    "use": "compare",
+    "value": [1668, 1989, 1579, 1555, 2128],
+    "unit": "フレーム",
+    "description": "フルバーストの入りどうしの間隔（最初の 5 つ。動画のフレーム）。III（I-DOLL・サン。CT 40 秒）の CT が明けるのを待つ回があり、ルージュの S1 の CT▼ で縮む",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "`1183-05` の III のタイマーの 00.00（f1228・2896・4885・6464・8019・10147）の差。I → II の替わり目は 9 回で、III が CT の間の 3 回は II で止まった"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstStartIntervals",
+      "args": {
+        "n": 5
+      },
+      "tolerance": {
+        "abs": 90
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      }
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1183-10",
+    "recording": "1183",
+    "kind": "count",
+    "use": "compare",
+    "value": 6,
+    "unit": "回",
+    "description": "180 秒のフルバーストの回数",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "`1183-05` の 00.00 の数"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstCount",
+      "args": {},
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      }
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1183-11",
+    "recording": "1183",
+    "kind": "hit",
+    "use": "compare",
+    "value": 24132,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの中（録画の f1228〜1837）の、I-DOLL・サンの胴体の 1 ヒット（距離ボーナスあり・会心なし）。ルージュのバーストの攻撃力▲あり",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 FA=1@600/x10;サ=2@600;ル=3@600（1 回目のフルバーストの中。バーストの攻撃力▲とフルバースト補正あり）に当てた。1 回目のフルバーストはモデルの CT▼ の有無で変わらない。サンのこの値の発は f1262〜1777 に 69 個。ルージュの 2 回目のバースト（フルバーストにならない回）でも、`1183-03` の替わり目の f2289 からサンの発が▲ありに替わり（直前の f2282 まで▲なし）、f2754 まで続く（f2919 からは▲なし）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1183-12",
+    "recording": "1183",
+    "kind": "hit",
+    "use": "compare",
+    "value": 14261,
+    "unit": "ダメージ",
+    "description": "ルージュの最初のバーストより前（f1059 の前後）の、I-DOLL・サンの胴体の 1 ヒット（距離ボーナスあり・会心なし）。▲なし",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 FA=1@200/x10;サ=2@200;ル=3@200 に当てた。f2282 など、ルージュのバーストの窓の外の発も同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1183-13",
+    "recording": "1183",
+    "kind": "hit",
+    "use": "compare",
+    "value": 510300,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの中の、ルージュ自身のコアの 1 ヒット（会心なし・距離ボーナスなし）。バーストの攻撃力▲あり・ソードコインなし",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 FA=1@600/x10;サ=2@600;ル=3@600（1 回目のフルバーストの中。バーストの攻撃力▲とフルバースト補正あり）に当てた。1 回目のフルバーストはモデルの CT▼ の有無で変わらない。この値の発は f1329〜1712 に 3 個"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  }
+]

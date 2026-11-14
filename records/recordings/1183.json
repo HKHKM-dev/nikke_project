@@ -31,13 +31,13 @@
   ],
   "target": {
     "name": "BigArms",
-    "element": "Fire"
+    "element": "Electronic"
   },
   "mode": "range-3min",
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "ルージュが前列の 3 枠目（V-0777 の撮影 B）",
+  "conditionNote": "ルージュが前列の 3 枠目（V-0777 の撮影 B）。敵は電撃（依頼は灼熱。出撃画面の属性タブが電撃）",
   "backup": {
     "at": "2026-11-14T22:40+09:00",
     "via": "cloud-move",
