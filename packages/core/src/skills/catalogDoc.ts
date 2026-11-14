@@ -375,6 +375,7 @@ const COND_INFO: Record<string, Info> = {
     'HP の経路の読む側。HP は減りうる（射撃場でも被弾でわずかに減る）ので前提で決めない',
   ],
   squad: ['同じ部隊の味方がいれば', 'ok', 'squad'],
+  row: ['前列・後列に配置されている時', 'ok', 'row（ルージュ編）'],
   burstStepMix: ['部隊構成（基本バースト段階）', 'ok', 'burstStepMix'],
   usedBurst: [
     '直前に自分がバーストを使用していれば・いなければ',
@@ -418,7 +419,7 @@ const TGT_INFO: Record<string, Info> = {
   'ally:lowestHpRatio': ['残りの HP の割合が最も低い味方 N 機', 'ok'],
   'ally:lowestHpValue': ['残りの HP の値が最も低い味方 N 機', 'gap'],
   'ally:topOther': ['最大HP・防御力が最も高い味方', 'gap'],
-  'ally:neighbors': ['両隣の味方', 'gap'],
+  'ally:neighbors': ['両隣の味方', 'ok'],
   'ally:random': ['ランダムな味方', 'check'],
   'ally:debuffed': [
     'デバフのかかった味方のうちランダムな N 機（デバフの印の付いた状態か timed の▼のある味方から選ぶ。removeDebuff の target debuffedRandom。N 機より多いときの選び方は未確認）',

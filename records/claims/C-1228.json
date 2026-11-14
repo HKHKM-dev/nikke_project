@@ -1,0 +1,16 @@
+{
+  "id": "C-1228",
+  "text": "ルージュの S1 は、フルチャージの発を戦闘を通して数え、8 の倍数に届いた発で、味方全体の残りのバーストのクールタイムを 7 秒（Lv10）縮める。III（CT 40 秒）の使用の間隔が 40 秒より短く（1,555〜2,128f）、区間の命中を自動の条件にしたモデルのフルバーストの間隔と回数は録画と合う。間隔はゲージで決まり（手入力の条件では合わない）、自動の条件の間隔は結論の根拠にしない（design-stage18.md 12.4 節）ので、CT▼ の量は仮説",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1183-09`・`1183-10`。V-0777",
+  "model": "data/skills/272.json の skill1 の effects[0]（cooldownReduction・{ count: fullChargeShot, everyRef: 1 }）",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": ["data/skills/272.json の skill1 の effects[0]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値（S1 の値 1・4）と、即時の CT▼ の確定の読み（D：キラーワイフの S2。C-1082）だけで決めた"
+}

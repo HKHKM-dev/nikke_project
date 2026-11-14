@@ -1,6 +1,13 @@
 // スキル定義の読み込みの検査のうち、効果 1 件の読み込み（種類ごとのモジュールへの振り分けと、どの種類にも共通の欄）。型は ../types.ts
 import { ELEMENTS } from '../../element.ts';
-import { INSTANT_KINDS, type InstantKind, SKILL_EFFECT_KINDS, type SkillEffect, type SkillSlot } from '../types.ts';
+import {
+  FORMATION_ROWS,
+  INSTANT_KINDS,
+  type InstantKind,
+  SKILL_EFFECT_KINDS,
+  type SkillEffect,
+  type SkillSlot,
+} from '../types.ts';
 import { parseAutoAttackEffect, parseShotPauseEffect, parseSummonEffect } from './attack.ts';
 import { fail, isRecord, type Json, oneOf, parseClaimRefs } from './common.ts';
 import { parseBurstStepMixCondition, parseSquadCondition, parseWithCharacterCondition } from './condition.ts';
@@ -76,6 +83,12 @@ export function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect
     }
     if (key === 'withCharacter') effect.withCharacter = parseWithCharacterCondition(v[key], `${path}.${key}`);
     else effect.enemyElement = oneOf(ELEMENTS, v[key], `${path}.${key}`);
+  }
+  // 「〈前列／後列〉に配置されている時」（passive・timed・付与。plan/design-rouge.md 2.2 節）
+  if (v.row !== undefined) {
+    if (effect.kind !== 'passive' && effect.kind !== 'timed' && effect.kind !== 'state')
+      fail(`${path}.row`, `only allowed in passive, timed and state, found in ${effect.kind}`);
+    effect.row = oneOf(FORMATION_ROWS, v.row, `${path}.row`);
   }
   if (v.claims !== undefined) effect.claims = parseClaimRefs(v.claims, `${path}.claims`);
   return effect;

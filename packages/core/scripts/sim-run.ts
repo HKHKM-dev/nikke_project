@@ -448,7 +448,7 @@ const input = {
   burstModel: values['fixed-cycle'] ? ('fixed' as const) : ('dynamic' as const),
   controlledSlot: values.controlled === undefined ? null : Number(values.controlled) - 1,
 };
-// 編成の条件（burstStepMix・squad・withCharacter・enemyElement）の付いた効果と、この編成で効くか（効かない効果は計算に入れない）
+// 編成の条件（burstStepMix・squad・withCharacter・enemyElement・row）の付いた効果と、この編成で効くか（効かない効果は計算に入れない）
 const compositionCharacters = slots.map((s) => s.character);
 // 編成で決まる自分の状態の条件（selfState。plan/design-skill-stage1.md 1.1 節）
 const selfStates = selfStateLookupsForTeam(
@@ -463,6 +463,7 @@ const compositionRows = slots.flatMap((slot, i) =>
       const squad = 'squad' in e ? e.squad : undefined;
       const withCharacter = 'withCharacter' in e ? e.withCharacter : undefined;
       const enemyElement = 'enemyElement' in e ? e.enemyElement : undefined;
+      const row = 'row' in e ? e.row : undefined;
       const selfState = 'condition' in e ? e.condition?.selfState : undefined;
       const decided = selfState !== undefined && selfStates[i]!(selfState.state) !== undefined;
       if (
@@ -470,6 +471,7 @@ const compositionRows = slots.flatMap((slot, i) =>
         squad === undefined &&
         withCharacter === undefined &&
         enemyElement === undefined &&
+        row === undefined &&
         !decided
       )
         return [];
@@ -478,6 +480,7 @@ const compositionRows = slots.flatMap((slot, i) =>
         squad && `same squad (${slot.character.squad}) ${squad.present ? 'present' : 'absent'}`,
         withCharacter && `character ${withCharacter.rid} ${withCharacter.present ? 'present' : 'absent'}`,
         enemyElement && `enemy ${enemyElement}`,
+        row && `${row} row`,
         decided && selfState !== undefined && `self ${selfState.present ? 'in' : 'not in'} ${selfState.state}`,
       ].filter(Boolean);
       return [

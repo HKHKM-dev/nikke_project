@@ -1,0 +1,265 @@
+[
+  {
+    "id": "1182-01",
+    "recording": "1182",
+    "kind": "total",
+    "use": "record",
+    "value": 105990801,
+    "description": "I-DOLL・フラワー・ルージュ・ソルジャーF.A.・デルタ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11452。増分は 470 個"
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1182-02",
+    "recording": "1182",
+    "kind": "count",
+    "use": "record",
+    "value": 251,
+    "unit": "トリガー",
+    "description": "I-DOLL・フラワー・ルージュ・ソルジャーF.A.・デルタ のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 470 個。前の増分から 30f 未満の増分（326 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 39f）から発の数を決めた（2 発になった組 83 個）"
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1182-03",
+    "recording": "1182",
+    "kind": "hit",
+    "use": "compare",
+    "value": 378318,
+    "unit": "ダメージ",
+    "description": "ルージュ（2 枠目・後列）の 1 マガジン目のコアの 1 ヒット（会心なし・距離ボーナスなし）。ソードコインの▲あり",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 花=1@600;ル=2@600;デ=4@600;FA=3@600/x10（scale 0.937646 でソードコインなしの版も足した）に当てた。934・1098・1180・1262・1344f の 586,944（1016f は 639,101 ＝ ルージュのコア + デルタのコア・距離ボーナス） は、ルージュのコア（378,318）とデルタのコア（208,626）の同じフレームの和。戦闘の最初の発から▲が乗る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1182-04",
+    "recording": "1182",
+    "kind": "hit",
+    "use": "compare",
+    "value": 378318,
+    "unit": "ダメージ",
+    "description": "ルージュの 30 回目のフルチャージ（録画の f3880 前後）より後の、終わり近くのコアの 1 ヒット（11282f。会心なし・距離ボーナスなし）。ソードコインの▲あり",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 花=1@600;ル=2@600;デ=4@600;FA=3@600/x10（scale 0.937646 でソードコインなしの版も足した）に当てた。ルージュの発は 1727f から 11282f まで、▲ありの格子にだけ合い、▲なしの版（354,728 など）に合う増分は無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 10000,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1182-05",
+    "recording": "1182",
+    "kind": "hit",
+    "use": "compare",
+    "value": 177222,
+    "unit": "ダメージ",
+    "description": "I-DOLL・フラワー（1 枠目・左の隣）の最初のコアの 1 ヒット（948f。会心なし・距離ボーナスなし）。ソードコインの▲あり",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 花=1@600;ル=2@600;デ=4@600;FA=3@600/x10（scale 0.937646 でソードコインなしの版も足した）に当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1182-06",
+    "recording": "1182",
+    "kind": "hit",
+    "use": "compare",
+    "value": 177222,
+    "unit": "ダメージ",
+    "description": "I-DOLL・フラワーの、ルージュの 30 回目のフルチャージより後の、終わり近くのコアの 1 ヒット（11233f）。ソードコインの▲あり",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 花=1@600;ル=2@600;デ=4@600;FA=3@600/x10（scale 0.937646 でソードコインなしの版も足した）に当てた。フラワーの発は全部、▲ありの格子に合い、▲なしの版に合う増分は無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 10000,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1182-07",
+    "recording": "1182",
+    "kind": "hit",
+    "use": "compare",
+    "value": 208626,
+    "unit": "ダメージ",
+    "description": "デルタ（4 枠目・隣でない）のコアの 1 ヒット（11302f。会心なし・距離ボーナスなし）。ソードコインの▲なし",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 花=1@600;ル=2@600;デ=4@600;FA=3@600/x10（scale 0.937646 でソードコインなしの版も足した）に当てた。デルタの発は全部、▲なしのモデルの格子に合う"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 10000,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1182-08",
+    "recording": "1182",
+    "kind": "hit",
+    "use": "compare",
+    "value": 13630,
+    "unit": "ダメージ",
+    "description": "ソルジャーF.A.（3 枠目・右の隣）の 1 ペレットの胴体（会心なし・距離ボーナスなし。有利コード）。ソードコインの▲あり",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 花=1@600;ル=2@600;デ=4@600;FA=3@600/x10（scale 0.937646 でソードコインなしの版も足した）に当てた。9143f の 136,300 は 1 ペレット 13,630 の 10 個。F.A. の増分は、▲ありの 1 ペレット（13,630）の倍数か、距離ボーナス・会心の混ざった和で、▲なしの 1 ペレット（12,780）の倍数は無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 10000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0777",
+    "readAt": "2026-11-14"
+  }
+]

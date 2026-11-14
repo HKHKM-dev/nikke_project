@@ -349,7 +349,7 @@ function parseTimedTarget(
   if (v.targetDefense !== undefined) {
     const targetDefense = oneOf(TARGET_DEFENSES, v.targetDefense, `${path}.targetDefense`);
     if (target !== 'allies') fail(`${path}.targetDefense`, `only allowed with target "allies", got "${target}"`);
-    for (const key of ['excludeSelf', 'targetState', 'targetBurstStep', 'targetSquad'] as const) {
+    for (const key of ['excludeSelf', 'targetState', 'targetAdjacent', 'targetBurstStep', 'targetSquad'] as const) {
       if (v[key] !== undefined) fail(`${path}.targetDefense`, `cannot be combined with ${key}`);
     }
     narrowing.targetDefense = targetDefense;
@@ -806,7 +806,7 @@ export function parsePassiveEffect(v: Record<string, Json>, path: string): Passi
   if (v.excludeSelf !== undefined) fail(`${path}.excludeSelf`, 'excludeSelf is only allowed in timed');
   // 最終防御力の比べは発火の瞬間に決めるので、常時の効果には書けない（plan/design-skill-stage7.md 1.4 節）
   if (v.targetDefense !== undefined) fail(`${path}.targetDefense`, 'targetDefense is only allowed in timed');
-  for (const key of ['targetState', 'includeSelf', 'targetBurstStep'] as const) {
+  for (const key of ['targetState', 'includeSelf', 'targetAdjacent', 'targetBurstStep'] as const) {
     if (v[key] !== undefined) fail(`${path}.${key}`, `${key} is only allowed in timed and state`);
   }
   if (v.name !== undefined) fail(`${path}.name`, NAME_REPLACED);

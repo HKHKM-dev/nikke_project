@@ -1,0 +1,99 @@
+{
+  "formatVersion": 1,
+  "resourceId": 272,
+  "checkedAt": "2026-11-14",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "cooldownReduction",
+          "trigger": {
+            "count": "fullChargeShot",
+            "everyRef": 1
+          },
+          "target": "allies",
+          "ref": 4,
+          "assumes": {
+            "ja": "「フルチャージで 8 回攻撃した時」は、フルチャージの発を戦闘を通して数え、8 の倍数に届いた発で起きる（D：キラーワイフの S2 と同じ読み）。味方全体の、いま残っているバーストのクールタイムを減らす",
+            "en": "\"After performing 8 Full Charge attacks\" counts full-charge shots over the whole battle and fires on every 8th (same reading as D: Killer Wife's S2). It reduces the remaining burst cooldown of all allies"
+          },
+          "claims": [
+            "C-1228"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルチャージ 8 回ごとの、味方全体へのスキル発動者基準の最大HP のみ▲（5 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "The Max HP ▲ (without restoring HP) of the skill user's max HP for all allies every 8 full charges (5 sec) does not change damage by itself (it matters only with effects that read HP)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "swordCoin",
+          "trigger": "battleStart",
+          "target": "allies",
+          "targetAdjacent": true,
+          "includeSelf": true,
+          "row": "back",
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "attackDamage",
+              "ref": 1
+            }
+          ],
+          "assumes": {
+            "ja": "後列は 2・4 枠目、両隣は編成の枠の順で左右の枠（ゲーム内の用語のツールチップ）。ソードコインは、シールドコインが付いた後も戦闘の終わりまで続く（説明文に解除が無い）",
+            "en": "The back row is slots 2 and 4, and adjacent means the slots to the left and right in the formation order (in-game term tooltip). Sword Coin lasts until the end of battle even after Shield Coin is applied (the description has no removal)"
+          },
+          "claims": [
+            "C-1226"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルチャージ 30 回ごとの、ソードコイン状態なら自分と両隣へのシールドコイン（受けるダメージ▼・持続）は、ダメージに関係しない",
+          "en": "Shield Coin (Damage Taken ▼, continuous) for self and adjacent allies every 30 full charges while in the Sword Coin state does not affect damage",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "バースト 5 回の使用時の、シールドコイン状態なら味方全体へのダブルソードコイン（スキル発動者基準で最大HP▲・持続）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Double Sword Coin (Max HP ▲ of the skill user's max HP, continuous) for all allies after 5 burst uses while in the Shield Coin state does not change damage by itself (it matters only with effects that read HP)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-1227"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "自分のコインの状態（ソードコイン・シールドコイン・ダブルソードコイン）ごとの、味方全体へのスキル発動者基準の最大HP（のみ）▲（10 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "The Max HP ▲ of the skill user's max HP for all allies (10 sec) by the user's coin state (Sword Coin, Shield Coin, Double Sword Coin) does not change damage by itself (it matters only with effects that read HP)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    }
+  }
+}

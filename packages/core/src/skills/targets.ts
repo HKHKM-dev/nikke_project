@@ -42,6 +42,8 @@ export type TargetedEffect = {
   targetSquad?: TargetSquad;
   excludeSelf?: ExcludeSelf;
   targetState?: NamedStateId;
+  /** 「両隣の味方」（plan/design-rouge.md 2.1 節）。枠は最上位の skills/composition.ts が fixedTargets に書く */
+  targetAdjacent?: true;
   targetBurstStep?: BasicBurstStep;
   /** 「自分と自分より最終防御力が低い味方」。発火の文脈の lowerDefense で決める */
   targetDefense?: TargetDefense;
@@ -55,6 +57,7 @@ function needsFixedTargets(effect: TargetedEffect): boolean {
     effect.target === 'longestChargeTime' ||
     effect.target === 'lowestHpRatio' ||
     effect.targetState !== undefined ||
+    effect.targetAdjacent !== undefined ||
     effect.targetBurstStep !== undefined ||
     (effect.target === 'allies' && effect.excludeSelf !== undefined)
   );

@@ -1,0 +1,46 @@
+{
+  "id": "1183",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1183_rouge-fa-sun.mp4",
+  "original": "2026-11-14_22-33-34.mp4",
+  "durationSec": 201.3,
+  "frames": 12078,
+  "fps": 60,
+  "sizeMB": 244,
+  "sha256": "d2f96800ab15",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 272,
+      "name": "ルージュ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Electronic"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "ルージュが前列の 3 枠目（V-0777 の撮影 B）。敵は電撃（依頼は灼熱。出撃画面の属性タブが電撃）",
+  "backup": {
+    "at": "2026-11-14T22:40+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
