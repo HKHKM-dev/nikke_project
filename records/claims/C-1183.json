@@ -1,0 +1,30 @@
+{
+  "id": "C-1183",
+  "text": "ディーゼルの宝物版バーストのダメージは、最終攻撃力の 299.66%（Lv10）の 1 ヒット（射撃場の的に 1 回）。II の替わり目の 61f 後に出る",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1133-15`（1 回目のバーストのヒット。比べる観測値。ほかの 7 回も同じ値か会心の値）。V-0763",
+  "model": "`data/skills/72.json` の treasureSkills.burst の effects[0]（burstDamage・ref 2）。ヒットの遅れは II の着地点の表のまま（比べていない）",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": ["data/skills/72.json の treasureSkills.burst の effects[0]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値（299.66%）",
+  "minimal": [
+    {
+      "observations": ["1133-15"],
+      "element": ["ディーゼル treasureSkills.skill1.notes[2]"],
+      "reason": "ほかの味方のスキルでディーゼルに付くスタック可能バフは、この編成（I-DOLL・フラワーの S2 はゲージのチャージ、バーストはダメージだけ）には無い",
+      "decided": "2026-11-14"
+    },
+    {
+      "observations": ["1133-15"],
+      "element": ["ディーゼル treasureSkills.skill2.effects[2]"],
+      "reason": "貫通ダメージ▲は貫通特化の効いている発にだけ乗り（C-1031）、この編成に貫通特化の味方はいない",
+      "decided": "2026-11-14"
+    }
+  ]
+}

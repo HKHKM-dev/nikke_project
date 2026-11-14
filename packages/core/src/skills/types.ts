@@ -789,7 +789,8 @@ export type AppliedTrigger = { applied: NamedStateId };
 /**
  * 「〈名前〉のフルスタック状態の時、スタック解除後」（plan/design-skill-stage3.md 1.3 節）。持ち主（自分）のその状態の件が
  * フルスタックになったフレームに発火し、その状態のスタックを全部外す（次のフレームで閉じる。同じフレームに付いた件も外す）。
- * 回復（heal）にだけ書ける（1 パス目が回復の前にフルスタックを見つける。frame/firstPass.ts）。その状態は、同じ定義の付与で
+ * 回復（heal）・使用武器の変更・弾丸チャージ（ammoRefill）・timed に書ける（1 パス目が回復の前にフルスタックを見つける。
+ * frame/firstPass.ts。弾丸チャージは外した後の最大装弾数で数える。plan/design-diesel.md 2.1 節）。その状態は、同じ定義の付与で
  * 自分にスタックで付き、付与はどれも射撃の回数のきっかけ（フルスタックになる件が前のフレームまでに登録される）
  */
 export type FullStackTrigger = { fullStack: NamedStateId };
@@ -2409,6 +2410,13 @@ export type StackChangeEffect = {
    * 残す（V-0437）。decrease の自分の状態だけ
    */
   closesAtZero?: true;
+  /**
+   * 説明文の「スタック可能バフ効果のスタック量 N 個▲」（plan/design-diesel.md 8.1 節。V-0763）。足す段の始まりのフレーム（射撃の回数の
+   * きっかけは発の次のフレーム）に、持ち主にその状態の件が付いていなければ足さない（条件を満たさない発火と同じく記録する）。フルスタックで
+   * 外した件は付いていないとみなし、同じ発の付与で付く件は付いているとみなす（0 段から同じ発で付与と重なったときの順は確かめていない）。
+   * 書かなければ、付いていない時も付与と同じく 1 段目から付ける。増加・自分だけ。段は 1.5（件を読む）
+   */
+  existingOnly?: true;
   condition?: EffectCondition;
   assumes?: LocalizedText;
 };

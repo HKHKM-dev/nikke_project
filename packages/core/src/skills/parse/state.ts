@@ -598,6 +598,7 @@ export function parseStackChangeEffect(v: Record<string, Json>, path: string): S
       'amountRef',
       'decrease',
       'closesAtZero',
+      'existingOnly',
       'condition',
       'assumes',
       'claims',
@@ -629,6 +630,13 @@ export function parseStackChangeEffect(v: Record<string, Json>, path: string): S
     if (!effect.decrease || target !== 'self')
       fail(`${path}.closesAtZero`, 'closesAtZero needs decrease on target "self"');
     effect.closesAtZero = true;
+  }
+  // 付いている時だけ足す（スタック可能バフ効果のスタック量▲。plan/design-diesel.md 8.1 節）
+  if (v.existingOnly !== undefined) {
+    parseTrue(v.existingOnly, `${path}.existingOnly`);
+    if (effect.decrease || target !== 'self')
+      fail(`${path}.existingOnly`, 'existingOnly needs an increase on target "self"');
+    effect.existingOnly = true;
   }
   if (target === 'enemy') {
     if (effect.decrease) fail(`${path}.decrease`, 'decrease is not allowed with target enemy');

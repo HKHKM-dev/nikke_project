@@ -1,0 +1,19 @@
+{
+  "id": "C-1184",
+  "text": "ディーゼルの宝物版 S2 のフルスタックの後の、味方全体の弾丸チャージ 86.62%（外したイチゴキャンディを除いた最大装弾数で数える）と貫通ダメージ 30%▲（10 秒）は説明文どおり（基礎版の弾丸チャージも同じ）。ディーゼル自身は弾丸チャージの後も残弾 300 で、量と貫通ダメージ▲は録画で見ていない",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "説明文（`data/characters/72.json` の treasure.skills.skill2 の値 05・06・07）。ディーゼル自身のフルスタックの後の残弾は `1133-18` で 300（削りの後に弾丸チャージしても 300 を超えない）。味方の弾丸チャージの量と貫通ダメージ▲は、この編成では読めない（フラワーの残弾は出ず、貫通特化の味方がいない）。V-0763",
+  "model": "`data/skills/72.json` の treasureSkills.skill2 の effects[1]（ammoRefill・`{ fullStack }`・外した後の最大装弾数で数える。`frame/firstPass/instants.ts`）と effects[2]（timed・pierceDamage・`{ fullStack }`）。基礎版は skills.skill2 の effects[1]",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": [
+      "data/skills/72.json の treasureSkills.skill2 の effects[1]",
+      "data/skills/72.json の treasureSkills.skill2 の effects[2]",
+      "data/skills/72.json の skill2 の effects[1]"
+    ]
+  },
+  "decidedOn": []
+}

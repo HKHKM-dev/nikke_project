@@ -319,7 +319,7 @@ const TRIG_INFO: Record<string, Info> = {
   fullStackConsume: [
     'フルスタックでスタック解除後',
     'ok',
-    'トリガー { fullStack }（回復と使用武器の変更。2 段目の段 3・段 11）',
+    'トリガー { fullStack }（回復・使用武器の変更・弾丸チャージ・timed。2 段目の段 3・段 11、ディーゼル編）',
   ],
   resourceEvent: [
     '固有のカウンタの出来事',

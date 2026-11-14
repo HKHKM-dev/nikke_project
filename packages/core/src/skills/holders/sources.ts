@@ -396,13 +396,14 @@ export function createSources({
   const counterValue = (slotIndex: number, counter: CounterId): number =>
     counterValues.get(counterKey(slotIndex, counter)) ?? 0;
   // ---- フルスタックの消費（定義の回復のきっかけ { fullStack } の状態。自分だけ。plan/design-skill-stage3.md 1.3 節）。
-  // 使用武器の変更のきっかけ { fullStack } の状態も（plan/design-skill-stage11.md 2.1 節） ----
+  // 使用武器の変更（plan/design-skill-stage11.md 2.1 節）・弾丸チャージ・timed（plan/design-diesel.md 2.1 節）のきっかけ
+  // { fullStack } の状態も ----
   const consuming: { holder: number; state: NamedStateId }[] = [];
   slots.forEach((slot, holder) => {
     if (slot === null || slot.definition === null) return;
     const effects = [
       ...resolveInstant(slot.definition, slot.character, slot.levels),
-      ...resolveTimed(slot.definition, slot.character, slot.levels).filter((e) => e.stat === 'weapon'),
+      ...resolveTimed(slot.definition, slot.character, slot.levels),
     ];
     for (const effect of effects) {
       if (!isResolvedFullStack(effect.trigger)) continue;

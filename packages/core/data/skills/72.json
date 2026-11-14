@@ -1,0 +1,244 @@
+{
+  "formatVersion": 1,
+  "resourceId": 72,
+  "checkedAt": "2026-11-12",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルバーストタイムが発動した時の自分の防御力▲（10 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "The DEF increase on self when entering Full Burst (10 s) does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
+        },
+        {
+          "ja": "フルバーストタイム持続中に撃たれた時の自分の回復は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは敵の攻撃で起きうる（C-0551）",
+          "en": "The heal on self when attacked during Full Burst does not occur because taking hits is not modeled (requirements 4.2). In the 3-minute range mode it can occur from the enemy's attacks",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "heal",
+            "target": "self",
+            "trigger": "damaged"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "strawberryCandy",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "self",
+          "maxStacksRef": 4,
+          "durationRef": 3,
+          "contents": [
+            {
+              "stat": "maxAmmo",
+              "ref": 2
+            }
+          ],
+          "claims": [
+            "C-1185"
+          ]
+        },
+        {
+          "kind": "ammoRefill",
+          "trigger": {
+            "fullStack": "strawberryCandy"
+          },
+          "target": "allies",
+          "ref": 5,
+          "assumes": {
+            "ja": "弾丸チャージの量は、イチゴキャンディを外した後の最大装弾数で数える（「スタック解除後」。plan/design-diesel.md 2.1 節）",
+            "en": "The reload amount is counted on the max ammo after Strawberry Candy is removed (\"after stacks are removed\"; plan/design-diesel.md 2.1)"
+          },
+          "claims": [
+            "C-1184"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "対象「最終攻撃力が最も高い敵 5 機」は単体ボスで 1 ヒット",
+            "en": "The hit on the 5 enemies with the highest final ATK lands once on a lone boss"
+          },
+          "claims": [
+            "C-1185"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "同じ敵への挑発はダメージに関係しない（付けるのはチェーンの間）",
+          "en": "The taunt on the same enemies does not affect damage (it is applied during the burst chain)",
+          "kind": "noDamage"
+        }
+      ]
+    }
+  },
+  "treasureSkills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "stackChange",
+          "state": "strawberryCandy",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 4
+          },
+          "condition": {
+            "selfState": "attract"
+          },
+          "target": "self",
+          "amountRef": 5,
+          "existingOnly": true,
+          "assumes": {
+            "ja": "スタック可能バフ効果のスタック量▲は、自分のイチゴキャンディに足す分だけ。命中は戦闘を通して数え、150 回目にヘイト状態で、イチゴキャンディが付いていれば足す",
+            "en": "Only the part added to own Strawberry Candy. Hits are counted through the battle; on the 150th hit, a stack is added if in the Attract state and Strawberry Candy is present"
+          },
+          "claims": [
+            "C-1180",
+            "C-1182"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルバーストタイムが発動した時の自分の防御力▲（10 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "The DEF increase on self when entering Full Burst (10 s) does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
+        },
+        {
+          "ja": "攻撃を受けた時（自分がヘイト状態なら）の自分の回復は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは敵の攻撃で起きうる（C-0551）",
+          "en": "The heal on self when attacked in the Attract state does not occur because taking hits is not modeled (requirements 4.2). In the 3-minute range mode it can occur from the enemy's attacks",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "heal",
+            "target": "self",
+            "trigger": "damaged"
+          }
+        },
+        {
+          "ja": "通常攻撃が 150 回命中した時（ヘイト状態なら）のスタック量▲のうち、ほかの味方のスキルで自分に付いたスタック可能バフに足す分は未対応（自分のイチゴキャンディの分だけ扱う）",
+          "en": "Of the stack count increase after 150 hits in the Attract state, the part added to stackable buffs from other allies' skills is not modeled (only own Strawberry Candy is handled)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "stackChange",
+            "target": "self",
+            "trigger": "normalHit"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "strawberryCandy",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "self",
+          "maxStacksRef": 3,
+          "durationRef": 4,
+          "contents": [
+            {
+              "stat": "maxAmmo",
+              "ref": 2
+            }
+          ],
+          "claims": [
+            "C-1179"
+          ]
+        },
+        {
+          "kind": "ammoRefill",
+          "trigger": {
+            "fullStack": "strawberryCandy"
+          },
+          "target": "allies",
+          "ref": 5,
+          "assumes": {
+            "ja": "弾丸チャージの量は、イチゴキャンディを外した後の最大装弾数で数える（「スタック解除後」。plan/design-diesel.md 2.1 節）",
+            "en": "The reload amount is counted on the max ammo after Strawberry Candy is removed (\"after stacks are removed\"; plan/design-diesel.md 2.1)"
+          },
+          "claims": [
+            "C-1184"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "fullStack": "strawberryCandy"
+          },
+          "target": "allies",
+          "stat": "pierceDamage",
+          "ref": 6,
+          "durationRef": 7,
+          "reads": [
+            "pierce"
+          ],
+          "assumes": {
+            "ja": "貫通特化の無い味方の発には乗らない",
+            "en": "It does not apply to shots of allies without Pierce"
+          },
+          "claims": [
+            "C-1184"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "対象「最終攻撃力が最も高い敵 5 機」は単体ボスで 1 ヒット",
+            "en": "The hit on the 5 enemies with the highest final ATK lands once on a lone boss"
+          },
+          "claims": [
+            "C-1183"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "attract",
+          "trigger": "burstUse",
+          "target": "self",
+          "durationRef": 5,
+          "claims": [
+            "C-1181"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "自分の最大HP のみ▲（10 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Max HP up without restoring HP on self (10 s) does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        },
+        {
+          "ja": "ヘイト（敵全体を挑発）そのものはダメージに関係しない（ティアの S2 と同じ自分にヘイトの形で、付けた時にゲージを溜めない。C-0505）。宝物版 S1 の条件が読むので、状態として付ける",
+          "en": "Attract (taunting all enemies) itself does not affect damage (the same self-Attract form as Tia's Skill 2, which charges no gauge when applied; C-0505). It is granted as a state because the treasure Skill 1 condition reads it",
+          "kind": "noDamage"
+        }
+      ]
+    }
+  }
+}

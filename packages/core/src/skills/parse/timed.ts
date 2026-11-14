@@ -262,6 +262,7 @@ export function parseTimedFields(
  * 「チャージ中の時、N 秒ごとに」（{ chargeTick }）と
  * 「フルチャージした時」（{ chargeFull }）も書ける（plan/design-skill-stage14.md 2.1・2.6 節）
  * 「遮蔽物の HP を回復した時」（{ coverHealed }）は timed だけ（plan/design-skill-stage17.md 2.1 節）
+ * 「〈名前〉のフルスタック状態の時、スタック解除後」（{ fullStack }）も timed だけ（plan/design-diesel.md 2.1 節）
  * 「〈カウンタ〉が 100% になった時」（{ counterFull }）は状態の付与だけ
  * （validateCounterGrant。plan/design-skill-stage19.md 2.1 節）
  */
@@ -285,6 +286,7 @@ function parseTimedTrigger(
       during: stat === undefined ? 'withState' : true,
       chance: allowChance,
       reloadEnd: true,
+      fullStack: stat !== undefined,
     })
   );
 }

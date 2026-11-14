@@ -77,8 +77,10 @@
     | 〈名前〉解除／直前に自分がバーストを使用していれば | `kind: "removeState"`／`condition.usedBurst: true` | マナの S2 | 同 1.2・1.4・1.5 節 |
     | 初めてフルバーストタイムが発動した時／直前に自分がバーストを使用していなければ | 出来事の回数のきっかけ `{ "count": "fullBurstStart", "atLeast": 1, "atMost": 1 }`／`condition.usedBurst: false` | ディーゼル：ウィンタースイーツの S1 | [design-diesel-ws.md](design-diesel-ws.md) 2.1・2.2 節 |
     | 〈名前〉のスタック量 N 個▲ | `kind: "stackChange"` | — | [design-skill-stage3.md](design-skill-stage3.md) 1.1 節 |
+    | スタック可能バフ効果のスタック量 N 個▲（付いているバフだけを増やす） | `stackChange` の `existingOnly: true` | ディーゼルの宝物版 S1（C-1182） | [design-diesel.md](design-diesel.md) 8.1 節 |
     | フルバーストタイム持続中に N 回／窓の外の発も数え、付くのは窓の中だけ | 回数のきっかけの `during: "fullBurst"` と `reset`／`firesDuring: "fullBurst"` | ソーダ：トゥインクルバニーの S1 | 同 1.2・1.6 節 |
     | 〈名前〉のフルスタック状態の時、スタック解除後（回復） | トリガー `{ "fullStack": "<id>" }` | クラウンの S2 | 同 1.3 節 |
+    | 〈名前〉のフルスタック状態ならスタック解除後、弾丸チャージ・▲▼（N 秒間維持） | `ammoRefill`・timed のトリガー `{ "fullStack": "<id>" }` | ディーゼルの S2 | [design-diesel.md](design-diesel.md) 2.1 節 |
     | 自分が武器変更状態の場合、通常攻撃が N 回命中した時 | 回数のきっかけの `firesDuring: "weaponChange"` | モランの S1 | [design-skill-stage11.md](design-skill-stage11.md) 2.3・3.3 節 |
     | 〈名前〉：バーストスキルクールタイム X 秒▼（持続・維持の付いた形。T4） | 状態の中身（か timed）の `stat: "burstCooldown"`・`scaling: "flat"` | モランの宝物版 S1 の熱血・ミルクの宝物版 S1・ティアの S1 | 同 3.3 節・[design-skill-stage15.md](design-skill-stage15.md) 2.2 節 |
     | 遮蔽物の HP を回復した時／遮蔽物 HP 回復 | timed のきっかけ `{ "coverHealed": true }`／`kind: "coverHeal"` | ティアの S1・S2 | [design-skill-stage15.md](design-skill-stage15.md) 2.2 節 |
