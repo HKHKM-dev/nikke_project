@@ -1,0 +1,16 @@
+{
+  "id": "C-1239",
+  "text": "リバーレリオの S1 の追加ダメージ（フルチャージの発ごとの 5 ヒット）は、どのヒットも射手の 1 ヒットぶんのバーストゲージ（target_burst_energy_pershot。フルチャージ倍率なし）を溜める。単騎の最初の満タンは 3 発目の追加ダメージの 1 ヒット目（溜めなければ 8 発目）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0841-10`。V-0780",
+  "model": "（モデル側を書く。未反映ならそう書く）",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": ["data/skills/262.json の skill1 の effects[2]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "ネオン：ビジョン・アイの S1 の追加ダメージのゲージの規則（C-0995）と、CDN の target_burst_energy_pershot（28,000）"
+}
