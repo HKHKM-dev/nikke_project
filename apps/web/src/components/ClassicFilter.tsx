@@ -11,8 +11,16 @@ import {
   toggleBadgeFilter,
   BADGE_KINDS,
   type BadgeFilters as BadgeFilterValues,
+  type BadgeKind,
 } from './modern/badges.ts';
 import { Popover } from './Popover.tsx';
+
+/** 属性のボタンの並び（電撃を鉄甲の前にする。ほかの種類はバッジの並びのまま） */
+const ELEMENT_ORDER = ['Fire', 'Water', 'Wind', 'Electronic', 'Iron'];
+function classicFilterValues(kind: BadgeKind): string[] {
+  const values = filterButtonValues(kind);
+  return kind.key === 'element' ? ELEMENT_ORDER.filter((v) => values.includes(v)) : values;
+}
 
 /** 絞り込みの状態と、合うニケ（絞り込んでいなければ null） */
 export function useClassicFilter(index: readonly CharacterIndexEntry[]) {
@@ -53,7 +61,7 @@ export function ClassicFilter({
         {CLASSIC_FILTER_KINDS.map((kind) => (
           <div key={kind.key} className="classic-filter-row" role="group" aria-label={`${kind.name}で絞り込み`}>
             <span className="classic-filter-row-name">{kind.name}</span>
-            {filterButtonValues(kind).map((v) => (
+            {classicFilterValues(kind).map((v) => (
               <button
                 key={v}
                 type="button"
