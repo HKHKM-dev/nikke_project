@@ -1,0 +1,123 @@
+{
+  "formatVersion": 1,
+  "resourceId": 431,
+  "checkedAt": "2026-11-12",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "敵を倒した時の自分の攻撃力▲（5 秒）は、射撃場の的が倒れないので起きない（敵 1 体の前提。要件 4.2 節）",
+          "en": "ATK up for self (5 s) when defeating an enemy does not occur, since the range target is never defeated (a single enemy; requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "unknown"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "cooldownReduction",
+          "trigger": {
+            "count": "fullBurstStart",
+            "atLeast": 1
+          },
+          "target": "allies",
+          "ref": 1,
+          "claims": [
+            "C-1171"
+          ]
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": {
+            "count": "fullBurstStart",
+            "atLeast": 2
+          },
+          "target": "allies",
+          "ref": 2,
+          "claims": [
+            "C-1171"
+          ]
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": {
+            "count": "fullBurstStart",
+            "atLeast": 3
+          },
+          "target": "allies",
+          "ref": 3,
+          "claims": [
+            "C-1171"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 1
+          },
+          "target": "allies",
+          "stat": "critDamage",
+          "ref": 4,
+          "durationRef": 5,
+          "claims": [
+            "C-1172"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 2
+          },
+          "target": "allies",
+          "stat": "critDamage",
+          "ref": 6,
+          "durationRef": 7,
+          "claims": [
+            "C-1172"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 3
+          },
+          "target": "allies",
+          "stat": "critDamage",
+          "ref": 8,
+          "durationRef": 9,
+          "claims": [
+            "C-1172"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "critRate",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-1173"
+          ]
+        }
+      ]
+    }
+  }
+}

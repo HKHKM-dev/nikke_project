@@ -1,0 +1,46 @@
+{
+  "id": "1139",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1139_smg+sr+ar_volume+delta+i-doll-sun_fire.mp4",
+  "original": "2026-11-14_09-55-51.mp4",
+  "durationSec": 210.9,
+  "frames": 12651,
+  "fps": 60,
+  "sizeMB": 255.7,
+  "sha256": "7fda2a67c417",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 431,
+      "name": "ボリューム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-14T10:19+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

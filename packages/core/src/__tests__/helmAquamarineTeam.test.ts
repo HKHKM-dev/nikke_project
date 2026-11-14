@@ -6,7 +6,7 @@ import { runSimulation } from '../sim/engine.ts';
 import { activeItemsAt, itemsOf } from '../skills/holders.ts';
 import type { TeamInput } from '../team.ts';
 import type { Element } from '../types.ts';
-import { describeEveryShotInOneGroup, fixedTeam, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedTeam, fullBurstCooldownCuts, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
 
 const HELM_AM = 353;
 const enemy = (element: Element | null) => ({ ...SHOOTING_RANGE_ENEMY, element });
@@ -75,16 +75,9 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     const schedule = sim.schedule;
     if (schedule === null || schedule.fullBurstWindows.length === 0) return;
     const expected = [107, 236, 388];
-    schedule.fullBurstWindows.forEach((w, n) => {
-      const amount = expected[Math.min(n, 2)];
-      // 枠ごとに、ヘルム：AM の効果（回数の段ごとに 1 件）が縮めた量の和
-      const cut = new Map<number, number>();
-      for (const r of schedule.cooldownReductions)
-        if (r.frame === w.start && r.sourceSlotIndex === helm)
-          cut.set(r.slotIndex, (cut.get(r.slotIndex) ?? 0) + r.applied);
-      // CT の残りが縮める量より長い枠（III など）は、縮める量だけ縮む（ほかの枠は CT の残りまで）
-      expect(Math.max(...cut.values())).toBe(amount);
-    });
+    expect(fullBurstCooldownCuts(schedule, helm)).toEqual(
+      schedule.fullBurstWindows.map((_, n) => expected[Math.min(n, 2)]),
+    );
   });
 });
 
