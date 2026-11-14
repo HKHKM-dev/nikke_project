@@ -150,5 +150,150 @@
       "slot": 1,
       "source": "firing"
     }
+  },
+  {
+    "id": "0841-07",
+    "recording": "0841",
+    "kind": "hit",
+    "use": "compare",
+    "value": [416291, 1464635],
+    "unit": "ダメージ",
+    "description": "リバーレリオ単騎の 1 発目（f900）と 2 発目（f989）の通常攻撃の 1 ヒット（どちらもコア・会心なし・距離ボーナスなし）。1 発目には激流と S1 のコア命中の攻撃ダメージ▲が乗らず、2 発目には両方が乗る（2 発目の値は攻撃ダメージ▲の和 1 + 20.83% + 231%）",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 通常なし=1@50;通常あり=1@600;追加=1@skill@600:skill1 に当てた。505 個の増分のうち、通常なしに合うのは 1 発目の 1 個だけで、2 発目からの発（86 個）はどれも通常あり（▲あり）の格子に合う"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": "1,2",
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "0841-08",
+    "recording": "0841",
+    "kind": "hit",
+    "use": "compare",
+    "value": 171836,
+    "unit": "ダメージ",
+    "description": "リバーレリオ単騎の S1 の追加ダメージの 1 ヒット（会心なし）。1 発目（f900）の 12f 後の 1 ヒット目から、激流とコア命中の攻撃ダメージ▲が乗った値（最終攻撃力の 40.5% × 攻撃ダメージ▲の和）。会心は 257,754",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid",
+      "note": "上と同じ格子。追加の格子（171,836・257,754）に合う増分が 410 個。外れた 8 個は、同じフレームに重なった追加ダメージの和（773,262 = 3 × 171,836 + 257,754 など）と、読みの崩れ（f10842 の 2）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "0841-09",
+    "recording": "0841",
+    "kind": "timing",
+    "use": "compare",
+    "value": [12, 18, 24, 30, 36, 12, 18, 24, 30, 36, 12, 18, 24, 30, 36, 12, 18, 24, 30, 36, 12, 18, 24, 30, 36],
+    "unit": "f",
+    "description": "リバーレリオ単騎の 1〜5 発目（f900・989・1078・1167・1256）の、発から S1 の追加ダメージの 5 ヒットまでの動画のフレーム（発ごとに 5 つ）",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid と使い捨てのスクリプト（V-0780「結果」）",
+      "note": "発（通常攻撃の格子に合う増分）ごとに、その後 45f の中の追加ダメージの増分のフレームを数えた。読めた 87 発のうち 61 発が 12・18・24・30・36、16 発がどれかのヒットが 1f 早い（動画とゲームの時刻のずれ）、残りは同じフレームに重なった和か、発の増分が遅れて読めた発（f1355 は 2・8・14・20・26。V-0596 の注記）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 1,
+        "event": "skillHit",
+        "anchor": "prevShot",
+        "count": 25
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "0841-10",
+    "recording": "0841",
+    "kind": "count",
+    "use": "compare",
+    "value": 3,
+    "unit": "発",
+    "description": "リバーレリオ単騎で、最初に BURST バーが消えた（ゲージが満タンになった）のが何発目の後か。3 発目（f1078）の追加ダメージの 1 ヒット目（f1090）でバーが消えた",
+    "method": {
+      "tool": "node tools/captures/gauge.ts --mode jumps・series（f850〜1200）",
+      "note": "バーは 1 発目の発で +1.8%（本当のゲージの約 12.6% からしか映らない。C-0084）、その後の追加ダメージの 5 ヒットでそれぞれ +6.2〜7.1%、2 発目の発で +15.9%（フルチャージ倍率で 1 ヒットの約 2 倍）と伸び、3 発目の発で 100%（約 96% から上は映らない）、f1090 で消えた。追加ダメージのヒットがゲージを溜めないモデルでは、満タンは 8 発目"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
   }
 ]

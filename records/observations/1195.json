@@ -1,0 +1,553 @@
+[
+  {
+    "id": "1195-01",
+    "recording": "1195",
+    "kind": "timing",
+    "use": "record",
+    "value": [1045, 2246, 3425, 4627, 5806, 7007, 8186, 9387, 10566],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・5・24・5・25・0・25f"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1195-02",
+    "recording": "1195",
+    "kind": "timing",
+    "use": "record",
+    "value": [1074, 2275, 3454, 4655, 5835, 7036, 8215, 9416, 10595],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・25・0・24・6・25・0・25f"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1195-03",
+    "recording": "1195",
+    "kind": "timing",
+    "use": "record",
+    "value": [1103, 3483, 5864, 8244, 10624],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1195-04",
+    "recording": "1195",
+    "kind": "timing",
+    "use": "record",
+    "value": [1633, 4046, 6472, 8853, 11199],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1195-05",
+    "recording": "1195",
+    "kind": "interval",
+    "use": "record",
+    "value": [530, 563, 608, 609, 575],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1195-06",
+    "recording": "1195",
+    "kind": "timing",
+    "use": "record",
+    "value": [2240, 3419, 4620, 5799, 7000, 8180, 9381, 10560],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1195-07",
+    "recording": "1195",
+    "kind": "timing",
+    "use": "record",
+    "value": [2269, 3448, 4649, 5828, 7029, 8209, 9410, 10589],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1195-08",
+    "recording": "1195",
+    "kind": "timing",
+    "use": "record",
+    "value": [3476, 5857, 8237, 10617],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1195-09",
+    "recording": "1195",
+    "kind": "interval",
+    "use": "compare",
+    "value": [2380, 2381, 2380, 2380],
+    "unit": "f",
+    "description": "ココア + ソルジャーF.A. + リバーレリオ（III・操作）の、フルバーストの始まり（III のタイマーの 00.00）どうしの間（動画のフレーム。1195-03 の 5 回の差）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "1195-03 の差。どの回も III（リバーレリオ）の CT（40 秒）の明け（1195-08）の 7f 後に 00.00 になった（CT が律速）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstStartIntervals",
+      "args": {
+        "n": 4
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burstChain"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1195-10",
+    "recording": "1195",
+    "kind": "hit",
+    "use": "compare",
+    "value": 17490226,
+    "unit": "ダメージ",
+    "description": "リバーレリオのバーストの追加ダメージ（925%）の 1 ヒット（会心なし）。フルバーストの 5 回のうち 4 回がこの値、1 回（5 回目）が会心の 23,320,301。S1 のフルバーストの攻撃力▲（160%）・バーストの攻撃ダメージ▲（50%）・フルバースト補正が乗った値",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 L前=3@200;L攻=3@350;LFB=3@700;追前=3@skill@200:skill1;追攻=3@skill@350:skill1;追FB=3@skill@700:skill1;バ=3@skill@280:burst;コ=1@200;コFB=1@700;FA=2@200/x10;FAFB=2@700/x10 に ±1.5 で当てた（setup は 1195-09）。モデルの遅れを測った値（60）にした後の格子（バ）に合う。攻撃力▲もバーストの▲もフルバースト補正も無い値（3,924,644）や、どれかが欠けた値の増分は無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1195-11",
+    "recording": "1195",
+    "kind": "timing",
+    "use": "compare",
+    "value": [76],
+    "unit": "f",
+    "description": "1 回目のフルバーストの、III のタイマーの 00.00（f1103）から、リバーレリオのバーストの追加ダメージのヒット（f1179）までの動画のフレーム。5 回の値は 76・76・75・76・76",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 L前=3@200;L攻=3@350;LFB=3@700;追前=3@skill@200:skill1;追攻=3@skill@350:skill1;追FB=3@skill@700:skill1;バ=3@skill@280:burst;コ=1@200;コFB=1@700;FA=2@200/x10;FAFB=2@700/x10 に ±1.5 で当てた（setup は 1195-09）。ヒットは 17,490,226（会心 23,320,301）の増分。5 回のフルバーストの 00.00（1195-03）からの差"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "skill": "burst",
+        "anchor": "fullBurst:0",
+        "within": "window",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1195-12",
+    "recording": "1195",
+    "kind": "timing",
+    "use": "compare",
+    "value": [76],
+    "unit": "f",
+    "description": "5 回目のフルバーストの、III のタイマーの 00.00（f10624）から、リバーレリオのバーストの追加ダメージのヒット（f10700。会心）までの動画のフレーム",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 L前=3@200;L攻=3@350;LFB=3@700;追前=3@skill@200:skill1;追攻=3@skill@350:skill1;追FB=3@skill@700:skill1;バ=3@skill@280:burst;コ=1@200;コFB=1@700;FA=2@200/x10;FAFB=2@700/x10 に ±1.5 で当てた（setup は 1195-09）。1 回目（1195-11）で決めた遅れの再現"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "skill": "burst",
+        "anchor": "fullBurst:4",
+        "within": "window",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1195-13",
+    "recording": "1195",
+    "kind": "hit",
+    "use": "compare",
+    "value": 5439303,
+    "unit": "ダメージ",
+    "description": "フルバーストの入りから 3 秒の間のリバーレリオの通常攻撃のコアの 1 ヒット（会心なし・距離ボーナスなし）。S1 の攻撃力 160%▲・バーストの攻撃ダメージ▲・フルバースト補正が乗った値。この格子（L攻）に合う発は 7 個（5,439,303 が 3・6,092,019 が 2・6,527,163 が 2）",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 L前=3@200;L攻=3@350;LFB=3@700;追前=3@skill@200:skill1;追攻=3@skill@350:skill1;追FB=3@skill@700:skill1;バ=3@skill@280:burst;コ=1@200;コFB=1@700;FA=2@200/x10;FAFB=2@700/x10 に ±1.5 で当てた（setup は 1195-09）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 350,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1195-14",
+    "recording": "1195",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2090975,
+    "unit": "ダメージ",
+    "description": "フルバーストの入りから 3 秒の後の、フルバーストの中のリバーレリオの通常攻撃のコアの 1 ヒット（会心なし・距離ボーナスなし）。バーストの攻撃ダメージ▲（和 4.0183）とフルバースト補正が乗り、攻撃力▲は無い。この格子（LFB）に合う発は 15 個",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 L前=3@200;L攻=3@350;LFB=3@700;追前=3@skill@200:skill1;追攻=3@skill@350:skill1;追FB=3@skill@700:skill1;バ=3@skill@280:burst;コ=1@200;コFB=1@700;FA=2@200/x10;FAFB=2@700/x10 に ±1.5 で当てた（setup は 1195-09）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1195-15",
+    "recording": "1195",
+    "kind": "hit",
+    "use": "compare",
+    "value": 765788,
+    "unit": "ダメージ",
+    "description": "フルバーストの入りから 3 秒の間のリバーレリオの S1 の追加ダメージの 1 ヒット（会心なし）。攻撃力▲・バーストの攻撃ダメージ▲・フルバースト補正が乗る。会心は 1,021,051。合う増分は 34 個",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 L前=3@200;L攻=3@350;LFB=3@700;追前=3@skill@200:skill1;追攻=3@skill@350:skill1;追FB=3@skill@700:skill1;バ=3@skill@280:burst;コ=1@200;コFB=1@700;FA=2@200/x10;FAFB=2@700/x10 に ±1.5 で当てた（setup は 1195-09）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill1",
+        "frame": 350
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1195-16",
+    "recording": "1195",
+    "kind": "hit",
+    "use": "compare",
+    "value": 294384,
+    "unit": "ダメージ",
+    "description": "フルバーストの入りから 3 秒の後の、フルバーストの中のリバーレリオの S1 の追加ダメージの 1 ヒット（会心なし）。会心は 392,512。合う増分は 86 個",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 L前=3@200;L攻=3@350;LFB=3@700;追前=3@skill@200:skill1;追攻=3@skill@350:skill1;追FB=3@skill@700:skill1;バ=3@skill@280:burst;コ=1@200;コFB=1@700;FA=2@200/x10;FAFB=2@700/x10 に ±1.5 で当てた（setup は 1195-09）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill1",
+        "frame": 700
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1195-17",
+    "recording": "1195",
+    "kind": "timing",
+    "use": "compare",
+    "value": 195,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 192,
+      "high": 198
+    },
+    "description": "1 回目のフルバーストの S1 の攻撃力▲の切れ目（00.00 の f1103 から数えた動画のフレーム）。▲ありの最後のヒット（追加ダメージ）は 192f、▲なしの最初のヒットは 198f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid --opt pair",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 L前=3@200;L攻=3@350;LFB=3@700;追前=3@skill@200:skill1;追攻=3@skill@350:skill1;追FB=3@skill@700:skill1;バ=3@skill@280:burst;コ=1@200;コFB=1@700;FA=2@200/x10;FAFB=2@700/x10 に ±1.5 で当てた（setup は 1195-09）。境は L攻,追攻 > LFB,追FB。範囲は 00.00 の 100〜300f。5 回の幅は 192〜198・192〜198・158〜211・197〜203・〜291 で、共通部分は 197〜198"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "attack",
+        "from": 3,
+        "n": 0,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1195-18",
+    "recording": "1195",
+    "kind": "timing",
+    "use": "compare",
+    "value": 200,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 197,
+      "high": 203
+    },
+    "description": "4 回目のフルバーストの S1 の攻撃力▲の切れ目（00.00 の f8244 から数えた動画のフレーム）。▲ありの最後のヒットは 197f、▲なしの最初のヒットは 203f",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid --opt pair",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 L前=3@200;L攻=3@350;LFB=3@700;追前=3@skill@200:skill1;追攻=3@skill@350:skill1;追FB=3@skill@700:skill1;バ=3@skill@280:burst;コ=1@200;コFB=1@700;FA=2@200/x10;FAFB=2@700/x10 に ±1.5 で当てた（setup は 1195-09）。1 回目（1195-17）と同じ読み方の再現"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "attack",
+        "from": 3,
+        "n": 3,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1195-19",
+    "recording": "1195",
+    "kind": "interval",
+    "use": "compare",
+    "value": 88.92,
+    "unit": "f",
+    "description": "バーストの攻撃ダメージ▲の窓（フルバーストの間）の中の、リバーレリオの続いた 2 発の間の平均（リロードを挟む間を除く 12 個: 89 が 11・88 が 1）。S1 のチャージ速度▲（12.74%）がチャージに効けば、間はチャージの短縮の分だけ短い",
+    "method": {
+      "tool": "recipe:buff-edge@5 --opt grid",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、格子 L前=3@200;L攻=3@350;LFB=3@700;追前=3@skill@200:skill1;追攻=3@skill@350:skill1;追FB=3@skill@700:skill1;バ=3@skill@280:burst;コ=1@200;コFB=1@700;FA=2@200/x10;FAFB=2@700/x10 に ±1.5 で当てた（setup は 1195-09）。リバーレリオの通常攻撃の格子（L前・L攻・LFB）に合う増分の、フルバーストの窓（1195-03〜1195-04）の中の差。231f（リロードを挟む）と 178f（2 発ぶん。読めなかった発を挟む）は除いた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowShotIntervalMean",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "attackDamage",
+        "inside": true,
+        "maxGap": 150
+      },
+      "tolerance": {
+        "abs": 0.2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "source": "V-0780",
+    "readAt": "2026-11-14"
+  }
+]

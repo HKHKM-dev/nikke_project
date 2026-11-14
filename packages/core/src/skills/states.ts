@@ -403,6 +403,11 @@ export const NAMED_STATES = {
   frenzy: { name: { ja: '狂気', en: 'Frenzy' }, holder: 'ally' },
   /** ソードコイン（ルージュの S2。戦闘開始時に後列なら自分と両隣に付く。攻撃ダメージ▲・持続。plan/design-rouge.md 2.3 節） */
   swordCoin: { name: { ja: 'ソードコイン', en: 'Sword Coin' }, holder: 'ally' },
+  /**
+   * 激流（リバーレリオの S2。フルチャージ攻撃が「ターゲット」に命中した時に自分に付く。攻撃ダメージ▲・持続。対になる緩流
+   * （ターゲットでないラプチャーに命中した時）は前提の外で付かないので、目録に置かない）
+   */
+  ragingCurrent: { name: { ja: '激流', en: 'Raging Current' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;
