@@ -700,9 +700,13 @@ for (const [i, slot] of slots.entries()) {
       // 使用武器の変更（1 発の倍率）と、最大装弾数（スタックの▼・装弾数無限込み）
       weapon: g.buffs.weapon ? `${(g.trigger.weaponMultiplier * 100).toFixed(2)}%` : '',
       ammo: g.buffs.infiniteAmmo > 0 ? '∞' : firingParams(slot.character.shot, g.buffs).maxAmmo,
+      // 1 トリガーの値と内訳（通常攻撃 + 射撃ごとの倍率ダメージ + 与えたダメージ量の X% の固定ダメージ。0 の項は省く）
       perTrigger:
-        g.trigger.perShot > 0
-          ? `${fmt(g.trigger.perTrigger)} (${fmt(g.trigger.normal)}+${fmt(g.trigger.perShot)})`
+        g.trigger.perShot > 0 || g.trigger.fixedShare > 0
+          ? `${fmt(g.trigger.perTrigger)} (${[g.trigger.normal, g.trigger.perShot, g.trigger.fixedShare]
+              .filter((v, k) => k === 0 || v > 0)
+              .map(fmt)
+              .join('+')})`
           : fmt(g.trigger.perTrigger),
       triggers: g.triggers,
       damage: fmt(g.damage),
@@ -710,7 +714,7 @@ for (const [i, slot] of slots.entries()) {
         .map(
           ({ e, n }) =>
             // 状態の中身はトリガーの代わりに、効いている状態（while:camouflage）
-            `${itemLabel(e)} ${e.stat}${e.value < 0 ? '' : '+'}${e.scaling === 'flat' ? `${e.value}${e.stat === 'chargeSpeed' ? 's' : ''}` : e.scaling === 'casterDefence' ? `${Math.round(e.appliedAmount)} (caster ${(e.value * 100).toFixed(2)}%)` : `${(e.value * 100).toFixed(2)}%`}${n > 1 ? ` ×${n}` : ''}${e.targetWeapon ? ` (${e.targetWeapon})` : ''}`,
+            `${itemLabel(e)} ${e.stat}${e.value < 0 ? '' : '+'}${e.scaling === 'flat' ? `${e.value}${e.stat === 'chargeSpeed' ? 's' : ''}` : e.scaling === 'casterDefence' ? `${Math.round(e.appliedAmount)} (caster ${(e.value * 100).toFixed(2)}%)` : e.scaling === 'perFinalMaxAmmo' ? `${(e.value * 100).toFixed(2)}% × max ammo` : `${(e.value * 100).toFixed(2)}%`}${n > 1 ? ` ×${n}` : ''}${e.targetWeapon ? ` (${e.targetWeapon})` : ''}`,
         )
         .join(', '),
     })),

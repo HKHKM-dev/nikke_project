@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { computeTriggerDamage, partialChargeTriggerDamage } from '../../damage.ts';
 import type { CharacterData } from '../../types.ts';
 import { applyChargeBuffs, applyResolvedEffect, PER_MAX_AMMO_CAP, ZERO_BUFFS } from '../buffs.ts';
-import { resolveFixedShare, resolvePerShotDamage } from '../burstDamage.ts';
+import { resolveDamageEffects, resolveFixedShare, resolvePerShotDamage } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 
@@ -134,6 +134,25 @@ describe('damageType fixedShare（plan/design-emilia.md 2.2 節）', () => {
     const partial = partialChargeTriggerDamage(full, 0.5);
     expect(partial.fixedShare).toBe(0);
     expect(partial.perTrigger).toBeCloseTo(partial.normal + partial.perShot, 6);
+  });
+});
+
+describe('畳み込めない固定ダメージ', () => {
+  it('rejects a fixedShare on a definition that fires uncharged shots', () => {
+    const emilia = readJson<CharacterData>('../../../data/characters/821.json');
+    const raw = readJson<{ skills: Record<string, { effects: unknown[] }> }>('../../../data/skills/821.json');
+    // 即着弾に替える使用武器の変更があると、フルチャージの発の毎回は畳み込まない（foldsIntoShot）
+    raw.skills.burst!.effects.push({
+      kind: 'weaponChange',
+      trigger: 'burstUse',
+      damageRef: 3,
+      durationRef: 6,
+      rateOfFire: 1412,
+      instantFire: true,
+      infiniteAmmo: true,
+    });
+    const parsed = parseSkillDefinition(raw);
+    expect(() => resolveDamageEffects(parsed, emilia, MAX_SKILL_LEVELS)).toThrow(/must fold into the shot/);
   });
 });
 
