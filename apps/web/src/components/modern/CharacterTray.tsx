@@ -81,8 +81,7 @@ export function CharacterTray({
   return (
     <section
       ref={setNodeRef}
-      // 持ち上げている間は、一覧の名前を流さない（流れる名前の層が多いと、ドラッグの描き直しのたびに合成の組み直しが重くなる）
-      className={`char-tray-panel ${returning ? 'char-tray-returning' : ''} ${active !== null ? 'char-tray-dragging' : ''}`}
+      className={`char-tray-panel ${returning ? 'char-tray-returning' : ''}`}
       aria-label="ニケ一覧パレット"
     >
       <div className="char-tray-header">

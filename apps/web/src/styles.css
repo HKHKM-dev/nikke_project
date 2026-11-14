@@ -1033,8 +1033,9 @@ header h1 {
 .scrolling-name .scrolling-name-track {
   animation: scrolling-name var(--name-duration) linear infinite;
 }
-/* 一覧から持ち上げている間は、一覧の名前を流さない（CharacterTray の char-tray-dragging。流れる名前の層が多いと、ドラッグの描き直しが重い） */
-.char-tray-dragging .scrolling-name .scrolling-name-track {
+/* 持ち上げている絵（SlotDragOverlay）の名前は流さない（一覧とスロットに残っている名前は流し続ける） */
+.slot-drag-overlay .scrolling-name .scrolling-name-track,
+.char-drag-overlay .scrolling-name .scrolling-name-track {
   animation: none;
 }
 @keyframes scrolling-name {
