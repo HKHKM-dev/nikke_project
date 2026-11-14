@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 124・効果 881（根拠あり 859）・notes 324（根拠あり 131）
+件数: キャラ 126・効果 895（根拠あり 873）・notes 331（根拠あり 136）
 
-notes の種類: 未対応 47・前提の外 92・計算に無関係 65・補足 34・間接 86
+notes の種類: 未対応 49・前提の外 96・計算に無関係 65・補足 34・間接 87
 
-スロット: supported 326・partial 34・unsupported 9・noEffect 51
+スロット: supported 330・partial 36・unsupported 9・noEffect 51
 
 ## 10 ラピ
 
@@ -1725,6 +1725,26 @@ notes の種類: 未対応 47・前提の外 92・計算に無関係 65・補足
   - effects[7] timed・burstUse・maxAmmo: C-1118（確定）、C-1119（確定）
   - notes[0] 間接（HP）: 完全計算の、自分の現在の HP 1%▼（1 秒間隔・10 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く。グレイブに HP を読む効果は無く、S1 の放熱の回復で戻る）: 根拠なし
 
+## 515 シンデレラ：クリスタルウェーブ
+
+- **skill1**: supported
+  - effects[0] timed・battleStart・attackDamage: C-1248（確定）
+  - effects[1] damage・5 秒ごと・skill: C-1249（確定）
+  - effects[2] burstGauge・teamAmmo: C-1250（確定）
+  - notes[0] 前提の外: 最大弾数のリロードが完了した時、変更準備状態なら、狙撃モード（チャージ時間 1 秒・最大装弾数 15 発・フルチャージで弾薬消費 40 発・貫通特化）への使用武器変更は、オートの射撃では狙撃モードに入らない（変更準備は撃ち切りのリロードの前に最後の弾丸で外れるか 6 秒で切れ、弾が残ったまま始まるハイドのリロードは的のジャンプの明けで止まって込め終わらない）ので起きない（要件 4.2 節）。モデルではずっと基礎の武器（MG）で撃つ: C-1253（確定）
+  - notes[1] 前提の外: 最大弾数のリロードが完了した時の変更準備（リロード時間を 3 秒に固定・6 秒・最後の弾丸で攻撃時に解除）は、オートの射撃では効く回が無い（撃ち切りのリロードは最後の弾丸で外れるか 6 秒で切れた後に始まり、ハイドのリロードは込め終わらずに止まる）ので、モデルでは付けない（要件 4.2 節）: C-1253（確定）
+- **skill2**: supported
+  - effects[0] timed・battleStart・attack: C-1248（確定）
+  - effects[1] timed・battleStart・coreDamage: C-1248（確定）
+  - effects[2] damage・fullBurstStart・skill: C-1252（確定）
+  - notes[0] 間接（デコイ）: 戦闘開始時とバースト使用時のデコイ（分身）は、それ自体は与ダメージを変えない（デコイを読む効果のある編成でだけ効く）: 根拠なし
+  - notes[1] 前提の外: 狙撃モード適用時のデストロイ（パーツダメージ▲）は、パーツを扱わず（要件 4.2 節）、オートの射撃では狙撃モードにもならない（skill1 の notes）ので効かない: C-1253（確定）
+  - notes[2] 前提の外: フルバーストタイムが発動した時、直前に自分がバーストを使っていて狙撃モードなら、敵全体（パーツ含む）への倍率ダメージは、オートの射撃では狙撃モードにならない（skill1 の notes）ので起きない（要件 4.2 節）: C-1253（確定）
+- **burst**: supported
+  - effects[0] timed・burstUse・attackDamage: C-1251（確定）
+  - effects[1] timed・burstUse・attack: C-1251（確定）
+  - effects[2] burstDamage・skill: C-1251（確定）
+
 ## 570 アークレンジャー・ブラック
 
 - **skill1**: supported
@@ -1814,6 +1834,19 @@ notes の種類: 未対応 47・前提の外 92・計算に無関係 65・補足
   - effects[0] state・burstUse・modeB（attack・chargeSpeed・fireStanceScale）: C-1100（確定）
     - contents[2] fireStanceScale: C-1155（仮説）
   - effects[1] currentHpDown・modeB の間 1 秒ごと（付いた時から）: C-1101（確定）
+
+## 821 エミリア
+
+- **skill1**: supported
+  - effects[0] timed・fullChargeShot・chargeSpeed: C-1254（確定）
+  - effects[1] timed・fullChargeShot・chargeDamage: C-1254（確定）
+- **skill2**: partial
+  - effects[0] damage・fullChargeShot・fixedShare: C-1255（確定）
+  - effects[1] timed・fullBurstStart・maxAmmo: C-1256（確定）
+  - notes[0] 未対応: 固定ダメージがバーストゲージを溜める分は未対応（溜めることは録画の 1 回目のフルバーストの入りの早さから見込むが、量が決まっていない）: C-1258（仮説）
+- **burst**: partial
+  - effects[0] state・burstUse・freezingWitch（chargeSpeed・chargeDamage）: C-1257（確定）
+  - notes[0] 未対応: 爆発範囲▲は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）: 根拠なし
 
 ## 822 ラム
 
