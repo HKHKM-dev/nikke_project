@@ -26,7 +26,7 @@ import { METRICS } from '../../../packages/core/src/records/observations/metrics
 import type { CompareSetup } from '../../../packages/core/src/records/observations/setup.ts';
 import {
   type CompareSpec,
-  isObservationValue,
+  isNumberArray,
   type Observation,
 } from '../../../packages/core/src/records/observations/types.ts';
 import { V_ID } from '../../../packages/core/src/records/ids.ts';
@@ -172,7 +172,7 @@ export function parseEvents(text: string | undefined): number[] {
   if (text === undefined || text === '') throw new Error('--opt events=<f,f,...|観測値の ID> が要る');
   if (/^\d+-\d+$/.test(text)) {
     const v = loadObservation(text).value;
-    if (!isObservationValue(v) || !Array.isArray(v)) throw new Error(`観測値 ${text} の値が数の列でない`);
+    if (!isNumberArray(v)) throw new Error(`観測値 ${text} の値が数の列でない`);
     return v;
   }
   return parseNumbers(text, 'events');

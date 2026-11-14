@@ -8,10 +8,9 @@ import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { observationIdsInBranches } from '../../packages/core/scripts/records-data.ts';
-import type { JsonValue, Observation } from '../../packages/core/src/records/observations/types.ts';
+import type { JsonValue, Observation, ObservationDraft } from '../../packages/core/src/records/observations/types.ts';
 import { isLegacy, type RecordingEntry } from '../../packages/core/src/records/recordings.ts';
 import { capturesDir, legacyVideoPath } from './dirs.ts';
-import type { RecipeObservation } from './recipes/types.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const RECORDINGS_DIR = `${ROOT}records/recordings/`;
@@ -58,7 +57,7 @@ function sameValue(a: JsonValue, b: JsonValue): boolean {
  */
 export function prepareObservations(
   recordingId: string,
-  produced: readonly RecipeObservation[],
+  produced: readonly ObservationDraft[],
   opts: { tool: string; source: string; readAt: string },
 ): { existing: Observation[]; finished: Observation[] } {
   const existing = loadObservations(recordingId);

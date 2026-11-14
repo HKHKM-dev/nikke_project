@@ -3,7 +3,6 @@
 import type { EnemyPresetMaster } from '../../types.ts';
 import type { RecordingEntry } from '../recordings.ts';
 import { METRICS } from './metrics/index.ts';
-import { isFiniteValue } from './run.ts';
 import {
   FAR_LANDINGS,
   holdFireRangesOf,
@@ -96,7 +95,7 @@ function fieldErrors(o: Observation, recordings: ReadonlyMap<string, RecordingEn
     errors.push(`${at}: invalid には reason と date（YYYY-MM-DD）が要る`);
   if (o.scope !== undefined) errors.push(...validateScope(o.scope, recordings.get(o.recording)?.team.length, at));
   // 記録だけの値（record）は、入れ子・オブジェクト・読めなかった要素の null を持ってよい
-  if ((o.use === 'compare' || o.use === 'input') && !isFiniteValue(o.value))
+  if ((o.use === 'compare' || o.use === 'input') && !isObservationValue(o.value))
     errors.push(`${at}: use が ${o.use} の value は数か数の配列`);
   if (o.use === 'compare' && o.compare === undefined) errors.push(`${at}: use が compare なら compare が要る`);
   if (o.use !== 'compare' && o.compare !== undefined) errors.push(`${at}: compare は use が compare のときだけ`);

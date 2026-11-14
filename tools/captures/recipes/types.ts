@@ -2,10 +2,9 @@
 // レシピは「録画 → 観測値の列」の手順を 1 つのモジュールにしたもの。名前と版を持ち、出力の観測値の method.tool に
 // `recipe:<名前>@<版>` を書く。目で数える値はレシピの外（観測値の method.note に書く）。
 import type {
-  NumericObservation,
   Observation,
+  ObservationDraft,
   ObservationKind,
-  RecordObservation,
 } from '../../../packages/core/src/records/observations/types.ts';
 import type { RecordingEntry } from '../../../packages/core/src/records/recordings.ts';
 
@@ -26,10 +25,8 @@ export type RecipeContext = {
   log: (message: string) => void;
 };
 
-type Draft<O> = Omit<O, 'id' | 'recording' | 'source' | 'readAt'>;
-
-/** レシピの出力。id・recording・source・readAt は read.ts が埋める（use ごとの value の型を保つ） */
-export type RecipeObservation = Draft<NumericObservation> | Draft<RecordObservation>;
+/** レシピの出力。id・recording・source・readAt は read.ts が埋める */
+export type RecipeObservation = ObservationDraft;
 
 export type Recipe = {
   name: string;

@@ -66,7 +66,7 @@ export type PredictionMemo = {
  */
 export function predictionKey(o: Observation, recording: RecordingEntry | undefined, data: RecordsData): string {
   const c = o.compare!;
-  const refs: [string, number | number[]][] = [];
+  const refs: [string, ObservationValue][] = [];
   JSON.stringify(c, (_, v: unknown) => {
     if (typeof v === 'string') {
       const value = data.observationValues?.get(v);

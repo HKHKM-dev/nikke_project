@@ -13,9 +13,10 @@ import { withArgs, type Metric, type MetricContext } from './observations/metric
 import type { CompareSetup } from './observations/setup.ts';
 import {
   type CompareSpec,
+  isMeasured,
   isObservationValue,
+  type MeasuredObservation,
   type Observation,
-  type ObservationValue,
   type Tolerance,
 } from './observations/types.ts';
 import {
@@ -503,13 +504,6 @@ export function observationsOfTarget(
   );
 }
 
-/** 値が数か数の配列の観測値（compare・input と、record の一部） */
-export type MeasuredObservation = Observation & { value: ObservationValue };
-
-function isMeasured(o: Observation): o is MeasuredObservation {
-  return isObservationValue(o.value);
-}
-
 export type TargetComparison = {
   target: PredictionTarget;
   observation: MeasuredObservation | undefined;
@@ -538,7 +532,8 @@ export function comparePredictions(
   if (file.predicted === null) return { file, targets, score, ...(stale ? { stale } : {}) };
   for (const t of file.targets) {
     // 値が数か数の配列でない観測値とは比べない（validatePredictions が落とす）
-    const observation = observationsOfTarget(file, t, observations).find(isMeasured);
+    const found = observationsOfTarget(file, t, observations)[0];
+    const observation = found !== undefined && isMeasured(found) ? found : undefined;
     const byHypothesis = file.hypotheses.map((h) => {
       const predicted = file.predicted!.values[h.id]?.[t.id];
       if (predicted === undefined) return { hypothesis: h.id, predicted: Number.NaN, diff: null, ok: null };

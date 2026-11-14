@@ -52,6 +52,11 @@ export type NumericObservation = ObservationFields & { use: 'compare' | 'input';
 /** 記録だけの観測値。value は入れ子の配列・オブジェクト・文字列と、読めなかった要素の null を持つ */
 export type RecordObservation = ObservationFields & { use: 'record'; value: JsonValue };
 
+type Draft<O> = Omit<O, 'id' | 'recording' | 'source' | 'readAt'>;
+
+/** 観測値の下書き（id・recording・source・readAt を除いたもの。Omit を use ごとにかけ、value の型を保つ） */
+export type ObservationDraft = Draft<NumericObservation> | Draft<RecordObservation>;
+
 type ObservationFields = {
   id: string;
   /** 置き場所の録画（recordings があれば、その中で最も若い番号） */
@@ -107,9 +112,21 @@ export type ObservationScope = {
   frames?: [number, number];
 };
 
+/** 値が数の配列か */
+export function isNumberArray(value: JsonValue): value is number[] {
+  return Array.isArray(value) && value.every((x) => typeof x === 'number');
+}
+
 /** 値が数か数の配列か（record の観測値の値は、そうでないことがある） */
 export function isObservationValue(value: JsonValue): value is ObservationValue {
-  return typeof value === 'number' || (Array.isArray(value) && value.every((x) => typeof x === 'number'));
+  return typeof value === 'number' || isNumberArray(value);
+}
+
+/** 値が数か数の配列の観測値（compare・input と、record の一部） */
+export type MeasuredObservation = Observation & { value: ObservationValue };
+
+export function isMeasured(o: Observation): o is MeasuredObservation {
+  return isObservationValue(o.value);
 }
 
 /** 失効した観測値 → 失効の理由 */
