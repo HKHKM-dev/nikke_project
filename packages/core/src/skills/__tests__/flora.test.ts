@@ -52,20 +52,26 @@ describe('読み込み', () => {
     expect(def.treasureSkills?.burst?.effects.map((e) => e.kind)).toEqual(['heal', 'timed', 'timed']);
   });
 
-  it('takes includeSelf only with targetState or the adjacent target', () => {
-    expect(parseWith('skills', 'skill1', 0, { target: 'allies' })).toThrow(
-      /includeSelf.*targetState or target "adjacent"/,
+  it('takes targetAdjacent and includeSelf on heal only with target allies and together', () => {
+    expect(parseWith('skills', 'skill1', 0, { targetAdjacent: undefined })).toThrow(
+      /includeSelf.*only allowed with targetAdjacent/,
     );
-    expect(parseWith('skills', 'skill2', 1, { includeSelf: true })).toThrow(/includeSelf/);
+    expect(parseWith('skills', 'skill1', 0, { target: 'self' })).toThrow(
+      /targetAdjacent.*only allowed with target "allies"/,
+    );
+    expect(parseWith('skills', 'skill1', 0, { targetAdjacent: false })).toThrow(/must be true/);
   });
 
-  it('takes the adjacent target only in timed, state grants and heal', () => {
-    const copy = structuredClone(raw);
-    copy.skills.skill2!.effects.push({ kind: 'passive', target: 'adjacent', stat: 'attack', ref: 4 });
-    expect(() => parseSkillDefinition(copy)).toThrow(/adjacent is only allowed/);
+  it('does not take targetAdjacent on instant effects other than heal', () => {
     const gauge = structuredClone(raw);
-    gauge.skills.burst!.effects.push({ kind: 'burstGauge', trigger: 'burstUse', target: 'adjacent', ref: 1 });
-    expect(() => parseSkillDefinition(gauge)).toThrow(/burstGauge must target "allies"|adjacent is only allowed/);
+    gauge.skills.burst!.effects.push({
+      kind: 'burstGauge',
+      trigger: 'burstUse',
+      target: 'allies',
+      targetAdjacent: true,
+      ref: 1,
+    });
+    expect(() => parseSkillDefinition(gauge)).toThrow(/targetAdjacent/);
   });
 
   it('puts an adjacent HP trigger only with a duration in seconds and without max HP stats', () => {
@@ -106,9 +112,9 @@ describe('解決値（スキル Lv7）', () => {
   });
 
   it('resolves the treasure Peace of Mind grant and the Max HP-only increase', () => {
-    const grants = resolveStateGrants(treasure.definition, treasure.character, LV7);
+    const grants = resolveStateGrants(treasure.definition!, treasure.character, LV7);
     expect(grants.find((g) => g.state === 'heartOfPeace')).toMatchObject({ trigger: 'battleStart' });
-    const up = resolveTimed(treasure.definition, treasure.character, LV7).find((e) => e.stat === 'maxHpOnly');
+    const up = resolveTimed(treasure.definition!, treasure.character, LV7).find((e) => e.stat === 'maxHpOnly');
     expect(up).toMatchObject({ trigger: 'burstStage2Enter', scaling: 'casterMaxHp', targetState: 'heartOfPeace' });
     expect(up!.value).toBeCloseTo(0.1297, 6);
     expect(up!.durationFrames).toBe(gameSecondsToFrames(2));

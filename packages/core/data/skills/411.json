@@ -8,7 +8,8 @@
         {
           "kind": "heal",
           "trigger": "battleStart",
-          "target": "adjacent",
+          "target": "allies",
+          "targetAdjacent": true,
           "includeSelf": true,
           "ref": 1,
           "assumes": {
@@ -105,7 +106,8 @@
           "state": "heartOfPeace",
           "trigger": "battleStart",
           "durationUntil": "battleEnd",
-          "target": "adjacent",
+          "target": "allies",
+          "targetAdjacent": true,
           "includeSelf": true,
           "assumes": {
             "ja": "心の平和（中身なし。持続回復は effects[1] の heal で書く）を、戦闘開始時に自分と両隣の味方に付け、戦闘の終わりまで続く。「心の平和状態の味方全体」（effects[3]・S2 の effects[2]）はこの 3 機（1・5 枠なら 2 機）",
@@ -115,7 +117,8 @@
         {
           "kind": "heal",
           "trigger": "battleStart",
-          "target": "adjacent",
+          "target": "allies",
+          "targetAdjacent": true,
           "includeSelf": true,
           "ref": 1,
           "assumes": {

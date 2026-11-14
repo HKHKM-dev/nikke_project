@@ -19,7 +19,7 @@
   - S2 の防御力無視ダメージ▲: ベスティー：TU の S2 の防御力無視ダメージ（フルチャージの発ごと）の 1 ヒットの値。
   - 宝物版 S2 の攻撃力▲: エクシア・ベスティー：TU の発の値。
 - 最小構成: エクシア（宝物版）とベスティー：TU は機構が確定したキャラ（[skills.md](../../plan/skills.md)）。未確定はフローラの効果だけ。フローラの効果どうしは、撮影ごとに起きる効果を分けて混ぜない（A は S1 と S2 の防御力無視ダメージ▲だけ、B は宝物版 S1 の最大HP のみ▲ と S2、C はそれにバーストを足す）。フローラの持続回復（`healed`）を読む効果は編成に無い。
-- 語彙（plan/design-adjacent-allies.md 2 節）: 両隣の対象 `adjacent`・`includeSelf`、心の平和（`heartOfPeace`）、きっかけ `{ adjacentHpAtMostRef }`・`{ adjacentHpFull }`、`stackChange` の `allStackable`。
+- 語彙（plan/design-adjacent-allies.md 2 節）: 両隣の対象 `targetAdjacent`・`includeSelf`（plan/design-rouge.md 2.1 節の形）、心の平和（`heartOfPeace`）、きっかけ `{ adjacentHpAtMostRef }`・`{ adjacentHpFull }`、`stackChange` の `allStackable`。
 - 通常攻撃の条件: エクシア（SR・最大装弾数 6）・フローラ（MG・最大装弾数 300・60〜4200rpm）・ベスティー：TU（RL）。的の表のそれぞれの行。
 
 ## 予測
