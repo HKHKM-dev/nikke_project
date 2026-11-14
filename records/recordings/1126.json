@@ -1,0 +1,40 @@
+{
+  "id": "1126",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1126_marciana-lastshot.mp4",
+  "original": "2026-11-14_00-51-38.mp4",
+  "durationSec": 197.9,
+  "frames": 11876,
+  "fps": 60,
+  "sizeMB": 240.2,
+  "sha256": "82eaf8521f84",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 321,
+      "name": "マルチャーナ",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 330,
+      "name": "クラウン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0756 の撮影 A: マルチャーナ（操作・ゲームの 3 枠目）・クラウン（4 枠目）。1・2・5 枠目は空き。オートバースト OFF（バーストを使わない）",
+  "backup": {
+    "at": "2026-11-14T01:00+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

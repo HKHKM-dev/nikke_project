@@ -1,0 +1,70 @@
+{
+  "formatVersion": 1,
+  "resourceId": 321,
+  "checkedAt": "2026-11-12",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "heal",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "allies",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "味方全体（自分を含む）への吸収回復（攻撃ダメージの X% 回復・3 秒）。付いていない状態から付いた時だけ「回復効果が適用された時」を起こし、切れる前の付き直しでは起こさない（C-0082 と同じ扱い）。満タンの味方にも起きるとみなす。「最後の弾丸が命中した時」は、残弾を 0 にした射撃で起こす（外れた時に起きないかは確かめていない）。回復量はダメージに関係しない",
+            "en": "A lifesteal (X% of attack damage, 3 s) on all allies, herself included. It triggers \"when healed\" only when newly applied, not when refreshed before it expires (as in C-0082), and also on allies at full HP. \"When the last bullet hits\" fires on the shot that empties the magazine (whether a miss skips it is unverified). The healed amount does not affect damage"
+          },
+          "claims": [
+            "C-1156"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "最後の弾丸が命中した時の、最終攻撃力が最も高い味方 2 機への受けるHP回復量▲（3 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "The HP-recovery-received increase on the 2 allies with the highest final ATK when the last bullet hits (3 s) does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 1,
+          "assumes": {
+            "ja": "バーストスキルを使用した時の、味方全体（自分を含む）への 1 回の回復（スキル発動者の最終最大HP の X%）。HP が満タンの味方にも「回復効果が適用された時」を起こす（エヌ：ミラクルフェアリーのバーストの回復の C-0618 と同じ読み）。回復量はダメージに関係しない",
+            "en": "A one-off heal on all allies, herself included, on using the Burst (X% of the caster's final max HP). It triggers \"when healed\" even on allies at full HP (read as for N: Miracle Fairy's Burst heal, C-0618). The healed amount does not affect damage"
+          },
+          "claims": [
+            "C-1195",
+            "C-1194"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "保存（超過した回復量を発動者の最大HP の X% まで保存・10 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Storage (stores excess healing up to X% of the caster's max HP for 10 s) does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        },
+        {
+          "ja": "味方全体への、スキル発動者の防御力に比例した防御力▲（10 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "Defence up for all allies in proportion to the caster's DEF (10 s) does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
+        }
+      ]
+    }
+  }
+}
