@@ -200,10 +200,7 @@ export function slotTriggerDamage(
   );
 }
 
-/**
- * 枠の手入力の条件での 1 トリガー値（フルバースト補正なし）。倍率ダメージのヒット（planSkillHits）・バーストのヒットと、結果の
- * バーストの代表値（sim/engine.ts）が、ヒットの時点のバフ buffs で出す
- */
+/** 枠の手入力の条件と、バフ buffs での 1 トリガー値（フルバースト補正なし） */
 export function slotHitTriggerDamage(
   slot: TeamSlotInput,
   enemy: EnemyInput,
@@ -485,9 +482,7 @@ type SlotReaders = {
   ownCounters: readonly CounterRecord[];
   /** damage の条件の自分の側の読み口 */
   self: SelfReaders;
-  /** perCount が読む、自分のその状態のスタック数 */
   selfStackCount: (state: NamedStateId, frame: number) => number;
-  /** 間隔の変更の窓（効く先とスロットで絞る） */
   everyWindows: (target: 'cycle' | 'shotCounts', skill: SkillSlot) => { start: number; end: number; every: number }[];
   push: PushHit;
 };
@@ -506,7 +501,7 @@ type PushHit = (
   valueFrame?: number,
 ) => { trigger: TriggerDamage; event: SkillHitEvent };
 
-/** 枠 slotIndex の読み口（定義の無い枠は null）。同じ発動の順のバーストの検査もここで行う */
+/** 枠 slotIndex の読み口（定義の無い枠は null） */
 function slotReadersOf(ctx: SkillHitsContext, slot: TeamSlotInput | null, slotIndex: number): SlotReaders | null {
   const { history } = ctx;
   const definition = slot?.skills?.definition;
@@ -753,16 +748,9 @@ function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
       const acc = effect.accumulate;
       if (acc?.source === 'team') {
         const end = frame + acc.durationFrames;
-        if (end + acc.releaseDelayFrames >= frames) continue;
-        const { trigger, event } = push(
-          end + acc.releaseDelayFrames,
-          effect,
-          false,
-          undefined,
-          undefined,
-          false,
-          frame,
-        );
+        const at = end + acc.releaseDelayFrames;
+        if (at >= frames) continue;
+        const { trigger, event } = push(at, effect, false, undefined, undefined, false, frame);
         event.accumulate = {
           start: frame,
           end,
