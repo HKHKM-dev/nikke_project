@@ -59,25 +59,27 @@ export function ModernView({
   // ドラッグを始めたら、一覧のクリックで待っているニケをやめる
   const drag = useSlotDrag({ team, dispatch, calc, roster, placement, onDragStart: () => setPendingId(null) });
 
-  // 一覧でニケをクリックしたとき: 空き枠があれば最も左の空き枠に置く。なければ、次にクリックしたスロットに置くまで待つ
-  // （同じニケをもう一度クリックすると待つのをやめる。ほかの編成で使っているニケは何もしない）
+  // 一覧でニケをクリックしたとき: 空き枠があれば最も左の空き枠に置く。なければ、次にクリックしたスロットに置くまで待つ。
+  // 待っている間（ほかのニケが暗い間）は、一覧のどのニケをクリックしても待つのをやめるだけ。ほかの編成で使っているニケは何もしない
   const handleSelectCharacter = (resourceId: number) => {
+    if (pendingId !== null) {
+      setPendingId(null);
+      return;
+    }
     // ほかの編成で使っているニケは選べない（App の dispatch も止める）
     if (otherPartyIds.has(resourceId)) return;
     // いまの編成のスロットにいるニケをクリックしたら、そのスロットから外す
     const takenIndex = team.slots.findIndex((s) => s.resourceId === resourceId);
     if (takenIndex !== -1) {
       clearSlot(takenIndex);
-      setPendingId(null);
       return;
     }
     const emptyIndex = team.slots.findIndex((s) => s.resourceId === null);
     if (emptyIndex === -1) {
-      setPendingId((id) => (id === resourceId ? null : resourceId));
+      setPendingId(resourceId);
       return;
     }
     placeFromTray(resourceId, emptyIndex);
-    setPendingId(null);
   };
 
   // 待っているニケを、クリックしたスロットに置く（いたニケは外れて一覧に戻る）
