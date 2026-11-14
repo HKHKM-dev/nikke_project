@@ -1,0 +1,46 @@
+{
+  "id": "1198",
+  "date": "2026-11-15",
+  "folder": "range",
+  "file": "20261115-1198_rl_emilia.mp4",
+  "original": "2026-11-15_01-24-38.mp4",
+  "durationSec": 215.2,
+  "frames": 12911,
+  "fps": 60,
+  "sizeMB": 260.4,
+  "sha256": "4bf8cce0acc9",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 821,
+      "name": "エミリア",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0779 の撮影。リター（I・AI）・デルタ（II・AI）・エミリア（III・操作・オート射撃 ON）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-15T01:33+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
