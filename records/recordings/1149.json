@@ -1,0 +1,40 @@
+{
+  "id": "1149",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1149_rl+ar_rumani+jill_fire.mp4",
+  "original": "2026-11-14_10-47-17.mp4",
+  "durationSec": 200.1,
+  "frames": 12003,
+  "fps": 60,
+  "sizeMB": 242.5,
+  "sha256": "b10e42a984f9",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 240,
+      "name": "ルマニ",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 841,
+      "name": "ジル",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0762 の撮影 B。ルマニ（I・操作）+ ジル（III）。戦闘履歴のパネルで枠順（1 ルマニ・2 ジル。LV.400）を、左上のボタンでオート射撃・オートバースト ON を確かめた",
+  "backup": {
+    "at": "2026-11-14T11:01+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
