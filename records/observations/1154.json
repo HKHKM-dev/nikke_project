@@ -1,0 +1,232 @@
+[
+  {
+    "id": "1154-15",
+    "recording": "1154",
+    "kind": "total",
+    "use": "record",
+    "value": 106062257,
+    "description": "エクシア の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11344。増分は 108 個"
+    },
+    "source": "V-0765",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1154-16",
+    "recording": "1154",
+    "kind": "count",
+    "use": "record",
+    "value": 108,
+    "unit": "トリガー",
+    "description": "エクシア のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 108 個。前の増分から 30f 未満の増分（0 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 37f）から発の数を決めた（2 発になった組 0 個）"
+    },
+    "source": "V-0765",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1154-17",
+    "recording": "1154",
+    "kind": "timing",
+    "use": "record",
+    "value": [1575, 3006, 4391, 5840, 7314, 8699, 10030],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・25・25・14・25・25・25f"
+    },
+    "source": "V-0765",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1154-18",
+    "recording": "1154",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": [
+      344596, 441179, 634346, 730930, 827513, 847570, 847570, 1000426, 1000426, 1000426, 1024084, 1024084, 1024027
+    ],
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "発の番号は、1 回目のバーストの替わり目の後の外れた発（1629f。残弾の表示は減るが総ダメージが変わらない）も 1 発と数え、バーストの増分（替わり目の 91f 後）を除いて頭から数えた。増分のフレーム: 854・936・1100・1182・1264・1464・1546・1711・1793・1875・2075・2157・2239。どの増分も、コア・非会心・距離ボーナスなしの格子に合う（会心・距離ボーナスの乗った発は除いた）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": "1,2,4,5,6,7,8,10,11,12,13,14,15",
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "description": "エクシアの通常攻撃の 1〜15 発目（会心の発を除く） の 1 ヒット（コア・非会心・距離ボーナスなし）。1〜6 発目はハッキングコード収集の 0〜5 スタック、7・8 発目は宝物版 S2 の攻撃力▲ 1 スタックと S1 の防御力▼（6 発目の最終弾から）、10〜12 発目はバーストの受けるダメージ▲・防御力▼、13・14 発目は 2 回目の S1 の防御力▼が重なり、15 発目は S1 の防御力▼の切れた後",
+    "source": "V-0765",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1154-19",
+    "recording": "1154",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": [
+      867526, 867526, 887582, 887533, 887533, 1047657, 1071319, 1071262, 907541, 927594, 927545, 927545, 927545, 927545
+    ],
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "発の番号は、1 回目のバーストの替わり目の後の外れた発（1629f。残弾の表示は減るが総ダメージが変わらない）も 1 発と数え、バーストの増分（替わり目の 91f 後）を除いて頭から数えた。増分のフレーム: 2449・2531・2731・2895・3060・3142・3424・3670・3752・4034・4120・4198・4280・4362。どの増分も、コア・非会心・距離ボーナスなしの格子に合う（会心・距離ボーナスの乗った発は除いた）。20 発目（1 回目の的のジャンプの後のマガジンの 2 発目）は、録画では S1 の防御力▼が乗り（887,582）、モデルではジャンプの後の射撃の時刻が録画とずれて切れているので除いた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": "17,18,19,21,23,24,26,29,30,32,33,34,35,36",
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "description": "エクシアの通常攻撃の 17〜36 発目（会心の発を除く）の 1 ヒット（コア・非会心・距離ボーナスなし）。宝物版 S2 の攻撃力▲が最終弾ごとに 1 スタックずつ増えて 5 スタックで止まり（36 発目まで）、S1 の防御力▼はマガジンの 1・2 発目にだけ乗り、2 回目のバースト（24 発目から）の受けるダメージ▲は 29 発目まで",
+    "source": "V-0765",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1154-20",
+    "recording": "1154",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 750792,
+    "description": "エクシアの 1 回目のバースト（ハッキングコード収集 5 スタック）の、バーストスキルダメージ（会心）と追加ダメージの和",
+    "method": {
+      "tool": "recipe:hud-jumps@3・recipe:burst-panel@4",
+      "note": "替わり目（1154-17 の 1 つ目）の 91f 後の増分。会心のバーストスキルダメージと、非会心の追加ダメージの和"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitWithSkillHits",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0765",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1154-21",
+    "recording": "1154",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 657380,
+    "description": "エクシアの 3 回目のバーストの、バーストスキルダメージと追加ダメージ（どちらも非会心）の和",
+    "method": {
+      "tool": "recipe:hud-jumps@3・recipe:burst-panel@4",
+      "note": "替わり目（1154-17 の 3 つ目）の 91f 後の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitWithSkillHits",
+      "args": {
+        "slot": 1,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0765",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1154-22",
+    "recording": "1154",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "value": [91, 91, 91, 91, 91, 91, 91],
+    "description": "エクシアの 1〜7 回目のバーストの、六角形が I から II に替わったフレーム（1154-17）から、バーストのヒット（HUD の増分）までの動画のフレーム",
+    "method": {
+      "tool": "recipe:hud-jumps@3・recipe:burst-panel@4",
+      "note": "7 回とも同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 1,
+        "count": 7
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0765",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1154-23",
+    "recording": "1154",
+    "kind": "count",
+    "use": "record",
+    "unit": "発",
+    "value": 1,
+    "description": "エクシアの 1 回目のバーストの替わり目（f1575）の後の発（f1629）で、総ダメージが増えなかった発の数（残弾の表示は 4 から 3 に減った）。2〜7 回目のバーストの替わり目とヒットの間の発（3060・5894・8754 など）は増える",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と目視",
+      "note": "残弾の表示（照準の左）を f1560〜1720 で目で読んだ。1145 も同じ（f1634）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0765",
+    "readAt": "2026-11-14"
+  }
+]

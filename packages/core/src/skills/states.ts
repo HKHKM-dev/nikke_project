@@ -375,6 +375,11 @@ export const NAMED_STATES = {
    * 書かない。付いた記録だけの名前で、読む効果（S1 のスタック量▲・バーストのフルスタックの条件）は未対応か間接の notes）
    */
   carrotParty: { name: { ja: 'ニンジンパーティー', en: 'Carrot Party' }, holder: 'ally' },
+  /**
+   * ハッキングコード収集（エクシアの S2。自分に 5 スタック・中身は攻撃力▲。S1・宝物版 S2 の「ハッキングコード収集状態なら」と、
+   * バーストの「フルスタック状態なら」が見る）
+   */
+  collectHackingCode: { name: { ja: 'ハッキングコード収集', en: 'Collect Hacking Code' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

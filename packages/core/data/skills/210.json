@@ -1,0 +1,294 @@
+{
+  "formatVersion": 1,
+  "resourceId": 210,
+  "checkedAt": "2026-11-12",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "allies",
+          "stat": "enemyDefenseDown",
+          "ref": 3,
+          "durationRef": 4,
+          "condition": {
+            "selfState": "collectHackingCode"
+          },
+          "assumes": {
+            "ja": "最後の弾丸はいつも命中する（外れた時に付かないのは入れない）。対象は敵 1 体",
+            "en": "The last bullet always hits (not applying it on a miss is not modeled). The target is the lone enemy"
+          },
+          "claims": [
+            "C-1189",
+            "C-1193"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "最後の弾丸が命中した時の対象の攻撃力▼はダメージに関係しない",
+          "en": "The attack decrease on the target when the last bullet hits does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "collectHackingCode",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "self",
+          "maxStacksRef": 2,
+          "durationRef": 3,
+          "contents": [
+            {
+              "stat": "attack",
+              "ref": 1
+            }
+          ],
+          "assumes": {
+            "ja": "最後の弾丸はいつも命中する（外れた時に付かないのは入れない）。付くたびに全部のスタックの維持を付け直す",
+            "en": "The last bullet always hits (not applying it on a miss is not modeled). Each application refreshes the duration of all stacks"
+          },
+          "claims": [
+            "C-1187",
+            "C-1193"
+          ]
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "最終防御力が最も高い敵 10 機は敵 1 体。同じバーストの防御力▼（effects[1]）は乗らない（発動の時点の値。C-0795）",
+            "en": "The 10 enemies with the highest final DEF are the lone enemy. The DEF decrease of the same Burst (effects[1]) does not apply (values at the activation; C-0795)"
+          },
+          "claims": [
+            "C-1190",
+            "C-1193"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "enemyDefenseDown",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-1190",
+            "C-1193"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 5,
+          "damageType": "additional",
+          "condition": {
+            "selfState": {
+              "state": "collectHackingCode",
+              "stacks": "full"
+            }
+          },
+          "assumes": {
+            "ja": "バーストスキルダメージと同じフレームに 1 ヒット。同じバーストの防御力▼（effects[1]）が乗る（ギルティのバーストと同じ形。C-0874）",
+            "en": "One hit on the same frame as the Burst skill damage. The DEF decrease of the same Burst (effects[1]) applies (same form as Guilty's Burst; C-0874)"
+          },
+          "claims": [
+            "C-1190",
+            "C-1193"
+          ]
+        }
+      ],
+      "notes": []
+    }
+  },
+  "treasureSkills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "allies",
+          "stat": "enemyDefenseDown",
+          "ref": 3,
+          "durationRef": 4,
+          "condition": {
+            "selfState": "collectHackingCode"
+          },
+          "assumes": {
+            "ja": "最後の弾丸はいつも命中する（外れた時に付かないのは入れない）。対象は敵 1 体",
+            "en": "The last bullet always hits (not applying it on a miss is not modeled). The target is the lone enemy"
+          },
+          "claims": [
+            "C-1189"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "stat": "reloadSpeed",
+          "ref": 5,
+          "durationRef": 6,
+          "assumes": {
+            "ja": "リロード速度 値 05（95）%▲（10 秒）。リロードの時間 × (1 − 値) になる（C-0013）。「固定」は書いていない（下の notes）",
+            "en": "Reload speed up by value 05 (95)% (10 s): reload time × (1 − value) (C-0013). \"Fixed\" is not modeled (see the notes below)"
+          },
+          "claims": [
+            "C-1192"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "最後の弾丸が命中した時の対象の攻撃力▼はダメージに関係しない",
+          "en": "The attack decrease on the target when the last bullet hits does not affect damage",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "リロード速度の「増加状態で固定」（窓の間、ほかのリロード速度▲▼を無視する）は未対応。ほかの枠からリロード速度▲▼を受ける編成では、モデルは足し合わせる（effects[1]）",
+          "en": "The reload speed being \"fixed\" (ignoring other reload speed ups/downs during the window) is not modeled. In teams where other units give reload speed ups/downs, the model adds them up (effects[1])",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "reloadSpeed",
+            "target": "self",
+            "trigger": "fullBurstStart"
+          },
+          "claims": [
+            "C-1192"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "collectHackingCode",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "self",
+          "maxStacksRef": 2,
+          "durationRef": 3,
+          "contents": [
+            {
+              "stat": "attack",
+              "ref": 1
+            }
+          ],
+          "assumes": {
+            "ja": "フルチャージの発はいつも命中する（外れた時に付かないのは入れない）。付くたびに全部のスタックの維持を付け直す",
+            "en": "Full Charge shots always hit (not applying it on a miss is not modeled). Each application refreshes the duration of all stacks"
+          },
+          "claims": [
+            "C-1187"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "allies",
+          "targetElement": "Electronic",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 4,
+          "maxStacksRef": 5,
+          "durationRef": 6,
+          "condition": {
+            "selfState": "collectHackingCode"
+          },
+          "assumes": {
+            "ja": "最後の弾丸はいつも命中する（外れた時に付かないのは入れない）。電撃コードの味方全体に自分も入る。付くたびに全部のスタックの維持を付け直す",
+            "en": "The last bullet always hits (not applying it on a miss is not modeled). All Electric Code allies include self. Each application refreshes the duration of all stacks"
+          },
+          "claims": [
+            "C-1188"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "最終防御力が最も高い敵 10 機は敵 1 体。同じバーストの防御力▼（effects[1]）と受けるダメージ▲（effects[3]）は乗らない（発動の時点の値。C-0795）",
+            "en": "The 10 enemies with the highest final DEF are the lone enemy. The DEF decrease (effects[1]) and Damage Taken up (effects[3]) of the same Burst do not apply (values at the activation; C-0795)"
+          },
+          "claims": [
+            "C-1190",
+            "C-1191"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "enemyDefenseDown",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-1190"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 5,
+          "damageType": "additional",
+          "condition": {
+            "selfState": {
+              "state": "collectHackingCode",
+              "stacks": "full"
+            }
+          },
+          "assumes": {
+            "ja": "バーストスキルダメージと同じフレームに 1 ヒット。同じバーストの防御力▼（effects[1]）が乗り、説明文で後に書かれた受けるダメージ▲（effects[3]）は乗らない（ギルティのバーストと同じ形。C-0874）",
+            "en": "One hit on the same frame as the Burst skill damage. The DEF decrease of the same Burst (effects[1]) applies, and the Damage Taken up written after it (effects[3]) does not (same form as Guilty's Burst; C-0874)"
+          },
+          "claims": [
+            "C-1190"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 6,
+          "durationRef": 7,
+          "condition": {
+            "selfState": {
+              "state": "collectHackingCode",
+              "stacks": "full"
+            }
+          },
+          "claims": [
+            "C-1190"
+          ]
+        }
+      ]
+    }
+  }
+}

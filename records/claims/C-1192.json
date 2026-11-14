@@ -1,0 +1,16 @@
+{
+  "id": "C-1192",
+  "text": "エクシアの宝物版 S1 の「フルバーストタイム発動時、自分にリロード速度 値 05 % 増加状態で固定（10 秒）」は、フルバーストの中のリロードを、マガジンの最終弾から次のマガジンの 1 発目まで 88f にする（外は 200f）。リロード 2 秒 ×（1 − 0.95）= 0.1 秒（C-0013 の式）。ほかのリロード速度▲▼の無い編成で読んだので、「固定」（ほかの▲▼を無視する）と足し合わせは見分けていない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1146-14`・`1147-14`（フルバーストの中の 6 回とも 88f。外の回の多くは 200f）。どちらもモデルと同じ。V-0765",
+  "model": "反映（data/skills/210.json の treasureSkills.skill1 の effects[1]）。「固定」は未対応の notes（treasureSkills.skill1 の notes[1]）",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": ["data/skills/210.json の treasureSkills.skill1 の effects[1]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値 05・06 とリロードの式（C-0013）"
+}

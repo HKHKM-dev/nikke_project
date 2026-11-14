@@ -1,0 +1,22 @@
+{
+  "id": "C-1193",
+  "text": "エクシアの基礎版のスキルの説明文は、S2 のきっかけ（最後の弾丸が命中した時）と維持（15 秒）、宝物版だけの行（S1 のリロード速度の固定・S2 の電撃コードの味方への攻撃力▲・バーストの受けるダメージ▲）のほかは宝物版と同じ文で、同じ形に読む（S1 の防御力▼・ハッキングコード収集の攻撃力▲と 5 スタック・バーストのダメージと防御力▼とフルスタックの追加ダメージ）。値はどれも説明文の値",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文（`data/characters/210.json` の skills と treasure.skills）。同じ文の読みは宝物版の録画で確かめた（C-1187・C-1189・C-1190）。最後の弾丸のきっかけは宝物版の S1・S2 の行で確かめた（C-1188・C-1189）。基礎版の録画は撮れない（宝物を外せない。トーブの C-0986 と同じ）。V-0765",
+  "model": "反映（data/skills/210.json の skills の skill1 の effects[0]・skill2 の effects[0]・burst の effects[0]〜[2]）。形は treasureSkills と同じで、値は基礎版の説明文の値",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": [
+      "data/skills/210.json の skill1 の effects[0]",
+      "data/skills/210.json の skill2 の effects[0]",
+      "data/skills/210.json の burst の effects[0]",
+      "data/skills/210.json の burst の effects[1]",
+      "data/skills/210.json の burst の effects[2]"
+    ]
+  },
+  "decidedOn": [],
+  "gradeReason": "基礎版は撮れないので、宝物版の録画で確かめた読みを同じ文に当てた推論にとどめる"
+}
