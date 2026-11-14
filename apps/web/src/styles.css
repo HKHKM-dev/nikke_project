@@ -1033,11 +1033,6 @@ header h1 {
 .scrolling-name .scrolling-name-track {
   animation: scrolling-name var(--name-duration) linear infinite;
 }
-/* 持ち上げている絵（SlotDragOverlay）の名前は流さない（一覧とスロットに残っている名前は流し続ける） */
-.slot-drag-overlay .scrolling-name .scrolling-name-track,
-.char-drag-overlay .scrolling-name .scrolling-name-track {
-  animation: none;
-}
 @keyframes scrolling-name {
   from {
     transform: translateX(0);
