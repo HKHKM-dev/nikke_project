@@ -1,0 +1,44 @@
+{
+  "id": "1158",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1158_crown-ai-sun-nofire-2.mp4",
+  "original": "2026-11-14_01-03-49.mp4",
+  "durationSec": 133,
+  "frames": 7977,
+  "fps": 60,
+  "sizeMB": 161.1,
+  "sha256": "e0480db7aaf9",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 330,
+      "name": "クラウン",
+      "controlled": false,
+      "bursts": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": true,
+      "fires": false,
+      "note": "操作・撃たない（オート射撃 OFF）",
+      "bursts": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。V-0761 の撮り方 C2（対照）: クラウン（AI）・I-DOLL・サン（操作。ゲームの 3 枠目・オート射撃 OFF で撃たない。一時停止の画面の与ダメージ 0）。オートバースト ON（I 段がいないのでバーストは撃たれない）。ゲージが満タンになった後、一時停止の画面を映して止めた。枠順とオート射撃・オートバーストは一時停止の画面と画面左上のボタンで確かめた",
+  "backup": {
+    "at": "2026-11-14T01:23+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

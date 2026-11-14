@@ -1,0 +1,44 @@
+{
+  "id": "1156",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1156_crown-ai-mihara-bc-nofire-2.mp4",
+  "original": "2026-11-14_01-01-19.mp4",
+  "durationSec": 76.4,
+  "frames": 4581,
+  "fps": 60,
+  "sizeMB": 92.4,
+  "sha256": "66e209ea0790",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 330,
+      "name": "クラウン",
+      "controlled": false,
+      "bursts": false
+    },
+    {
+      "slot": 2,
+      "rid": 162,
+      "name": "ミハラ：ボンディングチェーン",
+      "controlled": true,
+      "fires": false,
+      "note": "操作・撃たない（オート射撃 OFF）",
+      "bursts": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。V-0761 の撮り方 C1: クラウン（AI）・ミハラ：ボンディングチェーン（操作。ゲームの 3 枠目・オート射撃 OFF で撃たない）。オートバースト ON（I 段がいないのでバーストは撃たれない）。ゲージが満タンになった後、一時停止の画面を映して止めた。枠順とオート射撃・オートバーストは一時停止の画面と画面左上のボタンで確かめた",
+  "backup": {
+    "at": "2026-11-14T01:21+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

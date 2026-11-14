@@ -57,6 +57,7 @@ import { createInstantSources, createInstants } from './firstPass/instants.ts';
 import { createShotLogs } from './firstPass/shotLogs.ts';
 import { createShooterStates, createShooters } from './firstPass/shooters.ts';
 import { createFrameEvents } from './firstPass/frameEvents.ts';
+import { createCounterGauges } from './firstPass/counterGauges.ts';
 
 export type FirstPassOptions = {
   frames: number;
@@ -176,6 +177,11 @@ export type FirstPassResult = {
    * 持続ダメージで溜めたゲージ（発生順）。apply は付けたとき（発火のフレーム）、tick は予約した tick のフレーム。テスト用
    */
   dotGauges: { slotIndex: number; kind: 'apply' | 'tick'; frame: number; energy: number }[];
+  /**
+   * カウンタが上限に届いた時（{ counterFull }）のきっかけのヒットで溜めたゲージ（予約した順。plan/design-mihara-bc-gauge.md 3 節）。
+   * attack は倍率ダメージのヒット、apply は持続ダメージを付けた時、tick は刻み。frame は溜めるフレーム。テスト用
+   */
+  counterGauges: { slotIndex: number; kind: 'attack' | 'apply' | 'tick'; frame: number; energy: number }[];
   /**
    * 発と、射撃ごとの倍率ダメージのヒットで溜めたゲージ（予約した順）。shotFrame は発射、frame は着弾（飛ぶ時間を足したフレーム）。
    * フルバーストの終わりを跨ぐ発の照合用（plan/design-anis-star-gauge-timing.md 3.5 節）
@@ -327,6 +333,7 @@ function runFirstPassOnce(
   } = upToGaugeEffects;
   const { accumulateReleases, addAccumulatedGauge, recordAccumulatorShots } = createAccumulate(upToGaugeEffects);
   const { countSummons, summonHits } = createSummons(upToGaugeEffects);
+  const { countCounterGauges, counterGauges, trackCounterEvents } = createCounterGauges(upToGaugeEffects);
   const upToShooters = {
     ...upToGaugeEffects,
     ...shotPausesLayer,
@@ -358,9 +365,10 @@ function runFirstPassOnce(
     // 2. ゲージと状態機械（planDynamicSchedule と同じく、このフレームの射撃のゲージを枠順に足してから 1 フレーム進める）
     stepBurst(gauge, f, blocked);
     // 2b. V-0030: 段の循環の射撃は、手順 3 の後に数える（countCycles）
-    if (trackEvents || trackDotBurstUse) {
+    let ev: ReturnType<typeof collectFrameEvents> | null = null;
+    if (trackEvents || trackDotBurstUse || trackCounterEvents) {
       // 3. 出来事 → 射撃に効く窓の登録 → 即時効果
-      const ev = collectFrameEvents(f);
+      ev = collectFrameEvents(f);
       reserveBurstUseDotTicks(f, ev.burstEffects);
       applyHeals(ev, f);
 
@@ -373,6 +381,7 @@ function runFirstPassOnce(
     countDamageHitGauges(f);
     countCooldownTimers(f);
     countSummons(f);
+    countCounterGauges(f, ev);
   }
 
   const leadShots = lists.leadShots();
@@ -387,6 +396,7 @@ function runFirstPassOnce(
     instants: discardedExtensions.size === 0 ? instants : instants.filter((x) => !discardedExtensions.has(x)),
     cycleGaugeHits,
     dotGauges,
+    counterGauges,
     shotGauges,
     allyGauges,
     timerGauges,

@@ -18,7 +18,13 @@ import { type BurstActivation } from '../../burst/schedule.ts';
 import { isResolvedShotCount, isResolvedTimer, resolveSkillCooldownDowns } from '../../skills/resolve.ts';
 import { cooldownTimer, shortenedTimer, timerFramesOf } from '../../skills/timeline.ts';
 import { advanceShotCount, type ShotCountEveryAt, shotCountWeight } from '../../skills/triggers.ts';
-import { isSummonAttackTrigger, isTimerTrigger, SKILL_SLOTS, type ShotCountKind } from '../../skills/types.ts';
+import {
+  isCounterFullTrigger,
+  isSummonAttackTrigger,
+  isTimerTrigger,
+  SKILL_SLOTS,
+  type ShotCountKind,
+} from '../../skills/types.ts';
 import { dotTickTracker, groupDotsByState, type DotTickTracker } from '../dot.ts';
 import { flightFramesAt, type FlightFrameSpan } from '../landing.ts';
 import type { SkillSlot } from '../../types.ts';
@@ -168,6 +174,8 @@ export function createGaugeEffects({
   slots.forEach((slot, i) => {
     if (slot === null || slot.definition === null) return;
     for (const group of groupDotsByState(resolveDotEffects(slot.definition, slot.character, slot.levels))) {
+      // { counterFull } のきっかけの dot のゲージは counterGauges.ts が追う（plan/design-mihara-bc-gauge.md 3 節）
+      if (group.some((e) => isCounterFullTrigger(e.trigger))) continue;
       const dot = group[0]!.dot!;
       // tick のゲージは同じ状態でそろっている（groupDotsByState）。付けたときのゲージは効果ごと
       const onTick = dot.gaugeOnTick === true;
@@ -445,6 +453,10 @@ export function createGaugeEffects({
       reserveTimerGauge(t.slotIndex, f, f + t.delayFrames, targetEnergies[t.slotIndex]! * gaugeScale[t.slotIndex]!);
     }
   };
+  /** フレーム at のゲージに energy を予約する（at は予約するフレームより後） */
+  const reserveGauge = (at: number, energy: number): void => {
+    if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
+  };
   /** 前のフレームまでに予約した、このフレームのゲージ（段のヒットのゲージなど。V-0030） */
   const takeReservedGauge = (f: number): number => {
     const gauge = pendingGauge.get(f) ?? 0;
@@ -547,6 +559,7 @@ export function createGaugeEffects({
     dotGauges,
     landingGauge,
     reserveBurstUseDotTicks,
+    reserveGauge,
     reserveTimerGauge,
     reserveTimerGauges,
     shotGauges,

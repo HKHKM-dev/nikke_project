@@ -1850,6 +1850,161 @@
       "plus": null
     },
     {
+      "observation": "0119-02",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "627013d2f228103d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0119-02",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "627013d2f228103d",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0119-03",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "7b6cdf474d728c26",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0119-03",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "7b6cdf474d728c26",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0119-04",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "12342153c2d86e4e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0119-04",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "12342153c2d86e4e",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0119-08",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "e025bd056ecdf902",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "0119-08",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "e025bd056ecdf902",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0119-09",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "3d5e6113c4522e24",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0119-09",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "3d5e6113c4522e24",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0119-10",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "128dbfcc984245dd",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0119-10",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "128dbfcc984245dd",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0119-11",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "1d86f5c993ece3a0",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0119-11",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "1d86f5c993ece3a0",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0119-12",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "a4dd4a17f255562e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0119-12",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "a4dd4a17f255562e",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0119-13",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "fc5f30854e4221dc",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0119-13",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "fc5f30854e4221dc",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
       "observation": "0123-24",
       "element": "A2 skill2.effects[0]",
       "key": "493109b83f611b41",
@@ -12251,7 +12406,7 @@
     {
       "observation": "0490-03",
       "element": "アスカ burst.effects[0]",
-      "key": "442a07576da04170",
+      "key": "bdd3584b533c3226",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12267,111 +12422,198 @@
     {
       "observation": "0490-03",
       "element": "アスカ burst.effects[2]",
-      "key": "442a07576da04170",
+      "key": "bdd3584b533c3226",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0490-03",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "bdd3584b533c3226",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0490-03",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "bdd3584b533c3226",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0490-06",
+      "element": "アスカ burst.effects[0]",
+      "key": "1c5e6bc9e8ddf532",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0490-06",
+      "element": "アスカ burst.effects[2]",
+      "key": "1c5e6bc9e8ddf532",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "0490-06",
-      "element": "アスカ burst.effects[0]",
-      "key": "860f4b09910fdc4c",
-      "effective": false,
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "1c5e6bc9e8ddf532",
+      "effective": true,
       "minus": null,
       "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
     },
     {
       "observation": "0490-06",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "1c5e6bc9e8ddf532",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0490-07",
+      "element": "アスカ burst.effects[0]",
+      "key": "242a02e36c06e5ec",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0490-07",
       "element": "アスカ burst.effects[2]",
-      "key": "860f4b09910fdc4c",
+      "key": "242a02e36c06e5ec",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "0490-07",
-      "element": "アスカ burst.effects[0]",
-      "key": "83525e6f849c5b4a",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "242a02e36c06e5ec",
       "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0490-07",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "242a02e36c06e5ec",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0490-08",
+      "element": "アスカ burst.effects[0]",
+      "key": "fbb4025012f426e9",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0490-08",
       "element": "アスカ burst.effects[2]",
-      "key": "83525e6f849c5b4a",
+      "key": "fbb4025012f426e9",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "0490-08",
-      "element": "アスカ burst.effects[0]",
-      "key": "0bd060f004e1addf",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "fbb4025012f426e9",
       "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
+      "minus": -1,
+      "plus": null
     },
     {
       "observation": "0490-08",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "fbb4025012f426e9",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0490-09",
+      "element": "アスカ burst.effects[0]",
+      "key": "e4482e78e04dbc1b",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0490-09",
       "element": "アスカ burst.effects[2]",
-      "key": "0bd060f004e1addf",
+      "key": "e4482e78e04dbc1b",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "0490-09",
-      "element": "アスカ burst.effects[0]",
-      "key": "b9202ad8dae3febd",
-      "effective": false,
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "e4482e78e04dbc1b",
+      "effective": true,
       "minus": null,
       "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
+      "error": "minus: 0 回目の倍率ダメージが無い"
     },
     {
       "observation": "0490-09",
-      "element": "アスカ burst.effects[2]",
-      "key": "b9202ad8dae3febd",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "e4482e78e04dbc1b",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
     },
     {
       "observation": "0490-10",
       "element": "アスカ burst.effects[0]",
-      "key": "e5da56d26b7a6c23",
+      "key": "5c55db36c68ab7dd",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12387,15 +12629,32 @@
     {
       "observation": "0490-10",
       "element": "アスカ burst.effects[2]",
-      "key": "e5da56d26b7a6c23",
+      "key": "5c55db36c68ab7dd",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
+      "observation": "0490-10",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "5c55db36c68ab7dd",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0490-10",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "5c55db36c68ab7dd",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
       "observation": "0490-11",
       "element": "アスカ burst.effects[0]",
-      "key": "1993c5d29416e43d",
+      "key": "cafb8236fb30859b",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12411,10 +12670,27 @@
     {
       "observation": "0490-11",
       "element": "アスカ burst.effects[2]",
-      "key": "1993c5d29416e43d",
+      "key": "cafb8236fb30859b",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0490-11",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "cafb8236fb30859b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0490-11",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "cafb8236fb30859b",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
     },
     {
       "observation": "0491-05",
@@ -12443,7 +12719,7 @@
     {
       "observation": "0492-03",
       "element": "アスカ burst.effects[0]",
-      "key": "56505c2f4132124c",
+      "key": "7a83a9a35946bb32",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12459,111 +12735,198 @@
     {
       "observation": "0492-03",
       "element": "アスカ burst.effects[2]",
-      "key": "56505c2f4132124c",
+      "key": "7a83a9a35946bb32",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0492-03",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "7a83a9a35946bb32",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0492-03",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "7a83a9a35946bb32",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0492-06",
+      "element": "アスカ burst.effects[0]",
+      "key": "f24520711a64df36",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0492-06",
+      "element": "アスカ burst.effects[2]",
+      "key": "f24520711a64df36",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "0492-06",
-      "element": "アスカ burst.effects[0]",
-      "key": "131466b12e8b5bc0",
-      "effective": false,
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "f24520711a64df36",
+      "effective": true,
       "minus": null,
       "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
     },
     {
       "observation": "0492-06",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "f24520711a64df36",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0492-07",
+      "element": "アスカ burst.effects[0]",
+      "key": "8f57365b4213a340",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0492-07",
       "element": "アスカ burst.effects[2]",
-      "key": "131466b12e8b5bc0",
+      "key": "8f57365b4213a340",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "0492-07",
-      "element": "アスカ burst.effects[0]",
-      "key": "79a4c7a78d6357ae",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "8f57365b4213a340",
       "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0492-07",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "8f57365b4213a340",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0492-08",
+      "element": "アスカ burst.effects[0]",
+      "key": "51d5dfe8460a80dd",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0492-08",
       "element": "アスカ burst.effects[2]",
-      "key": "79a4c7a78d6357ae",
+      "key": "51d5dfe8460a80dd",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "0492-08",
-      "element": "アスカ burst.effects[0]",
-      "key": "d5cd89486a915d23",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "51d5dfe8460a80dd",
       "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
+      "minus": -1,
+      "plus": null
     },
     {
       "observation": "0492-08",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "51d5dfe8460a80dd",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0492-09",
+      "element": "アスカ burst.effects[0]",
+      "key": "ceed6b9b3c866088",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0492-09",
       "element": "アスカ burst.effects[2]",
-      "key": "d5cd89486a915d23",
+      "key": "ceed6b9b3c866088",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "0492-09",
-      "element": "アスカ burst.effects[0]",
-      "key": "7bc016e714f8c776",
-      "effective": false,
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "ceed6b9b3c866088",
+      "effective": true,
       "minus": null,
       "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
+      "error": "minus: 0 回目の倍率ダメージが無い"
     },
     {
       "observation": "0492-09",
-      "element": "アスカ burst.effects[2]",
-      "key": "7bc016e714f8c776",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "ceed6b9b3c866088",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
     },
     {
       "observation": "0492-10",
       "element": "アスカ burst.effects[0]",
-      "key": "b5f3acca2c63edff",
+      "key": "0e379e6e5a01f409",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12579,15 +12942,32 @@
     {
       "observation": "0492-10",
       "element": "アスカ burst.effects[2]",
-      "key": "b5f3acca2c63edff",
+      "key": "0e379e6e5a01f409",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
+      "observation": "0492-10",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "0e379e6e5a01f409",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0492-10",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "0e379e6e5a01f409",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
       "observation": "0492-11",
       "element": "アスカ burst.effects[0]",
-      "key": "c05f799a0c307d99",
+      "key": "4f63c77e1eda4c67",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12603,10 +12983,27 @@
     {
       "observation": "0492-11",
       "element": "アスカ burst.effects[2]",
-      "key": "c05f799a0c307d99",
+      "key": "4f63c77e1eda4c67",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0492-11",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "4f63c77e1eda4c67",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0492-11",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "4f63c77e1eda4c67",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
     },
     {
       "observation": "0493-03",
@@ -16799,52 +17196,513 @@
       "plus": 0
     },
     {
+      "observation": "0746-07",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "45ed4eb5f9f24ca6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0746-07",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "45ed4eb5f9f24ca6",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0746-08",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "6a6382243738312f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0746-08",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "6a6382243738312f",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0746-09",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "da3342cf012640b4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0746-09",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "da3342cf012640b4",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0746-10",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "328d29f66b704ebd",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0746-10",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "328d29f66b704ebd",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0746-11",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "7d9e4c07c53abae2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0746-11",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "7d9e4c07c53abae2",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0746-12",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "e996f2e350c591d6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0746-12",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "e996f2e350c591d6",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0746-13",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "fb9fd1b72ac9b27e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0746-13",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "fb9fd1b72ac9b27e",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0746-14",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "7c08223226de5dd7",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "0746-14",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "7c08223226de5dd7",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0746-15",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "a571ed20a56fe453",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0746-15",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "a571ed20a56fe453",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0746-16",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "afe836f8b207ce55",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0746-16",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "afe836f8b207ce55",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0746-17",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "8313e665ffdcf4fa",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0746-17",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "8313e665ffdcf4fa",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0747-05",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "470dab59968b2e72",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0747-05",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "470dab59968b2e72",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0747-06",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "b8341e83bdf33320",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0747-06",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "b8341e83bdf33320",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0747-07",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "a30d77ca5b5dd549",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0747-07",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "a30d77ca5b5dd549",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0747-08",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "3cae7cbb02fe9d7c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0747-08",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "3cae7cbb02fe9d7c",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0747-09",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "57e3a73e9129e70b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0747-09",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "57e3a73e9129e70b",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0747-10",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "b57076f0a386262f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0747-10",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "b57076f0a386262f",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0747-11",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "79280dd0557fdb25",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "0747-11",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "79280dd0557fdb25",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0747-12",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "83155a92f0b60bf1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0747-12",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "83155a92f0b60bf1",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0747-13",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "dbb27da1da382a16",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0747-13",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "dbb27da1da382a16",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0747-14",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "4f45f5328ef6d18b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0747-14",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "4f45f5328ef6d18b",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
       "observation": "0754-08",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "e74d4e0d7a5c97fc",
+      "key": "5252ff0dd6dee042",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0754-08",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "5252ff0dd6dee042",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0754-08",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "5252ff0dd6dee042",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0754-11",
+      "element": "シンデレラ skill1.effects[1]",
+      "key": "19400e39308c5190",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "0754-11",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "19400e39308c5190",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0754-11",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "19400e39308c5190",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0754-17",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "2f4910f99b6c074e",
+      "key": "494b46d09dc77ef3",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "0754-17",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "494b46d09dc77ef3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0754-17",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "494b46d09dc77ef3",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0755-08",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "1ee772acb474c295",
+      "key": "42f3b2e5ff33b762",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "0755-08",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "42f3b2e5ff33b762",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0755-08",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "42f3b2e5ff33b762",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0755-11",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "84168f25691d441c",
+      "key": "0a14caa1929d2670",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "0755-11",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "0a14caa1929d2670",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0755-11",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "0a14caa1929d2670",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
+    },
+    {
+      "observation": "0755-17",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "965c4961062c712e",
+      "key": "d266694888fb7cd3",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
       "observation": "0755-17",
-      "element": "シンデレラ skill1.effects[1]",
-      "key": "2d65e9c46ca8def5",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[2]",
+      "key": "d266694888fb7cd3",
       "effective": false,
       "minus": 0,
-      "plus": 0
+      "plus": null
+    },
+    {
+      "observation": "0755-17",
+      "element": "ミハラ：ボンディングチェーン skill1.effects[4]",
+      "key": "d266694888fb7cd3",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: Cannot read properties of undefined (reading 'track')"
     },
     {
       "observation": "0774-01",

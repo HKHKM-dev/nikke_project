@@ -501,6 +501,12 @@ export type HolderLists = {
    */
   enemyStateAt(state: NamedStateId, frame: number): boolean;
   /**
+   * 枠 holder のカウンタ counter の { counterFull } が、フレーム frame に発火するか（上限に届いた記録の次のフレーム。戦闘開始時の記録は 1。
+   * counterFullFrames と同じ）。1 パス目が { counterFull } のきっかけのヒットのゲージを予約するのに、frame − 1 までに登録した件で呼ぶ
+   * （plan/design-mihara-bc-gauge.md 3 節）
+   */
+  counterFullFiresAt(holder: number, counter: CounterId, frame: number): boolean;
+  /**
    * フレーム frame にフルスタックになった状態（定義にその状態のフルスタックの消費の
    * きっかけを持つ枠の、自分の状態だけ）を返し、その状態の件を消費する（次のフレームで切る。
    * plan/design-skill-stage3.md 1.3 節）。回復を当てる前（手順 3 の最初）に呼ぶ

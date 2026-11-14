@@ -1,0 +1,133 @@
+{
+  "verification": "V-0761",
+  "note": "撮影の 2 つの撮り方。どちらも、1 枠目のクラウン（MG）を AI で撃たせ、3 枠目の操作枠をオート射撃 OFF で撃たせない（noFireSlots。弾丸命中率 0 で通常攻撃のゲージを溜めない）。C1 の操作枠はミハラ：ボンディングチェーン（撃たないが、S1 の戦闘開始時のチャージで攻撃とチェーンバインドは出る）、C2 は I-DOLL・サン（対照。S1・S2 は noEffect）。予測の team は [クラウン, 操作枠] の順（ゲージの溜まりは枠の位置に依らない）。射撃場 3 分・灼熱タブの BigArms・スペック固定 ON・オートバースト ON（I 段のキャラがいないのでバーストは撃たれない）。読み k・s はモデルのコードを替えないと表せないので、値は検証記録の「予測」に手で書いた",
+  "team": [
+    {
+      "rid": 330,
+      "controlled": false
+    },
+    {
+      "rid": 162,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "Model",
+      "note": "いまのモデル。ミハラ：ボンディングチェーンのスキルのヒット（S1 の攻撃・チェーンバインドの付与と tick）はゲージを溜めない。通常攻撃 1 発のゲージは CDN の target_burst_energy_pershot（1,000）のまま（C-0083）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "C1-shots",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [2]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮り方 C1（クラウン AI・ミハラ：ボンディングチェーン操作で撃たない）。戦闘開始から、1 回目にゲージが満タンになった（BURST バーが消えた）フレームまでのクラウンの発の数（枠アイコンの上の残弾の減りで数える）。幅 2 は残弾の読みの 1〜2 発",
+      "observations": ["1155-02", "1156-02"]
+    },
+    {
+      "id": "C2-shots",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "team": [
+        {
+          "rid": 330,
+          "controlled": false
+        },
+        {
+          "rid": 308,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [2]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮り方 C2（対照。クラウン AI・I-DOLL・サン操作で撃たない）。読み方は C1-shots と同じ",
+      "observations": ["1157-02", "1158-02", "1159-02"]
+    },
+    {
+      "id": "C1-full",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [2]
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "撮り方 C1 の、戦闘開始（残り時間の 02:59 が出たフレーム。C-0078）から 1 回目の満タンまでの動画のフレーム。記録のために読む（AI の撃ち方の時刻のずれ（V-0748「分かったこと・分からないこと」）を含むので、見分けには使わない）",
+      "observations": ["1155-01", "1156-01"]
+    },
+    {
+      "id": "C2-full",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "team": [
+        {
+          "rid": 330,
+          "controlled": false
+        },
+        {
+          "rid": 308,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [2]
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "撮り方 C2 の、戦闘開始から 1 回目の満タンまでの動画のフレーム。読み方は C1-full と同じ",
+      "observations": ["1157-01", "1158-01", "1159-01"]
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-12",
+    "commit": "e33dd915979772d335e2093fed78e4ddcf0e4b5f",
+    "values": {
+      "Model": {
+        "C1-shots": 1000,
+        "C2-shots": 1000,
+        "C1-full": 1877,
+        "C2-full": 1877
+      }
+    }
+  }
+}
