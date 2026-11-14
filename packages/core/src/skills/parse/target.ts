@@ -30,18 +30,39 @@ export function parseTargetSquad(v: Record<string, Json>, target: BuffTarget, pa
   return squad;
 }
 
-/** targetState・targetBurstStep は target が allies のときだけ（targetBurstStep は burstUsers も） */
+/** 編成の枠で決まる対象の絞り込み（〈状態〉の味方・自分と・両隣・基本バースト段階） */
+export type PersonaTargetFields = {
+  targetState?: NamedStateId;
+  includeSelf?: true;
+  targetAdjacent?: true;
+  targetBurstStep?: BasicBurstStep;
+};
+
+/**
+ * targetState・targetAdjacent・targetBurstStep は target が allies のときだけ（targetBurstStep は burstUsers も）。
+ * targetAdjacent は targetState・targetBurstStep と組まない（plan/design-rouge.md 2.1 節）
+ */
 export function parsePersonaTargetFields(
   v: Record<string, Json>,
   target: BuffTarget,
   path: string,
-): { targetState?: NamedStateId; includeSelf?: true; targetBurstStep?: BasicBurstStep } {
-  const out: { targetState?: NamedStateId; includeSelf?: true; targetBurstStep?: BasicBurstStep } = {};
+): PersonaTargetFields {
+  const out: PersonaTargetFields = {};
   if (v.targetState !== undefined) out.targetState = parseNamedStateId(v.targetState, `${path}.targetState`, 'ally');
-  // 「自分と〈状態〉の味方」（plan/design-new-chars-1029.md 5.1 節）
+  // 「両隣の味方」（plan/design-rouge.md 2.1 節）
+  if (v.targetAdjacent !== undefined) {
+    if (v.targetAdjacent !== true) fail(`${path}.targetAdjacent`, 'must be true');
+    if (target !== 'allies') fail(`${path}.targetAdjacent`, `only allowed with target "allies", got "${target}"`);
+    for (const key of ['targetState', 'targetBurstStep'] as const) {
+      if (v[key] !== undefined) fail(`${path}.targetAdjacent`, `cannot be combined with ${key}`);
+    }
+    out.targetAdjacent = true;
+  }
+  // 「自分と〈状態〉の味方」（plan/design-new-chars-1029.md 5.1 節）・「自分と両隣」
   if (v.includeSelf !== undefined) {
     if (v.includeSelf !== true) fail(`${path}.includeSelf`, 'must be true');
-    if (out.targetState === undefined) fail(`${path}.includeSelf`, 'only allowed with targetState');
+    if (out.targetState === undefined && out.targetAdjacent === undefined)
+      fail(`${path}.includeSelf`, 'only allowed with targetState or targetAdjacent');
     out.includeSelf = true;
   }
   const step = parseTargetBurstStep(v, target, path);
@@ -87,6 +108,7 @@ export function validateDamageTaken(stat: BuffStat, target: BuffTarget, v: Recor
     'excludeSelf',
     'targetState',
     'includeSelf',
+    'targetAdjacent',
     'targetBurstStep',
     'durationShots',
     'durationShotsRef',

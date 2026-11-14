@@ -3,7 +3,7 @@
 // 残るので、何度通しても結果は同じ。
 //   - 外す条件: バースト段階の構成（burstStepMix。plan/design-anis-star-s1.md 2.1 節）、同じ部隊の味方（squad。
 //     plan/design-ram-s1.md 2.1 節）、編成に特定のキャラがいる（withCharacter）、敵の属性（enemyElement。
-//     plan/design-true-damage-element.md 3.3・3.6 節）。
+//     plan/design-true-damage-element.md 3.3・3.6 節）、自分の枠の列（row。plan/design-rouge.md 2.2 節）。
 //   - 自分の状態の条件（selfState）のうち編成で決まるもの（自分の定義の静的な状態と、どの枠の定義も付けない状態）は、満たせば
 //     条件から落とし、満たさなければ効果を外す（plan/design-skill-stage1.md 1.1 節）。
 //   - 自分の HP の割合の条件（selfHp）は、HP の割合が戦闘中に動かない枠（hpRatioMovesOf）だけ、枠の HP の割合の想定
@@ -11,7 +11,7 @@
 //     （skills/resolve.ts の resolveHpWhileEffects。plan/design-hp-ratio-readers.md 2.1 節）。
 //   - 枠の状態は、その枠の定義の静的な状態（staticStatesOf）から取る。静的な付与にも編成の条件を書けるので、効果を外した後の定義から
 //     集める（plan/design-named-state.md 3.4 節）。
-//   - 編成で決まる対象（targetSquad・longestChargeTime・targetState・targetBurstStep・allies の excludeSelf: always）の枠は、
+//   - 編成で決まる対象（targetSquad・longestChargeTime・targetState・targetAdjacent・targetBurstStep・allies の excludeSelf: always）の枠は、
 //     効果の fixedTargets に書く（skills/targets.ts が絞る。plan/design-target-vocab.md 2.2・2.3 節）。付与（state）の対象も
 //     timed と同じに決める。
 import type { TeamInput, TeamSlotInput } from '../team.ts';
@@ -29,6 +29,8 @@ import {
   staticStatesOf,
   type BurstStepMixCondition,
   type EffectCondition,
+  type FormationRow,
+  formationRowOf,
   type SelfHpCondition,
   type SkillDefinition,
   type SkillEffect,
@@ -121,6 +123,11 @@ export function enemyElementAllows(condition: Element | undefined, enemyElement:
   return condition === undefined || condition === enemyElement;
 }
 
+/** 自分の枠（selfIndex）の列が row か（条件が無ければ true） */
+export function rowAllows(row: FormationRow | undefined, selfIndex: number): boolean {
+  return row === undefined || formationRowOf(selfIndex) === row;
+}
+
 /** 効果の編成の条件をすべて満たすか（条件の無い効果は true）。enemyElement は敵の属性（属性なしは null） */
 export function compositionAllows(
   effect: SkillEffect,
@@ -132,7 +139,9 @@ export function compositionAllows(
   const squad = 'squad' in effect ? effect.squad : undefined;
   const withCharacter = 'withCharacter' in effect ? effect.withCharacter : undefined;
   const element = 'enemyElement' in effect ? effect.enemyElement : undefined;
+  const row = 'row' in effect ? effect.row : undefined;
   return (
+    rowAllows(row, selfIndex) &&
     burstStepMixAllows(mix, characters, selfIndex) &&
     squadAllows(squad, characters, selfIndex) &&
     withCharacterAllows(withCharacter, characters, selfIndex) &&
@@ -148,13 +157,14 @@ function fullCharacter(c: CompositionCharacter, index: number): Required<Composi
 }
 
 /**
- * 効果の対象が編成で決まる絞り込み（〈名前〉状態・基本バースト段階・allies の自分を除く）を持つか。
+ * 効果の対象が編成で決まる絞り込み（〈名前〉状態・両隣・基本バースト段階・allies の自分を除く）を持つか。
  * 付与（state）も timed と同じ
  */
 export function hasPersonaTargetFilter(effect: SkillEffect): boolean {
   return (
     (effect.kind === 'timed' || effect.kind === 'state') &&
     (effect.targetState !== undefined ||
+      effect.targetAdjacent !== undefined ||
       effect.targetBurstStep !== undefined ||
       (effect.target === 'allies' && effect.excludeSelf !== undefined))
   );
@@ -164,7 +174,9 @@ export function hasPersonaTargetFilter(effect: SkillEffect): boolean {
  * 編成で決まる対象の枠（順位の順）。targetSquad = 部隊が自分と同じ枠（自分を含む。枠の順）、
  * longestChargeTime = 基本チャージ時間（CharacterData.shot.chargeTime）の長い順（同値は枠の若い順。仮定）。
  * targetState = 枠の静的な状態（states[i]。枠の定義の静的な付与が付ける状態）にその id がある枠、
+ * targetAdjacent = 自分の左右の枠（空枠は無し。plan/design-rouge.md 2.1 節）、
  * targetBurstStep = 基本バースト段階が N の枠（countsAsBurstStep。再突入するキャラは除く）、allies の excludeSelf = 自分の枠を外す。
+ * targetState・targetAdjacent の includeSelf は自分の枠を足す。
  * どれも targetWeapon・targetElement で絞った後。どれでもない効果は undefined。付与（state）も timed と同じ
  */
 export function fixedTargetsOf(
@@ -195,6 +207,7 @@ export function fixedTargetsOf(
   // 家族の根なら家族のどの状態でも当たる（plan/design-new-chars-1029.md 5.1 節）。「自分と」は自分の枠を足す
   const matching = state === undefined ? [] : statesMatching(state);
   const withSelf = windowed && effect.includeSelf === true;
+  const adjacent = windowed && effect.targetAdjacent === true;
   const step = windowed ? effect.targetBurstStep : undefined;
   const excludeSelf = windowed && effect.target === 'allies' && effect.excludeSelf !== undefined;
   const candidates: number[] = [];
@@ -203,6 +216,7 @@ export function fixedTargetsOf(
     if (squad && c.squad !== self.squad) return;
     const own = withSelf && i === selfIndex;
     if (state !== undefined && !own && !matching.some((s) => (states[i] ?? []).includes(s))) return;
+    if (adjacent && !own && Math.abs(i - selfIndex) !== 1) return;
     if (step !== undefined && !countsAsBurstStep(c, step)) return;
     if (excludeSelf && i === selfIndex) return;
     if (!matchesTargetFilter(effect, fullCharacter(c, i))) return;
@@ -406,7 +420,7 @@ export function applyComposition(
   return changed ? { ...allowed, skills } : definition;
 }
 
-/** 編成の条件（burstStepMix・squad・withCharacter・enemyElement）を満たさない効果を外した定義。どれも満たせばそのまま */
+/** 編成の条件（burstStepMix・squad・withCharacter・enemyElement・row）を満たさない効果を外した定義。どれも満たせばそのまま */
 function filterComposition(
   definition: SkillDefinition,
   characters: readonly (CompositionCharacter | null)[],

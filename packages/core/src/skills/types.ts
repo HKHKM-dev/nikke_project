@@ -411,6 +411,18 @@ export type TargetSquad = 'same';
 export const TARGET_SQUADS = ['same'] as const satisfies readonly TargetSquad[];
 
 /**
+ * 編成の列（plan/design-rouge.md 2.2 節）。編成の枠の 1・3・5 枠目（添字 0・2・4）が前列、2・4 枠目（添字 1・3）が後列
+ * （ゲーム内の用語のツールチップ「両隣・後列」）
+ */
+export type FormationRow = 'front' | 'back';
+export const FORMATION_ROWS = ['front', 'back'] as const satisfies readonly FormationRow[];
+
+/** 枠の添字（0 始まり）の列 */
+export function formationRowOf(slotIndex: number): FormationRow {
+  return slotIndex % 2 === 1 ? 'back' : 'front';
+}
+
+/**
  * 編成で決まる対象（targetSquad・longestChargeTime）の、最上位で決めた枠（skills/composition.ts の
  * applyComposition が書く。JSON には書かない）。有れば、対象はこの枠だけに絞られる
  */
@@ -520,6 +532,8 @@ export type PassiveEffect = FixedTargetFields & {
   withCharacter?: WithCharacterCondition;
   /** 敵の属性の条件（敵の属性がこれのときだけ効果を持つ。静的な条件） */
   enemyElement?: Element;
+  /** 「〈前列／後列〉に配置されている時」。自分の枠の列がこれのときだけ効果を持つ（静的な条件。plan/design-rouge.md 2.2 節） */
+  row?: FormationRow;
   /**
    * 自分の HP の割合の条件（selfHp だけ。plan/design-skill-stage6.md 1.4 節）。HP の割合が枠の想定
    * （TeamSlotInput.hpRatio）のまま戦闘中一定なら、編成の段（skills/composition.ts の resolveSelfHp）で決まる。HP の割合が動きうる枠
@@ -974,9 +988,15 @@ export type TimedEffect = TargetCountFields &
     targetState?: NamedStateId;
     /**
      * 「自分と〈状態〉の味方」（plan/design-new-chars-1029.md 5.1 節）。targetState に当たる枠に、自分の枠を
-     * 足す（自分がその状態を持たなくても付く）。targetState と組むときだけ書ける（値は true だけ）
+     * 足す（自分がその状態を持たなくても付く）。targetState か targetAdjacent と組むときだけ書ける（値は true だけ）
      */
     includeSelf?: true;
+    /**
+     * 「両隣の味方」（plan/design-rouge.md 2.1 節）。編成の枠の順で自分の左右の枠（空枠と、1・5 枠目の外側は無し）だけ。
+     * includeSelf で自分を足す（「自分と両隣にいる味方 2 機」）。target が 'allies' のときだけ書け、targetState・targetBurstStep・
+     * targetSquad・excludeSelf・targetDefense とは組まない（値は true だけ）
+     */
+    targetAdjacent?: true;
     /** 「基本バースト段階が N の」。対象の枠の CharacterData.burstStep が N の枠だけ。target が 'allies' のときだけ書ける */
     targetBurstStep?: BasicBurstStep;
     /**
@@ -1036,6 +1056,8 @@ export type TimedEffect = TargetCountFields &
     withCharacter?: WithCharacterCondition;
     /** 敵の属性の条件 */
     enemyElement?: Element;
+    /** 「〈前列／後列〉に配置されている時」（静的な条件。plan/design-rouge.md 2.2 節） */
+    row?: FormationRow;
     /** 維持秒数の description_value_NN。durationSeconds・durationShots・durationShotsRef・durationUntil とちょうど 1 つ */
     durationRef?: number;
     /** 維持秒数の即値（説明文に「維持時間：10秒」と直書きされている場合） */

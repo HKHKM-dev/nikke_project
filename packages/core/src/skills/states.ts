@@ -396,6 +396,8 @@ export const NAMED_STATES = {
   concealment: { name: { ja: '隠れ身', en: 'Concealment' }, holder: 'ally' },
   /** 狂気（ロザンナの S2。宝物版の命中 N 回ごとの付与。攻撃力▲・10 スタック・30 秒。味方の戦闘不能時の付与は前提の外） */
   frenzy: { name: { ja: '狂気', en: 'Frenzy' }, holder: 'ally' },
+  /** ソードコイン（ルージュの S2。戦闘開始時に後列なら自分と両隣に付く。攻撃ダメージ▲・持続。plan/design-rouge.md 2.3 節） */
+  swordCoin: { name: { ja: 'ソードコイン', en: 'Sword Coin' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;
