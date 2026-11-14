@@ -794,18 +794,24 @@ header h1 {
 .modern-slot-card.drag-source-returning .modern-slot-char-area {
   opacity: 0.35;
 }
-/* 「操作」の印と「他の編成」の札の段。上に操作の印、その下（立ち絵のすぐ上）に札を縦に積む。
-   箱は両方が収まる高さ（印 30px と札 14px）にして、上はカードの上の余白（8px）へ、下は立ち絵との間（.modern-slot-card の gap 8px）へ
-   広げる。並びの中で取る高さは 30px のままなので、印や札の有無でカードの高さは変わらない */
+/* 「操作」のコントローラーのアイコンと「他の編成」の P○ のバッジの段。アイコンとバッジは別の層に置く（どちらも段の中に
+   absolute で重ね、互いの並びに影響しない）。アイコンは段の上端、バッジは下端（立ち絵のすぐ上）で、アイコンの層が上。
+   段は両方が収まる高さ（アイコン 30px とバッジ 14px）にして、上はカードの上の余白（8px）へ、下は立ち絵との間（.modern-slot-card の gap 8px）へ
+   広げる。並びの中で取る高さは 30px のままなので、アイコンやバッジの有無でカードの高さは変わらない */
 .modern-slot-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
+  position: relative;
   font-size: 0.8rem;
   font-weight: bold;
   height: 44px;
   margin: -6px 0 -8px;
+}
+/* 位置合わせは translate で行う（transform は、移した先へ滑り込むアニメーション（flight.ts の flyControllerInto）が使う） */
+.modern-slot-header > .modern-slot-focus-handle {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 2;
 }
 /* 操作キャラの印（コントローラーの絵。badges-src/ui_controller.svg）。白一色の絵を形だけ使い、文字色で塗る（テーマに従う） */
 /* 絵（SVG）を型にして文字の色で塗るアイコン（components/maskIcon.ts の maskIconStyle が --icon に絵を渡す） */
@@ -837,6 +843,11 @@ header h1 {
   cursor: grabbing;
 }
 .modern-slot-other-parties {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 1;
   display: flex;
   gap: 2px;
 }
