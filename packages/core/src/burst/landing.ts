@@ -83,6 +83,14 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // エクシア（宝物あり）: I の発動（六角形が I から II に替わるフレーム）からヒット（バーストスキルダメージと、フルスタックの時の追加
   // ダメージ）まで 91f。バースト使用時の効果（防御力▼・受けるダメージ▲）もヒットから付く。宝物なしは未測定
   { resourceIds: [210], treasure: true, delays: { hitFrames: 91, effectFrames: 91 }, claim: 'C-1191' },
+  // センチ（宝物あり）: II の発動（六角形の替わり目）から 1 ヒット目まで 12f、2 ヒット目はその 16f 後（バーストスキルダメージを 2 ヒットに等分）。
+  // バースト使用時の効果（防御力▼）は替わり目の 24〜44f 後から付く（10 秒の窓の終わりから。2 ヒット目と同じ 28f にした）。宝物なしは未測定
+  {
+    resourceIds: [80],
+    treasure: true,
+    delays: { hitFrames: 12, effectFrames: 28, hitOffsets: [0, 16] },
+    claim: 'C-1221',
+  },
   // ロザンナ（宝物あり）: I の発動（六角形が I から II に替わるフレーム）からヒット（バーストスキルダメージと、隠れ身の時の追加ダメージ）
   // まで 34f。バースト使用時の効果（受けるダメージ▲）もヒットから付き、同じフレームの通常攻撃に乗る。宝物なしは未測定
   { resourceIds: [280], treasure: true, delays: { hitFrames: 34, effectFrames: 34 }, claim: 'C-1207' },

@@ -1,11 +1,11 @@
 {
   "id": "C-1219",
   "text": "センチの宝物版 S1 の「フルチャージ攻撃が命中した時、スキル 2 のクールタイム 9.16%▼」は、命中のたびに S2 の残りのクールタイムを (1 − 9.16%) 倍にする（残りの割合の形）。元のクールタイムの 9.16% を引く形では、180 秒の S2 が 29 回になり、録画の 24 回と合わない。外れた発（HUD に増分の出ない発）では起きない",
-  "state": "仮説",
+  "state": "確定",
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
   "basis": "`1164-01`・`1165-01`・`1168-01`・`1178-01`。V-0773",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "反映（data/skills/80.json の treasureSkills.skill1 の effects[0] の skillCooldownReduction。packages/core/src/frame/firstPass/gaugeEffects.ts が残りを (1 − X / 100) 倍にする）。外れた発で起きないことは扱わない（命中を仮定）",
   "replaces": [],
   "updated": "2026-11-14",
   "subject": {

@@ -4,7 +4,7 @@
 - 関連: [design-arcana-magician.md](design-arcana-magician.md) 2.2 節（周期のきっかけの印 `cooldown`）・2.4 節（センチの S1 に使えるか）、[design-skill-catalog-tooltips.md](design-skill-catalog-tooltips.md) の T4（維持の無いクールタイムの増減は、いま残っているクールタイムを増減する）、[design-indirect-notes.md](design-indirect-notes.md)（バリア・HP の経路の notes）
 - 検証: V-0773（編成・予測・撮影の依頼はそちら）
 - 作成日: 2026-11-14
-- 状態: 実装中
+- 状態: 完了
 
 ## 0. 範囲
 
@@ -126,3 +126,4 @@
 
 - 2026-11-14: 起案した。撮影の依頼は V-0773。
 - 2026-11-14: 6 節の論点を推奨のとおりに決めた（オーナー）。2 節の語彙を実装した（即時の `skillCooldownReduction`・きっかけ `{ skillFired }`・timed の印 `cooldown`）。定義は撮影 B で S2 のクールタイムを読んでから書く。
+- 2026-11-14: 撮影（V-0773）で、論点 1 は残りの割合の形（R。C-1219）だったので、減らす量を残りの (1 − X / 100) 倍に直した（端数を持つ）。論点 2 は戦闘開始時に出ない（C-1218）。バーストは 2 ヒットに分かれ、防御力▼は 2 ヒット目の頃から付く（C-1221）ので、遅れの表に行を足した。発火ごとの件の始まりを返す指標 `buffFireStarts` を足した。

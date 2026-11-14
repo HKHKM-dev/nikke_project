@@ -1,0 +1,56 @@
+[
+  {
+    "id": "1167-01",
+    "recording": "1167",
+    "source": "V-0773",
+    "readAt": "2026-11-14",
+    "kind": "timing",
+    "use": "input",
+    "value": [0, 10588],
+    "unit": "f",
+    "description": "センチを撃たない区間（オート射撃 OFF・戦闘の全体。比べる設定 holdFire の入力。戦闘開始からのゲーム内のフレーム）",
+    "method": {
+      "tool": "台帳",
+      "note": "録画はオート射撃 OFF のまま約 61 秒で止めた。戦闘の全体を撃たない区間にする"
+    }
+  },
+  {
+    "id": "1167-02",
+    "recording": "1167",
+    "source": "V-0773",
+    "readAt": "2026-11-14",
+    "kind": "timing",
+    "use": "compare",
+    "value": [532, 1062, 1592, 2122, 2652, 3182],
+    "unit": "f",
+    "description": "S2 の発動の表示（左の「スキル2 現場検討」）が出たフレーム。戦闘開始（タイマーが出た f764）からの数。撃たないので S1 の▼が無い。1 回目は戦闘開始の約 9 秒後、以後 529〜531f ごと",
+    "method": {
+      "tool": "banner.ts（既定の明るさの読み）・timer.ts --mode changes",
+      "note": "帯の欄の明るさの立ち上がり − 戦闘開始（timer.ts の最初の大きな変わり目の次の変わり目）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffFireStarts",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "attack",
+        "video": true,
+        "count": 6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "holdFire": [
+          {
+            "slot": 1,
+            "frames": "1167-01"
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 5
+      }
+    }
+  }
+]

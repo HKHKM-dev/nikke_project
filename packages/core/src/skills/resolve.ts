@@ -925,7 +925,7 @@ export function resolveSkillCooldownDowns(
 
 /**
  * 解決した「スキル N のクールタイム X%▼」（維持なし。plan/design-centi.md 2.1 節）。きっかけの射撃のフレームの発動の後に、自分の slot の
- * クールタイムの印のある周期の残りから 元の周期 × percent / 100 を引く（frame/firstPass/gaugeEffects.ts）
+ * クールタイムの印のある周期の残りを (1 − percent / 100) 倍にする（frame/firstPass/gaugeEffects.ts）
  */
 export type ResolvedSkillCooldownReduction = {
   source: ResolvedEffect['source'];

@@ -1598,8 +1598,8 @@ export type CooldownReductionEffect = TargetCountFields & {
 
 /**
  * 「スキル N のクールタイム X%▼」（維持なし。plan/design-centi.md 2.1 節）。発火のフレームの発動の後に、対象（自分）の slot の、クールタイムの
- * 印（TimerTrigger の cooldown）のある周期の残り（次の発動までのフレーム）から、元の周期 × X% を引く（四捨五入したフレーム。T4 の
- * 「いま残っているクールタイムを減らす」）。残りが 0 以下になれば次のフレームに発動し、次の周期はその発動から数える。1 パス目
+ * 印（TimerTrigger の cooldown）のある周期の残り（次の発動までのフレーム。端数を持つ）を (1 − X / 100) 倍にする（T4 の「いま残っている
+ * クールタイムを減らす」の、残りの割合の形。C-1219）。発動は次の発動の時刻に達した最初のフレームで、次の周期はその発動から数える。1 パス目
  * （frame/firstPass/gaugeEffects.ts）が射撃を数えて当てる。きっかけは射撃の回数（毎 N 回だけ）。同じ定義のその slot に印のある周期が要る
  * （parse/crossChecks.ts の validateCooldownTimers）。維持の付いた形は状態の中身の skillCooldownDown
  */

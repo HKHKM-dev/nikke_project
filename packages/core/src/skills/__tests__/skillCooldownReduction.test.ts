@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import { fixedTeam, fixedSlot, effectWindows } from '../../__tests__/teamHelpers.ts';
 import { runSimulation } from '../../sim/engine.ts';
-import { gameSecondsToFirstFrame, gameSecondsToFrame, gameSecondsToFrames } from '../../time.ts';
+import { gameSecondsToFirstFrame, gameSecondsToFrames } from '../../time.ts';
 import { cooldownTimer } from '../timeline.ts';
 import { parseSkillDefinition } from '../types.ts';
 
@@ -84,29 +84,29 @@ describe('読み込み', () => {
   });
 });
 
-describe('減らす操作（cooldownTimer の cut）', () => {
-  /** cuts（フレーム → 引くフレーム数）を当てて、1 から frames − 1 まで回した発動 */
-  const run = (long: number, cuts: Record<number, number>, frames: number) => {
+describe('減らす操作（cooldownTimer の keep）', () => {
+  /** keeps（フレーム → 残りに掛ける割合）を当てて、1 から frames − 1 まで回した発動 */
+  const run = (long: number, keeps: Record<number, number>, frames: number) => {
     const tick = cooldownTimer(long);
     const out: number[] = [];
-    for (let f = 1; f < frames; f++) if (tick(f, undefined, () => undefined, cuts[f])) out.push(f);
+    for (let f = 1; f < frames; f++) if (tick(f, undefined, () => undefined, keeps[f])) out.push(f);
     return out;
   };
 
-  it('repeats the period without cuts', () => {
+  it('repeats the period without reductions', () => {
     expect(run(589, {}, 2000)).toEqual([589, 1178, 1767]);
   });
 
-  it('subtracts from the remaining, and counts the next period from the earlier fire', () => {
-    // 100 に 54f 引く → 535。その次は 535 + 589
-    expect(run(589, { 100: 54 }, 1200)).toEqual([535, 1124]);
+  it('multiplies the remaining, and counts the next period from the earlier fire', () => {
+    // 100 で残り 489 を 0.9 倍 → 440.1。発動は 540.1 に達した最初のフレーム 541。その次は 541 + 589
+    expect(run(589, { 100: 0.9 }, 1200)).toEqual([541, 1130]);
   });
 
-  it('fires on the next frame when the remaining drops to 0 or below, after the fire of the same frame', () => {
-    // 500 で残り 89 から 100 引く → 501 に発動
-    expect(run(589, { 500: 100 }, 1200)).toEqual([501, 1090]);
-    // 589 の発動の後に引く（次は 1178 − 54）
-    expect(run(589, { 589: 54 }, 1200)).toEqual([589, 1124]);
+  it('keeps the fraction of the remaining across reductions, and applies after the fire of the same frame', () => {
+    // 100 と 200 で 0.5 倍 → 100 + 244.5 = 344.5、200 で残り 144.5 → 72.25 → 272.25。発動は 273
+    expect(run(589, { 100: 0.5, 200: 0.5 }, 800)).toEqual([273]);
+    // 589 の発動の後に掛ける（次は 589 + 589 × 0.5 = 883.5 → 884）
+    expect(run(589, { 589: 0.5 }, 1000)).toEqual([589, 884]);
   });
 });
 
@@ -127,17 +127,14 @@ describe('1 パス目の発動と窓（センチの単騎・仮の周期）', ()
     );
   });
 
-  it('pulls the fires earlier by 9.16% of the period on every full charge shot', () => {
+  it('multiplies the remaining by (1 − 9.16%) on every full charge shot', () => {
     const sim = runSimulation(teamOf([cut, onS2]));
     const shots = new Set(sim.shots[0]!.frames);
     const tick = cooldownTimer(long);
-    const amount = gameSecondsToFrame((PERIOD * 9.16) / 100);
     const fires: number[] = [];
     for (let f = 1; f < sim.frames - 1; f++)
-      if (tick(f, undefined, () => undefined, shots.has(f) ? amount : undefined)) fires.push(f);
+      if (tick(f, undefined, () => undefined, shots.has(f) ? 1 - 9.16 / 100 : undefined)) fires.push(f);
     expect(fires.length).toBeGreaterThan(Math.floor(sim.frames / long));
     expect(s2Starts(sim)).toEqual(fires.map((f) => f + 1));
-    // 命中で残りが 0 以下になった回は、発の次のフレームに発動する
-    expect(fires.some((f) => shots.has(f - 1))).toBe(true);
   });
 });

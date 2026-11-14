@@ -1,16 +1,23 @@
 {
   "id": "C-1220",
   "text": "センチの宝物版 S1 の「スキル 2 を発動した時、鉄甲コードの味方全体に有利コードの攻撃ダメージ 5.69%▲（10 スタック・10 秒）」は、S2 の発動ごとに自分にも 1 段付き、鉄甲が有利な電撃の敵への発に、有利コードの倍率 1.1 + 0.0569 × 段 で乗る。値は説明文どおり",
-  "state": "仮説",
+  "state": "確定",
   "topic": "スキル・キャラ固有",
-  "grade": "単独実測",
+  "grade": "反復実測",
   "basis": "`1178-02`。V-0773",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "反映（data/skills/80.json の treasureSkills.skill1 の effects[1]。きっかけ { skillFired: \"skill2\" }）",
   "replaces": [],
   "updated": "2026-11-14",
   "subject": {
     "places": ["data/skills/80.json の treasureSkills.skill1 の effects[1]"]
   },
   "decidedOn": [],
-  "parameterFree": "値・段・維持は説明文、有利コードの倍率の式は elementDamage の決まり（skills/types.ts）"
+  "parameterFree": "値・段・維持は説明文、有利コードの倍率の式は elementDamage の決まり（skills/types.ts）",
+  "runs": [
+    {
+      "recording": "1178",
+      "reproduced": "1178-02 の 6・10・14・21・24 発目（1〜4 段と、段の切れの後の 1 段）",
+      "observations": ["1178-02"]
+    }
+  ]
 }
