@@ -181,7 +181,7 @@ export function RosterEditModal({
             className="advanced-settings-button roster-edit-back"
             onClick={() => view.setPane('list')}
           >
-            一覧へ
+            ←一覧へ戻る
           </button>
           {selectedEntry !== undefined && selectedRoster !== undefined ? (
             <CharacterForm
