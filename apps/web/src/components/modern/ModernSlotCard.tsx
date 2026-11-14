@@ -150,6 +150,7 @@ export function ModernSlotCard({
                 className="modern-slot-icon-button modern-slot-clear-button"
                 aria-label="スロットを空にする"
                 onClick={(e) => {
+                  if (awaitingPlacement) return; // 置き先待ちの間は反応せず、立ち絵の枠のクリック（置く）にする
                   e.stopPropagation();
                   onClear();
                 }}
@@ -164,6 +165,7 @@ export function ModernSlotCard({
                 className="modern-slot-icon-button modern-slot-build-button"
                 aria-label="育成・設定"
                 onClick={(e) => {
+                  if (awaitingPlacement) return; // 置き先待ちの間は反応せず、立ち絵の枠のクリック（置く）にする
                   e.stopPropagation();
                   onOpenBuildModal();
                 }}
