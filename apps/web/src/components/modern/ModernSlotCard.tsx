@@ -59,7 +59,7 @@ type Props = {
   growthMarks: GrowthMarks | null;
   /** 絵のバッジの列の最後に出すコレクション（宝物）のバッジ */
   collectionBadge: Badge | null;
-  /** このスロットのニケを選んでいるほかの編成の番号（1 から）。上の段に P1・P2 と出す */
+  /** このスロットのニケを選んでいるほかの編成の番号（1 から）。立ち絵の枠のすぐ上に P1・P2 と出す */
   otherParties: readonly number[];
   /** 一覧でクリックしたニケが、置くスロットのクリックを待っているときだけ渡す（このスロットに置く） */
   onPlacePending?: () => void;
@@ -124,12 +124,10 @@ export function ModernSlotCard({
       {...attributes}
       {...listeners}
     >
-      <div className="modern-slot-header">
-        {controlled && <DraggableControllerIcon slotIndex={slotIndex} />}
-        <OtherPartyBadges parties={otherParties} className="modern-slot-other-parties" />
-      </div>
+      <div className="modern-slot-header">{controlled && <DraggableControllerIcon slotIndex={slotIndex} />}</div>
 
       <div className="modern-slot-body">
+        <OtherPartyBadges parties={otherParties} className="modern-slot-other-parties" />
         {awaitingPlacement && (
           <>
             <svg className="modern-slot-target" viewBox="0 0 100 100" aria-hidden="true">
