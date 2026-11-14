@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { effectFrameOf, hexagonFrameOf, hitFrameOf } from '../burst/schedule.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { activeItemsAt } from '../skills/holders.ts';
+import { timerFramesOf } from '../skills/timeline.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import {
@@ -36,9 +37,9 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     activeItemsAt(sim.history, holder, frame, { sourceSlotIndex: dolla, skill: 'skill2', stat }).length;
 
   it('gives every ally the S1 ATK up for 5 s every 10 s from 10 s (not at the start of combat)', () => {
-    // 周期は ceil(10 ÷ 0.017) = 589 ティック（C-0502・C-1213）
-    const period = 589;
-    const starts = Array.from({ length: Math.floor((sim.frames - 1) / period) }, (_, k) => (k + 1) * period);
+    // 周期は ceil(10 ÷ 0.017) = 589 ティックで、1 回目も 1 周期後（C-0502・C-1213）
+    const starts = timerFramesOf({ everySeconds: 10 }, sim.frames);
+    expect(starts.slice(0, 2)).toEqual([589, 1178]);
     for (const holder of allies)
       expect(effectWindows(sim, holder, { resourceId: DOLLA, skill: 'skill1', stat: 'attack' })).toEqual(
         windowsFrom(starts, 5, sim.frames),
@@ -69,6 +70,8 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
         for (const holder of allies) {
           expect(upsAt(holder, frame - 1, stat)).toBe(0);
           expect(upsAt(holder, frame, stat)).toBe(ups);
+          // 戦闘の終わりを越える窓は、終わりまでだけ見る
+          if (frame + WINDOW > sim.frames) continue;
           expect(upsAt(holder, frame + WINDOW - 1, stat)).toBe(ups);
           expect(upsAt(holder, frame + WINDOW, stat)).toBe(0);
         }
