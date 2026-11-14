@@ -751,8 +751,32 @@ header h1 {
     opacity: 0.8;
   }
 }
+/* ◎ の上の ▼。◎ が縮むときに上へ、広がるときに下へ動く（◎ と同じ周期と緩急） */
+.modern-slot-target-arrow {
+  position: absolute;
+  /* ◎（幅 = 立ち絵の高さの 3/8）の上端の少し上 */
+  top: calc(var(--slot-portrait-h) / 2 - var(--slot-portrait-h) * 3 / 16 - var(--slot-portrait-h) * 3 / 40);
+  left: 50%;
+  width: calc(var(--slot-portrait-h) * 3 / 32);
+  fill: #fff;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.35));
+  pointer-events: none;
+  z-index: 3;
+  transform: translate(-50%, -40%);
+  animation: modern-slot-target-arrow-bob 1.2s ease-in-out infinite;
+}
+@keyframes modern-slot-target-arrow-bob {
+  0%,
+  100% {
+    transform: translate(-50%, -40%);
+  }
+  50% {
+    transform: translate(-50%, 30%);
+  }
+}
 @media (prefers-reduced-motion: reduce) {
-  .modern-slot-target {
+  .modern-slot-target,
+  .modern-slot-target-arrow {
     animation: none;
   }
 }
