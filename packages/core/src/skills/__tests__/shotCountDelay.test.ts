@@ -167,7 +167,7 @@ describe('cycle の段と dot の付けたときのゲージの遅れ', () => {
     expect(() => parseSkillDefinition(withShock({ gaugeOnApplyDelayFrames: 0 }))).toThrow(/gaugeOnApplyDelayFrames/);
   });
 
-  it('takes a positive integer tickDelayFrames only with a shot count trigger and without a state', () => {
+  it('takes a positive integer tickDelayFrames only with a shot count or timer trigger and without a state', () => {
     for (const d of [0, -1, 1.5, '5']) {
       expect(() => parseSkillDefinition(withShock({ tickDelayFrames: d }))).toThrow(/tickDelayFrames/);
     }
@@ -176,5 +176,14 @@ describe('cycle の段と dot の付けたときのゲージの遅れ', () => {
         withShock({ trigger: 'burstUse', gaugeOnApply: undefined, gaugeOnApplyDelayFrames: undefined }),
       ),
     ).toThrow(/tickDelayFrames/);
+    // 周期のきっかけ（発動から付くまでの遅れ。plan/design-rosanna-co.md 2 節）
+    const timer = {
+      trigger: { everySeconds: 30 },
+      gaugeOnApply: undefined,
+      gaugeOnApplyDelayFrames: undefined,
+      gaugeOnTick: undefined,
+    };
+    expect(() => parseSkillDefinition(withShock({ ...timer, tickDelayFrames: 8 }))).not.toThrow();
+    expect(() => parseSkillDefinition(withShock({ ...timer, tickDelayFrames: 0 }))).toThrow(/tickDelayFrames/);
   });
 });

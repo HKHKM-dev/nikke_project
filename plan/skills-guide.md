@@ -96,6 +96,7 @@
     | 「〈名前〉」：N 発間維持のチャージ速度▼ | 付与の `durationShotsRef` と中身の `stat: "chargeSpeed"` | エイダの特殊改造 | 同上 |
     | 再発動周期 N 秒（端数を持ち越す）／命中した時に付く（周期の付与の遅れ） | 周期のきっかけの `carry: true`／周期の付与の `delayFrames` | マリアン：クイーンの S1 の槍と弱点露出 | 同 10.2 節の a・d・e |
     | 周期のスキルのヒットから付く▲▼ | 周期のきっかけの timed の `delayFrames` | エーテルの S2 の防御力▼ | V-0602 |
+    | 説明文にきっかけの無い周期の持続ダメージが、発動の N f 後に付く | dot の周期のきっかけ（`everySeconds`）と `tickDelayFrames` | ロザンナ：シックオーシャンの S2 | [design-rosanna-co.md](design-rosanna-co.md) 2 節 |
     | コア命中ダメージ | damage の `coreHit: true` | マリアン：クイーンの S2 | 同 5.4 節 |
     | マシンガン立ち上げ速度 X%▲ | stat `spinUpSpeed` | マリアン：クイーンのバースト | 同 5.6 節 |
     | 通常攻撃が N 回クリティカル命中した時／自分が使用武器変更状態でなければ | 回数の種類 `critHit`／回数のきっかけの `firesOutside: "weaponChange"` | 紅蓮：神殺の S2 | 同 5.7 節 |

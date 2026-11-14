@@ -2002,7 +2002,8 @@ export type DotEffect = {
   /**
    * tick の刻み（とスタックの数）を、発火のフレームの d 後を起点に数える（1 以上の整数。レイヴンは 5。
    * 付けたのは撃った 6f 後で、その 1f 前が起点。C-0765。plan/design-shot-count-trigger-frame.md 6.7 節の論点 9）。
-   * 付けたときのゲージ（gaugeOnApplyDelayFrames）は動かさない。トリガーは射撃の回数トリガーだけ
+   * 付けたときのゲージ（gaugeOnApplyDelayFrames）は動かさない。トリガーは射撃の回数トリガーか、周期のトリガー（発動から付くまでの遅れ。
+   * ロザンナ：シックオーシャンの S2。plan/design-rosanna-co.md 2 節）
    */
   tickDelayFrames?: number;
   /**

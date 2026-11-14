@@ -1,0 +1,121 @@
+[
+  {
+    "id": "1151-01",
+    "recording": "1151",
+    "source": "V-0760",
+    "readAt": "2026-11-14",
+    "use": "compare",
+    "kind": "hit",
+    "value": 70277,
+    "unit": "ダメージ",
+    "description": "ロザンナ：シックオーシャン単騎の、1 回目の S2 の持続ダメージの付いた瞬間の tick（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "HUD の総ダメージの増分（前のフレームとの間が 1 の増分）の f2548 の値。1 tick の格子（最終攻撃力 × 70.4% − 防御を、会心・持続ダメージ▲・受けるダメージ▲・フルバーストで組んだ値）に ±1 で乗る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "1151-02",
+    "recording": "1151",
+    "source": "V-0760",
+    "readAt": "2026-11-14",
+    "use": "compare",
+    "kind": "hit",
+    "value": 105415,
+    "unit": "ダメージ",
+    "description": "1 回目の S2 の持続ダメージの 9 個目（k = 8）の tick（会心）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "HUD の総ダメージの増分（前のフレームとの間が 1 の増分）の f3048 の値。1 tick の格子（最終攻撃力 × 70.4% − 防御を、会心・持続ダメージ▲・受けるダメージ▲・フルバーストで組んだ値）に ±1 で乗る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 8,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "1151-03",
+    "recording": "1151",
+    "source": "V-0760",
+    "readAt": "2026-11-14",
+    "use": "record",
+    "kind": "timing",
+    "value": [1772.5, 3537.9, 5301.9, 7067.1, 8832.2],
+    "unit": "ティック",
+    "description": "S2 の持続ダメージのまとまりの最初の tick の、戦闘開始（動画 f774）からのゲーム内のティック。2・5 回目の最初の tick は増分が 18〜20f の間の和になり読めないので、2 個目の tick（88f 後）から 87.8〜88.0 ティック戻した",
+    "method": {
+      "tool": "node tools/captures/timer.ts --mode ticks",
+      "note": "2 個目の tick の動画のフレームは 2636・4401・6166・7931・9696"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "dot"
+    }
+  },
+  {
+    "id": "1151-04",
+    "recording": "1151",
+    "source": "V-0760",
+    "readAt": "2026-11-14",
+    "use": "compare",
+    "kind": "timing",
+    "value": [1774, 1862, 1921, 1979, 2038, 2097, 2156],
+    "unit": "f",
+    "description": "1 回目の S2 の持続ダメージの最初の 7 個の tick の動画のフレーム（戦闘開始 f774 から。8 個目は増分が 19f の間の和になり読めない）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "1 tick の格子に乗る増分と、通常攻撃との和のフレーム。戦闘開始は timer.ts"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitVideoFrames",
+      "args": {
+        "slot": 1,
+        "kind": "tick",
+        "count": 7
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "dot"
+    }
+  }
+]

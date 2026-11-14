@@ -1,0 +1,116 @@
+{
+  "formatVersion": 1,
+  "resourceId": 283,
+  "checkedAt": "2026-11-12",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "戦闘開始時の味方全体のパーツダメージ▲は、射撃場の的にパーツが無いので効かない",
+          "en": "Damage to Parts up for all allies at the start of battle does not apply (the training target has no parts)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "battleStart"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        },
+        {
+          "ja": "味方の誰かがパーツを破壊した時の、味方全体へのスキル発動者基準の攻撃力▲（5 スタック・30 秒）は、射撃場の的にパーツが無いので起きない",
+          "en": "The ATK up based on the skill user's ATK for all allies (5 stacks, 30 s) when an ally destroys a part does not occur (the training target has no parts)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "unknown"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "dot",
+          "trigger": {
+            "everySeconds": 30
+          },
+          "ref": 3,
+          "intervalSeconds": 1,
+          "durationRef": 4,
+          "firstTick": "atApplication",
+          "tickDelayFrames": 8,
+          "assumes": {
+            "ja": "戦闘開始から 30 秒ごと（CT 30 秒は録画から読んだ値）に発動し、その 8f 後に付く。照準線に最も近い敵 1 機は敵 1 体。tick は付いた瞬間と、その 1.5 秒後から 1 秒ごと（計 15 回）。フルバースト補正・攻撃ダメージ▲・持続ダメージ▲・受けるダメージ▲は tick ごとにその時点の状態で乗る",
+            "en": "Activates every 30 s from the start of battle (the 30 s cooldown was read from recordings) and is applied 8 frames later. The one enemy nearest the crosshair is the single enemy. It ticks on application, then every second from 1.5 s after (15 ticks). The Full Burst bonus, ATK damage up, sustained damage up and damage taken up apply per tick by the state at that tick"
+          },
+          "claims": [
+            "C-1196"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "味方全体のパーツダメージ▲は、射撃場の的にパーツが無いので効かない",
+          "en": "Damage to Parts up for all allies does not apply (the training target has no parts)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "unknown"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        },
+        {
+          "ja": "持続ダメージの tick がバーストゲージを溜めるかは確かめていない（単騎の 1 回目の満タンは最初の発動より前）。モデルは溜めない",
+          "en": "Whether the sustained damage ticks build burst gauge has not been verified (the first full gauge solo comes before the first activation). The model does not add gauge",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "burstGaugeHit"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "sustainedDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-1198"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "敵 1 体。敵全体の受けるダメージ▲を、味方全体の受けるダメージの別の乗数として書く",
+            "en": "One enemy. The damage-taken increase on all enemies is written as the separate damage-taken multiplier for all allies"
+          },
+          "claims": [
+            "C-1198"
+          ]
+        }
+      ]
+    }
+  }
+}
