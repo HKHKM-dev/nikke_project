@@ -1136,6 +1136,10 @@
 | 1171 | `20261114-1171_rosanna-solo.mp4` | ◎ロザンナ（280、MG・電撃・SSR、宝物 2） | BigArms・水冷 | 射撃場 3 分 | ON | ON / ON | ロザンナ単騎・操作・BigArms（水冷）・スペック固定 ON・オート射撃 ON・オートバースト ON。V-0774 の撮影 E1 |
 | 1172 | `20261114-1172_sg_poli.mp4` | リター（82、SMG・鉄甲・SSR） + ◎ポリ（30、SG・水冷・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0770 の撮影。リター（AI）・ポリ（操作・オート射撃 ON・宝物版）。オートバースト ON |
 | 1173 | `20261114-1173_sg_poli.mp4` | リター（82、SMG・鉄甲・SSR） + ◎ポリ（30、SG・水冷・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0770 の撮影。リター（AI）・ポリ（操作・オート射撃 ON・宝物版）。オートバースト ON |
+| 1174 | `20261114-1174_sr_dolla_fire.mp4` | ◎ドラー（202、SR・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1175 | `20261114-1175_sr_dolla_fire.mp4` | ◎ドラー（202、SR・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1176 | `20261114-1176_sr+sr+ar_cocoa+dolla+i-doll-sun_fire.mp4` | ココア（311、SR・灼熱・SSR） + ドラー（202、SR・風圧・SSR） + ◎I-DOLL・サン（308、AR・鉄甲・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1177 | `20261114-1177_sr+sr+ar_cocoa+dolla+i-doll-sun_fire.mp4` | ココア（311、SR・灼熱・SSR） + ドラー（202、SR・風圧・SSR） + ◎I-DOLL・サン（308、AR・鉄甲・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
