@@ -10,15 +10,14 @@ const ids = process.argv
   .slice(2)
   .flatMap((a) => a.split(','))
   .map((a) => a.trim())
-  .filter((a) => a !== '')
-  .map(Number);
+  .filter((a) => a !== '');
 if (ids.length === 0) {
   console.error('usage: npm run char -- <id>[,<id>...]');
   process.exit(1);
 }
 const { characters, defined } = loadCatalogInput();
 const byRid = new Map(characters.map((c) => [c.resourceId, c]));
-const missing = ids.filter((id) => !byRid.has(id));
+const missing = ids.filter((id) => !byRid.has(Number(id)));
 if (missing.length > 0) {
   console.error(`キャラのデータが無い: ${missing.join('・')}`);
   process.exit(1);
@@ -26,6 +25,7 @@ if (missing.length > 0) {
 const { effects } = classifyCharacters(characters, defined);
 console.log(
   ids
+    .map(Number)
     .map((rid) =>
       renderCharSummary(byRid.get(rid)!, { defined: defined.has(rid), similar: similarDefined(rid, effects) }),
     )

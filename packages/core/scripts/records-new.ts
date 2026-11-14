@@ -316,6 +316,11 @@ if (kind === 'verification') {
   const drafts = (Array.isArray(parsed) ? parsed : [parsed]) as ObservationDraft[];
   if (drafts.length === 0 || drafts.some((d) => d === null || typeof d !== 'object' || Array.isArray(d)))
     fail('下書きは観測値の欄のオブジェクトか、その配列');
+  // 番号・録画・出どころ・読んだ日はこのコマンドが付ける（下書きの値で上書きさせない）
+  const given = drafts.flatMap((d) => ['id', 'recording', 'source', 'readAt'].filter((k) => k in d));
+  if (given.length > 0) fail(`下書きに ${[...new Set(given)].join('・')} を書かない（このコマンドが付ける）`);
+  if (drafts.some((d) => typeof d.description !== 'string' || typeof d.kind !== 'string'))
+    fail('下書きには kind と description（文字列）が要る');
   const file = loadRecordingsFile();
   const recordings = recordingMap(file);
   if (!recordings.has(recordingId)) fail(`録画 ${recordingId} が台帳に無い`);
