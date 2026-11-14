@@ -1,5 +1,5 @@
-// ループの後に、件の一覧の履歴（HolderHistory）を読む関数: 件の絞り込み（itemsOf）、値の小片（valuePiecesOf。強化の受け付けと
-// 値は amplify で決める）、区間と常時の値（buffTimelineOf。plan/design-holder-effects.md 2.9 節）。
+// ループの後に、件の一覧の履歴（HolderHistory）を閉じる関数（createHistory）と、履歴を読む関数: 件の絞り込み（itemsOf）、値の小片
+// （valuePiecesOf。強化の受け付けと値は amplify で決める）、区間と常時の値（buffTimelineOf。plan/design-holder-effects.md 2.9 節）。
 import type { BurstSchedule } from '../../burst/schedule.ts';
 import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, fixedAttackBaseOf, type BuffTotals } from '../buffs.ts';
 import { isStateContent, type AppliedEffect, isTimedItem, type ItemEffect } from '../resolve.ts';
@@ -25,9 +25,58 @@ import {
   type HeldStage,
   type HeldTrack,
   type HolderHistory,
+  type HolderLists,
   isEnemyEffect,
 } from './types.ts';
 import { STAGE_RANK, scaledEffect, valueOf } from './items.ts';
+import type { HolderBase, Records } from './records.ts';
+import type { Sources } from './sources.ts';
+import type { Read } from './read.ts';
+import type { Views } from './views.ts';
+
+/** ループの後に履歴を閉じる関数（件の一覧の history） */
+export function createHistory({
+  amplifiers,
+  applications,
+  conditionSkips,
+  counterRecords,
+  frames,
+  heals,
+  hpRatioStepsOf,
+  logs,
+  options,
+  passive,
+  rankings,
+  readItems,
+  removeDebuffGuesses,
+  slots,
+  tracks,
+}: HolderBase & Records & Sources & Read & Views): HolderLists['history'] {
+  const history: HolderLists['history'] = () => {
+    for (const track of tracks) readItems(track);
+    const amplified = amplify(tracks, amplifiers, slots, frames);
+    return {
+      frames,
+      slots,
+      passive,
+      tracks,
+      amplified: amplified.pieces,
+      applications,
+      conditionSkips: [...conditionSkips, ...amplified.skips]
+        .map((x, i) => ({ x, i }))
+        .sort((a, b) => a.x.frame - b.x.frame || a.i - b.i)
+        .map(({ x }) => x),
+      rankings,
+      removeDebuffGuesses,
+      heals,
+      fullBurstWindows: [...options.fullBurstWindows()],
+      logs,
+      counters: counterRecords,
+      hpRatios: slots.map((_, i) => hpRatioStepsOf(i)),
+    };
+  };
+  return history;
+}
 
 const SKILL_ORDER = Object.fromEntries(SKILL_SLOTS.map((s, i) => [s, i])) as Record<string, number>;
 

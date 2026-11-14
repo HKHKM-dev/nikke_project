@@ -1,7 +1,7 @@
 // 件の一覧の層 5: 見る側（plan/design-split-first-pass.md 3.3 節・9.2 節）。stat ごとの見る列（射撃・ダメージ・当たり・射程・会心・ペレット・
 // 条件・順位・ゲージ・CT）、状態の件のスタックの段と敵の状態、登録が閉じる件の列（カウンタの 0・HP の割合・見る状態の終わり）、
 // 最大 HP▲・現在の HP▼・HP の割合・最終防御力・最終攻撃力と順位。見る列を読む問い合わせ（射手の実効値・当たり・与ダメージの値・
-// 状態のスタック数・現在の HP▼）と、ループの後に閉じる履歴（history）も返す。
+// 状態のスタック数・現在の HP▼）も返す。
 import { lowerBound } from '../../frame/shots.ts';
 import { ZERO_HIT_RATE, applyResolvedEffect, fixedAttackBaseOf, type BuffTotals } from '../buffs.ts';
 import { chanceStackLevelsAt } from '../chance.ts';
@@ -24,7 +24,7 @@ import {
 import { rankSlotsOf } from '../timeline.ts';
 import { ENEMY, type HeldItem, type HeldTrack, type HolderLists, type HpRatioSteps } from './types.ts';
 import { STAGE_RANK, scaledEffect, valueOf } from './items.ts';
-import { alliesOf, amplify } from './history.ts';
+import { alliesOf } from './history.ts';
 import type { HolderBase, Records } from './records.ts';
 import type { Fires } from './fires.ts';
 import type { Sources } from './sources.ts';
@@ -33,19 +33,10 @@ import type { Read } from './read.ts';
 /** stat ごとの見る列・状態の件・HP・防御力・順位を読む */
 export function createViews({
   activeAt,
-  amplifiers,
-  applications,
-  conditionSkips,
   counterKey,
-  counterRecords,
   frames,
-  heals,
-  logs,
-  options,
   passive,
-  rankings,
   readItems,
-  removeDebuffGuesses,
   slots,
   stateTracks,
   tracks,
@@ -108,7 +99,6 @@ export function createViews({
   );
   const firingBuffsAt: HolderLists['firingBuffsAt'] = (holder, frame, base) =>
     hasFiring[holder] ? firingBuffs[holder]!(frame, base) : null;
-  const hasFiringTracks: HolderLists['hasFiringTracks'] = (holder) => hasFiring[holder] === true;
   // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 与ダメージの値に効く件（piecesOfTrack と同じ持ち主の写し方）。
   // 読む枠だけ、初めて読むときに作る
   const damageViews: (View[] | undefined)[] = slots.map(() => undefined);
@@ -338,29 +328,6 @@ export function createViews({
     }
     return steps;
   };
-  const history: HolderLists['history'] = () => {
-    for (const track of tracks) readItems(track);
-    const amplified = amplify(tracks, amplifiers, slots, frames);
-    return {
-      frames,
-      slots,
-      passive,
-      tracks,
-      amplified: amplified.pieces,
-      applications,
-      conditionSkips: [...conditionSkips, ...amplified.skips]
-        .map((x, i) => ({ x, i }))
-        .sort((a, b) => a.x.frame - b.x.frame || a.i - b.i)
-        .map(({ x }) => x),
-      rankings,
-      removeDebuffGuesses,
-      heals,
-      fullBurstWindows: [...options.fullBurstWindows()],
-      logs,
-      counters: counterRecords,
-      hpRatios: slots.map((_, i) => hpRatioStepsOf(i)),
-    };
-  };
   /** 1 パス目の発火の文脈の selfHp（以下の形だけ。以上の形が来たら定義の読み込みの漏れなので投げる） */
   const selfHpAtMostHolds = (hp: SelfHpCondition, ratio: number): boolean => {
     if (!isSelfHpAtMost(hp))
@@ -438,11 +405,11 @@ export function createViews({
     finalAttacksAtFrame,
     firingBuffsAt,
     gaugeViews,
-    hasFiringTracks,
+    hasFiring,
     hasPellets,
-    history,
     hitRateAt,
     hitViews,
+    hpRatioStepsOf,
     lowerCurrentHp,
     lowerDefenseAt,
     minEffectiveRangeAt,

@@ -15,6 +15,7 @@
 import { type TimelineSlot } from './timeline.ts';
 import { type HolderLists, type HolderListsOptions } from './holders/types.ts';
 import { lastAtOrBefore } from './holders/items.ts';
+import { createHistory } from './holders/history.ts';
 import type { HolderBase, LateReaders } from './holders/records.ts';
 import { createRecords } from './holders/records.ts';
 import { createFires } from './holders/fires.ts';
@@ -97,9 +98,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     extendSources,
     firingBuffsAt,
     gaugeViews,
-    hasFiringTracks,
+    hasFiring,
     hasPellets,
-    history,
     hitRateAt,
     hitViews,
     holdsAt,
@@ -145,7 +145,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     registerBattleStart,
     registerFrame,
     firingBuffsAt,
-    hasFiringTracks,
+    hasFiringTracks: (holder) => hasFiring[holder] === true,
     hitRateAt,
     hasHitTracks: hitViews.some((views) => views.length > 0),
     critUpAt: (holder, frame) => sumAt(critViews[holder], frame),
@@ -195,6 +195,6 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     lowerCurrentHp,
     consumeFullStacks,
     leadShots,
-    history,
+    history: createHistory(layers),
   };
 }

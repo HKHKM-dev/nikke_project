@@ -1,7 +1,7 @@
 // 件の一覧の層 3: 出どころの準備（plan/design-split-first-pass.md 3.3 節・9.2 節）。出どころの種類ごとの関数（常時の件・持続バフ・
 // 状態の付与の組・while・循環の間隔・解除・延長・デバフ解除・スタック量・自分に付いた記録・カウンタ・消費・吸収回復・敵の状態と消去・
 // 静的な状態の記録）を、件の列を作る順（tracks の並びと準備の検査が投げる順）に呼び、件の列が出そろった後に、持ち主ごとの状態の件の列
-// （stateTracks）を埋める。
+// （stateTracks）を作る。フルバーストの窓の判定（inFullBurstAt）もここに置く。
 import { groupDotsByState } from '../../frame/dot.ts';
 import { resolveDotEffects } from '../burstDamage.ts';
 import { type ChanceOpportunity } from '../chance.ts';
@@ -34,7 +34,7 @@ import { canEverTarget, isEffectTarget } from '../targets.ts';
 import { advanceShotCount, shotCountWeight, type ShotCountEveryAt, type TriggerTracker } from '../triggers.ts';
 import { conditionReadsItems, isEndedTrigger, staticStatesOf, type TimerTrigger } from '../types.ts';
 import type { SkillSlot } from '../../types.ts';
-import { timerFramesOf, type AppliedRecord } from '../timeline.ts';
+import { timerFramesOf, type AppliedRecord, type TimelineSlot } from '../timeline.ts';
 import {
   type CounterRecord,
   type CounterSource,
@@ -43,8 +43,8 @@ import {
   type EnemyStateSource,
   type ExtendSource,
   type HeldItem,
-  type HeldStage,
   type HeldTrack,
+  type HolderLists,
   type RemoveDebuffSource,
   type RemoveSource,
   type StackSource,
@@ -65,6 +65,8 @@ import type { Fires } from './fires.ts';
 
 /** 出どころの種類ごとの関数が受けるもの */
 type SourceDeps = HolderBase & Records & Fires & WithLate;
+/** { applied } の効果の段（appliedStagesOf） */
+type AppliedStageOf = ReturnType<typeof appliedStagesOf>;
 /** 持ち主ごとの、状態 → その状態の件の列（段 1・1.5） */
 type StateTracks = Map<NamedStateId, HeldTrack[]>[];
 
@@ -74,19 +76,17 @@ export function createSources(deps: SourceDeps) {
   addPassiveTracks(deps);
   // ---- { applied } の効果の段（見る状態を付ける付与の段。plan/design-skill-stage4.md 1.1 節） ----
   const appliedStageOf = appliedStagesOf(slots);
-  const timedSources = createTimedSources({ ...deps, appliedStageOf });
-  const stateGroups = createStateGroups({ ...deps, appliedStageOf });
+  const timedSources = createTimedSources(deps, appliedStageOf);
+  const stateGroups = createStateGroups(deps, appliedStageOf);
   const { hpWhileStates, updateHpAtLeast, whileTracks } = createWhileSources(deps);
   const { cycleSources, shotCountEveryOf } = createCycleSources(deps);
   const removeSources = createRemoveSources(deps);
   const extendSources = createExtendSources(deps);
   const removeDebuffSources = createRemoveDebuffSources(deps);
-  const stackSources = createStackSources({ ...deps, stateGroups });
+  const stackSources = createStackSources(deps, stateGroups);
   /** フレーム frame がフルバーストの窓 [start, end) の中か（条件 inFullBurst） */
   const inFullBurstAt = (frame: number): boolean =>
     options.fullBurstWindows().some((w) => w.start <= frame && frame < w.end);
-  // 自分に付いた記録の読みが見る、持ち主ごとの状態の件の列（件の列が出そろった後に fillStateTracks で埋める）
-  const stateTracks: StateTracks = slots.map(() => new Map<NamedStateId, HeldTrack[]>());
   const {
     chainedApplications,
     ownAppliedOf,
@@ -95,17 +95,17 @@ export function createSources(deps: SourceDeps) {
     readOwnApplied,
     sinceFires,
     stateWindowFires,
-  } = createOwnApplied({ ...deps, stateTracks });
-  const { counterRecords, counterSources, counterValue, counterValues } = createCounterSources({
-    ...deps,
+  } = createOwnApplied(deps, () => stateTracks);
+  const { counterRecords, counterSources, counterValue, counterValues } = createCounterSources(
+    deps,
     shotCountEveryOf,
     sinceFires,
-  });
+  );
   const consuming = consumingStatesOf(deps);
   const { healKey, healTracks } = createHealTracks(deps);
   const { dotCancelSources, enemyStateSources } = createEnemyStateSources(deps);
   addStaticApplications(deps);
-  fillStateTracks(stateTracks, tracks);
+  const stateTracks = stateTracksOf(slots, tracks);
   return {
     appliedStageOf,
     chainedApplications,
@@ -156,14 +156,10 @@ function addPassiveTracks({ frames, newTrack, slots }: SourceDeps): void {
 }
 
 /** timed の出どころ（持ち主ごとの件の列は、対象になりうる枠にだけ作る） */
-function createTimedSources({
-  amplifiers,
-  appliedStageOf,
-  firesOf,
-  newTrack,
-  selfHpStateOf,
-  slots,
-}: SourceDeps & { appliedStageOf: (state: NamedStateId) => HeldStage }): TimedSource[] {
+function createTimedSources(
+  { amplifiers, firesOf, newTrack, selfHpStateOf, slots }: SourceDeps,
+  appliedStageOf: AppliedStageOf,
+): TimedSource[] {
   const timedSources: TimedSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
@@ -206,12 +202,7 @@ function createTimedSources({
 }
 
 /** 時間で変わる状態（出どころ × 状態 × 持ち主ごとに 1 つの件の列） */
-function createStateGroups({
-  appliedStageOf,
-  firesOf,
-  newTrack,
-  slots,
-}: SourceDeps & { appliedStageOf: (state: NamedStateId) => HeldStage }): StateGroup[] {
+function createStateGroups({ firesOf, newTrack, slots }: SourceDeps, appliedStageOf: AppliedStageOf): StateGroup[] {
   const stateGroups = stateGroupsOf(slots, firesOf, appliedStageOf);
   for (const group of stateGroups) {
     const grant = group.grants[0]!.grant;
@@ -378,11 +369,7 @@ function createRemoveDebuffSources({ firesOf, slots }: SourceDeps): RemoveDebuff
 }
 
 /** スタック量の増減（足す・減らす先は、同じ定義の付与の状態の、自分の件の列。plan/design-skill-stage3.md 1.1・1.5 節） */
-function createStackSources({
-  firesOf,
-  slots,
-  stateGroups,
-}: SourceDeps & { stateGroups: readonly StateGroup[] }): StackSource[] {
+function createStackSources({ firesOf, slots }: SourceDeps, stateGroups: readonly StateGroup[]): StackSource[] {
   const stackSources: StackSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
@@ -407,10 +394,10 @@ function createStackSources({
 }
 
 /**
- * 自分に付いた記録と、それを読むきっかけ（周期の since・状態の窓の中の射撃の回数）。stateTracks は件の列が出そろった後に埋まり、
- * 返す関数はそれより後に呼ばれる
+ * 自分に付いた記録と、それを読むきっかけ（周期の since・状態の窓の中の射撃の回数）。stateTracks は、件の列が出そろった後に作る
+ * 持ち主ごとの状態の件の列を読む（作る前に読むと落ちる。返す関数はそれより後に呼ばれる）
  */
-function createOwnApplied({ applications, frames, late, stateTracks }: SourceDeps & { stateTracks: StateTracks }) {
+function createOwnApplied({ applications, frames, late }: SourceDeps, stateTracks: () => StateTracks) {
   /**
    * 枠 × 状態ごとの、その枠に付いた記録のフレーム（昇順。plan/design-skill-stage19.md 2.1 節）。counterChange の { applied } と
    * 周期の since が読む。読むたびに、まだ見ていない記録を足す
@@ -438,7 +425,7 @@ function createOwnApplied({ applications, frames, late, stateTracks }: SourceDep
     readOwnApplied(ownApplied, slotIndex, state);
   /** 同: 枠にその状態の件（段によらない）が効いているか */
   const ownStateActive = (slotIndex: number, state: NamedStateId, frame: number): boolean =>
-    (stateTracks[slotIndex]?.get(state) ?? []).some((t) => late.activeAt(t, frame).length > 0);
+    (stateTracks()[slotIndex]?.get(state) ?? []).some((t) => late.activeAt(t, frame).length > 0);
   /**
    * 同（論点 2）: 状態の付いた時から数える周期（since）。起点はそのフレームまでに付いた最後の記録で、k 回目は起点から k × everySeconds 秒
    * （timerFramesOf と同じ数え方）。その状態が効いている間だけ。atStart なら付いたフレームにも発火する（V-0729。currentHpDown。
@@ -467,7 +454,7 @@ function createOwnApplied({ applications, frames, late, stateTracks }: SourceDep
     /** 枠のその状態の件のうち、[frame, frame + span] のどこかで効いている件の始まりの最小（無ければ undefined。配列を作らない） */
     const startOfHeld = (s: NamedStateId, frame: number, span: number): number | undefined => {
       let start: number | undefined;
-      for (const t of stateTracks[slotIndex]?.get(s) ?? [])
+      for (const t of stateTracks()[slotIndex]?.get(s) ?? [])
         for (const it of late.readItems(t))
           if (it.start <= frame + span && frame < it.end && (start === undefined || it.start < start)) start = it.start;
       return start;
@@ -504,16 +491,11 @@ function createOwnApplied({ applications, frames, late, stateTracks }: SourceDep
 }
 
 /** カウンタの増減（対象は自分。値は枠 × カウンタごとに 1 つ。plan/design-skill-stage10.md 2.3 節） */
-function createCounterSources({
-  counterKey,
-  firesOf,
-  shotCountEveryOf,
-  sinceFires,
-  slots,
-}: SourceDeps & {
-  shotCountEveryOf: (slotIndex: number, skill: SkillSlot) => ShotCountEveryAt | undefined;
-  sinceFires: (trigger: TimerTrigger, slotIndex: number) => TriggerTracker;
-}) {
+function createCounterSources(
+  { counterKey, firesOf, slots }: SourceDeps,
+  shotCountEveryOf: HolderLists['shotCountEveryOf'],
+  sinceFires: HolderLists['sinceFires'],
+) {
   const counterSources: CounterSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
@@ -544,7 +526,7 @@ function createCounterSources({
  * 使用武器の変更（plan/design-skill-stage11.md 2.1 節）・弾丸チャージ・timed（plan/design-diesel.md 2.1 節）のきっかけ
  * { fullStack } の状態も
  */
-function consumingStatesOf({ slots }: SourceDeps): { holder: number; state: NamedStateId }[] {
+function consumingStatesOf({ slots }: SourceDeps) {
   const consuming: { holder: number; state: NamedStateId }[] = [];
   slots.forEach((slot, holder) => {
     if (slot === null || slot.definition === null) return;
@@ -624,15 +606,17 @@ function addStaticApplications({ applications, frames, slots }: SourceDeps): voi
 }
 
 /**
- * 持ち主ごとの状態の件の列を埋める。段 1.5（条件つきの付与）の状態の件も入れ、前のフレームまでに付いた件だけを見る
+ * 持ち主ごとの状態の件の列。段 1.5（条件つきの付与）の状態の件も入れ、前のフレームまでに付いた件だけを見る
  * （同じフレームの条件つきどうしは連鎖させない。超火力（カウンタの条件で付く）を、後のフルバーストの開始の条件が見る。plan/design-skill-stage10.md 3.2 節）
  */
-function fillStateTracks(stateTracks: StateTracks, tracks: readonly HeldTrack[]): void {
-  stateTracks.forEach((byState, holder) => {
+function stateTracksOf(slots: readonly TimelineSlot[], tracks: readonly HeldTrack[]): StateTracks {
+  return slots.map((_, holder) => {
+    const byState = new Map<NamedStateId, HeldTrack[]>();
     for (const track of tracks) {
       const o = track.origin;
       if (track.holder !== holder || (track.stage !== 1 && track.stage !== 1.5) || o.kind !== 'state') continue;
       byState.set(o.state, [...(byState.get(o.state) ?? []), track]);
     }
+    return byState;
   });
 }
