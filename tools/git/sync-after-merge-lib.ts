@@ -141,17 +141,17 @@ export function ciSettled(stdout: string | null): boolean {
 
 /**
  * トピックブランチを origin/main へ取り込むか（セッションの始まりと発言のフック。plan/design-workflow-simplification-13.md 2 節）。
- * Claude Code のブランチ（claude/）で、追跡中のファイルに作業中の変更が無く、リベースの途中でもなく、追跡先が消えて（マージ済みで）
- * もいなくて、origin/main が進んでいるとき
+ * Claude Code のブランチ（claude/）で、追跡中のファイルに作業中の変更が無く、リベースや pr:prep の途中（busy）でもなく、追跡先が
+ * 消えて（マージ済みで）もいなくて、origin/main が進んでいるとき
  */
 export function shouldCatchUp(s: {
   branch: string | null;
   clean: boolean;
-  rebasing: boolean;
+  busy: boolean;
   track: string | null;
   behind: number;
 }): boolean {
-  return Boolean(s.branch?.startsWith('claude/')) && s.clean && !s.rebasing && s.track !== '[gone]' && s.behind > 0;
+  return Boolean(s.branch?.startsWith('claude/')) && s.clean && !s.busy && s.track !== '[gone]' && s.behind > 0;
 }
 
 /** 取り込んだときに、変わったかを知らせる決まりと道具の置き場所 */

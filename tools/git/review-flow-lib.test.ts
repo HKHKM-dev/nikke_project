@@ -1,4 +1,5 @@
 // 見直しから自動マージの予約までを止めずに進めるフックの判定（plan/design-review-steps.md 3 節）。
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   FLOW_EXPIRY_MS,
@@ -6,6 +7,7 @@ import {
   isReviewedCode,
   parseFlowState,
   parseNumstat,
+  SIMPLIFY_MIN_ADDED,
   simplifyGate,
   stopDecision,
 } from './review-flow-lib.ts';
@@ -76,17 +78,24 @@ describe('simplifyGate', () => {
   });
 
   it('reads git diff --numstat', () => {
-    expect(parseNumstat('3\t1\ta.ts\n-\t-\timg.png\n')).toEqual(
-      new Map([
-        ['a.ts', 3],
-        ['img.png', 0],
-      ]),
-    );
+    expect(parseNumstat('3\t1\ta.ts\n-\t-\timg.png\n')).toEqual([
+      { path: 'a.ts', added: 3 },
+      { path: 'img.png', added: 0 },
+    ]);
   });
 
   it('counts only non-test scripts under packages, apps and tools', () => {
     expect(isReviewedCode('tools/git/review-flow.ts')).toBe(true);
     expect(isReviewedCode('packages/core/src/records/__tests__/x.ts')).toBe(false);
     expect(isReviewedCode('records/claims/C-0001.json')).toBe(false);
+    expect(isReviewedCode('apps/web/vite.config.mts')).toBe(true);
+  });
+});
+
+describe('the line in AGENTS.md', () => {
+  it('matches the gate (the rule text and the hook move together)', () => {
+    const rule = readFileSync(new URL('../../AGENTS.md', import.meta.url), 'utf8');
+    expect(rule).toContain(`コードの追加が ${SIMPLIFY_MIN_ADDED} 行を超える`);
+    expect(rule).toContain('コード（`packages/`・`apps/`・`tools/`）');
   });
 });

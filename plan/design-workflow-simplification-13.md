@@ -82,3 +82,4 @@
 - 2026-11-14: 起案。
 - 2026-11-14: オーナーが 1 を自動で取り込む形で、2 を推奨どおり承認した。
 - 2026-11-14: 実施。1 は `sync-after-merge.ts` の `--catch-up`（SessionStart・UserPromptSubmit）に足し、`pr:prep` のリベースの続け方を `pr-prep-lib.ts` の `finishRebase` に切り出して両方から使う。追跡先があれば `--force-with-lease` で push する（ほかの道具の push が早送りで落ちないように）。2 は `review-flow.ts` の `--pre`（PreToolUse の Skill）。一時の clone で、衝突なし・生成物だけの衝突・手書きのファイルの衝突（元に戻す）・作業中の変更あり（何もしない）を確かめた。
+- 2026-11-14: 見直し（`/simplify`）で直した。取り込みは `tools/git/catch-up.ts` に分け、origin を fetch できたときだけ動かす。本物の git でリベースを進める部分（`gitRebaseIo`・`startRebase`）は `tools/git/git-rebase.ts` に置き、`pr:prep` と共有する。`pr:prep` が動いている間（git のディレクトリの印）は取り込まない。push は、origin のブランチに手元に無い commit が無いときだけ、リベースの前の追跡先の sha を lease にして行う（ほかのセッションの commit を上書きしない）。AGENTS.md の線とフックの線（`SIMPLIFY_MIN_ADDED`）がずれたらテストが落ちる。

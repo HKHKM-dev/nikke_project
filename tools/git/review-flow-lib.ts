@@ -66,7 +66,7 @@ export const SIMPLIFY_MIN_ADDED = 100;
 /** 見直しの規模に数えるコードのファイル（packages/・apps/・tools/ のスクリプトで、テストでないもの） */
 export function isReviewedCode(path: string): boolean {
   return (
-    /^(packages|apps|tools)\//.test(path) && /\.(ts|tsx|js|mjs|cjs)$/.test(path) && !/(\.test\.|__tests__\/)/.test(path)
+    /^(packages|apps|tools)\//.test(path) && /\.(?:[cm]?[jt]s|tsx)$/.test(path) && !/(\.test\.|__tests__\/)/.test(path)
   );
 }
 
@@ -85,11 +85,9 @@ export function simplifyGate(files: readonly { path: string; added: number; isNe
 }
 
 /** git diff --numstat の出力から、ファイルごとの追加の行数（バイナリは 0） */
-export function parseNumstat(text: string): Map<string, number> {
-  const out = new Map<string, number>();
-  for (const line of text.split('\n')) {
+export function parseNumstat(text: string): { path: string; added: number }[] {
+  return text.split('\n').flatMap((line) => {
     const [add, , path] = line.split('\t');
-    if (path) out.set(path, Number(add) || 0);
-  }
-  return out;
+    return path ? [{ path, added: Number(add) || 0 }] : [];
+  });
 }

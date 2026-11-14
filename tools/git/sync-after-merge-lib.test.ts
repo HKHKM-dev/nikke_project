@@ -240,17 +240,17 @@ describe('ciSettled', () => {
 });
 
 describe('shouldCatchUp', () => {
-  const plan = { branch: 'claude/x', clean: true, rebasing: false, track: '[behind 3]', behind: 3 };
+  const plan = { branch: 'claude/x', clean: true, busy: false, track: '[behind 3]', behind: 3 };
   it('catches up a clean Claude Code topic branch that main has moved past', () => {
     expect(shouldCatchUp(plan)).toBe(true);
     expect(shouldCatchUp({ ...plan, track: '' })).toBe(true);
   });
-  it('leaves other branches, work in progress, a rebase in progress, merged branches and up-to-date branches', () => {
+  it('leaves other branches, work in progress, a rebase or pr:prep in progress, merged branches and up-to-date branches', () => {
     expect(shouldCatchUp({ ...plan, branch: 'main' })).toBe(false);
     expect(shouldCatchUp({ ...plan, branch: 'antigrav/x' })).toBe(false);
     expect(shouldCatchUp({ ...plan, branch: null })).toBe(false);
     expect(shouldCatchUp({ ...plan, clean: false })).toBe(false);
-    expect(shouldCatchUp({ ...plan, rebasing: true })).toBe(false);
+    expect(shouldCatchUp({ ...plan, busy: true })).toBe(false);
     expect(shouldCatchUp({ ...plan, track: '[gone]' })).toBe(false);
     expect(shouldCatchUp({ ...plan, behind: 0 })).toBe(false);
   });

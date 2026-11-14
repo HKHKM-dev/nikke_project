@@ -29,7 +29,7 @@ let cwd: string | undefined;
 
 function git(args: readonly string[]): string | null {
   try {
-    return execFileSync('git', args, {
+    return execFileSync('git', ['-c', 'core.quotePath=false', ...args], {
       cwd,
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'ignore'],
@@ -52,7 +52,7 @@ function branchChanges(): { path: string; added: number; isNew: boolean }[] | nu
   if (base === null) return null;
   const added = parseNumstat(git(['diff', '--numstat', base]) ?? '');
   const created = new Set((git(['diff', '--name-only', '--diff-filter=A', base]) ?? '').split('\n').filter(Boolean));
-  const files = [...added].map(([path, n]) => ({ path, added: n, isNew: created.has(path) }));
+  const files = added.map((f) => ({ ...f, isNew: created.has(f.path) }));
   for (const path of (git(['ls-files', '--others', '--exclude-standard']) ?? '').split('\n').filter(Boolean))
     files.push({ path, added: 0, isNew: true });
   return files;
@@ -63,7 +63,7 @@ function main(): void {
   const input = parseJson<HookInput>(readFileSync(0, 'utf8')) ?? {};
   if (typeof input.cwd === 'string') cwd = input.cwd;
   if (mode === '--pre') {
-    if (input.tool_name !== 'Skill' || input.tool_input?.skill !== 'simplify') return;
+    if (input.tool_input?.skill !== 'simplify') return; // matcher が Skill
     const files = branchChanges();
     const reason = files === null ? null : simplifyGate(files);
     if (reason !== null)

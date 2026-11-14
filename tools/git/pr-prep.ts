@@ -51,11 +51,11 @@ import {
   pathListArgs,
   PROGRESS_PATHS,
   progressCopies,
-  rebaseOutcome,
   removedLines,
   short,
   splitGenerated,
 } from './pr-prep-lib.ts';
+import { gitRebaseIo, holdPrPrepLock, isRebasing, startRebase } from './git-rebase.ts';
 
 const { values } = parseArgs({
   options: {
@@ -109,8 +109,8 @@ function fail(message: string): never {
 }
 
 const gitDir = git(['rev-parse', '--absolute-git-dir']);
-const rebasing = () => existsSync(`${gitDir}/rebase-merge`) || existsSync(`${gitDir}/rebase-apply`);
-const NO_EDITOR = { GIT_EDITOR: 'true' };
+const rebasing = () => isRebasing(gitDir);
+holdPrPrepLock(gitDir);
 
 const branch = git(['rev-parse', '--abbrev-ref', 'HEAD']);
 
@@ -205,7 +205,7 @@ if (!rebasing()) {
   const behind = git(['rev-list', '--count', 'HEAD..origin/main']);
   if (behind !== '0') {
     console.log(`origin/main が ${behind} 件進んでいる。リベースする`);
-    const outcome = rebaseOutcome(tryGit(['rebase', 'origin/main'], NO_EDITOR), rebasing());
+    const outcome = startRebase(ROOT, gitDir, true);
     if (outcome === 'clean') console.log('衝突なしで取り込んだ');
     else if (outcome === 'notStarted')
       fail(
@@ -215,19 +215,16 @@ if (!rebasing()) {
 }
 
 // リベースの途中（衝突で止まったか、前の回で人が直している途中）なら、生成物の衝突を解いて続ける
+const io = gitRebaseIo(ROOT, gitDir, true);
 const rebased = finishRebase(
   {
-    rebasing,
-    conflicted: () => gitPaths(['diff', '--name-only', '--diff-filter=U']),
+    ...io,
     takeMain: (paths) => {
-      git(['checkout', '--ours', '--', ...paths]);
-      git(['add', '--', ...paths]);
+      console.log(`生成物の衝突は main の版を取る（終わりに作り直す）: ${paths.join('・')}`);
+      io.takeMain(paths);
     },
-    rebase: (step) => tryGit(['rebase', step], NO_EDITOR),
-    nothingStaged: () => tryGit(['diff', '--cached', '--quiet']) === 0,
   },
   GENERATED_PATHS,
-  (paths) => console.log(`生成物の衝突は main の版を取る（終わりに作り直す）: ${paths.join('・')}`),
 );
 if (rebased.kind === 'conflict') {
   console.error('生成物でないファイルが衝突した。直して git add し、もう一度 npm run pr:prep を回す:');
