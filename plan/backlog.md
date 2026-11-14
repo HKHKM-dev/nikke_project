@@ -82,7 +82,7 @@
 
 ## 5. 道具・記録の整備
 
-- 観測値の `value` の型（`packages/core/src/records/observations/types.ts`）を `use` で分ける: 型は数か数の配列だが、`record` の観測値は入れ子の配列・オブジェクト・文字列・読めなかった要素の `null` を持つ。`record` の `value` を JSON の値の型にし、読む側（`packages/core/src/records/predictions.ts`・`packages/core/scripts/records-data.ts` の `observationValues`・`packages/core/src/records/observations/teamInput.ts` など）を `use` の絞り込みで直す。`compare`・`input` の値が数か数の配列であることは `npm run records:check` が確かめている
+（なし）
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
 
