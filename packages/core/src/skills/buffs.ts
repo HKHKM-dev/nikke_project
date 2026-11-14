@@ -1,7 +1,11 @@
 // 1 体が受けるバフの合計と、ダメージ式への適用（純関数）。computeTriggerDamage（damage.ts）はここの関数を呼ぶだけにする。
 import type { CharacterData, ShotParams } from '../types.ts';
 import type { ResolvedEffect } from './resolve.ts';
+import type { NamedStateId } from './states.ts';
 import type { BuffStat } from './types.ts';
+
+/** 自分の状態のスタック数の条件（解決済み。stacks 段以上の間） */
+export type ResolvedStateWhile = { state: NamedStateId; stacks: number };
 
 /**
  * 使用武器の変更（殲滅モード）で持ち替えた武器。shot は基礎の武器を写して、1 発のダメージとレートを差し替えたもの
@@ -15,6 +19,16 @@ export type ChangedWeapon = {
   shot: ShotParams;
   /** 変更後の武器の 1 発が防御力無視ダメージか（WeaponChangeEffect.trueDamage） */
   trueDamage?: true;
+  /**
+   * 変更後の武器の発ごとの防御力無視の条件（WeaponChangeEffect.trueDamageWhile。plan/design-laplace.md 2.2 節）。自分の状態 state が
+   * stacks 段以上の発を防御力無視にする（1 パス目が ShotLog.trueDamageShotFrames に書き、2 パス目がその発の値を出し直す）
+   */
+  trueDamageWhile?: ResolvedStateWhile;
+  /**
+   * 変更後の武器の最初の発の 1 発のダメージ（shot.damage と同じ単位。WeaponChangeEffect.firstShotDamageRef。同 2.1 節）。
+   * 1 パス目が ShotLog.weaponChangeFirstShotFrames に書き、2 パス目がその発の値をこの値（防御力無視にしない）で出し直す
+   */
+  firstShotDamage?: number;
   /** 変更後の武器の発が発射体の爆発を持つか（WeaponChangeEffect.projectileExplosion。発射体爆発ダメージ▲が乗る） */
   projectileExplosion?: true;
   /** 変更後の武器の発が貫通特化か（WeaponChangeEffect.pierce。貫通ダメージ▲が乗る） */

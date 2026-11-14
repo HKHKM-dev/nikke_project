@@ -1748,6 +1748,20 @@ export type WeaponChangeEffect = {
   /** 変更後の武器の 1 発を防御力無視ダメージにする（「最終攻撃力の X% の防御力無視ダメージ」） */
   trueDamage?: true;
   /**
+   * 「通常ダメージを、自分が〈状態〉のフルスタック状態なら防御力無視ダメージとして適用」（plan/design-laplace.md 2.2 節）。変更後の
+   * 武器の発のうち、その発のフレームに自分の状態がスタックの条件を満たす発だけを防御力無視にする（発ごとに見る。見え方は倍率ダメージの
+   * 条件 selfState と同じで、frame より前に付いて frame に続いている件。frame/firstPass/shooters.ts が ShotLog.trueDamageShotFrames に
+   * 書く）。形は while の { selfState }（stacksBelow・sameFiring・present: false は書けない）。trueDamage とは組まない。
+   * 初回ダメージの発（firstShotDamageRef）は防御力無視にしない
+   */
+  trueDamageWhile?: { selfState: SelfStateCondition };
+  /**
+   * 「初回ダメージ：最終攻撃力の X% のダメージ」（plan/design-laplace.md 2.1 節）の description_value_NN。変更後の武器の最初の発だけ、
+   * 1 発のダメージを damageRef の値の代わりにこの値にする（2 発目からは damageRef。ヒット数 hitsPerShot は同じ）。最初の発も
+   * weaponChangeShot に数え、会心・コア・貫通特化の扱いはほかの発と同じで、trueDamage・trueDamageWhile でも防御力無視にしない
+   */
+  firstShotDamageRef?: number;
+  /**
    * 変更後の武器の発が発射体の爆発を持つ（発射体爆発ダメージ▲が乗る。damage.ts の hasProjectileExplosion）。
    * 基礎の武器の発射体（着弾の範囲など）は変えない。ウンファ：TU の炸裂弾は C-0376
    */

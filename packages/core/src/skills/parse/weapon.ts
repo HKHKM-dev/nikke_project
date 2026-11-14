@@ -13,7 +13,7 @@ import {
   parseTrue,
   rejectUnknownKeys,
 } from './common.ts';
-import { CONDITION_KEYS_OF, parseCondition, validateBurstStep } from './condition.ts';
+import { CONDITION_KEYS_OF, parseCondition, parseWhileCondition, validateBurstStep } from './condition.ts';
 import { parseTrigger } from './trigger.ts';
 
 /** 使用武器の変更 */
@@ -26,6 +26,8 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
       'damageRef',
       'hitsPerShot',
       'trueDamage',
+      'trueDamageWhile',
+      'firstShotDamageRef',
       'projectileExplosion',
       'pierce',
       'shotCount',
@@ -143,6 +145,16 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
   for (const key of ['trueDamage', 'projectileExplosion', 'pierce'] as const) {
     if (v[key] === undefined) continue;
     effect[key] = parseTrue(v[key], `${path}.${key}`);
+  }
+  // 初回ダメージ（最初の発の値）と、自分の状態の間の発だけの防御力無視（plan/design-laplace.md 2.1・2.2 節）
+  if (v.firstShotDamageRef !== undefined)
+    effect.firstShotDamageRef = parseRef(v.firstShotDamageRef, `${path}.firstShotDamageRef`);
+  if (v.trueDamageWhile !== undefined) {
+    if (effect.trueDamage) fail(`${path}.trueDamageWhile`, 'trueDamageWhile cannot be combined with trueDamage');
+    const w = parseWhileCondition(v.trueDamageWhile, `${path}.trueDamageWhile`);
+    if (!('selfState' in w)) fail(`${path}.trueDamageWhile`, 'trueDamageWhile needs { selfState }');
+    if (w.selfState.sameFiring) fail(`${path}.trueDamageWhile.selfState.sameFiring`, 'sameFiring is not allowed');
+    effect.trueDamageWhile = { selfState: w.selfState };
   }
   // 持ち替えた武器の弾の数（録画で読む即値。plan/design-zwei.md 2.2 節）
   if (v.shotCount !== undefined) effect.shotCount = parsePositiveInt(v.shotCount, `${path}.shotCount`);

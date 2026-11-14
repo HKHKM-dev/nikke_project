@@ -48,6 +48,16 @@ export type ShotLog = {
    */
   weaponChangeShotFrames?: number[];
   /**
+   * 初回ダメージを持つ使用武器の変更（ChangedWeapon.firstShotDamage）の、窓ごとの最初の発のフレーム（weaponChangeShotFrames の部分列。
+   * plan/design-laplace.md 2.1 節）。2 パス目がその発の値を初回ダメージで出し直す。1 パス目が書く。省略は無し
+   */
+  weaponChangeFirstShotFrames?: number[];
+  /**
+   * 発ごとの防御力無視の条件を持つ使用武器の変更（ChangedWeapon.trueDamageWhile）で、条件を満たした発のフレーム
+   * （weaponChangeShotFrames の部分列。初回ダメージの発は入らない。同 2.2 節）。2 パス目がその発の値を防御力無視で出し直す。1 パス目が書く。省略は無し
+   */
+  trueDamageShotFrames?: number[];
+  /**
    * きっかけ { chargeTick } の間隔ごとの、溜めの周期の発火のフレーム（昇順。plan/design-skill-stage14.md 2.1 節）。
    * 定義にそのきっかけを持つ枠だけ、1 パス目が溜めの進み（frame/shooter.ts の chargeProgressFrames）から書く。流し直し
    * （skills/triggers.ts の replayEvents）も同じ列を読む。省略は無し

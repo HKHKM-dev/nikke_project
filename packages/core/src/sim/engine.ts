@@ -25,7 +25,7 @@ import { isStateStat, type InstantKind } from '../skills/types.ts';
 import { combineBurstHitParts, slotBurstHit, withSkillHitValue, type BurstHitResult } from '../skills/burstDamage.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
-import type { BuffTotals } from '../skills/buffs.ts';
+import type { BuffTotals, ChangedWeapon } from '../skills/buffs.ts';
 import type { BuildEffect } from '../buildEffects.ts';
 import { EMPTY_BUFF_STATE, type BuffTimeline } from '../skills/timeline.ts';
 import {
@@ -86,7 +86,15 @@ export type SimSlotSegment = {
    * 着いた発の数。damage の射撃ごとの倍率ダメージは triggers ではなくこの数で数える。ほかの枠はキーごと無い
    */
   landedShots?: number;
+  /**
+   * 使用武器の変更の発のうち、値を出し直した発（plan/design-laplace.md 2.1・2.2 節）: 初回ダメージの発（first）と、発ごとの条件で
+   * 防御力無視にした発（trueDamage）。triggers・damage に含まれる。無ければキーごと無い
+   */
+  weaponShots?: { first?: WeaponShotVariant; trueDamage?: WeaponShotVariant };
 };
+
+/** 区間の中の、値を出し直した使用武器の変更の発（その発の 1 トリガー値と、数と合計） */
+export type WeaponShotVariant = { trigger: TriggerDamage; triggers: number; damage: number };
 
 export type SimSlotResult = {
   index: number;
@@ -152,6 +160,9 @@ type Runner = {
   shots: readonly number[];
   /** 部分チャージの発のフレーム → チャージの進み */
   partial: ReadonlyMap<number, number>;
+  /** 使用武器の変更の初回ダメージの発と、発ごとの条件で防御力無視にした発のフレーム */
+  firstShots: ReadonlySet<number>;
+  trueShots: ReadonlySet<number>;
   /** 射撃ごとの倍率ダメージを着弾で出す枠の、発のフレーム → 着弾のフレーム（ほかの枠は null） */
   landAt: ((frame: number) => number) | null;
   result: SimSlotResult;
@@ -353,10 +364,40 @@ function createRunner(c: RunnerContext, slot: SimInput['slots'][number], index: 
     const partial = partialShotsInRanges(shots[index]?.partialShots, range);
     const partialDamage = partial.reduce((sum, p) => sum + partialChargeTriggerDamage(trigger, p).perTrigger, 0);
     const landed = landAt === null ? undefined : countShotsInRanges(landings, range);
+    // 使用武器の変更の初回ダメージの発と、発ごとの条件で防御力無視にした発（plan/design-laplace.md 2.1・2.2 節）は、
+    // その発の武器で 1 トリガー値を出し直す
+    const weapon = state.buffs.weapon;
+    const variantAt = (
+      frames: readonly number[] | undefined,
+      w: () => ChangedWeapon,
+    ): WeaponShotVariant | undefined => {
+      const n = countShotsInRanges(frames ?? [], range);
+      if (n === 0 || weapon === undefined) return undefined;
+      const t = slotTriggerDamage(
+        slot,
+        index,
+        enemy,
+        landing,
+        segment.landing,
+        { ...state.buffs, weapon: w() },
+        segment.fullBurst,
+        perShot,
+        input.attackRounding,
+      );
+      return { trigger: t, triggers: n, damage: t.perTrigger * n };
+    };
+    const first = variantAt(shots[index]?.weaponChangeFirstShotFrames, () => {
+      // 初回ダメージの発は防御力無視にしない
+      const { trueDamage: _, ...rest } = weapon!;
+      return { ...rest, shot: { ...weapon!.shot, damage: weapon!.firstShotDamage ?? weapon!.shot.damage } };
+    });
+    const trueShots = variantAt(shots[index]?.trueDamageShotFrames, () => ({ ...weapon!, trueDamage: true }));
+    const variants = [first, trueShots].filter((v) => v !== undefined);
     // 着弾で出す枠は、射撃ごとの倍率ダメージを撃った数から着いた数に置き換える
     const damage =
-      trigger.perTrigger * (triggers - partial.length) +
+      trigger.perTrigger * (triggers - partial.length - variants.reduce((sum, v) => sum + v.triggers, 0)) +
       partialDamage +
+      variants.reduce((sum, v) => sum + v.damage, 0) +
       (landed === undefined ? 0 : trigger.perShot * (landed - triggers));
     return {
       start: segment.start,
@@ -371,6 +412,14 @@ function createRunner(c: RunnerContext, slot: SimInput['slots'][number], index: 
       damage,
       ...(partial.length > 0 ? { partialCharge: { triggers: partial.length, damage: partialDamage } } : {}),
       ...(landed === undefined ? {} : { landedShots: landed }),
+      ...(variants.length > 0
+        ? {
+            weaponShots: {
+              ...(first !== undefined ? { first } : {}),
+              ...(trueShots !== undefined ? { trueDamage: trueShots } : {}),
+            },
+          }
+        : {}),
     };
   });
   const autoCondition = autoConditionSummary(landing, slot, index, shotFrames, hitRateNSpansOf(timeline, index));
@@ -378,6 +427,8 @@ function createRunner(c: RunnerContext, slot: SimInput['slots'][number], index: 
     index,
     shots: shotFrames,
     partial: new Map((shots[index]?.partialShots ?? []).map((p) => [p.frame, p.progress])),
+    firstShots: new Set(shots[index]?.weaponChangeFirstShotFrames ?? []),
+    trueShots: new Set(shots[index]?.trueDamageShotFrames ?? []),
     landAt,
     result: {
       index,
@@ -534,6 +585,12 @@ function lateShotDamage(
 
 /** 1 発のダメージ（区間の 1 トリガー値。部分チャージの発は、その発のチャージの進みで出し直す） */
 function shotDamage(runner: Runner, segment: SimSlotSegment, frame: number): number {
+  const variant = runner.firstShots.has(frame)
+    ? segment.weaponShots?.first
+    : runner.trueShots.has(frame)
+      ? segment.weaponShots?.trueDamage
+      : undefined;
+  if (variant !== undefined) return variant.trigger.perTrigger;
   const progress = runner.partial.get(frame);
   return progress === undefined
     ? segment.trigger.perTrigger
