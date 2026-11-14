@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 104・効果 737（根拠あり 717）・notes 236（根拠あり 102）
+件数: キャラ 105・効果 750（根拠あり 730）・notes 237（根拠あり 102）
 
-notes の種類: 未対応 37・前提の外 58・計算に無関係 48・補足 33・間接 60
+notes の種類: 未対応 37・前提の外 58・計算に無関係 49・補足 33・間接 60
 
-スロット: supported 269・partial 25・unsupported 8・noEffect 37
+スロット: supported 272・partial 25・unsupported 8・noEffect 37
 
 ## 10 ラピ
 
@@ -969,6 +969,26 @@ notes の種類: 未対応 37・前提の外 58・計算に無関係 48・補足
   - effects[0] timed・burstUse・minEffectiveRange: C-1043（確定）、C-1033（仮説）
   - effects[1] timed・burstUse・attackDamage: C-1034（確定）
   - effects[2] timed・burstUse・pierceDamage（読む: 貫通）: C-1031（確定）
+
+## 316 ベルベット
+
+- **skill1**: supported
+  - effects[0] counterChange・battleStart・ammoPouch: C-1160（確定）
+  - effects[1] counterChange・burstStage2Enter・ammoPouch: C-1164（仮説）
+  - effects[2] counterChange・fullChargeShot・ammoPouch（減少）: C-1160（確定）
+  - effects[3] timed・fullChargeShot・attack: C-1160（確定）
+  - effects[4] timed・fullChargeShot・attackDamage: C-1160（確定）
+  - notes[0] 計算に無関係: 弾丸泥棒の効果 1（敵全体の残弾数▼）はダメージに関係しない: 根拠なし
+- **skill2**: supported
+  - effects[0] counterChange・fullChargeShot・ammoPouch（減少）: C-1165（仮説）
+  - effects[1] timed・fullChargeShot・attack: C-1163（確定）
+  - effects[2] timed・fullChargeShot・chargeDamage: C-1163（確定）
+  - effects[3] counterChange・normalHit・ammoPouch（減少）: C-1164（仮説）
+  - effects[4] timed・normalHit・attackDamage: C-1162（確定）
+  - effects[5] damage・normalHit・additional: C-1162（確定）
+- **burst**: supported
+  - effects[0] weaponChange・burstUse: C-1161（確定）
+  - effects[1] timed・burstUse・attackDamage: C-1161（確定）
 
 ## 330 クラウン
 

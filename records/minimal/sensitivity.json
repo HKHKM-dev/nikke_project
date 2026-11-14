@@ -29433,6 +29433,294 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "1134-03",
+      "element": "ベルベット skill2.effects[0]",
+      "key": "a0b1d82963ab5bc0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1134-03",
+      "element": "ベルベット skill2.effects[3]",
+      "key": "a0b1d82963ab5bc0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1134-04",
+      "element": "ベルベット skill2.effects[0]",
+      "key": "ab9c1ef2b0bcc6f9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1134-04",
+      "element": "ベルベット skill2.effects[3]",
+      "key": "ab9c1ef2b0bcc6f9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1134-05",
+      "element": "ベルベット skill2.effects[0]",
+      "key": "5bee53de8703d3af",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1134-05",
+      "element": "ベルベット skill2.effects[3]",
+      "key": "5bee53de8703d3af",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-11",
+      "element": "ベルベット skill1.effects[1]",
+      "key": "ff4a8d62801600cb",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-11",
+      "element": "ベルベット skill2.effects[0]",
+      "key": "ff4a8d62801600cb",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-11",
+      "element": "ベルベット skill2.effects[3]",
+      "key": "ff4a8d62801600cb",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-12",
+      "element": "ベルベット skill1.effects[1]",
+      "key": "3afb60a7f1163b38",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-12",
+      "element": "ベルベット skill2.effects[0]",
+      "key": "3afb60a7f1163b38",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-12",
+      "element": "ベルベット skill2.effects[3]",
+      "key": "3afb60a7f1163b38",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-13",
+      "element": "ベルベット skill1.effects[1]",
+      "key": "26d106ab77cbb9ec",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-13",
+      "element": "ベルベット skill2.effects[0]",
+      "key": "26d106ab77cbb9ec",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-13",
+      "element": "ベルベット skill2.effects[3]",
+      "key": "26d106ab77cbb9ec",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-14",
+      "element": "ベルベット skill1.effects[1]",
+      "key": "da847c26611bf4f5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-14",
+      "element": "ベルベット skill2.effects[0]",
+      "key": "da847c26611bf4f5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-14",
+      "element": "ベルベット skill2.effects[3]",
+      "key": "da847c26611bf4f5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-17",
+      "element": "ベルベット skill1.effects[1]",
+      "key": "43c543343be2450d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-17",
+      "element": "ベルベット skill2.effects[0]",
+      "key": "43c543343be2450d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-17",
+      "element": "ベルベット skill2.effects[3]",
+      "key": "43c543343be2450d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-18",
+      "element": "ベルベット skill1.effects[1]",
+      "key": "0b348de62cc26f87",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-18",
+      "element": "ベルベット skill2.effects[0]",
+      "key": "0b348de62cc26f87",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-18",
+      "element": "ベルベット skill2.effects[3]",
+      "key": "0b348de62cc26f87",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-19",
+      "element": "ベルベット skill1.effects[1]",
+      "key": "f961f8c52a077d08",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-19",
+      "element": "ベルベット skill2.effects[0]",
+      "key": "f961f8c52a077d08",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1135-19",
+      "element": "ベルベット skill2.effects[3]",
+      "key": "f961f8c52a077d08",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1136-11",
+      "element": "ベルベット skill1.effects[1]",
+      "key": "e1955377b8822434",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1136-11",
+      "element": "ベルベット skill2.effects[0]",
+      "key": "e1955377b8822434",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1136-11",
+      "element": "ベルベット skill2.effects[3]",
+      "key": "e1955377b8822434",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1136-12",
+      "element": "ベルベット skill1.effects[1]",
+      "key": "caa15ec1c2513e7c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1136-12",
+      "element": "ベルベット skill2.effects[0]",
+      "key": "caa15ec1c2513e7c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1136-12",
+      "element": "ベルベット skill2.effects[3]",
+      "key": "caa15ec1c2513e7c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1136-13",
+      "element": "ベルベット skill1.effects[1]",
+      "key": "aa727f60f1f1c18f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1136-13",
+      "element": "ベルベット skill2.effects[0]",
+      "key": "aa727f60f1f1c18f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1136-13",
+      "element": "ベルベット skill2.effects[3]",
+      "key": "aa727f60f1f1c18f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }
