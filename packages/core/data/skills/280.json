@@ -17,7 +17,10 @@
           "assumes": {
             "ja": "命中 値 01（120）回ごと（通算 120・240…回目）に付く。付いている間にまた付いたら維持を付け直す。被弾で外れない（前提の外。下の notes）",
             "en": "Granted every value 01 (120) hits (the 120th, 240th... overall). Re-granting while active refreshes the duration. It is not removed by hits (outside the model's assumptions; see notes)"
-          }
+          },
+          "claims": [
+            "C-1209"
+          ]
         },
         {
           "kind": "timed",
@@ -32,7 +35,10 @@
           "assumes": {
             "ja": "命中 値 01（120）回ごとに付き、きっかけの発の次の発から乗る。付いている間にまた付いたら維持を付け直す（重ならない）",
             "en": "Granted every value 01 (120) hits and applies from the shot after the triggering one. Re-granting while active refreshes the duration (no stacking)"
-          }
+          },
+          "claims": [
+            "C-1209"
+          ]
         }
       ],
       "notes": [
@@ -69,7 +75,10 @@
           "state": "concealment",
           "trigger": "battleStart",
           "target": "self",
-          "durationRef": 1
+          "durationRef": 1,
+          "claims": [
+            "C-1210"
+          ]
         }
       ],
       "notes": [
@@ -112,7 +121,10 @@
           "assumes": {
             "ja": "優先的に火力型の敵 2 機は敵 1 体",
             "en": "The 2 enemies (Attacker-type first) are the lone enemy"
-          }
+          },
+          "claims": [
+            "C-1210"
+          ]
         },
         {
           "kind": "damage",
@@ -125,7 +137,10 @@
           "assumes": {
             "ja": "バーストスキルダメージと同じフレームに 1 ヒット。発動の時点で隠れ身なら出る",
             "en": "One hit on the same frame as the Burst skill damage. Dealt when Concealment is active at the activation"
-          }
+          },
+          "claims": [
+            "C-1210"
+          ]
         }
       ],
       "notes": []
@@ -146,7 +161,11 @@
           "assumes": {
             "ja": "命中 値 01（120）回ごと（通算 120・240…回目）に付く。付いている間にまた付いたら維持を付け直す。被弾で外れない（前提の外。下の notes）",
             "en": "Granted every value 01 (120) hits (the 120th, 240th... overall). Re-granting while active refreshes the duration. It is not removed by hits (outside the model's assumptions; see notes)"
-          }
+          },
+          "claims": [
+            "C-1210",
+            "C-1209"
+          ]
         },
         {
           "kind": "timed",
@@ -161,7 +180,11 @@
           "assumes": {
             "ja": "命中 値 01（120）回ごとに付き、きっかけの発の次の発から乗る。付いている間にまた付いたら維持を付け直す（重ならない）",
             "en": "Granted every value 01 (120) hits and applies from the shot after the triggering one. Re-granting while active refreshes the duration (no stacking)"
-          }
+          },
+          "claims": [
+            "C-1210",
+            "C-1209"
+          ]
         },
         {
           "kind": "passive",
@@ -171,7 +194,10 @@
           "assumes": {
             "ja": "ターゲットが出現した時を、戦闘開始とみなす（射撃場の的はターゲットで、戦闘の始めからいる。エレグの S2 と同じ読み）。持続なので戦闘の終わりまで。有利コード（水冷）の敵にだけ効く",
             "en": "Treats the appearance of the stage target as the start of battle (the shooting-range target is a stage target present from the start; same reading as Elegg's S2). It lasts until the end of battle. Only affects enemies of the advantaged code (Water)"
-          }
+          },
+          "claims": [
+            "C-1210"
+          ]
         }
       ],
       "notes": [
@@ -208,7 +234,10 @@
           "state": "concealment",
           "trigger": "battleStart",
           "target": "self",
-          "durationRef": 1
+          "durationRef": 1,
+          "claims": [
+            "C-1210"
+          ]
         },
         {
           "kind": "state",
@@ -229,7 +258,10 @@
           "assumes": {
             "ja": "命中 値 06（500）回ごと（通算 500・1000…回目）に 1 スタック。射撃場の的は「ターゲット」とみる（ネオン：ビジョン・アイの S1 と同じ読み）。付くたびに全部のスタックの維持を付け直す",
             "en": "One stack every value 06 (500) hits (the 500th, 1000th... overall). The shooting-range target is treated as a stage target (same reading as Neon: Vision Eye's S1). Each application refreshes the duration of all stacks"
-          }
+          },
+          "claims": [
+            "C-1208"
+          ]
         }
       ],
       "notes": [
@@ -285,7 +317,10 @@
           "assumes": {
             "ja": "アサルト。優先的に火力型の敵 2 機は敵 1 体",
             "en": "Assault. The 2 enemies (Attacker-type first) are the lone enemy"
-          }
+          },
+          "claims": [
+            "C-1207"
+          ]
         },
         {
           "kind": "damage",
@@ -298,7 +333,10 @@
           "assumes": {
             "ja": "バーストスキルダメージと同じフレームに 1 ヒット。発動の時点で隠れ身なら出る",
             "en": "One hit on the same frame as the Burst skill damage. Dealt when Concealment is active at the activation"
-          }
+          },
+          "claims": [
+            "C-1207"
+          ]
         },
         {
           "kind": "timed",
@@ -311,7 +349,10 @@
           "assumes": {
             "ja": "アサルトの命中した対象（敵 1 体）が水冷コードなら付く。射撃場の的は「ターゲット」とみる。同じバーストのアサルトと追加ダメージには乗らない（発動の時点の値。C-0795）",
             "en": "Applied when the target hit by Assault (the lone enemy) is Water code. The shooting-range target is treated as a stage target. It does not apply to the same Burst's Assault and additional damage (values at the activation; C-0795)"
-          }
+          },
+          "claims": [
+            "C-1207"
+          ]
         }
       ],
       "notes": []

@@ -104,13 +104,15 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(frenzy[0]!.start).toBeGreaterThan(crit[0]!.start);
   });
 
-  it('gives Damage Taken up for 30 s on each Burst only against a Water Code enemy (treasure only)', () => {
+  it('gives Damage Taken up for 30 s from each Burst hit only against a Water Code enemy (treasure only)', () => {
     const taken = items({ kind: 'timed', skill: 'burst', stat: 'damageTaken' });
     if (!treasure || input.enemy.element !== 'Water') {
       expect(taken).toEqual([]);
       return;
     }
     expect(taken.length).toBe(bursts.length);
+    // 窓はバーストのヒット（替わり目の 34f 後。C-1207）から始まり、そのフレームの通常攻撃にも乗る
+    expect(taken.map((w) => w.start)).toEqual(bursts.flatMap(hitFramesOf));
     // 最後の回は戦闘の終わりで切れる
     taken.slice(0, -1).forEach((w) => expect(w.end - w.start).toBe(SEC30));
     expect(taken.at(-1)!.end - taken.at(-1)!.start).toBeLessThanOrEqual(SEC30);
