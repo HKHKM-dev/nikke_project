@@ -10,16 +10,12 @@
 // 2.9 節）。値の小片の並びは時刻の順（論点 5）。件を作るのはここだけで、読む側は履歴を直接読む。
 // ここには件の一覧を作る createHolderLists（層の作り手を順に呼び、問い合わせを組む）を置く。層の作り手は holders/records.ts・
 // fires.ts・sources.ts・read.ts・views.ts・conditions.ts・fire.ts・register.ts（plan/design-split-first-pass.md 3.3 節・9.2 節）、型は
-// holders/types.ts、件を作る純粋な関数は holders/items.ts、ループの後に履歴を読む関数は holders/history.ts に置く（外から使う名前は、
-// ここから同じ名前で再公開する）。
-import { ZERO_HIT_RATE, applyResolvedEffect, fixedAttackBaseOf, type BuffTotals } from './buffs.ts';
-import { createSpanMemo } from './spanMemo.ts';
-import { statesMatching } from './states.ts';
-import { type FrameEvents, type FullStackEvent } from './triggers.ts';
+// holders/types.ts、件を作る純粋な関数は holders/items.ts、ループの後に履歴を閉じる関数（createHistory）と履歴を読む関数は
+// holders/history.ts に置く（外から使う名前は、ここから同じ名前で再公開する）。
 import { type TimelineSlot } from './timeline.ts';
-import { type HolderLists, type HolderListsOptions, leadShotKey } from './holders/types.ts';
-import { insertSorted, lastAtOrBefore, scaledEffect, valueOf } from './holders/items.ts';
-import { amplify } from './holders/history.ts';
+import { type HolderLists, type HolderListsOptions } from './holders/types.ts';
+import { lastAtOrBefore } from './holders/items.ts';
+import { createHistory } from './holders/history.ts';
 import type { HolderBase, LateReaders } from './holders/records.ts';
 import { createRecords } from './holders/records.ts';
 import { createFires } from './holders/fires.ts';
@@ -86,50 +82,42 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const {
     activeAt,
     amplifiers,
-    applications,
-    conditionSkips,
-    consumeTrack,
-    consuming,
+    applyHeal,
+    consumeFullStacks,
     cooldownSum,
     cooldownViews,
     counterFullAt,
     counterKey,
-    counterRecords,
     counterSources,
     critViews,
     cycleSources,
-    damageViews,
-    damageViewsOf,
+    damageBuffsAt,
     endedAt,
     enemyStateAt,
     enemyStateSources,
     extendSources,
-    firingViews,
-    frames,
+    firingBuffsAt,
     gaugeViews,
+    hasFiring,
     hasPellets,
-    healKey,
-    heals,
-    healTracks,
+    hitRateAt,
     hitViews,
     holdsAt,
-    hpDowns,
-    hpRatioStepsOf,
-    leads,
-    logs,
+    leadShots,
+    lowerCurrentHp,
     minEffectiveRangeAt,
+    openWeaponChange,
     ownStateActive,
     ownUnchainedApplied,
-    passive,
     pelletCountViews,
     rankContext,
-    rankings,
     readItems,
     readOwnApplied,
-    register,
-    removeDebuffGuesses,
+    registerBattleStart,
+    registerFrame,
     removeDebuffSources,
     removeSources,
+    selfStackCountAt,
     shotCountEveryOf,
     sinceFires,
     singlePelletViews,
@@ -137,73 +125,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     stackSources,
     stateGroups,
     stateTracks,
-    staticStates,
     sumAt,
     timedSources,
-    tracks,
     whileTracks,
   } = layers;
-  const emptyEvents = (frame: number): FrameEvents => ({
-    frame,
-    shots: slots.map(() => null),
-    activations: [],
-    burstEffects: [],
-    fullBurstStart: false,
-    fullBurstEnd: false,
-    gaugeFull: false,
-    fullBurstStartUsers: [],
-    fullBurstEndUsers: [],
-    healed: slots.map(() => false),
-  });
-
-  const hasFiring = slots.map((_, i) => (firingViews[i] ?? []).length > 0);
-  /**
-   * 射手の実効値（持ち主ごと）。毎フレーム × 枠で読まれるので、効いている件の組が変わらない間（件の境目まで）は前の値を使い回す
-   * （plan/design-first-pass-perf.md 3.2 節）
-   */
-  const firingBuffs = firingViews.map((views) =>
-    createSpanMemo(
-      views.length,
-      (i) => readItems(views[i]!.track),
-      (frame, base: BuffTotals): BuffTotals | null => {
-        let buffs = base;
-        let changed = false;
-        for (const v of views) {
-          // 和集合の窓は重ならないので効いているのは多くて 1 つ。スタックする効果は効いている段の数だけ足す。件の scale（perCount の
-          // スタック数）は 2 パス目（piecesOfTrack）と同じく値に掛ける
-          for (const it of activeAt(v.track, frame)) {
-            const effect = scaledEffect(v.effect, it);
-            buffs = applyResolvedEffect(
-              buffs,
-              effect,
-              fixedAttackBaseOf(effect, v.track.casterBaseAttack, slots),
-              v.track.casterMaxHp,
-            ).totals;
-            changed = true;
-          }
-        }
-        return changed ? buffs : null;
-      },
-    ),
-  );
-
-  // 毎フレーム読むので、消費する状態の持ち主の件の列は前もって引く（件の列はここまでに作り終わる。plan/design-first-pass-perf.md 3.1 節）
-  const consumingTracks = consuming.map(({ holder, state }) => ({
-    holder,
-    state,
-    own: tracks.filter((t) => t.holder === holder && t.origin.kind === 'state' && t.origin.state === state),
-  }));
-
-  const selfStackCountAt: HolderLists['selfStackCountAt'] = (holder, state, frame) => {
-    let level = 0;
-    for (const s of statesMatching(state)) {
-      if (staticStates[holder]?.has(s) === true) level = Math.max(level, 1);
-      for (const t of stateTracks[holder]?.get(s) ?? [])
-        for (const it of activeAt(t, frame)) if (it.start < frame) level = Math.max(level, it.stack ?? 1);
-    }
-    return level;
-  };
-
   return {
     hasSources:
       timedSources.length > 0 ||
@@ -217,32 +142,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       stackSources.length > 0 ||
       whileTracks.length > 0 ||
       counterSources.length > 0,
-    registerBattleStart() {
-      if (frames <= 0) return;
-      register(emptyEvents(0), true);
-    },
-    registerFrame(ev) {
-      register(ev, false);
-      // テスト用: ループの中で読まれない件の列も、毎フレーム読んで確かめる（いまは読まない列を、後の定義が読んでも落とし漏れが分かる）
-      if (options.verifyItems === true) for (const track of tracks) readItems(track);
-    },
-    firingBuffsAt(holder, frame, base) {
-      return hasFiring[holder] ? firingBuffs[holder]!(frame, base) : null;
-    },
+    registerBattleStart,
+    registerFrame,
+    firingBuffsAt,
     hasFiringTracks: (holder) => hasFiring[holder] === true,
-    // 件の scale（perCount のスタック数・確率）は 2 パス目と同じく値に掛ける
-    hitRateAt: (holder, frame) => {
-      let n = 0;
-      let up = 0;
-      for (const v of hitViews[holder] ?? []) {
-        for (const it of activeAt(v.track, frame)) {
-          const value = valueOf(v.effect, it);
-          n += value;
-          if (v.effect.value > 0) up += value;
-        }
-      }
-      return n === 0 && up === 0 ? ZERO_HIT_RATE : { n, up };
-    },
+    hitRateAt,
     hasHitTracks: hitViews.some((views) => views.length > 0),
     critUpAt: (holder, frame) => sumAt(critViews[holder], frame),
     pelletsAt: (holder, frame) => ({
@@ -252,26 +156,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     hasPelletTracks: (holder) => hasPellets[holder] === true,
     minEffectiveRangeAt,
     rankContext,
-    applyHeal(effect, sourceSlotIndex, holder, frame) {
-      const track = healTracks.get(healKey(sourceSlotIndex, effect))?.[holder] ?? null;
-      if (track === null)
-        throw new Error(`no heal track for ${effect.source.skill}[${effect.effectIndex}] on ${holder}`);
-      const opens = effect.durationFrames === undefined || activeAt(track, frame).length === 0;
-      if (frame < frames) insertSorted(track.starts, frame);
-      if (opens) heals.push({ frame, sourceSlotIndex, slotIndex: holder });
-      return opens;
-    },
-    openWeaponChange(holder, weaponId, end) {
-      for (const track of tracks) {
-        const o = track.origin;
-        if (track.holder !== holder || o.kind !== 'timed') continue;
-        if (o.effect.durationUntil !== 'ammoSpent' || o.effect.weapon?.id !== weaponId) continue;
-        const last = readItems(track).at(-1);
-        if (last === undefined || last.start >= end || last.end < end) continue;
-        return true;
-      }
-      return false;
-    },
+    applyHeal,
+    openWeaponChange,
     cycleEveryAt(slotIndex, targetSkill, frame) {
       return cycleSources
         .filter((c) => c.slotIndex === slotIndex && c.effect.target === 'cycle' && c.effect.targetSkill === targetSkill)
@@ -280,23 +166,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     shotCountEveryOf,
     gaugeSpeedAt: (holder, frame) => sumAt(gaugeViews[holder], frame),
     hasGaugeSpeedTracks: (holder) => (gaugeViews[holder] ?? []).length > 0,
-    damageBuffsAt(holder, frame, base) {
-      let buffs = base;
-      for (const v of (damageViews[holder] ??= damageViewsOf(holder))) {
-        for (const it of activeAt(v.track, frame)) {
-          const effect = scaledEffect(v.effect, it);
-          buffs = applyResolvedEffect(
-            buffs,
-            effect,
-            fixedAttackBaseOf(effect, v.track.casterBaseAttack, slots),
-            v.track.casterMaxHp,
-            // 発動者基準の防御力▼（casterDefence）は付けた枠の基礎防御力を読む（2 パス目の skills/timeline.ts と同じ）
-            slots[v.track.sourceSlotIndex]?.baseDefence,
-          ).totals;
-        }
-      }
-      return buffs;
-    },
+    damageBuffsAt,
     burstCooldownAt: (holder, frame) => cooldownSum(holder, (it) => it.start <= frame && frame < it.end),
     burstCooldownStartedAt: (holder, frame) => cooldownSum(holder, (it) => it.start === frame),
     hasBurstCooldownTracks: (holder) => (cooldownViews[holder] ?? []).length > 0,
@@ -322,54 +192,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       return false;
     },
     skipInstant: (effect, sourceSlotIndex, frame) => skipEffect(sourceSlotIndex, effect, frame),
-    lowerCurrentHp(slotIndex, frame, ratio) {
-      const downs = hpDowns[slotIndex];
-      if (downs === undefined) throw new RangeError(`lowerCurrentHp: no slot ${slotIndex}`);
-      const n = downs.frames.length;
-      if (n > 0 && downs.frames[n - 1]! > frame) throw new RangeError('lowerCurrentHp must be called in frame order');
-      downs.frames.push(frame);
-      downs.products.push((n > 0 ? downs.products[n - 1]! : 1) * (1 - ratio));
-    },
-    consumeFullStacks(frame) {
-      const out: FullStackEvent[] = [];
-      for (const { holder, state, own } of consumingTracks) {
-        const full = own.some((t) => {
-          const max = t.origin.kind === 'state' ? t.origin.grant.maxStacks : undefined;
-          return max !== undefined && readItems(t).some((it) => it.stack === max && it.start === frame);
-        });
-        if (!full) continue;
-        for (const t of own) consumeTrack(t, frame);
-        out.push({ slotIndex: holder, state });
-      }
-      return out;
-    },
-    leadShots() {
-      return Object.fromEntries(
-        [...leads].filter(([, l]) => l.fired.length > 0).map(([g, l]) => [leadShotKey(g), l.fired]),
-      );
-    },
-    history() {
-      for (const track of tracks) readItems(track);
-      const amplified = amplify(tracks, amplifiers, slots, frames);
-      return {
-        frames,
-        slots,
-        passive,
-        tracks,
-        amplified: amplified.pieces,
-        applications,
-        conditionSkips: [...conditionSkips, ...amplified.skips]
-          .map((x, i) => ({ x, i }))
-          .sort((a, b) => a.x.frame - b.x.frame || a.i - b.i)
-          .map(({ x }) => x),
-        rankings,
-        removeDebuffGuesses,
-        heals,
-        fullBurstWindows: [...options.fullBurstWindows()],
-        logs,
-        counters: counterRecords,
-        hpRatios: slots.map((_, i) => hpRatioStepsOf(i)),
-      };
-    },
+    lowerCurrentHp,
+    consumeFullStacks,
+    leadShots,
+    history: createHistory(layers),
   };
 }

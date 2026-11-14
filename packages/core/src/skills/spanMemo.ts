@@ -1,5 +1,5 @@
 // 1 パス目の最適化の段 2（plan/design-first-pass-perf.md 3.2 節）: 効いている件の組で決まる値を、件の境目まで使い回す。
-// 射手の実効値（holders.ts の firingBuffsAt）は毎フレーム × 枠で読まれるが、効いている件の組は件の始まり・終わりでしか変わらない。
+// 射手の実効値（holders/views.ts の firingBuffsAt）は毎フレーム × 枠で読まれるが、効いている件の組は件の始まり・終わりでしか変わらない。
 
 /** 件の始まり・終わり（holders/types.ts の HeldItem のうち、ここで読む欄） */
 type Span = { start: number; end: number };

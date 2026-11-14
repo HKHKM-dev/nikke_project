@@ -1,5 +1,6 @@
 // 件の一覧の層 4: 件の読み（plan/design-split-first-pass.md 3.3 節・9.2 節）。件の列の件を、読む入力が伸びたときだけ作り直して返す（readItems）。
-// 最大スタック数▲で上がる上限、while の件、カウンタの while の件もここで作る。
+// 最大スタック数▲で上がる上限、while の件、カウンタの while の件もここで作る。件の列に書く問い合わせ（吸収回復の窓・フルスタックの
+// 消費）と、使用武器の変更の窓の読みも返す。
 import { type ShotLog } from '../../frame/shots.ts';
 import {
   resolveMaxStacksUps,
@@ -10,16 +11,22 @@ import {
 } from '../resolve.ts';
 import type { MaxStacksAt } from '../stacks.ts';
 import { statesMatching } from '../states.ts';
-import { ENEMY, type HeldItem, type HeldTrack, counterEffectiveFrom } from './types.ts';
-import { ALL_READS, type TrackReads, buildTrackItems, setLength, whileItems } from './items.ts';
+import { type FullStackEvent } from '../triggers.ts';
+import { ENEMY, type HeldItem, type HeldTrack, type HolderLists, counterEffectiveFrom } from './types.ts';
+import { ALL_READS, type TrackReads, buildTrackItems, insertSorted, setLength, whileItems } from './items.ts';
 import type { HolderBase, Records } from './records.ts';
 import type { Fires } from './fires.ts';
 import type { Sources } from './sources.ts';
 
 /** 件の列の件を読む（読む入力が伸びたときだけ作り直す） */
 export function createRead({
+  consumeTrack,
+  consuming,
   counterRecords,
   frames,
+  healKey,
+  healTracks,
+  heals,
   hpWhileStates,
   itemsSeen,
   logs,
@@ -171,6 +178,44 @@ export function createRead({
     track.items = items;
     return track.items;
   };
-  return { activeAt, readItems };
+  const applyHeal: HolderLists['applyHeal'] = (effect, sourceSlotIndex, holder, frame) => {
+    const track = healTracks.get(healKey(sourceSlotIndex, effect))?.[holder] ?? null;
+    if (track === null) throw new Error(`no heal track for ${effect.source.skill}[${effect.effectIndex}] on ${holder}`);
+    const opens = effect.durationFrames === undefined || activeAt(track, frame).length === 0;
+    if (frame < frames) insertSorted(track.starts, frame);
+    if (opens) heals.push({ frame, sourceSlotIndex, slotIndex: holder });
+    return opens;
+  };
+  const openWeaponChange: HolderLists['openWeaponChange'] = (holder, weaponId, end) => {
+    for (const track of tracks) {
+      const o = track.origin;
+      if (track.holder !== holder || o.kind !== 'timed') continue;
+      if (o.effect.durationUntil !== 'ammoSpent' || o.effect.weapon?.id !== weaponId) continue;
+      const last = readItems(track).at(-1);
+      if (last === undefined || last.start >= end || last.end < end) continue;
+      return true;
+    }
+    return false;
+  };
+  // 毎フレーム読むので、消費する状態の持ち主の件の列は前もって引く（件の列は出どころの準備で作り終わる。plan/design-first-pass-perf.md 3.1 節）
+  const consumingTracks = consuming.map(({ holder, state }) => ({
+    holder,
+    state,
+    own: tracks.filter((t) => t.holder === holder && t.origin.kind === 'state' && t.origin.state === state),
+  }));
+  const consumeFullStacks: HolderLists['consumeFullStacks'] = (frame) => {
+    const out: FullStackEvent[] = [];
+    for (const { holder, state, own } of consumingTracks) {
+      const full = own.some((t) => {
+        const max = t.origin.kind === 'state' ? t.origin.grant.maxStacks : undefined;
+        return max !== undefined && readItems(t).some((it) => it.stack === max && it.start === frame);
+      });
+      if (!full) continue;
+      for (const t of own) consumeTrack(t, frame);
+      out.push({ slotIndex: holder, state });
+    }
+    return out;
+  };
+  return { activeAt, applyHeal, consumeFullStacks, openWeaponChange, readItems };
 }
 export type Read = ReturnType<typeof createRead>;
