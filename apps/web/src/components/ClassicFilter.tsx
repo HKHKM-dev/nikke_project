@@ -1,5 +1,5 @@
-// クラシックのキャラの選択肢の絞り込み。スロットの上に、「絞り込み」のボタンで開くポップアップ（クラス・属性・武器種・企業のバッジと、
-// 宝物のあるニケのボタン）と、それとは別に並べるバースト段階の Ⅰ・Ⅱ・Ⅲ のボタン。押しているボタンは青くする。
+// クラシックのキャラの選択肢の絞り込み。スロットの上に、「絞り込み」のボタンで開くポップアップ（クラス・属性・武器種・企業と、
+// 宝物のあるニケのボタン。バッジの絵は使わず文字で出す）と、それとは別に並べるバースト段階の Ⅰ・Ⅱ・Ⅲ のボタン。押しているボタンは青くする。
 // 同じ種類は OR、種類どうしと宝物は AND（matchesBadgeFilters。全段階のニケは、どの段階で絞っても出す）
 import type { CharacterIndexEntry } from '@nikke/core';
 import { useMemo, useState } from 'react';
@@ -10,11 +10,8 @@ import {
   matchesBadgeFilters,
   toggleBadgeFilter,
   BADGE_KINDS,
-  TREASURE_FILTER_BADGE,
   type BadgeFilters as BadgeFilterValues,
 } from './modern/badges.ts';
-import { BadgeFilters } from './modern/BadgeFilter.tsx';
-import { BadgeIcon } from './modern/BadgeIcon.tsx';
 import { Popover } from './Popover.tsx';
 
 /** 絞り込みの状態と、合うニケ（絞り込んでいなければ null） */
@@ -53,15 +50,31 @@ export function ClassicFilter({
       align="left"
     >
       <div className="classic-filter-panel">
-        <BadgeFilters filters={filters} onChange={setFilters} kinds={CLASSIC_FILTER_KINDS} />
-        <div className="char-tray-badge-filter" role="group" aria-label="宝物で絞り込み">
+        {CLASSIC_FILTER_KINDS.map((kind) => (
+          <div key={kind.key} className="classic-filter-row" role="group" aria-label={`${kind.name}で絞り込み`}>
+            <span className="classic-filter-row-name">{kind.name}</span>
+            {filterButtonValues(kind).map((v) => (
+              <button
+                key={v}
+                type="button"
+                className="classic-filter-button"
+                aria-pressed={filters[kind.key]?.includes(v) ?? false}
+                onClick={() => setFilters((f) => toggleBadgeFilter(f, kind.key, v))}
+              >
+                {kind.badges[v]!.label}
+              </button>
+            ))}
+          </div>
+        ))}
+        <div className="classic-filter-row" role="group" aria-label="宝物で絞り込み">
+          <span className="classic-filter-row-name">宝物</span>
           <button
             type="button"
-            className="char-tray-badge-button"
+            className="classic-filter-button"
             aria-pressed={treasureOnly}
             onClick={() => setTreasureOnly((t) => !t)}
           >
-            <BadgeIcon className="char-badge" name={TREASURE_FILTER_BADGE} label="宝物のあるニケ" />
+            宝物のあるニケ
           </button>
         </div>
         <button
@@ -94,7 +107,7 @@ export function ClassicBurstFilter({
         <button
           key={v}
           type="button"
-          className="classic-list-order-button classic-burst-button"
+          className="classic-filter-button classic-burst-button"
           aria-pressed={filters.burstStep?.includes(v) ?? false}
           aria-label={`バースト ${BURST_STEP_LABEL[v as keyof typeof BURST_STEP_LABEL]}`}
           onClick={() => setFilters((f) => toggleBadgeFilter(f, 'burstStep', v))}
