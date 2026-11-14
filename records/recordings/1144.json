@@ -1,0 +1,40 @@
+{
+  "id": "1144",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1144_rl+mg_noise+crown-nofire_fire.mp4",
+  "original": "2026-11-14_10-37-52.mp4",
+  "durationSec": 198.9,
+  "frames": 11931,
+  "fps": 60,
+  "sizeMB": 240.9,
+  "sha256": "b9b6fa4b980c",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 430,
+      "name": "ノイズ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 330,
+      "name": "クラウン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON）。V-0759 の撮影: ノイズ（1 枠目・AI）・クラウン（2 枠目・操作・オート射撃 OFF で撃たない。戦闘履歴の与ダメージ 0）。オートバースト OFF で、ノイズのバーストだけを手で押した（クラウンのバーストは押さない）。バーストの欄は右。編成は戦闘履歴のパネルで確かめた",
+  "backup": {
+    "at": "2026-11-14T10:53+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
