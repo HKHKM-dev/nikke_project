@@ -8,6 +8,7 @@ import { parseArgs } from 'node:util';
 import { countsFromValue, fbWindowK, type Estimate, type RecordingCounts } from './fb-window-k-lib.ts';
 import { LANDINGS, type Landing } from './recipes/fb-window-cores.ts';
 import { loadObservations } from './records-io.ts';
+import { isNumberArray } from '../../packages/core/src/records/observations/types.ts';
 
 const { values } = parseArgs({
   options: { a: { type: 'string' }, b: { type: 'string' }, source: { type: 'string' }, landings: { type: 'string' } },
@@ -27,7 +28,7 @@ function load(id: string): RecordingCounts & { obs: string } {
       (values.source === undefined || o.source === values.source),
   );
   const o = hits.at(-1);
-  if (o === undefined || !Array.isArray(o.value)) throw new Error(`${id}: fb-window-cores の観測値が無い`);
+  if (o === undefined || !isNumberArray(o.value)) throw new Error(`${id}: fb-window-cores の観測値が無い`);
   return { recording: id, counts: countsFromValue(o.value), obs: o.id };
 }
 

@@ -24,7 +24,11 @@ import { loadRecordingsFile, loadRecordsData } from '../../../packages/core/scri
 import { buildTeamInput } from '../../../packages/core/src/records/observations/teamInput.ts';
 import { METRICS } from '../../../packages/core/src/records/observations/metrics/index.ts';
 import type { CompareSetup } from '../../../packages/core/src/records/observations/setup.ts';
-import type { CompareSpec, Observation } from '../../../packages/core/src/records/observations/types.ts';
+import {
+  type CompareSpec,
+  isNumberArray,
+  type Observation,
+} from '../../../packages/core/src/records/observations/types.ts';
 import { V_ID } from '../../../packages/core/src/records/ids.ts';
 import type { PredictionFile } from '../../../packages/core/src/records/predictions.ts';
 import type { RecordingEntry } from '../../../packages/core/src/records/recordings.ts';
@@ -168,7 +172,7 @@ export function parseEvents(text: string | undefined): number[] {
   if (text === undefined || text === '') throw new Error('--opt events=<f,f,...|観測値の ID> が要る');
   if (/^\d+-\d+$/.test(text)) {
     const v = loadObservation(text).value;
-    if (!Array.isArray(v)) throw new Error(`観測値 ${text} の値が数の列でない`);
+    if (!isNumberArray(v)) throw new Error(`観測値 ${text} の値が数の列でない`);
     return v;
   }
   return parseNumbers(text, 'events');

@@ -30,7 +30,13 @@ import type { TeamInput } from '../../team.ts';
 import { METRICS } from '../observations/metrics/index.ts';
 import { buildTeamInput, withoutEffects } from '../observations/teamInput.ts';
 import { compareValue, runObservations } from '../observations/run.ts';
-import { invalidReasonsOf, type Observation } from '../observations/types.ts';
+import {
+  invalidReasonsOf,
+  type JsonValue,
+  type NumericObservation,
+  type Observation,
+  type RecordObservation,
+} from '../observations/types.ts';
 import { renderOtherRows, renderResiduals } from '../observations/render.ts';
 import { validateObservations } from '../observations/validate.ts';
 import { jumpWindowsOf } from '../observations/setup.ts';
@@ -641,7 +647,7 @@ describe('照合の部品', () => {
   });
 
   it('reports unknown metrics, missing args, a model other than sim and unknown presets', () => {
-    const base = observations.find((o) => o.id === '0047-02')!;
+    const base = observations.find((o) => o.id === '0047-02') as NumericObservation;
     const broken = (patch: Partial<NonNullable<Observation['compare']>>, id = '0047-99'): Observation => ({
       ...base,
       id,
@@ -1058,6 +1064,7 @@ describe('照合の部品', () => {
     expect(() => buildTeamInput(rec074, { ...setup, jumpWindows: '0074-98' }, withValues)).toThrow(/jumpWindows/);
     const base = observations.find((o) => o.id === '0074-08')!;
     const ref = observations.find((o) => o.id === '0102-15')!;
+    const { compare: _compare, ...withoutCompare } = base;
     const withRef = (jumpWindows: string, id: string): Observation => ({
       ...base,
       id,
@@ -1071,6 +1078,17 @@ describe('照合の部品', () => {
           withRef('0074-97', '0074-91'),
           withRef('0102-15', '0074-92'),
           withRef('0102-98', '0074-93'),
+          // 値が数か数の配列でない record の観測値（入れ子の配列）
+          {
+            ...withoutCompare,
+            id: '0074-96',
+            use: 'record',
+            value: [
+              [1, 2],
+              [3, 4],
+            ],
+          },
+          withRef('0074-96', '0074-94'),
         ],
         recordings,
         data.enemies,
@@ -1080,12 +1098,13 @@ describe('照合の部品', () => {
       '0074-92: jumpWindows の観測値は同じ録画のもの',
       '0074-93: jumpWindows の観測値は同じ録画のもの',
       '0074-93: jumpWindows の観測値 0102-98 は [始まり, 終わり, …] の昇順の窓の並びでない',
+      '0074-94: jumpWindows の観測値 0074-96 は [始まり, 終わり, …] の昇順の窓の並びでない',
     ]);
   });
 });
 
 describe('観測値の形の拡張（Stage 20-E）', () => {
-  const record = observations.find((o) => o.id === '0047-03')!;
+  const record = observations.find((o) => o.id === '0047-03') as RecordObservation;
   const compared = observations.find((o) => o.id === '0047-02')!;
 
   it('checks recordings, unit, spread, readAt and invalid', () => {
@@ -1143,7 +1162,7 @@ describe('観測値の形の拡張（Stage 20-E）', () => {
   });
 
   it('renders record values with null elements, nested arrays and objects', () => {
-    const row = (value: unknown) => renderOtherRows([{ ...record, value: value as Observation['value'] }])[2];
+    const row = (value: unknown) => renderOtherRows([{ ...record, value: value as JsonValue }])[2];
     expect(row([7716540, null, 5321525])).toContain('| 7,716,540, —, 5,321,525 |');
     expect(
       row([

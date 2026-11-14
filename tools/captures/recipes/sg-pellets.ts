@@ -25,7 +25,7 @@ import {
 } from './pellets.ts';
 import { findJumpBoundaries, intervalName, splitIntervals, type Interval, type TriggerGroup } from './triggers.ts';
 import { observation, roundTo, type Recipe, type RecipeContext, type RecipeObservation } from './types.ts';
-import type { Observation } from '../../../packages/core/src/records/observations/types.ts';
+import { isNumberArray, type Observation } from '../../../packages/core/src/records/observations/types.ts';
 
 const OBSERVATIONS_DIR = new URL('../../../records/observations/', import.meta.url);
 
@@ -37,9 +37,9 @@ function pelletFromObservations(
   if (!existsSync(path)) return undefined;
   const list = JSON.parse(readFileSync(path, 'utf8')) as Observation[];
   const hit = list.find(
-    (o) => o.kind === 'hit' && Array.isArray(o.value) && !o.invalid && /1 ペレット/.test(o.description),
+    (o) => o.kind === 'hit' && isNumberArray(o.value) && !o.invalid && /1 ペレット/.test(o.description),
   );
-  if (!hit || !Array.isArray(hit.value)) return undefined;
+  if (!hit || !isNumberArray(hit.value)) return undefined;
   const [body, crit, core] = hit.value;
   return body === undefined ? undefined : { body, crit, core, id: hit.id };
 }

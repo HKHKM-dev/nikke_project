@@ -1,5 +1,6 @@
 // 比べる設定（CompareSetup）とその部品、設定が ID で指す観測値の値の読み（plan/design-stage19.md 2.3 節）
 import type { BuildEffectKind } from '../../buildEffects.ts';
+import type { ObservationValue } from './types.ts';
 import type { BurstDelayOverride } from '../../burst/landing.ts';
 import type { DefenceRounding, EnemyDebuffTiming } from '../../damage.ts';
 import type { AttackRounding } from '../../skills/buffs.ts';
@@ -249,19 +250,19 @@ export function landingFixed(
 }
 
 /** 手で撃ったチェーンの始まりの並び（昇順の 0 以上の整数）。形が違えば undefined */
-export function manualBurstsOf(value: number | number[] | undefined): number[] | undefined {
+export function manualBurstsOf(value: ObservationValue | undefined): number[] | undefined {
   if (!Array.isArray(value)) return undefined;
   const ok = value.every((f, i) => Number.isInteger(f) && f >= 0 && (i === 0 || f > value[i - 1]!));
   return ok ? value : undefined;
 }
 
 /** V-0605: オート射撃を OFF にしていた時間（[OFF, ON, …] の昇順の 0 以上の整数で偶数個）を [start, end) の並びにする。形が違えば undefined */
-export function holdFireRangesOf(value: number | number[] | undefined): { start: number; end: number }[] | undefined {
+export function holdFireRangesOf(value: ObservationValue | undefined): { start: number; end: number }[] | undefined {
   return manualBurstsOf(value) === undefined ? undefined : jumpWindowsOf(value);
 }
 
 /** setup.jumpWindows の観測値の値（[始まり, 終わり, …] の秒）を窓の列にする */
-export function jumpWindowsOf(value: number | number[] | undefined): { start: number; end: number }[] | undefined {
+export function jumpWindowsOf(value: ObservationValue | undefined): { start: number; end: number }[] | undefined {
   if (!Array.isArray(value) || value.length === 0 || value.length % 2 !== 0) return undefined;
   const out: { start: number; end: number }[] = [];
   for (let i = 0; i < value.length; i += 2) {

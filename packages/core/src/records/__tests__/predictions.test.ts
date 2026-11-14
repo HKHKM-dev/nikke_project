@@ -94,6 +94,16 @@ describe('records/predictions', () => {
     );
   });
 
+  it('rejects a target observation whose value is not a number or an array of numbers', () => {
+    const { compare: _compare, ...base } = observations.find((o) => o.id === '0101-01')!;
+    const nested: Observation = { ...base, id: '0101-98', use: 'record', value: [[1, 2], null] };
+    const target = file().targets[0]!;
+    const f = file({ targets: [{ ...target, observations: ['0101-98'] }] });
+    expect(validatePredictions([f], { ...ctx, observations: [...observations, nested] })).toEqual([
+      '予測 V-0063: 指標 shots の観測値 0101-98 の value は数か数の配列',
+    ]);
+  });
+
   it('rejects a build only under fixed-spec ON (録画の台帳と同じ。plan/design-build-snapshot.md 15 節)', () => {
     const team = [{ rid: 307, controlled: true, build: { attack: 400000 } }];
     expect(validatePredictions([file({ team, fixedSpec: false })], ctx)).toEqual([]);

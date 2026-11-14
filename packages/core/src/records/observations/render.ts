@@ -2,13 +2,10 @@
 import { CLAIM_TOPICS } from '../claims.ts';
 import type { Residual, ResidualStatus } from './run.ts';
 import type { CompareSetup } from './setup.ts';
-import type { CompareSpec, Observation, Tolerance } from './types.ts';
+import type { CompareSpec, JsonValue, Observation, Tolerance } from './types.ts';
 
-/**
- * 値。比べない観測値の value は型より広く、入れ子の配列・オブジェクト・文字列と、読めなかった要素の null を持つ。
- * null は「—」、入れ子は [ ]・{ } で囲む（一番外は囲まない）
- */
-function fmtValue(v: unknown, nested = false): string {
+/** 値。record の観測値の null（読めなかった要素）は「—」、入れ子は [ ]・{ } で囲む（一番外は囲まない） */
+function fmtValue(v: JsonValue, nested = false): string {
   if (v === null) return '—';
   if (typeof v === 'number') return fmtNumber(v);
   if (Array.isArray(v)) {

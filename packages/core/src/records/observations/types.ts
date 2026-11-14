@@ -37,15 +37,33 @@ export type CompareSpec = {
 /** 値の幅。range は最小〜最大、ci95 は 95% 区間 */
 export type ObservationSpread = { kind: 'range' | 'ci95'; low: number; high: number };
 
-export type Observation = {
+/** 比べる・入力に使う観測値（use が compare・input）の値 */
+export type ObservationValue = number | number[];
+
+/** JSON の値 */
+export type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue };
+
+/** 観測値。value の型は use で分かれる */
+export type Observation = NumericObservation | RecordObservation;
+
+/** モデルと比べる・モデルの入力にする観測値。value は数か数の配列（records:check が確かめる） */
+export type NumericObservation = ObservationFields & { use: 'compare' | 'input'; value: ObservationValue };
+
+/** 記録だけの観測値。value は入れ子の配列・オブジェクト・文字列と、読めなかった要素の null を持つ */
+export type RecordObservation = ObservationFields & { use: 'record'; value: JsonValue };
+
+type Draft<O> = Omit<O, 'id' | 'recording' | 'source' | 'readAt'>;
+
+/** 観測値の下書き（id・recording・source・readAt を除いたもの。Omit を use ごとにかけ、value の型を保つ） */
+export type ObservationDraft = Draft<NumericObservation> | Draft<RecordObservation>;
+
+type ObservationFields = {
   id: string;
   /** 置き場所の録画（recordings があれば、その中で最も若い番号） */
   recording: string;
   /** 複数の録画にまたがる値のとき、その録画の全部（recording も含める）。compare には使わない */
   recordings?: string[];
   kind: ObservationKind;
-  use: ObservationUse;
-  value: number | number[];
   /** 値の単位（px・f・%・倍 など） */
   unit?: string;
   /** 値の幅 */
@@ -93,6 +111,26 @@ export type ObservationScope = {
   source: ObservationSource;
   frames?: [number, number];
 };
+
+/** 値が数の配列か */
+export function isNumberArray(value: JsonValue): value is number[] {
+  return Array.isArray(value) && value.every((x) => typeof x === 'number');
+}
+
+/** 値が数か数の配列か（record の観測値の値は、そうでないことがある） */
+export function isObservationValue(value: JsonValue): value is ObservationValue {
+  return typeof value === 'number' || isNumberArray(value);
+}
+
+/**
+ * 値が数か数の配列の観測値（compare・input と、record の一部）。record の観測値も数として読む所（予測の指標・比べる設定が ID で指す値）で
+ * 絞り込む。compare・input だけを読む所は use で絞り込む
+ */
+export type MeasuredObservation = Observation & { value: ObservationValue };
+
+export function isMeasured(o: Observation): o is MeasuredObservation {
+  return isObservationValue(o.value);
+}
 
 /** 失効した観測値 → 失効の理由 */
 export function invalidReasonsOf(observations: readonly Observation[]): Map<string, string> {

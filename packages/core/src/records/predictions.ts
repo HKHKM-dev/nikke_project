@@ -11,7 +11,14 @@ import { compareValue, isFiniteValue } from './observations/run.ts';
 import { METRICS } from './observations/metrics/index.ts';
 import { withArgs, type Metric, type MetricContext } from './observations/metrics/context.ts';
 import type { CompareSetup } from './observations/setup.ts';
-import type { CompareSpec, Observation, Tolerance } from './observations/types.ts';
+import {
+  type CompareSpec,
+  isMeasured,
+  isObservationValue,
+  type MeasuredObservation,
+  type Observation,
+  type Tolerance,
+} from './observations/types.ts';
 import {
   validateRecordingBuild,
   type LegacyRecording,
@@ -114,7 +121,7 @@ export function validatePredictions(
 ): string[] {
   const errors: string[] = [];
   const seen = new Set<string>();
-  const observationIds = new Set(ctx.observations.map((o) => o.id));
+  const observationById = new Map(ctx.observations.map((o) => [o.id, o]));
   for (const f of files) {
     const at = `予測 ${f.verification}`;
     if (!V_ID.test(f.verification)) errors.push(`${at}: verification は V-NNNN`);
@@ -130,9 +137,8 @@ export function validatePredictions(
       hyp.add(h.id);
     }
     for (const [id, v] of Object.entries(f.values ?? {})) {
-      if (observationIds.has(id)) errors.push(`${at}: values の id ${id} が観測値の id と重なる`);
-      if (typeof v !== 'number' && !(Array.isArray(v) && v.every((x) => typeof x === 'number')))
-        errors.push(`${at}: values の ${id} は数か数の配列`);
+      if (observationById.has(id)) errors.push(`${at}: values の id ${id} が観測値の id と重なる`);
+      if (!isObservationValue(v)) errors.push(`${at}: values の ${id} は数か数の配列`);
     }
     if (f.targets.length === 0) errors.push(`${at}: 比べる指標が 1 つ以上要る`);
     const tgt = new Set<string>();
@@ -169,8 +175,11 @@ export function validatePredictions(
             ('abs' in tol && typeof tol.abs === 'number' && tol.abs >= 0));
         if (!ok) errors.push(`${at}: 指標 ${t.id} の tolerance は { rel } か { abs }（0 以上の数）`);
       }
-      for (const o of t.observations ?? []) {
-        if (!observationIds.has(o)) errors.push(`${at}: 指標 ${t.id} の観測値 ${o} が無い`);
+      for (const id of t.observations ?? []) {
+        const o = observationById.get(id);
+        if (o === undefined) errors.push(`${at}: 指標 ${t.id} の観測値 ${id} が無い`);
+        else if (!isObservationValue(o.value))
+          errors.push(`${at}: 指標 ${t.id} の観測値 ${id} の value は数か数の配列`);
       }
     }
     if (f.predicted !== null) {
@@ -497,7 +506,7 @@ export function observationsOfTarget(
 
 export type TargetComparison = {
   target: PredictionTarget;
-  observation: Observation | undefined;
+  observation: MeasuredObservation | undefined;
   /** 仮説 ID → 予測の値と差（観測値があれば）。ok は許容（観測値の compare.tolerance）か spread の中 */
   byHypothesis: { hypothesis: string; predicted: number | number[]; diff: number | null; ok: boolean | null }[];
 };
@@ -522,7 +531,9 @@ export function comparePredictions(
   const targets: TargetComparison[] = [];
   if (file.predicted === null) return { file, targets, score, ...(stale ? { stale } : {}) };
   for (const t of file.targets) {
-    const observation = observationsOfTarget(file, t, observations)[0];
+    // 値が数か数の配列でない観測値とは比べない（validatePredictions が落とす）
+    const found = observationsOfTarget(file, t, observations)[0];
+    const observation = found !== undefined && isMeasured(found) ? found : undefined;
     const byHypothesis = file.hypotheses.map((h) => {
       const predicted = file.predicted!.values[h.id]?.[t.id];
       if (predicted === undefined) return { hypothesis: h.id, predicted: Number.NaN, diff: null, ok: null };
@@ -539,7 +550,7 @@ export function comparePredictions(
 }
 
 /** 観測値の許容（compare.tolerance）か幅（spread）で、予測が合うか */
-function withinObservation(o: Observation, predicted: number | number[]): { diff: number; ok: boolean } {
+function withinObservation(o: MeasuredObservation, predicted: number | number[]): { diff: number; ok: boolean } {
   if (o.compare !== undefined) return compareValue(o.value, predicted, o.compare.tolerance);
   if (o.spread !== undefined && typeof predicted === 'number' && typeof o.value === 'number') {
     return { diff: predicted - o.value, ok: predicted >= o.spread.low && predicted <= o.spread.high };
@@ -554,7 +565,7 @@ function fmt(v: number | number[]): string {
   return Array.isArray(v) ? `[${v.map(one).join(', ')}]` : one(v);
 }
 
-function fmtDiff(o: Observation, diff: number | null): string {
+function fmtDiff(o: MeasuredObservation, diff: number | null): string {
   if (diff === null) return '';
   if (!Number.isFinite(diff)) return '長さが違う';
   if (o.compare !== undefined && 'rel' in o.compare.tolerance)
