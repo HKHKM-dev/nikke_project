@@ -1,0 +1,852 @@
+[
+  {
+    "id": "1179-01",
+    "recording": "1179",
+    "kind": "timing",
+    "use": "record",
+    "value": [1376, 2621, 3798, 5156, 6372, 7668, 8840, 10189, 11343],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・0・25・0・24・0・25f"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-02",
+    "recording": "1179",
+    "kind": "timing",
+    "use": "record",
+    "value": [1405, 3827, 6402, 8869, 11372],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・24・25・25f"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-03",
+    "recording": "1179",
+    "kind": "timing",
+    "use": "record",
+    "value": [1434, 3856, 6431, 8898, 11401],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-04",
+    "recording": "1179",
+    "kind": "timing",
+    "use": "record",
+    "value": [2043, 4465, 7039, 9507],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム。5 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-05",
+    "recording": "1179",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 608, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差。5 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-06",
+    "recording": "1179",
+    "kind": "timing",
+    "use": "record",
+    "value": [3794, 8835, 11339],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-07",
+    "recording": "1179",
+    "kind": "total",
+    "use": "record",
+    "value": 131432007,
+    "description": "I-DOLL・フラワー・ビスケット・ソルジャーE.G.・ココア の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11434。増分は 1909 個"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-08",
+    "recording": "1179",
+    "kind": "count",
+    "use": "record",
+    "value": 199,
+    "unit": "トリガー",
+    "description": "I-DOLL・フラワー・ビスケット・ソルジャーE.G.・ココア のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 1909 個。前の増分から 30f 未満の増分（1884 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 52f）から発の数を決めた（2 発になった組 25 個）"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-09",
+    "recording": "1179",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": 5,
+    "description": "フルバーストの回数（右のバースト欄の III のタイマーの 00.00）",
+    "method": {
+      "tool": "目視",
+      "note": "burst-panel の 00.00 の並びの数"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstCount",
+      "args": {},
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-10",
+    "recording": "1179",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 14820,
+    "description": "戦闘の頭のソルジャーE.G. の胴体の 1 ヒット（862f ほか。会心なし・距離ボーナスあり。S1 の攻撃力▲なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "戦闘の頭の 9 発が同じ値。比べるモデルは、ソルジャーE.G. の S1（確率の攻撃力▲。C-0372）を、フルバーストの始まりと終わりから 5 秒の窓に置き換え、格子の▲あり・なしを 1 つのモデルで取れるようにした（窓の外のこのフレームでは▲なし）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 100,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          },
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstEnd",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          }
+        ]
+      }
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-11",
+    "recording": "1179",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": 3.5,
+    "spread": {
+      "kind": "range",
+      "low": -11,
+      "high": 18
+    },
+    "description": "ビスケットのバースト（II の六角形の替わり目。`1179-02`）から、ココアの攻撃力▲の付き始めまでの動画のフレームの幅。ココアの発で挟めた回の「▲の無い最後の発 〜 ▲の乗った最初の発」（−74〜150・−11〜95・−58〜26・−91〜98・−66〜18f）の共通部分",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid・pair）",
+      "note": "HUD の増分を、各枠の 1 ヒットの格子（レシピ buff-edge の --opt grid。ビスケット・ココアはバーストの攻撃力▲の有無 × フルバーストの有無、フラワーはフルバーストの有無、ソルジャーE.G. は自分の S1 の有無 × フルバーストの有無）に ±1.5 で当てた。モデル（表に遅れの行が無く、II の本当の発動のフレームに付く）では替わり目の 6f 前で、幅より 4f 早い（1179 と 1180 の共通部分は −2〜18f）。表に行の無いキャラのバースト使用時の効果は実機より 0〜6f 早く付くことがあり、数 f の差は直さない（burst/landing.ts の冒頭・plan/burst-effect-delay-candidates.md 2.7 節の案 C）ので、比べずに記録にとどめる"
+    },
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-12",
+    "recording": "1179",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 599,
+    "spread": {
+      "kind": "range",
+      "low": 575,
+      "high": 623
+    },
+    "description": "ビスケットのバースト（II の六角形の替わり目。`1179-02`）から、ココアの攻撃力▲の切れ目までの動画のフレームの幅。ココアの発で挟めた回の「▲の乗った最後の発 〜 ▲の無い最初の発」（560〜（読めず）・541〜623・575〜657・462〜770f）の共通部分",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid・pair）",
+      "note": "HUD の増分を、各枠の 1 ヒットの格子（レシピ buff-edge の --opt grid。ビスケット・ココアはバーストの攻撃力▲の有無 × フルバーストの有無、フラワーはフルバーストの有無、ソルジャーE.G. は自分の S1 の有無 × フルバーストの有無）に ±1.5 で当てた。どの回も、▲の乗った最後の発より後に▲の乗った発は無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 4,
+        "skill": "burst",
+        "stat": "attack",
+        "from": 2,
+        "n": 0,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 24
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          },
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstEnd",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-13",
+    "recording": "1179",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 616497,
+    "description": "ビスケットのバーストの窓の中・フルバーストの中のココアのコアの 1 ヒット（会心なし）。攻撃力▲あり（1555f ほか）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、各枠の 1 ヒットの格子（レシピ buff-edge の --opt grid。ビスケット・ココアはバーストの攻撃力▲の有無 × フルバーストの有無、フラワーはフルバーストの有無、ソルジャーE.G. は自分の S1 の有無 × フルバーストの有無）に ±1.5 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          },
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstEnd",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-14",
+    "recording": "1179",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 547382,
+    "description": "ビスケットのバーストの窓の中・フルバーストの中のビスケット自身のコアの 1 ヒット（会心なし）。攻撃力▲あり（4212f ほか）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、各枠の 1 ヒットの格子（レシピ buff-edge の --opt grid。ビスケット・ココアはバーストの攻撃力▲の有無 × フルバーストの有無、フラワーはフルバーストの有無、ソルジャーE.G. は自分の S1 の有無 × フルバーストの有無）に ±1.5 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          },
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstEnd",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-15",
+    "recording": "1179",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 493198,
+    "description": "ビスケットのバーストの窓の中・フルバーストの前のココアのコアの 1 ヒット（会心なし）。攻撃力▲あり（11390f）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、各枠の 1 ヒットの格子（レシピ buff-edge の --opt grid。ビスケット・ココアはバーストの攻撃力▲の有無 × フルバーストの有無、フラワーはフルバーストの有無、ソルジャーE.G. は自分の S1 の有無 × フルバーストの有無）に ±1.5 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 560,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          },
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstEnd",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-16",
+    "recording": "1179",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 249258,
+    "description": "ビスケットのバーストの窓の中・フルバーストの中のフラワー（防御型）のコアの 1 ヒット（会心あり）。攻撃力▲なし（1652f）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、各枠の 1 ヒットの格子（レシピ buff-edge の --opt grid。ビスケット・ココアはバーストの攻撃力▲の有無 × フルバーストの有無、フラワーはフルバーストの有無、ソルジャーE.G. は自分の S1 の有無 × フルバーストの有無）に ±1.5 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          },
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstEnd",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-17",
+    "recording": "1179",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 152982,
+    "description": "ビスケットのバーストの窓の外のビスケット自身の胴体の 1 ヒット（会心なし）。攻撃力▲なし（6372f）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、各枠の 1 ヒットの格子（レシピ buff-edge の --opt grid。ビスケット・ココアはバーストの攻撃力▲の有無 × フルバーストの有無、フラワーはフルバーストの有無、ソルジャーE.G. は自分の S1 の有無 × フルバーストの有無）に ±1.5 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          },
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstEnd",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-18",
+    "recording": "1179",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 0.1982,
+    "description": "ビスケットの S1 の窓（アイコンが付いてから消えるまで。4 回）の中の、ソルジャーE.G.（火力型）の通常攻撃の 1 ヒットのうち会心の割合（67/338。回ごとに 23/93・15/71・21/92・8/82）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）の増分ごとの当て方",
+      "note": "ソルジャーE.G. の 1 ヒットだけに合った増分（レシピ buff-edge の --opt grid。自分の S1 の有無 × フルバーストの有無の 4 つの格子。ほかの枠の発と同じフレームの和は数えない）を、格子のセル（胴体 11,400.36 に対する 1 + コア + 会心 + 距離ボーナス（+ フルバースト補正）の倍率）で会心の有無に分けた。フルバーストの中か外かは `1179-03` の 00.00 と `1179-04` の終わり（5 回目は 00.00 + 609f）で、S1 の窓は、同じ録画のソルジャーE.G. の枠に会心率▲のアイコンが付いたフレームから消えたフレームまで（587〜590f。モデルの 10 秒は 588f）。許容は 338 ヒットの二項の 2σ（会心率 0.2077 で 0.044）。▲が付かないなら 0.15"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 3,
+        "frame": 1300
+      },
+      "tolerance": {
+        "abs": 0.044
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          },
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstEnd",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-19",
+    "recording": "1179",
+    "kind": "rate",
+    "use": "record",
+    "unit": "割合",
+    "value": 0.1732,
+    "description": "S1 の窓の外・フルバーストの外の、ソルジャーE.G. の通常攻撃の 1 ヒットのうち会心の割合（158/912）。モデルは 0.15",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）の増分ごとの当て方",
+      "note": "ソルジャーE.G. の 1 ヒットだけに合った増分（レシピ buff-edge の --opt grid。自分の S1 の有無 × フルバーストの有無の 4 つの格子。ほかの枠の発と同じフレームの和は数えない）を、格子のセル（胴体 11,400.36 に対する 1 + コア + 会心 + 距離ボーナス（+ フルバースト補正）の倍率）で会心の有無に分けた。フルバーストの中か外かは `1179-03` の 00.00 と `1179-04` の終わり（5 回目は 00.00 + 609f）で、S1 の窓は、同じ録画のソルジャーE.G. の枠に会心率▲のアイコンが付いたフレームから消えたフレームまで（587〜590f。モデルの 10 秒は 588f）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-20",
+    "recording": "1179",
+    "kind": "rate",
+    "use": "record",
+    "unit": "割合",
+    "value": 0.1315,
+    "description": "フルバーストの中の、ソルジャーE.G. の通常攻撃の 1 ヒットのうち会心の割合（48/365）。モデルは 0.15",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）の増分ごとの当て方",
+      "note": "ソルジャーE.G. の 1 ヒットだけに合った増分（レシピ buff-edge の --opt grid。自分の S1 の有無 × フルバーストの有無の 4 つの格子。ほかの枠の発と同じフレームの和は数えない）を、格子のセル（胴体 11,400.36 に対する 1 + コア + 会心 + 距離ボーナス（+ フルバースト補正）の倍率）で会心の有無に分けた。フルバーストの中か外かは `1179-03` の 00.00 と `1179-04` の終わり（5 回目は 00.00 + 609f）で、S1 の窓は、同じ録画のソルジャーE.G. の枠に会心率▲のアイコンが付いたフレームから消えたフレームまで（587〜590f。モデルの 10 秒は 588f）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-21",
+    "recording": "1179",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [2049, 4471, 7045, 9513],
+    "description": "ソルジャーE.G. の枠の下に、通常攻撃のクリティカル確率▲（剣の形）と持続回復（＋）のアイコンが 2 つ同時に付いたフレーム。どの回もフルバーストの終わり（`1179-04`）の 6f 後。フラワー・ビスケット・ココアの枠のアイコンの数は、フルバーストの終わりの前後で変わらない",
+    "method": {
+      "tool": "使い捨てのスクリプト（枠の下のアイコンの列の青の画素）",
+      "note": "1920×1080 の y 1048〜1068 を、枠ごとに最初のアイコンの左端（660・780・911・1044）から 20.5px おきに 5 つ、16px 幅で切り、B > 90・B − R > 50・B ≥ G の画素の数を全フレームで数えた（V-0451 と同じ読み方）。60 を超えるアイコンの数が増えた・減ったフレーム。どのアイコンかは切り出しの画で確かめた（1179 の 2040・2048・2240・2480・2630・2650f）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-22",
+    "recording": "1179",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [2638, 5059, 7634, 10101],
+    "description": "同じ 2 つのアイコンが同時に消えたフレーム。付いてから 589・588・589・588f（10 秒。持続回復のアイコンが消えるまでの長さは V-0451 の鈴原サクラの 587〜589f と同じ）",
+    "method": {
+      "tool": "使い捨てのスクリプト（枠の下のアイコンの列の青の画素）",
+      "note": "付いたフレームと同じ読み方。消える前の暗くなったアイコンも数に入る（閾値 60）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-23",
+    "recording": "1179",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 40605,
+    "description": "ビスケットのバーストの窓の中・フルバーストの中のソルジャーE.G.（火力型）のコアの 1 ヒット（1553f ほか。会心あり・距離ボーナスあり・自分の S1 の攻撃力▲あり）。ビスケットの攻撃力▲なし（付けば約 56,800）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、各枠の 1 ヒットの格子に ±1.5 で当てた。比べるモデルは、ソルジャーE.G. の S1 をフルバーストの始まりと終わりから 5 秒の窓に置き換えたもの（このフレームでは S1 あり）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          },
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstEnd",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationSeconds": 5
+            }
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1179-24",
+    "recording": "1179",
+    "kind": "count",
+    "use": "record",
+    "unit": "個",
+    "value": [0, 2, 0, 2],
+    "description": "ビスケットのバースト（II の替わり目。`1179-02`）の 15f 前から 80f 後までに増えた、枠の下のアイコンの数（フラワー・ビスケット・ソルジャーE.G.・ココアの順。5 回とも同じ。ソルジャーE.G. は自分の S1 の付き外れで増減するが、2 つ増えた回は無い）。ビスケットとココアに増えた 2 つは攻撃力▲と吸収回復",
+    "method": {
+      "tool": "使い捨てのスクリプト（枠の下のアイコンの列の青の画素）",
+      "note": "S1 のアイコンの観測値と同じ読み方。60 を超えるアイコンの数を、替わり目の 15f 前と 80f 後で比べた"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0775",
+    "readAt": "2026-11-14"
+  }
+]
