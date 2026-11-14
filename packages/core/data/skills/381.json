@@ -16,7 +16,10 @@
           "assumes": {
             "ja": "フルバーストタイムの終わりに、火力型の味方全体（自分は支援型なので入らない）の通常攻撃の会心率に説明文の値を足す（10 秒）",
             "en": "At the end of Full Burst, the value is added to the normal attack critical rate of all Attacker allies (not herself, a Supporter) for 10 s"
-          }
+          },
+          "claims": [
+            "C-1222"
+          ]
         },
         {
           "kind": "heal",
@@ -28,7 +31,10 @@
           "assumes": {
             "ja": "火力型の味方全体への持続回復（スキル発動者の最終最大HP の X%・1 秒間隔・10 秒）は、付いた時に 1 回だけ「回復効果が適用された時」を起こし、1 秒ごとの刻みでは起こさない（ノイズのバーストなどと同じ読み）。満タンの味方にも付く。回復量はダメージに関係しない",
             "en": "The heal over time on all Attacker allies (X% of the caster's final max HP every 1 s for 10 s) triggers \"when healed\" once when applied, not on each 1-second tick (as with Noise's Burst). It also lands on allies at full HP. The healed amount does not affect damage"
-          }
+          },
+          "claims": [
+            "C-1224"
+          ]
         }
       ]
     },
@@ -60,7 +66,10 @@
           "assumes": {
             "ja": "支援型の味方全体（自分も支援型なので入る）の攻撃力に説明文の値を足す（10 秒）",
             "en": "The value is added to the attack of all Supporter allies (herself included, as a Supporter) for 10 s"
-          }
+          },
+          "claims": [
+            "C-1223"
+          ]
         },
         {
           "kind": "heal",
@@ -72,7 +81,10 @@
           "assumes": {
             "ja": "支援型の味方全体（自分も入る）への吸収回復（攻撃ダメージの X% 回復・10 秒）。付いた時に 1 回だけ「回復効果が適用された時」を起こし、窓の中の付き直しでは起こさない（C-0082）。満タンの味方にも起きるとみなす。回復量はダメージに関係しない",
             "en": "An absorbing heal (X% of attack damage, 10 s) on all Supporter allies (herself included). It triggers \"when healed\" once when applied, not on re-application inside the window (C-0082), and also on allies at full HP. The healed amount does not affect damage"
-          }
+          },
+          "claims": [
+            "C-1225"
+          ]
         }
       ],
       "notes": [
