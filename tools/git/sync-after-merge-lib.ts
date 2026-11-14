@@ -138,3 +138,53 @@ export function ciSettled(stdout: string | null): boolean {
   const runs = parseJson<{ status?: unknown }[]>(stdout);
   return Array.isArray(runs) && runs.length > 0 && runs.every((r) => r.status === 'completed');
 }
+
+/**
+ * トピックブランチを origin/main へ取り込むか（セッションの始まりと発言のフック。plan/design-workflow-simplification-13.md 2 節）。
+ * Claude Code のブランチ（claude/）で、追跡中のファイルに作業中の変更が無く、リベースの途中でもなく、追跡先が消えて（マージ済みで）
+ * もいなくて、origin/main が進んでいるとき
+ */
+export function shouldCatchUp(s: {
+  branch: string | null;
+  clean: boolean;
+  rebasing: boolean;
+  track: string | null;
+  behind: number;
+}): boolean {
+  return Boolean(s.branch?.startsWith('claude/')) && s.clean && !s.rebasing && s.track !== '[gone]' && s.behind > 0;
+}
+
+/** 取り込んだときに、変わったかを知らせる決まりと道具の置き場所 */
+export const RULE_PATHS = [
+  'AGENTS.md',
+  '.claude',
+  'tools',
+  'plan/verification-guide.md',
+  'plan/skills-guide.md',
+  'plan/captures/protocol.md',
+  'plan/captures/guide.md',
+];
+
+/** 取り込んだ結果の知らせ（セッションのエージェントに渡す） */
+export function catchUpMessage(r: {
+  behind: number;
+  oldBase: string;
+  changed: readonly string[];
+  push: 'pushed' | 'noUpstream' | 'failed';
+  lockChanged: boolean;
+}): string {
+  const parts = [`origin/main の ${r.behind} 件をリベースで取り込んだ`];
+  if (r.push === 'pushed') parts.push('ブランチは強制 push した');
+  if (r.push === 'failed') parts.push('push は落ちた（次は npm run pr:prep -- --push で push する）');
+  if (r.changed.length > 0) {
+    const shown = r.changed.slice(0, 8).join('・') + (r.changed.length > 8 ? ` ほか ${r.changed.length - 8} 件` : '');
+    const notes = [
+      r.changed.includes('AGENTS.md') &&
+        `セッションの中の AGENTS.md は再開まで古いので、git diff ${r.oldBase} origin/main -- AGENTS.md で変わった所を読む`,
+      r.changed.some((p) => p.startsWith('.claude/')) && 'フックの変更は再開から効く',
+    ].filter(Boolean);
+    parts.push(`決まりと道具が変わった: ${shown}${notes.length > 0 ? `（${notes.join('。')}）` : ''}`);
+  }
+  if (r.lockChanged) parts.push('package-lock.json が変わったので npm ci を回す');
+  return parts.join('。');
+}

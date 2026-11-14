@@ -46,6 +46,7 @@ import {
   handRemovedLines,
   checkSteps,
   collisions,
+  finishRebase,
   nulPaths,
   pathListArgs,
   PROGRESS_PATHS,
@@ -214,33 +215,26 @@ if (!rebasing()) {
 }
 
 // リベースの途中（衝突で止まったか、前の回で人が直している途中）なら、生成物の衝突を解いて続ける
-while (rebasing()) {
-  const conflicted = gitPaths(['diff', '--name-only', '--diff-filter=U']);
-  const { generated, other } = splitGenerated(conflicted, GENERATED_PATHS);
-  if (other.length > 0) {
-    console.error('生成物でないファイルが衝突した。直して git add し、もう一度 npm run pr:prep を回す:');
-    for (const p of other) console.error(`  ${p}`);
-    process.exit(1);
-  }
-  if (generated.length > 0) {
-    console.log(`生成物の衝突は main の版を取る（終わりに作り直す）: ${generated.join('・')}`);
-    git(['checkout', '--ours', '--', ...generated]);
-    git(['add', '--', ...generated]);
-  }
-  if (tryGit(['rebase', '--continue'], NO_EDITOR) !== 0 && rebasing()) {
-    // 次のコミットが衝突したなら、次の回で解く
-    if (git(['diff', '--name-only', '--diff-filter=U']) !== '') continue;
-    // 生成物だけのコミットは、main の版を取ると空になる。そのコミットは飛ばす
-    if (tryGit(['diff', '--cached', '--quiet']) !== 0)
-      fail('git rebase --continue が衝突のほかの理由で落ちた（リベースの途中のまま）');
-    if (
-      tryGit(['rebase', '--skip'], NO_EDITOR) !== 0 &&
-      rebasing() &&
-      git(['diff', '--name-only', '--diff-filter=U']) === ''
-    )
-      fail('git rebase --skip が落ちた（リベースの途中のまま）');
-  }
+const rebased = finishRebase(
+  {
+    rebasing,
+    conflicted: () => gitPaths(['diff', '--name-only', '--diff-filter=U']),
+    takeMain: (paths) => {
+      git(['checkout', '--ours', '--', ...paths]);
+      git(['add', '--', ...paths]);
+    },
+    rebase: (step) => tryGit(['rebase', step], NO_EDITOR),
+    nothingStaged: () => tryGit(['diff', '--cached', '--quiet']) === 0,
+  },
+  GENERATED_PATHS,
+  (paths) => console.log(`生成物の衝突は main の版を取る（終わりに作り直す）: ${paths.join('・')}`),
+);
+if (rebased.kind === 'conflict') {
+  console.error('生成物でないファイルが衝突した。直して git add し、もう一度 npm run pr:prep を回す:');
+  for (const p of rebased.files) console.error(`  ${p}`);
+  process.exit(1);
 }
+if (rebased.kind === 'error') fail(rebased.message);
 
 console.log('生成物を作り直す（npm run records:minimal）');
 npm('records:minimal');

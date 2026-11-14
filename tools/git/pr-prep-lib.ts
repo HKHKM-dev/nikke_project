@@ -29,6 +29,47 @@ export function rebaseOutcome(status: number, rebasing: boolean): 'clean' | 'con
   return rebasing ? 'conflicted' : 'notStarted';
 }
 
+/** リベースを続けるのに使う git の操作（pr-prep.ts と、トピックブランチを取り込むフック sync-after-merge.ts が渡す） */
+export type RebaseIo = {
+  rebasing: () => boolean;
+  /** 衝突しているファイル */
+  conflicted: () => string[];
+  /** 衝突したファイルを main の版にして git add する */
+  takeMain: (paths: readonly string[]) => void;
+  /** git rebase --continue・--skip（エディタを開かない）。終了コード */
+  rebase: (step: '--continue' | '--skip') => number;
+  /** index に変更が無い（git diff --cached --quiet が 0） */
+  nothingStaged: () => boolean;
+};
+
+/**
+ * リベースの途中（衝突で止まった）なら、生成物の衝突を main の版で解いて最後まで続ける（生成物だけのコミットは main の版を取ると空に
+ * なるので飛ばす）。生成物でないファイルが衝突したら、そこで止めて conflict を返す（リベースの途中のまま）。takenMain は main の版を
+ * 取ったときに呼ぶ
+ */
+export function finishRebase(
+  io: RebaseIo,
+  generatedPaths: readonly string[],
+  takenMain: (paths: readonly string[]) => void = () => {},
+): { kind: 'done' } | { kind: 'conflict'; files: string[] } | { kind: 'error'; message: string } {
+  while (io.rebasing()) {
+    const { generated, other } = splitGenerated(io.conflicted(), generatedPaths);
+    if (other.length > 0) return { kind: 'conflict', files: other };
+    if (generated.length > 0) {
+      takenMain(generated);
+      io.takeMain(generated);
+    }
+    if (io.rebase('--continue') === 0 || !io.rebasing()) continue;
+    // 次のコミットが衝突したなら、次の回で解く
+    if (io.conflicted().length > 0) continue;
+    if (!io.nothingStaged())
+      return { kind: 'error', message: 'git rebase --continue が衝突のほかの理由で落ちた（リベースの途中のまま）' };
+    if (io.rebase('--skip') !== 0 && io.rebasing() && io.conflicted().length === 0)
+      return { kind: 'error', message: 'git rebase --skip が落ちた（リベースの途中のまま）' };
+  }
+  return { kind: 'done' };
+}
+
 export type Collision = { id: string; suggestion?: string };
 
 /**

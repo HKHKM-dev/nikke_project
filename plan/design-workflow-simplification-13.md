@@ -1,6 +1,6 @@
 # 繰り返しの業務の簡素化の案・第 13 回（2026-11-14 の見直し）
 
-- 何のための文書か: 検証 1 件ごと・PR ごと・セッションごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。
+- 何のための文書か: 検証 1 件ごと・PR ごと・セッションごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。2026-11-14 にオーナーが 1（自動で取り込む）・2 を承認し、実施した（5 節）。
 - 前の回: [design-workflow-simplification.md](design-workflow-simplification.md)・[-2](design-workflow-simplification-2.md)〜[-12](design-workflow-simplification-12.md)。見直しの段の要否と止めないフック（[design-review-steps.md](design-review-steps.md)）も含め、そこで扱ったものは繰り返さない。
 - この回で見たもの: 見直しのフック（#1135。2026-11-13 11:46 JST）の後にコードを変えた PR 9 本（#1136〜#1148）のセッションの記録（クラウドのセッションの出来事の列）と、その PR の差分。
 - 調べ方: origin/main（901cfbdb）のクラウドの環境で、出来事の列をセッションごとに読んだ（使い捨て。コミットしない）。デスクトップのセッションの記録は読めない。
@@ -80,3 +80,5 @@
 ## 5. 経過
 
 - 2026-11-14: 起案。
+- 2026-11-14: オーナーが 1 を自動で取り込む形で、2 を推奨どおり承認した。
+- 2026-11-14: 実施。1 は `sync-after-merge.ts` の `--catch-up`（SessionStart・UserPromptSubmit）に足し、`pr:prep` のリベースの続け方を `pr-prep-lib.ts` の `finishRebase` に切り出して両方から使う。追跡先があれば `--force-with-lease` で push する（ほかの道具の push が早送りで落ちないように）。2 は `review-flow.ts` の `--pre`（PreToolUse の Skill）。一時の clone で、衝突なし・生成物だけの衝突・手書きのファイルの衝突（元に戻す）・作業中の変更あり（何もしない）を確かめた。

@@ -1,6 +1,6 @@
 // マージ済みの PR の後片付け。Claude Code のフック（.claude/settings.json の SessionStart・UserPromptSubmit・Stop）から呼ぶ。
-//   node tools/git/sync-after-merge.ts [--prune-branches] [--wait-merge]
-//     --prune-branches は SessionStart だけ、--wait-merge は Stop だけで付ける
+//   node tools/git/sync-after-merge.ts [--prune-branches] [--wait-merge] [--catch-up <SessionStart|UserPromptSubmit>]
+//     --prune-branches は SessionStart だけ、--wait-merge は Stop だけ、--catch-up は SessionStart と UserPromptSubmit で付ける
 //
 // スカッシュマージでは、ブランチのコミットと main 上のコミットが別物になるので、放っておくと差分の表示に
 // マージ済みの変更が残る。そこで次の 2 つ（--prune-branches なら 3 つ）を行う。
@@ -13,7 +13,10 @@
 //      （PR を出さずに作業を移したブランチや、main に揃えて push したブランチが残るため。
 //      plan/design-workflow-simplification-10.md 2 節）。クラウドでは削除が安全確認で止まるので行わない。PR の一覧が取れなければ
 //      消さない
-// どちらも条件に合わなければ何もしない。ただし 1 の main が origin/main より遅れたまま早送りできないとき
+//   4. --catch-up なら、いまのトピックブランチ（claude/。作業中の変更が無く、マージ済みでない）を origin/main へリベースして強制 push
+//      し、決まりと道具が変わったかをエージェントに知らせる（撮影待ちで日をまたいだブランチが古い決まりと道具のまま進まないように。
+//      plan/design-workflow-simplification-13.md 2 節）。生成物でないファイルが衝突したら元に戻して知らせる
+// どれも条件に合わなければ何もしない。ただし 1 の main が origin/main より遅れたまま早送りできないとき
 // （作業中の変更がある・早送りに失敗した）は、黙っていると気づかれないので知らせる。早送りは Windows で途中で
 // 失敗すると、作業ツリーのファイルだけが書き換わり HEAD と index が残ることがある（2026-09-28、#54 の早送り）。
 // 失敗してもフックを止めない（常に終了コード 0）。
@@ -22,14 +25,15 @@
 // ブランチの PR が shouldWaitMerge に合えば、マージと main の CI（生成物の commit）の終わりを待って 1・2 を行う裏の処理
 // （--wait-pr <番号>）を、切り離して起こす（次の発言を待たずに揃えるため。plan/design-sync-wait-merge.md）。同じ PR を待つ
 // 裏の処理が動いていれば起こさない。裏の処理の結果は知らせられない（次のフックは、もう揃っているので何も言わない）。
-import { execFileSync, spawn } from 'node:child_process';
-import { readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { execFileSync, spawn, spawnSync } from 'node:child_process';
+import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 import { alive, type Lock, lockIsLive } from '../drive/sync-lib.ts';
 import {
   bringsNothing,
+  catchUpMessage,
   ciSettled,
   deleteArgs,
   mergeWaitState,
@@ -37,7 +41,9 @@ import {
   parseJson,
   parseRemoteBranches,
   prunableBranches,
+  RULE_PATHS,
   seenAt,
+  shouldCatchUp,
   shouldWaitMerge,
   WAIT_CI_MS,
   type PrView,
@@ -208,6 +214,74 @@ async function waitPr(n: number): Promise<void> {
   }
 }
 
+/** git の終了コード（エディタを開かない） */
+function gitStatus(args: readonly string[]): number {
+  return (
+    spawnSync('git', args, { stdio: 'ignore', timeout: 60_000, env: { ...process.env, GIT_EDITOR: 'true' } }).status ??
+    1
+  );
+}
+
+/**
+ * 4. いまのトピックブランチが shouldCatchUp に合えば、origin/main へリベースし（生成物の衝突は main の版を取る。pr-prep-lib.ts の
+ * finishRebase）、追跡先があれば強制 push する。生成物でないファイルが衝突したらリベースをやめて元に戻す。知らせることを返す
+ * （plan/design-workflow-simplification-13.md 2 節）
+ */
+async function catchUp(): Promise<string | null> {
+  const branch = git(['symbolic-ref', '--short', '-q', 'HEAD']);
+  const gitDir = git(['rev-parse', '--absolute-git-dir']);
+  if (!branch || gitDir === null) return null;
+  const rebasing = () => existsSync(resolve(gitDir, 'rebase-merge')) || existsSync(resolve(gitDir, 'rebase-apply'));
+  const ref = `refs/heads/${branch}`;
+  const plan = {
+    branch,
+    clean: isClean(),
+    rebasing: rebasing(),
+    track: git(['for-each-ref', '--format=%(upstream:track)', ref]),
+    behind: Number(git(['rev-list', '--count', 'HEAD..origin/main']) ?? 0),
+  };
+  if (!shouldCatchUp(plan)) return null;
+  const oldBase = git(['merge-base', 'HEAD', 'origin/main']);
+  if (oldBase === null) return null;
+  if (gitStatus(['rebase', '--quiet', 'origin/main']) !== 0) {
+    if (!rebasing()) return `main を取り込めなかった（git rebase が始まらなかった）。npm run pr:prep で取り込む`;
+    const [{ finishRebase }, { GENERATED_PATHS }] = await Promise.all([
+      import('./pr-prep-lib.ts'),
+      import('../../packages/core/scripts/records-data.ts'),
+    ]);
+    const conflicted = () => (git(['diff', '--name-only', '--diff-filter=U']) ?? '').split('\n').filter(Boolean);
+    const end = finishRebase(
+      {
+        rebasing,
+        conflicted,
+        takeMain: (paths) => {
+          git(['checkout', '--ours', '--', ...paths]);
+          git(['add', '--', ...paths]);
+        },
+        rebase: (step) => gitStatus(['rebase', step]),
+        nothingStaged: () => gitStatus(['diff', '--cached', '--quiet']) === 0,
+      },
+      GENERATED_PATHS,
+    );
+    if (end.kind !== 'done') {
+      gitStatus(['rebase', '--abort']);
+      const why = end.kind === 'conflict' ? `衝突: ${end.files.join('・')}` : end.message;
+      return `main を取り込めなかったので元に戻した（${why}）。npm run pr:prep で取り込み、衝突を直す`;
+    }
+  }
+  const upstream = git(['for-each-ref', '--format=%(upstream)', ref]);
+  const push = !upstream
+    ? 'noUpstream'
+    : gitStatus(['push', '--quiet', '--force-with-lease', 'origin', `HEAD:${branch}`]) === 0
+      ? 'pushed'
+      : 'failed';
+  const changed = (git(['diff', '--name-only', oldBase, 'origin/main', '--', ...RULE_PATHS]) ?? '')
+    .split('\n')
+    .filter(Boolean);
+  const lockChanged = gitStatus(['diff', '--quiet', oldBase, 'origin/main', '--', 'package-lock.json']) !== 0;
+  return catchUpMessage({ behind: plan.behind, oldBase: oldBase.slice(0, 12), changed, push, lockChanged });
+}
+
 const waitArg = process.argv.indexOf('--wait-pr');
 if (waitArg >= 0) {
   await waitPr(Number(process.argv[waitArg + 1]));
@@ -216,5 +290,17 @@ if (waitArg >= 0) {
   const branch = process.argv.includes('--wait-merge') ? pushedBranch() : null;
   const done = syncAfterMerge(process.argv.includes('--prune-branches'));
   if (branch) startWaiter(branch);
-  if (done.length > 0) console.log(JSON.stringify({ systemMessage: `後片付け: ${done.join('。')}` }));
+  // --catch-up <フックの出来事の名前>（SessionStart・UserPromptSubmit）: 4 を行い、エージェントに知らせる
+  const event = process.argv[process.argv.indexOf('--catch-up') + 1];
+  const caughtUp = process.argv.includes('--catch-up') ? await catchUp() : null;
+  if (caughtUp !== null) done.push(caughtUp);
+  if (done.length > 0)
+    console.log(
+      JSON.stringify({
+        systemMessage: `後片付け: ${done.join('。')}`,
+        ...(caughtUp !== null && event
+          ? { hookSpecificOutput: { hookEventName: event, additionalContext: caughtUp } }
+          : {}),
+      }),
+    );
 }

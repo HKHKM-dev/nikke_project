@@ -59,3 +59,37 @@ export function parseFlowState(text: string): FlowState | null {
     ? { branch: v.branch, startedAt: v.startedAt, ...(v.blocked === true ? { blocked: true } : {}) }
     : null;
 }
+
+/** 構造が変わる PR の線（AGENTS.md「コミット手順」の 1。文と同じ値にする） */
+export const SIMPLIFY_MIN_ADDED = 100;
+
+/** 見直しの規模に数えるコードのファイル（packages/・apps/・tools/ のスクリプトで、テストでないもの） */
+export function isReviewedCode(path: string): boolean {
+  return (
+    /^(packages|apps|tools)\//.test(path) && /\.(ts|tsx|js|mjs|cjs)$/.test(path) && !/(\.test\.|__tests__\/)/.test(path)
+  );
+}
+
+/**
+ * /simplify を呼ぶ前の判定（plan/design-workflow-simplification-13.md 3 節）: ブランチの基からの差分に、コードの新しいファイルが無く、
+ * コードの追加が SIMPLIFY_MIN_ADDED 行以下なら、構造が変わる PR ではないので止める理由を返す。要るなら null
+ */
+export function simplifyGate(files: readonly { path: string; added: number; isNew: boolean }[]): string | null {
+  const code = files.filter((f) => isReviewedCode(f.path));
+  const added = code.reduce((sum, f) => sum + f.added, 0);
+  if (code.some((f) => f.isNew) || added > SIMPLIFY_MIN_ADDED) return null;
+  return (
+    `構造が変わる PR ではない（コードの新しいファイルが無く、追加は ${added} 行で ${SIMPLIFY_MIN_ADDED} 行以下。` +
+    'AGENTS.md「コミット手順」の 1）ので、/simplify は回さない。/code-review へ進む。'
+  );
+}
+
+/** git diff --numstat の出力から、ファイルごとの追加の行数（バイナリは 0） */
+export function parseNumstat(text: string): Map<string, number> {
+  const out = new Map<string, number>();
+  for (const line of text.split('\n')) {
+    const [add, , path] = line.split('\t');
+    if (path) out.set(path, Number(add) || 0);
+  }
+  return out;
+}
