@@ -81,7 +81,7 @@ describe('ビスケット（防御型・支援型・火力型・支援型の編�
     expect(ups[0]!.effect.value).toBeCloseTo(0.0577, 12);
     const ended = fullBursts.filter((w) => w.end < BATTLE_END);
     expect(ended.length).toBeGreaterThan(1);
-    expect(windowsOf(ups)).toEqual(ended.map((w) => [2, w.end, w.end + TEN_SECONDS]));
+    expect(windowsOf(ups)).toEqual(ended.map((w) => [2, w.end, Math.min(w.end + TEN_SECONDS, BATTLE_END)]));
   });
 
   it('gives the attack up of the burst to the Supporter allies (herself included) only, for 10 s', () => {
@@ -99,7 +99,7 @@ describe('ビスケット（防御型・支援型・火力型・支援型の編�
     const ends = new Set(fullBursts.map((w) => w.end));
     expect(attackerHeals.length).toBeGreaterThan(1);
     expect(attackerHeals.every((f) => ends.has(f) || ends.has(f - 1))).toBe(true);
-    const burstStarts = new Set(fromBiscuit('attack').map((p) => p.start));
+    const burstStarts = new Set(windowsOf(fromBiscuit('attack')).map(([, start]) => start));
     const supporterHeals = heals.filter((h) => h.slotIndex !== 2);
     expect(new Set(supporterHeals.map((h) => h.slotIndex))).toEqual(new Set([1, 3]));
     expect(supporterHeals.every((h) => burstStarts.has(h.frame) || burstStarts.has(h.frame - 1))).toBe(true);
