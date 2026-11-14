@@ -1656,16 +1656,6 @@ html:has(.modern-view-container) {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.roster-edit-row-growth {
-  flex: none;
-  --growth-star-w: 10px;
-  --growth-core-w: 20px;
-  text-shadow: none;
-}
-.roster-edit-row-growth .growth-marks-core {
-  margin-top: 0;
-  font-size: 0.55rem;
-}
 .roster-edit-mark {
   flex: none;
   width: 1.2em;
