@@ -1,0 +1,34 @@
+{
+  "id": "1175",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1175_sr_dolla_fire.mp4",
+  "original": "2026-11-14_21-16-41.mp4",
+  "durationSec": 199.5,
+  "frames": 11968,
+  "fps": 60,
+  "sizeMB": 241.6,
+  "sha256": "5e7232714f11",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 202,
+      "name": "ドラー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-14T21:30+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

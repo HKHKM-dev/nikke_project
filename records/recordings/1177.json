@@ -1,0 +1,46 @@
+{
+  "id": "1177",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1177_sr+sr+ar_cocoa+dolla+i-doll-sun_fire.mp4",
+  "original": "2026-11-14_21-23-57.mp4",
+  "durationSec": 203.6,
+  "frames": 12218,
+  "fps": 60,
+  "sizeMB": 247,
+  "sha256": "6cd356d87d58",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 202,
+      "name": "ドラー",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-14T21:31+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
