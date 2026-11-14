@@ -13,7 +13,7 @@ import {
 } from '../src/records/backlog.ts';
 import { toClaims, type Claim, type ClaimFile } from '../src/records/claims.ts';
 import { V_ID } from '../src/records/ids.ts';
-import type { Observation } from '../src/records/observations/types.ts';
+import { isObservationValue, type Observation, type ObservationValue } from '../src/records/observations/types.ts';
 import type { RecordsData } from '../src/records/observations/teamInput.ts';
 import { sortRecordings, type RecordingEntry, type RecordingsFile } from '../src/records/recordings.ts';
 import { sensitivityId, type SensitivityEntry } from '../src/records/relevance.ts';
@@ -265,7 +265,12 @@ export function loadRecordsData(file: RecordingsFile, extraRids: readonly number
     characters,
     skills,
     enemies: parseEnemyPresets(readJson<unknown>(`${DATA}enemies.json`)),
-    observationValues: new Map(loadObservations().map((o) => [o.id, o.value])),
+    // record の観測値は、値が数か数の配列のものだけ入れる
+    observationValues: new Map(
+      loadObservations().flatMap((o): [string, ObservationValue][] =>
+        o.use !== 'record' ? [[o.id, o.value]] : isObservationValue(o.value) ? [[o.id, o.value]] : [],
+      ),
+    ),
     buildMasters: Object.fromEntries(
       Object.entries(MASTER_FILES).map(([name, file]) => [name, readJson<unknown>(`${DATA}masters/${file}`)]),
     ) as BuildMasters,

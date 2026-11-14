@@ -30,7 +30,13 @@ import type { TeamInput } from '../../team.ts';
 import { METRICS } from '../observations/metrics/index.ts';
 import { buildTeamInput, withoutEffects } from '../observations/teamInput.ts';
 import { compareValue, runObservations } from '../observations/run.ts';
-import { invalidReasonsOf, type Observation } from '../observations/types.ts';
+import {
+  invalidReasonsOf,
+  type JsonValue,
+  type NumericObservation,
+  type Observation,
+  type RecordObservation,
+} from '../observations/types.ts';
 import { renderOtherRows, renderResiduals } from '../observations/render.ts';
 import { validateObservations } from '../observations/validate.ts';
 import { jumpWindowsOf } from '../observations/setup.ts';
@@ -641,7 +647,7 @@ describe('照合の部品', () => {
   });
 
   it('reports unknown metrics, missing args, a model other than sim and unknown presets', () => {
-    const base = observations.find((o) => o.id === '0047-02')!;
+    const base = observations.find((o) => o.id === '0047-02') as NumericObservation;
     const broken = (patch: Partial<NonNullable<Observation['compare']>>, id = '0047-99'): Observation => ({
       ...base,
       id,
@@ -1085,7 +1091,7 @@ describe('照合の部品', () => {
 });
 
 describe('観測値の形の拡張（Stage 20-E）', () => {
-  const record = observations.find((o) => o.id === '0047-03')!;
+  const record = observations.find((o) => o.id === '0047-03') as RecordObservation;
   const compared = observations.find((o) => o.id === '0047-02')!;
 
   it('checks recordings, unit, spread, readAt and invalid', () => {
@@ -1143,7 +1149,7 @@ describe('観測値の形の拡張（Stage 20-E）', () => {
   });
 
   it('renders record values with null elements, nested arrays and objects', () => {
-    const row = (value: unknown) => renderOtherRows([{ ...record, value: value as Observation['value'] }])[2];
+    const row = (value: unknown) => renderOtherRows([{ ...record, value: value as JsonValue }])[2];
     expect(row([7716540, null, 5321525])).toContain('| 7,716,540, —, 5,321,525 |');
     expect(
       row([

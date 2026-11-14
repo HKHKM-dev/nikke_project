@@ -4,6 +4,7 @@
 // ID の桁は決め打ちしない（録画 3 桁以上・連番 2 桁以上・結論 4 桁以上）。通し番号の抜けは許す。
 import { ELEMENTS } from '../element.ts';
 import { ID_DIGITS } from './ids.ts';
+import type { ObservationValue } from './observations/types.ts';
 import { BUFF_STATS, type BuffStat } from '../skills/types.ts';
 import type { BurstStep, Element, WeaponType } from '../types.ts';
 import { WEAPON_TYPES } from '../weapons.ts';
@@ -521,7 +522,7 @@ export const HIT_VALUE_METRICS: ReadonlySet<string> = new Set([
 
 export function gradeCandidate(
   claim: Claim,
-  residuals: ReadonlyMap<string, { status: string; diff: number | null; value: number | number[]; metric?: string }>,
+  residuals: ReadonlyMap<string, { status: string; diff: number | null; value: ObservationValue; metric?: string }>,
   invalidIds: ReadonlySet<string> = new Set(),
 ): ClaimGrade | undefined {
   const valid = claim.observations.filter((o) => !invalidIds.has(o));

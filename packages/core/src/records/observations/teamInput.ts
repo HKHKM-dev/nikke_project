@@ -25,13 +25,14 @@ import {
   manualBurstsOf,
   withAddedEffects,
 } from './setup.ts';
+import type { ObservationValue } from './types.ts';
 
 export type RecordsData = {
   characters: ReadonlyMap<number, CharacterData>;
   skills: ReadonlyMap<number, SkillDefinition>;
   enemies: EnemyPresetMaster;
-  /** 観測値の id → 値（setup.jumpWindows を引く。無ければ jumpWindows は使えない） */
-  observationValues?: ReadonlyMap<string, number | number[]>;
+  /** 観測値の id → 値（数か数の配列のもの。setup.jumpWindows を引く。無ければ jumpWindows は使えない） */
+  observationValues?: ReadonlyMap<string, ObservationValue>;
   /** 育成のマスタ（スペック固定 OFF の録画の効果層を引く。無ければ固定 OFF の録画は比べられない） */
   buildMasters?: BuildMasters;
 };

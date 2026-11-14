@@ -37,15 +37,28 @@ export type CompareSpec = {
 /** 値の幅。range は最小〜最大、ci95 は 95% 区間 */
 export type ObservationSpread = { kind: 'range' | 'ci95'; low: number; high: number };
 
-export type Observation = {
+/** 比べる・入力に使う観測値（use が compare・input）の値 */
+export type ObservationValue = number | number[];
+
+/** JSON の値 */
+export type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue };
+
+/** 観測値。value の型は use で分かれる */
+export type Observation = NumericObservation | RecordObservation;
+
+/** モデルと比べる・モデルの入力にする観測値。value は数か数の配列（records:check が確かめる） */
+export type NumericObservation = ObservationFields & { use: 'compare' | 'input'; value: ObservationValue };
+
+/** 記録だけの観測値。value は入れ子の配列・オブジェクト・文字列と、読めなかった要素の null を持つ */
+export type RecordObservation = ObservationFields & { use: 'record'; value: JsonValue };
+
+type ObservationFields = {
   id: string;
   /** 置き場所の録画（recordings があれば、その中で最も若い番号） */
   recording: string;
   /** 複数の録画にまたがる値のとき、その録画の全部（recording も含める）。compare には使わない */
   recordings?: string[];
   kind: ObservationKind;
-  use: ObservationUse;
-  value: number | number[];
   /** 値の単位（px・f・%・倍 など） */
   unit?: string;
   /** 値の幅 */
@@ -93,6 +106,11 @@ export type ObservationScope = {
   source: ObservationSource;
   frames?: [number, number];
 };
+
+/** 値が数か数の配列か（record の観測値の値は、そうでないことがある） */
+export function isObservationValue(value: JsonValue): value is ObservationValue {
+  return typeof value === 'number' || (Array.isArray(value) && value.every((x) => typeof x === 'number'));
+}
 
 /** 失効した観測値 → 失効の理由 */
 export function invalidReasonsOf(observations: readonly Observation[]): Map<string, string> {

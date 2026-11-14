@@ -8,16 +8,14 @@ import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { observationIdsInBranches } from '../../packages/core/scripts/records-data.ts';
-import type { Observation } from '../../packages/core/src/records/observations/types.ts';
+import type { JsonValue, Observation } from '../../packages/core/src/records/observations/types.ts';
 import { isLegacy, type RecordingEntry } from '../../packages/core/src/records/recordings.ts';
 import { capturesDir, legacyVideoPath } from './dirs.ts';
+import type { RecipeObservation } from './recipes/types.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const RECORDINGS_DIR = `${ROOT}records/recordings/`;
 const OBSERVATIONS_DIR = `${ROOT}records/observations/`;
-
-/** 観測値の下書き（id・recording・source・readAt は書く側が埋める） */
-export type DraftObservation = Omit<Observation, 'id' | 'recording' | 'source' | 'readAt'>;
 
 export function loadRecording(recordingId: string): RecordingEntry {
   const path = `${RECORDINGS_DIR}${recordingId}.json`;
@@ -50,7 +48,7 @@ function nextId(recordingId: string, existing: readonly Observation[], taken: Re
   }
 }
 
-function sameValue(a: number | number[], b: number | number[]): boolean {
+function sameValue(a: JsonValue, b: JsonValue): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
@@ -60,7 +58,7 @@ function sameValue(a: number | number[], b: number | number[]): boolean {
  */
 export function prepareObservations(
   recordingId: string,
-  produced: readonly DraftObservation[],
+  produced: readonly RecipeObservation[],
   opts: { tool: string; source: string; readAt: string },
 ): { existing: Observation[]; finished: Observation[] } {
   const existing = loadObservations(recordingId);
@@ -90,7 +88,7 @@ export function prepareObservations(
       ...p,
       source: opts.source,
       readAt: opts.readAt,
-    } as Observation);
+    });
   }
   const ownFirst = nextId(recordingId, existing, new Set());
   if (finished.length > 0 && finished[0]!.id !== ownFirst)

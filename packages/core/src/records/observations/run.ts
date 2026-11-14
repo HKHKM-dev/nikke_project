@@ -5,13 +5,13 @@ import type { RecordingEntry } from '../recordings.ts';
 import type { MetricContext } from './metrics/context.ts';
 import { METRICS } from './metrics/index.ts';
 import { buildTeamInput, type RecordsData } from './teamInput.ts';
-import type { CompareSpec, Observation, Tolerance } from './types.ts';
+import type { CompareSpec, NumericObservation, Observation, ObservationValue, Tolerance } from './types.ts';
 
 /** invalid は失効した観測値（比べずに一覧に残す） */
 export type ResidualStatus = 'ok' | 'outside' | 'error' | 'invalid';
 
 export type Residual = {
-  observation: Observation;
+  observation: NumericObservation;
   status: ResidualStatus;
   predicted: number | number[] | null;
   /** 比べた差（列なら要素ごとの差の最大。rel は比、abs は差） */
@@ -29,7 +29,7 @@ function within(measured: number, predicted: number, tolerance: Tolerance): { di
 }
 
 export function compareValue(
-  measured: number | number[],
+  measured: ObservationValue,
   predicted: number | number[],
   tolerance: Tolerance,
 ): { diff: number; ok: boolean } {

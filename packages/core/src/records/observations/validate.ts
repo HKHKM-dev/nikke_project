@@ -20,6 +20,8 @@ import {
   OBSERVATION_SOURCES,
   OBSERVATION_USES,
   type ObservationScope,
+  type ObservationValue,
+  isObservationValue,
 } from './types.ts';
 
 type Enemies = Pick<EnemyPresetMaster, 'enemies' | 'eventSets'>;
@@ -193,7 +195,7 @@ function setupErrors(
 }
 
 /** ID で指す観測値の決まり。input は use が input であること、shape は値の形が違うときの文（観測値の ID の後に続ける） */
-type RefRule = { input: boolean; valueOk: (value: number | number[]) => boolean; shape: string };
+type RefRule = { input: boolean; valueOk: (value: ObservationValue) => boolean; shape: string };
 
 const JUMP_WINDOWS: RefRule = {
   input: false,
@@ -229,7 +231,8 @@ function refErrors(o: Observation, ref: Observation | undefined, id: string, lab
   if (ref.recording !== o.recording) errors.push(`${at}: ${label} の観測値は同じ録画のもの`);
   if (rule.input && ref.use !== 'input') errors.push(`${at}: ${label} の観測値 ${ref.id} の use は input`);
   if (ref.invalid !== undefined) errors.push(`${at}: ${label} の観測値 ${ref.id} は失効している`);
-  if (!rule.valueOk(ref.value)) errors.push(`${at}: ${label} の観測値 ${ref.id} ${rule.shape}`);
+  if (!isObservationValue(ref.value) || !rule.valueOk(ref.value))
+    errors.push(`${at}: ${label} の観測値 ${ref.id} ${rule.shape}`);
   return errors;
 }
 
