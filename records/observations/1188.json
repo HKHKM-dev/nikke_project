@@ -1,0 +1,385 @@
+[
+  {
+    "id": "1188-01",
+    "recording": "1188",
+    "kind": "timing",
+    "use": "record",
+    "value": [862, 2064, 3243, 4504, 5683, 6986, 8165, 9541, 10730],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・5・25・0・25・6・25・0・24f"
+    },
+    "source": "V-0778",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1188-02",
+    "recording": "1188",
+    "kind": "timing",
+    "use": "record",
+    "value": [892, 2093, 3272, 4533, 5712, 7015, 8194, 9570, 10759],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 6・0・25・0・25・0・25・0・24f"
+    },
+    "source": "V-0778",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1188-03",
+    "recording": "1188",
+    "kind": "timing",
+    "use": "record",
+    "value": [921, 3301, 5742, 8223, 10788],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0778",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1188-04",
+    "recording": "1188",
+    "kind": "timing",
+    "use": "record",
+    "value": [1530, 3910, 6350, 8832, 11397],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0778",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1188-05",
+    "recording": "1188",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 608, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0778",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1188-06",
+    "recording": "1188",
+    "kind": "timing",
+    "use": "record",
+    "value": [2057, 3237, 5677, 8159],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0778",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1188-07",
+    "recording": "1188",
+    "kind": "timing",
+    "use": "record",
+    "value": [2086, 3266, 5706, 8188, 10744],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0778",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1188-08",
+    "recording": "1188",
+    "kind": "timing",
+    "use": "record",
+    "value": [3294],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f10715"
+    },
+    "source": "V-0778",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1188-09",
+    "recording": "1188",
+    "kind": "hit",
+    "use": "compare",
+    "value": 439103,
+    "description": "エレグのバーストスキルダメージ（会心なし）。2 回目の発動（ジャッカルのバーストの 15 秒の中）",
+    "method": {
+      "tool": "hud.ts --mode jumps・series、帯の下は ffmpeg で切り出した HUD の画を目で読んだ",
+      "note": "f2123 の +450,228 から、同じフレームのエレグの通常攻撃 11,125（後の発と同じ値）を引いた。どの回も、ジャッカルの▲（38.91%）が攻撃ダメージ▲の和に乗った値（316,106 × 1.3891）と 1 未満で合う"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0778",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1188-10",
+    "recording": "1188",
+    "kind": "hit",
+    "use": "compare",
+    "value": 439103,
+    "description": "エレグのバーストスキルダメージ（会心なし）。3 回目の発動（ジャッカルのバーストの 15 秒の中）",
+    "method": {
+      "tool": "hud.ts --mode jumps・series、帯の下は ffmpeg で切り出した HUD の画を目で読んだ",
+      "note": "帯の下の増分（f3303 の 51,727,555 → f3328 の 52,177,783）+450,228 から、エレグの通常攻撃 11,125 を引いた。どの回も、ジャッカルの▲（38.91%）が攻撃ダメージ▲の和に乗った値（316,106 × 1.3891）と 1 未満で合う"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0778",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1188-11",
+    "recording": "1188",
+    "kind": "hit",
+    "use": "compare",
+    "value": 439103,
+    "description": "エレグのバーストスキルダメージ（会心なし）。4 回目の発動（ジャッカルのバーストの 15 秒の中）",
+    "method": {
+      "tool": "hud.ts --mode jumps・series、帯の下は ffmpeg で切り出した HUD の画を目で読んだ",
+      "note": "f4563 の +450,228 から、エレグの通常攻撃 11,125 を引いた。どの回も、ジャッカルの▲（38.91%）が攻撃ダメージ▲の和に乗った値（316,106 × 1.3891）と 1 未満で合う"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0778",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1188-12",
+    "recording": "1188",
+    "kind": "hit",
+    "use": "compare",
+    "value": 439103,
+    "description": "エレグのバーストスキルダメージ（会心なし）。6 回目の発動（ジャッカルのバーストの 15 秒の中）",
+    "method": {
+      "tool": "hud.ts --mode jumps・series、帯の下は ffmpeg で切り出した HUD の画を目で読んだ",
+      "note": "f7045 の +451,896 から、エレグの通常攻撃 12,793（後の発と同じ値）を引いた。どの回も、ジャッカルの▲（38.91%）が攻撃ダメージ▲の和に乗った値（316,106 × 1.3891）と 1 未満で合う"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 5,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0778",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1188-13",
+    "recording": "1188",
+    "kind": "hit",
+    "use": "compare",
+    "value": 439103,
+    "description": "エレグのバーストスキルダメージ（会心なし）。8 回目の発動（ジャッカルのバーストの 15 秒の中）",
+    "method": {
+      "tool": "hud.ts --mode jumps・series、帯の下は ffmpeg で切り出した HUD の画を目で読んだ",
+      "note": "f9600 の +576,092 から、同じフレームの紅蓮の 1 発 136,989（5f 後の f9605 の発と同じ値）を引いた。どの回も、ジャッカルの▲（38.91%）が攻撃ダメージ▲の和に乗った値（316,106 × 1.3891）と 1 未満で合う"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 7,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0778",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1188-14",
+    "recording": "1188",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1261285,
+    "description": "紅蓮のバーストスキルダメージ（会心なし）。1 回目の発動（ジャッカルのバーストの 15 秒の中。III の 00.00 の 100f 後）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f1021 の +1,292,739 から、同じフレームの小さい 2 ヒット（15,727 × 2）を引いた。ジャッカルの▲が乗らない値（乗れば 1.3891 倍）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0778",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1188-15",
+    "recording": "1188",
+    "kind": "hit",
+    "use": "compare",
+    "value": 3461570,
+    "description": "紅蓮のバーストスキルダメージ（会心）。2 回目の発動（ジャッカルのバーストの 15 秒の中。III の 00.00 の 100f 後）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f3401 の +3,475,476 から、エレグの通常攻撃 13,906 を引いた。ジャッカルの▲が乗らない値（乗れば 1.3891 倍）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0778",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1188-16",
+    "recording": "1188",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2210312,
+    "description": "紅蓮のバーストスキルダメージ（会心なし）。5 回目の発動（ジャッカルのバーストの 15 秒の中。III の 00.00 の 100f 後）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f10888 の +2,226,039 から、同じフレームの 15,727 を引いた。ジャッカルの▲が乗らない値（乗れば 1.3891 倍）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 4,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0778",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1188-17",
+    "recording": "1188",
+    "kind": "interval",
+    "use": "record",
+    "value": [30, 30, 30, 30],
+    "unit": "f",
+    "description": "フルバーストに入らない回（紅蓮が CT で連鎖が切れる 2・4・6・8 回目）の、エレグのバーストの II → III の替わり目から、バーストスキルダメージが総ダメージに足されるまで（動画のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4・hud.ts --mode jumps",
+      "note": "替わり目は `1188-02` の 2・4・6・8 番目。フルバーストに入る回は帯の下で、ヒットは III の 00.00 の 22f 後（C-0689 と同じ）"
+    },
+    "source": "V-0778",
+    "readAt": "2026-11-14"
+  }
+]
