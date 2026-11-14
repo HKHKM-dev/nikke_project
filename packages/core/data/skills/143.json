@@ -87,15 +87,22 @@
           "condition": {
             "selfState": "overconfidentHuh"
           },
+          "delayFrames": 6,
           "damageType": "distributed",
           "ref": 2,
           "assumes": {
-            "ja": "何見てんだよお前ら！！の間の分配ダメージ。周期は戦闘開始から 2 秒ごと（端数を持ち越す）に数え続け、状態の付いている回だけ、敵 1 体（的）に全額で出す（エイダの S2 と同じ形。C-0787）。ヒットは周期のフレームに出す。状態の窓は自分のフルバーストの窓とほぼ重なるので、バーストゲージを溜めるかは確かめていない（溜めない形で回す）",
-            "en": "Distributed damage while Overconfident, Huh?! is on. The interval counts every 2 s from the start of battle (carrying the fraction) and only the ticks while the state is on deal the full amount to the single enemy (the target), as Ada's S2 (C-0787). The hit lands on the tick frame. The state window almost coincides with her own Full Burst, so whether it charges the burst gauge is unchecked (modeled as not charging)"
+            "ja": "何見てんだよお前ら！！の間の分配ダメージ。周期は戦闘開始から 2 秒ごと（端数を持ち越す）に数え続け、状態の付いている回だけ、敵 1 体（的）に全額で出す（エイダの S2 と同じ形）。ヒットは周期の 6f 後。攻撃ダメージ▲の和に貫通ダメージ▲は足さない。状態の窓は自分のフルバーストの窓とほぼ重なるので、バーストゲージを溜めるかは確かめていない（溜めない形で回す）",
+            "en": "Distributed damage while Overconfident, Huh?! is on. The interval counts every 2 s from the start of battle (carrying the fraction) and only the ticks while the state is on deal the full amount to the single enemy (the target), as Ada's S2. The hit lands 6 f after the tick. Pierce damage up is not added to the attack damage sum. The state window almost coincides with her own Full Burst, so whether it charges the burst gauge is unchecked (modeled as not charging)"
           }
         }
       ],
       "notes": [
+        {
+          "ja": "モデルは、何見てんだよお前ら！！の付いた次のフレームからの周期の刻みに出す。録画では、III のタイマーの 00.00 の約 15f 後の刻みに出なかった回が 1 回あり（00.00 の 5f 以内の発には同じバーストの攻撃力▲が乗っていた）、原因は分からない。そうした回の窓では、モデルが 1 ヒット多い",
+          "en": "The model deals it on every tick from the frame after Overconfident, Huh?! is applied. In a recording, one tick about 15 f after the III timer's 00.00 dealt nothing (while a shot within 5 f of 00.00 already had the ATK up of the same Burst); the cause is unknown. In such windows the model has one hit too many",
+          "kind": "modeling",
+          "refers": "effects[0]"
+        },
         {
           "ja": "羞恥心状態の時のみの自分の貫通ダメージ 64.7%▲（持続）は、羞恥心がオートの射撃では起きない（S1 の notes）ので効かない（要件 4.2 節）",
           "en": "The pierce damage up of 64.7% on self only while in Embarrassment (continuous) never applies, since Embarrassment does not occur with auto fire (see the S1 notes; requirements 4.2)",

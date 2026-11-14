@@ -1,0 +1,454 @@
+[
+  {
+    "id": "1194-01",
+    "recording": "1194",
+    "kind": "timing",
+    "use": "input",
+    "unit": "f",
+    "value": [711, 3232, 4563, 5803, 7030, 8263, 9913],
+    "spread": {
+      "kind": "range",
+      "low": -2,
+      "high": 2
+    },
+    "description": "チェーンの始まり（I の本当の発動）のゲーム内のフレーム（戦闘開始から）の並び",
+    "method": {
+      "tool": "recipe:burst-panel@4 と tools/captures/timer.ts の戦闘開始",
+      "note": "戦闘開始は動画の f824（timer.ts）。I → II の六角形の替わり目（`1194-02`）の動画のフレームから、戦闘開始・替わり目までの 5f と発動の止まり 1f（C-0503）・それより前のフルバーストの入りの止まり 22f（C-0069）と I・II の発動の止まり 1f ずつを引いた（モデルの videoFrameOf の逆。0790-05 と同じ）。3・5・7 回目のチェーン（I → II の替わり目 f5441・f7933・f10841）は II を押さずに時間切れ。幅は戦闘開始の読みの揺れ"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burst"
+    },
+    "source": "V-0783",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1194-02",
+    "recording": "1194",
+    "kind": "timing",
+    "use": "record",
+    "value": [1541, 4086, 5441, 6682, 7933, 9167, 10841],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・0・25・0・25・0f"
+    },
+    "source": "V-0783",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1194-03",
+    "recording": "1194",
+    "kind": "timing",
+    "use": "record",
+    "value": [1585, 4122, 6712, 9196],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・24・25f"
+    },
+    "source": "V-0783",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1194-04",
+    "recording": "1194",
+    "kind": "timing",
+    "use": "record",
+    "value": [1619, 4157, 6741, 9226],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0783",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1194-05",
+    "recording": "1194",
+    "kind": "timing",
+    "use": "record",
+    "value": [2228, 4765, 7350, 9834],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0783",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1194-06",
+    "recording": "1194",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 608, 609, 608],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0783",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1194-07",
+    "recording": "1194",
+    "kind": "timing",
+    "use": "record",
+    "value": [4152],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0783",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1194-08",
+    "recording": "1194",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2575844,
+    "unit": "ダメージ",
+    "description": "ミルク：ブルーミングバニーの S2 の分配ダメージの 1 ヒット（会心なし）。4 回の窓の 19 発がどれもこの値（f9525 の 1 発は塊の中で読めない）。貫通ダメージ▲（117.64%）が乗れば 5,606,067",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "増分がそのまま 1 ヒット。会心の値（× 1.5 / 1.5 + 0.5 の比）の増分は無かった"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "rel": 0.0001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "1194-01"
+      }
+    },
+    "source": "V-0783",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1194-09",
+    "recording": "1194",
+    "kind": "hit",
+    "use": "compare",
+    "value": 3602141,
+    "unit": "ダメージ",
+    "description": "ミルク：ブルーミングバニーの 1 回目の窓の中の発（コア・会心なし・距離ボーナスなし）。攻撃力▲・貫通ダメージ▲・フルバースト補正が乗る。貫通ダメージ▲が乗らなければ 1,655,092。1・2・4 回目の窓の発（f1696・1778・1861・2142・2225・4184・4265・4347・4511・4711・9315・9396・9623・9822）がこの値で、4,322,570（f1943・f4429）はその会心（1.2 倍）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "増分がそのまま 1 ヒット。3 回目の窓の発は 4,034,398（距離ボーナスの付いた区間。1.12 倍）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "1194-01"
+      }
+    },
+    "source": "V-0783",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1194-10",
+    "recording": "1194",
+    "kind": "hit",
+    "use": "compare",
+    "value": 413536,
+    "unit": "ダメージ",
+    "description": "ミルク：ブルーミングバニーの窓の外の発（コア・会心なし・距離ボーナスなし。▲なし）。f1505・f1592・f4073 ほか",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "増分がそのまま 1 ヒット"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2000,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "1194-01"
+      }
+    },
+    "source": "V-0783",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1194-11",
+    "recording": "1194",
+    "kind": "timing",
+    "use": "compare",
+    "value": [857, 975, 1092, 1210, 1328],
+    "unit": "f",
+    "description": "ミルク：ブルーミングバニーの S2 の分配ダメージのヒットが出た動画のフレーム（戦闘開始 f824 から）。1 回目の窓（III のタイマーの 00.00 は f1619）の 5 発",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "2,575,844 の増分のフレーム。同じ窓のミルク：ブルーミングバニーの通常攻撃の発も、モデルより 4〜5f 遅い（手で押した II・III の間がモデルと違い、窓の中の止まりの位置がずれる）。許容の幅はこのずれを見込んだ。周期の起点を状態の付いた時にする仮説（H2・H3）とは、最初の発が 60f 以上違う"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "skill": "skill2",
+        "skip": 0,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 10
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "1194-01"
+      }
+    },
+    "source": "V-0783",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1194-12",
+    "recording": "1194",
+    "kind": "timing",
+    "use": "compare",
+    "value": [3472, 3590, 3708, 3826],
+    "unit": "f",
+    "description": "ミルク：ブルーミングバニーの S2 の分配ダメージのヒットが出た動画のフレーム（戦闘開始 f824 から）。2 回目の窓（00.00 は f4157）の 4 発。モデルはこの前にもう 1 発（00.00 の直後の周期の刻み）を出すが、録画には無い（`1194-15`）ので、モデルの 2 発目から比べる",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "2,575,844 の増分のフレーム。同じ窓のミルク：ブルーミングバニーの通常攻撃の発も、モデルより 4〜5f 遅い（手で押した II・III の間がモデルと違い、窓の中の止まりの位置がずれる）。許容の幅はこのずれを見込んだ。周期の起点を状態の付いた時にする仮説（H2・H3）とは、最初の発が 60f 以上違う"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "skill": "skill2",
+        "skip": 6,
+        "count": 4
+      },
+      "tolerance": {
+        "abs": 10
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "1194-01"
+      }
+    },
+    "source": "V-0783",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1194-13",
+    "recording": "1194",
+    "kind": "timing",
+    "use": "compare",
+    "value": [5969, 6087, 6205, 6322, 6440],
+    "unit": "f",
+    "description": "ミルク：ブルーミングバニーの S2 の分配ダメージのヒットが出た動画のフレーム（戦闘開始 f824 から）。3 回目の窓（00.00 は f6741）の 5 発",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "2,575,844 の増分のフレーム。同じ窓のミルク：ブルーミングバニーの通常攻撃の発も、モデルより 4〜5f 遅い（手で押した II・III の間がモデルと違い、窓の中の止まりの位置がずれる）。許容の幅はこのずれを見込んだ。周期の起点を状態の付いた時にする仮説（H2・H3）とは、最初の発が 60f 以上違う"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "skill": "skill2",
+        "skip": 10,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 10
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "1194-01"
+      }
+    },
+    "source": "V-0783",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1194-14",
+    "recording": "1194",
+    "kind": "timing",
+    "use": "compare",
+    "value": [8466, 8583, 8701, 8818, 8936],
+    "unit": "f",
+    "description": "ミルク：ブルーミングバニーの S2 の分配ダメージのヒットが出た動画のフレーム（戦闘開始 f824 から）。4 回目の窓（00.00 は f9226）の 5 発。f9525 は 3,434,459 の増分（前の f9444 の 2,322,661 と HUD の読みが割れた塊）の中の 1 発で、前後の 118f の並びからこのフレームとした",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "2,575,844 の増分のフレーム。同じ窓のミルク：ブルーミングバニーの通常攻撃の発も、モデルより 4〜5f 遅い（手で押した II・III の間がモデルと違い、窓の中の止まりの位置がずれる）。許容の幅はこのずれを見込んだ。周期の起点を状態の付いた時にする仮説（H2・H3）とは、最初の発が 60f 以上違う"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "skill": "skill2",
+        "skip": 15,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 10
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "1194-01"
+      }
+    },
+    "source": "V-0783",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1194-15",
+    "recording": "1194",
+    "kind": "count",
+    "use": "record",
+    "value": 4,
+    "unit": "回",
+    "description": "2 回目の窓のミルク：ブルーミングバニーの S2 のヒットの数。ほかの 3 回の窓は 5 回。戦闘開始からの 2 秒の周期の刻みのうち、00.00（f4157）の直後の刻み（ゲーム内で 00.00 の約 15f 後。ヒットは f4200 ごろの見込み）では出なかった。同じ窓のミルク：ブルーミングバニーの最初の発（f4184。00.00 から入りの止まり 22f の後の 5f 以内）には攻撃力▲・貫通ダメージ▲が乗っていた。モデル（manualBursts `1194-01`）はこの窓に 5 回出す",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "f4158〜f4184 は HUD が読めない（26f）が、f4184 の増分は 3,602,141 ちょうどで、S2 のヒットは入っていない。f4184〜f4296 の増分は 207,715・160,870・160,870・3,602,141・249,258 だけ"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0783",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1194-16",
+    "recording": "1194",
+    "kind": "count",
+    "use": "compare",
+    "value": [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6],
+    "unit": "発",
+    "description": "ミルク：ブルーミングバニーのマガジンごとの発数（照準の左の残弾。15 本）。どのマガジンも 6 発で、残弾が 1 から 6 に戻る込め終わりの間は 610〜716f（6 発 + リロード 2 秒。長い所は的のジャンプとフルバーストの入り）。マガジンの途中で残弾が 0 になる（羞恥心の強制リロード）ことは無く、羞恥心の分配ダメージ（窓の外で約 35 万）にあたる増分も無い",
+    "method": {
+      "tool": "node tools/captures/reticle-ammo.ts --mode mags",
+      "note": "込め終わり（1→6）は f1434・2071・2681・3392・4002・4640・5314・5926・6536・7171・7833・8444・9054・9751・10361"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0783",
+    "readAt": "2026-11-14",
+    "compare": {
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 3,
+        "count": 15
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "1194-01"
+      }
+    }
+  },
+  {
+    "id": "1194-17",
+    "recording": "1194",
+    "kind": "hit",
+    "use": "record",
+    "value": 2580920,
+    "unit": "ダメージ",
+    "description": "f7279 の増分（3 回目の窓の S2 の 5 発目 f7264 の 15f 後）。どの枠の 1 ヒットの格子にも当たらない（S2 の 1 ヒットより 5,076 大きい）。S2 の周期では 15f 後に次は出ないので、S2 のヒットとは数えていない",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps・--mode series",
+      "note": "f7270〜7278 は 147,218,056、f7279 から 149,798,976 で、読みは安定している"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "normal"
+    },
+    "source": "V-0783",
+    "readAt": "2026-11-14"
+  }
+]
