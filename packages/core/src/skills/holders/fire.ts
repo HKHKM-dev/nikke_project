@@ -17,10 +17,11 @@ import {
   type RemoveDebuffSource,
   type RemoveSource,
   type StackSource,
+  type AllStackSource,
   type TimedSource,
   pickRemoveDebuff,
 } from './types.ts';
-import { closeTakesEffect, insertSorted } from './items.ts';
+import { closeTakesEffect, insertSorted, isStackableBuffTrack } from './items.ts';
 import type { HolderBase, Records } from './records.ts';
 import type { Fires } from './fires.ts';
 import type { Sources } from './sources.ts';
@@ -298,6 +299,27 @@ export function createFire({
    * （スタックの段は始まりの数で上がり、上限と維持は付与のもの）。付いた記録は 1 件。
    * 減少（同 1.5 節）は、件の列に減少（そのフレームに効いている段の上から N 段を次のフレームで切る）を入れる。付いた記録は作らない
    */
+  /**
+   * 味方の全部のスタック可能バフへのスタック量▲（plan/design-adjacent-allies.md 2.5 節）。対象の枠の、上限のある状態の付与（敵に付く
+   * 状態・スタック量増減効果無効を除く）と上限のある timed（確率のきっかけを除く）の件の列のうち、start に件が付いているものに
+   * 始まりを足す（付与と同じに数える）。状態には記録を足す（{ applied } が読む。fireStackChange と同じ）
+   */
+  const fireAllStackable = (src: AllStackSource, start: number): void => {
+    if (start >= frames) return;
+    for (const track of tracks) {
+      if (!src.targets.includes(track.holder) || !isStackableBuffTrack(track)) continue;
+      if (activeAt(track, start).length === 0) continue;
+      for (let k = 0; k < src.effect.amount; k++) insertSorted(track.starts, start);
+      if (track.origin.kind === 'state') {
+        applications.push({
+          frame: start,
+          state: track.origin.state,
+          sourceSlotIndex: src.sourceSlotIndex,
+          slotIndex: track.holder,
+        });
+      }
+    }
+  };
   const fireStackChange = (src: StackSource, start: number): void => {
     if (start >= frames) return;
     if (src.effect.decrease === true) {
@@ -441,6 +463,7 @@ export function createFire({
     fireRemove,
     fireRemoveDebuff,
     fireStackChange,
+    fireAllStackable,
     fireTimed,
     pendingRemoveDebuffs,
     pushChanceOpportunity,

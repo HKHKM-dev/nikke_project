@@ -9,6 +9,7 @@ import {
   isResolvedShotCount,
   isResolvedTimer,
   resolveStackChanges,
+  resolveAllStackableChanges,
   resolveStateContents,
   resolveStateGrants,
   type ResolvedStackChange,
@@ -31,7 +32,7 @@ import {
   weaponStartTrim,
   type TimelineSlot,
 } from '../timeline.ts';
-import type { HeldItem, HeldOrigin, HeldStage, HeldTrack, StateGroup } from './types.ts';
+import { ENEMY, type HeldItem, type HeldOrigin, type HeldStage, type HeldTrack, type StateGroup } from './types.ts';
 
 /**
  * 窓の始まり。射撃の回数のきっかけは次のフレームから。timed の delayFrames があれば、きっかけの delayFrames 後から（ナガ S2 は 6。
@@ -597,6 +598,19 @@ function stageOfGrant(grant: ResolvedStateGrant): HeldStage {
     : 1;
 }
 
+/**
+ * 味方の全部のスタック可能バフへのスタック量▲（plan/design-adjacent-allies.md 2.5 節）が足す先の件の列か: 味方が持つ、上限のある
+ * 状態の付与（敵に付く状態・スタック量増減効果無効を除く）か、上限のある timed（確率のきっかけを除く）
+ */
+export function isStackableBuffTrack(track: HeldTrack): boolean {
+  if (track.holder === ENEMY || track.opportunities !== null) return false;
+  if (track.origin.kind === 'state') {
+    const g = track.origin.grant;
+    return g.maxStacks !== undefined && g.enemy !== true && g.stackImmutable !== true;
+  }
+  return track.origin.kind === 'timed' && track.origin.effect.maxStacks !== undefined;
+}
+
 /** スタック量の増加の段（件を見る条件つきは段 1.5） */
 export function stageOfStackChange(effect: ResolvedStackChange): HeldStage {
   // 付いている時だけ足す増加は、その状態の件を読む（plan/design-diesel.md 8.1 節）
@@ -616,6 +630,7 @@ export function appliedStagesOf(slots: readonly TimelineSlot[]): (state: NamedSt
       const now = out.get(state);
       if (now === undefined || STAGE_RANK[stage] > STAGE_RANK[now]) out.set(state, stage);
     };
+    let allStackable = false;
     for (const slot of slots) {
       if (slot === null || slot.definition === null) continue;
       for (const grant of resolveStateGrants(slot.definition, slot.character, slot.levels)) {
@@ -623,6 +638,16 @@ export function appliedStagesOf(slots: readonly TimelineSlot[]): (state: NamedSt
       }
       for (const effect of resolveStackChanges(slot.definition, slot.character, slot.levels)) {
         bump(effect.state, stageOfStackChange(effect));
+      }
+      // 味方の全部のスタック可能バフへの▲（段 1.5）は、編成のどの上限のある状態にも足しうる（plan/design-adjacent-allies.md 2.5 節）
+      if (resolveAllStackableChanges(slot.definition, slot.character, slot.levels).length > 0) allStackable = true;
+    }
+    if (allStackable) {
+      for (const slot of slots) {
+        if (slot === null || slot.definition === null) continue;
+        for (const grant of resolveStateGrants(slot.definition, slot.character, slot.levels)) {
+          if (!grant.isStatic && grant.maxStacks !== undefined && grant.stackImmutable !== true) bump(grant.state, 1.5);
+        }
       }
     }
     return out;

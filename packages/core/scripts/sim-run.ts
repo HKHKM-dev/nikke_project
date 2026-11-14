@@ -490,7 +490,7 @@ const compositionRows = slots.flatMap((slot, i) =>
         {
           slot: `slot ${i + 1} ${slot.character.name.ja}`,
           // 付与の行には状態の id も出す（state camouflage）。解除も（removeState metalSigma）
-          effect: `${skill}[${effectIndex}] ${e.kind}${e.kind === 'state' || e.kind === 'removeState' || e.kind === 'stackChange' ? ` ${e.state}` : ''}`,
+          effect: `${skill}[${effectIndex}] ${e.kind}${e.kind === 'state' || e.kind === 'removeState' || (e.kind === 'stackChange' && e.target !== 'allies') ? ` ${e.state}` : e.kind === 'stackChange' ? ' allStackable' : ''}`,
           condition: conditions.join(' & '),
           applies:
             compositionAllows(e, compositionCharacters, i, input.enemy.element) &&

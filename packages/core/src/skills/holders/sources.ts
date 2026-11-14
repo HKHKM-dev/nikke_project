@@ -20,6 +20,7 @@ import {
   resolveRemoveStates,
   resolveStateExtends,
   resolveStackChanges,
+  resolveAllStackableChanges,
   resolveTimed,
   resolveWhileEffects,
   type ResolvedInstantEffect,
@@ -48,6 +49,7 @@ import {
   type RemoveDebuffSource,
   type RemoveSource,
   type StackSource,
+  type AllStackSource,
   type StateGroup,
   type TimedSource,
   isEnemyEffect,
@@ -84,6 +86,7 @@ export function createSources(deps: SourceDeps) {
   const extendSources = createExtendSources(deps);
   const removeDebuffSources = createRemoveDebuffSources(deps);
   const stackSources = createStackSources(deps, stateGroups);
+  const allStackSources = createAllStackSources(deps);
   /** フレーム frame がフルバーストの窓 [start, end) の中か（条件 inFullBurst） */
   const inFullBurstAt = (frame: number): boolean =>
     options.fullBurstWindows().some((w) => w.start <= frame && frame < w.end);
@@ -131,6 +134,7 @@ export function createSources(deps: SourceDeps) {
     shotCountEveryOf,
     sinceFires,
     stackSources,
+    allStackSources,
     stateGroups,
     stateTracks,
     stateWindowFires,
@@ -391,6 +395,21 @@ function createStackSources({ firesOf, slots }: SourceDeps, stateGroups: readonl
     }
   });
   return stackSources;
+}
+
+/** 味方の全部のスタック可能バフへのスタック量▲（対象の枠は編成で決まる。plan/design-adjacent-allies.md 2.5 節） */
+function createAllStackSources({ firesOf, slots }: SourceDeps): AllStackSource[] {
+  const out: AllStackSource[] = [];
+  slots.forEach((slot, sourceSlotIndex) => {
+    if (slot === null || slot.definition === null) return;
+    for (const effect of resolveAllStackableChanges(slot.definition, slot.character, slot.levels)) {
+      const targets = slots.flatMap((t, i) =>
+        t !== null && isEffectTarget(effect, sourceSlotIndex, i, t.character) ? [i] : [],
+      );
+      out.push({ sourceSlotIndex, effect, fires: firesOf(effect.trigger, sourceSlotIndex), targets });
+    }
+  });
+  return out;
 }
 
 /**

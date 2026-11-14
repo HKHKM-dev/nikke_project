@@ -2480,8 +2480,38 @@ export type StateExtendEffect = {
  * 切る（同じフレームの判定には付いている）。最後の 1 段は残す（V-0437）。減らす先は、足す先と同じ（同じ定義の付与の、自分の件の列）。
  * 後の付与は減った段から数える
  */
-export type StackChangeEffect = {
+/** スタック量の増減。自分か敵の 1 つの状態（OwnStackChangeEffect）か、味方の全部のスタック可能バフ（AllStackableChangeEffect） */
+export type StackChangeEffect = OwnStackChangeEffect | AllStackableChangeEffect;
+
+/**
+ * 「〈味方〉に、スタック可能バフ効果のスタック量 N 個▲」（plan/design-adjacent-allies.md 2.5 節）。対象の枠（allies を
+ * targetWeapon・targetElement・targetClass で絞った枠）が持つ、上限のある状態の付与の件の列（敵に付く状態・stackImmutable を除く）と、
+ * 上限のある timed の件の列（確率のきっかけを除く）の全部に、足す段の始まりのフレーム（射撃の回数のきっかけは発の次のフレーム）に
+ * 件が付いていれば始まりを amount 個足す（付いていなければ足さない。OwnStackChangeEffect の existingOnly と同じ。C-1182）。
+ * どの枠の定義から付いた件でもよい。増加だけ。段は 1.5（件を読む）
+ */
+export type AllStackableChangeEffect = FixedTargetFields & {
   kind: 'stackChange';
+  allStackable: true;
+  trigger: EffectTrigger;
+  target: 'allies';
+  targetWeapon?: WeaponType;
+  targetElement?: Element;
+  targetClass?: NikkeClass;
+  amount?: number;
+  amountRef?: number;
+  condition?: EffectCondition;
+  assumes?: LocalizedText;
+};
+
+/** 味方の全部のスタック可能バフへのスタック量▲か */
+export function isAllStackableChange(e: SkillEffect): e is AllStackableChangeEffect & ClaimRefs & IndirectReads {
+  return e.kind === 'stackChange' && 'allStackable' in e;
+}
+
+export type OwnStackChangeEffect = {
+  kind: 'stackChange';
+  allStackable?: undefined;
   /** 目録の id（持ち主が味方の状態。target が enemy なら敵の状態） */
   state: NamedStateId;
   trigger: EffectTrigger;

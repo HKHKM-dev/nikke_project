@@ -747,6 +747,8 @@ export type ResolvedStateGrant = ResolvedItemFields & {
   isStatic: boolean;
   /** 解除不可の印（同じ定義の同じ状態の付与で揃う。plan/design-skill-stage1.md 1.3 節） */
   undispellable?: true;
+  /** スタック量増減効果無効（ほかの枠のスタック量▲も受けない。plan/design-nayuta.md 2.5 節・plan/design-adjacent-allies.md 2.5 節） */
+  stackImmutable?: true;
   /**
    * 1 回の発火で付けるスタックの数を、自分のカウンタの値か、自分の状態の
    * スタック数にする（plan/design-skill-stage10.md 2.1 節）
@@ -831,6 +833,7 @@ export function resolveStateGrants(
       );
       const grant: ResolvedStateGrant = { ...window, state: effect.state, isStatic: statics.has(effect.state) };
       if (effect.undispellable) grant.undispellable = true;
+      if (effect.stackImmutable) grant.stackImmutable = true;
       if (effect.stacksFrom !== undefined) grant.stacksFrom = effect.stacksFrom;
       if (effect.stacksPerFireRef !== undefined) {
         const n = amountOf({ amountRef: effect.stacksPerFireRef }, character.skills[slot], levels[slot]);
@@ -1313,8 +1316,8 @@ export function resolveStackChanges(
   for (const slot of SKILL_SLOTS) {
     const skill = character.skills[slot];
     def.skills[slot].effects.forEach((effect, effectIndex) => {
-      // 敵の持続ダメージのスタック量▲は resolveDotStackUps
-      if (effect.kind !== 'stackChange' || effect.target === 'enemy') return;
+      // 敵の持続ダメージのスタック量▲は resolveDotStackUps、味方の全部のスタック可能バフへの▲は resolveAllStackableChanges
+      if (effect.kind !== 'stackChange' || effect.target === 'enemy' || effect.target === 'allies') return;
       const amount = amountOf(effect, skill, levels[slot]);
       const r: ResolvedStackChange = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
@@ -1326,6 +1329,50 @@ export function resolveStackChanges(
       if (effect.decrease) r.decrease = true;
       if (effect.closesAtZero) r.closesAtZero = true;
       if (effect.existingOnly) r.existingOnly = true;
+      if (effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
+      out.push(r);
+    });
+  }
+  return out;
+}
+
+/**
+ * 解決した、味方の全部のスタック可能バフへのスタック量▲（stackChange の allStackable。plan/design-adjacent-allies.md 2.5 節）。
+ * amount は足すスタックの数（amountRef はスロットの Lv の説明文の値を整数に丸めたもの）
+ */
+export type ResolvedAllStackableChange = {
+  source: ResolvedEffect['source'];
+  effectIndex: number;
+  trigger: ResolvedTrigger;
+  target: 'allies';
+  targetWeapon?: WeaponType;
+  targetElement?: Element;
+  targetClass?: NikkeClass;
+  amount: number;
+  condition?: EffectCondition;
+};
+
+/** 定義の、味方の全部のスタック可能バフへのスタック量▲を Lv の数値に解く */
+export function resolveAllStackableChanges(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedAllStackableChange[] {
+  const out: ResolvedAllStackableChange[] = [];
+  for (const slot of SKILL_SLOTS) {
+    const skill = character.skills[slot];
+    def.skills[slot].effects.forEach((effect, effectIndex) => {
+      if (effect.kind !== 'stackChange' || effect.target !== 'allies') return;
+      const r: ResolvedAllStackableChange = {
+        source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+        effectIndex,
+        trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
+        target: 'allies',
+        amount: amountOf(effect, skill, levels[slot]),
+      };
+      if (effect.targetWeapon !== undefined) r.targetWeapon = effect.targetWeapon;
+      if (effect.targetElement !== undefined) r.targetElement = effect.targetElement;
+      if (effect.targetClass !== undefined) r.targetClass = effect.targetClass;
       if (effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
       out.push(r);
     });
