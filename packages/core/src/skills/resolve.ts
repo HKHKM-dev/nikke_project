@@ -1209,6 +1209,8 @@ export type ResolvedStackChange = {
   decrease?: true;
   /** 減少で最後の 1 段も切る（0 になったら件を閉じる。plan/design-skill-stage14.md 2.7 節） */
   closesAtZero?: true;
+  /** 付いている時だけ足す（plan/design-diesel.md 8.1 節） */
+  existingOnly?: true;
   condition?: EffectCondition;
 };
 
@@ -1237,6 +1239,7 @@ export function resolveStackChanges(
       };
       if (effect.decrease) r.decrease = true;
       if (effect.closesAtZero) r.closesAtZero = true;
+      if (effect.existingOnly) r.existingOnly = true;
       if (effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
       out.push(r);
     });

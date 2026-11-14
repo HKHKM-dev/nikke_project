@@ -93,9 +93,10 @@
           },
           "target": "self",
           "amountRef": 5,
+          "existingOnly": true,
           "assumes": {
-            "ja": "スタック可能バフ効果のスタック量▲は、自分のイチゴキャンディに足す分だけ。命中は戦闘を通して数え、150 回目にヘイト状態なら足す（ヘイトの間だけ数える読みとは撮影で見分ける。plan/design-diesel.md 7 節の論点 3）。イチゴキャンディが付いていない時も 1 段で付ける（確かめていない）",
-            "en": "Only the part added to own Strawberry Candy. Hits are counted through the battle and the stack is added on the 150th hit if in the Attract state (to be told apart from counting only during Attract by recording; plan/design-diesel.md section 7, issue 3). It adds one stack even when Strawberry Candy is absent (unverified)"
+            "ja": "スタック可能バフ効果のスタック量▲は、自分のイチゴキャンディに足す分だけ。命中は戦闘を通して数え、150 回目にヘイト状態で、イチゴキャンディが付いていれば足す",
+            "en": "Only the part added to own Strawberry Candy. Hits are counted through the battle; on the 150th hit, a stack is added if in the Attract state and Strawberry Candy is present"
           }
         }
       ],
@@ -168,7 +169,9 @@
           "stat": "pierceDamage",
           "ref": 6,
           "durationRef": 7,
-          "reads": ["pierce"],
+          "reads": [
+            "pierce"
+          ],
           "assumes": {
             "ja": "貫通特化の無い味方の発には乗らない",
             "en": "It does not apply to shots of allies without Pierce"

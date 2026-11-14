@@ -70,10 +70,15 @@ describe('撮影の編成（I-DOLL・フラワー（I・操作）・ディーゼ
     );
   });
 
-  it('stacks Strawberry Candy every 70 hits, plus one every 150th hit while in Attract', () => {
+  it('stacks Strawberry Candy every 70 hits, plus one every 150th hit while in Attract and Candy is present', () => {
     const inAttract = (f: number) => attract.some((a) => a.start <= f && f < a.end);
-    const extra = everyNth(shots, 150).filter(inAttract);
+    // 150 回目の発のフレーム（件の始まりの 1 つ前）にイチゴキャンディが付いていれば足す（plan/design-diesel.md 8.1 節）
+    const present = (f: number) => candy.some((i) => i.start <= f - 1 && f - 1 < i.end);
+    const candidates = everyNth(shots, 150).filter(inAttract);
+    const extra = candidates.filter(present);
     expect(extra.length).toBeGreaterThan(3);
+    // 0 段の時の 150 回目は足さない（この編成のモデルでも起きる）
+    expect(candidates.length).toBeGreaterThan(extra.length);
     const expected = [...everyNth(shots, 70), ...extra].filter((f) => f < plan.frames).sort((a, b) => a - b);
     expect(candy.map((i) => i.start)).toEqual(expected);
   });

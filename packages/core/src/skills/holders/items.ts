@@ -587,7 +587,8 @@ function stageOfGrant(grant: ResolvedStateGrant): HeldStage {
 
 /** スタック量の増加の段（件を見る条件つきは段 1.5） */
 export function stageOfStackChange(effect: ResolvedStackChange): HeldStage {
-  return conditionReadsItems(effect.condition) ? 1.5 : 1;
+  // 付いている時だけ足す増加は、その状態の件を読む（plan/design-diesel.md 8.1 節）
+  return effect.existingOnly === true || conditionReadsItems(effect.condition) ? 1.5 : 1;
 }
 
 /**

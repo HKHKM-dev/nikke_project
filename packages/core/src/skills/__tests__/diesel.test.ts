@@ -43,6 +43,12 @@ describe('読み込み', () => {
     expect(def.treasureSkills?.burst?.effects.map((e) => e.kind)).toEqual(['burstDamage', 'state']);
   });
 
+  it('takes existingOnly only on an increase on self', () => {
+    const copy = structuredClone(raw);
+    copy.treasureSkills.skill1!.effects[0]!.decrease = true;
+    expect(() => parseSkillDefinition(copy)).toThrow(/existingOnly needs an increase/);
+  });
+
   it('needs a self stacking grant on a shot count for the full-stack refill', () => {
     const copy = structuredClone(raw);
     copy.skills.skill2!.effects[0]!.trigger = 'burstUse';
@@ -94,12 +100,13 @@ describe('宝物版（段階 3）の解決値', () => {
     );
   });
 
-  it('adds one stack of Strawberry Candy every 150 hits while in Attract', () => {
+  it('adds one stack of Strawberry Candy every 150 hits while in Attract, only when Candy is present', () => {
     expect(resolveStackChanges(definition!, character, MAX_SKILL_LEVELS)).toEqual([
       expect.objectContaining({
         state: 'strawberryCandy',
         trigger: { count: 'normalHit', every: 150 },
         amount: 1,
+        existingOnly: true,
         condition: { selfState: { state: 'attract', present: true } },
       }),
     ]);

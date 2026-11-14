@@ -2410,6 +2410,12 @@ export type StackChangeEffect = {
    * 残す（V-0437）。decrease の自分の状態だけ
    */
   closesAtZero?: true;
+  /**
+   * 説明文の「スタック可能バフ効果のスタック量 N 個▲」（plan/design-diesel.md 8.1 節。V-0763）。発火のフレームに、持ち主にその状態の
+   * 件が付いていなければ足さない（条件を満たさない発火と同じく記録する）。書かなければ、付いていない時も付与と同じく 1 段目から付ける。
+   * 増加・自分だけ。段は 1.5（件を読む）
+   */
+  existingOnly?: true;
   condition?: EffectCondition;
   assumes?: LocalizedText;
 };

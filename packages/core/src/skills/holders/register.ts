@@ -341,7 +341,10 @@ export function createRegister({
       if (!take(x.effect.trigger) || !(battleStartOnly || x.fires(ev))) continue;
       if (
         !fireContextHolds(x.effect.condition, x.effect.trigger, ev, x.sourceSlotIndex) ||
-        !holdsAt(x.effect.condition, x.sourceSlotIndex, f)
+        !holdsAt(x.effect.condition, x.sourceSlotIndex, f) ||
+        // 付いている時だけ足す（その状態の件が無ければ不発。plan/design-diesel.md 8.1 節）
+        (x.effect.existingOnly === true &&
+          !holdsAt({ selfState: { state: x.effect.state, present: true } }, x.sourceSlotIndex, f))
       ) {
         skipEffect(x.sourceSlotIndex, x.effect, f);
         continue;
