@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 113・効果 793（根拠あり 773）・notes 269（根拠あり 111）
+件数: キャラ 114・効果 808（根拠あり 788）・notes 275（根拠あり 113）
 
-notes の種類: 未対応 42・前提の外 66・計算に無関係 57・補足 33・間接 71
+notes の種類: 未対応 44・前提の外 68・計算に無関係 59・補足 33・間接 71
 
-スロット: supported 290・partial 29・unsupported 9・noEffect 44
+スロット: supported 294・partial 31・unsupported 9・noEffect 44
 
 ## 10 ラピ
 
@@ -344,6 +344,36 @@ notes の種類: 未対応 42・前提の外 66・計算に無関係 57・補足
   - effects[0] state・weaponChangeShot・explosiveRound（damageTaken）: C-0312（確定）、C-0138（確定）、C-0816（確定）
   - effects[1] weaponChange・burstUse: C-0313（確定）、C-0376（確定）、C-0509（確定）
   - notes[0] 補足: II の直後に III が来たとき、炸裂弾は III のタイマーの 00.00（フルバーストの窓の始まり）より前に着き、フルバースト補正が乗らない（0233-10）。モデルもフルバーストの窓を III の発動の 6f 後の 00.00 から始める（II の替わり目の 29f 後。C-0516）ので、炸裂弾（替わり目の 22〜28f 後）に補正は乗らない: C-0509（確定）、C-0516（確定）
+
+## 100 ラプラス
+
+- **skill1**: partial
+  - effects[0] state・fullChargeShot・heroVision: C-1202（確定）、C-1206（確定）
+  - notes[0] 未対応: ヒーロービジョンの爆発範囲▲は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）: 根拠なし
+- **skill2**: supported
+  - effects[0] damage・lastShot・additional: C-1203（仮説）
+  - notes[0] 前提の外: 対象のパーツに命中した時の本体への追加ダメージは、射撃場の敵にパーツが無いので起きない（要件 4.2 節）: C-0443（範囲外）
+- **burst**: supported
+  - effects[0] weaponChange・burstUse: C-1200（確定）、C-1202（確定）
+  - effects[1] burstDamage・skill: C-1202（確定）、C-1204（確定）
+  - effects[2] damage・weaponChangeShot・true: C-1202（確定）、C-1205（確定）
+  - effects[3] damage・burstUse・true: C-1202（確定）、C-1205（確定）
+  - effects[4] damage・burstUse・true: C-1202（確定）、C-1205（確定）
+  - notes[0] 計算に無関係: バーストスキル発動中はハイド不可は、ダメージに関係しない（被弾を扱わない）: 根拠なし
+- **宝物版 skill1**: partial
+  - effects[0] state・fullChargeShot・heroVision: C-1206（確定）
+  - notes[0] 未対応: ヒーロービジョンの爆発範囲▲は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）: 根拠なし
+- **宝物版 skill2**: supported
+  - effects[0] damage・fullChargeShot・additional: C-1201（確定）
+  - notes[0] 前提の外: 対象のパーツに命中した時の本体への追加ダメージは、射撃場の敵にパーツが無いので起きない（要件 4.2 節）: C-0443（範囲外）
+- **宝物版 burst**: supported
+  - effects[0] weaponChange・burstUse: C-1200（確定）
+  - effects[1] weaponChange・burstUse: C-1200（確定）
+  - effects[2] burstDamage・skill: C-1204（確定）
+  - effects[3] damage・weaponChangeShot・true: C-1205（確定）
+  - effects[4] damage・burstUse・true: C-1205（確定）
+  - effects[5] damage・burstUse・true: C-1205（確定）
+  - notes[0] 計算に無関係: バーストスキル発動中はハイド不可は、ダメージに関係しない（被弾を扱わない）: 根拠なし
 
 ## 101 ドレイク
 
