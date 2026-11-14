@@ -55,6 +55,7 @@ const TEAMS: Record<string, TeamInput> = {
   'センチ単騎・電撃の敵（撮影 C の編成）': team([CENTI], 0, 'Electronic'),
   'プロダクト08 + センチ（撮影 D の編成）': team([PRODUCT08, CENTI], 1),
   '実戦寄り（プロダクト08 + センチ + ソリン・電撃の敵）': team([PRODUCT08, CENTI, SOLINE], 1, 'Electronic'),
+  'プロダクト08 + センチ（宝物の段階 1。S2 だけ宝物版）': team([PRODUCT08, CENTI], 1, 'Fire', 1),
   'プロダクト08 + センチ（基礎版）': team([PRODUCT08, CENTI], 1, 'Fire', 0),
 };
 
@@ -64,7 +65,8 @@ const PERIOD = gameSecondsToFirstFrame(9);
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   const plan = planTeamRun(input);
   const s = input.slots.findIndex((x) => x?.character.resourceId === CENTI);
-  const treasure = input.slots[s]!.skills!.treasurePhase === 3;
+  const phase = input.slots[s]!.skills!.treasurePhase ?? 0;
+  const treasure = phase === 3;
   const items = (filter: Parameters<typeof itemsOf>[1]) => itemsOf(plan.history, { sourceSlotIndex: s, ...filter });
   /** センチの S2 の発動（フルチャージの発ごとに残りを 0.9084 倍。C-1219）を射撃の列から並べ直したもの */
   const s2Fires = (() => {
@@ -104,6 +106,15 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
         expect(up.length).toBeGreaterThan(0);
         for (const w of up) expect(s2Fires).toContain(w.start - 1);
       }
+    });
+  } else if (phase === 1) {
+    it('gives the S2 ATK up every 9 s without the base S1 reduction, and no element damage up', () => {
+      const starts = items({ holder: s, kind: 'timed', skill: 'skill2', stat: 'attack' })
+        .filter((w) => (w.stack ?? 1) === 1)
+        .map((w) => w.start);
+      expect(starts.length).toBeGreaterThan(0);
+      for (const f of starts) expect((f - 1) % PERIOD).toBe(0);
+      expect(items({ kind: 'timed', skill: 'skill1', stat: 'elementDamage' })).toEqual([]);
     });
   } else {
     it('has no S1 or S2 effects in the base version (barrier only)', () => {

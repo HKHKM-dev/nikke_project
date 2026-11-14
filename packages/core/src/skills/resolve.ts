@@ -934,8 +934,6 @@ export function resolveSkillCooldownDowns(
  * クールタイムの印のある周期の残りを (1 − percent / 100) 倍にする（frame/firstPass/gaugeEffects.ts）
  */
 export type ResolvedSkillCooldownReduction = {
-  source: ResolvedEffect['source'];
-  effectIndex: number;
   trigger: ResolvedShotCountTrigger;
   slot: 'skill1' | 'skill2';
   percent: number;
@@ -949,22 +947,14 @@ export function resolveSkillCooldownReductions(
 ): ResolvedSkillCooldownReduction[] {
   return SKILL_SLOTS.flatMap((slot) => {
     const skill = character.skills[slot];
-    return def.skills[slot].effects.flatMap((effect, effectIndex) => {
+    return def.skills[slot].effects.flatMap((effect) => {
       if (effect.kind !== 'skillCooldownReduction') return [];
       const percent = skillValue(skill, effect.percentRef, levels[slot]);
       if (!(percent > 0 && percent < 100))
         throw new RangeError(`skillCooldownReduction needs a percent in (0, 100), got ${percent}`);
       const trigger = resolveTrigger(effect.trigger, skill, levels[slot]);
       if (!isResolvedShotCount(trigger)) throw new RangeError('skillCooldownReduction needs a shot count trigger');
-      return [
-        {
-          source: { resourceId: character.resourceId, skill: slot, name: skill.name },
-          effectIndex,
-          trigger,
-          slot: effect.slot,
-          percent,
-        },
-      ];
+      return [{ trigger, slot: effect.slot, percent }];
     });
   });
 }
