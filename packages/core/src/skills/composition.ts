@@ -498,13 +498,24 @@ function withAdjacentStates(
     for (const slot of SKILL_SLOTS) {
       for (const e of definition.skills[slot].effects) {
         if (e.kind !== 'state' || e.targetAdjacent !== true || !isBattleLongGrant(e)) continue;
-        for (const i of adjacentSlotsOf(characters, j, e.includeSelf === true)) {
+        // 外す効果のある状態は戦闘中ずっと付いているとは限らない（staticStatesOf と同じ規則）
+        if (removedStatesOf(definition).has(e.state)) continue;
+        // 付与の対象と同じ枠（武器種・コード・クラスの絞り込みも。fixedTargetsOf）
+        for (const i of fixedTargetsOf(e, characters, j) ?? []) {
           const held = (out[i] ??= []);
           if (!held.includes(e.state)) held.push(e.state);
         }
       }
     }
   });
+  return out;
+}
+
+/** 定義の解除（removeState）が外す状態 */
+function removedStatesOf(definition: SkillDefinition): Set<NamedStateId> {
+  const out = new Set<NamedStateId>();
+  for (const slot of SKILL_SLOTS)
+    for (const e of definition.skills[slot].effects) if (e.kind === 'removeState') out.add(e.state);
   return out;
 }
 

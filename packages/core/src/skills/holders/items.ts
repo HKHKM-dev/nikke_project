@@ -599,12 +599,17 @@ function stageOfGrant(grant: ResolvedStateGrant): HeldStage {
 
 /**
  * 味方の全部のスタック可能バフへのスタック量▲（plan/design-adjacent-allies.md 2.5 節）が足す先の件の列か: 味方が持つ、上限のある
- * 状態の付与（敵に付く状態・スタック量増減効果無効を除く）か、上限のある timed（確率のきっかけを除く）
+ * 状態の付与（敵に付く状態・スタック量増減効果無効を除く）か、上限のある timed（確率のきっかけ・perCount を除く）
  */
 export function isStackableBuffTrack(track: HeldTrack): boolean {
   if (track.holder === ENEMY || track.opportunities !== null) return false;
   if (track.origin.kind === 'state') return isStackableBuffGrant(track.origin.grant);
-  return track.origin.kind === 'timed' && track.origin.effect.maxStacks !== undefined;
+  // perCount の timed は件ごとの倍率（startScales）で持つので、始まりを足すと前の件が切れる。足す先にしない
+  return (
+    track.origin.kind === 'timed' &&
+    track.origin.effect.maxStacks !== undefined &&
+    track.origin.effect.perCount === undefined
+  );
 }
 
 /** 味方の全部のスタック可能バフへのスタック量▲が足しうる付与か（上限があり、敵に付かず、スタック量増減効果無効でない） */
