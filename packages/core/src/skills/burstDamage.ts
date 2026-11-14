@@ -31,7 +31,7 @@ import {
   type DamageEffect,
   type DotFirstTick,
   type EffectCondition,
-  type SkillDamageType,
+  type DamageEffectType,
   type SkillDefinition,
   type SkillSlot,
   type TimerTrigger,
@@ -83,7 +83,11 @@ export const SUSTAINED_DAMAGE_PLACEMENT: SustainedDamagePlacement = 'attackDamag
 /** 解決済みの倍率ダメージ 1 件。burstDamage（burst スロット）と damageで共通 */
 export type ResolvedSkillDamage = {
   source: { resourceId: number; skill: SkillSlot; name: LocalizedText };
-  damageType: SkillDamageType;
+  /**
+   * fixedShare（与えたダメージ量の X% の固定ダメージ）は射撃ごとの倍率ダメージ（resolvePerShotDamage）にだけ出る。damage.ts の
+   * computeTriggerDamage が、倍率ダメージの式でなく、その発の通常攻撃の値の multiplier 倍を 1 トリガーの値に足す
+   */
+  damageType: DamageEffectType;
   /** X/100。3.5164 など */
   multiplier: number;
   /** 発射体の爆発のヒット（自動攻撃の projectileExplosion）。発射体爆発ダメージ▲を掛ける（V-0124） */
@@ -375,6 +379,10 @@ export function resolveDamageEffects(
         throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot be a core hit damage`);
       }
       if (foldsIntoShot(effect, trigger, def)) return;
+      // 固定ダメージ（与えたダメージ量の X%）は畳み込む形だけを持つ（plan/design-emilia.md 2.2 節）
+      if (effect.damageType === 'fixedShare') {
+        throw new RangeError(`skill ${skill.id}: a fixed share damage must fold into the shot (fires uncharged shots)`);
+      }
       // 条件つきの射撃ごとも、SG ではペレットごとか 1 回の射撃ごとかが決まっていない（resolvePerShotDamage と同じく拒否する）。
       // 1 回の射撃ごとと読んだもの（perTrigger）は、射撃ごとの発動として 1 件ずつ出す（ほかの武器と同じ）
       if (isPerShotTrigger(trigger) && character.weaponType === 'SG' && effect.perTrigger !== true) {

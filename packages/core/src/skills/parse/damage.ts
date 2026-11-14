@@ -3,6 +3,7 @@ import { COUNTER_IDS } from '../counters.ts';
 import {
   BURST_DAMAGE_TYPES,
   type BurstDamageEffect,
+  DAMAGE_EFFECT_TYPES,
   type DamageEffect,
   type EffectTrigger,
   isAppliedTrigger,
@@ -12,7 +13,6 @@ import {
   isSummonAttackTrigger,
   isTimerTrigger,
   type PeriodShorten,
-  SKILL_DAMAGE_TYPES,
   SKILL_SLOTS,
   splitsPerCount,
 } from '../types.ts';
@@ -52,8 +52,9 @@ const isGaugeScale = (x: Json): x is number => Number.isInteger(x) && (x as numb
 export function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect {
   const trigger = parseDamageTrigger(v.trigger, `${path}.trigger`);
   // 射撃ごと（every = 1）の倍率ダメージも書ける。1 トリガーの値に畳み込む（skills/burstDamage.ts の resolvePerShotDamage）
-  const damageType = oneOf(SKILL_DAMAGE_TYPES, v.damageType, `${path}.damageType`);
+  const damageType = oneOf(DAMAGE_EFFECT_TYPES, v.damageType, `${path}.damageType`);
   const effect: DamageEffect = { kind: 'damage', trigger, ref: parseRef(v.ref, `${path}.ref`), damageType };
+  if (damageType === 'fixedShare') return parseFixedShareDamage(v, effect, path);
   if (isSummonAttackTrigger(trigger)) return parseSummonDamage(v, effect, path);
   if (v.accumulate !== undefined) return parseAccumulateDamage(v, effect, path);
   parseGaugeHitsAndCondition(v, effect, path);
@@ -69,6 +70,25 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
   parsePerCountSplit(v, effect, path);
   validateGaugePerHitSplit(effect, path);
   parseHitMarks(v, effect, path);
+  parseAssumes(v, effect, path);
+  return effect;
+}
+
+/**
+ * 与えたダメージ量の X% の固定ダメージ（plan/design-emilia.md 2.2 節）。フルチャージの発の毎回だけで、1 トリガーの値に畳み込むので
+ * ほかの欄（条件・遅れ・ゲージ・数のヒット）とは組まない
+ */
+function parseFixedShareDamage(v: Record<string, Json>, effect: DamageEffect, path: string): DamageEffect {
+  rejectUnknownKeys(
+    v,
+    ['kind', 'trigger', 'ref', 'damageType', 'assumes', 'claims', 'reads'],
+    path,
+    'not allowed with the damageType "fixedShare"',
+  );
+  const { trigger } = effect;
+  if (!isShotCountTrigger(trigger) || trigger.count !== 'fullChargeShot' || Object.keys(trigger).length !== 1) {
+    fail(`${path}.trigger`, 'fixedShare needs the trigger { count: "fullChargeShot" }');
+  }
   parseAssumes(v, effect, path);
   return effect;
 }

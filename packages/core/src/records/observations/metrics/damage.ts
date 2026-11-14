@@ -34,6 +34,16 @@ export const damageMetrics: Readonly<Record<string, Metric>> = {
   hitDamage: { args: ['slot', 'frame', 'core', 'crit', 'distance'], sim: hitDamage },
   hitDamageAtShot: { args: ['slot', 'shot', 'core', 'crit', 'distance'], sim: hitDamageAtShot },
   hitWithSkillHits: { args: ['slot', 'frame', 'core', 'crit', 'distance'], sim: hitWithSkillHits },
+  // 与えたダメージ量の X% の固定ダメージ（plan/design-emilia.md 2.2 節）: 同じ引数の hitDamage の X% と、その発の 1 ヒットとの和
+  // （HUD の 1 つの増分に合わさるとき）
+  fixedShareHitDamage: {
+    args: ['slot', 'frame', 'core', 'crit', 'distance'],
+    sim: (r, c) => hitDamage(r, c) * fixedShareRatio(r, c),
+  },
+  hitWithFixedShare: {
+    args: ['slot', 'frame', 'core', 'crit', 'distance'],
+    sim: (r, c) => hitDamage(r, c) * (1 + fixedShareRatio(r, c)),
+  },
   // 同じ区間・同じ部位の、会心した 1 ヒットと会心しない 1 ヒットの比（plan/design-target-vocab.md 4.1 節）。
   // 敵に掛かる別枠の乗数（受けるダメージ▲）と攻撃力は比で消え、倍率グループの会心の項（クリティカルダメージ）だけが残る
   critHitRatio: {
@@ -103,6 +113,15 @@ function hitDamage(result: SimResult, ctx: MetricContext): number {
   const boost = 1 + core + crit + distance + t.boost.fullBurst;
   // V-0119: 1 発のヒット数（的の表の hitsPerShot）は 1 ヒットの値に含めない
   return ((t.normal / t.hitRate / t.hitsPerShot / t.boost.total) * boost) / pelletsPerShot(shot.shotCount, t.buffs);
+}
+
+/** その時点の区間の、固定ダメージの通常攻撃の値に対する比（ΣX。無ければ 0） */
+function fixedShareRatio(result: SimResult, ctx: MetricContext): number {
+  const frame = frameArgOf(result, ctx);
+  const segment = slotOf(result.slots, ctx).segments.find((s) => s.start <= frame && frame < s.end);
+  if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
+  const t = segment.trigger;
+  return t.normal === 0 ? 0 : t.fixedShare / t.normal;
 }
 
 /**

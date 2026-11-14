@@ -170,6 +170,11 @@ export type BuffTotals = {
    */
   chargeSpeedOverflow: number;
   /**
+   * 最終最大装弾数 1 発ごとのチャージダメージ▲の比率の加算（scaling perFinalMaxAmmo。plan/design-emilia.md 2.1 節）。
+   * フルチャージの発で min(50, 最終最大装弾数) × この値をチャージダメージ▲に足す（applyChargeBuffs）
+   */
+  chargeDamagePerMaxAmmo: number;
+  /**
    * 攻撃速度の加算（plan/design-skill-stage9.md 1.2 節）。レートを蓄積して撃つ武器の発と発の間を、レート × (1 + Σ) に
    * する（frame/firing.ts の FiringParams.rateScale。C-0600）。ダメージの式は読まない
    */
@@ -283,6 +288,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   chargeSpeed: 0,
   chargeSpeedParts: Object.freeze([]) as readonly ChargeSpeedPart[],
   chargeSpeedOverflow: 0,
+  chargeDamagePerMaxAmmo: 0,
   attackSpeed: 0,
   spinUpSpeed: 0,
   chargeTimeFlat: 0,
@@ -472,6 +478,13 @@ export function applyResolvedEffect(
       appliedAmount,
     };
   }
+  // 最終最大装弾数 1 発ごとのチャージダメージ▲は、発の時点の装弾数を掛けるまで別の和に置く（applyChargeBuffs）
+  if (effect.scaling === 'perFinalMaxAmmo') {
+    return {
+      totals: { ...totals, chargeDamagePerMaxAmmo: totals.chargeDamagePerMaxAmmo + effect.value },
+      appliedAmount: effect.value,
+    };
+  }
   if (effect.scaling === 'casterChargeTime') {
     // value は解決時に 発動者の基礎チャージ時間 × 比率 の秒数にしてある（skills/resolve.ts）
     return { totals: { ...totals, chargeTimeFlat: totals.chargeTimeFlat + effect.value }, appliedAmount: effect.value };
@@ -584,15 +597,35 @@ export function scaleBasisPoints(units: number, ratio: number): number {
  * 足し合わせてから素のフルチャージ倍率に掛けて 1e-4 単位で丸め、足し算の▲（OL の増加など）はその後に足す（C-0122・C-0126）。
  * スキルの足し算の▲（C-0020）も OL と同じく倍率▲の後に足す（C-0134。アリスのフルバースト中）。
  * チャージ速度の超過分の変換は、足し算の▲に max(0, チャージ速度の和 − 1) × 割合 を足す
- * （和は効果ごとに整数の % に丸めてから足す。chargeSpeedOverflowDamage。plan/design-red-hood.md 2.4 節）
+ * （和は効果ごとに整数の % に丸めてから足す。chargeSpeedOverflowDamage。plan/design-red-hood.md 2.4 節）。
+ * 最終最大装弾数 1 発ごとの▲は、足し算の▲に min(50, finalMaxAmmo) × 比率の和 を足す（plan/design-emilia.md 2.1 節。
+ * finalMaxAmmo は呼ぶ側がその発の時点のバフで出す。▲が無ければ読まない）
  */
-export function applyChargeBuffs(fullChargeDamage: number, charge: boolean, buffs: BuffTotals): number {
+export function applyChargeBuffs(
+  fullChargeDamage: number,
+  charge: boolean,
+  buffs: BuffTotals,
+  finalMaxAmmo?: number,
+): number {
   if (!charge) return 1;
   return (
     scaleBasisPoints(fullChargeDamage * 10000, buffs.chargeDamageMultiplier) / 10000 +
     buffs.chargeDamage +
-    chargeSpeedOverflowDamage(buffs)
+    chargeSpeedOverflowDamage(buffs) +
+    perMaxAmmoChargeDamage(buffs, finalMaxAmmo)
   );
+}
+
+/** 最終最大装弾数 1 発ごとのチャージダメージ▲の上限の発数（ツールチップ。plan/design-skill-catalog-tooltips.md 4 節） */
+export const PER_MAX_AMMO_CAP = 50;
+
+function perMaxAmmoChargeDamage(
+  buffs: Pick<BuffTotals, 'chargeDamagePerMaxAmmo'>,
+  finalMaxAmmo: number | undefined,
+): number {
+  if (buffs.chargeDamagePerMaxAmmo === 0) return 0;
+  if (finalMaxAmmo === undefined) throw new RangeError('chargeDamagePerMaxAmmo needs the final max ammo of the shot');
+  return Math.min(PER_MAX_AMMO_CAP, finalMaxAmmo) * buffs.chargeDamagePerMaxAmmo;
 }
 
 /**

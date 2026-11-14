@@ -147,6 +147,8 @@
     | フルバースト状態でなければ（timed）／フルバーストタイム中のみ（攻撃力▲） | timed の `condition.inFullBurst: false`／攻撃力の timed の `condition.inFullBurst` | ベルベットの S1・S2 | [design-velvet.md](design-velvet.md) 2.1・2.2 節 |
     | 〈カウンタ〉の弾薬消費 N 発（足りなければ起きない） | `counterChange` の `decrease` と、消費と同じ行の効果の全部に `condition.selfCounter: { "atLeast": N }` | ベルベットの弾丸ポーチ | 同 1・2.3 節 |
     | スキル対象の説明部分が『〜敵1機に』で終わるバーストスキルダメージ▲ | stat `oneEnemyBurstDamage`（timed。当てはまる burstDamage は説明文の対象の句から解決が決める） | ジャッカルのバースト | [design-jackal.md](design-jackal.md) 2 節 |
+    | 自分の最終最大装弾数 1 発ごとにチャージダメージ X%▲ | timed の `scaling: "perFinalMaxAmmo"`（`chargeDamage`・`self` だけ） | エミリアの S1 | [design-emilia.md](design-emilia.md) 2.1 節 |
+    | 自分が与えたダメージ量の X% 分本体に固定ダメージ（フルチャージ攻撃が命中した時） | damage の `damageType: "fixedShare"`（きっかけは `{ "count": "fullChargeShot" }` だけ） | エミリアの S2 | 同 2.2 節 |
     | 使用武器変更の「初回ダメージ：最終攻撃力の X% のダメージ」（変更後の武器の発とは別の 1 ヒット） | burst の `burstDamage`（遅れの表の hitFrames） | ラプラスのバースト（C-1204） | [design-laplace.md](design-laplace.md) 8 節 |
     | 自分が〈状態〉のフルスタック状態なら、（使用武器変更の）通常ダメージを防御力無視ダメージとして適用（バーストを使った時に判定） | 変更を 2 つにし、条件 `selfState` の `stacks`（`trueDamage` あり）と `stacksBelow` で分ける | ラプラスの宝物版のバースト（C-1200） | 同 8 節 |
 

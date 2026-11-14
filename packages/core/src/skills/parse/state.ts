@@ -419,7 +419,8 @@ function parseStateContentItem(
   const timed = parseTimedEffect(contentAsTimed(grant, item), path);
   // 発動者の最大HP 基準は、timed の件の列を持ち主ごとに作る時に直すので、
   // 状態の中身には書けない（使い手がいない。plan/design-hp-ratio-readers.md 9 節）
-  if (timed.scaling === 'casterMaxHp') fail(`${path}.scaling`, 'casterMaxHp is only allowed in timed');
+  if (timed.scaling === 'casterMaxHp' || timed.scaling === 'perFinalMaxAmmo')
+    fail(`${path}.scaling`, `${timed.scaling} is only allowed in timed`);
   // 味方の状態の中身に敵の件（受けるダメージ▲）は書けない（plan/design-holder-effects.md 2.8 節）。
   // 敵に付く状態の中身は、敵が持つ stat だけ
   if (onEnemy) {

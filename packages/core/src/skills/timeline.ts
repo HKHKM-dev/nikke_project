@@ -203,6 +203,8 @@ const BUFF_FIELDS = [
   'chargeSpeed',
   // チャージ速度の超過分の変換（常時だけ。区間の値に入るので鍵に入れる）
   'chargeSpeedOverflow',
+  // 最終最大装弾数 1 発ごとのチャージダメージ▲（1 トリガーの値に入るので鍵に入れる）
+  'chargeDamagePerMaxAmmo',
   // 攻撃速度▲（射撃が変わるので鍵に入れる）
   'attackSpeed',
   // 立ち上げ速度▲（射撃が変わるので鍵に入れる）

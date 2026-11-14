@@ -125,6 +125,7 @@ describe('computeTriggerDamage', () => {
       chargeSpeed: 0,
       chargeSpeedParts: [],
       chargeSpeedOverflow: 0,
+      chargeDamagePerMaxAmmo: 0,
       attackSpeed: 0,
       spinUpSpeed: 0,
       chargeTimeFlat: 0,
