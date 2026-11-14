@@ -6,8 +6,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/tools/git/sync-after-merge.ts\" --prune-branches",
-            "timeout": 60
+            "command": "node \"$CLAUDE_PROJECT_DIR/tools/git/sync-after-merge.ts\" --prune-branches --catch-up SessionStart",
+            "timeout": 180
           }
         ]
       },
@@ -46,8 +46,20 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/tools/git/sync-after-merge.ts\"",
-            "timeout": 60
+            "command": "node \"$CLAUDE_PROJECT_DIR/tools/git/sync-after-merge.ts\" --catch-up UserPromptSubmit",
+            "timeout": 180
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/tools/git/review-flow.ts\" --pre",
+            "timeout": 20
           }
         ]
       }

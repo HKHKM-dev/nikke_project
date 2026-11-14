@@ -13,6 +13,7 @@ import {
   changedChecks,
   checkSteps,
   collisions,
+  finishRebase,
   DOC_SIZE_LIMIT,
   handEditedLines,
   handRemovedLines,
@@ -485,5 +486,46 @@ describe('longNewGuideItems', () => {
     git(cwd, ['rm', '-q', 'plan/captures/guide.md']);
     git(cwd, ['commit', '-q', '-m', 'delete']);
     expect(branchLongGuideItems(base, run, read)).toEqual([]);
+  });
+});
+
+describe('finishRebase', () => {
+  /** 衝突の列を順に返す、リベースの途中の偽の git */
+  function fakeIo(steps: string[][], continueFails = false) {
+    let i = 0;
+    const taken: string[][] = [];
+    return {
+      taken,
+      io: {
+        rebasing: () => i < steps.length,
+        conflicted: () => steps[i] ?? [],
+        takeMain: (paths: readonly string[]) => {
+          taken.push([...paths]);
+        },
+        rebase: () => {
+          if (continueFails) return 1;
+          i++;
+          return 0;
+        },
+        nothingStaged: () => false,
+      },
+    };
+  }
+
+  it('takes main for conflicted generated files and continues to the end', () => {
+    const { io, taken } = fakeIo([['plan/claims.md'], [], ['plan/minimal.md']]);
+    expect(finishRebase(io, ['plan/claims.md', 'plan/minimal.md'])).toEqual({ kind: 'done' });
+    expect(taken).toEqual([['plan/claims.md'], ['plan/minimal.md']]);
+  });
+
+  it('stops at a conflict in a file that is not generated', () => {
+    const { io, taken } = fakeIo([['plan/claims.md'], ['AGENTS.md', 'plan/claims.md']]);
+    expect(finishRebase(io, ['plan/claims.md'])).toEqual({ kind: 'conflict', files: ['AGENTS.md'] });
+    expect(taken).toEqual([['plan/claims.md']]);
+  });
+
+  it('reports a continue that fails for another reason', () => {
+    const { io } = fakeIo([[]], true);
+    expect(finishRebase(io, [])).toMatchObject({ kind: 'error' });
   });
 });

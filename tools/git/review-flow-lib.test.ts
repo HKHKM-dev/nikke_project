@@ -1,6 +1,16 @@
 // 見直しから自動マージの予約までを止めずに進めるフックの判定（plan/design-review-steps.md 3 節）。
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { FLOW_EXPIRY_MS, flowEvent, parseFlowState, stopDecision } from './review-flow-lib.ts';
+import {
+  FLOW_EXPIRY_MS,
+  flowEvent,
+  isReviewedCode,
+  parseFlowState,
+  parseNumstat,
+  SIMPLIFY_MIN_ADDED,
+  simplifyGate,
+  stopDecision,
+} from './review-flow-lib.ts';
 
 describe('flowEvent', () => {
   it('starts on reviewing the branch and ends on reserving the auto-merge', () => {
@@ -48,5 +58,44 @@ describe('parseFlowState', () => {
     });
     expect(parseFlowState('{"branch":"b"}')).toBeNull();
     expect(parseFlowState('nope')).toBeNull();
+  });
+});
+
+describe('simplifyGate', () => {
+  it('stops /simplify unless the branch adds a code file or more than 100 lines of code', () => {
+    const file = (path: string, added: number, isNew = false) => ({ path, added, isNew });
+    expect(simplifyGate([file('packages/core/src/a.ts', 60), file('tools/git/b.ts', 40)])).toContain('100 行以下');
+    expect(simplifyGate([file('packages/core/src/a.ts', 101)])).toBeNull();
+    expect(simplifyGate([file('apps/web/src/new.tsx', 5, true)])).toBeNull();
+    // テスト・データ・文書は数えない
+    expect(
+      simplifyGate([
+        file('packages/core/src/a.test.ts', 500, true),
+        file('packages/core/data/skills/1.json', 300),
+        file('plan/design-x.md', 200, true),
+      ]),
+    ).toContain('追加は 0 行');
+  });
+
+  it('reads git diff --numstat', () => {
+    expect(parseNumstat('3\t1\ta.ts\n-\t-\timg.png\n')).toEqual([
+      { path: 'a.ts', added: 3 },
+      { path: 'img.png', added: 0 },
+    ]);
+  });
+
+  it('counts only non-test scripts under packages, apps and tools', () => {
+    expect(isReviewedCode('tools/git/review-flow.ts')).toBe(true);
+    expect(isReviewedCode('packages/core/src/records/__tests__/x.ts')).toBe(false);
+    expect(isReviewedCode('records/claims/C-0001.json')).toBe(false);
+    expect(isReviewedCode('apps/web/vite.config.mts')).toBe(true);
+  });
+});
+
+describe('the line in AGENTS.md', () => {
+  it('matches the gate (the rule text and the hook move together)', () => {
+    const rule = readFileSync(new URL('../../AGENTS.md', import.meta.url), 'utf8');
+    expect(rule).toContain(`コードの追加が ${SIMPLIFY_MIN_ADDED} 行を超える`);
+    expect(rule).toContain('コード（`packages/`・`apps/`・`tools/`）');
   });
 });

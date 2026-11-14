@@ -46,15 +46,16 @@ import {
   handRemovedLines,
   checkSteps,
   collisions,
+  finishRebase,
   nulPaths,
   pathListArgs,
   PROGRESS_PATHS,
   progressCopies,
-  rebaseOutcome,
   removedLines,
   short,
   splitGenerated,
 } from './pr-prep-lib.ts';
+import { gitRebaseIo, holdPrPrepLock, isRebasing, startRebase } from './git-rebase.ts';
 
 const { values } = parseArgs({
   options: {
@@ -108,8 +109,8 @@ function fail(message: string): never {
 }
 
 const gitDir = git(['rev-parse', '--absolute-git-dir']);
-const rebasing = () => existsSync(`${gitDir}/rebase-merge`) || existsSync(`${gitDir}/rebase-apply`);
-const NO_EDITOR = { GIT_EDITOR: 'true' };
+const rebasing = () => isRebasing(gitDir);
+holdPrPrepLock(gitDir);
 
 const branch = git(['rev-parse', '--abbrev-ref', 'HEAD']);
 
@@ -204,7 +205,7 @@ if (!rebasing()) {
   const behind = git(['rev-list', '--count', 'HEAD..origin/main']);
   if (behind !== '0') {
     console.log(`origin/main が ${behind} 件進んでいる。リベースする`);
-    const outcome = rebaseOutcome(tryGit(['rebase', 'origin/main'], NO_EDITOR), rebasing());
+    const outcome = startRebase(ROOT, gitDir, true);
     if (outcome === 'clean') console.log('衝突なしで取り込んだ');
     else if (outcome === 'notStarted')
       fail(
@@ -214,33 +215,23 @@ if (!rebasing()) {
 }
 
 // リベースの途中（衝突で止まったか、前の回で人が直している途中）なら、生成物の衝突を解いて続ける
-while (rebasing()) {
-  const conflicted = gitPaths(['diff', '--name-only', '--diff-filter=U']);
-  const { generated, other } = splitGenerated(conflicted, GENERATED_PATHS);
-  if (other.length > 0) {
-    console.error('生成物でないファイルが衝突した。直して git add し、もう一度 npm run pr:prep を回す:');
-    for (const p of other) console.error(`  ${p}`);
-    process.exit(1);
-  }
-  if (generated.length > 0) {
-    console.log(`生成物の衝突は main の版を取る（終わりに作り直す）: ${generated.join('・')}`);
-    git(['checkout', '--ours', '--', ...generated]);
-    git(['add', '--', ...generated]);
-  }
-  if (tryGit(['rebase', '--continue'], NO_EDITOR) !== 0 && rebasing()) {
-    // 次のコミットが衝突したなら、次の回で解く
-    if (git(['diff', '--name-only', '--diff-filter=U']) !== '') continue;
-    // 生成物だけのコミットは、main の版を取ると空になる。そのコミットは飛ばす
-    if (tryGit(['diff', '--cached', '--quiet']) !== 0)
-      fail('git rebase --continue が衝突のほかの理由で落ちた（リベースの途中のまま）');
-    if (
-      tryGit(['rebase', '--skip'], NO_EDITOR) !== 0 &&
-      rebasing() &&
-      git(['diff', '--name-only', '--diff-filter=U']) === ''
-    )
-      fail('git rebase --skip が落ちた（リベースの途中のまま）');
-  }
+const io = gitRebaseIo(ROOT, gitDir, true);
+const rebased = finishRebase(
+  {
+    ...io,
+    takeMain: (paths) => {
+      console.log(`生成物の衝突は main の版を取る（終わりに作り直す）: ${paths.join('・')}`);
+      io.takeMain(paths);
+    },
+  },
+  GENERATED_PATHS,
+);
+if (rebased.kind === 'conflict') {
+  console.error('生成物でないファイルが衝突した。直して git add し、もう一度 npm run pr:prep を回す:');
+  for (const p of rebased.files) console.error(`  ${p}`);
+  process.exit(1);
 }
+if (rebased.kind === 'error') fail(rebased.message);
 
 console.log('生成物を作り直す（npm run records:minimal）');
 npm('records:minimal');

@@ -1,6 +1,6 @@
 // マージ済みの PR の後片付け。Claude Code のフック（.claude/settings.json の SessionStart・UserPromptSubmit・Stop）から呼ぶ。
-//   node tools/git/sync-after-merge.ts [--prune-branches] [--wait-merge]
-//     --prune-branches は SessionStart だけ、--wait-merge は Stop だけで付ける
+//   node tools/git/sync-after-merge.ts [--prune-branches] [--wait-merge] [--catch-up <SessionStart|UserPromptSubmit>]
+//     --prune-branches は SessionStart だけ、--wait-merge は Stop だけ、--catch-up は SessionStart と UserPromptSubmit で付ける
 //
 // スカッシュマージでは、ブランチのコミットと main 上のコミットが別物になるので、放っておくと差分の表示に
 // マージ済みの変更が残る。そこで次の 2 つ（--prune-branches なら 3 つ）を行う。
@@ -13,7 +13,8 @@
 //      （PR を出さずに作業を移したブランチや、main に揃えて push したブランチが残るため。
 //      plan/design-workflow-simplification-10.md 2 節）。クラウドでは削除が安全確認で止まるので行わない。PR の一覧が取れなければ
 //      消さない
-// どちらも条件に合わなければ何もしない。ただし 1 の main が origin/main より遅れたまま早送りできないとき
+//   4. --catch-up なら、fetch できたときに catch-up.ts でトピックブランチを origin/main へ取り込む（plan/design-workflow-simplification-13.md 2 節）
+// どれも条件に合わなければ何もしない。ただし 1 の main が origin/main より遅れたまま早送りできないとき
 // （作業中の変更がある・早送りに失敗した）は、黙っていると気づかれないので知らせる。早送りは Windows で途中で
 // 失敗すると、作業ツリーのファイルだけが書き換わり HEAD と index が残ることがある（2026-09-28、#54 の早送り）。
 // 失敗してもフックを止めない（常に終了コード 0）。
@@ -62,10 +63,10 @@ const git = (args: readonly string[], cwd?: string) => run('git', args, cwd);
 const isClean = (cwd?: string) => git(['status', '--porcelain', '--untracked-files=no'], cwd) === '';
 const PR_FIELDS = 'number,state,autoMergeRequest,mergedAt,mergeCommit';
 
-/** 1・2（prune なら 3 も）を行い、知らせることを返す */
-function syncAfterMerge(prune: boolean): string[] {
+/** 1・2（prune なら 3 も）を行い、知らせることを返す。origin を fetch できなければ null */
+function syncAfterMerge(prune: boolean): string[] | null {
   const done: string[] = [];
-  if (git(['fetch', '--quiet', '--prune', 'origin']) === null) return done;
+  if (git(['fetch', '--quiet', '--prune', 'origin']) === null) return null;
 
   // 1. メインのチェックアウト（git worktree list の先頭）
   const list = git(['worktree', 'list', '--porcelain']) ?? '';
@@ -216,5 +217,19 @@ if (waitArg >= 0) {
   const branch = process.argv.includes('--wait-merge') ? pushedBranch() : null;
   const done = syncAfterMerge(process.argv.includes('--prune-branches'));
   if (branch) startWaiter(branch);
-  if (done.length > 0) console.log(JSON.stringify({ systemMessage: `後片付け: ${done.join('。')}` }));
+  // --catch-up <フックの出来事の名前>（SessionStart・UserPromptSubmit）: fetch できたら catch-up.ts で取り込み、エージェントに知らせる
+  const at = process.argv.indexOf('--catch-up');
+  const event = at >= 0 ? process.argv[at + 1] : undefined;
+  const caughtUp = event && done !== null ? await (await import('./catch-up.ts')).catchUp() : null;
+  const messages = [
+    ...(done !== null && done.length > 0 ? [`後片付け: ${done.join('。')}`] : []),
+    ...(caughtUp !== null ? [`取り込み: ${caughtUp}`] : []),
+  ];
+  if (messages.length > 0)
+    console.log(
+      JSON.stringify({
+        systemMessage: messages.join('\n'),
+        ...(caughtUp !== null ? { hookSpecificOutput: { hookEventName: event, additionalContext: caughtUp } } : {}),
+      }),
+    );
 }

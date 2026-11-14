@@ -6,6 +6,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
   bringsNothing,
+  catchUpMessage,
   ciSettled,
   deleteArgs,
   mergeWaitState,
@@ -16,6 +17,7 @@ import {
   PRUNE_AGE_MS,
   prunableBranches,
   seenAt,
+  shouldCatchUp,
   shouldWaitMerge,
   WAIT_CI_MS,
   type GitRun,
@@ -234,5 +236,35 @@ describe('ciSettled', () => {
     expect(ciSettled('[]')).toBe(false);
     expect(ciSettled(null)).toBe(false);
     expect(ciSettled('not json')).toBe(false);
+  });
+});
+
+describe('shouldCatchUp', () => {
+  const plan = { branch: 'claude/x', clean: true, busy: false, track: '[behind 3]', behind: 3 };
+  it('catches up a clean Claude Code topic branch that main has moved past', () => {
+    expect(shouldCatchUp(plan)).toBe(true);
+    expect(shouldCatchUp({ ...plan, track: '' })).toBe(true);
+  });
+  it('leaves other branches, work in progress, a rebase or pr:prep in progress, merged branches and up-to-date branches', () => {
+    expect(shouldCatchUp({ ...plan, branch: 'main' })).toBe(false);
+    expect(shouldCatchUp({ ...plan, branch: 'antigrav/x' })).toBe(false);
+    expect(shouldCatchUp({ ...plan, branch: null })).toBe(false);
+    expect(shouldCatchUp({ ...plan, clean: false })).toBe(false);
+    expect(shouldCatchUp({ ...plan, busy: true })).toBe(false);
+    expect(shouldCatchUp({ ...plan, track: '[gone]' })).toBe(false);
+    expect(shouldCatchUp({ ...plan, behind: 0 })).toBe(false);
+  });
+});
+
+describe('catchUpMessage', () => {
+  it('says what changed and what to do next', () => {
+    const base = { behind: 4, oldBase: 'abc123', changed: [], push: 'pushed' as const, lockChanged: false };
+    expect(catchUpMessage(base)).toBe('origin/main の 4 件をリベースで取り込んだ。ブランチは強制 push した');
+    const full = catchUpMessage({ ...base, changed: ['AGENTS.md'], push: 'failed', lockChanged: true });
+    expect(full).toContain('push は落ちた');
+    expect(full).toContain('git diff abc123 origin/main -- AGENTS.md');
+    expect(full).toContain('npm ci');
+    expect(catchUpMessage({ ...base, changed: ['tools/x.ts'] })).not.toContain('AGENTS.md');
+    expect(catchUpMessage({ ...base, changed: ['.claude/settings.json'] })).toContain('フックの変更は再開から効く');
   });
 });
