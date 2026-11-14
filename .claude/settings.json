@@ -7,7 +7,7 @@
           {
             "type": "command",
             "command": "node \"$CLAUDE_PROJECT_DIR/tools/git/sync-after-merge.ts\" --prune-branches --catch-up SessionStart",
-            "timeout": 60
+            "timeout": 180
           }
         ]
       },
@@ -47,7 +47,7 @@
           {
             "type": "command",
             "command": "node \"$CLAUDE_PROJECT_DIR/tools/git/sync-after-merge.ts\" --catch-up UserPromptSubmit",
-            "timeout": 60
+            "timeout": 180
           }
         ]
       }

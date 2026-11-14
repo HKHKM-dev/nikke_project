@@ -47,6 +47,8 @@ export async function catchUp(): Promise<string | null> {
   };
   if (!shouldCatchUp(plan)) return null;
   const upstream = git(['rev-parse', '-q', '--verify', `${branch}@{upstream}`]);
+  // 追跡先の origin のブランチの名前（手元と違う名前でもよい）
+  const remoteBranch = git(['for-each-ref', '--format=%(upstream:lstrip=3)', ref]);
   if (upstream !== null && git(['rev-list', '--count', `HEAD..${upstream}`]) !== '0')
     return `origin の ${branch} に手元に無い commit があるので、main を取り込まなかった（git pull --rebase で揃えてから進める）`;
   const oldBase = git(['merge-base', 'HEAD', 'origin/main']);
@@ -63,8 +65,14 @@ export async function catchUp(): Promise<string | null> {
     }
   }
   let push: 'pushed' | 'noUpstream' | 'failed' = 'noUpstream';
-  if (upstream !== null)
-    push = gitOk(['push', '--quiet', `--force-with-lease=${branch}:${upstream}`, 'origin', `HEAD:${branch}`])
+  if (upstream !== null && remoteBranch)
+    push = gitOk([
+      'push',
+      '--quiet',
+      `--force-with-lease=${remoteBranch}:${upstream}`,
+      'origin',
+      `HEAD:${remoteBranch}`,
+    ])
       ? 'pushed'
       : 'failed';
   const changed = (git(['diff', '--name-only', oldBase, 'origin/main', '--', ...RULE_PATHS, 'package-lock.json']) ?? '')
