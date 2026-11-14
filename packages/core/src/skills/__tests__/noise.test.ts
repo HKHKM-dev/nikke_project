@@ -1,32 +1,27 @@
 // ノイズ（430）: バーストの味方全体への持続回復（1 秒間隔・10 秒）。S1 の被弾の受けるダメージ▼・S2 の挑発は
 // ダメージに関係せず、S2 のフルチャージの発のゲージの上乗せは未対応、S2・バーストの最大HP▲ は間接の notes（S1 は noEffect、S2 は unsupported）。V-0759。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { gameSecondsToFrames } from '../../time.ts';
-import type { CharacterData } from '../../types.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolvePassives, resolveTimed } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const noise = readJson<CharacterData>('../../../data/characters/430.json');
-const def = parseSkillDefinition(readJson<unknown>('../../../data/skills/430.json'));
+const noise = characterOf(430);
+const def = parseSkillDefinition(rawDefinition(430));
 
 describe('ノイズ（430）の定義', () => {
   it('resolves the burst heal over time on all allies on the burst use, for 10 s', () => {
     const instant = resolveInstant(def, noise, MAX_SKILL_LEVELS);
-    expect(instant).toHaveLength(1);
-    const [heal] = instant;
-    expect(heal).toMatchObject({
-      kind: 'heal',
-      target: 'allies',
-      trigger: 'burstUse',
-      durationFrames: gameSecondsToFrames(10),
-    });
-    expect(heal!.source.skill).toBe('burst');
-    expect(heal!.value).toBeCloseTo(0.0247, 12);
+    expect(instant).toEqual([
+      expect.objectContaining({
+        kind: 'heal',
+        target: 'allies',
+        trigger: 'burstUse',
+        durationFrames: gameSecondsToFrames(10),
+        source: expect.objectContaining({ skill: 'burst' }),
+      }),
+    ]);
+    expect(instant[0]!.value).toBeCloseTo(0.0247, 12);
   });
 
   it('scales the burst heal with the skill level (Lv1 1.36%)', () => {

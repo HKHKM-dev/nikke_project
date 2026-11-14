@@ -2,6 +2,7 @@
 // 1 回だけ healed を起こす（1 秒ごとの刻みでは起こさない。C-0578 と同じ扱い）。読む側はクラウンの S2 の攻撃ダメージ▲（7 秒）と
 // アスカの S1。V-0759 の撮影の編成と、実戦寄りの編成。
 import { describe, expect, it } from 'vitest';
+import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { healsOf } from './historyHelpers.ts';
@@ -20,13 +21,9 @@ const SHOOT = fixedTeam([NOISE, CROWN], 1, {
 // 実戦寄り: ノイズ（I）+ クラウン（II）+ アスカ（III）+ アリス（III）
 const PRACTICAL = fixedTeam([NOISE, CROWN, ASUKA, 191], 2);
 
-function burstUses(plan: ReturnType<typeof planTeamRun>, slotIndex: number): number[] {
-  return plan.schedule!.activations.filter((a) => a.slotIndex === slotIndex).map((a) => a.frame);
-}
-
 describe('撮影の編成（ノイズ + クラウン。V-0759）', () => {
   const plan = planTeamRun(SHOOT);
-  const uses = burstUses(plan, 0);
+  const uses = activationFramesOfSlot(plan.schedule!, 0);
 
   it('uses only the Noise burst, and Crown never fires', () => {
     expect(uses.length).toBeGreaterThan(1);
@@ -52,11 +49,11 @@ describe('撮影の編成（ノイズ + クラウン。V-0759）', () => {
 
 describe('実戦寄りの編成（ノイズ + クラウン + アスカ + アリス）', () => {
   const plan = planTeamRun(PRACTICAL);
-  const uses = burstUses(plan, 0);
+  const uses = activationFramesOfSlot(plan.schedule!, 0);
 
   it('heals every slot on each Noise burst use', () => {
     expect(uses.length).toBeGreaterThan(0);
-    const heals = healsOf(plan).filter((h) => h.sourceSlotIndex === 0);
+    const heals = healsOf(plan);
     for (const frame of uses) {
       for (const slotIndex of [0, 1, 2, 3]) expect(heals).toContainEqual({ frame, sourceSlotIndex: 0, slotIndex });
     }
