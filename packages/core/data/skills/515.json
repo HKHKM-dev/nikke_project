@@ -1,0 +1,147 @@
+{
+  "formatVersion": 1,
+  "resourceId": 515,
+  "checkedAt": "2026-11-14",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 3,
+          "durationUntil": "battleEnd"
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "everySeconds": 5
+          },
+          "ref": 7,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "戦闘開始から 5 秒ごと（5 秒・10 秒…）に、照準線に最も近い敵 1 機（敵 1 体の前提ではその敵）に 1 ヒット。発動からヒットまでの遅れと、バーストゲージを溜めるかは確かめていない（発動のフレーム・溜めない扱い）",
+            "en": "Every 5 s from the start of battle (5 s, 10 s, ...), one hit on the enemy nearest to the crosshair (that enemy under the single-enemy premise). The delay from activation to the hit and whether it charges the Burst Gauge are unchecked (hit on the activation frame, no gauge)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "最大弾数のリロードが完了した時、変更準備状態なら、狙撃モード（チャージ時間 1 秒・最大装弾数 15 発・フルチャージで弾薬消費 40 発・貫通特化。変更準備状態でのリロードの完了で解除）への使用武器変更は未対応（リロードの完了で始まって終わる変更の語彙が無く、撮っていない。plan/design-cinderella-cw.md 2.1 節）。モデルではずっと基礎の武器（MG）で撃つ",
+          "en": "The weapon change to Snipe Mode on reloading to max ammo while in Preparation for Change (1 s charge, 15 rounds, a Full Charge shot expends 40 rounds, Pierce; removed by reloading to max ammo while in Preparation for Change) is not implemented (no vocabulary for a change that starts and ends on a reload, and not recorded; plan/design-cinderella-cw.md 2.1). The model always fires the base weapon (MG)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "weaponChange"
+          }
+        },
+        {
+          "ja": "最大弾数のリロードが完了した時の変更準備（リロード時間を 3 秒に固定・6 秒・最後の弾丸で攻撃時に解除）は未対応（リロード時間の固定の語彙が無く、撮っていない。plan/design-cinderella-cw.md 2.2 節）。モデルではリロード時間は基礎の武器のまま",
+          "en": "Preparation for Change on reloading to max ammo (reload time fixed at 3 s, 6 s, removed on firing the last bullet) is not implemented (no vocabulary for a fixed reload time, and not recorded; plan/design-cinderella-cw.md 2.2). The model keeps the base reload time",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "state"
+          }
+        },
+        {
+          "ja": "味方が消費した弾の合計 200 発ごとの、味方全体のバーストゲージのチャージは未対応（味方の弾の消費を数えるきっかけの語彙が無く、自分の弾・狙撃モードの弾の数え方を撮っていない。plan/design-cinderella-cw.md 2.3 節）",
+          "en": "The Burst Gauge charge for all allies every 200 rounds of total ammo consumed by allies is not implemented (no trigger counting allies' ammo, and how own rounds and Snipe Mode rounds count is not recorded; plan/design-cinderella-cw.md 2.3)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "burstGauge"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "attack",
+          "ref": 2,
+          "durationUntil": "battleEnd"
+        },
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "coreDamage",
+          "ref": 4,
+          "durationUntil": "battleEnd",
+          "assumes": {
+            "ja": "ピンポイント。狙撃モードの適用で外れ、解除で付き直すが、モデルでは狙撃モードにならない（skill1 の notes）ので、戦闘の終わりまで付いたまま",
+            "en": "Pinpoint. It is removed when Snipe Mode takes effect and re-applied when it ends, but the model never enters Snipe Mode (skill1 notes), so it stays until the end of battle"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": "fullBurstStart",
+          "ref": 6,
+          "damageType": "skill",
+          "coreHit": true,
+          "assumes": {
+            "ja": "狙撃モードでない時の効果 1（コアが活性化している敵全体に、コア命中ダメージ）。射撃場の的はコアを持つ。直前に自分がバーストを使ったかの条件は書いていない（バースト III が自分だけの編成を前提にする）。ヒットのフレームとゲージは確かめていない（フルバーストの始まりのフレーム・溜めない扱い）",
+            "en": "Effect 1 when not in Snipe Mode (core strike damage to all enemies with an activated core). The range target has a core. The condition of having used the Burst just before is not written (assumes this unit is the only Burst III). The hit frame and gauge are unchecked (Full Burst start frame, no gauge)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "戦闘開始時とバースト使用時のデコイ（分身）は、それ自体は与ダメージを変えない（デコイを読む効果のある編成でだけ効く）",
+          "en": "The decoy (clone) at the start of battle and on Burst use does not change damage by itself (it matters only with an effect reading decoys in the team)",
+          "kind": "indirect",
+          "path": "decoy"
+        },
+        {
+          "ja": "狙撃モード適用時のデストロイ（パーツダメージ▲）は、パーツを扱わないので効かない（要件 4.2 節）",
+          "en": "Destroy (Damage to Parts up) on entering Snipe Mode has no effect because parts are not modeled (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "unknown",
+            "target": "unknown",
+            "trigger": "unknown"
+          }
+        },
+        {
+          "ja": "フルバーストタイムが発動した時、直前に自分がバーストを使っていて狙撃モードなら、敵全体（パーツ含む）への倍率ダメージは未対応（狙撃モードを定義していない。skill1 の notes）",
+          "en": "On Full Burst after this unit's Burst, the damage to all enemies (including parts) while in Snipe Mode is not implemented (Snipe Mode is not defined; skill1 notes)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 1,
+          "durationRef": 2
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "ref": 5,
+          "durationRef": 6
+        },
+        {
+          "kind": "burstDamage",
+          "ref": 4,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "最終攻撃力が最も高い敵 1 機は、敵 1 体の前提ではその敵",
+            "en": "The enemy with the highest final ATK is that enemy under the single-enemy premise"
+          }
+        }
+      ]
+    }
+  }
+}
