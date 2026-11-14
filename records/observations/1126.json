@@ -1,0 +1,179 @@
+[
+  {
+    "id": "1126-01",
+    "recording": "1126",
+    "kind": "total",
+    "use": "record",
+    "value": 111058063,
+    "description": "マルチャーナ・クラウン の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11322。増分は 5205 個"
+    },
+    "source": "V-0756",
+    "readAt": "2026-11-13"
+  },
+  {
+    "id": "1126-02",
+    "recording": "1126",
+    "kind": "count",
+    "use": "record",
+    "value": 253,
+    "unit": "トリガー",
+    "description": "マルチャーナ・クラウン のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 5205 個。前の増分から 30f 未満の増分（5140 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 39f）から発の数を決めた（2 発になった組 20 個）"
+    },
+    "source": "V-0756",
+    "readAt": "2026-11-13"
+  },
+  {
+    "id": "1126-03",
+    "recording": "1126",
+    "source": "V-0756",
+    "readAt": "2026-11-13",
+    "kind": "timing",
+    "use": "compare",
+    "value": 411.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 411,
+      "high": 412
+    },
+    "description": "マルチャーナの 9 発目（1 回目の最後の弾丸。HUD の SG の増分 f1189）から、クラウンの攻撃ダメージ▲（S2）の切れ目までの動画のフレーム。▲は f1188 の発（▲なし）と f1190 の発（▲あり）の間で付き、f1600 の発（▲あり）と f1601 の発（▲なし）の間で切れた。次の最後の弾丸（f1615）までの 14 フレームは▲なし",
+    "method": {
+      "tool": "recipe:hud-jumps@3 と使い捨てのスクリプト",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、クラウンの 1 ヒットの格子（▲なし 胴体 4477.44・会心 6716.17、▲あり 5417.26・8125.89、距離ボーナスの版も。同じフレームの 1〜3 ヒットの和）に当てた（buff-edge@5 の --opt grid=C=2@0;C▲=2@326 と同じ格子）。クラウンはほぼ毎フレーム増分を出すので、境は 1f の幅で挟める"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "attackDamage",
+        "from": 1,
+        "shot": 9,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1126-04",
+    "recording": "1126",
+    "source": "V-0756",
+    "readAt": "2026-11-13",
+    "kind": "timing",
+    "use": "compare",
+    "value": 415,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 410,
+      "high": 420
+    },
+    "description": "マルチャーナの 18 発目（2 回目の最後の弾丸。f1615）から、クラウンの攻撃ダメージ▲の切れ目までの動画のフレーム。▲は f1614（▲なし）と f1616（▲あり）の間で付き直し、f2025 の発（▲あり）と f2035 の発（▲なし）の間で切れた（クラウンのリロードで間の発が無い）。f2041 の最後の弾丸で付き直した",
+    "method": {
+      "tool": "recipe:hud-jumps@3 と使い捨てのスクリプト",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、クラウンの 1 ヒットの格子（▲なし 胴体 4477.44・会心 6716.17、▲あり 5417.26・8125.89、距離ボーナスの版も。同じフレームの 1〜3 ヒットの和）に当てた（buff-edge@5 の --opt grid=C=2@0;C▲=2@326 と同じ格子）。クラウンはほぼ毎フレーム増分を出すので、境は 1f の幅で挟める"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "attackDamage",
+        "from": 1,
+        "shot": 18,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1126-05",
+    "recording": "1126",
+    "source": "V-0756",
+    "readAt": "2026-11-13",
+    "kind": "timing",
+    "use": "compare",
+    "value": 411.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 411,
+      "high": 412
+    },
+    "description": "マルチャーナの 59 発目（的の 1 回目のジャンプの後の 2 回目の最後の弾丸。f3631）から、クラウンの攻撃ダメージ▲の切れ目までの動画のフレーム。▲は f3629（▲なし）と f3632（▲あり）の間で付き直し、f4042 の発（▲あり）と f4043 の発（▲なし）の間で切れた。次の最後の弾丸（f4057）までの 13 フレームは▲なし",
+    "method": {
+      "tool": "recipe:hud-jumps@3 と使い捨てのスクリプト",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、クラウンの 1 ヒットの格子（▲なし 胴体 4477.44・会心 6716.17、▲あり 5417.26・8125.89、距離ボーナスの版も。同じフレームの 1〜3 ヒットの和）に当てた（buff-edge@5 の --opt grid=C=2@0;C▲=2@326 と同じ格子）。クラウンはほぼ毎フレーム増分を出すので、境は 1f の幅で挟める"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "attackDamage",
+        "from": 1,
+        "shot": 59,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1126-06",
+    "recording": "1126",
+    "source": "V-0756",
+    "readAt": "2026-11-13",
+    "kind": "count",
+    "use": "record",
+    "value": 21,
+    "unit": "回",
+    "description": "マルチャーナの最後の弾丸（RELOADING のバーの前の SG の増分。的のジャンプでのリロードを除く）の回数と、そのたびのクラウンの攻撃ダメージ▲の付き方。前に▲の切れていた 12 回（f1189・1615・2041・3631・4057・5344・5769・7048・8105・8531・9813・10661）はどれも、最後の弾丸の SG の増分の前の発が▲なし、次の発が▲あり（f2041・8531・9813 はクラウンのリロードで前後の発がまばら）。そこから付いた▲の窓は、間にクラウンのリラックスの回復が無い 4 回で、最後の弾丸から 410〜413f で切れた（f1189→1600/1601、f3631→4042/4043、f5344→5754/5755、f7048→7459/7461）。ほかに 2 回（f1615→2025/2035、f8105→8509/8527）はクラウンのリロードで切れ目の幅が広い。残りの 9 回は、クラウンのリラックスの回復で延びた▲の中か、前後にクラウンの発が無い。▲の区間の外の▲あり（H2 の吸収回復の窓の中の命中ごとの付き直し）は無い",
+    "method": {
+      "tool": "recipe:hud-jumps@3・reload.ts --mode fit --shots と使い捨てのスクリプト",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、クラウンの 1 ヒットの格子（▲なし 胴体 4477.44・会心 6716.17、▲あり 5417.26・8125.89、距離ボーナスの版も。同じフレームの 1〜3 ヒットの和）に当てた（buff-edge@5 の --opt grid=C=2@0;C▲=2@326 と同じ格子）。クラウンはほぼ毎フレーム増分を出すので、境は 1f の幅で挟める"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  }
+]

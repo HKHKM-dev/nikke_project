@@ -1,0 +1,246 @@
+[
+  {
+    "id": "1127-01",
+    "recording": "1127",
+    "kind": "total",
+    "use": "record",
+    "value": 63497543,
+    "description": "I-DOLL・フラワー・マルチャーナ・クラウン の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f9959。増分は 4518 個"
+    },
+    "source": "V-0756",
+    "readAt": "2026-11-13"
+  },
+  {
+    "id": "1127-02",
+    "recording": "1127",
+    "kind": "count",
+    "use": "record",
+    "value": 175,
+    "unit": "トリガー",
+    "description": "I-DOLL・フラワー・マルチャーナ・クラウン のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 4518 個。前の増分から 30f 未満の増分（4476 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 43.5f）から発の数を決めた（2 発になった組 18 個）"
+    },
+    "source": "V-0756",
+    "readAt": "2026-11-13"
+  },
+  {
+    "id": "1127-05",
+    "recording": "1127",
+    "source": "V-0756",
+    "readAt": "2026-11-13",
+    "kind": "timing",
+    "use": "input",
+    "value": [0, 10589],
+    "unit": "f",
+    "description": "マルチャーナ（枠 2。オート射撃 OFF の操作枠）が撃たなかった区間（ゲーム内のフレーム。戦闘の全体。比べる設定 holdFire の入力）",
+    "method": {
+      "tool": "目視",
+      "note": "戦闘中の画面で、マルチャーナが遮蔽物に隠れたまま撃たず、照準の横の残弾が 009 のままなのを確かめた（f1200・f9930）。録画は残り 00:25 で終わり、戦闘履歴のパネルは無い"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1127-06",
+    "recording": "1127",
+    "source": "V-0756",
+    "readAt": "2026-11-13",
+    "kind": "timing",
+    "use": "compare",
+    "value": -1.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -2,
+      "high": -1
+    },
+    "description": "マルチャーナの 1 回目のバーストの使用（六角形の II → III の替わり目 f2098。1127-04）から、クラウンの攻撃ダメージ▲（S2）の付き始めまでの動画のフレーム。▲は f2096 の発（▲なし）と f2097 の発（▲あり）の間で付いた（その前の▲は切れていた）",
+    "method": {
+      "tool": "recipe:hud-jumps@3・burst-panel@4 と使い捨てのスクリプト",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、クラウンの 1 ヒットの格子（▲なし 胴体 4477.44・会心 6716.17、▲あり 5417.26・8125.89、距離ボーナスの版も。同じフレームの 1〜3 ヒットの和）に当てた（buff-edge@5 の --opt grid=C=2@0;C▲=2@326 と同じ格子）。クラウンはほぼ毎フレーム増分を出すので、境は 1f の幅で挟める"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "stat": "attackDamage",
+        "from": 2,
+        "n": 0,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "holdFire": [
+          {
+            "slot": 2,
+            "frames": "1127-05"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1127-07",
+    "recording": "1127",
+    "source": "V-0756",
+    "readAt": "2026-11-13",
+    "kind": "timing",
+    "use": "compare",
+    "value": -1.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -2,
+      "high": -1
+    },
+    "description": "マルチャーナの 2 回目のバーストの使用（六角形の II → III の替わり目 f4060。1127-04）から、クラウンの攻撃ダメージ▲（S2）の付き始めまでの動画のフレーム。▲は f4058 の発（▲なし）と f4059 の発（▲あり）の間で付いた（その前の▲は切れていた）",
+    "method": {
+      "tool": "recipe:hud-jumps@3・burst-panel@4 と使い捨てのスクリプト",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、クラウンの 1 ヒットの格子（▲なし 胴体 4477.44・会心 6716.17、▲あり 5417.26・8125.89、距離ボーナスの版も。同じフレームの 1〜3 ヒットの和）に当てた（buff-edge@5 の --opt grid=C=2@0;C▲=2@326 と同じ格子）。クラウンはほぼ毎フレーム増分を出すので、境は 1f の幅で挟める"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "stat": "attackDamage",
+        "from": 2,
+        "n": 1,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "holdFire": [
+          {
+            "slot": 2,
+            "frames": "1127-05"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1127-08",
+    "recording": "1127",
+    "source": "V-0756",
+    "readAt": "2026-11-13",
+    "kind": "timing",
+    "use": "compare",
+    "value": -2,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -3,
+      "high": -1
+    },
+    "description": "マルチャーナの 5 回目のバーストの使用（六角形の II → III の替わり目 f9851。1127-04）から、クラウンの攻撃ダメージ▲（S2）の付き始めまでの動画のフレーム。▲は f9848 の発（▲なし）と f9850 の発（▲あり）の間で付いた（その前の▲は切れていた）",
+    "method": {
+      "tool": "recipe:hud-jumps@3・burst-panel@4 と使い捨てのスクリプト",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、クラウンの 1 ヒットの格子（▲なし 胴体 4477.44・会心 6716.17、▲あり 5417.26・8125.89、距離ボーナスの版も。同じフレームの 1〜3 ヒットの和）に当てた（buff-edge@5 の --opt grid=C=2@0;C▲=2@326 と同じ格子）。クラウンはほぼ毎フレーム増分を出すので、境は 1f の幅で挟める"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "stat": "attackDamage",
+        "from": 2,
+        "n": 4,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "holdFire": [
+          {
+            "slot": 2,
+            "frames": "1127-05"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1127-09",
+    "recording": "1127",
+    "source": "V-0756",
+    "readAt": "2026-11-13",
+    "kind": "count",
+    "use": "record",
+    "value": 5,
+    "unit": "回",
+    "description": "マルチャーナのバーストの使用（六角形の II → III。1127-04）の回数。II はどの回もマルチャーナ（右のバースト欄の II の顔）で、クラウンはバーストを使わなかった（クラウンの 1 発にバーストの攻撃ダメージ▲の値が出ない）。3・4 回目（f5910・7918）は、クラウンのリラックスの回復で付いた▲（f5796・7530 から）の中で、付き始めを見られない。マルチャーナのバーストの後に、リラックスの回復と関係なく▲が付いたのは 1・2・5 回目",
+    "method": {
+      "tool": "recipe:hud-jumps@3・burst-panel@4 と使い捨てのスクリプト",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、クラウンの 1 ヒットの格子（▲なし 胴体 4477.44・会心 6716.17、▲あり 5417.26・8125.89、距離ボーナスの版も。同じフレームの 1〜3 ヒットの和）に当てた（buff-edge@5 の --opt grid=C=2@0;C▲=2@326 と同じ格子）。クラウンはほぼ毎フレーム増分を出すので、境は 1f の幅で挟める"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1127-03",
+    "recording": "1127",
+    "kind": "timing",
+    "use": "record",
+    "value": [2069, 4031, 5881, 7889, 9822],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・24・25・25・25f"
+    },
+    "source": "V-0756",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1127-04",
+    "recording": "1127",
+    "kind": "timing",
+    "use": "record",
+    "value": [2098, 4060, 5910, 7918, 9851],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25・25f"
+    },
+    "source": "V-0756",
+    "readAt": "2026-11-14"
+  }
+]
