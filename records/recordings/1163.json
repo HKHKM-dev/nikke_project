@@ -1,0 +1,47 @@
+{
+  "id": "1163",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1163_laplace-c-expire.mp4",
+  "original": "2026-11-14_20-34-31.mp4",
+  "durationSec": 199.8,
+  "frames": 11985,
+  "fps": 60,
+  "sizeMB": 242.1,
+  "sha256": "e3e3fa3c2182",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 100,
+      "name": "ラプラス",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0772 の撮り方 C: ココア（I）・ソルジャーF.A.（II）・ラプラス（III・操作・宝物 段階 3）。オートバースト OFF。ゲージの満タンの後にラプラスのオート射撃を OFF にし、約 8 秒後に I → II → III を手で押し、III と同時にオート射撃を ON に戻す（バーストの途中でヒーロービジョンが切れる回）",
+  "backup": {
+    "at": "2026-11-14T20:42+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
