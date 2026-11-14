@@ -1,0 +1,574 @@
+[
+  {
+    "id": "1199-01",
+    "recording": "1199",
+    "kind": "timing",
+    "use": "record",
+    "value": [1284, 2402, 3580, 4652, 5830, 6950, 8129, 9261, 10439],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 5・5・24・0・25・0・25・0・24f"
+    },
+    "source": "V-0779",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1199-02",
+    "recording": "1199",
+    "kind": "timing",
+    "use": "record",
+    "value": [1313, 3609, 5859, 8158, 10468],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 6・24・25・25・24f"
+    },
+    "source": "V-0779",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1199-03",
+    "recording": "1199",
+    "kind": "timing",
+    "use": "record",
+    "value": [1342, 3638, 5889, 8187, 10497],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0779",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1199-04",
+    "recording": "1199",
+    "kind": "timing",
+    "use": "record",
+    "value": [1951, 4246, 6497, 8796, 11002],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0779",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1199-05",
+    "recording": "1199",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 608, 608, 609, 505],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0779",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1199-06",
+    "recording": "1199",
+    "kind": "timing",
+    "use": "record",
+    "value": [3574, 5824, 8123, 10432],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0779",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1199-07",
+    "recording": "1199",
+    "kind": "hit",
+    "use": "compare",
+    "value": 642148,
+    "description": "エミリアの戦闘の最初の発（f954）の 1 ヒット（コア・会心でない）と、同じフレームの S2 の固定ダメージの和。S1 の▲の無い発。同じフレームのリターの 1 ヒット 20,044 を引いた（増分 662,192）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "buff-edge の grid（エミリアのモデルの 1 ヒットの格子の × 1.5899 の版）に当たる増分。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitWithFixedShare",
+      "args": {
+        "slot": 3,
+        "frame": 10,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0779",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1199-08",
+    "recording": "1199",
+    "kind": "hit",
+    "use": "compare",
+    "value": 673126,
+    "description": "エミリアの2 発目（f1029）の 1 ヒット（コア・会心でない）と、同じフレームの S2 の固定ダメージの和。S1 のチャージダメージ▲（最終最大装弾数 6 発ぶん）が乗る",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "buff-edge の grid（エミリアのモデルの 1 ヒットの格子の × 1.5899 の版）に当たる増分。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitWithFixedShare",
+      "args": {
+        "slot": 3,
+        "frame": 100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0779",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1199-09",
+    "recording": "1199",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1143477,
+    "description": "エミリアのリターの 2 回目のバーストの窓の中の発（f2518）の 1 ヒット（コア・会心でない）と、同じフレームの S2 の固定ダメージの和。リターの最大装弾数▲（6 → 9 発）で、S1 の▲が 9 発ぶんになる",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "buff-edge の grid（エミリアのモデルの 1 ヒットの格子の × 1.5899 の版）に当たる増分。f2667 も同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitWithFixedShare",
+      "args": {
+        "slot": 3,
+        "frame": 1800,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0779",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1199-10",
+    "recording": "1199",
+    "kind": "hit",
+    "use": "compare",
+    "value": 860767,
+    "description": "エミリアの1 回目のフルバーストの中の、氷結の魔女の後の発（f1947）の 1 ヒット（コア・会心でない）と、同じフレームの S2 の固定ダメージの和。S2 の最大装弾数 +3（6 → 9 発）で S1 の▲が 9 発ぶん",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "buff-edge の grid（エミリアのモデルの 1 ヒットの格子の × 1.5899 の版）に当たる増分。最大装弾数が 6 発のままなら 841,405"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitWithFixedShare",
+      "args": {
+        "slot": 3,
+        "fullBurst": 0,
+        "frame": 450,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0779",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1199-11",
+    "recording": "1199",
+    "kind": "hit",
+    "use": "compare",
+    "value": 5036433,
+    "description": "エミリアの1 回目のフルバーストの氷結の魔女の発（f1722）の 1 ヒット（コア・会心でない）と、同じフレームの S2 の固定ダメージの和。リターの攻撃力▲の窓の外で撃った発。同じフレームのリターの 1 ヒット 15,686 を引いた（増分 5,052,119）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "buff-edge の grid（エミリアのモデルの 1 ヒットの格子の × 1.5899 の版）に当たる増分。2 回目の窓の発（f3904）は胴体の 3,021,859"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitWithFixedShare",
+      "args": {
+        "slot": 3,
+        "fullBurst": 0,
+        "frame": 240,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0779",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1199-12",
+    "recording": "1199",
+    "kind": "hit",
+    "use": "compare",
+    "value": 9125042,
+    "description": "エミリアの3 回目のフルバーストの氷結の魔女の発（f6155）の 1 ヒット（コア・会心でない）と、同じフレームの S2 の固定ダメージの和。リターの攻撃力▲・最大装弾数▲の窓の中で撃った発（S1 の▲は 12 発ぶん）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "buff-edge の grid（エミリアのモデルの 1 ヒットの格子の × 1.5899 の版）に当たる増分。モデルの 3 回目の窓の +10f は、リターの窓と氷結の魔女の中（モデルの発の時刻はチェーンの時刻の残差で動くので、値はこの区間で比べる）。4・5 回目（f8436・f10730）はその会心のコア 11,404,842"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitWithFixedShare",
+      "args": {
+        "slot": 3,
+        "fullBurst": 2,
+        "frame": 10,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0779",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1199-13",
+    "recording": "1199",
+    "kind": "hit",
+    "use": "compare",
+    "value": 841407,
+    "description": "エミリアの1 回目のフルバーストの終わりの後の最初の発（f2022）の 1 ヒット（コア・会心）と、同じフレームの S2 の固定ダメージの和。前の発（f1947）は S2 の +3 の窓の中（9 発）で、この発は窓の外（6 発）。会心。付いた時の 9 発で決まるなら 860,767",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "buff-edge の grid（エミリアのモデルの 1 ヒットの格子の × 1.5899 の版）に当たる増分。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitWithFixedShare",
+      "args": {
+        "slot": 3,
+        "fullBurst": 0,
+        "frame": 600,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0779",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1199-14",
+    "recording": "1199",
+    "kind": "timing",
+    "use": "compare",
+    "value": [75, 75, 75, 76],
+    "unit": "f",
+    "description": "エミリアの最初の 5 発（f954・f1029・f1104・f1179・f1255）の発と発の間（動画のフレーム）。2 発目から S1 のチャージ速度▲が効く（▲が無ければ 82f）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "RL の着弾までのフレームは発ごとに同じとみなした"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 3,
+        "from": 0,
+        "to": 400
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "source": "V-0779",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1199-15",
+    "recording": "1199",
+    "kind": "timing",
+    "use": "compare",
+    "value": [76, 391],
+    "unit": "f",
+    "description": "1 回目のバーストの前の 2 発と氷結の魔女の発（f1255・f1331・f1722）の発と発の間（動画のフレーム）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "S1 の▲を和に入れない 300%▼ だけなら、氷結の魔女の溜めは 8f 長い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 3,
+        "burst": 0,
+        "from": -250,
+        "to": 300,
+        "video": true
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "source": "V-0779",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1199-16",
+    "recording": "1199",
+    "kind": "timing",
+    "use": "compare",
+    "value": [272, 76],
+    "unit": "f",
+    "description": "2 回目のバーストの前の発・氷結の魔女の発・次の発（f3632・f3904・f3980）の発と発の間（動画のフレーム）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": ""
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 3,
+        "burst": 1,
+        "from": -60,
+        "to": 300,
+        "video": true
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "source": "V-0779",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1199-17",
+    "recording": "1199",
+    "kind": "timing",
+    "use": "compare",
+    "value": [273],
+    "unit": "f",
+    "description": "4 回目のバーストの前の発と氷結の魔女の発（f8163・f8436）の間（動画のフレーム）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": ""
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 3,
+        "burst": 3,
+        "from": -60,
+        "to": 300,
+        "video": true
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "source": "V-0779",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1199-18",
+    "recording": "1199",
+    "kind": "count",
+    "use": "compare",
+    "value": [6, 9],
+    "description": "エミリアの最初の 2 本のマガジンの発の数（f954〜f1331 の 6 発、f1722〜f2324 の 9 発。その後 194f のリロード）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps と buff-edge の grid",
+      "note": "1198 と同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 3,
+        "count": 2
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "source": "V-0779",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1199-19",
+    "recording": "1199",
+    "kind": "timing",
+    "use": "compare",
+    "value": 400,
+    "unit": "f",
+    "description": "デルタの 1 発目の増分（f940）から、1 回目のフルバーストの入り（f1342。`1199-03`）までのゲーム内のフレーム（動画の 402f から I・II の発動の止まり 1f ずつを引いた）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps とレシピ burst-panel",
+      "note": "デルタの 1 発目は 224,312（デルタのコア 208,626 + リターの 1 ヒット 15,686）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstStartFromFirstShot",
+      "args": {
+        "slot": 2,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "gauge"
+    },
+    "source": "V-0779",
+    "readAt": "2026-11-14"
+  }
+]

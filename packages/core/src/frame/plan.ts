@@ -20,6 +20,7 @@ import {
   perCountFrames,
   resolveDamageEffects,
   resolveDotEffects,
+  resolveFixedShare,
   resolvePerShotDamage,
   type ResolvedDamageEffect,
   type ResolvedSkillDamage,
@@ -177,7 +178,7 @@ export function slotTriggerDamage(
   segmentLanding: string | null | undefined,
   buffs: BuffTotals,
   fullBurst: boolean,
-  perShot: ResolvedSkillDamage[],
+  shotSkills: ShotSkillDamage,
   attackRounding: AttackRounding | undefined,
 ): TriggerDamage {
   return landingTriggerDamage(
@@ -188,7 +189,8 @@ export function slotTriggerDamage(
       attackOverride: slot.attackOverride,
       attackRounding,
       buffs,
-      perShot,
+      perShot: shotSkills.perShot,
+      fixedShare: shotSkills.fixedShare,
     },
     // C-0170: 持続の命中率▲が効いている区間は、その区間の N でコア命中率を出し直す。即着弾に替えた使用武器の
     // 変更の区間は、的の表の変更後の武器の行のコア命中率。適正最小射程距離▲ の区間は距離ボーナスも出し直す
@@ -272,7 +274,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   const landing = planLandings(slots, enemy, frames, resolvePassiveStates(timelineSlots));
   // 蓄積爆破の発の値（下の shotValueAt）: 枠ごとの着弾の区間のカーソルと、1 発の倍率ダメージの解決
   const shotSpanAt: number[] = [];
-  const perShotOf: ResolvedSkillDamage[][] = [];
+  const shotSkillsOf: ShotSkillDamage[] = [];
   const first = runFirstPass(timelineSlots, {
     frames,
     model,
@@ -320,7 +322,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
         segmentLanding,
         buffs,
         fullBurst,
-        (perShotOf[slotIndex] ??= perShotDamageOf(slot)),
+        (shotSkillsOf[slotIndex] ??= shotSkillDamageOf(slot)),
         input.attackRounding,
       );
       const value =
@@ -373,6 +375,19 @@ export function perShotDamageOf(slot: TeamSlotInput): ResolvedSkillDamage[] {
   const definition = slot.skills?.definition;
   if (!definition) return [];
   return resolvePerShotDamage(definition, slot.character, slot.skills?.levels ?? MAX_SKILL_LEVELS);
+}
+
+/** 1 トリガーの値に畳み込むスキルのダメージ: 射撃ごとの倍率ダメージと、与えたダメージ量の X% の固定ダメージの X/100 の和 */
+export type ShotSkillDamage = { perShot: ResolvedSkillDamage[]; fixedShare: number };
+
+export function shotSkillDamageOf(slot: TeamSlotInput): ShotSkillDamage {
+  const definition = slot.skills?.definition;
+  if (!definition) return { perShot: [], fixedShare: 0 };
+  const levels = slot.skills?.levels ?? MAX_SKILL_LEVELS;
+  return {
+    perShot: resolvePerShotDamage(definition, slot.character, levels),
+    fixedShare: resolveFixedShare(definition, slot.character, levels),
+  };
 }
 
 /** バースト系のトリガー（burstDamage と同じく発動直前のバフで計算する）か */

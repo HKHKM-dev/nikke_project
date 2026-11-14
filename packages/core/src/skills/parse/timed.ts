@@ -99,6 +99,9 @@ function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path:
   if (scaling === 'casterMaxHp' && !isMaxHpStat(stat)) {
     fail(`${path}.scaling`, `casterMaxHp is only allowed with stat "maxHp" or "maxHpOnly", got "${stat}"`);
   }
+  if (scaling === 'perFinalMaxAmmo' && stat !== 'chargeDamage') {
+    fail(`${path}.scaling`, `perFinalMaxAmmo is only allowed with stat "chargeDamage", got "${stat}"`);
+  }
   if (scaling === 'casterChargeTime' && stat !== 'chargeSpeed') {
     fail(`${path}.scaling`, `casterChargeTime is only allowed with stat "chargeSpeed", got "${stat}"`);
   }
@@ -113,6 +116,15 @@ function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path:
   if (unit !== undefined && scaling !== 'flat') {
     fail(`${path}.scaling`, `${stat} needs scaling "flat" (the value is ${unit})`);
   }
+}
+
+/**
+ * timed だけに書ける scaling。発動者の最大HP 基準（casterMaxHp）は対象の枠ごとに件の列で直し（plan/design-hp-ratio-readers.md 9 節）、
+ * 最終最大装弾数 1 発ごと（perFinalMaxAmmo）は使い手が timed だけ（plan/design-emilia.md 2.1 節）。passive と状態の中身は拒む
+ */
+export function rejectTimedOnlyScaling(scaling: BuffScaling | undefined, path: string): void {
+  if (scaling === 'casterMaxHp' || scaling === 'perFinalMaxAmmo')
+    fail(`${path}.scaling`, `${scaling} is only allowed in timed`);
 }
 
 /** scaling 'flat'（値を 100 で割らない）を書ける stat */
@@ -379,6 +391,9 @@ function parseTimedValue(
   const { target } = effect;
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
   validateScaling(scaling, stat, path);
+  // 最終最大装弾数 1 発ごとの▲は持ち主の発の時点の装弾数で出すので、自分にだけ（plan/design-emilia.md 2.1 節）
+  if (scaling === 'perFinalMaxAmmo' && target !== 'self')
+    fail(`${path}.target`, 'perFinalMaxAmmo is only allowed with target "self"');
   validateFlatChargeTime(stat, scaling, v, path);
   validateDamageTaken(stat, target, v, path);
   validateAttackSpeed(stat, target, v, path);
@@ -827,8 +842,7 @@ export function parsePassiveEffect(v: Record<string, Json>, path: string): Passi
     fail(`${path}.stat`, `${stat} is only allowed in timed`);
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
   validateScaling(scaling, stat, path);
-  // 発動者の最大HP 基準は、対象の枠ごとに件の列で直すので timed だけ（常時の値は対象ごとに持たない。使い手がいない）
-  if (scaling === 'casterMaxHp') fail(`${path}.scaling`, 'casterMaxHp is only allowed in timed');
+  rejectTimedOnlyScaling(scaling, path);
   validateFlatChargeTime(stat, scaling, v, path);
   // 常時の受けるダメージ▲（観測値の比べる設定が使う）は、いまのまま
   // 味方の各枠の常時の値に足す（敵の常時の件にするのは、敵の効果を外す語彙を足す時。plan/design-holder-effects.md 2.8 節）

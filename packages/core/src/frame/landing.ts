@@ -673,6 +673,7 @@ export function landingTriggerDamage(
     },
     normal: sum((t) => t.normal),
     perShot: sum((t) => t.perShot),
+    fixedShare: sum((t) => t.fixedShare),
     perTrigger: sum((t) => t.perTrigger),
     hitRate: sum((t) => t.hitRate),
   };

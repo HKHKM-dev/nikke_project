@@ -375,6 +375,10 @@ export function resolveDamageEffects(
         throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot be a core hit damage`);
       }
       if (foldsIntoShot(effect, trigger, def)) return;
+      // 固定ダメージ（与えたダメージ量の X%）は畳み込む形だけを持つ（plan/design-emilia.md 2.2 節）
+      if (effect.damageType === 'fixedShare') {
+        throw new RangeError(`skill ${skill.id}: a fixed share damage must fold into the shot (fires uncharged shots)`);
+      }
       // 条件つきの射撃ごとも、SG ではペレットごとか 1 回の射撃ごとかが決まっていない（resolvePerShotDamage と同じく拒否する）。
       // 1 回の射撃ごとと読んだもの（perTrigger）は、射撃ごとの発動として 1 件ずつ出す（ほかの武器と同じ）
       if (isPerShotTrigger(trigger) && character.weaponType === 'SG' && effect.perTrigger !== true) {
@@ -712,23 +716,19 @@ export function isPerShotTrigger(trigger: ResolvedTrigger): boolean {
   );
 }
 
-/**
- * 射撃ごとの倍率ダメージ（damage の every = 1）を Lv の数値に解決する。damage.ts の computeTriggerDamage が
- * 1 トリガーの値（perShot）に足す。SG は「命中した時」がペレットごとかトリガーごとか分からないので拒否する
- */
-export function resolvePerShotDamage(
+/** 1 トリガーの値に畳み込む damage（射撃ごとの倍率ダメージと固定ダメージ）を、スロットと効果の組で並べる */
+function foldedDamageEffects(
   def: SkillDefinition,
   character: CharacterData,
   levels: SkillLevels,
-): ResolvedSkillDamage[] {
+): { slot: SkillSlot; effect: DamageEffect }[] {
   if (def.resourceId !== character.resourceId) {
     throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
   }
-  const resolved: ResolvedSkillDamage[] = [];
+  const folded: { slot: SkillSlot; effect: DamageEffect }[] = [];
   for (const slot of SKILL_SLOTS) {
-    const entry = def.skills[slot];
     const skill = character.skills[slot];
-    for (const effect of entry.effects) {
+    for (const effect of def.skills[slot].effects) {
       if (effect.kind !== 'damage') continue;
       // 条件つきは畳み込まない（resolveDamageEffects が射撃ごとの発動として出す）。遅れて出るヒット・
       // perCount の数だけのヒットも畳み込まない
@@ -738,16 +738,47 @@ export function resolvePerShotDamage(
           `skill ${skill.id}: damage on every shot is not supported for SG (per pellet or per trigger)`,
         );
       }
-      const r: ResolvedSkillDamage = {
-        source: { resourceId: character.resourceId, skill: slot, name: skill.name },
-        damageType: effect.damageType,
-        multiplier: skillValue(skill, effect.ref, levels[slot]) / 100,
-      };
-      if (effect.assumes) r.assumes = effect.assumes;
-      resolved.push(r);
+      folded.push({ slot, effect });
     }
   }
+  return folded;
+}
+
+/**
+ * 射撃ごとの倍率ダメージ（damage の every = 1）を Lv の数値に解決する。damage.ts の computeTriggerDamage が
+ * 1 トリガーの値（perShot）に足す。SG は「命中した時」がペレットごとかトリガーごとか分からないので拒否する。
+ * 固定ダメージ（fixedShare）は入れない（resolveFixedShare）
+ */
+export function resolvePerShotDamage(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedSkillDamage[] {
+  const resolved: ResolvedSkillDamage[] = [];
+  for (const { slot, effect } of foldedDamageEffects(def, character, levels)) {
+    if (effect.damageType === 'fixedShare') continue;
+    const skill = character.skills[slot];
+    const r: ResolvedSkillDamage = {
+      source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+      damageType: effect.damageType,
+      multiplier: skillValue(skill, effect.ref, levels[slot]) / 100,
+    };
+    if (effect.assumes) r.assumes = effect.assumes;
+    resolved.push(r);
+  }
   return resolved;
+}
+
+/**
+ * 与えたダメージ量の X% の固定ダメージ（damageType fixedShare）の X/100 の和（plan/design-emilia.md 2.2 節）。damage.ts の
+ * computeTriggerDamage が、フルチャージの発の通常攻撃の値にこの和を掛けて 1 トリガーの値（fixedShare）に足す
+ */
+export function resolveFixedShare(def: SkillDefinition, character: CharacterData, levels: SkillLevels): number {
+  let total = 0;
+  for (const { slot, effect } of foldedDamageEffects(def, character, levels)) {
+    if (effect.damageType === 'fixedShare') total += skillValue(character.skills[slot], effect.ref, levels[slot]) / 100;
+  }
+  return total;
 }
 
 export type BurstHitInput = {
