@@ -31125,6 +31125,182 @@
       "plus": null
     },
     {
+      "observation": "1164-01",
+      "element": "センチ treasureSkills.skill1.effects[2]",
+      "key": "5efe423ef237ebdf",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1164-02",
+      "element": "センチ treasureSkills.skill1.effects[2]",
+      "key": "83526507a1be1f1e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1165-01",
+      "element": "センチ treasureSkills.skill1.effects[2]",
+      "key": "41336e20adb9a45d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1165-02",
+      "element": "センチ treasureSkills.skill1.effects[2]",
+      "key": "ec1e8f9b22c512e6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1166-02",
+      "element": "センチ treasureSkills.skill1.effects[2]",
+      "key": "b0c9a061c6123dae",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1167-02",
+      "element": "センチ treasureSkills.skill1.effects[2]",
+      "key": "3656f448b8707cd5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1168-01",
+      "element": "センチ treasureSkills.skill1.effects[2]",
+      "key": "2ff2d4ceb5e58005",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1168-02",
+      "element": "センチ treasureSkills.skill1.effects[2]",
+      "key": "4e771a8a8cfde795",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1169-01",
+      "element": "センチ treasureSkills.burst.effects[2]",
+      "key": "2a52f6b9c71147c2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1169-01",
+      "element": "センチ treasureSkills.skill1.effects[2]",
+      "key": "2a52f6b9c71147c2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1169-02",
+      "element": "センチ treasureSkills.burst.effects[2]",
+      "key": "b42a485c055e3733",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1169-02",
+      "element": "センチ treasureSkills.skill1.effects[2]",
+      "key": "b42a485c055e3733",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1169-03",
+      "element": "センチ treasureSkills.burst.effects[2]",
+      "key": "5bf61be34d3cc02e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1169-03",
+      "element": "センチ treasureSkills.skill1.effects[2]",
+      "key": "5bf61be34d3cc02e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1169-04",
+      "element": "センチ treasureSkills.burst.effects[2]",
+      "key": "64acbb1654e3eb39",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1169-04",
+      "element": "センチ treasureSkills.skill1.effects[2]",
+      "key": "64acbb1654e3eb39",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1169-05",
+      "element": "センチ treasureSkills.burst.effects[2]",
+      "key": "b9c04abd8221d054",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1169-05",
+      "element": "センチ treasureSkills.skill1.effects[2]",
+      "key": "b9c04abd8221d054",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1169-06",
+      "element": "センチ treasureSkills.burst.effects[2]",
+      "key": "22443cecbd6049db",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1169-06",
+      "element": "センチ treasureSkills.skill1.effects[2]",
+      "key": "22443cecbd6049db",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1169-07",
+      "element": "センチ treasureSkills.burst.effects[2]",
+      "key": "91b4e5053923fe60",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1169-07",
+      "element": "センチ treasureSkills.skill1.effects[2]",
+      "key": "91b4e5053923fe60",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "1170-04",
       "element": "ロザンナ treasureSkills.skill2.effects[0]",
       "key": "afdfada56465a6de",
@@ -31299,6 +31475,326 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "1178-01",
+      "element": "センチ treasureSkills.skill1.effects[2]",
+      "key": "cab6d2520c22ef95",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1178-02",
+      "element": "センチ treasureSkills.skill1.effects[2]",
+      "key": "f93fb90b3cada0ae",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1179-09",
+      "element": "ビスケット burst.effects[1]",
+      "key": "a59d6caa8810a2cf",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1179-09",
+      "element": "ビスケット skill1.effects[1]",
+      "key": "a59d6caa8810a2cf",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1179-10",
+      "element": "ビスケット burst.effects[1]",
+      "key": "40948345f2162aea",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1179-10",
+      "element": "ビスケット skill1.effects[1]",
+      "key": "40948345f2162aea",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1179-12",
+      "element": "ビスケット burst.effects[1]",
+      "key": "e1277823c454dcaa",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1179-12",
+      "element": "ビスケット skill1.effects[1]",
+      "key": "e1277823c454dcaa",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1179-13",
+      "element": "ビスケット burst.effects[1]",
+      "key": "2f4950f3b8710fbe",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1179-13",
+      "element": "ビスケット skill1.effects[1]",
+      "key": "2f4950f3b8710fbe",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1179-14",
+      "element": "ビスケット burst.effects[1]",
+      "key": "397cf5ad4241a2c0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1179-14",
+      "element": "ビスケット skill1.effects[1]",
+      "key": "397cf5ad4241a2c0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1179-15",
+      "element": "ビスケット burst.effects[1]",
+      "key": "287bd250fca2b10f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1179-15",
+      "element": "ビスケット skill1.effects[1]",
+      "key": "287bd250fca2b10f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1179-16",
+      "element": "ビスケット burst.effects[1]",
+      "key": "d5a8a79fa98bd188",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1179-16",
+      "element": "ビスケット skill1.effects[1]",
+      "key": "d5a8a79fa98bd188",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1179-17",
+      "element": "ビスケット burst.effects[1]",
+      "key": "e3e12e304a282265",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1179-17",
+      "element": "ビスケット skill1.effects[1]",
+      "key": "e3e12e304a282265",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1179-18",
+      "element": "ビスケット burst.effects[1]",
+      "key": "7a6a26eb5ae9946c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1179-18",
+      "element": "ビスケット skill1.effects[1]",
+      "key": "7a6a26eb5ae9946c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1179-23",
+      "element": "ビスケット burst.effects[1]",
+      "key": "1447bf6941ef2a70",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1179-23",
+      "element": "ビスケット skill1.effects[1]",
+      "key": "1447bf6941ef2a70",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1180-09",
+      "element": "ビスケット burst.effects[1]",
+      "key": "0ceee18408dd5de9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1180-09",
+      "element": "ビスケット skill1.effects[1]",
+      "key": "0ceee18408dd5de9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1180-10",
+      "element": "ビスケット burst.effects[1]",
+      "key": "5cbbd51aaa50d937",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1180-10",
+      "element": "ビスケット skill1.effects[1]",
+      "key": "5cbbd51aaa50d937",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1180-12",
+      "element": "ビスケット burst.effects[1]",
+      "key": "7e9eb3f7f410fbd4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1180-12",
+      "element": "ビスケット skill1.effects[1]",
+      "key": "7e9eb3f7f410fbd4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1180-13",
+      "element": "ビスケット burst.effects[1]",
+      "key": "c2d5bccd24771278",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1180-13",
+      "element": "ビスケット skill1.effects[1]",
+      "key": "c2d5bccd24771278",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1180-14",
+      "element": "ビスケット burst.effects[1]",
+      "key": "9f527e1328b0f496",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1180-14",
+      "element": "ビスケット skill1.effects[1]",
+      "key": "9f527e1328b0f496",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1180-15",
+      "element": "ビスケット burst.effects[1]",
+      "key": "31cd46b5cc266426",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1180-15",
+      "element": "ビスケット skill1.effects[1]",
+      "key": "31cd46b5cc266426",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1180-16",
+      "element": "ビスケット burst.effects[1]",
+      "key": "53328d3ee1bf2ce1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1180-16",
+      "element": "ビスケット skill1.effects[1]",
+      "key": "53328d3ee1bf2ce1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1180-17",
+      "element": "ビスケット burst.effects[1]",
+      "key": "9fcd4629d0329db2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1180-17",
+      "element": "ビスケット skill1.effects[1]",
+      "key": "9fcd4629d0329db2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1180-22",
+      "element": "ビスケット burst.effects[1]",
+      "key": "77f992df56354586",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1180-22",
+      "element": "ビスケット skill1.effects[1]",
+      "key": "77f992df56354586",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }
