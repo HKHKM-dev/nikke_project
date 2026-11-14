@@ -30,7 +30,7 @@ import {
   parseTrue,
   rejectUnknownKeys,
 } from './common.ts';
-import { CONDITION_KEYS_OF, parseCondition } from './condition.ts';
+import { CONDITION_KEYS_OF, parseCondition, validateUsedBurst } from './condition.ts';
 import { parseDamageTrigger, parseShotCountDelay } from './trigger.ts';
 
 export function parseBurstDamageEffect(v: Record<string, Json>, path: string): BurstDamageEffect {
@@ -152,8 +152,10 @@ function parseGaugeHitsAndCondition(v: Record<string, Json>, effect: DamageEffec
     effect.gaugeHits = parseGaugeHits(v.gaugeHits, `${path}.gaugeHits`, 0);
   }
   // 発火の条件。timed と同じ型（鍵は inFullBurst・enemyState）
-  if (v.condition !== undefined)
+  if (v.condition !== undefined) {
     effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.damage);
+    validateUsedBurst(effect.condition, trigger, `${path}.condition`);
+  }
   // selfHp は「以上」の形だけ（「HP が最大の場合」。使い手のいない「以下」は書けない。plan/design-soline.md 2.1 節）
   if (effect.condition?.selfHp !== undefined && isSelfHpAtMost(effect.condition.selfHp))
     fail(`${path}.condition.selfHp`, 'a damage takes only the at-least form of selfHp (atLeast or atLeastRef)');

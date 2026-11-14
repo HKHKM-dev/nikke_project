@@ -616,10 +616,21 @@ export const BURST_USERS_TRIGGERS = ['fullBurstStart', 'fullBurstEnd'] as const 
  * その発自身には乗らない。plan/design-true-damage-element.md 9.6 節の論点 12）。循環（cycle）と during には書けない。
  * pelletHit = 的に当たったペレットの数（plan/design-pellet-hit.md 2 節）。1 発ごとに shotCount × その発の
  * 当たったペレットの割合（SG 以外は normalHit と同じ量）を足し、累計が N の倍数に届いた発で発火する（持ち越し。C-0408）。
- * 1 発の量が N を超えてはいけないので every か everyRef が要り、循環には書けない
+ * 1 発の量が N を超えてはいけないので every か everyRef が要り、循環には書けない。
+ * teamAmmo = 味方が消費した弾の合計（plan/design-cinderella-cw.md 2.3 節。C-1250）。自分を含む編成の全員の発の、減らした残弾
+ * （1 発 1。装弾数無限の発は 0）を足し、累計が N の倍数に届いた発で発火する。自分が撃たないフレームでも、味方の発で発火する。
+ * burstGauge にだけ書け、every か everyRef が要る
  */
 export type ShotCountKind =
-  'normalShot' | 'normalHit' | 'coreHit' | 'fullChargeShot' | 'lastShot' | 'weaponChangeShot' | 'pelletHit' | 'critHit';
+  | 'normalShot'
+  | 'normalHit'
+  | 'coreHit'
+  | 'fullChargeShot'
+  | 'lastShot'
+  | 'weaponChangeShot'
+  | 'pelletHit'
+  | 'critHit'
+  | 'teamAmmo';
 export const SHOT_COUNT_KINDS = [
   'normalShot',
   'normalHit',
@@ -633,6 +644,7 @@ export const SHOT_COUNT_KINDS = [
   // 累計が N の倍数を越えた発で発火する（coreHit と同じ持ち越し）。乱数の
   // きっかけを期待値で持つ（確率のきっかけ chance と同じ考え方）
   'critHit',
+  'teamAmmo',
 ] as const satisfies readonly ShotCountKind[];
 
 export type ShotCountTrigger = {
@@ -1204,7 +1216,7 @@ export function isStateEndUntil(u: unknown): u is StateEndUntil {
  * timed・付与にも書け、敵に付く状態の付与（エレグのブームインストール）の窓も見る（damage も同じ。そのフレームに付いた件も入れる。
  * plan/design-elegg-s3.md 3.2 節）。
  * selfState = 自分（効果を出した枠）にその状態が付いているか（plan/design-skill-stage1.md 1.1 節。timed・付与・damage）。
- * usedBurst = 直前に自分がバーストスキルを使用していれば（同 1.5 節。timed・付与・解除。フルバーストの開始・終了のきっかけだけ。
+ * usedBurst = 直前に自分がバーストスキルを使用していれば（同 1.5 節。timed・付与・解除・damage（plan/design-cinderella-cw.md 2.4 節。C-1252）。フルバーストの開始・終了のきっかけだけ。
  * 発火の文脈の burstUsers に自分がいるか。件を見ないので、これだけの条件は効果の段を上げない）。
  * false = 使用していなければ（burstUsers に自分がいない。plan/design-diesel-ws.md 2.2 節）。フルバーストの開始・終了の出来事の
  * 回数のきっかけ（{ count: 'fullBurstStart' | 'fullBurstEnd' }）にも書ける。

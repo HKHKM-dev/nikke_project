@@ -72,6 +72,8 @@ export type ShotEvent = {
    * （weaponChangeShot の回数に足す。plan/design-true-damage-element.md 9.6 節）。省略は false
    */
   weaponChange?: boolean;
+  /** この射撃で減らした残弾（teamAmmo の回数に足す。plan/design-cinderella-cw.md 2.3 節）。省略は 1、装弾数無限の発は 0 */
+  ammo?: number;
 };
 
 /** 1 回の射撃が、その回数トリガーの回数に足す量（plan/design-ludmilla-wo.md 2.2・2.3 節） */
@@ -93,6 +95,8 @@ export function shotCountWeight(kind: ShotCountKind, shot: ShotEvent): number {
       return shot.weaponChange === true ? 1 : 0;
     case 'pelletHit':
       return shot.pellets ?? shot.hits;
+    case 'teamAmmo':
+      return shot.ammo ?? 1;
   }
 }
 
@@ -260,6 +264,13 @@ export function createTriggerTracker(
           if (t.reset === 'fullBurstStart') count = 0;
         }
         if (t.during === 'fullBurst' && !inFullBurst) return false;
+      }
+      // 味方が消費した弾の合計は、自分を含む全員の発の残弾の減りを足す（自分が撃たないフレームも数える。plan/design-cinderella-cw.md 2.3 節）
+      if (t.count === 'teamAmmo') {
+        const weight = ev.shots.reduce((sum, x) => sum + (x ? shotCountWeight('teamAmmo', x) : 0), 0);
+        const next = advanceShotCount(count, weight, everyAt?.(ev.frame) ?? t.every);
+        count = next.count;
+        return next.fired;
       }
       const shot = ev.shots[slotIndex];
       if (!shot) return false;

@@ -75,6 +75,7 @@ import { everyAtOf, type ShotCountEveryAt } from '../skills/triggers.ts';
 import {
   isCounterFullTrigger,
   isSummonAttackTrigger,
+  burstUsersEventOf,
   ENEMY_HELD_STATS,
   isEnemyHeldStat,
   isFixedAttackScaling,
@@ -742,6 +743,7 @@ function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
             : triggerFrames(t, schedule, slotIndex, frames, shots, undefined, everyAtFor(effect.source.skill));
     for (const frame of fires) {
       if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, self)) continue;
+      if (!usedBurstHolds(effect.condition, t, frame, schedule, slotIndex)) continue;
       // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.2 節）: 発火のフレームから窓を開け、窓の終わりの遅れの後に
       // 爆発のヒットを置く。最大量は発火のフレームの最終攻撃力 × 倍率 × (1 + 分配ダメージ▲)（C-0904 と同じ形）。ヒットの値は
       // 2 パス目（sim/engine.ts）が窓の中のダメージの和にする
@@ -989,6 +991,24 @@ function damageConditionHolds(
   if (condition.inFullBurst === true && (schedule === null || !isInFullBurst(schedule, frame))) return false;
   if (condition.enemyState !== undefined && !enemyStateSpansHold(enemySpans, condition.enemyState, frame)) return false;
   return true;
+}
+
+/**
+ * damage の条件 usedBurst（直前に自分がバーストスキルを使用していれば。フルバーストの開始・終了のきっかけだけ。
+ * plan/design-cinderella-cw.md 2.4 節）: そのフレームに始まった（終わった）フルバーストの窓を開いたチェーン（burstUsers）に
+ * 自分の枠がいるか。1 パス目の fireContextHolds と同じ読みで、窓の無いフレームでは true も false も成り立たない
+ */
+function usedBurstHolds(
+  condition: EffectCondition | undefined,
+  trigger: ResolvedTrigger,
+  frame: number,
+  schedule: BurstSchedule | null,
+  slotIndex: number,
+): boolean {
+  if (condition?.usedBurst === undefined) return true;
+  const end = burstUsersEventOf(trigger) === 'fullBurstEnd';
+  const w = schedule?.fullBurstWindows.find((x) => (end ? x.end : x.start) === frame);
+  return w !== undefined && w.burstUsers.includes(slotIndex) === condition.usedBurst;
 }
 
 /**

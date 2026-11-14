@@ -11,45 +11,67 @@
           "target": "self",
           "stat": "attackDamage",
           "ref": 3,
-          "durationUntil": "battleEnd"
+          "durationUntil": "battleEnd",
+          "claims": [
+            "C-1248"
+          ]
         },
         {
           "kind": "damage",
           "trigger": {
-            "everySeconds": 5
+            "everySeconds": 5,
+            "carry": true
           },
           "ref": 7,
           "damageType": "skill",
+          "delayFrames": 6,
           "assumes": {
-            "ja": "戦闘開始から 5 秒ごと（5 秒・10 秒…）に、照準線に最も近い敵 1 機（敵 1 体の前提ではその敵）に 1 ヒット。発動からヒットまでの遅れと、バーストゲージを溜めるかは確かめていない（発動のフレーム・溜めない扱い）",
-            "en": "Every 5 s from the start of battle (5 s, 10 s, ...), one hit on the enemy nearest to the crosshair (that enemy under the single-enemy premise). The delay from activation to the hit and whether it charges the Burst Gauge are unchecked (hit on the activation frame, no gauge)"
-          }
+            "ja": "戦闘開始から 5 秒ごと（5 秒・10 秒…）に、照準線に最も近い敵 1 機（敵 1 体の前提ではその敵）に 1 ヒット。ヒットは発動のフレームで、バーストゲージは溜めない",
+            "en": "Every 5 s from the start of battle (5 s, 10 s, ...), one hit on the enemy nearest to the crosshair (that enemy under the single-enemy premise). The hit lands on the activation frame and does not charge the Burst Gauge"
+          },
+          "claims": [
+            "C-1249"
+          ]
+        },
+        {
+          "kind": "burstGauge",
+          "trigger": {
+            "count": "teamAmmo",
+            "everyRef": 8
+          },
+          "target": "allies",
+          "ref": 9,
+          "assumes": {
+            "ja": "味方が消費した弾の合計は、自分を含む編成の全員の発で減った残弾（1 発 1。装弾数無限の発は数えない）。合計が 200 の倍数に届いた発で、編成の 1 本のゲージに足す",
+            "en": "Total ammo consumed by allies counts the rounds spent by every member including self (one per shot; shots under infinite ammo do not count). When the total reaches a multiple of 200, the charge is added to the team's single gauge on that shot"
+          },
+          "claims": [
+            "C-1250"
+          ]
         }
       ],
       "notes": [
         {
-          "ja": "最大弾数のリロードが完了した時、変更準備状態なら、狙撃モード（チャージ時間 1 秒・最大装弾数 15 発・フルチャージで弾薬消費 40 発・貫通特化。変更準備状態でのリロードの完了で解除）への使用武器変更は未対応（リロードの完了で始まって終わる変更の語彙が無く、撮っていない。plan/design-cinderella-cw.md 2.1 節）。モデルではずっと基礎の武器（MG）で撃つ",
-          "en": "The weapon change to Snipe Mode on reloading to max ammo while in Preparation for Change (1 s charge, 15 rounds, a Full Charge shot expends 40 rounds, Pierce; removed by reloading to max ammo while in Preparation for Change) is not implemented (no vocabulary for a change that starts and ends on a reload, and not recorded; plan/design-cinderella-cw.md 2.1). The model always fires the base weapon (MG)",
-          "kind": "unimplemented",
+          "ja": "最大弾数のリロードが完了した時、変更準備状態なら、狙撃モード（チャージ時間 1 秒・最大装弾数 15 発・フルチャージで弾薬消費 40 発・貫通特化）への使用武器変更は、オートの射撃では狙撃モードに入らない（変更準備は撃ち切りのリロードの前に最後の弾丸で外れるか 6 秒で切れ、弾が残ったまま始まるハイドのリロードは的のジャンプの明けで止まって込め終わらない）ので起きない（要件 4.2 節）。モデルではずっと基礎の武器（MG）で撃つ",
+          "en": "The weapon change to Snipe Mode on reloading to max ammo while in Preparation for Change (1 s charge, 15 rounds, a Full Charge shot expends 40 rounds, Pierce) does not occur because auto fire never enters Snipe Mode (Preparation for Change is removed by the last bullet or expires after 6 s before a reload from empty, and a hide reload started with ammo left stops when the target lands from its jump without finishing) (requirements 4.2). The model always fires the base weapon (MG)",
+          "kind": "outOfScope",
           "effect": {
             "kind": "weaponChange"
-          }
+          },
+          "claims": [
+            "C-1253"
+          ]
         },
         {
-          "ja": "最大弾数のリロードが完了した時の変更準備（リロード時間を 3 秒に固定・6 秒・最後の弾丸で攻撃時に解除）は未対応（リロード時間の固定の語彙が無く、撮っていない。plan/design-cinderella-cw.md 2.2 節）。モデルではリロード時間は基礎の武器のまま",
-          "en": "Preparation for Change on reloading to max ammo (reload time fixed at 3 s, 6 s, removed on firing the last bullet) is not implemented (no vocabulary for a fixed reload time, and not recorded; plan/design-cinderella-cw.md 2.2). The model keeps the base reload time",
-          "kind": "unimplemented",
+          "ja": "最大弾数のリロードが完了した時の変更準備（リロード時間を 3 秒に固定・6 秒・最後の弾丸で攻撃時に解除）は、オートの射撃では効く回が無い（撃ち切りのリロードは最後の弾丸で外れるか 6 秒で切れた後に始まり、ハイドのリロードは込め終わらずに止まる）ので、モデルでは付けない（要件 4.2 節）",
+          "en": "Preparation for Change on reloading to max ammo (reload time fixed at 3 s, 6 s, removed on firing the last bullet) never takes effect under auto fire (a reload from empty starts after it was removed by the last bullet or expired after 6 s, and a hide reload stops without finishing), so the model does not apply it (requirements 4.2)",
+          "kind": "outOfScope",
           "effect": {
             "kind": "state"
-          }
-        },
-        {
-          "ja": "味方が消費した弾の合計 200 発ごとの、味方全体のバーストゲージのチャージは未対応（味方の弾の消費を数えるきっかけの語彙が無く、自分の弾・狙撃モードの弾の数え方を撮っていない。plan/design-cinderella-cw.md 2.3 節）",
-          "en": "The Burst Gauge charge for all allies every 200 rounds of total ammo consumed by allies is not implemented (no trigger counting allies' ammo, and how own rounds and Snipe Mode rounds count is not recorded; plan/design-cinderella-cw.md 2.3)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "burstGauge"
-          }
+          },
+          "claims": [
+            "C-1253"
+          ]
         }
       ]
     },
@@ -61,7 +83,10 @@
           "target": "self",
           "stat": "attack",
           "ref": 2,
-          "durationUntil": "battleEnd"
+          "durationUntil": "battleEnd",
+          "claims": [
+            "C-1248"
+          ]
         },
         {
           "kind": "timed",
@@ -71,9 +96,12 @@
           "ref": 4,
           "durationUntil": "battleEnd",
           "assumes": {
-            "ja": "ピンポイント。狙撃モードの適用で外れ、解除で付き直すが、モデルでは狙撃モードにならない（skill1 の notes）ので、戦闘の終わりまで付いたまま",
-            "en": "Pinpoint. It is removed when Snipe Mode takes effect and re-applied when it ends, but the model never enters Snipe Mode (skill1 notes), so it stays until the end of battle"
-          }
+            "ja": "ピンポイント。狙撃モードの適用で外れ、解除で付き直すが、オートの射撃では狙撃モードにならない（skill1 の notes）ので、戦闘の終わりまで付いたまま",
+            "en": "Pinpoint. It is removed when Snipe Mode takes effect and re-applied when it ends, but auto fire never enters Snipe Mode (skill1 notes), so it stays until the end of battle"
+          },
+          "claims": [
+            "C-1248"
+          ]
         },
         {
           "kind": "damage",
@@ -82,9 +110,15 @@
           "damageType": "skill",
           "coreHit": true,
           "assumes": {
-            "ja": "狙撃モードでない時の効果 1（コアが活性化している敵全体に、コア命中ダメージ）。射撃場の的はコアを持つ。直前に自分がバーストを使ったかの条件は書いていない（バースト III が自分だけの編成を前提にする）。ヒットのフレームとゲージは確かめていない（フルバーストの始まりのフレーム・溜めない扱い）",
-            "en": "Effect 1 when not in Snipe Mode (core strike damage to all enemies with an activated core). The range target has a core. The condition of having used the Burst just before is not written (assumes this unit is the only Burst III). The hit frame and gauge are unchecked (Full Burst start frame, no gauge)"
-          }
+            "ja": "狙撃モードでない時の効果 1（コアが活性化している敵全体に、コア命中ダメージ。射撃場の的はコアを持つ）。オートの射撃では狙撃モードにならない（skill1 の notes）ので、いつもこちら。ヒットはフルバーストの始まりのフレームで、バーストゲージは溜めない",
+            "en": "Effect 1 when not in Snipe Mode (core strike damage to all enemies with an activated core; the range target has a core). Auto fire never enters Snipe Mode (skill1 notes), so this one always applies. The hit lands on the Full Burst start frame and does not charge the Burst Gauge"
+          },
+          "condition": {
+            "usedBurst": true
+          },
+          "claims": [
+            "C-1252"
+          ]
         }
       ],
       "notes": [
@@ -95,22 +129,28 @@
           "path": "decoy"
         },
         {
-          "ja": "狙撃モード適用時のデストロイ（パーツダメージ▲）は、パーツを扱わないので効かない（要件 4.2 節）",
-          "en": "Destroy (Damage to Parts up) on entering Snipe Mode has no effect because parts are not modeled (requirements 4.2)",
+          "ja": "狙撃モード適用時のデストロイ（パーツダメージ▲）は、パーツを扱わず（要件 4.2 節）、オートの射撃では狙撃モードにもならない（skill1 の notes）ので効かない",
+          "en": "Destroy (Damage to Parts up) on entering Snipe Mode has no effect: parts are not modeled (requirements 4.2) and auto fire never enters Snipe Mode (skill1 notes)",
           "kind": "outOfScope",
           "effect": {
             "kind": "unknown",
             "target": "unknown",
             "trigger": "unknown"
-          }
+          },
+          "claims": [
+            "C-1253"
+          ]
         },
         {
-          "ja": "フルバーストタイムが発動した時、直前に自分がバーストを使っていて狙撃モードなら、敵全体（パーツ含む）への倍率ダメージは未対応（狙撃モードを定義していない。skill1 の notes）",
-          "en": "On Full Burst after this unit's Burst, the damage to all enemies (including parts) while in Snipe Mode is not implemented (Snipe Mode is not defined; skill1 notes)",
-          "kind": "unimplemented",
+          "ja": "フルバーストタイムが発動した時、直前に自分がバーストを使っていて狙撃モードなら、敵全体（パーツ含む）への倍率ダメージは、オートの射撃では狙撃モードにならない（skill1 の notes）ので起きない（要件 4.2 節）",
+          "en": "On Full Burst after this unit's Burst, the damage to all enemies (including parts) while in Snipe Mode does not occur because auto fire never enters Snipe Mode (skill1 notes; requirements 4.2)",
+          "kind": "outOfScope",
           "effect": {
             "kind": "damage"
-          }
+          },
+          "claims": [
+            "C-1253"
+          ]
         }
       ]
     },
@@ -122,7 +162,10 @@
           "target": "self",
           "stat": "attackDamage",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-1251"
+          ]
         },
         {
           "kind": "timed",
@@ -130,7 +173,10 @@
           "target": "self",
           "stat": "attack",
           "ref": 5,
-          "durationRef": 6
+          "durationRef": 6,
+          "claims": [
+            "C-1251"
+          ]
         },
         {
           "kind": "burstDamage",
@@ -139,7 +185,10 @@
           "assumes": {
             "ja": "最終攻撃力が最も高い敵 1 機は、敵 1 体の前提ではその敵",
             "en": "The enemy with the highest final ATK is that enemy under the single-enemy premise"
-          }
+          },
+          "claims": [
+            "C-1251"
+          ]
         }
       ]
     }
