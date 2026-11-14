@@ -3,7 +3,8 @@
 // shouldCatchUp に合うブランチ（claude/。作業中の変更が無く、リベースの途中でも pr:prep の途中でもなく、マージ済みでなく、origin/main が
 // 進んでいる）をリベースする。生成物の衝突は main の版を取り、生成物でないファイルが衝突したら元に戻して知らせる。追跡先があれば、
 // リベースの前の追跡先の sha を lease にして強制 push する（records:new・取り込みの道具の push が早送りで落ちないように）。
-// origin のブランチに手元に無い commit があるときは、上書きしないよう取り込まない。
+// origin のブランチに手元に無い commit があるときは、上書きしないよう取り込まない。PR を出したブランチ（origin の refs/pull/*/head に
+// 追跡先の sha がある）も取り込まない（自動マージを待つ間に push すると CI が回り直し、main が進むたびに繰り返すため）。
 import { execFileSync, spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { catchUpMessage, RULE_PATHS, shouldCatchUp } from './sync-after-merge-lib.ts';
@@ -51,6 +52,7 @@ export async function catchUp(): Promise<string | null> {
   const remoteBranch = git(['for-each-ref', '--format=%(upstream:lstrip=3)', ref]);
   if (upstream !== null && git(['rev-list', '--count', `HEAD..${upstream}`]) !== '0')
     return `origin の ${branch} に手元に無い commit があるので、main を取り込まなかった（git pull --rebase で揃えてから進める）`;
+  if (upstream !== null && (git(['ls-remote', 'origin', 'refs/pull/*/head']) ?? '').includes(upstream)) return null;
   const oldBase = git(['merge-base', 'HEAD', 'origin/main']);
   if (oldBase === null) return null;
   const outcome = startRebase(process.cwd(), gitDir);

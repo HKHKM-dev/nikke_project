@@ -30,7 +30,7 @@ function commit(cwd: string, file: string, text: string, message: string): void 
 }
 
 /** origin（bare）と、main から claude/x を切って push した clone。その後 main に AGENTS.md を変える commit を足す */
-function setup(): { work: string; other: string } {
+function setup(): { work: string; other: string; origin: string } {
   const root = mkdtempSync(join(tmpdir(), 'catch-up-'));
   dirs.push(root);
   const origin = join(root, 'origin.git');
@@ -48,7 +48,7 @@ function setup(): { work: string; other: string } {
   commit(other, 'AGENTS.md', 'rule 2\n', 'main moves');
   git(other, 'push', '-q', 'origin', 'HEAD:main');
   git(work, 'fetch', '-q', 'origin');
-  return { work, other };
+  return { work, other, origin };
 }
 
 function catchUp(cwd: string): string {
@@ -73,6 +73,13 @@ describe('catchUp', () => {
     expect(git(work, 'rev-parse', 'origin/claude/x')).toBe(git(work, 'rev-parse', 'HEAD'));
     // 取り込んだ後は何もしない
     expect(catchUp(work)).toBe('null');
+  });
+
+  it('leaves a branch that has a pull request', () => {
+    const { work, origin } = setup();
+    git(origin, 'update-ref', 'refs/pull/1/head', git(work, 'rev-parse', 'HEAD'));
+    expect(catchUp(work)).toBe('null');
+    expect(git(work, 'rev-list', '--count', 'HEAD..origin/main')).toBe('1');
   });
 
   it('puts the branch back when a hand-written file conflicts', () => {
