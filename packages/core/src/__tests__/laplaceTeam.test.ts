@@ -59,7 +59,13 @@ const L = 2;
 describe.each(Object.entries(CASES))('編成: %s', (name, { input, treasure }) => {
   const plan = planTeamRun(input);
   const changed = plan.shots[L]!.weaponChangeShotFrames ?? [];
-  const weapon = itemsOf(plan.history, { sourceSlotIndex: L, holder: L, kind: 'timed', skill: 'burst', stat: 'weapon' });
+  const weapon = itemsOf(plan.history, {
+    sourceSlotIndex: L,
+    holder: L,
+    kind: 'timed',
+    skill: 'burst',
+    stat: 'weapon',
+  });
   const vision = itemsOf(plan.history, { holder: L, kind: 'state', state: 'heroVision' });
   // 倍率ダメージの条件 selfState と同じ見え方（frame より前に付いて frame に続いている件）
   const fullAt = (f: number) => vision.some((w) => w.stack === 5 && w.start < f && f < w.end);
