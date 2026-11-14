@@ -15,6 +15,7 @@ import { toClaims, type Claim, type ClaimFile } from '../src/records/claims.ts';
 import { V_ID } from '../src/records/ids.ts';
 import { isMeasured, type Observation } from '../src/records/observations/types.ts';
 import type { RecordsData } from '../src/records/observations/teamInput.ts';
+import { validateObservations } from '../src/records/observations/validate.ts';
 import { sortRecordings, type RecordingEntry, type RecordingsFile } from '../src/records/recordings.ts';
 import { sensitivityId, type SensitivityEntry } from '../src/records/relevance.ts';
 import type { DefinedCharacter } from '../src/records/skills.ts';
@@ -249,6 +250,52 @@ export function knownRids(): Set<number> {
   );
 }
 
+/** 敵のプリセットと出来事のセット（data/enemies.json） */
+export function loadEnemies(): RecordsData['enemies'] {
+  return parseEnemyPresets(readJson<unknown>(`${DATA}enemies.json`));
+}
+
+/** コマンドの引数の ID の並び（, ・ 、 で区切る。バッククォートは除く） */
+export function splitIds(text: string): string[] {
+  return text
+    .split(/[,、・]/)
+    .map((s) => s.replaceAll('`', '').trim())
+    .filter((s) => s !== '');
+}
+
+/** 観測値 ID・録画 id・V-NNNN（source）で観測値を選ぶ。当たらなかった鍵は missing */
+export function pickObservations(
+  observations: readonly Observation[],
+  keys: readonly string[],
+): { picked: Observation[]; missing: string[] } {
+  const byId = new Set(observations.map((o) => o.id));
+  const picked: Observation[] = [];
+  const missing: string[] = [];
+  for (const k of keys) {
+    const hit = observations.filter((o) =>
+      byId.has(k) ? o.id === k : V_ID.test(k) ? o.source === k : o.recording === k || (o.recordings ?? []).includes(k),
+    );
+    if (hit.length === 0) missing.push(k);
+    for (const o of hit) if (!picked.includes(o)) picked.push(o);
+  }
+  return { picked, missing };
+}
+
+/**
+ * 足す観測値の検査（records:check と同じ validateObservations）。いまの観測値は ID で指す先として使い、足す観測値の分のエラーだけを返す
+ * （records:new observation・records:model）
+ */
+export function addedObservationErrors(
+  added: readonly Observation[],
+  recordings: ReadonlyMap<string, RecordingEntry>,
+): string[] {
+  const ids = new Set(added.map((o) => o.id));
+  const current = loadObservations().filter((o) => !ids.has(o.id));
+  return validateObservations([...current, ...added], recordings, loadEnemies()).filter((e) =>
+    ids.has(e.slice(0, e.indexOf(':'))),
+  );
+}
+
 /** 録画（と予測の編成）に出てくるキャラと、その定義・敵のプリセット */
 export function loadRecordsData(file: RecordingsFile, extraRids: readonly number[] = []): RecordsData {
   const known = knownRids();
@@ -264,7 +311,7 @@ export function loadRecordsData(file: RecordingsFile, extraRids: readonly number
   return {
     characters,
     skills,
-    enemies: parseEnemyPresets(readJson<unknown>(`${DATA}enemies.json`)),
+    enemies: loadEnemies(),
     // record の観測値は、値が数か数の配列のものだけ入れる
     observationValues: new Map(
       loadObservations()

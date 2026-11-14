@@ -1686,10 +1686,19 @@ export function resolveCoverHeals(
 const PLACEHOLDER = /\{description_value_(\d+)\}/g;
 const TAG = /<\/?(?:color|word_group)(?:=[^>]*)?>/g;
 
+/** 説明文の {description_value_NN} を、その置き場の Lv ごとの値（values[NN-1]）から value で作った文字列に置き換え、<color> / <word_group> タグを除く */
+export function fillSkillDescription(
+  skill: SkillRaw,
+  locale: Locale,
+  value: (levels: readonly string[] | null | undefined) => string,
+): string {
+  return skill.description[locale]
+    .replace(PLACEHOLDER, (_m, digits: string) => value(skill.values[Number(digits) - 1]))
+    .replace(TAG, '');
+}
+
 /** 説明文の {description_value_NN} を Lv の値に置き換え、<color> / <word_group> タグを除いた文字列（UI の確認用）。値が無い箇所は "?" */
 export function renderSkillDescription(skill: SkillRaw, level: number, locale: Locale): string {
   validateSkillLevel(level);
-  return skill.description[locale]
-    .replace(PLACEHOLDER, (_m, digits: string) => skill.values[Number(digits) - 1]?.[level - 1] ?? '?')
-    .replace(TAG, '');
+  return fillSkillDescription(skill, locale, (levels) => levels?.[level - 1] ?? '?');
 }

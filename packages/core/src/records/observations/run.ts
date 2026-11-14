@@ -96,6 +96,35 @@ export function isFiniteValue(v: number | number[]): boolean {
   return (Array.isArray(v) ? v : [v]).every(Number.isFinite);
 }
 
+/** 録画 id と比べる設定（setup）ごとの、組んだ入力と回したモデル（predictCompare が使い回す） */
+export type ModelCache = Map<string, { input: TeamInput; sim?: SimResult }>;
+
+/** 録画の編成・条件で、比べる指定（metric・args・setup）のモデルの値を出す。同じ録画・同じ条件のモデルは cache で 1 回だけ回す */
+export function predictCompare(
+  recordingId: string,
+  recording: RecordingEntry | undefined,
+  c: Pick<CompareSpec, 'metric' | 'args' | 'setup'>,
+  data: RecordsData,
+  cache: ModelCache = new Map(),
+): Prediction {
+  try {
+    if (recording === undefined) throw new Error(`録画 ${recordingId} が無い`);
+    const metric = METRICS[c.metric];
+    if (metric === undefined) throw new Error(`metric ${c.metric} が語彙に無い`);
+    const key = `${recordingId}:${JSON.stringify(c.setup)}`;
+    let run = cache.get(key);
+    if (run === undefined) {
+      run = { input: buildTeamInput(recording, c.setup, data) };
+      cache.set(key, run);
+    }
+    const ctx: MetricContext = { args: c.args, input: run.input };
+    run.sim ??= runSimulation(run.input);
+    return { predicted: metric.sim(run.sim, ctx) };
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
+}
+
 /**
  * use が compare の観測値をすべてモデルと比べる。同じ録画・同じ条件のモデルは 1 回だけ回す。memo があれば、覚えた予測値を使い、
  * 覚えていない観測値だけモデルを回す
@@ -106,25 +135,9 @@ export function runObservations(
   data: RecordsData,
   memo?: PredictionMemo,
 ): Residual[] {
-  const cache = new Map<string, { input: TeamInput; sim?: SimResult }>();
-  const predict = (o: Observation, c: CompareSpec, recording: RecordingEntry | undefined): Prediction => {
-    try {
-      if (recording === undefined) throw new Error(`録画 ${o.recording} が無い`);
-      const metric = METRICS[c.metric];
-      if (metric === undefined) throw new Error(`metric ${c.metric} が語彙に無い`);
-      const key = `${o.recording}:${JSON.stringify(c.setup)}`;
-      let run = cache.get(key);
-      if (run === undefined) {
-        run = { input: buildTeamInput(recording, c.setup, data) };
-        cache.set(key, run);
-      }
-      const ctx: MetricContext = { args: c.args, input: run.input };
-      run.sim ??= runSimulation(run.input);
-      return { predicted: metric.sim(run.sim, ctx) };
-    } catch (e) {
-      return { error: (e as Error).message };
-    }
-  };
+  const cache: ModelCache = new Map();
+  const predict = (o: Observation, c: CompareSpec, recording: RecordingEntry | undefined): Prediction =>
+    predictCompare(o.recording, recording, c, data, cache);
   const residuals: Residual[] = [];
   for (const o of observations) {
     const c = o.compare;

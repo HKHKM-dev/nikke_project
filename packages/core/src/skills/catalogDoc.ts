@@ -526,7 +526,8 @@ function statStatus(e: CatalogEffect): readonly [Status, string] {
 }
 
 /** 効果の分類の鍵。間隔の付いた回復と、維持の付いたクールタイムの増減は別の分類 */
-function effectKind(e: CatalogEffect): string {
+/** 効果の分類の鍵（stat は種類ごと、間隔の回復・持続の CT 短縮は別の分類） */
+export function effectKind(e: CatalogEffect): string {
   if (e.kind === 'heal:instant' && (e.mods ?? []).includes('meta:interval')) return 'heal:intervalForm';
   if (e.kind === 'stat') return `stat:${e.stat!.canon}`;
   if (
