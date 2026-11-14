@@ -135,6 +135,14 @@ export const BADGE_KINDS: readonly BadgeKind[] = [
 
 const kindOf = (key: BadgeKey): BadgeKind => BADGE_KINDS.find((kind) => kind.key === key)!;
 
+/** クラシックのキャラの選択肢の絞り込みに出すバッジの種類と順（クラス・属性・武器種・企業。ClassicView） */
+export const CLASSIC_FILTER_KINDS: readonly BadgeKind[] = [
+  kindOf('class'),
+  kindOf('element'),
+  kindOf('weaponType'),
+  kindOf('corporation'),
+];
+
 /** キャラの絵の左上に縦に出すバッジの順（属性・武器種・バースト段階。クラスは出さず、トレイの絞り込みにだけ使う） */
 export const VISUAL_BADGE_KINDS: readonly BadgeKind[] = [kindOf('element'), kindOf('weaponType'), kindOf('burstStep')];
 

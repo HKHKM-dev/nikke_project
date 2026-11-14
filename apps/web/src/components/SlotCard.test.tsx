@@ -17,6 +17,7 @@ function renderCard(controlled: boolean) {
       controlled={controlled}
       index={[]}
       excludeIds={new Set()}
+      visibleIds={null}
       otherPartyIds={new Map()}
       fullySupported={null}
       character={undefined}

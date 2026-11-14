@@ -6,6 +6,8 @@ type Props = {
   index: readonly CharacterIndexEntry[];
   /** 他の枠で選択中のニケ。選択肢から除外する */
   excludeIds: ReadonlySet<number>;
+  /** 絞り込みに合うニケ（null は絞り込まない）。合わないニケは選択肢から外す（選んでいるニケは残す） */
+  visibleIds: ReadonlySet<number> | null;
   /** すべてのスロットに未実装が無いキャラ。ほかのキャラの名前に「（未）」を付ける。読み込み前は null（印を付けない） */
   fullySupported: ReadonlySet<number> | null;
   /** ほかの編成で選んでいるニケ。名前に「（ほかの編成で使用中）」を付け、選べなくする */
@@ -20,11 +22,25 @@ export function characterLabel(entry: CharacterIndexEntry, isUnsupported: boolea
   return `${entry.name.ja}${isUnsupported ? '（未）' : ''}${inOtherParty ? '（ほかの編成で使用中）' : ''}`;
 }
 
-export function CharacterPicker({ index, excludeIds, fullySupported, otherPartyIds, value, onSelect, onClear }: Props) {
+export function CharacterPicker({
+  index,
+  excludeIds,
+  visibleIds,
+  fullySupported,
+  otherPartyIds,
+  value,
+  onSelect,
+  onClear,
+}: Props) {
   // 並びは受け取った一覧の順（App が名前順か戦闘力順に並べる。listOrder.ts）
   const options = useMemo(
-    () => index.filter((e) => e.resourceId === value || !excludeIds.has(e.resourceId)),
-    [index, excludeIds, value],
+    () =>
+      index.filter(
+        (e) =>
+          e.resourceId === value ||
+          (!excludeIds.has(e.resourceId) && (visibleIds === null || visibleIds.has(e.resourceId))),
+      ),
+    [index, excludeIds, visibleIds, value],
   );
 
   return (
