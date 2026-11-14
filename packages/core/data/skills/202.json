@@ -1,0 +1,100 @@
+{
+  "formatVersion": 1,
+  "resourceId": 202,
+  "checkedAt": "2026-11-14",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "味方全体への攻撃力▲（5 秒）は未対応（きっかけの書かれていない CT ごとのアクティブで、周期と 1 回目の時刻を録画で読んでいない）",
+          "en": "The ATK up (5 s) on all allies is not modeled (an active skill on its own cooldown with no trigger written; its interval and first activation have not been read from a recording)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "cooldownReduction",
+          "trigger": {
+            "count": "fullBurstStart",
+            "atLeast": 1
+          },
+          "target": "allies",
+          "ref": 1
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": {
+            "count": "fullBurstStart",
+            "atLeast": 2
+          },
+          "target": "allies",
+          "ref": 2
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": {
+            "count": "fullBurstStart",
+            "atLeast": 3
+          },
+          "target": "allies",
+          "ref": 3
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 1
+          },
+          "target": "allies",
+          "stat": "attack",
+          "ref": 4,
+          "durationRef": 5
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 2
+          },
+          "target": "allies",
+          "stat": "critRate",
+          "ref": 6,
+          "durationRef": 7
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 3
+          },
+          "target": "allies",
+          "stat": "critDamage",
+          "ref": 8,
+          "durationRef": 9
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "最終防御力が最も高い敵 1 機は、敵 1 体の前提でその敵",
+            "en": "The enemy with the highest final DEF is that enemy, given one enemy"
+          }
+        }
+      ]
+    }
+  }
+}
