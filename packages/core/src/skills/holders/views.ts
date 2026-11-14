@@ -1,11 +1,14 @@
 // 件の一覧の層 5: 見る側（plan/design-split-first-pass.md 3.3 節・9.2 節）。stat ごとの見る列（射撃・ダメージ・当たり・射程・会心・ペレット・
 // 条件・順位・ゲージ・CT）、状態の件のスタックの段と敵の状態、登録が閉じる件の列（カウンタの 0・HP の割合・見る状態の終わり）、
-// 最大 HP▲・現在の HP▼・HP の割合・最終防御力・最終攻撃力と順位。
+// 最大 HP▲・現在の HP▼・HP の割合・最終防御力・最終攻撃力と順位。見る列を読む問い合わせ（射手の実効値・当たり・与ダメージの値・
+// 状態のスタック数・現在の HP▼）と、ループの後に閉じる履歴（history）も返す。
 import { lowerBound } from '../../frame/shots.ts';
+import { ZERO_HIT_RATE, applyResolvedEffect, fixedAttackBaseOf, type BuffTotals } from '../buffs.ts';
 import { chanceStackLevelsAt } from '../chance.ts';
+import { createSpanMemo } from '../spanMemo.ts';
 import { type ItemEffect } from '../resolve.ts';
 import { attackRankFor, finalAttacksAt, type AttackItem } from '../ranking.ts';
-import { stateMatches, type NamedStateId } from '../states.ts';
+import { stateMatches, statesMatching, type NamedStateId } from '../states.ts';
 import { dependsOnRank } from '../targets.ts';
 import {
   isMaxHpStat,
@@ -20,8 +23,8 @@ import {
 } from '../types.ts';
 import { rankSlotsOf } from '../timeline.ts';
 import { ENEMY, type HeldItem, type HeldTrack, type HolderLists, type HpRatioSteps } from './types.ts';
-import { STAGE_RANK, valueOf } from './items.ts';
-import { alliesOf } from './history.ts';
+import { STAGE_RANK, scaledEffect, valueOf } from './items.ts';
+import { alliesOf, amplify } from './history.ts';
 import type { HolderBase, Records } from './records.ts';
 import type { Fires } from './fires.ts';
 import type { Sources } from './sources.ts';
@@ -30,10 +33,19 @@ import type { Read } from './read.ts';
 /** stat ごとの見る列・状態の件・HP・防御力・順位を読む */
 export function createViews({
   activeAt,
+  amplifiers,
+  applications,
+  conditionSkips,
   counterKey,
+  counterRecords,
   frames,
+  heals,
+  logs,
+  options,
   passive,
+  rankings,
   readItems,
+  removeDebuffGuesses,
   slots,
   stateTracks,
   tracks,
@@ -64,6 +76,39 @@ export function createViews({
   };
   // 射手: 射撃に効く stat（timed は段によらない。状態の中身も）
   const firingViews = viewsOf((_, e) => isFiringStat(e.stat));
+  const hasFiring = slots.map((_, i) => (firingViews[i] ?? []).length > 0);
+  /**
+   * 射手の実効値（持ち主ごと）。毎フレーム × 枠で読まれるので、効いている件の組が変わらない間（件の境目まで）は前の値を使い回す
+   * （plan/design-first-pass-perf.md 3.2 節）
+   */
+  const firingBuffs = firingViews.map((views) =>
+    createSpanMemo(
+      views.length,
+      (i) => readItems(views[i]!.track),
+      (frame, base: BuffTotals): BuffTotals | null => {
+        let buffs = base;
+        let changed = false;
+        for (const v of views) {
+          // 和集合の窓は重ならないので効いているのは多くて 1 つ。スタックする効果は効いている段の数だけ足す。件の scale（perCount の
+          // スタック数）は 2 パス目（piecesOfTrack）と同じく値に掛ける
+          for (const it of activeAt(v.track, frame)) {
+            const effect = scaledEffect(v.effect, it);
+            buffs = applyResolvedEffect(
+              buffs,
+              effect,
+              fixedAttackBaseOf(effect, v.track.casterBaseAttack, slots),
+              v.track.casterMaxHp,
+            ).totals;
+            changed = true;
+          }
+        }
+        return changed ? buffs : null;
+      },
+    ),
+  );
+  const firingBuffsAt: HolderLists['firingBuffsAt'] = (holder, frame, base) =>
+    hasFiring[holder] ? firingBuffs[holder]!(frame, base) : null;
+  const hasFiringTracks: HolderLists['hasFiringTracks'] = (holder) => hasFiring[holder] === true;
   // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 与ダメージの値に効く件（piecesOfTrack と同じ持ち主の写し方）。
   // 読む枠だけ、初めて読むときに作る
   const damageViews: (View[] | undefined)[] = slots.map(() => undefined);
@@ -86,6 +131,23 @@ export function createViews({
     }
     return views;
   };
+  const damageBuffsAt: HolderLists['damageBuffsAt'] = (holder, frame, base) => {
+    let buffs = base;
+    for (const v of (damageViews[holder] ??= damageViewsOf(holder))) {
+      for (const it of activeAt(v.track, frame)) {
+        const effect = scaledEffect(v.effect, it);
+        buffs = applyResolvedEffect(
+          buffs,
+          effect,
+          fixedAttackBaseOf(effect, v.track.casterBaseAttack, slots),
+          v.track.casterMaxHp,
+          // 発動者基準の防御力▼（casterDefence）は付けた枠の基礎防御力を読む（2 パス目の skills/timeline.ts と同じ）
+          slots[v.track.sourceSlotIndex]?.baseDefence,
+        ).totals;
+      }
+    }
+    return buffs;
+  };
   /** 当たりと同じ段の件（状態の中身か、段 1.5 までの timed・while）で、stat が stats のどれかの件の索引 */
   const hitStageViewsOf = (...stats: readonly BuffStat[]): View[][] =>
     viewsOf(
@@ -96,6 +158,19 @@ export function createViews({
   // 当たり: 順位の対象でない timed の当たりの stat と、状態の中身。条件つき（段 1.5）の
   // 命中率▲（ソーダ：トゥインクルバニーのバースト）も、区間（2 パス目）と同じ N にするため入れる（plan/design-skill-stage3.md 経過）
   const hitViews = hitStageViewsOf(...HIT_STATE_STATS);
+  // 件の scale（perCount のスタック数・確率）は 2 パス目と同じく値に掛ける
+  const hitRateAt: HolderLists['hitRateAt'] = (holder, frame) => {
+    let n = 0;
+    let up = 0;
+    for (const v of hitViews[holder] ?? []) {
+      for (const it of activeAt(v.track, frame)) {
+        const value = valueOf(v.effect, it);
+        n += value;
+        if (v.effect.value > 0) up += value;
+      }
+    }
+    return n === 0 && up === 0 ? ZERO_HIT_RATE : { n, up };
+  };
   // 条件 inEffectiveRange が読む適正最小射程距離▲（当たりと同じ段の件。plan/design-agent-bunny.md 2.2 節）
   const rangeViews = hitStageViewsOf('minEffectiveRange');
   const minEffectiveRangeAt = (holder: number, frame: number): number => sumAt(rangeViews[holder], frame);
@@ -112,6 +187,15 @@ export function createViews({
   // 条件 selfState が見る、枠の静的な状態と、段 1 の状態の件の列（持ち主 → 状態。plan/design-skill-stage1.md 1.1 節）。
   // 静的な状態を見る selfState は編成の段（skills/composition.ts）で決まるので、ここに来るのは時間で変わる状態がほとんど
   const staticStates = slots.map((slot) => new Set(staticStatesOf(slot?.definition)));
+  const selfStackCountAt: HolderLists['selfStackCountAt'] = (holder, state, frame) => {
+    let level = 0;
+    for (const s of statesMatching(state)) {
+      if (staticStates[holder]?.has(s) === true) level = Math.max(level, 1);
+      for (const t of stateTracks[holder]?.get(s) ?? [])
+        for (const it of activeAt(t, frame)) if (it.start < frame) level = Math.max(level, it.stack ?? 1);
+    }
+    return level;
+  };
   /**
    * 持ち主 × カウンタごとの、そのカウンタが 0 に届いたら閉じる自分の状態の件の列（付与の untilCounterEmpty。
    * 解除不可でも閉じる。registerCounters）
@@ -218,6 +302,14 @@ export function createViews({
   );
   // 枠ごとの現在の HP▼ の発火のフレーム（昇順）と、その発火までの 1 − ratio の積（plan/design-scarlet.md 2.1 節）
   const hpDowns = slots.map(() => ({ frames: [] as number[], products: [] as number[] }));
+  const lowerCurrentHp: HolderLists['lowerCurrentHp'] = (slotIndex, frame, ratio) => {
+    const downs = hpDowns[slotIndex];
+    if (downs === undefined) throw new RangeError(`lowerCurrentHp: no slot ${slotIndex}`);
+    const n = downs.frames.length;
+    if (n > 0 && downs.frames[n - 1]! > frame) throw new RangeError('lowerCurrentHp must be called in frame order');
+    downs.frames.push(frame);
+    downs.products.push((n > 0 ? downs.products[n - 1]! : 1) * (1 - ratio));
+  };
   /** 枠の frame より前の現在の HP▼ の積（無ければ 1） */
   const hpDownProductBefore = (slotIndex: number, frame: number): number => {
     const downs = hpDowns[slotIndex]!;
@@ -245,6 +337,29 @@ export function createViews({
       steps.ratios.push(ratio);
     }
     return steps;
+  };
+  const history: HolderLists['history'] = () => {
+    for (const track of tracks) readItems(track);
+    const amplified = amplify(tracks, amplifiers, slots, frames);
+    return {
+      frames,
+      slots,
+      passive,
+      tracks,
+      amplified: amplified.pieces,
+      applications,
+      conditionSkips: [...conditionSkips, ...amplified.skips]
+        .map((x, i) => ({ x, i }))
+        .sort((a, b) => a.x.frame - b.x.frame || a.i - b.i)
+        .map(({ x }) => x),
+      rankings,
+      removeDebuffGuesses,
+      heals,
+      fullBurstWindows: [...options.fullBurstWindows()],
+      logs,
+      counters: counterRecords,
+      hpRatios: slots.map((_, i) => hpRatioStepsOf(i)),
+    };
   };
   /** 1 パス目の発火の文脈の selfHp（以下の形だけ。以上の形が来たら定義の読み込みの漏れなので投げる） */
   const selfHpAtMostHolds = (hp: SelfHpCondition, ratio: number): boolean => {
@@ -318,16 +433,17 @@ export function createViews({
     cooldownViews,
     counterEmptyTracks,
     critViews,
-    damageViews,
-    damageViewsOf,
+    damageBuffsAt,
     enemyStateAt,
     finalAttacksAtFrame,
-    firingViews,
+    firingBuffsAt,
     gaugeViews,
+    hasFiringTracks,
     hasPellets,
+    history,
+    hitRateAt,
     hitViews,
-    hpDowns,
-    hpRatioStepsOf,
+    lowerCurrentHp,
     lowerDefenseAt,
     minEffectiveRangeAt,
     pelletCountViews,
@@ -337,6 +453,7 @@ export function createViews({
     selfHpAtMostHolds,
     selfHpRatioAt,
     selfHpUntilTracks,
+    selfStackCountAt,
     selfStateItemsAt,
     singlePelletViews,
     stackLevelAt,

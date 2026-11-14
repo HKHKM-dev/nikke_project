@@ -1,6 +1,7 @@
-// 件の一覧の層 3: 出どころの準備（plan/design-split-first-pass.md 3.3 節・9.2 節）。常時の件・持続バフ・状態の付与の組・HP の while・循環の間隔・
-// 解除・延長・デバフ解除・スタック量・自分に付いた記録・カウンタ・消費・吸収回復・敵の状態と消去の出どころと件の列を作り、件の列が
-// 出そろった後に、持ち主ごとの状態の件の列（stateTracks）を作る。
+// 件の一覧の層 3: 出どころの準備（plan/design-split-first-pass.md 3.3 節・9.2 節）。出どころの種類ごとの関数（常時の件・持続バフ・
+// 状態の付与の組・while・循環の間隔・解除・延長・デバフ解除・スタック量・自分に付いた記録・カウンタ・消費・吸収回復・敵の状態と消去・
+// 静的な状態の記録）を、件の列を作る順（tracks の並びと準備の検査が投げる順）に呼び、件の列が出そろった後に、持ち主ごとの状態の件の列
+// （stateTracks）を埋める。
 import { groupDotsByState } from '../../frame/dot.ts';
 import { resolveDotEffects } from '../burstDamage.ts';
 import { type ChanceOpportunity } from '../chance.ts';
@@ -42,10 +43,12 @@ import {
   type EnemyStateSource,
   type ExtendSource,
   type HeldItem,
+  type HeldStage,
   type HeldTrack,
   type RemoveDebuffSource,
   type RemoveSource,
   type StackSource,
+  type StateGroup,
   type TimedSource,
   isEnemyEffect,
 } from './types.ts';
@@ -60,21 +63,86 @@ import {
 import type { HolderBase, Records, WithLate } from './records.ts';
 import type { Fires } from './fires.ts';
 
+/** 出どころの種類ごとの関数が受けるもの */
+type SourceDeps = HolderBase & Records & Fires & WithLate;
+/** 持ち主ごとの、状態 → その状態の件の列（段 1・1.5） */
+type StateTracks = Map<NamedStateId, HeldTrack[]>[];
+
 /** 出どころと件の列を作る（件の列はここで出そろう） */
-export function createSources({
-  amplifiers,
-  applications,
-  counterKey,
-  firesOf,
-  frames,
-  newTrack,
-  options,
-  selfHpStateOf,
-  slots,
-  tracks,
-  late,
-}: HolderBase & Records & Fires & WithLate) {
-  // ---- 常時の件（スキルの常時パッシブと静的な状態の中身。論点 3）。戦闘の始めから終わりまで ----
+export function createSources(deps: SourceDeps) {
+  const { options, slots, tracks } = deps;
+  addPassiveTracks(deps);
+  // ---- { applied } の効果の段（見る状態を付ける付与の段。plan/design-skill-stage4.md 1.1 節） ----
+  const appliedStageOf = appliedStagesOf(slots);
+  const timedSources = createTimedSources({ ...deps, appliedStageOf });
+  const stateGroups = createStateGroups({ ...deps, appliedStageOf });
+  const { hpWhileStates, updateHpAtLeast, whileTracks } = createWhileSources(deps);
+  const { cycleSources, shotCountEveryOf } = createCycleSources(deps);
+  const removeSources = createRemoveSources(deps);
+  const extendSources = createExtendSources(deps);
+  const removeDebuffSources = createRemoveDebuffSources(deps);
+  const stackSources = createStackSources({ ...deps, stateGroups });
+  /** フレーム frame がフルバーストの窓 [start, end) の中か（条件 inFullBurst） */
+  const inFullBurstAt = (frame: number): boolean =>
+    options.fullBurstWindows().some((w) => w.start <= frame && frame < w.end);
+  // 自分に付いた記録の読みが見る、持ち主ごとの状態の件の列（件の列が出そろった後に fillStateTracks で埋める）
+  const stateTracks: StateTracks = slots.map(() => new Map<NamedStateId, HeldTrack[]>());
+  const {
+    chainedApplications,
+    ownAppliedOf,
+    ownStateActive,
+    ownUnchainedApplied,
+    readOwnApplied,
+    sinceFires,
+    stateWindowFires,
+  } = createOwnApplied({ ...deps, stateTracks });
+  const { counterRecords, counterSources, counterValue, counterValues } = createCounterSources({
+    ...deps,
+    shotCountEveryOf,
+    sinceFires,
+  });
+  const consuming = consumingStatesOf(deps);
+  const { healKey, healTracks } = createHealTracks(deps);
+  const { dotCancelSources, enemyStateSources } = createEnemyStateSources(deps);
+  addStaticApplications(deps);
+  fillStateTracks(stateTracks, tracks);
+  return {
+    appliedStageOf,
+    chainedApplications,
+    consuming,
+    counterRecords,
+    counterSources,
+    counterValue,
+    counterValues,
+    cycleSources,
+    dotCancelSources,
+    enemyStateSources,
+    extendSources,
+    healKey,
+    healTracks,
+    hpWhileStates,
+    inFullBurstAt,
+    ownAppliedOf,
+    ownStateActive,
+    ownUnchainedApplied,
+    readOwnApplied,
+    removeDebuffSources,
+    removeSources,
+    shotCountEveryOf,
+    sinceFires,
+    stackSources,
+    stateGroups,
+    stateTracks,
+    stateWindowFires,
+    timedSources,
+    updateHpAtLeast,
+    whileTracks,
+  };
+}
+export type Sources = ReturnType<typeof createSources>;
+
+/** 常時の件（スキルの常時パッシブと静的な状態の中身。論点 3）。戦闘の始めから終わりまで */
+function addPassiveTracks({ frames, newTrack, slots }: SourceDeps): void {
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const effect of resolvePassives(slot.definition, slot.character, slot.levels)) {
@@ -85,9 +153,17 @@ export function createSources({
       });
     }
   });
-  // ---- { applied } の効果の段（見る状態を付ける付与の段。plan/design-skill-stage4.md 1.1 節） ----
-  const appliedStageOf = appliedStagesOf(slots);
-  // ---- timed の出どころ（持ち主ごとの件の列は、対象になりうる枠にだけ作る） ----
+}
+
+/** timed の出どころ（持ち主ごとの件の列は、対象になりうる枠にだけ作る） */
+function createTimedSources({
+  amplifiers,
+  appliedStageOf,
+  firesOf,
+  newTrack,
+  selfHpStateOf,
+  slots,
+}: SourceDeps & { appliedStageOf: (state: NamedStateId) => HeldStage }): TimedSource[] {
   const timedSources: TimedSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
@@ -126,7 +202,16 @@ export function createSources({
       timedSources.push(src);
     }
   });
-  // ---- 時間で変わる状態（出どころ × 状態 × 持ち主ごとに 1 つの件の列） ----
+  return timedSources;
+}
+
+/** 時間で変わる状態（出どころ × 状態 × 持ち主ごとに 1 つの件の列） */
+function createStateGroups({
+  appliedStageOf,
+  firesOf,
+  newTrack,
+  slots,
+}: SourceDeps & { appliedStageOf: (state: NamedStateId) => HeldStage }): StateGroup[] {
   const stateGroups = stateGroupsOf(slots, firesOf, appliedStageOf);
   for (const group of stateGroups) {
     const grant = group.grants[0]!.grant;
@@ -156,8 +241,14 @@ export function createSources({
       );
     });
   }
-  // ---- 状態の間だけ効く常時の効果（while。plan/design-skill-stage9.md 1.3 節）。対象ごとに件の列（段 1.5）。
-  // 件は出どころの枠の状態の件から作るので、始まりは登録しない（readWhileItems） ----
+  return stateGroups;
+}
+
+/**
+ * 状態の間だけ効く常時の効果（while。plan/design-skill-stage9.md 1.3 節）。対象ごとに件の列（段 1.5）。
+ * 件は出どころの枠の状態の件から作るので、始まりは登録しない（readWhileItems）
+ */
+function createWhileSources({ frames, late, newTrack, slots }: SourceDeps) {
   /**
    * 出どころの枠 × 閾値ごとの、HP の割合が閾値以上の区間の件（plan/design-hp-ratio-readers.md 2.1 節。開いて
    * いる件の終わりは戦闘の終わり。変わった時だけ新しい配列にする）。フレーム f の可否は、f の登録の始め（updateHpAtLeast）に、f より前に始まった最大HP の件と前の現在の
@@ -207,7 +298,11 @@ export function createSources({
       });
     }
   });
-  // ---- 循環の間隔の変更（対象は自分） ----
+  return { hpWhileStates, updateHpAtLeast, whileTracks };
+}
+
+/** 循環の間隔の変更（対象は自分）と、それで変わる射撃の回数のきっかけの間隔 */
+function createCycleSources({ firesOf, late, newTrack, slots }: SourceDeps) {
   const cycleSources: CycleSource[] = [];
   slots.forEach((slot, slotIndex) => {
     if (slot === null || slot.definition === null) return;
@@ -220,7 +315,29 @@ export function createSources({
       });
     }
   });
-  // ---- 解除（対象は自分。件を見る条件つきは段 1.5。plan/design-skill-stage1.md 1.2 節） ----
+  /**
+   * 枠 slotIndex のスロット skill の射撃の回数のきっかけの、フレームごとの間隔
+   * （cycleEvery の shotCounts の窓の中ならその間隔。重なれば小さいほう。plan/design-skill-stage12.md 2.4 節）。窓の件はそのフレームに付いたものも見る
+   */
+  const shotCountEveryOf = (slotIndex: number, skill: SkillSlot): ShotCountEveryAt | undefined => {
+    const own = cycleSources.filter(
+      (c) => c.slotIndex === slotIndex && c.effect.target === 'shotCounts' && c.effect.targetSkill === skill,
+    );
+    if (own.length === 0) return undefined;
+    return (frame) => {
+      let every: number | undefined;
+      for (const c of own) {
+        if (late.readItems(c.track).some((it) => it.start <= frame && frame < it.end))
+          every = every === undefined ? c.effect.every : Math.min(every, c.effect.every);
+      }
+      return every;
+    };
+  };
+  return { cycleSources, shotCountEveryOf };
+}
+
+/** 解除（対象は自分。件を見る条件つきは段 1.5。plan/design-skill-stage1.md 1.2 節） */
+function createRemoveSources({ firesOf, slots }: SourceDeps): RemoveSource[] {
   const removeSources: RemoveSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
@@ -233,7 +350,11 @@ export function createSources({
       });
     }
   });
-  // ---- 状態の維持の延長（{ applied } のほかは段 1.5 の後に発火する。plan/design-mint-prika.md 2.5 節） ----
+  return removeSources;
+}
+
+/** 状態の維持の延長（{ applied } のほかは段 1.5 の後に発火する。plan/design-mint-prika.md 2.5 節） */
+function createExtendSources({ firesOf, slots }: SourceDeps): ExtendSource[] {
   const extendSources: ExtendSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
@@ -241,7 +362,11 @@ export function createSources({
       extendSources.push({ sourceSlotIndex, effect, fires: firesOf(effect.trigger, sourceSlotIndex) });
     }
   });
-  // ---- デバフ解除（対象は味方。段 1 の解除と同じ時に閉じる。plan/design-debuff-removal.md 2.2 節） ----
+  return extendSources;
+}
+
+/** デバフ解除（対象は味方。段 1 の解除と同じ時に閉じる。plan/design-debuff-removal.md 2.2 節） */
+function createRemoveDebuffSources({ firesOf, slots }: SourceDeps): RemoveDebuffSource[] {
   const removeDebuffSources: RemoveDebuffSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
@@ -249,7 +374,15 @@ export function createSources({
       removeDebuffSources.push({ sourceSlotIndex, effect, fires: firesOf(effect.trigger, sourceSlotIndex) });
     }
   });
-  // ---- スタック量の増減（足す・減らす先は、同じ定義の付与の状態の、自分の件の列。plan/design-skill-stage3.md 1.1・1.5 節） ----
+  return removeDebuffSources;
+}
+
+/** スタック量の増減（足す・減らす先は、同じ定義の付与の状態の、自分の件の列。plan/design-skill-stage3.md 1.1・1.5 節） */
+function createStackSources({
+  firesOf,
+  slots,
+  stateGroups,
+}: SourceDeps & { stateGroups: readonly StateGroup[] }): StackSource[] {
   const stackSources: StackSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
@@ -270,28 +403,14 @@ export function createSources({
       });
     }
   });
-  /** フレーム frame がフルバーストの窓 [start, end) の中か（条件 inFullBurst） */
-  const inFullBurstAt = (frame: number): boolean =>
-    options.fullBurstWindows().some((w) => w.start <= frame && frame < w.end);
-  /**
-   * 枠 slotIndex のスロット skill の射撃の回数のきっかけの、フレームごとの間隔
-   * （cycleEvery の shotCounts の窓の中ならその間隔。重なれば小さいほう。plan/design-skill-stage12.md 2.4 節）。窓の件はそのフレームに付いたものも見る
-   */
-  const shotCountEveryOf = (slotIndex: number, skill: SkillSlot): ShotCountEveryAt | undefined => {
-    const own = cycleSources.filter(
-      (c) => c.slotIndex === slotIndex && c.effect.target === 'shotCounts' && c.effect.targetSkill === skill,
-    );
-    if (own.length === 0) return undefined;
-    return (frame) => {
-      let every: number | undefined;
-      for (const c of own) {
-        if (late.readItems(c.track).some((it) => it.start <= frame && frame < it.end))
-          every = every === undefined ? c.effect.every : Math.min(every, c.effect.every);
-      }
-      return every;
-    };
-  };
-  // ---- カウンタの増減（対象は自分。値は枠 × カウンタごとに 1 つ。plan/design-skill-stage10.md 2.3 節） ----
+  return stackSources;
+}
+
+/**
+ * 自分に付いた記録と、それを読むきっかけ（周期の since・状態の窓の中の射撃の回数）。stateTracks は件の列が出そろった後に埋まり、
+ * 返す関数はそれより後に呼ばれる
+ */
+function createOwnApplied({ applications, frames, late, stateTracks }: SourceDeps & { stateTracks: StateTracks }) {
   /**
    * 枠 × 状態ごとの、その枠に付いた記録のフレーム（昇順。plan/design-skill-stage19.md 2.1 節）。counterChange の { applied } と
    * 周期の since が読む。読むたびに、まだ見ていない記録を足す
@@ -373,6 +492,28 @@ export function createSources({
       return next.fired;
     };
   };
+  return {
+    chainedApplications,
+    ownAppliedOf,
+    ownStateActive,
+    ownUnchainedApplied,
+    readOwnApplied,
+    sinceFires,
+    stateWindowFires,
+  };
+}
+
+/** カウンタの増減（対象は自分。値は枠 × カウンタごとに 1 つ。plan/design-skill-stage10.md 2.3 節） */
+function createCounterSources({
+  counterKey,
+  firesOf,
+  shotCountEveryOf,
+  sinceFires,
+  slots,
+}: SourceDeps & {
+  shotCountEveryOf: (slotIndex: number, skill: SkillSlot) => ShotCountEveryAt | undefined;
+  sinceFires: (trigger: TimerTrigger, slotIndex: number) => TriggerTracker;
+}) {
   const counterSources: CounterSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
@@ -395,9 +536,15 @@ export function createSources({
   /** 枠のカウンタの、いまの値（そのフレームの増減は、すべての判定の後に足すので、前のフレームの終わりの値） */
   const counterValue = (slotIndex: number, counter: CounterId): number =>
     counterValues.get(counterKey(slotIndex, counter)) ?? 0;
-  // ---- フルスタックの消費（定義の回復のきっかけ { fullStack } の状態。自分だけ。plan/design-skill-stage3.md 1.3 節）。
-  // 使用武器の変更（plan/design-skill-stage11.md 2.1 節）・弾丸チャージ・timed（plan/design-diesel.md 2.1 節）のきっかけ
-  // { fullStack } の状態も ----
+  return { counterRecords, counterSources, counterValue, counterValues };
+}
+
+/**
+ * フルスタックの消費（定義の回復のきっかけ { fullStack } の状態。自分だけ。plan/design-skill-stage3.md 1.3 節）。
+ * 使用武器の変更（plan/design-skill-stage11.md 2.1 節）・弾丸チャージ・timed（plan/design-diesel.md 2.1 節）のきっかけ
+ * { fullStack } の状態も
+ */
+function consumingStatesOf({ slots }: SourceDeps): { holder: number; state: NamedStateId }[] {
   const consuming: { holder: number; state: NamedStateId }[] = [];
   slots.forEach((slot, holder) => {
     if (slot === null || slot.definition === null) return;
@@ -411,7 +558,11 @@ export function createSources({
       if (!consuming.some((c) => c.holder === holder && c.state === state)) consuming.push({ holder, state });
     }
   });
-  // ---- 吸収回復の窓（効果ごと・持ち主ごと。C-0082・C-0087） ----
+  return consuming;
+}
+
+/** 吸収回復の窓（効果ごと・持ち主ごと。C-0082・C-0087） */
+function createHealTracks({ newTrack, slots }: SourceDeps) {
   /** 効果は出どころの枠・スロット・効果の番号で引く（1 パス目は効果を別に解決するので、同じオブジェクトではない） */
   const healKey = (sourceSlotIndex: number, effect: ResolvedInstantEffect): string =>
     `${sourceSlotIndex}:${effect.source.skill}:${effect.effectIndex}`;
@@ -430,7 +581,11 @@ export function createSources({
       );
     }
   });
-  // ---- 持続ダメージが付ける敵の状態（出どころ × 状態ごとに 1 つの件の列。持ち主は敵） ----
+  return { healKey, healTracks };
+}
+
+/** 持続ダメージが付ける敵の状態（出どころ × 状態ごとに 1 つの件の列。持ち主は敵）と、その消去 */
+function createEnemyStateSources({ firesOf, newTrack, slots }: SourceDeps) {
   const enemyStateSources: EnemyStateSource[] = [];
   const dotCancelSources: { track: HeldTrack; fires: TriggerTracker }[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
@@ -454,7 +609,11 @@ export function createSources({
       dotCancelSources.push({ track: source.track, fires: firesOf(cancel.trigger, sourceSlotIndex) });
     }
   });
-  // 静的な状態はフレーム 0 に付いた記録を作る（見る側の規則を状態の種類で分けない。plan/design-named-state.md 5.4 節）
+  return { dotCancelSources, enemyStateSources };
+}
+
+/** 静的な状態はフレーム 0 に付いた記録を作る（見る側の規則を状態の種類で分けない。plan/design-named-state.md 5.4 節） */
+function addStaticApplications({ applications, frames, slots }: SourceDeps): void {
   if (frames > 0) {
     slots.forEach((slot, slotIndex) => {
       for (const state of staticStatesOf(slot?.definition)) {
@@ -462,48 +621,18 @@ export function createSources({
       }
     });
   }
-  // 段 1.5（条件つきの付与）の状態の件も入れ、前のフレームまでに付いた件だけを見る
-  // （同じフレームの条件つきどうしは連鎖させない。超火力（カウンタの条件で付く）を、後のフルバーストの開始の条件が見る。plan/design-skill-stage10.md 3.2 節）
-  const stateTracks = slots.map((_, holder) => {
-    const byState = new Map<NamedStateId, HeldTrack[]>();
+}
+
+/**
+ * 持ち主ごとの状態の件の列を埋める。段 1.5（条件つきの付与）の状態の件も入れ、前のフレームまでに付いた件だけを見る
+ * （同じフレームの条件つきどうしは連鎖させない。超火力（カウンタの条件で付く）を、後のフルバーストの開始の条件が見る。plan/design-skill-stage10.md 3.2 節）
+ */
+function fillStateTracks(stateTracks: StateTracks, tracks: readonly HeldTrack[]): void {
+  stateTracks.forEach((byState, holder) => {
     for (const track of tracks) {
       const o = track.origin;
       if (track.holder !== holder || (track.stage !== 1 && track.stage !== 1.5) || o.kind !== 'state') continue;
       byState.set(o.state, [...(byState.get(o.state) ?? []), track]);
     }
-    return byState;
   });
-  return {
-    appliedStageOf,
-    chainedApplications,
-    consuming,
-    counterRecords,
-    counterSources,
-    counterValue,
-    counterValues,
-    cycleSources,
-    dotCancelSources,
-    enemyStateSources,
-    extendSources,
-    healKey,
-    healTracks,
-    hpWhileStates,
-    inFullBurstAt,
-    ownAppliedOf,
-    ownStateActive,
-    ownUnchainedApplied,
-    readOwnApplied,
-    removeDebuffSources,
-    removeSources,
-    shotCountEveryOf,
-    sinceFires,
-    stackSources,
-    stateGroups,
-    stateTracks,
-    stateWindowFires,
-    timedSources,
-    updateHpAtLeast,
-    whileTracks,
-  };
 }
-export type Sources = ReturnType<typeof createSources>;
