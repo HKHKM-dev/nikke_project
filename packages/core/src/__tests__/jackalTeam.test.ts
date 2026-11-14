@@ -56,7 +56,15 @@ describe('ジャッカル（111）の定義', () => {
 
   it('writes the burst as a timed oneEnemyBurstDamage for all allies, and S1・S2 as notes only', () => {
     expect(def.skills.burst.effects).toEqual([
-      { kind: 'timed', trigger: 'burstUse', target: 'allies', stat: 'oneEnemyBurstDamage', ref: 1, durationRef: 2 },
+      {
+        kind: 'timed',
+        trigger: 'burstUse',
+        target: 'allies',
+        stat: 'oneEnemyBurstDamage',
+        ref: 1,
+        durationRef: 2,
+        claims: ['C-1229', 'C-1230'],
+      },
     ]);
     expect(def.skills.skill1.effects).toEqual([]);
     expect(def.skills.skill2.effects).toEqual([]);
