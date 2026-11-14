@@ -9,6 +9,8 @@
 //    plan/backlog.md（生成物）を手で直していたら（足した行も消した行も）、止めて行を出す（直しは生成物を main の版に戻すと消えるので。
 //    同 2.11 節）。
 // 3. git rebase origin/main。衝突したファイルが全部生成物（records-data.ts の GENERATED_PATHS）なら main の版を取って続ける。
+//    設計書（plan/design-*.md）の、両方が同じ所に行を足しただけの衝突は、main の行・ブランチの行の順に両方残して続ける
+//    （plan/design-workflow-simplification-14.md 5 節）。
 //    生成物でないファイルが 1 つでもあれば、そこで止めてファイルを出す（人が直して git add し、もう一度 npm run pr:prep を回すと続きから）。
 // 4. 生成物を 1 回だけ作り直す（records:minimal。感度は変わった組だけ計算し直し、records:check も回る）。作り直しで生成物でない
 //    ファイル（開いている検証記録の予測との比べの表・整形）が変わったら、「records:check の書き換え」の commit を足す。
@@ -222,6 +224,11 @@ const rebased = finishRebase(
     takeMain: (paths) => {
       console.log(`生成物の衝突は main の版を取る（終わりに作り直す）: ${paths.join('・')}`);
       io.takeMain(paths);
+    },
+    keepBothAppends: (paths) => {
+      const merged = io.keepBothAppends(paths);
+      if (merged.length > 0) console.log(`設計書の、両方が行を足しただけの衝突は両方残す: ${merged.join('・')}`);
+      return merged;
     },
   },
   GENERATED_PATHS,

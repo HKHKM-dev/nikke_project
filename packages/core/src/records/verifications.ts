@@ -201,9 +201,8 @@ export function validateVerifications(list: readonly Verification[], ctx: Contex
         else if (d === v.id) errors.push(`${at}: ${name}に自分を書いている`);
       }
     }
-    if (v.state === '調査中' || v.state === '保留') {
-      if (v.claims.length > 0) errors.push(`${at}: ${v.state}の検証記録には「結論」を書かない`);
-    }
+    // 調査中は、閉じる前（records:close の検査）に「結論」を書く
+    if (v.state === '保留' && v.claims.length > 0) errors.push(`${at}: 保留の検証記録には「結論」を書かない`);
     if (v.state === '保留' && v.dependsOn.length === 0 && (v.waitingFor ?? '').trim() === '')
       errors.push(`${at}: 保留には「依存」か「待ち」が要る`);
     if (v.state === '完了' && v.claims.length === 0) errors.push(`${at}: 完了の検証記録には「結論」が 1 つ以上要る`);

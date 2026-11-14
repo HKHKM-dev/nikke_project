@@ -1,7 +1,7 @@
 // トピックブランチを origin/main へ取り込むフック（catch-up.ts。plan/design-workflow-simplification-13.md 2 節）を、一時の bare の
 // origin と clone で回す。catchUp は今のディレクトリで git を呼ぶので、別のプロセスで回す。
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -88,6 +88,23 @@ describe('catchUp', () => {
     const head = git(work, 'rev-parse', 'HEAD');
     expect(catchUp(work)).toContain('元に戻した（衝突: AGENTS.md）');
     expect(git(work, 'rev-parse', 'HEAD')).toBe(head);
+    expect(git(work, 'status', '--porcelain', '--untracked-files=no')).toBe('');
+  });
+
+  it('keeps both lines when the branch and main appended to the same design document', () => {
+    const { work, other } = setup();
+    mkdirSync(join(other, 'plan'));
+    commit(other, 'plan/design-x.md', '## 経過\n\n- a\n', 'doc');
+    git(other, 'push', '-q', 'origin', 'HEAD:main');
+    git(work, 'fetch', '-q', 'origin');
+    git(work, 'rebase', '-q', 'origin/main');
+    commit(work, 'plan/design-x.md', '## 経過\n\n- a\n- branch\n', 'topic adds a line');
+    git(work, 'push', '-q', '-f', 'origin', 'claude/x');
+    commit(other, 'plan/design-x.md', '## 経過\n\n- a\n- main\n', 'main adds a line');
+    git(other, 'push', '-q', 'origin', 'HEAD:main');
+    git(work, 'fetch', '-q', 'origin');
+    expect(catchUp(work)).toContain('origin/main の 1 件をリベースで取り込んだ');
+    expect(readFileSync(join(work, 'plan/design-x.md'), 'utf8')).toBe('## 経過\n\n- a\n- main\n- branch\n');
     expect(git(work, 'status', '--porcelain', '--untracked-files=no')).toBe('');
   });
 

@@ -95,3 +95,12 @@ export function runsOf<T extends { frame: number }>(samples: readonly T[], hit: 
   if (current !== null) runs.push(current);
   return runs;
 }
+
+/**
+ * 末尾だけを走査したときの、走査の頭のフレームの録画の頭からの番号。末尾から decoded 枚を読んだので、全体の枚数（ffprobe の
+ * nb_frames）から引く。全体の枚数が分からない・読んだ枚数の方が多いときは null（頭から全部を走査する）
+ */
+export function tailOffset(totalFrames: number, decoded: number): number | null {
+  if (!(totalFrames > 0) || decoded <= 0 || decoded > totalFrames) return null;
+  return totalFrames - decoded;
+}

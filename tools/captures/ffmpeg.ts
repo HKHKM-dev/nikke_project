@@ -79,7 +79,8 @@ export function cropFilter(crop: Crop): string {
   return `crop=${crop.w}:${crop.h}:${crop.x}:${crop.y}`;
 }
 
-export type StillOptions = { crop?: Crop; scale?: number; quality?: number };
+/** fromEnd: 録画の末尾から何秒の所から読むか（-sseof）。そのとき frame はそこから数えた番号 */
+export type StillOptions = { crop?: Crop; scale?: number; quality?: number; fromEnd?: number };
 
 /**
  * フレーム番号を指定して静止画を 1 枚書き出す。
@@ -91,7 +92,8 @@ export function writeStill(video: string, frame: number, out: string, options: S
   const filters = [`select='eq(n,${frame})'`];
   if (options.crop) filters.push(cropFilter(options.crop));
   if (options.scale) filters.push(`scale=${options.scale}:-1:flags=lanczos`);
-  const args = ['-v', 'error', '-i', video, '-vf', filters.join(','), '-fps_mode', 'vfr', '-frames:v', '1'];
+  const seek = options.fromEnd === undefined ? [] : ['-sseof', `-${options.fromEnd}`];
+  const args = ['-v', 'error', ...seek, '-i', video, '-vf', filters.join(','), '-fps_mode', 'vfr', '-frames:v', '1'];
   if (options.quality !== undefined) args.push('-q:v', String(options.quality));
   args.push('-y', out);
   const result = spawnSync('ffmpeg', args, { stdio: 'inherit' });

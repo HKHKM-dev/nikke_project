@@ -14,6 +14,8 @@ import {
   checkSteps,
   collisions,
   finishRebase,
+  isAppendMergeable,
+  mergeAppends,
   DOC_SIZE_LIMIT,
   handEditedLines,
   handRemovedLines,
@@ -491,12 +493,13 @@ describe('longNewGuideItems', () => {
 
 describe('finishRebase', () => {
   /** 衝突の列を順に返す、リベースの途中の偽の git */
-  function fakeIo(steps: string[][], continueFails = false) {
+  function fakeIo(steps: string[][], continueFails = false, appendMerged: readonly string[] = []) {
     let i = 0;
     const taken: string[][] = [];
     return {
       taken,
       io: {
+        keepBothAppends: (paths: readonly string[]) => paths.filter((p) => appendMerged.includes(p)),
         rebasing: () => i < steps.length,
         conflicted: () => steps[i] ?? [],
         takeMain: (paths: readonly string[]) => {
@@ -524,8 +527,38 @@ describe('finishRebase', () => {
     expect(taken).toEqual([['plan/claims.md']]);
   });
 
+  it('keeps both appends in a design document and stops at other conflicts there', () => {
+    const doc = 'plan/design-x.md';
+    expect(finishRebase(fakeIo([[doc, 'plan/claims.md']], false, [doc]).io, ['plan/claims.md'])).toEqual({
+      kind: 'done',
+    });
+    expect(finishRebase(fakeIo([[doc]]).io, [])).toEqual({ kind: 'conflict', files: [doc] });
+  });
+
   it('reports a continue that fails for another reason', () => {
     const { io } = fakeIo([[]], true);
     expect(finishRebase(io, [])).toMatchObject({ kind: 'error' });
+  });
+});
+
+describe('mergeAppends', () => {
+  const conflict = (ours: string, base: string, theirs: string) =>
+    ['<<<<<<< HEAD', ours, `||||||| parent of 1234 (x)${base}`, '=======', theirs, '>>>>>>> 1234 (x)'].join('\n');
+
+  it('keeps the lines of main and then of the branch when both only added lines', () => {
+    const text = ['## 経過', '', '- a', conflict('- main', '', '- branch'), ''].join('\n');
+    expect(mergeAppends(text)).toBe(['## 経過', '', '- a', '- main', '- branch', ''].join('\n'));
+  });
+
+  it('leaves a conflict whose base has lines, a file without conflicts and the merge style', () => {
+    expect(mergeAppends(conflict('- main', '\n- old', '- branch'))).toBeNull();
+    expect(mergeAppends('- a\n')).toBeNull();
+    expect(mergeAppends(['<<<<<<< HEAD', '- main', '=======', '- branch', '>>>>>>> 1234 (x)'].join('\n'))).toBeNull();
+  });
+
+  it('applies to design documents only', () => {
+    expect(isAppendMergeable('plan/design-split-first-pass.md')).toBe(true);
+    expect(isAppendMergeable('AGENTS.md')).toBe(false);
+    expect(isAppendMergeable('plan/captures/design-x.md')).toBe(false);
   });
 });
