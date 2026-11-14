@@ -36,6 +36,7 @@ import {
   resolveDotCancels,
   resolveDotStackUps,
   type ResolvedTrigger,
+  type SkillLevels,
 } from '../skills/resolve.ts';
 import {
   EMPTY_BUFF_STATE,
@@ -56,6 +57,8 @@ import {
   selfHpRatioOf,
   stacksHold,
   valuePiecesOf,
+  type CounterRecord,
+  type HeldItemView,
   type HolderHistory,
   type ValuePiece,
 } from '../skills/holders.ts';
@@ -82,6 +85,7 @@ import {
   staticStatesOf,
   type EffectCondition,
   type SelfStateCondition,
+  type SkillDefinition,
 } from '../skills/types.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
@@ -194,6 +198,27 @@ export function slotTriggerDamage(
     ),
     fullBurst,
   );
+}
+
+/**
+ * 枠の手入力の条件での 1 トリガー値（フルバースト補正なし）。倍率ダメージのヒット（planSkillHits）・バーストのヒットと、結果の
+ * バーストの代表値（sim/engine.ts）が、ヒットの時点のバフ buffs で出す
+ */
+export function slotHitTriggerDamage(
+  slot: TeamSlotInput,
+  enemy: EnemyInput,
+  buffs: BuffTotals,
+  attackRounding: AttackRounding | undefined,
+): TriggerDamage {
+  return computeTriggerDamage({
+    character: slot.character,
+    growth: slot.growth,
+    enemy,
+    attackOverride: slot.attackOverride,
+    attackRounding,
+    buffs,
+    condition: { ...slot.condition, fullBurst: false },
+  });
 }
 
 /** 1 パス目の結果 */
@@ -309,20 +334,22 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   // バフの区間は、1 パス目の件の一覧の履歴から作る（plan/design-holder-effects.md 2.7 節）
   const sustainedHitRateUp = input.sustainedHitRateUp ?? true;
   const timeline = buffTimelineOf(first.history, schedule, landing, sustainedHitRateUp);
-  const skillHits = planSkillHits(
+  const skillHits = planSkillHits({
     slots,
     enemy,
     timeline,
-    first.history,
+    history: first.history,
     schedule,
     frames,
     shots,
-    first,
-    input.sustainedDamagePlacement,
-    slotAutoAttackCoreRatesOf(slots, enemy, frames),
-    input.attackRounding,
-    slotDistanceRatesOf(landing, slots, frames),
-  );
+    summonHits: first.summonHits,
+    accumulateReleases: first.accumulateReleases,
+    cooldownTimerFires: first.cooldownTimerFires,
+    sustainedDamagePlacement: input.sustainedDamagePlacement,
+    autoAttackCoreRates: slotAutoAttackCoreRatesOf(slots, enemy, frames),
+    attackRounding: input.attackRounding,
+    distanceRates: slotDistanceRatesOf(landing, slots, frames),
+  });
   return {
     frames,
     shots,
@@ -360,39 +387,8 @@ function isBurstUseTrigger(trigger: ResolvedTrigger): boolean {
  * 射撃の回数トリガーはその射撃と同じバフ（その射撃で付くバフは次のフレームからなので含まない）、
  * バーストを使った時のもの（burstUse とその回数）は burstDamage と同じく発動直前のバフ。
  */
-export function planSkillHits(
-  slots: readonly (TeamSlotInput | null)[],
-  enemy: EnemyInput,
-  timeline: BuffTimeline,
-  /**
-   * 1 パス目の履歴（plan/design-holder-effects.md 2.8 節）。条件 enemyState は敵の状態の件、
-   * 下位効果のスタック適用は値の小片、{ applied } は付いた記録、段の循環は間隔の変更の件を見る。条件 selfCounter と
-   * perCount の { counter } はカウンタの記録を見る。条件 selfHp は HP の割合の段（hpRatios）を見る
-   */
-  history: SkillHitsHistory,
-  schedule: BurstSchedule | null,
-  frames: number,
-  shots: readonly (ShotLog | null)[],
-  /**
-   * 1 パス目が決めた召喚の攻撃の発火（plan/design-ein-near-feather.md 1.3 節）。蓄積して爆発するダメージ
-   * （plan/design-accumulate-explosion.md 2.4 節）: 1 パス目が決めた蓄積爆破の爆発
-   */
-  {
-    summonHits,
-    accumulateReleases,
-    cooldownTimerFires,
-  }: Pick<FirstPassResult, 'summonHits' | 'accumulateReleases' | 'cooldownTimerFires'>,
-  sustainedDamagePlacement?: SustainedDamagePlacement,
-  /** 枠ごとの自動攻撃のコアに当たる割合の区間（frame/landing.ts の slotAutoAttackCoreRatesOf）。省略はコアなし */
-  autoAttackCoreRates: readonly (Partial<Record<SkillSlot, FlightFrameSpan[]>> | null)[] = [],
-  /** 攻撃力▲の丸め（TeamInput.attackRounding）。省略はいまのモデル */
-  attackRounding?: AttackRounding,
-  /**
-   * 枠ごとの、通常攻撃に距離ボーナスの付く割合の区間（frame/landing.ts の slotDistanceRatesOf）。damage の distance の
-   * ヒットが読む。省略は距離ボーナスなし
-   */
-  distanceRates: readonly (FlightFrameSpan[] | null)[] = [],
-): SkillHitEvent[] {
+export function planSkillHits(input: SkillHitsInput): SkillHitEvent[] {
+  const { slots, history } = input;
   const hits: SkillHitEvent[] = [];
   // damage の条件 enemyState が見る、敵の状態ごとの「付いている」区間。敵の状態の件（どの出どころの件でもよい）
   const enemySpans = new Map<NamedStateId, { start: number; end: number }[]>();
@@ -417,25 +413,7 @@ export function planSkillHits(
   };
   // 下位効果のスタック適用が見る値の小片（区間に足すのと同じ。状態だけの stat は入れない）
   const pieces = valuePiecesOf(history).filter((p) => !isStateStat(p.effect.stat));
-  const ctx: SkillHitsContext = {
-    enemy,
-    timeline,
-    history,
-    schedule,
-    frames,
-    shots,
-    summonHits,
-    accumulateReleases,
-    cooldownTimerFires,
-    sustainedDamagePlacement,
-    autoAttackCoreRates,
-    attackRounding,
-    distanceRates,
-    hits,
-    enemySpans,
-    enemyGrantStacksAt,
-    pieces,
-  };
+  const ctx: SkillHitsContext = { ...input, hits, enemySpans, enemyGrantStacksAt, pieces };
   slots.forEach((slot, slotIndex) => {
     const s = slotReadersOf(ctx, slot, slotIndex);
     if (s === null) return;
@@ -453,18 +431,37 @@ type SkillHitsHistory = Pick<
   'tracks' | 'amplified' | 'slots' | 'applications' | 'counters' | 'hpRatios'
 >;
 
-/** planSkillHits の枠ごとの関数が読む、引数と、枠をまたいで共有するもの */
-type SkillHitsContext = Pick<FirstPassResult, 'summonHits' | 'accumulateReleases' | 'cooldownTimerFires'> & {
+/**
+ * planSkillHits の入力。summonHits は 1 パス目が決めた召喚の攻撃の発火（plan/design-ein-near-feather.md 1.3 節）、
+ * accumulateReleases は 1 パス目が決めた蓄積爆破の爆発（蓄積して爆発するダメージ。plan/design-accumulate-explosion.md 2.4 節）
+ */
+type SkillHitsInput = Pick<FirstPassResult, 'summonHits' | 'accumulateReleases' | 'cooldownTimerFires'> & {
+  slots: readonly (TeamSlotInput | null)[];
   enemy: EnemyInput;
   timeline: BuffTimeline;
+  /**
+   * 1 パス目の履歴（plan/design-holder-effects.md 2.8 節）。条件 enemyState は敵の状態の件、
+   * 下位効果のスタック適用は値の小片、{ applied } は付いた記録、段の循環は間隔の変更の件を見る。条件 selfCounter と
+   * perCount の { counter } はカウンタの記録を見る。条件 selfHp は HP の割合の段（hpRatios）を見る
+   */
   history: SkillHitsHistory;
   schedule: BurstSchedule | null;
   frames: number;
   shots: readonly (ShotLog | null)[];
   sustainedDamagePlacement: SustainedDamagePlacement | undefined;
+  /** 枠ごとの自動攻撃のコアに当たる割合の区間（frame/landing.ts の slotAutoAttackCoreRatesOf） */
   autoAttackCoreRates: readonly (Partial<Record<SkillSlot, FlightFrameSpan[]>> | null)[];
+  /** 攻撃力▲の丸め（TeamInput.attackRounding）。undefined はいまのモデル */
   attackRounding: AttackRounding | undefined;
+  /**
+   * 枠ごとの、通常攻撃に距離ボーナスの付く割合の区間（frame/landing.ts の slotDistanceRatesOf）。damage の distance の
+   * ヒットが読む
+   */
   distanceRates: readonly (FlightFrameSpan[] | null)[];
+};
+
+/** planSkillHits の枠ごとの関数が読む、入力と、枠をまたいで共有するもの */
+type SkillHitsContext = SkillHitsInput & {
   /** 積むヒット（すべての枠） */
   hits: SkillHitEvent[];
   /** 敵の状態ごとの「付いている」区間 */
@@ -474,23 +471,44 @@ type SkillHitsContext = Pick<FirstPassResult, 'summonHits' | 'accumulateReleases
   pieces: readonly ValuePiece[];
 };
 
+/** 枠 slotIndex の、倍率ダメージ・持続ダメージ・段の循環のヒットを作るのに要る読み口（slotReadersOf が作る） */
+type SlotReaders = {
+  slot: TeamSlotInput;
+  slotIndex: number;
+  definition: SkillDefinition;
+  levels: SkillLevels;
+  /** 同じ発動の順のバーストか */
+  sequential: boolean;
+  /** 自分の状態の件 */
+  ownStateItems: readonly HeldItemView[];
+  /** 自分のカウンタの記録 */
+  ownCounters: readonly CounterRecord[];
+  /** damage の条件の自分の側の読み口 */
+  self: SelfReaders;
+  /** perCount が読む、自分のその状態のスタック数 */
+  selfStackCount: (state: NamedStateId, frame: number) => number;
+  /** 間隔の変更の窓（効く先とスロットで絞る） */
+  everyWindows: (target: 'cycle' | 'shotCounts', skill: SkillSlot) => { start: number; end: number; every: number }[];
+  push: PushHit;
+};
+
 /**
- * 枠 slotIndex の、倍率ダメージ・持続ダメージ・段の循環のヒットを作るのに要る読み口（定義の無い枠は null）。同じ発動の順の
- * バーストの検査もここで行う。push はヒットを ctx.hits に積む
+ * 枠のヒット 1 つを積み、積んだヒットとその 1 トリガー値を返す（slotHitPusherOf が作る）。activationFrame は発動のフレーム（省略は
+ * 発火の effectFrames 前）、shooterAtHit は撃つ側のバフをヒットの時点で見るか、valueFrame は値を決めるフレーム（省略は frame）
  */
-function slotReadersOf(ctx: SkillHitsContext, slot: TeamSlotInput | null, slotIndex: number) {
-  const {
-    enemy,
-    timeline,
-    history,
-    schedule,
-    sustainedDamagePlacement,
-    autoAttackCoreRates,
-    attackRounding,
-    distanceRates,
-    hits,
-    pieces,
-  } = ctx;
+type PushHit = (
+  frame: number,
+  effect: ResolvedDamageEffect,
+  pre: boolean,
+  stacks?: number,
+  activationFrame?: number,
+  shooterAtHit?: boolean,
+  valueFrame?: number,
+) => { trigger: TriggerDamage; event: SkillHitEvent };
+
+/** 枠 slotIndex の読み口（定義の無い枠は null）。同じ発動の順のバーストの検査もここで行う */
+function slotReadersOf(ctx: SkillHitsContext, slot: TeamSlotInput | null, slotIndex: number): SlotReaders | null {
+  const { history } = ctx;
   const definition = slot?.skills?.definition;
   if (!slot || !definition) return null;
   const levels = slot.skills?.levels ?? MAX_SKILL_LEVELS;
@@ -541,6 +559,48 @@ function slotReadersOf(ctx: SkillHitsContext, slot: TeamSlotInput | null, slotIn
     counterAt,
     hpRatioAt: (frame) => selfHpRatioOf(history, slotIndex, frame),
   };
+  const push = slotHitPusherOf(ctx, slot, slotIndex, definition, sequential);
+  // 間隔の変更の件（持ち主はその枠。時刻の順）。窓が効く先（段の循環か、射撃の回数のきっかけか）とスロットで絞る（plan/design-skill-stage12.md 2.4 節）
+  const everyWindows = (target: 'cycle' | 'shotCounts', skill: SkillSlot) =>
+    itemsOf(history, { holder: slotIndex, kind: 'cycleEvery' }).flatMap((i) =>
+      i.origin.kind === 'cycleEvery' && i.origin.effect.target === target && i.origin.effect.targetSkill === skill
+        ? [{ start: i.start, end: i.end, every: i.origin.effect.every }]
+        : [],
+    );
+  return {
+    slot,
+    slotIndex,
+    definition,
+    everyWindows,
+    levels,
+    ownCounters,
+    ownStateItems,
+    push,
+    self,
+    selfStackCount,
+    sequential,
+  };
+}
+
+/** 枠 slotIndex のヒットを ctx.hits に積む関数を作る。同じ発動の順のバーストの検査もここで行う */
+function slotHitPusherOf(
+  ctx: SkillHitsContext,
+  slot: TeamSlotInput,
+  slotIndex: number,
+  definition: SkillDefinition,
+  sequential: boolean,
+): PushHit {
+  const {
+    enemy,
+    timeline,
+    schedule,
+    sustainedDamagePlacement,
+    autoAttackCoreRates,
+    attackRounding,
+    distanceRates,
+    hits,
+    pieces,
+  } = ctx;
   // 同じ発動の順は、ヒットと効果の発火が同じフレームのキャラだけで決めてある（plan/design-burst-landing.md 3.2 節）
   const delays = burstDelaysOf(slot.character);
   if (sequential && delays.hitFrames !== delays.effectFrames) {
@@ -548,15 +608,15 @@ function slotReadersOf(ctx: SkillHitsContext, slot: TeamSlotInput | null, slotIn
   }
   // 同じ発動の効果の順を、分かれたヒットにどう当てるかの根拠が無い（plan/design-burst-split-hits.md 4.1 節）
   if (sequential && isSplit(delays)) throw new RangeError('a sequential burst cannot have split hits');
-  const push = (
-    frame: number,
-    effect: ResolvedDamageEffect,
-    pre: boolean,
-    stacks?: number,
+  return (
+    frame,
+    effect,
+    pre,
+    stacks,
     activationFrame = frame - delays.effectFrames,
     shooterAtHit = false,
     valueFrame = frame,
-  ): { trigger: ReturnType<typeof computeTriggerDamage>; hit: SkillHitResult } => {
+  ) => {
     // バースト使用時の倍率ダメージは、撃つ側のバフを発動の時点で固定する（burstHitBuffs）。発動は発火の effectFrames 前
     // （分かれたヒットごとに出す damage は、発動のフレームを渡す）。
     // バーストのヒットごとに出す追加ダメージ（perBurstHit）は、撃つ側のバフもヒットの時点の値で出す
@@ -590,15 +650,7 @@ function slotReadersOf(ctx: SkillHitsContext, slot: TeamSlotInput | null, slotIn
         : skill !== 'burst' && definition.skills[skill].sequential === true && isResolvedShotCount(effect.trigger)
           ? withEarlierSequentialEffects(pieces, atHit, frame + 1, slotIndex, skill, effect.effectIndex)
           : atHit;
-    const trigger = computeTriggerDamage({
-      character: slot.character,
-      growth: slot.growth,
-      enemy,
-      attackOverride: slot.attackOverride,
-      attackRounding,
-      buffs,
-      condition: { ...slot.condition, fullBurst: false },
-    });
+    const trigger = slotHitTriggerDamage(slot, enemy, buffs, attackRounding);
     // フルバースト補正はフルバースト中に出た倍率ダメージにだけ乗る（2026-09-23 実測）
     const fullBurst = SKILL_HIT_FULL_BURST_BONUS && schedule !== null && isInFullBurst(schedule, valueFrame);
     // スタックする持続ダメージの tick は、1 スタックの倍率 × スタックの数（C-0182）
@@ -624,54 +676,16 @@ function slotReadersOf(ctx: SkillHitsContext, slot: TeamSlotInput | null, slotIn
       coreRate,
       distanceRate,
     );
-    hits.push({ frame, slotIndex, effect, hit, ...(stacks === undefined ? {} : { stacks }) });
-    return { trigger, hit };
-  };
-  // 間隔の変更の件（持ち主はその枠。時刻の順）。窓が効く先（段の循環か、射撃の回数のきっかけか）とスロットで絞る（plan/design-skill-stage12.md 2.4 節）
-  const everyWindows = (target: 'cycle' | 'shotCounts', skill: SkillSlot) =>
-    itemsOf(history, { holder: slotIndex, kind: 'cycleEvery' }).flatMap((i) =>
-      i.origin.kind === 'cycleEvery' && i.origin.effect.target === target && i.origin.effect.targetSkill === skill
-        ? [{ start: i.start, end: i.end, every: i.origin.effect.every }]
-        : [],
-    );
-  return {
-    slot,
-    slotIndex,
-    counterAt,
-    definition,
-    everyWindows,
-    levels,
-    ownCounters,
-    ownStateItems,
-    push,
-    self,
-    selfStackCount,
-    selfStateHolds,
-    sequential,
+    const event: SkillHitEvent = { frame, slotIndex, effect, hit, ...(stacks === undefined ? {} : { stacks }) };
+    hits.push(event);
+    return { trigger, event };
   };
 }
 
-/** 枠の読み口（slotReadersOf が返す物） */
-type SlotReaders = NonNullable<ReturnType<typeof slotReadersOf>>;
-
 /** 枠の倍率ダメージ（damage）のヒットを積む */
 function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
-  const { history, schedule, frames, shots, summonHits, accumulateReleases, hits, enemySpans, cooldownTimerFires } =
-    ctx;
-  const {
-    slot,
-    slotIndex,
-    definition,
-    levels,
-    sequential,
-    selfStateHolds,
-    selfStackCount,
-    ownCounters,
-    counterAt,
-    self,
-    push,
-    everyWindows,
-  } = s;
+  const { history, schedule, frames, shots, summonHits, accumulateReleases, enemySpans, cooldownTimerFires } = ctx;
+  const { slot, slotIndex, definition, levels, sequential, selfStackCount, ownCounters, self, push, everyWindows } = s;
   // 自分の発動（perBurstHit の damage が、発火のフレームからヒットのフレームの列を引く）
   const mine = (schedule?.activations ?? []).filter((a) => a.slotIndex === slotIndex);
   const everyAtFor = (skill: SkillSlot): ShotCountEveryAt | undefined => everyAtOf(everyWindows('shotCounts', skill));
@@ -702,8 +716,7 @@ function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
       for (const r of accumulateReleases) {
         if (r.slotIndex !== slotIndex || r.effect.source.skill !== effect.source.skill) continue;
         if (r.effect.effectIndex !== effect.effectIndex) continue;
-        push(r.frame, effect, false, undefined, undefined, false, r.applied);
-        hits[hits.length - 1]!.accumulate = {
+        push(r.frame, effect, false, undefined, undefined, false, r.applied).event.accumulate = {
           start: r.applied + 1,
           end: r.end,
           cap: r.cap,
@@ -729,7 +742,7 @@ function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
               t.cooldown === true
               ? cooldownFiresOf(slotIndex, effect.source.skill)
               : timerDamageFrames(t, shorten, frames, schedule, slotIndex, (state, f) =>
-                  selfStateHolds({ state, present: true }, f),
+                  self.stateHolds({ state, present: true }, f),
                 )
             : triggerFrames(t, schedule, slotIndex, frames, shots, undefined, everyAtFor(effect.source.skill));
     for (const frame of fires) {
@@ -741,11 +754,19 @@ function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
       if (acc?.source === 'team') {
         const end = frame + acc.durationFrames;
         if (end + acc.releaseDelayFrames >= frames) continue;
-        const { trigger, hit } = push(end + acc.releaseDelayFrames, effect, false, undefined, undefined, false, frame);
-        hits[hits.length - 1]!.accumulate = {
+        const { trigger, event } = push(
+          end + acc.releaseDelayFrames,
+          effect,
+          false,
+          undefined,
+          undefined,
+          false,
+          frame,
+        );
+        event.accumulate = {
           start: frame,
           end,
-          cap: trigger.attack * effect.multiplier * hit.distributedDamageMultiplier,
+          cap: trigger.attack * effect.multiplier * event.hit.distributedDamageMultiplier,
           source: 'team',
           ratio: 1,
           opened: frame,
@@ -761,7 +782,7 @@ function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
           ? undefined
           : 'state' in per
             ? selfStackCount(per.state, frame)
-            : counterAt(per.counter, frame);
+            : self.counterAt(per.counter, frame);
       if (copied === 0) continue;
       // 数だけのヒットを、倍率を掛けずに 1 つずつ間隔を空けて出す
       // （粘着榴弾の起爆・キャプチャーチェーンの攻撃。perCountFrames。それぞれのフレームのバフとフルバースト補正。plan/design-skill-stage12.md 2.2 節）。
@@ -813,8 +834,8 @@ function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
 
 /** 枠の持続ダメージ（dot）の tick を積む */
 function dotHits(ctx: SkillHitsContext, s: SlotReaders): void {
-  const { history, schedule, frames, shots, hits, enemySpans, enemyGrantStacksAt } = ctx;
-  const { slot, slotIndex, definition, levels, ownStateItems, self, ownCounters, counterAt, push } = s;
+  const { history, schedule, frames, shots, enemySpans, enemyGrantStacksAt } = ctx;
+  const { slot, slotIndex, definition, levels, ownStateItems, self, ownCounters, push } = s;
   // 持続ダメージの付くフレーム（plan/design-skill-stage13.md 2.3 節）。{ counterFull } の perCount は、発火の
   // applyDelayFrames 後から間隔ごとに、カウンタの数だけ 1 つずつ付く（キャプチャーチェーンの攻撃ごとのチェーンバインド）
   const dotApplicationFrames = (effect: ResolvedDamageEffect): number[] => {
@@ -833,7 +854,7 @@ function dotHits(ctx: SkillHitsContext, s: SlotReaders): void {
       throw new RangeError('a dot with { counterFull } needs perCount { counter } and perCountIntervalFrames');
     const step = { frames: effect.perCountIntervalFrames, delay: effect.dot!.applyDelayFrames };
     return counterFullFrames(ownCounters, slotIndex, t.counterFull).flatMap((f) =>
-      perCountFrames(f, counterAt(per.counter, f), step, frames),
+      perCountFrames(f, self.counterAt(per.counter, f), step, frames),
     );
   };
   // 持続ダメージ。付いた時から間隔ごとの tick を、倍率ダメージと同じ式で tick のフレームのバフで積む。
@@ -893,10 +914,7 @@ function dotHits(ctx: SkillHitsContext, s: SlotReaders): void {
     }
     // 付けるたびに、付けた 1 スタックぶんの 1 ヒット（C-0411。plan/design-skill-stage13.md 2.3 節）
     if (dot.hitOnApply === true) {
-      for (const { f, effect } of fires) {
-        push(f, effect, false);
-        hits[hits.length - 1]!.onApply = true;
-      }
+      for (const { f, effect } of fires) push(f, effect, false).event.onApply = true;
     }
     // 「〈状態〉解除まで」は、付いたフレームを含む自分のその状態の件ごとに、件の終わりまでの tick を出す
     // （件の続いている間の付き直しは、ほかの dot と同じく刻みを変えない）
