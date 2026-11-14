@@ -67,12 +67,24 @@
           "ref": 4,
           "durationRef": 5,
           "assumes": {
-            "ja": "両隣の味方のどちらかの HP の割合が 100% 未満から 100% に戻ったフレーム（被弾なしでは、最大HP のみ▲ が外れた時）に、味方全体に防御力無視ダメージ▲（5 秒）。満タンの味方への回復や戦闘開始時に起きるかは確かめていない（V-0776）",
-            "en": "True Damage up for all allies (5 s) on the frame either adjacent ally’s HP ratio rises from below 100% back to 100% (with no damage taken, when a Max HP-only increase ends). Whether healing a full-HP ally or the battle start also triggers it is unverified (V-0776)"
+            "ja": "両隣の味方のどちらかの HP の割合が 100% 未満から 100% に戻ったフレーム（被弾なしでは、最大HP のみ▲ が外れた時）と、割合が 100% のまま回復を受けたフレーム（戦闘開始時のフローラの持続回復など）に、味方全体に防御力無視ダメージ▲（5 秒）。持続回復の 1 秒ごとの刻みでは起きない",
+            "en": "True Damage up for all allies (5 s) on the frame either adjacent ally’s HP ratio rises from below 100% back to 100% (with no damage taken, when a Max HP-only increase ends), and on the frame either is healed while at 100% (such as Flora’s heal over time at the start of battle). Not on each 1 s tick of the heal over time"
           }
         }
       ],
-      "notes": []
+      "notes": [
+        {
+          "ja": "被弾で減った両隣の味方の HP が持続回復で最大に戻った時の防御力無視ダメージ▲と、被弾で両隣の味方の HP が 90% 以下になった時のバリアは、被弾を扱わないので起きない（要件 5.2 節）。射撃場の 3 分モードでは、操作キャラ（両隣にいれば）が的の攻撃を受けると起きる（C-0551。V-0776）",
+          "en": "True Damage up when an adjacent ally’s HP, lowered by hits, is healed back to max by the heal over time, and the barrier when hits bring an adjacent ally to 90% HP or below, do not occur because taking hits is not modeled (requirements 5.2). In the 3-minute range mode they occur when the controlled character (if adjacent) takes the target’s attacks (C-0551, V-0776)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "trueDamage",
+            "target": "allies",
+            "trigger": "damaged"
+          }
+        }
+      ]
     },
     "burst": {
       "effects": [
@@ -190,8 +202,8 @@
           "ref": 4,
           "durationRef": 5,
           "assumes": {
-            "ja": "両隣の味方のどちらかの HP の割合が 100% 未満から 100% に戻ったフレーム（被弾なしでは、最大HP のみ▲ が外れた時）に、味方全体に防御力無視ダメージ▲（10 秒）。満タンの味方への回復や戦闘開始時に起きるかは確かめていない（V-0776）",
-            "en": "True Damage up for all allies (10 s) on the frame either adjacent ally’s HP ratio rises from below 100% back to 100% (with no damage taken, when a Max HP-only increase ends). Whether healing a full-HP ally or the battle start also triggers it is unverified (V-0776)"
+            "ja": "両隣の味方のどちらかの HP の割合が 100% 未満から 100% に戻ったフレーム（被弾なしでは、最大HP のみ▲ が外れた時）と、割合が 100% のまま回復を受けたフレーム（戦闘開始時のフローラの持続回復など）に、味方全体に防御力無視ダメージ▲（10 秒）。持続回復の 1 秒ごとの刻みでは起きない",
+            "en": "True Damage up for all allies (10 s) on the frame either adjacent ally’s HP ratio rises from below 100% back to 100% (with no damage taken, when a Max HP-only increase ends), and on the frame either is healed while at 100% (such as Flora’s heal over time at the start of battle). Not on each 1 s tick of the heal over time"
           }
         },
         {
@@ -214,7 +226,19 @@
           }
         }
       ],
-      "notes": []
+      "notes": [
+        {
+          "ja": "被弾で減った両隣の味方の HP が持続回復で最大に戻った時の防御力無視ダメージ▲と、被弾で両隣の味方の HP が 90% 以下になった時のバリアは、被弾を扱わないので起きない（要件 5.2 節）。射撃場の 3 分モードでは、操作キャラ（両隣にいれば）が的の攻撃を受けると起きる（C-0551。V-0776）",
+          "en": "True Damage up when an adjacent ally’s HP, lowered by hits, is healed back to max by the heal over time, and the barrier when hits bring an adjacent ally to 90% HP or below, do not occur because taking hits is not modeled (requirements 5.2). In the 3-minute range mode they occur when the controlled character (if adjacent) takes the target’s attacks (C-0551, V-0776)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "trueDamage",
+            "target": "allies",
+            "trigger": "damaged"
+          }
+        }
+      ]
     },
     "burst": {
       "effects": [

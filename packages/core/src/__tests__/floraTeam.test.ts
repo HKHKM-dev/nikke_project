@@ -77,7 +77,8 @@ describe('撮影の編成・宝物版（エクシアのバーストだけ使う�
   });
 
   it('raises True Damage of all allies when the max HP increase ends (HP back to max)', () => {
-    const onBesti = trueDamage.filter((w) => w.holder === B);
+    // 戦闘開始時の持続回復の件（0 から）のほかは、最大HP のみ▲ の終わりから
+    const onBesti = trueDamage.filter((w) => w.holder === B && w.start > 0);
     const ends = maxHpOnly.filter((m) => m.holder === E).map((m) => m.end);
     expect(onBesti.length).toBe(ends.length);
     onBesti.forEach((w, k) => {
@@ -108,9 +109,13 @@ describe('撮影の編成・宝物版（バーストを使わない）', () => {
     return itemsOf(p.history, { sourceSlotIndex: E, holder: E, kind: 'timed', stat: 'attack' });
   })();
 
-  it('fires no S2 effects without a Burst Stage 2 entry', () => {
+  it('fires no barrier without a Burst Stage 2 entry', () => {
     expect(itemsOf(plan.history, { sourceSlotIndex: F, kind: 'state', state: 'barrier' })).toEqual([]);
-    expect(itemsOf(plan.history, { sourceSlotIndex: F, kind: 'timed', stat: 'trueDamage' })).toEqual([]);
+  });
+
+  it('raises True Damage of all allies for 10 s from the start of battle (the heal over time at full HP)', () => {
+    const td = itemsOf(plan.history, { sourceSlotIndex: F, holder: B, kind: 'timed', stat: 'trueDamage' });
+    expect(td.map((w) => [w.start, w.end])).toEqual([[0, gameSecondsToFrames(10)]]);
   });
 
   it('adds stacks to the stackable buffs of Electric Code allies (state and timed)', () => {

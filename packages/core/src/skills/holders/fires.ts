@@ -82,14 +82,20 @@ export function createFires({
       return (ev) => selfHpDropped(state, ev.frame);
     }
     // 両隣の味方の HP の割合が閾値以下に下がったフレーム・100% に上がったフレーム（どちらかの枠で起きれば 1 回。
-    // plan/design-adjacent-allies.md 2.3・2.4 節）
+    // plan/design-adjacent-allies.md 2.3・2.4 節）。最大になった時は、割合が 100% のまま回復を受けたフレーム（その枠の healed）も
+    // 起きる（戦闘開始時の持続回復で起きる。同 9 節の論点 7・V-0776）
     if (isResolvedAdjacentHp(trigger)) {
       const full = 'adjacentHpFull' in trigger;
-      const states = adjacentSlotsOf(slots, slotIndex, false).map((i) =>
-        selfHpStateOf(i, full ? BELOW_FULL_HP : trigger.adjacentHpAtMost),
-      );
+      const adjacent = adjacentSlotsOf(slots, slotIndex, false);
+      const states = adjacent.map((i) => selfHpStateOf(i, full ? BELOW_FULL_HP : trigger.adjacentHpAtMost));
+      const fullFires = (s: SelfHpState, i: number, ev: Parameters<TriggerTracker>[0]): boolean => {
+        const rose = selfHpRose(s, ev.frame);
+        return rose || (ev.healed[i] === true && !s.low);
+      };
       return (ev) =>
-        states.map((s) => (full ? selfHpRose(s, ev.frame) : selfHpDropped(s, ev.frame))).some((fired) => fired);
+        states
+          .map((s, k) => (full ? fullFires(s, adjacent[k]!, ev) : selfHpDropped(s, ev.frame)))
+          .some((fired) => fired);
     }
     // カウンタが上限に届いた次のフレーム（registerCounters が counterFullAt に書く）
     if (isCounterFullTrigger(trigger)) {
