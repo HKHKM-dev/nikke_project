@@ -1,0 +1,105 @@
+{
+  "verification": "V-0770",
+  "note": "H1 は 30.json の定義のまま（宝物版 段階 3）。H0 は宝物版の S1 とバーストの攻撃力▲を落とした形。S1 の▲が重なる形（付くたびに足される）は語彙の欄で書けないので、検証記録の「予測」に手で書いた",
+  "team": [
+    {
+      "rid": 82
+    },
+    {
+      "rid": 30,
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "S1 は 5 発ごとに味方全体へ攻撃力▲（10 秒・付くたびに付け直し）、バーストは使用時に味方全体へ攻撃力▲（10 秒）"
+    },
+    {
+      "id": "H0",
+      "note": "S1・バーストの攻撃力▲が付かない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 30,
+            "treasure": true,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 30,
+            "treasure": true,
+            "skill": "burst",
+            "index": 0
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "poli-pellet-by-shot",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 2,
+        "shot": "1,5,6,11,16,24,32",
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "ポリの 1 ペレットの胴体（会心・コア・距離ボーナスなし）の値を、1 発目からの発の番号ごとに。モデルでは 1・5 発目は S1 の▲なし、6・11・16 発目は▲ 1 回分、24 発目はポリのバーストの窓だけ、32 発目は S1 だけ"
+    },
+    {
+      "id": "liter-hit-after-s1",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "リターの 1 ヒットの胴体（会心・コア・距離ボーナスなし）を、ポリの 5 発目の後・リターのバーストの前（600f）で"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-14",
+    "commit": "5c8ee8658f052549d6243232722bbf68725cd1a2",
+    "values": {
+      "H1": {
+        "poli-pellet-by-shot": [
+          17699.639100000008, 17699.639100000008, 18667.141350000005, 18667.141350000005, 18667.141350000005,
+          26562.31435, 18667.141350000005
+        ],
+        "liter-hit-after-s1": 9191.031300000002
+      },
+      "H0": {
+        "poli-pellet-by-shot": [
+          17699.639100000008, 17699.639100000008, 17699.639100000008, 17699.639100000008, 17699.639100000008,
+          17699.639100000008, 17699.639100000008
+        ],
+        "liter-hit-after-s1": 8714.7225
+      }
+    }
+  }
+}
