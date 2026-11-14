@@ -38,22 +38,17 @@ function BadgeFilter({
   );
 }
 
-/**
- * バッジの絞り込み（kinds の種類を並べる。既定は全部の種類: 属性・バースト段階・クラス・武器種・企業）。
- * 同じ種類は OR、種類どうしは AND（matchesBadgeFilters）
- */
+/** 全部の種類（属性・バースト段階・クラス・武器種・企業）のバッジの絞り込み。同じ種類は OR、種類どうしは AND（matchesBadgeFilters） */
 export function BadgeFilters({
   filters,
   onChange,
-  kinds = BADGE_KINDS,
 }: {
   filters: BadgeFilterValues;
   onChange: (next: BadgeFilterValues) => void;
-  kinds?: readonly BadgeKind[];
 }) {
   return (
     <>
-      {kinds.map((kind) => (
+      {BADGE_KINDS.map((kind) => (
         <BadgeFilter
           key={kind.key}
           kind={kind}
