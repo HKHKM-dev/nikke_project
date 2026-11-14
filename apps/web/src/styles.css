@@ -813,6 +813,9 @@ header h1 {
 .modern-slot-other-parties {
   display: flex;
   gap: 2px;
+  /* 札の行の下端に置き、行と立ち絵の間（.modern-slot-card の gap 8px）まで下げて、立ち絵のすぐ上に付ける */
+  align-self: flex-end;
+  margin-bottom: -8px;
 }
 /* 立ち絵の右上に重ねるボタン（上から、空にする ✕・育成と設定の ⚙）。置き先待ちの水色の重ね・◎ より上 */
 .modern-slot-icon-button {
@@ -968,8 +971,9 @@ header h1 {
 }
 .growth-marks-core > span {
   position: relative;
-  /* 行の高さを字の高さにして、数字を枠の中央に置く */
+  /* 字の箱を大文字・数字の高さ（上は cap の高さ・下は並びの線）に切り詰めて、見える字を枠の中央に置く */
   line-height: 1;
+  text-box: trim-both cap alphabetic;
   letter-spacing: -0.02em;
 }
 /* MAX は 3 字なので、枠に収まるよう小さくする */
