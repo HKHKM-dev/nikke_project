@@ -6,6 +6,7 @@ import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runSimulation } from '../sim/engine.ts';
+import type { BurstSchedule } from '../burst/schedule.ts';
 import { simTeamResult } from '../sim/teamResult.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
@@ -91,6 +92,20 @@ export function effectWindows(
 /** 始まりの列から seconds 秒の窓（戦闘の終わり frames で切る） */
 export function windowsFrom(starts: readonly number[], seconds: number, frames: number): Window[] {
   return starts.map((start) => ({ start, end: Math.min(start + gameSecondsToFrames(seconds), frames) }));
+}
+
+/**
+ * フルバーストごとに、枠 sourceSlot の効果（回数の段ごとに 1 件）がその始まりのフレームに縮めた CT の、枠ごとの和の最大。
+ * CT の残りが縮める量より長い枠（III など）は縮める量だけ縮むので、最大が効果の量になる（ほかの枠は CT の残りまで）
+ */
+export function fullBurstCooldownCuts(schedule: BurstSchedule, sourceSlot: number): number[] {
+  return schedule.fullBurstWindows.map((w) => {
+    const cut = new Map<number, number>();
+    for (const r of schedule.cooldownReductions)
+      if (r.frame === w.start && r.sourceSlotIndex === sourceSlot)
+        cut.set(r.slotIndex, (cut.get(r.slotIndex) ?? 0) + r.applied);
+    return Math.max(...cut.values());
+  });
 }
 
 /** 編成ごとに、射撃の列が、どの枠でもどれか 1 つのグループに 1 回ずつ入る（start ≤ shot < end）ことを確かめる */

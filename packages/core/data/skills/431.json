@@ -32,10 +32,6 @@
           },
           "target": "allies",
           "ref": 1,
-          "assumes": {
-            "ja": "開始回数別の効果（下位効果のスタック適用）の 1 回目から。回数はフルバーストの回数（編成全体）で数える",
-            "en": "From the first entry of the per-entry effects (lower effects stack). Entries are counted as full bursts (team-wide)"
-          },
           "claims": [
             "C-1171"
           ]
@@ -48,10 +44,6 @@
           },
           "target": "allies",
           "ref": 2,
-          "assumes": {
-            "ja": "開始回数別の効果の 2 回目から",
-            "en": "From the second entry of the per-entry effects"
-          },
           "claims": [
             "C-1171"
           ]
@@ -64,10 +56,6 @@
           },
           "target": "allies",
           "ref": 3,
-          "assumes": {
-            "ja": "開始回数別の効果の 3 回目から",
-            "en": "From the third entry of the per-entry effects"
-          },
           "claims": [
             "C-1171"
           ]
@@ -82,10 +70,6 @@
           "stat": "critDamage",
           "ref": 4,
           "durationRef": 5,
-          "assumes": {
-            "ja": "使用回数別の効果（下位効果のスタック適用）の 1 回目から。回数は自分のバーストスキルの使用回数で数える",
-            "en": "From the first use of the per-use effects (lower effects stack). Uses are counted as her own Burst Skill uses"
-          },
           "claims": [
             "C-1172"
           ]
@@ -100,10 +84,6 @@
           "stat": "critDamage",
           "ref": 6,
           "durationRef": 7,
-          "assumes": {
-            "ja": "使用回数別の効果の 2 回目から",
-            "en": "From the second use of the per-use effects"
-          },
           "claims": [
             "C-1172"
           ]
@@ -118,10 +98,6 @@
           "stat": "critDamage",
           "ref": 8,
           "durationRef": 9,
-          "assumes": {
-            "ja": "使用回数別の効果の 3 回目から",
-            "en": "From the third use of the per-use effects"
-          },
           "claims": [
             "C-1172"
           ]

@@ -4,11 +4,17 @@ import { describe, expect, it } from 'vitest';
 import { runSimulation } from '../sim/engine.ts';
 import { activeItemsAt } from '../skills/holders.ts';
 import type { TeamInput } from '../team.ts';
-import { describeEveryShotInOneGroup, fixedTeam } from './teamHelpers.ts';
+import { gameSecondsToFrames } from '../time.ts';
+import {
+  describeEveryShotInOneGroup,
+  effectWindows,
+  fixedTeam,
+  fullBurstCooldownCuts,
+  windowsFrom,
+} from './teamHelpers.ts';
 
 const VOLUME = 431;
-/** 5 秒（ゲーム内の時計） */
-const WINDOW = 294;
+const WINDOW = gameSecondsToFrames(5);
 
 const TEAMS: Record<string, TeamInput> = {
   '撮影 A の編成（ボリューム単騎・オートバースト ON）': fixedTeam([VOLUME], 0),
@@ -19,10 +25,11 @@ const TEAMS: Record<string, TeamInput> = {
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   const volume = input.slots.findIndex((s) => s?.character.resourceId === VOLUME);
   const sim = runSimulation(input);
-  const uses = sim.schedule!.activations.filter((a) => a.slotIndex === volume).map((a) => a.frame);
+  const schedule = sim.schedule!;
+  const uses = schedule.activations.filter((a) => a.slotIndex === volume).map((a) => a.frame);
   const allies = input.slots.map((_, i) => i);
-  const countAt = (holder: number, frame: number, skill: string, stat: string) =>
-    activeItemsAt(sim.history, holder, frame, { sourceSlotIndex: volume, skill, stat }).length;
+  const critDamageUpsAt = (holder: number, frame: number) =>
+    activeItemsAt(sim.history, holder, frame, { sourceSlotIndex: volume, skill: 'skill2', stat: 'critDamage' }).length;
 
   it('uses her Burst more than three times', () => {
     expect(uses.length).toBeGreaterThan(3);
@@ -30,24 +37,23 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
 
   it('gives every ally the crit damage ups of the 1st to k-th use (up to 3) for 5 s from each use', () => {
     uses.forEach((frame, k) => {
+      const ups = Math.min(k + 1, 3);
       for (const holder of allies) {
-        expect(countAt(holder, frame, 'skill2', 'critDamage')).toBe(Math.min(k + 1, 3));
-        expect(countAt(holder, frame + WINDOW - 1, 'skill2', 'critDamage')).toBe(Math.min(k + 1, 3));
-        expect(countAt(holder, frame + WINDOW, 'skill2', 'critDamage')).toBe(0);
+        expect(critDamageUpsAt(holder, frame)).toBe(ups);
+        expect(critDamageUpsAt(holder, frame + WINDOW - 1)).toBe(ups);
+        expect(critDamageUpsAt(holder, frame + WINDOW)).toBe(0);
       }
     });
   });
 
   it('gives every ally the Burst crit rate up for 5 s from each use', () => {
-    for (const frame of uses)
-      for (const holder of allies) {
-        expect(countAt(holder, frame, 'burst', 'critRate')).toBe(1);
-        expect(countAt(holder, frame + WINDOW, 'burst', 'critRate')).toBe(0);
-      }
+    for (const holder of allies)
+      expect(effectWindows(sim, holder, { resourceId: VOLUME, skill: 'burst', stat: 'critRate' })).toEqual(
+        windowsFrom(uses, 5, sim.frames),
+      );
   });
 
   it('cuts the running Burst Skill cooldowns at each Full Burst by 2.34 s, then 5.04 s, then 8.21 s', () => {
-    const schedule = sim.schedule!;
     if (input.slots.length === 1) {
       // 単騎はフルバーストに入らないので起きない
       expect(schedule.fullBurstWindows).toEqual([]);
@@ -57,14 +63,9 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(schedule.fullBurstWindows.length).toBeGreaterThan(2);
     // 秒をフレームに切り捨てて効果ごとに引く（137・158・186f の和。リターの S1 と同じ。C-0460）
     const expected = [137, 295, 481];
-    schedule.fullBurstWindows.forEach((w, n) => {
-      const cut = new Map<number, number>();
-      for (const r of schedule.cooldownReductions)
-        if (r.frame === w.start && r.sourceSlotIndex === volume)
-          cut.set(r.slotIndex, (cut.get(r.slotIndex) ?? 0) + r.applied);
-      // CT の残りが縮める量より長い枠（III など）は、縮める量だけ縮む（ほかの枠は CT の残りまで）
-      expect(Math.max(...cut.values())).toBe(expected[Math.min(n, 2)]);
-    });
+    expect(fullBurstCooldownCuts(schedule, volume)).toEqual(
+      schedule.fullBurstWindows.map((_, n) => expected[Math.min(n, 2)]),
+    );
   });
 });
 
