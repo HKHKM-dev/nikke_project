@@ -68,6 +68,11 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(concealment[0]!.start).toBe(0);
     const firstHit120 = crit[0]!.start;
     expect(concealedAt(firstHit120 - 1)).toBe(firstHit120 - 1 < SEC5);
+    // S2 の付与の始まり（戦闘開始）は、S1 の付与（列の元。10 秒）と違う 5 秒の維持を持つ（plan/design-rosanna.md 2 節）
+    const track = plan.history.tracks.find(
+      (t) => t.holder === s && t.origin.kind === 'state' && t.origin.state === 'concealment',
+    )!;
+    expect(track.startDurations?.get(concealment[0]!.start)).toBe(SEC5);
     // どのクリティカル確率▲の窓の始まりからも隠れ身が 10 秒続き、▲の窓は 3 秒以上
     for (const w of crit) {
       expect(concealedAt(w.start)).toBe(true);

@@ -143,10 +143,15 @@ export function createFire({
       }
       if (levels !== undefined) (track.levelScales ??= new Map()).set(start, levels);
       // 元の付与と維持の違う付与（スタックしない秒の維持だけ。skills/resolve.ts の secondsOnly）は、始まりごとの維持を持つ
-      const own = g.grant.durationFrames;
-      if (track.origin.kind === 'state' && own !== track.origin.grant.durationFrames) {
-        const durations = (track.startDurations ??= new Map());
-        durations.set(start, Math.max(durations.get(start) ?? track.origin.grant.durationFrames, own));
+      // 同じ始まりに複数の付与が付いたら長いほう（表に無い始まりで、前に元の付与が同じフレームに付いていれば元の維持も比べる）
+      if (track.origin.kind === 'state') {
+        const own = g.grant.durationFrames;
+        const origin = track.origin.grant.durationFrames;
+        const prev = track.startDurations?.get(start);
+        if (own !== origin || prev !== undefined) {
+          const earlier = track.starts.filter((s) => s === start).length > count;
+          (track.startDurations ??= new Map()).set(start, Math.max(prev ?? (earlier ? origin : own), own));
+        }
       }
     };
     const targets: number[] = [];
