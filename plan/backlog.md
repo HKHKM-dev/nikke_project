@@ -117,10 +117,10 @@
 - アニス：スター（17）のバーストのコアの経路（2026-10-05）→ 一部完了: [design-anis-star-core-path.md](design-anis-star-core-path.md)。残りは 6 節
 - 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは 3 節
 - 戦闘力による一覧の並び替え（2026-11-07 起票）→ 一部完了: [design-combat-power-sort.md](design-combat-power-sort.md)。残りは 4 節
-- 1 パス目の分割で見送った整理（2026-11-12 起票）→ 一部完了: [design-split-first-pass.md](design-split-first-pass.md) 11 節
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
+- 1 パス目の分割で見送った整理（2026-11-12 起票）→ 完了（2026-11-14。11.1 節の #1〜#12）: [design-split-first-pass.md](design-split-first-pass.md) 11 節
 - 射撃場の SMG の近のコア命中率（2-54。2026-11-14 起票）→ 完了（2026-11-14。的の表の SMG の近を着地点ごとの値にし、銃口 1 つの SMG の近だけ指数・和。二丁持ちの形は 2-59）: [design-smg-near-core.md](design-smg-near-core.md)
 - 1 パス目の長い関数の分割（件の一覧とフレームループ）（2026-11-12 起票）→ 完了（2026-11-12）: [design-split-first-pass.md](design-split-first-pass.md)
 - 長い関数の分割（スキル定義のパーサと画面）（2026-11-12 起票）→ 完了（2026-11-12。段 P1・P2・W1・W2）: [design-split-long-functions.md](design-split-long-functions.md)
