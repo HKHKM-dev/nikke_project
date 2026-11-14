@@ -178,6 +178,7 @@ export function ModernView({
           index={index}
           takenIds={allTakenIds}
           otherPartyIds={otherPartyIds}
+          activeParty={parties.active + 1}
           unsupportedNote={unsupportedNote}
           pendingId={pendingId}
           roster={roster}
