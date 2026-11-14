@@ -5,9 +5,9 @@
   "topic": "命中率・距離",
   "grade": "単独実測",
   "basis": "幅ごとのコア命中率と差 `0345-21`、幅に対する傾き（幅だけ・近 2 回目の項を入れたもの・範囲の中だけ）と組ごとの平均の幅 `0345-22`。区間ごとの幅・上端の y・コア / ヒットは V-0732 の観測値（`0152-24`・`0152-25` の形。42 本）。V-0740",
-  "model": "未反映。的の表（`data/enemies.json` の `range-bigarms` の `coreHitRate.SMG.near`）は近 A・近 B・幅によらない帯の値（0.2644。C-0543）。レシピ near-landing の近 A の範囲（356〜372px）も変えていない",
+  "model": "未反映。的の表（`data/enemies.json` の `range-bigarms` の `coreHitRate.SMG`）の近は着地点ごとの値（C-1108）で、幅によらない（plan/design-smg-near-core.md 2.2 節）。レシピ near-landing の近 A の範囲（356〜372px）も変えていない",
   "replaces": [],
-  "updated": "2026-11-12",
+  "updated": "2026-11-14",
   "subject": {
     "mechanism": "targetTable"
   },

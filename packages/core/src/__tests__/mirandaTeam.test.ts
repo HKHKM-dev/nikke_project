@@ -11,7 +11,7 @@ import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { coreHitRateWithHitRateUp, landingPartsWith } from '../frame/landing.ts';
+import { coreHitRateWithHitRateUp, exponentSumHitRateUp, landingPartsWith } from '../frame/landing.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { hitRateNOf } from '../skills/buffs.ts';
@@ -195,16 +195,20 @@ describe('ヘルスアップ！の命中率▲（ミランダ単騎・条件は�
     expect(max).toBeCloseTo(N, 12);
   });
 
-  it('uses N for the core hit rate of the trigger (C-0036 の式)', () => {
+  it('uses N for the core hit rate of the trigger (銃口 1 つの SMG の近は指数・和。C-1109)', () => {
     const slot = applyTreasureToTeam(SOLO).slots[0]!;
     const nearShot = shots.find((f) => segmentAt(f).landing === 'near' && n(f) > N - 1e-9)!;
     expect(nearShot).toBeDefined();
     const seg = segmentAt(nearShot);
     const parts = landingPartsWith(plan.landing, slot, 0, seg.landing, hitRateNOf(seg.slots[0]!.buffs));
+    expect(parts.map((p) => [p.landing?.id, p.tableCoreHitRate])).toEqual([
+      ['nearA', 0.2113],
+      ['nearB', 0.2709],
+    ]);
     for (const p of parts) {
-      expect(p.condition.coreHitRate).toBeCloseTo(coreHitRateWithHitRateUp(p.tableCoreHitRate!, N), 12);
+      expect(p.condition.coreHitRate).toBeCloseTo(exponentSumHitRateUp(p.tableCoreHitRate!, N), 12);
+      expect(p.condition.coreHitRate).toBeLessThan(coreHitRateWithHitRateUp(p.tableCoreHitRate!, N));
     }
-    expect(coreHitRateWithHitRateUp(0.2644, N)).toBeCloseTo(0.321, 3);
   });
 
   it('gives the treasure S1 ATK up on self (attack ratio 0.5006 in the segment state)', () => {
