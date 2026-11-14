@@ -7,6 +7,7 @@ import {
   type DotFirstTick,
   isCounterFullTrigger,
   isShotCountTrigger,
+  isTimerTrigger,
   type StateEndUntil,
 } from '../types.ts';
 import {
@@ -232,7 +233,10 @@ function parseDotStacks(v: Record<string, Json>, effect: DotEffect, path: string
   }
 }
 
-/** ゲージ: 付けた時（gaugeOnApply とその遅れ）と刻みごと（gaugeOnTick）。刻みの遅れ（tickDelayFrames）も射撃の回数のきっかけだけ */
+/**
+ * ゲージ: 付けた時（gaugeOnApply とその遅れ）と刻みごと（gaugeOnTick）。刻みの遅れ（tickDelayFrames）は射撃の回数のきっかけか、
+ * 周期のきっかけ（ゲージを溜めない。plan/design-rosanna-co.md 2 節）
+ */
 function parseDotGauge(v: Record<string, Json>, effect: DotEffect, path: string): void {
   for (const key of ['gaugeOnApply', 'gaugeOnTick'] as const) {
     if (v[key] === undefined) continue;
@@ -260,7 +264,9 @@ function parseDotGauge(v: Record<string, Json>, effect: DotEffect, path: string)
   }
   if (v.tickDelayFrames !== undefined) {
     if (effect.state !== undefined) fail(`${path}.tickDelayFrames`, 'cannot be combined with state');
-    effect.tickDelayFrames = parseShotCountDelay(v.tickDelayFrames, effect.trigger, `${path}.tickDelayFrames`);
+    effect.tickDelayFrames = isTimerTrigger(effect.trigger)
+      ? parsePositiveInt(v.tickDelayFrames, `${path}.tickDelayFrames`)
+      : parseShotCountDelay(v.tickDelayFrames, effect.trigger, `${path}.tickDelayFrames`);
   }
   if (effect.gaugeOnTick === true && effect.firstTick !== 'afterInterval') {
     fail(`${path}.gaugeOnTick`, 'needs firstTick afterInterval');

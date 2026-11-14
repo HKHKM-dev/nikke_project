@@ -1,0 +1,392 @@
+{
+  "verification": "V-0760",
+  "note": "S2 の持続ダメージは CT が説明文に無く定義に無いので、どの仮説も override で足した。周期は録画で読む値で、予測では維持と同じ 15 秒に仮置きした（下の指標は tick の値だけで、周期に依らない。15 秒なら付き直しまで tick が途切れないので、frame の後の最初の tick が窓の中にある）。tick の形（付いた瞬間か 1 秒後か）と付き直しの形は、値の指標では見分けないので検証記録に手で書いた",
+  "team": [
+    {
+      "rid": 304
+    },
+    {
+      "rid": 283
+    },
+    {
+      "rid": 308,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-A",
+      "note": "S2 の tick は付いた瞬間と、その 1.5 秒後から 1 秒ごと（atApplication。ニヒリスターの火傷 C-0101・マナのバースト C-0300 と同じ形）。バーストは説明文どおり（いまの定義）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 283,
+            "skill": "skill2",
+            "effect": {
+              "kind": "dot",
+              "trigger": {
+                "everySeconds": 15
+              },
+              "ref": 3,
+              "intervalSeconds": 1,
+              "durationRef": 4,
+              "firstTick": "atApplication"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-I",
+      "note": "S2 の tick は付いた 1 秒後から 1 秒ごと（afterInterval。クルミのハッキング C-0130・アークレンジャー・ブラックのバースト C-0866 と同じ形）。バーストは説明文どおり",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 283,
+            "skill": "skill2",
+            "effect": {
+              "kind": "dot",
+              "trigger": {
+                "everySeconds": 15
+              },
+              "ref": 3,
+              "intervalSeconds": 1,
+              "durationRef": 4,
+              "firstTick": "afterInterval"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-A0",
+      "note": "H-A で、バーストの持続ダメージ▲が乗らない（▲の大きさが値で見分けられるかの確かめ）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 283,
+            "skill": "skill2",
+            "effect": {
+              "kind": "dot",
+              "trigger": {
+                "everySeconds": 15
+              },
+              "ref": 3,
+              "intervalSeconds": 1,
+              "durationRef": 4,
+              "firstTick": "atApplication"
+            }
+          }
+        ],
+        "dropEffects": [
+          {
+            "rid": 283,
+            "skill": "burst",
+            "index": 0
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "S-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 283,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 1500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A（単騎）: 通常攻撃の 1 ヒット（胴体・会心なし・距離ボーナスなし）"
+    },
+    {
+      "id": "S-dot",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "team": [
+        {
+          "rid": 283,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: S2 の持続ダメージの 1 tick（会心なし）"
+    },
+    {
+      "id": "S-dot-crit",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "team": [
+        {
+          "rid": 283,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: S2 の持続ダメージの 1 tick（会心）"
+    },
+    {
+      "id": "S-gauge",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "team": [
+        {
+          "rid": 283,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "撮影 A: 1 回目のゲージ満タンのフレーム（S2 の tick はゲージを溜めない。溜めるなら早まる。検証記録の予測）"
+    },
+    {
+      "id": "T-hit-out",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 304
+        },
+        {
+          "rid": 283
+        },
+        {
+          "rid": 308,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "frame": 1500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B（3 人）: バーストの窓の外のロザンナの通常攻撃の 1 ヒット"
+    },
+    {
+      "id": "T-hit-window",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 304
+        },
+        {
+          "rid": 283
+        },
+        {
+          "rid": 308,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "frame": 1880,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 2 回目のバースト（チェーンは II で時間切れ。フルバーストなし）の窓の中の通常攻撃の 1 ヒット（受けるダメージ▲だけ）"
+    },
+    {
+      "id": "T-dot-window",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "team": [
+        {
+          "rid": 304
+        },
+        {
+          "rid": 283
+        },
+        {
+          "rid": 308,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "frame": 1880,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 同じ窓の中の S2 の 1 tick（持続ダメージ▲と受けるダメージ▲。フルバーストなし）"
+    },
+    {
+      "id": "T-dot-fb",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "team": [
+        {
+          "rid": 304
+        },
+        {
+          "rid": 283
+        },
+        {
+          "rid": 308,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "fullBurst": 0,
+        "frame": 60,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 1 回目のフルバーストの中の S2 の 1 tick（持続ダメージ▲・受けるダメージ▲・フルバースト補正）"
+    },
+    {
+      "id": "T-hit-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 304
+        },
+        {
+          "rid": 283
+        },
+        {
+          "rid": 308,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "fullBurst": 0,
+        "frame": 60,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 1 回目のフルバーストの中の通常攻撃の 1 ヒット"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-12",
+    "commit": "ccee6cb2612034e5bccf6328cdb558ac871422ac",
+    "values": {
+      "H-A": {
+        "S-hit": 13626.112500000001,
+        "S-dot": 70276.80000000002,
+        "S-dot-crit": 105415.20000000003,
+        "S-gauge": 1545,
+        "T-hit-out": 13626.112500000001,
+        "T-hit-window": 18017.80855875,
+        "T-dot-window": 111809.78160844803,
+        "T-dot-fb": 167714.67241267202,
+        "T-hit-fb": 27026.712838125004
+      },
+      "H-I": {
+        "S-hit": 13626.112500000001,
+        "S-dot": 70276.80000000002,
+        "S-dot-crit": 105415.20000000003,
+        "S-gauge": 1545,
+        "T-hit-out": 13626.112500000001,
+        "T-hit-window": 18017.80855875,
+        "T-dot-window": 111809.78160844803,
+        "T-dot-fb": 167714.67241267202,
+        "T-hit-fb": 27026.712838125004
+      },
+      "H-A0": {
+        "S-hit": 13626.112500000001,
+        "S-dot": 70276.80000000002,
+        "S-dot-crit": 105415.20000000003,
+        "S-gauge": 1545,
+        "T-hit-out": 13626.112500000001,
+        "T-hit-window": 18017.80855875,
+        "T-dot-window": 92927.01264000002,
+        "T-dot-fb": 139390.51896000002,
+        "T-hit-fb": 27026.712838125004
+      }
+    }
+  }
+}

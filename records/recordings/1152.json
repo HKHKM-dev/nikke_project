@@ -1,0 +1,46 @@
+{
+  "id": "1152",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1152_rl+ar+ar_i-doll-flower+rosanna-chic-ocean+i-doll-sun_fire.mp4",
+  "original": "2026-11-14_10-59-22.mp4",
+  "durationSec": 208,
+  "frames": 12482,
+  "fps": 60,
+  "sizeMB": 252.6,
+  "sha256": "4c638384ddb1",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 283,
+      "name": "ロザンナ：シックオーシャン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-14T11:06+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
