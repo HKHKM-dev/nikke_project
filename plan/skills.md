@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 126・効果 895（根拠あり 873）・notes 331（根拠あり 136）
+件数: キャラ 127・効果 909（根拠あり 887）・notes 334（根拠あり 137）
 
-notes の種類: 未対応 49・前提の外 96・計算に無関係 65・補足 34・間接 87
+notes の種類: 未対応 50・前提の外 96・計算に無関係 66・補足 35・間接 87
 
-スロット: supported 330・partial 36・unsupported 9・noEffect 51
+スロット: supported 332・partial 37・unsupported 9・noEffect 51
 
 ## 10 ラピ
 
@@ -1898,6 +1898,29 @@ notes の種類: 未対応 49・前提の外 96・計算に無関係 65・補足
   - notes[1] 間接（HP）: 射撃マニュアルのフルスタック状態の間の自分の与えるHP回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: C-0180（確定）
 - **burst**: supported
   - effects[0] heal・burstUse: C-0646（仮説）、C-0180（確定）
+
+## 835 アスカ：WILLE
+
+- **skill1**: supported
+  - effects[0] damage・normalHit・additional: C-1264（確定）
+  - effects[1] damage・normalShot・skill: C-1265（確定）、C-1266（仮説）
+  - effects[2] state・normalShot・antiATField（damageTaken）: C-1265（確定）、C-1266（仮説）
+  - notes[0] 補足: 殲滅態勢の追加効果の対象「照準線に最も近い攻撃範囲内の敵 2 機」は、敵 1 体の前提で 1 機（ダメージ・アンチA.T.フィールドとも）: C-1265（確定）
+- **skill2**: partial
+  - effects[0] timed・fullBurstStart・attackDamage: C-1263（確定）
+  - effects[1] timed・annihilationState が終了した時・spinUpSpeed: C-1269（確定）
+  - effects[2] ammoDecrease・annihilationState が終了した時: C-1268（確定）
+  - effects[3] timed・annihilationState が終了した時・reloadSpeed: C-1268（確定）
+  - notes[0] 計算に無関係: 緊急修復の持続回復（自分の最終最大HP の 3.77%・1 秒間隔・3 秒）は、ダメージに関係しない（自分にだけ付き、アスカ：WILLE に回復を受けた時の効果は無い）: 根拠なし
+  - notes[1] 未対応: 緊急修復のリロード速度の「増加状態で固定」（ほかのリロード速度▲▼を無視する）は未対応。ほかのリロード速度▲▼と足し合わせる。アスカ：WILLE にリロード速度▲▼を付ける味方のいない編成では同じ値: 根拠なし
+- **burst**: supported
+  - effects[0] state・burstUse・annihilationState: C-1262（確定）、C-1267（確定）
+  - effects[1] timed・burstUse・normalAttackDamage: C-1262（確定）
+  - effects[2] ammoRefill・burstUse: C-1262（確定）
+  - effects[3] timed・burstUse・attack: C-1262（確定）
+  - effects[4] timed・burstUse・attackDamage: C-1262（確定）
+  - effects[5] damage・annihilationState が終了した時・additional: C-1267（確定）
+  - effects[6] cancelState・annihilationState が終了した時: C-1267（確定）
 
 ## 836 鈴原サクラ
 

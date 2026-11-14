@@ -32568,6 +32568,372 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "1196-01",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "c884400567f1d166",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1196-01",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "c884400567f1d166",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1196-02",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "00e7a0183d6bfb51",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1196-02",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "00e7a0183d6bfb51",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1196-03",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "1a1fe20060f16499",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1196-03",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "1a1fe20060f16499",
+      "effective": true,
+      "minus": 0,
+      "plus": 0.008299999999999865
+    },
+    {
+      "observation": "1196-04",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "0be2bcf59c18ff86",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1196-04",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "0be2bcf59c18ff86",
+      "effective": true,
+      "minus": 0,
+      "plus": 0.00830000000000015
+    },
+    {
+      "observation": "1196-05",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "37dbf819d5eea3ea",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 4 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1196-05",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "37dbf819d5eea3ea",
+      "effective": true,
+      "minus": -0.03213317847464185,
+      "plus": -0.024099883855981236
+    },
+    {
+      "observation": "1196-06",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "437b638549e66fd6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1196-06",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "437b638549e66fd6",
+      "effective": true,
+      "minus": -0.024295053175919665,
+      "plus": -0.016196702117279704
+    },
+    {
+      "observation": "1196-07",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "041d5a8599417c3c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1196-07",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "041d5a8599417c3c",
+      "effective": true,
+      "minus": null,
+      "plus": -0.9707800111281123,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1196-08",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "919d7b80d39913a3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1196-08",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "919d7b80d39913a3",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "plus: 3 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1196-09",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "c71059a636a4565b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1196-09",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "c71059a636a4565b",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "1196-10",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "1852568f8119318a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1196-10",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "1852568f8119318a",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "plus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "1196-11",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "c415f31464ad1f89",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1196-11",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "c415f31464ad1f89",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "plus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "1196-12",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "a09f2a45d7fdc638",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1196-12",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "a09f2a45d7fdc638",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "plus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "1196-13",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "307b7cf1e8a76320",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1196-13",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "307b7cf1e8a76320",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1197-01",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "23f870b212d38921",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1197-01",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "23f870b212d38921",
+      "effective": true,
+      "minus": 0,
+      "plus": 0.008299999999999969
+    },
+    {
+      "observation": "1197-02",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "25379d756e53fa54",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1197-02",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "25379d756e53fa54",
+      "effective": true,
+      "minus": 0,
+      "plus": 0.008299999999999865
+    },
+    {
+      "observation": "1197-03",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "b8b59d162c11cca7",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1197-03",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "b8b59d162c11cca7",
+      "effective": true,
+      "minus": 0,
+      "plus": 0.00830000000000015
+    },
+    {
+      "observation": "1197-04",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "bddca0c9c0be4cda",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1197-04",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "bddca0c9c0be4cda",
+      "effective": true,
+      "minus": null,
+      "plus": -0.9707800111281124,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1197-05",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "cbb4dfed29e35d7a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1197-05",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "cbb4dfed29e35d7a",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "1197-06",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "ba7bebdcd2a3adcb",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1197-06",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "ba7bebdcd2a3adcb",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "plus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "1197-07",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "6c472857273892e8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1197-07",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "6c472857273892e8",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "plus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "1197-08",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "7b2f796ea743eff9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1197-08",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "7b2f796ea743eff9",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "plus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "1197-09",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "1136f48629145431",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1197-09",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "1136f48629145431",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }

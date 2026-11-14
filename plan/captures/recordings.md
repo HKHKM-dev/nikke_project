@@ -1164,6 +1164,8 @@
 | 1193 | `20261115-1193_mg_cinderella-crystal-wave_auto-burst.mp4` | ルドミラ（190、SMG・水冷・SSR） + デルタ（20、SR・風圧・SR） + ◎シンデレラ：クリスタルウェーブ（515、MG・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0782 の撮影 B。ルドミラ（I・AI）・デルタ（II・AI）・シンデレラ：クリスタルウェーブ（III・操作・オート射撃 ON）。オートバースト ON |
 | 1194 | `20261115-1194_sr_milk-bb.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ノア（232、RL・風圧・SSR） + ◎ミルク：ブルーミングバニー（143、SR・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0783。バーストは手で I-DOLL・フラワー → ノア → ミルク：ブルーミングバニーの順に押し、押す時刻を回ごとにずらした |
 | 1195 | `20261115-1195_cocoa-fa-liberalio.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎リバーレリオ（262、SR・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0780 の撮影。ココア + ソルジャーF.A. + リバーレリオ（3 枠目・操作）。オートバースト ON |
+| 1196 | `20261115-1196_team_asuka-wille.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎アスカ：WILLE（835、MG・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0781 の撮影。I-DOLL・フラワー（I）・デルタ（II）・アスカ：WILLE（III・操作）。オートバースト ON |
+| 1197 | `20261115-1197_team_asuka-wille.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎アスカ：WILLE（835、MG・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0781 の撮影。I-DOLL・フラワー（I）・デルタ（II）・アスカ：WILLE（III・操作）。オートバースト ON |
 | 1198 | `20261115-1198_rl_emilia.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎エミリア（821、RL・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0779 の撮影。リター（I・AI）・デルタ（II・AI）・エミリア（III・操作・オート射撃 ON）。オートバースト ON |
 | 1199 | `20261115-1199_rl_emilia.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎エミリア（821、RL・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0779 の撮影。リター（I・AI）・デルタ（II・AI）・エミリア（III・操作・オート射撃 ON）。オートバースト ON |
 
