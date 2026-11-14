@@ -21,11 +21,11 @@
 
 既にある項目を、`{ counterFull }` のきっかけにも書けるようにする（新しい項目は足さない）。
 
-| 効果 | 項目 | 足す読みの規則 |
-| --- | --- | --- |
-| damage（`{ counterFull }`） | `gaugePerHit: true` | perCount `{ counter }` を perCountIntervalFrames で 1 つずつ出し、delayFrames がある（どのヒットも発火より後のフレーム）。条件は組まない |
-| dot（`{ counterFull }`） | `gaugeOnApply: true` | 付けるフレーム（発火の applyDelayFrames 後から間隔ごと）に 1 ヒットぶん。`gaugeOnApplyDelayFrames` は組まない |
-| dot（`{ counterFull }`） | `gaugeOnTick: true` | firstTick `halfAfterLatest` だけ（刻みは frame/dot.ts の latestDotTicks と同じ） |
+| 効果                        | 項目                 | 足す読みの規則                                                                                                                           |
+| --------------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| damage（`{ counterFull }`） | `gaugePerHit: true`  | perCount `{ counter }` を perCountIntervalFrames で 1 つずつ出し、delayFrames がある（どのヒットも発火より後のフレーム）。条件は組まない |
+| dot（`{ counterFull }`）    | `gaugeOnApply: true` | 付けるフレーム（発火の applyDelayFrames 後から間隔ごと）に 1 ヒットぶん。`gaugeOnApplyDelayFrames` は組まない                            |
+| dot（`{ counterFull }`）    | `gaugeOnTick: true`  | firstTick `halfAfterLatest` だけ（刻みは frame/dot.ts の latestDotTicks と同じ）                                                         |
 
 ## 3. 1 パス目
 
