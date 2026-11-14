@@ -1,0 +1,156 @@
+[
+  {
+    "id": "1173-01",
+    "recording": "1173",
+    "kind": "timing",
+    "use": "record",
+    "value": 2,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 1,
+      "high": 3
+    },
+    "description": "S1 の攻撃力▲（P0・P0+L・L0 → P1・P1+L・L1）が リター・ポリ の 1 発で替わるまでの時刻の幅（1 番目の事象 f980 から数えた動画のフレーム）。P0・P0+L・L0の最後の発は 0f、P1・P1+L・L1の最初の発は 3f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@5",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"condition\":\"auto\"}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L0: 枠 1（リター）のモデルの f60、L1: 枠 1（リター）のモデルの f600、P0: 枠 2（ポリ）のモデルの f60のペレット 10 個までの和、P1: 枠 2（ポリ）のモデルの f600のペレット 10 個までの和、P0+L: P0 と L0 の和、P1+L: P1 と L1 の和。境は P0・P0+L・L0 → P1・P1+L・L1（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -200〜100f。P0・P0+L・L0 64・P1・P1+L・L1 40・区別できない 0・外れ 0・食い違い（P1・P1+L・L1の最初の発より後のP0・P0+L・L0の発） 0"
+    },
+    "source": "V-0770",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1173-02",
+    "recording": "1173",
+    "kind": "timing",
+    "use": "record",
+    "value": 2,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 1,
+      "high": 3
+    },
+    "description": "S1 の攻撃力▲（P0・P0+L・L0 → P1・P1+L・L1）が リター・ポリ の 1 発で替わるまでの時刻の幅の、1 回の事象（f980）の共通部分（事象から数えた動画のフレーム）。P0・P0+L・L0の最後の発の最も遅いものは 0f、P1・P1+L・L1の最初の発の最も早いものは 3f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@5",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"condition\":\"auto\"}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L0: 枠 1（リター）のモデルの f60、L1: 枠 1（リター）のモデルの f600、P0: 枠 2（ポリ）のモデルの f60のペレット 10 個までの和、P1: 枠 2（ポリ）のモデルの f600のペレット 10 個までの和、P0+L: P0 と L0 の和、P1+L: P1 と L1 の和。境は P0・P0+L・L0 → P1・P1+L・L1（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -200〜100f。P0・P0+L・L0 64・P1・P1+L・L1 40・区別できない 0・外れ 0・食い違い（P1・P1+L・L1の最初の発より後のP0・P0+L・L0の発） 0"
+    },
+    "source": "V-0770",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1173-03",
+    "recording": "1173",
+    "source": "V-0770",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": [17699.82, 17699.68, 18667.17, 18667.13, 18667.05, 38258.84, 26562.09, 18667.09],
+    "unit": "ダメージ",
+    "description": "ポリの通常攻撃の 1・5・6・11・16・21・28・32 発目の、1 ペレットの胴体（非会心・距離ボーナスなし）の値。S1 の攻撃力▲の有無（なし・なし・あり・あり・あり・あり・あり・あり）とバーストの攻撃力▲の窓（21 発目はリターとポリのバースト、28 発目はポリのバーストだけ）の段",
+    "method": {
+      "tool": "recipe:buff-edge@5",
+      "note": "--opt grid でポリの 1 発（ペレット 10 個までの和）とリターの 1 ヒットの格子と、その和（同じフレームにリターのヒットが重なった増分）に ±1.5 で当て、合った格子のペレットの倍数（5.5・9.5・6・8・9.5・9.5・11.5・11）で、増分からリターの 1 ヒット（格子の値）を引いた残りを割った。発の番号はポリの増分（8 万以上）を頭から数えた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 2,
+        "shot": "1,5,6,11,16,21,28,32",
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1173-04",
+    "recording": "1173",
+    "source": "V-0770",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 9191.07,
+    "unit": "ダメージ",
+    "description": "ポリの 5 発目の後・リターの 1 回目のバーストの前の、リターの 1 ヒットの胴体（非会心・距離ボーナスなし）。S1 の攻撃力▲の乗った値",
+    "method": {
+      "tool": "recipe:buff-edge@5",
+      "note": "6 発目から 17 発目のあいだのリターの増分は、どれも S1 の▲の乗った格子（L1）の 11,948・16,544・21,139・25,735（距離ボーナス 0.3 と会心 0.5・コア 1 の組）に合う。値は 25,735 ÷ 2.8。5 発目より前の増分は▲なしの格子（L0）に合う（1173-01）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1173-05",
+    "recording": "1173",
+    "source": "V-0770",
+    "readAt": "2026-11-14",
+    "kind": "count",
+    "use": "record",
+    "value": [13, 11, 13, 13],
+    "unit": "発",
+    "description": "ポリのバースト 4 回（f1677・f4449・f7629・f10514 から）の窓で、ポリのバーストの攻撃力▲の乗った格子（リターのバーストの窓と重なる区間はその和の段）に合ったポリの発の数。窓の外のポリの発は、どれも▲の乗らない格子（S1 だけか、リターのバーストだけ）に合う（ほかの格子とも区別できない発はどの回にも数えない）",
+    "method": {
+      "tool": "recipe:buff-edge@5",
+      "note": "--opt grid の格子（S1 だけ・リターのバースト・ポリのバースト・両方のバースト。リターの S1 の使用回数別の攻撃力▲の版も）と、リターの 1 ヒットとの和。モデルでは同じ窓のポリの発は 13・10・13・13（2 回目は窓の初めの発が、リターの使用回数別の▲の段で区別できない格子にも合う）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1173-06",
+    "recording": "1173",
+    "source": "V-0770",
+    "readAt": "2026-11-14",
+    "kind": "count",
+    "use": "record",
+    "value": 201,
+    "unit": "発",
+    "description": "ポリの 6 発目から録画の終わりまでの 211 発のうち、S1 の攻撃力▲が 1 回分だけ乗った格子（バーストの段を含む。リターのヒットとの和も）にだけ合う発の数。▲なしの格子とも区別できない発は 5 発、▲なしの格子（とリターのヒットの和）にだけ合う発は 1 発（f5582）、どの格子にも合わない発は 4 発",
+    "method": {
+      "tool": "recipe:buff-edge@5",
+      "note": "合わない発と f5582 の発（f2592・f3376・f6000・f9491）は、20f ほど増分の無い間の後にまとめて出た増分か、2 フレームに割れた増分で、前後のリターのヒットはどれも S1 の▲の乗った格子に合う（S1 は切れていない）。S1 が付くたびに重なるなら、11 発目からは▲ 2 回分以上の値になり、この格子には合わない"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  }
+]
