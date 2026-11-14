@@ -105,6 +105,7 @@ function stateItems(
   untilEnds: readonly number[],
   decreases: readonly StackDecrease[] = [],
   maxStacksAt?: MaxStacksAt,
+  startDurations?: ReadonlyMap<number, number>,
 ): HeldItem[] {
   const shotFrames = log?.frames ?? [];
   // 持ち主の最大装弾数のリロード完了まで（timed の reloadEnd と同じ）と、ほかの状態の終わりまで
@@ -137,7 +138,7 @@ function stateItems(
       stack: w.stack,
     }));
   }
-  return itemsOfPairs(unionItems(starts, grant.durationFrames, frames));
+  return itemsOfPairs(unionItems(starts, grant.durationFrames, frames, startDurations));
 }
 
 /**
@@ -459,7 +460,18 @@ export function buildTrackItems(
           extendItems(
             starts,
             track.extensions,
-            (ss) => stateItems(o.grant, ss, log, ends, frames, track.untilEnds ?? [], decreases, maxStacksAt),
+            (ss) =>
+              stateItems(
+                o.grant,
+                ss,
+                log,
+                ends,
+                frames,
+                track.untilEnds ?? [],
+                decreases,
+                maxStacksAt,
+                track.startDurations,
+              ),
             frames,
           ),
         track.consumes,

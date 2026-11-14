@@ -530,7 +530,8 @@ function validateWhileEffects(entries: Partial<Record<SkillSlot, SkillEntry>>, r
 
 /**
  * 同じ定義の同じ状態の付与どうしの規則（plan/design-named-state.md 5.2・5.6 節）。中身（contents）を
- * 持つのは 1 つだけ、維持の形（秒・発数・出来事）とスタックの有無は同じ（即値は値も。Lv で決まる値は解決のときに見る）。
+ * 持つのは 1 つだけ、維持の形（秒・発数・出来事）とスタックの有無は同じ（即値は値も。Lv で決まる値は解決のときに見る。スタックしない
+ * 状態の秒の維持は値が違ってよい。plan/design-rosanna.md 2 節）。
  * 中身を持たない付与も、中身の項目と合わせた timed として今の規則を通す（状態の窓を共有するので、stat ごとの規則がどの付与にも効く）
  */
 function validateStateGrants(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
@@ -564,8 +565,10 @@ function validateStateGrants(entries: Partial<Record<SkillSlot, SkillEntry>>, ro
       if ((g.effect.stackImmutable === true) !== (first.effect.stackImmutable === true)) {
         fail(g.path, `grants of "${state}" need the same stackImmutable`);
       }
-      if (durationFormOf(g.effect) !== durationFormOf(first.effect)) {
-        fail(g.path, `grants of "${state}" need the same duration (${durationFormOf(first.effect)})`);
+      // スタックしない状態の秒の維持は、即値の値が違ってよい（plan/design-rosanna.md 2 節。Lv で決まる値は解決で見る）
+      const seconds = stackFormOf(first.effect) === 'none';
+      if (durationFormOf(g.effect, seconds) !== durationFormOf(first.effect, seconds)) {
+        fail(g.path, `grants of "${state}" need the same duration (${durationFormOf(first.effect, seconds)})`);
       }
       if (stackFormOf(g.effect) !== stackFormOf(first.effect)) {
         fail(g.path, `grants of "${state}" need the same max stacks (${stackFormOf(first.effect)})`);
@@ -584,11 +587,12 @@ function validateStateGrants(entries: Partial<Record<SkillSlot, SkillEntry>>, ro
   }
 }
 
-/** 付与の維持の形（同じ状態の付与どうしで比べる。即値は値も） */
-function durationFormOf(e: StateGrantEffect): string {
+/** 付与の維持の形（同じ状態の付与どうしで比べる。即値は値も。anySeconds なら秒の維持の値と、即値か ref かを見ない） */
+function durationFormOf(e: StateGrantEffect, anySeconds = false): string {
   if (e.durationUntil !== undefined) return `until ${JSON.stringify(e.durationUntil)}`;
   if (e.durationShots !== undefined) return `shots ${e.durationShots}`;
   if (e.durationShotsRef !== undefined) return 'shots (ref)';
+  if (anySeconds) return 'seconds';
   if (e.durationSeconds !== undefined) return `seconds ${e.durationSeconds}`;
   return 'seconds (ref)';
 }

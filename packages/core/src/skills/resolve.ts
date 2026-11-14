@@ -745,9 +745,26 @@ export type ResolvedStateGrant = ResolvedItemFields & {
 };
 
 /**
+ * スタックしない秒の維持の付与か（発数・出来事・HP・ほかの状態の終わりまでの維持と、戦闘の終わりまでの維持を除く）。
+ * 同じ状態のこの形の付与どうしは、維持の値が違ってよい（plan/design-rosanna.md 2 節）
+ */
+function secondsOnly(g: ResolvedStateGrant): boolean {
+  return (
+    g.maxStacks === undefined &&
+    g.durationShots === undefined &&
+    g.durationUntil === undefined &&
+    g.untilSelfHpAtMost === undefined &&
+    g.untilStateEnd === undefined &&
+    g.untilCounterEmpty === undefined &&
+    g.durationFrames !== BATTLE_END_FRAMES
+  );
+}
+
+/**
  * 定義の付与を Lv の数値に解く（静的な付与も入る）。維持は timed と同じに解き、バーストの効果の窓の終わり
  * （burstWindowTrimOf）も同じに縮める。同じ状態の付与どうしは、解いた維持とスタックの上限が同じでなければ RangeError
- * （窓を 1 つの状態としてまとめるため。plan/design-named-state.md 5.2 節）
+ * （窓を 1 つの状態としてまとめるため。plan/design-named-state.md 5.2 節）。スタックしない秒の維持の付与どうしは、維持の値が
+ * 違ってよい（secondsOnly）
  */
 export function resolveStateGrants(
   def: SkillDefinition,
@@ -807,8 +824,9 @@ export function resolveStateGrants(
   untrimmed.forEach((g, i) => {
     const k = untrimmed.findIndex((x) => x.state === g.state);
     const first = untrimmed[k]!;
+    // スタックしない状態の秒の維持は、付与ごとに値が違ってよい（件の列が始まりごとの維持で窓を開く。plan/design-rosanna.md 2 節）
     const same =
-      g.durationFrames === first.durationFrames &&
+      (g.durationFrames === first.durationFrames || (secondsOnly(g) && secondsOnly(first))) &&
       g.durationShots === first.durationShots &&
       g.durationUntil === first.durationUntil &&
       g.untilSelfHpAtMost === first.untilSelfHpAtMost &&
@@ -820,7 +838,8 @@ export function resolveStateGrants(
       );
     }
     // 窓の終わりを発動から数えるキャラで、バーストの使用の付与とほかの付与が混ざると、状態の維持が付与で分かれる（未対応）
-    if (resolved[i]!.durationFrames !== resolved[k]!.durationFrames) {
+    const trimmed = (j: number): boolean => resolved[j]!.durationFrames !== untrimmed[j]!.durationFrames;
+    if (trimmed(i) !== trimmed(k)) {
       throw new RangeError(
         `character ${character.resourceId}: grants of "${g.state}" mix burstUse and other triggers on a burst whose effect windows end from the activation (not supported: ${where(first)} and ${where(g)})`,
       );

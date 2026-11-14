@@ -115,6 +115,11 @@ export type HeldTrack = {
    */
   startScales?: Map<number, number>;
   /**
+   * 状態の件の列で、列の元の付与と秒の維持の違う付与の、件の始まり → 維持のフレーム数（同じ始まりに複数あれば長いほう。
+   * plan/design-rosanna.md 2 節）。表に無い始まりは元の付与の維持。ほかは無い
+   */
+  startDurations?: Map<number, number>;
+  /**
    * 徹甲炸裂弾の▲の付く時刻（plan/design-explosive-round-lead.md 3 節）: leadFrames のある付与の、件の始まり → きっかけの発のフレーム
    * （昇順。戦闘の始まりで止まった始まりには、発が複数ありうる）。付けた枠の小片の始まり（piecesOfTrack）に使う。ほかは無い
    */

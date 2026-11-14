@@ -73,6 +73,7 @@
     | 〈クラス〉型の味方 | `targetClass` | エヌ：ミラクルフェアリーの S1・バースト | [design-skill-stage9.md](design-skill-stage9.md) |
     | 残りの HP の割合が最も低い味方 N 機 | `target: "lowestHpRatio"` と `targetCount`（`targetCountRef`） | ミサトの S1 | [design-skill-stage8.md](design-skill-stage8.md)、[design-hp-ratio-readers.md](design-hp-ratio-readers.md) 2.2 節 |
     | 「〈名前〉」：機能…・〜状態の味方 | 状態の付与 `kind: "state"` と `contents`。名前は目録（`skills/states.ts`）の id | — | [design-named-state.md](design-named-state.md) 5 節・[design-skill-stage1.md](design-skill-stage1.md) 1.4 節 |
+    | 同じ状態を、維持の違うきっかけで付ける（スタックしない状態） | 付与ごとに秒の維持（`durationRef`・`durationSeconds`）を書く | ロザンナの S1・S2 の隠れ身 | [design-rosanna.md](design-rosanna.md) 2 節 |
     | 自分が〈状態〉なら・でなければ／解除不可 | `condition.selfState`／付与の `undispellable: true` | — | [design-skill-stage1.md](design-skill-stage1.md) 1.1・1.3 節 |
     | 〈名前〉解除／直前に自分がバーストを使用していれば | `kind: "removeState"`／`condition.usedBurst: true` | マナの S2 | 同 1.2・1.4・1.5 節 |
     | 初めてフルバーストタイムが発動した時／直前に自分がバーストを使用していなければ | 出来事の回数のきっかけ `{ "count": "fullBurstStart", "atLeast": 1, "atMost": 1 }`／`condition.usedBurst: false` | ディーゼル：ウィンタースイーツの S1 | [design-diesel-ws.md](design-diesel-ws.md) 2.1・2.2 節 |
