@@ -51,7 +51,7 @@ describe('読み込み', () => {
     expect(() => parseSkillDefinition(def([card(down, { maxStacks: 3 })]))).toThrow(/stacking grant/);
   });
 
-  it('takes the cooldown mark on damage and burstGaugeHit timers', () => {
+  it('takes the cooldown mark on damage and burstGaugeHit timers (timed: plan/design-centi.md)', () => {
     const parsed = parseSkillDefinition(
       def(
         [],
@@ -79,15 +79,13 @@ describe('読み込み', () => {
     fails(
       [
         {
-          kind: 'timed',
+          kind: 'heal',
           trigger: { everySeconds: 9, cooldown: true },
-          target: 'self',
-          stat: 'maxAmmo',
+          target: 'allies',
           ref: 1,
-          durationRef: 2,
         },
       ],
-      /only allowed in damage and burstGaugeHit/,
+      /only allowed in damage, burstGaugeHit and timed/,
     );
     fails(
       [s2({ everySeconds: 15, cooldown: true }), s2({ everySeconds: 10, cooldown: true })],

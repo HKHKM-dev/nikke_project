@@ -26,6 +26,7 @@ import {
   isSelfHpAtMostTrigger,
   isShotCountTrigger,
   isStateCountWindow,
+  isTimerTrigger,
   isStateEndUntil,
   isMaxStacksUpContent,
   isSkillCooldownDownContent,
@@ -39,6 +40,7 @@ import {
   type WeaponChangeEndTrigger,
   type ReloadEndTrigger,
   type CoverHealedTrigger,
+  type SkillFiredTrigger,
   type CoverHealEffect,
   type RemoveDebuffEffect,
   type StateExtendEffect,
@@ -94,6 +96,8 @@ export type ResolvedTrigger =
   | ReloadEndTrigger
   // 遮蔽物 HP 回復を受けた時（1 パス目の FrameEvents.coverHealed。skills/triggers.ts）
   | CoverHealedTrigger
+  // 自分の〈スロット〉を発動した時（1 パス目の FrameEvents.skillFired。skills/triggers.ts）
+  | SkillFiredTrigger
   // 溜めの周期と、溜めが満ちた時（1 パス目の射撃の記録 ShotLog.chargeTicks・chargeFullFrames。skills/triggers.ts）
   | ChargeTickTrigger
   | ChargeFullTrigger
@@ -127,6 +131,11 @@ export function isResolvedReloadEnd(t: ResolvedTrigger): t is ReloadEndTrigger {
 /** 遮蔽物 HP 回復を受けた時のきっかけ（{ coverHealed }）か */
 export function isResolvedCoverHealed(t: ResolvedTrigger): t is CoverHealedTrigger {
   return typeof t === 'object' && 'coverHealed' in t;
+}
+
+/** 自分の〈スロット〉を発動した時のきっかけ（{ skillFired }）か */
+export function isResolvedSkillFired(t: ResolvedTrigger): t is SkillFiredTrigger {
+  return typeof t === 'object' && 'skillFired' in t;
 }
 
 /** フルスタックの消費のきっかけ（{ fullStack }）か */
@@ -625,6 +634,7 @@ export function resolveTimed(
       }
       if (effect.kind !== 'timed') return;
       const window = resolveItemFields(effect, character, slot, levels[slot], effectIndex);
+      window.trigger = resolveTimedTrigger(effect, slot, window.trigger);
       const value =
         effect.amplifies !== undefined
           ? effect.amplifies.percent / 100 // 参照する効果の値に掛ける割合（窓ごとの値は skills/holders/history.ts の amplify）
@@ -652,6 +662,16 @@ export function resolveTimed(
       ? { ...r, durationFrames: Math.max(0, r.durationFrames - trim) }
       : r,
   );
+}
+
+/**
+ * timed のきっかけ。クールタイムの印のある周期（parse/crossChecks.ts が skill1・skill2 の timed に限る）は、自分のスロットの発動のきっかけ
+ * { skillFired } にする（1 パス目の発動の記録を読む。plan/design-centi.md 2.3 節）。ほかは resolveTrigger で解いたもの
+ */
+function resolveTimedTrigger(effect: TimedEffect, slot: SkillSlot, resolved: ResolvedTrigger): ResolvedTrigger {
+  if (!isTimerTrigger(effect.trigger) || effect.trigger.cooldown !== true) return resolved;
+  if (slot === 'burst') throw new RangeError('a cooldown timer is only allowed in skill1 and skill2');
+  return { skillFired: slot };
 }
 
 /** timed と付与で共通の、値を除いた件の欄 */
@@ -907,6 +927,36 @@ export function resolveSkillCooldownDowns(
     }
   }
   return out;
+}
+
+/**
+ * 解決した「スキル N のクールタイム X%▼」（維持なし。plan/design-centi.md 2.1 節）。きっかけの射撃のフレームの発動の後に、自分の slot の
+ * クールタイムの印のある周期の残りを (1 − percent / 100) 倍にする（frame/firstPass/gaugeEffects.ts）
+ */
+export type ResolvedSkillCooldownReduction = {
+  trigger: ResolvedShotCountTrigger;
+  slot: 'skill1' | 'skill2';
+  percent: number;
+};
+
+/** 定義の即時のスキルのクールタイム▼を Lv の数値に解く（値は効果のあるスロットの Lv の説明文の値）。100% 以上は止める */
+export function resolveSkillCooldownReductions(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedSkillCooldownReduction[] {
+  return SKILL_SLOTS.flatMap((slot) => {
+    const skill = character.skills[slot];
+    return def.skills[slot].effects.flatMap((effect) => {
+      if (effect.kind !== 'skillCooldownReduction') return [];
+      const percent = skillValue(skill, effect.percentRef, levels[slot]);
+      if (!(percent > 0 && percent < 100))
+        throw new RangeError(`skillCooldownReduction needs a percent in (0, 100), got ${percent}`);
+      const trigger = resolveTrigger(effect.trigger, skill, levels[slot]);
+      if (!isResolvedShotCount(trigger)) throw new RangeError('skillCooldownReduction needs a shot count trigger');
+      return [{ trigger, slot: effect.slot, percent }];
+    });
+  });
 }
 
 /**

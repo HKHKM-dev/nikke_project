@@ -1,0 +1,35 @@
+{
+  "id": "1164",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1164_centi-solo-fire-1.mp4",
+  "original": "2026-11-14_20-39-09.mp4",
+  "durationSec": 198.4,
+  "frames": 11905,
+  "fps": 60,
+  "sizeMB": 240.5,
+  "sha256": "e5a766384e60",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 80,
+      "name": "センチ",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱・3 分モード・スペック固定 ON）。V-0773 の撮影 A: センチ単騎（操作）・オート射撃 ON・オートバースト OFF。単騎・操作は戦闘履歴の画面で確かめた",
+  "backup": {
+    "at": "2026-11-14T20:57+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

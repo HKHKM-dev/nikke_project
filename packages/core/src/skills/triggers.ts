@@ -23,6 +23,7 @@ import {
   isResolvedWeaponChangeEnd,
   isResolvedReloadEnd,
   isResolvedCoverHealed,
+  isResolvedSkillFired,
   isResolvedSelfHpAtMost,
   isResolvedShotCount,
   type ResolvedTrigger,
@@ -163,6 +164,12 @@ export type FrameEvents = {
    */
   coverHealed?: readonly boolean[];
   /**
+   * このフレームに、前のフレームの自分のスロットの発動（クールタイムの印のある周期。1 パス目の記録）を知らせる枠とスロット
+   * （plan/design-centi.md 2.2 節）。トリガー { skillFired } が見る。流し直し（replayEvents）では作らないので、このきっかけは
+   * 1 パス目が件を登録する timed にだけ書ける。省略は無し
+   */
+  skillFired?: readonly { slotIndex: number; skill: 'skill1' | 'skill2' }[];
+  /**
    * このフレームに発動の結果進んだ段階（burst/schedule.ts の
    * stageEnterFrameOf がこのフレーム。段階 3 は六角形の替わり目。plan/design-skill-stage14.md 2.8 節）。トリガー burstStage{N}Enter が見る。省略は無し
    */
@@ -282,6 +289,9 @@ export function createTriggerTracker(
   if (isResolvedReloadEnd(t)) return (ev) => (ev.reloadEnds ?? []).includes(slotIndex);
   // 遮蔽物 HP 回復を受けた時（1 パス目が当てた遮蔽物 HP 回復の受け手）
   if (isResolvedCoverHealed(t)) return (ev) => ev.coverHealed?.[slotIndex] === true;
+  // 自分の〈スロット〉を発動した時（1 パス目の、前のフレームの発動の記録）
+  if (isResolvedSkillFired(t))
+    return (ev) => ev.skillFired?.some((x) => x.slotIndex === slotIndex && x.skill === t.skillFired) === true;
   // 自分の HP の割合の窓は 1 パス目の件の一覧が追う（skills/holders/fires.ts の firesOf。plan/design-mast.md 8 節）。出来事の列では追わない
   if (isResolvedSelfHpAtMost(t)) {
     throw new RangeError('a selfHpAtMost trigger is not tracked per event; the holder lists track it');

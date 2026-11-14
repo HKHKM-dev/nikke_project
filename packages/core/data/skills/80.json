@@ -1,0 +1,232 @@
+{
+  "formatVersion": 1,
+  "resourceId": 80,
+  "checkedAt": "2026-11-14",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルチャージ攻撃が命中した時の自分の S2 のクールタイム▼は、S2 のバリアの間隔を縮めるだけで、それ自体は与ダメージを変えない（基礎版の S2 はバリアだけ。バリアを読む効果のある編成でだけ効く。宝物版では S2 の攻撃力▲の回数を通して効くので効果として書く）",
+          "en": "The Skill 2 cooldown decrease on landing a Full Charge attack only shortens the interval of the Skill 2 barrier and does not change damage by itself (the base Skill 2 is only a barrier; it matters only with an effect reading barriers in the team. In the treasure version it acts through the number of Skill 2 ATK ups, so it is written as an effect)",
+          "kind": "indirect",
+          "path": "barrier",
+          "effect": {
+            "kind": "skillCooldownReduction",
+            "target": "self",
+            "trigger": "fullChargeShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "クールタイムごとの味方共用バリアは、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは味方がバリア適用状態にならない。バリアの量は要件 5.2 節の外）",
+          "en": "The shared barrier on every cooldown does not change damage by itself (it matters only with an effect reading barriers in the team; this barrier is not defined, so the model does not put allies in a barrier state; the barrier amount is out of scope, requirements 5.2)",
+          "kind": "indirect",
+          "path": "barrier",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "timer"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "残りの HP の数値が最も低い敵 5 機は敵 1 体で 1 ヒット。同じバーストの防御力▼（effects[1]）は乗らない（発動の時点の値。C-0795）。基礎版は撮れない（スペック固定でも宝物版が出る）ので、根拠は宝物版の同じ行の録画",
+            "en": "The 5 enemies with the lowest remaining HP are the lone enemy, hit once. The DEF decrease of the same Burst (effects[1]) does not apply (values at the activation; C-0795). The base version cannot be recorded (the treasure version shows even with fixed spec), so the evidence is the recordings of the same line in the treasure version"
+          },
+          "claims": [
+            "C-1221"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "enemyDefenseDown",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "敵 1 体への防御力▼を、味方全体の与ダメージの式で効かせる。基礎版の根拠は宝物版の同じ行の録画",
+            "en": "The DEF decrease on the lone enemy applies in the damage formula of all allies. The evidence for the base version is the recordings of the same line in the treasure version"
+          },
+          "claims": [
+            "C-1221"
+          ]
+        }
+      ]
+    }
+  },
+  "treasureSkills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "skillCooldownReduction",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "self",
+          "slot": "skill2",
+          "percentRef": 1,
+          "assumes": {
+            "ja": "フルチャージの発（命中を仮定）のたびに、その発のフレームで S2 の残りのクールタイムを (1 − X%) 倍にする（元のクールタイムの X% を引く形ではない）。外れた発では起きないが、モデルは全部の発が当たるとして回す",
+            "en": "On every Full Charge shot (assumed to hit), multiplies the remaining Skill 2 cooldown by (1 − X%) on the shot frame (not subtracting X% of the base cooldown). It does not occur on missed shots, but the model treats every shot as a hit"
+          },
+          "claims": [
+            "C-1219"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "skillFired": "skill2"
+          },
+          "target": "allies",
+          "targetElement": "Iron",
+          "stat": "elementDamage",
+          "ref": 2,
+          "durationRef": 3,
+          "maxStacksRef": 4,
+          "assumes": {
+            "ja": "S2 の発動の次のフレームから 1 段。鉄甲コードの味方（自分も入る）にだけ付き、乗るのは鉄甲が有利な電撃の敵だけ",
+            "en": "One stack from the frame after each Skill 2 activation, only on Iron allies (herself included). It only applies against Electric enemies, which Iron is strong against"
+          },
+          "claims": [
+            "C-1220"
+          ]
+        },
+        {
+          "kind": "heal",
+          "trigger": "battleStart",
+          "target": "allies",
+          "ref": 8,
+          "assumes": {
+            "ja": "戦闘開始時の味方全体への 1 回の回復で、HP が満タンの味方にも「回復効果が適用された時」を起こすとみなす。回復量はダメージに関係しない",
+            "en": "A one-off heal on all allies at the start of battle, assumed to trigger \"when healed\" even on allies at full HP. The healed amount does not affect damage"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "戦闘開始時の資材備蓄（最大HP を超える回復量を保存）は、貯めた分を HP が減った時に使うもので、被弾を扱わないので起きない（要件 4.2 節）",
+          "en": "Stockpile at the start of battle (stores healing beyond max HP) is spent when HP drops, which does not happen because taking hits is not modeled (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "heal",
+            "target": "allies",
+            "trigger": "damaged"
+          }
+        },
+        {
+          "ja": "自分を含む味方の HP が 100% 以下になった時（資材備蓄状態なら）の味方全体の回復は、HP が満タンから減るのが被弾の時だけなので起きない（要件 4.2 節）",
+          "en": "The heal on all allies when an ally's HP drops to 100% or below (while in Stockpile) does not occur, because HP only drops from full on taking hits, which is not modeled (requirements 4.2)",
+          "kind": "outOfScope",
+          "reads": [
+            "hp"
+          ],
+          "effect": {
+            "kind": "heal",
+            "target": "allies",
+            "trigger": "damaged"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 9,
+            "cooldown": true
+          },
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 3,
+          "maxStacksRef": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "S2 は説明文にきっかけの無いクールタイムごとのアクティブで、クールタイムは録画で読んだ 9 秒（戦闘開始の 9 秒後から。S1 の▼で早まる）。発動の次のフレームから 1 段、付くたびに全段の維持を付け直す",
+            "en": "Skill 2 is an active skill on its cooldown with no trigger in the description; the cooldown is 9 s as read from recordings (from 9 s after the start of battle; brought forward by the Skill 1 decrease). One stack from the frame after each activation, refreshing all stacks"
+          },
+          "claims": [
+            "C-1218"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "クールタイムごとの味方共用バリアは、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは味方がバリア適用状態にならない。バリアの量は要件 5.2 節の外）",
+          "en": "The shared barrier on every cooldown does not change damage by itself (it matters only with an effect reading barriers in the team; this barrier is not defined, so the model does not put allies in a barrier state; the barrier amount is out of scope, requirements 5.2)",
+          "kind": "indirect",
+          "path": "barrier",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "timer"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "残りの HP が最も低い敵 5 機は敵 1 体で 1 ヒット。同じバーストの防御力▼（effects[1]）は乗らない（発動の時点の値。C-0795）",
+            "en": "The 5 enemies with the lowest remaining HP are the lone enemy, hit once. The DEF decrease of the same Burst (effects[1]) does not apply (values at the activation; C-0795)"
+          },
+          "claims": [
+            "C-1221"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "enemyDefenseDown",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "敵 1 体への防御力▼を、味方全体の与ダメージの式で効かせる",
+            "en": "The DEF decrease on the lone enemy applies in the damage formula of all allies"
+          },
+          "claims": [
+            "C-1221"
+          ]
+        },
+        {
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 5,
+          "assumes": {
+            "ja": "味方全体への 1 回の回復で、HP が満タンの味方にも「回復効果が適用された時」を起こすとみなす。回復量はダメージに関係しない",
+            "en": "A one-off heal on all allies, assumed to trigger \"when healed\" even on allies at full HP. The healed amount does not affect damage"
+          }
+        }
+      ]
+    }
+  }
+}

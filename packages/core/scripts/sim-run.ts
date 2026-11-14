@@ -92,6 +92,8 @@ function triggerLabel(t: ResolvedTrigger): string {
   if ('reloadEnd' in t) return 'reloadEnd';
   // 遮蔽物 HP 回復を受けた時
   if ('coverHealed' in t) return 'coverHealed';
+  // 自分の〈スロット〉を発動した時（skillFired:skill2）
+  if ('skillFired' in t) return `skillFired:${t.skillFired}`;
   // 溜めの周期（chargeTick0.2s）と、溜めが満ちた時
   if ('chargeTick' in t) return `chargeTick${t.chargeTick.everySeconds}s`;
   if ('chargeFull' in t) return 'chargeFull';

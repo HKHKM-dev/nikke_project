@@ -1,0 +1,69 @@
+[
+  {
+    "id": "1165-01",
+    "recording": "1165",
+    "source": "V-0773",
+    "readAt": "2026-11-14",
+    "kind": "timing",
+    "use": "compare",
+    "value": [
+      430, 882, 1313, 1737, 2243, 2650, 3068, 3515, 3944, 4405, 4842, 5240, 5677, 6099, 6531, 6940, 7391, 7824, 8242
+    ],
+    "unit": "f",
+    "description": "S2 の発動の表示（左の「スキル2 現場検討」）が出たフレーム。戦闘開始（タイマーが出た f764）からの数。最初の 19 回（20 回目からは、戦闘開始から 7880f・8408f ごろの発が外れて HUD に増分が出ず（命中しないので S1 の▼が起きない）、モデル（全部の発が当たる）より 43〜89f 遅い。24 回の値は同じ読み方で 8723・9142・9557・10010・10458）。5〜7 回目は 1 回目の敵のジャンプの頭の発の数え方で 11〜29f 遅い（ほかは −2〜+6f）",
+    "method": {
+      "tool": "banner.ts --mode white・timer.ts --mode changes",
+      "note": "banner.ts --mode white（操作キャラが撃つ録画。帯の地の白い画素を数える読みで、帯の立ち上がりより約 4f 遅い）の立ち上がり − 戦闘開始。戦闘開始は timer.ts の最初の大きな変わり目（画面の切り替え）の次の変わり目"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffFireStarts",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "attack",
+        "video": true,
+        "count": 19
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 30
+      }
+    }
+  },
+  {
+    "id": "1165-02",
+    "recording": "1165",
+    "source": "V-0773",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": [244753, 256026, 267299, 278572, 289845, 256026],
+    "description": "センチの発 2,6,10,14,21,22 発目の 1 ヒット（コア・距離ボーナスあり・会心でない）。S2 の発動ごとに段が上がり（0〜4 段）、最後の発は 4 回目から 8 秒を過ぎて来た 5 回目の S2 の後で 1 段に戻った値",
+    "method": {
+      "tool": "recipe:hud-jumps@3（増分）",
+      "note": "発の番号は HUD の増分の順（戦闘の頭から）。会心の発（コア・距離ボーナスの値の 1.25 倍）を避けて選んだ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": "2,6,10,14,21,22",
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  }
+]

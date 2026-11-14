@@ -1,0 +1,235 @@
+[
+  {
+    "id": "1169-01",
+    "recording": "1169",
+    "source": "V-0773",
+    "readAt": "2026-11-14",
+    "kind": "timing",
+    "use": "compare",
+    "value": [12, 12, 12, 12, 12, 12, 12, 12],
+    "unit": "f",
+    "description": "センチのバーストの、II の発動（六角形の替わり目。1169-02）から 1 ヒット目までのフレーム（1〜8 回目）。2 ヒット目はどの回もその 16f 後（替わり目の 28f 後）に同じ値で出る（9 回目はほかの発と重なる）",
+    "method": {
+      "tool": "recipe:hud-jumps@3・recipe:burst-panel@2",
+      "note": "替わり目の後の、センチの発でもプロダクト08 の発でもない小さな増分 2 つ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 2,
+        "count": 8
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "1169-02",
+    "recording": "1169",
+    "source": "V-0773",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 144056,
+    "description": "センチの 1 回目のバーストのダメージ（2 ヒットの和。会心でない）。S2 の攻撃力▲の段とプロダクト08 のバーストの攻撃力▲が乗り、同じバーストの防御力▼は乗らない",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "1 ヒット目は f1290 の増分（364,250）にセンチの発と重なり、2 ヒット目の 72,028 の 2 倍とした"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 3
+      }
+    }
+  },
+  {
+    "id": "1169-03",
+    "recording": "1169",
+    "source": "V-0773",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 154756,
+    "description": "センチの 2 回目のバーストのダメージ（2 ヒットの和。会心でない）。S2 の攻撃力▲の段とプロダクト08 のバーストの攻撃力▲が乗り、同じバーストの防御力▼は乗らない",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "77,378 × 2"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 3
+      }
+    }
+  },
+  {
+    "id": "1169-04",
+    "recording": "1169",
+    "source": "V-0773",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 149406,
+    "description": "センチの 3 回目のバーストのダメージ（2 ヒットの和。会心でない）。S2 の攻撃力▲の段とプロダクト08 のバーストの攻撃力▲が乗り、同じバーストの防御力▼は乗らない",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "74,703 × 2"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 3
+      }
+    }
+  },
+  {
+    "id": "1169-05",
+    "recording": "1169",
+    "source": "V-0773",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 165454,
+    "description": "センチの 4 回目のバーストのダメージ（2 ヒットの和。会心でない）。S2 の攻撃力▲の段とプロダクト08 のバーストの攻撃力▲が乗り、同じバーストの防御力▼は乗らない",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "82,727 × 2"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 3,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 3
+      }
+    }
+  },
+  {
+    "id": "1169-06",
+    "recording": "1169",
+    "source": "V-0773",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 326134,
+    "description": "センチの発（f2531。2 回目のバーストの替わり目の 74f 後。コア・会心でない）の 1 ヒット。防御力▼が説明文の値で効いた値（敵の防御 100 → 85）。▼の前の同じ格子の発（f2448）は 326,088 で、差 46 は防御 15 ぶん（防御が 0 になる形なら約 300）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "モデルのゲーム内のフレーム 1720（動画 f2531 − 戦闘開始 f807 − 発動の止まり）の格子と照らした"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1720,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  },
+  {
+    "id": "1169-07",
+    "recording": "1169",
+    "source": "V-0773",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 317615,
+    "description": "プロダクト08 の発（f2512。2 回目のバーストの替わり目の 55f 後。コア・距離ボーナスなし・会心でない）の 1 ヒット。センチの宝物版 S2 の発動者基準の攻撃力▲（段）と防御力▼が乗った値。▼の前の同じ格子の発（f2429）は 317,563",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "モデルとの差 3（▼の前も同じ差。攻撃力の端数とみた）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1720,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 5
+      }
+    }
+  },
+  {
+    "id": "1169-08",
+    "recording": "1169",
+    "source": "V-0773",
+    "readAt": "2026-11-14",
+    "kind": "timing",
+    "use": "record",
+    "value": [611, 632],
+    "unit": "f",
+    "description": "防御力▼の窓の終わりの挟み込み（II の発動の替わり目から）。2 回目のバーストの 611f 後のセンチの発（256,072）には▼が乗り、5 回目の 632f 後の発（400,537。次の回と同じ値）には乗らない。10 秒（588f）から、付き始めは替わり目の 24〜44f 後（2 ヒット目の 28f と合う）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "同じ格子の、窓の外の次の発の値と比べた（+46 の有無）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  }
+]

@@ -138,6 +138,9 @@ const KIND_CLASS: Record<string, ElementClass> = {
   cycleEvery: 'firing',
   // 召喚の展開は、機数を通して召喚の攻撃（damage のきっかけ { summon }）のヒットにだけ効く
   summon: 'otherHit',
+  // 即時のスキルのクールタイム▼は、相手のスロットの周期の効果（倍率ダメージ・ゲージ・timed）の時刻を変えるので、分類を決めない
+  // （plan/design-centi.md 2.1 節）
+  skillCooldownReduction: 'unknown',
 };
 
 /**
@@ -216,7 +219,7 @@ function stateStatsOf(def: SkillDefinition, state: NamedStateId): string[] {
 }
 
 /** 鍵の名前をそのままきっかけの名前にするきっかけ（shapeOfEffect） */
-const NAMED_TRIGGER_KEYS = ['applied', 'fullStack', 'chargeTick', 'chargeFull'] as const;
+const NAMED_TRIGGER_KEYS = ['applied', 'fullStack', 'chargeTick', 'chargeFull', 'skillFired'] as const;
 
 /** 効果の形のきっかけの名前（shapeOfEffect。名前に直せないきっかけは無し） */
 function triggerNameOf(t: unknown): string | undefined {

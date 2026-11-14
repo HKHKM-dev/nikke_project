@@ -15,6 +15,7 @@ import type { FirstPassBase } from './base.ts';
 import type { InstantSources } from './instants.ts';
 import type { BurstScheduleLayer } from './burst.ts';
 import type { ShotPauses } from './shotPauses.ts';
+import type { GaugeEffects } from './gaugeEffects.ts';
 
 /** フレームの出来事を集める手順と、回復を当てる手順を作る */
 export function createFrameEvents({
@@ -23,6 +24,7 @@ export function createFrameEvents({
   burstPauseAim,
   burstUsePause,
   coverHeals,
+  skillFiredBefore,
   frames,
   gaugeFullOf,
   heals,
@@ -34,7 +36,7 @@ export function createFrameEvents({
   slots,
   targetsAt,
   windowsOf,
-}: FirstPassBase & InstantSources & BurstScheduleLayer & ShotPauses) {
+}: FirstPassBase & InstantSources & BurstScheduleLayer & ShotPauses & Pick<GaugeEffects, 'skillFiredBefore'>) {
   /** 先のフレームに効果が発火するバーストの発動（フレーム → 発動） */
   const pendingBurstEffects = new Map<number, BurstActivation[]>();
   /** 先のフレームのバーストのヒット（トリガー burstHit。plan/design-elegg.md 8.9 節） */
@@ -152,6 +154,8 @@ export function createFrameEvents({
         ) ?? [],
     );
     const chargeFulls = logs.flatMap((log, i) => (log?.chargeFullFrames?.at(-1) === f ? [i] : []));
+    // 前のフレームの自分のスロットの発動（クールタイムの印のある周期。1 パス目の記録。きっかけ { skillFired }。plan/design-centi.md 2.2 節）
+    const skillFired = skillFiredBefore();
     // このフレームに遮蔽物 HP 回復を受けた枠（前のフレームの射撃で起きたものから。このフレームの分は下で足す）
     if (coverHealedDirty) {
       coverHealed.fill(false);
@@ -181,6 +185,7 @@ export function createFrameEvents({
       ...(coverHeals.length > 0 ? { coverHealed } : {}),
       ...(chargeTicks.length > 0 ? { chargeTicks } : {}),
       ...(chargeFulls.length > 0 ? { chargeFulls } : {}),
+      ...(skillFired.length > 0 ? { skillFired } : {}),
       ...(stageEntries !== undefined ? { stageEntries } : {}),
     };
     return ev;

@@ -76,6 +76,7 @@ import {
   parseCoverHealedTrigger,
   parseEndedTrigger,
   parseSelfHpAtMostTrigger,
+  parseSkillFiredTrigger,
   parseShotCountDelay,
   parseStateEndUntil,
   parseTrigger,
@@ -279,7 +280,9 @@ function parseTimedTrigger(
     (stat === undefined
       ? // 「〈状態〉が終了した時」（{ ended }）も状態の付与だけ（plan/design-grave.md 2.1 節）
         (parseCounterFullTrigger(v.trigger, at) ?? parseEndedTrigger(v.trigger, at))
-      : (parseCoverHealedTrigger(v.trigger, at) ?? parseSelfHpAtMostTrigger(v.trigger, at))) ??
+      : (parseCoverHealedTrigger(v.trigger, at) ??
+        parseSelfHpAtMostTrigger(v.trigger, at) ??
+        parseSkillFiredTrigger(v.trigger, at))) ??
     // 自分の状態の間だけ数える窓（during: { state }）は状態の付与だけ
     parseTrigger(v.trigger, at, {
       timer: 'withStart',

@@ -12,7 +12,9 @@ import {
   type InstantKind,
   isAppliedTrigger,
   isEndedTrigger,
+  isShotCountTrigger,
   isWeaponChangeEndTrigger,
+  type SkillCooldownReductionEffect,
 } from '../types.ts';
 import {
   assertPositiveFinite,
@@ -253,4 +255,29 @@ function parseInstantKindFields(v: Record<string, Json>, effect: InstantEffect, 
   // cooldownReduction だけ
   if (v.maxFires !== undefined)
     (effect as CooldownReductionEffect).maxFires = parsePositiveInt(v.maxFires, `${path}.maxFires`);
+}
+
+/**
+ * 「スキル N のクールタイム X%▼」（維持なし。plan/design-centi.md 2.1 節）。対象は自分だけ。きっかけは射撃の回数の毎 N 回だけ
+ * （1 パス目が射撃を数えて当てる。数える窓・発火の窓・確率は使い手が出たら開く）。相手のスロットの印のある周期は
+ * parse/crossChecks.ts の validateCooldownTimers が見る
+ */
+export function parseSkillCooldownReductionEffect(v: Record<string, Json>, path: string): SkillCooldownReductionEffect {
+  rejectUnknownKeys(v, ['kind', 'trigger', 'target', 'slot', 'percentRef', 'assumes', 'claims'], path);
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
+  if (!isShotCountTrigger(trigger))
+    fail(`${path}.trigger`, 'skillCooldownReduction needs a shot count trigger ({ count })');
+  // 数える窓・発火の窓・確率は parseTrigger（options なし）が落とす。残るのはスタック
+  if (trigger.stacksRef !== undefined)
+    fail(`${path}.trigger.stacksRef`, 'skillCooldownReduction only takes count, every and everyRef');
+  if (v.target !== 'self') fail(`${path}.target`, 'skillCooldownReduction must target "self"');
+  const effect: SkillCooldownReductionEffect = {
+    kind: 'skillCooldownReduction',
+    trigger,
+    target: 'self',
+    slot: oneOf(['skill1', 'skill2'] as const, v.slot, `${path}.slot`),
+    percentRef: parseRef(v.percentRef, `${path}.percentRef`),
+  };
+  parseAssumes(v, effect, path);
+  return effect;
 }

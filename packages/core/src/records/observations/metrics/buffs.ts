@@ -26,6 +26,7 @@ import { spanOf } from './skillHits.ts';
 export const buffsMetrics: Readonly<Record<string, Metric>> = {
   buffWindowEnds: { args: ['slot', 'skill', 'stat'], sim: buffWindowEnds },
   buffWindowStarts: { args: ['slot', 'skill', 'stat'], sim: buffWindowStarts },
+  buffFireStarts: { args: ['slot', 'skill', 'stat'], sim: buffFireStarts },
   buffWindowStartIntervalMean: { args: ['slot', 'skill', 'stat', 'count'], sim: buffWindowStartIntervalMean },
   buffWindowShotIntervalMean: {
     args: ['slot', 'skill', 'stat', 'inside'],
@@ -89,10 +90,38 @@ function buffWindowEnds(result: SimResult, ctx: MetricContext): number[] {
  * videoFrameOf で足す。戦闘開始からの数）
  */
 function buffWindowStarts(result: SimResult, ctx: MetricContext): number[] {
-  const starts = [...new Set(buffPiecesFor(result, ctx).map((w) => w.start))]
+  return orderedStarts(
+    buffPiecesFor(result, ctx).map((w) => w.start),
+    result,
+    ctx,
+  );
+}
+
+/** 始まりの列を、重複なしの昇順にし、video なら動画のフレームに直し、count があれば最初の count 個にする */
+function orderedStarts(starts: readonly number[], result: SimResult, ctx: MetricContext): number[] {
+  const sorted = [...new Set(starts)]
     .sort((a, b) => a - b)
     .map((f) => (ctx.args.video === true ? videoFrameOf(result.schedule, f) : f));
-  return ctx.args.count === undefined ? starts : starts.slice(0, Number(ctx.args.count));
+  return ctx.args.count === undefined ? sorted : sorted.slice(0, Number(ctx.args.count));
+}
+
+/**
+ * その枠が受ける timed の効果の、発火ごとの件の始まり（モデルのフレーム。昇順。skill と stat で絞る。plan/design-centi.md）。
+ * buffWindowStarts（値の小片の始まり）と違い、スタックが上限のまま付き直した発火も入る（CT ごとのアクティブの発動を全部数える）。
+ * count・video は buffWindowStarts と同じ
+ */
+function buffFireStarts(result: SimResult, ctx: MetricContext): number[] {
+  const slotIndex = slotIndexOf(ctx);
+  const starts = result.history.tracks
+    .filter(
+      (t) =>
+        t.holder === slotIndex &&
+        t.origin.kind === 'timed' &&
+        t.origin.effect.source.skill === ctx.args.skill &&
+        t.origin.effect.stat === ctx.args.stat,
+    )
+    .flatMap((t) => t.starts);
+  return orderedStarts(starts, result, ctx);
 }
 
 /**

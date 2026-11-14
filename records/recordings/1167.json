@@ -1,0 +1,37 @@
+{
+  "id": "1167",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1167_centi-solo-nofire-2.mp4",
+  "original": "2026-11-14_20-47-23.mp4",
+  "durationSec": 74.9,
+  "frames": 4496,
+  "fps": 60,
+  "sizeMB": 90.1,
+  "sha256": "18a1b8104a2d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 80,
+      "name": "センチ",
+      "controlled": true,
+      "treasurePhase": 3,
+      "fires": false,
+      "note": "操作・撃たない（オート射撃 OFF）"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "BigArms（灼熱・3 分モード・スペック固定 ON）。V-0773 の撮影 B: センチ単騎（操作・オート射撃 OFF で撃たない）・オートバースト OFF。戦闘開始から約 60 秒で止めた。戦闘履歴の代わりに一時停止の画面（約 61 秒）を映して止めた。与ダメージ 0（撃っていない）",
+  "backup": {
+    "at": "2026-11-14T21:00+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

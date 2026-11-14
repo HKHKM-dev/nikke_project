@@ -91,6 +91,7 @@
     | N 回順番に攻撃（バースト以外）／順番攻撃ダメージ X%▲ | damage の `hitsRef`・`hitIntervalFrames`／stat `sequentialAttackDamage` | マリアン：クイーンの S1・S2 | 同 5.2・5.5 節 |
     | 〈状態〉再発動周期 N 秒▼／バーストを使用した時、〈スキル〉の発動間隔 N 秒▼（N 秒間維持） | 周期の damage の `periodShorten`（`state`／名前の無い窓 `window: { "trigger": "burstUse", "durationRef": N }`） | マリアン：クイーンの S2・エイダの S2 | 同 5.3 節・10.2 節の f・[design-skill-stage15.md](design-skill-stage15.md) 2.3 節 |
     | 〈名前〉：スキル N クールタイム X%▼（N 秒間維持。味方に付く） | 状態の中身 `{ "skillCooldownDown": { "slot": "skill2", "percentRef": N } }`／相手の周期のきっかけの印 `cooldown: true` | アルカナの S1 の魔術師のカード（相手はイサベルの S2） | [design-arcana-magician.md](design-arcana-magician.md) 2 節 |
+    | スキル N のクールタイム X%▼（維持なし。自分）／スキル N を発動した時／説明文にきっかけの無い CT ごとのアクティブの timed | `kind: "skillCooldownReduction"`（`slot`・`percentRef`。きっかけは射撃の回数）／timed のきっかけ `{ "skillFired": "skill2" }`／timed の周期のきっかけの印 `cooldown: true` | センチの宝物版 S1・S2 | [design-centi.md](design-centi.md) 2 節 |
     | フルバーストタイム発動中、N 秒ごとに | 周期のきっかけ（`everySeconds`）の damage と `condition.inFullBurst: true` | エイダの S2 | [design-skill-stage15.md](design-skill-stage15.md) 2.3 節 |
     | 最終攻撃力の X% の防御力無視ダメージ（倍率ダメージ） | damage の `damageType: "true"` | エイダの S2・ベスティー：タクティカル・アップの S2 | 同上 |
     | 直前にバーストスキルを使用した基本バースト段階が N の味方全体 | `target: "burstUsers"` と `targetBurstStep`（timed・付与・heal） | エイダの S1 | 同上 |
