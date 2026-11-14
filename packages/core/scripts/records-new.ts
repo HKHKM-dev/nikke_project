@@ -13,10 +13,16 @@
 //   --run は 1 本の録画の中の反復（runs。plan/design-grade-runs.md 2 節）。載せた観測値が許容内なら、その録画を 2 回と数え、後の回を
 //   再現にする。決めた回は、その録画を --decided-on に書いたときだけ書く。
 //   --parameter-free は、合わせ込みの定数を持たない仮説の式と定数の出どころ（parameterFree。同 3 節）。仮説の出どころの録画も再現に数える。
+//   --observations は根拠にする観測値の ID（無ければ、その検証記録を source にする観測値の全部）。等級の候補・状態・最小構成の検査は
+//   それで出す（plan/design-workflow-simplification-14.md 4 節）。
+//   npm run records:new -- observation --from V-NNNN --recording <録画 id> (--json '<下書き>' | --file <下書きの JSON>)
+// observation: 観測値の下書き（1 つか配列。id・recording・source・readAt を除いた欄。observations/types.ts の ObservationDraft）に、次の空き番号・
+//   source（--from）・readAt（今日）を付け、records:check と同じ観測値の検査を通ったら records/observations/<録画 id>.json に足す
+//   （通らなければ書かない。番号の振り方と同じ値の扱いは records:read --write と同じ。tools/captures/records-io.ts）。commit はしない。
 // 作ったファイルだけを commit して git push -u origin HEAD する（番号をほかのブランチから見えるようにする。reserve.ts）。--no-push で
 //   しない。
 import { spawnSync } from 'node:child_process';
-import { existsSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import {
   CLAIM_MECHANISMS,
@@ -35,7 +41,9 @@ import {
   validateRuns,
 } from '../src/records/claims.ts';
 import { claimDraft, nextId, verificationFileName, verificationTemplate } from '../src/records/drafts.ts';
-import { invalidReasonsOf } from '../src/records/observations/types.ts';
+import { invalidReasonsOf, type ObservationDraft } from '../src/records/observations/types.ts';
+import { validateObservations } from '../src/records/observations/validate.ts';
+import { prepareObservations, writeObservations } from '../../../tools/captures/records-io.ts';
 import { comparePredictions, todayLocal } from '../src/records/predictions.ts';
 import { relevanceOf } from '../src/records/relevance.ts';
 import { withFreshSensitivity } from '../src/records/sensitivity.ts';
@@ -69,6 +77,10 @@ const { values, positionals } = parseArgs({
     'decided-on': { type: 'string', multiple: true },
     run: { type: 'string', multiple: true },
     'parameter-free': { type: 'string' },
+    observations: { type: 'string' },
+    recording: { type: 'string' },
+    json: { type: 'string' },
+    file: { type: 'string' },
     'no-push': { type: 'boolean', default: false },
   },
 });
@@ -77,7 +89,8 @@ const USAGE =
   'usage: npm run records:new -- verification --title "<題名>" --name <短い名前> --topic <話題> [--question "<問い>"] [--from V-NNNN] [--no-push]\n' +
   '       npm run records:new -- claim --from V-NNNN [--text "<結論の文>"] [--topic <話題>] [--subject "<定義の場所>" … | --mechanism <機構>]\n' +
   '         [--decided-on <録画>:<仮説|値|読み方> … | --decided-on none] [--run "<録画>|<観測値,…>|<後の回>[|<決めた回>]" …]\n' +
-  '         [--parameter-free "<式と定数の出どころ>"] [--no-push]\n' +
+  '         [--parameter-free "<式と定数の出どころ>"] [--observations <観測値 ID,…>] [--no-push]\n' +
+  "       npm run records:new -- observation --from V-NNNN --recording <録画 id> (--json '<下書き>' | --file <下書きの JSON>)\n" +
   `話題: ${CLAIM_TOPICS.join(' / ')}\n` +
   `機構: ${CLAIM_MECHANISMS.join(' / ')}`;
 
@@ -190,7 +203,14 @@ if (kind === 'verification') {
     'C',
     claims.map((c) => c.id),
   );
-  const own = observations.filter((o) => o.source === from);
+  const picked = values.observations
+    ?.split(/[,、・]/)
+    .map((o) => o.replaceAll('`', '').trim())
+    .filter(Boolean);
+  const byObservationId = new Map(observations.map((o) => [o.id, o]));
+  const missing = (picked ?? []).filter((o) => !byObservationId.has(o));
+  if (missing.length > 0) fail(`--observations の観測値が無い: ${missing.join('・')}`);
+  const own = picked?.map((o) => byObservationId.get(o)!) ?? observations.filter((o) => o.source === from);
   const decidedOn = parseDecidedOn(values['decided-on']);
   const runs = parseRuns(values.run);
   const parameterFree = values['parameter-free'];
@@ -281,6 +301,34 @@ if (kind === 'verification') {
     );
   reserve([path], id, !values['no-push']);
   void loadSkillDefinitions;
+} else if (kind === 'observation') {
+  const from = values.from;
+  const recordingId = values.recording;
+  if (!from || !recordingId) fail('--from V-NNNN と --recording <録画 id> が要る');
+  if (!verifications.some((v) => v.id === from)) fail(`検証記録 ${from} が無い`);
+  if ((values.json === undefined) === (values.file === undefined)) fail('--json か --file のどちらか 1 つが要る');
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(values.json ?? readFileSync(values.file!, 'utf8'));
+  } catch (e) {
+    fail(`下書きの JSON が読めない: ${(e as Error).message}`);
+  }
+  const drafts = (Array.isArray(parsed) ? parsed : [parsed]) as ObservationDraft[];
+  if (drafts.length === 0 || drafts.some((d) => d === null || typeof d !== 'object' || Array.isArray(d)))
+    fail('下書きは観測値の欄のオブジェクトか、その配列');
+  const file = loadRecordingsFile();
+  const recordings = recordingMap(file);
+  if (!recordings.has(recordingId)) fail(`録画 ${recordingId} が台帳に無い`);
+  const { existing, finished } = prepareObservations(recordingId, drafts, { source: from, readAt: today });
+  const ids = new Set(finished.map((o) => o.id));
+  const others = loadObservations().filter((o) => o.recording !== recordingId);
+  const errors = validateObservations(
+    [...others, ...existing, ...finished],
+    recordings,
+    loadRecordsData(file).enemies,
+  ).filter((e) => ids.has(e.split(':')[0]!));
+  if (errors.length > 0) fail(`観測値の検査に通らないので書かない:\n${errors.map((e) => `  ${e}`).join('\n')}`);
+  writeObservations(recordingId, existing, finished);
 } else {
-  fail('verification か claim を指定する');
+  fail('verification・claim・observation のどれかを指定する');
 }

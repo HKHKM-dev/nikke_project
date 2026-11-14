@@ -24,7 +24,7 @@
 
 ### 1.2 説明文を分解する
 
-- `packages/core/data/characters/{resourceId}.json` の `skills.{skill1|skill2|burst}` を読む。説明文の 1 行ずつを、次のどれかに分ける。notes は種類 `kind` を付けて書く（[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.1 節）。1 行の notes に種類の違う中身を混ぜない。
+- `npm run char -- <resourceId>` で、通常攻撃・バースト・スキルの説明文（値を差し込んだもの）と、効果の分類が重なる定義済みのキャラ（手本の候補）を見る（元は `packages/core/data/characters/{resourceId}.json`）。説明文の 1 行ずつを、次のどれかに分ける。notes は種類 `kind` を付けて書く（[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.1 節）。1 行の notes に種類の違う中身を混ぜない。
   - **語彙にある**: そのまま定義に書ける
   - **語彙を足す**: 足す語彙の案を書く
   - **ダメージに関係しない**（`noDamage`）: どの編成・敵でも与ダメージを変えない（敵の攻撃力▼・不屈・無敵など）。挑発は、付けたときにゲージを溜めることがある（C-0422・C-0480・C-0506。自分にヘイト：敵全体を挑発のティアの S2 は溜めない C-0505。キャラごとに確かめる）（[design-skill-claims-5-2.md](design-skill-claims-5-2.md) 7.2 節）

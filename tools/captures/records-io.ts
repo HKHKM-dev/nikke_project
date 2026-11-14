@@ -1,4 +1,4 @@
-// 録画の台帳と観測値のファイルの読み書き（read.ts が使う）。
+// 録画の台帳と観測値のファイルの読み書き（read.ts と records:new observation が使う）。
 // - 録画の実体は records/recordings/<録画 id>.json から引く（このリポジトリの録画は置き場所の <folder>/<file>、旧の録画は path）。
 // - 観測値の id は次の空き番号。どれかのブランチ（手元か origin。main を含む）がこの録画に足したことのある番号を避ける
 //   （並行する読み取りが同じ番号を取らない。plan/design-investigation-review.md 4.3 節）。
@@ -53,12 +53,12 @@ function sameValue(a: JsonValue, b: JsonValue): boolean {
 
 /**
  * 下書きに id・recording・source・readAt を付ける。既にある同じ道具の値は足さない（違えば process.exitCode = 2）。
- * tool は既存の観測値の method.tool と比べる名前
+ * tool は既存の観測値の method.tool と比べる名前（無ければ下書きごとの method.tool）
  */
 export function prepareObservations(
   recordingId: string,
   produced: readonly ObservationDraft[],
-  opts: { tool: string; source: string; readAt: string },
+  opts: { tool?: string; source: string; readAt: string },
 ): { existing: Observation[]; finished: Observation[] } {
   const existing = loadObservations(recordingId);
   const branches = observationIdsInBranches(recordingId);
@@ -68,7 +68,10 @@ export function prepareObservations(
   for (const p of produced) {
     const prior = existing.find(
       (o) =>
-        o.invalid === undefined && o.method?.tool === opts.tool && o.kind === p.kind && o.description === p.description,
+        o.invalid === undefined &&
+        o.method?.tool === (opts.tool ?? p.method?.tool) &&
+        o.kind === p.kind &&
+        o.description === p.description,
     );
     if (prior) {
       if (sameValue(prior.value, p.value)) {

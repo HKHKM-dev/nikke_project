@@ -73,8 +73,8 @@
 
 - 読み取りはレシピで: `npm run records:read -- <録画 id>[,<録画 id>...] --recipe <名前> --source V-NNNN --write`（録画は , で並べて 1 回で読める。クラウドで録画が手元に無ければ、道具が Drive から取り寄せる）。レシピと `--opt` の一覧は `npm run records:read -- --list`。観測値が `records/observations/<録画 id>.json` に足され、`source` に検証記録の ID、`method.tool` にレシピ名と版が入る。
 - HUD の増分を何人かの 1 ヒットの格子（コア × 会心 × 距離 × ▲の有無。SG はペレットの和。倍率ダメージ・持続ダメージの tick と、それらの同じフレームの和も）に当て、誰のどの発か・▲が乗っているかを決め、事象の前後で窓の端を挟むのは、レシピ `buff-edge` の `--opt grid`・`pair`（格子はモデルのフレームで指す。事象の時刻は `burst-panel` の観測値の ID で渡せる）。使い捨てのスクリプトで書き直さない（[design-buff-edge-recipe.md](design-buff-edge-recipe.md) 8・9 節）。
-- レシピに無い値は、解析ツール（[captures/tools.md](captures/tools.md)）か目で読み、同じファイルに手で書く（`method.note` に読み方）。観測値の形は `packages/core/src/records/observations/types.ts` の型（[design-records-automation.md](design-records-automation.md) 3.4 節）。
-- モデルと比べる値は、比べる指定（`compare`。指標は照合ランナーの `METRICS`）を書く。要る指標が無ければ、読むモデルの出力でテーマのファイル（`packages/core/src/records/observations/metrics/` の `skillHits`・`damage`・`firing`・`burst`・`buffs`）を選び、その表に足す（足した PR に入れる）。補助関数はそのテーマのファイルに置き、2 つ以上のテーマが使うものは `metrics/context.ts` に置く（テーマどうしの import が循環しないように）。予測ファイルの指標と `metric`・`args`・`setup` を同じにすると、予測と自動で結び付く。
+- レシピに無い値は、解析ツール（[captures/tools.md](captures/tools.md)）か目で読み、`npm run records:new -- observation --from V-NNNN --recording <録画 id> --json '<下書き>'`（下書きは 1 つか配列。`--file` でも渡せる）で足す（`method.note` に読み方）。次の空き番号・`source`・`readAt` を付け、`records:check` と同じ観測値の検査に通らなければ書かない。観測値の形は `packages/core/src/records/observations/types.ts` の型（[design-records-automation.md](design-records-automation.md) 3.4 節）。
+- モデルと比べる値は、比べる指定（`compare`。指標は照合ランナーの `METRICS`）を書く。要る指標が無ければ、読むモデルの出力でテーマのファイル（`packages/core/src/records/observations/metrics/` の `skillHits`・`damage`・`firing`・`burst`・`buffs`）を選び、その表に足す（足した PR に入れる）。補助関数はそのテーマのファイルに置き、2 つ以上のテーマが使うものは `metrics/context.ts` に置く（テーマどうしの import が循環しないように）。予測ファイルの指標と `metric`・`args`・`setup` を同じにすると、予測と自動で結び付く。観測値を書く前にモデルの値を見るには `npm run records:model -- <録画 id> <指標>[,<指標>...] --setup '<JSON>' [--args '<JSON>']`。
 - 繰り返し使う読み方はレシピにする（`tools/captures/recipes/`）。読み取りの落とし穴は [captures/guide.md](captures/guide.md)。
 
 ## 7. 比べる
@@ -86,7 +86,7 @@
 
 ## 8. 結論
 
-- `npm run records:new -- claim --from V-NNNN --text "<結論の文>"` に、結論の対象（定義の効果なら `--subject "data/skills/<rid>.json の <スロット> の effects[<番号>]"`、定義に結び付かない機構なら `--mechanism <機構>`。付録 A）と、`--decided-on <録画>:<仮説|値|読み方>`（無ければ `--decided-on none`）を付ける。録画の中の反復は `--run "<録画>|<観測値,…>|<後の回>[|<決めた回>]"`、合わせ込みの定数を持たない仮説は `--parameter-free "<式と定数の出どころ>"`（[design-grade-runs.md](design-grade-runs.md)）。根拠（この検証記録の観測値）と等級の候補が埋まり、2.2 節の条件で状態が決まる。`model`（モデル側）は人が書く。番号は起案と同じく、道具が取ってすぐ push する（3 節）。
+- `npm run records:new -- claim --from V-NNNN --text "<結論の文>"` に、結論の対象（定義の効果なら `--subject "data/skills/<rid>.json の <スロット> の effects[<番号>]"`、定義に結び付かない機構なら `--mechanism <機構>`。付録 A）と、`--decided-on <録画>:<仮説|値|読み方>`（無ければ `--decided-on none`）を付ける。録画の中の反復は `--run "<録画>|<観測値,…>|<後の回>[|<決めた回>]"`、合わせ込みの定数を持たない仮説は `--parameter-free "<式と定数の出どころ>"`（[design-grade-runs.md](design-grade-runs.md)）。根拠（この検証記録の観測値。`--observations <ID,…>` で絞れる）と等級の候補が埋まり、2.2 節の条件で状態が決まる。`model`（モデル側）は人が書く。番号は起案と同じく、道具が取ってすぐ push する（3 節）。
 - `decidedOn` の役割: `仮説の出どころ`（その録画の観測値や残差を見て仮説を立てた）・`値を合わせた`（値をその録画に合わせて決めた）・`読み方を合わせた`（その録画を見てから読み方を組んだ・替えた）。予測の前に値を見ていただけの録画と、読めなさを理由に読み方を替えた録画は入れない（[design-investigation-review.md](design-investigation-review.md) 1.4.2 節の後）。
 - 定義に結び付く結論の書き方（効果の `claims` に ID を書く）は [skills-guide.md](skills-guide.md) 3 節。
 - `確定` の結論に結び付いた観測値は、以後 `npm test` で比べられる（許容外なら落ちる）。
