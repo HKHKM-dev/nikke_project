@@ -1,11 +1,11 @@
 {
   "id": "C-1273",
   "text": "リトルマーメイドの S2 の「フルバーストタイム中のみ、1 秒ごとに 4 回順番に攻撃」は、戦闘開始から 1 秒ごと（端数を持ち越す）に数える周期のうちフルバーストの窓の中の回に、周期の 6f 後から 12f おきに 4 ヒット（1 ヒットは最終攻撃力の 63.36%。コアなし）を出す",
-  "state": "仮説",
+  "state": "確定",
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
   "basis": "`1202-08`・`1202-09`。V-0784",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "data/skills/513.json（skill2 の effects[1]。{ everySeconds: 1, carry: true }・inFullBurst・delayFrames: 6・hitsRef: 6・hitIntervalFrames: 12）",
   "replaces": [],
   "updated": "2026-11-14",
   "subject": {
@@ -23,6 +23,14 @@
       "decided": "1",
       "reproduced": "2",
       "observations": ["1202-09"]
+    }
+  ],
+  "minimal": [
+    {
+      "element": ["リトルマーメイド skill1.notes[0]"],
+      "reason": "射撃集中は狙う敵をそろえる効果で、敵 1 体の射撃場では射撃・ゲージ・ダメージを変えない",
+      "decided": "2026-11-15",
+      "observations": ["1202-08", "1202-09"]
     }
   ]
 }

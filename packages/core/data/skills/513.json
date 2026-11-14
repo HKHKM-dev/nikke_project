@@ -13,7 +13,10 @@
           "assumes": {
             "ja": "フルバーストタイムが終了したフレームに、味方全体のバーストの CT の残りを縮める（アニス：スターの S1 と同じ形）",
             "en": "On the frame Full Burst ends, shortens the remaining burst cooldown of all allies (same form as Anis: Star's S1)"
-          }
+          },
+          "claims": [
+            "C-1274"
+          ]
         },
         {
           "kind": "timed",
@@ -21,7 +24,10 @@
           "target": "allies",
           "stat": "attackDamage",
           "ref": 2,
-          "durationRef": 3
+          "durationRef": 3,
+          "claims": [
+            "C-1274"
+          ]
         },
         {
           "kind": "burstGauge",
@@ -34,7 +40,10 @@
           "assumes": {
             "ja": "味方が消費した弾の合計は、自分を含む編成の全員の発（1 発 1）を数え、合計が 400 の倍数に届いた発で、編成の 1 本のゲージに足す（シンデレラ：クリスタルウェーブの S1 と同じ数え方）",
             "en": "The total ammo expended by allies counts every shot of the whole team including self (1 per round), and on the shot where the total reaches a multiple of 400 it adds to the team gauge (same counting as Cinderella: Crystal Wave S1)"
-          }
+          },
+          "claims": [
+            "C-1271"
+          ]
         }
       ],
       "notes": [
@@ -67,7 +76,10 @@
           "assumes": {
             "ja": "敵が出現した時を、戦闘開始とみなす（射撃場の的はターゲットで、戦闘の始めからいる。エレグの S2 と同じ読み）。持続なので戦闘の終わりまで。通常攻撃の命中 50 回目でバブルバースト（同じ値の受けるダメージ▲・持続）に替わるので、敵の受けるダメージ▲は戦闘の終わりまで同じ値で続く（notes の補足）",
             "en": "Treats the enemy appearance as the start of battle (the shooting-range target is a stage target present from the start; same reading as Elegg's S2). It lasts until the end of battle. At the 50th normal attack hit it is replaced by Explosive Bubble (the same Damage Taken increase, continuous), so the enemy's Damage Taken increase stays at the same value until the end of battle (see notes)"
-          }
+          },
+          "claims": [
+            "C-1270"
+          ]
         },
         {
           "kind": "damage",
@@ -86,7 +98,10 @@
           "assumes": {
             "ja": "フルバーストタイム中のみの 1 秒ごとの攻撃。周期は戦闘開始から 1 秒ごと（端数を持ち越す）に数え続け、フルバーストの窓の中の回だけ出す（エイダの S2 と同じ形）。ランダムな敵は敵 1 体の前提で的。周期の 6f 後に 1 ヒット目、12f おきに 4 ヒット。4 ヒットとも発動の時点のバフで出す。コアには当たらない。フルバーストの中なのでゲージは溜まらない",
             "en": "The attack every second only during Full Burst. The period counts every 1 s from the start of battle (carrying the fraction) and fires only inside the Full Burst window (same form as Ada S2). The random enemy is the target (one enemy). The first hit comes 6 frames after the period, then 4 hits 12 frames apart, all with the buffs at activation. No core. No burst gauge inside Full Burst"
-          }
+          },
+          "claims": [
+            "C-1273"
+          ]
         },
         {
           "kind": "damage",
@@ -102,7 +117,10 @@
             "ja": "バブルバラージ。味方が消費した弾の合計（skill1 の burstGauge と同じ数え方）が 500 の倍数に届いた発の 6f 後から、ランダムな敵（敵 1 体の前提で的）に 12f おきに 10 回順番に攻撃する（録画の間隔は 11〜13f で、0.2 秒に近い）。10 ヒットとも発動の時点のバフで出す。コアには当たらない。バーストゲージを溜めるかは確かめていない（溜めない扱い）",
             "en": "Bubble Barrage. From 6 frames after the shot where the total ammo expended by allies (counted as the skill1 burstGauge) reaches a multiple of 500, 10 sequential attacks 12 frames apart on a random enemy (the target, one enemy; the recorded spacing is 11 to 13 frames, close to 0.2 s). All 10 hits use the buffs at activation. No core. Whether it charges the burst gauge is unverified (treated as not charging)"
           },
-          "delayFrames": 6
+          "delayFrames": 6,
+          "claims": [
+            "C-1272"
+          ]
         }
       ],
       "notes": [
@@ -110,7 +128,10 @@
           "ja": "バブルバースト（通常攻撃が 50 回命中した時、対象がバブル状態なら、受けるダメージ▲・持続とバブル解除）は、バブルと同じ値の受けるダメージ▲に替わるだけなので、敵の受けるダメージ▲の窓は effects[0] のまま変わらない",
           "en": "Explosive Bubble (after landing 50 normal attacks, if the target has Bubble: Damage Taken increase, continuous, and Bubble removal) only replaces Bubble with a Damage Taken increase of the same value, so the enemy's Damage Taken window stays as in effects[0]",
           "kind": "modeling",
-          "refers": "effects[0]"
+          "refers": "effects[0]",
+          "claims": [
+            "C-1270"
+          ]
         },
         {
           "ja": "バブルバーストの気絶（3 秒）は、それ自体は与ダメージを変えない",
@@ -127,13 +148,19 @@
           "target": "allies",
           "stat": "attackDamage",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-1275"
+          ]
         },
         {
           "kind": "ammoRefill",
           "trigger": "burstUse",
           "target": "allies",
-          "ref": 3
+          "ref": 3,
+          "claims": [
+            "C-1275"
+          ]
         },
         {
           "kind": "timed",
@@ -142,7 +169,10 @@
           "stat": "attack",
           "scaling": "casterAttack",
           "ref": 4,
-          "durationRef": 5
+          "durationRef": 5,
+          "claims": [
+            "C-1275"
+          ]
         }
       ]
     }
