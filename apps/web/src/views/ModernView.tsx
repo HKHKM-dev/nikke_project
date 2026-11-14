@@ -49,7 +49,8 @@ export function ModernView({
   // 育成モーダルを開いているスロット（null なら閉じた状態）
   const [editingSlotIndex, setEditingSlotIndex] = useState<number | null>(null);
 
-  // 待っている間に、スロットのほか（一覧のニケも含む）をクリックしたら、待つのをやめる。スロットの立ち絵のクリックは置く（handlePlacePending）
+  // 待っている間に、スロットのほか（一覧のニケ・ボタン・アイコン・何もないところ）をクリックしたら、待つのをやめるだけにする
+  // （クリックした部品は反応させない。先に document で受けて止める）。スロットのクリックは置く（handlePlacePending）
   useEffect(() => {
     if (pendingId === null) return;
     // 待ち始めたクリック（一覧のニケ）は、この後で document に届くので数えない（その前に起きたクリック）
@@ -58,10 +59,12 @@ export function ModernView({
       if (event.timeStamp < since) return;
       const target = event.target;
       if (target instanceof Element && target.closest('.modern-slot-card')) return;
+      event.preventDefault();
+      event.stopPropagation();
       setPendingId(null);
     };
-    document.addEventListener('click', cancelOnOutsideClick);
-    return () => document.removeEventListener('click', cancelOnOutsideClick);
+    document.addEventListener('click', cancelOnOutsideClick, true);
+    return () => document.removeEventListener('click', cancelOnOutsideClick, true);
   }, [pendingId]);
 
   // スロット 5 枚を画面の幅に収める（足りなければ立ち絵を縮める）
