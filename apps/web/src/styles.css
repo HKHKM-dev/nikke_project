@@ -307,26 +307,13 @@ header h1 {
 }
 
 /* 枠カード */
+/* 枠は幅を --slot-w までにして、収まるだけ横に並べる（並びは左に寄せる） */
 .slots {
+  --slot-w: 12rem;
   display: grid;
   gap: 10px;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(0, var(--slot-w)));
   margin: 12px 0;
-}
-@media (min-width: 700px) {
-  .slots {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (min-width: 1020px) {
-  .slots {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-@media (min-width: 1280px) {
-  .slots {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
 }
 .slot {
   padding: 8px 10px;
@@ -361,20 +348,6 @@ header h1 {
   line-height: 1;
   font-size: 1.05rem;
   font-variant-numeric: tabular-nums;
-}
-/* キャラのいないスロットの、育成の欄（開かない） */
-.slot-settings[data-placeholder='true'] > summary {
-  cursor: default;
-}
-.slot-settings {
-  margin-top: 6px;
-}
-.slot-settings > summary {
-  cursor: pointer;
-  font-size: 0.8rem;
-}
-.slot-settings-body {
-  margin-top: 6px;
 }
 .growth-row {
   display: grid;
@@ -562,16 +535,20 @@ header h1 {
   gap: 6px;
   white-space: nowrap;
 }
-/* キャラの選択と、その右のスロットの詳細設定のボタン */
-.picker-row {
+/* キャラの選択の下のボタン（外す・育成・詳細）。3 つを同じ幅で並べる（育成・詳細はポップアップを開く） */
+.slot-buttons {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 4px;
-  align-items: stretch;
-  margin: 2px 0 6px;
 }
-.picker-row .picker {
-  margin: 0;
+.slot-buttons > .popover > .slot-button {
+  width: 100%;
+}
+.slot-button {
+  padding: 3px 4px;
+  font: inherit;
+  font-size: 0.8rem;
+  white-space: nowrap;
 }
 /* スロットの見出しの右の「操作」のラジオボタン（操作キャラにする。SlotCard） */
 .slot-controlled-option {
@@ -581,12 +558,6 @@ header h1 {
   margin-left: 6px;
   font-size: 0.75rem;
   cursor: pointer;
-}
-.slot-settings-button {
-  height: 100%;
-  padding: 3px 8px;
-  font: inherit;
-  font-size: 0.8rem;
 }
 .slot-toggles {
   display: flex;
@@ -1696,7 +1667,7 @@ html:has(.modern-view-container) {
 .modal-footer .roster-revert-button {
   margin-right: auto;
 }
-.slot-settings-body .roster-revert-button {
+.slot-growth-panel .roster-revert-button {
   margin-top: 6px;
 }
 /* アカウントのメニューの「全部を読み込んだ値に戻す」の行 */
