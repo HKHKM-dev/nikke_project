@@ -14,8 +14,8 @@ export type StateHolder = 'ally' | 'enemy';
 export type StateFamily = 'barrier' | 'intoTheFray';
 
 /**
- * 切り替えの組（plan/design-mint-prika.md 2.2 節）。同じ持ち主に組のある状態が付いたら、組のほかの状態の件を閉じる
- * （解除不可も。skills/holders/fire.ts の fireGrant）
+ * 切り替えの組（plan/design-mint-prika.md 2.2 節）。同じ持ち主に組のある状態が付いたら、組のほかの状態の件を次のフレームで閉じる
+ * （解除不可も。skills/holders/fire.ts の fireGrant）。同じフレームに付いた組の状態どうしは、{ applied } のきっかけの付与を後とみなして残す
  */
 export type StateSwitchGroup = 'assignedPart';
 

@@ -66,7 +66,7 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * 縮める（C-1043。式は R1 の仮説 C-1033）。条件が自動の枠の距離ボーナス（frame/landing.ts の distanceBonusAt）と、条件 inEffectiveRange が読む。射撃は変えない。
  * pierce = 貫通特化。値を持たないフラグ（ref を書かない）。それ自体は与ダメージを変えず、pierceDamage の乗る発にする。
  * pierceDamage = 貫通ダメージ▲（比率）。貫通特化（pierce）の効いている枠の通常攻撃にだけ、攻撃ダメージ▲と同じ和に足す（P1。C-1031）。
- * 倍率ダメージ・バーストのダメージには足さない（確かめていない）
+ * 倍率ダメージ・バーストのダメージには足さない（確かめていない）。定義を書くときの決まり: この効果に読む側の印 reads: ["pierce"] を書く
  * pelletCount = ペレット数 N 個▲（scaling 'flat'。値は個の数。plan/design-dorothy-serendipity.md 2.1・2.2 節）。
  * singlePellet = 「ペレットの数を 1 個に固定」。値を持たないフラグ
  * （ref を書かない）。効いていれば 1 発のペレットは 1 個で、▲より勝つ（C-1077）。どちらも timed の self だけ（PELLET_STATS）
@@ -154,14 +154,16 @@ export const BUFF_STATS = [
   // atMost と、passive の条件 selfHp（割合が動きうる枠）と対象の lowestHpRatio（回復の発火の時。plan/design-hp-ratio-readers.md）が読む
   'maxHpOnly',
   // 防御力▲（比率。plan/design-skill-stage7.md 1.3 節）。与ダメージの式は読まず、対象の絞り込み
-  // 「自分より最終防御力が低い味方」（targetDefense）だけが、発火のフレームの最終防御力として読む
+  // 「自分より最終防御力が低い味方」（targetDefense）だけが、発火のフレームの最終防御力として読む。定義を書くときの決まり: 効果にするのは、
+  // 比べの自分の側と、読む側と組む録画が読み直せたものだけ。ほかは間接の notes（段 7 の論点 4）
   'defense',
   // 攻撃速度▲（比率。plan/design-skill-stage9.md 1.2 節）。射手のレートの蓄積に (1 + Σ) を掛ける（frame/firing.ts）
   'attackSpeed',
   // バーストスキルのクールタイム X 秒▼ の維持の付いた形（T4。
   // 「その間スキル自体のクールタイムを変える」。plan/design-skill-stage11.md 3.3 節。V-0530）。scaling 'flat' だけで、
   // 値は縮める秒（正の値）。効いている間にバーストを使うと、
-  // その発動の CT が X 秒短い（frame/firstPass.ts。0 秒より短くしない）。与ダメージの式は読まない
+  // その発動の CT が X 秒短い（frame/firstPass.ts。0 秒より短くしない）。付いた時に走っている CT（同じ発動から付いたものも）も、
+  // その場で縮める（V-0566。plan/design-skill-stage15.md 2.2 節）。与ダメージの式は読まない。即時の CT▼ は cooldownReduction
   'burstCooldown',
   // 順番攻撃ダメージ▲（比率。plan/design-new-chars-1029.md 5.5 節）。「N 回順番に攻撃」の倍率ダメージ
   // （damage の hitsRef）にだけ、別枠の乗数 (1 + Σ) で掛ける（分配ダメージ▲と同じ置き方。仮説。skills/burstDamage.ts の computeBurstHit）
@@ -237,7 +239,8 @@ export const FLAG_STATS = [
 /**
  * 1 発のペレットの数を変える stat（plan/design-dorothy-serendipity.md 2.1・2.2 節）。timed の self だけに書ける。
  * 1 パス目（frame/firstPass.ts）が窓を追い、ペレットの命中の量（pelletHit）とゲージを実効のペレットの数で数える。1 発の総ダメージは
- * 変えない（固定は 1 個に総ダメージが乗り C-1074、▲は総ダメージをペレットで分ける C-1076）。区間の buffs にも入り、照合の 1 ペレットの値
+ * 変えない（固定は 1 個に総ダメージが乗り C-1074、ペレットの命中とゲージは 1 個と数える C-1075、▲は総ダメージをペレットで分ける
+ * C-1076）。区間の buffs にも入り、照合の 1 ペレットの値
  * （records/observations/metrics/damage.ts の hitDamage）が割る数を決める
  */
 export const PELLET_STATS = ['pelletCount', 'singlePellet'] as const satisfies readonly BuffStat[];
@@ -311,12 +314,14 @@ export function isAllyDecrease(effect: { stat: string; decrease?: true }): boole
  * casterFinalMaxHp = 発動者の最終最大HP × 比率を攻撃力に固定加算する（stat が attack のときだけ。「スキル発動者の
  * 最終最大HP の X% 分の攻撃力▲」。plan/design-skill-stage6.md 1.3 節。録画 0121 のラプラス：アルティメットヒーロー）、
  * casterDefence = 発動者のバフ前防御力 × 比率を敵の防御力から引く（stat が enemyDefenseDown のときだけ。「スキル発動者基準で
- * 防御力 X%▼」。plan/design-mast.md 2.2 節）、
+ * 防御力 X%▼」。plan/design-mast.md 2.2 節）。スタックで付けば 1 スタックごとに引き、割合の▼の後に 0 で止める（順と 0 で止めるのは
+ * 未確定）、
  * copyTopAttack = バフ前攻撃力が最も高い味方 1 機（自分も候補。空枠は除く）のバフ前攻撃力 × 比率の固定加算
  * （stat が attack のときだけ。「攻撃力が最も高い味方 1 機の攻撃力のコピー X%」。順位も写す値も「最終」の付かない攻撃力で読む。V-0627）、
  * casterMaxHp = 発動者のバフ前の最大HP × 比率を対象の最大HP に足す（stat が maxHp・maxHpOnly の timed だけ。
  * 「スキル発動者基準で最大HP（のみ）X%▲」。対象の比率は X × 発動者のバフ前の最大HP ÷ 対象のバフ前の最大HP で、件の列を対象の枠ごとに
- * 作る時に直す（skills/holders.ts）。plan/design-hp-ratio-readers.md 9 節の論点 8。V-0730）
+ * 作る時に直す（skills/holders.ts）。plan/design-hp-ratio-readers.md 9 節の論点 8。V-0730）。定義を書くときの決まり: 自分にだけ付く効果には
+ * 書かない（比率は X のままなので ratio で書く）
  */
 export type BuffScaling =
   | 'ratio'
@@ -352,9 +357,12 @@ export function isFixedAttackScaling(scaling: BuffScaling | undefined): boolean 
  * longestChargeTime = 「基本チャージ時間が一番長い味方 N 機」
  * （CharacterData.shot.chargeTime の長い順。同値は枠の若い順。編成で決まるので最上位の skills/composition.ts
  * で対象の枠を決める。plan/design-target-vocab.md 2.2 節）。N は topAttack と同じ欄。timed にだけ書ける。
- * lowestHpRatio = 「残りの HP の割合が最も低い味方 N 機」（枠の HP の割合の想定
- * TeamSlotInput.hpRatio の低い順。同値は枠の若い順（C-0567）。自分も候補。想定は戦闘中一定なので skills/composition.ts で対象の枠を
- * 決める。plan/design-skill-stage8.md 1.1 節）。N は topAttack と同じ欄。heal にだけ書ける
+ * lowestHpRatio = 「残りの HP の割合が最も低い味方 N 機」（回復の発火のフレームの HP の割合（枠の想定 TeamSlotInput.hpRatio を
+ * 最大HP のみ▲・現在の HP▼ で下げた割合）の低い順。同値は枠の若い順（C-0567）。自分も候補。候補の枠は skills/composition.ts が決める。
+ * plan/design-skill-stage8.md 1.1 節・plan/design-hp-ratio-readers.md 2.2 節）。N は topAttack と同じ欄。heal にだけ書ける。
+ * 定義を書くときの決まり: 被弾した味方が選ばれうることと、回復で割合が戻る分は扱わないことを assumes に書く。
+ * appliedCaster = 「〈状態〉のスキル発動者に」（そのフレームにきっかけの状態を付けた枠。plan/design-mint-prika.md 2.4 節）。
+ * { applied } のきっかけの timed・付与にだけ書ける
  */
 export type BuffTarget =
   'self' | 'allies' | 'burstUsers' | 'topAttack' | 'longestChargeTime' | 'lowestHpRatio' | 'appliedCaster';
@@ -513,8 +521,11 @@ export type PassiveEffect = FixedTargetFields & {
   /** 敵の属性の条件（敵の属性がこれのときだけ効果を持つ。静的な条件） */
   enemyElement?: Element;
   /**
-   * 自分の HP の割合の条件（selfHp だけ。plan/design-skill-stage6.md 1.4 節）。HP の割合は枠の想定
-   * （TeamSlotInput.hpRatio）で戦闘中一定なので、編成の段（skills/composition.ts の resolveSelfHp）で決まる
+   * 自分の HP の割合の条件（selfHp だけ。plan/design-skill-stage6.md 1.4 節）。HP の割合が枠の想定
+   * （TeamSlotInput.hpRatio）のまま戦闘中一定なら、編成の段（skills/composition.ts の resolveSelfHp）で決まる。HP の割合が動きうる枠
+   * （最大HP のみ▲ の対象・現在の HP▼ を持つ枠）では、割合が閾値を下回る間だけ外れる区間の件になる（while と同じ。
+   * plan/design-hp-ratio-readers.md 2.1 節）ので、while に書けない stat（敵が持つ stat・静的に読むフラグ）と、1 パス目が射撃の時に読む
+   * stat・最大HP の stat（攻撃力・防御力は書ける）には書けない
    */
   condition?: EffectCondition;
   /**
@@ -533,7 +544,8 @@ export type PassiveEffect = FixedTargetFields & {
  */
 export type WhileCondition =
   | { selfState: SelfStateCondition }
-  // 自分のカウンタが atLeast 以上の間（前のフレームの終わりの値。below は使い手がいない。plan/design-skill-stage11.md 2.4 節）
+  // 自分のカウンタが atLeast 以上の間（前のフレームの終わりの値。below は使い手がいない。plan/design-skill-stage11.md 2.4 節）。
+  // 段階の効果は閾値ごとに 1 つの passive で書く（別々に付くので、高い段階では下位の効果も乗る。plan/design-skill-stage16.md 2.1 節）
   | { selfCounter: { counter: CounterId; atLeast: number } };
 
 /**
@@ -663,8 +675,8 @@ export function isChanceTrigger(t: EffectTrigger): t is ShotCountTrigger {
 /** 回数トリガーの数える窓と、数え直し（plan/design-kurumi-s2.md 2.1 節） */
 export type ShotCountWindow = 'fullBurst';
 /**
- * 自分のその状態が付いている間の発だけを数え、その状態が付くたびに 0 から数え直す窓
- * （「〈状態〉なら、通常攻撃が命中した時…攻撃命中回数別の効果」。plan/design-grave.md 2.4 節）。
+ * 自分のその状態が付いている間の発のうち、付与の条件を満たす発（その発で付いた状態も入れる。C-1123）だけを数え、その状態が付くたびに
+ * 0 から数え直す窓（「〈状態〉なら、通常攻撃が命中した時…攻撃命中回数別の効果」。plan/design-grave.md 2.4 節）。
  * 状態の付与にだけ書ける。見る状態は、同じ定義の自分に付ける付与の
  * あるもの。発火は 1 パス目の件の一覧が追う（skills/holders/fires.ts の firesOf）
  */
@@ -713,7 +725,8 @@ export type EventCountTrigger = {
 /**
  * 時間の周期のトリガー。戦闘開始から k × everySeconds 秒（k = 1, 2, …）に発火する。射撃・リロード・
  * 的のジャンプ・バーストに関係しない（録画 0081 の S2。C-0091）。CT が説明文にも CDN にも無いアクティブ型のスキル用で、
- * 値は実測の即値。damage・dot・autoAttack・burstGaugeHit と timed に書ける。
+ * 値は実測の即値。damage・dot・autoAttack・burstGaugeHit と timed に書ける。条件（inFullBurst など）で出ない回も数えは続ける
+ * （窓ごとに数え直さない。plan/design-skill-stage15.md 2.3 節）。
  * 1 パス目で窓を追う stat（最大装弾数など）の timed にも書ける（1 パス目が周期のフレームで窓を登録する。frame/firstPass.ts。
  * plan/design-soldier-eg.md 3.2 節）
  */
@@ -735,7 +748,8 @@ export type TimerTrigger = {
    * 周期の起点を、その状態が自分に付いた最後のフレーム（付いた記録）にする（plan/design-skill-stage19.md 2.1 節。論点 2）。
    * k 回目は起点から k × everySeconds 秒に達した最初のフレーム（carry と同じ数え方）で、その状態が自分に付いている間だけ発火する（外れたら止まり、
    * 次に付いた時は数え直す）。counterChange にだけ書ける（変身の間 0.2 秒ごとのバッテリーの▼）。
-   * currentHpDown にも書ける（「現在のHP X%▼」「1 秒間隔」。B モードの間 1 秒ごと。plan/design-hp-down-interval.md 2.1 節）
+   * currentHpDown にも書ける（「現在のHP X%▼」「1 秒間隔」。B モードの間 1 秒ごと。plan/design-hp-down-interval.md 2.1 節）。
+   * その状態を自分に付ける付与が同じ定義に要る（parse/crossChecks.ts の validateOwnStateTriggers）
    */
   since?: AppliedTrigger;
   /**
@@ -810,7 +824,9 @@ export function isReloadEndTrigger(t: unknown): t is ReloadEndTrigger {
 /**
  * 「遮蔽物の HP を回復した時」（plan/design-skill-stage17.md 2.1 節。論点 2）。自分の枠が遮蔽物 HP 回復
  * （coverHeal。自分のものも味方のものも）を受けたフレームに発火する（1 パス目の FrameEvents.coverHealed。届くフレームは回復と同じ
- * skills/heals.ts の healFrameOf）。流し直し（replayEvents）では作らないので、1 パス目が件を登録する timed にだけ書ける
+ * skills/heals.ts の healFrameOf）。流し直し（replayEvents）では作らないので、1 パス目が件を登録する timed にだけ書ける。
+ * 定義を書くときの決まり: この timed に読む側の印 reads: ["cover"] を書く。撮影で確かめていない味方の遮蔽物 HP 回復は、coverHeal で
+ * なく間接の notes（path "cover"）で書く
  */
 export type CoverHealedTrigger = { coverHealed: true };
 
@@ -852,7 +868,8 @@ export function isChargeFullTrigger(t: unknown): t is ChargeFullTrigger {
  * 始まった件から求める（同じフレームに付いた最大HP のみ▲ は次のフレームから。論点 8）。1 パス目の件の一覧が追う（skills/holders.ts）ので、
  * timed にだけ書ける。回復で現在の HP が戻る分は扱わない。
  * 「自分の HP が X% 以下の時」「N 秒間維持」は、同じきっかけを秒の維持（durationRef・durationSeconds）と組む（下がったフレームに
- * 1 回発火して N 秒。閾値以下のまま続く間は発火しない。C-1025。plan/design-ade.md 2.1 節）
+ * 1 回発火して N 秒。閾値以下のまま続く間は、さらに下がっても上がっても発火しない。C-1025。plan/design-ade.md 2.1 節）。秒の維持なら
+ * 攻撃力にも書ける。最大HP▲・最大HP のみ▲ は、きっかけが読む HP の割合を動かすので書けない
  */
 export type SelfHpAtMostTrigger = { selfHpAtMostRef: number };
 
@@ -934,7 +951,8 @@ export type TimedEffect = TargetCountFields &
     excludeSelf?: ExcludeSelf;
     /**
      * 「〈名前〉状態の」（plan/design-named-state.md 5.4 節）。静的な状態（その枠の定義の
-     * 静的な状態。staticStatesOf）を持つ枠だけ。target が 'allies' のときだけ書ける
+     * 静的な状態。staticStatesOf）を持つ枠だけ。target が 'allies' のときだけ書ける。家族の根を指せば、家族のどの状態の枠にも当たる
+     * （skills/states.ts の StateFamily）
      */
     targetState?: NamedStateId;
     /**
@@ -946,7 +964,8 @@ export type TimedEffect = TargetCountFields &
     targetBurstStep?: BasicBurstStep;
     /**
      * 「自分と自分より最終防御力が低い味方」（lowerThanSelf。plan/design-skill-stage7.md 1.4 節）。発火のフレームの
-     * 最終防御力で比べ（同値は含まない。自分は含む）、維持の間は対象を変えない。target が 'allies' の timed だけに書ける
+     * 最終防御力で比べ（同値は含まない。自分は含む）、維持の間は対象を変えない。target が 'allies' の timed だけに書ける。
+     * 定義を書くときの決まり: 読む側の印 reads: ["defense"] も書く
      */
     targetDefense?: TargetDefense;
     /** 「〈武器〉を所持する味方」。target が self 以外（allies・burstUsers）のときだけ書ける */
@@ -1005,11 +1024,14 @@ export type TimedEffect = TargetCountFields &
     /** 維持秒数の即値（説明文に「維持時間：10秒」と直書きされている場合） */
     durationSeconds?: number;
     /**
-     * 「N 発間維持」の N の即値。付いたフレームから、対象の枠の N 発目の通常攻撃まで続く（N 発目にも効く）。
-     * 対象ごとにその枠の射撃を数え、維持中にまた付いたら数え直す。窓は 1 パス目の射撃の列で決まるので、
-     * 1 パス目のループの中で窓を追う stat（攻撃力・射撃に効く stat・状態の stat）と、スタック・条件・順位の対象には書けない。
+     * 「N 発間維持」の N の即値。付いたフレームから、対象の枠の N 発目の通常攻撃まで続く（N 発目にも効く）。射撃の回数のきっかけでは、
+     * きっかけの発の次の発から数える（きっかけの発自身には付かない）。
+     * 対象ごとにその枠の射撃を数え、維持中にまた付いたら数え直す。スタック（timed だけ）は付くたびに 1 段増え、持ち主の N 発目で全部
+     * 切れる（plan/design-zwei.md 2.3 節）。条件は selfState だけ組める。窓は 1 パス目の射撃の列で決まるので、
+     * 1 パス目のループの中で窓を追う stat（攻撃力・射撃に効く stat・状態の stat）には書けない。
      * 例外は、1 パス目の件の列が持ち主の発で窓を閉じる stat（チャージ速度、命中率▲・貫通特化・
-     * ペレットの数の固定。plan/design-dorothy-serendipity.md 2.3 節）
+     * ペレットの数の固定。plan/design-dorothy-serendipity.md 2.3 節）。チャージ速度は、溜めの途中で付いても、それまでに溜めたフレームは
+     * 残る（plan/design-skill-stage15.md 2.3 節）
      */
     durationShots?: number;
     /** 「N 発間維持」の N の description_value_NN */
@@ -1018,7 +1040,8 @@ export type TimedEffect = TargetCountFields &
      * 「〈状態〉の対象に命中させた味方に」（plan/design-killer-wife.md 2.2 節）。発火のフレームから withinRef（秒の
      * description_value_NN。対象に付く状態の維持）の間に、対象の枠（持ち主）が撃った最初の通常攻撃の次のフレームから、維持の秒数だけ付く。
      * その発自身には乗らず、同じ発火の後の命中では付き直さない（V-0717）。命中は持ち主の射撃のフレームで数える（外れと的の部位は見ない）。
-     * 秒の維持（durationRef・durationSeconds）とだけ組み、スタック・条件・発数や出来事の維持・強化・確率・遅れ・perCount とは組まない
+     * 秒の維持（durationRef・durationSeconds）とだけ組み、スタック・条件・発数や出来事の維持・強化・確率・遅れ・perCount とは組まない。
+     * 定義を書くときの決まり: 対象に付く敵の状態は、ほかに読む効果が無ければ付与で書かず modeling の notes にする
      */
     holderHit?: { withinRef: number };
     /**
@@ -1040,7 +1063,8 @@ export type TimedEffect = TargetCountFields &
      * 書かなければ次のフレームから。plan/design-shot-count-trigger-frame.md 6 節）。測った遅れを即値で書き、
      * 根拠の結論を claims に結ぶ。
      * 確率のきっかけ・付与には書けない。V-0602: 時間の周期のきっかけ（{ everySeconds }）にも書け、窓を周期の発火の delayFrames 後から
-     * 始める（書かなければ発火のフレームから）。1 パス目で窓を追う stat には書けない
+     * 始める（書かなければ発火のフレームから）。1 パス目で窓を追う stat には書けない。周期のスキルのヒットから付く効果で、ヒットその
+     * ものに乗らないなら、ヒットの遅れ + 1 を書く
      */
     delayFrames?: number;
     /** 常に満たすとみなした条件。UI に「仮定」として出す */
@@ -1057,7 +1081,7 @@ export type Amplifies = { skill: SkillSlot; percent: number };
  * reloadEnd = 持ち主（自分）のリロードが最大装弾数まで込め終わったフレームまで（「最大弾数リロード完了時に解除」。
  * plan/design-cinderella-s1-charge.md 1.1 節）。窓の終わりは 1 パス目の射撃の列（ShotLog.reloadEnds）から作るので、1 パス目で窓を
  * 追う stat にも書ける。timed の対象が自分のときだけ（スタックには書けない）。自分に付く、スタックしない状態の付与にも書ける
- * （「過熱I：…」「最大装弾リロード完了時に解除」。plan/design-grave.md 2.2 節）。
+ * （「過熱I：…」「最大装弾リロード完了時に解除」。plan/design-grave.md 2.2 節）。込めの途中で装弾数無限が付くと、そこで込め終わる（C-1124）。
  * selfHpAbove = 発動者の HP の割合が閾値を上回るフレームまで（きっかけ { selfHpAtMostRef } とだけ組む。
  * timed だけ。順位の対象 topAttack にも書ける。plan/design-mast.md 8 節）
  */
@@ -1154,9 +1178,11 @@ export type SelfCounterCondition = { counter: CounterId; atLeast?: number; below
  * atLeast = 説明文に即値で書かれた X（% 表記。ミルクの基礎版の S2 の
  * 「自分の HP が 80% 以上の時のみ」。plan/design-skill-stage15.md 2.1 節）。atLeastRef とちょうど 1 つ。
  * atMostRef・atMost = 「自分の HP が X% 以下の場合」（timed だけ。発火のフレームの HP の割合
- * （skills/holders/views.ts の selfHpRatioAt）で見る。編成の段では決めない。plan/design-scarlet.md 2.2 節）。
+ * （skills/holders/views.ts の selfHpRatioAt）で見る。付いた後は維持の終わりまで続く。編成の段では決めない。1 パス目で窓を追う stat には
+ * 書けない。plan/design-scarlet.md 2.2 節）。
  * passive は atLeast の形だけ、timed は atMost の形だけ書ける。
- * damage は atLeast の形だけ（「自分の HP が最大の場合」は atLeast 100。発火のフレームで見る。plan/design-soline.md 2.1 節）
+ * damage は atLeast の形だけ（「自分の HP が最大の場合」は atLeast 100。発火のフレームで見る。plan/design-soline.md 2.1 節）。
+ * 定義を書くときの決まり: HP は被弾で減りうるので、この条件を assumes で満たすとみなさない（plan/design-skill-catalog.md の論点 12）
  */
 export type SelfHpCondition =
   | { atLeastRef: number; atLeast?: never; atMostRef?: never; atMost?: never }
@@ -1247,7 +1273,8 @@ export function isMaxHpStat(stat: BuffStat | 'weapon' | undefined): boolean {
  * バーストの倍率ダメージの種別。skill = バーストスキルダメージ / ダメージ / 追加ダメージ（即時 1 ヒット）、distributed = 分配ダメージ
  * （射撃場の的 1 体では全額が当たる。C-0391 など。対象と周囲の敵の分配ダメージは、等分したヒットで合計が全額になる。C-0766）。
  * true = 防御力無視のバーストスキルダメージ（damage の true と同じ式。
- * skills/burstDamage.ts の computeBurstHit。plan/design-skill-stage16.md 2.2 節。論点 5）
+ * skills/burstDamage.ts の computeBurstHit。plan/design-skill-stage16.md 2.2 節。論点 5）。同じ発動の防御力無視ダメージ▲が乗るかは、
+ * 着地点の表（burst/landing.ts）の sameActivationBuffsOnHit
  */
 export type BurstDamageType = 'skill' | 'distributed' | 'true';
 export const BURST_DAMAGE_TYPES = ['skill', 'distributed', 'true'] as const satisfies readonly BurstDamageType[];
@@ -1272,7 +1299,8 @@ export type BurstDamageEffect = {
  * 倍率ダメージの種別（damage 用）。additional = 追加ダメージ。
  * true = 防御力無視ダメージ（「最終攻撃力の X% の防御力無視ダメージ」。plan/design-skill-stage15.md 2.3 節。論点 8）。
  * 防御力を引かず、防御力無視ダメージ▲（trueDamage）を攻撃ダメージ▲と同じ和に足す（使用武器の変更の防御力無視の発と同じ。C-0376・C-0525。
- * skills/burstDamage.ts の computeBurstHit）
+ * skills/burstDamage.ts の computeBurstHit）。射撃ごとの damage（フルチャージごとなど）でも通常攻撃に畳み込まず、発ごとに倍率ダメージの
+ * ヒットとして出す（skills/burstDamage.ts の foldsIntoShot）
  */
 export type SkillDamageType = BurstDamageType | 'additional' | 'true';
 export const SKILL_DAMAGE_TYPES = [
@@ -1358,7 +1386,8 @@ export type DamageEffect = {
   perCount?: { state: NamedStateId } | { counter: CounterId };
   /**
    * 「N 回順番に攻撃」の回数の description_value_NN（plan/design-new-chars-1029.md 5.2 節）。1 回の発動を
-   * N ヒットに分け、どのヒットも ref の値で出す（バーストの hitsRef と同じく、ref は 1 ヒットの値）。順番攻撃ダメージ▲（sequentialAttackDamage）
+   * N ヒットに分け、どのヒットも ref の値で出す（バーストの hitsRef と同じく、ref は 1 ヒットの値）。N ヒットとも発火のフレームのバフと
+   * フルバースト補正で出す（同 10.2 節の d。C-0735）。順番攻撃ダメージ▲（sequentialAttackDamage）
    * はこのヒットにだけ乗る。射撃の回数のきっかけ・perBurstHit とは組み合わせない
    */
   hitsRef?: number;
@@ -1489,7 +1518,8 @@ export type AccumulateSpec =
  *   slot のスロットの description_value_NN（durationRef）秒の間。縮めた次の発動のフレームが窓の中なら縮める（前の発動のフレームは見ない。
  *   エイダの S2 の閃光手榴弾投擲の発動間隔▼。V-0569）。elapsed なら（plan/design-skill-stage18.md 2.2 節。V-0612）、
  *   クールタイムを縮める窓（T4 のクールタイム▼の読み）。発動のフレームが窓の中なら次の発動まで縮めた周期、外なら縮めない周期で、窓が始まった
- *   フレームからは縮めた周期で次の発動が来る（ドロシーの発現。skills/timeline.ts の elapsedShortenedTimerFrames）。carry の周期とは組まない
+ *   フレームからは縮めた周期で次の発動が来る（ドロシーの発現。skills/timeline.ts の elapsedShortenedTimerFrames）。carry の周期とは組まない。
+ *   window は gaugePerHit とは組まない
  */
 export type PeriodShorten = { slot: SkillSlot; ref: number } & (
   | { state: NamedStateId; window?: never }
@@ -1505,7 +1535,8 @@ export function splitsPerCount(
 
 /**
  * 「バーストスキルクールタイム X 秒▼」。発火の瞬間に対象の残りの CT を X 秒減らす（0 未満にはしない。即時効果）。
- * 同じフレームの発動の後に当てる（plan/design-stage10.md 4 節）
+ * 同じフレームの発動の後に当てる（plan/design-stage10.md 4 節）。{ applied } のきっかけ（▼・▲）では、対象は自分だけ・条件は selfState
+ * だけ（plan/design-mint-prika.md 2.6 節）
  */
 export type CooldownReductionEffect = TargetCountFields & {
   kind: 'cooldownReduction';
@@ -1732,7 +1763,10 @@ export type WeaponChangeEffect = {
   shotCount?: number;
   /**
    * 使用武器変更の武器のパラメータ（plan/design-true-damage-element.md 9 節）: 変更後の武器のチャージ時間（秒・即値）。
-   * 説明文に数字で書かれている（description_value でない）。省略は基礎の武器のまま。チャージ武器にだけ書ける
+   * 説明文に数字で書かれている（description_value でない）。省略は基礎の武器のまま。基礎の武器がチャージしなくても書け、そのときは
+   * 変更後の武器を押下チャージ型（DOWN_Charge。発と発の間はチャージ時間だけ。skills/resolve.ts の chargeInput）にし、その発だけを
+   * fullChargeShot に数える（plan/design-nayuta.md 2.6 節。C-0936）。そのときレート（rateOfFire）は書かず、最初の発の待ちは
+   * firstShotDelayFrames、当たりは的の表の coreHitRate.weaponChanges・bulletHitRate.weaponChanges の行に書く
    */
   chargeTimeSeconds?: number;
   /**
@@ -1742,7 +1776,8 @@ export type WeaponChangeEffect = {
   chargeTimeRef?: number;
   /**
    * 説明文の「チャージ時間：N 秒固定」（plan/design-nayuta.md 2.4 節。V-0666）。変更後の武器のチャージ時間を、チャージ速度▲を受けずに
-   * chargeTimeSeconds（chargeTimeRef）のままにする（stat fixedChargeTime と同じ読み。C-0214）。chargeTimeSeconds か chargeTimeRef と組む
+   * chargeTimeSeconds（chargeTimeRef）のままにする（stat fixedChargeTime と同じ読み。C-0214）。chargeTimeSeconds か chargeTimeRef と組む。
+   * ナユタの記憶燃焼では確かめていない（C-0939）
    */
   chargeTimeFixed?: true;
   /** 同: 変更後の武器のフルチャージダメージ（%・即値。300 = 300%）。省略は基礎の武器のまま。チャージ武器にだけ書ける */
@@ -1791,14 +1826,15 @@ export type WeaponChangeEffect = {
   infiniteAmmo?: true;
   /**
    * 発火の条件。鍵は使った段階（burstStep。plan/design-red-hood.md 2.1 節）と、自分の状態のスタック数（selfState の stacks・
-   * stacksBelow。段 1.5 で判定し、段 1 の状態の件は同じフレームの付与も見る。plan/design-maxwell-om.md 2.2・2.3 節）。同じきっかけの変更どうしは、
+   * stacksBelow。段 1.5 で判定し、段 1 の状態の件（条件なしの付与）は同じきっかけの変更の条件が同じフレームから数える。
+   * plan/design-maxwell-om.md 2.2・2.3 節）。同じきっかけの変更どうしは、スロットをまたいでも、
    * 使った段階が違うか、同じ状態のスタック数の区間が重ならない（parse/crossChecks.ts の validateWeaponChangeStages）
    */
   condition?: EffectCondition;
   /**
    * 変更の窓の間だけ自分に付く状態の id（「記憶燃焼：使用武器変更」の記憶燃焼。plan/design-nayuta.md 2.5 節。論点 2）。
    * 読み込み（parse/definition.ts の parseEntry）が、同じきっかけ・維持・条件の中身の無い付与（kind: 'state'・自分。weaponChangeOf の印）を
-   * 同じスロットの効果の終わりに足す。撃ち切りで終わる変更（maxAmmoRef）とは組まない
+   * 同じスロットの効果の終わりに足す。付与は発火のフレームから、変更は次のフレームから効く。撃ち切りで終わる変更（maxAmmoRef）とは組まない
    */
   state?: NamedStateId;
   assumes?: LocalizedText;
@@ -1892,7 +1928,8 @@ export type DotEffect = {
   durationSeconds?: number;
   /**
    * 「持続」（battleEnd。firstTick: halfAfterLatest のときだけ。plan/design-skill-stage13.md 2.3 節）。
-   * 「〈状態〉解除まで」（StateEndUntil。きっかけ { applied } と組む）
+   * 「〈状態〉解除まで」（StateEndUntil。同じ状態のきっかけ { applied } とちょうど組で書き、ゲージ・敵の状態・スタック・数・遅れ・
+   * 条件とは組まない。parse/dot.ts の validateAppliedDot）
    */
   durationUntil?: 'battleEnd' | StateEndUntil;
   /**
@@ -1930,7 +1967,8 @@ export type DotEffect = {
   stacksFrom?: { enemyState: NamedStateId };
   /**
    * stacksFrom の数を、付けた時に 1 回だけでなく tick ごとに写し直す（その tick のフレームの判定で
-   * 敵に付いている元のスタックの数。0 の tick は出さない。plan/design-mast.md 2.3 節）。stacksFrom のときだけ書ける。写す時刻は撮影で決める（論点 4）
+   * 敵に付いている元のスタックの数。0 の tick は出さない。plan/design-mast.md 2.3 節）。stacksFrom のときだけ書ける。写す時刻を撮影で
+   * 決めるための仮説の形（論点 4）
    */
   copyEachTick?: true;
   /**
@@ -2198,7 +2236,10 @@ export type StateGrantEffect = Omit<
    * ほかの状態が終わった時（StateEndUntil）
    */
   durationUntil?: GrantDurationUntil;
-  /** 目録の id（持ち主が味方の状態。enemy なら敵の状態） */
+  /**
+   * 目録の id（持ち主が味方の状態。enemy なら敵の状態）。定義を書くときの決まり: 目録に無い状態は skills/states.ts に id を足す。
+   * ほかから参照されない名前も付与で書く（plan/design-skill-catalog.md の論点 4）
+   */
   state: NamedStateId;
   /**
    * JSON の target: "enemy"（敵に付く状態の付与。
@@ -2283,7 +2324,9 @@ export type RemoveStateEffect = {
  * そのフレームまでに付いた状態から、対象の味方ごとに、デバフの印の付いた状態（skills/states.ts の debuff）を count 個、スタックごと外す
  * （解除不可の件は外さない）。target は味方全体（allies）か、デバフのかかった味方からランダムに N 機（debuffedRandom。N は
  * targetCount / targetCountRef。デバフのかかった味方が N 機以下なら全員。より多いときは選び方を確かめていないので、枠の若い順）。状態が
- * count 個より多く付いた味方では、付いたのが早い順（確かめていない）。決め打ちで選んだ時は sim の枠の注記を出す
+ * count 個より多く付いた味方では、付いたのが早い順（確かめていない）。決め打ちで選んだ時は sim の枠の注記を出す。
+ * 味方に付く timed の▼（isAllyDecrease。plan/design-debuff-removal-timed.md 2.1 節）も外す。1 個は状態か▼の効果 1 つで、▲は外れない。
+ * 定義を書くときの決まり: 恩恵の▼（受けるダメージ▼など）を味方の timed の decrease で書くと外れてしまうので、notes か状態の中身で書く
  */
 export type RemoveDebuffEffect = TargetCountFields & {
   kind: 'removeDebuff';
