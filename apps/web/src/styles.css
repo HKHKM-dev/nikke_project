@@ -770,16 +770,16 @@ header h1 {
 .modern-slot-card.drag-source-returning .modern-slot-char-area {
   opacity: 0.35;
 }
-/* 「操作」「他の編成」の札の行。札の有無でカードの高さを変えない */
+/* 「操作」の印と「他の編成」の札の段。上に操作の印、その下（立ち絵のすぐ上）に札を縦に積む。
+   高さは操作の印（30px）に決めて、札の有無でカードの高さを変えない（両方あるときは、はみ出す分をカードの上の余白に出す） */
 .modern-slot-header {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
+  justify-content: flex-end;
   font-size: 0.8rem;
   font-weight: bold;
-  /* 操作の印（30px）の有無で高さを変えない */
-  min-height: 30px;
+  height: 30px;
 }
 /* 操作キャラの印（コントローラーの絵。badges-src/ui_controller.svg）。白一色の絵を形だけ使い、文字色で塗る（テーマに従う） */
 /* 絵（SVG）を型にして文字の色で塗るアイコン（components/maskIcon.ts の maskIconStyle が --icon に絵を渡す） */
@@ -813,8 +813,7 @@ header h1 {
 .modern-slot-other-parties {
   display: flex;
   gap: 2px;
-  /* 札の行の下端に置き、行と立ち絵の間（.modern-slot-card の gap 8px）まで下げて、立ち絵のすぐ上に付ける */
-  align-self: flex-end;
+  /* 段と立ち絵の間（.modern-slot-card の gap 8px）まで下げて、立ち絵のすぐ上に付ける */
   margin-bottom: -8px;
 }
 /* 立ち絵の右上に重ねるボタン（上から、空にする ✕・育成と設定の ⚙）。置き先待ちの水色の重ね・◎ より上 */
