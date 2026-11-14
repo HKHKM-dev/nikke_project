@@ -94,10 +94,11 @@ header h1 {
   z-index: 19;
   background: rgb(0 0 0 / 0.5);
 }
-/* クラシックのスロットの上の並べ替え（ClassicView） */
+/* クラシックのスロットの上の絞り込みと並べ替え（ClassicView）。左右の中央に置く */
 .classic-list-order {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 6px;
   margin: 8px 0;
 }
