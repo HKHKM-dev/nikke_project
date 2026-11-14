@@ -16,7 +16,6 @@ import { IntInput } from './IntInput.tsx';
 import { Modal } from './Modal.tsx';
 import { BadgeFilters } from './modern/BadgeFilter.tsx';
 import { CharacterVisual } from './modern/CharacterVisual.tsx';
-import { GrowthMarksView, growthMarksOf } from './modern/GrowthMarks.tsx';
 import { matchesBadgeFilters, type BadgeFilters as BadgeFilterValues } from './modern/badges.ts';
 
 type Props = {
@@ -182,7 +181,7 @@ export function RosterEditModal({
             className="advanced-settings-button roster-edit-back"
             onClick={() => view.setPane('list')}
           >
-            一覧へ
+            ←一覧へ戻る
           </button>
           {selectedEntry !== undefined && selectedRoster !== undefined ? (
             <CharacterForm
@@ -266,7 +265,6 @@ type RosterEditView = ReturnType<typeof useRosterEditSelection>;
 
 /** 左の一覧: 絞り込みと、アカウント全体・ニケの行 */
 function RosterEditList({ editor, view }: { editor: RosterEditor; view: RosterEditView }) {
-  const { roster } = editor;
   const { listed, selected, select, filters, setFilters, editedOnly, setEditedOnly } = view;
   // 選んだニケの行を、見える位置へ（前後のボタンで動いたとき）
   const listRef = useRef<HTMLDivElement>(null);
@@ -310,11 +308,6 @@ function RosterEditList({ editor, view }: { editor: RosterEditor; view: RosterEd
               <CharacterVisual character={c} size="compact" badges={false} />
             </span>
             <span className="roster-edit-row-name">{c.name.ja}</span>
-            {/* 限界突破・コア強化は、スペック固定でも育成状況の値を出す */}
-            <GrowthMarksView
-              {...growthMarksOf(c.rarity, roster.characters[String(c.resourceId)]!.growth)}
-              className="roster-edit-row-growth"
-            />
             {editor.editedIds.has(c.resourceId) && <EditedMark />}
           </button>
         ))}

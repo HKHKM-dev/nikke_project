@@ -751,8 +751,32 @@ header h1 {
     opacity: 0.8;
   }
 }
+/* ◎ の上の ▼。◎ が縮むときに上へ、広がるときに下へ動く（◎ と同じ周期と緩急） */
+.modern-slot-target-arrow {
+  position: absolute;
+  /* ◎（幅 = 立ち絵の高さの 3/8）の上端の少し上 */
+  top: calc(var(--slot-portrait-h) / 2 - var(--slot-portrait-h) * 3 / 16 - var(--slot-portrait-h) * 3 / 40);
+  left: 50%;
+  width: calc(var(--slot-portrait-h) * 3 / 32);
+  fill: #fff;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.35));
+  pointer-events: none;
+  z-index: 3;
+  transform: translate(-50%, -40%);
+  animation: modern-slot-target-arrow-bob 1.2s ease-in-out infinite;
+}
+@keyframes modern-slot-target-arrow-bob {
+  0%,
+  100% {
+    transform: translate(-50%, -40%);
+  }
+  50% {
+    transform: translate(-50%, 30%);
+  }
+}
 @media (prefers-reduced-motion: reduce) {
-  .modern-slot-target {
+  .modern-slot-target,
+  .modern-slot-target-arrow {
     animation: none;
   }
 }
@@ -770,16 +794,18 @@ header h1 {
 .modern-slot-card.drag-source-returning .modern-slot-char-area {
   opacity: 0.35;
 }
-/* 「操作」「他の編成」の札の行。札の有無でカードの高さを変えない */
+/* 「操作」の印と「他の編成」の札の段。上に操作の印、その下（立ち絵のすぐ上）に札を縦に積む。
+   箱は両方が収まる高さ（印 30px と札 14px）にして、上はカードの上の余白（8px）へ、下は立ち絵との間（.modern-slot-card の gap 8px）へ
+   広げる。並びの中で取る高さは 30px のままなので、印や札の有無でカードの高さは変わらない */
 .modern-slot-header {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
+  justify-content: flex-end;
   font-size: 0.8rem;
   font-weight: bold;
-  /* 操作の印（30px）の有無で高さを変えない */
-  min-height: 30px;
+  height: 44px;
+  margin: -6px 0 -8px;
 }
 /* 操作キャラの印（コントローラーの絵。badges-src/ui_controller.svg）。白一色の絵を形だけ使い、文字色で塗る（テーマに従う） */
 /* 絵（SVG）を型にして文字の色で塗るアイコン（components/maskIcon.ts の maskIconStyle が --icon に絵を渡す） */
@@ -968,8 +994,9 @@ header h1 {
 }
 .growth-marks-core > span {
   position: relative;
-  /* 行の高さを字の高さにして、数字を枠の中央に置く */
+  /* 字の箱を大文字・数字の高さ（上は cap の高さ・下は並びの線）に切り詰めて、見える字を枠の中央に置く */
   line-height: 1;
+  text-box: trim-both cap alphabetic;
   letter-spacing: -0.02em;
 }
 /* MAX は 3 字なので、枠に収まるよう小さくする */
@@ -1397,7 +1424,9 @@ html:has(.modern-view-container) {
   text-align: center;
   width: 100%;
   white-space: nowrap;
-  overflow: hidden;
+  /* 横だけ切る（上下も切ると、流れる名前ごとに合成の層の組み直しが重くなり、ドラッグが重い。縦長の名前の .modern-slot-char-name と同じ） */
+  overflow-x: clip;
+  overflow-y: visible;
 }
 /* 絵の枠。いまの編成にいるニケは、実機の部隊編成と同じく水色の枠・薄い水色の重ね・✓ を絵に重ねる */
 .char-tray-item-visual {
@@ -1626,16 +1655,6 @@ html:has(.modern-view-container) {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-.roster-edit-row-growth {
-  flex: none;
-  --growth-star-w: 10px;
-  --growth-core-w: 20px;
-  text-shadow: none;
-}
-.roster-edit-row-growth .growth-marks-core {
-  margin-top: 0;
-  font-size: 0.55rem;
 }
 .roster-edit-mark {
   flex: none;
