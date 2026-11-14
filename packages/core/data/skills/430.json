@@ -25,8 +25,8 @@
           ]
         },
         {
-          "ja": "フルチャージの発の 1 ヒットのゲージが target_burst_energy_pershot（28,000）より約 9% 多い（AI の枠で 1 ヒット約 30,400。マガジンの何発目かによらない）のは扱っていない。出どころ（挑発が付けるたびに少し溜めるのか、ほかの何か）は分からない",
-          "en": "The gauge per Full Charge hit being about 9% above target_burst_energy_pershot (28,000), about 30,400 per hit in an AI slot regardless of the shot's place in the magazine, is not modeled. Its source (the taunt charging a little on every application, or something else) is unknown",
+          "ja": "フルチャージの発の 1 ヒットのゲージが target_burst_energy_pershot より多い分（マガジンの何発目かによらない）は扱っていない。出どころ（挑発が付けるたびに少し溜めるのか、ほかの何か）は分からない",
+          "en": "The gauge per Full Charge hit exceeding target_burst_energy_pershot, regardless of the shot's place in the magazine, is not modeled. Its source (the taunt charging a little on every application, or something else) is unknown",
           "kind": "unimplemented",
           "effect": {
             "kind": "burstGaugeHit",

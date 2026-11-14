@@ -6,7 +6,7 @@ import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { healsOf } from './historyHelpers.ts';
-import { describeEveryShotInOneGroup, effectWindows, fixedTeam } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, effectWindows, fixedTeam, windowsFrom } from './teamHelpers.ts';
 
 const NOISE = 430;
 const CROWN = 330;
@@ -41,9 +41,7 @@ describe('撮影の編成（ノイズ + クラウン。V-0759）', () => {
   });
 
   it('opens the Crown S2 ATK damage up on Noise for 7 s from each burst use', () => {
-    expect(effectWindows(plan, 0, CROWN_UP)).toEqual(
-      uses.map((start) => ({ start, end: start + gameSecondsToFrames(7) })),
-    );
+    expect(effectWindows(plan, 0, CROWN_UP)).toEqual(windowsFrom(uses, 7, plan.frames));
   });
 });
 
