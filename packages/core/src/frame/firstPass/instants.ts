@@ -314,7 +314,8 @@ export function createInstants({
         // 付与で付く応急改造を含む。C-0561。仮説）を入れた最大装弾数で数える。フルスタックの消費のきっかけの弾丸チャージは、
         // 外したスタック（f + 1 で閉じる）を除いた最大装弾数で数え、残弾もそこで止める（「スタック解除後」。plan/design-diesel.md
         // 2.1 節）。残弾に足すのは発のフレーム f のまま
-        const fullStack = isResolvedFullStack(src.effect.trigger);
+        // 外すのは持ち主のスタックなので、外した後の値で数えるのは持ち主の枠だけ（ほかの味方は発火のフレームの値で数える）
+        const fullStack = isResolvedFullStack(src.effect.trigger) && target === src.sourceSlotIndex;
         const params = paramsAt(target, fullStack || isResolvedShotCount(src.effect.trigger) ? f + 1 : f);
         // 外した後の最大装弾数を超える残弾は、次のフレームの射手と同じくここで削る（記録の量を弾丸チャージの分だけにする）
         if (fullStack) clampAmmoToMax(state, params);

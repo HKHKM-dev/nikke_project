@@ -342,9 +342,14 @@ export function createRegister({
       if (
         !fireContextHolds(x.effect.condition, x.effect.trigger, ev, x.sourceSlotIndex) ||
         !holdsAt(x.effect.condition, x.sourceSlotIndex, f) ||
-        // 付いている時だけ足す（その状態の件が無ければ不発。plan/design-diesel.md 8.1 節）
+        // 付いている時だけ足す（足す段の始まりのフレームにその状態の件が無ければ不発。フルスタックで外した件は除かれ、同じ発の
+        // 付与の件は入る。plan/design-diesel.md 8.1 節）
         (x.effect.existingOnly === true &&
-          !holdsAt({ selfState: { state: x.effect.state, present: true } }, x.sourceSlotIndex, f))
+          !holdsAt(
+            { selfState: { state: x.effect.state, present: true } },
+            x.sourceSlotIndex,
+            battleStartOnly ? 0 : startOfFire(x.effect.trigger, f),
+          ))
       ) {
         skipEffect(x.sourceSlotIndex, x.effect, f);
         continue;
