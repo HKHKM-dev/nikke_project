@@ -17,7 +17,11 @@
       "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"condition\":\"auto\"}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L0: 枠 1（リター）のモデルの f60、L1: 枠 1（リター）のモデルの f600、P0: 枠 2（ポリ）のモデルの f60のペレット 10 個までの和、P1: 枠 2（ポリ）のモデルの f600のペレット 10 個までの和、P0+L: P0 と L0 の和、P1+L: P1 と L1 の和。境は P0・P0+L・L0 → P1・P1+L・L1（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -200〜100f。P0・P0+L・L0 64・P1・P1+L・L1 40・区別できない 0・外れ 0・食い違い（P1・P1+L・L1の最初の発より後のP0・P0+L・L0の発） 0"
     },
     "source": "V-0770",
-    "readAt": "2026-11-14"
+    "readAt": "2026-11-14",
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
   },
   {
     "id": "1173-02",
@@ -37,7 +41,11 @@
       "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"condition\":\"auto\"}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L0: 枠 1（リター）のモデルの f60、L1: 枠 1（リター）のモデルの f600、P0: 枠 2（ポリ）のモデルの f60のペレット 10 個までの和、P1: 枠 2（ポリ）のモデルの f600のペレット 10 個までの和、P0+L: P0 と L0 の和、P1+L: P1 と L1 の和。境は P0・P0+L・L0 → P1・P1+L・L1（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -200〜100f。P0・P0+L・L0 64・P1・P1+L・L1 40・区別できない 0・外れ 0・食い違い（P1・P1+L・L1の最初の発より後のP0・P0+L・L0の発） 0"
     },
     "source": "V-0770",
-    "readAt": "2026-11-14"
+    "readAt": "2026-11-14",
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
   },
   {
     "id": "1173-03",

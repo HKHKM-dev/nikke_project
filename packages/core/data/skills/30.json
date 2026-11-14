@@ -18,7 +18,10 @@
           "assumes": {
             "ja": "「通常攻撃で 5 回攻撃した時」は撃った通常攻撃の発（SG の 1 発は 10 ペレットで 1 回）の通算で数え、5 発ごとに発火する。発火のたびに 10 秒を数え直す（重ならない）。基礎版は撮れない（スペック固定でも宝物版が出る）ので、根拠は宝物版の同じ行の録画",
             "en": "\"After performing 5 normal attacks\" counts fired normal shots (one SG shot of 10 pellets counts once); every 5th shot fires it and restarts the 10 s (no stacking). The base version cannot be recorded (the treasure version shows even with fixed spec), so the evidence is the recordings of the same line in the treasure version"
-          }
+          },
+          "claims": [
+            "C-1211"
+          ]
         }
       ]
     },
@@ -50,7 +53,10 @@
           "assumes": {
             "ja": "基礎版は撮れない（スペック固定でも宝物版が出る）ので、根拠は宝物版の同じ行の録画",
             "en": "The base version cannot be recorded (the treasure version shows even with fixed spec), so the evidence is the recordings of the same line in the treasure version"
-          }
+          },
+          "claims": [
+            "C-1212"
+          ]
         }
       ],
       "notes": [
@@ -85,7 +91,10 @@
           "assumes": {
             "ja": "「通常攻撃を 5 回行った時」は撃った通常攻撃の発（SG の 1 発は 10 ペレットで 1 回）の通算で数え、5 発ごとに発火する。発火のたびに 10 秒を数え直す（重ならない）",
             "en": "\"After performing 5 normal attacks\" counts fired normal shots (one SG shot of 10 pellets counts once); every 5th shot fires it and restarts the 10 s (no stacking)"
-          }
+          },
+          "claims": [
+            "C-1211"
+          ]
         }
       ],
       "notes": [
@@ -131,7 +140,10 @@
           "target": "allies",
           "stat": "attack",
           "ref": 3,
-          "durationRef": 4
+          "durationRef": 4,
+          "claims": [
+            "C-1212"
+          ]
         }
       ],
       "notes": [
