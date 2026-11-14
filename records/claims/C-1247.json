@@ -5,14 +5,17 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`1194-16`。V-0783",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "いまのまま（`frame/shooter.ts` のチャージ武器の射手はフルチャージを保たない。C-0839）。羞恥心まわりは `data/skills/143.json` の skill1・skill2・burst の notes（前提の外）",
   "replaces": [],
   "updated": "2026-11-14",
   "subject": {
     "places": [
-      "data/skills/143.json の skill1 の notes",
+      "data/skills/143.json の skill1 の notes[0]",
+      "data/skills/143.json の skill1 の notes[1]",
+      "data/skills/143.json の skill1 の notes[2]",
+      "data/skills/143.json の skill1 の notes[3]",
       "data/skills/143.json の skill2 の notes[1]",
-      "data/skills/143.json の burst の notes"
+      "data/skills/143.json の burst の notes[0]"
     ]
   },
   "decidedOn": [],

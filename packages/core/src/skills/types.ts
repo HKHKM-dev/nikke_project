@@ -66,7 +66,7 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * 縮める（C-1043。式は R1 の仮説 C-1033）。条件が自動の枠の距離ボーナス（frame/landing.ts の distanceBonusAt）と、条件 inEffectiveRange が読む。射撃は変えない。
  * pierce = 貫通特化。値を持たないフラグ（ref を書かない）。それ自体は与ダメージを変えず、pierceDamage の乗る発にする。
  * pierceDamage = 貫通ダメージ▲（比率）。貫通特化（pierce）の効いている枠の通常攻撃にだけ、攻撃ダメージ▲と同じ和に足す（P1。C-1031）。
- * 倍率ダメージ・バーストのダメージには足さない（確かめていない）。定義を書くときの決まり: この効果に読む側の印 reads: ["pierce"] を書く
+ * 倍率ダメージには足さない（C-1243）。バーストのダメージにも足さない（確かめていない）。定義を書くときの決まり: この効果に読む側の印 reads: ["pierce"] を書く
  * pelletCount = ペレット数 N 個▲（scaling 'flat'。値は個の数。plan/design-dorothy-serendipity.md 2.1・2.2 節）。
  * singlePellet = 「ペレットの数を 1 個に固定」。値を持たないフラグ
  * （ref を書かない）。効いていれば 1 発のペレットは 1 個で、▲より勝つ（C-1077）。どちらも timed の self だけ（PELLET_STATS）

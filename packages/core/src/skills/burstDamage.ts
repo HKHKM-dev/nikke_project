@@ -985,7 +985,7 @@ export function combineBurstHitParts(parts: readonly { hit: BurstHitResult; shar
 /**
  * 倍率ダメージ 1 回ぶん（effects をまとめて）。攻撃力・会心・攻撃ダメージ・分配ダメージは通常攻撃と同じバフ後の値を使う。
  * 攻撃ダメージ▲の和には、貫通特化の枠でも貫通ダメージ▲を足さない（通常攻撃の和 normalAttackDamageGroup と違い、射撃ごとの
- * 倍率ダメージと同じ。倍率ダメージは C-1237。バーストのダメージは確かめていない）。burstDamage（slotBurstHit）と damageで共通。
+ * 倍率ダメージと同じ。倍率ダメージは C-1243。バーストのダメージは確かめていない）。burstDamage（slotBurstHit）と damageで共通。
  */
 export function computeSkillHit(
   effects: readonly ResolvedSkillDamage[],
