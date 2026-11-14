@@ -6,7 +6,7 @@ import { BadgeSprite } from './components/modern/BadgeIcon.tsx';
 import { RosterEditModal } from './components/RosterEditModal.tsx';
 import { SettingsMenu } from './components/SettingsMenu.tsx';
 import { UnreadableSavesNotice } from './components/UnreadableSavesNotice.tsx';
-import { INITIAL_TEAM_STATE, teamReducer } from './team.ts';
+import { INITIAL_TEAM_STATE, teamReducer, type TeamAction } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
 import { INITIAL_PARTIES, otherPartyResourceIds, switchParty, type PartiesState } from './parties.ts';
 import { slotSkillsStatus, unsupportedNoteOf, useSkillDefinitions } from './useSkillDefinitions.ts';
@@ -120,11 +120,20 @@ export function App() {
   const summarySlots = useMemo(() => notesSummarySlots(calc, slotResults), [calc, slotResults]);
 
   const otherPartyIds = useMemo(() => otherPartyResourceIds(parties), [parties]);
+  // ほかの編成で使っているニケは、いまの編成に入れない（ソロレイドでは同じニケを 2 つの編成に入れられない）。
+  // 一覧と選択肢でも選べなくしてあるが、編成を変える操作はすべてここを通るので、ここで止める
+  const dispatchToTeam = useCallback(
+    (action: TeamAction) => {
+      if (action.type === 'selectCharacter' && otherPartyIds.has(action.resourceId)) return;
+      dispatchWithRoster(action);
+    },
+    [otherPartyIds, dispatchWithRoster],
+  );
 
   const viewProps: ViewProps | null = orderedIndex
     ? {
         team,
-        dispatch: dispatchWithRoster,
+        dispatch: dispatchToTeam,
         index: orderedIndex,
         characterCache: cache,
         fullySupported: skills.fullySupported,

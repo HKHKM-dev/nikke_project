@@ -61,8 +61,10 @@ export function ModernView({
   const drag = useSlotDrag({ team, dispatch, calc, roster, placement, onDragStart: () => setPendingId(null) });
 
   // 一覧でニケをクリックしたとき: 空き枠があれば最も左の空き枠に置く。なければ、次にクリックしたスロットに置くまで待つ
-  // （同じニケをもう一度クリックすると待つのをやめる）
+  // （同じニケをもう一度クリックすると待つのをやめる。ほかの編成で使っているニケは何もしない）
   const handleSelectCharacter = (resourceId: number) => {
+    // ほかの編成で使っているニケは選べない（App の dispatch も止める）
+    if (otherPartyIds.has(resourceId)) return;
     // いまの編成のスロットにいるニケをクリックしたら、そのスロットから外す
     const takenIndex = team.slots.findIndex((s) => s.resourceId === resourceId);
     if (takenIndex !== -1) {
