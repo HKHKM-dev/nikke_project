@@ -1,0 +1,173 @@
+[
+  {
+    "id": "1148-01",
+    "recording": "1148",
+    "kind": "timing",
+    "use": "record",
+    "value": [1298, 2491, 3698, 4937, 6333, 7545, 8819, 10148],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25・25・25・25・25f"
+    },
+    "source": "V-0762",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1148-02",
+    "recording": "1148",
+    "kind": "total",
+    "use": "record",
+    "value": 21936382,
+    "description": "ルマニ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11256。増分は 98 個"
+    },
+    "source": "V-0762",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1148-03",
+    "recording": "1148",
+    "kind": "count",
+    "use": "record",
+    "value": 98,
+    "unit": "トリガー",
+    "description": "ルマニ のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 98 個。前の増分から 30f 未満の増分（1 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 53f）から発の数を決めた（2 発になった組 1 個）"
+    },
+    "source": "V-0762",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1148-04",
+    "recording": "1148",
+    "source": "V-0762",
+    "readAt": "2026-11-14",
+    "kind": "count",
+    "use": "record",
+    "value": [54, 40, 4],
+    "unit": "増分",
+    "description": "ルマニ単騎の通常攻撃の 1 ヒットを当てた格子ごとの数 [▲なし, バーストの通常攻撃ダメージ倍率▲あり, 外れ]。▲ありの 40 個は、どれもバースト欄の I → II の替わり目（`1148-01`）の 53〜609f 後。53〜606f に▲なしの発は無く、窓の終わりでは 607〜609f に▲ありと▲なしが重なる（RL の発は撃ってから飛ぶ時間の後に当たる）。▲ありの値は胴体 123,874・胴体の会心 185,810・コア 247,747・コアの会心 309,684 の 4 通りで、どれも武器倍率 5638 を丸めた 6205（× 1.1006）の値",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）98 個を、ルマニの▲の無い格子（R=1@100）・▲の乗った格子（U=1@800）と、仮説 H2（R × 1.0402）・H3（R × 1.050251・1.067・1.1005）の版に当てた（--opt events=1148-01 --opt from=-120 --opt to=720 --opt setup=1102-11）。当て方は ▲なし（R）54・▲あり（U）40・外れ 4。H2・H3 の版だけに当たった増分は 0。外れの 4 個（f4832・f7184・f9317・f11256 の 158,927・108,165・87,455・101,524）は、どれも的のジャンプの直後か最中の発（着地直後の 1 発の欠け）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1148-05",
+    "recording": "1148",
+    "source": "V-0762",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 123874,
+    "description": "ルマニのバーストの窓の中のルマニの通常攻撃（フルチャージ）の 1 ヒット（胴体。通常攻撃ダメージ倍率▲の乗った値。`1148-04` の▲ありの格子）",
+    "method": {
+      "tool": "`1148-04` から",
+      "note": "モデルの 1 回目の窓の中のフレーム 800 と比べる"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 800,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1148-06",
+    "recording": "1148",
+    "source": "V-0762",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 247747,
+    "description": "ルマニのバーストの窓の中のルマニの通常攻撃（フルチャージ）の 1 ヒット（コア。通常攻撃ダメージ倍率▲の乗った値。`1148-04` の▲ありの格子）",
+    "method": {
+      "tool": "`1148-04` から",
+      "note": "モデルの 1 回目の窓の中のフレーム 800 と比べる"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 800,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1148-07",
+    "recording": "1148",
+    "source": "V-0762",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 309684,
+    "description": "ルマニのバーストの窓の中のルマニの通常攻撃（フルチャージ）の 1 ヒット（コアの会心。通常攻撃ダメージ倍率▲の乗った値。`1148-04` の▲ありの格子）",
+    "method": {
+      "tool": "`1148-04` から",
+      "note": "モデルの 1 回目の窓の中のフレーム 800 と比べる"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 800,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]

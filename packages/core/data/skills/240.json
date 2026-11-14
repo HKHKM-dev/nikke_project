@@ -1,0 +1,70 @@
+{
+  "formatVersion": 1,
+  "resourceId": 240,
+  "checkedAt": "2026-11-12",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルチャージして攻撃した時の、自分へのマッスルアップ（最大HP▲・5 スタック・2 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）。フルスタックかを読むのは、バーストの受けるダメージ▼の条件だけ",
+          "en": "Muscle Up on self after a Full Charge attack (max HP up, 5 stacks, 2 s) does not change damage by itself (it matters only with an effect reading HP in the team). Only the Burst's damage-taken decrease reads whether it is at max stacks",
+          "kind": "indirect",
+          "path": "hp"
+        },
+        {
+          "ja": "フルバーストタイムの持続中にフルチャージ攻撃が命中した時の、対象への挑発（5 秒）はダメージに関係しない。付けるのはフルバーストの間だけで、その間はゲージが溜まらないので、ゲージにも出ない",
+          "en": "The taunt (5 s) on the target when a Full Charge attack hits during Full Burst does not affect damage. It is applied only during Full Burst, when the gauge does not charge, so it does not show in the gauge either",
+          "kind": "noDamage",
+          "claims": ["C-0264"]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "対象のパーツに 5 回命中した時の、味方全体のパーツダメージ▲（5 秒）は、射撃場の的にパーツが無いので効かない",
+          "en": "Damage to Parts up for all allies after hitting a target's Parts 5 times (5 s) does not apply (the training target has no parts)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "normalAttackDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "味方全体（自分を含む）の通常攻撃の武器倍率に (1 + 値) を掛けて四捨五入する（C-0121 の形）。フルチャージ倍率・コアと会心の和・攻撃ダメージ▲の和とは別の乗数で、ほかの通常攻撃ダメージ倍率▲とは 1 つの和",
+            "en": "Multiplies the normal attack weapon multiplier of all allies, herself included, by (1 + value) and rounds it (the C-0121 form). A separate multiplier from the full charge multiplier, the core/crit sum and the attack damage sum, and one sum with other normal attack damage multiplier increases"
+          },
+          "claims": ["C-1176", "C-1177", "C-1178"]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "自分の最大HP▲（10 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "The max HP increase on self (10 s) does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        },
+        {
+          "ja": "自分がマッスルアップのフルスタック状態の時の、自分の受けるダメージ▼（10 秒）は防御系でダメージに関係しない",
+          "en": "The damage-taken decrease on self while Muscle Up is at max stacks (10 s) is defensive and does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    }
+  }
+}

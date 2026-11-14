@@ -1,0 +1,273 @@
+[
+  {
+    "id": "1149-01",
+    "recording": "1149",
+    "kind": "timing",
+    "use": "record",
+    "value": [1203, 2381, 3559, 4738, 5916, 7094, 8272, 9480, 10659],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25・25・25・25・14・24f"
+    },
+    "source": "V-0762",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1149-02",
+    "recording": "1149",
+    "kind": "timing",
+    "use": "record",
+    "value": [2375, 3553, 4732, 5910, 7088, 8266, 10652, 10654],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f7036・f9444"
+    },
+    "source": "V-0762",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1149-03",
+    "recording": "1149",
+    "kind": "total",
+    "use": "record",
+    "value": 119089635,
+    "description": "ルマニ・ジル の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11394。増分は 598 個"
+    },
+    "source": "V-0762",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1149-04",
+    "recording": "1149",
+    "kind": "count",
+    "use": "record",
+    "value": 248,
+    "unit": "トリガー",
+    "description": "ルマニ・ジル のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 598 個。前の増分から 30f 未満の増分（535 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 42.5f）から発の数を決めた（2 発になった組 42 個）"
+    },
+    "source": "V-0762",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1149-05",
+    "recording": "1149",
+    "source": "V-0762",
+    "readAt": "2026-11-14",
+    "kind": "count",
+    "use": "record",
+    "value": [163, 161, 174],
+    "unit": "増分",
+    "description": "ルマニ（I・操作）+ ジル（III）の、ジルの格子に当てた増分の数 [マグナム弾だけ（J）, マグナム弾とルマニの▲（JU）, 硫酸弾の tick（D）]。JU の 161 個はどれもバースト欄の I → II の替わり目（`1149-01`）の 8〜584f 後で、その範囲のジルの発に J は無い（ルマニの▲の無いジルの発は、窓の外だけ）。窓の中の JU は、武器倍率 7109 に 1 + 0.30 + 0.1005 を掛けて丸めた 9956 の値（マグナム弾だけの 9242 の × 1.0773）。H5（別の乗数。× 1.1005）の値の増分は 0",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）598 個を、ルマニ（R=1@300・U=1@600）、ジルのマグナム弾だけ（J=2@300）・マグナム弾とルマニの▲（JU=2@600）・仮説 H5（J × 1.1005）、硫酸弾の tick（D=2@dot@300:skill2）と、それらの同じフレームの和に当てた（--opt events=1149-01 --opt from=-120 --opt to=720 --opt setup=1102-11）。当て方は J（H5 と区別できない J の値）163・JU 161・D 174・R 41・U 46・RJ 4・JD 2・外れ 7。H5 の版だけに当たった増分は 0"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1149-06",
+    "recording": "1149",
+    "source": "V-0762",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 119269,
+    "description": "ルマニのバーストの窓の中のジルの通常攻撃の 1 ヒット（胴体・距離ボーナスなし。マグナム弾とルマニの通常攻撃ダメージ倍率▲の乗った値。`1149-05` の JU の格子）",
+    "method": {
+      "tool": "`1149-05` から",
+      "note": "モデルの 1 回目の窓の中でマグナム弾の付いたフレーム 600 と比べる"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1149-07",
+    "recording": "1149",
+    "source": "V-0762",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 155050,
+    "description": "ルマニのバーストの窓の中のジルの通常攻撃の 1 ヒット（胴体・距離ボーナスあり。マグナム弾とルマニの通常攻撃ダメージ倍率▲の乗った値。`1149-05` の JU の格子）",
+    "method": {
+      "tool": "`1149-05` から",
+      "note": "モデルの 1 回目の窓の中でマグナム弾の付いたフレーム 600 と比べる"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1149-08",
+    "recording": "1149",
+    "source": "V-0762",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 230008,
+    "description": "ルマニのバーストの窓の中のジルの硫酸弾（S2）の持続ダメージの 1 tick（会心なし）。窓の外と同じ値で、ルマニの通常攻撃ダメージ倍率▲は乗らない（`1149-05` の D の格子）",
+    "method": {
+      "tool": "`1149-05` から",
+      "note": "モデルの 1 回目の窓の中のフレーム 600 の後の最初の tick と比べる"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "frame": 600,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1149-09",
+    "recording": "1149",
+    "source": "V-0762",
+    "readAt": "2026-11-14",
+    "kind": "timing",
+    "use": "compare",
+    "value": 1.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -5,
+      "high": 8
+    },
+    "description": "ルマニのバーストの使用（バースト欄の I → II の替わり目。`1149-01`）から、ジルの通常攻撃ダメージ倍率▲の付き始めまでの動画のフレームの幅。9 回のうちジルの発で挟めた 7 回の「▲の無い最後の発 〜 ▲の乗った最初の発」（-6〜19・-5〜20・-14〜11・-14〜9・-15〜10・-16〜8・-10〜15f）の共通部分",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）598 個を、ルマニ（R=1@300・U=1@600）、ジルのマグナム弾だけ（J=2@300）・マグナム弾とルマニの▲（JU=2@600）・仮説 H5（J × 1.1005）、硫酸弾の tick（D=2@dot@300:skill2）と、それらの同じフレームの和に当てた（--opt events=1149-01 --opt from=-120 --opt to=720 --opt setup=1102-11）。当て方は J（H5 と区別できない J の値）163・JU 161・D 174・R 41・U 46・RJ 4・JD 2・外れ 7。H5 の版だけに当たった増分は 0"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "stat": "normalAttackDamage",
+        "from": 1,
+        "n": 0,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 6.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1149-10",
+    "recording": "1149",
+    "source": "V-0762",
+    "readAt": "2026-11-14",
+    "kind": "timing",
+    "use": "compare",
+    "value": 590,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 584,
+      "high": 596
+    },
+    "description": "ルマニのバーストの使用（バースト欄の I → II の替わり目。`1149-01`）から、ジルの通常攻撃ダメージ倍率▲の切れ目までの動画のフレームの幅。9 回の「▲の乗った最後の発 〜 ▲の無い最初の発」（584〜608・575〜599・576〜600・573〜620・574〜598・573〜596・560 未満〜597・580〜604・581〜605f）の共通部分",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）598 個を、ルマニ（R=1@300・U=1@600）、ジルのマグナム弾だけ（J=2@300）・マグナム弾とルマニの▲（JU=2@600）・仮説 H5（J × 1.1005）、硫酸弾の tick（D=2@dot@300:skill2）と、それらの同じフレームの和に当てた（--opt events=1149-01 --opt from=-120 --opt to=720 --opt setup=1102-11）。当て方は J（H5 と区別できない J の値）163・JU 161・D 174・R 41・U 46・RJ 4・JD 2・外れ 7。H5 の版だけに当たった増分は 0"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "stat": "normalAttackDamage",
+        "from": 1,
+        "n": 0,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]
