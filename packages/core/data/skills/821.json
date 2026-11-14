@@ -1,0 +1,102 @@
+{
+  "formatVersion": 1,
+  "resourceId": 821,
+  "checkedAt": "2026-11-14",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "self",
+          "stat": "chargeSpeed",
+          "ref": 1,
+          "durationShotsRef": 2
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "self",
+          "stat": "chargeDamage",
+          "scaling": "perFinalMaxAmmo",
+          "ref": 3,
+          "durationShotsRef": 4,
+          "assumes": {
+            "ja": "最終最大装弾数は、▲が効く発の時点のもの（S2 の最大装弾数▲の窓の中は 3 発多い）。上限は 50 発（ツールチップ）",
+            "en": "The final max ammo is the one at the shot the buff applies to (3 more inside the window of the S2 max ammo up). Capped at 50 rounds (tooltip)"
+          }
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "damageType": "fixedShare",
+          "ref": 1,
+          "assumes": {
+            "ja": "フルチャージの通常攻撃 1 発ごとに 1 回（全弾命中の前提）。きっかけの発の 1 ヒットが与えた値の X% で、会心・コア・フルバースト補正・▲を乗せ直さない。撃った区間の値で決め、バーストゲージは溜めない",
+            "en": "Once per full-charge normal shot (every shot is assumed to hit). X% of the damage dealt by the triggering shot's hit, with no crit, core, Full Burst bonus or buffs applied again. Taken from the segment the shot was fired in; it does not charge the burst gauge"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "stat": "maxAmmo",
+          "scaling": "flat",
+          "ref": 2,
+          "durationRef": 3
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "freezingWitch",
+          "trigger": "burstUse",
+          "target": "self",
+          "durationShotsRef": 2,
+          "contents": [
+            {
+              "stat": "chargeSpeed",
+              "ref": 1,
+              "decrease": true
+            },
+            {
+              "stat": "chargeDamage",
+              "ref": 3
+            }
+          ],
+          "assumes": {
+            "ja": "氷結の魔女。バースト使用の後の最初の発（その溜め）にだけ効く。チャージ速度 300%▼ は、その発に S1 のチャージ速度▲も効いていれば同じ和に入る（減算の式でチャージ時間 1 秒 × (1 + 3 − ▲)）。溜めの途中で付いても、それまでに溜めたフレームは残る（特殊改造と同じ。C-0786）",
+            "en": "Freezing Witch. It applies only to the first shot after the Burst (and its charge). Charge Speed ▼ 300% sums with the S1 Charge Speed ▲ when that shot also has it (subtractive formula: charge time 1 s × (1 + 3 − ▲)). Frames already charged are kept if it is applied mid-charge (as with Special Modification, C-0786)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "爆発範囲▲は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）",
+          "en": "The explosion range up is not modeled (explosion range is not in the damage formula; its effect on the core-hit share is unverified)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

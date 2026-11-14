@@ -3,6 +3,7 @@
 // 射撃ごとの倍率ダメージ（「通常攻撃が命中した時、最終攻撃力の X% の追加ダメージ」）は 1 トリガーの値に足す（perShot）。
 // 使用武器の変更（殲滅モード）が効いている区間は、武器倍率・コア倍率を変更後の武器（buffs.weapon）から取る。
 import { elementMultiplier } from './element.ts';
+import { effectiveMaxAmmo } from './frame/firing.ts';
 import type { ResolvedSkillDamage } from './skills/burstDamage.ts';
 import {
   ZERO_BUFFS,
@@ -313,7 +314,12 @@ export type TriggerDamage = {
   normal: number;
   /** 射撃ごとの倍率ダメージの分（無ければ 0）。倍率グループは 1 + 会心 + フルバースト（コア・距離なし） */
   perShot: number;
-  /** 1 トリガー（SG は全ペレット）あたりの期待ダメージ = normal + perShot */
+  /**
+   * 与えたダメージ量の X% の固定ダメージの分（damageType fixedShare。無ければ 0。plan/design-emilia.md 2.2 節）。フルチャージの発の
+   * normal × ΣX で、何も乗せ直さない。perShot と違い、着弾の区間でなく撃った区間の値（その発の normal）で決まる
+   */
+  fixedShare: number;
+  /** 1 トリガー（SG は全ペレット）あたりの期待ダメージ = normal + perShot + fixedShare */
   perTrigger: number;
   /** 掛けた命中率（condition.hitRate。省略は 1）。normal と perShot に含まれている */
   hitRate: number;
@@ -500,7 +506,12 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const baseHit = Math.max(1, attack - defenceAfterDown(enemy, buffs));
   const weaponMultiplier = shot.damage / 10000;
   const charge = isChargeWeapon(shot) && condition.fullCharge;
-  const chargeMultiplier = applyChargeBuffs(shot.fullChargeDamage, charge, buffs);
+  const chargeMultiplier = applyChargeBuffs(
+    shot.fullChargeDamage,
+    charge,
+    buffs,
+    effectiveMaxAmmo(shot.maxAmmo, buffs),
+  );
 
   // 通常攻撃ダメージ倍率▲（SG・SMG のコレクション）は、通常攻撃の武器倍率（1e-4 単位の整数）に (1 + Σ) を掛けて
   // 四捨五入した値に置き換える（C-0121・C-0127。SG は 1 トリガーの値で丸める。C-0330）。乗数はその比
@@ -543,6 +554,8 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
     trueMultiplier *
     damageTakenMultiplier *
     element;
+  // 固定ダメージは通常攻撃の値（命中率・会心とコアの期待値を含む）の X%。フルチャージの発にだけ出る（きっかけが fullChargeShot）
+  const fixedShare = charge ? normal * fixedShareOf(input.perShot) : 0;
   const perShot =
     hitRate *
     perShotDamage(
@@ -578,7 +591,8 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
     elementMultiplier: element,
     normal,
     perShot,
-    perTrigger: normal + perShot,
+    fixedShare,
+    perTrigger: normal + perShot + fixedShare,
     hitRate,
     hitsPerShot,
   };
@@ -587,14 +601,14 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
 /**
  * 部分チャージの発（チャージの進み progress）の 1 トリガーの値。フルチャージ倍率 M（チャージのバフ込み）を
  * 1 + (M − 1) × progress に置き換える（C-0843。紅蓮BS・ラムで確かめたのは素の倍率だけで、バフのある場合の比例は仮定）。
- * 射撃ごとの倍率ダメージ（perShot）は変えない
+ * 射撃ごとの倍率ダメージ（perShot）は変えない。部分チャージの発はフルチャージでないので、固定ダメージ（fixedShare）は出さない
  */
 export function partialChargeTriggerDamage<T extends TriggerDamage>(trigger: T, progress: number): T {
   const full = trigger.chargeMultiplier;
   if (progress >= 1 || full <= 1) return trigger;
   const chargeMultiplier = 1 + (full - 1) * Math.max(0, progress);
   const normal = (trigger.normal * chargeMultiplier) / full;
-  return { ...trigger, chargeMultiplier, normal, perTrigger: normal + trigger.perShot };
+  return { ...trigger, chargeMultiplier, normal, fixedShare: 0, perTrigger: normal + trigger.perShot };
 }
 
 /**
@@ -616,6 +630,16 @@ function perShotDamage(
   const common = baseHit * boost * applyAttackDamageBuffs(buffs) * (1 + buffs.damageTaken) * element;
   const distributed = distributedHitMultiplier(1 + buffs.distributedDamage, 1 + buffs.damageTaken);
   let total = 0;
-  for (const e of effects) total += common * e.multiplier * (e.damageType === 'distributed' ? distributed : 1);
+  for (const e of effects) {
+    if (e.damageType === 'fixedShare') continue;
+    total += common * e.multiplier * (e.damageType === 'distributed' ? distributed : 1);
+  }
+  return total;
+}
+
+/** 与えたダメージ量の X% の固定ダメージの X/100 の和（plan/design-emilia.md 2.2 節） */
+function fixedShareOf(effects: readonly ResolvedSkillDamage[] | undefined): number {
+  let total = 0;
+  for (const e of effects ?? []) if (e.damageType === 'fixedShare') total += e.multiplier;
   return total;
 }

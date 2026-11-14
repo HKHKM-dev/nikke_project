@@ -209,6 +209,11 @@ export const NAMED_STATES = {
    */
   missileGuide: { name: { ja: 'ミサイルガイド', en: 'Missile Guide' }, holder: 'ally' },
   /**
+   * 氷結の魔女（エミリアのバースト。自分・1 発間維持。中身はチャージ速度 300%▼とチャージダメージ▲。特殊改造と同じ形。
+   * plan/design-emilia.md 2.3 節）
+   */
+  freezingWitch: { name: { ja: '氷結の魔女', en: 'Freezing Witch' }, holder: 'ally' },
+  /**
    * 同: 戦場コントロール（エマ：タクティカル・アップのバースト。味方全体に付く。中身は発動者の攻撃力の▲・10 秒。ベスティー：タクティカル・アップの
    * S2 の「自分が戦場コントロール状態なら」が見る）
    */

@@ -325,7 +325,9 @@ export function isAllyDecrease(effect: { stat: string; decrease?: true }): boole
  * casterMaxHp = 発動者のバフ前の最大HP × 比率を対象の最大HP に足す（stat が maxHp・maxHpOnly の timed だけ。
  * 「スキル発動者基準で最大HP（のみ）X%▲」。対象の比率は X × 発動者のバフ前の最大HP ÷ 対象のバフ前の最大HP で、件の列を対象の枠ごとに
  * 作る時に直す（skills/holders.ts）。plan/design-hp-ratio-readers.md 9 節の論点 8。V-0730）。定義を書くときの決まり: 自分にだけ付く効果には
- * 書かない（比率は X のままなので ratio で書く）
+ * 書かない（比率は X のままなので ratio で書く）、
+ * perFinalMaxAmmo = 「自分の最終最大装弾数 1 発ごとに X%▲」（stat が chargeDamage の timed の self だけ。plan/design-emilia.md 2.1 節）。
+ * 値は比率 × その発の時点の最終最大装弾数（上限 50 発）で、damage.ts がフルチャージの発の 1 トリガーの値を出すときに掛ける
  */
 export type BuffScaling =
   | 'ratio'
@@ -335,7 +337,8 @@ export type BuffScaling =
   | 'casterFinalMaxHp'
   | 'casterDefence'
   | 'copyTopAttack'
-  | 'casterMaxHp';
+  | 'casterMaxHp'
+  | 'perFinalMaxAmmo';
 export const BUFF_SCALINGS = [
   'ratio',
   'casterAttack',
@@ -345,6 +348,7 @@ export const BUFF_SCALINGS = [
   'casterDefence',
   'copyTopAttack',
   'casterMaxHp',
+  'perFinalMaxAmmo',
 ] as const satisfies readonly BuffScaling[];
 
 /** 攻撃力に実数を固定加算するスケーリング（比率で足さない。stat は attack だけ） */
@@ -1380,6 +1384,15 @@ export const SKILL_DAMAGE_TYPES = [
 ] as const satisfies readonly SkillDamageType[];
 
 /**
+ * damage の効果の種別。SkillDamageType と、fixedShare = 「自分が与えたダメージ量の X% 分本体に固定ダメージ」
+ * （plan/design-emilia.md 2.2 節）。きっかけの発（フルチャージの通常攻撃）の 1 ヒットが与えた値の X% で、会心・コア・フルバースト補正・▲を
+ * 乗せ直さない。きっかけは { count: 'fullChargeShot' } だけで、ほかの欄とは組まない。撃った区間の 1 トリガーの値（damage.ts の
+ * TriggerDamage.fixedShare）に畳み込む。バーストゲージは溜めない
+ */
+export type DamageEffectType = SkillDamageType | 'fixedShare';
+export const DAMAGE_EFFECT_TYPES = [...SKILL_DAMAGE_TYPES, 'fixedShare'] as const satisfies readonly DamageEffectType[];
+
+/**
  * トリガー付きの倍率ダメージ（「最終攻撃力の X% のダメージ / 分配ダメージ / 追加ダメージ」）。どのスロットにも書ける。
  * burst スロットの無条件の発動ダメージは従来どおり burstDamage。
  * 射撃の回数トリガーの毎回（every = 1。「通常攻撃が命中した時」）は、発動を 1 件ずつ作らずに
@@ -1395,7 +1408,7 @@ export type DamageEffect = {
   trigger: EffectTrigger;
   /** description_value_NN の NN（1 始まり）。値は % 表記 */
   ref: number;
-  damageType: SkillDamageType;
+  damageType: DamageEffectType;
   /**
    * 1 回の発動のヒットのうちバーストゲージを溜めるものの、発動した射撃からの遅れ（フレーム。昇順。V-0034）。
    * 0 は発と同じフレーム（V-0035 のモダニア）。段の gaugeHits（V-0030、C-0085）と同じで、1 ヒットで射手の targetBurstEnergyPerShot（フルチャージ倍率なし）を溜める。
