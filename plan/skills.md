@@ -500,9 +500,9 @@ notes の種類: 未対応 42・前提の外 66・計算に無関係 57・補足
 - **skill1**: supported
   - effects[0] counterChange・battleStart・restraintChains: C-0411（確定）
   - effects[1] counterChange・fullBurstEnd・restraintChains: C-0747（確定）
-  - effects[2] damage・restraintChains が最大になった時・skill: C-0411（確定）、C-0745（確定）、C-0747（確定）、C-1197（仮説）
+  - effects[2] damage・restraintChains が最大になった時・skill: C-0411（確定）、C-0745（確定）、C-0747（確定）
   - effects[3] counterChange・restraintChains が最大になった時・restraintChains（減少）: C-0411（確定）
-  - effects[4] dot・restraintChains が最大になった時: C-0411（確定）、C-0745（確定）、C-0747（確定）、C-1197（仮説）
+  - effects[4] dot・restraintChains が最大になった時: C-0411（確定）、C-0745（確定）、C-0747（確定）
 - **skill2**: supported
   - effects[0] timed・burstStage3Enter・sustainedDamage: C-0748（確定）、C-0755（確定）
   - effects[1] stackChange・normalHit・ensnaringChains: C-0754（確定）、C-0751（確定）
