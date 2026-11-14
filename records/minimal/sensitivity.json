@@ -29459,6 +29459,198 @@
       "plus": null
     },
     {
+      "observation": "1133-04",
+      "element": "ディーゼル treasureSkills.skill2.effects[1]",
+      "key": "169f0d39c32b1ab8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1133-04",
+      "element": "ディーゼル treasureSkills.skill2.effects[2]",
+      "key": "169f0d39c32b1ab8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1133-05",
+      "element": "ディーゼル treasureSkills.skill2.effects[1]",
+      "key": "23c82157c56730c6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1133-05",
+      "element": "ディーゼル treasureSkills.skill2.effects[2]",
+      "key": "23c82157c56730c6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1133-06",
+      "element": "ディーゼル treasureSkills.skill2.effects[1]",
+      "key": "67ab4d58c5c734c9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1133-06",
+      "element": "ディーゼル treasureSkills.skill2.effects[2]",
+      "key": "67ab4d58c5c734c9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1133-07",
+      "element": "ディーゼル treasureSkills.skill2.effects[1]",
+      "key": "77d078c679dd33c5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1133-07",
+      "element": "ディーゼル treasureSkills.skill2.effects[2]",
+      "key": "77d078c679dd33c5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1133-08",
+      "element": "ディーゼル treasureSkills.skill2.effects[1]",
+      "key": "ef28fd68cf81532f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1133-08",
+      "element": "ディーゼル treasureSkills.skill2.effects[2]",
+      "key": "ef28fd68cf81532f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1133-09",
+      "element": "ディーゼル treasureSkills.skill2.effects[1]",
+      "key": "d79f039bd160fe5c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1133-09",
+      "element": "ディーゼル treasureSkills.skill2.effects[2]",
+      "key": "d79f039bd160fe5c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1133-10",
+      "element": "ディーゼル treasureSkills.skill2.effects[1]",
+      "key": "1f87063da18f9de0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1133-10",
+      "element": "ディーゼル treasureSkills.skill2.effects[2]",
+      "key": "1f87063da18f9de0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1133-11",
+      "element": "ディーゼル treasureSkills.skill2.effects[1]",
+      "key": "6a00514357594fc8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1133-11",
+      "element": "ディーゼル treasureSkills.skill2.effects[2]",
+      "key": "6a00514357594fc8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1133-12",
+      "element": "ディーゼル treasureSkills.skill2.effects[1]",
+      "key": "ec76735fd0af185c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1133-12",
+      "element": "ディーゼル treasureSkills.skill2.effects[2]",
+      "key": "ec76735fd0af185c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1133-13",
+      "element": "ディーゼル treasureSkills.skill2.effects[1]",
+      "key": "161bd510929d1d21",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1133-13",
+      "element": "ディーゼル treasureSkills.skill2.effects[2]",
+      "key": "161bd510929d1d21",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1133-14",
+      "element": "ディーゼル treasureSkills.skill2.effects[1]",
+      "key": "09b040201501f4b7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1133-14",
+      "element": "ディーゼル treasureSkills.skill2.effects[2]",
+      "key": "09b040201501f4b7",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1133-15",
+      "element": "ディーゼル treasureSkills.skill2.effects[1]",
+      "key": "1000361e13169047",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1133-15",
+      "element": "ディーゼル treasureSkills.skill2.effects[2]",
+      "key": "1000361e13169047",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "1134-03",
       "element": "ベルベット skill2.effects[0]",
       "key": "a0b1d82963ab5bc0",

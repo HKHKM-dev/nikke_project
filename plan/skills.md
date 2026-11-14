@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 111・効果 781（根拠あり 761）・notes 257（根拠あり 108）
+件数: キャラ 112・効果 790（根拠あり 770）・notes 265（根拠あり 108）
 
-notes の種類: 未対応 40・前提の外 61・計算に無関係 55・補足 33・間接 68
+notes の種類: 未対応 41・前提の外 63・計算に無関係 57・補足 33・間接 71
 
-スロット: supported 285・partial 27・unsupported 9・noEffect 42
+スロット: supported 289・partial 28・unsupported 9・noEffect 43
 
 ## 10 ラピ
 
@@ -213,6 +213,32 @@ notes の種類: 未対応 40・前提の外 61・計算に無関係 55・補足
 - **burst**: supported
   - effects[0] burstDamage・skill: C-1113（確定）
   - effects[1] damage・burstUse・additional（読む: HP）: C-1114（確定）、C-1115（仮説）
+
+## 72 ディーゼル
+
+- **skill1**: noEffect
+  - notes[0] 間接（防御力）: フルバーストタイムが発動した時の自分の防御力▲（10 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: 根拠なし
+  - notes[1] 前提の外: フルバーストタイム持続中に撃たれた時の自分の回復は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは敵の攻撃で起きうる（C-0551）: 根拠なし
+- **skill2**: supported
+  - effects[0] state・normalHit・strawberryCandy（maxAmmo）: C-1185（確定）
+  - effects[1] ammoRefill・strawberryCandy のフルスタック: C-1184（仮説）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1185（確定）
+  - notes[0] 計算に無関係: 同じ敵への挑発はダメージに関係しない（付けるのはチェーンの間）: 根拠なし
+- **宝物版 skill1**: partial
+  - effects[0] stackChange・normalHit・strawberryCandy: C-1180（確定）、C-1182（確定）
+  - notes[0] 間接（防御力）: フルバーストタイムが発動した時の自分の防御力▲（10 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: 根拠なし
+  - notes[1] 前提の外: 攻撃を受けた時（自分がヘイト状態なら）の自分の回復は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは敵の攻撃で起きうる（C-0551）: 根拠なし
+  - notes[2] 未対応: 通常攻撃が 150 回命中した時（ヘイト状態なら）のスタック量▲のうち、ほかの味方のスキルで自分に付いたスタック可能バフに足す分は未対応（自分のイチゴキャンディの分だけ扱う）: 根拠なし
+- **宝物版 skill2**: supported
+  - effects[0] state・normalHit・strawberryCandy（maxAmmo）: C-1179（確定）
+  - effects[1] ammoRefill・strawberryCandy のフルスタック: C-1184（仮説）
+  - effects[2] timed・strawberryCandy のフルスタック・pierceDamage（読む: 貫通）: C-1184（仮説）
+- **宝物版 burst**: supported
+  - effects[0] burstDamage・skill: C-1183（確定）
+  - effects[1] state・burstUse・attract: C-1181（確定）
+  - notes[0] 間接（HP）: 自分の最大HP のみ▲（10 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+  - notes[1] 計算に無関係: ヘイト（敵全体を挑発）そのものはダメージに関係しない（ティアの S2 と同じ自分にヘイトの形で、付けた時にゲージを溜めない。C-0505）。宝物版 S1 の条件が読むので、状態として付ける: 根拠なし
 
 ## 73 ブリッド：サイレントトラック
 
