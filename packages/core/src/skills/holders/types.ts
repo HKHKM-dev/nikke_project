@@ -375,6 +375,8 @@ export type AllStackSource = {
   effect: ResolvedAllStackableChange;
   fires: TriggerTracker;
   targets: readonly number[];
+  /** 足す先の件の列（最初の発火で選ぶ。skills/holders/fire.ts の fireAllStackable） */
+  tracks?: HeldTrack[];
 };
 
 /** カウンタの増減 1 つ（対象は自分。plan/design-skill-stage10.md 2.3 節）。{ ended } のトリガーは fires を持たない */

@@ -30,8 +30,7 @@ import {
 import { CONDITION_KEYS_OF, parseCondition, validateBurstStep } from './condition.ts';
 import {
   LOWEST_HP_RATIO_HEAL_ONLY,
-  parseHealAdjacent,
-  parseTargetBurstStep,
+  parsePersonaTargetFields,
   parseTargetClass,
   parseTargetCount,
   parseTargetElement,
@@ -148,11 +147,8 @@ export function parseInstantEffect(v: Record<string, Json>, path: string, kind: 
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (targetElement !== undefined) effect.targetElement = targetElement;
   if (targetClass !== undefined) effect.targetClass = targetClass;
-  // heal の「基本バースト段階が N の」（欄の一覧で heal だけに限ってある）
-  const step = parseTargetBurstStep(v, target, path);
-  if (step !== undefined) (effect as HealEffect).targetBurstStep = step;
-  // heal の「自分と両隣」（欄の一覧で heal だけに限ってある）
-  Object.assign(effect, parseHealAdjacent(v, target, path));
+  // heal の「基本バースト段階が N の」と「（自分と）両隣」（欄の一覧で heal だけに限ってある。timed と同じ検査）
+  Object.assign(effect, parsePersonaTargetFields(v, target, path));
   // heal も N 機の対象（lowestHpRatio）の N を持つ
   Object.assign(effect, count);
   parseInstantKindFields(v, effect, path);

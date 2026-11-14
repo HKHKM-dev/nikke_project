@@ -18,7 +18,7 @@ import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { BurstStep, CharacterData, Element } from '../types.ts';
 import { skillValue, type SkillLevels } from './resolve.ts';
 import { statesMatching, type NamedStateId } from './states.ts';
-import { matchesTargetFilter } from './targets.ts';
+import { adjacentSlotsOf, matchesTargetFilter } from './targets.ts';
 import {
   SKILL_SLOTS,
   burstStepChangeOf,
@@ -27,6 +27,7 @@ import {
   selfHpThreshold,
   statContentsOf,
   staticStatesOf,
+  isBattleLongGrant,
   type BurstStepMixCondition,
   type EffectCondition,
   type FormationRow,
@@ -158,9 +159,10 @@ function fullCharacter(c: CompositionCharacter, index: number): Required<Composi
 
 /**
  * 効果の対象が編成で決まる絞り込み（〈名前〉状態・両隣・基本バースト段階・allies の自分を除く）を持つか。
- * 付与（state）も timed と同じ
+ * 付与（state）も timed と同じ。heal は両隣と基本バースト段階だけ持つ
  */
 export function hasPersonaTargetFilter(effect: SkillEffect): boolean {
+  if (effect.kind === 'heal') return effect.targetAdjacent !== undefined || effect.targetBurstStep !== undefined;
   return (
     (effect.kind === 'timed' || effect.kind === 'state') &&
     (effect.targetState !== undefined ||
@@ -187,34 +189,26 @@ export function fixedTargetsOf(
 ): number[] | undefined {
   // 「残りの HP の割合が最も低い味方 N 機」（heal の lowestHpRatio）は、枠の HP の
   // 割合の想定（省略は満タン）の低い順・同値は枠の若い順（C-0567。plan/design-skill-stage8.md 1.1 節）。自分も候補。先頭の N 枠は skills/targets.ts が取る
-  if (effect.kind === 'heal') {
-    // 「両隣の味方」（「自分と」なら自分の枠も。timed・付与と同じ枠。plan/design-adjacent-allies.md 2.1 節）
-    if (effect.targetAdjacent === true) {
-      return adjacentSlotsOf(characters, selfIndex, effect.includeSelf === true).filter((i) =>
-        matchesTargetFilter(effect, fullCharacter(characters[i]!, i)),
-      );
-    }
-    // 「基本バースト段階が N の」（エイダの S1 の吸収回復。timed と同じ countsAsBurstStep）
-    const step = effect.targetBurstStep;
-    if (step !== undefined) return characters.flatMap((c, i) => (c !== null && countsAsBurstStep(c, step) ? [i] : []));
-    if (effect.target !== 'lowestHpRatio') return undefined;
+  if (effect.kind === 'heal' && effect.target === 'lowestHpRatio') {
     const ratio = (i: number) => characters[i]?.hpRatio ?? 1;
     return characters.flatMap((c, i) => (c === null ? [] : [i])).sort((a, b) => ratio(a) - ratio(b) || a - b);
   }
-  if (effect.kind !== 'passive' && effect.kind !== 'timed' && effect.kind !== 'state') return undefined;
-  const squad = effect.targetSquad !== undefined;
+  // heal の両隣と「基本バースト段階が N の」（エイダの S1 の吸収回復）は、timed と同じ枠の決め方
+  if (effect.kind !== 'passive' && effect.kind !== 'timed' && effect.kind !== 'state' && effect.kind !== 'heal')
+    return undefined;
+  const squad = 'targetSquad' in effect && effect.targetSquad !== undefined;
   const longest = effect.target === 'longestChargeTime';
-  const persona = hasPersonaTargetFilter(effect);
-  if (!squad && !longest && !persona) return undefined;
+  if (!squad && !longest && !hasPersonaTargetFilter(effect)) return undefined;
   const self = characters[selfIndex];
   if (!self) throw new Error(`no character in slot ${selfIndex}`);
   const windowed = effect.kind === 'timed' || effect.kind === 'state';
+  const persona = effect.kind === 'passive' ? undefined : effect;
   const state = windowed ? effect.targetState : undefined;
   // 家族の根なら家族のどの状態でも当たる（plan/design-new-chars-1029.md 5.1 節）。「自分と」は自分の枠を足す
   const matching = state === undefined ? [] : statesMatching(state);
-  const withSelf = windowed && effect.includeSelf === true;
-  const adjacent = windowed && effect.targetAdjacent === true;
-  const step = windowed ? effect.targetBurstStep : undefined;
+  const withSelf = persona?.includeSelf === true;
+  const adjacent = persona?.targetAdjacent === true ? adjacentSlotsOf(characters, selfIndex, withSelf) : undefined;
+  const step = persona?.targetBurstStep;
   const excludeSelf = windowed && effect.target === 'allies' && effect.excludeSelf !== undefined;
   const candidates: number[] = [];
   characters.forEach((c, i) => {
@@ -222,7 +216,7 @@ export function fixedTargetsOf(
     if (squad && c.squad !== self.squad) return;
     const own = withSelf && i === selfIndex;
     if (state !== undefined && !own && !matching.some((s) => (states[i] ?? []).includes(s))) return;
-    if (adjacent && !own && Math.abs(i - selfIndex) !== 1) return;
+    if (adjacent !== undefined && !adjacent.includes(i)) return;
     if (step !== undefined && !countsAsBurstStep(c, step)) return;
     if (excludeSelf && i === selfIndex) return;
     if (!matchesTargetFilter(effect, fullCharacter(c, i))) return;
@@ -231,20 +225,6 @@ export function fixedTargetsOf(
   if (!longest) return candidates;
   const seconds = (i: number) => fullCharacter(characters[i]!, i).shot.chargeTime;
   return candidates.sort((a, b) => seconds(b) - seconds(a) || a - b);
-}
-
-/**
- * 枠 selfIndex の「両隣」の枠（左右の枠のうち空でないもの。枠の若い順）。withSelf なら自分の枠も入れる。ゲーム内の用語のツールチップの
- * 「両隣」（編成の枠の左右）の読み（plan/design-adjacent-allies.md 2.1 節）
- */
-export function adjacentSlotsOf(
-  characters: readonly (unknown | null)[],
-  selfIndex: number,
-  withSelf: boolean,
-): number[] {
-  return [selfIndex - 1, ...(withSelf ? [selfIndex] : []), selfIndex + 1].filter(
-    (i) => i >= 0 && i < characters.length && characters[i] !== null && characters[i] !== undefined,
-  );
 }
 
 function sameTargets(a: readonly number[] | undefined, b: readonly number[] | undefined): boolean {
@@ -517,14 +497,7 @@ function withAdjacentStates(
     if (!definition) return;
     for (const slot of SKILL_SLOTS) {
       for (const e of definition.skills[slot].effects) {
-        if (e.kind !== 'state' || e.targetAdjacent !== true) continue;
-        const battleLong =
-          e.trigger === 'battleStart' &&
-          e.durationUntil === 'battleEnd' &&
-          e.condition === undefined &&
-          e.maxStacks === undefined &&
-          e.maxStacksRef === undefined;
-        if (!battleLong) continue;
+        if (e.kind !== 'state' || e.targetAdjacent !== true || !isBattleLongGrant(e)) continue;
         for (const i of adjacentSlotsOf(characters, j, e.includeSelf === true)) {
           const held = (out[i] ??= []);
           if (!held.includes(e.state)) held.push(e.state);

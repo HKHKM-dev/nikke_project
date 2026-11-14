@@ -9,7 +9,6 @@ import {
   isResolvedShotCount,
   isResolvedTimer,
   resolveStackChanges,
-  resolveAllStackableChanges,
   resolveStateContents,
   resolveStateGrants,
   type ResolvedStackChange,
@@ -21,7 +20,7 @@ import { stackItems, STACK_REFRESH, type MaxStacksAt, type StackDecrease } from 
 import type { NamedStateId } from '../states.ts';
 import { dependsOnDefense, dependsOnRank } from '../targets.ts';
 import type { ShotCountEveryAt, TriggerTracker } from '../triggers.ts';
-import { conditionReadsItems, type EdgeShift, type EffectCondition } from '../types.ts';
+import { conditionReadsItems, SKILL_SLOTS, type EdgeShift, type EffectCondition } from '../types.ts';
 import {
   effectItems,
   holderHitStarts,
@@ -604,11 +603,13 @@ function stageOfGrant(grant: ResolvedStateGrant): HeldStage {
  */
 export function isStackableBuffTrack(track: HeldTrack): boolean {
   if (track.holder === ENEMY || track.opportunities !== null) return false;
-  if (track.origin.kind === 'state') {
-    const g = track.origin.grant;
-    return g.maxStacks !== undefined && g.enemy !== true && g.stackImmutable !== true;
-  }
+  if (track.origin.kind === 'state') return isStackableBuffGrant(track.origin.grant);
   return track.origin.kind === 'timed' && track.origin.effect.maxStacks !== undefined;
+}
+
+/** 味方の全部のスタック可能バフへのスタック量▲が足しうる付与か（上限があり、敵に付かず、スタック量増減効果無効でない） */
+function isStackableBuffGrant(grant: ResolvedStateGrant): boolean {
+  return grant.maxStacks !== undefined && grant.enemy !== true && grant.stackImmutable !== true;
 }
 
 /** スタック量の増加の段（件を見る条件つきは段 1.5） */
@@ -631,25 +632,23 @@ export function appliedStagesOf(slots: readonly TimelineSlot[]): (state: NamedSt
       if (now === undefined || STAGE_RANK[stage] > STAGE_RANK[now]) out.set(state, stage);
     };
     let allStackable = false;
+    const grants: ResolvedStateGrant[] = [];
     for (const slot of slots) {
       if (slot === null || slot.definition === null) continue;
       for (const grant of resolveStateGrants(slot.definition, slot.character, slot.levels)) {
-        if (!grant.isStatic && !isResolvedApplied(grant.trigger)) bump(grant.state, stageOfGrant(grant));
+        if (grant.isStatic) continue;
+        grants.push(grant);
+        if (!isResolvedApplied(grant.trigger)) bump(grant.state, stageOfGrant(grant));
       }
       for (const effect of resolveStackChanges(slot.definition, slot.character, slot.levels)) {
         bump(effect.state, stageOfStackChange(effect));
       }
-      // 味方の全部のスタック可能バフへの▲（段 1.5）は、編成のどの上限のある状態にも足しうる（plan/design-adjacent-allies.md 2.5 節）
-      if (resolveAllStackableChanges(slot.definition, slot.character, slot.levels).length > 0) allStackable = true;
+      const def = slot.definition;
+      if (SKILL_SLOTS.some((s) => def.skills[s].effects.some((e) => e.kind === 'stackChange' && e.target === 'allies')))
+        allStackable = true;
     }
-    if (allStackable) {
-      for (const slot of slots) {
-        if (slot === null || slot.definition === null) continue;
-        for (const grant of resolveStateGrants(slot.definition, slot.character, slot.levels)) {
-          if (!grant.isStatic && grant.maxStacks !== undefined && grant.stackImmutable !== true) bump(grant.state, 1.5);
-        }
-      }
-    }
+    // 味方の全部のスタック可能バフへの▲（段 1.5）は、編成のどの上限のある状態にも足しうる（plan/design-adjacent-allies.md 2.5 節）
+    if (allStackable) for (const grant of grants) if (isStackableBuffGrant(grant)) bump(grant.state, 1.5);
     return out;
   };
   return (state) => (stages ??= build()).get(state) ?? 1;

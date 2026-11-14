@@ -2504,14 +2504,8 @@ export type AllStackableChangeEffect = FixedTargetFields & {
   assumes?: LocalizedText;
 };
 
-/** 味方の全部のスタック可能バフへのスタック量▲か */
-export function isAllStackableChange(e: SkillEffect): e is AllStackableChangeEffect & ClaimRefs & IndirectReads {
-  return e.kind === 'stackChange' && 'allStackable' in e;
-}
-
 export type OwnStackChangeEffect = {
   kind: 'stackChange';
-  allStackable?: undefined;
   /** 目録の id（持ち主が味方の状態。target が enemy なら敵の状態） */
   state: NamedStateId;
   trigger: EffectTrigger;
@@ -2622,10 +2616,17 @@ export function isEndedTrigger(t: unknown): t is EndedTrigger {
  * （skills/resolve.ts の resolvePassives）
  */
 export function isStaticStateGrant(effect: StateGrantEffect): boolean {
+  return isBattleLongGrant(effect) && effect.target === 'self';
+}
+
+/**
+ * 戦闘の終わりまでの付与の形か（戦闘開始時・戦闘の終わりまで・発火の条件なし・スタックなし。対象は問わない）。自分への付与なら
+ * 静的な付与（isStaticStateGrant）。両隣への付与は、〈状態〉の味方の対象が読む枠の状態に入る（skills/composition.ts の withAdjacentStates）
+ */
+export function isBattleLongGrant(effect: StateGrantEffect): boolean {
   return (
     effect.trigger === 'battleStart' &&
     effect.durationUntil === 'battleEnd' &&
-    effect.target === 'self' &&
     effect.condition === undefined &&
     effect.maxStacks === undefined &&
     effect.maxStacksRef === undefined

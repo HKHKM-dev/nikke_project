@@ -1,6 +1,5 @@
 // 件の一覧の層 2: 発火の読み（plan/design-split-first-pass.md 3.3 節・9.2 節）。きっかけから TriggerTracker を作る firesOf と、
 // 自分の HP の割合のきっかけの状態。
-import { adjacentSlotsOf } from '../composition.ts';
 import {
   isResolvedAdjacentHp,
   isResolvedApplied,
@@ -9,16 +8,18 @@ import {
   isResolvedTimer,
   type ResolvedTrigger,
 } from '../resolve.ts';
+import { adjacentSlotsOf } from '../targets.ts';
+import { HP_RATIO_EPS } from './views.ts';
 import { createTriggerTracker, type ShotCountEveryAt, type TriggerTracker } from '../triggers.ts';
 import { isEndedTrigger, isStateCountWindow, isCounterFullTrigger, type EffectCondition } from '../types.ts';
 import { timerFramesOf } from '../timeline.ts';
 import type { HolderBase, Records, WithLate } from './records.ts';
 
 /**
- * 「HP が最大」の判定の閾値。割合がこれ以下なら最大でない（selfHpAtMostAt は閾値に 1e-9 を足して比べるので、割合が 1 − 1e-9 より
- * 大きければ最大とみなす）
+ * 「HP が最大」の判定の閾値。割合がこれ以下なら最大でない（selfHpAtMostAt は閾値に HP_RATIO_EPS を足して比べるので、割合が
+ * 1 − HP_RATIO_EPS より大きければ最大とみなす）
  */
-const BELOW_FULL_HP = 1 - 2e-9;
+const BELOW_FULL_HP = 1 - 2 * HP_RATIO_EPS;
 
 /** きっかけから発火の追跡（TriggerTracker）を作る */
 export function createFires({
@@ -40,6 +41,8 @@ export function createFires({
     frame: number;
     low: boolean;
     dropped: boolean;
+    /** 閾値を上回ったフレームか（そのフレームの判定。上がったフレームは ends にも足す） */
+    rose: boolean;
     ends: number[];
   };
   const selfHpStates = new Map<string, SelfHpState>();
@@ -47,7 +50,7 @@ export function createFires({
     const key = `${slotIndex}:${threshold}`;
     let state = selfHpStates.get(key);
     if (state === undefined) {
-      state = { slotIndex, threshold, frame: -1, low: false, dropped: false, ends: [] };
+      state = { slotIndex, threshold, frame: -1, low: false, dropped: false, rose: false, ends: [] };
       selfHpStates.set(key, state);
     }
     return state;
@@ -55,17 +58,13 @@ export function createFires({
   const selfHpDropped = (state: SelfHpState, frame: number): boolean => {
     if (state.frame !== frame) {
       const low = late.selfHpAtMostAt(state.slotIndex, frame, state.threshold);
-      if (state.low && !low && frame < frames) state.ends.push(frame);
+      state.rose = state.low && !low && frame < frames;
+      if (state.rose) state.ends.push(frame);
       state.dropped = low && !state.low;
       state.low = low;
       state.frame = frame;
     }
     return state.dropped;
-  };
-  /** 割合が閾値を上回ったフレームか（selfHpDropped と同じ状態を読む。上がったフレームは ends の最後） */
-  const selfHpRose = (state: SelfHpState, frame: number): boolean => {
-    selfHpDropped(state, frame);
-    return state.ends.at(-1) === frame;
   };
   const firesOf = (
     trigger: ResolvedTrigger,
@@ -86,16 +85,22 @@ export function createFires({
     // 起きる（戦闘開始時の持続回復で起きる。同 9 節の論点 7・V-0776）
     if (isResolvedAdjacentHp(trigger)) {
       const full = 'adjacentHpFull' in trigger;
-      const adjacent = adjacentSlotsOf(slots, slotIndex, false);
-      const states = adjacent.map((i) => selfHpStateOf(i, full ? BELOW_FULL_HP : trigger.adjacentHpAtMost));
-      const fullFires = (s: SelfHpState, i: number, ev: Parameters<TriggerTracker>[0]): boolean => {
-        const rose = selfHpRose(s, ev.frame);
-        return rose || (ev.healed[i] === true && !s.low);
+      const steps = adjacentSlotsOf(slots, slotIndex, false).map((i) => ({
+        i,
+        state: selfHpStateOf(i, full ? BELOW_FULL_HP : trigger.adjacentHpAtMost),
+      }));
+      const step: (x: (typeof steps)[number], ev: Parameters<TriggerTracker>[0]) => boolean = full
+        ? (x, ev) => {
+            selfHpDropped(x.state, ev.frame);
+            return x.state.rose || (ev.healed[x.i] === true && !x.state.low);
+          }
+        : (x, ev) => selfHpDropped(x.state, ev.frame);
+      // どの枠の状態も毎フレーム進める（短絡させない）
+      return (ev) => {
+        let fired = false;
+        for (const x of steps) fired = step(x, ev) || fired;
+        return fired;
       };
-      return (ev) =>
-        states
-          .map((s, k) => (full ? fullFires(s, adjacent[k]!, ev) : selfHpDropped(s, ev.frame)))
-          .some((fired) => fired);
     }
     // カウンタが上限に届いた次のフレーム（registerCounters が counterFullAt に書く）
     if (isCounterFullTrigger(trigger)) {

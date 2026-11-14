@@ -3,7 +3,8 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { CharacterData } from '../../types.ts';
-import { adjacentSlotsOf, fixedTargetsOf } from '../composition.ts';
+import { fixedTargetsOf } from '../composition.ts';
+import { adjacentSlotsOf } from '../targets.ts';
 import {
   MAX_SKILL_LEVELS,
   resolveAllStackableChanges,
@@ -54,7 +55,7 @@ describe('読み込み', () => {
 
   it('takes targetAdjacent and includeSelf on heal only with target allies and together', () => {
     expect(parseWith('skills', 'skill1', 0, { targetAdjacent: undefined })).toThrow(
-      /includeSelf.*only allowed with targetAdjacent/,
+      /includeSelf.*only allowed with .*targetAdjacent/,
     );
     expect(parseWith('skills', 'skill1', 0, { target: 'self' })).toThrow(
       /targetAdjacent.*only allowed with target "allies"/,

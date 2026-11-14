@@ -1358,6 +1358,9 @@ export function resolveAllStackableChanges(
   character: CharacterData,
   levels: SkillLevels,
 ): ResolvedAllStackableChange[] {
+  if (def.resourceId !== character.resourceId) {
+    throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
+  }
   const out: ResolvedAllStackableChange[] = [];
   for (const slot of SKILL_SLOTS) {
     const skill = character.skills[slot];

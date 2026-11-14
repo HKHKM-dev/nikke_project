@@ -44,6 +44,7 @@ export function createFire({
   frames,
   holdsAt,
   rankings,
+  readItems,
   removeDebuffGuesses,
   slots,
   stackLevelAt,
@@ -299,27 +300,6 @@ export function createFire({
    * （スタックの段は始まりの数で上がり、上限と維持は付与のもの）。付いた記録は 1 件。
    * 減少（同 1.5 節）は、件の列に減少（そのフレームに効いている段の上から N 段を次のフレームで切る）を入れる。付いた記録は作らない
    */
-  /**
-   * 味方の全部のスタック可能バフへのスタック量▲（plan/design-adjacent-allies.md 2.5 節）。対象の枠の、上限のある状態の付与（敵に付く
-   * 状態・スタック量増減効果無効を除く）と上限のある timed（確率のきっかけを除く）の件の列のうち、start に件が付いているものに
-   * 始まりを足す（付与と同じに数える）。状態には記録を足す（{ applied } が読む。fireStackChange と同じ）
-   */
-  const fireAllStackable = (src: AllStackSource, start: number): void => {
-    if (start >= frames) return;
-    for (const track of tracks) {
-      if (!src.targets.includes(track.holder) || !isStackableBuffTrack(track)) continue;
-      if (activeAt(track, start).length === 0) continue;
-      for (let k = 0; k < src.effect.amount; k++) insertSorted(track.starts, start);
-      if (track.origin.kind === 'state') {
-        applications.push({
-          frame: start,
-          state: track.origin.state,
-          sourceSlotIndex: src.sourceSlotIndex,
-          slotIndex: track.holder,
-        });
-      }
-    }
-  };
   const fireStackChange = (src: StackSource, start: number): void => {
     if (start >= frames) return;
     if (src.effect.decrease === true) {
@@ -342,6 +322,28 @@ export function createFire({
       slotIndex: src.sourceSlotIndex,
     };
     applications.push(record);
+  };
+  /**
+   * 味方の全部のスタック可能バフへのスタック量▲（plan/design-adjacent-allies.md 2.5 節）。対象の枠の、上限のある状態の付与（敵に付く
+   * 状態・スタック量増減効果無効を除く）と上限のある timed（確率のきっかけを除く）の件の列のうち、start に件が付いているものに
+   * 始まりを足す（付与と同じに数える）。状態には記録を足す（{ applied } が読む。fireStackChange と同じ）。足す先の件の列は、件の列が
+   * 出そろった後の最初の発火で 1 回だけ選ぶ（fireExtend と同じ）
+   */
+  const fireAllStackable = (src: AllStackSource, start: number): void => {
+    if (start >= frames) return;
+    src.tracks ??= tracks.filter((t) => src.targets.includes(t.holder) && isStackableBuffTrack(t));
+    for (const track of src.tracks) {
+      if (!readItems(track).some((it) => it.start <= start && start < it.end)) continue;
+      for (let k = 0; k < src.effect.amount; k++) insertSorted(track.starts, start);
+      if (track.origin.kind === 'state') {
+        applications.push({
+          frame: start,
+          state: track.origin.state,
+          sourceSlotIndex: src.sourceSlotIndex,
+          slotIndex: track.holder,
+        });
+      }
+    }
   };
   // ---- { applied } の出どころ（timed・付与。見る状態が自分に付いた記録から発火する。plan/design-skill-stage4.md 1.1 節） ----
   type AppliedSource = {
