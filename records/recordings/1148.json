@@ -15,12 +15,6 @@
       "rid": 240,
       "name": "ルマニ",
       "controlled": true
-    },
-    {
-      "slot": 2,
-      "rid": 841,
-      "name": "ジル",
-      "controlled": false
     }
   ],
   "target": {
