@@ -77,6 +77,7 @@
     | 〈名前〉解除／直前に自分がバーストを使用していれば | `kind: "removeState"`／`condition.usedBurst: true` | マナの S2 | 同 1.2・1.4・1.5 節 |
     | 初めてフルバーストタイムが発動した時／直前に自分がバーストを使用していなければ | 出来事の回数のきっかけ `{ "count": "fullBurstStart", "atLeast": 1, "atMost": 1 }`／`condition.usedBurst: false` | ディーゼル：ウィンタースイーツの S1 | [design-diesel-ws.md](design-diesel-ws.md) 2.1・2.2 節 |
     | 〈名前〉のスタック量 N 個▲ | `kind: "stackChange"` | — | [design-skill-stage3.md](design-skill-stage3.md) 1.1 節 |
+    | スタック可能バフ効果のスタック量 N 個▲（付いているバフだけを増やす） | `stackChange` の `existingOnly: true` | ディーゼルの宝物版 S1（C-1182） | [design-diesel.md](design-diesel.md) 8.1 節 |
     | フルバーストタイム持続中に N 回／窓の外の発も数え、付くのは窓の中だけ | 回数のきっかけの `during: "fullBurst"` と `reset`／`firesDuring: "fullBurst"` | ソーダ：トゥインクルバニーの S1 | 同 1.2・1.6 節 |
     | 〈名前〉のフルスタック状態の時、スタック解除後（回復） | トリガー `{ "fullStack": "<id>" }` | クラウンの S2 | 同 1.3 節 |
     | 〈名前〉のフルスタック状態ならスタック解除後、弾丸チャージ・▲▼（N 秒間維持） | `ammoRefill`・timed のトリガー `{ "fullStack": "<id>" }` | ディーゼルの S2 | [design-diesel.md](design-diesel.md) 2.1 節 |

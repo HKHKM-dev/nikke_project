@@ -41,6 +41,9 @@
               "stat": "maxAmmo",
               "ref": 2
             }
+          ],
+          "claims": [
+            "C-1185"
           ]
         },
         {
@@ -53,7 +56,10 @@
           "assumes": {
             "ja": "弾丸チャージの量は、イチゴキャンディを外した後の最大装弾数で数える（「スタック解除後」。plan/design-diesel.md 2.1 節）",
             "en": "The reload amount is counted on the max ammo after Strawberry Candy is removed (\"after stacks are removed\"; plan/design-diesel.md 2.1)"
-          }
+          },
+          "claims": [
+            "C-1184"
+          ]
         }
       ]
     },
@@ -66,7 +72,10 @@
           "assumes": {
             "ja": "対象「最終攻撃力が最も高い敵 5 機」は単体ボスで 1 ヒット",
             "en": "The hit on the 5 enemies with the highest final ATK lands once on a lone boss"
-          }
+          },
+          "claims": [
+            "C-1185"
+          ]
         }
       ],
       "notes": [
@@ -97,7 +106,11 @@
           "assumes": {
             "ja": "スタック可能バフ効果のスタック量▲は、自分のイチゴキャンディに足す分だけ。命中は戦闘を通して数え、150 回目にヘイト状態で、イチゴキャンディが付いていれば足す",
             "en": "Only the part added to own Strawberry Candy. Hits are counted through the battle; on the 150th hit, a stack is added if in the Attract state and Strawberry Candy is present"
-          }
+          },
+          "claims": [
+            "C-1180",
+            "C-1182"
+          ]
         }
       ],
       "notes": [
@@ -146,6 +159,9 @@
               "stat": "maxAmmo",
               "ref": 2
             }
+          ],
+          "claims": [
+            "C-1179"
           ]
         },
         {
@@ -158,7 +174,10 @@
           "assumes": {
             "ja": "弾丸チャージの量は、イチゴキャンディを外した後の最大装弾数で数える（「スタック解除後」。plan/design-diesel.md 2.1 節）",
             "en": "The reload amount is counted on the max ammo after Strawberry Candy is removed (\"after stacks are removed\"; plan/design-diesel.md 2.1)"
-          }
+          },
+          "claims": [
+            "C-1184"
+          ]
         },
         {
           "kind": "timed",
@@ -175,7 +194,10 @@
           "assumes": {
             "ja": "貫通特化の無い味方の発には乗らない",
             "en": "It does not apply to shots of allies without Pierce"
-          }
+          },
+          "claims": [
+            "C-1184"
+          ]
         }
       ]
     },
@@ -188,14 +210,20 @@
           "assumes": {
             "ja": "対象「最終攻撃力が最も高い敵 5 機」は単体ボスで 1 ヒット",
             "en": "The hit on the 5 enemies with the highest final ATK lands once on a lone boss"
-          }
+          },
+          "claims": [
+            "C-1183"
+          ]
         },
         {
           "kind": "state",
           "state": "attract",
           "trigger": "burstUse",
           "target": "self",
-          "durationRef": 5
+          "durationRef": 5,
+          "claims": [
+            "C-1181"
+          ]
         }
       ],
       "notes": [

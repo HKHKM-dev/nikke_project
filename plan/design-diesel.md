@@ -5,7 +5,7 @@
 - 前提の語彙: [design-skill-stage3.md](design-skill-stage3.md) 1.1・1.3 節（`stackChange`・フルスタックの消費のきっかけ `{ fullStack }`）、[design-skill-stage4.md](design-skill-stage4.md) 1.2 節（弾丸チャージ `ammoRefill`）、[design-skill-stage17.md](design-skill-stage17.md) 2.1 節（1 パス目だけが作るきっかけを timed に書く形。`{ coverHealed }`）、[design-agent-bunny.md](design-agent-bunny.md) 2.3 節（貫通ダメージ▲ `pierceDamage`）、[design-skill-stage19.md](design-skill-stage19.md) 2.2 節（スタック可能バフ効果のスタック量▲を自分の状態の分だけ書く形）
 - 検証記録: V-0763
 - 作成日: 2026-11-12
-- 状態: 撮影の後の論点の承認待ち（8 節）
+- 状態: 完了（V-0763）
 
 ## 0. 範囲
 
@@ -107,4 +107,4 @@
 
 - 2026-11-12: 起案。V-0763 を起こした。
 - 2026-11-13: 7 節の論点 1〜4 をオーナーが推奨どおり承認した。2.1 節の語彙と定義を実装し、V-0763 の撮影を依頼した。
-- 2026-11-14: 録画 1133 を取り込んで読んだ。8 節の論点 5・6 を起案した。
+- 2026-11-14: 録画 1133 を取り込んで読んだ。8 節の論点 5・6 を起案し、オーナーが推奨どおり承認した。`existingOnly` を実装し、V-0763 を閉じた（C-1179〜C-1185）。チェーンの間隔のずれは課題 2-58 に起票した。
