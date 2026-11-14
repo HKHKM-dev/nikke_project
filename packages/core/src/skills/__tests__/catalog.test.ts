@@ -1,19 +1,13 @@
-// スキルの効果の分類（plan/design-skill-catalog.md の論点 2・11 節）: 読み違いの直し（説明文の書き損じ・句の読み方）と、
-// plan/skill-catalog.md が最新であること。
-import { readFileSync } from 'node:fs';
+// スキルの効果の分類（plan/design-skill-catalog.md の論点 2・11 節）: 読み違いの直し（説明文の書き損じ・
+// 句の読み方）。
 import { describe, expect, it } from 'vitest';
-import { SKILL_CATALOG_PATH, loadCatalogInput } from '../../../scripts/records-data.ts';
+import { loadCatalogInput } from '../../../scripts/records-data.ts';
 import { classifyCharacters, classifyQuote, cleanDescription } from '../catalog.ts';
-import { renderSkillCatalog } from '../catalogDoc.ts';
 
 const { characters, defined } = loadCatalogInput();
 const { lines, effects } = classifyCharacters(characters, defined);
 
 describe('skill catalog', () => {
-  it('matches plan/skill-catalog.md (npm run records:check)', () => {
-    expect(readFileSync(SKILL_CATALOG_PATH, 'utf8')).toBe(renderSkillCatalog(lines, effects));
-  });
-
   it('fixes the misprints in the descriptions', () => {
     // ロザンナ：シックオーシャンの閉じ括弧の欠け
     expect(

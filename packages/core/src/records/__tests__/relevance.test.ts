@@ -1,14 +1,11 @@
-// 最小構成の検査（plan/design-minimal-relevance.md 7 節の PR 3）: 静的な判定と plan/minimal.md。
+// 最小構成の検査（plan/design-minimal-relevance.md 7 節の PR 3）: 静的な判定。
 // 録画とキャラは実データを使い、判定の段ごとに確かめる。件数や ID の一覧は直書きしない（plan/design-stage20.md 3.6 節）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
-  MINIMAL_PATH,
   loadClaims,
   loadObservations,
   loadRecordingsFile,
   loadRecordsData,
-  loadSensitivity,
   recordingMap,
 } from '../../../scripts/records-data.ts';
 import type { Claim } from '../claims.ts';
@@ -21,7 +18,6 @@ import {
   impossibleReason,
   notRelevantReason,
   relevanceOf,
-  renderMinimal,
   unconfirmedReason,
   whenHolds,
   type MinimalElement,
@@ -45,20 +41,6 @@ const obs = (patch: Partial<Observation>): Observation => ({
   description: 'd',
   source: 'V-0000',
   ...patch,
-});
-
-describe('plan/minimal.md（実データ）', () => {
-  it('matches plan/minimal.md (npm run records:check)', () => {
-    expect(readFileSync(MINIMAL_PATH, 'utf8')).toBe(
-      renderMinimal(relevanceOf(claims, observations, ctx, loadSensitivity()), claims),
-    );
-  });
-
-  // 感度の結果の鍵が今の入力と合う（plan/design-workflow-simplification.md 3 節）。スキル定義・録画の台帳・比べる指定を変えて回し忘れると落ちる
-  it('has fresh sensitivity results (npm run records:minimal)', () => {
-    const unmeasured = relevanceOf(claims, observations, ctx, loadSensitivity()).reduce((n, r) => n + r.unmeasured, 0);
-    expect(unmeasured, '感度の結果が無いか古い要素がある。npm run records:minimal で計算し直す').toBe(0);
-  });
 });
 
 describe('要素を並べる（2 節の 2）', () => {

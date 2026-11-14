@@ -1,6 +1,6 @@
 # 繰り返しの業務の簡素化の案・第 12 回（2026-11-13 の定期の見直し）
 
-- 何のための文書か: 検証 1 件ごと・PR ごと・セッションごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。
+- 何のための文書か: 検証 1 件ごと・PR ごと・セッションごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。2026-11-14 にオーナーが 1〜3 を承認し、実施した（6 節）。
 - 前の回: [design-workflow-simplification.md](design-workflow-simplification.md)・[-2](design-workflow-simplification-2.md)〜[-11](design-workflow-simplification-11.md)。どれも実施済み。そこで扱ったものは繰り返さない。見直しの段の要否（[design-review-steps.md](design-review-steps.md)。2026-11-13 に実施）も扱わない。
 - この回で見たもの: 第 11 回の後の 34 本の PR（#1103〜#1136）が触るファイル、手書きの文書の大きさ、スキルの PR の書き先、生成物と CI とテストのつながり、撮影の道具の使われ方（検証記録・観測値）、`.claude/settings.json` のフックとメモリ、origin のブランチ、デイリーレビューの記録（`scratch/`）、最小構成の感度の全部の計算し直し（[verification-guide.md](verification-guide.md) 7 節の「定期の見直し」の分）。
 - 調べ方: origin/main（9477ff54）のクラウドの環境で、使い捨てのスクリプトで数えた（コミットしない）。
@@ -74,7 +74,7 @@
 - 第 7 回（3 節）は「迎撃戦の段で使う。作ったばかり」として残した。そのときから使う予定が増えていない。
 - 同じ回で残した道具のうち、`dups.ts`（最後は V-0571）・`fb-window-k.ts`（V-0542）も最近の 77 本（V-0680〜）の検証記録には出ないが、使ったことのある道具なので、この案には入れない。迎撃戦の段階の数値を読む `hud-interception.ts` は観測値 12 本で使っているので残す。
 
-**案**: 3 ファイルと [captures/tools.md](captures/tools.md) の行を消す。ほかの道具は `result-screen-lib.ts` を読んでいない（import は 3 ファイルの中だけ）。要るようになったら git の履歴から戻す（設計書は記録として残る）。
+**案**: 3 ファイルと [captures/tools.md](captures/tools.md) の行を消す。要るようになったら git の履歴から戻す（設計書は記録として残る）。
 
 **効果**: 毎回の `npm test`・型の確かめ・lint が読むコードが 1,071 行減る。道具の一覧の 1 行と、道具の共通の部分を直すときの手入れが減る。効果は小さい。
 
@@ -97,3 +97,5 @@
 ## 6. 経過
 
 - 2026-11-13: 起案。
+- 2026-11-14: オーナーが 1・2 を推奨どおり、3 を消すと決めた。
+- 2026-11-14: 実施。2 は 10 件の一致の比べを外し（`verifications.test.ts` は検査だけ残した）、AGENTS.md の「生成」の項・[verification-guide.md](verification-guide.md) 7 節・`pr:prep` の最後の案内を直した。3 は、起案で見落としていたが `probe-result.ts` がパネルの検出（`measurePanel`・`isPanel`・`runsOf`・`scaleCrop`）を `result-screen-lib.ts` から読んでいたので、その部分とテストを `probe-result-lib.ts` に移して残し、ほかを消した。取り込み（`intake.ts`）の迎撃戦の案内と、[captures/guide.md](captures/guide.md) の道具への言及も消した。

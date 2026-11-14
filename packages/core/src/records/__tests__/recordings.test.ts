@@ -1,10 +1,8 @@
-// Stage 19-A: 録画の台帳の検証と、台帳の表が録画の JSON から生成したものと一致すること。
+// Stage 19-A: 録画の台帳の検証と、台帳の表の組み立て。
 // Stage 20-A: 件数や ID の一覧は直書きしない。Stage 20-C: 録画は records/recordings/ に 1 本 1 ファイル、
 // 表は plan/captures/recordings.md に丸ごと生成する（plan/design-stage20.md 3.5・3.6 節）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
-  RECORDINGS_DOC_PATH,
   knownRids as loadKnownRids,
   loadRecordingsFile,
   loadRecordsData,
@@ -150,11 +148,6 @@ describe('records/recordings', () => {
 });
 
 describe('plan/captures/recordings.md', () => {
-  it('matches records/recordings (npm run records:table)', () => {
-    // prettier の対象外なので、生成の結果と 1 字まで同じ（plan/design-generated-table-width.md）
-    expect(readFileSync(RECORDINGS_DOC_PATH, 'utf8')).toBe(renderRecordingsDoc(file, characters));
-  });
-
   it('replaces only the marked section', () => {
     const doc = 'a\n<!-- records:legacy:start -->\nold\n<!-- records:legacy:end -->\nb';
     expect(replaceGeneratedSection(doc, 'legacy', '| x |')).toBe(

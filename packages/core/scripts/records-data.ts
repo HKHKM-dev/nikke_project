@@ -297,7 +297,7 @@ export function loadSkillDefinitions(): DefinedCharacter[] {
   }));
 }
 
-/** data/skills/index.json に載った定義とキャラデータから作った、対応状況の索引（records:check が書き、npm test が最新かを確かめる） */
+/** data/skills/index.json に載った定義とキャラデータから作った、対応状況の索引（records:check が書く） */
 export function skillSupportIndexOfData(): SkillSupportIndex {
   return buildSkillSupportIndex(loadDefinitionsWithCharacters());
 }
