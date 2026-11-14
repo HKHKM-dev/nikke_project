@@ -94,13 +94,18 @@ describe('状態の付与の検証（parseSkillDefinition）', () => {
     expect(() => parse([{ ...camouflage, name: 'followUp' }])).toThrow(/unknown field/);
   });
 
-  it('allows contents on one grant of a state, with the same duration and max stacks on all of them', () => {
+  it('allows contents on one grant of a state, with the same duration form and max stacks on all of them', () => {
     const second = { ...camouflage, trigger: 'fullBurstStart', contents: undefined };
     expect(parse([camouflage, second]).skills.skill1.effects).toHaveLength(2);
     expect(() => parse([camouflage, { ...camouflage, trigger: 'fullBurstStart' }])).toThrow(
       /only one grant of "camouflage" in a definition may have contents/,
     );
-    expect(() => parse([camouflage, { ...second, durationSeconds: 6 }])).toThrow(/need the same duration/);
+    // スタックしない状態の秒の維持は、値が違ってよい（plan/design-rosanna.md 2 節）。発数の維持とは混ぜない
+    expect(parse([camouflage, { ...second, durationSeconds: 6 }]).skills.skill1.effects).toHaveLength(2);
+    const { durationSeconds: _d, ...noDuration } = second;
+    expect(() => parse([camouflage, { ...noDuration, durationShots: 3 }])).toThrow(/need the same duration/);
+    const stacked = { ...camouflage, maxStacks: 2 };
+    expect(() => parse([stacked, { ...second, maxStacks: 2, durationSeconds: 6 }])).toThrow(/need the same duration/);
     expect(() => parse([camouflage, { ...second, maxStacks: 2 }])).toThrow(/need the same max stacks/);
   });
 

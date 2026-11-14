@@ -2223,7 +2223,8 @@ export function statContentsOf(contents: readonly StateContentItem[] | undefined
 /**
  * 状態の付与（plan/design-named-state.md 5.2 節）。timed から値の欄（stat・ref・scaling・decrease）を除き、目録の id（state）を
  * 足したもの。窓の作り方は timed と同じ（発火・対象・維持・上書き延長・スタック・条件・段）。同じ定義の同じ状態の付与は 1 つの状態
- * （発火をまとめて和集合・スタックの段にする）で、中身（contents）を持てるのはそのうち 1 つ、維持とスタックの上限は同じ。
+ * （発火をまとめて和集合・スタックの段にする）で、中身（contents）を持てるのはそのうち 1 つ、維持とスタックの上限は同じ（スタックしない
+ * 状態の秒の維持は、付与ごとに値が違ってよい。窓は始まりごとの維持の和集合。plan/design-rosanna.md 2 節）。
  * 書けないのは name・amplifies と、トリガーの確率のきっかけ。{ applied } は書ける（自分の状態は見ない。連鎖させない）。
  * 静的な状態（staticStatesOf）の付与は編成の段で持ち主が決まり、中身は常時パッシブとして解く。維持 0 秒の付与は、
  * 名前の付いた即時効果の付いた記録だけを作る（中身・スタック・解除不可は書けない。plan/design-skill-stage4.md 1.2 節）

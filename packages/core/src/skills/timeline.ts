@@ -590,13 +590,21 @@ export function untilNextEndItems(
   return merged;
 }
 
-/** 同一効果の件を和集合にする（上書き延長。重ねない）。frames が上限 */
-export function unionItems(fireFrames: readonly number[], durationFrames: number, frames: number): [number, number][] {
-  if (durationFrames <= 0) return [];
+/**
+ * 同一効果の件を和集合にする（上書き延長。重ねない）。frames が上限。durations は始まり → 維持のフレーム数（無い始まりは
+ * durationFrames。同じ状態の維持の違う付与。付いている間に短い付与が付いても窓は短くならない。plan/design-rosanna.md 2 節）
+ */
+export function unionItems(
+  fireFrames: readonly number[],
+  durationFrames: number,
+  frames: number,
+  durations?: ReadonlyMap<number, number>,
+): [number, number][] {
   const merged: [number, number][] = [];
   for (const f of [...fireFrames].sort((a, b) => a - b)) {
-    if (f >= frames) continue;
-    const end = Math.min(f + durationFrames, frames);
+    const d = durations?.get(f) ?? durationFrames;
+    if (f >= frames || d <= 0) continue;
+    const end = Math.min(f + d, frames);
     const last = merged[merged.length - 1];
     if (last !== undefined && f <= last[1]) {
       if (end > last[1]) last[1] = end;

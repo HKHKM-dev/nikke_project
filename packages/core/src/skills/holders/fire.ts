@@ -142,6 +142,17 @@ export function createFire({
         if (fires !== undefined) insertSorted(fires, fire!);
       }
       if (levels !== undefined) (track.levelScales ??= new Map()).set(start, levels);
+      // 元の付与と維持の違う付与（スタックしない秒の維持だけ。skills/resolve.ts の secondsOnly）は、始まりごとの維持を持つ
+      // 同じ始まりに複数の付与が付いたら長いほう（表に無い始まりで、前に元の付与が同じフレームに付いていれば元の維持も比べる）
+      if (track.origin.kind === 'state') {
+        const own = g.grant.durationFrames;
+        const origin = track.origin.grant.durationFrames;
+        const prev = track.startDurations?.get(start);
+        if (own !== origin || prev !== undefined) {
+          const earlier = track.starts.filter((s) => s === start).length > count;
+          (track.startDurations ??= new Map()).set(start, Math.max(prev ?? (earlier ? origin : own), own));
+        }
+      }
     };
     const targets: number[] = [];
     // 敵に付く状態は、対象の味方があれば敵の件の列に 1 回だけ足す（付いた記録は作らない。{ applied } で見る

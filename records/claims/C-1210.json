@@ -1,0 +1,24 @@
+{
+  "id": "C-1210",
+  "text": "ロザンナの撮っていない行は、撮った版と同じ文の読みで書く: 基礎版のバースト（宝物版の受けるダメージ▲の行が無いほかは同じ文）、S2 の戦闘開始時の隠れ身（値 01 秒。S1 の隠れ身と維持の違う同じ状態の付与）、宝物版 S1（基礎版の S1 と同じ文に、ターゲットが出現した時（戦闘開始とみなす。エレグの S2 の C-0662 と同じ読み）の有利コードの攻撃ダメージ 値 08 %▲（持続）が足される）。値はどれも説明文の値",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文（`data/characters/280.json` の skills と treasure.skills）。同じ文の読みは、撮った版で確かめた（C-1207・C-1208・C-1209）。基礎版のバースト・S2 は宝物を外せないので撮れない（トーブの C-0986 と同じ）。S2 の戦闘開始時の隠れ身は、単騎では 1 回目のバーストが命中 120 回目の後なので録画に出ない（S1 の隠れ身と重なる）。宝物版 S1 の行は、録画 1170・1171 の宝物の段階に入っていない（台帳の treasurePhase）。V-0774",
+  "model": "反映（data/skills/280.json の skill2 の effects[0]・burst の effects[0]・burst の effects[1]・treasureSkills.skill1 の effects[0]〜[2]・treasureSkills.skill2 の effects[0]）。S2 と S1 の隠れ身の維持の違いは plan/design-rosanna.md 2 節の語彙",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": [
+      "data/skills/280.json の burst の effects[0]",
+      "data/skills/280.json の burst の effects[1]",
+      "data/skills/280.json の skill2 の effects[0]",
+      "data/skills/280.json の treasureSkills.skill2 の effects[0]",
+      "data/skills/280.json の treasureSkills.skill1 の effects[0]",
+      "data/skills/280.json の treasureSkills.skill1 の effects[1]",
+      "data/skills/280.json の treasureSkills.skill1 の effects[2]"
+    ]
+  },
+  "decidedOn": [],
+  "gradeReason": "撮っていない行を、撮った版の同じ文の読みに当てた推論にとどめる"
+}

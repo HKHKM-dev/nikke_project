@@ -1,0 +1,35 @@
+{
+  "id": "1170",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1170_rosanna-solo.mp4",
+  "original": "2026-11-14_20-56-39.mp4",
+  "durationSec": 197.3,
+  "frames": 11837,
+  "fps": 60,
+  "sizeMB": 239.2,
+  "sha256": "213473042e57",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 280,
+      "name": "ロザンナ",
+      "controlled": true,
+      "treasurePhase": 2
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Water"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "ロザンナ単騎・操作・BigArms（水冷）・スペック固定 ON・オート射撃 ON・オートバースト ON。V-0774 の撮影 E1",
+  "backup": {
+    "at": "2026-11-14T21:05+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
