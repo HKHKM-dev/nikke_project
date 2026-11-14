@@ -3,7 +3,7 @@
 import type { Crop } from './ffmpeg.ts';
 
 /** 座標の基準の大きさ。ほかの大きさの録画は比で直す */
-export const BASE = { width: 1920, height: 1080 } as const;
+const BASE = { width: 1920, height: 1080 } as const;
 
 export function scaleCrop(crop: Crop, width: number, height: number): Crop {
   const sx = width / BASE.width;

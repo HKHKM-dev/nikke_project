@@ -10,7 +10,12 @@ import { spawnSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { parseArgs } from 'node:util';
-import { SENSITIVITY_VERSION, type SensitivityEntry, type SensitivityIndex } from '../src/records/relevance.ts';
+import {
+  SENSITIVITY_VERSION,
+  relevanceOf,
+  type SensitivityEntry,
+  type SensitivityIndex,
+} from '../src/records/relevance.ts';
 import { reusedSensitivity, sensitivityOf, sensitivityTargets } from '../src/records/sensitivity.ts';
 import type { SimResult } from '../src/sim/engine.ts';
 import {
@@ -66,4 +71,12 @@ const errors = entries.filter((e) => e.error !== undefined).length;
 console.log(
   `感度: 観測値 ${targets.length}（計算し直した ${recomputed}）・組（観測値 × 効果）${entries.length}。効きうる ${effective}（うち計算できない ${errors}）。${((Date.now() - started) / 1000).toFixed(0)} 秒`,
 );
+// 書いた結果で、最小構成の検査が感度を引けない要素が残らないこと（対象の選び方と鍵が検査の引き方とずれると残る）
+const unmeasured = relevanceOf(claims, observations, ctx, loadSensitivity()).reduce((n, r) => n + r.unmeasured, 0);
+if (unmeasured > 0) {
+  console.error(
+    `最小構成の検査が感度を引けない要素が ${unmeasured} 件ある（sensitivityTargets・sensitivityKey と relevanceOf のずれ）`,
+  );
+  process.exit(1);
+}
 process.exit(spawnSync('npm run records:check', { cwd: ROOT, stdio: 'inherit', shell: true }).status ?? 1);
