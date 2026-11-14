@@ -8,7 +8,6 @@ import type { Badge } from './badges.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
 import type { ActiveDragData, OverDragData } from './dropIntent.ts';
-import { OtherPartyBadges } from './OtherPartyBadges.tsx';
 import { useScrollingName } from './useScrollingName.tsx';
 
 /** 操作キャラの印（コントローラーの絵）。ModernSlotCard の上の段と、ドラッグ中の重ねる絵（ModernView）が使う */
@@ -59,8 +58,6 @@ type Props = {
   growthMarks: GrowthMarks | null;
   /** 絵のバッジの列の最後に出すコレクション（宝物）のバッジ */
   collectionBadge: Badge | null;
-  /** このスロットのニケを選んでいるほかの編成の番号（1 から）。上の段（立ち絵の枠のすぐ上）に P1・P2 と出す */
-  otherParties: readonly number[];
   /** 一覧でクリックしたニケが、置くスロットのクリックを待っているときだけ渡す（このスロットに置く） */
   onPlacePending?: () => void;
   onOpenBuildModal: () => void;
@@ -78,7 +75,6 @@ export function ModernSlotCard({
   slotResult,
   collectionBadge,
   growthMarks,
-  otherParties,
   onPlacePending,
   onOpenBuildModal,
   onClear,
@@ -125,9 +121,6 @@ export function ModernSlotCard({
       {...listeners}
     >
       <div className="modern-slot-header">{controlled && <DraggableControllerIcon slotIndex={slotIndex} />}</div>
-      <div className="modern-slot-other-parties-row">
-        <OtherPartyBadges parties={otherParties} className="modern-slot-other-parties" />
-      </div>
 
       <div className="modern-slot-body">
         {awaitingPlacement && (
