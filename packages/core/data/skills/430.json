@@ -17,9 +17,24 @@
       "effects": [],
       "notes": [
         {
-          "ja": "フルチャージ攻撃が命中した時の、対象への挑発（2 秒）はダメージに関係しない（付けてもゲージを溜めないとみなす。ノアの S2 の同じ行と同じ読み）",
-          "en": "The taunt (2 s) on the target when a Full Charge attack hits does not affect damage (applying it is taken not to charge the burst gauge, read as for the same line of Noah's S2)",
-          "kind": "noDamage"
+          "ja": "フルチャージ攻撃が命中した時の、対象への挑発（2 秒）そのものはダメージに関係しない。付けるたびに射手の target_burst_energy_pershot を溜める形と、付いていない所から付いた時（マガジンの 1 発目）だけ溜める形は、発ごとのゲージと合わない",
+          "en": "The taunt itself (2 s) on the target when a Full Charge attack hits does not affect damage. Charging the shooter's target_burst_energy_pershot on every application, or only when newly applied (the first shot of a magazine), does not match the per-shot gauge",
+          "kind": "noDamage",
+          "claims": [
+            "C-1175"
+          ]
+        },
+        {
+          "ja": "フルチャージの発の 1 ヒットのゲージが target_burst_energy_pershot（28,000）より約 9% 多い（AI の枠で 1 ヒット約 30,400。マガジンの何発目かによらない）のは扱っていない。出どころ（挑発が付けるたびに少し溜めるのか、ほかの何か）は分からない",
+          "en": "The gauge per Full Charge hit being about 9% above target_burst_energy_pershot (28,000), about 30,400 per hit in an AI slot regardless of the shot's place in the magazine, is not modeled. Its source (the taunt charging a little on every application, or something else) is unknown",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "burstGaugeHit",
+            "trigger": "fullChargeShot"
+          },
+          "claims": [
+            "C-1175"
+          ]
         },
         {
           "ja": "フルチャージして攻撃した時の自分の最大HP▲（1.8 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
@@ -40,7 +55,10 @@
           "assumes": {
             "ja": "持続回復（スキル発動者の最終最大HP の X%・1 秒間隔・10 秒間維持）は、付いた時に 1 回だけ「回復効果が適用された時」を起こし、1 秒ごとの刻みでは起こさない（ゲーム内の用語のツールチップの読み。エマ：タクティカル・アップの S1・ミサトのバーストと同じ）。自分を含む味方全体に、満タンの味方にも付く。付く時刻はモデルのバーストの使用のフレーム（ノイズのバーストの効果の付き始めは未測定）。回復量はダメージに関係しない",
             "en": "The heal over time (X% of the caster's final max HP every 1 s for 10 s) triggers \"when healed\" once when applied, not on each 1-second tick (reading of the in-game term tooltip; as Emma: Tactical Upgrade's S1 and Misato's Burst). It lands on all allies including self, also at full HP. Applied at the model's burst use frame (when Noise's burst effects actually start is unmeasured). The healed amount does not affect damage"
-          }
+          },
+          "claims": [
+            "C-1174"
+          ]
         }
       ],
       "notes": [

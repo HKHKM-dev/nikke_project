@@ -20,7 +20,10 @@
       "slot": 2,
       "rid": 330,
       "name": "クラウン",
-      "controlled": true
+      "controlled": true,
+      "fires": false,
+      "note": "操作・撃たない（オート射撃 OFF）",
+      "bursts": false
     }
   ],
   "target": {
