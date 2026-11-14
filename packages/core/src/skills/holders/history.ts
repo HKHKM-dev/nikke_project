@@ -52,7 +52,7 @@ export function createHistory({
   slots,
   tracks,
 }: HolderBase & Records & Sources & Read & Views): HolderLists['history'] {
-  const history: HolderLists['history'] = () => {
+  return () => {
     for (const track of tracks) readItems(track);
     const amplified = amplify(tracks, amplifiers, slots, frames);
     return {
@@ -75,7 +75,6 @@ export function createHistory({
       hpRatios: slots.map((_, i) => hpRatioStepsOf(i)),
     };
   };
-  return history;
 }
 
 const SKILL_ORDER = Object.fromEntries(SKILL_SLOTS.map((s, i) => [s, i])) as Record<string, number>;

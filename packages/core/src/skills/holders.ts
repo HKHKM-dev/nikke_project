@@ -10,8 +10,8 @@
 // 2.9 節）。値の小片の並びは時刻の順（論点 5）。件を作るのはここだけで、読む側は履歴を直接読む。
 // ここには件の一覧を作る createHolderLists（層の作り手を順に呼び、問い合わせを組む）を置く。層の作り手は holders/records.ts・
 // fires.ts・sources.ts・read.ts・views.ts・conditions.ts・fire.ts・register.ts（plan/design-split-first-pass.md 3.3 節・9.2 節）、型は
-// holders/types.ts、件を作る純粋な関数は holders/items.ts、ループの後に履歴を読む関数は holders/history.ts に置く（外から使う名前は、
-// ここから同じ名前で再公開する）。
+// holders/types.ts、件を作る純粋な関数は holders/items.ts、ループの後に履歴を閉じる関数（createHistory）と履歴を読む関数は
+// holders/history.ts に置く（外から使う名前は、ここから同じ名前で再公開する）。
 import { type TimelineSlot } from './timeline.ts';
 import { type HolderLists, type HolderListsOptions } from './holders/types.ts';
 import { lastAtOrBefore } from './holders/items.ts';
