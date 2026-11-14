@@ -31123,6 +31123,86 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "1170-04",
+      "element": "ロザンナ treasureSkills.skill2.effects[0]",
+      "key": "afdfada56465a6de",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1170-07",
+      "element": "ロザンナ treasureSkills.skill2.effects[0]",
+      "key": "81c9aa37c2f495de",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1170-09",
+      "element": "ロザンナ treasureSkills.skill2.effects[0]",
+      "key": "db968d15c3cdf356",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1170-11",
+      "element": "ロザンナ treasureSkills.skill2.effects[0]",
+      "key": "35ea8272c3baa5b7",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1171-04",
+      "element": "ロザンナ treasureSkills.skill2.effects[0]",
+      "key": "f05405634688ab6a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1171-05",
+      "element": "ロザンナ treasureSkills.skill2.effects[0]",
+      "key": "60e6b43a3170fe2d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1171-06",
+      "element": "ロザンナ treasureSkills.skill2.effects[0]",
+      "key": "32316ef78c094274",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1171-07",
+      "element": "ロザンナ treasureSkills.skill2.effects[0]",
+      "key": "226f7e18150ff10f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1171-09",
+      "element": "ロザンナ treasureSkills.skill2.effects[0]",
+      "key": "7458e36e24b8cb77",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1171-11",
+      "element": "ロザンナ treasureSkills.skill2.effects[0]",
+      "key": "a5ffe37ffceaeeea",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }
