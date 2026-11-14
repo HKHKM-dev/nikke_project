@@ -4,7 +4,7 @@
 - 関連: [design-skill-stage10.md](design-skill-stage10.md) 2.3 節（カウンタの目録と `counterChange`・条件 `selfCounter`）、[design-skill-stage3.md](design-skill-stage3.md) 1.6 節（回数のきっかけの `firesDuring`）、[design-holder-effects.md](design-holder-effects.md) 1.3・2 節（1 パス目で窓を追う stat の制限を外すのは使い手の定義の時）、[design-stage11-modernia.md](design-stage11-modernia.md) 3.4 節（バーストの使用武器変更の 4200rpm の武器）
 - 検証: V-0767
 - 作成日: 2026-11-12
-- 状態: 撮影待ち（4 節）
+- 状態: 完了
 
 ## 0. 範囲
 
@@ -105,3 +105,4 @@
 
 - 2026-11-12: 起案。説明文の全行を語彙と照らし、足りないのは timed の条件 `inFullBurst` の 2 つの制限だけと分かった（2.4 節で試した）。
 - 2026-11-13: 承認（5 節の論点はどれも推奨の案）。2.1・2.2 節の語彙と目録の弾丸ポーチ、定義（3 節の仮説を `assumes` に書いた）を実装し、V-0767 で撮影を依頼。
+- 2026-11-14: 撮影（録画 1134〜1136。V-0767）を読んだ。使用武器変更の最初の発の待ちを 12f にした（3 節の仮説の「既定のまま」から変えた。残弾の表示は 999 発で、10 秒に撃ち切らないので装弾数無限のまま書く）。ほかは 1 節・3 節のとおり。

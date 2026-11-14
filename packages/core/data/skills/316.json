@@ -14,7 +14,10 @@
           "assumes": {
             "ja": "説明文の「弾丸泥棒」は効果の呼び名で、付く状態ではない（状態の付与にしない）。弾丸ポーチは時間で減らず、補充は上限 6000 で切る（plan/design-velvet.md 3 節）",
             "en": "\"Bullet Snatch\" is the name of the effect, not a state (no state grant). The Ammo Pouch does not decrease over time, and a refill is capped at 6000 (plan/design-velvet.md 3)"
-          }
+          },
+          "claims": [
+            "C-1160"
+          ]
         },
         {
           "kind": "counterChange",
@@ -25,7 +28,10 @@
           "assumes": {
             "ja": "「バースト 2 段階突入時」は、発動の結果バースト 2 段階に進んだ時（ふつうは I の発動のフレーム）。誰の I でも満タンに戻す",
             "en": "\"When entering Burst Stage 2\" is when an activation moves the chain to stage 2 (usually the frame of the Burst I activation), whoever uses it; the pouch is refilled to full"
-          }
+          },
+          "claims": [
+            "C-1162"
+          ]
         },
         {
           "kind": "counterChange",
@@ -46,7 +52,10 @@
           "assumes": {
             "ja": "「弾薬消費」を伴う効果は、ポーチが消費の量に足りなければ、消費も同じ行の強化も起きない（条件 selfCounter。前のフレームの終わりの値で見る）。「フルバースト状態でなければ」はフルバーストの窓 [始まり, 終わり) の外（plan/design-velvet.md 1 節）",
             "en": "An effect with \"consume ammo\" does not occur, together with the buffs on the same line, when the pouch holds less than the cost (selfCounter, read at the end of the previous frame). \"Not in Full Burst\" means outside the Full Burst window [start, end) (plan/design-velvet.md 1)"
-          }
+          },
+          "claims": [
+            "C-1160"
+          ]
         },
         {
           "kind": "timed",
@@ -63,7 +72,10 @@
               "counter": "ammoPouch",
               "atLeast": 100
             }
-          }
+          },
+          "claims": [
+            "C-1160"
+          ]
         },
         {
           "kind": "timed",
@@ -80,7 +92,10 @@
               "counter": "ammoPouch",
               "atLeast": 100
             }
-          }
+          },
+          "claims": [
+            "C-1160"
+          ]
         }
       ],
       "notes": [
@@ -112,7 +127,10 @@
           "assumes": {
             "ja": "「フルバーストタイム中のみ」はフルバーストの窓 [始まり, 終わり) の中。どのフルチャージの発も、S1 か S2 のどちらか一方だけを起こす。自分の使用武器変更の間はフルチャージしないので、自分がバーストを使ったフルバーストでは、変更が終わった後の残りにしか起きない（plan/design-velvet.md 3 節）",
             "en": "\"Only during Full Burst Time\" means inside the Full Burst window [start, end); each full-charge shot triggers either S1 or S2. She does not full-charge during her own weapon change, so in a Full Burst where she used her burst, this only occurs after the weapon change ends (plan/design-velvet.md 3)"
-          }
+          },
+          "claims": [
+            "C-1163"
+          ]
         },
         {
           "kind": "timed",
@@ -130,7 +148,10 @@
               "counter": "ammoPouch",
               "atLeast": 300
             }
-          }
+          },
+          "claims": [
+            "C-1163"
+          ]
         },
         {
           "kind": "timed",
@@ -147,7 +168,10 @@
               "counter": "ammoPouch",
               "atLeast": 300
             }
-          }
+          },
+          "claims": [
+            "C-1163"
+          ]
         },
         {
           "kind": "counterChange",
@@ -169,7 +193,10 @@
           "assumes": {
             "ja": "命中を戦闘を通して数え、50 の倍数に届いた命中がフルバーストの中のときだけ起きる（ソーダ：トゥインクルバニーの S1 と同じ読み）。フルチャージの消費と同じフレームに起き、ポーチが 300 だけ残っていれば、どちらも前のフレームの値を見て起き、ポーチは 0 で止まる（plan/design-velvet.md 1 節）",
             "en": "Hits are counted through the battle, and it occurs only when a multiple of 50 is reached inside Full Burst (the same reading as Soda: Twinkling Bunny S1). If it falls on the same frame as the full-charge cost with only 300 left, both see the previous frame value and occur, and the pouch stops at 0 (plan/design-velvet.md 1)"
-          }
+          },
+          "claims": [
+            "C-1162"
+          ]
         },
         {
           "kind": "timed",
@@ -187,7 +214,10 @@
               "counter": "ammoPouch",
               "atLeast": 300
             }
-          }
+          },
+          "claims": [
+            "C-1162"
+          ]
         },
         {
           "kind": "damage",
@@ -203,7 +233,10 @@
               "counter": "ammoPouch",
               "atLeast": 300
             }
-          }
+          },
+          "claims": [
+            "C-1162"
+          ]
         }
       ]
     },
@@ -220,7 +253,10 @@
           "assumes": {
             "ja": "残弾の表示は 999 発だが、10 秒に約 600 発しか撃たないので撃ち切らず、装弾数無限と同じに書く（infiniteAmmo）。1 発 1 ヒットで、コア・会心・距離ボーナスは基礎の SR と同じ（V-0767）",
             "en": "The ammo display shows 999 rounds, but she fires only about 600 in the 10 s, so it never runs out and is written as infinite ammo (infiniteAmmo). One hit per shot, with the same core, crit and distance bonus as the base SR (V-0767)"
-          }
+          },
+          "claims": [
+            "C-1161"
+          ]
         },
         {
           "kind": "timed",
@@ -228,7 +264,10 @@
           "target": "self",
           "stat": "attackDamage",
           "ref": 3,
-          "durationRef": 4
+          "durationRef": 4,
+          "claims": [
+            "C-1161"
+          ]
         }
       ]
     }

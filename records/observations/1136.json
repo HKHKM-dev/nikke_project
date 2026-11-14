@@ -278,6 +278,10 @@
     "method": {
       "tool": "recipe:hud-jumps@3 の増分を目で読んだ",
       "note": "HUD の総ダメージの増分（hud-jumps@3）。プロダクト08 の発（952,427・会心 1,142,913）・アリスの発（3,484,052）と大きさで分けた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
     }
   }
 ]
