@@ -7,43 +7,21 @@ import { gameSecondsToFrames } from '../../time.ts';
 import { counterMax } from '../counters.ts';
 import { parseSkillDefinition } from '../types.ts';
 
-type Effects = { effects: Record<string, unknown>[] };
-type Raw = { skills: { skill1: Effects; skill2: Effects; burst: Effects } };
 const VELVET = 316;
-const raw = rawDefinition<Raw>(VELVET);
+const raw = rawDefinition(VELVET);
 
-const patched = (slot: keyof Raw['skills'], index: number, patch: Record<string, unknown>) => {
-  const copy = structuredClone(raw);
-  copy.skills[slot].effects[index] = { ...copy.skills[slot].effects[index], ...patch };
-  return () => parseSkillDefinition(copy);
-};
-const indexOf = (slot: keyof Raw['skills'], match: (e: Record<string, unknown>) => boolean) =>
-  raw.skills[slot].effects.findIndex(match);
-const S1_ATTACK = indexOf('skill1', (e) => e.stat === 'attack');
-const S2_ATTACK = indexOf('skill2', (e) => e.stat === 'attack');
-const S2_CHARGE_DAMAGE = indexOf('skill2', (e) => e.stat === 'chargeDamage');
-
+// 条件 inFullBurst の読み込みの規則は trueDamageElement.test.ts で見る。ここではベルベットの定義が読めることと、読んだ形を見る
 describe('語彙の検証', () => {
-  it('accepts the definition', () => {
-    expect(() => parseSkillDefinition(raw)).not.toThrow();
+  it('accepts the definition, with inFullBurst false on the S1 attack up and true on the S2 attack up', () => {
+    const def = parseSkillDefinition(raw);
+    const attackOf = (slot: 'skill1' | 'skill2') =>
+      def.skills[slot].effects.find((e) => e.kind === 'timed' && e.stat === 'attack');
+    expect(attackOf('skill1')).toMatchObject({ condition: { inFullBurst: false } });
+    expect(attackOf('skill2')).toMatchObject({ condition: { inFullBurst: true } });
   });
 
   it('caps the Ammo Pouch at the stored maximum of the description (6000)', () => {
     expect(counterMax('ammoPouch')).toBe(skillValueOf(VELVET, 'skill1', 3));
-  });
-
-  it('takes inFullBurst true and false on the attack up, and not on another stat tracked in the first pass', () => {
-    const def = parseSkillDefinition(raw);
-    expect(def.skills.skill1.effects[S1_ATTACK]).toMatchObject({ condition: { inFullBurst: false } });
-    expect(def.skills.skill2.effects[S2_ATTACK]).toMatchObject({ condition: { inFullBurst: true } });
-    expect(patched('skill1', S1_ATTACK, { stat: 'chargeSpeed' })).toThrow(
-      /inFullBurst is not supported for "chargeSpeed"/,
-    );
-  });
-
-  it('takes inFullBurst: false on a timed with a stat that is not tracked in the first pass', () => {
-    const def = patched('skill2', S2_CHARGE_DAMAGE, { condition: { inFullBurst: false } })();
-    expect(def.skills.skill2.effects[S2_CHARGE_DAMAGE]).toMatchObject({ condition: { inFullBurst: false } });
   });
 });
 

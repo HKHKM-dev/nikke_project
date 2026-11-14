@@ -123,7 +123,7 @@ describe('durationUntil・inFullBurst・atStart の検証', () => {
     };
     expect(() => parseSkillDefinition(withSkill2([{ ...grant, condition: { inFullBurst: true } }]))).not.toThrow();
     expect(() => parseSkillDefinition(withSkill2([{ ...grant, condition: { inFullBurst: false } }]))).toThrow(
-      /a state grant cannot have inFullBurst: false/,
+      /condition\.inFullBurst: expected true/,
     );
   });
 
