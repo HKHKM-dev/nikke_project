@@ -1,0 +1,80 @@
+{
+  "formatVersion": 1,
+  "resourceId": 111,
+  "checkedAt": "2026-11-14",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "10 回攻撃を受けた時の、最終最大HP が最も高い敵 1 機の受けるダメージ▲は、被弾を扱わないので起きない（要件 5.2 節）。射撃場の 3 分モードでは、操作キャラが的の攻撃を受けると起きる（C-0551）",
+          "en": "Damage Taken up on the enemy with the highest max HP after taking 10 hits does not occur because taking hits is not modeled (requirements 5.2). In the 3-minute range mode it occurs when the controlled character takes the target's attacks",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "damageTaken",
+            "target": "enemy",
+            "trigger": "damaged"
+          }
+        },
+        {
+          "ja": "10 回攻撃を受けた時の、敵の攻撃力▼はダメージに関係しない",
+          "en": "ATK down on the enemy after taking 10 hits does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "戦闘開始時の、自分と最終攻撃力が最も高い味方 1 機の受けるダメージ均等分配（120 秒）は、被弾で HP が減った時だけ働く（被弾なしの前提の外）",
+          "en": "Equal sharing of damage taken between self and the ally with the highest ATK (120 s, from battle start) works only when HP drops from enemy hits (outside the no-damage-taken premise)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "unknown",
+            "target": "unknown",
+            "trigger": "battleStart"
+          }
+        },
+        {
+          "ja": "戦闘開始時の、自分と最終攻撃力が最も高い味方 1 機の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "Defence up for self and the ally with the highest ATK (from battle start) does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "oneEnemyBurstDamage",
+          "ref": 1,
+          "durationRef": 2
+        }
+      ],
+      "notes": [
+        {
+          "ja": "「〜敵1機に」で終わるバーストスキルダメージ▲は、行の対象の句が「敵1機に」で終わるバーストの追加ダメージ・持続ダメージ（ラピ：レッドフード・マナなど）に乗るかを確かめていない。モデルは乗せない（plan/design-jackal.md 2.2 節）",
+          "en": "Whether the Burst Skill damage up for \"Affects 1 enemy unit(s)\" applies to additional damage or sustained damage on such lines (Rapi: Red Hood, Mana, etc.) is not verified. The model does not apply it",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "oneEnemyBurstDamage",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "味方全体の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "Defence up for all allies does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
+        }
+      ]
+    }
+  }
+}

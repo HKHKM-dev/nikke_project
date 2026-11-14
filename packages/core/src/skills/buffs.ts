@@ -130,6 +130,11 @@ export type BuffTotals = {
    * 攻撃ダメージ▲と同じ和に足す（skills/burstDamage.ts の computeBurstHit。V-0545）
    */
   sequentialAttackDamage: number;
+  /**
+   * 「〜敵1機に」で終わるバーストスキルダメージの加算（plan/design-jackal.md 2 節）。印 oneEnemy の付いた burstDamage にだけ
+   * 攻撃ダメージ▲と同じ和に足す（skills/burstDamage.ts の computeBurstHit）
+   */
+  oneEnemyBurstDamage: number;
   /** 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.3 節）: 蓄積爆破のダメージ蓄積割合の加算。accumulate（capOrExpire）の割合に足す（C-0903） */
   accumulateRatio: number;
   /**
@@ -266,6 +271,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   sustainedDamage: 0,
   burstGaugeSpeed: 0,
   sequentialAttackDamage: 0,
+  oneEnemyBurstDamage: 0,
   accumulateRatio: 0,
   burstCooldown: 0,
   maxAmmoRatio: 0,
@@ -315,6 +321,7 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attack
   elementAdvantage: 'elementAdvantage',
   sustainedDamage: 'sustainedDamage',
   sequentialAttackDamage: 'sequentialAttackDamage',
+  oneEnemyBurstDamage: 'oneEnemyBurstDamage',
   accumulateRatio: 'accumulateRatio',
   fixedChargeTime: 'fixedChargeTime',
   fireStanceScale: 'fireStanceScale',

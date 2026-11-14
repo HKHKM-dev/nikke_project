@@ -105,6 +105,7 @@ export type BuffStat =
   | 'attackSpeed'
   | 'burstCooldown'
   | 'sequentialAttackDamage'
+  | 'oneEnemyBurstDamage'
   | 'spinUpSpeed'
   | 'chargeSpeedOverflow'
   | 'accumulateRatio'
@@ -168,6 +169,9 @@ export const BUFF_STATS = [
   // 順番攻撃ダメージ▲（比率。plan/design-new-chars-1029.md 5.5 節）。「N 回順番に攻撃」の倍率ダメージ
   // （damage の hitsRef）にだけ、別枠の乗数 (1 + Σ) で掛ける（分配ダメージ▲と同じ置き方。仮説。skills/burstDamage.ts の computeBurstHit）
   'sequentialAttackDamage',
+  // 「スキル対象の説明部分が『〜敵1機に』で終わるバーストスキルダメージ」▲（比率。plan/design-jackal.md 2 節）。説明文の対象の句が
+  // 「敵1機に」で終わる行の burstDamage（解決の印 oneEnemy）にだけ、攻撃ダメージ▲と同じ和に足す（skills/burstDamage.ts の computeBurstHit）
+  'oneEnemyBurstDamage',
   // 同 5.6 節: マシンガン立ち上げ速度▲（比率）。MG のレートの上がり方（1 発ごとの rateOfFireChangePerShot）に (1 + Σ) を掛ける
   // （読みは仮説。論点 I。cadence.ts の rateAfterShots）。スピンアップの無い武器には効かない。射撃に効く
   'spinUpSpeed',

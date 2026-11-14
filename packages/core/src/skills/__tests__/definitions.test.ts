@@ -26,7 +26,7 @@ import {
   skillValue,
 } from '../resolve.ts';
 import { counterMax } from '../counters.ts';
-import { SKILL_LEVEL_MAX } from '../resolve.ts';
+import { SKILL_LEVEL_MAX, targetPhraseOf } from '../resolve.ts';
 import { ATTACK_SPEED_WEAPONS } from '../parse/timed.ts';
 import { applyTreasure, TREASURE_PHASE_MAX } from '../treasure.ts';
 import {
@@ -295,6 +295,15 @@ describe('data/skills', () => {
             `burst hitsRef ${effect.hitsRef} Lv${lv}`,
           ).toBe(splits);
         }
+      }
+    });
+
+    // plan/design-jackal.md 2.2 節: 「〜敵1機に」で終わるバーストスキルダメージ▲は、burstDamage の値の載った ■ の行の対象の句で
+    // 当てはまるかを決める。行が見つからないと印が付かないので、データの定義は全部見つかることを確かめる
+    it('finds the description line of every burstDamage ref (its target phrase)', () => {
+      for (const effect of def.skills.burst.effects) {
+        if (effect.kind !== 'burstDamage') continue;
+        expect(targetPhraseOf(character.skills.burst, effect.ref, SKILL_LEVEL_MAX), `burst ref ${effect.ref}`).toBeDefined();
       }
     });
 
