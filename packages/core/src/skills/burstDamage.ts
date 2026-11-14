@@ -19,7 +19,7 @@ import {
 } from '../damage.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { CharacterData, LocalizedText } from '../types.ts';
-import { applyCritBuffs, type BuffTotals } from './buffs.ts';
+import { applyAttackDamageBuffs, applyCritBuffs, type BuffTotals } from './buffs.ts';
 import type { NamedStateId } from './states.ts';
 import type { CounterId } from './counters.ts';
 import {
@@ -984,13 +984,14 @@ export function combineBurstHitParts(parts: readonly { hit: BurstHitResult; shar
 
 /**
  * 倍率ダメージ 1 回ぶん（effects をまとめて）。攻撃力・会心・攻撃ダメージ・分配ダメージは通常攻撃と同じバフ後の値を使う。
- * burstDamage（slotBurstHit）と damageで共通。
+ * 攻撃ダメージ▲の和には、貫通特化の枠でも貫通ダメージ▲を足さない（通常攻撃の和 normalAttackDamageGroup と違い、射撃ごとの
+ * 倍率ダメージと同じ。倍率ダメージは C-1237。バーストのダメージは確かめていない）。burstDamage（slotBurstHit）と damageで共通。
  */
 export function computeSkillHit(
   effects: readonly ResolvedSkillDamage[],
   character: CharacterData,
   enemy: EnemyInput,
-  trigger: Pick<TriggerDamage, 'attack' | 'attackDamageMultiplier'>,
+  trigger: Pick<TriggerDamage, 'attack'>,
   buffs: BuffTotals,
   fullBurstBonus: boolean,
   sustainedDamagePlacement: SustainedDamagePlacement = SUSTAINED_DAMAGE_PLACEMENT,
@@ -1003,7 +1004,7 @@ export function computeSkillHit(
     // 敵の防御力▼は、ヒットが見る敵の側のバフ（buffs。バーストのヒットは発動の時点の値。C-0795）で防御力を下げる
     enemy: { ...enemy, defence: defenceAfterDown(enemy, buffs) },
     crit: applyCritBuffs(character.crit, buffs),
-    attackDamageMultiplier: trigger.attackDamageMultiplier,
+    attackDamageMultiplier: applyAttackDamageBuffs(buffs),
     elementMultiplier: skillElementMultiplier(character, enemy, buffs),
     effects,
     fullBurstBonus,

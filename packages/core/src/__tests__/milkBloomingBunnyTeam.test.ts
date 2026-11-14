@@ -22,8 +22,9 @@ const TEAMS = {
 };
 
 type Plan = ReturnType<typeof planTeamRun>;
-const s2 = rawDefinition<{ skills: { skill2: { effects: { trigger: { everySeconds: number } }[] } } }>(MILK_BB).skills
-  .skill2.effects[0]!;
+const s2 = rawDefinition<{
+  skills: { skill2: { effects: { trigger: { everySeconds: number }; delayFrames: number }[] } };
+}>(MILK_BB).skills.skill2.effects[0]!;
 const PERIOD_FRAMES = s2.trigger.everySeconds / GAME_SECONDS_PER_FRAME;
 
 describe.each(Object.entries(TEAMS))('%s', (_name, input) => {
@@ -58,14 +59,22 @@ describe.each(Object.entries(TEAMS))('%s', (_name, input) => {
     expect(s2Hits.length).toBeGreaterThan(0);
     for (const h of s2Hits) {
       expect(h.effect.damageType).toBe('distributed');
-      expect(stateWindows.some((w) => w.start < h.frame && h.frame < w.end)).toBe(true);
-      // 端数を持ち越すので、k 回目は k × 2 秒に達した最初のフレーム
-      const k = Math.round(h.frame / PERIOD_FRAMES);
-      expect(Math.ceil(k * PERIOD_FRAMES - 1e-9)).toBe(h.frame);
+      // 端数を持ち越すので、k 回目は k × 2 秒に達した最初のフレーム。ヒットはその delayFrames 後
+      const tick = h.frame - s2.delayFrames;
+      expect(stateWindows.some((w) => w.start < tick && tick < w.end)).toBe(true);
+      const k = Math.round(tick / PERIOD_FRAMES);
+      expect(Math.ceil(k * PERIOD_FRAMES - 1e-9)).toBe(tick);
     }
     // 窓（10 秒）ごとに 5 回（戦闘の終わりで切れた窓は数えない）
     for (const w of stateWindows.filter((x) => x.end < plan.frames))
-      expect(s2Hits.filter((h) => w.start < h.frame && h.frame < w.end)).toHaveLength(5);
+      expect(s2Hits.filter((h) => w.start < h.frame - s2.delayFrames && h.frame - s2.delayFrames < w.end)).toHaveLength(
+        5,
+      );
+  });
+
+  // V-0783 の編成には攻撃ダメージ▲が無いので、乗数が 1 なら貫通ダメージ▲（窓の中は 117.64%）が足されていない
+  it.runIf(_name.includes('V-0783'))('does not add the pierce damage up to the S2 hits (C-1237)', () => {
+    for (const h of s2Hits) expect(h.hit.attackDamageMultiplier).toBe(1);
   });
 
   it('never applies Embarrassment (holding full charge is out of scope)', () => {
