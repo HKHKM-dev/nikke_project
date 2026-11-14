@@ -15,7 +15,7 @@
 - 根拠の `0010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 868・仮説 162・棄却 149・範囲外 2（計 1181）
+件数: 確定 871・仮説 165・棄却 149・範囲外 2（計 1187）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -8074,6 +8074,50 @@
   - 決めるのに使った録画: なし
   - 検証記録: V-0778
   - 定義: `data/skills/111.json` の burst の effects[0]
+- **C-1231** フローラの S1 の「通常攻撃で 100 回攻撃した時、電撃コードの味方全体にスタック可能バフ効果のスタック量 1 個▲」は、電撃コードの味方（自分も入る）が持つ、上限のある状態の付与とスタックする timed の全部に、付いていれば 1 段足す（付いていなければ足さない）。エクシアの宝物版 S2 のハッキングコード収集（状態）と電撃コードの味方への攻撃力▲（timed）の両方に足され、どちらも自分の発だけより早く段が上がる
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-14
+  - 根拠: `1184-01`・`1184-02`・`1184-03`・`1185-01`・`1185-02`・`1185-03`。V-0776
+  - モデル側: `data/skills/411.json` の treasureSkills.skill1 の effects[2]（`stackChange` の `allStackable`。`skills/holders/fire.ts` の `fireAllStackable`・`skills/holders/items.ts` の `isStackableBuffTrack`。plan/design-adjacent-allies.md 2.5 節）
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0776
+  - 定義: `data/skills/411.json` の treasureSkills.skill1 の effects[2]
+- **C-1232** フローラの宝物版 S1 の「バースト 2 段階突入時、心の平和状態の味方全体にスキル発動者基準で最大HP のみ▲（2 秒）」で両隣の味方の HP の割合が 90% 以下に下がり、S2 の「両隣の味方のうち 1 機が HP 90% 以下になった時、味方全体にバリア（10 秒）」が起き、フローラにバリアが付いたフレームに宝物版 S2 の「バリア適用時、心の平和状態の味方全体にスキル発動者基準で攻撃力▲（10 秒）」が付く。心の平和は戦闘開始時にフローラと両隣の味方に付き、戦闘の終わりまで続く
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-14
+  - 根拠: `1186-01`・`1186-03`。V-0776
+  - モデル側: `data/skills/411.json` の treasureSkills.skill1 の effects[0]・effects[3] と treasureSkills.skill2 の effects[0]・effects[2]（対象 `targetAdjacent`・心の平和 `heartOfPeace`（`skills/composition.ts` の `withAdjacentStates`）、きっかけ `{ adjacentHpAtMostRef }`（`skills/holders/fires.ts`）、`{ applied: "barrier" }`（C-0671）。plan/design-adjacent-allies.md 2.2・2.3 節）
+  - 決めるのに使った録画: なし
+  - 録画の中の反復: 1186（2が合う。1186-01・1186-03）
+  - 検証記録: V-0776
+  - 定義: `data/skills/411.json` の treasureSkills.skill1 の effects[0]、`data/skills/411.json` の treasureSkills.skill1 の effects[3]、`data/skills/411.json` の treasureSkills.skill2 の effects[0]、`data/skills/411.json` の treasureSkills.skill2 の effects[2]
+- **C-1233** フローラの宝物版バーストの「味方全体にスキル発動者基準で攻撃力▲（10 秒）」は、説明文どおりフローラのバーストの使用から味方全体に付く
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-14
+  - 根拠: `1187-01`・`1187-03`。V-0776
+  - モデル側: `data/skills/411.json` の treasureSkills.burst の effects[2]（timed の `casterAttack`）
+  - 決めるのに使った録画: なし
+  - 録画の中の反復: 1187（2が合う。1187-01・1187-03）
+  - 検証記録: V-0776
+  - 定義: `data/skills/411.json` の treasureSkills.burst の effects[2]
+- **C-1234** フローラの S2 の「自分の両隣の味方のうち 1 機の HP が最大になった時、味方全体に防御力無視ダメージ▲」は、両隣の味方の HP の割合が 100% 未満から 100% に戻った時（被弾なしでは、宝物版 S1 の最大HP のみ▲ が外れた時）と、割合が 100% のまま回復を受けた時（戦闘開始時に付くフローラの S1 の持続回復）に起きる。持続回復の 1 秒ごとの刻みでは起きない（バーストの無い録画で、戦闘開始から約 10 秒の後は▲が乗らない）
+  - 状態: 仮説・等級: 厳密一致・更新日: 2026-11-14
+  - 根拠: `1184-06`・`1184-07`・`1185-06`・`1185-07`。V-0776。割合が戻った時に起きることは、撮影 B のバフのアイコンの消える時刻でも見た（`1186-02`。記録）。被弾から最大に戻った時にも起きる（`1185-05`。前提の外。S2 の notes）
+  - モデル側: `data/skills/411.json` の treasureSkills.skill2 の effects[1]（きっかけ `{ adjacentHpFull }`。`skills/holders/fires.ts` の割合の戻りと、割合 100% のままの `healed`）と、treasureSkills.skill1 の effects[1]（戦闘開始時の持続回復の `healed`）。plan/design-adjacent-allies.md 2.4 節・9 節の論点 7
+  - 決めるのに使った録画: 1184（仮説の出どころ）、1185（仮説の出どころ）
+  - 検証記録: V-0776
+  - 定義: `data/skills/411.json` の treasureSkills.skill1 の effects[1]、`data/skills/411.json` の treasureSkills.skill2 の effects[1]
+- **C-1235** フローラの宝物版バーストの「味方全体に発動者の最終最大HP の X% 回復」と「防御力無視ダメージ▲（10 秒）」は、説明文どおりフローラのバーストの使用から味方全体に付く（回復は受けた味方の「回復効果が適用された時」を起こす）
+  - 状態: 仮説・等級: 推論・更新日: 2026-11-14
+  - 根拠: 説明文（`data/characters/411.json` の treasure.skills の burst）。撮影 C（`1187`）のフルバーストの中のベスティー：TU の増分は、バーストの▲の乗った防御力無視ダメージと通常攻撃のコアの和と読める（`1187-02`・`1187-04`。記録）が、入りの止まりで時刻がそろわず、モデルの同じ回と比べていない。回復を読む効果は編成に無い。V-0776
+  - モデル側: 反映（`data/skills/411.json` の treasureSkills.burst の effects[0]・effects[1]）
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0776
+  - 定義: `data/skills/411.json` の treasureSkills.burst の effects[0]、`data/skills/411.json` の treasureSkills.burst の effects[1]
+- **C-1236** フローラの基礎版のスキルの説明文は、宝物版だけの行（S1 の心の平和の名前とバースト 2 段階突入の最大HP のみ▲、S2 のバリア適用時の攻撃力▲、バーストの攻撃力▲）と S2 の防御力無視ダメージ▲の維持（5 秒）のほかは宝物版と同じ文で、同じ形に読む（S1 の自分と両隣への持続回復・スタック量▲、S2 のバリアと防御力無視ダメージ▲、バーストの回復と防御力無視ダメージ▲）。値はどれも説明文の値
+  - 状態: 仮説・等級: 推論・更新日: 2026-11-14
+  - 根拠: 説明文（`data/characters/411.json` の skills と treasure.skills）。同じ文の読みは宝物版の録画で確かめた（C-1231・C-1232・C-1234・C-1235）。基礎版では、両隣の HP の割合を下げる効果がフローラ自身に無いので、S2 のバリアと割合が戻った時の▲は、ほかの味方の最大HP のみ▲・現在の HP▼ のある編成でだけ起きる。基礎版の録画は撮れない（宝物を外せない。エクシアの C-1193 と同じ）。V-0776
+  - モデル側: 反映（`data/skills/411.json` の skills の skill1 の effects[0]・[1]、skill2 の effects[0]・[1]、burst の effects[0]・[1]）。形は treasureSkills と同じで、値は基礎版の説明文の値
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0776
+  - 定義: `data/skills/411.json` の skill1 の effects[0]、`data/skills/411.json` の skill1 の effects[1]、`data/skills/411.json` の skill2 の effects[0]、`data/skills/411.json` の skill2 の effects[1]、`data/skills/411.json` の burst の effects[0]、`data/skills/411.json` の burst の effects[1]
 
 ## 敵・的・場面
 

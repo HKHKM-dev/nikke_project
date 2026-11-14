@@ -31925,6 +31925,326 @@
       "plus": null
     },
     {
+      "observation": "1184-01",
+      "element": "フローラ treasureSkills.burst.effects[0]",
+      "key": "84fdc8058450a0ea",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1184-01",
+      "element": "フローラ treasureSkills.burst.effects[1]",
+      "key": "84fdc8058450a0ea",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1184-01",
+      "element": "フローラ treasureSkills.skill1.effects[1]",
+      "key": "84fdc8058450a0ea",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1184-01",
+      "element": "フローラ treasureSkills.skill2.effects[1]",
+      "key": "84fdc8058450a0ea",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1184-02",
+      "element": "フローラ treasureSkills.burst.effects[0]",
+      "key": "a3bfabc0c64b368b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1184-02",
+      "element": "フローラ treasureSkills.burst.effects[1]",
+      "key": "a3bfabc0c64b368b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1184-02",
+      "element": "フローラ treasureSkills.skill1.effects[1]",
+      "key": "a3bfabc0c64b368b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1184-02",
+      "element": "フローラ treasureSkills.skill2.effects[1]",
+      "key": "a3bfabc0c64b368b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1184-03",
+      "element": "フローラ treasureSkills.burst.effects[0]",
+      "key": "cc31393bc025c9c6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1184-03",
+      "element": "フローラ treasureSkills.burst.effects[1]",
+      "key": "cc31393bc025c9c6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1184-03",
+      "element": "フローラ treasureSkills.skill1.effects[1]",
+      "key": "cc31393bc025c9c6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1184-03",
+      "element": "フローラ treasureSkills.skill2.effects[1]",
+      "key": "cc31393bc025c9c6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1185-01",
+      "element": "フローラ treasureSkills.burst.effects[0]",
+      "key": "ec58a0d62192156d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1185-01",
+      "element": "フローラ treasureSkills.burst.effects[1]",
+      "key": "ec58a0d62192156d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1185-01",
+      "element": "フローラ treasureSkills.skill1.effects[1]",
+      "key": "ec58a0d62192156d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1185-01",
+      "element": "フローラ treasureSkills.skill2.effects[1]",
+      "key": "ec58a0d62192156d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1185-02",
+      "element": "フローラ treasureSkills.burst.effects[0]",
+      "key": "5a4e3f3f38dbdd4c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1185-02",
+      "element": "フローラ treasureSkills.burst.effects[1]",
+      "key": "5a4e3f3f38dbdd4c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1185-02",
+      "element": "フローラ treasureSkills.skill1.effects[1]",
+      "key": "5a4e3f3f38dbdd4c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1185-02",
+      "element": "フローラ treasureSkills.skill2.effects[1]",
+      "key": "5a4e3f3f38dbdd4c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1185-03",
+      "element": "フローラ treasureSkills.burst.effects[0]",
+      "key": "a94fc4620ad7e26d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1185-03",
+      "element": "フローラ treasureSkills.burst.effects[1]",
+      "key": "a94fc4620ad7e26d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1185-03",
+      "element": "フローラ treasureSkills.skill1.effects[1]",
+      "key": "a94fc4620ad7e26d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1185-03",
+      "element": "フローラ treasureSkills.skill2.effects[1]",
+      "key": "a94fc4620ad7e26d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1186-01",
+      "element": "フローラ treasureSkills.burst.effects[0]",
+      "key": "89826a0764b5dc6c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1186-01",
+      "element": "フローラ treasureSkills.burst.effects[1]",
+      "key": "89826a0764b5dc6c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1186-01",
+      "element": "フローラ treasureSkills.skill1.effects[1]",
+      "key": "89826a0764b5dc6c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1186-01",
+      "element": "フローラ treasureSkills.skill2.effects[1]",
+      "key": "89826a0764b5dc6c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1186-03",
+      "element": "フローラ treasureSkills.burst.effects[0]",
+      "key": "f765f676de707b57",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1186-03",
+      "element": "フローラ treasureSkills.burst.effects[1]",
+      "key": "f765f676de707b57",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1186-03",
+      "element": "フローラ treasureSkills.skill1.effects[1]",
+      "key": "f765f676de707b57",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1186-03",
+      "element": "フローラ treasureSkills.skill2.effects[1]",
+      "key": "f765f676de707b57",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1187-01",
+      "element": "フローラ treasureSkills.burst.effects[0]",
+      "key": "7bc9e29688ed48bf",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1187-01",
+      "element": "フローラ treasureSkills.burst.effects[1]",
+      "key": "7bc9e29688ed48bf",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1187-01",
+      "element": "フローラ treasureSkills.skill1.effects[1]",
+      "key": "7bc9e29688ed48bf",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1187-01",
+      "element": "フローラ treasureSkills.skill2.effects[1]",
+      "key": "7bc9e29688ed48bf",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1187-03",
+      "element": "フローラ treasureSkills.burst.effects[0]",
+      "key": "be8924d8ec4f4963",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1187-03",
+      "element": "フローラ treasureSkills.burst.effects[1]",
+      "key": "be8924d8ec4f4963",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1187-03",
+      "element": "フローラ treasureSkills.skill1.effects[1]",
+      "key": "be8924d8ec4f4963",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1187-03",
+      "element": "フローラ treasureSkills.skill2.effects[1]",
+      "key": "be8924d8ec4f4963",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "1188-09",
       "element": "エレグ skill1.effects[0]",
       "key": "9a31050eb642acf1",
