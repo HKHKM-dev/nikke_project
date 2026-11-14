@@ -1,0 +1,35 @@
+{
+  "id": "1178",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1178_centi-solo-electric.mp4",
+  "original": "2026-11-14_22-10-25.mp4",
+  "durationSec": 198.4,
+  "frames": 11902,
+  "fps": 60,
+  "sizeMB": 240.4,
+  "sha256": "070ac0a7e163",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 80,
+      "name": "センチ",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Electronic"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "BigArms（電撃・3 分モード・スペック固定 ON）。V-0773 の撮影 C（撮り直し）: センチ単騎（操作）・オート射撃 ON・オートバースト OFF",
+  "backup": {
+    "at": "2026-11-14T22:14+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
