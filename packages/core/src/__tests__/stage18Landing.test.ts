@@ -20,8 +20,10 @@ import {
   bulletHitRateAt,
   coreHitRateAt,
   bulletHitRateWithHitRateUp,
+  coreHitRateUpIsExponent,
   coreHitRateWithHitRateUp,
   distanceBonusAt,
+  exponentSumHitRateUp,
   hitRateDownAt,
   hitRateUpRaisesBulletHitRate,
   landingBandOf,
@@ -67,6 +69,8 @@ function weapon(
 
 const AR = weapon('AR', { min: 25, max: 45 });
 const SMG = weapon('SMG', { min: 15, max: 35 });
+/** 二丁持ちの SMG（銃口 2 つ。的の表は dualWield の行） */
+const DUAL_SMG = weapon('SMG', { min: 15, max: 35 }, 1, { muzzleCount: 2 });
 const MG = weapon('MG', { min: 35, max: 55 });
 const SR = weapon('SR', { min: 45, max: 100 });
 const SR_NEAR = weapon('SR', { min: 25, max: 45 });
@@ -129,6 +133,15 @@ describe('データ（data/enemies.json の的の条件の表）', () => {
     expect(targetRateOf(profile.bulletHitRate, SG, at('nearA'))).toBe(0.845);
     expect(targetRateOf(profile.bulletHitRate, SG, at('nearB'))).toBe(0.951);
     expect(targetRateOf(profile.bulletHitRate, AR, at('nearB'))).toBe(0.9975);
+    // C-1108・C-1137・C-1147: SMG のコア命中率は近の着地点ごと（銃口 1 つと二丁持ち）。AR は近の帯の値を共通に使う
+    // （plan/design-smg-near-core.md 5.1 節）
+    expect(targetRateOf(profile.coreHitRate, SMG, at('nearA'))).toBe(0.2113);
+    expect(targetRateOf(profile.coreHitRate, SMG, at('nearB'))).toBe(0.2709);
+    expect(targetRateOf(profile.coreHitRate, DUAL_SMG, at('nearA'))).toBe(0.2142);
+    expect(targetRateOf(profile.coreHitRate, DUAL_SMG, at('nearB'))).toBe(0.2885);
+    expect(targetRateOf(profile.coreHitRate, DUAL_SMG, at('midNear'))).toBe(0.1233);
+    expect(targetRateOf(profile.coreHitRate, AR, at('nearA'))).toBe(0.4244);
+    expect(targetRateOf(profile.coreHitRate, AR, at('nearB'))).toBe(0.4244);
     expect(targetRateOf(profile.bulletHitRate, SG, at('midFarB'))).toBe(0.77);
     // C-0168: SR・RL の弾丸命中率は 1（距離帯によらない）
     expect(targetRateOf(profile.bulletHitRate, SR, at('farB'))).toBe(1);
@@ -392,10 +405,38 @@ describe('命中率▲（C-0036・C-0037）', () => {
     expect(coreHitRateWithHitRateUp(0.2281, -0.2)).toBe(0.2281);
   });
 
+  it('raises the core hit rate of a single-muzzle SMG at near range by the exponent form (C-1109); other cells keep 1/(1 − N)²', () => {
+    const at = (id: string) => profile.landings.find((l) => l.id === id)!;
+    expect(coreHitRateUpIsExponent(SMG, at('nearA'))).toBe(true);
+    expect(coreHitRateUpIsExponent(SMG, at('nearB'))).toBe(true);
+    expect(coreHitRateUpIsExponent(SMG, at('midNear'))).toBe(false);
+    expect(coreHitRateUpIsExponent(SMG, at('farA'))).toBe(false);
+    expect(coreHitRateUpIsExponent(DUAL_SMG, at('nearA'))).toBe(false);
+    expect(coreHitRateUpIsExponent(AR, at('nearA'))).toBe(false);
+    // ナユタのフルスタックの N 0.42（plan/design-smg-near-core.md 5.1 節: 近 A 0.506・近 B 0.609。和なら 0.628・0.805）
+    const n = upOnly(0.42);
+    expect(autoConditionAt(profile, at('nearA'), SMG, n, MANUAL).coreHitRate).toBeCloseTo(0.506, 3);
+    expect(autoConditionAt(profile, at('nearB'), SMG, n, MANUAL).coreHitRate).toBeCloseTo(0.609, 3);
+    expect(autoConditionAt(profile, at('farA'), SMG, n, MANUAL).coreHitRate).toBe(
+      coreHitRateWithHitRateUp(0.0342, 0.42),
+    );
+    expect(autoConditionAt(profile, at('nearA'), DUAL_SMG, n, MANUAL).coreHitRate).toBe(
+      coreHitRateWithHitRateUp(0.2142, 0.42),
+    );
+    expect(autoConditionAt(profile, at('nearA'), AR, n, MANUAL).coreHitRate).toBe(
+      coreHitRateWithHitRateUp(0.4244, 0.42),
+    );
+    // 指数・和も N ≥ 1 で 1、N ≤ 0 で表の値のまま
+    expect(coreHitRateAt(0.2113, upOnly(1), undefined, true)).toBe(1);
+    expect(coreHitRateAt(0.2113, upOnly(0), undefined, true)).toBe(0.2113);
+    expect(exponentSumHitRateUp(0.2113, 0.42)).toBe(bulletHitRateWithHitRateUp(0.2113, 0.42));
+  });
+
   it('applies to the table value only; the manual value is kept as it is', () => {
     const near = profile.landings.find((l) => l.id === 'nearA')!;
     const withUp = autoConditionAt(profile, near, SMG, upOnly(0.0509), MANUAL);
-    expect(withUp.coreHitRate).toBeCloseTo(0.2644 / 0.9491 ** 2, 12);
+    // C-1109: 銃口 1 つの SMG の近は指数・和
+    expect(withUp.coreHitRate).toBeCloseTo(1 - (1 - 0.2113) ** (1 / 0.9491 ** 2), 12);
     const smgNear = (profile.bulletHitRate.SMG as Record<string, number>).near!;
     expect(withUp.hitRate).toBe(bulletHitRateWithHitRateUp(smgNear, 0.0509));
     expect(withUp.distanceBonus).toBe(true);
@@ -704,6 +745,18 @@ describe('編成（自動の条件）', () => {
       expect(note(SR, events).ja).toContain('命中率▲は弾丸命中率に効かせていない（未実装）');
       expect(note(SR, events).ja).not.toContain('C-0527');
     }
+  });
+
+  it('says the exponent form of the core hit rate only for a single-muzzle SMG whose plan has near (C-1109)', () => {
+    const note = (c: CharacterData, events: boolean) =>
+      runTeam(input([slot(c, true)], enemy({ events }))).slots[0]!.notes.find((x) => x.code === 'auto-condition')!
+        .message;
+    expect(note(SMG, true).ja).toContain('C-1109');
+    expect(note(SMG, true).en).toContain('C-1109');
+    // 近の無い計画（初期位置の中近だけ）・二丁持ち・AR には出さない
+    expect(note(SMG, false).ja).not.toContain('C-1109');
+    expect(note(DUAL_SMG, true).ja).not.toContain('C-1109');
+    expect(note(AR, true).ja).not.toContain('C-1109');
   });
 
   it('writes the notes: table, mix, unmeasured cells, MG spin-up, and unmeasured landings', () => {

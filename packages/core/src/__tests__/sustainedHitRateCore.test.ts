@@ -12,6 +12,7 @@ import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.t
 import {
   bulletHitRateWithHitRateUp,
   coreHitRateWithHitRateUp,
+  exponentSumHitRateUp,
   hitRateSpansOf,
   landingPartsOf,
   landingPartsWith,
@@ -102,7 +103,8 @@ describe('持続の命中率▲（C-0170）', () => {
     const buffs = seg.slots[LITER]!.buffs;
     const parts = landingPartsWith(plan.landing, slot, LITER, seg.landing, hitRateNOf(buffs));
     for (const p of parts) {
-      expect(p.condition.coreHitRate).toBe(coreHitRateWithHitRateUp(p.tableCoreHitRate!, MODERNIA_S2 + DRAKE_S1));
+      // C-1109: リターは銃口 1 つの SMG なので、近のコア命中率は指数・和
+      expect(p.condition.coreHitRate).toBe(exponentSumHitRateUp(p.tableCoreHitRate!, MODERNIA_S2 + DRAKE_S1));
       // C-0192: リターは SMG なので弾丸命中率も区間の N で出し直す
       expect(p.condition.hitRate).toBe(bulletHitRateWithHitRateUp(p.tableBulletHitRate!, MODERNIA_S2 + DRAKE_S1));
       expect(p.condition.hitRate).toBeGreaterThan(p.tableBulletHitRate!);

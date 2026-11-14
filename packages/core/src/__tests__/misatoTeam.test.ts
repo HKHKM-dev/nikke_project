@@ -8,7 +8,7 @@ import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { coreHitRateWithHitRateUp, landingPartsWith } from '../frame/landing.ts';
+import { exponentSumHitRateUp, landingPartsWith } from '../frame/landing.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { hitRateNOf } from '../skills/buffs.ts';
@@ -128,16 +128,18 @@ describe('射撃マニュアルのスタック（ミサト単騎・条件は自�
     expect(max).toBeCloseTo(3 * STACK, 12);
   });
 
-  it('uses the stacked N for the core hit rate of the trigger (C-0036 の式)', () => {
+  it('uses the stacked N for the core hit rate of the trigger (銃口 1 つの SMG の近は指数・和。C-1109)', () => {
     const slot = SOLO.slots[0]!;
     const nearShot = shots.find((f) => segmentAt(f).landing === 'near' && n(f) > 3 * STACK - 1e-9)!;
     expect(nearShot).toBeDefined();
     const seg = segmentAt(nearShot);
     const parts = landingPartsWith(plan.landing, slot, 0, seg.landing, hitRateNOf(seg.slots[0]!.buffs));
     for (const p of parts) {
-      expect(p.condition.coreHitRate).toBeCloseTo(coreHitRateWithHitRateUp(p.tableCoreHitRate!, 3 * STACK), 12);
+      expect(p.condition.coreHitRate).toBeCloseTo(exponentSumHitRateUp(p.tableCoreHitRate!, 3 * STACK), 12);
     }
-    expect(coreHitRateWithHitRateUp(0.2644, 3 * STACK)).toBeCloseTo(0.367, 3);
+    // plan/design-smg-near-core.md 5.1 節: 近 A 0.281・近 B 0.355（和なら 0.293・0.376）
+    expect(exponentSumHitRateUp(0.2113, 3 * STACK)).toBeCloseTo(0.281, 3);
+    expect(exponentSumHitRateUp(0.2709, 3 * STACK)).toBeCloseTo(0.355, 3);
   });
 
   it('reports the shot-weighted N below 3 stacks (the first 180 shots and the rebuilds after the jumps)', () => {

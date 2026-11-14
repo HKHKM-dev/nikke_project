@@ -3,7 +3,8 @@
 //
 // - 距離ボーナス: 着地点の距離の範囲が、キャラの bonusRange に丸ごと入るか（C-0026・C-0031・C-0044）。
 // - コア命中率: 的の表の値 p（着地点の id → 帯 → all の順で引く）に、命中率▲ N で min(1, p ÷ (1 − N)²)。N ≥ 1 なら 1
-//   （C-0036・C-0037）。計画（planLandings）は枠の常時の BuffTotals.hitRate（育成の効果層・常時パッシブ）で出し、
+//   （C-0036・C-0037）。銃口 1 つの SMG の近（近 A・近 B）だけは、外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にする（指数・和。C-1109。
+//   仮説。plan/design-smg-near-core.md 3 節）。計画（planLandings）は枠の常時の BuffTotals.hitRate（育成の効果層・常時パッシブ）で出し、
 //   持続の▲（フルバーストの頭などで配られるもの。C-0170）が効いている区間は、使う時点で区間の N で出し直す（landingPartsWith）。
 // - 弾丸命中率: 的の表の値。通常攻撃のダメージと 1 パス目のゲージに掛ける（手入力の condition.hitRate と同じ扱い）。
 //   AR・SMG・MG は命中率▲ N で外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にする（C-0192・C-0519。確かめたのは SMG の遠と中遠 B・C だけ。plan/design-hit-rate-up-bullet-h2.md）。
@@ -223,10 +224,27 @@ function downOnly(hitRate: HitRateN): boolean {
 
 /**
  * 的の表のコア命中率 p を、命中率の和 hitRate で出し直す。▼だけの和（downOnly）は命中率▼の値 down に N の値があればそれ
- * （plan/design-maids.md 8.2 節）、無ければ p のまま。ほかは N で▲の式（coreHitRateWithHitRateUp。N ≤ 0 は p のまま）
+ * （plan/design-maids.md 8.2 節）、無ければ p のまま。ほかは N で▲の式（N ≤ 0 は p のまま）。式は exponent が真なら指数・和
+ * （exponentSumHitRateUp。coreHitRateUpIsExponent）、偽なら和（coreHitRateWithHitRateUp）
  */
-export function coreHitRateAt(p: number, hitRate: HitRateN, down: HitRateDownAt | undefined): number {
-  return downOnly(hitRate) ? (valueAtN(down?.core, hitRate.n) ?? p) : coreHitRateWithHitRateUp(p, hitRate.n);
+export function coreHitRateAt(p: number, hitRate: HitRateN, down: HitRateDownAt | undefined, exponent = false): number {
+  if (downOnly(hitRate)) return valueAtN(down?.core, hitRate.n) ?? p;
+  return exponent ? exponentSumHitRateUp(p, hitRate.n) : coreHitRateWithHitRateUp(p, hitRate.n);
+}
+
+/**
+ * 命中率▲がコア命中率に効く形が指数・和か。銃口 1 つの SMG の近（近 A・近 B）だけ指数・和（C-1109。仮説）で、
+ * 二丁持ちの SMG・ほかの帯・ほかの武器種は和（C-0036。plan/design-smg-near-core.md 3.2 節）
+ */
+export function coreHitRateUpIsExponent(
+  character: Pick<CharacterData, 'weaponType' | 'shot'>,
+  landing: Pick<LandingPoint, 'band'>,
+): boolean {
+  return (
+    character.weaponType === 'SMG' &&
+    landing.band === 'near' &&
+    muzzleHitsOf(character.weaponType, character.shot) === 1
+  );
 }
 
 /** 弾丸命中率で coreHitRateAt と同じ（▲の式は bulletHitRateWithHitRateUp。plan/design-maids.md 8.3 節） */
@@ -245,14 +263,22 @@ export function coreHitRateWithHitRateUp(p: number, hitRateUp: number): number {
 }
 
 /**
- * C-0192: 命中率▲ N で、弾丸命中率 p の外れの割合 1 − p を (1 − p) ^ (1 ÷ (1 − N)²) にする（H2）。N ≥ 1 なら 1。
+ * 指数・和: 命中率▲ N で、率 p の外れの割合 1 − p を (1 − p) ^ (1 ÷ (1 − N)²) にする。N ≥ 1 なら 1、N ≤ 0 は変えない。
+ * 弾丸命中率（bulletHitRateWithHitRateUp）と、銃口 1 つの SMG の近のコア命中率（coreHitRateAt。C-1109）が使う
+ */
+export function exponentSumHitRateUp(p: number, hitRateUp: number): number {
+  if (hitRateUp <= 0) return p;
+  if (hitRateUp >= 1) return 1;
+  return 1 - (1 - p) ** (1 / (1 - hitRateUp) ** 2);
+}
+
+/**
+ * C-0192: 命中率▲ N で、弾丸命中率 p を指数・和（exponentSumHitRateUp）で上げる（H2）。
  * 確かめたのは SMG の遠と中遠 B・C（C-0519）と SG の近（C-0631）だけ（plan/design-hit-rate-up-bullet-h2.md）。
  * N ≤ 0 は変えない（命中率▼は bulletHitRateAt が的の▼の表で引く）
  */
 export function bulletHitRateWithHitRateUp(p: number, hitRateUp: number): number {
-  if (hitRateUp <= 0) return p;
-  if (hitRateUp >= 1) return 1;
-  return 1 - (1 - p) ** (1 / (1 - hitRateUp) ** 2);
+  return exponentSumHitRateUp(p, hitRateUp);
 }
 
 /**
@@ -301,7 +327,10 @@ export function autoConditionAt(
   // V-0119: 1 発のヒット数は表にある弾の種類だけ（無ければ 1 発 1 ヒット）。手入力の条件には無い
   const hits = profile.hitsPerShot === undefined ? null : targetRateOf(profile.hitsPerShot, character, landing);
   return {
-    coreHitRate: core === null ? manual.coreHitRate : coreHitRateAt(core, hitRate, down),
+    coreHitRate:
+      core === null
+        ? manual.coreHitRate
+        : coreHitRateAt(core, hitRate, down, coreHitRateUpIsExponent(character, landing)),
     distanceBonus: distanceBonusAt(character, landing),
     fullCharge: manual.fullCharge,
     hitRate:
@@ -473,7 +502,16 @@ export function landingPartsWith(
         ...p,
         condition: {
           ...p.condition,
-          ...(core ? { coreHitRate: coreHitRateAt(p.tableCoreHitRate!, hitRate, p.hitRateDown) } : {}),
+          ...(core
+            ? {
+                coreHitRate: coreHitRateAt(
+                  p.tableCoreHitRate!,
+                  hitRate,
+                  p.hitRateDown,
+                  p.landing !== null && coreHitRateUpIsExponent(slot.character, p.landing),
+                ),
+              }
+            : {}),
           ...(bullet ? { hitRate: bulletHitRateAt(p.tableBulletHitRate!, hitRate, p.hitRateDown) } : {}),
           ...(distance ? { distanceBonus: distanceBonusAt(slot.character, p.landing!, minRange) } : {}),
         },
@@ -833,11 +871,23 @@ export function landingNotes(
   );
   const n = plan.hitRate[slotIndex]?.n ?? 0;
   const bullet = bulletHitRateUpNote(slot.character, parts);
+  // C-1109: 計画に、コア命中率を指数・和で上げる着地点（銃口 1 つの SMG の近）があるか
+  const exponentCore = [...parts.values()]
+    .flat()
+    .some(
+      (p) =>
+        p.landing !== null && p.tableCoreHitRate !== undefined && coreHitRateUpIsExponent(slot.character, p.landing),
+    );
   const ja = [
     `${profile.name.ja}の表（単騎 AUTO の実測）でコア命中率・距離ボーナス・弾丸命中率を決めた`,
     ...mixes.map((id) => mixLabel(profile, id).ja),
     ...(n > 0 ? [`常時の命中率▲ ${pct(n)} でコア命中率を 1/(1 − N)² 倍（上限 1）`] : []),
     'フルバースト中などに配られる持続の命中率▲も、効いている区間で N に足してコア命中率に効かせた（C-0170。仮説）',
+    ...(exponentCore
+      ? [
+          '近（近 A・近 B）のコア命中率は、命中率▲で 1/(1 − N)² 倍にせず、外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にした（銃口 1 つの SMG の近だけ。C-1109。仮説）',
+        ]
+      : []),
     bullet.ja,
   ];
   const en = [
@@ -845,6 +895,11 @@ export function landingNotes(
     ...mixes.map((id) => mixLabel(profile, id).en),
     ...(n > 0 ? [`constant hit rate up ${pct(n)} scales core hit rate by 1/(1 − N)² (max 1)`] : []),
     'timed hit rate buffs (e.g. given at full burst) are added to N while active and change core hit rate (C-0170; hypothesis)',
+    ...(exponentCore
+      ? [
+          'at near range (landings A and B), hit rate buffs turn the core miss rate 1 − p into (1 − p) ^ (1 ÷ (1 − N)²) instead of scaling core hit rate by 1/(1 − N)² (single-muzzle SMG at near range only; C-1109; hypothesis)',
+        ]
+      : []),
     bullet.en,
   ];
   notes.push({ level: 'approx', code: 'auto-condition', message: { ja: ja.join('。'), en: en.join('; ') } });

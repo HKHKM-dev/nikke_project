@@ -5,9 +5,9 @@
   "topic": "命中率・距離",
   "grade": "単独実測",
   "basis": "近 1 回目・2 回目ごとの近 B と近 A とみられる区間のコア命中率と差、組ごとの差 `0345-23`。区間ごとの値は V-0732 の観測値（`0152-24`・`0152-25` の形。42 本）。V-0740",
-  "model": "未反映。的の表（`data/enemies.json` の `range-bigarms` の `coreHitRate.SMG.near`）は近 1 回目・2 回目に共通の帯の値（0.2644。C-0543）",
+  "model": "未反映。的の表（`data/enemies.json` の `range-bigarms` の `coreHitRate.SMG`）の近は着地点ごとの値（C-1108）で、近 1 回目・2 回目を合わせた値（plan/design-smg-near-core.md 2.2 節）",
   "replaces": [],
-  "updated": "2026-11-12",
+  "updated": "2026-11-14",
   "subject": {
     "mechanism": "targetTable"
   },
