@@ -9,6 +9,7 @@ import {
   type ChargeTickTrigger,
   type CounterFullTrigger,
   type CoverHealedTrigger,
+  type SkillFiredTrigger,
   type EffectTrigger,
   type EndedTrigger,
   type StateEndUntil,
@@ -114,6 +115,8 @@ export function parseTrigger(v: Json, path: string, options: TriggerOptions = {}
   }
   // 遮蔽物 HP 回復を受けた時のきっかけは timed だけ（parseCoverHealedTrigger で先に読む）
   if (v.coverHealed !== undefined) fail(path, 'a { coverHealed } trigger is only allowed in timed');
+  // 自分の〈スロット〉を発動した時のきっかけも timed だけ（parseSkillFiredTrigger で先に読む）
+  if (v.skillFired !== undefined) fail(path, 'a { skillFired } trigger is only allowed in timed');
   // リロードの込め終わりのきっかけは removeState だけ（plan/design-skill-stage16.md 2.2 節）
   if (v.reloadEnd !== undefined) {
     if (!options.reloadEnd)
@@ -351,6 +354,16 @@ export function parseSelfHpAtMostTrigger(v: Json, path: string): SelfHpAtMostTri
   if (!isRecord(v) || v.selfHpAtMostRef === undefined) return undefined;
   rejectUnknownKeys(v, ['selfHpAtMostRef'], path);
   return { selfHpAtMostRef: parseRef(v.selfHpAtMostRef, `${path}.selfHpAtMostRef`) };
+}
+
+/**
+ * { skillFired: 'skill1' | 'skill2' }（plan/design-centi.md 2.2 節）。それ以外の形なら undefined（timed だけが読む。相手のスロットに
+ * 印のある周期が要ることは parse/crossChecks.ts の validateCooldownTimers が見る）
+ */
+export function parseSkillFiredTrigger(v: Json, path: string): SkillFiredTrigger | undefined {
+  if (!isRecord(v) || v.skillFired === undefined) return undefined;
+  rejectUnknownKeys(v, ['skillFired'], path);
+  return { skillFired: oneOf(['skill1', 'skill2'] as const, v.skillFired, `${path}.skillFired`) };
 }
 
 /** { coverHealed: true }。ほかのきっかけなら undefined（状態の付与では読まず、parseTrigger が落とす） */

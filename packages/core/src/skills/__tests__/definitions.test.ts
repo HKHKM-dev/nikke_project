@@ -194,23 +194,25 @@ describe('data/skills', () => {
                       ...(effect.stacksPerFireRef === undefined ? [] : [effect.stacksPerFireRef]),
                     ]
                   : // 2 段目の段 3: スタック量の増加は、足す数の amountRef
-                    effect.kind === 'stackChange' || effect.kind === 'counterChange'
-                    ? effect.amountRef === undefined
-                      ? []
-                      : [effect.amountRef]
-                    : effect.kind === 'cycleEvery' ||
-                        effect.kind === 'burstGaugeHit' ||
-                        effect.kind === 'shotPause' ||
-                        effect.kind === 'burstReentry' ||
-                        effect.kind === 'burstStepChange' ||
-                        effect.kind === 'removeState' ||
-                        effect.kind === 'removeDebuff' ||
-                        effect.kind === 'cancelState' ||
-                        effect.kind === 'stateExtend' ||
-                        effect.kind === 'summon' ||
-                        effect.ref === undefined
-                      ? []
-                      : [effect.ref];
+                    effect.kind === 'skillCooldownReduction'
+                    ? [effect.percentRef]
+                    : effect.kind === 'stackChange' || effect.kind === 'counterChange'
+                      ? effect.amountRef === undefined
+                        ? []
+                        : [effect.amountRef]
+                      : effect.kind === 'cycleEvery' ||
+                          effect.kind === 'burstGaugeHit' ||
+                          effect.kind === 'shotPause' ||
+                          effect.kind === 'burstReentry' ||
+                          effect.kind === 'burstStepChange' ||
+                          effect.kind === 'removeState' ||
+                          effect.kind === 'removeDebuff' ||
+                          effect.kind === 'cancelState' ||
+                          effect.kind === 'stateExtend' ||
+                          effect.kind === 'summon' ||
+                          effect.ref === undefined
+                        ? []
+                        : [effect.ref];
           for (const ref of refs) {
             const entry = character.skills[slot].values[ref - 1];
             expect(entry, `${slot} ref ${ref}`).toHaveLength(SKILL_LEVEL_MAX);

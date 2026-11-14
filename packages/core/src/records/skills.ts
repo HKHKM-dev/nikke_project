@@ -264,6 +264,7 @@ function triggerLabel(e: SkillEffect): string | undefined {
   if ('chargeFull' in t) return 'フルチャージした時';
   // 下がったフレームに発火する（続く長さは維持で決まる。selfHpAbove なら閾値以下の間、秒の維持なら N 秒）
   if ('selfHpAtMostRef' in t) return '自分の HP が閾値以下に下がった時';
+  if ('skillFired' in t) return `${t.skillFired} を発動した時`;
   if ('summon' in t) return `${t.summon} の攻撃（機数で決まる間隔）`;
   return t.count;
 }

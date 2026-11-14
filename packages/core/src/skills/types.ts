@@ -755,7 +755,8 @@ export type TimerTrigger = {
   /**
    * この周期は、説明文にきっかけの無いアクティブ型のスキルのクールタイム
    * （録画で読んだ周期。plan/design-arcana-magician.md 2.2 節）。状態の中身の skillCooldownDown が縮めるのは、
-   * この印のある周期だけ。damage と burstGaugeHit にだけ書け、
+   * この印のある周期だけ（即時の skillCooldownReduction も。plan/design-centi.md 2.1 節）。damage・burstGaugeHit・timed にだけ書け
+   * （timed は解決で自分のスロットの { skillFired } に置き換わる。同 2.3 節）、
    * carry・atStart・since・periodShorten・gaugePerHit とは組まない。同じスロットの印のある周期は同じ秒
    */
   cooldown?: true;
@@ -878,6 +879,19 @@ export function isSelfHpAtMostTrigger(t: unknown): t is SelfHpAtMostTrigger {
   return typeof t === 'object' && t !== null && 'selfHpAtMostRef' in t;
 }
 
+/**
+ * 「スキル N を発動した時」（plan/design-centi.md 2.2 節）。自分のそのスロットの、クールタイムの印（TimerTrigger の cooldown）のある周期の
+ * 発動（1 パス目がフレームの順に追った記録。縮んだ発動も入る）の次のフレームに発火する（1 パス目の FrameEvents.skillFired。発動を決めるのが
+ * 件の登録の後なので）。流し直し（replayEvents）では作らないので、1 パス目が件を登録する timed にだけ書ける。同じ定義のそのスロットに
+ * 印のある周期が要る（parse/crossChecks.ts の validateCooldownTimers）。印のある周期の timed は、解決で自分のスロットのこのきっかけに
+ * 置き換わる（skills/resolve.ts の resolveTimedTrigger）
+ */
+export type SkillFiredTrigger = { skillFired: 'skill1' | 'skill2' };
+
+export function isSkillFiredTrigger(t: unknown): t is SkillFiredTrigger {
+  return typeof t === 'object' && t !== null && 'skillFired' in t;
+}
+
 /** JSON に書くトリガー。文字列は BuffTrigger、オブジェクトは回数トリガー・時間の周期のトリガー・効果名のトリガーなど */
 export type EffectTrigger =
   | BuffTrigger
@@ -896,6 +910,8 @@ export type EffectTrigger =
   | ChargeFullTrigger
   // { selfHpAtMostRef }（timed だけが受ける。parseSelfHpAtMostTrigger）
   | SelfHpAtMostTrigger
+  // { skillFired }（timed だけが受ける。parseSkillFiredTrigger）
+  | SkillFiredTrigger
   // { counterFull }（damage・dot・counterChange・状態の付与だけが受ける。parseCounterFullTrigger）
   | CounterFullTrigger
   // { summon }（damage だけが受ける。parseSummonAttackTrigger）
@@ -1579,6 +1595,24 @@ export type CooldownReductionEffect = TargetCountFields & {
         ref?: never;
       }
   );
+
+/**
+ * 「スキル N のクールタイム X%▼」（維持なし。plan/design-centi.md 2.1 節）。発火のフレームの発動の後に、対象（自分）の slot の、クールタイムの
+ * 印（TimerTrigger の cooldown）のある周期の残り（次の発動までのフレーム）から、元の周期 × X% を引く（四捨五入したフレーム。T4 の
+ * 「いま残っているクールタイムを減らす」）。残りが 0 以下になれば次のフレームに発動し、次の周期はその発動から数える。1 パス目
+ * （frame/firstPass/gaugeEffects.ts）が射撃を数えて当てる。きっかけは射撃の回数（毎 N 回だけ）。同じ定義のその slot に印のある周期が要る
+ * （parse/crossChecks.ts の validateCooldownTimers）。維持の付いた形は状態の中身の skillCooldownDown
+ */
+export type SkillCooldownReductionEffect = {
+  kind: 'skillCooldownReduction';
+  trigger: ShotCountTrigger;
+  target: 'self';
+  /** 縮めるスロット */
+  slot: 'skill1' | 'skill2';
+  /** % の description_value_NN（効果のあるスロットの Lv で解く） */
+  percentRef: number;
+  assumes?: LocalizedText;
+};
 
 /**
  * 「弾丸チャージ X%」。発火の瞬間に対象の残弾へ 最大装弾数 × X% を足す（最大で止める。即時効果）。
@@ -2601,6 +2635,7 @@ export type SkillEffect = (
   | RemoveDebuffEffect
   | CancelStateEffect
   | StateExtendEffect
+  | SkillCooldownReductionEffect
   | StackChangeEffect
   | CounterChangeEffect
   | SummonEffect
@@ -2654,6 +2689,7 @@ export const SKILL_EFFECT_KINDS = [
   'removeDebuff',
   'cancelState',
   'stateExtend',
+  'skillCooldownReduction',
   'stackChange',
   'counterChange',
   'summon',

@@ -1,7 +1,7 @@
 // 1 パス目（../firstPass.ts の runFirstPassOnce）のゲージを溜める効果（plan/design-split-first-pass.md 3.4 節）: 段の循環・倍率ダメージ・
 // 射撃の回数・持続ダメージ・味方のゲージ・CT の時間・周期のゲージを追い、ゲージをフレームに予約して足す。
 import { burstDelaysOf } from '../../burst/landing.ts';
-import { gameSecondsToFirstFrame } from '../../time.ts';
+import { gameSecondsToFirstFrame, gameSecondsToFrame } from '../../time.ts';
 import { resolveCycleEvery, resolveCycles } from '../../skills/cycles.ts';
 import {
   damageHitFramesOf,
@@ -15,7 +15,12 @@ import {
   resolveDamageEffects,
 } from '../../skills/burstDamage.ts';
 import { type BurstActivation } from '../../burst/schedule.ts';
-import { isResolvedShotCount, isResolvedTimer, resolveSkillCooldownDowns } from '../../skills/resolve.ts';
+import {
+  isResolvedShotCount,
+  isResolvedTimer,
+  resolveSkillCooldownDowns,
+  resolveSkillCooldownReductions,
+} from '../../skills/resolve.ts';
 import { cooldownTimer, shortenedTimer, timerFramesOf } from '../../skills/timeline.ts';
 import { advanceShotCount, type ShotCountEveryAt, shotCountWeight } from '../../skills/triggers.ts';
 import {
@@ -257,7 +262,9 @@ export function createGaugeEffects({
   // クールタイムの印のある周期は、枠 × スロットごとに発火をフレームの順に追う
   // （cooldownTimer。plan/design-arcana-magician.md 2.1 節）。縮めるのは、
   // 編成のどれかの定義の状態の中身の「スキル N クールタイム X%▼」で、そのフレームまでに登録した状態の件で決める。
-  // 縮める状態が無ければ静的な周期と同じ列になる。2 パス目とゲージはこの記録だけを読む
+  // 縮める状態が無ければ静的な周期と同じ列になる。2 パス目とゲージはこの記録だけを読む。
+  // 自分の定義の即時の「スキル N のクールタイム X%▼」（skillCooldownReduction）は、きっかけの射撃を数え、そのフレームの発動の後に
+  // 残りから 元の周期 × X% を引く（plan/design-centi.md 2.1 節）
   const cooldownDowns = slots.flatMap((slot) =>
     slot === null || slot.definition === null
       ? []
@@ -269,9 +276,11 @@ export function createGaugeEffects({
     skill: SkillSlot;
     /** そのスロットを縮める状態と、その縮めた周期（フレーム） */
     downs: { state: NamedStateId; short: number }[];
-    tick: (f: number, started: number | undefined, held: () => number | undefined) => boolean;
+    tick: (f: number, started: number | undefined, held: () => number | undefined, cut?: number) => boolean;
     /** 同じスロットの印のある burstGaugeHit の遅れ（ループの前の予約の代わりに、発火で予約する） */
     gaugeDelays: number[];
+    /** そのスロットを即時に縮める効果（きっかけの射撃の数え・引くフレーム数） */
+    cuts: { count: ShotCountKind; every: number; n: number; frames: number }[];
     /** 発火のフレーム（cooldownTimerFires の記録の frames と同じ配列） */
     fires: number[];
   }[] = [];
@@ -294,6 +303,15 @@ export function createGaugeEffects({
           .map((d) => ({ state: d.state, short: gameSecondsToFirstFrame(everySeconds * (1 - d.percent / 100)) })),
         tick: cooldownTimer(gameSecondsToFirstFrame(everySeconds)),
         gaugeDelays: marked.flatMap((e) => (e.kind === 'burstGaugeHit' ? [e.delayFrames!] : [])),
+        // 引くフレーム数は四捨五入（確かめていない。plan/design-centi.md 6 節）
+        cuts: resolveSkillCooldownReductions(slot.definition, slot.character, slot.levels)
+          .filter((c) => c.slot === skill)
+          .map((c) => ({
+            count: c.trigger.count,
+            every: c.trigger.every,
+            n: 0,
+            frames: gameSecondsToFrame((everySeconds * c.percent) / 100),
+          })),
         fires,
       });
     }
@@ -379,6 +397,21 @@ export function createGaugeEffects({
    * フレーム f の終わりに、印のある周期の発火を決める（f に付いた縮める状態の件も見る）。発火したら記録し、その枠の
    * 印のある burstGaugeHit のゲージを遅れの後のフレームに予約する（ループの前の予約と同じ量）
    */
+  /** このフレームの射撃で、そのスロットを即時に縮める効果が引くフレーム数の和（無ければ undefined） */
+  const cutAt = (t: (typeof cooldownTrackers)[number]): number | undefined => {
+    const shot = shotEvents[t.slotIndex];
+    if (shot === null || shot === undefined) return undefined;
+    let sum: number | undefined;
+    for (const c of t.cuts) {
+      const counted = advanceShotCount(c.n, shotCountWeight(c.count, shot), c.every);
+      c.n = counted.count;
+      if (counted.fired) sum = (sum ?? 0) + c.frames;
+    }
+    return sum;
+  };
+  /** 枠 slotIndex の skill の、印のある周期がフレーム frame に発動したか（1 パス目の記録。frame までに決めた発動を読む） */
+  const cooldownFiredAt = (slotIndex: number, skill: SkillSlot, frame: number): boolean =>
+    cooldownTrackers.some((t) => t.slotIndex === slotIndex && t.skill === skill && t.fires.at(-1) === frame);
   const countCooldownTimers = (f: number): void => {
     for (const t of cooldownTrackers) {
       const i = t.slotIndex;
@@ -390,7 +423,7 @@ export function createGaugeEffects({
           throw new RangeError(`two or more states shorten the cooldown of ${t.skill} at once (not implemented)`);
         return on[0]?.short;
       };
-      if (!t.tick(f, started, held)) continue;
+      if (!t.tick(f, started, held, cutAt(t))) continue;
       t.fires.push(f);
       const energy = hitGaugeEnergy(i);
       for (const d of t.gaugeDelays) if (f + d < frames) reserveTimerGauge(i, f, f + d, energy);
@@ -544,6 +577,7 @@ export function createGaugeEffects({
     addShotGauges,
     cooldownTimerFires,
     countCooldownTimers,
+    cooldownFiredAt,
     countCycles,
     countDamageHitGauges,
     cycleGaugeHits,

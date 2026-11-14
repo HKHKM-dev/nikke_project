@@ -216,7 +216,7 @@ const KIND_INFO: Record<string, Info> = {
   'instant:skillCooldown': [
     'スキルのクールタイム・周期の変更（即時）',
     'check',
-    'periodShorten（前の発動のフレームに自分がその状態なら次の周期を縮める。マリアン：クイーンの S2）だけ',
+    'periodShorten（前の発動のフレームに自分がその状態なら次の周期を縮める。マリアン：クイーンの S2）と、skillCooldownReduction（自分のスキル N のクールタイムの印のある周期の残りから、元の周期の X% を引く。センチ編）だけ',
   ],
   // ツールチップ「クールタイム」（T4）: 維持やスタックの付いた増減は、その間スキル自体のクールタイムを変える。即時の増減とは別の効果
   'sustained:cooldown': [
@@ -326,7 +326,11 @@ const TRIG_INFO: Record<string, Info> = {
     'check',
     'カウンタが最大になった時の { counterFull }（counterChange のきっかけ。2 段目の段 11）だけ',
   ],
-  skillEvent: ['ほかのスキルの発動・命中', 'gap'],
+  skillEvent: [
+    'ほかのスキルの発動・命中',
+    'check',
+    'timed の { skillFired }（自分のスキル N のクールタイムの印のある周期の発動の次のフレーム。センチ編）だけ',
+  ],
   limited: ['戦闘中 N 回', 'gap'],
   damaged: ['攻撃を受けた時', 'damaged'],
   kill: ['敵を倒した時', 'oos'],

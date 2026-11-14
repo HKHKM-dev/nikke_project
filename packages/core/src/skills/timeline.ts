@@ -467,17 +467,20 @@ export function elapsedShortenedTimerFrames(
  * フレームでだけ呼ぶ。どちらも無ければ undefined）。次の発動（初めは long）を、窓が始まったフレーム s で s + started に早め（もっと早い
  * 予定ならそのまま）、発動のフレーム f の次は f + held（窓の外なら f + long）。
  * 同じフレームは始まりを先に見る。窓の終わりを越えた発動も、窓の中の発動から縮めた周期で
- * 来る（T4 の「終わっても残りは戻らず」。C-0848・C-1055）
+ * 来る（T4 の「終わっても残りは戻らず」。C-0848・C-1055）。
+ * cut はそのフレームに残り（次の発動 − f）から引くフレーム数（即時の「スキル N のクールタイム X%▼」。plan/design-centi.md 2.1 節）。
+ * そのフレームの発動の後に当て、残りが 0 以下になれば次のフレーム（f + 1）に発動する
  */
 export function cooldownTimer(
   long: number,
-): (f: number, started: number | undefined, held: () => number | undefined) => boolean {
+): (f: number, started: number | undefined, held: () => number | undefined, cut?: number) => boolean {
   let next = long;
-  return (f, started, held) => {
+  return (f, started, held, cut) => {
     if (started !== undefined) next = Math.min(next, f + started);
-    if (f !== next) return false;
-    next = f + (held() ?? long);
-    return true;
+    const fired = f === next;
+    if (fired) next = f + (held() ?? long);
+    if (cut !== undefined) next = Math.max(f + 1, next - cut);
+    return fired;
   };
 }
 

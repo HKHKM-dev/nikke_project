@@ -4,7 +4,7 @@
 - 関連: [design-arcana-magician.md](design-arcana-magician.md) 2.2 節（周期のきっかけの印 `cooldown`）・2.4 節（センチの S1 に使えるか）、[design-skill-catalog-tooltips.md](design-skill-catalog-tooltips.md) の T4（維持の無いクールタイムの増減は、いま残っているクールタイムを増減する）、[design-indirect-notes.md](design-indirect-notes.md)（バリア・HP の経路の notes）
 - 検証: V-0773（編成・予測・撮影の依頼はそちら）
 - 作成日: 2026-11-14
-- 状態: 起案
+- 状態: 実装中
 
 ## 0. 範囲
 
@@ -125,3 +125,4 @@
 ## 経過
 
 - 2026-11-14: 起案した。撮影の依頼は V-0773。
+- 2026-11-14: 6 節の論点を推奨のとおりに決めた（オーナー）。2 節の語彙の実装に入った。定義は撮影 B で S2 のクールタイムを読んでから書く。

@@ -13,7 +13,7 @@ import {
   parseBurstReentryEffect,
   parseBurstStepChangeEffect,
 } from './gauge.ts';
-import { parseCoverHealEffect, parseInstantEffect } from './instant.ts';
+import { parseCoverHealEffect, parseInstantEffect, parseSkillCooldownReductionEffect } from './instant.ts';
 import { parseIndirectReads } from './notes.ts';
 import {
   parseCancelStateEffect,
@@ -115,6 +115,7 @@ const EFFECT_BODY_PARSERS = {
   removeDebuff: (v, path) => parseRemoveDebuffEffect(v, path),
   cancelState: (v, path) => parseCancelStateEffect(v, path),
   stateExtend: (v, path) => parseStateExtendEffect(v, path),
+  skillCooldownReduction: (v, path) => parseSkillCooldownReductionEffect(v, path),
   stackChange: (v, path) => parseStackChangeEffect(v, path),
   counterChange: (v, path) => parseCounterChangeEffect(v, path),
   summon: (v, path, slot) => parseSummonEffect(v, path, slot),
