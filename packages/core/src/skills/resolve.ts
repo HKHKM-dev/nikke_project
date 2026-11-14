@@ -15,7 +15,7 @@ import type {
 import { burstWindowTrimOf } from '../burst/landing.ts';
 import { GAME_SECONDS_PER_FRAME, gameSecondsToFrames } from '../time.ts';
 import { isChargeWeapon } from '../weapons.ts';
-import type { ChangedWeapon, ResolvedStateWhile } from './buffs.ts';
+import type { ChangedWeapon } from './buffs.ts';
 import type { CounterId } from './counters.ts';
 import {
   SKILL_SLOTS,
@@ -52,7 +52,6 @@ import {
   type EdgeShift,
   type DurationUntil,
   type EffectCondition,
-  type SelfStateCondition,
   type EffectTrigger,
   type EndedTrigger,
   type CounterFullTrigger,
@@ -77,7 +76,7 @@ import {
   type TimedEffect,
   staticStatesOf,
 } from './types.ts';
-import { type NamedStateId, stateMatches } from './states.ts';
+import type { NamedStateId } from './states.ts';
 
 /**
  * Lv の数値に解決したトリガー。射撃の回数トリガーは every（1 以上の整数）に解決済み。
@@ -621,7 +620,7 @@ export function resolveTimed(
     const skill = character.skills[slot];
     entry.effects.forEach((effect, effectIndex) => {
       if (effect.kind === 'weaponChange') {
-        resolved.push(resolveWeaponChange(effect, character, slot, levels[slot], effectIndex, def, levels));
+        resolved.push(resolveWeaponChange(effect, character, slot, levels[slot], effectIndex));
         return;
       }
       if (effect.kind !== 'timed') return;
@@ -1422,8 +1421,6 @@ function resolveWeaponChange(
   slot: SkillSlot,
   level: number,
   effectIndex: number,
-  def: SkillDefinition,
-  levels: SkillLevels,
 ): ResolvedTimedEffect {
   const skill = character.skills[slot];
   // CDN に変更後のレートが無い変更は、定義の即値（rateOfFire。録画で読む。plan/design-skill-stage11.md 2.1 節）
@@ -1482,13 +1479,6 @@ function resolveWeaponChange(
       hits,
       shot: changedWeaponShot(character.shot, damage, rateOfFire, hits, overrides),
       ...(effect.trueDamage ? { trueDamage: true as const } : {}),
-      // 初回ダメージ（最初の発の値。ヒット数ぶん）と、発ごとの防御力無視の条件（plan/design-laplace.md 2.1・2.2 節）
-      ...(effect.firstShotDamageRef !== undefined
-        ? { firstShotDamage: Math.round((skillValue(skill, effect.firstShotDamageRef, level) / 100) * 10000) * hits }
-        : {}),
-      ...(effect.trueDamageWhile !== undefined
-        ? { trueDamageWhile: resolveStateWhile(effect.trueDamageWhile.selfState, def, character, levels, skill, level) }
-        : {}),
       ...(effect.projectileExplosion ? { projectileExplosion: true as const } : {}),
       ...(effect.pierce ? { pierce: true as const } : {}),
       ...(effect.firstShotDelayFrames !== undefined ? { firstShotDelayFrames: effect.firstShotDelayFrames } : {}),
@@ -1515,35 +1505,6 @@ function resolveWeaponChange(
   if (effect.condition) r.condition = resolveCondition(effect.condition, skill, level);
   if (effect.assumes) r.assumes = effect.assumes;
   return r;
-}
-
-/**
- * 使用武器の変更の発ごとの防御力無視の条件（trueDamageWhile）を、状態とスタック数の下の端に解く（plan/design-laplace.md 2.2 節）。
- * 'full' は同じ定義のその状態の自分への付与のスタックの上限（Lv の値）、stacksRef はそのスロットの Lv の値を整数に丸めた数
- */
-function resolveStateWhile(
-  self: SelfStateCondition,
-  def: SkillDefinition,
-  character: CharacterData,
-  levels: SkillLevels,
-  skill: SkillRaw,
-  level: number,
-): ResolvedStateWhile {
-  if (self.stacks === 'full') {
-    const caps = SKILL_SLOTS.flatMap((s) =>
-      def.skills[s].effects.flatMap((e) =>
-        e.kind === 'state' && stateMatches(self.state, e.state)
-          ? [resolveMaxStacks(e, character.skills[s], levels[s])]
-          : [],
-      ),
-    ).filter((n): n is number => n !== undefined);
-    if (caps.length === 0) throw new RangeError(`skill ${skill.id}: no grant of "${self.state}" with max stacks`);
-    return { state: self.state, stacks: Math.max(...caps) };
-  }
-  if (self.stacks !== undefined) return { state: self.state, stacks: self.stacks };
-  if (self.stacksRef !== undefined)
-    return { state: self.state, stacks: Math.round(skillValue(skill, self.stacksRef, level)) };
-  return { state: self.state, stacks: 1 };
 }
 
 /**

@@ -184,6 +184,10 @@
     "method": {
       "tool": "recipe:hud-jumps@3 の増分（tools/captures/hud.ts --mode jumps）と、burst-panel の 00.00",
       "note": "オート射撃 OFF では、ビームの発はこの回の数発しか総ダメージに出ない（照準が的から外れていた見込み）。最初のフレーム（f4887）は 79,784（2 発か、会心・コアの 1 発）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
     }
   }
 ]

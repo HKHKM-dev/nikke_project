@@ -64,7 +64,10 @@
           "effect": {
             "kind": "damage",
             "trigger": "unknown"
-          }
+          },
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     },
@@ -239,7 +242,10 @@
           "effect": {
             "kind": "damage",
             "trigger": "unknown"
-          }
+          },
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     },

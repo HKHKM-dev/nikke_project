@@ -9,9 +9,7 @@
   "replaces": [],
   "updated": "2026-11-14",
   "subject": {
-    "places": [
-      "data/skills/100.json の skill2 の effects[0]"
-    ]
+    "places": ["data/skills/100.json の skill2 の effects[0]"]
   },
   "decidedOn": []
 }

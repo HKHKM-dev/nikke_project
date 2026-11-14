@@ -19,7 +19,6 @@ import {
   isStaticStateGrant,
   isSummonAttackTrigger,
   isTimerTrigger,
-  type SelfStateCondition,
   type ShotCountTrigger,
   SKILL_SLOTS,
   type SkillEffect,
@@ -502,11 +501,6 @@ function validateWhileEffects(entries: Partial<Record<SkillSlot, SkillEntry>>, r
   );
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
-      // 使用武器の変更の発ごとの防御力無視（trueDamageWhile。plan/design-laplace.md 2.2 節）も、while と同じ付与を求める
-      if (e.kind === 'weaponChange' && e.trueDamageWhile !== undefined) {
-        checkStateWhile(e.trueDamageWhile.selfState, `${root}.${slot}.effects[${i}].trueDamageWhile`);
-        return;
-      }
       if ((e.kind !== 'passive' && e.kind !== 'allyGaugeAdd') || e.while === undefined) return;
       // カウンタの while は、同じ定義にそのカウンタを増やす counterChange が要る
       if ('selfCounter' in e.while) {
@@ -518,21 +512,19 @@ function validateWhileEffects(entries: Partial<Record<SkillSlot, SkillEntry>>, r
           );
         return;
       }
-      checkStateWhile(e.while.selfState, `${root}.${slot}.effects[${i}].while`);
-    });
-  }
-  function checkStateWhile({ state, stacks, stacksRef }: SelfStateCondition, path: string): void {
-    const own = grants.filter(
-      (g) => stateMatches(state, g.state) && !isStaticStateGrant(g) && (g.target === 'self' || g.target === 'allies'),
-    );
-    const stacked = stacks !== undefined || stacksRef !== undefined;
-    const ok = own.some((g) => !stacked || g.maxStacks !== undefined || g.maxStacksRef !== undefined);
-    if (!ok) {
-      fail(
-        path,
-        `while on "${state}" needs a grant of the same state on self (target self or allies, not static${stacked ? ', with maxStacks' : ''}) in the definition`,
+      const { state, stacks, stacksRef } = e.while.selfState;
+      const own = grants.filter(
+        (g) => stateMatches(state, g.state) && !isStaticStateGrant(g) && (g.target === 'self' || g.target === 'allies'),
       );
-    }
+      const stacked = stacks !== undefined || stacksRef !== undefined;
+      const ok = own.some((g) => !stacked || g.maxStacks !== undefined || g.maxStacksRef !== undefined);
+      if (!ok) {
+        fail(
+          `${root}.${slot}.effects[${i}].while`,
+          `while on "${state}" needs a grant of the same state on self (target self or allies, not static${stacked ? ', with maxStacks' : ''}) in the definition`,
+        );
+      }
+    });
   }
 }
 

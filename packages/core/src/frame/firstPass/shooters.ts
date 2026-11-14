@@ -123,8 +123,6 @@ export function createShooters({
   /** 使用武器の変更中の射手の状態と、その武器の識別子（変更していなければ null） */
   const changedShooters: (ShooterState | null)[] = slots.map(() => null);
   const activeWeapon: (string | null)[] = slots.map(() => null);
-  // 初回ダメージを持つ使用武器の変更の、まだ撃っていない最初の発（plan/design-laplace.md 2.1 節）
-  const firstShotPending: boolean[] = slots.map(() => false);
   const shotCounts = slots.map(() => 0);
   /**
    * フレーム f に始まった枠 i の使用武器変更（識別子
@@ -166,7 +164,6 @@ export function createShooters({
       const weaponId = params.weapon?.id ?? null;
       if (weaponId !== activeWeapon[i]) {
         activeWeapon[i] = weaponId;
-        firstShotPending[i] = params.weapon?.firstShotDamage !== undefined;
         if (params.weapon !== null) {
           changedShooters[i] = weaponChangeShooter(params.weapon.shot, model, params);
           const firstHit = weaponChangeFirstHitAt(i, params.weapon.id, f);
@@ -255,17 +252,7 @@ export function createShooters({
       if (!fired && partial === null) return;
       log.frames.push(f);
       if (state.lastShot) log.lastShotFrames!.push(f);
-      if (params.weapon !== null) {
-        (log.weaponChangeShotFrames ??= []).push(f);
-        // 初回ダメージの発と、自分の状態の間の防御力無視の発（plan/design-laplace.md 2.1・2.2 節）。状態の見え方は倍率ダメージの
-        // 条件 selfState と同じ（frame より前に付いて frame に続いている件）。初回ダメージの発は防御力無視にしない
-        const cond = params.weapon.trueDamageWhile;
-        if (firstShotPending[i]) {
-          firstShotPending[i] = false;
-          (log.weaponChangeFirstShotFrames ??= []).push(f);
-        } else if (cond !== undefined && lists.selfStackCountAt(i, cond.state, f) >= cond.stacks)
-          (log.trueDamageShotFrames ??= []).push(f);
-      }
+      if (params.weapon !== null) (log.weaponChangeShotFrames ??= []).push(f);
       // チャージしない変更後の武器の発は fullChargeShot に数えない。チャージ武器への変更を持つチャージしない基礎の武器の発も
       // 数えない（どちらも、発の武器がチャージ武器でない。plan/design-nayuta.md 2.6 節）
       const uncharged = log.fullCharge && !isChargeWeapon(shot);

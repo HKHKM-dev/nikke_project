@@ -1,17 +1,15 @@
 {
   "id": "C-1206",
   "text": "ラプラスの宝物版の S1 のヒーロービジョンは、フルチャージの発ごとに自分に 1 スタック（最大 5）付き、最後のフルチャージの発（RL の命中）から 15 秒（ゲーム内 約 880f。動画ではフルバーストの入りの止まりを含めて 899〜904f）で切れる（付くたびに維持を付け直す）。オート射撃で撃ち続ける間は、バーストの時いつもフルスタック",
-  "state": "仮説",
+  "state": "確定",
   "topic": "スキル・キャラ固有",
-  "grade": "厳密一致",
+  "grade": "反復実測",
   "basis": "`1163-08`・`1163-09`・`1163-10`・`1163-11`・`1163-12`・`1160-13`・`1160-14`・`1161-14`・`1161-15`。V-0772",
   "model": "data/skills/100.json の treasureSkills.skill1 の effects[0]（state heroVision・{ count: fullChargeShot }・maxStacksRef・durationRef）、skills/states.ts の heroVision",
   "replaces": [],
   "updated": "2026-11-14",
   "subject": {
-    "places": [
-      "data/skills/100.json の treasureSkills.skill1 の effects[0]"
-    ]
+    "places": ["data/skills/100.json の treasureSkills.skill1 の effects[0]"]
   },
   "decidedOn": [
     {
@@ -24,11 +22,25 @@
       "recording": "1163",
       "decided": "1163-09",
       "reproduced": "1163-10,1163-11",
+      "observations": ["1163-09", "1163-10", "1163-11"]
+    }
+  ],
+  "minimal": [
+    {
       "observations": [
+        "1160-13",
+        "1160-14",
+        "1161-14",
+        "1161-15",
+        "1163-08",
         "1163-09",
         "1163-10",
-        "1163-11"
-      ]
+        "1163-11",
+        "1163-12"
+      ],
+      "element": ["ラプラス treasureSkills.skill1.notes[0]"],
+      "reason": "ヒーロービジョンの爆発範囲▲は、的が 1 体ではコアに当たる割合しか動かしえない。比べた値はどれも、コアに当たった RL・ビームの発の値か、コアの乗らない倍率ダメージで、スタックの数によらず同じ格子に合う（RL の弾速 300 の直進弾とビームのコア命中率は 1）",
+      "decided": "2026-11-14"
     }
   ]
 }
