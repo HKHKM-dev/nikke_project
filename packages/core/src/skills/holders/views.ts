@@ -31,6 +31,9 @@ import type { Sources } from './sources.ts';
 import type { Read } from './read.ts';
 
 /** stat ごとの見る列・状態の件・HP・防御力・順位を読む */
+/** HP の割合の閾値の比べで許す浮動小数の誤差（selfHpAtMostAt。「HP が最大」の判定も同じ幅を使う。skills/holders/fires.ts） */
+export const HP_RATIO_EPS = 1e-9;
+
 export function createViews({
   activeAt,
   counterKey,
@@ -336,7 +339,7 @@ export function createViews({
   };
   /** 枠の HP の割合がフレーム frame に閾値 threshold（割合）以下か（きっかけ { selfHpAtMost } と維持 { selfHpAtMostRef } が読む） */
   const selfHpAtMostAt = (slotIndex: number, frame: number, threshold: number): boolean =>
-    selfHpRatioAt(slotIndex, frame) <= threshold + 1e-9;
+    selfHpRatioAt(slotIndex, frame) <= threshold + HP_RATIO_EPS;
   // 枠のそのフレームの最終防御力（常時 + 効いている防御力▲ の件）と、
   // 発動者より低い枠（同値は含まない）と発動者自身（plan/design-skill-stage7.md 1.2・1.4 節）
   const defenseViews = viewsOf((_, e) => e.stat === 'defense');

@@ -1,0 +1,41 @@
+{
+  "id": "C-1232",
+  "text": "フローラの宝物版 S1 の「バースト 2 段階突入時、心の平和状態の味方全体にスキル発動者基準で最大HP のみ▲（2 秒）」で両隣の味方の HP の割合が 90% 以下に下がり、S2 の「両隣の味方のうち 1 機が HP 90% 以下になった時、味方全体にバリア（10 秒）」が起き、フローラにバリアが付いたフレームに宝物版 S2 の「バリア適用時、心の平和状態の味方全体にスキル発動者基準で攻撃力▲（10 秒）」が付く。心の平和は戦闘開始時にフローラと両隣の味方に付き、戦闘の終わりまで続く",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1186-01`・`1186-03`。V-0776",
+  "model": "`data/skills/411.json` の treasureSkills.skill1 の effects[0]・effects[3] と treasureSkills.skill2 の effects[0]・effects[2]（対象 `targetAdjacent`・心の平和 `heartOfPeace`（`skills/composition.ts` の `withAdjacentStates`）、きっかけ `{ adjacentHpAtMostRef }`（`skills/holders/fires.ts`）、`{ applied: \"barrier\" }`（C-0671）。plan/design-adjacent-allies.md 2.2・2.3 節）",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": [
+      "data/skills/411.json の treasureSkills.skill1 の effects[0]",
+      "data/skills/411.json の treasureSkills.skill1 の effects[3]",
+      "data/skills/411.json の treasureSkills.skill2 の effects[0]",
+      "data/skills/411.json の treasureSkills.skill2 の effects[2]"
+    ]
+  },
+  "decidedOn": [],
+  "runs": [
+    {
+      "recording": "1186",
+      "reproduced": "2",
+      "observations": ["1186-01", "1186-03"]
+    }
+  ],
+  "minimal": [
+    {
+      "observations": ["1186-01", "1186-03"],
+      "element": ["フローラ treasureSkills.burst.effects[2]"],
+      "reason": "撮影 B はフローラのバーストを使わない（バースト欄の II → III が無い。1186 の burst-panel）",
+      "decided": "2026-11-14"
+    },
+    {
+      "observations": ["1186-01", "1186-03"],
+      "element": ["フローラ treasureSkills.skill2.notes[0]"],
+      "reason": "比べたエクシアの発はバーストの後のバリアの窓の中で、被弾で付きうるバリアと攻撃力▲は同じ窓の付き直しになるだけ（値は変わらない）。被弾の防御力無視ダメージ▲はエクシアの通常攻撃に乗らない",
+      "decided": "2026-11-14"
+    }
+  ]
+}

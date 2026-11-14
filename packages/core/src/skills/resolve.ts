@@ -24,6 +24,8 @@ import {
   isCounterFullTrigger,
   isFlagStat,
   isSelfHpAtMostTrigger,
+  isAdjacentHpAtMostTrigger,
+  type AdjacentHpFullTrigger,
   isShotCountTrigger,
   isStateCountWindow,
   isTimerTrigger,
@@ -109,6 +111,10 @@ export type ResolvedTrigger =
   // 自分の HP の割合が閾値（比率。説明文の X% ÷ 100。plan/design-mast.md 8 節）以下に下がった時。timed だけ。1 パス目の件の一覧が
   // 追う（skills/holders/fires.ts の firesOf）ので、出来事の列では追わない
   | { selfHpAtMost: number }
+  // 両隣の味方の HP の割合が閾値（比率）以下に下がった時・100% に上がった時（plan/design-adjacent-allies.md 2.3・2.4 節）。
+  // timed と状態の付与だけ。1 パス目の件の一覧が追う（skills/holders/fires.ts）
+  | { adjacentHpAtMost: number }
+  | AdjacentHpFullTrigger
   // 自分のその状態の件が外れた時（plan/design-grave.md 2.1 節）。ammoDecrease・状態の付与（と counterChange）だけ。1 パス目の件の一覧が
   // 追う（skills/holders/conditions.ts の endedAt）ので、出来事の列では追わない
   | EndedTrigger;
@@ -116,6 +122,11 @@ export type ResolvedTrigger =
 /** 自分の HP の割合の窓のきっかけ（{ selfHpAtMost }）か */
 export function isResolvedSelfHpAtMost(t: ResolvedTrigger): t is { selfHpAtMost: number } {
   return typeof t === 'object' && 'selfHpAtMost' in t;
+}
+
+/** 両隣の味方の HP の割合のきっかけ（{ adjacentHpAtMost }・{ adjacentHpFull }）か */
+export function isResolvedAdjacentHp(t: ResolvedTrigger): t is { adjacentHpAtMost: number } | AdjacentHpFullTrigger {
+  return typeof t === 'object' && ('adjacentHpAtMost' in t || 'adjacentHpFull' in t);
 }
 
 /** 使用武器の変更の終わりのきっかけ（{ weaponChangeEnd }）か */
@@ -206,6 +217,8 @@ function selfHpRatioOfRef(skill: SkillRaw, ref: number, level: number): number {
 export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: number): ResolvedTrigger {
   // HP の割合の閾値は % → 比率
   if (isSelfHpAtMostTrigger(trigger)) return { selfHpAtMost: selfHpRatioOfRef(skill, trigger.selfHpAtMostRef, level) };
+  if (isAdjacentHpAtMostTrigger(trigger))
+    return { adjacentHpAtMost: selfHpRatioOfRef(skill, trigger.adjacentHpAtMostRef, level) };
   if (!isShotCountTrigger(trigger)) return typeof trigger === 'object' ? { ...trigger } : trigger;
   // 確率のきっかけは 1 発ごとに引く（every 1）。確率は % → 比率
   if (trigger.chance !== undefined || trigger.chanceRef !== undefined) {
@@ -734,6 +747,8 @@ export type ResolvedStateGrant = ResolvedItemFields & {
   isStatic: boolean;
   /** 解除不可の印（同じ定義の同じ状態の付与で揃う。plan/design-skill-stage1.md 1.3 節） */
   undispellable?: true;
+  /** スタック量増減効果無効（ほかの枠のスタック量▲も受けない。plan/design-nayuta.md 2.5 節・plan/design-adjacent-allies.md 2.5 節） */
+  stackImmutable?: true;
   /**
    * 1 回の発火で付けるスタックの数を、自分のカウンタの値か、自分の状態の
    * スタック数にする（plan/design-skill-stage10.md 2.1 節）
@@ -818,6 +833,7 @@ export function resolveStateGrants(
       );
       const grant: ResolvedStateGrant = { ...window, state: effect.state, isStatic: statics.has(effect.state) };
       if (effect.undispellable) grant.undispellable = true;
+      if (effect.stackImmutable) grant.stackImmutable = true;
       if (effect.stacksFrom !== undefined) grant.stacksFrom = effect.stacksFrom;
       if (effect.stacksPerFireRef !== undefined) {
         const n = amountOf({ amountRef: effect.stacksPerFireRef }, character.skills[slot], levels[slot]);
@@ -1300,8 +1316,8 @@ export function resolveStackChanges(
   for (const slot of SKILL_SLOTS) {
     const skill = character.skills[slot];
     def.skills[slot].effects.forEach((effect, effectIndex) => {
-      // 敵の持続ダメージのスタック量▲は resolveDotStackUps
-      if (effect.kind !== 'stackChange' || effect.target === 'enemy') return;
+      // 敵の持続ダメージのスタック量▲は resolveDotStackUps、味方の全部のスタック可能バフへの▲は resolveAllStackableChanges
+      if (effect.kind !== 'stackChange' || effect.target === 'enemy' || effect.target === 'allies') return;
       const amount = amountOf(effect, skill, levels[slot]);
       const r: ResolvedStackChange = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
@@ -1313,6 +1329,53 @@ export function resolveStackChanges(
       if (effect.decrease) r.decrease = true;
       if (effect.closesAtZero) r.closesAtZero = true;
       if (effect.existingOnly) r.existingOnly = true;
+      if (effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
+      out.push(r);
+    });
+  }
+  return out;
+}
+
+/**
+ * 解決した、味方の全部のスタック可能バフへのスタック量▲（stackChange の allStackable。plan/design-adjacent-allies.md 2.5 節）。
+ * amount は足すスタックの数（amountRef はスロットの Lv の説明文の値を整数に丸めたもの）
+ */
+export type ResolvedAllStackableChange = {
+  source: ResolvedEffect['source'];
+  effectIndex: number;
+  trigger: ResolvedTrigger;
+  target: 'allies';
+  targetWeapon?: WeaponType;
+  targetElement?: Element;
+  targetClass?: NikkeClass;
+  amount: number;
+  condition?: EffectCondition;
+};
+
+/** 定義の、味方の全部のスタック可能バフへのスタック量▲を Lv の数値に解く */
+export function resolveAllStackableChanges(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedAllStackableChange[] {
+  if (def.resourceId !== character.resourceId) {
+    throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
+  }
+  const out: ResolvedAllStackableChange[] = [];
+  for (const slot of SKILL_SLOTS) {
+    const skill = character.skills[slot];
+    def.skills[slot].effects.forEach((effect, effectIndex) => {
+      if (effect.kind !== 'stackChange' || effect.target !== 'allies') return;
+      const r: ResolvedAllStackableChange = {
+        source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+        effectIndex,
+        trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
+        target: 'allies',
+        amount: amountOf(effect, skill, levels[slot]),
+      };
+      if (effect.targetWeapon !== undefined) r.targetWeapon = effect.targetWeapon;
+      if (effect.targetElement !== undefined) r.targetElement = effect.targetElement;
+      if (effect.targetClass !== undefined) r.targetClass = effect.targetClass;
       if (effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
       out.push(r);
     });

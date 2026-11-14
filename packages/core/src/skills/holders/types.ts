@@ -14,6 +14,7 @@ import type {
   ResolvedRemoveState,
   ResolvedStateExtend,
   ResolvedStackChange,
+  ResolvedAllStackableChange,
   ResolvedStateContent,
   ResolvedStateGrant,
   ResolvedTimedEffect,
@@ -363,6 +364,19 @@ export type StackSource = {
   stage: HeldStage;
   fires: TriggerTracker;
   track: HeldTrack;
+};
+
+/**
+ * 味方の全部のスタック可能バフへのスタック量▲ 1 つ（plan/design-adjacent-allies.md 2.5 節）。targets は対象の枠（編成で決まる）。
+ * 段は 1.5（足す先の件を読む）
+ */
+export type AllStackSource = {
+  sourceSlotIndex: number;
+  effect: ResolvedAllStackableChange;
+  fires: TriggerTracker;
+  targets: readonly number[];
+  /** 足す先の件の列（最初の発火で選ぶ。skills/holders/fire.ts の fireAllStackable） */
+  tracks?: HeldTrack[];
 };
 
 /** カウンタの増減 1 つ（対象は自分。plan/design-skill-stage10.md 2.3 節）。{ ended } のトリガーは fires を持たない */

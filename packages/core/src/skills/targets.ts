@@ -143,6 +143,20 @@ export function isEffectTarget(
   }
 }
 
+/**
+ * 枠 selfIndex の「両隣」の枠（左右の枠のうち空でないもの。枠の若い順）。withSelf なら自分の枠も入れる。ゲーム内の用語のツールチップの
+ * 「両隣」（編成の枠の左右）の読み（plan/design-rouge.md 2.1 節・plan/design-adjacent-allies.md 2.1 節）
+ */
+export function adjacentSlotsOf(
+  characters: readonly (unknown | null)[],
+  selfIndex: number,
+  withSelf: boolean,
+): number[] {
+  return [selfIndex - 1, ...(withSelf ? [selfIndex] : []), selfIndex + 1].filter(
+    (i) => i >= 0 && i < characters.length && characters[i] !== null && characters[i] !== undefined,
+  );
+}
+
 /** 文脈しだいで掛かりうるか（burstUsers・topAttack は武器種・属性の条件だけで見る）。1 パス目で「窓を持ちうる枠」を決めるのに使う */
 export function canEverTarget(
   effect: TargetedEffect,

@@ -910,6 +910,29 @@ export function isSkillFiredTrigger(t: unknown): t is SkillFiredTrigger {
   return typeof t === 'object' && t !== null && 'skillFired' in t;
 }
 
+/**
+ * 「両隣の味方のうち 1 機が HP X% 以下になった時」（plan/design-adjacent-allies.md 2.3 節）。発動者の左右の枠（空枠は数えない）の
+ * どちらかの HP の割合が閾値（description_value_NN の X%）以下に下がったフレームに発火する（同じフレームに 2 機とも下がっても 1 回）。
+ * 割合は { selfHpAtMostRef } と同じ（skills/holders/views.ts の selfHpRatioAt。回復で戻る分は扱わない）。1 パス目の件の一覧が追う。
+ * 秒の維持の timed と状態の付与にだけ書け、最大HP▲・最大HP のみ▲ は書けない
+ */
+export type AdjacentHpAtMostTrigger = { adjacentHpAtMostRef: number };
+
+export function isAdjacentHpAtMostTrigger(t: unknown): t is AdjacentHpAtMostTrigger {
+  return typeof t === 'object' && t !== null && 'adjacentHpAtMostRef' in t;
+}
+
+/**
+ * 「両隣の味方のうち 1 機の HP が最大になった時」（plan/design-adjacent-allies.md 2.4 節）。左右の枠のどちらかの HP の割合が、
+ * 100% 未満から 100% に上がったフレームに発火する（被弾の無い前提では、最大HP のみ▲ が外れた時）。書ける効果は
+ * { adjacentHpAtMostRef } と同じ
+ */
+export type AdjacentHpFullTrigger = { adjacentHpFull: true };
+
+export function isAdjacentHpFullTrigger(t: unknown): t is AdjacentHpFullTrigger {
+  return typeof t === 'object' && t !== null && 'adjacentHpFull' in t;
+}
+
 /** JSON に書くトリガー。文字列は BuffTrigger、オブジェクトは回数トリガー・時間の周期のトリガー・効果名のトリガーなど */
 export type EffectTrigger =
   | BuffTrigger
@@ -930,6 +953,9 @@ export type EffectTrigger =
   | SelfHpAtMostTrigger
   // { skillFired }（timed だけが受ける。parseSkillFiredTrigger）
   | SkillFiredTrigger
+  // { adjacentHpAtMostRef }・{ adjacentHpFull }（timed・状態の付与だけが受ける。parseAdjacentHpTrigger）
+  | AdjacentHpAtMostTrigger
+  | AdjacentHpFullTrigger
   // { counterFull }（damage・dot・counterChange・状態の付与だけが受ける。parseCounterFullTrigger）
   | CounterFullTrigger
   // { summon }（damage だけが受ける。parseSummonAttackTrigger）
@@ -1678,6 +1704,13 @@ export type HealEffect = TargetCountFields &
      * allies だけ。エイダの S1 の吸収回復。plan/design-skill-stage15.md 2.3 節）
      */
     targetBurstStep?: BasicBurstStep;
+    /**
+     * 「両隣の味方」（timed の targetAdjacent と同じ。target が 'allies' のときだけ。plan/design-rouge.md 2.1 節・
+     * plan/design-adjacent-allies.md 2.1 節）
+     */
+    targetAdjacent?: true;
+    /** 「自分と両隣」（targetAdjacent と組むときだけ） */
+    includeSelf?: true;
     /** 回復量（%）の description_value_NN（UI の表示用） */
     ref: number;
     /** 維持秒数の description_value_NN（任意。durationSeconds と両方は書けない） */
@@ -2447,7 +2480,31 @@ export type StateExtendEffect = {
  * 切る（同じフレームの判定には付いている）。最後の 1 段は残す（V-0437）。減らす先は、足す先と同じ（同じ定義の付与の、自分の件の列）。
  * 後の付与は減った段から数える
  */
-export type StackChangeEffect = {
+/** スタック量の増減。自分か敵の 1 つの状態（OwnStackChangeEffect）か、味方の全部のスタック可能バフ（AllStackableChangeEffect） */
+export type StackChangeEffect = OwnStackChangeEffect | AllStackableChangeEffect;
+
+/**
+ * 「〈味方〉に、スタック可能バフ効果のスタック量 N 個▲」（plan/design-adjacent-allies.md 2.5 節）。対象の枠（allies を
+ * targetWeapon・targetElement・targetClass で絞った枠）が持つ、上限のある状態の付与の件の列（敵に付く状態・stackImmutable を除く）と、
+ * 上限のある timed の件の列（確率のきっかけを除く）の全部に、足す段の始まりのフレーム（射撃の回数のきっかけは発の次のフレーム）に
+ * 件が付いていれば始まりを amount 個足す（付いていなければ足さない。OwnStackChangeEffect の existingOnly と同じ。C-1182）。
+ * どの枠の定義から付いた件でもよい。増加だけ。段は 1.5（件を読む）
+ */
+export type AllStackableChangeEffect = FixedTargetFields & {
+  kind: 'stackChange';
+  allStackable: true;
+  trigger: EffectTrigger;
+  target: 'allies';
+  targetWeapon?: WeaponType;
+  targetElement?: Element;
+  targetClass?: NikkeClass;
+  amount?: number;
+  amountRef?: number;
+  condition?: EffectCondition;
+  assumes?: LocalizedText;
+};
+
+export type OwnStackChangeEffect = {
   kind: 'stackChange';
   /** 目録の id（持ち主が味方の状態。target が enemy なら敵の状態） */
   state: NamedStateId;
@@ -2559,10 +2616,17 @@ export function isEndedTrigger(t: unknown): t is EndedTrigger {
  * （skills/resolve.ts の resolvePassives）
  */
 export function isStaticStateGrant(effect: StateGrantEffect): boolean {
+  return isBattleLongGrant(effect) && effect.target === 'self';
+}
+
+/**
+ * 戦闘の終わりまでの付与の形か（戦闘開始時・戦闘の終わりまで・発火の条件なし・スタックなし。対象は問わない）。自分への付与なら
+ * 静的な付与（isStaticStateGrant）。両隣への付与は、〈状態〉の味方の対象が読む枠の状態に入る（skills/composition.ts の withAdjacentStates）
+ */
+export function isBattleLongGrant(effect: StateGrantEffect): boolean {
   return (
     effect.trigger === 'battleStart' &&
     effect.durationUntil === 'battleEnd' &&
-    effect.target === 'self' &&
     effect.condition === undefined &&
     effect.maxStacks === undefined &&
     effect.maxStacksRef === undefined

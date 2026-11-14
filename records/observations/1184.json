@@ -1,0 +1,222 @@
+[
+  {
+    "id": "1184-01",
+    "recording": "1184",
+    "kind": "hit",
+    "use": "compare",
+    "value": 634346,
+    "unit": "ダメージ",
+    "description": "撮影 A（バーストなし）のエクシアの 3 発目（コア・非会心・距離ボーナスなし）の 1 ヒット。ハッキングコード収集（状態）の段は、自分の発だけなら 2、フローラの S1 のスタック量▲が状態にも足されれば 3",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f1091 の 645,467 からフローラのコアの 1 ヒット 11,121 を引いた。1〜4 発目（f927・1009・1091・1173）は 350,156・452,300・645,467・849,755 で、フローラの 1 ヒット（5,560・11,121・2 × 11,121）を引くと 344,596・441,179・634,346・827,513"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 234,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "source": "V-0776",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1184-02",
+    "recording": "1184",
+    "kind": "hit",
+    "use": "compare",
+    "value": 827513,
+    "unit": "ダメージ",
+    "description": "撮影 A のエクシアの 4 発目（コア）の 1 ヒット。モデルではハッキングコード収集が 5 段（自分の発だけなら 3 段）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f1173 の 849,755 からフローラのコアの 2 ヒット（2 × 11,121）を引いた"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 316,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "source": "V-0776",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1184-03",
+    "recording": "1184",
+    "kind": "hit",
+    "use": "compare",
+    "value": 907541,
+    "unit": "ダメージ",
+    "description": "撮影 A のエクシアの 11 発目（コア）の 1 ヒット。宝物版 S2 の電撃コードの味方への攻撃力▲（timed）は、モデルでは 4 段（自分の最後の弾丸だけなら 1 段）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f1865 の 907,541（12 発目の f1947 も同じ）。5・6 発目（f1255・1337）は 827,513・1,034,392（会心）で timed の段は 0、13 発目（f2393）から 927,545 で 5 段"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1008,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "source": "V-0776",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1184-04",
+    "recording": "1184",
+    "kind": "hit",
+    "use": "record",
+    "value": 427172,
+    "unit": "ダメージ",
+    "description": "撮影 A のベスティー：TU の、フローラのリロード中（小さい増分の無い間）のフルチャージの発の増分（f2490）。防御力無視ダメージ 319,643（▲なし）と通常攻撃のコアの 1 ヒット 107,529 の和",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "フローラのリロードの間（f2389〜2560）の増分。同じ間の f2510・2530 は 458,624（319,643 + 戦場コントロールの攻撃力▲の乗ったコア 138,981）。▲あり（418,636）の和は 526,165・557,617"
+    },
+    "source": "V-0776",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1184-05",
+    "recording": "1184",
+    "kind": "hit",
+    "use": "record",
+    "value": 592362,
+    "unit": "ダメージ",
+    "description": "撮影 A のベスティー：TU の、フローラのリロード中のフルチャージの発の増分（f3705）。防御力無視ダメージ▲（30.97%）の乗った 418,636 と、会心のコア 173,726 の和",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f3744 も同じ。バーストを使っていない録画で、戦闘開始の後にも▲の乗った塊と乗らない塊が入れ替わる（1185-05 の記録）"
+    },
+    "source": "V-0776",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1184-06",
+    "recording": "1184",
+    "kind": "hit",
+    "use": "compare",
+    "value": 418636,
+    "unit": "ダメージ",
+    "description": "撮影 A の戦闘開始の直後のベスティー：TU の S2 の防御力無視ダメージ（非会心）の 1 ヒット。S2 の防御力無視ダメージ▲（30.97%）が乗る（▲なしは 319,643）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f1001 の 537,286 から、ベスティー：TU の最初の発の通常攻撃のコアの 1 ヒット 107,529 とフローラのコアの 1 ヒット 11,121 を引いた。同じ塊の f1177 も▲あり"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 140,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "source": "V-0776",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1184-07",
+    "recording": "1184",
+    "kind": "hit",
+    "use": "compare",
+    "value": 319643,
+    "unit": "ダメージ",
+    "description": "撮影 A の戦闘開始から約 10 秒の後のベスティー：TU の S2 の防御力無視ダメージ（非会心）の 1 ヒット。▲が外れている",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "1184-04（f2490 の 427,172）から、通常攻撃のコアの 1 ヒット 107,529 を引いた（フローラのリロード中で、フローラの 1 ヒットは混ざらない）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 1600,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "source": "V-0776",
+    "readAt": "2026-11-14"
+  }
+]

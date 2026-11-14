@@ -57,7 +57,7 @@ import {
 import { itemsOf } from '../src/skills/holders.ts';
 import type { TreasurePhase } from '../src/skills/treasure.ts';
 import { compositionAllows, resolveSelfState, selfStateLookupsForTeam } from '../src/skills/composition.ts';
-import { SKILL_SLOTS, parseSkillDefinition, parseSkillIndex } from '../src/skills/types.ts';
+import { SKILL_SLOTS, parseSkillDefinition, parseSkillIndex, type SkillEffect } from '../src/skills/types.ts';
 import { TEAM_SIZE, type TeamSlotInput } from '../src/team.ts';
 import type { BuildMasters, CharacterData, CharacterIndex, Element } from '../src/types.ts';
 import type { EnemyInput } from '../src/damage.ts';
@@ -99,6 +99,9 @@ function triggerLabel(t: ResolvedTrigger): string {
   if ('chargeFull' in t) return 'chargeFull';
   // 自分の HP の割合が閾値以下の間（hp<=70%）
   if ('selfHpAtMost' in t) return `hp<=${+(t.selfHpAtMost * 100).toFixed(2)}%`;
+  // 両隣の味方の HP の割合（adjacentHp<=90%・adjacentHpFull）
+  if ('adjacentHpAtMost' in t) return `adjacentHp<=${+(t.adjacentHpAtMost * 100).toFixed(2)}%`;
+  if ('adjacentHpFull' in t) return 'adjacentHpFull';
   // 召喚の攻撃（summon:nearFeather）
   if ('summon' in t) return `summon:${t.summon}`;
   // 自分の状態が終わった時（ended:prediction）
@@ -109,6 +112,12 @@ function triggerLabel(t: ResolvedTrigger): string {
   if ('every' in t)
     return `${t.count}/${t.every}${t.during ? `@${typeof t.during === 'object' ? t.during.state : t.during}${t.reset === 'fullBurstStart' ? '!' : ''}` : ''}`;
   return `${t.count}≥${t.atLeast}${t.atMost !== undefined ? `≤${t.atMost}` : ''}`;
+}
+
+/** 効果の行に添える状態の id（付与・解除・スタック量の増減。味方の全部のスタック可能バフへの▲は allStackable） */
+function stateLabelOf(e: SkillEffect): string {
+  if (e.kind === 'stackChange') return e.target === 'allies' ? ' allStackable' : ` ${e.state}`;
+  return e.kind === 'state' || e.kind === 'removeState' ? ` ${e.state}` : '';
 }
 
 const { values } = parseArgs({
@@ -487,7 +496,7 @@ const compositionRows = slots.flatMap((slot, i) =>
         {
           slot: `slot ${i + 1} ${slot.character.name.ja}`,
           // 付与の行には状態の id も出す（state camouflage）。解除も（removeState metalSigma）
-          effect: `${skill}[${effectIndex}] ${e.kind}${e.kind === 'state' || e.kind === 'removeState' || e.kind === 'stackChange' ? ` ${e.state}` : ''}`,
+          effect: `${skill}[${effectIndex}] ${e.kind}${stateLabelOf(e)}`,
           condition: conditions.join(' & '),
           applies:
             compositionAllows(e, compositionCharacters, i, input.enemy.element) &&

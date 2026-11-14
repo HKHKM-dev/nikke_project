@@ -1,0 +1,342 @@
+{
+  "verification": "V-0776",
+  "note": "撮影 A（1184・1185。バーストなし）・B（1186。エクシアのバーストだけ）・C（1187。オートバースト）の予測。射撃場の BigArms（電撃）・3 分モード・スペック固定 ON（スキル Lv10・宝物は段階 3）。フレームはモデルのゲーム内のフレームで、各窓の代表（A のエクシアの timed は、モデルでは 8.2・13.0・14.7・16.4・18.6 秒に 1〜5 段。B のエクシアのバーストの 1 回目は f666 で、攻撃力▲ f667〜1255・防御力無視ダメージ▲ f783〜1371）。読むときは buff-edge の setup にこの指標を使う",
+  "team": [
+    {
+      "rid": 210,
+      "treasurePhase": 3
+    },
+    {
+      "rid": 411,
+      "treasurePhase": 3
+    },
+    {
+      "rid": 94,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（plan/design-adjacent-allies.md。S1 のスタック量▲は状態と timed の両方・付いている時だけ、S2 の防御力無視ダメージ▲は両隣の HP の割合が 100% に戻った時だけ、宝物版のバースト 2 段階突入の最大HP のみ▲ → バリア → 攻撃力▲）"
+    },
+    {
+      "id": "H0-stack",
+      "note": "S1 のスタック量▲（宝物版 skill1 の effects[2]）が無い",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 411,
+            "skill": "skill1",
+            "index": 2,
+            "treasure": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2-td-always",
+      "note": "S2 の防御力無視ダメージ▲が、満タンの味方への回復（持続回復の刻み）でも起き、戦闘の始めから終わりまでずっと乗る（味方全体の常時の▲として足す）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 411,
+            "skill": "skill2",
+            "treasure": true,
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "trueDamage",
+              "ref": 4
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-hp-full",
+      "note": "S2 の防御力無視ダメージ▲（宝物版 skill2 の effects[1]）が、最大HP のみ▲ が外れて割合が戻った時には起きない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 411,
+            "skill": "skill2",
+            "index": 1,
+            "treasure": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-barrier-atk",
+      "note": "宝物版 S2 のバリア適用時の攻撃力▲（effects[2]）が起きない（バリアが付かないか、バリア適用時の読みが違う）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 411,
+            "skill": "skill2",
+            "index": 2,
+            "treasure": true
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-exia-t4",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 990,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 A: エクシアの 1 ヒット（コア）。モデルでは timed の攻撃力▲が 4 段の時（16.4〜18.6 秒）。H0-stack では 1 段"
+    },
+    {
+      "id": "A-exia-t5",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 A: エクシアの 1 ヒット（コア）。モデルでは 5 段（18.6 秒から）。H0-stack では 2 段"
+    },
+    {
+      "id": "A-besti-td",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 3000,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 A: ベスティー：TU の S2 の防御力無視ダメージ（非会心）。H1 では▲なし、H2-td-always ではずっと▲"
+    },
+    {
+      "id": "B-td-pre",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 500,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "noBurstSlots": [2, 3],
+        "burst": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 B: エクシアのバーストの前の防御力無視ダメージ"
+    },
+    {
+      "id": "B-exia-atk",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "noBurstSlots": [2, 3],
+        "burst": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 B: エクシアのバーストの直後（攻撃力▲の窓・防御力無視ダメージ▲の前）のエクシアの 1 ヒット"
+    },
+    {
+      "id": "B-td-atk",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 700,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "noBurstSlots": [2, 3],
+        "burst": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 B: 同じ窓の防御力無視ダメージ（攻撃力▲だけ）"
+    },
+    {
+      "id": "B-td-both",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 900,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "noBurstSlots": [2, 3],
+        "burst": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 B: 攻撃力▲と防御力無視ダメージ▲が重なる窓の防御力無視ダメージ"
+    },
+    {
+      "id": "B-td-only",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 1300,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "noBurstSlots": [2, 3],
+        "burst": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 B: 攻撃力▲が外れ、防御力無視ダメージ▲だけの窓（f1255〜1371）"
+    },
+    {
+      "id": "C-td-pre",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 500,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 C: 1 回目のチェーンの前の防御力無視ダメージ"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-14",
+    "commit": "e78401a6cbe4001b9581cc86974f751a8d04b1b2",
+    "values": {
+      "H1": {
+        "A-exia-t4": 907541.1560000001,
+        "A-exia-t5": 927593.824,
+        "A-besti-td": 319642.7360000001,
+        "B-td-pre": 319642.7360000001,
+        "B-exia-atk": 1003206.432,
+        "B-td-atk": 679982.5025105987,
+        "B-td-both": 679982.5025105987,
+        "B-td-only": 494158.0422167918,
+        "C-td-pre": 319642.7360000001
+      },
+      "H0-stack": {
+        "A-exia-t4": 847521.2320000001,
+        "A-exia-t5": 867573.9,
+        "A-besti-td": 319642.7360000001,
+        "B-td-pre": 319642.7360000001,
+        "B-exia-atk": 1003206.432,
+        "B-td-atk": 679982.5025105987,
+        "B-td-both": 679982.5025105987,
+        "B-td-only": 494158.0422167918,
+        "C-td-pre": 319642.7360000001
+      },
+      "H2-td-always": {
+        "A-exia-t4": 907541.1560000001,
+        "A-exia-t5": 927593.824,
+        "A-besti-td": 418636.09133920004,
+        "B-td-pre": 418636.09133920004,
+        "B-exia-atk": 1003206.432,
+        "B-td-atk": 840775.4940563974,
+        "B-td-both": 840775.4940563975,
+        "B-td-only": 611009.7988591836,
+        "C-td-pre": 418636.09133920004
+      },
+      "H0-hp-full": {
+        "A-exia-t4": 907541.1560000001,
+        "A-exia-t5": 927593.824,
+        "A-besti-td": 319642.7360000001,
+        "B-td-pre": 319642.7360000001,
+        "B-exia-atk": 1003206.432,
+        "B-td-atk": 519189.5109648001,
+        "B-td-both": 519189.5109648002,
+        "B-td-only": 377306.2855744001,
+        "C-td-pre": 319642.7360000001
+      },
+      "H0-barrier-atk": {
+        "A-exia-t4": 907541.1560000001,
+        "A-exia-t5": 927593.824,
+        "A-besti-td": 319642.7360000001,
+        "B-td-pre": 319642.7360000001,
+        "B-exia-atk": 847569.56,
+        "B-td-atk": 494158.0422167918,
+        "B-td-both": 494158.0422167918,
+        "B-td-only": 494158.0422167918,
+        "C-td-pre": 319642.7360000001
+      }
+    }
+  }
+}

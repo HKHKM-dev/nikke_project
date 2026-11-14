@@ -1,0 +1,106 @@
+[
+  {
+    "id": "1187-01",
+    "recording": "1187",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2035246,
+    "unit": "ダメージ",
+    "description": "撮影 C（オートバースト）の 2 回目のフルバーストの中のエクシアのコアの 1 ヒット。フローラのバーストの攻撃力▲（スキル発動者基準 85.86%）が乗る。乗らなければ 1,598,251",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "バースト欄の I → II の替わり目（1187-01 の f3997）から +347 の増分。+435・+517 は 2,035,302"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3353,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0001
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0776",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1187-02",
+    "recording": "1187",
+    "kind": "hit",
+    "use": "record",
+    "value": 3191597,
+    "unit": "ダメージ",
+    "description": "撮影 C の 1 回目のフルバーストの中のベスティー：TU のフルチャージの発の増分（f1495 から +511・+531・+550）。防御力無視ダメージ（バーストの防御力無視ダメージ▲ 42.39% の乗った 2,762,463）と通常攻撃のコア 429,115 の和",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "バーストの▲が無ければ防御力無視ダメージは 2,260,660"
+    },
+    "source": "V-0776",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1187-03",
+    "recording": "1187",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2005715,
+    "unit": "ダメージ",
+    "description": "撮影 C の 1 回目のフルバーストの中のエクシアのコアの 1 ヒット（フローラのバーストの攻撃力▲が乗る）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "バースト欄の I → II の替わり目（f1495）から +446 の増分。+363 は会心の 2,406,876"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1043,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0001
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0776",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1187-04",
+    "recording": "1187",
+    "kind": "hit",
+    "use": "record",
+    "value": 2762482,
+    "unit": "ダメージ",
+    "description": "撮影 C の 1 回目のフルバーストの中のベスティー：TU の S2 の防御力無視ダメージ（非会心）の 1 ヒット。フローラのバーストの防御力無視ダメージ▲（42.39%）が乗る（無ければ 2,260,660）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "1187-02（3,191,597。+511・+531・+550 の 3 回）から、通常攻撃のコアの 1 ヒット 429,115 を引いた。フルバーストの中は入りの止まりで動画とモデルの時刻がそろわず、モデルの同じ回の値（バーストの▲・S2 の▲・ベスティー：TU のバーストの▲の重なり方で 2,265,815〜2,762,463）を決められないので比べない"
+    },
+    "source": "V-0776",
+    "readAt": "2026-11-14"
+  }
+]

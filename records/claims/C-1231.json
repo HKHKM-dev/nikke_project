@@ -1,0 +1,34 @@
+{
+  "id": "C-1231",
+  "text": "フローラの S1 の「通常攻撃で 100 回攻撃した時、電撃コードの味方全体にスタック可能バフ効果のスタック量 1 個▲」は、電撃コードの味方（自分も入る）が持つ、上限のある状態の付与とスタックする timed の全部に、付いていれば 1 段足す（付いていなければ足さない）。エクシアの宝物版 S2 のハッキングコード収集（状態）と電撃コードの味方への攻撃力▲（timed）の両方に足され、どちらも自分の発だけより早く段が上がる",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1184-01`・`1184-02`・`1184-03`・`1185-01`・`1185-02`・`1185-03`。V-0776",
+  "model": "`data/skills/411.json` の treasureSkills.skill1 の effects[2]（`stackChange` の `allStackable`。`skills/holders/fire.ts` の `fireAllStackable`・`skills/holders/items.ts` の `isStackableBuffTrack`。plan/design-adjacent-allies.md 2.5 節）",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": ["data/skills/411.json の treasureSkills.skill1 の effects[2]"]
+  },
+  "decidedOn": [],
+  "minimal": [
+    {
+      "observations": ["1184-01", "1184-02", "1184-03", "1185-01", "1185-02", "1185-03"],
+      "element": [
+        "フローラ treasureSkills.skill1.effects[3]",
+        "フローラ treasureSkills.skill2.effects[0]",
+        "フローラ treasureSkills.skill2.effects[2]",
+        "フローラ treasureSkills.burst.effects[2]"
+      ],
+      "reason": "撮影 A はバーストを一度も使わないので、バースト 2 段階突入（最大HP のみ▲）も、それで起きるバリアとバリア適用時の攻撃力▲も、バーストも起きない",
+      "decided": "2026-11-14"
+    },
+    {
+      "observations": ["1184-01", "1184-02", "1184-03", "1185-01", "1185-02", "1185-03"],
+      "element": ["フローラ treasureSkills.skill2.notes[0]"],
+      "reason": "被弾で起きうるのは防御力無視ダメージ▲（エクシアの通常攻撃に乗らない）と、HP 90% 以下でのバリア（その後のバリア適用時の攻撃力▲）。エクシアの発はどれも攻撃力▲の無い格子と一致し、バリアは付いていない",
+      "decided": "2026-11-14"
+    }
+  ]
+}

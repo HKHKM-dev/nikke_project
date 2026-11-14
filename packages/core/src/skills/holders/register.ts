@@ -43,6 +43,8 @@ export function createRegister({
   fireRemoveDebuff,
   firesOf,
   fireStackChange,
+  fireAllStackable,
+  allStackSources,
   fireTimed,
   frames,
   holdsAt,
@@ -361,6 +363,18 @@ export function createRegister({
         continue;
       }
       fireStackChange(x, battleStartOnly ? 0 : startOfFire(x.effect.trigger, f));
+    }
+    // 味方の全部のスタック可能バフへのスタック量▲（足す先の件を読むので段 1.5。plan/design-adjacent-allies.md 2.5 節）
+    for (const x of allStackSources) {
+      if (!take(x.effect.trigger) || !(battleStartOnly || x.fires(ev))) continue;
+      if (
+        !fireContextHolds(x.effect.condition, x.effect.trigger, ev, x.sourceSlotIndex) ||
+        !holdsAt(x.effect.condition, x.sourceSlotIndex, f)
+      ) {
+        skipEffect(x.sourceSlotIndex, x.effect, f);
+        continue;
+      }
+      fireAllStackable(x, battleStartOnly ? 0 : startOfFire(x.effect.trigger, f));
     }
     dispatchApplied(1.5, from);
   };

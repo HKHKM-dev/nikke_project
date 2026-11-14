@@ -24,6 +24,7 @@ import {
   type RemoveDebuffEffect,
   type RemoveStateEffect,
   type StackChangeEffect,
+  type AllStackableChangeEffect,
   type StatContentItem,
   type StateContentItem,
   type StateExtendEffect,
@@ -44,7 +45,7 @@ import {
 } from './common.ts';
 import { CONDITION_KEYS_OF, parseCondition, validateUsedBurst } from './condition.ts';
 import { type GrantTimedFields, parseTimedEffect, parseTimedFields } from './timed.ts';
-import { parseTargetCount } from './target.ts';
+import { parseTargetClass, parseTargetCount, parseTargetElement, parseTargetWeapon } from './target.ts';
 import {
   parseAppliedTrigger,
   parseCounterFullTrigger,
@@ -590,6 +591,7 @@ export function parseCounterChangeEffect(v: Record<string, Json>, path: string):
  * 同じ。同じ定義にその状態をスタックで付ける付与が要ること（validateStackChanges）は、定義全体で見る
  */
 export function parseStackChangeEffect(v: Record<string, Json>, path: string): StackChangeEffect {
+  if (v.allStackable !== undefined) return parseAllStackableChange(v, path);
   rejectUnknownKeys(
     v,
     [
@@ -649,6 +651,53 @@ export function parseStackChangeEffect(v: Record<string, Json>, path: string): S
       fail(`${path}.condition`, `target enemy needs the condition { enemyState: "${state}" }`);
     effect.condition = condition;
   } else if (v.condition !== undefined) {
+    const condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.removeState);
+    validateUsedBurst(condition, trigger, `${path}.condition`);
+    effect.condition = condition;
+  }
+  parseAssumes(v, effect, path);
+  return effect;
+}
+
+/**
+ * 味方の全部のスタック可能バフへのスタック量▲（plan/design-adjacent-allies.md 2.5 節）。対象は allies（武器種・コード・クラスで
+ * 絞れる）。増加だけで、付いている件にだけ足す（existingOnly は書かない。いつもその読み）。条件は解除と同じ鍵
+ */
+function parseAllStackableChange(v: Record<string, Json>, path: string): AllStackableChangeEffect {
+  rejectUnknownKeys(
+    v,
+    [
+      'kind',
+      'allStackable',
+      'trigger',
+      'target',
+      'targetWeapon',
+      'targetElement',
+      'targetClass',
+      'amount',
+      'amountRef',
+      'condition',
+      'assumes',
+      'claims',
+    ],
+    path,
+  );
+  parseTrue(v.allStackable, `${path}.allStackable`);
+  if (v.target !== 'allies')
+    fail(`${path}.target`, `allStackable must target "allies", got ${JSON.stringify(v.target)}`);
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
+  const effect: AllStackableChangeEffect = { kind: 'stackChange', allStackable: true, trigger, target: 'allies' };
+  const targetWeapon = parseTargetWeapon(v, 'allies', path);
+  if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
+  const targetElement = parseTargetElement(v, 'allies', path);
+  if (targetElement !== undefined) effect.targetElement = targetElement;
+  const targetClass = parseTargetClass(v, 'allies', path);
+  if (targetClass !== undefined) effect.targetClass = targetClass;
+  if ((v.amount === undefined) === (v.amountRef === undefined))
+    fail(path, 'expected exactly one of amount and amountRef');
+  if (v.amount !== undefined) effect.amount = parsePositiveInt(v.amount, `${path}.amount`);
+  else effect.amountRef = parseRef(v.amountRef, `${path}.amountRef`);
+  if (v.condition !== undefined) {
     const condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.removeState);
     validateUsedBurst(condition, trigger, `${path}.condition`);
     effect.condition = condition;

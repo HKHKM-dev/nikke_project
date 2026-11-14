@@ -387,6 +387,11 @@ export const NAMED_STATES = {
    * 弾丸チャージ（宝物版は貫通ダメージ▲も）が出る。宝物版 S1 のスタック量▲が足す。plan/design-diesel.md 1 節）
    */
   strawberryCandy: { name: { ja: 'イチゴキャンディ', en: 'Strawberry Candy' }, holder: 'ally' },
+  /**
+   * 心の平和（フローラの宝物版 S1。戦闘開始時に自分と両隣の味方に付く・戦闘の終わりまで。中身は持続回復（定義では別の heal）。
+   * 宝物版 S1・S2 の「心の平和状態の味方全体」が見る。plan/design-adjacent-allies.md 2.2 節）
+   */
+  heartOfPeace: { name: { ja: '心の平和', en: 'Peace of Mind' }, holder: 'ally' },
   /** ヘイト（敵全体を挑発。ディーゼルの宝物版バースト。自分・10 秒・中身なし。宝物版 S1 の「自分がヘイト状態なら」が見る） */
   attract: { name: { ja: 'ヘイト', en: 'Attract' }, holder: 'ally' },
   /**
