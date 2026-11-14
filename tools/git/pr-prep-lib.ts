@@ -36,6 +36,8 @@ export type RebaseIo = {
   conflicted: () => string[];
   /** 衝突したファイルを main の版にして git add する */
   takeMain: (paths: readonly string[]) => void;
+  /** 衝突したファイルを、両方が足した行を両方残して直し（mergeAppends）、直せたものを git add して返す */
+  keepBothAppends: (paths: readonly string[]) => string[];
   /** git rebase --continue・--skip（エディタを開かない）。終了コード */
   rebase: (step: '--continue' | '--skip') => number;
   /** index に変更が無い（git diff --cached --quiet が 0） */
@@ -43,15 +45,59 @@ export type RebaseIo = {
 };
 
 /**
+ * 両方が行を足しただけの衝突を直してよいファイル（設計書。並行の PR が「経過」の末尾に 1 行ずつ足す。
+ * plan/design-workflow-simplification-14.md 5 節）
+ */
+export const isAppendMergeable = (path: string): boolean => /^plan\/design-[^/]+\.md$/.test(path);
+
+/**
+ * diff3 の形の衝突の印（git checkout --conflict=diff3）のあるファイルの中身で、どの衝突も基の側が空（両方が同じ所に行を足しただけ）
+ * なら、main の行（ours）・ブランチの行（theirs）の順に両方残した中身を返す。ほかの衝突が 1 つでもあれば null
+ */
+export function mergeAppends(text: string): string | null {
+  const out: string[] = [];
+  let part: 'none' | 'ours' | 'base' | 'theirs' = 'none';
+  let ours: string[] = [];
+  let theirs: string[] = [];
+  let baseEmpty = true;
+  let found = false;
+  for (const line of text.split('\n')) {
+    if (part === 'none' && line.startsWith('<<<<<<<')) {
+      part = 'ours';
+      ours = [];
+      theirs = [];
+      baseEmpty = true;
+      found = true;
+    } else if (part === 'ours' && line.startsWith('|||||||')) part = 'base';
+    else if (part === 'ours' && line.startsWith('======='))
+      return null; // diff3 の形でない
+    else if (part === 'base' && line.startsWith('=======')) part = 'theirs';
+    else if (part === 'theirs' && line.startsWith('>>>>>>>')) {
+      if (!baseEmpty) return null;
+      out.push(...ours, ...theirs);
+      part = 'none';
+    } else if (part === 'ours') ours.push(line);
+    else if (part === 'base') baseEmpty = false;
+    else if (part === 'theirs') theirs.push(line);
+    else out.push(line);
+  }
+  return found && part === 'none' ? out.join('\n') : null;
+}
+
+/**
  * リベースの途中（衝突で止まった）なら、生成物の衝突を main の版で解いて最後まで続ける（生成物だけのコミットは main の版を取ると空に
- * なるので飛ばす）。生成物でないファイルが衝突したら、そこで止めて conflict を返す（リベースの途中のまま）
+ * なるので飛ばす）。設計書の、両方が行を足しただけの衝突は両方残す（isAppendMergeable・mergeAppends）。ほかのファイルが衝突したら、
+ * そこで止めて conflict を返す（リベースの途中のまま）
  */
 export function finishRebase(
   io: RebaseIo,
   generatedPaths: readonly string[],
 ): { kind: 'done' } | { kind: 'conflict'; files: string[] } | { kind: 'error'; message: string } {
   while (io.rebasing()) {
-    const { generated, other } = splitGenerated(io.conflicted(), generatedPaths);
+    const { generated, other: hand } = splitGenerated(io.conflicted(), generatedPaths);
+    const mergeable = hand.filter(isAppendMergeable);
+    const merged = new Set(mergeable.length > 0 ? io.keepBothAppends(mergeable) : []);
+    const other = hand.filter((p) => !merged.has(p));
     if (other.length > 0) return { kind: 'conflict', files: other };
     if (generated.length > 0) io.takeMain(generated);
     if (io.rebase('--continue') === 0 || !io.rebasing()) continue;

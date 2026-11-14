@@ -1,10 +1,10 @@
 // 本物の git で origin/main へのリベースを進める部分。pr-prep.ts と、トピックブランチを取り込むフック（catch-up.ts）が使う。
 // 衝突の解き方の判断は pr-prep-lib.ts の finishRebase。
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { alive, type Lock, lockIsLive } from '../drive/sync-lib.ts';
-import { finishRebase, nulPaths, pathListArgs, rebaseOutcome, type RebaseIo } from './pr-prep-lib.ts';
+import { finishRebase, mergeAppends, nulPaths, pathListArgs, rebaseOutcome, type RebaseIo } from './pr-prep-lib.ts';
 import { parseJson } from './sync-after-merge-lib.ts';
 
 /** git の終了コード（エディタを開かない）。inherit なら git の出力をそのまま見せる */
@@ -38,6 +38,19 @@ export function gitRebaseIo(cwd: string, gitDir: string, inherit = false): Rebas
       execFileSync('git', ['checkout', '--ours', '--', ...paths], { cwd, stdio: 'ignore' });
       execFileSync('git', ['add', '--', ...paths], { cwd, stdio: 'ignore' });
     },
+    keepBothAppends: (paths) =>
+      paths.filter((path) => {
+        // 基の側を見るために diff3 の形で印を付け直す。直せなければ、ふつうの形に戻して人に渡す
+        if (gitStatus(cwd, ['checkout', '--conflict=diff3', '--', path]) !== 0) return false;
+        const file = join(cwd, path);
+        const merged = mergeAppends(readFileSync(file, 'utf8'));
+        if (merged === null) {
+          gitStatus(cwd, ['checkout', '--conflict=merge', '--', path]);
+          return false;
+        }
+        writeFileSync(file, merged);
+        return gitStatus(cwd, ['add', '--', path]) === 0;
+      }),
     rebase: (step) => gitStatus(cwd, ['rebase', step], inherit),
     nothingStaged: () => gitStatus(cwd, ['diff', '--cached', '--quiet']) === 0,
   };

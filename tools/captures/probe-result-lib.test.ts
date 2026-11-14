@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { PANEL_CROP, PANEL_DETECT, isPanel, measurePanel, runsOf, scaleCrop } from './probe-result-lib.ts';
+import { PANEL_CROP, PANEL_DETECT, isPanel, measurePanel, runsOf, scaleCrop, tailOffset } from './probe-result-lib.ts';
 
 /** PANEL_DETECT の大きさの画。暗幕・白いカード・青いヘッダー */
 function panelFrame({ header = true, card = 230, outside = 15 } = {}) {
@@ -37,5 +37,15 @@ describe('切り出しの位置', () => {
   it('ほかの大きさの録画は比で直す', () => {
     expect(scaleCrop(PANEL_CROP, 2560, 1440)).toEqual({ x: 853, y: 53, w: 880, h: 1320 });
     expect(scaleCrop(PANEL_CROP, 1920, 1080)).toEqual(PANEL_CROP);
+  });
+});
+
+describe('tailOffset', () => {
+  it('numbers the tail scan from the head of the recording, or gives up', () => {
+    expect(tailOffset(10_000, 900)).toBe(9_100);
+    expect(tailOffset(600, 600)).toBe(0);
+    expect(tailOffset(0, 900)).toBeNull();
+    expect(tailOffset(500, 900)).toBeNull();
+    expect(tailOffset(10_000, 0)).toBeNull();
   });
 });

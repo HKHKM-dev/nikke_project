@@ -1,5 +1,5 @@
 // 録画の中から「一時停止 / 戦闘履歴」パネルを探し、キャラ名の読めるフレームを切り出す。
-//   node tools/captures/probe-result.ts <動画...> [--list] [--out-dir DIR] [--step 15] [--samples 3]
+//   node tools/captures/probe-result.ts <動画...> [--list] [--out-dir DIR] [--step 15] [--samples 3] [--tail 15] [--full]
 //
 // 立ち絵・ポートレートでのキャラ同定は当てにならない（実際に 2 回取り違えている）。
 // このパネルには枠順・クラス・**キャラ名**・LV・戦闘力・与ダメージ総計が文字で出るので、
@@ -7,6 +7,10 @@
 // 「戦闘履歴」はレイアウトが同じで、画面上の位置もほぼ固定。
 //
 // 検出（暗幕 + 青いヘッダー帯の AND）は probe-result-lib.ts にある。
+//
+// パネルは録画を止める前に映す（plan/captures/protocol.md「撮る（射撃場）」の 3）ので、まず末尾の --tail 秒だけを走査し、
+// 見つからなければ頭から全部を走査する（--full で初めから全部。plan/design-workflow-simplification-14.md 2 節）。
+// フレームの番号は、どちらでも録画の頭から数える。
 //
 // 切り出した画像の文字は OCR せず目視で読む。名前欄は長いと横スクロールで切れるので
 // （録画 0021 のクイーン（真）は「ーン（真）」しか写らないフレームがある）、
@@ -24,6 +28,7 @@ import {
   runsOf,
   scaleCrop,
   type PanelFeatures,
+  tailOffset,
   type Run as Span,
 } from './probe-result-lib.ts';
 
@@ -41,11 +46,15 @@ const { values, positionals } = parseArgs({
     blue: { type: 'string', default: String(PANEL_THRESHOLDS.blue * 100) },
     crop: { type: 'string' },
     scale: { type: 'string', default: '900' },
+    tail: { type: 'string', default: '15' },
+    full: { type: 'boolean', default: false },
   },
 });
 
 if (positionals.length === 0) {
-  console.error('usage: node tools/captures/probe-result.ts <動画...> [--list] [--out-dir DIR] [--samples 3]');
+  console.error(
+    'usage: node tools/captures/probe-result.ts <動画...> [--list] [--out-dir DIR] [--samples 3] [--tail 15] [--full]',
+  );
   process.exit(1);
 }
 
@@ -53,17 +62,55 @@ const step = Math.max(1, Number(values.step));
 const sampleCount = Math.max(1, Number(values.samples));
 const contrastThreshold = Number(values.contrast);
 const blueThreshold = Number(values.blue) / 100;
+const tailSeconds = Number(values.tail);
+
+const FRAME_BYTES = PANEL_DETECT.w * PANEL_DETECT.h * 3;
 
 async function scan(video: string): Promise<Sample[]> {
   const filters = [`select='not(mod(n,${step}))'`, `scale=${PANEL_DETECT.w}:${PANEL_DETECT.h}`, 'format=rgb24'];
   const args = ['-v', 'error', '-i', video, '-vf', filters.join(','), '-fps_mode', 'vfr', '-f', 'rawvideo', '-'];
   const samples: Sample[] = [];
   let index = 0;
-  for await (const frame of rawFrames(args, PANEL_DETECT.w * PANEL_DETECT.h * 3)) {
+  for await (const frame of rawFrames(args, FRAME_BYTES)) {
     samples.push({ frame: index * step, ...measurePanel(frame) });
     index += 1;
   }
   return samples;
+}
+
+/**
+ * 末尾の seconds 秒を走査する。末尾から読んだ枚数で頭からの番号に直すので、select で間引かずに全部を読む（縮小した画なので軽い）。
+ * offset は走査の頭のフレームの番号。頭からの番号に直せなければ null
+ */
+async function scanTail(
+  video: string,
+  seconds: number,
+  totalFrames: number,
+): Promise<{ samples: Sample[]; offset: number } | null> {
+  const filters = [`scale=${PANEL_DETECT.w}:${PANEL_DETECT.h}`, 'format=rgb24'];
+  const args = [
+    '-v',
+    'error',
+    '-sseof',
+    `-${seconds}`,
+    '-i',
+    video,
+    '-vf',
+    filters.join(','),
+    '-fps_mode',
+    'vfr',
+    '-f',
+    'rawvideo',
+    '-',
+  ];
+  const local: Sample[] = [];
+  let index = 0;
+  for await (const frame of rawFrames(args, FRAME_BYTES)) {
+    if (index % step === 0) local.push({ frame: index, ...measurePanel(frame) });
+    index += 1;
+  }
+  const offset = tailOffset(totalFrames, index);
+  return offset === null ? null : { samples: local.map((s) => ({ ...s, frame: s.frame + offset })), offset };
 }
 
 /** 閾値を超えたサンプルの区間と、区間の中の特徴の最大 */
@@ -93,10 +140,20 @@ for (const video of positionals) {
   const stem = basename(video, extname(video));
   console.log(`\n=== ${basename(video)} ===`);
 
-  const samples = await scan(video);
+  // 末尾で見つかったときだけ、切り出しも末尾から読む（頭から数えた番号を、末尾の走査の番号に戻して渡す）
+  let tail: { samples: Sample[]; offset: number } | null = null;
+  if (!values.full && tailSeconds > 0) {
+    tail = await scanTail(video, tailSeconds, probe.nbFrames);
+    if (tail !== null && toRuns(tail.samples).length === 0) {
+      console.log(`末尾の ${tailSeconds} 秒にパネルが無いので、頭から全部を走査する`);
+      tail = null;
+    }
+  }
+  const samples = tail?.samples ?? (await scan(video));
   const runs = toRuns(samples);
+  const range = tail === null ? '' : `（末尾の ${tailSeconds} 秒。f${tail.offset} から）`;
   console.log(
-    `${probe.nbFrames} フレーム / ${probe.avgFps.toFixed(2)} fps / ${step} フレームおきに ${samples.length} 点を判定`,
+    `${probe.nbFrames} フレーム / ${probe.avgFps.toFixed(2)} fps / ${step} フレームおきに ${samples.length} 点を判定${range}`,
   );
 
   if (runs.length === 0) {
@@ -120,7 +177,9 @@ for (const video of positionals) {
     if (values.list) continue;
     for (const frame of pickFrames(run)) {
       const out = join(values['out-dir'], `${stem}_f${frame}_panel.jpg`);
-      writeStill(video, frame, out, { crop, scale: Number(values.scale), quality: 3 });
+      const still = { crop, scale: Number(values.scale), quality: 3 };
+      if (tail === null) writeStill(video, frame, out, still);
+      else writeStill(video, frame - tail.offset, out, { ...still, fromEnd: tailSeconds });
       console.log(`  ${out}`);
     }
   }

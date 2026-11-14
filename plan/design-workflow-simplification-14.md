@@ -1,6 +1,6 @@
 # 繰り返しの業務の簡素化の案・第 14 回（2026-11-14 の見直し）
 
-- 何のための文書か: 検証 1 件ごと・PR ごと・セッションごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。
+- 何のための文書か: 検証 1 件ごと・PR ごと・セッションごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。2026-11-14 にオーナーが 1〜6 を承認した（6 の確認の間隔は 10 分後からに変えて）。実施は 9 節。
 - 前の回: [design-workflow-simplification.md](design-workflow-simplification.md)・[-2](design-workflow-simplification-2.md)〜[-13](design-workflow-simplification-13.md)。見直しの段（[design-review-steps.md](design-review-steps.md)）・撮影の本数（[design-capture-count.md](design-capture-count.md)）も含め、そこで扱ったものは繰り返さない。
 - この回で見たもの: 2026-11-12〜11-14 のクラウドのセッション 18 本の出来事の列。スキル定義の 6 本（録画が届いてから PR の直前まで）、11-14 に始めたスキル定義の 5 本（始まりから撮影の依頼・取り込みまで）、11-14 のコードの整理・検証・設計の PR 7 本（#1149〜#1155）。
 - 調べ方: origin/main（e15d1e76）のクラウドの環境で、出来事の列をセッションごとに読んだ（使い捨て。コミットしない）。デスクトップのセッションの記録は読めない。
@@ -105,3 +105,6 @@ Claude Code のメモリ（リポジトリの外）に書いた手順のうち�
 ## 9. 経過
 
 - 2026-11-14: 起案。
+- 2026-11-14: オーナーが 1〜6 を推奨どおり承認した。6 の念のための確認は、6 分後ではなく 10 分後・30 分後・1 時間後・3 時間後にする。
+- 2026-11-14: 6 を実施（Claude Code のメモリの `check-parallel-work`・`bash-pitfalls`・`pr-workflow`）。
+- 2026-11-14: 1・2・4 を実施。1 は `probe-result.ts` の `--tail`（既定 15 秒）・`--full`。末尾から読んだ枚数を ffprobe の全体の枚数から引いて頭からの番号に直し（`tailOffset`）、切り出しも同じ所から読む（`writeStill` の `fromEnd`）。フレーム落ちのある作った動画で、末尾から・頭からの切り出しが同じ画になるのを確かめた。2 は `verifications.ts`。4 は `pr-prep-lib.ts` の `mergeAppends`（衝突の印を diff3 の形で付け直して基の側を見る）を `finishRebase` が使い、`pr:prep` とトピックブランチの取り込み（`catch-up.ts`）の両方で効く。
