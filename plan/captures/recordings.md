@@ -1118,6 +1118,9 @@
 | 1147 | `20261114-1147_exia-fb-reload.mp4` | デルタ（20、SR・風圧・SR） + ソリン（71、SMG・鉄甲・SSR） + ◎エクシア（210、SR・電撃・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1148 | `20261114-1148_rl_rumani_fire.mp4` | ◎ルマニ（240、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0762 の撮影 A。ルマニ単騎（操作）。戦闘履歴のパネルでルマニ 1 体（LV.400）を、左上のボタンでオート射撃・オートバースト ON を確かめた |
 | 1149 | `20261114-1149_rl+ar_rumani+jill_fire.mp4` | ◎ルマニ（240、RL・灼熱・SSR） + ジル（841、AR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0762 の撮影 B。ルマニ（I・操作）+ ジル（III）。戦闘履歴のパネルで枠順（1 ルマニ・2 ジル。LV.400）を、左上のボタンでオート射撃・オートバースト ON を確かめた |
+| 1150 | `20261114-1150_ar_rosanna-chic-ocean_fire.mp4` | ◎ロザンナ：シックオーシャン（283、AR・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
+| 1151 | `20261114-1151_ar_rosanna-chic-ocean_fire.mp4` | ◎ロザンナ：シックオーシャン（283、AR・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
+| 1152 | `20261114-1152_rl+ar+ar_i-doll-flower+rosanna-chic-ocean+i-doll-sun_fire.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ロザンナ：シックオーシャン（283、AR・風圧・SSR） + ◎I-DOLL・サン（308、AR・鉄甲・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1153 | `20261114-1153_anis-star-grave-sakura-heat.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + アニス：スター（17、RL・電撃・SSR） + ◎グレイブ（514、AR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0768 の撮影。III がいないので、チェーンは II の後に切れる。アニス：スターも AI で撃つ |
 | 1154 | `20261114-1154_exia-solo.mp4` | ◎エクシア（210、SR・電撃・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 
