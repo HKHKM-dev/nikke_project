@@ -49,22 +49,27 @@ export function ModernView({
   // 育成モーダルを開いているスロット（null なら閉じた状態）
   const [editingSlotIndex, setEditingSlotIndex] = useState<number | null>(null);
 
-  // 待っている間に、スロットのほか（一覧のニケ・ボタン・アイコン・何もないところ）をクリックしたら、待つのをやめるだけにする
-  // （クリックした部品は反応させない。先に document で受けて止める）。スロットのクリックは置く（handlePlacePending）
+  // 待っている間に、スロットのほか（一覧のニケ・ボタン・アイコン・プルダウンメニュー・入力欄・何もないところ）をクリックしたら、
+  // 待つのをやめるだけにする（クリックした部品は反応させない。先に document で受けて止める。プルダウンメニューが開く・入力欄に
+  // フォーカスが移るのは押した時（mousedown）なので、それも止める）。スロットのクリックは置く（handlePlacePending）
   useEffect(() => {
     if (pendingId === null) return;
     // 待ち始めたクリック（一覧のニケ）は、この後で document に届くので数えない（その前に起きたクリック）
     const since = performance.now();
-    const cancelOnOutsideClick = (event: MouseEvent) => {
+    const blockOutsideSlots = (event: MouseEvent) => {
       if (event.timeStamp < since) return;
       const target = event.target;
       if (target instanceof Element && target.closest('.modern-slot-card')) return;
       event.preventDefault();
       event.stopPropagation();
-      setPendingId(null);
+      if (event.type === 'click') setPendingId(null);
     };
-    document.addEventListener('click', cancelOnOutsideClick, true);
-    return () => document.removeEventListener('click', cancelOnOutsideClick, true);
+    document.addEventListener('mousedown', blockOutsideSlots, true);
+    document.addEventListener('click', blockOutsideSlots, true);
+    return () => {
+      document.removeEventListener('mousedown', blockOutsideSlots, true);
+      document.removeEventListener('click', blockOutsideSlots, true);
+    };
   }, [pendingId]);
 
   // スロット 5 枚を画面の幅に収める（足りなければ立ち絵を縮める）
