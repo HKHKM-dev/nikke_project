@@ -1,0 +1,170 @@
+{
+  "formatVersion": 1,
+  "resourceId": 143,
+  "checkedAt": "2026-11-14",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "self",
+          "stat": "pierce",
+          "durationRef": 1,
+          "assumes": {
+            "ja": "貫通特化（6 秒）。フルチャージの発の後から付き、その発自身には付かない。オート射撃では発の間（リロードと的のジャンプを跨いでも）が 6 秒より短いので、戦闘の最初の発の後はどの発にも付いている。それ自体は与ダメージを変えず、バーストの貫通ダメージ▲の乗る発にする",
+            "en": "Pierce (6 s). Applied after each full charge shot, not to that shot itself. With auto fire the gap between shots (even across reloads and target jumps) is under 6 s, so every shot after the first has it. It does not change damage by itself; it makes the Burst's pierce damage up apply"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルチャージを 0.5 秒以上維持した時の「羞恥心」の効果 1（敵全体に最終攻撃力の 290% の分配ダメージ）は、オートの射撃ではフルチャージを保たないので起きない（要件 4.2 節）",
+          "en": "Embarrassment effect 1 (distributed damage of 290% of final ATK to all enemies) on holding full charge for 0.5 s or more never happens, since auto fire does not hold full charge (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "damage",
+            "target": "enemy",
+            "trigger": "unknown"
+          },
+          "claims": [
+            "C-0839"
+          ]
+        },
+        {
+          "ja": "羞恥心の効果 2・4（自分の残弾数 100% 減少・強制リロード）は、羞恥心が起きないので起きない（要件 4.2 節）",
+          "en": "Embarrassment effects 2 and 4 (removes 100% of own ammo, forced reload) never happen, since Embarrassment does not occur (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "ammoDecrease",
+            "target": "self",
+            "trigger": "unknown"
+          },
+          "claims": [
+            "C-0839"
+          ]
+        },
+        {
+          "ja": "羞恥心の効果 3（自分のリロード速度 50% 低下で固定・リロード 1 回）は、羞恥心が起きないので起きない（要件 4.2 節）",
+          "en": "Embarrassment effect 3 (own reload speed fixed at a 50% reduction for 1 reload) never happens, since Embarrassment does not occur (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "reloadSpeed",
+            "target": "self",
+            "trigger": "unknown"
+          },
+          "claims": [
+            "C-0839"
+          ]
+        },
+        {
+          "ja": "羞恥心の効果 5（自分に攻撃力 118.7%▲・40 秒）は、羞恥心が起きないので起きない（要件 4.2 節）",
+          "en": "Embarrassment effect 5 (ATK up 118.7% on self for 40 s) never happens, since Embarrassment does not occur (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "unknown"
+          },
+          "claims": [
+            "C-0839"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "everySeconds": 2,
+            "carry": true
+          },
+          "condition": {
+            "selfState": "overconfidentHuh"
+          },
+          "damageType": "distributed",
+          "ref": 2,
+          "assumes": {
+            "ja": "何見てんだよお前ら！！の間の分配ダメージ。周期は戦闘開始から 2 秒ごと（端数を持ち越す）に数え続け、状態の付いている回だけ、敵 1 体（的）に全額で出す（エイダの S2 と同じ形。C-0787）。ヒットは周期のフレームに出す。状態の窓は自分のフルバーストの窓とほぼ重なるので、バーストゲージを溜めるかは確かめていない（溜めない形で回す）",
+            "en": "Distributed damage while Overconfident, Huh?! is on. The interval counts every 2 s from the start of battle (carrying the fraction) and only the ticks while the state is on deal the full amount to the single enemy (the target), as Ada's S2 (C-0787). The hit lands on the tick frame. The state window almost coincides with her own Full Burst, so whether it charges the burst gauge is unchecked (modeled as not charging)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "羞恥心状態の時のみの自分の貫通ダメージ 64.7%▲（持続）は、羞恥心がオートの射撃では起きない（S1 の notes）ので効かない（要件 4.2 節）",
+          "en": "The pierce damage up of 64.7% on self only while in Embarrassment (continuous) never applies, since Embarrassment does not occur with auto fire (see the S1 notes; requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "passive",
+            "stat": "pierceDamage",
+            "target": "self"
+          },
+          "reads": [
+            "pierce"
+          ],
+          "claims": [
+            "C-0839"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "overconfidentHuh",
+          "trigger": "burstUse",
+          "target": "self",
+          "durationSeconds": 10,
+          "assumes": {
+            "ja": "何見てんだよお前ら！！（10 秒）。中身は書かず、攻撃力▲・貫通ダメージ▲は同じ窓の timed で書く。S2 の周期の分配ダメージがこの状態を見る",
+            "en": "Overconfident, Huh?! (10 s). No contents; the ATK up and pierce damage up are the timed effects with the same window. The S2 periodic distributed damage reads this state"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "pierceDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "reads": [
+            "pierce"
+          ],
+          "assumes": {
+            "ja": "貫通ダメージ▲は、S1 の貫通特化の効いている発（オート射撃では戦闘の最初の発のほかのどの発）に、攻撃ダメージ▲と同じ和で乗る（C-1031 の形）",
+            "en": "Pierce damage up applies to shots with Pierce from S1 (with auto fire, every shot but the first of battle), in the same sum as attack damage up (the C-1031 form)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "ref": 3,
+          "durationRef": 4
+        }
+      ],
+      "notes": [
+        {
+          "ja": "何見てんだよお前ら！！の羞恥心免疫（10 秒）は、羞恥心がオートの射撃では起きない（S1 の notes）ので効かない（要件 4.2 節）",
+          "en": "The immunity to Embarrassment in Overconfident, Huh?! (10 s) has no effect, since Embarrassment does not occur with auto fire (see the S1 notes; requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "unknown",
+            "target": "self"
+          },
+          "claims": [
+            "C-0839"
+          ]
+        }
+      ]
+    }
+  }
+}

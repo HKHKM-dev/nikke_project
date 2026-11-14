@@ -1,0 +1,353 @@
+{
+  "verification": "V-0783",
+  "note": "撮影の予測。I-DOLL・フラワー（I）+ ノア（II）+ ミルク：BB（III・操作）。射撃場の BigArms（灼熱）・3 分モード・スペック固定 ON（スキル Lv10）・オートバースト ON。ミルク：BB のバーストは 40 秒ごとに 5 回（モデル）",
+  "team": [
+    {
+      "rid": 304
+    },
+    {
+      "rid": 232
+    },
+    {
+      "rid": 143,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義。S2 の周期は戦闘開始から 2 秒ごと（端数を持ち越す）に数え、何見てんだよお前ら！！の間の回だけ出る（エイダの S2 と同じ形。C-0787）。バーストの攻撃力▲・貫通ダメージ▲は窓の中の発に乗る"
+    },
+    {
+      "id": "H2-since",
+      "note": "S2 の周期を、何見てんだよお前ら！！の付いた時（バースト使用）から 2 秒ごとに数える（2・4・6・8・10 秒後。ゲーム内の 2 秒 = 117.6f の倍数の切り上げ。10 秒後の回は状態の終わりと重なり、出るかはこの上書きでは決めない）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 143,
+            "skill": "skill2",
+            "index": 0
+          }
+        ],
+        "addEffects": [
+          {
+            "rid": 143,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": "burstUse",
+              "damageType": "distributed",
+              "ref": 2,
+              "delayFrames": 118
+            }
+          },
+          {
+            "rid": 143,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": "burstUse",
+              "damageType": "distributed",
+              "ref": 2,
+              "delayFrames": 236
+            }
+          },
+          {
+            "rid": 143,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": "burstUse",
+              "damageType": "distributed",
+              "ref": 2,
+              "delayFrames": 353
+            }
+          },
+          {
+            "rid": 143,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": "burstUse",
+              "damageType": "distributed",
+              "ref": 2,
+              "delayFrames": 471
+            }
+          },
+          {
+            "rid": 143,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": "burstUse",
+              "damageType": "distributed",
+              "ref": 2,
+              "delayFrames": 589
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H3-since-at-start",
+      "note": "S2 の周期を、何見てんだよお前ら！！の付いた時から数え、付いたフレームにも出る（0・2・4・6・8 秒後）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 143,
+            "skill": "skill2",
+            "index": 0
+          }
+        ],
+        "addEffects": [
+          {
+            "rid": 143,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": "burstUse",
+              "damageType": "distributed",
+              "ref": 2
+            }
+          },
+          {
+            "rid": 143,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": "burstUse",
+              "damageType": "distributed",
+              "ref": 2,
+              "delayFrames": 118
+            }
+          },
+          {
+            "rid": 143,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": "burstUse",
+              "damageType": "distributed",
+              "ref": 2,
+              "delayFrames": 236
+            }
+          },
+          {
+            "rid": 143,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": "burstUse",
+              "damageType": "distributed",
+              "ref": 2,
+              "delayFrames": 353
+            }
+          },
+          {
+            "rid": 143,
+            "skill": "skill2",
+            "effect": {
+              "kind": "damage",
+              "trigger": "burstUse",
+              "damageType": "distributed",
+              "ref": 2,
+              "delayFrames": 471
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-pierce",
+      "note": "バーストの貫通ダメージ▲（burst の effects[1]）が窓の中の発に乗らない（S1 の貫通特化が付かない・乗り方が違う）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 143,
+            "skill": "burst",
+            "index": 1
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "s2-frames-1",
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "anchor": "activation:1",
+        "within": "untilNext"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "note": "S2 の分配ダメージのヒットの、ミルク：BB の 1 回目のバーストの発動（右のバースト欄の III の替わり目）からの動画のフレームの列"
+    },
+    {
+      "id": "s2-frames-2",
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "anchor": "activation:2",
+        "within": "untilNext"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "note": "S2 の分配ダメージのヒットの、ミルク：BB の 2 回目のバーストの発動（右のバースト欄の III の替わり目）からの動画のフレームの列"
+    },
+    {
+      "id": "s2-frames-3",
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "anchor": "activation:3",
+        "within": "untilNext"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "note": "S2 の分配ダメージのヒットの、ミルク：BB の 3 回目のバーストの発動（右のバースト欄の III の替わり目）からの動画のフレームの列"
+    },
+    {
+      "id": "s2-count-2",
+      "model": "sim",
+      "metric": "eventCount",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "anchor": "activation:2",
+        "within": "untilNext"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "2 回目のバーストから次のバーストまでの S2 のヒットの数"
+    },
+    {
+      "id": "s2-hit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "S2 の分配ダメージの 1 ヒット（会心なし。2 回目のヒット。フルバーストの窓の中）"
+    },
+    {
+      "id": "shot-window",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3000,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "ミルク：BB の 1 発（コア・会心なし・距離ボーナスなし）。2 回目のバーストの窓の中（攻撃力▲・貫通ダメージ▲・フルバースト補正）"
+    },
+    {
+      "id": "shot-outside",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2000,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "ミルク：BB の 1 発（コア・会心なし・距離ボーナスなし）。窓の外（▲なし）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-14",
+    "commit": "bfd2f37dcd9f3b85d3f14e10ea7579d52faa5287",
+    "values": {
+      "H1": {
+        "s2-frames-1": [129, 246, 364, 482, 599],
+        "s2-frames-2": [130, 247, 365, 483, 600],
+        "s2-frames-3": [131, 248, 366, 483, 601],
+        "s2-count-2": 5,
+        "s2-hit": 5606067.2918514,
+        "shot-window": 3602141.3691220004,
+        "shot-outside": 413535.792
+      },
+      "H2-since": {
+        "s2-frames-1": [134, 252, 369, 487, 605],
+        "s2-frames-2": [134, 252, 369, 487, 605],
+        "s2-frames-3": [134, 252, 369, 487, 605],
+        "s2-count-2": 5,
+        "s2-hit": 5606067.2918514,
+        "shot-window": 3602141.3691220004,
+        "shot-outside": 413535.792
+      },
+      "H3-since-at-start": {
+        "s2-frames-1": [-6, 134, 252, 369, 487],
+        "s2-frames-2": [-6, 134, 252, 369, 487],
+        "s2-frames-3": [-6, 134, 252, 369, 487],
+        "s2-count-2": 5,
+        "s2-hit": 5606067.2918514,
+        "shot-window": 3602141.3691220004,
+        "shot-outside": 413535.792
+      },
+      "H0-pierce": {
+        "s2-frames-1": [129, 246, 364, 482, 599],
+        "s2-frames-2": [130, 247, 365, 483, 600],
+        "s2-frames-3": [131, 248, 366, 483, 601],
+        "s2-count-2": 5,
+        "s2-hit": 2575844.1885,
+        "shot-window": 1655091.605,
+        "shot-outside": 413535.792
+      }
+    }
+  }
+}
