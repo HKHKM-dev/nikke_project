@@ -11,7 +11,10 @@
           "target": "self",
           "stat": "attack",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-1241"
+          ]
         },
         {
           "kind": "timed",
@@ -115,7 +118,10 @@
             "stat": "chargeSpeed",
             "target": "allies",
             "trigger": "fullBurstStart"
-          }
+          },
+          "claims": [
+            "C-1242"
+          ]
         }
       ]
     },
@@ -165,7 +171,10 @@
             "stat": "chargeSpeed",
             "target": "self",
             "trigger": "battleStart"
-          }
+          },
+          "claims": [
+            "C-1242"
+          ]
         }
       ]
     },
@@ -177,17 +186,24 @@
           "target": "self",
           "stat": "attackDamage",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-1241"
+          ]
         },
         {
           "kind": "damage",
           "trigger": "burstUse",
           "ref": 3,
           "damageType": "additional",
+          "delayFrames": 60,
           "assumes": {
-            "ja": "敵全体は単体ボス 1 体。発動の頃の 1 ヒット（遅れは撮って読む）",
-            "en": "All enemies are the single boss. One hit around activation (the delay is read from a recording)"
-          }
+            "ja": "敵全体は単体ボス 1 体。発動の 60f 後（III のタイマーの 00.00 から動画で 76f。フルバーストの入りの止まりの後）に 1 ヒットで、その時のバフ（S1 のフルバーストの攻撃力▲・同じ発動の攻撃ダメージ▲）とフルバースト補正で出る",
+            "en": "All enemies are the single boss. One hit 60 f after activation (76 video frames after the Burst III timer reads 00.00, after the Full Burst entry stop), with the buffs at that frame (the S1 Full Burst ATK up and the attack damage up from the same activation) and the Full Burst bonus"
+          },
+          "claims": [
+            "C-1240"
+          ]
         }
       ]
     }

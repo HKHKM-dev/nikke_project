@@ -4,13 +4,21 @@
   "state": "仮説",
   "topic": "スキル・キャラ固有",
   "grade": "単独実測",
-  "basis": "`1195-19`。V-0780",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "basis": "`1195-19`（フルバーストの間の続いた 2 発の間の平均 88.92f。モデル 89f。チャージ速度▲が効けば、チャージの短縮の分だけ短い）。録画 1 本で、5 回のフルバーストの間をまとめた値。V-0780",
+  "model": "モデル側は効果を持たない（data/skills/262.json の skill1 の notes と skill2 の notes の未対応。編成に III がリバーレリオだけなら、どちらの読みでもチャージ速度▲は効かない）",
   "replaces": [],
   "updated": "2026-11-14",
   "subject": {
-    "places": ["data/skills/262.json の skill1 の notes", "data/skills/262.json の skill2 の notes"]
+    "places": ["data/skills/262.json の skill1 の notes[0]", "data/skills/262.json の skill2 の notes[1]"]
   },
   "decidedOn": [],
-  "parameterFree": "C-0222 の押下チャージ型の発の間（89f）。チャージ速度▲を足さない"
+  "parameterFree": "C-0222 の押下チャージ型の発の間（89f）。チャージ速度▲を足さない",
+  "minimal": [
+    {
+      "observations": ["1195-19"],
+      "element": "リバーレリオ skill2.notes[0]",
+      "reason": "緩流はターゲットでない敵に命中した時だけ付く。射撃場の敵はターゲットで、緩流が付けばマガジンの中の発の間が 59f になるが、録画 1195 のフルバーストの外と中の発の間は 89f（1195-19）",
+      "decided": "2026-11-15"
+    }
+  ]
 }
