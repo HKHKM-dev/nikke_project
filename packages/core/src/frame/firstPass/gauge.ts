@@ -13,14 +13,12 @@ export function createGauge({ controlledSlot, lists, options, passive, slots }: 
   // 時間で変わるゲージ速度（timed・状態の中身）の件を持ちうる枠は、フレームの頭で
   // (1 + 常時の速度 + 効いている件の速度) を読み（f − 1 までに付いた件。射手と同じ見え方。
   // plan/design-skill-stage1.md 1.6 節）、そのフレームに溜めるゲージに掛ける。
-  // 持たない枠は常時の値だけで、今までと同じ値（下の energies などを前もって作る）
+  // 持たない枠は常時の値だけなので、その量（下の energies・hitEnergies など）を前もって作る
   const timedGauge = slots.map((_, i) => lists.hasGaugeSpeedTracks(i));
   const timedGaugeSlots = slots.flatMap((_, i) => (timedGauge[i] ? [i] : []));
   const gaugeScale = slots.map((_, i) => 1 + gaugeSpeed[i]!);
   const targetEnergies = slots.map((slot) => slot?.character.shot.targetBurstEnergyPerShot ?? 0);
-  /** 枠 i の、射手の 1 ヒットぶんのゲージ（targetBurstEnergyPerShot）のこのフレームの量。前もって作った値 fixed は速度が変わらない枠の分 */
-  const targetEnergyNow = (i: number, fixed: number): number =>
-    timedGauge[i] ? targetEnergies[i]! * gaugeScale[i]! : fixed;
+  const hitEnergies = targetEnergies.map((e, i) => e * (1 + gaugeSpeed[i]!));
   // 弾丸命中率が着地点で変わる枠は、1 発のゲージを命中率 1 で持ち、撃ったフレームの区間の命中率を掛ける。
   // SG はペレットの割合も 1 で持ち、区間の弾丸命中率が的の表の値ならそのまま（当たったペレットの割合。C-0150）、
   // 手入力の値なら置き値 SG_PELLET_GAUGE_HIT_RATE を掛ける（plan/design-sg-hit-rate.md 3 節）
@@ -138,21 +136,17 @@ export function createGauge({ controlledSlot, lists, options, passive, slots }: 
   const updateTimedGaugeSpeed = (f: number): void => {
     for (const i of timedGaugeSlots) gaugeScale[i] = 1 + gaugeSpeed[i]! + lists.gaugeSpeedAt(i, f);
   };
-  /** 枠 i のヒットごとのゲージの、このフレームの 1 ヒットの量 */
-  const hitGaugeEnergy = (i: number): number => targetEnergyNow(i, targetEnergies[i]! * (1 + gaugeSpeed[i]!));
+  /** 枠 i のヒットごとのゲージ（射手の 1 ヒットぶん。targetBurstEnergyPerShot × (1 + ゲージ速度)）の、このフレームの量 */
+  const hitGaugeEnergy = (i: number): number => (timedGauge[i] ? targetEnergies[i]! * gaugeScale[i]! : hitEnergies[i]!);
   return {
     chargeGaugeOf,
     energyAt,
     gaugeHitsOf,
-    gaugeScale,
-    gaugeSpeed,
     hitGaugeEnergy,
     hitsAt,
     obstacleEnergyAt,
     obstacles,
     pelletsAt,
-    targetEnergies,
-    targetEnergyNow,
     timedGauge,
     updateTimedGaugeSpeed,
   };

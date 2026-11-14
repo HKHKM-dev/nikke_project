@@ -43,7 +43,6 @@ type CycleGaugeTracker = {
   skill: SkillSlot;
   every: number;
   gaugeHits: number[][];
-  energy: number;
   count: number;
   step: number;
   /** fullChargeShot の循環は部分チャージの発を数えない */
@@ -51,7 +50,7 @@ type CycleGaugeTracker = {
 };
 
 /** 射撃の回数で溜まるゲージ（段の循環・倍率ダメージのゲージ・射撃の回数のゲージ）の追跡を作る */
-export function createShotGaugeTrackers({ gaugeSpeed, logs, slots }: FirstPassBase & Gauge) {
+export function createShotGaugeTrackers({ logs, slots }: FirstPassBase) {
   // V-0030: 段のヒットでゲージを溜める循環。溜めるゲージは当たるフレームに予約する（pendingGauge）
   const cycleTrackers: CycleGaugeTracker[] = [];
   slots.forEach((slot, i) => {
@@ -75,7 +74,6 @@ export function createShotGaugeTrackers({ gaugeSpeed, logs, slots }: FirstPassBa
         skill: cycle.source.skill,
         every: cycle.trigger.every,
         gaugeHits: cycle.gaugeHits,
-        energy: slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!),
         count: 0,
         step: 0,
         fullChargeOnly: cycle.trigger.count === 'fullChargeShot',
@@ -88,7 +86,6 @@ export function createShotGaugeTrackers({ gaugeSpeed, logs, slots }: FirstPassBa
     count: ShotCountKind;
     every: number;
     gaugeHits: number[];
-    energy: number;
     n: number;
   }[] = [];
   slots.forEach((slot, i) => {
@@ -100,7 +97,6 @@ export function createShotGaugeTrackers({ gaugeSpeed, logs, slots }: FirstPassBa
         count: g.trigger.count,
         every: g.trigger.every,
         gaugeHits: g.gaugeHits,
-        energy: slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!),
         n: 0,
       });
     }
@@ -112,7 +108,6 @@ export function createShotGaugeTrackers({ gaugeSpeed, logs, slots }: FirstPassBa
     slotIndex: number;
     count: ShotCountKind;
     every: number;
-    energy: number;
     n: number;
     delayFrames: number;
   }[] = [];
@@ -124,7 +119,6 @@ export function createShotGaugeTrackers({ gaugeSpeed, logs, slots }: FirstPassBa
         slotIndex: i,
         count: t.count,
         every: t.every,
-        energy: slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!),
         n: 0,
         delayFrames: t.delayFrames ?? 0,
       });
@@ -143,15 +137,11 @@ export function createGaugeEffects({
   hitGaugeEnergy,
   flights,
   frames,
-  gaugeScale,
-  gaugeSpeed,
   lists,
   logs,
   shotEvents,
   shotFlightAt,
   slots,
-  targetEnergies,
-  targetEnergyNow,
   timedGauge,
 }: FirstPassBase & Gauge & ShotGaugeTrackers) {
   // ゲージを溜める持続ダメージ（dot の gaugeOnApply・gaugeOnTick。plan/design-raven-s1.md 4 節）。射撃を数えて
@@ -167,7 +157,6 @@ export function createGaugeEffects({
     onBurstUse: boolean;
     tracker: DotTickTracker;
     onTick: boolean;
-    energy: number;
     /** 自動攻撃のヒットの飛ぶ時間（plan/design-anis-star-gauge-timing.md 4 節。持続ダメージ・表に無いものは null） */
     flight: FlightFrameSpan[] | null;
   }[] = [];
@@ -200,7 +189,6 @@ export function createGaugeEffects({
         onBurstUse,
         tracker: dotTickTracker(dot.intervalSeconds, dot.durationSeconds, frames, dot.firstTick),
         onTick,
-        energy: slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!),
         flight: dot.autoAttack === true ? (flights[i]?.autoAttacks[group[0]!.source.skill] ?? null) : null,
       });
     }
@@ -257,7 +245,7 @@ export function createGaugeEffects({
     const { ticks } = t.tracker.fire(f + t.tickDelay);
     if (!t.onTick) return;
     // 時間で変わるゲージ速度は、付いたフレームの速度で tick の分も決める
-    const energy = targetEnergyNow(t.slotIndex, t.energy);
+    const energy = hitGaugeEnergy(t.slotIndex);
     for (const tick of ticks) {
       if (tick <= f) throw new RangeError(`dot gauge tick at ${tick} is not after the fire at ${f}`);
       // 自動攻撃のヒットは、刻みのフレーム + 飛ぶ時間に着く（C-0504。ダメージの tick のフレームは変えない）
@@ -275,6 +263,7 @@ export function createGaugeEffects({
       ? []
       : resolveSkillCooldownDowns(slot.definition, slot.character, slot.levels),
   );
+  const cooldownTimerFires: FirstPassResult['cooldownTimerFires'] = [];
   const cooldownTrackers: {
     slotIndex: number;
     skill: SkillSlot;
@@ -283,6 +272,7 @@ export function createGaugeEffects({
     tick: (f: number, started: number | undefined, held: () => number | undefined) => boolean;
     /** 同じスロットの印のある burstGaugeHit の遅れ（ループの前の予約の代わりに、発火で予約する） */
     gaugeDelays: number[];
+    /** 発火のフレーム（cooldownTimerFires の記録の frames と同じ配列） */
     fires: number[];
   }[] = [];
   slots.forEach((slot, slotIndex) => {
@@ -294,6 +284,8 @@ export function createGaugeEffects({
       const first = marked[0];
       if (first === undefined || !('trigger' in first) || !isTimerTrigger(first.trigger)) continue;
       const { everySeconds } = first.trigger;
+      const fires: number[] = [];
+      cooldownTimerFires.push({ slotIndex, skill, frames: fires });
       cooldownTrackers.push({
         slotIndex,
         skill,
@@ -302,7 +294,7 @@ export function createGaugeEffects({
           .map((d) => ({ state: d.state, short: gameSecondsToFirstFrame(everySeconds * (1 - d.percent / 100)) })),
         tick: cooldownTimer(gameSecondsToFirstFrame(everySeconds)),
         gaugeDelays: marked.flatMap((e) => (e.kind === 'burstGaugeHit' ? [e.delayFrames!] : [])),
-        fires: [],
+        fires,
       });
     }
   });
@@ -318,7 +310,6 @@ export function createGaugeEffects({
   };
   slots.forEach((slot, i) => {
     if (slot === null || slot.definition === null) return;
-    const energy = slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!);
     for (const { delayFrames, ...timer } of resolveTimerGauges(slot.definition)) {
       // クールタイムの印のある周期は、ループの中で発火を追って予約する（countCooldownTimers）
       if (timer.cooldown === true) continue;
@@ -327,7 +318,7 @@ export function createGaugeEffects({
         if (at >= frames) continue;
         if (timedGauge[i])
           timedTimerGauges.set(fire, [...(timedTimerGauges.get(fire) ?? []), { slotIndex: i, delayFrames }]);
-        else reserveTimerGauge(i, fire, at, energy);
+        else reserveTimerGauge(i, fire, at, hitGaugeEnergy(i));
       }
     }
   });
@@ -438,7 +429,7 @@ export function createGaugeEffects({
       let e = t.every;
       for (const every of lists.cycleEveryAt(t.slotIndex, t.skill, f)) e = Math.min(e, every);
       if (t.count % e !== 0) continue;
-      const energy = targetEnergyNow(t.slotIndex, t.energy);
+      const energy = hitGaugeEnergy(t.slotIndex);
       for (const d of t.gaugeHits[t.step]!) {
         const at = f + d;
         cycleGaugeHits.push({ slotIndex: t.slotIndex, shotFrame: f, frame: at, energy });
@@ -450,7 +441,7 @@ export function createGaugeEffects({
   /** 時間で変わる速度の枠の、周期のゲージを予約する */
   const reserveTimerGauges = (f: number): void => {
     for (const t of timedTimerGauges.get(f) ?? []) {
-      reserveTimerGauge(t.slotIndex, f, f + t.delayFrames, targetEnergies[t.slotIndex]! * gaugeScale[t.slotIndex]!);
+      reserveTimerGauge(t.slotIndex, f, f + t.delayFrames, hitGaugeEnergy(t.slotIndex));
     }
   };
   /** フレーム at のゲージに energy を予約する（at は予約するフレームより後） */
@@ -474,7 +465,7 @@ export function createGaugeEffects({
       if (!counted.fired) continue;
       // 射撃ごとの倍率ダメージのヒット（S1 の追加ダメージなど）も、発の着弾から数える（飛ぶ時間。plan/design-anis-star-gauge-timing.md 3.1 節）
       const flight = shotFlightAt(t.slotIndex, f);
-      const energy = targetEnergyNow(t.slotIndex, t.energy);
+      const energy = hitGaugeEnergy(t.slotIndex);
       for (const d of t.gaugeHits) gauge += landingGauge(t.slotIndex, f + flight + d, f, energy, 1);
     }
     // 射撃の回数でゲージだけを溜める効果。発火した射撃のフレームのゲージに足す（遅れがあれば、そのフレームに予約する）
@@ -484,7 +475,7 @@ export function createGaugeEffects({
       const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), t.every);
       t.n = counted.count;
       if (!counted.fired) continue;
-      const energy = targetEnergyNow(t.slotIndex, t.energy);
+      const energy = hitGaugeEnergy(t.slotIndex);
       if (t.delayFrames === 0) gauge += energy;
       else if (f + t.delayFrames < frames) {
         pendingGauge.set(f + t.delayFrames, (pendingGauge.get(f + t.delayFrames) ?? 0) + energy);
@@ -506,7 +497,7 @@ export function createGaugeEffects({
       }
       if (!fired) continue;
       if (apply) {
-        const energy = targetEnergyNow(t.slotIndex, t.energy);
+        const energy = hitGaugeEnergy(t.slotIndex);
         // 付けたのは撃った 6f 後（C-0181。plan/design-shot-count-trigger-frame.md 6.6 節）。
         // モデルの射撃のフレームは撃ったフレーム（C-0661）なので、その applyDelay 後のゲージに足す
         if (t.applyDelay === 0) {
@@ -551,7 +542,7 @@ export function createGaugeEffects({
     allyGauges,
     damageEffects,
     addShotGauges,
-    cooldownTrackers,
+    cooldownTimerFires,
     countCooldownTimers,
     countCycles,
     countDamageHitGauges,

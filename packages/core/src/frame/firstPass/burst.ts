@@ -104,8 +104,7 @@ export function createBurstStep({
   const blockedAt = (f: number): boolean => {
     while (nextBlock < untargetable.length && untargetable[nextBlock]!.end < f) nextBlock += 1;
     const block = untargetable[nextBlock];
-    const blocked = block !== undefined && block.start <= f && f < block.end;
-    return blocked;
+    return block !== undefined && block.start <= f && f < block.end;
   };
   /** このフレームのゲージを足して、状態機械を 1 フレーム進める（手順 2） */
   const stepBurst = (gauge: number, f: number, blocked: boolean): void => {
