@@ -1,5 +1,5 @@
 import { DndContext, pointerWithin } from '@dnd-kit/core';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DamageTotalPanel } from '../components/DamageTotalPanel.tsx';
 import { ErrorBoundary } from '../components/ErrorBoundary.tsx';
 import { NotesSummary } from '../components/NotesSummary.tsx';
@@ -48,6 +48,21 @@ export function ModernView({
 
   // 育成モーダルを開いているスロット（null なら閉じた状態）
   const [editingSlotIndex, setEditingSlotIndex] = useState<number | null>(null);
+
+  // 待っている間に、スロットのほか（一覧のニケも含む）をクリックしたら、待つのをやめる。スロットの立ち絵のクリックは置く（handlePlacePending）
+  useEffect(() => {
+    if (pendingId === null) return;
+    // 待ち始めたクリック（一覧のニケ）は、この後で document に届くので数えない（その前に起きたクリック）
+    const since = performance.now();
+    const cancelOnOutsideClick = (event: MouseEvent) => {
+      if (event.timeStamp < since) return;
+      const target = event.target;
+      if (target instanceof Element && target.closest('.modern-slot-card')) return;
+      setPendingId(null);
+    };
+    document.addEventListener('click', cancelOnOutsideClick);
+    return () => document.removeEventListener('click', cancelOnOutsideClick);
+  }, [pendingId]);
 
   // スロット 5 枚を画面の幅に収める（足りなければ立ち絵を縮める）
   const slotsGridRef = useRef<HTMLElement>(null);
