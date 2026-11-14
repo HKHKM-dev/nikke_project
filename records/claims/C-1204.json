@@ -1,0 +1,34 @@
+{
+  "id": "C-1204",
+  "text": "ラプラスの宝物版のバーストの初回ダメージ（最終攻撃力の 1455.72%）は、使用武器変更の発とは別の 1 ヒットで、III のタイマーの 00.00 の 7f 後（ゲーム内。動画で 29f。ビームの最初の発の 1f 後）に出る。コアとフルバースト補正は乗らず、会心は乗る（バーストスキルダメージと同じ式）。ヒーロービジョンのスタックによらず、防御力を引いた値（防御力無視にならない）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1160-11`・`1160-12`・`1161-11`・`1161-12`・`1161-13`・`1162-07`・`1162-08`。V-0772",
+  "model": "data/skills/100.json の treasureSkills.burst の effects[2]（burstDamage・skill）、burst/landing.ts の MEASURED_BURST_DELAYS のラプラスの行（hitFrames 7）",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": [
+      "data/skills/100.json の treasureSkills.burst の effects[2]"
+    ]
+  },
+  "decidedOn": [
+    {
+      "recording": "1161",
+      "role": "値を合わせた"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "1161",
+      "decided": "1161-11",
+      "reproduced": "1161-12,1161-13",
+      "observations": [
+        "1161-11",
+        "1161-12",
+        "1161-13"
+      ]
+    }
+  ]
+}

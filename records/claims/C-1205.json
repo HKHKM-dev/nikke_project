@@ -1,0 +1,50 @@
+{
+  "id": "C-1205",
+  "text": "ラプラスの宝物版のバーストの「ヒーロービジョンのフルスタック状態なら、同じ敵に最終攻撃力の 11.9% の防御力無視ダメージ」は、ビームの発ごとに 1 ヒット（発と同じフレーム）と、初回ダメージのヒットと同じフレームに 2 ヒット出る。どれもコアは乗らず、フルバースト補正と会心は乗る。フルスタックかは発ごとに見て、途中でヒーロービジョンが切れると、その後の発には出ない。ヒーロービジョンが 0 スタックのバーストでは出ない",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1160-11`・`1160-12`・`1160-13`・`1160-14`・`1161-11`・`1161-12`・`1161-13`・`1161-14`・`1161-15`・`1162-07`・`1162-08`・`1163-08`・`1163-09`・`1163-10`・`1163-11`・`1163-12`。V-0772",
+  "model": "data/skills/100.json の treasureSkills.burst の effects[3]（{ count: weaponChangeShot } の damage・true・condition.selfState の stacks full）・effects[4]・[5]（burstUse・perBurstHit の damage。初回ダメージのヒットのフレーム）",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": [
+      "data/skills/100.json の treasureSkills.burst の effects[3]",
+      "data/skills/100.json の treasureSkills.burst の effects[4]",
+      "data/skills/100.json の treasureSkills.burst の effects[5]"
+    ]
+  },
+  "decidedOn": [
+    {
+      "recording": "1161",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "1163",
+      "role": "仮説の出どころ"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "1161",
+      "decided": "1161-11",
+      "reproduced": "1161-12,1161-13",
+      "observations": [
+        "1161-11",
+        "1161-12",
+        "1161-13"
+      ]
+    },
+    {
+      "recording": "1163",
+      "decided": "1163-09",
+      "reproduced": "1163-10,1163-11",
+      "observations": [
+        "1163-09",
+        "1163-10",
+        "1163-11"
+      ]
+    }
+  ]
+}

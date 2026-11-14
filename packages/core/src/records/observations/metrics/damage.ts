@@ -33,6 +33,7 @@ export const damageMetrics: Readonly<Record<string, Metric>> = {
   critRateAt: { args: ['slot', 'frame'], sim: critRateAt },
   hitDamage: { args: ['slot', 'frame', 'core', 'crit', 'distance'], sim: hitDamage },
   hitDamageAtShot: { args: ['slot', 'shot', 'core', 'crit', 'distance'], sim: hitDamageAtShot },
+  hitWithSkillHits: { args: ['slot', 'frame', 'core', 'crit', 'distance'], sim: hitWithSkillHits },
   // 同じ区間・同じ部位の、会心した 1 ヒットと会心しない 1 ヒットの比（plan/design-target-vocab.md 4.1 節）。
   // 敵に掛かる別枠の乗数（受けるダメージ▲）と攻撃力は比で消え、倍率グループの会心の項（クリティカルダメージ）だけが残る
   critHitRatio: {
@@ -102,6 +103,23 @@ function hitDamage(result: SimResult, ctx: MetricContext): number {
   const boost = 1 + core + crit + distance + t.boost.fullBurst;
   // V-0119: 1 発のヒット数（的の表の hitsPerShot）は 1 ヒットの値に含めない
   return ((t.normal / t.hitRate / t.hitsPerShot / t.boost.total) * boost) / pelletsPerShot(shot.shotCount, t.buffs);
+}
+
+/**
+ * V-0772（ラプラスのバーストのビーム）: フレーム frame（と fullBurst。frameArgOf）以後の枠の最初の発の hitDamage と、その発と同じ
+ * フレームに出る同じ枠の倍率ダメージ（持続ダメージを除く。会心なしの値）の和。録画では HUD の 1 つの増分に合わさる。会心（crit）は
+ * 通常攻撃にだけ当てる（burstHitWithSkillHits と同じ）
+ */
+function hitWithSkillHits(result: SimResult, ctx: MetricContext): number {
+  const from = frameArgOf(result, ctx);
+  const shot = slotOf(result.shots, ctx).frames.find((f) => f >= from);
+  if (shot === undefined) throw new Error(`フレーム ${from} の後に発が無い`);
+  const skills = result.skillHits.filter(
+    (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.dot === undefined && h.frame === shot,
+  );
+  const { fullBurst: _, ...args } = ctx.args;
+  const hit = hitDamage(result, { ...ctx, args: { ...args, frame: shot } });
+  return hit + skills.reduce((sum, h) => sum + oneHitValue(h.hit, false), 0);
 }
 
 /**

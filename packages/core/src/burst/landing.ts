@@ -194,6 +194,15 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
     delays: { hitFrames: 54, effectFrames: 0, hitOffsets: [0, 12, 24, 35, 47, 59, 71, 82, 94, 106] },
     claim: 'C-0655',
   },
+  // ラプラス（宝物あり）: III のタイマーの 00.00 から使用武器変更（ビーム）の最初の発まで 6f（動画で 28f。止まり 22f を含む）、
+  // 初回ダメージ（バーストの倍率ダメージ）のヒットまで 7f（動画で 29f）。窓の終わりは発動から数える（モダニアと同じ）。ビームの形は C-1200。宝物なしは未測定
+  {
+    resourceIds: [100],
+    treasure: true,
+    delays: { hitFrames: 7, effectFrames: 5 },
+    windowFromActivation: true,
+    claim: 'C-1204',
+  },
   // ヘルム：アクアマリン: II の発動（六角形の替わり目）からヒットまで 64f（フルバーストに入る回は、III の 00.00 の後の入りの止まりを挟んで
   // 動画で 84〜85f）。電撃の敵への追加ダメージ（burst の effects[1]。burstUse）もヒットと同じフレームに出る
   { resourceIds: [353], delays: { hitFrames: 64, effectFrames: 64 }, claim: 'C-1061' },
