@@ -92,6 +92,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     consuming,
     cooldownSum,
     cooldownViews,
+    counterFullAt,
+    counterKey,
     counterRecords,
     counterSources,
     critViews,
@@ -313,6 +315,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     endedAt,
     selfStackCountAt,
     enemyStateAt,
+    counterFullFiresAt: (holder, counter, frame) => counterFullAt.get(counterKey(holder, counter)) === frame,
     instantConditionHolds(effect, sourceSlotIndex, frame) {
       if (holdsAt(effect.condition, sourceSlotIndex, frame)) return true;
       skipEffect(sourceSlotIndex, effect, frame);

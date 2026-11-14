@@ -96,7 +96,7 @@ export function dotTicks(
       fires,
       frames,
       maxStacks,
-      tickIntervalFrames ?? intervalSeconds * FRAMES_PER_GAME_SECOND,
+      latestTickIntervalFrames(intervalSeconds, tickIntervalFrames),
       cancels,
     );
   const tracker = dotTickTracker(intervalSeconds, durationSeconds, frames, firstTick);
@@ -152,6 +152,16 @@ export function dotActiveSpans(
   return spans;
 }
 
+/** halfAfterLatest の刻みの間隔（フレーム）。実測の tickIntervalFrames があればそれ、無ければ intervalSeconds */
+export function latestTickIntervalFrames(intervalSeconds: number, tickIntervalFrames: number | undefined): number {
+  return tickIntervalFrames ?? intervalSeconds * FRAMES_PER_GAME_SECOND;
+}
+
+/** halfAfterLatest の、最後に付けたフレーム anchor からの k 回目（0 始まり）の刻みのフレーム（latestDotTicks と 1 パス目のゲージが使う） */
+export function latestTickFrame(anchor: number, k: number, intervalFrames: number): number {
+  return anchor + Math.round((k + 0.5) * intervalFrames);
+}
+
 /**
  * firstTick halfAfterLatest の tick（チェーンバインド。維持は戦闘の終わりまで。plan/design-skill-stage13.md 2.3 節）。
  * 付けるたびに刻みを付け直し、最後に付けたフレーム a から、k 回目（0 始まり）を a + round((k + 0.5) × 間隔) に出す（間隔はゲーム内の
@@ -174,7 +184,7 @@ export function latestDotTicks(
     stacks = Math.min(stacks + 1, maxStacks);
     const next = Math.min(fires[i + 1] ?? frames, c < cancels.length ? cancels[c]! + 1 : frames);
     for (let k = 0; ; k++) {
-      const frame = anchor + Math.round((k + 0.5) * intervalFrames);
+      const frame = latestTickFrame(anchor, k, intervalFrames);
       if (frame >= next || frame >= frames) break;
       out.push({ frame, stacks });
     }

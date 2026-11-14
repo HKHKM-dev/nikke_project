@@ -235,12 +235,18 @@ function parseDotStacks(v: Record<string, Json>, effect: DotEffect, path: string
 
 /**
  * ゲージ: 付けた時（gaugeOnApply とその遅れ）と刻みごと（gaugeOnTick）。刻みの遅れ（tickDelayFrames）は射撃の回数のきっかけか、
- * 周期のきっかけ（ゲージを溜めない。plan/design-rosanna-co.md 2 節）
+ * 周期のきっかけ（ゲージを溜めない。plan/design-rosanna-co.md 2 節）。カウンタが上限に届いた時（{ counterFull }）の dot は、付けた時と、
+ * firstTick halfAfterLatest の刻みごと（遅れは組まない。plan/design-mihara-bc-gauge.md 2 節）
  */
 function parseDotGauge(v: Record<string, Json>, effect: DotEffect, path: string): void {
+  const counterFull = isCounterFullTrigger(effect.trigger);
   for (const key of ['gaugeOnApply', 'gaugeOnTick'] as const) {
     if (v[key] === undefined) continue;
     if (v[key] !== true) fail(`${path}.${key}`, 'expected true');
+    if (counterFull) {
+      effect[key] = true;
+      continue;
+    }
     // V-0113: tick のゲージは、バースト使用時に付くハッキング（クルミ）にも要る。付けたときの分は射撃の回数トリガーだけ
     if (key === 'gaugeOnTick' && effect.trigger === 'burstUse') {
       effect[key] = true;
@@ -253,6 +259,10 @@ function parseDotGauge(v: Record<string, Json>, effect: DotEffect, path: string)
       );
     }
     effect[key] = true;
+  }
+  if (counterFull) {
+    validateCounterFullDotGauge(v, effect, path);
+    return;
   }
   if (v.gaugeOnApplyDelayFrames !== undefined) {
     if (effect.gaugeOnApply !== true) fail(`${path}.gaugeOnApplyDelayFrames`, 'needs gaugeOnApply');
@@ -271,4 +281,16 @@ function parseDotGauge(v: Record<string, Json>, effect: DotEffect, path: string)
   if (effect.gaugeOnTick === true && effect.firstTick !== 'afterInterval') {
     fail(`${path}.gaugeOnTick`, 'needs firstTick afterInterval');
   }
+}
+
+/** { counterFull } の dot のゲージの形（parseDotGauge）。1 パス目の frame/firstPass/counterGauges.ts が追う */
+function validateCounterFullDotGauge(v: Record<string, Json>, effect: DotEffect, path: string): void {
+  // 1 パス目は、付ける数を上限に届いたカウンタの上限で出すので、数えるカウンタは同じもの
+  const charges = effect.gaugeOnApply === true || effect.gaugeOnTick === true;
+  if (charges && isCounterFullTrigger(effect.trigger) && effect.perCount?.counter !== effect.trigger.counterFull)
+    fail(`${path}.perCount`, 'a dot with gauge on { counterFull } needs perCount { counter } of the same counter');
+  for (const key of ['gaugeOnApplyDelayFrames', 'tickDelayFrames'] as const)
+    if (v[key] !== undefined) fail(`${path}.${key}`, 'cannot be used with { counterFull }');
+  if (effect.gaugeOnTick === true && effect.firstTick !== 'halfAfterLatest')
+    fail(`${path}.gaugeOnTick`, 'with { counterFull } needs firstTick halfAfterLatest');
 }

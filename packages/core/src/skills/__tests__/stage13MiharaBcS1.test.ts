@@ -37,13 +37,29 @@ describe('語彙の検証', () => {
   });
 
   it('allows { counterFull } with perCount on damage, and perCountIntervalFrames only with perCount { counter }', () => {
-    expect(withEffect(attack, { perCount: undefined, perCountIntervalFrames: undefined })).not.toThrow();
+    expect(
+      withEffect(attack, { perCount: undefined, perCountIntervalFrames: undefined, gaugePerHit: undefined }),
+    ).not.toThrow();
     expect(withEffect(attack, { perCount: undefined })).toThrow(/perCountIntervalFrames needs perCount/);
     // 段 14 の PR 2: perCountIntervalSeconds は delayFrames と組めるようになったので、秒とフレームの間隔の重なりで落ちる
     expect(withEffect(attack, { perCountIntervalSeconds: 0.25 })).toThrow(
       /perCountIntervalFrames cannot be used with perCountIntervalSeconds/,
     );
     expect(withEffect(attack, { trigger: { counterFull: 'nope' } })).toThrow(/counterFull/);
+  });
+
+  it('limits the gauge of { counterFull } hits to the forms the first pass tracks (V-0761)', () => {
+    // 倍率ダメージのヒットごとのゲージは、perCount { counter } を 1 つずつ出すヒットだけ
+    expect(withEffect(attack, { perCount: undefined, perCountIntervalFrames: undefined })).toThrow(
+      /gaugePerHit with \{ counterFull \} needs perCount \{ counter \} and perCountIntervalFrames/,
+    );
+    expect(withEffect(attack, { gaugePerHit: 2 })).toThrow(/gaugePerHit/);
+    // 持続ダメージの刻みのゲージは halfAfterLatest だけ、遅れは組まない
+    expect(withEffect(chains, { gaugeOnApplyDelayFrames: 2 })).toThrow(/cannot be used with \{ counterFull \}/);
+    expect(withEffect(chains, { gaugeOnTick: false })).toThrow(/expected true/);
+    // ヒットの数は上限に届いたカウンタの上限で出すので、数えるカウンタは同じもの
+    expect(withEffect(attack, { perCount: { counter: 'battery' } })).toThrow(/of the same counter/);
+    expect(withEffect(chains, { perCount: { counter: 'battery' } })).toThrow(/of the same counter/);
   });
 
   it('keeps the chain bind form together (halfAfterLatest ⇔ durationUntil battleEnd, perCount needs { counterFull })', () => {

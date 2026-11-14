@@ -1,0 +1,69 @@
+[
+  {
+    "id": "1159-01",
+    "recording": "1159",
+    "source": "V-0761",
+    "readAt": "2026-11-13",
+    "use": "compare",
+    "kind": "timing",
+    "value": 2009,
+    "unit": "f",
+    "description": "撮り方 C2（クラウン（AI）・I-DOLL・サン（操作・撃たない））の、戦闘開始から 1 回目にバーストゲージが満タンになる（BURST バーが消える。C-0083）までの動画のフレーム",
+    "method": {
+      "tool": "gauge.ts --mode events・timer.ts --mode runs",
+      "note": "バー消失 f2786（前のフレームまでバーが映り、このフレームで段のアイコンに替わったのを画で確かめた） − 戦闘開始 f777（残り時間の 02:59 が出たフレーム。C-0078）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [2]
+      }
+    }
+  },
+  {
+    "id": "1159-02",
+    "recording": "1159",
+    "source": "V-0761",
+    "readAt": "2026-11-13",
+    "use": "compare",
+    "kind": "count",
+    "value": 1008,
+    "unit": "発",
+    "description": "撮り方 C2（クラウン（AI）・I-DOLL・サン（操作・撃たない））の、戦闘の始まりから 1 回目にゲージが満タンになった（BURST バーが消えた）フレームまでのクラウンの発の数",
+    "method": {
+      "tool": "ammo.ts --mode mags・series --crop 667,902,110,26（枠アイコンの上の残弾。2 人の編成の 1 枠目）・gauge.ts --mode events",
+      "note": "残弾の減りの和。1〜3 本目のマガジンは 300 発ずつ撃ち切り（どれも 0 の表示の後に次の最大の表示）、4 本目のマガジンはバー消失 f2786 の表示が 192（300 − 192 = 108 発）。満タンの前後の表示は画で読んだ（C2 の 3 本は、満タンの約 20f 前から ammo.ts --mode series の復号が 1f に約 8 発ずつ減る形に崩れたが、画では 1f に 1 発ずつ減っている）。表示は発と 1〜2f ずれうる（MG は約 1f に 1 発）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [2]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  }
+]

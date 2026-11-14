@@ -314,7 +314,8 @@ function parsePeriodShorten(p: Json, trigger: EffectTrigger, at: string): Period
 
 /**
  * ヒットごとのゲージ（gaugePerHit）。周期の倍率ダメージ（V-0545。plan/design-new-chars-1029.md 11.2 節の b）と、
- * 射撃の回数のきっかけ（数える窓なし。plan/design-skill-stage14.md 2.5 節）の倍率ダメージに書ける
+ * 射撃の回数のきっかけ（数える窓なし。plan/design-skill-stage14.md 2.5 節）と、カウンタが上限に届いた時（{ counterFull }。
+ * plan/design-mihara-bc-gauge.md 2 節）の倍率ダメージに書ける
  */
 function parseDamageGaugePerHit(v: Record<string, Json>, effect: DamageEffect, path: string): void {
   if (v.gaugePerHit === undefined) return;
@@ -327,10 +328,14 @@ function parseDamageGaugePerHit(v: Record<string, Json>, effect: DamageEffect, p
       `${path}.gaugePerHit`,
       `expected true (or an integer of 2 or more with a shot count trigger), got ${JSON.stringify(v.gaugePerHit)}`,
     );
-  if (!isTimerTrigger(trigger) && !(isShotCountTrigger(trigger) && !hasCountingWindow(trigger)))
+  if (
+    !isTimerTrigger(trigger) &&
+    !isCounterFullTrigger(trigger) &&
+    !(isShotCountTrigger(trigger) && !hasCountingWindow(trigger))
+  )
     fail(
       `${path}.gaugePerHit`,
-      'gaugePerHit needs a timer trigger ({ everySeconds }) or a shot count trigger without a counting window',
+      'gaugePerHit needs a timer trigger ({ everySeconds }), { counterFull } or a shot count trigger without a counting window',
     );
   if (effect.gaugeHits !== undefined) fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with gaugeHits');
   // 1 パス目は名前の無い窓の短縮を追わない（使い手のエイダの S2 はゲージを溜めるかを確かめていない）
@@ -384,9 +389,22 @@ function parsePerCountSplit(v: Record<string, Json>, effect: DamageEffect, path:
 
 /**
  * 射撃の回数のきっかけのヒットごとのゲージは、1 パス目が数えられるヒット
- * （1 つずつ出すなら perCount の { state }）だけ（plan/design-skill-stage14.md 2.5 節）。perCount の分け方（parsePerCountSplit）を読んだ後に見る
+ * （1 つずつ出すなら perCount の { state }）だけ（plan/design-skill-stage14.md 2.5 節）。{ counterFull } のきっかけは、perCount の
+ * { counter } を perCountIntervalFrames で 1 つずつ出すヒットだけ（plan/design-mihara-bc-gauge.md 2 節）。perCount の分け方
+ * （parsePerCountSplit）を読んだ後に見る
  */
 function validateGaugePerHitSplit(effect: DamageEffect, path: string): void {
+  if (effect.gaugePerHit !== undefined && isCounterFullTrigger(effect.trigger)) {
+    if (effect.perCount === undefined || !('counter' in effect.perCount) || effect.perCountIntervalFrames === undefined)
+      fail(
+        `${path}.gaugePerHit`,
+        'gaugePerHit with { counterFull } needs perCount { counter } and perCountIntervalFrames',
+      );
+    // 1 パス目は、ヒットの数を上限に届いたカウンタの上限で出す（frame/firstPass/counterGauges.ts）ので、数えるカウンタは同じもの
+    if (effect.perCount.counter !== effect.trigger.counterFull)
+      fail(`${path}.gaugePerHit`, 'gaugePerHit with { counterFull } needs perCount { counter } of the same counter');
+    return;
+  }
   if (effect.gaugePerHit === undefined || !isShotCountTrigger(effect.trigger) || effect.perCount === undefined) return;
   if (!('state' in effect.perCount) || !splitsPerCount(effect))
     fail(

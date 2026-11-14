@@ -215,6 +215,8 @@ export type TeamPlan = {
   cycleGaugeHits: FirstPassResult['cycleGaugeHits'];
   /** 持続ダメージで溜めたゲージ（1 パス目。テスト用） */
   dotGauges: FirstPassResult['dotGauges'];
+  /** { counterFull } のきっかけのヒットで溜めたゲージ（1 パス目。テスト用。plan/design-mihara-bc-gauge.md 3 節） */
+  counterGauges: FirstPassResult['counterGauges'];
   /** 発のゲージ（着弾のフレーム。1 パス目の記録。frame/firstPass.ts） */
   shotGauges: FirstPassResult['shotGauges'];
   /** 味方のゲージ（allyGaugeAdd）で足したゲージ（1 パス目の記録。照合用） */
@@ -332,6 +334,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     landing,
     cycleGaugeHits,
     dotGauges,
+    counterGauges: first.counterGauges,
     shotGauges,
     allyGauges,
     timerGauges,
