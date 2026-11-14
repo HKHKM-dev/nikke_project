@@ -137,12 +137,20 @@ export function flyToTray(content: Element, to: DOMRect | null): void {
 
 /**
  * 操作の印を、離した位置（from。持ち上げた印の箱）から、移した先のスロット（card。描き直しの後に引く）の印の場所へ滑り込ませる。
- * 印は描き直しの後に移した先へ出るので、次の描画で、その印を離した位置から元の場所へ動かす
+ * 印は描き直しの後に移した先へ出るので、印が出た描画で、その印を離した位置から元の場所へ動かす（出るまで CONTROLLER_WAIT_FRAMES の描画まで待つ）
  */
-export function flyControllerInto(from: DOMRect, card: () => Element | null): void {
+const CONTROLLER_WAIT_FRAMES = 5;
+export function flyControllerInto(
+  from: DOMRect,
+  card: () => Element | null,
+  framesLeft = CONTROLLER_WAIT_FRAMES,
+): void {
   requestAnimationFrame(() => {
     const icon = card()?.querySelector('.modern-slot-focus-handle');
-    if (!icon) return;
+    if (!icon) {
+      if (framesLeft > 1) flyControllerInto(from, card, framesLeft - 1);
+      return;
+    }
     const to = icon.getBoundingClientRect();
     icon.animate(
       [{ transform: `translate(${from.left - to.left}px, ${from.top - to.top}px)` }, { transform: 'none' }],
