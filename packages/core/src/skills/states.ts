@@ -403,6 +403,11 @@ export const NAMED_STATES = {
   frenzy: { name: { ja: '狂気', en: 'Frenzy' }, holder: 'ally' },
   /** ソードコイン（ルージュの S2。戦闘開始時に後列なら自分と両隣に付く。攻撃ダメージ▲・持続。plan/design-rouge.md 2.3 節） */
   swordCoin: { name: { ja: 'ソードコイン', en: 'Sword Coin' }, holder: 'ally' },
+  /**
+   * 何見てんだよお前ら！！（ミルク：ブルーミングバニーのバースト。自分・10 秒・中身なし（攻撃力▲・貫通ダメージ▲は同じ窓の timed）。
+   * S2 の「何見てんだよお前ら！！状態の時のみ、2 秒ごとに」が見る）
+   */
+  overconfidentHuh: { name: { ja: '何見てんだよお前ら！！', en: 'Overconfident, Huh?!' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;
