@@ -634,6 +634,7 @@ export function resolveTimed(
       }
       if (effect.kind !== 'timed') return;
       const window = resolveItemFields(effect, character, slot, levels[slot], effectIndex);
+      window.trigger = resolveTimedTrigger(effect, slot, window.trigger);
       const value =
         effect.amplifies !== undefined
           ? effect.amplifies.percent / 100 // 参照する効果の値に掛ける割合（窓ごとの値は skills/holders/history.ts の amplify）
@@ -663,6 +664,16 @@ export function resolveTimed(
   );
 }
 
+/**
+ * timed のきっかけ。クールタイムの印のある周期（parse/crossChecks.ts が skill1・skill2 の timed に限る）は、自分のスロットの発動のきっかけ
+ * { skillFired } にする（1 パス目の発動の記録を読む。plan/design-centi.md 2.3 節）。ほかは resolveTrigger で解いたもの
+ */
+function resolveTimedTrigger(effect: TimedEffect, slot: SkillSlot, resolved: ResolvedTrigger): ResolvedTrigger {
+  if (!isTimerTrigger(effect.trigger) || effect.trigger.cooldown !== true) return resolved;
+  if (slot === 'burst') throw new RangeError('a cooldown timer is only allowed in skill1 and skill2');
+  return { skillFired: slot };
+}
+
 /** timed と付与で共通の、値を除いた件の欄 */
 type ResolvedItemFields = Omit<ResolvedTimedEffect, 'stat' | 'scaling' | 'value' | 'weapon' | 'amplifies'>;
 
@@ -684,12 +695,7 @@ function resolveItemFields(
   const r: ResolvedItemFields = {
     source: { resourceId: character.resourceId, skill: slot, name: skill.name },
     target: effect.target,
-    // クールタイムの印のある周期（timed だけ。parse/crossChecks.ts）は、自分のスロットの発動のきっかけ { skillFired } にする
-    // （1 パス目の発動の記録を読む。plan/design-centi.md 2.3 節）
-    trigger:
-      isTimerTrigger(effect.trigger) && effect.trigger.cooldown === true
-        ? { skillFired: slot as 'skill1' | 'skill2' }
-        : resolveTrigger(effect.trigger, skill, level),
+    trigger: resolveTrigger(effect.trigger, skill, level),
     durationFrames: effect.durationUntil === 'battleEnd' ? BATTLE_END_FRAMES : gameSecondsToFrames(seconds),
     effectIndex,
   };

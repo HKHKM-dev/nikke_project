@@ -80,6 +80,9 @@ describe('読み込み', () => {
     );
     fails([{ ...onS2, trigger: { skillFired: 'burst' } }], [s2Attack], /skillFired/);
     fails([], [{ ...s2Attack, stat: 'critRate', delayFrames: 3 }], /cannot have delayFrames/);
+    expect(() =>
+      parseSkillDefinition({ ...def([], []), skills: { ...def([], []).skills, burst: { effects: [s2Attack] } } }),
+    ).toThrow(/only allowed in skill1 and skill2/);
     fails([], [{ ...s2Attack, trigger: { everySeconds: PERIOD, cooldown: true, atStart: true } }], /carry or atStart/);
   });
 });

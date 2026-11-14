@@ -267,9 +267,9 @@ export function parseSkillCooldownReductionEffect(v: Record<string, Json>, path:
   const trigger = parseTrigger(v.trigger, `${path}.trigger`);
   if (!isShotCountTrigger(trigger))
     fail(`${path}.trigger`, 'skillCooldownReduction needs a shot count trigger ({ count })');
-  const extra = Object.keys(trigger).find((k) => k !== 'count' && k !== 'every' && k !== 'everyRef');
-  if (extra !== undefined)
-    fail(`${path}.trigger.${extra}`, 'skillCooldownReduction only takes count, every and everyRef');
+  // 数える窓・発火の窓・確率は parseTrigger（options なし）が落とす。残るのはスタック
+  if (trigger.stacksRef !== undefined)
+    fail(`${path}.trigger.stacksRef`, 'skillCooldownReduction only takes count, every and everyRef');
   if (v.target !== 'self') fail(`${path}.target`, 'skillCooldownReduction must target "self"');
   const effect: SkillCooldownReductionEffect = {
     kind: 'skillCooldownReduction',

@@ -216,7 +216,7 @@ const KIND_INFO: Record<string, Info> = {
   'instant:skillCooldown': [
     'スキルのクールタイム・周期の変更（即時）',
     'check',
-    'periodShorten（前の発動のフレームに自分がその状態なら次の周期を縮める。マリアン：クイーンの S2）と、skillCooldownReduction（自分のスキル N のクールタイムの印のある周期の残りから、元の周期の X% を引く。センチ編）だけ',
+    'periodShorten（前の発動のフレームに自分がその状態なら次の周期を縮める。マリアン：クイーンの S2）と、skillCooldownReduction（自分のスキル N のクールタイムの印のある周期の残りを (1 − X / 100) 倍にする。センチ編・C-1219）だけ',
   ],
   // ツールチップ「クールタイム」（T4）: 維持やスタックの付いた増減は、その間スキル自体のクールタイムを変える。即時の増減とは別の効果
   'sustained:cooldown': [

@@ -90,10 +90,19 @@ function buffWindowEnds(result: SimResult, ctx: MetricContext): number[] {
  * videoFrameOf で足す。戦闘開始からの数）
  */
 function buffWindowStarts(result: SimResult, ctx: MetricContext): number[] {
-  const starts = [...new Set(buffPiecesFor(result, ctx).map((w) => w.start))]
+  return orderedStarts(
+    buffPiecesFor(result, ctx).map((w) => w.start),
+    result,
+    ctx,
+  );
+}
+
+/** 始まりの列を、重複なしの昇順にし、video なら動画のフレームに直し、count があれば最初の count 個にする */
+function orderedStarts(starts: readonly number[], result: SimResult, ctx: MetricContext): number[] {
+  const sorted = [...new Set(starts)]
     .sort((a, b) => a - b)
     .map((f) => (ctx.args.video === true ? videoFrameOf(result.schedule, f) : f));
-  return ctx.args.count === undefined ? starts : starts.slice(0, Number(ctx.args.count));
+  return ctx.args.count === undefined ? sorted : sorted.slice(0, Number(ctx.args.count));
 }
 
 /**
@@ -112,10 +121,7 @@ function buffFireStarts(result: SimResult, ctx: MetricContext): number[] {
         t.origin.effect.stat === ctx.args.stat,
     )
     .flatMap((t) => t.starts);
-  const sorted = [...new Set(starts)]
-    .sort((a, b) => a - b)
-    .map((f) => (ctx.args.video === true ? videoFrameOf(result.schedule, f) : f));
-  return ctx.args.count === undefined ? sorted : sorted.slice(0, Number(ctx.args.count));
+  return orderedStarts(starts, result, ctx);
 }
 
 /**

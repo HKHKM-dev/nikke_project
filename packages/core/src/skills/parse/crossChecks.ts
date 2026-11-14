@@ -396,6 +396,7 @@ function validateCooldownTimers(entries: Partial<Record<SkillSlot, SkillEntry>>,
       if (e.kind === 'burstGaugeHit' && e.delayFrames === undefined)
         fail(path, 'cooldown in burstGaugeHit needs delayFrames');
       if (e.kind === 'timed' && e.delayFrames !== undefined) fail(path, 'cooldown in timed cannot have delayFrames');
+      if (slot === 'burst') fail(path, 'cooldown is only allowed in skill1 and skill2');
       if (seconds !== undefined && seconds !== e.trigger.everySeconds)
         fail(path, `cooldown timers in one slot need the same everySeconds (${seconds} and ${e.trigger.everySeconds})`);
       seconds = e.trigger.everySeconds;
@@ -405,14 +406,13 @@ function validateCooldownTimers(entries: Partial<Record<SkillSlot, SkillEntry>>,
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
       const path = `${root}.${slot}.effects[${i}]`;
-      const target =
-        e.kind === 'skillCooldownReduction'
-          ? { slot: e.slot, at: `${path}.slot` }
-          : 'trigger' in e && isSkillFiredTrigger(e.trigger)
-            ? { slot: e.trigger.skillFired, at: `${path}.trigger.skillFired` }
-            : undefined;
-      if (target !== undefined && !marked.has(target.slot))
-        fail(target.at, `${target.slot} needs a cooldown timer ({ everySeconds, cooldown: true }) in the definition`);
+      const needsMarked = (target: SkillSlot, at: string): void => {
+        if (!marked.has(target))
+          fail(at, `${target} needs a cooldown timer ({ everySeconds, cooldown: true }) in the definition`);
+      };
+      if (e.kind === 'skillCooldownReduction') needsMarked(e.slot, `${path}.slot`);
+      else if ('trigger' in e && isSkillFiredTrigger(e.trigger))
+        needsMarked(e.trigger.skillFired, `${path}.trigger.skillFired`);
     });
   }
 }
