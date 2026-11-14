@@ -30,6 +30,8 @@ import {
   STATIC_PASSIVE_FLAG_STATS,
   isSelfHpAtMostTrigger,
   isSelfHpAtMost,
+  isAdjacentHpAtMostTrigger,
+  isAdjacentHpFullTrigger,
   isStateStat,
   isTimerTrigger,
   SKILL_SLOTS,
@@ -77,6 +79,7 @@ import {
   parseEndedTrigger,
   parseSelfHpAtMostTrigger,
   parseSkillFiredTrigger,
+  parseAdjacentHpTrigger,
   parseShotCountDelay,
   parseStateEndUntil,
   parseTrigger,
@@ -277,6 +280,8 @@ function parseTimedTrigger(
   return (
     parseAppliedTrigger(v.trigger, at) ??
     parseChargeTrigger(v.trigger, at) ??
+    // 両隣の味方の HP の割合（timed と付与。plan/design-adjacent-allies.md 2.3・2.4 節）
+    parseAdjacentHpTrigger(v.trigger, at) ??
     (stat === undefined
       ? // 「〈状態〉が終了した時」（{ ended }）も状態の付与だけ（plan/design-grave.md 2.1 節）
         (parseCounterFullTrigger(v.trigger, at) ?? parseEndedTrigger(v.trigger, at))
@@ -420,6 +425,12 @@ function validateHpTrigger(effect: GrantTimedFields, stat: BuffStat | undefined,
       `${path}.stat`,
       `the trigger { selfHpAtMostRef } cannot carry "${stat}" (it moves the HP ratio the trigger reads)`,
     );
+  // 両隣の HP の割合のきっかけは秒の維持だけ（plan/design-adjacent-allies.md 2.3・2.4 節）。最大HP の stat は同じ理由で書かない
+  const adjacentTrigger = isAdjacentHpAtMostTrigger(effect.trigger) || isAdjacentHpFullTrigger(effect.trigger);
+  if (adjacentTrigger && !inSeconds)
+    fail(path, 'an adjacent HP trigger goes with a duration in seconds (durationRef or durationSeconds)');
+  if (adjacentTrigger && stat !== undefined && isMaxHpStat(stat))
+    fail(`${path}.stat`, `an adjacent HP trigger cannot carry "${stat}" (it moves the HP ratio the trigger reads)`);
 }
 
 /** 効果のあるスタック（maxStacks・maxStacksRef）と、維持との組。発数の維持と条件の組もここで見る（今の検査の順を守るため） */

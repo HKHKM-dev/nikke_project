@@ -74,6 +74,30 @@ export function parsePersonaTargetFields(
 }
 
 /**
+ * heal の「両隣の味方」（targetAdjacent）と「自分と」（includeSelf）。timed と同じく、targetAdjacent は target が allies のときだけ、
+ * includeSelf は targetAdjacent と組むときだけ書ける（plan/design-adjacent-allies.md 2.1 節）
+ */
+export function parseHealAdjacent(
+  v: Record<string, Json>,
+  target: BuffTarget,
+  path: string,
+): { targetAdjacent?: true; includeSelf?: true } {
+  const out: { targetAdjacent?: true; includeSelf?: true } = {};
+  if (v.targetAdjacent !== undefined) {
+    if (v.targetAdjacent !== true) fail(`${path}.targetAdjacent`, 'must be true');
+    if (target !== 'allies') fail(`${path}.targetAdjacent`, `only allowed with target "allies", got "${target}"`);
+    if (v.targetBurstStep !== undefined) fail(`${path}.targetAdjacent`, 'cannot be combined with targetBurstStep');
+    out.targetAdjacent = true;
+  }
+  if (v.includeSelf !== undefined) {
+    if (v.includeSelf !== true) fail(`${path}.includeSelf`, 'must be true');
+    if (out.targetAdjacent === undefined) fail(`${path}.includeSelf`, 'only allowed with targetAdjacent');
+    out.includeSelf = true;
+  }
+  return out;
+}
+
+/**
  * 「基本バースト段階が N の」。対象は allies と burstUsers（「直前に
  * バーストスキルを使用した基本バースト段階が N の味方全体」。エイダの S1。plan/design-skill-stage15.md 2.3 節）
  */

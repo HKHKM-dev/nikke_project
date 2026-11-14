@@ -188,6 +188,12 @@ export function fixedTargetsOf(
   // 「残りの HP の割合が最も低い味方 N 機」（heal の lowestHpRatio）は、枠の HP の
   // 割合の想定（省略は満タン）の低い順・同値は枠の若い順（C-0567。plan/design-skill-stage8.md 1.1 節）。自分も候補。先頭の N 枠は skills/targets.ts が取る
   if (effect.kind === 'heal') {
+    // 「両隣の味方」（「自分と」なら自分の枠も。timed・付与と同じ枠。plan/design-adjacent-allies.md 2.1 節）
+    if (effect.targetAdjacent === true) {
+      return adjacentSlotsOf(characters, selfIndex, effect.includeSelf === true).filter((i) =>
+        matchesTargetFilter(effect, fullCharacter(characters[i]!, i)),
+      );
+    }
     // 「基本バースト段階が N の」（エイダの S1 の吸収回復。timed と同じ countsAsBurstStep）
     const step = effect.targetBurstStep;
     if (step !== undefined) return characters.flatMap((c, i) => (c !== null && countsAsBurstStep(c, step) ? [i] : []));
@@ -225,6 +231,20 @@ export function fixedTargetsOf(
   if (!longest) return candidates;
   const seconds = (i: number) => fullCharacter(characters[i]!, i).shot.chargeTime;
   return candidates.sort((a, b) => seconds(b) - seconds(a) || a - b);
+}
+
+/**
+ * 枠 selfIndex の「両隣」の枠（左右の枠のうち空でないもの。枠の若い順）。withSelf なら自分の枠も入れる。ゲーム内の用語のツールチップの
+ * 「両隣」（編成の枠の左右）の読み（plan/design-adjacent-allies.md 2.1 節）
+ */
+export function adjacentSlotsOf(
+  characters: readonly (unknown | null)[],
+  selfIndex: number,
+  withSelf: boolean,
+): number[] {
+  return [selfIndex - 1, ...(withSelf ? [selfIndex] : []), selfIndex + 1].filter(
+    (i) => i >= 0 && i < characters.length && characters[i] !== null && characters[i] !== undefined,
+  );
 }
 
 function sameTargets(a: readonly number[] | undefined, b: readonly number[] | undefined): boolean {
@@ -482,6 +502,39 @@ function hpRatioMovesOf(definitions: readonly (SkillDefinition | null | undefine
   return moves;
 }
 
+/**
+ * 枠ごとの静的な状態に、両隣への戦闘の終わりまでの付与（戦闘開始時・戦闘の終わりまで・発火の条件なし・スタックなし。targetAdjacent）
+ * が付ける状態を足す（〈状態〉の味方の対象 targetState が読む。plan/design-adjacent-allies.md 2.2 節）。件は時間で変わる付与と
+ * 同じに作るので、中身と自分の状態の条件はこれを読まない
+ */
+function withAdjacentStates(
+  states: readonly (readonly NamedStateId[] | undefined)[],
+  definitions: readonly (SkillDefinition | null | undefined)[],
+  characters: readonly (CompositionCharacter | null)[],
+): (readonly NamedStateId[] | undefined)[] {
+  const out = states.map((s) => (s === undefined ? undefined : [...s]));
+  definitions.forEach((definition, j) => {
+    if (!definition) return;
+    for (const slot of SKILL_SLOTS) {
+      for (const e of definition.skills[slot].effects) {
+        if (e.kind !== 'state' || e.targetAdjacent !== true) continue;
+        const battleLong =
+          e.trigger === 'battleStart' &&
+          e.durationUntil === 'battleEnd' &&
+          e.condition === undefined &&
+          e.maxStacks === undefined &&
+          e.maxStacksRef === undefined;
+        if (!battleLong) continue;
+        for (const i of adjacentSlotsOf(characters, j, e.includeSelf === true)) {
+          const held = (out[i] ??= []);
+          if (!held.includes(e.state)) held.push(e.state);
+        }
+      }
+    }
+  });
+  return out;
+}
+
 /** 枠ごとの、ほかの枠の定義が付けうる状態（自分の枠を除く全枠の付与の状態） */
 function otherGrantedStates(definitions: readonly (SkillDefinition | null | undefined)[]): Set<NamedStateId>[] {
   const granted = definitions.map(grantedStatesOf);
@@ -510,7 +563,11 @@ export function applyCompositionToTeam<T extends TeamInput>(input: T): T {
     const definition = slot?.skills?.definition;
     return definition ? filterComposition(definition, characters, i, enemyElement) : undefined;
   });
-  const states = filtered.map((definition) => (definition === undefined ? undefined : staticStatesOf(definition)));
+  const states = withAdjacentStates(
+    filtered.map((definition) => (definition === undefined ? undefined : staticStatesOf(definition))),
+    filtered,
+    characters,
+  );
   const others = otherGrantedStates(filtered);
   const moves = hpRatioMovesOf(filtered);
   const slots = input.slots.map((slot, i) =>

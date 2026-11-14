@@ -99,6 +99,9 @@ function triggerLabel(t: ResolvedTrigger): string {
   if ('chargeFull' in t) return 'chargeFull';
   // 自分の HP の割合が閾値以下の間（hp<=70%）
   if ('selfHpAtMost' in t) return `hp<=${+(t.selfHpAtMost * 100).toFixed(2)}%`;
+  // 両隣の味方の HP の割合（adjacentHp<=90%・adjacentHpFull）
+  if ('adjacentHpAtMost' in t) return `adjacentHp<=${+(t.adjacentHpAtMost * 100).toFixed(2)}%`;
+  if ('adjacentHpFull' in t) return 'adjacentHpFull';
   // 召喚の攻撃（summon:nearFeather）
   if ('summon' in t) return `summon:${t.summon}`;
   // 自分の状態が終わった時（ended:prediction）

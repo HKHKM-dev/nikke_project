@@ -1,6 +1,8 @@
 // 件の一覧の層 2: 発火の読み（plan/design-split-first-pass.md 3.3 節・9.2 節）。きっかけから TriggerTracker を作る firesOf と、
 // 自分の HP の割合のきっかけの状態。
+import { adjacentSlotsOf } from '../composition.ts';
 import {
+  isResolvedAdjacentHp,
   isResolvedApplied,
   isResolvedSelfHpAtMost,
   isResolvedShotCount,
@@ -12,8 +14,21 @@ import { isEndedTrigger, isStateCountWindow, isCounterFullTrigger, type EffectCo
 import { timerFramesOf } from '../timeline.ts';
 import type { HolderBase, Records, WithLate } from './records.ts';
 
+/**
+ * 「HP が最大」の判定の閾値。割合がこれ以下なら最大でない（selfHpAtMostAt は閾値に 1e-9 を足して比べるので、割合が 1 − 1e-9 より
+ * 大きければ最大とみなす）
+ */
+const BELOW_FULL_HP = 1 - 2e-9;
+
 /** きっかけから発火の追跡（TriggerTracker）を作る */
-export function createFires({ counterFullAt, counterKey, frames, options, late }: HolderBase & Records & WithLate) {
+export function createFires({
+  counterFullAt,
+  counterKey,
+  frames,
+  options,
+  late,
+  slots,
+}: HolderBase & Records & WithLate) {
   /** 周期のトリガーは出来事の列に無いので、周期のフレームで発火する（atStart のフレーム 0 はループの前に登録する） */
   /**
    * 発動者 × 閾値ごとの、HP の割合の窓の追跡（plan/design-mast.md 8 節）。毎フレームのきっかけの判定で 1 回だけ割合を求め、
@@ -47,6 +62,11 @@ export function createFires({ counterFullAt, counterKey, frames, options, late }
     }
     return state.dropped;
   };
+  /** 割合が閾値を上回ったフレームか（selfHpDropped と同じ状態を読む。上がったフレームは ends の最後） */
+  const selfHpRose = (state: SelfHpState, frame: number): boolean => {
+    selfHpDropped(state, frame);
+    return state.ends.at(-1) === frame;
+  };
   const firesOf = (
     trigger: ResolvedTrigger,
     slotIndex: number,
@@ -60,6 +80,16 @@ export function createFires({ counterFullAt, counterKey, frames, options, late }
     if (isResolvedSelfHpAtMost(trigger)) {
       const state = selfHpStateOf(slotIndex, trigger.selfHpAtMost);
       return (ev) => selfHpDropped(state, ev.frame);
+    }
+    // 両隣の味方の HP の割合が閾値以下に下がったフレーム・100% に上がったフレーム（どちらかの枠で起きれば 1 回。
+    // plan/design-adjacent-allies.md 2.3・2.4 節）
+    if (isResolvedAdjacentHp(trigger)) {
+      const full = 'adjacentHpFull' in trigger;
+      const states = adjacentSlotsOf(slots, slotIndex, false).map((i) =>
+        selfHpStateOf(i, full ? BELOW_FULL_HP : trigger.adjacentHpAtMost),
+      );
+      return (ev) =>
+        states.map((s) => (full ? selfHpRose(s, ev.frame) : selfHpDropped(s, ev.frame))).some((fired) => fired);
     }
     // カウンタが上限に届いた次のフレーム（registerCounters が counterFullAt に書く）
     if (isCounterFullTrigger(trigger)) {

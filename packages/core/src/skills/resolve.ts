@@ -24,6 +24,8 @@ import {
   isCounterFullTrigger,
   isFlagStat,
   isSelfHpAtMostTrigger,
+  isAdjacentHpAtMostTrigger,
+  type AdjacentHpFullTrigger,
   isShotCountTrigger,
   isStateCountWindow,
   isTimerTrigger,
@@ -109,6 +111,10 @@ export type ResolvedTrigger =
   // 自分の HP の割合が閾値（比率。説明文の X% ÷ 100。plan/design-mast.md 8 節）以下に下がった時。timed だけ。1 パス目の件の一覧が
   // 追う（skills/holders/fires.ts の firesOf）ので、出来事の列では追わない
   | { selfHpAtMost: number }
+  // 両隣の味方の HP の割合が閾値（比率）以下に下がった時・100% に上がった時（plan/design-adjacent-allies.md 2.3・2.4 節）。
+  // timed と状態の付与だけ。1 パス目の件の一覧が追う（skills/holders/fires.ts）
+  | { adjacentHpAtMost: number }
+  | AdjacentHpFullTrigger
   // 自分のその状態の件が外れた時（plan/design-grave.md 2.1 節）。ammoDecrease・状態の付与（と counterChange）だけ。1 パス目の件の一覧が
   // 追う（skills/holders/conditions.ts の endedAt）ので、出来事の列では追わない
   | EndedTrigger;
@@ -116,6 +122,11 @@ export type ResolvedTrigger =
 /** 自分の HP の割合の窓のきっかけ（{ selfHpAtMost }）か */
 export function isResolvedSelfHpAtMost(t: ResolvedTrigger): t is { selfHpAtMost: number } {
   return typeof t === 'object' && 'selfHpAtMost' in t;
+}
+
+/** 両隣の味方の HP の割合のきっかけ（{ adjacentHpAtMost }・{ adjacentHpFull }）か */
+export function isResolvedAdjacentHp(t: ResolvedTrigger): t is { adjacentHpAtMost: number } | AdjacentHpFullTrigger {
+  return typeof t === 'object' && ('adjacentHpAtMost' in t || 'adjacentHpFull' in t);
 }
 
 /** 使用武器の変更の終わりのきっかけ（{ weaponChangeEnd }）か */
@@ -206,6 +217,8 @@ function selfHpRatioOfRef(skill: SkillRaw, ref: number, level: number): number {
 export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: number): ResolvedTrigger {
   // HP の割合の閾値は % → 比率
   if (isSelfHpAtMostTrigger(trigger)) return { selfHpAtMost: selfHpRatioOfRef(skill, trigger.selfHpAtMostRef, level) };
+  if (isAdjacentHpAtMostTrigger(trigger))
+    return { adjacentHpAtMost: selfHpRatioOfRef(skill, trigger.adjacentHpAtMostRef, level) };
   if (!isShotCountTrigger(trigger)) return typeof trigger === 'object' ? { ...trigger } : trigger;
   // 確率のきっかけは 1 発ごとに引く（every 1）。確率は % → 比率
   if (trigger.chance !== undefined || trigger.chanceRef !== undefined) {

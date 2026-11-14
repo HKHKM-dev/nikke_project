@@ -910,6 +910,29 @@ export function isSkillFiredTrigger(t: unknown): t is SkillFiredTrigger {
   return typeof t === 'object' && t !== null && 'skillFired' in t;
 }
 
+/**
+ * 「両隣の味方のうち 1 機が HP X% 以下になった時」（plan/design-adjacent-allies.md 2.3 節）。発動者の左右の枠（空枠は数えない）の
+ * どちらかの HP の割合が閾値（description_value_NN の X%）以下に下がったフレームに発火する（同じフレームに 2 機とも下がっても 1 回）。
+ * 割合は { selfHpAtMostRef } と同じ（skills/holders/views.ts の selfHpRatioAt。回復で戻る分は扱わない）。1 パス目の件の一覧が追う。
+ * 秒の維持の timed と状態の付与にだけ書け、最大HP▲・最大HP のみ▲ は書けない
+ */
+export type AdjacentHpAtMostTrigger = { adjacentHpAtMostRef: number };
+
+export function isAdjacentHpAtMostTrigger(t: unknown): t is AdjacentHpAtMostTrigger {
+  return typeof t === 'object' && t !== null && 'adjacentHpAtMostRef' in t;
+}
+
+/**
+ * 「両隣の味方のうち 1 機の HP が最大になった時」（plan/design-adjacent-allies.md 2.4 節）。左右の枠のどちらかの HP の割合が、
+ * 100% 未満から 100% に上がったフレームに発火する（被弾の無い前提では、最大HP のみ▲ が外れた時）。書ける効果は
+ * { adjacentHpAtMostRef } と同じ
+ */
+export type AdjacentHpFullTrigger = { adjacentHpFull: true };
+
+export function isAdjacentHpFullTrigger(t: unknown): t is AdjacentHpFullTrigger {
+  return typeof t === 'object' && t !== null && 'adjacentHpFull' in t;
+}
+
 /** JSON に書くトリガー。文字列は BuffTrigger、オブジェクトは回数トリガー・時間の周期のトリガー・効果名のトリガーなど */
 export type EffectTrigger =
   | BuffTrigger
@@ -930,6 +953,9 @@ export type EffectTrigger =
   | SelfHpAtMostTrigger
   // { skillFired }（timed だけが受ける。parseSkillFiredTrigger）
   | SkillFiredTrigger
+  // { adjacentHpAtMostRef }・{ adjacentHpFull }（timed・状態の付与だけが受ける。parseAdjacentHpTrigger）
+  | AdjacentHpAtMostTrigger
+  | AdjacentHpFullTrigger
   // { counterFull }（damage・dot・counterChange・状態の付与だけが受ける。parseCounterFullTrigger）
   | CounterFullTrigger
   // { summon }（damage だけが受ける。parseSummonAttackTrigger）
@@ -1678,6 +1704,13 @@ export type HealEffect = TargetCountFields &
      * allies だけ。エイダの S1 の吸収回復。plan/design-skill-stage15.md 2.3 節）
      */
     targetBurstStep?: BasicBurstStep;
+    /**
+     * 「両隣の味方」（timed の targetAdjacent と同じ。target が 'allies' のときだけ。plan/design-rouge.md 2.1 節・
+     * plan/design-adjacent-allies.md 2.1 節）
+     */
+    targetAdjacent?: true;
+    /** 「自分と両隣」（targetAdjacent と組むときだけ） */
+    includeSelf?: true;
     /** 回復量（%）の description_value_NN（UI の表示用） */
     ref: number;
     /** 維持秒数の description_value_NN（任意。durationSeconds と両方は書けない） */

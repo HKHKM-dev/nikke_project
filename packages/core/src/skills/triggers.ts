@@ -25,6 +25,7 @@ import {
   isResolvedCoverHealed,
   isResolvedSkillFired,
   isResolvedSelfHpAtMost,
+  isResolvedAdjacentHp,
   isResolvedShotCount,
   type ResolvedTrigger,
 } from './resolve.ts';
@@ -293,8 +294,8 @@ export function createTriggerTracker(
   if (isResolvedSkillFired(t))
     return (ev) => ev.skillFired?.some((x) => x.slotIndex === slotIndex && x.skill === t.skillFired) === true;
   // 自分の HP の割合の窓は 1 パス目の件の一覧が追う（skills/holders/fires.ts の firesOf。plan/design-mast.md 8 節）。出来事の列では追わない
-  if (isResolvedSelfHpAtMost(t)) {
-    throw new RangeError('a selfHpAtMost trigger is not tracked per event; the holder lists track it');
+  if (isResolvedSelfHpAtMost(t) || isResolvedAdjacentHp(t)) {
+    throw new RangeError('an HP ratio trigger is not tracked per event; the holder lists track it');
   }
   // 溜めの周期と溜めが満ちた時（1 パス目の射撃の記録の列）
   if (isChargeTickTrigger(t)) {

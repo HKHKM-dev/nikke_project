@@ -4,6 +4,7 @@
 //   - 「〈武器種〉の味方」「〈コード〉コードの味方」（targetElement）「〈クラス〉型の味方」（targetClass）は、対象の枠のキャラで絞る。
 //   - 編成で決まる対象は、最上位の skills/composition.ts が決めた枠（fixedTargets）で絞る（どれが編成で決まるかは composition.ts）。
 //     それ以外の「自分を除く」（excludeSelf）は順位（skills/ranking.ts）で外す。
+//   - 「両隣にいる味方」（adjacent）も編成で決まる対象（左右の枠と、includeSelf なら自分の枠）。
 //   - 「残りの HP の割合が最も低い味方 N 機」（lowestHpRatio）は、fixedTargets（HP の割合の想定の低い順。同値は枠の若い順）の
 //     先頭 targetCount 枠に掛ける（plan/design-skill-stage8.md 1.1 節）。
 import type { Element, NikkeClass, WeaponType } from '../types.ts';

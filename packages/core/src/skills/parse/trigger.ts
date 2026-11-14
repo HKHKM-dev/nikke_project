@@ -21,6 +21,8 @@ import {
   isShotCountTrigger,
   isTimerTrigger,
   type SelfHpAtMostTrigger,
+  type AdjacentHpAtMostTrigger,
+  type AdjacentHpFullTrigger,
   SHOT_COUNT_KINDS,
   SHOT_COUNT_RESETS,
   SHOT_COUNT_WINDOWS,
@@ -347,6 +349,27 @@ export function parseSinceTimerTrigger(v: Json, path: string, allowStart = false
   const from = parseAppliedTrigger(since, `${path}.since`);
   if (from === undefined) fail(`${path}.since`, 'expected { applied }');
   return { ...timer, since: from };
+}
+
+/**
+ * { adjacentHpAtMostRef: N } と { adjacentHpFull: true }（plan/design-adjacent-allies.md 2.3・2.4 節）。それ以外の形なら undefined
+ * （timed と状態の付与が読む）
+ */
+export function parseAdjacentHpTrigger(
+  v: Json,
+  path: string,
+): AdjacentHpAtMostTrigger | AdjacentHpFullTrigger | undefined {
+  if (!isRecord(v)) return undefined;
+  if (v.adjacentHpAtMostRef !== undefined) {
+    rejectUnknownKeys(v, ['adjacentHpAtMostRef'], path);
+    return { adjacentHpAtMostRef: parseRef(v.adjacentHpAtMostRef, `${path}.adjacentHpAtMostRef`) };
+  }
+  if (v.adjacentHpFull !== undefined) {
+    rejectUnknownKeys(v, ['adjacentHpFull'], path);
+    if (v.adjacentHpFull !== true) fail(`${path}.adjacentHpFull`, 'must be true');
+    return { adjacentHpFull: true };
+  }
+  return undefined;
 }
 
 /** { selfHpAtMostRef: N }（plan/design-mast.md 8 節）。それ以外の形なら undefined（timed だけが読む） */

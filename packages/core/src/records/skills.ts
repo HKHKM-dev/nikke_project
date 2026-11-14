@@ -265,6 +265,8 @@ function triggerLabel(e: SkillEffect): string | undefined {
   // 下がったフレームに発火する（続く長さは維持で決まる。selfHpAbove なら閾値以下の間、秒の維持なら N 秒）
   if ('selfHpAtMostRef' in t) return '自分の HP が閾値以下に下がった時';
   if ('skillFired' in t) return `${t.skillFired} を発動した時`;
+  if ('adjacentHpAtMostRef' in t) return '両隣の味方のうち 1 機の HP が閾値以下に下がった時';
+  if ('adjacentHpFull' in t) return '両隣の味方のうち 1 機の HP が最大になった時';
   if ('summon' in t) return `${t.summon} の攻撃（機数で決まる間隔）`;
   return t.count;
 }
