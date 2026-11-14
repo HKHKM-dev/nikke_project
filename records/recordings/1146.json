@@ -1,0 +1,47 @@
+{
+  "id": "1146",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1146_exia-fb-reload.mp4",
+  "original": "2026-11-14_10-29-01.mp4",
+  "durationSec": 246.3,
+  "frames": 14779,
+  "fps": 60,
+  "sizeMB": 297.7,
+  "sha256": "93a92b6bb754",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 71,
+      "name": "ソリン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 210,
+      "name": "エクシア",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-14T10:55+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

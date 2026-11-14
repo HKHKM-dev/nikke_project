@@ -77,6 +77,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   { resourceIds: [311], delays: { hitFrames: 0, effectFrames: 20 }, claim: 'C-0980' },
   // I-DOLL・フラワー: I の発動（六角形が I から II に替わるフレーム。本当の発動の 5f 後）からヒットまで 14f。バースト使用時の効果は無い
   { resourceIds: [304], delays: { hitFrames: 14, effectFrames: 0 }, claim: 'C-0220' },
+  // エクシア（宝物あり）: I の発動（六角形が I から II に替わるフレーム）からヒット（バーストスキルダメージと、フルスタックの時の追加
+  // ダメージ）まで 91f。バースト使用時の効果（防御力▼・受けるダメージ▲）もヒットから付く。宝物なしは未測定
+  { resourceIds: [210], treasure: true, delays: { hitFrames: 91, effectFrames: 91 }, claim: 'C-1191' },
   // ニヒリスター: II の発動（六角形の替わり目）からヒットと火傷の付与（1 回目の tick はヒットと同じフレーム。C-0101）まで、どちらも 9f
   { resourceIds: [261], delays: { hitFrames: 9, effectFrames: 9 }, claim: 'C-0219' },
   // ノワール: III のタイマーの 00.00 からヒットまで 72f（動画で 93〜94f。止まり 22f を含む）。効果（SG の味方の命中率▲）の遅れは未測定。

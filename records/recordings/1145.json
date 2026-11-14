@@ -1,0 +1,35 @@
+{
+  "id": "1145",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1145_exia-solo.mp4",
+  "original": "2026-11-14_10-24-39.mp4",
+  "durationSec": 198.2,
+  "frames": 11889,
+  "fps": 60,
+  "sizeMB": 240.1,
+  "sha256": "e242c516b6f3",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 210,
+      "name": "エクシア",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-14T10:54+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
