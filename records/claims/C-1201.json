@@ -1,0 +1,28 @@
+{
+  "id": "C-1201",
+  "text": "ラプラスの宝物版の S2 の追加ダメージ（最終攻撃力の 132.45%）は、フルチャージの発ごとに 1 ヒットで、RL の命中と同じ HUD の増分に出る。コアは乗らない。使用武器変更の発（ビーム）では出ない。ヒットは倍率の乗らない 1 ヒットのバーストゲージを溜める（溜めない形では、1 回目のフルバーストがモデルで約 80f 遅れる）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1160-16`・`1160-17`・`1161-17`・`1161-18`。V-0772",
+  "model": "data/skills/100.json の treasureSkills.skill2 の effects[0]（{ count: fullChargeShot } の damage・additional・gaugeHits [0]）、skills/burstDamage.ts の foldsIntoShot（即着弾の使用武器変更を持つ定義では、フルチャージの発ごとの倍率ダメージを畳み込まず、フルチャージの発にだけ出す）",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": ["data/skills/100.json の treasureSkills.skill2 の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1160",
+      "role": "仮説の出どころ"
+    }
+  ],
+  "minimal": [
+    {
+      "observations": ["1160-16", "1160-17", "1161-17", "1161-18"],
+      "element": ["ラプラス treasureSkills.skill1.notes[0]"],
+      "reason": "ヒーロービジョンの爆発範囲▲は、的が 1 体ではコアに当たる割合しか動かしえない。比べた値はどれも、コアに当たった RL・ビームの発の値か、コアの乗らない倍率ダメージで、スタックの数によらず同じ格子に合う（RL の弾速 300 の直進弾とビームのコア命中率は 1）",
+      "decided": "2026-11-14"
+    }
+  ]
+}

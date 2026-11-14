@@ -311,17 +311,32 @@ export function effectHitFrames(
  * （射撃ごとの発動として 1 件ずつ出す）。遅れて出るヒット（delayFrames）・perCount の数だけのヒット（オートファイア）も、
  * 発のヒットと別のヒットなので畳み込まず、発ごとに 1 件ずつ出す（plan/design-skill-stage14.md 2.5 節）。
  * 防御力無視ダメージ（ベスティー：タクティカル・アップの S2）も、畳み込む値
- * （damage.ts の perShot）が防御力を引いた式だけを持つので、発ごとに 1 件ずつ出す（plan/design-skill-stage16.md 2.2 節）
+ * （damage.ts の perShot）が防御力を引いた式だけを持つので、発ごとに 1 件ずつ出す（plan/design-skill-stage16.md 2.2 節）。
+ * フルチャージの発ごとの倍率ダメージは、チャージしない発（即着弾に替えた使用武器の変更の発）を撃つ定義では畳み込まず、
+ * フルチャージの発（ShotLog の fullChargeShot の列）にだけ 1 件ずつ出す（畳み込むとどの発にも乗る。plan/design-laplace.md 1 節）
  */
-function foldsIntoShot(effect: DamageEffect, trigger: ResolvedTrigger): boolean {
+function foldsIntoShot(effect: DamageEffect, trigger: ResolvedTrigger, def: SkillDefinition): boolean {
   return (
     isPerShotTrigger(trigger) &&
+    !(
+      typeof trigger === 'object' &&
+      'count' in trigger &&
+      trigger.count === 'fullChargeShot' &&
+      firesUnchargedShots(def)
+    ) &&
     effect.damageType !== 'true' &&
     effect.condition === undefined &&
     effect.delayFrames === undefined &&
     effect.perCount === undefined &&
     // 蓄積爆破（accumulate の self）は、1 パス目が付け方と爆発を決める
     effect.accumulate === undefined
+  );
+}
+
+/** 定義がチャージしない発（即着弾に替える使用武器の変更）を撃つか */
+function firesUnchargedShots(def: SkillDefinition): boolean {
+  return SKILL_SLOTS.some((slot) =>
+    def.skills[slot].effects.some((e) => e.kind === 'weaponChange' && e.instantFire === true),
   );
 }
 
@@ -345,10 +360,10 @@ export function resolveDamageEffects(
       // ネオン：ビジョン・アイの S1 の超火力状態の追加効果。条件 selfState を射撃のフレームで見る）
       // 畳み込む効果は射撃と同じフレームに乗る。遅れて出るヒットは畳み込まない（foldsIntoShot）
       // 畳み込む効果はコアの補正を持てない（resolvePerShotDamage が読まない）
-      if (foldsIntoShot(effect, trigger) && effect.coreHit === true) {
+      if (foldsIntoShot(effect, trigger, def) && effect.coreHit === true) {
         throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot be a core hit damage`);
       }
-      if (foldsIntoShot(effect, trigger)) return;
+      if (foldsIntoShot(effect, trigger, def)) return;
       // 条件つきの射撃ごとも、SG ではペレットごとか 1 回の射撃ごとかが決まっていない（resolvePerShotDamage と同じく拒否する）。
       // 1 回の射撃ごとと読んだもの（perTrigger）は、射撃ごとの発動として 1 件ずつ出す（ほかの武器と同じ）
       if (isPerShotTrigger(trigger) && character.weaponType === 'SG' && effect.perTrigger !== true) {
@@ -706,7 +721,7 @@ export function resolvePerShotDamage(
       if (effect.kind !== 'damage') continue;
       // 条件つきは畳み込まない（resolveDamageEffects が射撃ごとの発動として出す）。遅れて出るヒット・
       // perCount の数だけのヒットも畳み込まない
-      if (!foldsIntoShot(effect, resolveTrigger(effect.trigger, skill, levels[slot]))) continue;
+      if (!foldsIntoShot(effect, resolveTrigger(effect.trigger, skill, levels[slot]), def)) continue;
       if (character.weaponType === 'SG') {
         throw new RangeError(
           `skill ${skill.id}: damage on every shot is not supported for SG (per pellet or per trigger)`,

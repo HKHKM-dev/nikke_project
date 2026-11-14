@@ -144,6 +144,8 @@
     | 自分の HP が最大の場合（倍率ダメージ） | damage の `condition.selfHp: { "atLeast": 100 }` | ソリンのバースト | [design-soline.md](design-soline.md) 2.1 節 |
     | フルバースト状態でなければ（timed）／フルバーストタイム中のみ（攻撃力▲） | timed の `condition.inFullBurst: false`／攻撃力の timed の `condition.inFullBurst` | ベルベットの S1・S2 | [design-velvet.md](design-velvet.md) 2.1・2.2 節 |
     | 〈カウンタ〉の弾薬消費 N 発（足りなければ起きない） | `counterChange` の `decrease` と、消費と同じ行の効果の全部に `condition.selfCounter: { "atLeast": N }` | ベルベットの弾丸ポーチ | 同 1・2.3 節 |
+    | 使用武器変更の「初回ダメージ：最終攻撃力の X% のダメージ」（変更後の武器の発とは別の 1 ヒット） | burst の `burstDamage`（遅れの表の hitFrames） | ラプラスのバースト（C-1204） | [design-laplace.md](design-laplace.md) 8 節 |
+    | 自分が〈状態〉のフルスタック状態なら、（使用武器変更の）通常ダメージを防御力無視ダメージとして適用（バーストを使った時に判定） | 変更を 2 つにし、条件 `selfState` の `stacks`（`trueDamage` あり）と `stacksBelow` で分ける | ラプラスの宝物版のバースト（C-1200） | 同 8 節 |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。

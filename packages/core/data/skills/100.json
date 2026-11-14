@@ -1,0 +1,384 @@
+{
+  "formatVersion": 1,
+  "resourceId": 100,
+  "checkedAt": "2026-11-14",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "heroVision",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "self",
+          "maxStacksRef": 3,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "フルチャージの発ごとに 1 スタック。付くたびにすべてのスタックの維持を付け直す（いまの既定）。中身の爆発範囲▲は notes[0]。バーストの「ヒーロービジョンのフルスタック状態なら」が読む",
+            "en": "One stack per Full Charge shot. Each new stack refreshes the duration of all stacks (the current default). Its explosion range increase is notes[0]. The Burst's \"when Hero Vision is at max stacks\" reads it"
+          },
+          "claims": [
+            "C-1202",
+            "C-1206"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "ヒーロービジョンの爆発範囲▲は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）",
+          "en": "The explosion range increase of Hero Vision is not modeled (explosion range is not in the damage formula; its effect on the core hit rate is not checked)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "fullChargeShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "damageType": "additional",
+          "ref": 1,
+          "assumes": {
+            "ja": "「最後の弾丸が命中した時」は、残弾を 0 にした射撃で起こす（全弾命中の前提）。ヒットは発のフレームに出す（着弾の時刻は確かめていない）。コアの補正は乗らない",
+            "en": "\"When the last bullet hits\" fires on the shot that empties the magazine (every shot is assumed to hit). The hit is placed on the shot frame (the landing time is not checked). The core bonus does not apply"
+          },
+          "claims": [
+            "C-1203"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "対象のパーツに命中した時の本体への追加ダメージは、射撃場の敵にパーツが無いので起きない（要件 4.2 節）",
+          "en": "The additional damage to the target's body on hitting its Parts does not occur, since the range enemy has no Parts (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "damage",
+            "trigger": "unknown"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "damageRef": 2,
+          "durationRef": 3,
+          "pierce": true,
+          "rateOfFire": 1412,
+          "instantFire": true,
+          "infiniteAmmo": true,
+          "assumes": {
+            "ja": "変更後の武器（ビーム）の形は CDN に無いので録画で読んだ（V-0772）: 即着弾でチャージせず、2.5f おき（2・3f の繰り返し。1412rpm）で、維持の間リロードしない。窓の終わりはフルバーストの終わりと同じ（録画の最後の発は 00.00 の 582f 後で、モデルの最後の発より 4f 早い。V-0772）。コアへの当たりは基礎の RL の行（照準がコアにある時。撃たない操作のバーストでは胴体）。追加効果の貫通特化で、変更後の発に味方の貫通ダメージ▲が乗る。変更後の発のバーストゲージは確かめていない（モデルは変更前の武器の 1 発の量）",
+            "en": "The changed weapon (beam) is not in CDN, so it was read from recordings (V-0772): instant hit, no charge, one shot every 2.5 frames (2/3-frame steps; 1412 rpm), no reload during the duration. The window ends with the Full Burst (the last recorded shot is 582 frames after 00.00, 4 frames before the model's last shot; V-0772). Core hits follow the base RL row (when the crosshair is on the core; body hits in a Burst without shooting input). The additional Pierce makes allies' Pierce Damage ups apply to the changed shots. Burst gauge per changed shot is unverified (the model uses one base weapon shot)"
+          },
+          "claims": [
+            "C-1200",
+            "C-1202"
+          ]
+        },
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "初回ダメージは、変更後の武器の発とは別の 1 ヒット（V-0772）。コアとフルバースト補正は乗らない（バーストスキルダメージと同じ式）。ヒットは変更後の武器の最初の発の 1f 後",
+            "en": "The first damage is one hit separate from the changed-weapon shots (V-0772). No core or Full Burst bonus (the same formula as Burst Skill damage). It lands 1 frame after the first changed-weapon shot"
+          },
+          "claims": [
+            "C-1202",
+            "C-1204"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "weaponChangeShot"
+          },
+          "damageType": "true",
+          "ref": 4,
+          "condition": {
+            "selfState": {
+              "state": "heroVision",
+              "stacks": "full"
+            }
+          },
+          "assumes": {
+            "ja": "「同じ敵に」は単体ボス。変更後の武器の発ごとに 1 ヒット（発と同じフレーム）。フルスタックかは発ごとに見るので、途中でヒーロービジョンが切れると、その後の発には出ない（V-0772）。コアの補正は乗らない",
+            "en": "\"The same enemy\" is the lone boss. One hit per changed-weapon shot (on the shot frame). Max stacks are checked per shot, so after Hero Vision ends midway the later shots have none (V-0772). No core bonus"
+          },
+          "claims": [
+            "C-1202",
+            "C-1205"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "damageType": "true",
+          "ref": 4,
+          "condition": {
+            "selfState": {
+              "state": "heroVision",
+              "stacks": "full"
+            }
+          },
+          "perBurstHit": true,
+          "assumes": {
+            "ja": "初回ダメージのヒットと同じフレームに、同じ防御力無視ダメージがもう 2 ヒット出る（V-0772。録画で読んだ数で、説明文に無い）。この効果とその次の効果で 1 ヒットずつ",
+            "en": "Two more hits of the same true damage land on the frame of the first damage (V-0772; a count read from recordings, not in the description). This effect and the next give one hit each"
+          },
+          "claims": [
+            "C-1202",
+            "C-1205"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "damageType": "true",
+          "ref": 4,
+          "condition": {
+            "selfState": {
+              "state": "heroVision",
+              "stacks": "full"
+            }
+          },
+          "perBurstHit": true,
+          "assumes": {
+            "ja": "初回ダメージのヒットと同じフレームに、同じ防御力無視ダメージがもう 2 ヒット出る（V-0772。録画で読んだ数で、説明文に無い）。この効果とその次の効果で 1 ヒットずつ",
+            "en": "Two more hits of the same true damage land on the frame of the first damage (V-0772; a count read from recordings, not in the description). This effect and the next give one hit each"
+          },
+          "claims": [
+            "C-1202",
+            "C-1205"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "バーストスキル発動中はハイド不可は、ダメージに関係しない（被弾を扱わない）",
+          "en": "Being unable to take cover during the Burst Skill does not affect damage (taking hits is not modeled)",
+          "kind": "noDamage"
+        }
+      ]
+    }
+  },
+  "treasureSkills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "heroVision",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "self",
+          "maxStacksRef": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "フルチャージの発ごとに 1 スタック。付くたびにすべてのスタックの維持を付け直す（いまの既定）。中身の爆発範囲▲は notes[0]。バーストの「ヒーロービジョンのフルスタック状態なら」が読む",
+            "en": "One stack per Full Charge shot. Each new stack refreshes the duration of all stacks (the current default). Its explosion range increase is notes[0]. The Burst's \"when Hero Vision is at max stacks\" reads it"
+          },
+          "claims": [
+            "C-1206"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "ヒーロービジョンの爆発範囲▲は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）",
+          "en": "The explosion range increase of Hero Vision is not modeled (explosion range is not in the damage formula; its effect on the core hit rate is not checked)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "fullChargeShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "damageType": "additional",
+          "ref": 1,
+          "assumes": {
+            "ja": "フルチャージの発ごとに 1 回（全弾命中の前提）。使用武器変更の発（チャージしない）では起きない。コアの補正は乗らない。ヒットは RL の命中と同じ増分に出て（モデルは発と同じフレーム）、倍率の乗らない 1 ヒットのバーストゲージを溜める（V-0772。溜めない形では 1 回目のフルバーストが約 80f 遅れる）",
+            "en": "Once per Full Charge shot (every shot is assumed to hit). It does not fire on the changed-weapon shots (uncharged). The core bonus does not apply. The hit lands in the same HUD increment as the RL hit (the model uses the shot frame) and charges one unmultiplied hit of Burst Gauge (V-0772; without it the first Full Burst comes about 80 frames late)"
+          },
+          "gaugeHits": [
+            0
+          ],
+          "claims": [
+            "C-1201"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "対象のパーツに命中した時の本体への追加ダメージは、射撃場の敵にパーツが無いので起きない（要件 4.2 節）",
+          "en": "The additional damage to the target's body on hitting its Parts does not occur, since the range enemy has no Parts (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "damage",
+            "trigger": "unknown"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "damageRef": 2,
+          "durationRef": 3,
+          "pierce": true,
+          "rateOfFire": 1412,
+          "instantFire": true,
+          "infiniteAmmo": true,
+          "trueDamage": true,
+          "condition": {
+            "selfState": {
+              "state": "heroVision",
+              "stacks": 5
+            }
+          },
+          "assumes": {
+            "ja": "変更後の武器（ビーム）の形は CDN に無いので録画で読んだ（V-0772）: 即着弾でチャージせず、2.5f おき（2・3f の繰り返し。1412rpm）で、維持の間リロードしない。窓の終わりはフルバーストの終わりと同じ（録画の最後の発は 00.00 の 582f 後で、モデルの最後の発より 4f 早い。V-0772）。コアへの当たりは基礎の RL の行（照準がコアにある時。撃たない操作のバーストでは胴体）。追加効果の貫通特化で、変更後の発に味方の貫通ダメージ▲が乗る。変更後の発のバーストゲージは確かめていない（モデルは変更前の武器の 1 発の量）。「フルスタック状態なら通常ダメージを防御力無視ダメージとして適用」は、バーストを使った時に 1 回だけ見る（途中でヒーロービジョンが切れても、その後の発も防御力無視のまま）",
+            "en": "The changed weapon (beam) is not in CDN, so it was read from recordings (V-0772): instant hit, no charge, one shot every 2.5 frames (2/3-frame steps; 1412 rpm), no reload during the duration. The window ends with the Full Burst (the last recorded shot is 582 frames after 00.00, 4 frames before the model's last shot; V-0772). Core hits follow the base RL row (when the crosshair is on the core; body hits in a Burst without shooting input). The additional Pierce makes allies' Pierce Damage ups apply to the changed shots. Burst gauge per changed shot is unverified (the model uses one base weapon shot). \"Normal damage is applied as true damage at max Hero Vision stacks\" is judged once when the Burst is used (if Hero Vision ends midway, the later shots stay true damage)"
+          },
+          "claims": [
+            "C-1200"
+          ]
+        },
+        {
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "damageRef": 2,
+          "durationRef": 3,
+          "pierce": true,
+          "rateOfFire": 1412,
+          "instantFire": true,
+          "infiniteAmmo": true,
+          "condition": {
+            "selfState": {
+              "state": "heroVision",
+              "stacksBelow": 5
+            }
+          },
+          "assumes": {
+            "ja": "ヒーロービジョンがフルスタックでない時の変更（通常ダメージは防御力無視にしない）。形は effects[0] と同じ",
+            "en": "The change when Hero Vision is not at max stacks (normal damage is not true damage). Same shape as effects[0]"
+          },
+          "claims": [
+            "C-1200"
+          ]
+        },
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "初回ダメージは、変更後の武器の発とは別の 1 ヒット（V-0772）。コアとフルバースト補正は乗らない（バーストスキルダメージと同じ式）。ヒットは変更後の武器の最初の発の 1f 後",
+            "en": "The first damage is one hit separate from the changed-weapon shots (V-0772). No core or Full Burst bonus (the same formula as Burst Skill damage). It lands 1 frame after the first changed-weapon shot"
+          },
+          "claims": [
+            "C-1204"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "weaponChangeShot"
+          },
+          "damageType": "true",
+          "ref": 4,
+          "condition": {
+            "selfState": {
+              "state": "heroVision",
+              "stacks": "full"
+            }
+          },
+          "assumes": {
+            "ja": "「同じ敵に」は単体ボス。変更後の武器の発ごとに 1 ヒット（発と同じフレーム）。フルスタックかは発ごとに見るので、途中でヒーロービジョンが切れると、その後の発には出ない（V-0772）。コアの補正は乗らない",
+            "en": "\"The same enemy\" is the lone boss. One hit per changed-weapon shot (on the shot frame). Max stacks are checked per shot, so after Hero Vision ends midway the later shots have none (V-0772). No core bonus"
+          },
+          "claims": [
+            "C-1205"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "damageType": "true",
+          "ref": 4,
+          "condition": {
+            "selfState": {
+              "state": "heroVision",
+              "stacks": "full"
+            }
+          },
+          "perBurstHit": true,
+          "assumes": {
+            "ja": "初回ダメージのヒットと同じフレームに、同じ防御力無視ダメージがもう 2 ヒット出る（V-0772。録画で読んだ数で、説明文に無い）。この効果とその次の効果で 1 ヒットずつ",
+            "en": "Two more hits of the same true damage land on the frame of the first damage (V-0772; a count read from recordings, not in the description). This effect and the next give one hit each"
+          },
+          "claims": [
+            "C-1205"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "damageType": "true",
+          "ref": 4,
+          "condition": {
+            "selfState": {
+              "state": "heroVision",
+              "stacks": "full"
+            }
+          },
+          "perBurstHit": true,
+          "assumes": {
+            "ja": "初回ダメージのヒットと同じフレームに、同じ防御力無視ダメージがもう 2 ヒット出る（V-0772。録画で読んだ数で、説明文に無い）。この効果とその次の効果で 1 ヒットずつ",
+            "en": "Two more hits of the same true damage land on the frame of the first damage (V-0772; a count read from recordings, not in the description). This effect and the next give one hit each"
+          },
+          "claims": [
+            "C-1205"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "バーストスキル発動中はハイド不可は、ダメージに関係しない（被弾を扱わない）",
+          "en": "Being unable to take cover during the Burst Skill does not affect damage (taking hits is not modeled)",
+          "kind": "noDamage"
+        }
+      ]
+    }
+  }
+}

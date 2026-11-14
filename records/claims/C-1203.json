@@ -1,0 +1,15 @@
+{
+  "id": "C-1203",
+  "text": "ラプラスの基礎版の S2 の「最後の弾丸が命中した時、最終攻撃力の 81.66% の追加ダメージ」は、残弾を 0 にした射撃ごとに 1 ヒット（全弾命中の前提）で、発のフレームに出る",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文（`data/characters/100.json` の skills.skill2）。語彙（{ count: lastShot }）はほかのキャラで確かめた形。基礎版の録画は撮れない（宝物は外せない）。V-0772",
+  "model": "data/skills/100.json の skill2 の effects[0]（{ count: lastShot } の damage・additional）",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": ["data/skills/100.json の skill2 の effects[0]"]
+  },
+  "decidedOn": []
+}

@@ -1,0 +1,306 @@
+[
+  {
+    "id": "1163-01",
+    "recording": "1163",
+    "kind": "timing",
+    "use": "record",
+    "value": [1620, 4609, 7101, 10351],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・5・5f"
+    },
+    "source": "V-0772",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1163-02",
+    "recording": "1163",
+    "kind": "timing",
+    "use": "record",
+    "value": [1649, 4638, 7130, 10380],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・6・0f"
+    },
+    "source": "V-0772",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1163-03",
+    "recording": "1163",
+    "kind": "timing",
+    "use": "record",
+    "value": [1678, 4668, 7159, 10409],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0772",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1163-04",
+    "recording": "1163",
+    "kind": "timing",
+    "use": "record",
+    "value": [2287, 5276, 7768, 11018],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0772",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1163-05",
+    "recording": "1163",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 608, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0772",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1163-06",
+    "recording": "1163",
+    "source": "V-0772",
+    "readAt": "2026-11-14",
+    "kind": "timing",
+    "use": "input",
+    "unit": "f",
+    "value": [812, 3777, 6245, 9471],
+    "description": "手で I（ココア）のバーストを押したゲーム内のフレーム（戦闘開始から）の並び",
+    "method": {
+      "tool": "recipe:burst-panel@4 の I → II の替わり目（1163-01）と tools/captures/timer.ts --mode stalls（戦闘開始 f803）",
+      "note": "替わり目（本当の発動の 5f 後）から 5f と、前のフルバーストの入りの止まり 22f と前の I・II の発動ごとの 1f を引いた"
+    }
+  },
+  {
+    "id": "1163-07",
+    "recording": "1163",
+    "source": "V-0772",
+    "readAt": "2026-11-14",
+    "kind": "timing",
+    "use": "input",
+    "unit": "f",
+    "value": [406, 845, 3387, 3810, 5772, 6278, 8998, 9504],
+    "description": "ラプラス（3 枠目）のオート射撃を OFF にしていた時間（[OFF, ON, …] のゲーム内のフレーム）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（tools/captures/hud.ts --mode jumps）と、burst-panel の 00.00・timer.ts --mode stalls（戦闘開始 f803）",
+      "note": "OFF はバーストの前の最後のラプラスの発（RL のコアと S2 の追加ダメージの和 536,686 系の増分。f1208・4213・6622・9872）の次のフレーム。ON は II → III の替わり目（1163-02。III を押したフレーム）。止まりは 1163-01 と同じに引いた"
+    }
+  },
+  {
+    "id": "1163-08",
+    "recording": "1163",
+    "source": "V-0772",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 87943,
+    "description": "ラプラスの 1 回目のフルバーストの始まりから 100f（ゲーム内）の後の、ビームの 1 発の増分。ヒーロービジョンが切れる前",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（tools/captures/hud.ts --mode jumps）と、burst-panel の 00.00",
+      "note": "ビームの 1 発は、変更後の武器の通常ダメージ（22.2%。防御力無視・コア・フルバースト補正）と、同じフレームの防御力無視ダメージ（11.9%。コアなし・フルバースト補正）の 2 ヒットの和で、会心は別々に出る（会心の差 13,309 と 7,134）。87,943 はどちらも会心しない値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitWithSkillHits",
+      "args": {
+        "slot": 3,
+        "fullBurst": 0,
+        "frame": 100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "1163-06",
+        "holdFire": [
+          {
+            "slot": 3,
+            "frames": "1163-07"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1163-09",
+    "recording": "1163",
+    "source": "V-0772",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 66542,
+    "description": "ラプラスの 1 回目のフルバーストの始まりから 560f（ゲーム内）の後の、ビームの 1 発の増分。ヒーロービジョンが切れた後（防御力無視ダメージが出ない）。通常ダメージは防御力無視のまま（防御力を引けば 66,487）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（tools/captures/hud.ts --mode jumps）と、burst-panel の 00.00",
+      "note": "ビームの 1 発は、変更後の武器の通常ダメージ（22.2%。防御力無視・コア・フルバースト補正）と、同じフレームの防御力無視ダメージ（11.9%。コアなし・フルバースト補正）の 2 ヒットの和で、会心は別々に出る（会心の差 13,309 と 7,134）。87,943 はどちらも会心しない値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitWithSkillHits",
+      "args": {
+        "slot": 3,
+        "fullBurst": 0,
+        "frame": 560,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "1163-06",
+        "holdFire": [
+          {
+            "slot": 3,
+            "frames": "1163-07"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1163-10",
+    "recording": "1163",
+    "source": "V-0772",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 66542,
+    "description": "ラプラスの 2 回目のフルバーストの始まりから 540f（ゲーム内）の後の、ビームの 1 発の増分。ヒーロービジョンが切れた後",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（tools/captures/hud.ts --mode jumps）と、burst-panel の 00.00",
+      "note": "ビームの 1 発は、変更後の武器の通常ダメージ（22.2%。防御力無視・コア・フルバースト補正）と、同じフレームの防御力無視ダメージ（11.9%。コアなし・フルバースト補正）の 2 ヒットの和で、会心は別々に出る（会心の差 13,309 と 7,134）。87,943 はどちらも会心しない値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitWithSkillHits",
+      "args": {
+        "slot": 3,
+        "fullBurst": 1,
+        "frame": 540,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "1163-06",
+        "holdFire": [
+          {
+            "slot": 3,
+            "frames": "1163-07"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1163-11",
+    "recording": "1163",
+    "source": "V-0772",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 66542,
+    "description": "ラプラスの 4 回目のフルバーストの始まりから 540f（ゲーム内）の後の、ビームの 1 発の増分。ヒーロービジョンが切れた後",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（tools/captures/hud.ts --mode jumps）と、burst-panel の 00.00",
+      "note": "ビームの 1 発は、変更後の武器の通常ダメージ（22.2%。防御力無視・コア・フルバースト補正）と、同じフレームの防御力無視ダメージ（11.9%。コアなし・フルバースト補正）の 2 ヒットの和で、会心は別々に出る（会心の差 13,309 と 7,134）。87,943 はどちらも会心しない値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitWithSkillHits",
+      "args": {
+        "slot": 3,
+        "fullBurst": 3,
+        "frame": 540,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "1163-06",
+        "holdFire": [
+          {
+            "slot": 3,
+            "frames": "1163-07"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1163-12",
+    "recording": "1163",
+    "source": "V-0772",
+    "readAt": "2026-11-14",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": [903, 904, 899, 904],
+    "description": "バーストの前の最後のラプラスの発（RL の命中。f1208・4213・6622・9872）から、ビームの発に防御力無視ダメージが乗らなくなった最初の発（f2111・5117・7521・10776）までの動画のフレーム（フルバーストの入りの止まり 22f を含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（tools/captures/hud.ts --mode jumps）と、burst-panel の 00.00",
+      "note": "最後に乗った発は 901・902・896・901f 後。止まりを引くと約 880f で、ヒーロービジョンの維持 15 秒（882f）と合う。乗らなくなった後のビームの発は 66,542（防御力無視の通常ダメージ）のままで、防御力を引いた 66,487 は 1 つも出ない（4 回の 54・52・83・83 発）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  }
+]

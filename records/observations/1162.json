@@ -1,0 +1,193 @@
+[
+  {
+    "id": "1162-01",
+    "recording": "1162",
+    "kind": "timing",
+    "use": "record",
+    "value": [1770, 3392, 4801, 6426, 8064, 9680, 11122],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・24・6・25・0・25f"
+    },
+    "source": "V-0772",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1162-02",
+    "recording": "1162",
+    "kind": "timing",
+    "use": "record",
+    "value": [1799, 3421, 4830, 6455, 8093, 9710, 11152],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・26・6・26・6・25f"
+    },
+    "source": "V-0772",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1162-03",
+    "recording": "1162",
+    "kind": "timing",
+    "use": "record",
+    "value": [1829, 4859, 8122, 11181],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0772",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1162-04",
+    "recording": "1162",
+    "kind": "timing",
+    "use": "record",
+    "value": [2437, 5467, 8731],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム。4 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0772",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1162-05",
+    "recording": "1162",
+    "kind": "interval",
+    "use": "record",
+    "value": [608, 608, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差。4 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0772",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1162-06",
+    "recording": "1162",
+    "source": "V-0772",
+    "readAt": "2026-11-14",
+    "kind": "timing",
+    "use": "input",
+    "unit": "f",
+    "value": [0, 11000],
+    "description": "ラプラス（3 枠目）のオート射撃を OFF にしていた時間（[OFF, ON] のゲーム内のフレーム。戦闘の全部）",
+    "method": {
+      "tool": "録画の台帳（autoFire OFF）と戦闘履歴のラプラスの与ダメージ",
+      "note": "戦闘の初めから終わりまで撃たない（ON は戦闘の終わりの後）"
+    }
+  },
+  {
+    "id": "1162-07",
+    "recording": "1162",
+    "source": "V-0772",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 1743894,
+    "description": "ラプラスの 1 回目のバーストの初回ダメージ（II → III の替わり目の 58f 後）の増分。ヒーロービジョンが 0 スタックなので、同じフレームの防御力無視ダメージは無い",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（tools/captures/hud.ts --mode jumps）と、burst-panel の 00.00",
+      "note": "会心の回は 2,615,841（3 回目）で、ちょうど 1.5 倍"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitWithSkillHits",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "holdFire": [
+          {
+            "slot": 3,
+            "frames": "1162-06"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "1162-08",
+    "recording": "1162",
+    "source": "V-0772",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 2615841,
+    "description": "ラプラスの 3 回目のバーストの初回ダメージの増分（会心）。同じフレームの防御力無視ダメージは無い",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（tools/captures/hud.ts --mode jumps）と、burst-panel の 00.00",
+      "note": "撃たない録画"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitWithSkillHits",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "holdFire": [
+          {
+            "slot": 3,
+            "frames": "1162-06"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "1162-09",
+    "recording": "1162",
+    "source": "V-0772",
+    "readAt": "2026-11-14",
+    "kind": "hit",
+    "use": "record",
+    "unit": "ダメージ",
+    "value": 39892,
+    "description": "ラプラスの 2 回目のバーストのビームの発（f4892・4895・4897・4907）の増分。通常ダメージ（22.2%）が防御力を引いた値で、コア・会心なし・フルバースト補正（119,796 × 0.222 × 1.5）。防御力無視ダメージは無い",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（tools/captures/hud.ts --mode jumps）と、burst-panel の 00.00",
+      "note": "オート射撃 OFF では、ビームの発はこの回の数発しか総ダメージに出ない（照準が的から外れていた見込み）。最初のフレーム（f4887）は 79,784（2 発か、会心・コアの 1 発）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  }
+]

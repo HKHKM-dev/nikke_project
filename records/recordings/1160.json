@@ -1,0 +1,47 @@
+{
+  "id": "1160",
+  "date": "2026-11-14",
+  "folder": "range",
+  "file": "20261114-1160_laplace-a-1.mp4",
+  "original": "2026-11-14_20-23-31.mp4",
+  "durationSec": 203.9,
+  "frames": 12231,
+  "fps": 60,
+  "sizeMB": 246.9,
+  "sha256": "23d7e331cb24",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 100,
+      "name": "ラプラス",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0772 の撮り方 A: ココア（I）・ソルジャーF.A.（II）・ラプラス（III・操作・宝物 段階 3）。オート射撃 ON・オートバースト ON",
+  "backup": {
+    "at": "2026-11-14T20:39+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
