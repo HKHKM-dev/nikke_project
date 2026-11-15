@@ -4,7 +4,7 @@
    height="100"
    version="1.1"
    id="svg5"
-   sodipodi:docname="account.svg"
+   sodipodi:docname="ui_account.svg"
    inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
    viewBox="0 0 100 100"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -22,9 +22,9 @@
      inkscape:pageopacity="0"
      inkscape:pagecheckerboard="true"
      inkscape:deskcolor="#505050"
-     inkscape:zoom="5.38"
-     inkscape:cx="51.394052"
-     inkscape:cy="51.951673"
+     inkscape:zoom="2.69"
+     inkscape:cx="49.814126"
+     inkscape:cy="50"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
@@ -53,12 +53,16 @@
        inkscape:locked="false" />
   </sodipodi:namedview>
   <rect
-     style="fill:none;stroke:#ffffff;stroke-width:6.54206"
+     style="fill:none;stroke:#000000;stroke-width:5;stroke-dasharray:none"
      id="rect4"
-     width="93.457947"
-     height="93.457947"
-     x="3.271028"
-     y="3.271028" />
+     width="95.000038"
+     height="95.000038"
+     x="2.4920542"
+     y="2.4920542" />
+  <path
+     id="rect4-9"
+     style="fill:#1a1a1a;stroke:#ffffff;stroke-width:5;stroke-dasharray:none"
+     d="m 7.5,92.5 c 28.333333,0 56.666667,0 85,0 0,-28.333333 0,-56.666667 0,-85 -28.333333,0 -56.666667,0 -85,0 0,28.333333 0,56.666667 0,85 z" />
   <ellipse
      style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:7.65699"
      id="path4"
@@ -67,8 +71,8 @@
      rx="12"
      ry="14" />
   <path
-     style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:6.2707"
-     d="M 12.50128,85.168 H 87.49872 C 87.49872,85.168 88.297224,60 50,60 11.702776,60 12.50128,85.168 12.50128,85.168 Z"
+     style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:5.85265"
+     d="M 15.001195,83.490134 H 84.998806 C 84.998806,83.490134 85.744077,60 50,60 14.255924,60 15.001195,83.490134 15.001195,83.490134 Z"
      id="path5"
      sodipodi:nodetypes="cczc" />
 </svg>
