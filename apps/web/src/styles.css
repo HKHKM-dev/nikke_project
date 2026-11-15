@@ -1465,7 +1465,8 @@ html:has(.modern-view-container) {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  /* 区切りの縦線の右のすき間（左は .char-tray-badge-filter の padding-right。どちらもボタンの枠 2px を足して、絵から 5px） */
+  gap: 3px;
 }
 /* バッジの絞り込み。どれかを押している組では、押していないバッジを薄くする */
 .char-tray-badge-filter {
@@ -1473,7 +1474,7 @@ html:has(.modern-view-container) {
   display: flex;
   /* バッジの絵どうしの間は 4px（ボタンの枠 2px を両側） */
   gap: 0;
-  padding-right: 6px;
+  padding-right: 3px;
   border-right: 1px solid color-mix(in srgb, var(--app-fg) 15%, transparent);
 }
 .char-tray-badge-button {
