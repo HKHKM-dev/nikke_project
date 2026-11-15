@@ -129,13 +129,14 @@
     | 使用武器変更の「追加効果：貫通特化」／変更後の武器の 1 発の弾の数（説明文に無く、録画で読む） | `weaponChange` の `pierce: true`／`shotCount` | ツバイのバースト | [design-zwei.md](design-zwei.md) 2.1・2.2 節 |
     | 「N スタック」「N 発間維持」 | timed の `maxStacksRef` と `durationShotsRef` | ツバイの宝物版 S1 | 同 2.3 節 |
     | デバフ効果解除 N 個（味方全体／デバフのかかった味方からランダムに N 機） | `removeDebuff`（`target: "allies"`／`"debuffedRandom"` と `targetCount`） | ココアの S1・バースト | [design-debuff-removal.md](design-debuff-removal.md) 2.2 節・[design-debuff-removal-timed.md](design-debuff-removal-timed.md) 2.1 節 |
-    | ペレットの数を 1 個に固定／ペレット数 N 個▲（N 発間維持の貫通特化・命中率▲） | フラグの stat `singlePellet`／stat `pelletCount` と `scaling: "flat"`（どちらも timed の self だけ）／`durationShotsRef` を `hitRate`・`pierce`・`singlePellet` にも書ける | ドロシー：セレンディピティの S1・バースト | [design-dorothy-serendipity.md](design-dorothy-serendipity.md) 2 節 |
+    | ペレットの数を 1 個に固定／ペレット数 N 個▲（N 発間維持の貫通特化・命中率▲） | フラグの stat `singlePellet`／stat `pelletCount` と `scaling: "flat"`（どちらも timed の self。`pelletCount` は自分に付く状態の中身にも）／`durationShotsRef` を `hitRate`・`pierce`・`singlePellet` にも書ける | ドロシー：セレンディピティの S1・バースト、アルカナ：フォーチュンメイトの S2 の幸せな思い出 | [design-dorothy-serendipity.md](design-dorothy-serendipity.md) 2 節・[design-fortune-mate.md](design-fortune-mate.md) 2.3 節 |
     | 〈状態〉が終了した時（残弾数減少・状態の付与） | きっかけ `{ "ended": 〈状態〉 }`（counterChange・ammoDecrease・状態の付与） | グレイブの S1 | [design-grave.md](design-grave.md) 2.1 節 |
     | 〈状態〉：…「最大装弾リロード完了時に解除」 | 状態の付与の `durationUntil: "reloadEnd"` | グレイブの S2 の過熱I | 同 2.2 節 |
     | 〈状態〉が終了した時（倍率ダメージ・timed・敵の状態の消去）／終了の N f 後のヒット | きっかけ `{ ended }`／damage と敵の消去の `delayFrames` | アスカ：WILLE の殲滅・緊急修復 | [design-asuka-wille.md](design-asuka-wille.md) 2.1 節・決めたこと |
     | 個別対象ごとに〈敵に付いた状態〉スタックコピー（1 回のヒット）／効果適用後、〈状態〉解除 | damage の `perCount: { enemyState }`（`{ ended }` だけ）／`cancelState` の `target: "enemy"`（敵にスタックで付ける付与の状態） | アスカ：WILLE の殲滅 | 同 2.2・2.3 節 |
     | 自分が〈状態〉の時に限り、対象に（敵に付く状態の付与） | 敵の付与の条件 `selfState`（ほかの鍵は書けない） | アスカ：WILLE の S1 のアンチA.T.フィールド | 同 決めたこと |
     | リロード比率 X%▼ | stat `reloadRatio`（`decrease`） | グレイブの S1 の放熱 | 同 2.3 節 |
+    | 〈状態〉なら、通常攻撃時「攻撃回数別の効果」「各段階の効果のみ適用」「〈状態〉解除時初期化」（段が弾丸チャージ・状態の付与） | 段ごとの効果に、回数のきっかけ `every`（段の間隔 × 段の数）・`phase`（段の回数）・`during: { state }`（弾丸チャージにも書ける） | アルカナ：フォーチュンメイトの S2 | [design-fortune-mate.md](design-fortune-mate.md) 2.1・2.2 節 |
     | 〈状態〉なら、命中した時「攻撃命中回数別の効果」（N 回：〈状態〉かつ〈下位の状態〉の時に限り） | 回数のきっかけの `during: { "state": 〈状態〉 }` と付与の条件 `selfState` | グレイブの S2 の過熱II・III | 同 2.4 節・C-1123 |
     | 〈状態〉の時に限り…「持続」（状態の付与） | 状態の付与の `durationUntil: { "stateEnd": 〈状態〉 }` | グレイブの S2 の過熱II・III | 同 2.5 節 |
     | 「貫通特化」「1 発間維持」 | timed の `stat: "pierce"` と `durationShots: 1` | D：キラーワイフの S1 | [design-killer-wife.md](design-killer-wife.md) 2.1・10 節 |

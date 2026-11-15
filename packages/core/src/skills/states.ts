@@ -440,6 +440,17 @@ export const NAMED_STATES = {
   lingeringTaste: { name: { ja: 'やみつきの味', en: 'Lingering Taste' }, holder: 'ally', group: 'taste' },
   /** 同: オススメの味（分配ダメージ増加効果が適用された時。付くとやみつきの味を消去する） */
   recommendedTaste: { name: { ja: 'オススメの味', en: 'Recommended Taste' }, holder: 'ally', group: 'taste' },
+  /**
+   * 思い出作り（アルカナ：フォーチュンメイトのバースト。自分・持続。中身はクリティカル確率▲・攻撃ダメージ▲。S1 がフルバースト終了で外し、
+   * S2 の攻撃回数別の効果がこの間の射撃を数える。plan/design-fortune-mate.md 1 節）
+   */
+  memoryMaking: { name: { ja: '思い出作り', en: 'Making Memories' }, holder: 'ally' },
+  /** 幸せな思い出（同 S2 の攻撃回数別の効果の 4 回目。自分・3 スタック・持続。中身はペレット数▲。S1 の青春の記録のきっかけ） */
+  happyMemory: { name: { ja: '幸せな思い出', en: 'Happy Memories' }, holder: 'ally' },
+  /** 大切な思い出（同 6 回目。自分・3 スタック・持続。中身は攻撃力▲。S1 のフルバースト終了の攻撃力▲がスタック数を掛ける） */
+  preciousMemory: { name: { ja: '大切な思い出', en: 'Precious Moments' }, holder: 'ally' },
+  /** 青春の記録（同 S1。幸せな思い出が付くたびに自分に 1 スタック・3 スタック・持続。中身は通常攻撃ダメージ倍率▲。フルバースト終了で外れる） */
+  youthRecord: { name: { ja: '青春の記録', en: 'Snapshots of Youth' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

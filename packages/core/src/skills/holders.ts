@@ -182,6 +182,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     appliedAt: (slotIndex, state, frame) =>
       lastAtOrBefore(readOwnApplied(ownUnchainedApplied, slotIndex, state), frame) === frame,
     sinceFires,
+    stateWindowFires: layers.stateWindowFires,
     endedAt,
     selfStackCountAt,
     enemyStateAt,

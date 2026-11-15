@@ -69,7 +69,8 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * 倍率ダメージには足さない（C-1243）。バーストのダメージにも足さない（確かめていない）。定義を書くときの決まり: この効果に読む側の印 reads: ["pierce"] を書く
  * pelletCount = ペレット数 N 個▲（scaling 'flat'。値は個の数。plan/design-dorothy-serendipity.md 2.1・2.2 節）。
  * singlePellet = 「ペレットの数を 1 個に固定」。値を持たないフラグ
- * （ref を書かない）。効いていれば 1 発のペレットは 1 個で、▲より勝つ（C-1077）。どちらも timed の self だけ（PELLET_STATS）
+ * （ref を書かない）。効いていれば 1 発のペレットは 1 個で、▲より勝つ（C-1077）。どちらも timed の self だけ（PELLET_STATS）。
+ * pelletCount は自分に付く状態の中身にも書ける（スタックの値は 1 スタックあたり。plan/design-fortune-mate.md 2.3 節）
  */
 export type BuffStat =
   | 'attack'
@@ -663,6 +664,12 @@ export type ShotCountTrigger = {
   /** N の description_value_NN。every とどちらか片方 */
   everyRef?: number;
   /**
+   * 周期の中の位置（plan/design-fortune-mate.md 2.1 節。「攻撃回数別の効果」「各段階の効果のみ適用」の段を、段ごとの効果で書く）。
+   * 数えた回数が N の倍数 + phase に届いた発で発火する（every 6・phase 2 なら 2・8・14…回目）。1 以上 N 未満の即値。
+   * 数える窓が自分の状態（during: { state }）のときだけ書け、数え直すと 0 から数える
+   */
+  phase?: number;
+  /**
    * フルスタックの数の description_value_NN。N 回ごとに 1 スタック、満ちたら解除して発火する（N × スタック数 回ごと）。
    * スタック自体に効果が無い場合だけ使う（クラウン S2 のリラックス）
    */
@@ -716,7 +723,7 @@ export type ShotCountWindow = 'fullBurst';
 /**
  * 自分のその状態が付いている間の発のうち、付与の条件を満たす発（その発で付いた状態も入れる。C-1123）だけを数え、その状態が付くたびに
  * 0 から数え直す窓（「〈状態〉なら、通常攻撃が命中した時…攻撃命中回数別の効果」。plan/design-grave.md 2.4 節）。
- * 状態の付与にだけ書ける。見る状態は、同じ定義の自分に付ける付与の
+ * 状態の付与と弾丸チャージ（plan/design-fortune-mate.md 2.2 節）にだけ書ける。見る状態は、同じ定義の自分に付ける付与の
  * あるもの。発火は 1 パス目の件の一覧が追う（skills/holders/fires.ts の firesOf）
  */
 export type StateCountWindow = { state: NamedStateId };

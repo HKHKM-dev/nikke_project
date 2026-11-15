@@ -24,7 +24,7 @@ import {
   type FrameEvents,
   type TriggerTracker,
 } from '../../skills/triggers.ts';
-import { isEndedTrigger } from '../../skills/types.ts';
+import { isEndedTrigger, isStateCountWindow } from '../../skills/types.ts';
 import { clampAmmoToMax, refillAmmo, drainAmmo, resumeAfterLastShotRefill } from '../shooter.ts';
 import type { FirstPassBase } from './base.ts';
 import type { HolderLists } from '../../skills/holders.ts';
@@ -60,7 +60,7 @@ export function createInstantSources({
   frames: number;
   scheduleModel: BurstScheduleModel | null;
   /** 件の一覧（出どころの後に作るので、発火の時に読む） */
-  listsOf: () => Pick<HolderLists, 'appliedAt' | 'endedAt' | 'sinceFires'>;
+  listsOf: () => Pick<HolderLists, 'appliedAt' | 'endedAt' | 'sinceFires' | 'stateWindowFires'>;
 }) {
   const instant: InstantSource[] = [];
   /** 発火の文脈 context のとき、効果 e が掛かる枠（burstUsers は発火ごとに変わる） */
@@ -80,6 +80,12 @@ export function createInstantSources({
     // 「〈状態〉が終了した時」（ammoDecrease）は件の一覧の endedAt で決める（plan/design-grave.md 2.1 節）
     const trigger = effect.trigger;
     if (isEndedTrigger(trigger)) return (ev) => listsOf().endedAt(sourceSlotIndex, trigger.ended, ev.frame);
+    // 自分の状態の窓で数える回数（弾丸チャージ）は、件の一覧の状態の付与と同じ数え方で決める（plan/design-fortune-mate.md 2.2 節）
+    if (isResolvedShotCount(trigger) && isStateCountWindow(trigger.during)) {
+      const window = trigger.during.state;
+      let fires: TriggerTracker | undefined;
+      return (ev) => (fires ??= listsOf().stateWindowFires(trigger, sourceSlotIndex, window, undefined))(ev);
+    }
     if (!isResolvedTimer(effect.trigger)) return createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel);
     // 件の一覧（lists）は即時効果の後に作るので、最初の呼び出しで作る
     if (effect.trigger.since !== undefined) {

@@ -1,0 +1,183 @@
+{
+  "formatVersion": 1,
+  "resourceId": 583,
+  "checkedAt": "2026-11-15",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstEnd",
+          "target": "allies",
+          "targetWeapon": "SG",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 1,
+          "perCount": {
+            "state": "preciousMemory"
+          },
+          "durationRef": 2,
+          "assumes": {
+            "ja": "スキル発動者基準で攻撃力 X% × 大切な思い出のスタック数。スタック数はフルバースト終了のフレームの数で、維持の間は変えない。フォーチュンメイトも SG なので自分にも付く",
+            "en": "ATK up X% of the caster's ATK × Precious Moments stacks. The stack count is taken at the Full Burst end frame and kept for the duration. Fortune Mate also holds a shotgun, so it applies to self too"
+          }
+        },
+        {
+          "kind": "state",
+          "state": "youthRecord",
+          "trigger": {
+            "applied": "happyMemory"
+          },
+          "target": "self",
+          "maxStacksRef": 4,
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "normalAttackDamage",
+              "ref": 3
+            }
+          ],
+          "assumes": {
+            "ja": "青春の記録は幸せな思い出が付くたびに 1 スタック（幸せな思い出のスタックが上限の後も）。外すのは下のフルバースト終了の解除",
+            "en": "Snapshots of Youth gains a stack every time Happy Memories is applied (also after Happy Memories reaches its stack limit). It is removed on Full Burst end below"
+          }
+        },
+        {
+          "kind": "removeState",
+          "state": "memoryMaking",
+          "trigger": "fullBurstEnd",
+          "target": "self"
+        },
+        {
+          "kind": "removeState",
+          "state": "youthRecord",
+          "trigger": "fullBurstEnd",
+          "target": "self"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "ammoRefill",
+          "trigger": {
+            "count": "normalShot",
+            "every": 6,
+            "phase": 2,
+            "during": {
+              "state": "memoryMaking"
+            }
+          },
+          "target": "self",
+          "scaling": "flat",
+          "ref": 1,
+          "assumes": {
+            "ja": "攻撃回数別の効果の 2 回目の段。攻撃回数は思い出作りの間の射撃を数え、2・4・6 回目の段を 6 回ごとに繰り返す（2・8・14…回目）。思い出作りが外れたら 0 に戻す（付き直しでは戻さない）",
+            "en": "The 2nd-attack tier of the attack-count effect. Attacks are counted as shots while in Making Memories, and the 2nd, 4th and 6th tiers repeat every 6 attacks (2nd, 8th, 14th, …). The count resets when Making Memories is removed (not when it is reapplied)"
+          }
+        },
+        {
+          "kind": "state",
+          "state": "happyMemory",
+          "trigger": {
+            "count": "normalShot",
+            "every": 6,
+            "phase": 4,
+            "during": {
+              "state": "memoryMaking"
+            }
+          },
+          "target": "self",
+          "maxStacksRef": 3,
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "pelletCount",
+              "scaling": "flat",
+              "ref": 2
+            }
+          ],
+          "assumes": {
+            "ja": "4 回目の段（4・10・16…回目。数え方は上と同じ）。幸せな思い出はフルバースト終了でも外れず残る",
+            "en": "The 4th-attack tier (4th, 10th, 16th, …; counted as above). Happy Memories is not removed on Full Burst end"
+          }
+        },
+        {
+          "kind": "state",
+          "state": "preciousMemory",
+          "trigger": {
+            "count": "normalShot",
+            "every": 6,
+            "during": {
+              "state": "memoryMaking"
+            }
+          },
+          "target": "self",
+          "maxStacksRef": 5,
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "attack",
+              "ref": 4
+            }
+          ],
+          "assumes": {
+            "ja": "6 回目の段（6・12・18…回目。数え方は上と同じ）。大切な思い出はフルバースト終了でも外れず残る",
+            "en": "The 6th-attack tier (6th, 12th, 18th, …; counted as above). Precious Moments is not removed on Full Burst end"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "excludeSelf": "always",
+          "targetWeapon": "SG",
+          "stat": "attackDamage",
+          "ref": 6,
+          "durationRef": 7
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "memoryMaking",
+          "trigger": "burstUse",
+          "target": "self",
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "critRate",
+              "ref": 1
+            },
+            {
+              "stat": "attackDamage",
+              "ref": 3
+            }
+          ],
+          "assumes": {
+            "ja": "持続の思い出作りは S1 のフルバースト終了の解除で外れる。フルバーストに入らなかったバーストでは、付いたまま次のフルバースト終了まで続く",
+            "en": "The continuous Making Memories is removed by S1 on Full Burst end. After a Burst that does not lead to Full Burst, it stays until the next Full Burst end"
+          }
+        },
+        {
+          "kind": "ammoRefill",
+          "trigger": "burstUse",
+          "target": "self",
+          "scaling": "flat",
+          "ref": 2,
+          "assumes": {
+            "ja": "思い出作りの効果 2 の弾丸チャージ 2 発。付けた時の即時の効果として書く",
+            "en": "Making Memories effect 2 (reload 2 rounds), written as an instant effect on application"
+          }
+        },
+        {
+          "kind": "burstDamage",
+          "ref": 4,
+          "damageType": "skill"
+        }
+      ]
+    }
+  }
+}

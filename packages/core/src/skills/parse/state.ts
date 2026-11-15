@@ -17,7 +17,6 @@ import {
   isShotCountTrigger,
   isStateCountWindow,
   isStateEndUntil,
-  isPelletStat,
   isSelfHpAtMostTrigger,
   isStacksCondition,
   type MaxStacksUpContentItem,
@@ -432,8 +431,8 @@ function parseStateContentItem(
   } else if (timed.stat === 'damageTaken') {
     fail(`${path}.stat`, 'damageTaken is held by the enemy, not by a state of an ally');
   }
-  // ペレットの数の stat は timed にだけ書ける（使い手がいない）
-  if (isPelletStat(timed.stat)) fail(`${path}.stat`, `${timed.stat} is only allowed in timed`);
+  // ペレットの数の固定は timed にだけ書ける（使い手がいない）。ペレット数▲は中身にも書ける（plan/design-fortune-mate.md 2.3 節）
+  if (timed.stat === 'singlePellet') fail(`${path}.stat`, `${timed.stat} is only allowed in timed`);
   const out: StatContentItem = { stat: timed.stat };
   if (timed.ref !== undefined) out.ref = timed.ref;
   if (timed.value !== undefined) out.value = timed.value;
@@ -536,7 +535,7 @@ export function contentAsTimed(grant: Record<string, Json>, item: Record<string,
   if (isEndedTrigger(fields.trigger as EffectTrigger) || isBuffAppliedTrigger(fields.trigger))
     fields.trigger = 'battleStart';
   if (isRecord(fields.trigger) && isRecord(fields.trigger.during)) {
-    const { during: _during, ...rest } = fields.trigger;
+    const { during: _during, phase: _phase, ...rest } = fields.trigger;
     fields.trigger = rest;
   }
   if (isStateEndUntil(fields.durationUntil)) fields.durationUntil = 'battleEnd';

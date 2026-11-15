@@ -21,6 +21,7 @@ import {
   FIRING_WINDOWS,
   isChanceTrigger,
   isShotCountTrigger,
+  isStateCountWindow,
   noBuffStateReason,
   isTimerTrigger,
   type SelfHpAtMostTrigger,
@@ -72,9 +73,10 @@ export type TriggerOptions = {
   timer?: boolean | 'withStart';
   /**
    * 回数のきっかけの数える窓（during）と発火の窓（firesDuring）。'withState' なら自分の状態の窓
-   * （during: { state }）も書ける（状態の付与だけ。plan/design-grave.md 2.4 節）
+   * （during: { state }）も書ける（状態の付与だけ。plan/design-grave.md 2.4 節）。'stateOnly' なら自分の状態の窓だけ
+   * （弾丸チャージ。plan/design-fortune-mate.md 2.2 節）
    */
-  during?: boolean | 'withState';
+  during?: boolean | 'withState' | 'stateOnly';
   /** 確率のきっかけ（chance・chanceRef） */
   chance?: boolean;
   /** フルスタックの消費（{ fullStack }） */
@@ -181,6 +183,7 @@ function parseShotCountTrigger(v: Record<string, Json>, path: string, options: T
       'count',
       'every',
       'everyRef',
+      'phase',
       'stacksRef',
       'during',
       'reset',
@@ -209,6 +212,7 @@ function parseShotCountTrigger(v: Record<string, Json>, path: string, options: T
   if (v.everyRef !== undefined) trigger.everyRef = parseRef(v.everyRef, `${path}.everyRef`);
   if (v.stacksRef !== undefined) trigger.stacksRef = parseRef(v.stacksRef, `${path}.stacksRef`);
   parseCountingWindow(v, trigger, path, options);
+  parsePhase(v, trigger, path);
   parseFiringWindow(v, trigger, path, options);
   parseChance(v, trigger, path, options);
   return trigger;
@@ -227,18 +231,35 @@ function parseCountingWindow(
   if (v.during === undefined) fail(`${path}.reset`, 'reset needs during');
   if (isRecord(v.during)) {
     // 自分の状態の間だけ数え、状態が付くたびに数え直す（reset は書かない。plan/design-grave.md 2.4 節）
-    if (allowDuring !== 'withState')
+    if (allowDuring !== 'withState' && allowDuring !== 'stateOnly')
       fail(`${path}.during`, 'a counting window of a state (during: { state }) is only allowed in state grants');
     rejectUnknownKeys(v.during, ['state'], `${path}.during`);
     trigger.during = { state: parseNamedStateId(v.during.state, `${path}.during.state`, 'ally') };
     if (v.reset !== undefined)
       fail(`${path}.reset`, 'a counting window of a state starts over when the state is applied (write no reset)');
   } else {
+    if (allowDuring === 'stateOnly')
+      fail(`${path}.during`, 'only a counting window of a state (during: { state }) is allowed here');
     trigger.during = oneOf(SHOT_COUNT_WINDOWS, v.during, `${path}.during`);
     if (v.reset === undefined) fail(`${path}.reset`, 'during needs reset (fullBurstStart or never)');
     trigger.reset = oneOf(SHOT_COUNT_RESETS, v.reset, `${path}.reset`);
   }
   rejectWindowCombos(trigger, 'during', path);
+}
+
+/**
+ * 周期の中の位置（plan/design-fortune-mate.md 2.1 節）。1 以上で、every（即値なら）より小さい整数。数える窓が自分の状態のときだけ
+ */
+function parsePhase(v: Record<string, Json>, trigger: ShotCountTrigger, path: string): void {
+  if (v.phase === undefined) return;
+  if (!isStateCountWindow(trigger.during))
+    fail(`${path}.phase`, 'phase needs a counting window of a state (during: { state })');
+  const phase = parsePositiveInt(v.phase, `${path}.phase`);
+  if (trigger.every !== undefined && phase >= trigger.every)
+    fail(`${path}.phase`, `phase must be less than every (${trigger.every}), got ${phase}`);
+  if (trigger.every === undefined && trigger.everyRef === undefined)
+    fail(`${path}.phase`, 'phase needs every or everyRef');
+  trigger.phase = phase;
 }
 
 /** 数える窓（during）と発火の窓（firesDuring）は、スタック・最後の発・使用武器の変更の発と組まない */
@@ -259,7 +280,7 @@ function parseFiringWindow(
   options: TriggerOptions,
 ): void {
   if (v.firesDuring !== undefined) {
-    if (!options.during) {
+    if (!options.during || options.during === 'stateOnly') {
       fail(`${path}.firesDuring`, 'a firing window (firesDuring) is only allowed in damage, timed and state');
     }
     if (v.during !== undefined) fail(`${path}.firesDuring`, 'firesDuring cannot be used with during');
