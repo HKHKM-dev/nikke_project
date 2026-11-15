@@ -16,7 +16,7 @@
 - 使い手:
   - 画面: 切り替える部品が無い。既定（`apps/web/src/team.ts` の `DEFAULT_SLOT_CONDITION`）は真。偽になるのは、部品があったころの保存データ（`parseCondition` が読む）だけ。
   - 照合（`records/observations/teamInput.ts`）と CLI（`packages/core/scripts/sim-run.ts`）: 常に真。
-  - テスト: 条件の書き方として約 180 か所に出る。偽はおよそ 15 か所で、偽の振る舞いを見ているのは `damage.test.ts`・`emilia.test.ts`・`fullChargeFold.test.ts` などの数件（ほかは、チャージしない武器のキャラに書いてあるだけ）。
+  - テスト: 条件の書き方として多くのテストに出る。偽の振る舞いを見ているのは `damage.test.ts`・`emilia.test.ts`・`fullChargeFold.test.ts` などの一部で、ほかの偽は、チャージしない武器のキャラに書いてあるだけ。
 
 ## 2. 案
 

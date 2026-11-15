@@ -511,7 +511,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const attack = roundedAttack(baseAttack, buffs, input.attackRounding);
   const baseHit = Math.max(1, attack - defenceAfterDown(enemy, buffs));
   const weaponMultiplier = shot.damage / 10000;
-  // チャージ武器はフルチャージで撃つ（オートの射撃の撃ち方。plan/requirements.md 4.2 節）。部分チャージの発は 2 パス目が発ごとに出し直す
+  // チャージ武器はフルチャージで撃つ（オートの射撃の撃ち方。plan/requirements.md 4.2 節）。部分チャージの発は partialChargeTriggerDamage で発ごとに出し直す
   const charge = isChargeWeapon(shot);
   const chargeMultiplier = applyChargeBuffs(
     shot.fullChargeDamage,
