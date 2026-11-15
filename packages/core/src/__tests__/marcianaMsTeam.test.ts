@@ -15,6 +15,8 @@ const FLOWER = 304;
 const DELTA = 20;
 const LITER = 82;
 const CINDERELLA_CW = 515;
+const DIESEL = 72;
+const RAPI = 10;
 
 const electric = { enemy: { ...SHOOTING_RANGE_ENEMY, element: 'Electronic' as const } };
 const fire = { enemy: { ...SHOOTING_RANGE_ENEMY, element: 'Fire' as const } };
@@ -30,8 +32,9 @@ const TEAMS: Record<string, TeamInput> = {
     2,
     fire,
   ),
-  '実戦寄り（リター + デルタ + マルチャーナ：MS + シンデレラ：クリスタルウェーブ・電撃）': fixedTeam(
-    [LITER, DELTA, MARCIANA_MS, CINDERELLA_CW],
+  // III の 2 体がかわるがわる撃つ（チェーンの間隔が CT より短い）。自分の使ったフルバーストの次は、ラピの使ったフルバースト
+  '実戦寄り（リター + ディーゼル + マルチャーナ：MS + ラピ・電撃）': fixedTeam(
+    [LITER, DIESEL, MARCIANA_MS, RAPI],
     2,
     electric,
   ),
@@ -76,6 +79,8 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(hitsOf('fullBurstStart').map((h) => h.frame)).toEqual(own);
     // バーストを使わない編成では、フルバーストがあっても出ない
     expect(own.length > 0).toBe(activations.length > 0);
+    // III が 2 体の編成では、自分が前に使ったことがあっても、ほかの III が開いたフルバーストには出ない
+    if (input.slots.length === 4) expect(windows.some((w) => !w.burstUsers.includes(m))).toBe(true);
   });
 
   it('puts the burst Attack Damage and Elemental Advantage Attack Damage on itself from each burst use', () => {
