@@ -815,6 +815,8 @@ export type BurstHitInput = {
   distance?: { rate: number; bonus: number };
   /** Σ sustainedDamage。sustained の効果にだけ、sustainedDamagePlacement の置き場所で掛ける。省略 0 */
   sustainedDamage?: number;
+  /** Σ dotEffect（持続ダメージの効果▲。plan/design-bready.md 2.4 節）。sustained の効果にだけ、別の乗数 (1 + Σ) で掛ける。省略 0 */
+  dotEffect?: number;
   /** 省略は SUSTAINED_DAMAGE_PLACEMENT */
   sustainedDamagePlacement?: SustainedDamagePlacement;
   /**
@@ -919,7 +921,7 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
       (effect.oneEnemy === true ? oneEnemy : 1) *
       (effect.projectileExplosion === true ? explosion : 1) *
       (effect.projectileStick === true ? stick : 1) *
-      (effect.sustained === true ? sustained : 1),
+      (effect.sustained === true ? sustained * (1 + (input.dotEffect ?? 0)) : 1),
   }));
   let multiplier = 0;
   let perActivation = 0;
@@ -1047,6 +1049,7 @@ export function computeSkillHit(
     projectileStickMultiplier: stickHitMultiplier(buffs),
     sustainedDamage: buffs.sustainedDamage,
     sustainedDamagePlacement,
+    dotEffect: buffs.dotEffect,
     distance: { rate: distanceRate, bonus: character.bonusRange === null ? 0 : DISTANCE_BONUS },
     // コアダメージ▲（buffs.coreDamage）は、通常攻撃と同じく
     // コアの項に足す（論点 4。アニス：スターのシューティングスター。C-0594。plan/design-anis-star-core-path.md 3.1 節・11.3 節）

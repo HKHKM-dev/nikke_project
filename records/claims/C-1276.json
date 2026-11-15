@@ -1,16 +1,30 @@
 {
   "id": "C-1276",
   "text": "ブレッディの S1 のやみつきの味（Lv10）は、味方の持続ダメージ▲（ロザンナ：シックオーシャンのバースト）が自分に付いたフレーム（II の発動）に付き、チャージ速度 20%▼ はチャージ速度▲と同じ和に入ってチャージを 1 秒 × (1 + 0.2) = 72f にする。マガジンの中の発の間は 82f から 94f になる",
-  "state": "仮説",
+  "state": "確定",
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`1203-01`・`1203-02`・`1203-03`・`1204-01`。V-0785",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "反映（`data/skills/520.json` の skill1 の effects[1]。きっかけ `{ buffApplied }` は `skills/holders/fire.ts` の `dispatchApplied`、チャージ速度▼は `frame/firing.ts` の `speedScaledSeconds`）",
   "replaces": [],
   "updated": "2026-11-15",
   "subject": {
     "places": ["data/skills/520.json の skill1 の effects[1]"]
   },
   "decidedOn": [],
-  "parameterFree": "チャージ速度▼の減算の式（C-0786・C-1257）と説明文の 20%"
+  "parameterFree": "チャージ速度▼の減算の式（C-0786・C-1257）と説明文の 20%",
+  "minimal": [
+    {
+      "element": ["ブレッディ skill1.effects[2]"],
+      "reason": "この編成（撮り方 1）に分配ダメージ▲を配る味方がいないので、オススメの味は付かない",
+      "decided": "2026-11-15",
+      "observations": ["1203-01", "1203-02", "1203-03", "1204-01"]
+    },
+    {
+      "element": ["ロザンナ：シックオーシャン skill2.notes[1]"],
+      "reason": "比べた時刻は 1 回目のフルバーストの中で、ロザンナ：シックオーシャンの S2 の最初の発動（戦闘開始から 30 秒）より前なので、その tick がゲージを溜めるかはバーストの時刻に効かない",
+      "decided": "2026-11-15",
+      "observations": ["1203-03", "1204-01"]
+    }
+  ]
 }

@@ -6,11 +6,13 @@ import { lowerBound, type ShotLog } from '../../frame/shots.ts';
 import { chancePieces, chanceStackPieces, chanceValueOf } from '../chance.ts';
 import {
   isResolvedApplied,
+  isResolvedBuffApplied,
   isResolvedShotCount,
   isResolvedTimer,
   resolveStackChanges,
   resolveStateContents,
   resolveStateGrants,
+  resolveTimed,
   type ResolvedStackChange,
   type ResolvedStateGrant,
   type ResolvedTimedEffect,
@@ -20,7 +22,7 @@ import { stackItems, STACK_REFRESH, type MaxStacksAt, type StackDecrease } from 
 import type { NamedStateId } from '../states.ts';
 import { dependsOnDefense, dependsOnRank } from '../targets.ts';
 import type { ShotCountEveryAt, TriggerTracker } from '../triggers.ts';
-import { conditionReadsItems, SKILL_SLOTS, type EdgeShift, type EffectCondition } from '../types.ts';
+import { type BuffStat, conditionReadsItems, SKILL_SLOTS, type EdgeShift, type EffectCondition } from '../types.ts';
 import {
   effectItems,
   holderHitStarts,
@@ -552,6 +554,7 @@ export function stateGroupsOf(
     condition?: EffectCondition,
   ) => TriggerTracker,
   appliedStageOf: (state: NamedStateId) => HeldStage,
+  buffAppliedStageOf: (stat: BuffStat) => HeldStage = () => 1,
 ): StateGroup[] {
   const groups: StateGroup[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
@@ -575,7 +578,9 @@ export function stateGroupsOf(
       // { applied } の付与は、見る状態を付ける付与の段（plan/design-skill-stage4.md 1.1 節）
       const stage: HeldStage = isResolvedApplied(grant.trigger)
         ? appliedStageOf(grant.trigger.applied)
-        : stageOfGrant(grant);
+        : isResolvedBuffApplied(grant.trigger)
+          ? buffAppliedStageOf(grant.trigger.buffApplied)
+          : stageOfGrant(grant);
       group.grants.push({
         grant,
         stage,
@@ -657,6 +662,44 @@ export function appliedStagesOf(slots: readonly TimelineSlot[]): (state: NamedSt
     return out;
   };
   return (state) => (stages ??= build()).get(state) ?? 1;
+}
+
+/** 「〈stat〉増加効果」に数える効果か（▲。▼は負の値。使用武器の変更は数えない。plan/design-bready.md 2.1 節） */
+export function isBuffUp(effect: { stat: ResolvedTimedEffect['stat']; value: number }): effect is {
+  stat: BuffStat;
+  value: number;
+} {
+  return effect.stat !== 'weapon' && effect.value > 0;
+}
+
+/**
+ * { buffApplied } の付与の段（plan/design-bready.md 2.1 節）。stat ごとに、その stat の▲を付ける timed と、中身にその stat の▲を持つ
+ * 付与（編成のどの枠でも。{ applied }・{ buffApplied } のもの・静的な付与を除く）の段のいちばん後。無ければ段 1
+ */
+export function buffAppliedStagesOf(slots: readonly TimelineSlot[]): (stat: BuffStat) => HeldStage {
+  let stages: Map<BuffStat, HeldStage> | null = null;
+  const build = (): Map<BuffStat, HeldStage> => {
+    const out = new Map<BuffStat, HeldStage>();
+    const bump = (stat: BuffStat, stage: HeldStage): void => {
+      const now = out.get(stat);
+      if (now === undefined || STAGE_RANK[stage] > STAGE_RANK[now]) out.set(stat, stage);
+    };
+    const chained = (t: ResolvedTrigger): boolean => isResolvedApplied(t) || isResolvedBuffApplied(t);
+    for (const slot of slots) {
+      if (slot === null || slot.definition === null) continue;
+      for (const effect of resolveTimed(slot.definition, slot.character, slot.levels)) {
+        if (isBuffUp(effect) && !chained(effect.trigger)) bump(effect.stat, stageOfTimed(effect));
+      }
+      const contents = resolveStateContents(slot.definition, slot.character, slot.levels);
+      for (const grant of resolveStateGrants(slot.definition, slot.character, slot.levels)) {
+        if (grant.isStatic || chained(grant.trigger)) continue;
+        for (const c of contents)
+          if (c.whileState === grant.state && isBuffUp(c)) bump(c.stat, stageOfGrant(grant));
+      }
+    }
+    return out;
+  };
+  return (stat) => (stages ??= build()).get(stat) ?? 1;
 }
 
 /** timed の効果の段（強化の受け付けと値は、履歴を閉じる時に決める） */

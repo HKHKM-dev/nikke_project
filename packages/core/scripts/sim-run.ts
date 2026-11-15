@@ -84,6 +84,8 @@ function triggerLabel(t: ResolvedTrigger): string {
   if ('everySeconds' in t) return `every${t.everySeconds}s${t.since === undefined ? '' : `:since:${t.since.applied}`}`;
   // 状態が付いた時のトリガー（applied:followUp。id は名前の付いた状態の目録の id）
   if ('applied' in t) return `applied:${t.applied}`;
+  // その stat の▲が付いた時（buffApplied:sustainedDamage）
+  if ('buffApplied' in t) return `buffApplied:${t.buffApplied}`;
   // フルスタックの消費のきっかけ（fullStack:relax）
   if ('fullStack' in t) return `fullStack:${t.fullStack}`;
   // 使用武器の変更の終わり

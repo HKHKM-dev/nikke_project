@@ -1,0 +1,331 @@
+[
+  {
+    "id": "1205-01",
+    "recording": "1205",
+    "kind": "interval",
+    "use": "compare",
+    "value": [94, 94, 94, 94],
+    "unit": "f",
+    "description": "1 回目のフルバーストの後の、オススメの味の間のブレッディの発と発の間（動画のフレーム）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1623・f1717・f1811・f1905・f1999 の発の増分"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 3,
+        "from": 750,
+        "to": 1130,
+        "video": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1205-02",
+    "recording": "1205",
+    "kind": "timing",
+    "use": "compare",
+    "value": [6, 6, 6, 6, 6],
+    "unit": "f",
+    "description": "ブレッディの発から、その発の分配ダメージまでの動画のフレーム（2 つ目から 5 つ）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1035→f1041・f1129→f1135・f1223→f1229・f1317→f1323・f1411→f1417。1 つ目（f920 の発）はフルバーストの入りの止まりを挟んで f949"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "skill": "skill2",
+        "anchor": "prevShot",
+        "skip": 1,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1205-03",
+    "recording": "1205",
+    "kind": "hit",
+    "use": "compare",
+    "value": 558911,
+    "unit": "ダメージ",
+    "description": "フルバーストの外の、オススメの味の分配ダメージ（非会心。エレグの分配ダメージ▲なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1911 の増分（f2005 も同じ値）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1035,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1205-04",
+    "recording": "1205",
+    "kind": "hit",
+    "use": "compare",
+    "value": 781022,
+    "unit": "ダメージ",
+    "description": "エレグの II の後の、オススメの味の分配ダメージ（非会心。エレグの分配ダメージ 39.74%▲ が乗る）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f2101 の 792,143 から、同じフレームのエレグの MG の 2 ヒット（11,121）を引いた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1225,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1205-05",
+    "recording": "1205",
+    "kind": "hit",
+    "use": "compare",
+    "value": 4049343,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの中の分配ダメージ（非会心。S1・バーストの攻撃力▲、バーストの攻撃ダメージ▲、エレグの分配ダメージ▲が乗る）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1041 の 4,065,070 から、同じフレームのエレグの MG の 1 ヒット（15,727）を引いた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 165,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1205-06",
+    "recording": "1205",
+    "kind": "hit",
+    "use": "compare",
+    "value": 5399124,
+    "unit": "ダメージ",
+    "description": "同じフルバーストの中の分配ダメージ（会心）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1135 の 5,414,851 から、同じフレームのエレグの MG の 1 ヒット（15,727）を引いた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 255,
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1205-07",
+    "recording": "1205",
+    "kind": "hit",
+    "use": "compare",
+    "value": 727868,
+    "unit": "ダメージ",
+    "description": "フルバーストの外の、オススメの味の間のブレッディの発（コア・非会心。S2 の攻撃ダメージ▲が乗る）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1905 の増分（f1999 も同じ値）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1034,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1205-08",
+    "recording": "1205",
+    "kind": "hit",
+    "use": "compare",
+    "value": 3144799,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの中のブレッディの発（コア・非会心。S1 とバーストの攻撃力▲、バーストと S2 の攻撃ダメージ▲が乗る）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1411 の増分"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 352,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1205-09",
+    "recording": "1205",
+    "kind": "hit",
+    "use": "compare",
+    "value": 4049343,
+    "unit": "ダメージ",
+    "description": "3 回目のフルバーストの中の分配ダメージ（非会心）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f6023 の増分（00.00 の f5683 の 340f 後。同じフレームにほかのヒットが無い）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "fullBurst": 2,
+        "frame": 200,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  }
+]

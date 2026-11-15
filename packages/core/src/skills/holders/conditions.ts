@@ -4,7 +4,7 @@ import { statTotal } from '../buffs.ts';
 import { type ResolvedTrigger } from '../resolve.ts';
 import { statesMatching, type NamedStateId } from '../states.ts';
 import { fireContextOf, burstStepHolds, type FrameEvents } from '../triggers.ts';
-import { isStacksCondition, type EndedTrigger, type EffectCondition } from '../types.ts';
+import { type BuffStat, isStacksCondition, type EndedTrigger, type EffectCondition } from '../types.ts';
 import { type HeldTrack } from './types.ts';
 import { stacksHold, valueOf } from './items.ts';
 import type { HolderBase, Records } from './records.ts';
@@ -59,16 +59,18 @@ export function createConditions({
         return false;
       }
     }
-    if (condition.selfBuffed !== undefined) {
-      const stat = condition.selfBuffed;
+    // 「自分が〈stat〉増加状態なら」と「でなければ」（plan/design-bready.md 2.2 節）: 常時の値か段 1 の件に、その stat の正の値があるか
+    const buffedAt = (stat: BuffStat): boolean => {
       const base = passive[sourceSlotIndex];
-      const buffed =
+      return (
         (base !== null && base !== undefined && statTotal(base.buffs, stat) > 0) ||
         (conditionViews[sourceSlotIndex] ?? []).some(
           (v) => v.effect.stat === stat && activeAt(v.track, frame).some((it) => valueOf(v.effect, it) > 0),
-        );
-      if (!buffed) return false;
-    }
+        )
+      );
+    };
+    if (condition.selfBuffed !== undefined && !buffedAt(condition.selfBuffed)) return false;
+    if (condition.selfNotBuffed !== undefined && buffedAt(condition.selfNotBuffed)) return false;
     // 解除の「フルバースト状態でなければ」（inFullBurst: false）も
     if (condition.inFullBurst !== undefined && inFullBurstAt(frame) !== condition.inFullBurst) return false;
     if (condition.enemyState !== undefined && !enemyStateAt(condition.enemyState, frame)) return false;

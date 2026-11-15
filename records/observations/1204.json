@@ -1,0 +1,110 @@
+[
+  {
+    "id": "1204-01",
+    "recording": "1204",
+    "kind": "timing",
+    "use": "compare",
+    "value": [31, 120, 179, 237, 296],
+    "unit": "f",
+    "description": "1 回目のフルバーストの 00.00（f1325）からの、あと味の tick の動画のフレーム（頭の 5 つ）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1356・f1445・f1504・f1562・f1621 の大きな増分。00.00 はレシピ burst-panel@4 の読み（記録しない）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "dot",
+        "anchor": "fullBurst:0",
+        "within": "window",
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1204-02",
+    "recording": "1204",
+    "kind": "hit",
+    "use": "compare",
+    "value": 5832824,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの中のあと味の tick（非会心）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1445 の増分（f1504・f1621 も同じ値）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1204-03",
+    "recording": "1204",
+    "kind": "hit",
+    "use": "compare",
+    "value": 326825,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの中で付いたあと味の、ブレッディのバーストの 10 秒の後の tick（会心。どの▲も乗らない）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1962 の増分"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1090,
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  }
+]

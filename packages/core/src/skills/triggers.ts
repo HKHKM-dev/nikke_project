@@ -17,6 +17,7 @@ import {
 import { fullChargeFrameSet, type ShotLog } from '../frame/shots.ts';
 import {
   isResolvedApplied,
+  isResolvedBuffApplied,
   isResolvedEventCount,
   isResolvedFullStack,
   isResolvedTimer,
@@ -323,6 +324,10 @@ export function createTriggerTracker(
   // 効果名のトリガーは 1 パス目の履歴の記録（HolderHistory.applications）で決まる。出来事の列では追わない
   if (isResolvedApplied(t)) {
     throw new RangeError(`an applied trigger (${t.applied}) is not tracked per event; use appliedFrames`);
+  }
+  // 「〈stat〉増加効果が適用された時」も件の一覧の付いた記録で決まる（skills/holders/fire.ts の dispatchApplied）
+  if (isResolvedBuffApplied(t)) {
+    throw new RangeError(`a buff-applied trigger (${t.buffApplied}) is not tracked per event; the holder lists track it`);
   }
   // カウンタが上限に届いた時は 1 パス目のカウンタの記録で決まる（skills/holders/fires.ts の firesOf と、skills/holders/types.ts の counterFullFrames）
   if (isCounterFullTrigger(t)) {

@@ -28,7 +28,7 @@ import type { StackDecrease } from '../stacks.ts';
 import type { NamedStateId } from '../states.ts';
 import type { dependsOnRank, FireContext } from '../targets.ts';
 import type { FrameEvents, FullStackEvent, HealRecord, ShotCountEveryAt, TriggerTracker } from '../triggers.ts';
-import { isEnemyHeldStat, type TimerTrigger } from '../types.ts';
+import { type BuffStat, isEnemyHeldStat, type TimerTrigger } from '../types.ts';
 import type { SkillSlot } from '../../types.ts';
 import type { AppliedRecord, ConditionSkip, SlotBuffState, TimelineSlot } from '../timeline.ts';
 
@@ -48,6 +48,12 @@ export function isEnemyEffect(effect: { stat: string }): boolean {
 
 /** 段の印（plan/design-holder-effects.md 2.5 節）: 1・1.5・2・2.5 段目 */
 export type HeldStage = 1 | 1.5 | 2 | 2.5;
+
+/**
+ * その stat の▲（timed か状態の中身）が枠 slotIndex にフレーム frame に付いた記録（{ buffApplied } が読む。plan/design-bready.md 2.1 節）。
+ * { applied }・{ buffApplied } のきっかけの効果が付けたものは作らない（連鎖させない）
+ */
+export type BuffAppliedRecord = { frame: number; stat: BuffStat; slotIndex: number };
 
 /** 件の列の出どころ */
 export type HeldOrigin =

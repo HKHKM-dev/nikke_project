@@ -30,6 +30,7 @@ const buffs: BuffTotals = {
   projectileStickDamage: 0,
   elementAdvantage: 0,
   sustainedDamage: 0,
+  dotEffect: 0,
   burstGaugeSpeed: 0,
   sequentialAttackDamage: 0,
   oneEnemyBurstDamage: 0,

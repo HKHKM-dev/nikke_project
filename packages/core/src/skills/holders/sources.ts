@@ -56,6 +56,7 @@ import {
 } from './types.ts';
 import {
   appliedStagesOf,
+  buffAppliedStagesOf,
   insertSorted,
   lastAtOrBefore,
   stageOfStackChange,
@@ -207,7 +208,7 @@ function createTimedSources(
 
 /** 時間で変わる状態（出どころ × 状態 × 持ち主ごとに 1 つの件の列） */
 function createStateGroups({ firesOf, newTrack, slots }: SourceDeps, appliedStageOf: AppliedStageOf): StateGroup[] {
-  const stateGroups = stateGroupsOf(slots, firesOf, appliedStageOf);
+  const stateGroups = stateGroupsOf(slots, firesOf, appliedStageOf, buffAppliedStagesOf(slots));
   for (const group of stateGroups) {
     const grant = group.grants[0]!.grant;
     // 敵に付く状態は、敵の 1 つの件の列（対象の味方が編成にいれば）

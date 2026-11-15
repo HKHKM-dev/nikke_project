@@ -1,12 +1,17 @@
 // 件の一覧の層 7: 発火（plan/design-split-first-pass.md 3.3 節・9.2 節）。持続バフ・状態の付与・解除・延長・デバフ解除・スタック量の発火を
 // 件の列に入れ、{ applied } の出どころに付いた記録を配る。条件で落とした記録と順位の記録もここで足す。
 import { type ChanceOpportunity } from '../chance.ts';
-import { isResolvedApplied, type ResolvedEffect, type ResolvedShotCountTrigger } from '../resolve.ts';
+import {
+  isResolvedApplied,
+  isResolvedBuffApplied,
+  type ResolvedEffect,
+  type ResolvedShotCountTrigger,
+} from '../resolve.ts';
 import { tiedAtCutoff } from '../ranking.ts';
 import { namedStateGroup, namedStateIsDebuff, statesMatching, type NamedStateId } from '../states.ts';
 import { isEffectTarget, type FireContext } from '../targets.ts';
 import { shotCountWeight, type ShotEvent } from '../triggers.ts';
-import { isAllyDecrease, type EffectCondition } from '../types.ts';
+import { type BuffStat, isAllyDecrease, type EffectCondition } from '../types.ts';
 import { type AppliedRecord } from '../timeline.ts';
 import {
   ENEMY,
@@ -21,7 +26,7 @@ import {
   type TimedSource,
   pickRemoveDebuff,
 } from './types.ts';
-import { closeTakesEffect, insertSorted, isStackableBuffTrack } from './items.ts';
+import { closeTakesEffect, insertSorted, isBuffUp, isStackableBuffTrack } from './items.ts';
 import type { HolderBase, Records } from './records.ts';
 import type { Fires } from './fires.ts';
 import type { Sources } from './sources.ts';
@@ -33,6 +38,7 @@ import type { Conditions } from './conditions.ts';
 export function createFire({
   activeAt,
   applications,
+  buffApplications,
   appliedStageOf,
   chainedApplications,
   chanceLevelsAt,
@@ -104,6 +110,8 @@ export function createFire({
         throw new Error(`no track for ${src.effect.source.skill}[${src.effect.effectIndex}] on slot ${holder}`);
       insertSorted(track.starts, start);
       if (scale !== undefined) (track.startScales ??= new Map()).set(start, scale);
+      if (isBuffUp(src.effect) && context?.appliedCasters === undefined)
+        buffApplications.push({ frame: start, stat: src.effect.stat, slotIndex: holder });
       targets.push(holder);
     });
     return targets;
@@ -182,6 +190,9 @@ export function createFire({
         slotIndex: holder,
       };
       applications.push(record);
+      if (context?.appliedCasters === undefined)
+        for (const c of group.contents)
+          if (isBuffUp(c)) buffApplications.push({ frame: start, stat: c.stat, slotIndex: holder });
       targets.push(holder);
     });
     return targets;
@@ -347,7 +358,9 @@ export function createFire({
   };
   // ---- { applied } の出どころ（timed・付与。見る状態が自分に付いた記録から発火する。plan/design-skill-stage4.md 1.1 節） ----
   type AppliedSource = {
-    state: NamedStateId;
+    /** 見る状態か、見る stat（{ buffApplied }。plan/design-bready.md 2.1 節） */
+    state?: NamedStateId;
+    buffStat?: BuffStat;
     sourceSlotIndex: number;
     stage: HeldStage;
     /** 最後に発火したフレーム。記録のフレームは呼び出しの順に減らないので、前の呼び出しと同じフレームの 2 回目を落とす */
@@ -363,9 +376,9 @@ export function createFire({
   for (const group of stateGroups) {
     for (const g of group.grants) {
       const t = g.grant.trigger;
-      if (!isResolvedApplied(t)) continue;
+      if (!isResolvedApplied(t) && !isResolvedBuffApplied(t)) continue;
       appliedSources.push({
-        state: t.applied,
+        ...(isResolvedApplied(t) ? { state: t.applied } : { buffStat: t.buffApplied }),
         sourceSlotIndex: group.sourceSlotIndex,
         stage: g.stage,
         last: -1,
@@ -412,12 +425,19 @@ export function createFire({
    * 段 stage の { applied } の出どころを、この呼び出しで付いた記録（applications の from から。{ applied } の付与の記録を除く）から
    * 発火する。窓は記録のフレームから。同じフレームに 2 つの出どころから付いても 1 回（appliedFrames と同じ）
    */
-  const dispatchApplied = (stage: HeldStage, from: number): void => {
-    if (from >= applications.length) return;
+  const dispatchApplied = (stage: HeldStage, from: number, buffFrom: number): void => {
+    if (from >= applications.length && buffFrom >= buffApplications.length) return;
     for (const a of appliedSources) {
       if (a.stage !== stage) continue;
       const fires = new Map<number, number[]>();
-      for (let k = from; k < applications.length; k++) {
+      if (a.buffStat !== undefined) {
+        // { buffApplied }: 見る stat の▲が自分に付いた記録（付けた枠は問わない。対象 appliedCaster は書けない）
+        for (let k = buffFrom; k < buffApplications.length; k++) {
+          const r = buffApplications[k]!;
+          if (r.stat === a.buffStat && r.slotIndex === a.sourceSlotIndex) fires.set(r.frame, []);
+        }
+      }
+      for (let k = from; a.state !== undefined && k < applications.length; k++) {
         const r = applications[k]!;
         if (r.state !== a.state || r.slotIndex !== a.sourceSlotIndex || chainedApplications.has(r)) continue;
         const casters = fires.get(r.frame) ?? [];

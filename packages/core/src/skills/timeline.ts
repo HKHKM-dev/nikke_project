@@ -193,8 +193,9 @@ const BUFF_FIELDS = [
   // 発射体付着ダメージ▲と有利コードのダメージ適用
   'projectileStickDamage',
   'elementAdvantage',
-  // 持続ダメージ▲
+  // 持続ダメージ▲と、持続ダメージの効果▲
   'sustainedDamage',
+  'dotEffect',
   'burstGaugeSpeed',
   'maxAmmoRatio',
   'maxAmmoFlat',

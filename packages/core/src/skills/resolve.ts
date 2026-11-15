@@ -38,6 +38,7 @@ import {
   type BuffStat,
   type BuffTarget,
   type AppliedTrigger,
+  type BuffAppliedTrigger,
   type FullStackTrigger,
   type WeaponChangeEndTrigger,
   type ReloadEndTrigger,
@@ -117,7 +118,10 @@ export type ResolvedTrigger =
   | AdjacentHpFullTrigger
   // 自分のその状態の件が外れた時（plan/design-grave.md 2.1 節）。ammoDecrease・状態の付与（と counterChange）だけ。1 パス目の件の一覧が
   // 追う（skills/holders/conditions.ts の endedAt）ので、出来事の列では追わない
-  | EndedTrigger;
+  | EndedTrigger
+  // その stat の▲が自分に付いた時（plan/design-bready.md 2.1 節）。状態の付与だけ。件の一覧が付いた記録から発火する
+  // （skills/holders/fire.ts の dispatchApplied）ので、出来事の列では追わない
+  | BuffAppliedTrigger;
 
 /** 自分の HP の割合の窓のきっかけ（{ selfHpAtMost }）か */
 export function isResolvedSelfHpAtMost(t: ResolvedTrigger): t is { selfHpAtMost: number } {
@@ -152,6 +156,11 @@ export function isResolvedSkillFired(t: ResolvedTrigger): t is SkillFiredTrigger
 /** フルスタックの消費のきっかけ（{ fullStack }）か */
 export function isResolvedFullStack(t: ResolvedTrigger): t is FullStackTrigger {
   return typeof t === 'object' && 'fullStack' in t;
+}
+
+/** 「〈stat〉増加効果が適用された時」（{ buffApplied }）か */
+export function isResolvedBuffApplied(t: ResolvedTrigger): t is BuffAppliedTrigger {
+  return typeof t === 'object' && 'buffApplied' in t;
 }
 
 /** 効果名のトリガー（{ applied }）か */

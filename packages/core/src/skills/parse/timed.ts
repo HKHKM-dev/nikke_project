@@ -73,6 +73,7 @@ import {
 } from './target.ts';
 import {
   parseAppliedTrigger,
+  parseBuffAppliedTrigger,
   parseChargeTrigger,
   parseCounterFullTrigger,
   parseCoverHealedTrigger,
@@ -289,6 +290,12 @@ function parseTimedTrigger(
   allowChance: boolean,
 ): EffectTrigger {
   const at = `${path}.trigger`;
+  // 「〈stat〉増加効果が適用された時」は状態の付与だけ（plan/design-bready.md 2.1 節）
+  const buffApplied = parseBuffAppliedTrigger(v.trigger, at);
+  if (buffApplied !== undefined) {
+    if (stat !== undefined) fail(at, 'a buff-applied trigger ({ buffApplied }) is only allowed in state grants');
+    return buffApplied;
+  }
   return (
     parseAppliedTrigger(v.trigger, at) ??
     parseChargeTrigger(v.trigger, at) ??
@@ -504,6 +511,9 @@ function parseTimedCondition(
     stat !== undefined &&
     (stat === condition.selfBuffed || isStateStat(stat))
   ) {
+    fail(`${path}.stat`, `a conditional effect cannot give "${stat}" (it would feed its own condition)`);
+  }
+  if (condition.selfNotBuffed !== undefined && stat !== undefined && stat === condition.selfNotBuffed) {
     fail(`${path}.stat`, `a conditional effect cannot give "${stat}" (it would feed its own condition)`);
   }
   if (target === 'topAttack') fail(`${path}.target`, 'a conditional effect cannot target "topAttack"');

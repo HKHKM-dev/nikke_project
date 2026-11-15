@@ -98,6 +98,7 @@ const STAT_CLASS: Record<BuffStat, ElementClass> = {
   trueDamage: 'damageValue',
   trueDamageConversion: 'damageValue',
   sustainedDamage: 'damageValue',
+  dotEffect: 'damageValue',
   // 最大HP▲ は発動者の最終最大HP 基準の攻撃力▲を通して値に効く（notes のときと同じ分類）
   maxHp: 'damageValue',
   // 最大HP のみ▲ も同じ（最終最大HP への足し方が最大HP▲ と同じ）

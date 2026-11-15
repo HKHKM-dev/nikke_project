@@ -1,0 +1,365 @@
+[
+  {
+    "id": "1203-01",
+    "recording": "1203",
+    "kind": "interval",
+    "use": "compare",
+    "value": [82, 82, 82, 82],
+    "unit": "f",
+    "description": "最初の II（味が付く前）までのブレッディの発と発の間（動画のフレーム）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f916・f998・f1080・f1162・f1244 の発の増分（コア。f916 はロザンナ：シックオーシャンの AR の 1 ヒットと同じフレーム）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 3,
+        "from": 0,
+        "to": 440,
+        "video": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1203-02",
+    "recording": "1203",
+    "kind": "interval",
+    "use": "compare",
+    "value": [94, 94, 94],
+    "unit": "f",
+    "description": "1 回目のフルバーストの中の、やみつきの味の間のブレッディの 2 本目のマガジンの発と発の間（動画のフレーム）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1574・f1668・f1762・f1856 の発の増分（f1762 はあと味の tick と同じフレーム）。照準の左の残弾（reticle-ammo.ts --mode series）の減りも 93〜94f おき"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 3,
+        "from": 700,
+        "to": 1000,
+        "video": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1203-03",
+    "recording": "1203",
+    "kind": "timing",
+    "use": "compare",
+    "value": [30, 119, 178, 236, 295],
+    "unit": "f",
+    "description": "1 回目のフルバーストの III のタイマーの 00.00（f1332）からの、あと味の tick の動画のフレーム（頭の 5 つ）。最初のあと味は、やみつきの味が付いた後の最初の発（戦闘を通して 6 発目）で付き、付いた瞬間と 1.5・2.5・3.5・4.5 秒後に出る",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1362（発と同じフレーム）・f1451・f1510・f1568・f1627 の大きな増分（あと味効果▲の乗った tick）。00.00 はレシピ burst-panel@4 の読み（記録しない）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "dot",
+        "anchor": "fullBurst:0",
+        "within": "window",
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1203-04",
+    "recording": "1203",
+    "kind": "hit",
+    "use": "compare",
+    "value": 5832824,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの中のあと味の tick（非会心。ブレッディのバーストの攻撃ダメージ▲・あと味効果▲・ロザンナ：シックオーシャンの持続ダメージ▲と受けるダメージ▲・S2 の受けるダメージ▲が乗る）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1510 の増分（f1568 も同じ値）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1203-05",
+    "recording": "1203",
+    "kind": "hit",
+    "use": "compare",
+    "value": 7777099,
+    "unit": "ダメージ",
+    "description": "同じフルバーストの中のあと味の tick（会心）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1451 の増分（f1627 も同じ値）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": true
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1203-06",
+    "recording": "1203",
+    "kind": "hit",
+    "use": "compare",
+    "value": 217883,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの中で付いたあと味の、ブレッディのバーストの 10 秒の後の tick（非会心。どの▲も乗らない）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1968 の増分。f1762 で付いたあと味の 4 つ目の tick。バーストの窓は f1332 から約 600f"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1090,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1203-07",
+    "recording": "1203",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2647630,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの中の、あと味が付いて 5 秒の間のブレッディの発（コア・会心。S1 の攻撃力▲・バーストの攻撃ダメージ▲・S2 の受けるダメージ▲が乗る）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1574 の増分"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 704,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1203-08",
+    "recording": "1203",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2458022,
+    "unit": "ダメージ",
+    "description": "同じフルバーストの中の、あと味が付いて 5 秒の後のブレッディの発（コア・会心。S2 の受けるダメージ▲が切れている）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1668 の増分（f1362 のあと味の付与から 306f 後）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 798,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1203-09",
+    "recording": "1203",
+    "kind": "hit",
+    "use": "compare",
+    "value": 5832824,
+    "unit": "ダメージ",
+    "description": "2 回目のフルバーストの中のあと味の tick（非会心。1 回目と同じ▲）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "00.00（f3711）の 298f 後の増分"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "fullBurst": 1,
+        "frame": 250,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1203-10",
+    "recording": "1203",
+    "kind": "hit",
+    "use": "compare",
+    "value": 7777099,
+    "unit": "ダメージ",
+    "description": "3 回目のフルバーストの中のあと味の tick（会心）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "00.00（f6091）の 308f 後の増分"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "fullBurst": 2,
+        "frame": 250,
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0785",
+    "readAt": "2026-11-15"
+  }
+]
