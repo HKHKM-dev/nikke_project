@@ -213,6 +213,10 @@ header h1 {
   width: 34px;
   height: 34px;
   padding: 0;
+  /* ボタンの枠と地は出さない（絵だけ） */
+  border: none;
+  background: none;
+  box-shadow: none;
 }
 .settings-menu-icon {
   width: 28px;
