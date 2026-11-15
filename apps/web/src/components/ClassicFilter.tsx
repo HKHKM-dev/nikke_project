@@ -1,5 +1,5 @@
 // クラシックのキャラの選択肢の絞り込み。スロットの上に、「絞り込み」のボタンで開くポップアップ（クラス・属性・武器種・企業と、
-// 宝物のあるニケのボタン。バッジの絵は使わず文字で出す）と、それとは別に並べるバースト段階の Ⅰ・Ⅱ・Ⅲ のボタン。押しているボタンは青くする。
+// 宝物のあるニケのボタン。バッジの絵は使わず文字で出す）と、それとは別に並べるバースト段階の Ⅰ・Ⅱ・Ⅲ のボタン。押しているボタンは編成のタブと同じ色で塗る。
 // 同じ種類は OR、種類どうしと宝物は AND（matchesBadgeFilters。全段階のニケは、どの段階で絞っても出す）
 import type { CharacterIndexEntry } from '@nikke/core';
 import { useMemo, useState } from 'react';
@@ -47,7 +47,7 @@ export function ClassicFilter({
   treasureOnly,
   setTreasureOnly,
 }: Omit<ReturnType<typeof useClassicFilter>, 'visibleIds'>) {
-  // ポップアップの中で押しているボタンがあるか（ボタンを青くする。バースト段階は別のボタンなので見ない）
+  // ポップアップの中で押しているボタンがあるか（ボタンを塗る。バースト段階は別のボタンなので見ない）
   const active = treasureOnly || CLASSIC_FILTER_KINDS.some((kind) => (filters[kind.key]?.length ?? 0) > 0);
   return (
     <Popover

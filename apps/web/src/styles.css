@@ -111,10 +111,12 @@ header h1 {
   min-width: 2.2em;
   padding: 4px 6px;
 }
-/* 絞り込み中は「絞り込み」のボタンを青くする */
-.classic-list-order-button.classic-filter-active {
-  border-color: var(--placing-blue);
-  color: var(--placing-blue);
+/* 押している絞り込みのボタンと、絞り込み中の「絞り込み」のボタンは、編成のタブの選んでいるものと同じ色（Highlight）で塗る */
+.classic-list-order-button.classic-filter-active,
+.classic-filter-button[aria-pressed='true'] {
+  border-color: Highlight;
+  background: Highlight;
+  color: HighlightText;
 }
 /* 絞り込みのポップアップ: 種類ごとに、名前と文字のボタンを 1 行に並べる（ClassicFilter.tsx） */
 .classic-filter-panel {
@@ -139,10 +141,6 @@ header h1 {
   font-size: 0.8rem;
   white-space: nowrap;
   cursor: pointer;
-}
-.classic-filter-button[aria-pressed='true'] {
-  border-color: var(--placing-blue);
-  background: color-mix(in srgb, var(--placing-blue) 35%, transparent);
 }
 .classic-filter-clear {
   align-self: flex-end;
