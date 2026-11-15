@@ -11,7 +11,7 @@ type Props = {
 
 export function AccountMenu({ roster, onEditRoster }: Props) {
   return (
-    <Popover button="アカウント" buttonClassName="account-menu-button" label="アカウント" align="right">
+    <Popover button="アカウント" buttonClassName="header-menu-button" label="アカウント" align="right">
       {(close) => (
         <RosterSettings
           {...roster}

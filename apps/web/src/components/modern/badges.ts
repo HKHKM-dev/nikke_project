@@ -74,6 +74,8 @@ export const GROWTH_BADGES = { star: badgeName('grade_star'), core: badgeName('c
 /** 未対応の印（ⓘ。CharacterVisual）と、操作キャラの印（ModernSlotCard の ControllerIcon）のバッジ */
 export const UNSUPPORTED_BADGE = badgeName('ui_information');
 export const CONTROLLER_BADGE = badgeName('ui_controller');
+/** 右上の設定のメニューのボタンのバッジ（モダン UI の SettingsMenu） */
+export const SETTING_BADGE = badgeName('ui_window');
 /** お気に入りのバッジ（favorites.ts の FAVORITE_MARKS ごと）と、2 つ以上押したときに数を重ねる無地のバッジ */
 export const FAVORITE_BADGES = {
   star: badgeName('main_star'),
@@ -83,9 +85,6 @@ export const FAVORITE_BADGES = {
   club: badgeName('main_club'),
 } as const;
 export const FAVORITE_COUNT_BADGE = badgeName('ui_blank_main');
-
-/** 右上の設定のメニューのボタンのバッジ（SettingsMenu） */
-export const SETTING_BADGE = badgeName('ui_window');
 
 /** 元に戻すのボタン（ModernView）と、ニケ一覧の絞り込みを外すボタン（CharacterTray）のバッジ */
 export const RETURN_BADGE = badgeName('ui_return');

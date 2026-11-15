@@ -141,8 +141,12 @@ export const MONOCHROME_GROUPS: ReadonlySet<string> = new Set([
   'main',
 ]);
 
+/** グループの外で、白黒で描くバッジ（画面が図柄の色を CSS で変えるもの） */
+export const MONOCHROME_NAMES: ReadonlySet<string> = new Set(['ui_information', 'ui_controller', 'ui_window']);
+
 /** バッジ（拡張子なしの名前）が白黒で描くものか */
-export const isMonochrome = (name: string): boolean => MONOCHROME_GROUPS.has(name.slice(0, name.indexOf('_')));
+export const isMonochrome = (name: string): boolean =>
+  MONOCHROME_NAMES.has(name) || MONOCHROME_GROUPS.has(name.slice(0, name.indexOf('_')));
 
 /** 塗りと縁の色 */
 const PAINT = new Set(['fill', 'stroke']);

@@ -200,6 +200,13 @@ header h1 {
   padding: 3px 0;
   cursor: pointer;
 }
+/* 見出しの行の右の、アカウントと設定のボタンを横に並べる */
+.app-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* 設定のボタン（モダン UI。絵はバッジ ui_window の正方形） */
 .settings-menu-button {
   display: grid;
   place-items: center;
@@ -207,19 +214,12 @@ header h1 {
   height: 34px;
   padding: 0;
 }
-/* 設定のボタンの絵（バッジ ui_window。正方形） */
 .settings-menu-icon {
   width: 28px;
   height: 28px;
 }
-/* 見出しの行の右の、アカウントと設定のボタンを横に並べる */
-.app-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-/* アカウントのボタン（育成状況の読み書き）。高さは設定のボタンにそろえる */
-.account-menu-button {
+/* 見出しの行の右の、アカウント（育成状況の読み書き）と設定（クラシック）の文字のボタン */
+.header-menu-button {
   height: 34px;
   padding: 0 10px;
 }
@@ -1024,6 +1024,12 @@ header h1 {
 .badge-collection_plain.badge-variant-max {
   --badge-ground: initial;
 }
+/* ⓘ の文字・操作キャラの印の図柄・設定のボタンの四角（差し色）は白にする */
+.badge-ui_information,
+.badge-ui_controller,
+.badge-ui_window {
+  --badge-accent: #ffffff;
+}
 .badge-core_plain {
   --badge-accent: #e600e6;
 }
@@ -1612,10 +1618,13 @@ html:has(.modern-view-container) {
 .slot-build-favorite-button .favorite-badge {
   width: 20px;
 }
-/* お気に入りのバッジ（FavoriteBadge.tsx。130×180）。押していないバッジは図柄が灰色（元の色）、押したバッジは図柄をバッジごとの色にする */
+/* お気に入りのバッジ（FavoriteBadge.tsx。130×180）。押していないバッジは図柄が灰色（元の色）、押したバッジは図柄と枠（主の色）をバッジごとの色にする */
 .favorite-badge {
   display: block;
   aspect-ratio: 130 / 180;
+}
+.favorite-badge-on {
+  --badge-main: var(--badge-accent);
 }
 .favorite-badge-star.favorite-badge-on {
   --badge-accent: #ffc400;

@@ -1,4 +1,4 @@
-// 右上の設定のメニュー（ボタンの絵はバッジ ui_window）。サイト全体の設定をここに置く: テーマ・表示モードの切り替え。
+// 右上の設定のメニュー（ボタンは、クラシックでは文字「設定」、モダン UI ではバッジ ui_window の絵）。サイト全体の設定をここに置く: テーマ・表示モードの切り替え。
 // 一覧の並びは、クラシックはスロットの上の「並べ替え」（ClassicView）、モダン UI はニケ一覧の「並べ替え」で選ぶ。
 // 育成状況は左隣の「アカウント」のメニュー（AccountMenu.tsx）
 import { THEME_LABEL, useTheme, type Theme } from '../theme.ts';
@@ -19,8 +19,8 @@ export function SettingsMenu({ uiMode, onSelectUiMode }: Props) {
   const [theme, setTheme] = useTheme();
   return (
     <Popover
-      button={<BadgeIcon className="settings-menu-icon" name={SETTING_BADGE} />}
-      buttonClassName="settings-menu-button"
+      button={uiMode === 'modern' ? <BadgeIcon className="settings-menu-icon" name={SETTING_BADGE} /> : '設定'}
+      buttonClassName={uiMode === 'modern' ? 'settings-menu-button' : 'header-menu-button'}
       label="設定"
       align="right"
     >
