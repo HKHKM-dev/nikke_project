@@ -920,6 +920,10 @@ svg.settings-menu-icon {
 .modern-slot-build-button {
   top: 30px;
 }
+/* 育成を変えたスロットは、歯車を青にする（白の規則より詳細度を上げる） */
+.modern-slot-build-edited > svg.badge-ui_setting {
+  --badge-accent: var(--placing-blue);
+}
 
 /* カードボディ・キャラ表示 */
 .modern-slot-body {
@@ -1049,8 +1053,11 @@ svg.settings-menu-icon {
 .badge-collection_plain.badge-variant-max {
   --badge-ground: initial;
 }
-/* ⓘ の文字・操作キャラの印・設定とアカウントのボタンの図柄・元に戻すの矢印・スロットの空にする ✕ と育成・設定の歯車（差し色）は白にする */
-.badge-ui_delete,
+/* スロットの空にする ✕（差し色）は赤 */
+.badge-ui_delete {
+  --badge-accent: #ff3b4f;
+}
+/* ⓘ の文字・操作キャラの印・設定とアカウントのボタンの図柄・元に戻すの矢印・スロットの育成・設定の歯車（差し色）は白にする */
 .badge-ui_setting,
 .badge-ui_information,
 .badge-ui_controller,
@@ -1566,16 +1573,17 @@ html:has(.modern-view-container) {
 }
 /* 絞り込みのクリアの印（バッジ ui_return） */
 .char-tray-filter-clear {
-  /* ボタンの枠と地は出さない（絵だけ） */
-  padding: 0;
+  /* ボタンの枠と地は出さない（絵だけ）。外の大きさは絞り込みのバッジのボタン（余白 1px と枠 2px）とそろえる */
+  padding: 3px;
   border: none;
   background: none;
   box-shadow: none;
 }
+/* 大きさは絞り込みのバッジ（.char-tray-badge-filter の --badge-w の幅、130×150）と同じ */
 .char-tray-filter-clear-icon {
   display: block;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: calc(24px * 150 / 130);
 }
 /* ✓ の中身（.mask-icon。バッジの絵 ui_check.svg を型にして水色で塗る） */
 .char-tray-item-check > .mask-icon {

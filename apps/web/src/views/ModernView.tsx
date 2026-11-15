@@ -14,7 +14,7 @@ import { useSlotUndo } from '../components/modern/useSlotUndo.ts';
 import { BadgeIcon } from '../components/modern/BadgeIcon.tsx';
 import { RETURN_BADGE } from '../components/modern/badges.ts';
 import { SlotDragOverlay } from '../components/modern/SlotDragOverlay.tsx';
-import { slotCollectionBadge, slotGrowthMarks } from '../components/modern/slotBadges.ts';
+import { slotCollectionBadge, slotGrowthEdited, slotGrowthMarks } from '../components/modern/slotBadges.ts';
 import { useSlotDrag } from '../components/modern/useSlotDrag.ts';
 import { useSlotPlacement } from '../components/modern/useSlotPlacement.ts';
 import { commonGrowthOf, rosterGrowthOf } from '../roster.ts';
@@ -188,6 +188,7 @@ export function ModernView({
                     slotResult={slotResults[i] ?? null}
                     growthMarks={slotGrowthMarks(calc, team, roster, i)}
                     collectionBadge={slotCollectionBadge(calc, i)}
+                    growthEdited={slotGrowthEdited(team, roster, i)}
                     controlled={team.controlledSlot === i}
                     onPlacePending={pendingId !== null ? () => handlePlacePending(i) : undefined}
                     onOpenBuildModal={() => setEditingSlotIndex(i)}

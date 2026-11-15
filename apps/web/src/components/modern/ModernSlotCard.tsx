@@ -52,6 +52,8 @@ type Props = {
   growthMarks: GrowthMarks | null;
   /** 絵のバッジの列の最後に出すコレクション（宝物）のバッジ */
   collectionBadge: Badge | null;
+  /** 育成を変えたか（育成・設定のボタンの歯車を青にする。slotGrowthEdited） */
+  growthEdited: boolean;
   /** 一覧でクリックしたニケが、置くスロットのクリックを待っているときだけ渡す（このスロットに置く） */
   onPlacePending?: () => void;
   onOpenBuildModal: () => void;
@@ -69,6 +71,7 @@ export function ModernSlotCard({
   slotResult,
   collectionBadge,
   growthMarks,
+  growthEdited,
   onPlacePending,
   onOpenBuildModal,
   onClear,
@@ -150,7 +153,7 @@ export function ModernSlotCard({
               </button>
               <button
                 type="button"
-                className="modern-slot-icon-button modern-slot-build-button"
+                className={`modern-slot-icon-button modern-slot-build-button ${growthEdited ? 'modern-slot-build-edited' : ''}`}
                 aria-label="育成・設定"
                 onClick={(e) => {
                   e.stopPropagation();
