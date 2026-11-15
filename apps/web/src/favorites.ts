@@ -1,4 +1,4 @@
-// ニケのお気に入り（育成・設定の窓の ui_main_○○ のバッジ 5 種）。ニケ（resourceId）ごとに押したバッジを持ち、ブラウザに覚える
+// ニケのお気に入り（育成・設定の窓の main_○○ のバッジ 5 種）。ニケ（resourceId）ごとに押したバッジを持ち、ブラウザに覚える
 import { createContext, useCallback, useState } from 'react';
 import { readStorage, writeStorage } from './storage.ts';
 

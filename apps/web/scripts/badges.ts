@@ -138,6 +138,7 @@ export const MONOCHROME_GROUPS: ReadonlySet<string> = new Set([
   'collection',
   'grade',
   'core',
+  'main',
 ]);
 
 /** バッジ（拡張子なしの名前）が白黒で描くものか */
