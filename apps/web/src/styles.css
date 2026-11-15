@@ -1205,6 +1205,8 @@ header h1 {
 .char-tray-tall-area .growth-marks {
   --growth-star-w: 9px;
   --growth-core-w: 20px;
+  /* 右端からの距離を四角の表示（.char-tray-growth）とそろえる（名前の右の余白より 2px 右へ） */
+  margin-right: -2px;
 }
 /* スロットのカードの縦長の絵（portraits）。元の絵（256×512）と同じ 1:2 の枠に、切らずに出す。高さで大きさを決める。
    空のスロットの枠も同じ大きさにする */
@@ -1529,9 +1531,9 @@ html:has(.modern-view-container) {
   font-weight: bold;
   line-height: 1.25;
 }
-/* ニケ一覧では、幅をコア強化のアイコン（--growth-core-w）にそろえ、左端をそろえる */
+/* ニケ一覧では、幅をコア強化のアイコン（--growth-core-w）より 2px 広くする */
 .char-tray-item-parties .party-number-badge {
-  width: 20px;
+  width: 22px;
   text-align: center;
 }
 
