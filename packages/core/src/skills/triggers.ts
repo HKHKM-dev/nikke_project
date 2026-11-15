@@ -269,10 +269,11 @@ export function createTriggerTracker(
         if (t.during === 'fullBurst' && !inFullBurst) return false;
       }
       // 味方が消費した弾の合計は、自分を含む全員の発の残弾の減りを足す（自分が撃たないフレームも数える。plan/design-cinderella-cw.md 2.3 節）
-      // 1 フレームの量（同じフレームに撃った枠の数）が N を超えても、N の倍数を越えたら 1 回だけ発火する
+      // 1 フレームの量（同じフレームに撃った枠の数）が N を超えても、N の倍数を越えたら 1 回だけ発火する。自分の発の回数の間隔の変更
+      // （everyAt）は読まない（味方の発も数えるので、N は説明文の値のまま）
       if (t.count === 'teamAmmo') {
         const weight = ev.shots.reduce((sum, x) => sum + (x ? shotCountWeight('teamAmmo', x) : 0), 0);
-        const every = everyAt?.(ev.frame) ?? t.every;
+        const every = t.every;
         const fired = Math.floor((count + weight) / every) > Math.floor(count / every);
         count += weight;
         return fired;

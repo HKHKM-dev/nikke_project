@@ -88,7 +88,10 @@ describe('teamAmmo の damage', () => {
     expect(read).toMatchObject({ ...barrage, delayFrames: 6, hitIntervalFrames: 12 });
   });
 
-  it('rejects gaugePerHit, and hitsRef with the other shot count triggers', () => {
+  it('rejects gaugePerHit, gaugeHits, and hitsRef with the other shot count triggers', () => {
+    expect(() => withSkill1Effects([{ ...barrage, gaugeHits: [0] }])).toThrow(
+      'gaugeHits cannot be used with a teamAmmo count',
+    );
     expect(() => withSkill1Effects([{ ...barrage, delayFrames: 6, gaugePerHit: true }])).toThrow(
       'gaugePerHit cannot be used with a teamAmmo count',
     );
@@ -99,6 +102,13 @@ describe('teamAmmo の damage', () => {
 });
 
 describe('teamAmmo の数え方', () => {
+  it('ignores the own shot count interval change (everyAt)', () => {
+    const trigger = resolveTrigger({ count: 'teamAmmo', every: 3 }, character.skills.skill1, MAX_SKILL_LEVELS.skill1);
+    const fires = createTriggerTracker(trigger, 0, null, () => 1);
+    expect(fires(frame(1, [shot(), shot()]))).toBe(false); // 2
+    expect(fires(frame(2, [shot()]))).toBe(true); // 3
+  });
+
   it('counts one per shot and nothing for a shot under infinite ammo', () => {
     expect(shotCountWeight('teamAmmo', shot())).toBe(1);
     expect(shotCountWeight('teamAmmo', shot(0))).toBe(0);

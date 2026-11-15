@@ -171,6 +171,8 @@ function parseGaugeHitsAndCondition(v: Record<string, Json>, effect: DamageEffec
     // ゲージは 1 パス目で射撃を数えて予約するので、射撃の回数トリガーのときだけ
     if (!isShotCountTrigger(trigger)) fail(`${path}.gaugeHits`, 'gaugeHits needs a shot count trigger');
     if (trigger.stacksRef !== undefined) fail(`${path}.gaugeHits`, 'gaugeHits cannot be used with stacksRef');
+    // 1 パス目のゲージの予約は自分の発だけを数える（味方が消費した弾の合計とは数え方が違う）
+    if (trigger.count === 'teamAmmo') fail(`${path}.gaugeHits`, 'gaugeHits cannot be used with a teamAmmo count');
     effect.gaugeHits = parseGaugeHits(v.gaugeHits, `${path}.gaugeHits`, 0);
   }
   // 発火の条件。timed と同じ型（鍵は inFullBurst・enemyState）
