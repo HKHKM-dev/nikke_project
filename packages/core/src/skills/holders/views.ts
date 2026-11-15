@@ -340,7 +340,19 @@ export function createViews({
     const i = memo.list.findLastIndex((r) => r.frame <= frame) + 1;
     memo.list.splice(i, 0, { frame, fireFrame, sourceSlotIndex, value });
   };
-  /** 回復量（対象 holder のバフ前の最大HP を 1 とする値）。発動者の最終最大HP は、発火のフレームより前に付いた最大HP の件で求める */
+  // 与える HP 回復量▲ の件（plan/design-heal-amount-up.md 2.1 節）
+  const healDealtViews = viewsOf((_, e) => e.stat === 'healDealt');
+  /** 枠のフレーム frame より前に付いて frame に効いている与える HP 回復量▲ の和（常時 + 件） */
+  const healDealtBefore = (slotIndex: number, frame: number): number => {
+    let up = passive[slotIndex]?.buffs.healDealt ?? 0;
+    for (const v of healDealtViews[slotIndex] ?? [])
+      for (const it of readItems(v.track)) if (it.start < frame && frame < it.end) up += valueOf(v.effect, it);
+    return up;
+  };
+  /**
+   * 回復量（対象 holder のバフ前の最大HP を 1 とする値）。発動者の最終最大HP と与える HP 回復量▲ は、発火のフレームより前に付いた件で
+   * 求める
+   */
   const restoreAmountOf = (r: HpRestore, holder: number): number => {
     const caster = finalMaxHpAt(r.sourceSlotIndex, r.fireFrame, true);
     const own = slots[holder]?.casterMaxHp;
@@ -348,7 +360,7 @@ export function createViews({
       throw new RangeError(
         `slot ${holder}: a heal by casterFinalMaxHp needs the base max HP of the caster and the target`,
       );
-    return (caster * r.value) / own;
+    return (caster * r.value * (1 + healDealtBefore(r.sourceSlotIndex, r.fireFrame))) / own;
   };
   /**
    * 回復を除いた現在の HP と最大HP と上限（想定の割合 × 最大HP）。どれも枠のバフ前の最大HP を 1 とする（plan/design-skill-stage6.md

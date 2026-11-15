@@ -37,6 +37,14 @@ export const skillHitsMetrics: Readonly<Record<string, Metric>> = {
     sim: (r, c) => firstCount(windowFirstHeals(r, c), c, '回復の来た窓'),
     occurrences: (r, c) => windowFirstHeals(r, c).length,
   },
+  // 枠 windowSlot の HP の割合が 1 を下回る間（途中で上下しても、1 に戻るまでを 1 つの窓）ごとに、枠が出した回復のうち窓の中で n 回目
+  // （0 始まり）に当たったものの対象の枠（1 始まり）の並び。回復が n + 1 回来ない窓は飛ばし、skip・count で切る（V-0797）。録画では、
+  // 窓の中で n + 1 回目に HP のバーが伸びた枠。windowFirstHealTargets と同じく、どの窓でも同じ枠になる問いに使う
+  windowNthHealTargets: {
+    args: ['slot', 'windowSlot', 'n'],
+    sim: (r, c) => firstCount(windowNthHeals(r, c), c, `${Number(c.args.n) + 1} 回目の回復の来た窓`),
+    occurrences: (r, c) => windowNthHeals(r, c).length,
+  },
   dotTickOffsets: { args: ['slot', 'n'], sim: dotTickOffsets },
   // 持続ダメージの、付けた時の 1 スタックのヒット（kind apply）か、スタックの tick（kind tick）の、録画の
   // 動画のフレーム（戦闘開始から）の頭の count 個（V-0546）
@@ -107,6 +115,43 @@ function windowFirstHeals(result: SimResult, ctx: MetricContext): number[] {
     targets.push(h.slotIndex + 1);
   });
   return targets;
+}
+
+/**
+ * 枠 windowSlot の HP の割合が 1 を下回る窓（続いた段をまとめる）ごとの、枠が出した n 回目（0 始まり）の回復の対象の枠（1 始まり）。
+ * 回復は当たったフレームの段で窓に入れ、同じフレームの回復は 1 回と数える。その回のフレームに対象が 2 機以上あれば誤り（V-0797）
+ */
+function windowNthHeals(result: SimResult, ctx: MetricContext): number[] {
+  const slotIndex = slotIndexOf(ctx);
+  const n = Number(ctx.args.n);
+  const steps = result.history.hpRatios[Number(ctx.args.windowSlot) - 1];
+  if (steps === undefined) throw new Error(`枠 ${String(ctx.args.windowSlot)} が無い`);
+  // 段ごとの窓の番号（割合が 1 未満の続いた段の最初の段の番号。1 の段は -1）
+  const windowOf: number[] = [];
+  steps.ratios.forEach((ratio, k) => {
+    const prev = windowOf[k - 1] ?? -1;
+    windowOf.push(ratio >= 1 ? -1 : prev >= 0 ? prev : k);
+  });
+  const byFrame = new Map<number, number[]>();
+  for (const h of result.history.heals) {
+    if (h.sourceSlotIndex !== slotIndex) continue;
+    const targets = byFrame.get(h.frame);
+    if (targets === undefined) byFrame.set(h.frame, [h.slotIndex]);
+    else targets.push(h.slotIndex);
+  }
+  const counts = new Map<number, number>();
+  const out: number[] = [];
+  for (const frame of [...byFrame.keys()].sort((a, b) => a - b)) {
+    const window = windowOf[hpRatioStepIndexOf(steps, frame)] ?? -1;
+    if (window < 0) continue;
+    const k = counts.get(window) ?? 0;
+    counts.set(window, k + 1);
+    if (k !== n) continue;
+    const targets = byFrame.get(frame)!;
+    if (targets.length > 1) throw new Error(`枠 ${String(ctx.args.slot)} の f${frame} の回復は対象が 2 機以上`);
+    out.push(targets[0]! + 1);
+  }
+  return out;
 }
 
 /** 枠が出した n 回目（0 始まり）の回復のフレームを、動画のフレームにする（V-0501） */

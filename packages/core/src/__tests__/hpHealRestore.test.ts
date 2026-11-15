@@ -39,8 +39,33 @@ describe('マストの最大HP のみ▲ の窓とミサトの S1 の回復', ()
     // ミサトの S1 は発火の 6f 後に付く（delayFrames）。発火から付くまでは上がらない
     expect(ratio(2, h.frame - 6)).toBe(before);
     // 窓の中の 3 枠目の最大HP（バフ前の最大HP を 1 とする）は 1 ÷ 割合
-    const amount = (maxHp(0) * skillValueOf(MISATO, 'skill1', 7)) / 100 / maxHp(2);
+    // 射撃マニュアルのフルスタックの間に発火した回復には、S2 の与える HP 回復量▲も掛かる（C-1334）
+    const up = itemsOf(plan.history, { sourceSlotIndex: 0, kind: 'while', stat: 'healDealt', holder: 0 });
+    const full = up.some((it) => it.start < h.frame - 6 && h.frame - 6 < it.end);
+    const boost = full ? 1 + skillValueOf(MISATO, 'skill2', 2) / 100 : 1;
+    const amount = (maxHp(0) * skillValueOf(MISATO, 'skill1', 7) * boost) / 100 / maxHp(2);
     expect(ratio(2, h.frame + 1) - before).toBeCloseTo(amount * before, 9);
+  });
+
+  it('multiplies the amount by (1 + 30.05%) only while Shooting Manual is at max stacks before the heal fires (C-1334)', () => {
+    // S2 の与える HP 回復量▲の件（射撃マニュアルのフルスタックの間）
+    const up = itemsOf(plan.history, { sourceSlotIndex: 0, kind: 'while', stat: 'healDealt', holder: 0 });
+    expect(up.length).toBeGreaterThan(0);
+    const amount = (maxHp(0) * skillValueOf(MISATO, 'skill1', 7)) / 100 / maxHp(2);
+    const factors = new Set<number>();
+    for (const w of lowered) {
+      // 窓の中の 3 枠目の最大HP（バフ前の最大HP を 1 とする）は 1 ÷ 窓の始めの割合
+      const inverseMax = ratio(2, w.start + 1);
+      for (const h of heals.filter((x) => x.slotIndex === 2 && w.start < x.frame - 6 && x.frame + 1 < w.end)) {
+        // 発火は付く 6f 前
+        const fire = h.frame - 6;
+        const full = up.some((it) => it.start < fire && fire < it.end);
+        const factor = (ratio(2, h.frame + 1) - ratio(2, h.frame)) / (amount * inverseMax);
+        expect(factor).toBeCloseTo(full ? 1 + skillValueOf(MISATO, 'skill2', 2) / 100 : 1, 9);
+        factors.add(full ? 1 : 0);
+      }
+    }
+    expect(factors.has(1)).toBe(true);
   });
 
   it('cuts the restored HP when the max-HP-only up ends (back to full, not above)', () => {

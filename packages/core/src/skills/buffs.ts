@@ -154,6 +154,11 @@ export type BuffTotals = {
    */
   maxHpRatio: number;
   /**
+   * 与える HP 回復量▲ の比率の加算（plan/design-heal-amount-up.md 2.1 節）。ダメージの式は読まず、その枠が出す量で追う回復の量
+   * （skills/holders/views.ts の restoreAmountOf）だけが読む
+   */
+  healDealt: number;
+  /**
    * 防御力▲ の比率の加算（plan/design-skill-stage7.md 1.2 節）。その枠の最終防御力 = バフ前の防御力 × (1 + defenseRatio)。
    * ダメージの式は読まず、対象の絞り込み「自分より最終防御力が低い味方」だけが読む（skills/holders.ts）
    */
@@ -287,6 +292,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   burstCooldown: 0,
   maxAmmoRatio: 0,
   maxHpRatio: 0,
+  healDealt: 0,
   defenseRatio: 0,
   maxAmmoFlat: 0,
   reloadSpeed: 0,
@@ -345,6 +351,7 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attack
   maxHp: 'maxHpRatio',
   // 最大HP のみ▲ も最終最大HP には同じに足す（HP の割合を下げる読みは未実装。skills/types.ts の BUFF_STATS）
   maxHpOnly: 'maxHpRatio',
+  healDealt: 'healDealt',
   defense: 'defenseRatio',
   reloadSpeed: 'reloadSpeed',
   reloadRatio: 'reloadRatio',

@@ -113,6 +113,7 @@ describe('computeTriggerDamage', () => {
       burstCooldown: 0,
       maxAmmoRatio: 0,
       maxHpRatio: 0,
+      healDealt: 0,
       defenseRatio: 0,
       maxAmmoFlat: 0,
       reloadSpeed: 0,

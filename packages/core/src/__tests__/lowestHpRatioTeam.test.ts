@@ -101,7 +101,7 @@ describe('lowestHpRatio の読み込み', () => {
       targetCountRef: 6,
       ref: 7,
       scaling: 'casterFinalMaxHp',
-      claims: ['C-0567', 'C-0180', 'C-0652', 'C-1116', 'C-1316'],
+      claims: ['C-0567', 'C-0180', 'C-0652', 'C-1116', 'C-1316', 'C-1335'],
     });
     expect(s1.notes).toBeUndefined();
     expect(s1.support).toBe('supported');

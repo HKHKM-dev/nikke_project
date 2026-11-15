@@ -1,11 +1,19 @@
-// ミサト（833）: S1「射撃マニュアル」の命中率▲（60 発ごとに自分に 1 スタック・3 スタック・5 秒）の解決と、
-// S1 の回復（2 段目の段 8。残りの HP の割合が最も低い味方 1 機。C-0567）、ダメージに効く効果の無い S2（noEffect）と、
-// バーストの味方全体の持続回復（5 秒間維持。C-0646）。V-0110。
+// ミサト（833）: S1「射撃マニュアル」（状態。中身は命中率▲。60 発ごとに自分に 1 スタック・3 スタック・5 秒）の解決と、
+// S1 の回復（2 段目の段 8。残りの HP の割合が最も低い味方 1 機。C-0567）、S2 の射撃マニュアルのフルスタックの間の与える HP 回復量▲
+// （C-1334）と、バーストの味方全体の持続回復（5 秒間維持。C-0646）。V-0110・V-0797。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { gameSecondsToFrames } from '../../time.ts';
 import type { CharacterData } from '../../types.ts';
-import { MAX_SKILL_LEVELS, resolveInstant, resolvePassives, resolveTimed } from '../resolve.ts';
+import {
+  MAX_SKILL_LEVELS,
+  resolveInstant,
+  resolvePassives,
+  resolveStateContents,
+  resolveStateGrants,
+  resolveTimed,
+  resolveWhileEffects,
+} from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 
 function readJson<T>(path: string): T {
@@ -16,22 +24,24 @@ const misato = readJson<CharacterData>('../../../data/characters/833.json');
 const def = parseSkillDefinition(readJson<unknown>('../../../data/skills/833.json'));
 
 describe('ミサト（833）の定義', () => {
-  it('resolves S1 to a self hit rate up every 60 normal shots, 3 stacks for 5 s', () => {
-    const timed = resolveTimed(def, misato, MAX_SKILL_LEVELS);
-    expect(timed).toHaveLength(1);
-    const [hit] = timed;
-    expect(hit).toMatchObject({
-      stat: 'hitRate',
+  it('resolves S1 to Shooting Manual on self every 60 normal shots, 3 stacks for 5 s, holding a hit rate up', () => {
+    expect(resolveTimed(def, misato, MAX_SKILL_LEVELS)).toEqual([]);
+    const grants = resolveStateGrants(def, misato, MAX_SKILL_LEVELS);
+    expect(grants).toHaveLength(1);
+    expect(grants[0]).toMatchObject({
+      state: 'shootingManual',
       target: 'self',
       maxStacks: 3,
       durationFrames: gameSecondsToFrames(5),
+      trigger: { count: 'normalShot', every: 60 },
     });
-    expect(hit!.trigger).toEqual({ count: 'normalShot', every: 60 });
-    expect(hit!.value).toBeCloseTo(0.0504, 12);
+    const contents = resolveStateContents(def, misato, MAX_SKILL_LEVELS);
+    expect(contents.map((c) => c.stat)).toEqual(['hitRate']);
+    expect(contents[0]!.value).toBeCloseTo(0.0504, 12);
   });
 
   it('scales the hit rate up with the skill level (Lv1 2.52%)', () => {
-    const lv1 = resolveTimed(def, misato, { skill1: 1, skill2: 1, burst: 1 });
+    const lv1 = resolveStateContents(def, misato, { skill1: 1, skill2: 1, burst: 1 });
     expect(lv1[0]!.value).toBeCloseTo(0.0252, 12);
   });
 
@@ -60,8 +70,12 @@ describe('ミサト（833）の定義', () => {
     expect(def.skills.burst.support).toBe('supported');
   });
 
-  it('defines nothing else (S2 has no effect on damage)', () => {
-    expect(def.skills.skill2.support).toBe('noEffect');
+  it('resolves S2 to an outgoing healing up on self while Shooting Manual is at max stacks (C-1334)', () => {
     expect(resolvePassives(def, misato, MAX_SKILL_LEVELS)).toEqual([]);
+    const whiles = resolveWhileEffects(def, misato, MAX_SKILL_LEVELS);
+    expect(whiles).toHaveLength(1);
+    expect(whiles[0]).toMatchObject({ stat: 'healDealt', target: 'self' });
+    expect(whiles[0]!.value).toBeCloseTo(0.3005, 12);
+    expect(whiles[0]).toMatchObject({ whileState: 'shootingManual', whileStacks: 'full' });
   });
 });
