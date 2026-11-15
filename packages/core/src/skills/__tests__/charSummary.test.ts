@@ -12,7 +12,7 @@ const skill = (ja: string, values: (string[] | null)[]): SkillRaw => ({
 });
 
 describe('fillDescription', () => {
-  it('puts the values in, with the Lv 1 value when the levels differ, and drops the markup', () => {
+  it('puts the values in with their numbers, with the Lv 1 value when the levels differ, and drops the markup', () => {
     expect(
       fillDescription(
         skill(
@@ -23,8 +23,8 @@ describe('fillDescription', () => {
           ],
         ),
       ),
-    ).toBe('■味方全体に\n「攻撃力16.16（Lv1 は 8.88）％▲」「5秒間維持」');
-    expect(fillDescription(skill('{description_value_03}', [null, null, null]))).toBe('?');
+    ).toBe('■味方全体に\n「攻撃力16.16{01}（Lv1 は 8.88）％▲」「5{02}秒間維持」');
+    expect(fillDescription(skill('{description_value_03}', [null, null, null]))).toBe('?{03}');
   });
 });
 

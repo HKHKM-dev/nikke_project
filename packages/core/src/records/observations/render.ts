@@ -165,3 +165,51 @@ export function renderResiduals(
   lines.push(...renderResidualRows(attention, claimsOf));
   return lines.join('\n');
 }
+
+/**
+ * 2 つの版の残差の、予測か判定が変わった行（records:residual -- --base。plan/design-workflow-simplification-15.md 5 節）。
+ * 片方にしか無い観測値も出す。予測は表に出す桁（fmtValue）で比べる
+ */
+export function renderResidualChanges(base: readonly Residual[], head: readonly Residual[]): string[] {
+  const before = new Map(base.map((r) => [r.observation.id, r]));
+  const after = new Map(head.map((r) => [r.observation.id, r]));
+  const ids = [...new Set([...after.keys(), ...before.keys()])];
+  const shown = (r: Residual | undefined) =>
+    r === undefined
+      ? { predicted: '（無い）', diff: '—', status: '（無い）' }
+      : {
+          predicted: fmtValue(r.predicted),
+          diff: fmtDiff(r),
+          status: r.status === 'error' ? `${STATUS_JA.error}: ${cell(r.message ?? '')}` : STATUS_JA[r.status],
+        };
+  const rows: string[] = [];
+  let statusChanged = 0;
+  for (const id of ids) {
+    const b = shown(before.get(id));
+    const a = shown(after.get(id));
+    if (b.predicted === a.predicted && b.status === a.status) continue;
+    if (b.status !== a.status) statusChanged++;
+    const o = (after.get(id) ?? before.get(id))!.observation;
+    rows.push(
+      `| ${[
+        id,
+        `\`${o.compare!.metric}\``,
+        cell(fmtObserved(o)),
+        `${b.predicted} → ${a.predicted}`,
+        `${b.diff} → ${a.diff}`,
+        b.status === a.status ? a.status : `${b.status} → ${a.status}`,
+      ].join(' | ')} |`,
+    );
+  }
+  return [
+    `比べた観測値 ${head.length} 件（基の版 ${base.length} 件）のうち、予測か判定が変わった ${rows.length} 件（判定が変わった ${statusChanged} 件）`,
+    ...(rows.length === 0
+      ? []
+      : [
+          '',
+          '| 観測値 | 指標 | 実測 | 予測（基 → 今） | 差（基 → 今） | 判定 |',
+          '| --- | --- | --- | --- | --- | --- |',
+          ...rows,
+        ]),
+  ];
+}
