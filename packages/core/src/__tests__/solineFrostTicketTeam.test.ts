@@ -51,9 +51,15 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   it('shortens the burst cooldowns of the allies by 7.48 s at the start of every Full Burst', () => {
     expect(schedule.fullBurstWindows.length).toBeGreaterThan(3);
     expect(fullBurstCooldownCuts(schedule, ticket)).toEqual(schedule.fullBurstWindows.map(() => CUT_FRAMES));
+    const own = schedule.cooldownReductions.filter((x) => x.sourceSlotIndex === ticket);
     // 縮めるのはフルバーストの始まりのフレームだけ
-    for (const r of schedule.cooldownReductions.filter((x) => x.sourceSlotIndex === ticket))
-      expect(schedule.fullBurstWindows.some((w) => w.start === r.frame)).toBe(true);
+    for (const r of own) expect(schedule.fullBurstWindows.some((w) => w.start === r.frame)).toBe(true);
+    // どのフルバーストでも、味方の全員（自分も）に入る
+    const everySlot = input.slots.map((_, i) => i);
+    for (const w of schedule.fullBurstWindows) {
+      const slots = new Set(own.filter((r) => r.frame === w.start).map((r) => r.slotIndex));
+      expect([...slots].sort((a, b) => a - b)).toEqual(everySlot);
+    }
   });
 
   it('heals every ally once on each burst use', () => {
@@ -62,9 +68,9 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   });
 
   // ほかに枠の回復が無い（クラウン自身の回復はフロストチケットの最初のバーストより後）
-  const onlyTicketHealsFirst = plan.instants.every(
-    (i) => i.effect.kind !== 'heal' || i.sourceSlotIndex === ticket || i.frame > uses[0]!,
-  );
+  const onlyTicketHealsFirst =
+    uses.length > 0 &&
+    plan.instants.every((i) => i.effect.kind !== 'heal' || i.sourceSlotIndex === ticket || i.frame > uses[0]!);
   it.runIf(onlyTicketHealsFirst)("opens Crown's S2 (when healed) at the first burst heal", () => {
     const windows = effectWindows(plan, crown, { resourceId: CROWN, skill: 'skill2', stat: 'attackDamage' });
     expect(windows[0]!.start).toBe(uses[0]);

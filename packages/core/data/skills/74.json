@@ -21,8 +21,8 @@
       ],
       "notes": [
         {
-          "ja": "戦闘開始時とバーストスキル使用時に味方全体に発券する乗車券（最大 2 枚・持続。1 枚ごとにスキル発動者基準で最大HP のみ▲）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）。被弾の無い前提では乗車券は減らず、1 回目のバーストで 2 枚になると、以後は変わらない。1 回目のバーストの 2 枚目は同じバーストの回復の後に付くので、HP の割合は戦闘開始から 2 回目のバーストの回復まで下がっている",
-          "en": "The tickets issued to all allies at the start of battle and on using the Burst (up to 2, continuous; each raises max HP only, based on the skill user) do not change damage by themselves (they matter only with an effect reading HP in the team). Without damage taken the tickets never decrease, and once the first Burst brings them to 2 they stay unchanged. The second ticket of the first Burst comes after the heal of the same Burst, so the HP ratio stays lowered from the start of battle until the heal of the second Burst",
+          "ja": "戦闘開始時とバーストスキル使用時に味方全体に発券する乗車券（最大 2 枚・持続。1 枚ごとにスキル発動者基準で最大HP のみ▲）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）。被弾の無い前提では乗車券は減らず、1 回目のバーストで 2 枚になると、以後は変わらない。1 回目のバーストの 2 枚目は同じバーストの回復の後に付くので、ほかの回復を受けなければ、HP の割合は戦闘開始から 2 回目のバーストの回復まで下がっている",
+          "en": "The tickets issued to all allies at the start of battle and on using the Burst (up to 2, continuous; each raises max HP only, based on the skill user) do not change damage by themselves (they matter only with an effect reading HP in the team). Without damage taken the tickets never decrease, and once the first Burst brings them to 2 they stay unchanged. The second ticket of the first Burst comes after the heal of the same Burst, so unless healed otherwise the HP ratio stays lowered from the start of battle until the heal of the second Burst",
           "kind": "indirect",
           "path": "hp",
           "claims": [
