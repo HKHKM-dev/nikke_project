@@ -4,7 +4,7 @@
 - 関連: [design-nayuta.md](design-nayuta.md) 2.5 節（スタックの増減効果の無効 `stackImmutable`）、[design-anis-star-s2-burst.md](design-anis-star-s2-burst.md) 2.3 節（チャージ時間の固定 `fixedChargeTime`）、[design-skill-stage13-inventory.md](design-skill-stage13-inventory.md) 0.1・0.2 節、[design-new-chars-1029.md](design-new-chars-1029.md) 論点 F、[design-asuka-wille.md](design-asuka-wille.md) 2.5 節、[design-skill-stage21.md](design-skill-stage21.md) 4 節の 8、[design-skill-stage20.md](design-skill-stage20.md) 2.3 節（ジルの固定）、[design-holder-effects-current.md](design-holder-effects-current.md)（件と持ち主）、[design-target-vocab.md](design-target-vocab.md)（順位の対象）
 - 検証: 承認の後に起案する（5 節の撮影）
 - 作成日: 2026-11-15
-- 状態: 承認待ち
+- 状態: 実装中（撮影待ち）
 
 ## 0. 範囲
 
@@ -172,6 +172,8 @@
 
 ## 7. 論点（オーナーに決めてもらうこと）
 
+- 決定（2026-11-15・オーナー）: 7 つとも推奨の案にする。
+
 1. **語彙の形**（3.1・3.2 節）
    - 推奨: 案 A。1 つの印 `lock` にし、無効は値 0 の固定として書く。いまの使い手は 4 体とも▲▼の両方を止めるので、案 B と同じ値になり、計算の手順が 1 つで済む。向きの片方だけの無効が出たら、`lock` に向きを開く。
    - 代わりの案: 案 B。無効 `immune`（向きつき）と固定 `lock` を別にする。
@@ -195,3 +197,4 @@
 ## 経過
 
 - 2026-11-15: 起案。対象の 5 行と、効く編成（2 節）を洗い出した。論点 1〜7 をオーナーに諮る。
+- 2026-11-15: オーナーが論点 1〜7 を推奨どおりに決めた。

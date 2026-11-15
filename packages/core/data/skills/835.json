@@ -143,12 +143,13 @@
           "ref": 8,
           "durationUntil": "reloadEnd",
           "assumes": {
-            "ja": "緊急修復のリロード速度 60% 増加（1 発間維持）。1 発間の窓が効くのは、残弾数減少で始まる込めだけなので、その込めが最大装弾数まで込め終わるまでとして書く。「固定」は下の notes",
-            "en": "Emergency Repair reload speed up 60% (for 1 round). The only reload inside that 1-round window is the one started by the ammo removal, so it is written as lasting until that reload completes. \"Fixed\" is in the notes below"
+            "ja": "緊急修復の「リロード速度 60% 増加状態で固定」（1 発間維持）。1 発間の窓が効くのは、残弾数減少で始まる込めだけなので、その込めが最大装弾数まで込め終わるまでとして書く。固定の間は、ほかのリロード速度▲▼（装備・キューブを含む）を足さない（plan/design-stat-lock.md 3.1 節。装備・キューブは確かめていない）",
+            "en": "Emergency Repair \"reload speed fixed at +60%\" (for 1 round). The only reload inside that 1-round window is the one started by the ammo removal, so it is written as lasting until that reload completes. While fixed, other reload speed changes (including gear and cubes) are not added (plan/design-stat-lock.md 3.1; gear and cubes are unverified)"
           },
           "claims": [
             "C-1268"
-          ]
+          ],
+          "lock": true
         }
       ],
       "notes": [
@@ -156,17 +157,6 @@
           "ja": "緊急修復の持続回復（自分の最終最大HP の 3.77%・1 秒間隔・3 秒）は、ダメージに関係しない（自分にだけ付き、アスカ：WILLE に回復を受けた時の効果は無い）",
           "en": "Emergency Repair HP regeneration (3.77% of own final max HP every second for 3 s) does not affect damage (it is only on self, and Asuka: WILLE has no effect on receiving healing)",
           "kind": "noDamage"
-        },
-        {
-          "ja": "緊急修復のリロード速度の「増加状態で固定」（ほかのリロード速度▲▼を無視する）は未対応。ほかのリロード速度▲▼と足し合わせる。アスカ：WILLE にリロード速度▲▼を付ける味方のいない編成では同じ値",
-          "en": "The reload speed being \"fixed\" in Emergency Repair (ignoring other reload speed ups/downs) is not modeled; it is added to other reload speed changes. Same value in teams where no ally changes Asuka: WILLE's reload speed",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "reloadSpeed",
-            "target": "self",
-            "trigger": "unknown"
-          }
         }
       ]
     },

@@ -428,6 +428,32 @@ function sourceKeyOf(effect: { source?: ResolvedEffect['source'] }): string {
 
 export type AppliedBuff = { totals: BuffTotals; appliedAmount: number };
 
+/** 持ち主に効いている値の固定（timed の lock）1 件 */
+export type StatLock = Pick<ResolvedEffect, 'stat' | 'value'> & { source?: ResolvedEffect['source'] };
+
+/**
+ * 値の固定を持ち主の和に当てる（plan/design-stat-lock.md 3.1・3.4 節）。ほかの効果（常時の値・装備・キューブを含む）を全部足した後に
+ * 呼ぶ。チャージ速度の固定は、比率の和と内訳を固定の値にし、秒で引く分（発動者基準のチャージ速度とチャージ時間▼。chargeTimeFlat）を
+ * 0 にする。チャージ時間の固定（fixedChargeTime）は別の量なので触らない。リロード速度の固定は、和を固定の値にする。
+ * 同じ持ち主の同じ stat の固定は 1 つまで（parse/crossChecks.ts の validateLockCount）
+ */
+export function applyStatLocks(totals: BuffTotals, locks: readonly StatLock[]): BuffTotals {
+  if (locks.length === 0) return totals;
+  const next: BuffTotals = { ...totals };
+  for (const lock of locks) {
+    if (lock.stat === 'chargeSpeed') {
+      next.chargeSpeed = lock.value;
+      next.chargeSpeedParts = lock.value === 0 ? [] : [{ source: sourceKeyOf(lock), ratio: lock.value }];
+      next.chargeTimeFlat = 0;
+    } else if (lock.stat === 'reloadSpeed') {
+      next.reloadSpeed = lock.value;
+    } else {
+      throw new RangeError(`lock is not allowed for ${lock.stat}`);
+    }
+  }
+  return next;
+}
+
 /**
  * 攻撃力の固定加算の元のバフ前攻撃力（V-0627）。copyTopAttack は、枠のうちバフ前攻撃力が最も高い枠の値
  * （自分も候補。空枠は除く。編成で決まり、戦闘の間は動かない）、ほかは発動者の値
@@ -460,11 +486,15 @@ export function applyResolvedEffect(
     target?: ResolvedEffect['target'];
     /** 状態の中身（isStateContent）なら付いている状態。チャージ時間の固定の勝ち負けに使う */
     whileState?: string;
+    /** 値の固定。足さず、和を上書きする（applyStatLocks） */
+    lock?: true;
   },
   casterBaseAttack: number,
   casterMaxHp?: number,
   casterBaseDefence?: number,
 ): AppliedBuff {
+  // 値の固定は足さない。持ち主の和を、ほかの効果を全部足した後に上書きする（applyStatLocks。plan/design-stat-lock.md 3.4 節）
+  if (effect.lock === true) return { totals, appliedAmount: effect.value };
   // 使用武器の変更は値を足さず、武器を差し替える（1 体に 1 つ。後から付いたほうを使う）
   if (effect.stat === 'weapon') {
     return { totals: { ...totals, weapon: effect.weapon ?? null }, appliedAmount: effect.value };

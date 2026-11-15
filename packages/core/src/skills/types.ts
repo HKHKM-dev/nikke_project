@@ -278,6 +278,17 @@ export function isSelfOnlyTimedStat(stat: BuffStat): boolean {
 }
 
 /**
+ * 値の固定（timed の lock）を書ける stat（plan/design-stat-lock.md 3.1 節）。どちらも比率で、持ち主の和を固定の値で上書きする
+ * （skills/buffs.ts の applyStatLocks）
+ */
+export const LOCK_STATS = ['chargeSpeed', 'reloadSpeed'] as const satisfies readonly BuffStat[];
+export type LockStat = (typeof LOCK_STATS)[number];
+
+export function isLockStat(stat: BuffStat | 'weapon'): stat is LockStat {
+  return (LOCK_STATS as readonly string[]).includes(stat);
+}
+
+/**
  * 説明文に無い値を定数 value で書く stat（ref を書かない。plan/design-a2-bmode-stance.md 3.1 節）。値は 0 より大きく 1 以下
  */
 export const CONSTANT_VALUE_STATS = ['fireStanceScale'] as const satisfies readonly BuffStat[];
@@ -1213,6 +1224,13 @@ export type TimedEffect = TargetCountFields &
      * ものに乗らないなら、ヒットの遅れ + 1 を書く
      */
     delayFrames?: number;
+    /**
+     * 値の固定（plan/design-stat-lock.md 3.1 節）。効いている間、持ち主のこの stat の値はこの効果の値だけになり、ほかの効果（自分の
+     * ものも味方のものも、常時の値も）を足さない。「〈stat〉 X% 増加状態で固定」は ref の値で固定し、「〈stat〉増加効果無効」
+     * 「〈stat〉減少効果無効」の組は ref を書かない（値 0 の固定）。stat は LOCK_STATS だけで、自分にだけ・scaling・decrease・スタック・
+     * 条件・確率・発数の維持・perCount・amplifies なし。1 つの定義に同じ stat の固定は 1 つまで（parse/crossChecks.ts）
+     */
+    lock?: true;
     /** 常に満たすとみなした条件。UI に「仮定」として出す */
     assumes?: LocalizedText;
   };

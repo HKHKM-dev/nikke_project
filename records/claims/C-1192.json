@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
   "basis": "`1146-14`・`1147-14`（フルバーストの中の 6 回とも 88f。外の回の多くは 200f）。どちらもモデルと同じ。V-0765",
-  "model": "反映（data/skills/210.json の treasureSkills.skill1 の effects[1]）。「固定」は未対応の notes（treasureSkills.skill1 の notes[1]）",
+  "model": "反映（data/skills/210.json の treasureSkills.skill1 の effects[1]。「固定」は同じ効果の lock。plan/design-stat-lock.md）",
   "replaces": [],
   "updated": "2026-11-14",
   "subject": {

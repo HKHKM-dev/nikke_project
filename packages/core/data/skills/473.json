@@ -34,6 +34,20 @@
             "C-0719",
             "C-0750"
           ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "self",
+          "stat": "chargeSpeed",
+          "lock": true,
+          "durationUntil": "battleEnd",
+          "assumes": {
+            "ja": "「チャージ速度増加効果無効」「チャージ速度減少効果無効」（持続）の組を、最初のフルチャージの発の次のフレームからの値 0 の固定で書く。「自分がフルチャージ状態の時に限り」は、きっかけのフルチャージの発で満たされる（オートの射撃ではどの発もフルチャージ）。止める範囲は、チャージ速度の比率の▲▼・発動者基準のチャージ速度・チャージ時間 X 秒▼（マナの S2）と、装備・キューブのチャージ速度▲（plan/design-stat-lock.md 論点 2）。マナと組んだ録画と、装備・キューブのある録画（スペック固定では無い）は無いので、その 2 つは確かめていない",
+            "en": "The pair \"charge speed increase immunity\" and \"charge speed decrease immunity\" (continuous) is written as a lock at 0 from the frame after the first full-charge shot. \"Only while in Full Charge\" is met by the triggering full-charge shot (every auto-fire shot is a full charge). It blocks ratio charge speed changes, caster-based charge speed, the \"charge time −X s\" of Mana's S2, and charge speed from gear and cubes (plan/design-stat-lock.md issue 2). The last two are unverified: no recording pairs her with Mana or has gear/cubes (fixed spec has none)"
+          }
         }
       ],
       "notes": [
@@ -50,17 +64,6 @@
           "claims": [
             "C-0443"
           ]
-        },
-        {
-          "ja": "フルチャージした時からの、自分へのチャージ速度▲▼の無効（持続）は未対応（効果の無効の語彙が無い。自分にチャージ速度▲▼を付ける味方のいる編成でだけ効く。plan/design-new-chars-1029.md 論点 F）",
-          "en": "The immunity to charge speed increases and decreases on self from a full charge on (continuous) is not modeled (no vocabulary for effect immunity; it matters only with an ally giving her charge speed changes. plan/design-new-chars-1029.md issue F)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "chargeSpeed",
-            "target": "self",
-            "trigger": "fullChargeShot"
-          }
         }
       ]
     },

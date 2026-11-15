@@ -12,7 +12,15 @@ import type { BuildEffect } from '../buildEffects.ts';
 import { lowerBound, type ShotLog } from '../frame/shots.ts';
 import type { CharacterData } from '../types.ts';
 import { framesToGameSeconds, gameSecondsToFirstFrame } from '../time.ts';
-import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, fixedAttackBaseOf, type BuffTotals } from './buffs.ts';
+import {
+  ZERO_BUFFS,
+  addRatioBuff,
+  applyResolvedEffect,
+  applyStatLocks,
+  fixedAttackBaseOf,
+  type BuffTotals,
+  type StatLock,
+} from './buffs.ts';
 import {
   isResolvedShotCount,
   isResolvedTimer,
@@ -809,6 +817,18 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
         sourceSlotIndex: p.sourceSlotIndex,
         appliedAmount: applied.appliedAmount,
       });
+    }
+    // 値の固定（plan/design-stat-lock.md 3.4 節）: ほかの小片を全部足した後に、枠の和を固定の値で上書きする。止めた効果は一覧に
+    // 残し、足した量を 0 にする（付いたが効いていないことが表示で分かるように）
+    for (const state of slotStates) {
+      if (!state) continue;
+      const locks: StatLock[] = state.timedEffects.filter((e) => e.lock === true);
+      if (locks.length === 0) continue;
+      state.buffs = applyStatLocks(state.buffs, locks);
+      const locked = new Set(locks.map((l) => l.stat));
+      state.timedEffects = state.timedEffects.map((e) =>
+        e.lock !== true && locked.has(e.stat) ? { ...e, appliedAmount: 0 } : e,
+      );
     }
     // 状態だけの stat の小片は timedEffects には入れない（表示は履歴の値の小片から作る）。buffs.hitRate・minEffectiveRange だけを足す
     for (const p of stateActive(start)) {
