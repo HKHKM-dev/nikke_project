@@ -465,6 +465,11 @@ export const NAMED_STATES = {
    * モデルが要るのはキャプチャーの命中を数える窓だけなので、敵 1 体の前提で自分の状態として持つ
    */
   ghostPossession: { name: { ja: '憑依', en: 'Possession' }, holder: 'ally' },
+  /**
+   * エグゾスパインMk2（イヴのバースト。自分・バースト使用時から維持。中身なし。S1 の不安定エネルギーの倍率と S2 のイーグルアイエグゾスパインの
+   * 攻撃力▲の倍率を倍にする効果は、それぞれのスロットの効果の条件・while が見る）
+   */
+  exospineMk2: { name: { ja: 'エグゾスパインMk2', en: 'Exospine Mk2' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

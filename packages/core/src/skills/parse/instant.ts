@@ -90,8 +90,8 @@ const INSTANT_KIND_KEYS: Record<InstantKind, readonly string[]> = {
   // 編成の条件（burstStepMix・squad）、直書きの秒数（seconds）、発火の条件（condition。plan/design-skill-stage12.md 2.6 節）、
   // 戦闘中の発火の回数の上限（maxFires。plan/design-red-hood.md 2.3 節）、CT▲（increase）
   cooldownReduction: ['burstStepMix', 'squad', 'seconds', 'condition', 'maxFires', 'increase'],
-  // 弾丸チャージの発数（scaling）
-  ammoRefill: ['scaling'],
+  // 弾丸チャージの発数（scaling）と敵の属性の条件（parseEffect が読む。plan/design-eve.md 2.2 節）
+  ammoRefill: ['scaling', 'enemyElement'],
   // 維持時間（plan/design-heal-window.md 1.1 節）、回数トリガーの遅れ（delayFrames）、編成の条件（plan/design-heal-vocabulary.md
   // 2.1 節）と withCharacter（F5。同 3.3 節）、基本バースト段階の対象（targetBurstStep）、発火の条件（plan/design-mint-prika.md 2.7 節）
   heal: [

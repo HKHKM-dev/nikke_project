@@ -1,0 +1,20 @@
+{
+  "id": "C-1323",
+  "text": "イヴのバーストは、ランダムな敵（敵 1 体で的）に最終攻撃力の 457.14% のヒットを 6 回出す。1 ヒット目は III のタイマーの 00.00 の 22f 後（動画で 44f。止まり 22f を含む）、その後は 1 ヒット目から 12・24・35・47・59f。6 ヒットとも同じ値で、同じ発動のエグゾスパインMk2 の攻撃力▲は乗らない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1223-12`・`1223-13`・`1223-14`・`1224-07`・`1225-10`・`1225-14`。V-0794",
+  "model": "data/skills/850.json（burst の effects[0]。burstDamage の hitsRef）と burst/landing.ts の遅れの表のイヴの行（hitFrames 22・hitOffsets）",
+  "replaces": [],
+  "updated": "2026-11-15",
+  "subject": {
+    "places": ["data/skills/850.json の burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1223",
+      "role": "値を合わせた"
+    }
+  ]
+}

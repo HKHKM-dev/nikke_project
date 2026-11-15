@@ -55,9 +55,9 @@ const files = readdirSync(SKILLS_DIR)
 
 /**
  * 維持の秒が Lv で変わる付与（resourceId:スロット:durationRef）。説明文の値がそうなっているものだけ（D の S2 の気絶免疫、アスカの
- * バーストの貫通特化の 15・20・25 秒）
+ * バーストの貫通特化の 15・20・25 秒、イヴのバーストのエグゾスパインMk2 の 3・5・7・10 秒）
  */
-const LEVEL_DEPENDENT_DURATIONS = new Set(['40:skill2:3', '830:burst:1']);
+const LEVEL_DEPENDENT_DURATIONS = new Set(['40:skill2:3', '830:burst:1', '850:burst:3']);
 
 function isLevelDependentDuration(resourceId: number, slot: SkillSlot, durationRef: number | undefined): boolean {
   return LEVEL_DEPENDENT_DURATIONS.has(`${resourceId}:${slot}:${durationRef}`);

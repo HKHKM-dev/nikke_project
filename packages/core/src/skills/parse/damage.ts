@@ -234,10 +234,10 @@ function parseHitShape(v: Record<string, Json>, effect: DamageEffect, path: stri
   if (v.perCount !== undefined) effect.perCount = parseDamagePerCount(v.perCount, trigger, `${path}.perCount`);
   // 「N 回順番に攻撃」（plan/design-new-chars-1029.md 5.2 節）
   if (v.hitsRef !== undefined) {
-    // 味方が消費した弾の合計は、自分の発に付くヒットではないので N 回順番に攻撃を書ける（バブルバラージ。plan/design-little-mermaid.md 2.1 節）
-    if (isShotCountTrigger(trigger) && trigger.count !== 'teamAmmo')
-      fail(`${path}.hitsRef`, 'hitsRef cannot be used with a shot count trigger (except teamAmmo)');
+    // 射撃の回数のきっかけにも書ける（バブルバラージ・イヴの不安定エネルギー。plan/design-eve.md 2.1 節）。射撃に畳み込まない（foldsIntoShot）
     if (effect.perBurstHit === true) fail(`${path}.hitsRef`, 'hitsRef cannot be used with perBurstHit');
+    // ヒットごとのゲージは gaugePerHit で書く（発のフレームからのゲージの列 gaugeHits とは組まない）
+    if (v.gaugeHits !== undefined) fail(`${path}.hitsRef`, 'hitsRef cannot be used with gaugeHits');
     effect.hitsRef = parseRef(v.hitsRef, `${path}.hitsRef`);
   }
   if (v.hitIntervalFrames !== undefined) {

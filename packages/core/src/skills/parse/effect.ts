@@ -75,10 +75,15 @@ export function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect
       effect.withCharacter = parseWithCharacterCondition(v[key], `${path}.${key}`);
       continue;
     }
+    // 敵の属性は弾丸チャージにも書ける（イヴの S2。plan/design-eve.md 2.2 節）
+    if (key === 'enemyElement' && effect.kind === 'ammoRefill') {
+      effect.enemyElement = oneOf(ELEMENTS, v[key], `${path}.${key}`);
+      continue;
+    }
     if (effect.kind !== 'passive' && effect.kind !== 'timed' && effect.kind !== 'state' && effect.kind !== 'damage') {
       fail(
         `${path}.${key}`,
-        `only allowed in passive, timed, state and damage (withCharacter also in heal), found in ${effect.kind}`,
+        `only allowed in passive, timed, state and damage (withCharacter also in heal, enemyElement also in ammoRefill), found in ${effect.kind}`,
       );
     }
     if (key === 'withCharacter') effect.withCharacter = parseWithCharacterCondition(v[key], `${path}.${key}`);

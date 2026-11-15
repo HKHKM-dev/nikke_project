@@ -1,0 +1,16 @@
+{
+  "id": "C-1322",
+  "text": "イヴの S2 の弾丸チャージは、電撃コードの敵に通常攻撃が 10 回命中するごとに 3 発入り、10 回の数え方はマガジンをまたいで続く。マガジンは 105・108・105 発になる。灼熱の敵では入らない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1223-15`・`1224-06`・`1225-11`。V-0794",
+  "model": "data/skills/850.json（skill2 の effects[3]。{ count: normalHit, everyRef: 3 } の ammoRefill（flat）と enemyElement: Electronic。plan/design-eve.md 2.2 節）",
+  "replaces": [],
+  "updated": "2026-11-15",
+  "subject": {
+    "places": ["data/skills/850.json の skill2 の effects[3]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値（10 回・3 発）と最大装弾数 75 発"
+}

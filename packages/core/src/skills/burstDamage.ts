@@ -334,7 +334,7 @@ export function effectHitFrames(
 /**
  * 射撃ごとの倍率ダメージ（every = 1）を 1 トリガーの値に畳み込むか（resolvePerShotDamage）。条件つきは畳み込まない
  * （射撃ごとの発動として 1 件ずつ出す）。遅れて出るヒット（delayFrames）・perCount の数だけのヒット（オートファイア）も、
- * 発のヒットと別のヒットなので畳み込まず、発ごとに 1 件ずつ出す（plan/design-skill-stage14.md 2.5 節）。
+ * 発のヒットと別のヒットなので畳み込まず、発ごとに 1 件ずつ出す（plan/design-skill-stage14.md 2.5 節）。N 回順番に攻撃（hitsRef）も同じ。
  * 防御力無視ダメージ（ベスティー：タクティカル・アップの S2）も、畳み込む値
  * （damage.ts の perShot）が防御力を引いた式だけを持つので、発ごとに 1 件ずつ出す（plan/design-skill-stage16.md 2.2 節）。
  * フルチャージの発ごとの倍率ダメージは、チャージしない発（即着弾に替えた使用武器の変更の発）を撃つ定義では畳み込まず、
@@ -354,6 +354,8 @@ function foldsIntoShot(effect: DamageEffect, trigger: ResolvedTrigger, def: Skil
     effect.condition === undefined &&
     effect.delayFrames === undefined &&
     effect.perCount === undefined &&
+    // N 回順番に攻撃は発のヒットと別の N ヒット（plan/design-eve.md 2.1 節）
+    effect.hitsRef === undefined &&
     // 蓄積爆破（accumulate の self）は、1 パス目が付け方と爆発を決める
     effect.accumulate === undefined
   );

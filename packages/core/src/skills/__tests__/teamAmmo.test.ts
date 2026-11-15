@@ -88,15 +88,12 @@ describe('teamAmmo の damage', () => {
     expect(read).toMatchObject({ ...barrage, delayFrames: 6, hitIntervalFrames: 12 });
   });
 
-  it('rejects gaugePerHit, gaugeHits, and hitsRef with the other shot count triggers', () => {
+  it('rejects gaugePerHit and gaugeHits with a teamAmmo count', () => {
     expect(() => withSkill1Effects([{ ...barrage, gaugeHits: [0] }])).toThrow(
       'gaugeHits cannot be used with a teamAmmo count',
     );
     expect(() => withSkill1Effects([{ ...barrage, delayFrames: 6, gaugePerHit: true }])).toThrow(
       'gaugePerHit cannot be used with a teamAmmo count',
-    );
-    expect(() => withSkill1Effects([{ ...barrage, trigger: { count: 'normalShot', every: 500 } }])).toThrow(
-      'hitsRef cannot be used with a shot count trigger (except teamAmmo)',
     );
   });
 });

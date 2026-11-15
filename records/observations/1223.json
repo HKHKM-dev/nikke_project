@@ -1,0 +1,506 @@
+[
+  {
+    "id": "1223-01",
+    "recording": "1223",
+    "kind": "timing",
+    "use": "record",
+    "value": [1510, 2848, 4084, 5503, 6749, 8075, 9417, 10749],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 5・5・27・0・24・0・25・0f"
+    },
+    "source": "V-0794",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1223-02",
+    "recording": "1223",
+    "kind": "timing",
+    "use": "record",
+    "value": [1539, 4114, 6778, 9446],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 6・25・24・25f"
+    },
+    "source": "V-0794",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1223-03",
+    "recording": "1223",
+    "kind": "timing",
+    "use": "record",
+    "value": [1568, 4143, 6807, 9475],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0794",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1223-04",
+    "recording": "1223",
+    "kind": "timing",
+    "use": "record",
+    "value": [2177, 4752, 7416, 10084],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0794",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1223-05",
+    "recording": "1223",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0794",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1223-06",
+    "recording": "1223",
+    "kind": "hit",
+    "use": "compare",
+    "value": [35085, 35085],
+    "unit": "ダメージ",
+    "description": "イヴの 1〜50 発目（1 つ目の不安定エネルギーより前）の 1 ヒット（胴体・会心なし・距離ボーナスあり）。S2 の攻撃力▲（スキル発動者基準 50%）と有利コードが乗った値",
+    "method": {
+      "tool": "hud.ts --mode jumps（レシピ hud-jumps@3 のキャッシュ）と、イヴの 1 ヒットの格子（胴体 26,988.56 ×（1 + 会心 0.5 + コア 1 + 距離 0.3）× 受けるダメージ▲ 1.1 の有無）",
+      "note": "f845・f860・f865 などの増分 35,085。f841 からの 5f おきのイヴの発（格子の胴体 + 距離）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": "1,50",
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0794",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1223-07",
+    "recording": "1223",
+    "kind": "hit",
+    "use": "compare",
+    "value": [38594, 38594],
+    "unit": "ダメージ",
+    "description": "イヴの 70〜120 発目（1 つ目の不安定エネルギーの後・1 回目のバーストより前）の 1 ヒット（胴体・会心なし・距離ボーナスあり）。受けるダメージ▲（10%）の乗った値",
+    "method": {
+      "tool": "hud.ts --mode jumps（レシピ hud-jumps@3 のキャッシュ）と、イヴの 1 ヒットの格子（胴体 26,988.56 ×（1 + 会心 0.5 + コア 1 + 距離 0.3）× 受けるダメージ▲ 1.1 の有無）",
+      "note": "f1135・f1193 などの増分 38,594（= 35,085 × 1.1）。f1106 の不安定エネルギーの後の発は、会心・コアの格子もどれも 1.1 倍になった"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": "70,120",
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0794",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1223-08",
+    "recording": "1223",
+    "kind": "hit",
+    "use": "compare",
+    "value": 711786,
+    "unit": "ダメージ",
+    "description": "1 つ目の不安定エネルギーの 1 ヒット目（会心あり。受けるダメージ▲の前）",
+    "method": {
+      "tool": "hud.ts --mode jumps（レシピ hud-jumps@3 のキャッシュ）と、イヴの 1 ヒットの格子（胴体 26,988.56 ×（1 + 会心 0.5 + コア 1 + 距離 0.3）× 受けるダメージ▲ 1.1 の有無）",
+      "note": "f1106 の増分。会心なしの 474,524 の 1.5 倍。同じ回の 2 ヒット目（f1118）も 711,786 で、1 ヒット目が付けた受けるダメージ▲は乗らない（3 ヒットとも発動の時点の値）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "trigger": "shotCount",
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0794",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1223-09",
+    "recording": "1223",
+    "kind": "hit",
+    "use": "compare",
+    "value": 521977,
+    "unit": "ダメージ",
+    "description": "2 つ目の不安定エネルギーの 2 ヒット目（会心なし。1 つ目が付けた受けるダメージ▲の窓の中・バーストの前）",
+    "method": {
+      "tool": "hud.ts --mode jumps（レシピ hud-jumps@3 のキャッシュ）と、イヴの 1 ヒットの格子（胴体 26,988.56 ×（1 + 会心 0.5 + コア 1 + 距離 0.3）× 受けるダメージ▲ 1.1 の有無）",
+      "note": "f1491 の増分（474,524 × 1.1）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "trigger": "shotCount",
+        "n": 4,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0794",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1223-10",
+    "recording": "1223",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2088197,
+    "unit": "ダメージ",
+    "description": "エグゾスパインMk2 の間（1 回目のフルバーストの中）の不安定エネルギーの 1 ヒット（会心なし）。倍率 2 倍・Mk2 の攻撃力▲・フルバースト補正・受けるダメージ▲が乗った値。モデルは同じフレームの 2 つの効果の和",
+    "method": {
+      "tool": "hud.ts --mode jumps（レシピ hud-jumps@3 のキャッシュ）と、イヴの 1 ヒットの格子（胴体 26,988.56 ×（1 + 会心 0.5 + コア 1 + 距離 0.3）× 受けるダメージ▲ 1.1 の有無）",
+      "note": "f1833 の増分。同じ回の f1821・f1845 は会心（2,784,262 と、それに発の重なった値）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 3,
+        "trigger": "shotCount",
+        "n": 6,
+        "count": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0794",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1223-11",
+    "recording": "1223",
+    "kind": "hit",
+    "use": "compare",
+    "value": 71260,
+    "unit": "ダメージ",
+    "description": "エグゾスパインMk2 の間（1 回目のフルバーストの中）のイヴの 1 ヒット（胴体・会心なし・距離ボーナスあり）。Mk2 で攻撃力▲が 2 倍（スキル発動者基準 100%）になった値",
+    "method": {
+      "tool": "hud.ts --mode jumps（レシピ hud-jumps@3 のキャッシュ）と、イヴの 1 ヒットの格子（胴体 26,988.56 ×（1 + 会心 0.5 + コア 1 + 距離 0.3）× 受けるダメージ▲ 1.1 の有無）",
+      "note": "f1605・f1649 などの増分。コアは f1595 の 110,848"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1000,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0794",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1223-12",
+    "recording": "1223",
+    "kind": "hit",
+    "use": "compare",
+    "value": 5965410,
+    "unit": "ダメージ",
+    "description": "1 回目のバーストの 6 ヒットの和（会心なし）。1 ヒット 994,235 の 6 倍（6 ヒットとも同じ値で、エグゾスパインMk2 の攻撃力▲もフルバースト補正も乗らない）",
+    "method": {
+      "tool": "hud.ts --mode jumps（レシピ hud-jumps@3 のキャッシュ）と、イヴの 1 ヒットの格子（胴体 26,988.56 ×（1 + 会心 0.5 + コア 1 + 距離 0.3）× 受けるダメージ▲ 1.1 の有無）",
+      "note": "f1611・1623・1635・1646・1658・1670 の増分。会心なしは f1635 の 994,235、会心は 1,491,352（1.5 倍）。f1658 は会心と発の和。2〜4 回目のバーストも同じ 2 つの値"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0794",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1223-13",
+    "recording": "1223",
+    "kind": "timing",
+    "use": "compare",
+    "value": [43, 44, 44, 44],
+    "unit": "f",
+    "description": "III のタイマーの 00.00 から、イヴのバーストの 1 ヒット目までの動画のフレーム（4 回）",
+    "method": {
+      "tool": "hud.ts --mode jumps（レシピ hud-jumps@3 のキャッシュ）と、イヴの 1 ヒットの格子（胴体 26,988.56 ×（1 + 会心 0.5 + コア 1 + 距離 0.3）× 受けるダメージ▲ 1.1 の有無） と burst-panel（1223-03）",
+      "note": "00.00（f1568・4143・6807・9475）から、ずれ 0・12・24・35・47・59 の 6 つの大きな増分がそろう 1 ヒット目（f1611・4187・6851・9519）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 4
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0794",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1223-14",
+    "recording": "1223",
+    "kind": "timing",
+    "use": "compare",
+    "value": [0, 12, 24, 35, 47, 59],
+    "unit": "f",
+    "description": "1 回目のバーストの 6 ヒット（ランダムな敵への順番の攻撃）の、1 ヒット目からのずれ（動画のフレーム）。2〜4 回目も同じ（±1）",
+    "method": {
+      "tool": "hud.ts --mode jumps（レシピ hud-jumps@3 のキャッシュ）と、イヴの 1 ヒットの格子（胴体 26,988.56 ×（1 + 会心 0.5 + コア 1 + 距離 0.3）× 受けるダメージ▲ 1.1 の有無）",
+      "note": "f1611・1623・1635・1646・1658・1670"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0794",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1223-15",
+    "recording": "1223",
+    "kind": "count",
+    "use": "compare",
+    "value": [105, 108],
+    "unit": "発",
+    "description": "イヴの最初の 2 本のマガジンの発の数。75 発 + 弾丸チャージ 3 発 × 10・11 回（10 回命中ごとの数え方はマガジンをまたいで続く）",
+    "method": {
+      "tool": "reticle-ammo.ts --mode series（照準の左の残弾）",
+      "note": "残弾の 1 減りの数 + 2 増え（弾丸チャージの 3 と同じフレームの発の 1）の数 + 読み違いの所（29→20→28 などを前後の値でつないだ）+ 表示の読めない最後の 1 発。1 本目 88 + 10 + 6 + 1、2 本目 93 + 11 + 3 + 1。3 本目は読み違いがつながらず数えない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 3,
+        "count": 2
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0794",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1223-16",
+    "recording": "1223",
+    "kind": "timing",
+    "use": "record",
+    "value": [1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1],
+    "unit": "f",
+    "description": "不安定エネルギーの 1 ヒット目の、直前のイヴの発の増分からの動画のフレーム（フルバーストの窓の外で、前後の発の読めた 13 回）。3 ヒットのずれはどの回も 0・12・24（±1）",
+    "method": {
+      "tool": "hud.ts --mode jumps（レシピ hud-jumps@3 のキャッシュ）と、イヴの 1 ヒットの格子（胴体 26,988.56 ×（1 + 会心 0.5 + コア 1 + 距離 0.3）× 受けるダメージ▲ 1.1 の有無）",
+      "note": "12f おきの 3 つの大きな増分の 1 ヒット目（f1106・1479・2819・3108・3480・3760・5218・5582・6188・6502・8013・8386・9043）と、その前のイヴの格子に合う増分。f2819 の前の発は f2817"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0794",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1223-17",
+    "recording": "1223",
+    "kind": "count",
+    "use": "record",
+    "value": [44, 40, 44, 41, 41, 40, 44, 42, 42, 44, 40, 45],
+    "unit": "回",
+    "description": "前の不安定エネルギーの 1 ヒット目から次の 1 ヒット目までの、イヴの会心の格子に合う増分の数（フルバーストの窓をまたがない 12 回。1 つ目は戦闘開始から）",
+    "method": {
+      "tool": "hud.ts --mode jumps（レシピ hud-jumps@3 のキャッシュ）と、イヴの 1 ヒットの格子（胴体 26,988.56 ×（1 + 会心 0.5 + コア 1 + 距離 0.3）× 受けるダメージ▲ 1.1 の有無）",
+      "note": "増分がほかの枠の発と同じフレームに重なった発は格子に合わず数えない（少なめに出る）。間の不安定エネルギーを読み落とした所（6188・9043 の前は 82）は除いた。会心でない命中も数える読みなら、会心率 75% で約 33 になる"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0794",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1223-18",
+    "recording": "1223",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 0.7714,
+    "description": "フルバーストの窓の外のイヴの通常攻撃の 1 ヒットのうち会心の割合（992/1286）",
+    "method": {
+      "tool": "hud.ts --mode jumps（レシピ hud-jumps@3 のキャッシュ）と、イヴの 1 ヒットの格子",
+      "note": "イヴの 1 ヒットだけに合った増分（格子: 胴体 26,988.56 ×（1 + 会心 0.5 + コア 1 + 距離 0.3）× 受けるダメージ▲ 1.1 の有無。ほかの枠の発と同じフレームの和は数えない）を会心の有無に分けた。フルバーストの窓（00.00 の 40f 前から終わりの 10f 後。1223-03・1223-04）は除いた。許容は 1286 ヒットの二項の 2σ（会心率 0.75 で 0.024）。会心率▲が Lv1 の値（35.45%）なら 0.5045"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 3,
+        "frame": 300
+      },
+      "tolerance": {
+        "abs": 0.024
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0794",
+    "readAt": "2026-11-15"
+  }
+]

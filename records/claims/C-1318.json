@@ -1,0 +1,16 @@
+{
+  "id": "C-1318",
+  "text": "イヴの S2 のイーグルアイエグゾスパインの攻撃力▲（スキル発動者基準 50%）と最大装弾数▲（25%）は、戦闘開始から持続で効く。バーストの前のイヴの 1 ヒットに攻撃力▲が乗り、弾丸チャージの入らない灼熱の敵ではマガジンが 75 発（60 × 1.25）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1223-06`・`1225-06`・`1225-11`。V-0794",
+  "model": "data/skills/850.json（skill2 の effects[0]・[1]。self の passive の attack（scaling casterAttack）と maxAmmo）",
+  "replaces": [],
+  "updated": "2026-11-15",
+  "subject": {
+    "places": ["data/skills/850.json の skill2 の effects[0]", "data/skills/850.json の skill2 の effects[1]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値（50%・25%）と、確定の 1 発の式"
+}
