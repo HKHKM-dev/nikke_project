@@ -223,12 +223,8 @@ export function parseTimedEffect(v: Record<string, Json>, path: string): TimedEf
 function validateLock(effect: TimedEffect, path: string): void {
   const { stat } = effect;
   if (!isLockStat(stat)) fail(`${path}.lock`, `lock is only allowed with stat ${LOCK_STATS.join(', ')}, got "${stat}"`);
-  if (effect.target !== 'self') fail(`${path}.target`, 'lock is only allowed with target "self"');
+  validateSelfOnlyShape(effect, path, 'lock');
   if (effect.scaling !== undefined) fail(`${path}.scaling`, 'lock takes no scaling (ratio only)');
-  if (effect.decrease) fail(`${path}.decrease`, 'lock cannot be decreased (write the locked value)');
-  if (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined) fail(path, 'lock cannot stack');
-  if (effect.condition !== undefined) fail(`${path}.condition`, 'lock cannot have a condition');
-  if (effect.perCount !== undefined) fail(`${path}.perCount`, 'lock cannot have perCount');
   if (effect.amplifies !== undefined) fail(`${path}.amplifies`, 'lock cannot amplify');
   if (effect.holderHit !== undefined) fail(`${path}.holderHit`, 'lock cannot have holderHit');
   if (isChanceTrigger(effect.trigger)) fail(`${path}.trigger`, 'lock cannot have a chance trigger');
@@ -471,7 +467,7 @@ function parseTimedValue(
     if (value > 1) fail(`${path}.value`, `expected at most 1, got ${value}`);
     effect.value = value;
   }
-  // 値 0 の固定（「〈stat〉増加効果無効」「減少効果無効」の組）は ref を書かない（validateLock）
+  // 値 0 の固定（「〈stat〉増加効果無効」「減少効果無効」の組）は ref を書かない（validateLock。値は解決で 0）
   else if (!(v.lock !== undefined && v.ref === undefined)) {
     effect.ref = parseRef(v.ref, `${path}.ref`);
   }
@@ -741,14 +737,21 @@ function parseAmplifies(v: Record<string, Json>, stat: BuffStat, target: BuffTar
 function validateSelfOnlyStat(effect: TimedEffect, path: string): void {
   const { stat } = effect;
   if (!isSelfOnlyTimedStat(stat)) return;
-  if (effect.target !== 'self') fail(`${path}.target`, `${stat} is only allowed with target "self"`);
   if (stat === 'fixedChargeTime' && effect.scaling !== undefined)
     fail(`${path}.scaling`, 'fixedChargeTime is in seconds (do not write scaling)');
-  if (effect.decrease) fail(`${path}.decrease`, `${stat} cannot be decreased`);
-  if (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined) fail(path, `${stat} cannot stack`);
-  if (effect.condition !== undefined) fail(`${path}.condition`, `${stat} cannot have a condition`);
-  // 数に比例して値を掛ける perCount は、足し合わせない stat には意味が無い
-  if (effect.perCount !== undefined) fail(`${path}.perCount`, `${stat} cannot have perCount`);
+  validateSelfOnlyShape(effect, path, stat);
+}
+
+/**
+ * 足し合わせない値（自分にだけ付く stat と値の固定 lock）の形: 自分にだけ・減らす書き方なし・スタックなし・条件なし・perCount なし
+ * （数に比例して値を掛ける perCount は、足し合わせない値には意味が無い）。label は文言の主語
+ */
+function validateSelfOnlyShape(effect: TimedEffect, path: string, label: string): void {
+  if (effect.target !== 'self') fail(`${path}.target`, `${label} is only allowed with target "self"`);
+  if (effect.decrease) fail(`${path}.decrease`, `${label} cannot be decreased`);
+  if (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined) fail(path, `${label} cannot stack`);
+  if (effect.condition !== undefined) fail(`${path}.condition`, `${label} cannot have a condition`);
+  if (effect.perCount !== undefined) fail(`${path}.perCount`, `${label} cannot have perCount`);
 }
 
 /**

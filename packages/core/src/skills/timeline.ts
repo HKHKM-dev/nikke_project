@@ -18,8 +18,8 @@ import {
   applyResolvedEffect,
   applyStatLocks,
   fixedAttackBaseOf,
+  statLockOf,
   type BuffTotals,
-  type StatLock,
 } from './buffs.ts';
 import {
   isResolvedShotCount,
@@ -822,10 +822,10 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
     // 残し、足した量を 0 にする（付いたが効いていないことが表示で分かるように）
     for (const state of slotStates) {
       if (!state) continue;
-      const locks: StatLock[] = state.timedEffects.filter((e) => e.lock === true);
+      const locks = state.timedEffects.flatMap((e) => statLockOf(e) ?? []);
       if (locks.length === 0) continue;
       state.buffs = applyStatLocks(state.buffs, locks);
-      const locked = new Set(locks.map((l) => l.stat));
+      const locked = new Set<string>(locks.map((l) => l.stat));
       state.timedEffects = state.timedEffects.map((e) =>
         e.lock !== true && locked.has(e.stat) ? { ...e, appliedAmount: 0 } : e,
       );

@@ -8,6 +8,7 @@ import {
   applyResolvedEffect,
   applyStatLocks,
   fixedAttackBaseOf,
+  statLockOf,
   type BuffTotals,
   type StatLock,
 } from '../buffs.ts';
@@ -97,7 +98,8 @@ export function createViews({
           // スタック数）は 2 パス目（piecesOfTrack）と同じく値に掛ける
           for (const it of activeAt(v.track, frame)) {
             const effect = scaledEffect(v.effect, it);
-            if (effect.lock === true) locks.push(effect);
+            const lock = statLockOf(effect);
+            if (lock !== null) locks.push(lock);
             buffs = applyResolvedEffect(
               buffs,
               effect,
@@ -137,9 +139,13 @@ export function createViews({
   };
   const damageBuffsAt: HolderLists['damageBuffsAt'] = (holder, frame, base) => {
     let buffs = base;
+    // 値の固定は射手の実効値（firingBuffs）と同じく、全部足した後に和を上書きする（チャージ速度の超過分の変換が読む）
+    const locks: StatLock[] = [];
     for (const v of (damageViews[holder] ??= damageViewsOf(holder))) {
       for (const it of activeAt(v.track, frame)) {
         const effect = scaledEffect(v.effect, it);
+        const lock = statLockOf(effect);
+        if (lock !== null) locks.push(lock);
         buffs = applyResolvedEffect(
           buffs,
           effect,
@@ -150,7 +156,7 @@ export function createViews({
         ).totals;
       }
     }
-    return buffs;
+    return applyStatLocks(buffs, locks);
   };
   /** 当たりと同じ段の件（状態の中身か、段 1.5 までの timed・while）で、stat が stats のどれかの件の索引 */
   const hitStageViewsOf = (...stats: readonly BuffStat[]): View[][] =>

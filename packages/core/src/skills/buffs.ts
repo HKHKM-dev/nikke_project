@@ -1,7 +1,7 @@
 // 1 体が受けるバフの合計と、ダメージ式への適用（純関数）。computeTriggerDamage（damage.ts）はここの関数を呼ぶだけにする。
 import type { CharacterData, ShotParams } from '../types.ts';
 import type { ResolvedEffect } from './resolve.ts';
-import type { BuffStat } from './types.ts';
+import { isLockStat, type BuffStat, type LockStat } from './types.ts';
 
 /**
  * 使用武器の変更（殲滅モード）で持ち替えた武器。shot は基礎の武器を写して、1 発のダメージとレートを差し替えたもの
@@ -429,7 +429,14 @@ function sourceKeyOf(effect: { source?: ResolvedEffect['source'] }): string {
 export type AppliedBuff = { totals: BuffTotals; appliedAmount: number };
 
 /** 持ち主に効いている値の固定（timed の lock）1 件 */
-export type StatLock = Pick<ResolvedEffect, 'stat' | 'value'> & { source?: ResolvedEffect['source'] };
+export type StatLock = Pick<ResolvedEffect, 'value' | 'source'> & { stat: LockStat };
+
+/** 効果が値の固定なら、その固定（applyStatLocks に渡す形）。ほかは null */
+export function statLockOf(effect: Pick<ResolvedEffect, 'stat' | 'value' | 'source' | 'lock'>): StatLock | null {
+  return effect.lock === true && isLockStat(effect.stat)
+    ? { stat: effect.stat, value: effect.value, source: effect.source }
+    : null;
+}
 
 /**
  * 値の固定を持ち主の和に当てる（plan/design-stat-lock.md 3.1・3.4 節）。ほかの効果（常時の値・装備・キューブを含む）を全部足した後に
@@ -445,10 +452,8 @@ export function applyStatLocks(totals: BuffTotals, locks: readonly StatLock[]): 
       next.chargeSpeed = lock.value;
       next.chargeSpeedParts = lock.value === 0 ? [] : [{ source: sourceKeyOf(lock), ratio: lock.value }];
       next.chargeTimeFlat = 0;
-    } else if (lock.stat === 'reloadSpeed') {
-      next.reloadSpeed = lock.value;
     } else {
-      throw new RangeError(`lock is not allowed for ${lock.stat}`);
+      next.reloadSpeed = lock.value;
     }
   }
   return next;
