@@ -73,5 +73,168 @@
     },
     "source": "V-0787",
     "readAt": "2026-11-15"
+  },
+  {
+    "id": "1211-06",
+    "recording": "1211",
+    "kind": "hit",
+    "use": "compare",
+    "value": [56075, 56075],
+    "unit": "ダメージ",
+    "description": "灼熱の敵へのマルチャーナの 2 発目と 61 発目の 1 ヒット（胴体・会心なし・距離ボーナスあり）。ホイッスル 5 スタックだけが乗り、有利コードの攻撃ダメージ▲は乗らない",
+    "method": {
+      "tool": "hud.ts --mode jumps と、レシピ buff-edge@5 の --opt grid（増分ごとの当て方）",
+      "note": "f859・f1227 の増分（1 発目はコア + 会心）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": "2,61",
+        "core": false,
+        "crit": false,
+        "distance": "model"
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1211-07",
+    "recording": "1211",
+    "kind": "hit",
+    "use": "compare",
+    "value": 30522381,
+    "unit": "ダメージ",
+    "description": "灼熱の敵への 1 回目のフルバースト発動時の追加ダメージ（会心）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、レシピ buff-edge@5 の --opt grid（増分ごとの当て方）",
+      "note": "f1609 の増分（00.00 は f1582。入りの止まりで HUD が読めない 25f の後の最初のフレーム）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "trigger": "fullBurstStart",
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1211-08",
+    "recording": "1211",
+    "kind": "hit",
+    "use": "compare",
+    "value": 22891786,
+    "unit": "ダメージ",
+    "description": "灼熱の敵への 2 回目のフルバースト発動時の追加ダメージ（会心なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、レシピ buff-edge@5 の --opt grid（増分ごとの当て方）",
+      "note": "f4368 の増分（00.00 は f4341）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "trigger": "fullBurstStart",
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1211-09",
+    "recording": "1211",
+    "kind": "count",
+    "use": "compare",
+    "value": 0,
+    "unit": "回",
+    "description": "灼熱の敵への 20 回命中ごとの追加ダメージの数（3 分）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、レシピ buff-edge@5 の --opt grid（増分ごとの当て方）",
+      "note": "1,772 個の増分のどれも、追加ダメージ（コードによらず高リスク対象が付く読みで、フルバースト中 922,409・フルバーストの後 482,495。会心なし）と発の和に合わない。HUD が 19〜20f 読めずにまとまった増分 5 個（f2032・f2282・f3292・f10125・f10363）も、その範囲の追加ダメージの値より小さい。フルバーストの後の発は戦闘開始の発と同じ 56,075 で、防御力▼が乗らない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventCount",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "trigger": "shotCount"
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1211-10",
+    "recording": "1211",
+    "kind": "timing",
+    "use": "record",
+    "value": [27, 27, 28],
+    "unit": "f",
+    "description": "フルバースト発動時の追加ダメージの増分の、III のタイマーの 00.00 からの動画のフレーム（1・2・4 回目）",
+    "method": {
+      "tool": "hud.ts --mode jumps と burst-panel（III のタイマーの 00.00）",
+      "note": "どれも入りの止まりで HUD が読めない 25〜27f の後の最初のフレームなので、それより前のどこか。3 回目はほかの発と重なった"
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
   }
 ]

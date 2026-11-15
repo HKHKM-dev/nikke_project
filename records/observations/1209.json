@@ -73,5 +73,298 @@
     },
     "source": "V-0787",
     "readAt": "2026-11-15"
+  },
+  {
+    "id": "1209-06",
+    "recording": "1209",
+    "kind": "hit",
+    "use": "compare",
+    "value": [73128, 73128],
+    "unit": "ダメージ",
+    "description": "マルチャーナの 1 発目と 61 発目（2 本目のマガジンの 1 発目。どちらも 1 回目のバーストより前）の 1 ヒット（胴体・会心なし・距離ボーナスあり）。ホイッスル 5 スタックと S2 の有利コードの攻撃ダメージ▲が乗った値",
+    "method": {
+      "tool": "hud.ts --mode jumps と、レシピ buff-edge@5 の --opt grid（増分ごとの当て方）",
+      "note": "f898・f1270 の増分。発は照準の横の残弾（reticle-ammo.ts）の減りで確かめた。1 ヒットの格子（コア × 会心 × 距離）の胴体 + 距離の値に合う"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": "1,61",
+        "core": false,
+        "crit": false,
+        "distance": "model"
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1209-07",
+    "recording": "1209",
+    "kind": "hit",
+    "use": "compare",
+    "value": 36944052,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバースト発動時の追加ダメージ（会心なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、レシピ buff-edge@5 の --opt grid（増分ごとの当て方）",
+      "note": "f1653 の増分（00.00 は f1627。入りの止まりで HUD が読めない 25f の後の最初のフレーム）。ほかの発と重ならない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "trigger": "fullBurstStart",
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1209-08",
+    "recording": "1209",
+    "kind": "hit",
+    "use": "compare",
+    "value": 36944052,
+    "unit": "ダメージ",
+    "description": "2 回目のフルバースト発動時の追加ダメージ（会心なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、レシピ buff-edge@5 の --opt grid（増分ごとの当て方）",
+      "note": "f4421 の増分（00.00 は f4393。HUD は前のフレームから読めている）。ほかの発と重ならない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "trigger": "fullBurstStart",
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1209-09",
+    "recording": "1209",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1488584,
+    "unit": "ダメージ",
+    "description": "1 回目の高リスク対象の窓の 1 つ目の 20 回命中ごとの追加ダメージ（会心なし。フルバースト中・バーストの▲あり）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、レシピ buff-edge@5 の --opt grid（増分ごとの当て方）",
+      "note": "f1761 の増分 1,648,284 は、同じフレームのマルチャーナの発（フルバースト中・バーストの▲の胴体 + 距離。格子の 159,700.09）との和。発を引いた値"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "trigger": "shotCount",
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1209-10",
+    "recording": "1209",
+    "kind": "hit",
+    "use": "compare",
+    "value": 629221,
+    "unit": "ダメージ",
+    "description": "1 回目の高リスク対象の窓のうち、フルバーストの後（バーストの▲が切れた後）の 20 回命中ごとの追加ダメージ（会心なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、レシピ buff-edge@5 の --opt grid（増分ごとの当て方）",
+      "note": "f2329 の増分 702,351 は、同じフレームのマルチャーナの発（高リスク対象の防御力▼の乗った胴体 + 距離。格子の 73,130.30）との和。発を引いた値。モデルの 6 回目（0 始まり）は同じ状態（フルバーストの後・窓の中）の回"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "trigger": "shotCount",
+        "n": 6,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1209-11",
+    "recording": "1209",
+    "kind": "hit",
+    "use": "compare",
+    "value": 73130,
+    "unit": "ダメージ",
+    "description": "1 回目の高リスク対象の窓の中で、フルバーストの後のマルチャーナの 1 ヒット（胴体・会心なし・距離ボーナスあり）。防御力 10.56%▼の分だけ、窓の外（73,128）より 2 大きい",
+    "method": {
+      "tool": "hud.ts --mode jumps と、レシピ buff-edge@5 の --opt grid（増分ごとの当て方）",
+      "note": "f2236・f2240 の増分（フルバーストの終わり f2235 の後）。窓の外の同じ着地点の発（1 発目など）は 73,128"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1400,
+        "core": false,
+        "crit": false,
+        "distance": "model"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1209-12",
+    "recording": "1209",
+    "kind": "timing",
+    "use": "record",
+    "value": [26, 28, 28, 27],
+    "unit": "f",
+    "description": "フルバースト発動時の追加ダメージの増分の、III のタイマーの 00.00 からの動画のフレーム（4 回）",
+    "method": {
+      "tool": "hud.ts --mode jumps と burst-panel（III のタイマーの 00.00）",
+      "note": "1・3・4 回目は、入りの止まりで HUD が読めない 25〜26f の後の最初のフレームなので、それより前のどこか。2 回目（28f）は前のフレームから読めている"
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1209-13",
+    "recording": "1209",
+    "kind": "count",
+    "use": "record",
+    "value": [140, 160, 180, 200, 220, 240, 260, 280, 300, 560],
+    "unit": "命中",
+    "description": "20 回命中ごとの追加ダメージは、戦闘の始めから通しで数えた命中が 20 の倍数に届いた発に出る（値は出た発の通算の命中目。高リスク対象の窓の外の命中も数え、付くたびに数え直さない）。1 回目の窓の 9 回は 140・160・…・300 命中目、2 回目の窓の 1 つ目は 560 命中目",
+    "method": {
+      "tool": "照準の横の残弾（reticle-ammo.ts）と hud.ts --mode jumps と、使い捨てのスクリプト",
+      "note": "発は残弾の減り、外れは残弾が減ったのに HUD が増えない発（HUD が読めているフレーム）。最初の 2 本のマガジンは 60 発とも命中（120 命中）。1 回目の窓の 9 回は 3〜5 本目のマガジンの 20・40・60 発目。窓の外の 2701〜4533 の発は 262 発で、外れは 1 回目のジャンプの明けの 2 発（f2942・f2952）だけなので 260 命中。2 回目の窓の 1 つ目（f4533）は 10 本目のマガジンの 15 発目で、通しで 560 命中目。付くたびに数え直す読みなら 20 発目、窓の中だけ数えて持ち越す読みなら 13 発目（1 回目の窓の後ろの 7 発は窓の中で、防御力▼の乗った値）。どの窓の中でも、追加ダメージは 20 命中ずつ離れている"
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1209-14",
+    "recording": "1209",
+    "kind": "hit",
+    "use": "compare",
+    "value": 133083,
+    "unit": "ダメージ",
+    "description": "2 回目のフルバーストの窓の中のマルチャーナの 1 ヒット（胴体・会心なし・距離ボーナスなし（近））。バーストの攻撃ダメージ▲・有利コードの攻撃ダメージ▲とフルバースト補正が乗った値",
+    "method": {
+      "tool": "hud.ts --mode jumps と、レシピ buff-edge@5 の --opt grid（増分ごとの当て方）",
+      "note": "f4470 の増分（00.00 は f4393）。窓の中の発の多くが同じ値（コア・会心の格子のほかの値も、バーストの▲の乗った格子に合う）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "fullBurst": 1,
+        "frame": 60,
+        "core": false,
+        "crit": false,
+        "distance": "model"
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
   }
 ]

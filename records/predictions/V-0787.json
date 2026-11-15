@@ -1,6 +1,6 @@
 {
   "verification": "V-0787",
-  "note": "撮影の予測。I-DOLL・フラワー（I）+ デルタ（II）+ マルチャーナ：マリンスタディ（III・操作）。射撃場の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オートバースト ON。撮影 A は電撃、撮影 B は灼熱の敵。20 回命中の数え方の読み（高リスク対象の間だけ数える）は上書きで書けないので、検証記録の「予測」に手で書く",
+  "note": "撮影の予測。I-DOLL・フラワー（I）+ デルタ（II）+ マルチャーナ：マリンスタディ（III・操作）。射撃場の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オートバースト ON。撮影 A は電撃、撮影 B は灼熱の敵。20 回命中の数え方の読み（高リスク対象の間だけ数える）は上書きで書けないので、検証記録の「予測」に手で書く。撮影の後に、比べる観測値と引数をそろえるため、A-fb・A-hr に crit: false を、A-shots・B-shots に core: false・crit: false を足し、B-shots の発を 2・61 発目に替えた（値の求め方は同じ）",
   "team": [
     {
       "rid": 304
@@ -79,13 +79,17 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "condition": "auto"
       },
       "metric": "hitDamageAtShot",
       "args": {
         "slot": 3,
         "shot": "1,61",
+        "core": false,
+        "crit": false,
         "distance": "model"
       },
       "tolerance": {
@@ -98,14 +102,17 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "condition": "auto"
       },
       "metric": "skillHitDamage",
       "args": {
         "slot": 3,
         "trigger": "fullBurstStart",
-        "n": 0
+        "n": 0,
+        "crit": false
       },
       "tolerance": {
         "rel": 0.001
@@ -117,14 +124,17 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "condition": "auto"
       },
       "metric": "skillHitDamage",
       "args": {
         "slot": 3,
         "trigger": "shotCount",
-        "n": 0
+        "n": 0,
+        "crit": false
       },
       "tolerance": {
         "rel": 0.001
@@ -136,7 +146,9 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "condition": "auto"
       },
       "metric": "eventFrames",
@@ -154,26 +166,32 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "condition": "auto"
       },
       "metric": "hitDamageAtShot",
       "args": {
         "slot": 3,
-        "shot": "1,61",
+        "shot": "2,61",
+        "core": false,
+        "crit": false,
         "distance": "model"
       },
       "tolerance": {
         "rel": 0.001
       },
-      "note": "撮影 B（灼熱）のマルチャーナの、1 回目のバーストより前の発の 1 ヒット。有利コードでないので、有利コードの攻撃ダメージ▲は乗らない"
+      "note": "撮影 B（灼熱）のマルチャーナの、1 回目のバーストより前の発（2 発目と 61 発目。1 発目は会心だった）の 1 ヒット。有利コードでないので、有利コードの攻撃ダメージ▲は乗らない"
     },
     {
       "id": "B-hr-count",
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "condition": "auto"
       },
       "metric": "eventCount",
@@ -190,38 +208,106 @@
   ],
   "predicted": {
     "at": "2026-11-15",
-    "commit": "7ae3aff482aa029b1dc006508366121a5b004db2",
+    "commit": "e14f5a8c5e961e1e1f036bb139d94dc6026e2d0f",
     "values": {
       "H1": {
-        "A-shots": [73127.75269527, 73127.75269527],
+        "A-shots": [
+          73127.75269527,
+          73127.75269527
+        ],
         "A-fb": 36944051.00906302,
         "A-hr": 1488584.2074457326,
-        "A-hr-frames": [39, 138, 236, 411, 510, 608, 783, 882, 984, 1160],
-        "B-shots": [56075.2647, 56075.2647],
+        "A-hr-frames": [
+          39,
+          138,
+          236,
+          411,
+          510,
+          608,
+          783,
+          882,
+          984,
+          1160
+        ],
+        "B-shots": [
+          56075.2647,
+          56075.2647
+        ],
         "B-hr-count": 0
       },
       "H-W1": {
-        "A-shots": [36803.388331710004, 36803.388331710004],
+        "A-shots": [
+          36803.388331710004,
+          36803.388331710004
+        ],
         "A-fb": 18593665.432367455,
         "A-hr": 749193.3333018045,
-        "A-hr-frames": [39, 138, 236, 411, 510, 608, 783, 882, 984, 1160],
-        "B-shots": [28221.293100000003, 28221.293100000003],
+        "A-hr-frames": [
+          39,
+          138,
+          236,
+          411,
+          510,
+          608,
+          783,
+          882,
+          984,
+          1160
+        ],
+        "B-shots": [
+          28221.293100000003,
+          28221.293100000003
+        ],
         "B-hr-count": 0
       },
       "H-E0": {
-        "A-shots": [61682.79117, 61682.79117],
+        "A-shots": [
+          61682.79117,
+          61682.79117
+        ],
         "A-fb": 32271674.74747561,
         "A-hr": 1300320.4593110976,
-        "A-hr-frames": [39, 138, 236, 411, 510, 608, 783, 882, 984, 1160],
-        "B-shots": [56075.2647, 56075.2647],
+        "A-hr-frames": [
+          39,
+          138,
+          236,
+          411,
+          510,
+          608,
+          783,
+          882,
+          984,
+          1160
+        ],
+        "B-shots": [
+          56075.2647,
+          56075.2647
+        ],
         "B-hr-count": 0
       },
       "H-HR-all": {
-        "A-shots": [73127.75269527, 73127.75269527],
+        "A-shots": [
+          73127.75269527,
+          73127.75269527
+        ],
         "A-fb": 36944051.00906302,
         "A-hr": 1488584.2074457326,
-        "A-hr-frames": [39, 138, 236, 411, 510, 608, 783, 882, 984, 1160],
-        "B-shots": [56075.2647, 56075.2647],
+        "A-hr-frames": [
+          39,
+          138,
+          236,
+          411,
+          510,
+          608,
+          783,
+          882,
+          984,
+          1160
+        ],
+        "B-shots": [
+          56075.2647,
+          56075.2647
+        ],
         "B-hr-count": 35
       }
     }
