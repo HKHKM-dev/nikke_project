@@ -172,3 +172,25 @@ export function prBody(
     '- （なければ節ごと消す）',
   ].join('\n');
 }
+
+/**
+ * 同じ検証記録の仮説の結論を、まとめて確定にできるか（plan/design-workflow-simplification-15.md 2 節）。候補を全部確定とみなして
+ * evaluate（確定にできない理由を結論ごとに返す）を回し、理由が残ったものを候補から外して、残りが変わらなくなるまで繰り返す。
+ * 確定にできる条件は evaluate（records:close の claimDraft）が決める。ここは、互いに未確定の要素として警告し合う分を外すだけ
+ */
+export function promoteTogether(
+  candidates: readonly string[],
+  evaluate: (assumed: ReadonlySet<string>) => ReadonlyMap<string, readonly string[]>,
+): { promoted: string[]; reasons: Map<string, readonly string[]> } {
+  let assumed = new Set(candidates);
+  const reasons = new Map<string, readonly string[]>();
+  while (assumed.size > 0) {
+    const result = evaluate(assumed);
+    const failing = [...assumed].filter((id) => (result.get(id) ?? []).length > 0);
+    for (const id of failing) reasons.set(id, result.get(id)!);
+    if (failing.length === 0) break;
+    assumed = new Set([...assumed].filter((id) => !failing.includes(id)));
+  }
+  for (const id of assumed) reasons.delete(id);
+  return { promoted: candidates.filter((id) => assumed.has(id)), reasons };
+}

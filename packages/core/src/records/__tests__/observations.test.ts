@@ -17,7 +17,7 @@ import {
   gatedObservations,
   observationIdsIn,
   renderClaims,
-  supportedObservations,
+  claimTieErrors,
   toClaims,
   validateClaims,
   type Claim,
@@ -51,17 +51,6 @@ const residuals = runObservationsCached(observations, recordings, data);
 const claims = loadClaims();
 const invalidReasons = invalidReasonsOf(observations);
 const gated = gatedObservations(claims, new Set(invalidReasons.keys()));
-/**
- * 自動の条件でも、確定の結論に結び付けてよい指標（命中率▲が効くのは自動の条件だけ。design-stage18.md「経過」の 2026-11-03）。
- * 1 ヒットの値はコア・会心を引数で決め、自動の条件で変わるのは着地点で決まる距離ボーナスだけなので、的の表の割合に左右されない
- * （適正最小射程距離▲が効くのは自動の条件だけ。plan/design-agent-bunny.md 10 節）
- */
-const AUTO_GATEABLE_METRICS: ReadonlySet<string> = new Set([
-  'coreHitRate',
-  'bulletHitRate',
-  'hitDamage',
-  'hitDamageAtShot',
-]);
 
 describe('records/observations', () => {
   it('passes validation and each file holds only its own recording', () => {
@@ -87,21 +76,8 @@ describe('records/claims・plan/claims.md', () => {
     expect(validateClaims(claims, new Set(observations.map((o) => o.id)), new Set(invalidReasons.keys()))).toEqual([]);
   });
 
-  it('ties every observation compared under manual conditions to a 確定 or 仮説 claim (Stage 20-A)', () => {
-    // 許容幅の外で落とすのは確定の結論の根拠だけ。仮説の結論の根拠は、残差の一覧に出すだけ（design-stage19.md 2.5 節）
-    const supported = supportedObservations(claims);
-    const manual = residuals.filter((r) => r.observation.compare?.setup.condition !== 'auto');
-    expect(manual.filter((r) => !supported.has(r.observation.id)).map((r) => r.observation.id)).toEqual([]);
-  });
-
-  it('does not gate the totals under automatic conditions by a claim (Stage 18-C)', () => {
-    // 自動の条件での単騎の与ダメージは、残差として並べるだけで結論には結び付けない（design-stage18.md 12.4 節）。
-    // コア命中率・弾丸命中率の指標は、命中率▲が自動の条件でしか効かないので、確定の結論に結び付けてよい（同「経過」の 2026-11-03）
-    const auto = residuals.filter(
-      (r) =>
-        r.observation.compare?.setup.condition === 'auto' && !AUTO_GATEABLE_METRICS.has(r.observation.compare.metric),
-    );
-    expect(auto.filter((r) => gated.has(r.observation.id)).map((r) => r.observation.id)).toEqual([]);
+  it('ties the compared observations to claims by the rules records:check also runs (Stage 20-A・18-C)', () => {
+    expect(claimTieErrors(observations, claims, new Set(invalidReasons.keys()))).toEqual([]);
   });
 
   it('keeps the corrected claims as 棄却', () => {

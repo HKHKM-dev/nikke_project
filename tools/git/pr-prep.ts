@@ -1,7 +1,7 @@
 // PR の前に main を取り込み、生成物を作り直して CI と同じ確認を回す（plan/design-workflow-simplification-4.md 2 節。AGENTS.md「コミット手順」）。
 // 生成物は PR に入れない（main の版に戻して push する。マージの後に GitHub の CI が main で作り直して commit する。plan/design-pr-conflicts.md 3.1 節）。
 //   npm run pr:prep [-- --push] [--no-ci] [--allow-progress]
-// 1. 作業中の変更が無いことと、main の上でないことを確かめ、git fetch origin。
+// 1. 作業中の変更が無いこと（生成物だけの変更は HEAD の版へ戻して進む）と、main の上でないことを確かめ、git fetch origin。
 // 2. ブランチで足した検証記録・結論・録画の ID が main と重なっていたら、リベースの前に止めて records:renumber のコマンドを出す。
 //    課題のファイルで足した 2 節の番号（records/backlog/2-NN.json）が main と重なっていたら、止めて空いた番号を出す。
 //    8 節・8.2 節の課題のファイル（records/backlog/）・段の一覧の経過・設計書の「状態」の行に進み具合を書き写していたら、止めて行を
@@ -118,7 +118,13 @@ const branch = git(['rev-parse', '--abbrev-ref', 'HEAD']);
 
 if (!rebasing()) {
   if (branch === 'main' || branch === 'HEAD') fail('トピックブランチで回す（main の上か、ブランチが無い）');
-  if (git(['status', '--porcelain', '--untracked-files=no']) !== '') fail('作業中の変更がある。commit してから回す');
+  // 生成物だけの変更は PR に入れないので、HEAD の版へ戻して進む（plan/design-workflow-simplification-15.md 4 節）
+  const dirty = splitGenerated(gitPaths(['diff', '--name-only', 'HEAD']), GENERATED_PATHS);
+  if (dirty.other.length > 0) fail(`作業中の変更がある。commit してから回す: ${dirty.other.join('・')}`);
+  if (dirty.generated.length > 0) {
+    git(['checkout', 'HEAD', '--', ...dirty.generated]);
+    console.log(`作業中の生成物の変更を HEAD の版に戻した: ${dirty.generated.join('・')}`);
+  }
   if (tryGit(['fetch', '--quiet', 'origin']) !== 0) fail('git fetch origin が落ちた');
 
   const added = gitPaths(['diff', '--name-only', '--diff-filter=AR', 'origin/main...HEAD', '--', 'records']);
