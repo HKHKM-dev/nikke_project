@@ -28,6 +28,11 @@ import {
 } from './recordings.ts';
 
 export type PredictionMember = {
+  /**
+   * 枠（1〜5、ゲームの枠の順）。空枠を挟む編成で書く（録画の台帳の slot と同じ。空枠は書かない）。書くなら編成の全員に書き、
+   * 省略すると並びの順に 1 枠目から詰める
+   */
+  slot?: number;
   rid: number;
   /** 操作した枠なら true */
   controlled?: boolean;
@@ -210,13 +215,25 @@ function validateTeam(
   const errors: string[] = [];
   if (team.length === 0 || team.length > 5) errors.push(`${at}: 編成は 1〜5 体`);
   for (const m of team) if (!knownRids.has(m.rid)) errors.push(`${at}: rid ${m.rid} のキャラのデータが無い`);
+  const withSlot = team.filter((m) => m.slot !== undefined).length;
+  if (withSlot > 0 && withSlot < team.length) errors.push(`${at}: slot は編成の全員に書くか、全員に書かない`);
   team.forEach((m, i) => {
+    if (withSlot === team.length) {
+      const previous = i === 0 ? 0 : team[i - 1]!.slot!;
+      if (!Number.isInteger(m.slot) || m.slot! <= previous || m.slot! > 5)
+        errors.push(`${at}: 枠は 1〜5 の整数で、小さい順に並べる（${i + 1} 番目が ${m.slot}）`);
+    }
     if (m.build === undefined) return;
     if (fixedSpec === true) errors.push(`${at}: 育成（build）はスペック固定 OFF の予測にだけ書く`);
-    errors.push(...validateRecordingBuild(m.build, `${at} 枠 ${i + 1}`));
+    errors.push(...validateRecordingBuild(m.build, `${at} 枠 ${slotOf(m, i)}`));
   });
   if (team.filter((m) => m.controlled === true).length > 1) errors.push(`${at}: 操作した枠が 2 つ以上ある`);
   return errors;
+}
+
+/** 予測の編成の枠（slot を省略した編成は並びの順に 1 枠目から） */
+function slotOf(member: PredictionMember, index: number): number {
+  return member.slot ?? index + 1;
 }
 
 /** 予測ファイルに出てくる rid（ファイルの team と指標の team。データの読み込みに使う） */
@@ -251,7 +268,7 @@ function asRecording(
   suffix = '',
 ): LegacyRecording {
   const team: RecordingMember[] = members.map((m, i) => ({
-    slot: i + 1,
+    slot: slotOf(m, i),
     rid: m.rid,
     name: String(m.rid),
     controlled: m.controlled ?? false,
