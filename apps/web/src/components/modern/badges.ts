@@ -34,6 +34,8 @@ const BADGE_SVGS = import.meta.glob<string>(
     '../../assets/badges/ui_window.svg',
     '../../assets/badges/ui_return.svg',
     '../../assets/badges/ui_account.svg',
+    '../../assets/badges/ui_delete.svg',
+    '../../assets/badges/ui_setting.svg',
   ],
   { eager: true, query: '?raw', import: 'default' },
 );
@@ -91,6 +93,9 @@ export const FAVORITE_COUNT_BADGE = badgeName('ui_blank_main');
 
 /** 元に戻すのボタン（ModernView）と、ニケ一覧の絞り込みを外すボタン（CharacterTray）のバッジ */
 export const RETURN_BADGE = badgeName('ui_return');
+/** スロットの立ち絵の右上の、空にするボタンと育成・設定のボタン（ModernSlotCard）のバッジ */
+export const DELETE_BADGE = badgeName('ui_delete');
+export const BUILD_BADGE = badgeName('ui_setting');
 
 /**
  * コレクションのバッジ。ニケ一覧の宝物の絞り込みのボタンと、スロット・ニケ一覧のコレクション（collectionBadge）が同じ絵を使い、

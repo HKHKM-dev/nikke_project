@@ -892,30 +892,33 @@ svg.settings-menu-icon {
   display: inline-flex;
   cursor: grabbing;
 }
-/* 立ち絵の右上に重ねるボタン（上から、空にする ✕・育成と設定の ⚙）。置き先待ちの水色の重ね・◎ より上 */
+/* 立ち絵の右上に重ねるボタン（上から、空にする（バッジ ui_delete）・育成と設定（バッジ ui_setting））。置き先待ちの水色の重ね・◎ より上。
+   ボタンの枠と地は出さず、バッジの絵（縦横 130:150）だけにする */
 .modern-slot-icon-button {
   position: absolute;
   right: 3px;
   z-index: 4;
   width: 22px;
-  height: 22px;
+  height: calc(22px * 150 / 130);
   padding: 0;
   display: grid;
   place-items: center;
   border: none;
   border-radius: 0;
-  background: rgba(0, 0, 0, 0.55);
-  color: #fff;
-  font-size: 0.8rem;
-  line-height: 1;
+  background: none;
+  box-shadow: none;
   cursor: pointer;
+}
+.modern-slot-icon {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .modern-slot-clear-button {
   top: 3px;
 }
 .modern-slot-build-button {
-  top: 28px;
-  font-size: 0.95rem;
+  top: 30px;
 }
 
 /* カードボディ・キャラ表示 */
@@ -1046,7 +1049,9 @@ svg.settings-menu-icon {
 .badge-collection_plain.badge-variant-max {
   --badge-ground: initial;
 }
-/* ⓘ の文字・操作キャラの印・設定とアカウントのボタンの図柄・元に戻すの矢印（差し色）は白にする */
+/* ⓘ の文字・操作キャラの印・設定とアカウントのボタンの図柄・元に戻すの矢印・スロットの空にする ✕ と育成・設定の歯車（差し色）は白にする */
+.badge-ui_delete,
+.badge-ui_setting,
 .badge-ui_information,
 .badge-ui_controller,
 .badge-ui_window,

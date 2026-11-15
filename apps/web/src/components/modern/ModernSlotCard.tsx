@@ -3,7 +3,7 @@ import type { CharacterData, CharacterIndexEntry } from '@nikke/core';
 import type { SlotResultView } from '../../calcView.ts';
 import { formatDamage } from '../../format.ts';
 import { BadgeIcon } from './BadgeIcon.tsx';
-import { CONTROLLER_BADGE, type Badge } from './badges.ts';
+import { BUILD_BADGE, CONTROLLER_BADGE, DELETE_BADGE, type Badge } from './badges.ts';
 import selectionCircle from '../../assets/badges/ui_selection_circle.svg';
 import selectionTriangle from '../../assets/badges/ui_selection_triangle.svg';
 import { CharacterVisual } from './CharacterVisual.tsx';
@@ -146,7 +146,7 @@ export function ModernSlotCard({
                 onMouseDown={(e) => e.stopPropagation()}
                 onTouchStart={(e) => e.stopPropagation()}
               >
-                ✕
+                <BadgeIcon className="modern-slot-icon" name={DELETE_BADGE} />
               </button>
               <button
                 type="button"
@@ -160,7 +160,7 @@ export function ModernSlotCard({
                 onMouseDown={(e) => e.stopPropagation()}
                 onTouchStart={(e) => e.stopPropagation()}
               >
-                ⚙
+                <BadgeIcon className="modern-slot-icon" name={BUILD_BADGE} />
               </button>
             </>
           ) : (
