@@ -26,7 +26,9 @@ describe('renderResidualChanges', () => {
       [residual('0001-01', 10, 'ok'), residual('0001-02', 10, 'ok'), residual('0001-03', 10, 'ok')],
       [residual('0001-01', 10, 'ok'), residual('0001-02', 12, 'outside'), residual('0001-04', 9, 'ok')],
     );
-    expect(lines[0]).toBe('比べた観測値 3 件（基の版 3 件）のうち、予測か判定が変わった 3 件（判定が変わった 3 件）');
+    expect(lines[0]).toBe(
+      '比べた観測値 3 件（基の版 3 件）のうち、予測か判定が変わった 3 件（両方にあって判定が変わった 1 件）',
+    );
     const rows = lines.slice(4);
     expect(rows.map((r) => r.split(' | ')[0])).toEqual(['| 0001-02', '| 0001-04', '| 0001-03']);
     expect(rows[0]).toContain('10 → 12');
@@ -36,7 +38,7 @@ describe('renderResidualChanges', () => {
 
   it('prints only the count when nothing changed', () => {
     expect(renderResidualChanges([residual('0001-01', 10, 'ok')], [residual('0001-01', 10, 'ok')])).toEqual([
-      '比べた観測値 1 件（基の版 1 件）のうち、予測か判定が変わった 0 件（判定が変わった 0 件）',
+      '比べた観測値 1 件（基の版 1 件）のうち、予測か判定が変わった 0 件（両方にあって判定が変わった 0 件）',
     ]);
   });
 });

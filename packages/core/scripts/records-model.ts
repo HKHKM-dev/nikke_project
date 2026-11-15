@@ -51,8 +51,9 @@ function parseSpecs(texts: readonly string[]): { metric: string; args: Record<st
   return texts.flatMap((text) => {
     const at = text.indexOf(':{');
     if (at < 0) return splitIds(text).map((metric) => ({ metric, args: {}, text: metric }));
-    const metric = text.slice(0, at);
-    return [{ metric, args: parseObject(text.slice(at + 1), metric), text }];
+    // 指標,指標:{args} は、どの指標にも args を重ねる
+    const args = parseObject(text.slice(at + 1), text.slice(0, at));
+    return splitIds(text.slice(0, at)).map((metric) => ({ metric, args, text: `${metric}${text.slice(at)}` }));
   });
 }
 

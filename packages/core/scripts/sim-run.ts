@@ -64,6 +64,8 @@ import type { EnemyInput } from '../src/damage.ts';
 import { framesToGameSeconds, gameSecondsToFrame } from '../src/time.ts';
 
 const DATA_DIR = join(import.meta.dirname, '../data');
+/** --trace の種類 */
+const TRACE_KINDS = ['shots', 'bursts', 'buffs', 'hits', 'instants'] as const;
 const OBSERVATIONS_DIR = join(import.meta.dirname, '../../../records/observations');
 
 /** 効果の値（比は %、固定値はそのまま。発動者の防御力の比は、分かれば掛けた後の量も） */
@@ -537,8 +539,8 @@ if (values.trace !== undefined) {
   printTrace(
     sim.events,
     values.trace,
-    values.from === undefined ? 0 : gameSecondsToFrame(Number(values.from)),
-    values.to === undefined ? Infinity : gameSecondsToFrame(Number(values.to)),
+    values.from === undefined ? 0 : gameSecondsToFrame(seconds(values.from, '--from')),
+    values.to === undefined ? Infinity : gameSecondsToFrame(seconds(values.to, '--to')),
   );
   process.exit(0);
 }
@@ -885,7 +887,17 @@ function compactTimed<
   return out;
 }
 
-type TraceKind = 'shots' | 'bursts' | 'buffs' | 'hits' | 'instants';
+type TraceKind = (typeof TRACE_KINDS)[number];
+
+/** --from・--to の秒（数でなければ止める） */
+function seconds(text: string, name: string): number {
+  const v = Number(text);
+  if (text.trim() === '' || !Number.isFinite(v) || v < 0) {
+    console.error(`${name} は 0 以上の秒（数）: ${text}`);
+    process.exit(2);
+  }
+  return v;
+}
 
 /** 出来事の種類 → --trace の種類（即時効果の種類は instants） */
 function traceKindOf(e: SimEvent): TraceKind {
@@ -933,8 +945,13 @@ function traceText(e: SimEvent, shot: number): string {
 
 /** 出来事の列を 1 行ずつ出す（--trace）。枠は 1 始まり。発の番号は枠ごとに 1 始まり（観測値の hitDamageAtShot の shot と同じ数え方） */
 function printTrace(events: readonly SimEvent[], kinds: string, start: number, end: number): void {
-  const known: readonly string[] = ['shots', 'bursts', 'buffs', 'hits', 'instants'];
-  const wanted = new Set(kinds.split(',').map((k) => k.trim()));
+  const known: readonly string[] = TRACE_KINDS;
+  const wanted = new Set(
+    kinds
+      .split(',')
+      .map((k) => k.trim())
+      .filter((k) => k !== ''),
+  );
   const unknown = [...wanted].filter((k) => k !== 'all' && !known.includes(k));
   if (unknown.length > 0) {
     console.error(`--trace の種類が無い: ${unknown.join(',')}（${known.join('・')}・all）`);

@@ -194,7 +194,7 @@ export function renderResidualChanges(base: readonly Residual[], head: readonly 
     const b = shown(br);
     const a = shown(ar);
     if (b.predicted === a.predicted && b.status === a.status) continue;
-    if (b.status !== a.status) statusChanged++;
+    if (br !== undefined && ar !== undefined && b.status !== a.status) statusChanged++;
     const o = (ar ?? br)!.observation;
     rows.push(
       `| ${[
@@ -208,7 +208,7 @@ export function renderResidualChanges(base: readonly Residual[], head: readonly 
     );
   }
   return [
-    `比べた観測値 ${head.length} 件（基の版 ${base.length} 件）のうち、予測か判定が変わった ${rows.length} 件（判定が変わった ${statusChanged} 件）`,
+    `比べた観測値 ${head.length} 件（基の版 ${base.length} 件）のうち、予測か判定が変わった ${rows.length} 件（両方にあって判定が変わった ${statusChanged} 件）`,
     ...(rows.length === 0
       ? []
       : [

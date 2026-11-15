@@ -28,7 +28,7 @@ function lookup(key: string): CharacterData[] {
     return c === undefined ? [] : [c];
   }
   const k = key.toLowerCase();
-  const names = (c: CharacterData) => [c.name.ja, c.name.en.toLowerCase()];
+  const names = (c: CharacterData) => [c.name.ja.toLowerCase(), c.name.en.toLowerCase()];
   const exact = characters.filter((c) => names(c).includes(k));
   return exact.length > 0 ? exact : characters.filter((c) => names(c).some((n) => n.includes(k)));
 }

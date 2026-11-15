@@ -3,8 +3,9 @@
 //         npm run records:residual -- --all [--base <ref>]
 // 引いた観測値（--all で全部）のうち比べるものはモデルと比べて residuals.md と同じ列で、比べないものは値を出す。
 // --base <ref>（origin/main など）は、その版を一時の worktree に取り出し、その版のコードとデータで同じ観測値を回して、予測か判定が
-// 変わった行だけを出す（コード・データを変えた PR の前後比べ。plan/design-workflow-simplification-15.md 5 節）。依存と予測値の覚え
-// （residual-cache.ts）は今の作業ツリーのものを使うので、基の版の予測値も覚えに残る。
+// 変わった行だけを出す（コード・データを変えた PR の前後比べ。plan/design-workflow-simplification-15.md 5 節）。基の版の records-data.ts・
+// residual-cache.ts を同じプロセスで読むので、その 2 つの入口の形が今と同じ版とだけ比べられる。依存（node_modules）と予測値の覚えの
+// 置き場所（node_modules/.cache/residuals/）は今の作業ツリーのものを使うので、基の版の予測値も覚えに残る。
 import { spawnSync } from 'node:child_process';
 import { mkdtempSync, rmSync, symlinkSync, unlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -65,6 +66,11 @@ if (values.base !== undefined) {
     const base = await residualsOf(dir);
     console.log(`${values.base} と比べた:`);
     console.log(renderResidualChanges(base.residuals, residuals).join('\n'));
+  } catch (e) {
+    console.error(
+      `${values.base} の版を回せなかった（records-data.ts・residual-cache.ts の入口の形が今と違う版とは比べられない）: ${(e as Error).message}`,
+    );
+    process.exitCode = 1;
   } finally {
     // リンクを先に外す（worktree を消すときに、リンクの先の node_modules に触れないように）
     try {
