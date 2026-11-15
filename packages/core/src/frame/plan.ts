@@ -1198,8 +1198,8 @@ function withSameActivationEffects(
     if (w.start < activationFrame || w.start > at || w.end <= at) continue;
     if (isStateStat(w.effect.stat) || isEnemyHeldStat(w.effect.stat)) continue;
     if (isWeaponPiece(w)) continue;
-    if (!isFixedAttackScaling(w.effect.scaling) || w.stack !== undefined)
-      assertPlainTimed(w, 'same-activation buffs on a burst hit');
+    const attackBased = w.effect.scaling === 'casterAttack' || w.effect.scaling === 'copyTopAttack';
+    if (!attackBased || w.stack !== undefined) assertPlainTimed(w, 'same-activation buffs on a burst hit');
     const base = fixedAttackBaseOf(w.effect, slots[slotIndex]?.casterBaseAttack ?? 0, slots);
     out = applyResolvedEffect(out, w.effect, base).totals;
   }

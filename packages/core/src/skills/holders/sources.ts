@@ -7,6 +7,7 @@ import { resolveDotEffects } from '../burstDamage.ts';
 import { type ChanceOpportunity } from '../chance.ts';
 import { resolveCycleEvery } from '../cycles.ts';
 import {
+  isRecordTriggered,
   isResolvedApplied,
   isResolvedSelfHpAtMost,
   isResolvedChance,
@@ -25,6 +26,7 @@ import {
   resolveTimed,
   resolveWhileEffects,
   type ResolvedInstantEffect,
+  type ResolvedTimedEffect,
   type ResolvedShotCountTrigger,
   isHpWhileEffect,
   resolveCounterWhileEffects,
@@ -171,6 +173,7 @@ function createTimedSources(
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const effect of resolveTimed(slot.definition, slot.character, slot.levels)) {
+      assertHeldTargetSupported(effect);
       const stage = isResolvedApplied(effect.trigger) ? appliedStageOf(effect.trigger.applied) : stageOfTimed(effect);
       if (stage === 2.5) {
         amplifiers.push({ sourceSlotIndex, effect, starts: [] });
@@ -377,6 +380,24 @@ function createRemoveDebuffSources({ firesOf, slots }: SourceDeps): RemoveDebuff
     }
   });
   return removeDebuffSources;
+}
+
+/**
+ * 時間で変わる〈状態〉の味方の対象（targetStateHeld）は、段 1.5・2 の timed の発火の文脈（stateHolders）で決める
+ * （plan/design-rei-tentative.md 2.2 節）。文脈の入らない経路（確率のきっかけ・付いた記録のきっかけ・強化・敵の件の効果）は使い手が
+ * いないので、黙って誰にも掛けずに通さず落とす
+ */
+function assertHeldTargetSupported(effect: ResolvedTimedEffect): void {
+  if (effect.targetStateHeld !== true) return;
+  if (
+    isResolvedChance(effect.trigger) ||
+    isRecordTriggered(effect.trigger) ||
+    effect.amplifies !== undefined ||
+    isEnemyEffect(effect)
+  )
+    throw new RangeError(
+      `${effect.source.skill}[${effect.effectIndex}]: a target state that changes over time is supported only for timed effects fired by events on allies`,
+    );
 }
 
 /** スタック量の増減（足す・減らす先は、同じ定義の付与の状態の、自分の件の列。plan/design-skill-stage3.md 1.1・1.5 節） */

@@ -3,6 +3,7 @@
 import { describe, expect, it } from 'vitest';
 import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { applyComposition, grantedStatesOf, isHeldTargetState } from '../composition.ts';
+import { isEffectTarget } from '../targets.ts';
 import { MAX_SKILL_LEVELS, resolveDotStackUps, resolveEnemyStackUps } from '../resolve.ts';
 import { parseSkillDefinition, type SkillEffect } from '../types.ts';
 
@@ -72,5 +73,26 @@ describe('時間で変わる状態の味方（編成）', () => {
     const e = definition.skills.skill1.effects[HELD]!;
     expect(isHeldTargetState(e, [undefined, ['annihilationState']], new Set(['annihilationState']))).toBe(false);
     expect(isHeldTargetState(e, [], new Set(['annihilationState']))).toBe(true);
+  });
+});
+
+describe('時間で変わる状態の味方（発火の文脈）', () => {
+  const slot = { weaponType: 'AR', element: 'Wind' } as const;
+  const effect = {
+    target: 'allies',
+    targetState: 'annihilationState',
+    targetStateHeld: true,
+    fixedTargets: [0, 1, 2, 3],
+  } as const;
+
+  it('targets only the slots holding the state at the fire frame', () => {
+    const context = { stateHolders: [2] };
+    expect([0, 1, 2, 3].filter((i) => isEffectTarget(effect, 3, i, slot, context))).toEqual([2]);
+  });
+
+  it('targets nobody without the fire context, and adds the source with includeSelf', () => {
+    expect([0, 1, 2, 3].filter((i) => isEffectTarget(effect, 3, i, slot))).toEqual([]);
+    const withSelf = { ...effect, includeSelf: true } as const;
+    expect([0, 1, 2, 3].filter((i) => isEffectTarget(withSelf, 3, i, slot, { stateHolders: [2] }))).toEqual([2, 3]);
   });
 });

@@ -344,7 +344,10 @@ export function createFire({
     const enemyState = src.kind === 'enemyState' ? src.effect.state : undefined;
     src.tracks ??= tracks.filter((t) =>
       src.kind === 'enemyState'
-        ? t.holder === ENEMY && t.origin.kind === 'state' && t.origin.state === enemyState
+        ? t.holder === ENEMY &&
+          t.origin.kind === 'state' &&
+          t.origin.state === enemyState &&
+          t.origin.grant.stackImmutable !== true
         : src.targets.includes(t.holder) && isStackableBuffTrack(t),
     );
     for (const track of src.tracks) {

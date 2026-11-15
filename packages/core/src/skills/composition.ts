@@ -433,7 +433,9 @@ export function applyComposition(
           return e;
         }
         slotChanged = true;
-        return { ...e, fixedTargets: fixed, ...(held && { targetStateHeld: true as const }) };
+        // 前の組み立ての印は、この編成で決め直す
+        const { targetStateHeld: _, ...rest } = e as SkillEffect & { targetStateHeld?: true };
+        return { ...rest, fixedTargets: fixed, ...(held && { targetStateHeld: true as const }) } as SkillEffect;
       });
     if (!slotChanged && effects.length === entry.effects.length) continue;
     changed = true;
