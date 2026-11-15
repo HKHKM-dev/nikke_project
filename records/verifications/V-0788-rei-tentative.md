@@ -6,7 +6,7 @@
 - Stage: [plan/design-rei-tentative.md](../../plan/design-rei-tentative.md)（キャラ毎の調査）
 - 録画: `1212`、`1213`、`1214`
 - 結論: `C-1295`、`C-1296`、`C-1297`、`C-1298`、`C-1299`、`C-1300`
-- 状態: 調査中
+- 状態: 完了
 
 ## 条件
 
