@@ -147,7 +147,8 @@
             "en": "Emergency Repair \"reload speed fixed at +60%\" (for 1 round). The only reload inside that 1-round window is the one started by the ammo removal, so it is written as lasting until that reload completes. While fixed, other reload speed changes (including gear and cubes) are not added (plan/design-stat-lock.md 3.1; gear and cubes are unverified)"
           },
           "claims": [
-            "C-1268"
+            "C-1268",
+            "C-1340"
           ],
           "lock": true
         }

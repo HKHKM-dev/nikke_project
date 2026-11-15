@@ -150,7 +150,8 @@
             "en": "\"Reload speed fixed at +value 05 (95)%\" (10 s): reload time × (1 − value) (C-0013). While fixed, other reload speed changes (including gear and cubes) are not added (plan/design-stat-lock.md 3.1; gear and cubes are unverified)"
           },
           "claims": [
-            "C-1192"
+            "C-1192",
+            "C-1339"
           ],
           "lock": true
         }

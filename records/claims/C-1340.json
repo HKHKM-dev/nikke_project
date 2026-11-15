@@ -4,8 +4,8 @@
   "state": "確定",
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
-  "basis": "`1237-06`。V-0800",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "basis": "`1237-06`（4 回のフルバーストの殲滅態勢の終わりの込め。78・80・79・83f。込め終わりの表示は最後の発の 66〜71f 後）。モデル（固定）の 79f と許容内。足し合わせなら 25f（V-0800 の予測）。V-0800",
+  "model": "反映（data/skills/835.json の skill2 の effects[3] の lock。plan/design-stat-lock.md）",
   "replaces": [],
   "updated": "2026-11-15",
   "subject": {

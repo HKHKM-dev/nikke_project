@@ -73,5 +73,36 @@
     },
     "source": "V-0800",
     "readAt": "2026-11-15"
+  },
+  {
+    "id": "1237-06",
+    "recording": "1237",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "value": 79,
+    "description": "アスカ：WILLE の緊急修復（殲滅態勢の終わりの残弾数減少）の込めの、最後の発から次の発まで（クラウンの S1 のリロード速度▲の窓の中。4 回の中央値）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の左の残弾）",
+      "note": "最後の発は、殲滅態勢の終わりの前で残弾が読めた最後のフレーム（0 の表示はリロードで暗くなり読めない）、次の発は 300 の次に 299 になったフレーム。フルバーストの 00.00（1237-03）ごとに: 2194 → 2272（78f）、5120 → 5200（80f）、7931 → 8010（79f）、10830 → 10913（83f。最後の発の前の数フレームが読めない）。300 の表示（込め終わり）は最後の発の 66・68・67・71f 後。1 回目で決め、2〜4 回目で再現した。足し合わせなら込めが 0 秒で 25f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "reloadToNextShotAt",
+      "args": {
+        "slot": 3,
+        "frame": 1372
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0800",
+    "readAt": "2026-11-15"
   }
 ]
