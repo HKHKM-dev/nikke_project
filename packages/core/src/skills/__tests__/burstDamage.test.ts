@@ -128,7 +128,7 @@ describe('slotBurstHit', () => {
     character,
     growth: { level: 1, grade: 0, core: 0 },
     enemy,
-    condition: { coreHitRate: 1, distanceBonus: true, fullCharge: true },
+    condition: { coreHitRate: 1, distanceBonus: true },
     buffs: { ...ZERO_BUFFS, attackRatio: 0.3, critRate: 0.05, attackDamage: 0.3 },
   });
 
@@ -166,7 +166,7 @@ describe('slotBurstHit（防御力無視のバーストスキルダメージ）'
     character,
     growth: { level: 1, grade: 0, core: 0 },
     enemy,
-    condition: { coreHitRate: 1, distanceBonus: true, fullCharge: true },
+    condition: { coreHitRate: 1, distanceBonus: true },
     buffs,
   });
 

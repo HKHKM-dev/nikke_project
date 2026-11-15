@@ -30,7 +30,7 @@ function fixedSlot(id: number): TeamSlotInput {
     character: c,
     growth: fixed.growth,
     attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+    condition: { coreHitRate: 1, distanceBonus: false },
   };
   if (DEFINED.has(id)) {
     slot.skills = {

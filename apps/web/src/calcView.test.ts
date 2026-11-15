@@ -73,7 +73,7 @@ describe('buildCalcView: inputs removed from the screen', () => {
     s = teamReducer(s, {
       type: 'setSlotCondition',
       index: 0,
-      condition: { coreHitRate: 0.3, distanceBonus: false, fullCharge: false, hitRate: 0.5 },
+      condition: { coreHitRate: 0.3, distanceBonus: false, hitRate: 0.5 },
     });
     s = teamReducer(s, { type: 'setHpRatio', index: 0, hpRatio: 0.4 });
     s = teamReducer(s, { type: 'setBuild', index: 0, build: { ...s.slots[0]!.build, affectionRank: 20 } });

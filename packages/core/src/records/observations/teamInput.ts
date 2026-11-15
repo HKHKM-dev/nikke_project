@@ -150,7 +150,6 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
   const condition = {
     coreHitRate: setup.coreHitRate ?? 1,
     distanceBonus: setup.distanceBonus ?? true,
-    fullCharge: true,
     hitRate: setup.hitRate ?? 1,
   };
   // 枠は台帳の slot の位置に置き、空枠は null にする（両隣・後列は TeamInput.slots の添字で決まる。plan/design-rouge.md 2.1 節）

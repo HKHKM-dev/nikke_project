@@ -218,7 +218,7 @@ describe('使用武器変更の終わりのずれ', () => {
           growth: fixed.growth,
           attackOverride: fixed.attack,
           hpOverride: computeFixedSpecHp(c),
-          condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+          condition: { coreHitRate: 1, distanceBonus: false },
           skills: { definition: parseSkillDefinition(definition), levels: MAX_SKILL_LEVELS },
         },
       ],

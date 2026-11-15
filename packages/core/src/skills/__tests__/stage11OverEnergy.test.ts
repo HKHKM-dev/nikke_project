@@ -94,7 +94,7 @@ describe('ラプラス：アルティメットヒーローの S2（V-0529）', (
     growth: fixed.growth,
     attackOverride: fixed.attack,
     hpOverride: computeFixedSpecHp(c),
-    condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+    condition: { coreHitRate: 1, distanceBonus: false },
     skills: { definition: definitionOf(LAPLACE), levels: MAX_SKILL_LEVELS },
   };
   const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };

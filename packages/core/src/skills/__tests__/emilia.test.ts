@@ -118,7 +118,7 @@ describe('damageType fixedShare（plan/design-emilia.md 2.2 節）', () => {
     // 射撃ごとの倍率ダメージの列には入らず、比率の和で渡す
     expect(perShot).toEqual([]);
     expect(fixedShare).toBeCloseTo(0.5899, 12);
-    const condition = { coreHitRate: 0.5, distanceBonus: false, fullCharge: true, hitRate: 1 };
+    const condition = { coreHitRate: 0.5, distanceBonus: false, hitRate: 1 };
     const t = computeTriggerDamage({ ...input, condition });
     expect(t.perShot).toBe(0);
     expect(t.fixedShare).toBeCloseTo(t.normal * 0.5899, 6);
@@ -128,9 +128,14 @@ describe('damageType fixedShare（plan/design-emilia.md 2.2 節）', () => {
   });
 
   it('does not occur on uncharged or partially charged shots', () => {
-    const condition = { coreHitRate: 0.5, distanceBonus: false, fullCharge: false, hitRate: 1 };
-    expect(computeTriggerDamage({ ...input, condition }).fixedShare).toBe(0);
-    const full = computeTriggerDamage({ ...input, condition: { ...condition, fullCharge: true } });
+    const condition = { coreHitRate: 0.5, distanceBonus: false, hitRate: 1 };
+    // チャージしない武器に替えた区間の発
+    const uncharged = { id: 'x', hits: 1, shot: { ...emilia.shot, chargeTime: 0 } };
+    expect(computeTriggerDamage({ ...input, buffs: { ...input.buffs, weapon: uncharged }, condition }).fixedShare).toBe(
+      0,
+    );
+    const full = computeTriggerDamage({ ...input, condition });
+    expect(full.fixedShare).toBeGreaterThan(0);
     const partial = partialChargeTriggerDamage(full, 0.5);
     expect(partial.fixedShare).toBe(0);
     expect(partial.perTrigger).toBeCloseTo(partial.normal + partial.perShot, 6);

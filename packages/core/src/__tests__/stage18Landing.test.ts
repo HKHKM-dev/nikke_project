@@ -53,7 +53,7 @@ const master = parseEnemyPresets(raw);
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
 const preset = master.enemies.find((e) => e.id === 'range-bigarms-fire')!;
 
-const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: true, fullCharge: true, hitRate: 1 };
+const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: true, hitRate: 1 };
 /** 命中率▲だけの和 */
 const upOnly = (n: number): HitRateN => ({ n, up: n });
 /** 命中率▼だけの和 */
@@ -716,7 +716,7 @@ describe('編成（自動の条件）', () => {
   it('uses the initial landing (中近) without the 3-minute mode, and matches the manual 中近 condition', () => {
     const calc = runTeam(input(team(true), enemy({ events: false })));
     expect(calc.landings).toEqual([{ start: 0, end: battleSecondsToFrames(180), landing: 'midNear', band: 'midNear' }]);
-    const midNear: SlotCondition = { coreHitRate: 0.2281, distanceBonus: true, fullCharge: true, hitRate: 0.9963 };
+    const midNear: SlotCondition = { coreHitRate: 0.2281, distanceBonus: true, hitRate: 0.9963 };
     const manual = runTeam(
       input([slot(weapon('AR', { min: 25, max: 45 }, 1), false, { condition: midNear })], enemy({ events: false })),
     );

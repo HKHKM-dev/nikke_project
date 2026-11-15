@@ -99,7 +99,7 @@ describe('ニアフェザー（単騎・バーストなし。アインの定義�
     growth: fixed.growth,
     attackOverride: fixed.attack,
     hpOverride: computeFixedSpecHp(character),
-    condition: { coreHitRate: 0, distanceBonus: false, fullCharge: false },
+    condition: { coreHitRate: 0, distanceBonus: false },
     skills: { definition: parseSkillDefinition(definition), levels: MAX_SKILL_LEVELS },
   };
   const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
@@ -139,7 +139,7 @@ describe('ニアフェザー（バーストあり。リター + デルタ + ア�
       growth: fixed.growth,
       attackOverride: fixed.attack,
       hpOverride: computeFixedSpecHp(c),
-      condition: { coreHitRate: 0, distanceBonus: false, fullCharge: false },
+      condition: { coreHitRate: 0, distanceBonus: false },
       skills: {
         definition: parseSkillDefinition(readJson(`../../../data/skills/${id}.json`)),
         levels: MAX_SKILL_LEVELS,

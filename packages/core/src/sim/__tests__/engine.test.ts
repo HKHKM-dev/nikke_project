@@ -12,7 +12,7 @@ import { FIXED_BURST_CYCLE } from '../../burst/fixedCycle.ts';
 import { battleSecondsToFrames, gameSecondsToFrames } from '../../time.ts';
 
 const enemy: EnemyInput = { defence: 100, element: 'Wind', hasCore: true };
-const condition: SlotCondition = { coreHitRate: 1, distanceBonus: true, fullCharge: true };
+const condition: SlotCondition = { coreHitRate: 1, distanceBonus: true };
 const growth = { level: 1, grade: 0, core: 0 };
 const tenLevels = (v: string) => Array.from({ length: 10 }, () => v);
 const empty: SkillRaw = { id: 0, name: { ja: '', en: '' }, description: { ja: '', en: '' }, values: [] };

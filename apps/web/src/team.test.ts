@@ -164,7 +164,7 @@ describe('parseTeamState', () => {
     s = teamReducer(s, {
       type: 'setSlotCondition',
       index: 0,
-      condition: { coreHitRate: 0.4, distanceBonus: false, fullCharge: true },
+      condition: { coreHitRate: 0.4, distanceBonus: false },
     });
     s = teamReducer(s, { type: 'setFixedSpec', fixedSpec: true });
     expect(parseTeamState(serializeTeamState(s), index)).toEqual(s);
@@ -189,7 +189,7 @@ describe('parseTeamState', () => {
     expect(parseTeamState(serializeTeamState(dup), index)).toBeNull();
 
     const badRate = withCharacters([10]);
-    badRate.slots[0]!.condition = { coreHitRate: 1.5, distanceBonus: true, fullCharge: true };
+    badRate.slots[0]!.condition = { coreHitRate: 1.5, distanceBonus: true };
     expect(parseTeamState(serializeTeamState(badRate), index)).toBeNull();
 
     const badElement = { ...initialTeamState(), enemy: { defence: 100, element: 'Plasma', hasCore: true } };
@@ -512,6 +512,17 @@ describe('hit rate (Stage 15)', () => {
       expect(parseTeamState(JSON.stringify(raw), index), String(bad)).toBeNull();
     }
   });
+
+  it('reads the fullCharge of old saved data and drops it (charge weapons always fully charge)', () => {
+    const s = withCharacters([10, 20]);
+    const raw = JSON.parse(serializeTeamState(s)) as { slots: { condition: Record<string, unknown> }[] };
+    expect(raw.slots[0]!.condition).not.toHaveProperty('fullCharge');
+    raw.slots[0]!.condition.fullCharge = false;
+    raw.slots[1]!.condition.fullCharge = true;
+    const parsed = parseTeamState(JSON.stringify(raw), index);
+    expect(parsed).toEqual(s);
+    expect(parsed?.slots[0]?.condition).not.toHaveProperty('fullCharge');
+  });
 });
 
 describe('condition mode (Stage 18-C2)', () => {
@@ -534,11 +545,11 @@ describe('condition mode (Stage 18-C2)', () => {
     };
     raw.formatVersion = 1;
     const conditions = [
-      { coreHitRate: 1, distanceBonus: true, fullCharge: true, hitRate: 1 },
-      { coreHitRate: 1, distanceBonus: true, fullCharge: false },
-      { coreHitRate: 0.4, distanceBonus: true, fullCharge: true, hitRate: 1 },
-      { coreHitRate: 1, distanceBonus: false, fullCharge: true, hitRate: 1 },
-      { coreHitRate: 1, distanceBonus: true, fullCharge: true, hitRate: 0.8 },
+      { coreHitRate: 1, distanceBonus: true, hitRate: 1 },
+      { coreHitRate: 1, distanceBonus: true },
+      { coreHitRate: 0.4, distanceBonus: true, hitRate: 1 },
+      { coreHitRate: 1, distanceBonus: false, hitRate: 1 },
+      { coreHitRate: 1, distanceBonus: true, hitRate: 0.8 },
     ];
     raw.slots.forEach((slot, i) => {
       delete slot.conditionMode;

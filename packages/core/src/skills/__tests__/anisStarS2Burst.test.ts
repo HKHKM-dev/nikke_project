@@ -99,7 +99,7 @@ describe('アニス：スター（17）の S2 とバースト', () => {
       enemy: { defence: 100, element: null, hasCore: true },
       attackOverride: 100000,
       buffs,
-      condition: { coreHitRate: 0, distanceBonus: false, fullCharge: true },
+      condition: { coreHitRate: 0, distanceBonus: false },
     });
     const withExplosion = computeSkillHit(
       [star!],

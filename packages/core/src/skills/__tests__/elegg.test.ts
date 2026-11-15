@@ -41,7 +41,7 @@ function solo(definition: SkillDefinition): TeamInput {
         character: elegg,
         growth: fixed.growth,
         attackOverride: fixed.attack,
-        condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+        condition: { coreHitRate: 1, distanceBonus: false },
         skills: { definition, levels: MAX_SKILL_LEVELS },
       },
     ],
@@ -81,7 +81,7 @@ function slotOf(id: number): TeamInput['slots'][number] {
     character: c,
     growth: fixed.growth,
     attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+    condition: { coreHitRate: 1, distanceBonus: false },
   };
   const definition =
     id === 500 ? def : parseSkillDefinition(readJson<unknown>(`../../../data/skills/${id}.json`) as never);

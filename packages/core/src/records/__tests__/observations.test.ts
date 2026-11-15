@@ -687,7 +687,7 @@ describe('照合の部品', () => {
     expect(input.slots.map((s) => s!.character.resourceId)).toEqual([822, 20, 225]);
     expect(input.controlledSlot).toBe(2);
     expect(input.enemy.events).toHaveLength(5);
-    expect(input.slots[0]!.condition).toEqual({ coreHitRate: 1, distanceBonus: true, fullCharge: true, hitRate: 1 });
+    expect(input.slots[0]!.condition).toEqual({ coreHitRate: 1, distanceBonus: true, hitRate: 1 });
     const setup = { enemy: 'range-bigarms-fire' };
     expect(() => buildTeamInput(recordings.get('0048')!, setup, data)).toThrow(/スペック固定 OFF/);
     expect(() => buildTeamInput(recordings.get('0001')!, setup, data)).toThrow(/記録が無い/);

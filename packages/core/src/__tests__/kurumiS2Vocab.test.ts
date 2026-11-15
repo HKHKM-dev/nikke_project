@@ -138,7 +138,7 @@ function slotOf(id: number, definition?: unknown): TeamSlotInput {
     character: c,
     growth: fixed.growth,
     attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+    condition: { coreHitRate: 1, distanceBonus: false },
   };
   const raw = definition ?? (DEFINED.has(id) ? readJson<unknown>(`../../data/skills/${id}.json`) : undefined);
   if (raw !== undefined) slot.skills = { definition: parseSkillDefinition(raw), levels: MAX_SKILL_LEVELS };

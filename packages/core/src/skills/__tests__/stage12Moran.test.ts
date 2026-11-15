@@ -64,7 +64,7 @@ describe('モランの宝物版の S2（熱血状態のフルバースト発動�
         growth: fixed.growth,
         attackOverride: fixed.attack,
         hpOverride: computeFixedSpecHp(character),
-        condition: { coreHitRate: 0.5, distanceBonus: true, fullCharge: true, hitRate: 1 },
+        condition: { coreHitRate: 0.5, distanceBonus: true, hitRate: 1 },
         skills: {
           definition: i === 2 ? moran : definitions[i]!,
           levels: MAX_SKILL_LEVELS,

@@ -275,7 +275,6 @@ if (far !== undefined && (!far.every((n) => FAR_LANDINGS.includes(n)) || conditi
 const condition = {
   coreHitRate: Number(values['core-hit-rate'] ?? '1'),
   distanceBonus: true,
-  fullCharge: true,
   hitRate: Number(values['hit-rate'] ?? '1'),
 };
 const modeOf = conditionMode === 'auto' ? { conditionMode: 'auto' as const } : {};

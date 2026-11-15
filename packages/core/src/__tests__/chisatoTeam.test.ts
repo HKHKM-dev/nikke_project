@@ -24,7 +24,7 @@ const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/i
 const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
 
 const CHISATO = 860;
-const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false, fullCharge: true };
+const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false };
 
 function fixedSlot(id: number): TeamSlotInput {
   const c = character(id);

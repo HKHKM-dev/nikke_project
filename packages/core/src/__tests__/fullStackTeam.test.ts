@@ -79,7 +79,7 @@ describe('クラウン（330）の S2（C-0271）', () => {
       character: crown,
       growth: fixed.growth,
       attackOverride: fixed.attack,
-      condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+      condition: { coreHitRate: 1, distanceBonus: false },
       skills: { definition: crownDefinition(), levels: MAX_SKILL_LEVELS },
     };
     const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };

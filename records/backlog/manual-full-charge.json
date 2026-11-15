@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 2,
-  "text": "手入力の条件 `fullCharge`（`damage.ts` の `TriggerCondition`）が偽の枠は、2 パス目の 1 トリガーの値でだけフルチャージでない発になる（チャージ倍率が 1 になり、畳み込んだフルチャージの発ごとの項を外す。`computeTriggerDamage`）。1 パス目はこれを見ず、チャージ時間で撃ち、`fullChargeShot` に数えた発で畳み込まない倍率ダメージ・ゲージ（フルチャージ倍率のゲージを含む）・バフを出すので、同じきっかけの効果で扱いが割れる。画面には切り替える部品が無く、照合（`records/observations/teamInput.ts`）と CLI（`scripts/sim-run.ts`）は常に真で、偽になるのは古い保存データと直接の呼び出しだけ。欄を消して常にフルチャージにするか、1 パス目にも効かせるかを決める（[design-full-charge-fold.md](design-full-charge-fold.md) 6 節の論点 2）"
-}

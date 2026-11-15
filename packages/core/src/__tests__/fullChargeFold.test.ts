@@ -48,7 +48,7 @@ describe('1 トリガーの値（plan/design-full-charge-fold.md 3.2 節）', ()
     perShot: [fullChargeHit, everyHit],
     fixedShare: 0.5,
   };
-  const condition = { coreHitRate: 0.5, distanceBonus: false, fullCharge: true, hitRate: 1 };
+  const condition = { coreHitRate: 0.5, distanceBonus: false, hitRate: 1 };
   const rl = computeTriggerDamage({ ...input, character: characterOf(A2), condition });
 
   it('gives a full charge shot every folded term', () => {
@@ -73,7 +73,7 @@ describe('1 トリガーの値（plan/design-full-charge-fold.md 3.2 節）', ()
     expect(partialChargeTriggerDamage(rl, 1)).toBe(rl);
   });
 
-  it('drops them from a shot of a weapon that does not charge, and from a slot set not to fully charge', () => {
+  it('drops them from a shot of a weapon that does not charge', () => {
     onlyEveryHit(computeTriggerDamage({ ...input, character: characterOf(NAYUTA), condition }));
     // チャージ武器の基礎の武器を、チャージしない武器に替えた区間（即着弾の使用武器の変更）
     const instant = { id: 'x', hits: 1, shot: { ...characterOf(A2).shot, chargeTime: 0 } };
@@ -84,9 +84,6 @@ describe('1 トリガーの値（plan/design-full-charge-fold.md 3.2 節）', ()
         character: characterOf(A2),
         condition,
       }),
-    );
-    onlyEveryHit(
-      computeTriggerDamage({ ...input, character: characterOf(A2), condition: { ...condition, fullCharge: false } }),
     );
   });
 });

@@ -155,7 +155,7 @@ describe('エイダ（V-0569）', () => {
       growth: fixed.growth,
       attackOverride: fixed.attack,
       hpOverride: computeFixedSpecHp(character),
-      condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true, hitRate: 1 },
+      condition: { coreHitRate: 1, distanceBonus: false, hitRate: 1 },
       skills: { definition, levels: MAX_SKILL_LEVELS, treasurePhase: 0 },
     };
   };

@@ -246,8 +246,6 @@ export type TriggerCondition = {
   coreHitRate: number;
   /** 距離ボーナス（キャラに bonusRange がない場合は無視） */
   distanceBonus: boolean;
-  /** チャージ武器をフルチャージで撃つ前提か */
-  fullCharge: boolean;
   /** フルバースト区間中か。省略 false。true なら倍率グループに FULL_BURST_BOOST を足す */
   fullBurst?: boolean;
   /**
@@ -513,7 +511,8 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const attack = roundedAttack(baseAttack, buffs, input.attackRounding);
   const baseHit = Math.max(1, attack - defenceAfterDown(enemy, buffs));
   const weaponMultiplier = shot.damage / 10000;
-  const charge = isChargeWeapon(shot) && condition.fullCharge;
+  // チャージ武器はフルチャージで撃つ（オートの射撃の撃ち方。plan/requirements.md 4.2 節）。部分チャージの発は partialChargeTriggerDamage で発ごとに出し直す
+  const charge = isChargeWeapon(shot);
   const chargeMultiplier = applyChargeBuffs(
     shot.fullChargeDamage,
     charge,
@@ -601,7 +600,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
     hitRate,
     hitsPerShot,
   };
-  // 区間の武器がチャージ武器でない（使用武器の変更の発も区間の武器で決める）か、手入力でフルチャージしない枠の発は、フルチャージの発でない
+  // 区間の武器がチャージ武器でない（使用武器の変更の発も区間の武器で決める）発は、フルチャージの発でない
   return charge ? full : nonFullChargeTriggerDamage(full);
 }
 

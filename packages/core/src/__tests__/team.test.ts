@@ -12,7 +12,7 @@ import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 import { makeCharacter } from './fixtures.ts';
 
 const enemy: EnemyInput = { defence: 100, element: 'Wind', hasCore: true };
-const condition: SlotCondition = { coreHitRate: 1, distanceBonus: true, fullCharge: true };
+const condition: SlotCondition = { coreHitRate: 1, distanceBonus: true };
 const growth = { level: 1, grade: 0, core: 0 };
 
 function slot(resourceId: number, shot = {}, extra: Partial<TeamSlotInput> = {}): TeamSlotInput {

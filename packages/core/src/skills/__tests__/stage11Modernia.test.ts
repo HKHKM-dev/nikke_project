@@ -252,14 +252,14 @@ describe('computeTriggerDamage with per-shot damage and a changed weapon (3.1)',
 
   it('adds (ATK − DEF) × 3.05% × (1 + crit + FB) without core or distance', () => {
     expect(PER_SHOT_DAMAGE_CORE).toBe(false);
-    const out = computeTriggerDamage({ ...base, condition: { coreHitRate: 1, distanceBonus: true, fullCharge: true } });
+    const out = computeTriggerDamage({ ...base, condition: { coreHitRate: 1, distanceBonus: true } });
     // 通常攻撃: 120,594 × 7.71% × (1 + 1.0 + 0.075 + 0.3)
     expect(out.normal).toBeCloseTo(120594 * 0.0771 * 2.375, 6);
     expect(out.perShot).toBeCloseTo(120594 * 0.0305 * 1.075, 6);
     expect(out.perTrigger).toBeCloseTo(out.normal + out.perShot, 9);
     const fb = computeTriggerDamage({
       ...base,
-      condition: { coreHitRate: 0, distanceBonus: false, fullCharge: true, fullBurst: true },
+      condition: { coreHitRate: 0, distanceBonus: false, fullBurst: true },
     });
     expect(fb.perShot).toBeCloseTo(120594 * 0.0305 * 1.575, 6);
     // 表示（非会心・FB 外）は 3,678、FB 中は 5,517（plan/design-stage11-modernia.md 7.5 節）
@@ -271,7 +271,7 @@ describe('computeTriggerDamage with per-shot damage and a changed weapon (3.1)',
     const { perShot: _p, ...noPerShot } = base;
     const out = computeTriggerDamage({
       ...noPerShot,
-      condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+      condition: { coreHitRate: 1, distanceBonus: false },
     });
     expect(out.perShot).toBe(0);
     expect(out.perTrigger).toBe(out.normal);
@@ -285,7 +285,7 @@ describe('computeTriggerDamage with per-shot damage and a changed weapon (3.1)',
     const out = computeTriggerDamage({
       ...base,
       buffs,
-      condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true, fullBurst: true },
+      condition: { coreHitRate: 1, distanceBonus: false, fullBurst: true },
     });
     expect(out.weaponMultiplier).toBeCloseTo(0.0224, 12);
     // 殲滅モードのコア（FB 中・非会心の表示）: 120,594 × 2.24% × 2.5 = 6,753

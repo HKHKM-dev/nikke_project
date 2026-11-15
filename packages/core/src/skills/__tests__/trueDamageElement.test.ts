@@ -302,7 +302,7 @@ describe('1 発の式の防御力無視ダメージ', () => {
     character: makeCharacter(),
     growth: { level: 1, grade: 0, core: 0 },
     enemy: { defence: 100, element: null, hasCore: true },
-    condition: { coreHitRate: 0, distanceBonus: false, fullCharge: true },
+    condition: { coreHitRate: 0, distanceBonus: false },
     buffs,
   });
 

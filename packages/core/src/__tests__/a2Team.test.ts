@@ -12,7 +12,7 @@ import { characterOf, describeEveryShotInOneGroup, fixedSlot, SHOOTING_RANGE_ENE
 const slot = (id: number): TeamSlotInput => ({
   ...fixedSlot(id),
   defenceOverride: computeFixedSpecDefence(characterOf(id)),
-  condition: { coreHitRate: 0.1, distanceBonus: true, fullCharge: true },
+  condition: { coreHitRate: 0.1, distanceBonus: true },
 });
 
 const A2 = 811;

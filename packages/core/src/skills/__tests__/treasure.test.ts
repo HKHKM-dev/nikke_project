@@ -117,7 +117,7 @@ describe('applyTreasure', () => {
 
 describe('applyTreasureToTeam', () => {
   const enemy: EnemyInput = { defence: 0, element: null, hasCore: false };
-  const condition = { coreHitRate: 0, distanceBonus: false, fullCharge: true };
+  const condition = { coreHitRate: 0, distanceBonus: false };
   const growth = { level: 1, grade: 0, core: 0 };
   const character = treasureCharacter();
   // 同じキャラは 2 枠に置けないので、スキルと宝物のオブジェクトを共有する別 ID のキャラを並べる

@@ -45,7 +45,7 @@ function fixedSlot(id: number, auto: boolean, treasurePhase: TreasurePhase = 0):
     character,
     growth: fixed.growth,
     attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+    condition: { coreHitRate: 1, distanceBonus: false },
     ...(auto ? { conditionMode: 'auto' as const } : {}),
     skills: {
       definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),

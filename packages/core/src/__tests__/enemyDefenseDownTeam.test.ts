@@ -31,7 +31,7 @@ function slotOf(id: number): TeamSlotInput {
     character: c,
     growth: fixed.growth,
     attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+    condition: { coreHitRate: 1, distanceBonus: false },
   };
   if (DEFINED.has(id)) {
     slot.skills = {
@@ -106,7 +106,7 @@ describe('敵の防御力▼の式（plan/design-skill-stage2.md 1 節。C-0556�
         enemy,
         attackOverride: 10_000,
         buffs: { ...ZERO_BUFFS, enemyDefenseDown },
-        condition: { coreHitRate: 0, distanceBonus: false, fullCharge: true },
+        condition: { coreHitRate: 0, distanceBonus: false },
       });
     expect(trigger(0).baseHit).toBe(9_900);
     expect(trigger(0.084).baseHit).toBe(9_908);
