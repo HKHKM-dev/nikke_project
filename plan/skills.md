@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 136・効果 990（根拠あり 968）・notes 351（根拠あり 145）
+件数: キャラ 137・効果 1004（根拠あり 982）・notes 353（根拠あり 146）
 
-notes の種類: 未対応 49・前提の外 104・計算に無関係 69・補足 41・間接 88
+notes の種類: 未対応 50・前提の外 104・計算に無関係 69・補足 42・間接 88
 
-スロット: supported 359・partial 36・unsupported 9・noEffect 52
+スロット: supported 364・partial 36・unsupported 10・noEffect 52
 
 ## 10 ラピ
 
@@ -587,6 +587,31 @@ notes の種類: 未対応 49・前提の外 104・計算に無関係 69・補�
   - effects[1] timed・burstUse・pierceDamage（読む: 貫通）: C-1244（確定）
   - effects[2] timed・burstUse・attack: C-1244（確定）
   - notes[0] 前提の外: 何見てんだよお前ら！！の羞恥心免疫（10 秒）は、羞恥心がオートの射撃では起きない（S1 の notes）ので効かない（要件 4.2 節）: C-0839（確定）、C-1247（確定）
+
+## 150 ジュリア
+
+- **skill1**: unsupported
+  - notes[0] 未対応: 基礎版の S1 は説明文にきっかけの無いクールタイムごとのアクティブで、クールタイムは録画で読むもの。宝物を外せないので基礎版を撮れず、未対応（宝物版の S1 と同じクールタイムとは限らない）: 根拠なし
+- **skill2**: supported
+  - effects[0] state・lastShot・crescendo（critDamage）: C-1326（確定）、C-1330（仮説）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1331（仮説）
+  - effects[1] damage・burstUse・additional: C-1329（確定）、C-1331（仮説）
+- **宝物版 skill1**: supported
+  - effects[0] timed・20 秒ごと・critRate: C-1325（確定）
+  - effects[1] timed・20 秒ごと・attack: C-1325（確定）
+  - effects[2] timed・20 秒ごと・normalCritRate: C-1325（確定）
+  - effects[3] timed・battleStart・critRate: C-1325（確定）
+  - effects[4] timed・battleStart・attack: C-1325（確定）
+  - effects[5] timed・battleStart・normalCritRate: C-1325（確定）
+- **宝物版 skill2**: supported
+  - effects[0] state・critHit・crescendo（critDamage）: C-1326（確定）
+  - effects[1] damage・critHit・additional: C-1327（確定）
+  - effects[2] damage・critHit・additional: C-1328（確定）
+  - notes[0] 補足: 「戦闘開始時、自分にスキル 1 強制使用」は、宝物版 S1 の戦闘開始時の効果（treasureSkills.skill1 の effects[3]〜[5]）で入れた。S1 が基礎版の段階（宝物の段階 1）では、基礎版の S1 が未対応なので入らない: C-1325（確定）
+- **宝物版 burst**: supported
+  - effects[0] burstDamage・skill: C-1329（確定）
+  - effects[1] damage・burstUse・additional: C-1329（確定）
 
 ## 160 ユニ
 

@@ -15,7 +15,7 @@
 - 根拠の `0010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 941・仮説 180・棄却 149・範囲外 2（計 1272）
+件数: 確定 946・仮説 182・棄却 149・範囲外 2（計 1279）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -8782,6 +8782,55 @@
   - 決めるのに使った録画: 1223（値を合わせた）
   - 検証記録: V-0794
   - 定義: `data/skills/850.json` の skill1 の effects[1]
+- **C-1325** ジュリアの宝物版 S1 は、戦闘開始時（宝物版 S2 の強制使用。最初の発から）と、戦闘開始から 20 秒ごとに、自分に会心率 26.04%・攻撃力 20%・通常攻撃の会心率 36.16% の▲を 10 秒付ける（Lv10）。発動は撃たない間も続く
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-15
+  - 根拠: `1226-01`・`1226-02`・`1226-03`・`1226-04`・`1226-15`・`1226-16`・`1226-17`・`1227-01`・`1227-02`・`1227-03`・`1227-04`・`1227-15`・`1227-16`・`1227-17`。V-0792
+  - モデル側: data/skills/150.json の treasureSkills.skill1 の effects[0]〜[2]（{ everySeconds: 20, cooldown: true } の timed）と effects[3]〜[5]（battleStart の timed。宝物版 S2 の強制使用）、treasureSkills.skill2 の notes
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0792
+  - 定義: `data/skills/150.json` の treasureSkills.skill1 の effects[0]、`data/skills/150.json` の treasureSkills.skill1 の effects[1]、`data/skills/150.json` の treasureSkills.skill1 の effects[2]、`data/skills/150.json` の treasureSkills.skill1 の effects[3]、`data/skills/150.json` の treasureSkills.skill1 の effects[4]、`data/skills/150.json` の treasureSkills.skill1 の effects[5]、`data/skills/150.json` の treasureSkills.skill2 の notes[0]
+- **C-1326** ジュリアの宝物版 S2 のクレッシェンドは、通常攻撃の会心の発 6 回ごとに自分に 1 スタック（次の発から。最大 5）付き、1 スタックごとにクリティカルダメージ 24.79% を足す（Lv10）。マルカートと倍率ダメージの会心にも乗る。オート射撃では会心が毎秒数回あるので、戦闘開始の約 3 秒後からいつも 5 スタックで、15 秒の維持で切れる所は録画に無い
+  - 状態: 確定・等級: 反復実測・更新日: 2026-11-15
+  - 根拠: `1226-05`・`1226-28`・`1227-05`・`1227-28`。V-0792
+  - モデル側: data/skills/150.json の treasureSkills.skill2 の effects[0]（状態 crescendo の付与・{ count: critHit, everyRef: 1 }・maxStacksRef・durationRef・中身 critDamage）、skills/states.ts の crescendo
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0792
+  - 定義: `data/skills/150.json` の skill2 の effects[0]、`data/skills/150.json` の treasureSkills.skill2 の effects[0]
+- **C-1327** ジュリアの宝物版 S2 のマルカートは、通常攻撃の会心の発 8 回ごとに、その発と同じ増分に最終攻撃力の 88% の追加ダメージの 1 ヒット（コアの補正なし。会心は倍率ダメージの会心率で、クレッシェンドが乗る）を出す（Lv10）
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-15
+  - 根拠: `1226-06`・`1226-07`・`1226-10`・`1226-18`・`1226-19`・`1227-06`・`1227-07`・`1227-10`・`1227-18`・`1227-19`。V-0792
+  - モデル側: data/skills/150.json の treasureSkills.skill2 の effects[1]（{ count: critHit, everyRef: 7 } の damage・additional）
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0792
+  - 定義: `data/skills/150.json` の treasureSkills.skill2 の effects[1]
+- **C-1328** ジュリアの宝物版 S2 の「マルカートがクリティカル命中した時、同じ敵に最終攻撃力の 100% の追加ダメージ」は、会心したマルカートにだけ同じ増分に 1 ヒット出る（会心しないマルカートには出ない）。マルカートの会心は倍率ダメージの会心率（基礎 + 会心率▲。通常攻撃のクリティカル確率▲は入らない）で決まり、この 1 ヒット自身も同じ会心率で会心する。モデルは期待値（値 × 倍率ダメージの会心率）で持つ（onSkillCrit）
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-15
+  - 根拠: `1226-08`・`1226-09`・`1226-18`・`1226-20`・`1227-08`・`1227-09`・`1227-18`・`1227-20`。V-0792
+  - モデル側: data/skills/150.json の treasureSkills.skill2 の effects[2]（damage の onSkillCrit）、skills/burstDamage.ts の computeBurstHit・oneHitValue
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0792
+  - 定義: `data/skills/150.json` の treasureSkills.skill2 の effects[2]
+- **C-1329** ジュリアの宝物版のバーストは、III のタイマーの 00.00 の 5f 後（動画で 27f。止まり 22f を含む）から動画で 12f おき（遅れの表の hitOffsets [0, 12, 24, 36, 47]）に最終攻撃力の 544.5% の 5 ヒットを出し（フルバースト補正なし・発動の直前のバフ）、クレッシェンドがフルスタックなら、各ヒットと同じフレームに 544.5% の追加ダメージ（フルバースト補正あり・ヒットの時点のバフ）を出す。クレッシェンドが無ければ（撃たない録画）追加ダメージは出ない（Lv10）
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-15
+  - 根拠: `1226-11`・`1226-12`・`1226-13`・`1226-14`・`1227-11`・`1227-12`・`1227-13`・`1227-14`・`1228-01`・`1228-02`・`1228-03`・`1228-04`・`1226-29`。V-0792
+  - モデル側: data/skills/150.json の treasureSkills.burst の effects[0]（burstDamage・hitsRef）と effects[1]（burstUse・perBurstHit・条件 selfState crescendo のフルスタック）、burst/landing.ts の 150 の行（treasure）
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0792
+  - 定義: `data/skills/150.json` の burst の effects[1]、`data/skills/150.json` の treasureSkills.burst の effects[0]、`data/skills/150.json` の treasureSkills.burst の effects[1]
+- **C-1330** ジュリアの基礎版の S2 の「最後の弾丸が命中した時」のクレッシェンドは、残弾を 0 にした射撃ごとに 1 スタック付く（全弾命中の前提）。中身（クリティカルダメージ▲・5 スタック・付くたびに維持を付け直す）は宝物版と同じ文（C-1326）
+  - 状態: 仮説・等級: 推論・更新日: 2026-11-15
+  - 根拠: 説明文（`data/characters/150.json` の skills.skill2）。語彙（{ count: lastShot }）はほかのキャラで確かめた形で、中身は宝物版と同じ文（C-1326）。基礎版の録画は撮れない（宝物は外せない）。V-0792
+  - モデル側: data/skills/150.json の skill2 の effects[0]（{ count: lastShot } の状態 crescendo の付与）
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0792
+  - 定義: `data/skills/150.json` の skill2 の effects[0]
+- **C-1331** ジュリアの基礎版のバーストの「最終防御力が最も高い敵 5 機に」は、単体ボスに 1 ヒットで、クレッシェンドのフルスタックの追加ダメージもそのヒットと同じフレームに 1 ヒット出る。追加ダメージの条件と値の扱いは宝物版と同じ文（C-1329）
+  - 状態: 仮説・等級: 推論・更新日: 2026-11-15
+  - 根拠: 説明文（`data/characters/150.json` の burstSkill）。追加ダメージの条件と値の扱いは宝物版と同じ文（C-1329）。基礎版の録画は撮れない（宝物は外せない）。バーストの遅れは未測定（遅れの表に基礎版の行が無い）。V-0792
+  - モデル側: data/skills/150.json の burst の effects[0]（burstDamage）と effects[1]（burstUse・perBurstHit・条件 selfState crescendo のフルスタック）
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0792
+  - 定義: `data/skills/150.json` の burst の effects[0]、`data/skills/150.json` の burst の effects[1]
 
 ## 敵・的・場面
 
