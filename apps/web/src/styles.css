@@ -1471,14 +1471,15 @@ html:has(.modern-view-container) {
 .char-tray-badge-filter {
   --badge-w: 24px;
   display: flex;
-  /* バッジの絵どうしの間は 5px（ボタンの余白 1px と枠 1px を両側と、この 1px） */
-  gap: 1px;
+  /* バッジの絵どうしの間は 5px（ボタンの余白 0.5px と枠 2px を両側） */
+  gap: 0;
   padding-right: 6px;
   border-right: 1px solid color-mix(in srgb, var(--app-fg) 15%, transparent);
 }
 .char-tray-badge-button {
-  padding: 1px;
-  border: 1px solid transparent;
+  /* 枠の外の大きさは、絵より 5px 大きい（余白 0.5px と枠 2px を両側） */
+  padding: 0.5px;
+  border: 2px solid transparent;
   border-radius: 4px;
   background: none;
   cursor: pointer;
@@ -1574,8 +1575,8 @@ html:has(.modern-view-container) {
 }
 /* 絞り込みのクリアの印（バッジ ui_return） */
 .char-tray-filter-clear {
-  /* ボタンの枠と地は出さない（絵だけ）。外の大きさは絞り込みのバッジのボタン（余白 1px と枠 1px）とそろえる */
-  padding: 2px;
+  /* ボタンの枠と地は出さない（絵だけ）。外の大きさは絞り込みのバッジのボタン（余白 0.5px と枠 2px）とそろえる */
+  padding: 2.5px;
   border: none;
   background: none;
   box-shadow: none;
