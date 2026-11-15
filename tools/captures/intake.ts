@@ -1,7 +1,7 @@
 // 録画の取り込み（plan/design-records-automation.md 3.3 節）: 命名規約でリネームして置き場所に移し、素性（長さ・フレーム数・fps・
 // 大きさ・sha256）を取り、records/recordings/<録画 id>.json を書く。編成・的・条件は引数で受け、無ければ空で出す（人が埋める）。
 //   node tools/captures/intake.ts <元ファイル>... --name <識別子>[,<識別子>...] [--id NNNN] [--folder range] [--date YYYY-MM-DD]
-//        [--rid 271,870] [--controlled 1] [--treasure 2:3] [--target BigArms --element Fire] [--mode range-3min]
+//        [--rid 271,-,870] [--controlled 1] [--treasure 2:3] [--target BigArms --element Fire] [--mode range-3min]
 //        [--fixed-spec on|off] [--build-snapshot <名前>|-] [--auto-fire on|off] [--auto-burst on|off] [--note "..."]... [--copy]
 //        [--no-backup] [--no-push]
 // 1 回の撮影の録画をまとめて取り込む（plan/design-workflow-simplification-2.md 1 節）。--name は元ファイルと同じ数を , で並べ、--note は
@@ -27,6 +27,8 @@
 // move で種別フォルダへ規約名で移す（移せなければコピーと元のごみ箱への移動）。PC を付けると Drive for desktop が F:/record の写しを消し、
 // bisync が E: に降ろす。--copy は使えない。record の一覧は --list-record。
 // 環境変数: NIKKE_DRIVE_SA_KEY・NIKKE_DRIVE_RECORD_FOLDER_ID・NIKKE_DRIVE_FOLDER_ID（drive.ts・fetch.ts）と受け口（gateway.ts）。
+// --rid は枠の順に rid を並べ、空枠は - で書く（台帳の team には埋まった枠だけを、その枠の番号で書く）。--controlled・--treasure の枠も
+// 枠の番号（空枠を数える）。
 // 取り込んだ後は、キャラの確かめに node tools/captures/probe-result.ts <動画> --list。
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -71,7 +73,9 @@ import {
   checkRecordingId,
   isRecordingName,
   nextRecordingIds,
+  parseControlledArg,
   parseOnOff,
+  parseRidArg,
   parseTreasureArg,
   reservedLabel,
   sequentialRecordingIds,
@@ -114,7 +118,7 @@ const { values, positionals } = parseArgs({
 
 const USAGE =
   'usage: node tools/captures/intake.ts <元ファイル | drive:<record の中のパス>>... --name <識別子>[,<識別子>...] [--id NNNN]\n' +
-  '       [--folder range] [--date YYYY-MM-DD] [--rid 271,870] [--controlled 1] [--treasure 2:3] [--target BigArms --element Fire]\n' +
+  '       [--folder range] [--date YYYY-MM-DD] [--rid 271,-,870] [--controlled 1] [--treasure 2:3] [--target BigArms --element Fire]\n' +
   '       [--mode range-3min] [--fixed-spec on|off] [--build-snapshot <名前>|-] [--auto-fire on|off] [--auto-burst on|off]\n' +
   '       [--note "..."]... [--copy] [--no-backup] [--no-push]\n' +
   '       node tools/captures/intake.ts --list-record（Drive の record の一覧）';
@@ -259,7 +263,9 @@ if (values.element !== undefined && !(ELEMENTS as readonly string[]).includes(va
   fail(`--element は ${ELEMENTS.join(' / ')}`);
 }
 const onOff = (v: string | undefined, flag: string): boolean | null => orFail(() => parseOnOff(v, flag));
-const rids = values.rid === undefined ? [] : values.rid.split(',').map((s) => Number(s.trim()));
+// 枠の順の rid（空枠は null）
+const rids = orFail(() => parseRidArg(values.rid));
+const controlled = orFail(() => parseControlledArg(values.controlled, rids));
 // 宝物を持つ枠の段階の指定（--treasure <枠>:<段階>,...。0 は宝物なし）。録画を動かす前に確かめる
 const givenTreasure = orFail(() =>
   parseTreasureArg(values.treasure, rids, (rid) => characterOf(rid).treasure !== null),
@@ -357,6 +363,7 @@ const treasure = treasurePhases();
 /** 宝物を持つ枠の段階（冒頭の説明）。録画を動かす前に決める */
 function treasurePhases(): Map<number, number> {
   const slots = rids.flatMap((rid, i) => {
+    if (rid === null) return [];
     const c = characterOf(rid);
     return c.treasure === null ? [] : [{ slot: i + 1, rid, name: c.name.ja }];
   });
@@ -476,7 +483,6 @@ console.error(`${source} → ${dest}（${drive !== null ? '取り寄せ' : value
 const probe = ffprobe(dest);
 const fullDigest = await sha256(dest);
 const digest = fullDigest.slice(0, 12);
-const controlled = values.controlled === undefined ? null : Number(values.controlled);
 const entry: ProjectRecording = {
   id: values.id,
   date,
@@ -488,13 +494,19 @@ const entry: ProjectRecording = {
   fps: Math.round(probe.avgFps),
   sizeMB: Math.round((probe.sizeBytes / 1024 / 1024) * 10) / 10,
   sha256: digest,
-  team: rids.map((rid, i) => ({
-    slot: i + 1,
-    rid,
-    name: characterName(rid),
-    controlled: controlled === null ? null : controlled === i + 1,
-    ...(treasure.has(i + 1) ? { treasurePhase: treasure.get(i + 1)! } : {}),
-  })),
+  team: rids.flatMap((rid, i) =>
+    rid === null
+      ? []
+      : [
+          {
+            slot: i + 1,
+            rid,
+            name: characterName(rid),
+            controlled: controlled === null ? null : controlled === i + 1,
+            ...(treasure.has(i + 1) ? { treasurePhase: treasure.get(i + 1)! } : {}),
+          },
+        ],
+  ),
   target: { name: values.target ?? '', element: (values.element as Element | undefined) ?? null },
   mode: (values.mode as RecordingMode | undefined) ?? null,
   fixedSpec,
