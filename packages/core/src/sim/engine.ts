@@ -8,7 +8,14 @@
 // 敵の出来事（狙えない窓など）は 1 パス目で効く（plan/design-stage16.md 9 節）。フレームループは trace（出来事の列）のときだけ回し、
 // 値は作らない（__tests__/calcShots.test.ts で一致を固定）。
 import { hitFramesOf, type BurstActivation, type BurstSchedule, type BurstStepKey } from '../burst/schedule.ts';
-import { baseAttackOf, modelNotes, partialChargeTriggerDamage, type ModelNote, type TriggerDamage } from '../damage.ts';
+import {
+  baseAttackOf,
+  modelNotes,
+  nonFullChargeTriggerDamage,
+  partialChargeTriggerDamage,
+  type ModelNote,
+  type TriggerDamage,
+} from '../damage.ts';
 import {
   autoAttackCoreRowNotes,
   autoConditionSummary,
@@ -254,14 +261,13 @@ export function runSimulation(simInput: SimInput): SimResult {
       if (f >= frames) break;
       while (segIndex + 1 < timeline.segments.length && timeline.segments[segIndex]!.end <= f) segIndex += 1;
       const segment = runner.result.segments[segIndex]!;
-      const damage = shotDamage(runner, segment, f);
-      const late = lateShotDamage(runner, segmentEnds, f, frames);
-      addPerSecond(runner.index, f, damage - (late === null ? 0 : segment.trigger.perShot));
+      const { fired, late } = shotParts(runner, segmentEnds, segment, f, frames);
+      addPerSecond(runner.index, f, fired);
       if (late !== null && late.frame < frames) addPerSecond(runner.index, late.frame, late.damage);
       const own = ownShots[runner.index];
       if (own) {
         own.frames.push(f);
-        const value = late === null ? damage : damage - segment.trigger.perShot + late.damage;
+        const value = fired + (late?.damage ?? 0);
         own.value.push(own.value.at(-1)! + value);
         own.ratioValue.push(own.ratioValue.at(-1)! + value * segment.buffs.accumulateRatio);
       }
@@ -327,13 +333,15 @@ function createRunner(c: RunnerContext, slot: SimInput['slots'][number], index: 
   const flight = flights[index]?.shot ?? null;
   const landAt = flight === null || perShot.length === 0 ? null : (f: number) => f + flightFramesAt(flight, f);
   // 戦闘の終わりの後に着く発の射撃ごとの倍率ダメージは出さない
-  const landings =
+  const landingsOf = (fired: readonly number[]): number[] =>
     landAt === null
       ? []
-      : shotFrames
+      : fired
           .map(landAt)
           .filter((f) => f < frames)
           .sort((a, b) => a - b);
+  const landings = landingsOf(shotFrames);
+  const partialLandings = landingsOf((shots[index]?.partialShots ?? []).map((p) => p.frame));
   // 区間ごとの 1 トリガー値と発数。発数は射撃の列から二分探索で引く（区間は [0, frames) を隙間なく覆う）
   const segments: SimSlotSegment[] = timeline.segments.map((segment) => {
     const state = segment.slots[index] ?? EMPTY_BUFF_STATE;
@@ -354,11 +362,15 @@ function createRunner(c: RunnerContext, slot: SimInput['slots'][number], index: 
     const partial = partialShotsInRanges(shots[index]?.partialShots, range);
     const partialDamage = partial.reduce((sum, p) => sum + partialChargeTriggerDamage(trigger, p).perTrigger, 0);
     const landed = landAt === null ? undefined : countShotsInRanges(landings, range);
-    // 着弾で出す枠は、射撃ごとの倍率ダメージを撃った数から着いた数に置き換える
+    // 着弾で出す枠は、射撃ごとの倍率ダメージを撃った数から着いた数に置き換える。部分チャージの発の射撃ごとの倍率ダメージは、
+    // フルチャージの発にだけ乗る分を外す（shotParts と同じ。plan/design-full-charge-fold.md 3.3 節）
+    const landedPartial = landAt === null ? 0 : countShotsInRanges(partialLandings, range);
     const damage =
       trigger.perTrigger * (triggers - partial.length) +
       partialDamage +
-      (landed === undefined ? 0 : trigger.perShot * (landed - triggers));
+      (landed === undefined
+        ? 0
+        : trigger.perShot * (landed - triggers) - trigger.perShotFullCharge * (landedPartial - partial.length));
     return {
       start: segment.start,
       end: segment.end,
@@ -517,28 +529,26 @@ function settleAccumulates(
 }
 
 /**
- * 射撃ごとの倍率ダメージを着弾で出す枠の、その発の射撃ごとの倍率ダメージ（着弾のフレームと、その区間の値。戦闘の終わりの後に着く発は 0）。
- * ほかの枠は null
+ * 1 発のダメージの分け: 撃ったフレームに出す分（fired）と、射撃ごとの倍率ダメージを着弾で出す枠の、着弾のフレームとその区間の
+ * 射撃ごとの倍率ダメージ（late。戦闘の終わりの後に着く発は 0。ほかの枠は null）。部分チャージの発は、その発のチャージの進みで出し直し、
+ * 着弾の分もフルチャージの発にだけ乗る項を外す（plan/design-full-charge-fold.md 3.3 節）
  */
-function lateShotDamage(
+function shotParts(
   runner: Runner,
   segmentEnds: readonly number[],
+  segment: SimSlotSegment,
   frame: number,
   frames: number,
-): { frame: number; damage: number } | null {
-  if (runner.landAt === null) return null;
-  const at = runner.landAt(frame);
-  if (at >= frames) return { frame: at, damage: 0 };
-  const k = lowerBound(segmentEnds, at + 1);
-  return { frame: at, damage: runner.result.segments[k]!.trigger.perShot };
-}
-
-/** 1 発のダメージ（区間の 1 トリガー値。部分チャージの発は、その発のチャージの進みで出し直す） */
-function shotDamage(runner: Runner, segment: SimSlotSegment, frame: number): number {
+): { fired: number; late: { frame: number; damage: number } | null } {
   const progress = runner.partial.get(frame);
-  return progress === undefined
-    ? segment.trigger.perTrigger
-    : partialChargeTriggerDamage(segment.trigger, progress).perTrigger;
+  const shot = progress === undefined ? segment.trigger : partialChargeTriggerDamage(segment.trigger, progress);
+  if (runner.landAt === null) return { fired: shot.perTrigger, late: null };
+  const fired = shot.perTrigger - shot.perShot;
+  const at = runner.landAt(frame);
+  if (at >= frames) return { fired, late: { frame: at, damage: 0 } };
+  const landing = runner.result.segments[lowerBound(segmentEnds, at + 1)]!.trigger;
+  const late = progress === undefined ? landing : nonFullChargeTriggerDamage(landing);
+  return { fired, late: { frame: at, damage: late.perShot } };
 }
 
 /**
@@ -644,8 +654,8 @@ function traceEvents(
       if (runner.shots[next] !== f) continue;
       nextShot[runner.index] = next + 1;
       const segment = runner.result.segments[segIndex]!;
-      const late = lateShotDamage(runner, segmentEnds, f, frames);
-      const damage = shotDamage(runner, segment, f) - (late === null ? 0 : segment.trigger.perShot - late.damage);
+      const { fired, late } = shotParts(runner, segmentEnds, segment, f, frames);
+      const damage = fired + (late?.damage ?? 0);
       events.push({ frame: f, kind: 'trigger', slot: runner.index, fullBurst: fb, damage });
     }
   }

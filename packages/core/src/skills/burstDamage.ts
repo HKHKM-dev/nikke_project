@@ -106,6 +106,12 @@ export type ResolvedSkillDamage = {
   distance?: true;
   /** 発射体の付着のヒット（damage の projectileStick）。発射体付着ダメージ▲を掛ける */
   projectileStick?: true;
+  /**
+   * 1 トリガーの値に畳み込む射撃ごとの倍率ダメージのうち、きっかけが { count: 'fullChargeShot' } のもの（resolvePerShotDamage）。
+   * フルチャージでない発（部分チャージの発・チャージしない武器の発）には乗らない（damage.ts の perShotFullCharge。
+   * plan/design-full-charge-fold.md 3.1 節）
+   */
+  fullChargeOnly?: true;
   assumes?: LocalizedText;
 };
 
@@ -323,7 +329,8 @@ export function effectHitFrames(
  * 防御力無視ダメージ（ベスティー：タクティカル・アップの S2）も、畳み込む値
  * （damage.ts の perShot）が防御力を引いた式だけを持つので、発ごとに 1 件ずつ出す（plan/design-skill-stage16.md 2.2 節）。
  * フルチャージの発ごとの倍率ダメージは、チャージしない発（即着弾に替えた使用武器の変更の発）を撃つ定義では畳み込まず、
- * フルチャージの発（ShotLog の fullChargeShot の列）にだけ 1 件ずつ出す（畳み込むとどの発にも乗る。plan/design-laplace.md 1 節）
+ * フルチャージの発（ShotLog の fullChargeShot の列）にだけ 1 件ずつ出す（この形で C-1201 を確かめた。plan/design-laplace.md 1 節。
+ * 畳み込んだフルチャージの発ごとの項も、チャージしない武器の発には乗らない。plan/design-full-charge-fold.md 3.4 節）
  */
 function foldsIntoShot(effect: DamageEffect, trigger: ResolvedTrigger, def: SkillDefinition): boolean {
   return (
@@ -746,7 +753,7 @@ function foldedDamageEffects(
 /**
  * 射撃ごとの倍率ダメージ（damage の every = 1）を Lv の数値に解決する。damage.ts の computeTriggerDamage が
  * 1 トリガーの値（perShot）に足す。SG は「命中した時」がペレットごとかトリガーごとか分からないので拒否する。
- * 固定ダメージ（fixedShare）は入れない（resolveFixedShare）
+ * 固定ダメージ（fixedShare）は入れない（resolveFixedShare）。きっかけが fullChargeShot の効果に fullChargeOnly を付ける
  */
 export function resolvePerShotDamage(
   def: SkillDefinition,
@@ -762,6 +769,7 @@ export function resolvePerShotDamage(
       damageType: effect.damageType,
       multiplier: skillValue(skill, effect.ref, levels[slot]) / 100,
     };
+    if (isShotCountTrigger(effect.trigger) && effect.trigger.count === 'fullChargeShot') r.fullChargeOnly = true;
     if (effect.assumes) r.assumes = effect.assumes;
     resolved.push(r);
   }
