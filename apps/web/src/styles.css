@@ -207,10 +207,10 @@ header h1 {
   height: 34px;
   padding: 0;
 }
-/* 設定のボタンの絵（バッジ ui_setting。六角形で縦 150 : 横 130） */
+/* 設定のボタンの絵（バッジ ui_window。正方形） */
 .settings-menu-icon {
-  width: 26px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
 }
 /* 見出しの行の右の、アカウントと設定のボタンを横に並べる */
 .app-header-actions {
@@ -962,6 +962,10 @@ header h1 {
 }
 /* バッジの値ごとの色（差し色。BadgeIcon が名前のクラス badge-<名前> を付ける）。元の SVG では #808080 で描いてある。
    テーマで変えるときは light-dark(ライト, ダーク) で書く */
+/* 属性は、内の六角形の縁（主の色）も値の色にする */
+[class^='badge-element_'] {
+  --badge-main: var(--badge-accent);
+}
 .badge-element_Fire {
   --badge-accent: #ff0000;
 }
@@ -977,17 +981,28 @@ header h1 {
 .badge-element_Electronic {
   --badge-accent: #ff02de;
 }
+/* バースト段階は、地を値の色にし、数字（差し色）を白にする */
+[class^='badge-burstStep_'] {
+  --badge-accent: #ffffff;
+}
 .badge-burstStep_Step1 {
-  --badge-accent: #008000;
+  --badge-ground: #008000;
 }
 .badge-burstStep_Step2 {
-  --badge-accent: #b27800;
+  --badge-ground: #b27800;
 }
 .badge-burstStep_Step3 {
-  --badge-accent: #cc0000;
+  --badge-ground: #cc0000;
 }
 .badge-burstStep_AllStep {
-  --badge-accent: #8b00cc;
+  --badge-ground: #8b00cc;
+}
+/* クラス・武器種・企業・コレクション（宝物の絞り込みのボタン）は、図柄（差し色）を白にする。コレクションのレア度の色（tone）は下で上書きする */
+[class^='badge-class_'],
+[class^='badge-weaponType_'],
+[class^='badge-corporation_'],
+.badge-collection_plain {
+  --badge-accent: #ffffff;
 }
 .badge-tone-R {
   --badge-accent: #19a2e6;

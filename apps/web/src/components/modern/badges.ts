@@ -31,7 +31,7 @@ const BADGE_SVGS = import.meta.glob<string>(
     '../../assets/badges/ui_blank_main.svg',
     '../../assets/badges/ui_information.svg',
     '../../assets/badges/ui_controller.svg',
-    '../../assets/badges/ui_setting.svg',
+    '../../assets/badges/ui_window.svg',
     '../../assets/badges/ui_return.svg',
   ],
   { eager: true, query: '?raw', import: 'default' },
@@ -85,7 +85,7 @@ export const FAVORITE_BADGES = {
 export const FAVORITE_COUNT_BADGE = badgeName('ui_blank_main');
 
 /** 右上の設定のメニューのボタンのバッジ（SettingsMenu） */
-export const SETTING_BADGE = badgeName('ui_setting');
+export const SETTING_BADGE = badgeName('ui_window');
 
 /** 元に戻すのボタン（ModernView）と、ニケ一覧の絞り込みを外すボタン（CharacterTray）のバッジ */
 export const RETURN_BADGE = badgeName('ui_return');
