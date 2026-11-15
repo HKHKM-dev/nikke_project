@@ -580,7 +580,7 @@ export function stateGroupsOf(
       const stage: HeldStage = isResolvedApplied(grant.trigger)
         ? appliedStageOf(grant.trigger.applied)
         : isResolvedBuffApplied(grant.trigger)
-          ? buffAppliedStageOf(grant.trigger.buffApplied)
+          ? laterStage(buffAppliedStageOf(grant.trigger.buffApplied), stageOfGrant(grant))
           : stageOfGrant(grant);
       group.grants.push({
         grant,
@@ -645,7 +645,8 @@ export function appliedStagesOf(slots: readonly TimelineSlot[]): (state: NamedSt
       for (const grant of resolveStateGrants(slot.definition, slot.character, slot.levels)) {
         if (grant.isStatic) continue;
         grants.push(grant);
-        if (isResolvedBuffApplied(grant.trigger)) bump(grant.state, buffStageOf(grant.trigger.buffApplied));
+        if (isResolvedBuffApplied(grant.trigger))
+          bump(grant.state, laterStage(buffStageOf(grant.trigger.buffApplied), stageOfGrant(grant)));
         else if (!isResolvedApplied(grant.trigger)) bump(grant.state, stageOfGrant(grant));
       }
       for (const effect of resolveStackChanges(slot.definition, slot.character, slot.levels)) {
@@ -658,6 +659,11 @@ export function appliedStagesOf(slots: readonly TimelineSlot[]): (state: NamedSt
     // 味方の全部のスタック可能バフへの▲（段 1.5）は、編成のどの上限のある状態にも足しうる（plan/design-adjacent-allies.md 2.5 節）
     if (allStackable) for (const grant of grants) if (isStackableBuffGrant(grant)) bump(grant.state, 1.5);
   });
+}
+
+/** 2 つの段の後のほう（{ buffApplied } の付与は、見る stat を付ける効果の段と、付与自身の条件の段の後のほう） */
+function laterStage(a: HeldStage, b: HeldStage): HeldStage {
+  return STAGE_RANK[a] >= STAGE_RANK[b] ? a : b;
 }
 
 /** キー → 段のいちばん後（STAGE_RANK）を、初めて引かれた時に collect で集めて作る。集めなかったキーは段 1 */

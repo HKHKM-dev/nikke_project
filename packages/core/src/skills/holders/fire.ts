@@ -433,7 +433,7 @@ export function createFire({
     start: number,
     context: FireContext | undefined,
   ): void {
-    if (!isBuffUp(effect) || context?.appliedCasters !== undefined) return;
+    if (buffListeners.size === 0 || !isBuffUp(effect) || context?.appliedCasters !== undefined) return;
     if (buffListeners.has(buffKey(holder, effect.stat)))
       buffApplications.push({ frame: start, stat: effect.stat, slotIndex: holder });
   }

@@ -50,6 +50,12 @@ describe('語彙の検証', () => {
     expect(cond({ stat: 'sustainedDamage', present: false, other: 1 })).toThrow(/other/);
   });
 
+  it('takes dotEffect only with exactly one sustained dot in the definition', () => {
+    const copy = structuredClone(raw);
+    copy.skills.skill2.effects = copy.skills.skill2.effects.filter((e) => e.kind !== 'dot');
+    expect(() => parseSkillDefinition(copy)).toThrow(/exactly one sustained dot/);
+  });
+
   it('puts the two tastes in one switch group', () => {
     expect(namedStateGroup('lingeringTaste')).toBe('taste');
     expect(namedStateGroup('recommendedTaste')).toBe('taste');
