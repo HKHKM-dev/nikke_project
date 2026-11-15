@@ -1,0 +1,112 @@
+{
+  "verification": "V-0790",
+  "note": "編成はクラウン（II・AI）・I-DOLL・サン（III・AI）・ソリン：フロストチケット（I・3 枠目の操作枠。オート射撃 OFF で撃たない。noFireSlots）。射撃場 3 分・灼熱タブの BigArms・スペック固定 ON・オートバースト ON。乗車券の HP のバーは、モデルが乗車券を持たない（間接の notes）ので検証記録の「予測」に手で書いた",
+  "team": [
+    {
+      "rid": 330,
+      "controlled": false
+    },
+    {
+      "rid": 308,
+      "controlled": false
+    },
+    {
+      "rid": 74,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "Model",
+      "note": "定義のとおり。S1 はフルバーストの始まりに味方全体のバーストの CT の残りを 7.48 秒縮め、バーストは味方全体を 1 回回復して「回復効果が適用された時」を起こす"
+    },
+    {
+      "id": "NoCut",
+      "note": "S1 のクールタイム▼が無い",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 74,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "NoHeal",
+      "note": "バーストの回復が「回復効果が適用された時」を起こさない（クラウンの S2 の攻撃ダメージ▲が開かない）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 74,
+            "skill": "burst",
+            "index": 0
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "fb-intervals",
+      "model": "sim",
+      "metric": "fullBurstStartIntervals",
+      "args": {
+        "n": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [3]
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "フルバーストの入り（III のタイマーの 00.00）どうしの間隔（動画のフレーム）。読むのはレシピ burst-panel。幅 3 は入りの止まりの長さの回ごとの差（C-0069）と、C-0730 の読みの差（2f 以内）"
+    },
+    {
+      "id": "crown-buff-start-1",
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "attackDamage",
+        "from": 3,
+        "n": 1,
+        "edge": "start"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [3]
+      },
+      "tolerance": {
+        "abs": 25
+      },
+      "note": "ソリン：フロストチケットの 2 回目のバーストの発動の印（I → II の替わり目）から、その後に始まったクラウンの S2 の攻撃ダメージ▲の窓の付き始めまでの動画のフレーム（負は替わり目より前）。読むのはレシピ buff-edge の pair（クラウン・サンの発の▲の有無）。幅 25 は V-0766 の 1 回目のチェーンの挟みの幅の半分ほど。クラウン自身の回復の窓と重なる回は読まない"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-15",
+    "commit": "7d06e8c0acd34f8fceb1c1c6e140db484658bbbc",
+    "values": {
+      "Model": {
+        "fb-intervals": [1936, 1936, 1936, 1936],
+        "crown-buff-start-1": -6
+      },
+      "NoCut": {
+        "fb-intervals": [2376, 2376, 2376, 2376],
+        "crown-buff-start-1": -6
+      },
+      "NoHeal": {
+        "fb-intervals": [1936, 1936, 1936, 1936],
+        "crown-buff-start-1": 521
+      }
+    }
+  }
+}
