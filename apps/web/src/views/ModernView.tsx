@@ -81,8 +81,6 @@ export function ModernView({
   // スロットのニケの並びを元に戻す（スロットの並びの上の中央のボタン）
   const slotUndo = useSlotUndo(team, dispatch, parties.active);
   const placement = useSlotPlacement(team, slotUndo.trackedDispatch);
-  // 元に戻す操作（積まない）
-  const undoPlacement = useSlotPlacement(team, dispatch);
   const { clearSlot, placeFromTray } = placement;
   // ドラッグを始めたら、一覧のクリックで待っているニケをやめる
   const drag = useSlotDrag({
@@ -164,7 +162,7 @@ export function ModernView({
               className="modern-slot-undo-button"
               aria-label="元に戻す"
               title="元に戻す"
-              onClick={() => slotUndo.undo(undoPlacement)}
+              onClick={() => slotUndo.undo(placement)}
             >
               <span className="mask-icon modern-slot-undo-icon" style={maskIconStyle(returnIcon)} />
             </button>

@@ -37,9 +37,10 @@ export type SlotPlacement = {
   swapSlots: (fromIndex: number, toIndex: number, dragged?: DOMRect) => void;
   /**
    * スロットのニケの並びを target にする（元に戻す。useSlotUndo）。育成・設定はニケと一緒に動き、いまの値のまま（rearrangeActions）。
-   * 外れるニケは一覧へ、動くニケは前のスロットから、一覧から入るニケは一覧の絵から、それぞれのスロットへ動かす
+   * 外れるニケは一覧へ、動くニケは前のスロットから、一覧から入るニケは一覧の絵から、それぞれのスロットへ動かす。
+   * 操作は send で送る（元に戻すの履歴に積まない dispatch を渡せる）
    */
-  rearrange: (target: Arrangement) => void;
+  rearrange: (target: Arrangement, send?: Dispatch<TeamAction>) => void;
 };
 
 export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>): SlotPlacement {
@@ -60,6 +61,8 @@ export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>
   /** スロット index へ、from から絵を動かす（置いた後の描画で動かし始める。前に動いていた写しは消す） */
   const queueArrival = (index: number, from: DOMRect | undefined) => {
     stopArrival(slotCardAt(index));
+    // 同じスロットへ前に積んだ待ちは捨てる（後から来たものだけが着く）
+    arrivalsRef.current = arrivalsRef.current.filter((a) => a.index !== index);
     if (from) arrivalsRef.current.push({ index, from, until: arrivalDeadline() });
   };
 
@@ -99,7 +102,7 @@ export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>
     dispatch({ type: 'swapSlots', fromIndex, toIndex });
   };
 
-  const rearrange = (target: Arrangement) => {
+  const rearrange = (target: Arrangement, send: Dispatch<TeamAction> = dispatch) => {
     const current = arrangementOf(team);
     const actions = rearrangeActions(current, target);
     if (actions.length === 0) return;
@@ -116,7 +119,7 @@ export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>
       if (id !== null && current[i] !== id)
         queueArrival(i, slotRects.get(id) ?? trayVisualAt(id)?.getBoundingClientRect());
     });
-    for (const action of actions) dispatch(action);
+    for (const action of actions) send(action);
   };
 
   return { clearSlot, placeFromTray, swapSlots, rearrange };

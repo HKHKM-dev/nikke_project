@@ -27,12 +27,12 @@ export function useSlotUndo(team: TeamState, dispatch: Dispatch<TeamAction>, act
     dispatch(action);
   };
 
-  /** 1 つ前の並びに戻す（戻す操作は積まないので、trackedDispatch でない dispatch で作った placement を渡す） */
+  /** 1 つ前の並びに戻す（戻す操作は積まないので、受け取った dispatch で送る） */
   const undo = (placement: SlotPlacement) => {
     const target = stack.arrangements.at(-1);
     if (target === undefined) return;
     setStack((s) => ({ ...s, arrangements: s.arrangements.slice(0, -1) }));
-    placement.rearrange(target);
+    placement.rearrange(target, dispatch);
   };
   return { trackedDispatch, canUndo: stack.arrangements.length > 0, undo };
 }

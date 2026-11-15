@@ -687,9 +687,18 @@ header h1 {
      useSlotFit が並びに縮めた値を置く（上限は useSlotFit.ts の PORTRAIT_MAX_H と同じ） */
   --slot-portrait-h: 256px;
 }
-/* 置き先待ちのスロットの立ち絵と、いまの編成にいるニケの絵に重ねる薄い水色 */
+/* 置き先待ちのスロットの立ち絵と、いまの編成にいるニケ・置き先待ちのニケの絵に重ねる箱（枠は下の .char-tray-item-visual の後の規則） */
 .modern-slot-card.modern-slot-awaiting .modern-slot-char-area::after,
 .char-tray-item-taken .char-tray-item-visual::after,
+.char-tray-item-pending .char-tray-item-visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 2;
+}
+/* 置き先待ちのニケは枠だけで、薄い水色は重ねない */
 .modern-slot-card.modern-slot-awaiting .modern-slot-char-area::after,
 .char-tray-item-taken .char-tray-item-visual::after {
   background: color-mix(in srgb, var(--placing-blue) 30%, transparent);

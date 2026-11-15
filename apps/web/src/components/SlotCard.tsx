@@ -97,7 +97,7 @@ export function SlotCard({
         <button
           type="button"
           className="slot-button"
-          disabled={!character}
+          disabled={slot.resourceId === null}
           onClick={() => dispatch({ type: 'clearSlot', index: slotIndex })}
         >
           外す
