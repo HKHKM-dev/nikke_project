@@ -472,6 +472,11 @@ export const NAMED_STATES = {
    * 攻撃力▲の倍率を倍にする効果は、それぞれのスロットの効果の条件・while が見る）
    */
   exospineMk2: { name: { ja: 'エグゾスパインMk2', en: 'Exospine Mk2' }, holder: 'ally' },
+  /**
+   * 射撃マニュアル（ミサトの S1。命中率▲のスタック。S2 の「射撃マニュアルのフルスタック状態の時のみ」の与える HP 回復量▲。
+   * plan/design-heal-amount-up.md 2.2 節）
+   */
+  shootingManual: { name: { ja: '射撃マニュアル', en: 'Shooting Manual' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

@@ -105,6 +105,8 @@ const STAT_CLASS: Record<BuffStat, ElementClass> = {
   maxHp: 'damageValue',
   // 最大HP のみ▲ も同じ（最終最大HP への足し方が最大HP▲ と同じ）
   maxHpOnly: 'damageValue',
+  // 与える HP 回復量▲ も、量で追う回復の HP の割合を通して値に効く
+  healDealt: 'damageValue',
   // 防御力▲ は、対象の絞り込み（自分より最終防御力が低い味方）を通して値に効く（防御力▲ だけの効果は、経路 defense の
   // 間接の要素と同じに見る。notRelevantReason）
   defense: 'damageValue',

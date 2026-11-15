@@ -103,6 +103,7 @@ export type BuffStat =
   | 'dotEffect'
   | 'maxHp'
   | 'maxHpOnly'
+  | 'healDealt'
   | 'defense'
   | 'attackSpeed'
   | 'burstCooldown'
@@ -160,6 +161,10 @@ export const BUFF_STATS = [
   // 間は HP の割合を下げ（plan/design-skill-stage6.md の論点 8）、自分の HP の割合のきっかけ（selfHpAtMostRef）と、timed の条件 selfHp の
   // atMost と、passive の条件 selfHp（割合が動きうる枠）と対象の lowestHpRatio（回復の発火の時。plan/design-hp-ratio-readers.md）が読む
   'maxHpOnly',
+  // 与える HP 回復量▲（比率。plan/design-heal-amount-up.md 2.1 節）。持つ枠が出す、量で追う回復（heal の scaling 'casterFinalMaxHp'）の
+  // 量に (1 + Σ) を掛ける（回復の発火のフレームより前に付いた件と常時の分。skills/holders/views.ts の restoreAmountOf）。与ダメージの式・
+  // 射撃は読まず、HP の割合を通して効く
+  'healDealt',
   // 防御力▲（比率。plan/design-skill-stage7.md 1.3 節）。与ダメージの式は読まず、対象の絞り込み
   // 「自分より最終防御力が低い味方」（targetDefense）だけが、発火のフレームの最終防御力として読む。定義を書くときの決まり: 効果にするのは、
   // 比べの自分の側と、読む側と組む録画が読み直せたものだけ。ほかは間接の notes（段 7 の論点 4）

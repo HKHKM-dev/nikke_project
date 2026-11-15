@@ -825,9 +825,11 @@ function isFirstPassTrackedStat(stat: BuffStat): boolean {
   // 時間で変わるバーストゲージのチャージ速度は、1 パス目がゲージに読む（plan/design-skill-stage1.md 1.6 節）。
   // 最大HP▲ は、1 パス目の順位（攻撃力）が発動者の最終最大HP として読むので、攻撃力と同じに扱う
   // 防御力▲ は、1 パス目の発火の対象の絞り込み（最終防御力の比べ）が読むので、攻撃力と同じに扱う
+  // 与える HP 回復量▲ は、1 パス目が回復の量（HP の割合）に読む
   return (
     stat === 'attack' ||
     isMaxHpStat(stat) ||
+    stat === 'healDealt' ||
     stat === 'defense' ||
     stat === 'burstGaugeSpeed' ||
     stat === 'burstCooldown' ||

@@ -6,23 +6,29 @@
     "skill1": {
       "effects": [
         {
-          "kind": "timed",
+          "kind": "state",
+          "state": "shootingManual",
           "trigger": {
             "count": "normalShot",
             "everyRef": 1
           },
           "target": "self",
-          "stat": "hitRate",
-          "ref": 2,
           "maxStacksRef": 3,
           "durationRef": 4,
+          "contents": [
+            {
+              "stat": "hitRate",
+              "ref": 2
+            }
+          ],
           "assumes": {
-            "ja": "「通常攻撃で 60 回攻撃した時」は撃った発の通算（当たったかに依らない）で数え、60 発ごとに 1 スタック足す。スタックの維持時間は発火のたびに全スタックを数え直す（skills/stacks.ts の STACK_REFRESH）",
-            "en": "\"After performing 60 normal attacks\" counts every normal shot fired (hit or miss); each 60th shot adds a stack, and every new stack restarts the duration of all stacks (STACK_REFRESH in skills/stacks.ts)"
+            "ja": "「通常攻撃で 60 回攻撃した時」は撃った発の通算（当たったかに依らない）で数え、60 発ごとに射撃マニュアルを 1 スタック足す。スタックの維持時間は発火のたびに全スタックを数え直す（skills/stacks.ts の STACK_REFRESH）。中身の命中率▲はスタックごとに足す。S2 の「射撃マニュアルのフルスタック状態の時のみ」が読む",
+            "en": "\"After performing 60 normal attacks\" counts every normal shot fired (hit or miss); each 60th shot adds a Shooting Manual stack, and every new stack restarts the duration of all stacks (STACK_REFRESH in skills/stacks.ts). Its Hit Rate increase adds per stack. The S2 \"only when Shooting Manual is at max stacks\" reads it"
           },
           "claims": [
             "C-0183",
-            "C-0184"
+            "C-0184",
+            "C-1334"
           ]
         },
         {
@@ -37,21 +43,44 @@
           "scaling": "casterFinalMaxHp",
           "delayFrames": 6,
           "assumes": {
-            "ja": "「残りの HP の割合が最も低い味方」は、回復の時の HP の割合（枠の想定の割合（既定は満タン）を、最大HP のみ▲・現在の HP▼ で下げ、量で追う回復（スキル発動者の最終最大HP の X%）で戻した割合。持続回復・吸収回復では戻さない）の低い順に選び、並んだときは枠の若い順に選ぶ（自分も候補。C-0567）。実機では被弾で HP の割合が下がった味方が選ばれうる（射撃場 3 分モードでも、撃つ枠には的の攻撃が当たる）。満タンの味方にも回復は起き、「回復効果が適用された時」を起こす。「通常攻撃で 120 回攻撃した時」は、命中率▲（effects[0]）と同じく撃った発の通算で数える。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く（与えるHP回復量▲・受けるHP回復量▲は掛けない。plan/design-hp-heal-restore.md 2.2 節）",
-            "en": "\"The ally with the lowest remaining HP ratio\" uses the HP ratio at the heal (the slot's assumed ratio, full by default, lowered by max-HP-only ups and current HP downs and raised back by heals of X% of the caster's final max HP; heals over time and lifesteal do not raise it); ties go to the leftmost slot (self included; C-0567). In game, an ally whose HP ratio dropped from damage can be chosen instead (in the 3-minute range mode, the target attacks the slots that fire). The heal also lands on allies at full HP and triggers \"when healed\". \"After performing 120 normal attacks\" counts every normal shot fired, as for the hit rate up (effects[0]). The healed amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs (Outgoing/Incoming Healing ups are not applied; plan/design-hp-heal-restore.md 2.2)"
+            "ja": "「残りの HP の割合が最も低い味方」は、回復の時の HP の割合（枠の想定の割合（既定は満タン）を、最大HP のみ▲・現在の HP▼ で下げ、量で追う回復（スキル発動者の最終最大HP の X%）で戻した割合。持続回復・吸収回復では戻さない）の低い順に選び、並んだときは枠の若い順に選ぶ（自分も候補。C-0567）。実機では被弾で HP の割合が下がった味方が選ばれうる（射撃場 3 分モードでも、撃つ枠には的の攻撃が当たる）。満タンの味方にも回復は起き、「回復効果が適用された時」を起こす。「通常攻撃で 120 回攻撃した時」は、命中率▲（effects[0]）と同じく撃った発の通算で数える。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く。発動者の最終最大HP は、ミサト自身に付いた最大HP のみ▲ も入れる（C-1335）。S2 の与えるHP回復量▲は掛け、受けるHP回復量▲は掛けない（plan/design-heal-amount-up.md 2.1・2.3 節）",
+            "en": "\"The ally with the lowest remaining HP ratio\" uses the HP ratio at the heal (the slot's assumed ratio, full by default, lowered by max-HP-only ups and current HP downs and raised back by heals of X% of the caster's final max HP; heals over time and lifesteal do not raise it); ties go to the leftmost slot (self included; C-0567). In game, an ally whose HP ratio dropped from damage can be chosen instead (in the 3-minute range mode, the target attacks the slots that fire). The heal also lands on allies at full HP and triggers \"when healed\". \"After performing 120 normal attacks\" counts every normal shot fired, as for the hit rate up (effects[0]). The healed amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs. The caster's final max HP includes the max-HP-only ups on Misato herself (C-1335). The S2 Outgoing Healing up is applied; Incoming Healing ups are not (plan/design-heal-amount-up.md 2.1, 2.3)"
           },
           "claims": [
             "C-0567",
             "C-0180",
             "C-0652",
             "C-1116",
-            "C-1316"
+            "C-1316",
+            "C-1335"
           ]
         }
       ]
     },
     "skill2": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "healDealt",
+          "ref": 2,
+          "while": {
+            "selfState": {
+              "state": "shootingManual",
+              "present": true,
+              "stacks": "full"
+            }
+          },
+          "assumes": {
+            "ja": "射撃マニュアルのフルスタック（3 スタック）の間、量で追う S1 の回復の量に (1 + 30.05%) を掛ける（回復の発火のフレームより前にフルスタックになった時。plan/design-heal-amount-up.md 2.1 節）。量で追わないバーストの持続回復には効かない",
+            "en": "While Shooting Manual is at max stacks (3), multiplies the amount of the tracked S1 heal by (1 + 30.05%) (when max stacks were reached before the heal fires; plan/design-heal-amount-up.md 2.1). It does not affect the untracked heal over time of the Burst"
+          },
+          "claims": [
+            "C-1334",
+            "C-0180"
+          ]
+        }
+      ],
       "notes": [
         {
           "ja": "射撃マニュアル状態の間の味方全体のバリアに与えるダメージ▲は、バリアの無い敵（射撃場の的）では効かない",
@@ -63,15 +92,6 @@
             "target": "allies",
             "trigger": "unknown"
           },
-          "claims": [
-            "C-0180"
-          ]
-        },
-        {
-          "ja": "射撃マニュアルのフルスタック状態の間の自分の与えるHP回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
-          "en": "Outgoing Healing up on self at max Shooting Manual stacks does not change damage by itself (it matters only with an effect reading HP in the team)",
-          "kind": "indirect",
-          "path": "hp",
           "claims": [
             "C-0180"
           ]
