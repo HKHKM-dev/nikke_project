@@ -40,8 +40,8 @@
           "stat": "critDamage",
           "ref": 7,
           "assumes": {
-            "ja": "自分の HP の割合は、枠の想定の割合を最大HP▲・最大HP のみ▲ で下げた値。被弾の無い前提では、バーストの最大HP のみ▲ の間だけ 70% 以下になる（plan/design-mast.md 8 節）",
-            "en": "Own HP ratio is the slot's assumed ratio lowered by max HP up and max-HP-only up. With no damage taken, it falls to 70% or lower only during the burst's max-HP-only up (plan/design-mast.md 8)"
+            "ja": "自分の HP の割合は、枠の想定の割合を最大HP▲・最大HP のみ▲ で下げた値。被弾の無い前提では、バーストの最大HP のみ▲ の間だけ 70% 以下になる（plan/design-mast.md 8 節）。回復（スキル発動者の最終最大HP の X%）で 70% を上回れば切れる（確かめていない）",
+            "en": "Own HP ratio is the slot's assumed ratio lowered by max HP up and max-HP-only up. With no damage taken, it falls to 70% or lower only during the burst's max-HP-only up (plan/design-mast.md 8). A heal (X% of the caster's final max HP) lifting it above 70% ends it (unverified)"
           },
           "claims": [
             "C-0862"
@@ -59,8 +59,8 @@
           "stat": "critDamage",
           "ref": 7,
           "assumes": {
-            "ja": "自分の HP の割合は、枠の想定の割合を最大HP▲・最大HP のみ▲ で下げた値。被弾の無い前提では、バーストの最大HP のみ▲ の間だけ 70% 以下になる（plan/design-mast.md 8 節）",
-            "en": "Own HP ratio is the slot's assumed ratio lowered by max HP up and max-HP-only up. With no damage taken, it falls to 70% or lower only during the burst's max-HP-only up (plan/design-mast.md 8)"
+            "ja": "自分の HP の割合は、枠の想定の割合を最大HP▲・最大HP のみ▲ で下げた値。被弾の無い前提では、バーストの最大HP のみ▲ の間だけ 70% 以下になる（plan/design-mast.md 8 節）。回復（スキル発動者の最終最大HP の X%）で 70% を上回れば切れる（確かめていない）",
+            "en": "Own HP ratio is the slot's assumed ratio lowered by max HP up and max-HP-only up. With no damage taken, it falls to 70% or lower only during the burst's max-HP-only up (plan/design-mast.md 8). A heal (X% of the caster's final max HP) lifting it above 70% ends it (unverified)"
           },
           "claims": [
             "C-0862"
@@ -73,17 +73,6 @@
           "en": "Sea Breeze is applied every 2 critical normal-attack hits and all its stacks expire about 3 s after the last application. In game it breaks and restarts from 0 when 2 crits do not land within 3 s, but the model counts crits as an expectation, so it never breaks and Storm copies more stacks (V-0623)",
           "kind": "modeling",
           "refers": "effects[0]"
-        },
-        {
-          "ja": "回復で現在の HP が戻って HP の割合が 70% を上回る分（最大HP のみ▲ の間に回復を受けた時）は扱わない（HP の割合は最大HP▲・最大HP のみ▲ だけで下げる）",
-          "en": "The HP ratio rising above 70% because a heal restores current HP (a heal received during the max-HP-only up) is not modeled (the ratio is lowered only by max HP up and max-HP-only up)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "critDamage",
-            "target": "topAttack",
-            "trigger": "unknown"
-          }
         }
       ]
     },

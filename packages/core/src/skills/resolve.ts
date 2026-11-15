@@ -1739,8 +1739,11 @@ export type ResolvedInstantEffect = {
   durationFrames?: number;
   /** heal の delayFrames（skills/heals.ts の healFrameOf。plan/design-shot-count-trigger-frame.md 6 節） */
   delayFrames?: number;
-  /** 弾丸チャージの発数（ammoRefill の scaling 'flat'）。value は発数のまま */
-  scaling?: 'flat';
+  /**
+   * 弾丸チャージの発数（ammoRefill の scaling 'flat'）。value は発数のまま。heal の 'casterFinalMaxHp' は、value（割合）× 発動者の
+   * 最終最大HP を対象の現在の HP に足す（plan/design-hp-heal-restore.md 2.2 節）
+   */
+  scaling?: 'flat' | 'casterFinalMaxHp';
   /**
    * cooldownReduction の発火の条件（selfState。stacksRef は解いてある。plan/design-skill-stage12.md 2.6 節）。
    * fullBurstExtend も。cooldownReduction の使った段階（burstStep）も
@@ -1803,6 +1806,7 @@ export function resolveInstant(
         effectIndex,
       };
       if (effect.kind === 'ammoRefill' && effect.scaling === 'flat') r.scaling = 'flat';
+      if (effect.kind === 'heal' && effect.scaling === 'casterFinalMaxHp') r.scaling = 'casterFinalMaxHp';
       if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
       if (effect.targetElement) r.targetElement = effect.targetElement;
       if (effect.targetClass) r.targetClass = effect.targetClass;

@@ -11,9 +11,10 @@
           "target": "topAttack",
           "targetCountRef": 2,
           "ref": 3,
+          "scaling": "casterFinalMaxHp",
           "assumes": {
-            "ja": "グリーンハーブ（スキル発動者の最終最大HP の X% の回復）。「フルチャージ攻撃が 3 回命中した時」は、RL の当たりは 1 発 1 ヒット（C-0168）なので、フルチャージの発の通算で数える。回復量はダメージに関係しない（確かめていない）",
-            "en": "Green Herb (heals X% of the caster's final max HP). \"When 3 fully charged attacks hit\" is counted as fully charged shots, since an RL shot is one hit (C-0168). The amount does not affect damage (not checked)"
+            "ja": "グリーンハーブ（スキル発動者の最終最大HP の X% の回復）。「フルチャージ攻撃が 3 回命中した時」は、RL の当たりは 1 発 1 ヒット（C-0168）なので、フルチャージの発の通算で数える。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く（与えるHP回復量▲・受けるHP回復量▲は掛けない。plan/design-hp-heal-restore.md 2.2 節）",
+            "en": "Green Herb (heals X% of the caster's final max HP). \"When 3 fully charged attacks hit\" is counted as fully charged shots, since an RL shot is one hit (C-0168). The healed amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs (Outgoing/Incoming Healing ups are not applied; plan/design-hp-heal-restore.md 2.2)"
           }
         }
       ]
@@ -36,9 +37,10 @@
           "trigger": "burstUse",
           "target": "allies",
           "ref": 1,
+          "scaling": "casterFinalMaxHp",
           "assumes": {
-            "ja": "味方全体への 1 回の回復（スキル発動者の最終最大HP の X%）。回復量はダメージに関係しない（確かめていない）",
-            "en": "A one-off heal on all allies (X% of the caster's final max HP). The amount does not affect damage (not checked)"
+            "ja": "味方全体への 1 回の回復（スキル発動者の最終最大HP の X%）。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く（与えるHP回復量▲・受けるHP回復量▲は掛けない。plan/design-hp-heal-restore.md 2.2 節）",
+            "en": "A one-off heal on all allies (X% of the caster's final max HP). The healed amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs (Outgoing/Incoming Healing ups are not applied; plan/design-hp-heal-restore.md 2.2)"
           }
         },
         {

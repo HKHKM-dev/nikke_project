@@ -446,8 +446,17 @@ export type HolderLists = {
     context: FireContext,
     frame: number,
   ): FireContext;
-  /** 回復の効果 effect がフレーム frame に枠 holder に付く。回復を起こすなら true（吸収回復の付き直しなら false） */
-  applyHeal(effect: ResolvedInstantEffect, sourceSlotIndex: number, holder: number, frame: number): boolean;
+  /**
+   * 回復の効果 effect（フレーム fireFrame に発火）がフレーム frame に枠 holder に付く。回復を起こすなら true（吸収回復の付き直しなら
+   * false）。scaling 'casterFinalMaxHp' の回復は、frame の次のフレームから HP の割合を上げる（plan/design-hp-heal-restore.md 2.1 節）
+   */
+  applyHeal(
+    effect: ResolvedInstantEffect,
+    sourceSlotIndex: number,
+    holder: number,
+    frame: number,
+    fireFrame: number,
+  ): boolean;
   /** 枠 holder の、撃ち切りで終わる使用武器の変更（weaponId）の開いている件があるか（閉じる前に見る） */
   openWeaponChange(holder: number, weaponId: string, end: number): boolean;
   /** 枠 slotIndex の、段の循環 targetSkill に効く間隔の変更の件のうち、フレーム frame に効いているものの間隔 */

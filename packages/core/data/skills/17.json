@@ -244,13 +244,14 @@
           },
           "target": "allies",
           "ref": 3,
+          "scaling": "casterFinalMaxHp",
           "burstStepMix": {
             "otherBurstStep": "Step1",
             "present": true
           },
           "assumes": {
-            "ja": "みんなの星状態のとき（自分を除く基本バースト段階 1 の味方がいるとき。S1 の everyonesStar と同じ編成の条件）。フルチャージの発ごとに味方全体が回復を受け、そのたびに「回復効果が適用された時」を起こす（1 回の回復。HP が満タンでも適用とみなす。ヘルムの宝物版 S1 の C-0345 と同じ読み）。回復量はダメージに関係しない",
-            "en": "With Everyone's Star (another standard Burst I ally is present; the same squad condition as everyonesStar in S1). Each Full Charge shot heals all allies and triggers \"when healed\" each time (a one-off heal; it counts as applied even at full HP, read the same way as Helm's treasure S1, C-0345). The healed amount does not affect damage"
+            "ja": "みんなの星状態のとき（自分を除く基本バースト段階 1 の味方がいるとき。S1 の everyonesStar と同じ編成の条件）。フルチャージの発ごとに味方全体が回復を受け、そのたびに「回復効果が適用された時」を起こす（1 回の回復。HP が満タンでも適用とみなす。ヘルムの宝物版 S1 の C-0345 と同じ読み）。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く（与えるHP回復量▲・受けるHP回復量▲は掛けない。plan/design-hp-heal-restore.md 2.2 節）",
+            "en": "With Everyone's Star (another standard Burst I ally is present; the same squad condition as everyonesStar in S1). Each Full Charge shot heals all allies and triggers \"when healed\" each time (a one-off heal; it counts as applied even at full HP, read the same way as Helm's treasure S1, C-0345). The healed amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs (Outgoing/Incoming Healing ups are not applied; plan/design-hp-heal-restore.md 2.2)"
           },
           "claims": [
             "C-0576"

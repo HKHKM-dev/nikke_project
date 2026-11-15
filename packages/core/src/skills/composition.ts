@@ -492,16 +492,22 @@ function applyCompositionToSlot(
  * 絞り込みによらずどの枠も動きうるとみる（多めに見ても、動かない枠の区間の件は戦闘の全体になるだけ）。definitions は編成の条件で
  * 外した後の各枠の定義（定義の無い枠は null・undefined）
  */
+/** 最大HP のみ▲ の効果（常時・while・timed・状態の中身）か */
+export function isMaxHpOnlyEffect(e: SkillEffect): boolean {
+  return (
+    ((e.kind === 'passive' || e.kind === 'timed') && e.stat === 'maxHpOnly') ||
+    (e.kind === 'state' && statContentsOf(e.contents).some((c) => c.stat === 'maxHpOnly'))
+  );
+}
+
 function hpRatioMovesOf(definitions: readonly (SkillDefinition | null | undefined)[]): boolean[] {
   const moves = definitions.map(() => false);
   definitions.forEach((definition, i) => {
     if (!definition) return;
     for (const slot of SKILL_SLOTS) {
       for (const e of definition.skills[slot].effects) {
-        const lowers =
-          ((e.kind === 'passive' || e.kind === 'timed') && e.stat === 'maxHpOnly') ||
-          (e.kind === 'state' && statContentsOf(e.contents).some((c) => c.stat === 'maxHpOnly'));
-        if (e.kind === 'currentHpDown' || (lowers && e.target === 'self')) moves[i] = true;
+        const lowers = isMaxHpOnlyEffect(e);
+        if (e.kind === 'currentHpDown' || (lowers && 'target' in e && e.target === 'self')) moves[i] = true;
         else if (lowers) moves.fill(true);
       }
     }

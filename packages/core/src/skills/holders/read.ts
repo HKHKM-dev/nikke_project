@@ -4,6 +4,7 @@
 import { type ShotLog } from '../../frame/shots.ts';
 import {
   resolveMaxStacksUps,
+  type ResolvedInstantEffect,
   type ResolvedWhileEffect,
   type ResolvedCounterWhileEffect,
   isCounterWhileEffect,
@@ -178,7 +179,13 @@ export function createRead({
     track.items = items;
     return track.items;
   };
-  const applyHeal: HolderLists['applyHeal'] = (effect, sourceSlotIndex, holder, frame) => {
+  /** 回復の記録と吸収回復の件（量で追う回復の HP も足す問い合わせは skills/holders/views.ts の applyHeal） */
+  const recordHeal = (
+    effect: ResolvedInstantEffect,
+    sourceSlotIndex: number,
+    holder: number,
+    frame: number,
+  ): boolean => {
     const track = healTracks.get(healKey(sourceSlotIndex, effect))?.[holder] ?? null;
     if (track === null) throw new Error(`no heal track for ${effect.source.skill}[${effect.effectIndex}] on ${holder}`);
     const opens = effect.durationFrames === undefined || activeAt(track, frame).length === 0;
@@ -216,6 +223,6 @@ export function createRead({
     }
     return out;
   };
-  return { activeAt, applyHeal, consumeFullStacks, openWeaponChange, readItems };
+  return { activeAt, consumeFullStacks, openWeaponChange, readItems, recordHeal };
 }
 export type Read = ReturnType<typeof createRead>;

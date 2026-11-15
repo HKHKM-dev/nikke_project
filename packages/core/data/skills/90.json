@@ -36,9 +36,10 @@
           "trigger": "burstUse",
           "target": "allies",
           "ref": 1,
+          "scaling": "casterFinalMaxHp",
           "assumes": {
-            "ja": "味方全体の 1 回の回復と、吸収回復（攻撃ダメージの X% 回復・5 秒）は、どちらも使った時に付き、そのフレームに 1 回だけ「回復効果が適用された時」を起こす（吸収回復は窓の中の命中では起こさない。C-0082）。満タンの味方にも付く。回復量はダメージに関係しない",
-            "en": "The one-off heal and the lifesteal (X% of attack damage, 5 s) on all allies both land on use and trigger \"when healed\" once on that frame (the lifesteal does not on hits inside its window; C-0082). They also land on allies at full HP. The healed amount does not affect damage"
+            "ja": "味方全体の 1 回の回復と、吸収回復（攻撃ダメージの X% 回復・5 秒）は、どちらも使った時に付き、そのフレームに 1 回だけ「回復効果が適用された時」を起こす（吸収回復は窓の中の命中では起こさない。C-0082）。満タンの味方にも付く。1 回の回復の回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く（与えるHP回復量▲・受けるHP回復量▲は掛けない。plan/design-hp-heal-restore.md 2.2 節）（吸収回復は割合を戻さない）",
+            "en": "The one-off heal and the lifesteal (X% of attack damage, 5 s) on all allies both land on use and trigger \"when healed\" once on that frame (the lifesteal does not on hits inside its window; C-0082). They also land on allies at full HP. For the one-off heal, the healed amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs (Outgoing/Incoming Healing ups are not applied; plan/design-hp-heal-restore.md 2.2) (the lifesteal does not raise the ratio)"
           },
           "claims": [
             "C-0686",

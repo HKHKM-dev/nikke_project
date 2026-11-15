@@ -13,9 +13,10 @@
           },
           "target": "allies",
           "ref": 2,
+          "scaling": "casterFinalMaxHp",
           "assumes": {
-            "ja": "通常攻撃 60 発ごと（通算 60・120・180…発目。リロードをまたいで数える）に味方全体が 1 回の回復を受け、そのたびに「回復効果が適用された時」を起こす（HP が満タンでも適用とみなす）。回復量はダメージに関係しない",
-            "en": "Every 60 normal attacks (the 60th, 120th, 180th... overall, counted across reloads) all allies receive a one-off heal, triggering \"when healed\" each time (it counts as applied even at full HP). The healed amount does not affect damage"
+            "ja": "通常攻撃 60 発ごと（通算 60・120・180…発目。リロードをまたいで数える）に味方全体が 1 回の回復を受け、そのたびに「回復効果が適用された時」を起こす（HP が満タンでも適用とみなす）。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く（与えるHP回復量▲・受けるHP回復量▲は掛けない。plan/design-hp-heal-restore.md 2.2 節）",
+            "en": "Every 60 normal attacks (the 60th, 120th, 180th... overall, counted across reloads) all allies receive a one-off heal, triggering \"when healed\" each time (it counts as applied even at full HP). The healed amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs (Outgoing/Incoming Healing ups are not applied; plan/design-hp-heal-restore.md 2.2)"
           },
           "claims": [
             "C-1166"
@@ -132,9 +133,10 @@
           "trigger": "burstUse",
           "target": "allies",
           "ref": 1,
+          "scaling": "casterFinalMaxHp",
           "assumes": {
-            "ja": "味方全体への 1 回の回復で、HP が満タンの味方にも「回復効果が適用された時」を起こす。回復量はダメージに関係しない",
-            "en": "A one-off heal on all allies that triggers \"when healed\" even on allies at full HP. The healed amount does not affect damage"
+            "ja": "味方全体への 1 回の回復で、HP が満タンの味方にも「回復効果が適用された時」を起こす。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く（与えるHP回復量▲・受けるHP回復量▲は掛けない。plan/design-hp-heal-restore.md 2.2 節）",
+            "en": "A one-off heal on all allies that triggers \"when healed\" even on allies at full HP. The healed amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs (Outgoing/Incoming Healing ups are not applied; plan/design-hp-heal-restore.md 2.2)"
           },
           "claims": [
             "C-1170"

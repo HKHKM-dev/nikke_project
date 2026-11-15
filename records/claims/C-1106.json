@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`1090-03`・`1091-03`（エードの S2 だけの区間の会心の発に、ミルクの S2 が乗る）・`1090-04`・`1091-04`（バーストだけの区間の会心の発は、ミルクの S2 の外れた値。ノワールの S1 は乗る）・`1090-05`・`1090-06`・`1091-05`・`1091-06`（S2 とバーストの重なりの発は、ノワールの S1 も外れた値）・`1090-02`・`1091-02`（窓の外の発）・`1090-07`・`1091-07`（バーストの区間の会心の発 144 個・128 個に、ミルクの S2 が乗ったままの値は無い）・`1090-08`・`1091-08`（ノワールの S1 の外れた発は、重なりの間だけ 303 個・284 個）・`1090-09`・`1091-09`（HP のバーの割合）。H1c の予測と合い、H1（対象基準）・H0（見直さない）とは合わない。V-0730",
-  "model": "反映（data/skills/141.json の skill2 の effects[0]・treasureSkills.skill2 の effects[0]、data/skills/271.json の skill1 の effects[0]。HP の割合が動きうる枠では、常時の selfHp を編成の段で決めずに、件の一覧が区間の件にする（skills/composition.ts の hpRatioMovesOf、skills/resolve.ts の resolveHpWhileEffects、skills/holders.ts の hpAtLeastOf）。外れ始めは最大HP のみ▲ の窓の始まりの次のフレーム（マスト編の論点 8 と同じ。録画で分かるのは、窓の中の発で外れていること）。回復で割合が戻る分は扱わない）",
+  "model": "反映（data/skills/141.json の skill2 の effects[0]・treasureSkills.skill2 の effects[0]、data/skills/271.json の skill1 の effects[0]。HP の割合が動きうる枠では、常時の selfHp を編成の段で決めずに、件の一覧が区間の件にする（skills/composition.ts の hpRatioMovesOf、skills/resolve.ts の resolveHpWhileEffects、skills/holders.ts の hpAtLeastOf）。外れ始めは最大HP のみ▲ の窓の始まりの次のフレーム（マスト編の論点 8 と同じ。録画で分かるのは、窓の中の発で外れていること）。割合は量で追う回復で戻る（C-1316））",
   "replaces": [],
   "updated": "2026-11-12",
   "subject": {
@@ -22,23 +22,6 @@
       "observations": ["1090-07", "1090-08", "1091-07", "1091-08"],
       "element": "ノワール burst.effects[1]",
       "reason": "ノワールのバーストは使っていない（オートバースト OFF で、I-DOLL・フラワー → エードの順にだけ手で使った。比べる指定の noBurstSlots）ので、バーストの命中率▲は出ない",
-      "decided": "2026-11-12"
-    },
-    {
-      "observations": [
-        "1090-02",
-        "1090-03",
-        "1090-04",
-        "1090-05",
-        "1090-06",
-        "1091-02",
-        "1091-03",
-        "1091-04",
-        "1091-05",
-        "1091-06"
-      ],
-      "element": "エード skill1.notes[1]",
-      "reason": "回復で現在の HP が戻る分の未対応の notes。編成（I-DOLL・フラワー・エード・ミルク・ノワール）でバーストを使うのはフラワーとエードだけで、HP の回復が無いので起きない",
       "decided": "2026-11-12"
     },
     {

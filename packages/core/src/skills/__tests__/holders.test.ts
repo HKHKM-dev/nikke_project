@@ -166,11 +166,11 @@ describe('吸収回復の窓', () => {
     const heal = resolveInstant(slot.definition!, slot.character, slot.levels).find((e) => e.kind === 'heal')!;
     const lists = listsOf([slot]);
     lists.registerBattleStart();
-    expect(lists.applyHeal(heal, 0, 0, 0)).toBe(true);
+    expect(lists.applyHeal(heal, 0, 0, 0, 0)).toBe(true);
     // 窓 [0, D5) の中の付き直しは回復を起こさず、窓を延ばす（[0, 2·D5 − 1)）
-    expect(lists.applyHeal(heal, 0, 0, D5 - 1)).toBe(false);
+    expect(lists.applyHeal(heal, 0, 0, D5 - 1, D5 - 1)).toBe(false);
     // 窓のちょうど終わりのフレームは窓の外
-    expect(lists.applyHeal(heal, 0, 0, 2 * D5 - 1)).toBe(true);
+    expect(lists.applyHeal(heal, 0, 0, 2 * D5 - 1, 2 * D5 - 1)).toBe(true);
     expect(lists.history().heals).toEqual([
       { frame: 0, sourceSlotIndex: 0, slotIndex: 0 },
       { frame: 2 * D5 - 1, sourceSlotIndex: 0, slotIndex: 0 },
@@ -189,13 +189,13 @@ describe('吸収回復の窓（効果ごと・対象の枠ごと）', () => {
     );
     const lists = listsOf([slot, slotWith(2, [])]);
     lists.registerBattleStart();
-    expect(lists.applyHeal(lasting!, 0, 0, 10)).toBe(true);
-    expect(lists.applyHeal(lasting!, 0, 0, 60)).toBe(false); // 付き直し（窓は 60 + D5 まで延びる）
-    expect(lists.applyHeal(lasting!, 0, 0, 59 + D5)).toBe(false); // 延びた窓の中
-    expect(lists.applyHeal(lasting!, 0, 1, 60)).toBe(true); // 対象の枠ごと
-    expect(lists.applyHeal(lasting!, 0, 0, 59 + 2 * D5)).toBe(true); // 延びた窓が切れた後
-    expect(lists.applyHeal(instant!, 0, 0, 61)).toBe(true);
-    expect(lists.applyHeal(instant!, 0, 0, 62)).toBe(true);
+    expect(lists.applyHeal(lasting!, 0, 0, 10, 10)).toBe(true);
+    expect(lists.applyHeal(lasting!, 0, 0, 60, 60)).toBe(false); // 付き直し（窓は 60 + D5 まで延びる）
+    expect(lists.applyHeal(lasting!, 0, 0, 59 + D5, 59 + D5)).toBe(false); // 延びた窓の中
+    expect(lists.applyHeal(lasting!, 0, 1, 60, 60)).toBe(true); // 対象の枠ごと
+    expect(lists.applyHeal(lasting!, 0, 0, 59 + 2 * D5, 59 + 2 * D5)).toBe(true); // 延びた窓が切れた後
+    expect(lists.applyHeal(instant!, 0, 0, 61, 61)).toBe(true);
+    expect(lists.applyHeal(instant!, 0, 0, 62, 62)).toBe(true);
   });
 });
 

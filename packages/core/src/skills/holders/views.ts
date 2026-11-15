@@ -36,6 +36,7 @@ export const HP_RATIO_EPS = 1e-9;
 
 export function createViews({
   activeAt,
+  recordHeal,
   counterKey,
   frames,
   passive,
@@ -275,10 +276,10 @@ export function createViews({
     }
     return { up, only };
   };
-  const finalMaxHpAt = (slotIndex: number, frame: number): number | undefined => {
+  const finalMaxHpAt = (slotIndex: number, frame: number, startsBefore = false): number | undefined => {
     const base = slots[slotIndex]?.casterMaxHp;
     if (base === undefined) return undefined;
-    return base * (1 + maxHpUpAt(slotIndex, frame, false).up);
+    return base * (1 + maxHpUpAt(slotIndex, frame, startsBefore).up);
   };
   /**
    * 枠のフレーム frame の HP の割合（plan/design-mast.md 8 節。plan/design-skill-stage6.md 2.4 節の式）。枠の想定の割合 ×
@@ -309,15 +310,107 @@ export function createViews({
     const i = lowerBound(downs.frames, frame);
     return i === 0 ? 1 : downs.products[i - 1]!;
   };
-  const selfHpRatioAt = (slotIndex: number, frame: number): number => {
-    const ratio = (slots[slotIndex]?.hpRatio ?? 1) * hpDownProductBefore(slotIndex, frame);
-    if (!maxHpOnlyMoves[slotIndex]) return ratio;
+  /**
+   * 枠ごとの、量で追う回復（heal の scaling 'casterFinalMaxHp'）の記録（付くフレームの昇順）と、回復で足した HP の余り E の記録
+   * （plan/design-hp-heal-restore.md 2.1 節。値はその枠のバフ前の最大HP を 1 とする）。E は回復を受けた枠だけ、フレームの昇順に進める
+   * （upTo まで進めた。next は次に足す回復の位置）。E が 0 より大きくなるのは、最大HP のみ▲ か現在の HP▼ で下がった枠だけ
+   */
+  type HpRestore = { frame: number; fireFrame: number; sourceSlotIndex: number; value: number };
+  const restores = slots.map(() => ({
+    list: [] as HpRestore[],
+    upTo: -1,
+    next: 0,
+    values: null as Float64Array | null,
+  }));
+  /**
+   * 枠 holder に、フレーム fireFrame に発火した量で追う回復（発動者 sourceSlotIndex・割合 value）がフレーム frame（戦闘の中）に付く。
+   * E には frame の次のフレームから効く
+   */
+  const restoreHp = (
+    sourceSlotIndex: number,
+    holder: number,
+    frame: number,
+    fireFrame: number,
+    value: number,
+  ): void => {
+    const memo = restores[holder];
+    if (memo === undefined) throw new RangeError(`restoreHp: no slot ${holder}`);
+    if (frame <= memo.upTo - 1)
+      throw new RangeError(`restoreHp: frame ${frame} is before the advanced frame of slot ${holder}`);
+    const i = memo.list.findLastIndex((r) => r.frame <= frame) + 1;
+    memo.list.splice(i, 0, { frame, fireFrame, sourceSlotIndex, value });
+  };
+  /** 回復量（対象 holder のバフ前の最大HP を 1 とする値）。発動者の最終最大HP は、発火のフレームより前に付いた最大HP の件で求める */
+  const restoreAmountOf = (r: HpRestore, holder: number): number => {
+    const caster = finalMaxHpAt(r.sourceSlotIndex, r.fireFrame, true);
+    const own = slots[holder]?.casterMaxHp;
+    if (caster === undefined || own === undefined)
+      throw new RangeError(
+        `slot ${holder}: a heal by casterFinalMaxHp needs the base max HP of the caster and the target`,
+      );
+    return (caster * r.value) / own;
+  };
+  /**
+   * 回復を除いた現在の HP と最大HP と上限（想定の割合 × 最大HP）。どれも枠のバフ前の最大HP を 1 とする（plan/design-skill-stage6.md
+   * 2.4 節の式）。product は frame より前の現在の HP▼ の積
+   */
+  const hpBaseAt = (slotIndex: number, frame: number, product = hpDownProductBefore(slotIndex, frame)) => {
+    const r0 = slots[slotIndex]?.hpRatio ?? 1;
     const { up, only } = maxHpUpAt(slotIndex, frame, true);
-    return (ratio * (1 + up - only)) / (1 + up);
+    return { current: r0 * product * (1 + up - only), max: 1 + up, cap: r0 * (1 + up) };
+  };
+  /**
+   * 枠のフレーム frame の余り E。f − 1 から f へ: f − 1 の現在の HP▼ を E にも掛け、f − 1 に付いた回復の量を足し、現在の HP が上限
+   * （想定の割合 × 最大HP。plan/design-hp-heal-restore.md 2.4 節）を超えないように削る。frame より前に付いた回復・件・現在の HP▼ だけを
+   * 読むので、1 パス目ではフレーム f の登録の始めに f まで進めてよい
+   */
+  const surplusAt = (slotIndex: number, frame: number): number => {
+    const memo = restores[slotIndex]!;
+    const { list } = memo;
+    if (list.length === 0 || frame <= list[0]!.frame) return 0;
+    memo.values ??= new Float64Array(Math.max(frames, 1) + 1);
+    const values = memo.values;
+    if (frame <= memo.upTo) return values[frame]!;
+    let g = memo.upTo < 0 ? list[0]!.frame + 1 : memo.upTo + 1;
+    let e = memo.upTo < 0 ? 0 : values[memo.upTo]!;
+    let before = hpDownProductBefore(slotIndex, g - 1);
+    for (; g <= frame; g++) {
+      const heals = memo.next < list.length && list[memo.next]!.frame === g - 1;
+      // E が 0 で回復も付かないフレームは 0 のまま（配列は 0 で始まる）
+      if (e === 0 && !heals) {
+        before = hpDownProductBefore(slotIndex, g);
+        continue;
+      }
+      const product = hpDownProductBefore(slotIndex, g);
+      e *= product / before;
+      before = product;
+      const base = hpBaseAt(slotIndex, g, product);
+      const room = base.cap - base.current;
+      for (; memo.next < list.length && list[memo.next]!.frame === g - 1; memo.next++)
+        if (room > HP_RATIO_EPS) e += restoreAmountOf(list[memo.next]!, slotIndex);
+      e = Math.max(0, Math.min(e, room));
+      values[g] = e;
+    }
+    memo.upTo = frame;
+    return e;
+  };
+  /** 回復の記録（skills/holders/read.ts）と、量で追う回復の HP（restoreHp） */
+  const applyHeal: HolderLists['applyHeal'] = (effect, sourceSlotIndex, holder, frame, fireFrame) => {
+    const opens = recordHeal(effect, sourceSlotIndex, holder, frame);
+    if (effect.scaling === 'casterFinalMaxHp') restoreHp(sourceSlotIndex, holder, frame, fireFrame, effect.value);
+    return opens;
+  };
+  const selfHpRatioAt = (slotIndex: number, frame: number): number => {
+    const e = surplusAt(slotIndex, frame);
+    if (e === 0 && !maxHpOnlyMoves[slotIndex])
+      return (slots[slotIndex]?.hpRatio ?? 1) * hpDownProductBefore(slotIndex, frame);
+    const { current, max, cap } = hpBaseAt(slotIndex, frame);
+    // 上限まで戻った枠は想定の割合（余りを上限で削った値から割り戻すと、浮動小数の誤差で想定の割合からずれる）
+    return current + e >= cap ? (slots[slotIndex]?.hpRatio ?? 1) : (current + e) / max;
   };
   /**
    * 履歴に置く、枠の HP の割合の段（selfHpRatioAt を毎フレーム取り、値の変わったフレームだけを残す）。最大HP のみ▲ も現在の
-   * HP▼ も無い枠は割合が動かないので 1 段。ループの後に呼ぶ
+   * HP▼ も無い枠は割合が動かない（回復も戻さない）ので 1 段。ループの後に呼ぶ
    */
   const hpRatioStepsOf = (slotIndex: number): HpRatioSteps => {
     if (!maxHpOnlyMoves[slotIndex] && hpDowns[slotIndex]!.frames.length === 0)
@@ -397,6 +490,7 @@ export function createViews({
     return { ...context, attackRank: attackRankFor(e, rankSlots, finalAttacks, sourceSlotIndex) };
   };
   return {
+    applyHeal,
     chanceLevelsAt,
     conditionViews,
     cooldownSum,

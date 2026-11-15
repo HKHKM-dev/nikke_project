@@ -13,10 +13,11 @@
           "target": "lowestHpRatio",
           "targetCountRef": 1,
           "ref": 2,
+          "scaling": "casterFinalMaxHp",
           "delayFrames": 6,
           "assumes": {
-            "ja": "「残りの HP の割合が最も低い味方」は、回復の時の HP の割合（枠の想定の割合（既定は満タン）を、最大HP のみ▲・現在の HP▼ で下げた割合。回復で割合が戻る分は扱わない）の低い順に選び、並んだときは枠の若い順に選ぶ（自分も候補。C-0591。ミサト S1 の C-0567 と同じ）。実機では被弾で HP の割合が下がった味方が選ばれうる（射撃場 3 分モードでも、撃つ枠には的の攻撃が当たる）。満タンの味方にも回復は起き、「回復効果が適用された時」を起こす。回復量はダメージに関係しない。「最後の弾丸が命中した時」は、残弾を 0 にした射撃で起こす（外れた時に起きないかは確かめていない）",
-            "en": "\"The ally with the lowest remaining HP ratio\" uses the HP ratio at the heal (the slot's assumed ratio, full by default, lowered by max-HP-only ups and current HP downs; the rise from heals is not modeled); ties go to the leftmost slot (self included; C-0591, as for Misato S1 in C-0567). In game, an ally whose HP ratio dropped from damage can be chosen instead (in the 3-minute range mode, the target attacks the slots that fire). The heal also lands on allies at full HP and triggers \"when healed\". The healed amount does not affect damage. \"When the last bullet hits\" fires on the shot that empties the magazine (whether a miss skips it is unverified)"
+            "ja": "「残りの HP の割合が最も低い味方」は、回復の時の HP の割合（枠の想定の割合（既定は満タン）を、最大HP のみ▲・現在の HP▼ で下げ、量で追う回復（スキル発動者の最終最大HP の X%）で戻した割合。持続回復・吸収回復では戻さない）の低い順に選び、並んだときは枠の若い順に選ぶ（自分も候補。C-0591。ミサト S1 の C-0567 と同じ）。実機では被弾で HP の割合が下がった味方が選ばれうる（射撃場 3 分モードでも、撃つ枠には的の攻撃が当たる）。満タンの味方にも回復は起き、「回復効果が適用された時」を起こす。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く（与えるHP回復量▲・受けるHP回復量▲は掛けない。plan/design-hp-heal-restore.md 2.2 節）。「最後の弾丸が命中した時」は、残弾を 0 にした射撃で起こす（外れた時に起きないかは確かめていない）",
+            "en": "\"The ally with the lowest remaining HP ratio\" uses the HP ratio at the heal (the slot's assumed ratio, full by default, lowered by max-HP-only ups and current HP downs and raised back by heals of X% of the caster's final max HP; heals over time and lifesteal do not raise it); ties go to the leftmost slot (self included; C-0591, as for Misato S1 in C-0567). In game, an ally whose HP ratio dropped from damage can be chosen instead (in the 3-minute range mode, the target attacks the slots that fire). The heal also lands on allies at full HP and triggers \"when healed\". The healed amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs (Outgoing/Incoming Healing ups are not applied; plan/design-hp-heal-restore.md 2.2). \"When the last bullet hits\" fires on the shot that empties the magazine (whether a miss skips it is unverified)"
           },
           "claims": [
             "C-0591",
@@ -36,9 +37,10 @@
           "target": "lowestHpRatio",
           "targetCountRef": 1,
           "ref": 2,
+          "scaling": "casterFinalMaxHp",
           "assumes": {
-            "ja": "「残りの HP の割合が最も低い味方」は、回復の時の HP の割合（枠の想定の割合（既定は満タン）を、最大HP のみ▲・現在の HP▼ で下げた割合。回復で割合が戻る分は扱わない）の低い順に選び、並んだときは枠の若い順に選ぶ（自分も候補。C-0591。ミサト S1 の C-0567 と同じ）。実機では被弾で HP の割合が下がった味方が選ばれうる（射撃場 3 分モードでも、撃つ枠には的の攻撃が当たる）。満タンの味方にも回復は起き、「回復効果が適用された時」を起こす。回復量はダメージに関係しない。説明文にきっかけが無く、戦闘開始から 15 秒ごと（録画 0193 の帯が 883f ごと。C-0254）",
-            "en": "\"The ally with the lowest remaining HP ratio\" uses the HP ratio at the heal (the slot's assumed ratio, full by default, lowered by max-HP-only ups and current HP downs; the rise from heals is not modeled); ties go to the leftmost slot (self included; C-0591, as for Misato S1 in C-0567). In game, an ally whose HP ratio dropped from damage can be chosen instead (in the 3-minute range mode, the target attacks the slots that fire). The heal also lands on allies at full HP and triggers \"when healed\". The healed amount does not affect damage. The description gives no trigger; every 15 s from the start of combat (the banner in recording 193 every 883 f; C-0254)"
+            "ja": "「残りの HP の割合が最も低い味方」は、回復の時の HP の割合（枠の想定の割合（既定は満タン）を、最大HP のみ▲・現在の HP▼ で下げ、量で追う回復（スキル発動者の最終最大HP の X%）で戻した割合。持続回復・吸収回復では戻さない）の低い順に選び、並んだときは枠の若い順に選ぶ（自分も候補。C-0591。ミサト S1 の C-0567 と同じ）。実機では被弾で HP の割合が下がった味方が選ばれうる（射撃場 3 分モードでも、撃つ枠には的の攻撃が当たる）。満タンの味方にも回復は起き、「回復効果が適用された時」を起こす。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く（与えるHP回復量▲・受けるHP回復量▲は掛けない。plan/design-hp-heal-restore.md 2.2 節）。説明文にきっかけが無く、戦闘開始から 15 秒ごと（録画 0193 の帯が 883f ごと。C-0254）",
+            "en": "\"The ally with the lowest remaining HP ratio\" uses the HP ratio at the heal (the slot's assumed ratio, full by default, lowered by max-HP-only ups and current HP downs and raised back by heals of X% of the caster's final max HP; heals over time and lifesteal do not raise it); ties go to the leftmost slot (self included; C-0591, as for Misato S1 in C-0567). In game, an ally whose HP ratio dropped from damage can be chosen instead (in the 3-minute range mode, the target attacks the slots that fire). The heal also lands on allies at full HP and triggers \"when healed\". The healed amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs (Outgoing/Incoming Healing ups are not applied; plan/design-hp-heal-restore.md 2.2). The description gives no trigger; every 15 s from the start of combat (the banner in recording 193 every 883 f; C-0254)"
           },
           "claims": [
             "C-0591",
@@ -54,9 +56,10 @@
           "trigger": "burstUse",
           "target": "allies",
           "ref": 2,
+          "scaling": "casterFinalMaxHp",
           "assumes": {
-            "ja": "味方全体への 1 回の回復で、HP が満タンの味方にも「回復効果が適用された時」を起こす（ヘルムの宝物版 S1 の C-0345 からの類推）。回復量はダメージに関係しない",
-            "en": "A one-off heal on all allies that triggers \"when healed\" even on allies at full HP (by analogy with Helm's treasure S1, C-0345). The healed amount does not affect damage"
+            "ja": "味方全体への 1 回の回復で、HP が満タンの味方にも「回復効果が適用された時」を起こす（ヘルムの宝物版 S1 の C-0345 からの類推）。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く（与えるHP回復量▲・受けるHP回復量▲は掛けない。plan/design-hp-heal-restore.md 2.2 節）",
+            "en": "A one-off heal on all allies that triggers \"when healed\" even on allies at full HP (by analogy with Helm's treasure S1, C-0345). The healed amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs (Outgoing/Incoming Healing ups are not applied; plan/design-hp-heal-restore.md 2.2)"
           },
           "claims": [
             "C-0254",
