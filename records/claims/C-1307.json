@@ -1,0 +1,16 @@
+{
+  "id": "C-1307",
+  "text": "トリナのバーストの「電撃コードのアサルトライフルを使用する味方全体に最大装弾数 20 発▲（Lv10・10 秒）」は、ソルジャーE.G. の最大装弾数を 60 から 80 にする。E.G. の S2 の最大装弾数 112.77%▲ と重なる時は 148（比率で上げて丸めた 128 に 20 を足す。先に足して掛けるなら 170）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1221-16`・`1221-17`・`1221-18`・`1221-19`・`1222-14`・`1222-15`・`1222-16`。V-0791",
+  "model": "反映（`data/skills/412.json` の burst の effects[4]。`frame/firing.ts` の `effectiveMaxAmmo`）",
+  "replaces": [],
+  "updated": "2026-11-15",
+  "subject": {
+    "places": ["data/skills/412.json の burst の effects[4]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値（バーストの値 06・07）と、最大装弾数の式 max(1, 丸め(基礎 × (1 + Σ比率)) + Σ固定)（frame/firing.ts の effectiveMaxAmmo。比率の和は C-0017・C-0328）"
+}

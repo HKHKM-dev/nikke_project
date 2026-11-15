@@ -54,6 +54,8 @@ export type TargetedEffect = {
   /** 「両隣の味方」（plan/design-rouge.md 2.1 節）。枠は最上位の skills/composition.ts が fixedTargets に書く */
   targetAdjacent?: true;
   targetBurstStep?: BasicBurstStep;
+  /** 「部隊の一番左側にいる〈絞り込み〉の味方 1 機」（plan/design-trina.md 2.2 節）。枠は skills/composition.ts が fixedTargets に書く */
+  targetLeftmost?: true;
   /** 「自分と自分より最終防御力が低い味方」。発火の文脈の lowerDefense で決める */
   targetDefense?: TargetDefense;
   fixedTargets?: readonly number[];
@@ -68,6 +70,7 @@ function needsFixedTargets(effect: TargetedEffect): boolean {
     effect.targetState !== undefined ||
     effect.targetAdjacent !== undefined ||
     effect.targetBurstStep !== undefined ||
+    effect.targetLeftmost !== undefined ||
     (effect.target === 'allies' && effect.excludeSelf !== undefined)
   );
 }

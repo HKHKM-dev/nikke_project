@@ -83,6 +83,7 @@ const VALUE_LIMITS: Partial<Record<string, number>> = {
   trueDamage: 200,
   sustainedDamage: 200,
   elementDamage: 200,
+  allEnemiesBurstDamage: 1000,
 };
 
 /**
@@ -254,6 +255,7 @@ describe('data/skills', () => {
                 // アークレンジャー・ブラック: バーストの持続ダメージ▲は Lv10 で 135.83%（上限は 200% で見る）
                 // プリバティ: 宝物版バーストの有利コードの攻撃ダメージ▲は Lv10 で 130%（上限は 200% で見る）
                 // ブレッディ: バーストのあと味効果▲は Lv10 で 349.8%（上限は 1000% で見る）
+                // トリナ: バーストの根張り（『敵全体に』で終わるバーストスキルダメージ▲）は Lv10 で 435.6%（上限は 1000% で見る）
                 const stat =
                   effect.kind === 'timed' || effect.kind === 'passive'
                     ? effect.stat

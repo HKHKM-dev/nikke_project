@@ -716,7 +716,7 @@ for (const [i, slot] of slots.entries()) {
         .map(
           ({ e, n }) =>
             // 状態の中身はトリガーの代わりに、効いている状態（while:camouflage）
-            `${itemLabel(e)} ${e.stat}${e.value < 0 ? '' : '+'}${e.scaling === 'flat' ? `${e.value}${e.stat === 'chargeSpeed' ? 's' : ''}` : e.scaling === 'casterDefence' ? `${Math.round(e.appliedAmount)} (caster ${(e.value * 100).toFixed(2)}%)` : e.scaling === 'perFinalMaxAmmo' ? `${(e.value * 100).toFixed(2)}% × max ammo` : `${(e.value * 100).toFixed(2)}%`}${n > 1 ? ` ×${n}` : ''}${e.targetWeapon ? ` (${e.targetWeapon})` : ''}`,
+            `${itemLabel(e)} ${e.stat}${e.value < 0 ? '' : '+'}${e.scaling === 'flat' ? `${e.value}${e.stat === 'chargeSpeed' ? 's' : ''}` : e.scaling === 'casterDefence' ? `${Math.round(e.appliedAmount)} (caster ${(e.value * 100).toFixed(2)}%)` : e.scaling === 'perFinalMaxAmmo' ? `${(e.value * 100).toFixed(2)}% × max ammo` : `${(e.value * 100).toFixed(2)}%`}${n > 1 ? ` ×${n}` : ''}${e.targetWeapon ? ` (${e.targetWeapon}${e.targetLeftmost ? ', leftmost' : ''})` : ''}`,
         )
         .join(', '),
     })),

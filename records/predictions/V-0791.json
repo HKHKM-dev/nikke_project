@@ -1,0 +1,265 @@
+{
+  "verification": "V-0791",
+  "note": "撮影 A（ココア（I）・ソルジャーE.G.（III。電撃 AR）・トリナ（II・操作）・ミハラ（III）・オートバースト ON）の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。III は撃てる枠のうち左（E.G.）から撃つので、チェーンごとに E.G.・ミハラが交互に III を使う（モデルではトリナのバーストは f301・1477・2653…）。E.G. の 1 ヒットは、ミハラのチェーン（フルバースト 5 秒）のトリナの窓の後半（フルバーストの外・窓の中）と、窓の外で比べる。根張りを別枠の乗数 (1 + Σ) で掛ける読み（H-root-separate）と、『敵全体に』で絞らずどのバーストにも乗せる読み（H-root-any）は override で書けないので、検証記録の「予測」に手で書いた",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 300
+    },
+    {
+      "rid": 412,
+      "controlled": true
+    },
+    {
+      "rid": 161
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S2 のバースト使用時の攻撃ダメージ▲・リロード速度▲は、電撃 AR のうちいちばん左の 1 機（E.G.）。根張りは『敵全体に』の行の burstDamage に、攻撃ダメージ▲と同じ和で乗る）"
+    },
+    {
+      "id": "H-left-slot1",
+      "note": "「部隊の一番左側にいる」を 1 枠目だけと読む（1 枠目のココアは電撃 AR でないので、S2 のバースト使用時の▲はだれにも付かない）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 412,
+            "skill": "skill2",
+            "index": 1
+          },
+          {
+            "rid": 412,
+            "skill": "skill2",
+            "index": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-root",
+      "note": "根張り（burst の effects[2]）が無い",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 412,
+            "skill": "burst",
+            "index": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-ar-burst",
+      "note": "バーストの電撃 AR への命中率▲・最大装弾数▲（burst の effects[3]・[4]）が無い",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 412,
+            "skill": "burst",
+            "index": 3
+          },
+          {
+            "rid": 412,
+            "skill": "burst",
+            "index": 4
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "eg-hit-window",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1950,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "ミハラのチェーンのトリナの窓の後半（フルバーストの外）の E.G. の胴体の 1 ヒット（S2 の攻撃ダメージ▲ 94.15% とバーストの 20.9% が乗るか）。S1 の確率の攻撃力▲は格子の版で分ける（読んだ後に、観測値と同じ setup（E.G. の S1 の攻撃力▲を常に乗せる）にそろえた）"
+    },
+    {
+      "id": "eg-hit-outside",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 2300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "トリナの窓の外の E.G. の胴体の 1 ヒット（比べの基準。トリナの効果は S2 の最大HP のみ▲ だけ）（読んだ後に、観測値と同じ setup（E.G. の S1 の攻撃力▲を常に乗せる）にそろえた）"
+    },
+    {
+      "id": "eg-maxammo-window",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 2,
+        "frame": 1570
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "トリナの窓の中の E.G. の最大装弾数（バーストの 20 発▲。E.G. の S2 の最大装弾数▲（9 秒ごと・5 秒）が重なる時は、比率の後に発数を足す）（読んだ後に、E.G. の S2 の外のフレームにそろえた）"
+    },
+    {
+      "id": "mihara-burst-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 4,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "ミハラの 2 回目（n は 0 始まり）のバースト（『敵全体に』のバーストスキルダメージ）の会心なしの値。根張りとバーストの攻撃ダメージ▲ 20.9% が乗る"
+    },
+    {
+      "id": "eg-burst-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "E.G. の 1 回目（n は 0 始まり）のバースト（『攻撃範囲内の敵に』のダメージ）の会心なしの値。根張りは乗らない（読んだ後に、観測値と同じ setup（E.G. の S1 の攻撃力▲を常に乗せる）にそろえた）"
+    },
+    {
+      "id": "mihara-burst-0",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 4,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "ミハラの 1 回目のバースト（同じ発動のペインロード 1 は乗らない。C-0563）の会心なしの 3 ヒットの和（読んだ後に足した）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-15",
+    "commit": "cc49b1a6110cd848dd35f8aac9c99d863cb91ae5",
+    "values": {
+      "H1": {
+        "eg-hit-window": 26460.6608013,
+        "eg-hit-outside": 12304.4226,
+        "eg-maxammo-window": 80,
+        "mihara-burst-1": 2683917.3160800003,
+        "eg-burst-1": 1359862.6536,
+        "mihara-burst-0": 2322204.908562
+      },
+      "H-left-slot1": {
+        "eg-hit-window": 14876.046923400001,
+        "eg-hit-outside": 12304.4226,
+        "eg-maxammo-window": 80,
+        "mihara-burst-1": 2683917.3160800003,
+        "eg-burst-1": 764507.7648,
+        "mihara-burst-0": 2322204.908562
+      },
+      "H0-root": {
+        "eg-hit-window": 26460.6608013,
+        "eg-hit-outside": 12304.4226,
+        "eg-maxammo-window": 80,
+        "mihara-burst-1": 583082.8454880001,
+        "eg-burst-1": 1359862.6536,
+        "mihara-burst-0": 504500.5812132001
+      },
+      "H0-ar-burst": {
+        "eg-hit-window": 26460.6608013,
+        "eg-hit-outside": 12304.4226,
+        "eg-maxammo-window": 60,
+        "mihara-burst-1": 2683917.3160800003,
+        "eg-burst-1": 1359862.6536,
+        "mihara-burst-0": 2322204.908562
+      }
+    }
+  }
+}

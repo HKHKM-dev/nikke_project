@@ -1,0 +1,778 @@
+[
+  {
+    "id": "1221-01",
+    "recording": "1221",
+    "kind": "timing",
+    "use": "record",
+    "value": [1152, 2353, 3554, 4755, 5956, 7158, 8358, 9559, 10760],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・0・0・0・6・0・0・0f"
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-02",
+    "recording": "1221",
+    "kind": "timing",
+    "use": "record",
+    "value": [1181, 2382, 3584, 4784, 5986, 7271, 8471, 9672, 10873],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・6・0・6・6・0・0・0f"
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-03",
+    "recording": "1221",
+    "kind": "timing",
+    "use": "record",
+    "value": [1210, 2411, 3613, 4896, 6014, 7300, 8500, 9701, 10902],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-04",
+    "recording": "1221",
+    "kind": "timing",
+    "use": "record",
+    "value": [1819, 2726, 4221, 5211, 6624, 7615, 9109, 10016, 11511],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-05",
+    "recording": "1221",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 315, 608, 315, 610, 315, 609, 315, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-06",
+    "recording": "1221",
+    "kind": "timing",
+    "use": "record",
+    "value": [2347, 3548, 4749, 5950, 7151, 8352, 9553, 10754],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-07",
+    "recording": "1221",
+    "kind": "timing",
+    "use": "record",
+    "value": [2376, 3577, 4778, 5979, 8465, 9666, 10867],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f7180"
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-08",
+    "recording": "1221",
+    "kind": "timing",
+    "use": "record",
+    "value": [3605, 6008, 10895],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-09",
+    "recording": "1221",
+    "kind": "hit",
+    "use": "compare",
+    "value": 26461,
+    "unit": "ダメージ",
+    "description": "ミハラのチェーンのトリナの窓の中（フルバーストの後）のソルジャーE.G. の 1 ヒット（胴体・会心なし・距離ボーナスなし・S1 の攻撃力▲あり）。トリナの S2 の攻撃ダメージ 94.15%▲ とバーストの 20.9%▲ が和で乗った値（× 2.1505）。1 枠目のココアは電撃 AR でない",
+    "method": {
+      "tool": "hud.ts --mode jumps と、レシピ buff-edge@5 の --opt grid（増分ごとの当て方。setup V-0791:eg-grid-window）",
+      "note": "f5221〜5333 の増分（II → III の替わり目 f4784 の後 437〜549f）。f9672 の後 368〜530f も同じ。E.G. の S1（命中時 5% の確率の攻撃力 7.92%▲）は、この区間の発がどれも▲の乗った格子（× 1.0793）に合うので、setup で常に乗る形（passive）に置き換えて比べる"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1950,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
+      }
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-10",
+    "recording": "1221",
+    "kind": "hit",
+    "use": "compare",
+    "value": 12304,
+    "unit": "ダメージ",
+    "description": "トリナの窓の後のソルジャーE.G. の 1 ヒット（胴体・会心なし・距離ボーナスなし・S1 の攻撃力▲あり）。トリナの▲が無い基準",
+    "method": {
+      "tool": "hud.ts --mode jumps と、レシピ buff-edge@5 の --opt grid（増分ごとの当て方。setup V-0791:eg-grid-window）",
+      "note": "f3037・f3071 など（f2382 の後 620f 以降）の増分。E.G. の S1（命中時 5% の確率の攻撃力 7.92%▲）は、この区間の発がどれも▲の乗った格子（× 1.0793）に合うので、setup で常に乗る形（passive）に置き換えて比べる"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 2300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
+      }
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-11",
+    "recording": "1221",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1359863,
+    "unit": "ダメージ",
+    "description": "ソルジャーE.G. の 1 回目のバースト（「攻撃範囲内の敵に」の最終攻撃力の 720% のダメージ）の 1 ヒット（会心なし）。トリナの S2 の攻撃ダメージ 94.15%▲ とバーストの 20.9%▲ が乗り、根張り（『敵全体に』で終わるバーストスキルダメージ▲）は乗らない（乗れば約 3.03 倍）",
+    "method": {
+      "tool": "hud.ts --mode jumps（III のタイマーの 00.00 の後の増分）",
+      "note": "f1239 の増分（00.00 の f1210 の 29f 後）。E.G. の S1（命中時 5% の確率の攻撃力 7.92%▲）は、この区間の発がどれも▲の乗った格子（× 1.0793）に合うので、setup で常に乗る形（passive）に置き換えて比べる"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
+      }
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-12",
+    "recording": "1221",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1359863,
+    "unit": "ダメージ",
+    "description": "ソルジャーE.G. の 2 回目のバースト（「攻撃範囲内の敵に」の最終攻撃力の 720% のダメージ）の 1 ヒット（会心なし）。トリナの S2 の攻撃ダメージ 94.15%▲ とバーストの 20.9%▲ が乗り、根張り（『敵全体に』で終わるバーストスキルダメージ▲）は乗らない（乗れば約 3.03 倍）",
+    "method": {
+      "tool": "hud.ts --mode jumps（III のタイマーの 00.00 の後の増分）",
+      "note": "f3641 の増分（00.00 の f3613 の 28f 後）。E.G. の S1（命中時 5% の確率の攻撃力 7.92%▲）は、この区間の発がどれも▲の乗った格子（× 1.0793）に合うので、setup で常に乗る形（passive）に置き換えて比べる"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
+      }
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-13",
+    "recording": "1221",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1359863,
+    "unit": "ダメージ",
+    "description": "ソルジャーE.G. の 3 回目のバースト（「攻撃範囲内の敵に」の最終攻撃力の 720% のダメージ）の 1 ヒット（会心なし）。トリナの S2 の攻撃ダメージ 94.15%▲ とバーストの 20.9%▲ が乗り、根張り（『敵全体に』で終わるバーストスキルダメージ▲）は乗らない（乗れば約 3.03 倍）",
+    "method": {
+      "tool": "hud.ts --mode jumps（III のタイマーの 00.00 の後の増分）",
+      "note": "f6043 の増分（00.00 の f6014 の 29f 後）。E.G. の S1（命中時 5% の確率の攻撃力 7.92%▲）は、この区間の発がどれも▲の乗った格子（× 1.0793）に合うので、setup で常に乗る形（passive）に置き換えて比べる"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
+      }
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-14",
+    "recording": "1221",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2322204,
+    "unit": "ダメージ",
+    "description": "ミハラの 1 回目のバースト（『敵全体に』の最終攻撃力の 399.6% のバーストスキルダメージ。3 ヒット）の 3 ヒットの和（会心なし）。根張り 435.6%▲ とトリナのバーストの攻撃ダメージ 20.9%▲ が同じ和（1 + 0.209 + 4.356）で乗った値。同じ発動のペインロード 1 は乗らない（C-0563）",
+    "method": {
+      "tool": "hud.ts --mode jumps（III のタイマーの 00.00 の後 38〜61f の増分。C-0564・C-0575）",
+      "note": "f2450・2460・2472 の増分（00.00 の f2411 の後）は 821,386・808,315・774,068。前の 2 つは同じフレームの E.G.・ミハラの発（47,318・34,247）との和で、3 ヒットとも 774,068"
+    },
+    "scope": {
+      "slot": 4,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 4,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-15",
+    "recording": "1221",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2683917,
+    "unit": "ダメージ",
+    "description": "ミハラの 2 回目のバースト（『敵全体に』の最終攻撃力の 399.6% のバーストスキルダメージ。3 ヒット）の 3 ヒットの和（会心なし）。根張り 435.6%▲ とトリナのバーストの攻撃ダメージ 20.9%▲ が同じ和（1 + 0.209 + 4.356）で乗った値。1 回目に付いたペインロード 1（攻撃力 15.56%▲）が乗る",
+    "method": {
+      "tool": "hud.ts --mode jumps（III のタイマーの 00.00 の後 38〜61f の増分。C-0564・C-0575）",
+      "note": "f4935・4945・4957 の増分（00.00 の f4896 の後）が 3 つとも 894,639"
+    },
+    "scope": {
+      "slot": 4,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 4,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-16",
+    "recording": "1221",
+    "kind": "count",
+    "use": "compare",
+    "value": 80,
+    "unit": "発",
+    "description": "ソルジャーE.G. の最大装弾数（トリナの窓の中・E.G. の S2 の最大装弾数▲の外。60 + 20）",
+    "method": {
+      "tool": "目視（枠アイコンの上の「残弾/最大」の最大）",
+      "note": "f2475 のリロード明けの表示。モデルのフレームは同じチェーンの同じ時期（動画のフレームからチェーンの止まりを引いた所）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 2,
+        "frame": 1570
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-17",
+    "recording": "1221",
+    "kind": "count",
+    "use": "compare",
+    "value": 148,
+    "unit": "発",
+    "description": "ソルジャーE.G. の最大装弾数（トリナの窓の中・E.G. の S2 の最大装弾数 112.77%▲ と重なる。round(60 × 2.1277) + 20）",
+    "method": {
+      "tool": "目視（枠アイコンの上の「残弾/最大」の最大）",
+      "note": "f2620 のリロード明けの表示。モデルのフレームは同じチェーンの同じ時期（動画のフレームからチェーンの止まりを引いた所）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 2,
+        "frame": 1715
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-18",
+    "recording": "1221",
+    "kind": "count",
+    "use": "compare",
+    "value": 60,
+    "unit": "発",
+    "description": "ソルジャーE.G. の最大装弾数（どちらの▲も無い）",
+    "method": {
+      "tool": "目視（枠アイコンの上の「残弾/最大」の最大）",
+      "note": "f3030 のリロード明けの表示。モデルのフレームは同じチェーンの同じ時期（動画のフレームからチェーンの止まりを引いた所）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 2,
+        "frame": 2110
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-19",
+    "recording": "1221",
+    "kind": "count",
+    "use": "compare",
+    "value": 128,
+    "unit": "発",
+    "description": "ソルジャーE.G. の最大装弾数（E.G. の S2 だけ）",
+    "method": {
+      "tool": "目視（枠アイコンの上の「残弾/最大」の最大）",
+      "note": "f3285 のリロード明けの表示。モデルのフレームは同じチェーンの同じ時期（動画のフレームからチェーンの止まりを引いた所）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 2,
+        "frame": 2360
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-20",
+    "recording": "1221",
+    "kind": "timing",
+    "use": "compare",
+    "value": 609.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 605,
+      "high": 614
+    },
+    "description": "トリナのバースト使用時の攻撃ダメージ▲（S2 の 94.15%・バーストの 20.9%）がソルジャーE.G. の 1 発で切れる時刻の幅（II → III の替わり目から数えた動画のフレーム）の、ミハラのチェーン 4 回の共通部分。10 秒の窓とフルバーストの入りの止まり",
+    "method": {
+      "tool": "レシピ buff-edge@5 の --opt grid・pair（Ws・W → Es・E。setup V-0791:eg-grid-window）",
+      "note": "事象 f2382・4784・7271・9672。値は幅の真ん中"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "attackDamage",
+        "from": 3,
+        "n": 1,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 4.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-21",
+    "recording": "1221",
+    "kind": "interval",
+    "use": "record",
+    "value": 36,
+    "unit": "f",
+    "description": "ソルジャーE.G. のマガジンの最終弾（残弾 0 の表示）から次の 1 発目までの、トリナの窓の外の中央（84f）と窓の中の中央（48f）の差。リロード速度 50.82%▲ で縮んだ分（モデルは窓の外 92〜93f・中 57〜58f で差 35f。残弾の表示から読むので、両方に同じ約 9f のずれが乗る）",
+    "method": {
+      "tool": "tools/captures/ammo.ts --mode mags（最終弾 → 次の 1 発目）",
+      "note": "窓の中 46〜50f（f1680・2571・3654・5363・6451・7591・9781・10232・11315 の最終弾）、窓の外 82〜87f（f2082・3198・4281・4713・5799・6887・8061・9149・10663）。窓の端をまたぐ回（f5977 は 58f、f8495 はフルバーストの入りの止まりを含んで 66f）と、戦闘の始めの回（f1178）は外した"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "firing"
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-22",
+    "recording": "1221",
+    "kind": "size",
+    "use": "record",
+    "value": 0.5682,
+    "description": "顔のカードの HP のバー（白）の長さ ÷ 満タンの幅（水色）: 1 回目のトリナのバーストより前（f900〜1150）のソルジャーE.G.（ほかの 3 機は 1.0）。S2 の最大HP のみ 44.98%▲（発動者基準）なら 0.566",
+    "method": {
+      "tool": "使い捨てのスクリプト（y1035 の白の長さを y1027 の水色の幅で割る。端の画素は明るさで按分。1 画素は約 1.14%。V-0730 の読み方）",
+      "note": "50 画素 / 88 画素"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "skill"
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-23",
+    "recording": "1221",
+    "kind": "size",
+    "use": "record",
+    "value": 0.4659,
+    "description": "顔のカードの HP のバー（白）の長さ ÷ 満タンの幅（水色）: 1 回目のトリナのバーストの直後（f1180）のソルジャーE.G.。S2 とバーストの最大HP のみ▲（発動者基準）なら 0.474",
+    "method": {
+      "tool": "使い捨てのスクリプト（y1035 の白の長さを y1027 の水色の幅で割る。端の画素は明るさで按分。1 画素は約 1.14%。V-0730 の読み方）",
+      "note": "41 画素。同じフレームでココア 0.8295（予測 0.832）・トリナ 0.82〜0.84（0.832）・ミハラ 0.7528（0.754）"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "skill"
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-24",
+    "recording": "1221",
+    "kind": "size",
+    "use": "record",
+    "value": 0.5,
+    "description": "顔のカードの HP のバー（白）の長さ ÷ 満タンの幅（水色）: 1 回目のトリナのバーストの窓の中で、ソルジャーE.G. のバーが伸びた先（f1200 に 0.4886、f1305 に 0.5000）。被弾なしで、S1 のフルチャージ時の「HP 50% 以下」の回復（トリナの最終最大HP の 1.57%。E.G. の最大HP の 1.27%）が 2 回入った形（0.487・0.500）",
+    "method": {
+      "tool": "使い捨てのスクリプト（y1035 の白の長さを y1027 の水色の幅で割る。端の画素は明るさで按分。1 画素は約 1.14%。V-0730 の読み方）",
+      "note": "43・44 画素。ほかの 3 機の割合（75〜83%）は変わらない"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "skill"
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-25",
+    "recording": "1221",
+    "kind": "size",
+    "use": "record",
+    "value": 0.7955,
+    "description": "顔のカードの HP のバー（白）の長さ ÷ 満タンの幅（水色）: 1 回目のフルバーストの終わり（f1819）の後のソルジャーE.G.。f1790 に 0.6023（バーストの最大HP のみ▲ が切れた）、そこから f1820・1910・1970・2025・2085 に 3〜4 画素ずつ伸びた（S1 の持続回復の 5 回。1 回はトリナの最終最大HP の 4.06% = E.G. の最大HP の 3.9%）",
+    "method": {
+      "tool": "使い捨てのスクリプト（y1035 の白の長さを y1027 の水色の幅で割る。端の画素は明るさで按分。1 画素は約 1.14%。V-0730 の読み方）",
+      "note": "53 → 70 画素"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "skill"
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-26",
+    "recording": "1221",
+    "kind": "timing",
+    "use": "compare",
+    "value": [608],
+    "unit": "f",
+    "description": "1 回目のフルバーストの始まり（III のタイマーの 00.00）から、トリナの S1 の持続回復の 1 回目（ソルジャーE.G. の HP のバーが伸びたフレーム）までの動画のフレーム。フルバーストの終わりに付く",
+    "method": {
+      "tool": "使い捨てのスクリプト（顔のカードの HP のバーの長さを 5f おきに測る。V-0730 の読み方）",
+      "note": "00.00 は f1210、フルバーストの終わりは f1819、バーは f1815 の 0.6023 から f1820 に 0.6364。5f おきに測ったので、伸びる前の測りの次から伸びた測りまでを幅にした。動画のフレームとゲーム内の時刻のずれ（1f）を許容に足す（伸びた幅は 606〜610f）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "heal",
+        "anchor": "fullBurst:0",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1221-27",
+    "recording": "1221",
+    "kind": "timing",
+    "use": "compare",
+    "value": [317],
+    "unit": "f",
+    "description": "2 回目のフルバーストの始まり（III のタイマーの 00.00）から、トリナの S1 の持続回復の 1 回目（ソルジャーE.G. の HP のバーが伸びたフレーム）までの動画のフレーム。フルバーストの終わりに付く",
+    "method": {
+      "tool": "使い捨てのスクリプト（顔のカードの HP のバーの長さを 5f おきに測る。V-0730 の読み方）",
+      "note": "00.00 は f2411、フルバーストの終わりは f2726、バーは f2725 の 0.6705 から f2730 に 0.7045。その後 f2815・2875・2935 にも伸びた。5f おきに測ったので、伸びる前の測りの次から伸びた測りまでを幅にした。動画のフレームとゲーム内の時刻のずれ（1f）を許容に足す（伸びた幅は 315〜319f）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "heal",
+        "anchor": "fullBurst:1",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0791",
+    "readAt": "2026-11-15"
+  }
+]

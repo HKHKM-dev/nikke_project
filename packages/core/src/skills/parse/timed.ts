@@ -323,7 +323,7 @@ function parseTimedTrigger(
 /** timed の対象の絞り込みの欄（足す順に並ぶ）。数（targetCount・targetCountRef）は別に返す（値の欄と名前の検査の後に足す） */
 type TimedNarrowing = Pick<
   TimedFields,
-  'targetWeapon' | 'targetElement' | 'targetClass' | 'targetSquad' | 'excludeSelf' | 'targetDefense'
+  'targetWeapon' | 'targetElement' | 'targetClass' | 'targetSquad' | 'excludeSelf' | 'targetDefense' | 'targetLeftmost'
 > &
   ReturnType<typeof parsePersonaTargetFields>;
 
@@ -370,6 +370,23 @@ function parseTimedTarget(
     narrowing.excludeSelf = excludeSelf;
   }
   Object.assign(narrowing, parsePersonaTargetFields(v, target, path));
+  // 「部隊の一番左側にいる〈絞り込み〉の味方 1 機」（plan/design-trina.md 2.2 節）
+  if (v.targetLeftmost !== undefined) {
+    if (v.targetLeftmost !== true) fail(`${path}.targetLeftmost`, 'must be true');
+    if (target !== 'allies') fail(`${path}.targetLeftmost`, `only allowed with target "allies", got "${target}"`);
+    for (const key of [
+      'targetState',
+      'includeSelf',
+      'targetAdjacent',
+      'targetBurstStep',
+      'targetSquad',
+      'excludeSelf',
+      'targetDefense',
+    ] as const) {
+      if (v[key] !== undefined) fail(`${path}.targetLeftmost`, `cannot be combined with ${key}`);
+    }
+    narrowing.targetLeftmost = true;
+  }
   // 「自分より最終防御力が低い味方」は allies だけ（自分を除く・状態・段階・部隊の
   // 絞り込みとは組み合わせない。使い手がいない。plan/design-skill-stage7.md 1.4 節）
   if (v.targetDefense !== undefined) {
@@ -838,6 +855,7 @@ export function parsePassiveEffect(v: Record<string, Json>, path: string): Passi
   if (v.excludeSelf !== undefined) fail(`${path}.excludeSelf`, 'excludeSelf is only allowed in timed');
   // 最終防御力の比べは発火の瞬間に決めるので、常時の効果には書けない（plan/design-skill-stage7.md 1.4 節）
   if (v.targetDefense !== undefined) fail(`${path}.targetDefense`, 'targetDefense is only allowed in timed');
+  if (v.targetLeftmost !== undefined) fail(`${path}.targetLeftmost`, 'targetLeftmost is only allowed in timed');
   for (const key of ['targetState', 'includeSelf', 'targetAdjacent', 'targetBurstStep'] as const) {
     if (v[key] !== undefined) fail(`${path}.${key}`, `${key} is only allowed in timed and state`);
   }

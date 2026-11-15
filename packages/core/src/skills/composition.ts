@@ -158,7 +158,7 @@ function fullCharacter(c: CompositionCharacter, index: number): Required<Composi
 }
 
 /**
- * 効果の対象が編成で決まる絞り込み（〈名前〉状態・両隣・基本バースト段階・allies の自分を除く）を持つか。
+ * 効果の対象が編成で決まる絞り込み（〈名前〉状態・両隣・基本バースト段階・一番左・allies の自分を除く）を持つか。
  * 付与（state）も timed と同じ。heal は両隣と基本バースト段階だけ持つ
  */
 export function hasPersonaTargetFilter(effect: SkillEffect): boolean {
@@ -168,6 +168,7 @@ export function hasPersonaTargetFilter(effect: SkillEffect): boolean {
     (effect.targetState !== undefined ||
       effect.targetAdjacent !== undefined ||
       effect.targetBurstStep !== undefined ||
+      (effect.kind === 'timed' && effect.targetLeftmost !== undefined) ||
       (effect.target === 'allies' && effect.excludeSelf !== undefined))
   );
 }
@@ -178,6 +179,7 @@ export function hasPersonaTargetFilter(effect: SkillEffect): boolean {
  * targetState = 枠の静的な状態（states[i]。枠の定義の静的な付与が付ける状態）にその id がある枠、
  * targetAdjacent = 自分の左右の枠（空枠は無し。plan/design-rouge.md 2.1 節）、
  * targetBurstStep = 基本バースト段階が N の枠（countsAsBurstStep。再突入するキャラは除く）、allies の excludeSelf = 自分の枠を外す。
+ * targetLeftmost = 絞り込みに合う枠のうち、いちばん左の 1 枠（plan/design-trina.md 2.2 節）。
  * targetState・targetAdjacent の includeSelf は自分の枠を足す。
  * どれも targetWeapon・targetElement で絞った後。どれでもない効果は undefined。付与（state）も timed と同じ
  */
@@ -225,6 +227,7 @@ export function fixedTargetsOf(
     if (!matchesTargetFilter(effect, fullCharacter(c, i))) return;
     candidates.push(i);
   });
+  if (effect.kind === 'timed' && effect.targetLeftmost === true) return candidates.slice(0, 1);
   if (!longest) return candidates;
   const seconds = (i: number) => fullCharacter(characters[i]!, i).shot.chargeTime;
   return candidates.sort((a, b) => seconds(b) - seconds(a) || a - b);

@@ -388,6 +388,8 @@ export type ResolvedEffect = {
   targetAdjacent?: true;
   /** 「基本バースト段階が N の」。定義に無ければキーごと無い */
   targetBurstStep?: BasicBurstStep;
+  /** 「部隊の一番左側にいる〈絞り込み〉の味方 1 機」。定義に無ければキーごと無い */
+  targetLeftmost?: true;
   /** 「自分と自分より最終防御力が低い味方」。定義に無ければキーごと無い */
   targetDefense?: TargetDefense;
   /** 編成で決まる対象の枠（skills/composition.ts が定義に書いたもの）。無ければキーごと無い */
@@ -749,6 +751,7 @@ function resolveItemFields(
   if (effect.includeSelf) r.includeSelf = true;
   if (effect.targetAdjacent) r.targetAdjacent = true;
   if (effect.targetBurstStep) r.targetBurstStep = effect.targetBurstStep;
+  if (effect.targetLeftmost) r.targetLeftmost = true;
   if (effect.targetDefense) r.targetDefense = effect.targetDefense;
   if (effect.fixedTargets) r.fixedTargets = effect.fixedTargets;
   if (effect.targetStateHeld) r.targetStateHeld = true;

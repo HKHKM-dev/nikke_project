@@ -115,6 +115,7 @@ describe('computeTriggerDamage', () => {
       burstGaugeSpeed: 0,
       sequentialAttackDamage: 0,
       oneEnemyBurstDamage: 0,
+      allEnemiesBurstDamage: 0,
       accumulateRatio: 0,
       burstCooldown: 0,
       maxAmmoRatio: 0,
