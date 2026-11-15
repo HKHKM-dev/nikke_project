@@ -40,7 +40,9 @@ export function parseFavorites(raw: string | null): Favorites {
 
 /** 押したバッジの並びで、バッジを 1 つ押す（押してあれば外す。並びは FAVORITE_MARKS の順に保つ） */
 export function toggleFavoriteMark(marks: readonly FavoriteMark[], mark: FavoriteMark): readonly FavoriteMark[] {
-  return marks.includes(mark) ? marks.filter((m) => m !== mark) : FAVORITE_MARKS.filter((m) => m === mark || marks.includes(m));
+  return marks.includes(mark)
+    ? marks.filter((m) => m !== mark)
+    : FAVORITE_MARKS.filter((m) => m === mark || marks.includes(m));
 }
 
 /** そのニケのバッジを 1 つ押す（押してあれば外す） */

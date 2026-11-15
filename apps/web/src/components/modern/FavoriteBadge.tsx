@@ -1,6 +1,12 @@
 // お気に入りのバッジ（main_○○。白黒のバッジ）。押したバッジは、図柄（差し色）をバッジごとの色で塗る（styles.css の .favorite-badge）
 import { useContext } from 'react';
-import { FAVORITE_LABEL, FAVORITE_MARKS, favoriteMarksOf, FavoritesContext, type FavoriteMark } from '../../favorites.ts';
+import {
+  FAVORITE_LABEL,
+  FAVORITE_MARKS,
+  favoriteMarksOf,
+  FavoritesContext,
+  type FavoriteMark,
+} from '../../favorites.ts';
 import { BadgeIcon } from './BadgeIcon.tsx';
 import { FAVORITE_BADGES, FAVORITE_COUNT_BADGE } from './badges.ts';
 

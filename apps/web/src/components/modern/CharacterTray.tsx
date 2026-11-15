@@ -9,12 +9,7 @@ import {
 } from './badges.ts';
 import { BadgeFilters } from './BadgeFilter.tsx';
 import { FavoriteButtons } from './FavoriteBadge.tsx';
-import {
-  favoriteMarksOf,
-  FavoritesContext,
-  toggleFavoriteMark,
-  type FavoriteMark,
-} from '../../favorites.ts';
+import { favoriteMarksOf, FavoritesContext, toggleFavoriteMark, type FavoriteMark } from '../../favorites.ts';
 import { BadgeIcon } from './BadgeIcon.tsx';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
 import { activeDragData, type OverDragData } from './dropIntent.ts';
