@@ -42,7 +42,7 @@ import {
 } from '../src/records/observations/setup.ts';
 import { ENEMY_PRESETS_PATH, MASTER_FILES } from '../src/load.ts';
 import type { GrowthInput } from '../src/stats.ts';
-import { runSimulation, simIntervalTotals } from '../src/sim/engine.ts';
+import { runSimulation, simIntervalTotals, type SimEvent } from '../src/sim/engine.ts';
 import { simTeamResult } from '../src/sim/teamResult.ts';
 import { firingParams } from '../src/frame/firing.ts';
 import {
@@ -64,7 +64,23 @@ import type { EnemyInput } from '../src/damage.ts';
 import { framesToGameSeconds, gameSecondsToFrame } from '../src/time.ts';
 
 const DATA_DIR = join(import.meta.dirname, '../data');
+/** --trace の種類 */
+const TRACE_KINDS = ['shots', 'bursts', 'buffs', 'hits', 'instants'] as const;
 const OBSERVATIONS_DIR = join(import.meta.dirname, '../../../records/observations');
+
+/** 効果の値（比は %、固定値はそのまま。発動者の防御力の比は、分かれば掛けた後の量も） */
+function effectValueText(e: ItemEffect, appliedAmount?: number): string {
+  const pct = (v: number) => `${(v * 100).toFixed(2)}%`;
+  const value =
+    e.scaling === 'flat'
+      ? `${e.value}${e.stat === 'chargeSpeed' ? 's' : ''}`
+      : e.scaling === 'casterDefence'
+        ? `${appliedAmount === undefined ? '' : `${Math.round(appliedAmount)} `}(caster ${pct(e.value)})`
+        : e.scaling === 'perFinalMaxAmmo'
+          ? `${pct(e.value)} × max ammo`
+          : pct(e.value);
+  return `${e.stat}${e.value < 0 ? '' : '+'}${value}`;
+}
 
 /** 件を持つ効果の出どころの欄（状態・カウンタ・HP の割合の while は条件、持続バフはきっかけ） */
 function itemLabel(e: ItemEffect): string {
@@ -172,12 +188,19 @@ const { values } = parseArgs({
     // 出来事のセットの狙えない窓と着地点の区間の切れ目を、録画で読んだ窓に置き換える（V-0088。照合の setup.jumpWindows と同じ）。
     // 観測値の id（例 0056-11）か、[始まり, 終わり, …] の秒をカンマ区切りで渡す。--events に狙えない窓を持つ出来事のセットが要る
     'jump-windows': { type: 'string' },
+    // 出来事の列だけを短く出す（区間の表は出さない。plan/design-workflow-simplification-15.md 6 節）。種類をカンマ区切りで:
+    // shots（通常射撃。枠ごとの発の番号つき）・bursts（バーストのヒット・フルバースト・ゲージ・チェーン切れ）・buffs（区間に効く値の
+    // 付き始めと切れ目）・hits（倍率ダメージ）・instants（即時効果）。all で全部
+    trace: { type: 'string' },
+    // --trace で出す範囲（ゲームの秒。省略は始めから・終わりまで）
+    from: { type: 'string' },
+    to: { type: 'string' },
   },
 });
 
 if (!values.ids) {
   console.error(
-    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--no-jump] [--mid-far A] [--near A,B] [--far A,B] [--skill-levels 191:skill2=4] [--jump-windows 0056-11]',
+    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--no-jump] [--mid-far A] [--near A,B] [--far A,B] [--skill-levels 191:skill2=4] [--jump-windows 0056-11] [--trace shots,bursts,buffs --from 10 --to 20]',
   );
   process.exit(2);
 }
@@ -507,11 +530,20 @@ const compositionRows = slots.flatMap((slot, i) =>
     }),
   ),
 );
-if (compositionRows.length > 0) {
+if (compositionRows.length > 0 && values.trace === undefined) {
   console.log('composition conditions (effects that do not apply are left out)');
   console.table(compositionRows);
 }
-const sim = runSimulation(input);
+const sim = runSimulation(values.trace === undefined ? input : { ...input, trace: true });
+if (values.trace !== undefined) {
+  printTrace(
+    sim.events,
+    values.trace,
+    values.from === undefined ? 0 : gameSecondsToFrame(seconds(values.from, '--from')),
+    values.to === undefined ? Infinity : gameSecondsToFrame(seconds(values.to, '--to')),
+  );
+  process.exit(0);
+}
 const result = simTeamResult(input, sim);
 
 const fmt = (n: number, digits = 0) => n.toLocaleString('en-US', { maximumFractionDigits: digits });
@@ -715,7 +747,7 @@ for (const [i, slot] of slots.entries()) {
         .map(
           ({ e, n }) =>
             // 状態の中身はトリガーの代わりに、効いている状態（while:camouflage）
-            `${itemLabel(e)} ${e.stat}${e.value < 0 ? '' : '+'}${e.scaling === 'flat' ? `${e.value}${e.stat === 'chargeSpeed' ? 's' : ''}` : e.scaling === 'casterDefence' ? `${Math.round(e.appliedAmount)} (caster ${(e.value * 100).toFixed(2)}%)` : e.scaling === 'perFinalMaxAmmo' ? `${(e.value * 100).toFixed(2)}% × max ammo` : `${(e.value * 100).toFixed(2)}%`}${n > 1 ? ` ×${n}` : ''}${e.targetWeapon ? ` (${e.targetWeapon}${e.targetLeftmost ? ', leftmost' : ''})` : ''}`,
+            `${itemLabel(e)} ${effectValueText(e, e.appliedAmount)}${n > 1 ? ` ×${n}` : ''}${e.targetWeapon ? ` (${e.targetWeapon}${e.targetLeftmost ? ', leftmost' : ''})` : ''}`,
         )
         .join(', '),
     })),
@@ -853,4 +885,86 @@ function compactTimed<
     else out.push({ e, n: 1 });
   }
   return out;
+}
+
+type TraceKind = (typeof TRACE_KINDS)[number];
+
+/** --from・--to の秒（数でなければ止める） */
+function seconds(text: string, name: string): number {
+  const v = Number(text);
+  if (text.trim() === '' || !Number.isFinite(v) || v < 0) {
+    console.error(`${name} は 0 以上の秒（数）: ${text}`);
+    process.exit(2);
+  }
+  return v;
+}
+
+/** 出来事の種類 → --trace の種類（即時効果の種類は instants） */
+function traceKindOf(e: SimEvent): TraceKind {
+  switch (e.kind) {
+    case 'trigger':
+      return 'shots';
+    case 'burst':
+    case 'fullBurstStart':
+    case 'fullBurstEnd':
+    case 'gaugeFull':
+    case 'chainTimeout':
+      return 'bursts';
+    case 'buffStart':
+    case 'buffEnd':
+      return 'buffs';
+    case 'skillHit':
+      return 'hits';
+    default:
+      return 'instants';
+  }
+}
+
+/** 出来事の 1 行の中身（shot は枠ごとの発の番号） */
+function traceText(e: SimEvent, shot: number): string {
+  const amount = (n: number) => Math.round(n).toLocaleString('en-US');
+  switch (e.kind) {
+    case 'trigger':
+      return `枠${e.slot + 1} 発 ${shot}${e.fullBurst ? '（FB）' : ''} ${amount(e.damage)}`;
+    case 'burst':
+      return `枠${e.slot + 1} バースト ${e.step} ${amount(e.damage)}`;
+    case 'fullBurstStart':
+    case 'fullBurstEnd':
+    case 'gaugeFull':
+    case 'chainTimeout':
+      return e.kind;
+    case 'buffStart':
+    case 'buffEnd':
+      return `枠${e.slot + 1} ${e.kind === 'buffStart' ? '付く' : '切れる'} ${itemLabel(e.effect)} ${effectValueText(e.effect)}`;
+    case 'skillHit':
+      return `枠${e.slot + 1} 倍率ダメージ ${amount(e.damage)}`;
+    default:
+      return `枠${e.slot + 1} ${e.kind} ${e.amount}（出どころ 枠${e.source + 1}）`;
+  }
+}
+
+/** 出来事の列を 1 行ずつ出す（--trace）。枠は 1 始まり。発の番号は枠ごとに 1 始まり（観測値の hitDamageAtShot の shot と同じ数え方） */
+function printTrace(events: readonly SimEvent[], kinds: string, start: number, end: number): void {
+  const known: readonly string[] = TRACE_KINDS;
+  const wanted = new Set(
+    kinds
+      .split(',')
+      .map((k) => k.trim())
+      .filter((k) => k !== ''),
+  );
+  const unknown = [...wanted].filter((k) => k !== 'all' && !known.includes(k));
+  if (unknown.length > 0) {
+    console.error(`--trace の種類が無い: ${unknown.join(',')}（${known.join('・')}・all）`);
+    process.exit(2);
+  }
+  const shotNo = new Map<number, number>();
+  const rows: string[] = [];
+  for (const e of events) {
+    // 発の番号は範囲の外でも数える
+    const shot = e.kind === 'trigger' ? (shotNo.get(e.slot) ?? 0) + 1 : 0;
+    if (e.kind === 'trigger') shotNo.set(e.slot, shot);
+    if (!(wanted.has('all') || wanted.has(traceKindOf(e))) || e.frame < start || e.frame >= end) continue;
+    rows.push(`f${e.frame} ${framesToGameSeconds(e.frame).toFixed(2)}s ${traceText(e, shot)}`);
+  }
+  console.log(rows.join('\n'));
 }

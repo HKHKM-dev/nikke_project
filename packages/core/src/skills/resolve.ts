@@ -1884,10 +1884,10 @@ const TAG = /<\/?(?:color|word_group)(?:=[^>]*)?>/g;
 export function fillSkillDescription(
   skill: SkillRaw,
   locale: Locale,
-  value: (levels: readonly string[] | null | undefined) => string,
+  value: (levels: readonly string[] | null | undefined, digits: string) => string,
 ): string {
   return skill.description[locale]
-    .replace(PLACEHOLDER, (_m, digits: string) => value(skill.values[Number(digits) - 1]))
+    .replace(PLACEHOLDER, (_m, digits: string) => value(skill.values[Number(digits) - 1], digits))
     .replace(TAG, '');
 }
 

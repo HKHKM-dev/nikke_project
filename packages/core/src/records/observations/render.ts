@@ -80,6 +80,11 @@ function cell(text: string): string {
   return text.replace(/\|/g, '\\|');
 }
 
+/** 判定の欄（比べられないときは理由も） */
+function statusCell(r: Residual): string {
+  return r.status === 'error' ? `${STATUS_JA.error}: ${cell(r.message ?? '')}` : STATUS_JA[r.status];
+}
+
 const RESIDUAL_HEADER = [
   '| 観測値 | 読んだもの | 比べる値 | モデル | 実測 | 予測 | 差 | 許容 | 判定 | 結論 |',
   '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
@@ -105,7 +110,7 @@ export function renderResidualRows(
         fmtValue(r.predicted),
         fmtDiff(r),
         fmtTolerance(c.tolerance),
-        r.status === 'error' ? `${STATUS_JA.error}: ${cell(r.message ?? '')}` : STATUS_JA[r.status],
+        statusCell(r),
         claimText(o.id),
       ].join(' | ')} |`,
     );
@@ -164,4 +169,53 @@ export function renderResiduals(
   lines.push('', `### 見る行（許容外・比べられない・失効。${attention.length} 件）`, '');
   lines.push(...renderResidualRows(attention, claimsOf));
   return lines.join('\n');
+}
+
+/**
+ * 2 つの版の残差の、予測か判定が変わった行（records:residual -- --base。plan/design-workflow-simplification-15.md 5 節）。
+ * 片方にしか無い観測値も出す。予測は表に出す桁（fmtValue）で比べる
+ */
+export function renderResidualChanges(base: readonly Residual[], head: readonly Residual[]): string[] {
+  const before = new Map(base.map((r) => [r.observation.id, r]));
+  const after = new Map(head.map((r) => [r.observation.id, r]));
+  const ids = [...new Set([...after.keys(), ...before.keys()])];
+  const shown = (r: Residual | undefined) =>
+    r === undefined
+      ? { predicted: '（無い）', diff: '—', status: '（無い）' }
+      : {
+          predicted: fmtValue(r.predicted),
+          diff: fmtDiff(r),
+          status: statusCell(r),
+        };
+  const rows: string[] = [];
+  let statusChanged = 0;
+  for (const id of ids) {
+    const [br, ar] = [before.get(id), after.get(id)];
+    const b = shown(br);
+    const a = shown(ar);
+    if (b.predicted === a.predicted && b.status === a.status) continue;
+    if (br !== undefined && ar !== undefined && b.status !== a.status) statusChanged++;
+    const o = (ar ?? br)!.observation;
+    rows.push(
+      `| ${[
+        id,
+        `\`${o.compare!.metric}\`${cell(fmtArgs(o.compare!.args, o.compare!.setup))}`,
+        cell(fmtObserved(o)),
+        `${b.predicted} → ${a.predicted}`,
+        `${b.diff} → ${a.diff}`,
+        b.status === a.status ? a.status : `${b.status} → ${a.status}`,
+      ].join(' | ')} |`,
+    );
+  }
+  return [
+    `比べた観測値 ${head.length} 件（基の版 ${base.length} 件）のうち、予測か判定が変わった ${rows.length} 件（両方にあって判定が変わった ${statusChanged} 件）`,
+    ...(rows.length === 0
+      ? []
+      : [
+          '',
+          '| 観測値 | 指標 | 実測 | 予測（基 → 今） | 差（基 → 今） | 判定 |',
+          '| --- | --- | --- | --- | --- | --- |',
+          ...rows,
+        ]),
+  ];
 }
