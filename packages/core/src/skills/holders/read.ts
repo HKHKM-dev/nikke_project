@@ -179,8 +179,8 @@ export function createRead({
     track.items = items;
     return track.items;
   };
-  /** 回復の記録と吸収回復の件（量で追う回復の HP は skills/holders/views.ts の restoreHp。holders.ts が両方を呼ぶ） */
-  const applyHeal = (
+  /** 回復の記録と吸収回復の件（量で追う回復の HP も足す問い合わせは skills/holders/views.ts の applyHeal） */
+  const recordHeal = (
     effect: ResolvedInstantEffect,
     sourceSlotIndex: number,
     holder: number,
@@ -223,6 +223,6 @@ export function createRead({
     }
     return out;
   };
-  return { activeAt, applyHeal, consumeFullStacks, openWeaponChange, readItems };
+  return { activeAt, consumeFullStacks, openWeaponChange, readItems, recordHeal };
 }
 export type Read = ReturnType<typeof createRead>;

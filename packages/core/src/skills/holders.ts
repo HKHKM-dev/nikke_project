@@ -119,7 +119,6 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     registerFrame,
     removeDebuffSources,
     removeSources,
-    restoreHp,
     selfStackCountAt,
     shotCountEveryOf,
     sinceFires,
@@ -159,11 +158,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     hasPelletTracks: (holder) => hasPellets[holder] === true,
     minEffectiveRangeAt,
     rankContext,
-    applyHeal(effect, sourceSlotIndex, holder, frame, fireFrame) {
-      const opens = applyHeal(effect, sourceSlotIndex, holder, frame);
-      if (effect.scaling === 'casterFinalMaxHp') restoreHp(sourceSlotIndex, holder, frame, fireFrame, effect.value);
-      return opens;
-    },
+    applyHeal,
     openWeaponChange,
     cycleEveryAt(slotIndex, targetSkill, frame) {
       return cycleSources

@@ -234,8 +234,8 @@ function parseInstantTarget(
 /** 種類ごとの欄（書ける種類は INSTANT_KIND_KEYS で限ってある）: 維持・弾丸チャージの発数・遅れ・発火の条件・CT▲・発火の回数の上限 */
 function parseInstantKindFields(v: Record<string, Json>, effect: InstantEffect, path: string): void {
   if (v.durationRef !== undefined || v.durationSeconds !== undefined) Object.assign(effect, parseDuration(v, path));
+  // 量で追う回復は維持の無い 1 回の回復だけ（持続回復・吸収回復は割合を戻さない。plan/design-hp-heal-restore.md 2.5 節）。ほかは ammoRefill
   if (v.scaling !== undefined && effect.kind === 'heal') {
-    // 量で追う回復は維持の無い 1 回の回復だけ（持続回復・吸収回復は割合を戻さない。plan/design-hp-heal-restore.md 2.5 節）
     if (v.scaling !== 'casterFinalMaxHp')
       fail(`${path}.scaling`, `heal only takes "casterFinalMaxHp", got ${JSON.stringify(v.scaling)}`);
     if (v.durationRef !== undefined || v.durationSeconds !== undefined)

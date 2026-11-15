@@ -492,7 +492,7 @@ function applyCompositionToSlot(
  * 絞り込みによらずどの枠も動きうるとみる（多めに見ても、動かない枠の区間の件は戦闘の全体になるだけ）。definitions は編成の条件で
  * 外した後の各枠の定義（定義の無い枠は null・undefined）
  */
-export function hpRatioMovesOf(definitions: readonly (SkillDefinition | null | undefined)[]): boolean[] {
+function hpRatioMovesOf(definitions: readonly (SkillDefinition | null | undefined)[]): boolean[] {
   const moves = definitions.map(() => false);
   definitions.forEach((definition, i) => {
     if (!definition) return;

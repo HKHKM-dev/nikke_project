@@ -8,7 +8,6 @@ import {
   computeFixedSpecHp,
   fixedSpecGrowth,
 } from '../../fixedSpec.ts';
-import { hpRatioMovesOf } from '../../skills/composition.ts';
 import { MAX_SKILL_LEVELS } from '../../skills/resolve.ts';
 import type { TreasurePhase } from '../../skills/treasure.ts';
 import { SKILL_SLOTS, type SkillDefinition, type SkillEntry, statContentsOf } from '../../skills/types.ts';
@@ -55,7 +54,7 @@ function buildInputOf(build: RecordingBuild): BuildInput {
 
 /**
  * 定義に発動者の最終最大HP を読む効果（scaling casterFinalMaxHp。状態の中身も）があるか。宝物版の定義も見る。量で追う回復は、
- * HP の割合が動きうる編成（teamHpMoves）でだけ数える（割合の下がった枠に当たる時だけ量を読む。plan/design-hp-heal-restore.md 2.2 節）
+ * HP の割合を下げる効果のある編成（teamHpMoves）でだけ数える（割合の下がった枠に当たる時だけ量を読む。plan/design-hp-heal-restore.md 2.2 節）
  */
 function readsCasterMaxHp(definition: SkillDefinition | null, teamHpMoves: boolean): boolean {
   if (definition === null) return false;
@@ -65,6 +64,20 @@ function readsCasterMaxHp(definition: SkillDefinition | null, teamHpMoves: boole
       (e) =>
         ('scaling' in e && e.scaling === 'casterFinalMaxHp' && (e.kind !== 'heal' || teamHpMoves)) ||
         (e.kind === 'state' && statContentsOf(e.contents).some((c) => c.scaling === 'casterFinalMaxHp')),
+    ),
+  );
+}
+
+/** 定義に HP の割合を下げる効果（最大HP のみ▲・現在の HP▼。状態の中身も）があるか。宝物版の定義も見る */
+function lowersHpRatio(definition: SkillDefinition | null): boolean {
+  if (definition === null) return false;
+  const entries = [...Object.values(definition.skills), ...Object.values(definition.treasureSkills ?? {})];
+  return entries.some((entry) =>
+    entry.effects.some(
+      (e) =>
+        e.kind === 'currentHpDown' ||
+        ((e.kind === 'passive' || e.kind === 'timed') && e.stat === 'maxHpOnly') ||
+        (e.kind === 'state' && statContentsOf(e.contents).some((c) => c.stat === 'maxHpOnly')),
     ),
   );
 }
@@ -157,10 +170,20 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     hitRate: setup.hitRate ?? 1,
   };
   // 枠は台帳の slot の位置に置き、空枠は null にする（両隣・後列は TeamInput.slots の添字で決まる。plan/design-rouge.md 2.1 節）
-  const teamHpMoves = hpRatioMovesOf(
-    teamBySlot(recording).map((member) => (member === null ? null : data.skills.get(member.rid))),
-  ).some(Boolean);
-  const slots: (TeamSlotInput | null)[] = teamBySlot(recording).map((member) => {
+  const members = teamBySlot(recording);
+  const definitions = members.map((member) =>
+    member === null
+      ? null
+      : withoutHealsIf(
+          withoutEffects(
+            data.skills.get(member.rid) ?? null,
+            (setup.dropEffects ?? []).filter((d) => d.rid === member.rid),
+          ),
+          setup.dropHeals?.includes(member.rid) === true,
+        ),
+  );
+  const teamHpMoves = definitions.some(lowersHpRatio);
+  const slots: (TeamSlotInput | null)[] = members.map((member, i) => {
     if (member === null) return null;
     const base = data.characters.get(member.rid);
     if (base === undefined) throw new Error(`rid ${member.rid} のデータが無い`);
@@ -168,13 +191,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     if (delayOverrides.length > 1) throw new Error(`burstDelays: rid ${member.rid} が 2 つある`);
     const character =
       delayOverrides.length === 0 ? base : { ...base, burstDelayOverride: burstDelayOverrideOf(delayOverrides[0]!) };
-    const definition = withoutHealsIf(
-      withoutEffects(
-        data.skills.get(member.rid) ?? null,
-        (setup.dropEffects ?? []).filter((d) => d.rid === member.rid),
-      ),
-      setup.dropHeals?.includes(member.rid) === true,
-    );
+    const definition = definitions[i]!;
     const adds = (setup.addEffects ?? []).filter((a) => a.rid === member.rid);
     if (adds.length > 0 && definition === null) throw new Error(`addEffects: rid ${member.rid} の定義が無い`);
     if (fixedSpec && member.cube !== undefined)
