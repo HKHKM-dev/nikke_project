@@ -69,8 +69,8 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * 倍率ダメージには足さない（C-1243）。バーストのダメージにも足さない（確かめていない）。定義を書くときの決まり: この効果に読む側の印 reads: ["pierce"] を書く
  * pelletCount = ペレット数 N 個▲（scaling 'flat'。値は個の数。plan/design-dorothy-serendipity.md 2.1・2.2 節）。
  * singlePellet = 「ペレットの数を 1 個に固定」。値を持たないフラグ
- * （ref を書かない）。効いていれば 1 発のペレットは 1 個で、▲より勝つ（C-1077）。どちらも timed の self だけ（PELLET_STATS）。
- * pelletCount は自分に付く状態の中身にも書ける（スタックの値は 1 スタックあたり。plan/design-fortune-mate.md 2.3 節）
+ * （ref を書かない）。効いていれば 1 発のペレットは 1 個で、▲より勝つ（C-1077）。どちらも self だけ（PELLET_STATS）で、singlePellet は
+ * timed だけ、pelletCount は自分に付く状態の中身にも書ける（スタックの値は 1 スタックあたり。plan/design-fortune-mate.md 2.3 節）
  */
 export type BuffStat =
   | 'attack'

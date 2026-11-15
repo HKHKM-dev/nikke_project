@@ -32,7 +32,7 @@ export type LateReaders = {
     trigger: ResolvedShotCountTrigger,
     slotIndex: number,
     state: NamedStateId,
-    conditionState: NamedStateId | undefined,
+    conditionState?: NamedStateId,
   ) => TriggerTracker;
   /** 層 5（views）: 自分の HP の割合 */
   selfHpRatioAt: (slotIndex: number, frame: number) => number;

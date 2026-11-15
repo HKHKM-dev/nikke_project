@@ -248,17 +248,16 @@ function parseCountingWindow(
 }
 
 /**
- * 周期の中の位置（plan/design-fortune-mate.md 2.1 節）。1 以上で、every（即値なら）より小さい整数。数える窓が自分の状態のときだけ
+ * 周期の中の位置（plan/design-fortune-mate.md 2.1 節）。1 以上で、every（即値。省略は 1）より小さい整数。数える窓が自分の状態のときだけ
  */
 function parsePhase(v: Record<string, Json>, trigger: ShotCountTrigger, path: string): void {
   if (v.phase === undefined) return;
   if (!isStateCountWindow(trigger.during))
     fail(`${path}.phase`, 'phase needs a counting window of a state (during: { state })');
   const phase = parsePositiveInt(v.phase, `${path}.phase`);
-  if (trigger.every !== undefined && phase >= trigger.every)
-    fail(`${path}.phase`, `phase must be less than every (${trigger.every}), got ${phase}`);
-  if (trigger.every === undefined && trigger.everyRef === undefined)
-    fail(`${path}.phase`, 'phase needs every or everyRef');
+  // everyRef の値は解決で照らす（skills/resolve.ts）
+  if (trigger.everyRef === undefined && phase >= (trigger.every ?? 1))
+    fail(`${path}.phase`, `phase must be less than every (${trigger.every ?? 1}), got ${phase}`);
   trigger.phase = phase;
 }
 

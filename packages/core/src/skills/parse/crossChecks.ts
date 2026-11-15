@@ -320,7 +320,7 @@ function validateOwnStateTriggers(entries: Partial<Record<SkillSlot, SkillEntry>
       // 自分の状態の窓で数える回数・ほかの状態の終わりまでの維持（plan/design-grave.md 2.4・2.5 節）
       if (e.kind === 'ammoDecrease' || e.kind === 'state' || e.kind === 'ammoRefill') {
         const t = e.trigger;
-        if ((e.kind === 'state' || e.kind === 'ammoRefill') && isShotCountTrigger(t) && isStateCountWindow(t.during))
+        if (e.kind !== 'ammoDecrease' && isShotCountTrigger(t) && isStateCountWindow(t.during))
           needGrant(t.during.state, `${at}.trigger.during`, e.kind);
         const until = e.kind === 'state' ? e.durationUntil : undefined;
         if (isStateEndUntil(until)) needGrant(until.stateEnd, `${at}.durationUntil`, e.kind);

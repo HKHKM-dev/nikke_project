@@ -517,7 +517,7 @@ export type HolderLists = {
     trigger: ResolvedShotCountTrigger,
     slotIndex: number,
     state: NamedStateId,
-    conditionState: NamedStateId | undefined,
+    conditionState?: NamedStateId,
   ): TriggerTracker;
   /**
    * 枠 holder の自分の状態 state の件（段によらない）が、フレーム frame に外れたか（{ ended } の発火。

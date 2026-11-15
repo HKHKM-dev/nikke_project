@@ -249,11 +249,15 @@ export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: n
     throw new RangeError(`skill ${skill.id}: count trigger must be a positive integer, got ${every}`);
   }
   if (isStateCountWindow(trigger.during)) {
-    if (trigger.phase === undefined) return { count: trigger.count, every, during: { ...trigger.during } };
-    if (trigger.phase >= every) {
+    if (trigger.phase !== undefined && trigger.phase >= every) {
       throw new RangeError(`skill ${skill.id}: phase must be less than every (${every}), got ${trigger.phase}`);
     }
-    return { count: trigger.count, every, during: { ...trigger.during }, phase: trigger.phase };
+    return {
+      count: trigger.count,
+      every,
+      during: { ...trigger.during },
+      ...(trigger.phase !== undefined ? { phase: trigger.phase } : {}),
+    };
   }
   if (trigger.during !== undefined)
     return { count: trigger.count, every, during: trigger.during, reset: trigger.reset! };

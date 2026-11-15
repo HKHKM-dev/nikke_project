@@ -35,7 +35,7 @@ describe('語彙の検証', () => {
     expect(patched('skill2', HAPPY, { trigger: { ...window, phase: 0 } })).toThrow(/phase/);
     expect(
       patched('skill2', HAPPY, { trigger: { count: 'normalShot', phase: 2, during: { state: 'memoryMaking' } } }),
-    ).toThrow(/phase needs every or everyRef/);
+    ).toThrow(/phase must be less than every \(1\)/);
   });
 
   it('takes only a counting window of an own state on ammoRefill', () => {

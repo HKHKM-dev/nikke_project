@@ -9,7 +9,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { applicationsOf, slotPieces } from './historyHelpers.ts';
-import { describeEveryShotInOneGroup, fixedTeam, skillValueOf } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, effectWindows, fixedTeam, skillValueOf } from './teamHelpers.ts';
 
 const FORTUNE_MATE = 583;
 
@@ -99,12 +99,7 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
           p.effect.source.skill === 'skill1' &&
           p.effect.stat === 'attack',
       );
-      const s2 = slotPieces(plan, h).filter(
-        (p) =>
-          p.effect.source.resourceId === FORTUNE_MATE &&
-          p.effect.source.skill === 'skill2' &&
-          p.effect.stat === 'attackDamage',
-      );
+      const s2 = effectWindows(plan, h, { resourceId: FORTUNE_MATE, skill: 'skill2', stat: 'attackDamage' });
       expect(s1.length > 0).toBe(sg);
       expect(s2.length > 0).toBe(sg && h !== a);
       for (const p of s1) {

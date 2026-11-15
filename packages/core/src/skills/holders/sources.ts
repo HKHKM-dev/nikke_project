@@ -474,22 +474,14 @@ function createOwnApplied({ applications, frames, late }: SourceDeps, stateTrack
     trigger: ResolvedShotCountTrigger,
     slotIndex: number,
     state: NamedStateId,
-    conditionState: NamedStateId | undefined,
+    conditionState?: NamedStateId,
   ): TriggerTracker => {
-    /**
-     * 枠のその状態の件のうち、[frame, frame + span] のどこかで効いている件の始まりの最小（無ければ undefined。配列を作らない）。
-     * before なら、frame より前に付いた件だけを見る
-     */
-    const startOfHeld = (s: NamedStateId, frame: number, span: number, before = false): number | undefined => {
+    /** 枠のその状態の件のうち、maxStart までに始まり frame にまだ続く件の始まりの最小（無ければ undefined。配列を作らない） */
+    const startOfHeld = (s: NamedStateId, frame: number, maxStart: number): number | undefined => {
       let start: number | undefined;
       for (const t of stateTracks()[slotIndex]?.get(s) ?? [])
         for (const it of late.readItems(t))
-          if (
-            (before ? it.start < frame : it.start <= frame + span) &&
-            frame < it.end &&
-            (start === undefined || it.start < start)
-          )
-            start = it.start;
+          if (it.start <= maxStart && frame < it.end && (start === undefined || it.start < start)) start = it.start;
       return start;
     };
     // 周期の中の位置（phase）は、数え直す時に回数を every − phase から始め、every の倍数の判定のまま phase 回目に発火させる
@@ -502,7 +494,7 @@ function createOwnApplied({ applications, frames, late }: SourceDeps, stateTrack
       if (!shot) return false;
       // 窓は前のフレームまでに付いた件で見る（同じフレームに付いた件が見えるかを、件の登録の中で読む付与と、登録の後に読む弾丸チャージ
       // でそろえる。plan/design-fortune-mate.md 2.2 節）
-      const start = startOfHeld(state, ev.frame, 0, true);
+      const start = startOfHeld(state, ev.frame, ev.frame - 1);
       if (start === undefined) return false;
       if (start !== from) {
         from = start;
@@ -511,7 +503,8 @@ function createOwnApplied({ applications, frames, late }: SourceDeps, stateTrack
       // その発で付いた状態（同じ発の回数のきっかけで前に書いた付与。件は次のフレームから）も条件に入れる（V-0735: 過熱I を付けた発も
       // 過熱II の回数に、過熱II を付けた発も過熱III の回数に数える）。条件は自分の状態があるかだけ（skills/parse/state.ts）で、段 1.5 の件も
       // そのフレームに付いた件を見る
-      if (conditionState !== undefined && startOfHeld(conditionState, ev.frame, 1) === undefined) return false;
+      if (conditionState !== undefined && startOfHeld(conditionState, ev.frame, ev.frame + 1) === undefined)
+        return false;
       const next = advanceShotCount(count, shotCountWeight(trigger.count, shot), trigger.every);
       count = next.count;
       return next.fired;

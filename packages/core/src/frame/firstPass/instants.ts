@@ -84,7 +84,7 @@ export function createInstantSources({
     if (isResolvedShotCount(trigger) && isStateCountWindow(trigger.during)) {
       const window = trigger.during.state;
       let fires: TriggerTracker | undefined;
-      return (ev) => (fires ??= listsOf().stateWindowFires(trigger, sourceSlotIndex, window, undefined))(ev);
+      return (ev) => (fires ??= listsOf().stateWindowFires(trigger, sourceSlotIndex, window))(ev);
     }
     if (!isResolvedTimer(effect.trigger)) return createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel);
     // 件の一覧（lists）は即時効果の後に作るので、最初の呼び出しで作る
