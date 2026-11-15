@@ -59,6 +59,7 @@ function eventAt(f: number, run: Run): FrameEvents {
   };
 }
 
+type CounterGaugesInput = Parameters<typeof createCounterGauges>[0];
 /** 書き換えた定義で作り手を作り、フレーム 0 から frames − 1 までの終わりに countCounterGauges を呼ぶ（frame/firstPass.ts の手順と同じ） */
 function runGauges(run: Run, patch: (def: RawDefinition) => void = () => {}) {
   const copy = structuredClone(raw);
@@ -74,16 +75,21 @@ function runGauges(run: Run, patch: (def: RawDefinition) => void = () => {}) {
     enemyStateAt: () => run.enemyState ?? true,
   } as unknown as HolderLists;
   const reserved: { frame: number; energy: number }[] = [];
-  const gauges = createCounterGauges({
+  // 作り手が分割代入で読む欄だけを渡す（欄ごとの型は検査する）
+  const input: Pick<
+    CounterGaugesInput,
+    'burstModel' | 'damageEffects' | 'frames' | 'hitGaugeEnergy' | 'lists' | 'options' | 'reserveGauge' | 'slots'
+  > = {
     burstModel: 'fixed',
     damageEffects: [resolveDamageEffects(definition, mihara, MAX_SKILL_LEVELS)],
     frames: run.frames,
     hitGaugeEnergy: () => ENERGY,
     lists,
-    options: { burst: false },
-    reserveGauge: (frame: number, energy: number) => reserved.push({ frame, energy }),
+    options: { frames: run.frames, burst: false },
+    reserveGauge: (frame: number, energy: number) => void reserved.push({ frame, energy }),
     slots: [slot],
-  } as unknown as Parameters<typeof createCounterGauges>[0]);
+  };
+  const gauges = createCounterGauges(input as CounterGaugesInput);
   for (let f = 0; f < run.frames; f++) gauges.countCounterGauges(f, gauges.trackCounterEvents ? eventAt(f, run) : null);
   const framesOf = (kind: 'attack' | 'apply' | 'tick') =>
     gauges.counterGauges.filter((g) => g.kind === kind).map((g) => g.frame);
@@ -114,7 +120,7 @@ describe('counterGauges: 攻撃と付けた時のヒット', () => {
     const attack = resolveDamageEffects(definition, mihara, MAX_SKILL_LEVELS).find(
       (e) => e.source.skill === 'skill1' && e.gaugePerHit !== undefined,
     )!;
-    // ヒットの数はきっかけのカウンタの上限（読み込みが perCount を同じカウンタに限る。カウンタの食い違いの直し）
+    // ヒットの数はきっかけのカウンタの上限（読み込みが perCount を同じカウンタに限る）
     expect(r.framesOf('attack')).toEqual(effectHitFrames(attack, 1, counterMax(COUNTER), frames));
     expect(r.framesOf('attack')).toHaveLength(counterMax(COUNTER));
     expect(r.framesOf('apply')).toEqual(appliesOf([1], frames));
@@ -222,7 +228,7 @@ describe('counterGauges: 追えない形は作る時に落とす', () => {
   });
 
   it('rejects a dot state with gauge that mixes { counterFull } and another trigger', () => {
-    // 同じ状態の dot の刻みは 1 つの列なので、ほかのきっかけで付けた分を追えない（混ざったまとまりの直し）
+    // 同じ状態の dot の刻みは 1 つの列なので、ほかのきっかけで付けた分を追えない
     const mixed = (def: RawDefinition) => {
       const chains = { ...def.skills.skill1.effects[CHAINS]!, gaugeOnTick: undefined };
       def.skills.skill1.effects[CHAINS] = chains;

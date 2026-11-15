@@ -27,6 +27,9 @@ const BASE = at(0);
 
 type Shot = { frame: number; scale: number; spunAfter: number };
 
+/** 1 マガジンを撃ち切るまでに見るフレームの上限（超えたら撃ち切らない形として落とす） */
+const MAX_FRAMES = 10_000;
+
 /** 戦闘開始から 1 マガジンを撃ち切る。paramsOf(f) はフレーム f の実効値。after は最終弾の後に進めるフレーム数 */
 function fireMagazine(paramsOf: (f: number) => FiringParams, after = 0) {
   const state = initialShooter(shot, model, paramsOf(0));
@@ -34,6 +37,7 @@ function fireMagazine(paramsOf: (f: number) => FiringParams, after = 0) {
   let lastShot: { frame: number; wait: number; acc: number; spunShots: number } | null = null;
   let f = 0;
   for (; lastShot === null; f++) {
+    if (f > MAX_FRAMES) throw new Error(`no last shot within ${MAX_FRAMES} frames`);
     const params = paramsOf(f);
     if (!stepShooter(state, shot, model, params)) continue;
     shots.push({ frame: f, scale: params.spinUpScale, spunAfter: state.spunShots });
@@ -89,7 +93,7 @@ describe('立ち上げ速度がマガジンの途中で替わる', () => {
     const relative = shots.map((s) => s.frame - origin);
     expect(relative).toEqual(framesBySpun((t) => (t + origin < switchAt ? before : after).spinUpScale));
     expect(relative.slice(0, 7)).toEqual(simulateShotFrames(shot, model, before).slice(0, 7));
-    // 替わった後の列は、どちらの一定の列とも違う（撃った数 × いまの立ち上げ速度では決めない）
+    // 替わった後の列は、どちらの立ち上げ速度が一定の列とも違う
     expect(relative).not.toEqual(simulateShotFrames(shot, model, before));
     expect(relative).not.toEqual(simulateShotFrames(shot, model, after));
     // 7 発目の後のレートは、6 発ぶんの替える前の進み + 1 発ぶんの替えた後の進みから
@@ -112,7 +116,7 @@ describe('全弾リロードの始まりのずれ', () => {
     expect(before).toBeCloseTo(6 * 1.5 + 5, 12);
     const offset = reloadStartOffset(shot, model, BASE, last!.acc, before);
     expect(offset).toBeLessThan(0);
-    // 撃った数 × 最終弾の立ち上げ速度の進み（11 発 × 1）とは違うずれ
+    // 最終弾の前までの進みを 11 発 × 1 とすると、違うずれになる
     expect(offset).not.toBeCloseTo(reloadStartOffset(shot, model, BASE, last!.acc, 11 * BASE.spinUpScale), 6);
     expect(last!.wait).toBe(expectedWait(BASE, last!.acc, before));
   });
@@ -223,8 +227,12 @@ describe('使用武器変更の終わりのずれ', () => {
       burst: false,
       controlledSlot: 0,
     });
-    const logOf = (rateOfFire: number, spinUp = false) =>
-      runSimulation(inputOf(definitionOf(rateOfFire, spinUp))).shots[0]!;
+    const logs = new Map<string, ReturnType<typeof runSimulation>['shots'][number]>();
+    const logOf = (rateOfFire: number, spinUp = false) => {
+      const key = `${rateOfFire}:${spinUp}`;
+      if (!logs.has(key)) logs.set(key, runSimulation(inputOf(definitionOf(rateOfFire, spinUp))).shots[0]!);
+      return logs.get(key)!;
+    };
     /** 最初の変更の最終弾から、次の基礎の武器の発までのフレーム */
     const gapAfterChange = (log: ReturnType<typeof logOf>) => {
       const changed = new Set(log.weaponChangeShotFrames);
