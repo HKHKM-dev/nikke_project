@@ -1,0 +1,387 @@
+{
+  "verification": "V-0792",
+  "note": "撮影 A（ココア（I）・ソルジャーF.A.（II）・ジュリア（III・操作・宝物の段階 3）・オートバースト ON）と B（ジュリアはオート射撃 OFF で撃たない）の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。S1 のクールタイムは撮る前の仮の値（H1 は 20 秒）。宝物版のバーストの 5 回の順番の攻撃は、遅れの表の行が無いので、どの仮説も同じフレームの 5 ヒットにした（setup の burstDelays）。マルカートの会心の追加ダメージは定義に無い（未対応）ので、その仮説は検証記録の「予測」に手で書いた",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 301
+    },
+    {
+      "rid": 150,
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S1 のクールタイム 20 秒・戦闘開始時に S1 を強制使用・クレッシェンドはクリティカル命中 6 回ごと・マルカートは 8 回ごと・バーストの追加ダメージは順番の攻撃のヒットごと）"
+    },
+    {
+      "id": "H-ct13",
+      "note": "S1 のクールタイムが 13 秒",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 150,
+            "skill": "skill1",
+            "treasure": true,
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 13,
+                "cooldown": true
+              },
+              "target": "self",
+              "stat": "critRate",
+              "ref": 1,
+              "durationRef": 2
+            }
+          },
+          {
+            "rid": 150,
+            "skill": "skill1",
+            "treasure": true,
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 13,
+                "cooldown": true
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 3,
+              "durationRef": 4
+            }
+          },
+          {
+            "rid": 150,
+            "skill": "skill1",
+            "treasure": true,
+            "replace": 2,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 13,
+                "cooldown": true
+              },
+              "target": "self",
+              "stat": "normalCritRate",
+              "ref": 5,
+              "durationRef": 6
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-forced",
+      "note": "戦闘開始時の S1 の強制使用が無い（treasureSkills.skill1 の effects[3]〜[5] を落とす）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 150,
+            "skill": "skill1",
+            "treasure": true,
+            "index": 3
+          },
+          {
+            "rid": 150,
+            "skill": "skill1",
+            "treasure": true,
+            "index": 4
+          },
+          {
+            "rid": 150,
+            "skill": "skill1",
+            "treasure": true,
+            "index": 5
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-once",
+      "note": "宝物版のバーストのフルスタックの追加ダメージが、バーストごとに 1 ヒットだけ（順番の攻撃のヒットごとでない）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 150,
+            "skill": "burst",
+            "treasure": true,
+            "replace": 1,
+            "effect": {
+              "kind": "damage",
+              "trigger": "burstUse",
+              "damageType": "additional",
+              "ref": 3,
+              "condition": {
+                "selfState": {
+                  "state": "crescendo",
+                  "stacks": "full"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "hit-5s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burstDelays": [
+          {
+            "rid": 150,
+            "treasure": true,
+            "row": {
+              "hitFrames": 0,
+              "effectFrames": 0,
+              "hitOffsets": [0, 0, 0, 0, 0]
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A の戦闘開始から 5 秒のジュリアの胴体・会心なしの 1 ヒット（強制使用の S1 の攻撃力▲ 20% が乗るか）"
+    },
+    {
+      "id": "hit-15s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 900,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burstDelays": [
+          {
+            "rid": 150,
+            "treasure": true,
+            "row": {
+              "hitFrames": 0,
+              "effectFrames": 0,
+              "hitOffsets": [0, 0, 0, 0, 0]
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A の 15 秒の 1 ヒット（クールタイム 20 秒なら S1 の▲が切れている、13 秒なら 13 秒の発動の▲が乗る）"
+    },
+    {
+      "id": "hit-25s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burstDelays": [
+          {
+            "rid": 150,
+            "treasure": true,
+            "row": {
+              "hitFrames": 0,
+              "effectFrames": 0,
+              "hitOffsets": [0, 0, 0, 0, 0]
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A の 25 秒の 1 ヒット（20 秒なら 20 秒の発動の▲が乗る、13 秒なら 23 秒で切れている）"
+    },
+    {
+      "id": "crit-ratio-25s",
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 3,
+        "frame": 1500,
+        "core": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burstDelays": [
+          {
+            "rid": 150,
+            "treasure": true,
+            "row": {
+              "hitFrames": 0,
+              "effectFrames": 0,
+              "hitOffsets": [0, 0, 0, 0, 0]
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 A の 25 秒の、会心した 1 ヒットと会心しない 1 ヒットの比（クレッシェンドのクリティカルダメージ▲ 24.79% × 5 スタック）"
+    },
+    {
+      "id": "marcato-count",
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burstDelays": [
+          {
+            "rid": 150,
+            "treasure": true,
+            "row": {
+              "hitFrames": 0,
+              "effectFrames": 0,
+              "hitOffsets": [0, 0, 0, 0, 0]
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "rel": 0.1
+      },
+      "note": "撮影 A の 180 秒のマルカートのヒットの数（クリティカル命中を期待値で 8 回ごと。録画は会心の乱数で揺れる）"
+    },
+    {
+      "id": "burst-hits-a",
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "burst"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burstDelays": [
+          {
+            "rid": 150,
+            "treasure": true,
+            "row": {
+              "hitFrames": 0,
+              "effectFrames": 0,
+              "hitOffsets": [0, 0, 0, 0, 0]
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "撮影 A の 180 秒のバーストの追加ダメージのヒットの数（バーストの倍率ダメージ本体は数えない）"
+    },
+    {
+      "id": "burst-hits-b",
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "burst"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "burstDelays": [
+          {
+            "rid": 150,
+            "treasure": true,
+            "row": {
+              "hitFrames": 0,
+              "effectFrames": 0,
+              "hitOffsets": [0, 0, 0, 0, 0]
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "撮影 B（ジュリアは撃たない）の追加ダメージのヒットの数（クレッシェンドが付かないので 0）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-15",
+    "commit": "84405268aaeec6979705d3ffb9f8f4e0ed7c40bd",
+    "values": {
+      "H1": {
+        "hit-5s": 20229.142499999998,
+        "hit-15s": 25282.945799999994,
+        "hit-25s": 20229.142499999998,
+        "crit-ratio-25s": 2.7394999999999996,
+        "marcato-count": 92,
+        "burst-hits-a": 25,
+        "burst-hits-b": 0
+      },
+      "H-ct13": {
+        "hit-5s": 20229.142499999998,
+        "hit-15s": 30343.713749999995,
+        "hit-25s": 16855.297199999997,
+        "crit-ratio-25s": 2.7394999999999996,
+        "marcato-count": 129,
+        "burst-hits-a": 25,
+        "burst-hits-b": 0
+      },
+      "H0-forced": {
+        "hit-5s": 16855.297199999997,
+        "hit-15s": 25282.945799999994,
+        "hit-25s": 20229.142499999998,
+        "crit-ratio-25s": 2.7394999999999996,
+        "marcato-count": 84,
+        "burst-hits-a": 20,
+        "burst-hits-b": 0
+      },
+      "H-once": {
+        "hit-5s": 20229.142499999998,
+        "hit-15s": 25282.945799999994,
+        "hit-25s": 20229.142499999998,
+        "crit-ratio-25s": 2.7394999999999996,
+        "marcato-count": 92,
+        "burst-hits-a": 5,
+        "burst-hits-b": 0
+      }
+    }
+  }
+}

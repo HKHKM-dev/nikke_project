@@ -1,0 +1,240 @@
+{
+  "formatVersion": 1,
+  "resourceId": 150,
+  "checkedAt": "2026-11-15",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "基礎版の S1 は説明文にきっかけの無いクールタイムごとのアクティブで、クールタイムは録画で読むもの。宝物を外せないので基礎版を撮れず、未対応（宝物版の S1 と同じクールタイムとは限らない）",
+          "en": "The base S1 is a cooldown-based active skill with no trigger in its description; the cooldown must be read from recordings. The treasure cannot be removed, so the base version cannot be recorded and is not modeled (its cooldown may differ from the treasure S1)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "critRate",
+            "target": "self",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "crescendo",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "self",
+          "maxStacksRef": 2,
+          "durationRef": 3,
+          "contents": [
+            {
+              "stat": "critDamage",
+              "ref": 1
+            }
+          ],
+          "assumes": {
+            "ja": "「最後の弾丸が命中した時」は、残弾を 0 にした射撃で起こす（全弾命中の前提）。最後の弾丸ごとに 1 スタック。付くたびにすべてのスタックの維持を付け直す（いまの既定）。バーストの「クレッシェンドのフルスタック状態なら」が読む",
+            "en": "\"When the last bullet hits\" fires on the shot that empties the magazine (assuming every shot hits). One stack per last bullet; each application refreshes the duration of all stacks (the current default). Read by the Burst's \"if Crescendo is at full stacks\""
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "最終防御力が最も高い敵 5 機を、単体ボスで 1 体として 1 ヒット",
+            "en": "The 5 highest-DEF enemies hit once as a single boss"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "damageType": "additional",
+          "ref": 3,
+          "condition": {
+            "selfState": {
+              "state": "crescendo",
+              "stacks": "full"
+            }
+          },
+          "perBurstHit": true,
+          "assumes": {
+            "ja": "「同じ敵に」は単体ボス。バーストの倍率ダメージのヒットと同じフレームに 1 ヒット。フルスタックかはバーストを使った時に見る",
+            "en": "\"The same enemy\" is the single boss. One hit on the same frame as the Burst damage hit. Full stacks are checked when the Burst is used"
+          }
+        }
+      ]
+    }
+  },
+  "treasureSkills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 20,
+            "cooldown": true
+          },
+          "target": "self",
+          "stat": "critRate",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "S1 は説明文にきっかけの無いクールタイムごとのアクティブ。クールタイムは録画で読む（いまの 20 秒は撮る前の仮の値。V-0792）",
+            "en": "S1 is a cooldown-based active skill with no trigger in its description. The cooldown is read from recordings (the current 20 s is a provisional value before recording; V-0792)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 20,
+            "cooldown": true
+          },
+          "target": "self",
+          "stat": "attack",
+          "ref": 3,
+          "durationRef": 4
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 20,
+            "cooldown": true
+          },
+          "target": "self",
+          "stat": "normalCritRate",
+          "ref": 5,
+          "durationRef": 6
+        },
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "critRate",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "宝物版 S2 の「戦闘開始時、自分にスキル 1 強制使用」を、S1 の 3 つの効果を戦闘開始時にも付ける形で書いた（この効果とその次の 2 つ）。クールタイムは戦闘開始から数える（強制使用で数え直しても同じ時刻）",
+            "en": "The treasure S2's \"at the start of battle, force-use Skill 1 on self\" is written as the three S1 effects also applied at the start of battle (this effect and the next two). The cooldown counts from the start of battle (the same timing even if the forced use restarts it)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "attack",
+          "ref": 3,
+          "durationRef": 4
+        },
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "normalCritRate",
+          "ref": 5,
+          "durationRef": 6
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "crescendo",
+          "trigger": {
+            "count": "critHit",
+            "everyRef": 1
+          },
+          "target": "self",
+          "maxStacksRef": 3,
+          "durationRef": 4,
+          "contents": [
+            {
+              "stat": "critDamage",
+              "ref": 2
+            }
+          ],
+          "assumes": {
+            "ja": "通常攻撃のクリティカル命中を期待値で数え（命中の期待値 × その発の通常攻撃の会心率）、6 回ごとに 1 スタック。付くたびにすべてのスタックの維持を付け直す（いまの既定）。バーストの「クレッシェンドのフルスタック状態なら」が読む",
+            "en": "Critical normal-attack hits are counted as expected values (expected hits × that shot's normal-attack crit rate); one stack per 6. Each application refreshes the duration of all stacks (the current default). Read by the Burst's \"if Crescendo is at full stacks\""
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "critHit",
+            "everyRef": 7
+          },
+          "damageType": "additional",
+          "ref": 5,
+          "assumes": {
+            "ja": "マルカート。通常攻撃のクリティカル命中（期待値）8 回ごとに、発のフレームに 1 ヒット。コアの補正は乗らない",
+            "en": "Marcato. One hit on the shot's frame per 8 critical normal-attack hits (expected). No core bonus"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "「マルカートがクリティカル命中した時、同じ敵に最終攻撃力の 100% の追加ダメージ」は未対応（倍率ダメージの会心をきっかけにする語彙が無い。plan/design-julia.md 2.1 節）",
+          "en": "\"When Marcato lands a critical hit, deals 100% of final ATK as additional damage to the same enemy\" is not modeled (no vocabulary for a trigger on a skill-damage critical hit; plan/design-julia.md 2.1)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "target": "enemy",
+            "trigger": "unknown"
+          }
+        },
+        {
+          "ja": "「戦闘開始時、自分にスキル 1 強制使用」は、宝物版 S1 の戦闘開始時の効果（treasureSkills.skill1 の effects[3]〜[5]）で入れた。S1 が基礎版の段階（宝物の段階 1）では、基礎版の S1 が未対応なので入らない",
+          "en": "\"At the start of battle, force-use Skill 1 on self\" is applied via the treasure S1's start-of-battle effects (treasureSkills.skill1 effects[3]–[5]). At the stage where S1 is still the base version (treasure stage 1), it is not applied because the base S1 is not modeled",
+          "kind": "modeling",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "battleStart"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "hitsRef": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "ランダムな敵は単体ボス。5 回の順番の攻撃は、遅れの表のヒット（未測定のあいだは同じフレーム）に等分する",
+            "en": "The random enemy is the single boss. The 5 sequential attacks are split evenly over the delay table's hits (the same frame until measured)"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "damageType": "additional",
+          "ref": 3,
+          "condition": {
+            "selfState": {
+              "state": "crescendo",
+              "stacks": "full"
+            }
+          },
+          "perBurstHit": true,
+          "assumes": {
+            "ja": "「同じ敵に」は単体ボス。順番の攻撃のヒットごとに 1 ヒット（同じフレーム）。フルスタックかはバーストを使った時に見る",
+            "en": "\"The same enemy\" is the single boss. One hit per sequential-attack hit (same frame). Full stacks are checked when the Burst is used"
+          }
+        }
+      ]
+    }
+  }
+}

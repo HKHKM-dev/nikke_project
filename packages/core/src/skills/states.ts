@@ -135,6 +135,8 @@ export const NAMED_STATES = {
   warmUp: { name: { ja: 'ウォームアップ', en: 'Warm Up' }, holder: 'ally' },
   /** ヒーロービジョン（ラプラスの S1。バーストの「ヒーロービジョンのフルスタック状態なら」。plan/design-laplace.md 2.3 節） */
   heroVision: { name: { ja: 'ヒーロービジョン', en: 'Hero Vision' }, holder: 'ally' },
+  /** クレッシェンド（ジュリアの S2。クリティカルダメージ▲のスタック。バーストの「クレッシェンドのフルスタック状態なら」。plan/design-julia.md 1 節） */
+  crescendo: { name: { ja: 'クレッシェンド', en: 'Crescendo' }, holder: 'ally' },
   /**
    * 熱血（モランの宝物版の S1。ラプチャーが出現した時・持続・
    * バーストスキルのクールタイム▼。宝物版の S2 の「熱血状態なら」。plan/design-skill-stage11.md 3.3 節。V-0530）
