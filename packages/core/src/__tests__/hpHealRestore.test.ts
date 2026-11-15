@@ -39,7 +39,11 @@ describe('マストの最大HP のみ▲ の窓とミサトの S1 の回復', ()
     // ミサトの S1 は発火の 6f 後に付く（delayFrames）。発火から付くまでは上がらない
     expect(ratio(2, h.frame - 6)).toBe(before);
     // 窓の中の 3 枠目の最大HP（バフ前の最大HP を 1 とする）は 1 ÷ 割合
-    const amount = (maxHp(0) * skillValueOf(MISATO, 'skill1', 7)) / 100 / maxHp(2);
+    // 射撃マニュアルのフルスタックの間に発火した回復には、S2 の与える HP 回復量▲も掛かる（C-1334）
+    const up = itemsOf(plan.history, { sourceSlotIndex: 0, kind: 'while', stat: 'healDealt', holder: 0 });
+    const full = up.some((it) => it.start < h.frame - 6 && h.frame - 6 < it.end);
+    const boost = full ? 1 + skillValueOf(MISATO, 'skill2', 2) / 100 : 1;
+    const amount = (maxHp(0) * skillValueOf(MISATO, 'skill1', 7) * boost) / 100 / maxHp(2);
     expect(ratio(2, h.frame + 1) - before).toBeCloseTo(amount * before, 9);
   });
 
