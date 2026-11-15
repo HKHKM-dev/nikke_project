@@ -136,13 +136,9 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "noBurstSlots": [
-          4
-        ]
+        "noBurstSlots": [4]
       },
       "metric": "eventFrames",
       "args": {
@@ -161,13 +157,9 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "noBurstSlots": [
-          4
-        ]
+        "noBurstSlots": [4]
       },
       "metric": "counterAtBursts",
       "args": {
@@ -184,13 +176,9 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "noBurstSlots": [
-          4
-        ]
+        "noBurstSlots": [4]
       },
       "metric": "eventFrames",
       "args": {
@@ -208,13 +196,9 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "noBurstSlots": [
-          4
-        ]
+        "noBurstSlots": [4]
       },
       "metric": "buffWindowStarts",
       "args": {
@@ -234,13 +218,9 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto",
-        "noBurstSlots": [
-          4
-        ]
+        "noBurstSlots": [4]
       },
       "metric": "buffWindowStarts",
       "args": {
@@ -260,151 +240,32 @@
     "commit": "cec4209ad4d5950ccb1b3376098a1a16a6fbac50",
     "values": {
       "H1": {
-        "cap-frames": [
-          164,
-          634,
-          821,
-          1311,
-          1517,
-          1891,
-          2237,
-          2642,
-          3152,
-          3314,
-          3768,
-          4017,
-          4392
-        ],
-        "counter-at-bursts": [
-          1,
-          8,
-          9,
-          9,
-          10
-        ],
+        "cap-frames": [164, 634, 821, 1311, 1517, 1891, 2237, 2642, 3152, 3314, 3768, 4017, 4392],
+        "counter-at-bursts": [1, 8, 9, 9, 10],
         "s2-frames": [],
-        "atk-start": [
-          165
-        ],
-        "elem-start": [
-          1312,
-          3315,
-          5533,
-          7803
-        ]
+        "atk-start": [165],
+        "elem-start": [1312, 3315, 5533, 7803]
       },
       "H-E2": {
-        "cap-frames": [
-          164,
-          244,
-          329,
-          634,
-          821,
-          902,
-          982,
-          1311,
-          1392,
-          1517,
-          1891,
-          2237,
-          2338
-        ],
-        "counter-at-bursts": [
-          3,
-          13,
-          13,
-          13,
-          13
-        ],
-        "s2-frames": [
-          2819,
-          4909,
-          5075,
-          5157,
-          6944,
-          7292,
-          7373,
-          7454,
-          9443,
-          9780,
-          9863,
-          9945
-        ],
-        "atk-start": [
-          165
-        ],
-        "elem-start": [
-          903
-        ]
+        "cap-frames": [164, 244, 329, 634, 821, 902, 982, 1311, 1392, 1517, 1891, 2237, 2338],
+        "counter-at-bursts": [3, 13, 13, 13, 13],
+        "s2-frames": [2819, 4909, 5075, 5157, 6944, 7292, 7373, 7454, 9443, 9780, 9863, 9945],
+        "atk-start": [165],
+        "elem-start": [903]
       },
       "H-T2": {
-        "cap-frames": [
-          201,
-          831,
-          1343,
-          1537,
-          1912,
-          2259,
-          2674,
-          3327,
-          3815,
-          4416,
-          4968,
-          5093,
-          5552
-        ],
-        "counter-at-bursts": [
-          1,
-          7,
-          6,
-          6,
-          6
-        ],
+        "cap-frames": [201, 831, 1343, 1537, 1912, 2259, 2674, 3327, 3815, 4416, 4968, 5093, 5552],
+        "counter-at-bursts": [1, 7, 6, 6, 6],
         "s2-frames": [],
-        "atk-start": [
-          202
-        ],
-        "elem-start": [
-          1538,
-          4417,
-          6768,
-          9240
-        ]
+        "atk-start": [202],
+        "elem-start": [1538, 4417, 6768, 9240]
       },
       "H-F2": {
-        "cap-frames": [
-          164,
-          634,
-          821,
-          1311,
-          1517,
-          1891,
-          2237,
-          2642,
-          3152,
-          3314,
-          3768,
-          4017,
-          4392
-        ],
-        "counter-at-bursts": [
-          1,
-          7,
-          8,
-          8,
-          9
-        ],
+        "cap-frames": [164, 634, 821, 1311, 1517, 1891, 2237, 2642, 3152, 3314, 3768, 4017, 4392],
+        "counter-at-bursts": [1, 7, 8, 8, 9],
         "s2-frames": [],
-        "atk-start": [
-          165
-        ],
-        "elem-start": [
-          1518,
-          3769,
-          6021,
-          7948,
-          10307
-        ]
+        "atk-start": [165],
+        "elem-start": [1518, 3769, 6021, 7948, 10307]
       }
     }
   }

@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 134・効果 968（根拠あり 946）・notes 350（根拠あり 144）
+件数: キャラ 135・効果 980（根拠あり 958）・notes 352（根拠あり 145）
 
-notes の種類: 未対応 51・前提の外 104・計算に無関係 69・補足 38・間接 88
+notes の種類: 未対応 51・前提の外 104・計算に無関係 69・補足 40・間接 88
 
-スロット: supported 351・partial 38・unsupported 9・noEffect 52
+スロット: supported 354・partial 38・unsupported 9・noEffect 52
 
 ## 10 ラピ
 
@@ -1734,6 +1734,26 @@ notes の種類: 未対応 51・前提の外 104・計算に無関係 69・補�
 - **burst**: supported
   - effects[0] timed・burstUse・attack: C-0852（仮説）
   - effects[1] timed・burstUse・accumulateRatio: C-0903（確定）
+
+## 502 エレグ：ブーム・アンド・ショック
+
+- **skill1**: supported
+  - effects[0] state・battleStart・ghostPossession: C-1312（確定）
+  - effects[1] state・6 秒ごと・ghostPossession: C-1312（確定）
+  - effects[2] counterChange・teamHit・ghostCapture: C-1312（確定）
+  - effects[3] removeState・teamHit・ghostPossession: C-1312（確定）
+  - effects[4] passive・ghostCapture 1 以上の間・attack: C-1313（確定）
+  - effects[5] passive・ghostCapture 4 以上の間・elementDamage: C-1313（確定）
+  - notes[0] 補足: 憑依は説明文では敵（ランダムな 1 機）に付く。モデルが要るのはキャプチャーの命中を数える窓だけなので、敵 1 体の前提で自分の状態として持つ: C-1312（確定）
+- **skill2**: supported
+  - effects[0] timed・burstUse・attack: C-1314（確定）
+  - effects[1] damage・teamHit・skill: C-1314（確定）
+- **burst**: supported
+  - effects[0] damage・burstUse・skill: C-1315（確定）
+  - effects[1] counterChange・burstUse・ghostCapture（減少）: C-1315（確定）
+  - effects[2] damage・burstUse・skill: C-1315（確定）
+  - effects[3] counterChange・burstUse・ghostCapture（減少）: C-1315（確定）
+  - notes[0] 補足: S2 のダメージとバーストの順番の攻撃がバーストゲージを溜めるかは確かめていない（溜めない形で回す）: 根拠なし
 
 ## 511 シンデレラ
 

@@ -169,7 +169,8 @@ export function createStateWindowTracker(
     // 全員の発の和は 1 フレームで N を超えうるので、teamAmmo と同じく、N の倍数を越えたら 1 回だけ発火する
     if (team) {
       const fired =
-        Math.floor((count + weight) / trigger.every + COUNT_EPSILON) > Math.floor(count / trigger.every + COUNT_EPSILON);
+        Math.floor((count + weight) / trigger.every + COUNT_EPSILON) >
+        Math.floor(count / trigger.every + COUNT_EPSILON);
       count += weight;
       return fired;
     }
