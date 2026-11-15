@@ -193,6 +193,8 @@ export type ResolvedShotCountTrigger = {
    */
   during?: ShotCountWindow | StateCountWindow;
   reset?: ShotCountReset;
+  /** 周期の中の位置（自分の状態の窓・即値の every だけ。1 以上 every 未満。plan/design-fortune-mate.md 2.1 節） */
+  phase?: number;
   /** ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 戦闘中ずっと数え、発火だけこの窓の中に限る */
   firesDuring?: FiringWindow;
   /** 使用武器の変更の発では発火しない（plan/design-new-chars-1029.md 5.7 節） */
@@ -246,7 +248,15 @@ export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: n
   if (!Number.isInteger(every) || every < 1) {
     throw new RangeError(`skill ${skill.id}: count trigger must be a positive integer, got ${every}`);
   }
-  if (isStateCountWindow(trigger.during)) return { count: trigger.count, every, during: { ...trigger.during } };
+  if (isStateCountWindow(trigger.during)) {
+    // phase は即値の every より小さいことを読み込みで確かめてある（skills/parse/trigger.ts の parsePhase）
+    return {
+      count: trigger.count,
+      every,
+      during: { ...trigger.during },
+      ...(trigger.phase !== undefined ? { phase: trigger.phase } : {}),
+    };
+  }
   if (trigger.during !== undefined)
     return { count: trigger.count, every, during: trigger.during, reset: trigger.reset! };
   if (trigger.firesDuring !== undefined) return { count: trigger.count, every, firesDuring: trigger.firesDuring };

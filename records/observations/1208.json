@@ -1,0 +1,627 @@
+[
+  {
+    "id": "1208-01",
+    "recording": "1208",
+    "kind": "timing",
+    "use": "record",
+    "value": [1310, 2511, 3691, 4893, 6072, 7276, 8454, 9655, 10835],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 5・5・25・5・24・5・25・0・24f"
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-02",
+    "recording": "1208",
+    "kind": "timing",
+    "use": "record",
+    "value": [1339, 2540, 3720, 4922, 6101, 7305, 8483, 9685, 10864],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 6・0・25・6・24・7・25・0・24f"
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-03",
+    "recording": "1208",
+    "kind": "timing",
+    "use": "record",
+    "value": [1368, 3749, 6130, 8513, 10893],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-04",
+    "recording": "1208",
+    "kind": "timing",
+    "use": "record",
+    "value": [1977, 4358, 6739, 9121, 11502],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-05",
+    "recording": "1208",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609, 608, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-06",
+    "recording": "1208",
+    "kind": "timing",
+    "use": "record",
+    "value": [2504, 3683, 4886, 6065, 8448, 9649, 10828],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-07",
+    "recording": "1208",
+    "kind": "timing",
+    "use": "record",
+    "value": [2533, 3714, 4915, 6094, 7295, 8477, 9678, 10857],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-08",
+    "recording": "1208",
+    "kind": "timing",
+    "use": "record",
+    "value": [3742, 6122, 8503, 10887],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-09",
+    "recording": "1208",
+    "kind": "count",
+    "use": "compare",
+    "value": [2, 8, 14],
+    "unit": "発目",
+    "description": "1 回目の思い出作りの窓（f1339〜f1977）の中で、S2 の弾丸チャージ 6 発で残弾が戻った発の番号（窓の中の発を 1 から数える。最初の 3 個）",
+    "method": {
+      "tool": "tools/captures/ammo.ts の照合を写した使い捨てのスクリプト（見本は 1207 の画）",
+      "note": "フォーチュンメイトの枠アイコンの上の「N/9」の残弾を全フレーム読み（この録画の 1207 の画から作った見本との正規化相互相関。使い捨てのスクリプト）、思い出作りの窓（バーストの使用からフルバーストの終わりまで。burst-panel の II → III の替わり目とフルバーストの終わり）の中の減り（発）を数え、残弾が戻った発の番号を並べた（バーストの使用の 2 発の戻りは除く）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "stateWindowRefillShots",
+      "args": {
+        "slot": 2,
+        "state": "memoryMaking",
+        "skill": "skill2",
+        "n": 1,
+        "count": 3
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-10",
+    "recording": "1208",
+    "kind": "count",
+    "use": "compare",
+    "value": [2, 8, 14, 20, 26, 32, 38],
+    "unit": "発目",
+    "description": "2 回目の思い出作りの窓（f2540〜f4358）の中で、S2 の弾丸チャージ 6 発で残弾が戻った発の番号（窓の中の発を 1 から数える。最初の 7 個）",
+    "method": {
+      "tool": "tools/captures/ammo.ts の照合を写した使い捨てのスクリプト（見本は 1207 の画）",
+      "note": "フォーチュンメイトの枠アイコンの上の「N/9」の残弾を全フレーム読み（この録画の 1207 の画から作った見本との正規化相互相関。使い捨てのスクリプト）、思い出作りの窓（バーストの使用からフルバーストの終わりまで。burst-panel の II → III の替わり目とフルバーストの終わり）の中の減り（発）を数え、残弾が戻った発の番号を並べた（バーストの使用の 2 発の戻りは除く）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "stateWindowRefillShots",
+      "args": {
+        "slot": 2,
+        "state": "memoryMaking",
+        "skill": "skill2",
+        "n": 2,
+        "count": 7
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-11",
+    "recording": "1208",
+    "kind": "count",
+    "use": "compare",
+    "value": [2, 8, 14, 20, 26, 32, 38],
+    "unit": "発目",
+    "description": "3 回目の思い出作りの窓（f4922〜f6739）の中で、S2 の弾丸チャージ 6 発で残弾が戻った発の番号（窓の中の発を 1 から数える。最初の 7 個）",
+    "method": {
+      "tool": "tools/captures/ammo.ts の照合を写した使い捨てのスクリプト（見本は 1207 の画）",
+      "note": "フォーチュンメイトの枠アイコンの上の「N/9」の残弾を全フレーム読み（この録画の 1207 の画から作った見本との正規化相互相関。使い捨てのスクリプト）、思い出作りの窓（バーストの使用からフルバーストの終わりまで。burst-panel の II → III の替わり目とフルバーストの終わり）の中の減り（発）を数え、残弾が戻った発の番号を並べた（バーストの使用の 2 発の戻りは除く）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "stateWindowRefillShots",
+      "args": {
+        "slot": 2,
+        "state": "memoryMaking",
+        "skill": "skill2",
+        "n": 3,
+        "count": 7
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-12",
+    "recording": "1208",
+    "kind": "count",
+    "use": "compare",
+    "value": [2, 8, 14, 20, 26, 32, 38],
+    "unit": "発目",
+    "description": "4 回目の思い出作りの窓（f7305〜f9121）の中で、S2 の弾丸チャージ 6 発で残弾が戻った発の番号（窓の中の発を 1 から数える。最初の 7 個）",
+    "method": {
+      "tool": "tools/captures/ammo.ts の照合を写した使い捨てのスクリプト（見本は 1207 の画）",
+      "note": "フォーチュンメイトの枠アイコンの上の「N/9」の残弾を全フレーム読み（この録画の 1207 の画から作った見本との正規化相互相関。使い捨てのスクリプト）、思い出作りの窓（バーストの使用からフルバーストの終わりまで。burst-panel の II → III の替わり目とフルバーストの終わり）の中の減り（発）を数え、残弾が戻った発の番号を並べた（バーストの使用の 2 発の戻りは除く）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "stateWindowRefillShots",
+      "args": {
+        "slot": 2,
+        "state": "memoryMaking",
+        "skill": "skill2",
+        "n": 4,
+        "count": 7
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-13",
+    "recording": "1208",
+    "kind": "count",
+    "use": "compare",
+    "value": [2, 8, 14, 20, 26, 32, 38],
+    "unit": "発目",
+    "description": "5 回目の思い出作りの窓（f9685〜f11502）の中で、S2 の弾丸チャージ 6 発で残弾が戻った発の番号（窓の中の発を 1 から数える。最初の 7 個）",
+    "method": {
+      "tool": "tools/captures/ammo.ts の照合を写した使い捨てのスクリプト（見本は 1207 の画）",
+      "note": "フォーチュンメイトの枠アイコンの上の「N/9」の残弾を全フレーム読み（この録画の 1207 の画から作った見本との正規化相互相関。使い捨てのスクリプト）、思い出作りの窓（バーストの使用からフルバーストの終わりまで。burst-panel の II → III の替わり目とフルバーストの終わり）の中の減り（発）を数え、残弾が戻った発の番号を並べた（バーストの使用の 2 発の戻りは除く）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "stateWindowRefillShots",
+      "args": {
+        "slot": 2,
+        "state": "memoryMaking",
+        "skill": "skill2",
+        "n": 5,
+        "count": 7
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-14",
+    "recording": "1208",
+    "kind": "hit",
+    "use": "compare",
+    "value": 52042.5,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの、思い出作りの窓の 2〜6 発目（戦闘の 11〜15 発目）のフォーチュンメイトの 1 ペレットの胴体（思い出作りの▲・フルバースト。大切な思い出なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト（ペレットの単位に当てる）",
+      "note": "HUD の総ダメージの f1500 の増分（hud.ts --mode jumps）を、モデルの 1 ペレットの胴体の 1/3（フルバースト中。会心 +1・コア +2 の刻み）の整数倍（28 倍）とソルジャーE.G. の 1 ヒット（28300）の和に当て、1 ペレットの胴体に直した。発の主はフォーチュンメイトの残弾（枠アイコンの上の「N/9」）の減りと、ツバイ・フォーチュンメイトの 40f ごとの刻みで分けた（使い捨てのスクリプト）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 2,
+        "shot": 11,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-15",
+    "recording": "1208",
+    "kind": "hit",
+    "use": "compare",
+    "value": 53339.29,
+    "unit": "ダメージ",
+    "description": "同じ窓の 7〜12 発目（戦闘の 16〜21 発目）のフォーチュンメイトの 1 ペレットの胴体（大切な思い出 1 スタック）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト（ペレットの単位に当てる）",
+      "note": "HUD の総ダメージの f1618 の増分（hud.ts --mode jumps）を、モデルの 1 ペレットの胴体の 1/3（フルバースト中。会心 +1・コア +2 の刻み）の整数倍（34 倍）に当て、1 ペレットの胴体に直した。発の主はフォーチュンメイトの残弾（枠アイコンの上の「N/9」）の減りと、ツバイ・フォーチュンメイトの 40f ごとの刻みで分けた（使い捨てのスクリプト）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 2,
+        "shot": 16,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-16",
+    "recording": "1208",
+    "kind": "hit",
+    "use": "compare",
+    "value": 54636.75,
+    "unit": "ダメージ",
+    "description": "同じ窓の 13 発目から（戦闘の 22 発目から）のフォーチュンメイトの 1 ペレットの胴体（大切な思い出 2 スタック）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト（ペレットの単位に当てる）",
+      "note": "HUD の総ダメージの f1932 の増分（hud.ts --mode jumps）を、モデルの 1 ペレットの胴体の 1/3（フルバースト中。会心 +1・コア +2 の刻み）の整数倍（44 倍）に当て、1 ペレットの胴体に直した。発の主はフォーチュンメイトの残弾（枠アイコンの上の「N/9」）の減りと、ツバイ・フォーチュンメイトの 40f ごとの刻みで分けた（使い捨てのスクリプト）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 2,
+        "shot": 22,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-17",
+    "recording": "1208",
+    "kind": "hit",
+    "use": "compare",
+    "value": 33636,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバースト終了の後のフォーチュンメイトの 1 ペレットの胴体（S1 の攻撃力▲ 13% × 2 スタック。幸せな思い出・大切な思い出・青春の記録は外れ、ペレットは 10 個）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト（ペレットの単位に当てる）",
+      "note": "HUD の総ダメージの f2049 の増分（hud.ts --mode jumps）を、モデルの 1 ペレットの胴体の 1/2（会心 +1・コア +2 の刻み）の整数倍（21 倍）に当て、1 ペレットの胴体に直した。発の主はフォーチュンメイトの残弾（枠アイコンの上の「N/9」）の減りと、ツバイ・フォーチュンメイトの 40f ごとの刻みで分けた（使い捨てのスクリプト）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "fullBurst": 0,
+        "frame": 650,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-18",
+    "recording": "1208",
+    "kind": "hit",
+    "use": "compare",
+    "value": 37108.41,
+    "unit": "ダメージ",
+    "description": "2 回目のフルバースト終了の後のフォーチュンメイトの 1 ペレットの胴体（S1 の攻撃力▲ 13% × 3 スタック）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト（ペレットの単位に当てる）",
+      "note": "HUD の総ダメージの f4365 の増分（hud.ts --mode jumps）を、モデルの 1 ペレットの胴体の 1/2（会心 +1・コア +2 の刻み）の整数倍（34 倍）に当て、1 ペレットの胴体に直した。発の主はフォーチュンメイトの残弾（枠アイコンの上の「N/9」）の減りと、ツバイ・フォーチュンメイトの 40f ごとの刻みで分けた（使い捨てのスクリプト）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "fullBurst": 1,
+        "frame": 650,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-19",
+    "recording": "1208",
+    "kind": "hit",
+    "use": "compare",
+    "value": 46767,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバースト中のツバイの 1 ペレットの胴体（フォーチュンメイトの S2 の攻撃ダメージ 55%▲）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト（ペレットの単位に当てる）",
+      "note": "HUD の総ダメージの f1587 の増分（hud.ts --mode jumps）を、モデルの 1 ペレットの胴体の 1/3（フルバースト中。会心 +1・コア +2 の刻み）の整数倍（29 倍）に当て、1 ペレットの胴体に直した。発の主はフォーチュンメイトの残弾（枠アイコンの上の「N/9」）の減りと、ツバイ・フォーチュンメイトの 40f ごとの刻みで分けた（使い捨てのスクリプト）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "fullBurst": 0,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-20",
+    "recording": "1208",
+    "kind": "hit",
+    "use": "compare",
+    "value": 26396,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバースト終了の後のツバイの 1 ペレットの胴体（フォーチュンメイトの S1 の攻撃力▲ 13% × 2 スタック）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト（ペレットの単位に当てる）",
+      "note": "HUD の総ダメージの f2013 の増分（hud.ts --mode jumps）を、モデルの 1 ペレットの胴体の 1/2（会心 +1・コア +2 の刻み）の整数倍（23 倍）に当て、1 ペレットの胴体に直した。発の主はフォーチュンメイトの残弾（枠アイコンの上の「N/9」）の減りと、ツバイ・フォーチュンメイトの 40f ごとの刻みで分けた（使い捨てのスクリプト）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "fullBurst": 0,
+        "frame": 650,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-21",
+    "recording": "1208",
+    "kind": "hit",
+    "use": "compare",
+    "value": 29536.77,
+    "unit": "ダメージ",
+    "description": "2 回目のフルバースト終了の後のツバイの 1 ペレットの胴体（S1 の攻撃力▲ 13% × 3 スタック）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト（ペレットの単位に当てる）",
+      "note": "HUD の総ダメージの f4395 の増分（hud.ts --mode jumps）を、モデルの 1 ペレットの胴体の 1/2（会心 +1・コア +2 の刻み）の整数倍（31 倍）に当て、1 ペレットの胴体に直した。発の主はフォーチュンメイトの残弾（枠アイコンの上の「N/9」）の減りと、ツバイ・フォーチュンメイトの 40f ごとの刻みで分けた（使い捨てのスクリプト）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "fullBurst": 1,
+        "frame": 650,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1208-22",
+    "recording": "1208",
+    "kind": "count",
+    "use": "record",
+    "value": [2, 2, 2, 2, 2, 2],
+    "unit": "発",
+    "description": "フォーチュンメイトのバーストの使用（II → III の替わり目）の直前の、枠アイコンの上の残弾の増え（バーストの効果 2 の弾丸チャージ。最大で止まらなかった回: f2535 5→7・f4917 2→4・f6095 6→8・f7300 7→9・f8478 7→9・f10859 5→7）",
+    "method": {
+      "tool": "tools/captures/ammo.ts の照合を写した使い捨てのスクリプト（見本は 1207 の画）",
+      "note": "残弾が最大の 9 で止まった回（なし）と、リロード中・同じフレームの発と重なった回は除いた"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "firing"
+    },
+    "source": "V-0786",
+    "readAt": "2026-11-15"
+  }
+]

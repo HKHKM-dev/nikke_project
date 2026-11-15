@@ -21,6 +21,7 @@ import type {
   ResolvedWhileEffect,
   ResolvedCounterWhileEffect,
   ResolvedHpWhileEffect,
+  ResolvedShotCountTrigger,
 } from '../resolve.ts';
 import type { attackRankFor, RankingRecord } from '../ranking.ts';
 import { counterMax, type CounterId } from '../counters.ts';
@@ -508,6 +509,16 @@ export type HolderLists = {
    * 1 パス目が since の currentHpDown の発火に使う。返す関数は件の登録（registerFrame）の後に呼ぶ
    */
   sinceFires(trigger: TimerTrigger, slotIndex: number): TriggerTracker;
+  /**
+   * 自分の状態の窓で数える回数（during: { state }）の発火（状態の付与と同じ数え方。plan/design-grave.md 2.4 節）。1 パス目が弾丸チャージの
+   * 発火に使う（plan/design-fortune-mate.md 2.2 節）。返す関数は件の登録（registerFrame）の後に呼ぶ
+   */
+  stateWindowFires(
+    trigger: ResolvedShotCountTrigger,
+    slotIndex: number,
+    state: NamedStateId,
+    conditionState?: NamedStateId,
+  ): TriggerTracker;
   /**
    * 枠 holder の自分の状態 state の件（段によらない）が、フレーム frame に外れたか（{ ended } の発火。
    * counterChange と同じ。plan/design-grave.md 2.1 節）。1 パス目が { ended } の ammoDecrease の発火に、件の登録（registerFrame）の後に呼ぶ

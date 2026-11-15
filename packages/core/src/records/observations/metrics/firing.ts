@@ -2,12 +2,23 @@
 import { activationFramesOfSlot, type BurstSchedule, isInFullBurst, videoFrameOf } from '../../../burst/schedule.ts';
 import { rateAfterShots, reloadCompleteToFirstShotFrames } from '../../../cadence.ts';
 import { effectiveMaxAmmo, firingParams } from '../../../frame/firing.ts';
+import { unionRanges } from '../../../frame/events.ts';
 import { lowerBound, partialShotsInRanges } from '../../../frame/shots.ts';
 import type { SimResult, SimSlotSegment } from '../../../sim/engine.ts';
 import { itemsOf } from '../../../skills/holders.ts';
+import type { NamedStateId } from '../../../skills/states.ts';
 import type { FrameRange } from '../../../skills/timeline.ts';
 import { DEFAULT_WEAPON_MODEL, MAX_RPM } from '../../../weapons.ts';
-import { atShotFrame, eachOrOne, median, type Metric, type MetricContext, slotIndexOf, slotOf } from './context.ts';
+import {
+  atShotFrame,
+  eachOrOne,
+  firstCount,
+  median,
+  type Metric,
+  type MetricContext,
+  slotIndexOf,
+  slotOf,
+} from './context.ts';
 
 export const firingMetrics: Readonly<Record<string, Metric>> = {
   gaugeFullToWeaponChangeShot: { args: ['slot', 'n'], sim: gaugeFullToWeaponChangeShot },
@@ -18,6 +29,7 @@ export const firingMetrics: Readonly<Record<string, Metric>> = {
   // n 発目の最大装弾数と、弾丸チャージの発数（V-0435）
   maxAmmoAtShot: { args: ['slot', 'shot'], sim: maxAmmoAtShot },
   ammoRefillAmounts: { args: ['slot', 'count'], sim: ammoRefillAmounts },
+  stateWindowRefillShots: { args: ['slot', 'state', 'skill', 'n'], sim: stateWindowRefillShots },
   reloadFramesAt: { args: ['slot', 'frame'], sim: reloadFramesAt },
   reloadToNextShotAt: { args: ['slot', 'frame'], sim: reloadToNextShotAt },
   hideReloadToWindowEnd: { args: ['slot', 'window'], sim: hideReloadToWindowEnd },
@@ -391,6 +403,32 @@ function ammoRefillAmounts(result: SimResult, ctx: MetricContext): number[] {
     .slice(0, count);
   if (amounts.length < count) throw new Error(`弾丸チャージが ${amounts.length} 回しか無い`);
   return amounts;
+}
+
+/**
+ * 枠の自分の状態 state の n 回目（1 始まり）の窓（付いてから外れるまで。重なる・接する件はまとめる）の中の発を、付いたフレームより後から
+ * 1 始まりで数え、スロット skill の弾丸チャージが起きた発の番号（skip・count で切る。V-0786。フォーチュンメイトの S2 の攻撃回数別の効果）。
+ * 録画では、枠アイコンの上の「残弾/最大」の減りで発を数え、戻った発の番号を読む
+ */
+function stateWindowRefillShots(result: SimResult, ctx: MetricContext): number[] {
+  const slotIndex = slotIndexOf(ctx);
+  const n = Number(ctx.args.n);
+  const items = itemsOf(result.history, { holder: slotIndex, state: String(ctx.args.state) as NamedStateId });
+  const window = unionRanges([...items].sort((a, b) => a.start - b.start))[n - 1];
+  if (window === undefined) throw new Error(`状態 ${String(ctx.args.state)} の ${n} 回目の窓が無い`);
+  const refills = new Set(
+    result.instants
+      .filter(
+        (e) => e.slotIndex === slotIndex && e.effect.kind === 'ammoRefill' && e.effect.source.skill === ctx.args.skill,
+      )
+      .map((e) => e.frame),
+  );
+  const shots = slotOf(result.shots, ctx).frames.filter((f) => window.start < f && f < window.end);
+  return firstCount(
+    shots.flatMap((f, k) => (refills.has(f) ? [k + 1] : [])),
+    ctx,
+    '弾丸チャージの発',
+  );
 }
 
 /**
