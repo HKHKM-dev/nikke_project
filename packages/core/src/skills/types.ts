@@ -1554,8 +1554,8 @@ export type DamageEffect = {
    * 「N 回順番に攻撃」の回数の description_value_NN（plan/design-new-chars-1029.md 5.2 節）。1 回の発動を
    * N ヒットに分け、どのヒットも ref の値で出す（バーストの hitsRef と同じく、ref は 1 ヒットの値）。N ヒットとも発火のフレームのバフと
    * フルバースト補正で出す（同 10.2 節の d。C-0735）。順番攻撃ダメージ▲（sequentialAttackDamage）
-   * はこのヒットにだけ乗る。射撃の回数のきっかけ（味方が消費した弾の合計 teamAmmo を除く。plan/design-little-mermaid.md 2.1 節）・
-   * perBurstHit とは組み合わせない
+   * はこのヒットにだけ乗る。射撃の回数のきっかけにも書け、そのときは射撃に畳み込まず発火ごとに N ヒットを出す（イヴの S1 の不安定エネルギー。
+   * plan/design-eve.md 2.1 節）。perBurstHit とは組み合わせない
    */
   hitsRef?: number;
   /**
@@ -1778,6 +1778,8 @@ export type AmmoRefillEffect = TargetCountFields & {
   /** % の description_value_NN（scaling 'flat' なら発数） */
   ref: number;
   scaling?: 'flat';
+  /** 敵の属性の条件（静的な条件。「対象が〈コード〉なら自分に弾丸チャージ」。plan/design-eve.md 2.2 節） */
+  enemyElement?: Element;
   assumes?: LocalizedText;
 };
 

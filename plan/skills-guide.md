@@ -168,6 +168,8 @@
     | 〈持続ダメージの名前〉効果 X%▲ | timed の stat `dotEffect`（持ち主の持続ダメージの tick に別の乗数） | ブレッディのバーストのあと味効果 | 同 2.4 節・決めたこと |
     | 「〈状態〉」の間の必要命中回数 N 回（味方全体で累計）で〈カウンタ〉1 増加（その状態の解除・倍率ダメージも同じきっかけ） | 回数の種類 `teamHit` と `during: { state }`（counterChange・damage・removeState にも書ける） | エレグ：ブーム・アンド・ショックの S1 の憑依・S2 | [design-elegg-bs.md](design-elegg-bs.md) 2.1・2.2 節 |
     | 〈カウンタ〉N▼「最低 M を維持」 | `counterChange` の `floor` | エレグ：ブーム・アンド・ショックのバースト | 同 2.3 節 |
+    | 通常攻撃が N 回（クリティカル）命中した時、ランダムな敵に「N 回順番に攻撃」 | 射撃の回数のきっかけの damage の `hitsRef`・`hitIntervalFrames`・`delayFrames`（射撃に畳み込まない） | イヴの S1 の不安定エネルギー | [design-eve.md](design-eve.md) 2.1 節 |
+    | 通常攻撃が N 回命中した時、対象が〈コード〉なら自分に弾丸チャージ | `ammoRefill` の `enemyElement` | イヴの S2 | 同 2.2 節 |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。

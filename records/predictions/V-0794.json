@@ -1,0 +1,310 @@
+{
+  "verification": "V-0794",
+  "note": "撮影の予測。I-DOLL・フラワー（I）+ デルタ（II）+ イヴ（III・操作）。射撃場の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オートバースト ON。撮影 A は電撃、撮影 B は灼熱の敵。不安定エネルギーの 1 ヒット目の遅れ・ヒットの間隔・バーストの 6 ヒットの時刻は録画で読む（定義の値は仮）",
+  "team": [
+    {
+      "rid": 304
+    },
+    {
+      "rid": 20
+    },
+    {
+      "rid": 850,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（会心 44 回ごとの不安定エネルギー 3 ヒット、電撃の敵だけ受けるダメージ▲と 10 回命中ごとの弾丸チャージ 3 発、エグゾスパインMk2 の間は不安定エネルギーと S2 の攻撃力▲が 2 倍）",
+      "override": {}
+    },
+    {
+      "id": "H-noMk2",
+      "note": "エグゾスパインMk2 が不安定エネルギーと攻撃力▲の倍率を上げない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 850,
+            "skill": "skill1",
+            "index": 2
+          },
+          {
+            "rid": 850,
+            "skill": "skill2",
+            "index": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-ammo-all",
+      "note": "弾丸チャージが敵のコードによらず入る（撮影 B の灼熱の敵でもマガジンが延びる）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 850,
+            "skill": "skill2",
+            "replace": 3,
+            "effect": {
+              "kind": "ammoRefill",
+              "trigger": {
+                "count": "normalHit",
+                "everyRef": 3
+              },
+              "target": "self",
+              "scaling": "flat",
+              "ref": 4
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-hit44",
+      "note": "不安定エネルギーのきっかけが、クリティカルでない命中も含めた 44 回ごと",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 850,
+            "skill": "skill1",
+            "replace": 1,
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "count": "normalHit",
+                "everyRef": 6
+              },
+              "damageType": "skill",
+              "ref": 2,
+              "hitsRef": 3,
+              "delayFrames": 6,
+              "hitIntervalFrames": 12,
+              "gaugePerHit": true
+            }
+          },
+          {
+            "rid": 850,
+            "skill": "skill1",
+            "replace": 2,
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "count": "normalHit",
+                "everyRef": 6
+              },
+              "condition": {
+                "selfState": "exospineMk2"
+              },
+              "damageType": "skill",
+              "ref": 2,
+              "hitsRef": 3,
+              "delayFrames": 6,
+              "hitIntervalFrames": 12
+            }
+          },
+          {
+            "rid": 850,
+            "skill": "skill1",
+            "replace": 3,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "normalHit",
+                "everyRef": 6
+              },
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 4,
+              "durationRef": 5,
+              "delayFrames": 6,
+              "enemyElement": "Electronic"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-shots",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": "1,61",
+        "core": false,
+        "crit": false,
+        "distance": "model"
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 A（電撃）のイヴの、1 回目のバーストより前の発の 1 ヒット（胴体・会心なし・その区間の距離ボーナス）。S2 の攻撃力▲と有利コードで決まる"
+    },
+    {
+      "id": "A-shots-dt",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": "70,120",
+        "core": false,
+        "crit": false,
+        "distance": "model"
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 A のイヴの、1 つ目の不安定エネルギーの後・1 回目のバーストより前の発の 1 ヒット（受けるダメージ▲の窓の中）"
+    },
+    {
+      "id": "A-ue",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "trigger": "shotCount",
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 A の 1 つ目の不安定エネルギーの 1 ヒット目（会心なし）"
+    },
+    {
+      "id": "A-ue-count",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "eventCount",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "trigger": "shotCount"
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "撮影 A の不安定エネルギーのヒットの数（3 分。エグゾスパインMk2 の間の倍の分も 1 ヒットとして数える）"
+    },
+    {
+      "id": "A-mag",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "magazineShots",
+      "args": {
+        "slot": 3,
+        "count": 3
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 A の最初の 3 本のマガジンの発の数（10 回命中ごとの弾丸チャージ 3 発で延びる）"
+    },
+    {
+      "id": "B-ue",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "trigger": "shotCount",
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 B（灼熱）の 1 つ目の不安定エネルギーの 1 ヒット目（会心なし・有利コードでない）"
+    },
+    {
+      "id": "B-mag",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "magazineShots",
+      "args": {
+        "slot": 3,
+        "count": 3
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 B の最初の 3 本のマガジンの発の数（弾丸チャージが入らなければ最大装弾数のまま）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-15",
+    "commit": "55952ddcd116d143c1afef66e39d67a08533941f",
+    "values": {
+      "H1": {
+        "A-shots": [35085.13008000001, 38593.64308800001],
+        "A-shots-dt": [38593.64308800001, 38593.64308800001],
+        "A-ue": 474524.1600000001,
+        "A-ue-count": 108,
+        "A-mag": [105, 105, 106],
+        "B-ue": 431385.6,
+        "B-mag": [75, 75, 75]
+      },
+      "H-noMk2": {
+        "A-shots": [35085.13008000001, 38593.64308800001],
+        "A-shots-dt": [38593.64308800001, 38593.64308800001],
+        "A-ue": 474524.1600000001,
+        "A-ue-count": 90,
+        "A-mag": [105, 105, 106],
+        "B-ue": 431385.6,
+        "B-mag": [75, 75, 75]
+      },
+      "H-ammo-all": {
+        "A-shots": [35085.13008000001, 38593.64308800001],
+        "A-shots-dt": [38593.64308800001, 38593.64308800001],
+        "A-ue": 474524.1600000001,
+        "A-ue-count": 108,
+        "A-mag": [105, 105, 106],
+        "B-ue": 431385.6,
+        "B-mag": [105, 105, 106]
+      },
+      "H-hit44": {
+        "A-shots": [35085.13008000001, 38593.64308800001],
+        "A-shots-dt": [38593.64308800001, 38593.64308800001],
+        "A-ue": 474524.1600000001,
+        "A-ue-count": 147,
+        "A-mag": [105, 105, 106],
+        "B-ue": 431385.6,
+        "B-mag": [75, 75, 75]
+      }
+    }
+  }
+}

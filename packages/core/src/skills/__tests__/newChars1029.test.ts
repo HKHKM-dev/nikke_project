@@ -77,10 +77,16 @@ describe('5.2・5.4 damage の hitsRef・hitIntervalFrames・coreHit の検証',
     });
   });
 
-  it('rejects hits on shot count triggers and with perBurstHit, and an interval without hits', () => {
-    expect(() => effectOf({ ...damage, trigger: { count: 'normalShot', every: 2 }, hitsRef: 2 })).toThrow(
-      /hitsRef cannot be used with a shot count trigger/,
+  it('reads hits on a shot count trigger (plan/design-eve.md 2.1)', () => {
+    expect(effectOf({ ...damage, trigger: { count: 'critHit', every: 44 }, hitsRef: 2, delayFrames: 6 })).toMatchObject(
+      {
+        hitsRef: 2,
+        delayFrames: 6,
+      },
     );
+  });
+
+  it('rejects hits with perBurstHit, and an interval without hits', () => {
     expect(() => effectOf({ ...damage, trigger: 'burstUse', perBurstHit: true, hitsRef: 2 })).toThrow(
       /hitsRef cannot be used with perBurstHit/,
     );
