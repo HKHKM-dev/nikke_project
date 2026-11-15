@@ -108,6 +108,7 @@ export type BuffStat =
   | 'burstCooldown'
   | 'sequentialAttackDamage'
   | 'oneEnemyBurstDamage'
+  | 'allEnemiesBurstDamage'
   | 'spinUpSpeed'
   | 'chargeSpeedOverflow'
   | 'accumulateRatio'
@@ -177,6 +178,9 @@ export const BUFF_STATS = [
   // 「スキル対象の説明部分が『〜敵1機に』で終わるバーストスキルダメージ」▲（比率。plan/design-jackal.md 2 節）。説明文の対象の句が
   // 「敵1機に」で終わる行の burstDamage（解決の印 oneEnemy）にだけ、攻撃ダメージ▲と同じ和に足す（skills/burstDamage.ts の computeBurstHit）
   'oneEnemyBurstDamage',
+  // 「スキル対象の説明部分が『敵全体に』で終わるバーストスキルダメージ」▲（比率。plan/design-trina.md 2.1 節）。説明文の対象の句が
+  // 「敵全体に」で終わる行の burstDamage（解決の印 allEnemies）にだけ、攻撃ダメージ▲と同じ和に足す（oneEnemyBurstDamage と同じ形）
+  'allEnemiesBurstDamage',
   // 同 5.6 節: マシンガン立ち上げ速度▲（比率）。MG のレートの上がり方（1 発ごとの rateOfFireChangePerShot）に (1 + Σ) を掛ける
   // （読みは仮説。論点 I。cadence.ts の rateAfterShots）。スピンアップの無い武器には効かない。射撃に効く
   'spinUpSpeed',
@@ -1079,6 +1083,13 @@ export type TimedEffect = TargetCountFields &
      * targetSquad・excludeSelf・targetDefense とは組まない（値は true だけ）
      */
     targetAdjacent?: true;
+    /**
+     * 「部隊の一番左側にいる〈絞り込み〉の味方 1 機」（plan/design-trina.md 2.2 節）。武器種・コード・クラスの絞り込み（自分も候補）に
+     * 合う枠のうち、編成の枠の順でいちばん左（添字の最も小さい枠。空枠は数えない）の 1 枠だけ。編成で決まるので最上位の
+     * skills/composition.ts で枠を決める。target が 'allies' のときだけ書け、targetState・includeSelf・targetAdjacent・targetBurstStep・
+     * targetSquad・excludeSelf・targetDefense とは組まない（値は true だけ）
+     */
+    targetLeftmost?: true;
     /** 「基本バースト段階が N の」。対象の枠の CharacterData.burstStep が N の枠だけ。target が 'allies' のときだけ書ける */
     targetBurstStep?: BasicBurstStep;
     /**

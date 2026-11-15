@@ -102,6 +102,11 @@ export type ResolvedSkillDamage = {
    * 「〜敵1機に」で終わるバーストスキルダメージ▲（oneEnemyBurstDamage）を掛ける
    */
   oneEnemy?: true;
+  /**
+   * 説明文の対象の句が「敵全体に」で終わる行の burstDamage（plan/design-trina.md 2.1 節）。
+   * 「敵全体に」で終わるバーストスキルダメージ▲（allEnemiesBurstDamage）を掛ける
+   */
+  allEnemies?: true;
   /** 撃った枠の通常攻撃と同じ距離ボーナスを倍率グループに足すヒット（damage の distance。粘着榴弾の付着と爆発） */
   distance?: true;
   /** 発射体の付着のヒット（damage の projectileStick）。発射体付着ダメージ▲を掛ける */
@@ -221,6 +226,8 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
 
 /** 対象の句がこれで終わる行の burstDamage に oneEnemy の印を付ける（plan/design-jackal.md 2.2 節） */
 const ONE_ENEMY_TARGET = '敵1機に';
+/** 対象の句がこれで終わる行の burstDamage に allEnemies の印を付ける（plan/design-trina.md 2.1 節） */
+const ALL_ENEMIES_TARGET = '敵全体に';
 
 /** burst スロットの burstDamage 効果を Lv の数値に解決する。unsupported・効果なしなら空 */
 export function resolveBurstDamage(
@@ -247,7 +254,9 @@ export function resolveBurstDamage(
       multiplier: (skillValue(skill, effect.ref, levels.burst) / 100) * hits,
     };
     // 値の載った行が無ければ印を付けない（データの定義は全部見つかる。skills/__tests__/definitions.test.ts）
-    if (targetPhraseOf(skill, effect.ref, levels.burst)?.endsWith(ONE_ENEMY_TARGET) === true) r.oneEnemy = true;
+    const phrase = targetPhraseOf(skill, effect.ref, levels.burst);
+    if (phrase?.endsWith(ONE_ENEMY_TARGET) === true) r.oneEnemy = true;
+    if (phrase?.endsWith(ALL_ENEMIES_TARGET) === true) r.allEnemies = true;
     if (effect.assumes) r.assumes = effect.assumes;
     resolved.push(r);
   }
@@ -805,6 +814,8 @@ export type BurstHitInput = {
   sequentialAttackDamage?: number;
   /** Σ oneEnemyBurstDamage。oneEnemy の効果にだけ、攻撃ダメージ▲と同じ和に足す（plan/design-jackal.md 2.3 節）。省略 0 */
   oneEnemyBurstDamage?: number;
+  /** Σ allEnemiesBurstDamage。allEnemies の効果にだけ、攻撃ダメージ▲と同じ和に足す（plan/design-trina.md 2.1 節）。省略 0 */
+  allEnemiesBurstDamage?: number;
   /**
    * Σ trueDamage（防御力無視ダメージ▲。plan/design-skill-stage15.md 2.3 節）。damageType true の効果にだけ、攻撃ダメージ▲と
    * 同じ和に足す（damage.ts の TRUE_DAMAGE_BUCKET。C-0525）。省略 0
@@ -868,6 +879,8 @@ export type BurstHitResult = {
   sequentialAttackDamageMultiplier: number;
   /** 「〜敵1機に」で終わるバーストスキルダメージ▲の乗数（oneEnemy の効果にだけ掛かる。攻撃ダメージ▲の和に足した比） */
   oneEnemyBurstDamageMultiplier: number;
+  /** 「敵全体に」で終わるバーストスキルダメージ▲の乗数（allEnemies の効果にだけ掛かる。攻撃ダメージ▲の和に足した比） */
+  allEnemiesBurstDamageMultiplier: number;
   /** 1 + Σ damageTaken（すべての効果に掛かる） */
   damageTakenMultiplier: number;
   /** sustained の効果に掛けた乗数（置き場所によらず、▲なしに対する比）。sustained の効果が無ければ 1 */
@@ -915,6 +928,8 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
     (input.attackDamageMultiplier + (input.sequentialAttackDamage ?? 0)) / input.attackDamageMultiplier;
   // 「〜敵1機に」で終わるバーストスキルダメージ▲も攻撃ダメージ▲と同じ和に足す（plan/design-jackal.md 2.3 節。論点 3）
   const oneEnemy = (input.attackDamageMultiplier + (input.oneEnemyBurstDamage ?? 0)) / input.attackDamageMultiplier;
+  // 「敵全体に」で終わるバーストスキルダメージ▲も同じ和に足す（plan/design-trina.md 2.1 節）
+  const allEnemies = (input.attackDamageMultiplier + (input.allEnemiesBurstDamage ?? 0)) / input.attackDamageMultiplier;
   // 分配ダメージ▲は受けるダメージ▲と 1 つの和（common に掛けた受けるダメージ▲に対する比。damage.ts の distributedHitMultiplier。C-0767）
   const distributedFactor = distributedHitMultiplier(distributed, damageTaken);
   const perEffect = input.effects.map((effect) => ({
@@ -927,6 +942,7 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
       (effect.damageType === 'true' ? trueFactor : 1) *
       (effect.sequential === true ? sequential : 1) *
       (effect.oneEnemy === true ? oneEnemy : 1) *
+      (effect.allEnemies === true ? allEnemies : 1) *
       (effect.projectileExplosion === true ? explosion : 1) *
       (effect.projectileStick === true ? stick : 1) *
       (effect.sustained === true ? sustained * (1 + (input.dotEffect ?? 0)) : 1),
@@ -956,6 +972,7 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
     distributedDamageMultiplier: distributed,
     sequentialAttackDamageMultiplier: sequential,
     oneEnemyBurstDamageMultiplier: oneEnemy,
+    allEnemiesBurstDamageMultiplier: allEnemies,
     damageTakenMultiplier: damageTaken,
     sustainedDamageMultiplier: hasSustained ? sustained : 1,
     perEffect,
@@ -1051,6 +1068,7 @@ export function computeSkillHit(
     distributedDamageMultiplier: 1 + buffs.distributedDamage,
     sequentialAttackDamage: buffs.sequentialAttackDamage,
     oneEnemyBurstDamage: buffs.oneEnemyBurstDamage,
+    allEnemiesBurstDamage: buffs.allEnemiesBurstDamage,
     trueDamage: buffs.trueDamage,
     damageTakenMultiplier: 1 + buffs.damageTaken,
     projectileExplosionMultiplier: explosionHitMultiplier(buffs),

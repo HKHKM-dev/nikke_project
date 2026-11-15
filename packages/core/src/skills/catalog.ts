@@ -255,6 +255,7 @@ const STAT_NAMES: Rules = [
   [/^貫通範囲$/, 'pierceRange'],
   [/から受けるダメージ$/, 'damageTakenFromElement'],
   [/スキル対象の説明部分が『[～〜]?敵1機に』.*バーストスキルダメージ$/, 'oneEnemyBurstDamage'],
+  [/スキル対象の説明部分が『敵全体に』.*バーストスキルダメージ$/, 'allEnemiesBurstDamage'],
   [/スキル対象の説明部分が.*バーストスキルダメージ$/, 'burstDamageByTargetText'],
   [/該当の発射体に与えるダメージ$/, 'projectileTargetDamage'],
   [/^受けるHP回復量$/, 'healReceived'],
