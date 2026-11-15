@@ -45,14 +45,21 @@ export function validateObservations(
   return errors;
 }
 
-/** scope の検査。teamSize は録画の編成の枠の数（録画が無ければ undefined で、枠の範囲は見ない） */
-export function validateScope(scope: ObservationScope, teamSize: number | undefined, at: string): string[] {
+/** 録画の編成の埋まった枠（1 始まり）。録画が無ければ undefined（枠の範囲は見ない） */
+function filledSlotsOf(recording: RecordingEntry | undefined): ReadonlySet<number> | undefined {
+  return recording === undefined ? undefined : new Set(recording.team.map((m) => m.slot));
+}
+
+/** scope の検査。filled は録画の編成の埋まった枠（undefined なら枠の範囲は見ない） */
+export function validateScope(scope: ObservationScope, filled: ReadonlySet<number> | undefined, at: string): string[] {
   const errors: string[] = [];
   const slots = scope.slot === 'all' ? [] : Array.isArray(scope.slot) ? scope.slot : [scope.slot];
   if (scope.slot !== 'all' && slots.length === 0) errors.push(`${at}: scope.slot が空`);
   for (const s of slots)
-    if (!Number.isInteger(s) || s < 1 || (teamSize !== undefined && s > teamSize))
-      errors.push(`${at}: scope.slot は録画の編成の枠（1〜${teamSize ?? '?'}）か 'all'（${JSON.stringify(s)}）`);
+    if (!Number.isInteger(s) || s < 1 || (filled !== undefined && !filled.has(s)))
+      errors.push(
+        `${at}: scope.slot は録画の編成の枠（${filled === undefined ? '1 以上' : [...filled].join('・')}）か 'all'（${JSON.stringify(s)}）`,
+      );
   if (new Set(slots).size !== slots.length) errors.push(`${at}: scope.slot に同じ枠が 2 回ある`);
   if (!OBSERVATION_SOURCES.includes(scope.source)) errors.push(`${at}: scope.source が語彙に無い: ${scope.source}`);
   if (scope.frames !== undefined) {
@@ -94,7 +101,7 @@ function fieldErrors(o: Observation, recordings: ReadonlyMap<string, RecordingEn
   if (o.readAt !== undefined && !isDate(o.readAt)) errors.push(`${at}: readAt は YYYY-MM-DD`);
   if (o.invalid !== undefined && (o.invalid.reason.trim() === '' || !isDate(o.invalid.date)))
     errors.push(`${at}: invalid には reason と date（YYYY-MM-DD）が要る`);
-  if (o.scope !== undefined) errors.push(...validateScope(o.scope, recordings.get(o.recording)?.team.length, at));
+  if (o.scope !== undefined) errors.push(...validateScope(o.scope, filledSlotsOf(recordings.get(o.recording)), at));
   // 記録だけの値（record）は、入れ子・オブジェクト・読めなかった要素の null を持ってよい
   if ((o.use === 'compare' || o.use === 'input') && !isFiniteValue(o.value))
     errors.push(`${at}: use が ${o.use} の value は数か数の配列`);
@@ -119,7 +126,7 @@ function compareErrors(
     if (c.args[name] === undefined) errors.push(`${at}: ${c.metric} の引数 ${name} が無い`);
   if (c.model !== 'sim') errors.push(`${at}: model は sim だけ（calc は 2026-10-27 の一本化で消した）`);
   errors.push(...conditionErrors(c.setup, enemies, at));
-  errors.push(...setupErrors(o, c.setup, byId, recordings.get(o.recording)?.team.length));
+  errors.push(...setupErrors(o, c.setup, byId, filledSlotsOf(recordings.get(o.recording))));
   const tol = 'rel' in c.tolerance ? c.tolerance.rel : c.tolerance.abs;
   if (!(tol >= 0)) errors.push(`${at}: 許容幅は 0 以上`);
   return errors;
@@ -155,7 +162,7 @@ function setupErrors(
   o: Observation,
   setup: CompareSetup,
   byId: ReadonlyMap<string, Observation>,
-  teamSize: number | undefined,
+  filled: ReadonlySet<number> | undefined,
 ): string[] {
   const at = o.id;
   const errors: string[] = [];
@@ -179,7 +186,7 @@ function setupErrors(
   };
   for (const [key, list] of Object.entries(slotLists))
     for (const s of list)
-      if (!Number.isInteger(s) || s < 1 || (teamSize !== undefined && s > teamSize))
+      if (!Number.isInteger(s) || s < 1 || (filled !== undefined && !filled.has(s)))
         errors.push(`${at}: ${key} の枠 ${String(s)} が編成の外`);
   if (setup.noBurstSlots !== undefined && setup.burst !== true)
     errors.push(`${at}: noBurstSlots は burst が true のときだけ書く`);
