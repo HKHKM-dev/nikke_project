@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 135・効果 980（根拠あり 958）・notes 350（根拠あり 145）
+件数: キャラ 136・効果 990（根拠あり 968）・notes 351（根拠あり 145）
 
-notes の種類: 未対応 49・前提の外 104・計算に無関係 69・補足 40・間接 88
+notes の種類: 未対応 49・前提の外 104・計算に無関係 69・補足 41・間接 88
 
-スロット: supported 356・partial 36・unsupported 9・noEffect 52
+スロット: supported 359・partial 36・unsupported 9・noEffect 52
 
 ## 10 ラピ
 
@@ -2109,6 +2109,23 @@ notes の種類: 未対応 49・前提の外 104・計算に無関係 69・補�
 - **burst**: supported
   - effects[0] heal・burstUse: 根拠なし
   - effects[1] removeDebuff・burstUse・デバフ 1 個: C-0979（確定）、C-0988（仮説）
+
+## 850 イヴ
+
+- **skill1**: supported
+  - effects[0] passive・critRate: C-1319（確定）
+  - effects[1] damage・critHit・skill: C-1324（確定）
+  - effects[2] damage・critHit・skill: C-1321（確定）
+  - effects[3] timed・critHit・damageTaken: C-1320（確定）
+- **skill2**: supported
+  - effects[0] passive・attack: C-1318（確定）
+  - effects[1] passive・maxAmmo: C-1318（確定）
+  - effects[2] passive・exospineMk2 の間・attack: C-1321（確定）
+  - effects[3] ammoRefill・normalHit: C-1322（確定）
+  - notes[0] 補足: 「下位効果のスタック適用」は、イーグルアイエグゾスパインMk2 の間も元の攻撃力▲が残り、Mk2 の分が重なることと読む（effects[2] は effects[0] に足す形）: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1323（確定）
+  - effects[1] state・burstUse・exospineMk2: C-1321（確定）
 
 ## 851 レイヴン
 
