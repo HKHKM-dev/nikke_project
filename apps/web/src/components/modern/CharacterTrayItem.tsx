@@ -10,14 +10,16 @@ import type { TrayShape } from '../../trayShape.ts';
 import { SlotCharName } from './ModernSlotCard.tsx';
 import { useScrollingName } from './useScrollingName.tsx';
 import type { ActiveDragData } from './dropIntent.ts';
-import { OtherPartyBadges } from './OtherPartyBadges.tsx';
+import { PartyNumberBadges } from './PartyNumberBadges.tsx';
 
 type Props = {
   character: CharacterIndexEntry;
   /** いまの編成のどこかのスロットにいる（置けない。plan/design-ui-rebuild.md 5.2 節） */
   isTaken: boolean;
-  /** このニケを選んでいるほかの編成の番号（1 から。置ける）。右上（限界突破・コア強化の下）に P1・P2 と出す */
-  otherParties: readonly number[];
+  /** ほかの編成で使っている（置けない） */
+  inOtherParty: boolean;
+  /** 右上（限界突破・コア強化の下）に P1・P2 と出す編成の番号（1 から。いまの編成にいればいまの編成、ほかは otherParties） */
+  partyNumbers: readonly number[];
   unsupportedNote: string | null;
   /** 置くスロットのクリックを待っている */
   isPending: boolean;
@@ -120,7 +122,8 @@ export function TrayItemFace({
 export function CharacterTrayItem({
   character,
   isTaken,
-  otherParties,
+  inOtherParty,
+  partyNumbers,
   unsupportedNote,
   isPending,
   growthMarks,
@@ -134,27 +137,29 @@ export function CharacterTrayItem({
       type: 'tray-character',
       character,
     } satisfies ActiveDragData,
-    disabled: isTaken,
+    // いまの編成にいるニケと、ほかの編成で使っているニケは持ち上げられない
+    disabled: isTaken || inOtherParty,
   });
-  // いまの編成にいるニケは、実機の部隊編成と同じく水色の枠と ✓ を重ねて示す（文字の札は出さない）
+  // いまの編成にいるニケは、実機の部隊編成と同じく水色の枠と ✓ を重ねて示す（右上にいまの編成の P○ のバッジも出す）
   return (
     <button
       ref={setNodeRef}
       type="button"
-      className={`char-tray-item ${isTaken ? 'char-tray-item-taken' : ''} ${isDragging ? 'char-tray-item-dragging' : ''} ${isPending ? 'char-tray-item-pending' : ''}`}
+      className={`char-tray-item ${isTaken ? 'char-tray-item-taken' : ''} ${inOtherParty ? 'char-tray-item-other-party' : ''} ${isDragging ? 'char-tray-item-dragging' : ''} ${isPending ? 'char-tray-item-pending' : ''}`}
       // いまの編成にいるニケは、クリックでスロットから外す（ModernView）。ドラッグはできない（useDraggable の disabled）が、
-      // クリックはできるので aria-disabled は付けない（attributes が付けるものを打ち消す）
+      // クリックはできるので aria-disabled は付けない（attributes が付けるものを打ち消す）。ほかの編成で使っているニケは、クリックしても
+      // 何もしない（ModernView）ので aria-disabled を付ける
       // スロットとの間を動くアニメーションが、このニケの絵を探す（ModernView の trayVisualAt）
       data-resource-id={character.resourceId}
       onClick={onClick}
       {...attributes}
-      aria-disabled={undefined}
+      aria-disabled={inOtherParty || undefined}
       {...listeners}
     >
       <TrayItemContent
         character={character}
         isTaken={isTaken}
-        otherParties={otherParties}
+        partyNumbers={partyNumbers}
         unsupportedNote={unsupportedNote}
         growthMarks={growthMarks}
         collectionBadge={collectionBadge}
@@ -165,18 +170,18 @@ export function CharacterTrayItem({
 }
 
 /**
- * 一覧の項目の中身（絵と、配置中の ✓ かほかの編成の札）。持ち上げている間は、ドラッグの状態（useDraggable）が動くたびに
+ * 一覧の項目の中身（絵と、配置中の ✓ と、編成の P○ のバッジ）。持ち上げている間は、ドラッグの状態（useDraggable）が動くたびに
  * どの項目も描き直されるので、memo で中身まで描き直さないようにする
  */
 const TrayItemContent = memo(function TrayItemContent({
   character,
   isTaken,
-  otherParties,
+  partyNumbers,
   unsupportedNote,
   growthMarks,
   collectionBadge,
   shape,
-}: Omit<Props, 'isPending' | 'onClick'>) {
+}: Omit<Props, 'isPending' | 'onClick' | 'inOtherParty'>) {
   return (
     <TrayItemFace
       character={character}
@@ -185,18 +190,19 @@ const TrayItemContent = memo(function TrayItemContent({
       collectionBadge={collectionBadge}
       shape={shape}
       overlay={
-        isTaken ? (
-          // ✓ はバッジの絵（ui_check.svg）を型に、水色で塗る（白い縁取りは外側の箱に付ける。型で切ると縁取りも切れるので）
-          <span className="char-tray-item-check" aria-hidden="true">
-            <span className="mask-icon" style={maskIconStyle(checkIcon)} />
-          </span>
-        ) : (
-          // 四角の絵で限界突破・コア強化を出すときは、その下に置く
-          <OtherPartyBadges
-            parties={otherParties}
+        <>
+          {isTaken && (
+            // ✓ はバッジの絵（ui_check.svg）を型に、水色で塗る（縁取りの影は外側の箱に付ける。型で切ると縁取りも切れるので）
+            <span className="char-tray-item-check" aria-hidden="true">
+              <span className="mask-icon" style={maskIconStyle(checkIcon)} />
+            </span>
+          )}
+          {/* 四角の絵で限界突破・コア強化を出すときは、その下に置く */}
+          <PartyNumberBadges
+            parties={partyNumbers}
             className={`char-tray-item-parties ${shape === 'square' && growthMarks ? 'char-tray-item-parties-below-growth' : ''}`}
           />
-        )
+        </>
       }
     />
   );

@@ -1,3 +1,4 @@
+import { ClassicBurstFilter, ClassicFilter, useClassicFilter } from '../components/ClassicFilter.tsx';
 import { DamageTotalPanel } from '../components/DamageTotalPanel.tsx';
 import { ErrorBoundary } from '../components/ErrorBoundary.tsx';
 import { ListOrderSettings } from '../components/ListOrderSettings.tsx';
@@ -31,6 +32,7 @@ export function ClassicView({
   roster,
   listOrder,
 }: ViewProps) {
+  const { visibleIds, ...filter } = useClassicFilter(index);
   return (
     <>
       <TeamSettingsForm
@@ -46,8 +48,10 @@ export function ClassicView({
       {/* 全編成の合計は、編成のタブの上（どの編成を開いていても見える） */}
       <DamageTotalPanel title="合計ダメージ" value={totals.total} computing={totalsPending} />
       <PartyTabs active={parties.active} onSelect={selectParty} totals={totals.parties} />
-      {/* キャラの選択肢の並べ替え（ボタンで開くポップアップに「一覧の並び」を出す）。スロットの上に置く */}
+      {/* キャラの選択肢のバースト段階の絞り込み（ClassicBurstFilter）・絞り込み（ClassicFilter）・並べ替え（ボタンで開くポップアップに「一覧の並び」を出す）。この順でスロットの上の中央に置く */}
       <div className="classic-list-order">
+        <ClassicBurstFilter {...filter} />
+        <ClassicFilter {...filter} />
         <Popover
           button={
             <>
@@ -72,6 +76,7 @@ export function ClassicView({
               controlled={team.controlledSlot === i}
               index={index}
               excludeIds={takenResourceIds(team, i)}
+              visibleIds={visibleIds}
               otherPartyIds={otherPartyIds}
               fullySupported={fullySupported}
               character={shown.character}

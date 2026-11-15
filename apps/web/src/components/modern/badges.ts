@@ -135,12 +135,22 @@ export const BADGE_KINDS: readonly BadgeKind[] = [
 
 const kindOf = (key: BadgeKey): BadgeKind => BADGE_KINDS.find((kind) => kind.key === key)!;
 
+/** クラシックのキャラの選択肢の絞り込みに出すバッジの種類と順（クラス・属性・武器種・企業。ClassicView） */
+export const CLASSIC_FILTER_KINDS: readonly BadgeKind[] = [
+  kindOf('class'),
+  kindOf('element'),
+  kindOf('weaponType'),
+  kindOf('corporation'),
+];
+
 /** キャラの絵の左上に縦に出すバッジの順（属性・武器種・バースト段階。クラスは出さず、トレイの絞り込みにだけ使う） */
 export const VISUAL_BADGE_KINDS: readonly BadgeKind[] = [kindOf('element'), kindOf('weaponType'), kindOf('burstStep')];
 
 /** ニケ一覧の正方形の絵の左上に縦に出すバッジの順（武器種・バースト段階）。属性は右下に別に出す（ELEMENT_BADGE_KIND） */
 export const COMPACT_BADGE_KINDS: readonly BadgeKind[] = [kindOf('weaponType'), kindOf('burstStep')];
 export const ELEMENT_BADGE_KIND: BadgeKind = kindOf('element');
+/** バースト段階のバッジの種類（クラシックの Ⅰ・Ⅱ・Ⅲ の絞り込み） */
+export const BURST_STEP_BADGE_KIND: BadgeKind = kindOf('burstStep');
 
 /**
  * スロットの絵の左上（バースト段階の下）に出すコレクションのバッジ。宝物を付けていれば SSR（最後の段階は上限の黒の版）、

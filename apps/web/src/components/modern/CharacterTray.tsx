@@ -1,12 +1,7 @@
 import { useDroppable } from '@dnd-kit/core';
 import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
-import { memo, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
-import {
-  matchesBadgeFilters,
-  trayCollectionBadge,
-  type BadgeFilters as BadgeFilterValues,
-  TREASURE_FILTER_BADGE,
-} from './badges.ts';
+import { memo, useMemo, type Dispatch, type SetStateAction } from 'react';
+import { trayCollectionBadge, type BadgeFilters as BadgeFilterValues, TREASURE_FILTER_BADGE } from './badges.ts';
 import { BadgeFilters } from './BadgeFilter.tsx';
 import { BadgeIcon } from './BadgeIcon.tsx';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
@@ -23,8 +18,9 @@ import {
 import type { ListOrderControls } from '../../useListOrder.ts';
 import { TRAY_SHAPE_LABEL, type TrayShape } from '../../trayShape.ts';
 import type { OtherParties } from '../../parties.ts';
-import { NO_PARTIES } from './OtherPartyBadges.tsx';
+import { NO_PARTIES } from './PartyNumberBadges.tsx';
 import { Popover } from '../Popover.tsx';
+import { useCharacterFilter } from '../useCharacterFilter.ts';
 import returnIcon from '../../assets/badges/ui_return.svg';
 import { maskIconStyle } from '../maskIcon.ts';
 
@@ -32,6 +28,8 @@ type Props = {
   index: readonly CharacterIndexEntry[];
   takenIds: ReadonlySet<number>;
   otherPartyIds: OtherParties;
+  /** いまの編成の番号（1 から。いまの編成にいるニケに P○ のバッジを出す） */
+  activeParty: number;
   /** 未対応の印の知らせ（useSkillDefinitions の unsupportedNoteOf。完全対応なら null） */
   unsupportedNote: (resourceId: number) => string | null;
   /** 置くスロットのクリックを待っているニケ */
@@ -52,6 +50,7 @@ export function CharacterTray({
   index,
   takenIds,
   otherPartyIds,
+  activeParty,
   unsupportedNote,
   pendingId,
   roster,
@@ -61,9 +60,14 @@ export function CharacterTray({
   onToggleShape,
   onSelectCharacter,
 }: Props) {
-  const [filters, setFilters] = useState<BadgeFilterValues>({});
-  /** 宝物のあるニケだけにする（バッジの絞り込みと AND） */
-  const [treasureOnly, setTreasureOnly] = useState(false);
+  // 並びは受け取った一覧の順（App が名前順か戦闘力順に並べる。listOrder.ts）
+  const {
+    filters,
+    setFilters,
+    treasureOnly,
+    setTreasureOnly,
+    filtered: filteredCharacters,
+  } = useCharacterFilter(index);
 
   // スロットのキャラをトレイへ戻すと、そのスロットを空にする（ModernView の handleDragEnd）
   const { isOver, active, setNodeRef } = useDroppable({
@@ -71,12 +75,6 @@ export function CharacterTray({
     data: { type: 'tray' } satisfies OverDragData,
   });
   const returning = isOver && activeDragData(active?.data.current)?.type === 'slot-character';
-
-  // 並びは受け取った一覧の順（App が名前順か戦闘力順に並べる。listOrder.ts）
-  const filteredCharacters = useMemo(
-    () => index.filter((char) => (!treasureOnly || char.hasTreasure) && matchesBadgeFilters(char, filters)),
-    [index, filters, treasureOnly],
-  );
 
   return (
     <section
@@ -108,6 +106,7 @@ export function CharacterTray({
         characters={filteredCharacters}
         takenIds={takenIds}
         otherPartyIds={otherPartyIds}
+        activeParty={activeParty}
         unsupportedNote={unsupportedNote}
         pendingId={pendingId}
         roster={roster}
@@ -123,6 +122,7 @@ type TrayListProps = Pick<
   Props,
   | 'takenIds'
   | 'otherPartyIds'
+  | 'activeParty'
   | 'unsupportedNote'
   | 'pendingId'
   | 'roster'
@@ -139,6 +139,7 @@ const TrayList = memo(function TrayList({
   characters,
   takenIds,
   otherPartyIds,
+  activeParty,
   unsupportedNote,
   pendingId,
   roster,
@@ -146,6 +147,8 @@ const TrayList = memo(function TrayList({
   shape,
   onSelectCharacter,
 }: TrayListProps) {
+  // いまの編成にいるニケの P○ のバッジ（項目の memo のため、編成が変わるまで同じ配列）
+  const activeParties = useMemo(() => [activeParty], [activeParty]);
   return (
     <div className={`char-tray-list ${pendingId !== null ? 'char-tray-list-pending' : ''}`}>
       {characters.length === 0 ? (
@@ -153,12 +156,14 @@ const TrayList = memo(function TrayList({
       ) : (
         characters.map((char) => {
           const isTaken = takenIds.has(char.resourceId);
+          const otherParties = otherPartyIds.get(char.resourceId) ?? NO_PARTIES;
           return (
             <CharacterTrayItem
               key={char.resourceId}
               character={char}
               isTaken={isTaken}
-              otherParties={otherPartyIds.get(char.resourceId) ?? NO_PARTIES}
+              inOtherParty={otherParties.length > 0}
+              partyNumbers={isTaken ? activeParties : otherParties}
               unsupportedNote={unsupportedNote(char.resourceId)}
               isPending={pendingId === char.resourceId}
               growthMarks={trayGrowthMarks(char, roster, fixedSpec)}

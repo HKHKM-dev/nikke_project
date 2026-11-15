@@ -8,6 +8,7 @@ import {
   type PartiesState,
   serializeParties,
   switchParty,
+  withoutCrossPartyDuplicates,
 } from './parties.ts';
 import { INITIAL_TEAM_STATE, TEAM_FORMAT_VERSION, TEAM_SHAPE_ERROR, teamReducer, type TeamState } from './team.ts';
 
@@ -145,5 +146,29 @@ describe('parties', () => {
     // 選んでいる編成（0）のニケ 10 は数えない
     expect([...otherPartyResourceIds(parties)]).toEqual([[11, [2]]]);
     expect(otherPartyResourceIds(INITIAL_PARTIES).size).toBe(0);
+  });
+
+  it('keeps a character only in the lowest-numbered party', () => {
+    // 編成 01: 10、編成 02（選んでいる）: 10 と 11、編成 03: 11
+    const p0 = partyOf(withCharacter(INITIAL_TEAM_STATE, 0, 10));
+    const p2 = partyOf(withCharacter(INITIAL_TEAM_STATE, 4, 11));
+    const state: PartiesState = { active: 1, parties: [p0, null, p2, null, null] };
+    const team = withCharacter(withCharacter(INITIAL_TEAM_STATE, 1, 10), 3, 11);
+    const next = withoutCrossPartyDuplicates(state, team);
+    expect(next.team.slots.map((s) => s.resourceId)).toEqual([null, null, null, 11, null]);
+    expect(next.parties.parties[0]).toBe(p0);
+    expect(next.parties.parties[2]!.slots.map((s) => s.resourceId)).toEqual([null, null, null, null, null]);
+    expect(next.parties.active).toBe(1);
+  });
+
+  it('returns the same objects when no character is in two parties', () => {
+    const state: PartiesState = {
+      active: 0,
+      parties: [null, partyOf(withCharacter(INITIAL_TEAM_STATE, 0, 11)), null, null, null],
+    };
+    const team = withCharacter(INITIAL_TEAM_STATE, 0, 10);
+    const next = withoutCrossPartyDuplicates(state, team);
+    expect(next.parties).toBe(state);
+    expect(next.team).toBe(team);
   });
 });
