@@ -327,7 +327,9 @@ export function createTriggerTracker(
   }
   // 「〈stat〉増加効果が適用された時」も件の一覧の付いた記録で決まる（skills/holders/fire.ts の dispatchApplied）
   if (isResolvedBuffApplied(t)) {
-    throw new RangeError(`a buff-applied trigger (${t.buffApplied}) is not tracked per event; the holder lists track it`);
+    throw new RangeError(
+      `a buff-applied trigger (${t.buffApplied}) is not tracked per event; the holder lists track it`,
+    );
   }
   // カウンタが上限に届いた時は 1 パス目のカウンタの記録で決まる（skills/holders/fires.ts の firesOf と、skills/holders/types.ts の counterFullFrames）
   if (isCounterFullTrigger(t)) {

@@ -20,8 +20,8 @@ import {
   type EventCountTrigger,
   FIRING_WINDOWS,
   isChanceTrigger,
-  isFlagStat,
   isShotCountTrigger,
+  noBuffStateReason,
   isTimerTrigger,
   type SelfHpAtMostTrigger,
   type AdjacentHpAtMostTrigger,
@@ -352,8 +352,8 @@ export function parseBuffAppliedTrigger(v: Json, path: string): BuffAppliedTrigg
   if (!isRecord(v) || v.buffApplied === undefined) return undefined;
   rejectUnknownKeys(v, ['buffApplied'], path);
   const stat = oneOf(BUFF_STATS, v.buffApplied, `${path}.buffApplied`);
-  if (isFlagStat(stat) || stat === 'damageTaken' || stat === 'fireStanceScale')
-    fail(`${path}.buffApplied`, `${stat} has no buff state to be applied`);
+  const reason = noBuffStateReason(stat);
+  if (reason !== undefined) fail(`${path}.buffApplied`, reason);
   return { buffApplied: stat };
 }
 

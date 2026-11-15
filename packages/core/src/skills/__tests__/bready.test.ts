@@ -2,10 +2,10 @@
 // なければ」（selfBuffed の present: false）、持続ダメージの効果▲（dotEffect）の語彙の検証と解決と、tick の式
 import { describe, expect, it } from 'vitest';
 import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
-import { computeBurstHit, type ResolvedSkillDamage } from '../burstDamage.ts';
+import { computeBurstHit, type BurstHitInput, type ResolvedSkillDamage } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveStateGrants, resolveTimed } from '../resolve.ts';
 import { namedStateGroup } from '../states.ts';
-import { isBuffAppliedTrigger, parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../types.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
 type Raw = { skills: { skill1: Effects; skill2: Effects; burst: Effects } };
@@ -23,7 +23,6 @@ const indexOf = (slot: keyof Raw['skills'], match: (e: Record<string, unknown>) 
 const LINGERING = indexOf('skill1', (e) => e.state === 'lingeringTaste');
 const RECOMMENDED = indexOf('skill1', (e) => e.state === 'recommendedTaste');
 const DAMAGE_TAKEN = indexOf('skill2', (e) => e.stat === 'damageTaken');
-const DOT_EFFECT = indexOf('burst', (e) => e.stat === 'dotEffect');
 
 describe('語彙の検証', () => {
   it('accepts the definition', () => {
@@ -35,16 +34,16 @@ describe('語彙の検証', () => {
       /only allowed in state grants/,
     );
     expect(patched('skill1', LINGERING, { target: 'allies' })).toThrow(/can only target "self"/);
-    expect(patched('skill1', LINGERING, { trigger: { buffApplied: 'damageTaken' } })).toThrow(/has no buff state/);
-    expect(patched('skill1', LINGERING, { trigger: { buffApplied: 'pierce' } })).toThrow(/has no buff state/);
+    expect(patched('skill1', LINGERING, { trigger: { buffApplied: 'damageTaken' } })).toThrow(/held by the enemy/);
+    expect(patched('skill1', LINGERING, { trigger: { buffApplied: 'pierce' } })).toThrow(/not a buff state/);
     expect(patched('skill1', LINGERING, { trigger: { buffApplied: 'attack', extra: 1 } })).toThrow(/extra/);
   });
 
   it('reads selfBuffed { stat, present: false } as "if not buffed"', () => {
     const def = parseSkillDefinition(raw);
-    const grant = def.skills.skill1.effects[RECOMMENDED]!;
-    expect(grant).toMatchObject({ condition: { selfNotBuffed: 'sustainedDamage' } });
-    expect('selfBuffed' in (grant as { condition: object }).condition).toBe(false);
+    expect(def.skills.skill1.effects[RECOMMENDED]).toMatchObject({
+      condition: { selfBuffed: { stat: 'sustainedDamage', present: false } },
+    });
     const cond = (selfBuffed: unknown) => patched('skill1', RECOMMENDED, { condition: { selfBuffed } });
     expect(cond({ stat: 'sustainedDamage', present: true })).toThrow(/expected false/);
     expect(cond({ stat: 'damageTaken', present: false })).toThrow(/held by the enemy/);
@@ -61,9 +60,7 @@ describe('解決', () => {
   const levels = MAX_SKILL_LEVELS;
   it('resolves the taste grants on { buffApplied } with the Charge Speed down', () => {
     const grants = resolveStateGrants(parseSkillDefinition(raw), character, levels);
-    const lingering = grants.find((g) => g.state === 'lingeringTaste')!;
-    expect(isBuffAppliedTrigger(lingering.trigger)).toBe(true);
-    expect(lingering.trigger).toEqual({ buffApplied: 'sustainedDamage' });
+    expect(grants.find((g) => g.state === 'lingeringTaste')!.trigger).toEqual({ buffApplied: 'sustainedDamage' });
     expect(grants.find((g) => g.state === 'recommendedTaste')!.trigger).toEqual({ buffApplied: 'distributedDamage' });
   });
 
@@ -72,12 +69,11 @@ describe('解決', () => {
     const up = timed.find((e) => e.stat === 'dotEffect')!;
     expect(up.value).toBeCloseTo(3.498, 6);
     expect(up.source.skill).toBe('burst');
-    expect(DOT_EFFECT).toBeGreaterThanOrEqual(0);
   });
 });
 
 describe('持続ダメージの効果▲の式', () => {
-  const base = {
+  const base: Omit<BurstHitInput, 'effects'> = {
     attack: 10_000,
     enemy: { defence: 0, element: null, hasCore: false },
     crit: { rate: 0, damage: 0.5 },
@@ -85,7 +81,7 @@ describe('持続ダメージの効果▲の式', () => {
     elementMultiplier: 1,
     fullBurstBonus: false,
     sustainedDamage: 0.2,
-  } as const;
+  };
   const effect = (sustained: boolean): ResolvedSkillDamage => ({
     source: { resourceId: BREADY, skill: 'skill2', name: { ja: '', en: '' } },
     damageType: 'skill',
@@ -93,8 +89,7 @@ describe('持続ダメージの効果▲の式', () => {
     ...(sustained ? { sustained: true as const } : {}),
   });
   const value = (dotEffect: number, sustained: boolean) =>
-    computeBurstHit({ ...base, effects: [effect(sustained)], dotEffect } as Parameters<typeof computeBurstHit>[0])
-      .perActivation;
+    computeBurstHit({ ...base, effects: [effect(sustained)], dotEffect }).perActivation;
 
   it('multiplies only sustained ticks by (1 + Σ) as a separate factor', () => {
     expect(value(3.498, true) / value(0, true)).toBeCloseTo(4.498, 9);

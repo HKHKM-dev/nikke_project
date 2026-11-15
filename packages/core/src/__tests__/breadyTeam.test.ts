@@ -12,7 +12,10 @@ const ROSANNA_CO = 283;
 const ELEGG = 500;
 
 const TEAMS = {
-  'I-DOLL・フラワー + ロザンナ：シックオーシャン + ブレッディ（V-0785 の撮り方 1）': fixedTeam([304, ROSANNA_CO, BREADY], 2),
+  'I-DOLL・フラワー + ロザンナ：シックオーシャン + ブレッディ（V-0785 の撮り方 1）': fixedTeam(
+    [304, ROSANNA_CO, BREADY],
+    2,
+  ),
   'I-DOLL・フラワー + エレグ + ブレッディ（V-0785 の撮り方 2）': fixedTeam([304, ELEGG, BREADY], 2),
   '実戦寄り（I-DOLL・フラワー + ロザンナ：シックオーシャン + ブレッディ + エレグ + 紅蓮）': fixedTeam(
     [304, ROSANNA_CO, BREADY, ELEGG, 222],
@@ -22,7 +25,7 @@ const TEAMS = {
 
 const DISTRIBUTED_DELAY = 6;
 
-describe.each(Object.entries(TEAMS))('編成: %s', (name, input) => {
+describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   const b = input.slots.findIndex((s) => s?.character.resourceId === BREADY);
   const plan = planTeamRun(input);
   const lingering = itemsOf(plan.history, { holder: b, state: 'lingeringTaste' });
@@ -55,7 +58,9 @@ describe.each(Object.entries(TEAMS))('編成: %s', (name, input) => {
 
   it('fires Aftertaste only on shots in Lingering Taste and distributed damage 6 frames after shots in Recommended Taste', () => {
     // あと味の tick は付いた瞬間にも出る（atApplication）ので、発と同じフレームの tick が付いたフレーム
-    const dotApplies = new Set(hits.filter((h) => h.effect.dot !== undefined && shots.includes(h.frame)).map((h) => h.frame));
+    const dotApplies = new Set(
+      hits.filter((h) => h.effect.dot !== undefined && shots.includes(h.frame)).map((h) => h.frame),
+    );
     for (const f of dotApplies) expect(inAny(lingering, f)).toBe(true);
     const distributed = hits.filter((h) => h.effect.dot === undefined && h.effect.source.skill === 'skill2');
     for (const h of distributed) {
@@ -67,7 +72,7 @@ describe.each(Object.entries(TEAMS))('編成: %s', (name, input) => {
   });
 
   // 味の間はチャージが 1 秒 × (1 + 0.2)。マガジンの中の発の間が、味の外（82f）より 12f 延びる
-  it.runIf(!name.includes('紅蓮'))('lengthens the shot interval in a taste by the 20% Charge Speed down', () => {
+  it('lengthens the shot interval in a taste by the 20% Charge Speed down', () => {
     const tastes = [...lingering, ...recommended];
     const gaps = shots.slice(1).map((f, i) => ({ at: shots[i]!, gap: f - shots[i]! }));
     const inside = gaps.filter((g) => inAny(tastes, g.at - 72) && g.gap < 100).map((g) => g.gap);

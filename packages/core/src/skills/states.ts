@@ -440,8 +440,6 @@ export const NAMED_STATES = {
   lingeringTaste: { name: { ja: 'やみつきの味', en: 'Lingering Taste' }, holder: 'ally', group: 'taste' },
   /** 同: オススメの味（分配ダメージ増加効果が適用された時。付くとやみつきの味を消去する） */
   recommendedTaste: { name: { ja: 'オススメの味', en: 'Recommended Taste' }, holder: 'ally', group: 'taste' },
-  /** あと味（ブレッディの S2 の持続ダメージ。バーストのあと味効果▲が指す。plan/design-bready.md 2.4 節） */
-  aftertaste: { name: { ja: 'あと味', en: 'Aftertaste' }, holder: 'enemy' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

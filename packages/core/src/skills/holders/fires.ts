@@ -2,8 +2,7 @@
 // 自分の HP の割合のきっかけの状態。
 import {
   isResolvedAdjacentHp,
-  isResolvedApplied,
-  isResolvedBuffApplied,
+  isRecordTriggered,
   isResolvedSelfHpAtMost,
   isResolvedShotCount,
   isResolvedTimer,
@@ -75,7 +74,7 @@ export function createFires({
     condition?: EffectCondition,
   ): TriggerTracker => {
     // { applied } は出来事では発火しない（段の登録の後に、付いた記録から発火する。dispatchApplied）
-    if (isResolvedApplied(trigger) || isResolvedBuffApplied(trigger)) return () => false;
+    if (isRecordTriggered(trigger)) return () => false;
     // 自分の HP の割合が閾値以下に下がったフレーム（上がったフレームは窓の終わりに書く。plan/design-mast.md 8 節）
     if (isResolvedSelfHpAtMost(trigger)) {
       const state = selfHpStateOf(slotIndex, trigger.selfHpAtMost);

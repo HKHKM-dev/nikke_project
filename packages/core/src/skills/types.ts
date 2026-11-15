@@ -1256,12 +1256,8 @@ export function isStateEndUntil(u: unknown): u is StateEndUntil {
  * 手入力の距離ボーナスの有無で決める
  */
 export type EffectCondition = {
-  selfBuffed?: BuffStat;
-  /**
-   * 「自分が〈stat〉増加状態でなければ」（plan/design-bready.md 2.2 節）。JSON は "selfBuffed": { "stat": "<stat>", "present": false }。
-   * selfBuffed と同じものを見て、無ければ満たす
-   */
-  selfNotBuffed?: BuffStat;
+  /** stat だけなら「自分が〈stat〉増加状態なら」、{ stat, present: false } なら「でなければ」（plan/design-bready.md 2.2 節） */
+  selfBuffed?: BuffStat | { stat: BuffStat; present: false };
   /**
    * true = 発火の瞬間がフルバーストタイムの中なら。false = フルバーストタイムの
    * 外なら（counterChange・removeState・stat のある timed。plan/design-skill-stage12.md 2.2 節・plan/design-velvet.md 2.1 節）
@@ -1369,9 +1365,23 @@ export function isStacksCondition(self: SelfStateCondition | undefined): boolean
 /** 条件のキー */
 export type ConditionKey = keyof EffectCondition;
 
-/** 条件が「自分が 〈stat〉 増加状態なら」を含むならその stat、それ以外は undefined */
-export function selfBuffedStatOf(condition: EffectCondition | undefined): BuffStat | undefined {
-  return condition?.selfBuffed;
+/** 条件 selfBuffed の stat と、増加状態を求めるか（present。「でなければ」は false）。無ければ undefined */
+export function selfBuffedOf(condition: EffectCondition | undefined): { stat: BuffStat; present: boolean } | undefined {
+  const c = condition?.selfBuffed;
+  if (c === undefined) return undefined;
+  return typeof c === 'string' ? { stat: c, present: true } : c;
+}
+
+/**
+ * 増加状態の無い stat なら理由（条件 selfBuffed・きっかけ { buffApplied } が見られない）。フラグ、敵が持つ受けるダメージ▲
+ * （plan/design-holder-effects.md 2.8 節）、既定が 1 の掛け合わせで「和 > 0 で増加状態」と読めない射撃の姿勢の長さの倍率
+ * （plan/design-a2-bmode-stance.md 3.1 節）。増加状態のある stat なら undefined
+ */
+export function noBuffStateReason(stat: BuffStat): string | undefined {
+  if (isFlagStat(stat)) return `${stat} is not a buff state`;
+  if (stat === 'damageTaken') return 'damageTaken is held by the enemy, not by the caster';
+  if (stat === 'fireStanceScale') return 'fireStanceScale is a multiplier, not a buff state';
+  return undefined;
 }
 
 /** 最終最大HP に足す stat か（最大HP▲・最大HP のみ▲） */

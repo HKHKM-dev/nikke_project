@@ -9,7 +9,7 @@ import {
   type ConditionKey,
   type CounterChangeEffect,
   type EffectCondition,
-  isFlagStat,
+  noBuffStateReason,
   type SelfCounterCondition,
   type SelfHpCondition,
   type SelfStateCondition,
@@ -131,22 +131,20 @@ export function parseCondition(
   const condition: EffectCondition = {};
   if (c.selfBuffed !== undefined) {
     // 「自分が〈stat〉増加状態でなければ」は { stat, present: false }（plan/design-bready.md 2.2 節）
-    const absent = isRecord(c.selfBuffed);
-    if (absent) {
-      rejectUnknownKeys(c.selfBuffed as Record<string, Json>, ['stat', 'present'], `${path}.selfBuffed`);
-      if ((c.selfBuffed as Record<string, Json>).present !== false)
+    const absent = isRecord(c.selfBuffed) ? c.selfBuffed : undefined;
+    if (absent !== undefined) {
+      rejectUnknownKeys(absent, ['stat', 'present'], `${path}.selfBuffed`);
+      if (absent.present !== false)
         fail(`${path}.selfBuffed.present`, 'expected false (write the stat alone for "if buffed")');
     }
-    const at = absent ? `${path}.selfBuffed.stat` : `${path}.selfBuffed`;
-    const selfBuffed = oneOf(BUFF_STATS, absent ? (c.selfBuffed as Record<string, Json>).stat : c.selfBuffed, at);
-    if (isFlagStat(selfBuffed)) fail(`${path}.selfBuffed`, `${selfBuffed} is not a buff state`);
-    // 受けるダメージ▲は敵が持つ（自分の増加状態ではない。plan/design-holder-effects.md 2.8 節）
-    if (selfBuffed === 'damageTaken') fail(`${path}.selfBuffed`, 'damageTaken is held by the enemy, not by the caster');
-    // 射撃の姿勢の長さの倍率は既定が 1 の掛け合わせで、「和 > 0 で増加状態」と読めない（plan/design-a2-bmode-stance.md 3.1 節）
-    if (selfBuffed === 'fireStanceScale')
-      fail(`${path}.selfBuffed`, 'fireStanceScale is a multiplier, not a buff state');
-    if (absent) condition.selfNotBuffed = selfBuffed;
-    else condition.selfBuffed = selfBuffed;
+    const stat = oneOf(
+      BUFF_STATS,
+      absent === undefined ? c.selfBuffed : absent.stat,
+      absent === undefined ? `${path}.selfBuffed` : `${path}.selfBuffed.stat`,
+    );
+    const reason = noBuffStateReason(stat);
+    if (reason !== undefined) fail(`${path}.selfBuffed`, reason);
+    condition.selfBuffed = absent === undefined ? stat : { stat, present: false };
   }
   if (c.inFullBurst !== undefined) {
     if (c.inFullBurst !== true && !(outsideFullBurst && c.inFullBurst === false))

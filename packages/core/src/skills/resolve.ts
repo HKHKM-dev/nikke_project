@@ -163,6 +163,11 @@ export function isResolvedBuffApplied(t: ResolvedTrigger): t is BuffAppliedTrigg
   return typeof t === 'object' && 'buffApplied' in t;
 }
 
+/** 付いた記録から件の一覧が発火するきっかけ（{ applied }・{ buffApplied }。出来事では発火しない）か */
+export function isRecordTriggered(t: ResolvedTrigger): t is AppliedTrigger | BuffAppliedTrigger {
+  return isResolvedApplied(t) || isResolvedBuffApplied(t);
+}
+
 /** 効果名のトリガー（{ applied }）か */
 export function isResolvedApplied(t: ResolvedTrigger): t is AppliedTrigger {
   return typeof t === 'object' && 'applied' in t;

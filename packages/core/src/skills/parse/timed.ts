@@ -20,6 +20,7 @@ import {
   isFiringStat,
   isFixedAttackScaling,
   isFlagStat,
+  selfBuffedOf,
   isHitStateStat,
   isMaxHpStat,
   isPassiveFlagStat,
@@ -506,14 +507,8 @@ function parseTimedCondition(
     fail(`${path}.condition`, `inFullBurst is not supported for "${stat}" (no definition uses it on this stat yet)`);
   }
   // 条件付きの効果が状態を作ると連鎖するので、同じ stat と状態だけの stat は出せない（plan/design-stage11-modernia.md 2.4 節）
-  if (
-    condition.selfBuffed !== undefined &&
-    stat !== undefined &&
-    (stat === condition.selfBuffed || isStateStat(stat))
-  ) {
-    fail(`${path}.stat`, `a conditional effect cannot give "${stat}" (it would feed its own condition)`);
-  }
-  if (condition.selfNotBuffed !== undefined && stat !== undefined && stat === condition.selfNotBuffed) {
+  const watched = selfBuffedOf(condition);
+  if (watched !== undefined && stat !== undefined && (stat === watched.stat || isStateStat(stat))) {
     fail(`${path}.stat`, `a conditional effect cannot give "${stat}" (it would feed its own condition)`);
   }
   if (target === 'topAttack') fail(`${path}.target`, 'a conditional effect cannot target "topAttack"');

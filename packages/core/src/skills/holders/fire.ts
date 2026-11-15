@@ -2,14 +2,16 @@
 // 件の列に入れ、{ applied } の出どころに付いた記録を配る。条件で落とした記録と順位の記録もここで足す。
 import { type ChanceOpportunity } from '../chance.ts';
 import {
+  isRecordTriggered,
   isResolvedApplied,
-  isResolvedBuffApplied,
   type ResolvedEffect,
   type ResolvedShotCountTrigger,
 } from '../resolve.ts';
 import { tiedAtCutoff } from '../ranking.ts';
 import { namedStateGroup, namedStateIsDebuff, statesMatching, type NamedStateId } from '../states.ts';
 import { isEffectTarget, type FireContext } from '../targets.ts';
+
+const buffKey = (holder: number, stat: BuffStat): string => `${holder}:${stat}`;
 import { shotCountWeight, type ShotEvent } from '../triggers.ts';
 import { type BuffStat, isAllyDecrease, type EffectCondition } from '../types.ts';
 import { type AppliedRecord } from '../timeline.ts';
@@ -110,8 +112,7 @@ export function createFire({
         throw new Error(`no track for ${src.effect.source.skill}[${src.effect.effectIndex}] on slot ${holder}`);
       insertSorted(track.starts, start);
       if (scale !== undefined) (track.startScales ??= new Map()).set(start, scale);
-      if (isBuffUp(src.effect) && context?.appliedCasters === undefined)
-        buffApplications.push({ frame: start, stat: src.effect.stat, slotIndex: holder });
+      recordBuffUp(src.effect, holder, start, context);
       targets.push(holder);
     });
     return targets;
@@ -190,9 +191,7 @@ export function createFire({
         slotIndex: holder,
       };
       applications.push(record);
-      if (context?.appliedCasters === undefined)
-        for (const c of group.contents)
-          if (isBuffUp(c)) buffApplications.push({ frame: start, stat: c.stat, slotIndex: holder });
+      for (const c of group.contents) recordBuffUp(c, holder, start, context);
       targets.push(holder);
     });
     return targets;
@@ -358,9 +357,8 @@ export function createFire({
   };
   // ---- { applied } の出どころ（timed・付与。見る状態が自分に付いた記録から発火する。plan/design-skill-stage4.md 1.1 節） ----
   type AppliedSource = {
-    /** 見る状態か、見る stat（{ buffApplied }。plan/design-bready.md 2.1 節） */
-    state?: NamedStateId;
-    buffStat?: BuffStat;
+    /** 見る状態（{ applied }）か、見る stat（{ buffApplied }。plan/design-bready.md 2.1 節） */
+    watch: { state: NamedStateId } | { stat: BuffStat };
     sourceSlotIndex: number;
     stage: HeldStage;
     /** 最後に発火したフレーム。記録のフレームは呼び出しの順に減らないので、前の呼び出しと同じフレームの 2 回目を落とす */
@@ -376,9 +374,9 @@ export function createFire({
   for (const group of stateGroups) {
     for (const g of group.grants) {
       const t = g.grant.trigger;
-      if (!isResolvedApplied(t) && !isResolvedBuffApplied(t)) continue;
+      if (!isRecordTriggered(t)) continue;
       appliedSources.push({
-        ...(isResolvedApplied(t) ? { state: t.applied } : { buffStat: t.buffApplied }),
+        watch: isResolvedApplied(t) ? { state: t.applied } : { stat: t.buffApplied },
         sourceSlotIndex: group.sourceSlotIndex,
         stage: g.stage,
         last: -1,
@@ -396,7 +394,7 @@ export function createFire({
     const t = src.effect.trigger;
     if (!isResolvedApplied(t)) continue;
     appliedSources.push({
-      state: t.applied,
+      watch: { state: t.applied },
       sourceSlotIndex: src.sourceSlotIndex,
       stage: src.stage,
       last: -1,
@@ -412,7 +410,7 @@ export function createFire({
     const t = src.effect.trigger;
     if (!isResolvedApplied(t)) continue;
     appliedSources.push({
-      state: t.applied,
+      watch: { state: t.applied },
       sourceSlotIndex: src.sourceSlotIndex,
       stage: appliedStageOf(t.applied),
       last: -1,
@@ -421,29 +419,56 @@ export function createFire({
       fire: (start) => fireExtend(src, start),
     });
   }
+  // { buffApplied } が見る（枠, stat）。聞く出どころの無い▲は記録しない
+  const buffListeners = new Set(
+    appliedSources.flatMap((a) => ('stat' in a.watch ? [buffKey(a.sourceSlotIndex, a.watch.stat)] : [])),
+  );
   /**
-   * 段 stage の { applied } の出どころを、この呼び出しで付いた記録（applications の from から。{ applied } の付与の記録を除く）から
+   * timed・状態の中身の▲が枠 holder に付いた記録（{ buffApplied } が読む）。{ applied }・{ buffApplied } のきっかけの効果
+   * （文脈に appliedCasters がある）が付けたものは記録しない（連鎖させない）
+   */
+  function recordBuffUp(
+    effect: Parameters<typeof isBuffUp>[0],
+    holder: number,
+    start: number,
+    context: FireContext | undefined,
+  ): void {
+    if (!isBuffUp(effect) || context?.appliedCasters !== undefined) return;
+    if (buffListeners.has(buffKey(holder, effect.stat)))
+      buffApplications.push({ frame: start, stat: effect.stat, slotIndex: holder });
+  }
+  /** まだ dispatchApplied で読んでいない記録の始まり（静的な状態の記録は、戦闘開始時の呼び出しで読む）。フレームの登録の後に進める */
+  let appliedFrom = 0;
+  let buffFrom = 0;
+  const markDispatched = (): void => {
+    appliedFrom = applications.length;
+    buffFrom = buffApplications.length;
+  };
+  /**
+   * 段 stage の { applied }・{ buffApplied } の出どころを、このフレームに付いた記録（{ applied } の付与の記録を除く）から
    * 発火する。窓は記録のフレームから。同じフレームに 2 つの出どころから付いても 1 回（appliedFrames と同じ）
    */
-  const dispatchApplied = (stage: HeldStage, from: number, buffFrom: number): void => {
-    if (from >= applications.length && buffFrom >= buffApplications.length) return;
+  const dispatchApplied = (stage: HeldStage): void => {
+    if (appliedFrom >= applications.length && buffFrom >= buffApplications.length) return;
     for (const a of appliedSources) {
       if (a.stage !== stage) continue;
       const fires = new Map<number, number[]>();
-      if (a.buffStat !== undefined) {
+      if ('stat' in a.watch) {
         // { buffApplied }: 見る stat の▲が自分に付いた記録（付けた枠は問わない。対象 appliedCaster は書けない）
         for (let k = buffFrom; k < buffApplications.length; k++) {
           const r = buffApplications[k]!;
-          if (r.stat === a.buffStat && r.slotIndex === a.sourceSlotIndex) fires.set(r.frame, []);
+          if (r.stat === a.watch.stat && r.slotIndex === a.sourceSlotIndex) fires.set(r.frame, []);
+        }
+      } else {
+        for (let k = appliedFrom; k < applications.length; k++) {
+          const r = applications[k]!;
+          if (r.state !== a.watch.state || r.slotIndex !== a.sourceSlotIndex || chainedApplications.has(r)) continue;
+          const casters = fires.get(r.frame) ?? [];
+          if (!casters.includes(r.sourceSlotIndex)) casters.push(r.sourceSlotIndex);
+          fires.set(r.frame, casters);
         }
       }
-      for (let k = from; a.state !== undefined && k < applications.length; k++) {
-        const r = applications[k]!;
-        if (r.state !== a.state || r.slotIndex !== a.sourceSlotIndex || chainedApplications.has(r)) continue;
-        const casters = fires.get(r.frame) ?? [];
-        if (!casters.includes(r.sourceSlotIndex)) casters.push(r.sourceSlotIndex);
-        fires.set(r.frame, casters);
-      }
+      if (fires.size === 0) continue;
       for (const frame of [...fires.keys()].sort((x, y) => x - y)) {
         if (frame <= a.last) continue;
         a.last = frame;
@@ -480,6 +505,7 @@ export function createFire({
   };
   return {
     dispatchApplied,
+    markDispatched,
     fireExtend,
     fireGrant,
     fireRemove,

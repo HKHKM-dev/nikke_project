@@ -7,6 +7,7 @@ import { chancePieces, chanceStackPieces, chanceValueOf } from '../chance.ts';
 import {
   isResolvedApplied,
   isResolvedBuffApplied,
+  isRecordTriggered,
   isResolvedShotCount,
   isResolvedTimer,
   resolveStackChanges,
@@ -554,7 +555,7 @@ export function stateGroupsOf(
     condition?: EffectCondition,
   ) => TriggerTracker,
   appliedStageOf: (state: NamedStateId) => HeldStage,
-  buffAppliedStageOf: (stat: BuffStat) => HeldStage = () => 1,
+  buffAppliedStageOf: (stat: BuffStat) => HeldStage,
 ): StateGroup[] {
   const groups: StateGroup[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
@@ -633,14 +634,10 @@ export function stageOfStackChange(effect: ResolvedStackChange): HeldStage {
  * （編成のどの枠でも。{ applied } のもの・静的な付与を除く）の段のいちばん後。無ければ（静的な状態だけ・付ける効果が無い）段 1
  */
 export function appliedStagesOf(slots: readonly TimelineSlot[]): (state: NamedStateId) => HeldStage {
+  // { buffApplied } の付与は、その付与の段（buffAppliedStagesOf）で付く
+  const buffStageOf = buffAppliedStagesOf(slots);
   // { applied } の効果を持つ編成でだけ解く（初めて引かれた時）
-  let stages: Map<NamedStateId, HeldStage> | null = null;
-  const build = (): Map<NamedStateId, HeldStage> => {
-    const out = new Map<NamedStateId, HeldStage>();
-    const bump = (state: NamedStateId, stage: HeldStage): void => {
-      const now = out.get(state);
-      if (now === undefined || STAGE_RANK[stage] > STAGE_RANK[now]) out.set(state, stage);
-    };
+  return latestStages((bump) => {
     let allStackable = false;
     const grants: ResolvedStateGrant[] = [];
     for (const slot of slots) {
@@ -648,7 +645,8 @@ export function appliedStagesOf(slots: readonly TimelineSlot[]): (state: NamedSt
       for (const grant of resolveStateGrants(slot.definition, slot.character, slot.levels)) {
         if (grant.isStatic) continue;
         grants.push(grant);
-        if (!isResolvedApplied(grant.trigger)) bump(grant.state, stageOfGrant(grant));
+        if (isResolvedBuffApplied(grant.trigger)) bump(grant.state, buffStageOf(grant.trigger.buffApplied));
+        else if (!isResolvedApplied(grant.trigger)) bump(grant.state, stageOfGrant(grant));
       }
       for (const effect of resolveStackChanges(slot.definition, slot.character, slot.levels)) {
         bump(effect.state, stageOfStackChange(effect));
@@ -659,9 +657,21 @@ export function appliedStagesOf(slots: readonly TimelineSlot[]): (state: NamedSt
     }
     // 味方の全部のスタック可能バフへの▲（段 1.5）は、編成のどの上限のある状態にも足しうる（plan/design-adjacent-allies.md 2.5 節）
     if (allStackable) for (const grant of grants) if (isStackableBuffGrant(grant)) bump(grant.state, 1.5);
+  });
+}
+
+/** キー → 段のいちばん後（STAGE_RANK）を、初めて引かれた時に collect で集めて作る。集めなかったキーは段 1 */
+function latestStages<K>(collect: (bump: (key: K, stage: HeldStage) => void) => void): (key: K) => HeldStage {
+  let stages: Map<K, HeldStage> | null = null;
+  const build = (): Map<K, HeldStage> => {
+    const out = new Map<K, HeldStage>();
+    collect((key, stage) => {
+      const now = out.get(key);
+      if (now === undefined || STAGE_RANK[stage] > STAGE_RANK[now]) out.set(key, stage);
+    });
     return out;
   };
-  return (state) => (stages ??= build()).get(state) ?? 1;
+  return (key) => (stages ??= build()).get(key) ?? 1;
 }
 
 /** 「〈stat〉増加効果」に数える効果か（▲。▼は負の値。使用武器の変更は数えない。plan/design-bready.md 2.1 節） */
@@ -677,29 +687,19 @@ export function isBuffUp(effect: { stat: ResolvedTimedEffect['stat']; value: num
  * 付与（編成のどの枠でも。{ applied }・{ buffApplied } のもの・静的な付与を除く）の段のいちばん後。無ければ段 1
  */
 export function buffAppliedStagesOf(slots: readonly TimelineSlot[]): (stat: BuffStat) => HeldStage {
-  let stages: Map<BuffStat, HeldStage> | null = null;
-  const build = (): Map<BuffStat, HeldStage> => {
-    const out = new Map<BuffStat, HeldStage>();
-    const bump = (stat: BuffStat, stage: HeldStage): void => {
-      const now = out.get(stat);
-      if (now === undefined || STAGE_RANK[stage] > STAGE_RANK[now]) out.set(stat, stage);
-    };
-    const chained = (t: ResolvedTrigger): boolean => isResolvedApplied(t) || isResolvedBuffApplied(t);
+  return latestStages((bump) => {
     for (const slot of slots) {
       if (slot === null || slot.definition === null) continue;
       for (const effect of resolveTimed(slot.definition, slot.character, slot.levels)) {
-        if (isBuffUp(effect) && !chained(effect.trigger)) bump(effect.stat, stageOfTimed(effect));
+        if (isBuffUp(effect) && !isRecordTriggered(effect.trigger)) bump(effect.stat, stageOfTimed(effect));
       }
       const contents = resolveStateContents(slot.definition, slot.character, slot.levels);
       for (const grant of resolveStateGrants(slot.definition, slot.character, slot.levels)) {
-        if (grant.isStatic || chained(grant.trigger)) continue;
-        for (const c of contents)
-          if (c.whileState === grant.state && isBuffUp(c)) bump(c.stat, stageOfGrant(grant));
+        if (grant.isStatic || isRecordTriggered(grant.trigger)) continue;
+        for (const c of contents) if (c.whileState === grant.state && isBuffUp(c)) bump(c.stat, stageOfGrant(grant));
       }
     }
-    return out;
-  };
-  return (stat) => (stages ??= build()).get(stat) ?? 1;
+  });
 }
 
 /** timed の効果の段（強化の受け付けと値は、履歴を閉じる時に決める） */
