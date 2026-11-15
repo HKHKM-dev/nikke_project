@@ -15,7 +15,7 @@
 - 根拠の `0010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 934・仮説 178・棄却 149・範囲外 2（計 1263）
+件数: 確定 930・仮説 178・棄却 149・範囲外 2（計 1259）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -8686,34 +8686,6 @@
   - 決めるのに使った録画: なし
   - 検証記録: V-0791
   - 定義: `data/skills/412.json` の skill1 の notes[0]
-- **C-1312** エレグ：ブーム・アンド・ショックの S1 の憑依は、戦闘開始時とそこから 6 秒ごとに付き、その間の味方全体の通常攻撃の命中が 100 に届いた発で幽霊キャプチャー数が 1 増えて憑依が外れる（6 秒の窓にキャプチャーは最大 1 回。届かなかった窓の命中は次の窓に持ち越さない）
-  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-15
-  - 根拠: `1215-01`・`1216-01`・`1217-09`・`1218-09`・`1217-07`・`1218-07`。V-0789
-  - モデル側: data/skills/502.json の skill1 の effects[0]〜[3]（状態 ghostPossession の付与 2 つ・counterChange・removeState。回数の種類 teamHit と during: { state }）。数え方は packages/core/src/skills/triggers.ts の createStateWindowTracker、カウンタ ghostCapture は skills/counters.ts
-  - 決めるのに使った録画: なし
-  - 検証記録: V-0789
-  - 定義: `data/skills/502.json` の skill1 の effects[0]、`data/skills/502.json` の skill1 の effects[1]、`data/skills/502.json` の skill1 の effects[2]、`data/skills/502.json` の skill1 の effects[3]、`data/skills/502.json` の skill1 の notes[0]
-- **C-1313** エレグ：ブーム・アンド・ショックの S1 の水冷コードの味方への発動者基準の攻撃力 16.2%▲は幽霊キャプチャー数 1 以上で、有利コードの攻撃ダメージ 35%▲は 4 以上で乗り、4 以上では両方が乗る（攻撃力▲は 1 回目のキャプチャーの発から乗る）
-  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-15
-  - 根拠: `1215-05`・`1215-06`・`1216-05`・`1216-06`・`1215-04`・`1216-04`・`1217-11`・`1218-11`。V-0789
-  - モデル側: data/skills/502.json の skill1 の effects[4]・[5]（passive の while.selfCounter・targetElement: Water・casterAttack・elementDamage）
-  - 決めるのに使った録画: なし
-  - 検証記録: V-0789
-  - 定義: `data/skills/502.json` の skill1 の effects[4]、`data/skills/502.json` の skill1 の effects[5]
-- **C-1314** エレグ：ブーム・アンド・ショックの S2 の 1100% のダメージは、幽霊キャプチャー数が 13 のままのキャプチャーで出て（13 に届いた回は出ない）、バースト使用時の攻撃力 40%▲（10 秒）は自分の順番の攻撃に乗る
-  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-15
-  - 根拠: `1215-03`・`1215-04`・`1216-03`・`1216-04`・`1217-11`・`1218-11`。V-0789
-  - モデル側: data/skills/502.json の skill2 の effects[0]（timed）・[1]（damage。きっかけは S1 のキャプチャーと同じ・条件 selfCounter atLeast 13）
-  - 決めるのに使った録画: なし
-  - 検証記録: V-0789
-  - 定義: `data/skills/502.json` の skill2 の effects[0]、`data/skills/502.json` の skill2 の effects[1]
-- **C-1315** エレグ：ブーム・アンド・ショックのバーストは、幽霊キャプチャー数が 13 でなければ最終攻撃力の 800% を 6 回順番に攻撃してキャプチャー数を 6 減らし（最低 1 で止まる）、13 なら 800% を 13 回順番に攻撃して 9 減らす。バースト使用時の効果は III のタイマーの 00.00 から 1 ヒット目までの間に発火し、順番の攻撃は 00.00 の 6f 後から 12f ごとで、フルバースト補正が乗る
-  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-15
-  - 根拠: `1217-07`・`1217-11`・`1217-12`・`1218-07`・`1218-08`・`1218-11`・`1218-12`。V-0789
-  - モデル側: data/skills/502.json の burst の effects[0]〜[3]（damage の hitsRef・delayFrames・hitIntervalFrames・条件 selfCounter、counterChange の floor）と、packages/core/src/burst/landing.ts の遅れの表の 502 の行（効果の発火 1f）
-  - 決めるのに使った録画: 1218（値を合わせた）
-  - 検証記録: V-0789
-  - 定義: `data/skills/502.json` の burst の effects[0]、`data/skills/502.json` の burst の effects[1]、`data/skills/502.json` の burst の effects[2]、`data/skills/502.json` の burst の effects[3]
 
 ## 敵・的・場面
 
