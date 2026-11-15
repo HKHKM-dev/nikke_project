@@ -3,6 +3,7 @@
 import { describe, expect, it } from 'vitest';
 import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { MAX_SKILL_LEVELS, resolveCounterChanges } from '../resolve.ts';
+import { createStateWindowTracker, type FrameEvents, type ShotEvent } from '../triggers.ts';
 import { parseSkillDefinition } from '../types.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
@@ -86,5 +87,29 @@ describe('解決', () => {
       [6, true, 1, { counter: 'ghostCapture', below: 13 }],
       [9, true, undefined, { counter: 'ghostCapture', atLeast: 13 }],
     ]);
+  });
+});
+
+describe('味方全体の命中（teamHit）の数え方', () => {
+  const shot = (hits: number) => ({ hits, coreHits: 0 }) as ShotEvent;
+  const ev = (frame: number, shots: (ShotEvent | null)[]) => ({ frame, shots }) as unknown as FrameEvents;
+  const trigger = { count: 'teamHit' as const, every: 2, during: { state: 'ghostPossession' as const } };
+
+  it('adds the hits of all slots, fires once even when a frame crosses N more than once, and counts frames without own shots', () => {
+    const fires = createStateWindowTracker(trigger, 0, 'ghostPossession', () => 0);
+    // 5 人で 5 命中（N = 2 を 2 回またぐ）でも 1 回
+    expect(fires(ev(1, [shot(1), shot(1), shot(1), shot(1), shot(1)]))).toBe(true);
+    // 自分が撃たないフレームの味方の命中も数える（5 → 6 で 2 の倍数をまたぐ）
+    expect(fires(ev(2, [null, shot(1)]))).toBe(true);
+    expect(fires(ev(3, [null, null]))).toBe(false);
+  });
+
+  it('starts over when a new item of the state starts', () => {
+    let start = 0;
+    const fires = createStateWindowTracker(trigger, 0, 'ghostPossession', () => start);
+    expect(fires(ev(1, [shot(1)]))).toBe(false);
+    start = 2;
+    expect(fires(ev(3, [shot(1)]))).toBe(false);
+    expect(fires(ev(4, [shot(1)]))).toBe(true);
   });
 });

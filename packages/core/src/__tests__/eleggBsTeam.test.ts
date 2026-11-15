@@ -10,7 +10,7 @@ import { itemsOf } from '../skills/holders.ts';
 import { counterEffectiveFrom } from '../skills/holders/types.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { slotPieces } from './historyHelpers.ts';
-import { describeEveryShotInOneGroup, fixedTeam } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rawDefinition } from './teamHelpers.ts';
 
 const ELEGG_BS = 502;
 const POSSESSION_FRAMES = gameSecondsToFrames(6);
@@ -100,8 +100,9 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     const hits = plan.skillHits.filter((h) => h.slotIndex === e && h.effect.source.skill === 'burst');
     for (const [k, a] of mine.entries()) {
       const at = effectFrameOf(a);
-      // 戦闘の終わりの後に出るヒットは数えない
-      if (at + 5 + 12 * 12 >= plan.frames) continue;
+      // 戦闘の終わりの後に出るヒットは数えない（13 ヒットの最後まで）
+      const sequence = hits[0]!.effect;
+      if (at + (sequence.delayFrames ?? 0) + (sequence.hitIntervalFrames ?? 0) * 12 >= plan.frames) continue;
       const before = countAt(at);
       const next = mine[k + 1]?.frame ?? plan.frames;
       const n = hits.filter((h) => at <= h.frame && h.frame < next).length;
@@ -112,6 +113,30 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
       const floor = before === 13 ? 0 : Math.min(1, before);
       expect([Math.max(floor, before - drop), Math.max(floor, before - drop + 1)]).toContain(after);
     }
+  });
+});
+
+describe('バーストのキャプチャー数の▼（下限 1）', () => {
+  // 憑依を 30 秒ごとだけにした定義（戦闘開始時の憑依を外す）で、1 回目のバースト（ゲージが満ちた時）をキャプチャーの前（0）にし、
+  // 2 回目をキャプチャーの後（13 でない時）にする
+  const raw = rawDefinition<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>(ELEGG_BS);
+  raw.skills.skill1.effects.shift();
+  raw.skills.skill1.effects[0]!.trigger = { everySeconds: 30, carry: true };
+  const input = fixedTeam([304, 232, ELEGG_BS, 300], 2, { noBurstSlots: [3] });
+  input.slots[2] = fixedSlot(ELEGG_BS, raw);
+  const plan = planTeamRun(input);
+  const records = plan.history.counters.filter((c) => c.slotIndex === 2 && c.counter === 'ghostCapture');
+  const valueAt = (f: number, after: boolean) =>
+    records.filter((r) => (after ? r.frame <= f : r.frame < f)).at(-1)?.value ?? 0;
+  const bursts = plan.schedule!.activations.filter((x) => x.slotIndex === 2).map((a) => effectFrameOf(a));
+
+  it('keeps 0 when the burst comes before any capture, and stops at 1 when 6 would go below it', () => {
+    const zero = bursts.filter((f) => valueAt(f, false) === 0);
+    const low = bursts.filter((f) => valueAt(f, false) > 0 && valueAt(f, false) < 13);
+    expect(zero.length).toBeGreaterThan(0);
+    expect(low.length).toBeGreaterThan(0);
+    for (const f of zero) expect(valueAt(f, true)).toBe(0);
+    for (const f of low) expect(valueAt(f, true)).toBe(Math.max(1, valueAt(f, false) - 6));
   });
 });
 

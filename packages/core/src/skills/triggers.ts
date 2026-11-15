@@ -166,6 +166,13 @@ export function createStateWindowTracker(
     // 過熱II の回数に、過熱II を付けた発も過熱III の回数に数える）。条件は自分の状態があるかだけ（skills/parse/state.ts）で、段 1.5 の件も
     // そのフレームに付いた件を見る
     if (conditionState !== undefined && startOfHeld(conditionState, ev.frame, ev.frame + 1) === undefined) return false;
+    // 全員の発の和は 1 フレームで N を超えうるので、teamAmmo と同じく、N の倍数を越えたら 1 回だけ発火する
+    if (team) {
+      const fired =
+        Math.floor((count + weight) / trigger.every + COUNT_EPSILON) > Math.floor(count / trigger.every + COUNT_EPSILON);
+      count += weight;
+      return fired;
+    }
     const next = advanceShotCount(count, weight, trigger.every);
     count = next.count;
     return next.fired;
