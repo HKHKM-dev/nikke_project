@@ -739,12 +739,16 @@ svg.settings-menu-icon {
   z-index: 3;
   display: inline-flex;
   padding: 3px 8px;
+  /* ボタンの枠と地は出さない（絵だけ） */
+  border: none;
+  background: none;
+  box-shadow: none;
   cursor: pointer;
 }
 .modern-slot-undo-icon {
   display: block;
-  width: 20px;
-  height: 20px;
+  width: 26px;
+  height: 26px;
 }
 .modern-slots-grid {
   display: flex;
