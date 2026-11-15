@@ -30,24 +30,27 @@
       ]
     },
     "skill2": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "burstGaugeHit",
+          "trigger": {
+            "everySeconds": 20
+          },
+          "delayFrames": 4,
+          "assumes": {
+            "ja": "周期の 20 秒は録画から読んだ値（説明文にきっかけが無い）。単騎の録画 0309 で、S2 の表示は戦闘開始から 1185f、その後 1177〜1181f（7 回のうち 5 回は 1177f）ごとに出て、ceil の周期 1,177 と合う（8 回目までにモデルが 5f 早くなる）。ゲージは表示の 4f 前に伸びるので、発動（1177f）の 4f 後のフレームに足す。1 回の量は射手の 1 ヒットぶん（フルチャージ倍率なし。4,000）（C-0422）",
+            "en": "The 20 s period is read from recordings (the description gives no trigger). In solo recording 0309 the S2 display appears 1185 f after combat start and every 1177–1181 f after (5 of the 7 intervals are 1177 f), matching the ceil period of 1,177 (the model is 5 f early by the 8th). The gauge grows 4 f before the display, so it is added 4 f after the activation (1177 f). One activation is one shooter hit of gauge (no full-charge multiplier; 4,000) (C-0422)"
+          },
+          "claims": [
+            "C-0422"
+          ]
+        }
+      ],
       "notes": [
         {
           "ja": "最終攻撃力が最も高い敵 1 機への挑発はダメージに関係しない",
           "en": "The taunt on the enemy with the highest final attack does not affect damage",
           "kind": "noDamage"
-        },
-        {
-          "ja": "S2 の発動のたびに、射手の target_burst_energy_pershot（4,000）のゲージを溜めるのは未対応（説明文にきっかけが無い。C-0422）",
-          "en": "Charging the burst gauge by the shooter's target_burst_energy_pershot (4,000) on each S2 activation is not modeled (the description gives no trigger; C-0422)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "burstGaugeHit",
-            "trigger": "timer"
-          },
-          "claims": [
-            "C-0422"
-          ]
         },
         {
           "ja": "自分の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
