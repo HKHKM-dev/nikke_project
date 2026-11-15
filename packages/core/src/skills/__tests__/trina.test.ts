@@ -122,6 +122,7 @@ describe('data: which burstDamage get the allEnemies mark', () => {
       '581',
       '583',
       '831',
+      '834',
       '870',
       '871',
     ]);
