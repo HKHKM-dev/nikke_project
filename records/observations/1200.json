@@ -1,0 +1,203 @@
+[
+  {
+    "id": "1200-01",
+    "recording": "1200",
+    "kind": "hit",
+    "use": "compare",
+    "value": [13888, 13888, 13888, 13888],
+    "description": "リトルマーメイドの通常攻撃の 1 ヒット（胴体・会心なし・距離ボーナスあり）の 1・40・80・200 発目（最初のバーストの前）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "戦闘開始 f806（02:59 が出たフレーム。C-0078）から最初のバーストまでの胴体の非会心の増分はどれも 13,888（距離ボーナスなしの帯では 10,683）。命中 50 回目（増分の 50 番目あたり）の前後で変わらない。受けるダメージ▲が無ければ 13,221、2 つ重なれば 14,556 で、どちらも 1 つも無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": "1,40,80,200",
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0784",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1200-02",
+    "recording": "1200",
+    "kind": "gauge",
+    "use": "record",
+    "value": {
+      "bubble": 1360,
+      "none": 0,
+      "double": 0
+    },
+    "description": "戦闘全体の、受けるダメージ▲の乗り方ごとの通常攻撃の胴体の非会心の増分の数（バブル 1 つ: 10,683・13,888、無し: 10,170・13,221、2 つ: 11,197・14,556）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "バブル（バブルバースト）は戦闘の終わりまで 1 つ分だけ乗り、的のジャンプの後も変わらない"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0784",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1200-03",
+    "recording": "1200",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 1233,
+    "description": "戦闘開始から 1 回目にバーストゲージが満タンになる（BURST バーが消える。C-0083）までの動画のフレーム",
+    "method": {
+      "tool": "gauge.ts --mode series・timer.ts --mode changes",
+      "note": "バー消失 f2039 − 戦闘開始 f806。消える直前のバーは約 79%（本当のゲージ）で、射撃のゲージだけでは届かない（自分の 400 発目の 37% で満タン）。味方が消費した弾の合計を数えないモデルでは約 27 秒（1,594f）にバーストを使う"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0784",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1200-04",
+    "recording": "1200",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [1485, 1496, 1509, 1521, 1533, 1544, 1556, 1568, 1579, 1591],
+    "description": "1 回目のバブルバラージの 10 ヒットの、戦闘開始からの動画のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps・timer.ts --mode changes",
+      "note": "増分が 85,000 を超えるフレーム − 戦闘開始（同じフレームの通常攻撃の 1 ヒットとの和を含む）。間隔は 11〜13f（0.2 秒に近い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 1,
+        "event": "skillHit",
+        "skill": "skill2",
+        "count": 10
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0784",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1200-05",
+    "recording": "1200",
+    "kind": "hit",
+    "use": "compare",
+    "value": 115913,
+    "description": "1 回目のバブルバラージの 1 ヒット（会心なし。バーストの窓の中）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "1 ヒットだけのフレームの増分。会心は 173,869。バーストの攻撃ダメージ▲と発動者基準の攻撃力▲が乗った値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0784",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1200-06",
+    "recording": "1200",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [1485, 3094, 4769, 6319, 7908, 9527],
+    "description": "バブルバラージの 1 ヒット目の、戦闘開始からの動画のフレーム（戦闘の全部）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "約 1,550〜1,680f おき（自分の 500 発ごと）。2 回目からは、的のジャンプとバーストの時刻の揺れで録画ごとに数十 f ずれる"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0784",
+    "readAt": "2026-11-14"
+  },
+  {
+    "id": "1200-07",
+    "recording": "1200",
+    "kind": "hit",
+    "use": "compare",
+    "value": 89730,
+    "description": "4 回目のバブルバラージの 1 ヒット（会心なし。バーストの窓の外）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f7125〜7231 の 1 ヒットだけのフレームの増分（同じフレームに通常攻撃の 10,683 が重なると 100,413。会心は 134,595）。3 回目（f5575〜）も同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 30,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0784",
+    "readAt": "2026-11-14"
+  }
+]

@@ -80,7 +80,7 @@ export type TriggerOptions = {
   weaponChangeEnd?: boolean;
   /** リロードの込め終わり（{ reloadEnd }） */
   reloadEnd?: boolean;
-  /** 味方が消費した弾の合計（{ count: "teamAmmo" }。burstGauge だけ。plan/design-cinderella-cw.md 2.3 節） */
+  /** 味方が消費した弾の合計（{ count: "teamAmmo" }。burstGauge と damage だけ。plan/design-cinderella-cw.md 2.3 節・plan/design-little-mermaid.md 2.1 節） */
   teamAmmo?: boolean;
 };
 
@@ -193,10 +193,10 @@ function parseShotCountTrigger(v: Record<string, Json>, path: string, options: T
   if (v.count === 'pelletHit' && v.every === undefined && v.everyRef === undefined) {
     fail(path, 'pelletHit needs every or everyRef');
   }
-  // 味方が消費した弾の合計は、編成の全員の発を数える即時効果（burstGauge）だけ。数える窓・発火の窓・スタック・確率とは組まない
-  // （plan/design-cinderella-cw.md 2.3 節）
+  // 味方が消費した弾の合計は、編成の全員の発を数える即時効果（burstGauge）と倍率ダメージ（damage）だけ。数える窓・発火の窓・スタック・
+  // 確率とは組まない（plan/design-cinderella-cw.md 2.3 節・plan/design-little-mermaid.md 2.1 節）
   if (v.count === 'teamAmmo') {
-    if (!options.teamAmmo) fail(`${path}.count`, 'a teamAmmo count is only allowed in burstGauge');
+    if (!options.teamAmmo) fail(`${path}.count`, 'a teamAmmo count is only allowed in burstGauge and damage');
     if (v.every === undefined && v.everyRef === undefined) fail(path, 'teamAmmo needs every or everyRef');
     for (const key of ['stacksRef', 'during', 'reset', 'firesDuring', 'firesOutside', 'chance', 'chanceRef'])
       if (v[key] !== undefined) fail(`${path}.${key}`, `${key} cannot be used with teamAmmo`);
@@ -437,7 +437,7 @@ export function parseDamageTrigger(v: Json, path: string): EffectTrigger {
     parseSummonAttackTrigger(v, path) ??
     parseCounterFullTrigger(v, path) ??
     parseAppliedTrigger(v, path) ??
-    parseTrigger(v, path, { timer: true, during: true })
+    parseTrigger(v, path, { timer: true, during: true, teamAmmo: true })
   );
 }
 

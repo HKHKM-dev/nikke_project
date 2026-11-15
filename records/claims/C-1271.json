@@ -1,0 +1,24 @@
+{
+  "id": "C-1271",
+  "text": "リトルマーメイドの S1 の「味方が消費した弾の合計が 400 発ごとに、味方全体にバーストゲージのチャージ 37%」は、自分を含む編成の全員の発（1 発 1）を数え、合計が 400 の倍数に届いた発で 37% を足す（単騎では 1 回目のゲージの満タンが戦闘開始から 1,233f で、数えないモデルの約 27 秒より早い）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1200-03`・`1201-03`。V-0784",
+  "model": "data/skills/513.json（skill1 の effects[2]。burstGauge のきっかけ { count: \"teamAmmo\", everyRef: 4 }）。skills/triggers.ts（teamAmmo は全員の発の残弾の減りを足す）",
+  "replaces": [],
+  "updated": "2026-11-14",
+  "subject": {
+    "places": ["data/skills/513.json の skill1 の effects[2]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値（400 発・37%）と、自分を含む全員の発を 1 発 1 で数える読み（C-1250）",
+  "minimal": [
+    {
+      "element": ["リトルマーメイド skill1.notes[0]"],
+      "reason": "射撃集中は狙う敵をそろえる効果で、敵 1 体の射撃場では射撃・ゲージ・ダメージを変えない",
+      "decided": "2026-11-15",
+      "observations": ["1200-03", "1201-03"]
+    }
+  ]
+}

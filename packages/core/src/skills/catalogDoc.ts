@@ -323,7 +323,7 @@ const TRIG_INFO: Record<string, Info> = {
   teamAmmo: [
     '味方の消費した弾の合計',
     'ok',
-    'burstGauge の { count: "teamAmmo", every }（自分を含む全員の発。シンデレラ：クリスタルウェーブ編）',
+    'burstGauge と damage（N 回順番に攻撃も）の { count: "teamAmmo", every }（自分を含む全員の発。シンデレラ：クリスタルウェーブ編・リトルマーメイド編）',
   ],
   fullStackConsume: [
     'フルスタックでスタック解除後',

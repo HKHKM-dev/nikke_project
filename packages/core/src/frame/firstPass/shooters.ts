@@ -291,8 +291,12 @@ export function createShooters({
         pellets: pelletCount,
       };
       if (params.weapon !== null) shotEvents[i]!.weaponChange = true;
-      // 装弾数無限の発は残弾を減らさないので、味方が消費した弾の合計（teamAmmo）に数えない（plan/design-cinderella-cw.md 2.3 節）
-      if (params.infiniteAmmo) shotEvents[i]!.ammo = 0;
+      // 装弾数無限の発は残弾を減らさないので、味方が消費した弾の合計（teamAmmo）に数えない（plan/design-cinderella-cw.md 2.3 節）。
+      // 流し直し（replayEvents）も同じに数えるよう、射撃の列にも残す
+      if (params.infiniteAmmo) {
+        shotEvents[i]!.ammo = 0;
+        (log.infiniteAmmoShotFrames ??= []).push(f);
+      }
       shotCounts[i]! += 1;
       const shotEnergy = energyAt(i, f);
       // チャージしない変更後の武器の発には、基礎の武器のフルチャージ倍率を掛けない（変更後の武器の発のゲージは確かめていない。

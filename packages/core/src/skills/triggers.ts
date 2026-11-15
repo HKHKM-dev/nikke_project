@@ -73,8 +73,8 @@ export type ShotEvent = {
    */
   weaponChange?: boolean;
   /**
-   * この射撃で減らした残弾（teamAmmo の回数に足す。plan/design-cinderella-cw.md 2.3 節）。省略は 1、装弾数無限の発は 0。1 パス目の射手だけが
-   * 書く（流し直しの replayEvents は射撃の列に装弾数無限の印が無いので書かない。teamAmmo を書ける burstGauge は 1 パス目だけが読む）
+   * この射撃で減らした残弾（teamAmmo の回数に足す。plan/design-cinderella-cw.md 2.3 節）。省略は 1、装弾数無限の発は 0。1 パス目の射手と、
+   * 流し直し（replayEvents。射撃の列の infiniteAmmoShotFrames）が書く
    */
   ammo?: number;
 };
@@ -269,10 +269,11 @@ export function createTriggerTracker(
         if (t.during === 'fullBurst' && !inFullBurst) return false;
       }
       // 味方が消費した弾の合計は、自分を含む全員の発の残弾の減りを足す（自分が撃たないフレームも数える。plan/design-cinderella-cw.md 2.3 節）
-      // 1 フレームの量（同じフレームに撃った枠の数）が N を超えても、N の倍数を越えたら 1 回だけ発火する
+      // 1 フレームの量（同じフレームに撃った枠の数）が N を超えても、N の倍数を越えたら 1 回だけ発火する。自分の発の回数の間隔の変更
+      // （everyAt）は読まない（味方の発も数えるので、N は説明文の値のまま）
       if (t.count === 'teamAmmo') {
         const weight = ev.shots.reduce((sum, x) => sum + (x ? shotCountWeight('teamAmmo', x) : 0), 0);
-        const every = everyAt?.(ev.frame) ?? t.every;
+        const every = t.every;
         const fired = Math.floor((count + weight) / every) > Math.floor(count / every);
         count += weight;
         return fired;
@@ -447,6 +448,7 @@ export function replayEvents(
     if (!log) return;
     const last = new Set(log.lastShotFrames ?? []);
     const changed = new Set(log.weaponChangeShotFrames ?? []);
+    const infinite = new Set(log.infiniteAmmoShotFrames ?? []);
     const full = fullChargeFrameSet(log);
     log.frames.forEach((f, k) => {
       if (f >= frames) return;
@@ -461,6 +463,7 @@ export function replayEvents(
       const pellets = log.pelletHits?.[k];
       if (pellets !== undefined) shot.pellets = pellets;
       if (changed.has(f)) shot.weaponChange = true;
+      if (infinite.has(f)) shot.ammo = 0;
       (at(f).shots as (ShotEvent | null)[])[slotIndex] = shot;
     });
     // 使用武器の変更の終わり（トリガー { weaponChangeEnd }）

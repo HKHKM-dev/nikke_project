@@ -1,9 +1,10 @@
 // シンデレラ：クリスタルウェーブ編（plan/design-cinderella-cw.md 2.3・2.4 節）: 回数トリガー teamAmmo（味方が消費した弾の合計。C-1250）の
-// 読み込みの制約と数え方、damage の条件 usedBurst（C-1252）の読み込みの制約
+// 読み込みの制約と数え方、damage の条件 usedBurst（C-1252）の読み込みの制約。リトルマーメイド編（plan/design-little-mermaid.md 2.1 節）の
+// damage（バブルバラージの N 回順番に攻撃）と、流し直しの装弾数無限の発
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { MAX_SKILL_LEVELS, resolveTrigger } from '../resolve.ts';
-import { createTriggerTracker, shotCountWeight, type FrameEvents, type ShotEvent } from '../triggers.ts';
+import { createTriggerTracker, replayEvents, shotCountWeight, type FrameEvents, type ShotEvent } from '../triggers.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 import type { CharacterData } from '../../types.ts';
 
@@ -49,10 +50,19 @@ describe('teamAmmo の読み込み', () => {
     expect(withSkill1Effects([gauge]).skills.skill1.effects[0]).toMatchObject(gauge);
   });
 
-  it('rejects it outside burstGauge, without every, and with a window, stacks or chance', () => {
+  it('rejects it outside burstGauge and damage, without every, and with a window, stacks or chance', () => {
     expect(() =>
-      withSkill1Effects([{ kind: 'damage', trigger: { count: 'teamAmmo', every: 200 }, ref: 7, damageType: 'skill' }]),
-    ).toThrow('a teamAmmo count is only allowed in burstGauge');
+      withSkill1Effects([
+        {
+          kind: 'timed',
+          trigger: { count: 'teamAmmo', every: 200 },
+          target: 'self',
+          stat: 'attack',
+          ref: 3,
+          durationRef: 4,
+        },
+      ]),
+    ).toThrow('a teamAmmo count is only allowed in burstGauge and damage');
     expect(() => withSkill1Effects([{ ...gauge, trigger: { count: 'teamAmmo' } }])).toThrow(
       'teamAmmo needs every or everyRef',
     );
@@ -64,7 +74,41 @@ describe('teamAmmo の読み込み', () => {
   });
 });
 
+describe('teamAmmo の damage', () => {
+  const barrage = {
+    kind: 'damage',
+    trigger: { count: 'teamAmmo', every: 500 },
+    ref: 7,
+    damageType: 'skill',
+    hitsRef: 8,
+  };
+
+  it('reads it with N sequential hits (hitsRef) and a delay', () => {
+    const read = withSkill1Effects([{ ...barrage, delayFrames: 6, hitIntervalFrames: 12 }]).skills.skill1.effects[0];
+    expect(read).toMatchObject({ ...barrage, delayFrames: 6, hitIntervalFrames: 12 });
+  });
+
+  it('rejects gaugePerHit, gaugeHits, and hitsRef with the other shot count triggers', () => {
+    expect(() => withSkill1Effects([{ ...barrage, gaugeHits: [0] }])).toThrow(
+      'gaugeHits cannot be used with a teamAmmo count',
+    );
+    expect(() => withSkill1Effects([{ ...barrage, delayFrames: 6, gaugePerHit: true }])).toThrow(
+      'gaugePerHit cannot be used with a teamAmmo count',
+    );
+    expect(() => withSkill1Effects([{ ...barrage, trigger: { count: 'normalShot', every: 500 } }])).toThrow(
+      'hitsRef cannot be used with a shot count trigger (except teamAmmo)',
+    );
+  });
+});
+
 describe('teamAmmo の数え方', () => {
+  it('ignores the own shot count interval change (everyAt)', () => {
+    const trigger = resolveTrigger({ count: 'teamAmmo', every: 3 }, character.skills.skill1, MAX_SKILL_LEVELS.skill1);
+    const fires = createTriggerTracker(trigger, 0, null, () => 1);
+    expect(fires(frame(1, [shot(), shot()]))).toBe(false); // 2
+    expect(fires(frame(2, [shot()]))).toBe(true); // 3
+  });
+
   it('counts one per shot and nothing for a shot under infinite ammo', () => {
     expect(shotCountWeight('teamAmmo', shot())).toBe(1);
     expect(shotCountWeight('teamAmmo', shot(0))).toBe(0);
@@ -77,6 +121,12 @@ describe('teamAmmo の数え方', () => {
     expect(fires(frame(2, [null, shot()]))).toBe(true); // 3（自分は撃っていない）
     expect(fires(frame(3, [shot(0), shot()]))).toBe(false); // 4（装弾数無限の発は数えない）
     expect(fires(frame(4, [shot(), shot()]))).toBe(true); // 6
+  });
+
+  it('marks the infinite-ammo shots of the shot log as no ammo in the replayed events', () => {
+    const events = replayEvents(null, [{ frames: [1, 2, 3], fullCharge: false, infiniteAmmoShotFrames: [2] }], 10);
+    const ammo = events.filter((e) => e.shots[0]).map((e) => shotCountWeight('teamAmmo', e.shots[0]!));
+    expect(ammo).toEqual([1, 0, 1]);
   });
 
   it('fires once when the shots of one frame pass N', () => {
