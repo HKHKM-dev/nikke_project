@@ -218,6 +218,13 @@ header h1 {
   width: 28px;
   height: 28px;
 }
+/* ライトでは色を反転する（地を白、縁と四角を暗い色、外の線を白） */
+.settings-menu-icon.badge-ui_window {
+  --badge-ground: light-dark(#ffffff, #1a1a1a);
+  --badge-main: light-dark(#1a1a1a, #ffffff);
+  --badge-accent: light-dark(#1a1a1a, #ffffff);
+  --badge-line: light-dark(#ffffff, #000000);
+}
 /* 見出しの行の右の、アカウント（育成状況の読み書き）と設定（クラシック）の文字のボタン */
 .header-menu-button {
   height: 34px;
