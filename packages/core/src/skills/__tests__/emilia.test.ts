@@ -3,6 +3,9 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTriggerDamage, partialChargeTriggerDamage } from '../../damage.ts';
+import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { runSimulation } from '../../sim/engine.ts';
+import type { TeamSlotInput } from '../../team.ts';
 import type { CharacterData } from '../../types.ts';
 import { applyChargeBuffs, applyResolvedEffect, PER_MAX_AMMO_CAP, ZERO_BUFFS } from '../buffs.ts';
 import { resolveDamageEffects, resolveFixedShare, resolvePerShotDamage } from '../burstDamage.ts';
@@ -95,9 +98,14 @@ describe('damageType fixedShare（plan/design-emilia.md 2.2 節）', () => {
     expect(() => parseSkillDefinition(def([], [{ ...share, delayFrames: 6 }]))).toThrow(
       /not allowed with the damageType "fixedShare"/,
     );
-    expect(() => parseSkillDefinition(def([], [{ ...share, gaugeHits: [0] }]))).toThrow(
-      /not allowed with the damageType "fixedShare"/,
-    );
+    // ゲージは着弾と同じフレームの 1 ヒットだけ（C-1333）
+    expect(parseSkillDefinition(def([], [{ ...share, gaugeHits: [0] }])).skills.skill2.effects[0]).toMatchObject({
+      gaugeHits: [0],
+    });
+    for (const gaugeHits of [[3], [0, 0]])
+      expect(() => parseSkillDefinition(def([], [{ ...share, gaugeHits }]))).toThrow(
+        /fixedShare takes only gaugeHits \[0\]/,
+      );
   });
 
   const emilia = readJson<CharacterData>('../../../data/characters/821.json');
@@ -139,6 +147,28 @@ describe('damageType fixedShare（plan/design-emilia.md 2.2 節）', () => {
     const partial = partialChargeTriggerDamage(full, 0.5);
     expect(partial.fixedShare).toBe(0);
     expect(partial.perTrigger).toBeCloseTo(partial.normal + partial.perShot, 6);
+  });
+});
+
+describe('固定ダメージのバーストゲージ（C-1333）', () => {
+  it('charges one hit of the shooter (28,000) on the landing frame of each full charge shot', () => {
+    const emilia = readJson<CharacterData>('../../../data/characters/821.json');
+    const definition = parseSkillDefinition(readJson<unknown>('../../../data/skills/821.json'));
+    const fixed = computeFixedSpecAttack(emilia);
+    const slot: TeamSlotInput = {
+      character: emilia,
+      growth: fixed.growth,
+      attackOverride: fixed.attack,
+      condition: { coreHitRate: 1, distanceBonus: false },
+      skills: { definition, levels: MAX_SKILL_LEVELS },
+    };
+    const enemy = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire' as const, hasCore: true };
+    const r = runSimulation({ slots: [slot], enemy, durationSeconds: 20, burst: false, controlledSlot: 0 });
+    const first = r.shots[0]!.frames[0]!;
+    const gauges = r.shotGauges.filter((g) => g.shotFrame === first);
+    // 発 28,000 × 2.5 と、固定ダメージの 1 ヒット 28,000（フルチャージ倍率なし）が、同じ着弾のフレームに入る
+    expect(gauges.map((g) => g.energy).sort((a, b) => a - b)).toEqual([28000, 70000]);
+    expect(new Set(gauges.map((g) => g.frame)).size).toBe(1);
   });
 });
 
