@@ -98,15 +98,14 @@
         "shot": "2,61",
         "core": false,
         "crit": false,
-        "distance": "model"
+        "distance": true
       },
       "tolerance": {
         "rel": 0.0005
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "source": "V-0787",
@@ -142,8 +141,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "source": "V-0787",
@@ -179,8 +177,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "source": "V-0787",
@@ -215,8 +212,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "source": "V-0787",

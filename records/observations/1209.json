@@ -98,15 +98,14 @@
         "shot": "1,61",
         "core": false,
         "crit": false,
-        "distance": "model"
+        "distance": true
       },
       "tolerance": {
         "rel": 0.0005
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "source": "V-0787",
@@ -142,8 +141,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "source": "V-0787",
@@ -179,8 +177,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "source": "V-0787",
@@ -216,8 +213,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "source": "V-0787",
@@ -253,8 +249,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "source": "V-0787",
@@ -284,15 +279,14 @@
         "frame": 1400,
         "core": false,
         "crit": false,
-        "distance": "model"
+        "distance": true
       },
       "tolerance": {
         "abs": 1
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "source": "V-0787",
@@ -357,15 +351,51 @@
         "frame": 60,
         "core": false,
         "crit": false,
-        "distance": "model"
+        "distance": false
       },
       "tolerance": {
         "rel": 0.0005
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1209-15",
+    "recording": "1209",
+    "kind": "timing",
+    "use": "compare",
+    "value": [134, 232, 330, 506, 604, 702, 878, 976, 1074],
+    "unit": "f",
+    "description": "1 回目の高リスク対象の窓の 20 回命中ごとの追加ダメージの増分の、1 回目のフルバーストの始まり（III のタイマーの 00.00）からの動画のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps と、レシピ buff-edge@5 の --opt grid（増分ごとの当て方）と burst-panel",
+      "note": "追加ダメージと発の和の格子に合った増分（f1761〜f2701）から 00.00（f1627。`1209-03`）を引いた。どれもその発と同じフレーム。最初の 2 本のマガジンの 120 発がどれも当たり、通しの 140・160・…・300 命中目"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "trigger": "shotCount",
+        "anchor": "fullBurst:0",
+        "within": "untilNext"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
       }
     },
     "source": "V-0787",

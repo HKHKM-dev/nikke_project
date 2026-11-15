@@ -4,8 +4,8 @@
   "state": "確定",
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
-  "basis": "`1209-09`・`1209-10`・`1209-13`・`1210-08`・`1210-09`・`1210-12`。V-0787",
-  "model": "data/skills/322.json（skill1 の effects[1]。{ count: normalHit, everyRef: 8 }・condition.enemyState・additional）。命中はモデルでは弾丸命中率の期待値で数えるので、出る発の位置は録画と数発ずれる",
+  "basis": "`1209-09`・`1209-10`・`1209-13`・`1209-15`・`1210-08`・`1210-09`・`1210-12`・`1210-14`。V-0787",
+  "model": "data/skills/322.json（skill1 の effects[1]。{ count: normalHit, everyRef: 8 }・condition.enemyState・additional）。条件が自動（射撃場の表）のときは、命中を弾丸命中率の期待値で数えるので、出る発の位置は録画と数発ずれる（数と値は変わらない）",
   "replaces": [],
   "updated": "2026-11-15",
   "subject": {

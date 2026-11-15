@@ -1,6 +1,6 @@
 {
   "verification": "V-0787",
-  "note": "撮影の予測。I-DOLL・フラワー（I）+ デルタ（II）+ マルチャーナ：マリンスタディ（III・操作）。射撃場の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オートバースト ON。撮影 A は電撃、撮影 B は灼熱の敵。20 回命中の数え方の読み（高リスク対象の間だけ数える）は上書きで書けないので、検証記録の「予測」に手で書く。撮影の後に、比べる観測値と引数をそろえるため、A-fb・A-hr に crit: false を、A-shots・B-shots に core: false・crit: false を足し、B-shots の発を 2・61 発目に替えた（値の求め方は同じ）",
+  "note": "撮影の予測。I-DOLL・フラワー（I）+ デルタ（II）+ マルチャーナ：マリンスタディ（III・操作）。射撃場の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オートバースト ON。撮影 A は電撃、撮影 B は灼熱の敵。20 回命中の数え方の読み（高リスク対象の間だけ数える）は上書きで書けないので、検証記録の「予測」に手で書く。撮影の後に、比べる観測値と引数をそろえるため、A-fb・A-hr に crit: false を、A-shots・B-shots に core: false・crit: false を足し、B-shots の発を 2・61 発目に替えた（値の求め方は同じ）。比べる観測値と同じく、条件（condition）を省き、距離ボーナスを有りと明示した",
   "team": [
     {
       "rid": 304
@@ -81,8 +81,7 @@
         "enemy": "range-bigarms-electric",
         "events": [
           "range-3min-jump"
-        ],
-        "condition": "auto"
+        ]
       },
       "metric": "hitDamageAtShot",
       "args": {
@@ -90,7 +89,7 @@
         "shot": "1,61",
         "core": false,
         "crit": false,
-        "distance": "model"
+        "distance": true
       },
       "tolerance": {
         "rel": 0.001
@@ -104,8 +103,7 @@
         "enemy": "range-bigarms-electric",
         "events": [
           "range-3min-jump"
-        ],
-        "condition": "auto"
+        ]
       },
       "metric": "skillHitDamage",
       "args": {
@@ -126,8 +124,7 @@
         "enemy": "range-bigarms-electric",
         "events": [
           "range-3min-jump"
-        ],
-        "condition": "auto"
+        ]
       },
       "metric": "skillHitDamage",
       "args": {
@@ -148,8 +145,7 @@
         "enemy": "range-bigarms-electric",
         "events": [
           "range-3min-jump"
-        ],
-        "condition": "auto"
+        ]
       },
       "metric": "eventFrames",
       "args": {
@@ -168,8 +164,7 @@
         "enemy": "range-bigarms-fire",
         "events": [
           "range-3min-jump"
-        ],
-        "condition": "auto"
+        ]
       },
       "metric": "hitDamageAtShot",
       "args": {
@@ -177,7 +172,7 @@
         "shot": "2,61",
         "core": false,
         "crit": false,
-        "distance": "model"
+        "distance": true
       },
       "tolerance": {
         "rel": 0.001
@@ -191,8 +186,7 @@
         "enemy": "range-bigarms-fire",
         "events": [
           "range-3min-jump"
-        ],
-        "condition": "auto"
+        ]
       },
       "metric": "eventCount",
       "args": {
@@ -208,51 +202,49 @@
   ],
   "predicted": {
     "at": "2026-11-15",
-    "commit": "e14f5a8c5e961e1e1f036bb139d94dc6026e2d0f",
+    "commit": "b2782d948cce71fce3173047e24ac4f66d1e484a",
     "values": {
       "H1": {
         "A-shots": [
-          73127.75269527,
-          73127.75269527
+          73127.75269527003,
+          73127.75269527003
         ],
         "A-fb": 36944051.00906302,
         "A-hr": 1488584.2074457326,
         "A-hr-frames": [
-          39,
-          138,
-          236,
-          411,
-          510,
-          608,
-          783,
-          882,
-          984,
-          1160
+          133,
+          231,
+          329,
+          505,
+          603,
+          701,
+          877,
+          975,
+          1073
         ],
         "B-shots": [
-          56075.2647,
-          56075.2647
+          56075.26470000001,
+          56075.26470000001
         ],
         "B-hr-count": 0
       },
       "H-W1": {
         "A-shots": [
-          36803.388331710004,
-          36803.388331710004
+          36803.38833171001,
+          36803.38833171001
         ],
         "A-fb": 18593665.432367455,
         "A-hr": 749193.3333018045,
         "A-hr-frames": [
-          39,
-          138,
-          236,
-          411,
-          510,
-          608,
-          783,
-          882,
-          984,
-          1160
+          133,
+          231,
+          329,
+          505,
+          603,
+          701,
+          877,
+          975,
+          1073
         ],
         "B-shots": [
           28221.293100000003,
@@ -262,53 +254,51 @@
       },
       "H-E0": {
         "A-shots": [
-          61682.79117,
-          61682.79117
+          61682.79117000001,
+          61682.79117000001
         ],
         "A-fb": 32271674.74747561,
         "A-hr": 1300320.4593110976,
         "A-hr-frames": [
-          39,
-          138,
-          236,
-          411,
-          510,
-          608,
-          783,
-          882,
-          984,
-          1160
+          133,
+          231,
+          329,
+          505,
+          603,
+          701,
+          877,
+          975,
+          1073
         ],
         "B-shots": [
-          56075.2647,
-          56075.2647
+          56075.26470000001,
+          56075.26470000001
         ],
         "B-hr-count": 0
       },
       "H-HR-all": {
         "A-shots": [
-          73127.75269527,
-          73127.75269527
+          73127.75269527003,
+          73127.75269527003
         ],
         "A-fb": 36944051.00906302,
         "A-hr": 1488584.2074457326,
         "A-hr-frames": [
-          39,
-          138,
-          236,
-          411,
-          510,
-          608,
-          783,
-          882,
-          984,
-          1160
+          133,
+          231,
+          329,
+          505,
+          603,
+          701,
+          877,
+          975,
+          1073
         ],
         "B-shots": [
-          56075.2647,
-          56075.2647
+          56075.26470000001,
+          56075.26470000001
         ],
-        "B-hr-count": 35
+        "B-hr-count": 37
       }
     }
   }
