@@ -33587,6 +33587,614 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "1212-01",
+      "element": "レイ（仮称） skill1.effects[0]",
+      "key": "7d66c01879176341",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-01",
+      "element": "レイ（仮称） skill1.effects[1]",
+      "key": "7d66c01879176341",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-01",
+      "element": "レイ（仮称） skill1.effects[2]",
+      "key": "7d66c01879176341",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-02",
+      "element": "レイ（仮称） skill1.effects[0]",
+      "key": "38a8adacc6adb869",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-02",
+      "element": "レイ（仮称） skill1.effects[1]",
+      "key": "38a8adacc6adb869",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-02",
+      "element": "レイ（仮称） skill1.effects[2]",
+      "key": "38a8adacc6adb869",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-03",
+      "element": "レイ（仮称） skill1.effects[0]",
+      "key": "3c15ea11bad795f8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-03",
+      "element": "レイ（仮称） skill1.effects[1]",
+      "key": "3c15ea11bad795f8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-03",
+      "element": "レイ（仮称） skill1.effects[2]",
+      "key": "3c15ea11bad795f8",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1212-04",
+      "element": "レイ（仮称） skill1.effects[0]",
+      "key": "1f47e6c2f09db675",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-04",
+      "element": "レイ（仮称） skill1.effects[1]",
+      "key": "1f47e6c2f09db675",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-04",
+      "element": "レイ（仮称） skill1.effects[2]",
+      "key": "1f47e6c2f09db675",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1212-05",
+      "element": "レイ（仮称） skill1.effects[0]",
+      "key": "77142fb08f6f5a5f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-05",
+      "element": "レイ（仮称） skill1.effects[1]",
+      "key": "77142fb08f6f5a5f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-05",
+      "element": "レイ（仮称） skill1.effects[2]",
+      "key": "77142fb08f6f5a5f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-06",
+      "element": "レイ（仮称） skill1.effects[0]",
+      "key": "265e78bb9468596c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-06",
+      "element": "レイ（仮称） skill1.effects[1]",
+      "key": "265e78bb9468596c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-06",
+      "element": "レイ（仮称） skill1.effects[2]",
+      "key": "265e78bb9468596c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-07",
+      "element": "レイ（仮称） skill1.effects[0]",
+      "key": "a6a8717a32ae60a5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-07",
+      "element": "レイ（仮称） skill1.effects[1]",
+      "key": "a6a8717a32ae60a5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-07",
+      "element": "レイ（仮称） skill1.effects[2]",
+      "key": "a6a8717a32ae60a5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-08",
+      "element": "レイ（仮称） skill1.effects[0]",
+      "key": "34b2e998c1a0b777",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-08",
+      "element": "レイ（仮称） skill1.effects[1]",
+      "key": "34b2e998c1a0b777",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-08",
+      "element": "レイ（仮称） skill1.effects[2]",
+      "key": "34b2e998c1a0b777",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-09",
+      "element": "レイ（仮称） skill1.effects[0]",
+      "key": "ff1a538993da6ee8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-09",
+      "element": "レイ（仮称） skill1.effects[1]",
+      "key": "ff1a538993da6ee8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-09",
+      "element": "レイ（仮称） skill1.effects[2]",
+      "key": "ff1a538993da6ee8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-10",
+      "element": "レイ（仮称） skill1.effects[0]",
+      "key": "9eaefc7e71686313",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-10",
+      "element": "レイ（仮称） skill1.effects[1]",
+      "key": "9eaefc7e71686313",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1212-10",
+      "element": "レイ（仮称） skill1.effects[2]",
+      "key": "9eaefc7e71686313",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1213-01",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "7678e8d9bde24ece",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1213-01",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "7678e8d9bde24ece",
+      "effective": true,
+      "minus": 0,
+      "plus": 0.24900000000000014
+    },
+    {
+      "observation": "1213-01",
+      "element": "レイ（仮称） skill1.effects[0]",
+      "key": "7678e8d9bde24ece",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1213-01",
+      "element": "レイ（仮称） skill1.effects[1]",
+      "key": "7678e8d9bde24ece",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1213-01",
+      "element": "レイ（仮称） skill1.effects[2]",
+      "key": "7678e8d9bde24ece",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1213-02",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "7809ec156d2817b8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1213-02",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "7809ec156d2817b8",
+      "effective": true,
+      "minus": null,
+      "plus": -0.41712819052524835,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1213-02",
+      "element": "レイ（仮称） skill1.effects[0]",
+      "key": "7809ec156d2817b8",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1213-02",
+      "element": "レイ（仮称） skill1.effects[1]",
+      "key": "7809ec156d2817b8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1213-02",
+      "element": "レイ（仮称） skill1.effects[2]",
+      "key": "7809ec156d2817b8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1213-04",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "dd2151e7807287a2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1213-04",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "dd2151e7807287a2",
+      "effective": true,
+      "minus": -0.199359487590072,
+      "plus": 0
+    },
+    {
+      "observation": "1213-04",
+      "element": "レイ（仮称） skill1.effects[0]",
+      "key": "dd2151e7807287a2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1213-04",
+      "element": "レイ（仮称） skill1.effects[1]",
+      "key": "dd2151e7807287a2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1213-04",
+      "element": "レイ（仮称） skill1.effects[2]",
+      "key": "dd2151e7807287a2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1213-05",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "56571921b14db600",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1213-05",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "56571921b14db600",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1213-05",
+      "element": "レイ（仮称） skill1.effects[0]",
+      "key": "56571921b14db600",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1213-05",
+      "element": "レイ（仮称） skill1.effects[1]",
+      "key": "56571921b14db600",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1213-05",
+      "element": "レイ（仮称） skill1.effects[2]",
+      "key": "56571921b14db600",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1213-06",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "5db84799ae17560c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1213-06",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "5db84799ae17560c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1213-06",
+      "element": "レイ（仮称） skill1.effects[0]",
+      "key": "5db84799ae17560c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1213-06",
+      "element": "レイ（仮称） skill1.effects[1]",
+      "key": "5db84799ae17560c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1213-06",
+      "element": "レイ（仮称） skill1.effects[2]",
+      "key": "5db84799ae17560c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1214-01",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "66ba6eb04d4eb7b9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1214-01",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "66ba6eb04d4eb7b9",
+      "effective": true,
+      "minus": 0,
+      "plus": 0.24900000000000014
+    },
+    {
+      "observation": "1214-01",
+      "element": "レイ（仮称） skill1.effects[0]",
+      "key": "66ba6eb04d4eb7b9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1214-01",
+      "element": "レイ（仮称） skill1.effects[1]",
+      "key": "66ba6eb04d4eb7b9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1214-01",
+      "element": "レイ（仮称） skill1.effects[2]",
+      "key": "66ba6eb04d4eb7b9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1214-02",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "208e82ac19d336c7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1214-02",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "208e82ac19d336c7",
+      "effective": true,
+      "minus": null,
+      "plus": -0.41712819052524835,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1214-02",
+      "element": "レイ（仮称） skill1.effects[0]",
+      "key": "208e82ac19d336c7",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1214-02",
+      "element": "レイ（仮称） skill1.effects[1]",
+      "key": "208e82ac19d336c7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1214-02",
+      "element": "レイ（仮称） skill1.effects[2]",
+      "key": "208e82ac19d336c7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1214-04",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "ef654bb0ed90c1bf",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1214-04",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "ef654bb0ed90c1bf",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1214-04",
+      "element": "レイ（仮称） skill1.effects[0]",
+      "key": "ef654bb0ed90c1bf",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1214-04",
+      "element": "レイ（仮称） skill1.effects[1]",
+      "key": "ef654bb0ed90c1bf",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1214-04",
+      "element": "レイ（仮称） skill1.effects[2]",
+      "key": "ef654bb0ed90c1bf",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1214-05",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "202ee3de4c29fb3f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1214-05",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "202ee3de4c29fb3f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1214-05",
+      "element": "レイ（仮称） skill1.effects[0]",
+      "key": "202ee3de4c29fb3f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1214-05",
+      "element": "レイ（仮称） skill1.effects[1]",
+      "key": "202ee3de4c29fb3f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1214-05",
+      "element": "レイ（仮称） skill1.effects[2]",
+      "key": "202ee3de4c29fb3f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }

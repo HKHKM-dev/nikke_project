@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 131・効果 949（根拠あり 927）・notes 342（根拠あり 141）
+件数: キャラ 132・効果 957（根拠あり 935）・notes 343（根拠あり 142）
 
-notes の種類: 未対応 50・前提の外 99・計算に無関係 68・補足 38・間接 87
+notes の種類: 未対応 50・前提の外 100・計算に無関係 68・補足 38・間接 87
 
-スロット: supported 344・partial 37・unsupported 9・noEffect 51
+スロット: supported 347・partial 37・unsupported 9・noEffect 51
 
 ## 10 ラピ
 
@@ -1970,6 +1970,21 @@ notes の種類: 未対応 50・前提の外 99・計算に無関係 68・補足
   - notes[1] 間接（HP）: 射撃マニュアルのフルスタック状態の間の自分の与えるHP回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: C-0180（確定）
 - **burst**: supported
   - effects[0] heal・burstUse: C-0646（仮説）、C-0180（確定）
+
+## 834 レイ（仮称）
+
+- **skill1**: supported
+  - effects[0] damage・normalHit・additional: C-1297（確定）、C-1296（仮説）
+  - effects[1] stackChange・normalHit・antiATField: C-1297（確定）、C-1296（仮説）
+  - effects[2] damage・normalHit・additional: C-1300（確定）、C-1296（仮説）
+  - effects[3] timed・fullBurstStart・attack: C-1298（確定）
+  - notes[0] 前提の外: フルバーストタイムが発動した時の、殲滅態勢の追加効果の適用対象 1▲・攻撃範囲 500%▲は、敵 1 体の前提ではダメージに関係しない（追加効果は射撃場の敵 1 体に毎回当たる）: C-1265（確定）
+- **skill2**: supported
+  - effects[0] timed・fullBurstStart・spinUpSpeed: C-1299（確定）
+  - effects[1] timed・fullBurstStart・attack: C-1299（確定）
+- **burst**: supported
+  - effects[0] state・burstUse・attackState（attackDamage・attack）: C-1295（確定）
+  - effects[1] burstDamage・skill: C-1295（確定）
 
 ## 835 アスカ：WILLE
 
