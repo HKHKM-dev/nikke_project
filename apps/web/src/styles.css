@@ -1033,9 +1033,10 @@ header h1 {
   right: 2px;
   z-index: 2;
   font-size: 0.65rem;
-  /* ニケ一覧の絵は小さいので、星とコアの印も小さくする（.growth-marks の既定より後に置いて上書きする） */
+  /* ニケ一覧の絵は小さいので、星とコアの印も小さくする（.growth-marks の既定より後に置いて上書きする）。
+     コアの印の幅は、左上のバッジ（.char-visual の --badge-w）と同じ */
   --growth-star-w: 9px;
-  --growth-core-w: 19px;
+  --growth-core-w: 20px;
 }
 .char-tray-growth .growth-marks-core {
   /* 四角の絵の右上（上端に寄せてある）では、はみ出しを下へ */
@@ -1203,7 +1204,7 @@ header h1 {
 /* 限界突破・コア強化の大きさは、四角の表示（.char-tray-growth）と同じ */
 .char-tray-tall-area .growth-marks {
   --growth-star-w: 9px;
-  --growth-core-w: 19px;
+  --growth-core-w: 20px;
 }
 /* スロットのカードの縦長の絵（portraits）。元の絵（256×512）と同じ 1:2 の枠に、切らずに出す。高さで大きさを決める。
    空のスロットの枠も同じ大きさにする */
@@ -1484,8 +1485,8 @@ html:has(.modern-view-container) {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 50%;
-  height: 50%;
+  width: 40%;
+  height: 40%;
   transform: translate(-50%, -50%);
   display: flex;
   /* 縁取りの影は、ライトモードでは黒、ダークモードでは白 */
@@ -1524,8 +1525,8 @@ html:has(.modern-view-container) {
   pointer-events: none;
 }
 .char-tray-item-parties-below-growth {
-  /* .char-tray-growth（top 2px）のコアの印（高さ 19px。--growth-core-w）の下に 2px 空ける */
-  top: 23px;
+  /* .char-tray-growth（top 2px）のコアの印（高さ 20px。--growth-core-w）の下に 2px 空ける */
+  top: 24px;
 }
 .party-number-badge {
   background: var(--placing-blue);
@@ -1533,7 +1534,11 @@ html:has(.modern-view-container) {
   font-size: 0.7rem;
   font-weight: bold;
   line-height: 1.25;
-  padding: 0 7px;
+}
+/* ニケ一覧では、幅をコア強化のアイコン（--growth-core-w）にそろえ、左端をそろえる */
+.char-tray-item-parties .party-number-badge {
+  width: 20px;
+  text-align: center;
 }
 
 /* Modal ダイアログ */
