@@ -12,17 +12,16 @@
 //    設計書（plan/design-*.md）・手引き（plan/*-guide.md）・状態の目録（packages/core/src/skills/states.ts）の、両方が同じ所に行を
 //    足しただけの衝突は、main の行・ブランチの行の順に両方残して続ける（plan/design-workflow-simplification-14.md 5 節・-15.md 8 節）。
 //    生成物でないファイルが 1 つでもあれば、そこで止めてファイルを出す（人が直して git add し、もう一度 npm run pr:prep を回すと続きから）。
-// 4. ブランチで変えた records/ のファイル（生成物を除く）を prettier --write で整え、変わったら「書式」の commit を足す（手で書いた
-//    JSON の書式で確かめが落ちて回し直すのを避ける。plan/design-workflow-simplification-15.md 8 節）。
-// 5. 生成物を 1 回だけ作り直す（records:minimal。感度は変わった組だけ計算し直し、records:check も回る）。作り直しで生成物でない
-//    ファイル（開いている検証記録の予測との比べの表・整形）が変わったら、「records:check の書き換え」の commit を足す。
-// 6. CI と同じ確認（--no-ci で省く）。書式（prettier）と lint（eslint）は、ブランチで変えたファイルだけを見る（全部は GitHub の CI が
+// 4. 生成物を 1 回だけ作り直す（records:minimal。感度は変わった組だけ計算し直し、records:check も回る）。作り直しで生成物でない
+//    ファイル（開いている検証記録の予測との比べの表・手で書いた records/ の JSON の整形）が変わったら、「records:check の書き換え」の
+//    commit を足す。
+// 5. CI と同じ確認（--no-ci で省く）。書式（prettier）と lint（eslint）は、ブランチで変えたファイルだけを見る（全部は GitHub の CI が
 //    見る。設定を変えたブランチは全部。plan/design-workflow-simplification-8.md 1 節）。npm run ci のほかの段（型・テスト・ビルド）は
 //    全部。確認は作り直した生成物の上で回す（GitHub の CI も作り直してから回す）。
-// 7. 生成物を main の版に戻し、ブランチが変えていたら「生成物を main の版に戻す」の commit を足す（スカッシュマージなので、途中の
+// 6. 生成物を main の版に戻し、ブランチが変えていたら「生成物を main の版に戻す」の commit を足す（スカッシュマージなので、途中の
 //    コミットの生成物は合っていなくてよい）。作業ツリーの生成物も main の版になる。
 //    --push なら git push --force-with-lease -u origin HEAD。
-// 8. push の前に、ブランチで変えた手書きの .md が大きさの目安（50KB。検証記録は 30KB）を超えていたら知らせる（止めない。
+// 7. push の前に、ブランチで変えた手書きの .md が大きさの目安（50KB。検証記録は 30KB）を超えていたら知らせる（止めない。
 //    plan/design-workflow-simplification-10.md 1 節）。撮影と読み取りの手引き（plan/captures/guide.md）で足すか変えた項目が 600 バイトを
 //    超えていたら知らせる（止めない。plan/design-workflow-simplification-11.md 2 節）。
 import { execFileSync, spawnSync } from 'node:child_process';
@@ -49,7 +48,6 @@ import {
   handEditedLines,
   handRemovedLines,
   checkSteps,
-  MAX_CHANGED_FILES,
   collisions,
   finishRebase,
   nulPaths,
@@ -248,21 +246,6 @@ if (rebased.kind === 'conflict') {
   process.exit(1);
 }
 if (rebased.kind === 'error') fail(rebased.message);
-
-const records = splitGenerated(
-  gitPaths(['diff', '--name-only', '--diff-filter=AMR', 'origin/main...HEAD', '--', 'records']),
-  GENERATED_PATHS,
-).other;
-if (records.length > 0) {
-  // 多いときは records/ を丸ごと渡す（コマンドラインの長さの上限を避ける。main の分は CI が整えてあるので変わらない）
-  const targets = records.length > MAX_CHANGED_FILES ? ['records'] : records;
-  bin('prettier', ['--write', '--ignore-unknown', '--log-level', 'warn', ...targets]);
-  if (tryGit(['diff', '--quiet', '--', ...targets]) !== 0) {
-    git(['add', '--update', '--', ...targets]);
-    git(['commit', '--quiet', '-m', '書式']);
-    console.log('ブランチで変えた records/ のファイルを prettier で整えて commit した');
-  }
-}
 
 console.log('生成物を作り直す（npm run records:minimal）');
 npm('records:minimal');

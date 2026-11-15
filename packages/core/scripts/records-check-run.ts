@@ -8,8 +8,18 @@ import { ROOT } from './records-data.ts';
 const keep = process.argv.includes('--keep-generated');
 // 回す前から書き換わっていた生成物（手で回した records:minimal の結果など）は戻さない
 const dirtyAtStart = dirtyGenerated();
-/** 手書きのファイル（予測の表・結論の印の付け替えを records:check が書き込む） */
-const HAND = ['records/claims', 'records/backlog', 'records/verifications', 'records/recordings'];
+/**
+ * 手書きのファイル（予測の表・結論の印の付け替えを records:check が書き込む。予測・観測値は、手で書いた JSON の書式で pr:prep の確かめが
+ * 落ちないように整える。plan/design-workflow-simplification-15.md 8 節）
+ */
+const HAND = [
+  'records/claims',
+  'records/backlog',
+  'records/verifications',
+  'records/recordings',
+  'records/predictions',
+  'records/observations',
+];
 /** prettier で整える生成物 */
 const GENERATED = [
   'plan/claims.md',

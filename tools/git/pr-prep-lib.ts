@@ -46,7 +46,8 @@ export type RebaseIo = {
 
 /**
  * 両方が行を足しただけの衝突を直してよいファイル。設計書（並行の PR が「経過」の末尾に 1 行ずつ足す）・状態の目録（states.ts。
- * スキル定義の PR が状態を足す）・手引き（plan/*-guide.md。表に行を足す）。両方残して壊れたら、続く型検査とテストが見つける
+ * スキル定義の PR が状態を足す）・手引き（plan/*-guide.md。表に行を足す）。両方残して壊れたら、PR の前の pr:prep の確かめと CI が
+ * 見つける（フックの取り込みは確かめずにトピックブランチへ push する）
  * （plan/design-workflow-simplification-14.md 5 節・-15.md 8 節）
  */
 export const isAppendMergeable = (path: string): boolean =>
