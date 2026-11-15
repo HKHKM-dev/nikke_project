@@ -859,6 +859,13 @@ header h1 {
   width: 30px;
   height: 30px;
 }
+/* 操作キャラの印は、ダークでは色を反転する（地を白、縁と図柄を暗い色、外の線を白） */
+.modern-slot-focus-icon.badge-ui_controller {
+  --badge-ground: light-dark(#1a1a1a, #ffffff);
+  --badge-main: light-dark(#ffffff, #1a1a1a);
+  --badge-accent: light-dark(#ffffff, #1a1a1a);
+  --badge-line: light-dark(#000000, #ffffff);
+}
 /* 操作の印はドラッグして別のスロットへ移せる。持ち上げている間、元の印は薄くする */
 .modern-slot-focus-handle {
   display: inline-flex;
@@ -1326,6 +1333,13 @@ header h1 {
 .char-unsupported-tag > svg {
   width: 100%;
   height: 100%;
+}
+/* ライトでは色を反転する（地を白、縁と文字を暗い色、外の線を白） */
+.char-unsupported-tag > .badge-ui_information {
+  --badge-ground: light-dark(#ffffff, #1a1a1a);
+  --badge-main: light-dark(#1a1a1a, #ffffff);
+  --badge-accent: light-dark(#1a1a1a, #ffffff);
+  --badge-line: light-dark(#ffffff, #000000);
 }
 .char-visual-compact .char-unsupported-tag {
   width: 13px;
