@@ -86,6 +86,7 @@
 ## 5. 道具・記録の整備
 
 - 照合の指標 `perShotHitDamage`（`packages/core/src/records/observations/metrics/damage.ts`）は、引数のフレームの区間の 1 トリガーの値の `perShot` から 1 回の値を出し、その時刻の発が部分チャージの発かを見ない。2 パス目は部分チャージの発に、きっかけが `fullChargeShot` の分（`perShotFullCharge`）を乗せないので、部分チャージの発を読む観測値では、モデルに無い追加ダメージの値を出す。いまの比べる観測値は、どれも部分チャージの発から離れたフレームを指す（2026-11-15 に調べた）。部分チャージの発の 1 回の値を比べる観測値が要るときに、その発の値（`partialChargeTriggerDamage` を通した `perShot`）から出す（[design-full-charge-fold.md](design-full-charge-fold.md) 3.2 節）
+- 手入力の条件 `fullCharge`（`damage.ts` の `TriggerCondition`）が偽の枠は、2 パス目の 1 トリガーの値でだけフルチャージでない発になる（チャージ倍率が 1 になり、畳み込んだフルチャージの発ごとの項を外す。`computeTriggerDamage`）。1 パス目はこれを見ず、チャージ時間で撃ち、`fullChargeShot` に数えた発で畳み込まない倍率ダメージ・ゲージ（フルチャージ倍率のゲージを含む）・バフを出すので、同じきっかけの効果で扱いが割れる。画面には切り替える部品が無く、照合（`records/observations/teamInput.ts`）と CLI（`scripts/sim-run.ts`）は常に真で、偽になるのは古い保存データと直接の呼び出しだけ。欄を消して常にフルチャージにするか、1 パス目にも効かせるかを決める（[design-full-charge-fold.md](design-full-charge-fold.md) 6 節の論点 2）
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
 
