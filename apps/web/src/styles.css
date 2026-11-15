@@ -1495,12 +1495,6 @@ html:has(.modern-view-container) {
   pointer-events: none;
   z-index: 3;
 }
-/* 四角の絵では、✓ を下に寄せて、右上の P○ のバッジ・限界突破・コア強化と左上のバッジに重ならないようにする */
-.char-tray-item-check.char-tray-item-check-square {
-  top: auto;
-  bottom: 4px;
-  transform: translateX(-50%);
-}
 /* 絞り込みのクリアの印（ui_return.svg） */
 .char-tray-filter-clear-icon {
   display: block;
