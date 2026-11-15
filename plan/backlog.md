@@ -83,7 +83,6 @@
 ## 5. 道具・記録の整備
 
 - 照合の指標 `perShotHitDamage`（`packages/core/src/records/observations/metrics/damage.ts`）は、引数のフレームの区間の 1 トリガーの値の `perShot` から 1 回の値を出し、その時刻の発が部分チャージの発かを見ない。2 パス目は部分チャージの発に、きっかけが `fullChargeShot` の分（`perShotFullCharge`）を乗せないので、部分チャージの発を読む観測値では、モデルに無い追加ダメージの値を出す。いまの比べる観測値は、どれも部分チャージの発から離れたフレームを指す（2026-11-15 に調べた）。部分チャージの発の 1 回の値を比べる観測値が要るときに、その発の値（`partialChargeTriggerDamage` を通した `perShot`）から出す（[design-full-charge-fold.md](design-full-charge-fold.md) 3.2 節）
-- バーストの遅れの表（`packages/core/src/burst/landing.ts` の `withBurstDelays`）は、`effectFrames` が 0 の行の効果を、発動の印（III ならタイマーの 00.00）でなく本当の発動（印の 6f 前）で発火させる。そのため「00.00 ちょうど」は書けず、エレグ：ブーム・アンド・ショックの行は、読んだ範囲（00.00 から 1 ヒット目の 6f 後まで）の中の 1f にした（C-1315）。`effectFrames` を省略できるようにして省略を本当の発動にすれば 0 で印ちょうどを書けるが、`effectFrames: 0` を本当の発動の意味で持つ約 40 行の意味が変わる（[design-elegg-bs.md](design-elegg-bs.md) 7 節）
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
 
