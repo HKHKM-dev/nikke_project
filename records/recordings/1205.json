@@ -1,0 +1,46 @@
+{
+  "id": "1205",
+  "date": "2026-11-15",
+  "folder": "range",
+  "file": "20261115-1205_team_bready-elegg.mp4",
+  "original": "2026-11-15_11-52-01.mp4",
+  "durationSec": 208.4,
+  "frames": 12502,
+  "fps": 60,
+  "sizeMB": 252.4,
+  "sha256": "f30d39de0245",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 500,
+      "name": "エレグ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 520,
+      "name": "ブレッディ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0785 の撮影（撮り方 2）。I-DOLL・フラワー（I）・エレグ（II）・ブレッディ（III・操作）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-15T12:00+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
