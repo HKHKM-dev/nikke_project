@@ -2,7 +2,7 @@
 
 - 手順: [skills-guide.md](skills-guide.md)（1.1 選ぶ → 1.2 説明文を分解する → 1.3 設計書 → 1.4 実装する）
 - 関連: [design-skill-catalog-classes.md](design-skill-catalog-classes.md) 6.7 節（貫通特化と貫通ダメージ）・7.1 節（条件「適正射程距離内なら」は要確認）・7.2 節（フルチャージ攻撃の命中）、[design-skill-catalog-tooltips.md](design-skill-catalog-tooltips.md) の T2・T6、[design-indirect-notes.md](design-indirect-notes.md)（経路 `pierce`）、[design-stage18.md](design-stage18.md) 12 節（着地点ごとの条件）、[design-sustained-hit-rate-gauge.md](design-sustained-hit-rate-gauge.md)（状態の stat を 1 パス目が追う形）
-- 検証: V-0710
+- 検証: V-0710、V-0796
 - 作成日: 2026-11-10
 - 状態: 決定・実装（10.1 節）
 
@@ -177,3 +177,4 @@
 - 2026-11-10: 起案。説明文とコードを照らし、足す語彙は適正最小射程距離▲・「適正射程距離内なら」・貫通特化と貫通ダメージ▲と分かった（0・1 節）。撮影 A・B を V-0710 に計画した。論点 1〜7 をオーナーに諮る。
 - 2026-11-10: 撮影 A・B（録画 1021〜1024）を読んだ。貫通ダメージ▲は P1、適正最小射程距離▲ は距離ボーナスの帯を広げる（R1 か R3。R2・R0 は合わない）。近で S1・S2 のきっかけが距離ボーナスと食い違う形が出た（10 節）。見直した論点（10.1 節）をオーナーに諮る。
 - 2026-11-10: オーナーが 10.1 節の論点を推奨どおりに決めた。2 節の語彙（`minEffectiveRange`・`inEffectiveRange`・`pierce`・`pierceDamage`・状態 `spyLens`・着地点の `distance`）を足し、定義 `data/skills/315.json` を書いた。指標 `hitDamage` の `distance: "model"` を足した。結論は C-1031・C-1043・C-1033〜C-1035。貫通特化の 8 体の notes を直した（ドロシーは前提の外から間接へ）。課題（1.3 節・2-57・6 節）を起こした。
+- 2026-11-15: V-0796（録画 1232・1233）で、近で隠しレンズが切れた後にバーストを使う回を撮り、縮め方は R1 と分かった（C-1033 を確定）。近 A と近 B の距離が違ったので、`data/enemies.json` の近の `distance` を近 A 19・近 B 15.5 にした（C-1336・C-1337）。

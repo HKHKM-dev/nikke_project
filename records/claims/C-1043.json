@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
   "basis": "`1023-03`・`1024-03`（中近の 8 発目（7 スタック）は帯の外）、`1023-04`・`1024-04`（中近の 10 発目（9 スタック）が帯の中の最初の発で、S1・S2 の▲はまだ乗らない）、`1023-05`・`1024-05`（11 発目から S2 の▲も乗る。スタックは付けた発の命中には効かない）、`1023-06`・`1024-06`・`1021-05`・`1022-05`（近は隠しレンズのフルスタックでも帯の外）、`1021-04`・`1022-04`（バーストの間は近も帯の中）、`1023-07`・`1024-07`・`1021-03`・`1022-03`（遠は帯の中）。どれもモデル（距離ボーナスは distance: model で区間のモデルの値）と 1 未満。中近の 9 発目は 2 本とも的のミサイルに当たって読めない。V-0710",
-  "model": "反映（`frame/landing.ts` の distanceBonusAt・landingPartsWith・inEffectiveRangeAt、`data/enemies.json` の range-bigarms の着地点の distance（C-0045 の推定）、data/skills/315.json の skill1 の effects[1]・burst の effects[0]）",
+  "model": "反映（`frame/landing.ts` の distanceBonusAt・landingPartsWith・inEffectiveRangeAt、`data/enemies.json` の range-bigarms の着地点の distance（C-1336・C-1337・C-1338）、data/skills/315.json の skill1 の effects[1]・burst の effects[0]）",
   "replaces": [],
   "updated": "2026-11-10",
   "subject": {
