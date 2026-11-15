@@ -20,6 +20,7 @@ import {
   type Tolerance,
 } from './observations/types.ts';
 import {
+  slotOrderErrors,
   validateRecordingBuild,
   type LegacyRecording,
   type RecordingBuild,
@@ -217,12 +218,14 @@ function validateTeam(
   for (const m of team) if (!knownRids.has(m.rid)) errors.push(`${at}: rid ${m.rid} のキャラのデータが無い`);
   const withSlot = team.filter((m) => m.slot !== undefined).length;
   if (withSlot > 0 && withSlot < team.length) errors.push(`${at}: slot は編成の全員に書くか、全員に書かない`);
+  if (withSlot > 0 && withSlot === team.length)
+    errors.push(
+      ...slotOrderErrors(
+        team.map((m) => m.slot),
+        at,
+      ),
+    );
   team.forEach((m, i) => {
-    if (withSlot === team.length) {
-      const previous = i === 0 ? 0 : team[i - 1]!.slot!;
-      if (!Number.isInteger(m.slot) || m.slot! <= previous || m.slot! > 5)
-        errors.push(`${at}: 枠は 1〜5 の整数で、小さい順に並べる（${i + 1} 番目が ${m.slot}）`);
-    }
     if (m.build === undefined) return;
     if (fixedSpec === true) errors.push(`${at}: 育成（build）はスペック固定 OFF の予測にだけ書く`);
     errors.push(...validateRecordingBuild(m.build, `${at} 枠 ${slotOf(m, i)}`));
