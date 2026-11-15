@@ -7,7 +7,8 @@ import { runSimulation } from '../../sim/engine.ts';
 import { itemsOf } from '../../skills/holders.ts';
 import type { CompareSetup } from '../observations/setup.ts';
 import { buildTeamInput } from '../observations/teamInput.ts';
-import { validateScope } from '../observations/validate.ts';
+import type { Observation } from '../observations/types.ts';
+import { validateObservations, validateScope } from '../observations/validate.ts';
 import { teamBySlot, validateRecordings, type ProjectRecording, type RecordingMember } from '../recordings.ts';
 import { elementsOf } from '../relevance.ts';
 
@@ -71,5 +72,32 @@ describe('recordings with an empty slot between members', () => {
     expect(validateScope({ slot: 3, source: 'normal' }, new Set([1, 2, 4]), 'x')).toEqual([
       "x: scope.slot は録画の編成の枠（1・2・4）か 'all'（3）",
     ]);
+  });
+
+  it('rejects compare settings that point at the empty slot', () => {
+    const observation: Observation = {
+      id: '1181-90',
+      recording: '1181',
+      kind: 'hit',
+      use: 'compare',
+      value: 1,
+      description: 'x',
+      source: 'V-0001',
+      compare: {
+        model: 'sim',
+        metric: 'slotTotalDamage',
+        args: { slot: 3 },
+        tolerance: { abs: 1 },
+        setup: { ...setup, noFireSlots: [3], obstacles: [{ slot: 3, shot: 1, count: 'x' }] },
+      },
+    };
+    const errors = validateObservations([observation], new Map([['1181', gapped]]), data.enemies);
+    expect(errors).toContain('1181-90: slotTotalDamage の引数 slot の枠 3 が編成の外');
+    expect(errors).toContain('1181-90: noFireSlots の枠 3 が編成の外');
+    expect(errors).toContain('1181-90: obstacles の枠 3 が編成の外');
+    const filledOnly = { ...observation.compare!, args: { slot: 4 }, setup: { ...setup, noFireSlots: [4] } };
+    expect(
+      validateObservations([{ ...observation, compare: filledOnly }], new Map([['1181', gapped]]), data.enemies),
+    ).toEqual([]);
   });
 });

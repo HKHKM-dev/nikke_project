@@ -126,7 +126,10 @@ function compareErrors(
     if (c.args[name] === undefined) errors.push(`${at}: ${c.metric} の引数 ${name} が無い`);
   if (c.model !== 'sim') errors.push(`${at}: model は sim だけ（calc は 2026-10-27 の一本化で消した）`);
   errors.push(...conditionErrors(c.setup, enemies, at));
-  errors.push(...setupErrors(o, c.setup, byId, filledSlotsOf(recordings.get(o.recording))));
+  const filled = filledSlotsOf(recordings.get(o.recording));
+  if (c.args.slot !== undefined && filled !== undefined && !filled.has(Number(c.args.slot)))
+    errors.push(`${at}: ${c.metric} の引数 slot の枠 ${String(c.args.slot)} が編成の外`);
+  errors.push(...setupErrors(o, c.setup, byId, filled));
   const tol = 'rel' in c.tolerance ? c.tolerance.rel : c.tolerance.abs;
   if (!(tol >= 0)) errors.push(`${at}: 許容幅は 0 以上`);
   return errors;
@@ -171,10 +174,12 @@ function setupErrors(
   for (const ob of setup.obstacles ?? []) {
     if (!Number.isInteger(ob.slot) || ob.slot < 1 || !Number.isInteger(ob.shot) || ob.shot < 1)
       errors.push(`${at}: obstacles の slot・shot は 1 以上の整数`);
+    else if (filled !== undefined && !filled.has(ob.slot)) errors.push(`${at}: obstacles の枠 ${ob.slot} が編成の外`);
     ref(ob.count, 'obstacles', OBSTACLES);
   }
   for (const ph of setup.pelletHits ?? []) {
     if (!Number.isInteger(ph.slot) || ph.slot < 1) errors.push(`${at}: pelletHits の slot は 1 以上の整数`);
+    else if (filled !== undefined && !filled.has(ph.slot)) errors.push(`${at}: pelletHits の枠 ${ph.slot} が編成の外`);
     ref(ph.counts, 'pelletHits', PELLET_HITS);
   }
   errors.push(...burstDelaysErrors(setup, at));
