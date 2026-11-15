@@ -79,9 +79,7 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "metric": "hitDamageAtShot",
@@ -102,9 +100,7 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "metric": "skillHitDamage",
@@ -124,9 +120,7 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "metric": "skillHitDamage",
@@ -146,9 +140,7 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "metric": "eventFrames",
@@ -166,9 +158,7 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "metric": "hitDamageAtShot",
@@ -189,9 +179,7 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "metric": "eventCount",
@@ -210,9 +198,7 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "metric": "hitDamageAtShot",
       "args": {
@@ -232,9 +218,7 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "metric": "skillHitDamage",
       "args": {
@@ -253,9 +237,7 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "metric": "skillHitDamage",
       "args": {
@@ -274,9 +256,7 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "metric": "eventFrames",
       "args": {
@@ -293,9 +273,7 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "metric": "hitDamageAtShot",
       "args": {
@@ -315,9 +293,7 @@
       "model": "sim",
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "metric": "eventCount",
       "args": {
@@ -336,191 +312,59 @@
     "commit": "31616ec416e268e68ec46d67dbdcee8a2e913882",
     "values": {
       "H1": {
-        "A-shots": [
-          73127.75269527,
-          73127.75269527
-        ],
+        "A-shots": [73127.75269527, 73127.75269527],
         "A-fb": 36944051.00906302,
         "A-hr": 1488584.2074457326,
-        "A-hr-frames": [
-          39,
-          138,
-          236,
-          411,
-          510,
-          608,
-          783,
-          882,
-          984,
-          1160
-        ],
-        "B-shots": [
-          56075.2647,
-          56075.2647
-        ],
+        "A-hr-frames": [39, 138, 236, 411, 510, 608, 783, 882, 984, 1160],
+        "B-shots": [56075.2647, 56075.2647],
         "B-hr-count": 0,
-        "A-shots-r": [
-          73127.75269527003,
-          73127.75269527003
-        ],
+        "A-shots-r": [73127.75269527003, 73127.75269527003],
         "A-fb-r": 36944051.00906302,
         "A-hr-r": 1488584.2074457326,
-        "A-hr-frames-r": [
-          133,
-          231,
-          329,
-          505,
-          603,
-          701,
-          877,
-          975,
-          1073
-        ],
-        "B-shots-r": [
-          56075.26470000001,
-          56075.26470000001
-        ],
+        "A-hr-frames-r": [133, 231, 329, 505, 603, 701, 877, 975, 1073],
+        "B-shots-r": [56075.26470000001, 56075.26470000001],
         "B-hr-count-r": 0
       },
       "H-W1": {
-        "A-shots": [
-          36803.388331710004,
-          36803.388331710004
-        ],
+        "A-shots": [36803.388331710004, 36803.388331710004],
         "A-fb": 18593665.432367455,
         "A-hr": 749193.3333018045,
-        "A-hr-frames": [
-          39,
-          138,
-          236,
-          411,
-          510,
-          608,
-          783,
-          882,
-          984,
-          1160
-        ],
-        "B-shots": [
-          28221.293100000003,
-          28221.293100000003
-        ],
+        "A-hr-frames": [39, 138, 236, 411, 510, 608, 783, 882, 984, 1160],
+        "B-shots": [28221.293100000003, 28221.293100000003],
         "B-hr-count": 0,
-        "A-shots-r": [
-          36803.38833171001,
-          36803.38833171001
-        ],
+        "A-shots-r": [36803.38833171001, 36803.38833171001],
         "A-fb-r": 18593665.432367455,
         "A-hr-r": 749193.3333018045,
-        "A-hr-frames-r": [
-          133,
-          231,
-          329,
-          505,
-          603,
-          701,
-          877,
-          975,
-          1073
-        ],
-        "B-shots-r": [
-          28221.293100000003,
-          28221.293100000003
-        ],
+        "A-hr-frames-r": [133, 231, 329, 505, 603, 701, 877, 975, 1073],
+        "B-shots-r": [28221.293100000003, 28221.293100000003],
         "B-hr-count-r": 0
       },
       "H-E0": {
-        "A-shots": [
-          61682.79117,
-          61682.79117
-        ],
+        "A-shots": [61682.79117, 61682.79117],
         "A-fb": 32271674.74747561,
         "A-hr": 1300320.4593110976,
-        "A-hr-frames": [
-          39,
-          138,
-          236,
-          411,
-          510,
-          608,
-          783,
-          882,
-          984,
-          1160
-        ],
-        "B-shots": [
-          56075.2647,
-          56075.2647
-        ],
+        "A-hr-frames": [39, 138, 236, 411, 510, 608, 783, 882, 984, 1160],
+        "B-shots": [56075.2647, 56075.2647],
         "B-hr-count": 0,
-        "A-shots-r": [
-          61682.79117000001,
-          61682.79117000001
-        ],
+        "A-shots-r": [61682.79117000001, 61682.79117000001],
         "A-fb-r": 32271674.74747561,
         "A-hr-r": 1300320.4593110976,
-        "A-hr-frames-r": [
-          133,
-          231,
-          329,
-          505,
-          603,
-          701,
-          877,
-          975,
-          1073
-        ],
-        "B-shots-r": [
-          56075.26470000001,
-          56075.26470000001
-        ],
+        "A-hr-frames-r": [133, 231, 329, 505, 603, 701, 877, 975, 1073],
+        "B-shots-r": [56075.26470000001, 56075.26470000001],
         "B-hr-count-r": 0
       },
       "H-HR-all": {
-        "A-shots": [
-          73127.75269527,
-          73127.75269527
-        ],
+        "A-shots": [73127.75269527, 73127.75269527],
         "A-fb": 36944051.00906302,
         "A-hr": 1488584.2074457326,
-        "A-hr-frames": [
-          39,
-          138,
-          236,
-          411,
-          510,
-          608,
-          783,
-          882,
-          984,
-          1160
-        ],
-        "B-shots": [
-          56075.2647,
-          56075.2647
-        ],
+        "A-hr-frames": [39, 138, 236, 411, 510, 608, 783, 882, 984, 1160],
+        "B-shots": [56075.2647, 56075.2647],
         "B-hr-count": 35,
-        "A-shots-r": [
-          73127.75269527003,
-          73127.75269527003
-        ],
+        "A-shots-r": [73127.75269527003, 73127.75269527003],
         "A-fb-r": 36944051.00906302,
         "A-hr-r": 1488584.2074457326,
-        "A-hr-frames-r": [
-          133,
-          231,
-          329,
-          505,
-          603,
-          701,
-          877,
-          975,
-          1073
-        ],
-        "B-shots-r": [
-          56075.26470000001,
-          56075.26470000001
-        ],
+        "A-hr-frames-r": [133, 231, 329, 505, 603, 701, 877, 975, 1073],
+        "B-shots-r": [56075.26470000001, 56075.26470000001],
         "B-hr-count-r": 37
       }
     }
