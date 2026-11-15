@@ -1008,7 +1008,7 @@ header h1 {
   --badge-accent: #ff8000;
 }
 /* コレクションのバッジ（collection_plain）。レア度の色（tone）があるときは、縁もその色にして地を白にする。
-   LV が上限・宝物が最後の段階の版（variant の max）は、地を暗いままにする。tone の無い宝物の絞り込みのボタンは元の色のまま */
+   LV が上限・宝物が最後の段階の版（variant の max）は、地を元の暗い色に戻す（initial で SVG の既定の色になる）。tone の無い宝物の絞り込みのボタンは元の色のまま */
 .badge-collection_plain.badge-tone-R,
 .badge-collection_plain.badge-tone-SR,
 .badge-collection_plain.badge-tone-SSR {
@@ -1016,7 +1016,7 @@ header h1 {
   --badge-ground: #ffffff;
 }
 .badge-collection_plain.badge-variant-max {
-  --badge-ground: #1a1a1a;
+  --badge-ground: initial;
 }
 .badge-core_plain {
   --badge-accent: #e600e6;
