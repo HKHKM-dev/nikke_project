@@ -1484,8 +1484,8 @@ html:has(.modern-view-container) {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 60%;
-  height: 60%;
+  width: 50%;
+  height: 50%;
   transform: translate(-50%, -50%);
   display: flex;
   filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
@@ -1516,8 +1516,8 @@ html:has(.modern-view-container) {
   pointer-events: none;
 }
 .char-tray-item-parties-below-growth {
-  /* .char-tray-growth（top 2px・コアの印の高さ 16px）の下 */
-  top: 20px;
+  /* .char-tray-growth（top 2px）のコアの印（高さ 19px。--growth-core-w）の下に 2px 空ける */
+  top: 23px;
 }
 .party-number-badge {
   background: var(--placing-blue);
