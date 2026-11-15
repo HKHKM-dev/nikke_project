@@ -116,6 +116,44 @@ describe('records/predictions', () => {
     ]);
   });
 
+  it('places members at their slots when the team writes slot, leaving the gaps empty', () => {
+    // 2 枠目に置いた単騎は、1 枠目の単騎と同じ発数（1 枠目は空枠）。指標の枠も台帳と同じ枠の番号で指す
+    const atSlot2 = (slot: number) => ({
+      id: 'shots',
+      model: 'sim' as const,
+      metric: 'shotCount',
+      args: { slot },
+      setup: SETUP,
+    });
+    const f = file({
+      team: [{ slot: 2, rid: 307, controlled: true }],
+      hypotheses: [{ id: 'H1' }],
+      targets: [atSlot2(2)],
+    });
+    expect(validatePredictions([f], ctx)).toEqual([]);
+    expect(runPredictions(f, data).H1!.shots).toBe(187);
+    expect(() => runPredictions({ ...f, targets: [atSlot2(1)] }, data)).toThrow('枠 1 が無い');
+  });
+
+  it('rejects slot on only some members, and slots out of order or past 5', () => {
+    const errorsOf = (team: PredictionFile['team']) => validatePredictions([file({ team })], ctx);
+    expect(
+      errorsOf([
+        { rid: 307, controlled: true },
+        { slot: 3, rid: 10 },
+      ]),
+    ).toContain('予測 V-0063: slot は編成の全員に書くか、全員に書かない');
+    expect(
+      errorsOf([
+        { slot: 3, rid: 307 },
+        { slot: 1, rid: 10 },
+      ]),
+    ).toContain('予測 V-0063: 枠は 1〜5 の整数で、小さい順に並べる（2 番目が 1）');
+    expect(errorsOf([{ slot: 6, rid: 307 }])).toContain(
+      '予測 V-0063: 枠は 1〜5 の整数で、小さい順に並べる（1 番目が 6）',
+    );
+  });
+
   it('runs the model per hypothesis and target, applying the override to the setup', () => {
     const f = file();
     const values = runPredictions(f, data);

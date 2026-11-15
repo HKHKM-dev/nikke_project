@@ -160,6 +160,17 @@ export function teamBySlot(entry: Pick<RecordingEntry, 'team'>): (RecordingMembe
   return out;
 }
 
+/** 編成の枠の並びの検査（録画の台帳と予測で共通）。枠は 1〜5 の整数で小さい順。空枠は書かずに飛ばす（teamBySlot が null にする） */
+export function slotOrderErrors(slots: readonly (number | undefined)[], at: string): string[] {
+  const errors: string[] = [];
+  slots.forEach((slot, i) => {
+    const previous = i === 0 ? 0 : slots[i - 1]!;
+    if (!Number.isInteger(slot) || slot! <= previous || slot! > 5)
+      errors.push(`${at}: 枠は 1〜5 の整数で、小さい順に並べる（${i + 1} 番目が ${slot}）`);
+  });
+  return errors;
+}
+
 /** このリポジトリの録画を番号順に、その後に旧の録画を id の順に並べる */
 export function sortRecordings(entries: readonly RecordingEntry[]): RecordingEntry[] {
   const project = entries.filter((e) => !isLegacy(e)).sort((a, b) => Number(a.id) - Number(b.id));
@@ -213,11 +224,13 @@ export function validateRecordings(file: RecordingsFile, knownRids: ReadonlySet<
       errors.push(`${at}: 的の属性が語彙に無い: ${entry.target.element}`);
     }
     if (entry.team.length === 0 || entry.team.length > 5) errors.push(`${at}: 編成は 1〜5 体`);
-    entry.team.forEach((member, i) => {
-      // 空枠は書かずに飛ばす（teamBySlot が null にする）
-      const previous = i === 0 ? 0 : entry.team[i - 1]!.slot;
-      if (!Number.isInteger(member.slot) || member.slot <= previous || member.slot > 5)
-        errors.push(`${at}: 枠は 1〜5 の整数で、小さい順に並べる（${i + 1} 番目が ${member.slot}）`);
+    errors.push(
+      ...slotOrderErrors(
+        entry.team.map((m) => m.slot),
+        at,
+      ),
+    );
+    entry.team.forEach((member) => {
       if (!knownRids.has(member.rid)) errors.push(`${at}: rid ${member.rid} のキャラのデータが無い`);
       for (const key of ['fires', 'bursts'] as const)
         if (member[key] !== undefined && typeof member[key] !== 'boolean')
