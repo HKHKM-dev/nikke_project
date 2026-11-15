@@ -218,14 +218,14 @@ function TrayFilters({
   return (
     <div className="char-tray-filter-group">
       <BadgeFilters filters={filters} onChange={onFiltersChange} />
-      <div className="char-tray-badge-filter" role="group" aria-label="宝物で絞り込み">
+      <div className="char-tray-badge-filter" role="group" aria-label="宝もので絞り込み">
         <button
           type="button"
           className="char-tray-badge-button"
           aria-pressed={treasureOnly}
           onClick={() => onTreasureOnlyChange((t) => !t)}
         >
-          <BadgeIcon className="char-badge" name={TREASURE_FILTER_BADGE} label="宝物のあるニケ" />
+          <BadgeIcon className="char-badge" name={TREASURE_FILTER_BADGE} label="宝ものがあるニケ" />
         </button>
       </div>
       <div className="char-tray-badge-filter" role="group" aria-label="お気に入りで絞り込み">

@@ -127,6 +127,7 @@ export function ModernView({
   );
 
   const editingCalcSlot = editingSlotIndex !== null ? calc.slots[editingSlotIndex] : null;
+  const editingResourceId = editingSlotIndex !== null ? team.slots[editingSlotIndex]!.resourceId : null;
 
   return (
     // 立ち絵（CharacterVisual）は、ここで渡すお気に入りのバッジを上端に出す
@@ -225,7 +226,7 @@ export function ModernView({
               usesHpRatio={editingCalcSlot.usesHpRatio}
               favoriteMarks={editingResourceId === null ? [] : favoriteMarksOf(favorites, editingResourceId)}
               onToggleFavorite={(mark) => editingResourceId !== null && toggleFavorite(editingResourceId, mark)}
-              rosterGrowth={rosterGrowthOf(roster, team.slots[editingSlotIndex]!.resourceId)}
+              rosterGrowth={rosterGrowthOf(roster, editingResourceId)}
               dispatch={dispatch}
               onClose={() => setEditingSlotIndex(null)}
             />

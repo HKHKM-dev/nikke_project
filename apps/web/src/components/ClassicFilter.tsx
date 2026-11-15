@@ -51,15 +51,15 @@ export function ClassicFilter({
             ))}
           </div>
         ))}
-        <div className="classic-filter-row" role="group" aria-label="宝物で絞り込み">
-          <span className="classic-filter-row-name">宝物</span>
+        <div className="classic-filter-row" role="group" aria-label="宝もので絞り込み">
+          <span className="classic-filter-row-name">宝もの</span>
           <button
             type="button"
             className="classic-filter-button"
             aria-pressed={treasureOnly}
             onClick={() => setTreasureOnly((t) => !t)}
           >
-            宝物のあるニケ
+            宝もの
           </button>
         </div>
         <button
