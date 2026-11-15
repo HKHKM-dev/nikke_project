@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 127・効果 909（根拠あり 887）・notes 334（根拠あり 137）
+件数: キャラ 128・効果 918（根拠あり 896）・notes 337（根拠あり 138）
 
-notes の種類: 未対応 50・前提の外 96・計算に無関係 66・補足 35・間接 87
+notes の種類: 未対応 50・前提の外 97・計算に無関係 67・補足 36・間接 87
 
-スロット: supported 332・partial 37・unsupported 9・noEffect 51
+スロット: supported 335・partial 37・unsupported 9・noEffect 51
 
 ## 10 ラピ
 
@@ -1700,6 +1700,24 @@ notes の種類: 未対応 50・前提の外 96・計算に無関係 66・補足
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0654（確定）、C-0655（確定）
   - effects[1] damage・burstUse・additional: C-0656（確定）、C-0657（確定）
+
+## 513 リトルマーメイド
+
+- **skill1**: supported
+  - effects[0] cooldownReduction・fullBurstEnd: C-1274（確定）
+  - effects[1] timed・fullBurstStart・attackDamage: C-1274（確定）
+  - effects[2] burstGauge・teamAmmo: C-1271（確定）
+  - notes[0] 前提の外: フォーカス状態（操作キャラ）の時の、味方全体の射撃集中は、敵 1 体の前提では与ダメージを変えない（狙う敵をそろえる効果。敵の構造に関わる）: 根拠なし
+- **skill2**: supported
+  - effects[0] state・battleStart・bubble（damageTaken）: C-1270（確定）
+  - effects[1] damage・1 秒ごと・skill: C-1273（確定）
+  - effects[2] damage・teamAmmo・skill: C-1272（確定）
+  - notes[0] 補足: バブルバースト（通常攻撃が 50 回命中した時、対象がバブル状態なら、受けるダメージ▲・持続とバブル解除）は、バブルと同じ値の受けるダメージ▲に替わるだけなので、敵の受けるダメージ▲の窓は effects[0] のまま変わらない: C-1270（確定）
+  - notes[1] 計算に無関係: バブルバーストの気絶（3 秒）は、それ自体は与ダメージを変えない: 根拠なし
+- **burst**: supported
+  - effects[0] timed・burstUse・attackDamage: C-1275（確定）
+  - effects[1] ammoRefill・burstUse: C-1275（確定）
+  - effects[2] timed・burstUse・attack: C-1275（確定）
 
 ## 514 グレイブ
 
