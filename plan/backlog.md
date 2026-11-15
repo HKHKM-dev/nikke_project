@@ -86,7 +86,7 @@
 
 ## 5. 道具・記録の整備
 
-- 照合ランナー（`packages/core/src/records/observations/teamInput.ts`）は録画の台帳の `team` の並びの順で枠を作るので、空枠を挟む録画では枠の添字が台帳の `slot` とずれ、枠の並びで決まる語彙（両隣 `targetAdjacent`・後列 `row`）が違う枠に効く。空枠を挟む録画は `npm run records:check`（録画の台帳の検査）が止める。空枠を挟む録画が要るときに、台帳の `slot` で枠を置き、間を空枠にする（[design-rouge.md](design-rouge.md) 2.1 節）
+（なし）
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
 

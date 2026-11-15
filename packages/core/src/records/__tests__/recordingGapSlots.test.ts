@@ -16,13 +16,22 @@ const file = loadRecordingsFile();
 const data = loadRecordsData(file);
 const base = recordingMap(file).get('1181') as ProjectRecording;
 const byRid = (rid: number) => base.team.find((m) => m.rid === rid)!;
-const placed = (rid: number, slot: number, controlled = false): RecordingMember => ({ ...byRid(rid), slot, controlled });
+const placed = (rid: number, slot: number, controlled = false): RecordingMember => ({
+  ...byRid(rid),
+  slot,
+  controlled,
+});
 const withTeam = (team: RecordingMember[]): ProjectRecording => ({ ...base, team });
 // フラワー 1・ソルジャー 2（操作）・空枠 3・ルージュ 4（後列）
 const gapped = withTeam([placed(304, 1), placed(301, 2, true), placed(272, 4)]);
 // 同じ 3 体を詰めると、ルージュは 3 枠目（前列）
 const packed = withTeam([placed(304, 1), placed(301, 2, true), placed(272, 3)]);
-const setup: CompareSetup = { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], burst: false, noFireSlots: [4] };
+const setup: CompareSetup = {
+  enemy: 'range-bigarms-fire',
+  events: ['range-3min-jump'],
+  burst: false,
+  noFireSlots: [4],
+};
 const ctx = { recordings: new Map([[base.id, base]]), ...data, claims: [] };
 const swordCoinPlace = 'data/skills/272.json の skill2 の effects[0]';
 

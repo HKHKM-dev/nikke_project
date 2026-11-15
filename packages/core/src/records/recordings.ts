@@ -152,7 +152,10 @@ export function isLegacy(entry: RecordingEntry): entry is LegacyRecording {
  * この添字で引く（plan/design-rouge.md 2.1 節）
  */
 export function teamBySlot(entry: Pick<RecordingEntry, 'team'>): (RecordingMember | null)[] {
-  const out: (RecordingMember | null)[] = Array.from({ length: Math.max(0, ...entry.team.map((m) => m.slot)) }, () => null);
+  const out: (RecordingMember | null)[] = Array.from(
+    { length: Math.max(0, ...entry.team.map((m) => m.slot)) },
+    () => null,
+  );
   for (const member of entry.team) out[member.slot - 1] = member;
   return out;
 }
