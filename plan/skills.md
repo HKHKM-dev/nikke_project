@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 133・効果 959（根拠あり 937）・notes 347（根拠あり 143）
+件数: キャラ 134・効果 968（根拠あり 946）・notes 350（根拠あり 144）
 
-notes の種類: 未対応 50・前提の外 103・計算に無関係 68・補足 38・間接 88
+notes の種類: 未対応 51・前提の外 104・計算に無関係 69・補足 38・間接 88
 
-スロット: supported 349・partial 37・unsupported 9・noEffect 52
+スロット: supported 351・partial 38・unsupported 9・noEffect 52
 
 ## 10 ラピ
 
@@ -1553,6 +1553,24 @@ notes の種類: 未対応 50・前提の外 103・計算に無関係 68・補�
   - effects[0] heal・burstUse: C-1235（仮説）
   - effects[1] timed・burstUse・trueDamage: C-1235（仮説）
   - effects[2] timed・burstUse・attack: C-1233（確定）
+
+## 412 トリナ
+
+- **skill1**: partial
+  - effects[0] heal・fullBurstEnd: C-1310（確定）
+  - notes[0] 未対応: フルチャージ攻撃時の、残りの HP の割合が最も低い味方 2 機が HP 30% 以下・50% 以下の時の回復は未対応（対象の HP の割合の閾値の条件の語彙が無い）。被弾が無くても、最大HP のみ▲ で割合が下がった味方に起きうる（S2 とバーストの最大HP のみ▲ を受けた電撃 AR のアタッカーは 50% を下回りうる）。回復で、回復を受けた時を読む味方がいなければダメージに効かない: C-1311（仮説）
+- **skill2**: supported
+  - effects[0] timed・battleStart・maxHpOnly: C-1309（仮説）
+  - effects[1] timed・burstUse・attackDamage: C-1305（確定）
+  - effects[2] timed・burstUse・reloadSpeed: C-1305（確定）
+  - notes[0] 計算に無関係: 戦闘開始時の、部隊の一番左側にいる電撃コードの AR の味方 1 機への無敵（2 秒）はダメージに関係しない: 根拠なし
+- **burst**: supported
+  - effects[0] timed・burstUse・maxHpOnly: C-1309（仮説）
+  - effects[1] timed・burstUse・attackDamage: C-1306（確定）
+  - effects[2] timed・burstUse・allEnemiesBurstDamage: C-1306（確定）
+  - effects[3] timed・burstUse・hitRate: C-1308（仮説）
+  - effects[4] timed・burstUse・maxAmmo: C-1307（確定）
+  - notes[0] 前提の外: ニケを除いた敵が 2 機以上の時の、根張りから根腐れへの変化（『敵全体に』で終わるバーストスキルダメージ▲が値 10 に下がる）は、敵 1 体では起きない: 根拠なし
 
 ## 430 ノイズ
 

@@ -34195,6 +34195,606 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "1221-09",
+      "element": "トリナ burst.effects[0]",
+      "key": "2c91663b015e8204",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-09",
+      "element": "トリナ burst.effects[3]",
+      "key": "2c91663b015e8204",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-09",
+      "element": "トリナ skill2.effects[0]",
+      "key": "2c91663b015e8204",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-10",
+      "element": "トリナ burst.effects[0]",
+      "key": "39ae4baff2bb08d0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-10",
+      "element": "トリナ burst.effects[3]",
+      "key": "39ae4baff2bb08d0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-10",
+      "element": "トリナ skill2.effects[0]",
+      "key": "39ae4baff2bb08d0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-11",
+      "element": "トリナ burst.effects[0]",
+      "key": "f6873f18eae9ee8b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-11",
+      "element": "トリナ burst.effects[3]",
+      "key": "f6873f18eae9ee8b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-11",
+      "element": "トリナ skill2.effects[0]",
+      "key": "f6873f18eae9ee8b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-12",
+      "element": "トリナ burst.effects[0]",
+      "key": "99cc616b68ccb85e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-12",
+      "element": "トリナ burst.effects[3]",
+      "key": "99cc616b68ccb85e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-12",
+      "element": "トリナ skill2.effects[0]",
+      "key": "99cc616b68ccb85e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-13",
+      "element": "トリナ burst.effects[0]",
+      "key": "5a790cc66c333c41",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-13",
+      "element": "トリナ burst.effects[3]",
+      "key": "5a790cc66c333c41",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-13",
+      "element": "トリナ skill2.effects[0]",
+      "key": "5a790cc66c333c41",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-14",
+      "element": "トリナ burst.effects[0]",
+      "key": "6b4ab4e47aed2923",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-14",
+      "element": "トリナ burst.effects[3]",
+      "key": "6b4ab4e47aed2923",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-14",
+      "element": "トリナ skill2.effects[0]",
+      "key": "6b4ab4e47aed2923",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-15",
+      "element": "トリナ burst.effects[0]",
+      "key": "29b2b59fb01b420e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-15",
+      "element": "トリナ burst.effects[3]",
+      "key": "29b2b59fb01b420e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-15",
+      "element": "トリナ skill2.effects[0]",
+      "key": "29b2b59fb01b420e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-16",
+      "element": "トリナ burst.effects[0]",
+      "key": "ced51345f5829276",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-16",
+      "element": "トリナ burst.effects[3]",
+      "key": "ced51345f5829276",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-16",
+      "element": "トリナ skill2.effects[0]",
+      "key": "ced51345f5829276",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-17",
+      "element": "トリナ burst.effects[0]",
+      "key": "5626b3d44d2dfabf",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-17",
+      "element": "トリナ burst.effects[3]",
+      "key": "5626b3d44d2dfabf",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-17",
+      "element": "トリナ skill2.effects[0]",
+      "key": "5626b3d44d2dfabf",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-18",
+      "element": "トリナ burst.effects[0]",
+      "key": "bd8cae1a69533dcb",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-18",
+      "element": "トリナ burst.effects[3]",
+      "key": "bd8cae1a69533dcb",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-18",
+      "element": "トリナ skill2.effects[0]",
+      "key": "bd8cae1a69533dcb",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-19",
+      "element": "トリナ burst.effects[0]",
+      "key": "ce492bad6ed9740a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-19",
+      "element": "トリナ burst.effects[3]",
+      "key": "ce492bad6ed9740a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-19",
+      "element": "トリナ skill2.effects[0]",
+      "key": "ce492bad6ed9740a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-20",
+      "element": "トリナ burst.effects[0]",
+      "key": "33131e90e31df07f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-20",
+      "element": "トリナ burst.effects[3]",
+      "key": "33131e90e31df07f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-20",
+      "element": "トリナ skill2.effects[0]",
+      "key": "33131e90e31df07f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-26",
+      "element": "トリナ burst.effects[0]",
+      "key": "f8b18d647b955f8f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-26",
+      "element": "トリナ burst.effects[3]",
+      "key": "f8b18d647b955f8f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-26",
+      "element": "トリナ skill2.effects[0]",
+      "key": "f8b18d647b955f8f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-27",
+      "element": "トリナ burst.effects[0]",
+      "key": "f9cfe59b1f5e6afa",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-27",
+      "element": "トリナ burst.effects[3]",
+      "key": "f9cfe59b1f5e6afa",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1221-27",
+      "element": "トリナ skill2.effects[0]",
+      "key": "f9cfe59b1f5e6afa",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-09",
+      "element": "トリナ burst.effects[0]",
+      "key": "dc8ca8d12e62cb6a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-09",
+      "element": "トリナ burst.effects[3]",
+      "key": "dc8ca8d12e62cb6a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-09",
+      "element": "トリナ skill2.effects[0]",
+      "key": "dc8ca8d12e62cb6a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-10",
+      "element": "トリナ burst.effects[0]",
+      "key": "d6ee365d3636317e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-10",
+      "element": "トリナ burst.effects[3]",
+      "key": "d6ee365d3636317e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-10",
+      "element": "トリナ skill2.effects[0]",
+      "key": "d6ee365d3636317e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-11",
+      "element": "トリナ burst.effects[0]",
+      "key": "4e88a7728d64d865",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-11",
+      "element": "トリナ burst.effects[3]",
+      "key": "4e88a7728d64d865",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-11",
+      "element": "トリナ skill2.effects[0]",
+      "key": "4e88a7728d64d865",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-12",
+      "element": "トリナ burst.effects[0]",
+      "key": "a836515584a91e92",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-12",
+      "element": "トリナ burst.effects[3]",
+      "key": "a836515584a91e92",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-12",
+      "element": "トリナ skill2.effects[0]",
+      "key": "a836515584a91e92",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-13",
+      "element": "トリナ burst.effects[0]",
+      "key": "e59148f0145c425b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-13",
+      "element": "トリナ burst.effects[3]",
+      "key": "e59148f0145c425b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-13",
+      "element": "トリナ skill2.effects[0]",
+      "key": "e59148f0145c425b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-14",
+      "element": "トリナ burst.effects[0]",
+      "key": "ca480d8b75265858",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-14",
+      "element": "トリナ burst.effects[3]",
+      "key": "ca480d8b75265858",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-14",
+      "element": "トリナ skill2.effects[0]",
+      "key": "ca480d8b75265858",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-15",
+      "element": "トリナ burst.effects[0]",
+      "key": "1cf9e63a880dcff1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-15",
+      "element": "トリナ burst.effects[3]",
+      "key": "1cf9e63a880dcff1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-15",
+      "element": "トリナ skill2.effects[0]",
+      "key": "1cf9e63a880dcff1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-16",
+      "element": "トリナ burst.effects[0]",
+      "key": "6a20d3c87b72e14d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-16",
+      "element": "トリナ burst.effects[3]",
+      "key": "6a20d3c87b72e14d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-16",
+      "element": "トリナ skill2.effects[0]",
+      "key": "6a20d3c87b72e14d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-17",
+      "element": "トリナ burst.effects[0]",
+      "key": "8eb49f3210daa9b1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-17",
+      "element": "トリナ burst.effects[3]",
+      "key": "8eb49f3210daa9b1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-17",
+      "element": "トリナ skill2.effects[0]",
+      "key": "8eb49f3210daa9b1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-23",
+      "element": "トリナ burst.effects[0]",
+      "key": "203aee56c8883f31",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-23",
+      "element": "トリナ burst.effects[3]",
+      "key": "203aee56c8883f31",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-23",
+      "element": "トリナ skill2.effects[0]",
+      "key": "203aee56c8883f31",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-24",
+      "element": "トリナ burst.effects[0]",
+      "key": "b121023d9603abdc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-24",
+      "element": "トリナ burst.effects[3]",
+      "key": "b121023d9603abdc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1222-24",
+      "element": "トリナ skill2.effects[0]",
+      "key": "b121023d9603abdc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }
