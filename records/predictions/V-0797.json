@@ -1,0 +1,101 @@
+{
+  "verification": "V-0797",
+  "note": "撮影 A（ミサト・I-DOLL・フラワー・エード）の窓ごとの回復の対象。回復量（撮影 A・B の HP のバーの伸び）の仮説は override で書けないので、検証記録の「予測」に手で書いた",
+  "team": [
+    {
+      "rid": 833,
+      "controlled": true
+    },
+    {
+      "rid": 304
+    },
+    {
+      "rid": 310
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（C-1316。量で追う回復は対象の現在の HP を戻し、次の回復は戻った割合で選ぶ）",
+      "override": {}
+    },
+    {
+      "id": "H0",
+      "note": "回復で HP の割合が戻らない（ミサトの S1 の回復から scaling casterFinalMaxHp を外す）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 833,
+            "skill": "skill1",
+            "replace": 1,
+            "effect": {
+              "kind": "heal",
+              "trigger": {
+                "count": "normalShot",
+                "everyRef": 5
+              },
+              "target": "lowestHpRatio",
+              "targetCountRef": 6,
+              "ref": 7,
+              "delayFrames": 6
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-first",
+      "model": "sim",
+      "metric": "windowNthHealTargets",
+      "args": {
+        "slot": 1,
+        "windowSlot": 3,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [1]
+      },
+      "note": "エードの最大HP のみ▲ の窓（エードの HP の割合が 1 未満の間）ごとの、窓の中の 1 回目のミサトの S1 の回復の対象の枠"
+    },
+    {
+      "id": "A-second",
+      "model": "sim",
+      "metric": "windowNthHealTargets",
+      "args": {
+        "slot": 1,
+        "windowSlot": 3,
+        "n": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [1]
+      },
+      "note": "同じ窓の 2 回目の回復の対象の枠（回復が 2 回来た窓だけ）",
+      "tolerance": {
+        "abs": 0.5
+      }
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-15",
+    "commit": "d43ddf1295029142712bf66948e0e65acedd4985",
+    "values": {
+      "H1": {
+        "A-first": [1, 1, 1, 1, 1, 1, 1, 1, 1],
+        "A-second": [2, 2, 2, 2, 2, 2, 2]
+      },
+      "H0": {
+        "A-first": [1, 1, 1, 1, 1, 1, 1, 1, 1],
+        "A-second": [1, 1, 1, 1, 1, 1, 1]
+      }
+    }
+  }
+}
