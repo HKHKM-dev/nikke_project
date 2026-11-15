@@ -18,6 +18,7 @@ import {
   type HeldTrack,
   type HolderListsOptions,
   type RemoveDebuffGuessRecord,
+  type StateEndGuessRecord,
 } from './types.ts';
 import { type TrackReads, insertSorted, trackReadsOf } from './items.ts';
 
@@ -60,6 +61,7 @@ export function createRecords({ options, slots }: HolderBase) {
   const conditionSkips: ConditionSkip[] = [];
   const rankings: RankingRecord[] = [];
   const removeDebuffGuesses: RemoveDebuffGuessRecord[] = [];
+  const stateEndGuesses: StateEndGuessRecord[] = [];
   const heals: HealRecord[] = [];
   const amplifiers: AmplifierSource[] = [];
   /**
@@ -135,6 +137,7 @@ export function createRecords({ options, slots }: HolderBase) {
     passive,
     rankings,
     removeDebuffGuesses,
+    stateEndGuesses,
     tracks,
   };
 }

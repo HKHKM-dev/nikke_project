@@ -28,6 +28,7 @@ import {
 } from '../frame/landing.ts';
 import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect, type ItemEffect } from '../skills/resolve.ts';
 import { valuePiecesOf, type RemoveDebuffGuessRecord } from '../skills/holders.ts';
+import { namedStateName, type NamedStateId } from '../skills/states.ts';
 import { isStateStat, type InstantKind } from '../skills/types.ts';
 import { combineBurstHitParts, slotBurstHit, withSkillHitValue, type BurstHitResult } from '../skills/burstDamage.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
@@ -401,6 +402,7 @@ function createRunner(c: RunnerContext, slot: SimInput['slots'][number], index: 
         ...slotConditionNotes(landing, slot, index, enemy, autoCondition),
         ...autoAttackCoreRowNotes(slot, enemy),
         ...removeDebuffNotes(history, index),
+        ...stateEndNotes(history, index),
       ],
       passiveBuffs: passive.buffs,
       passiveEffects: passive.passiveEffects,
@@ -579,6 +581,27 @@ function removeDebuffNotes(history: TeamPlan['history'], slotIndex: number): Mod
               ja: `デバフ解除（${nameJa}）で、デバフ（状態と▼）が ${limit} 個より多く付いた味方がいた時が ${times} 回あった。選び方を確かめていないので、付いたのが早い順に ${limit} 個を外した`,
               en: `Debuff removal (${nameEn}) found an ally with more than ${limit} debuffs ${times} time(s). The rule is unverified; the model removes the ${limit} earliest`,
             },
+    };
+  });
+}
+
+/**
+ * この枠の「〈状態〉が終了した時」で、状態の終わりのフレームに同じ状態がそのフレームの登録で付き、終わりと見るかが読み手の順で
+ * 分かれた注記（状態ごとに 1 つ。plan/design-state-ended.md 4 節）。今の使い手では起きない
+ */
+function stateEndNotes(history: TeamPlan['history'], slotIndex: number): ModelNote[] {
+  const times = new Map<NamedStateId, number>();
+  for (const record of history.stateEndGuesses)
+    if (record.holder === slotIndex) times.set(record.state, (times.get(record.state) ?? 0) + 1);
+  return [...times].map(([state, n]) => {
+    const { ja, en } = namedStateName(state);
+    return {
+      level: 'approx',
+      code: 'state-end-regrant',
+      message: {
+        ja: `${ja}の終わりのフレームに同じ状態が付け直された時が ${n} 回あった。終わりと見るかを確かめていないので、終わりと見るかが効果を読む順で分かれた`,
+        en: `${en} was applied again on the frame it ended ${n} time(s). Whether that counts as an end is unverified, so effects disagreed depending on when they were read`,
+      },
     };
   });
 }

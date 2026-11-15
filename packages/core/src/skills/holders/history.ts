@@ -3,10 +3,11 @@
 import type { BurstSchedule } from '../../burst/schedule.ts';
 import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, fixedAttackBaseOf, type BuffTotals } from '../buffs.ts';
 import { isStateContent, type AppliedEffect, isTimedItem, type ItemEffect } from '../resolve.ts';
-import type { NamedStateId } from '../states.ts';
+import { stateMatches, type NamedStateId } from '../states.ts';
 import { isEffectTarget } from '../targets.ts';
 import { SKILL_SLOTS, isMaxHpStat, isStateStat, type BuffStat } from '../types.ts';
 import type { SkillSlot } from '../../types.ts';
+import { unionRanges } from '../../frame/events.ts';
 import {
   buildSegments,
   unionItems,
@@ -33,6 +34,7 @@ import type { HolderBase, Records } from './records.ts';
 import type { Sources } from './sources.ts';
 import type { Read } from './read.ts';
 import type { Views } from './views.ts';
+import type { Conditions } from './conditions.ts';
 
 /** ループの後に履歴を閉じる関数（件の一覧の history） */
 export function createHistory({
@@ -49,11 +51,14 @@ export function createHistory({
   rankings,
   readItems,
   removeDebuffGuesses,
+  settleEnded,
   slots,
+  stateEndGuesses,
   tracks,
-}: HolderBase & Records & Sources & Read & Views): HolderLists['history'] {
+}: HolderBase & Records & Sources & Read & Views & Pick<Conditions, 'settleEnded'>): HolderLists['history'] {
   return () => {
     for (const track of tracks) readItems(track);
+    settleEnded();
     const amplified = amplify(tracks, amplifiers, slots, frames);
     return {
       frames,
@@ -68,6 +73,7 @@ export function createHistory({
         .map(({ x }) => x),
       rankings,
       removeDebuffGuesses,
+      stateEndGuesses: [...stateEndGuesses].sort((a, b) => a.frame - b.frame),
       heals,
       fullBurstWindows: [...options.fullBurstWindows()],
       logs,
@@ -154,6 +160,30 @@ export function itemsOf(history: Pick<HolderHistory, 'tracks'>, filter: HeldItem
     }
   }
   return out.sort((a, b) => a.start - b.start);
+}
+
+/**
+ * 件の出どころが、その状態（家族の根なら家族のどれか。plan/design-skill-stage5.md 1.2 節）の付与か。「〈状態〉が終了した時」の判定
+ * （1 パス目の endedAt と stateEndFrames）が読む件を選ぶ
+ */
+export function isStateOrigin(origin: HeldOrigin, state: NamedStateId): boolean {
+  return origin.kind === 'state' && stateMatches(state, origin.state);
+}
+
+/**
+ * 「〈状態〉が終了した時」のフレーム（昇順）。items は 1 つの持ち主の件（出そろったもの。itemsOf の順 = 始まりの順）で、その状態
+ * （家族も）の件をつないだ塊の終わりのうち、戦闘の終わり（frames）より前のもの。damage の { ended }（2 パス目）と指標の
+ * event: stateEnd が読む。1 パス目の endedAt と、そのフレームの登録が済んだ後の件の上で同じ答えになる（plan/design-state-ended.md 4 節）
+ */
+export function stateEndFrames(
+  items: readonly Pick<HeldItemView, 'start' | 'end' | 'origin'>[],
+  state: NamedStateId,
+  frames: number,
+): number[] {
+  const own = items.filter((i) => isStateOrigin(i.origin, state));
+  return unionRanges(own)
+    .map((r) => r.end)
+    .filter((f) => f < frames);
 }
 
 /** 持ち主 holder にフレーム frame に効いている件（時刻の順） */

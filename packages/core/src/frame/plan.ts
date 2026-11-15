@@ -56,9 +56,11 @@ import {
   buffTimelineOf,
   counterEffectiveFrom,
   counterFullFrames,
+  isStateOrigin,
   itemsOf,
   selfHpRatioOf,
   stacksHold,
+  stateEndFrames,
   valuePiecesOf,
   type CounterRecord,
   type HeldItemView,
@@ -105,7 +107,7 @@ import {
   type TeamInput,
   type TeamSlotInput,
 } from '../team.ts';
-import { unionRanges, untargetableRanges } from './events.ts';
+import { untargetableRanges } from './events.ts';
 import type { FrameRange } from '../skills/timeline.ts';
 import { dotStacksAt, dotTicks, groupDotsByState } from './dot.ts';
 export {
@@ -538,9 +540,7 @@ function slotReadersOf(ctx: SkillHitsContext, slot: TeamSlotInput | null, slotIn
   const ownStateItems = itemsOf(history, { holder: slotIndex, kind: 'state' });
   const selfStateHolds = (self: SelfStateCondition, frame: number): boolean => {
     const isStatic = [...ownStatics].some((s) => stateMatches(self.state, s));
-    const active = ownStateItems.filter(
-      (i) => i.origin.kind === 'state' && stateMatches(self.state, i.origin.state) && i.start < frame && frame < i.end,
-    );
+    const active = ownStateItems.filter((i) => isStateOrigin(i.origin, self.state) && i.start < frame && frame < i.end);
     if (!isStacksCondition(self)) return (isStatic || active.length > 0) === self.present;
     return stacksHold(
       self,
@@ -555,7 +555,7 @@ function slotReadersOf(ctx: SkillHitsContext, slot: TeamSlotInput | null, slotIn
   const selfStackCount = (state: NamedStateId, frame: number): number => {
     let level = [...ownStatics].some((s) => stateMatches(state, s)) ? 1 : 0;
     for (const i of ownStateItems) {
-      if (i.origin.kind !== 'state' || !stateMatches(state, i.origin.state)) continue;
+      if (!isStateOrigin(i.origin, state)) continue;
       if (i.start < frame && frame < i.end) level = Math.max(level, i.stack ?? 1);
     }
     return level;
@@ -596,19 +596,6 @@ function slotReadersOf(ctx: SkillHitsContext, slot: TeamSlotInput | null, slotIn
     selfStackCount,
     sequential,
   };
-}
-
-/**
- * 「〈状態〉が終了した時」の発火のフレーム。持ち主のその状態（家族も）の件が外れた最初のフレームで、そのフレームにほかの件が
- * 付いていないもの（1 パス目の skills/holders/conditions.ts の endedAt と同じ見え方。plan/design-asuka-wille.md 2.1 節）
- */
-function endedFramesOf(items: readonly HeldItemView[], state: NamedStateId, frames: number): number[] {
-  const own = items
-    .filter((i) => i.origin.kind === 'state' && stateMatches(state, i.origin.state))
-    .sort((x, y) => x.start - y.start);
-  return unionRanges(own)
-    .map((r) => r.end)
-    .filter((f) => f < frames);
 }
 
 /** 枠 slotIndex のヒットを ctx.hits に積む関数を作る。同じ発動の順のバーストの検査もここで行う */
@@ -780,7 +767,7 @@ function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
           ? appliedFrames(history, t.applied, slotIndex)
           : // 「〈状態〉が終了した時」は自分のその状態の件が外れた最初のフレーム（plan/design-asuka-wille.md 2.1 節）
             isEndedTrigger(t)
-            ? endedFramesOf(ownStateItems, t.ended, frames)
+            ? stateEndFrames(ownStateItems, t.ended, frames)
             : isResolvedTimer(t)
               ? // クールタイムの印のある周期は 1 パス目の記録（plan/design-arcana-magician.md 2.1 節）
                 t.cooldown === true

@@ -53,8 +53,10 @@ export { startOfFire, shiftEdges, stacksHold, whileItems } from './holders/items
 export {
   type HeldItemView,
   type HeldItemFilter,
+  isStateOrigin,
   itemsOf,
   activeItemsAt,
+  stateEndFrames,
   type ValuePiece,
   valuePiecesOf,
   buffTimelineOf,
