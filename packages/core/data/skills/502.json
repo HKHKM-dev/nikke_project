@@ -150,8 +150,8 @@
           "ref": 1,
           "damageType": "skill",
           "hitsRef": 2,
-          "delayFrames": 30,
-          "hitIntervalFrames": 6,
+          "delayFrames": 5,
+          "hitIntervalFrames": 12,
           "condition": {
             "selfCounter": {
               "counter": "ghostCapture",
@@ -188,8 +188,8 @@
           "ref": 4,
           "damageType": "skill",
           "hitsRef": 5,
-          "delayFrames": 30,
-          "hitIntervalFrames": 6,
+          "delayFrames": 5,
+          "hitIntervalFrames": 12,
           "condition": {
             "selfCounter": {
               "counter": "ghostCapture",

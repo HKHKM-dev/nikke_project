@@ -1,0 +1,207 @@
+[
+  {
+    "id": "1216-01",
+    "recording": "1216",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [198, 813, 1335],
+    "description": "幽霊キャプチャー数が増えた動画のフレーム（戦闘開始（動画の f861。timer.ts --mode changes の 3 つ目の変わり目。タイマーと照準が出る）から）の最初の 3 回。4 回目からは、6 秒の窓の中の命中が 100 に届くかの際どい窓で録画ごとに分かれる（下の記録）",
+    "method": {
+      "tool": "使い捨てのスクリプト（GHOST の欄の数字）",
+      "note": "戦闘開始（動画の f861。timer.ts --mode changes の 3 つ目の変わり目。タイマーと照準が出る）から。エレグ：ブーム・アンド・ショックの頭の上の「GHOST」の欄の赤い数字を、使い捨てのスクリプトで全フレーム読んだ（欄を大きさ違いの型で追い、数字の窓の赤み（R − max(G, B)）を、目で確かめた 0〜13 の見本と正規化相互相関で照らし、値は 1 ずつ増える（バーストの前後だけ減る）並びで最もよく合う列を選んだ）。替わり目のフレームは、際どいものを数字の窓の拡大で確かめた"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 1,
+        "event": "counterUp",
+        "counter": "ghostCapture",
+        "count": 3
+      },
+      "tolerance": {
+        "abs": 20
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0789",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1216-02",
+    "recording": "1216",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [198, 813, 1335, 1529, 2022, 2482, 2592, 3134, 3296, 3694, 4463, 5056, 5572],
+    "description": "幽霊キャプチャー数が 0 から 13 まで 1 ずつ増えた動画のフレーム（戦闘開始 f861 から）の全部（13 回）。6 秒（353f）の窓に 1 回ずつ入る（窓の起点をずらしても、2 回が同じ窓に入る並びは無い）。どのキャプチャーも窓の始まりから 84f（MG の最も速い連射で 100 発）より後",
+    "method": {
+      "tool": "使い捨てのスクリプト（GHOST の欄の数字）",
+      "note": "戦闘開始（動画の f861。timer.ts --mode changes の 3 つ目の変わり目。タイマーと照準が出る）から。エレグ：ブーム・アンド・ショックの頭の上の「GHOST」の欄の赤い数字を、使い捨てのスクリプトで全フレーム読んだ（欄を大きさ違いの型で追い、数字の窓の赤み（R − max(G, B)）を、目で確かめた 0〜13 の見本と正規化相互相関で照らし、値は 1 ずつ増える（バーストの前後だけ減る）並びで最もよく合う列を選んだ）。替わり目のフレームは、際どいものを数字の窓の拡大で確かめた"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0789",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1216-03",
+    "recording": "1216",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": 10,
+    "description": "S2 の 1100% のヒット（13 のままのキャプチャー）の回数。動画のフレーム（戦闘開始 f861 から）は 5774・6231・6833・7344・7539・7909・8666・9303・9780・10362",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "増分が 220 万〜335 万の 10 回（S2 の 1 ヒットと、同じフレームの MG の 1 ヒットの和。会心は 1.5 倍の項）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventCount",
+      "args": {
+        "slot": 1,
+        "event": "skillHit",
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0789",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1216-04",
+    "recording": "1216",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 2220543,
+    "description": "S2 の 1100% の 1 ヒット（会心なし）。f6635・f8400（戦闘開始から 5774・7539）の増分がこの値。ほかの回は同じフレームの MG の 1 ヒット（22,488 など）との和",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "増分がそのまま 1 ヒット"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "rel": 0.0001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0789",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1216-05",
+    "recording": "1216",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 7340,
+    "description": "1 回目のキャプチャー（動画の f1059）の前のエレグ：BS の MG の 1 発（胴体・会心なし・距離ボーナスなし）。コアの発（14,680）の半分。f1059 より前の発",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "増分がそのまま 1 発（2 発の和の増分を除く）。コアの発は胴体の 2 倍"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 150,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0789",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1216-06",
+    "recording": "1216",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 8530,
+    "description": "1 回目のキャプチャーの後・4 回目の前の 1 発（胴体・会心なし・距離ボーナスなし）。コアの発（17,060）の半分。f1059 の発から上がる。S1 の発動者基準の攻撃力 16.2%▲だけが乗る（有利コードの攻撃ダメージ▲はまだ無い）。f1059 からの発",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "増分がそのまま 1 発（2 発の和の増分を除く）。コアの発は胴体の 2 倍"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 250,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0789",
+    "readAt": "2026-11-15"
+  }
+]
