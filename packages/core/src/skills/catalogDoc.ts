@@ -508,7 +508,7 @@ const DUR: Record<string, Info> = {
   'meta:misc': ['その他', 'check'],
   'meta:seconds': ['N 秒（項目）', 'check'],
   'meta:count': ['N 回（項目）', 'check'],
-  'meta:floor': ['最低 N を維持', 'gap'],
+  'meta:floor': ['最低 N を維持', 'ok', 'counterChange の floor（エレグ：ブーム・アンド・ショック編）'],
   'meta:staged': ['段階別・状態別の効果', 'check'],
   'meta:eventCountStaged': ['使用回数別・開始回数別の効果', 'ok'],
   'meta:shotCycle': ['攻撃回数別の効果（循環）', 'ok'],

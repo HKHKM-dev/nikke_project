@@ -135,7 +135,7 @@ export function createRegister({
   const registerCounters = ({ ev, battleStartOnly }: FrameStep): void => {
     if (counterSources.length === 0) return;
     const f = ev.frame;
-    const deltas = new Map<string, { slotIndex: number; counter: CounterId; delta: number }>();
+    const deltas = new Map<string, { slotIndex: number; counter: CounterId; delta: number; floor: number }>();
     for (const src of counterSources) {
       const t = src.effect.trigger;
       let fired: boolean;
@@ -156,13 +156,16 @@ export function createRegister({
         continue;
       }
       const key = counterKey(src.sourceSlotIndex, src.effect.counter);
-      const d = deltas.get(key) ?? { slotIndex: src.sourceSlotIndex, counter: src.effect.counter, delta: 0 };
+      const d = deltas.get(key) ?? { slotIndex: src.sourceSlotIndex, counter: src.effect.counter, delta: 0, floor: 0 };
       d.delta += src.effect.decrease === true ? -src.effect.amount : src.effect.amount;
+      // 「最低 N を維持」は、増減の和を足した後に、このフレームで発火した下限の最大で止める（plan/design-elegg-bs.md 2.3 節）
+      if (src.effect.floor !== undefined) d.floor = Math.max(d.floor, src.effect.floor);
       deltas.set(key, d);
     }
-    for (const [key, { slotIndex, counter, delta }] of deltas) {
+    for (const [key, { slotIndex, counter, delta, floor }] of deltas) {
       const before = counterValues.get(key) ?? 0;
-      const after = Math.max(0, Math.min(counterMax(counter), before + delta));
+      // 減らす前が下限より小さければ、下限は減らす前の値（上げはしない）
+      const after = Math.max(Math.min(floor, before), Math.min(counterMax(counter), before + delta));
       if (after === before) continue;
       counterValues.set(key, after);
       counterRecords.push(

@@ -28,6 +28,7 @@ import {
   isResolvedSelfHpAtMost,
   isResolvedAdjacentHp,
   isResolvedShotCount,
+  type ResolvedShotCountTrigger,
   type ResolvedTrigger,
 } from './resolve.ts';
 import type { FireContext } from './targets.ts';
@@ -101,7 +102,57 @@ export function shotCountWeight(kind: ShotCountKind, shot: ShotEvent): number {
       return shot.pellets ?? shot.hits;
     case 'teamAmmo':
       return shot.ammo ?? 1;
+    // 味方全体の命中は、1 発の量は命中（全員の発の和は createStateWindowTracker が足す）
+    case 'teamHit':
+      return shot.hits;
   }
+}
+
+/** 枠のその状態の件のうち、maxStart までに始まり frame にまだ続く件の始まりの最小（無ければ undefined） */
+export type HeldStartOf = (state: NamedStateId, frame: number, maxStart: number) => number | undefined;
+
+/**
+ * 自分の状態の間だけ数える回数のきっかけ（during: { state }。plan/design-grave.md 2.4 節。V-0735）。その状態の件が効いていて、
+ * 効果の条件（付与の condition。「完全計算かつ過熱I 状態の時に限り」の過熱I。その発で付いた分も入れる）を満たす発だけを数え、件が新しく
+ * 始まったら 0 から数え直す（付き直しで件が続いている間は数え直さない）。N の倍数に届いた発で発火する（回数の量は shotCountWeight）。
+ * 味方全体の命中（teamHit）は、そのフレームの全員の発の量を足す（自分が撃たないフレームも。plan/design-elegg-bs.md 2.1 節）。
+ * 件の一覧（skills/holders/sources.ts の stateWindowFires）と、倍率ダメージの発動（frame/plan.ts）が使う
+ */
+export function createStateWindowTracker(
+  trigger: ResolvedShotCountTrigger,
+  slotIndex: number,
+  state: NamedStateId,
+  startOfHeld: HeldStartOf,
+  conditionState?: NamedStateId,
+): TriggerTracker {
+  const team = trigger.count === 'teamHit';
+  // 周期の中の位置（phase）は、数え直す時に回数を every − phase から始め、every の倍数の判定のまま phase 回目に発火させる
+  // （plan/design-fortune-mate.md 2.1 節）
+  const origin = trigger.phase === undefined ? 0 : trigger.every - trigger.phase;
+  let count = origin;
+  let from: number | undefined;
+  return (ev) => {
+    const shot = ev.shots[slotIndex];
+    if (team ? !ev.shots.some((x) => x) : !shot) return false;
+    // 窓は前のフレームまでに付いた件で見る（同じフレームに付いた件が見えるかを、件の登録の中で読む付与と、登録の後に読む弾丸チャージ
+    // でそろえる。plan/design-fortune-mate.md 2.2 節）
+    const start = startOfHeld(state, ev.frame, ev.frame - 1);
+    if (start === undefined) return false;
+    if (start !== from) {
+      from = start;
+      count = origin;
+    }
+    // その発で付いた状態（同じ発の回数のきっかけで前に書いた付与。件は次のフレームから）も条件に入れる（V-0735: 過熱I を付けた発も
+    // 過熱II の回数に、過熱II を付けた発も過熱III の回数に数える）。条件は自分の状態があるかだけ（skills/parse/state.ts）で、段 1.5 の件も
+    // そのフレームに付いた件を見る
+    if (conditionState !== undefined && startOfHeld(conditionState, ev.frame, ev.frame + 1) === undefined) return false;
+    const weight = team
+      ? ev.shots.reduce((sum, x) => sum + (x ? shotCountWeight('teamHit', x) : 0), 0)
+      : shotCountWeight(trigger.count, shot!);
+    const next = advanceShotCount(count, weight, trigger.every);
+    count = next.count;
+    return next.fired;
+  };
 }
 
 /** 期待値の累計の端数の誤差の許し（N の倍数をまたいだかの判定にだけ使う） */

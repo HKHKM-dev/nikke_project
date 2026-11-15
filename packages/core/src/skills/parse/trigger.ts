@@ -73,8 +73,8 @@ export type TriggerOptions = {
   timer?: boolean | 'withStart';
   /**
    * 回数のきっかけの数える窓（during）と発火の窓（firesDuring）。'withState' なら自分の状態の窓
-   * （during: { state }）も書ける（状態の付与だけ。plan/design-grave.md 2.4 節）。'stateOnly' なら自分の状態の窓だけ
-   * （弾丸チャージ。plan/design-fortune-mate.md 2.2 節）
+   * （during: { state }）も書ける（状態の付与と damage。plan/design-grave.md 2.4 節・plan/design-elegg-bs.md 2.2 節）。'stateOnly' なら
+   * 自分の状態の窓だけ（弾丸チャージ・カウンタの増減・解除。plan/design-fortune-mate.md 2.2 節・plan/design-elegg-bs.md 2.2 節）
    */
   during?: boolean | 'withState' | 'stateOnly';
   /** 確率のきっかけ（chance・chanceRef） */
@@ -212,6 +212,9 @@ function parseShotCountTrigger(v: Record<string, Json>, path: string, options: T
   if (v.everyRef !== undefined) trigger.everyRef = parseRef(v.everyRef, `${path}.everyRef`);
   if (v.stacksRef !== undefined) trigger.stacksRef = parseRef(v.stacksRef, `${path}.stacksRef`);
   parseCountingWindow(v, trigger, path, options);
+  // 味方全体の命中は、自分の状態の窓で数えるときだけ（plan/design-elegg-bs.md 2.1 節）
+  if (trigger.count === 'teamHit' && !isStateCountWindow(trigger.during))
+    fail(`${path}.count`, 'a teamHit count needs a counting window of a state (during: { state })');
   parsePhase(v, trigger, path);
   parseFiringWindow(v, trigger, path, options);
   parseChance(v, trigger, path, options);
@@ -227,12 +230,19 @@ function parseCountingWindow(
 ): void {
   if (v.during === undefined && v.reset === undefined) return;
   const allowDuring = options.during ?? false;
-  if (!allowDuring) fail(`${path}.during`, 'a counting window (during) is only allowed in damage, timed and state');
+  if (!allowDuring)
+    fail(
+      `${path}.during`,
+      'a counting window (during) is only allowed in damage, timed, state, ammoRefill, counterChange and removeState',
+    );
   if (v.during === undefined) fail(`${path}.reset`, 'reset needs during');
   if (isRecord(v.during)) {
     // 自分の状態の間だけ数え、状態が付くたびに数え直す（reset は書かない。plan/design-grave.md 2.4 節）
     if (allowDuring !== 'withState' && allowDuring !== 'stateOnly')
-      fail(`${path}.during`, 'a counting window of a state (during: { state }) is only allowed in state grants');
+      fail(
+        `${path}.during`,
+        'a counting window of a state (during: { state }) is only allowed in state grants, ammoRefill, counterChange, damage and removeState',
+      );
     rejectUnknownKeys(v.during, ['state'], `${path}.during`);
     trigger.during = { state: parseNamedStateId(v.during.state, `${path}.during.state`, 'ally') };
     if (v.reset !== undefined)
@@ -474,7 +484,7 @@ export function parseDamageTrigger(v: Json, path: string): EffectTrigger {
     parseSummonAttackTrigger(v, path) ??
     parseCounterFullTrigger(v, path) ??
     parseAppliedTrigger(v, path) ??
-    parseTrigger(v, path, { timer: true, during: true, teamAmmo: true })
+    parseTrigger(v, path, { timer: true, during: 'withState', teamAmmo: true })
   );
 }
 

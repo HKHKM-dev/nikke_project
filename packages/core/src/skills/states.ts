@@ -460,6 +460,11 @@ export const NAMED_STATES = {
   whistle: { name: { ja: 'ホイッスル', en: 'Whistle' }, holder: 'ally' },
   /** 高リスク対象（同バースト。電撃コードの敵全体・20 秒。中身は防御力▼。S1 の「対象が高リスク対象状態なら」の追加ダメージが見る） */
   highRiskTarget: { name: { ja: '高リスク対象', en: 'High-Risk Target' }, holder: 'enemy' },
+  /**
+   * 憑依（エレグ：ブーム・アンド・ショックの S1。戦闘開始時と 6 秒ごとに 6 秒。中身なし。plan/design-elegg-bs.md 2.4 節）。説明文では敵に付くが、
+   * モデルが要るのはキャプチャーの命中を数える窓だけなので、敵 1 体の前提で自分の状態として持つ
+   */
+  ghostPossession: { name: { ja: '憑依', en: 'Possession' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

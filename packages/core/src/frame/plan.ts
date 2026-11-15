@@ -45,6 +45,7 @@ import {
   timerDamageFrames,
   resolvePassiveStates,
   segmentIndexAt,
+  stateWindowTriggerFrames,
   triggerFrames,
   type BuffTimeline,
   type SlotBuffState,
@@ -78,6 +79,7 @@ import { everyAtOf, type ShotCountEveryAt } from '../skills/triggers.ts';
 import {
   isCounterFullTrigger,
   isEndedTrigger,
+  isStateCountWindow,
   isSummonAttackTrigger,
   burstUsersEventOf,
   ENEMY_HELD_STATS,
@@ -715,6 +717,20 @@ function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
   const { cooldownTimerFires } = ctx;
   const { slot, slotIndex, definition, levels, sequential, selfStackCount, ownCounters, self, push, everyWindows } = s;
   const { ownStateItems } = s;
+  // 自分の状態の窓で数える回数の窓（件の一覧の stateWindowFires と同じ見え方）
+  const ownStartOfHeld = (state: NamedStateId, frame: number, maxStart: number): number | undefined => {
+    let start: number | undefined;
+    for (const i of ownStateItems)
+      if (
+        i.origin.kind === 'state' &&
+        i.origin.state === state &&
+        i.start <= maxStart &&
+        frame < i.end &&
+        (start === undefined || i.start < start)
+      )
+        start = i.start;
+    return start;
+  };
   // 自分の発動（perBurstHit の damage が、発火のフレームからヒットのフレームの列を引く）
   const mine = (schedule?.activations ?? []).filter((a) => a.slotIndex === slotIndex);
   const everyAtFor = (skill: SkillSlot): ShotCountEveryAt | undefined => everyAtOf(everyWindows('shotCounts', skill));
@@ -776,7 +792,10 @@ function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
                 : timerDamageFrames(t, shorten, frames, schedule, slotIndex, (state, f) =>
                     self.stateHolds({ state, present: true }, f),
                   )
-              : triggerFrames(t, schedule, slotIndex, frames, shots, undefined, everyAtFor(effect.source.skill));
+              : // 自分の状態の間だけ数える回数は、1 パス目の履歴の件で窓を見る（plan/design-elegg-bs.md 2.2 節）
+                isResolvedShotCount(t) && isStateCountWindow(t.during)
+                ? stateWindowTriggerFrames(t, t.during.state, slotIndex, schedule, frames, shots, ownStartOfHeld)
+                : triggerFrames(t, schedule, slotIndex, frames, shots, undefined, everyAtFor(effect.source.skill));
     for (const frame of fires) {
       if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, self)) continue;
       if (!usedBurstHolds(effect.condition, t, frame, schedule, slotIndex)) continue;
