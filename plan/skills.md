@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 137・効果 1006（根拠あり 984）・notes 350（根拠あり 143）
+件数: キャラ 137・効果 1008（根拠あり 986）・notes 346（根拠あり 141）
 
-notes の種類: 未対応 48・前提の外 104・計算に無関係 69・補足 42・間接 87
+notes の種類: 未対応 44・前提の外 104・計算に無関係 69・補足 42・間接 87
 
-スロット: supported 367・partial 35・unsupported 9・noEffect 51
+スロット: supported 371・partial 31・unsupported 9・noEffect 51
 
 ## 10 ラピ
 
@@ -795,11 +795,10 @@ notes の種類: 未対応 48・前提の外 104・計算に無関係 69・補�
   - effects[0] burstDamage・skill: C-1190（確定）、C-1193（仮説）
   - effects[1] timed・burstUse・enemyDefenseDown: C-1190（確定）、C-1193（仮説）
   - effects[2] damage・burstUse・additional: C-1190（確定）、C-1193（仮説）
-- **宝物版 skill1**: partial
+- **宝物版 skill1**: supported
   - effects[0] timed・lastShot・enemyDefenseDown: C-1189（確定）
-  - effects[1] timed・fullBurstStart・reloadSpeed: C-1192（確定）
+  - effects[1] timed・fullBurstStart・reloadSpeed: C-1192（確定）、C-1339（確定）
   - notes[0] 計算に無関係: 最後の弾丸が命中した時の対象の攻撃力▼はダメージに関係しない: 根拠なし
-  - notes[1] 未対応: リロード速度の「増加状態で固定」（窓の間、ほかのリロード速度▲▼を無視する）は未対応。ほかの枠からリロード速度▲▼を受ける編成では、モデルは足し合わせる（effects[1]）: C-1192（確定）
 - **宝物版 skill2**: supported
   - effects[0] state・fullChargeShot・collectHackingCode（attack）: C-1187（確定）
   - effects[1] timed・lastShot・attack: C-1188（確定）
@@ -992,10 +991,10 @@ notes の種類: 未対応 48・前提の外 104・計算に無関係 69・補�
   - effects[5] damage・fullChargeShot・additional: C-1238（確定）、C-1239（確定）
   - effects[6] damage・fullChargeShot・additional: C-1238（確定）、C-1239（確定）
   - notes[0] 未対応: フルバーストタイムが発動した時の、最終攻撃力が一番低い基本バースト段階 III の味方 1 機へのスキル発動者基準のチャージ速度▲（10 秒）は未対応（最終攻撃力が一番低い味方の対象の語彙が無い）。基本バースト段階 III が自分だけの編成では自分が対象で、S2 のチャージ速度増加効果無効で効かない。自分より最終攻撃力の低い III の味方（チャージ武器）のいる編成でだけ効く: C-1242（仮説）
-- **skill2**: partial
+- **skill2**: supported
   - effects[0] state・fullChargeShot・ragingCurrent（attackDamage）: C-1237（確定）
+  - effects[1] timed・battleStart・chargeSpeed: C-1242（仮説）、C-1342（確定）
   - notes[0] 前提の外: フルチャージ攻撃が「ターゲット」でないラプチャーに命中した時の緩流（チャージ時間 1 秒で固定・持続。激流解除）は、敵が「ターゲット」の単体ボスだけの前提では起きない: 根拠なし
-  - notes[1] 未対応: 戦闘開始時からの、自分へのチャージ速度増加効果・減少効果の無効（持続・解除不可）は未対応（効果の無効の語彙が無い。自分にチャージ速度▲▼を付ける味方のいる編成でだけ効く。S1 のチャージ速度▲が自分に付いたときも、これで効かない）: C-1242（仮説）
 - **burst**: supported
   - effects[0] timed・burstUse・attackDamage: C-1241（確定）
   - effects[1] damage・burstUse・additional: C-1240（確定）
@@ -1717,11 +1716,11 @@ notes の種類: 未対応 48・前提の外 104・計算に無関係 69・補�
 
 ## 473 ラプンツェル：サンクチュアリ
 
-- **skill1**: partial
+- **skill1**: supported
   - effects[0] heal・fullChargeShot: C-0913（確定）
   - effects[1] timed・fullBurstStart・attackDamage: C-0719（確定）、C-0750（確定）
+  - effects[2] timed・fullChargeShot・chargeSpeed: C-1341（確定）
   - notes[0] 前提の外: ナノ粒子投与（バーストの、戦闘不能の味方が 3 機以上の分岐）を使用した時の、バーストスキルのクールタイム▲とナノ粒子消耗：防御力▲は、味方が倒れない前提では起きない（要件 5.2 節）: C-0443（範囲外）
-  - notes[1] 未対応: フルチャージした時からの、自分へのチャージ速度▲▼の無効（持続）は未対応（効果の無効の語彙が無い。自分にチャージ速度▲▼を付ける味方のいる編成でだけ効く。plan/design-new-chars-1029.md 論点 F）: 根拠なし
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・attack: C-0719（確定）、C-0750（確定）
   - effects[1] damage・fullChargeShot・additional: C-0720（確定）、C-0721（確定）、C-0914（確定）
@@ -2065,13 +2064,12 @@ notes の種類: 未対応 48・前提の外 104・計算に無関係 69・補�
   - effects[1] damage・normalShot・skill: C-1265（確定）、C-1266（仮説）
   - effects[2] state・normalShot・antiATField（damageTaken）: C-1265（確定）、C-1266（仮説）
   - notes[0] 補足: 殲滅態勢の追加効果の対象「照準線に最も近い攻撃範囲内の敵 2 機」は、敵 1 体の前提で 1 機（ダメージ・アンチA.T.フィールドとも）: C-1265（確定）
-- **skill2**: partial
+- **skill2**: supported
   - effects[0] timed・fullBurstStart・attackDamage: C-1263（確定）
   - effects[1] timed・annihilationState が終了した時・spinUpSpeed: C-1269（確定）
   - effects[2] ammoDecrease・annihilationState が終了した時: C-1268（確定）
-  - effects[3] timed・annihilationState が終了した時・reloadSpeed: C-1268（確定）
+  - effects[3] timed・annihilationState が終了した時・reloadSpeed: C-1268（確定）、C-1340（確定）
   - notes[0] 計算に無関係: 緊急修復の持続回復（自分の最終最大HP の 3.77%・1 秒間隔・3 秒）は、ダメージに関係しない（自分にだけ付き、アスカ：WILLE に回復を受けた時の効果は無い）: 根拠なし
-  - notes[1] 未対応: 緊急修復のリロード速度の「増加状態で固定」（ほかのリロード速度▲▼を無視する）は未対応。ほかのリロード速度▲▼と足し合わせる。アスカ：WILLE にリロード速度▲▼を付ける味方のいない編成では同じ値: 根拠なし
 - **burst**: supported
   - effects[0] state・burstUse・annihilationState: C-1262（確定）、C-1267（確定）
   - effects[1] timed・burstUse・normalAttackDamage: C-1262（確定）

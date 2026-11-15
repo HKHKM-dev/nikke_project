@@ -31,6 +31,7 @@
     191,
     194,
     202,
+    210,
     222,
     225,
     226,
@@ -75,6 +76,7 @@
     470,
     471,
     472,
+    473,
     500,
     502,
     511,
@@ -92,6 +94,7 @@
     831,
     833,
     834,
+    835,
     836,
     840,
     841,
@@ -160,10 +163,6 @@
       "unimplemented": 1,
       "assumed": 7
     },
-    "210": {
-      "unimplemented": 1,
-      "assumed": 6
-    },
     "223": {
       "unimplemented": 1,
       "assumed": 11
@@ -181,8 +180,8 @@
       "assumed": 5
     },
     "262": {
-      "unimplemented": 2,
-      "assumed": 4
+      "unimplemented": 1,
+      "assumed": 5
     },
     "270": {
       "unimplemented": 1,
@@ -224,10 +223,6 @@
       "unimplemented": 1,
       "assumed": 1
     },
-    "473": {
-      "unimplemented": 1,
-      "assumed": 4
-    },
     "501": {
       "unimplemented": 2,
       "assumed": 1
@@ -239,10 +234,6 @@
     "821": {
       "unimplemented": 1,
       "assumed": 3
-    },
-    "835": {
-      "unimplemented": 1,
-      "assumed": 10
     },
     "861": {
       "unimplemented": 1,

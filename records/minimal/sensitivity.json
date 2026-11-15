@@ -20222,6 +20222,54 @@
       "plus": null
     },
     {
+      "observation": "0841-02",
+      "element": "リバーレリオ skill2.effects[1]",
+      "key": "a3e23df6fedfff69",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0841-04",
+      "element": "リバーレリオ skill2.effects[1]",
+      "key": "8ae200609e000cbf",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0841-07",
+      "element": "リバーレリオ skill2.effects[1]",
+      "key": "dbec75fe7c84ba69",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0841-08",
+      "element": "リバーレリオ skill2.effects[1]",
+      "key": "f09e6042b6a081c7",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0841-09",
+      "element": "リバーレリオ skill2.effects[1]",
+      "key": "8cac26c93aa3f78c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0841-10",
+      "element": "リバーレリオ skill2.effects[1]",
+      "key": "a1bd83251aac398c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "0842-03",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
       "key": "1e7f72c066312e17",
@@ -23426,7 +23474,7 @@
     {
       "observation": "0932-03",
       "element": "アスカ burst.effects[0]",
-      "key": "c2aace3c8556fe21",
+      "key": "ecd56f93fdb2a238",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -23442,7 +23490,7 @@
     {
       "observation": "0932-03",
       "element": "アスカ burst.effects[2]",
-      "key": "c2aace3c8556fe21",
+      "key": "ecd56f93fdb2a238",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -23450,7 +23498,7 @@
     {
       "observation": "0932-04",
       "element": "アスカ burst.effects[0]",
-      "key": "2edf4a67e5cac0de",
+      "key": "22c6820828e941ff",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -23466,7 +23514,7 @@
     {
       "observation": "0932-04",
       "element": "アスカ burst.effects[2]",
-      "key": "2edf4a67e5cac0de",
+      "key": "22c6820828e941ff",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -23474,7 +23522,7 @@
     {
       "observation": "0932-05",
       "element": "アスカ burst.effects[0]",
-      "key": "2216ca71e0534104",
+      "key": "b5e30af2cd793fc5",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -23490,7 +23538,7 @@
     {
       "observation": "0932-05",
       "element": "アスカ burst.effects[2]",
-      "key": "2216ca71e0534104",
+      "key": "b5e30af2cd793fc5",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -23498,7 +23546,7 @@
     {
       "observation": "0932-08",
       "element": "アスカ burst.effects[0]",
-      "key": "202a0ff31d4a0f1a",
+      "key": "29f2b71cac98cbf3",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -23514,7 +23562,7 @@
     {
       "observation": "0932-08",
       "element": "アスカ burst.effects[2]",
-      "key": "202a0ff31d4a0f1a",
+      "key": "29f2b71cac98cbf3",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -23522,7 +23570,7 @@
     {
       "observation": "0932-09",
       "element": "アスカ burst.effects[0]",
-      "key": "eccd70acbc7caf77",
+      "key": "08de5a6325311526",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -23538,7 +23586,7 @@
     {
       "observation": "0932-09",
       "element": "アスカ burst.effects[2]",
-      "key": "eccd70acbc7caf77",
+      "key": "08de5a6325311526",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -23546,7 +23594,7 @@
     {
       "observation": "0933-03",
       "element": "アスカ burst.effects[0]",
-      "key": "3b8d907e134bc443",
+      "key": "1f54452d6d2be40a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -23562,7 +23610,7 @@
     {
       "observation": "0933-03",
       "element": "アスカ burst.effects[2]",
-      "key": "3b8d907e134bc443",
+      "key": "1f54452d6d2be40a",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -23570,7 +23618,7 @@
     {
       "observation": "0933-04",
       "element": "アスカ burst.effects[0]",
-      "key": "dc566141ffcccd04",
+      "key": "12f040a26ac86bc5",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -23586,7 +23634,7 @@
     {
       "observation": "0933-04",
       "element": "アスカ burst.effects[2]",
-      "key": "dc566141ffcccd04",
+      "key": "12f040a26ac86bc5",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -23594,7 +23642,7 @@
     {
       "observation": "0933-05",
       "element": "アスカ burst.effects[0]",
-      "key": "be0e05b705444cde",
+      "key": "826432b8c6386dff",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -23610,7 +23658,7 @@
     {
       "observation": "0933-05",
       "element": "アスカ burst.effects[2]",
-      "key": "be0e05b705444cde",
+      "key": "826432b8c6386dff",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -23618,7 +23666,7 @@
     {
       "observation": "0933-08",
       "element": "アスカ burst.effects[0]",
-      "key": "701d136d1ff58060",
+      "key": "44c3b966122d7d19",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -23634,7 +23682,7 @@
     {
       "observation": "0933-08",
       "element": "アスカ burst.effects[2]",
-      "key": "701d136d1ff58060",
+      "key": "44c3b966122d7d19",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -23642,7 +23690,7 @@
     {
       "observation": "0933-09",
       "element": "アスカ burst.effects[0]",
-      "key": "565ec776ce8f221d",
+      "key": "62ae5235413f514c",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -23658,7 +23706,7 @@
     {
       "observation": "0933-09",
       "element": "アスカ burst.effects[2]",
-      "key": "565ec776ce8f221d",
+      "key": "62ae5235413f514c",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -30288,7 +30336,7 @@
     {
       "observation": "1146-11",
       "element": "ソリン burst.effects[1]",
-      "key": "75db3d47fff3ea8c",
+      "key": "c76860b97cc3413a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -30296,7 +30344,7 @@
     {
       "observation": "1146-12",
       "element": "ソリン burst.effects[1]",
-      "key": "a692577cfae2bf41",
+      "key": "4f2f0742528d0cef",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -30304,7 +30352,7 @@
     {
       "observation": "1146-13",
       "element": "ソリン burst.effects[1]",
-      "key": "4dd8331d2db9aec4",
+      "key": "ec2588e33ce36b72",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -30312,7 +30360,7 @@
     {
       "observation": "1146-14",
       "element": "ソリン burst.effects[1]",
-      "key": "e7101be1822bc3ac",
+      "key": "67517a4f6d09315a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -30320,7 +30368,7 @@
     {
       "observation": "1147-11",
       "element": "ソリン burst.effects[1]",
-      "key": "46d6e9d240d674dd",
+      "key": "5040c2acb0555903",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -30328,7 +30376,7 @@
     {
       "observation": "1147-12",
       "element": "ソリン burst.effects[1]",
-      "key": "a257ad67612bf26c",
+      "key": "1d95a3d93e4b1d1a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -30336,7 +30384,7 @@
     {
       "observation": "1147-13",
       "element": "ソリン burst.effects[1]",
-      "key": "16c7b8b19c170f1e",
+      "key": "5effd33fe60b5198",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -30344,7 +30392,7 @@
     {
       "observation": "1147-14",
       "element": "ソリン burst.effects[1]",
-      "key": "ac2414f5ca477f3e",
+      "key": "9e515c1bf3f5f138",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31176,7 +31224,7 @@
     {
       "observation": "1184-01",
       "element": "フローラ treasureSkills.burst.effects[0]",
-      "key": "440b320bc3b46020",
+      "key": "f7ab0db5d9a62316",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31184,7 +31232,7 @@
     {
       "observation": "1184-01",
       "element": "フローラ treasureSkills.burst.effects[1]",
-      "key": "440b320bc3b46020",
+      "key": "f7ab0db5d9a62316",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31192,7 +31240,7 @@
     {
       "observation": "1184-01",
       "element": "フローラ treasureSkills.skill1.effects[1]",
-      "key": "440b320bc3b46020",
+      "key": "f7ab0db5d9a62316",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31200,7 +31248,7 @@
     {
       "observation": "1184-01",
       "element": "フローラ treasureSkills.skill2.effects[1]",
-      "key": "440b320bc3b46020",
+      "key": "f7ab0db5d9a62316",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31208,7 +31256,7 @@
     {
       "observation": "1184-02",
       "element": "フローラ treasureSkills.burst.effects[0]",
-      "key": "0f86edd08bf22ffd",
+      "key": "bed8bc3ec6a9f013",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31216,7 +31264,7 @@
     {
       "observation": "1184-02",
       "element": "フローラ treasureSkills.burst.effects[1]",
-      "key": "0f86edd08bf22ffd",
+      "key": "bed8bc3ec6a9f013",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31224,7 +31272,7 @@
     {
       "observation": "1184-02",
       "element": "フローラ treasureSkills.skill1.effects[1]",
-      "key": "0f86edd08bf22ffd",
+      "key": "bed8bc3ec6a9f013",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31232,7 +31280,7 @@
     {
       "observation": "1184-02",
       "element": "フローラ treasureSkills.skill2.effects[1]",
-      "key": "0f86edd08bf22ffd",
+      "key": "bed8bc3ec6a9f013",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31240,7 +31288,7 @@
     {
       "observation": "1184-03",
       "element": "フローラ treasureSkills.burst.effects[0]",
-      "key": "fe60abe19d1b73f4",
+      "key": "a014263fe6a4c9c2",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31248,7 +31296,7 @@
     {
       "observation": "1184-03",
       "element": "フローラ treasureSkills.burst.effects[1]",
-      "key": "fe60abe19d1b73f4",
+      "key": "a014263fe6a4c9c2",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31256,7 +31304,7 @@
     {
       "observation": "1184-03",
       "element": "フローラ treasureSkills.skill1.effects[1]",
-      "key": "fe60abe19d1b73f4",
+      "key": "a014263fe6a4c9c2",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31264,7 +31312,7 @@
     {
       "observation": "1184-03",
       "element": "フローラ treasureSkills.skill2.effects[1]",
-      "key": "fe60abe19d1b73f4",
+      "key": "a014263fe6a4c9c2",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31272,7 +31320,7 @@
     {
       "observation": "1185-01",
       "element": "フローラ treasureSkills.burst.effects[0]",
-      "key": "0fd20926ea1a2e13",
+      "key": "52190cd8b097d31d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31280,7 +31328,7 @@
     {
       "observation": "1185-01",
       "element": "フローラ treasureSkills.burst.effects[1]",
-      "key": "0fd20926ea1a2e13",
+      "key": "52190cd8b097d31d",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31288,7 +31336,7 @@
     {
       "observation": "1185-01",
       "element": "フローラ treasureSkills.skill1.effects[1]",
-      "key": "0fd20926ea1a2e13",
+      "key": "52190cd8b097d31d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31296,7 +31344,7 @@
     {
       "observation": "1185-01",
       "element": "フローラ treasureSkills.skill2.effects[1]",
-      "key": "0fd20926ea1a2e13",
+      "key": "52190cd8b097d31d",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31304,7 +31352,7 @@
     {
       "observation": "1185-02",
       "element": "フローラ treasureSkills.burst.effects[0]",
-      "key": "8f50e095c90be456",
+      "key": "33cd072b142b52f0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31312,7 +31360,7 @@
     {
       "observation": "1185-02",
       "element": "フローラ treasureSkills.burst.effects[1]",
-      "key": "8f50e095c90be456",
+      "key": "33cd072b142b52f0",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31320,7 +31368,7 @@
     {
       "observation": "1185-02",
       "element": "フローラ treasureSkills.skill1.effects[1]",
-      "key": "8f50e095c90be456",
+      "key": "33cd072b142b52f0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31328,7 +31376,7 @@
     {
       "observation": "1185-02",
       "element": "フローラ treasureSkills.skill2.effects[1]",
-      "key": "8f50e095c90be456",
+      "key": "33cd072b142b52f0",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31336,7 +31384,7 @@
     {
       "observation": "1185-03",
       "element": "フローラ treasureSkills.burst.effects[0]",
-      "key": "148aa292ee454f13",
+      "key": "3ec379ac4e4c3c1d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31344,7 +31392,7 @@
     {
       "observation": "1185-03",
       "element": "フローラ treasureSkills.burst.effects[1]",
-      "key": "148aa292ee454f13",
+      "key": "3ec379ac4e4c3c1d",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31352,7 +31400,7 @@
     {
       "observation": "1185-03",
       "element": "フローラ treasureSkills.skill1.effects[1]",
-      "key": "148aa292ee454f13",
+      "key": "3ec379ac4e4c3c1d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31360,7 +31408,7 @@
     {
       "observation": "1185-03",
       "element": "フローラ treasureSkills.skill2.effects[1]",
-      "key": "148aa292ee454f13",
+      "key": "3ec379ac4e4c3c1d",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31368,7 +31416,7 @@
     {
       "observation": "1186-01",
       "element": "フローラ treasureSkills.burst.effects[0]",
-      "key": "4f61eb1d39bb5276",
+      "key": "d37b8513eeb0f990",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31376,7 +31424,7 @@
     {
       "observation": "1186-01",
       "element": "フローラ treasureSkills.burst.effects[1]",
-      "key": "4f61eb1d39bb5276",
+      "key": "d37b8513eeb0f990",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31384,7 +31432,7 @@
     {
       "observation": "1186-01",
       "element": "フローラ treasureSkills.skill1.effects[1]",
-      "key": "4f61eb1d39bb5276",
+      "key": "d37b8513eeb0f990",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31392,7 +31440,7 @@
     {
       "observation": "1186-01",
       "element": "フローラ treasureSkills.skill2.effects[1]",
-      "key": "4f61eb1d39bb5276",
+      "key": "d37b8513eeb0f990",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31400,7 +31448,7 @@
     {
       "observation": "1186-03",
       "element": "フローラ treasureSkills.burst.effects[0]",
-      "key": "81ba8586b9e2de61",
+      "key": "04c50b38b3bbcc3f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31408,7 +31456,7 @@
     {
       "observation": "1186-03",
       "element": "フローラ treasureSkills.burst.effects[1]",
-      "key": "81ba8586b9e2de61",
+      "key": "04c50b38b3bbcc3f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31416,7 +31464,7 @@
     {
       "observation": "1186-03",
       "element": "フローラ treasureSkills.skill1.effects[1]",
-      "key": "81ba8586b9e2de61",
+      "key": "04c50b38b3bbcc3f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31424,7 +31472,7 @@
     {
       "observation": "1186-03",
       "element": "フローラ treasureSkills.skill2.effects[1]",
-      "key": "81ba8586b9e2de61",
+      "key": "04c50b38b3bbcc3f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31432,7 +31480,7 @@
     {
       "observation": "1187-01",
       "element": "フローラ treasureSkills.burst.effects[0]",
-      "key": "f8150ae6e1ab9539",
+      "key": "7d67f6987b5fa097",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31440,7 +31488,7 @@
     {
       "observation": "1187-01",
       "element": "フローラ treasureSkills.burst.effects[1]",
-      "key": "f8150ae6e1ab9539",
+      "key": "7d67f6987b5fa097",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31448,7 +31496,7 @@
     {
       "observation": "1187-01",
       "element": "フローラ treasureSkills.skill1.effects[1]",
-      "key": "f8150ae6e1ab9539",
+      "key": "7d67f6987b5fa097",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31456,7 +31504,7 @@
     {
       "observation": "1187-01",
       "element": "フローラ treasureSkills.skill2.effects[1]",
-      "key": "f8150ae6e1ab9539",
+      "key": "7d67f6987b5fa097",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31464,7 +31512,7 @@
     {
       "observation": "1187-03",
       "element": "フローラ treasureSkills.burst.effects[0]",
-      "key": "b6febd8860e304c5",
+      "key": "77e1c6f618cc95db",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31472,7 +31520,7 @@
     {
       "observation": "1187-03",
       "element": "フローラ treasureSkills.burst.effects[1]",
-      "key": "b6febd8860e304c5",
+      "key": "77e1c6f618cc95db",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31480,7 +31528,7 @@
     {
       "observation": "1187-03",
       "element": "フローラ treasureSkills.skill1.effects[1]",
-      "key": "b6febd8860e304c5",
+      "key": "77e1c6f618cc95db",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31488,7 +31536,7 @@
     {
       "observation": "1187-03",
       "element": "フローラ treasureSkills.skill2.effects[1]",
-      "key": "b6febd8860e304c5",
+      "key": "77e1c6f618cc95db",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31819,9 +31867,81 @@
       "plus": null
     },
     {
+      "observation": "1195-10",
+      "element": "リバーレリオ skill2.effects[1]",
+      "key": "f77bb2deb3b44e9f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1195-11",
+      "element": "リバーレリオ skill2.effects[1]",
+      "key": "f0b39558430c2093",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1195-12",
+      "element": "リバーレリオ skill2.effects[1]",
+      "key": "9c7878ec349cc207",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1195-13",
+      "element": "リバーレリオ skill2.effects[1]",
+      "key": "f57334587d2c420f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1195-14",
+      "element": "リバーレリオ skill2.effects[1]",
+      "key": "2ea683518252a3fe",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1195-15",
+      "element": "リバーレリオ skill2.effects[1]",
+      "key": "d339ab5394bce290",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1195-16",
+      "element": "リバーレリオ skill2.effects[1]",
+      "key": "e49cb164cb2bbc35",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1195-17",
+      "element": "リバーレリオ skill2.effects[1]",
+      "key": "691b7cde2ada71a7",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1195-18",
+      "element": "リバーレリオ skill2.effects[1]",
+      "key": "311e3e639a4dfa78",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "1196-01",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "74a99132643cb2d1",
+      "key": "d9c224c4954f0b9f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31829,7 +31949,7 @@
     {
       "observation": "1196-01",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "74a99132643cb2d1",
+      "key": "d9c224c4954f0b9f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31837,7 +31957,7 @@
     {
       "observation": "1196-02",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "c63b185b7e2819a6",
+      "key": "14f6a4c98b5f5b88",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31845,7 +31965,7 @@
     {
       "observation": "1196-02",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "c63b185b7e2819a6",
+      "key": "14f6a4c98b5f5b88",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31853,7 +31973,7 @@
     {
       "observation": "1196-03",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "d25eb5c39e92fdee",
+      "key": "22a80eb1b041f4f0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31861,7 +31981,7 @@
     {
       "observation": "1196-03",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "d25eb5c39e92fdee",
+      "key": "22a80eb1b041f4f0",
       "effective": true,
       "minus": 0,
       "plus": 0.008299999999999865
@@ -31869,7 +31989,7 @@
     {
       "observation": "1196-04",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "a68fe7226a3126f1",
+      "key": "e1f10dd465e45fbf",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -31878,7 +31998,7 @@
     {
       "observation": "1196-04",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "a68fe7226a3126f1",
+      "key": "e1f10dd465e45fbf",
       "effective": true,
       "minus": 0,
       "plus": 0.00830000000000015
@@ -31886,7 +32006,7 @@
     {
       "observation": "1196-05",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "3dbbd8be8963783d",
+      "key": "c91bc6081d4a3783",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -31895,7 +32015,7 @@
     {
       "observation": "1196-05",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "3dbbd8be8963783d",
+      "key": "c91bc6081d4a3783",
       "effective": true,
       "minus": -0.03213317847464185,
       "plus": -0.024099883855981236
@@ -31903,7 +32023,7 @@
     {
       "observation": "1196-06",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "efa0b4b207e10f41",
+      "key": "8d6d9c442236b7af",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31911,7 +32031,7 @@
     {
       "observation": "1196-06",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "efa0b4b207e10f41",
+      "key": "8d6d9c442236b7af",
       "effective": true,
       "minus": -0.024295053175919665,
       "plus": -0.016196702117279704
@@ -31919,7 +32039,7 @@
     {
       "observation": "1196-07",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "b042abb2ed17cf5b",
+      "key": "caf0bb44a2ec9825",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31927,7 +32047,7 @@
     {
       "observation": "1196-07",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "b042abb2ed17cf5b",
+      "key": "caf0bb44a2ec9825",
       "effective": true,
       "minus": null,
       "plus": -0.9707800111281123,
@@ -31936,7 +32056,7 @@
     {
       "observation": "1196-08",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "49dc4f43aa9bd464",
+      "key": "e0c90c31c8379c8a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31944,7 +32064,7 @@
     {
       "observation": "1196-08",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "49dc4f43aa9bd464",
+      "key": "e0c90c31c8379c8a",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -31953,7 +32073,7 @@
     {
       "observation": "1196-09",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "337d22a5f10300bc",
+      "key": "e385b787fd9ee622",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31961,7 +32081,7 @@
     {
       "observation": "1196-09",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "337d22a5f10300bc",
+      "key": "e385b787fd9ee622",
       "effective": true,
       "minus": null,
       "plus": 0,
@@ -31970,7 +32090,7 @@
     {
       "observation": "1196-10",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "182d27b8ce86c65d",
+      "key": "6d15fcb6f943e5a3",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31978,7 +32098,7 @@
     {
       "observation": "1196-10",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "182d27b8ce86c65d",
+      "key": "6d15fcb6f943e5a3",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -31987,7 +32107,7 @@
     {
       "observation": "1196-11",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "776d1e3f9571d1de",
+      "key": "3445387599765280",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31995,7 +32115,7 @@
     {
       "observation": "1196-11",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "776d1e3f9571d1de",
+      "key": "3445387599765280",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -32004,7 +32124,7 @@
     {
       "observation": "1196-12",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "992585728d39d51f",
+      "key": "697c8204ff3b8021",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32012,7 +32132,7 @@
     {
       "observation": "1196-12",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "992585728d39d51f",
+      "key": "697c8204ff3b8021",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -32021,7 +32141,7 @@
     {
       "observation": "1196-13",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "9dec1a565a0cfd87",
+      "key": "7e6bca402eab5ee9",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32029,7 +32149,7 @@
     {
       "observation": "1196-13",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "9dec1a565a0cfd87",
+      "key": "7e6bca402eab5ee9",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -32037,7 +32157,7 @@
     {
       "observation": "1197-01",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "b996b3c90e243976",
+      "key": "3c3c1513b7fd2d78",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32045,7 +32165,7 @@
     {
       "observation": "1197-01",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "b996b3c90e243976",
+      "key": "3c3c1513b7fd2d78",
       "effective": true,
       "minus": 0,
       "plus": 0.008299999999999969
@@ -32053,7 +32173,7 @@
     {
       "observation": "1197-02",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "bfe4c7a29e7c4833",
+      "key": "5f29fa54ece0749d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32061,7 +32181,7 @@
     {
       "observation": "1197-02",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "bfe4c7a29e7c4833",
+      "key": "5f29fa54ece0749d",
       "effective": true,
       "minus": 0,
       "plus": 0.008299999999999865
@@ -32069,7 +32189,7 @@
     {
       "observation": "1197-03",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "51b5a4556cbcbe60",
+      "key": "8a35c497d2065abe",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -32078,7 +32198,7 @@
     {
       "observation": "1197-03",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "51b5a4556cbcbe60",
+      "key": "8a35c497d2065abe",
       "effective": true,
       "minus": 0,
       "plus": 0.00830000000000015
@@ -32086,7 +32206,7 @@
     {
       "observation": "1197-04",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "0b82f8aee7a9ae2d",
+      "key": "2e06a9587fc86313",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32094,7 +32214,7 @@
     {
       "observation": "1197-04",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "0b82f8aee7a9ae2d",
+      "key": "2e06a9587fc86313",
       "effective": true,
       "minus": null,
       "plus": -0.9707800111281124,
@@ -32103,7 +32223,7 @@
     {
       "observation": "1197-05",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "3e27b01a93b9c9cd",
+      "key": "1a2183ec14a555b3",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32111,7 +32231,7 @@
     {
       "observation": "1197-05",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "3e27b01a93b9c9cd",
+      "key": "1a2183ec14a555b3",
       "effective": true,
       "minus": null,
       "plus": 0,
@@ -32120,7 +32240,7 @@
     {
       "observation": "1197-06",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "7a200587d4b5ffec",
+      "key": "e02c695dc715e072",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32128,7 +32248,7 @@
     {
       "observation": "1197-06",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "7a200587d4b5ffec",
+      "key": "e02c695dc715e072",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -32137,7 +32257,7 @@
     {
       "observation": "1197-07",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "70b5dc207c70144f",
+      "key": "4f12259e17a0c2f1",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32145,7 +32265,7 @@
     {
       "observation": "1197-07",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "70b5dc207c70144f",
+      "key": "4f12259e17a0c2f1",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -32154,7 +32274,7 @@
     {
       "observation": "1197-08",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "246f682dd9cc954e",
+      "key": "df01962fc8e026d0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32162,7 +32282,7 @@
     {
       "observation": "1197-08",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "246f682dd9cc954e",
+      "key": "df01962fc8e026d0",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -32171,7 +32291,7 @@
     {
       "observation": "1197-09",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "5c6dbf054b0c4506",
+      "key": "02a2dbe749bbbae8",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32179,7 +32299,7 @@
     {
       "observation": "1197-09",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "5c6dbf054b0c4506",
+      "key": "02a2dbe749bbbae8",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -33082,7 +33202,7 @@
     {
       "observation": "1213-01",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "2d60027ee4b5a359",
+      "key": "713b2f7c6ebcfbb7",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33090,7 +33210,7 @@
     {
       "observation": "1213-01",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "2d60027ee4b5a359",
+      "key": "713b2f7c6ebcfbb7",
       "effective": true,
       "minus": 0,
       "plus": 0.24900000000000014
@@ -33098,7 +33218,7 @@
     {
       "observation": "1213-01",
       "element": "レイ（仮称） skill1.effects[0]",
-      "key": "2d60027ee4b5a359",
+      "key": "713b2f7c6ebcfbb7",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33106,7 +33226,7 @@
     {
       "observation": "1213-01",
       "element": "レイ（仮称） skill1.effects[1]",
-      "key": "2d60027ee4b5a359",
+      "key": "713b2f7c6ebcfbb7",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33114,7 +33234,7 @@
     {
       "observation": "1213-01",
       "element": "レイ（仮称） skill1.effects[2]",
-      "key": "2d60027ee4b5a359",
+      "key": "713b2f7c6ebcfbb7",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33122,7 +33242,7 @@
     {
       "observation": "1213-02",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "97c172422264269f",
+      "key": "12b90f98a78830b1",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33130,7 +33250,7 @@
     {
       "observation": "1213-02",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "97c172422264269f",
+      "key": "12b90f98a78830b1",
       "effective": true,
       "minus": null,
       "plus": -0.41712819052524835,
@@ -33139,7 +33259,7 @@
     {
       "observation": "1213-02",
       "element": "レイ（仮称） skill1.effects[0]",
-      "key": "97c172422264269f",
+      "key": "12b90f98a78830b1",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -33148,7 +33268,7 @@
     {
       "observation": "1213-02",
       "element": "レイ（仮称） skill1.effects[1]",
-      "key": "97c172422264269f",
+      "key": "12b90f98a78830b1",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33156,7 +33276,7 @@
     {
       "observation": "1213-02",
       "element": "レイ（仮称） skill1.effects[2]",
-      "key": "97c172422264269f",
+      "key": "12b90f98a78830b1",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33164,7 +33284,7 @@
     {
       "observation": "1213-04",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "f9c11af089405455",
+      "key": "fe2ed1a2ee98c97b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33172,7 +33292,7 @@
     {
       "observation": "1213-04",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "f9c11af089405455",
+      "key": "fe2ed1a2ee98c97b",
       "effective": true,
       "minus": -0.199359487590072,
       "plus": 0
@@ -33180,7 +33300,7 @@
     {
       "observation": "1213-04",
       "element": "レイ（仮称） skill1.effects[0]",
-      "key": "f9c11af089405455",
+      "key": "fe2ed1a2ee98c97b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33188,7 +33308,7 @@
     {
       "observation": "1213-04",
       "element": "レイ（仮称） skill1.effects[1]",
-      "key": "f9c11af089405455",
+      "key": "fe2ed1a2ee98c97b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33196,7 +33316,7 @@
     {
       "observation": "1213-04",
       "element": "レイ（仮称） skill1.effects[2]",
-      "key": "f9c11af089405455",
+      "key": "fe2ed1a2ee98c97b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33204,7 +33324,7 @@
     {
       "observation": "1213-05",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "991aea46282825e7",
+      "key": "0606e42433ab44f9",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33212,7 +33332,7 @@
     {
       "observation": "1213-05",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "991aea46282825e7",
+      "key": "0606e42433ab44f9",
       "effective": true,
       "minus": null,
       "plus": 0,
@@ -33221,7 +33341,7 @@
     {
       "observation": "1213-05",
       "element": "レイ（仮称） skill1.effects[0]",
-      "key": "991aea46282825e7",
+      "key": "0606e42433ab44f9",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33229,7 +33349,7 @@
     {
       "observation": "1213-05",
       "element": "レイ（仮称） skill1.effects[1]",
-      "key": "991aea46282825e7",
+      "key": "0606e42433ab44f9",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33237,7 +33357,7 @@
     {
       "observation": "1213-05",
       "element": "レイ（仮称） skill1.effects[2]",
-      "key": "991aea46282825e7",
+      "key": "0606e42433ab44f9",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33245,7 +33365,7 @@
     {
       "observation": "1213-06",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "6398283e66f9a2eb",
+      "key": "f99eae3c5c624df5",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33253,7 +33373,7 @@
     {
       "observation": "1213-06",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "6398283e66f9a2eb",
+      "key": "f99eae3c5c624df5",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -33261,7 +33381,7 @@
     {
       "observation": "1213-06",
       "element": "レイ（仮称） skill1.effects[0]",
-      "key": "6398283e66f9a2eb",
+      "key": "f99eae3c5c624df5",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33269,7 +33389,7 @@
     {
       "observation": "1213-06",
       "element": "レイ（仮称） skill1.effects[1]",
-      "key": "6398283e66f9a2eb",
+      "key": "f99eae3c5c624df5",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33277,7 +33397,7 @@
     {
       "observation": "1213-06",
       "element": "レイ（仮称） skill1.effects[2]",
-      "key": "6398283e66f9a2eb",
+      "key": "f99eae3c5c624df5",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33285,7 +33405,7 @@
     {
       "observation": "1214-01",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "fe1cbcb3d8ed950e",
+      "key": "1685277923032e38",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33293,7 +33413,7 @@
     {
       "observation": "1214-01",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "fe1cbcb3d8ed950e",
+      "key": "1685277923032e38",
       "effective": true,
       "minus": 0,
       "plus": 0.24900000000000014
@@ -33301,7 +33421,7 @@
     {
       "observation": "1214-01",
       "element": "レイ（仮称） skill1.effects[0]",
-      "key": "fe1cbcb3d8ed950e",
+      "key": "1685277923032e38",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33309,7 +33429,7 @@
     {
       "observation": "1214-01",
       "element": "レイ（仮称） skill1.effects[1]",
-      "key": "fe1cbcb3d8ed950e",
+      "key": "1685277923032e38",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33317,7 +33437,7 @@
     {
       "observation": "1214-01",
       "element": "レイ（仮称） skill1.effects[2]",
-      "key": "fe1cbcb3d8ed950e",
+      "key": "1685277923032e38",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33325,7 +33445,7 @@
     {
       "observation": "1214-02",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "c728235795925800",
+      "key": "a221d185251fa7b6",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33333,7 +33453,7 @@
     {
       "observation": "1214-02",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "c728235795925800",
+      "key": "a221d185251fa7b6",
       "effective": true,
       "minus": null,
       "plus": -0.41712819052524835,
@@ -33342,7 +33462,7 @@
     {
       "observation": "1214-02",
       "element": "レイ（仮称） skill1.effects[0]",
-      "key": "c728235795925800",
+      "key": "a221d185251fa7b6",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -33351,7 +33471,7 @@
     {
       "observation": "1214-02",
       "element": "レイ（仮称） skill1.effects[1]",
-      "key": "c728235795925800",
+      "key": "a221d185251fa7b6",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33359,7 +33479,7 @@
     {
       "observation": "1214-02",
       "element": "レイ（仮称） skill1.effects[2]",
-      "key": "c728235795925800",
+      "key": "a221d185251fa7b6",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33367,7 +33487,7 @@
     {
       "observation": "1214-04",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "86c799b39089e5f8",
+      "key": "735abc7902f7f5ee",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33375,7 +33495,7 @@
     {
       "observation": "1214-04",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "86c799b39089e5f8",
+      "key": "735abc7902f7f5ee",
       "effective": true,
       "minus": null,
       "plus": 0,
@@ -33384,7 +33504,7 @@
     {
       "observation": "1214-04",
       "element": "レイ（仮称） skill1.effects[0]",
-      "key": "86c799b39089e5f8",
+      "key": "735abc7902f7f5ee",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33392,7 +33512,7 @@
     {
       "observation": "1214-04",
       "element": "レイ（仮称） skill1.effects[1]",
-      "key": "86c799b39089e5f8",
+      "key": "735abc7902f7f5ee",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33400,7 +33520,7 @@
     {
       "observation": "1214-04",
       "element": "レイ（仮称） skill1.effects[2]",
-      "key": "86c799b39089e5f8",
+      "key": "735abc7902f7f5ee",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33408,7 +33528,7 @@
     {
       "observation": "1214-05",
       "element": "アスカ：WILLE skill1.effects[1]",
-      "key": "35286e5def231f78",
+      "key": "556acd4758055b6e",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33416,7 +33536,7 @@
     {
       "observation": "1214-05",
       "element": "アスカ：WILLE skill1.effects[2]",
-      "key": "35286e5def231f78",
+      "key": "556acd4758055b6e",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -33424,7 +33544,7 @@
     {
       "observation": "1214-05",
       "element": "レイ（仮称） skill1.effects[0]",
-      "key": "35286e5def231f78",
+      "key": "556acd4758055b6e",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33432,7 +33552,7 @@
     {
       "observation": "1214-05",
       "element": "レイ（仮称） skill1.effects[1]",
-      "key": "35286e5def231f78",
+      "key": "556acd4758055b6e",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -33440,7 +33560,7 @@
     {
       "observation": "1214-05",
       "element": "レイ（仮称） skill1.effects[2]",
-      "key": "35286e5def231f78",
+      "key": "556acd4758055b6e",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -34073,6 +34193,54 @@
       "observation": "1234-02",
       "element": "ミサト skill1.effects[0]",
       "key": "ff90416494235811",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1236-01",
+      "element": "ソリン burst.effects[1]",
+      "key": "238a31f1693d2054",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1236-02",
+      "element": "ソリン burst.effects[1]",
+      "key": "c01a925777089438",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1237-06",
+      "element": "アスカ：WILLE skill1.effects[1]",
+      "key": "df4ad285d4b0f31a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1237-06",
+      "element": "アスカ：WILLE skill1.effects[2]",
+      "key": "df4ad285d4b0f31a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1238-09",
+      "element": "リバーレリオ skill2.effects[1]",
+      "key": "cca5998a717da625",
+      "effective": true,
+      "minus": -8,
+      "plus": 0
+    },
+    {
+      "observation": "1239-09",
+      "element": "リバーレリオ skill2.effects[1]",
+      "key": "72b6fba5a1f31076",
       "effective": false,
       "minus": 0,
       "plus": 0
