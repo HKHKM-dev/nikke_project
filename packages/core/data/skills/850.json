@@ -13,7 +13,10 @@
           "assumes": {
             "ja": "インパクトエグゾスパイン（戦闘開始時・持続）のクリティカル確率▲。戦闘の間ずっと続くので常時の効果で書く",
             "en": "Impact-Type Exospine's Critical Rate increase (from the start of battle, continuous). It lasts the whole battle, so it is written as a passive"
-          }
+          },
+          "claims": [
+            "C-1319"
+          ]
         },
         {
           "kind": "damage",
@@ -24,13 +27,15 @@
           "damageType": "skill",
           "ref": 2,
           "hitsRef": 3,
-          "delayFrames": 6,
+          "delayFrames": 1,
           "hitIntervalFrames": 12,
-          "gaugePerHit": true,
           "assumes": {
-            "ja": "不安定エネルギー。通常攻撃のクリティカル命中（発ごとに命中の期待値 × その発の通常攻撃の会心率を足す。紅蓮：神殺の S2 と同じ数え方）が 44 の倍数に届いた発から、ランダムな敵（敵 1 体の前提で的）に 3 回順番に攻撃する。1 ヒットは説明文の値で、3 ヒットとも発動の時点のバフで出す。1 ヒット目の遅れ・ヒットの間隔・ゲージ（射手の 1 ヒットぶん）はマリアン：クイーンとリトルマーメイドの順番の攻撃に倣った仮の値で、録画で読む",
-            "en": "Unstable Energy. From the shot where normal attack critical hits (counted per shot as expected hits × that shot's normal attack critical rate, as for Scarlet: Goddeath S2) reach a multiple of 44, it attacks a random enemy (the target under the single-enemy premise) sequentially 3 times. Each hit is the description value and all 3 use the buffs at activation. The first-hit delay, the hit spacing and the gauge (one shooter hit) are provisional values after Marian: Queen and Little Mermaid's sequential attacks, to be read from recordings"
-          }
+            "ja": "不安定エネルギー。通常攻撃のクリティカル命中（発ごとに命中の期待値 × その発の通常攻撃の会心率を足す。紅蓮：神殺の S2 と同じ数え方）が 44 の倍数に届いた発の 1f 後から、ランダムな敵（敵 1 体の前提で的）に 12f おきに 3 回順番に攻撃する。1 ヒットは説明文の値で、3 ヒットとも発動の時点のバフで出す（1 ヒット目が付けた受けるダメージ▲は同じ回の 2・3 ヒット目に乗らない）。実機は会心を 1 回ずつ数えるので、1 回ずつの時刻は乱数の分だけ違う。バーストゲージを溜めるかは確かめていない（溜めない扱い。溜める読みとの差は 1 回目のフルバーストまでで 4f で、録画で分けられなかった）",
+            "en": "Unstable Energy. From 1 frame after the shot where normal attack critical hits (counted per shot as expected hits × that shot's normal attack critical rate, as for Scarlet: Goddeath S2) reach a multiple of 44, it attacks a random enemy (the target under the single-enemy premise) sequentially 3 times, 12 frames apart. Each hit is the description value, and all 3 use the buffs at activation (the Damage Taken increase applied by the 1st hit is not on the 2nd and 3rd hits of the same activation). In game crits are counted one by one, so individual timings differ by the randomness. Whether it charges the burst gauge is unverified (treated as not charging; the charging reading differs by 4 frames up to the first Full Burst and could not be told apart in the recordings)"
+          },
+          "claims": [
+            "C-1324"
+          ]
         },
         {
           "kind": "damage",
@@ -44,12 +49,15 @@
           "damageType": "skill",
           "ref": 2,
           "hitsRef": 3,
-          "delayFrames": 6,
+          "delayFrames": 1,
           "hitIntervalFrames": 12,
           "assumes": {
-            "ja": "バーストのインパクトエグゾスパインMk2「不安定エネルギーの順番に攻撃する効果のダメージ倍率を 100% 効果量に対し増加」は、エグゾスパインMk2 の間の不安定エネルギーの各ヒットの倍率を 2 倍にする（元の値に対して +100%。紅蓮：神殺の居合の C-0969 と同じ読み）。モデルは不安定エネルギーと同じ値・同じフレームの 2 つ目の効果の和で書く（期待値は同じ。ゲージは 1 つ目の効果だけが溜める）。Mk2 かは発動の時点で見る",
-            "en": "Burst's Impact-Type Exospine Mk2 (\"the damage multiplier of Unstable Energy sequential attacks is scaled by 100%\") doubles each Unstable Energy hit while Exospine Mk2 lasts (+100% of the original value, read as Scarlet: Goddeath's Iai in C-0969). The model writes it as a second effect of the same value on the same frames (same expectation; only the first effect charges gauge). Mk2 is checked at activation"
-          }
+            "ja": "バーストのインパクトエグゾスパインMk2「不安定エネルギーの順番に攻撃する効果のダメージ倍率を 100% 効果量に対し増加」は、エグゾスパインMk2 の間に発動した不安定エネルギーの各ヒットの倍率を 2 倍にする（元の値に対して +100%。紅蓮：神殺の居合の C-0969 と同じ読み）。実機は 1 つのヒット。モデルは不安定エネルギーと同じ値・同じフレームの 2 つ目の効果の和で書く（期待値は同じ）。Mk2 かは発動の時点で見る",
+            "en": "Burst's Impact-Type Exospine Mk2 (\"the damage multiplier of Unstable Energy sequential attacks is scaled by 100%\") doubles each Unstable Energy hit activated while Exospine Mk2 lasts (+100% of the original value, read as Scarlet: Goddeath's Iai in C-0969). In game it is one hit; the model writes it as a second effect of the same value on the same frames (same expectation). Mk2 is checked at activation"
+          },
+          "claims": [
+            "C-1321"
+          ]
         },
         {
           "kind": "timed",
@@ -61,12 +69,15 @@
           "stat": "damageTaken",
           "ref": 4,
           "durationRef": 5,
-          "delayFrames": 6,
+          "delayFrames": 1,
           "enemyElement": "Electronic",
           "assumes": {
-            "ja": "不安定エネルギーが電撃コードの敵に命中した時の受けるダメージ▲。1 ヒット目から 10 秒とみなす（2・3 ヒット目で付き直す分の窓の延びは入れない）。重ならず付き直すと読む",
-            "en": "Damage Taken increase when Unstable Energy hits an Electric Code enemy. It is taken as 10 s from the first hit (the extension from re-application by the 2nd and 3rd hits is not included). Re-application refreshes instead of stacking"
-          }
+            "ja": "不安定エネルギーが電撃コードの敵に命中した時の受けるダメージ▲。1 ヒット目から 10 秒とみなす（同じ回の 2・3 ヒット目で付き直す分の窓の延びは入れない）。重ならず付き直すと読む。不安定エネルギーは約 5 秒ごとに出るので、窓の終わりは録画で見ていない",
+            "en": "Damage Taken increase when Unstable Energy hits an Electric Code enemy. It is taken as 10 s from the 1st hit (the extension from re-application by the 2nd and 3rd hits of the same activation is not included). Re-application refreshes instead of stacking. Unstable Energy comes about every 5 s, so the window end is not seen in the recordings"
+          },
+          "claims": [
+            "C-1320"
+          ]
         }
       ],
       "notes": []
@@ -82,7 +93,10 @@
           "assumes": {
             "ja": "イーグルアイエグゾスパイン（戦闘開始時・持続）のスキル発動者基準の攻撃力▲。戦闘の間ずっと続くので常時の効果で書く",
             "en": "Eagle Eye-Type Exospine's ATK increase based on the skill user's ATK (from the start of battle, continuous). It lasts the whole battle, so it is written as a passive"
-          }
+          },
+          "claims": [
+            "C-1318"
+          ]
         },
         {
           "kind": "passive",
@@ -92,7 +106,10 @@
           "assumes": {
             "ja": "イーグルアイエグゾスパインの最大装弾数▲（戦闘開始時・持続）",
             "en": "Eagle Eye-Type Exospine's Max Ammunition Capacity increase (from the start of battle, continuous)"
-          }
+          },
+          "claims": [
+            "C-1318"
+          ]
         },
         {
           "kind": "passive",
@@ -106,7 +123,10 @@
           "assumes": {
             "ja": "バーストのイーグルアイエグゾスパインMk2「イーグルアイエグゾスパインの攻撃力増加倍率を 100% 効果量に対し増加」は、エグゾスパインMk2 の間の攻撃力▲を 2 倍にする（元の値に対して +100%。C-0969 と同じ読み）。モデルは元の▲と同じ値の 2 つ目の効果を、Mk2 の間だけ足す",
             "en": "Burst's Eagle Eye-Type Exospine Mk2 (\"the ATK increase multiplier of Eagle Eye-Type Exospine is scaled by 100%\") doubles the ATK increase while Exospine Mk2 lasts (+100% of the original value, read as in C-0969). The model adds a second effect of the same value only during Mk2"
-          }
+          },
+          "claims": [
+            "C-1321"
+          ]
         },
         {
           "kind": "ammoRefill",
@@ -121,7 +141,10 @@
           "assumes": {
             "ja": "電撃コードの敵に通常攻撃が 10 回命中するごとに弾丸チャージ 3 発（命中は発ごとに命中の期待値を足して数える）",
             "en": "Reloads 3 rounds every 10 normal attack hits on an Electric Code enemy (hits are counted by adding the expected hits per shot)"
-          }
+          },
+          "claims": [
+            "C-1322"
+          ]
         }
       ],
       "notes": [
@@ -136,16 +159,17 @@
     "burst": {
       "effects": [
         {
-          "kind": "damage",
-          "trigger": "burstUse",
-          "damageType": "skill",
+          "kind": "burstDamage",
           "ref": 1,
+          "damageType": "skill",
           "hitsRef": 2,
-          "hitIntervalFrames": 12,
           "assumes": {
-            "ja": "ランダムな敵への 6 回の順番の攻撃は、敵 1 体の前提ではすべてその敵に当たる。1 ヒットは説明文の値で、6 ヒットとも発動の時点のバフとフルバースト補正で出す。1 ヒット目の時刻（バースト使用時の効果の発火と同じフレーム）とヒットの間隔は、エレグ：ブーム・アンド・ショックのバーストの 6 回順番の攻撃に倣った仮の値で、録画で読む",
-            "en": "With a single enemy, all 6 sequential hits on random enemies land on that enemy. Each hit is the description value, and all 6 use the buffs and the Full Burst bonus at activation. The first-hit timing (the frame burst use effects fire) and the spacing are provisional values after Elegg: Boom and Shock's 6 sequential burst attacks, to be read from recordings"
-          }
+            "ja": "ランダムな敵への 6 回の順番の攻撃は、敵 1 体の前提ではすべてその敵に当たる。1 ヒットは説明文の値で、ヒットの時刻は遅れの表の分かれたヒット（III のタイマーの 00.00 から 22f と、その後のずれ）。同じ発動のエグゾスパインMk2 の攻撃力▲は乗らない（遅れの表の、同じ発動の▲がヒットに乗る行でない）",
+            "en": "With a single enemy, all 6 sequential hits on random enemies land on that enemy. Each hit is the description value, timed by the split hits of the burst delay table (22 frames after the III timer shows 00.00, then the offsets). The ATK increase of the same activation's Exospine Mk2 does not apply (the delay table row does not put same-activation buffs on the hit)"
+          },
+          "claims": [
+            "C-1323"
+          ]
         },
         {
           "kind": "state",
@@ -156,7 +180,10 @@
           "assumes": {
             "ja": "エグゾスパインMk2 の 2 つの効果は、S1 の不安定エネルギー（skill1 の effects[2]）と S2 の攻撃力▲（skill2 の effects[2]）に、この状態の条件で書いた",
             "en": "The two Exospine Mk2 effects are written in S1's Unstable Energy (skill1 effects[2]) and S2's ATK increase (skill2 effects[2]), conditioned on this state"
-          }
+          },
+          "claims": [
+            "C-1321"
+          ]
         }
       ],
       "notes": []

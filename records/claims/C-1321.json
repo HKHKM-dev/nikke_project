@@ -1,11 +1,11 @@
 {
   "id": "C-1321",
   "text": "イヴのバーストのエグゾスパインMk2 は使用から付き、その間は不安定エネルギーの各ヒットの倍率が 2 倍（480%）、S2 のイーグルアイエグゾスパインの攻撃力▲が 2 倍（スキル発動者基準 100%）になる（「100% 効果量に対し増加」は元の値の 2 倍）。Mk2 の間に発動した不安定エネルギーには、2 倍の倍率と 2 倍の攻撃力▲とフルバースト補正が乗る",
-  "state": "仮説",
+  "state": "確定",
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`1223-10`・`1223-11`・`1225-09`。V-0794",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "data/skills/850.json（burst の effects[1] の状態 exospineMk2 の付与、skill1 の effects[2] の条件 selfState の不安定エネルギーの 2 つ目の damage、skill2 の effects[2] の while.selfState の攻撃力▲の 2 つ目の passive）。skills/states.ts の exospineMk2",
   "replaces": [],
   "updated": "2026-11-15",
   "subject": {

@@ -1,11 +1,11 @@
 {
   "id": "C-1324",
   "text": "イヴの S1 の不安定エネルギーは、通常攻撃のクリティカル命中 44 回ごとに、きっかけの発の 1f 後から 12f おきに 3 ヒット出る。1 ヒットは最終攻撃力の 240% で、3 ヒットとも発動の時点のバフで出る（1 ヒット目が付けた受けるダメージ▲は同じ回の 2・3 ヒット目に乗らない）",
-  "state": "仮説",
+  "state": "確定",
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`1223-08`・`1223-09`・`1223-16`・`1223-17`・`1224-09`・`1225-08`・`1225-13`。V-0794",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "data/skills/850.json（skill1 の effects[1]。{ count: critHit, everyRef: 6 } の damage の hitsRef・hitIntervalFrames 12・delayFrames 1。射撃の回数のきっかけの hitsRef は plan/design-eve.md 2.1 節）",
   "replaces": [],
   "updated": "2026-11-15",
   "subject": {

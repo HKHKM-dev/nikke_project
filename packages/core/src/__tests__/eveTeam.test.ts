@@ -1,9 +1,10 @@
 // イヴ（850）を含む編成（plan/design-eve.md）。S1 の不安定エネルギーが通常攻撃のクリティカル命中 44 回ごとに自分の発から 3 ヒットで出て、
 // エグゾスパインMk2 の間だけ同じ値のヒットが重なること、電撃コードの敵にだけ受けるダメージ▲が付くこと、S2 の攻撃力▲が戦闘を通して効き、
-// Mk2 の間だけもう 1 つ重なること、電撃コードの敵にだけ 10 回命中ごとに弾丸チャージ 3 発が入ること、バーストが 6 ヒットで出て
-// Mk2 が付くことを見る。射撃の列のグループ分け
+// Mk2 の間だけもう 1 つ重なること、電撃コードの敵にだけ 10 回命中ごとに弾丸チャージ 3 発が入ること、バーストが説明文の値の 6 倍で出て
+// Mk2 が付くことを見る（6 ヒットの時刻は遅れの表の行）。射撃の列のグループ分け
 import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
+import { runSimulation } from '../sim/engine.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput } from '../team.ts';
 import { describeEveryShotInOneGroup, effectWindows, fixedTeam, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
@@ -36,7 +37,7 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
       .filter((h) => h.slotIndex === e && h.effect.source.skill === 'skill1' && h.effect.effectIndex === effectIndex)
       .map((h) => h.frame);
 
-  it('fires Unstable Energy as 3 hits 12 frames apart, starting 6 frames after an own shot', () => {
+  it('fires Unstable Energy as 3 hits 12 frames apart, starting 1 frame after an own shot', () => {
     const hits = s1Hits(1);
     // 180 秒で 20 回より多く出る（会心率 75% の AR）
     expect(hits.length).toBeGreaterThan(60);
@@ -44,7 +45,7 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     for (let k = 0; k + 2 < hits.length; k += 3) {
       expect(hits[k + 1]! - hits[k]!).toBe(12);
       expect(hits[k + 2]! - hits[k]!).toBe(24);
-      expect(shots.has(hits[k]! - 6)).toBe(true);
+      expect(shots.has(hits[k]! - 1)).toBe(true);
     }
   });
 
@@ -54,7 +55,7 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(doubled.length).toBeGreaterThan(0);
     const expected: number[] = [];
     for (let k = 0; k < base.length; k += 3) {
-      if (inMk2(base[k]! - 6)) expected.push(...base.slice(k, k + 3));
+      if (inMk2(base[k]! - 1)) expected.push(...base.slice(k, k + 3));
     }
     expect(doubled).toEqual(expected);
   });
@@ -87,12 +88,10 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(refills.length).toBeGreaterThan(100);
   });
 
-  it('hits 6 times 12 frames apart with the burst', () => {
-    const hits = plan.skillHits
-      .filter((h) => h.slotIndex === e && h.effect.source.skill === 'burst')
-      .map((h) => h.frame);
-    expect(hits.length).toBe(activations.length * 6);
-    for (let k = 0; k < hits.length; k += 6) expect(hits[k + 5]! - hits[k]!).toBe(60);
+  it('hits the burst for 6 × the description value on each use', () => {
+    const hits = runSimulation(input).slots[e]!.burst.hits;
+    expect(hits.length).toBe(activations.length);
+    for (const h of hits) expect(h.multiplier).toBeCloseTo(6 * 4.5714, 10);
   });
 });
 

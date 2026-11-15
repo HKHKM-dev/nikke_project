@@ -221,6 +221,14 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
     delays: { hitFrames: 54, effectFrames: 0, hitOffsets: [0, 12, 24, 35, 47, 59, 71, 82, 94, 106] },
     claim: 'C-0655',
   },
+  // イヴ: 「6 回順番に攻撃」。III のタイマーの 00.00 から 1 ヒット目まで 22f（動画で 44f の最も多い値。止まり 22f を含む）、2 ヒット目以降は
+  // 1 ヒット目から約 12f おき（どの回も同じ）。各ヒットが説明文の値（burstDamage の hitsRef）。同じ発動のエグゾスパインMk2 の
+  // 攻撃力▲は乗らない（V-0794）
+  {
+    resourceIds: [850],
+    delays: { hitFrames: 22, effectFrames: 0, hitOffsets: [0, 12, 24, 35, 47, 59] },
+    claim: 'C-1323',
+  },
   // ラプラス（宝物あり）: III のタイマーの 00.00 から使用武器変更（ビーム）の最初の発まで 6f（動画で 28f。止まり 22f を含む）、
   // 初回ダメージ（バーストの倍率ダメージ）のヒットまで 7f（動画で 29f）。窓の終わりは発動から数える（モダニアと同じ）。ビームの形は C-1200。宝物なしは未測定
   {
