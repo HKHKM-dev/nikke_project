@@ -18,7 +18,12 @@ type Props = {
 export function SettingsMenu({ uiMode, onSelectUiMode }: Props) {
   const [theme, setTheme] = useTheme();
   return (
-    <Popover button={<BadgeIcon className="settings-menu-icon" name={SETTING_BADGE} />} buttonClassName="settings-menu-button" label="設定" align="right">
+    <Popover
+      button={<BadgeIcon className="settings-menu-icon" name={SETTING_BADGE} />}
+      buttonClassName="settings-menu-button"
+      label="設定"
+      align="right"
+    >
       <fieldset className="popover-group">
         <legend>表示モード</legend>
         {UI_MODES.map((m) => (
