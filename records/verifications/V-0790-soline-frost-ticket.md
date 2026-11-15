@@ -50,7 +50,12 @@
 
 <!-- records:predictions:start -->
 
-（予測との比べの表は npm run records:check が書き込む）
+予測は 2026-11-15（commit 7d06e8c）に出した。
+
+| 指標                                         | 実測         | 予測 Model                   | 予測 NoCut                   | 予測 NoHeal                  |
+| -------------------------------------------- | ------------ | ---------------------------- | ---------------------------- | ---------------------------- |
+| fb-intervals（fullBurstStartIntervals）      | （実測なし） | [1,936, 1,936, 1,936, 1,936] | [2,376, 2,376, 2,376, 2,376] | [1,936, 1,936, 1,936, 1,936] |
+| crown-buff-start-1（buffEdgeFromActivation） | （実測なし） | -6                           | -6                           | 521                          |
 
 <!-- records:predictions:end -->
 
