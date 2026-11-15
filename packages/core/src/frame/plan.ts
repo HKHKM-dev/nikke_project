@@ -56,6 +56,7 @@ import {
   buffTimelineOf,
   counterEffectiveFrom,
   counterFullFrames,
+  isStateOrigin,
   itemsOf,
   selfHpRatioOf,
   stacksHold,
@@ -539,9 +540,7 @@ function slotReadersOf(ctx: SkillHitsContext, slot: TeamSlotInput | null, slotIn
   const ownStateItems = itemsOf(history, { holder: slotIndex, kind: 'state' });
   const selfStateHolds = (self: SelfStateCondition, frame: number): boolean => {
     const isStatic = [...ownStatics].some((s) => stateMatches(self.state, s));
-    const active = ownStateItems.filter(
-      (i) => i.origin.kind === 'state' && stateMatches(self.state, i.origin.state) && i.start < frame && frame < i.end,
-    );
+    const active = ownStateItems.filter((i) => isStateOrigin(i.origin, self.state) && i.start < frame && frame < i.end);
     if (!isStacksCondition(self)) return (isStatic || active.length > 0) === self.present;
     return stacksHold(
       self,
@@ -556,7 +555,7 @@ function slotReadersOf(ctx: SkillHitsContext, slot: TeamSlotInput | null, slotIn
   const selfStackCount = (state: NamedStateId, frame: number): number => {
     let level = [...ownStatics].some((s) => stateMatches(state, s)) ? 1 : 0;
     for (const i of ownStateItems) {
-      if (i.origin.kind !== 'state' || !stateMatches(state, i.origin.state)) continue;
+      if (!isStateOrigin(i.origin, state)) continue;
       if (i.start < frame && frame < i.end) level = Math.max(level, i.stack ?? 1);
     }
     return level;

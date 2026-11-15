@@ -171,16 +171,16 @@ export function isStateOrigin(origin: HeldOrigin, state: NamedStateId): boolean 
 }
 
 /**
- * 「〈状態〉が終了した時」のフレーム（昇順）。items は 1 つの持ち主の件（出そろったもの）で、その状態（家族も）の件をつないだ塊の
- * 終わりのうち、戦闘の終わり（frames）より前のもの。damage の { ended }（2 パス目）と指標の event: stateEnd が読む。1 パス目の
- * endedAt と、そのフレームの登録が済んだ後の件の上で同じ答えになる（plan/design-state-ended.md 4 節）
+ * 「〈状態〉が終了した時」のフレーム（昇順）。items は 1 つの持ち主の件（出そろったもの。itemsOf の順 = 始まりの順）で、その状態
+ * （家族も）の件をつないだ塊の終わりのうち、戦闘の終わり（frames）より前のもの。damage の { ended }（2 パス目）と指標の
+ * event: stateEnd が読む。1 パス目の endedAt と、そのフレームの登録が済んだ後の件の上で同じ答えになる（plan/design-state-ended.md 4 節）
  */
 export function stateEndFrames(
   items: readonly Pick<HeldItemView, 'start' | 'end' | 'origin'>[],
   state: NamedStateId,
   frames: number,
 ): number[] {
-  const own = items.filter((i) => isStateOrigin(i.origin, state)).sort((x, y) => x.start - y.start);
+  const own = items.filter((i) => isStateOrigin(i.origin, state));
   return unionRanges(own)
     .map((r) => r.end)
     .filter((f) => f < frames);

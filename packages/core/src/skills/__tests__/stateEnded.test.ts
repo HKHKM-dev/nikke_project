@@ -59,7 +59,7 @@ function run(effects: unknown[]) {
         attackOverride: 1000,
         hpOverride: 10000,
         defenceOverride: 100,
-        condition: { coreHitRate: 0, distanceBonus: false, fullCharge: true },
+        condition: { coreHitRate: 0, distanceBonus: false },
         skills: { definition, levels: MAX_SKILL_LEVELS },
       },
     ],
@@ -123,8 +123,7 @@ describe('終わりのフレームに付け直す', () => {
   const { input, result } = run(readers(2.02));
   const spans = spansOf(result);
   // 付け直しが件を延ばし、完全計算は 1 つの件につながる。付け直しのフレーム
-  const [[start, end]] = spans('prediction') as [[number, number]];
-  const period = start;
+  const [[period, end]] = spans('prediction') as [[number, number]];
   const regrants = [2, 3, 4].map((n) => n * period).filter((f) => f < end);
 
   it('re-grants on the end frame and joins into one item', () => {
