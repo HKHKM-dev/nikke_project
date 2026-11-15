@@ -1,6 +1,6 @@
 // モダン UI で、一覧のニケをスロットに置く・スロットから外す操作と、そのときに絵を飛ばすアニメーション（flight.ts）
 import { useLayoutEffect, useRef, type Dispatch } from 'react';
-import { placeCharacterAction, type TeamAction, type TeamState } from '../../team.ts';
+import { placeCharacterAction, rearrangeActions, type TeamAction, type TeamState } from '../../team.ts';
 import { slotCardAt } from './dropAnimation.ts';
 import { flyIntoSlot, flyToTray, stopArrival } from './flight.ts';
 
@@ -20,6 +20,11 @@ export type SlotPlacement = {
    * 置けない（どこかのスロットにいる）ときは何もしない。置いたかを返す
    */
   placeFromTray: (resourceId: number, index: number, from?: DOMRect) => boolean;
+  /**
+   * スロットのニケの並びを target にする（元に戻す。useSlotUndo）。育成・設定はニケと一緒に動き、いまの値のまま（rearrangeActions）。
+   * 外れるニケは一覧へ、動くニケは前のスロットから、一覧から入るニケは一覧の絵から、それぞれのスロットへ動かす
+   */
+  rearrange: (target: readonly (number | null)[]) => void;
 };
 
 export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>): SlotPlacement {
@@ -66,5 +71,27 @@ export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>
     return true;
   };
 
-  return { clearSlot, placeFromTray };
+  const rearrange = (target: readonly (number | null)[]) => {
+    const current = team.slots.map((s) => s.resourceId);
+    const actions = rearrangeActions(current, target);
+    if (actions.length === 0) return;
+    // 動く前のスロットの立ち絵の位置（スロットの間を動くニケは、ここから動かす）
+    const slotRects = new Map<number, DOMRect>();
+    current.forEach((id, i) => {
+      const area = slotCardAt(i)?.querySelector('.modern-slot-char-area');
+      if (id !== null && area) slotRects.set(id, area.getBoundingClientRect());
+    });
+    current.forEach((id, i) => {
+      if (id !== null && !target.includes(id)) sendToTray(i);
+    });
+    target.forEach((id, i) => {
+      if (id === null || current[i] === id) return;
+      stopArrival(slotCardAt(i));
+      const from = slotRects.get(id) ?? trayVisualAt(id)?.getBoundingClientRect();
+      if (from) arrivalsRef.current.push({ index: i, from, until: arrivalDeadline() });
+    });
+    for (const action of actions) dispatch(action);
+  };
+
+  return { clearSlot, placeFromTray, rearrange };
 }

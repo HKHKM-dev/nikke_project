@@ -80,8 +80,8 @@ export function ModernView({
   useSlotFit(slotsGridRef, team.slots.length);
 
   // 置く・外す（絵を飛ばす）と、ドラッグ
-  // スロットの入れ替え・外す・置き換えを元に戻す（スロットの並びの上の中央のボタン）
-  const slotUndo = useSlotUndo(team, dispatch);
+  // スロットのニケの並びを元に戻す（スロットの並びの上の中央のボタン）
+  const slotUndo = useSlotUndo(team, dispatch, parties.active);
   const placement = useSlotPlacement(team, slotUndo.trackedDispatch);
   const { clearSlot, placeFromTray } = placement;
   // ドラッグを始めたら、一覧のクリックで待っているニケをやめる
@@ -161,14 +161,14 @@ export function ModernView({
         <PartyTabs active={parties.active} onSelect={selectParty} totals={totals.parties} />
 
         <div className="modern-slots-area">
-          {/* 元に戻す（スロットの並びの上の端の中央。戻せる操作の後だけ出す）。絵はバッジの絵 ui_return.svg（.mask-icon） */}
+          {/* 元に戻す（スロットの並びの上の端の中央。戻せる並びがあるときだけ出す）。絵はバッジの絵 ui_return.svg（.mask-icon） */}
           {slotUndo.canUndo && (
             <button
               type="button"
               className="modern-slot-undo-button"
               aria-label="元に戻す"
               title="元に戻す"
-              onClick={slotUndo.undo}
+              onClick={() => slotUndo.undo(placement)}
             >
               <span className="mask-icon modern-slot-undo-icon" style={maskIconStyle(returnIcon)} />
             </button>
