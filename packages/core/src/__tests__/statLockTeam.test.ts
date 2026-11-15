@@ -91,7 +91,9 @@ describe('エクシアの宝物版 S1 のリロード速度の固定（クラウ
   });
 
   it('would shorten the reload if the reload speed ups were added', () => {
-    for (const g of reloadGaps(team([CROWN, SOLINE, EXIA], 2, EXIA))) expect(g).toBeLessThan(88);
+    const gaps = reloadGaps(team([CROWN, SOLINE, EXIA], 2, EXIA));
+    expect(gaps.length).toBeGreaterThan(3);
+    for (const g of gaps) expect(g).toBeLessThan(88);
   });
 });
 
@@ -116,7 +118,9 @@ describe('アスカ：WILLE の緊急修復のリロード速度の固定（I-DO
   });
 
   it('would reload at once if the reload speed ups were added', () => {
-    for (const r of emergencyReloads(team([FLOWER, CROWN, ASUKA_WILLE], 2, ASUKA_WILLE))) expect(r).toBeLessThan(10);
+    const reloads = emergencyReloads(team([FLOWER, CROWN, ASUKA_WILLE], 2, ASUKA_WILLE));
+    expect(reloads.length).toBeGreaterThan(2);
+    for (const r of reloads) expect(r).toBeLessThan(10);
   });
 });
 
@@ -127,14 +131,18 @@ describe('チャージ速度▲▼の無効（ココア + ユニ + ラプンツ�
     const intervals = fullBurstIntervals(team(ids, 3), 3);
     expect(intervals.length).toBeGreaterThan(10);
     for (const d of intervals) expect(d).toBe(89);
-    for (const d of fullBurstIntervals(team(ids, 3, LIBERALIO), 3)) expect(d).toBeLessThan(89);
+    const summed = fullBurstIntervals(team(ids, 3, LIBERALIO), 3);
+    expect(summed.length).toBeGreaterThan(10);
+    for (const d of summed) expect(d).toBeLessThan(89);
   });
 
   it('keeps Rapunzel: Sanctuary’s Full Burst intervals at 82 f under Yuni’s charge speed up', () => {
     const intervals = fullBurstIntervals(team(ids, 2), 2);
     expect(intervals.length).toBeGreaterThan(10);
     for (const d of intervals) expect(d).toBe(82);
-    for (const d of fullBurstIntervals(team(ids, 2, RAPUNZEL_S), 2)) expect(d).toBeLessThan(82);
+    const summed = fullBurstIntervals(team(ids, 2, RAPUNZEL_S), 2);
+    expect(summed.length).toBeGreaterThan(10);
+    for (const d of summed) expect(d).toBeLessThan(82);
   });
 });
 
