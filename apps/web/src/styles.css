@@ -207,6 +207,11 @@ header h1 {
   height: 34px;
   padding: 0;
 }
+/* 設定のボタンの絵（バッジ ui_setting。六角形で縦 150 : 横 130） */
+.settings-menu-icon {
+  width: 26px;
+  height: 30px;
+}
 /* 見出しの行の右の、アカウントと設定のボタンを横に並べる */
 .app-header-actions {
   display: flex;
