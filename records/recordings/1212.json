@@ -1,0 +1,46 @@
+{
+  "id": "1212",
+  "date": "2026-11-15",
+  "folder": "range",
+  "file": "20261115-1212_team_rei-tentative.mp4",
+  "original": "2026-11-15_14-04-03.mp4",
+  "durationSec": 200.6,
+  "frames": 12034,
+  "fps": 60,
+  "sizeMB": 243,
+  "sha256": "2286661929d4",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 834,
+      "name": "レイ（仮称）",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0788 の撮影（編成 A）。I-DOLL・フラワー（I）・デルタ（II）・レイ（仮称）（III・操作）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-15T14:16+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
