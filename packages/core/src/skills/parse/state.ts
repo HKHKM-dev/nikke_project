@@ -550,7 +550,19 @@ export function contentAsTimed(grant: Record<string, Json>, item: Record<string,
 export function parseCounterChangeEffect(v: Record<string, Json>, path: string): CounterChangeEffect {
   rejectUnknownKeys(
     v,
-    ['kind', 'counter', 'trigger', 'target', 'amount', 'amountRef', 'decrease', 'floor', 'condition', 'assumes', 'claims'],
+    [
+      'kind',
+      'counter',
+      'trigger',
+      'target',
+      'amount',
+      'amountRef',
+      'decrease',
+      'floor',
+      'condition',
+      'assumes',
+      'claims',
+    ],
     path,
   );
   const counter = oneOf(COUNTER_IDS, v.counter, `${path}.counter`);

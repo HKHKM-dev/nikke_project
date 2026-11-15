@@ -80,7 +80,9 @@ describe('during・reset と damage の condition の検証', () => {
       trigger: S2_H1.trigger,
     });
     const cut = { kind: 'cooldownReduction', trigger: S2_H1.trigger, target: 'allies', ref: 2 };
-    expect(() => parseSkillDefinition(withSkill2([cut]))).toThrow(/only allowed in damage, timed, state, ammoRefill, counterChange and removeState/);
+    expect(() => parseSkillDefinition(withSkill2([cut]))).toThrow(
+      /only allowed in damage, timed, state, ammoRefill, counterChange and removeState/,
+    );
     expect(() => parseSkillDefinition(withSkill2([{ ...S2_H1, condition: undefined, gaugeHits: [0] }]))).toThrow(
       /gaugeHits cannot be used with a condition or a counting window/,
     );
