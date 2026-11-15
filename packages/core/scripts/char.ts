@@ -7,16 +7,13 @@ import { parseArgs } from 'node:util';
 import { renderCharSummary, similarDefined } from '../src/skills/charSummary.ts';
 import { classifyCharacters } from '../src/skills/catalog.ts';
 import type { CharacterData } from '../src/types.ts';
-import { loadCatalogInput } from './records-data.ts';
+import { loadCatalogInput, splitIds } from './records-data.ts';
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
   options: { en: { type: 'boolean', default: false } },
 });
-const keys = positionals
-  .flatMap((a) => a.split(','))
-  .map((a) => a.trim())
-  .filter((a) => a !== '');
+const keys = positionals.flatMap(splitIds);
 if (keys.length === 0) {
   console.error('usage: npm run char -- <id か名前（の一部）>[,...] [--en]');
   process.exit(1);
@@ -26,7 +23,10 @@ const byRid = new Map(characters.map((c) => [c.resourceId, c]));
 
 /** id か名前で引く（名前がぴったり合うキャラがあればそれだけ、無ければ名前を含むキャラ全部） */
 function lookup(key: string): CharacterData[] {
-  if (/^\d+$/.test(key)) return byRid.has(Number(key)) ? [byRid.get(Number(key))!] : [];
+  if (/^\d+$/.test(key)) {
+    const c = byRid.get(Number(key));
+    return c === undefined ? [] : [c];
+  }
   const k = key.toLowerCase();
   const names = (c: CharacterData) => [c.name.ja, c.name.en.toLowerCase()];
   const exact = characters.filter((c) => names(c).includes(k));

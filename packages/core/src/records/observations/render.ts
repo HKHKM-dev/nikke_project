@@ -80,6 +80,11 @@ function cell(text: string): string {
   return text.replace(/\|/g, '\\|');
 }
 
+/** 判定の欄（比べられないときは理由も） */
+function statusCell(r: Residual): string {
+  return r.status === 'error' ? `${STATUS_JA.error}: ${cell(r.message ?? '')}` : STATUS_JA[r.status];
+}
+
 const RESIDUAL_HEADER = [
   '| 観測値 | 読んだもの | 比べる値 | モデル | 実測 | 予測 | 差 | 許容 | 判定 | 結論 |',
   '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
@@ -105,7 +110,7 @@ export function renderResidualRows(
         fmtValue(r.predicted),
         fmtDiff(r),
         fmtTolerance(c.tolerance),
-        r.status === 'error' ? `${STATUS_JA.error}: ${cell(r.message ?? '')}` : STATUS_JA[r.status],
+        statusCell(r),
         claimText(o.id),
       ].join(' | ')} |`,
     );
@@ -180,20 +185,21 @@ export function renderResidualChanges(base: readonly Residual[], head: readonly 
       : {
           predicted: fmtValue(r.predicted),
           diff: fmtDiff(r),
-          status: r.status === 'error' ? `${STATUS_JA.error}: ${cell(r.message ?? '')}` : STATUS_JA[r.status],
+          status: statusCell(r),
         };
   const rows: string[] = [];
   let statusChanged = 0;
   for (const id of ids) {
-    const b = shown(before.get(id));
-    const a = shown(after.get(id));
+    const [br, ar] = [before.get(id), after.get(id)];
+    const b = shown(br);
+    const a = shown(ar);
     if (b.predicted === a.predicted && b.status === a.status) continue;
     if (b.status !== a.status) statusChanged++;
-    const o = (after.get(id) ?? before.get(id))!.observation;
+    const o = (ar ?? br)!.observation;
     rows.push(
       `| ${[
         id,
-        `\`${o.compare!.metric}\``,
+        `\`${o.compare!.metric}\`${cell(fmtArgs(o.compare!.args, o.compare!.setup))}`,
         cell(fmtObserved(o)),
         `${b.predicted} → ${a.predicted}`,
         `${b.diff} → ${a.diff}`,

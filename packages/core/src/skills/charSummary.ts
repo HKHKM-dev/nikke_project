@@ -14,11 +14,9 @@ export type SimilarChar = { rid: number; name: string; shared: readonly string[]
 /** 説明文の値の差し込み。値に番号を添え（16.16{01}）、Lv ごとの値が違えば「最大（Lv1 は最小）」 */
 export function fillDescription(skill: SkillRaw, locale: Locale = 'ja'): string {
   return fillSkillDescription(skill, locale, (levels, digits) => {
-    const n = `{${digits}}`;
-    if (levels === null || levels === undefined || levels.length === 0) return `?${n}`;
-    const first = levels[0]!;
-    const last = levels[levels.length - 1]!;
-    return first === last ? `${last}${n}` : `${last}${n}（Lv1 は ${first}）`;
+    const first = levels?.[0];
+    const last = levels?.at(-1);
+    return `${last ?? '?'}{${digits}}${first === last ? '' : `（Lv1 は ${first}）`}`;
   }).trim();
 }
 
@@ -52,9 +50,9 @@ function skillLines(label: string, skill: SkillRaw, locale: Locale): string[] {
 /** 1 キャラ分の詰めた文 */
 export function renderCharSummary(
   c: CharacterData,
-  opts: { defined: boolean; similar: readonly SimilarChar[]; locale?: Locale },
+  opts: { defined: boolean; similar: readonly SimilarChar[]; locale: Locale },
 ): string {
-  const locale = opts.locale ?? 'ja';
+  const { locale } = opts;
   const s = c.shot;
   const out = [
     `# ${c.resourceId} ${c.name.ja}（${c.name.en}） ${c.rarity} ${c.class} ${c.element} ${c.weaponType} バースト ${c.burstStep}`,
