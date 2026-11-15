@@ -1112,7 +1112,14 @@ describe('観測値の形の拡張（Stage 20-E）', () => {
       [
         { ...record, id: '0047-81', recordings: ['0047', '0046'] },
         { ...record, id: '0046-82', recording: '0046', recordings: ['0046', '999'] },
-        { ...compared, id: '0046-83', recording: '0046', recordings: ['0046', '0047'] },
+        // 録画 0046 は 1 体なので、比べる枠は 1 枠目にする
+        {
+          ...compared,
+          id: '0046-83',
+          recording: '0046',
+          recordings: ['0046', '0047'],
+          compare: { ...compared.compare!, args: { ...compared.compare!.args, slot: 1 } },
+        },
         { ...record, id: '0047-84', value: 10, unit: ' ', spread: { kind: 'range', low: 12, high: 11 } },
         { ...record, id: '0047-85', value: 10, spread: { kind: 'ci95', low: 11, high: 13 } },
         { ...record, id: '0047-86', readAt: '9/27', invalid: { reason: '', date: '2026-09-27' } },

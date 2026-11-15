@@ -13,7 +13,7 @@ import type { TreasurePhase } from '../../skills/treasure.ts';
 import { SKILL_SLOTS, type SkillDefinition, type SkillEntry, statContentsOf } from '../../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import type { BuildMasters, CharacterData, EnemyPresetMaster } from '../../types.ts';
-import type { RecordingBuild, RecordingEntry } from '../recordings.ts';
+import { type RecordingBuild, type RecordingEntry, teamBySlot } from '../recordings.ts';
 import type { SkillRoot } from '../skills.ts';
 import {
   burstDelayOverrideOf,
@@ -153,7 +153,9 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     fullCharge: true,
     hitRate: setup.hitRate ?? 1,
   };
-  const slots: TeamSlotInput[] = recording.team.map((member, index) => {
+  // 枠は台帳の slot の位置に置き、空枠は null にする（両隣・後列は TeamInput.slots の添字で決まる。plan/design-rouge.md 2.1 節）
+  const slots: (TeamSlotInput | null)[] = teamBySlot(recording).map((member) => {
+    if (member === null) return null;
     const base = data.characters.get(member.rid);
     if (base === undefined) throw new Error(`rid ${member.rid} のデータが無い`);
     const delayOverrides = (setup.burstDelays ?? []).filter((d) => d.rid === member.rid);
@@ -189,7 +191,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     return {
       character,
       growth: fixedSpecGrowth(character),
-      condition: setup.noFireSlots?.includes(index + 1) === true ? { ...condition, hitRate: 0 } : condition,
+      condition: setup.noFireSlots?.includes(member.slot) === true ? { ...condition, hitRate: 0 } : condition,
       ...(auto ? { conditionMode: 'auto' as const } : {}),
       attackOverride: build === undefined ? computeFixedSpecAttack(character).attack : build.attack,
       ...(build === undefined
@@ -203,7 +205,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
       },
     };
   });
-  const controlled = recording.team.findIndex((m) => m.controlled === true);
+  const controlled = recording.team.find((m) => m.controlled === true);
   let manualBursts: number[] | undefined;
   if (setup.manualBursts !== undefined) {
     if (setup.burst === false) throw new Error('manualBursts は burst が false のときには書かない');
@@ -254,7 +256,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     durationSeconds,
     burst: setup.burst ?? true,
     burstModel: 'dynamic',
-    controlledSlot: controlled < 0 ? null : controlled,
+    controlledSlot: controlled === undefined ? null : controlled.slot - 1,
     ...(obstacleBreaks.length === 0 ? {} : { obstacleBreaks }),
     ...(pelletHits.length === 0 ? {} : { pelletHits }),
     ...(setup.sustainedHitRateUp === false ? { sustainedHitRateUp: false } : {}),

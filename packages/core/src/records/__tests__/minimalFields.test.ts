@@ -187,7 +187,7 @@ describe('観測値の scope', () => {
   it('accepts slot numbers, arrays and all, with or without frames', () => {
     expect(check({ slot: 1, source: 'normal' })).toEqual([]);
     expect(check({ slot: 'all', source: 'clock', frames: [100, 200] })).toEqual([]);
-    expect(validateScope({ slot: [1, 2], source: 'gauge' }, 2, 'x')).toEqual([]);
+    expect(validateScope({ slot: [1, 2], source: 'gauge' }, new Set([1, 2]), 'x')).toEqual([]);
   });
 
   it('rejects slots outside the team, unknown sources and bad frames', () => {
@@ -195,7 +195,9 @@ describe('観測値の scope', () => {
       expect.stringMatching(/scope.slot は録画の編成の枠/),
     ]);
     expect(check({ slot: [], source: 'normal' })).toEqual([expect.stringMatching(/scope.slot が空/)]);
-    expect(validateScope({ slot: [1, 1], source: 'normal' }, 2, 'x')).toEqual([expect.stringMatching(/2 回/)]);
+    expect(validateScope({ slot: [1, 1], source: 'normal' }, new Set([1, 2]), 'x')).toEqual([
+      expect.stringMatching(/2 回/),
+    ]);
     expect(check({ slot: 1, source: 'weather' })).toEqual([expect.stringMatching(/scope.source/)]);
     expect(check({ slot: 1, source: 'normal', frames: [200, 100] })).toEqual([expect.stringMatching(/scope.frames/)]);
     expect(check({ slot: 1, source: 'normal', frames: [1.5, 2] })).toEqual([expect.stringMatching(/scope.frames/)]);

@@ -27,7 +27,7 @@ import { markElements, type Claim, type ClaimState, type ClaimWhen } from './cla
 import { normalConditionMeasured } from './minimal.ts';
 import type { Observation, ObservationKind, ObservationSource } from './observations/types.ts';
 import type { RecordsData } from './observations/teamInput.ts';
-import type { RecordingEntry } from './recordings.ts';
+import { type RecordingEntry, teamBySlot } from './recordings.ts';
 import type { SkillRoot } from './skills.ts';
 
 /** 効果の分類（plan/design-minimal-check.md 8.4 節の段 3）。unknown は分類が決まらない（stat や種類が unknown の notes） */
@@ -273,16 +273,20 @@ export type RelevanceContext = RecordsData & {
 /** 録画の編成の全枠の要素（宝物の段階と編成の条件を当てる。計算に無関係の notes は数えない。9 節の 4） */
 export function elementsOf(recording: RecordingEntry, ctx: RelevanceContext): MinimalElement[] {
   const out: MinimalElement[] = [];
-  const teamCharacters = recording.team.map((m) => ctx.characters.get(m.rid) ?? null);
+  // 編成の条件は枠の位置（台帳の slot - 1。空枠は null）で引く（照合ランナーと同じ。plan/design-rouge.md 2.1 節）
+  const bySlot = teamBySlot(recording);
+  const teamCharacters = bySlot.map((m) => (m === null ? null : (ctx.characters.get(m.rid) ?? null)));
   // 編成で決まる自分の状態の条件（selfState）は、編成の段と同じに決める（plan/design-skill-stage1.md 1.1 節）
-  const teamDefinitions = recording.team.map((m) => {
+  const teamDefinitions = bySlot.map((m) => {
+    if (m === null) return null;
     const character = ctx.characters.get(m.rid);
     const base = ctx.skills.get(m.rid);
     if (character === undefined || base === undefined) return null;
     return applyTreasure(character, base, (m.treasurePhase ?? 0) as TreasurePhase).definition ?? null;
   });
   const selfStates = selfStateLookupsForTeam(teamDefinitions, teamCharacters, recording.target.element);
-  recording.team.forEach((member, i) => {
+  recording.team.forEach((member) => {
+    const i = member.slot - 1;
     const character = ctx.characters.get(member.rid);
     const base = ctx.skills.get(member.rid);
     // 要素の名前はキャラのデータの名前（台帳の呼び名は録画ごとに揺れる。印は名前で合わせる。design-minimal-relevance.md 11.4 節）

@@ -16,7 +16,7 @@ export type RecordingMode = (typeof RECORDING_MODES)[number];
 const ELEMENTS: readonly Element[] = ['Fire', 'Water', 'Wind', 'Electronic', 'Iron'];
 
 export type RecordingMember = {
-  /** 枠（1 始まり、枠順） */
+  /** 枠（1〜5、ゲームの枠の順。空枠は書かない） */
   slot: number;
   rid: number;
   /** 台帳での呼び名 */
@@ -147,6 +147,19 @@ export function isLegacy(entry: RecordingEntry): entry is LegacyRecording {
   return 'legacy' in entry && entry.legacy === true;
 }
 
+/**
+ * 編成を枠の位置（添字 = 枠 - 1）に置いた並び。空枠は null で、長さは最後の埋まった枠まで。枠の並びで決まる語彙（両隣・後列）は
+ * この添字で引く（plan/design-rouge.md 2.1 節）
+ */
+export function teamBySlot(entry: Pick<RecordingEntry, 'team'>): (RecordingMember | null)[] {
+  const out: (RecordingMember | null)[] = Array.from(
+    { length: Math.max(0, ...entry.team.map((m) => m.slot)) },
+    () => null,
+  );
+  for (const member of entry.team) out[member.slot - 1] = member;
+  return out;
+}
+
 /** このリポジトリの録画を番号順に、その後に旧の録画を id の順に並べる */
 export function sortRecordings(entries: readonly RecordingEntry[]): RecordingEntry[] {
   const project = entries.filter((e) => !isLegacy(e)).sort((a, b) => Number(a.id) - Number(b.id));
@@ -201,11 +214,10 @@ export function validateRecordings(file: RecordingsFile, knownRids: ReadonlySet<
     }
     if (entry.team.length === 0 || entry.team.length > 5) errors.push(`${at}: 編成は 1〜5 体`);
     entry.team.forEach((member, i) => {
-      // 照合ランナー（observations/teamInput.ts）は team の並びの添字を枠とみなすので、空枠を挟む録画は止める（課題 recording-gap-slots）
-      if (member.slot !== i + 1)
-        errors.push(
-          `${at}: 枠は 1 から枠順に並べる（${i + 1} 番目が ${member.slot}）。空枠を挟む録画は、課題 recording-gap-slots を直すまで照合できない`,
-        );
+      // 空枠は書かずに飛ばす（teamBySlot が null にする）
+      const previous = i === 0 ? 0 : entry.team[i - 1]!.slot;
+      if (!Number.isInteger(member.slot) || member.slot <= previous || member.slot > 5)
+        errors.push(`${at}: 枠は 1〜5 の整数で、小さい順に並べる（${i + 1} 番目が ${member.slot}）`);
       if (!knownRids.has(member.rid)) errors.push(`${at}: rid ${member.rid} のキャラのデータが無い`);
       for (const key of ['fires', 'bursts'] as const)
         if (member[key] !== undefined && typeof member[key] !== 'boolean')

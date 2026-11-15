@@ -59,27 +59,6 @@ describe('records/recordings', () => {
     ]);
   });
 
-  it('rejects a team whose slots skip an empty slot (課題 recording-gap-slots)', () => {
-    const member = (slot: number, rid: number) => ({ slot, rid, name: String(rid), controlled: false });
-    const slotErrors = (slots: readonly number[]) =>
-      validateRecordings(
-        { recordings: [{ ...first, team: slots.map((slot) => member(slot, 290)) }] },
-        knownRids,
-      ).filter((e) => e.includes('枠は 1 から枠順に並べる'));
-    expect(slotErrors([1])).toEqual([]);
-    expect(slotErrors([1, 2, 3, 4, 5])).toEqual([]);
-    for (const [slots, wrong] of [
-      [[1, 3], '2 番目が 3'],
-      [[2], '1 番目が 2'],
-      [[1, 2, 5], '3 番目が 5'],
-    ] as const) {
-      const errors = slotErrors(slots);
-      expect(errors).toHaveLength(1);
-      expect(errors[0]).toContain(wrong);
-      expect(errors[0]).toContain('課題 recording-gap-slots を直すまで照合できない');
-    }
-  });
-
   it('reports broken entries', () => {
     const errors = validateRecordings(
       {
@@ -88,8 +67,8 @@ describe('records/recordings', () => {
           {
             ...first,
             team: [
-              { slot: 1, rid: 20, name: 'デルタ', controlled: true },
-              { slot: 3, rid: 999999, name: '?', controlled: true },
+              { slot: 3, rid: 20, name: 'デルタ', controlled: true },
+              { slot: 1, rid: 999999, name: '?', controlled: true },
             ],
           },
         ],
@@ -97,9 +76,7 @@ describe('records/recordings', () => {
       knownRids,
     );
     expect(errors.filter((e) => e.startsWith('0002:'))).toEqual([]);
-    expect(errors).toContainEqual(
-      '0001: 枠は 1 から枠順に並べる（2 番目が 3）。空枠を挟む録画は、課題 recording-gap-slots を直すまで照合できない',
-    );
+    expect(errors).toContainEqual('0001: 枠は 1〜5 の整数で、小さい順に並べる（2 番目が 1）');
     expect(errors).toContainEqual('0001: rid 999999 のキャラのデータが無い');
     expect(errors).toContainEqual('0001: 操作した枠が 2 つ以上ある');
   });
