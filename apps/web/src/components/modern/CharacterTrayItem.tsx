@@ -194,7 +194,10 @@ const TrayItemContent = memo(function TrayItemContent({
         <>
           {isTaken && (
             // ✓ はバッジの絵（ui_check.svg）を型に、水色で塗る（縁取りの影は外側の箱に付ける。型で切ると縁取りも切れるので）
-            <span className="char-tray-item-check" aria-hidden="true">
+            <span
+              className={`char-tray-item-check ${shape === 'square' ? 'char-tray-item-check-square' : ''}`}
+              aria-hidden="true"
+            >
               <span className="mask-icon" style={maskIconStyle(checkIcon)} />
             </span>
           )}
