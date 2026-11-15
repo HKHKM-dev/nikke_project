@@ -1,0 +1,46 @@
+{
+  "id": "1220",
+  "date": "2026-11-15",
+  "folder": "range",
+  "file": "20261115-1220_frost-ticket-nofire.mp4",
+  "original": "2026-11-15_14-56-59.mp4",
+  "durationSec": 201.2,
+  "frames": 12073,
+  "fps": 60,
+  "sizeMB": 244.2,
+  "sha256": "dede57a83e8d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 330,
+      "name": "クラウン",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 74,
+      "name": "ソリン：フロストチケット",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0790 の撮影（ソリン：フロストチケットは撃たない操作枠。オート射撃 OFF）",
+  "backup": {
+    "at": "2026-11-15T15:02+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
