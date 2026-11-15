@@ -5,16 +5,8 @@ import { GrowthEditor, type ShownGrowth } from '../GrowthEditor.tsx';
 import { Modal } from '../Modal.tsx';
 import { RosterRevertButton } from '../RosterRevertButton.tsx';
 import { SlotOptions } from '../SlotOptions.tsx';
-import { FAVORITE_MARKS, type FavoriteMark } from '../../favorites.ts';
+import { FAVORITE_LABEL, FAVORITE_MARKS, type FavoriteMark } from '../../favorites.ts';
 import { FavoriteBadge } from './FavoriteBadge.tsx';
-
-const FAVORITE_LABEL: Record<FavoriteMark, string> = {
-  star: 'スター',
-  spade: 'スペード',
-  heart: 'ハート',
-  diamond: 'ダイヤ',
-  club: 'クラブ',
-};
 
 type Props = {
   slotIndex: number;

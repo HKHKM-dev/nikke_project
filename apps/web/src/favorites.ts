@@ -5,6 +5,15 @@ import { readStorage, writeStorage } from './storage.ts';
 export const FAVORITE_MARKS = ['star', 'spade', 'heart', 'diamond', 'club'] as const;
 export type FavoriteMark = (typeof FAVORITE_MARKS)[number];
 
+/** バッジの名前（ボタンの読み上げと、マウスを載せたときの知らせ） */
+export const FAVORITE_LABEL: Record<FavoriteMark, string> = {
+  star: 'スター',
+  spade: 'スペード',
+  heart: 'ハート',
+  diamond: 'ダイヤ',
+  club: 'クラブ',
+};
+
 /** ニケ（resourceId の文字列）ごとの押したバッジ（FAVORITE_MARKS の順）。どれも押していないニケは持たない */
 export type Favorites = Readonly<Record<string, readonly FavoriteMark[]>>;
 

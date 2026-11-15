@@ -1,6 +1,6 @@
 import { useDroppable } from '@dnd-kit/core';
 import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
-import { memo, useMemo, type Dispatch, type SetStateAction } from 'react';
+import { memo, useContext, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
 import {
   RETURN_BADGE,
   trayCollectionBadge,
@@ -8,6 +8,14 @@ import {
   TREASURE_FILTER_BADGE,
 } from './badges.ts';
 import { BadgeFilters } from './BadgeFilter.tsx';
+import { FavoriteBadge } from './FavoriteBadge.tsx';
+import {
+  FAVORITE_LABEL,
+  FAVORITE_MARKS,
+  favoriteMarksOf,
+  FavoritesContext,
+  type FavoriteMark,
+} from '../../favorites.ts';
 import { BadgeIcon } from './BadgeIcon.tsx';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
 import { activeDragData, type OverDragData } from './dropIntent.ts';
@@ -64,13 +72,17 @@ export function CharacterTray({
   onSelectCharacter,
 }: Props) {
   // 並びは受け取った一覧の順（App が名前順か戦闘力順に並べる。listOrder.ts）
-  const {
-    filters,
-    setFilters,
-    treasureOnly,
-    setTreasureOnly,
-    filtered: filteredCharacters,
-  } = useCharacterFilter(index);
+  const { filters, setFilters, treasureOnly, setTreasureOnly, filtered: badgeFiltered } = useCharacterFilter(index);
+  // お気に入りの絞り込み（押したバッジのどれかが付いたニケ。ほかの絞り込みと AND）
+  const favorites = useContext(FavoritesContext);
+  const [favoriteFilter, setFavoriteFilter] = useState<readonly FavoriteMark[]>([]);
+  const filteredCharacters = useMemo(
+    () =>
+      favoriteFilter.length === 0
+        ? badgeFiltered
+        : badgeFiltered.filter((c) => favoriteMarksOf(favorites, c.resourceId).some((m) => favoriteFilter.includes(m))),
+    [badgeFiltered, favoriteFilter, favorites],
+  );
 
   // スロットのキャラをトレイへ戻すと、そのスロットを空にする（ModernView の handleDragEnd）
   const { isOver, active, setNodeRef } = useDroppable({
@@ -92,6 +104,8 @@ export function CharacterTray({
             onFiltersChange={setFilters}
             treasureOnly={treasureOnly}
             onTreasureOnlyChange={setTreasureOnly}
+            favoriteFilter={favoriteFilter}
+            onFavoriteFilterChange={setFavoriteFilter}
           />
         </div>
         {/* 並べ替え（ボタンで開くポップアップで並びを選ぶ）と、絞り込み・立ち絵の縦長と四角の切り替えのボタン（絞り込みは未実装の置き場所で、押しても
@@ -188,14 +202,19 @@ function TrayFilters({
   onFiltersChange,
   treasureOnly,
   onTreasureOnlyChange,
+  favoriteFilter,
+  onFavoriteFilterChange,
 }: {
   filters: BadgeFilterValues;
   onFiltersChange: (filters: BadgeFilterValues) => void;
   /** 宝物のあるニケだけにする（バッジの絞り込みと AND） */
   treasureOnly: boolean;
   onTreasureOnlyChange: Dispatch<SetStateAction<boolean>>;
+  /** 押したお気に入りのバッジ（どれかが付いたニケだけにする） */
+  favoriteFilter: readonly FavoriteMark[];
+  onFavoriteFilterChange: (marks: readonly FavoriteMark[]) => void;
 }) {
-  const filtering = treasureOnly || Object.keys(filters).length > 0;
+  const filtering = treasureOnly || favoriteFilter.length > 0 || Object.keys(filters).length > 0;
   return (
     <div className="char-tray-filter-group">
       <BadgeFilters filters={filters} onChange={onFiltersChange} />
@@ -209,6 +228,30 @@ function TrayFilters({
           <BadgeIcon className="char-badge" name={TREASURE_FILTER_BADGE} label="宝物のあるニケ" />
         </button>
       </div>
+      <div className="char-tray-badge-filter" role="group" aria-label="お気に入りで絞り込み">
+        {FAVORITE_MARKS.map((mark) => {
+          const pressed = favoriteFilter.includes(mark);
+          return (
+            <button
+              key={mark}
+              type="button"
+              className="char-tray-badge-button"
+              aria-pressed={pressed}
+              aria-label={`お気に入り（${FAVORITE_LABEL[mark]}）`}
+              title={FAVORITE_LABEL[mark]}
+              onClick={() =>
+                onFavoriteFilterChange(
+                  pressed
+                    ? favoriteFilter.filter((m) => m !== mark)
+                    : FAVORITE_MARKS.filter((m) => m === mark || favoriteFilter.includes(m)),
+                )
+              }
+            >
+              <FavoriteBadge mark={mark} on />
+            </button>
+          );
+        })}
+      </div>
       {/* 選んだ絞り込みを全部外す（何も選んでいないときは押せない）。文字の代わりにバッジ ui_return */}
       <button
         type="button"
@@ -220,6 +263,7 @@ function TrayFilters({
           if (!filtering) return;
           onFiltersChange({});
           onTreasureOnlyChange(false);
+          onFavoriteFilterChange([]);
         }}
       >
         <BadgeIcon className="char-tray-filter-clear-icon" name={RETURN_BADGE} />

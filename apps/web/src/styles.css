@@ -222,7 +222,7 @@ header h1 {
   width: 28px;
   height: 28px;
 }
-/* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。図柄を白にする .badge-ui_* の規則より強くするため、要素名を付ける */
+/* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。図柄を白にするバッジごとの規則より強くするため、要素名を付ける */
 svg.settings-menu-icon {
   --badge-ground: light-dark(#ffffff, #1a1a1a);
   --badge-main: light-dark(#1a1a1a, #ffffff);
@@ -1465,6 +1465,10 @@ html:has(.modern-view-container) {
   background: none;
   cursor: pointer;
   line-height: 0;
+}
+/* お気に入りのバッジ（130×180）は、高さをほかのバッジ（130×150）にそろえる */
+.char-tray-badge-button .favorite-badge {
+  width: calc(var(--badge-w) * 150 / 180);
 }
 .char-tray-badge-button[aria-pressed='true'] {
   border-color: var(--app-fg);
