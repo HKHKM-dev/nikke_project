@@ -1,0 +1,87 @@
+{
+  "formatVersion": 1,
+  "resourceId": 74,
+  "checkedAt": "2026-11-15",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "cooldownReduction",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "ref": 3,
+          "assumes": {
+            "ja": "フルバーストタイムが始まったフレームに、味方全体（自分も）のバーストの CT の残りを縮める（ラピ：レッドフードの S1 と同じ形）。同じフレームに始まった III の CT も縮む",
+            "en": "On the frame Full Burst starts, shortens the remaining burst cooldown of all allies (herself included; same form as Rapi: Red Hood's S1). The cooldown of the Burst III that started on the same frame is shortened too"
+          },
+          "claims": [
+            "C-1302"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "戦闘開始時とバーストスキル使用時に味方全体に発券する乗車券（最大 2 枚・持続。1 枚ごとにスキル発動者基準で最大HP のみ▲）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）。被弾の無い前提では乗車券は減らず、1 回目のバーストで 2 枚になると、以後は変わらない。1 回目のバーストの 2 枚目は同じバーストの回復の後に付くので、ほかの回復を受けなければ、HP の割合は戦闘開始から 2 回目のバーストの回復まで下がっている",
+          "en": "The tickets issued to all allies at the start of battle and on using the Burst (up to 2, continuous; each raises max HP only, based on the skill user) do not change damage by themselves (they matter only with an effect reading HP in the team). Without damage taken the tickets never decrease, and once the first Burst brings them to 2 they stay unchanged. The second ticket of the first Burst comes after the heal of the same Burst, so unless healed otherwise the HP ratio stays lowered from the start of battle until the heal of the second Burst",
+          "kind": "indirect",
+          "path": "hp",
+          "claims": [
+            "C-1304"
+          ]
+        },
+        {
+          "ja": "フルバーストタイムの発動時の、味方全体の早期割引の解除は、S2 の乗車券の減少（HP が 15% 以下になった時）にしか効かないので、被弾を扱わない前提では効かない（要件 4.2 節）",
+          "en": "Removing First Train Discount from all allies when Full Burst starts only affects the ticket decrease of S2 (when HP falls to 15% or below), so it has no effect without damage taken (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "removeState",
+            "target": "allies",
+            "trigger": "fullBurstStart"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "味方の HP が 15% 以下になった時の、乗車券を持つその味方への回復（スキル発動者の最終最大HP の X%）と乗車券 1 枚▼は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードの敵の攻撃は操作キャラにだけ当たる（C-0551）ので、操作キャラの HP が 15% 以下になった時だけ起きうる",
+          "en": "The heal on an ally holding a ticket when that ally's HP falls to 15% or below (X% of the skill user's final max HP) and the ticket decrease by 1 do not occur because damage taken is not modeled (requirements 4.2). In the 3-minute range mode the enemy only attacks the controlled unit (C-0551), so they can occur only when the controlled unit's HP falls to 15% or below",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "heal",
+            "target": "allies",
+            "trigger": "damaged"
+          }
+        },
+        {
+          "ja": "戦闘開始時の味方全体の早期割引（6 秒。S2 による乗車券の減少が起きない）は、S2 の乗車券の減少にしか効かないので、被弾を扱わない前提では効かない（要件 4.2 節）",
+          "en": "First Train Discount on all allies at the start of battle (6 s; S2 does not use tickets) only affects the ticket decrease of S2, so it has no effect without damage taken (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "state",
+            "target": "allies",
+            "trigger": "battleStart"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 1,
+          "assumes": {
+            "ja": "味方全体（自分を含む）への 1 回の回復（スキル発動者の最終最大HP の X%）で、HP が満タンの味方にも「回復効果が適用された時」を起こす。回復量はダメージに関係しない",
+            "en": "A one-off heal on all allies, herself included (X% of the skill user's final max HP), that triggers \"when healed\" even on allies at full HP. The healed amount does not affect damage"
+          },
+          "claims": [
+            "C-1303"
+          ]
+        }
+      ]
+    }
+  }
+}

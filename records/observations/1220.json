@@ -1,0 +1,319 @@
+[
+  {
+    "id": "1220-01",
+    "recording": "1220",
+    "kind": "timing",
+    "use": "record",
+    "value": [1654, 3591, 5529, 7466, 9404, 11357],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・0・0・0・0f"
+    },
+    "source": "V-0790",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1220-02",
+    "recording": "1220",
+    "kind": "timing",
+    "use": "record",
+    "value": [1683, 3620, 5558, 7495, 9433, 11386],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・0・0・0・0f"
+    },
+    "source": "V-0790",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1220-03",
+    "recording": "1220",
+    "kind": "timing",
+    "use": "record",
+    "value": [1712, 3649, 5587, 7524, 9462, 11415],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0790",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1220-04",
+    "recording": "1220",
+    "kind": "timing",
+    "use": "record",
+    "value": [2321, 4258, 6196, 8133, 10071],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム。6 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0790",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1220-05",
+    "recording": "1220",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差。6 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0790",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1220-06",
+    "recording": "1220",
+    "kind": "timing",
+    "use": "record",
+    "value": [3585, 5523, 7460, 9398],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f11335"
+    },
+    "source": "V-0790",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1220-07",
+    "recording": "1220",
+    "kind": "timing",
+    "use": "record",
+    "value": [3643, 5581, 7518, 9456],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0790",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1220-08",
+    "recording": "1220",
+    "kind": "interval",
+    "use": "compare",
+    "value": [1937, 1938, 1937, 1938],
+    "unit": "f",
+    "description": "フルバーストの入り（III のタイマーの 00.00。`1220-03`）どうしの間隔（最初の 4 つ）。どの回も I（フロストチケット）と III（サン）の CT の明け（`1220-06`・`1220-07`）を待ってから進む",
+    "method": {
+      "tool": "`1220-03` の差",
+      "note": "5 回目の間隔（1953f）は、I の段の CT の明け（1220-06）が I → II の替わり目の前に無く、ゲージを待った回（CT が律速でない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstStartIntervals",
+      "args": {
+        "n": 4
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [3]
+      }
+    },
+    "source": "V-0790",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1220-09",
+    "recording": "1220",
+    "kind": "timing",
+    "use": "compare",
+    "value": -1,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -1,
+      "high": -1
+    },
+    "description": "クラウンの S2 の攻撃ダメージ▲（フロストチケットのバーストの回復から）（クラウン・サン → クラウン▲・サン▲）が クラウン・I-DOLL・サン の 1 発で替わるまでの時刻の幅（1 番目の事象 f1654 から数えた動画のフレーム）。クラウン・サンの最後の発は -2f、クラウン▲・サン▲の最初の発は -1f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@5",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true,\"noFireSlots\":[3]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は クラウン: 枠 1（クラウン）のモデルの f700、クラウン▲: 枠 1（クラウン）のモデルの f790、サン: 枠 2（I-DOLL・サン）のモデルの f700、サン▲: 枠 2（I-DOLL・サン）のモデルの f790。境は クラウン・サン → クラウン▲・サン▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -200〜25f。クラウン・サン 452・クラウン▲・サン▲ 161・区別できない 0・外れ 98・食い違い（クラウン▲・サン▲の最初の発より後のクラウン・サンの発） 0"
+    },
+    "source": "V-0790",
+    "readAt": "2026-11-15",
+    "scope": {
+      "slot": [1, 2],
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "attackDamage",
+        "from": 3,
+        "n": 0,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 25
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [3]
+      }
+    }
+  },
+  {
+    "id": "1220-10",
+    "recording": "1220",
+    "kind": "timing",
+    "use": "compare",
+    "value": -1,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -1,
+      "high": -1
+    },
+    "description": "クラウンの S2 の攻撃ダメージ▲（フロストチケットのバーストの回復から）（クラウン・サン → クラウン▲・サン▲）が クラウン・I-DOLL・サン の 1 発で替わるまでの時刻の幅（2 番目の事象 f3591 から数えた動画のフレーム）。クラウン・サンの最後の発は -2f、クラウン▲・サン▲の最初の発は -1f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@5",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true,\"noFireSlots\":[3]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は クラウン: 枠 1（クラウン）のモデルの f700、クラウン▲: 枠 1（クラウン）のモデルの f790、サン: 枠 2（I-DOLL・サン）のモデルの f700、サン▲: 枠 2（I-DOLL・サン）のモデルの f790。境は クラウン・サン → クラウン▲・サン▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -200〜25f。クラウン・サン 452・クラウン▲・サン▲ 161・区別できない 0・外れ 98・食い違い（クラウン▲・サン▲の最初の発より後のクラウン・サンの発） 0"
+    },
+    "source": "V-0790",
+    "readAt": "2026-11-15",
+    "scope": {
+      "slot": [1, 2],
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "attackDamage",
+        "from": 3,
+        "n": 1,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 25
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [3]
+      }
+    }
+  },
+  {
+    "id": "1220-11",
+    "recording": "1220",
+    "kind": "timing",
+    "use": "record",
+    "value": -0.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -1,
+      "high": 0
+    },
+    "description": "クラウンの S2 の攻撃ダメージ▲（フロストチケットのバーストの回復から）（クラウン・サン → クラウン▲・サン▲）が クラウン・I-DOLL・サン の 1 発で替わるまでの時刻の幅（3 番目の事象 f5529 から数えた動画のフレーム）。クラウン・サンの最後の発は -2f、クラウン▲・サン▲の最初の発は 0f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@5",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true,\"noFireSlots\":[3]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は クラウン: 枠 1（クラウン）のモデルの f700、クラウン▲: 枠 1（クラウン）のモデルの f790、サン: 枠 2（I-DOLL・サン）のモデルの f700、サン▲: 枠 2（I-DOLL・サン）のモデルの f790。境は クラウン・サン → クラウン▲・サン▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -200〜25f。クラウン・サン 452・クラウン▲・サン▲ 161・区別できない 0・外れ 98・食い違い（クラウン▲・サン▲の最初の発より後のクラウン・サンの発） 0"
+    },
+    "source": "V-0790",
+    "readAt": "2026-11-15",
+    "scope": {
+      "slot": [1, 2],
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1220-12",
+    "recording": "1220",
+    "kind": "timing",
+    "use": "record",
+    "value": -2.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -5,
+      "high": 0
+    },
+    "description": "クラウンの S2 の攻撃ダメージ▲（フロストチケットのバーストの回復から）（クラウン・サン → クラウン▲・サン▲）が クラウン・I-DOLL・サン の 1 発で替わるまでの時刻の幅（4 番目の事象 f7466 から数えた動画のフレーム）。クラウン・サンの最後の発は -6f、クラウン▲・サン▲の最初の発は 0f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@5",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true,\"noFireSlots\":[3]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は クラウン: 枠 1（クラウン）のモデルの f700、クラウン▲: 枠 1（クラウン）のモデルの f790、サン: 枠 2（I-DOLL・サン）のモデルの f700、サン▲: 枠 2（I-DOLL・サン）のモデルの f790。境は クラウン・サン → クラウン▲・サン▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -200〜25f。クラウン・サン 452・クラウン▲・サン▲ 161・区別できない 0・外れ 98・食い違い（クラウン▲・サン▲の最初の発より後のクラウン・サンの発） 0"
+    },
+    "source": "V-0790",
+    "readAt": "2026-11-15",
+    "scope": {
+      "slot": [1, 2],
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1220-13",
+    "recording": "1220",
+    "kind": "timing",
+    "use": "record",
+    "value": -2.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -5,
+      "high": 0
+    },
+    "description": "クラウンの S2 の攻撃ダメージ▲（フロストチケットのバーストの回復から）（クラウン・サン → クラウン▲・サン▲）が クラウン・I-DOLL・サン の 1 発で替わるまでの時刻の幅（5 番目の事象 f9404 から数えた動画のフレーム）。クラウン・サンの最後の発は -6f、クラウン▲・サン▲の最初の発は 0f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@5",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true,\"noFireSlots\":[3]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は クラウン: 枠 1（クラウン）のモデルの f700、クラウン▲: 枠 1（クラウン）のモデルの f790、サン: 枠 2（I-DOLL・サン）のモデルの f700、サン▲: 枠 2（I-DOLL・サン）のモデルの f790。境は クラウン・サン → クラウン▲・サン▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -200〜25f。クラウン・サン 452・クラウン▲・サン▲ 161・区別できない 0・外れ 98・食い違い（クラウン▲・サン▲の最初の発より後のクラウン・サンの発） 0"
+    },
+    "source": "V-0790",
+    "readAt": "2026-11-15",
+    "scope": {
+      "slot": [1, 2],
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1220-14",
+    "recording": "1220",
+    "kind": "rate",
+    "use": "record",
+    "value": [92.05, 86.36, 88.64, 100, 100],
+    "unit": "%",
+    "description": "HP のバーの割合（区間の中で一定の値）。戦闘開始から 1 回目のバースト（1220-01 の 1 つ目）までのクラウン / サン（f960〜1600）、1 回目のフルバーストの後から 2 回目のバーストまでのサン（f2640〜3520。クラウンはこの間に自分の S2 の回復で 100% に戻るので外す）、2 回目からのバーストの後のフルバーストの外のクラウン / サン（f3600・f4560〜4800）の順",
+    "method": {
+      "tool": "使い捨てのスクリプト（画面下の顔のカードの HP のバーの長さ）",
+      "note": "V-0730 と同じ読み方。画面下の顔のカードの HP のバー（白。y1033・1035・1037 の中央値）の長さを、上の水色のバー（y1027。満タンの幅）で割って測った（端の画素は明るさで按分。1 画素はバーの約 1.1%）。フルバーストの間は画面が暗く、どのバーも約 3% 短く出るので外した。フロストチケット（3 枠目）のバーは、左の属性のアイコンと重なって水色のバーの端が取れない画が多いので外した（取れた画では 1 回目のバーストの前は 89.93%、後は 91.05%）"
+    },
+    "scope": {
+      "slot": [1, 2],
+      "source": "normal"
+    },
+    "source": "V-0790",
+    "readAt": "2026-11-15"
+  }
+]
