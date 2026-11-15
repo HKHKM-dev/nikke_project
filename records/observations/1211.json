@@ -1,0 +1,236 @@
+[
+  {
+    "id": "1211-01",
+    "recording": "1211",
+    "kind": "timing",
+    "use": "record",
+    "value": [1524, 2988, 4283, 5726, 7053, 8408, 9757, 11229],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・0・25・0・24・0f"
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1211-02",
+    "recording": "1211",
+    "kind": "timing",
+    "use": "record",
+    "value": [1553, 4312, 7082, 9786],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25f"
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1211-03",
+    "recording": "1211",
+    "kind": "timing",
+    "use": "record",
+    "value": [1582, 4341, 7111, 9817],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1211-04",
+    "recording": "1211",
+    "kind": "timing",
+    "use": "record",
+    "value": [2191, 4950, 7720, 10427],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1211-05",
+    "recording": "1211",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609, 610],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1211-06",
+    "recording": "1211",
+    "kind": "hit",
+    "use": "compare",
+    "value": [56075, 56075],
+    "unit": "ダメージ",
+    "description": "灼熱の敵へのマルチャーナの 2 発目と 61 発目の 1 ヒット（胴体・会心なし・距離ボーナスあり）。ホイッスル 5 スタックだけが乗り、有利コードの攻撃ダメージ▲は乗らない",
+    "method": {
+      "tool": "hud.ts --mode jumps と、レシピ buff-edge@5 の --opt grid（増分ごとの当て方）",
+      "note": "f859・f1227 の増分（1 発目はコア + 会心）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": "2,61",
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1211-07",
+    "recording": "1211",
+    "kind": "hit",
+    "use": "compare",
+    "value": 30522381,
+    "unit": "ダメージ",
+    "description": "灼熱の敵への 1 回目のフルバースト発動時の追加ダメージ（会心）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、レシピ buff-edge@5 の --opt grid（増分ごとの当て方）",
+      "note": "f1609 の増分（00.00 は f1582。入りの止まりで HUD が読めない 25f の後の最初のフレーム）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "trigger": "fullBurstStart",
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1211-08",
+    "recording": "1211",
+    "kind": "hit",
+    "use": "compare",
+    "value": 22891786,
+    "unit": "ダメージ",
+    "description": "灼熱の敵への 2 回目のフルバースト発動時の追加ダメージ（会心なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、レシピ buff-edge@5 の --opt grid（増分ごとの当て方）",
+      "note": "f4368 の増分（00.00 は f4341）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "trigger": "fullBurstStart",
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1211-09",
+    "recording": "1211",
+    "kind": "count",
+    "use": "compare",
+    "value": 0,
+    "unit": "回",
+    "description": "灼熱の敵への 20 回命中ごとの追加ダメージの数（3 分）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、レシピ buff-edge@5 の --opt grid（増分ごとの当て方）",
+      "note": "1,772 個の増分のどれも、追加ダメージ（コードによらず高リスク対象が付く読みで、フルバースト中 922,409・フルバーストの後 482,495。会心なし）と発の和に合わない。HUD が 19〜20f 読めずにまとまった増分 5 個（f2032・f2282・f3292・f10125・f10363）も、その範囲の追加ダメージの値より小さい。フルバーストの後の発は戦闘開始の発と同じ 56,075 で、防御力▼が乗らない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventCount",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "trigger": "shotCount"
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1211-10",
+    "recording": "1211",
+    "kind": "timing",
+    "use": "record",
+    "value": [27, 27, 28],
+    "unit": "f",
+    "description": "フルバースト発動時の追加ダメージの増分の、III のタイマーの 00.00 からの動画のフレーム（1・2・4 回目）",
+    "method": {
+      "tool": "hud.ts --mode jumps と burst-panel（III のタイマーの 00.00）",
+      "note": "どれも入りの止まりで HUD が読めない 25〜27f の後の最初のフレームなので、それより前のどこか。3 回目はほかの発と重なった"
+    },
+    "source": "V-0787",
+    "readAt": "2026-11-15"
+  }
+]

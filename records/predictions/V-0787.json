@@ -1,0 +1,372 @@
+{
+  "verification": "V-0787",
+  "note": "撮影の予測。I-DOLL・フラワー（I）+ デルタ（II）+ マルチャーナ：マリンスタディ（III・操作）。射撃場の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オートバースト ON。撮影 A は電撃、撮影 B は灼熱の敵。20 回命中の数え方の読み（高リスク対象の間だけ数える）は上書きで書けないので、検証記録の「予測」に手で書く。撮影の後に、比べる観測値と引数・setup をそろえた指標（id の末尾が -r）を足した。撮る前の指標は、検査が求める引数（core・crit の false。省いたときと同じ値）を足したほかは元のまま",
+  "team": [
+    {
+      "rid": 304
+    },
+    {
+      "rid": 20
+    },
+    {
+      "rid": 322,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（戦闘開始時にホイッスル 5 スタック・有利コードの攻撃ダメージ▲が持続。フルバースト発動時に追加ダメージ。バーストで電撃コードの敵だけに高リスク対象が付き、その間の 20 回命中ごとに追加ダメージ）",
+      "override": {}
+    },
+    {
+      "id": "H-W1",
+      "note": "戦闘開始時のスタック量 4 個▲が効かず、ホイッスルは 1 スタックのまま（5 秒ごとの付き直しで増える読みは上書きで書けない。増えるなら値は H-W1 と H1 の間を 5 秒ごとに段で上がる）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 322,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-E0",
+      "note": "S2 の有利コードの攻撃ダメージ▲（ラプチャーの出現の時）が射撃場では付かない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 322,
+            "skill": "skill2",
+            "index": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-HR-all",
+      "note": "高リスク対象が敵のコードによらず付く（撮影 B の灼熱の敵にも 20 回命中ごとの追加ダメージが出る）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 322,
+            "skill": "burst",
+            "replace": 2,
+            "effect": {
+              "kind": "state",
+              "state": "highRiskTarget",
+              "trigger": "burstUse",
+              "target": "enemy",
+              "durationRef": 6,
+              "contents": [
+                {
+                  "stat": "enemyDefenseDown",
+                  "ref": 5
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-shots",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": "1,61",
+        "core": false,
+        "crit": false,
+        "distance": "model"
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 A（電撃）のマルチャーナの、1 回目のバーストより前の発の 1 ヒット（胴体・会心なし・その区間の距離ボーナス）。ホイッスルのスタック数と有利コードの攻撃ダメージ▲で決まる"
+    },
+    {
+      "id": "A-fb",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "trigger": "fullBurstStart",
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 A の 1 回目のフルバースト発動時の追加ダメージ（会心なし）"
+    },
+    {
+      "id": "A-hr",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "trigger": "shotCount",
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 A の 1 つ目の 20 回命中ごとの追加ダメージ（会心なし）"
+    },
+    {
+      "id": "A-hr-frames",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "trigger": "shotCount",
+        "anchor": "fullBurst:0",
+        "within": "untilNext"
+      },
+      "note": "撮影 A の 1 回目のフルバーストから 2 回目までの、20 回命中ごとの追加ダメージの動画のフレーム（窓の始まりから）。高リスク対象の 20 秒で止まる"
+    },
+    {
+      "id": "B-shots",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": "1,61",
+        "core": false,
+        "crit": false,
+        "distance": "model"
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 B（灼熱）のマルチャーナの、1 回目のバーストより前の発の 1 ヒット。有利コードでないので、有利コードの攻撃ダメージ▲は乗らない"
+    },
+    {
+      "id": "B-hr-count",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "eventCount",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "trigger": "shotCount"
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "撮影 B の 20 回命中ごとの追加ダメージの数（3 分）"
+    },
+    {
+      "id": "A-shots-r",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": "1,61",
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影の後に足した（比べる観測値と同じ引数・setup。条件を省いた弾丸命中率 1 のモデル）。撮影 A（電撃）のマルチャーナの、1 回目のバーストより前の発の 1 ヒット（胴体・会心なし・その区間の距離ボーナス）。ホイッスルのスタック数と有利コードの攻撃ダメージ▲で決まる"
+    },
+    {
+      "id": "A-fb-r",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "trigger": "fullBurstStart",
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影の後に足した（比べる観測値と同じ引数・setup。条件を省いた弾丸命中率 1 のモデル）。撮影 A の 1 回目のフルバースト発動時の追加ダメージ（会心なし）"
+    },
+    {
+      "id": "A-hr-r",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "trigger": "shotCount",
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影の後に足した（比べる観測値と同じ引数・setup。条件を省いた弾丸命中率 1 のモデル）。撮影 A の 1 つ目の 20 回命中ごとの追加ダメージ（会心なし）"
+    },
+    {
+      "id": "A-hr-frames-r",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "trigger": "shotCount",
+        "anchor": "fullBurst:0",
+        "within": "untilNext"
+      },
+      "note": "撮影の後に足した（比べる観測値と同じ引数・setup。条件を省いた弾丸命中率 1 のモデル）。撮影 A の 1 回目のフルバーストから 2 回目までの、20 回命中ごとの追加ダメージの動画のフレーム（窓の始まりから）。高リスク対象の 20 秒で止まる"
+    },
+    {
+      "id": "B-shots-r",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": "2,61",
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影の後に足した（比べる観測値と同じ引数・setup。条件を省いた弾丸命中率 1 のモデル）。撮影 B（灼熱）のマルチャーナの、1 回目のバーストより前の発（2 発目と 61 発目。1 発目は会心だった）の 1 ヒット。有利コードでないので、有利コードの攻撃ダメージ▲は乗らない"
+    },
+    {
+      "id": "B-hr-count-r",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "metric": "eventCount",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "trigger": "shotCount"
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "撮影の後に足した（比べる観測値と同じ引数・setup。条件を省いた弾丸命中率 1 のモデル）。撮影 B の 20 回命中ごとの追加ダメージの数（3 分）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-15",
+    "commit": "31616ec416e268e68ec46d67dbdcee8a2e913882",
+    "values": {
+      "H1": {
+        "A-shots": [73127.75269527, 73127.75269527],
+        "A-fb": 36944051.00906302,
+        "A-hr": 1488584.2074457326,
+        "A-hr-frames": [39, 138, 236, 411, 510, 608, 783, 882, 984, 1160],
+        "B-shots": [56075.2647, 56075.2647],
+        "B-hr-count": 0,
+        "A-shots-r": [73127.75269527003, 73127.75269527003],
+        "A-fb-r": 36944051.00906302,
+        "A-hr-r": 1488584.2074457326,
+        "A-hr-frames-r": [133, 231, 329, 505, 603, 701, 877, 975, 1073],
+        "B-shots-r": [56075.26470000001, 56075.26470000001],
+        "B-hr-count-r": 0
+      },
+      "H-W1": {
+        "A-shots": [36803.388331710004, 36803.388331710004],
+        "A-fb": 18593665.432367455,
+        "A-hr": 749193.3333018045,
+        "A-hr-frames": [39, 138, 236, 411, 510, 608, 783, 882, 984, 1160],
+        "B-shots": [28221.293100000003, 28221.293100000003],
+        "B-hr-count": 0,
+        "A-shots-r": [36803.38833171001, 36803.38833171001],
+        "A-fb-r": 18593665.432367455,
+        "A-hr-r": 749193.3333018045,
+        "A-hr-frames-r": [133, 231, 329, 505, 603, 701, 877, 975, 1073],
+        "B-shots-r": [28221.293100000003, 28221.293100000003],
+        "B-hr-count-r": 0
+      },
+      "H-E0": {
+        "A-shots": [61682.79117, 61682.79117],
+        "A-fb": 32271674.74747561,
+        "A-hr": 1300320.4593110976,
+        "A-hr-frames": [39, 138, 236, 411, 510, 608, 783, 882, 984, 1160],
+        "B-shots": [56075.2647, 56075.2647],
+        "B-hr-count": 0,
+        "A-shots-r": [61682.79117000001, 61682.79117000001],
+        "A-fb-r": 32271674.74747561,
+        "A-hr-r": 1300320.4593110976,
+        "A-hr-frames-r": [133, 231, 329, 505, 603, 701, 877, 975, 1073],
+        "B-shots-r": [56075.26470000001, 56075.26470000001],
+        "B-hr-count-r": 0
+      },
+      "H-HR-all": {
+        "A-shots": [73127.75269527, 73127.75269527],
+        "A-fb": 36944051.00906302,
+        "A-hr": 1488584.2074457326,
+        "A-hr-frames": [39, 138, 236, 411, 510, 608, 783, 882, 984, 1160],
+        "B-shots": [56075.2647, 56075.2647],
+        "B-hr-count": 35,
+        "A-shots-r": [73127.75269527003, 73127.75269527003],
+        "A-fb-r": 36944051.00906302,
+        "A-hr-r": 1488584.2074457326,
+        "A-hr-frames-r": [133, 231, 329, 505, 603, 701, 877, 975, 1073],
+        "B-shots-r": [56075.26470000001, 56075.26470000001],
+        "B-hr-count-r": 37
+      }
+    }
+  }
+}

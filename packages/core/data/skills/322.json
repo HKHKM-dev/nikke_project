@@ -1,0 +1,185 @@
+{
+  "formatVersion": 1,
+  "resourceId": 322,
+  "checkedAt": "2026-11-15",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": "fullBurstStart",
+          "ref": 2,
+          "damageType": "additional",
+          "condition": {
+            "usedBurst": true
+          },
+          "assumes": {
+            "ja": "警戒対象指定の効果 1。最終最大HP が最も高い敵 1 機は、敵 1 体の前提ではその敵。ヒットはフルバーストの始まりのフレームで、バーストゲージは溜めない",
+            "en": "Effect 1 of Flagged Target Designation. The enemy with the highest final max HP is the single enemy. The hit lands on the Full Burst start frame and does not charge the Burst Gauge"
+          },
+          "claims": [
+            "C-1292",
+            "C-1301"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 8
+          },
+          "condition": {
+            "enemyState": "highRiskTarget"
+          },
+          "ref": 9,
+          "damageType": "additional",
+          "assumes": {
+            "ja": "命中は戦闘中ずっと通算で数え、20 の倍数に届いた命中の時に敵が高リスク対象状態なら出る（状態の外で届いた回は出ずに過ぎる）。ヒットは届いた発のフレームで、バーストゲージは溜めない",
+            "en": "Hits are counted throughout the battle; the damage occurs when a multiple of 20 is reached while the enemy is a High-Risk Target (a count reached outside the state passes without effect). The hit lands on the frame of the triggering shot and does not charge the Burst Gauge"
+          },
+          "claims": [
+            "C-1293"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "警戒対象指定の効果 2（対象が生存している時、警戒対象：攻撃力▼・10 秒）は、敵の攻撃力▼なのでダメージに関係しない",
+          "en": "Effect 2 of Flagged Target Designation (Flagged Target: ATK down for 10 s while the target is alive) is an enemy ATK down and does not affect damage",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "敵が破壊された時、対象が警戒対象状態なら、ランダムな敵 1 機に警戒対象指定（追加ダメージ・攻撃力▼）は、敵 1 体の前提では敵が破壊されないので起きない（要件 4.2 節）",
+          "en": "On an enemy being neutralized while the target is a Flagged Target, Flagged Target Designation on a random enemy (additional damage and ATK down) does not occur under the single-enemy assumption, since the enemy is never neutralized (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "damage",
+            "target": "enemy",
+            "trigger": "unknown"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "whistle",
+          "trigger": "battleStart",
+          "target": "self",
+          "maxStacksRef": 2,
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "attack",
+              "ref": 1
+            }
+          ],
+          "claims": [
+            "C-1291"
+          ]
+        },
+        {
+          "kind": "stackChange",
+          "state": "whistle",
+          "trigger": "battleStart",
+          "target": "self",
+          "amountRef": 3,
+          "assumes": {
+            "ja": "戦闘開始時の付与（effects[0]）の 1 スタックに 4 個足し、上限の 5 スタックになる",
+            "en": "Adds 4 stacks to the 1 stack granted at the start of battle (effects[0]), reaching the cap of 5"
+          },
+          "claims": [
+            "C-1291"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "elementDamage",
+          "ref": 11,
+          "durationUntil": "battleEnd",
+          "assumes": {
+            "ja": "ラプチャーが出現した時を、戦闘開始とみなす（射撃場の敵は戦闘の始めからいる 1 体で、5 機以下）。有利コード（鉄甲に対して電撃）の敵にだけ効く",
+            "en": "Treats the appearance of the Rapture as the start of battle (the range enemy is a single unit present from the start, so 5 or fewer). Applies only against enemies of the advantaged code (Electric, against Iron)"
+          },
+          "claims": [
+            "C-1291"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "ラプチャーが 3 機以下の状態を 5 秒維持するたびのホイッスルは、敵 1 体の前提では 5 秒ごとに起きるが、戦闘開始時に上限の 5 スタックで持続して付いているので、値を変えない",
+          "en": "Whistle every 5 s with 3 or fewer Raptures occurs every 5 s under the single-enemy assumption, but Whistle is already at its cap of 5 stacks continuously from the start of battle, so it does not change the value",
+          "kind": "modeling",
+          "refers": "effects[0]",
+          "claims": [
+            "C-1291"
+          ]
+        },
+        {
+          "ja": "ラプチャーが 6 機以上の状態を 1 秒維持するたびのペンくん緊急出動（敵全体への追加ダメージ・ホイッスルのスタック量 1 個▼）は、敵 1 体の前提では起きない（要件 4.2 節）",
+          "en": "Penguin Emergency Dispatch every 1 s with 6 or more Raptures (additional damage to all enemies and Whistle stacks down by 1) does not occur under the single-enemy assumption (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "damage",
+            "target": "enemy",
+            "trigger": "unknown"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "elementDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-1294"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-1294"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "highRiskTarget",
+          "trigger": "burstUse",
+          "target": "enemy",
+          "enemyElement": "Electronic",
+          "durationRef": 6,
+          "contents": [
+            {
+              "stat": "enemyDefenseDown",
+              "ref": 5
+            }
+          ],
+          "claims": [
+            "C-1294"
+          ]
+        }
+      ],
+      "notes": []
+    }
+  }
+}

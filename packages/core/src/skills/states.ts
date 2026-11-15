@@ -451,6 +451,10 @@ export const NAMED_STATES = {
   preciousMemory: { name: { ja: '大切な思い出', en: 'Precious Moments' }, holder: 'ally' },
   /** 青春の記録（同 S1。幸せな思い出が付くたびに自分に 1 スタック・3 スタック・持続。中身は通常攻撃ダメージ倍率▲。フルバースト終了で外れる） */
   youthRecord: { name: { ja: '青春の記録', en: 'Snapshots of Youth' }, holder: 'ally' },
+  /** ホイッスル（マルチャーナ：マリンスタディの S2。自分・5 スタック・持続。中身は攻撃力▲。戦闘開始時に付き、同じ時にスタック量 4 個▲） */
+  whistle: { name: { ja: 'ホイッスル', en: 'Whistle' }, holder: 'ally' },
+  /** 高リスク対象（同バースト。電撃コードの敵全体・20 秒。中身は防御力▼。S1 の「対象が高リスク対象状態なら」の追加ダメージが見る） */
+  highRiskTarget: { name: { ja: '高リスク対象', en: 'High-Risk Target' }, holder: 'enemy' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;
