@@ -4,7 +4,7 @@
 - 関連: [design-nayuta.md](design-nayuta.md) 2.5 節（スタックの増減効果の無効 `stackImmutable`）、[design-anis-star-s2-burst.md](design-anis-star-s2-burst.md) 2.3 節（チャージ時間の固定 `fixedChargeTime`）、[design-skill-stage13-inventory.md](design-skill-stage13-inventory.md) 0.1・0.2 節、[design-new-chars-1029.md](design-new-chars-1029.md) 論点 F、[design-asuka-wille.md](design-asuka-wille.md) 2.5 節、[design-skill-stage21.md](design-skill-stage21.md) 4 節の 8、[design-skill-stage20.md](design-skill-stage20.md) 2.3 節（ジルの固定）、[design-holder-effects-current.md](design-holder-effects-current.md)（件と持ち主）、[design-target-vocab.md](design-target-vocab.md)（順位の対象）
 - 検証: V-0800
 - 作成日: 2026-11-15
-- 状態: 実装中（撮影待ち）
+- 状態: 完了
 
 ## 0. 範囲
 
@@ -196,7 +196,14 @@
 7. **PR の範囲**
    - 推奨: 語彙・4 体の定義・撮影の結論を 1 本にする（設計の承認もこの PR に入れる）。
 
+## 決めたこと（撮った後）
+
+- 4 体とも、固定・無効が味方の▲を足さない読みで合った（C-1339〜C-1342）。語彙と定義は 3・4 節のまま。
+- 見直しで足したもの: 値の固定は、射手の実効値と区間の値のほかに、倍率ダメージの値の和（`damageBuffsAt`）にも当てる。射手の実効値の近道（和が 0 なら基礎の実効値）は、常時の値も 0 のときだけにした（固定が装備・キューブのチャージ速度を 0 にした時に、基礎の実効値へ戻らないように）。
+- リバーレリオ S1 の対象（論点 5）は、backlog の 1.3 節に起票した。
+
 ## 経過
 
 - 2026-11-15: 起案。対象の 5 行と、効く編成（2 節）を洗い出した。論点 1〜7 をオーナーに諮る。
 - 2026-11-15: オーナーが論点 1〜7 を推奨どおりに決めた。語彙 `lock` と 4 体の定義を実装し、撮影計画（V-0800）を書いた。画面には効果ごとの一覧が無いので、表示は分類（`catalogDoc.ts`）だけを直した。
+- 2026-11-15: 撮影（録画 1236〜1239。V-0800）を読み、4 体とも固定・無効の読みで合った。見直しで、倍率ダメージの値の和にも固定を当て、射手の実効値の近道を直した。
