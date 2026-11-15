@@ -3,7 +3,7 @@ import type { BuildSnapshot } from '@nikke/core';
 import type { CalcView } from '../../calcView.ts';
 import { rosterGrowthOf } from '../../roster.ts';
 import { sameGrowthFields } from '../../rosterEdits.ts';
-import { emptySlot, type TeamState } from '../../team.ts';
+import type { TeamState } from '../../team.ts';
 import { collectionBadge, type Badge } from './badges.ts';
 import { growthMarksOf, type GrowthMarks } from './GrowthMarks.tsx';
 
@@ -24,13 +24,15 @@ export function slotGrowthMarks(
 }
 
 /**
- * スロットの育成を変えたか（育成・設定のボタンの歯車を青にする）。育成状況にいるニケは育成状況の育成と、いないニケは空のスロットの既定と比べる。
+ * スロットの育成を育成状況から変えたか（育成・設定のボタンの歯車を青にする。「育成状況に戻す」を押せるときと同じ）。
+ * 育成状況にいないニケは、比べる値が無い（スロットの育成は前のニケのものが残る）ので変えたことにしない。
  * スペック固定のときは育成を使わないので、変えたことにしない
  */
 export function slotGrowthEdited(team: TeamState, roster: BuildSnapshot | null, i: number): boolean {
   const slot = team.slots[i]!;
-  if (slot.resourceId === null || team.fixedSpec) return false;
-  return !sameGrowthFields(slot, rosterGrowthOf(roster, slot.resourceId) ?? emptySlot());
+  if (team.fixedSpec) return false;
+  const base = rosterGrowthOf(roster, slot.resourceId);
+  return base !== null && !sameGrowthFields(slot, base);
 }
 
 /** スロットの絵のバッジの列の最後に出すコレクション（宝物を付けていれば宝物） */
