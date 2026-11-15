@@ -42,19 +42,29 @@ export function createConditions({
       )
     );
   };
+  /**
+   * 枠 slotIndex がフレーム frame にその状態（家族の根なら家族のどれか。plan/design-skill-stage5.md 1.2 節）を持つか。静的な状態か、
+   * 段の見え方（selfStateItemsAt）で件が付いているか。条件 selfState と、時間で変わる〈状態〉の味方の対象（stateHoldersAt）が使う
+   */
+  const hasStateAt = (slotIndex: number, state: NamedStateId, frame: number): boolean => {
+    const family = statesMatching(state);
+    if (family.some((s) => staticStates[slotIndex]?.has(s) === true)) return true;
+    return family.some((s) =>
+      (stateTracks[slotIndex]?.get(s) ?? []).some((t) => selfStateItemsAt(t, frame).length > 0),
+    );
+  };
   const holdsAt = (condition: EffectCondition | undefined, sourceSlotIndex: number, frame: number): boolean => {
     if (condition === undefined) return true;
     if (condition.selfState !== undefined) {
       const { state, present, sameFiring } = condition.selfState;
-      // 家族の根なら、家族のどの状態でも当たる（plan/design-skill-stage5.md 1.2 節）
-      const family = statesMatching(state);
-      const isStatic = family.some((s) => staticStates[sourceSlotIndex]?.has(s) === true);
-      const own = family.flatMap((s) => stateTracks[sourceSlotIndex]?.get(s) ?? []);
       if (!isStacksCondition(condition.selfState)) {
-        const has = isStatic || own.some((t) => selfStateItemsAt(t, frame).length > 0);
-        if (has !== present) return false;
-      } else if (
-        !stacksHold(
+        if (hasStateAt(sourceSlotIndex, state, frame) !== present) return false;
+      } else {
+        const family = statesMatching(state);
+        const isStatic = family.some((s) => staticStates[sourceSlotIndex]?.has(s) === true);
+        const own = family.flatMap((s) => stateTracks[sourceSlotIndex]?.get(s) ?? []);
+        // スタック数の条件（段 1 の状態の件の、そのフレームの段の最大。plan/design-skill-stage3.md 1.4 節）
+        const holds = stacksHold(
           condition.selfState,
           isStatic,
           // sameFiring（plan/design-quency-eq.md 2 節の論点 3）は、同じ発火で前に書いた付与が付けた分
@@ -63,10 +73,8 @@ export function createConditions({
             origin: t.origin,
             items: sameFiring ? activeAt(t, frame + 1) : selfStateItemsAt(t, frame),
           })),
-        )
-      ) {
-        // スタック数の条件（段 1 の状態の件の、そのフレームの段の最大。plan/design-skill-stage3.md 1.4 節）
-        return false;
+        );
+        if (!holds) return false;
       }
     }
     // 「自分が〈stat〉増加状態なら」と「でなければ」（plan/design-bready.md 2.2 節）
@@ -158,18 +166,9 @@ export function createConditions({
     }
     return condition.selfCounter === undefined || holdsAt({ selfCounter: condition.selfCounter }, slotIndex, frame);
   };
-  /**
-   * フレーム frame にその状態（家族の根なら家族のどれか）の件を持つ枠（静的な状態も）。時間で変わる〈状態〉の味方の対象
-   * （FireContext の stateHolders。plan/design-rei-tentative.md 2.2 節）。条件 selfState と同じ件を見る
-   */
-  const stateHoldersAt = (state: NamedStateId, frame: number): number[] => {
-    const family = statesMatching(state);
-    return stateTracks.flatMap((held, i) => {
-      const isStatic = family.some((s) => staticStates[i]?.has(s) === true);
-      const own = family.flatMap((s) => held?.get(s) ?? []);
-      return isStatic || own.some((t) => selfStateItemsAt(t, frame).length > 0) ? [i] : [];
-    });
-  };
+  /** フレーム frame にその状態を持つ枠（時間で変わる〈状態〉の味方の対象。FireContext の stateHolders。plan/design-rei-tentative.md 2.2 節） */
+  const stateHoldersAt = (state: NamedStateId, frame: number): number[] =>
+    stateTracks.flatMap((_, i) => (hasStateAt(i, state, frame) ? [i] : []));
   return { counterConditionHolds, endedAt, fireContextHolds, holdsAt, stateHoldersAt };
 }
 export type Conditions = ReturnType<typeof createConditions>;

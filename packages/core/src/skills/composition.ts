@@ -186,7 +186,8 @@ export function fixedTargetsOf(
   characters: readonly (CompositionCharacter | null)[],
   selfIndex: number,
   states: readonly (readonly NamedStateId[] | undefined)[] = [],
-  granted: ReadonlySet<NamedStateId> = new Set(),
+  /** targetState が時間で変わる状態なら true（isHeldTargetState）。状態で絞らず、発火のフレームに絞る */
+  held = false,
 ): number[] | undefined {
   // 「残りの HP の割合が最も低い味方 N 機」（heal の lowestHpRatio）は、枠の HP の
   // 割合の想定（省略は満タン）の低い順・同値は枠の若い順（C-0567。plan/design-skill-stage8.md 1.1 節）。自分も候補。先頭の N 枠は skills/targets.ts が取る
@@ -205,7 +206,7 @@ export function fixedTargetsOf(
   const windowed = effect.kind === 'timed' || effect.kind === 'state';
   const persona = effect.kind === 'passive' ? undefined : effect;
   // 時間で変わる状態は、ここでは状態で絞らない（発火のフレームに絞る。plan/design-rei-tentative.md 2.2 節）
-  const state = windowed && !isHeldTargetState(effect, states, granted) ? effect.targetState : undefined;
+  const state = windowed && !held ? effect.targetState : undefined;
   // 家族の根なら家族のどの状態でも当たる（plan/design-new-chars-1029.md 5.1 節）。「自分と」は自分の枠を足す
   const matching = state === undefined ? [] : statesMatching(state);
   const withSelf = persona?.includeSelf === true;
@@ -421,18 +422,18 @@ export function applyComposition(
       })
       .filter((e): e is SkillEffect => e !== null)
       .map((e) => {
-        const fixed = fixedTargetsOf(e, characters, selfIndex, states, granted);
         const held = isHeldTargetState(e, states, granted);
+        const fixed = fixedTargetsOf(e, characters, selfIndex, states, held);
+        const prev = e as { fixedTargets?: readonly number[]; targetStateHeld?: true };
         if (
           fixed === undefined ||
           !('target' in e) ||
-          (sameTargets(fixed, (e as { fixedTargets?: readonly number[] }).fixedTargets) &&
-            (e as { targetStateHeld?: true }).targetStateHeld === (held ? true : undefined))
+          (sameTargets(fixed, prev.fixedTargets) && (prev.targetStateHeld === true) === held)
         ) {
           return e;
         }
         slotChanged = true;
-        return held ? { ...e, fixedTargets: fixed, targetStateHeld: true as const } : { ...e, fixedTargets: fixed };
+        return { ...e, fixedTargets: fixed, ...(held && { targetStateHeld: true as const }) };
       });
     if (!slotChanged && effects.length === entry.effects.length) continue;
     changed = true;

@@ -1300,12 +1300,27 @@ export function resolveDotStackUps(
   character: CharacterData,
   levels: SkillLevels,
 ): ResolvedDotStackUp[] {
+  return resolveEnemyStackChanges(def, character, levels, true);
+}
+
+/**
+ * 敵のスタック量▲（stackChange の target enemy）を解く。onDot なら同じ定義にその状態の dot があるもの（resolveDotStackUps）、
+ * そうでなければ無いもの（resolveEnemyStackUps）。どの効果もちょうど片方に入る
+ */
+function resolveEnemyStackChanges(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+  onDot: boolean,
+): ResolvedEnemyStackUp[] {
   return SKILL_SLOTS.flatMap((slot) => {
     const skill = character.skills[slot];
-    return def.skills[slot].effects.flatMap((effect) =>
-      effect.kind === 'stackChange' && effect.target === 'enemy' && hasDotOfState(def, effect.state)
+    return def.skills[slot].effects.flatMap((effect, effectIndex) =>
+      effect.kind === 'stackChange' && effect.target === 'enemy' && hasDotOfState(def, effect.state) === onDot
         ? [
             {
+              source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+              effectIndex,
               state: effect.state,
               trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
               amount: amountOf(effect, skill, levels[slot]),
@@ -1349,7 +1364,7 @@ export function resolveStackChanges(
   for (const slot of SKILL_SLOTS) {
     const skill = character.skills[slot];
     def.skills[slot].effects.forEach((effect, effectIndex) => {
-      // 敵の持続ダメージのスタック量▲は resolveDotStackUps、味方の全部のスタック可能バフへの▲は resolveAllStackableChanges
+      // 敵のスタック量▲は resolveDotStackUps・resolveEnemyStackUps、味方の全部のスタック可能バフへの▲は resolveAllStackableChanges
       if (effect.kind !== 'stackChange' || effect.target === 'enemy' || effect.target === 'allies') return;
       const amount = amountOf(effect, skill, levels[slot]);
       const r: ResolvedStackChange = {
@@ -1378,37 +1393,14 @@ function hasDotOfState(def: SkillDefinition, state: NamedStateId): boolean {
  * 解決した、敵に付いた付与の状態へのスタック量▲（stackChange の target enemy で、同じ定義にその状態の dot が無いもの。
  * plan/design-rei-tentative.md 2.1 節）。足す先は、編成のどの枠の付与が敵に付けた件でもよい（skills/holders/fire.ts の fireAllStackable）
  */
-export type ResolvedEnemyStackUp = {
-  source: ResolvedEffect['source'];
-  effectIndex: number;
-  state: NamedStateId;
-  trigger: ResolvedTrigger;
-  amount: number;
-  condition: EffectCondition;
-};
+export type ResolvedEnemyStackUp = ResolvedDotStackUp & { source: ResolvedEffect['source']; effectIndex: number };
 
 export function resolveEnemyStackUps(
   def: SkillDefinition,
   character: CharacterData,
   levels: SkillLevels,
 ): ResolvedEnemyStackUp[] {
-  return SKILL_SLOTS.flatMap((slot) => {
-    const skill = character.skills[slot];
-    return def.skills[slot].effects.flatMap((effect, effectIndex) =>
-      effect.kind === 'stackChange' && effect.target === 'enemy' && !hasDotOfState(def, effect.state)
-        ? [
-            {
-              source: { resourceId: character.resourceId, skill: slot, name: skill.name },
-              effectIndex,
-              state: effect.state,
-              trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
-              amount: amountOf(effect, skill, levels[slot]),
-              condition: resolveCondition(effect.condition!, skill, levels[slot]),
-            },
-          ]
-        : [],
-    );
-  });
+  return resolveEnemyStackChanges(def, character, levels, false);
 }
 
 /**

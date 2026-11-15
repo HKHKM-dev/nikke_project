@@ -484,13 +484,9 @@ function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, r
         );
       // 敵のスタック量▲は、同じ定義にその状態の dot が無ければ、編成のどの枠の付与が敵に付けた件にも足す
       // （他のキャラの付与でもよい。plan/design-rei-tentative.md 2.1 節）
-      const onOtherGrant = e.kind === 'stackChange' && e.target === 'enemy' && !dots.some((d) => d.state === e.state);
-      if (
-        onDot &&
-        !onGrant &&
-        !onOtherGrant &&
-        !dots.some((d) => d.state === e.state && d.firstTick === 'halfAfterLatest')
-      )
+      const sameDots = onDot ? dots.filter((d) => d.state === e.state) : [];
+      const onOtherGrant = e.kind === 'stackChange' && sameDots.length === 0;
+      if (onDot && !onGrant && !onOtherGrant && !sameDots.some((d) => d.firstTick === 'halfAfterLatest'))
         fail(
           `${root}.${slot}.effects[${i}]`,
           `${e.kind} of "${e.state}" needs a dot of the same state with firstTick halfAfterLatest in the definition`,

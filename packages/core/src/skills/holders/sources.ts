@@ -416,17 +416,11 @@ function createAllStackSources({ firesOf, slots }: SourceDeps): AllStackSource[]
       const targets = slots.flatMap((t, i) =>
         t !== null && isEffectTarget(effect, sourceSlotIndex, i, t.character) ? [i] : [],
       );
-      out.push({ sourceSlotIndex, effect, fires: firesOf(effect.trigger, sourceSlotIndex), targets });
+      out.push({ kind: 'allies', sourceSlotIndex, effect, fires: firesOf(effect.trigger, sourceSlotIndex), targets });
     }
     // 敵に付いた付与の状態（他の枠の付与でもよい）へのスタック量▲も、件を読んで足す同じ形（plan/design-rei-tentative.md 2.1 節）
     for (const effect of resolveEnemyStackUps(slot.definition, slot.character, slot.levels))
-      out.push({
-        sourceSlotIndex,
-        effect,
-        fires: firesOf(effect.trigger, sourceSlotIndex),
-        targets: [],
-        enemyState: effect.state,
-      });
+      out.push({ kind: 'enemyState', sourceSlotIndex, effect, fires: firesOf(effect.trigger, sourceSlotIndex) });
   });
   return out;
 }

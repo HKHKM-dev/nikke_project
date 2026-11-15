@@ -48,6 +48,7 @@ import {
   triggerFrames,
   type BuffTimeline,
   type SlotBuffState,
+  type TimelineSlot,
 } from '../skills/timeline.ts';
 import {
   ENEMY,
@@ -65,6 +66,7 @@ import {
 } from '../skills/holders.ts';
 import {
   applyResolvedEffect,
+  fixedAttackBaseOf,
   hitRateNOf,
   type AttackRounding,
   type BuffTotals,
@@ -1146,10 +1148,8 @@ export function burstHitBuffs(
   hitFrame: number,
   slotIndex: number,
   preActivation: boolean,
-  sameActivation?: readonly ValuePiece[],
+  sameActivation?: SameActivation,
   enemyDebuffs: EnemyDebuffTiming = 'activation',
-  /** 撃つ枠のバフ前攻撃力（同じ発動の発動者基準の攻撃力▲を足すのに使う。sameActivation と組む） */
-  casterBaseAttack = 0,
 ): BuffTotals {
   let buffs = burstSnapshotState(timeline, activationFrame, slotIndex, preActivation).buffs;
   if (enemyDebuffs === 'hit') {
@@ -1164,31 +1164,33 @@ export function burstHitBuffs(
     activationFrame,
     preActivation ? hitFrame - 1 : hitFrame,
     slotIndex,
-    casterBaseAttack,
   );
 }
+
+/** burstHitBuffs の sameActivation: 値の小片と、攻撃力の固定加算の元の値を引く枠（fixedAttackBaseOf） */
+export type SameActivation = { pieces: readonly ValuePiece[]; slots: readonly TimelineSlot[] };
 
 /** 同じ発動の▲がヒットに乗るキャラ（plan/design-burst-landing.md 10 節）なら、burstHitBuffs の sameActivation に渡す値の小片 */
 export function sameActivationPiecesOf(
   history: Parameters<typeof valuePiecesOf>[0],
   character: Parameters<typeof sameActivationBuffsOnHit>[0],
-): readonly ValuePiece[] | undefined {
-  return sameActivationBuffsOnHit(character) ? valuePiecesOf(history) : undefined;
+): SameActivation | undefined {
+  return sameActivationBuffsOnHit(character) ? { pieces: valuePiecesOf(history), slots: history.slots } : undefined;
 }
 
 /**
  * 同じ発動の▲がヒットに乗るキャラ（plan/design-burst-landing.md 10 節の案 1）: この枠が自分に付けた burst スロットの値の小片のうち、
  * 発動のフレーム以後に始まり、ヒットが見るフレーム at に続いているものを足す。遅れは CT（20 秒以上）より短いので、発動のフレーム
  * 以後に始まる burst スロットの小片は、この発動のものだけ。敵が持つ stat（受けるダメージ▲・防御力▼）は、発動の時点の値で見る
- * ので足さない（C-0795）
+ * ので足さない（C-0795）。攻撃力の固定加算（発動者基準。レイ（仮称）の攻撃態勢。C-1295）は、ほかの小片の足し方と同じく
+ * fixedAttackBaseOf の値で足す
  */
 function withSameActivationEffects(
-  pieces: readonly ValuePiece[],
+  { pieces, slots }: SameActivation,
   buffs: BuffTotals,
   activationFrame: number,
   at: number,
   slotIndex: number,
-  casterBaseAttack: number,
 ): BuffTotals {
   let out = buffs;
   for (const w of pieces) {
@@ -1196,13 +1198,10 @@ function withSameActivationEffects(
     if (w.start < activationFrame || w.start > at || w.end <= at) continue;
     if (isStateStat(w.effect.stat) || isEnemyHeldStat(w.effect.stat)) continue;
     if (isWeaponPiece(w)) continue;
-    // 自分の発動者基準の攻撃力▲（レイ（仮称）の攻撃態勢。C-1295）は、自分のバフ前攻撃力で足す
-    if (w.effect.scaling === 'casterAttack' && w.stack === undefined) {
-      out = applyResolvedEffect(out, w.effect, casterBaseAttack).totals;
-      continue;
-    }
-    assertPlainTimed(w, 'same-activation buffs on a burst hit');
-    out = applyResolvedEffect(out, w.effect, 0).totals;
+    if (!isFixedAttackScaling(w.effect.scaling) || w.stack !== undefined)
+      assertPlainTimed(w, 'same-activation buffs on a burst hit');
+    const base = fixedAttackBaseOf(w.effect, slots[slotIndex]?.casterBaseAttack ?? 0, slots);
+    out = applyResolvedEffect(out, w.effect, base).totals;
   }
   return out;
 }

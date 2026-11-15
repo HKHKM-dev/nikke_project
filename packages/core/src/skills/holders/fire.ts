@@ -341,9 +341,9 @@ export function createFire({
    */
   const fireAllStackable = (src: AllStackSource, start: number): void => {
     if (start >= frames) return;
-    const enemyState = src.enemyState;
+    const enemyState = src.kind === 'enemyState' ? src.effect.state : undefined;
     src.tracks ??= tracks.filter((t) =>
-      enemyState !== undefined
+      src.kind === 'enemyState'
         ? t.holder === ENEMY && t.origin.kind === 'state' && t.origin.state === enemyState
         : src.targets.includes(t.holder) && isStackableBuffTrack(t),
     );

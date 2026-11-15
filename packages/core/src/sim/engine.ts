@@ -458,7 +458,6 @@ function burstHitDamageOf(c: BurstHitContext, hitAt: BurstHitAt): number | null 
     BURST_HIT_USES_PRE_ACTIVATION_BUFFS,
     sameActivationPiecesOf(history, slot.character),
     enemy.burstHitEnemyDebuffs,
-    history.slots[index]?.casterBaseAttack ?? 0,
   );
   const trigger = slotHitTriggerDamage(slot, enemy, buffs, input.attackRounding);
   const hit = slotBurstHit(
