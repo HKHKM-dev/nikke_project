@@ -2,7 +2,7 @@
 // ファイル名は <キャラのデータの項目名>_<その値>.svg（命名規則は apps/web/scripts/badges.ts の冒頭）なので、項目と値からファイルを引く。
 // 画面は読んだバッジを 1 つのスプライト（BadgeSprite）にして文書に 1 度だけ置き、バッジは <use> で出す（BadgeIcon。
 // plan/design-badge-color.md）。色の役の CSS の変数（--badge-<役>）が <use> の中まで届くので、白黒のバッジの色は CSS で決まる。
-// 束に入るのは下の glob が読む項目のバッジだけ（文字列で束に入る。アーティファクトのファイル数を使わない）。
+// 束に入るのは下の glob が読むバッジだけ（文字列で束に入る。アーティファクトのファイル数を使わない）。
 import {
   COLLECTION_LEVEL_MAX,
   ELEMENT_LABEL,
@@ -27,6 +27,9 @@ const BADGE_SVGS = import.meta.glob<string>(
     '../../assets/badges/collection_*.svg',
     '../../assets/badges/grade_*.svg',
     '../../assets/badges/core_*.svg',
+    '../../assets/badges/ui_information.svg',
+    '../../assets/badges/ui_controller.svg',
+    '../../assets/badges/ui_setting.svg',
   ],
   { eager: true, query: '?raw', import: 'default' },
 );
@@ -64,6 +67,13 @@ function badgeName(name: string): string {
  * （styles.css の .growth-marks-star）
  */
 export const GROWTH_BADGES = { star: badgeName('grade_star'), core: badgeName('core_plain') } as const;
+
+/** 未対応の印（ⓘ。CharacterVisual）と、操作キャラの印（ModernSlotCard の ControllerIcon）のバッジ */
+export const UNSUPPORTED_BADGE = badgeName('ui_information');
+export const CONTROLLER_BADGE = badgeName('ui_controller');
+
+/** 右上の設定のメニューのボタンのバッジ（SettingsMenu） */
+export const SETTING_BADGE = badgeName('ui_setting');
 
 /** ニケ一覧の宝物の絞り込みのボタンのバッジ */
 export const TREASURE_FILTER_BADGE = badgeName('collection_plain');
