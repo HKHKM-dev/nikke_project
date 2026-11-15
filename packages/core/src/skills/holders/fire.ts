@@ -341,11 +341,20 @@ export function createFire({
    */
   const fireAllStackable = (src: AllStackSource, start: number): void => {
     if (start >= frames) return;
-    src.tracks ??= tracks.filter((t) => src.targets.includes(t.holder) && isStackableBuffTrack(t));
+    const enemyState = src.kind === 'enemyState' ? src.effect.state : undefined;
+    src.tracks ??= tracks.filter((t) =>
+      src.kind === 'enemyState'
+        ? t.holder === ENEMY &&
+          t.origin.kind === 'state' &&
+          t.origin.state === enemyState &&
+          t.origin.grant.stackImmutable !== true
+        : src.targets.includes(t.holder) && isStackableBuffTrack(t),
+    );
     for (const track of src.tracks) {
       if (!readItems(track).some((it) => it.start <= start && start < it.end)) continue;
       for (let k = 0; k < src.effect.amount; k++) insertSorted(track.starts, start);
-      if (track.origin.kind === 'state') {
+      // 敵の状態の記録は作らない（{ applied } が見るのは味方の状態だけ）
+      if (track.origin.kind === 'state' && enemyState === undefined) {
         applications.push({
           frame: start,
           state: track.origin.state,

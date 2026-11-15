@@ -14,6 +14,7 @@ import type {
   ResolvedRemoveState,
   ResolvedStateExtend,
   ResolvedStackChange,
+  ResolvedEnemyStackUp,
   ResolvedAllStackableChange,
   ResolvedStateContent,
   ResolvedStateGrant,
@@ -379,12 +380,17 @@ export type StackSource = {
  */
 export type AllStackSource = {
   sourceSlotIndex: number;
-  effect: ResolvedAllStackableChange;
   fires: TriggerTracker;
-  targets: readonly number[];
   /** 足す先の件の列（最初の発火で選ぶ。skills/holders/fire.ts の fireAllStackable） */
   tracks?: HeldTrack[];
-};
+} & (
+  | { kind: 'allies'; effect: ResolvedAllStackableChange; targets: readonly number[] }
+  /**
+   * 敵に付いた付与の状態へのスタック量▲（plan/design-rei-tentative.md 2.1 節）。足す先は、編成のどの枠の付与が敵に付けた
+   * effect.state の件の列
+   */
+  | { kind: 'enemyState'; effect: ResolvedEnemyStackUp }
+);
 
 /** カウンタの増減 1 つ（対象は自分。plan/design-skill-stage10.md 2.3 節）。{ ended } のトリガーは fires を持たない */
 export type CounterSource = { sourceSlotIndex: number; effect: ResolvedCounterChange; fires: TriggerTracker | null };

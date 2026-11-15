@@ -1,0 +1,28 @@
+{
+  "id": "C-1295",
+  "text": "レイ（仮称）のバーストは説明文どおり。攻撃態勢（攻撃ダメージ 35.9%▲・自分の攻撃力の 63.36%▲）は III のタイマーの 00.00 の前（本当の発動）から自分の発に乗り、フルバーストの終わりの数 f 前に切れる。バーストスキルダメージ（990.2%）は 00.00 の 33f 後（動画）に 1 ヒットで出て、同じ発動の攻撃態勢が乗り、フルバーストの開始の▲（S2 の攻撃力▲）とフルバースト補正は乗らない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1212-01`・`1212-02`・`1212-05`・`1212-06`・`1212-07`・`1212-08`・`1212-09`。V-0788",
+  "model": "反映（`data/skills/834.json` の burst の effects[0]・[1]、`burst/landing.ts` の `MEASURED_BURST_DELAYS` のレイ（仮称）の行（hitFrames 11・同じ発動の▲がヒットに乗る）。同じ発動の発動者基準の攻撃力▲を自分のバフ前攻撃力で足す（`frame/plan.ts` の `withSameActivationEffects`）",
+  "replaces": [],
+  "updated": "2026-11-15",
+  "subject": {
+    "places": ["data/skills/834.json の burst の effects[0]", "data/skills/834.json の burst の effects[1]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1212",
+      "role": "値を合わせた"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "1212",
+      "decided": "1 回目のバースト",
+      "reproduced": "2〜4 回目のバースト",
+      "observations": ["1212-06", "1212-07"]
+    }
+  ]
+}

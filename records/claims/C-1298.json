@@ -1,0 +1,24 @@
+{
+  "id": "C-1298",
+  "text": "レイ（仮称）の S1 の、フルバーストタイムが発動した時の殲滅態勢状態の味方への攻撃力▲（スキル発動者基準 17.6%）は、同じバースト使用で殲滅態勢になったアスカ：WILLE に、フルバーストの開始から付く",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1213-01`・`1214-01`。V-0788",
+  "model": "反映（`data/skills/834.json` の skill1 の effects[3]。時間で変わる状態の味方の対象は `skills/composition.ts` の `isHeldTargetState` と `skills/holders/conditions.ts` の `stateHoldersAt`。plan/design-rei-tentative.md 2.2 節）",
+  "replaces": [],
+  "updated": "2026-11-15",
+  "subject": {
+    "places": ["data/skills/834.json の skill1 の effects[3]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "値は説明文の 17.6%（発動者基準）、殲滅態勢がフルバーストの開始に見えるのは C-1263",
+  "minimal": [
+    {
+      "observations": ["1213-01", "1214-01"],
+      "element": ["アスカ：WILLE skill1.effects[2]"],
+      "reason": "比べた発は、アンチA.T.フィールドの最初のスタックより前（録画の 0 スタックの値）",
+      "decided": "2026-11-15"
+    }
+  ]
+}

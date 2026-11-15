@@ -439,7 +439,15 @@ export function formationRowOf(slotIndex: number): FormationRow {
  * 編成で決まる対象（targetSquad・longestChargeTime）の、最上位で決めた枠（skills/composition.ts の
  * applyComposition が書く。JSON には書かない）。有れば、対象はこの枠だけに絞られる
  */
-export type FixedTargetFields = { fixedTargets?: readonly number[] };
+export type FixedTargetFields = {
+  fixedTargets?: readonly number[];
+  /**
+   * targetState が時間で変わる状態（どの枠でも静的でなく、編成のどれかの定義が時間で変わる付与で付ける）なら true（timed だけ。
+   * plan/design-rei-tentative.md 2.2 節）。fixedTargets は状態で絞らない候補の枠で、発火のフレームにその状態の件を持つ枠に絞る
+   * （skills/targets.ts の FireContext の stateHolders）
+   */
+  targetStateHeld?: true;
+};
 
 /** 「最終攻撃力が最も高い味方 N 機」の N。target が topAttack のときだけ、ちょうど片方 */
 export type TargetCountFields = {
@@ -1056,7 +1064,8 @@ export type TimedEffect = TargetCountFields &
     /**
      * 「〈名前〉状態の」（plan/design-named-state.md 5.4 節）。静的な状態（その枠の定義の
      * 静的な状態。staticStatesOf）を持つ枠だけ。target が 'allies' のときだけ書ける。家族の根を指せば、家族のどの状態の枠にも当たる
-     * （skills/states.ts の StateFamily）
+     * （skills/states.ts の StateFamily）。どの枠でも静的でない状態（バーストの使用などで付く）なら、発火のフレームにその状態の件を
+     * 持つ枠（どの枠の定義が付けた件でもよい。plan/design-rei-tentative.md 2.2 節。timed だけ）
      */
     targetState?: NamedStateId;
     /**
@@ -2588,7 +2597,9 @@ export type OwnStackChangeEffect = {
    * enemy なら、同じ定義の firstTick halfAfterLatest の dot（敵に付く
    * スタックの持続ダメージ）のスタック量▲（plan/design-skill-stage13.md 2.6 節）。付与と同じく、
    * 1 スタックぶんのヒットと刻みの付け直しを伴う（frame/plan.ts の planSkillHits。
-   * V-0548）。条件は { enemyState: state } だけで、減少（decrease）は書けない
+   * V-0548）。条件は { enemyState: state } だけで、減少（decrease）は書けない。同じ定義にその状態の dot が無ければ、編成のどの枠の
+   * 付与が敵に付けたその状態の件（スタックの上限・維持・中身は付けた付与のもの）に、発火のフレーム（射撃の回数のきっかけは次のフレーム）に
+   * 件が付いていれば N スタックを足す（段 1.5。plan/design-rei-tentative.md 2.1 節）
    */
   target: 'self' | 'enemy';
   /** 足す（減らす）スタックの数（即値）。amountRef とどちらか 1 つ */

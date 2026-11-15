@@ -1,0 +1,19 @@
+{
+  "id": "C-1296",
+  "text": "レイ（仮称）の S1 の 7 回命中・18 回命中の数え方は、状態（攻撃態勢・アンチA.T.フィールド）が付いてから数え直す読みではない（1 回目の追加ダメージが、状態が付いてから 7 発目・18 発目より前に出る）。戦闘を通して数え、届いた命中の時に状態を見る読みと矛盾しない（命中の通しの数は、HUD の読めないフレームがあり数えていない）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`1212-11`・`1213-07`。V-0788",
+  "model": "反映（`data/skills/834.json` の skill1 の effects[0]〜[2] は、窓なしの命中の回数と条件 `enemyState`・`selfState`）",
+  "replaces": [],
+  "updated": "2026-11-15",
+  "subject": {
+    "places": [
+      "data/skills/834.json の skill1 の effects[0]",
+      "data/skills/834.json の skill1 の effects[1]",
+      "data/skills/834.json の skill1 の effects[2]"
+    ]
+  },
+  "decidedOn": []
+}

@@ -186,6 +186,8 @@ export function fixedTargetsOf(
   characters: readonly (CompositionCharacter | null)[],
   selfIndex: number,
   states: readonly (readonly NamedStateId[] | undefined)[] = [],
+  /** targetState が時間で変わる状態なら true（isHeldTargetState）。状態で絞らず、発火のフレームに絞る */
+  held = false,
 ): number[] | undefined {
   // 「残りの HP の割合が最も低い味方 N 機」（heal の lowestHpRatio）は、枠の HP の
   // 割合の想定（省略は満タン）の低い順・同値は枠の若い順（C-0567。plan/design-skill-stage8.md 1.1 節）。自分も候補。先頭の N 枠は skills/targets.ts が取る
@@ -203,7 +205,8 @@ export function fixedTargetsOf(
   if (!self) throw new Error(`no character in slot ${selfIndex}`);
   const windowed = effect.kind === 'timed' || effect.kind === 'state';
   const persona = effect.kind === 'passive' ? undefined : effect;
-  const state = windowed ? effect.targetState : undefined;
+  // 時間で変わる状態は、ここでは状態で絞らない（発火のフレームに絞る。plan/design-rei-tentative.md 2.2 節）
+  const state = windowed && !held ? effect.targetState : undefined;
   // 家族の根なら家族のどの状態でも当たる（plan/design-new-chars-1029.md 5.1 節）。「自分と」は自分の枠を足す
   const matching = state === undefined ? [] : statesMatching(state);
   const withSelf = persona?.includeSelf === true;
@@ -225,6 +228,21 @@ export function fixedTargetsOf(
   if (!longest) return candidates;
   const seconds = (i: number) => fullCharacter(characters[i]!, i).shot.chargeTime;
   return candidates.sort((a, b) => seconds(b) - seconds(a) || a - b);
+}
+
+/**
+ * timed の targetState が時間で変わる状態か（plan/design-rei-tentative.md 2.2 節）。どの枠の静的な状態にも無く、編成のどれかの定義が
+ * 付ける（granted）状態。静的な状態を持つ枠があれば、今の静的な状態の絞り込みのまま
+ */
+export function isHeldTargetState(
+  effect: SkillEffect,
+  states: readonly (readonly NamedStateId[] | undefined)[],
+  granted: ReadonlySet<NamedStateId>,
+): boolean {
+  if (effect.kind !== 'timed' || effect.targetState === undefined) return false;
+  const matching = statesMatching(effect.targetState);
+  if (states.some((held) => held?.some((s) => matching.includes(s)) === true)) return false;
+  return matching.some((s) => granted.has(s));
 }
 
 function sameTargets(a: readonly number[] | undefined, b: readonly number[] | undefined): boolean {
@@ -389,6 +407,8 @@ export function applyComposition(
 ): SkillDefinition {
   const allowed = filterComposition(definition, characters, selfIndex, enemyElement);
   const lookup = selfStateLookupOf(allowed, others);
+  // 編成のどれかの定義が付ける状態（時間で変わる targetState の判定。isHeldTargetState）
+  const granted = new Set([...others, ...grantedStatesOf(allowed)]);
   let changed = allowed !== definition;
   const skills = { ...allowed.skills };
   for (const slot of SKILL_SLOTS) {
@@ -402,16 +422,20 @@ export function applyComposition(
       })
       .filter((e): e is SkillEffect => e !== null)
       .map((e) => {
-        const fixed = fixedTargetsOf(e, characters, selfIndex, states);
+        const held = isHeldTargetState(e, states, granted);
+        const fixed = fixedTargetsOf(e, characters, selfIndex, states, held);
+        const prev = e as { fixedTargets?: readonly number[]; targetStateHeld?: true };
         if (
           fixed === undefined ||
           !('target' in e) ||
-          sameTargets(fixed, (e as { fixedTargets?: readonly number[] }).fixedTargets)
+          (sameTargets(fixed, prev.fixedTargets) && (prev.targetStateHeld === true) === held)
         ) {
           return e;
         }
         slotChanged = true;
-        return { ...e, fixedTargets: fixed };
+        // 前の組み立ての印は、この編成で決め直す
+        const { targetStateHeld: _, ...rest } = e as SkillEffect & { targetStateHeld?: true };
+        return { ...rest, fixedTargets: fixed, ...(held && { targetStateHeld: true as const }) } as SkillEffect;
       });
     if (!slotChanged && effects.length === entry.effects.length) continue;
     changed = true;

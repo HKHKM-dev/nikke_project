@@ -4,7 +4,7 @@
 import { isRecordTriggered, isResolvedApplied, isResolvedChance, type ResolvedTrigger } from '../resolve.ts';
 import { attackRankFor } from '../ranking.ts';
 import { counterMax, type CounterId } from '../counters.ts';
-import { dependsOnDefense } from '../targets.ts';
+import { dependsOnDefense, type FireContext } from '../targets.ts';
 import { fireContextOf, type FrameEvents } from '../triggers.ts';
 import { isEndedTrigger } from '../types.ts';
 import { ENEMY, type GrantSource, type HeldStage, type HolderLists, type TimedSource, leadShotKey } from './types.ts';
@@ -66,6 +66,7 @@ export function createRegister({
   stackSources,
   stateEndTracks,
   stateGroups,
+  stateHoldersAt,
   timedSources,
   tracks,
   updateHpAtLeast,
@@ -73,6 +74,14 @@ export function createRegister({
   // 付いた記録から発火する出どころ（{ applied }・{ buffApplied }）は出来事では発火しない（dispatchApplied）
   const timedAt = (stage: HeldStage): TimedSource[] =>
     timedSources.filter((s) => s.stage === stage && !isRecordTriggered(s.effect.trigger));
+  /**
+   * 時間で変わる〈状態〉の味方（targetStateHeld）なら、発火の文脈に、フレーム f にその状態を持つ枠を足す（plan/design-rei-tentative.md
+   * 2.2 節）。段 1.5 と段 2 の timed の発火が通る
+   */
+  const heldContext = (src: TimedSource, context: FireContext, f: number): FireContext =>
+    src.effect.targetStateHeld === true && src.effect.targetState !== undefined
+      ? { ...context, stateHolders: stateHoldersAt(src.effect.targetState, f) }
+      : context;
   const stage1Timed = timedAt(1);
   const stage15Timed = timedAt(1.5);
   const stage2Timed = timedAt(2);
@@ -335,7 +344,7 @@ export function createRegister({
       fireTimed(
         src,
         battleStartOnly ? 0 : startOfFire(src.effect.trigger, f, src.effect.delayFrames),
-        fireContextOf(src.effect.trigger, ev),
+        heldContext(src, fireContextOf(src.effect.trigger, ev), f),
       );
     }
     for (const r of stage15Removes) {
@@ -412,15 +421,24 @@ export function createRegister({
       if (start >= frames) continue;
       // 最終防御力の比べの対象（発火のフレームの最終防御力。段 1・1.5 の防御力▲ の件。同じフレームに付いたものも入れる）
       if (dependsOnDefense(src.effect)) {
-        fireTimed(src, start, {
-          ...fireContextOf(src.effect.trigger, ev),
-          lowerDefense: lowerDefenseAt(src.sourceSlotIndex, f),
-        });
+        fireTimed(
+          src,
+          start,
+          heldContext(
+            src,
+            { ...fireContextOf(src.effect.trigger, ev), lowerDefense: lowerDefenseAt(src.sourceSlotIndex, f) },
+            f,
+          ),
+        );
         continue;
       }
       const finalAttacks = finalAttacksAtFrame(f);
       const attackRank = attackRankFor(src.effect, rankSlots, finalAttacks, src.sourceSlotIndex);
-      const targets = fireTimed(src, start, { ...fireContextOf(src.effect.trigger, ev), attackRank });
+      const targets = fireTimed(
+        src,
+        start,
+        heldContext(src, { ...fireContextOf(src.effect.trigger, ev), attackRank }, f),
+      );
       recordRanking(f, src.sourceSlotIndex, src.effect, attackRank, finalAttacks, targets);
     }
     dispatchApplied(2);

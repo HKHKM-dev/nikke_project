@@ -1,0 +1,393 @@
+[
+  {
+    "id": "1212-01",
+    "recording": "1212",
+    "kind": "hit",
+    "use": "compare",
+    "value": 70442,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの III のタイマーの 00.00（f1530）の 1f 前のレイ（仮称）の発（会心・距離ボーナス・コアでない）。攻撃態勢（攻撃ダメージ▲・攻撃力▲）が乗り、フルバースト補正と S2 の▲は乗らない",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "00.00 はレシピ burst-panel@4 の読み（記録しない）。f1529 の増分。その前の発（f1522 の 40,531）は攻撃態勢の乗らない値"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "fullBurst": 0,
+        "frame": -1,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0788",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1212-02",
+    "recording": "1212",
+    "kind": "hit",
+    "use": "compare",
+    "value": 75451,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの中のレイ（仮称）の発（非会心・距離ボーナス・コアでない）。攻撃態勢・S2 の攻撃力▲・フルバースト補正が乗った値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1565 の増分（00.00 の 35f 後）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "fullBurst": 0,
+        "frame": 30,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0788",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1212-03",
+    "recording": "1212",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1224051,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの、S1 の 7 回命中の追加ダメージ（最終攻撃力の 286.37%）の 1 回目（非会心）。攻撃態勢・S2 の攻撃力▲・フルバースト補正が乗った値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1560 の 1,299,502 から、同じフレームのレイ（仮称）の発 75,451 を引いた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill1",
+        "percent": 286.37,
+        "fullBurst": 0,
+        "frame": 0
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0788",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1212-04",
+    "recording": "1212",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1224051,
+    "unit": "ダメージ",
+    "description": "2 回目のフルバーストの、S1 の 7 回命中の追加ダメージの 1 回目（非会心）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f4139 の 1,328,844 から、同じフレームのレイ（仮称）の発（コア）104,793 を引いた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill1",
+        "percent": 286.37,
+        "fullBurst": 1,
+        "frame": 0
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0788",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1212-05",
+    "recording": "1212",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2634333,
+    "unit": "ダメージ",
+    "description": "1 回目のバーストのバーストスキルダメージ（990.2%。非会心）。同じ発動の攻撃態勢（攻撃ダメージ▲・攻撃力▲）が乗り、S2 の攻撃力▲とフルバースト補正は乗らない",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1563 の増分。4 回とも同じ値（f1563・4019・6612・9274）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0788",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1212-06",
+    "recording": "1212",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2634333,
+    "unit": "ダメージ",
+    "description": "4 回目のバーストのバーストスキルダメージ（非会心）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f9274 の増分"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0788",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1212-07",
+    "recording": "1212",
+    "kind": "timing",
+    "use": "compare",
+    "value": [33, 33, 33, 33],
+    "unit": "f",
+    "description": "III のタイマーの 00.00 から、レイ（仮称）のバーストスキルダメージのヒットまでの動画のフレーム（4 回）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "00.00（burst-panel@4: f1530・3986・6579・9241）から、2,634,333 の増分（f1563・4019・6612・9274）まで"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 4
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0788",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1212-08",
+    "recording": "1212",
+    "kind": "hit",
+    "use": "compare",
+    "value": 117368,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの終わりの近くで、攻撃態勢が乗った最後のレイ（仮称）の発（コア・距離ボーナス・非会心）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f2133 の増分（00.00 の 603f 後。フルバーストの終わりは 609f 後）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "fullBurst": 0,
+        "frame": 578,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0788",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1212-09",
+    "recording": "1212",
+    "kind": "hit",
+    "use": "compare",
+    "value": 55075,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの終わりの近くで、攻撃態勢が切れた最初のレイ（仮称）の発（コア・距離ボーナス・非会心）。S2 の攻撃力▲とフルバースト補正だけが乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f2138 の増分（00.00 の 608f 後）。攻撃態勢の切れ目は 00.00 の 604〜608f 後（モデルはフルバーストの終わりの 6f 前）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "fullBurst": 0,
+        "frame": 584,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0788",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1212-10",
+    "recording": "1212",
+    "kind": "hit",
+    "use": "compare",
+    "value": 356338,
+    "unit": "ダメージ",
+    "description": "3 回目のフルバーストの中のデルタの発（コア・距離ボーナス・非会心）。レイ（仮称）の S2 の攻撃力▲（レイ（仮称）の攻撃力の 11.61%）とフルバースト補正が乗った値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f6627 の増分。同じ値がフルバーストの中に 5 回（f6627・6709・6880・7044・7126）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "fullBurst": 2,
+        "frame": 100,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0788",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1212-11",
+    "recording": "1212",
+    "kind": "count",
+    "use": "record",
+    "value": [3, 6],
+    "unit": "発",
+    "description": "7 回命中の追加ダメージの 1 回目が、攻撃態勢が付いてから何発目のレイ（仮称）の発で出たか（1 回目・2 回目のフルバースト）。状態の間だけ数える読み（H2）なら 7 発目",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "1 回目: 攻撃態勢の乗った発 f1529・1557・1560（f1522 は乗らない）。2 回目: f4013・4119・4124・4129・4134・4139（f3980 は乗らない）。2 回目は 00.00 の前に撃ち切り、込め直しの後に出た。追加ダメージは 7 発ごと（34〜35f おき）に、届いた発と同じフレームに出る"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0788",
+    "readAt": "2026-11-15"
+  }
+]

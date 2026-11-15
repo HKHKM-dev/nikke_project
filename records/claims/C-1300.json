@@ -1,0 +1,16 @@
+{
+  "id": "C-1300",
+  "text": "レイ（仮称）の S1 の、攻撃態勢の間の 7 回命中の追加ダメージは、最終攻撃力の 286.37%（説明文どおり）で、7 発目の命中と同じフレームに出て、攻撃態勢・S2 の攻撃力▲・フルバースト補正が乗る",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1212-03`・`1212-04`。V-0788",
+  "model": "反映（`data/skills/834.json` の skill1 の effects[2]）",
+  "replaces": [],
+  "updated": "2026-11-15",
+  "subject": {
+    "places": ["data/skills/834.json の skill1 の effects[2]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "値は説明文の 286.37%（攻撃態勢・S2 の攻撃力▲も説明文の値）"
+}
