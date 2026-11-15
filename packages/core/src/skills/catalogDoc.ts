@@ -585,6 +585,9 @@ function effectStatus(e: CatalogEffect): readonly [Status, string] {
   const info = KIND_INFO[k];
   if (info === undefined) return ['check', '?'];
   if (k === 'instant:ammoDrain' && e.side === 'enemy') return ['nodmg', '敵の残弾'];
+  // 増減効果の無効は、値の固定 lock を書ける stat（チャージ速度・リロード速度）だけが語彙あり
+  if (k === 'buffOp:nullify' && !/チャージ速度|リロード速度/.test(e.quote))
+    return ['gap', 'なし（lock はチャージ速度・リロード速度だけ）'];
   // バーストの「フルバーストタイム N 秒▲▼」は CDN の burst_duration で入っている
   if (k.startsWith('fullBurst:') && e.implicit === 'burstUse' && e.conditions.length === 0) {
     return ['ok', 'CDN の burst_duration'];

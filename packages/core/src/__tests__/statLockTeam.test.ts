@@ -18,6 +18,7 @@ const COCOA = 311;
 const YUNI = 160;
 const RAPUNZEL_S = 473;
 const LIBERALIO = 262;
+const SOLDIER_FA = 301;
 
 const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
@@ -134,5 +135,20 @@ describe('チャージ速度▲▼の無効（ココア + ユニ + ラプンツ�
     expect(intervals.length).toBeGreaterThan(10);
     for (const d of intervals) expect(d).toBe(82);
     for (const d of fullBurstIntervals(team(ids, 2, RAPUNZEL_S), 2)) expect(d).toBeLessThan(82);
+  });
+});
+
+describe('チャージ速度▲▼の無効は、キューブのチャージ速度▲も止める（論点 2b）', () => {
+  it('keeps Liberalio’s intervals at 89 f with a charge speed cube and no other charge speed effect', () => {
+    const input = team([COCOA, SOLDIER_FA, LIBERALIO], 2);
+    input.slots[2] = {
+      ...input.slots[2]!,
+      buildEffects: [
+        { source: { kind: 'cube', name: { ja: 'ブースト', en: 'Boost' }, level: 1 }, stat: 'chargeSpeed', value: 0.1 },
+      ],
+    };
+    const intervals = fullBurstIntervals(input, 2);
+    expect(intervals.length).toBeGreaterThan(10);
+    for (const d of intervals) expect(d).toBe(89);
   });
 });
