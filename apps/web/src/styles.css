@@ -815,7 +815,7 @@ header h1 {
   outline: 3px solid Highlight;
   outline-offset: -1px;
 }
-/* 入れ替えた後、動く絵が着くまで、ドラッグ元と落とした先の立ち絵の枠全体（名前・限界突破・✕ などを含む）を隠す（ModernView の DROP_ANIMATION） */
+/* 置いた・入れ替えた後、動く絵が着くまで、行き先のスロットの立ち絵の枠全体（名前・限界突破・✕ などを含む）を隠す（flight.ts の flyIntoSlot） */
 .modern-slot-card.modern-slot-arriving .modern-slot-char-area {
   visibility: hidden;
 }

@@ -107,7 +107,7 @@ export function useSlotDrag({ team, dispatch, calc, roster, placement, onDragSta
 
   const handleDragStart = (event: DragStartEvent) => {
     onDragStart();
-    setDropState({ targetIndex: null, placed: false });
+    setDropState({ placed: false });
     if (noScrollNodeRef.current) Reflect.deleteProperty(noScrollNodeRef.current, 'scrollIntoView');
     const source = (event.activatorEvent.target as Element | null)?.closest('.modern-slot-card, .char-tray-item');
     if (source) Object.assign(source, { scrollIntoView: () => undefined });
@@ -177,8 +177,13 @@ export function useSlotDrag({ team, dispatch, calc, roster, placement, onDragSta
         break;
       }
       case 'swap':
-        setDropState({ targetIndex: intent.to });
-        dispatch({ type: 'swapSlots', fromIndex: intent.from, toIndex: intent.to });
+        // 持ち上げた絵は、離した位置から落とした先へ、落とした先にいたものは、その元の位置からドラッグ元へ動かす
+        setDropState({ placed: true });
+        placement.swapSlots(
+          intent.from,
+          intent.to,
+          document.querySelector('.slot-drag-overlay-portrait')?.getBoundingClientRect(),
+        );
         break;
     }
   };

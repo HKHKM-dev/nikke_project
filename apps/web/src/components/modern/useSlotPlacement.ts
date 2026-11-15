@@ -21,6 +21,11 @@ export type SlotPlacement = {
    */
   placeFromTray: (resourceId: number, index: number, from?: DOMRect) => boolean;
   /**
+   * スロット fromIndex と toIndex を入れ替える（持ち上げて落とした）。持ち上げたものは dragged（離した位置の絵）から toIndex へ、
+   * toIndex にいたもの（ニケ）は、その元の位置から fromIndex へ動かす
+   */
+  swapSlots: (fromIndex: number, toIndex: number, dragged?: DOMRect) => void;
+  /**
    * スロットのニケの並びを target にする（元に戻す。useSlotUndo）。育成・設定はニケと一緒に動き、いまの値のまま（rearrangeActions）。
    * 外れるニケは一覧へ、動くニケは前のスロットから、一覧から入るニケは一覧の絵から、それぞれのスロットへ動かす
    */
@@ -71,6 +76,21 @@ export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>
     return true;
   };
 
+  const swapSlots = (fromIndex: number, toIndex: number, dragged?: DOMRect) => {
+    // スロットの位置は入れ替えても変わらないので、落とした先の立ち絵の枠の位置が、入れ替わるものの元の位置
+    const targetArea = slotCardAt(toIndex)?.querySelector('.modern-slot-char-area');
+    stopArrival(slotCardAt(fromIndex));
+    stopArrival(slotCardAt(toIndex));
+    if (dragged) arrivalsRef.current.push({ index: toIndex, from: dragged, until: arrivalDeadline() });
+    if (targetArea)
+      arrivalsRef.current.push({
+        index: fromIndex,
+        from: targetArea.getBoundingClientRect(),
+        until: arrivalDeadline(),
+      });
+    dispatch({ type: 'swapSlots', fromIndex, toIndex });
+  };
+
   const rearrange = (target: readonly (number | null)[]) => {
     const current = team.slots.map((s) => s.resourceId);
     const actions = rearrangeActions(current, target);
@@ -93,5 +113,5 @@ export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>
     for (const action of actions) dispatch(action);
   };
 
-  return { clearSlot, placeFromTray, rearrange };
+  return { clearSlot, placeFromTray, swapSlots, rearrange };
 }
