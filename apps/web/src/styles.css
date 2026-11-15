@@ -759,7 +759,7 @@ header h1 {
   position: relative;
 }
 /* 一覧でクリックしたニケの置き先を待っている間は、どのスロットも立ち絵の枠のクリックで置ける。
-   実機の部隊編成と同じく、水色の実線の枠・水色の重ね・◎（内と外の輪が脈打つ）を重ねる */
+   実機の部隊編成と同じく、水色の実線の枠・水色の重ね・◎（ui_selection_circle.svg。脈打つ）を重ねる */
 .modern-slot-card.modern-slot-awaiting .modern-slot-char-area {
   cursor: pointer;
 }
@@ -772,19 +772,10 @@ header h1 {
   width: calc(var(--slot-portrait-h) * 3 / 8);
   height: calc(var(--slot-portrait-h) * 3 / 8);
   transform: translate(-50%, -50%) scale(0.92);
-  fill: none;
-  stroke: #fff;
   filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.35));
   pointer-events: none;
   z-index: 3;
-  /* 2 つの輪を 1 枚ごと脈打たせる（輪ごとに動かすより描き直しが少ない） */
-  animation: modern-slot-target-pulse 1.2s ease-in-out infinite;
-}
-.modern-slot-target-outer {
-  stroke-width: 4;
-}
-.modern-slot-target-inner {
-  stroke-width: 5;
+  animation: modern-slot-target-pulse 1s ease-in-out infinite;
 }
 @keyframes modern-slot-target-pulse {
   0%,
@@ -797,19 +788,18 @@ header h1 {
     opacity: 0.8;
   }
 }
-/* ◎ の上の ▼。◎ が縮むときに上へ、広がるときに下へ動く（◎ と同じ周期と緩急） */
+/* ◎ の上の ▼（ui_selection_triangle.svg）。◎ が縮むときに上へ、広がるときに下へ動く（◎ と同じ周期と緩急） */
 .modern-slot-target-arrow {
   position: absolute;
   /* ◎（幅 = 立ち絵の高さの 3/8）の上端の少し上 */
   top: calc(var(--slot-portrait-h) / 2 - var(--slot-portrait-h) * 3 / 16 - var(--slot-portrait-h) * 3 / 40);
   left: 50%;
   width: calc(var(--slot-portrait-h) * 3 / 32);
-  fill: #fff;
   filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.35));
   pointer-events: none;
   z-index: 3;
   transform: translate(-50%, -40%);
-  animation: modern-slot-target-arrow-bob 1.2s ease-in-out infinite;
+  animation: modern-slot-target-arrow-bob 1s ease-in-out infinite;
 }
 @keyframes modern-slot-target-arrow-bob {
   0%,

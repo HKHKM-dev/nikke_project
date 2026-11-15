@@ -4,6 +4,8 @@ import type { SlotResultView } from '../../calcView.ts';
 import { formatDamage } from '../../format.ts';
 import { BadgeIcon } from './BadgeIcon.tsx';
 import { CONTROLLER_BADGE, type Badge } from './badges.ts';
+import selectionCircle from '../../assets/badges/ui_selection_circle.svg';
+import selectionTriangle from '../../assets/badges/ui_selection_triangle.svg';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
 import type { ActiveDragData, OverDragData } from './dropIntent.ts';
@@ -117,13 +119,8 @@ export function ModernSlotCard({
       <div className="modern-slot-body">
         {awaitingPlacement && (
           <>
-            <svg className="modern-slot-target" viewBox="0 0 100 100" aria-hidden="true">
-              <circle className="modern-slot-target-outer" cx="50" cy="50" r="40" />
-              <circle className="modern-slot-target-inner" cx="50" cy="50" r="22" />
-            </svg>
-            <svg className="modern-slot-target-arrow" viewBox="0 0 10 7" aria-hidden="true">
-              <polygon points="0,0 10,0 5,7" />
-            </svg>
+            <img className="modern-slot-target" src={selectionCircle} alt="" aria-hidden="true" />
+            <img className="modern-slot-target-arrow" src={selectionTriangle} alt="" aria-hidden="true" />
           </>
         )}
         {/* 置き先待ちのクリックは立ち絵の枠でだけ受ける（カードの上下の段・ダメージの欄では置かない） */}
