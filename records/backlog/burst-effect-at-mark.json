@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 3,
-  "text": "バーストの遅れの表（`packages/core/src/burst/landing.ts` の `withBurstDelays`）は、`effectFrames` が 0 の行の効果を、発動の印（III ならタイマーの 00.00）でなく本当の発動（印の 6f 前）で発火させる。そのため「00.00 ちょうど」は書けず、エレグ：ブーム・アンド・ショックの行は、読んだ範囲（00.00 から 1 ヒット目の 6f 後まで）の中の 1f にした（C-1315）。`effectFrames` を省略できるようにして省略を本当の発動にすれば 0 で印ちょうどを書けるが、`effectFrames: 0` を本当の発動の意味で持つ約 40 行の意味が変わる（[design-elegg-bs.md](design-elegg-bs.md) 7 節）"
-}

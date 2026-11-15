@@ -3,7 +3,7 @@
 - 課題: `records/backlog/burst-effect-at-mark.json`
 - 関連: [design-elegg-bs.md](design-elegg-bs.md) 7 節（エレグ：ブーム・アンド・ショックの行を 1f にした）、[burst-effect-delay-candidates.md](burst-effect-delay-candidates.md)「まとめ」・2.6 節・2.7 節（付き始めの形と、直さない判断）、[design-burst-landing.md](design-burst-landing.md) 2 節（遅れの表）、[design-burst-hit-origin.md](design-burst-hit-origin.md) 8 節（III の起点）、[design-compare-setup-extension.md](design-compare-setup-extension.md) 2 節（比べる設定の遅れの上書きと `origin`）
 - 作成日: 2026-11-15
-- 状態: 承認待ち
+- 状態: 完了
 
 ## 0. 範囲
 
@@ -58,12 +58,17 @@
 2. 502 を 00.00 ちょうどにする根拠が無い。1f は読んだ範囲の中で、00.00 ちょうどにすると、結論にしていない 2 つの観測値が許容外になる（2 節）。AGENTS.md「根拠のない変更は行わない」。
 3. 印ちょうどの行が要る結論が出たら、そのとき案 B の形で足せる（いまの行の意味を変えずに足せるので、先に入れておく得が無い）。
 
-案 A に決まったら、この設計書と課題のファイルを閉じる変更だけの PR にする。`landing.ts` の 502 の行の注記は、いまの形を述べていて直す所が無い。
+`landing.ts` の 502 の行の注記は、いまの形を述べていて直す所が無い。
 
 ## 5. 論点（オーナーの判断）
 
 1. 案 A・B・C のどれにするか（推奨は A）。
 
+## 6. 決定（2026-11-15、オーナー）
+
+- 論点 1: 案 A（変えない）。502 の行は 1f のまま。コードと表は変えず、課題 `records/backlog/burst-effect-at-mark.json` を閉じる。
+
 ## 経過
 
 - 2026-11-15: 起案した。
+- 2026-11-15: オーナーが案 A に決め、課題を閉じた。
