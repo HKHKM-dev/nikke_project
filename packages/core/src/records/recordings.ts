@@ -347,20 +347,6 @@ export function replaceGeneratedSection(doc: string, name: string, body: string)
   return `${doc.slice(0, start + marker(name, false).length)}\n\n${body}\n\n${doc.slice(end)}`;
 }
 
-/** 表の列幅（prettier が揃える空白と罫線の長さ）だけを除いた形。生成の節の中身が変わったかを見るのに使う */
-export function tableShape(text: string): string {
-  return text
-    .split('\n')
-    .map((line) =>
-      line
-        .trim()
-        .replace(/\s*\|\s*/g, '|')
-        .replace(/-{3,}/g, '---'),
-    )
-    .filter((line) => line !== '')
-    .join('\n');
-}
-
 export function extractGeneratedSection(doc: string, name: string): string {
   const start = doc.indexOf(marker(name, false));
   const end = doc.indexOf(marker(name, true));

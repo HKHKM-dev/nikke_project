@@ -30,7 +30,7 @@ import { RESULTS_MARKERS } from '../src/records/drafts.ts';
 import { invalidReasonsOf } from '../src/records/observations/types.ts';
 import { renderResiduals } from '../src/records/observations/render.ts';
 import { validateObservations } from '../src/records/observations/validate.ts';
-import { extractGeneratedSection, replaceGeneratedSection, tableShape } from '../src/records/recordings.ts';
+import { replaceGeneratedSection } from '../src/records/recordings.ts';
 import { definitionPlacesByClaim, renderSkills, validateSkillClaims } from '../src/records/skills.ts';
 import { renderSkillSupportIndex } from '../src/skills/support.ts';
 import {
@@ -177,10 +177,7 @@ for (const p of predictions) {
     const path = verificationPath(v);
     const doc = readFileSync(path, 'utf8');
     if (doc.includes(RESULTS_MARKERS[0]) && doc.includes(RESULTS_MARKERS[1])) {
-      // 列幅のほかに変わりが無ければ書かない（整形の後の版を、整えていない版で書き換えない）
-      const table = renderPredictionTable(comparison);
-      if (tableShape(extractGeneratedSection(doc, 'predictions')) !== tableShape(table))
-        writeFileSync(path, replaceGeneratedSection(doc, 'predictions', table));
+      writeFileSync(path, replaceGeneratedSection(doc, 'predictions', renderPredictionTable(comparison)));
     }
   }
 }

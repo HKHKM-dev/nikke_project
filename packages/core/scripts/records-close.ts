@@ -9,7 +9,13 @@
 import { spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
-import { claimTieErrors, gradeCandidate, type ClaimFile, type ClaimGrade } from '../src/records/claims.ts';
+import {
+  claimTieErrors,
+  gradeAboveCandidate,
+  gradeCandidate,
+  type ClaimFile,
+  type ClaimGrade,
+} from '../src/records/claims.ts';
 import { closeChecks, markState, prBody, prTitle, promoteTogether, residualCounts } from '../src/records/close.ts';
 import { claimDraft } from '../src/records/drafts.ts';
 import { V_ID } from '../src/records/ids.ts';
@@ -31,6 +37,7 @@ import {
   recordingMap,
   verificationPath,
 } from './records-data.ts';
+import { restoreGenerated } from './generated.ts';
 import { runObservationsCached } from './residual-cache.ts';
 
 const { values, positionals } = parseArgs({
@@ -61,11 +68,11 @@ const data = loadRecordsData(
   predictions.flatMap((p) => p.team.map((m) => m.rid)),
 );
 const observations = loadObservations();
-let claims = loadClaims();
+const loaded = loadClaims();
 const own = observations.filter((o) => o.source === id);
-let ownClaims = claims.filter((c) => verification.claims.includes(c.id));
+const loadedOwn = loaded.filter((c) => verification.claims.includes(c.id));
 // 等級の候補は、その結論の根拠の観測値をモデルと比べて出す
-const basisObs = observations.filter((o) => ownClaims.some((c) => c.observations.includes(o.id)));
+const basisObs = observations.filter((o) => loadedOwn.some((c) => c.observations.includes(o.id)));
 const residuals = runObservationsCached(basisObs, recordings, data);
 const residualOf = new Map(
   residuals.map((r) => [
@@ -75,12 +82,12 @@ const residualOf = new Map(
 );
 const invalid = new Set(invalidReasonsOf(observations).keys());
 const gradeCandidates = new Map<string, ClaimGrade>();
-for (const c of ownClaims) {
+for (const c of loadedOwn) {
   const g = gradeCandidate(c, residualOf, invalid);
   if (g !== undefined) gradeCandidates.set(c.id, g);
 }
 // 根拠の観測値の感度はその場で計算して重ねる（最小構成の検査。plan/design-minimal-relevance.md 5 節）
-const sensitivity = withFreshSensitivity(basisObs, { recordings, ...data, claims }, loadSensitivity());
+const sensitivity = withFreshSensitivity(basisObs, { recordings, ...data, claims: loaded }, loadSensitivity());
 const prediction = predictions.find((p) => p.verification === id);
 // 同じ記録の仮説の結論を、まとめて確定にできるか（plan/design-workflow-simplification-15.md 2 節）。条件は records:new と同じ
 // claimDraft で見る。when・edge は仮説にだけ書ける欄なので、書いた結論は人が仮説に置いたものとして外す
@@ -89,10 +96,17 @@ const compared = new Map(
 );
 const predictionComparison = prediction === undefined ? undefined : comparePredictions(prediction, observations);
 const today = todayLocal();
+// 確定にするときは、等級も候補に合わせる（人の判断で候補より上にしたものは残す）
+const confirm = <T extends { grade?: ClaimGrade | undefined }>(c: T, cid: string): T => {
+  const g = gradeCandidates.get(cid);
+  const grade = g !== undefined && (c.grade === undefined || !gradeAboveCandidate(c.grade, g)) ? g : c.grade;
+  return { ...c, state: '確定', ...(grade === undefined ? {} : { grade }), updated: today };
+};
+const assumeConfirmed = (ids: ReadonlySet<string>) => loaded.map((c) => (ids.has(c.id) ? confirm(c, c.id) : c));
 const together = promoteTogether(
-  ownClaims.filter((c) => c.state === '仮説' && c.when === undefined && c.edge === undefined).map((c) => c.id),
+  loadedOwn.filter((c) => c.state === '仮説' && c.when === undefined && c.edge === undefined).map((c) => c.id),
   (assumed) => {
-    const assumedClaims = claims.map((c) => (assumed.has(c.id) ? { ...c, state: '確定' as const } : c));
+    const assumedClaims = assumeConfirmed(assumed);
     const targets = assumedClaims.filter((c) => assumed.has(c.id));
     const ctx = { recordings, ...data, claims: assumedClaims };
     const warnings = new Map(relevanceOf(targets, observations, ctx, sensitivity).map((r) => [r.claim, r.warnings]));
@@ -120,24 +134,21 @@ const together = promoteTogether(
   },
 );
 if (together.promoted.length > 0 && values.mark) {
-  for (const cid of together.promoted) {
-    const path = `${CLAIMS_DIR}${cid}.json`;
-    const claimFile = JSON.parse(readFileSync(path, 'utf8')) as ClaimFile;
-    writeFileSync(path, `${JSON.stringify({ ...claimFile, state: '確定', updated: today }, null, 2)}\n`);
-  }
-  spawnSync(
-    process.platform === 'win32' ? 'npx.cmd' : 'npx',
-    ['prettier', '--write', ...together.promoted.map((cid) => `${CLAIMS_DIR}${cid}.json`)],
-    { stdio: 'ignore' },
-  );
+  const paths = together.promoted.map((cid) => `${CLAIMS_DIR}${cid}.json`);
+  for (const [i, cid] of together.promoted.entries())
+    writeFileSync(
+      paths[i]!,
+      `${JSON.stringify(confirm(JSON.parse(readFileSync(paths[i]!, 'utf8')) as ClaimFile, cid), null, 2)}\n`,
+    );
+  spawnSync(process.execPath, [`${ROOT}tools/format-retry.ts`, ...paths], { cwd: ROOT, stdio: 'ignore' });
   console.log(`同じ記録の結論をまとめて確定にした: ${together.promoted.join('・')}`);
-  claims = loadClaims();
-  ownClaims = claims.filter((c) => verification.claims.includes(c.id));
 } else if (together.promoted.length > 0)
   console.log(
     `--mark で確定にする（同じ記録の結論をまとめて確定とみなすと条件がそろう）: ${together.promoted.join('・')}`,
   );
 for (const [cid, reasons] of together.reasons) console.log(`仮説のまま: ${cid}（${reasons.join('。')}）`);
+const claims = values.mark ? assumeConfirmed(new Set(together.promoted)) : loaded;
+const ownClaims = claims.filter((c) => verification.claims.includes(c.id));
 // 最小構成の検査（同 5 節）: この記録の結論の組
 const relevanceCtx = { recordings, ...data, claims };
 const minimal = new Map(
@@ -148,9 +159,7 @@ const outside = new Set(residuals.filter((r) => r.status === 'outside').map((r) 
 const predictionFits =
   prediction === undefined || prediction.predicted === null || prediction.hypotheses.length < 2
     ? undefined
-    : [...comparePredictions(prediction, observations).score.entries()]
-        .filter(([, s]) => s.total > 0 && s.ok === s.total)
-        .map(([h]) => h);
+    : [...predictionComparison!.score.entries()].filter(([, s]) => s.total > 0 && s.ok === s.total).map(([h]) => h);
 const result = closeChecks({
   verification,
   claims,
@@ -163,7 +172,11 @@ const result = closeChecks({
 // 結論と観測値の結び付きの決まり（records:check と同じ。この記録の結論の根拠と、この記録の観測値だけを見る）
 const ownIds = new Set([...own, ...basisObs].map((o) => o.id));
 result.errors.push(
-  ...claimTieErrors(observations, claims, invalid).filter((e) => ownIds.has(e.slice(0, e.indexOf(':')))),
+  ...claimTieErrors(
+    observations.filter((o) => ownIds.has(o.id)),
+    claims,
+    invalid,
+  ),
 );
 for (const w of result.warnings) console.log(`注意: ${w}`);
 if (result.errors.length > 0) {
@@ -202,7 +215,7 @@ console.log(
   )}\n`,
 );
 // 作り直した生成物は PR に入れないので、読み終えたら HEAD の版へ戻す（plan/design-workflow-simplification-15.md 4 節）
-if (!values['keep-generated']) run('node packages/core/scripts/records-restore-generated.ts');
+if (!values['keep-generated'] && !restoreGenerated()) process.exit(1);
 console.log(
   '残り: 設計書のある仕事なら、設計か実装が変わったときだけ設計書の経過に 1 行書く（ほかの所には書かない。AGENTS.md「文書の書き方」）。課題の状態が変わったら課題のファイル（records/backlog/。plan/backlog.md は生成物）を直し（Stage の状態が変わったときだけ plan/roadmap.md）、commit して npm run pr:prep -- --push の後に PR を出す（AGENTS.md「コミット手順」）',
 );

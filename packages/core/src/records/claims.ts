@@ -490,7 +490,7 @@ export function supportedObservations(claims: readonly Claim[]): Set<string> {
  * 1 ヒットの値はコア・会心を引数で決め、自動の条件で変わるのは着地点で決まる距離ボーナスだけなので、的の表の割合に左右されない
  * （適正最小射程距離▲が効くのは自動の条件だけ。plan/design-agent-bunny.md 10 節）
  */
-export const AUTO_GATEABLE_METRICS: ReadonlySet<string> = new Set([
+const AUTO_GATEABLE_METRICS: ReadonlySet<string> = new Set([
   'coreHitRate',
   'bulletHitRate',
   'hitDamage',

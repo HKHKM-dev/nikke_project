@@ -182,15 +182,15 @@ export function promoteTogether(
   candidates: readonly string[],
   evaluate: (assumed: ReadonlySet<string>) => ReadonlyMap<string, readonly string[]>,
 ): { promoted: string[]; reasons: Map<string, readonly string[]> } {
-  let assumed = new Set(candidates);
+  const assumed = new Set(candidates);
   const reasons = new Map<string, readonly string[]>();
-  while (assumed.size > 0) {
+  for (;;) {
     const result = evaluate(assumed);
     const failing = [...assumed].filter((id) => (result.get(id) ?? []).length > 0);
-    for (const id of failing) reasons.set(id, result.get(id)!);
-    if (failing.length === 0) break;
-    assumed = new Set([...assumed].filter((id) => !failing.includes(id)));
+    if (failing.length === 0) return { promoted: [...assumed], reasons };
+    for (const id of failing) {
+      reasons.set(id, result.get(id)!);
+      assumed.delete(id);
+    }
   }
-  for (const id of assumed) reasons.delete(id);
-  return { promoted: candidates.filter((id) => assumed.has(id)), reasons };
 }

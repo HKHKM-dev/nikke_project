@@ -13,7 +13,6 @@ import {
   renderRecordingsDoc,
   replaceGeneratedSection,
   sortRecordings,
-  tableShape,
   validateRecordings,
   type ProjectRecording,
   type RecordingBuild,
@@ -154,14 +153,5 @@ describe('plan/captures/recordings.md', () => {
     expect(replaceGeneratedSection(doc, 'legacy', '| x |')).toBe(
       'a\n<!-- records:legacy:start -->\n\n| x |\n\n<!-- records:legacy:end -->\nb',
     );
-  });
-});
-
-describe('tableShape', () => {
-  it('ignores the column widths prettier aligns, but not the cells', () => {
-    const raw = '| a | bb |\n| --- | --- |\n| 1 | 2 |';
-    const aligned = '\n| a   | bb  |\n| --- | ----- |\n| 1   | 2   |\n';
-    expect(tableShape(aligned)).toBe(tableShape(raw));
-    expect(tableShape('| a | bb |\n| --- | --- |\n| 1 | 3 |')).not.toBe(tableShape(raw));
   });
 });
