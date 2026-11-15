@@ -119,7 +119,7 @@ export const BADGE_KINDS: readonly BadgeKind[] = [
   {
     key: 'element',
     name: '属性',
-    badges: badgesOf('element', ['Fire', 'Water', 'Wind', 'Iron', 'Electronic'], (v) => ELEMENT_LABEL[v].ja),
+    badges: badgesOf('element', ['Fire', 'Water', 'Wind', 'Electronic', 'Iron'], (v) => ELEMENT_LABEL[v].ja),
   },
   {
     key: 'burstStep',

@@ -1416,7 +1416,7 @@ html:has(.modern-view-container) {
 .char-tray-badge-filter {
   --badge-w: 24px;
   display: flex;
-  gap: 2px;
+  gap: 0;
   padding-right: 6px;
   border-right: 1px solid color-mix(in srgb, var(--app-fg) 15%, transparent);
 }

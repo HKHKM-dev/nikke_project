@@ -5,21 +5,8 @@ import type { CharacterIndexEntry } from '@nikke/core';
 import { useMemo } from 'react';
 import { useCharacterFilter } from './useCharacterFilter.ts';
 import { BURST_STEP_LABEL } from '../skillLabels.ts';
-import {
-  BURST_STEP_BADGE_KIND,
-  CLASSIC_FILTER_KINDS,
-  filterButtonValues,
-  toggleBadgeFilter,
-  type BadgeKind,
-} from './modern/badges.ts';
+import { BURST_STEP_BADGE_KIND, CLASSIC_FILTER_KINDS, filterButtonValues, toggleBadgeFilter } from './modern/badges.ts';
 import { Popover } from './Popover.tsx';
-
-/** 属性のボタンの並び（電撃を鉄甲の前にする。ほかの種類はバッジの並びのまま） */
-const ELEMENT_ORDER = ['Fire', 'Water', 'Wind', 'Electronic', 'Iron'];
-function classicFilterValues(kind: BadgeKind): string[] {
-  const values = filterButtonValues(kind);
-  return kind.key === 'element' ? ELEMENT_ORDER.filter((v) => values.includes(v)) : values;
-}
 
 /** 絞り込みの状態と、合うニケ（絞り込んでいなければ null） */
 export function useClassicFilter(index: readonly CharacterIndexEntry[]) {
@@ -50,7 +37,7 @@ export function ClassicFilter({
         {CLASSIC_FILTER_KINDS.map((kind) => (
           <div key={kind.key} className="classic-filter-row" role="group" aria-label={`${kind.name}で絞り込み`}>
             <span className="classic-filter-row-name">{kind.name}</span>
-            {classicFilterValues(kind).map((v) => (
+            {filterButtonValues(kind).map((v) => (
               <button
                 key={v}
                 type="button"
