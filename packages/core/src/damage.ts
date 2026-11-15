@@ -1,6 +1,7 @@
 // 通常攻撃のダメージの式。1 トリガーの期待ダメージ（computeTriggerDamage）は sim の 2 パス目が区間ごとに使う。
 // 常時・持続のバフ（buffs）を差し込める。フルバースト区間は condition.fullBurst で倍率グループに +0.5 が乗る。
 // 射撃ごとの倍率ダメージ（「通常攻撃が命中した時、最終攻撃力の X% の追加ダメージ」）は 1 トリガーの値に足す（perShot）。
+// フルチャージの発にだけ乗る項は、フルチャージでない発の値から外す（nonFullChargeTriggerDamage）。
 // 使用武器の変更（殲滅モード）が効いている区間は、武器倍率・コア倍率を変更後の武器（buffs.weapon）から取る。
 import { elementMultiplier } from './element.ts';
 import { effectiveMaxAmmo } from './frame/firing.ts';
@@ -317,6 +318,11 @@ export type TriggerDamage = {
   /** 射撃ごとの倍率ダメージの分（無ければ 0）。倍率グループは 1 + 会心 + フルバースト（コア・距離なし） */
   perShot: number;
   /**
+   * perShot のうち、きっかけが fullChargeShot の効果（ResolvedSkillDamage の fullChargeOnly）の分。perShot に含まれている。
+   * フルチャージでない発では 0（nonFullChargeTriggerDamage。plan/design-full-charge-fold.md 3.1 節）
+   */
+  perShotFullCharge: number;
+  /**
    * 与えたダメージ量の X% の固定ダメージの分（damageType fixedShare。無ければ 0。plan/design-emilia.md 2.2 節）。フルチャージの発の
    * normal × ΣX で、何も乗せ直さない。perShot と違い、着弾の区間でなく撃った区間の値（その発の normal）で決まる
    */
@@ -556,21 +562,15 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
     trueMultiplier *
     damageTakenMultiplier *
     element;
-  // 固定ダメージは通常攻撃の値（命中率・会心とコアの期待値を含む）の X%。フルチャージの発にだけ出る（きっかけが fullChargeShot）
-  const fixedShare = charge ? normal * (input.fixedShare ?? 0) : 0;
-  const perShot =
-    hitRate *
-    perShotDamage(
-      input.perShot,
-      baseHit,
-      boostCore,
-      boostSkillCrit,
-      boostFullBurst,
-      buffs,
-      skillElementMultiplier(character, enemy, buffs),
-    );
+  // 固定ダメージは通常攻撃の値（命中率・会心とコアの期待値を含む）の X%。フルチャージの発にだけ出る（きっかけが fullChargeShot。下の charge）
+  const fixedShare = normal * (input.fixedShare ?? 0);
+  const skillElement = skillElementMultiplier(character, enemy, buffs);
+  const perShotOf = (effects: readonly ResolvedSkillDamage[] | undefined): number =>
+    hitRate * perShotDamage(effects, baseHit, boostCore, boostSkillCrit, boostFullBurst, buffs, skillElement);
+  const perShot = perShotOf(input.perShot);
+  const perShotFullCharge = perShotOf(input.perShot?.filter((e) => e.fullChargeOnly === true));
 
-  return {
+  const full: TriggerDamage = {
     baseAttack,
     attack,
     buffs,
@@ -593,24 +593,41 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
     elementMultiplier: element,
     normal,
     perShot,
+    perShotFullCharge,
     fixedShare,
     perTrigger: normal + perShot + fixedShare,
     hitRate,
     hitsPerShot,
   };
+  // 区間の武器がチャージ武器でない（使用武器の変更の発も区間の武器で決める）か、手入力でフルチャージしない枠の発は、フルチャージの発でない
+  return charge ? full : nonFullChargeTriggerDamage(full);
+}
+
+/**
+ * フルチャージでない発の 1 トリガーの値。フルチャージの発にだけ乗る項（射撃ごとの倍率ダメージのうちきっかけが fullChargeShot の
+ * 分 perShotFullCharge と、固定ダメージ fixedShare）を外す。フルチャージの発ごとの項を足すときは、ここで外す
+ * （plan/design-full-charge-fold.md 3.2 節。部分チャージの発に追加ダメージが乗らないのは V-0624・V-0038）
+ */
+export function nonFullChargeTriggerDamage<T extends TriggerDamage>(trigger: T): T {
+  const perShot = trigger.perShot - trigger.perShotFullCharge;
+  return { ...trigger, perShot, perShotFullCharge: 0, fixedShare: 0, perTrigger: trigger.normal + perShot };
 }
 
 /**
  * 部分チャージの発（チャージの進み progress）の 1 トリガーの値。フルチャージ倍率 M（チャージのバフ込み）を
  * 1 + (M − 1) × progress に置き換える（C-0843。紅蓮BS・ラムで確かめたのは素の倍率だけで、バフのある場合の比例は仮定）。
- * 射撃ごとの倍率ダメージ（perShot）は変えない。部分チャージの発はフルチャージでないので、固定ダメージ（fixedShare）は出さない
+ * 部分チャージの発はフルチャージでないので、フルチャージの発にだけ乗る項を外す（nonFullChargeTriggerDamage）
  */
 export function partialChargeTriggerDamage<T extends TriggerDamage>(trigger: T, progress: number): T {
+  if (progress >= 1) return trigger;
   const full = trigger.chargeMultiplier;
-  if (progress >= 1 || full <= 1) return trigger;
+  if (full <= 1) return nonFullChargeTriggerDamage(trigger);
   const chargeMultiplier = 1 + (full - 1) * Math.max(0, progress);
-  const normal = (trigger.normal * chargeMultiplier) / full;
-  return { ...trigger, chargeMultiplier, normal, fixedShare: 0, perTrigger: normal + trigger.perShot };
+  return nonFullChargeTriggerDamage({
+    ...trigger,
+    chargeMultiplier,
+    normal: (trigger.normal * chargeMultiplier) / full,
+  });
 }
 
 /**
