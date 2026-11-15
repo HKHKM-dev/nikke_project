@@ -1,0 +1,9 @@
+{
+  "section": "2",
+  "cells": {
+    "課題": "「〈状態〉が終了した時」のフレームの判定が、1 パス目・2 パス目・指標の 3 か所にある（[design-asuka-wille.md](design-asuka-wille.md) 2.1 節・[design-grave.md](design-grave.md) 2.1 節）",
+    "いま分かっていること": "1 パス目は `skills/holders/conditions.ts` の `endedAt`（あるフレームに外れた件があり、そのフレームを覆う件が無いか。登録の途中の件の列を読む。読み手は `register.ts` の counterChange と `{ stateEnd }` の窓・`fires.ts` の付与と timed と消去・`frame/firstPass/instants.ts` の残弾数減少）。2 パス目は `frame/plan.ts` の `endedFramesOf`（damage の `{ ended }`）、指標は `records/observations/metrics/skillHits.ts` の `stateEndFramesOf`（`event: stateEnd`）で、どちらも出そろった件を `unionRanges` でつないだ塊の終わり。同じフレームの付け直し（前の件の終わりと次の件の始まりが同じフレーム）・戦闘の終わりで切れた塊・長さ 0 の件は、3 か所とも同じに扱う。食い違う入力は 2 つ: (1) 家族の根（`intoTheFray`）を指すと、1・2 パス目は家族の状態も見るが、指標は `itemsOf` の `state` で同じ id の件だけを見る（いまの `{ ended }` と `event: stateEnd` の使い手は家族の根を指さないので、値は変わらない）。(2) 1 パス目は 1 フレームの登録の途中で読むので、件の終わりのフレーム f に同じ状態を付け直す付与が f に登録されると、付与より前に読む手続き（`registerEnds`）は終わりと見て、後に読む手続き（`registerCounters`・即時効果）と 2 パス目・指標は終わりと見ない（コードを読んだ限り。テストでは確かめていない）",
+    "次の 1 手": "(2) の入力（終わりのフレームに同じ状態を付け直す編成）をテストで作り、3 か所の結果を確かめる。そのうえで、2 パス目と指標の判定を家族の扱いを揃えた 1 つの関数にまとめる形と、1 パス目が判定した終わりのフレームを記録に残して 2 パス目と指標がそれを読む形（範囲が広い）を比べて設計する",
+    "要るもの": "テスト・設計"
+  }
+}
