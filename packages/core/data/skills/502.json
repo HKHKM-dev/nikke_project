@@ -1,0 +1,268 @@
+{
+  "formatVersion": 1,
+  "resourceId": 502,
+  "checkedAt": "2026-11-15",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "ghostPossession",
+          "trigger": "battleStart",
+          "target": "self",
+          "durationRef": 3,
+          "assumes": {
+            "ja": "憑依は戦闘開始時と、そこから 6 秒ごと（effects[1]）に付き、6 秒で外れる",
+            "en": "Possession is applied at the start of battle and every 6 s from then (effects[1]), and lasts 6 s"
+          },
+          "claims": [
+            "C-1312"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "ghostPossession",
+          "trigger": {
+            "everySeconds": 6,
+            "carry": true
+          },
+          "target": "self",
+          "durationRef": 3,
+          "assumes": {
+            "ja": "再発動周期は戦闘開始から 6 秒ごと（端数を持ち越す。マリアン：クイーンの S1 と同じ数え方）で、前の憑依でキャプチャーが起きたかによらない",
+            "en": "The recurring interval counts every 6 s from the start of battle (carrying the fraction, as Marian: Queen's S1), whether the previous possession led to a capture or not"
+          },
+          "claims": [
+            "C-1312"
+          ]
+        },
+        {
+          "kind": "counterChange",
+          "counter": "ghostCapture",
+          "trigger": {
+            "count": "teamHit",
+            "everyRef": 2,
+            "during": {
+              "state": "ghostPossession"
+            }
+          },
+          "target": "self",
+          "amount": 1,
+          "assumes": {
+            "ja": "命中回数は憑依の間の味方全体の通常攻撃の命中の期待値を数え、100 に届いた発でキャプチャー数を 1 増やす。憑依が付くたびに 0 から数え直す（届かなかった憑依の回数は持ち越さない）。倍率ダメージのヒットは数えない",
+            "en": "The hit count is the expected normal attack hits of all allies during Possession; the shot reaching 100 adds 1 ghost. It starts over each time Possession is applied (the count of a possession that fell short is not carried over). Skill damage hits are not counted"
+          },
+          "claims": [
+            "C-1312"
+          ]
+        },
+        {
+          "kind": "removeState",
+          "state": "ghostPossession",
+          "trigger": {
+            "count": "teamHit",
+            "everyRef": 2,
+            "during": {
+              "state": "ghostPossession"
+            }
+          },
+          "target": "self",
+          "assumes": {
+            "ja": "キャプチャーで幽霊が捕まり、憑依が外れる（説明文に無い行。6 秒の間にキャプチャーは最大 1 回）",
+            "en": "Capturing the ghost ends Possession (not in the description; at most one capture per 6 s)"
+          },
+          "claims": [
+            "C-1312"
+          ]
+        },
+        {
+          "kind": "passive",
+          "target": "allies",
+          "targetElement": "Water",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 5,
+          "while": {
+            "selfCounter": {
+              "counter": "ghostCapture",
+              "atLeast": 1
+            }
+          },
+          "assumes": {
+            "ja": "「水冷コードの味方全体」は自分（水冷）を含む",
+            "en": "\"All Water Code allies\" includes herself (Water)"
+          },
+          "claims": [
+            "C-1313"
+          ]
+        },
+        {
+          "kind": "passive",
+          "target": "allies",
+          "targetElement": "Water",
+          "stat": "elementDamage",
+          "ref": 7,
+          "while": {
+            "selfCounter": {
+              "counter": "ghostCapture",
+              "atLeast": 4
+            }
+          },
+          "assumes": {
+            "ja": "閾値の 4 は説明文の description_value_06。閾値ごとに別の効果なので、4 以上では effects[4] の攻撃力▲も乗る（下位効果のスタック適用）",
+            "en": "The threshold 4 is description_value_06. Each threshold is a separate effect, so at 4 or more the ATK up of effects[4] also applies (each subsequent effect triggers all effects before it)"
+          },
+          "claims": [
+            "C-1313"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "憑依は説明文では敵（ランダムな 1 機）に付く。モデルが要るのはキャプチャーの命中を数える窓だけなので、敵 1 体の前提で自分の状態として持つ",
+          "en": "In the description Possession is put on an enemy (1 random enemy). The model needs only the window counting hits for a capture, so with one enemy it is held as her own state",
+          "kind": "modeling",
+          "refers": "effects[0]",
+          "claims": [
+            "C-1312"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-1314"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "teamHit",
+            "every": 100,
+            "during": {
+              "state": "ghostPossession"
+            }
+          },
+          "ref": 3,
+          "damageType": "skill",
+          "condition": {
+            "selfCounter": {
+              "counter": "ghostCapture",
+              "atLeast": 13
+            }
+          },
+          "assumes": {
+            "ja": "「幽霊キャプチャー発動時」は S1 のキャプチャー（skill1 の effects[2] と同じきっかけ。必要命中回数 100 は S1 の description_value_02 なので即値で書く）。最大の 13 は説明文の S1 の description_value_04。条件はキャプチャーの前の値を見るので、13 のまま捕まえた回だけ出る（13 に届いた回は出ない）。敵全体は敵 1 体",
+            "en": "\"On ghost capture\" is the S1 capture (the same trigger as skill1 effects[2]; the required 100 hits is S1 description_value_02, so it is written as an immediate value). The maximum 13 is S1 description_value_04. The condition sees the count before the capture, so it deals damage only on captures at 13 (not on the capture reaching 13). All enemies is the one enemy"
+          },
+          "claims": [
+            "C-1314"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 1,
+          "damageType": "skill",
+          "hitsRef": 2,
+          "delayFrames": 5,
+          "hitIntervalFrames": 12,
+          "condition": {
+            "selfCounter": {
+              "counter": "ghostCapture",
+              "below": 13
+            }
+          },
+          "assumes": {
+            "ja": "キャプチャー数が 13 でない時の 6 回の順番の攻撃（ランダムな敵は敵 1 体）。バースト使用時の効果は III のタイマーの 00.00 の 1f 後に発火し（遅れの表）、1 ヒット目はその 5f 後（00.00 から 6f）、ヒットの間は 12f。値は発火のフレームのバフとフルバースト補正で出る",
+            "en": "The 6 sequential attacks when the ghost count is not 13 (the random enemy is the one enemy). Burst use effects fire 1 frame after the III timer reaches 00.00 (the delay table); the first hit is 5 frames later (6 frames after 00.00), then every 12 frames. The values use the buffs and the Full Burst bonus of the firing frame"
+          },
+          "claims": [
+            "C-1315"
+          ]
+        },
+        {
+          "kind": "counterChange",
+          "counter": "ghostCapture",
+          "trigger": "burstUse",
+          "target": "self",
+          "amountRef": 3,
+          "decrease": true,
+          "floor": 1,
+          "condition": {
+            "selfCounter": {
+              "counter": "ghostCapture",
+              "below": 13
+            }
+          },
+          "assumes": {
+            "ja": "「最低 1 を維持」は、減らした結果が 1 を下回るなら 1 で止める。減らす前が 0（キャプチャーの前）なら 0 のまま",
+            "en": "\"Maintains at least 1 ghost\" stops the decrease at 1. A count of 0 before the decrease (before any capture) stays 0"
+          },
+          "claims": [
+            "C-1315"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 4,
+          "damageType": "skill",
+          "hitsRef": 5,
+          "delayFrames": 5,
+          "hitIntervalFrames": 12,
+          "condition": {
+            "selfCounter": {
+              "counter": "ghostCapture",
+              "atLeast": 13
+            }
+          },
+          "assumes": {
+            "ja": "キャプチャー数が 13 の時の 13 回の順番の攻撃（ランダムな敵は敵 1 体）。バースト使用時の効果は III のタイマーの 00.00 の 1f 後に発火し（遅れの表）、1 ヒット目はその 5f 後（00.00 から 6f）、ヒットの間は 12f。値は発火のフレームのバフとフルバースト補正で出る",
+            "en": "The 13 sequential attacks when the ghost count is 13 (the random enemy is the one enemy). Burst use effects fire 1 frame after the III timer reaches 00.00 (the delay table); the first hit is 5 frames later (6 frames after 00.00), then every 12 frames. The values use the buffs and the Full Burst bonus of the firing frame"
+          },
+          "claims": [
+            "C-1315"
+          ]
+        },
+        {
+          "kind": "counterChange",
+          "counter": "ghostCapture",
+          "trigger": "burstUse",
+          "target": "self",
+          "amountRef": 6,
+          "decrease": true,
+          "condition": {
+            "selfCounter": {
+              "counter": "ghostCapture",
+              "atLeast": 13
+            }
+          },
+          "claims": [
+            "C-1315"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "S2 のダメージとバーストの順番の攻撃がバーストゲージを溜めるかは確かめていない（溜めない形で回す）",
+          "en": "Whether the S2 damage and the burst sequential attacks charge the burst gauge is not confirmed (run without charging)",
+          "kind": "modeling",
+          "refers": "effects[0]"
+        }
+      ]
+    }
+  }
+}

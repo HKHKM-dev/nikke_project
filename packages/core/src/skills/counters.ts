@@ -49,6 +49,11 @@ export const COUNTERS = {
    * フルバーストの中の通常攻撃 50 回の命中で消費する（足りなければ効果ごと起きない）。上限 6000（説明文の「最大6000発保存」）
    */
   ammoPouch: { name: { ja: '弾丸ポーチ', en: 'Ammo Pouch' }, max: 6000 },
+  /**
+   * 幽霊キャプチャー数（エレグ：ブーム・アンド・ショックの S1・S2・バースト。plan/design-elegg-bs.md 2.4 節）。憑依の間の味方全体の命中が
+   * 100 に届くたびに 1、バーストで 6（最低 1）か 9 減る。値で段階の効果（1・4 以上）とバーストの分岐（13）が決まる。上限 13（説明文の「最大13」）
+   */
+  ghostCapture: { name: { ja: '幽霊キャプチャー数', en: 'Ghosts captured' }, max: 13 },
 } as const satisfies Record<string, CounterInfo>;
 
 export type CounterId = keyof typeof COUNTERS;

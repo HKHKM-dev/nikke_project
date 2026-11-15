@@ -641,7 +641,10 @@ export const BURST_USERS_TRIGGERS = ['fullBurstStart', 'fullBurstEnd'] as const 
  * teamAmmo = 味方が消費した弾の合計（plan/design-cinderella-cw.md 2.3 節。C-1250）。自分を含む編成の全員の発の、減らした残弾
  * （1 発 1。装弾数無限の発は 0）を足し、累計が N の倍数に届いた発で発火する。自分が撃たないフレームでも、味方の発で発火する。
  * burstGauge と damage（N 回順番に攻撃の hitsRef も書ける。gaugePerHit は書けない。plan/design-little-mermaid.md 2.1 節）にだけ書け、
- * every か everyRef が要る。装弾数無限の発は、流し直しも射撃の列の infiniteAmmoShotFrames で 0 にする
+ * every か everyRef が要る。装弾数無限の発は、流し直しも射撃の列の infiniteAmmoShotFrames で 0 にする。
+ * teamHit = 味方全体の命中（plan/design-elegg-bs.md 2.1 節）。自分を含む編成の全員の通常攻撃の発の命中の期待値（normalHit と同じ量）を
+ * 足し、累計が N の倍数を越えた発で発火する。自分が撃たないフレームでも、味方の発で発火する。数える窓が自分の状態（during: { state }）の
+ * ときだけ書ける
  */
 export type ShotCountKind =
   | 'normalShot'
@@ -652,7 +655,8 @@ export type ShotCountKind =
   | 'weaponChangeShot'
   | 'pelletHit'
   | 'critHit'
-  | 'teamAmmo';
+  | 'teamAmmo'
+  | 'teamHit';
 export const SHOT_COUNT_KINDS = [
   'normalShot',
   'normalHit',
@@ -667,7 +671,11 @@ export const SHOT_COUNT_KINDS = [
   // きっかけを期待値で持つ（確率のきっかけ chance と同じ考え方）
   'critHit',
   'teamAmmo',
+  'teamHit',
 ] as const satisfies readonly ShotCountKind[];
+
+/** 自分を含む編成の全員の発を数える回数の種類（自分が撃たないフレームでも、味方の発で起きる） */
+export const TEAM_COUNT_KINDS = ['teamAmmo', 'teamHit'] as const satisfies readonly ShotCountKind[];
 
 export type ShotCountTrigger = {
   count: ShotCountKind;
@@ -735,7 +743,7 @@ export type ShotCountWindow = 'fullBurst';
 /**
  * 自分のその状態が付いている間の発のうち、付与の条件を満たす発（その発で付いた状態も入れる。C-1123）だけを数え、その状態が付くたびに
  * 0 から数え直す窓（「〈状態〉なら、通常攻撃が命中した時…攻撃命中回数別の効果」。plan/design-grave.md 2.4 節）。
- * 状態の付与と弾丸チャージ（plan/design-fortune-mate.md 2.2 節）にだけ書ける。見る状態は、同じ定義の自分に付ける付与の
+ * 状態の付与と弾丸チャージ（plan/design-fortune-mate.md 2.2 節）・カウンタの増減・倍率ダメージ・解除（plan/design-elegg-bs.md 2.2 節）にだけ書ける。見る状態は、同じ定義の自分に付ける付与の
  * あるもの。発火は 1 パス目の件の一覧が追う（skills/holders/fires.ts の firesOf）
  */
 export type StateCountWindow = { state: NamedStateId };
@@ -2678,6 +2686,12 @@ export type CounterChangeEffect = {
   /** 足す（減らす）値の description_value_NN（整数に丸める） */
   amountRef?: number;
   decrease?: true;
+  /**
+   * 「最低 N を維持」（plan/design-elegg-bs.md 2.3 節）。decrease のときだけ書ける 1 以上の即値。減らした結果が N を下回るなら、N と
+   * 減らす前の値の小さい方で止める（減らす前が N 未満なら変えない）。同じフレームの増減が重なったら、和を足した後に、そのフレームで
+   * 発火した floor の最大で止める
+   */
+  floor?: number;
   condition?: EffectCondition;
   assumes?: LocalizedText;
 };

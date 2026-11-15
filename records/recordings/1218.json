@@ -1,0 +1,52 @@
+{
+  "id": "1218",
+  "date": "2026-11-15",
+  "folder": "range",
+  "file": "20261115-1218_elegg-bs.mp4",
+  "original": "2026-11-15_14-43-22.mp4",
+  "durationSec": 200.1,
+  "frames": 12007,
+  "fps": 60,
+  "sizeMB": 242.5,
+  "sha256": "3018b3f7254f",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 232,
+      "name": "ノア",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 502,
+      "name": "エレグ：ブーム・アンド・ショック",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 300,
+      "name": "ソルジャーE.G.",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "4 人（V-0789 の撮り方 2）。バーストは手で 2 回（I-DOLL・フラワー → ノア → エレグ：BS）",
+  "backup": {
+    "at": "2026-11-15T14:56+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

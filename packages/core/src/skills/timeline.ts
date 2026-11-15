@@ -21,6 +21,7 @@ import {
   type AppliedEffect,
   type AppliedTimedEffect,
   type ResolvedEffect,
+  type ResolvedShotCountTrigger,
   type ResolvedTimedEffect,
   type ResolvedTrigger,
   type SkillLevels,
@@ -32,10 +33,12 @@ import type { ResolvedPeriodShorten } from './burstDamage.ts';
 import { refreshAll, stackItems, type StackItem } from './stacks.ts';
 import { isEffectTarget } from './targets.ts';
 import {
+  createStateWindowTracker,
   replayEvents,
   trackTriggerFires,
   type FrameEvents,
   type HealRecord,
+  type HeldStartOf,
   type ShotCountEveryAt,
   type TriggerFire,
 } from './triggers.ts';
@@ -331,6 +334,25 @@ export function triggerFires(
     return all.map((frame) => ({ frame, context: null }));
   }
   return trackTriggerFires(trigger, slotIndex, schedule, eventsOf(schedule, shots, frames, heals), everyAt);
+}
+
+/**
+ * 自分の状態の間だけ数える回数のきっかけ（during: { state }）の発火フレーム（倍率ダメージの発動。plan/design-elegg-bs.md 2.2 節）。
+ * 出来事の列を、件の一覧と同じ数え方（createStateWindowTracker）に流し直す。startOfHeld は 1 パス目の履歴の件から読む
+ */
+export function stateWindowTriggerFrames(
+  trigger: ResolvedShotCountTrigger,
+  state: NamedStateId,
+  slotIndex: number,
+  schedule: BurstSchedule | null,
+  frames: number,
+  shots: readonly (ShotLog | null)[],
+  startOfHeld: HeldStartOf,
+): number[] {
+  const fires = createStateWindowTracker(trigger, slotIndex, state, startOfHeld);
+  const out: number[] = [];
+  for (const ev of eventsOf(schedule, shots, frames)) if (fires(ev)) out.push(ev.frame);
+  return out;
 }
 
 /**

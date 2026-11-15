@@ -166,6 +166,8 @@
     | 対象が〈他のキャラが敵に付けた状態〉なら、〈状態〉のスタック量 N 個▲ | `stackChange` の `target: "enemy"`（同じ定義にその状態の dot が無い）と条件 `enemyState` | レイ（仮称）の S1 のアンチA.T.フィールド | [design-rei-tentative.md](design-rei-tentative.md) 2.1 節 |
     | 〈時間で変わる状態〉の味方全体（バーストの使用などで付く状態） | timed の `targetState`（編成のどの枠でも静的でなければ、発火のフレームにその状態を持つ枠） | レイ（仮称）の S1 の殲滅態勢の味方 | 同 2.2 節 |
     | 〈持続ダメージの名前〉効果 X%▲ | timed の stat `dotEffect`（持ち主の持続ダメージの tick に別の乗数） | ブレッディのバーストのあと味効果 | 同 2.4 節・決めたこと |
+    | 「〈状態〉」の間の必要命中回数 N 回（味方全体で累計）で〈カウンタ〉1 増加（その状態の解除・倍率ダメージも同じきっかけ） | 回数の種類 `teamHit` と `during: { state }`（counterChange・damage・removeState にも書ける） | エレグ：ブーム・アンド・ショックの S1 の憑依・S2 | [design-elegg-bs.md](design-elegg-bs.md) 2.1・2.2 節 |
+    | 〈カウンタ〉N▼「最低 M を維持」 | `counterChange` の `floor` | エレグ：ブーム・アンド・ショックのバースト | 同 2.3 節 |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。

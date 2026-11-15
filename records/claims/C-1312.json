@@ -1,0 +1,20 @@
+{
+  "id": "C-1312",
+  "text": "エレグ：ブーム・アンド・ショックの S1 の憑依は、戦闘開始時とそこから 6 秒ごとに付き、その間の味方全体の通常攻撃の命中が 100 に届いた発で幽霊キャプチャー数が 1 増えて憑依が外れる（6 秒の窓にキャプチャーは最大 1 回。届かなかった窓の命中は次の窓に持ち越さない）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1215-01`・`1216-01`・`1217-09`・`1218-09`・`1217-07`・`1218-07`。V-0789",
+  "model": "data/skills/502.json の skill1 の effects[0]〜[3]（状態 ghostPossession の付与 2 つ・counterChange・removeState。回数の種類 teamHit と during: { state }）。数え方は packages/core/src/skills/triggers.ts の createStateWindowTracker、カウンタ ghostCapture は skills/counters.ts",
+  "replaces": [],
+  "updated": "2026-11-15",
+  "subject": {
+    "places": [
+      "data/skills/502.json の skill1 の effects[0]",
+      "data/skills/502.json の skill1 の effects[1]",
+      "data/skills/502.json の skill1 の effects[2]",
+      "data/skills/502.json の skill1 の effects[3]"
+    ]
+  },
+  "decidedOn": []
+}

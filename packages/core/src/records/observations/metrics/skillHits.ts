@@ -144,6 +144,18 @@ function healHitCounts(result: SimResult, ctx: MetricContext): number[] {
 /** eventFrames の出来事（モデルのフレームと、録画の動画のフレーム） */
 type EventPoint = { frame: number; video: number; opened?: number };
 
+/** 枠のカウンタが前の値より増えた記録のフレーム（昇順） */
+function counterUpFramesOf(result: SimResult, slotIndex: number, counter: string): number[] {
+  const out: number[] = [];
+  let value = 0;
+  for (const r of result.history.counters) {
+    if (r.slotIndex !== slotIndex || r.counter !== counter) continue;
+    if (r.value > value) out.push(r.frame);
+    value = r.value;
+  }
+  return out;
+}
+
 /** eventFrames の event: 枠の出来事の列（時刻の順） */
 function eventPointsOf(result: SimResult, ctx: MetricContext): EventPoint[] {
   const slotIndex = slotIndexOf(ctx);
@@ -180,9 +192,12 @@ function eventPointsOf(result: SimResult, ctx: MetricContext): EventPoint[] {
     // V-0742: 枠の通常攻撃の発（録画では、照準の左か枠アイコンの上の残弾が減ったフレーム）
     case 'shot':
       return slotOf(result.shots, ctx).frames.map(at);
+    // V-0789: 枠のカウンタ（引数 counter）が増えたフレーム（幽霊キャプチャー。録画では、画面のカウンタの表示が増えたフレーム）
+    case 'counterUp':
+      return counterUpFramesOf(result, slotIndex, String(ctx.args.counter)).map(at);
     default:
       throw new Error(
-        `event は skillHit・dot・dotApply・dotTick・burstHit・activation・heal・stateEnd・currentHpDown・shot（${String(ctx.args.event)}）`,
+        `event は skillHit・dot・dotApply・dotTick・burstHit・activation・heal・stateEnd・currentHpDown・shot・counterUp（${String(ctx.args.event)}）`,
       );
   }
 }

@@ -1,0 +1,336 @@
+[
+  {
+    "id": "1217-01",
+    "recording": "1217",
+    "kind": "timing",
+    "use": "input",
+    "unit": "f",
+    "value": [1520, 6725],
+    "spread": {
+      "kind": "range",
+      "low": -2,
+      "high": 2
+    },
+    "description": "チェーンの始まり（I の本当の発動）のゲーム内のフレーム（戦闘開始から）の並び。オートバースト OFF で手で 2 回押した",
+    "method": {
+      "tool": "recipe:burst-panel@4 と tools/captures/timer.ts の戦闘開始",
+      "note": "戦闘開始は動画の f839（timer.ts --mode changes の 3 つ目の変わり目。2 つ目は WARNING の演出の始まりで、タイマーと照準はこのフレームに出る）。I → II の六角形の替わり目（f2365・f7594。下の burst-panel の観測値）の動画のフレームから、戦闘開始・替わり目までの 5f と発動の止まり 1f（C-0503）、2 回目はそれより前のフルバーストの入りの止まり 22f（C-0069）と I・II の発動の止まり 1f ずつを引いた（1194-01 と同じ）。幅は戦闘開始の読みの揺れ"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burst"
+    },
+    "source": "V-0789",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1217-02",
+    "recording": "1217",
+    "kind": "timing",
+    "use": "record",
+    "value": [2365, 7594],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0f"
+    },
+    "source": "V-0789",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1217-03",
+    "recording": "1217",
+    "kind": "timing",
+    "use": "record",
+    "value": [2394, 7623],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0f"
+    },
+    "source": "V-0789",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1217-04",
+    "recording": "1217",
+    "kind": "timing",
+    "use": "record",
+    "value": [2423, 7652],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0789",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1217-05",
+    "recording": "1217",
+    "kind": "timing",
+    "use": "record",
+    "value": [3032, 8261],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0789",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1217-06",
+    "recording": "1217",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0789",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1217-07",
+    "recording": "1217",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": [5, 13],
+    "description": "エレグ：ブーム・アンド・ショックのバーストの発動ごとの、発動の前の幽霊キャプチャー数（1 回目は 13 でない時、2 回目は 13 の時）",
+    "method": {
+      "tool": "使い捨てのスクリプト（GHOST の欄の数字）",
+      "note": "戦闘開始（動画の f839。timer.ts --mode changes の 3 つ目の変わり目。タイマーと照準が出る）から。エレグ：ブーム・アンド・ショックの頭の上の「GHOST」の欄の赤い数字を、使い捨てのスクリプトで全フレーム読んだ（欄を大きさ違いの型で追い、数字の窓の赤み（R − max(G, B)）を、目で確かめた 0〜13 の見本と正規化相互相関で照らし、値は 1 ずつ増える（バーストの前後だけ減る）並びで最もよく合う列を選んだ）。替わり目のフレームは、際どいものを数字の窓の拡大で確かめた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "counterAtBursts",
+      "args": {
+        "slot": 3,
+        "counter": "ghostCapture"
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "1217-01",
+        "noBurstSlots": [4]
+      }
+    },
+    "source": "V-0789",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1217-08",
+    "recording": "1217",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": [1, 5],
+    "description": "発動の後の幽霊キャプチャー数。1 回目は 6▼ が最低 1 で止まった。2 回目は 13 → 4（9▼）で、同じ時にキャプチャーが 1 回重なって 5（4 はバーストの演出の黄色に隠れて見えない）。命中の数え方が効くので、条件は自動（射撃場の表の弾丸命中率）で比べ、結論には結び付けない",
+    "method": {
+      "tool": "使い捨てのスクリプト（GHOST の欄の数字）",
+      "note": "戦闘開始（動画の f839。timer.ts --mode changes の 3 つ目の変わり目。タイマーと照準が出る）から。エレグ：ブーム・アンド・ショックの頭の上の「GHOST」の欄の赤い数字を、使い捨てのスクリプトで全フレーム読んだ（欄を大きさ違いの型で追い、数字の窓の赤み（R − max(G, B)）を、目で確かめた 0〜13 の見本と正規化相互相関で照らし、値は 1 ずつ増える（バーストの前後だけ減る）並びで最もよく合う列を選んだ）。替わり目のフレームは、際どいものを数字の窓の拡大で確かめた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "counterAfterBursts",
+      "args": {
+        "slot": 3,
+        "counter": "ghostCapture"
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "1217-01",
+        "noBurstSlots": [4],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0789",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1217-09",
+    "recording": "1217",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [164, 625, 801, 1283, 1496, 1885, 2233, 2631, 3140, 3292, 3730],
+    "description": "幽霊キャプチャー数が増えた動画のフレーム（戦闘開始 f839 から）の 1〜11 回目。どの 6 秒の窓でもキャプチャーが起きる（エレグ：BS の発が 100 に届かない窓も、味方の命中で届く）",
+    "method": {
+      "tool": "使い捨てのスクリプト（GHOST の欄の数字）",
+      "note": "戦闘開始（動画の f839。timer.ts --mode changes の 3 つ目の変わり目。タイマーと照準が出る）から。エレグ：ブーム・アンド・ショックの頭の上の「GHOST」の欄の赤い数字を、使い捨てのスクリプトで全フレーム読んだ（欄を大きさ違いの型で追い、数字の窓の赤み（R − max(G, B)）を、目で確かめた 0〜13 の見本と正規化相互相関で照らし、値は 1 ずつ増える（バーストの前後だけ減る）並びで最もよく合う列を選んだ）。替わり目のフレームは、際どいものを数字の窓の拡大で確かめた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "counterUp",
+        "counter": "ghostCapture",
+        "count": 11
+      },
+      "tolerance": {
+        "abs": 20
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "1217-01",
+        "noBurstSlots": [4]
+      }
+    },
+    "source": "V-0789",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1217-10",
+    "recording": "1217",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [4362, 4881, 5052, 5475, 5983, 7261, 7768, 7900, 8361, 8798, 9111, 9311, 9710],
+    "description": "同じく 13 回目から（12 回目は 4076 で、モデルの 3992 より遅い。モデルでは的のジャンプ（4041f）の直前に 100 に届く窓で、実機ではジャンプをまたいだ）。命中の数え方が効くので、条件は自動（射撃場の表の弾丸命中率）で比べ、結論には結び付けない",
+    "method": {
+      "tool": "使い捨てのスクリプト（GHOST の欄の数字）",
+      "note": "戦闘開始（動画の f839。timer.ts --mode changes の 3 つ目の変わり目。タイマーと照準が出る）から。エレグ：ブーム・アンド・ショックの頭の上の「GHOST」の欄の赤い数字を、使い捨てのスクリプトで全フレーム読んだ（欄を大きさ違いの型で追い、数字の窓の赤み（R − max(G, B)）を、目で確かめた 0〜13 の見本と正規化相互相関で照らし、値は 1 ずつ増える（バーストの前後だけ減る）並びで最もよく合う列を選んだ）。替わり目のフレームは、際どいものを数字の窓の拡大で確かめた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "counterUp",
+        "counter": "ghostCapture",
+        "skip": 12,
+        "count": 13
+      },
+      "tolerance": {
+        "abs": 20
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "1217-01",
+        "noBurstSlots": [4],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0789",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1217-11",
+    "recording": "1217",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 3256880,
+    "description": "バーストの順番の攻撃（800%）の 1 ヒット（会心なし）。2 回のバーストのどの回もこの値（会心は 4,342,507）。フルバースト補正と S2 の攻撃力▲・S1 の攻撃力▲・有利コードの攻撃ダメージ▲が乗る",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "増分がそのまま 1 ヒット（同じフレームの味方の発と重なった回を除く）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "rel": 0.0001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "1217-01",
+        "noBurstSlots": [4]
+      }
+    },
+    "source": "V-0789",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1217-12",
+    "recording": "1217",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [
+      1612, 1624, 1636, 1648, 1659, 1671, 6841, 6853, 6865, 6877, 6888, 6900, 6912, 6924, 6936, 6947, 6959, 6971, 6983
+    ],
+    "description": "バーストの順番の攻撃のヒットの動画のフレーム（戦闘開始 f839 から）。1 回目のバーストは 6 ヒット、2 回目は 13 ヒット。III のタイマーの 00.00 から 28f 後に始まり、11〜12f ごと",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "3,256,880・4,342,507 とその和の増分のフレーム"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "skill": "burst",
+        "count": 19
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "1217-01",
+        "noBurstSlots": [4]
+      }
+    },
+    "source": "V-0789",
+    "readAt": "2026-11-15"
+  }
+]

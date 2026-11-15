@@ -155,3 +155,28 @@ describe('射撃の間・ヒットの遅れ・発動の動画のフレームの�
     expect(() => metric('burstActivationVideoFrames', r, { n: all + 1 })).toThrow(`発動が ${all} 回しかない`);
   });
 });
+
+describe('カウンタの増減の前後と増えたフレーム（エレグ：ブーム・アンド・ショック。V-0789）', () => {
+  // 録画 1218: エレグ：ブーム・アンド・ショックは枠 3。バーストは手で 2 回（1218-01）
+  const r = run('1218', { burst: true, manualBursts: '1218-01', noBurstSlots: [4] });
+  const records = r.result.history.counters.filter((c) => c.slotIndex === 2 && c.counter === 'ghostCapture');
+
+  it('counterAfterBursts includes the change on the firing frame, counterAtBursts does not', () => {
+    const before = metric('counterAtBursts', r, { slot: 3, counter: 'ghostCapture' }) as number[];
+    const after = metric('counterAfterBursts', r, { slot: 3, counter: 'ghostCapture' }) as number[];
+    expect(before).toHaveLength(after.length);
+    const fires = r.result.schedule!.activations.filter((a) => a.slotIndex === 2);
+    fires.forEach((a, k) => {
+      const at = a.effectFrame ?? a.frame;
+      expect(records.some((c) => c.frame === at)).toBe(before[k] !== after[k]);
+      expect(after[k]).toBe(records.filter((c) => c.frame <= at).at(-1)?.value ?? 0);
+    });
+  });
+
+  it('eventFrames counterUp lists only the frames where the counter rose', () => {
+    const ups = metric('eventCount', r, { slot: 3, event: 'counterUp', counter: 'ghostCapture' }) as number;
+    const rises = records.filter((c, i) => c.value > (i === 0 ? 0 : records[i - 1]!.value)).length;
+    expect(ups).toBe(rises);
+    expect(rises).toBeLessThan(records.length);
+  });
+});

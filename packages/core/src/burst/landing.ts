@@ -58,6 +58,11 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // plan/design-elegg.md 8.9 節）。この編成では II から III の 00.00 までがどの回も同じで、ヒットが II の発動に結び付くか III の 00.00 に
   // 結び付くかは見分けていない
   { resourceIds: [500], delays: { hitFrames: 30, effectFrames: 0 }, claim: 'C-0689' },
+  // エレグ：ブーム・アンド・ショック: バースト使用時の効果（順番の攻撃・幽霊キャプチャー数の▼・S2 の攻撃力▲）は、III のタイマーの 00.00 から
+  // 順番の攻撃の 1 ヒット目（00.00 から 6f。動画で 28f。止まり 22f を含む）までの間に発火する（キャプチャー数の表示がその間に減り、
+  // 順番の攻撃にフルバースト補正が乗る。V-0789）。遅れ 0 は本当の発動（00.00 の 6f 前）になるので、範囲の中の 1f にした（ヒットは damage の
+  // delayFrames）。バーストスキルダメージ（burstDamage）は持たない
+  { resourceIds: [502], delays: { hitFrames: 6, effectFrames: 1 }, claim: 'C-1315' },
   // マリアン：クイーン: III のタイマーの 00.00 からヒットまで 5f（動画で 27f。止まり 22f を含む）。バーストスキルダメージには同じ発動の
   // 攻撃力▲・攻撃ダメージ▲が乗る（同じ発動の▲がヒットに乗る行。C-0582 と同じ形）。効果の発火の遅れは 0
   { resourceIds: [19], sameActivationBuffsOnHit: true, delays: { hitFrames: 5, effectFrames: 0 }, claim: 'C-0742' },

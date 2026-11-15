@@ -550,7 +550,19 @@ export function contentAsTimed(grant: Record<string, Json>, item: Record<string,
 export function parseCounterChangeEffect(v: Record<string, Json>, path: string): CounterChangeEffect {
   rejectUnknownKeys(
     v,
-    ['kind', 'counter', 'trigger', 'target', 'amount', 'amountRef', 'decrease', 'condition', 'assumes', 'claims'],
+    [
+      'kind',
+      'counter',
+      'trigger',
+      'target',
+      'amount',
+      'amountRef',
+      'decrease',
+      'floor',
+      'condition',
+      'assumes',
+      'claims',
+    ],
     path,
   );
   const counter = oneOf(COUNTER_IDS, v.counter, `${path}.counter`);
@@ -565,10 +577,11 @@ export function parseCounterChangeEffect(v: Record<string, Json>, path: string):
     trigger = parseAppliedTrigger(v.trigger, `${path}.trigger`)!;
   } else {
     // 同（論点 2）: 状態の付いた時から数える周期（変身の間 0.2 秒ごとの▼）と、
-    // 時間の周期のきっかけ（千束の超感覚の 2 秒ごとの▼。plan/design-skill-stage16.md 2.1 節）
+    // 時間の周期のきっかけ（千束の超感覚の 2 秒ごとの▼。plan/design-skill-stage16.md 2.1 節）。
+    // 自分の状態の窓で数える回数（幽霊キャプチャー数。plan/design-elegg-bs.md 2.2 節）
     trigger =
       parseSinceTimerTrigger(v.trigger, `${path}.trigger`) ??
-      parseTrigger(v.trigger, `${path}.trigger`, { timer: true });
+      parseTrigger(v.trigger, `${path}.trigger`, { timer: true, during: 'stateOnly' });
   }
   if (v.target !== 'self') fail(`${path}.target`, `expected "self", got ${JSON.stringify(v.target)}`);
   const effect: CounterChangeEffect = { kind: 'counterChange', counter, trigger, target: 'self' };
@@ -578,6 +591,11 @@ export function parseCounterChangeEffect(v: Record<string, Json>, path: string):
   else effect.amountRef = parseRef(v.amountRef, `${path}.amountRef`);
   if (v.decrease !== undefined) {
     effect.decrease = parseTrue(v.decrease, `${path}.decrease`);
+  }
+  // 「最低 N を維持」（plan/design-elegg-bs.md 2.3 節）
+  if (v.floor !== undefined) {
+    if (effect.decrease !== true) fail(`${path}.floor`, 'floor needs decrease');
+    effect.floor = parsePositiveInt(v.floor, `${path}.floor`);
   }
   if (v.condition !== undefined) {
     effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.counterChange, true);
@@ -719,7 +737,8 @@ function parseAllStackableChange(v: Record<string, Json>, path: string): AllStac
 export function parseRemoveStateEffect(v: Record<string, Json>, path: string): RemoveStateEffect {
   rejectUnknownKeys(v, ['kind', 'state', 'trigger', 'target', 'condition', 'assumes', 'claims'], path);
   const state = parseNamedStateId(v.state, `${path}.state`, 'ally');
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`, { reloadEnd: true });
+  // 自分の状態の窓で数える回数も（憑依のキャプチャーで憑依を外す。plan/design-elegg-bs.md 2.2 節）
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, { reloadEnd: true, during: 'stateOnly' });
   if (v.target !== 'self') {
     fail(
       `${path}.target`,

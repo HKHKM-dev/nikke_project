@@ -44,6 +44,7 @@ export const buffsMetrics: Readonly<Record<string, Metric>> = {
   stateStackDrops: { args: ['slot', 'state'], sim: stateStackDrops },
   // カウンタの値・状態が付いた回・フルバーストの終わりのスタック数（V-0503）
   counterAtBursts: { args: ['slot', 'counter'], sim: counterAtBursts },
+  counterAfterBursts: { args: ['slot', 'counter'], sim: counterAfterBursts },
   stateAppliedAtBursts: { args: ['slot', 'state'], sim: stateAppliedAtBursts },
   stateStacksAtFullBurstEnds: { args: ['slot', 'state'], sim: stateStacksAtFullBurstEnds },
   fullBurstStackGainResidues: { args: ['slot', 'state', 'every'], sim: fullBurstStackGainResidues },
@@ -362,6 +363,11 @@ function stateStacksAt(result: SimResult, slotIndex: number, state: string, fram
  * 発動の直前の画面のカウンタの表示（火力ゲージ）と比べる
  */
 function counterAtBursts(result: SimResult, ctx: MetricContext): number[] {
+  return counterAroundBursts(result, ctx, false);
+}
+
+/** 発動ごとの、効果の発火のフレームの前（after なら、そのフレームの増減を足した後）のカウンタの値 */
+function counterAroundBursts(result: SimResult, ctx: MetricContext, after: boolean): number[] {
   if (result.schedule === null) throw new Error('バーストの時刻表が無い');
   const slotIndex = slotIndexOf(ctx);
   const counter = String(ctx.args.counter);
@@ -370,9 +376,17 @@ function counterAtBursts(result: SimResult, ctx: MetricContext): number[] {
     .filter((a) => a.slotIndex === slotIndex)
     .map((a) => {
       const at = effectFrameOf(a);
-      return records.filter((c) => c.frame < at).at(-1)?.value ?? 0;
+      return records.filter((c) => (after ? c.frame <= at : c.frame < at)).at(-1)?.value ?? 0;
     });
   return firstCount(values, ctx, 'バーストの発動');
+}
+
+/**
+ * 枠のバーストの発動ごとに、その発動の効果の発火のフレームの増減を足した後の、枠のカウンタ counter の値（V-0789。幽霊キャプチャー数の
+ * 「N▼」「最低 1 を維持」）。count を書くと最初の count 回。録画では、発動の直後の画面のカウンタの表示と比べる
+ */
+function counterAfterBursts(result: SimResult, ctx: MetricContext): number[] {
+  return counterAroundBursts(result, ctx, true);
 }
 
 /**

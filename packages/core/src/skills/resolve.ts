@@ -1464,6 +1464,8 @@ export type ResolvedCounterChange = {
   trigger: ResolvedTrigger | EndedTrigger | CounterFullTrigger;
   amount: number;
   decrease?: true;
+  /** 減らした結果の下限（CounterChangeEffect.floor） */
+  floor?: number;
   condition?: EffectCondition;
 };
 
@@ -1493,6 +1495,7 @@ export function resolveCounterChanges(
         amount,
       };
       if (effect.decrease) r.decrease = true;
+      if (effect.floor !== undefined) r.floor = effect.floor;
       if (effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
       out.push(r);
     });
