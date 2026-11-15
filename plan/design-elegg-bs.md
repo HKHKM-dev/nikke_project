@@ -4,7 +4,7 @@
 - 関連: [design-grave.md](design-grave.md) 2.4 節（状態の間だけ数える回数 `during: { state }`）、[design-fortune-mate.md](design-fortune-mate.md) 2.2 節（`during: { state }` を状態の付与の外に開いた前例）、[design-skill-stage16.md](design-skill-stage16.md) 2.1 節（カウンタの段階の効果 `while.selfCounter`）、[design-velvet.md](design-velvet.md) 2.3 節（カウンタの消費と条件 `selfCounter`）、[design-cinderella-cw.md](design-cinderella-cw.md) 2.3 節（味方全体の回数 `teamAmmo`）、[design-new-chars-1029.md](design-new-chars-1029.md) 5.2・5.3 節（「N 回順番に攻撃」・再発動周期）
 - 検証: V-0789
 - 作成日: 2026-11-15
-- 状態: 完了（V-0789。C-1312〜C-1315）
+- 状態: 完了（7 節）
 
 ## 0. 範囲
 
