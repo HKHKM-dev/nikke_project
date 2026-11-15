@@ -1,6 +1,6 @@
 {
   "verification": "V-0792",
-  "note": "撮影 A（ココア（I）・ソルジャーF.A.（II）・ジュリア（III・操作・宝物の段階 3）・オートバースト ON）と B（ジュリアはオート射撃 OFF で撃たない）の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。S1 のクールタイムは撮る前の仮の値（H1 は 20 秒）。宝物版のバーストの 5 回の順番の攻撃は、遅れの表の行が無いので、どの仮説も同じフレームの 5 ヒットにした（setup の burstDelays）。マルカートの会心の追加ダメージは定義に無い（未対応）ので、その仮説は検証記録の「予測」に手で書いた",
+  "note": "撮影 A（ココア（I）・ソルジャーF.A.（II）・ジュリア（III・操作・宝物の段階 3）・オートバースト ON）と B（ジュリアはオート射撃 OFF で撃たない）の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。S1 のクールタイムは撮る前の仮の値（H1 は 20 秒）。宝物版のバーストの 5 回の順番の攻撃は、遅れの表の行が無いので、どの仮説も同じフレームの 5 ヒットにした（setup の burstDelays）。マルカートの会心の追加ダメージは期待値のヒット（onSkillCrit）なので、マルカートの会心率の仮説は検証記録の「予測」に手で書いた",
   "team": [
     {
       "rid": 311
@@ -146,7 +146,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burstDelays": [
           {
             "rid": 150,
@@ -154,7 +156,13 @@
             "row": {
               "hitFrames": 0,
               "effectFrames": 0,
-              "hitOffsets": [0, 0, 0, 0, 0]
+              "hitOffsets": [
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
             }
           }
         ]
@@ -177,7 +185,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burstDelays": [
           {
             "rid": 150,
@@ -185,7 +195,13 @@
             "row": {
               "hitFrames": 0,
               "effectFrames": 0,
-              "hitOffsets": [0, 0, 0, 0, 0]
+              "hitOffsets": [
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
             }
           }
         ]
@@ -208,7 +224,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burstDelays": [
           {
             "rid": 150,
@@ -216,7 +234,13 @@
             "row": {
               "hitFrames": 0,
               "effectFrames": 0,
-              "hitOffsets": [0, 0, 0, 0, 0]
+              "hitOffsets": [
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
             }
           }
         ]
@@ -238,7 +262,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burstDelays": [
           {
             "rid": 150,
@@ -246,7 +272,13 @@
             "row": {
               "hitFrames": 0,
               "effectFrames": 0,
-              "hitOffsets": [0, 0, 0, 0, 0]
+              "hitOffsets": [
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
             }
           }
         ]
@@ -259,14 +291,18 @@
     {
       "id": "marcato-count",
       "model": "sim",
-      "metric": "skillHitCount",
+      "metric": "eventCount",
       "args": {
         "slot": 3,
-        "skill": "skill2"
+        "event": "skillHit",
+        "skill": "skill2",
+        "percent": 88
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burstDelays": [
           {
             "rid": 150,
@@ -274,7 +310,13 @@
             "row": {
               "hitFrames": 0,
               "effectFrames": 0,
-              "hitOffsets": [0, 0, 0, 0, 0]
+              "hitOffsets": [
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
             }
           }
         ]
@@ -282,7 +324,7 @@
       "tolerance": {
         "rel": 0.1
       },
-      "note": "撮影 A の 180 秒のマルカートのヒットの数（クリティカル命中を期待値で 8 回ごと。録画は会心の乱数で揺れる）"
+      "note": "撮影 A の 180 秒のマルカート（88%）のヒットの数（クリティカル命中を期待値で 8 回ごと。録画は会心の乱数で揺れる）。会心の追加ダメージ（100%）は数えない"
     },
     {
       "id": "burst-hits-a",
@@ -294,7 +336,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burstDelays": [
           {
             "rid": 150,
@@ -302,7 +346,13 @@
             "row": {
               "hitFrames": 0,
               "effectFrames": 0,
-              "hitOffsets": [0, 0, 0, 0, 0]
+              "hitOffsets": [
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
             }
           }
         ]
@@ -322,8 +372,12 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "noFireSlots": [3],
+        "events": [
+          "range-3min-jump"
+        ],
+        "noFireSlots": [
+          3
+        ],
         "burstDelays": [
           {
             "rid": 150,
@@ -331,7 +385,13 @@
             "row": {
               "hitFrames": 0,
               "effectFrames": 0,
-              "hitOffsets": [0, 0, 0, 0, 0]
+              "hitOffsets": [
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
             }
           }
         ]
@@ -344,7 +404,7 @@
   ],
   "predicted": {
     "at": "2026-11-15",
-    "commit": "84405268aaeec6979705d3ffb9f8f4e0ed7c40bd",
+    "commit": "4d5d753eba17cf3c48581e2dd5db464b71da7b2a",
     "values": {
       "H1": {
         "hit-5s": 20229.142499999998,

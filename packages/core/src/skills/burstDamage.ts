@@ -95,6 +95,8 @@ export type ResolvedSkillDamage = {
   core?: true;
   /** コア命中ダメージ（core と組み、コアに当たる割合を 1 にする。plan/design-new-chars-1029.md 5.4 節） */
   coreHit?: true;
+  /** 倍率ダメージの会心をきっかけにする 1 ヒット（期待値に倍率ダメージの会心率を掛ける。plan/design-julia.md 2.1 節） */
+  onSkillCrit?: true;
   /** 同 5.5 節: 「N 回順番に攻撃」のヒット。順番攻撃ダメージ▲（sequentialAttackDamage）を掛ける */
   sequential?: true;
   /**
@@ -391,6 +393,9 @@ export function resolveDamageEffects(
       if (foldsIntoShot(effect, trigger, def) && effect.coreHit === true) {
         throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot be a core hit damage`);
       }
+      if (foldsIntoShot(effect, trigger, def) && effect.onSkillCrit === true) {
+        throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot fire on a skill critical hit`);
+      }
       if (foldsIntoShot(effect, trigger, def)) return;
       // 固定ダメージ（与えたダメージ量の X%）は畳み込む形だけを持つ（plan/design-emilia.md 2.2 節）
       if (effect.damageType === 'fixedShare') {
@@ -471,6 +476,7 @@ export function resolveDamageEffects(
         r.core = true;
         r.coreHit = true;
       }
+      if (effect.onSkillCrit === true) r.onSkillCrit = true;
       if (effect.perCountIntervalSeconds !== undefined) r.perCountIntervalSeconds = effect.perCountIntervalSeconds;
       if (effect.perCountIntervalFrames !== undefined) r.perCountIntervalFrames = effect.perCountIntervalFrames;
       // 「順番に攻撃」の perCount の数だけのヒット（オートファイアの効果 2）も
@@ -891,6 +897,11 @@ export type BurstHitResult = {
   perEffect: { effect: ResolvedSkillDamage; expected: number }[];
   /** 1 発動あたりの合計 */
   perActivation: number;
+  /**
+   * 倍率ダメージの会心をきっかけにするヒット（onSkillCrit）の会心率（期待値に掛けた確率）。ヒットが出た時の 1 ヒットの値（oneHitValue）は
+   * これを外して組み直す。onSkillCrit の効果だけのヒットにある
+   */
+  onSkillCritRate?: number;
 };
 
 export type SkillHitResult = BurstHitResult;
@@ -947,8 +958,10 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
       (effect.allEnemies === true ? allEnemies : 1) *
       (effect.projectileExplosion === true ? explosion : 1) *
       (effect.projectileStick === true ? stick : 1) *
-      (effect.sustained === true ? sustained * (1 + (input.dotEffect ?? 0)) : 1),
+      (effect.sustained === true ? sustained * (1 + (input.dotEffect ?? 0)) : 1) *
+      (effect.onSkillCrit === true ? input.crit.rate : 1),
   }));
+  const onSkillCrit = input.effects.length > 0 && input.effects.every((e) => e.onSkillCrit === true);
   let multiplier = 0;
   let perActivation = 0;
   for (const p of perEffect) {
@@ -979,6 +992,7 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
     sustainedDamageMultiplier: hasSustained ? sustained : 1,
     perEffect,
     perActivation,
+    ...(onSkillCrit ? { onSkillCritRate: input.crit.rate } : {}),
   };
 }
 
@@ -1010,10 +1024,14 @@ export function oneHitValue(hit: BurstHitResult, crit: boolean, core = false, di
   const coreTerm = core ? hit.boost.coreDamage : 0;
   const distanceTerm = distance ? hit.boost.distanceBonus : 0;
   const expectedGroup = hit.boost.total + hit.boost.sustained;
-  return (
-    (hit.perActivation / expectedGroup) *
-    (1 + critTerm + hit.boost.fullBurst + hit.boost.sustained + coreTerm + distanceTerm)
-  );
+  // 倍率ダメージの会心をきっかけにするヒットは、出た時の値（会心率を掛けない。会心率 0 なら出ないので 0）
+  const fired =
+    hit.onSkillCritRate === undefined
+      ? hit.perActivation
+      : hit.onSkillCritRate > 0
+        ? hit.perActivation / hit.onSkillCritRate
+        : 0;
+  return (fired / expectedGroup) * (1 + critTerm + hit.boost.fullBurst + hit.boost.sustained + coreTerm + distanceTerm);
 }
 
 /**

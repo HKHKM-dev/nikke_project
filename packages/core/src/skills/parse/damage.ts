@@ -69,6 +69,8 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
   parseDamageGaugePerHit(v, effect, path);
   // 同 5.4 節: 「コア命中ダメージ」
   if (v.coreHit !== undefined) effect.coreHit = parseTrue(v.coreHit, `${path}.coreHit`);
+  // 倍率ダメージの会心をきっかけにする 1 ヒット（plan/design-julia.md 2.1 節）
+  if (v.onSkillCrit !== undefined) effect.onSkillCrit = parseTrue(v.onSkillCrit, `${path}.onSkillCrit`);
   parsePerCountSplit(v, effect, path);
   validateGaugePerHitSplit(effect, path);
   parseHitMarks(v, effect, path);

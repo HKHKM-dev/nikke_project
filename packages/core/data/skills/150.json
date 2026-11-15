@@ -179,19 +179,23 @@
             "ja": "マルカート。通常攻撃のクリティカル命中（期待値）8 回ごとに、発のフレームに 1 ヒット。コアの補正は乗らない",
             "en": "Marcato. One hit on the shot's frame per 8 critical normal-attack hits (expected). No core bonus"
           }
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "critHit",
+            "everyRef": 7
+          },
+          "damageType": "additional",
+          "ref": 6,
+          "onSkillCrit": true,
+          "assumes": {
+            "ja": "マルカート（effects[1]）がクリティカル命中した時の追加ダメージ。マルカートと同じ発のフレームに、期待値で値 × 倍率ダメージの会心率（基礎 + 会心率▲。通常攻撃のクリティカル確率▲は入れない）の 1 ヒット。「同じ敵に」は単体ボス。コアの補正は乗らない",
+            "en": "Additional damage when Marcato (effects[1]) lands a critical hit. One hit on the same shot frame as Marcato, as an expected value of value × the skill-damage crit rate (base + crit rate up; normal-attack crit rate up excluded). \"The same enemy\" is the single boss. No core bonus"
+          }
         }
       ],
       "notes": [
-        {
-          "ja": "「マルカートがクリティカル命中した時、同じ敵に最終攻撃力の 100% の追加ダメージ」は未対応（倍率ダメージの会心をきっかけにする語彙が無い。plan/design-julia.md 2.1 節）",
-          "en": "\"When Marcato lands a critical hit, deals 100% of final ATK as additional damage to the same enemy\" is not modeled (no vocabulary for a trigger on a skill-damage critical hit; plan/design-julia.md 2.1)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
-            "target": "enemy",
-            "trigger": "unknown"
-          }
-        },
         {
           "ja": "「戦闘開始時、自分にスキル 1 強制使用」は、宝物版 S1 の戦闘開始時の効果（treasureSkills.skill1 の effects[3]〜[5]）で入れた。S1 が基礎版の段階（宝物の段階 1）では、基礎版の S1 が未対応なので入らない",
           "en": "\"At the start of battle, force-use Skill 1 on self\" is applied via the treasure S1's start-of-battle effects (treasureSkills.skill1 effects[3]–[5]). At the stage where S1 is still the base version (treasure stage 1), it is not applied because the base S1 is not modeled",
