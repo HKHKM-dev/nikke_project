@@ -19,7 +19,11 @@
           "assumes": {
             "ja": "命中は戦闘を通して数え、18 の倍数に届いた命中の時に敵がアンチA.T.フィールド状態なら起きる",
             "en": "Hits are counted through the battle; it fires when a multiple of 18 is reached while the enemy is in Anti A.T. Field"
-          }
+          },
+          "claims": [
+            "C-1297",
+            "C-1296"
+          ]
         },
         {
           "kind": "stackChange",
@@ -36,7 +40,11 @@
           "assumes": {
             "ja": "アンチA.T.フィールドのスタック量 10 個▲。敵に付いている件（アスカ：WILLE の付与）に 10 スタックを足し、上限・維持・中身は付けた付与のもの。数え方は上の追加ダメージと同じ",
             "en": "Anti A.T. Field stacks up 10: adds 10 stacks to the instance on the enemy (applied by Asuka: WILLE); the cap, duration and contents are those of that grant. Counted the same way as the additional damage above"
-          }
+          },
+          "claims": [
+            "C-1297",
+            "C-1296"
+          ]
         },
         {
           "kind": "damage",
@@ -52,7 +60,11 @@
           "assumes": {
             "ja": "命中は戦闘を通して数え、7 の倍数に届いた命中の時に自分が攻撃態勢なら起きる",
             "en": "Hits are counted through the battle; it fires when a multiple of 7 is reached while this unit is in Attack State"
-          }
+          },
+          "claims": [
+            "C-1300",
+            "C-1296"
+          ]
         },
         {
           "kind": "timed",
@@ -66,7 +78,10 @@
           "assumes": {
             "ja": "殲滅態勢状態の味方は、フルバーストの開始のフレームに殲滅態勢の件を持つ枠（アスカ：WILLE がバーストを使った回は、バースト使用時に付いた殲滅態勢が見える）。付いた後は殲滅態勢が外れても 9 秒続く",
             "en": "Allies in Annihilation State are the units holding Annihilation State at the Full Burst start frame (when Asuka: WILLE used her Burst, the state applied on Burst use is visible). Once applied it lasts 9 s even after the state ends"
-          }
+          },
+          "claims": [
+            "C-1298"
+          ]
         }
       ],
       "notes": [
@@ -76,7 +91,10 @@
           "kind": "outOfScope",
           "effect": {
             "kind": "unknown"
-          }
+          },
+          "claims": [
+            "C-1265"
+          ]
         }
       ]
     },
@@ -89,7 +107,10 @@
           "targetWeapon": "MG",
           "stat": "spinUpSpeed",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-1299"
+          ]
         },
         {
           "kind": "timed",
@@ -98,7 +119,10 @@
           "stat": "attack",
           "scaling": "casterAttack",
           "ref": 3,
-          "durationRef": 4
+          "durationRef": 4,
+          "claims": [
+            "C-1299"
+          ]
         }
       ]
     },
@@ -124,16 +148,22 @@
           "assumes": {
             "ja": "攻撃態勢の 2 つの項目の維持はどちらも 10 秒で、状態の維持と同じと読む",
             "en": "Both Attack State items last 10 s; read as the duration of the state itself"
-          }
+          },
+          "claims": [
+            "C-1295"
+          ]
         },
         {
           "kind": "burstDamage",
           "ref": 5,
           "damageType": "skill",
           "assumes": {
-            "ja": "敵全体は、敵 1 体の前提でその敵に 1 ヒット",
-            "en": "All enemies means one hit on the single enemy"
-          }
+            "ja": "敵全体は、敵 1 体の前提でその敵に 1 ヒット。III のタイマーの 00.00 の 11f 後（動画で 33f）に出て、同じ発動の攻撃態勢が乗る（遅れの表 burst/landing.ts）",
+            "en": "All enemies means one hit on the single enemy. It lands 11 frames after the Step III timer reaches 00.00 (33 video frames), with the same activation's Attack State applied (delay table burst/landing.ts)"
+          },
+          "claims": [
+            "C-1295"
+          ]
         }
       ]
     }

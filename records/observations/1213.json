@@ -1,0 +1,248 @@
+[
+  {
+    "id": "1213-01",
+    "recording": "1213",
+    "kind": "hit",
+    "use": "compare",
+    "value": 17328,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの中の、アンチA.T.フィールドが付く前のアスカ：WILLE の発（非会心・コアでない）。殲滅態勢の▲・S2 の▲に加え、レイ（仮称）の S1 の殲滅態勢の味方への攻撃力▲（レイ（仮称）の攻撃力の 17.6%）と S2 の攻撃力▲（11.61%）が乗った値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1491 の増分（00.00 は burst-panel@4 の f1378）。17.6% の攻撃力▲を外したモデルでは 15,594"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "fullBurst": 0,
+        "frame": 20,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0788",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1213-02",
+    "recording": "1213",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1224002,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの、レイ（仮称）の S1 の 18 回命中の追加ダメージ（最終攻撃力の 590.64%）の 1 回目（非会心）。アンチA.T.フィールド 4 スタックの受けるダメージ▲・S2 の攻撃力▲・フルバースト補正が乗った値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1546 の 1,290,420 から、同じフレームのアスカ：WILLE の発（コア・4 スタック）29838 とレイ（仮称）の発（4 スタック）36580 を引いた"
+    },
+    "scope": {
+      "slot": 4,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 4,
+        "n": 0,
+        "crit": false,
+        "skill": "skill1",
+        "percent": 590.64
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0788",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1213-03",
+    "recording": "1213",
+    "kind": "hit",
+    "use": "record",
+    "value": [29838, 32235],
+    "unit": "ダメージ",
+    "description": "18 回命中の追加ダメージの直前と直後のアスカ：WILLE の発（コア・非会心）。アンチA.T.フィールドのスタックが 4 から 14 に、10 増えた（1 スタックで約 240）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "直前は f1544（4 スタック）、直後は f1547（14 スタック。追加ダメージの後のフレーム）。0 スタックのコアの発は 28,879"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0788",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1213-04",
+    "recording": "1213",
+    "kind": "hit",
+    "use": "compare",
+    "value": 36070,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの終わりの近くの、アスカ：WILLE の発（コア・非会心）。アンチA.T.フィールド 30 スタック（上限）の値で、それより上がらない",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1780 の増分。殲滅態勢の終わりまで、コアの発はこの値で止まる"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "fullBurst": 0,
+        "frame": 450,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0788",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1213-05",
+    "recording": "1213",
+    "kind": "hit",
+    "use": "compare",
+    "value": 651611,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの殲滅（最終攻撃力の 6.62% × アンチA.T.フィールドのスタック数。非会心）。30 スタック分",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "f1933 の 687,016 から、同じフレームのレイ（仮称）の発 35405 を引いた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "rel": 0.0005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0788",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1213-06",
+    "recording": "1213",
+    "kind": "timing",
+    "use": "compare",
+    "value": [579, 602, 615, 625, 633, 639, 644, 649, 653, 657, 660, 663, 666, 668],
+    "unit": "f",
+    "description": "1 回目のフルバーストの後（殲滅の残弾数減少で込め直した後）の、アスカ：WILLE の最初の 14 発の、00.00 からの動画のフレーム。立ち上げ速度の▲（レイ（仮称）の S2・13 秒）と緊急修復の▼（3 秒）が重なる間も、1 秒に 1 発にならず、マガジンの初めと同じ間（23・13・10f…）で立ち上がる",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "照準の左の残弾（reticle-ammo.ts --mode series）が減ったフレーム。モデルの発は 300 発を飛ばした後の 14 発"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "shot",
+        "anchor": "fullBurst:0",
+        "skip": 300,
+        "count": 14
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0788",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1213-07",
+    "recording": "1213",
+    "kind": "count",
+    "use": "record",
+    "value": 8,
+    "unit": "発",
+    "description": "18 回命中の追加ダメージの 1 回目が、アンチA.T.フィールドの最初のスタックが付いてから何発目のレイ（仮称）の発で出たか（1 回目のフルバースト）。状態の間だけ数える読み（H2）なら 18 発目",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最初のスタックが乗ったアスカ：WILLE の発は f1511（f1508 は 0 スタック）。その後のレイ（仮称）の発（5f おき）は f1546 まで 8 発。2〜4 回目の追加ダメージは 18 発ごと（88〜90f おき。リロードを挟むと延びる）"
+    },
+    "scope": {
+      "slot": 4,
+      "source": "skill"
+    },
+    "source": "V-0788",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1213-08",
+    "recording": "1213",
+    "kind": "timing",
+    "use": "record",
+    "value": [
+      [570, 593, 606, 616, 624, 630, 635, 640, 644, 648, 651, 654, 657, 659],
+      [628, 650, 663, 673, 681, 687, 692, 697]
+    ],
+    "unit": "f",
+    "description": "2 回目・3 回目のフルバーストの後の、アスカ：WILLE の最初の発の、00.00 からの動画のフレーム。最初の発の時刻はモデル（2 回目は 586f）と違うが、間（23・13・10・8・6f…）は 1 回目と同じ",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "00.00 は f3757・6136"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0788",
+    "readAt": "2026-11-15"
+  }
+]

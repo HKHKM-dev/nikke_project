@@ -1148,6 +1148,8 @@ export function burstHitBuffs(
   preActivation: boolean,
   sameActivation?: readonly ValuePiece[],
   enemyDebuffs: EnemyDebuffTiming = 'activation',
+  /** 撃つ枠のバフ前攻撃力（同じ発動の発動者基準の攻撃力▲を足すのに使う。sameActivation と組む） */
+  casterBaseAttack = 0,
 ): BuffTotals {
   let buffs = burstSnapshotState(timeline, activationFrame, slotIndex, preActivation).buffs;
   if (enemyDebuffs === 'hit') {
@@ -1162,6 +1164,7 @@ export function burstHitBuffs(
     activationFrame,
     preActivation ? hitFrame - 1 : hitFrame,
     slotIndex,
+    casterBaseAttack,
   );
 }
 
@@ -1185,6 +1188,7 @@ function withSameActivationEffects(
   activationFrame: number,
   at: number,
   slotIndex: number,
+  casterBaseAttack: number,
 ): BuffTotals {
   let out = buffs;
   for (const w of pieces) {
@@ -1192,6 +1196,11 @@ function withSameActivationEffects(
     if (w.start < activationFrame || w.start > at || w.end <= at) continue;
     if (isStateStat(w.effect.stat) || isEnemyHeldStat(w.effect.stat)) continue;
     if (isWeaponPiece(w)) continue;
+    // 自分の発動者基準の攻撃力▲（レイ（仮称）の攻撃態勢。C-1295）は、自分のバフ前攻撃力で足す
+    if (w.effect.scaling === 'casterAttack' && w.stack === undefined) {
+      out = applyResolvedEffect(out, w.effect, casterBaseAttack).totals;
+      continue;
+    }
     assertPlainTimed(w, 'same-activation buffs on a burst hit');
     out = applyResolvedEffect(out, w.effect, 0).totals;
   }
