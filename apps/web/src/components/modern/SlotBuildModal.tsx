@@ -5,6 +5,8 @@ import { GrowthEditor, type ShownGrowth } from '../GrowthEditor.tsx';
 import { Modal } from '../Modal.tsx';
 import { RosterRevertButton } from '../RosterRevertButton.tsx';
 import { SlotOptions } from '../SlotOptions.tsx';
+import type { FavoriteMark } from '../../favorites.ts';
+import { FavoriteButtons } from './FavoriteBadge.tsx';
 
 type Props = {
   slotIndex: number;
@@ -16,6 +18,9 @@ type Props = {
   masters: BuildMasters | null;
   mastersError: string | null;
   usesHpRatio: boolean;
+  /** このニケの押したお気に入りのバッジ */
+  favoriteMarks: readonly FavoriteMark[];
+  onToggleFavorite: (mark: FavoriteMark) => void;
   /** 育成状況のこのニケの育成（育成状況にいなければ null）。あれば「育成状況の値に戻す」を出す */
   rosterGrowth: SlotGrowthFields | null;
   dispatch: Dispatch<TeamAction>;
@@ -31,6 +36,8 @@ export function SlotBuildModal({
   masters,
   mastersError,
   usesHpRatio,
+  favoriteMarks,
+  onToggleFavorite,
   rosterGrowth,
   dispatch,
   onClose,
@@ -41,7 +48,19 @@ export function SlotBuildModal({
 
   return (
     <Modal
-      title={`スロット ${slotIndex + 1}: ${character.name.ja}`}
+      title={
+        <span className="slot-build-title">
+          {character.name.ja}
+          {/* お気に入り。押したバッジは色が付き、立ち絵の上端にも出る（FavoriteRibbons） */}
+          <span className="slot-build-favorites" role="group" aria-label="お気に入り">
+            <FavoriteButtons
+              marks={favoriteMarks}
+              onToggle={onToggleFavorite}
+              buttonClassName="slot-build-favorite-button"
+            />
+          </span>
+        </span>
+      }
       label={`スロット ${slotIndex + 1}（${character.name.ja}）の育成・設定`}
       onClose={onClose}
     >

@@ -138,10 +138,23 @@ export const MONOCHROME_GROUPS: ReadonlySet<string> = new Set([
   'collection',
   'grade',
   'core',
+  'main',
+]);
+
+/** グループの外で、白黒で描くバッジ（画面が図柄の色を CSS で変えるもの） */
+export const MONOCHROME_NAMES: ReadonlySet<string> = new Set([
+  'ui_information',
+  'ui_controller',
+  'ui_window',
+  'ui_account',
+  'ui_return',
+  'ui_delete',
+  'ui_setting',
 ]);
 
 /** バッジ（拡張子なしの名前）が白黒で描くものか */
-export const isMonochrome = (name: string): boolean => MONOCHROME_GROUPS.has(name.slice(0, name.indexOf('_')));
+export const isMonochrome = (name: string): boolean =>
+  MONOCHROME_NAMES.has(name) || MONOCHROME_GROUPS.has(name.slice(0, name.indexOf('_')));
 
 /** 塗りと縁の色 */
 const PAINT = new Set(['fill', 'stroke']);
@@ -154,7 +167,12 @@ const COLOR_ATTRS = new RegExp(`(\\s)(style|${[...PAINT, ...SHADE].join('|')})="
 function roleColor(name: string, prop: string, value: string): string {
   if (SHADE.has(prop) && !SHADE_COLORS.has(value.toLowerCase()))
     throw new Error(`badges: 白黒のバッジ ${name} の ${prop} が ${value}（陰の #000000 か #ffffff にする）`);
-  if (!PAINT.has(prop) || ['none', 'currentColor'].includes(value) || value.startsWith('url(')) return value;
+  if (
+    !PAINT.has(prop) ||
+    ['none', 'currentColor', 'context-stroke', 'context-fill'].includes(value) ||
+    value.startsWith('url(')
+  )
+    return value;
   const role = COLOR_ROLES[value.toLowerCase()];
   if (!role) throw new Error(`badges: 白黒のバッジ ${name} の ${prop} の ${value} は色の役（COLOR_ROLES）に無い`);
   return `var(--badge-${role},${value})`;

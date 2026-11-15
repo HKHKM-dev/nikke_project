@@ -161,7 +161,7 @@ export function App() {
       <header className="app-header">
         <h1>NIKKE ダメージ計算</h1>
         <div className="app-header-actions">
-          <AccountMenu roster={rosterControls} onEditRoster={() => setRosterEditing(true)} />
+          <AccountMenu uiMode={uiMode} roster={rosterControls} onEditRoster={() => setRosterEditing(true)} />
           <SettingsMenu uiMode={uiMode} onSelectUiMode={setUiMode} />
         </div>
       </header>

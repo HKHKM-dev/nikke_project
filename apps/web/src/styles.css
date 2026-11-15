@@ -200,6 +200,22 @@ header h1 {
   padding: 3px 0;
   cursor: pointer;
 }
+/* 見出しの行の右の、アカウントと設定のボタンを横に並べる */
+.app-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* 枠と地を出さず、絵だけのボタン（アカウントと設定・元に戻す・スロットの右上・絞り込みのクリア） */
+.settings-menu-button,
+.modern-slot-undo-button,
+.modern-slot-icon-button,
+.char-tray-filter-clear {
+  border: none;
+  background: none;
+  box-shadow: none;
+}
+/* アカウントと設定のボタン（モダン UI。絵はバッジ ui_account・ui_window の正方形） */
 .settings-menu-button {
   display: grid;
   place-items: center;
@@ -207,19 +223,21 @@ header h1 {
   height: 34px;
   padding: 0;
 }
-/* 設定のボタンの絵（バッジ ui_setting。六角形で縦 150 : 横 130） */
 .settings-menu-icon {
-  width: 26px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
 }
-/* 見出しの行の右の、アカウントと設定のボタンを横に並べる */
-.app-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+/* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。設定とアカウントのボタン・未対応の印 ⓘ。
+   図柄を白にするバッジごとの規則より強くするため、要素名や親を付ける */
+svg.settings-menu-icon,
+.char-unsupported-tag > .badge-ui_information {
+  --badge-ground: light-dark(#ffffff, #1a1a1a);
+  --badge-main: light-dark(#1a1a1a, #ffffff);
+  --badge-accent: light-dark(#1a1a1a, #ffffff);
+  --badge-line: light-dark(#ffffff, #000000);
 }
-/* アカウントのボタン（育成状況の読み書き）。高さは設定のボタンにそろえる */
-.account-menu-button {
+/* 見出しの行の右の、アカウント（育成状況の読み書き）と設定（クラシック）の文字のボタン */
+.header-menu-button {
   height: 34px;
   padding: 0 10px;
 }
@@ -732,8 +750,8 @@ header h1 {
 }
 .modern-slot-undo-icon {
   display: block;
-  width: 20px;
-  height: 20px;
+  width: 26px;
+  height: 26px;
 }
 .modern-slots-grid {
   display: flex;
@@ -759,7 +777,7 @@ header h1 {
   position: relative;
 }
 /* 一覧でクリックしたニケの置き先を待っている間は、どのスロットも立ち絵の枠のクリックで置ける。
-   実機の部隊編成と同じく、水色の実線の枠・水色の重ね・◎（内と外の輪が脈打つ）を重ねる */
+   実機の部隊編成と同じく、水色の実線の枠・水色の重ね・◎（ui_selection_circle.svg。脈打つ）を重ねる */
 .modern-slot-card.modern-slot-awaiting .modern-slot-char-area {
   cursor: pointer;
 }
@@ -768,23 +786,14 @@ header h1 {
   /* 立ち絵（.modern-slot-char-area の先頭、高さ --slot-portrait-h）の中央 */
   top: calc(var(--slot-portrait-h) / 2);
   left: 50%;
-  /* 立ち絵の幅の 3/4（元の大きさで 96px）。立ち絵が縮むと一緒に縮む */
-  width: calc(var(--slot-portrait-h) * 3 / 8);
-  height: calc(var(--slot-portrait-h) * 3 / 8);
+  /* 外の輪の外径が立ち絵の幅の 3/4 × 0.84（元の大きさで約 81px）。絵は外の輪が枠の端まで描かれている。立ち絵が縮むと一緒に縮む */
+  width: calc(var(--slot-portrait-h) * 3 / 8 * 0.84);
+  height: calc(var(--slot-portrait-h) * 3 / 8 * 0.84);
   transform: translate(-50%, -50%) scale(0.92);
-  fill: none;
-  stroke: #fff;
   filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.35));
   pointer-events: none;
   z-index: 3;
-  /* 2 つの輪を 1 枚ごと脈打たせる（輪ごとに動かすより描き直しが少ない） */
-  animation: modern-slot-target-pulse 1.2s ease-in-out infinite;
-}
-.modern-slot-target-outer {
-  stroke-width: 4;
-}
-.modern-slot-target-inner {
-  stroke-width: 5;
+  animation: modern-slot-target-pulse 1s ease-in-out infinite;
 }
 @keyframes modern-slot-target-pulse {
   0%,
@@ -797,19 +806,19 @@ header h1 {
     opacity: 0.8;
   }
 }
-/* ◎ の上の ▼。◎ が縮むときに上へ、広がるときに下へ動く（◎ と同じ周期と緩急） */
+/* ◎ の上の ▼（ui_selection_triangle.svg）。◎ が縮むときに上へ、広がるときに下へ動く（◎ と同じ周期と緩急） */
 .modern-slot-target-arrow {
   position: absolute;
-  /* ◎（幅 = 立ち絵の高さの 3/8）の上端の少し上 */
+  /* ◎ の外の輪の少し上（立ち絵の中央から、立ち絵の高さの 3/16 + 3/40 だけ上）。枠の上 19% は絵の空き */
   top: calc(var(--slot-portrait-h) / 2 - var(--slot-portrait-h) * 3 / 16 - var(--slot-portrait-h) * 3 / 40);
   left: 50%;
-  width: calc(var(--slot-portrait-h) * 3 / 32);
-  fill: #fff;
+  /* 絵の三角は枠の幅の 76%（左右 12% ずつ空き）。三角の幅を立ち絵の高さの 3/32 にする */
+  width: calc(var(--slot-portrait-h) * 3 / 32 / 0.76);
   filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.35));
   pointer-events: none;
   z-index: 3;
   transform: translate(-50%, -40%);
-  animation: modern-slot-target-arrow-bob 1.2s ease-in-out infinite;
+  animation: modern-slot-target-arrow-bob 1s ease-in-out infinite;
 }
 @keyframes modern-slot-target-arrow-bob {
   0%,
@@ -817,7 +826,7 @@ header h1 {
     transform: translate(-50%, -40%);
   }
   50% {
-    transform: translate(-50%, 30%);
+    transform: translate(-50%, -3%);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -861,6 +870,13 @@ header h1 {
   width: 30px;
   height: 30px;
 }
+/* 操作キャラの印は、ダークでは色を反転する（地を白、縁と図柄を暗い色、外の線を白） */
+.modern-slot-focus-icon.badge-ui_controller {
+  --badge-ground: light-dark(#1a1a1a, #ffffff);
+  --badge-main: light-dark(#ffffff, #1a1a1a);
+  --badge-accent: light-dark(#ffffff, #1a1a1a);
+  --badge-line: light-dark(#000000, #ffffff);
+}
 /* 操作の印はドラッグして別のスロットへ移せる。持ち上げている間、元の印は薄くする */
 .modern-slot-focus-handle {
   display: inline-flex;
@@ -879,30 +895,34 @@ header h1 {
   display: inline-flex;
   cursor: grabbing;
 }
-/* 立ち絵の右上に重ねるボタン（上から、空にする ✕・育成と設定の ⚙）。置き先待ちの水色の重ね・◎ より上 */
+/* 立ち絵の右上に重ねるボタン（上から、空にする（バッジ ui_delete）・育成と設定（バッジ ui_setting））。置き先待ちの水色の重ね・◎ より上。
+   絵はバッジ（縦横 130:150） */
 .modern-slot-icon-button {
   position: absolute;
   right: 3px;
   z-index: 4;
   width: 22px;
-  height: 22px;
+  height: calc(22px * 150 / 130);
   padding: 0;
   display: grid;
   place-items: center;
-  border: none;
   border-radius: 0;
-  background: rgba(0, 0, 0, 0.55);
-  color: #fff;
-  font-size: 0.8rem;
-  line-height: 1;
   cursor: pointer;
+}
+.modern-slot-icon {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .modern-slot-clear-button {
   top: 3px;
 }
 .modern-slot-build-button {
-  top: 28px;
-  font-size: 0.95rem;
+  top: 30px;
+}
+/* 育成を変えたスロットは、歯車を青にする（白の規則より詳細度を上げる） */
+.modern-slot-build-edited > svg.badge-ui_setting {
+  --badge-accent: var(--placing-blue);
 }
 
 /* カードボディ・キャラ表示 */
@@ -971,6 +991,10 @@ header h1 {
 }
 /* バッジの値ごとの色（差し色。BadgeIcon が名前のクラス badge-<名前> を付ける）。元の SVG では #808080 で描いてある。
    テーマで変えるときは light-dark(ライト, ダーク) で書く */
+/* 属性は、内の六角形の縁（主の色）も値の色にする */
+[class^='badge-element_'] {
+  --badge-main: var(--badge-accent);
+}
 .badge-element_Fire {
   --badge-accent: #ff0000;
 }
@@ -986,17 +1010,28 @@ header h1 {
 .badge-element_Electronic {
   --badge-accent: #ff02de;
 }
+/* バースト段階は、地を値の色にし、数字（差し色）を白にする */
+[class^='badge-burstStep_'] {
+  --badge-accent: #ffffff;
+}
 .badge-burstStep_Step1 {
-  --badge-accent: #008000;
+  --badge-ground: #008000;
 }
 .badge-burstStep_Step2 {
-  --badge-accent: #b27800;
+  --badge-ground: #b27800;
 }
 .badge-burstStep_Step3 {
-  --badge-accent: #cc0000;
+  --badge-ground: #cc0000;
 }
 .badge-burstStep_AllStep {
-  --badge-accent: #8b00cc;
+  --badge-ground: #8b00cc;
+}
+/* クラス・武器種・企業・コレクション（宝物の絞り込みのボタン）は、図柄（差し色）を白にする。コレクションのレア度の色（tone）は下で上書きする */
+[class^='badge-class_'],
+[class^='badge-weaponType_'],
+[class^='badge-corporation_'],
+.badge-collection_plain {
+  --badge-accent: #ffffff;
 }
 .badge-tone-R {
   --badge-accent: #19a2e6;
@@ -1017,6 +1052,19 @@ header h1 {
 }
 .badge-collection_plain.badge-variant-max {
   --badge-ground: initial;
+}
+/* スロットの空にする ✕（差し色）は赤 */
+.badge-ui_delete {
+  --badge-accent: #ff3b4f;
+}
+/* ⓘ の文字・操作キャラの印・設定とアカウントのボタンの図柄・元に戻すの矢印・スロットの育成・設定の歯車（差し色）は白にする */
+.badge-ui_setting,
+.badge-ui_information,
+.badge-ui_controller,
+.badge-ui_window,
+.badge-ui_account,
+.badge-ui_return {
+  --badge-accent: #ffffff;
 }
 .badge-core_plain {
   --badge-accent: #e600e6;
@@ -1410,23 +1458,30 @@ html:has(.modern-view-container) {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  /* 区切りの縦線の右のすき間（左は .char-tray-badge-filter の padding-right。どちらもボタンの枠 2px を足して、絵から 5px） */
+  gap: 3px;
 }
 /* バッジの絞り込み。どれかを押している組では、押していないバッジを薄くする */
 .char-tray-badge-filter {
   --badge-w: 24px;
   display: flex;
-  gap: 2px;
-  padding-right: 6px;
+  /* バッジの絵どうしの間は 4px（ボタンの枠 2px を両側） */
+  gap: 0;
+  padding-right: 3px;
   border-right: 1px solid color-mix(in srgb, var(--app-fg) 15%, transparent);
 }
 .char-tray-badge-button {
-  padding: 1px;
+  /* 枠は絵にすき間なく付ける */
+  padding: 0;
   border: 2px solid transparent;
   border-radius: 4px;
   background: none;
   cursor: pointer;
   line-height: 0;
+}
+/* お気に入りのバッジ（130×180）は、高さをほかのバッジ（130×150）にそろえる */
+.char-tray-badge-button .favorite-badge {
+  width: calc(var(--badge-w) * 150 / 180);
 }
 .char-tray-badge-button[aria-pressed='true'] {
   border-color: var(--app-fg);
@@ -1513,10 +1568,15 @@ html:has(.modern-view-container) {
   z-index: 3;
 }
 /* 絞り込みのクリアの印（バッジ ui_return） */
+.char-tray-filter-clear {
+  /* 外の大きさは絞り込みのバッジのボタン（余白なしで枠 2px）とそろえる */
+  padding: 2px;
+}
+/* 大きさは絞り込みのバッジ（.char-tray-badge-filter の --badge-w の幅、130×150）と同じ */
 .char-tray-filter-clear-icon {
   display: block;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: calc(24px * 150 / 130);
 }
 /* ✓ の中身（.mask-icon。バッジの絵 ui_check.svg を型にして水色で塗る） */
 .char-tray-item-check > .mask-icon {
@@ -1584,6 +1644,97 @@ html:has(.modern-view-container) {
 .modal-header h2 {
   margin: 0;
   font-size: 1.1rem;
+}
+/* モダンの育成・設定の見出し（ニケの名前と、お気に入りの main_○○ のバッジ 5 個） */
+.slot-build-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.slot-build-favorites {
+  display: flex;
+  gap: 4px;
+}
+.slot-build-favorite-button {
+  display: flex;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  line-height: 0;
+}
+.slot-build-favorite-button .favorite-badge {
+  width: 20px;
+}
+/* お気に入りのバッジ（FavoriteBadge.tsx。130×180）。押していないバッジは図柄が灰色（元の色）、押したバッジは図柄と枠（主の色）をバッジごとの色にする */
+.favorite-badge {
+  display: block;
+  aspect-ratio: 130 / 180;
+}
+.favorite-badge-on {
+  --badge-main: var(--badge-accent);
+}
+.favorite-badge-star.favorite-badge-on {
+  --badge-accent: #ffc400;
+}
+.favorite-badge-spade.favorite-badge-on {
+  --badge-accent: #3d8bff;
+}
+.favorite-badge-heart.favorite-badge-on {
+  --badge-accent: #ff3b4f;
+}
+.favorite-badge-diamond.favorite-badge-on {
+  --badge-accent: #ff8a1f;
+}
+.favorite-badge-club.favorite-badge-on {
+  --badge-accent: #2fc25b;
+}
+/* 立ち絵の上端の中央に下げるお気に入りのバッジ（FavoriteRibbons）。絵の幅に合わせて縮む */
+.char-visual-favorites {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1px;
+  pointer-events: none;
+  z-index: 1;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
+}
+.char-visual-favorites .favorite-badge {
+  width: 10px;
+}
+.char-visual-portrait .char-visual-favorites .favorite-badge {
+  width: 14px;
+}
+/* ニケ一覧の四角の絵では、右下の属性のバッジ（高さ --badge-w × 150/130）の上に 1 つだけ出す。幅は属性のバッジと同じ。
+   上の P○ のバッジと重ならないように、帯の下の切れ込み（深さは幅の 27.7%）に六角形の上の角を収めるところまで下げる */
+.char-visual-favorite-corner {
+  position: absolute;
+  right: 2px;
+  bottom: calc(2px + var(--badge-w) * 150 / 130 - var(--badge-w) * 0.277 + 1px);
+  z-index: 2;
+  width: var(--badge-w);
+  pointer-events: none;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
+}
+.char-visual-favorite-corner .favorite-badge {
+  width: 100%;
+}
+/* 2 つ以上のときに無地の ui_blank_main に重ねる数（帯の切れ込みより上の、四角の部分の中央） */
+.char-visual-favorite-count {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 75%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: bold;
+  line-height: 1;
 }
 .modal-close-button {
   background: transparent;

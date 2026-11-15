@@ -27,10 +27,15 @@ const BADGE_SVGS = import.meta.glob<string>(
     '../../assets/badges/collection_*.svg',
     '../../assets/badges/grade_*.svg',
     '../../assets/badges/core_*.svg',
+    '../../assets/badges/main_*.svg',
+    '../../assets/badges/ui_blank_main.svg',
     '../../assets/badges/ui_information.svg',
     '../../assets/badges/ui_controller.svg',
-    '../../assets/badges/ui_setting.svg',
+    '../../assets/badges/ui_window.svg',
     '../../assets/badges/ui_return.svg',
+    '../../assets/badges/ui_account.svg',
+    '../../assets/badges/ui_delete.svg',
+    '../../assets/badges/ui_setting.svg',
   ],
   { eager: true, query: '?raw', import: 'default' },
 );
@@ -72,12 +77,25 @@ export const GROWTH_BADGES = { star: badgeName('grade_star'), core: badgeName('c
 /** 未対応の印（ⓘ。CharacterVisual）と、操作キャラの印（ModernSlotCard の ControllerIcon）のバッジ */
 export const UNSUPPORTED_BADGE = badgeName('ui_information');
 export const CONTROLLER_BADGE = badgeName('ui_controller');
-
-/** 右上の設定のメニューのボタンのバッジ（SettingsMenu） */
-export const SETTING_BADGE = badgeName('ui_setting');
+/** 右上の設定のメニューのボタンのバッジ（モダン UI の SettingsMenu） */
+export const SETTING_BADGE = badgeName('ui_window');
+/** 右上のアカウントのメニューのボタンのバッジ（モダン UI の AccountMenu） */
+export const ACCOUNT_BADGE = badgeName('ui_account');
+/** お気に入りのバッジ（favorites.ts の FAVORITE_MARKS ごと）と、2 つ以上押したときに数を重ねる無地のバッジ */
+export const FAVORITE_BADGES = {
+  star: badgeName('main_star'),
+  spade: badgeName('main_spade'),
+  heart: badgeName('main_heart'),
+  diamond: badgeName('main_diamond'),
+  club: badgeName('main_club'),
+} as const;
+export const FAVORITE_COUNT_BADGE = badgeName('ui_blank_main');
 
 /** 元に戻すのボタン（ModernView）と、ニケ一覧の絞り込みを外すボタン（CharacterTray）のバッジ */
 export const RETURN_BADGE = badgeName('ui_return');
+/** スロットの立ち絵の右上の、空にするボタンと育成・設定のボタン（ModernSlotCard）のバッジ */
+export const DELETE_BADGE = badgeName('ui_delete');
+export const BUILD_BADGE = badgeName('ui_setting');
 
 /**
  * コレクションのバッジ。ニケ一覧の宝物の絞り込みのボタンと、スロット・ニケ一覧のコレクション（collectionBadge）が同じ絵を使い、
@@ -119,7 +137,7 @@ export const BADGE_KINDS: readonly BadgeKind[] = [
   {
     key: 'element',
     name: '属性',
-    badges: badgesOf('element', ['Fire', 'Water', 'Wind', 'Iron', 'Electronic'], (v) => ELEMENT_LABEL[v].ja),
+    badges: badgesOf('element', ['Fire', 'Water', 'Wind', 'Electronic', 'Iron'], (v) => ELEMENT_LABEL[v].ja),
   },
   {
     key: 'burstStep',

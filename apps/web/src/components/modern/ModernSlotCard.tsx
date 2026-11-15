@@ -3,7 +3,9 @@ import type { CharacterData, CharacterIndexEntry } from '@nikke/core';
 import type { SlotResultView } from '../../calcView.ts';
 import { formatDamage } from '../../format.ts';
 import { BadgeIcon } from './BadgeIcon.tsx';
-import { CONTROLLER_BADGE, type Badge } from './badges.ts';
+import { BUILD_BADGE, CONTROLLER_BADGE, DELETE_BADGE, type Badge } from './badges.ts';
+import selectionCircle from '../../assets/badges/ui_selection_circle.svg';
+import selectionTriangle from '../../assets/badges/ui_selection_triangle.svg';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
 import type { ActiveDragData, OverDragData } from './dropIntent.ts';
@@ -50,6 +52,8 @@ type Props = {
   growthMarks: GrowthMarks | null;
   /** 絵のバッジの列の最後に出すコレクション（宝物）のバッジ */
   collectionBadge: Badge | null;
+  /** 育成を変えたか（育成・設定のボタンの歯車を青にする。slotGrowthEdited） */
+  growthEdited: boolean;
   /** 一覧でクリックしたニケが、置くスロットのクリックを待っているときだけ渡す（このスロットに置く） */
   onPlacePending?: () => void;
   onOpenBuildModal: () => void;
@@ -67,6 +71,7 @@ export function ModernSlotCard({
   slotResult,
   collectionBadge,
   growthMarks,
+  growthEdited,
   onPlacePending,
   onOpenBuildModal,
   onClear,
@@ -117,13 +122,8 @@ export function ModernSlotCard({
       <div className="modern-slot-body">
         {awaitingPlacement && (
           <>
-            <svg className="modern-slot-target" viewBox="0 0 100 100" aria-hidden="true">
-              <circle className="modern-slot-target-outer" cx="50" cy="50" r="40" />
-              <circle className="modern-slot-target-inner" cx="50" cy="50" r="22" />
-            </svg>
-            <svg className="modern-slot-target-arrow" viewBox="0 0 10 7" aria-hidden="true">
-              <polygon points="0,0 10,0 5,7" />
-            </svg>
+            <img className="modern-slot-target" src={selectionCircle} alt="" aria-hidden="true" />
+            <img className="modern-slot-target-arrow" src={selectionTriangle} alt="" aria-hidden="true" />
           </>
         )}
         {/* 置き先待ちのクリックは立ち絵の枠でだけ受ける（カードの上下の段・ダメージの欄では置かない） */}
@@ -149,11 +149,11 @@ export function ModernSlotCard({
                 onMouseDown={(e) => e.stopPropagation()}
                 onTouchStart={(e) => e.stopPropagation()}
               >
-                ✕
+                <BadgeIcon className="modern-slot-icon" name={DELETE_BADGE} />
               </button>
               <button
                 type="button"
-                className="modern-slot-icon-button modern-slot-build-button"
+                className={`modern-slot-icon-button modern-slot-build-button ${growthEdited ? 'modern-slot-build-edited' : ''}`}
                 aria-label="育成・設定"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -163,7 +163,7 @@ export function ModernSlotCard({
                 onMouseDown={(e) => e.stopPropagation()}
                 onTouchStart={(e) => e.stopPropagation()}
               >
-                ⚙
+                <BadgeIcon className="modern-slot-icon" name={BUILD_BADGE} />
               </button>
             </>
           ) : (
