@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import {
   classify,
   commonRange,
+  countIn,
+  delimiterFrames,
   edgeBy,
   edgeOf,
   gridsOf,
@@ -11,6 +13,7 @@ import {
   parseGrids,
   pelletSums,
   rangeOf,
+  rangesBetween,
   roleOf,
   sumValues,
   withScales,
@@ -253,5 +256,39 @@ describe('matchGrids・roleOf', () => {
       edges('0302', SUN_OFF, CROWN_ON, { tol: 2, from: -200, to: 60, edge: 'start' }).map((e) => [e.before, e.after]),
     );
     expect(commonRange(es)).toEqual({ low: -6, high: -5 });
+  });
+});
+
+describe('区間ごとの数え（版 7）', () => {
+  // 会心 = 数える格子、追撃 = 区切り（12f おきの 3 ヒット）。80 は会心とほかの格子の両方に合う増分
+  const rows = [
+    { frame: 10, increment: 1, names: ['会心'] },
+    { frame: 20, increment: 2, names: ['胴体'] },
+    { frame: 30, increment: 3, names: ['会心'] },
+    { frame: 40, increment: 9, names: ['追撃'] },
+    { frame: 52, increment: 9, names: ['追撃'] },
+    { frame: 64, increment: 9, names: ['追撃'] },
+    { frame: 70, increment: 1, names: ['会心'] },
+    { frame: 80, increment: 5, names: ['会心', 'ほか'] },
+    { frame: 90, increment: 1, names: [] },
+    { frame: 100, increment: 9, names: ['追撃'] },
+    { frame: 110, increment: 1, names: ['会心'] },
+  ];
+  it('区切りは、続く追撃のヒットを 1 ヒット目にまとめる', () => {
+    expect(delimiterFrames(rows, ['追撃'], 30)).toEqual([40, 100]);
+    expect(delimiterFrames(rows, ['追撃'], 5)).toEqual([40, 52, 64, 100]);
+  });
+  it('区間は録画の始めから区切りの間。最後の区切りの後は区間にしない', () => {
+    expect(rangesBetween([40, 100])).toEqual([
+      { from: 0, to: 39 },
+      { from: 40, to: 99 },
+    ]);
+  });
+  it('数える格子だけに合う増分を数え、ほかの格子にも合う増分は別に数える', () => {
+    expect(countIn(rows, rangesBetween([40, 100]), ['会心'])).toEqual([
+      { counted: 2, ambiguous: 0 },
+      { counted: 1, ambiguous: 1 },
+    ]);
+    expect(countIn(rows, [{ from: 30, to: 110 }], ['会心'])).toEqual([{ counted: 3, ambiguous: 1 }]);
   });
 });

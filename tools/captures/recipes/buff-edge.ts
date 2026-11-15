@@ -20,6 +20,8 @@
 // - 版 6（plan/design-julia.md 8 節）: 倍率ダメージの格子を倍率で絞る（/p<倍率 %>。指標の引数 percent）、会心なし・ありの片方だけにする
 //   （/c0・/c1）、3 つの格子の和（<名前>=<格子>+<格子>+<格子>）を足す（ジュリアの 1 発・マルカート・その会心の追加ダメージは同じ増分に
 //   乗り、追加ダメージはマルカートが会心した時だけ出る）。
+// - 版 7（plan/design-workflow-simplification-15.md 7 節）: 区間ごとに、指定の格子だけに合う増分を数える（--opt count。区間は
+//   --opt between の格子に合う増分の間か、--opt ranges。イヴの不安定エネルギーの間の会心の数（V-0794 の 1223-17））。
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -38,7 +40,7 @@ import type { RecordingEntry } from '../../../packages/core/src/records/recordin
 import { runSimulation } from '../../../packages/core/src/sim/engine.ts';
 import { loadHudJumps } from './hud-jumps.ts';
 import type { HudRow } from './triggers.ts';
-import { observation, roundTo, type Recipe, type RecipeContext, type RecipeObservation } from './types.ts';
+import { observation, parseRanges, roundTo, type Recipe, type RecipeContext, type RecipeObservation } from './types.ts';
 
 const ROOT = fileURLToPath(new URL('../../../', import.meta.url));
 
@@ -439,6 +441,52 @@ export function gridsOf(specs: readonly GridSpec[], m: Pick<Model, 'cells' | 'hi
   return specs.map((spec) => made.get(spec.name)!);
 }
 
+/** 増分と、合った格子の名前 */
+export type LabelledRow = { frame: number; increment: number; names: string[] };
+
+/**
+ * 区切りの格子に合う増分のフレーム。区切りの格子に合う直前の増分から merge f 以内に続く増分は、前の区切りにまとめる
+ * （追撃の 2 ヒット目以降。続くかぎりつなぐ）
+ */
+export function delimiterFrames(rows: readonly LabelledRow[], between: readonly string[], merge: number): number[] {
+  const out: number[] = [];
+  let last = -Infinity;
+  for (const r of rows) {
+    if (!r.names.some((n) => between.includes(n))) continue;
+    if (r.frame - last > merge) out.push(r.frame);
+    last = r.frame;
+  }
+  return out;
+}
+
+/** 区切りの間の区間（両端を含む動画のフレーム。1 つ目は録画の始めから。最後の区切りの後は区間にしない） */
+export function rangesBetween(delimiters: readonly number[]): { from: number; to: number }[] {
+  return delimiters.map((d, i) => ({ from: i === 0 ? 0 : delimiters[i - 1]!, to: d - 1 }));
+}
+
+/**
+ * 区間（両端を含む）ごとの、count の格子だけに合う増分の数（counted）と、count の格子とほかの格子の両方に合う増分の数
+ * （ambiguous。数えない）
+ */
+export function countIn(
+  rows: readonly LabelledRow[],
+  ranges: readonly { from: number; to: number }[],
+  count: readonly string[],
+): { counted: number; ambiguous: number }[] {
+  return ranges.map(({ from, to }) => {
+    let counted = 0;
+    let ambiguous = 0;
+    for (const r of rows) {
+      if (r.frame < from || r.frame > to) continue;
+      const hit = r.names.filter((n) => count.includes(n)).length;
+      if (hit === 0) continue;
+      if (hit === r.names.length) counted++;
+      else ambiguous++;
+    }
+    return { counted, ambiguous };
+  });
+}
+
 /** 格子が当てる枠（和はその 2 つの枠） */
 function slotsOf(g: Grid, grids: readonly Grid[]): number[] {
   // 和の中に和は入らない（parseGrids）
@@ -449,24 +497,29 @@ function slotsOf(g: Grid, grids: readonly Grid[]): number[] {
 
 const fmt = (n: number) => roundTo(n, 2).toLocaleString('en-US');
 
+/** カンマで並べた格子の名前（空は除く）。どれも grids に無ければ --opt key の誤りで止める */
+function gridNames(text: string, grids: readonly Pick<Grid, 'name'>[], key: string): string[] {
+  const list = text
+    .split(',')
+    .map((x) => x.trim())
+    .filter((x) => x !== '');
+  for (const n of list)
+    if (!grids.some((g) => g.name === n)) throw new Error(`--opt ${key} の名前が --opt grid に無い: ${n}`);
+  return list;
+}
+
 /** --opt pair（<前の格子>[,...]><後の格子>[,...]）。無ければ undefined */
 export function parsePair(
   text: string | undefined,
   grids: readonly Pick<Grid, 'name'>[],
 ): { before: string[]; after: string[] } | undefined {
   if (text === undefined || text === '') return undefined;
-  const sides = text.split('>').map((side) =>
-    side
-      .split(',')
-      .map((x) => x.trim())
-      .filter((x) => x !== ''),
-  );
+  const sides = text.split('>').map((side) => gridNames(side, grids, 'pair'));
   const [before, after] = sides;
   if (sides.length !== 2 || before!.length === 0 || after!.length === 0) {
     throw new Error(`--opt pair=<前の格子>[,...]><後の格子>[,...] の形が違う: ${text}`);
   }
   for (const n of [...before!, ...after!]) {
-    if (!grids.some((g) => g.name === n)) throw new Error(`--opt pair の名前が --opt grid に無い: ${n}`);
     if (before!.includes(n) && after!.includes(n)) throw new Error(`--opt pair の両側に同じ格子がある: ${n}`);
   }
   return { before: before!, after: after! };
@@ -526,10 +579,10 @@ function edgeObservations(
 
 export const buffEdge: Recipe = {
   name: 'buff-edge',
-  version: 6,
+  version: 7,
   describe:
     '味方の 1 発の HUD の増分をモデルの 1 ヒットの格子に当てる。事象（II の発動など）の前後で、▲の無い最後の発と▲の乗った最初の発で付き始め（か切れ目）を挟んだ幅（事象ごとと全回の共通部分。timing）。' +
-    '--opt grid で何人かの格子に当て、増分ごとに合う格子を出す（--opt pair で境を挟む）',
+    '--opt grid で何人かの格子に当て、増分ごとに合う格子を出す（--opt pair で境を挟む。--opt count で区間ごとに数える）',
   options: {
     slot: '値を当てる枠（1 始まり。grid を使わないとき）',
     off: '▲の無い格子を取るモデルのフレーム（カンマ区切り）。省くと枠の区間の一覧を出して止まる',
@@ -538,6 +591,12 @@ export const buffEdge: Recipe = {
       `格子の並び（; 区切り）: ${GRID_FORMS}（/x は同じフレームの数ヒットまでの和、@shot は射撃ごとの倍率ダメージ（S1 の追加ダメージなど）、/s は持続ダメージのスタック数、/h は同じフレームの倍率ダメージの n ヒットの和、/* は倍率の版）。` +
       '例 サン=2@1300;サン▲=2@380;ナガ=1@1300/x10;槍=1@skill@1000:skill1;槍+通常=槍+サン。slot・off・on の代わり',
     pair: '境を挟む格子の組: <前の格子>[,...]><後の格子>[,...]（付き始めなら ▲なし>▲あり、切れ目なら ▲あり>▲なし。何人かの発で挟むなら , で並べる）。省くと増分ごとの当て方だけを出す',
+    count:
+      '区間ごとに数える格子（カンマ区切り。grid を使うとき）。区間の中の、この格子だけに合う増分を数える（会心の格子なら会心の数）',
+    between:
+      '数える区間の区切りの格子（カンマ区切り）。合う増分の間を区間にする（1 つ目は録画の始めから。merge f 以内に続く増分は 1 つにまとめる）',
+    merge: '区切りの増分をまとめる間（動画のフレーム。既定 30）',
+    ranges: '数える区間（動画のフレーム a-b をカンマ区切り。両端を含む。between の代わり）',
     segments: '区間の一覧を出して止まる枠（カンマ区切り。grid のフレームを選ぶため）',
     events: '事象の時刻（動画のフレーム）をカンマ区切りで、か値が数の列の観測値の ID（burst-panel の出力など）',
     from: '事象からの範囲の始め（動画のフレーム。既定 -60）',
@@ -696,8 +755,9 @@ async function runGrids(
     `増分 ${rows.length} 個の当て方: ${[...counts].map(([k, n]) => `${k} ${n}`).join('・')}（増分ごとは ${tsv}）`,
   );
 
+  const counted = countObservations(recipe, ctx, labelled, grids, describeGrid, o.tol);
   const pair = parsePair(ctx.options.pair, grids);
-  if (pair === undefined && ctx.options.events === undefined) return [];
+  if (pair === undefined && ctx.options.events === undefined) return counted;
   const events = parseEvents(ctx.options.events);
   const role = (inc: number): Role => (pair === undefined ? 'none' : roleOf(labelOf(inc), pair.before, pair.after));
   const edges = events.map((e) => edgeBy(rows, e, { role, from: o.from, to: o.to }));
@@ -709,7 +769,7 @@ async function runGrids(
         `  ${e.shots.map((s) => `${s.offset}:${s.increment}:${labelOf(s.increment).join('|') || '外れ'}`).join(' ')}`,
       );
     }
-    return [];
+    return counted;
   }
   const beforeName = pair.before.join('・');
   const afterName = pair.after.join('・');
@@ -735,5 +795,55 @@ async function runGrids(
     note,
   });
   if (commonRange(edges) === undefined) ctx.log('全回の共通部分が無い（片側の発が無いか、幅が重ならない）');
-  return out;
+  return [...counted, ...out];
+}
+
+/** 版 7: 区間ごとに、--opt count の格子だけに合う増分を数える */
+function countObservations(
+  recipe: Recipe,
+  ctx: RecipeContext,
+  rows: readonly LabelledRow[],
+  grids: readonly Grid[],
+  describeGrid: (g: Grid) => string,
+  tol: number,
+): RecipeObservation[] {
+  const names = (key: string) => gridNames(ctx.options[key] ?? '', grids, key);
+  const count = names('count');
+  if (count.length === 0) {
+    if (ctx.options.between !== undefined || ctx.options.ranges !== undefined)
+      throw new Error('--opt between・ranges は --opt count と使う');
+    return [];
+  }
+  const between = names('between');
+  if (between.length > 0 === (ctx.options.ranges !== undefined))
+    throw new Error('--opt count には --opt between か ranges のどちらか 1 つが要る');
+  let ranges: { from: number; to: number }[];
+  let where: string;
+  if (between.length > 0) {
+    const merge = ctx.options.merge === undefined ? 30 : Number(ctx.options.merge);
+    if (!(merge >= 0)) throw new Error(`--opt merge は 0 以上の数: ${ctx.options.merge}`);
+    const delimiters = delimiterFrames(rows, between, merge);
+    ranges = rangesBetween(delimiters);
+    where = `${between.join('・')}に合う増分（${merge}f 以内に続くものは 1 つ目）の間。区切りは f${delimiters.join('・')}、1 つ目の区間は録画の始めから`;
+  } else {
+    ranges = parseRanges(ctx.options.ranges!);
+    where = `区間 ${ranges.map((r) => `f${r.from}〜${r.to}`).join('・')}`;
+  }
+  const result = countIn(rows, ranges, count);
+  const countName = count.join('・');
+  ranges.forEach((r, i) =>
+    ctx.log(`f${r.from}〜${r.to}: ${countName} ${result[i]!.counted}（区別できない ${result[i]!.ambiguous}）`),
+  );
+  return [
+    observation(
+      recipe,
+      'count',
+      result.map((r) => r.counted),
+      `${countName}の格子だけに合う HUD の増分の数（${where}）`,
+      `HUD の増分を、モデルの 1 ヒットの格子に ±${tol} で当て、${countName}の格子だけに合う増分を数えた。格子は ${grids.map(describeGrid).join('、')}。` +
+        `${countName}とほかの格子の両方に合う増分は数えない（区間ごとに ${result.map((r) => r.ambiguous).join('・')}）。` +
+        'ほかの枠の発と同じフレームに重なった発は格子に合わないので、数は少なめに出る',
+      { unit: '回' },
+    ),
+  ];
 }

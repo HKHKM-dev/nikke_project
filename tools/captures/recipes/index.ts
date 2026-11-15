@@ -5,6 +5,7 @@ import { burstPanel } from './burst-panel.ts';
 import { dualSmgCores } from './dual-smg-cores.ts';
 import { dualSmgStages } from './dual-smg-stages.ts';
 import { farLanding } from './far-landing.ts';
+import { hpBars } from './hp-bars.ts';
 import { hudJumps } from './hud-jumps.ts';
 import { midfarLanding } from './midfar-landing.ts';
 import { nearLanding } from './near-landing.ts';
@@ -32,6 +33,7 @@ export const RECIPES: readonly Recipe[] = [
   burstPanel,
   fbWindowCores,
   fbNearWidth,
+  hpBars,
 ];
 
 export function findRecipe(name: string): Recipe | undefined {

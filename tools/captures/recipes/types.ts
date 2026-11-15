@@ -67,3 +67,19 @@ export function roundTo(value: number, digits: number): number {
   const p = 10 ** digits;
   return Math.round(value * p) / p;
 }
+
+/** --opt ranges の区間の並び（a-b,c-d。動画のフレーム。両端を含む） */
+export function parseRanges(text: string): { from: number; to: number }[] {
+  return text
+    .split(',')
+    .map((s) => s.trim())
+    .filter((s) => s !== '')
+    .map((s) => {
+      const m = /^(\d+)-(\d+)$/.exec(s);
+      if (m === null) throw new Error(`--opt ranges は a-b をカンマで並べる: ${s}`);
+      const from = Number(m[1]);
+      const to = Number(m[2]);
+      if (from > to) throw new Error(`--opt ranges の始めが終わりより後: ${s}`);
+      return { from, to };
+    });
+}
