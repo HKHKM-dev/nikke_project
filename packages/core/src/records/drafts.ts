@@ -137,6 +137,9 @@ export type ClaimDraftInput = {
 
 export type ClaimDraft = { file: ClaimFile; reasons: string[] };
 
+/** 最小構成の警告で仮説にした理由の書き出し（records:close が、理由がこれだけの結論をまとめて確定にする候補にする） */
+export const MINIMAL_REASON = '最小構成の警告がある';
+
 /**
  * 結論の下書き（3.6 節）。状態は、等級の候補が厳密一致か反復実測で、疑問の印（結論の対象が無い・反復実測なのに decidedOn が無い・
  * 最小構成の警告・scope の無い観測値・予測と合う仮説が 2 つ以上・失効した観測値・許容外）が無いときだけ確定。1 つでも欠ければ仮説にし、
@@ -155,7 +158,7 @@ export function claimDraft(input: ClaimDraftInput): ClaimDraft {
     reasons.push('decidedOn が無い（仮説・値・読み方を決めるのに使った録画。無ければ []。--decided-on で書く）');
   const warned = input.minimal.filter((w) => w.elements.length > 0);
   if (warned.length > 0) {
-    reasons.push(`最小構成の警告がある（${summarizeWarnings(warned)}）`);
+    reasons.push(`${MINIMAL_REASON}（${summarizeWarnings(warned)}）`);
   }
   // 設計書 9 節の 2: compare を持たない根拠の観測値には scope が要る
   const noScope = valid.filter((o) => o.compare === undefined && o.scope === undefined).map((o) => o.id);

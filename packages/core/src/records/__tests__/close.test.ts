@@ -1,7 +1,7 @@
 // 閉じる前の検査（plan/design-records-automation.md 3.7 節）
 import { describe, expect, it } from 'vitest';
 import type { Claim } from '../claims.ts';
-import { closeChecks, markState, prBody, prTitle, residualCounts, type CloseInput } from '../close.ts';
+import { closeChecks, markState, prBody, prTitle, promoteTogether, residualCounts, type CloseInput } from '../close.ts';
 import type { Observation } from '../observations/types.ts';
 import { parseVerification } from '../verifications.ts';
 
@@ -262,5 +262,31 @@ describe('prBody', () => {
     expect(prBody(v, claims, { compared: 1660, outside: 47 })).toContain('- 許容外 47 件（比べた観測値 1660 件）');
     expect(prBody(v, [], undefined)).toContain('件数の行が読めなかった');
     expect(prBody(v, [], undefined)).toContain('- C-0001: （結論が無い）');
+  });
+});
+
+describe('promoteTogether', () => {
+  // A と B は互いの未確定を警告し合う（どちらも確定とみなせば通る）。C は自分の理由で通らない。D は C が確定でないと通らない
+  const evaluate = (assumed: ReadonlySet<string>) =>
+    new Map<string, readonly string[]>([
+      ['A', assumed.has('B') ? [] : ['B が未確定']],
+      ['B', assumed.has('A') ? [] : ['A が未確定']],
+      ['C', ['許容外']],
+      ['D', assumed.has('C') ? [] : ['C が未確定']],
+    ]);
+
+  it('promotes the claims that pass together and keeps the reasons of the rest', () => {
+    const r = promoteTogether(['A', 'B', 'C', 'D'], evaluate);
+    expect(r.promoted).toEqual(['A', 'B']);
+    expect(r.reasons).toEqual(
+      new Map([
+        ['C', ['許容外']],
+        ['D', ['C が未確定']],
+      ]),
+    );
+  });
+
+  it('drops a claim that only passed while a failing sibling was assumed', () => {
+    expect(promoteTogether(['A', 'C'], evaluate).promoted).toEqual([]);
   });
 });

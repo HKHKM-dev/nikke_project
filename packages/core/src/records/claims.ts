@@ -4,7 +4,7 @@
 // ID の桁は決め打ちしない（録画 3 桁以上・連番 2 桁以上・結論 4 桁以上）。通し番号の抜けは許す。
 import { ELEMENTS } from '../element.ts';
 import { ID_DIGITS } from './ids.ts';
-import type { ObservationValue } from './observations/types.ts';
+import type { Observation, ObservationValue } from './observations/types.ts';
 import { BUFF_STATS, type BuffStat } from '../skills/types.ts';
 import type { BurstStep, Element, WeaponType } from '../types.ts';
 import { WEAPON_TYPES } from '../weapons.ts';
@@ -483,6 +483,44 @@ export function claimsByObservation(claims: readonly Claim[]): Map<string, strin
 /** 結論に結び付いた観測値（状態が確定か仮説の結論の根拠）。手入力の条件で比べる観測値は、どれかに結び付ける */
 export function supportedObservations(claims: readonly Claim[]): Set<string> {
   return new Set(claims.filter((c) => c.state === '確定' || c.state === '仮説').flatMap((c) => c.observations));
+}
+
+/**
+ * 自動の条件でも、確定の結論に結び付けてよい指標（命中率▲が効くのは自動の条件だけ。design-stage18.md「経過」の 2026-11-03）。
+ * 1 ヒットの値はコア・会心を引数で決め、自動の条件で変わるのは着地点で決まる距離ボーナスだけなので、的の表の割合に左右されない
+ * （適正最小射程距離▲が効くのは自動の条件だけ。plan/design-agent-bunny.md 10 節）
+ */
+const AUTO_GATEABLE_METRICS: ReadonlySet<string> = new Set([
+  'coreHitRate',
+  'bulletHitRate',
+  'hitDamage',
+  'hitDamageAtShot',
+]);
+
+/**
+ * 結論と観測値の結び付きの決まり（records:check と observations.test.ts）:
+ * - 手入力の条件で比べる観測値は、確定か仮説の結論に結び付ける（Stage 20-A。許容幅で落とすのは確定の結論の根拠だけ。design-stage19.md 2.5 節）
+ * - 自動の条件の総ダメージ（AUTO_GATEABLE_METRICS の外）は、確定の結論の根拠にしない（Stage 18-C。design-stage18.md 12.4 節）
+ */
+export function claimTieErrors(
+  observations: readonly Observation[],
+  claims: readonly Claim[],
+  invalidIds: ReadonlySet<string> = new Set(),
+): string[] {
+  const supported = supportedObservations(claims);
+  const gated = gatedObservations(claims, invalidIds);
+  const errors: string[] = [];
+  for (const o of observations) {
+    const c = o.compare;
+    if (o.use !== 'compare' || c === undefined) continue;
+    if (c.setup.condition !== 'auto' && !supported.has(o.id))
+      errors.push(`${o.id}: 手入力の条件で比べる観測値が、確定か仮説の結論の根拠に無い（Stage 20-A）`);
+    if (c.setup.condition === 'auto' && !AUTO_GATEABLE_METRICS.has(c.metric) && gated.has(o.id))
+      errors.push(
+        `${o.id}: 自動の条件の ${c.metric} を確定の結論の根拠にしている（Stage 18-C。結論を仮説にするか根拠から外す）`,
+      );
+  }
+  return errors;
 }
 
 /** テストで許容幅を守らせる観測値（状態が確定の結論の根拠。失効したものは外す） */

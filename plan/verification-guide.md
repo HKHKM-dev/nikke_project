@@ -67,7 +67,7 @@
 ## 5. 撮る・取り込む
 
 - 撮り終えたら、1 回の撮影の録画をまとめて、すぐに取り込む: `node tools/captures/intake.ts <元ファイル>... --name <識別子>,... --rid ... --controlled ... [--treasure <枠>:<段階>（スナップショットで決まらない枠だけ）] --target BigArms --element Fire --mode range-3min --fixed-spec on|off ...`（番号の取得・リネーム・移動・素性・`records/recordings/<録画 id>.json`・Drive への同期と sha256 の突き合わせ・録画の JSON の `backup` への記録・録画の一覧 [captures/recordings.md](captures/recordings.md) の作り直し・番号を押さえる commit と push。オプションは `intake.ts` の冒頭）。
-- 道具が埋めない項目（`人が埋める項目` に出る）を埋めたら、`npm run records:check` で一覧を作り直す。命名規約は [captures/index.md](captures/index.md)「命名規約」。
+- 道具が埋めない項目（`人が埋める項目` に出る）を埋めたら、`npm run records:check` で検査する（一覧を手元で見るなら `-- --keep-generated`）。命名規約は [captures/index.md](captures/index.md)「命名規約」。
 
 ## 6. 読む
 
@@ -79,7 +79,7 @@
 
 ## 7. 比べる
 
-- `npm run records:check` で、生成物を全部作り直す（手元で中身を見たいとき。感度も計算し直すなら `npm run records:minimal`。PR の前は `pr:prep`、マージの後は CI が作り直す）: 録画の一覧（[captures/recordings.md](captures/recordings.md)）・スキルの効果の分類（[skill-catalog.md](skill-catalog.md)）・残差の一覧（[residuals.md](residuals.md)）・結論の一覧（[claims.md](claims.md)）・検証記録の一覧（[verifications.md](verifications.md)。予測ファイルがあれば「予測との比べ」）・対応状況（[skills.md](skills.md)）・最小構成の検査（[minimal.md](minimal.md)）を作り直す。観測値のモデルの予測値は、モデルのコードとデータ（`packages/core/src`・`data`）が同じあいだ覚えておき（`node_modules/.cache/residuals/`。`npm test` も使う）、2 回目からは覚えていない観測値だけをモデルで回す。覚えを使わないときは `NIKKE_NO_RESIDUAL_CACHE=1`。
+- `npm run records:check` で、生成物を全部作り直して検査する。生成物は PR に入れないので、終わりに HEAD の版へ戻す（回す前から書き換わっていたものは戻さない。中身を見たいときは `-- --keep-generated` か、感度も計算し直す `npm run records:minimal`。どちらも生成物を残す。PR の前は `pr:prep`、マージの後は CI が作り直す）。作り直すもの: 録画の一覧（[captures/recordings.md](captures/recordings.md)）・スキルの効果の分類（[skill-catalog.md](skill-catalog.md)）・残差の一覧（[residuals.md](residuals.md)）・結論の一覧（[claims.md](claims.md)）・検証記録の一覧（[verifications.md](verifications.md)。予測ファイルがあれば「予測との比べ」）・対応状況（[skills.md](skills.md)）・最小構成の検査（[minimal.md](minimal.md)）を作り直す。観測値のモデルの予測値は、モデルのコードとデータ（`packages/core/src`・`data`）が同じあいだ覚えておき（`node_modules/.cache/residuals/`。`npm test` も使う）、2 回目からは覚えていない観測値だけをモデルで回す。覚えを使わないときは `NIKKE_NO_RESIDUAL_CACHE=1`。
 - 残差の一覧には見る行（許容外・比べられない・失効）しか載らない。自分の観測値の残差は `npm run records:residual -- V-NNNN`（録画 id・観測値 ID でも引ける。許容内の行も同じ列で出す）。
 - 最小構成の検査の感度（`npm run records:minimal`）は、閉じるとき（9 節）に `records:close` が計算し直す。それより前に見たいときは手で回す。既定は、鍵（スキル定義・録画の台帳・比べる指定）の変わった観測値だけを計算し直す（数秒）。鍵はモデルのコードを含まないので、モデルを大きく組み直す PR と、定期の見直しでは `npm run records:minimal -- --all` で全部を計算し直し、差が出ないことを見る（差が出たら鍵に足りない入力を足す。[design-workflow-simplification-5.md](design-workflow-simplification-5.md) 7.2 節）。
 - 合わないときは、まず読み取りと条件を疑う。機構の話にするのは、未確定の要素を 1 つにした編成で切り分けてから。残差を係数で埋めない（AGENTS.md）。
@@ -98,7 +98,7 @@
 
 ## 9. 閉じる・PR
 
-- 検証記録の「結果」「分かったこと・分からないこと」「次に撮るもの」を書き、冒頭の「結論」に ID を足し、`npm run records:close -- V-NNNN --mark` で閉じる前の検査を通して状態を `完了` にする。落ちた検査は道具が出す（検査の一覧は `packages/core/scripts/records-close.ts` の冒頭。`judgment` で上書きできるものは 8 節）。CI と同じ確認は PR の前の `npm run pr:prep` が回す（閉じるときにも回したければ `--ci`。こちらは書式と lint も全部のファイルを見る）。
+- 検証記録の「結果」「分かったこと・分からないこと」「次に撮るもの」を書き、冒頭の「結論」に ID を足し、`npm run records:close -- V-NNNN --mark` で閉じる前の検査を通して状態を `完了` にする。この記録の仮説の結論のうち、仮説の理由が最小構成の警告だけのもの（理由が残っていないものを含む。`when`・`edge` の無いもの）は、まとめて確定とみなして確定にできる条件を見直し、通ったものを、閉じる前の検査が通ったときに確定に書き換える（等級も機械の候補に合わせる。`--mark` が無ければ出すだけで、閉じる前の検査は確定にした後の結論で見る）。落ちた検査は道具が出す（検査の一覧は `packages/core/scripts/records-close.ts` の冒頭。`judgment` で上書きできるものは 8 節）。CI と同じ確認は PR の前の `npm run pr:prep` が回す（閉じるときにも回したければ `--ci`。こちらは書式と lint も全部のファイルを見る）。
 - 閉じた記録にも、録画・観測値・表・結果を書き足してよい（[design-investigation-review.md](design-investigation-review.md) 4.2 節）。結論の根拠が変わったら `records:close` を回し直す。
 - 課題の状態が変わったら、その課題のファイル（`records/backlog/`。書き方は [backlog.md](backlog.md) の冒頭）を直す（ID と経過は書かない。Stage の状態が変わったときだけ [roadmap.md](roadmap.md) の 1 行も）。commit して `npm run pr:prep -- --push` を回し、[AGENTS.md](../AGENTS.md)「コミット手順」で PR を出す。題名の案と本文の骨組みは `records:close` が出す。本文は骨組みに「変更」（コード・データ）を足し、値と読み方は検証記録にあるので書き写さない（結論は ID で指す。[design-workflow-simplification-5.md](design-workflow-simplification-5.md) 2 節）。
 
