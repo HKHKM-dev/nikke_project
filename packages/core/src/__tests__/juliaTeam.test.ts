@@ -44,7 +44,7 @@ const CASES: Record<string, { input: TeamInput; treasure: boolean }> = {
   },
 };
 const J = 2;
-/** 定義の S1 のクールタイム（撮る前の仮の値 20 秒。V-0792）。発動は時刻に達した最初のフレーム */
+/** 定義の S1 のクールタイム（20 秒。C-1325）。発動は時刻に達した最初のフレーム */
 const S1_PERIOD = gameSecondsToFirstFrame(20);
 
 describe.each(Object.entries(CASES))('編成: %s', (_name, { input, treasure }) => {
@@ -103,11 +103,12 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, treasure }) 
   it('deals the Burst additional damage on each Burst hit only while Crescendo is at full stacks', () => {
     const extra = hitsOf('burst').filter((h) => h.effect.damageType === 'additional');
     const full = activations.filter((a) => fullAt(hitFrameOf(a)));
-    // 宝物版は順番の攻撃のヒットごと（遅れの表の分かれたヒットの数。表に行の無いあいだは 1）
+    // 宝物版は順番の攻撃のヒットごと（遅れの表の分かれたヒット。C-1329）。基礎版は 1 ヒット
     const character = applyTreasure(characterOf(JULIA), null, treasure ? 3 : 0).character;
-    const splits = burstDelaysOf(character).hitOffsets?.length ?? 1;
-    expect(extra.length).toBe(full.length * splits);
-    for (const h of extra) expect(full.some((a) => hitFrameOf(a) === h.frame)).toBe(true);
+    const offsets = burstDelaysOf(character).hitOffsets ?? [0];
+    expect(offsets.length).toBe(treasure ? 5 : 1);
+    const frames = full.flatMap((a) => offsets.map((o) => hitFrameOf(a) + o));
+    expect(extra.map((h) => h.frame).sort((a, b) => a - b)).toEqual(frames.sort((a, b) => a - b));
     if (treasure) expect(full.length).toBe(activations.length);
   });
 });

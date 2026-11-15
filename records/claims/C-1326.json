@@ -1,11 +1,11 @@
 {
   "id": "C-1326",
   "text": "ジュリアの宝物版 S2 のクレッシェンドは、通常攻撃の会心の発 6 回ごとに自分に 1 スタック（次の発から。最大 5）付き、1 スタックごとにクリティカルダメージ 24.79% を足す（Lv10）。マルカートと倍率ダメージの会心にも乗る。オート射撃では会心が毎秒数回あるので、戦闘開始の約 3 秒後からいつも 5 スタックで、15 秒の維持で切れる所は録画に無い",
-  "state": "仮説",
+  "state": "確定",
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
   "basis": "`1226-05`・`1226-28`・`1227-05`・`1227-28`。V-0792",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "data/skills/150.json の treasureSkills.skill2 の effects[0]（状態 crescendo の付与・{ count: critHit, everyRef: 1 }・maxStacksRef・durationRef・中身 critDamage）、skills/states.ts の crescendo",
   "replaces": [],
   "updated": "2026-11-15",
   "subject": {

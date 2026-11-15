@@ -241,6 +241,14 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // ヘルム：アクアマリン: II の発動（六角形の替わり目）からヒットまで 64f（フルバーストに入る回は、III の 00.00 の後の入りの止まりを挟んで
   // 動画で 84〜85f）。電撃の敵への追加ダメージ（burst の effects[1]。burstUse）もヒットと同じフレームに出る
   { resourceIds: [353], delays: { hitFrames: 64, effectFrames: 64 }, claim: 'C-1061' },
+  // ジュリア（宝物あり）: III のタイマーの 00.00 から「5 回順番に攻撃」の 1 ヒット目まで 5f（動画で 27f。止まり 22f を含む）、その後は
+  // 動画で 12・24・36・47f 後。フルスタックの追加ダメージ（burst の effects[1]。perBurstHit）も各ヒットと同じフレームに出る。宝物なしは未測定
+  {
+    resourceIds: [150],
+    treasure: true,
+    delays: { hitFrames: 5, effectFrames: 0, hitOffsets: [0, 12, 24, 36, 47] },
+    claim: 'C-1329',
+  },
 ];
 
 /**
