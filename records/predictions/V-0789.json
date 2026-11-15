@@ -1,0 +1,411 @@
+{
+  "verification": "V-0789",
+  "note": "撮影の予測（撮り方 2: I-DOLL・フラワー + ノア + エレグ：BS（操作）+ ソルジャーE.G.）。射撃場の BigArms（灼熱）・3 分モード・スペック固定 ON（スキル Lv10）。バーストは手で 2 回使う計画だが、押す時刻は録画で読むまで決まらないので、予測はオートバースト（ソルジャーE.G. はバーストを使わない）の時刻表で出す。撮り方 1（単騎）の予測と、R2（外れてから 6 秒後に付き直す）・C2（届かなかった憑依の回数を持ち越す）は上書きで書けないので、検証記録の「予測」に手で書く",
+  "team": [
+    {
+      "rid": 304
+    },
+    {
+      "rid": 232
+    },
+    {
+      "rid": 502,
+      "controlled": true
+    },
+    {
+      "rid": 300
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（R1・E1・C1・T1・F1）",
+      "override": {}
+    },
+    {
+      "id": "H-E2",
+      "note": "キャプチャーで憑依が外れず、同じ憑依の中で 100 回ごとに何回でもキャプチャーする（S1 の解除を落とす）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 502,
+            "skill": "skill1",
+            "index": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-T2",
+      "note": "自分の命中だけを数える（キャプチャー・解除・S2 のダメージのきっかけを normalHit にする）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 502,
+            "skill": "skill1",
+            "replace": 2,
+            "effect": {
+              "kind": "counterChange",
+              "counter": "ghostCapture",
+              "trigger": {
+                "count": "normalHit",
+                "everyRef": 2,
+                "during": {
+                  "state": "ghostPossession"
+                }
+              },
+              "target": "self",
+              "amount": 1
+            }
+          },
+          {
+            "rid": 502,
+            "skill": "skill1",
+            "replace": 3,
+            "effect": {
+              "kind": "removeState",
+              "state": "ghostPossession",
+              "trigger": {
+                "count": "normalHit",
+                "everyRef": 2,
+                "during": {
+                  "state": "ghostPossession"
+                }
+              },
+              "target": "self"
+            }
+          },
+          {
+            "rid": 502,
+            "skill": "skill2",
+            "replace": 1,
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "count": "normalHit",
+                "every": 100,
+                "during": {
+                  "state": "ghostPossession"
+                }
+              },
+              "ref": 3,
+              "damageType": "skill",
+              "condition": {
+                "selfCounter": {
+                  "counter": "ghostCapture",
+                  "atLeast": 13
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-F2",
+      "note": "バーストの 6▼ に下限が無い（0 まで減る）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 502,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "counterChange",
+              "counter": "ghostCapture",
+              "trigger": "burstUse",
+              "target": "self",
+              "amountRef": 3,
+              "decrease": true,
+              "condition": {
+                "selfCounter": {
+                  "counter": "ghostCapture",
+                  "below": 13
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "cap-frames",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "noBurstSlots": [
+          4
+        ]
+      },
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "counterUp",
+        "counter": "ghostCapture",
+        "count": 13
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "note": "キャプチャーの動画のフレーム（戦闘の始まりから。最初の 13 回）。録画では、画面のキャプチャー数の表示が増えたフレーム（出ていなければ、攻撃力▲・有利コードの攻撃ダメージ▲の付き始めと S2 のヒットから）"
+    },
+    {
+      "id": "counter-at-bursts",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "noBurstSlots": [
+          4
+        ]
+      },
+      "metric": "counterAtBursts",
+      "args": {
+        "slot": 3,
+        "counter": "ghostCapture"
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "エレグ：BS のバーストの発動ごとの、発動の前のキャプチャー数。録画では、発動の直前の画面のキャプチャー数（出ていなければ、バーストのヒットの数（6 か 13）と有利コードの攻撃ダメージ▲の有無から）"
+    },
+    {
+      "id": "s2-frames",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "noBurstSlots": [
+          4
+        ]
+      },
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "note": "S2 の 1100% のヒットの動画のフレーム（全部）。録画では、HUD の増分の格子でエレグ：BS の S2 の 1 ヒットと分ける"
+    },
+    {
+      "id": "atk-start",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "noBurstSlots": [
+          4
+        ]
+      },
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "attack",
+        "count": 1,
+        "video": true
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "note": "S1 の攻撃力▲の付き始め（1 回目のキャプチャーの次のフレーム。動画のフレーム）。録画では、エレグ：BS の発の値が上がった最初の発"
+    },
+    {
+      "id": "elem-start",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto",
+        "noBurstSlots": [
+          4
+        ]
+      },
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "elementDamage",
+        "video": true
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "note": "S1 の有利コードの攻撃ダメージ▲の付き始めの列（4 回目のキャプチャーと、バーストで 4 未満に減った後に 4 に戻った回。動画のフレーム）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-15",
+    "commit": "cec4209ad4d5950ccb1b3376098a1a16a6fbac50",
+    "values": {
+      "H1": {
+        "cap-frames": [
+          164,
+          634,
+          821,
+          1311,
+          1517,
+          1891,
+          2237,
+          2642,
+          3152,
+          3314,
+          3768,
+          4017,
+          4392
+        ],
+        "counter-at-bursts": [
+          1,
+          8,
+          9,
+          9,
+          10
+        ],
+        "s2-frames": [],
+        "atk-start": [
+          165
+        ],
+        "elem-start": [
+          1312,
+          3315,
+          5533,
+          7803
+        ]
+      },
+      "H-E2": {
+        "cap-frames": [
+          164,
+          244,
+          329,
+          634,
+          821,
+          902,
+          982,
+          1311,
+          1392,
+          1517,
+          1891,
+          2237,
+          2338
+        ],
+        "counter-at-bursts": [
+          3,
+          13,
+          13,
+          13,
+          13
+        ],
+        "s2-frames": [
+          2819,
+          4909,
+          5075,
+          5157,
+          6944,
+          7292,
+          7373,
+          7454,
+          9443,
+          9780,
+          9863,
+          9945
+        ],
+        "atk-start": [
+          165
+        ],
+        "elem-start": [
+          903
+        ]
+      },
+      "H-T2": {
+        "cap-frames": [
+          201,
+          831,
+          1343,
+          1537,
+          1912,
+          2259,
+          2674,
+          3327,
+          3815,
+          4416,
+          4968,
+          5093,
+          5552
+        ],
+        "counter-at-bursts": [
+          1,
+          7,
+          6,
+          6,
+          6
+        ],
+        "s2-frames": [],
+        "atk-start": [
+          202
+        ],
+        "elem-start": [
+          1538,
+          4417,
+          6768,
+          9240
+        ]
+      },
+      "H-F2": {
+        "cap-frames": [
+          164,
+          634,
+          821,
+          1311,
+          1517,
+          1891,
+          2237,
+          2642,
+          3152,
+          3314,
+          3768,
+          4017,
+          4392
+        ],
+        "counter-at-bursts": [
+          1,
+          7,
+          8,
+          8,
+          9
+        ],
+        "s2-frames": [],
+        "atk-start": [
+          165
+        ],
+        "elem-start": [
+          1518,
+          3769,
+          6021,
+          7948,
+          10307
+        ]
+      }
+    }
+  }
+}
