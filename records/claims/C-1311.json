@@ -5,11 +5,11 @@
   "topic": "スキル・キャラ固有",
   "grade": "単独実測",
   "basis": "`1221-24`・`1222-21`。V-0791",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "未反映（`data/skills/412.json` の skill1 の notes の未対応。対象の HP の割合の閾値の条件の語彙が無い）",
   "replaces": [],
   "updated": "2026-11-15",
   "subject": {
-    "places": ["data/skills/412.json の skill1 の notes"]
+    "places": ["data/skills/412.json の skill1 の notes[0]"]
   },
   "decidedOn": []
 }

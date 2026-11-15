@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`1221-16`・`1221-17`・`1221-18`・`1221-19`・`1222-14`・`1222-15`・`1222-16`。V-0791",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "反映（`data/skills/412.json` の burst の effects[4]。`frame/firing.ts` の `effectiveMaxAmmo`）",
   "replaces": [],
   "updated": "2026-11-15",
   "subject": {

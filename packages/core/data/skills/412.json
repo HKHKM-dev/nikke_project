@@ -14,7 +14,10 @@
           "assumes": {
             "ja": "フルバーストタイムが終わった時、味方全体への持続回復（1 秒間隔・値 02 秒間維持）。付いた時に 1 回だけ「回復効果が適用された時」を起こし、1 秒ごとの刻みでは起こさない（C-0578 と同じ）。満タンの味方にも付く。回復量はダメージに関係しない（回復で HP の割合が戻る分は扱わない）",
             "en": "When Full Burst Time ends, a heal over time on all allies (every 1 s for value 02 s). It triggers \"when healed\" once when applied, not on each tick (as C-0578). It also lands on allies at full HP. The healed amount does not affect damage (the rise of the HP ratio from heals is not modeled)"
-          }
+          },
+          "claims": [
+            "C-1310"
+          ]
         }
       ],
       "notes": [
@@ -26,7 +29,10 @@
             "kind": "heal",
             "target": "lowestHpRatio",
             "trigger": "fullChargeShot"
-          }
+          },
+          "claims": [
+            "C-1311"
+          ]
         }
       ]
     },
@@ -45,7 +51,10 @@
           "assumes": {
             "ja": "戦闘開始時から戦闘の終わりまで、電撃コードの AR の味方全体に、トリナのバフ前の最大HP × 値 01 を最大HP に足す（HP は足さない。エード・マストと同じ発動者基準）。読むのは HP の割合と最終最大HP だけ。「自分が生存状態の時に限り」は、味方が倒れない前提でいつも満たす",
             "en": "From battle start to the end of battle, adds Trina's pre-buff max HP × value 01 to the max HP of all Electric AR allies (without restoring HP; caster-based as Ade and Mast). Only the HP ratio and the final max HP read it. \"Only while this unit is alive\" always holds (allies do not fall)"
-          }
+          },
+          "claims": [
+            "C-1309"
+          ]
         },
         {
           "kind": "timed",
@@ -60,7 +69,10 @@
           "assumes": {
             "ja": "「部隊の一番左側にいる電撃コードのアサルトライフルを使用する味方 1 機」は、電撃コードの AR の枠のうち、編成の枠の順でいちばん左の 1 機（1 枠目が電撃 AR でなくても付く。機数は値 06 の 1）",
             "en": "\"The 1 ally using an Electric AR on the far left of the squad\" is the leftmost Electric AR slot in formation order (it applies even when slot 1 is not an Electric AR; the count is value 06, 1)"
-          }
+          },
+          "claims": [
+            "C-1305"
+          ]
         },
         {
           "kind": "timed",
@@ -75,7 +87,10 @@
           "assumes": {
             "ja": "対象は effects[1] と同じ（電撃コードの AR の枠のうち、いちばん左の 1 機）",
             "en": "Same target as effects[1] (the leftmost Electric AR slot)"
-          }
+          },
+          "claims": [
+            "C-1305"
+          ]
         }
       ],
       "notes": [
@@ -99,7 +114,10 @@
           "assumes": {
             "ja": "トリナのバフ前の最大HP × 値 01 を、味方全体の最大HP に足す（HP は足さない。発動者基準）。読むのは HP の割合と最終最大HP だけ",
             "en": "Adds Trina's pre-buff max HP × value 01 to the max HP of all allies (without restoring HP; caster-based). Only the HP ratio and the final max HP read it"
-          }
+          },
+          "claims": [
+            "C-1309"
+          ]
         },
         {
           "kind": "timed",
@@ -107,7 +125,10 @@
           "target": "allies",
           "stat": "attackDamage",
           "ref": 8,
-          "durationRef": 9
+          "durationRef": 9,
+          "claims": [
+            "C-1306"
+          ]
         },
         {
           "kind": "timed",
@@ -119,7 +140,10 @@
           "assumes": {
             "ja": "根張り。「ニケを除いた敵が 1 機の場合」は、敵 1 体の前提でいつも満たす。乗るのは、説明文の対象の句が「敵全体に」で終わる行の burstDamage（バーストスキルダメージ）だけで、攻撃ダメージ▲と同じ和に足す（plan/design-trina.md 2.1 節）。根張りの名前を読む効果は無いので、名前の無い▲として書く",
             "en": "Taking Root. \"When there is 1 enemy excluding Nikkes\" always holds with one enemy. It applies only to burstDamage (Burst Skill damage) on lines whose target phrase ends with 敵全体に (all enemies), added to the attack damage up sum (plan/design-trina.md 2.1). Nothing reads the name Taking Root, so it is written as an unnamed up"
-          }
+          },
+          "claims": [
+            "C-1306"
+          ]
         },
         {
           "kind": "timed",
@@ -129,7 +153,10 @@
           "targetElement": "Electronic",
           "stat": "hitRate",
           "ref": 5,
-          "durationRef": 6
+          "durationRef": 6,
+          "claims": [
+            "C-1308"
+          ]
         },
         {
           "kind": "timed",
@@ -140,7 +167,10 @@
           "stat": "maxAmmo",
           "scaling": "flat",
           "ref": 7,
-          "durationRef": 6
+          "durationRef": 6,
+          "claims": [
+            "C-1307"
+          ]
         }
       ],
       "notes": [

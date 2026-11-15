@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "単独実測",
   "basis": "`1221-22`・`1221-23`・`1222-19`・`1222-20`。V-0791",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "反映（`data/skills/412.json` の skill2 の effects[0]・burst の effects[0]。`scaling: \"casterMaxHp\"`）",
   "replaces": [],
   "updated": "2026-11-15",
   "subject": {

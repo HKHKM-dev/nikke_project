@@ -86,12 +86,27 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": [
+          "range-3min-jump"
+        ],
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
       },
       "tolerance": {
-        "rel": 0.005
+        "abs": 1
       },
-      "note": "ミハラのチェーンのトリナの窓の後半（フルバーストの外）の E.G. の胴体の 1 ヒット（S2 の攻撃ダメージ▲ 94.15% とバーストの 20.9% が乗るか）。S1 の確率の攻撃力▲は格子の版で分ける"
+      "note": "ミハラのチェーンのトリナの窓の後半（フルバーストの外）の E.G. の胴体の 1 ヒット（S2 の攻撃ダメージ▲ 94.15% とバーストの 20.9% が乗るか）。S1 の確率の攻撃力▲は格子の版で分ける（読んだ後に、観測値と同じ setup（E.G. の S1 の攻撃力▲を常に乗せる）にそろえた）"
     },
     {
       "id": "eg-hit-outside",
@@ -106,12 +121,27 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": [
+          "range-3min-jump"
+        ],
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
       },
       "tolerance": {
-        "rel": 0.005
+        "abs": 1
       },
-      "note": "トリナの窓の外の E.G. の胴体の 1 ヒット（比べの基準。トリナの効果は S2 の最大HP のみ▲ だけ）"
+      "note": "トリナの窓の外の E.G. の胴体の 1 ヒット（比べの基準。トリナの効果は S2 の最大HP のみ▲ だけ）（読んだ後に、観測値と同じ setup（E.G. の S1 の攻撃力▲を常に乗せる）にそろえた）"
     },
     {
       "id": "eg-maxammo-window",
@@ -119,16 +149,18 @@
       "metric": "maxAmmoAt",
       "args": {
         "slot": 2,
-        "frame": 1950
+        "frame": 1570
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": [
+          "range-3min-jump"
+        ]
       },
       "tolerance": {
-        "abs": 0.5
+        "abs": 0
       },
-      "note": "トリナの窓の中の E.G. の最大装弾数（バーストの 20 発▲。E.G. の S2 の最大装弾数▲（9 秒ごと・5 秒）が重なる時は、比率の後に発数を足す）"
+      "note": "トリナの窓の中の E.G. の最大装弾数（バーストの 20 発▲。E.G. の S2 の最大装弾数▲（9 秒ごと・5 秒）が重なる時は、比率の後に発数を足す）（読んだ後に、E.G. の S2 の外のフレームにそろえた）"
     },
     {
       "id": "mihara-burst-1",
@@ -141,12 +173,14 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": [
+          "range-3min-jump"
+        ]
       },
       "tolerance": {
-        "rel": 0.01
+        "abs": 3
       },
-      "note": "ミハラの 1 回目のバースト（『敵全体に』のバーストスキルダメージ）の会心なしの値。根張りとバーストの攻撃ダメージ▲ 20.9% が乗る"
+      "note": "ミハラの 2 回目（n は 0 始まり）のバースト（『敵全体に』のバーストスキルダメージ）の会心なしの値。根張りとバーストの攻撃ダメージ▲ 20.9% が乗る"
     },
     {
       "id": "eg-burst-1",
@@ -154,50 +188,89 @@
       "metric": "burstHitDamage",
       "args": {
         "slot": 2,
-        "n": 1,
+        "n": 0,
         "crit": false
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": [
+          "range-3min-jump"
+        ],
+        "addEffects": [
+          {
+            "rid": 300,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 1
+            }
+          }
+        ]
       },
       "tolerance": {
-        "rel": 0.01
+        "abs": 2
       },
-      "note": "E.G. の 1 回目のバースト（『攻撃範囲内の敵に』のダメージ）の会心なしの値。根張りは乗らない"
+      "note": "E.G. の 1 回目（n は 0 始まり）のバースト（『攻撃範囲内の敵に』のダメージ）の会心なしの値。根張りは乗らない（読んだ後に、観測値と同じ setup（E.G. の S1 の攻撃力▲を常に乗せる）にそろえた）"
+    },
+    {
+      "id": "mihara-burst-0",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 4,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "ミハラの 1 回目のバースト（同じ発動のペインロード 1 は乗らない。C-0563）の会心なしの 3 ヒットの和（読んだ後に足した）"
     }
   ],
   "predicted": {
     "at": "2026-11-15",
-    "commit": "a9798bc20368c50e842b20dfd1d97a99036d1c0e",
+    "commit": "cc49b1a6110cd848dd35f8aac9c99d863cb91ae5",
     "values": {
       "H1": {
-        "eg-hit-window": 26246.447130750003,
-        "eg-hit-outside": 12250.6242,
+        "eg-hit-window": 26460.6608013,
+        "eg-hit-outside": 12304.4226,
         "eg-maxammo-window": 80,
         "mihara-burst-1": 2683917.3160800003,
-        "eg-burst-1": 1350897.6491999999
+        "eg-burst-1": 1359862.6536,
+        "mihara-burst-0": 2322204.908562
       },
       "H-left-slot1": {
-        "eg-hit-window": 14703.617167200002,
-        "eg-hit-outside": 12250.6242,
+        "eg-hit-window": 14876.046923400001,
+        "eg-hit-outside": 12304.4226,
         "eg-maxammo-window": 80,
         "mihara-burst-1": 2683917.3160800003,
-        "eg-burst-1": 759467.6856000001
+        "eg-burst-1": 764507.7648,
+        "mihara-burst-0": 2322204.908562
       },
       "H0-root": {
-        "eg-hit-window": 26246.447130750003,
-        "eg-hit-outside": 12250.6242,
+        "eg-hit-window": 26460.6608013,
+        "eg-hit-outside": 12304.4226,
         "eg-maxammo-window": 80,
         "mihara-burst-1": 583082.8454880001,
-        "eg-burst-1": 1350897.6491999999
+        "eg-burst-1": 1359862.6536,
+        "mihara-burst-0": 504500.5812132001
       },
       "H0-ar-burst": {
-        "eg-hit-window": 26246.447130750003,
-        "eg-hit-outside": 12250.6242,
+        "eg-hit-window": 26460.6608013,
+        "eg-hit-outside": 12304.4226,
         "eg-maxammo-window": 60,
         "mihara-burst-1": 2683917.3160800003,
-        "eg-burst-1": 1353591.7956
+        "eg-burst-1": 1359862.6536,
+        "mihara-burst-0": 2322204.908562
       }
     }
   }
