@@ -1,6 +1,7 @@
 import { characterImageFile, type CharacterIndexEntry } from '@nikke/core';
 import { useReducer, type ReactNode } from 'react';
 import { BadgeIcon } from './BadgeIcon.tsx';
+import { FavoriteRibbons } from './FavoriteBadge.tsx';
 import {
   COMPACT_BADGE_KINDS,
   ELEMENT_BADGE_KIND,
@@ -86,6 +87,7 @@ export function CharacterVisual({
         </div>
       )}
       {badges && elementBadge && <CharBadge badge={elementBadge} className="char-badge char-visual-corner-badge" />}
+      {badges && <FavoriteRibbons resourceId={character.resourceId} />}
       {overlay}
       {unsupportedNote !== null && (
         // 印はバッジ ui_information。知らせはマウスを載せると出る

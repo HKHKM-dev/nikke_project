@@ -19,6 +19,7 @@ import { useSlotDrag } from '../components/modern/useSlotDrag.ts';
 import { useSlotPlacement } from '../components/modern/useSlotPlacement.ts';
 import { commonGrowthOf, rosterGrowthOf } from '../roster.ts';
 import { useTrayShape } from '../trayShape.ts';
+import { favoriteMarksOf, FavoritesContext, useFavorites } from '../favorites.ts';
 
 export function ModernView({
   team,
@@ -45,6 +46,7 @@ export function ModernView({
 
   // ニケ一覧の立ち絵の形（四角・縦長）。ブラウザに覚える
   const [trayShape, toggleTrayShape] = useTrayShape();
+  const [favorites, toggleFavorite] = useFavorites();
 
   // 枠が埋まっているときに一覧でクリックしたニケ。次にクリックしたスロットに置く（null なら待っていない）
   const [pendingId, setPendingId] = useState<number | null>(null);
@@ -127,114 +129,122 @@ export function ModernView({
   const editingCalcSlot = editingSlotIndex !== null ? calc.slots[editingSlotIndex] : null;
 
   return (
-    <DndContext
-      sensors={drag.sensors}
-      // 落とす先は、カーソル（指）の下の受け口で決める（既定は持ち上げた絵の外枠＝カード 1 枚分との重なりで、隣に少し掛かっただけで入れ替わる）
-      collisionDetection={pointerWithin}
-      onDragStart={drag.handleDragStart}
-      // ドラッグ中の画面端の自動スクロールは使わない（画面は、ホイールやタッチのスクロールで動かす）
-      autoScroll={false}
-      onDragEnd={drag.handleDragEnd}
-      onDragCancel={drag.handleDragCancel}
-      // ドロップの後にドラッグ元へフォーカスを戻さない（戻すと、その要素まで一覧がスクロールされることがある）
-      accessibility={{ restoreFocus: false }}
-    >
-      <div className="modern-view-container">
-        <TeamSettingsForm
-          element={team.enemy.element}
-          fixedSpec={team.fixedSpec}
-          consoleInput={team.console}
-          synchroLevel={team.synchroLevel}
-          durationSeconds={team.durationSeconds}
-          rangeJump={team.rangeJump}
-          rosterCommon={roster && commonGrowthOf(roster)}
-          dispatch={dispatch}
-        />
-
-        <DamageTotalPanel title="合計ダメージ" value={totals.total} computing={totalsPending} />
-        <PartyTabs active={parties.active} onSelect={selectParty} totals={totals.parties} />
-
-        <div className="modern-slots-area">
-          {/* 元に戻す（スロットの並びの上の端の中央。戻せる並びがあるときだけ出す）。絵はバッジ ui_return */}
-          {slotUndo.canUndo && (
-            <button
-              type="button"
-              className="modern-slot-undo-button"
-              aria-label="元に戻す"
-              title="元に戻す"
-              onClick={() => slotUndo.undo(placement)}
-            >
-              <BadgeIcon className="modern-slot-undo-icon" name={RETURN_BADGE} />
-            </button>
-          )}
-          <section ref={slotsGridRef} className="modern-slots-grid" aria-label="編成スロット一覧">
-            {team.slots.map((slot, i) => {
-              const { character } = calc.slots[i]!;
-              const characterEntry = slot.resourceId !== null ? indexMap.get(slot.resourceId) : undefined;
-
-              return (
-                <ModernSlotCard
-                  key={i}
-                  slotIndex={i}
-                  character={character}
-                  characterEntry={characterEntry}
-                  unsupportedNote={slot.resourceId === null ? null : unsupportedNote(slot.resourceId)}
-                  error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
-                  slotResult={slotResults[i] ?? null}
-                  growthMarks={slotGrowthMarks(calc, team, roster, i)}
-                  collectionBadge={slotCollectionBadge(calc, i)}
-                  controlled={team.controlledSlot === i}
-                  onPlacePending={pendingId !== null ? () => handlePlacePending(i) : undefined}
-                  onOpenBuildModal={() => setEditingSlotIndex(i)}
-                  onClear={() => clearSlot(i)}
-                  partyTotalDamage={totals.parties[parties.active]?.total ?? null}
-                />
-              );
-            })}
-          </section>
-        </div>
-
-        <CharacterTray
-          index={index}
-          takenIds={allTakenIds}
-          otherPartyIds={otherPartyIds}
-          activeParty={parties.active + 1}
-          unsupportedNote={unsupportedNote}
-          pendingId={pendingId}
-          roster={roster}
-          fixedSpec={team.fixedSpec}
-          listOrder={listOrder}
-          shape={trayShape}
-          onToggleShape={toggleTrayShape}
-          onSelectCharacter={handleSelectCharacter}
-        />
-
-        {editingSlotIndex !== null && editingCalcSlot && (
-          <SlotBuildModal
-            slotIndex={editingSlotIndex}
-            slot={team.slots[editingSlotIndex]!}
-            character={editingCalcSlot.character}
+    // 立ち絵（CharacterVisual）は、ここで渡すお気に入りのバッジを上端に出す
+    <FavoritesContext value={favorites}>
+      <DndContext
+        sensors={drag.sensors}
+        // 落とす先は、カーソル（指）の下の受け口で決める（既定は持ち上げた絵の外枠＝カード 1 枚分との重なりで、隣に少し掛かっただけで入れ替わる）
+        collisionDetection={pointerWithin}
+        onDragStart={drag.handleDragStart}
+        // ドラッグ中の画面端の自動スクロールは使わない（画面は、ホイールやタッチのスクロールで動かす）
+        autoScroll={false}
+        onDragEnd={drag.handleDragEnd}
+        onDragCancel={drag.handleDragCancel}
+        // ドロップの後にドラッグ元へフォーカスを戻さない（戻すと、その要素まで一覧がスクロールされることがある）
+        accessibility={{ restoreFocus: false }}
+      >
+        <div className="modern-view-container">
+          <TeamSettingsForm
+            element={team.enemy.element}
             fixedSpec={team.fixedSpec}
-            shown={editingCalcSlot}
-            masters={masters}
-            mastersError={mastersError}
-            usesHpRatio={editingCalcSlot.usesHpRatio}
-            rosterGrowth={rosterGrowthOf(roster, team.slots[editingSlotIndex]!.resourceId)}
+            consoleInput={team.console}
+            synchroLevel={team.synchroLevel}
+            durationSeconds={team.durationSeconds}
+            rangeJump={team.rangeJump}
+            rosterCommon={roster && commonGrowthOf(roster)}
             dispatch={dispatch}
-            onClose={() => setEditingSlotIndex(null)}
           />
-        )}
 
-        <ErrorBoundary
-          resetKeys={[shown]}
-          fallback={(e) => <p className="error">計算の結果を表示できませんでした: {e.message}</p>}
-        >
-          {shown?.computed.ok === false && <p className="error">{shown.computed.error}</p>}
-          <NotesSummary slots={summarySlots} enemyNotes={shown?.computed.ok ? shown.computed.result.enemyNotes : []} />
-        </ErrorBoundary>
+          <DamageTotalPanel title="合計ダメージ" value={totals.total} computing={totalsPending} />
+          <PartyTabs active={parties.active} onSelect={selectParty} totals={totals.parties} />
 
-        <SlotDragOverlay overlay={drag.overlay} trayShape={trayShape} />
-      </div>
-    </DndContext>
+          <div className="modern-slots-area">
+            {/* 元に戻す（スロットの並びの上の端の中央。戻せる並びがあるときだけ出す）。絵はバッジ ui_return */}
+            {slotUndo.canUndo && (
+              <button
+                type="button"
+                className="modern-slot-undo-button"
+                aria-label="元に戻す"
+                title="元に戻す"
+                onClick={() => slotUndo.undo(placement)}
+              >
+                <BadgeIcon className="modern-slot-undo-icon" name={RETURN_BADGE} />
+              </button>
+            )}
+            <section ref={slotsGridRef} className="modern-slots-grid" aria-label="編成スロット一覧">
+              {team.slots.map((slot, i) => {
+                const { character } = calc.slots[i]!;
+                const characterEntry = slot.resourceId !== null ? indexMap.get(slot.resourceId) : undefined;
+
+                return (
+                  <ModernSlotCard
+                    key={i}
+                    slotIndex={i}
+                    character={character}
+                    characterEntry={characterEntry}
+                    unsupportedNote={slot.resourceId === null ? null : unsupportedNote(slot.resourceId)}
+                    error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
+                    slotResult={slotResults[i] ?? null}
+                    growthMarks={slotGrowthMarks(calc, team, roster, i)}
+                    collectionBadge={slotCollectionBadge(calc, i)}
+                    controlled={team.controlledSlot === i}
+                    onPlacePending={pendingId !== null ? () => handlePlacePending(i) : undefined}
+                    onOpenBuildModal={() => setEditingSlotIndex(i)}
+                    onClear={() => clearSlot(i)}
+                    partyTotalDamage={totals.parties[parties.active]?.total ?? null}
+                  />
+                );
+              })}
+            </section>
+          </div>
+
+          <CharacterTray
+            index={index}
+            takenIds={allTakenIds}
+            otherPartyIds={otherPartyIds}
+            activeParty={parties.active + 1}
+            unsupportedNote={unsupportedNote}
+            pendingId={pendingId}
+            roster={roster}
+            fixedSpec={team.fixedSpec}
+            listOrder={listOrder}
+            shape={trayShape}
+            onToggleShape={toggleTrayShape}
+            onSelectCharacter={handleSelectCharacter}
+          />
+
+          {editingSlotIndex !== null && editingCalcSlot && (
+            <SlotBuildModal
+              slotIndex={editingSlotIndex}
+              slot={team.slots[editingSlotIndex]!}
+              character={editingCalcSlot.character}
+              fixedSpec={team.fixedSpec}
+              shown={editingCalcSlot}
+              masters={masters}
+              mastersError={mastersError}
+              usesHpRatio={editingCalcSlot.usesHpRatio}
+              favoriteMarks={editingResourceId === null ? [] : favoriteMarksOf(favorites, editingResourceId)}
+              onToggleFavorite={(mark) => editingResourceId !== null && toggleFavorite(editingResourceId, mark)}
+              rosterGrowth={rosterGrowthOf(roster, team.slots[editingSlotIndex]!.resourceId)}
+              dispatch={dispatch}
+              onClose={() => setEditingSlotIndex(null)}
+            />
+          )}
+
+          <ErrorBoundary
+            resetKeys={[shown]}
+            fallback={(e) => <p className="error">計算の結果を表示できませんでした: {e.message}</p>}
+          >
+            {shown?.computed.ok === false && <p className="error">{shown.computed.error}</p>}
+            <NotesSummary
+              slots={summarySlots}
+              enemyNotes={shown?.computed.ok ? shown.computed.result.enemyNotes : []}
+            />
+          </ErrorBoundary>
+
+          <SlotDragOverlay overlay={drag.overlay} trayShape={trayShape} />
+        </div>
+      </DndContext>
+    </FavoritesContext>
   );
 }

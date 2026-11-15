@@ -5,14 +5,16 @@ import { GrowthEditor, type ShownGrowth } from '../GrowthEditor.tsx';
 import { Modal } from '../Modal.tsx';
 import { RosterRevertButton } from '../RosterRevertButton.tsx';
 import { SlotOptions } from '../SlotOptions.tsx';
-import mainStar from '../../assets/badges/ui_main_star.svg';
-import mainSpade from '../../assets/badges/ui_main_spade.svg';
-import mainHeart from '../../assets/badges/ui_main_heart.svg';
-import mainDiamond from '../../assets/badges/ui_main_diamond.svg';
-import mainClub from '../../assets/badges/ui_main_club.svg';
+import { FAVORITE_MARKS, type FavoriteMark } from '../../favorites.ts';
+import { FavoriteBadge } from './FavoriteBadge.tsx';
 
-/** 見出しの横に並べるバッジ（いまは並べるだけで、押しても何も起きない） */
-const MAIN_BADGES = [mainStar, mainSpade, mainHeart, mainDiamond, mainClub];
+const FAVORITE_LABEL: Record<FavoriteMark, string> = {
+  star: 'スター',
+  spade: 'スペード',
+  heart: 'ハート',
+  diamond: 'ダイヤ',
+  club: 'クラブ',
+};
 
 type Props = {
   slotIndex: number;
@@ -24,6 +26,9 @@ type Props = {
   masters: BuildMasters | null;
   mastersError: string | null;
   usesHpRatio: boolean;
+  /** このニケの押したお気に入りのバッジ */
+  favoriteMarks: readonly FavoriteMark[];
+  onToggleFavorite: (mark: FavoriteMark) => void;
   /** 育成状況のこのニケの育成（育成状況にいなければ null）。あれば「育成状況の値に戻す」を出す */
   rosterGrowth: SlotGrowthFields | null;
   dispatch: Dispatch<TeamAction>;
@@ -39,6 +44,8 @@ export function SlotBuildModal({
   masters,
   mastersError,
   usesHpRatio,
+  favoriteMarks,
+  onToggleFavorite,
   rosterGrowth,
   dispatch,
   onClose,
@@ -52,10 +59,24 @@ export function SlotBuildModal({
       title={
         <span className="slot-build-title">
           {character.name.ja}
-          <span className="slot-build-main-badges" aria-hidden="true">
-            {MAIN_BADGES.map((src) => (
-              <img key={src} src={src} alt="" />
-            ))}
+          {/* お気に入り。押したバッジは色が付き、立ち絵の上端にも出る（FavoriteRibbons） */}
+          <span className="slot-build-favorites" role="group" aria-label="お気に入り">
+            {FAVORITE_MARKS.map((mark) => {
+              const on = favoriteMarks.includes(mark);
+              return (
+                <button
+                  key={mark}
+                  type="button"
+                  className="slot-build-favorite-button"
+                  aria-pressed={on}
+                  aria-label={`お気に入り（${FAVORITE_LABEL[mark]}）`}
+                  title={FAVORITE_LABEL[mark]}
+                  onClick={() => onToggleFavorite(mark)}
+                >
+                  <FavoriteBadge mark={mark} on={on} />
+                </button>
+              );
+            })}
           </span>
         </span>
       }

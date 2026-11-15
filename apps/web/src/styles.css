@@ -1576,20 +1576,72 @@ html:has(.modern-view-container) {
   margin: 0;
   font-size: 1.1rem;
 }
-/* モダンの育成・設定の見出し（ニケの名前と ui_main_○○ のバッジ 5 個） */
+/* モダンの育成・設定の見出し（ニケの名前と、お気に入りの ui_main_○○ のバッジ 5 個） */
 .slot-build-title {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-.slot-build-main-badges {
+.slot-build-favorites {
   display: flex;
   gap: 4px;
 }
-.slot-build-main-badges > img {
-  height: 28px;
-  /* 白い絵なので、ライトモードでは縁に影を付けて背景から浮かせる */
+.slot-build-favorite-button {
+  display: flex;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  line-height: 0;
+}
+.slot-build-favorite-button .favorite-badge {
+  width: 20px;
+}
+/* お気に入りのバッジ（FavoriteBadge.tsx）。縦横比は絵（100×140）のまま */
+.favorite-badge {
+  display: block;
+  aspect-ratio: 100 / 140;
+}
+/* 押していないバッジは白い絵なので、ライトモードでは縁に影を付けて背景から浮かせる */
+img.favorite-badge {
   filter: drop-shadow(0 0 1px light-dark(rgba(0, 0, 0, 0.7), transparent));
+}
+/* 押したバッジは、絵を型にしてバッジごとの色で塗り、左上から右下へ暗くする（元の絵の白から灰の濃淡に合わせる） */
+.favorite-badge-on {
+  --favorite-color: #f5b301;
+  background: linear-gradient(135deg, var(--favorite-color) 30%, color-mix(in srgb, var(--favorite-color) 60%, #000));
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
+}
+.favorite-badge-on[data-mark='spade'] {
+  --favorite-color: #3d7bf5;
+}
+.favorite-badge-on[data-mark='heart'] {
+  --favorite-color: #e5484d;
+}
+.favorite-badge-on[data-mark='diamond'] {
+  --favorite-color: #f07c1a;
+}
+.favorite-badge-on[data-mark='club'] {
+  --favorite-color: #2fa84f;
+}
+/* 立ち絵の上端の中央に下げるお気に入りのバッジ（FavoriteRibbons）。絵の幅に合わせて縮む */
+.char-visual-favorites {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1px;
+  pointer-events: none;
+  z-index: 1;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
+}
+.char-visual-favorites .favorite-badge {
+  width: 10px;
+}
+.char-visual-portrait .char-visual-favorites .favorite-badge {
+  width: 14px;
 }
 .modal-close-button {
   background: transparent;
