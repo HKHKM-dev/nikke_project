@@ -47,13 +47,12 @@ export function ClassicFilter({
   treasureOnly,
   setTreasureOnly,
 }: Omit<ReturnType<typeof useClassicFilter>, 'visibleIds'>) {
-  // ポップアップの中で押しているボタンの数（ボタンに添える。バースト段階は別のボタンなので数えない）
-  const count =
-    CLASSIC_FILTER_KINDS.reduce((n, kind) => n + (filters[kind.key]?.length ?? 0), 0) + (treasureOnly ? 1 : 0);
+  // ポップアップの中で押しているボタンがあるか（ボタンを青くする。バースト段階は別のボタンなので見ない）
+  const active = treasureOnly || CLASSIC_FILTER_KINDS.some((kind) => (filters[kind.key]?.length ?? 0) > 0);
   return (
     <Popover
-      button={count > 0 ? `絞り込み（${count}）` : '絞り込み'}
-      buttonClassName={`classic-list-order-button ${count > 0 ? 'classic-filter-active' : ''}`}
+      button="絞り込み"
+      buttonClassName={`classic-list-order-button ${active ? 'classic-filter-active' : ''}`}
       label="キャラの選択肢の絞り込み"
       align="left"
     >
@@ -89,7 +88,7 @@ export function ClassicFilter({
         <button
           type="button"
           className="classic-filter-clear"
-          disabled={count === 0}
+          disabled={!active}
           onClick={() => {
             // バースト段階（ポップアップの外のボタン）は残す
             setFilters(({ burstStep }) => (burstStep ? { burstStep } : {}));
