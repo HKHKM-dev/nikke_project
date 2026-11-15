@@ -38,6 +38,7 @@
     232,
     234,
     240,
+    242,
     271,
     272,
     280,
@@ -170,10 +171,6 @@
     "233": {
       "unimplemented": 1,
       "assumed": 2
-    },
-    "242": {
-      "unimplemented": 1,
-      "assumed": 1
     },
     "260": {
       "unimplemented": 1,

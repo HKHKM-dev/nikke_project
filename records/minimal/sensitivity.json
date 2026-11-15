@@ -15795,7 +15795,7 @@
     {
       "observation": "0710-10",
       "element": "アスカ burst.effects[0]",
-      "key": "f9f6310a8de7ac1d",
+      "key": "7e3083b9ee5d64c4",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15811,7 +15811,7 @@
     {
       "observation": "0710-10",
       "element": "アスカ burst.effects[2]",
-      "key": "f9f6310a8de7ac1d",
+      "key": "7e3083b9ee5d64c4",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -15819,7 +15819,7 @@
     {
       "observation": "0710-10",
       "element": "フォルクヴァン burst.effects[0]",
-      "key": "f9f6310a8de7ac1d",
+      "key": "7e3083b9ee5d64c4",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -15828,7 +15828,7 @@
     {
       "observation": "0710-11",
       "element": "アスカ burst.effects[0]",
-      "key": "3cbd89351b337b28",
+      "key": "e77c24f883d1d68d",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15844,7 +15844,7 @@
     {
       "observation": "0710-11",
       "element": "アスカ burst.effects[2]",
-      "key": "3cbd89351b337b28",
+      "key": "e77c24f883d1d68d",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -15852,7 +15852,7 @@
     {
       "observation": "0710-11",
       "element": "フォルクヴァン burst.effects[0]",
-      "key": "3cbd89351b337b28",
+      "key": "e77c24f883d1d68d",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -15861,7 +15861,7 @@
     {
       "observation": "0710-12",
       "element": "アスカ burst.effects[0]",
-      "key": "b70499c0a40c41bd",
+      "key": "26c7ab7b0ba36424",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15877,7 +15877,7 @@
     {
       "observation": "0710-12",
       "element": "アスカ burst.effects[2]",
-      "key": "b70499c0a40c41bd",
+      "key": "26c7ab7b0ba36424",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -15885,7 +15885,7 @@
     {
       "observation": "0710-12",
       "element": "フォルクヴァン burst.effects[0]",
-      "key": "b70499c0a40c41bd",
+      "key": "26c7ab7b0ba36424",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -15894,7 +15894,7 @@
     {
       "observation": "0710-13",
       "element": "アスカ burst.effects[0]",
-      "key": "968deb8ae99fb8bb",
+      "key": "1d237b39f6caea6a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15910,7 +15910,7 @@
     {
       "observation": "0710-13",
       "element": "アスカ burst.effects[2]",
-      "key": "968deb8ae99fb8bb",
+      "key": "1d237b39f6caea6a",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -15918,7 +15918,7 @@
     {
       "observation": "0710-13",
       "element": "フォルクヴァン burst.effects[0]",
-      "key": "968deb8ae99fb8bb",
+      "key": "1d237b39f6caea6a",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -15927,7 +15927,7 @@
     {
       "observation": "0710-15",
       "element": "アスカ burst.effects[0]",
-      "key": "6e04502945a1a798",
+      "key": "ef1725042c3b02fd",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15943,7 +15943,7 @@
     {
       "observation": "0710-15",
       "element": "アスカ burst.effects[2]",
-      "key": "6e04502945a1a798",
+      "key": "ef1725042c3b02fd",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -15951,7 +15951,7 @@
     {
       "observation": "0710-15",
       "element": "フォルクヴァン burst.effects[0]",
-      "key": "6e04502945a1a798",
+      "key": "ef1725042c3b02fd",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -15960,7 +15960,7 @@
     {
       "observation": "0710-17",
       "element": "アスカ burst.effects[0]",
-      "key": "33dc193254e1a0e1",
+      "key": "a70edf510c781958",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15976,7 +15976,7 @@
     {
       "observation": "0710-17",
       "element": "アスカ burst.effects[2]",
-      "key": "33dc193254e1a0e1",
+      "key": "a70edf510c781958",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -15984,7 +15984,7 @@
     {
       "observation": "0710-17",
       "element": "フォルクヴァン burst.effects[0]",
-      "key": "33dc193254e1a0e1",
+      "key": "a70edf510c781958",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -15993,7 +15993,7 @@
     {
       "observation": "0710-18",
       "element": "アスカ burst.effects[0]",
-      "key": "db28a37d447ef5fc",
+      "key": "104f55b0705c6b41",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -16009,7 +16009,7 @@
     {
       "observation": "0710-18",
       "element": "アスカ burst.effects[2]",
-      "key": "db28a37d447ef5fc",
+      "key": "104f55b0705c6b41",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -16017,7 +16017,7 @@
     {
       "observation": "0710-18",
       "element": "フォルクヴァン burst.effects[0]",
-      "key": "db28a37d447ef5fc",
+      "key": "104f55b0705c6b41",
       "effective": true,
       "minus": null,
       "plus": null,
