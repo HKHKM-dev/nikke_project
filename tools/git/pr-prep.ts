@@ -49,6 +49,7 @@ import {
   handEditedLines,
   handRemovedLines,
   checkSteps,
+  MAX_CHANGED_FILES,
   collisions,
   finishRebase,
   nulPaths,
@@ -253,9 +254,11 @@ const records = splitGenerated(
   GENERATED_PATHS,
 ).other;
 if (records.length > 0) {
-  bin('prettier', ['--write', '--ignore-unknown', '--log-level', 'warn', ...records]);
-  if (tryGit(['diff', '--quiet', '--', ...records]) !== 0) {
-    git(['add', '--', ...records]);
+  // 多いときは records/ を丸ごと渡す（コマンドラインの長さの上限を避ける。main の分は CI が整えてあるので変わらない）
+  const targets = records.length > MAX_CHANGED_FILES ? ['records'] : records;
+  bin('prettier', ['--write', '--ignore-unknown', '--log-level', 'warn', ...targets]);
+  if (tryGit(['diff', '--quiet', '--', ...targets]) !== 0) {
+    git(['add', '--', ...targets]);
     git(['commit', '--quiet', '-m', '書式']);
     console.log('ブランチで変えた records/ のファイルを prettier で整えて commit した');
   }
