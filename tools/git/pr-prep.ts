@@ -258,7 +258,7 @@ if (records.length > 0) {
   const targets = records.length > MAX_CHANGED_FILES ? ['records'] : records;
   bin('prettier', ['--write', '--ignore-unknown', '--log-level', 'warn', ...targets]);
   if (tryGit(['diff', '--quiet', '--', ...targets]) !== 0) {
-    git(['add', '--', ...targets]);
+    git(['add', '--update', '--', ...targets]);
     git(['commit', '--quiet', '-m', '書式']);
     console.log('ブランチで変えた records/ のファイルを prettier で整えて commit した');
   }
