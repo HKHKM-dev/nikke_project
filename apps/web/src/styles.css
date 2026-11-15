@@ -1042,11 +1042,12 @@ svg.settings-menu-icon {
 .badge-collection_plain.badge-variant-max {
   --badge-ground: initial;
 }
-/* ⓘ の文字・操作キャラの印・設定とアカウントのボタンの図柄（差し色）は白にする */
+/* ⓘ の文字・操作キャラの印・設定とアカウントのボタンの図柄・元に戻すの矢印（差し色）は白にする */
 .badge-ui_information,
 .badge-ui_controller,
 .badge-ui_window,
-.badge-ui_account {
+.badge-ui_account,
+.badge-ui_return {
   --badge-accent: #ffffff;
 }
 .badge-core_plain {
@@ -1555,6 +1556,13 @@ html:has(.modern-view-container) {
   z-index: 3;
 }
 /* 絞り込みのクリアの印（バッジ ui_return） */
+.char-tray-filter-clear {
+  /* ボタンの枠と地は出さない（絵だけ） */
+  padding: 0;
+  border: none;
+  background: none;
+  box-shadow: none;
+}
 .char-tray-filter-clear-icon {
   display: block;
   width: 20px;

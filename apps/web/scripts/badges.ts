@@ -147,6 +147,7 @@ export const MONOCHROME_NAMES: ReadonlySet<string> = new Set([
   'ui_controller',
   'ui_window',
   'ui_account',
+  'ui_return',
 ]);
 
 /** バッジ（拡張子なしの名前）が白黒で描くものか */
@@ -164,7 +165,12 @@ const COLOR_ATTRS = new RegExp(`(\\s)(style|${[...PAINT, ...SHADE].join('|')})="
 function roleColor(name: string, prop: string, value: string): string {
   if (SHADE.has(prop) && !SHADE_COLORS.has(value.toLowerCase()))
     throw new Error(`badges: 白黒のバッジ ${name} の ${prop} が ${value}（陰の #000000 か #ffffff にする）`);
-  if (!PAINT.has(prop) || ['none', 'currentColor'].includes(value) || value.startsWith('url(')) return value;
+  if (
+    !PAINT.has(prop) ||
+    ['none', 'currentColor', 'context-stroke', 'context-fill'].includes(value) ||
+    value.startsWith('url(')
+  )
+    return value;
   const role = COLOR_ROLES[value.toLowerCase()];
   if (!role) throw new Error(`badges: 白黒のバッジ ${name} の ${prop} の ${value} は色の役（COLOR_ROLES）に無い`);
   return `var(--badge-${role},${value})`;
