@@ -32934,6 +32934,260 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "1203-01",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "c1f45ffa30176b1f",
+      "effective": true,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1203-02",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "7250d4f20c9c27f1",
+      "effective": true,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1203-03",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "68785f8d90f5a430",
+      "effective": true,
+      "minus": 0,
+      "plus": 5
+    },
+    {
+      "observation": "1203-04",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "d9b7156b0ad25ada",
+      "effective": true,
+      "minus": 0,
+      "plus": 0.33244695584732115
+    },
+    {
+      "observation": "1203-05",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "c0103f55827fb90a",
+      "effective": true,
+      "minus": 0,
+      "plus": 0.33244695584732115
+    },
+    {
+      "observation": "1203-06",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "1ff946a4bcdb4f33",
+      "effective": true,
+      "minus": 0,
+      "plus": 17.381012822510776
+    },
+    {
+      "observation": "1203-07",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "fb3e31367d16cf63",
+      "effective": true,
+      "minus": 0,
+      "plus": 0.3746176415506586
+    },
+    {
+      "observation": "1203-08",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "7da6c7c12e45824a",
+      "effective": true,
+      "minus": 0,
+      "plus": 0.07713831959464537
+    },
+    {
+      "observation": "1203-09",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "c6d4db85b4aab38e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1203-10",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "9554e1c30319f17e",
+      "effective": true,
+      "minus": 0,
+      "plus": -0.07161412623744992
+    },
+    {
+      "observation": "1204-01",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "0a3c01fa104d3be7",
+      "effective": true,
+      "minus": 0,
+      "plus": 5
+    },
+    {
+      "observation": "1204-02",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "ce2ad0ec36036dfd",
+      "effective": true,
+      "minus": 0,
+      "plus": 0.33244695584732115
+    },
+    {
+      "observation": "1204-03",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "e0f83ec6875e6dcf",
+      "effective": true,
+      "minus": 0,
+      "plus": 15.338678064454022
+    },
+    {
+      "observation": "1205-01",
+      "element": "エレグ skill1.effects[0]",
+      "key": "1d52ca08ef32cb23",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1205-01",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "1d52ca08ef32cb23",
+      "effective": true,
+      "minus": -12,
+      "plus": null
+    },
+    {
+      "observation": "1205-02",
+      "element": "エレグ skill1.effects[0]",
+      "key": "9bb52ae598c4f4d6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1205-02",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "9bb52ae598c4f4d6",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "1205-03",
+      "element": "エレグ skill1.effects[0]",
+      "key": "5d2a5a367340169b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1205-03",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "5d2a5a367340169b",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1205-04",
+      "element": "エレグ skill1.effects[0]",
+      "key": "50fc71c79542749c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1205-04",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "50fc71c79542749c",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1205-05",
+      "element": "エレグ skill1.effects[0]",
+      "key": "ac3ba6899c114726",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1205-05",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "ac3ba6899c114726",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1205-06",
+      "element": "エレグ skill1.effects[0]",
+      "key": "c4f1b55a11404db1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1205-06",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "c4f1b55a11404db1",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1205-07",
+      "element": "エレグ skill1.effects[0]",
+      "key": "33371cfbaa0c5f04",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1205-07",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "33371cfbaa0c5f04",
+      "effective": true,
+      "minus": -0.37503906005874627,
+      "plus": 0
+    },
+    {
+      "observation": "1205-08",
+      "element": "エレグ skill1.effects[0]",
+      "key": "fbafcdc762c7a0b6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1205-08",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "fbafcdc762c7a0b6",
+      "effective": true,
+      "minus": -0.47570280388932845,
+      "plus": 0
+    },
+    {
+      "observation": "1205-09",
+      "element": "エレグ skill1.effects[0]",
+      "key": "124fe958c1505253",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1205-09",
+      "element": "ブレッディ skill1.effects[2]",
+      "key": "124fe958c1505253",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: 0 回目の倍率ダメージが無い"
     }
   ]
 }
