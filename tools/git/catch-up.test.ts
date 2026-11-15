@@ -4,10 +4,10 @@ import { execFileSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { afterEach, describe, expect, it } from 'vitest';
 
-const CATCH_UP = fileURLToPath(new URL('./catch-up.ts', import.meta.url));
+// import() は Windows の絶対パスを受けないので file: の URL で渡す
+const CATCH_UP = new URL('./catch-up.ts', import.meta.url).href;
 const dirs: string[] = [];
 afterEach(() => {
   for (const d of dirs.splice(0)) rmSync(d, { recursive: true, force: true });
@@ -19,6 +19,10 @@ const ENV = {
   GIT_AUTHOR_EMAIL: 't@t',
   GIT_COMMITTER_NAME: 't',
   GIT_COMMITTER_EMAIL: 't@t',
+  // 書いたとおりの改行で比べる（Windows の core.autocrlf を切る）
+  GIT_CONFIG_COUNT: '1',
+  GIT_CONFIG_KEY_0: 'core.autocrlf',
+  GIT_CONFIG_VALUE_0: 'false',
 };
 const git = (cwd: string, ...args: string[]) =>
   execFileSync('git', args, { cwd, env: ENV, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
@@ -63,7 +67,8 @@ function catchUp(cwd: string): string {
   ).trim();
 }
 
-describe('catchUp', () => {
+// Windows の git は遅く、1 件で既定の 5 秒を超える
+describe('catchUp', { timeout: 30_000 }, () => {
   it('rebases a clean topic branch onto origin/main and force-pushes it', () => {
     const { work } = setup();
     expect(catchUp(work)).toContain(
