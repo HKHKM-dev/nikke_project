@@ -444,7 +444,10 @@ export function gridsOf(specs: readonly GridSpec[], m: Pick<Model, 'cells' | 'hi
 /** 増分と、合った格子の名前 */
 export type LabelledRow = { frame: number; increment: number; names: string[] };
 
-/** 区切りの格子に合う増分のフレーム。前の区切りの増分から merge f 以内に続く増分は、前の区切りにまとめる（追撃の 2 ヒット目以降） */
+/**
+ * 区切りの格子に合う増分のフレーム。区切りの格子に合う直前の増分から merge f 以内に続く増分は、前の区切りにまとめる
+ * （追撃の 2 ヒット目以降。続くかぎりつなぐ）
+ */
 export function delimiterFrames(rows: readonly LabelledRow[], between: readonly string[], merge: number): number[] {
   const out: number[] = [];
   let last = -Infinity;

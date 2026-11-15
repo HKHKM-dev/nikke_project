@@ -1,12 +1,13 @@
 // レシピ hp-bars: 画面下の顔のカードの HP のバーの長さを、満タンの幅で割って、枠ごとの HP の割合を時間で読む
-// （V-0730・V-0790・V-0791・V-0797 で使い捨てのスクリプトにしていた読み方）。全フレームの測りをキャッシュし
+// （V-0730・V-0790・V-0791・V-0797 の読み方）。全フレームの測りをキャッシュし
 // （hp-bars@<版>.tsv）、割合と区間の中央値・伸び縮みは hp-bars-lib.ts で決める。
 //
 // - カードは左から 5 つの置き場所のどこかに出る。水色のバーが読める置き場所を左から編成の枠に当てる（--opt cards で指定もできる）。
 // - 割合は（白のバーの右端 − 左端）÷（水色のバーの右端 − 左端）。左端と水色の右端は録画を通した中央値で、白の右端だけを画ごとに測る
 //   （端の画素は明るさで按分。1 画素はバーの約 1.1%）。左の属性のアイコンが水色のバーの左端に重なる枠も、これで読める。
 // - 読まない画: カードが隠れた画（バーストの演出・戦闘の前後）、暗い画（戦闘の終わり。白が DIM_LEVEL より暗い）、
-//   シールドの出ている画（白の右に別の色が続き、フルバースト中などに白が短く出る）。区間の中央値と伸び縮みは、読めた測りだけで出す。
+//   シールドの出ている画（白の右に別の色が続き、フルバースト中などに白が短く出る）。HP が約 8% 以下の画も、白の明るさを測る左端の
+//   後の 5 画素に白が無いので、隠れた画と同じく読まない。区間の中央値と伸び縮みは、読めた測りだけで出す。
 import { cropFilter, rawFrames } from '../ffmpeg.ts';
 import { CARD_SLOTS } from '../card-layout.ts';
 import { derived } from './cache.ts';
@@ -40,6 +41,8 @@ async function measure(video: string): Promise<string> {
   let frame = 0;
   for await (const buf of rawFrames(args, W * H * 3)) {
     const px = (x: number, y: number): [number, number, number] => {
+      // 帯の外は暗い（連なりが帯の端を越えて次の行に回り込まない）
+      if (x < X || x >= X + W || y < Y || y >= Y + H) return [0, 0, 0];
       const i = ((y - Y) * W + (x - X)) * 3;
       return [buf[i]!, buf[i + 1]!, buf[i + 2]!];
     };
@@ -73,7 +76,11 @@ export const hpBars: Recipe = {
     const team = ctx.recording.team;
     const positions =
       ctx.options.cards === undefined ? presentPositions(rows) : ctx.options.cards.split(',').map((s) => Number(s) - 1);
-    if (positions.length !== team.length || positions.some((p) => !(p >= 0 && p < CARD_SLOTS.length)))
+    if (
+      positions.length !== team.length ||
+      new Set(positions).size !== positions.length ||
+      positions.some((p) => !(p >= 0 && p < CARD_SLOTS.length))
+    )
       throw new Error(
         `カードの置き場所（${positions.map((p) => p + 1).join('・')}）と編成の人数（${team.length}）が合わない。--opt cards で指定する`,
       );

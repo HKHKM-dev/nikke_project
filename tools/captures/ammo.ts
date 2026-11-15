@@ -155,7 +155,8 @@ function magazines(ammo: (number | null)[], maxes: number[], offset: number): Ma
     const v = ammo[i]!;
     const max = maxes[i]!;
     // マガジンの始まり: 最大の表示が出た所。録画の始めで最大が出る前に減り始めていれば、最初に表示が出た所
-    const refill = v === max && (i === 0 || ((ammo[i - 1] === null || ammo[i - 1]! < max) && maxes[i - 1] === max));
+    // （消えた後に最大で出た所は、最大がその間に替わっていてもリロード。見えたまま最大に増えた所は、最大が同じときだけ）
+    const refill = v === max && (i === 0 || ammo[i - 1] === null || (ammo[i - 1]! < max && maxes[i - 1] === max));
     if (refill || (cur === undefined && v !== null)) {
       if (cur) cur.next = i + offset;
       cur = { full: i + offset, max, stalls: [] };

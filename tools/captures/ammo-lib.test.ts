@@ -134,6 +134,10 @@ describe('decodeAmmo', () => {
     const seq = [9, 9, 8, 7, null, null, 7, 6, 0, null, null, 9, 8];
     expect(decodeAmmo(frames(seq, 9), Array(seq.length).fill(9), { charge: false })).toEqual(seq);
   });
+  it('録画の始めはマガジンの途中でもよく、消えていた間に MAX_DROP より多く減っても続く', () => {
+    const seq = [30, 29, 28, null, null, 12, 11];
+    expect(decodeAmmo(frames(seq, 60, 60), Array(seq.length).fill(60), { charge: false })).toEqual(seq);
+  });
   it('読み違えた 1 フレームの増加は、同じマガジンの中なので採らない', () => {
     const seq = [9, 8, 7, 9, 6, 5];
     const out = decodeAmmo(frames(seq, 9), Array(seq.length).fill(9), { charge: false });

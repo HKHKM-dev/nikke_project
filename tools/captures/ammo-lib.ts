@@ -313,8 +313,9 @@ export function decodeAmmo(
   };
   const back: Int16Array[] = [];
   let prev = new Float64Array(states).fill(NEG);
+  // 録画の始めはマガジンの途中でもよい（どの残弾からでも始まる）
   prev[size + maxes[0]!] = HIDDEN_SCORE;
-  prev[maxes[0]!] = emit(0, maxes[0]!);
+  for (let v = 0; v <= maxes[0]!; v++) prev[v] = emit(0, v);
   back.push(new Int16Array(states).fill(-1));
   for (let f = 1; f < n; f++) {
     const cur = new Float64Array(states).fill(NEG);
@@ -329,6 +330,13 @@ export function decodeAmmo(
     // 消えている状態の中の最もよいもの（リロードの終わり）
     let hiddenBest = size;
     for (let u = 1; u < size; u++) if (prev[size + u]! > prev[hiddenBest]!) hiddenBest = size + u;
+    // 消えていた状態から戻る先は、消える前の値 u 以下のどれでもよい（消えていた間に何発撃ったかは分からない）。
+    // v ごとの、u ≥ v の消えている状態の中の最もよいもの
+    const hiddenFrom = new Int32Array(size);
+    for (let v = limit, best = size + limit; v >= 0; v--) {
+      if (prev[size + v]! > prev[best]!) best = size + v;
+      hiddenFrom[v] = best;
+    }
     // u < v（増える）の中の最もよい前の値（charge・最大の替わり目）
     let riseBest = NEG;
     let riseFrom = -1;
@@ -336,8 +344,8 @@ export function decodeAmmo(
       for (let u = v; u <= Math.min(limit, v + MAX_DROP); u++) {
         const drop = DROP_PENALTY * Math.max(0, u - v - 1);
         take(v, u, prev[u]! - drop);
-        take(v, size + u, prev[size + u]! - HIDE_PENALTY - drop);
       }
+      take(v, hiddenFrom[v]!, prev[hiddenFrom[v]!]! - HIDE_PENALTY);
       if (maxChanged || opts.charge) {
         const pen = maxChanged ? DROP_PENALTY : RISE_PENALTY;
         if (riseFrom >= 0) take(v, riseFrom, riseBest - pen);
