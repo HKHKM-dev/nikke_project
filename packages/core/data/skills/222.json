@@ -29,8 +29,8 @@
           "target": "self",
           "ref": 5,
           "assumes": {
-            "ja": "攻撃力▲と同じ発火（通常攻撃の命中 10 回ごと。命中は期待値で数える）で、自分の現在の HP を 4.01% 下げる（HP の割合に 1 − 0.0401 を掛ける。最大HP は変えない）。HP の割合を読む S2・バーストの▲は次のフレームから読む。回復で戻る分は扱わない（紅蓮は回復を持たない）",
-            "en": "On the same trigger as the ATK up (every 10 normal-attack hits, counted as expected hits), lowers own current HP by 4.01% (the HP ratio is multiplied by 1 − 0.0401; max HP is unchanged). The S2 and burst effects that read the HP ratio see it from the next frame. HP restored by heals is not modeled (Scarlet has no heal)"
+            "ja": "攻撃力▲と同じ発火（通常攻撃の命中 10 回ごと。命中は期待値で数える）で、自分の現在の HP を 4.01% 下げる（HP の割合に 1 − 0.0401 を掛ける。最大HP は変えない）。HP の割合を読む S2・バーストの▲は次のフレームから読む。味方の回復（スキル発動者の最終最大HP の X%）で戻る（紅蓮は回復を持たない）",
+            "en": "On the same trigger as the ATK up (every 10 normal-attack hits, counted as expected hits), lowers own current HP by 4.01% (the HP ratio is multiplied by 1 − 0.0401; max HP is unchanged). The S2 and burst effects that read the HP ratio see it from the next frame. Allies' heals of X% of the caster's final max HP restore it (Scarlet has no heal)"
           },
           "claims": [
             "C-1044"
@@ -51,8 +51,8 @@
           "stat": "critDamage",
           "ref": 4,
           "assumes": {
-            "ja": "自分の HP の割合が 60% 以下に下がったフレームの次から付き、上回るまで続く。被弾の無い前提では、S1 の現在の HP▼ だけで下がり、戻らない（射撃場の的の攻撃で減る分は扱わない。plan/design-scarlet.md 2.1 節）",
-            "en": "Applied from the frame after own HP ratio falls to 60% or lower, until it rises above. With no damage taken, only S1's current HP down lowers it and it never recovers (the small loss from the shooting range target attacks is not modeled; plan/design-scarlet.md 2.1)"
+            "ja": "自分の HP の割合が 60% 以下に下がったフレームの次から付き、上回るまで続く。被弾の無い前提では、S1 の現在の HP▼ で下がり、味方の回復（スキル発動者の最終最大HP の X%）でだけ戻る（射撃場の的の攻撃で減る分は扱わない。plan/design-scarlet.md 2.1 節）",
+            "en": "Applied from the frame after own HP ratio falls to 60% or lower, until it rises above. With no damage taken, S1's current HP down lowers it and only allies' heals (X% of the caster's final max HP) raise it (the small loss from the shooting range target attacks is not modeled; plan/design-scarlet.md 2.1)"
           },
           "claims": [
             "C-1045",

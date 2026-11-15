@@ -969,7 +969,7 @@ export function isSkillFiredTrigger(t: unknown): t is SkillFiredTrigger {
 /**
  * 「両隣の味方のうち 1 機が HP X% 以下になった時」（plan/design-adjacent-allies.md 2.3 節）。発動者の左右の枠（空枠は数えない）の
  * どちらかの HP の割合が閾値（description_value_NN の X%）以下に下がったフレームに発火する（同じフレームに 2 機とも下がっても 1 回）。
- * 割合は { selfHpAtMostRef } と同じ（skills/holders/views.ts の selfHpRatioAt。回復で戻る分は扱わない）。1 パス目の件の一覧が追う。
+ * 割合は { selfHpAtMostRef } と同じ（skills/holders/views.ts の selfHpRatioAt。回復で戻る分も入れる）。1 パス目の件の一覧が追う。
  * 秒の維持の timed と状態の付与にだけ書け、最大HP▲・最大HP のみ▲ は書けない
  */
 export type AdjacentHpAtMostTrigger = { adjacentHpAtMostRef: number };
@@ -1782,7 +1782,8 @@ export type AmmoRefillEffect = TargetCountFields & {
 };
 
 /**
- * 「HP を X% 回復」。数値はダメージに関係しないので、対象に「回復を受けた」出来事（トリガー healed）を起こすだけ。
+ * 「HP を X% 回復」。対象に「回復を受けた」出来事（トリガー healed）を起こす。scaling 'casterFinalMaxHp' の回復は、対象の現在の HP を
+ * 戻して HP の割合を上げる（plan/design-hp-heal-restore.md 2.2 節）。ほかの回復は割合を変えない。
  * 回復は heal の窓が始まるはずのフレーム（射撃の回数起点なら次のフレーム）に起きる。トリガーに healed は書けない（連鎖させない）
  * V-0024: 維持時間（吸収回復などの「N 秒間維持」）を書くと、同じ効果の窓が付いている対象への付き直しでは healed を起こさず、
  * 窓を延ばすだけにする（plan/design-heal-window.md 1.1 節、C-0082）。書かなければ付くたびに healed を起こす
@@ -1809,8 +1810,13 @@ export type HealEffect = TargetCountFields &
     targetAdjacent?: true;
     /** 「自分と両隣」（targetAdjacent と組むときだけ） */
     includeSelf?: true;
-    /** 回復量（%）の description_value_NN（UI の表示用） */
+    /** 回復量（%）の description_value_NN */
     ref: number;
+    /**
+     * 「スキル発動者の最終最大HP の X% 回復」（維持の無い回復だけ）。発動者の最終最大HP（発火のフレームより前に付いた最大HP の件）× X を
+     * 対象の現在の HP に足し、HP の割合を上げる（skills/holders/views.ts の selfHpRatioAt。plan/design-hp-heal-restore.md 2.2 節）
+     */
+    scaling?: 'casterFinalMaxHp';
     /** 維持秒数の description_value_NN（任意。durationSeconds と両方は書けない） */
     durationRef?: number;
     durationSeconds?: number;
@@ -1873,7 +1879,7 @@ export type AmmoDecreaseEffect = TargetCountFields & {
 /**
  * 「現在のHP X%▼」（plan/design-scarlet.md 2.1 節）。発火のたびに、自分の現在の HP を X% 下げる（HP の割合に (1 − X) を掛ける。
  * 最大HP は変えない。即時効果）。自分の HP の割合を読む効果（きっかけ { selfHpAtMostRef }・条件 selfHp の atMost）が、発火の次のフレーム
- * から読む（skills/holders/views.ts の selfHpRatioAt）。回復で戻る分は扱わない。対象は自分だけ。
+ * から読む（skills/holders/views.ts の selfHpRatioAt）。回復（heal の scaling 'casterFinalMaxHp'）で戻る。対象は自分だけ。
  * 「1 秒間隔」は、状態の付いた時から数える周期 { everySeconds, since } で書く
  * （付いたフレームにも起きるなら atStart。plan/design-hp-down-interval.md 2.1 節。V-0729）
  */

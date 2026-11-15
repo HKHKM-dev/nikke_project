@@ -309,7 +309,79 @@ export function createViews({
     const i = lowerBound(downs.frames, frame);
     return i === 0 ? 1 : downs.products[i - 1]!;
   };
+  /**
+   * 枠ごとの、量で追う回復（heal の scaling 'casterFinalMaxHp'）の記録（付くフレームの昇順）と、回復で足した HP の余り E の記録
+   * （plan/design-hp-heal-restore.md 2.1 節。値はその枠のバフ前の最大HP を 1 とする）。E は回復を受けた枠だけ、フレームの昇順に進める
+   */
+  type HpRestore = { frame: number; fireFrame: number; sourceSlotIndex: number; value: number };
+  const restores = slots.map(() => [] as HpRestore[]);
+  const surplus = slots.map(() => ({ upTo: -1, values: null as Float64Array | null }));
+  /**
+   * 枠 holder に、フレーム fireFrame に発火した量で追う回復（発動者 sourceSlotIndex・割合 value）がフレーム frame に付く。
+   * E には frame の次のフレームから効く
+   */
+  const restoreHp = (sourceSlotIndex: number, holder: number, frame: number, fireFrame: number, value: number): void => {
+    const list = restores[holder];
+    if (list === undefined) throw new RangeError(`restoreHp: no slot ${holder}`);
+    if (frame >= frames) return;
+    if (frame <= surplus[holder]!.upTo - 1)
+      throw new RangeError(`restoreHp: frame ${frame} is before the advanced frame of slot ${holder}`);
+    const i = list.findLastIndex((r) => r.frame <= frame) + 1;
+    list.splice(i, 0, { frame, fireFrame, sourceSlotIndex, value });
+  };
+  /** 回復量（対象 holder のバフ前の最大HP を 1 とする値）。発動者の最終最大HP は、発火のフレームより前に付いた最大HP の件で求める */
+  const restoreAmountOf = (r: HpRestore, holder: number): number => {
+    const caster = slots[r.sourceSlotIndex]?.casterMaxHp;
+    const own = slots[holder]?.casterMaxHp;
+    if (caster === undefined || own === undefined)
+      throw new RangeError(`slot ${holder}: a heal by casterFinalMaxHp needs the base max HP of the caster and the target`);
+    return (caster * (1 + maxHpUpAt(r.sourceSlotIndex, r.fireFrame, true).up) * r.value) / own;
+  };
+  /** 回復を除いた現在の HP（S）と最大HP（M）。どちらも枠のバフ前の最大HP を 1 とする（plan/design-skill-stage6.md 2.4 節の式） */
+  const hpBaseAt = (slotIndex: number, frame: number): { current: number; max: number; cap: number } => {
+    const r0 = slots[slotIndex]?.hpRatio ?? 1;
+    const { up, only } = maxHpUpAt(slotIndex, frame, true);
+    return { current: r0 * hpDownProductBefore(slotIndex, frame) * (1 + up - only), max: 1 + up, cap: r0 * (1 + up) };
+  };
+  /**
+   * 枠のフレーム frame の余り E。f − 1 から f へ: f − 1 の現在の HP▼ を E にも掛け、f − 1 に付いた回復の量を足し、現在の HP が上限
+   * （想定の割合 × 最大HP。plan/design-hp-heal-restore.md 2.4 節）を超えないように削る。frame より前に付いた回復・件・現在の HP▼ だけを
+   * 読むので、1 パス目ではフレーム f の登録の始めに f まで進めてよい
+   */
+  const surplusAt = (slotIndex: number, frame: number): number => {
+    const list = restores[slotIndex]!;
+    if (list.length === 0 || frame <= list[0]!.frame) return 0;
+    const memo = surplus[slotIndex]!;
+    memo.values ??= new Float64Array(Math.max(frames, 1) + 1);
+    const values = memo.values;
+    if (frame <= memo.upTo) return values[frame]!;
+    let g = memo.upTo < 0 ? list[0]!.frame + 1 : memo.upTo + 1;
+    let e = memo.upTo < 0 ? 0 : values[memo.upTo]!;
+    let next = list.findIndex((r) => r.frame >= g - 1);
+    if (next < 0) next = list.length;
+    for (; g <= frame; g++) {
+      if (e > 0) {
+        const before = hpDownProductBefore(slotIndex, g - 1);
+        if (before > 0) e *= hpDownProductBefore(slotIndex, g) / before;
+      }
+      const base = hpBaseAt(slotIndex, g);
+      const room = base.cap - base.current;
+      for (; next < list.length && list[next]!.frame === g - 1; next++)
+        if (room > HP_RATIO_EPS) e += restoreAmountOf(list[next]!, slotIndex);
+      e = Math.max(0, Math.min(e, room));
+      values[g] = e;
+    }
+    memo.upTo = frame;
+    return e;
+  };
   const selfHpRatioAt = (slotIndex: number, frame: number): number => {
+    if (restores[slotIndex]!.length > 0) {
+      const e = surplusAt(slotIndex, frame);
+      if (e > 0) {
+        const { current, max } = hpBaseAt(slotIndex, frame);
+        return (current + e) / max;
+      }
+    }
     const ratio = (slots[slotIndex]?.hpRatio ?? 1) * hpDownProductBefore(slotIndex, frame);
     if (!maxHpOnlyMoves[slotIndex]) return ratio;
     const { up, only } = maxHpUpAt(slotIndex, frame, true);
@@ -320,7 +392,7 @@ export function createViews({
    * HP▼ も無い枠は割合が動かないので 1 段。ループの後に呼ぶ
    */
   const hpRatioStepsOf = (slotIndex: number): HpRatioSteps => {
-    if (!maxHpOnlyMoves[slotIndex] && hpDowns[slotIndex]!.frames.length === 0)
+    if (!maxHpOnlyMoves[slotIndex] && hpDowns[slotIndex]!.frames.length === 0 && restores[slotIndex]!.length === 0)
       return { frames: [0], ratios: [selfHpRatioAt(slotIndex, 0)] };
     const steps = { frames: [] as number[], ratios: [] as number[] };
     for (let f = 0; f < Math.max(frames, 1); f++) {
@@ -419,6 +491,7 @@ export function createViews({
     pelletCountViews,
     rankContext,
     rankSlots,
+    restoreHp,
     selfHpAtMostAt,
     selfHpAtMostHolds,
     selfHpRatioAt,

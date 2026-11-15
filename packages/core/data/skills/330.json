@@ -54,6 +54,7 @@
           },
           "target": "self",
           "ref": 6,
+          "scaling": "casterFinalMaxHp",
           "assumes": {
             "ja": "編成の外（定義の無いヒーラーなど）からの回復は数えない。HP が満タンでも回復は適用されたとみなす",
             "en": "Healing from outside the modeled skills (e.g. undefined healers) is not counted; a heal at full HP still counts as applied"

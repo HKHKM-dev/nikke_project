@@ -16,8 +16,8 @@
           "ref": 3,
           "durationRef": 4,
           "assumes": {
-            "ja": "自分の HP の割合は、枠の想定の割合を最大HP▲・最大HP のみ▲ で下げた値。被弾の無い前提では、S2・バーストの最大HP のみ▲ で 90% 以下に下がった時に付く（下がったまま、さらに下がっても付き直さない。plan/design-ade.md 2.1 節）",
-            "en": "Own HP ratio is the slot's assumed ratio lowered by max HP up and max-HP-only up. With no damage taken, it fires when the S2 or burst max-HP-only up lowers it to 90% or below (not again while it stays at or below 90%, even if it falls further; plan/design-ade.md 2.1)"
+            "ja": "自分の HP の割合は、枠の想定の割合を最大HP▲・最大HP のみ▲ で下げた値。被弾の無い前提では、S2・バーストの最大HP のみ▲ で 90% 以下に下がった時に付く（下がったまま、さらに下がっても付き直さない。plan/design-ade.md 2.1 節）。回復（スキル発動者の最終最大HP の X%）で 90% を上回った後に、また 90% 以下に下がれば付き直す（確かめていない）",
+            "en": "Own HP ratio is the slot's assumed ratio lowered by max HP up and max-HP-only up. With no damage taken, it fires when the S2 or burst max-HP-only up lowers it to 90% or below (not again while it stays at or below 90%, even if it falls further; plan/design-ade.md 2.1). After a heal (X% of the caster's final max HP) lifts it above 90%, it fires again when the ratio falls to 90% or below again (unverified)"
           },
           "claims": [
             "C-1025"
@@ -34,17 +34,6 @@
             "kind": "state",
             "target": "allies",
             "trigger": "battleStart"
-          }
-        },
-        {
-          "ja": "回復で現在の HP が戻って HP の割合が 90% を上回る分（最大HP のみ▲ の間に回復を受けた時）は扱わない（HP の割合は最大HP▲・最大HP のみ▲ だけで下げる）",
-          "en": "The HP ratio rising above 90% because a heal restores current HP (a heal received during max-HP-only up) is not modeled (the ratio is lowered only by max HP up and max-HP-only up)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "allies",
-            "trigger": "unknown"
           }
         }
       ]

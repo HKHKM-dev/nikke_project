@@ -105,9 +105,10 @@
           "trigger": "burstUse",
           "target": "allies",
           "ref": 1,
+          "scaling": "casterFinalMaxHp",
           "assumes": {
-            "ja": "味方全体の回復。回復量はダメージに関係せず、受けた味方の「回復効果が適用された時」を起こす",
-            "en": "Heal on all allies. The amount does not affect damage; it triggers \"when healed\" on the allies that receive it"
+            "ja": "味方全体の回復。受けた味方の「回復効果が適用された時」を起こす。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く（与えるHP回復量▲・受けるHP回復量▲は掛けない。plan/design-hp-heal-restore.md 2.2 節）",
+            "en": "Heal on all allies. It triggers \"when healed\" on the allies that receive it. The healed amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs (Outgoing/Incoming Healing ups are not applied; plan/design-hp-heal-restore.md 2.2)"
           },
           "claims": [
             "C-1236"

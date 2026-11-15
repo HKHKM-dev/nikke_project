@@ -106,6 +106,8 @@ const INSTANT_KIND_KEYS: Record<InstantKind, readonly string[]> = {
     // 「両隣の味方」と「自分と」（plan/design-adjacent-allies.md 2.1 節）
     'targetAdjacent',
     'includeSelf',
+    // 「スキル発動者の最終最大HP の X% 回復」（plan/design-hp-heal-restore.md 2.2 節）
+    'scaling',
   ],
   burstGauge: [],
   ammoDecrease: [],
@@ -232,7 +234,14 @@ function parseInstantTarget(
 /** 種類ごとの欄（書ける種類は INSTANT_KIND_KEYS で限ってある）: 維持・弾丸チャージの発数・遅れ・発火の条件・CT▲・発火の回数の上限 */
 function parseInstantKindFields(v: Record<string, Json>, effect: InstantEffect, path: string): void {
   if (v.durationRef !== undefined || v.durationSeconds !== undefined) Object.assign(effect, parseDuration(v, path));
-  if (v.scaling !== undefined) {
+  if (v.scaling !== undefined && effect.kind === 'heal') {
+    // 量で追う回復は維持の無い 1 回の回復だけ（持続回復・吸収回復は割合を戻さない。plan/design-hp-heal-restore.md 2.5 節）
+    if (v.scaling !== 'casterFinalMaxHp')
+      fail(`${path}.scaling`, `heal only takes "casterFinalMaxHp", got ${JSON.stringify(v.scaling)}`);
+    if (v.durationRef !== undefined || v.durationSeconds !== undefined)
+      fail(`${path}.scaling`, 'a heal with a duration cannot take scaling "casterFinalMaxHp"');
+    (effect as HealEffect).scaling = 'casterFinalMaxHp';
+  } else if (v.scaling !== undefined) {
     if (v.scaling !== 'flat') fail(`${path}.scaling`, `ammoRefill only takes "flat", got ${JSON.stringify(v.scaling)}`);
     (effect as AmmoRefillEffect).scaling = 'flat';
   }

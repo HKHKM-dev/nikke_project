@@ -1,6 +1,6 @@
 // HP の割合を時間で読む編（plan/design-hp-ratio-readers.md）: 常時の条件 selfHp（ミルクの S2・ノワールの S1）と、回復の対象
-// lowestHpRatio（ミサトの S1）が、最大HP のみ▲（エード・マスト）で下がった HP の割合を時間で読むか。割合の動かない編成は、いままでどおり
-// 編成の段で決める（常時の件のまま）
+// lowestHpRatio（ミサトの S1）が、最大HP のみ▲（エード・マスト）で下がり、回復で戻る HP の割合（plan/design-hp-heal-restore.md）を
+// 時間で読むか。割合の動かない編成は、編成の段で決める（常時の件のまま）
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
@@ -110,13 +110,22 @@ describe('マストの最大HP のみ▲ と、ミサトの S1 の回復（lowes
       (f) => lowered.some((w) => w.start < f && f < w.end) === inside,
     );
 
-  it('heals the youngest attacker (51.1%, below Mast at 53.7%) inside her burst max-HP-only up, and Misato (full, youngest) outside', () => {
+  it('heals the youngest attacker (51.1%, below Mast at 53.7%) first inside her burst max-HP-only up, and Misato (full, youngest) outside', () => {
     expect(lowered.length).toBeGreaterThan(0);
     const inside = heals.filter((h) => clear(h.frame, true));
     const outside = heals.filter((h) => clear(h.frame, false));
     expect(inside.length).toBeGreaterThan(0);
     expect(outside.length).toBeGreaterThan(0);
-    for (const h of inside) expect(h.slotIndex).toBe(2);
+    // 窓の中の n 回目の回復: 1 回目は 3 枠目（51.09%）。回復で 3 枠目の割合が戻る（plan/design-hp-heal-restore.md 2.3 節）ので、
+    // 2 回目は同じ割合の 4 枠目（V-0730 の録画 1089 の f5115 の窓）
+    const nth = new Map<number, number>();
+    for (const h of inside) {
+      const w = lowered.findIndex((x) => x.start < h.frame && h.frame < x.end + 8);
+      const n = nth.get(w) ?? 0;
+      nth.set(w, n + 1);
+      if (n < 2) expect(h.slotIndex).toBe([2, 3][n]);
+    }
+    expect([...nth.values()].some((n) => n >= 2)).toBe(true);
     for (const h of outside) expect(h.slotIndex).toBe(0);
   });
 });

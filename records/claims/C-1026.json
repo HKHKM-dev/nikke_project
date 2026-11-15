@@ -12,13 +12,5 @@
     "places": ["data/skills/310.json の skill2 の effects[0]", "data/skills/310.json の burst の effects[0]"]
   },
   "decidedOn": [],
-  "parameterFree": "HP の割合の式は plan/design-skill-stage6.md 2.4 節（論点 8 の決定）、最大HP のみ 15.62%・25.15%・維持 5 秒・10 秒・120 発・閾値 90% は説明文の Lv10 の値",
-  "minimal": [
-    {
-      "observations": ["1017-03", "1017-04", "1018-03", "1018-04", "1019-06", "1020-06"],
-      "element": "エード skill1.notes[1]",
-      "reason": "回復で現在の HP が戻る分の未対応の notes。編成（エード単騎・I-DOLL・フラワー + エード）に HP の回復が無いので起きない",
-      "decided": "2026-11-10"
-    }
-  ]
+  "parameterFree": "HP の割合の式は plan/design-skill-stage6.md 2.4 節（論点 8 の決定）、最大HP のみ 15.62%・25.15%・維持 5 秒・10 秒・120 発・閾値 90% は説明文の Lv10 の値"
 }

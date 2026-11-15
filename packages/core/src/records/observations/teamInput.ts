@@ -8,6 +8,7 @@ import {
   computeFixedSpecHp,
   fixedSpecGrowth,
 } from '../../fixedSpec.ts';
+import { hpRatioMovesOf } from '../../skills/composition.ts';
 import { MAX_SKILL_LEVELS } from '../../skills/resolve.ts';
 import type { TreasurePhase } from '../../skills/treasure.ts';
 import { SKILL_SLOTS, type SkillDefinition, type SkillEntry, statContentsOf } from '../../skills/types.ts';
@@ -52,14 +53,17 @@ function buildInputOf(build: RecordingBuild): BuildInput {
   return out;
 }
 
-/** 定義に発動者の最終最大HP を読む効果（scaling casterFinalMaxHp。状態の中身も）があるか。宝物版の定義も見る */
-function readsCasterMaxHp(definition: SkillDefinition | null): boolean {
+/**
+ * 定義に発動者の最終最大HP を読む効果（scaling casterFinalMaxHp。状態の中身も）があるか。宝物版の定義も見る。量で追う回復は、
+ * HP の割合が動きうる編成（teamHpMoves）でだけ数える（割合の下がった枠に当たる時だけ量を読む。plan/design-hp-heal-restore.md 2.2 節）
+ */
+function readsCasterMaxHp(definition: SkillDefinition | null, teamHpMoves: boolean): boolean {
   if (definition === null) return false;
   const entries = [...Object.values(definition.skills), ...Object.values(definition.treasureSkills ?? {})];
   return entries.some((entry) =>
     entry.effects.some(
       (e) =>
-        ('scaling' in e && e.scaling === 'casterFinalMaxHp') ||
+        ('scaling' in e && e.scaling === 'casterFinalMaxHp' && (e.kind !== 'heal' || teamHpMoves)) ||
         (e.kind === 'state' && statContentsOf(e.contents).some((c) => c.scaling === 'casterFinalMaxHp')),
     ),
   );
@@ -153,6 +157,9 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     hitRate: setup.hitRate ?? 1,
   };
   // 枠は台帳の slot の位置に置き、空枠は null にする（両隣・後列は TeamInput.slots の添字で決まる。plan/design-rouge.md 2.1 節）
+  const teamHpMoves = hpRatioMovesOf(
+    teamBySlot(recording).map((member) => (member === null ? null : data.skills.get(member.rid))),
+  ).some(Boolean);
   const slots: (TeamSlotInput | null)[] = teamBySlot(recording).map((member) => {
     if (member === null) return null;
     const base = data.characters.get(member.rid);
@@ -176,7 +183,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     const build = fixedSpec ? undefined : member.build!;
     // 台帳の育成には最大HP が無いので、最終最大HP を読む効果のある枠は
     // スペック固定 OFF の録画では比べない（黙って育成値だけの HP にしない。plan/design-skill-stage6.md 1.1 節）
-    if (build !== undefined && readsCasterMaxHp(definition))
+    if (build !== undefined && readsCasterMaxHp(definition, teamHpMoves))
       throw new Error(
         `rid ${member.rid}: スペック固定 OFF の録画で最終最大HP を読む効果のある枠は未対応（台帳に最大HP が無い）`,
       );

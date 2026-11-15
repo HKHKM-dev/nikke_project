@@ -58,6 +58,7 @@
           "kind": "heal",
           "target": "allies",
           "ref": 2,
+          "scaling": "casterFinalMaxHp",
           "trigger": {
             "everySeconds": 3
           },

@@ -203,7 +203,7 @@ export function createFrameEvents({
       const context = lists.rankContext(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev), f);
       for (const target of targetsAt(src.effect, src.sourceSlotIndex, context)) {
         const at = healFrameOf(src.effect, f, src.sourceSlotIndex, target);
-        if (at < frames && !lists.applyHeal(src.effect, src.sourceSlotIndex, target, at)) continue;
+        if (at < frames && !lists.applyHeal(src.effect, src.sourceSlotIndex, target, at, f)) continue;
         if (at === f) {
           healed[target] = true;
           healedDirty = true;

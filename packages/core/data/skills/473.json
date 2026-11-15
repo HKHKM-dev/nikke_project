@@ -12,6 +12,7 @@
           },
           "target": "allies",
           "ref": 1,
+          "scaling": "casterFinalMaxHp",
           "claims": [
             "C-0913"
           ]

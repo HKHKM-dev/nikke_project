@@ -113,8 +113,8 @@
             "C-1101"
           ],
           "assumes": {
-            "ja": "回復で現在の HP が戻る分は扱わない（A2 は回復を持たない。味方の回復で 40% より上に戻った時に B モードがまた付くかは確かめていない）",
-            "en": "HP restored by heals is not modeled (A2 has no heal; whether Mode B can be applied again after an ally heals her above 40% is unverified)"
+            "ja": "味方の回復（スキル発動者の最終最大HP の X%）で現在の HP が戻る（A2 は回復を持たない。40% より上に戻った時に B モードがまた付くかは確かめていない）",
+            "en": "Allies' heals of X% of the caster's final max HP restore current HP (A2 has no heal; whether Mode B can be applied again after being healed above 40% is unverified)"
           }
         }
       ],
