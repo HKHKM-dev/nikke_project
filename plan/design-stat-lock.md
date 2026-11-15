@@ -2,7 +2,7 @@
 
 - 手順: [skills-guide.md](skills-guide.md)（1.2 説明文を分解する → 1.3 設計書 → 1.4 実装する）
 - 関連: [design-nayuta.md](design-nayuta.md) 2.5 節（スタックの増減効果の無効 `stackImmutable`）、[design-anis-star-s2-burst.md](design-anis-star-s2-burst.md) 2.3 節（チャージ時間の固定 `fixedChargeTime`）、[design-skill-stage13-inventory.md](design-skill-stage13-inventory.md) 0.1・0.2 節、[design-new-chars-1029.md](design-new-chars-1029.md) 論点 F、[design-asuka-wille.md](design-asuka-wille.md) 2.5 節、[design-skill-stage21.md](design-skill-stage21.md) 4 節の 8、[design-skill-stage20.md](design-skill-stage20.md) 2.3 節（ジルの固定）、[design-holder-effects-current.md](design-holder-effects-current.md)（件と持ち主）、[design-target-vocab.md](design-target-vocab.md)（順位の対象）
-- 検証: 承認の後に起案する（5 節の撮影）
+- 検証: V-0800
 - 作成日: 2026-11-15
 - 状態: 実装中（撮影待ち）
 
@@ -132,6 +132,8 @@
 
 ### 5.2 撮影（最小構成の案）
 
+- 撮影は V-0800（編成・混ざる要素・予測・撮影の依頼はそちら）。
+
 - どれも、前に撮った編成の 1 体を、▲を付ける機構の確定したキャラに替える形にする。替えた 1 体のほかは前の録画と同じなので、窓の中の値を前の録画と並べて比べられる。替えるクラウン（II）・ユニ（II）は機構が確定したキャラ（ダメージに効く効果の根拠がすべて確定で、残る notes は間接だけ）。
 - どの問いもフルバーストごとに起きる（型 A）ので、1 本で決めて後の回で再現する。
 
@@ -197,4 +199,4 @@
 ## 経過
 
 - 2026-11-15: 起案。対象の 5 行と、効く編成（2 節）を洗い出した。論点 1〜7 をオーナーに諮る。
-- 2026-11-15: オーナーが論点 1〜7 を推奨どおりに決めた。
+- 2026-11-15: オーナーが論点 1〜7 を推奨どおりに決めた。語彙 `lock` と 4 体の定義を実装し、撮影計画（V-0800）を書いた。画面には効果ごとの一覧が無いので、表示は分類（`catalogDoc.ts`）だけを直した。
