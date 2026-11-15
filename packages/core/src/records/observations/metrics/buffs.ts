@@ -363,6 +363,11 @@ function stateStacksAt(result: SimResult, slotIndex: number, state: string, fram
  * 発動の直前の画面のカウンタの表示（火力ゲージ）と比べる
  */
 function counterAtBursts(result: SimResult, ctx: MetricContext): number[] {
+  return counterAroundBursts(result, ctx, false);
+}
+
+/** 発動ごとの、効果の発火のフレームの前（after なら、そのフレームの増減を足した後）のカウンタの値 */
+function counterAroundBursts(result: SimResult, ctx: MetricContext, after: boolean): number[] {
   if (result.schedule === null) throw new Error('バーストの時刻表が無い');
   const slotIndex = slotIndexOf(ctx);
   const counter = String(ctx.args.counter);
@@ -371,7 +376,7 @@ function counterAtBursts(result: SimResult, ctx: MetricContext): number[] {
     .filter((a) => a.slotIndex === slotIndex)
     .map((a) => {
       const at = effectFrameOf(a);
-      return records.filter((c) => c.frame < at).at(-1)?.value ?? 0;
+      return records.filter((c) => (after ? c.frame <= at : c.frame < at)).at(-1)?.value ?? 0;
     });
   return firstCount(values, ctx, 'バーストの発動');
 }
@@ -381,17 +386,7 @@ function counterAtBursts(result: SimResult, ctx: MetricContext): number[] {
  * 「N▼」「最低 1 を維持」）。count を書くと最初の count 回。録画では、発動の直後の画面のカウンタの表示と比べる
  */
 function counterAfterBursts(result: SimResult, ctx: MetricContext): number[] {
-  if (result.schedule === null) throw new Error('バーストの時刻表が無い');
-  const slotIndex = slotIndexOf(ctx);
-  const counter = String(ctx.args.counter);
-  const records = result.history.counters.filter((c) => c.slotIndex === slotIndex && c.counter === counter);
-  const values = result.schedule.activations
-    .filter((a) => a.slotIndex === slotIndex)
-    .map((a) => {
-      const at = effectFrameOf(a);
-      return records.filter((c) => c.frame <= at).at(-1)?.value ?? 0;
-    });
-  return firstCount(values, ctx, 'バーストの発動');
+  return counterAroundBursts(result, ctx, true);
 }
 
 /**

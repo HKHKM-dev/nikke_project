@@ -75,7 +75,7 @@ import {
 } from '../skills/buffs.ts';
 import type { CounterId } from '../skills/counters.ts';
 import { stateMatches, statesMatching, type NamedStateId } from '../skills/states.ts';
-import { everyAtOf, type ShotCountEveryAt } from '../skills/triggers.ts';
+import { earliestHeldStart, everyAtOf, type ShotCountEveryAt } from '../skills/triggers.ts';
 import {
   isCounterFullTrigger,
   isEndedTrigger,
@@ -717,19 +717,15 @@ function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
   const { cooldownTimerFires } = ctx;
   const { slot, slotIndex, definition, levels, sequential, selfStackCount, ownCounters, self, push, everyWindows } = s;
   const { ownStateItems } = s;
-  // 自分の状態の窓で数える回数の窓（件の一覧の stateWindowFires と同じ見え方）
+  // 自分の状態の窓で数える回数の窓（件の一覧の stateWindowFires と同じ見え方）。状態ごとの件は 1 回だけ絞る
+  const ownItemsByState = new Map<NamedStateId, HeldItemView[]>();
   const ownStartOfHeld = (state: NamedStateId, frame: number, maxStart: number): number | undefined => {
-    let start: number | undefined;
-    for (const i of ownStateItems)
-      if (
-        i.origin.kind === 'state' &&
-        i.origin.state === state &&
-        i.start <= maxStart &&
-        frame < i.end &&
-        (start === undefined || i.start < start)
-      )
-        start = i.start;
-    return start;
+    let items = ownItemsByState.get(state);
+    if (items === undefined) {
+      items = ownStateItems.filter((i) => i.origin.kind === 'state' && i.origin.state === state);
+      ownItemsByState.set(state, items);
+    }
+    return earliestHeldStart(items, frame, maxStart);
   };
   // 自分の発動（perBurstHit の damage が、発火のフレームからヒットのフレームの列を引く）
   const mine = (schedule?.activations ?? []).filter((a) => a.slotIndex === slotIndex);

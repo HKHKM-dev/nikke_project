@@ -111,6 +111,25 @@ export function shotCountWeight(kind: ShotCountKind, shot: ShotEvent): number {
 /** 枠のその状態の件のうち、maxStart までに始まり frame にまだ続く件の始まりの最小（無ければ undefined） */
 export type HeldStartOf = (state: NamedStateId, frame: number, maxStart: number) => number | undefined;
 
+/** 件の列のうち、maxStart までに始まり frame にまだ続く件の始まりの最小（無ければ undefined。HeldStartOf の中身） */
+export function earliestHeldStart(
+  items: Iterable<{ start: number; end: number }>,
+  frame: number,
+  maxStart: number,
+): number | undefined {
+  let start: number | undefined;
+  for (const it of items)
+    if (it.start <= maxStart && frame < it.end && (start === undefined || it.start < start)) start = it.start;
+  return start;
+}
+
+/** 1 フレームの、自分を含む編成の全員の発の回数の量の和（teamAmmo・teamHit） */
+export function teamShotWeight(kind: ShotCountKind, shots: readonly (ShotEvent | null)[]): number {
+  let sum = 0;
+  for (const x of shots) if (x) sum += shotCountWeight(kind, x);
+  return sum;
+}
+
 /**
  * 自分の状態の間だけ数える回数のきっかけ（during: { state }。plan/design-grave.md 2.4 節。V-0735）。その状態の件が効いていて、
  * 効果の条件（付与の condition。「完全計算かつ過熱I 状態の時に限り」の過熱I。その発で付いた分も入れる）を満たす発だけを数え、件が新しく
@@ -133,7 +152,8 @@ export function createStateWindowTracker(
   let from: number | undefined;
   return (ev) => {
     const shot = ev.shots[slotIndex];
-    if (team ? !ev.shots.some((x) => x) : !shot) return false;
+    const weight = team ? teamShotWeight('teamHit', ev.shots) : shot ? shotCountWeight(trigger.count, shot) : 0;
+    if (weight <= 0) return false;
     // 窓は前のフレームまでに付いた件で見る（同じフレームに付いた件が見えるかを、件の登録の中で読む付与と、登録の後に読む弾丸チャージ
     // でそろえる。plan/design-fortune-mate.md 2.2 節）
     const start = startOfHeld(state, ev.frame, ev.frame - 1);
@@ -146,9 +166,6 @@ export function createStateWindowTracker(
     // 過熱II の回数に、過熱II を付けた発も過熱III の回数に数える）。条件は自分の状態があるかだけ（skills/parse/state.ts）で、段 1.5 の件も
     // そのフレームに付いた件を見る
     if (conditionState !== undefined && startOfHeld(conditionState, ev.frame, ev.frame + 1) === undefined) return false;
-    const weight = team
-      ? ev.shots.reduce((sum, x) => sum + (x ? shotCountWeight('teamHit', x) : 0), 0)
-      : shotCountWeight(trigger.count, shot!);
     const next = advanceShotCount(count, weight, trigger.every);
     count = next.count;
     return next.fired;
@@ -324,7 +341,7 @@ export function createTriggerTracker(
       // 1 フレームの量（同じフレームに撃った枠の数）が N を超えても、N の倍数を越えたら 1 回だけ発火する。自分の発の回数の間隔の変更
       // （everyAt）は読まない（味方の発も数えるので、N は説明文の値のまま）
       if (t.count === 'teamAmmo') {
-        const weight = ev.shots.reduce((sum, x) => sum + (x ? shotCountWeight('teamAmmo', x) : 0), 0);
+        const weight = teamShotWeight('teamAmmo', ev.shots);
         const every = t.every;
         const fired = Math.floor((count + weight) / every) > Math.floor(count / every);
         count += weight;

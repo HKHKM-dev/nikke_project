@@ -317,17 +317,16 @@ function validateOwnStateTriggers(entries: Partial<Record<SkillSlot, SkillEntry>
       // plan/design-asuka-wille.md 2.1 節）
       if (e.kind !== 'counterChange' && 'trigger' in e && isEndedTrigger(e.trigger))
         needGrant(e.trigger.ended, `${at}.trigger`, e.kind);
-      // 自分の状態の窓で数える回数（カウンタの増減・倍率ダメージ・解除。plan/design-elegg-bs.md 2.2 節）
-      if (e.kind === 'counterChange' || e.kind === 'damage' || e.kind === 'removeState') {
-        const t = e.trigger;
-        if (isShotCountTrigger(t) && isStateCountWindow(t.during))
-          needGrant(t.during.state, `${at}.trigger.during`, e.kind);
-      }
-      // 自分の状態の窓で数える回数・ほかの状態の終わりまでの維持（plan/design-grave.md 2.4・2.5 節）
+      // 自分の状態の窓で数える回数（窓を書ける種類はパーサが絞る。plan/design-grave.md 2.4 節・plan/design-elegg-bs.md 2.2 節）
+      if (
+        e.kind !== 'ammoDecrease' &&
+        'trigger' in e &&
+        isShotCountTrigger(e.trigger) &&
+        isStateCountWindow(e.trigger.during)
+      )
+        needGrant(e.trigger.during.state, `${at}.trigger.during`, e.kind);
+      // ほかの状態の終わりまでの維持（plan/design-grave.md 2.5 節）
       if (e.kind === 'ammoDecrease' || e.kind === 'state' || e.kind === 'ammoRefill') {
-        const t = e.trigger;
-        if (e.kind !== 'ammoDecrease' && isShotCountTrigger(t) && isStateCountWindow(t.during))
-          needGrant(t.during.state, `${at}.trigger.during`, e.kind);
         const until = e.kind === 'state' ? e.durationUntil : undefined;
         if (isStateEndUntil(until)) needGrant(until.stateEnd, `${at}.durationUntil`, e.kind);
         return;

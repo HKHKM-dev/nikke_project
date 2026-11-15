@@ -144,7 +144,6 @@ function healHitCounts(result: SimResult, ctx: MetricContext): number[] {
 /** eventFrames の出来事（モデルのフレームと、録画の動画のフレーム） */
 type EventPoint = { frame: number; video: number; opened?: number };
 
-/** eventFrames の event: 枠の出来事の列（時刻の順） */
 /** 枠のカウンタが前の値より増えた記録のフレーム（昇順） */
 function counterUpFramesOf(result: SimResult, slotIndex: number, counter: string): number[] {
   const out: number[] = [];
@@ -157,6 +156,7 @@ function counterUpFramesOf(result: SimResult, slotIndex: number, counter: string
   return out;
 }
 
+/** eventFrames の event: 枠の出来事の列（時刻の順） */
 function eventPointsOf(result: SimResult, ctx: MetricContext): EventPoint[] {
   const slotIndex = slotIndexOf(ctx);
   const schedule = result.schedule;

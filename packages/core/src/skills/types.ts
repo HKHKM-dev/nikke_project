@@ -674,6 +674,9 @@ export const SHOT_COUNT_KINDS = [
   'teamHit',
 ] as const satisfies readonly ShotCountKind[];
 
+/** 自分を含む編成の全員の発を数える回数の種類（自分が撃たないフレームでも、味方の発で起きる） */
+export const TEAM_COUNT_KINDS = ['teamAmmo', 'teamHit'] as const satisfies readonly ShotCountKind[];
+
 export type ShotCountTrigger = {
   count: ShotCountKind;
   /** N 回ごと（即値）。every / everyRef とも省略なら毎回（1） */

@@ -8,6 +8,7 @@ import { applyTreasure, treasureSlots } from '../skills/treasure.ts';
 import {
   INDIRECT_PATH_NAMES,
   SHOT_COUNT_KINDS,
+  TEAM_COUNT_KINDS,
   SKILL_SLOTS,
   contentStatOf,
   isCoverHealedTrigger,
@@ -481,11 +482,11 @@ export function sameEdgeRange(a: EdgeRange | undefined, b: EdgeRange | undefined
 }
 
 /**
- * 撃つ枠の溜めで起きるきっかけ（撃たない枠では起きない。射撃の回数のきっかけと同じ扱い）。味方が消費した弾の合計（teamAmmo）は
- * 味方の発でも起きるので入れない（plan/design-cinderella-cw.md 2.3 節）
+ * 撃つ枠の溜めで起きるきっかけ（撃たない枠では起きない。射撃の回数のきっかけと同じ扱い）。編成の全員の発を数える種類（teamAmmo・teamHit）は
+ * 味方の発でも起きるので入れない（plan/design-cinderella-cw.md 2.3 節・plan/design-elegg-bs.md 2.1 節）
  */
 const SHOT_TRIGGERS: ReadonlySet<string> = new Set([
-  ...SHOT_COUNT_KINDS.filter((k) => k !== 'teamAmmo'),
+  ...SHOT_COUNT_KINDS.filter((k) => !(TEAM_COUNT_KINDS as readonly string[]).includes(k)),
   'chargeTick',
   'chargeFull',
 ]);

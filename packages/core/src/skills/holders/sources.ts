@@ -35,7 +35,12 @@ import {
 import { type CounterId } from '../counters.ts';
 import { type NamedStateId } from '../states.ts';
 import { canEverTarget, isEffectTarget } from '../targets.ts';
-import { createStateWindowTracker, type ShotCountEveryAt, type TriggerTracker } from '../triggers.ts';
+import {
+  createStateWindowTracker,
+  earliestHeldStart,
+  type ShotCountEveryAt,
+  type TriggerTracker,
+} from '../triggers.ts';
 import { conditionReadsItems, isEndedTrigger, staticStatesOf, type TimerTrigger } from '../types.ts';
 import type { SkillSlot } from '../../types.ts';
 import { timerFramesOf, type AppliedRecord, type TimelineSlot } from '../timeline.ts';
@@ -500,12 +505,13 @@ function createOwnApplied({ applications, frames, late }: SourceDeps, stateTrack
     state: NamedStateId,
     conditionState?: NamedStateId,
   ): TriggerTracker => {
-    /** 枠のその状態の件のうち、maxStart までに始まり frame にまだ続く件の始まりの最小（無ければ undefined。配列を作らない） */
+    /** 枠のその状態の件のうち、maxStart までに始まり frame にまだ続く件の始まりの最小（無ければ undefined） */
     const startOfHeld = (s: NamedStateId, frame: number, maxStart: number): number | undefined => {
       let start: number | undefined;
-      for (const t of stateTracks()[slotIndex]?.get(s) ?? [])
-        for (const it of late.readItems(t))
-          if (it.start <= maxStart && frame < it.end && (start === undefined || it.start < start)) start = it.start;
+      for (const t of stateTracks()[slotIndex]?.get(s) ?? []) {
+        const x = earliestHeldStart(late.readItems(t), frame, maxStart);
+        if (x !== undefined && (start === undefined || x < start)) start = x;
+      }
       return start;
     };
     return createStateWindowTracker(trigger, slotIndex, state, startOfHeld, conditionState);
