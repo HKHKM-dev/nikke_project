@@ -1183,6 +1183,8 @@
 | 1212 | `20261115-1212_team_rei-tentative.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎レイ（仮称）（834、AR・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0788 の撮影（編成 A）。I-DOLL・フラワー（I）・デルタ（II）・レイ（仮称）（III・操作）。オートバースト ON |
 | 1213 | `20261115-1213_team_asuka-wille-rei-tentative.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎アスカ：WILLE（835、MG・風圧・SSR） + レイ（仮称）（834、AR・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0788 の撮影（編成 B）。I-DOLL・フラワー（I）・デルタ（II）・アスカ：WILLE（III・操作）・レイ（仮称）。オートバースト ON |
 | 1214 | `20261115-1214_team_asuka-wille-rei-tentative.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎アスカ：WILLE（835、MG・風圧・SSR） + レイ（仮称）（834、AR・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0788 の撮影（編成 B）。I-DOLL・フラワー（I）・デルタ（II）・アスカ：WILLE（III・操作）・レイ（仮称）。オートバースト ON |
+| 1219 | `20261115-1219_frost-ticket-nofire.mp4` | クラウン（330、MG・鉄甲・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ソリン：フロストチケット（74、SG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0790 の撮影（ソリン：フロストチケットは撃たない操作枠。オート射撃 OFF） |
+| 1220 | `20261115-1220_frost-ticket-nofire.mp4` | クラウン（330、MG・鉄甲・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ソリン：フロストチケット（74、SG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0790 の撮影（ソリン：フロストチケットは撃たない操作枠。オート射撃 OFF） |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
