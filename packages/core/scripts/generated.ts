@@ -3,19 +3,25 @@
 import { spawnSync } from 'node:child_process';
 import { GENERATED_PATHS, ROOT } from './records-data.ts';
 
-/** 書き換わった生成物を HEAD の版へ戻す。失敗したら誤りを出して false */
-export function restoreGenerated(): boolean {
-  const git = (args: readonly string[]) => spawnSync('git', args, { cwd: ROOT, encoding: 'utf8' });
-  const diff = git(['diff', '--name-only', 'HEAD', '--', ...GENERATED_PATHS]);
-  const changed = diff.stdout.split('\n').filter((p) => p !== '');
-  const restored = diff.status === 0 && changed.length > 0 ? git(['checkout', 'HEAD', '--', ...changed]) : diff;
+const git = (args: readonly string[]) => spawnSync('git', args, { cwd: ROOT, encoding: 'utf8' });
+
+/** HEAD から書き換わっている生成物 */
+export function dirtyGenerated(): Set<string> {
+  const diff = git(['diff', '-z', '--name-only', 'HEAD', '--', ...GENERATED_PATHS]);
+  return new Set(diff.status === 0 ? diff.stdout.split('\0').filter((p) => p !== '') : []);
+}
+
+/** 書き換わった生成物を HEAD の版へ戻す（keep は戻さない。回す前から書き換わっていたもの）。失敗したら誤りを出して false */
+export function restoreGenerated(keep: ReadonlySet<string> = new Set()): boolean {
+  const changed = [...dirtyGenerated()].filter((p) => !keep.has(p));
+  if (changed.length === 0) return true;
+  const restored = git(['checkout', 'HEAD', '--', ...changed]);
   if (restored.status !== 0) {
     console.error(`生成物を HEAD の版に戻せなかった: ${restored.stderr.trim()}`);
     return false;
   }
-  if (changed.length > 0)
-    console.log(
-      `生成物 ${changed.length} 件を HEAD の版に戻した（PR に入れないため。中身を見るなら --keep-generated か npm run records:minimal）`,
-    );
+  console.log(
+    `生成物 ${changed.length} 件を HEAD の版に戻した（PR に入れないため。中身を見るなら --keep-generated か npm run records:minimal）`,
+  );
   return true;
 }

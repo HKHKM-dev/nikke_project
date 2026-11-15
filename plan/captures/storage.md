@@ -38,7 +38,7 @@ E:/nikke_project_captures/      このプロジェクトが採用した録画（
    - ドライブをまたぐので、コピー → sha256 の一致を確かめる → 取り込み元から消す、の順に行う。
    - スクショは、関連する録画と同じ種別フォルダに置く。録画に付かないスクショ（ステータス画面だけ など）は `ui/` に置く（名前は [index.md](index.md)「命名規約」）。
    - 例外: 旧プロジェクトの録画（`L-` の番号）は移さない（[index.md](index.md)「旧プロジェクトの録画」）。
-3. 録画は `records/recordings/<録画 id>.json` を 1 本足し、`npm run records:check` で録画の一覧（[recordings.md](recordings.md)）を作り直す。採用しなかった録画にも通し番号を振って載せ、採用しなかった理由を `conditionNote` に書く。スクショは `records/recordings/` に載せない（録画に付くものはファイル名の番号で結びつく。録画に付かないものは、それを読んだ記録（検証記録など）にファイル名を書く）。証拠フレームは `E:/nikke_project_captures/frames/` に切り出す（コミットしない）。
+3. 録画は `records/recordings/<録画 id>.json` を 1 本足し、`npm run records:check` で検査する（録画の一覧 [recordings.md](recordings.md) は生成物で、終わりに戻る。手元で見るなら `-- --keep-generated`）。採用しなかった録画にも通し番号を振って載せ、採用しなかった理由を `conditionNote` に書く。スクショは `records/recordings/` に載せない（録画に付くものはファイル名の番号で結びつく。録画に付かないものは、それを読んだ記録（検証記録など）にファイル名を書く）。証拠フレームは `E:/nikke_project_captures/frames/` に切り出す（コミットしない）。
 4. Google Drive に同期する（下記「バックアップ」）。移した録画・スクショ・証拠フレームはどれも `E:/nikke_project_captures/` の下にある。録画は `intake.ts` が取り込みの最後に Drive に置き、ハッシュを突き合わせる（`intake.ts` の冒頭のコメント）。`frames/` に切り出した証拠フレームは `still.ts` が上げる。ほかに足したもの（スクショ・手で置いたもの）は、デスクトップのセッションの始めか、離席の前の `npm run drive:sync` で上がる。
 
 ### 参照資料（`reference/`）

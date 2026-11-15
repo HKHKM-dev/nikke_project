@@ -38,7 +38,7 @@ interception の例: 20261001-0066_special_boss-name.mp4 （種類_ボス英名�
 
 ### 録画の一覧
 
-表は [recordings.md](recordings.md) にある（`records/recordings/<録画 id>.json` から `npm run records:check` で生成する。手で書かない。条件を直すときは JSON を直して作り直す）。
+表は [recordings.md](recordings.md) にある（`records/recordings/<録画 id>.json` から `npm run records:check -- --keep-generated` で生成する。手で書かない。条件を直すときは JSON を直して作り直す）。
 
 録画ごとの条件・写っているもの・注意は、その録画の JSON の `conditionNote` に書く（一覧の表の「条件」の列に出る）。撮影の注意は [guide.md](guide.md)「射撃場の条件」に、キャラの取り違えは下の「過去の取り違え」にある。
 

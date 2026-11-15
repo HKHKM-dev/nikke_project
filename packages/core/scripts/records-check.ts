@@ -94,7 +94,6 @@ const errors = [
   ...validateObservations(observations, recordings, data.enemies),
   ...misplacedClaims(),
   ...validateClaims(claims, new Set(observations.map((o) => o.id)), new Set(invalidReasons.keys())),
-  ...claimTieErrors(observations, claims, new Set(invalidReasons.keys())),
   ...validateVerifications(verifications, { claims, recordingIds: new Set(recordings.keys()), observations }),
   ...unlistedConfirmedClaims(claims, verifications, observations),
   ...validateSkillClaims(skills, claims),
@@ -125,6 +124,9 @@ if (errors.length > 0) {
   console.error(errors.join('\n'));
   process.exit(1);
 }
+// 結論と観測値の結び付きの決まり（plan/design-workflow-simplification-15.md 3 節）。結論を作る前の「比べる」の段でも一覧を作り直せる
+// ように、ここでは注意にとどめる（npm test と records:close が止める）
+for (const e of claimTieErrors(observations, claims, new Set(invalidReasons.keys()))) console.log(`注意: ${e}`);
 const residuals = runObservationsCached(observations, recordings, data);
 const doc = readFileSync(RESIDUALS_PATH, 'utf8');
 writeFileSync(

@@ -17,7 +17,7 @@ import {
   type ClaimGrade,
 } from '../src/records/claims.ts';
 import { closeChecks, markState, prBody, prTitle, promoteTogether, residualCounts } from '../src/records/close.ts';
-import { claimDraft } from '../src/records/drafts.ts';
+import { claimDraft, MINIMAL_REASON } from '../src/records/drafts.ts';
 import { V_ID } from '../src/records/ids.ts';
 import { relevanceOf } from '../src/records/relevance.ts';
 import { withFreshSensitivity } from '../src/records/sensitivity.ts';
@@ -37,7 +37,7 @@ import {
   recordingMap,
   verificationPath,
 } from './records-data.ts';
-import { restoreGenerated } from './generated.ts';
+import { dirtyGenerated, restoreGenerated } from './generated.ts';
 import { runObservationsCached } from './residual-cache.ts';
 
 const { values, positionals } = parseArgs({
@@ -60,6 +60,8 @@ if (verification === undefined) {
   console.error(`検証記録 ${id} が無い`);
   process.exit(1);
 }
+// 回す前から書き換わっていた生成物（手で回した records:minimal の結果など）は、終わりに戻さない
+const dirtyAtStart = dirtyGenerated();
 const file = loadRecordingsFile();
 const recordings = recordingMap(file);
 const predictions = loadPredictions();
@@ -90,7 +92,9 @@ for (const c of loadedOwn) {
 const sensitivity = withFreshSensitivity(basisObs, { recordings, ...data, claims: loaded }, loadSensitivity());
 const prediction = predictions.find((p) => p.verification === id);
 // 同じ記録の仮説の結論を、まとめて確定にできるか（plan/design-workflow-simplification-15.md 2 節）。条件は records:new と同じ
-// claimDraft で見る。when・edge は仮説にだけ書ける欄なので、書いた結論は人が仮説に置いたものとして外す
+// claimDraft と、結論と観測値の結び付きの決まり（claimTieErrors）で見る。候補は、仮説の理由が最小構成の警告だけのもの（理由が
+// 残っていないものを含む。ほかの理由があるものは触らない。when・edge は仮説にだけ書ける欄なので、書いた結論は外す）。--mark が無くても、
+// 閉じる前の検査は確定にした後の結論で見る（--mark で通るかが分かるように）。書き換えは --mark で検査が通った後
 const compared = new Map(
   residuals.filter((r) => r.status !== 'invalid').map((r) => [r.observation.id, r.status === 'ok']),
 );
@@ -103,51 +107,52 @@ const confirm = <T extends { grade?: ClaimGrade | undefined }>(c: T, cid: string
   return { ...c, state: '確定', ...(grade === undefined ? {} : { grade }), updated: today };
 };
 const assumeConfirmed = (ids: ReadonlySet<string>) => loaded.map((c) => (ids.has(c.id) ? confirm(c, c.id) : c));
+/** assumed を確定とみなしたときの、targets の結論の確定にできない理由 */
+const reasonsOf = (assumed: ReadonlySet<string>, targets: readonly string[]) => {
+  const assumedClaims = assumeConfirmed(assumed);
+  const ctx = { recordings, ...data, claims: assumedClaims };
+  const subjects = assumedClaims.filter((c) => targets.includes(c.id));
+  const warnings = new Map(relevanceOf(subjects, observations, ctx, sensitivity).map((r) => [r.claim, r.warnings]));
+  return new Map(
+    subjects.map((c) => {
+      const basis = observations.filter((o) => c.observations.includes(o.id));
+      const draft = claimDraft({
+        id: c.id,
+        verification: id,
+        topic: c.topic,
+        text: c.text,
+        today,
+        observations: basis,
+        gradeCandidate: gradeCandidates.get(c.id),
+        compared: new Map([...compared].filter(([o]) => c.observations.includes(o))),
+        ...(c.subject === undefined ? {} : { subject: c.subject }),
+        minimal: warnings.get(c.id) ?? [],
+        prediction: predictionComparison,
+        ...(c.decidedOn === undefined ? {} : { decidedOn: c.decidedOn }),
+        ...(c.runs === undefined ? {} : { runs: c.runs }),
+        ...(c.parameterFree === undefined ? {} : { parameterFree: c.parameterFree }),
+      });
+      return [c.id, [...draft.reasons, ...claimTieErrors(basis, assumedClaims, invalid)]] as const;
+    }),
+  );
+};
+const hypotheses = loadedOwn
+  .filter((c) => c.state === '仮説' && c.when === undefined && c.edge === undefined)
+  .map((c) => c.id);
+const initial = reasonsOf(new Set(), hypotheses);
 const together = promoteTogether(
-  loadedOwn.filter((c) => c.state === '仮説' && c.when === undefined && c.edge === undefined).map((c) => c.id),
-  (assumed) => {
-    const assumedClaims = assumeConfirmed(assumed);
-    const targets = assumedClaims.filter((c) => assumed.has(c.id));
-    const ctx = { recordings, ...data, claims: assumedClaims };
-    const warnings = new Map(relevanceOf(targets, observations, ctx, sensitivity).map((r) => [r.claim, r.warnings]));
-    return new Map(
-      targets.map((c) => [
-        c.id,
-        claimDraft({
-          id: c.id,
-          verification: id,
-          topic: c.topic,
-          text: c.text,
-          today,
-          observations: observations.filter((o) => c.observations.includes(o.id)),
-          gradeCandidate: gradeCandidates.get(c.id),
-          compared: new Map([...compared].filter(([o]) => c.observations.includes(o))),
-          ...(c.subject === undefined ? {} : { subject: c.subject }),
-          minimal: warnings.get(c.id) ?? [],
-          prediction: predictionComparison,
-          ...(c.decidedOn === undefined ? {} : { decidedOn: c.decidedOn }),
-          ...(c.runs === undefined ? {} : { runs: c.runs }),
-          ...(c.parameterFree === undefined ? {} : { parameterFree: c.parameterFree }),
-        }).reasons,
-      ]),
-    );
-  },
+  hypotheses.filter((cid) => {
+    const r = initial.get(cid) ?? [];
+    return r.every((x) => x.startsWith(MINIMAL_REASON));
+  }),
+  (assumed) => reasonsOf(assumed, [...assumed]),
 );
-if (together.promoted.length > 0 && values.mark) {
-  const paths = together.promoted.map((cid) => `${CLAIMS_DIR}${cid}.json`);
-  for (const [i, cid] of together.promoted.entries())
-    writeFileSync(
-      paths[i]!,
-      `${JSON.stringify(confirm(JSON.parse(readFileSync(paths[i]!, 'utf8')) as ClaimFile, cid), null, 2)}\n`,
-    );
-  spawnSync(process.execPath, [`${ROOT}tools/format-retry.ts`, ...paths], { cwd: ROOT, stdio: 'ignore' });
-  console.log(`同じ記録の結論をまとめて確定にした: ${together.promoted.join('・')}`);
-} else if (together.promoted.length > 0)
+if (together.promoted.length > 0)
   console.log(
-    `--mark で確定にする（同じ記録の結論をまとめて確定とみなすと条件がそろう）: ${together.promoted.join('・')}`,
+    `${values.mark ? '閉じる前の検査を通れば確定にする' : '--mark で確定にする'}（同じ記録の結論をまとめて確定とみなすと条件がそろう）: ${together.promoted.join('・')}`,
   );
 for (const [cid, reasons] of together.reasons) console.log(`仮説のまま: ${cid}（${reasons.join('。')}）`);
-const claims = values.mark ? assumeConfirmed(new Set(together.promoted)) : loaded;
+const claims = assumeConfirmed(new Set(together.promoted));
 const ownClaims = claims.filter((c) => verification.claims.includes(c.id));
 // 最小構成の検査（同 5 節）: この記録の結論の組
 const relevanceCtx = { recordings, ...data, claims };
@@ -189,11 +194,25 @@ if (values.mark && verification.state !== '完了') {
   writeFileSync(path, markState(readFileSync(path, 'utf8'), '完了'));
   console.log(`${path} の状態を 完了 にした`);
 }
+if (values.mark && together.promoted.length > 0) {
+  const paths = together.promoted.map((cid) => `${CLAIMS_DIR}${cid}.json`);
+  for (const [i, cid] of together.promoted.entries())
+    writeFileSync(
+      paths[i]!,
+      `${JSON.stringify(confirm(JSON.parse(readFileSync(paths[i]!, 'utf8')) as ClaimFile, cid), null, 2)}\n`,
+    );
+  if (
+    spawnSync(process.execPath, [`${ROOT}tools/format-retry.ts`, ...paths], { cwd: ROOT, stdio: 'ignore' }).status !== 0
+  )
+    console.error(`結論のファイルを整えられなかった（npx prettier --write で整える）: ${paths.join(' ')}`);
+  console.log(`同じ記録の結論をまとめて確定にした: ${together.promoted.join('・')}`);
+}
 const run = (cmd: string): void => {
   console.log(`$ ${cmd}`);
   const r = spawnSync(cmd, { cwd: ROOT, stdio: 'inherit', shell: true });
   if (r.status !== 0) {
     console.error(`${cmd} が失敗した`);
+    if (!values['keep-generated']) restoreGenerated(dirtyAtStart);
     process.exit(1);
   }
 };
@@ -215,7 +234,7 @@ console.log(
   )}\n`,
 );
 // 作り直した生成物は PR に入れないので、読み終えたら HEAD の版へ戻す（plan/design-workflow-simplification-15.md 4 節）
-if (!values['keep-generated'] && !restoreGenerated()) process.exit(1);
+if (!values['keep-generated'] && !restoreGenerated(dirtyAtStart)) process.exit(1);
 console.log(
   '残り: 設計書のある仕事なら、設計か実装が変わったときだけ設計書の経過に 1 行書く（ほかの所には書かない。AGENTS.md「文書の書き方」）。課題の状態が変わったら課題のファイル（records/backlog/。plan/backlog.md は生成物）を直し（Stage の状態が変わったときだけ plan/roadmap.md）、commit して npm run pr:prep -- --push の後に PR を出す（AGENTS.md「コミット手順」）',
 );
