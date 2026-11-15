@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 130・効果 941（根拠あり 919）・notes 338（根拠あり 138）
+件数: キャラ 131・効果 949（根拠あり 927）・notes 342（根拠あり 141）
 
-notes の種類: 未対応 50・前提の外 97・計算に無関係 67・補足 37・間接 87
+notes の種類: 未対応 50・前提の外 99・計算に無関係 68・補足 38・間接 87
 
-スロット: supported 341・partial 37・unsupported 9・noEffect 51
+スロット: supported 344・partial 37・unsupported 9・noEffect 51
 
 ## 10 ラピ
 
@@ -1275,6 +1275,24 @@ notes の種類: 未対応 50・前提の外 97・計算に無関係 67・補足
 - **burst**: noEffect
   - notes[0] 間接（HP）: 保存（超過した回復量を発動者の最大HP の X% まで保存・10 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
   - notes[1] 間接（防御力）: 味方全体への、スキル発動者の防御力に比例した防御力▲（10 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: 根拠なし
+
+## 322 マルチャーナ：マリンスタディ
+
+- **skill1**: supported
+  - effects[0] damage・fullBurstStart・additional: C-1292（確定）、C-1301（仮説）
+  - effects[1] damage・normalHit・additional: C-1293（確定）
+  - notes[0] 計算に無関係: 警戒対象指定の効果 2（対象が生存している時、警戒対象：攻撃力▼・10 秒）は、敵の攻撃力▼なのでダメージに関係しない: 根拠なし
+  - notes[1] 前提の外: 敵が破壊された時、対象が警戒対象状態なら、ランダムな敵 1 機に警戒対象指定（追加ダメージ・攻撃力▼）は、敵 1 体の前提では敵が破壊されないので起きない（要件 4.2 節）: C-0443（範囲外）
+- **skill2**: supported
+  - effects[0] state・battleStart・whistle（attack）: C-1291（確定）
+  - effects[1] stackChange・battleStart・whistle: C-1291（確定）
+  - effects[2] timed・battleStart・elementDamage: C-1291（確定）
+  - notes[0] 補足: ラプチャーが 3 機以下の状態を 5 秒維持するたびのホイッスルは、敵 1 体の前提では 5 秒ごとに起きるが、戦闘開始時に上限の 5 スタックで持続して付いているので、値を変えない: C-1291（確定）
+  - notes[1] 前提の外: ラプチャーが 6 機以上の状態を 1 秒維持するたびのペンくん緊急出動（敵全体への追加ダメージ・ホイッスルのスタック量 1 個▼）は、敵 1 体の前提では起きない（要件 4.2 節）: C-0443（範囲外）
+- **burst**: supported
+  - effects[0] timed・burstUse・elementDamage: C-1294（確定）
+  - effects[1] timed・burstUse・attackDamage: C-1294（確定）
+  - effects[2] state・burstUse・highRiskTarget（enemyDefenseDown）: C-1294（確定）
 
 ## 330 クラウン
 

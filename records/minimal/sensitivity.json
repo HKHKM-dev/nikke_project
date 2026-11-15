@@ -33430,6 +33430,163 @@
       "effective": true,
       "minus": -0.318991158653059,
       "plus": -0.318991158653059
+    },
+    {
+      "observation": "1209-06",
+      "element": "マルチャーナ：マリンスタディ skill1.effects[0]",
+      "key": "5b56999e9012f893",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1209-07",
+      "element": "マルチャーナ：マリンスタディ skill1.effects[0]",
+      "key": "0966980e5924ebfb",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1209-08",
+      "element": "マルチャーナ：マリンスタディ skill1.effects[0]",
+      "key": "e36bd92dc9f1f0c6",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 1 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1209-09",
+      "element": "マルチャーナ：マリンスタディ skill1.effects[0]",
+      "key": "f33246da76389d79",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1209-10",
+      "element": "マルチャーナ：マリンスタディ skill1.effects[0]",
+      "key": "414dffb439469ae7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1209-11",
+      "element": "マルチャーナ：マリンスタディ skill1.effects[0]",
+      "key": "046470c2c8e16db1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1209-14",
+      "element": "マルチャーナ：マリンスタディ skill1.effects[0]",
+      "key": "57ca52e5cf6c4356",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1209-15",
+      "element": "マルチャーナ：マリンスタディ skill1.effects[0]",
+      "key": "e37ba1cca8c745f9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1210-06",
+      "element": "マルチャーナ：マリンスタディ skill1.effects[0]",
+      "key": "db4cc66381fd900c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1210-07",
+      "element": "マルチャーナ：マリンスタディ skill1.effects[0]",
+      "key": "3c566b845ca36a87",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1210-08",
+      "element": "マルチャーナ：マリンスタディ skill1.effects[0]",
+      "key": "e17a143881330f85",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1210-09",
+      "element": "マルチャーナ：マリンスタディ skill1.effects[0]",
+      "key": "5191d1769119436b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1210-10",
+      "element": "マルチャーナ：マリンスタディ skill1.effects[0]",
+      "key": "deb27a88a3c9579d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1210-13",
+      "element": "マルチャーナ：マリンスタディ skill1.effects[0]",
+      "key": "669ca1173e5b485a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1210-14",
+      "element": "マルチャーナ：マリンスタディ skill1.effects[0]",
+      "key": "220bc3691da3967c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1211-06",
+      "element": "マルチャーナ：マリンスタディ skill1.effects[0]",
+      "key": "b458fa989b56960b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1211-07",
+      "element": "マルチャーナ：マリンスタディ skill1.effects[0]",
+      "key": "f374bb6493db9587",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1211-08",
+      "element": "マルチャーナ：マリンスタディ skill1.effects[0]",
+      "key": "ce7d0398a43dbac5",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 1 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1211-09",
+      "element": "マルチャーナ：マリンスタディ skill1.effects[0]",
+      "key": "dcf08b81aef0dc9c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }
