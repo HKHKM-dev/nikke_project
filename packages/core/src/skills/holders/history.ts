@@ -73,7 +73,7 @@ export function createHistory({
         .map(({ x }) => x),
       rankings,
       removeDebuffGuesses,
-      stateEndGuesses,
+      stateEndGuesses: [...stateEndGuesses].sort((a, b) => a.frame - b.frame),
       heals,
       fullBurstWindows: [...options.fullBurstWindows()],
       logs,

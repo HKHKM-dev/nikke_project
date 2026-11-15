@@ -599,8 +599,8 @@ function stateEndNotes(history: TeamPlan['history'], slotIndex: number): ModelNo
       level: 'approx',
       code: 'state-end-regrant',
       message: {
-        ja: `${ja}の終わりのフレームに同じ状態が付け直された時が ${n} 回あった。終わりと見るかを確かめていないので、付け直しより前に読む効果は終わりと見て、後に読む効果とダメージは終わりと見なかった`,
-        en: `${en} was applied again on the frame it ended ${n} time(s). Whether that counts as an end is unverified; effects read before the re-application treated it as an end, and effects read after it and damage did not`,
+        ja: `${ja}の終わりのフレームに同じ状態が付け直された時が ${n} 回あった。終わりと見るかを確かめていないので、終わりと見るかが効果を読む順で分かれた`,
+        en: `${en} was applied again on the frame it ended ${n} time(s). Whether that counts as an end is unverified, so effects disagreed depending on when they were read`,
       },
     };
   });

@@ -92,7 +92,7 @@
 ## 決めたこと
 
 - 2026-11-15: オーナーが論点 1〜3 を推すとおりに決めた（案 A・注記で知らせる・課題は起票しない）。
-- 実装は 4 節のとおり。共通の関数は `skills/holders/history.ts` の `isStateOrigin`（読む件を選ぶ述語）と `stateEndFrames`（終わりのフレームの列）。1 パス目の `endedAt` は、持ち主 × 状態ごとに、前のフレームの読みを次のフレームで初めて読む時（とループの後）に判定し直し、食い違いを `HolderHistory.stateEndGuesses` に残す。注記の code は `state-end-regrant`。
+- 実装は 4 節のとおり。共通の関数は `skills/holders/history.ts` の `isStateOrigin`（読む件を選ぶ述語）と `stateEndFrames`（終わりのフレームの列）。1 パス目の `endedAt` は、持ち主 × 状態ごとに、前のフレームの読みを次のフレームで初めて読む時（とループの後）に判定し直し、食い違いを `HolderHistory.stateEndGuesses` に残す。注記の code は `state-end-regrant`。文は、終わりと見るかが効果を読む順で分かれたことだけを書く（判定し直しは、終わりと見なかった読みが後で終わりになる向きも記録するので、向きは書かない）。
 - 比べる観測値の全部の予測値と差は、変更の前後で同じだった。
 
 ## 経過

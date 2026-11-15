@@ -159,8 +159,8 @@ export function createConditions({
    */
   const settleReads = (reads: EndedReads): void => {
     if (!reads.sawEnded && !reads.sawNotEnded) return;
-    const items = reads.own.map(readItems);
-    const settled = items.some((list, i) => list !== reads.items[i]) ? endsAt(items, reads.frame) : reads.last;
+    const rebuilt = reads.own.some((t, i) => readItems(t) !== reads.items[i]);
+    const settled = rebuilt ? endsAt(reads.own.map(readItems), reads.frame) : reads.last;
     if (settled ? reads.sawNotEnded : reads.sawEnded)
       stateEndGuesses.push({ frame: reads.frame, holder: reads.holder, state: reads.state });
     reads.sawEnded = false;
@@ -184,7 +184,7 @@ export function createConditions({
       settleReads(reads);
       reads.frame = frame;
     }
-    reads.items = reads.own.map(readItems);
+    for (let i = 0; i < reads.own.length; i++) reads.items[i] = readItems(reads.own[i]!);
     const ended = endsAt(reads.items, frame);
     reads.last = ended;
     if (ended) reads.sawEnded = true;
