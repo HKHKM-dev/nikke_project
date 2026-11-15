@@ -568,7 +568,9 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const perShotOf = (effects: readonly ResolvedSkillDamage[] | undefined): number =>
     hitRate * perShotDamage(effects, baseHit, boostCore, boostSkillCrit, boostFullBurst, buffs, skillElement);
   const perShot = perShotOf(input.perShot);
-  const perShotFullCharge = perShotOf(input.perShot?.filter((e) => e.fullChargeOnly === true));
+  const perShotFullCharge = input.perShot?.some((e) => e.fullChargeOnly === true)
+    ? perShotOf(input.perShot.filter((e) => e.fullChargeOnly === true))
+    : 0;
 
   const full: TriggerDamage = {
     baseAttack,

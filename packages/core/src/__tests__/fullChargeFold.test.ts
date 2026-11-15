@@ -6,6 +6,7 @@ import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts
 import type { ResolvedSkillDamage } from '../skills/burstDamage.ts';
 import { ZERO_BUFFS } from '../skills/buffs.ts';
 import { runSimulation } from '../sim/engine.ts';
+import type { TargetProfile } from '../types.ts';
 import { isChargeWeapon } from '../weapons.ts';
 import { characterOf, fixedSlot, fixedTeam, rawDefinition, readJson } from './teamHelpers.ts';
 
@@ -14,18 +15,25 @@ const RAPUNZEL_SANCTUARY = 473;
 const NAYUTA = 223;
 const LITER = 82;
 const ALICE = 191;
+const CROWN = 330;
 
 // 射撃場 3 分モード（敵のジャンプの始まりに部分チャージの発が出る。C-1001）
 const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
+const enemyWith = (target: TargetProfile): EnemyInput => ({
   defence: 100,
   element: 'Fire',
   hasCore: true,
   events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
+  target,
+  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, target),
+});
+const rangeEnemy = enemyWith(profile);
+// RL の飛ぶ時間を 400f 延ばした的（部分チャージの発が、撃った区間と別の区間に着く）
+const slowProfile = structuredClone(profile);
+for (const row of Object.values(slowProfile.flightFrames!.shots!.RL!.byProjectile!))
+  for (const key of Object.keys(row)) row[key]! += 400;
+const slowEnemy = enemyWith(slowProfile);
 
 const source = { resourceId: 1, skill: 'skill1', name: { ja: '-', en: '-' } } as const;
 const fullChargeHit: ResolvedSkillDamage = { source, damageType: 'additional', multiplier: 1.5, fullChargeOnly: true };
@@ -67,6 +75,16 @@ describe('1 トリガーの値（plan/design-full-charge-fold.md 3.2 節）', ()
 
   it('drops them from a shot of a weapon that does not charge, and from a slot set not to fully charge', () => {
     onlyEveryHit(computeTriggerDamage({ ...input, character: characterOf(NAYUTA), condition }));
+    // チャージ武器の基礎の武器を、チャージしない武器に替えた区間（即着弾の使用武器の変更）
+    const instant = { id: 'x', hits: 1, shot: { ...characterOf(A2).shot, chargeTime: 0 } };
+    onlyEveryHit(
+      computeTriggerDamage({
+        ...input,
+        buffs: { ...input.buffs, weapon: instant },
+        character: characterOf(A2),
+        condition,
+      }),
+    );
     onlyEveryHit(
       computeTriggerDamage({ ...input, character: characterOf(A2), condition: { ...condition, fullCharge: false } }),
     );
@@ -74,20 +92,28 @@ describe('1 トリガーの値（plan/design-full-charge-fold.md 3.2 節）', ()
 });
 
 describe.each([
-  ['A2 単騎（飛ぶ時間なし）', A2],
-  ['ラプンツェル：サンクチュアリ単騎（射撃ごとの倍率ダメージを着弾で出す）', RAPUNZEL_SANCTUARY],
-])('部分チャージの発: %s', (_name, id) => {
+  ['A2 単騎（飛ぶ時間なし）', [A2], rangeEnemy],
+  ['ラプンツェル：サンクチュアリ単騎（射撃ごとの倍率ダメージを着弾で出す）', [RAPUNZEL_SANCTUARY], rangeEnemy],
+  // 部分チャージの発が、バフの違う区間に着く（区間の合計の、着いた部分チャージの発の数の項）
+  [
+    'リター・クラウン・ラプンツェル：サンクチュアリ（飛ぶ時間を延ばした的）',
+    [LITER, CROWN, RAPUNZEL_SANCTUARY],
+    slowEnemy,
+  ],
+])('部分チャージの発: %s', (_name, ids, enemy) => {
+  const index = ids.length - 1;
+  const id = ids[index]!;
   const result = runSimulation({
-    ...fixedTeam([id], 0),
-    slots: [{ ...fixedSlot(id), conditionMode: 'auto' }],
-    enemy: rangeEnemy,
+    ...fixedTeam(ids, index),
+    slots: ids.map((x) => ({ ...fixedSlot(x), conditionMode: 'auto' as const })),
+    enemy,
     trace: true,
   });
-  const slot = result.slots[0]!;
-  const partial = result.shots[0]!.partialShots ?? [];
+  const slot = result.slots[index]!;
+  const partial = result.shots[index]!.partialShots ?? [];
   const segmentAt = (f: number) => slot.segments.find((s) => s.start <= f && f < s.end)!;
   const shotEvents = new Map(
-    result.events.flatMap((e) => (e.kind === 'trigger' && e.slot === 0 ? [[e.frame, e.damage] as const] : [])),
+    result.events.flatMap((e) => (e.kind === 'trigger' && e.slot === index ? [[e.frame, e.damage] as const] : [])),
   );
 
   it('gives a partially charged shot no "on full charge hit" damage', () => {
