@@ -1,6 +1,6 @@
 {
   "verification": "V-0787",
-  "note": "撮影の予測。I-DOLL・フラワー（I）+ デルタ（II）+ マルチャーナ：マリンスタディ（III・操作）。射撃場の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オートバースト ON。撮影 A は電撃、撮影 B は灼熱の敵。20 回命中の数え方の読み（高リスク対象の間だけ数える）は上書きで書けないので、検証記録の「予測」に手で書く。撮影の後に、比べる観測値と引数・setup をそろえた指標（id の末尾が -r）を足した。撮る前の指標は元のまま",
+  "note": "撮影の予測。I-DOLL・フラワー（I）+ デルタ（II）+ マルチャーナ：マリンスタディ（III・操作）。射撃場の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オートバースト ON。撮影 A は電撃、撮影 B は灼熱の敵。20 回命中の数え方の読み（高リスク対象の間だけ数える）は上書きで書けないので、検証記録の「予測」に手で書く。撮影の後に、比べる観測値と引数・setup をそろえた指標（id の末尾が -r）を足した。撮る前の指標は、検査が求める引数（core・crit の false。省いたときと同じ値）を足したほかは元のまま",
   "team": [
     {
       "rid": 304
@@ -88,6 +88,8 @@
       "args": {
         "slot": 3,
         "shot": "1,61",
+        "core": false,
+        "crit": false,
         "distance": "model"
       },
       "tolerance": {
@@ -109,7 +111,8 @@
       "args": {
         "slot": 3,
         "trigger": "fullBurstStart",
-        "n": 0
+        "n": 0,
+        "crit": false
       },
       "tolerance": {
         "rel": 0.001
@@ -130,7 +133,8 @@
       "args": {
         "slot": 3,
         "trigger": "shotCount",
-        "n": 0
+        "n": 0,
+        "crit": false
       },
       "tolerance": {
         "rel": 0.001
@@ -171,6 +175,8 @@
       "args": {
         "slot": 3,
         "shot": "1,61",
+        "core": false,
+        "crit": false,
         "distance": "model"
       },
       "tolerance": {
@@ -327,7 +333,7 @@
   ],
   "predicted": {
     "at": "2026-11-15",
-    "commit": "4e1276c883de3a5143117fcbac3f21ba20aa3a41",
+    "commit": "31616ec416e268e68ec46d67dbdcee8a2e913882",
     "values": {
       "H1": {
         "A-shots": [
