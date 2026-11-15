@@ -1,0 +1,52 @@
+{
+  "id": "1213",
+  "date": "2026-11-15",
+  "folder": "range",
+  "file": "20261115-1213_team_asuka-wille-rei-tentative.mp4",
+  "original": "2026-11-15_14-07-38.mp4",
+  "durationSec": 202.2,
+  "frames": 12134,
+  "fps": 60,
+  "sizeMB": 245,
+  "sha256": "76d188d8324d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 835,
+      "name": "アスカ：WILLE",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 834,
+      "name": "レイ（仮称）",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0788 の撮影（編成 B）。I-DOLL・フラワー（I）・デルタ（II）・アスカ：WILLE（III・操作）・レイ（仮称）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-15T14:17+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
