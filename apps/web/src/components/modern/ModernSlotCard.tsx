@@ -2,24 +2,16 @@ import { useDraggable, useDroppable } from '@dnd-kit/core';
 import type { CharacterData, CharacterIndexEntry } from '@nikke/core';
 import type { SlotResultView } from '../../calcView.ts';
 import { formatDamage } from '../../format.ts';
-import controllerIcon from '../../assets/badges/ui_controller.svg';
-import { maskIconStyle } from '../maskIcon.ts';
-import type { Badge } from './badges.ts';
+import { BadgeIcon } from './BadgeIcon.tsx';
+import { CONTROLLER_BADGE, type Badge } from './badges.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
 import type { ActiveDragData, OverDragData } from './dropIntent.ts';
 import { useScrollingName } from './useScrollingName.tsx';
 
-/** 操作キャラの印（コントローラーの絵）。ModernSlotCard の上の段と、ドラッグ中の重ねる絵（ModernView）が使う */
+/** 操作キャラの印（バッジ ui_controller）。ModernSlotCard の上の段と、ドラッグ中の重ねる絵（ModernView）が使う */
 export function ControllerIcon() {
-  return (
-    <span
-      className="modern-slot-focus-icon mask-icon"
-      role="img"
-      aria-label="操作"
-      style={maskIconStyle(controllerIcon)}
-    />
-  );
+  return <BadgeIcon className="modern-slot-focus-icon" name={CONTROLLER_BADGE} label="操作" />;
 }
 
 /**

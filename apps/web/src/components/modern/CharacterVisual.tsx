@@ -1,9 +1,13 @@
 import { characterImageFile, type CharacterIndexEntry } from '@nikke/core';
 import { useReducer, type ReactNode } from 'react';
-import informationIcon from '../../assets/badges/ui_information.svg';
-import { maskIconStyle } from '../maskIcon.ts';
 import { BadgeIcon } from './BadgeIcon.tsx';
-import { COMPACT_BADGE_KINDS, ELEMENT_BADGE_KIND, VISUAL_BADGE_KINDS, type Badge } from './badges.ts';
+import {
+  COMPACT_BADGE_KINDS,
+  ELEMENT_BADGE_KIND,
+  UNSUPPORTED_BADGE,
+  VISUAL_BADGE_KINDS,
+  type Badge,
+} from './badges.ts';
 
 type Props = {
   character: CharacterIndexEntry;
@@ -82,9 +86,9 @@ export function CharacterVisual({
       {badges && elementBadge && <CharBadge badge={elementBadge} className="char-badge char-visual-corner-badge" />}
       {overlay}
       {unsupportedNote !== null && (
-        // 印はバッジの絵 ui_information.svg を型にして塗る（.mask-icon）。知らせはマウスを載せると出る
+        // 印はバッジ ui_information。知らせはマウスを載せると出る
         <span className="char-unsupported-tag" role="img" aria-label={unsupportedNote} title={unsupportedNote}>
-          <span className="mask-icon" style={maskIconStyle(informationIcon)} />
+          <BadgeIcon name={UNSUPPORTED_BADGE} />
         </span>
       )}
     </div>
