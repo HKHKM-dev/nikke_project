@@ -3,7 +3,7 @@
 - 関連: [skills-guide.md](skills-guide.md)、[design-helm.md](design-helm.md) 2.2 節（即時効果 `burstGauge`）、[design-moran.md](design-moran.md)（ゲージだけの効果を先に入れた前例）、[design-named-state.md](design-named-state.md)（名前の付いた状態）、[design-skill-catalog-classes.md](design-skill-catalog-classes.md)（「ターゲットの出現」は前提の外（構造）に分けている）
 - 作成日: 2026-10-26
 - 根拠: C-0662（V-0504）
-- 状態: 段 1 は実装した（2026-10-26。V-0504・C-0662）。段 2 は実装した（2026-10-26。8 節。V-0521・V-0522、C-0689〜C-0691）。段 3 は [design-elegg-s3.md](design-elegg-s3.md)（S2 は実装した。V-0524、C-0696・C-0697。S1 は未対応）
+- 状態: 完了（段 1 は 7 節、段 2 は 8 節、段 3 は [design-elegg-s3.md](design-elegg-s3.md)。進み具合は経過）
 
 ## 1. 何を足すか
 
