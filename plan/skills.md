@@ -1029,7 +1029,7 @@ notes の種類: 未対応 50・前提の外 104・計算に無関係 69・補�
 ## 272 ルージュ
 
 - **skill1**: supported
-  - effects[0] cooldownReduction・fullChargeShot: C-1228（仮説）
+  - effects[0] cooldownReduction・fullChargeShot: C-1228（確定）
   - notes[0] 間接（HP）: フルチャージ 8 回ごとの、味方全体へのスキル発動者基準の最大HP のみ▲（5 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
 - **skill2**: supported
   - effects[0] state・battleStart・swordCoin（attackDamage）: C-1226（確定）
