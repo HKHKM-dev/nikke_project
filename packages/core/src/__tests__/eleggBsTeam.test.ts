@@ -4,6 +4,7 @@
 // 13 のままのキャプチャーで S2 のダメージ。バーストは 13 でなければ 6 ヒットで 6 減らし（最低 1）、13 なら 13 ヒットで 9 減らす。
 // 射撃の列のグループ分け。
 import { describe, expect, it } from 'vitest';
+import { effectFrameOf } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { counterEffectiveFrom } from '../skills/holders/types.ts';
@@ -31,7 +32,8 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     return v;
   };
   const mine = plan.schedule!.activations.filter((x) => x.slotIndex === e);
-  const burstFrames = new Set(mine.map((x) => x.frame));
+  // バースト使用時の効果は遅れの表の発火のフレーム（III のタイマーの 00.00 の 1f 後。C-1315）
+  const burstFrames = new Set(mine.map((x) => effectFrameOf(x)));
   // キャプチャー（値が 1 増えた記録。バーストのフレームの記録は除く）
   const captures = records.filter(
     (r, i) => r.value === (i === 0 ? 0 : records[i - 1]!.value) + 1 && !burstFrames.has(r.frame),
@@ -97,16 +99,18 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(mine.length).toBeGreaterThan(0);
     const hits = plan.skillHits.filter((h) => h.slotIndex === e && h.effect.source.skill === 'burst');
     for (const [k, a] of mine.entries()) {
+      const at = effectFrameOf(a);
       // 戦闘の終わりの後に出るヒットは数えない
-      if (a.frame + 30 + 12 * 6 >= plan.frames) continue;
-      const before = countAt(a.frame);
+      if (at + 5 + 12 * 12 >= plan.frames) continue;
+      const before = countAt(at);
       const next = mine[k + 1]?.frame ?? plan.frames;
-      const n = hits.filter((h) => a.frame <= h.frame && h.frame < next).length;
+      const n = hits.filter((h) => at <= h.frame && h.frame < next).length;
       expect(n).toBe(before === 13 ? 13 : 6);
-      const after = records.find((r) => r.frame === a.frame)?.value ?? before;
-      const captured = captures.some((c) => c.frame === a.frame) ? 1 : 0;
-      const expected = before === 13 ? 4 : Math.max(Math.min(1, before), before - 6 + captured);
-      expect(after).toBe(expected);
+      const after = records.find((r) => r.frame === at)?.value ?? before;
+      // 同じフレームにキャプチャーが重なれば、増減の和（+1）を足してから下限で止める
+      const drop = before === 13 ? 9 : 6;
+      const floor = before === 13 ? 0 : Math.min(1, before);
+      expect([Math.max(floor, before - drop), Math.max(floor, before - drop + 1)]).toContain(after);
     }
   });
 });

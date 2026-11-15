@@ -127,7 +127,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "burst": true,
         "manualBursts": "1217-01",
         "noBurstSlots": [4]
@@ -143,7 +142,7 @@
     "use": "compare",
     "unit": "回",
     "value": [1, 5],
-    "description": "発動の後の幽霊キャプチャー数。1 回目は 6▼ が最低 1 で止まった。2 回目は 13 → 4（9▼）で、同じ時にキャプチャーが 1 回重なって 5（4 はバーストの演出の黄色に隠れて見えない）",
+    "description": "発動の後の幽霊キャプチャー数。1 回目は 6▼ が最低 1 で止まった。2 回目は 13 → 4（9▼）で、同じ時にキャプチャーが 1 回重なって 5（4 はバーストの演出の黄色に隠れて見えない）。命中の数え方が効くので、条件は自動（射撃場の表の弾丸命中率）で比べ、結論には結び付けない",
     "method": {
       "tool": "使い捨てのスクリプト（GHOST の欄の数字）",
       "note": "戦闘開始（動画の f839。timer.ts --mode changes の 3 つ目の変わり目。タイマーと照準が出る）から。エレグ：ブーム・アンド・ショックの頭の上の「GHOST」の欄の赤い数字を、使い捨てのスクリプトで全フレーム読んだ（欄を大きさ違いの型で追い、数字の窓の赤み（R − max(G, B)）を、目で確かめた 0〜13 の見本と正規化相互相関で照らし、値は 1 ずつ増える（バーストの前後だけ減る）並びで最もよく合う列を選んだ）。替わり目のフレームは、際どいものを数字の窓の拡大で確かめた"
@@ -165,10 +164,10 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "burst": true,
         "manualBursts": "1217-01",
-        "noBurstSlots": [4]
+        "noBurstSlots": [4],
+        "condition": "auto"
       }
     },
     "source": "V-0789",
@@ -205,7 +204,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "burst": true,
         "manualBursts": "1217-01",
         "noBurstSlots": [4]
@@ -221,7 +219,7 @@
     "use": "compare",
     "unit": "f",
     "value": [4362, 4881, 5052, 5475, 5983, 7261, 7768, 7900, 8361, 8798, 9111, 9311, 9710],
-    "description": "同じく 13 回目から（12 回目は 4076 で、モデルの 3992 より遅い。モデルでは的のジャンプ（4041f）の直前に 100 に届く窓で、実機ではジャンプをまたいだ）",
+    "description": "同じく 13 回目から（12 回目は 4076 で、モデルの 3992 より遅い。モデルでは的のジャンプ（4041f）の直前に 100 に届く窓で、実機ではジャンプをまたいだ）。命中の数え方が効くので、条件は自動（射撃場の表の弾丸命中率）で比べ、結論には結び付けない",
     "method": {
       "tool": "使い捨てのスクリプト（GHOST の欄の数字）",
       "note": "戦闘開始（動画の f839。timer.ts --mode changes の 3 つ目の変わり目。タイマーと照準が出る）から。エレグ：ブーム・アンド・ショックの頭の上の「GHOST」の欄の赤い数字を、使い捨てのスクリプトで全フレーム読んだ（欄を大きさ違いの型で追い、数字の窓の赤み（R − max(G, B)）を、目で確かめた 0〜13 の見本と正規化相互相関で照らし、値は 1 ずつ増える（バーストの前後だけ減る）並びで最もよく合う列を選んだ）。替わり目のフレームは、際どいものを数字の窓の拡大で確かめた"
@@ -246,10 +244,10 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "burst": true,
         "manualBursts": "1217-01",
-        "noBurstSlots": [4]
+        "noBurstSlots": [4],
+        "condition": "auto"
       }
     },
     "source": "V-0789",
@@ -286,7 +284,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "burst": true,
         "manualBursts": "1217-01",
         "noBurstSlots": [4]
@@ -328,7 +325,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "burst": true,
         "manualBursts": "1217-01",
         "noBurstSlots": [4]
