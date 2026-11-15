@@ -429,6 +429,11 @@ export const NAMED_STATES = {
    */
   antiATField: { name: { ja: 'アンチA.T.フィールド', en: 'Anti A.T. Field' }, holder: 'enemy' },
   /**
+   * 攻撃態勢（レイ（仮称）のバースト。自分・10 秒・中身は攻撃ダメージ▲と発動者基準の攻撃力▲。S1 の「自分が攻撃態勢状態なら、通常攻撃が
+   * 7 回命中した時」が見る。plan/design-rei-tentative.md 1 節）
+   */
+  attackState: { name: { ja: '攻撃態勢', en: 'Attack State' }, holder: 'ally' },
+  /**
    * バブル（リトルマーメイドの S2。敵が出現した時に敵に付く。受けるダメージ▲・持続。通常攻撃の命中 50 回目でバブルバーストに替わる。
    * plan/design-little-mermaid.md 2.2 節）
    */

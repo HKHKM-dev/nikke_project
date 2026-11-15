@@ -1,0 +1,131 @@
+{
+  "formatVersion": 1,
+  "resourceId": 834,
+  "checkedAt": "2026-11-15",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "condition": {
+            "enemyState": "antiATField"
+          },
+          "damageType": "additional",
+          "ref": 2,
+          "assumes": {
+            "ja": "命中は戦闘を通して数え、18 の倍数に届いた命中の時に敵がアンチA.T.フィールド状態なら起きる",
+            "en": "Hits are counted through the battle; it fires when a multiple of 18 is reached while the enemy is in Anti A.T. Field"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 4
+          },
+          "condition": {
+            "selfState": "attackState"
+          },
+          "damageType": "additional",
+          "ref": 5,
+          "assumes": {
+            "ja": "命中は戦闘を通して数え、7 の倍数に届いた命中の時に自分が攻撃態勢なら起きる",
+            "en": "Hits are counted through the battle; it fires when a multiple of 7 is reached while this unit is in Attack State"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "18 回命中の時のアンチA.T.フィールドのスタック量 10 個▲は未対応（他のキャラが敵に付けた状態のスタック量を変える語彙が無い。plan/design-rei-tentative.md 2.1 節）",
+          "en": "Anti A.T. Field stacks up 10 on the 18th hit is not modeled (no vocabulary to change the stacks of a state another unit applied to the enemy)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "stackChange",
+            "target": "enemy",
+            "trigger": "normalHit"
+          }
+        },
+        {
+          "ja": "フルバーストタイムが発動した時の、殲滅態勢状態の味方全体への発動者基準の攻撃力▲は未対応（時間で変わる状態で対象を絞る語彙が無い。plan/design-rei-tentative.md 2.2 節）",
+          "en": "ATK up (based on the skill user) to all allies in Annihilation State on entering Full Burst is not modeled (no vocabulary to filter targets by a time-varying state)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "fullBurstStart"
+          }
+        },
+        {
+          "ja": "フルバーストタイムが発動した時の、殲滅態勢の追加効果の適用対象 1▲・攻撃範囲 500%▲は、敵 1 体の前提ではダメージに関係しない（追加効果は射撃場の敵 1 体に毎回当たる）",
+          "en": "On entering Full Burst, the Annihilation State additional effect's units affected ▲1 and attack range ▲500% do not affect damage against a single enemy (the additional effect always hits the one range enemy)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "unknown"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "burstUsers",
+          "targetWeapon": "MG",
+          "stat": "spinUpSpeed",
+          "ref": 1,
+          "durationRef": 2
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 3,
+          "durationRef": 4
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "attackState",
+          "trigger": "burstUse",
+          "target": "self",
+          "durationRef": 2,
+          "contents": [
+            {
+              "stat": "attackDamage",
+              "ref": 1
+            },
+            {
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 3
+            }
+          ],
+          "assumes": {
+            "ja": "攻撃態勢の 2 つの項目の維持はどちらも 10 秒で、状態の維持と同じと読む",
+            "en": "Both Attack State items last 10 s; read as the duration of the state itself"
+          }
+        },
+        {
+          "kind": "burstDamage",
+          "ref": 5,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "敵全体は、敵 1 体の前提でその敵に 1 ヒット",
+            "en": "All enemies means one hit on the single enemy"
+          }
+        }
+      ]
+    }
+  }
+}
