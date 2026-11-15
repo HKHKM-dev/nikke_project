@@ -262,6 +262,8 @@ const STAT_NAMES: Rules = [
   [/^次のバリアのHP$/, 'barrierHp'],
   [/^バリアに与えるダメージ$/, 'barrierDamage'],
   [/維持時間$|持続時間$/, 'stateDuration'],
+  // 自分の持続ダメージ（〈名前〉）の効果▲（ブレッディのあと味効果。plan/design-bready.md 2.4 節）。ほかの「〈名前〉効果」は状態の中身の値
+  [/^あと味効果$/, 'dotEffect'],
   [/効果$|蓄積割合$|最大蓄積量$|追加効果適用対象$|追加効果攻撃範囲$/, 'stateParam'],
 ];
 

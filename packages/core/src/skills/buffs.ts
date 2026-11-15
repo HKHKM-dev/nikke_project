@@ -123,6 +123,8 @@ export type BuffTotals = {
    * SUSTAINED_DAMAGE_PLACEMENT。plan/design-sustained-damage-up.md 3 節）
    */
   sustainedDamage: number;
+  /** 持続ダメージの効果の加算。持ち主の持続ダメージ（dot）の tick に別の乗数 (1 + dotEffect) で掛ける（plan/design-bready.md 2.4 節） */
+  dotEffect: number;
   /** バーストゲージのチャージ速度の加算。この枠の射撃で溜まるゲージに (1 + burstGaugeSpeed) を掛ける（passive のみ） */
   burstGaugeSpeed: number;
   /**
@@ -274,6 +276,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   projectileStickDamage: 0,
   elementAdvantage: 0,
   sustainedDamage: 0,
+  dotEffect: 0,
   burstGaugeSpeed: 0,
   sequentialAttackDamage: 0,
   oneEnemyBurstDamage: 0,
@@ -326,6 +329,7 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attack
   projectileStickDamage: 'projectileStickDamage',
   elementAdvantage: 'elementAdvantage',
   sustainedDamage: 'sustainedDamage',
+  dotEffect: 'dotEffect',
   sequentialAttackDamage: 'sequentialAttackDamage',
   oneEnemyBurstDamage: 'oneEnemyBurstDamage',
   accumulateRatio: 'accumulateRatio',

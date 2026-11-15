@@ -3,6 +3,8 @@ import { COUNTER_IDS } from '../counters.ts';
 import { SUMMON_IDS } from '../summons.ts';
 import {
   type AppliedTrigger,
+  BUFF_STATS,
+  type BuffAppliedTrigger,
   BUFF_TRIGGERS,
   CHANCE_COUNT_KINDS,
   type ChargeFullTrigger,
@@ -19,6 +21,7 @@ import {
   FIRING_WINDOWS,
   isChanceTrigger,
   isShotCountTrigger,
+  noBuffStateReason,
   isTimerTrigger,
   type SelfHpAtMostTrigger,
   type AdjacentHpAtMostTrigger,
@@ -338,6 +341,20 @@ export function parseEndedTrigger(v: Json, path: string): EndedTrigger | undefin
  */
 export function parseStateEndUntil(v: Json, key: string, expected: string): StateEndUntil {
   return { stateEnd: parseNamedStateId(objectUntil(v, 'stateEnd', key, expected), `${key}.stateEnd`, 'ally') };
+}
+
+/**
+ * 「〈stat〉増加効果が適用された時」（{ buffApplied }。plan/design-bready.md 2.1 節）。{ buffApplied } でなければ undefined。
+ * 書けるのは状態の付与だけ（呼ぶ側が決める）。見る stat は増加状態のある stat（フラグ・敵が持つ受けるダメージ▲・掛け合わせの倍率は
+ * 条件 selfBuffed と同じく除く）
+ */
+export function parseBuffAppliedTrigger(v: Json, path: string): BuffAppliedTrigger | undefined {
+  if (!isRecord(v) || v.buffApplied === undefined) return undefined;
+  rejectUnknownKeys(v, ['buffApplied'], path);
+  const stat = oneOf(BUFF_STATS, v.buffApplied, `${path}.buffApplied`);
+  const reason = noBuffStateReason(stat);
+  if (reason !== undefined) fail(`${path}.buffApplied`, reason);
+  return { buffApplied: stat };
 }
 
 /**

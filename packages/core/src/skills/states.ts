@@ -17,7 +17,7 @@ export type StateFamily = 'barrier' | 'intoTheFray';
  * 切り替えの組（plan/design-mint-prika.md 2.2 節）。同じ持ち主に組のある状態が付いたら、組のほかの状態の件を次のフレームで閉じる
  * （解除不可も。skills/holders/fire.ts の fireGrant）。同じフレームに付いた組の状態どうしは、{ applied } のきっかけの付与を後とみなして残す
  */
-export type StateSwitchGroup = 'assignedPart';
+export type StateSwitchGroup = 'assignedPart' | 'taste';
 
 export type NamedStateInfo = {
   /** 画面と CLI の名前（日本語は説明文の状態名） */
@@ -433,6 +433,13 @@ export const NAMED_STATES = {
    * plan/design-little-mermaid.md 2.2 節）
    */
   bubble: { name: { ja: 'バブル', en: 'Bubble' }, holder: 'enemy' },
+  /**
+   * やみつきの味（ブレッディの S1。持続ダメージ増加効果が適用された時に自分に付く。チャージ速度▼・解除不可。付くとオススメの味を
+   * 消去する。S2・バーストの「やみつきの味状態なら」が見る。plan/design-bready.md 2.3 節）
+   */
+  lingeringTaste: { name: { ja: 'やみつきの味', en: 'Lingering Taste' }, holder: 'ally', group: 'taste' },
+  /** 同: オススメの味（分配ダメージ増加効果が適用された時。付くとやみつきの味を消去する） */
+  recommendedTaste: { name: { ja: 'オススメの味', en: 'Recommended Taste' }, holder: 'ally', group: 'taste' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

@@ -157,6 +157,10 @@
     | 味方が消費した弾の合計が N 発ごとに（バーストゲージのチャージ） | burstGauge のきっかけ `{ "count": "teamAmmo", "everyRef": N }`（自分を含む全員の発） | シンデレラ：クリスタルウェーブの S1 | [design-cinderella-cw.md](design-cinderella-cw.md) 7 節 |
     | 味方が消費した弾の合計が N 発ごとに、ランダムな敵に「N 回順番に攻撃」 | damage のきっかけ `{ "count": "teamAmmo", "everyRef": N }` と `hitsRef`・`hitIntervalFrames`・`delayFrames` | リトルマーメイドの S2 のバブルバラージ | [design-little-mermaid.md](design-little-mermaid.md) 7 節 |
     | フルバーストタイムが発動した時、直前に自分がバーストを使用していれば（倍率ダメージ） | damage の `condition.usedBurst: true` | シンデレラ：クリスタルウェーブの S2 | 同上 |
+    | 〈stat〉増加効果が適用された時（自分に付く状態） | 付与のきっかけ `{ "buffApplied": "<stat>" }`（どの枠の▲でも、付くたびに） | ブレッディの S1 のやみつきの味・オススメの味 | [design-bready.md](design-bready.md) 2.1 節 |
+    | 〈stat〉増加状態でなければ | 条件 `selfBuffed: { "stat": "<stat>", "present": false }` | ブレッディの S1 のオススメの味 | 同 2.2 節 |
+    | 〈状態〉消去（もう片方の状態が付いた時に外れる 2 つの状態） | 目録の切り替えの組 `group` | ブレッディの S1 の味 | 同 2.3 節 |
+    | 〈持続ダメージの名前〉効果 X%▲ | timed の stat `dotEffect`（持ち主の持続ダメージの tick に別の乗数） | ブレッディのバーストのあと味効果 | 同 2.4 節・決めたこと |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。

@@ -20,6 +20,7 @@ import {
   isFiringStat,
   isFixedAttackScaling,
   isFlagStat,
+  selfBuffedOf,
   isHitStateStat,
   isMaxHpStat,
   isPassiveFlagStat,
@@ -73,6 +74,7 @@ import {
 } from './target.ts';
 import {
   parseAppliedTrigger,
+  parseBuffAppliedTrigger,
   parseChargeTrigger,
   parseCounterFullTrigger,
   parseCoverHealedTrigger,
@@ -289,6 +291,12 @@ function parseTimedTrigger(
   allowChance: boolean,
 ): EffectTrigger {
   const at = `${path}.trigger`;
+  // 「〈stat〉増加効果が適用された時」は状態の付与だけ（plan/design-bready.md 2.1 節）
+  const buffApplied = parseBuffAppliedTrigger(v.trigger, at);
+  if (buffApplied !== undefined) {
+    if (stat !== undefined) fail(at, 'a buff-applied trigger ({ buffApplied }) is only allowed in state grants');
+    return buffApplied;
+  }
   return (
     parseAppliedTrigger(v.trigger, at) ??
     parseChargeTrigger(v.trigger, at) ??
@@ -499,11 +507,8 @@ function parseTimedCondition(
     fail(`${path}.condition`, `inFullBurst is not supported for "${stat}" (no definition uses it on this stat yet)`);
   }
   // 条件付きの効果が状態を作ると連鎖するので、同じ stat と状態だけの stat は出せない（plan/design-stage11-modernia.md 2.4 節）
-  if (
-    condition.selfBuffed !== undefined &&
-    stat !== undefined &&
-    (stat === condition.selfBuffed || isStateStat(stat))
-  ) {
+  const watched = selfBuffedOf(condition);
+  if (watched !== undefined && stat !== undefined && (stat === watched.stat || isStateStat(stat))) {
     fail(`${path}.stat`, `a conditional effect cannot give "${stat}" (it would feed its own condition)`);
   }
   if (target === 'topAttack') fail(`${path}.target`, 'a conditional effect cannot target "topAttack"');

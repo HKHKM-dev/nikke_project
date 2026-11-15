@@ -9,6 +9,7 @@ import {
   type EffectTrigger,
   type EndedTrigger,
   isAppliedTrigger,
+  isBuffAppliedTrigger,
   isChanceTrigger,
   isCounterFullTrigger,
   isEndedTrigger,
@@ -97,6 +98,9 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
   validateChanceGrant(fields, v, path, onEnemy);
   validateNoSelfReference(fields, state, path);
   const effect: StateGrantEffect = { kind: 'state', state, ...fields };
+  // 「〈stat〉増加効果が適用された時」の付与は自分にだけ（使い手はブレッディの味。plan/design-bready.md 2.1 節）
+  if (isBuffAppliedTrigger(fields.trigger) && fields.target !== 'self')
+    fail(`${path}.target`, 'a grant on a buff-applied trigger ({ buffApplied }) can only target "self"');
   if (onEnemy) {
     if (isAppliedTrigger(fields.trigger))
       fail(`${path}.trigger`, 'a grant on the enemy cannot be triggered by { applied }');
@@ -528,7 +532,9 @@ export function contentAsTimed(grant: Record<string, Json>, item: Record<string,
   // 状態の終わりのきっかけ（{ ended }）・自分の状態の窓で数える回数のきっかけ・ほかの状態の
   // 終わりまでの維持（{ stateEnd }）は件の一覧が決める（timed には書けない）ので、中身の規則は、戦闘開始時か、窓の無い回数のきっかけで付く
   // 「持続」と同じ（plan/design-grave.md 2.1・2.4・2.5 節）
-  if (isEndedTrigger(fields.trigger as EffectTrigger)) fields.trigger = 'battleStart';
+  // 「〈stat〉増加効果が適用された時」（{ buffApplied }。plan/design-bready.md 2.1 節）も同じ
+  if (isEndedTrigger(fields.trigger as EffectTrigger) || isBuffAppliedTrigger(fields.trigger))
+    fields.trigger = 'battleStart';
   if (isRecord(fields.trigger) && isRecord(fields.trigger.during)) {
     const { during: _during, ...rest } = fields.trigger;
     fields.trigger = rest;

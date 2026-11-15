@@ -6,11 +6,14 @@ import { lowerBound, type ShotLog } from '../../frame/shots.ts';
 import { chancePieces, chanceStackPieces, chanceValueOf } from '../chance.ts';
 import {
   isResolvedApplied,
+  isResolvedBuffApplied,
+  isRecordTriggered,
   isResolvedShotCount,
   isResolvedTimer,
   resolveStackChanges,
   resolveStateContents,
   resolveStateGrants,
+  resolveTimed,
   type ResolvedStackChange,
   type ResolvedStateGrant,
   type ResolvedTimedEffect,
@@ -20,7 +23,7 @@ import { stackItems, STACK_REFRESH, type MaxStacksAt, type StackDecrease } from 
 import type { NamedStateId } from '../states.ts';
 import { dependsOnDefense, dependsOnRank } from '../targets.ts';
 import type { ShotCountEveryAt, TriggerTracker } from '../triggers.ts';
-import { conditionReadsItems, SKILL_SLOTS, type EdgeShift, type EffectCondition } from '../types.ts';
+import { type BuffStat, conditionReadsItems, SKILL_SLOTS, type EdgeShift, type EffectCondition } from '../types.ts';
 import {
   effectItems,
   holderHitStarts,
@@ -552,6 +555,7 @@ export function stateGroupsOf(
     condition?: EffectCondition,
   ) => TriggerTracker,
   appliedStageOf: (state: NamedStateId) => HeldStage,
+  buffAppliedStageOf: (stat: BuffStat) => HeldStage,
 ): StateGroup[] {
   const groups: StateGroup[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
@@ -575,7 +579,9 @@ export function stateGroupsOf(
       // { applied } の付与は、見る状態を付ける付与の段（plan/design-skill-stage4.md 1.1 節）
       const stage: HeldStage = isResolvedApplied(grant.trigger)
         ? appliedStageOf(grant.trigger.applied)
-        : stageOfGrant(grant);
+        : isResolvedBuffApplied(grant.trigger)
+          ? laterStage(buffAppliedStageOf(grant.trigger.buffApplied), stageOfGrant(grant))
+          : stageOfGrant(grant);
       group.grants.push({
         grant,
         stage,
@@ -628,14 +634,10 @@ export function stageOfStackChange(effect: ResolvedStackChange): HeldStage {
  * （編成のどの枠でも。{ applied } のもの・静的な付与を除く）の段のいちばん後。無ければ（静的な状態だけ・付ける効果が無い）段 1
  */
 export function appliedStagesOf(slots: readonly TimelineSlot[]): (state: NamedStateId) => HeldStage {
+  // { buffApplied } の付与は、その付与の段（buffAppliedStagesOf）で付く
+  const buffStageOf = buffAppliedStagesOf(slots);
   // { applied } の効果を持つ編成でだけ解く（初めて引かれた時）
-  let stages: Map<NamedStateId, HeldStage> | null = null;
-  const build = (): Map<NamedStateId, HeldStage> => {
-    const out = new Map<NamedStateId, HeldStage>();
-    const bump = (state: NamedStateId, stage: HeldStage): void => {
-      const now = out.get(state);
-      if (now === undefined || STAGE_RANK[stage] > STAGE_RANK[now]) out.set(state, stage);
-    };
+  return latestStages((bump) => {
     let allStackable = false;
     const grants: ResolvedStateGrant[] = [];
     for (const slot of slots) {
@@ -643,7 +645,9 @@ export function appliedStagesOf(slots: readonly TimelineSlot[]): (state: NamedSt
       for (const grant of resolveStateGrants(slot.definition, slot.character, slot.levels)) {
         if (grant.isStatic) continue;
         grants.push(grant);
-        if (!isResolvedApplied(grant.trigger)) bump(grant.state, stageOfGrant(grant));
+        if (isResolvedBuffApplied(grant.trigger))
+          bump(grant.state, laterStage(buffStageOf(grant.trigger.buffApplied), stageOfGrant(grant)));
+        else if (!isResolvedApplied(grant.trigger)) bump(grant.state, stageOfGrant(grant));
       }
       for (const effect of resolveStackChanges(slot.definition, slot.character, slot.levels)) {
         bump(effect.state, stageOfStackChange(effect));
@@ -654,9 +658,54 @@ export function appliedStagesOf(slots: readonly TimelineSlot[]): (state: NamedSt
     }
     // 味方の全部のスタック可能バフへの▲（段 1.5）は、編成のどの上限のある状態にも足しうる（plan/design-adjacent-allies.md 2.5 節）
     if (allStackable) for (const grant of grants) if (isStackableBuffGrant(grant)) bump(grant.state, 1.5);
+  });
+}
+
+/** 2 つの段の後のほう（{ buffApplied } の付与は、見る stat を付ける効果の段と、付与自身の条件の段の後のほう） */
+function laterStage(a: HeldStage, b: HeldStage): HeldStage {
+  return STAGE_RANK[a] >= STAGE_RANK[b] ? a : b;
+}
+
+/** キー → 段のいちばん後（STAGE_RANK）を、初めて引かれた時に collect で集めて作る。集めなかったキーは段 1 */
+function latestStages<K>(collect: (bump: (key: K, stage: HeldStage) => void) => void): (key: K) => HeldStage {
+  let stages: Map<K, HeldStage> | null = null;
+  const build = (): Map<K, HeldStage> => {
+    const out = new Map<K, HeldStage>();
+    collect((key, stage) => {
+      const now = out.get(key);
+      if (now === undefined || STAGE_RANK[stage] > STAGE_RANK[now]) out.set(key, stage);
+    });
     return out;
   };
-  return (state) => (stages ??= build()).get(state) ?? 1;
+  return (key) => (stages ??= build()).get(key) ?? 1;
+}
+
+/** 「〈stat〉増加効果」に数える効果か（▲。▼は負の値。使用武器の変更は数えない。plan/design-bready.md 2.1 節） */
+export function isBuffUp(effect: { stat: ResolvedTimedEffect['stat']; value: number }): effect is {
+  stat: BuffStat;
+  value: number;
+} {
+  return effect.stat !== 'weapon' && effect.value > 0;
+}
+
+/**
+ * { buffApplied } の付与の段（plan/design-bready.md 2.1 節）。stat ごとに、その stat の▲を付ける timed と、中身にその stat の▲を持つ
+ * 付与（編成のどの枠でも。{ applied }・{ buffApplied } のもの・静的な付与を除く）の段のいちばん後。無ければ段 1
+ */
+export function buffAppliedStagesOf(slots: readonly TimelineSlot[]): (stat: BuffStat) => HeldStage {
+  return latestStages((bump) => {
+    for (const slot of slots) {
+      if (slot === null || slot.definition === null) continue;
+      for (const effect of resolveTimed(slot.definition, slot.character, slot.levels)) {
+        if (isBuffUp(effect) && !isRecordTriggered(effect.trigger)) bump(effect.stat, stageOfTimed(effect));
+      }
+      const contents = resolveStateContents(slot.definition, slot.character, slot.levels);
+      for (const grant of resolveStateGrants(slot.definition, slot.character, slot.levels)) {
+        if (grant.isStatic || isRecordTriggered(grant.trigger)) continue;
+        for (const c of contents) if (c.whileState === grant.state && isBuffUp(c)) bump(c.stat, stageOfGrant(grant));
+      }
+    }
+  });
 }
 
 /** timed の効果の段（強化の受け付けと値は、履歴を閉じる時に決める） */

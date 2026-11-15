@@ -1,7 +1,7 @@
 // 件の一覧の層 8: 1 フレームの登録（plan/design-split-first-pass.md 3.3 節・9.2 節）。段ごとの出どころの列と前の回の発を作り、
 // フレームの出来事から、前の処理 → 段 1 → 敵の状態 → 段 1.5 → 段 2 → デバフ解除 → 強化 → カウンタの順に登録する（plan/design-holder-effects.md 2.4 節）。
 // 戦闘開始時とフレームごとの登録（registerBattleStart・registerFrame）と、leadFrames のある付与が発火した発のフレーム（leadShots）を返す。
-import { isResolvedApplied, isResolvedChance, type ResolvedTrigger } from '../resolve.ts';
+import { isRecordTriggered, isResolvedApplied, isResolvedChance, type ResolvedTrigger } from '../resolve.ts';
 import { attackRankFor } from '../ranking.ts';
 import { counterMax, type CounterId } from '../counters.ts';
 import { dependsOnDefense } from '../targets.ts';
@@ -20,7 +20,6 @@ import type { Fire } from './fire.ts';
 /** フレームの出来事から、段の順に件を登録する */
 export function createRegister({
   amplifiers,
-  applications,
   closeTrack,
   counterConditionHolds,
   counterEmptyTracks,
@@ -31,6 +30,7 @@ export function createRegister({
   counterValues,
   cycleSources,
   dispatchApplied,
+  markDispatched,
   dotCancelSources,
   endedAt,
   enemyStateSources,
@@ -70,17 +70,15 @@ export function createRegister({
   tracks,
   updateHpAtLeast,
 }: HolderBase & Records & Fires & Sources & Read & Views & Conditions & Fire) {
-  /** まだ dispatchApplied で読んでいない記録の始まり（静的な状態の記録は、戦闘開始時の呼び出しで読む） */
-  let appliedFrom = 0;
-  // { applied } の出どころは出来事では発火しない（dispatchApplied）
+  // 付いた記録から発火する出どころ（{ applied }・{ buffApplied }）は出来事では発火しない（dispatchApplied）
   const timedAt = (stage: HeldStage): TimedSource[] =>
-    timedSources.filter((s) => s.stage === stage && !isResolvedApplied(s.effect.trigger));
+    timedSources.filter((s) => s.stage === stage && !isRecordTriggered(s.effect.trigger));
   const stage1Timed = timedAt(1);
   const stage15Timed = timedAt(1.5);
   const stage2Timed = timedAt(2);
   const grantsAt = (stage: HeldStage): GrantSource[] =>
     stateGroups.flatMap((group) =>
-      group.grants.filter((g) => g.stage === stage && !isResolvedApplied(g.grant.trigger)),
+      group.grants.filter((g) => g.stage === stage && !isRecordTriggered(g.grant.trigger)),
     );
   const stage1Grants = grantsAt(1);
   // 1 パス目も件の始まりから見る（plan/design-explosive-round-lead.md 5.2 節）: leadFrames のある付与（段 1 だけ。skills/parse/state.ts が条件・
@@ -123,7 +121,6 @@ export function createRegister({
     ev: FrameEvents;
     battleStartOnly: boolean;
     take: (trigger: ResolvedTrigger) => boolean;
-    from: number;
   };
   /** このフレームのカウンタの増減を、すべての判定の後に足す（0 と上限の間で切る） */
   const registerCounters = ({ ev, battleStartOnly }: FrameStep): void => {
@@ -188,7 +185,7 @@ export function createRegister({
   };
 
   /** 段 1 の付与と効果・解除・スタック量の増減と、その { applied } */
-  const registerStage1 = ({ ev, battleStartOnly, take, from }: FrameStep): void => {
+  const registerStage1 = ({ ev, battleStartOnly, take }: FrameStep): void => {
     const f = ev.frame;
     // 段 1: 条件なし・順位の対象でない付与と効果（確率のきっかけは機会を貯める）
     for (const g of stage1Grants) {
@@ -268,7 +265,7 @@ export function createRegister({
       fireStackChange(x, battleStartOnly ? 0 : startOfFire(x.effect.trigger, f));
     }
     // 段 1 の { applied }（段 1 の付与・スタック量の増加で付いた記録から）
-    dispatchApplied(1, from);
+    dispatchApplied(1);
   };
 
   /** 敵の状態・消去・循環の間隔の変更（段 1 の { applied } の後。ループの中の判定は読まない） */
@@ -311,7 +308,7 @@ export function createRegister({
     }
   };
   /** 段 1.5 の付与と効果・解除・延長・スタック量の増減と、その { applied } */
-  const registerStage15 = ({ ev, battleStartOnly, take, from }: FrameStep): void => {
+  const registerStage15 = ({ ev, battleStartOnly, take }: FrameStep): void => {
     const f = ev.frame;
     // 段 1.5: 条件つきの付与と効果（と、状態のスタック数を数で読む付与）。判定は段 1 の件だけを見る（条件つきどうしは
     // 連鎖させない）
@@ -393,11 +390,11 @@ export function createRegister({
       }
       fireAllStackable(x, battleStartOnly ? 0 : startOfFire(x.effect.trigger, f));
     }
-    dispatchApplied(1.5, from);
+    dispatchApplied(1.5);
   };
 
   /** 段 2（順位・最終防御力の比べの対象）の付与と効果と、その { applied } */
-  const registerStage2 = ({ ev, battleStartOnly, take, from }: FrameStep): void => {
+  const registerStage2 = ({ ev, battleStartOnly, take }: FrameStep): void => {
     const f = ev.frame;
     // 段 2: 順位の対象。発火のフレームの順位（段 1・1.5 の攻撃力の件。同じフレームに付いたものも入れる）
     for (const g of stage2Grants) {
@@ -426,7 +423,7 @@ export function createRegister({
       const targets = fireTimed(src, start, { ...fireContextOf(src.effect.trigger, ev), attackRank });
       recordRanking(f, src.sourceSlotIndex, src.effect, attackRank, finalAttacks, targets);
     }
-    dispatchApplied(2, from);
+    dispatchApplied(2);
   };
 
   /** デバフ解除（予約した解除を先に） */
@@ -468,16 +465,15 @@ export function createRegister({
     const f = ev.frame;
     // このフレームの HP の割合の while の可否（このフレームのどの登録よりも先）
     updateHpAtLeast(f);
-    const from = appliedFrom;
     const take = (trigger: ResolvedTrigger): boolean =>
       battleStartOnly ? atBattleStart(trigger) : trigger !== 'battleStart';
-    const step: FrameStep = { ev, battleStartOnly, take, from };
+    const step: FrameStep = { ev, battleStartOnly, take };
     registerEnds(step);
     registerStage1(step);
     registerEnemyStates(step);
     registerStage15(step);
     registerStage2(step);
-    appliedFrom = applications.length;
+    markDispatched();
     registerRemoveDebuffs(step);
     registerAmplifiers(step);
     // カウンタの増減は、このフレームのすべての判定の後

@@ -1,0 +1,46 @@
+{
+  "id": "1203",
+  "date": "2026-11-15",
+  "folder": "range",
+  "file": "20261115-1203_team_bready-rosanna-co.mp4",
+  "original": "2026-11-15_11-45-06.mp4",
+  "durationSec": 200.4,
+  "frames": 12021,
+  "fps": 60,
+  "sizeMB": 242.8,
+  "sha256": "0e09af544981",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 283,
+      "name": "ロザンナ：シックオーシャン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 520,
+      "name": "ブレッディ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0785 の撮影（撮り方 1）。I-DOLL・フラワー（I）・ロザンナ：シックオーシャン（II）・ブレッディ（III・操作）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-15T11:59+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

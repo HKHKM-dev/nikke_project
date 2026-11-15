@@ -249,6 +249,18 @@ function validateAppliedTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>
 }
 
 /**
+ * 持続ダメージの効果▲（dotEffect）は持ち主の持続ダメージの tick の全部に掛かるので、持続ダメージ（sustained の dot）がちょうど 1 つの
+ * 定義にだけ書ける（plan/design-bready.md 決めたこと。2 つ以上なら、指す持続ダメージの欄が要る）
+ */
+function validateDotEffect(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const all = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []);
+  const ups = all.filter((e) => (e.kind === 'timed' || e.kind === 'passive') && e.stat === 'dotEffect');
+  if (ups.length === 0) return;
+  const dots = all.filter((e) => e.kind === 'dot' && e.sustained !== false).length;
+  if (dots !== 1) fail(root, `dotEffect needs exactly one sustained dot in the definition, got ${dots}`);
+}
+
+/**
  * 条件 selfState の sameFiring は、状態の付与にだけ書け、同じ
  * スロットのそれより前に、見る状態を同じきっかけで付ける付与が要る（その付与が同じ発火で付ける分を数える）。次のフレームの件を見るので、
  * 見る状態の付与は定義の中でどれも同じきっかけで、スタックごとの維持（stackRefresh: each）でないこと（ほかの出どころの件や、
@@ -670,6 +682,7 @@ export function validateCrossChecks(entries: Partial<Record<SkillSlot, SkillEntr
     validateDotStateRefs,
     validateSummons,
     validateCooldownTimers,
+    validateDotEffect,
   ])
     check(entries, root);
 }

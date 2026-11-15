@@ -74,6 +74,7 @@ const VALUE_LIMITS: Partial<Record<string, number>> = {
   projectileStickDamage: 1000,
   projectileExplosionDamage: 1000,
   chargeSpeed: 1000,
+  dotEffect: 1000,
   attack: 200,
   chargeDamageMultiplier: 200,
   sequentialAttackDamage: 200,
@@ -252,6 +253,7 @@ describe('data/skills', () => {
                 // エイダ: バーストの特殊改造のチャージダメージ▲は Lv10 で 1500%（上限は 2000% で見る）・チャージ速度▼は 300%（上限は 1000% で見る）
                 // アークレンジャー・ブラック: バーストの持続ダメージ▲は Lv10 で 135.83%（上限は 200% で見る）
                 // プリバティ: 宝物版バーストの有利コードの攻撃ダメージ▲は Lv10 で 130%（上限は 200% で見る）
+                // ブレッディ: バーストのあと味効果▲は Lv10 で 349.8%（上限は 1000% で見る）
                 const stat =
                   effect.kind === 'timed' || effect.kind === 'passive'
                     ? effect.stat

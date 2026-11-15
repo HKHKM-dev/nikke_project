@@ -56,6 +56,7 @@ import {
 } from './types.ts';
 import {
   appliedStagesOf,
+  buffAppliedStagesOf,
   insertSorted,
   lastAtOrBefore,
   stageOfStackChange,
@@ -79,7 +80,8 @@ export function createSources(deps: SourceDeps) {
   // ---- { applied } の効果の段（見る状態を付ける付与の段。plan/design-skill-stage4.md 1.1 節） ----
   const appliedStageOf = appliedStagesOf(slots);
   const timedSources = createTimedSources(deps, appliedStageOf);
-  const stateGroups = createStateGroups(deps, appliedStageOf);
+  // { buffApplied } の付与の段（見る stat の▲を付ける効果の段。plan/design-bready.md 2.1 節）
+  const stateGroups = createStateGroups(deps, appliedStageOf, buffAppliedStagesOf(slots));
   const { hpWhileStates, updateHpAtLeast, whileTracks } = createWhileSources(deps);
   const { cycleSources, shotCountEveryOf } = createCycleSources(deps);
   const removeSources = createRemoveSources(deps);
@@ -206,8 +208,12 @@ function createTimedSources(
 }
 
 /** 時間で変わる状態（出どころ × 状態 × 持ち主ごとに 1 つの件の列） */
-function createStateGroups({ firesOf, newTrack, slots }: SourceDeps, appliedStageOf: AppliedStageOf): StateGroup[] {
-  const stateGroups = stateGroupsOf(slots, firesOf, appliedStageOf);
+function createStateGroups(
+  { firesOf, newTrack, slots }: SourceDeps,
+  appliedStageOf: AppliedStageOf,
+  buffAppliedStageOf: ReturnType<typeof buffAppliedStagesOf>,
+): StateGroup[] {
+  const stateGroups = stateGroupsOf(slots, firesOf, appliedStageOf, buffAppliedStageOf);
   for (const group of stateGroups) {
     const grant = group.grants[0]!.grant;
     // 敵に付く状態は、敵の 1 つの件の列（対象の味方が編成にいれば）

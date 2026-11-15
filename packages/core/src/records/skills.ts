@@ -254,6 +254,7 @@ function triggerLabel(e: SkillEffect): string | undefined {
       ? `${t.everySeconds} 秒ごと`
       : `${t.since.applied} の間 ${t.everySeconds} 秒ごと${t.atStart === true ? '（付いた時から）' : ''}`;
   if ('applied' in t) return `${t.applied} が適用された時`;
+  if ('buffApplied' in t) return `${t.buffApplied} 増加効果が適用された時`;
   if ('fullStack' in t) return `${t.fullStack} のフルスタック`;
   if ('ended' in t) return `${t.ended} が終了した時`;
   if ('weaponChangeEnd' in t) return '使用武器の変更が終了した時';

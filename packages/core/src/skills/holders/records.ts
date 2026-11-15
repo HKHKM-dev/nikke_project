@@ -11,6 +11,7 @@ import { type HealRecord, type TriggerTracker } from '../triggers.ts';
 import { resolvePassiveStates, type AppliedRecord, type ConditionSkip, type TimelineSlot } from '../timeline.ts';
 import {
   type AmplifierSource,
+  type BuffAppliedRecord,
   type HeldItem,
   type HeldOrigin,
   type HeldStage,
@@ -55,6 +56,7 @@ export function createRecords({ options, slots }: HolderBase) {
   const passive = resolvePassiveStates(slots);
   const tracks: HeldTrack[] = [];
   const applications: AppliedRecord[] = [];
+  const buffApplications: BuffAppliedRecord[] = [];
   const conditionSkips: ConditionSkip[] = [];
   const rankings: RankingRecord[] = [];
   const removeDebuffGuesses: RemoveDebuffGuessRecord[] = [];
@@ -119,6 +121,7 @@ export function createRecords({ options, slots }: HolderBase) {
   return {
     amplifiers,
     applications,
+    buffApplications,
     closeTrack,
     conditionSkips,
     consumeTrack,

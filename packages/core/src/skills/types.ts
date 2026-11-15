@@ -99,6 +99,7 @@ export type BuffStat =
   | 'trueDamage'
   | 'trueDamageConversion'
   | 'sustainedDamage'
+  | 'dotEffect'
   | 'maxHp'
   | 'maxHpOnly'
   | 'defense'
@@ -147,6 +148,9 @@ export const BUFF_STATS = [
   'trueDamage',
   'trueDamageConversion',
   'sustainedDamage',
+  // 「〈持続ダメージ〉効果 X%▲」（比率。plan/design-bready.md 2.4 節）。持ち主の持続ダメージ（dot。sustained の tick）に、ほかのどの群とも
+  // 別の乗数 (1 + Σ) を tick のフレームの値で掛ける（ブレッディのあと味効果▲）。自分の持続ダメージが 1 つのキャラだけが書く
+  'dotEffect',
   // 最大HP▲（比率。plan/design-skill-stage6.md 2.4 節）。与ダメージの式は読まず、発動者の最終最大HP 基準の
   // 攻撃力▲（casterFinalMaxHp）だけが読む。「最大HP のみ▲」はこの stat では書かない（definitions.test.ts）
   'maxHp',
@@ -823,6 +827,14 @@ export function isSummonAttackTrigger(t: unknown): t is SummonAttackTrigger {
 export type AppliedTrigger = { applied: NamedStateId };
 
 /**
+ * 「〈stat〉増加効果が適用された時」（plan/design-bready.md 2.1 節）。編成のどの枠の効果でも（自分の効果も）、その stat の▲（decrease でない）の
+ * 件がこの効果を持つ枠に付いたフレームに発火する。数えるのは timed（対象にこの枠が入るもの）と状態の付与の中身で、付き直しでも付くたびに
+ * 1 回（同じフレームに 2 つ付いても 1 回）。状態の付与（対象は自分）にだけ書ける。段は、その stat を付ける効果の段のいちばん後
+ * （skills/holders/items.ts の buffAppliedStagesOf）
+ */
+export type BuffAppliedTrigger = { buffApplied: BuffStat };
+
+/**
  * 「〈名前〉のフルスタック状態の時、スタック解除後」（plan/design-skill-stage3.md 1.3 節）。持ち主（自分）のその状態の件が
  * フルスタックになったフレームに発火し、その状態のスタックを全部外す（次のフレームで閉じる。同じフレームに付いた件も外す）。
  * 回復（heal）・使用武器の変更・弾丸チャージ（ammoRefill）・timed に書ける（1 パス目が回復の前にフルスタックを見つける。
@@ -979,10 +991,16 @@ export type EffectTrigger =
   | SummonAttackTrigger
   // { ended }（counterChange・ammoDecrease・状態の付与・damage・timed・敵の状態の消去だけが受ける。plan/design-grave.md 2.1 節・
   // plan/design-asuka-wille.md 2.1 節）
-  | EndedTrigger;
+  | EndedTrigger
+  // { buffApplied }（状態の付与だけが受ける。parseBuffAppliedTrigger）
+  | BuffAppliedTrigger;
 
 export function isAppliedTrigger(t: unknown): t is AppliedTrigger {
   return typeof t === 'object' && t !== null && 'applied' in t;
+}
+
+export function isBuffAppliedTrigger(t: unknown): t is BuffAppliedTrigger {
+  return typeof t === 'object' && t !== null && 'buffApplied' in t;
 }
 
 export function isTimerTrigger(t: unknown): t is TimerTrigger {
@@ -1238,7 +1256,8 @@ export function isStateEndUntil(u: unknown): u is StateEndUntil {
  * 手入力の距離ボーナスの有無で決める
  */
 export type EffectCondition = {
-  selfBuffed?: BuffStat;
+  /** stat だけなら「自分が〈stat〉増加状態なら」、{ stat, present: false } なら「でなければ」（plan/design-bready.md 2.2 節） */
+  selfBuffed?: BuffStat | { stat: BuffStat; present: false };
   /**
    * true = 発火の瞬間がフルバーストタイムの中なら。false = フルバーストタイムの
    * 外なら（counterChange・removeState・stat のある timed。plan/design-skill-stage12.md 2.2 節・plan/design-velvet.md 2.1 節）
@@ -1346,9 +1365,23 @@ export function isStacksCondition(self: SelfStateCondition | undefined): boolean
 /** 条件のキー */
 export type ConditionKey = keyof EffectCondition;
 
-/** 条件が「自分が 〈stat〉 増加状態なら」を含むならその stat、それ以外は undefined */
-export function selfBuffedStatOf(condition: EffectCondition | undefined): BuffStat | undefined {
-  return condition?.selfBuffed;
+/** 条件 selfBuffed の stat と、増加状態を求めるか（present。「でなければ」は false）。無ければ undefined */
+export function selfBuffedOf(condition: EffectCondition | undefined): { stat: BuffStat; present: boolean } | undefined {
+  const c = condition?.selfBuffed;
+  if (c === undefined) return undefined;
+  return typeof c === 'string' ? { stat: c, present: true } : c;
+}
+
+/**
+ * 増加状態の無い stat なら理由（条件 selfBuffed・きっかけ { buffApplied } が見られない）。フラグ、敵が持つ受けるダメージ▲
+ * （plan/design-holder-effects.md 2.8 節）、既定が 1 の掛け合わせで「和 > 0 で増加状態」と読めない射撃の姿勢の長さの倍率
+ * （plan/design-a2-bmode-stance.md 3.1 節）。増加状態のある stat なら undefined
+ */
+export function noBuffStateReason(stat: BuffStat): string | undefined {
+  if (isFlagStat(stat)) return `${stat} is not a buff state`;
+  if (stat === 'damageTaken') return 'damageTaken is held by the enemy, not by the caster';
+  if (stat === 'fireStanceScale') return 'fireStanceScale is a multiplier, not a buff state';
+  return undefined;
 }
 
 /** 最終最大HP に足す stat か（最大HP▲・最大HP のみ▲） */

@@ -1,0 +1,15 @@
+{
+  "id": "C-1280",
+  "text": "ブレッディの S1 の「分配ダメージ増加効果が適用された時、持続ダメージ増加状態でなければ」は、持続ダメージ▲が付いている間に分配ダメージ▲が付いてもオススメの味が付かないと読む（説明文どおり。持続ダメージ▲の付いた時にやみつきの味も付くので、機構が確定したキャラの編成では起こせず、撮っていない。持続ダメージ▲もやみつきの味も無い時に付く側は 1205-01）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1205-01`。V-0785",
+  "model": "反映（`data/skills/520.json` の skill1 の effects[2] の条件 `selfBuffed: { stat: \"sustainedDamage\", present: false }`。`skills/holders/conditions.ts`）",
+  "replaces": [],
+  "updated": "2026-11-15",
+  "subject": {
+    "places": ["data/skills/520.json の skill1 の effects[2]"]
+  },
+  "decidedOn": []
+}
