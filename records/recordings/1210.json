@@ -1,0 +1,46 @@
+{
+  "id": "1210",
+  "date": "2026-11-15",
+  "folder": "range",
+  "file": "20261115-1210_team_marciana-ms.mp4",
+  "original": "2026-11-15_13-55-57.mp4",
+  "durationSec": 211.1,
+  "frames": 12663,
+  "fps": 60,
+  "sizeMB": 255.8,
+  "sha256": "03554a0e59e0",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 322,
+      "name": "マルチャーナ：マリンスタディ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Electronic"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0787 撮影 A（電撃の敵）",
+  "backup": {
+    "at": "2026-11-15T14:05+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
