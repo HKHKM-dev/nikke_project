@@ -56,6 +56,17 @@ describe('適正射程距離（distanceBonusAt・inEffectiveRangeAt）', () => {
     expect(distanceBonusAt(sr, landing('nearA'), lens(10) + skillValueOf(ADE_AB, 'burst', 1) / 100)).toBe(true);
   });
 
+  it('puts the near landings in the band from the stack measured after the lens ran out and Burst was used (V-0796)', () => {
+    const lens = (stacks: number) => (stacks * skillValueOf(ADE_AB, 'skill1', 3)) / 100;
+    const burst = skillValueOf(ADE_AB, 'burst', 1) / 100;
+    // 近 A（18〜20。C-1336）: バーストだけ（下端 20.0）では外、1 スタック（18.0）で中
+    expect(distanceBonusAt(sr, landing('nearA'), burst)).toBe(false);
+    expect(distanceBonusAt(sr, landing('nearA'), burst + lens(1))).toBe(true);
+    // 近 B（15〜16。C-1337）: 2 スタック（16.0）までは外、3 スタック（14.0）で中
+    expect(distanceBonusAt(sr, landing('nearB'), burst + lens(2))).toBe(false);
+    expect(distanceBonusAt(sr, landing('nearB'), burst + lens(3))).toBe(true);
+  });
+
   it('uses the manual range bonus without a landing plan', () => {
     const slot = fixedSlot(ADE_AB);
     expect(inEffectiveRangeAt(null, slot, 0, 0, 1)).toBe(slot.condition.distanceBonus);
