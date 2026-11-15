@@ -48,12 +48,16 @@
           },
           "damageType": "fixedShare",
           "ref": 1,
+          "gaugeHits": [
+            0
+          ],
           "assumes": {
-            "ja": "フルチャージの通常攻撃 1 発ごとに 1 回（全弾命中の前提）。きっかけの発の 1 ヒットが与えた値の X% で、会心・コア・フルバースト補正・▲を乗せ直さない。撃った区間の値で決め、発と同じフレームに出す",
-            "en": "Once per full-charge normal shot (every shot is assumed to hit). X% of the damage dealt by the triggering shot hit, with no crit, core, Full Burst bonus or buffs applied again. Taken from the segment the shot was fired in and dealt on the same frame as the shot"
+            "ja": "フルチャージの通常攻撃 1 発ごとに 1 回（全弾命中の前提）。きっかけの発の 1 ヒットが与えた値の X% で、会心・コア・フルバースト補正・▲を乗せ直さない。撃った区間の値で決め、発と同じフレームに出す。1 回で射手の 1 ヒットぶんのバーストゲージ（target_burst_energy_pershot。フルチャージ倍率なし）を、発の着弾のフレームに溜める",
+            "en": "Once per full-charge normal shot (every shot is assumed to hit). X% of the damage dealt by the triggering shot hit, with no crit, core, Full Burst bonus or buffs applied again. Taken from the segment the shot was fired in and dealt on the same frame as the shot. Each one charges the burst gauge by one hit of the shooter (target_burst_energy_pershot, without the full charge multiplier) on the landing frame of the shot"
           },
           "claims": [
-            "C-1255"
+            "C-1255",
+            "C-1333"
           ]
         },
         {
@@ -69,19 +73,7 @@
           ]
         }
       ],
-      "notes": [
-        {
-          "ja": "固定ダメージがバーストゲージを溜める分は未対応（溜めることは録画の 1 回目のフルバーストの入りの早さから見込むが、量が決まっていない）",
-          "en": "The burst gauge charged by the fixed damage is not modeled (the earlier first Full Burst in the recordings implies it charges the gauge, but the amount is undetermined)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "burstGaugeHit"
-          },
-          "claims": [
-            "C-1258"
-          ]
-        }
-      ]
+      "notes": []
     },
     "burst": {
       "effects": [

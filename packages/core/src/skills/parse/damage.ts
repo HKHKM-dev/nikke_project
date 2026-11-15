@@ -85,18 +85,25 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
 
 /**
  * 与えたダメージ量の X% の固定ダメージ（plan/design-emilia.md 2.2 節）。フルチャージの発の毎回だけで、1 トリガーの値に畳み込むので
- * ほかの欄（条件・遅れ・ゲージ・数のヒット）とは組まない
+ * ほかの欄（条件・遅れ・数のヒット）とは組まない。ゲージは gaugeHits の [0] だけ（固定ダメージは発の着弾と同じフレームに出るので、
+ * 1 回で射手の 1 ヒットぶんを着弾のフレームに溜める。C-1333）
  */
 function parseFixedShareDamage(v: Record<string, Json>, effect: DamageEffect, path: string): DamageEffect {
   rejectUnknownKeys(
     v,
-    ['kind', 'trigger', 'ref', 'damageType', 'assumes', 'claims', 'reads'],
+    ['kind', 'trigger', 'ref', 'damageType', 'gaugeHits', 'assumes', 'claims', 'reads'],
     path,
     'not allowed with the damageType "fixedShare"',
   );
   const { trigger } = effect;
   if (!isShotCountTrigger(trigger) || trigger.count !== 'fullChargeShot' || Object.keys(trigger).length !== 1) {
     fail(`${path}.trigger`, 'fixedShare needs the trigger { count: "fullChargeShot" }');
+  }
+  if (v.gaugeHits !== undefined) {
+    const hits = parseGaugeHits(v.gaugeHits, `${path}.gaugeHits`, 0);
+    if (hits.length !== 1 || hits[0] !== 0)
+      fail(`${path}.gaugeHits`, 'fixedShare takes only gaugeHits [0] (the fixed damage lands with the shot)');
+    effect.gaugeHits = hits;
   }
   parseAssumes(v, effect, path);
   return effect;

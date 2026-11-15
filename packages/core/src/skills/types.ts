@@ -1469,8 +1469,8 @@ export const SKILL_DAMAGE_TYPES = [
 /**
  * damage の効果の種別。SkillDamageType と、fixedShare = 「自分が与えたダメージ量の X% 分本体に固定ダメージ」
  * （plan/design-emilia.md 2.2 節）。きっかけの発（フルチャージの通常攻撃）の 1 ヒットが与えた値の X% で、会心・コア・フルバースト補正・▲を
- * 乗せ直さない。きっかけは { count: 'fullChargeShot' } だけで、ほかの欄とは組まない。撃った区間の 1 トリガーの値（damage.ts の
- * TriggerDamage.fixedShare）に畳み込む。モデルはバーストゲージを溜めない（溜める見込みで量が未確定。エミリアの定義の未対応の notes。C-1258）
+ * 乗せ直さない。きっかけは { count: 'fullChargeShot' } だけで、gaugeHits のほかの欄とは組まない。撃った区間の 1 トリガーの値（damage.ts の
+ * TriggerDamage.fixedShare）に畳み込む。gaugeHits は [0] だけ書け、1 回で射手の 1 ヒットぶんのバーストゲージを発の着弾のフレームに溜める（C-1333）
  */
 export type DamageEffectType = SkillDamageType | 'fixedShare';
 export const DAMAGE_EFFECT_TYPES = [...SKILL_DAMAGE_TYPES, 'fixedShare'] as const satisfies readonly DamageEffectType[];

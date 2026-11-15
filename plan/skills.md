@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 137・効果 1004（根拠あり 982）・notes 353（根拠あり 146）
+件数: キャラ 137・効果 1004（根拠あり 982）・notes 352（根拠あり 145）
 
-notes の種類: 未対応 50・前提の外 104・計算に無関係 69・補足 42・間接 88
+notes の種類: 未対応 49・前提の外 104・計算に無関係 69・補足 42・間接 88
 
-スロット: supported 364・partial 36・unsupported 10・noEffect 52
+スロット: supported 365・partial 35・unsupported 10・noEffect 52
 
 ## 10 ラピ
 
@@ -1985,10 +1985,9 @@ notes の種類: 未対応 50・前提の外 104・計算に無関係 69・補�
 - **skill1**: supported
   - effects[0] timed・fullChargeShot・chargeSpeed: C-1254（確定）
   - effects[1] timed・fullChargeShot・chargeDamage: C-1254（確定）
-- **skill2**: partial
-  - effects[0] damage・fullChargeShot・fixedShare: C-1255（確定）
+- **skill2**: supported
+  - effects[0] damage・fullChargeShot・fixedShare: C-1255（確定）、C-1333（確定）
   - effects[1] timed・fullBurstStart・maxAmmo: C-1256（確定）
-  - notes[0] 未対応: 固定ダメージがバーストゲージを溜める分は未対応（溜めることは録画の 1 回目のフルバーストの入りの早さから見込むが、量が決まっていない）: C-1258（仮説）
 - **burst**: partial
   - effects[0] state・burstUse・freezingWitch（chargeSpeed・chargeDamage）: C-1257（確定）
   - notes[0] 未対応: 爆発範囲▲は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）: 根拠なし

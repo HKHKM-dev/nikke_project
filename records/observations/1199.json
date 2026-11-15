@@ -424,7 +424,11 @@
       "source": "firing"
     },
     "source": "V-0779",
-    "readAt": "2026-11-14"
+    "readAt": "2026-11-14",
+    "invalid": {
+      "reason": "比べる窓（エミリアの発動からのフレーム）を、固定ダメージのゲージの無いチェーンの遅いモデルに合わせて取っていた。窓を取り直し、柱（`1199-20`）を入れた設定で `1199-24`（V-0799）で比べ直した",
+      "date": "2026-11-15"
+    }
   },
   {
     "id": "1199-16",
@@ -462,7 +466,11 @@
       "source": "firing"
     },
     "source": "V-0779",
-    "readAt": "2026-11-14"
+    "readAt": "2026-11-14",
+    "invalid": {
+      "reason": "比べる窓（エミリアの発動からのフレーム）を、固定ダメージのゲージの無いチェーンの遅いモデルに合わせて取っていた。窓を取り直し、柱（`1199-20`）を入れた設定で `1199-25`（V-0799）で比べ直した",
+      "date": "2026-11-15"
+    }
   },
   {
     "id": "1199-17",
@@ -500,7 +508,11 @@
       "source": "firing"
     },
     "source": "V-0779",
-    "readAt": "2026-11-14"
+    "readAt": "2026-11-14",
+    "invalid": {
+      "reason": "比べる窓（エミリアの発動からのフレーム）を、固定ダメージのゲージの無いチェーンの遅いモデルに合わせて取っていた。窓を取り直し、柱（`1199-20`）を入れた設定で `1199-26`（V-0799）で、的の表の命中率で比べ直した（結論には結び付けない）",
+      "date": "2026-11-15"
+    }
   },
   {
     "id": "1199-18",
@@ -569,6 +581,335 @@
       "source": "gauge"
     },
     "source": "V-0779",
-    "readAt": "2026-11-14"
+    "readAt": "2026-11-14",
+    "invalid": {
+      "reason": "比べる設定に、エミリアの 1 発目が壊した柱（`1199-20`）が無かった。同じ値を `1199-22`（V-0799）で比べ直した",
+      "date": "2026-11-15"
+    }
+  },
+  {
+    "id": "1199-20",
+    "recording": "1199",
+    "kind": "count",
+    "use": "input",
+    "value": 2,
+    "unit": "個",
+    "description": "エミリア（操作）の戦闘の最初の発（f954 に着弾）の爆発で無くなった物の数。的の右の縦長のコンテナの柱（1 個）と、柱の左の小さい物（1 個）（0162-22 と同じ組）",
+    "method": {
+      "tool": "目で読む（切り出し）と tools/captures/gauge.ts --subpixel",
+      "note": "柱は、その発の直前（f935）には立っていて、着弾の後（f1084）には無い。柱の左の小さい物は、着弾の後は的に隠れて崩れが見えない。数はバーで決めた: f954 のバーは 0px から 20.92px（本当の 12.6% + px × 0.738% = 28.0%。C-0084）。それまでのヒット（HUD の増分で数えたリターの 29 ヒット × 2,000・デルタの 1 発 53,000）と、この発の 98,000（発 70,000 + 固定ダメージ 28,000）の和 20.9% より約 7.1% 多く、物 1 個 35,000（14,000 × 2.5。C-0177・C-0139）の 2 個ぶん"
+    },
+    "source": "V-0799",
+    "readAt": "2026-11-15",
+    "scope": {
+      "slot": 3,
+      "source": "gauge",
+      "frames": [935, 954]
+    }
+  },
+  {
+    "id": "1199-21",
+    "recording": "1199",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [415, 444, 473, 1533, 2711, 2740, 2769, 3783, 4961, 4990, 5020],
+    "description": "I・II・III の発動の印（I → II・II → III の六角形の替わり目と III のタイマーの 00.00）の、戦闘開始（f869）からの動画のフレーム。最初の 5 回のチェーン（2・4 回目は I の単独の発動）",
+    "method": {
+      "tool": "recipe:burst-panel@2 の値（`1199-01`〜`1199-03`）を並べ、戦闘開始を引いた",
+      "note": "1・3・5 回目はフルバースト、2・4 回目は I だけの発動（II・III は CT）。1・2・4 回目はゲージが律速で、3・5 回目は I の CT が律速（`1199-06`）。6 回目からは、リターの弾丸命中率（モデルは 1）でずれる（`1199-27`）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationVideoFrames",
+      "args": {
+        "n": 11
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 1,
+            "count": "1199-20"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    },
+    "source": "V-0799",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1199-22",
+    "recording": "1199",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 400,
+    "description": "デルタの 1 発目の増分（f940）から 1 回目のフルバーストの入り（f1342。`1199-03`）までのゲーム内のフレーム（`1199-19` と同じ値を、柱（`1199-20`）を入れた設定で比べ直す）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps とレシピ burst-panel",
+      "note": "`1199-19` と同じ読み。1 回目の満タンはエミリアの 5 発目の着弾（BURST バーが消えたフレーム）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstStartFromFirstShot",
+      "args": {
+        "slot": 2,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 1,
+            "count": "1199-20"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "gauge"
+    },
+    "source": "V-0799",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1199-23",
+    "recording": "1199",
+    "kind": "gauge",
+    "use": "compare",
+    "unit": "%",
+    "value": 9.83,
+    "description": "エミリアの発（発と S2 の固定ダメージ。同じ着弾のフレーム）1 回が溜めたゲージの、録画の全体の平均（BURST バーが見えている間の 27 回）。本当の量の % = px × 0.738（C-0084）",
+    "method": {
+      "tool": "node tools/captures/gauge.ts --mode series --subpixel と hud.ts --mode jumps",
+      "note": "エミリアの発の着弾のフレーム f の前のフレームから f + 1 までのバーの伸びから、その間の HUD のリターのヒット × 2,000 を引いた（平均 13.322px、標準誤差 0.099px）。同じ読みのデルタの発（53,000）は平均 7.33px。バーの端（2px 未満・105px 超）と、バーが前後で 3px より大きく動くフレームは除いた。指標は 2 発目で指す（どの発も同じ量）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotGauge",
+      "args": {
+        "slot": 3,
+        "n": 2
+      },
+      "tolerance": {
+        "abs": 0.4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 1,
+            "count": "1199-20"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "gauge"
+    },
+    "source": "V-0799",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1199-24",
+    "recording": "1199",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [76, 391],
+    "description": "1 回目のバーストの前の 2 発と氷結の魔女の発（f1255・f1331・f1722）の発と発の間（動画のフレーム）（`1199-15` と同じ値を、柱（`1199-20`）を入れた設定で比べ直す）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "`1199-15` と同じ読み。比べる窓（エミリアの発動からのモデルのフレーム）は、録画と同じ発を選ぶように取り直した"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 3,
+        "burst": 0,
+        "from": -100,
+        "to": 360,
+        "video": true
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 1,
+            "count": "1199-20"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "source": "V-0799",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1199-25",
+    "recording": "1199",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [272, 76],
+    "description": "2 回目のバーストの前の発・氷結の魔女の発・次の発（f3632・f3904・f3980）の発と発の間（動画のフレーム）（`1199-16` と同じ値を、柱（`1199-20`）を入れた設定で比べ直す）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "`1199-16` と同じ読み。比べる窓（エミリアの発動からのモデルのフレーム）は、録画と同じ発を選ぶように取り直した"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 3,
+        "burst": 1,
+        "from": -60,
+        "to": 330,
+        "video": true
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 1,
+            "count": "1199-20"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "source": "V-0799",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1199-26",
+    "recording": "1199",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [273],
+    "description": "4 回目のバーストの前の発と氷結の魔女の発（f8163・f8436）の間（動画のフレーム）（`1199-17` と同じ値を、柱（`1199-20`）と的の表の命中率を入れた設定で比べ直す。結論には結び付けない）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "`1199-17` と同じ読み。比べる窓（エミリアの発動からのモデルのフレーム）は、録画と同じ発を選ぶように取り直した。4 回目のバーストのころは、弾丸命中率 1 のモデルのチェーンが録画より 28〜38f 早く、窓で同じ発を選べないので、的の表の命中率で比べる（結論には結び付けない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 3,
+        "burst": 3,
+        "from": -60,
+        "to": 240,
+        "video": true
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 1,
+            "count": "1199-20"
+          }
+        ],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "source": "V-0799",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1199-27",
+    "recording": "1199",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [
+      415, 444, 473, 1533, 2711, 2740, 2769, 3783, 4961, 4990, 5020, 6081, 7260, 7289, 7318, 8392, 9570, 9599, 9628
+    ],
+    "description": "I・II・III の発動の印（I → II・II → III の六角形の替わり目と III のタイマーの 00.00）の、戦闘開始（f869）からの動画のフレーム。チェーンは 9 回（I の単独の発動 4 回を含む）。弾丸命中率は的の表（condition auto）",
+    "method": {
+      "tool": "recipe:burst-panel@2 の値（`1199-01`〜`1199-03`）を並べ、戦闘開始を引いた",
+      "note": "1・3・5・7・9 回目はフルバースト、2・4・6・8 回目は I だけの発動。6・8 回目の周期（ゲージが律速）では、HUD のリターのヒットが弾丸命中率 1 のモデルの発の数より 1 割ほど少なく、1 のモデルでは満タンが 26〜92f 早い。的の表の命中率で回すと合う。リターの当たりは録画ごとに揺れるので、許容は 10f。的の表の条件なので、結論には結び付けない（残差の記録）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationVideoFrames",
+      "args": {
+        "n": 19
+      },
+      "tolerance": {
+        "abs": 10
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 1,
+            "count": "1199-20"
+          }
+        ],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    },
+    "source": "V-0799",
+    "readAt": "2026-11-15"
   }
 ]
