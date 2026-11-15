@@ -768,9 +768,9 @@ header h1 {
   /* 立ち絵（.modern-slot-char-area の先頭、高さ --slot-portrait-h）の中央 */
   top: calc(var(--slot-portrait-h) / 2);
   left: 50%;
-  /* 立ち絵の幅の 3/4（元の大きさで 96px）。立ち絵が縮むと一緒に縮む */
-  width: calc(var(--slot-portrait-h) * 3 / 8);
-  height: calc(var(--slot-portrait-h) * 3 / 8);
+  /* 外の輪の外径が立ち絵の幅の 3/4 × 0.84（元の大きさで約 81px）。絵は外の輪が枠の端まで描かれている。立ち絵が縮むと一緒に縮む */
+  width: calc(var(--slot-portrait-h) * 3 / 8 * 0.84);
+  height: calc(var(--slot-portrait-h) * 3 / 8 * 0.84);
   transform: translate(-50%, -50%) scale(0.92);
   filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.35));
   pointer-events: none;
@@ -791,10 +791,11 @@ header h1 {
 /* ◎ の上の ▼（ui_selection_triangle.svg）。◎ が縮むときに上へ、広がるときに下へ動く（◎ と同じ周期と緩急） */
 .modern-slot-target-arrow {
   position: absolute;
-  /* ◎（幅 = 立ち絵の高さの 3/8）の上端の少し上 */
+  /* ◎ の外の輪の少し上（立ち絵の中央から、立ち絵の高さの 3/16 + 3/40 だけ上）。枠の上 19% は絵の空き */
   top: calc(var(--slot-portrait-h) / 2 - var(--slot-portrait-h) * 3 / 16 - var(--slot-portrait-h) * 3 / 40);
   left: 50%;
-  width: calc(var(--slot-portrait-h) * 3 / 32);
+  /* 絵の三角は枠の幅の 76%（左右 12% ずつ空き）。三角の幅を立ち絵の高さの 3/32 にする */
+  width: calc(var(--slot-portrait-h) * 3 / 32 / 0.76);
   filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.35));
   pointer-events: none;
   z-index: 3;
@@ -807,7 +808,7 @@ header h1 {
     transform: translate(-50%, -40%);
   }
   50% {
-    transform: translate(-50%, 30%);
+    transform: translate(-50%, -3%);
   }
 }
 @media (prefers-reduced-motion: reduce) {
