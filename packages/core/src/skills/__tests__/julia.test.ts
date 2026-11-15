@@ -30,6 +30,12 @@ describe('語彙の検証', () => {
     expect(() => parseSkillDefinition(patched({ onSkillCrit: false }))).toThrow(/onSkillCrit/);
   });
 
+  it('rejects onSkillCrit on the forms that do not compute a skill hit', () => {
+    expect(() =>
+      parseSkillDefinition(patched({ damageType: 'fixedShare', trigger: { count: 'fullChargeShot' } })),
+    ).toThrow(/onSkillCrit cannot be used/);
+  });
+
   it('rejects onSkillCrit on a per-shot damage that folds into the shot', () => {
     const def = parseSkillDefinition(patched({ trigger: { count: 'normalShot' } }));
     const applied = applyTreasure(characterOf(JULIA), def, TREASURE_PHASE_MAX);

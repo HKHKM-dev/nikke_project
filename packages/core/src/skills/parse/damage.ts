@@ -56,6 +56,12 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
   // 射撃ごと（every = 1）の倍率ダメージも書ける。1 トリガーの値に畳み込む（skills/burstDamage.ts の resolvePerShotDamage）
   const damageType = oneOf(DAMAGE_EFFECT_TYPES, v.damageType, `${path}.damageType`);
   const effect: DamageEffect = { kind: 'damage', trigger, ref: parseRef(v.ref, `${path}.ref`), damageType };
+  // 倍率ダメージの会心をきっかけにする 1 ヒット（plan/design-julia.md 2.1 節）は、下の早く返る形（固定ダメージ・召喚の攻撃・蓄積）には書けない
+  if (
+    v.onSkillCrit !== undefined &&
+    (damageType === 'fixedShare' || isSummonAttackTrigger(trigger) || v.accumulate !== undefined)
+  )
+    fail(path, 'onSkillCrit cannot be used with fixedShare, summon attacks or accumulate');
   if (damageType === 'fixedShare') return parseFixedShareDamage(v, effect, path);
   if (isSummonAttackTrigger(trigger)) return parseSummonDamage(v, effect, path);
   if (v.accumulate !== undefined) return parseAccumulateDamage(v, effect, path);
@@ -69,7 +75,6 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
   parseDamageGaugePerHit(v, effect, path);
   // 同 5.4 節: 「コア命中ダメージ」
   if (v.coreHit !== undefined) effect.coreHit = parseTrue(v.coreHit, `${path}.coreHit`);
-  // 倍率ダメージの会心をきっかけにする 1 ヒット（plan/design-julia.md 2.1 節）
   if (v.onSkillCrit !== undefined) effect.onSkillCrit = parseTrue(v.onSkillCrit, `${path}.onSkillCrit`);
   parsePerCountSplit(v, effect, path);
   validateGaugePerHitSplit(effect, path);
