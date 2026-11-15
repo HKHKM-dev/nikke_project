@@ -320,7 +320,13 @@ export function createViews({
    * 枠 holder に、フレーム fireFrame に発火した量で追う回復（発動者 sourceSlotIndex・割合 value）がフレーム frame に付く。
    * E には frame の次のフレームから効く
    */
-  const restoreHp = (sourceSlotIndex: number, holder: number, frame: number, fireFrame: number, value: number): void => {
+  const restoreHp = (
+    sourceSlotIndex: number,
+    holder: number,
+    frame: number,
+    fireFrame: number,
+    value: number,
+  ): void => {
     const list = restores[holder];
     if (list === undefined) throw new RangeError(`restoreHp: no slot ${holder}`);
     if (frame >= frames) return;
@@ -334,7 +340,9 @@ export function createViews({
     const caster = slots[r.sourceSlotIndex]?.casterMaxHp;
     const own = slots[holder]?.casterMaxHp;
     if (caster === undefined || own === undefined)
-      throw new RangeError(`slot ${holder}: a heal by casterFinalMaxHp needs the base max HP of the caster and the target`);
+      throw new RangeError(
+        `slot ${holder}: a heal by casterFinalMaxHp needs the base max HP of the caster and the target`,
+      );
     return (caster * (1 + maxHpUpAt(r.sourceSlotIndex, r.fireFrame, true).up) * r.value) / own;
   };
   /** 回復を除いた現在の HP（S）と最大HP（M）。どちらも枠のバフ前の最大HP を 1 とする（plan/design-skill-stage6.md 2.4 節の式） */

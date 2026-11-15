@@ -20,7 +20,13 @@ type Json = { skills: Record<string, { effects: Record<string, unknown>[] }> };
 describe('マストの最大HP のみ▲ の窓とミサトの S1 の回復', () => {
   const team = (): TeamInput => fixedTeam([MISATO, MAST, MILK, NOIR, FLOWER], 2, { noBurstSlots: [0, 2, 3] });
   const plan = planTeamRun(team());
-  const lowered = itemsOf(plan.history, { sourceSlotIndex: 1, kind: 'timed', skill: 'burst', stat: 'maxHpOnly', holder: 2 });
+  const lowered = itemsOf(plan.history, {
+    sourceSlotIndex: 1,
+    kind: 'timed',
+    skill: 'burst',
+    stat: 'maxHpOnly',
+    holder: 2,
+  });
   const heals = plan.history.heals.filter((h) => h.sourceSlotIndex === 0);
   const ratio = (slot: number, frame: number) => selfHpRatioOf(plan.history, slot, frame);
   const maxHp = (slot: number) => plan.history.slots[slot]!.casterMaxHp!;
