@@ -1576,6 +1576,21 @@ html:has(.modern-view-container) {
   margin: 0;
   font-size: 1.1rem;
 }
+/* モダンの育成・設定の見出し（ニケの名前と ui_main_○○ のバッジ 5 個） */
+.slot-build-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.slot-build-main-badges {
+  display: flex;
+  gap: 4px;
+}
+.slot-build-main-badges > img {
+  height: 28px;
+  /* 白い絵なので、ライトモードでは縁に影を付けて背景から浮かせる */
+  filter: drop-shadow(0 0 1px light-dark(rgba(0, 0, 0, 0.7), transparent));
+}
 .modal-close-button {
   background: transparent;
   border: none;

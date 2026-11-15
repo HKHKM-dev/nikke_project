@@ -5,6 +5,14 @@ import { GrowthEditor, type ShownGrowth } from '../GrowthEditor.tsx';
 import { Modal } from '../Modal.tsx';
 import { RosterRevertButton } from '../RosterRevertButton.tsx';
 import { SlotOptions } from '../SlotOptions.tsx';
+import mainStar from '../../assets/badges/ui_main_star.svg';
+import mainSpade from '../../assets/badges/ui_main_spade.svg';
+import mainHeart from '../../assets/badges/ui_main_heart.svg';
+import mainDiamond from '../../assets/badges/ui_main_diamond.svg';
+import mainClub from '../../assets/badges/ui_main_club.svg';
+
+/** 見出しの横に並べるバッジ（いまは並べるだけで、押しても何も起きない） */
+const MAIN_BADGES = [mainStar, mainSpade, mainHeart, mainDiamond, mainClub];
 
 type Props = {
   slotIndex: number;
@@ -41,7 +49,16 @@ export function SlotBuildModal({
 
   return (
     <Modal
-      title={`スロット ${slotIndex + 1}: ${character.name.ja}`}
+      title={
+        <span className="slot-build-title">
+          {character.name.ja}
+          <span className="slot-build-main-badges" aria-hidden="true">
+            {MAIN_BADGES.map((src) => (
+              <img key={src} src={src} alt="" />
+            ))}
+          </span>
+        </span>
+      }
       label={`スロット ${slotIndex + 1}（${character.name.ja}）の育成・設定`}
       onClose={onClose}
     >
