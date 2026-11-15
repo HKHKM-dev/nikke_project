@@ -58,12 +58,38 @@ export function parseOnOff(value: string | undefined, flag: string): boolean | n
 }
 
 /**
+ * --rid 271,-,870 を、枠の順の rid の並びにする（- は空枠で null。plan/design-rouge.md 2.1 節）。省略は空の並び。枠は 1〜5 で、
+ * 最後の枠は埋まっていること
+ */
+export function parseRidArg(arg: string | undefined): (number | null)[] {
+  if (arg === undefined) return [];
+  const rids = arg.split(',').map((s) => {
+    const t = s.trim();
+    if (t === '-') return null;
+    if (!/^[1-9]\d*$/.test(t)) throw new Error(`--rid は rid（正の整数）か空枠の - を , で並べる（${t}）`);
+    return Number(t);
+  });
+  if (rids.length > 5) throw new Error(`--rid は 5 枠まで（${rids.length} 枠）`);
+  if (rids[rids.length - 1] === null) throw new Error('--rid の最後の枠が空枠（後ろの空枠は書かない）');
+  return rids;
+}
+
+/** --controlled <枠> を枠の番号にする。省略は null。枠は --rid の埋まった枠（--rid が無ければ範囲は見ない） */
+export function parseControlledArg(arg: string | undefined, rids: readonly (number | null)[]): number | null {
+  if (arg === undefined) return null;
+  const slot = Number(arg);
+  if (!Number.isInteger(slot) || slot < 1 || (rids.length > 0 && (rids[slot - 1] ?? null) === null))
+    throw new Error(`--controlled の枠 ${arg} が --rid の埋まった枠でない`);
+  return slot;
+}
+
+/**
  * --treasure <枠>:<段階>,...（段階は 0〜3。0 は宝物なし）を、枠（1 始まり）→ 段階にする。枠は --rid の中で、そのキャラが宝物を持つこと
  * （hasTreasure は rid で引く）
  */
 export function parseTreasureArg(
   arg: string | undefined,
-  rids: readonly number[],
+  rids: readonly (number | null)[],
   hasTreasure: (rid: number) => boolean,
 ): Map<number, number> {
   const phases = new Map<number, number>();
@@ -71,9 +97,9 @@ export function parseTreasureArg(
     const m = /^(\d+):([0-3])$/.exec(t.trim());
     if (!m) throw new Error(`--treasure は <枠>:<段階（0〜3。0 は宝物なし）> を , で並べる（${t}）`);
     const slot = Number(m[1]);
-    if (slot < 1 || slot > rids.length) throw new Error(`--treasure の枠 ${slot} が --rid に無い`);
-    if (!hasTreasure(rids[slot - 1]!))
-      throw new Error(`--treasure の枠 ${slot}（rid ${rids[slot - 1]}）のキャラは宝物を持たない`);
+    const rid = rids[slot - 1] ?? null;
+    if (rid === null) throw new Error(`--treasure の枠 ${slot} が --rid に無い`);
+    if (!hasTreasure(rid)) throw new Error(`--treasure の枠 ${slot}（rid ${rid}）のキャラは宝物を持たない`);
     phases.set(slot, Number(m[2]));
   }
   return phases;

@@ -3,7 +3,9 @@ import {
   batchNamesAndNotes,
   isRecordingName,
   nextRecordingIds,
+  parseControlledArg,
   parseOnOff,
+  parseRidArg,
   parseTreasureArg,
   reservedLabel,
   sequentialRecordingIds,
@@ -92,6 +94,36 @@ describe('引数の検査', () => {
     expect(() => parseTreasureArg('3:1', rids, hasTreasure)).toThrow(
       '--treasure の枠 3（rid 10）のキャラは宝物を持たない',
     );
+    // 空枠は --rid に無い枠として止める
+    const gapped = [271, null, 870];
+    expect(parseTreasureArg('3:2', gapped, hasTreasure)).toEqual(new Map([[3, 2]]));
+    expect(() => parseTreasureArg('2:1', gapped, hasTreasure)).toThrow('--treasure の枠 2 が --rid に無い');
+  });
+});
+
+describe('--rid と --controlled（空枠は -）', () => {
+  it('reads rids in slot order with - for an empty slot', () => {
+    expect(parseRidArg(undefined)).toEqual([]);
+    expect(parseRidArg('271, 870')).toEqual([271, 870]);
+    expect(parseRidArg('271,-,870')).toEqual([271, null, 870]);
+    expect(parseRidArg('-,272')).toEqual([null, 272]);
+  });
+
+  it('rejects non-rids, more than 5 slots and a trailing empty slot', () => {
+    expect(() => parseRidArg('271,abc')).toThrow('--rid は rid（正の整数）か空枠の - を , で並べる（abc）');
+    expect(() => parseRidArg('271,,870')).toThrow(/--rid は rid/);
+    expect(() => parseRidArg('0')).toThrow(/--rid は rid/);
+    expect(() => parseRidArg('1,2,3,4,5,6')).toThrow('--rid は 5 枠まで（6 枠）');
+    expect(() => parseRidArg('271,-')).toThrow('--rid の最後の枠が空枠');
+  });
+
+  it('takes the controlled slot only on a filled slot', () => {
+    const gapped = [271, null, 870];
+    expect(parseControlledArg(undefined, gapped)).toBeNull();
+    expect(parseControlledArg('3', gapped)).toBe(3);
+    expect(parseControlledArg('2', [])).toBe(2);
+    for (const bad of ['2', '4', '0', 'x'])
+      expect(() => parseControlledArg(bad, gapped)).toThrow(`--controlled の枠 ${bad} が --rid の埋まった枠でない`);
   });
 });
 
