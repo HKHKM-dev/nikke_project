@@ -1,7 +1,12 @@
 import { useDroppable } from '@dnd-kit/core';
 import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
 import { memo, useMemo, type Dispatch, type SetStateAction } from 'react';
-import { trayCollectionBadge, type BadgeFilters as BadgeFilterValues, TREASURE_FILTER_BADGE } from './badges.ts';
+import {
+  RETURN_BADGE,
+  trayCollectionBadge,
+  type BadgeFilters as BadgeFilterValues,
+  TREASURE_FILTER_BADGE,
+} from './badges.ts';
 import { BadgeFilters } from './BadgeFilter.tsx';
 import { BadgeIcon } from './BadgeIcon.tsx';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
@@ -21,8 +26,6 @@ import type { OtherParties } from '../../parties.ts';
 import { NO_PARTIES } from './PartyNumberBadges.tsx';
 import { Popover } from '../Popover.tsx';
 import { useCharacterFilter } from '../useCharacterFilter.ts';
-import returnIcon from '../../assets/badges/ui_return.svg';
-import { maskIconStyle } from '../maskIcon.ts';
 
 type Props = {
   index: readonly CharacterIndexEntry[];
@@ -206,7 +209,7 @@ function TrayFilters({
           <BadgeIcon className="char-badge" name={TREASURE_FILTER_BADGE} label="宝物のあるニケ" />
         </button>
       </div>
-      {/* 選んだ絞り込みを全部外す（何も選んでいないときは押せない）。文字の代わりにバッジの絵 ui_return.svg（.mask-icon） */}
+      {/* 選んだ絞り込みを全部外す（何も選んでいないときは押せない）。文字の代わりにバッジ ui_return */}
       <button
         type="button"
         className="char-tray-action-button char-tray-filter-clear"
@@ -219,7 +222,7 @@ function TrayFilters({
           onTreasureOnlyChange(false);
         }}
       >
-        <span className="mask-icon char-tray-filter-clear-icon" style={maskIconStyle(returnIcon)} />
+        <BadgeIcon className="char-tray-filter-clear-icon" name={RETURN_BADGE} />
       </button>
     </div>
   );

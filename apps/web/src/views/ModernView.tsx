@@ -11,8 +11,8 @@ import { useSlotFit } from '../components/modern/useSlotFit.ts';
 import { ModernSlotCard } from '../components/modern/ModernSlotCard.tsx';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
 import { useSlotUndo } from '../components/modern/useSlotUndo.ts';
-import { maskIconStyle } from '../components/maskIcon.ts';
-import returnIcon from '../assets/badges/ui_return.svg';
+import { BadgeIcon } from '../components/modern/BadgeIcon.tsx';
+import { RETURN_BADGE } from '../components/modern/badges.ts';
 import { SlotDragOverlay } from '../components/modern/SlotDragOverlay.tsx';
 import { slotCollectionBadge, slotGrowthMarks } from '../components/modern/slotBadges.ts';
 import { useSlotDrag } from '../components/modern/useSlotDrag.ts';
@@ -155,7 +155,7 @@ export function ModernView({
         <PartyTabs active={parties.active} onSelect={selectParty} totals={totals.parties} />
 
         <div className="modern-slots-area">
-          {/* 元に戻す（スロットの並びの上の端の中央。戻せる並びがあるときだけ出す）。絵はバッジの絵 ui_return.svg（.mask-icon） */}
+          {/* 元に戻す（スロットの並びの上の端の中央。戻せる並びがあるときだけ出す）。絵はバッジ ui_return */}
           {slotUndo.canUndo && (
             <button
               type="button"
@@ -164,7 +164,7 @@ export function ModernView({
               title="元に戻す"
               onClick={() => slotUndo.undo(placement)}
             >
-              <span className="mask-icon modern-slot-undo-icon" style={maskIconStyle(returnIcon)} />
+              <BadgeIcon className="modern-slot-undo-icon" name={RETURN_BADGE} />
             </button>
           )}
           <section ref={slotsGridRef} className="modern-slots-grid" aria-label="編成スロット一覧">

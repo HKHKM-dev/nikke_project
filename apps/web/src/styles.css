@@ -1512,7 +1512,7 @@ html:has(.modern-view-container) {
   pointer-events: none;
   z-index: 3;
 }
-/* 絞り込みのクリアの印（ui_return.svg） */
+/* 絞り込みのクリアの印（バッジ ui_return） */
 .char-tray-filter-clear-icon {
   display: block;
   width: 20px;

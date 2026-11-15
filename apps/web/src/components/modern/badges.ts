@@ -30,6 +30,7 @@ const BADGE_SVGS = import.meta.glob<string>(
     '../../assets/badges/ui_information.svg',
     '../../assets/badges/ui_controller.svg',
     '../../assets/badges/ui_setting.svg',
+    '../../assets/badges/ui_return.svg',
   ],
   { eager: true, query: '?raw', import: 'default' },
 );
@@ -74,6 +75,9 @@ export const CONTROLLER_BADGE = badgeName('ui_controller');
 
 /** 右上の設定のメニューのボタンのバッジ（SettingsMenu） */
 export const SETTING_BADGE = badgeName('ui_setting');
+
+/** 元に戻すのボタン（ModernView）と、ニケ一覧の絞り込みを外すボタン（CharacterTray）のバッジ */
+export const RETURN_BADGE = badgeName('ui_return');
 
 /**
  * コレクションのバッジ。ニケ一覧の宝物の絞り込みのボタンと、スロット・ニケ一覧のコレクション（collectionBadge）が同じ絵を使い、
