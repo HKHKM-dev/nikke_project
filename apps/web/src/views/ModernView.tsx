@@ -10,6 +10,9 @@ import { CharacterTray } from '../components/modern/CharacterTray.tsx';
 import { useSlotFit } from '../components/modern/useSlotFit.ts';
 import { ModernSlotCard } from '../components/modern/ModernSlotCard.tsx';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
+import { useSlotUndo } from '../components/modern/useSlotUndo.ts';
+import { maskIconStyle } from '../components/maskIcon.ts';
+import returnIcon from '../assets/badges/ui_return.svg';
 import { SlotDragOverlay } from '../components/modern/SlotDragOverlay.tsx';
 import { slotCollectionBadge, slotGrowthMarks } from '../components/modern/slotBadges.ts';
 import { useSlotDrag } from '../components/modern/useSlotDrag.ts';
@@ -77,10 +80,19 @@ export function ModernView({
   useSlotFit(slotsGridRef, team.slots.length);
 
   // 置く・外す（絵を飛ばす）と、ドラッグ
-  const placement = useSlotPlacement(team, dispatch);
+  // スロットの入れ替え・外す・置き換えを元に戻す（スロットの並びの上の中央のボタン）
+  const slotUndo = useSlotUndo(team, dispatch);
+  const placement = useSlotPlacement(team, slotUndo.trackedDispatch);
   const { clearSlot, placeFromTray } = placement;
   // ドラッグを始めたら、一覧のクリックで待っているニケをやめる
-  const drag = useSlotDrag({ team, dispatch, calc, roster, placement, onDragStart: () => setPendingId(null) });
+  const drag = useSlotDrag({
+    team,
+    dispatch: slotUndo.trackedDispatch,
+    calc,
+    roster,
+    placement,
+    onDragStart: () => setPendingId(null),
+  });
 
   // 一覧でニケをクリックしたとき: 空き枠があれば最も左の空き枠に置く。なければ、次にクリックしたスロットに置くまで待つ。
   // 待っている間（ほかのニケが暗い間）は、一覧のどのニケをクリックしても待つのをやめるだけ。ほかの編成で使っているニケは何もしない
@@ -148,31 +160,45 @@ export function ModernView({
         <DamageTotalPanel title="合計ダメージ" value={totals.total} computing={totalsPending} />
         <PartyTabs active={parties.active} onSelect={selectParty} totals={totals.parties} />
 
-        <section ref={slotsGridRef} className="modern-slots-grid" aria-label="編成スロット一覧">
-          {team.slots.map((slot, i) => {
-            const { character } = calc.slots[i]!;
-            const characterEntry = slot.resourceId !== null ? indexMap.get(slot.resourceId) : undefined;
+        <div className="modern-slots-area">
+          {/* 元に戻す（スロットの並びの上の端の中央。戻せる操作の後だけ出す）。絵はバッジの絵 ui_return.svg（.mask-icon） */}
+          {slotUndo.canUndo && (
+            <button
+              type="button"
+              className="modern-slot-undo-button"
+              aria-label="元に戻す"
+              title="元に戻す"
+              onClick={slotUndo.undo}
+            >
+              <span className="mask-icon modern-slot-undo-icon" style={maskIconStyle(returnIcon)} />
+            </button>
+          )}
+          <section ref={slotsGridRef} className="modern-slots-grid" aria-label="編成スロット一覧">
+            {team.slots.map((slot, i) => {
+              const { character } = calc.slots[i]!;
+              const characterEntry = slot.resourceId !== null ? indexMap.get(slot.resourceId) : undefined;
 
-            return (
-              <ModernSlotCard
-                key={i}
-                slotIndex={i}
-                character={character}
-                characterEntry={characterEntry}
-                unsupportedNote={slot.resourceId === null ? null : unsupportedNote(slot.resourceId)}
-                error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
-                slotResult={slotResults[i] ?? null}
-                growthMarks={slotGrowthMarks(calc, team, roster, i)}
-                collectionBadge={slotCollectionBadge(calc, i)}
-                controlled={team.controlledSlot === i}
-                onPlacePending={pendingId !== null ? () => handlePlacePending(i) : undefined}
-                onOpenBuildModal={() => setEditingSlotIndex(i)}
-                onClear={() => clearSlot(i)}
-                partyTotalDamage={totals.parties[parties.active]?.total ?? null}
-              />
-            );
-          })}
-        </section>
+              return (
+                <ModernSlotCard
+                  key={i}
+                  slotIndex={i}
+                  character={character}
+                  characterEntry={characterEntry}
+                  unsupportedNote={slot.resourceId === null ? null : unsupportedNote(slot.resourceId)}
+                  error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
+                  slotResult={slotResults[i] ?? null}
+                  growthMarks={slotGrowthMarks(calc, team, roster, i)}
+                  collectionBadge={slotCollectionBadge(calc, i)}
+                  controlled={team.controlledSlot === i}
+                  onPlacePending={pendingId !== null ? () => handlePlacePending(i) : undefined}
+                  onOpenBuildModal={() => setEditingSlotIndex(i)}
+                  onClear={() => clearSlot(i)}
+                  partyTotalDamage={totals.parties[parties.active]?.total ?? null}
+                />
+              );
+            })}
+          </section>
+        </div>
 
         <CharacterTray
           index={index}

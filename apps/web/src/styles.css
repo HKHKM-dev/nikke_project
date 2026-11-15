@@ -699,6 +699,26 @@ header h1 {
 
 /* 5スロットグリッド */
 /* 5 枚を 1 段に並べ、余った幅は左右に分けて中央に寄せる。幅が足りなければ立ち絵を縮めて収める（useSlotFit.ts が --slot-portrait-h を置く） */
+/* スロットの並びと、その上の端の中央の「元に戻す」のボタン（useSlotUndo）。ボタンの段は、出ていない間も空けておく（出し入れで並びが動かないように） */
+.modern-slots-area {
+  position: relative;
+  padding-top: 30px;
+}
+.modern-slot-undo-button {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  translate: -50%;
+  z-index: 3;
+  display: inline-flex;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+.modern-slot-undo-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
 .modern-slots-grid {
   display: flex;
   flex-wrap: wrap;
