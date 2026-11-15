@@ -7,16 +7,15 @@ import { defaultDropAnimationSideEffects, type DropAnimation } from '@dnd-kit/co
  */
 const returnSideEffects = defaultDropAnimationSideEffects({ className: { active: 'drag-source-returning' } });
 
-/** 離したドロップの結果（useSlotDrag がドラッグの始めに戻し、終わりに決める。DROP_ANIMATION が読む） */
-const dropState: { placed: boolean } = {
-  // 持ち上げたものの行き先が決まった（一覧のニケをスロットに置いた・スロットのニケを一覧へ戻して外した・スロットどうしを入れ替えた）。
-  // 元へ戻るアニメーションはしない（行き先へは flight.ts で動かす）
-  placed: false,
-};
+/**
+ * 持ち上げたものの行き先が決まった（一覧のニケをスロットに置いた・スロットのニケを一覧へ戻して外した・スロットどうしを入れ替えた）。
+ * 元へ戻るアニメーションはしない（行き先へは flight.ts で動かす）。useSlotDrag がドラッグの始めに戻し、終わりに決める。DROP_ANIMATION が読む
+ */
+let dropPlaced = false;
 
-/** 離したドロップの結果を書く（ドロップの処理から、描画の外の dropState を書き換える） */
-export function setDropState(next: Partial<typeof dropState>): void {
-  Object.assign(dropState, next);
+/** 行き先が決まったかを書く（ドロップの処理から、描画の外の dropPlaced を書き換える） */
+export function setDropPlaced(placed: boolean): void {
+  dropPlaced = placed;
 }
 
 /** スロット index のカード（無ければ null） */
@@ -27,12 +26,12 @@ export const slotCardAt = (index: number | null) =>
 
 /** 離したときのアニメーション。行き先が決まらなかったときだけ、持ち上げた絵をドラッグ元へ戻す */
 export const DROP_ANIMATION: DropAnimation = {
-  // 行き先が決まったとき（dropState.placed）は動かさない（始めと終わりが同じなら、dnd-kit はアニメーションをしない）
+  // 行き先が決まったとき（dropPlaced）は動かさない（始めと終わりが同じなら、dnd-kit はアニメーションをしない）
   keyframes: ({ transform: { initial, final } }) => {
     const at = (t: typeof initial) => ({
       transform: `translate3d(${t.x}px, ${t.y}px, 0) scaleX(${t.scaleX}) scaleY(${t.scaleY})`,
     });
-    return [at(initial), at(dropState.placed ? initial : final)];
+    return [at(initial), at(dropPlaced ? initial : final)];
   },
   sideEffects: returnSideEffects,
 };

@@ -14,7 +14,7 @@ import { useRef, useState, type Dispatch, type MouseEvent as ReactMouseEvent } f
 import type { CalcView } from '../../calcView.ts';
 import type { TeamAction, TeamState } from '../../team.ts';
 import { trayCollectionBadge, type Badge } from './badges.ts';
-import { setDropState, slotCardAt } from './dropAnimation.ts';
+import { setDropPlaced, slotCardAt } from './dropAnimation.ts';
 import { flyControllerInto } from './flight.ts';
 import { activeDragData, dropIntentOf } from './dropIntent.ts';
 import { trayGrowthMarks, type GrowthMarks } from './GrowthMarks.tsx';
@@ -107,7 +107,7 @@ export function useSlotDrag({ team, dispatch, calc, roster, placement, onDragSta
 
   const handleDragStart = (event: DragStartEvent) => {
     onDragStart();
-    setDropState({ placed: false });
+    setDropPlaced(false);
     if (noScrollNodeRef.current) Reflect.deleteProperty(noScrollNodeRef.current, 'scrollIntoView');
     const source = (event.activatorEvent.target as Element | null)?.closest('.modern-slot-card, .char-tray-item');
     if (source) Object.assign(source, { scrollIntoView: () => undefined });
@@ -160,25 +160,25 @@ export function useSlotDrag({ team, dispatch, calc, roster, placement, onDragSta
       case 'controller': {
         // 持ち上げた印は、離した位置から移した先のスロットの印の場所へ動かす
         const from = document.querySelector('.controller-drag-overlay')?.getBoundingClientRect();
-        setDropState({ placed: true });
+        setDropPlaced(true);
         dispatch({ type: 'setControlledSlot', index: intent.index });
         if (from) flyControllerInto(from, () => slotCardAt(intent.index));
         break;
       }
       case 'unplace':
         // 外したニケはスロットへ戻らないので、戻るアニメーションはしない。持ち上げた絵を一覧のそのニケの絵へ動かす
-        setDropState({ placed: true });
+        setDropPlaced(true);
         placement.clearSlot(intent.index, document.querySelector('.slot-drag-overlay-portrait .modern-slot-char-area'));
         break;
       case 'place': {
         // 持ち上げた絵は、離した位置からスロットへ動かす
         const from = document.querySelector('.char-drag-overlay .char-tray-item-visual')?.getBoundingClientRect();
-        if (placement.placeFromTray(intent.character.resourceId, intent.index, from)) setDropState({ placed: true });
+        if (placement.placeFromTray(intent.character.resourceId, intent.index, from)) setDropPlaced(true);
         break;
       }
       case 'swap':
         // 持ち上げた絵は、離した位置から落とした先へ、落とした先にいたものは、その元の位置からドラッグ元へ動かす
-        setDropState({ placed: true });
+        setDropPlaced(true);
         placement.swapSlots(
           intent.from,
           intent.to,

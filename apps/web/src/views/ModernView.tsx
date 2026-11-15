@@ -57,10 +57,8 @@ export function ModernView({
   // フォーカスが移るのは押した時（mousedown）なので、それも止める）。スロットのクリックは置く（handlePlacePending）
   useEffect(() => {
     if (pendingId === null) return;
-    // 待ち始めたクリック（一覧のニケ）は、この後で document に届くので数えない（その前に起きたクリック）
-    const since = performance.now();
+    // 待ち始めたクリック（一覧のニケ）は、document の capture の段を過ぎてから付けるので、ここには来ない
     const blockOutsideSlots = (event: MouseEvent) => {
-      if (event.timeStamp < since) return;
       const target = event.target;
       if (target instanceof Element && target.closest('.modern-slot-card')) return;
       event.preventDefault();
@@ -83,6 +81,8 @@ export function ModernView({
   // スロットのニケの並びを元に戻す（スロットの並びの上の中央のボタン）
   const slotUndo = useSlotUndo(team, dispatch, parties.active);
   const placement = useSlotPlacement(team, slotUndo.trackedDispatch);
+  // 元に戻す操作（積まない）
+  const undoPlacement = useSlotPlacement(team, dispatch);
   const { clearSlot, placeFromTray } = placement;
   // ドラッグを始めたら、一覧のクリックで待っているニケをやめる
   const drag = useSlotDrag({
@@ -97,10 +97,6 @@ export function ModernView({
   // 一覧でニケをクリックしたとき: 空き枠があれば最も左の空き枠に置く。なければ、次にクリックしたスロットに置くまで待つ。
   // 待っている間（ほかのニケが暗い間）は、一覧のどのニケをクリックしても待つのをやめるだけ。ほかの編成で使っているニケは何もしない
   const handleSelectCharacter = (resourceId: number) => {
-    if (pendingId !== null) {
-      setPendingId(null);
-      return;
-    }
     // ほかの編成で使っているニケは選べない（App の dispatch も止める）
     if (otherPartyIds.has(resourceId)) return;
     // いまの編成のスロットにいるニケをクリックしたら、そのスロットから外す
@@ -168,7 +164,7 @@ export function ModernView({
               className="modern-slot-undo-button"
               aria-label="元に戻す"
               title="元に戻す"
-              onClick={() => slotUndo.undo(placement)}
+              onClick={() => slotUndo.undo(undoPlacement)}
             >
               <span className="mask-icon modern-slot-undo-icon" style={maskIconStyle(returnIcon)} />
             </button>

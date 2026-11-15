@@ -1,12 +1,7 @@
 import { useDroppable } from '@dnd-kit/core';
 import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
-import { memo, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
-import {
-  matchesBadgeFilters,
-  trayCollectionBadge,
-  type BadgeFilters as BadgeFilterValues,
-  TREASURE_FILTER_BADGE,
-} from './badges.ts';
+import { memo, useMemo, type Dispatch, type SetStateAction } from 'react';
+import { trayCollectionBadge, type BadgeFilters as BadgeFilterValues, TREASURE_FILTER_BADGE } from './badges.ts';
 import { BadgeFilters } from './BadgeFilter.tsx';
 import { BadgeIcon } from './BadgeIcon.tsx';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
@@ -25,6 +20,7 @@ import { TRAY_SHAPE_LABEL, type TrayShape } from '../../trayShape.ts';
 import type { OtherParties } from '../../parties.ts';
 import { NO_PARTIES } from './PartyNumberBadges.tsx';
 import { Popover } from '../Popover.tsx';
+import { useCharacterFilter } from '../useCharacterFilter.ts';
 import returnIcon from '../../assets/badges/ui_return.svg';
 import { maskIconStyle } from '../maskIcon.ts';
 
@@ -64,9 +60,14 @@ export function CharacterTray({
   onToggleShape,
   onSelectCharacter,
 }: Props) {
-  const [filters, setFilters] = useState<BadgeFilterValues>({});
-  /** 宝物のあるニケだけにする（バッジの絞り込みと AND） */
-  const [treasureOnly, setTreasureOnly] = useState(false);
+  // 並びは受け取った一覧の順（App が名前順か戦闘力順に並べる。listOrder.ts）
+  const {
+    filters,
+    setFilters,
+    treasureOnly,
+    setTreasureOnly,
+    filtered: filteredCharacters,
+  } = useCharacterFilter(index);
 
   // スロットのキャラをトレイへ戻すと、そのスロットを空にする（ModernView の handleDragEnd）
   const { isOver, active, setNodeRef } = useDroppable({
@@ -74,12 +75,6 @@ export function CharacterTray({
     data: { type: 'tray' } satisfies OverDragData,
   });
   const returning = isOver && activeDragData(active?.data.current)?.type === 'slot-character';
-
-  // 並びは受け取った一覧の順（App が名前順か戦闘力順に並べる。listOrder.ts）
-  const filteredCharacters = useMemo(
-    () => index.filter((char) => (!treasureOnly || char.hasTreasure) && matchesBadgeFilters(char, filters)),
-    [index, filters, treasureOnly],
-  );
 
   return (
     <section
@@ -167,7 +162,7 @@ const TrayList = memo(function TrayList({
               key={char.resourceId}
               character={char}
               isTaken={isTaken}
-              otherParties={otherParties}
+              inOtherParty={otherParties.length > 0}
               partyNumbers={isTaken ? activeParties : otherParties}
               unsupportedNote={unsupportedNote(char.resourceId)}
               isPending={pendingId === char.resourceId}

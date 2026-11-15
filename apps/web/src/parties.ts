@@ -95,7 +95,6 @@ export function withoutCrossPartyDuplicates(
     changed = true;
     return { ...p, slots };
   });
-  if (!changed && nextTeam === team) return { parties: state, team };
   return { parties: changed ? { ...state, parties } : state, team: nextTeam };
 }
 

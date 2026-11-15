@@ -681,20 +681,22 @@ header h1 {
   --tray-visual-w: calc(256px / 3 + 2px);
   /* 置き先待ち・配置中の印の水色（実機の部隊編成の色） */
   --placing-blue: light-dark(#0ea5e9, #38bdf8);
+  /* ニケ一覧のコア強化のアイコンの幅（左上のバッジ .char-visual の --badge-w と同じ）。P○ のバッジの幅と位置もこれで決める */
+  --tray-core-w: 20px;
   /* スロットのカードの縦長の絵の高さ（枠線の内側。.char-visual-portrait と空のスロットの枠）。立ち絵（256×512）の 1/2。狭い画面では
      useSlotFit が並びに縮めた値を置く（上限は useSlotFit.ts の PORTRAIT_MAX_H と同じ） */
   --slot-portrait-h: 256px;
 }
 /* 置き先待ちのスロットの立ち絵と、いまの編成にいるニケの絵に重ねる薄い水色 */
 .modern-slot-card.modern-slot-awaiting .modern-slot-char-area::after,
+.char-tray-item-taken .char-tray-item-visual::after,
+.modern-slot-card.modern-slot-awaiting .modern-slot-char-area::after,
 .char-tray-item-taken .char-tray-item-visual::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
   background: color-mix(in srgb, var(--placing-blue) 30%, transparent);
+}
+/* 置き先待ちの間は、スロットの ✕・⚙ のボタンを反応させず、立ち絵の枠のクリック（置く）にする */
+.modern-slot-card.modern-slot-awaiting .modern-slot-icon-button {
   pointer-events: none;
-  z-index: 2;
 }
 
 /* 5スロットグリッド */
@@ -1033,10 +1035,9 @@ header h1 {
   right: 2px;
   z-index: 2;
   font-size: 0.65rem;
-  /* ニケ一覧の絵は小さいので、星とコアの印も小さくする（.growth-marks の既定より後に置いて上書きする）。
-     コアの印の幅は、左上のバッジ（.char-visual の --badge-w）と同じ */
+  /* ニケ一覧の絵は小さいので、星とコアの印も小さくする（.growth-marks の既定より後に置いて上書きする） */
   --growth-star-w: 9px;
-  --growth-core-w: 20px;
+  --growth-core-w: var(--tray-core-w);
 }
 .char-tray-growth .growth-marks-core {
   /* 四角の絵の右上（上端に寄せてある）では、はみ出しを下へ */
@@ -1204,7 +1205,7 @@ header h1 {
 /* 限界突破・コア強化の大きさは、四角の表示（.char-tray-growth）と同じ */
 .char-tray-tall-area .growth-marks {
   --growth-star-w: 9px;
-  --growth-core-w: 20px;
+  --growth-core-w: var(--tray-core-w);
   /* 右端からの距離を四角の表示（.char-tray-growth）とそろえる（名前の右の余白より 2px 右へ） */
   margin-right: -2px;
 }
@@ -1439,13 +1440,12 @@ html:has(.modern-view-container) {
   color: inherit;
   position: relative;
 }
-/* 置き先を待っている間は、ほかのニケを暗くする（待っているニケの枠は上の共通の規則） */
-.char-tray-list-pending .char-tray-item:not(.char-tray-item-pending) {
-  filter: brightness(0.4);
-}
-/* ほかの編成で使っているニケは選べない。置き先を待っている間のほかのニケ（上の規則）と同じく暗くし、押せない形のカーソルにする */
+/* 置き先を待っている間のほかのニケと、ほかの編成で使っているニケ（選べない）は暗くする（待っているニケの枠は上の共通の規則） */
+.char-tray-list-pending .char-tray-item:not(.char-tray-item-pending),
 .char-tray-item.char-tray-item-other-party {
   filter: brightness(0.4);
+}
+.char-tray-item.char-tray-item-other-party {
   cursor: not-allowed;
 }
 /* 四角の絵の下の名前。収まらない名前は流す（.scrolling-name。useScrollingName.tsx） */
@@ -1474,14 +1474,6 @@ html:has(.modern-view-container) {
 .char-tray-item-pending .char-tray-item-visual::after {
   /* 絵の枠（1px の枠線）と外形がそろうように、絵の箱と同じ大きさに描く */
   border: 2px solid var(--placing-blue);
-}
-.char-tray-item-pending .char-tray-item-visual::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 2;
 }
 .char-tray-item-check {
   position: absolute;
@@ -1521,8 +1513,8 @@ html:has(.modern-view-container) {
   pointer-events: none;
 }
 .char-tray-item-parties-below-growth {
-  /* .char-tray-growth（top 2px）のコアの印（高さ 20px。--growth-core-w）の下に 2px 空ける */
-  top: 24px;
+  /* .char-tray-growth（top 2px）のコアの印（高さ --tray-core-w）の下に 2px 空ける */
+  top: calc(var(--tray-core-w) + 4px);
 }
 .party-number-badge {
   background: var(--placing-blue);
@@ -1533,7 +1525,7 @@ html:has(.modern-view-container) {
 }
 /* ニケ一覧では、幅をコア強化のアイコン（--growth-core-w）より 2px 広くする */
 .char-tray-item-parties .party-number-badge {
-  width: 22px;
+  width: calc(var(--tray-core-w) + 2px);
   text-align: center;
 }
 

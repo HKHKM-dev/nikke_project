@@ -1,12 +1,22 @@
 // モダン UI で、一覧のニケをスロットに置く・スロットから外す操作と、そのときに絵を飛ばすアニメーション（flight.ts）
 import { useLayoutEffect, useRef, type Dispatch } from 'react';
-import { placeCharacterAction, rearrangeActions, type TeamAction, type TeamState } from '../../team.ts';
+import {
+  arrangementOf,
+  placeCharacterAction,
+  rearrangeActions,
+  type Arrangement,
+  type TeamAction,
+  type TeamState,
+} from '../../team.ts';
 import { slotCardAt } from './dropAnimation.ts';
 import { flyIntoSlot, flyToTray, stopArrival } from './flight.ts';
 
 /** 一覧のそのニケの絵（一覧に出ていなければ null） */
 const trayVisualAt = (resourceId: number) =>
   document.querySelector(`.char-tray-item[data-resource-id="${resourceId}"] .char-tray-item-visual`);
+
+/** スロット index の立ち絵の枠（無ければ null） */
+const slotAreaAt = (index: number) => slotCardAt(index)?.querySelector('.modern-slot-char-area') ?? null;
 
 /** 置いたニケのスロットに絵が入るのを待つ長さ（ms） */
 const ARRIVAL_WAIT_MS = 1000;
@@ -29,7 +39,7 @@ export type SlotPlacement = {
    * スロットのニケの並びを target にする（元に戻す。useSlotUndo）。育成・設定はニケと一緒に動き、いまの値のまま（rearrangeActions）。
    * 外れるニケは一覧へ、動くニケは前のスロットから、一覧から入るニケは一覧の絵から、それぞれのスロットへ動かす
    */
-  rearrange: (target: readonly (number | null)[]) => void;
+  rearrange: (target: Arrangement) => void;
 };
 
 export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>): SlotPlacement {
@@ -47,11 +57,17 @@ export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>
     });
   });
 
+  /** スロット index へ、from から絵を動かす（置いた後の描画で動かし始める。前に動いていた写しは消す） */
+  const queueArrival = (index: number, from: DOMRect | undefined) => {
+    stopArrival(slotCardAt(index));
+    if (from) arrivalsRef.current.push({ index, from, until: arrivalDeadline() });
+  };
+
   /**
    * スロット index のニケを外す直前に、その立ち絵を一覧のそのニケの絵へ動かす。content は動かす絵（無ければスロットの立ち絵の枠。
    * 持ち上げて一覧へ落としたときは、持ち上げた絵）
    */
-  const sendToTray = (index: number, content = slotCardAt(index)?.querySelector('.modern-slot-char-area') ?? null) => {
+  const sendToTray = (index: number, content = slotAreaAt(index)) => {
     const id = team.slots[index]?.resourceId;
     if (id === null || id === undefined || !content) return;
     flyToTray(content, trayVisualAt(id)?.getBoundingClientRect() ?? null);
@@ -71,44 +87,34 @@ export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>
     const action = placeCharacterAction(team, resourceId, index);
     if (!action) return false;
     sendToTray(index);
-    if (from) arrivalsRef.current.push({ index, from, until: arrivalDeadline() });
+    queueArrival(index, from);
     dispatch(action);
     return true;
   };
 
   const swapSlots = (fromIndex: number, toIndex: number, dragged?: DOMRect) => {
     // スロットの位置は入れ替えても変わらないので、落とした先の立ち絵の枠の位置が、入れ替わるものの元の位置
-    const targetArea = slotCardAt(toIndex)?.querySelector('.modern-slot-char-area');
-    stopArrival(slotCardAt(fromIndex));
-    stopArrival(slotCardAt(toIndex));
-    if (dragged) arrivalsRef.current.push({ index: toIndex, from: dragged, until: arrivalDeadline() });
-    if (targetArea)
-      arrivalsRef.current.push({
-        index: fromIndex,
-        from: targetArea.getBoundingClientRect(),
-        until: arrivalDeadline(),
-      });
+    queueArrival(fromIndex, slotAreaAt(toIndex)?.getBoundingClientRect());
+    queueArrival(toIndex, dragged);
     dispatch({ type: 'swapSlots', fromIndex, toIndex });
   };
 
-  const rearrange = (target: readonly (number | null)[]) => {
-    const current = team.slots.map((s) => s.resourceId);
+  const rearrange = (target: Arrangement) => {
+    const current = arrangementOf(team);
     const actions = rearrangeActions(current, target);
     if (actions.length === 0) return;
     // 動く前のスロットの立ち絵の位置（スロットの間を動くニケは、ここから動かす）
     const slotRects = new Map<number, DOMRect>();
     current.forEach((id, i) => {
-      const area = slotCardAt(i)?.querySelector('.modern-slot-char-area');
-      if (id !== null && area) slotRects.set(id, area.getBoundingClientRect());
+      const rect = slotAreaAt(i)?.getBoundingClientRect();
+      if (id !== null && rect) slotRects.set(id, rect);
     });
     current.forEach((id, i) => {
       if (id !== null && !target.includes(id)) sendToTray(i);
     });
     target.forEach((id, i) => {
-      if (id === null || current[i] === id) return;
-      stopArrival(slotCardAt(i));
-      const from = slotRects.get(id) ?? trayVisualAt(id)?.getBoundingClientRect();
-      if (from) arrivalsRef.current.push({ index: i, from, until: arrivalDeadline() });
+      if (id !== null && current[i] !== id)
+        queueArrival(i, slotRects.get(id) ?? trayVisualAt(id)?.getBoundingClientRect());
     });
     for (const action of actions) dispatch(action);
   };

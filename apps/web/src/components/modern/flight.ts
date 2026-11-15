@@ -9,7 +9,7 @@ const FLIGHT = { duration: 250, easing: 'ease', fill: 'forwards' } as const;
  * アニメーションで動かす立ち絵の枠の写し。立ち絵の画像は遅延読み込み・非同期の描画（CharacterVisual）なので、写しのままだと
  * 動き始めの数フレームは画像が空で、立ち絵の枠（明るい背景と枠線）だけが白い枠のように見える。写しの画像はすぐ読んで描く
  */
-export function cloneForAnimation(node: Element): HTMLElement {
+function cloneForAnimation(node: Element): HTMLElement {
   const copy = node.cloneNode(true) as HTMLElement;
   for (const img of copy.querySelectorAll('img')) {
     img.loading = 'eager';
@@ -25,7 +25,7 @@ export function cloneForAnimation(node: Element): HTMLElement {
  * 画面の外のスロットの画像は遅延読み込み（loading="lazy"）で読まれず、デコードが終わらないので、DECODE_WAIT_MS で待つのをやめる
  */
 const DECODE_WAIT_MS = 500;
-export function decodeImages(node: Element): Promise<void> {
+function decodeImages(node: Element): Promise<void> {
   const decoded = Promise.all([...node.querySelectorAll('img')].map((img) => img.decode().catch(() => undefined)));
   return Promise.race([decoded, new Promise((resolve) => setTimeout(resolve, DECODE_WAIT_MS))]).then(() => undefined);
 }

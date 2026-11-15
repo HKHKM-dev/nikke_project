@@ -16,8 +16,8 @@ type Props = {
   character: CharacterIndexEntry;
   /** いまの編成のどこかのスロットにいる（置けない。plan/design-ui-rebuild.md 5.2 節） */
   isTaken: boolean;
-  /** このニケを選んでいるほかの編成の番号（1 から。置けない） */
-  otherParties: readonly number[];
+  /** ほかの編成で使っている（置けない） */
+  inOtherParty: boolean;
   /** 右上（限界突破・コア強化の下）に P1・P2 と出す編成の番号（1 から。いまの編成にいればいまの編成、ほかは otherParties） */
   partyNumbers: readonly number[];
   unsupportedNote: string | null;
@@ -122,7 +122,7 @@ export function TrayItemFace({
 export function CharacterTrayItem({
   character,
   isTaken,
-  otherParties,
+  inOtherParty,
   partyNumbers,
   unsupportedNote,
   isPending,
@@ -131,7 +131,6 @@ export function CharacterTrayItem({
   shape,
   onClick,
 }: Props) {
-  const inOtherParty = otherParties.length > 0;
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `tray-${character.resourceId}`,
     data: {
@@ -182,7 +181,7 @@ const TrayItemContent = memo(function TrayItemContent({
   growthMarks,
   collectionBadge,
   shape,
-}: Omit<Props, 'isPending' | 'onClick' | 'otherParties'>) {
+}: Omit<Props, 'isPending' | 'onClick' | 'inOtherParty'>) {
   return (
     <TrayItemFace
       character={character}

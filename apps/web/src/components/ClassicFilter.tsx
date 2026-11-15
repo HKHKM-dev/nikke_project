@@ -2,15 +2,14 @@
 // 宝物のあるニケのボタン。バッジの絵は使わず文字で出す）と、それとは別に並べるバースト段階の Ⅰ・Ⅱ・Ⅲ のボタン。押しているボタンは編成のタブと同じ色で塗る。
 // 同じ種類は OR、種類どうしと宝物は AND（matchesBadgeFilters。全段階のニケは、どの段階で絞っても出す）
 import type { CharacterIndexEntry } from '@nikke/core';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { useCharacterFilter } from './useCharacterFilter.ts';
 import { BURST_STEP_LABEL } from '../skillLabels.ts';
 import {
+  BURST_STEP_BADGE_KIND,
   CLASSIC_FILTER_KINDS,
   filterButtonValues,
-  matchesBadgeFilters,
   toggleBadgeFilter,
-  BADGE_KINDS,
-  type BadgeFilters as BadgeFilterValues,
   type BadgeKind,
 } from './modern/badges.ts';
 import { Popover } from './Popover.tsx';
@@ -24,21 +23,12 @@ function classicFilterValues(kind: BadgeKind): string[] {
 
 /** 絞り込みの状態と、合うニケ（絞り込んでいなければ null） */
 export function useClassicFilter(index: readonly CharacterIndexEntry[]) {
-  const [filters, setFilters] = useState<BadgeFilterValues>({});
-  const [treasureOnly, setTreasureOnly] = useState(false);
-  const filtering = treasureOnly || Object.keys(filters).length > 0;
+  const { filtering, filtered, ...filter } = useCharacterFilter(index);
   const visibleIds = useMemo(
-    () =>
-      filtering
-        ? new Set(
-            index
-              .filter((c) => (!treasureOnly || c.hasTreasure) && matchesBadgeFilters(c, filters))
-              .map((c) => c.resourceId),
-          )
-        : null,
-    [index, filters, treasureOnly, filtering],
+    () => (filtering ? new Set(filtered.map((c) => c.resourceId)) : null),
+    [filtering, filtered],
   );
-  return { filters, setFilters, treasureOnly, setTreasureOnly, visibleIds };
+  return { ...filter, visibleIds };
 }
 
 export function ClassicFilter({
@@ -102,8 +92,6 @@ export function ClassicFilter({
   );
 }
 
-const BURST_STEP_KIND = BADGE_KINDS.find((kind) => kind.key === 'burstStep')!;
-
 /** バースト段階の絞り込み（Ⅰ・Ⅱ・Ⅲ のボタン。「絞り込み」のポップアップとは別に並べる） */
 export function ClassicBurstFilter({
   filters,
@@ -111,13 +99,13 @@ export function ClassicBurstFilter({
 }: Pick<ReturnType<typeof useClassicFilter>, 'filters' | 'setFilters'>) {
   return (
     <div className="classic-burst-filter" role="group" aria-label="バースト段階で絞り込み">
-      {filterButtonValues(BURST_STEP_KIND).map((v) => (
+      {filterButtonValues(BURST_STEP_BADGE_KIND).map((v) => (
         <button
           key={v}
           type="button"
           className="classic-filter-button classic-burst-button"
           aria-pressed={filters.burstStep?.includes(v) ?? false}
-          aria-label={`バースト ${BURST_STEP_LABEL[v as keyof typeof BURST_STEP_LABEL]}`}
+          aria-label={BURST_STEP_BADGE_KIND.badges[v]!.label}
           onClick={() => setFilters((f) => toggleBadgeFilter(f, 'burstStep', v))}
         >
           {BURST_STEP_LABEL[v as keyof typeof BURST_STEP_LABEL]}

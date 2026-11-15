@@ -149,6 +149,8 @@ export const VISUAL_BADGE_KINDS: readonly BadgeKind[] = [kindOf('element'), kind
 /** ニケ一覧の正方形の絵の左上に縦に出すバッジの順（武器種・バースト段階）。属性は右下に別に出す（ELEMENT_BADGE_KIND） */
 export const COMPACT_BADGE_KINDS: readonly BadgeKind[] = [kindOf('weaponType'), kindOf('burstStep')];
 export const ELEMENT_BADGE_KIND: BadgeKind = kindOf('element');
+/** バースト段階のバッジの種類（クラシックの Ⅰ・Ⅱ・Ⅲ の絞り込み） */
+export const BURST_STEP_BADGE_KIND: BadgeKind = kindOf('burstStep');
 
 /**
  * スロットの絵の左上（バースト段階の下）に出すコレクションのバッジ。宝物を付けていれば SSR（最後の段階は上限の黒の版）、
