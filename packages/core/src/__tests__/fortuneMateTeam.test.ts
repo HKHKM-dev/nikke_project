@@ -1,6 +1,7 @@
 // アルカナ：フォーチュンメイト（583）を含む編成（plan/design-fortune-mate.md。V-0786）。語彙は skills/__tests__/fortuneMate.test.ts。
 // ここでは味方と組んだ時に: バーストで思い出作りが付き、フルバースト終了で外れる（フルバーストに入らなかったバーストでは続く）。
-// 思い出作りの間の射撃の 2・8・14…発目に弾丸チャージ、4・10・16…発目に幸せな思い出（と青春の記録）、6・12・18…発目に大切な思い出が付く。
+// 思い出作りの間の射撃の 2・8・14…発目に弾丸チャージ、4・10・16…発目に幸せな思い出（と青春の記録）、6・12・18…発目に大切な思い出が付き、
+// フルバースト終了で思い出作りと一緒に外れる。
 // フルバースト終了で SG の味方（自分も）に、発動者基準の攻撃力 × 大切な思い出のスタック数が付き、バーストの使用で自分を除く SG の
 // 味方に攻撃ダメージ▲が付く。射撃の列のグループ分け。
 import { describe, expect, it } from 'vitest';
@@ -52,7 +53,8 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     const precious = new Set(grantsOf('preciousMemory'));
     let counted = 0;
     for (const w of windows) {
-      const inside = shotsIn(w);
+      // 付与は発の次のフレームから付くので、戦闘の最後のフレームの発は見ない
+      const inside = shotsIn(w).filter((f) => f + 1 < plan.frames);
       inside.forEach((f, k) => {
         const n = k + 1;
         expect(refills.includes(f)).toBe(n % 6 === 2);
@@ -77,6 +79,14 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     // 幸せな思い出のスタックが上限の後も、付くたびに付く
     expect(youthApplied.map((r) => r.frame)).toEqual(happy.map((f) => f + 1));
     for (const it of youth) if (it.end < plan.frames) expect(removedAt.has(it.end)).toBe(true);
+  });
+
+  it('removes Happy Memories and Precious Moments with Making Memories on Full Burst end (V-0786)', () => {
+    for (const state of ['happyMemory', 'preciousMemory'] as const) {
+      const items = itemsOf(plan.history, { holder: a, state });
+      expect(items.length).toBeGreaterThan(0);
+      for (const it of items) if (it.end < plan.frames) expect(removedAt.has(it.end)).toBe(true);
+    }
   });
 
   it('gives shotgun allies a ratio of the caster ATK × Precious Moments stacks on Full Burst end, and Attack Damage on burst use to the others', () => {

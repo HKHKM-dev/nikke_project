@@ -21,13 +21,13 @@
       "slot": 2,
       "rid": 583,
       "name": "アルカナ：フォーチュンメイト",
-      "controlled": true
+      "controlled": false
     },
     {
       "slot": 3,
       "rid": 300,
       "name": "ソルジャーE.G.",
-      "controlled": false
+      "controlled": true
     }
   ],
   "target": {
@@ -38,7 +38,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "",
+  "conditionNote": "操作はソルジャーE.G.（3 枠目）。撮影の依頼（フォーチュンメイトの操作）と違う（30 秒の画の SPC の枠と照準の横の 60 発の残弾で確かめた）",
   "backup": {
     "at": "2026-11-15T12:18+09:00",
     "via": "cloud-move",

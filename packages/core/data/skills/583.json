@@ -98,8 +98,8 @@
             }
           ],
           "assumes": {
-            "ja": "4 回目の段（4・10・16…回目。数え方は上と同じ）。幸せな思い出はフルバースト終了でも外れず残る",
-            "en": "The 4th-attack tier (4th, 10th, 16th, …; counted as above). Happy Memories is not removed on Full Burst end"
+            "ja": "4 回目の段（4・10・16…回目。数え方は上と同じ）",
+            "en": "The 4th-attack tier (4th, 10th, 16th, …; counted as above)"
           }
         },
         {
@@ -122,8 +122,28 @@
             }
           ],
           "assumes": {
-            "ja": "6 回目の段（6・12・18…回目。数え方は上と同じ）。大切な思い出はフルバースト終了でも外れず残る",
-            "en": "The 6th-attack tier (6th, 12th, 18th, …; counted as above). Precious Moments is not removed on Full Burst end"
+            "ja": "6 回目の段（6・12・18…回目。数え方は上と同じ）",
+            "en": "The 6th-attack tier (6th, 12th, 18th, …; counted as above)"
+          }
+        },
+        {
+          "kind": "removeState",
+          "state": "happyMemory",
+          "trigger": "fullBurstEnd",
+          "target": "self",
+          "assumes": {
+            "ja": "「思い出作り解除時初期化」。思い出作りが外れるフルバースト終了で、攻撃回数別の効果の幸せな思い出も外す（S1 のフルバースト終了の攻撃力▲は、外す前のスタック数を読む）",
+            "en": "\"Resets when Making Memories is removed\": Happy Memories from the attack-count effect is also removed on Full Burst end, when Making Memories is removed (the S1 ATK up on Full Burst end reads the stacks before removal)"
+          }
+        },
+        {
+          "kind": "removeState",
+          "state": "preciousMemory",
+          "trigger": "fullBurstEnd",
+          "target": "self",
+          "assumes": {
+            "ja": "「思い出作り解除時初期化」。思い出作りが外れるフルバースト終了で、攻撃回数別の効果の大切な思い出も外す（S1 のフルバースト終了の攻撃力▲は、外す前のスタック数を読む）",
+            "en": "\"Resets when Making Memories is removed\": Precious Moments from the attack-count effect is also removed on Full Burst end, when Making Memories is removed (the S1 ATK up on Full Burst end reads the stacks before removal)"
           }
         },
         {
