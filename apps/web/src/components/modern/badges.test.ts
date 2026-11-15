@@ -1,3 +1,4 @@
+import { COLLECTION_LEVEL_MAX } from '@nikke/core';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -34,19 +35,22 @@ describe('バッジの対応表', () => {
   // 名前を変えたり打ち間違えたりすると、そのバッジは差し色の既定の灰のままになる
   const css = readFileSync(fileURLToPath(new URL('../../styles.css', import.meta.url)), 'utf8');
   it('styles.css の値ごとの色（.badge-<名前>）は、スプライトにあるバッジを指す', () => {
-    const named = [...css.matchAll(/\.badge-(?!tone-)([\w-]+)/g)].map(([, name]) => name);
+    const named = [...css.matchAll(/\.badge-(?!tone-|variant-)([\w-]+)/g)].map(([, name]) => name);
     expect(named).toContain('element_Fire');
     expect(named.filter((name) => !BADGE_SYMBOLS.includes(`id="badge-${name}"`))).toEqual([]);
   });
 
-  it('styles.css の tone の色（.badge-tone-<値>）は、コレクションのバッジの出す tone と同じ', () => {
-    const tones = [...css.matchAll(/\.badge-tone-([\w-]+)/g)].map(([, tone]) => tone);
+  it('styles.css の tone・variant の色（.badge-tone-<値>・.badge-variant-<値>）は、コレクションのバッジの出すものと同じ', () => {
+    const inCss = (pattern: RegExp) => [...new Set([...css.matchAll(pattern)].map(([, value]) => value))].sort();
     const used = [
       collectionBadge({ rarity: 'R', level: 1 }, 0, false),
       collectionBadge({ rarity: 'SR', level: 1 }, 0, false),
+      collectionBadge({ rarity: 'SR', level: COLLECTION_LEVEL_MAX }, 0, false),
       collectionBadge(null, 1, true),
-    ].map((b) => b?.tone);
-    expect(tones.sort()).toEqual(used.sort());
+    ];
+    const emitted = (key: 'tone' | 'variant') => [...new Set(used.map((b) => b?.[key]).filter(Boolean))].sort();
+    expect(inCss(/\.badge-tone-([\w-]+)/g)).toEqual(emitted('tone'));
+    expect(inCss(/\.badge-variant-([\w-]+)/g)).toEqual(emitted('variant'));
   });
 
   // スプライトのバッジは文字列で束に入るが、URL で読むもの（マスクの形に使う ui_check など）は、これ未満なら束に埋め込まれる
@@ -157,11 +161,12 @@ describe('絵のバッジ', () => {
     expect(collectionBadge({ rarity: 'SR', level: 15 }, 2, true)?.label).toBe('宝物 段階 2');
     // 宝物の無いキャラは段階を見ない
     expect(collectionBadge(null, 3, false)).toBeNull();
-    // 上限の版と通常の版は別のバッジ
-    expect(file(collectionBadge({ rarity: 'R', level: 15 }, 0, false))).not.toBe(
-      file(collectionBadge({ rarity: 'R', level: 14 }, 0, false)),
-    );
-    expect(file(collectionBadge(null, 3, true))).not.toBe(file(collectionBadge(null, 1, true)));
+    // 上限の版は、同じ絵に variant の max を付ける
+    expect(collectionBadge({ rarity: 'R', level: 15 }, 0, false)?.variant).toBe('max');
+    expect(collectionBadge({ rarity: 'R', level: 14 }, 0, false)?.variant).toBeUndefined();
+    expect(collectionBadge(null, 3, true)?.variant).toBe('max');
+    expect(collectionBadge(null, 1, true)?.variant).toBeUndefined();
+    expect(file(collectionBadge(null, 3, true))).toBe(file(collectionBadge(null, 1, true)));
     // 絵はレア度によらず同じで、色は tone（宝物は SSR）
     expect(file(collectionBadge({ rarity: 'SR', level: 14 }, 0, false))).toBe(
       file(collectionBadge({ rarity: 'R', level: 14 }, 0, false)),

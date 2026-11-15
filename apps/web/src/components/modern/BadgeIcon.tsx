@@ -14,24 +14,28 @@ export function BadgeSprite() {
 
 /**
  * バッジ（name は拡張子なしの名前）。label が無ければ読み上げない。大きさは className の CSS で決める。
- * 値ごとの色は、名前のクラス（badge-<名前>）か、同じ絵を値ごとに塗り分けるなら tone のクラス（badge-tone-<tone>）に、
- * styles.css が色の役の変数を決める
+ * 値ごとの色は、名前のクラス（badge-<名前>）か、同じ絵を値ごとに塗り分けるなら tone のクラス（badge-tone-<tone>）と
+ * variant のクラス（badge-variant-<variant>）に、styles.css が色の役の変数を決める
  */
 export function BadgeIcon({
   name,
   label,
   tone,
+  variant,
   className,
 }: {
   name: string;
   label?: string;
   tone?: Badge['tone'];
+  variant?: Badge['variant'];
   className?: string;
 }) {
   const a11y = label === undefined ? { 'aria-hidden': true } : { role: 'img', 'aria-label': label };
   return (
     <svg
-      className={[`badge-${name}`, tone && `badge-tone-${tone}`, className].filter(Boolean).join(' ')}
+      className={[`badge-${name}`, tone && `badge-tone-${tone}`, variant && `badge-variant-${variant}`, className]
+        .filter(Boolean)
+        .join(' ')}
       viewBox={badgeViewBox(name)}
       {...a11y}
     >
