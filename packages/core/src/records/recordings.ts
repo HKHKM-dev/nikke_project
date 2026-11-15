@@ -201,7 +201,11 @@ export function validateRecordings(file: RecordingsFile, knownRids: ReadonlySet<
     }
     if (entry.team.length === 0 || entry.team.length > 5) errors.push(`${at}: 編成は 1〜5 体`);
     entry.team.forEach((member, i) => {
-      if (member.slot !== i + 1) errors.push(`${at}: 枠は 1 から枠順に並べる（${i + 1} 番目が ${member.slot}）`);
+      // 照合ランナー（observations/teamInput.ts）は team の並びの添字を枠とみなすので、空枠を挟む録画は止める（課題 recording-gap-slots）
+      if (member.slot !== i + 1)
+        errors.push(
+          `${at}: 枠は 1 から枠順に並べる（${i + 1} 番目が ${member.slot}）。空枠を挟む録画は、課題 recording-gap-slots を直すまで照合できない`,
+        );
       if (!knownRids.has(member.rid)) errors.push(`${at}: rid ${member.rid} のキャラのデータが無い`);
       for (const key of ['fires', 'bursts'] as const)
         if (member[key] !== undefined && typeof member[key] !== 'boolean')
