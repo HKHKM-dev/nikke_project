@@ -44,7 +44,10 @@ import {
   type PrView,
 } from './sync-after-merge-lib.ts';
 
-/** 成功したら標準出力（前後の空白を除く）、失敗したら null */
+/**
+ * 成功したら標準出力（前後の空白を除く）、失敗したら null。windowsHide: 切り離した --wait-pr はコンソールを持たないので、
+ * 付けないと Windows では gh・git を起こすたびにコンソールの窓が一瞬開く
+ */
 function run(cmd: string, args: readonly string[], cwd?: string): string | null {
   try {
     return execFileSync(cmd, args, {
@@ -52,6 +55,7 @@ function run(cmd: string, args: readonly string[], cwd?: string): string | null 
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'ignore'],
       timeout: 20_000,
+      windowsHide: true,
     }).trim();
   } catch {
     return null;
