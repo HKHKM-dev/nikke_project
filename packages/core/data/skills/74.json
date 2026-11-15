@@ -13,15 +13,21 @@
           "assumes": {
             "ja": "フルバーストタイムが始まったフレームに、味方全体（自分も）のバーストの CT の残りを縮める（ラピ：レッドフードの S1 と同じ形）。同じフレームに始まった III の CT も縮む",
             "en": "On the frame Full Burst starts, shortens the remaining burst cooldown of all allies (herself included; same form as Rapi: Red Hood's S1). The cooldown of the Burst III that started on the same frame is shortened too"
-          }
+          },
+          "claims": [
+            "C-1302"
+          ]
         }
       ],
       "notes": [
         {
-          "ja": "戦闘開始時とバーストスキル使用時に味方全体に発券する乗車券（最大 2 枚・持続。1 枚ごとにスキル発動者基準で最大HP のみ▲）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）。被弾の無い前提では乗車券は減らず、1 回目のバーストで 2 枚になると、以後は変わらない",
-          "en": "The tickets issued to all allies at the start of battle and on using the Burst (up to 2, continuous; each raises max HP only, based on the skill user) do not change damage by themselves (they matter only with an effect reading HP in the team). Without damage taken the tickets never decrease, and once the first Burst brings them to 2 they stay unchanged",
+          "ja": "戦闘開始時とバーストスキル使用時に味方全体に発券する乗車券（最大 2 枚・持続。1 枚ごとにスキル発動者基準で最大HP のみ▲）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）。被弾の無い前提では乗車券は減らず、1 回目のバーストで 2 枚になると、以後は変わらない。1 回目のバーストの 2 枚目は同じバーストの回復の後に付くので、HP の割合は戦闘開始から 2 回目のバーストの回復まで下がっている",
+          "en": "The tickets issued to all allies at the start of battle and on using the Burst (up to 2, continuous; each raises max HP only, based on the skill user) do not change damage by themselves (they matter only with an effect reading HP in the team). Without damage taken the tickets never decrease, and once the first Burst brings them to 2 they stay unchanged. The second ticket of the first Burst comes after the heal of the same Burst, so the HP ratio stays lowered from the start of battle until the heal of the second Burst",
           "kind": "indirect",
-          "path": "hp"
+          "path": "hp",
+          "claims": [
+            "C-1304"
+          ]
         },
         {
           "ja": "フルバーストタイムの発動時の、味方全体の早期割引の解除は、S2 の乗車券の減少（HP が 15% 以下になった時）にしか効かないので、被弾を扱わない前提では効かない（要件 4.2 節）",
@@ -70,7 +76,10 @@
           "assumes": {
             "ja": "味方全体（自分を含む）への 1 回の回復（スキル発動者の最終最大HP の X%）で、HP が満タンの味方にも「回復効果が適用された時」を起こす。回復量はダメージに関係しない",
             "en": "A one-off heal on all allies, herself included (X% of the skill user's final max HP), that triggers \"when healed\" even on allies at full HP. The healed amount does not affect damage"
-          }
+          },
+          "claims": [
+            "C-1303"
+          ]
         }
       ]
     }
