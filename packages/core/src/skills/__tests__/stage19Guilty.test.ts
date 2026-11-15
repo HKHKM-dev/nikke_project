@@ -29,7 +29,7 @@ function slotOf(character: CharacterData, definition?: SkillDefinition, attack?:
     character,
     growth: fixed.growth,
     attackOverride: attack ?? fixed.attack,
-    condition: { coreHitRate: 0, distanceBonus: false, fullCharge: false },
+    condition: { coreHitRate: 0, distanceBonus: false },
     ...(definition === undefined ? {} : { skills: { definition, levels: MAX_SKILL_LEVELS } }),
   };
 }

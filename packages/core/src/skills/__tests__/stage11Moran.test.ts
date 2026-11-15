@@ -110,7 +110,7 @@ describe('モランのバースト・S1（V-0530）', () => {
       growth: fixed.growth,
       attackOverride: fixed.attack,
       hpOverride: computeFixedSpecHp(character),
-      condition: { coreHitRate: 0.5, distanceBonus: true, fullCharge: true, hitRate: 1 },
+      condition: { coreHitRate: 0.5, distanceBonus: true, hitRate: 1 },
       skills: { definition: def, levels: MAX_SKILL_LEVELS, treasurePhase },
     };
     const input: TeamInput = { slots: [slot], enemy, durationSeconds: 180, burst: true, controlledSlot: 0 };

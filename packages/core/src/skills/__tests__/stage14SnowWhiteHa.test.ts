@@ -47,7 +47,7 @@ function slot(): TeamSlotInput {
     growth: fixed.growth,
     attackOverride: fixed.attack,
     hpOverride: computeFixedSpecHp(character),
-    condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+    condition: { coreHitRate: 1, distanceBonus: false },
     skills: { definition, levels: MAX_SKILL_LEVELS },
   };
 }
@@ -257,7 +257,7 @@ function teamSlot(id: number, def = definition): TeamSlotInput {
     growth: fixed.growth,
     attackOverride: fixed.attack,
     hpOverride: computeFixedSpecHp(c),
-    condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+    condition: { coreHitRate: 1, distanceBonus: false },
     skills: { definition: parseSkillDefinition(readJson(`../../../data/skills/${id}.json`)), levels: MAX_SKILL_LEVELS },
   };
 }

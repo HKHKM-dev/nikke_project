@@ -61,7 +61,7 @@ function run(effects: Record<string, unknown>[], hasCore = true, shot: Partial<C
         character: { ...character(), shot: { ...character().shot, ...shot } },
         growth: { level: 1, grade: 0, core: 0 },
         attackOverride: 10_000,
-        condition: { coreHitRate: 0, distanceBonus: false, fullCharge: true },
+        condition: { coreHitRate: 0, distanceBonus: false },
         skills: { definition, levels: MAX_SKILL_LEVELS },
       },
     ],

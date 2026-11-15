@@ -31,7 +31,7 @@ function slotOf(id: number, definition?: SkillDefinition, treasurePhase: Treasur
     character: c,
     growth: fixed.growth,
     attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+    condition: { coreHitRate: 1, distanceBonus: false },
   };
   const def =
     definition ??

@@ -106,7 +106,7 @@ describe('リター・デルタ・ミハラ：ボンディングチェーンの�
       growth: fixed.growth,
       attackOverride: fixed.attack,
       hpOverride: computeFixedSpecHp(character),
-      condition: { coreHitRate: 0.5, distanceBonus: true, fullCharge: true, hitRate: 1 },
+      condition: { coreHitRate: 0.5, distanceBonus: true, hitRate: 1 },
       skills: {
         definition: parseSkillDefinition(readJson<unknown>(`../../../data/skills/${character.resourceId}.json`)),
         levels: MAX_SKILL_LEVELS,

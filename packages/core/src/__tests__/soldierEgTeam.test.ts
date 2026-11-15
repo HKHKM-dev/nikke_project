@@ -24,7 +24,7 @@ function readJson<T>(path: string): T {
 const SOLDIER = 300;
 const VALUE = 0.0792;
 const DURATION = gameSecondsToFrames(5);
-const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false, fullCharge: true };
+const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false };
 
 const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;

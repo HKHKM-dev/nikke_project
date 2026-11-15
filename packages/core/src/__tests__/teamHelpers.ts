@@ -19,7 +19,7 @@ export function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
 }
 
-const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false, fullCharge: true };
+const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false };
 export const SHOOTING_RANGE_ENEMY: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
 
 const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);

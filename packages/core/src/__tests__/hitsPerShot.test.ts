@@ -19,7 +19,7 @@ const raw = JSON.parse(readFileSync(new URL('../../data/enemies.json', import.me
 >;
 const master = parseEnemyPresets(raw);
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false, fullCharge: true, hitRate: 1 };
+const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false, hitRate: 1 };
 
 function homingRl(explosionRange: number): CharacterData {
   return makeCharacter(

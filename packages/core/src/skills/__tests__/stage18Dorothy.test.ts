@@ -27,7 +27,7 @@ function slotOf(rid: number): TeamSlotInput {
     growth: fixed.growth,
     attackOverride: fixed.attack,
     hpOverride: computeFixedSpecHp(character),
-    condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true, hitRate: 1 },
+    condition: { coreHitRate: 1, distanceBonus: false, hitRate: 1 },
     skills: {
       definition: parseSkillDefinition(readJson<unknown>(`../../../data/skills/${rid}.json`)),
       levels: MAX_SKILL_LEVELS,

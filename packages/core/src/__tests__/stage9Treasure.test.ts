@@ -27,7 +27,7 @@ function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput 
     character,
     growth: fixed.growth,
     attackOverride: fixed.attack,
-    condition: { coreHitRate: 0, distanceBonus: false, fullCharge: true },
+    condition: { coreHitRate: 0, distanceBonus: false },
   };
   if (DEFINED.has(id)) {
     slot.skills = {

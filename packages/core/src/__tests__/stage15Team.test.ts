@@ -35,7 +35,7 @@ function slot(resourceId: number, burstStep: 'Step1' | 'Step2' | 'Step3', condit
     character,
     growth,
     attackOverride: 10000,
-    condition: { coreHitRate: 0.5, distanceBonus: false, fullCharge: true, ...condition },
+    condition: { coreHitRate: 0.5, distanceBonus: false, ...condition },
     skills: { definition, levels: MAX_SKILL_LEVELS },
   };
   return input;
@@ -79,7 +79,7 @@ describe('命中率（hitRate）: 掛かり方', () => {
         attackOverride: 10000,
         enemy,
         perShot: [{ multiplier: 0.3, damageType: 'additional' }] as never,
-        condition: { coreHitRate: 0.5, distanceBonus: false, fullCharge: true, hitRate },
+        condition: { coreHitRate: 0.5, distanceBonus: false, hitRate },
       });
     expect(t(0.6).normal / t(1).normal).toBeCloseTo(0.6, 12);
     expect(t(0.6).perShot / t(1).perShot).toBeCloseTo(0.6, 12);

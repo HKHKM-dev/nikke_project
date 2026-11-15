@@ -3,7 +3,7 @@
 - 何のための文書か: 手入力の条件 `fullCharge`（`damage.ts` の `TriggerCondition`）が偽の枠の扱いが、1 パス目と 2 パス目で割れているのを、どちらかにそろえる形を決める
 - 関連: 課題 `records/backlog/manual-full-charge.json`、[design-full-charge-fold.md](design-full-charge-fold.md) 6 節の論点 2（推奨の案で、偽の枠の `fullChargeShot` の射撃ごとの倍率ダメージも乗らなくなった）、[requirements.md](requirements.md) 4.2 節（通常攻撃はオートの射撃の撃ち方。C-0839）、[design-stage18.md](design-stage18.md) 12.9 節（条件の決め方。`fullCharge` は手入力のまま）
 - 起案: 2026-11-15
-- 状態: 起案（4 節の論点をオーナーに諮る）
+- 状態: 完了（2 節の案 A。3 節）
 
 ## 1. いまのモデル（コードで確かめた。2026-11-15）
 
@@ -51,7 +51,7 @@
 | 直す所 | 型・`computeTriggerDamage` の 1 行・`slotConditionAt`・画面の読み込みと既定・照合と CLI・テストの条件の書き方 | 1 パス目の 4 ファイル・2 パス目の部分チャージ・新しい条件の欄 |
 | 古い保存データ | 偽の枠はフルチャージで計算（推奨の無視のとき） | 偽の枠は、偽のまま計算 |
 
-## 3. 実装（案 A のとき）
+## 3. 実装（案 A）
 
 - `damage.ts`: `TriggerCondition.fullCharge` を消し、`charge = isChargeWeapon(shot)`。コメントの「手入力でフルチャージしない枠」を消す。
 - `frame/landing.ts`: `slotConditionAt` の `fullCharge: manual.fullCharge` を消す。`team.ts` の `conditionMode` のコメント（「fullCharge は condition のまま」）も直す。
@@ -67,3 +67,4 @@
 ## 5. 経過
 
 - 2026-11-15: 起案。論点 1・2 をオーナーに諮る。
+- 2026-11-15: オーナーが論点 1・2 を推奨どおりに決めた（案 A・古い保存データの `fullCharge` は無視する）。3 節のとおりに実装し、課題 `manual-full-charge` を閉じた。

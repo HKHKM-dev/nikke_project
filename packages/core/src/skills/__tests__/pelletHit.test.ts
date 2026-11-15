@@ -34,7 +34,7 @@ function solo(hitRate: number, pelletHits?: readonly PelletHits[]): TeamInput {
         character: privaty,
         growth: fixed.growth,
         attackOverride: fixed.attack,
-        condition: { coreHitRate: 0, distanceBonus: false, fullCharge: true, hitRate },
+        condition: { coreHitRate: 0, distanceBonus: false, hitRate },
         skills: { definition: def, levels: MAX_SKILL_LEVELS },
       },
     ],

@@ -41,7 +41,7 @@ function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput 
     attackOverride: fixed.attack,
     hpOverride: computeFixedSpecHp(c),
     defenceOverride: computeFixedSpecDefence(c),
-    condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+    condition: { coreHitRate: 1, distanceBonus: false },
     skills: { definition: definitionOf(id), levels: MAX_SKILL_LEVELS, treasurePhase },
   };
 }

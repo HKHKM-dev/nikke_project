@@ -53,7 +53,7 @@ describe('ラム・デルタ・シンデレラ・ミハラ：ボンディング�
       growth: fixed.growth,
       attackOverride: fixed.attack,
       hpOverride: computeFixedSpecHp(character),
-      condition: { coreHitRate: 1, distanceBonus: true, fullCharge: true, hitRate: 1 },
+      condition: { coreHitRate: 1, distanceBonus: true, hitRate: 1 },
       skills: {
         definition: parseSkillDefinition(readJson<unknown>(`../../../data/skills/${character.resourceId}.json`)),
         levels: MAX_SKILL_LEVELS,

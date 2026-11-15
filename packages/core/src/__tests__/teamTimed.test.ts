@@ -23,7 +23,7 @@ const FRAMES = battleSecondsToFrames(180);
 const H = FIXED_BURST_CYCLE.normalFrames;
 
 const enemy: EnemyInput = { defence: 100, element: 'Wind', hasCore: true };
-const condition: SlotCondition = { coreHitRate: 1, distanceBonus: true, fullCharge: true };
+const condition: SlotCondition = { coreHitRate: 1, distanceBonus: true };
 const growth = { level: 1, grade: 0, core: 0 };
 const tenLevels = (v: string) => Array.from({ length: 10 }, () => v);
 const unsupported: SkillEntry = { support: 'unsupported', effects: [] };

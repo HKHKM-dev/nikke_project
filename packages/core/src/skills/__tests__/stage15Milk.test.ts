@@ -30,7 +30,7 @@ function slotOf(rid: number, treasurePhase: 0 | 3 = 0): TeamSlotInput {
     growth: fixed.growth,
     attackOverride: fixed.attack,
     hpOverride: computeFixedSpecHp(c),
-    condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true, hitRate: 1 },
+    condition: { coreHitRate: 1, distanceBonus: false, hitRate: 1 },
     skills: { definition: definition(rid), levels: MAX_SKILL_LEVELS, treasurePhase },
   };
 }

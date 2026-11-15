@@ -55,7 +55,6 @@ export function emptySlotBuild(): SlotBuild {
 export const DEFAULT_SLOT_CONDITION: SlotCondition = {
   coreHitRate: 1,
   distanceBonus: true,
-  fullCharge: true,
   hitRate: 1,
 };
 /** スキル Lv の既定値。全部 10 */
@@ -487,11 +486,11 @@ function parseConditionMode(v: Json, condition: SlotCondition): ConditionMode | 
 function parseCondition(v: Json): SlotCondition | null {
   if (!isRecord(v)) return null;
   if (!isFinite_(v.coreHitRate) || v.coreHitRate < 0 || v.coreHitRate > 1) return null;
-  if (!isBool(v.distanceBonus) || !isBool(v.fullCharge)) return null;
+  if (!isBool(v.distanceBonus)) return null;
+  // 古い保存データの fullCharge（フルチャージで撃つか）は読まない。チャージ武器は常にフルチャージで撃つ（plan/design-manual-full-charge.md 2 節）
   const condition: SlotCondition = {
     coreHitRate: v.coreHitRate,
     distanceBonus: v.distanceBonus,
-    fullCharge: v.fullCharge,
   };
   // 弾丸命中率。古い保存データには無い。欠落は欠落のまま読む（計算では 1 = 射撃場）
   if (v.hitRate !== undefined) {

@@ -36,7 +36,7 @@ function solo(definition: SkillDefinition): TeamInput {
         character: moran,
         growth: fixed.growth,
         attackOverride: fixed.attack,
-        condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+        condition: { coreHitRate: 1, distanceBonus: false },
         skills: { definition, levels: MAX_SKILL_LEVELS },
       },
     ],

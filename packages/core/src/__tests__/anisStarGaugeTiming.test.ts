@@ -44,7 +44,7 @@ function fixedSlot(id: number): TeamSlotInput {
     growth: fixed.growth,
     attackOverride: fixed.attack,
     // 条件は手入力（照合の既定）。飛ぶ時間は条件の決め方に依らず、的の表と着地点で決まる（3.3 節）
-    condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+    condition: { coreHitRate: 1, distanceBonus: false },
     skills: {
       definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
       levels: MAX_SKILL_LEVELS,

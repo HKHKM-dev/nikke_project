@@ -19,7 +19,7 @@ function readJson<T>(path: string): T {
 
 const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
 const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
-const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false, fullCharge: true };
+const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false };
 
 function fixedSlot(id: number): TeamSlotInput {
   const c = character(id);

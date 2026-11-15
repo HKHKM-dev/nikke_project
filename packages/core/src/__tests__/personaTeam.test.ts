@@ -73,7 +73,7 @@ function fixedSlot(id: number, definition?: SkillDefinition): TeamSlotInput {
     character: c,
     growth: fixed.growth,
     attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+    condition: { coreHitRate: 1, distanceBonus: false },
   };
   if (definition) slot.skills = { definition, levels: MAX_SKILL_LEVELS };
   return slot;

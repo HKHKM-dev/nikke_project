@@ -15,7 +15,7 @@ function input(overrides: Partial<TriggerDamageInput> = {}): TriggerDamageInput 
     character: makeCharacter(),
     growth: { level: 1, grade: 0, core: 0 },
     enemy: { defence: 100, element: 'Wind', hasCore: true },
-    condition: { coreHitRate: 1, distanceBonus: true, fullCharge: true },
+    condition: { coreHitRate: 1, distanceBonus: true },
     ...overrides,
   };
 }
@@ -45,7 +45,7 @@ describe('computeTriggerDamage', () => {
     const r = computeTriggerDamage(
       input({
         character: makeCharacter({ coreDamageRate: 2.5 }),
-        condition: { coreHitRate: 0.4, distanceBonus: false, fullCharge: true },
+        condition: { coreHitRate: 0.4, distanceBonus: false },
       }),
     );
     expect(r.boost.core).toBeCloseTo(0.6, 10);
@@ -74,13 +74,6 @@ describe('computeTriggerDamage', () => {
     const full = computeTriggerDamage(input({ character: rl }));
     expect(full.chargeMultiplier).toBe(2.5);
     expect(full.boost.distance).toBe(0);
-    const noCharge = computeTriggerDamage(
-      input({
-        character: rl,
-        condition: { coreHitRate: 1, distanceBonus: true, fullCharge: false },
-      }),
-    );
-    expect(noCharge.chargeMultiplier).toBe(1);
     expect(modelNotes(rl).map((n) => n.code)).not.toContain('charge-release');
   });
 
@@ -167,15 +160,6 @@ describe('computeTriggerDamage', () => {
       { weaponType: 'RL', bonusRange: null },
     );
     expect(computeTriggerDamage(input({ character: rl, buffs })).chargeMultiplier).toBeCloseTo(2.9, 12);
-    expect(
-      computeTriggerDamage(
-        input({
-          character: rl,
-          buffs,
-          condition: { coreHitRate: 1, distanceBonus: true, fullCharge: false },
-        }),
-      ).chargeMultiplier,
-    ).toBe(1);
   });
 
   it('baseAttackOf prefers attackOverride over the growth-derived attack', () => {
@@ -205,16 +189,16 @@ describe('computeTriggerDamage', () => {
   });
 
   it('rejects invalid core hit rate', () => {
-    expect(() =>
-      computeTriggerDamage(input({ condition: { coreHitRate: 1.5, distanceBonus: true, fullCharge: true } })),
-    ).toThrow(RangeError);
+    expect(() => computeTriggerDamage(input({ condition: { coreHitRate: 1.5, distanceBonus: true } }))).toThrow(
+      RangeError,
+    );
   });
 
   it('adds FULL_BURST_BOOST to the boost group only when fullBurst is true', () => {
     const base = computeTriggerDamage(input());
     const fb = computeTriggerDamage(
       input({
-        condition: { coreHitRate: 1, distanceBonus: true, fullCharge: true, fullBurst: true },
+        condition: { coreHitRate: 1, distanceBonus: true, fullBurst: true },
       }),
     );
     expect(FULL_BURST_BOOST).toBe(0.5);
@@ -232,7 +216,7 @@ describe('computeTriggerDamage', () => {
     const omitted = computeTriggerDamage(input());
     const explicit = computeTriggerDamage(
       input({
-        condition: { coreHitRate: 1, distanceBonus: true, fullCharge: true, fullBurst: false },
+        condition: { coreHitRate: 1, distanceBonus: true, fullBurst: false },
       }),
     );
     expect(explicit).toEqual(omitted);

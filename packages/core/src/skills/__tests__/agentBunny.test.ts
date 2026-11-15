@@ -48,7 +48,7 @@ describe('貫通ダメージ▲の式（P1。plan/design-agent-bunny.md 2.3 節�
       growth,
       attackOverride: attack,
       enemy: { defence: 100, element: null, hasCore: true },
-      condition: { coreHitRate: 1, distanceBonus: true, fullCharge: true },
+      condition: { coreHitRate: 1, distanceBonus: true },
       buffs: { ...ZERO_BUFFS, ...buffs },
     }).normal;
 
@@ -66,7 +66,7 @@ describe('貫通ダメージ▲の式（P1。plan/design-agent-bunny.md 2.3 節�
         growth: fixed.growth,
         attackOverride: fixed.attack,
         enemy: { defence: 100, element: null, hasCore: true },
-        condition: { coreHitRate: 0, distanceBonus: false, fullCharge: true },
+        condition: { coreHitRate: 0, distanceBonus: false },
         buffs: { ...ZERO_BUFFS, ...buffs },
       }).normal;
     expect(rl({ pierce: 1, pierceDamage: 0.2, projectileExplosionDamage: 0.1, attackDamage: 0.5 })).toBeCloseTo(

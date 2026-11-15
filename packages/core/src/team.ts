@@ -80,7 +80,7 @@ export type TeamSlotInput = {
   buildEffects?: readonly BuildEffect[];
   /**
    * 条件の決め方。'auto' は敵の的の条件の表（射撃場の BigArms）と着地点の時間割りから、コア命中率・距離ボーナス・
-   * 弾丸命中率を決める（frame/landing.ts。fullCharge は condition のまま）。**省略は 'manual'**（condition をそのまま使う）。
+   * 弾丸命中率を決める（frame/landing.ts）。**省略は 'manual'**（condition をそのまま使う）。
    * 的の表の無い敵では、自動でも condition を使い、注記を出す
    */
   conditionMode?: ConditionMode;

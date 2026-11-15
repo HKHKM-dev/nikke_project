@@ -332,7 +332,6 @@ export function autoConditionAt(
         ? manual.coreHitRate
         : coreHitRateAt(core, hitRate, down, coreHitRateUpIsExponent(character, landing)),
     distanceBonus: distanceBonusAt(character, landing),
-    fullCharge: manual.fullCharge,
     hitRate:
       bullet === null
         ? (manual.hitRate ?? 1)

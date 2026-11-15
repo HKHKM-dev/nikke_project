@@ -29,7 +29,7 @@ const slot: TeamSlotInput = {
   character,
   growth: fixed.growth,
   attackOverride: fixed.attack,
-  condition: { coreHitRate: 0, distanceBonus: false, fullCharge: false },
+  condition: { coreHitRate: 0, distanceBonus: false },
   skills: { definition, levels: MAX_SKILL_LEVELS },
 };
 

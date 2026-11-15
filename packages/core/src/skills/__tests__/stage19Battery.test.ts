@@ -169,7 +169,7 @@ describe('バッテリーで続く変身（単騎・バーストなし）', () =
     growth: fixed.growth,
     attackOverride: fixed.attack,
     hpOverride: computeFixedSpecHp(character),
-    condition: { coreHitRate: 0, distanceBonus: false, fullCharge: false },
+    condition: { coreHitRate: 0, distanceBonus: false },
     skills: { definition: parseSkillDefinition(definitionOf(skill1, skill2, burst)), levels: MAX_SKILL_LEVELS },
   });
   const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };

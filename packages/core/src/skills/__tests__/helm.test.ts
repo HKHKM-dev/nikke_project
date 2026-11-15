@@ -164,7 +164,7 @@ describe('ダメージの式（ヘルム編）', () => {
       growth: {},
       attackOverride: 1100,
       enemy: { defence: 100, element: null, hasCore: false },
-      condition: { coreHitRate: 0, distanceBonus: false, fullCharge: false },
+      condition: { coreHitRate: 0, distanceBonus: false },
       buffs,
       perShot: [
         {

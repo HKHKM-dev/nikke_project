@@ -34,7 +34,7 @@ function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput 
     character,
     growth: fixed.growth,
     attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+    condition: { coreHitRate: 1, distanceBonus: false },
   };
   if (DEFINED.has(id)) {
     slot.skills = {
@@ -107,7 +107,7 @@ const PARTIAL: TeamInput = {
     {
       character: makeCharacter(SR, { resourceId: 2 }),
       growth: { level: 1, grade: 0, core: 0 },
-      condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+      condition: { coreHitRate: 1, distanceBonus: false },
     },
   ],
   enemy: { defence: 100, element: null, hasCore: true, events: partialEvents },

@@ -23,7 +23,7 @@ const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/i
 const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
 
 const SAKURA = 836;
-const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false, fullCharge: true };
+const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false };
 
 function fixedSlot(id: number, condition: SlotCondition = MANUAL): TeamSlotInput {
   const c = character(id);

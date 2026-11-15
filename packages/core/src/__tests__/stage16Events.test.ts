@@ -261,7 +261,7 @@ describe('射手（ハイドとリロード）', () => {
           {
             character: characterOf(rid),
             growth: { level: 1, grade: 0, core: 0 },
-            condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+            condition: { coreHitRate: 1, distanceBonus: false },
           },
         ],
         enemy: { defence: 100, element: null, hasCore: true, events },
@@ -383,7 +383,7 @@ describe('バースト（狙えない間はオートバーストが発動しな�
 
 describe('編成', () => {
   const growth = { level: 1, grade: 0, core: 0 };
-  const condition: SlotCondition = { coreHitRate: 0.5, distanceBonus: true, fullCharge: true };
+  const condition: SlotCondition = { coreHitRate: 0.5, distanceBonus: true };
   const slot = (
     resourceId: number,
     shot: Partial<ShotParams>,

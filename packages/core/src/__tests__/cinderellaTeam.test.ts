@@ -34,7 +34,7 @@ function fixedSlot(id: number): TeamSlotInput {
     growth: fixed.growth,
     attackOverride: fixed.attack,
     hpOverride: computeFixedSpecHp(c),
-    condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+    condition: { coreHitRate: 1, distanceBonus: false },
     skills: { definition: definitionOf(id), levels: MAX_SKILL_LEVELS },
   };
 }

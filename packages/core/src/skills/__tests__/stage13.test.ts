@@ -351,7 +351,7 @@ describe('新 stat の式（3.3）', () => {
       attackOverride: 10000,
       enemy,
       buffs,
-      condition: { coreHitRate: 0.5, distanceBonus: false, fullCharge: true },
+      condition: { coreHitRate: 0.5, distanceBonus: false },
     });
 
   it('elementDamage: 1.1 + Σ when advantaged, 1 otherwise', () => {
@@ -384,7 +384,7 @@ describe('新 stat の式（3.3）', () => {
       enemy: advantaged,
       buffs: ZERO_BUFFS,
       perShot,
-      condition: { coreHitRate: 0.5, distanceBonus: false, fullCharge: true },
+      condition: { coreHitRate: 0.5, distanceBonus: false },
     });
     const boosted = computeTriggerDamage({
       character,
@@ -393,7 +393,7 @@ describe('新 stat の式（3.3）', () => {
       enemy: advantaged,
       buffs,
       perShot,
-      condition: { coreHitRate: 0.5, distanceBonus: false, fullCharge: true },
+      condition: { coreHitRate: 0.5, distanceBonus: false },
     });
     // C-0121: 武器倍率（1e-4 単位の整数）に掛けて四捨五入した値の比
     const rounded = scaleBasisPoints(character.shot.damage, 0.0946) / character.shot.damage;
@@ -420,7 +420,7 @@ describe('runTeam with build effects', () => {
     character: makeCharacter(),
     growth: { level: 1, grade: 0, core: 0 },
     attackOverride: 10000,
-    condition: { coreHitRate: 0.5, distanceBonus: false, fullCharge: true },
+    condition: { coreHitRate: 0.5, distanceBonus: false },
     ...(buildEffects ? { buildEffects } : {}),
   });
 

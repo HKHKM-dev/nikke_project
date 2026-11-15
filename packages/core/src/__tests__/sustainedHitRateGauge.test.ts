@@ -41,7 +41,7 @@ function fixedSlot(id: number, auto = true): TeamSlotInput {
     character,
     growth: fixed.growth,
     attackOverride: fixed.attack,
-    condition: { coreHitRate: 0.3, distanceBonus: true, fullCharge: true },
+    condition: { coreHitRate: 0.3, distanceBonus: true },
     ...(auto ? { conditionMode: 'auto' as const } : {}),
     skills: {
       definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
