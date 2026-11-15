@@ -142,7 +142,12 @@ export const MONOCHROME_GROUPS: ReadonlySet<string> = new Set([
 ]);
 
 /** グループの外で、白黒で描くバッジ（画面が図柄の色を CSS で変えるもの） */
-export const MONOCHROME_NAMES: ReadonlySet<string> = new Set(['ui_information', 'ui_controller', 'ui_window']);
+export const MONOCHROME_NAMES: ReadonlySet<string> = new Set([
+  'ui_information',
+  'ui_controller',
+  'ui_window',
+  'ui_account',
+]);
 
 /** バッジ（拡張子なしの名前）が白黒で描くものか */
 export const isMonochrome = (name: string): boolean =>

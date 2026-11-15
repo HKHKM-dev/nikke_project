@@ -33,6 +33,7 @@ const BADGE_SVGS = import.meta.glob<string>(
     '../../assets/badges/ui_controller.svg',
     '../../assets/badges/ui_window.svg',
     '../../assets/badges/ui_return.svg',
+    '../../assets/badges/ui_account.svg',
   ],
   { eager: true, query: '?raw', import: 'default' },
 );
@@ -76,6 +77,8 @@ export const UNSUPPORTED_BADGE = badgeName('ui_information');
 export const CONTROLLER_BADGE = badgeName('ui_controller');
 /** 右上の設定のメニューのボタンのバッジ（モダン UI の SettingsMenu） */
 export const SETTING_BADGE = badgeName('ui_window');
+/** 右上のアカウントのメニューのボタンのバッジ（モダン UI の AccountMenu） */
+export const ACCOUNT_BADGE = badgeName('ui_account');
 /** お気に入りのバッジ（favorites.ts の FAVORITE_MARKS ごと）と、2 つ以上押したときに数を重ねる無地のバッジ */
 export const FAVORITE_BADGES = {
   star: badgeName('main_star'),

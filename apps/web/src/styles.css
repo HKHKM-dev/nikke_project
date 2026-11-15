@@ -206,7 +206,7 @@ header h1 {
   align-items: center;
   gap: 8px;
 }
-/* 設定のボタン（モダン UI。絵はバッジ ui_window の正方形） */
+/* アカウントと設定のボタン（モダン UI。絵はバッジ ui_account・ui_window の正方形） */
 .settings-menu-button {
   display: grid;
   place-items: center;
@@ -218,8 +218,8 @@ header h1 {
   width: 28px;
   height: 28px;
 }
-/* ライトでは色を反転する（地を白、縁と四角を暗い色、外の線を白） */
-.settings-menu-icon.badge-ui_window {
+/* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。図柄を白にする .badge-ui_* の規則より強くするため、要素名を付ける */
+svg.settings-menu-icon {
   --badge-ground: light-dark(#ffffff, #1a1a1a);
   --badge-main: light-dark(#1a1a1a, #ffffff);
   --badge-accent: light-dark(#1a1a1a, #ffffff);
@@ -1038,10 +1038,11 @@ header h1 {
 .badge-collection_plain.badge-variant-max {
   --badge-ground: initial;
 }
-/* ⓘ の文字・操作キャラの印の図柄・設定のボタンの四角（差し色）は白にする */
+/* ⓘ の文字・操作キャラの印・設定とアカウントのボタンの図柄（差し色）は白にする */
 .badge-ui_information,
 .badge-ui_controller,
-.badge-ui_window {
+.badge-ui_window,
+.badge-ui_account {
   --badge-accent: #ffffff;
 }
 .badge-core_plain {
