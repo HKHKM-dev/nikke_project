@@ -1,0 +1,20 @@
+{
+  "id": "C-1286",
+  "text": "アルカナ：フォーチュンメイトの思い出作り・青春の記録・幸せな思い出・大切な思い出は、フルバースト終了で全部外れる（S2 の「思い出作り解除時初期化」は回数だけでなく段の効果も外す。フルバースト終了の後の発は、思い出作りの▲が無く、10 個のペレットで分け、大切な思い出の攻撃力▲が無い）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1207-17`・`1207-18`・`1208-17`・`1208-18`。V-0786",
+  "model": "（モデル側を書く。未反映ならそう書く）",
+  "replaces": [],
+  "updated": "2026-11-15",
+  "subject": {
+    "places": [
+      "data/skills/583.json の skill2 の effects[3]",
+      "data/skills/583.json の skill2 の effects[4]",
+      "data/skills/583.json の skill1 の effects[2]",
+      "data/skills/583.json の skill1 の effects[3]"
+    ]
+  },
+  "decidedOn": []
+}
