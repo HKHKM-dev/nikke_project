@@ -1,0 +1,47 @@
+{
+  "id": "1228",
+  "date": "2026-11-15",
+  "folder": "range",
+  "file": "20261115-1228_julia-b-nofire.mp4",
+  "original": "2026-11-15_17-46-56.mp4",
+  "durationSec": 200.1,
+  "frames": 12008,
+  "fps": 60,
+  "sizeMB": 242.6,
+  "sha256": "ea8fda7b9b3d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 150,
+      "name": "ジュリア",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0792 の撮り方 B: ココア（I）・ソルジャーF.A.（II）・ジュリア（III・操作・オート射撃 OFF で撃たない）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-15T17:55+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
