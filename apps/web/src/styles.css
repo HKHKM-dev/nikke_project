@@ -1643,11 +1643,12 @@ img.favorite-badge {
 .char-visual-portrait .char-visual-favorites .favorite-badge {
   width: 14px;
 }
-/* ニケ一覧の四角の絵では、右下の属性のバッジ（高さ --badge-w × 150/130）のすぐ上に 1 つだけ出す。幅は属性のバッジと同じ */
+/* ニケ一覧の四角の絵では、右下の属性のバッジ（高さ --badge-w × 150/130）の上に 1 つだけ出す。幅は属性のバッジと同じ。
+   上の P○ のバッジと重ならないように、帯の下の切れ込み（深さは幅の 28.846%）に六角形の上の角を収めるところまで下げる */
 .char-visual-favorite-corner {
   position: absolute;
   right: 2px;
-  bottom: calc(2px + var(--badge-w) * 150 / 130 + 2px);
+  bottom: calc(2px + var(--badge-w) * 150 / 130 - var(--badge-w) * 0.28846 + 1px);
   z-index: 2;
   width: var(--badge-w);
   pointer-events: none;
