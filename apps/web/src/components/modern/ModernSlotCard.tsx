@@ -9,7 +9,7 @@ import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
 import type { ActiveDragData, OverDragData } from './dropIntent.ts';
 import { useScrollingName } from './useScrollingName.tsx';
 
-/** 操作キャラの印（バッジ ui_controller）。ModernSlotCard の上の段と、ドラッグ中の重ねる絵（ModernView）が使う */
+/** 操作キャラの印（バッジ ui_controller）。ModernSlotCard の上の段と、ドラッグ中の重ねる絵（SlotDragOverlay）が使う */
 export function ControllerIcon() {
   return <BadgeIcon className="modern-slot-focus-icon" name={CONTROLLER_BADGE} label="操作" />;
 }
