@@ -380,6 +380,8 @@ export type ResolvedEffect = {
   excludeSelf?: ExcludeSelf;
   /** 「〈名前〉状態の」（目録の id）。定義に無ければキーごと無い */
   targetState?: NamedStateId;
+  /** targetState が時間で変わる状態なら true（skills/types.ts の FixedTargetFields）。無ければキーごと無い */
+  targetStateHeld?: true;
   /** 「自分と〈状態〉の味方」（plan/design-new-chars-1029.md 5.1 節）・「自分と両隣」。定義に無ければキーごと無い */
   includeSelf?: true;
   /** 「両隣の味方」（plan/design-rouge.md 2.1 節）。定義に無ければキーごと無い */
@@ -749,6 +751,7 @@ function resolveItemFields(
   if (effect.targetBurstStep) r.targetBurstStep = effect.targetBurstStep;
   if (effect.targetDefense) r.targetDefense = effect.targetDefense;
   if (effect.fixedTargets) r.fixedTargets = effect.fixedTargets;
+  if (effect.targetStateHeld) r.targetStateHeld = true;
   const count = resolveTargetCount(effect, skill, level);
   if (count !== undefined) r.targetCount = count;
   const maxStacks = resolveMaxStacks(effect, skill, level);
@@ -1300,7 +1303,7 @@ export function resolveDotStackUps(
   return SKILL_SLOTS.flatMap((slot) => {
     const skill = character.skills[slot];
     return def.skills[slot].effects.flatMap((effect) =>
-      effect.kind === 'stackChange' && effect.target === 'enemy'
+      effect.kind === 'stackChange' && effect.target === 'enemy' && hasDotOfState(def, effect.state)
         ? [
             {
               state: effect.state,
@@ -1364,6 +1367,48 @@ export function resolveStackChanges(
     });
   }
   return out;
+}
+
+/** 定義に、その状態を付ける dot があるか（敵のスタック量▲が持続ダメージのものか、付与の状態のものかを分ける） */
+function hasDotOfState(def: SkillDefinition, state: NamedStateId): boolean {
+  return SKILL_SLOTS.some((slot) => def.skills[slot].effects.some((e) => e.kind === 'dot' && e.state === state));
+}
+
+/**
+ * 解決した、敵に付いた付与の状態へのスタック量▲（stackChange の target enemy で、同じ定義にその状態の dot が無いもの。
+ * plan/design-rei-tentative.md 2.1 節）。足す先は、編成のどの枠の付与が敵に付けた件でもよい（skills/holders/fire.ts の fireAllStackable）
+ */
+export type ResolvedEnemyStackUp = {
+  source: ResolvedEffect['source'];
+  effectIndex: number;
+  state: NamedStateId;
+  trigger: ResolvedTrigger;
+  amount: number;
+  condition: EffectCondition;
+};
+
+export function resolveEnemyStackUps(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedEnemyStackUp[] {
+  return SKILL_SLOTS.flatMap((slot) => {
+    const skill = character.skills[slot];
+    return def.skills[slot].effects.flatMap((effect, effectIndex) =>
+      effect.kind === 'stackChange' && effect.target === 'enemy' && !hasDotOfState(def, effect.state)
+        ? [
+            {
+              source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+              effectIndex,
+              state: effect.state,
+              trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
+              amount: amountOf(effect, skill, levels[slot]),
+              condition: resolveCondition(effect.condition!, skill, levels[slot]),
+            },
+          ]
+        : [],
+    );
+  });
 }
 
 /**

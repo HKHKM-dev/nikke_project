@@ -14,6 +14,7 @@ import type {
   ResolvedRemoveState,
   ResolvedStateExtend,
   ResolvedStackChange,
+  ResolvedEnemyStackUp,
   ResolvedAllStackableChange,
   ResolvedStateContent,
   ResolvedStateGrant,
@@ -379,9 +380,14 @@ export type StackSource = {
  */
 export type AllStackSource = {
   sourceSlotIndex: number;
-  effect: ResolvedAllStackableChange;
+  effect: ResolvedAllStackableChange | ResolvedEnemyStackUp;
   fires: TriggerTracker;
   targets: readonly number[];
+  /**
+   * 敵に付いた付与の状態へのスタック量▲（plan/design-rei-tentative.md 2.1 節）なら、その状態。足す先は、編成のどの枠の付与が
+   * 敵に付けたその状態の件の列（targets は空）
+   */
+  enemyState?: NamedStateId;
   /** 足す先の件の列（最初の発火で選ぶ。skills/holders/fire.ts の fireAllStackable） */
   tracks?: HeldTrack[];
 };

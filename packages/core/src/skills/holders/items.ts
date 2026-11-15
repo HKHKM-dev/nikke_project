@@ -714,6 +714,8 @@ export function stageOfTimed(effect: ResolvedTimedEffect): HeldStage {
   // 最終防御力の比べの対象も、順位と同じく段 1・1.5 の件（防御力▲）が出そろってから決める
   if (dependsOnRank(effect) || dependsOnDefense(effect)) return 2;
   // 件を見ない条件（usedBurst だけ）は段を上げない（plan/design-skill-stage1.md 1.5 節）。スタック数を読む perCount も段 1.5
-  if (conditionReadsItems(effect.condition) || effect.perCount !== undefined) return 1.5;
+  // 時間で変わる〈状態〉の味方（発火のフレームの状態の件で対象を決める。plan/design-rei-tentative.md 2.2 節）も段 1.5
+  if (conditionReadsItems(effect.condition) || effect.perCount !== undefined || effect.targetStateHeld === true)
+    return 1.5;
   return 1;
 }

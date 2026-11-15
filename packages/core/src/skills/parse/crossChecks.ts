@@ -457,7 +457,7 @@ function validateSummons(entries: Partial<Record<SkillSlot, SkillEntry>>, root: 
 
 /**
  * 消去（cancelState）と敵のスタック量▲（stackChange の target
- * enemy）は、同じ定義の firstTick halfAfterLatest の dot の state を指す（消去で tick を止めるのは、付けるたびに刻みを付け直す形だけ。frame/dot.ts の latestDotTicks。plan/design-skill-stage13.md 2.4・2.5 節）。dot の stacksFrom の
+ * enemy。同じ定義にその状態の dot が無ければ、編成のどの枠の付与が敵に付けた状態にも足せる）は、同じ定義の firstTick halfAfterLatest の dot の state を指す（消去で tick を止めるのは、付けるたびに刻みを付け直す形だけ。frame/dot.ts の latestDotTicks。plan/design-skill-stage13.md 2.4・2.5 節）。dot の stacksFrom の
  * enemyState も、同じ定義の dot の state を指す。消去は、敵にスタックで付ける付与の状態も指せ、damage の perCount の enemyState は
  * それを指す（plan/design-asuka-wille.md 2.2・2.3 節）
  */
@@ -482,7 +482,15 @@ function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, r
           `${root}.${slot}.effects[${i}]`,
           `a cancel triggered by { ended } or with delayFrames needs a grant of "${e.state}" on the enemy with stacks`,
         );
-      if (onDot && !onGrant && !dots.some((d) => d.state === e.state && d.firstTick === 'halfAfterLatest'))
+      // 敵のスタック量▲は、同じ定義にその状態の dot が無ければ、編成のどの枠の付与が敵に付けた件にも足す
+      // （他のキャラの付与でもよい。plan/design-rei-tentative.md 2.1 節）
+      const onOtherGrant = e.kind === 'stackChange' && e.target === 'enemy' && !dots.some((d) => d.state === e.state);
+      if (
+        onDot &&
+        !onGrant &&
+        !onOtherGrant &&
+        !dots.some((d) => d.state === e.state && d.firstTick === 'halfAfterLatest')
+      )
         fail(
           `${root}.${slot}.effects[${i}]`,
           `${e.kind} of "${e.state}" needs a dot of the same state with firstTick halfAfterLatest in the definition`,

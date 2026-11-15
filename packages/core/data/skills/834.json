@@ -22,6 +22,23 @@
           }
         },
         {
+          "kind": "stackChange",
+          "state": "antiATField",
+          "target": "enemy",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "condition": {
+            "enemyState": "antiATField"
+          },
+          "amountRef": 3,
+          "assumes": {
+            "ja": "アンチA.T.フィールドのスタック量 10 個▲。敵に付いている件（アスカ：WILLE の付与）に 10 スタックを足し、上限・維持・中身は付けた付与のもの。数え方は上の追加ダメージと同じ",
+            "en": "Anti A.T. Field stacks up 10: adds 10 stacks to the instance on the enemy (applied by Asuka: WILLE); the cap, duration and contents are those of that grant. Counted the same way as the additional damage above"
+          }
+        },
+        {
           "kind": "damage",
           "trigger": {
             "count": "normalHit",
@@ -36,30 +53,23 @@
             "ja": "命中は戦闘を通して数え、7 の倍数に届いた命中の時に自分が攻撃態勢なら起きる",
             "en": "Hits are counted through the battle; it fires when a multiple of 7 is reached while this unit is in Attack State"
           }
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "targetState": "annihilationState",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 10,
+          "durationRef": 11,
+          "assumes": {
+            "ja": "殲滅態勢状態の味方は、フルバーストの開始のフレームに殲滅態勢の件を持つ枠（アスカ：WILLE がバーストを使った回は、バースト使用時に付いた殲滅態勢が見える）。付いた後は殲滅態勢が外れても 9 秒続く",
+            "en": "Allies in Annihilation State are the units holding Annihilation State at the Full Burst start frame (when Asuka: WILLE used her Burst, the state applied on Burst use is visible). Once applied it lasts 9 s even after the state ends"
+          }
         }
       ],
       "notes": [
-        {
-          "ja": "18 回命中の時のアンチA.T.フィールドのスタック量 10 個▲は未対応（他のキャラが敵に付けた状態のスタック量を変える語彙が無い。plan/design-rei-tentative.md 2.1 節）",
-          "en": "Anti A.T. Field stacks up 10 on the 18th hit is not modeled (no vocabulary to change the stacks of a state another unit applied to the enemy)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "stackChange",
-            "target": "enemy",
-            "trigger": "normalHit"
-          }
-        },
-        {
-          "ja": "フルバーストタイムが発動した時の、殲滅態勢状態の味方全体への発動者基準の攻撃力▲は未対応（時間で変わる状態で対象を絞る語彙が無い。plan/design-rei-tentative.md 2.2 節）",
-          "en": "ATK up (based on the skill user) to all allies in Annihilation State on entering Full Burst is not modeled (no vocabulary to filter targets by a time-varying state)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "allies",
-            "trigger": "fullBurstStart"
-          }
-        },
         {
           "ja": "フルバーストタイムが発動した時の、殲滅態勢の追加効果の適用対象 1▲・攻撃範囲 500%▲は、敵 1 体の前提ではダメージに関係しない（追加効果は射撃場の敵 1 体に毎回当たる）",
           "en": "On entering Full Burst, the Annihilation State additional effect's units affected ▲1 and attack range ▲500% do not affect damage against a single enemy (the additional effect always hits the one range enemy)",

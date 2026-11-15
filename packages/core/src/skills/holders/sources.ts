@@ -21,6 +21,7 @@ import {
   resolveStateExtends,
   resolveStackChanges,
   resolveAllStackableChanges,
+  resolveEnemyStackUps,
   resolveTimed,
   resolveWhileEffects,
   type ResolvedInstantEffect,
@@ -403,7 +404,10 @@ function createStackSources({ firesOf, slots }: SourceDeps, stateGroups: readonl
   return stackSources;
 }
 
-/** 味方の全部のスタック可能バフへのスタック量▲（対象の枠は編成で決まる。plan/design-adjacent-allies.md 2.5 節） */
+/**
+ * 味方の全部のスタック可能バフへのスタック量▲（対象の枠は編成で決まる。plan/design-adjacent-allies.md 2.5 節）と、敵に付いた付与の
+ * 状態へのスタック量▲（plan/design-rei-tentative.md 2.1 節）
+ */
 function createAllStackSources({ firesOf, slots }: SourceDeps): AllStackSource[] {
   const out: AllStackSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
@@ -414,6 +418,15 @@ function createAllStackSources({ firesOf, slots }: SourceDeps): AllStackSource[]
       );
       out.push({ sourceSlotIndex, effect, fires: firesOf(effect.trigger, sourceSlotIndex), targets });
     }
+    // 敵に付いた付与の状態（他の枠の付与でもよい）へのスタック量▲も、件を読んで足す同じ形（plan/design-rei-tentative.md 2.1 節）
+    for (const effect of resolveEnemyStackUps(slot.definition, slot.character, slot.levels))
+      out.push({
+        sourceSlotIndex,
+        effect,
+        fires: firesOf(effect.trigger, sourceSlotIndex),
+        targets: [],
+        enemyState: effect.state,
+      });
   });
   return out;
 }

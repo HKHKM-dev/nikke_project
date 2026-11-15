@@ -161,6 +161,8 @@
     | 〈stat〉増加効果が適用された時（自分に付く状態） | 付与のきっかけ `{ "buffApplied": "<stat>" }`（どの枠の▲でも、付くたびに） | ブレッディの S1 のやみつきの味・オススメの味 | [design-bready.md](design-bready.md) 2.1 節 |
     | 〈stat〉増加状態でなければ | 条件 `selfBuffed: { "stat": "<stat>", "present": false }` | ブレッディの S1 のオススメの味 | 同 2.2 節 |
     | 〈状態〉消去（もう片方の状態が付いた時に外れる 2 つの状態） | 目録の切り替えの組 `group` | ブレッディの S1 の味 | 同 2.3 節 |
+    | 対象が〈他のキャラが敵に付けた状態〉なら、〈状態〉のスタック量 N 個▲ | `stackChange` の `target: "enemy"`（同じ定義にその状態の dot が無い）と条件 `enemyState` | レイ（仮称）の S1 のアンチA.T.フィールド | [design-rei-tentative.md](design-rei-tentative.md) 2.1 節 |
+    | 〈時間で変わる状態〉の味方全体（バーストの使用などで付く状態） | timed の `targetState`（編成のどの枠でも静的でなければ、発火のフレームにその状態を持つ枠） | レイ（仮称）の S1 の殲滅態勢の味方 | 同 2.2 節 |
     | 〈持続ダメージの名前〉効果 X%▲ | timed の stat `dotEffect`（持ち主の持続ダメージの tick に別の乗数） | ブレッディのバーストのあと味効果 | 同 2.4 節・決めたこと |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。

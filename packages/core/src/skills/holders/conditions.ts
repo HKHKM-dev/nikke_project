@@ -158,6 +158,18 @@ export function createConditions({
     }
     return condition.selfCounter === undefined || holdsAt({ selfCounter: condition.selfCounter }, slotIndex, frame);
   };
-  return { counterConditionHolds, endedAt, fireContextHolds, holdsAt };
+  /**
+   * フレーム frame にその状態（家族の根なら家族のどれか）の件を持つ枠（静的な状態も）。時間で変わる〈状態〉の味方の対象
+   * （FireContext の stateHolders。plan/design-rei-tentative.md 2.2 節）。条件 selfState と同じ件を見る
+   */
+  const stateHoldersAt = (state: NamedStateId, frame: number): number[] => {
+    const family = statesMatching(state);
+    return stateTracks.flatMap((held, i) => {
+      const isStatic = family.some((s) => staticStates[i]?.has(s) === true);
+      const own = family.flatMap((s) => held?.get(s) ?? []);
+      return isStatic || own.some((t) => selfStateItemsAt(t, frame).length > 0) ? [i] : [];
+    });
+  };
+  return { counterConditionHolds, endedAt, fireContextHolds, holdsAt, stateHoldersAt };
 }
 export type Conditions = ReturnType<typeof createConditions>;

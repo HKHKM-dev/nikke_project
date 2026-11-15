@@ -30,6 +30,11 @@ export type FireContext = {
    * 割合の低い順・同値は枠の若い順。fixedTargets の候補の枠だけ。plan/design-hp-ratio-readers.md 2.2 節）。無ければ fixedTargets（枠の想定の順）
    */
   hpRank?: readonly number[];
+  /**
+   * 時間で変わる targetState（targetStateHeld）の、発火のフレームにその状態の件を持つ枠（plan/design-rei-tentative.md 2.2 節。
+   * skills/holders/conditions.ts の stateHoldersAt）
+   */
+  stateHolders?: readonly number[];
 } | null;
 
 /** isEffectTarget が見る効果の項目 */
@@ -42,6 +47,10 @@ export type TargetedEffect = {
   targetSquad?: TargetSquad;
   excludeSelf?: ExcludeSelf;
   targetState?: NamedStateId;
+  /** targetState が時間で変わる状態なら true（skills/types.ts の FixedTargetFields）。発火の文脈の stateHolders で絞る */
+  targetStateHeld?: true;
+  /** 「自分と〈状態〉の味方」。時間で変わる targetState では、発火の文脈の枠に自分を足す */
+  includeSelf?: true;
   /** 「両隣の味方」（plan/design-rouge.md 2.1 節）。枠は最上位の skills/composition.ts が fixedTargets に書く */
   targetAdjacent?: true;
   targetBurstStep?: BasicBurstStep;
@@ -121,6 +130,13 @@ export function isEffectTarget(
       // 防御力の比べの絞り込みは、発火の文脈の枠だけ（文脈に無ければ誰にも掛からない）
       if (effect.targetDefense !== undefined)
         return weaponOk && context?.lowerDefense?.includes(targetSlotIndex) === true;
+      // 時間で変わる〈状態〉の味方は、発火のフレームにその状態を持つ枠だけ（文脈に無ければ誰にも掛からない）
+      if (effect.targetStateHeld === true)
+        return (
+          weaponOk &&
+          ((effect.includeSelf === true && sourceSlotIndex === targetSlotIndex) ||
+            context?.stateHolders?.includes(targetSlotIndex) === true)
+        );
       return weaponOk;
     case 'longestChargeTime':
       return weaponOk;
@@ -176,9 +192,14 @@ export function canEverTarget(
 }
 
 /** 対象が発火の文脈で変わるか（変わらなければ効果ごとに 1 回だけ対象を決めてよい） */
-export function dependsOnContext(effect: { target: BuffTarget; targetDefense?: TargetDefense }): boolean {
+export function dependsOnContext(effect: {
+  target: BuffTarget;
+  targetDefense?: TargetDefense;
+  targetStateHeld?: true;
+}): boolean {
   return (
     effect.target === 'burstUsers' ||
+    effect.targetStateHeld === true ||
     effect.target === 'topAttack' ||
     effect.target === 'appliedCaster' ||
     dependsOnDefense(effect)

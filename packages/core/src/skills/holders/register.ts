@@ -66,6 +66,7 @@ export function createRegister({
   stackSources,
   stateEndTracks,
   stateGroups,
+  stateHoldersAt,
   timedSources,
   tracks,
   updateHpAtLeast,
@@ -332,10 +333,13 @@ export function createRegister({
         skipEffect(src.sourceSlotIndex, src.effect, f);
         continue;
       }
+      const context = fireContextOf(src.effect.trigger, ev);
+      // 時間で変わる〈状態〉の味方は、発火のフレームにその状態を持つ枠（plan/design-rei-tentative.md 2.2 節）
+      const held = src.effect.targetStateHeld === true ? src.effect.targetState : undefined;
       fireTimed(
         src,
         battleStartOnly ? 0 : startOfFire(src.effect.trigger, f, src.effect.delayFrames),
-        fireContextOf(src.effect.trigger, ev),
+        held === undefined ? context : { ...context, stateHolders: stateHoldersAt(held, f) },
       );
     }
     for (const r of stage15Removes) {
