@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 137・効果 1005（根拠あり 983）・notes 351（根拠あり 144）
+件数: キャラ 137・効果 1006（根拠あり 984）・notes 350（根拠あり 143）
 
-notes の種類: 未対応 48・前提の外 104・計算に無関係 69・補足 42・間接 88
+notes の種類: 未対応 48・前提の外 104・計算に無関係 69・補足 42・間接 87
 
-スロット: supported 366・partial 35・unsupported 9・noEffect 52
+スロット: supported 367・partial 35・unsupported 9・noEffect 51
 
 ## 10 ラピ
 
@@ -2035,11 +2035,11 @@ notes の種類: 未対応 48・前提の外 104・計算に無関係 69・補�
 ## 833 ミサト
 
 - **skill1**: supported
-  - effects[0] timed・normalShot・hitRate: C-0183（確定）、C-0184（仮説）
-  - effects[1] heal・normalShot: C-0567（確定）、C-0180（確定）、C-0652（確定）、C-1116（確定）、C-1316（仮説）
-- **skill2**: noEffect
+  - effects[0] state・normalShot・shootingManual（hitRate）: C-0183（確定）、C-0184（仮説）、C-1334（確定）
+  - effects[1] heal・normalShot: C-0567（確定）、C-0180（確定）、C-0652（確定）、C-1116（確定）、C-1316（確定）、C-1335（確定）
+- **skill2**: supported
+  - effects[0] passive・shootingManual のフルスタックの間・healDealt: C-1334（確定）、C-0180（確定）
   - notes[0] 前提の外: 射撃マニュアル状態の間の味方全体のバリアに与えるダメージ▲は、バリアの無い敵（射撃場の的）では効かない: C-0180（確定）
-  - notes[1] 間接（HP）: 射撃マニュアルのフルスタック状態の間の自分の与えるHP回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: C-0180（確定）
 - **burst**: supported
   - effects[0] heal・burstUse: C-0646（仮説）、C-0180（確定）
 
