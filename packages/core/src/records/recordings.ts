@@ -230,7 +230,7 @@ export function validateRecordings(file: RecordingsFile, knownRids: ReadonlySet<
         at,
       ),
     );
-    entry.team.forEach((member, i) => {
+    entry.team.forEach((member) => {
       if (!knownRids.has(member.rid)) errors.push(`${at}: rid ${member.rid} のキャラのデータが無い`);
       for (const key of ['fires', 'bursts'] as const)
         if (member[key] !== undefined && typeof member[key] !== 'boolean')
