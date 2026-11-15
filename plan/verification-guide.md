@@ -40,7 +40,7 @@
 ## 3. 起案
 
 - `npm run records:new -- verification --title "<題名>" --name <短い名前> --topic "<話題>" --question "<問い>"` で、次の空き番号の `records/verifications/V-NNNN-<短い名前>.md` を状態 `調査中` で作る（ほかのブランチが使っている番号は避ける）。
-- 番号を取ったら、すぐ push する（PR は出さない）。ほかのセッションに見えるのは origin のブランチだけで、push までの間に同じ番号を取られる（[design-workflow-simplification.md](design-workflow-simplification.md) 4 節）。`records:new` は、作ったファイルだけを commit して push する（`--no-push` でしない）。V-/C- の番号は `records:new` で取り、手で書かない。
+- 番号を取ったら、すぐ push する（PR は出さない）。ほかのセッションに見えるのは origin のブランチだけで、push までの間に同じ番号を取られる（[design-workflow-simplification.md](design-workflow-simplification.md) 4 節）。`records:new` は、作ったファイルだけを commit して push する（`--no-push` でしない。並行のセッションがあるときは使わない。push しない番号は、ほかのセッションから見えずに重なる）。V-/C- の番号は `records:new` で取り、手で書かない。
 - 番号がほかのブランチと重なったら、AGENTS.md「コミット手順」の 1 のとおり `records:renumber` で振り直し、すぐ commit して push する。
 - 読み直しなら、冒頭の「録画」に録画を挙げる。別の検証の途中で出た問いなら「派生元」を書く。
 - 仮説の出どころ（どの録画のどの値・残差から立てたか）を書いておく。結論の `decidedOn` のもとになる（8 節）。

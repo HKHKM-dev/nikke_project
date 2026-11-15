@@ -85,6 +85,7 @@ const { values, positionals } = parseArgs({
     json: { type: 'string' },
     file: { type: 'string' },
     'no-push': { type: 'boolean', default: false },
+    help: { type: 'boolean', short: 'h', default: false },
   },
 });
 
@@ -96,6 +97,11 @@ const USAGE =
   "       npm run records:new -- observation --from V-NNNN --recording <録画 id> (--json '<下書き>' | --file <下書きの JSON>)\n" +
   `話題: ${CLAIM_TOPICS.join(' / ')}\n` +
   `機構: ${CLAIM_MECHANISMS.join(' / ')}`;
+
+if (values.help) {
+  console.log(USAGE);
+  process.exit(0);
+}
 
 function fail(message: string): never {
   console.error(message);
