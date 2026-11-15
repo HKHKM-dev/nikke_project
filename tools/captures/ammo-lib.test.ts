@@ -55,7 +55,7 @@ describe('glyphKey・advanceOf', () => {
     expect(advanceOf(t, 'm3', 'd')).toBe(8);
     expect(advanceOf(t, '3', '/')).toBe(10);
     expect(advanceOf({ advances: { '1d': [5], '2d': [9], '3d': [9] } }, 'm2', 'd')).toBe(9);
-    expect(advanceOf({ advances: { '2d': [9] } }, '2', '/')).toBe(10);
+    expect(() => advanceOf({ advances: { '2d': [9] } }, '2', '/')).toThrow();
   });
 });
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { CARD_SLOTS } from '../../card-layout.ts';
 import {
-  CARD_SLOTS,
   type CardRaw,
   changesOf,
   formatHpTsv,
@@ -8,14 +8,15 @@ import {
   type HpRawRow,
   measureCard,
   parseHpTsv,
-  parseRanges,
   plateausOf,
   presentPositions,
   rangeMedian,
   ratioOf,
+  rightEdge,
   runEdges,
   type Sample,
 } from '../hp-bars-lib.ts';
+import { parseRanges } from '../types.ts';
 
 type RGB = [number, number, number];
 const DARK: RGB = [10, 12, 8];
@@ -67,15 +68,10 @@ describe('runEdges', () => {
     expect(runEdges(() => 0, 0, 5)).toBeUndefined();
   });
 
-  it('右端だけ別の背景で按分できる', () => {
+  it('右端は最後の画素の欠けと右隣のにじみで直す', () => {
     const v = [1, 1, 1, 0.25];
-    const r = runEdges(
-      (x) => v[x] ?? 0,
-      0,
-      3,
-      (x) => (x === 3 ? 0 : (v[x] ?? 0)),
-    )!;
-    expect(r.right).toBe(3);
+    expect(rightEdge((x) => v[x] ?? 0, 2)).toBe(3.25);
+    expect(rightEdge((x) => (x === 3 ? 0 : (v[x] ?? 0)), 2)).toBe(3);
   });
 });
 

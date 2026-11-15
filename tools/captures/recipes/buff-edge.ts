@@ -38,10 +38,9 @@ import { V_ID } from '../../../packages/core/src/records/ids.ts';
 import type { PredictionFile } from '../../../packages/core/src/records/predictions.ts';
 import type { RecordingEntry } from '../../../packages/core/src/records/recordings.ts';
 import { runSimulation } from '../../../packages/core/src/sim/engine.ts';
-import { parseRanges } from './hp-bars-lib.ts';
 import { loadHudJumps } from './hud-jumps.ts';
 import type { HudRow } from './triggers.ts';
-import { observation, roundTo, type Recipe, type RecipeContext, type RecipeObservation } from './types.ts';
+import { observation, parseRanges, roundTo, type Recipe, type RecipeContext, type RecipeObservation } from './types.ts';
 
 const ROOT = fileURLToPath(new URL('../../../', import.meta.url));
 
@@ -495,24 +494,29 @@ function slotsOf(g: Grid, grids: readonly Grid[]): number[] {
 
 const fmt = (n: number) => roundTo(n, 2).toLocaleString('en-US');
 
+/** カンマで並べた格子の名前（空は除く）。どれも grids に無ければ --opt key の誤りで止める */
+function gridNames(text: string, grids: readonly Pick<Grid, 'name'>[], key: string): string[] {
+  const list = text
+    .split(',')
+    .map((x) => x.trim())
+    .filter((x) => x !== '');
+  for (const n of list)
+    if (!grids.some((g) => g.name === n)) throw new Error(`--opt ${key} の名前が --opt grid に無い: ${n}`);
+  return list;
+}
+
 /** --opt pair（<前の格子>[,...]><後の格子>[,...]）。無ければ undefined */
 export function parsePair(
   text: string | undefined,
   grids: readonly Pick<Grid, 'name'>[],
 ): { before: string[]; after: string[] } | undefined {
   if (text === undefined || text === '') return undefined;
-  const sides = text.split('>').map((side) =>
-    side
-      .split(',')
-      .map((x) => x.trim())
-      .filter((x) => x !== ''),
-  );
+  const sides = text.split('>').map((side) => gridNames(side, grids, 'pair'));
   const [before, after] = sides;
   if (sides.length !== 2 || before!.length === 0 || after!.length === 0) {
     throw new Error(`--opt pair=<前の格子>[,...]><後の格子>[,...] の形が違う: ${text}`);
   }
   for (const n of [...before!, ...after!]) {
-    if (!grids.some((g) => g.name === n)) throw new Error(`--opt pair の名前が --opt grid に無い: ${n}`);
     if (before!.includes(n) && after!.includes(n)) throw new Error(`--opt pair の両側に同じ格子がある: ${n}`);
   }
   return { before: before!, after: after! };
@@ -800,14 +804,7 @@ function countObservations(
   describeGrid: (g: Grid) => string,
   tol: number,
 ): RecipeObservation[] {
-  const names = (key: string) => {
-    const list = (ctx.options[key] ?? '')
-      .split(',')
-      .map((x) => x.trim())
-      .filter((x) => x !== '');
-    for (const n of list) if (!grids.some((g) => g.name === n)) throw new Error(`--opt ${key} の ${n} が格子に無い`);
-    return list;
-  };
+  const names = (key: string) => gridNames(ctx.options[key] ?? '', grids, key);
   const count = names('count');
   if (count.length === 0) {
     if (ctx.options.between !== undefined || ctx.options.ranges !== undefined)
@@ -817,19 +814,23 @@ function countObservations(
   const between = names('between');
   if (between.length > 0 === (ctx.options.ranges !== undefined))
     throw new Error('--opt count には --opt between か ranges のどちらか 1 つが要る');
-  const merge = ctx.options.merge === undefined ? 30 : Number(ctx.options.merge);
-  if (!(merge >= 0)) throw new Error(`--opt merge は 0 以上の数: ${ctx.options.merge}`);
-  const delimiters = between.length > 0 ? delimiterFrames(rows, between, merge) : [];
-  const ranges = between.length > 0 ? rangesBetween(delimiters) : parseRanges(ctx.options.ranges!);
+  let ranges: { from: number; to: number }[];
+  let where: string;
+  if (between.length > 0) {
+    const merge = ctx.options.merge === undefined ? 30 : Number(ctx.options.merge);
+    if (!(merge >= 0)) throw new Error(`--opt merge は 0 以上の数: ${ctx.options.merge}`);
+    const delimiters = delimiterFrames(rows, between, merge);
+    ranges = rangesBetween(delimiters);
+    where = `${between.join('・')}に合う増分（${merge}f 以内に続くものは 1 つ目）の間。区切りは f${delimiters.join('・')}、1 つ目の区間は録画の始めから`;
+  } else {
+    ranges = parseRanges(ctx.options.ranges!);
+    where = `区間 ${ranges.map((r) => `f${r.from}〜${r.to}`).join('・')}`;
+  }
   const result = countIn(rows, ranges, count);
   const countName = count.join('・');
   ranges.forEach((r, i) =>
     ctx.log(`f${r.from}〜${r.to}: ${countName} ${result[i]!.counted}（区別できない ${result[i]!.ambiguous}）`),
   );
-  const where =
-    between.length > 0
-      ? `${between.join('・')}に合う増分（${merge}f 以内に続くものは 1 つ目）の間。区切りは f${delimiters.join('・')}、1 つ目の区間は録画の始めから`
-      : `区間 ${ranges.map((r) => `f${r.from}〜${r.to}`).join('・')}`;
   return [
     observation(
       recipe,

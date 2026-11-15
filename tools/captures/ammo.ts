@@ -12,8 +12,8 @@
 //   消える前の値以下から続ける（バーストの演出・暗い縞の重なりで読めなかった間）。
 //   --charge なら、増える遷移（弾丸チャージ）も罰則付きで許す（マガジンの区切りは表示が消えた所だけになるので --mode series で読む）。
 //   分割リロードの武器（SG）には使えない。
-// - crop は 1920×1080 で表示を含む 110×26。--card N は顔のカードの置き場所（左から 1〜5。hp-bars-lib.ts の CARD_SLOTS）の
-//   表示の crop（x は水色のバーの左端 − 7、y 902）。既定は見本を作った crop（2 つ目の置き場所）。
+// - crop は 1920×1080 で表示を含む 110×26。--card N は顔のカードの置き場所（左から 1〜5。card-layout.ts）の
+//   表示の crop（card-layout.ts の ammoCrop）。既定は見本を作った crop（2 つ目の置き場所）。
 // - 見本（ammo-templates.json）は、暗い背景の画の表示の字を、文字列の右詰めで字の列に当てて作る（ammo-lib.ts buildTemplates）。
 //   録画 1221（ソルジャーE.G. の NN/60・NN/80・NNN/148）と 1207（フォーチュンメイトの N/9）の 2 つ目の置き場所と、
 //   0041（NNN/300 と N/300。既定の crop）から作った。最大の小さい字の 5 と 7 は見本が無い。--merge は今の見本に足す
@@ -28,6 +28,7 @@ import {
   buildTemplates,
   decodeAmmo,
   decodeMax,
+  digitKeys,
   frameScores,
   maxCandidates,
   type Templates,
@@ -35,7 +36,8 @@ import {
   type Gray,
 } from './ammo-lib.ts';
 import { cropFilter, parseCrop, rawFrames, type Crop } from './ffmpeg.ts';
-import { CARD_SLOTS } from './recipes/hp-bars-lib.ts';
+import { selectExpr } from './aim-lib.ts';
+import { ammoCrop, CARD_SLOTS } from './card-layout.ts';
 
 const TEMPLATE_FILE = new URL('./ammo-templates.json', import.meta.url);
 /** 最大の候補にする、「/」の右で最もよく合ったフレームの数の下限（--max を省いたとき） */
@@ -74,23 +76,31 @@ function cropOf(fallback: Crop): Crop {
   if (values.card !== undefined) {
     const slot = CARD_SLOTS[Number(values.card) - 1];
     if (slot === undefined) throw new Error(`--card は 1〜${CARD_SLOTS.length}: ${values.card}`);
-    return { x: slot.left - 7, y: 902, w: 110, h: 26 };
+    return ammoCrop(slot);
   }
   return fallback;
 }
 
-async function readFrames(crop: Crop, first: number, last: number | undefined): Promise<Gray[]> {
-  const select = last === undefined ? `gte(n\\,${first})` : `between(n\\,${first}\\,${last})`;
-  const args = ['-v', 'error', '-i', video!, '-vf', `select='${select}',${cropFilter(crop)}`];
-  args.push('-fps_mode', 'passthrough', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-');
-  const frames: Gray[] = [];
-  for await (const buf of rawFrames(args, crop.w * crop.h * 3)) frames.push(toGray(buf, crop.w, crop.h));
-  return frames;
+/** first〜last のフレームを読み、each に通した値の列にする（読みながら照合し、デコードと照合を重ねる） */
+async function readFrames<T>(
+  crop: Crop,
+  first: number,
+  last: number | undefined,
+  each: (img: Gray) => T,
+): Promise<T[]> {
+  const args = ['-v', 'error', '-i', video!, '-vf', `select='${selectExpr(first, last, 1)}',${cropFilter(crop)}`];
+  args.push('-fps_mode', 'passthrough');
+  // 終わりがあれば、選んだ枚数を出したところで止める（録画の終わりまでデコードしない）
+  if (last !== undefined) args.push('-frames:v', String(last - first + 1));
+  args.push('-f', 'rawvideo', '-pix_fmt', 'rgb24', '-');
+  const out: T[] = [];
+  for await (const buf of rawFrames(args, crop.w * crop.h * 3)) out.push(each(toGray(buf, crop.w, crop.h)));
+  return out;
 }
 
 async function makeTemplates(spec: string): Promise<void> {
   const base = values.merge ? loadTemplates() : undefined;
-  const crop = cropOf(base?.crop ?? { x: 785, y: 902, w: 110, h: 26 });
+  const crop = cropOf(base?.crop ?? ammoCrop(CARD_SLOTS[1]));
   const samples = spec.split(',').map((s) => {
     const at = s.indexOf(':');
     const frame = Number(s.slice(0, at));
@@ -99,15 +109,15 @@ async function makeTemplates(spec: string): Promise<void> {
       throw new Error(`見本は frame:残弾/最大 で指定する: ${s}`);
     return { frame, text };
   });
-  const frames = await readFrames(crop, 0, Math.max(...samples.map((s) => s.frame)));
+  const wanted = new Set(samples.map((s) => s.frame));
+  let n = 0;
+  const frames = await readFrames(crop, 0, Math.max(...wanted), (img) => (wanted.has(n++) ? img : undefined));
   const templates = buildTemplates(
     samples.map(({ frame, text }) => ({ img: frames[frame]!, text })),
     crop,
     base,
   );
-  const missing = [...[...'0123456789/'], ...[...'0123456789'].map((d) => `m${d}`)].filter(
-    (d) => templates.glyphs[d] === undefined,
-  );
+  const missing = ['/', ...digitKeys(false), ...digitKeys(true)].filter((d) => templates.glyphs[d] === undefined);
   writeFileSync(TEMPLATE_FILE, `${JSON.stringify(templates)}\n`);
   const counts = Object.fromEntries(Object.entries(templates.glyphs).map(([ch, g]) => [ch, `${g.count}（幅 ${g.w}）`]));
   const advances = Object.fromEntries(Object.entries(templates.advances).map(([k, v]) => [k, v.length]));
@@ -188,7 +198,7 @@ const given = values.max?.split(',').map(Number);
 if (given !== undefined && given.some((v) => !Number.isInteger(v) || v < 1))
   throw new Error(`--max は正の整数をカンマで並べる: ${values.max}`);
 const limit = given === undefined ? 300 : Math.max(...given);
-const frames = (await readFrames(crop, from, to)).map((img) => frameScores(img, templates, limit));
+const frames = await readFrames(crop, from, to, (img) => frameScores(img, templates, limit));
 const candidates = given ?? maxCandidates(frames, MAX_MIN_FRAMES);
 if (given === undefined) console.error(`最大の候補: ${candidates.join('・') || 'なし'}`);
 const maxes = decodeMax(frames, candidates);

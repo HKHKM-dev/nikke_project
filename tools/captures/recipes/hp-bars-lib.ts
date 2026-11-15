@@ -2,23 +2,13 @@
 // HP の割合にする（V-0730・V-0790・V-0791・V-0797 の読み方）。フレームごとの測りは hp-bars.ts が録画から出し、
 // キャッシュ hp-bars@<版>.tsv に置く。
 import { median } from '../aim-lib.ts';
+import { CARD_SLOTS } from '../card-layout.ts';
 
 /** 切り出す帯（1920×1080。高さは偶数） */
 export const STRIP = { x: 640, y: 1024, w: 640, h: 16 };
 /** 白のバーを読む行（中央値を取る）と、水色のバーを読む行 */
 export const WHITE_ROWS = [1033, 1035, 1037] as const;
 export const CYAN_ROWS = [1025, 1026, 1027] as const;
-/**
- * カードの置き場所（左から 5 つ。水色のバーの左端と右端の x）。編成の人数によらず同じ所に出て、空きの置き場所には
- * カードが無い（4 人の録画 1090 は 1〜4 つ目、3 人の 1220 は 1〜3 つ目、2 人の 1235 は 3・4 つ目）
- */
-export const CARD_SLOTS = [
-  { left: 672, right: 759 },
-  { left: 792, right: 879 },
-  { left: 924, right: 1012 },
-  { left: 1056, right: 1144 },
-  { left: 1176, right: 1264 },
-] as const;
 /** 置き場所の左右の探す幅（px） */
 export const SEARCH = 6;
 /** 白の明るさ（min(R,G,B)）の背景（バーの減った所の暗い色）。端の画素の按分の 0 */
@@ -53,16 +43,18 @@ export type Pixel = (x: number, y: number) => readonly [number, number, number];
 
 const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
 
+/** 連なりの最後の画素 last の右端（終わりの次の位置）。最後の画素の欠け（1 − frac）と右隣のにじみ（frac）で直す */
+export const rightEdge = (frac: (x: number) => number, last: number): number =>
+  last + 1 - (1 - frac(last)) + frac(last + 1);
+
 /**
  * 1 行の値の列（x0 から）で、from 〜 to の中で最初に始まる「満ちた」連なりの端を按分で出す。frac は画素の満ち具合（0〜1）。
- * 左端は連なりの最初の画素の欠け（1 − frac）と左隣のにじみ（frac）で、右端は最後の画素の欠けと右隣のにじみで直す。
- * 右端の按分は fracRight（右の背景が左と違うとき）で測る
+ * 左端は連なりの最初の画素の欠け（1 − frac）と左隣のにじみ（frac）で、右端は rightEdge で直す
  */
 export function runEdges(
   frac: (x: number) => number,
   from: number,
   to: number,
-  fracRight: (x: number) => number = frac,
 ): { left: number; right: number; last: number } | undefined {
   let s = -1;
   for (let x = from; x <= to; x++)
@@ -74,8 +66,7 @@ export function runEdges(
   let e = s;
   while (frac(e + 1) >= HALF) e++;
   const left = s + (1 - frac(s)) - frac(s - 1);
-  const right = e + 1 - (1 - fracRight(e)) + fracRight(e + 1);
-  return { left, right, last: e };
+  return { left, right: rightEdge(frac, e), last: e };
 }
 
 /** 1 フレーム・1 つの置き場所を測る */
@@ -99,7 +90,7 @@ export function measureCard(px: Pixel, slot: (typeof CARD_SLOTS)[number]): CardR
       const [r, gr, b] = px(x, y);
       return Math.min(r, gr, b) > 100 ? 0 : clamp01((gr - CYAN_BG) / (CYAN_FULL - CYAN_BG));
     };
-    cyanRights.push(e + 1 - (1 - g(e)) + g(e + 1));
+    cyanRights.push(rightEdge(g, e));
   }
   const lefts: number[] = [];
   const rights: number[] = [];
@@ -112,17 +103,13 @@ export function measureCard(px: Pixel, slot: (typeof CARD_SLOTS)[number]): CardR
     const level = median([0, 1, 2, 3, 4].map((d) => min(probe + d)));
     if (level < WHITE_BG + 100) continue;
     const fracOver = (bg: number) => (x: number) => clamp01((min(x) - bg) / (level - bg));
-    const first = runEdges(fracOver(WHITE_BG), slot.left - SEARCH, slot.left + SEARCH);
-    if (first === undefined) continue;
+    const run = runEdges(fracOver(WHITE_BG), slot.left - SEARCH, slot.left + SEARCH);
+    if (run === undefined) continue;
     // バーの減った所の色は背景の透けで変わる（暗い ≈ 12 か灰色 ≈ 75）。白の 3〜7 画素右の中央値を右端の背景にする
-    const behind = [3, 4, 5, 6, 7].map((d) => first.last + d).filter((x) => x <= slot.right);
+    const behind = [3, 4, 5, 6, 7].map((d) => run.last + d).filter((x) => x <= slot.right);
     const bgRight = behind.length >= 3 ? median(behind.map(min)) : WHITE_BG;
-    const run =
-      bgRight < level - 40
-        ? runEdges(fracOver(WHITE_BG), slot.left - SEARCH, slot.left + SEARCH, fracOver(Math.max(WHITE_BG, bgRight)))!
-        : first;
     lefts.push(run.left);
-    rights.push(run.right);
+    rights.push(bgRight < level - 40 ? rightEdge(fracOver(Math.max(WHITE_BG, bgRight)), run.last) : run.right);
     levels.push(level);
     let k = 0;
     for (let x = run.last + 2; x <= slot.right + 1; x++) {
@@ -169,9 +156,9 @@ export type CardGeometry = { position: number; left: number; full: number };
 
 /** 置き場所のうち、水色のバーが半分より多くの画で読めた所（左から） */
 export function presentPositions(rows: readonly HpRawRow[]): number[] {
+  const shown = rows.filter((r) => r.cards.some((c) => !Number.isNaN(c.cyanRight))).length;
   return CARD_SLOTS.map((_, i) => i).filter((i) => {
     const seen = rows.filter((r) => !Number.isNaN(r.cards[i]!.cyanRight)).length;
-    const shown = rows.filter((r) => r.cards.some((c) => !Number.isNaN(c.cyanRight))).length;
     return shown > 0 && seen > shown / 2;
   });
 }
@@ -215,22 +202,6 @@ export function samplesOf(rows: readonly HpRawRow[], g: CardGeometry, step: numb
     .map((r) => {
       const { ratio, unread } = ratioOf(r.cards[g.position]!, g);
       return { frame: r.frame, ratio, unread };
-    });
-}
-
-/** --opt ranges（a-b,c-d。両端を含む） */
-export function parseRanges(text: string): { from: number; to: number }[] {
-  return text
-    .split(',')
-    .map((s) => s.trim())
-    .filter((s) => s !== '')
-    .map((s) => {
-      const m = /^(\d+)-(\d+)$/.exec(s);
-      if (m === null) throw new Error(`--opt ranges は a-b をカンマで並べる: ${s}`);
-      const from = Number(m[1]);
-      const to = Number(m[2]);
-      if (from > to) throw new Error(`--opt ranges の始めが終わりより後: ${s}`);
-      return { from, to };
     });
 }
 

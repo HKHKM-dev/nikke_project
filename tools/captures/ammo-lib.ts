@@ -5,6 +5,7 @@
 // 桁の数の取り違え（「36」を「6」と読む）は、並びの外の 1 字ぶんに数字が無いことも点に入れて防ぐ。
 // 最大は戦闘の途中で変わる（最大装弾数▲）ので、先に最大の列を復号し、その後で残弾を復号する（どちらも Viterbi）。
 import type { Crop } from './ffmpeg.ts';
+import { ncc } from './hud-interception.ts';
 
 /** 1 フレームの min(R,G,B) */
 export type Gray = { data: Uint8Array; w: number; h: number };
@@ -34,26 +35,37 @@ export function glyphKey(ch: string, isMax: boolean): string {
 }
 
 /** 残弾の数字か最大の数字の鍵の並び */
-function digitKeys(isMax: boolean): string[] {
+export function digitKeys(isMax: boolean): string[] {
   return [...DIGITS].map((d) => glyphKey(d, isMax));
 }
 
-const median = (v: readonly number[]) => [...v].sort((a, b) => a - b)[v.length >> 1]!;
+/** 並べた真ん中の値（偶数個なら上の方。送りと幅を整数の px に保つ） */
+const middleValue = (v: readonly number[]) => [...v].sort((a, b) => a - b)[v.length >> 1]!;
 
 /**
  * 字の鍵 key から、次の字（next が d なら数字、/ なら「/」）までの送り。見本の無い字は、同じ大きさの数字の同じ種類の送りの中央値、
  * それも無ければ残弾の数字の送り
  */
 export function advanceOf(t: Pick<Templates, 'advances'>, key: string, next: 'd' | '/'): number {
+  // 照合は 1 フレームに数千回引くので、見本ごとに覚える
+  let memo = advanceMemo.get(t.advances);
+  if (memo === undefined) advanceMemo.set(t.advances, (memo = new Map()));
+  const k = `${key}${next}`;
+  let v = memo.get(k);
+  if (v === undefined) memo.set(k, (v = computeAdvance(t, key, next)));
+  return v;
+}
+
+const advanceMemo = new WeakMap<Templates['advances'], Map<string, number>>();
+
+function computeAdvance(t: Pick<Templates, 'advances'>, key: string, next: 'd' | '/'): number {
   const own = t.advances[`${key}${next}`];
-  if (own !== undefined && own.length > 0) return median(own);
+  if (own !== undefined && own.length > 0) return middleValue(own);
   for (const keys of [digitKeys(key.startsWith('m')), digitKeys(false)]) {
     const same = keys.flatMap((d) => t.advances[`${d}${next}`] ?? []);
-    if (same.length > 0) return median(same);
+    if (same.length > 0) return middleValue(same);
   }
-  const other = digitKeys(false).flatMap((d) => t.advances[`${d}${next === 'd' ? '/' : 'd'}`] ?? []);
-  if (other.length === 0) throw new Error('見本に送りが無い');
-  return median(other) + (next === 'd' ? -1 : 1);
+  throw new Error(`見本に ${next === 'd' ? '数字の前' : '「/」の前'}の送りが無い`);
 }
 
 export const DIGITS = '0123456789';
@@ -79,29 +91,6 @@ export function patch(img: Gray, x0: number, w: number, y0: number, rows: number
       out.push(v > BG_CUT ? v - BG_CUT : 0);
     }
   return out;
-}
-
-export function ncc(a: readonly number[], b: readonly number[]): number {
-  const n = a.length;
-  let ma = 0;
-  let mb = 0;
-  for (let i = 0; i < n; i++) {
-    ma += a[i]!;
-    mb += b[i]!;
-  }
-  ma /= n;
-  mb /= n;
-  let s = 0;
-  let sa = 0;
-  let sb = 0;
-  for (let i = 0; i < n; i++) {
-    const da = a[i]! - ma;
-    const db = b[i]! - mb;
-    s += da * db;
-    sa += da * da;
-    sb += db * db;
-  }
-  return sa > 0 && sb > 0 ? s / Math.sqrt(sa * sb) : 0;
 }
 
 /** 字ごと・字の左端の x ごとの照合の点（範囲の外は −1） */
@@ -134,6 +123,16 @@ function near(m: Float32Array | undefined, x: number): number {
 
 /** 平均の数字の幅（並びの外の 1 字ぶんに使う） */
 function digitWidth(t: Templates, isMax: boolean): number {
+  let memo = widthMemo.get(t.glyphs);
+  if (memo === undefined) widthMemo.set(t.glyphs, (memo = new Map()));
+  let v = memo.get(isMax);
+  if (v === undefined) memo.set(isMax, (v = averageDigitWidth(t, isMax)));
+  return v;
+}
+
+const widthMemo = new WeakMap<Templates['glyphs'], Map<boolean, number>>();
+
+function averageDigitWidth(t: Templates, isMax: boolean): number {
   const ws = digitKeys(isMax)
     .map((d) => t.glyphs[d]?.w)
     .filter((w): w is number => w !== undefined);
@@ -487,7 +486,7 @@ export function buildTemplates(samples: readonly TemplateSample[], crop: Crop, b
   for (const p of placed)
     p.runs.forEach((r, i) => {
       const ch = keyAt(p.text, i);
-      const w = sums.get(ch)?.w ?? median(widths.get(ch)!);
+      const w = sums.get(ch)?.w ?? middleValue(widths.get(ch)!);
       const prev = sums.get(ch);
       // 字の列の左端は閾値で ±1 ぶれるので、2 つ目からはそれまでの平均に最もよく合う位置（±1）で切り出す
       let data = patch(p.img, r.x - 1, w + 2, y0, rows);
