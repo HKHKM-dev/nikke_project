@@ -55,6 +55,7 @@ export {
   type HeldItemFilter,
   itemsOf,
   activeItemsAt,
+  stateEndFrames,
   type ValuePiece,
   valuePiecesOf,
   buffTimelineOf,

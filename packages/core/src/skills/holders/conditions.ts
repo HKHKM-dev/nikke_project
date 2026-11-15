@@ -7,6 +7,7 @@ import { fireContextOf, burstStepHolds, type FrameEvents } from '../triggers.ts'
 import { type BuffStat, isStacksCondition, selfBuffedOf, type EndedTrigger, type EffectCondition } from '../types.ts';
 import { type HeldTrack } from './types.ts';
 import { stacksHold, valueOf } from './items.ts';
+import { isStateOrigin } from './history.ts';
 import type { HolderBase, Records } from './records.ts';
 import type { Fires } from './fires.ts';
 import type { Sources } from './sources.ts';
@@ -27,6 +28,7 @@ export function createConditions({
   selfHpAtMostHolds,
   selfHpRatioAt,
   selfStateItemsAt,
+  stateEndGuesses,
   stateTracks,
   staticStates,
   tracks,
@@ -125,20 +127,8 @@ export function createConditions({
     // 自分の HP の割合が閾値以下か（resolveCondition が atMostRef を atMost（% 表記）にしてある）。以上の形は passive（編成の段）と
     // damage（2 パス目）だけなので、ここには来ない
     (condition?.selfHp === undefined || selfHpAtMostHolds(condition.selfHp, selfHpRatioAt(sourceSlotIndex, ev.frame)));
-  /**
-   * { ended } の発火（plan/design-skill-stage4.md 1.3 節）。持ち主（自分）のその状態の件（段によらない）の終わりがこの
-   * フレームで、このフレームに続く件が無い
-   */
-  const endedTracks = new Map<string, HeldTrack[]>();
-  const endedAt = (holder: number, state: NamedStateId, frame: number): boolean => {
-    // 件の列は初期化で出そろうので、持ち主 × 状態ごとに 1 回だけ集める（毎フレーム呼ぶ）
-    const key = `${holder}:${state}`;
-    let own = endedTracks.get(key);
-    if (own === undefined) {
-      const family = statesMatching(state);
-      own = tracks.filter((t) => t.holder === holder && t.origin.kind === 'state' && family.includes(t.origin.state));
-      endedTracks.set(key, own);
-    }
+  /** 件の列のどれかの件がフレーム frame に終わり、frame を覆う件が無いか */
+  const endsAt = (own: readonly HeldTrack[], frame: number): boolean => {
     let ended = false;
     for (const t of own)
       for (const it of readItems(t)) {
@@ -146,6 +136,51 @@ export function createConditions({
         if (it.end === frame) ended = true;
       }
     return ended;
+  };
+  /**
+   * 持ち主 × 状態ごとの、その状態（家族も）の件の列（初期化で出そろう）と、まだ確かめていない読み（読んだフレームと、答えの
+   * 印 ENDED・NOT_ENDED の和）
+   */
+  type EndedReads = { holder: number; state: NamedStateId; own: HeldTrack[]; frame: number; seen: number };
+  const ENDED = 1;
+  const NOT_ENDED = 2;
+  const endedReads = new Map<string, EndedReads>();
+  /**
+   * 読んだフレームの登録が済んだ後の件で判定し直し、読んだ答えと食い違えば記録に残す（plan/design-state-ended.md 4 節）。そのフレームの
+   * 件は、後のフレームの登録では変わらない（閉じる・消費するのは後のフレーム）
+   */
+  const settleReads = (reads: EndedReads): void => {
+    if (reads.seen === 0) return;
+    const settled = endsAt(reads.own, reads.frame) ? ENDED : NOT_ENDED;
+    if ((reads.seen & ~settled) !== 0)
+      stateEndGuesses.push({ frame: reads.frame, holder: reads.holder, state: reads.state });
+    reads.seen = 0;
+  };
+  /**
+   * { ended } の発火（plan/design-skill-stage4.md 1.3 節）。持ち主（自分）のその状態の件（段によらない）の終わりがこの
+   * フレームで、このフレームに続く件が無い。1 フレームの登録の途中で読むので、終わりのフレームに同じ状態の件がそのフレームの
+   * 登録で付くと、付く前に読む手続きと後に読む手続きで答えが分かれる（plan/design-state-ended.md 2.1 節）
+   */
+  const endedAt = (holder: number, state: NamedStateId, frame: number): boolean => {
+    // 毎フレーム呼ぶので、件の列は持ち主 × 状態ごとに 1 回だけ集める
+    const key = `${holder}:${state}`;
+    let reads = endedReads.get(key);
+    if (reads === undefined) {
+      const own = tracks.filter((t) => t.holder === holder && isStateOrigin(t.origin, state));
+      reads = { holder, state, own, frame, seen: 0 };
+      endedReads.set(key, reads);
+    }
+    if (reads.frame !== frame) {
+      settleReads(reads);
+      reads.frame = frame;
+    }
+    const ended = endsAt(reads.own, frame);
+    reads.seen |= ended ? ENDED : NOT_ENDED;
+    return ended;
+  };
+  /** まだ確かめていない読みを確かめる（ループの後。履歴を閉じる前） */
+  const settleEnded = (): void => {
+    for (const reads of endedReads.values()) settleReads(reads);
   };
   /**
    * カウンタの増減の条件。selfState は段によらずそのフレームに効いている状態の件を見る（増減はすべての判定の後に足すので、
@@ -169,6 +204,6 @@ export function createConditions({
   /** フレーム frame にその状態を持つ枠（時間で変わる〈状態〉の味方の対象。FireContext の stateHolders。plan/design-rei-tentative.md 2.2 節） */
   const stateHoldersAt = (state: NamedStateId, frame: number): number[] =>
     stateTracks.flatMap((_, i) => (hasStateAt(i, state, frame) ? [i] : []));
-  return { counterConditionHolds, endedAt, fireContextHolds, holdsAt, stateHoldersAt };
+  return { counterConditionHolds, endedAt, fireContextHolds, holdsAt, settleEnded, stateHoldersAt };
 }
 export type Conditions = ReturnType<typeof createConditions>;

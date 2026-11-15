@@ -180,6 +180,8 @@ export type HolderHistory = {
   rankings: readonly RankingRecord[];
   /** デバフ解除の対象を、選び方を確かめていない決め打ちで選んだ記録（フレームの順） */
   removeDebuffGuesses: readonly RemoveDebuffGuessRecord[];
+  /** 「〈状態〉が終了した時」の 1 パス目の読みが、そのフレームの登録の後の件と食い違った記録（フレームの順） */
+  stateEndGuesses: readonly StateEndGuessRecord[];
   /** 回復の記録（回復を起こした適用。吸収回復の付き直しは入らない） */
   heals: readonly HealRecord[];
   /** ループで分かったフルバーストの窓（終わりで閉じる件を作り直すのに使う） */
@@ -224,6 +226,12 @@ export type RemoveDebuffGuessRecord = {
   guess: RemoveDebuffGuess;
   limit: number;
 };
+
+/**
+ * 「〈状態〉が終了した時」の決め打ちの記録 1 つ（plan/design-state-ended.md 4 節）。持ち主 holder の状態 state の件の終わりのフレーム
+ * frame に、同じ状態（家族も）の件がそのフレームの登録の途中で付き、1 パス目の読み手の答えが登録の順で分かれた
+ */
+export type StateEndGuessRecord = { frame: number; holder: number; state: NamedStateId };
 
 /**
  * デバフ解除で外すデバフを選ぶ（plan/design-debuff-removal.md 2.2 節）。held は枠ごとの、効いているデバフ（印の付いた状態と、

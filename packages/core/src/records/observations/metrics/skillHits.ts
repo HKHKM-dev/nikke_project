@@ -6,9 +6,8 @@ import {
   hitFramesOf,
   videoFrameOf,
 } from '../../../burst/schedule.ts';
-import { unionRanges } from '../../../frame/events.ts';
 import type { SimResult } from '../../../sim/engine.ts';
-import { hpRatioStepIndexOf, itemsOf } from '../../../skills/holders.ts';
+import { hpRatioStepIndexOf, itemsOf, stateEndFrames } from '../../../skills/holders.ts';
 import { isResolvedShotCount } from '../../../skills/resolve.ts';
 import type { NamedStateId } from '../../../skills/states.ts';
 import type { CompareSpec } from '../types.ts';
@@ -181,9 +180,14 @@ function eventPointsOf(result: SimResult, ctx: MetricContext): EventPoint[] {
       return mine().map((a) => ({ frame: a.frame, video: activationVideoFrameOf(schedule!, a) }));
     case 'heal':
       return healFramesOf(result, ctx).map(at);
-    // 状態（引数 state）が外れたフレーム
+    // 状態（引数 state。家族の根なら家族のどれか）が外れたフレーム（続く件をつないだ塊の終わり。戦闘の終わりで切れた塊は入れない。
+    // plan/design-debuff-removal.md 7.3 節）
     case 'stateEnd':
-      return stateEndFramesOf(result, slotIndex, String(ctx.args.state)).map(at);
+      return stateEndFrames(
+        itemsOf(result.history, { holder: slotIndex, kind: 'state' }),
+        String(ctx.args.state) as NamedStateId,
+        result.frames,
+      ).map(at);
     // 枠の自分への現在の HP▼ のフレーム（録画では、枠の HP のバーが下がったフレーム）（V-0729）
     case 'currentHpDown':
       return result.instants
@@ -289,17 +293,6 @@ function phaseOf(value: number, ctx: MetricContext): number {
   const modulo = Number(ctx.args.modulo);
   const r = ((value % modulo) + modulo) % modulo;
   return r > modulo / 2 ? r - modulo : r;
-}
-
-/**
- * 枠 slotIndex の状態 state が外れたフレーム（効いていたのが、そのフレームから効いて
- * いない。続く件をつないだ塊の終わり。昇順。plan/design-debuff-removal.md 7.3 節）。戦闘の終わりで切れた塊は入れない
- */
-function stateEndFramesOf(result: SimResult, slotIndex: number, state: string): number[] {
-  const items = itemsOf(result.history, { holder: slotIndex, state: state as NamedStateId });
-  return unionRanges(items)
-    .map((r) => r.end)
-    .filter((f) => f < result.frames);
 }
 
 /** eventFrames の基準（fullBurst:<n>・activation:<n>）の、動画のフレームと、数える範囲（モデルのフレーム） */
