@@ -560,5 +560,9 @@ describe('mergeAppends', () => {
     expect(isAppendMergeable('plan/design-split-first-pass.md')).toBe(true);
     expect(isAppendMergeable('AGENTS.md')).toBe(false);
     expect(isAppendMergeable('plan/captures/design-x.md')).toBe(false);
+    expect(isAppendMergeable('plan/skills-guide.md')).toBe(true);
+    expect(isAppendMergeable('plan/captures/guide.md')).toBe(false);
+    expect(isAppendMergeable('packages/core/src/skills/states.ts')).toBe(true);
+    expect(isAppendMergeable('packages/core/src/skills/resolve.ts')).toBe(false);
   });
 });

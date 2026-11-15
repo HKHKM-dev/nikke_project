@@ -161,3 +161,4 @@
 - 2026-11-15: オーナーが案を全部、推奨どおり承認した。実装は 4 つの PR に分ける（2〜4 節、5・6・9 節、8・10 節、7 節）。
 - 2026-11-15: 2〜4 節を実装した（records:close の結論のまとめての確定・結び付きの決まりの records:check への移し・生成物の戻し）。結び付きの決まりは、結論を作る前の「比べる」の段で一覧を作り直せるように records:check では注意にとどめ、npm test と records:close が止める。
 - 2026-11-15: 5・6・9 節を実装した（records:residual の --all・--base、records:model の複数の指定と --like、sim の出来事の列、char の値の番号・--en・会心率・名前で引く）。sim の出来事の列は、--events が敵の出来事のセットの指定に使われているので --trace にした。--like の args は、指標が違う指定にはその指標が要る引数だけを使う。
+- 2026-11-15: 8・10 節を実装した（records:check が予測・観測値の JSON も整える・両方残す範囲に手引きと状態の目録を足す・records:new の --help・--no-push の注意・メモリの推奨の書き方と python3）。書式は、pr:prep に段を足さず、手書きのファイルを整えている records:check の対象に予測・観測値を足した（pr:prep は「records:check の書き換え」として commit する。Windows の書き込みの繰り返しも付く）。--no-push の注意は、--no-push を説明している verification-guide.md 3 節に足した。

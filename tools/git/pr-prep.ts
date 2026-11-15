@@ -9,11 +9,12 @@
 //    plan/backlog.md（生成物）を手で直していたら（足した行も消した行も）、止めて行を出す（直しは生成物を main の版に戻すと消えるので。
 //    同 2.11 節）。
 // 3. git rebase origin/main。衝突したファイルが全部生成物（records-data.ts の GENERATED_PATHS）なら main の版を取って続ける。
-//    設計書（plan/design-*.md）の、両方が同じ所に行を足しただけの衝突は、main の行・ブランチの行の順に両方残して続ける
-//    （plan/design-workflow-simplification-14.md 5 節）。
+//    設計書（plan/design-*.md）・手引き（plan/*-guide.md）・状態の目録（packages/core/src/skills/states.ts）の、両方が同じ所に行を
+//    足しただけの衝突は、main の行・ブランチの行の順に両方残して続ける（plan/design-workflow-simplification-14.md 5 節・-15.md 8 節）。
 //    生成物でないファイルが 1 つでもあれば、そこで止めてファイルを出す（人が直して git add し、もう一度 npm run pr:prep を回すと続きから）。
 // 4. 生成物を 1 回だけ作り直す（records:minimal。感度は変わった組だけ計算し直し、records:check も回る）。作り直しで生成物でない
-//    ファイル（開いている検証記録の予測との比べの表・整形）が変わったら、「records:check の書き換え」の commit を足す。
+//    ファイル（開いている検証記録の予測との比べの表・手で書いた records/ の JSON の整形）が変わったら、「records:check の書き換え」の
+//    commit を足す。
 // 5. CI と同じ確認（--no-ci で省く）。書式（prettier）と lint（eslint）は、ブランチで変えたファイルだけを見る（全部は GitHub の CI が
 //    見る。設定を変えたブランチは全部。plan/design-workflow-simplification-8.md 1 節）。npm run ci のほかの段（型・テスト・ビルド）は
 //    全部。確認は作り直した生成物の上で回す（GitHub の CI も作り直してから回す）。
@@ -233,7 +234,7 @@ const rebased = finishRebase(
     },
     keepBothAppends: (paths) => {
       const merged = io.keepBothAppends(paths);
-      if (merged.length > 0) console.log(`設計書の、両方が行を足しただけの衝突は両方残す: ${merged.join('・')}`);
+      if (merged.length > 0) console.log(`両方が行を足しただけの衝突は両方残す: ${merged.join('・')}`);
       return merged;
     },
   },

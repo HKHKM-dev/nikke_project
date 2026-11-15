@@ -45,10 +45,13 @@ export type RebaseIo = {
 };
 
 /**
- * 両方が行を足しただけの衝突を直してよいファイル（設計書。並行の PR が「経過」の末尾に 1 行ずつ足す。
- * plan/design-workflow-simplification-14.md 5 節）
+ * 両方が行を足しただけの衝突を直してよいファイル。設計書（並行の PR が「経過」の末尾に 1 行ずつ足す）・状態の目録（states.ts。
+ * スキル定義の PR が状態を足す）・手引き（plan/*-guide.md。表に行を足す）。両方残して壊れたら、PR の前の pr:prep の確かめと CI が
+ * 見つける（フックの取り込みは確かめずにトピックブランチへ push する）
+ * （plan/design-workflow-simplification-14.md 5 節・-15.md 8 節）
  */
-export const isAppendMergeable = (path: string): boolean => /^plan\/design-[^/]+\.md$/.test(path);
+export const isAppendMergeable = (path: string): boolean =>
+  /^plan\/(?:design-[^/]+|[^/]+-guide)\.md$/.test(path) || path === 'packages/core/src/skills/states.ts';
 
 /**
  * diff3 の形の衝突の印（git checkout --conflict=diff3）のあるファイルの中身で、どの衝突も基の側が空（両方が同じ所に行を足しただけ）
@@ -86,7 +89,7 @@ export function mergeAppends(text: string): string | null {
 
 /**
  * リベースの途中（衝突で止まった）なら、生成物の衝突を main の版で解いて最後まで続ける（生成物だけのコミットは main の版を取ると空に
- * なるので飛ばす）。設計書の、両方が行を足しただけの衝突は両方残す（isAppendMergeable・mergeAppends）。ほかのファイルが衝突したら、
+ * なるので飛ばす）。設計書などの、両方が行を足しただけの衝突は両方残す（isAppendMergeable・mergeAppends）。ほかのファイルが衝突したら、
  * そこで止めて conflict を返す（リベースの途中のまま）
  */
 export function finishRebase(
