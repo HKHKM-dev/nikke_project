@@ -58,18 +58,12 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
-        "noBurstSlots": [
-          1
-        ]
+        "noBurstSlots": [1]
       },
       "note": "エードの最大HP のみ▲ の窓（エードの HP の割合が 1 未満の間）ごとの、窓の中の 1 回目のミサトの S1 の回復の対象の枠",
-      "observations": [
-        "1234-02"
-      ]
+      "observations": ["1234-02"]
     },
     {
       "id": "A-second",
@@ -83,21 +77,15 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
-        "noBurstSlots": [
-          1
-        ]
+        "noBurstSlots": [1]
       },
       "note": "同じ窓の 2 回目の回復の対象の枠（回復が 2 回来た窓だけ）",
       "tolerance": {
         "abs": 0.5
       },
-      "observations": [
-        "1234-01"
-      ]
+      "observations": ["1234-01"]
     }
   ],
   "predicted": {
@@ -105,42 +93,12 @@
     "commit": "348be92c89da8a3bfd0a6964774dc313077dd7b6",
     "values": {
       "H1": {
-        "A-first": [
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1
-        ],
-        "A-second": [
-          2,
-          2,
-          2,
-          2
-        ]
+        "A-first": [1, 1, 1, 1, 1, 1, 1, 1, 1],
+        "A-second": [2, 2, 2, 2]
       },
       "H0": {
-        "A-first": [
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1
-        ],
-        "A-second": [
-          1,
-          1,
-          1,
-          1
-        ]
+        "A-first": [1, 1, 1, 1, 1, 1, 1, 1, 1],
+        "A-second": [1, 1, 1, 1]
       }
     }
   }
