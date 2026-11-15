@@ -1,0 +1,15 @@
+{
+  "id": "C-1331",
+  "text": "ジュリアの基礎版のバーストの「最終防御力が最も高い敵 5 機に」は、単体ボスに 1 ヒットで、クレッシェンドのフルスタックの追加ダメージもそのヒットと同じフレームに 1 ヒット出る。追加ダメージの条件と値の扱いは宝物版と同じ文（C-1329）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文（`data/characters/150.json` の burstSkill）。追加ダメージの条件と値の扱いは宝物版と同じ文（C-1329）。基礎版の録画は撮れない（宝物は外せない）。バーストの遅れは未測定（遅れの表に基礎版の行が無い）。V-0792",
+  "model": "data/skills/150.json の burst の effects[0]（burstDamage）と effects[1]（burstUse・perBurstHit・条件 selfState crescendo のフルスタック）",
+  "replaces": [],
+  "updated": "2026-11-15",
+  "subject": {
+    "places": ["data/skills/150.json の burst の effects[0]", "data/skills/150.json の burst の effects[1]"]
+  },
+  "decidedOn": []
+}

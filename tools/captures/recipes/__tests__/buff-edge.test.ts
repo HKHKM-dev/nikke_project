@@ -151,6 +151,33 @@ describe('parseGrids（版 5）', () => {
   });
 });
 
+describe('parseGrids（版 6）', () => {
+  it('倍率ダメージの倍率の絞り・会心の片方・3 つの和を読む', () => {
+    expect(parseGrids('M=3@skill@300:skill2/p88/c1;J=3@300+2000/c0;JMF=J+M+M')).toEqual([
+      {
+        kind: 'skill',
+        name: 'M',
+        slot: 3,
+        frame: 300,
+        skill: 'skill2',
+        stacks: [],
+        percent: 88,
+        crit: true,
+        scales: [],
+      },
+      { kind: 'normal', name: 'J', slot: 3, frames: [300, 2000], pellets: 1, scales: [], crit: false },
+      { kind: 'sum', name: 'JMF', parts: ['J', 'M', 'M'], scales: [] },
+    ]);
+  });
+
+  it('形に合わない /p・/c と 4 つの和を受けない', () => {
+    expect(() => parseGrids('a=1@10/p88')).toThrow(/\/p は倍率ダメージの格子だけ/);
+    expect(() => parseGrids('a=1@skill@10/c2')).toThrow(/\/c0 か \/c1/);
+    expect(() => parseGrids('a=1@10;b=a+a/c1')).toThrow(/\/c は和の格子には書かない/);
+    expect(() => parseGrids('a=1@10;b=a+a+a+a')).toThrow(/形が違う/);
+  });
+});
+
 describe('gridsOf・sumValues', () => {
   const cell = (core: boolean, crit: boolean, distance: boolean, value: number) => ({ core, crit, distance, value });
   const m = {
@@ -160,6 +187,12 @@ describe('gridsOf・sumValues', () => {
 
   it('和は、2 つの格子の値をそれぞれ四捨五入して足した組', () => {
     expect(sumValues([100.4, 150.6], [1000.2])).toEqual([1100, 1151]);
+  });
+
+  it('版 6: 通常攻撃の格子を会心の片方に絞り、3 つの和を出す', () => {
+    const grids = gridsOf(parseGrids('J=1@900/c1;S=1@skill@0;JSS=J+S+S'), m);
+    expect(grids[0]!.values).toEqual([150.6]);
+    expect(grids[2]!.values).toEqual(sumValues(sumValues([150.6], [1000.2, 1500.3]), [1000.2, 1500.3]));
   });
 
   it('格子を指定の順に出し、和は和でない格子の値（倍率の版を含む）から出す', () => {

@@ -1,0 +1,18 @@
+{
+  "id": "C-1329",
+  "text": "ジュリアの宝物版のバーストは、III のタイマーの 00.00 の 5f 後（動画で 27f。止まり 22f を含む）から動画で 12f おき（遅れの表の hitOffsets [0, 12, 24, 36, 47]）に最終攻撃力の 544.5% の 5 ヒットを出し（フルバースト補正なし・発動の直前のバフ）、クレッシェンドがフルスタックなら、各ヒットと同じフレームに 544.5% の追加ダメージ（フルバースト補正あり・ヒットの時点のバフ）を出す。クレッシェンドが無ければ（撃たない録画）追加ダメージは出ない（Lv10）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1226-11`・`1226-12`・`1226-13`・`1226-14`・`1227-11`・`1227-12`・`1227-13`・`1227-14`・`1228-01`・`1228-02`・`1228-03`・`1228-04`・`1226-29`。V-0792",
+  "model": "data/skills/150.json の treasureSkills.burst の effects[0]（burstDamage・hitsRef）と effects[1]（burstUse・perBurstHit・条件 selfState crescendo のフルスタック）、burst/landing.ts の 150 の行（treasure）",
+  "replaces": [],
+  "updated": "2026-11-15",
+  "subject": {
+    "places": [
+      "data/skills/150.json の treasureSkills.burst の effects[0]",
+      "data/skills/150.json の treasureSkills.burst の effects[1]"
+    ]
+  },
+  "decidedOn": []
+}

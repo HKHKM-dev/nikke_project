@@ -17,6 +17,9 @@
 //   （ソーダ：トゥインクルバニーの時間延長状態別のダメージの I と II は、同じ増分に乗る）。
 // - 版 5（plan/design-anis-star-unimplemented.md 3 節）: 格子に、射撃ごとの倍率ダメージ（@shot@<f>。指標 perShotHitDamage。アニス：スターの
 //   S1 の追加ダメージ）を足す。発の本体と同じ増分に乗るので、和の格子で本体と組む。
+// - 版 6（plan/design-julia.md 8 節）: 倍率ダメージの格子を倍率で絞る（/p<倍率 %>。指標の引数 percent）、会心なし・ありの片方だけにする
+//   （/c0・/c1）、3 つの格子の和（<名前>=<格子>+<格子>+<格子>）を足す（ジュリアの 1 発・マルカート・その会心の追加ダメージは同じ増分に
+//   乗り、追加ダメージはマルカートが会心した時だけ出る）。
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -220,10 +223,13 @@ function model(recording: RecordingEntry, setup: CompareSetup): Model {
   const hit = (slot: number, frame: number, core: boolean, crit: boolean, distance: boolean) =>
     value('hitDamage', { slot, frame, core, crit, distance });
   return {
-    hits({ kind, slot, frame, skill, stacks, hits }) {
-      const named: CompareSpec['args'] = skill === undefined ? {} : { skill };
+    hits({ kind, slot, frame, skill, stacks, hits, percent, crit: only }) {
+      const named: CompareSpec['args'] = {
+        ...(skill === undefined ? {} : { skill }),
+        ...(percent === undefined ? {} : { percent }),
+      };
       const out: number[] = [];
-      for (const crit of [false, true]) {
+      for (const crit of only === undefined ? [false, true] : [only]) {
         if (kind === 'shot') out.push(value('perShotHitDamage', { slot, frame, crit }));
         else if (stacks.length > 0)
           for (const k of stacks) out.push(value('dotStackTickDamage', { slot, frame, stacks: k, crit, ...named }));
@@ -268,6 +274,8 @@ export type NormalGridSpec = {
   frames: number[];
   pellets: number;
   scales: number[];
+  /** 版 6: 会心なし（false）・あり（true）の片方だけ。省略は両方 */
+  crit?: boolean;
 };
 export type HitGridSpec = {
   kind: 'skill' | 'dot' | 'shot';
@@ -278,14 +286,19 @@ export type HitGridSpec = {
   stacks: number[];
   /** 版 4: 倍率ダメージの、frame 以降の最初のヒットから数えた hits 個の和（1 は 1 ヒット）。省略は 1 */
   hits?: number;
+  /** 版 6: 倍率ダメージを倍率（%）で絞る（指標の引数 percent）。省略は絞らない */
+  percent?: number;
+  /** 版 6: 会心なし（false）・あり（true）の片方だけ。省略は両方 */
+  crit?: boolean;
   scales: number[];
 };
-export type SumGridSpec = { kind: 'sum'; name: string; parts: [string, string]; scales: number[] };
+/** 和の格子。parts は 2 つか 3 つ（版 6） */
+export type SumGridSpec = { kind: 'sum'; name: string; parts: string[]; scales: number[] };
 export type GridSpec = NormalGridSpec | HitGridSpec | SumGridSpec;
 
 const GRID_FORMS =
-  '<名前>=<枠>@<f>[+<f>...][/x<ペレット数>][/*<倍率>]・<名前>=<枠>@skill@<f>[:<スキル>][/h<ヒット数>]・<名前>=<枠>@shot@<f>・' +
-  '<名前>=<枠>@dot@<f>[:<スキル>][/s<スタック数>]・<名前>=<格子>+<格子>';
+  '<名前>=<枠>@<f>[+<f>...][/x<ペレット数>][/*<倍率>]・<名前>=<枠>@skill@<f>[:<スキル>][/h<ヒット数>][/p<倍率 %>]・<名前>=<枠>@shot@<f>・' +
+  '<名前>=<枠>@dot@<f>[:<スキル>][/s<スタック数>]・<名前>=<格子>+<格子>[+<格子>]。どの形にも /c0（会心なしだけ）・/c1（会心ありだけ）';
 
 export function parseGrids(text: string): GridSpec[] {
   const specs = text
@@ -293,7 +306,7 @@ export function parseGrids(text: string): GridSpec[] {
     .map((t) => t.trim())
     .filter((t) => t !== '')
     .map((t): GridSpec => {
-      const [, rawName, body, tail] = /^([^=]+)=([^/]+)((?:\/[xsh*][\d.,]+)*)$/.exec(t) ?? [];
+      const [, rawName, body, tail] = /^([^=]+)=([^/]+)((?:\/[xsh*pc][\d.,]+)*)$/.exec(t) ?? [];
       if (rawName === undefined || body === undefined) throw new Error(`--opt grid の形が違う（${GRID_FORMS}）: ${t}`);
       const mods = tail!.split('/').filter((x) => x !== '');
       const take = (c: string) => mods.filter((x) => x.startsWith(c)).map((x) => x.slice(1));
@@ -303,15 +316,23 @@ export function parseGrids(text: string): GridSpec[] {
       const stacks = take('s').flatMap((x) => parseNumbers(x, 'grid のスタック数'));
       const [hitCount, ...moreHits] = take('h');
       if (moreHits.length > 0) throw new Error(`--opt grid のヒット数が 2 つある: ${t}`);
+      const [percentText, ...morePercents] = take('p');
+      if (morePercents.length > 0) throw new Error(`--opt grid の倍率（/p）が 2 つある: ${t}`);
+      const [critText, ...moreCrits] = take('c');
+      if (moreCrits.length > 0 || (critText !== undefined && critText !== '0' && critText !== '1'))
+        throw new Error(`--opt grid の /c は /c0 か /c1 を 1 つ: ${t}`);
+      const crit = critText === undefined ? {} : { crit: critText === '1' };
       const only = (ok: boolean, what: string) => {
         if (!ok) throw new Error(`--opt grid の ${what}: ${t}`);
       };
       const normal = /^(\d+)@(\d+(?:\+\d+)*)$/.exec(body);
       const hit = /^(\d+)@(skill|dot|shot)@(\d+)(?::(.+))?$/.exec(body);
-      const sum = /^([^@+]+)\+([^@+]+)$/.exec(body);
+      const sum = /^([^@+]+)\+([^@+]+)(?:\+([^@+]+))?$/.exec(body);
       const name = rawName.trim();
       only(stacks.length === 0 || hit?.[2] === 'dot', '/s は dot の格子だけ');
       only(hitCount === undefined || hit?.[2] === 'skill', '/h は倍率ダメージの格子だけ');
+      only(percentText === undefined || hit?.[2] === 'skill', '/p は倍率ダメージの格子だけ');
+      only(critText === undefined || sum === null, '/c は和の格子には書かない');
       if (normal !== null) {
         const frames = normal[2]!.split('+').map(Number);
         return {
@@ -321,6 +342,7 @@ export function parseGrids(text: string): GridSpec[] {
           frames,
           pellets: Number(pellets ?? 1),
           scales,
+          ...crit,
         };
       }
       only(pellets === undefined, '/x は通常攻撃の格子だけ');
@@ -330,10 +352,24 @@ export function parseGrids(text: string): GridSpec[] {
         const skill = hit[4] === undefined ? {} : { skill: hit[4] };
         const hits = hitCount === undefined ? {} : { hits: Number(hitCount) };
         only(hitCount === undefined || (Number.isInteger(hits.hits) && hits.hits! >= 1), 'ヒット数は 1 以上の整数');
-        return { kind, name, slot: Number(hit[1]), frame: Number(hit[3]), ...skill, stacks, ...hits, scales };
+        const percent = percentText === undefined ? {} : { percent: Number(percentText) };
+        only(percent.percent === undefined || (Number.isFinite(percent.percent) && percent.percent > 0), '/p は正の数');
+        return {
+          kind,
+          name,
+          slot: Number(hit[1]),
+          frame: Number(hit[3]),
+          ...skill,
+          stacks,
+          ...hits,
+          ...percent,
+          ...crit,
+          scales,
+        };
       }
       if (sum !== null) {
-        return { kind: 'sum', name, parts: [sum[1]!.trim(), sum[2]!.trim()], scales };
+        const parts = [sum[1]!, sum[2]!, ...(sum[3] === undefined ? [] : [sum[3]])].map((x) => x.trim());
+        return { kind: 'sum', name, parts, scales };
       }
       throw new Error(`--opt grid の形が違う（${GRID_FORMS}）: ${t}`);
     });
@@ -386,12 +422,20 @@ export function gridsOf(specs: readonly GridSpec[], m: Pick<Model, 'cells' | 'hi
     made.set(spec.name, { ...spec, base, values: withScales(base, spec.scales) });
   for (const spec of specs) {
     if (spec.kind === 'normal') {
-      const cells = spec.frames.flatMap((f) => m.cells(spec.slot, f));
+      const cells = spec.frames
+        .flatMap((f) => m.cells(spec.slot, f))
+        .filter((c) => spec.crit === undefined || c.crit === spec.crit);
       make(spec, spec.pellets === 1 ? distinct(cells.map((c) => c.value)) : pelletSums(cells, spec.pellets));
     } else if (spec.kind !== 'sum') make(spec, distinct(m.hits(spec)));
   }
   for (const spec of specs)
-    if (spec.kind === 'sum') make(spec, sumValues(made.get(spec.parts[0])!.values, made.get(spec.parts[1])!.values));
+    if (spec.kind === 'sum')
+      make(
+        spec,
+        spec.parts
+          .slice(1)
+          .reduce((acc, part) => sumValues(acc, made.get(part)!.values), made.get(spec.parts[0]!)!.values),
+      );
   return specs.map((spec) => made.get(spec.name)!);
 }
 
@@ -482,7 +526,7 @@ function edgeObservations(
 
 export const buffEdge: Recipe = {
   name: 'buff-edge',
-  version: 5,
+  version: 6,
   describe:
     '味方の 1 発の HUD の増分をモデルの 1 ヒットの格子に当てる。事象（II の発動など）の前後で、▲の無い最後の発と▲の乗った最初の発で付き始め（か切れ目）を挟んだ幅（事象ごとと全回の共通部分。timing）。' +
     '--opt grid で何人かの格子に当て、増分ごとに合う格子を出す（--opt pair で境を挟む）',

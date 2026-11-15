@@ -1,0 +1,15 @@
+{
+  "id": "C-1330",
+  "text": "ジュリアの基礎版の S2 の「最後の弾丸が命中した時」のクレッシェンドは、残弾を 0 にした射撃ごとに 1 スタック付く（全弾命中の前提）。中身（クリティカルダメージ▲・5 スタック・付くたびに維持を付け直す）は宝物版と同じ文（C-1326）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文（`data/characters/150.json` の skills.skill2）。語彙（{ count: lastShot }）はほかのキャラで確かめた形で、中身は宝物版と同じ文（C-1326）。基礎版の録画は撮れない（宝物は外せない）。V-0792",
+  "model": "data/skills/150.json の skill2 の effects[0]（{ count: lastShot } の状態 crescendo の付与）",
+  "replaces": [],
+  "updated": "2026-11-15",
+  "subject": {
+    "places": ["data/skills/150.json の skill2 の effects[0]"]
+  },
+  "decidedOn": []
+}

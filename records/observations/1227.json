@@ -1,0 +1,702 @@
+[
+  {
+    "id": "1227-01",
+    "recording": "1227",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 26298,
+    "description": "ジュリアの胴体・会心なし・距離ボーナスありの 1 ヒット（戦闘開始から 5 秒。S1 の攻撃力▲あり（戦闘開始時の強制使用））",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@6 の当て方（--opt grid。ジュリアの 1 発・マルカート・その会心の追加ダメージの格子と、ココア・ソルジャーF.A. の格子）",
+      "note": "ジュリアの発の増分のうち、Jn の格子（会心なし）に当たったもの。値はどれも同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-02",
+    "recording": "1227",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 30340,
+    "description": "ジュリアの胴体・会心なし・距離ボーナスありの 1 ヒット（15 秒。フルバーストの中、S1 の攻撃力▲なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@6 の当て方（--opt grid。ジュリアの 1 発・マルカート・その会心の追加ダメージの格子と、ココア・ソルジャーF.A. の格子）",
+      "note": "ジュリアの発の増分のうち、Jn の格子（会心なし）に当たったもの。値はどれも同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1000,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-03",
+    "recording": "1227",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 26298,
+    "description": "ジュリアの胴体・会心なし・距離ボーナスありの 1 ヒット（25 秒。2 回目の S1 の攻撃力▲あり）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@6 の当て方（--opt grid。ジュリアの 1 発・マルカート・その会心の追加ダメージの格子と、ココア・ソルジャーF.A. の格子）",
+      "note": "ジュリアの発の増分のうち、Jn の格子（会心なし）に当たったもの。値はどれも同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1500,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-04",
+    "recording": "1227",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 21912,
+    "description": "ジュリアの胴体・会心なし・距離ボーナスありの 1 ヒット（34 秒。S1 の攻撃力▲なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@6 の当て方（--opt grid。ジュリアの 1 発・マルカート・その会心の追加ダメージの格子と、ココア・ソルジャーF.A. の格子）",
+      "note": "ジュリアの発の増分のうち、Jn の格子（会心なし）に当たったもの。値はどれも同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2000,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-05",
+    "recording": "1227",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "比",
+    "value": 2.33805,
+    "description": "ジュリアの胴体・距離ボーナスありの、会心した 1 ヒット（61,486）と会心しない 1 ヒット（26,298）の比（クレッシェンド 5 スタック）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@6 の当て方（--opt grid。ジュリアの 1 発・マルカート・その会心の追加ダメージの格子と、ココア・ソルジャーF.A. の格子）",
+      "note": "戦闘開始の約 3 秒後から、会心の 1 ヒットはどれも 61,486（S1 の外は 51,232）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 3,
+        "frame": 1500,
+        "core": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 0.0001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-06",
+    "recording": "1227",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 126522,
+    "description": "ジュリアの宝物版 S2 のマルカート（会心なし・S1 の攻撃力▲あり）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@6 の当て方（--opt grid。ジュリアの 1 発・マルカート・その会心の追加ダメージの格子と、ココア・ソルジャーF.A. の格子）",
+      "note": "同じ増分のジュリアの 1 発（と、会心の追加ダメージではマルカート）の値を引いた残り。どの回も同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 300,
+        "percent": 88,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-07",
+    "recording": "1227",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 346607,
+    "description": "ジュリアの宝物版 S2 のマルカート（会心・クレッシェンド 5 スタック・S1 の攻撃力▲あり）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@6 の当て方（--opt grid。ジュリアの 1 発・マルカート・その会心の追加ダメージの格子と、ココア・ソルジャーF.A. の格子）",
+      "note": "同じ増分のジュリアの 1 発（と、会心の追加ダメージではマルカート）の値を引いた残り。どの回も同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 300,
+        "percent": 88,
+        "crit": true,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-08",
+    "recording": "1227",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 143775,
+    "description": "ジュリアの宝物版 S2 のマルカートの会心の追加ダメージ（会心なし・S1 の攻撃力▲あり）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@6 の当て方（--opt grid。ジュリアの 1 発・マルカート・その会心の追加ダメージの格子と、ココア・ソルジャーF.A. の格子）",
+      "note": "同じ増分のジュリアの 1 発（と、会心の追加ダメージではマルカート）の値を引いた残り。どの回も同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 300,
+        "percent": 100,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-09",
+    "recording": "1227",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 393872,
+    "description": "ジュリアの宝物版 S2 のマルカートの会心の追加ダメージ（会心・S1 の攻撃力▲あり）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@6 の当て方（--opt grid。ジュリアの 1 発・マルカート・その会心の追加ダメージの格子と、ココア・ソルジャーF.A. の格子）",
+      "note": "同じ増分のジュリアの 1 発（と、会心の追加ダメージではマルカート）の値を引いた残り。どの回も同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 300,
+        "percent": 100,
+        "crit": true,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-10",
+    "recording": "1227",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 105420,
+    "description": "ジュリアの宝物版 S2 のマルカート（会心なし・S1 の攻撃力▲なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@6 の当て方（--opt grid。ジュリアの 1 発・マルカート・その会心の追加ダメージの格子と、ココア・ソルジャーF.A. の格子）",
+      "note": "同じ増分のジュリアの 1 発（と、会心の追加ダメージではマルカート）の値を引いた残り。どの回も同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 2000,
+        "percent": 88,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-11",
+    "recording": "1227",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [27, 39, 51, 63, 74],
+    "description": "ジュリアの 1 回目のバーストの、III のタイマーの 00.00 から「5 回順番に攻撃」の各ヒットまでの動画のフレーム（入りの止まり 22f を含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 の 20〜90f 後の 60 万を超える増分（バーストの倍率ダメージと、同じ増分に乗る追加ダメージの和）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "burstHit",
+        "anchor": "fullBurst:0",
+        "within": "window"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-12",
+    "recording": "1227",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [27, 39, 51, 63, 74],
+    "description": "ジュリアの 2 回目のバーストの、III のタイマーの 00.00 から「5 回順番に攻撃」の各ヒットまでの動画のフレーム（入りの止まり 22f を含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 の 20〜90f 後の 60 万を超える増分（バーストの倍率ダメージと、同じ増分に乗る追加ダメージの和）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "burstHit",
+        "anchor": "fullBurst:1",
+        "within": "window"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-13",
+    "recording": "1227",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [27, 39, 51, 63, 74],
+    "description": "ジュリアの 4 回目のバーストの、III のタイマーの 00.00 から「5 回順番に攻撃」の各ヒットまでの動画のフレーム（入りの止まり 22f を含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 の 20〜90f 後の 60 万を超える増分（バーストの倍率ダメージと、同じ増分に乗る追加ダメージの和）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "burstHit",
+        "anchor": "fullBurst:3",
+        "within": "window"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-14",
+    "recording": "1227",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [27, 39, 51, 63, 74],
+    "description": "ジュリアの 5 回目のバーストの、III のタイマーの 00.00 から「5 回順番に攻撃」の各ヒットまでの動画のフレーム（入りの止まり 22f を含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 の 20〜90f 後の 60 万を超える増分（バーストの倍率ダメージと、同じ増分に乗る追加ダメージの和）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "burstHit",
+        "anchor": "fullBurst:4",
+        "within": "window"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-15",
+    "recording": "1227",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [2022, 2027, 5585, 5589, 6781, 6791, 7966, 7971, 9166, 9176, 10343, 10348],
+    "description": "ジュリアの S1 の攻撃力▲が付き直した所（▲なしの最後の発と▲ありの最初の発の動画のフレーム）。最初の窓は戦闘開始の最初の発から",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@6 の当て方（--opt grid。ジュリアの 1 発・マルカート・その会心の追加ダメージの格子と、ココア・ソルジャーF.A. の格子）",
+      "note": "会心なし・会心（5 スタック）の 1 ヒットを、攻撃力▲あり（20,229.14 の倍数）となし（16,855.30 の倍数）に分けた切り替わり。間に撃たない窓（敵のジャンプ）がある所は幅が広い"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-16",
+    "recording": "1227",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [1436, 1440, 8552, 8557, 9754, 9759, 10933, 10938],
+    "description": "ジュリアの S1 の攻撃力▲が切れた所（▲ありの最後の発と▲なしの最初の発の動画のフレーム）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@6 の当て方（--opt grid。ジュリアの 1 発・マルカート・その会心の追加ダメージの格子と、ココア・ソルジャーF.A. の格子）",
+      "note": "同上"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-17",
+    "recording": "1227",
+    "kind": "rate",
+    "use": "record",
+    "unit": "割合",
+    "value": [0.78, 0.144],
+    "description": "ジュリアの通常攻撃の会心の割合（S1 の攻撃力▲あり・なしの発ごと。戦闘開始の 1100f 後から）。[あり, なし]",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@6 の当て方（--opt grid。ジュリアの 1 発・マルカート・その会心の追加ダメージの格子と、ココア・ソルジャーF.A. の格子）",
+      "note": "会心（5 スタック）・会心なしの格子に 1 つだけ当たった発。説明文どおりなら S1 の間 77.2%（15% + 26.04% + 36.16%）、外 15%"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-18",
+    "recording": "1227",
+    "kind": "count",
+    "use": "record",
+    "unit": "回",
+    "value": [80, 32, 32, 0],
+    "description": "ジュリアのマルカート（88%）の数・会心したマルカートの数・会心したマルカートのうち 100% の追加ダメージが同じ増分に続いた数・会心しないマルカートに追加ダメージが続いた数。[マルカート, 会心, 追加あり, 会心なしで追加あり]",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@6 の当て方（--opt grid。ジュリアの 1 発・マルカート・その会心の追加ダメージの格子と、ココア・ソルジャーF.A. の格子）",
+      "note": "マルカートは どれも会心の発の増分に乗る（会心なしの発に乗った読みは 0）。読み分けられない増分のマルカートは数えていない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-19",
+    "recording": "1227",
+    "kind": "count",
+    "use": "record",
+    "unit": "回",
+    "value": [47, 80],
+    "description": "ジュリアのマルカートとマルカートの間（後のマルカートの発を含む）の会心の発の数が 8 だった間の数と、全部の間の数。[8, 全部]",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@6 の当て方（--opt grid。ジュリアの 1 発・マルカート・その会心の追加ダメージの格子と、ココア・ソルジャーF.A. の格子）",
+      "note": "8 でない間は、読み分けられない増分（ほかの枠の発と重なった発）を挟むか、8 の倍数（途中のマルカートの増分を読み落とした）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-20",
+    "recording": "1227",
+    "kind": "count",
+    "use": "record",
+    "unit": "回",
+    "value": [67, 29, 15, 13, 3, 0],
+    "description": "S1 の間・外のマルカートの数と、会心したマルカートの数と、その追加ダメージが会心した数。[S1 の間の数, 会心, 追加の会心, S1 の外の数, 会心, 追加の会心]",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@6 の当て方（--opt grid。ジュリアの 1 発・マルカート・その会心の追加ダメージの格子と、ココア・ソルジャーF.A. の格子）",
+      "note": "格子の状態（S1 の攻撃力▲あり・なし、フルバーストの内・外）が 1 つに決まるマルカートだけ。倍率ダメージの会心率は S1 の間 41.04%（15% + 26.04%）、外 15%"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-21",
+    "recording": "1227",
+    "kind": "timing",
+    "use": "record",
+    "value": [1333, 2534, 3738, 5027, 6262, 7589, 8781, 10087, 11266],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・0・24・0・25・0・25f"
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-22",
+    "recording": "1227",
+    "kind": "timing",
+    "use": "record",
+    "value": [1362, 2563, 3767, 5056, 6291, 7618, 8810, 10116, 11295],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・25・0・24・0・25・0・25f"
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-23",
+    "recording": "1227",
+    "kind": "timing",
+    "use": "record",
+    "value": [1391, 3796, 6320, 8839, 11324],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-24",
+    "recording": "1227",
+    "kind": "timing",
+    "use": "record",
+    "value": [2000, 4405, 6929, 9448],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム。5 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-25",
+    "recording": "1227",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差。5 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-26",
+    "recording": "1227",
+    "kind": "timing",
+    "use": "record",
+    "value": [2528, 11260],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f4933"
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-27",
+    "recording": "1227",
+    "kind": "timing",
+    "use": "record",
+    "value": [2557, 11289],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f8791"
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1227-28",
+    "recording": "1227",
+    "kind": "count",
+    "use": "record",
+    "unit": "回",
+    "value": [5, 10, 16, 21, 27],
+    "description": "戦闘開始から、ジュリアの会心の 1 ヒットの値でクレッシェンドのスタックが 1 つ増えた発の、前までの会心の発の数（1〜5 スタック）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@6 の当て方",
+      "note": "同上。ほかの枠の発と重なって読み分けられない増分の会心は数えていない（マルカートが会心の 14・29・37・45 回目に乗ったので、2〜3 回を数え落としている）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  }
+]

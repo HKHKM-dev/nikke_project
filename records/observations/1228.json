@@ -1,0 +1,206 @@
+[
+  {
+    "id": "1228-01",
+    "recording": "1228",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": 0,
+    "description": "ジュリアが撃たない録画の、バーストのクレッシェンドのフルスタックの追加ダメージの数（バーストのヒットに追加ダメージが乗らない）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "4 回のバーストの 5 ヒットとも、増分はバーストの倍率ダメージ 1 つの値（652,289・782,855 と、その会心 978,434・1,174,282）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3]
+      }
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1228-02",
+    "recording": "1228",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 3261445,
+    "description": "ジュリアの 1 回目のバーストの倍率ダメージ（5 ヒットの和の会心なしの値。1 ヒットの会心なし 652,289 の 5 倍。S1 の攻撃力▲なし・フルバースト補正なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "5 ヒットのうち 4 つが 652,289、1 つが会心の 978,434（652,289 × 1.5。クレッシェンドなし）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3]
+      }
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1228-03",
+    "recording": "1228",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [27, 39, 51, 63, 74],
+    "description": "ジュリアの 1 回目のバーストの、III のタイマーの 00.00 から「5 回順番に攻撃」の各ヒットまでの動画のフレーム（入りの止まり 22f を含む。撃たない録画）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 の 20〜90f 後の 60 万を超える増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "burstHit",
+        "anchor": "fullBurst:0",
+        "within": "window"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3]
+      }
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1228-04",
+    "recording": "1228",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [27, 38, 51, 63, 74],
+    "description": "ジュリアの 2 回目のバーストの、III のタイマーの 00.00 から「5 回順番に攻撃」の各ヒットまでの動画のフレーム（入りの止まり 22f を含む。撃たない録画）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 の 20〜90f 後の 60 万を超える増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "burstHit",
+        "anchor": "fullBurst:1",
+        "within": "window"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3]
+      }
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1228-06",
+    "recording": "1228",
+    "kind": "timing",
+    "use": "record",
+    "value": [1605, 3177, 4714, 6317, 7956, 9572, 11096],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・24・5・25・0・24f"
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1228-07",
+    "recording": "1228",
+    "kind": "timing",
+    "use": "record",
+    "value": [1634, 3206, 4743, 6346, 7985, 9601, 11125],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・24・0・25・0・24f"
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1228-08",
+    "recording": "1228",
+    "kind": "timing",
+    "use": "record",
+    "value": [1663, 4772, 8014, 11154],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1228-09",
+    "recording": "1228",
+    "kind": "timing",
+    "use": "record",
+    "value": [2272, 5381, 8623],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム。4 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  },
+  {
+    "id": "1228-10",
+    "recording": "1228",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差。4 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0792",
+    "readAt": "2026-11-15"
+  }
+]

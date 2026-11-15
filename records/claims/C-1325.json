@@ -1,0 +1,18 @@
+{
+  "id": "C-1325",
+  "text": "ジュリアの宝物版 S1 は、戦闘開始時（宝物版 S2 の強制使用。最初の発から）と、戦闘開始から 20 秒ごとに、自分に会心率 26.04%・攻撃力 20%・通常攻撃の会心率 36.16% の▲を 10 秒付ける（Lv10）。発動は撃たない間も続く",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1226-01`・`1226-02`・`1226-03`・`1226-04`・`1226-15`・`1226-16`・`1226-17`・`1227-01`・`1227-02`・`1227-03`・`1227-04`・`1227-15`・`1227-16`・`1227-17`。V-0792",
+  "model": "data/skills/150.json の treasureSkills.skill1 の effects[0]〜[2]（{ everySeconds: 20, cooldown: true } の timed）と effects[3]〜[5]（battleStart の timed。宝物版 S2 の強制使用）、treasureSkills.skill2 の notes",
+  "replaces": [],
+  "updated": "2026-11-15",
+  "subject": {
+    "places": [
+      "data/skills/150.json の treasureSkills.skill1 の effects[0]",
+      "data/skills/150.json の treasureSkills.skill1 の effects[3]"
+    ]
+  },
+  "decidedOn": []
+}
