@@ -90,6 +90,9 @@ describe('5.2・5.4 damage の hitsRef・hitIntervalFrames・coreHit の検証',
     expect(() => effectOf({ ...damage, trigger: 'burstUse', perBurstHit: true, hitsRef: 2 })).toThrow(
       /hitsRef cannot be used with perBurstHit/,
     );
+    expect(() => effectOf({ ...damage, trigger: { count: 'critHit', every: 44 }, hitsRef: 2, gaugeHits: [0] })).toThrow(
+      /hitsRef cannot be used with gaugeHits/,
+    );
     expect(() => effectOf({ ...damage, hitIntervalFrames: 5 })).toThrow(/hitIntervalFrames needs hitsRef/);
     for (const n of [-1, 1.5, '5']) {
       expect(() => effectOf({ ...damage, hitsRef: 2, hitIntervalFrames: n })).toThrow(/hitIntervalFrames/);

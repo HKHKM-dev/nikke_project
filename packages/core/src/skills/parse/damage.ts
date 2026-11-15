@@ -236,6 +236,8 @@ function parseHitShape(v: Record<string, Json>, effect: DamageEffect, path: stri
   if (v.hitsRef !== undefined) {
     // 射撃の回数のきっかけにも書ける（バブルバラージ・イヴの不安定エネルギー。plan/design-eve.md 2.1 節）。射撃に畳み込まない（foldsIntoShot）
     if (effect.perBurstHit === true) fail(`${path}.hitsRef`, 'hitsRef cannot be used with perBurstHit');
+    // ヒットごとのゲージは gaugePerHit で書く（発のフレームからのゲージの列 gaugeHits とは組まない）
+    if (v.gaugeHits !== undefined) fail(`${path}.hitsRef`, 'hitsRef cannot be used with gaugeHits');
     effect.hitsRef = parseRef(v.hitsRef, `${path}.hitsRef`);
   }
   if (v.hitIntervalFrames !== undefined) {
