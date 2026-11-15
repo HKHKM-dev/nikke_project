@@ -29,7 +29,7 @@ export const firingMetrics: Readonly<Record<string, Metric>> = {
   // n 発目の最大装弾数と、弾丸チャージの発数（V-0435）
   maxAmmoAtShot: { args: ['slot', 'shot'], sim: maxAmmoAtShot },
   ammoRefillAmounts: { args: ['slot', 'count'], sim: ammoRefillAmounts },
-  stateWindowRefillShots: { args: ['slot', 'state', 'skill', 'n', 'count'], sim: stateWindowRefillShots },
+  stateWindowRefillShots: { args: ['slot', 'state', 'skill', 'n'], sim: stateWindowRefillShots },
   reloadFramesAt: { args: ['slot', 'frame'], sim: reloadFramesAt },
   reloadToNextShotAt: { args: ['slot', 'frame'], sim: reloadToNextShotAt },
   hideReloadToWindowEnd: { args: ['slot', 'window'], sim: hideReloadToWindowEnd },
@@ -413,9 +413,8 @@ function ammoRefillAmounts(result: SimResult, ctx: MetricContext): number[] {
 function stateWindowRefillShots(result: SimResult, ctx: MetricContext): number[] {
   const slotIndex = slotIndexOf(ctx);
   const n = Number(ctx.args.n);
-  const window = unionRanges(
-    itemsOf(result.history, { holder: slotIndex, state: String(ctx.args.state) as NamedStateId }),
-  )[n - 1];
+  const items = itemsOf(result.history, { holder: slotIndex, state: String(ctx.args.state) as NamedStateId });
+  const window = unionRanges([...items].sort((a, b) => a.start - b.start))[n - 1];
   if (window === undefined) throw new Error(`状態 ${String(ctx.args.state)} の ${n} 回目の窓が無い`);
   const refills = new Set(
     result.instants

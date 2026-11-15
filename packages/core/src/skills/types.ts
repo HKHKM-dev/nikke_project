@@ -665,7 +665,7 @@ export type ShotCountTrigger = {
   everyRef?: number;
   /**
    * 周期の中の位置（plan/design-fortune-mate.md 2.1 節。「攻撃回数別の効果」「各段階の効果のみ適用」の段を、段ごとの効果で書く）。
-   * 数えた回数が N の倍数 + phase に届いた発で発火する（every 6・phase 2 なら 2・8・14…回目）。1 以上 N 未満の即値。
+   * 数えた回数が N の倍数 + phase に届いた発で発火する（every 6・phase 2 なら 2・8・14…回目）。1 以上 every 未満の即値（everyRef とは組まない）。
    * 数える窓が自分の状態（during: { state }）のときだけ書け、数え直すと 0 から数える
    */
   phase?: number;
