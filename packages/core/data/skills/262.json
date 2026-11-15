@@ -161,7 +161,8 @@
             "en": "The pair \"charge speed increase immunity\" and \"charge speed decrease immunity\" (continuous, cannot be removed) is written as a lock at 0 for the whole battle (the model has no effect that removes timed buffs, so \"cannot be removed\" is not written). Her S1 charge speed increase does not apply when she is its target. It blocks ratio charge speed changes, caster-based charge speed, the \"charge time −X s\" of Mana's S2, and charge speed from gear and cubes (plan/design-stat-lock.md issue 2). The last two are unverified: no recording pairs her with Mana or has gear/cubes (fixed spec has none)"
           },
           "claims": [
-            "C-1242"
+            "C-1242",
+            "C-1342"
           ]
         }
       ],
