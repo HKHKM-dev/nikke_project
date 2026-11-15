@@ -75,22 +75,20 @@ export const CONTROLLER_BADGE = badgeName('ui_controller');
 /** 右上の設定のメニューのボタンのバッジ（SettingsMenu） */
 export const SETTING_BADGE = badgeName('ui_setting');
 
-/** ニケ一覧の宝物の絞り込みのボタンのバッジ */
-export const TREASURE_FILTER_BADGE = badgeName('collection_plain');
-
-/** コレクションのバッジ（通常の版と、LV が上限・宝物が最後の段階の版） */
-const COLLECTION_BADGES = {
-  plain: badgeName('collection_rarity'),
-  max: badgeName('collection_rarity-max'),
-} as const;
+/**
+ * コレクションのバッジ。ニケ一覧の宝物の絞り込みのボタンと、スロット・ニケ一覧のコレクション（collectionBadge）が同じ絵を使い、
+ * コレクションの色は tone と variant のクラスで styles.css が決める
+ */
+const COLLECTION_BADGE = badgeName('collection_plain');
+export const TREASURE_FILTER_BADGE = COLLECTION_BADGE;
 
 /** バッジを出すキャラの項目 */
 export type BadgeKey = 'element' | 'burstStep' | 'class' | 'weaponType' | 'corporation';
 /**
  * name はバッジの拡張子なしの名前。tone は同じ絵に値ごとの差し色を付けるときの値（BadgeIcon が badge-tone-<tone> のクラスを付け、
- * styles.css が色を決める。コレクションのレア度）
+ * styles.css が色を決める。コレクションのレア度）。variant は同じ絵の別の版（badge-variant-<variant> のクラス。コレクションの上限の版は max）
  */
-export type Badge = { name: string; label: string; tone?: string };
+export type Badge = { name: string; label: string; tone?: string; variant?: string };
 export type BadgeKind = {
   key: BadgeKey;
   /** 絞り込みの名前 */
@@ -164,7 +162,8 @@ export const BURST_STEP_BADGE_KIND: BadgeKind = kindOf('burstStep');
 
 /**
  * スロットの絵の左上（バースト段階の下）に出すコレクションのバッジ。宝物を付けていれば SSR（最後の段階は上限の黒の版）、
- * R・SR のコレクションなら その色（LV が上限なら黒の版）、どちらも無ければ出さない。絵はレア度によらず同じで、レア度の色は tone
+ * R・SR のコレクションなら その色（LV が上限なら黒の版）、どちらも無ければ出さない。絵はレア度によらず同じで、レア度の色は tone、
+ * 上限の黒の版は variant の max
  */
 export function collectionBadge(
   collection: CollectionInput,
@@ -172,9 +171,10 @@ export function collectionBadge(
   hasTreasure: boolean,
 ): Badge | null {
   const pick = (tone: string, max: boolean, label: string): Badge => ({
-    name: max ? COLLECTION_BADGES.max : COLLECTION_BADGES.plain,
+    name: COLLECTION_BADGE,
     label,
     tone,
+    ...(max && { variant: 'max' }),
   });
   if (hasTreasure && treasurePhase > 0) {
     return pick('SSR', treasurePhase === TREASURE_PHASE_MAX, `宝物 段階 ${treasurePhase}`);

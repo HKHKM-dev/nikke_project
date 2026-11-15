@@ -2,10 +2,12 @@
 // （plan/design-modern-ui.md 2.5 節）。
 //   npm run badges:build
 // バッジを直すときは badges-src のほうを Inkscape で直し、これを回す。書き出したものが元と合っているかは badges.test.ts が見る。
+// 書き出すのは badges-src の直下の SVG だけ。枠の無い図柄だけの部品（parts/parts_*.svg。バッジを描くときに写す元）と枠の形
+// （frame/）は書き出さない。
 //
 // 六角形の枠（plan/design-badge-frame.md 7 節）: 枠のあるバッジの元は、枠の 2 つの要素（hex-out・hex-in。Inkscape でロックしてある）
 // を持つ。書き出しは、まず元の枠を badges-src/frame/hex.svg の形にそろえて元に書き戻し（色は元の hex-in の塗りと縁のまま）、
-// そのあと元を小さくする。枠の形は frame/hex.svg だけを直す。枠のある新しいバッジは、枠のあるどれか（ui_blank など）を写して
+// そのあと元を小さくする。枠の形は frame/hex.svg だけを直す。枠のある新しいバッジは、枠のあるどれか（ui_blank_hexagon など）を写して
 // 中身を描く。枠の色を変えるときは hex-in の塗りと縁を変える。
 //
 // 白黒のバッジ（plan/design-badge-color.md）: MONOCHROME_GROUPS のグループのバッジは、色の役（COLOR_ROLES）の色だけで描き、
@@ -21,7 +23,7 @@
 //   英単語（burst・collection・ui）
 // - 値: データにある項目は、データの値を大文字小文字までそのまま（Fire・Step1・AllStep・ELYSION など）。値ごとの絵でないもの
 //   （grade の空いた星と埋まった星など）と、データに無いものは小文字の英語
-// - 変種: 同じ値の別の版は後ろに -<小文字> を付ける（collection の上限に達した版は -max、背景の六角形を付けた版は -badge）
+// - 変種: 同じ値の別の版は後ろに -<小文字> を付ける（背景の六角形を付けた版は -badge）
 // - 並びの番号は付けない（並びは使う側のコードが決める）
 // - 規則に合わない名前（<グループ>_ の無いもの）があると、書き出しは止まる
 import { existsSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
