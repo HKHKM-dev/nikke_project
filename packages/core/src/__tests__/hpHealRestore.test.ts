@@ -36,6 +36,8 @@ describe('マストの最大HP のみ▲ の窓とミサトの S1 の回復', ()
     const h = heals.find((x) => x.slotIndex === 2 && w.start < x.frame && x.frame < w.end)!;
     expect(h).toBeDefined();
     const before = ratio(2, h.frame);
+    // ミサトの S1 は発火の 6f 後に付く（delayFrames）。発火から付くまでは上がらない
+    expect(ratio(2, h.frame - 6)).toBe(before);
     // 窓の中の 3 枠目の最大HP（バフ前の最大HP を 1 とする）は 1 ÷ 割合
     const amount = (maxHp(0) * skillValueOf(MISATO, 'skill1', 7)) / 100 / maxHp(2);
     expect(ratio(2, h.frame + 1) - before).toBeCloseTo(amount * before, 9);

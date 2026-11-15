@@ -313,7 +313,7 @@ export function createViews({
   /**
    * 枠ごとの、量で追う回復（heal の scaling 'casterFinalMaxHp'）の記録（付くフレームの昇順）と、回復で足した HP の余り E の記録
    * （plan/design-hp-heal-restore.md 2.1 節。値はその枠のバフ前の最大HP を 1 とする）。E は回復を受けた枠だけ、フレームの昇順に進める
-   * （upTo まで進めた。next は次に足す回復の位置。positive は E が 0 より大きくなったことがあるか）
+   * （upTo まで進めた。next は次に足す回復の位置）。E が 0 より大きくなるのは、最大HP のみ▲ か現在の HP▼ で下がった枠だけ
    */
   type HpRestore = { frame: number; fireFrame: number; sourceSlotIndex: number; value: number };
   const restores = slots.map(() => ({
@@ -321,7 +321,6 @@ export function createViews({
     upTo: -1,
     next: 0,
     values: null as Float64Array | null,
-    positive: false,
   }));
   /**
    * 枠 holder に、フレーム fireFrame に発火した量で追う回復（発動者 sourceSlotIndex・割合 value）がフレーム frame（戦闘の中）に付く。
@@ -391,7 +390,6 @@ export function createViews({
         if (room > HP_RATIO_EPS) e += restoreAmountOf(list[memo.next]!, slotIndex);
       e = Math.max(0, Math.min(e, room));
       values[g] = e;
-      if (e > 0) memo.positive = true;
     }
     memo.upTo = frame;
     return e;
@@ -406,16 +404,16 @@ export function createViews({
     const e = surplusAt(slotIndex, frame);
     if (e === 0 && !maxHpOnlyMoves[slotIndex])
       return (slots[slotIndex]?.hpRatio ?? 1) * hpDownProductBefore(slotIndex, frame);
-    const { current, max } = hpBaseAt(slotIndex, frame);
-    return (current + e) / max;
+    const { current, max, cap } = hpBaseAt(slotIndex, frame);
+    // 上限まで戻った枠は想定の割合（余りを上限で削った値から割り戻すと、浮動小数の誤差で想定の割合からずれる）
+    return current + e >= cap ? (slots[slotIndex]?.hpRatio ?? 1) : (current + e) / max;
   };
   /**
    * 履歴に置く、枠の HP の割合の段（selfHpRatioAt を毎フレーム取り、値の変わったフレームだけを残す）。最大HP のみ▲ も現在の
-   * HP▼ も回復で足した HP も無い枠は割合が動かないので 1 段。ループの後に呼ぶ
+   * HP▼ も無い枠は割合が動かない（回復も戻さない）ので 1 段。ループの後に呼ぶ
    */
   const hpRatioStepsOf = (slotIndex: number): HpRatioSteps => {
-    surplusAt(slotIndex, Math.max(frames, 1) - 1);
-    if (!maxHpOnlyMoves[slotIndex] && hpDowns[slotIndex]!.frames.length === 0 && !restores[slotIndex]!.positive)
+    if (!maxHpOnlyMoves[slotIndex] && hpDowns[slotIndex]!.frames.length === 0)
       return { frames: [0], ratios: [selfHpRatioAt(slotIndex, 0)] };
     const steps = { frames: [] as number[], ratios: [] as number[] };
     for (let f = 0; f < Math.max(frames, 1); f++) {

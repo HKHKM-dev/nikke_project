@@ -375,7 +375,8 @@ export function isFixedAttackScaling(scaling: BuffScaling | undefined): boolean 
  * （CharacterData.shot.chargeTime の長い順。同値は枠の若い順。編成で決まるので最上位の skills/composition.ts
  * で対象の枠を決める。plan/design-target-vocab.md 2.2 節）。N は topAttack と同じ欄。timed にだけ書ける。
  * lowestHpRatio = 「残りの HP の割合が最も低い味方 N 機」（回復の発火のフレームの HP の割合（枠の想定 TeamSlotInput.hpRatio を
- * 最大HP のみ▲・現在の HP▼ で下げ、量で追う回復で戻した割合。skills/holders/views.ts の selfHpRatioAt）の低い順。同値は枠の若い順（C-0567）。自分も候補。候補の枠は skills/composition.ts が決める。
+ * 最大HP のみ▲・現在の HP▼ で下げ、量で追う回復で戻した割合。skills/holders/views.ts の selfHpRatioAt）の低い順。
+ * 同値は枠の若い順（C-0567）。自分も候補。候補の枠は skills/composition.ts が決める。
  * plan/design-skill-stage8.md 1.1 節・plan/design-hp-ratio-readers.md 2.2 節）。N は topAttack と同じ欄。heal にだけ書ける。
  * 定義を書くときの決まり: 被弾した味方が選ばれうることと、持続回復・吸収回復では割合が戻らないことを assumes に書く。
  * appliedCaster = 「〈状態〉のスキル発動者に」（そのフレームにきっかけの状態を付けた枠。plan/design-mint-prika.md 2.4 節）。

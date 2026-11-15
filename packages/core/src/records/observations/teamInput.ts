@@ -8,6 +8,7 @@ import {
   computeFixedSpecHp,
   fixedSpecGrowth,
 } from '../../fixedSpec.ts';
+import { isMaxHpOnlyEffect } from '../../skills/composition.ts';
 import { MAX_SKILL_LEVELS } from '../../skills/resolve.ts';
 import type { TreasurePhase } from '../../skills/treasure.ts';
 import { SKILL_SLOTS, type SkillDefinition, type SkillEntry, statContentsOf } from '../../skills/types.ts';
@@ -68,18 +69,11 @@ function readsCasterMaxHp(definition: SkillDefinition | null, teamHpMoves: boole
   );
 }
 
-/** 定義に HP の割合を下げる効果（最大HP のみ▲・現在の HP▼。状態の中身も）があるか。宝物版の定義も見る */
+/** 定義に HP の割合を下げる効果（最大HP のみ▲・現在の HP▼。skills/composition.ts の hpRatioMovesOf と同じ判定）があるか。宝物版の定義も見る */
 function lowersHpRatio(definition: SkillDefinition | null): boolean {
   if (definition === null) return false;
   const entries = [...Object.values(definition.skills), ...Object.values(definition.treasureSkills ?? {})];
-  return entries.some((entry) =>
-    entry.effects.some(
-      (e) =>
-        e.kind === 'currentHpDown' ||
-        ((e.kind === 'passive' || e.kind === 'timed') && e.stat === 'maxHpOnly') ||
-        (e.kind === 'state' && statContentsOf(e.contents).some((c) => c.stat === 'maxHpOnly')),
-    ),
-  );
+  return entries.some((entry) => entry.effects.some((e) => e.kind === 'currentHpDown' || isMaxHpOnlyEffect(e)));
 }
 
 /** 対象を最終防御力の比べで決める効果（targetDefense）があるか（plan/design-skill-stage7.md 1.4 節） */
