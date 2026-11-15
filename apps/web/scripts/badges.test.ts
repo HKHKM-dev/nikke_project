@@ -13,6 +13,7 @@ import {
   buildBadges,
   findFrame,
   MONOCHROME_GROUPS,
+  MONOCHROME_NAMES,
   isMonochrome,
   optimizeBadge,
   parseFrame,
@@ -155,6 +156,13 @@ describe('白黒のバッジ', () => {
     const screen = readFileSync(new URL('../src/components/modern/badges.ts', import.meta.url), 'utf8');
     const globbed = [...screen.matchAll(/'\.\.\/\.\.\/assets\/badges\/([^_]+)_\*\.svg'/g)].map(([, group]) => group);
     expect(globbed.sort()).toEqual([...MONOCHROME_GROUPS].sort());
+  });
+
+  it('グループの外で画面のスプライトに 1 枚ずつ入れるバッジは、無地の ui_blank_main のほかは白黒', () => {
+    const screen = readFileSync(new URL('../src/components/modern/badges.ts', import.meta.url), 'utf8');
+    const single = [...screen.matchAll(/'\.\.\/\.\.\/assets\/badges\/([^*']+)\.svg'/g)].map(([, name]) => name!);
+    expect(single).toContain('ui_information');
+    expect(single.filter((name) => name !== 'ui_blank_main').sort()).toEqual([...MONOCHROME_NAMES].sort());
   });
 
   it('書き出しは、白黒のグループのバッジの色を変数にし、id の前に名前を付ける', () => {

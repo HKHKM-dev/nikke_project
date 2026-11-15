@@ -5,8 +5,8 @@ import { GrowthEditor, type ShownGrowth } from '../GrowthEditor.tsx';
 import { Modal } from '../Modal.tsx';
 import { RosterRevertButton } from '../RosterRevertButton.tsx';
 import { SlotOptions } from '../SlotOptions.tsx';
-import { FAVORITE_LABEL, FAVORITE_MARKS, type FavoriteMark } from '../../favorites.ts';
-import { FavoriteBadge } from './FavoriteBadge.tsx';
+import type { FavoriteMark } from '../../favorites.ts';
+import { FavoriteButtons } from './FavoriteBadge.tsx';
 
 type Props = {
   slotIndex: number;
@@ -53,22 +53,11 @@ export function SlotBuildModal({
           {character.name.ja}
           {/* お気に入り。押したバッジは色が付き、立ち絵の上端にも出る（FavoriteRibbons） */}
           <span className="slot-build-favorites" role="group" aria-label="お気に入り">
-            {FAVORITE_MARKS.map((mark) => {
-              const on = favoriteMarks.includes(mark);
-              return (
-                <button
-                  key={mark}
-                  type="button"
-                  className="slot-build-favorite-button"
-                  aria-pressed={on}
-                  aria-label={`お気に入り（${FAVORITE_LABEL[mark]}）`}
-                  title={FAVORITE_LABEL[mark]}
-                  onClick={() => onToggleFavorite(mark)}
-                >
-                  <FavoriteBadge mark={mark} on={on} />
-                </button>
-              );
-            })}
+            <FavoriteButtons
+              marks={favoriteMarks}
+              onToggle={onToggleFavorite}
+              buttonClassName="slot-build-favorite-button"
+            />
           </span>
         </span>
       }

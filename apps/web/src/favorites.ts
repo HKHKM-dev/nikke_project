@@ -1,5 +1,5 @@
 // ニケのお気に入り（育成・設定の窓の main_○○ のバッジ 5 種）。ニケ（resourceId）ごとに押したバッジを持ち、ブラウザに覚える
-import { createContext, useCallback, useState } from 'react';
+import { createContext, useCallback, useEffect, useRef, useState } from 'react';
 import { readStorage, writeStorage } from './storage.ts';
 
 export const FAVORITE_MARKS = ['star', 'spade', 'heart', 'diamond', 'club'] as const;
@@ -17,7 +17,7 @@ export const FAVORITE_LABEL: Record<FavoriteMark, string> = {
 /** ニケ（resourceId の文字列）ごとの押したバッジ（FAVORITE_MARKS の順）。どれも押していないニケは持たない */
 export type Favorites = Readonly<Record<string, readonly FavoriteMark[]>>;
 
-export const FAVORITES_STORAGE_KEY = 'nikke-calc.favorites.v1';
+const FAVORITES_STORAGE_KEY = 'nikke-calc.favorites.v1';
 
 /** 覚えたお気に入りを読む。読めない値・知らないバッジは捨てる */
 export function parseFavorites(raw: string | null): Favorites {
@@ -38,13 +38,15 @@ export function parseFavorites(raw: string | null): Favorites {
   return out;
 }
 
+/** 押したバッジの並びで、バッジを 1 つ押す（押してあれば外す。並びは FAVORITE_MARKS の順に保つ） */
+export function toggleFavoriteMark(marks: readonly FavoriteMark[], mark: FavoriteMark): readonly FavoriteMark[] {
+  return marks.includes(mark) ? marks.filter((m) => m !== mark) : FAVORITE_MARKS.filter((m) => m === mark || marks.includes(m));
+}
+
 /** そのニケのバッジを 1 つ押す（押してあれば外す） */
 export function toggleFavorite(favorites: Favorites, resourceId: number, mark: FavoriteMark): Favorites {
   const key = String(resourceId);
-  const current = favorites[key] ?? [];
-  const next = current.includes(mark)
-    ? current.filter((m) => m !== mark)
-    : FAVORITE_MARKS.filter((m) => m === mark || current.includes(m));
+  const next = toggleFavoriteMark(favorites[key] ?? [], mark);
   const { [key]: _, ...rest } = favorites;
   return next.length > 0 ? { ...rest, [key]: next } : rest;
 }
@@ -59,12 +61,13 @@ export const FavoritesContext = createContext<Favorites>({});
 /** いまのお気に入りと、バッジを押す関数（押した結果はブラウザに覚える） */
 export function useFavorites(): [Favorites, (resourceId: number, mark: FavoriteMark) => void] {
   const [favorites, setFavorites] = useState(() => parseFavorites(readStorage(FAVORITES_STORAGE_KEY)));
+  // 押した結果を覚える（読んだだけの最初の描画では書かない）
+  const loaded = useRef(favorites);
+  useEffect(() => {
+    if (favorites !== loaded.current) writeStorage(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
+  }, [favorites]);
   const toggle = useCallback((resourceId: number, mark: FavoriteMark) => {
-    setFavorites((prev) => {
-      const next = toggleFavorite(prev, resourceId, mark);
-      writeStorage(FAVORITES_STORAGE_KEY, JSON.stringify(next));
-      return next;
-    });
+    setFavorites((prev) => toggleFavorite(prev, resourceId, mark));
   }, []);
   return [favorites, toggle];
 }

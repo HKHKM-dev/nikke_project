@@ -215,7 +215,7 @@ export function ModernView({
             onSelectCharacter={handleSelectCharacter}
           />
 
-          {editingSlotIndex !== null && editingCalcSlot && (
+          {editingSlotIndex !== null && editingResourceId !== null && editingCalcSlot && (
             <SlotBuildModal
               slotIndex={editingSlotIndex}
               slot={team.slots[editingSlotIndex]!}
@@ -225,8 +225,8 @@ export function ModernView({
               masters={masters}
               mastersError={mastersError}
               usesHpRatio={editingCalcSlot.usesHpRatio}
-              favoriteMarks={editingResourceId === null ? [] : favoriteMarksOf(favorites, editingResourceId)}
-              onToggleFavorite={(mark) => editingResourceId !== null && toggleFavorite(editingResourceId, mark)}
+              favoriteMarks={favoriteMarksOf(favorites, editingResourceId)}
+              onToggleFavorite={(mark) => toggleFavorite(editingResourceId, mark)}
               rosterGrowth={rosterGrowthOf(roster, editingResourceId)}
               dispatch={dispatch}
               onClose={() => setEditingSlotIndex(null)}

@@ -8,12 +8,11 @@ import {
   TREASURE_FILTER_BADGE,
 } from './badges.ts';
 import { BadgeFilters } from './BadgeFilter.tsx';
-import { FavoriteBadge } from './FavoriteBadge.tsx';
+import { FavoriteButtons } from './FavoriteBadge.tsx';
 import {
-  FAVORITE_LABEL,
-  FAVORITE_MARKS,
   favoriteMarksOf,
   FavoritesContext,
+  toggleFavoriteMark,
   type FavoriteMark,
 } from '../../favorites.ts';
 import { BadgeIcon } from './BadgeIcon.tsx';
@@ -229,28 +228,12 @@ function TrayFilters({
         </button>
       </div>
       <div className="char-tray-badge-filter" role="group" aria-label="お気に入りで絞り込み">
-        {FAVORITE_MARKS.map((mark) => {
-          const pressed = favoriteFilter.includes(mark);
-          return (
-            <button
-              key={mark}
-              type="button"
-              className="char-tray-badge-button"
-              aria-pressed={pressed}
-              aria-label={`お気に入り（${FAVORITE_LABEL[mark]}）`}
-              title={FAVORITE_LABEL[mark]}
-              onClick={() =>
-                onFavoriteFilterChange(
-                  pressed
-                    ? favoriteFilter.filter((m) => m !== mark)
-                    : FAVORITE_MARKS.filter((m) => m === mark || favoriteFilter.includes(m)),
-                )
-              }
-            >
-              <FavoriteBadge mark={mark} on />
-            </button>
-          );
-        })}
+        <FavoriteButtons
+          marks={favoriteFilter}
+          onToggle={(mark) => onFavoriteFilterChange(toggleFavoriteMark(favoriteFilter, mark))}
+          buttonClassName="char-tray-badge-button"
+          colorAll
+        />
       </div>
       {/* 選んだ絞り込みを全部外す（何も選んでいないときは押せない）。文字の代わりにバッジ ui_return */}
       <button

@@ -206,6 +206,15 @@ header h1 {
   align-items: center;
   gap: 8px;
 }
+/* 枠と地を出さず、絵だけのボタン（アカウントと設定・元に戻す・スロットの右上・絞り込みのクリア） */
+.settings-menu-button,
+.modern-slot-undo-button,
+.modern-slot-icon-button,
+.char-tray-filter-clear {
+  border: none;
+  background: none;
+  box-shadow: none;
+}
 /* アカウントと設定のボタン（モダン UI。絵はバッジ ui_account・ui_window の正方形） */
 .settings-menu-button {
   display: grid;
@@ -213,17 +222,15 @@ header h1 {
   width: 34px;
   height: 34px;
   padding: 0;
-  /* ボタンの枠と地は出さない（絵だけ） */
-  border: none;
-  background: none;
-  box-shadow: none;
 }
 .settings-menu-icon {
   width: 28px;
   height: 28px;
 }
-/* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。図柄を白にするバッジごとの規則より強くするため、要素名を付ける */
-svg.settings-menu-icon {
+/* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。設定とアカウントのボタン・未対応の印 ⓘ。
+   図柄を白にするバッジごとの規則より強くするため、要素名や親を付ける */
+svg.settings-menu-icon,
+.char-unsupported-tag > .badge-ui_information {
   --badge-ground: light-dark(#ffffff, #1a1a1a);
   --badge-main: light-dark(#1a1a1a, #ffffff);
   --badge-accent: light-dark(#1a1a1a, #ffffff);
@@ -739,10 +746,6 @@ svg.settings-menu-icon {
   z-index: 3;
   display: inline-flex;
   padding: 3px 8px;
-  /* ボタンの枠と地は出さない（絵だけ） */
-  border: none;
-  background: none;
-  box-shadow: none;
   cursor: pointer;
 }
 .modern-slot-undo-icon {
@@ -893,7 +896,7 @@ svg.settings-menu-icon {
   cursor: grabbing;
 }
 /* 立ち絵の右上に重ねるボタン（上から、空にする（バッジ ui_delete）・育成と設定（バッジ ui_setting））。置き先待ちの水色の重ね・◎ より上。
-   ボタンの枠と地は出さず、バッジの絵（縦横 130:150）だけにする */
+   絵はバッジ（縦横 130:150） */
 .modern-slot-icon-button {
   position: absolute;
   right: 3px;
@@ -903,10 +906,7 @@ svg.settings-menu-icon {
   padding: 0;
   display: grid;
   place-items: center;
-  border: none;
   border-radius: 0;
-  background: none;
-  box-shadow: none;
   cursor: pointer;
 }
 .modern-slot-icon {
@@ -1356,13 +1356,6 @@ svg.settings-menu-icon {
   width: 100%;
   height: 100%;
 }
-/* ライトでは色を反転する（地を白、縁と文字を暗い色、外の線を白） */
-.char-unsupported-tag > .badge-ui_information {
-  --badge-ground: light-dark(#ffffff, #1a1a1a);
-  --badge-main: light-dark(#1a1a1a, #ffffff);
-  --badge-accent: light-dark(#1a1a1a, #ffffff);
-  --badge-line: light-dark(#ffffff, #000000);
-}
 .char-visual-compact .char-unsupported-tag {
   width: 13px;
   height: 13px;
@@ -1576,11 +1569,8 @@ html:has(.modern-view-container) {
 }
 /* 絞り込みのクリアの印（バッジ ui_return） */
 .char-tray-filter-clear {
-  /* ボタンの枠と地は出さない（絵だけ）。外の大きさは絞り込みのバッジのボタン（余白なしで枠 2px）とそろえる */
+  /* 外の大きさは絞り込みのバッジのボタン（余白なしで枠 2px）とそろえる */
   padding: 2px;
-  border: none;
-  background: none;
-  box-shadow: none;
 }
 /* 大きさは絞り込みのバッジ（.char-tray-badge-filter の --badge-w の幅、130×150）と同じ */
 .char-tray-filter-clear-icon {
