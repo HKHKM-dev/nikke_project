@@ -50,11 +50,13 @@
     304,
     305,
     308,
+    310,
     311,
     316,
     321,
     322,
     330,
+    350,
     352,
     353,
     354,
@@ -192,10 +194,6 @@
       "unimplemented": 1,
       "assumed": 0
     },
-    "310": {
-      "unimplemented": 1,
-      "assumed": 3
-    },
     "313": {
       "unimplemented": 2,
       "assumed": 2
@@ -211,10 +209,6 @@
     "331": {
       "unimplemented": 5,
       "assumed": 0
-    },
-    "350": {
-      "unimplemented": 1,
-      "assumed": 5
     },
     "400": {
       "unimplemented": 1,
