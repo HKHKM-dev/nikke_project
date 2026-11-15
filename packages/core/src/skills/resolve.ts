@@ -406,6 +406,11 @@ export type ResolvedEffect = {
   weapon?: ChangedWeapon;
   /** 名前の付いたバースト段階の変更のどちらの側の効果か（画面の出どころの表示）。定義に無ければキーごと無い */
   burstStepMode?: BurstStepMode;
+  /**
+   * 値の固定（timed の lock。plan/design-stat-lock.md 3.1 節）。持ち主の stat の和を value で上書きする（skills/buffs.ts の
+   * applyStatLocks）。定義に無ければキーごと無い
+   */
+  lock?: true;
   assumes?: LocalizedText;
 };
 
@@ -681,13 +686,16 @@ export function resolveTimed(
       const value =
         effect.amplifies !== undefined
           ? effect.amplifies.percent / 100 // 参照する効果の値に掛ける割合（窓ごとの値は skills/holders/history.ts の amplify）
-          : contentValue(effect, character, slot, levels[slot], 'timed');
+          : effect.lock === true && effect.ref === undefined
+            ? 0 // 「増加効果無効」「減少効果無効」の組は値 0 の固定
+            : contentValue(effect, character, slot, levels[slot], 'timed');
       const r: ResolvedTimedEffect = { ...window, stat: effect.stat, scaling: effect.scaling ?? 'ratio', value };
       if (effect.amplifies !== undefined) r.amplifies = effect.amplifies;
       if (effect.edgeShift !== undefined) r.edgeShift = effect.edgeShift;
       if (effect.delayFrames !== undefined) r.delayFrames = effect.delayFrames;
       if (effect.perCount !== undefined) r.perCount = effect.perCount;
       if (effect.decrease === true) r.decrease = true;
+      if (effect.lock === true) r.lock = true;
       if (effect.holderHit !== undefined)
         r.holderHitWithinFrames = gameSecondsToFrames(skillValue(skill, effect.holderHit.withinRef, levels[slot]));
       resolved.push(r);

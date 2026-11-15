@@ -12,13 +12,5 @@
     "places": ["data/skills/834.json の skill2 の effects[0]", "data/skills/834.json の skill2 の effects[1]"]
   },
   "decidedOn": [],
-  "parameterFree": "値は説明文の 100%・11.61%、立ち上げ速度の和の形は C-0743・C-1269",
-  "minimal": [
-    {
-      "observations": ["1213-06", "1214-05"],
-      "element": ["アスカ：WILLE skill2.notes[1]"],
-      "reason": "編成にアスカ：WILLE のリロード速度を変える味方がいないので、リロード速度の「固定」は足し合わせと同じ値",
-      "decided": "2026-11-15"
-    }
-  ]
+  "parameterFree": "値は説明文の 100%・11.61%、立ち上げ速度の和の形は C-0743・C-1269"
 }

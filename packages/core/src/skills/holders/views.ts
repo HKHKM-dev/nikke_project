@@ -3,7 +3,15 @@
 // 最大 HP▲・現在の HP▼・HP の割合・最終防御力・最終攻撃力と順位。見る列を読む問い合わせ（射手の実効値・当たり・与ダメージの値・
 // 状態のスタック数・現在の HP▼）も返す。
 import { lowerBound } from '../../frame/shots.ts';
-import { ZERO_HIT_RATE, applyResolvedEffect, fixedAttackBaseOf, type BuffTotals } from '../buffs.ts';
+import {
+  ZERO_HIT_RATE,
+  applyResolvedEffect,
+  applyStatLocks,
+  fixedAttackBaseOf,
+  statLockOf,
+  type BuffTotals,
+  type StatLock,
+} from '../buffs.ts';
 import { chanceStackLevelsAt } from '../chance.ts';
 import { createSpanMemo } from '../spanMemo.ts';
 import { type ItemEffect } from '../resolve.ts';
@@ -83,11 +91,15 @@ export function createViews({
       (frame, base: BuffTotals): BuffTotals | null => {
         let buffs = base;
         let changed = false;
+        // 値の固定は、ほかの件を全部足した後に和を上書きする（常時の値も。plan/design-stat-lock.md 3.4 節）
+        const locks: StatLock[] = [];
         for (const v of views) {
           // 和集合の窓は重ならないので効いているのは多くて 1 つ。スタックする効果は効いている段の数だけ足す。件の scale（perCount の
           // スタック数）は 2 パス目（piecesOfTrack）と同じく値に掛ける
           for (const it of activeAt(v.track, frame)) {
             const effect = scaledEffect(v.effect, it);
+            const lock = statLockOf(effect);
+            if (lock !== null) locks.push(lock);
             buffs = applyResolvedEffect(
               buffs,
               effect,
@@ -97,7 +109,7 @@ export function createViews({
             changed = true;
           }
         }
-        return changed ? buffs : null;
+        return changed ? applyStatLocks(buffs, locks) : null;
       },
     ),
   );
@@ -127,9 +139,13 @@ export function createViews({
   };
   const damageBuffsAt: HolderLists['damageBuffsAt'] = (holder, frame, base) => {
     let buffs = base;
+    // 値の固定は射手の実効値（firingBuffs）と同じく、全部足した後に和を上書きする（チャージ速度の超過分の変換が読む）
+    const locks: StatLock[] = [];
     for (const v of (damageViews[holder] ??= damageViewsOf(holder))) {
       for (const it of activeAt(v.track, frame)) {
         const effect = scaledEffect(v.effect, it);
+        const lock = statLockOf(effect);
+        if (lock !== null) locks.push(lock);
         buffs = applyResolvedEffect(
           buffs,
           effect,
@@ -140,7 +156,7 @@ export function createViews({
         ).totals;
       }
     }
-    return buffs;
+    return applyStatLocks(buffs, locks);
   };
   /** 当たりと同じ段の件（状態の中身か、段 1.5 までの timed・while）で、stat が stats のどれかの件の索引 */
   const hitStageViewsOf = (...stats: readonly BuffStat[]): View[][] =>

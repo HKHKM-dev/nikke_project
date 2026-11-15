@@ -146,12 +146,14 @@
           "ref": 5,
           "durationRef": 6,
           "assumes": {
-            "ja": "リロード速度 値 05（95）%▲（10 秒）。リロードの時間 × (1 − 値) になる（C-0013）。「固定」は書いていない（下の notes）",
-            "en": "Reload speed up by value 05 (95)% (10 s): reload time × (1 − value) (C-0013). \"Fixed\" is not modeled (see the notes below)"
+            "ja": "「リロード速度 値 05（95）% 増加状態で固定」（10 秒）。リロードの時間 × (1 − 値) になる（C-0013）。固定の間は、ほかのリロード速度▲▼（装備・キューブを含む）を足さない（plan/design-stat-lock.md 3.1 節。装備・キューブは確かめていない）",
+            "en": "\"Reload speed fixed at +value 05 (95)%\" (10 s): reload time × (1 − value) (C-0013). While fixed, other reload speed changes (including gear and cubes) are not added (plan/design-stat-lock.md 3.1; gear and cubes are unverified)"
           },
           "claims": [
-            "C-1192"
-          ]
+            "C-1192",
+            "C-1339"
+          ],
+          "lock": true
         }
       ],
       "notes": [
@@ -159,20 +161,6 @@
           "ja": "最後の弾丸が命中した時の対象の攻撃力▼はダメージに関係しない",
           "en": "The attack decrease on the target when the last bullet hits does not affect damage",
           "kind": "noDamage"
-        },
-        {
-          "ja": "リロード速度の「増加状態で固定」（窓の間、ほかのリロード速度▲▼を無視する）は未対応。ほかの枠からリロード速度▲▼を受ける編成では、モデルは足し合わせる（effects[1]）",
-          "en": "The reload speed being \"fixed\" (ignoring other reload speed ups/downs during the window) is not modeled. In teams where other units give reload speed ups/downs, the model adds them up (effects[1])",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "reloadSpeed",
-            "target": "self",
-            "trigger": "fullBurstStart"
-          },
-          "claims": [
-            "C-1192"
-          ]
         }
       ]
     },

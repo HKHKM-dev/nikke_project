@@ -12,13 +12,5 @@
     "places": ["data/skills/835.json の skill2 の effects[2]", "data/skills/835.json の skill2 の effects[3]"]
   },
   "decidedOn": [],
-  "parameterFree": "説明文の値（残弾数 100% 減少・リロード速度 60%）と、リロードの時間の確定の式（C-0013）",
-  "minimal": [
-    {
-      "element": ["アスカ：WILLE skill2.notes[1]"],
-      "reason": "この編成にアスカ：WILLE のリロード速度を変える味方はいない（固定と足し合わせが同じ値）",
-      "decided": "2026-11-14",
-      "observations": ["1196-13", "1197-09"]
-    }
-  ]
+  "parameterFree": "説明文の値（残弾数 100% 減少・リロード速度 60%）と、リロードの時間の確定の式（C-0013）"
 }

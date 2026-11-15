@@ -73,7 +73,8 @@ export function createShooterStates({ lists, model, passive, slots }: FirstPassB
   const paramsAt = (i: number, f: number): FiringParams => {
     const base = baseParams[i]!;
     const buffs = lists.firingBuffsAt(i, f, passiveFiring[i]!);
-    if (buffs === null || isZeroFiring(buffs)) return base;
+    // 和が 0 でも、常時の値が 0 でなければ基礎の実効値と違う（値の固定が常時のチャージ速度を 0 にした時など。plan/design-stat-lock.md）
+    if (buffs === null || (isZeroFiring(buffs) && isZeroFiring(passiveFiring[i]!))) return base;
     return firingParams(slots[i]!.character.shot, buffs);
   };
   const shooters: (ShooterState | null)[] = slots.map((slot, i) =>

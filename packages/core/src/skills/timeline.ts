@@ -12,7 +12,15 @@ import type { BuildEffect } from '../buildEffects.ts';
 import { lowerBound, type ShotLog } from '../frame/shots.ts';
 import type { CharacterData } from '../types.ts';
 import { framesToGameSeconds, gameSecondsToFirstFrame } from '../time.ts';
-import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, fixedAttackBaseOf, type BuffTotals } from './buffs.ts';
+import {
+  ZERO_BUFFS,
+  addRatioBuff,
+  applyResolvedEffect,
+  applyStatLocks,
+  fixedAttackBaseOf,
+  statLockOf,
+  type BuffTotals,
+} from './buffs.ts';
 import {
   isResolvedShotCount,
   isResolvedTimer,
@@ -757,6 +765,8 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
   // 4〜5. 区間ごとに状態を組む。区間の頭で効いている小片は、始まりの順に入れて終わったものを外す走査で引き、足す順は並びの順にする
   // （小片が多い確率の状態で、区間 × 小片の二重の走査にしない。plan/design-tove-base.md 6 節）
   const buffActive = activePieceSweep(buffPieces);
+  // 値の固定（lock）の小片が無い編成では、区間ごとの上書きを飛ばす
+  const hasLock = buffPieces.some((p) => p.effect.lock === true);
   const stateActive = activePieceSweep(landingStatePieces);
   const segments: TimelineSegment[] = [];
   for (let i = 0; i + 1 < sorted.length; i++) {
@@ -809,6 +819,18 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
         sourceSlotIndex: p.sourceSlotIndex,
         appliedAmount: applied.appliedAmount,
       });
+    }
+    // 値の固定（plan/design-stat-lock.md 3.4 節）: ほかの小片を全部足した後に、枠の和を固定の値で上書きする。止めた効果は一覧に
+    // 残し、足した量を 0 にする（付いたが効いていないことが表示で分かるように）
+    for (const state of hasLock ? slotStates : []) {
+      if (!state) continue;
+      const locks = state.timedEffects.flatMap((e) => statLockOf(e) ?? []);
+      if (locks.length === 0) continue;
+      state.buffs = applyStatLocks(state.buffs, locks);
+      const locked = new Set<string>(locks.map((l) => l.stat));
+      state.timedEffects = state.timedEffects.map((e) =>
+        e.lock !== true && locked.has(e.stat) ? { ...e, appliedAmount: 0 } : e,
+      );
     }
     // 状態だけの stat の小片は timedEffects には入れない（表示は履歴の値の小片から作る）。buffs.hitRate・minEffectiveRange だけを足す
     for (const p of stateActive(start)) {

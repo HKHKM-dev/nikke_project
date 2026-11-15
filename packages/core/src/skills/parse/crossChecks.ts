@@ -126,6 +126,18 @@ function validateFixedChargeTimeCount(entries: Partial<Record<SkillSlot, SkillEn
 }
 
 /**
+ * 値の固定（timed の lock）は、1 つの定義に同じ stat で 1 つまで（plan/design-stat-lock.md 3.1 節）。持ち主は 1 つの定義しか
+ * 持たず、固定は自分にだけ付くので、同じ持ち主に同じ stat の固定が重なることは無い
+ */
+function validateLockCount(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const stats = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).flatMap((e) =>
+    e.kind === 'timed' && e.lock === true ? [e.stat] : [],
+  );
+  const dup = stats.find((s, i) => stats.indexOf(s) !== i);
+  if (dup !== undefined) fail(root, `at most one lock of "${dup}" per definition`);
+}
+
+/**
  * 同じ定義に、状態 state を自分にスタックで付ける付与がある（スタック量の増減・フルスタック・最大スタック数▲の先）。holder が enemy なら、
  * 敵にスタックで付ける付与（dot の stacksFrom の元。plan/design-mast.md 2.3 節）
  */
@@ -677,6 +689,7 @@ export function validateCrossChecks(entries: Partial<Record<SkillSlot, SkillEntr
   for (const check of [
     validateCycles,
     validateFixedChargeTimeCount,
+    validateLockCount,
     validateInstantFireCoreHits,
     validateWeaponChangeStages,
     validateStateGrants,

@@ -1,0 +1,5 @@
+{
+  "section": "5",
+  "order": 2,
+  "text": "値の固定（timed の `lock`）は、持ち主の和を作る 3 か所（`skills/holders/views.ts` の `firingBuffs`・`damageBuffsAt`、`skills/timeline.ts` の `buildSegments`）でだけ当てている。`frame/plan.ts` の `withSameActivationEffects`・`withEarlierSequentialEffects` は固定を当て直さず、条件 `selfBuffed` と、きっかけ `{ buffApplied }` は止めた▲も付いたと数え、区間の表示は止めた常時の値（装備・キューブ）の量を 0 にしない。いまの定義にはどれも効く組が無い（固定を持つ 4 体に、自分のバーストのチャージ速度▲・リロード速度▲と、これらを読む条件・きっかけが無い）。使い手が出たら、効果の列から和を作る関数を 1 つにして（足す → `applyStatLocks`）、和を作る所がそれを使う形にする（[design-stat-lock.md](design-stat-lock.md) 3.4 節）"
+}

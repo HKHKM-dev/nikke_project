@@ -185,7 +185,11 @@ const KIND_INFO: Record<string, Info> = {
     'check',
     '自分に付く▼（デバフ）を防ぎうる。気絶免疫は射撃場では防ぐものが無く、状態（stunImmunity）としてだけ読む（D。C-0886）',
   ],
-  'buffOp:nullify': ['増減効果の無効', 'gap', 'なし（チャージ速度の増減を無効にする等）'],
+  'buffOp:nullify': [
+    '増減効果の無効',
+    'ok',
+    'timed の lock（値なし = 値 0 の固定。チャージ速度の▲▼の無効。plan/design-stat-lock.md 3.1 節）',
+  ],
   'buffOp:nullifyStack': [
     'スタック量の増減効果の無効',
     'ok',
@@ -278,7 +282,7 @@ const KIND_INFO: Record<string, Info> = {
   'stat:fixed': [
     '値の固定（〜に固定）',
     'check',
-    'チャージ時間は fixedChargeTime。リロード速度の増加状態の固定（ジル）は値に効かない（C-0013。計算に無関係の notes）。ほかはなし',
+    'チャージ時間は fixedChargeTime。リロード速度の増加状態の固定は timed の lock（plan/design-stat-lock.md 3.1 節。ジルは値に効かないので計算に無関係の notes）。ほかはなし',
   ],
   'stat:overflowConvert': ['超過した値の変換', 'gap', 'なし'],
   // 目録（skills/counters.ts）のカウンタの増減・値の条件・上限のきっかけと、値の数だけの攻撃
@@ -570,13 +574,20 @@ export function effectKind(e: CatalogEffect): string {
 function effectStatus(e: CatalogEffect): readonly [Status, string] {
   if (e.kind === 'stat') {
     if (e.sub === 'stat:fixed')
-      return e.stat!.canon === 'chargeTime' ? ['ok', 'fixedChargeTime'] : ['gap', 'なし（〜に固定）'];
+      return e.stat!.canon === 'chargeTime'
+        ? ['ok', 'fixedChargeTime']
+        : e.stat!.canon === 'reloadSpeed'
+          ? ['ok', 'timed の lock']
+          : ['gap', 'なし（〜に固定）'];
     return statStatus(e);
   }
   const k = effectKind(e);
   const info = KIND_INFO[k];
   if (info === undefined) return ['check', '?'];
   if (k === 'instant:ammoDrain' && e.side === 'enemy') return ['nodmg', '敵の残弾'];
+  // 増減効果の無効は、値の固定 lock を書ける stat（チャージ速度・リロード速度）だけが語彙あり
+  if (k === 'buffOp:nullify' && !/チャージ速度|リロード速度/.test(e.quote))
+    return ['gap', 'なし（lock はチャージ速度・リロード速度だけ）'];
   // バーストの「フルバーストタイム N 秒▲▼」は CDN の burst_duration で入っている
   if (k.startsWith('fullBurst:') && e.implicit === 'burstUse' && e.conditions.length === 0) {
     return ['ok', 'CDN の burst_duration'];
