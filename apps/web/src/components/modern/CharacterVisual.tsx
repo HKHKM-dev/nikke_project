@@ -87,7 +87,7 @@ export function CharacterVisual({
         </div>
       )}
       {badges && elementBadge && <CharBadge badge={elementBadge} className="char-badge char-visual-corner-badge" />}
-      {badges && <FavoriteRibbons resourceId={character.resourceId} />}
+      {badges && <FavoriteRibbons resourceId={character.resourceId} corner={compact} />}
       {overlay}
       {unsupportedNote !== null && (
         // 印はバッジ ui_information。知らせはマウスを載せると出る

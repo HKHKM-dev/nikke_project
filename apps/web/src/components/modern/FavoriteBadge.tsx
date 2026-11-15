@@ -1,5 +1,6 @@
 // お気に入りのバッジ（ui_main_○○.svg）。押したバッジは、絵を型にしてバッジごとの色で塗る（styles.css の .favorite-badge）
 import { useContext } from 'react';
+import mainPlain from '../../assets/badges/ui_main.svg';
 import mainClub from '../../assets/badges/ui_main_club.svg';
 import mainDiamond from '../../assets/badges/ui_main_diamond.svg';
 import mainHeart from '../../assets/badges/ui_main_heart.svg';
@@ -25,10 +26,27 @@ export function FavoriteBadge({ mark, on }: { mark: FavoriteMark; on: boolean })
   );
 }
 
-/** 立ち絵の上端の中央に下げる、そのニケの押したバッジ（無ければ何も出さない） */
-export function FavoriteRibbons({ resourceId }: { resourceId: number }) {
+/**
+ * 立ち絵に出す、そのニケの押したバッジ（無ければ何も出さない）。ニケ一覧の四角の絵（corner）は右の列（P○ と属性のバッジの間）に 1 つだけ出し、
+ * 2 つ以上なら無地の ui_main に数を重ねる。ほかの絵は上端の中央に、押したバッジを並べて下げる
+ */
+export function FavoriteRibbons({ resourceId, corner = false }: { resourceId: number; corner?: boolean }) {
   const marks = favoriteMarksOf(useContext(FavoritesContext), resourceId);
   if (marks.length === 0) return null;
+  if (corner) {
+    return (
+      <span className="char-visual-favorite-corner" aria-hidden="true">
+        {marks.length === 1 ? (
+          <FavoriteBadge mark={marks[0]!} on />
+        ) : (
+          <>
+            <img className="favorite-badge" src={mainPlain} alt="" />
+            <span className="char-visual-favorite-count">{marks.length}</span>
+          </>
+        )}
+      </span>
+    );
+  }
   return (
     <span className="char-visual-favorites" aria-hidden="true">
       {marks.map((mark) => (
