@@ -33188,6 +33188,248 @@
       "minus": null,
       "plus": 0,
       "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1207-09",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "d38a9229f770d23e",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: 状態 memoryMaking の 1 回目の窓が無い"
+    },
+    {
+      "observation": "1207-10",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "f7c86366e8f65e99",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "plus: 状態 memoryMaking の 2 回目の窓が無い"
+    },
+    {
+      "observation": "1207-11",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "6b8a5473c24d2bb0",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "plus: 状態 memoryMaking の 3 回目の窓が無い"
+    },
+    {
+      "observation": "1207-12",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "dad6252c9d027a57",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "plus: 状態 memoryMaking の 4 回目の窓が無い"
+    },
+    {
+      "observation": "1207-13",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "e8144e11c4ea96ce",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "plus: 状態 memoryMaking の 5 回目の窓が無い"
+    },
+    {
+      "observation": "1207-14",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "00ec09fb31608884",
+      "effective": true,
+      "minus": -0.23071005461958616,
+      "plus": -0.3167217603258873
+    },
+    {
+      "observation": "1207-15",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "de65bcb48933177b",
+      "effective": true,
+      "minus": -0.2494127080184064,
+      "plus": 0.024319723735757078
+    },
+    {
+      "observation": "1207-16",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "0dfb9c3dc8789f98",
+      "effective": true,
+      "minus": -0.2672333895474007,
+      "plus": 0.023734365930649537
+    },
+    {
+      "observation": "1207-17",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "bc296205de5ecd94",
+      "effective": true,
+      "minus": -0.20648609979532234,
+      "plus": 0.10323973795944859
+    },
+    {
+      "observation": "1207-18",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "b41f3e7ca8d0b59d",
+      "effective": true,
+      "minus": -0.28074209720512755,
+      "plus": -0.28074209720512755
+    },
+    {
+      "observation": "1207-19",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "0b719161654cac0a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1207-20",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "ab2e49ae0fe28f67",
+      "effective": true,
+      "minus": -0.237965465121605,
+      "plus": 0.11897891570863668
+    },
+    {
+      "observation": "1207-21",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "fc0e18af5cb18afe",
+      "effective": true,
+      "minus": -0.318991158653059,
+      "plus": -0.318991158653059
+    },
+    {
+      "observation": "1207-22",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "6f2d4199d1e9cc48",
+      "effective": true,
+      "minus": -0.2842219282279727,
+      "plus": -0.2842219282279727
+    },
+    {
+      "observation": "1207-23",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "1b7696de74fa0dfd",
+      "effective": true,
+      "minus": -0.28422192822797276,
+      "plus": -0.28422192822797276
+    },
+    {
+      "observation": "1207-24",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "549ac945a599891c",
+      "effective": true,
+      "minus": -0.2842219282279727,
+      "plus": -0.2842219282279727
+    },
+    {
+      "observation": "1208-09",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "8eb793ae47932399",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: 状態 memoryMaking の 1 回目の窓が無い"
+    },
+    {
+      "observation": "1208-10",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "06af8151474aab6e",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "plus: 状態 memoryMaking の 2 回目の窓が無い"
+    },
+    {
+      "observation": "1208-11",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "3bacee6cf486fb77",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "plus: 状態 memoryMaking の 3 回目の窓が無い"
+    },
+    {
+      "observation": "1208-12",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "d961c3b3afcbcfd0",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "plus: 状態 memoryMaking の 4 回目の窓が無い"
+    },
+    {
+      "observation": "1208-13",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "db930da6fa1077b9",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "plus: 状態 memoryMaking の 5 回目の窓が無い"
+    },
+    {
+      "observation": "1208-14",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "011f8eca63c44aef",
+      "effective": true,
+      "minus": -0.23071005461958616,
+      "plus": -0.3167217603258873
+    },
+    {
+      "observation": "1208-15",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "a8b07dad75d0fdd0",
+      "effective": true,
+      "minus": -0.2494127080184064,
+      "plus": 0.024319723735757078
+    },
+    {
+      "observation": "1208-16",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "963a02a44c53da1b",
+      "effective": true,
+      "minus": -0.2672333895474007,
+      "plus": 0.023734365930649537
+    },
+    {
+      "observation": "1208-17",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "30f463b4dd068f97",
+      "effective": true,
+      "minus": -0.20648609979532234,
+      "plus": 0.10323973795944859
+    },
+    {
+      "observation": "1208-18",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "25447d9ddecbb3ae",
+      "effective": true,
+      "minus": -0.28074209720512755,
+      "plus": -0.28074209720512755
+    },
+    {
+      "observation": "1208-19",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "83e8bfcc416309f9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1208-20",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "9dccf3276fceff04",
+      "effective": true,
+      "minus": -0.237965465121605,
+      "plus": 0.11897891570863668
+    },
+    {
+      "observation": "1208-21",
+      "element": "アルカナ：フォーチュンメイト burst.effects[0]",
+      "key": "222443c65cce2a0d",
+      "effective": true,
+      "minus": -0.318991158653059,
+      "plus": -0.318991158653059
     }
   ]
 }
