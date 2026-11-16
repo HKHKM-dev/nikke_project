@@ -1070,7 +1070,7 @@ svg.settings-menu-icon,
 .badge-core_plain {
   --badge-accent: #e600e6;
 }
-/* コアの印の中央（黒い丸）に段階（01〜07）を重ねる */
+/* コアの印の中央（黒い丸）に段階（01〜07）を重ねる。字は印の SVG の中に描く（GrowthMarks.tsx の CoreLabel。大きさは印に合わせて変わる） */
 .growth-marks-core {
   position: relative;
   display: inline-grid;
@@ -1080,10 +1080,6 @@ svg.settings-menu-icon,
   margin-left: 2px;
   /* 星より大きい分を上にはみ出させ、行の高さに数えない（コア強化があっても、無いときと同じ高さに星を置く。下は名前なので上へ） */
   margin-top: calc(var(--growth-star-w) - var(--growth-core-w));
-  font-size: 0.7rem;
-  font-weight: bold;
-  color: #fff;
-  text-shadow: none;
 }
 .growth-marks-core > svg {
   position: absolute;
@@ -1091,16 +1087,12 @@ svg.settings-menu-icon,
   width: 100%;
   height: 100%;
 }
-.growth-marks-core > span {
-  position: relative;
-  /* 字の箱を大文字・数字の高さ（上は cap の高さ・下は並びの線）に切り詰めて、見える字を枠の中央に置く */
-  line-height: 1;
-  text-box: trim-both cap alphabetic;
+.growth-marks-core text {
+  fill: #fff;
+  font-weight: bold;
   letter-spacing: -0.02em;
 }
-/* MAX は 3 字なので、枠に収まるよう小さくする */
-.growth-marks-core > .growth-marks-core-max {
-  font-size: 0.72em;
+.growth-marks-core .growth-marks-core-max {
   letter-spacing: -0.06em;
 }
 .char-tray-growth {
@@ -1117,11 +1109,6 @@ svg.settings-menu-icon,
   /* 四角の絵の右上（上端に寄せてある）では、はみ出しを下へ */
   margin-top: 0;
   margin-bottom: calc(var(--growth-star-w) - var(--growth-core-w));
-}
-.char-tray-growth .growth-marks-core,
-.char-tray-tall-area .growth-marks-core {
-  /* アイコンとの比はスロット（0.7rem・24px）とほぼ同じ */
-  font-size: 0.6rem;
 }
 .scrolling-name {
   text-align: left;
