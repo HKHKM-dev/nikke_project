@@ -57,6 +57,16 @@ export function favoriteMarksOf(favorites: Favorites, resourceId: number): reado
   return favorites[String(resourceId)] ?? [];
 }
 
+/** お気に入りの絞り込み: 押したバッジ（marks）のどれかが付いたニケだけ（OR）。どれも押していなければ全部 */
+export function filterByFavorites<T extends { resourceId: number }>(
+  list: readonly T[],
+  favorites: Favorites,
+  marks: readonly FavoriteMark[],
+): readonly T[] {
+  if (marks.length === 0) return list;
+  return list.filter((c) => favoriteMarksOf(favorites, c.resourceId).some((m) => marks.includes(m)));
+}
+
 /** 立ち絵（CharacterVisual）がバッジを出すために読む。モダン UI（ModernView）だけが渡す */
 export const FavoritesContext = createContext<Favorites>({});
 

@@ -9,7 +9,7 @@ import {
 } from './badges.ts';
 import { BadgeFilters } from './BadgeFilter.tsx';
 import { FavoriteButtons } from './FavoriteBadge.tsx';
-import { favoriteMarksOf, FavoritesContext, toggleFavoriteMark, type FavoriteMark } from '../../favorites.ts';
+import { filterByFavorites, FavoritesContext, toggleFavoriteMark, type FavoriteMark } from '../../favorites.ts';
 import { BadgeIcon } from './BadgeIcon.tsx';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
 import { activeDragData, type OverDragData } from './dropIntent.ts';
@@ -71,10 +71,7 @@ export function CharacterTray({
   const favorites = useContext(FavoritesContext);
   const [favoriteFilter, setFavoriteFilter] = useState<readonly FavoriteMark[]>([]);
   const filteredCharacters = useMemo(
-    () =>
-      favoriteFilter.length === 0
-        ? badgeFiltered
-        : badgeFiltered.filter((c) => favoriteMarksOf(favorites, c.resourceId).some((m) => favoriteFilter.includes(m))),
+    () => filterByFavorites(badgeFiltered, favorites, favoriteFilter),
     [badgeFiltered, favoriteFilter, favorites],
   );
 
