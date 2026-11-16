@@ -9,6 +9,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { burstDelaysOf } from '../burst/landing.ts';
 import { effectFrameOf, hexagonFrameOf, hitFramesOf, hitShareOf } from '../burst/schedule.ts';
 import { itemsOf } from '../skills/holders.ts';
+import { counterEffectiveFrom } from '../skills/holders/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, readJson } from './teamHelpers.ts';
 
@@ -60,7 +61,7 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, maiden: M, b
   const plan = planTeamRun(input);
   const records = plan.history.counters.filter((r) => r.slotIndex === M && r.counter === 'mp');
   /** フレーム f の前のフレームの終わりの MP（条件 selfCounter・perCount と同じ見え方） */
-  const mpBefore = (f: number) => records.filter((r) => r.frame < f).at(-1)?.value ?? 0;
+  const mpBefore = (f: number) => records.filter((r) => counterEffectiveFrom(r) <= f).at(-1)?.value ?? 0;
   const schedule = plan.schedule!;
   const mine = schedule.activations.filter((a) => a.slotIndex === M);
   const uses = mine.map(effectFrameOf);

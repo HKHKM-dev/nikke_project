@@ -11,6 +11,7 @@ import {
 } from '../../burst/controller.ts';
 import { burstCandidateOf, burstUnitOf } from '../../burst/dynamic.ts';
 import type { BurstActivation, BurstSchedule, BurstScheduleModel } from '../../burst/schedule.ts';
+import type { BurstDamageEffect } from '../../skills/types.ts';
 import type { TimelineSlot } from '../../skills/timeline.ts';
 import type { FirstPassBase } from './base.ts';
 import type { FirstPassOptions, InstantApplication } from '../firstPass.ts';
@@ -100,10 +101,11 @@ export function createBurstStep({
     };
   }
   // 所持カウンタ分の連続攻撃（burstDamage の hitsFrom。plan/design-maiden-ice-rose.md 8 節）: 枠ごとのカウンタ
-  const hitsFromOf = slots.map((s) => {
-    const effect = s?.definition?.skills.burst.effects.find((e) => e.kind === 'burstDamage');
-    return effect?.kind === 'burstDamage' ? effect.hitsFrom?.counter : undefined;
-  });
+  const hitsFromOf = slots.map(
+    (s) =>
+      s?.definition?.skills.burst.effects.find((e): e is BurstDamageEffect => e.kind === 'burstDamage')?.hitsFrom
+        ?.counter,
+  );
   /** 発動のヒットを、前のフレームの終わりのカウンタの値の数に切る（各ヒットは説明文の値） */
   const cutCounterHits = (a: BurstActivation): void => {
     const counter = hitsFromOf[a.slotIndex];

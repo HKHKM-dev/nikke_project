@@ -135,9 +135,7 @@ export function burstHitsOfSlot(
 ): { activationFrame: number; frame: number; share: number }[] {
   return schedule.activations
     .filter((a) => a.slotIndex === slotIndex)
-    .flatMap((a) => {
-      return hitFramesOf(a).map((frame) => ({ activationFrame: a.frame, frame, share: hitShareOf(a) }));
-    })
+    .flatMap((a) => hitFramesOf(a).map((frame) => ({ activationFrame: a.frame, frame, share: hitShareOf(a) })))
     .filter((h) => h.frame < frames);
 }
 

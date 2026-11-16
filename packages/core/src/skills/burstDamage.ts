@@ -98,8 +98,8 @@ export type ResolvedSkillDamage = {
   /** 倍率ダメージの会心をきっかけにする 1 ヒット（期待値に倍率ダメージの会心率を掛ける。plan/design-julia.md 2.1 節） */
   onSkillCrit?: true;
   /**
-   * 攻撃力に合算する、撃つ側の最終最大HP の比率（damage の addCasterMaxHpRef。plan/design-maiden-ice-rose.md 2.2 節）。frame/plan.ts の
-   * slotHitPusherOf がヒットの攻撃力に足す
+   * 攻撃力に合算する、撃つ側の最終最大HP の比率（burstDamage の addCasterMaxHpRef。plan/design-maiden-ice-rose.md 2.2 節）。slotBurstHit が
+   * ヒットの攻撃力に足す
    */
   addCasterMaxHpRatio?: number;
   /** 同 5.5 節: 「N 回順番に攻撃」のヒット。順番攻撃ダメージ▲（sequentialAttackDamage）を掛ける */
@@ -255,12 +255,6 @@ export function resolveBurstDamage(
     // ヒットで等分すると、各ヒットが説明文の値になる。回数と分かれたヒットの数（burstDelaysOf の hitOffsets）がそろうかは、
     // 定義のテスト（skills/__tests__/definitions.test.ts）が確かめる。plan/design-skill-stage10.md 2.2 節）
     const hits = effect.hitsRef === undefined ? 1 : skillValue(skill, effect.hitsRef, levels.burst);
-    // 所持カウンタ分の連続攻撃と最大HP の合算は、ヒットの切り方と攻撃力が発動ごとに 1 つなので、スロットの burstDamage が 1 つのときだけ
-    // （plan/design-maiden-ice-rose.md 8 節）
-    const single = entry.effects.filter((e) => e.kind === 'burstDamage').length === 1;
-    if (!single && (effect.hitsFrom !== undefined || effect.addCasterMaxHpRef !== undefined)) {
-      throw new RangeError(`skill ${skill.id}: hitsFrom and addCasterMaxHpRef need the only burstDamage of the slot`);
-    }
     const r: ResolvedBurstDamage = {
       source: { resourceId: character.resourceId, skill: 'burst', name: skill.name },
       damageType: effect.damageType,
@@ -409,9 +403,6 @@ export function resolveDamageEffects(
       if (foldsIntoShot(effect, trigger, def) && effect.onSkillCrit === true) {
         throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot fire on a skill critical hit`);
       }
-      if (foldsIntoShot(effect, trigger, def) && effect.addCasterMaxHpRef !== undefined) {
-        throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot add the max HP to the attack`);
-      }
       if (foldsIntoShot(effect, trigger, def)) return;
       // 固定ダメージ（与えたダメージ量の X%）は畳み込む形だけを持つ（plan/design-emilia.md 2.2 節）
       if (effect.damageType === 'fixedShare') {
@@ -493,8 +484,6 @@ export function resolveDamageEffects(
         r.coreHit = true;
       }
       if (effect.onSkillCrit === true) r.onSkillCrit = true;
-      if (effect.addCasterMaxHpRef !== undefined)
-        r.addCasterMaxHpRatio = skillValue(skill, effect.addCasterMaxHpRef, levels[slot]) / 100;
       if (effect.perCountIntervalSeconds !== undefined) r.perCountIntervalSeconds = effect.perCountIntervalSeconds;
       if (effect.perCountIntervalFrames !== undefined) r.perCountIntervalFrames = effect.perCountIntervalFrames;
       // 「順番に攻撃」の perCount の数だけのヒット（オートファイアの効果 2）も

@@ -50,6 +50,17 @@ export function validateBurstHitTriggers(effects: readonly SkillEffect[], slot: 
 }
 
 /**
+ * 所持カウンタ分の連続攻撃（hitsFrom）と最大HP の合算（addCasterMaxHpRef）は、ヒットの切り方と攻撃力が発動ごとに 1 つなので、
+ * burst スロットの burstDamage が 1 つのときだけ書ける（plan/design-maiden-ice-rose.md 8 節）
+ */
+function validateSingleBurstDamage(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const damages = (entries.burst?.effects ?? []).filter((e) => e.kind === 'burstDamage');
+  if (damages.length < 2) return;
+  if (damages.some((e) => e.hitsFrom !== undefined || e.addCasterMaxHpRef !== undefined))
+    fail(`${root}.burst`, 'hitsFrom and addCasterMaxHpRef need the only burstDamage of the slot');
+}
+
+/**
  * cycle は 1 スロットに 1 つまで。cycleEvery の slot にはちょうど 1 つの cycle があり、
  * every が即値ならそれより小さい（間隔を「速める」効果だけ。everyRef との比較は Lv で決まるので解決時に見る）
  */
@@ -705,6 +716,7 @@ export function validateCrossChecks(entries: Partial<Record<SkillSlot, SkillEntr
     validateSummons,
     validateCooldownTimers,
     validateDotEffect,
+    validateSingleBurstDamage,
   ])
     check(entries, root);
 }
