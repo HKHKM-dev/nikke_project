@@ -349,6 +349,14 @@ export function baseMaxHpOf(input: { character: CharacterData; growth: GrowthInp
   return input.hpOverride ?? computeStat(input.character, 'hp', input.growth);
 }
 
+/** 最終最大HP（バフ前の最大HP × (1 + 最大HP▲ と最大HP のみ▲ の比率の和)。plan/design-skill-stage6.md 1.2 節）。maxHpRatio はその枠のバフの合計 */
+export function finalMaxHpOf(
+  input: { character: CharacterData; growth: GrowthInput; hpOverride?: number },
+  buffs: { maxHpRatio: number },
+): number {
+  return baseMaxHpOf(input) * (1 + buffs.maxHpRatio);
+}
+
 /**
  * バフ前の防御力（plan/design-skill-stage7.md 1.1 節）。defenceOverride（射撃場スペック固定・育成入力）があればそれ、
  * 無ければ育成値から算出する（baseMaxHpOf と同じ流儀）

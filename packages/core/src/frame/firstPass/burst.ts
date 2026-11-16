@@ -11,6 +11,8 @@ import {
 } from '../../burst/controller.ts';
 import { burstCandidateOf, burstUnitOf } from '../../burst/dynamic.ts';
 import type { BurstActivation, BurstSchedule, BurstScheduleModel } from '../../burst/schedule.ts';
+import type { BurstDamageEffect } from '../../skills/types.ts';
+import { counterMax } from '../../skills/counters.ts';
 import type { TimelineSlot } from '../../skills/timeline.ts';
 import type { FirstPassBase } from './base.ts';
 import type { FirstPassOptions, InstantApplication } from '../firstPass.ts';
@@ -66,6 +68,7 @@ export function createBurstStep({
   instants,
   lists,
   passive,
+  slots,
   untargetable,
 }: FirstPassBase & InstantSources & BurstScheduleLayer) {
   // T4 の▼ の件を持ちうる枠の、最後の発動（発動の後に付いた▼ の縮めた長さを足す先）
@@ -98,6 +101,25 @@ export function createBurstStep({
       return seconds;
     };
   }
+  // 所持カウンタ分の連続攻撃（burstDamage の hitsFrom。plan/design-maiden-ice-rose.md 8 節）: 枠ごとのカウンタ
+  const hitsFromOf = slots.map(
+    (s) =>
+      s?.definition?.skills.burst.effects.find((e): e is BurstDamageEffect => e.kind === 'burstDamage')?.hitsFrom
+        ?.counter,
+  );
+  /** 発動のヒットを、前のフレームの終わりのカウンタの値の数に切る（各ヒットは説明文の値） */
+  const cutCounterHits = (a: BurstActivation): void => {
+    const counter = hitsFromOf[a.slotIndex];
+    if (counter === undefined) return;
+    const offsets = a.hitOffsets ?? [0];
+    // 遅れの表の行はカウンタの上限の数のヒットを持つ（足りなければ、ヒットを黙って減らさずに止める）
+    if (offsets.length < counterMax(counter))
+      throw new RangeError(
+        `slot ${a.slotIndex}: hitsFrom needs ${counterMax(counter)} split hits in the burst delay table`,
+      );
+    a.hitOffsets = offsets.slice(0, lists.counterValueAt(a.slotIndex, counter));
+    a.hitShare = 1;
+  };
   /** いま見ている（または次に来る）狙えない窓の添字 */
   let nextBlock = 0;
   /** フレーム f が狙えない窓の中か */
@@ -132,6 +154,7 @@ export function createBurstStep({
       };
       for (let i = before; i < controller.activations.length; i++) {
         const a = controller.activations[i]!;
+        cutCounterHits(a);
         const seconds = (passive[a.slotIndex]?.buffs.burstCooldown ?? 0) + lists.burstCooldownAt(a.slotIndex, f - 1);
         if (seconds > 0) shorten(a, seconds);
         if (lists.hasBurstCooldownTracks(a.slotIndex)) lastActivationOf.set(a.slotIndex, a);

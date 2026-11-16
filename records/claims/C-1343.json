@@ -1,0 +1,25 @@
+{
+  "id": "C-1343",
+  "text": "メイデン：アイスローズの MP は、バースト 1 段階突入時に 0 なら 1 回復し、フルバーストタイムの始まりに 1 以上なら 1 チャージし、バーストの使用で全部消える（自分が III を撃った回のフルバーストでは、消えた後なのでチャージしない）。バーストの連続攻撃のヒットの数は、使った時の MP",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1240-14`・`1241-10`・`1242-10`。V-0801",
+  "model": "data/skills/183.json の skill1 の effects[0]〜[2]（counterChange。目録 skills/counters.ts の mp）と burst の effects[0] の hitsFrom（frame/firstPass/burst.ts が発動ごとにヒットを MP の数に切る）",
+  "replaces": [],
+  "updated": "2026-11-16",
+  "subject": {
+    "places": [
+      "data/skills/183.json の skill1 の effects[0]",
+      "data/skills/183.json の skill1 の effects[1]",
+      "data/skills/183.json の skill1 の effects[2]",
+      "data/skills/183.json の burst の effects[0]"
+    ]
+  },
+  "decidedOn": [],
+  "judgment": {
+    "decided": "2026-11-16",
+    "overrides": ["合う仮説が 2 つ以上"],
+    "reason": "予測ファイルで録画と比べられた指標（A-shot-before・A-s2・A-shot-after）は 3 つの仮説（H1・H-burstDamage・H-restore）が同じ値を出すものだけで、見分ける値は別の指標で読んだ（連続攻撃は burstDamage に移したので burstHitDamage、ソルジャーE.G. の発は命中時の確率の▲が期待値の格子に当たらないので fullBurstBuffApplied と数）。その読みでは H1 の damage の形と H-restore は合わず、いまの定義（H-burstDamage の形・フルバーストのチャージだけ）と合う。2026-11-16 のオーナーの判断"
+  }
+}

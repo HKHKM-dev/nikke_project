@@ -1,0 +1,209 @@
+{
+  "formatVersion": 1,
+  "resourceId": 183,
+  "checkedAt": "2026-11-16",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "counterChange",
+          "counter": "mp",
+          "trigger": "burstStage1Enter",
+          "target": "self",
+          "amountRef": 1,
+          "condition": {
+            "selfCounter": {
+              "counter": "mp",
+              "below": 1
+            }
+          },
+          "assumes": {
+            "ja": "バースト 1 段階突入（ゲージの満タンと、チェーンが時間切れで 1 段階に戻った時）に、MP が 0 なら 1 回復する。上限 12 は目録の値",
+            "en": "On entering Burst stage 1 (gauge full, and a timed-out chain returning to stage 1), MP is restored by 1 if it is 0. The cap of 12 is the catalog value"
+          },
+          "claims": [
+            "C-1343"
+          ]
+        },
+        {
+          "kind": "counterChange",
+          "counter": "mp",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "amountRef": 2,
+          "condition": {
+            "selfCounter": {
+              "counter": "mp",
+              "atLeast": 1
+            }
+          },
+          "assumes": {
+            "ja": "フルバーストタイムの始まりに、MP が 1 以上なら 1 チャージする。自分が III を撃った回は、バーストで MP が消えた後（フルバーストの始まりは発動の 6f 後）なのでチャージしない",
+            "en": "At the start of Full Burst, MP is charged by 1 if it is 1 or more. When she used the Burst III herself, MP has already been cleared by then (Full Burst starts 6 frames after activation), so it does not charge"
+          },
+          "claims": [
+            "C-1343"
+          ]
+        },
+        {
+          "kind": "counterChange",
+          "counter": "mp",
+          "trigger": "burstUse",
+          "target": "self",
+          "amount": 12,
+          "decrease": true,
+          "assumes": {
+            "ja": "「バーストスキルを使用した時、蓄積したすべての MP が消滅」を、上限と同じ量の減少で書く。同じフレームのバーストの連続攻撃は、消える前の MP を読む",
+            "en": "'All accumulated MP disappears when the Burst Skill is used' is written as a decrease by the cap. The Burst's consecutive attacks on the same frame read the MP before it disappears"
+          },
+          "claims": [
+            "C-1343"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot",
+            "everyRef": 6
+          },
+          "target": "self",
+          "stat": "maxHpOnly",
+          "ref": 3,
+          "maxStacksRef": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "最大HP のみ▲。与ダメージの式は読まず、S2 の MP 使用後の攻撃力▲とバーストの合算が、自分の最終最大HP を通して読む",
+            "en": "Max HP-only increase. The damage formula does not read it; S2's post-MP attack increase and the Burst's added max HP read it through her final max HP"
+          },
+          "claims": [
+            "C-1349"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "condition": {
+            "selfCounter": {
+              "counter": "mp",
+              "atLeast": 1
+            }
+          },
+          "target": "allies",
+          "excludeSelf": "always",
+          "targetElement": "Electronic",
+          "stat": "elementDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "「MP チャージ時」を、S1 の MP のチャージと同じきっかけと条件（フルバーストの始まり・MP が 1 以上）で書く。1 段階突入の回復（MP 0 → 1）では付かず、自分が III を撃った回のフルバーストでも付かない（MP がバーストで消えた後）。MP が上限 12 のときのチャージ（増えない）でも付く読み。有利コードの攻撃ダメージ▲は、有利コードの倍率 1.1 に足す",
+            "en": "\"When MP is charged\" is written with the same trigger and condition as S1's MP charge (start of Full Burst, MP of 1 or more). It is not applied by the stage-1 restore (MP 0 → 1), nor at a Full Burst where she used the Burst III herself (MP is cleared by the Burst first). Read as applying even when MP is at the cap of 12 (no increase). The advantage-code damage increase is added to the advantage multiplier 1.1"
+          },
+          "claims": [
+            "C-1347",
+            "C-1350"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "condition": {
+            "selfCounter": {
+              "counter": "mp",
+              "atLeast": 1
+            }
+          },
+          "target": "allies",
+          "excludeSelf": "always",
+          "targetElement": "Electronic",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "「MP チャージ時」の読みは effects[0] と同じ。発動者基準（メイデンの最終攻撃力）の攻撃力▲",
+            "en": "Same reading of \"when MP is charged\" as effects[0]. Attack increase based on the caster (Maiden's final attack)"
+          },
+          "claims": [
+            "C-1347"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "elementDamage",
+          "ref": 5,
+          "durationRef": 6,
+          "assumes": {
+            "ja": "「MP 使用後」をバーストの使用で書く。バーストの連続攻撃には乗らない（連続攻撃は発動の直前のバフで出る）。有利コードの攻撃ダメージ▲は、有利コードの倍率 1.1 に足す",
+            "en": "\"After using MP\" is written as Burst use. It is not on the Burst's consecutive attacks (they use the buffs just before activation). The advantage-code damage increase is added to the advantage multiplier 1.1"
+          },
+          "claims": [
+            "C-1350"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "scaling": "casterFinalMaxHp",
+          "ref": 7,
+          "durationRef": 8,
+          "assumes": {
+            "ja": "「MP 使用後」をバーストの使用で書く。攻撃力▲は、効いている各フレームの自分の最終最大HP（S1 の最大HP のみ▲ のスタックを含む）の 3.2%。バーストの連続攻撃には乗らない",
+            "en": "\"After using MP\" is written as Burst use. The increase is 3.2% of her final max HP at each frame (including S1's max HP-only stacks). It is not on the Burst's consecutive attacks"
+          },
+          "claims": [
+            "C-1346"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "fullChargeShot",
+            "everyRef": 11
+          },
+          "damageType": "skill",
+          "ref": 10,
+          "gaugeHits": [
+            0
+          ],
+          "assumes": {
+            "ja": "照準線に最も近い敵 1 機は的。フルチャージの発ごとに、射手の 1 ヒットぶんのバーストゲージを溜める。録画では通常攻撃の着弾の 8〜10f 前に別の増分で出るが、モデルは発に畳み込む（発と同じフレーム）",
+            "en": "The enemy nearest the crosshair is the target. Each full-charge shot also charges the shooter's per-hit burst gauge. In the recordings it shows as a separate increment 8–10 frames before the normal attack lands; the model folds it into the shot (same frame)"
+          },
+          "claims": [
+            "C-1348"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "damageType": "skill",
+          "ref": 3,
+          "hitsFrom": {
+            "counter": "mp"
+          },
+          "addCasterMaxHpRef": 2,
+          "assumes": {
+            "ja": "所持 MP 分の連続攻撃。発動のフレームの MP の数だけ、1 ヒットずつ説明文の値で出し、ヒットの攻撃力に自分の最終最大HP の 10% を足す。バーストスキルダメージと同じく、発動の直前のバフで出し、フルバースト補正も同じ発動の▲（S2 の MP 使用後の▲）も乗らない。ヒットの時刻は遅れの表の行。対象（照準線に最も近い敵 1 機）は的",
+            "en": "Consecutive attacks for the MP held. As many hits as MP at activation, each at the description value, with 10% of her final max HP added to the attack. Like other Burst Skill damage, they use the buffs just before activation and get neither the Full Burst bonus nor the same activation's increases (S2's post-MP buffs). Hit timings are in the burst delay table. The target (one enemy nearest the crosshair) is the shooting-range target"
+          },
+          "claims": [
+            "C-1343",
+            "C-1344",
+            "C-1345"
+          ]
+        }
+      ]
+    }
+  }
+}

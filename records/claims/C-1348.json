@@ -1,0 +1,25 @@
+{
+  "id": "C-1348",
+  "text": "メイデン：アイスローズの S2 のフルチャージごとの倍率ダメージは最終攻撃力の 547.62% で、1 回ごとに射手の 1 ヒットぶんのバーストゲージを溜める（録画では通常攻撃の着弾の 8〜10f 前に別の増分で出る）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1240-18`・`1240-20`・`1241-20`。V-0801",
+  "model": "data/skills/183.json の skill2 の effects[4]（fullChargeShot ごとの damage の gaugeHits [0]）",
+  "replaces": [],
+  "updated": "2026-11-16",
+  "subject": {
+    "places": ["data/skills/183.json の skill2 の effects[4]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1240",
+      "role": "仮説の出どころ"
+    }
+  ],
+  "judgment": {
+    "decided": "2026-11-16",
+    "overrides": ["合う仮説が 2 つ以上"],
+    "reason": "予測ファイルで録画と比べられた指標（A-shot-before・A-s2・A-shot-after）は 3 つの仮説（H1・H-burstDamage・H-restore）が同じ値を出すものだけで、見分ける値は別の指標で読んだ（連続攻撃は burstDamage に移したので burstHitDamage、ソルジャーE.G. の発は命中時の確率の▲が期待値の格子に当たらないので fullBurstBuffApplied と数）。その読みでは H1 の damage の形と H-restore は合わず、いまの定義（H-burstDamage の形・フルバーストのチャージだけ）と合う。2026-11-16 のオーナーの判断"
+  }
+}

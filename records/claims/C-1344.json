@@ -1,0 +1,21 @@
+{
+  "id": "C-1344",
+  "text": "メイデン：アイスローズのバーストの連続攻撃の 1 ヒットは、(最終攻撃力 + スキル発動者の最終最大HP の 10% − 防御力) × 1372.8% のバーストスキルダメージで、発動の直前のバフで出す。フルバースト補正も、同じ発動で付く MP 使用後の▲も乗らない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1240-09`・`1240-10`・`1240-11`・`1240-12`・`1243-11`。V-0801",
+  "model": "data/skills/183.json の burst の effects[0]（burstDamage の addCasterMaxHpRef。sim/engine.ts が撃つ側の最終最大HP を slotBurstHit に渡す）",
+  "replaces": [],
+  "updated": "2026-11-16",
+  "subject": {
+    "places": ["data/skills/183.json の burst の effects[0]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値（1372.8%・10%）と、スペック固定の攻撃力・最大HP（computeFixedSpecAttack・computeFixedSpecHp）、最大HP のみ▲ のスタック（6.34%）",
+  "judgment": {
+    "decided": "2026-11-16",
+    "overrides": ["合う仮説が 2 つ以上"],
+    "reason": "予測ファイルで録画と比べられた指標（A-shot-before・A-s2・A-shot-after）は 3 つの仮説（H1・H-burstDamage・H-restore）が同じ値を出すものだけで、見分ける値は別の指標で読んだ（連続攻撃は burstDamage に移したので burstHitDamage、ソルジャーE.G. の発は命中時の確率の▲が期待値の格子に当たらないので fullBurstBuffApplied と数）。その読みでは H1 の damage の形と H-restore は合わず、いまの定義（H-burstDamage の形・フルバーストのチャージだけ）と合う。2026-11-16 のオーナーの判断"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "id": "C-1346",
+  "text": "メイデン：アイスローズの S2 の MP 使用後の攻撃力▲は、バーストの使用から自分に付き、効いている各フレームの自分の最終最大HP（S1 の最大HP のみ▲ を含む）の 3.2% を攻撃力に足す",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1240-19`・`1240-17`。V-0801",
+  "model": "data/skills/183.json の skill2 の effects[3]（burstUse の timed の casterFinalMaxHp）",
+  "replaces": [],
+  "updated": "2026-11-16",
+  "subject": {
+    "places": ["data/skills/183.json の skill2 の effects[3]"]
+  },
+  "decidedOn": [],
+  "judgment": {
+    "decided": "2026-11-16",
+    "overrides": ["合う仮説が 2 つ以上"],
+    "reason": "予測ファイルで録画と比べられた指標（A-shot-before・A-s2・A-shot-after）は 3 つの仮説（H1・H-burstDamage・H-restore）が同じ値を出すものだけで、見分ける値は別の指標で読んだ（連続攻撃は burstDamage に移したので burstHitDamage、ソルジャーE.G. の発は命中時の確率の▲が期待値の格子に当たらないので fullBurstBuffApplied と数）。その読みでは H1 の damage の形と H-restore は合わず、いまの定義（H-burstDamage の形・フルバーストのチャージだけ）と合う。2026-11-16 のオーナーの判断"
+  }
+}

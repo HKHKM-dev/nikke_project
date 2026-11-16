@@ -1,0 +1,505 @@
+[
+  {
+    "id": "1243-01",
+    "recording": "1243",
+    "kind": "timing",
+    "use": "record",
+    "value": [1172, 2373, 3575, 4772, 5977, 7178, 8379, 9622, 10824],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・5・4・0・0・0・0・0f"
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1243-02",
+    "recording": "1243",
+    "kind": "timing",
+    "use": "record",
+    "value": [1201, 2403, 3604, 4805, 6006, 7207, 8409, 9651, 10853],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・6・6・0・0・0・6・0・0f"
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1243-03",
+    "recording": "1243",
+    "kind": "timing",
+    "use": "record",
+    "value": [1230, 2431, 3633, 4834, 6035, 7236, 8437, 9680, 10882],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1243-04",
+    "recording": "1243",
+    "kind": "timing",
+    "use": "record",
+    "value": [1839, 3041, 4241, 5443, 6644, 7845, 8977, 10290, 11491],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1243-05",
+    "recording": "1243",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 610, 608, 609, 609, 609, 540, 610, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1243-06",
+    "recording": "1243",
+    "kind": "timing",
+    "use": "record",
+    "value": [2367, 3568, 5971, 7172, 8373, 10818],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f9575"
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1243-07",
+    "recording": "1243",
+    "kind": "timing",
+    "use": "record",
+    "value": [2396, 3597, 4799, 6000, 7201, 8402, 10847],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1243-08",
+    "recording": "1243",
+    "kind": "timing",
+    "use": "record",
+    "value": [3625, 6028, 8430],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1243-09",
+    "recording": "1243",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 2316431,
+    "description": "メイデンの 1 回目のバースト（2 回目のフルバースト）の後の S2 の倍率ダメージ（会心なし。f2500）。MP 使用後の攻撃力▲（最終最大HP の 3.2%）と有利コードの攻撃ダメージ▲ 31.68%（有利コードの 1.1 に足す）・フルバースト補正。31.68% が無ければ 0.776 倍の約 180 万",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "バーストの前の S2 は 481,026（437,296 × 1.1）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1700,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1243-10",
+    "recording": "1243",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 1080412,
+    "description": "同じ間のメイデンの通常攻撃のコア・会心なしの 1 ヒット（f2510）。MP 使用後の 2 つの▲とフルバースト補正",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "S2 の倍率ダメージ（f2500）の 10f 後の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1700,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1243-11",
+    "recording": "1243",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 13660486,
+    "description": "メイデンの 1 回目のバーストの連続攻撃の 2 ヒットの和（会心なし。f2499 の 6,830,243 × 2。f2493 の増分はソルジャーE.G. の発と同じフレームの和）。有利コードの 1.1 が乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00（f2431）の 62・68f 後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.000001
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1243-12",
+    "recording": "1243",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": 1,
+    "description": "1 回目のフルバーストで、ソルジャーE.G. に MP チャージ時の有利コードの攻撃ダメージ▲（40.9%）が付いたか（付いた 1・付かない 0）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と使い捨てのスクリプト（ソルジャーE.G. の 1 ヒットを、攻撃力の状態 4 つ × 有利コードの倍率（1.1・1.509）× 倍率（コア・会心・距離・フルバースト）の格子に当てた）",
+      "note": "ソルジャーE.G. が III を撃った 1・3・5・7・9 回目は、フルバーストの中の発がどれも 1.509 倍（78〜99 発）。メイデンが撃った回は 1.1 倍だけ（57〜93 発）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "elementDamage",
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1243-13",
+    "recording": "1243",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": 0,
+    "description": "2 回目のフルバーストで、ソルジャーE.G. に MP チャージ時の有利コードの攻撃ダメージ▲（40.9%）が付いたか（付いた 1・付かない 0）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と使い捨てのスクリプト（ソルジャーE.G. の 1 ヒットを、攻撃力の状態 4 つ × 有利コードの倍率（1.1・1.509）× 倍率（コア・会心・距離・フルバースト）の格子に当てた）",
+      "note": "ソルジャーE.G. が III を撃った 1・3・5・7・9 回目は、フルバーストの中の発がどれも 1.509 倍（78〜99 発）。メイデンが撃った回は 1.1 倍だけ（57〜93 発）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "elementDamage",
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1243-14",
+    "recording": "1243",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": 1,
+    "description": "3 回目のフルバーストで、ソルジャーE.G. に MP チャージ時の有利コードの攻撃ダメージ▲（40.9%）が付いたか（付いた 1・付かない 0）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と使い捨てのスクリプト（ソルジャーE.G. の 1 ヒットを、攻撃力の状態 4 つ × 有利コードの倍率（1.1・1.509）× 倍率（コア・会心・距離・フルバースト）の格子に当てた）",
+      "note": "ソルジャーE.G. が III を撃った 1・3・5・7・9 回目は、フルバーストの中の発がどれも 1.509 倍（78〜99 発）。メイデンが撃った回は 1.1 倍だけ（57〜93 発）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "elementDamage",
+        "n": 2
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1243-15",
+    "recording": "1243",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": 0,
+    "description": "4 回目のフルバーストで、ソルジャーE.G. に MP チャージ時の有利コードの攻撃ダメージ▲（40.9%）が付いたか（付いた 1・付かない 0）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と使い捨てのスクリプト（ソルジャーE.G. の 1 ヒットを、攻撃力の状態 4 つ × 有利コードの倍率（1.1・1.509）× 倍率（コア・会心・距離・フルバースト）の格子に当てた）",
+      "note": "ソルジャーE.G. が III を撃った 1・3・5・7・9 回目は、フルバーストの中の発がどれも 1.509 倍（78〜99 発）。メイデンが撃った回は 1.1 倍だけ（57〜93 発）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "elementDamage",
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1243-16",
+    "recording": "1243",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": 1,
+    "description": "5 回目のフルバーストで、ソルジャーE.G. に MP チャージ時の有利コードの攻撃ダメージ▲（40.9%）が付いたか（付いた 1・付かない 0）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と使い捨てのスクリプト（ソルジャーE.G. の 1 ヒットを、攻撃力の状態 4 つ × 有利コードの倍率（1.1・1.509）× 倍率（コア・会心・距離・フルバースト）の格子に当てた）",
+      "note": "ソルジャーE.G. が III を撃った 1・3・5・7・9 回目は、フルバーストの中の発がどれも 1.509 倍（78〜99 発）。メイデンが撃った回は 1.1 倍だけ（57〜93 発）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "elementDamage",
+        "n": 4
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1243-17",
+    "recording": "1243",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": 0,
+    "description": "6 回目のフルバーストで、ソルジャーE.G. に MP チャージ時の有利コードの攻撃ダメージ▲（40.9%）が付いたか（付いた 1・付かない 0）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と使い捨てのスクリプト（ソルジャーE.G. の 1 ヒットを、攻撃力の状態 4 つ × 有利コードの倍率（1.1・1.509）× 倍率（コア・会心・距離・フルバースト）の格子に当てた）",
+      "note": "ソルジャーE.G. が III を撃った 1・3・5・7・9 回目は、フルバーストの中の発がどれも 1.509 倍（78〜99 発）。メイデンが撃った回は 1.1 倍だけ（57〜93 発）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "elementDamage",
+        "n": 5
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1243-18",
+    "recording": "1243",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": 1,
+    "description": "7 回目のフルバーストで、ソルジャーE.G. に MP チャージ時の有利コードの攻撃ダメージ▲（40.9%）が付いたか（付いた 1・付かない 0）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と使い捨てのスクリプト（ソルジャーE.G. の 1 ヒットを、攻撃力の状態 4 つ × 有利コードの倍率（1.1・1.509）× 倍率（コア・会心・距離・フルバースト）の格子に当てた）",
+      "note": "ソルジャーE.G. が III を撃った 1・3・5・7・9 回目は、フルバーストの中の発がどれも 1.509 倍（78〜99 発）。メイデンが撃った回は 1.1 倍だけ（57〜93 発）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "elementDamage",
+        "n": 6
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1243-19",
+    "recording": "1243",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": 0,
+    "description": "8 回目のフルバーストで、ソルジャーE.G. に MP チャージ時の有利コードの攻撃ダメージ▲（40.9%）が付いたか（付いた 1・付かない 0）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と使い捨てのスクリプト（ソルジャーE.G. の 1 ヒットを、攻撃力の状態 4 つ × 有利コードの倍率（1.1・1.509）× 倍率（コア・会心・距離・フルバースト）の格子に当てた）",
+      "note": "ソルジャーE.G. が III を撃った 1・3・5・7・9 回目は、フルバーストの中の発がどれも 1.509 倍（78〜99 発）。メイデンが撃った回は 1.1 倍だけ（57〜93 発）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "elementDamage",
+        "n": 7
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1243-20",
+    "recording": "1243",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": 1,
+    "description": "9 回目のフルバーストで、ソルジャーE.G. に MP チャージ時の有利コードの攻撃ダメージ▲（40.9%）が付いたか（付いた 1・付かない 0）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と使い捨てのスクリプト（ソルジャーE.G. の 1 ヒットを、攻撃力の状態 4 つ × 有利コードの倍率（1.1・1.509）× 倍率（コア・会心・距離・フルバースト）の格子に当てた）",
+      "note": "ソルジャーE.G. が III を撃った 1・3・5・7・9 回目は、フルバーストの中の発がどれも 1.509 倍（78〜99 発）。メイデンが撃った回は 1.1 倍だけ（57〜93 発）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "elementDamage",
+        "n": 8
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  }
+]

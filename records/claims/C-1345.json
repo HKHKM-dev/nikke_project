@@ -1,0 +1,29 @@
+{
+  "id": "C-1345",
+  "text": "メイデン：アイスローズのバーストの連続攻撃は、III のタイマーの 00.00 から 40f（動画で 61〜62f。入りの止まり 22f を含む）に 1 ヒット目が出て、k 個目は 1 ヒット目から動画で 0・6・10〜11・16〜17f（5.5k f）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1240-15`・`1240-16`・`1241-11`・`1242-11`。V-0801",
+  "model": "packages/core/src/burst/landing.ts の 183 の行（hitFrames 40・hitOffsets）",
+  "replaces": [],
+  "updated": "2026-11-16",
+  "subject": {
+    "mechanism": "burstChain"
+  },
+  "decidedOn": [
+    {
+      "recording": "1240",
+      "role": "値を合わせた"
+    },
+    {
+      "recording": "1241",
+      "role": "値を合わせた"
+    }
+  ],
+  "judgment": {
+    "decided": "2026-11-16",
+    "overrides": ["合う仮説が 2 つ以上"],
+    "reason": "予測ファイルで録画と比べられた指標（A-shot-before・A-s2・A-shot-after）は 3 つの仮説（H1・H-burstDamage・H-restore）が同じ値を出すものだけで、見分ける値は別の指標で読んだ（連続攻撃は burstDamage に移したので burstHitDamage、ソルジャーE.G. の発は命中時の確率の▲が期待値の格子に当たらないので fullBurstBuffApplied と数）。その読みでは H1 の damage の形と H-restore は合わず、いまの定義（H-burstDamage の形・フルバーストのチャージだけ）と合う。2026-11-16 のオーナーの判断"
+  }
+}

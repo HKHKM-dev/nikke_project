@@ -38,6 +38,16 @@ export function parseBurstDamageEffect(v: Record<string, Json>, path: string): B
   const damageType = oneOf(BURST_DAMAGE_TYPES, v.damageType, `${path}.damageType`);
   const effect: BurstDamageEffect = { kind: 'burstDamage', ref: parseRef(v.ref, `${path}.ref`), damageType };
   if (v.hitsRef !== undefined) effect.hitsRef = parseRef(v.hitsRef, `${path}.hitsRef`);
+  // 所持カウンタ分の連続攻撃（plan/design-maiden-ice-rose.md 8 節）
+  if (v.hitsFrom !== undefined) {
+    const at = `${path}.hitsFrom`;
+    if (effect.hitsRef !== undefined) fail(at, 'hitsFrom cannot be used with hitsRef');
+    if (!isRecord(v.hitsFrom)) fail(at, 'expected { counter }');
+    rejectUnknownKeys(v.hitsFrom, ['counter'], at);
+    effect.hitsFrom = { counter: oneOf(COUNTER_IDS, v.hitsFrom.counter, `${at}.counter`) };
+  }
+  if (v.addCasterMaxHpRef !== undefined)
+    effect.addCasterMaxHpRef = parseRef(v.addCasterMaxHpRef, `${path}.addCasterMaxHpRef`);
   parseAssumes(v, effect, path);
   return effect;
 }
@@ -433,6 +443,12 @@ function parsePerCountSplit(v: Record<string, Json>, effect: DamageEffect, path:
       fail(`${path}.${key}`, `${key} cannot be used with perCountIntervalSeconds or perBurstHit`);
     effect.perCountIntervalFrames = parsePositiveInt(v.perCountIntervalFrames, `${path}.${key}`);
   }
+  // 1 つずつ出すヒットは、それぞれのフレームの値で出す（frame/plan.ts の planSkillHits）。値を発火の直前で決める形は読まない
+  if (splitsPerCount(effect) && effect.valueBeforeFire !== undefined)
+    fail(
+      `${path}.valueBeforeFire`,
+      'valueBeforeFire cannot be used with perCountIntervalSeconds or perCountIntervalFrames',
+    );
   // 「順番に攻撃」の perCount の数だけのヒット
   if (v.sequentialAttack !== undefined) {
     parseTrue(v.sequentialAttack, `${path}.sequentialAttack`);

@@ -11,6 +11,7 @@ import {
   defenceAfterDown,
   DISTANCE_BONUS,
   distributedHitMultiplier,
+  finalMaxHpOf,
   explosionHitMultiplier,
   FULL_BURST_BOOST,
   skillElementMultiplier,
@@ -97,6 +98,11 @@ export type ResolvedSkillDamage = {
   coreHit?: true;
   /** 倍率ダメージの会心をきっかけにする 1 ヒット（期待値に倍率ダメージの会心率を掛ける。plan/design-julia.md 2.1 節） */
   onSkillCrit?: true;
+  /**
+   * 攻撃力に合算する、撃つ側の最終最大HP の比率（burstDamage の addCasterMaxHpRef。plan/design-maiden-ice-rose.md 2.2 節）。slotBurstHit が
+   * ヒットの攻撃力に足す
+   */
+  addCasterMaxHpRatio?: number;
   /** 同 5.5 節: 「N 回順番に攻撃」のヒット。順番攻撃ダメージ▲（sequentialAttackDamage）を掛ける */
   sequential?: true;
   /**
@@ -255,6 +261,8 @@ export function resolveBurstDamage(
       damageType: effect.damageType,
       multiplier: (skillValue(skill, effect.ref, levels.burst) / 100) * hits,
     };
+    if (effect.addCasterMaxHpRef !== undefined)
+      r.addCasterMaxHpRatio = skillValue(skill, effect.addCasterMaxHpRef, levels.burst) / 100;
     // 値の載った行が無ければ印を付けない（データの定義は全部見つかる。skills/__tests__/definitions.test.ts）
     const phrase = targetPhraseOf(skill, effect.ref, levels.burst);
     if (phrase?.endsWith(ONE_ENEMY_TARGET) === true) r.oneEnemy = true;
@@ -1138,9 +1146,17 @@ export function slotBurstHit(
   enemy: EnemyInput,
   trigger: Pick<TriggerDamage, 'attack' | 'attackDamageMultiplier'>,
   buffs: BuffTotals,
+  /** 撃つ枠（最終最大HP を buffs で求める）。最大HP を攻撃力に合算する burstDamage（addCasterMaxHpRef）のときだけ要る */
+  caster?: Parameters<typeof finalMaxHpOf>[0],
 ): BurstHitResult | null {
   if (!definition) return null;
   const effects = resolveBurstDamage(definition, character, levels);
   if (effects.length === 0) return null;
-  return computeSkillHit(effects, character, enemy, trigger, buffs, BURST_SKILL_FULL_BURST_BONUS);
+  // 最大HP の合算はスロットの burstDamage が 1 つのときだけ（resolveBurstDamage）なので、攻撃力に足してよい
+  const ratio = effects[0]!.addCasterMaxHpRatio;
+  if (ratio !== undefined && caster === undefined)
+    throw new RangeError(`character ${character.resourceId}: addCasterMaxHpRef needs the caster`);
+  const attacked =
+    ratio === undefined ? trigger : { ...trigger, attack: trigger.attack + ratio * finalMaxHpOf(caster!, buffs) };
+  return computeSkillHit(effects, character, enemy, attacked, buffs, BURST_SKILL_FULL_BURST_BONUS);
 }

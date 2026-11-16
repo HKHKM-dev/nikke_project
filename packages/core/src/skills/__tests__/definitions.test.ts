@@ -312,6 +312,14 @@ describe('data/skills', () => {
       }
     });
 
+    // 所持カウンタ分の連続攻撃（hitsFrom。plan/design-maiden-ice-rose.md 8 節）: 遅れの表の行は、カウンタの上限の数のヒットを持つ
+    it('burst hitsFrom has as many split hits in the burst delay table as the counter cap', () => {
+      for (const effect of def.skills.burst.effects) {
+        if (effect.kind !== 'burstDamage' || effect.hitsFrom === undefined) continue;
+        expect(burstDelaysOf(character).hitOffsets?.length ?? 1).toBe(counterMax(effect.hitsFrom.counter));
+      }
+    });
+
     // plan/design-jackal.md 2.2 節: 「〜敵1機に」で終わるバーストスキルダメージ▲は、burstDamage の値の載った ■ の行の対象の句で
     // 当てはまるかを決める。行が見つからないと印が付かないので、データの定義は全部見つかることを確かめる
     it('finds the description line of every burstDamage ref (its target phrase)', () => {
