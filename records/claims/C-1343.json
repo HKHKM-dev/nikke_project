@@ -5,14 +5,15 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`1240-14`・`1241-10`・`1242-10`。V-0801",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "data/skills/183.json の skill1 の effects[0]〜[2]（counterChange。目録 skills/counters.ts の mp）と burst の effects[0] の hitsFrom（frame/firstPass/burst.ts が発動ごとにヒットを MP の数に切る）",
   "replaces": [],
   "updated": "2026-11-16",
   "subject": {
     "places": [
       "data/skills/183.json の skill1 の effects[0]",
       "data/skills/183.json の skill1 の effects[1]",
-      "data/skills/183.json の skill1 の effects[2]"
+      "data/skills/183.json の skill1 の effects[2]",
+      "data/skills/183.json の burst の effects[0]"
     ]
   },
   "decidedOn": []

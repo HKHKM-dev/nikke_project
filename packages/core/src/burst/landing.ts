@@ -249,6 +249,14 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
     delays: { hitFrames: 5, effectFrames: 0, hitOffsets: [0, 12, 24, 36, 47] },
     claim: 'C-1329',
   },
+  // メイデン：アイスローズ: III のタイマーの 00.00 から「所持 MP 分の連続攻撃」の 1 ヒット目まで 40f（動画で 61〜62f。止まり 22f を含む）。
+  // k 個目は 1 ヒット目から 5.5k f（四捨五入。動画で 0・6・10〜11・16〜17f）。ヒットの数は MP（burstDamage の hitsFrom）で、表は上限の 12 個。
+  // 5 個目からは読んでいない（同じ間隔とみた）
+  {
+    resourceIds: [183],
+    delays: { hitFrames: 40, effectFrames: 0, hitOffsets: [0, 6, 11, 17, 22, 28, 33, 39, 44, 50, 55, 61] },
+    claim: 'C-1345',
+  },
 ];
 
 /**

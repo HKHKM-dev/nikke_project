@@ -6,7 +6,8 @@ import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { effectFrameOf } from '../burst/schedule.ts';
+import { burstDelaysOf } from '../burst/landing.ts';
+import { effectFrameOf, hexagonFrameOf, hitFramesOf, hitShareOf } from '../burst/schedule.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, readJson } from './teamHelpers.ts';
@@ -18,7 +19,7 @@ const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/e
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
 const rangeEnemy: EnemyInput = {
   defence: FIXED_SPEC_ENEMY_DEFENCE,
-  element: 'Water',
+  element: 'Fire',
   hasCore: true,
   events: enemyEventsOf(master, ['range-3min-jump'], 180),
   target: profile,
@@ -61,8 +62,8 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, maiden: M, b
   /** フレーム f の前のフレームの終わりの MP（条件 selfCounter・perCount と同じ見え方） */
   const mpBefore = (f: number) => records.filter((r) => r.frame < f).at(-1)?.value ?? 0;
   const schedule = plan.schedule!;
-  const uses = schedule.activations.filter((a) => a.slotIndex === M).map(effectFrameOf);
-  const burstHits_ = plan.skillHits.filter((h) => h.slotIndex === M && h.effect.source.skill === 'burst');
+  const mine = schedule.activations.filter((a) => a.slotIndex === M);
+  const uses = mine.map(effectFrameOf);
   const fullBurstStarts = schedule.activations.filter((a) => a.startsFullBurst).map((a) => a.fullBurstStart!);
 
   it('keeps MP between 0 and 12 and clears it on every Burst use', () => {
@@ -81,12 +82,17 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, maiden: M, b
 
   it('attacks as many times as the MP held at each Burst use', () => {
     expect(uses.length).toBeGreaterThan(0);
-    const counts = uses.map(
-      (f, k) => burstHits_.filter((h) => h.frame > f && h.frame < (uses[k + 1] ?? Infinity)).length,
-    );
+    const counts = mine.map((a) => hitFramesOf(a).length);
     expect(counts).toEqual(uses.map(mpBefore));
     for (const n of counts) expect(n).toBeGreaterThanOrEqual(1);
     if (burstHits !== undefined) expect(counts.slice(0, burstHits.length)).toEqual(burstHits);
+    // 各ヒットは説明文の値（等分しない）で、遅れの表の行の先頭から MP の数だけ
+    const { hitFrames, hitOffsets } = burstDelaysOf(input.slots[M]!.character);
+    for (const a of mine) {
+      expect(hitShareOf(a)).toBe(1);
+      const n = hitFramesOf(a).length;
+      expect(hitFramesOf(a)).toEqual(hitOffsets!.slice(0, n).map((o) => hexagonFrameOf(a) + hitFrames + o));
+    }
   });
 
   it('buffs electric allies other than herself at the Full Burst starts where MP is charged', () => {

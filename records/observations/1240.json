@@ -1,0 +1,497 @@
+[
+  {
+    "id": "1240-01",
+    "recording": "1240",
+    "kind": "timing",
+    "use": "record",
+    "value": [1251, 2453, 3632, 4833, 6012, 7213, 8392, 9621, 10800],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・6・24・6・24・0・25・0・25f"
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1240-02",
+    "recording": "1240",
+    "kind": "timing",
+    "use": "record",
+    "value": [1280, 2482, 3661, 4862, 6041, 7242, 8421, 9650, 10829],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・6・24・0・25・0・25・0・25f"
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1240-03",
+    "recording": "1240",
+    "kind": "timing",
+    "use": "record",
+    "value": [1310, 3690, 6070, 8450, 10859],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1240-04",
+    "recording": "1240",
+    "kind": "timing",
+    "use": "record",
+    "value": [1919, 4299, 6679, 9059, 11468],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1240-05",
+    "recording": "1240",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1240-06",
+    "recording": "1240",
+    "kind": "timing",
+    "use": "record",
+    "value": [2446, 3625, 4826, 6006, 7207, 8386, 10794],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f9587"
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1240-07",
+    "recording": "1240",
+    "kind": "timing",
+    "use": "record",
+    "value": [2475, 3654, 4855, 6035, 7236, 8415, 10823],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1240-08",
+    "recording": "1240",
+    "kind": "timing",
+    "use": "record",
+    "value": [3683, 6064, 8443],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1240-09",
+    "recording": "1240",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 5633930,
+    "description": "メイデンの 1 回目のバーストの連続攻撃の 1 ヒット（会心なし。MP 1 で 1 ヒット）。(攻撃力 79,954 + 最終最大HP × 10% − 防御力 100) × 1372.8% で、フルバースト補正と MP 使用後の▲は乗っていない。最大HP のみ▲ なし（それまでのフルチャージの発は 5 発）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 の 61〜62f 後の 1 つの増分（f1371）。許容は相対 1e-6（10 スタックの最終最大HP では、説明文の 6.34% の丸めの差が数ダメージになる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.000001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1240-10",
+    "recording": "1240",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 6784693,
+    "description": "メイデンの 2 回目のバーストの連続攻撃の 1 ヒット（会心なし。MP 1 で 1 ヒット）。(攻撃力 79,954 + 最終最大HP × 10% − 防御力 100) × 1372.8% で、フルバースト補正と MP 使用後の▲は乗っていない。最大HP のみ▲ 4 スタック",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 の 61〜62f 後の 1 つの増分（f3752）。許容は相対 1e-6（10 スタックの最終最大HP では、説明文の 6.34% の丸めの差が数ダメージになる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.000001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1240-11",
+    "recording": "1240",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 8510824,
+    "description": "メイデンの 4 回目のバーストの連続攻撃の 1 ヒット（会心なし。MP 1 で 1 ヒット）。(攻撃力 79,954 + 最終最大HP × 10% − 防御力 100) × 1372.8% で、フルバースト補正と MP 使用後の▲は乗っていない。最大HP のみ▲ 10 スタック",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 の 61〜62f 後の 1 つの増分（f8512）。許容は相対 1e-6（10 スタックの最終最大HP では、説明文の 6.34% の丸めの差が数ダメージになる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.000001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1240-12",
+    "recording": "1240",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 8510824,
+    "description": "メイデンの 5 回目のバーストの連続攻撃の 1 ヒット（会心なし。MP 1 で 1 ヒット）。(攻撃力 79,954 + 最終最大HP × 10% − 防御力 100) × 1372.8% で、フルバースト補正と MP 使用後の▲は乗っていない。最大HP のみ▲ 10 スタック",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 の 61〜62f 後の 1 つの増分（f10920）。許容は相対 1e-6（10 スタックの最終最大HP では、説明文の 6.34% の丸めの差が数ダメージになる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.000001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1240-13",
+    "recording": "1240",
+    "kind": "hit",
+    "use": "record",
+    "unit": "ダメージ",
+    "value": 11903185,
+    "description": "メイデンの 3 回目のバーストの連続攻撃の 1 ヒット（会心。f6132）。(79,954 + 最終最大HP × 10% − 100) × 1372.8% × 1.5 の最終最大HP は、最大HP のみ▲ 8 スタック（モデルは 7 スタックで 11,471,641。スタックの数え方の残差で、比べには使わない）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00（f6070）の 62f 後の増分"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1240-14",
+    "recording": "1240",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": [1, 1, 1, 1, 1],
+    "description": "メイデンの各バーストの連続攻撃のヒットの数（III がメイデンだけの編成。どの回も 1 段階突入の回復で MP 1）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "5 回のフルバーストの 00.00 の 0〜120f 後の 300 万を超える増分がどれも 1 つ（f1371・f3752・f6132・f8512・f10920）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "counterAtBursts",
+      "args": {
+        "slot": 3,
+        "counter": "mp"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1240-15",
+    "recording": "1240",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [61],
+    "description": "メイデンの 1 回目のバーストの、III のタイマーの 00.00 から連続攻撃のヒットまでの動画のフレーム（入りの止まり 22f を含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "5 回とも 61〜62f（f1310→1371・3690→3752・6070→6132・8450→8512・10859→10920）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "burstHit",
+        "anchor": "fullBurst:0",
+        "within": "window"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1240-16",
+    "recording": "1240",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [61],
+    "description": "メイデンの 5 回目のバーストの、III のタイマーの 00.00 から連続攻撃のヒットまでの動画のフレーム（入りの止まり 22f を含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "5 回とも 61〜62f（f1310→1371・3690→3752・6070→6132・8450→8512・10859→10920）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "burstHit",
+        "anchor": "fullBurst:4",
+        "within": "window"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1240-17",
+    "recording": "1240",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 122376,
+    "description": "メイデンの 1 回目のバーストより前の通常攻撃の胴体・会心なしの 1 ヒット（フルチャージ。有利コードなし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@7 の当て方（--opt grid。メイデンの 1 発・S2 の倍率ダメージ、ココア・ソルジャーF.A. の格子）",
+      "note": "M の格子（f300）に当たった増分。コアの 244,753 が多い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1240-18",
+    "recording": "1240",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 437296,
+    "description": "メイデンの S2 のフルチャージごとの倍率ダメージ（会心なし。1 回目のバーストより前）。通常攻撃の着弾の 8〜10f 前に別の増分で出る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@7 の当て方（--opt grid。メイデンの 1 発・S2 の倍率ダメージ、ココア・ソルジャーF.A. の格子）",
+      "note": "S2 の格子（f300 の射撃ごとの倍率ダメージ）。f967・f1050・f1132・f1214 など"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1240-19",
+    "recording": "1240",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 442128,
+    "description": "メイデンの 1 回目のバーストの後（フルバーストの中）の通常攻撃の胴体・会心なしの 1 ヒット。MP 使用後の攻撃力▲（最終最大HP の 3.2%。最大HP のみ▲ 1 スタック）とフルバースト補正",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@7 の当て方（--opt grid。メイデンの 1 発・S2 の倍率ダメージ、ココア・ソルジャーF.A. の格子）",
+      "note": "f1775 の増分。同じ間の S2 は 1,579,889（会心なし）・2,106,519（会心）で、どれも攻撃力 79,954 + 112,480"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  },
+  {
+    "id": "1240-20",
+    "recording": "1240",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 341,
+    "description": "メイデンの最初の発（S2 の倍率ダメージの増分 f967）から 1 回目のフルバーストの 00.00（f1310）までの動画のフレーム − I・II の発動の止まり 2f",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "S2 の倍率ダメージがバーストゲージを溜めない読みでは、モデルは 428"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstStartFromFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0801",
+    "readAt": "2026-11-16"
+  }
+]

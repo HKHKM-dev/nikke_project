@@ -45,6 +45,11 @@ export type BurstActivation = {
    */
   hitOffsets?: readonly number[];
   /**
+   * 各ヒットの倍率の割合。省略は等分（1 ÷ ヒットの数）。所持カウンタ分の連続攻撃（burstDamage の hitsFrom）は、ヒットごとに説明文の値なので 1
+   * （frame/firstPass/burst.ts が書く。plan/design-maiden-ice-rose.md 8 節）
+   */
+  hitShare?: number;
+  /**
    * この発動の CT を、維持の付いたバーストスキルのクールタイム▼（モランの宝物版の熱血など（V-0530）。
    * frame/firstPass.ts の手順 2）で縮めたフレーム数。即時の CT▼（BurstSchedule の cooldownReductions）とは別。省略は 0
    */
@@ -63,6 +68,11 @@ export function hitFrameOf(a: BurstActivation): number {
 export function hitFramesOf(a: BurstActivation): number[] {
   const first = hitFrameOf(a);
   return (a.hitOffsets ?? [0]).map((offset) => first + offset);
+}
+
+/** 発動の各ヒットの倍率の割合（BurstActivation の hitShare。省略は等分） */
+export function hitShareOf(a: BurstActivation): number {
+  return a.hitShare ?? 1 / (a.hitOffsets ?? [0]).length;
 }
 
 /** 発動の効果の発火のフレーム */
@@ -126,8 +136,7 @@ export function burstHitsOfSlot(
   return schedule.activations
     .filter((a) => a.slotIndex === slotIndex)
     .flatMap((a) => {
-      const hits = hitFramesOf(a);
-      return hits.map((frame) => ({ activationFrame: a.frame, frame, share: 1 / hits.length }));
+      return hitFramesOf(a).map((frame) => ({ activationFrame: a.frame, frame, share: hitShareOf(a) }));
     })
     .filter((h) => h.frame < frames);
 }

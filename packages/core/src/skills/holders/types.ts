@@ -566,6 +566,11 @@ export type HolderLists = {
    */
   counterFullFiresAt(holder: number, counter: CounterId, frame: number): boolean;
   /**
+   * 枠 holder のカウンタ counter のいまの値（そのフレームの増減は、すべての判定の後に足すので、手順 2 で呼べば前のフレームの終わりの値）。
+   * 1 パス目が、所持カウンタ分の連続攻撃（burstDamage の hitsFrom）のヒットの数を発動のフレームに決めるのに使う（plan/design-maiden-ice-rose.md 8 節）
+   */
+  counterValueAt(holder: number, counter: CounterId): number;
+  /**
    * フレーム frame にフルスタックになった状態（定義にその状態のフルスタックの消費の
    * きっかけを持つ枠の、自分の状態だけ）を返し、その状態の件を消費する（次のフレームで切る。
    * plan/design-skill-stage3.md 1.3 節）。回復を当てる前（手順 3 の最初）に呼ぶ

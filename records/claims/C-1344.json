@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`1240-09`・`1240-10`・`1240-11`・`1240-12`。V-0801",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "data/skills/183.json の burst の effects[0]（burstDamage の addCasterMaxHpRef。sim/engine.ts が撃つ側の最終最大HP を slotBurstHit に渡す）",
   "replaces": [],
   "updated": "2026-11-16",
   "subject": {

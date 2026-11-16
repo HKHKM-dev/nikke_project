@@ -255,11 +255,19 @@ export function resolveBurstDamage(
     // ヒットで等分すると、各ヒットが説明文の値になる。回数と分かれたヒットの数（burstDelaysOf の hitOffsets）がそろうかは、
     // 定義のテスト（skills/__tests__/definitions.test.ts）が確かめる。plan/design-skill-stage10.md 2.2 節）
     const hits = effect.hitsRef === undefined ? 1 : skillValue(skill, effect.hitsRef, levels.burst);
+    // 所持カウンタ分の連続攻撃と最大HP の合算は、ヒットの切り方と攻撃力が発動ごとに 1 つなので、スロットの burstDamage が 1 つのときだけ
+    // （plan/design-maiden-ice-rose.md 8 節）
+    const single = entry.effects.filter((e) => e.kind === 'burstDamage').length === 1;
+    if (!single && (effect.hitsFrom !== undefined || effect.addCasterMaxHpRef !== undefined)) {
+      throw new RangeError(`skill ${skill.id}: hitsFrom and addCasterMaxHpRef need the only burstDamage of the slot`);
+    }
     const r: ResolvedBurstDamage = {
       source: { resourceId: character.resourceId, skill: 'burst', name: skill.name },
       damageType: effect.damageType,
       multiplier: (skillValue(skill, effect.ref, levels.burst) / 100) * hits,
     };
+    if (effect.addCasterMaxHpRef !== undefined)
+      r.addCasterMaxHpRatio = skillValue(skill, effect.addCasterMaxHpRef, levels.burst) / 100;
     // 値の載った行が無ければ印を付けない（データの定義は全部見つかる。skills/__tests__/definitions.test.ts）
     const phrase = targetPhraseOf(skill, effect.ref, levels.burst);
     if (phrase?.endsWith(ONE_ENEMY_TARGET) === true) r.oneEnemy = true;
@@ -1148,9 +1156,16 @@ export function slotBurstHit(
   enemy: EnemyInput,
   trigger: Pick<TriggerDamage, 'attack' | 'attackDamageMultiplier'>,
   buffs: BuffTotals,
+  /** 撃つ側の最終最大HP（同じ buffs の値）。最大HP を攻撃力に合算する burstDamage（addCasterMaxHpRef）のときだけ要る */
+  casterFinalMaxHp?: number,
 ): BurstHitResult | null {
   if (!definition) return null;
   const effects = resolveBurstDamage(definition, character, levels);
   if (effects.length === 0) return null;
-  return computeSkillHit(effects, character, enemy, trigger, buffs, BURST_SKILL_FULL_BURST_BONUS);
+  // 最大HP の合算はスロットの burstDamage が 1 つのときだけ（resolveBurstDamage）なので、攻撃力に足してよい
+  const ratio = effects[0]!.addCasterMaxHpRatio;
+  if (ratio !== undefined && casterFinalMaxHp === undefined)
+    throw new RangeError(`character ${character.resourceId}: addCasterMaxHpRef needs the final max HP of the caster`);
+  const attacked = ratio === undefined ? trigger : { ...trigger, attack: trigger.attack + ratio * casterFinalMaxHp! };
+  return computeSkillHit(effects, character, enemy, attacked, buffs, BURST_SKILL_FULL_BURST_BONUS);
 }

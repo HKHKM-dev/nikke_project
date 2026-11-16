@@ -189,6 +189,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     selfStackCountAt,
     enemyStateAt,
     counterFullFiresAt: (holder, counter, frame) => counterFullAt.get(counterKey(holder, counter)) === frame,
+    counterValueAt: (holder, counter) => layers.counterValue(holder, counter),
     instantConditionHolds(effect, sourceSlotIndex, frame) {
       if (holdsAt(effect.condition, sourceSlotIndex, frame)) return true;
       skipEffect(sourceSlotIndex, effect, frame);

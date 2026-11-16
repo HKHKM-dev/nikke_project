@@ -7,9 +7,10 @@
 //   - 1 秒ごとのダメージ（タイムラインの表示用）は、射撃の列・バーストのヒット・倍率ダメージの列から直接足す。
 // 敵の出来事（狙えない窓など）は 1 パス目で効く（plan/design-stage16.md 9 節）。フレームループは trace（出来事の列）のときだけ回し、
 // 値は作らない（__tests__/calcShots.test.ts で一致を固定）。
-import { hitFramesOf, type BurstActivation, type BurstSchedule, type BurstStepKey } from '../burst/schedule.ts';
+import { hitFramesOf, hitShareOf, type BurstActivation, type BurstSchedule, type BurstStepKey } from '../burst/schedule.ts';
 import {
   baseAttackOf,
+  baseMaxHpOf,
   modelNotes,
   nonFullChargeTriggerDamage,
   partialChargeTriggerDamage,
@@ -228,7 +229,7 @@ export function runSimulation(simInput: SimInput): SimResult {
   const burstHits = (schedule?.activations ?? [])
     .flatMap((activation) => {
       const hitFrames = hitFramesOf(activation);
-      return hitFrames.map((frame) => ({ activation, frame, share: 1 / hitFrames.length }));
+      return hitFrames.map((frame) => ({ activation, frame, share: hitShareOf(activation) }));
     })
     .filter((h) => h.frame < frames)
     .sort((a, b) => a.frame - b.frame);
@@ -419,6 +420,7 @@ function createRunner(c: RunnerContext, slot: SimInput['slots'][number], index: 
           enemy,
           slotHitTriggerDamage(slot, enemy, passive.buffs, input.attackRounding),
           passive.buffs,
+          baseMaxHpOf(slot) * (1 + passive.buffs.maxHpRatio),
         ),
         damage: 0,
         hits: [],
@@ -469,6 +471,7 @@ function burstHitDamageOf(c: BurstHitContext, hitAt: BurstHitAt): number | null 
     enemy,
     trigger,
     buffs,
+    baseMaxHpOf(slot) * (1 + buffs.maxHpRatio),
   );
   if (hit === null) return null;
   const result = runner.result.burst;

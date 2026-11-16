@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`1240-19`。V-0801",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "data/skills/183.json の skill2 の effects[3]（burstUse の timed の casterFinalMaxHp）",
   "replaces": [],
   "updated": "2026-11-16",
   "subject": {

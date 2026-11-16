@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`1240-18`・`1240-20`・`1241-20`。V-0801",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "data/skills/183.json の skill2 の effects[4]（fullChargeShot ごとの damage の gaugeHits [0]）",
   "replaces": [],
   "updated": "2026-11-16",
   "subject": {

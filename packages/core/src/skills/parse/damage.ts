@@ -38,6 +38,16 @@ export function parseBurstDamageEffect(v: Record<string, Json>, path: string): B
   const damageType = oneOf(BURST_DAMAGE_TYPES, v.damageType, `${path}.damageType`);
   const effect: BurstDamageEffect = { kind: 'burstDamage', ref: parseRef(v.ref, `${path}.ref`), damageType };
   if (v.hitsRef !== undefined) effect.hitsRef = parseRef(v.hitsRef, `${path}.hitsRef`);
+  // 所持カウンタ分の連続攻撃（plan/design-maiden-ice-rose.md 8 節）
+  if (v.hitsFrom !== undefined) {
+    const at = `${path}.hitsFrom`;
+    if (effect.hitsRef !== undefined) fail(at, 'hitsFrom cannot be used with hitsRef');
+    if (!isRecord(v.hitsFrom)) fail(at, 'expected { counter }');
+    rejectUnknownKeys(v.hitsFrom, ['counter'], at);
+    effect.hitsFrom = { counter: oneOf(COUNTER_IDS, v.hitsFrom.counter, `${at}.counter`) };
+  }
+  if (v.addCasterMaxHpRef !== undefined)
+    effect.addCasterMaxHpRef = parseRef(v.addCasterMaxHpRef, `${path}.addCasterMaxHpRef`);
   parseAssumes(v, effect, path);
   return effect;
 }

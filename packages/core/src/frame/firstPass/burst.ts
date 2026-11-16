@@ -66,6 +66,7 @@ export function createBurstStep({
   instants,
   lists,
   passive,
+  slots,
   untargetable,
 }: FirstPassBase & InstantSources & BurstScheduleLayer) {
   // T4 の▼ の件を持ちうる枠の、最後の発動（発動の後に付いた▼ の縮めた長さを足す先）
@@ -98,6 +99,18 @@ export function createBurstStep({
       return seconds;
     };
   }
+  // 所持カウンタ分の連続攻撃（burstDamage の hitsFrom。plan/design-maiden-ice-rose.md 8 節）: 枠ごとのカウンタ
+  const hitsFromOf = slots.map((s) => {
+    const effect = s?.definition?.skills.burst.effects.find((e) => e.kind === 'burstDamage');
+    return effect?.kind === 'burstDamage' ? effect.hitsFrom?.counter : undefined;
+  });
+  /** 発動のヒットを、前のフレームの終わりのカウンタの値の数に切る（各ヒットは説明文の値） */
+  const cutCounterHits = (a: BurstActivation): void => {
+    const counter = hitsFromOf[a.slotIndex];
+    if (counter === undefined) return;
+    a.hitOffsets = (a.hitOffsets ?? [0]).slice(0, lists.counterValueAt(a.slotIndex, counter));
+    a.hitShare = 1;
+  };
   /** いま見ている（または次に来る）狙えない窓の添字 */
   let nextBlock = 0;
   /** フレーム f が狙えない窓の中か */
@@ -132,6 +145,7 @@ export function createBurstStep({
       };
       for (let i = before; i < controller.activations.length; i++) {
         const a = controller.activations[i]!;
+        cutCounterHits(a);
         const seconds = (passive[a.slotIndex]?.buffs.burstCooldown ?? 0) + lists.burstCooldownAt(a.slotIndex, f - 1);
         if (seconds > 0) shorten(a, seconds);
         if (lists.hasBurstCooldownTracks(a.slotIndex)) lastActivationOf.set(a.slotIndex, a);
