@@ -1,0 +1,52 @@
+{
+  "id": "1242",
+  "date": "2026-11-16",
+  "folder": "range",
+  "file": "20261116-1242_maiden-b-2.mp4",
+  "original": "2026-11-16_23-03-42.mp4",
+  "durationSec": 202.6,
+  "frames": 12156,
+  "fps": 60,
+  "sizeMB": 245.4,
+  "sha256": "8513586b8758",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 300,
+      "name": "ソルジャーE.G.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 183,
+      "name": "メイデン：アイスローズ",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Water"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-16T23:10+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
