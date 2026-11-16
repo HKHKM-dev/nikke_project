@@ -36,6 +36,7 @@ const INDEX = [PLAIN, ABSENT, WITH_TREASURE, OTHER];
 
 // キャラのデータは、置いてあるファイルから読んだものを返す（画面は fetch で読む）
 vi.mock('../useCharacterCache.ts', () => ({
+  prefetchCharacters: () => {},
   useCharacterCache: (ids: readonly (number | null)[]) => ({
     characters: new Map(
       ids
