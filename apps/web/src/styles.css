@@ -1120,7 +1120,8 @@ svg.settings-menu-icon,
 }
 .char-tray-growth .growth-marks-core,
 .char-tray-tall-area .growth-marks-core {
-  font-size: 0.5rem;
+  /* アイコンとの比はスロット（0.7rem・24px）とほぼ同じ */
+  font-size: 0.6rem;
 }
 .scrolling-name {
   text-align: left;
