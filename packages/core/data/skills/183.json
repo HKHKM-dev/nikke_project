@@ -99,8 +99,8 @@
           "ref": 1,
           "durationRef": 2,
           "assumes": {
-            "ja": "「MP チャージ時」を、S1 の MP のチャージと同じきっかけと条件（フルバーストの始まり・MP が 1 以上）で書く。1 段階突入の回復（MP 0 → 1）では付かず、自分が III を撃った回のフルバーストでも付かない（MP がバーストで消えた後）。MP が上限 12 のときのチャージ（増えない）でも付く読み。有利コードの攻撃ダメージ▲は、撮影の敵が電撃に有利でなく、確かめていない",
-            "en": "\"When MP is charged\" is written with the same trigger and condition as S1's MP charge (start of Full Burst, MP of 1 or more). It is not applied by the stage-1 restore (MP 0 → 1), nor at a Full Burst where she used the Burst III herself (MP is cleared by the Burst first). Read as applying even when MP is at the cap of 12 (no increase). The advantage-code damage increase is unverified (the recorded enemy was not weak to Electric)"
+            "ja": "「MP チャージ時」を、S1 の MP のチャージと同じきっかけと条件（フルバーストの始まり・MP が 1 以上）で書く。1 段階突入の回復（MP 0 → 1）では付かず、自分が III を撃った回のフルバーストでも付かない（MP がバーストで消えた後）。MP が上限 12 のときのチャージ（増えない）でも付く読み。有利コードの攻撃ダメージ▲は、有利コードの倍率 1.1 に足す",
+            "en": "\"When MP is charged\" is written with the same trigger and condition as S1's MP charge (start of Full Burst, MP of 1 or more). It is not applied by the stage-1 restore (MP 0 → 1), nor at a Full Burst where she used the Burst III herself (MP is cleared by the Burst first). Read as applying even when MP is at the cap of 12 (no increase). The advantage-code damage increase is added to the advantage multiplier 1.1"
           },
           "claims": [
             "C-1347",
@@ -139,8 +139,8 @@
           "ref": 5,
           "durationRef": 6,
           "assumes": {
-            "ja": "「MP 使用後」をバーストの使用で書く。バーストの連続攻撃には乗らない（連続攻撃は発動の直前のバフで出る）。有利コードの攻撃ダメージ▲は、撮影の敵が電撃に有利でなく、確かめていない",
-            "en": "\"After using MP\" is written as Burst use. It is not on the Burst's consecutive attacks (they use the buffs just before activation). The advantage-code damage increase is unverified (the recorded enemy was not weak to Electric)"
+            "ja": "「MP 使用後」をバーストの使用で書く。バーストの連続攻撃には乗らない（連続攻撃は発動の直前のバフで出る）。有利コードの攻撃ダメージ▲は、有利コードの倍率 1.1 に足す",
+            "en": "\"After using MP\" is written as Burst use. It is not on the Burst's consecutive attacks (they use the buffs just before activation). The advantage-code damage increase is added to the advantage multiplier 1.1"
           },
           "claims": [
             "C-1350"

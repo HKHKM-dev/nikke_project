@@ -159,7 +159,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "manualBursts": "1242-09"
       }
     },
@@ -193,7 +192,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "manualBursts": "1242-09"
       }
     },
@@ -227,7 +225,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "manualBursts": "1242-09"
       }
     },
@@ -261,7 +258,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "manualBursts": "1242-09"
       }
     },
@@ -295,7 +291,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "manualBursts": "1242-09"
       }
     },
@@ -329,7 +324,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "manualBursts": "1242-09"
       }
     },
@@ -363,7 +357,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "manualBursts": "1242-09"
       }
     },
@@ -397,7 +390,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "manualBursts": "1242-09"
       }
     },
@@ -431,7 +423,6 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "manualBursts": "1242-09"
       }
     },
