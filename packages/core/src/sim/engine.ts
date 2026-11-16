@@ -7,7 +7,13 @@
 //   - 1 秒ごとのダメージ（タイムラインの表示用）は、射撃の列・バーストのヒット・倍率ダメージの列から直接足す。
 // 敵の出来事（狙えない窓など）は 1 パス目で効く（plan/design-stage16.md 9 節）。フレームループは trace（出来事の列）のときだけ回し、
 // 値は作らない（__tests__/calcShots.test.ts で一致を固定）。
-import { hitFramesOf, hitShareOf, type BurstActivation, type BurstSchedule, type BurstStepKey } from '../burst/schedule.ts';
+import {
+  hitFramesOf,
+  hitShareOf,
+  type BurstActivation,
+  type BurstSchedule,
+  type BurstStepKey,
+} from '../burst/schedule.ts';
 import {
   baseAttackOf,
   baseMaxHpOf,
