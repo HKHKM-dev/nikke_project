@@ -51,7 +51,7 @@ type Case = { name: string; team: TeamState; roster: BuildSnapshot | null; edite
 const CASES: Case[] = [
   { name: '育成状況にいるニケで育成が同じ', team: teamWith(82, growth82), roster: ROSTER, edited: false },
   { name: '育成状況にいるニケで育成が違う', team: teamWith(82, otherSkills), roster: ROSTER, edited: true },
-  // 育成状況にいないニケに替えると、スロットの育成は前のニケ（82）のものが残る
+  // 育成状況にいないニケに替えると、スロットの育成は前のニケ（ここでは 10）のものが残る
   { name: '育成状況にいないニケ（前のニケの育成が残る）', team: teamWith(99, growth10), roster: ROSTER, edited: false },
   { name: '空のスロット', team: teamWith(null, growth10), roster: ROSTER, edited: false },
   { name: 'スペック固定', team: teamWith(82, otherSkills, true), roster: ROSTER, edited: false },
