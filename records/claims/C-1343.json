@@ -16,5 +16,10 @@
       "data/skills/183.json の burst の effects[0]"
     ]
   },
-  "decidedOn": []
+  "decidedOn": [],
+  "judgment": {
+    "decided": "2026-11-16",
+    "overrides": ["合う仮説が 2 つ以上"],
+    "reason": "予測ファイルで録画と比べられた指標（A-shot-before・A-s2・A-shot-after）は 3 つの仮説（H1・H-burstDamage・H-restore）が同じ値を出すものだけで、見分ける値は別の指標で読んだ（連続攻撃は burstDamage に移したので burstHitDamage、ソルジャーE.G. の発は命中時の確率の▲が期待値の格子に当たらないので fullBurstBuffApplied と数）。その読みでは H1 の damage の形と H-restore は合わず、いまの定義（H-burstDamage の形・フルバーストのチャージだけ）と合う。2026-11-16 のオーナーの判断"
+  }
 }
