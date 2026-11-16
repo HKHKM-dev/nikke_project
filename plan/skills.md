@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 137・効果 1008（根拠あり 986）・notes 346（根拠あり 141）
+件数: キャラ 138・効果 1018（根拠あり 996）・notes 346（根拠あり 141）
 
 notes の種類: 未対応 44・前提の外 104・計算に無関係 69・補足 42・間接 87
 
-スロット: supported 371・partial 31・unsupported 9・noEffect 51
+スロット: supported 374・partial 31・unsupported 9・noEffect 51
 
 ## 10 ラピ
 
@@ -692,6 +692,22 @@ notes の種類: 未対応 44・前提の外 104・計算に無関係 69・補�
 - **burst**: supported
   - effects[0] timed・burstUse・reloadSpeed: C-0456（確定）、C-0479（確定）
   - effects[1] timed・burstUse・critDamage: C-0463（確定）、C-0479（確定）
+
+## 183 メイデン：アイスローズ
+
+- **skill1**: supported
+  - effects[0] counterChange・burstStage1Enter・mp: C-1343（確定）
+  - effects[1] counterChange・fullBurstStart・mp: C-1343（確定）
+  - effects[2] counterChange・burstUse・mp（減少）: C-1343（確定）
+  - effects[3] timed・fullChargeShot・maxHpOnly: C-1349（確定）
+- **skill2**: supported
+  - effects[0] timed・fullBurstStart・elementDamage: C-1347（確定）、C-1350（確定）
+  - effects[1] timed・fullBurstStart・attack: C-1347（確定）
+  - effects[2] timed・burstUse・elementDamage: C-1350（確定）
+  - effects[3] timed・burstUse・attack: C-1346（確定）
+  - effects[4] damage・fullChargeShot・skill: C-1348（確定）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1343（確定）、C-1344（確定）、C-1345（確定）
 
 ## 190 ルドミラ
 
