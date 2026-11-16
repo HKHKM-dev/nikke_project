@@ -12,6 +12,7 @@ import {
 import { burstCandidateOf, burstUnitOf } from '../../burst/dynamic.ts';
 import type { BurstActivation, BurstSchedule, BurstScheduleModel } from '../../burst/schedule.ts';
 import type { BurstDamageEffect } from '../../skills/types.ts';
+import { counterMax } from '../../skills/counters.ts';
 import type { TimelineSlot } from '../../skills/timeline.ts';
 import type { FirstPassBase } from './base.ts';
 import type { FirstPassOptions, InstantApplication } from '../firstPass.ts';
@@ -110,7 +111,13 @@ export function createBurstStep({
   const cutCounterHits = (a: BurstActivation): void => {
     const counter = hitsFromOf[a.slotIndex];
     if (counter === undefined) return;
-    a.hitOffsets = (a.hitOffsets ?? [0]).slice(0, lists.counterValueAt(a.slotIndex, counter));
+    const offsets = a.hitOffsets ?? [0];
+    // 遅れの表の行はカウンタの上限の数のヒットを持つ（足りなければ、ヒットを黙って減らさずに止める）
+    if (offsets.length < counterMax(counter))
+      throw new RangeError(
+        `slot ${a.slotIndex}: hitsFrom needs ${counterMax(counter)} split hits in the burst delay table`,
+      );
+    a.hitOffsets = offsets.slice(0, lists.counterValueAt(a.slotIndex, counter));
     a.hitShare = 1;
   };
   /** いま見ている（または次に来る）狙えない窓の添字 */

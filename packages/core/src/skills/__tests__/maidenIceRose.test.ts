@@ -34,18 +34,19 @@ describe('語彙の検証', () => {
     expect(() => parseSkillDefinition(two)).toThrow(/need the only burstDamage/);
   });
 
-  it('rejects valueBeforeFire on hits split by perCountIntervalFrames (each hit uses its own frame)', () => {
+  it('rejects valueBeforeFire on hits split by perCount (each hit uses its own frame)', () => {
     const split = {
       trigger: 'burstUse',
       gaugeHits: undefined,
       perCount: { counter: 'mp' },
-      perCountIntervalFrames: 12,
       delayFrames: 6,
       valueBeforeFire: true,
     };
-    expect(() => parseSkillDefinition(patched('skill2', S2_DAMAGE, split))).toThrow(
-      /cannot be used with valueBeforeFire/,
-    );
+    for (const interval of [{ perCountIntervalFrames: 12 }, { perCountIntervalSeconds: 0.2 }]) {
+      expect(() => parseSkillDefinition(patched('skill2', S2_DAMAGE, { ...split, ...interval }))).toThrow(
+        /valueBeforeFire cannot be used with perCountInterval/,
+      );
+    }
   });
 });
 
@@ -79,5 +80,16 @@ describe('ヒットの攻撃力', () => {
     expect(withHp / without).toBeCloseTo(ratio, 9);
     // 最大HP に比例して増える
     expect(firstBurst(2_000_000, bare) - withHp).toBeCloseTo(withHp - without, 3);
+  });
+});
+
+describe('遅れの表', () => {
+  it('stops instead of cutting fewer hits when the burst delay table lacks the counter cap of split hits', () => {
+    const input = fixedTeam([311, 301, MAIDEN], 2);
+    input.slots[2] = {
+      ...input.slots[2]!,
+      character: { ...input.slots[2]!.character, burstDelayOverride: { row: null } },
+    };
+    expect(() => runSimulation(input)).toThrow(/hitsFrom needs 12 split hits/);
   });
 });

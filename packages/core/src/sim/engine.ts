@@ -16,7 +16,6 @@ import {
 } from '../burst/schedule.ts';
 import {
   baseAttackOf,
-  finalMaxHpOf,
   modelNotes,
   nonFullChargeTriggerDamage,
   partialChargeTriggerDamage,
@@ -426,7 +425,7 @@ function createRunner(c: RunnerContext, slot: SimInput['slots'][number], index: 
           enemy,
           slotHitTriggerDamage(slot, enemy, passive.buffs, input.attackRounding),
           passive.buffs,
-          finalMaxHpOf(slot, passive.buffs),
+          slot,
         ),
         damage: 0,
         hits: [],
@@ -477,7 +476,7 @@ function burstHitDamageOf(c: BurstHitContext, hitAt: BurstHitAt): number | null 
     enemy,
     trigger,
     buffs,
-    finalMaxHpOf(slot, buffs),
+    slot,
   );
   if (hit === null) return null;
   const result = runner.result.burst;

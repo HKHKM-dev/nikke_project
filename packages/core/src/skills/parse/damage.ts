@@ -442,9 +442,13 @@ function parsePerCountSplit(v: Record<string, Json>, effect: DamageEffect, path:
     if (effect.perCountIntervalSeconds !== undefined || effect.perBurstHit !== undefined)
       fail(`${path}.${key}`, `${key} cannot be used with perCountIntervalSeconds or perBurstHit`);
     effect.perCountIntervalFrames = parsePositiveInt(v.perCountIntervalFrames, `${path}.${key}`);
-    // 1 つずつ出すヒットは、それぞれのフレームの値で出す（frame/plan.ts の planSkillHits）。値を発火の直前で決める形は読まない
-    if (effect.valueBeforeFire !== undefined) fail(`${path}.${key}`, `${key} cannot be used with valueBeforeFire`);
   }
+  // 1 つずつ出すヒットは、それぞれのフレームの値で出す（frame/plan.ts の planSkillHits）。値を発火の直前で決める形は読まない
+  if (splitsPerCount(effect) && effect.valueBeforeFire !== undefined)
+    fail(
+      `${path}.valueBeforeFire`,
+      'valueBeforeFire cannot be used with perCountIntervalSeconds or perCountIntervalFrames',
+    );
   // 「順番に攻撃」の perCount の数だけのヒット
   if (v.sequentialAttack !== undefined) {
     parseTrue(v.sequentialAttack, `${path}.sequentialAttack`);

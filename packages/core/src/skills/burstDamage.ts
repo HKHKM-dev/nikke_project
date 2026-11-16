@@ -11,6 +11,7 @@ import {
   defenceAfterDown,
   DISTANCE_BONUS,
   distributedHitMultiplier,
+  finalMaxHpOf,
   explosionHitMultiplier,
   FULL_BURST_BOOST,
   skillElementMultiplier,
@@ -1145,16 +1146,17 @@ export function slotBurstHit(
   enemy: EnemyInput,
   trigger: Pick<TriggerDamage, 'attack' | 'attackDamageMultiplier'>,
   buffs: BuffTotals,
-  /** 撃つ側の最終最大HP（同じ buffs の値）。最大HP を攻撃力に合算する burstDamage（addCasterMaxHpRef）のときだけ要る */
-  casterFinalMaxHp?: number,
+  /** 撃つ枠（最終最大HP を buffs で求める）。最大HP を攻撃力に合算する burstDamage（addCasterMaxHpRef）のときだけ要る */
+  caster?: Parameters<typeof finalMaxHpOf>[0],
 ): BurstHitResult | null {
   if (!definition) return null;
   const effects = resolveBurstDamage(definition, character, levels);
   if (effects.length === 0) return null;
   // 最大HP の合算はスロットの burstDamage が 1 つのときだけ（resolveBurstDamage）なので、攻撃力に足してよい
   const ratio = effects[0]!.addCasterMaxHpRatio;
-  if (ratio !== undefined && casterFinalMaxHp === undefined)
-    throw new RangeError(`character ${character.resourceId}: addCasterMaxHpRef needs the final max HP of the caster`);
-  const attacked = ratio === undefined ? trigger : { ...trigger, attack: trigger.attack + ratio * casterFinalMaxHp! };
+  if (ratio !== undefined && caster === undefined)
+    throw new RangeError(`character ${character.resourceId}: addCasterMaxHpRef needs the caster`);
+  const attacked =
+    ratio === undefined ? trigger : { ...trigger, attack: trigger.attack + ratio * finalMaxHpOf(caster!, buffs) };
   return computeSkillHit(effects, character, enemy, attacked, buffs, BURST_SKILL_FULL_BURST_BONUS);
 }
