@@ -97,6 +97,11 @@ export type ResolvedSkillDamage = {
   coreHit?: true;
   /** 倍率ダメージの会心をきっかけにする 1 ヒット（期待値に倍率ダメージの会心率を掛ける。plan/design-julia.md 2.1 節） */
   onSkillCrit?: true;
+  /**
+   * 攻撃力に合算する、撃つ側の最終最大HP の比率（damage の addCasterMaxHpRef。plan/design-maiden-ice-rose.md 2.2 節）。frame/plan.ts の
+   * slotHitPusherOf がヒットの攻撃力に足す
+   */
+  addCasterMaxHpRatio?: number;
   /** 同 5.5 節: 「N 回順番に攻撃」のヒット。順番攻撃ダメージ▲（sequentialAttackDamage）を掛ける */
   sequential?: true;
   /**
@@ -396,6 +401,9 @@ export function resolveDamageEffects(
       if (foldsIntoShot(effect, trigger, def) && effect.onSkillCrit === true) {
         throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot fire on a skill critical hit`);
       }
+      if (foldsIntoShot(effect, trigger, def) && effect.addCasterMaxHpRef !== undefined) {
+        throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot add the max HP to the attack`);
+      }
       if (foldsIntoShot(effect, trigger, def)) return;
       // 固定ダメージ（与えたダメージ量の X%）は畳み込む形だけを持つ（plan/design-emilia.md 2.2 節）
       if (effect.damageType === 'fixedShare') {
@@ -477,6 +485,8 @@ export function resolveDamageEffects(
         r.coreHit = true;
       }
       if (effect.onSkillCrit === true) r.onSkillCrit = true;
+      if (effect.addCasterMaxHpRef !== undefined)
+        r.addCasterMaxHpRatio = skillValue(skill, effect.addCasterMaxHpRef, levels[slot]) / 100;
       if (effect.perCountIntervalSeconds !== undefined) r.perCountIntervalSeconds = effect.perCountIntervalSeconds;
       if (effect.perCountIntervalFrames !== undefined) r.perCountIntervalFrames = effect.perCountIntervalFrames;
       // 「順番に攻撃」の perCount の数だけのヒット（オートファイアの効果 2）も

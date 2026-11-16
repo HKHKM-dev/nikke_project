@@ -6,6 +6,7 @@ import { burstDelaysOf, isSplit, sameActivationBuffsOnHit } from '../burst/landi
 import { battleSecondsToFrames } from '../time.ts';
 import { effectFrameOf, hitFramesOf, isInFullBurst, type BurstSchedule } from '../burst/schedule.ts';
 import {
+  baseMaxHpOf,
   computeTriggerDamage,
   partialChargeTriggerDamage,
   type EnemyDebuffTiming,
@@ -666,7 +667,12 @@ function slotHitPusherOf(
         : skill !== 'burst' && definition.skills[skill].sequential === true && isResolvedShotCount(effect.trigger)
           ? withEarlierSequentialEffects(pieces, atHit, frame + 1, slotIndex, skill, effect.effectIndex)
           : atHit;
-    const trigger = slotHitTriggerDamage(slot, enemy, buffs, attackRounding);
+    const base = slotHitTriggerDamage(slot, enemy, buffs, attackRounding);
+    // 最大HP を攻撃力に合算するヒット（plan/design-maiden-ice-rose.md 2.2 節）: 同じバフの自分の最終最大HP × 比率を足す
+    const trigger =
+      effect.addCasterMaxHpRatio === undefined
+        ? base
+        : { ...base, attack: base.attack + baseMaxHpOf(slot) * (1 + buffs.maxHpRatio) * effect.addCasterMaxHpRatio };
     // フルバースト補正はフルバースト中に出た倍率ダメージにだけ乗る（2026-09-23 実測）
     const fullBurst = SKILL_HIT_FULL_BURST_BONUS && schedule !== null && isInFullBurst(schedule, valueFrame);
     // スタックする持続ダメージの tick は、1 スタックの倍率 × スタックの数（C-0182）

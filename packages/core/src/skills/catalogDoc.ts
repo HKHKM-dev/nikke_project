@@ -134,7 +134,12 @@ const KIND_INFO: Record<string, Info> = {
   ],
   'damage:core': ['コア命中ダメージ', 'ok', 'damage の coreHit'],
   'damage:fixed': ['固定ダメージ', 'gap', 'なし'],
-  'damage:hpScaled': ['最大HP を足した倍率ダメージ', 'gap', 'なし'],
+  'damage:hpScaled': [
+    '最大HP を攻撃力に合算した倍率ダメージ',
+    'ok',
+    'damage の addCasterMaxHpRef（メイデン：アイスローズ編）',
+  ],
+  'damage:hpConverted': ['最大HP を攻撃力として換算した倍率ダメージ', 'gap', 'なし'],
   // 蓄積して爆発するダメージの定義（plan/design-accumulate-explosion.md 2 節。C-0901・C-0903・C-0904）
   'damage:accumulate': [
     '蓄積して爆発するダメージ',
@@ -1180,7 +1185,7 @@ function writeIndirectSection(
       'HP',
       '読む',
       '最大HP 基準の攻撃力▲・ダメージ',
-      E.filter((e) => e.kind === 'damage:hpScaled' || (e.kind === 'stat' && e.stat!.scaling === 'casterHp')),
+      E.filter((e) => e.kind === 'damage:hpScaled' || e.kind === 'damage:hpConverted' || (e.kind === 'stat' && e.stat!.scaling === 'casterHp')),
     ],
     ['HP', '読む', '失った HP ごとの▲', E.filter((e) => e.kind === 'stat' && e.stat!.scaling === 'lostHp')],
     ['HP', '読む', 'HP の割合の条件（以上・以下・最大）', L.filter((l) => l.conditions.includes('hp'))],

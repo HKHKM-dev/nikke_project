@@ -1,0 +1,338 @@
+{
+  "verification": "V-0801",
+  "note": "撮影の予測。撮影 A はココア（I）+ ソルジャーF.A.（II）+ メイデン（III・操作）、撮影 B はココア（I）+ ソルジャーE.G.（III）+ メイデン（III・操作）+ ソルジャーF.A.（II）。射撃場の BigArms（水冷）・3 分モード・スペック固定 ON（スキル Lv10）。撮影 B の指標はオートバースト（ソルジャーE.G. とメイデンが交互に III を撃つ）で出す（手動操作の 4 回目のチェーンは検証記録に手で書く）。バーストの連続攻撃の遅れと間隔は仮の値",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 301
+    },
+    {
+      "rid": 183,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（連続攻撃は burstUse の damage で、ヒットのフレームのバフ（MP 使用後の▲を含む）とフルバースト補正で出る。MP チャージ時の▲はフルバーストのチャージだけ）",
+      "override": {}
+    },
+    {
+      "id": "H-burstDamage",
+      "note": "連続攻撃がバーストスキルダメージの形（発動の直前のバフで、MP 使用後の▲もフルバースト補正も乗らない。遅れ 0 の damage で近似: 1 ヒット目は発動のフレーム（フルバーストの始まりの前）に発動の時点のバフで出るので、MP 1 の撮影 A の 1 ヒットは案 A と同じ値。2 ヒット目からはフルバースト補正が乗るので案 A と違う）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 183,
+            "skill": "burst",
+            "replace": 0,
+            "effect": {
+              "kind": "damage",
+              "trigger": "burstUse",
+              "damageType": "skill",
+              "ref": 3,
+              "addCasterMaxHpRef": 2,
+              "perCount": {
+                "counter": "mp"
+              },
+              "perCountIntervalFrames": 12
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-restore",
+      "note": "MP チャージ時の▲が、1 段階突入の回復（MP 0 → 1）でも電撃の味方に付く",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 183,
+            "skill": "skill2",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstStage1Enter",
+              "condition": {
+                "selfCounter": {
+                  "counter": "mp",
+                  "below": 1
+                }
+              },
+              "target": "allies",
+              "excludeSelf": "always",
+              "targetElement": "Electronic",
+              "stat": "elementDamage",
+              "ref": 1,
+              "durationRef": 2
+            }
+          },
+          {
+            "rid": 183,
+            "skill": "skill2",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstStage1Enter",
+              "condition": {
+                "selfCounter": {
+                  "counter": "mp",
+                  "below": 1
+                }
+              },
+              "target": "allies",
+              "excludeSelf": "always",
+              "targetElement": "Electronic",
+              "stat": "attack",
+              "ref": 3,
+              "durationRef": 4,
+              "scaling": "casterAttack"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-burst-hit",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 A の 1 回目のバーストの連続攻撃の 1 ヒット（会心なし。MP 1 なので 1 ヒット）"
+    },
+    {
+      "id": "A-burst-count",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "撮影 A の連続攻撃のヒットの数（バーストごとに 1）"
+    },
+    {
+      "id": "A-shot-before",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 A のメイデンの 1 回目のバーストより前の通常攻撃の 1 ヒット（胴体・会心なし）"
+    },
+    {
+      "id": "A-shot-after",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 A の 1 回目のバーストの後（MP 使用後の▲の窓の中）の通常攻撃の 1 ヒット"
+    },
+    {
+      "id": "A-s2",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 A の S2 のフルチャージごとの倍率ダメージ（会心なし。1 回目のバーストより前）"
+    },
+    {
+      "id": "B-burst-count",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "team": [
+        {
+          "rid": 311
+        },
+        {
+          "rid": 300
+        },
+        {
+          "rid": 183,
+          "controlled": true
+        },
+        {
+          "rid": 301
+        }
+      ],
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "撮影 B（オートで交互）の連続攻撃のヒットの数（メイデンのバーストごとに 2）"
+    },
+    {
+      "id": "B-seg-pre",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "team": [
+        {
+          "rid": 311
+        },
+        {
+          "rid": 300
+        },
+        {
+          "rid": 183,
+          "controlled": true
+        },
+        {
+          "rid": 301
+        }
+      ],
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 380,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 B のソルジャーE.G. の 1 ヒット。1 回目のバースト 1 段階突入（MP 0 → 1）の後・フルバーストの前"
+    },
+    {
+      "id": "B-seg-fb",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "team": [
+        {
+          "rid": 311
+        },
+        {
+          "rid": 300
+        },
+        {
+          "rid": 183,
+          "controlled": true
+        },
+        {
+          "rid": 301
+        }
+      ],
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 B のソルジャーE.G. の 1 ヒット。ソルジャーE.G. が撃った 1 回目のフルバーストの中（MP チャージ時の▲）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-16",
+    "commit": "73cc8dc76495ad582bdd9eb7cf9cb4157acbefd1",
+    "values": {
+      "H1": {
+        "A-burst-hit": 15866204.960603822,
+        "A-burst-count": 5,
+        "A-shot-before": 134613.8805,
+        "A-shot-after": 626406.642246,
+        "A-s2": 481026.1222800001,
+        "B-burst-count": 8,
+        "B-seg-pre": 17465.502054,
+        "B-seg-fb": 39492.78230322001
+      },
+      "H-burstDamage": {
+        "A-burst-hit": 6513783.424180032,
+        "A-burst-count": 5,
+        "A-shot-before": 134613.8805,
+        "A-shot-after": 626406.642246,
+        "A-s2": 481026.1222800001,
+        "B-burst-count": 8,
+        "B-seg-pre": 17465.502054,
+        "B-seg-fb": 39492.78230322001
+      },
+      "H-restore": {
+        "A-burst-hit": 15866204.960603822,
+        "A-burst-count": 5,
+        "A-shot-before": 134613.8805,
+        "A-shot-after": 626406.642246,
+        "A-s2": 481026.1222800001,
+        "B-burst-count": 8,
+        "B-seg-pre": 28551.972252960008,
+        "B-seg-fb": 58279.71997008001
+      }
+    }
+  }
+}

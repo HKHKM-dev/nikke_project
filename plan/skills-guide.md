@@ -171,6 +171,8 @@
     | 通常攻撃が N 回（クリティカル）命中した時、ランダムな敵に「N 回順番に攻撃」 | 射撃の回数のきっかけの damage の `hitsRef`・`hitIntervalFrames`・`delayFrames`（射撃に畳み込まない） | イヴの S1 の不安定エネルギー | [design-eve.md](design-eve.md) 2.1 節 |
     | 通常攻撃が N 回命中した時、対象が〈コード〉なら自分に弾丸チャージ | `ammoRefill` の `enemyElement` | イヴの S2 | 同 2.2 節 |
     | 〈倍率ダメージ〉がクリティカル命中した時、同じ敵に（追加ダメージ） | damage の `onSkillCrit: true`（相手と同じきっかけ。期待値は値 × 倍率ダメージの会心率） | ジュリアの宝物版 S2 のマルカート | [design-julia.md](design-julia.md) 2.1 節 |
+    | スキル発動者の最終最大HP の X% を攻撃力に合算して Y% ダメージ／〈カウンタ〉分の連続攻撃 | damage の `addCasterMaxHpRef`／`burstUse` の damage の `perCount: { counter }` と `perCountIntervalFrames` | メイデン：アイスローズのバースト | [design-maiden-ice-rose.md](design-maiden-ice-rose.md) 2.2・2.3 節 |
+    | 〈カウンタ〉が 0 なら・1 以上なら（カウンタの増減と timed のきっかけ） | 条件 `selfCounter` の `below: 1`・`atLeast: 1` | メイデン：アイスローズの S1・S2 の MP | 同 2.1・2.4 節 |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。

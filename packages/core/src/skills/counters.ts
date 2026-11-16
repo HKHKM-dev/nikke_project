@@ -54,6 +54,11 @@ export const COUNTERS = {
    * 100 に届くたびに 1、バーストで 6（最低 1）か 9 減る。値で段階の効果（1・4 以上）とバーストの分岐（13）が決まる。上限 13（説明文の「最大13」）
    */
   ghostCapture: { name: { ja: '幽霊キャプチャー数', en: 'Ghosts captured' }, max: 13 },
+  /**
+   * MP（メイデン：アイスローズの S1・S2・バースト。plan/design-maiden-ice-rose.md 2.1 節）。バースト 1 段階突入時に 0 なら 1、フルバーストの
+   * 始まりに 1 以上なら 1 足し、バーストの使用で全部消える。バーストは MP の数だけ攻撃する。上限 12（説明文の「最大12まで蓄積可能」）
+   */
+  mp: { name: { ja: 'MP', en: 'MP' }, max: 12 },
 } as const satisfies Record<string, CounterInfo>;
 
 export type CounterId = keyof typeof COUNTERS;

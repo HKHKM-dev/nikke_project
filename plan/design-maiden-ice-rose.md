@@ -2,9 +2,9 @@
 
 - 手順: [skills-guide.md](skills-guide.md)（1.1 選ぶ → 1.2 説明文を分解する → 1.3 設計書 → 1.4 実装する）・[verification-guide.md](verification-guide.md)
 - 関連: [design-skill-stage10.md](design-skill-stage10.md) 2.1・2.3 節（カウンタの目録・`counterChange`・条件 `selfCounter`・`perCount` の `{ counter }`）、[design-skill-stage11.md](design-skill-stage11.md) 2.5 節（バーストのカウンタの数だけの追加ダメージ）、[design-skill-stage6.md](design-skill-stage6.md) 1.2・1.3 節（最終最大HP・`casterFinalMaxHp`。最大HP を使うダメージは「使い手を定義する時に足す」とした）、[design-velvet.md](design-velvet.md) 2.3 節（カウンタの消費）、[design-eve.md](design-eve.md) 7 節（バーストの順番の攻撃を `damage` から `burstDamage` に移した前例）
-- 検証: 承認の後に起こす（4 節）
+- 検証: V-0801
 - 作成日: 2026-11-16
-- 状態: 承認待ち（7 節）
+- 状態: 撮影待ち（V-0801）
 
 ## 0. 範囲
 
@@ -19,7 +19,7 @@
 - きっかけ `burstStage1Enter` は、ゲージの満タンと、チェーンが時間切れで 1 段階に戻った時に起きる（354 の定義の `assumes`）。`counterChange` と timed に書ける。
 - フルバーストの始まりは、III の発動の 6f 後（`burst/controller.ts` の `fullBurstStartDelayFrames`）。メイデンが III なら、`burstUse` の MP の消費がフルバーストの始まりより前に来るので、その回のフルバーストでは MP が 0 で、チャージしない（遅れの表の `effectFrames` が 6f 未満のとき）。
 - III を撃てる枠が 2 つあると、モデルは CT の明けた枠のうち左の枠を選ぶ（`pickCandidate`。オーナーの言う「左側優先」）。手で撃つ録画は、チェーンの始まり（I）の時刻を比べる設定の `manualBursts` で渡す。
-- `damage` の `perCount: { counter }` は、発火のフレームのカウンタの値を掛け、`perCountIntervalFrames` があれば 1 ヒットずつ出す（ラプラス：アルティメットヒーローのバースト・ミハラ：ボンディングチェーンのチェーンの攻撃）。`burstUse` の damage のヒットは、撃つ側のバフを発動の時点で固定し（`frame/plan.ts` の `burstHitBuffs`）、フルバースト補正はヒットのフレームがフルバーストの中なら乗る（`SKILL_HIT_FULL_BURST_BONUS`）。`burstDamage` も発動の直前のバフで出し、フルバースト補正は乗らない（`BURST_SKILL_FULL_BURST_BONUS`）。どちらも、同じ発動で付いた▲は乗らない（`burstDamage` は遅れの表の行の `sameActivationBuffsOnHit` で乗せられる）。
+- `damage` の `perCount: { counter }` は、発火のフレームのカウンタの値を掛け、`perCountIntervalFrames` があれば 1 ヒットずつ出す（ラプラス：アルティメットヒーローのバースト・ミハラ：ボンディングチェーンのチェーンの攻撃）。`burstUse` の damage は、遅れ（`delayFrames`）が無ければ撃つ側のバフを発動の時点で固定し（`frame/plan.ts` の `burstHitBuffs`）、遅れがあればヒットのフレームのバフ（同じ発動で付いた▲も入る）で出す。フルバースト補正は、ヒットのフレームがフルバーストの中なら乗る（`SKILL_HIT_FULL_BURST_BONUS`）。`burstDamage` は発動の直前のバフで出し（同じ発動の▲は、遅れの表の行の `sameActivationBuffsOnHit` があるときだけ乗る）、フルバースト補正は乗らない（`BURST_SKILL_FULL_BURST_BONUS`）。
 - 「〜敵1機に」で終わるバーストスキルダメージ▲（ジャッカル）は、`burstDamage` にだけ乗る（`skills/burstDamage.ts` の印 `oneEnemy`）。
 - 最終最大HP は、スペック固定の HP（`computeFixedSpecHp`。メイデンは 3,305,431）× (1 + 最大HP▲ と最大HP のみ▲ の和)。`casterFinalMaxHp` の攻撃力▲は、効いている各フレームの値を読み直す（[design-skill-stage6.md](design-skill-stage6.md) 1.3 節）。
 
@@ -61,7 +61,9 @@
 ### 2.3 所持 MP 分の連続攻撃（論点 1）
 
 - 撮る前は、いまの語彙の damage（`burstUse`・`perCount: { counter: mp }`・`perCountIntervalFrames`）で書く（案 B）。ヒットの遅れと間隔は、仮の値（遅れ 6f・間隔 12f。イヴ・エレグ：ブーム・アンド・ショックの順番の攻撃に倣う）を入れ、録画で読んで直す。
-- damage と `burstDamage` で値が違うのは、フルバースト補正だけ（0.1 節）。damage はヒットがフルバーストの中なら乗り、`burstDamage` は乗らない。1 ヒットの値で 1.5 倍前後の差になるので、録画の 1 ヒットで見分けられる。
+- 遅れのある damage と `burstDamage` では、値の決まり方が 2 つ違う（0.1 節）。どちらになるかは録画の 1 ヒットで見分けられる。
+  - フルバースト補正: damage はヒットがフルバーストの中なら乗り、`burstDamage` は乗らない。1 ヒットの値で 1.5 倍前後の差になる。
+  - 同じ発動の▲（S2 の MP 使用後の▲）: damage は乗り、`burstDamage` は乗らない。MP 使用後の攻撃力▲（最終最大HP の 3.2%）はメイデンの攻撃力より大きいので、差は大きい。
 - 録画でバーストスキルダメージの形（フルバースト補正なし）と分かったら、`burstDamage` に「ヒットの数を自分のカウンタの値にする」欄（仮称 `hitsFrom: { counter }`）と、遅れの表の行のヒットの間隔を足して移す（案 A。イヴのバーストを移したのと同じ判断）。そのときはジャッカルの「敵1機に」のバーストスキルダメージ▲も乗る。
 - damage のまま（フルバースト補正が乗る）なら、案 B で閉じる。ジャッカルの▲がこのヒットに乗るかは撮れないので、扱い方の補足（`modeling`）の notes に書く。
 
@@ -69,7 +71,7 @@
 
 - 「MP チャージ時」は、MP をチャージする効果と同じきっかけと条件の timed で書く（フルバーストの始まり・MP が 1 以上）。カウンタの増えたことをきっかけにする語彙は足さない（使い手がメイデンだけ）。
 - MP が上限 12 のときのチャージ（結果は増えない）でも▲が付くかは、撮れない（11 回のフルバーストが要る）。付く読みで書き、`assumes` に書く。
-- 「MP 使用後」は `burstUse` の timed で書く。バーストのヒットは発動の時点のバフで出すので（0.1 節）、案 A・B のどちらでも、この▲は連続攻撃に乗らない。録画で乗っていたら、付く時刻と乗せ方を見直す。付く時刻（連続攻撃の前か後か）は、メイデンの次の通常攻撃の▲の乗り始めで読む。
+- 「MP 使用後」は `burstUse` の timed で書く。案 B の damage（遅れあり）では連続攻撃に乗り、案 A の `burstDamage` では乗らない（2.3 節）。実機で連続攻撃の後に付くなら、乗らない形（案 A）にする。1 ヒットずつ出す damage（`perCountIntervalFrames`）は、どのヒットもそのフレームの値で出し、値を発火の直前で決める `valueBeforeFire` とは組めない（読み込みで弾く）。付く時刻は、メイデンの次の通常攻撃の▲の乗り始めでも読む。
 
 ## 3. 定義の案
 
@@ -78,7 +80,7 @@
 
 ## 4. 撮って確かめる問い
 
-承認の後に検証記録を起こし、編成・予測・撮影の依頼はそちらに書く。撮影は 2 つ（論点 4）。どちらもスペック固定 ON・射撃場 BigArms（水冷。電撃に有利コード）・メイデンは操作枠（3 枠目）でオート射撃 ON。
+撮影は V-0801（編成・予測・撮影の依頼はそちら）。撮影は 2 つ（論点 4）。どちらもスペック固定 ON・射撃場 BigArms（水冷。電撃に有利コード）・メイデンは操作枠（3 枠目）でオート射撃 ON。
 
 - **撮影 A**（MP 1 のバースト・自分への効果）: ココア（I）・ソルジャーF.A.（II）・メイデン（III・操作）、オートバースト ON。1 本（型 A）。
   - 見ること: 1 段階突入の回復で毎回 1 ヒットのバースト（遅れ・値・フルバースト補正の有無）、MP 使用後の▲（付く時刻・値。HP に比例する攻撃力▲が S1 のスタックで増えるか）、S2 のフルチャージごとの倍率ダメージ（時刻・ゲージ）、S1 の最大HP のみ▲ のスタック（6 回ごと。バーストと S2 の▲の値の増え方で読む）。
@@ -102,6 +104,8 @@
 
 ## 7. 論点（オーナーに決めてもらうこと）
 
+- 2026-11-16 に決めた: 1〜4 とも推奨どおり。
+
 1. **所持 MP 分の連続攻撃の形**（2.3 節）。推奨: 撮る前は既存の damage（`perCount: { counter: mp }`）で書き、録画でフルバースト補正が乗らないと分かったら `burstDamage` にカウンタの回数の欄を足して移す。代わりの案: 撮る前から `burstDamage` に欄を足す（録画の前に語彙を 1 つ多く作る）。
 2. **最大HP を攻撃力に合算するダメージ**（2.2 節）。推奨: damage に `addCasterMaxHpRef`（仮称）を足す。代わりの案: 未対応の notes にする（バーストの値の 8 割が欠ける）。
 3. **「MP チャージ時」の読み**（2.4 節）。推奨: フルバーストのチャージ（MP が 1 以上の時）だけで付く読みで定義し、1 段階突入の回復（MP 0 → 1）でも付くかを撮影 B で見分ける。付けば、同じ timed を `burstStage1Enter`・`below: 1` でも書く。
@@ -110,3 +114,4 @@
 ## 8. 経過
 
 - 2026-11-16: 起案。
+- 2026-11-16: 論点 1〜4 をオーナーが推奨どおりに決めた。2.2 節の語彙（damage の `addCasterMaxHpRef`）と目録の `mp` を実装し、定義を入れた。撮影 V-0801 を依頼した。

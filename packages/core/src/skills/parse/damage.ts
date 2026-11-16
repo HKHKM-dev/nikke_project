@@ -62,6 +62,11 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
     (damageType === 'fixedShare' || isSummonAttackTrigger(trigger) || v.accumulate !== undefined)
   )
     fail(path, 'onSkillCrit cannot be used with fixedShare, summon attacks or accumulate');
+  if (
+    v.addCasterMaxHpRef !== undefined &&
+    (damageType === 'fixedShare' || isSummonAttackTrigger(trigger) || v.accumulate !== undefined)
+  )
+    fail(path, 'addCasterMaxHpRef cannot be used with fixedShare, summon attacks or accumulate');
   if (damageType === 'fixedShare') return parseFixedShareDamage(v, effect, path);
   if (isSummonAttackTrigger(trigger)) return parseSummonDamage(v, effect, path);
   if (v.accumulate !== undefined) return parseAccumulateDamage(v, effect, path);
@@ -76,6 +81,9 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
   // 同 5.4 節: 「コア命中ダメージ」
   if (v.coreHit !== undefined) effect.coreHit = parseTrue(v.coreHit, `${path}.coreHit`);
   if (v.onSkillCrit !== undefined) effect.onSkillCrit = parseTrue(v.onSkillCrit, `${path}.onSkillCrit`);
+  // 最大HP を攻撃力に合算する（plan/design-maiden-ice-rose.md 2.2 節）
+  if (v.addCasterMaxHpRef !== undefined)
+    effect.addCasterMaxHpRef = parseRef(v.addCasterMaxHpRef, `${path}.addCasterMaxHpRef`);
   parsePerCountSplit(v, effect, path);
   validateGaugePerHitSplit(effect, path);
   parseHitMarks(v, effect, path);
@@ -432,6 +440,8 @@ function parsePerCountSplit(v: Record<string, Json>, effect: DamageEffect, path:
     if (effect.perCountIntervalSeconds !== undefined || effect.perBurstHit !== undefined)
       fail(`${path}.${key}`, `${key} cannot be used with perCountIntervalSeconds or perBurstHit`);
     effect.perCountIntervalFrames = parsePositiveInt(v.perCountIntervalFrames, `${path}.${key}`);
+    // 1 つずつ出すヒットは、それぞれのフレームの値で出す（frame/plan.ts の planSkillHits）。値を発火の直前で決める形は読まない
+    if (effect.valueBeforeFire !== undefined) fail(`${path}.${key}`, `${key} cannot be used with valueBeforeFire`);
   }
   // 「順番に攻撃」の perCount の数だけのヒット
   if (v.sequentialAttack !== undefined) {

@@ -1623,6 +1623,13 @@ export type DamageEffect = {
    */
   onSkillCrit?: true;
   /**
+   * 「スキル発動者の最終最大HP の X% を攻撃力に合算して」（メイデン：アイスローズのバースト。plan/design-maiden-ice-rose.md 2.2 節）の X の
+   * description_value_NN。ヒットの攻撃力を、値を決めるフレームの撃つ側の最終攻撃力 + 自分の最終最大HP（バフ前の最大HP × (1 + 最大HP▲ と
+   * 最大HP のみ▲ の比率の和)）× X% にして、いまの式（防御力を引いて倍率を掛ける）に入れる。射撃ごとに畳み込む効果
+   * （毎回の回数のきっかけで条件なし）には書けない
+   */
+  addCasterMaxHpRef?: number;
+  /**
    * 同 5.3 節: 「〈状態〉再発動周期 N 秒▼」。時間の周期のきっかけ（{ everySeconds }）の damage にだけ書ける。前の発動のフレームに自分が
    * state（家族の根なら家族のどれか）で、縮めた次の発動のフレームでも state なら、次の発動までを everySeconds − N 秒にする（同 10.2 節の f。
    * C-0738）。N は slot のスロットの
