@@ -52,7 +52,6 @@
 | # | 課題 | いま分かっていること | 次の 1 手 | 要るもの |
 | --- | --- | --- | --- | --- |
 | 2-1 | 命中率▲が弾丸命中率に効く式（SMG の遠のほか） | SMG の遠と中遠 B・C は H2（C-0192・C-0519）。モデルは AR・SMG・MG のどの帯にも同じ式を当てる（[design-hit-rate-up-bullet-h2.md](design-hit-rate-up-bullet-h2.md)）。SG は近だけ H2 で（C-0631）、中近・遠は H2 ほど上がらない（C-0527。仮説・未反映）。ほかの帯・武器種は手元の録画では見分けられない（V-0401「条件」）。SG の大きな▲の材料: ドロシー：セレンディピティの S1 の固定の発（ペレット 1 個）は中近・中遠・遠でもほぼ全部コアに当たり（C-1074）、フルバーストの間の命中率▲でペレットの当たりが大きく上がる（C-1079）。モデルはこの帯で表の割合のまま（V-0719）。最小構成の案は V-0401「次に撮るもの」 | 保留（2026-10-08 のオーナー判断） | 判断 |
-| 2-4 | バーストの着弾の遅れ（ほかのキャラ） | まとめは [burst-effect-delay-candidates.md](burst-effect-delay-candidates.md)「まとめ」（キャラごとの結論の一覧）。付き始めはキャラごとに違う（C-0540）。付き始めはモデルを直さない（案 C。チャージの途中の速度▲だけ入れた。[design-charge-carryover.md](design-charge-carryover.md)） | 読み直しで測れる候補は済んだ（ノワールは測り方が無いので後回し）。アリスの再現は V-0407（録画 0407。C-0523 を繰り返し、確定（2026-10-10 のオーナーの判断））。チャージの途中の速度▲はモデルに入れた（2026-10-10 のオーナーの判断。plan/design-charge-carryover.md の案 1-A。付き始めは案 C のまま） | 撮影・読み直し |
 | 2-33 | 既存の確定の点検で仮説にした結論 | 残りは C-0641（N は宝物版の値か）と C-0642 | どちらも撮り足さない（オーナーの決定） | — |
 | 2-43 | 防御力▼の後の防御力の丸めの、.5 ちょうどの向き | C-0790 は 64.36→64・91.6→92 だけで見分けた。モデル（`damage.ts` の `defenceAfterDown`）は `Math.round` で .5 を切り上げるが、根拠は無い（テストはいまの扱いを留めるだけ）。射撃場の的（防御力 100）で .5 になる組は、定義のある▼のスキル Lv の組ではルドミラの S1 Lv6 とエレグのバースト Lv7 の▼の和（62.50）だけで、2 つの▼の和の効き方も確かめていない。防御力を手入力する敵では出うる | 撮らない（未確定と明記。2026-11-01 のオーナーの判断） | — |
 | 2-46 | 敵の防御力▼の効き方が、キャラで違うわけ | トロニーの S2（C-0851）とプロダクト23 のバースト（C-0777）は、▼の後の防御が 0 になった値で、説明文の値を C-0556・C-0790 の式で引いた値と合わない。エーテル・エレグ・ルドミラ・エクシア・センチの▼は説明文どおり（C-0832・C-0690・C-0556・C-1189・C-1221）。トロニー・プロダクト23 の▼は定義には入れていない | 付ける側の防御力 × X を的の防御より小さくできる撮り方（防御の高い、防御の分かった的など）が見つかったら、仮説（`function_standard` が User。V-0642）を撮って確かめる。StaticData は使わない | 撮影の手段 |
@@ -110,7 +109,6 @@
 - 持続の命中率▲をコア命中率に効かせる（2026-09-28 起票）→ 一部完了: [design-sustained-hit-rate-core.md](design-sustained-hit-rate-core.md)。残りは 1.2 節
 - SG の命中率（2026-10-01）→ 一部完了: [design-sg-hit-rate.md](design-sg-hit-rate.md)。残りは 2-1
 - 命中率▲が弾丸命中率に効く式（2026-10-03 起票）→ 一部完了: [design-hit-rate-up-bullet-h2.md](design-hit-rate-up-bullet-h2.md)。残りは 2-1
-- バーストの効果の着弾の遅れと、同じ発動の中の効果の順（2026-10-01 起票）→ 一部完了: まとめは [burst-effect-delay-candidates.md](burst-effect-delay-candidates.md)「まとめ」、[design-burst-landing.md](design-burst-landing.md)・[design-burst-split-hits.md](design-burst-split-hits.md)・[design-burst-effect-window-end.md](design-burst-effect-window-end.md)。残りは 2-4
 - アニス：スター（17）の S1（2026-10-03）→ 一部完了: [design-anis-star-s1.md](design-anis-star-s1.md)・[design-anis-star-s2-burst.md](design-anis-star-s2-burst.md)・[design-anis-star-ally-gauge.md](design-anis-star-ally-gauge.md)。残りは 6 節
 - 防御力無視ダメージ・有利コードの攻撃ダメージ等の語彙（2026-10-05）→ 一部完了: [design-true-damage-element.md](design-true-damage-element.md)・[design-delayed-skill-hit.md](design-delayed-skill-hit.md)。残りは 6 節
 - 対象の語彙（2026-10-05）→ 一部完了: [design-target-vocab.md](design-target-vocab.md)・[design-ranked-shot-duration.md](design-ranked-shot-duration.md)。残りは 6 節
@@ -120,6 +118,7 @@
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
+- バーストの効果の着弾の遅れと、同じ発動の中の効果の順（2026-10-01 起票）→ 閉じた（2026-11-16。残りの 2-4 も閉じた。数 f の差は直さず、これからのキャラはキャラごとの検証記録で扱う。オーナーの判断）: まとめは [burst-effect-delay-candidates.md](burst-effect-delay-candidates.md)「まとめ」、[design-burst-landing.md](design-burst-landing.md)・[design-burst-split-hits.md](design-burst-split-hits.md)・[design-burst-effect-window-end.md](design-burst-effect-window-end.md)。行（2-4）は閉じた
 - 二丁持ちの SMG で命中率▲がコア命中率を上げる形（2-59。2026-11-14 起票）→ 決定（2026-11-15。案 1C。どの帯も和のままで、モデルは変えない）: [design-dual-smg-hit-rate-form.md](design-dual-smg-hit-rate-form.md)
 - 1 パス目の分割で見送った整理（2026-11-12 起票）→ 完了（2026-11-14。11.1 節の #1〜#12）: [design-split-first-pass.md](design-split-first-pass.md) 11 節
 - 射撃場の SMG の近のコア命中率（2-54。2026-11-14 起票）→ 完了（2026-11-14。的の表の SMG の近を着地点ごとの値にし、銃口 1 つの SMG の近だけ指数・和。二丁持ちの形は 2-59）: [design-smg-near-core.md](design-smg-near-core.md)
