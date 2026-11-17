@@ -394,9 +394,10 @@ const TARGET_KEYS = {
   filter: FILTER_TARGET_KEYS,
   /**
    * heal だけが持つ欄（resolveInstant）: 編成で決まる対象の枠（lowestHpRatio・両隣・基本バースト段階。skills/composition.ts が書く。
-   * plan/design-skill-stage8.md 1.1 節）と、「基本バースト段階が N の」（fixedTargets の無い呼び出しを skills/targets.ts が落とす印）
+   * plan/design-skill-stage8.md 1.1 節）と、「基本バースト段階が N の」「両隣の味方」（どちらも、fixedTargets の無い呼び出しを
+   * skills/targets.ts が落とす印。枠は fixedTargets に入るので、ほかに読む所は無い）
    */
-  heal: ['fixedTargets', 'targetBurstStep'],
+  heal: ['fixedTargets', 'targetBurstStep', 'targetAdjacent'],
 } as const satisfies Record<string, readonly (keyof TargetFields)[]>;
 
 /**

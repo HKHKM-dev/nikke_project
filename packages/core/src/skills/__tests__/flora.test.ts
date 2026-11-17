@@ -4,10 +4,11 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { CharacterData } from '../../types.ts';
 import { fixedTargetsOf } from '../composition.ts';
-import { adjacentSlotsOf } from '../targets.ts';
+import { adjacentSlotsOf, isEffectTarget } from '../targets.ts';
 import {
   MAX_SKILL_LEVELS,
   resolveAllStackableChanges,
+  resolveInstant,
   resolveStateGrants,
   resolveTimed,
   resolveTrigger,
@@ -135,6 +136,16 @@ describe('両隣の枠', () => {
     const characters = [EXIA_LIKE, flora, EXIA_LIKE, null, EXIA_LIKE];
     expect(fixedTargetsOf(def.skills.skill1.effects[0]!, characters, 1)).toEqual([0, 1, 2]);
     expect(fixedTargetsOf(def.skills.skill1.effects[0]!, characters, 4)).toEqual([4]);
+  });
+
+  it('refuses to target the adjacent heal without the composition step', () => {
+    // 編成を通さずに解いた回復は、両隣の枠（fixedTargets）が無い。黙って味方の全員に掛けずに落とす
+    const heal = resolveInstant(def, flora, LV7).find((e) => e.kind === 'heal' && e.source.skill === 'skill1')!;
+    expect(heal).toMatchObject({ target: 'allies', targetAdjacent: true });
+    expect(heal.fixedTargets).toBeUndefined();
+    expect(() => isEffectTarget(heal, 1, 4, EXIA_LIKE)).toThrow(/needs fixedTargets/);
+    expect(isEffectTarget({ ...heal, fixedTargets: [0, 1, 2] }, 1, 2, EXIA_LIKE)).toBe(true);
+    expect(isEffectTarget({ ...heal, fixedTargets: [0, 1, 2] }, 1, 4, EXIA_LIKE)).toBe(false);
   });
 });
 
