@@ -207,7 +207,10 @@ if (!values.child) {
         '--name',
         names[i]!,
         ...(note !== undefined ? ['--note', note] : []),
-        ...[...shared, ['--build-snapshot', snapshot] as const].flatMap(([k, v]) => (v === undefined ? [] : [k, v])),
+        // --キー=値 で渡す（--rid -,-,300 のように - で始まる値を、子の parseArgs が引数の名前と取り違えないように）
+        ...[...shared, ['--build-snapshot', snapshot] as const].flatMap(([k, v]) =>
+          v === undefined ? [] : [`${k}=${v}`],
+        ),
         ...flags,
       ],
       { stdio: 'inherit' },

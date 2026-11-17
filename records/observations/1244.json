@@ -1,0 +1,82 @@
+[
+  {
+    "id": "1244-01",
+    "recording": "1244",
+    "kind": "total",
+    "use": "record",
+    "value": 1379062,
+    "unit": "ダメージ",
+    "description": "戦闘の終わりのリザルト画面の STAGE DAMAGE（ソルジャーE.G. の単騎の 1 戦の与ダメージ。数え上がりが止まった後の値）",
+    "method": {
+      "tool": "目視",
+      "note": "リザルト画面の数字を、数え上がりが止まった後のフレームで読んだ"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "target",
+      "frames": [1135, 1746]
+    },
+    "source": "V-0802",
+    "readAt": "2026-11-17"
+  },
+  {
+    "id": "1244-02",
+    "recording": "1244",
+    "kind": "hit",
+    "use": "record",
+    "value": [13002, 13431, 16252],
+    "unit": "ダメージ",
+    "description": "ボスの名前の下の累計ダメージの 1 フレーム差の増分の 1 ヒットの格子。コア 13,002（77 回）・S1 の攻撃力▲ありのコア 13,431（2 回）・コア会心 16,252（11 回）。胴体のヒットは無い。16,252 ÷ 13,002 = 1.25 で、距離ボーナスの乗らない倍率グループ（2.0・2.5）の比",
+    "method": {
+      "tool": "hud.ts --screen raid --mode jumps --fallback",
+      "note": "1 フレーム差の増分の頻度を数えた。最後の値 1,379,062 は STAGE DAMAGE（-01）と同じ"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [1135, 1733]
+    },
+    "source": "V-0802",
+    "readAt": "2026-11-17"
+  },
+  {
+    "id": "1244-03",
+    "recording": "1244",
+    "kind": "count",
+    "use": "record",
+    "value": [102, 102, 16, 0],
+    "unit": "ヒット",
+    "description": "増分を格子のセルの和（最少のヒット数）に分けた [ヒット数, コア, 会心, 距離ボーナスあり]",
+    "method": {
+      "tool": "hud.ts --screen raid --mode jumps --fallback",
+      "note": "累計ダメージの増分（gap を含む全部）を 13,002・13,431・16,252・16,788 の和に分けた。分けられない増分は無い"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [1135, 1733]
+    },
+    "source": "V-0802",
+    "readAt": "2026-11-17"
+  },
+  {
+    "id": "1244-04",
+    "recording": "1244",
+    "kind": "count",
+    "use": "record",
+    "value": 106,
+    "unit": "発",
+    "description": "照準の横の残弾から数えた、撃った数（およそ。減りの合計 105 と最初の 1 発）",
+    "method": {
+      "tool": "reticle-ammo.ts --mode mags --max 90",
+      "note": "1505 のリロード（1→60）をまたいで減りを足した。読めないフレームをまたぐ減りの取りこぼしはありうる"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing",
+      "frames": [1124, 1746]
+    },
+    "source": "V-0802",
+    "readAt": "2026-11-17"
+  }
+]

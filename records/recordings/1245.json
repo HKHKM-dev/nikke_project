@@ -12,14 +12,15 @@
   "team": [
     {
       "slot": 3,
-      "rid": 300,
-      "name": "ソルジャーE.G.",
+      "rid": 311,
+      "name": "ココア",
       "controlled": true
     }
   ],
   "target": {
     "name": "勝利の女神",
-    "element": null
+    "element": null,
+    "level": 400
   },
   "mode": null,
   "fixedSpec": null,

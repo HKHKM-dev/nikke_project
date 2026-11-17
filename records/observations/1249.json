@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1249-01",
+    "recording": "1249",
+    "kind": "total",
+    "use": "record",
+    "value": 732879,
+    "unit": "ダメージ",
+    "description": "戦闘の終わりのリザルト画面の STAGE DAMAGE（I-DOLL・フラワーの単騎の 1 戦の与ダメージ。数え上がりが止まった後の値）",
+    "method": {
+      "tool": "目視",
+      "note": "リザルト画面の数字を、数え上がりが止まった後のフレームで読んだ"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "target",
+      "frames": [653, 1509]
+    },
+    "source": "V-0802",
+    "readAt": "2026-11-17"
+  },
+  {
+    "id": "1249-02",
+    "recording": "1249",
+    "kind": "hit",
+    "use": "record",
+    "value": [68175, 85218],
+    "unit": "ダメージ",
+    "description": "累計ダメージの増分の 1 ヒットの格子。フルチャージのコア 68,175（7 回）・コア会心 85,218（3 回）。モデル（Lv400・防御力 30,850。風圧どうしで有利なし）の倍率グループ 1 あたり 34,087.2 の 2.0・2.5 倍",
+    "method": {
+      "tool": "hud.ts --screen raid --mode jumps --fallback",
+      "note": "増分 10 個がどれもこの 2 つの値。最後の値は STAGE DAMAGE（-01）と同じ"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [653, 1506]
+    },
+    "source": "V-0802",
+    "readAt": "2026-11-17"
+  }
+]
