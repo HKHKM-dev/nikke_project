@@ -158,8 +158,8 @@ function fullCharacter(c: CompositionCharacter, index: number): Required<Composi
 }
 
 /**
- * 編成で決まる対象の枠（順位の順）。編成で決まる対象か（部隊・基本チャージ時間・〈名前〉状態・両隣・基本バースト段階・一番左・
- * allies の自分を除く）は skills/targets.ts の needsFixedTargets で見る。heal が持つのは、両隣と基本バースト段階と lowestHpRatio だけ。
+ * 編成で決まる対象の枠（順位の順）。編成で決まる対象かは skills/targets.ts の needsFixedTargets で見る。heal が持つのは、両隣と
+ * 基本バースト段階と lowestHpRatio だけ。
  * targetSquad = 部隊が自分と同じ枠（自分を含む。枠の順）、
  * longestChargeTime = 基本チャージ時間（CharacterData.shot.chargeTime）の長い順（同値は枠の若い順。仮定）。
  * targetState = 枠の静的な状態（states[i]。枠の定義の静的な付与が付ける状態）にその id がある枠、
@@ -189,6 +189,10 @@ export function fixedTargetsOf(
   const squad = 'targetSquad' in effect && effect.targetSquad !== undefined;
   const longest = effect.target === 'longestChargeTime';
   if (!needsFixedTargets(effect)) return undefined;
+  // 枠の決め方の無い組（読み込みが落とす。heal でない lowestHpRatio と、付与の targetLeftmost）には枠を書かない
+  // （skills/targets.ts の守りが、枠の無い対象として落とす）
+  if (effect.target === 'lowestHpRatio' || (effect.kind === 'state' && effect.targetLeftmost !== undefined))
+    return undefined;
   const self = characters[selfIndex];
   if (!self) throw new Error(`no character in slot ${selfIndex}`);
   const windowed = effect.kind === 'timed' || effect.kind === 'state';

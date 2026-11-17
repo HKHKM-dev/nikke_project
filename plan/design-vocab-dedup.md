@@ -188,7 +188,8 @@ stat を 1 つ足すときに書く所（`allEnemiesBurstDamage` を足した #1
 
 - 型: `skills/targets.ts` に対象の絞り込みの欄の型 `TargetFields`（14 個。欄の注記もここ）を置き、`TargetedEffect` は `{ target } & TargetFields`。`skills/resolve.ts` の `ResolvedEffect` は `TargetFields` との交わり、`ResolvedInstantEffect`・`ResolvedAllStackableChange` は、写す欄の一覧（下）から `Pick` で取る。
 - 写す所: `skills/resolve.ts` の `TARGET_KEYS` に、写す所ごとの欄の一覧（書く順）を並べ、`copyTargetFields(to, from, keys)` が写す。一覧は `passive`・`item`（timed と付与）・`content`（状態の中身）・`filter`（武器種・コード・クラスだけ。スタック可能バフのスタック量の増減と即時効果）・`heal`（heal だけの欄）の 5 つ。N（`targetCount`）を Lv の値に解いて書く所と、heal かどうかの分岐は、元の所に残した。
-- 判定: `needsFixedTargets` を `skills/targets.ts` から出し、`skills/composition.ts` の `fixedTargetsOf` が使う。`hasPersonaTargetFilter` は消した。
+- 判定: `needsFixedTargets` を `skills/targets.ts` から出し、`skills/composition.ts` の `fixedTargetsOf` が使う。`hasPersonaTargetFilter` は消した。`needsFixedTargets` は欄だけを見るので、前の判定が種類で外していた 2 つの組（heal でない `lowestHpRatio` と、付与の `targetLeftmost`。どちらも読み込みが落とす）は、`fixedTargetsOf` が枠を書かずに返す（前と同じく、対象の判定の守りが落とす）。
+- 型の守り: `copyTargetFields` の一覧の型は、元の効果の型と解決済みの効果の型の両方が持つ欄だけ。写す所に合わない一覧を渡すと型の検査で落ちる（常時の所に `item` を渡して落ちることを確かめた）。
 - 対象の欄を足すときに解決の側で書く所は、`TargetFields` の 1 行と、`TARGET_KEYS` の当たる一覧に 1 語。編成で決まる欄なら `needsFixedTargets` に 1 行。
 
 **写す欄の所ごとの違い（論点 4）**。2.2 節の表の — の理由。どれも今のまま保った:
@@ -207,9 +208,11 @@ stat を 1 つ足すときに書く所（`allEnemiesBurstDamage` を足した #1
 
 - **heal の `targetAdjacent` の守り（論点 5）**: 動かして確かめた。編成を通さずに解いた `data/skills/411.json` の S1 の回復（両隣）は、`isEffectTarget` が隣でない枠にも true を返す（落ちない）。`data/skills/840.json` の S1 の回復（基本バースト段階）は `needs fixedTargets` で落ちる。この段では直さず、課題にした（`records/backlog/heal-adjacent-fixed-targets.json`）。
 
-**確かめた結果**（6 節。基の版は main の fc71c712）:
+**見直し**: 整理の観点（`/simplify`）で、写す関数の型を写す所と結び、`needsFixedTargets` の引数を `TargetFields` から取る形にし、欄を足す手順を `TargetFields` の注記に書いた。バグの観点（`/code-review medium`）で、上の 2 つの組の扱いを前と同じに戻した。見送った指摘: `TARGET_KEYS.filter` と `FILTER_TARGET_KEYS` の名前が 2 つあること（写す所ごとの一覧を 1 つの表に並べるため）、`TargetFields` の 2 欄を `FixedTargetFields` から取ること（注記が 2 か所に分かれる）、heal の `targetAdjacent` の守り（論点 5）。
 
-- `npm test`（404 ファイル）・`npm run typecheck`・変えたファイルの lint が通る。期待値の書き換えは無い。`needsFixedTargets` のテストを `skills/__tests__/targets.test.ts` に足した。
+**確かめた結果**（6 節。基の版は main の fc71c712。見直しの直しの後に回し直した）:
+
+- `npm test`（404 ファイル）・`npm run typecheck`・変えたファイルの lint が通る。期待値の書き換えは無い。`needsFixedTargets` のテストを `skills/__tests__/targets.test.ts` に、`fixedTargetsOf` が枠を書かない組のテストを `skills/__tests__/composition.test.ts` に足した。
 - 読み込みの結果（138 定義）・編成を通さない解決の結果（138 定義 × 解決の関数 10 個）・`runSimulation`（`trace` あり）の `SimResult` と `TeamResult`（4 編成と、比べる指定のある観測値の入力 1,013 組）の JSON が、main と文字列で一致した（3,553 行の要約が全部同じ）。
 - 判定: 全部の定義の効果 1,018 個（枠を書くもの 31 個: timed 15・passive 2・state 6・heal 8）で、`fixedTargetsOf` の返す枠が main と一致した（5 枠の編成に置いて、`held` の真偽の両方で比べた）。
 - 速さ: 4 編成の `runSimulation`（`trace` なし）を、main と段の後を別のプロセスで交互に 6 回ずつ起こし、1 プロセスで 40 回の平均の中央値を比べた。

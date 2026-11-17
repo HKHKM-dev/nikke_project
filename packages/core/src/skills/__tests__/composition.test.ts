@@ -115,3 +115,42 @@ describe('基本バースト段階が N の味方に再突入するキャラを�
     expect(compositionAllows(effect, [ram, reentry, rem], 0)).toBe(true);
   });
 });
+
+describe('編成で決まる対象の枠（fixedTargetsOf）', () => {
+  const timed = {
+    kind: 'timed',
+    trigger: 'burstUse',
+    target: 'allies',
+    stat: 'attack',
+    ref: 1,
+    durationRef: 2,
+  };
+  const grant = {
+    kind: 'state',
+    state: 'swordCoin',
+    trigger: 'battleStart',
+    target: 'allies',
+    durationUntil: 'battleEnd',
+    contents: [{ stat: 'attackDamage', ref: 1 }],
+  };
+  const effectOf = (effect: Record<string, unknown>) =>
+    parseSkillDefinition(definitionWith(effect)).skills.skill1.effects[0]!;
+  const team = [ram, rem, delta];
+
+  it('writes no slots for a target decided without the composition', () => {
+    expect(fixedTargetsOf(effectOf(timed), team, 0)).toBeUndefined();
+    expect(fixedTargetsOf(effectOf(grant), team, 0)).toBeUndefined();
+  });
+
+  it('writes the leftmost slot for a timed effect', () => {
+    expect(fixedTargetsOf(effectOf({ ...timed, targetLeftmost: true }), team, 1)).toEqual([0]);
+  });
+
+  it('writes no slots for a combination the loader rejects', () => {
+    // 読み込みを通さずに作った効果。枠を書かないので、対象の判定（skills/targets.ts）が枠の無い対象として落とす
+    const leftmostGrant = { ...effectOf(grant), targetLeftmost: true } as ReturnType<typeof effectOf>;
+    expect(fixedTargetsOf(leftmostGrant, team, 0)).toBeUndefined();
+    const lowestHpTimed = { ...effectOf(timed), target: 'lowestHpRatio' } as ReturnType<typeof effectOf>;
+    expect(fixedTargetsOf(lowestHpTimed, team, 0)).toBeUndefined();
+  });
+});
