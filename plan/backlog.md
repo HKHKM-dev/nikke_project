@@ -116,10 +116,10 @@
 - アニス：スター（17）のバーストのコアの経路（2026-10-05）→ 一部完了: [design-anis-star-core-path.md](design-anis-star-core-path.md)。残りは 6 節
 - 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは 3 節
 - 戦闘力による一覧の並び替え（2026-11-07 起票）→ 一部完了: [design-combat-power-sort.md](design-combat-power-sort.md)。残りは 4 節
-- 語彙の定義の重なりを減らす（stat の一覧と対象の絞り込みの欄）（2026-11-17 起票）→ 一部完了（A は承認待ち）: [design-vocab-dedup.md](design-vocab-dedup.md) 4 節
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
+- 語彙の定義の重なりを減らす（stat の一覧と対象の絞り込みの欄）（2026-11-17 起票）→ 完了（2026-11-17）: [design-vocab-dedup.md](design-vocab-dedup.md)
 - バーストの効果の着弾の遅れと、同じ発動の中の効果の順（2026-10-01 起票）→ 閉じた（2026-11-16。残りの 2-4 も閉じた。数 f の差は直さず、これからのキャラはキャラごとの検証記録で扱う。オーナーの判断）: まとめは [burst-effect-delay-candidates.md](burst-effect-delay-candidates.md)「まとめ」、[design-burst-landing.md](design-burst-landing.md)・[design-burst-split-hits.md](design-burst-split-hits.md)・[design-burst-effect-window-end.md](design-burst-effect-window-end.md)。行（2-4）は閉じた
 - 二丁持ちの SMG で命中率▲がコア命中率を上げる形（2-59。2026-11-14 起票）→ 決定（2026-11-15。案 1C。どの帯も和のままで、モデルは変えない）: [design-dual-smg-hit-rate-form.md](design-dual-smg-hit-rate-form.md)
 - 1 パス目の分割で見送った整理（2026-11-12 起票）→ 完了（2026-11-14。11.1 節の #1〜#12）: [design-split-first-pass.md](design-split-first-pass.md) 11 節
