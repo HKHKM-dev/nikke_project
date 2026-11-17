@@ -2,7 +2,7 @@
 
 - 何のための文書か: スキルの語彙を足すたびに、同じ中身を何か所にも書いている所（stat の一覧と、対象の絞り込みの欄）を、動きを変えずに 1 か所へ寄せる変更の、今の構造・案と得失・論点・段・確かめ方
 - 対象: A = `skills/types.ts` の `BuffStat`・`BUFF_STATS` と、`skills/buffs.ts` の `RATIO_FIELD`。B = `skills/targets.ts` の `TargetedEffect`、`skills/resolve.ts` の解決済みの効果の型と対象の欄を写す所、「編成で決まる対象か」の判定（`skills/targets.ts`・`skills/composition.ts`）
-- 状態: 承認待ち（4 節の論点）
+- 状態: B は進行中（5 節の段 B）。A は承認待ち（4 節の論点 1・2）
 - 関連: [design-split-skill-holders.md](design-split-skill-holders.md)（4.3 節の案 2 が和集合を一覧から導く案。衝突を減らす目的で比べ、見送った）、[design-split-long-functions.md](design-split-long-functions.md)・[design-split-first-pass.md](design-split-first-pass.md)（動きを変えない分割と、その確かめ方）、[design-first-pass-perf.md](design-first-pass-perf.md)（速さの測り方）、[design-target-vocab.md](design-target-vocab.md)（対象の語彙）、[skills-guide.md](skills-guide.md) 1.4 節（語彙を足す手順）
 - 作成日: 2026-11-17
 - 調べた時点: main の fc71c712。行番号はその時点のファイルの行
@@ -185,3 +185,4 @@ stat を 1 つ足すときに書く所（`allEnemiesBurstDamage` を足した #1
 ## 9. 経過
 
 - 2026-11-17: 起案。
+- 2026-11-17: オーナーが B を実施すると決めた。B に当たる論点（3〜6・8）は推奨の案で進める。A（論点 1・2）は未決。
