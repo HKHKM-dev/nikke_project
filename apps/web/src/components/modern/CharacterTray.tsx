@@ -42,6 +42,7 @@ import { useFilterTable } from '../../useFilterTable.ts';
 import {
   FILTER_EFFECTS,
   FILTER_SIDE_LABEL,
+  sidesOf,
   SPECIAL_ATTACKS,
   TRAITS,
   type FilterEffect,
@@ -93,9 +94,7 @@ export function CharacterTray({
   // 「絞り込み」の窓（文字の検索・バースト CT。trayFilter.ts）。表は窓を初めて開いたときに読む
   const [trayFilter, setTrayFilter] = useState<TrayFilter>(EMPTY_TRAY_FILTER);
   const [tableRequested, setTableRequested] = useState(false);
-  const { table: filterTable, error: filterTableError } = useFilterTable(
-    tableRequested || needsFilterTable(trayFilter),
-  );
+  const { table: filterTable, error: filterTableError } = useFilterTable(tableRequested);
   const filteredCharacters = useMemo(() => {
     return applyTrayFilter(filterByFavorites(badgeFiltered, favorites, favoriteFilter), trayFilter, filterTable);
   }, [badgeFiltered, favoriteFilter, favorites, trayFilter, filterTable]);
@@ -122,7 +121,7 @@ export function CharacterTray({
             onTreasureOnlyChange={setTreasureOnly}
             favoriteFilter={favoriteFilter}
             onFavoriteFilterChange={setFavoriteFilter}
-            trayFilterActive={trayFilterActive(trayFilter)}
+            trayFilterOn={trayFilterActive(trayFilter)}
             onClearTrayFilter={() => setTrayFilter(EMPTY_TRAY_FILTER)}
           />
         </div>
@@ -225,7 +224,7 @@ function TrayFilters({
   onTreasureOnlyChange,
   favoriteFilter,
   onFavoriteFilterChange,
-  trayFilterActive,
+  trayFilterOn,
   onClearTrayFilter,
 }: {
   filters: BadgeFilterValues;
@@ -237,10 +236,10 @@ function TrayFilters({
   favoriteFilter: readonly FavoriteMark[];
   onFavoriteFilterChange: (marks: readonly FavoriteMark[]) => void;
   /** 「絞り込み」の窓で絞っているか（クリアで一緒に外す） */
-  trayFilterActive: boolean;
+  trayFilterOn: boolean;
   onClearTrayFilter: () => void;
 }) {
-  const filtering = trayFilterActive || treasureOnly || favoriteFilter.length > 0 || Object.keys(filters).length > 0;
+  const filtering = trayFilterOn || treasureOnly || favoriteFilter.length > 0 || Object.keys(filters).length > 0;
   return (
     <div className="char-tray-filter-group">
       <BadgeFilters filters={filters} onChange={onFiltersChange} />
@@ -414,7 +413,7 @@ function TrayFilterMenu({
 function effectRows(present: ReadonlySet<string>) {
   const rows: { group: string; effects: { effect: FilterEffect; sides: FilterSide[] }[] }[] = [];
   for (const effect of FILTER_EFFECTS) {
-    const sides = (['self', 'ally', 'enemy'] as const).filter((side) => present.has(`${effect.key}:${side}`));
+    const sides = sidesOf(effect).filter((side) => present.has(`${effect.key}:${side}`));
     if (sides.length === 0) continue;
     let row = rows.at(-1);
     if (row?.group !== effect.group) rows.push((row = { group: effect.group, effects: [] }));

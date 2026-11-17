@@ -6,16 +6,13 @@ import { useEffect, useState } from 'react';
 let loaded: FilterTable | null = null;
 let pending: Promise<FilterTable> | null = null;
 
-export function useFilterTable(
-  enabled: boolean,
-  baseUrl: string = import.meta.env.BASE_URL,
-): { table: FilterTable | null; error: string | null } {
+export function useFilterTable(enabled: boolean): { table: FilterTable | null; error: string | null } {
   const [table, setTable] = useState<FilterTable | null>(loaded);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     if (!enabled || table !== null) return;
     let cancelled = false;
-    pending ??= loadFilterTable({ baseUrl }).then((t) => (loaded = t));
+    pending ??= loadFilterTable({ baseUrl: import.meta.env.BASE_URL }).then((t) => (loaded = t));
     pending.then(
       (t) => {
         if (!cancelled) setTable(t);
@@ -29,6 +26,6 @@ export function useFilterTable(
     return () => {
       cancelled = true;
     };
-  }, [enabled, table, baseUrl]);
+  }, [enabled, table]);
   return { table: table ?? loaded, error };
 }

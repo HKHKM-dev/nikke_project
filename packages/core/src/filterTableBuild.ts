@@ -3,15 +3,18 @@
 import {
   FILTER_EFFECTS,
   normalizeSearchText,
+  FILTER_SIDES,
+  sidesOf,
   SPECIAL_ATTACKS,
   TRAITS,
+  type FilterEffect,
   type FilterSide,
   type FilterTable,
   type FilterTableEntry,
 } from './filterTable.ts';
-import { classifyCharacters, type CatalogEffect } from './skills/catalog.ts';
-import { SKILL_SLOTS } from './skills/types.ts';
-import type { CharacterData, SkillRaw } from './types.ts';
+import { classifyCharacters, slotsOf, type CatalogEffect } from './skills/catalog.ts';
+import { fillSkillDescription } from './skills/resolve.ts';
+import type { CharacterData } from './types.ts';
 
 /** catalog の stat の canon を、効果の鍵にまとめる（無いものはそのまま） */
 const STAT_KEY: Record<string, string> = {
@@ -47,7 +50,7 @@ const KIND_KEY: Record<string, string> = {
   'control:taunt': 'taunt',
   'control:stun': 'stun',
 };
-const EFFECT_KEYS = new Set(FILTER_EFFECTS.map((e) => e.key));
+const EFFECTS_BY_KEY = new Map<string, FilterEffect>(FILTER_EFFECTS.map((e) => [e.key, e]));
 
 /** 効果の句 1 つの項目（`${鍵}:${側}`）。項目に無いものは null */
 function effectTag(e: CatalogEffect): string | null {
@@ -61,20 +64,19 @@ function effectTag(e: CatalogEffect): string | null {
     if (e.stat) key = e.stat.dir === 'up' ? (STAT_KEY[e.stat.canon] ?? e.stat.canon) : STAT_DOWN_KEY[e.stat.canon];
     else key = KIND_KEY[e.kind];
   } else return null;
-  if (key === undefined || !EFFECT_KEYS.has(key)) return null;
-  // 敵デバフの項目は敵だけ、ほかは自・味だけ
-  if ((side === 'enemy') !== (FILTER_EFFECTS.find((f) => f.key === key)!.group === '敵デバフ')) return null;
+  const effect = key === undefined ? undefined : EFFECTS_BY_KEY.get(key);
+  if (effect === undefined || !sidesOf(effect).includes(side)) return null;
   return `${key}:${side}`;
 }
 
-function specialAttacksOf(effects: readonly CatalogEffect[], text: string): string[] {
+function specialAttacksOf(effects: readonly CatalogEffect[], descriptions: string): string[] {
   const kinds = new Set(effects.map((e) => e.kind));
   const has: Record<(typeof SPECIAL_ATTACKS)[number]['key'], boolean> = {
     pierce: kinds.has('weaponChange:pierce'),
     dot: kinds.has('damage:dot'),
     distributed: kinds.has('damage:distributed'),
     true: kinds.has('damage:true') || kinds.has('damage:burstTrue') || kinds.has('flag:trueDamageConversion'),
-    sequential: text.includes('順番ニ攻撃'),
+    sequential: descriptions.includes('順番に攻撃'),
     weaponChange: [...kinds].some((k) => k.startsWith('weaponChange')),
   };
   return SPECIAL_ATTACKS.filter((a) => has[a.key]).map((a) => a.key);
@@ -88,18 +90,11 @@ function traitsOf(c: CharacterData, effects: readonly CatalogEffect[]): string[]
   return TRAITS.filter((t) => has[t.key]).map((t) => t.key);
 }
 
-/** 説明文の書式（色・用語の印）を除き、値の差し込みを最大 Lv の値にする */
-function skillDescriptionText(skill: SkillRaw): string {
-  return skill.description.ja
-    .replace(/<\/?word_group[^>]*>/g, '')
-    .replace(/<\/?color[^>]*>/g, '')
-    .replace(/\{description_value_(\d+)\}/g, (_, n: string) => skill.values[Number(n) - 1]?.at(-1) ?? '')
-    .replace(/｣/g, '」');
-}
-
-function skillsOf(c: CharacterData): SkillRaw[] {
-  const base = SKILL_SLOTS.map((s) => c.skills[s]);
-  return c.treasure === null ? base : [...base, ...SKILL_SLOTS.map((s) => c.treasure!.skills[s])];
+/** スキル名と説明文（基礎版と宝物版）。説明文は書式の印を除き、値の差し込みを最大 Lv の値にする */
+function skillTexts(c: CharacterData): string {
+  return slotsOf(c)
+    .map(([, s]) => `${s.name.ja}\n${fillSkillDescription(s, 'ja', (levels) => levels?.at(-1) ?? '')}`)
+    .join('\n');
 }
 
 export function buildFilterTable(characters: readonly CharacterData[]): FilterTable {
@@ -110,24 +105,20 @@ export function buildFilterTable(characters: readonly CharacterData[]): FilterTa
     if (list === undefined) effectsOf.set(e.rid, [e]);
     else list.push(e);
   }
-  const effectOrder = FILTER_EFFECTS.flatMap((f) => (['self', 'ally', 'enemy'] as const).map((s) => `${f.key}:${s}`));
+  const effectOrder = FILTER_EFFECTS.flatMap((f) => FILTER_SIDES.map((s) => `${f.key}:${s}`));
   const entries = [...characters]
     .sort((a, b) => a.resourceId - b.resourceId)
     .map((c): [string, FilterTableEntry] => {
       const own = effectsOf.get(c.resourceId) ?? [];
-      const skillText = normalizeSearchText(
-        skillsOf(c)
-          .map((s) => `${s.name.ja}\n${skillDescriptionText(s)}`)
-          .join('\n'),
-      );
+      const texts = skillTexts(c);
       const tags = new Set(own.map(effectTag).filter((t) => t !== null));
       return [
         String(c.resourceId),
         {
           burstCooldown: c.burstSkill.cooldownSeconds,
-          skillText,
+          skillText: normalizeSearchText(texts),
           effects: effectOrder.filter((t) => tags.has(t)),
-          special: specialAttacksOf(own, skillText),
+          special: specialAttacksOf(own, texts),
           traits: traitsOf(c, own),
         },
       ];

@@ -496,7 +496,7 @@ function lineTriggers(head: string): string[] {
 }
 
 /** キャラのスロット（基礎版の skill1・skill2・burst と、宝物版の同じ 3 つ） */
-function slotsOf(c: CharacterData): [string, SkillRaw][] {
+export function slotsOf(c: CharacterData): [string, SkillRaw][] {
   const out: [string, SkillRaw][] = SKILL_SLOTS.map((s) => [s, c.skills[s]]);
   if (c.treasure !== null) for (const s of SKILL_SLOTS) out.push([`treasure.${s}`, c.treasure.skills[s]]);
   return out;

@@ -83,18 +83,18 @@ export function applyTrayFilter(
 ): readonly CharacterIndexEntry[] {
   if (!trayFilterActive(filter)) return characters;
   const nameTerms = searchTerms(filter.name);
-  const skillTerms = table === null ? [] : searchTerms(filter.skill);
-  const cooldowns = table === null ? [] : filter.burstCooldowns;
-  const effects = table === null ? [] : effectGroups(filter.effects);
-  const special = table === null ? [] : filter.special;
-  const traits = table === null ? [] : filter.traits;
+  const matchesName = (c: CharacterIndexEntry) =>
+    nameTerms.length === 0 || matchesSearchTerms(normalizeSearchText(`${c.name.ja} ${c.name.en}`), nameTerms);
+  if (table === null) return characters.filter(matchesName);
+  const skillTerms = searchTerms(filter.skill);
+  const effects = effectGroups(filter.effects);
+  const { burstCooldowns: cooldowns, special, traits } = filter;
+  const usesTable = needsFilterTable(filter);
   return characters.filter((c) => {
-    if (nameTerms.length > 0 && !matchesSearchTerms(normalizeSearchText(`${c.name.ja} ${c.name.en}`), nameTerms))
-      return false;
-    if (table === null) return true;
+    if (!matchesName(c)) return false;
     const entry = table.characters[String(c.resourceId)];
     // 表に無いニケ（データの取り込みの直後に表だけ古いとき）は、表の要る項目で絞っている間は出さない
-    if (entry === undefined) return !needsFilterTable(filter);
+    if (entry === undefined) return !usesTable;
     if (skillTerms.length > 0 && !matchesSearchTerms(entry.skillText, skillTerms)) return false;
     if (cooldowns.length > 0 && !cooldowns.includes(entry.burstCooldown)) return false;
     if (!effects.every((tags) => tags.some((t) => entry.effects.includes(t)))) return false;

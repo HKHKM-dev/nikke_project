@@ -28,10 +28,11 @@ const CAP_RATIO = 0.71;
  * 絵の位置が画素の半端にあると、行ごとに上下へずれる）
  */
 function CoreLabel({ label }: { label: string }) {
-  const size = label === 'MAX' ? CORE_LABEL_MAX_SIZE : CORE_LABEL_SIZE;
+  const isMax = label === 'MAX';
+  const size = isMax ? CORE_LABEL_MAX_SIZE : CORE_LABEL_SIZE;
   return (
     <text
-      className={label === 'MAX' ? 'growth-marks-core-max' : undefined}
+      className={isMax ? 'growth-marks-core-max' : undefined}
       x={50}
       y={50 + (size * CAP_RATIO) / 2}
       fontSize={size}

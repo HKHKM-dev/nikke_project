@@ -1073,8 +1073,7 @@ svg.settings-menu-icon,
 /* コアの印の中央（黒い丸）に段階（01〜07）を重ねる。字は印の SVG の中に描く（GrowthMarks.tsx の CoreLabel。大きさは印に合わせて変わる） */
 .growth-marks-core {
   position: relative;
-  display: inline-grid;
-  place-items: center;
+  display: inline-block;
   width: var(--growth-core-w);
   height: var(--growth-core-w);
   margin-left: 2px;
