@@ -4,10 +4,15 @@
 //   node tools/captures/hud.ts <動画> --make-templates 6000:39174344,11400:79851043,...   # テンプレートを作り直す
 //   node tools/captures/hud.ts <動画> --screen interception [--mode ...]   # 迎撃戦の段階の数値（V-0462）
 //   node tools/captures/hud.ts --screen interception --make-templates 516:1300:896779,514:1090:79191,...  # 録画 id:フレーム:左の値
+//   node tools/captures/hud.ts <動画> --screen raid [--mode ...]   # ソロレイドのボスの名前の下の累計ダメージ（V-0802）
 //
 // --screen interception: 迎撃戦の画面上部のボスの段階の数値「被ダメージ/段階の HP」の左の値を読む。リザルト画面の TOTAL DAMAGE と
 // 同じ系列で増える（V-0462）。読み方は hud-interception.ts（灰色のまま見本と照合する）、見本は hud-interception-templates.json。
 // 段階 1（右側が 8,404,000）だけを読む。--crop は使わない。
+//
+// --screen raid: ソロレイドの画面上部のボスの名前の下の累計ダメージ（例: 796,370）を読む。読み方は range と同じで、切り出しの既定
+// （RAID_CROP）と見本（hud-raid-templates.json。--make-templates もこちらに書く）だけが違う。数字は細い字で、min(R,G,B) は
+// 数字 200 超・背景 110 未満（V-0802）。
 //
 // 表示は白（FB 中などは薄い赤）の斜体の数字で、カンマ区切り・中央揃え。min(R,G,B) を 2 値にして連結成分に分け、
 // 高さの揃った成分を数字、低くて下に寄った成分をカンマとして左から並べ、数字は見本（hud-templates.json）と
@@ -39,7 +44,8 @@ import {
 } from './hud-interception.ts';
 import { capturesDir } from './dirs.ts';
 
-const TEMPLATE_FILE = new URL('./hud-templates.json', import.meta.url);
+const RANGE_TEMPLATE_FILE = new URL('./hud-templates.json', import.meta.url);
+const RAID_TEMPLATE_FILE = new URL('./hud-raid-templates.json', import.meta.url);
 const INTERCEPTION_TEMPLATE_FILE = new URL('./hud-interception-templates.json', import.meta.url);
 /** 数字とみなす明るさ（min(R,G,B)） */
 const THRESHOLD = 150;
@@ -63,7 +69,7 @@ type Templates = { crop: Crop; digitHeight: number; digits: Record<string, numbe
 const { values, positionals } = parseArgs({
   allowPositionals: true,
   options: {
-    crop: { type: 'string', default: '810,34,300,38' },
+    crop: { type: 'string' },
     screen: { type: 'string', default: 'range' },
     mode: { type: 'string', default: 'final' },
     from: { type: 'string', default: '0' },
@@ -74,8 +80,9 @@ const { values, positionals } = parseArgs({
 });
 
 const interception = values.screen === 'interception';
-if (!interception && values.screen !== 'range') {
-  console.error('--screen は range か interception');
+const raid = values.screen === 'raid';
+if (!interception && !raid && values.screen !== 'range') {
+  console.error('--screen は range・interception・raid');
   process.exit(1);
 }
 if (interception && values.fallback) {
@@ -85,13 +92,19 @@ if (interception && values.fallback) {
 const video = positionals[0];
 if (!video && !(interception && values['make-templates'] !== undefined)) {
   console.error(
-    'usage: node tools/captures/hud.ts <動画> [--screen range|interception] [--mode final|jumps|series] [--from N] [--to N] [--crop x,y,w,h] [--fallback]\n' +
+    'usage: node tools/captures/hud.ts <動画> [--screen range|interception|raid] [--mode final|jumps|series] [--from N] [--to N] [--crop x,y,w,h] [--fallback]\n' +
       '       node tools/captures/hud.ts <動画> --make-templates frame:value,... [--crop x,y,w,h]\n' +
       '       node tools/captures/hud.ts --screen interception --make-templates 録画id:frame:value,...',
   );
   process.exit(1);
 }
-const crop = parseCrop(values.crop);
+/** 切り出しの既定（元の画の px） */
+const RANGE_CROP = '810,34,300,38';
+const RAID_CROP = '850,58,220,34';
+const crop = parseCrop(values.crop ?? (raid ? RAID_CROP : RANGE_CROP));
+const TEMPLATE_FILE = raid ? RAID_TEMPLATE_FILE : RANGE_TEMPLATE_FILE;
+/** 数字の塊の幅の上限（数字の高さに対する比）。ソロレイドの字は横に広い（高さ約 15px に幅 16px 前後。V-0802） */
+const DIGIT_MAX_ASPECT = raid ? 1.4 : 1;
 
 function binarize(rgb: Buffer, w: number, h: number, threshold = THRESHOLD): Uint8Array {
   const out = new Uint8Array(w * h);
@@ -195,7 +208,7 @@ function glyphs(cs: Component[], digitHeight: number | null): Glyph[] {
   for (const c of cs) {
     const h = c.maxY - c.minY + 1;
     const w = c.maxX - c.minX + 1;
-    if (h >= dh * 0.8 && h <= dh * 1.2 && w <= dh) out.push({ kind: 'digit', c });
+    if (h >= dh * 0.8 && h <= dh * 1.2 && w <= dh * DIGIT_MAX_ASPECT) out.push({ kind: 'digit', c });
     else if (h >= 2 && h <= dh * 0.5 && w <= dh * 0.5 && c.pixels.length >= 3) out.push({ kind: 'comma', c });
   }
   out.sort((a, b) => a.c.minX + a.c.maxX - (b.c.minX + b.c.maxX));
@@ -343,7 +356,7 @@ async function makeTemplates(spec: string): Promise<void> {
   };
   writeFileSync(TEMPLATE_FILE, `${JSON.stringify(templates)}\n`);
   console.log(
-    `hud-templates.json: 数字 10 種（${samples.length} フレームから）、数字の高さ ${templates.digitHeight}px`,
+    `${TEMPLATE_FILE.pathname.split('/').at(-1)}: 数字 10 種（${samples.length} フレームから）、数字の高さ ${templates.digitHeight}px`,
   );
 }
 

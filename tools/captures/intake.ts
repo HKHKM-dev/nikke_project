@@ -167,6 +167,11 @@ if (!values.child) {
   // まとめて取り込む（冒頭の説明）: 1 本ずつ子のプロセスで回し、終わりに一覧を作り直して番号を押さえる
   if (positionals.length === 0 || !values.name) fail('元ファイル・--name が要る');
   const { names, notes } = orFail(() => batchNamesAndNotes(positionals.length, values.name!, values.note));
+  if (positionals.length > 1 && values.rid !== undefined && new Set(names).size > 1) {
+    console.error(
+      `注意: --rid ${values.rid} を ${positionals.length} 本の全部に書く（録画ごとに編成が違うなら 1 本ずつ取り込む）`,
+    );
+  }
   let ids: string[];
   if (values.id !== undefined) ids = orFail(() => sequentialRecordingIds(values.id!, positionals.length));
   else {
@@ -204,10 +209,12 @@ if (!values.child) {
         '--child',
         '--id',
         ids[i]!,
-        '--name',
-        names[i]!,
-        ...(note !== undefined ? ['--note', note] : []),
-        ...[...shared, ['--build-snapshot', snapshot] as const].flatMap(([k, v]) => (v === undefined ? [] : [k, v])),
+        // 値は --キー=値 で渡す（--rid -,-,300 や - で始まる --note を、子の parseArgs が引数の名前と取り違えないように）
+        `--name=${names[i]!}`,
+        ...(note !== undefined ? [`--note=${note}`] : []),
+        ...[...shared, ['--build-snapshot', snapshot] as const].flatMap(([k, v]) =>
+          v === undefined ? [] : [`${k}=${v}`],
+        ),
         ...flags,
       ],
       { stdio: 'inherit' },

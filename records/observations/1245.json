@@ -1,0 +1,62 @@
+[
+  {
+    "id": "1245-01",
+    "recording": "1245",
+    "kind": "total",
+    "use": "record",
+    "value": 4720254,
+    "unit": "ダメージ",
+    "description": "戦闘の終わりのリザルト画面の STAGE DAMAGE（ココアの単騎の 1 戦の与ダメージ。数え上がりが止まった後の値）",
+    "method": {
+      "tool": "目視",
+      "note": "リザルト画面の数字を、数え上がりが止まった後のフレームで読んだ"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "target",
+      "frames": [1215, 2925]
+    },
+    "source": "V-0802",
+    "readAt": "2026-11-17"
+  },
+  {
+    "id": "1245-02",
+    "recording": "1245",
+    "kind": "hit",
+    "use": "record",
+    "value": [259107, 315435],
+    "unit": "ダメージ",
+    "description": "累計ダメージの増分の 1 ヒットの格子。フルチャージのコア 259,107（17 回）とコア会心 315,435（1 回）。比 1.2174 = 2.8 ÷ 2.3 で、距離ボーナスの乗ったコアの倍率グループ。モデル（Lv400 の攻撃力・防御力 30,850・有利コード 1.1）の値と同じ",
+    "method": {
+      "tool": "hud.ts --screen raid --mode jumps --fallback",
+      "note": "増分 18 個がどれもこの 2 つの値。最後の値は STAGE DAMAGE（-01）と同じ"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [1215, 2845]
+    },
+    "source": "V-0802",
+    "readAt": "2026-11-17"
+  },
+  {
+    "id": "1245-03",
+    "recording": "1245",
+    "kind": "count",
+    "use": "record",
+    "value": [18, 18],
+    "unit": "発",
+    "description": "[撃った数, ボスに当たった数]。残弾の 3 本のマガジン（6 発ずつ）と、累計ダメージの増分 18 個。4 本目のマガジンは撃つ前に戦闘不能",
+    "method": {
+      "tool": "reticle-ammo.ts --mode mags --max 6 と hud.ts --screen raid --mode jumps",
+      "note": "当たった 18 発はどれもコア"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing",
+      "frames": [1145, 2925]
+    },
+    "source": "V-0802",
+    "readAt": "2026-11-17"
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "id": "1248",
+  "date": "2026-11-17",
+  "folder": "raid",
+  "file": "20261117-1248_solo_goddess-of-victory_soldier-fa.mp4",
+  "original": "2026-11-17_22-45-15.mp4",
+  "durationSec": 33.2,
+  "frames": 1992,
+  "fps": 60,
+  "sizeMB": 40.2,
+  "sha256": "8d09eb968533",
+  "team": [
+    {
+      "slot": 3,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "勝利の女神",
+    "element": null,
+    "level": 400
+  },
+  "mode": null,
+  "fixedSpec": null,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "ソロレイド第 43 シーズン「勝利の女神」チャレンジモードの模擬戦闘（出撃画面に Lv.400[固定]）。単騎（3 枠目）・スペック固定の選択肢なし（実ビルドを Lv400 にして使う）。交戦の途中で戦闘不能になって終わる。パーツ（サポートモジュール）のある敵。V-0802",
+  "backup": {
+    "at": "2026-11-17T22:54+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
