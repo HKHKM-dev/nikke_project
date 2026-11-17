@@ -248,9 +248,16 @@ stat を 1 つ足すときに書く所（`allEnemiesBurstDamage` を足した #1
 | Stage 8 の 5 人 | 55.94 | 54.34 | 0.971 |
 | 録画 0037 | 36.07 | 36.91 | 1.023 |
 
+### 9.3 heal の `targetAdjacent` の守り（2026-11-17）
+
+- 論点 5 で見送った守りの抜けを直した（オーナーの指示）。`skills/resolve.ts` の `TARGET_KEYS.heal` に `targetAdjacent` を足し、解決済みの回復に「両隣の味方」の印を写す。編成を通さずに解いた「両隣の味方」の回復は、対象の判定が `needs fixedTargets` で落とす（前は、隣でない枠にも掛かった）。`includeSelf` は、枠が `fixedTargets` に入っていて読む所が無いので写さない。
+- 動きの変わる所: 解決済みの回復に欄が 1 つ増える。最上位（`applyCompositionToTeam`）を通す呼び出しの計算の結果は変わらない。
+- 確かめ（基の結果は main の 44caa1eb で作ったもの。その後の main の変更は、結果の変わらない段 A と画面だけ）: 6 節と同じ比べで、変わったのは、フローラ（411）の解決の結果と、フローラのいる入力の `SimResult`・`TeamResult` だけ。足した欄を除いて比べると、全部が main と文字列で一致した。落ちるようになった入力は無い。`npm test` が通り、守りのテストを `skills/__tests__/flora.test.ts` に足した。課題（`records/backlog/heal-adjacent-fixed-targets.json`）は消した。
+
 ## 10. 経過
 
 - 2026-11-17: 起案。
 - 2026-11-17: オーナーが B を実施すると決めた。B に当たる論点（3〜6・8）は推奨の案で進める。A（論点 1・2）は未決。
 - 2026-11-17: 段 B を実装した（9.1 節）。
 - 2026-11-17: オーナーが A も実施すると決めた。論点 1・2 は推奨の案（案 A1。[design-split-skill-holders.md](design-split-skill-holders.md) の決定には当たらないものとして進める）で進めた。段 A を実装し（9.2 節）、課題を閉じた。
+- 2026-11-17: オーナーの指示で、論点 5 で見送った heal の `targetAdjacent` の守りを直した（9.3 節）。
