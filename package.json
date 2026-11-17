@@ -14,6 +14,7 @@
     "fetch-data": "npm run fetch-data -w @nikke/core --",
     "fetch-data:diff": "node packages/core/scripts/data-diff.ts",
     "combat-table": "npm run combat-table -w @nikke/core",
+    "filter-table": "npm run filter-table -w @nikke/core",
     "fetch-images": "npm run fetch-images -w @nikke/core --",
     "test": "vitest run",
     "test:watch": "vitest",

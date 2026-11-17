@@ -1425,15 +1425,36 @@ html:has(.modern-view-container) {
 .char-tray-sort-option[aria-pressed='false'] .char-tray-sort-mark {
   visibility: hidden;
 }
-/* 未実装の置き場所のボタン。マウスを重ねても禁止の印（〇に斜線）は出さない（オーナーの指示）。押せる印（指の形）も出さない */
+/* 押せないボタン（何も選んでいないときのクリア）。マウスを重ねても禁止の印（〇に斜線）は出さない（オーナーの指示）。押せる印（指の形）も出さない */
 .char-tray-action-button[aria-disabled='true'] {
   cursor: default;
   opacity: 0.6;
 }
-.char-tray-unimplemented {
-  font-size: 0.65rem;
-  padding: 0 4px;
-  border: 1px solid currentColor;
+/* 「絞り込み」の窓（CharacterTray の TrayFilterMenu）。行の形はクラシックの絞り込み（.classic-filter-row）と同じ */
+.char-tray-filter-menu {
+  display: contents;
+}
+.char-tray-filter-panel {
+  width: min(24rem, calc(100vw - 32px));
+}
+.char-tray-filter-panel .classic-filter-row-name {
+  width: 6em;
+}
+.char-tray-filter-input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  font-size: 0.85rem;
+}
+.char-tray-filter-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+/* 絞り込んでいる間の「絞り込み」のボタン（押している絞り込みのボタンと同じ色） */
+.char-tray-action-button.char-tray-filter-active {
+  border-color: Highlight;
+  background: Highlight;
+  color: HighlightText;
 }
 .char-tray-filters {
   display: flex;

@@ -1,0 +1,34 @@
+// 絞り込みの表（data/characters/filter.json。plan/design-character-filter.md 3 節）を、要るとき（enabled）に 1 回だけ読む。
+// 読んだ表は画面全体で使い回す（ニケ一覧が描き直されても、読み直さない）。版と形は loadFilterTable が確かめ、違えば error にする
+import { loadFilterTable, type FilterTable } from '@nikke/core';
+import { useEffect, useState } from 'react';
+
+let loaded: FilterTable | null = null;
+let pending: Promise<FilterTable> | null = null;
+
+export function useFilterTable(
+  enabled: boolean,
+  baseUrl: string = import.meta.env.BASE_URL,
+): { table: FilterTable | null; error: string | null } {
+  const [table, setTable] = useState<FilterTable | null>(loaded);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    if (!enabled || table !== null) return;
+    let cancelled = false;
+    pending ??= loadFilterTable({ baseUrl }).then((t) => (loaded = t));
+    pending.then(
+      (t) => {
+        if (!cancelled) setTable(t);
+      },
+      (e: unknown) => {
+        // 読めなかったら、次に開いたときに読み直せるようにする
+        pending = null;
+        if (!cancelled) setError(e instanceof Error ? e.message : String(e));
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [enabled, table, baseUrl]);
+  return { table: table ?? loaded, error };
+}

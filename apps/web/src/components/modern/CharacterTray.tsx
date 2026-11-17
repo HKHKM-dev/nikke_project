@@ -28,6 +28,16 @@ import type { OtherParties } from '../../parties.ts';
 import { NO_PARTIES } from './PartyNumberBadges.tsx';
 import { Popover } from '../Popover.tsx';
 import { useCharacterFilter } from '../useCharacterFilter.ts';
+import {
+  applyTrayFilter,
+  burstCooldownValues,
+  EMPTY_TRAY_FILTER,
+  needsFilterTable,
+  trayFilterActive,
+  type TrayFilter,
+} from '../../trayFilter.ts';
+import { useFilterTable } from '../../useFilterTable.ts';
+import type { FilterTable } from '@nikke/core';
 
 type Props = {
   index: readonly CharacterIndexEntry[];
@@ -70,10 +80,15 @@ export function CharacterTray({
   // お気に入りの絞り込み（押したバッジのどれかが付いたニケ。ほかの絞り込みと AND）
   const favorites = useContext(FavoritesContext);
   const [favoriteFilter, setFavoriteFilter] = useState<readonly FavoriteMark[]>([]);
-  const filteredCharacters = useMemo(
-    () => filterByFavorites(badgeFiltered, favorites, favoriteFilter),
-    [badgeFiltered, favoriteFilter, favorites],
+  // 「絞り込み」の窓（文字の検索・バースト CT。trayFilter.ts）。表は窓を初めて開いたときに読む
+  const [trayFilter, setTrayFilter] = useState<TrayFilter>(EMPTY_TRAY_FILTER);
+  const [tableRequested, setTableRequested] = useState(false);
+  const { table: filterTable, error: filterTableError } = useFilterTable(
+    tableRequested || needsFilterTable(trayFilter),
   );
+  const filteredCharacters = useMemo(() => {
+    return applyTrayFilter(filterByFavorites(badgeFiltered, favorites, favoriteFilter), trayFilter, filterTable);
+  }, [badgeFiltered, favoriteFilter, favorites, trayFilter, filterTable]);
 
   // スロットのキャラをトレイへ戻すと、そのスロットを空にする（ModernView の handleDragEnd）
   const { isOver, active, setNodeRef } = useDroppable({
@@ -97,15 +112,20 @@ export function CharacterTray({
             onTreasureOnlyChange={setTreasureOnly}
             favoriteFilter={favoriteFilter}
             onFavoriteFilterChange={setFavoriteFilter}
+            trayFilterActive={trayFilterActive(trayFilter)}
+            onClearTrayFilter={() => setTrayFilter(EMPTY_TRAY_FILTER)}
           />
         </div>
-        {/* 並べ替え（ボタンで開くポップアップで並びを選ぶ）と、絞り込み・立ち絵の縦長と四角の切り替えのボタン（絞り込みは未実装の置き場所で、押しても
-            何も起きない。disabled にすると、アーティファクトのコメントでボタンを選べない（マウスの操作を受けない）ので aria-disabled にする） */}
+        {/* 並べ替え・絞り込み（ボタンで開くポップアップ）と、立ち絵の縦長と四角の切り替えのボタン */}
         <div className="char-tray-actions">
           <TraySortMenu listOrder={listOrder} />
-          <button type="button" className="char-tray-action-button" aria-disabled="true">
-            絞り込み<span className="char-tray-unimplemented">未実装</span>
-          </button>
+          <TrayFilterMenu
+            filter={trayFilter}
+            onChange={setTrayFilter}
+            table={filterTable}
+            tableError={filterTableError}
+            onOpen={() => setTableRequested(true)}
+          />
           <TrayShapeToggle shape={shape} onToggle={onToggleShape} />
         </div>
       </div>
@@ -195,6 +215,8 @@ function TrayFilters({
   onTreasureOnlyChange,
   favoriteFilter,
   onFavoriteFilterChange,
+  trayFilterActive,
+  onClearTrayFilter,
 }: {
   filters: BadgeFilterValues;
   onFiltersChange: (filters: BadgeFilterValues) => void;
@@ -204,8 +226,11 @@ function TrayFilters({
   /** 押したお気に入りのバッジ（どれかが付いたニケだけにする） */
   favoriteFilter: readonly FavoriteMark[];
   onFavoriteFilterChange: (marks: readonly FavoriteMark[]) => void;
+  /** 「絞り込み」の窓で絞っているか（クリアで一緒に外す） */
+  trayFilterActive: boolean;
+  onClearTrayFilter: () => void;
 }) {
-  const filtering = treasureOnly || favoriteFilter.length > 0 || Object.keys(filters).length > 0;
+  const filtering = trayFilterActive || treasureOnly || favoriteFilter.length > 0 || Object.keys(filters).length > 0;
   return (
     <div className="char-tray-filter-group">
       <BadgeFilters filters={filters} onChange={onFiltersChange} />
@@ -239,10 +264,106 @@ function TrayFilters({
           onFiltersChange({});
           onTreasureOnlyChange(false);
           onFavoriteFilterChange([]);
+          onClearTrayFilter();
         }}
       >
         <BadgeIcon className="char-tray-filter-clear-icon" name={RETURN_BADGE} />
       </button>
+    </div>
+  );
+}
+
+/**
+ * 「絞り込み」のポップアップ（plan/design-character-filter.md 4.1 節）: 名前・スキルの検索と、バースト CT のボタン。
+ * 絞っている間はボタンを押している色にする
+ */
+function TrayFilterMenu({
+  filter,
+  onChange,
+  table,
+  tableError,
+  onOpen,
+}: {
+  filter: TrayFilter;
+  onChange: Dispatch<SetStateAction<TrayFilter>>;
+  table: FilterTable | null;
+  tableError: string | null;
+  /** ポップアップを開いた（表を読み始める） */
+  onOpen: () => void;
+}) {
+  const active = trayFilterActive(filter);
+  const cooldowns = useMemo(() => (table === null ? [] : burstCooldownValues(table)), [table]);
+  return (
+    <div className="char-tray-filter-menu" onClickCapture={onOpen}>
+      <Popover
+        button="絞り込み"
+        buttonClassName={`char-tray-action-button ${active ? 'char-tray-filter-active' : ''}`}
+        label="ニケ一覧の絞り込み"
+        align="left"
+      >
+        <div className="classic-filter-panel char-tray-filter-panel">
+          <label className="classic-filter-row">
+            <span className="classic-filter-row-name">名前</span>
+            <input
+              type="search"
+              className="char-tray-filter-input"
+              value={filter.name}
+              placeholder="ラピ・Rapi など"
+              onChange={(e) => onChange((f) => ({ ...f, name: e.target.value }))}
+            />
+          </label>
+          <label className="classic-filter-row">
+            <span className="classic-filter-row-name">スキル</span>
+            <input
+              type="search"
+              className="char-tray-filter-input"
+              value={filter.skill}
+              placeholder="スキル名・説明文（空白で区切って AND）"
+              onChange={(e) => onChange((f) => ({ ...f, skill: e.target.value }))}
+            />
+          </label>
+          <div className="classic-filter-row" role="group" aria-label="バースト CT で絞り込み">
+            <span className="classic-filter-row-name">バースト CT</span>
+            {table === null ? (
+              <span className="hint">
+                {tableError === null ? '読み込み中…' : `絞り込みの表を読めない: ${tableError}`}
+              </span>
+            ) : (
+              cooldowns.map((v) => (
+                <button
+                  key={v}
+                  type="button"
+                  className="classic-filter-button"
+                  aria-pressed={filter.burstCooldowns.includes(v)}
+                  onClick={() =>
+                    onChange((f) => ({
+                      ...f,
+                      burstCooldowns: f.burstCooldowns.includes(v)
+                        ? f.burstCooldowns.filter((x) => x !== v)
+                        : [...f.burstCooldowns, v],
+                    }))
+                  }
+                >
+                  {v} 秒
+                </button>
+              ))
+            )}
+          </div>
+          {table === null && tableError === null && needsFilterTable(filter) && (
+            <p className="hint">表を読み終えるまで、スキルとバースト CT では絞らない</p>
+          )}
+          <div className="char-tray-filter-footer">
+            <button
+              type="button"
+              className="classic-filter-button"
+              disabled={!active}
+              onClick={() => onChange(EMPTY_TRAY_FILTER)}
+            >
+              すべて外す
+            </button>
+          </div>
+        </div>
+      </Popover>
     </div>
   );
 }
