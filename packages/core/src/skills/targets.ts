@@ -2,7 +2,7 @@
 //   - 発火のたびに対象が変わるもの（「直前にバーストスキルを使用した味方」）は、発火の文脈を受けて決める。
 //   - 「最終攻撃力が最も高い味方 N 機」（topAttack）は、文脈（攻撃力の順位）で決める（skills/ranking.ts）。
 //   - 「〈武器種〉の味方」「〈コード〉コードの味方」（targetElement）「〈クラス〉型の味方」（targetClass）は、対象の枠のキャラで絞る。
-//   - 編成で決まる対象は、最上位の skills/composition.ts が決めた枠（fixedTargets）で絞る（どれが編成で決まるかは composition.ts）。
+//   - 編成で決まる対象は、最上位の skills/composition.ts が決めた枠（fixedTargets）で絞る（どれが編成で決まるかは needsFixedTargets）。
 //     それ以外の「自分を除く」（excludeSelf）は順位（skills/ranking.ts）で外す。
 //   - 「残りの HP の割合が最も低い味方 N 機」（lowestHpRatio）は、fixedTargets（HP の割合の想定の低い順。同値は枠の若い順）の
 //     先頭 targetCount 枠に掛ける（plan/design-skill-stage8.md 1.1 節）。
@@ -37,32 +37,61 @@ export type FireContext = {
   stateHolders?: readonly number[];
 } | null;
 
-/** isEffectTarget が見る効果の項目 */
-export type TargetedEffect = {
-  target: BuffTarget;
+/**
+ * 対象の絞り込みの欄（解決した後の形）。解決済みの効果の型（skills/resolve.ts）は、欄をここから取る。どの欄も、定義に無ければ
+ * キーごと無い。欄を足すときは、skills/resolve.ts の TARGET_KEYS の、その欄を書ける効果の一覧にも足す（足さないと、解決済みの
+ * 効果に載らない）。編成で決まる欄なら、needsFixedTargets と skills/composition.ts の fixedTargetsOf にも足す
+ */
+export type TargetFields = {
+  /** 「〈武器〉を所持する味方」 */
   targetWeapon?: WeaponType;
+  /** 「〈コード〉コードの味方」 */
   targetElement?: Element;
+  /** 「〈クラス〉型の味方」（plan/design-skill-stage9.md 1.1 節） */
   targetClass?: NikkeClass;
+  /** N 機を選ぶ対象（topAttack・longestChargeTime・lowestHpRatio）の N（解決済み） */
   targetCount?: number;
+  /** 「同じ部隊の味方全体に」 */
   targetSquad?: TargetSquad;
+  /** 「自分を除く」（topAttack と、allies の always） */
   excludeSelf?: ExcludeSelf;
+  /** 「〈名前〉状態の」（目録の id） */
   targetState?: NamedStateId;
   /** targetState が時間で変わる状態なら true（skills/types.ts の FixedTargetFields）。発火の文脈の stateHolders で絞る */
   targetStateHeld?: true;
-  /** 「自分と〈状態〉の味方」。時間で変わる targetState では、発火の文脈の枠に自分を足す */
+  /**
+   * 「自分と〈状態〉の味方」（plan/design-new-chars-1029.md 5.1 節）・「自分と両隣」。時間で変わる targetState では、発火の文脈の枠に
+   * 自分を足す
+   */
   includeSelf?: true;
   /** 「両隣の味方」（plan/design-rouge.md 2.1 節）。枠は最上位の skills/composition.ts が fixedTargets に書く */
   targetAdjacent?: true;
+  /** 「基本バースト段階が N の」 */
   targetBurstStep?: BasicBurstStep;
   /** 「部隊の一番左側にいる〈絞り込み〉の味方 1 機」（plan/design-trina.md 2.2 節）。枠は skills/composition.ts が fixedTargets に書く */
   targetLeftmost?: true;
   /** 「自分と自分より最終防御力が低い味方」。発火の文脈の lowerDefense で決める */
   targetDefense?: TargetDefense;
+  /** 編成で決まる対象の枠（skills/composition.ts が定義に書いたもの） */
   fixedTargets?: readonly number[];
 };
 
-/** 編成で決まる対象か（最上位の skills/composition.ts が fixedTargets を書く） */
-function needsFixedTargets(effect: TargetedEffect): boolean {
+/** isEffectTarget が見る効果の項目 */
+export type TargetedEffect = { target: BuffTarget } & TargetFields;
+
+/**
+ * 編成で決まる対象か（最上位の skills/composition.ts が fixedTargets を書く）。定義の効果（composition.ts の fixedTargetsOf が
+ * 枠を書くかを決める）と、解決済みの効果（fixedTargetOk が fixedTargets の無い呼び出しを落とす）の両方が同じ判定を使う。
+ * 欄を書ける効果の種類は読み込み（skills/parse/）が決めるので、ここでは欄だけを見る。枠の決め方（fixedTargetsOf）は効果の種類で
+ * 分かれる（excludeSelf・targetState は timed と付与、targetLeftmost は timed）ので、読み込みが欄を書ける種類を広げたら、
+ * fixedTargetsOf の枠の決め方も合わせる
+ */
+export function needsFixedTargets(
+  effect: { target: string } & Pick<
+    TargetFields,
+    'targetSquad' | 'targetState' | 'targetAdjacent' | 'targetBurstStep' | 'targetLeftmost' | 'excludeSelf'
+  >,
+): boolean {
   return (
     effect.targetSquad !== undefined ||
     effect.target === 'longestChargeTime' ||

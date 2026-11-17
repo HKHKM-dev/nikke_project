@@ -18,7 +18,7 @@ import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { BurstStep, CharacterData, Element } from '../types.ts';
 import { skillValue, type SkillLevels } from './resolve.ts';
 import { statesMatching, type NamedStateId } from './states.ts';
-import { adjacentSlotsOf, matchesTargetFilter } from './targets.ts';
+import { adjacentSlotsOf, matchesTargetFilter, needsFixedTargets } from './targets.ts';
 import {
   SKILL_SLOTS,
   burstStepChangeOf,
@@ -158,23 +158,9 @@ function fullCharacter(c: CompositionCharacter, index: number): Required<Composi
 }
 
 /**
- * 効果の対象が編成で決まる絞り込み（〈名前〉状態・両隣・基本バースト段階・一番左・allies の自分を除く）を持つか。
- * 付与（state）も timed と同じ。heal は両隣と基本バースト段階だけ持つ
- */
-export function hasPersonaTargetFilter(effect: SkillEffect): boolean {
-  if (effect.kind === 'heal') return effect.targetAdjacent !== undefined || effect.targetBurstStep !== undefined;
-  return (
-    (effect.kind === 'timed' || effect.kind === 'state') &&
-    (effect.targetState !== undefined ||
-      effect.targetAdjacent !== undefined ||
-      effect.targetBurstStep !== undefined ||
-      (effect.kind === 'timed' && effect.targetLeftmost !== undefined) ||
-      (effect.target === 'allies' && effect.excludeSelf !== undefined))
-  );
-}
-
-/**
- * 編成で決まる対象の枠（順位の順）。targetSquad = 部隊が自分と同じ枠（自分を含む。枠の順）、
+ * 編成で決まる対象の枠（順位の順）。編成で決まる対象かは skills/targets.ts の needsFixedTargets で見る。heal が持つのは、両隣と
+ * 基本バースト段階と lowestHpRatio だけ。
+ * targetSquad = 部隊が自分と同じ枠（自分を含む。枠の順）、
  * longestChargeTime = 基本チャージ時間（CharacterData.shot.chargeTime）の長い順（同値は枠の若い順。仮定）。
  * targetState = 枠の静的な状態（states[i]。枠の定義の静的な付与が付ける状態）にその id がある枠、
  * targetAdjacent = 自分の左右の枠（空枠は無し。plan/design-rouge.md 2.1 節）、
@@ -202,7 +188,11 @@ export function fixedTargetsOf(
     return undefined;
   const squad = 'targetSquad' in effect && effect.targetSquad !== undefined;
   const longest = effect.target === 'longestChargeTime';
-  if (!squad && !longest && !hasPersonaTargetFilter(effect)) return undefined;
+  if (!needsFixedTargets(effect)) return undefined;
+  // 枠の決め方の無い組（読み込みが落とす。heal でない lowestHpRatio と、付与の targetLeftmost）には枠を書かない
+  // （skills/targets.ts の守りが、枠の無い対象として落とす）
+  if (effect.target === 'lowestHpRatio' || (effect.kind === 'state' && effect.targetLeftmost !== undefined))
+    return undefined;
   const self = characters[selfIndex];
   if (!self) throw new Error(`no character in slot ${selfIndex}`);
   const windowed = effect.kind === 'timed' || effect.kind === 'state';
