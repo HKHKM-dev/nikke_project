@@ -2,7 +2,7 @@
 
 - 何のための文書か: スキルの語彙を足すたびに、同じ中身を何か所にも書いている所（stat の一覧と、対象の絞り込みの欄）を、動きを変えずに 1 か所へ寄せる変更の、今の構造・案と得失・論点・段・確かめ方
 - 対象: A = `skills/types.ts` の `BuffStat`・`BUFF_STATS` と、`skills/buffs.ts` の `RATIO_FIELD`。B = `skills/targets.ts` の `TargetedEffect`、`skills/resolve.ts` の解決済みの効果の型と対象の欄を写す所、「編成で決まる対象か」の判定（`skills/targets.ts`・`skills/composition.ts`）
-- 状態: B は進行中（5 節の段 B）。A は承認待ち（4 節の論点 1・2）
+- 状態: B は実装済み（9.1 節）。A は承認待ち（4 節の論点 1・2）
 - 関連: [design-split-skill-holders.md](design-split-skill-holders.md)（4.3 節の案 2 が和集合を一覧から導く案。衝突を減らす目的で比べ、見送った）、[design-split-long-functions.md](design-split-long-functions.md)・[design-split-first-pass.md](design-split-first-pass.md)（動きを変えない分割と、その確かめ方）、[design-first-pass-perf.md](design-first-pass-perf.md)（速さの測り方）、[design-target-vocab.md](design-target-vocab.md)（対象の語彙）、[skills-guide.md](skills-guide.md) 1.4 節（語彙を足す手順）
 - 作成日: 2026-11-17
 - 調べた時点: main の fc71c712。行番号はその時点のファイルの行
@@ -78,7 +78,7 @@ stat を 1 つ足すときに書く所（`allEnemiesBurstDamage` を足した #1
 
 欄を足すと両方に 1 行ずつ足す（#1190 の `targetLeftmost`）。片方だけに足すと、`composition.ts` の側の書き漏れは守りが落とすが、`targets.ts` の側の書き漏れは、最上位の `applyCompositionToTeam` を通さない呼び出しで黙って全員に掛かる。
 
-- いま、heal の `targetAdjacent`（「両隣の味方」の回復。`data/skills/411.json`）は、`resolveInstant` が `targetAdjacent` を写さないので、守りが働かない（`targetBurstStep` は「`fixedTargets` の無い呼び出しを落とす印」として写している）。最上位を通す呼び出し（画面・CLI・records 層）では `fixedTargets` が必ず書かれるので、計算の結果には出ていない。コードを読んで分かったことで、動かして確かめてはいない。
+- いま、heal の `targetAdjacent`（「両隣の味方」の回復。`data/skills/411.json`）は、`resolveInstant` が `targetAdjacent` を写さないので、守りが働かない（`targetBurstStep` は「`fixedTargets` の無い呼び出しを落とす印」として写している）。最上位を通す呼び出し（画面・CLI・records 層）では `fixedTargets` が必ず書かれるので、計算の結果には出ていない。コードを読んで分かったことで、動かして確かめてはいない（段 B で動かして確かめた。9.1 節）。
 
 **読み込み**。`skills/parse/` には、対象の欄の名前の一覧が 5 か所ある（`timed.ts` の `targetLeftmost`・`targetDefense` と組めない欄、`target.ts` の `validateDamageTaken`、`state.ts` の `ENEMY_GRANT_FORBIDDEN_KEYS`・`STATE_GRANT_KEYS`、`instant.ts` の種類ごとの書ける欄）。どれも「この欄とは組めない」「この種類に書ける」という検査の中身で、一覧の順がエラー文の出る順を決める。
 
@@ -182,7 +182,48 @@ stat を 1 つ足すときに書く所（`allEnemiesBurstDamage` を足した #1
 - `skills/parse/` と、定義の側の効果の型（案 B2）。
 - `resolve.ts` の、対象の欄でない写す行（`burstStepMode`・`assumes`・`condition` など）。
 
-## 9. 経過
+## 9. 作り
+
+### 9.1 段 B（2026-11-17）
+
+- 型: `skills/targets.ts` に対象の絞り込みの欄の型 `TargetFields`（14 個。欄の注記もここ）を置き、`TargetedEffect` は `{ target } & TargetFields`。`skills/resolve.ts` の `ResolvedEffect` は `TargetFields` との交わり、`ResolvedInstantEffect`・`ResolvedAllStackableChange` は、写す欄の一覧（下）から `Pick` で取る。
+- 写す所: `skills/resolve.ts` の `TARGET_KEYS` に、写す所ごとの欄の一覧（書く順）を並べ、`copyTargetFields(to, from, keys)` が写す。一覧は `passive`・`item`（timed と付与）・`content`（状態の中身）・`filter`（武器種・コード・クラスだけ。スタック可能バフのスタック量の増減と即時効果）・`heal`（heal だけの欄）の 5 つ。N（`targetCount`）を Lv の値に解いて書く所と、heal かどうかの分岐は、元の所に残した。
+- 判定: `needsFixedTargets` を `skills/targets.ts` から出し、`skills/composition.ts` の `fixedTargetsOf` が使う。`hasPersonaTargetFilter` は消した。
+- 対象の欄を足すときに解決の側で書く所は、`TargetFields` の 1 行と、`TARGET_KEYS` の当たる一覧に 1 語。編成で決まる欄なら `needsFixedTargets` に 1 行。
+
+**写す欄の所ごとの違い（論点 4）**。2.2 節の表の — の理由。どれも今のまま保った:
+
+<!-- prettier-ignore -->
+| 所 | 写さない欄 | 理由 |
+| --- | --- | --- |
+| `passiveValueOf`（常時） | `targetCount`・`excludeSelf`・`targetState`・`includeSelf`・`targetAdjacent`・`targetBurstStep`・`targetLeftmost`・`targetDefense` | 元の型（`PassiveEffect`）に欄が無い |
+| 同 | `targetStateHeld` | 型（`FixedTargetFields`）にはあるが、付くのは timed だけ（`composition.ts` の `isHeldTargetState`） |
+| `resolveStateContents`（状態の中身） | `targetLeftmost`・`targetDefense` | 付与に書けない（読み込みの `STATE_GRANT_KEYS` に無く、不明な欄として落ちる） |
+| 同 | `targetStateHeld` | timed だけに付く |
+| `resolveAllStackableChanges` | 武器種・コード・クラスのほか全部 | 元の型に欄が無い。`fixedTargets` は型（`FixedTargetFields`）にはあるが、`fixedTargetsOf` がこの種類に枠を書かない |
+| `resolveInstant`（即時効果） | `targetSquad`・`excludeSelf`・`targetState`・`targetStateHeld`・`targetLeftmost`・`targetDefense` | 元の型（即時効果の 7 種類）に欄が無い |
+| 同 | heal の `targetAdjacent`・`includeSelf` | **元の型にあるが写していない**。`includeSelf` は、枠が `fixedTargets` に入るので読む所が無い。`targetAdjacent` は守り（`needsFixedTargets`）だけが読むので、写さないと守りが働かない（下） |
+| `resolveCoverHeals` | N のほか全部 | 元の型（`CoverHealEffect`）に欄が無い |
+
+- **heal の `targetAdjacent` の守り（論点 5）**: 動かして確かめた。編成を通さずに解いた `data/skills/411.json` の S1 の回復（両隣）は、`isEffectTarget` が隣でない枠にも true を返す（落ちない）。`data/skills/840.json` の S1 の回復（基本バースト段階）は `needs fixedTargets` で落ちる。この段では直さず、課題にした（`records/backlog/heal-adjacent-fixed-targets.json`）。
+
+**確かめた結果**（6 節。基の版は main の fc71c712）:
+
+- `npm test`（404 ファイル）・`npm run typecheck`・変えたファイルの lint が通る。期待値の書き換えは無い。`needsFixedTargets` のテストを `skills/__tests__/targets.test.ts` に足した。
+- 読み込みの結果（138 定義）・編成を通さない解決の結果（138 定義 × 解決の関数 10 個）・`runSimulation`（`trace` あり）の `SimResult` と `TeamResult`（4 編成と、比べる指定のある観測値の入力 1,013 組）の JSON が、main と文字列で一致した（3,553 行の要約が全部同じ）。
+- 判定: 全部の定義の効果 1,018 個（枠を書くもの 31 個: timed 15・passive 2・state 6・heal 8）で、`fixedTargetsOf` の返す枠が main と一致した（5 枠の編成に置いて、`held` の真偽の両方で比べた）。
+- 速さ: 4 編成の `runSimulation`（`trace` なし）を、main と段の後を別のプロセスで交互に 6 回ずつ起こし、1 プロセスで 40 回の平均の中央値を比べた。
+
+<!-- prettier-ignore -->
+| 編成 | main（ms） | 段の後（ms） | 比 |
+| --- | --- | --- | --- |
+| LRNAM | 94.13 | 95.21 | 1.011 |
+| 主力 | 97.68 | 98.61 | 1.010 |
+| Stage 8 の 5 人 | 54.67 | 54.99 | 1.006 |
+| 録画 0037 | 37.62 | 37.55 | 0.998 |
+
+## 10. 経過
 
 - 2026-11-17: 起案。
 - 2026-11-17: オーナーが B を実施すると決めた。B に当たる論点（3〜6・8）は推奨の案で進める。A（論点 1・2）は未決。
+- 2026-11-17: 段 B を実装した（9.1 節）。

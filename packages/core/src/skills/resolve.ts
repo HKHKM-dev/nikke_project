@@ -2,16 +2,7 @@
 // 使用武器の変更は stat 'weapon' の持続効果として解決する。resolveTimed は timed と weaponChange（どれもトリガーを持つ）だけで、
 // 状態の付与（resolveStateGrants）と中身（resolveStateContents）は別に解決する（plan/design-named-state-impl.md 1.2 節）。
 // 静的な付与の中身は resolvePassives が常時パッシブとして集める。
-import type {
-  CharacterData,
-  Element,
-  Locale,
-  LocalizedText,
-  NikkeClass,
-  ShotParams,
-  SkillRaw,
-  WeaponType,
-} from '../types.ts';
+import type { CharacterData, Locale, LocalizedText, ShotParams, SkillRaw } from '../types.ts';
 import { burstWindowTrimOf } from '../burst/landing.ts';
 import { GAME_SECONDS_PER_FRAME, gameSecondsToFrames } from '../time.ts';
 import { isChargeWeapon } from '../weapons.ts';
@@ -49,7 +40,6 @@ import {
   type StateExtendEffect,
   type ChargeTickTrigger,
   type ChargeFullTrigger,
-  type BasicBurstStep,
   type BurstStepMode,
   type BurstStepModeField,
   type BuffTrigger,
@@ -62,8 +52,6 @@ import {
   type CounterFullTrigger,
   type EventCountTrigger,
   type SummonAttackTrigger,
-  type ExcludeSelf,
-  type TargetDefense,
   type InstantKind,
   type ShotCountKind,
   type ShotCountReset,
@@ -74,7 +62,6 @@ import {
   type SkillSlot,
   type TargetCountFields,
   type TimerTrigger,
-  type TargetSquad,
   type PassiveEffect,
   type StacksFrom,
   type StateGrantEffect,
@@ -82,6 +69,7 @@ import {
   staticStatesOf,
 } from './types.ts';
 import type { NamedStateId } from './states.ts';
+import type { TargetFields } from './targets.ts';
 
 /**
  * Lv の数値に解決したトリガー。射撃の回数トリガーは every（1 以上の整数）に解決済み。
@@ -363,37 +351,67 @@ function scaledValue(
  */
 export type EffectStat = BuffStat | 'weapon';
 
-export type ResolvedEffect = {
+/** 武器種・コード・クラスの絞り込み（対象を持つどの効果にも書ける） */
+const FILTER_TARGET_KEYS = ['targetWeapon', 'targetElement', 'targetClass'] as const;
+
+/**
+ * 解決済みの効果に写す対象の絞り込みの欄（写す所ごと。並びは書く順）。元の効果に書けない欄は載せない。解決済みの効果の型は、
+ * 持つ欄をここから取る
+ */
+const TARGET_KEYS = {
+  /** 常時の効果（passiveValueOf） */
+  passive: [...FILTER_TARGET_KEYS, 'targetSquad', 'fixedTargets'],
+  /** timed と状態の付与（resolveItemFields）。N（targetCount）は Lv の値に解いて、この後に書く */
+  item: [
+    ...FILTER_TARGET_KEYS,
+    'targetSquad',
+    'excludeSelf',
+    'targetState',
+    'includeSelf',
+    'targetAdjacent',
+    'targetBurstStep',
+    'targetLeftmost',
+    'targetDefense',
+    'fixedTargets',
+    'targetStateHeld',
+  ],
+  /**
+   * 状態の中身（resolveStateContents）。解決済みの付与から写す。付与に書けない欄（targetLeftmost・targetDefense）と、timed にだけ付く
+   * targetStateHeld は無い
+   */
+  content: [
+    ...FILTER_TARGET_KEYS,
+    'targetCount',
+    'targetSquad',
+    'excludeSelf',
+    'targetState',
+    'includeSelf',
+    'targetAdjacent',
+    'targetBurstStep',
+    'fixedTargets',
+  ],
+  /** スタック可能バフのスタック量の増減（resolveAllStackableChanges）と、即時効果（resolveInstant） */
+  filter: FILTER_TARGET_KEYS,
+  /**
+   * heal だけが持つ欄（resolveInstant）: 編成で決まる対象の枠（lowestHpRatio・両隣・基本バースト段階。skills/composition.ts が書く。
+   * plan/design-skill-stage8.md 1.1 節）と、「基本バースト段階が N の」（fixedTargets の無い呼び出しを skills/targets.ts が落とす印）
+   */
+  heal: ['fixedTargets', 'targetBurstStep'],
+} as const satisfies Record<string, readonly (keyof TargetFields)[]>;
+
+/** from にある対象の絞り込みの欄を、keys の順に to へ写す（無い欄はキーごと書かない） */
+function copyTargetFields(to: TargetFields, from: TargetFields, keys: readonly (keyof TargetFields)[]): void {
+  for (const key of keys) copyTargetField(to, from, key);
+}
+
+function copyTargetField<K extends keyof TargetFields>(to: TargetFields, from: TargetFields, key: K): void {
+  const value = from[key];
+  if (value !== undefined) to[key] = value;
+}
+
+export type ResolvedEffect = TargetFields & {
   source: { resourceId: number; skill: SkillSlot; name: LocalizedText };
   target: BuffTarget;
-  /** 「〈武器〉を所持する味方」。定義に無ければキーごと無い */
-  targetWeapon?: WeaponType;
-  /** アスカ: 「〈コード〉コードの味方」。定義に無ければキーごと無い */
-  targetElement?: Element;
-  /** 「〈クラス〉型の味方」（plan/design-skill-stage9.md 1.1 節） */
-  targetClass?: NikkeClass;
-  /** target が topAttack・longestChargeTime のときの N（解決済み）。それ以外はキーごと無い */
-  targetCount?: number;
-  /** 「同じ部隊の味方全体に」。定義に無ければキーごと無い */
-  targetSquad?: TargetSquad;
-  /** 「自分を除く」（topAttack と、allies の always）。定義に無ければキーごと無い */
-  excludeSelf?: ExcludeSelf;
-  /** 「〈名前〉状態の」（目録の id）。定義に無ければキーごと無い */
-  targetState?: NamedStateId;
-  /** targetState が時間で変わる状態なら true（skills/types.ts の FixedTargetFields）。無ければキーごと無い */
-  targetStateHeld?: true;
-  /** 「自分と〈状態〉の味方」（plan/design-new-chars-1029.md 5.1 節）・「自分と両隣」。定義に無ければキーごと無い */
-  includeSelf?: true;
-  /** 「両隣の味方」（plan/design-rouge.md 2.1 節）。定義に無ければキーごと無い */
-  targetAdjacent?: true;
-  /** 「基本バースト段階が N の」。定義に無ければキーごと無い */
-  targetBurstStep?: BasicBurstStep;
-  /** 「部隊の一番左側にいる〈絞り込み〉の味方 1 機」。定義に無ければキーごと無い */
-  targetLeftmost?: true;
-  /** 「自分と自分より最終防御力が低い味方」。定義に無ければキーごと無い */
-  targetDefense?: TargetDefense;
-  /** 編成で決まる対象の枠（skills/composition.ts が定義に書いたもの）。無ければキーごと無い */
-  fixedTargets?: readonly number[];
   stat: EffectStat;
   /** 省略を 'ratio' に埋めた後の値 */
   scaling: BuffScaling;
@@ -467,11 +485,7 @@ function passiveValueOf(
         ? 1
         : scaledValue(skillValue(skill, effect.ref, level), effect.stat, effect.scaling, character, effect.decrease),
   };
-  if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
-  if (effect.targetElement) r.targetElement = effect.targetElement;
-  if (effect.targetClass) r.targetClass = effect.targetClass;
-  if (effect.targetSquad) r.targetSquad = effect.targetSquad;
-  if (effect.fixedTargets) r.fixedTargets = effect.fixedTargets;
+  copyTargetFields(r, effect, TARGET_KEYS.passive);
   if (effect.burstStepMode) r.burstStepMode = effect.burstStepMode;
   if (effect.assumes) r.assumes = effect.assumes;
   return r;
@@ -750,19 +764,7 @@ function resolveItemFields(
     durationFrames: effect.durationUntil === 'battleEnd' ? BATTLE_END_FRAMES : gameSecondsToFrames(seconds),
     effectIndex,
   };
-  if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
-  if (effect.targetElement) r.targetElement = effect.targetElement;
-  if (effect.targetClass) r.targetClass = effect.targetClass;
-  if (effect.targetSquad) r.targetSquad = effect.targetSquad;
-  if (effect.excludeSelf) r.excludeSelf = effect.excludeSelf;
-  if (effect.targetState) r.targetState = effect.targetState;
-  if (effect.includeSelf) r.includeSelf = true;
-  if (effect.targetAdjacent) r.targetAdjacent = true;
-  if (effect.targetBurstStep) r.targetBurstStep = effect.targetBurstStep;
-  if (effect.targetLeftmost) r.targetLeftmost = true;
-  if (effect.targetDefense) r.targetDefense = effect.targetDefense;
-  if (effect.fixedTargets) r.fixedTargets = effect.fixedTargets;
-  if (effect.targetStateHeld) r.targetStateHeld = true;
+  copyTargetFields(r, effect, TARGET_KEYS.item);
   const count = resolveTargetCount(effect, skill, level);
   if (count !== undefined) r.targetCount = count;
   const maxStacks = resolveMaxStacks(effect, skill, level);
@@ -1045,17 +1047,7 @@ export function resolveStateContents(
           subIndex,
           whileState: effect.state,
         };
-        if (grant.targetWeapon) r.targetWeapon = grant.targetWeapon;
-        if (grant.targetElement) r.targetElement = grant.targetElement;
-        if (grant.targetClass) r.targetClass = grant.targetClass;
-        if (grant.targetCount !== undefined) r.targetCount = grant.targetCount;
-        if (grant.targetSquad) r.targetSquad = grant.targetSquad;
-        if (grant.excludeSelf) r.excludeSelf = grant.excludeSelf;
-        if (grant.targetState) r.targetState = grant.targetState;
-        if (grant.includeSelf) r.includeSelf = true;
-        if (grant.targetAdjacent) r.targetAdjacent = true;
-        if (grant.targetBurstStep) r.targetBurstStep = grant.targetBurstStep;
-        if (grant.fixedTargets) r.fixedTargets = grant.fixedTargets;
+        copyTargetFields(r, grant, TARGET_KEYS.content);
         if (grant.maxStacks !== undefined) r.maxStacks = grant.maxStacks;
         if (grant.assumes) r.assumes = grant.assumes;
         out.push(r);
@@ -1423,12 +1415,9 @@ export type ResolvedAllStackableChange = {
   effectIndex: number;
   trigger: ResolvedTrigger;
   target: 'allies';
-  targetWeapon?: WeaponType;
-  targetElement?: Element;
-  targetClass?: NikkeClass;
   amount: number;
   condition?: EffectCondition;
-};
+} & Pick<TargetFields, (typeof TARGET_KEYS.filter)[number]>;
 
 /** 定義の、味方の全部のスタック可能バフへのスタック量▲を Lv の数値に解く */
 export function resolveAllStackableChanges(
@@ -1451,9 +1440,7 @@ export function resolveAllStackableChanges(
         target: 'allies',
         amount: amountOf(effect, skill, levels[slot]),
       };
-      if (effect.targetWeapon !== undefined) r.targetWeapon = effect.targetWeapon;
-      if (effect.targetElement !== undefined) r.targetElement = effect.targetElement;
-      if (effect.targetClass !== undefined) r.targetClass = effect.targetClass;
+      copyTargetFields(r, effect, TARGET_KEYS.filter);
       if (effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
       out.push(r);
     });
@@ -1728,21 +1715,17 @@ function resolveWeaponChange(
  * 即時効果（CT 短縮・弾丸チャージ）。value は CT 短縮なら秒、弾丸チャージなら比率（0.3988）。
  * 回復（heal）の value は最大 HP に対する比率（0.0523。表示用で計算には使わない）
  */
-export type ResolvedInstantEffect = {
+/**
+ * 即時効果の対象の絞り込みの欄: 武器種・コード・クラス、N（targetCount。target が topAttack のときと、heal の lowestHpRatio）、
+ * heal だけが持つ欄（TARGET_KEYS.heal）
+ */
+type InstantTargetKey = (typeof TARGET_KEYS.filter)[number] | 'targetCount' | (typeof TARGET_KEYS.heal)[number];
+
+export type ResolvedInstantEffect = Pick<TargetFields, InstantTargetKey> & {
   source: { resourceId: number; skill: SkillSlot; name: LocalizedText };
   kind: InstantKind;
   trigger: ResolvedTrigger;
   target: BuffTarget;
-  targetWeapon?: WeaponType;
-  targetElement?: Element;
-  /** 「〈クラス〉型の味方」（plan/design-skill-stage9.md 1.1 節） */
-  targetClass?: NikkeClass;
-  /** target が topAttack のときの N。heal の lowestHpRatio の N も */
-  targetCount?: number;
-  /** 編成で決まる対象の枠（heal の lowestHpRatio。skills/composition.ts が書く。plan/design-skill-stage8.md 1.1 節） */
-  fixedTargets?: readonly number[];
-  /** heal の「基本バースト段階が N の」（fixedTargets の無い呼び出しを skills/targets.ts が落とす印） */
-  targetBurstStep?: BasicBurstStep;
   /** V-0024: heal の維持時間（フレーム）。あれば、同じ効果の窓が付いている対象への付き直しでは回復の記録を作らない */
   durationFrames?: number;
   /** heal の delayFrames（skills/heals.ts の healFrameOf。plan/design-shot-count-trigger-frame.md 6 節） */
@@ -1815,13 +1798,10 @@ export function resolveInstant(
       };
       if (effect.kind === 'ammoRefill' && effect.scaling === 'flat') r.scaling = 'flat';
       if (effect.kind === 'heal' && effect.scaling === 'casterFinalMaxHp') r.scaling = 'casterFinalMaxHp';
-      if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
-      if (effect.targetElement) r.targetElement = effect.targetElement;
-      if (effect.targetClass) r.targetClass = effect.targetClass;
+      copyTargetFields(r, effect, TARGET_KEYS.filter);
       const count = resolveTargetCount(effect, skill, levels[slot]);
       if (count !== undefined) r.targetCount = count;
-      if (effect.kind === 'heal' && effect.fixedTargets) r.fixedTargets = effect.fixedTargets;
-      if (effect.kind === 'heal' && effect.targetBurstStep) r.targetBurstStep = effect.targetBurstStep;
+      if (effect.kind === 'heal') copyTargetFields(r, effect, TARGET_KEYS.heal);
       if (effect.kind === 'heal' && (effect.durationRef !== undefined || effect.durationSeconds !== undefined)) {
         r.durationFrames = gameSecondsToFrames(durationSecondsOf(effect, skill, levels[slot]));
       }

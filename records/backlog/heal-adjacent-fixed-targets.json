@@ -1,0 +1,5 @@
+{
+  "section": "5",
+  "order": 4,
+  "text": "heal の「両隣の味方」（`targetAdjacent`）は、解決（`packages/core/src/skills/resolve.ts` の `resolveInstant`）が `targetAdjacent` を写さないので、編成で決める枠（`fixedTargets`）の無い呼び出しを落とす守り（`skills/targets.ts` の `needsFixedTargets`）が働かず、隣でない味方にも掛かる（「基本バースト段階が N の」は、守りの印として写している）。最上位（`applyCompositionToTeam`）を通す呼び出し（画面・CLI・records 層）では `fixedTargets` が必ず書かれるので、計算の結果には出ない。直すなら、`resolve.ts` の `TARGET_KEYS.heal` に `targetAdjacent` を足す（解決済みの効果に欄が 1 つ増え、編成を通さない呼び出しが落ちるようになる）。[design-vocab-dedup.md](design-vocab-dedup.md) 9.1 節"
+}
