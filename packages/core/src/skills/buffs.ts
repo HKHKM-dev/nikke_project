@@ -323,60 +323,33 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   weapon: null,
 });
 
-/** stat に対応する BuffTotals の比率フィールド */
-const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attackParts' | 'chargeSpeedParts'>> = {
-  attack: 'attackRatio',
-  critRate: 'critRate',
-  critDamage: 'critDamage',
-  attackDamage: 'attackDamage',
-  chargeDamage: 'chargeDamage',
-  chargeDamageMultiplier: 'chargeDamageMultiplier',
-  distributedDamage: 'distributedDamage',
-  damageTaken: 'damageTaken',
-  enemyDefenseDown: 'enemyDefenseDown',
-  projectileExplosionDamage: 'projectileExplosionDamage',
-  projectileStickDamage: 'projectileStickDamage',
-  elementAdvantage: 'elementAdvantage',
-  sustainedDamage: 'sustainedDamage',
-  dotEffect: 'dotEffect',
-  sequentialAttackDamage: 'sequentialAttackDamage',
-  oneEnemyBurstDamage: 'oneEnemyBurstDamage',
-  allEnemiesBurstDamage: 'allEnemiesBurstDamage',
-  accumulateRatio: 'accumulateRatio',
-  fixedChargeTime: 'fixedChargeTime',
-  fireStanceScale: 'fireStanceScale',
-  burstGaugeSpeed: 'burstGaugeSpeed',
-  burstCooldown: 'burstCooldown',
-  maxAmmo: 'maxAmmoRatio',
-  maxHp: 'maxHpRatio',
-  // 最大HP のみ▲ も最終最大HP には同じに足す（HP の割合を下げる読みは未実装。skills/types.ts の BUFF_STATS）
-  maxHpOnly: 'maxHpRatio',
-  healDealt: 'healDealt',
-  defense: 'defenseRatio',
-  reloadSpeed: 'reloadSpeed',
-  reloadRatio: 'reloadRatio',
-  chargeSpeed: 'chargeSpeed',
-  chargeSpeedOverflow: 'chargeSpeedOverflow',
-  attackSpeed: 'attackSpeed',
-  spinUpSpeed: 'spinUpSpeed',
-  hitRate: 'hitRate',
-  infiniteAmmo: 'infiniteAmmo',
-  elementDamage: 'elementDamage',
-  coreDamage: 'coreDamage',
-  normalAttackDamage: 'normalAttackDamage',
-  normalCritRate: 'normalCritRate',
-  trueDamage: 'trueDamage',
-  trueDamageConversion: 'trueDamageConversion',
-  minEffectiveRange: 'minEffectiveRange',
-  pierce: 'pierce',
-  pierceDamage: 'pierceDamage',
-  pelletCount: 'pelletCount',
-  singlePellet: 'singlePellet',
-};
+/** 比率を足す BuffTotals の欄（数の欄） */
+type RatioField = Exclude<keyof BuffTotals, 'weapon' | 'attackParts' | 'chargeSpeedParts'>;
+
+/**
+ * stat に対応する BuffTotals の比率フィールド。名前の違う 5 つのほかは、stat と同じ名前の欄。同じ名前の数の欄が BuffTotals に無い
+ * stat を足すと、ここの型の検査で落ちる
+ */
+function ratioFieldOf(stat: BuffStat): RatioField {
+  switch (stat) {
+    case 'attack':
+      return 'attackRatio';
+    case 'maxAmmo':
+      return 'maxAmmoRatio';
+    // 最大HP のみ▲ も最終最大HP には同じに足す（HP の割合を下げる読みは未実装。skills/types.ts の BUFF_STATS）
+    case 'maxHp':
+    case 'maxHpOnly':
+      return 'maxHpRatio';
+    case 'defense':
+      return 'defenseRatio';
+    default:
+      return stat;
+  }
+}
 
 /** stat の合計（「自分が 〈stat〉 増加状態なら」の判定用） */
 export function statTotal(totals: BuffTotals, stat: BuffStat): number {
-  return totals[RATIO_FIELD[stat]];
+  return totals[ratioFieldOf(stat)];
 }
 
 /** 比率の加算（0.2 = +20%）。新しいオブジェクトを返す。攻撃力とチャージ速度は内訳にも出どころ source で足す */
@@ -387,7 +360,7 @@ export function addRatioBuff(
   source = 'build',
   self = false,
 ): BuffTotals {
-  const field = RATIO_FIELD[stat];
+  const field = ratioFieldOf(stat);
   const next: BuffTotals = { ...totals, [field]: totals[field] + ratio };
   if (stat === 'hitRate' && ratio > 0) next.hitRateUp = totals.hitRateUp + ratio;
   if (stat === 'chargeSpeed') next.chargeSpeedParts = [...totals.chargeSpeedParts, { source, ratio }];
