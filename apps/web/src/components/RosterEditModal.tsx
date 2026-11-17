@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { clampGrowth } from '../calcView.ts';
 import { REVERT_ALL_LABEL, consoleFromRoster, recycleRoomWithConsole, rosterFields } from '../roster.ts';
 import { patchedCharacterEdit } from '../rosterEdits.ts';
-import { useCharacterCache } from '../useCharacterCache.ts';
+import { prefetchCharacters, useCharacterCache } from '../useCharacterCache.ts';
 import type { ConfirmedAction, RosterEditor } from '../useRoster.ts';
 import { ConsoleFields } from './ConsoleFields.tsx';
 import { GrowthEditor } from './GrowthEditor.tsx';
@@ -168,6 +168,11 @@ export function RosterEditModal({
 
   // 欄の上限と、計算に使えるかの確かめには、選んだニケのキャラのデータが要る
   const cache = useCharacterCache([view.selected], baseUrl);
+  // 前後のニケのデータも先に読んでおき、前へ・次へで切り替えたときにすぐ出す
+  const neighborKey = view.neighborIds.join(',');
+  useEffect(() => {
+    if (neighborKey !== '') prefetchCharacters(neighborKey.split(',').map(Number), baseUrl);
+  }, [neighborKey, baseUrl]);
   const { selectedEntry, selectedRoster } = view;
 
   return (
@@ -242,6 +247,8 @@ function useRosterEditSelection(editor: RosterEditor, index: readonly CharacterI
     const next = at === -1 ? undefined : listed[at + offset];
     return next === undefined ? null : () => select(next.resourceId);
   };
+  // 前後のニケ（先に読んでおく）
+  const neighborIds = at === -1 ? [] : [listed[at - 1], listed[at + 1]].flatMap((c) => (c ? [c.resourceId] : []));
   // 選んでいるニケの一覧の行と、育成状況の値（アカウント全体なら undefined）
   const selectedEntry = ordered.find((c) => c.resourceId === selected);
   const selectedRoster = selected === null ? undefined : roster.characters[String(selected)];
@@ -252,6 +259,7 @@ function useRosterEditSelection(editor: RosterEditor, index: readonly CharacterI
     selectedRoster,
     select,
     neighbor,
+    neighborIds,
     filters,
     setFilters,
     editedOnly,

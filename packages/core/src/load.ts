@@ -1,5 +1,6 @@
 import { COMBAT_TABLE_FILE, parseCombatPowerTable, type CombatPowerTable } from './combatTable.ts';
 import { parseEnemyPresets } from './enemies.ts';
+import { FILTER_TABLE_FILE, parseFilterTable, type FilterTable } from './filterTable.ts';
 import {
   parseSkillDefinition,
   parseSkillIndex,
@@ -50,6 +51,11 @@ export function combatTablePath(): string {
   return `${CHARACTER_DATA_DIR}/${COMBAT_TABLE_FILE}`;
 }
 
+/** 絞り込みの表（filterTable.ts） */
+export function filterTablePath(): string {
+  return `${CHARACTER_DATA_DIR}/${FILTER_TABLE_FILE}`;
+}
+
 export function skillIndexPath(): string {
   return `${SKILL_DATA_DIR}/index.json`;
 }
@@ -96,6 +102,11 @@ export async function loadCharacter(resourceId: number, options: LoadOptions = {
 export async function loadCombatPowerTable(options: LoadOptions = {}): Promise<CombatPowerTable> {
   const { baseUrl = '/', fetchImpl = fetch } = options;
   return parseCombatPowerTable(await fetchJson<unknown>(joinUrl(baseUrl, combatTablePath()), fetchImpl));
+}
+
+export async function loadFilterTable(options: LoadOptions = {}): Promise<FilterTable> {
+  const { baseUrl = '/', fetchImpl = fetch } = options;
+  return parseFilterTable(await fetchJson<unknown>(joinUrl(baseUrl, filterTablePath()), fetchImpl));
 }
 
 /** 定義済みキャラの一覧。手書き JSON なので読み込み時に検証する */

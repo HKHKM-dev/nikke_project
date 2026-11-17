@@ -223,9 +223,10 @@ header h1 {
   height: 34px;
   padding: 0;
 }
+/* 絵はボタンの押せる範囲いっぱいの大きさ */
 .settings-menu-icon {
-  width: 28px;
-  height: 28px;
+  width: 34px;
+  height: 34px;
 }
 /* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。設定とアカウントのボタン・未対応の印 ⓘ。
    図柄を白にするバッジごとの規則より強くするため、要素名や親を付ける */
@@ -1069,20 +1070,15 @@ svg.settings-menu-icon,
 .badge-core_plain {
   --badge-accent: #e600e6;
 }
-/* コアの印の中央（黒い丸）に段階（01〜07）を重ねる */
+/* コアの印の中央（黒い丸）に段階（01〜07）を重ねる。字は印の SVG の中に描く（GrowthMarks.tsx の CoreLabel。大きさは印に合わせて変わる） */
 .growth-marks-core {
   position: relative;
-  display: inline-grid;
-  place-items: center;
+  display: inline-block;
   width: var(--growth-core-w);
   height: var(--growth-core-w);
   margin-left: 2px;
   /* 星より大きい分を上にはみ出させ、行の高さに数えない（コア強化があっても、無いときと同じ高さに星を置く。下は名前なので上へ） */
   margin-top: calc(var(--growth-star-w) - var(--growth-core-w));
-  font-size: 0.7rem;
-  font-weight: bold;
-  color: #fff;
-  text-shadow: none;
 }
 .growth-marks-core > svg {
   position: absolute;
@@ -1090,16 +1086,12 @@ svg.settings-menu-icon,
   width: 100%;
   height: 100%;
 }
-.growth-marks-core > span {
-  position: relative;
-  /* 字の箱を大文字・数字の高さ（上は cap の高さ・下は並びの線）に切り詰めて、見える字を枠の中央に置く */
-  line-height: 1;
-  text-box: trim-both cap alphabetic;
+.growth-marks-core text {
+  fill: #fff;
+  font-weight: bold;
   letter-spacing: -0.02em;
 }
-/* MAX は 3 字なので、枠に収まるよう小さくする */
-.growth-marks-core > .growth-marks-core-max {
-  font-size: 0.72em;
+.growth-marks-core .growth-marks-core-max {
   letter-spacing: -0.06em;
 }
 .char-tray-growth {
@@ -1116,10 +1108,6 @@ svg.settings-menu-icon,
   /* 四角の絵の右上（上端に寄せてある）では、はみ出しを下へ */
   margin-top: 0;
   margin-bottom: calc(var(--growth-star-w) - var(--growth-core-w));
-}
-.char-tray-growth .growth-marks-core,
-.char-tray-tall-area .growth-marks-core {
-  font-size: 0.5rem;
 }
 .scrolling-name {
   text-align: left;
@@ -1436,15 +1424,79 @@ html:has(.modern-view-container) {
 .char-tray-sort-option[aria-pressed='false'] .char-tray-sort-mark {
   visibility: hidden;
 }
-/* 未実装の置き場所のボタン。マウスを重ねても禁止の印（〇に斜線）は出さない（オーナーの指示）。押せる印（指の形）も出さない */
+/* 押せないボタン（何も選んでいないときのクリア）。マウスを重ねても禁止の印（〇に斜線）は出さない（オーナーの指示）。押せる印（指の形）も出さない */
 .char-tray-action-button[aria-disabled='true'] {
   cursor: default;
   opacity: 0.6;
 }
-.char-tray-unimplemented {
-  font-size: 0.65rem;
-  padding: 0 4px;
-  border: 1px solid currentColor;
+/* 「絞り込み」の窓（CharacterTray の TrayFilterMenu）。行の形はクラシックの絞り込み（.classic-filter-row）と同じ */
+.char-tray-filter-menu {
+  display: contents;
+}
+.char-tray-filter-panel {
+  width: min(44rem, calc(100vw - 32px));
+  max-height: min(80vh, 44rem);
+  overflow-y: auto;
+}
+/* スキルの効果: 分類ごとの行に、効果の名前と自・味・敵のボタンを組にして並べる */
+.char-tray-filter-effects {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--app-border);
+}
+.char-tray-filter-effects-title {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  margin: 0;
+  font-size: 0.8rem;
+}
+.char-tray-filter-effects .classic-filter-row {
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+.char-tray-filter-effects .classic-filter-row-name {
+  flex: none;
+  padding-top: 2px;
+}
+.char-tray-filter-effect-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+.char-tray-filter-effect {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  white-space: nowrap;
+}
+.char-tray-filter-effect-name {
+  margin-right: 2px;
+  font-size: 0.8rem;
+}
+.classic-filter-button.char-tray-filter-side {
+  padding: 0 5px;
+}
+.char-tray-filter-panel .classic-filter-row-name {
+  width: 6.5em;
+}
+.char-tray-filter-input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  font-size: 0.85rem;
+}
+.char-tray-filter-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+/* 絞り込んでいる間の「絞り込み」のボタン（押している絞り込みのボタンと同じ色） */
+.char-tray-action-button.char-tray-filter-active {
+  border-color: Highlight;
+  background: Highlight;
+  color: HighlightText;
 }
 .char-tray-filters {
   display: flex;

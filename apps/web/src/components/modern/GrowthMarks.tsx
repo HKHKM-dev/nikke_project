@@ -17,6 +17,32 @@ export function growthMarksOf(rarity: Rarity, growth: Pick<GrowthInput, 'grade' 
   return { grade: growth.grade, gradeMax: GRADE_MAX[rarity], core: growth.core, coreMax: CORE_MAX[rarity] };
 }
 
+/** コアの印（100×100）の中央に置く段階の字の大きさ（印の幅に対する値）。MAX は 3 字なので小さくする */
+const CORE_LABEL_SIZE = 48;
+const CORE_LABEL_MAX_SIZE = 35;
+/** 字の大文字・数字の高さ（cap）の、字の大きさに対する比のおよその値（system-ui の各書体で 0.7 前後）。並びの線をこの半分だけ下げて中央に置く */
+const CAP_RATIO = 0.71;
+
+/**
+ * コアの印の中の段階の字。印の SVG の中に描き、印と同じ座標で置く（HTML の字は並びの線が画素にそろえられ、
+ * 絵の位置が画素の半端にあると、行ごとに上下へずれる）
+ */
+function CoreLabel({ label }: { label: string }) {
+  const isMax = label === 'MAX';
+  const size = isMax ? CORE_LABEL_MAX_SIZE : CORE_LABEL_SIZE;
+  return (
+    <text
+      className={isMax ? 'growth-marks-core-max' : undefined}
+      x={50}
+      y={50 + (size * CAP_RATIO) / 2}
+      fontSize={size}
+      textAnchor="middle"
+    >
+      {label}
+    </text>
+  );
+}
+
 /**
  * ニケ一覧（と一覧から持ち上げた絵）の限界突破・コア強化。スペック固定のときはスロットと同じく固定の値（限界突破・コアとも上限）、
  * ほかは育成状況の値（育成状況にいなければ出さない）
@@ -49,8 +75,9 @@ export function GrowthMarksView({ grade, gradeMax, core, coreMax, className }: G
       ))}
       {coreLabel && (
         <span className="growth-marks-core" aria-hidden="true">
-          <BadgeIcon name={GROWTH_BADGES.core} />
-          <span className={core >= coreMax ? 'growth-marks-core-max' : undefined}>{coreLabel}</span>
+          <BadgeIcon name={GROWTH_BADGES.core}>
+            <CoreLabel label={coreLabel} />
+          </BadgeIcon>
         </span>
       )}
     </div>
