@@ -1,3 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" fill="#ffffff">
+<svg xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 130" width="130" height="130" fill="#ffffff"><sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#505050"
+     showguides="true"><sodipodi:guide
+       position="0,130"
+       orientation="0,130"
+       id="guide2"
+       inkscape:locked="false" /><sodipodi:guide
+       position="130,130"
+       orientation="130,0"
+       id="guide3"
+       inkscape:locked="false" /><sodipodi:guide
+       position="130,0"
+       orientation="0,-130"
+       id="guide4"
+       inkscape:locked="false" /><sodipodi:guide
+       position="0,0"
+       orientation="-130,0"
+       id="guide5"
+       inkscape:locked="false" /></sodipodi:namedview><g id="g_parts" transform="translate(15,15)">
   <path d="M50 8.3C37.5 27.1 14.6 42.5 14.6 60.4C14.6 72.5 23.2 80.5 33.5 80.5C41.5 80.5 46 74 47.5 64.5C46.5 76.5 43.5 84.5 37 90H63C56.5 84.5 53.5 76.5 52.5 64.5C54 74 58.5 80.5 66.5 80.5C76.8 80.5 85.4 72.5 85.4 60.4C85.4 42.5 62.5 27.1 50 8.3Z" />
-</svg>
+</g></svg>

@@ -897,13 +897,13 @@ svg.settings-menu-icon,
   cursor: grabbing;
 }
 /* 立ち絵の右上に重ねるボタン（上から、空にする（バッジ ui_delete）・育成と設定（バッジ ui_setting））。置き先待ちの水色の重ね・◎ より上。
-   絵はバッジ（縦横 130:150） */
+   絵はバッジ（八角形で縦横 130:130） */
 .modern-slot-icon-button {
   position: absolute;
   right: 3px;
   z-index: 4;
   width: 22px;
-  height: calc(22px * 150 / 130);
+  height: 22px;
   padding: 0;
   display: grid;
   place-items: center;
@@ -919,7 +919,7 @@ svg.settings-menu-icon,
   top: 3px;
 }
 .modern-slot-build-button {
-  top: 30px;
+  top: 27px;
 }
 /* 育成を変えたスロットは、歯車を青にする（白の規則より詳細度を上げる） */
 .modern-slot-build-edited > svg.badge-ui_setting {

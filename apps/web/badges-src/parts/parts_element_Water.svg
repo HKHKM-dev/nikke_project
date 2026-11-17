@@ -3,8 +3,8 @@
 
 <svg
    width="130"
-   height="150"
-   viewBox="0 0 130 150"
+   height="130"
+   viewBox="0 0 130 130"
    version="1.1"
    id="svg1"
    xml:space="preserve"
@@ -22,30 +22,23 @@
      inkscape:pageopacity="0"
      inkscape:pagecheckerboard="true"
      inkscape:deskcolor="#505050"
-     inkscape:document-units="px"
-     inkscape:zoom="4"
-     inkscape:cx="65.000001"
-     inkscape:cy="75.000001"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg1"
-     showgrid="false"><inkscape:grid
-       id="grid2"
-       units="px"
-       originx="0"
-       originy="0"
-       spacingx="0.26458333"
-       spacingy="0.26458333"
-       empcolor="#0099e5"
-       empopacity="0.30196078"
-       color="#0099e5"
-       opacity="0.14901961"
-       empspacing="5"
-       enabled="true"
-       visible="false" /></sodipodi:namedview><defs
+     showguides="true"><sodipodi:guide
+       position="0,130"
+       orientation="0,130"
+       id="guide2"
+       inkscape:locked="false" /><sodipodi:guide
+       position="130,130"
+       orientation="130,0"
+       id="guide3"
+       inkscape:locked="false" /><sodipodi:guide
+       position="130,0"
+       orientation="0,-130"
+       id="guide4"
+       inkscape:locked="false" /><sodipodi:guide
+       position="0,0"
+       orientation="-130,0"
+       id="guide5"
+       inkscape:locked="false" /></sodipodi:namedview><g id="g_parts" transform="translate(0,-10)"><defs
      id="defs1" />
 <g
      id="content"
@@ -61,4 +54,4 @@
      style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2.11609;stroke-linecap:round;stroke-linejoin:round"
      d="M 21.523943,26.114988 C 22.142849,24.359693 21.78845,22.432718 21.150188,20.735562 20.066962,18.141263 18.4768,15.806016 17.085719,13.374477 16.283423,11.93141 15.474065,10.48987 14.783832,8.9886918 14.093599,10.48987 13.284241,11.93141 12.481945,13.374477 c -1.391081,2.431539 -2.981243,4.766786 -4.0644693,7.361085 -0.6382615,1.697156 -0.9926606,3.624131 -0.3737551,5.379426 0.8665405,2.819322 3.5393164,5.156596 6.7401114,5.120346 3.200795,0.03625 5.873571,-2.301024 6.740111,-5.120346 z"
      inkscape:label="water1"
-     sodipodi:nodetypes="ssscssscs" /></g></svg>
+     sodipodi:nodetypes="ssscssscs" /></g></g></svg>
