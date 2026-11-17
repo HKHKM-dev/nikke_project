@@ -11,7 +11,7 @@ export type { SkillSlot };
 export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies readonly SkillSlot[];
 
 /**
- * 何が上がるか。
+ * 何が上がるか（stat）の一覧。BuffStat はここから導く。並びは読み込みのエラー文に出る（skills/parse/common.ts の oneOf）。
  * distributedDamage = 分配ダメージの乗数 (1 + Σ)。distributed の倍率ダメージにだけ掛かる（録画 0021 で攻撃ダメージ▲と別枠の乗数と確認。受けるダメージ▲とは 1 つの和。C-0767）。
  * burstGaugeSpeed = バーストゲージのチャージ速度 (1 + Σ)。対象の枠の射撃で溜まるゲージに掛かる。passive のほか、
  * timed と状態の中身にも書ける（1 パス目がフレームごとに件を作り、f − 1 までに付いた件を射手と同じに読む。plan/design-skill-stage1.md 1.6 節）。
@@ -72,53 +72,6 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * （ref を書かない）。効いていれば 1 発のペレットは 1 個で、▲より勝つ（C-1077）。どちらも self だけ（PELLET_STATS）で、singlePellet は
  * timed だけ、pelletCount は自分に付く状態の中身にも書ける（スタックの値は 1 スタックあたり。plan/design-fortune-mate.md 2.3 節）
  */
-export type BuffStat =
-  | 'attack'
-  | 'critRate'
-  | 'critDamage'
-  | 'attackDamage'
-  | 'chargeDamage'
-  | 'distributedDamage'
-  | 'burstGaugeSpeed'
-  | 'maxAmmo'
-  | 'reloadSpeed'
-  | 'reloadRatio'
-  | 'chargeSpeed'
-  | 'hitRate'
-  | 'infiniteAmmo'
-  | 'elementDamage'
-  | 'coreDamage'
-  | 'normalAttackDamage'
-  | 'normalCritRate'
-  | 'chargeDamageMultiplier'
-  | 'damageTaken'
-  | 'enemyDefenseDown'
-  | 'projectileExplosionDamage'
-  | 'projectileStickDamage'
-  | 'elementAdvantage'
-  | 'fixedChargeTime'
-  | 'trueDamage'
-  | 'trueDamageConversion'
-  | 'sustainedDamage'
-  | 'dotEffect'
-  | 'maxHp'
-  | 'maxHpOnly'
-  | 'healDealt'
-  | 'defense'
-  | 'attackSpeed'
-  | 'burstCooldown'
-  | 'sequentialAttackDamage'
-  | 'oneEnemyBurstDamage'
-  | 'allEnemiesBurstDamage'
-  | 'spinUpSpeed'
-  | 'chargeSpeedOverflow'
-  | 'accumulateRatio'
-  | 'minEffectiveRange'
-  | 'pierce'
-  | 'pierceDamage'
-  | 'pelletCount'
-  | 'singlePellet'
-  | 'fireStanceScale';
 export const BUFF_STATS = [
   'attack',
   'critRate',
@@ -203,7 +156,10 @@ export const BUFF_STATS = [
   'singlePellet',
   // 射撃の姿勢の長さの倍率（説明文に無い定数 value。plan/design-a2-bmode-stance.md 3.1 節）
   'fireStanceScale',
-] as const satisfies readonly BuffStat[];
+] as const;
+
+/** 何が上がるか（BUFF_STATS の値。stat ごとの決まりは BUFF_STATS の注記） */
+export type BuffStat = (typeof BUFF_STATS)[number];
 
 /** 射撃に効く stat（射手の実効値を変える） */
 export const FIRING_STATS = [

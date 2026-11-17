@@ -2,7 +2,7 @@
 
 - 何のための文書か: スキルの語彙を足すたびに、同じ中身を何か所にも書いている所（stat の一覧と、対象の絞り込みの欄）を、動きを変えずに 1 か所へ寄せる変更の、今の構造・案と得失・論点・段・確かめ方
 - 対象: A = `skills/types.ts` の `BuffStat`・`BUFF_STATS` と、`skills/buffs.ts` の `RATIO_FIELD`。B = `skills/targets.ts` の `TargetedEffect`、`skills/resolve.ts` の解決済みの効果の型と対象の欄を写す所、「編成で決まる対象か」の判定（`skills/targets.ts`・`skills/composition.ts`）
-- 状態: B は実装済み（9.1 節）。A は承認待ち（4 節の論点 1・2）
+- 状態: 完了（段 B は 9.1 節、段 A は 9.2 節）
 - 関連: [design-split-skill-holders.md](design-split-skill-holders.md)（4.3 節の案 2 が和集合を一覧から導く案。衝突を減らす目的で比べ、見送った）、[design-split-long-functions.md](design-split-long-functions.md)・[design-split-first-pass.md](design-split-first-pass.md)（動きを変えない分割と、その確かめ方）、[design-first-pass-perf.md](design-first-pass-perf.md)（速さの測り方）、[design-target-vocab.md](design-target-vocab.md)（対象の語彙）、[skills-guide.md](skills-guide.md) 1.4 節（語彙を足す手順）
 - 作成日: 2026-11-17
 - 調べた時点: main の fc71c712。行番号はその時点のファイルの行
@@ -225,8 +225,31 @@ stat を 1 つ足すときに書く所（`allEnemiesBurstDamage` を足した #1
 | Stage 8 の 5 人 | 54.67 | 54.99 | 1.006 |
 | 録画 0037 | 37.62 | 37.55 | 0.998 |
 
+### 9.2 段 A（2026-11-17）
+
+- 型: `skills/types.ts` の `BuffStat` を一覧から導く（`(typeof BUFF_STATS)[number]`）。和集合の宣言は消し、stat ごとの決まりの注記のまとまりは `BUFF_STATS` の上に置いた。一覧の並びと項目の注記は変えていない。
+- 比率の欄: `skills/buffs.ts` の `RATIO_FIELD` を、名前の違う 5 行の表（`RENAMED_RATIO_FIELD`）と「無ければ同じ名前」（`ratioFieldOf`）から、読み込みの時に 1 回だけ組む。`statTotal`・`addRatioBuff` が引く表の形は前と同じ。
+- stat を足すときに書く所は、一覧（`BUFF_STATS`）・`BuffTotals` の欄・`ZERO_BUFFS`・`records/relevance.ts` の `STAT_CLASS` の 4 つ。`BuffTotals` に同じ名前の数の欄が無い stat を一覧に足すと、`ratioFieldOf` と `STAT_CLASS` の型の検査で落ちる（一覧に仮の stat を足して確かめた）。
+
+**確かめた結果**（6 節。基の版は main の 44caa1eb）:
+
+- `npm test`・`npm run typecheck`・変えたファイルの lint が通る。期待値の書き換えは無い。
+- `BUFF_STATS` を JSON にした文が main と同じ（並びが同じなので、読み込みのエラー文は変わらない）。
+- 読み込みの結果・編成を通さない解決の結果・`runSimulation`（`trace` あり）の `SimResult` と `TeamResult`（4 編成と、比べる指定のある全部の観測値の入力）の JSON が、main と文字列で一致した。
+- 組んだ表は V8 の速い形のまま（46 個の鍵を `Object.fromEntries` で組んだオブジェクトで確かめた）。
+- 速さ: 9.1 節と同じ測り方。
+
+<!-- prettier-ignore -->
+| 編成 | main（ms） | 段の後（ms） | 比 |
+| --- | --- | --- | --- |
+| LRNAM | 95.02 | 97.76 | 1.029 |
+| 主力 | 100.95 | 98.84 | 0.979 |
+| Stage 8 の 5 人 | 53.55 | 54.89 | 1.025 |
+| 録画 0037 | 37.95 | 38.31 | 1.009 |
+
 ## 10. 経過
 
 - 2026-11-17: 起案。
 - 2026-11-17: オーナーが B を実施すると決めた。B に当たる論点（3〜6・8）は推奨の案で進める。A（論点 1・2）は未決。
 - 2026-11-17: 段 B を実装した（9.1 節）。
+- 2026-11-17: オーナーが A も実施すると決めた。論点 1・2 は推奨の案（案 A1。[design-split-skill-holders.md](design-split-skill-holders.md) の決定には当たらないものとして進める）で進めた。段 A を実装し（9.2 節）、課題を閉じた。
