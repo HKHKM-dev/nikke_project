@@ -3,8 +3,8 @@
 
 <svg
    width="130"
-   height="150"
-   viewBox="0 0 130 150"
+   height="130"
+   viewBox="0 0 130 130"
    version="1.1"
    id="svg1"
    xml:space="preserve"
@@ -22,30 +22,23 @@
      inkscape:pageopacity="0"
      inkscape:pagecheckerboard="true"
      inkscape:deskcolor="#505050"
-     inkscape:document-units="px"
-     inkscape:zoom="4"
-     inkscape:cx="65"
-     inkscape:cy="75"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg1"
-     showgrid="false"><inkscape:grid
-       id="grid2"
-       units="px"
-       originx="0"
-       originy="0"
-       spacingx="0.26458333"
-       spacingy="0.26458333"
-       empcolor="#0099e5"
-       empopacity="0.30196078"
-       color="#0099e5"
-       opacity="0.14901961"
-       empspacing="5"
-       enabled="true"
-       visible="false" /></sodipodi:namedview><defs
+     showguides="true"><sodipodi:guide
+       position="0,130"
+       orientation="0,130"
+       id="guide2"
+       inkscape:locked="false" /><sodipodi:guide
+       position="130,130"
+       orientation="130,0"
+       id="guide3"
+       inkscape:locked="false" /><sodipodi:guide
+       position="130,0"
+       orientation="0,-130"
+       id="guide4"
+       inkscape:locked="false" /><sodipodi:guide
+       position="0,0"
+       orientation="-130,0"
+       id="guide5"
+       inkscape:locked="false" /></sodipodi:namedview><g id="g_parts" transform="translate(0,-10)"><defs
      id="defs1" />
 <g
      id="content"
@@ -67,4 +60,4 @@
      id="polygon1-7"
      style="display:inline;mix-blend-mode:normal;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.485721;stroke-dasharray:none;stroke-opacity:1"
      inkscape:label="iron1"
-     d="m 5.65625,12.998047 c 0,1.943359 0,3.886719 0,5.830078 1.6855469,0.972656 3.3710938,1.945312 5.056641,2.917969 1.684895,-0.972657 3.369791,-1.945313 5.054687,-2.917969 0,-1.943359 0,-3.886719 0,-5.830078 -1.684896,-0.972656 -3.369792,-1.945313 -5.054687,-2.917969 -1.6855472,0.972656 -3.3710941,1.945313 -5.056641,2.917969 z" /></g></svg>
+     d="m 5.65625,12.998047 c 0,1.943359 0,3.886719 0,5.830078 1.6855469,0.972656 3.3710938,1.945312 5.056641,2.917969 1.684895,-0.972657 3.369791,-1.945313 5.054687,-2.917969 0,-1.943359 0,-3.886719 0,-5.830078 -1.684896,-0.972656 -3.369792,-1.945313 -5.054687,-2.917969 -1.6855472,0.972656 -3.3710941,1.945313 -5.056641,2.917969 z" /></g></g></svg>
