@@ -16,9 +16,27 @@ const all = [rapi, anis, neon];
 const table: FilterTable = {
   formatVersion: 1,
   characters: {
-    10: { burstCooldown: 40, skillText: 'フォーメーション ■自分ニ 「攻撃力21.81%▲」' },
-    11: { burstCooldown: 20, skillText: 'グレネード ■味方全体ニ 「クリティカル確率▲」' },
-    12: { burstCooldown: 40, skillText: 'ファイアー ■自分ニ 「攻撃力▲」「クリティカル確率▲」' },
+    10: {
+      burstCooldown: 40,
+      skillText: 'フォーメーション ■自分ニ 「攻撃力21.81%▲」',
+      effects: ['attack:self', 'taunt:enemy'],
+      special: [],
+      traits: [],
+    },
+    11: {
+      burstCooldown: 20,
+      skillText: 'グレネード ■味方全体ニ 「クリティカル確率▲」',
+      effects: ['critRate:ally'],
+      special: ['distributed'],
+      traits: ['splitReload'],
+    },
+    12: {
+      burstCooldown: 40,
+      skillText: 'ファイアー ■自分ニ 「攻撃力▲」「クリティカル確率▲」',
+      effects: ['attack:self', 'critRate:self'],
+      special: ['pierce'],
+      traits: [],
+    },
   },
 };
 
@@ -49,6 +67,30 @@ describe('ニケ一覧の絞り込み（文字とバースト CT）', () => {
     const stray = char(99, 'ほか', 'Other');
     expect(applyTrayFilter([...all, stray], filter, table)).toEqual([anis]);
     expect(applyTrayFilter([stray], { ...EMPTY_TRAY_FILTER, name: 'ほか' }, table)).toEqual([stray]);
+  });
+
+  it('スキルの効果は、同じ効果の自・味は OR、効果どうしは AND', () => {
+    expect(applyTrayFilter(all, { ...EMPTY_TRAY_FILTER, effects: ['critRate:self', 'critRate:ally'] }, table)).toEqual([
+      anis,
+      neon,
+    ]);
+    expect(applyTrayFilter(all, { ...EMPTY_TRAY_FILTER, effects: ['critRate:self', 'attack:self'] }, table)).toEqual([
+      neon,
+    ]);
+    expect(applyTrayFilter(all, { ...EMPTY_TRAY_FILTER, effects: ['critRate:ally', 'attack:self'] }, table)).toEqual(
+      [],
+    );
+  });
+
+  it('特殊攻撃・特性は、押したもののどれか', () => {
+    expect(applyTrayFilter(all, { ...EMPTY_TRAY_FILTER, special: ['pierce', 'distributed'] }, table)).toEqual([
+      anis,
+      neon,
+    ]);
+    expect(applyTrayFilter(all, { ...EMPTY_TRAY_FILTER, traits: ['splitReload'] }, table)).toEqual([anis]);
+    expect(applyTrayFilter(all, { ...EMPTY_TRAY_FILTER, special: ['pierce'], traits: ['splitReload'] }, table)).toEqual(
+      [],
+    );
   });
 
   it('バースト CT のボタンは表にある値を小さい順に', () => {

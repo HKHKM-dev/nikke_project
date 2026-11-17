@@ -49,7 +49,8 @@ import {
   type RawRoleData,
 } from './normalize.ts';
 import { COMBAT_TABLE_FILE, buildCombatPowerTable } from '../src/combatTable.ts';
-import { FILTER_TABLE_FILE, buildFilterTable } from '../src/filterTable.ts';
+import { FILTER_TABLE_FILE } from '../src/filterTable.ts';
+import { buildFilterTable } from '../src/filterTableBuild.ts';
 import { MASTER_FILES } from '../src/load.ts';
 import type {
   BuildMasters,

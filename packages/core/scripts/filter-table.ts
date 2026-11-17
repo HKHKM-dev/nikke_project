@@ -4,7 +4,8 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { FILTER_TABLE_FILE, buildFilterTable } from '../src/filterTable.ts';
+import { FILTER_TABLE_FILE } from '../src/filterTable.ts';
+import { buildFilterTable } from '../src/filterTableBuild.ts';
 import { CHARACTER_DATA_DIR, characterDataPath, characterIndexPath } from '../src/load.ts';
 import type { CharacterData, CharacterIndex } from '../src/types.ts';
 import { formatJson } from './format-json.ts';

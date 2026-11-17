@@ -31,13 +31,23 @@ import { useCharacterFilter } from '../useCharacterFilter.ts';
 import {
   applyTrayFilter,
   burstCooldownValues,
+  effectTagsInTable,
   EMPTY_TRAY_FILTER,
   needsFilterTable,
+  toggleValue,
   trayFilterActive,
   type TrayFilter,
 } from '../../trayFilter.ts';
 import { useFilterTable } from '../../useFilterTable.ts';
-import type { FilterTable } from '@nikke/core';
+import {
+  FILTER_EFFECTS,
+  FILTER_SIDE_LABEL,
+  SPECIAL_ATTACKS,
+  TRAITS,
+  type FilterEffect,
+  type FilterSide,
+  type FilterTable,
+} from '@nikke/core';
 
 type Props = {
   index: readonly CharacterIndexEntry[];
@@ -274,8 +284,8 @@ function TrayFilters({
 }
 
 /**
- * 「絞り込み」のポップアップ（plan/design-character-filter.md 4.1 節）: 名前・スキルの検索と、バースト CT のボタン。
- * 絞っている間はボタンを押している色にする
+ * 「絞り込み」のポップアップ（plan/design-character-filter.md 4.1・5 節）: 名前・スキルの検索と、バースト CT・特殊攻撃・特性・
+ * スキルの効果のボタン。絞っている間はボタンを押している色にする
  */
 function TrayFilterMenu({
   filter,
@@ -293,6 +303,9 @@ function TrayFilterMenu({
 }) {
   const active = trayFilterActive(filter);
   const cooldowns = useMemo(() => (table === null ? [] : burstCooldownValues(table)), [table]);
+  // 効果の分類ごとに、表にある項目と側だけを出す
+  const effectGroups = useMemo(() => (table === null ? [] : effectRows(effectTagsInTable(table))), [table]);
+  const tableHint = tableError === null ? '読み込み中…' : `絞り込みの表を読めない: ${tableError}`;
   return (
     <div className="char-tray-filter-menu" onClickCapture={onOpen}>
       <Popover
@@ -322,35 +335,64 @@ function TrayFilterMenu({
               onChange={(e) => onChange((f) => ({ ...f, skill: e.target.value }))}
             />
           </label>
-          <div className="classic-filter-row" role="group" aria-label="バースト CT で絞り込み">
-            <span className="classic-filter-row-name">バースト CT</span>
-            {table === null ? (
-              <span className="hint">
-                {tableError === null ? '読み込み中…' : `絞り込みの表を読めない: ${tableError}`}
-              </span>
-            ) : (
-              cooldowns.map((v) => (
-                <button
-                  key={v}
-                  type="button"
-                  className="classic-filter-button"
-                  aria-pressed={filter.burstCooldowns.includes(v)}
-                  onClick={() =>
-                    onChange((f) => ({
-                      ...f,
-                      burstCooldowns: f.burstCooldowns.includes(v)
-                        ? f.burstCooldowns.filter((x) => x !== v)
-                        : [...f.burstCooldowns, v],
-                    }))
-                  }
-                >
-                  {v} 秒
-                </button>
-              ))
-            )}
-          </div>
+          {table === null ? (
+            <p className="hint">{tableHint}</p>
+          ) : (
+            <>
+              <FilterButtonRow
+                name="バースト CT"
+                options={cooldowns.map((v) => ({ key: v, label: `${v} 秒` }))}
+                selected={filter.burstCooldowns}
+                onToggle={(v) => onChange((f) => ({ ...f, burstCooldowns: toggleValue(f.burstCooldowns, v) }))}
+              />
+              <FilterButtonRow
+                name="特殊攻撃"
+                options={SPECIAL_ATTACKS}
+                selected={filter.special}
+                onToggle={(v) => onChange((f) => ({ ...f, special: toggleValue(f.special, v) }))}
+              />
+              <FilterButtonRow
+                name="特性"
+                options={TRAITS}
+                selected={filter.traits}
+                onToggle={(v) => onChange((f) => ({ ...f, traits: toggleValue(f.traits, v) }))}
+              />
+              <div className="char-tray-filter-effects" role="group" aria-label="スキルの効果で絞り込み">
+                <p className="char-tray-filter-effects-title">
+                  スキルの効果<span className="hint">自＝自分・味＝味方・敵＝敵に。効果どうしは AND</span>
+                </p>
+                {effectGroups.map(({ group, effects }) => (
+                  <div key={group} className="classic-filter-row" role="group" aria-label={group}>
+                    <span className="classic-filter-row-name">{group}</span>
+                    <span className="char-tray-filter-effect-list">
+                      {effects.map(({ effect, sides }) => (
+                        <span key={effect.key} className="char-tray-filter-effect">
+                          <span className="char-tray-filter-effect-name">{effect.label}</span>
+                          {sides.map((side) => {
+                            const tag = `${effect.key}:${side}`;
+                            return (
+                              <button
+                                key={side}
+                                type="button"
+                                className="classic-filter-button char-tray-filter-side"
+                                aria-pressed={filter.effects.includes(tag)}
+                                aria-label={`${effect.label}（${FILTER_SIDE_LABEL[side]}）`}
+                                onClick={() => onChange((f) => ({ ...f, effects: toggleValue(f.effects, tag) }))}
+                              >
+                                {FILTER_SIDE_LABEL[side]}
+                              </button>
+                            );
+                          })}
+                        </span>
+                      ))}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
           {table === null && tableError === null && needsFilterTable(filter) && (
-            <p className="hint">表を読み終えるまで、スキルとバースト CT では絞らない</p>
+            <p className="hint">表を読み終えるまで、名前のほかでは絞らない</p>
           )}
           <div className="char-tray-filter-footer">
             <button
@@ -364,6 +406,49 @@ function TrayFilterMenu({
           </div>
         </div>
       </Popover>
+    </div>
+  );
+}
+
+/** 効果の項目を分類ごとにまとめ、表にある側（自・味・敵）だけを付ける。表に無い項目は出さない */
+function effectRows(present: ReadonlySet<string>) {
+  const rows: { group: string; effects: { effect: FilterEffect; sides: FilterSide[] }[] }[] = [];
+  for (const effect of FILTER_EFFECTS) {
+    const sides = (['self', 'ally', 'enemy'] as const).filter((side) => present.has(`${effect.key}:${side}`));
+    if (sides.length === 0) continue;
+    let row = rows.at(-1);
+    if (row?.group !== effect.group) rows.push((row = { group: effect.group, effects: [] }));
+    row.effects.push({ effect, sides });
+  }
+  return rows;
+}
+
+/** 名前と文字のボタンの 1 行（押したもののどれか） */
+function FilterButtonRow<K extends string | number>({
+  name,
+  options,
+  selected,
+  onToggle,
+}: {
+  name: string;
+  options: readonly { key: K; label: string }[];
+  selected: readonly K[];
+  onToggle: (key: K) => void;
+}) {
+  return (
+    <div className="classic-filter-row" role="group" aria-label={`${name}で絞り込み`}>
+      <span className="classic-filter-row-name">{name}</span>
+      {options.map((o) => (
+        <button
+          key={o.key}
+          type="button"
+          className="classic-filter-button"
+          aria-pressed={selected.includes(o.key)}
+          onClick={() => onToggle(o.key)}
+        >
+          {o.label}
+        </button>
+      ))}
     </div>
   );
 }

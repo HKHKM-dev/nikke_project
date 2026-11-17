@@ -1435,10 +1435,53 @@ html:has(.modern-view-container) {
   display: contents;
 }
 .char-tray-filter-panel {
-  width: min(24rem, calc(100vw - 32px));
+  width: min(44rem, calc(100vw - 32px));
+  max-height: min(80vh, 44rem);
+  overflow-y: auto;
+}
+/* スキルの効果: 分類ごとの行に、効果の名前と自・味・敵のボタンを組にして並べる */
+.char-tray-filter-effects {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--app-border);
+}
+.char-tray-filter-effects-title {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  margin: 0;
+  font-size: 0.8rem;
+}
+.char-tray-filter-effects .classic-filter-row {
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+.char-tray-filter-effects .classic-filter-row-name {
+  flex: none;
+  padding-top: 2px;
+}
+.char-tray-filter-effect-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+.char-tray-filter-effect {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  white-space: nowrap;
+}
+.char-tray-filter-effect-name {
+  margin-right: 2px;
+  font-size: 0.8rem;
+}
+.classic-filter-button.char-tray-filter-side {
+  padding: 0 5px;
 }
 .char-tray-filter-panel .classic-filter-row-name {
-  width: 6em;
+  width: 6.5em;
 }
 .char-tray-filter-input {
   flex: 1;
