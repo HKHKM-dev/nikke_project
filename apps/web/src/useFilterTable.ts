@@ -6,11 +6,16 @@ import { useEffect, useState } from 'react';
 let loaded: FilterTable | null = null;
 let pending: Promise<FilterTable> | null = null;
 
-export function useFilterTable(enabled: boolean): { table: FilterTable | null; error: string | null } {
+/** retry は、読めなかった後にもう一度読む（窓を開き直したとき） */
+export function useFilterTable(enabled: boolean): {
+  table: FilterTable | null;
+  error: string | null;
+  retry: () => void;
+} {
   const [table, setTable] = useState<FilterTable | null>(loaded);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
-    if (!enabled || table !== null) return;
+    if (!enabled || table !== null || error !== null) return;
     let cancelled = false;
     pending ??= loadFilterTable({ baseUrl: import.meta.env.BASE_URL }).then((t) => (loaded = t));
     pending.then(
@@ -18,7 +23,7 @@ export function useFilterTable(enabled: boolean): { table: FilterTable | null; e
         if (!cancelled) setTable(t);
       },
       (e: unknown) => {
-        // 読めなかったら、次に開いたときに読み直せるようにする
+        // 読めなかったら、次に開いたとき（retry）に読み直す
         pending = null;
         if (!cancelled) setError(e instanceof Error ? e.message : String(e));
       },
@@ -26,6 +31,6 @@ export function useFilterTable(enabled: boolean): { table: FilterTable | null; e
     return () => {
       cancelled = true;
     };
-  }, [enabled, table]);
-  return { table: table ?? loaded, error };
+  }, [enabled, table, error]);
+  return { table: table ?? loaded, error, retry: () => setError(null) };
 }

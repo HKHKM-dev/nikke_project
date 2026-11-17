@@ -94,7 +94,7 @@ export function CharacterTray({
   // 「絞り込み」の窓（文字の検索・バースト CT。trayFilter.ts）。表は窓を初めて開いたときに読む
   const [trayFilter, setTrayFilter] = useState<TrayFilter>(EMPTY_TRAY_FILTER);
   const [tableRequested, setTableRequested] = useState(false);
-  const { table: filterTable, error: filterTableError } = useFilterTable(tableRequested);
+  const { table: filterTable, error: filterTableError, retry: retryFilterTable } = useFilterTable(tableRequested);
   const filteredCharacters = useMemo(() => {
     return applyTrayFilter(filterByFavorites(badgeFiltered, favorites, favoriteFilter), trayFilter, filterTable);
   }, [badgeFiltered, favoriteFilter, favorites, trayFilter, filterTable]);
@@ -133,7 +133,10 @@ export function CharacterTray({
             onChange={setTrayFilter}
             table={filterTable}
             tableError={filterTableError}
-            onOpen={() => setTableRequested(true)}
+            onOpen={() => {
+              setTableRequested(true);
+              if (filterTableError !== null) retryFilterTable();
+            }}
           />
           <TrayShapeToggle shape={shape} onToggle={onToggleShape} />
         </div>

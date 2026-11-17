@@ -48,6 +48,8 @@ const KIND_KEY: Record<string, string> = {
   'instant:burstGauge': 'burstGauge',
   'fullBurst:extend': 'fullBurstExtend',
   'control:taunt': 'taunt',
+  // 「敵全体を挑発」（ヘイト）は自分の側の句に読まれるが、敵を挑発する効果なので敵の挑発に数える（effectTag）
+  'control:selfTaunt': 'taunt',
   'control:stun': 'stun',
 };
 const EFFECTS_BY_KEY = new Map<string, FilterEffect>(FILTER_EFFECTS.map((e) => [e.key, e]));
@@ -59,6 +61,9 @@ function effectTag(e: CatalogEffect): string | null {
   if (e.side === 'enemy') {
     side = 'enemy';
     key = e.stat ? ENEMY_STAT_KEY[e.stat.canon]?.[e.stat.dir] : KIND_KEY[e.kind];
+  } else if (e.kind === 'control:selfTaunt') {
+    side = 'enemy';
+    key = KIND_KEY[e.kind];
   } else if (e.side === 'self' || e.side === 'ally') {
     side = e.side;
     if (e.stat) key = e.stat.dir === 'up' ? (STAT_KEY[e.stat.canon] ?? e.stat.canon) : STAT_DOWN_KEY[e.stat.canon];
@@ -72,12 +77,13 @@ function effectTag(e: CatalogEffect): string | null {
 function specialAttacksOf(effects: readonly CatalogEffect[], descriptions: string): string[] {
   const kinds = new Set(effects.map((e) => e.kind));
   const has: Record<(typeof SPECIAL_ATTACKS)[number]['key'], boolean> = {
-    pierce: kinds.has('weaponChange:pierce'),
+    // 「貫通特化」は単独の句のほか、使用武器変更の中の「追加効果:貫通特化」にも書かれる
+    pierce: descriptions.includes('貫通特化'),
     dot: kinds.has('damage:dot'),
     distributed: kinds.has('damage:distributed'),
     true: kinds.has('damage:true') || kinds.has('damage:burstTrue') || kinds.has('flag:trueDamageConversion'),
     sequential: descriptions.includes('順番に攻撃'),
-    weaponChange: [...kinds].some((k) => k.startsWith('weaponChange')),
+    weaponChange: kinds.has('weaponChange'),
   };
   return SPECIAL_ATTACKS.filter((a) => has[a.key]).map((a) => a.key);
 }

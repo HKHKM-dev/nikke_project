@@ -55,10 +55,10 @@
 ## 5. 第 2 段: スキルの効果・特殊攻撃・特性
 
 - スキルの効果: catalog の効果の句（`classifyCharacters` の `effects`）から、stat の▲（`stat.canon`・`dir: 'up'`）を「自」（side が self）「味」（ally）に、▼で side が enemy のものを「敵」に分ける。分類（ダメージ・クリティカル・敵デバフ・連射と武器・回復と耐久・バースト・マイナス効果）は旧プロジェクトの並びを手本に、canon から分類への表を作る。
-- 項目は `FILTER_EFFECTS`（分類: ダメージ・クリティカル・連射と武器・回復と耐久・バースト・敵デバフ）。自・味は stat の▲と、受けるダメージの▼、stat でない効果（回復・バリア・弾丸チャージ・バースト CT 短縮・バーストゲージ増加・フルバースト時間延長）。敵は受けるダメージ▲・防御力▼・攻撃力▼・挑発・スタン。窓には、表にある項目と側だけを出す。
+- 項目は `FILTER_EFFECTS`（分類: ダメージ・クリティカル・連射と武器・回復と耐久・バースト・敵デバフ）。自・味は stat の▲と、受けるダメージの▼、stat でない効果（回復・バリア・弾丸チャージ・バースト CT 短縮・バーストゲージ増加・フルバースト時間延長）。敵は受けるダメージ▲・防御力▼・攻撃力▼・挑発・スタン。挑発には、自分の側の句に読まれる「敵全体を挑発」（ヘイト。`control:selfTaunt`）も数える。窓には、表にある項目と側だけを出す。
 - 旧プロジェクトの「マイナス効果」（自分の HP の消費・装弾数の減少など）は置かない（件数が少なく、絞る用途が見えない）。
 - 同じ効果の自・味は OR、効果どうしは AND（旧プロジェクトの `matchesSkillTagFilter` と同じ）。特殊攻撃・特性は、押したもののどれか（OR。バッジの絞り込みの同じ種類と同じ）。
-- 特殊攻撃: 貫通（`weaponChange:pierce`。説明文の「貫通特化」）・持続（`damage:dot`）・分配（`damage:distributed`）・防御力無視（`damage:true`・`damage:burstTrue`・`flag:trueDamageConversion`）・順番に攻撃（説明文の「順番に攻撃」）・使用武器変更（`weaponChange` で始まる kind）。
+- 特殊攻撃: 貫通（説明文の「貫通特化」。単独の句のほか、使用武器変更の中の「追加効果:貫通特化」にも書かれる）・持続（`damage:dot`）・分配（`damage:distributed`）・防御力無視（`damage:true`・`damage:burstTrue`・`flag:trueDamageConversion`）・順番に攻撃（説明文の「順番に攻撃」）・使用武器変更（kind `weaponChange`）。
 - 特性: バースト再突入（`burst:reentry`）・分割リロード（`shot.reloadBullet < 1`）。宝ものはニケ一覧の上のバッジの絞り込みにあるので、窓には置かない。
 - 表（filter.json）には、1 体ごとのタグの配列（`effects`・`special`・`traits`）を足す。作る関数（`filterTableBuild.ts`）は catalog を使うので、画面と Worker が読み込む `index.ts` からは出さない。
 

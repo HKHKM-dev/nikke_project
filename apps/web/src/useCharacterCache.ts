@@ -47,11 +47,21 @@ export function useCharacterCache(resourceIds: readonly (number | null)[], baseU
     if (wantedKey === '') return;
     for (const text of wantedKey.split(',')) {
       const id = Number(text);
-      if (characters.has(id) || errors.has(id) || inflight.current.has(id)) continue;
+      // 読めなかったものは、ほかの所で読み終えたときだけ取り直す（共有のキャッシュから。fetch はしない）
+      if (characters.has(id) || inflight.current.has(id)) continue;
+      if (errors.has(id) && !loaded.has(keyOf(baseUrl, id))) continue;
       inflight.current.add(id);
       loadShared(id, baseUrl)
         .then(
-          (character) => setCharacters((m) => new Map(m).set(id, character)),
+          (character) => {
+            setCharacters((m) => new Map(m).set(id, character));
+            setErrors((m) => {
+              if (!m.has(id)) return m;
+              const next = new Map(m);
+              next.delete(id);
+              return next;
+            });
+          },
           (e: unknown) => setErrors((m) => new Map(m).set(id, e instanceof Error ? e.message : String(e))),
         )
         .finally(() => inflight.current.delete(id));
