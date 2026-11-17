@@ -355,8 +355,8 @@ export type EffectStat = BuffStat | 'weapon';
 const FILTER_TARGET_KEYS = ['targetWeapon', 'targetElement', 'targetClass'] as const;
 
 /**
- * 解決済みの効果に写す対象の絞り込みの欄（写す所ごと。並びは書く順）。元の効果に書けない欄は載せない。解決済みの効果の型は、
- * 持つ欄をここから取る
+ * 解決済みの効果に写す対象の絞り込みの欄（写す所ごと。並びは書く順）。元の効果に書けない欄は載せない。欄の一部だけを持つ
+ * 解決済みの効果の型（ResolvedInstantEffect・ResolvedAllStackableChange）は、持つ欄をここから取る
  */
 const TARGET_KEYS = {
   /** 常時の効果（passiveValueOf） */
@@ -399,9 +399,16 @@ const TARGET_KEYS = {
   heal: ['fixedTargets', 'targetBurstStep'],
 } as const satisfies Record<string, readonly (keyof TargetFields)[]>;
 
-/** from にある対象の絞り込みの欄を、keys の順に to へ写す（無い欄はキーごと書かない） */
-function copyTargetFields(to: TargetFields, from: TargetFields, keys: readonly (keyof TargetFields)[]): void {
-  for (const key of keys) copyTargetField(to, from, key);
+/**
+ * from にある対象の絞り込みの欄を、keys の順に to へ写す（無い欄はキーごと書かない）。keys は、元の効果の型と解決済みの効果の型の
+ * 両方が持つ欄だけ（写す所に合わない一覧を渡すと、型の検査で落ちる）
+ */
+function copyTargetFields<To extends TargetFields, From extends TargetFields>(
+  to: To,
+  from: From,
+  keys: readonly (keyof To & keyof From & keyof TargetFields)[],
+): void {
+  for (const key of keys) copyTargetField<keyof TargetFields>(to, from, key);
 }
 
 function copyTargetField<K extends keyof TargetFields>(to: TargetFields, from: TargetFields, key: K): void {
@@ -1712,15 +1719,15 @@ function resolveWeaponChange(
 }
 
 /**
- * 即時効果（CT 短縮・弾丸チャージ）。value は CT 短縮なら秒、弾丸チャージなら比率（0.3988）。
- * 回復（heal）の value は最大 HP に対する比率（0.0523。表示用で計算には使わない）
- */
-/**
  * 即時効果の対象の絞り込みの欄: 武器種・コード・クラス、N（targetCount。target が topAttack のときと、heal の lowestHpRatio）、
  * heal だけが持つ欄（TARGET_KEYS.heal）
  */
 type InstantTargetKey = (typeof TARGET_KEYS.filter)[number] | 'targetCount' | (typeof TARGET_KEYS.heal)[number];
 
+/**
+ * 即時効果（CT 短縮・弾丸チャージ）。value は CT 短縮なら秒、弾丸チャージなら比率（0.3988）。
+ * 回復（heal）の value は最大 HP に対する比率（0.0523。表示用で計算には使わない）
+ */
 export type ResolvedInstantEffect = Pick<TargetFields, InstantTargetKey> & {
   source: { resourceId: number; skill: SkillSlot; name: LocalizedText };
   kind: InstantKind;

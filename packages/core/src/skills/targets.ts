@@ -2,7 +2,7 @@
 //   - 発火のたびに対象が変わるもの（「直前にバーストスキルを使用した味方」）は、発火の文脈を受けて決める。
 //   - 「最終攻撃力が最も高い味方 N 機」（topAttack）は、文脈（攻撃力の順位）で決める（skills/ranking.ts）。
 //   - 「〈武器種〉の味方」「〈コード〉コードの味方」（targetElement）「〈クラス〉型の味方」（targetClass）は、対象の枠のキャラで絞る。
-//   - 編成で決まる対象は、最上位の skills/composition.ts が決めた枠（fixedTargets）で絞る（どれが編成で決まるかは composition.ts）。
+//   - 編成で決まる対象は、最上位の skills/composition.ts が決めた枠（fixedTargets）で絞る（どれが編成で決まるかは needsFixedTargets）。
 //     それ以外の「自分を除く」（excludeSelf）は順位（skills/ranking.ts）で外す。
 //   - 「残りの HP の割合が最も低い味方 N 機」（lowestHpRatio）は、fixedTargets（HP の割合の想定の低い順。同値は枠の若い順）の
 //     先頭 targetCount 枠に掛ける（plan/design-skill-stage8.md 1.1 節）。
@@ -39,7 +39,8 @@ export type FireContext = {
 
 /**
  * 対象の絞り込みの欄（解決した後の形）。解決済みの効果の型（skills/resolve.ts）は、欄をここから取る。どの欄も、定義に無ければ
- * キーごと無い
+ * キーごと無い。欄を足すときは、skills/resolve.ts の TARGET_KEYS の、その欄を書ける効果の一覧にも足す（足さないと、解決済みの
+ * 効果に載らない）。編成で決まる欄なら、needsFixedTargets と skills/composition.ts の fixedTargetsOf にも足す
  */
 export type TargetFields = {
   /** 「〈武器〉を所持する味方」 */
@@ -81,17 +82,16 @@ export type TargetedEffect = { target: BuffTarget } & TargetFields;
 /**
  * 編成で決まる対象か（最上位の skills/composition.ts が fixedTargets を書く）。定義の効果（composition.ts の fixedTargetsOf が
  * 枠を書くかを決める）と、解決済みの効果（fixedTargetOk が fixedTargets の無い呼び出しを落とす）の両方が同じ判定を使う。
- * 欄を書ける効果の種類は読み込み（skills/parse/）が決めるので、ここでは欄だけを見る
+ * 欄を書ける効果の種類は読み込み（skills/parse/）が決めるので、ここでは欄だけを見る。枠の決め方（fixedTargetsOf）は効果の種類で
+ * 分かれる（excludeSelf・targetState は timed と付与、targetLeftmost は timed）ので、読み込みが欄を書ける種類を広げたら、
+ * fixedTargetsOf の枠の決め方も合わせる
  */
-export function needsFixedTargets(effect: {
-  target: string;
-  targetSquad?: unknown;
-  targetState?: unknown;
-  targetAdjacent?: unknown;
-  targetBurstStep?: unknown;
-  targetLeftmost?: unknown;
-  excludeSelf?: unknown;
-}): boolean {
+export function needsFixedTargets(
+  effect: { target: string } & Pick<
+    TargetFields,
+    'targetSquad' | 'targetState' | 'targetAdjacent' | 'targetBurstStep' | 'targetLeftmost' | 'excludeSelf'
+  >,
+): boolean {
   return (
     effect.targetSquad !== undefined ||
     effect.target === 'longestChargeTime' ||
