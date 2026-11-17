@@ -1,7 +1,7 @@
 // 1 体が受けるバフの合計と、ダメージ式への適用（純関数）。computeTriggerDamage（damage.ts）はここの関数を呼ぶだけにする。
 import type { CharacterData, ShotParams } from '../types.ts';
 import type { ResolvedEffect } from './resolve.ts';
-import { BUFF_STATS, isLockStat, type BuffStat, type LockStat } from './types.ts';
+import { isLockStat, type BuffStat, type LockStat } from './types.ts';
 
 /**
  * 使用武器の変更（殲滅モード）で持ち替えた武器。shot は基礎の武器を写して、1 発のダメージとレートを差し替えたもの
@@ -326,34 +326,30 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
 /** 比率を足す BuffTotals の欄（数の欄） */
 type RatioField = Exclude<keyof BuffTotals, 'weapon' | 'attackParts' | 'chargeSpeedParts'>;
 
-/** stat と名前の違う比率の欄。ここに無い stat は、同じ名前の欄に足す */
-const RENAMED_RATIO_FIELD = {
-  attack: 'attackRatio',
-  maxAmmo: 'maxAmmoRatio',
-  maxHp: 'maxHpRatio',
-  // 最大HP のみ▲ も最終最大HP には同じに足す（HP の割合を下げる読みは未実装。skills/types.ts の BUFF_STATS）
-  maxHpOnly: 'maxHpRatio',
-  defense: 'defenseRatio',
-} as const satisfies Partial<Record<BuffStat, RatioField>>;
-
-function isRenamedStat(stat: BuffStat): stat is keyof typeof RENAMED_RATIO_FIELD {
-  return Object.hasOwn(RENAMED_RATIO_FIELD, stat);
-}
-
-/** stat に対応する BuffTotals の比率フィールド。同じ名前の数の欄が BuffTotals に無い stat を足すと、ここの型の検査で落ちる */
+/**
+ * stat に対応する BuffTotals の比率フィールド。名前の違う 5 つのほかは、stat と同じ名前の欄。同じ名前の数の欄が BuffTotals に無い
+ * stat を足すと、ここの型の検査で落ちる
+ */
 function ratioFieldOf(stat: BuffStat): RatioField {
-  return isRenamedStat(stat) ? RENAMED_RATIO_FIELD[stat] : stat;
+  switch (stat) {
+    case 'attack':
+      return 'attackRatio';
+    case 'maxAmmo':
+      return 'maxAmmoRatio';
+    // 最大HP のみ▲ も最終最大HP には同じに足す（HP の割合を下げる読みは未実装。skills/types.ts の BUFF_STATS）
+    case 'maxHp':
+    case 'maxHpOnly':
+      return 'maxHpRatio';
+    case 'defense':
+      return 'defenseRatio';
+    default:
+      return stat;
+  }
 }
-
-/** stat ごとの比率フィールドの表（読み込みの時に 1 回だけ組む） */
-const RATIO_FIELD = Object.fromEntries(BUFF_STATS.map((stat) => [stat, ratioFieldOf(stat)])) as Record<
-  BuffStat,
-  RatioField
->;
 
 /** stat の合計（「自分が 〈stat〉 増加状態なら」の判定用） */
 export function statTotal(totals: BuffTotals, stat: BuffStat): number {
-  return totals[RATIO_FIELD[stat]];
+  return totals[ratioFieldOf(stat)];
 }
 
 /** 比率の加算（0.2 = +20%）。新しいオブジェクトを返す。攻撃力とチャージ速度は内訳にも出どころ source で足す */
@@ -364,7 +360,7 @@ export function addRatioBuff(
   source = 'build',
   self = false,
 ): BuffTotals {
-  const field = RATIO_FIELD[stat];
+  const field = ratioFieldOf(stat);
   const next: BuffTotals = { ...totals, [field]: totals[field] + ratio };
   if (stat === 'hitRate' && ratio > 0) next.hitRateUp = totals.hitRateUp + ratio;
   if (stat === 'chargeSpeed') next.chargeSpeedParts = [...totals.chargeSpeedParts, { source, ratio }];

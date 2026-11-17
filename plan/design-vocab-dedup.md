@@ -131,6 +131,8 @@ stat を 1 つ足すときに書く所（`allEnemiesBurstDamage` を足した #1
 
 ## 4. 論点（オーナーの判断）
 
+決定（2026-11-17、オーナー）: B を実施し、続けて A も実施する。どの論点も推奨の案で進めた（10 節）。
+
 <!-- prettier-ignore -->
 | # | 論点 | 推奨 | ほかの案 |
 | --- | --- | --- | --- |
@@ -228,7 +230,7 @@ stat を 1 つ足すときに書く所（`allEnemiesBurstDamage` を足した #1
 ### 9.2 段 A（2026-11-17）
 
 - 型: `skills/types.ts` の `BuffStat` を一覧から導く（`(typeof BUFF_STATS)[number]`）。和集合の宣言は消し、stat ごとの決まりの注記のまとまりは `BUFF_STATS` の上に置いた。一覧の並びと項目の注記は変えていない。
-- 比率の欄: `skills/buffs.ts` の `RATIO_FIELD` を、名前の違う 5 行の表（`RENAMED_RATIO_FIELD`）と「無ければ同じ名前」（`ratioFieldOf`）から、読み込みの時に 1 回だけ組む。`statTotal`・`addRatioBuff` が引く表の形は前と同じ。
+- 比率の欄: `skills/buffs.ts` の 46 行の表 `RATIO_FIELD` を、名前の違う 5 つだけを分け、ほかは同じ名前を返す関数 `ratioFieldOf`（`switch`）に替えた。`statTotal`・`addRatioBuff` はこの関数を呼ぶ。3.2 節の「読み込みの時に 1 回だけ組む表」にはしなかった（バグの見直しの指摘: 読み込みの時に `BUFF_STATS` を読むと、`types.ts` と `skills/parse/` の循環する import の中に `buffs.ts` が入った時に読み込みの順で落ちる。組んだ表は `as` で型を言い切ることにもなる）。
 - stat を足すときに書く所は、一覧（`BUFF_STATS`）・`BuffTotals` の欄・`ZERO_BUFFS`・`records/relevance.ts` の `STAT_CLASS` の 4 つ。`BuffTotals` に同じ名前の数の欄が無い stat を一覧に足すと、`ratioFieldOf` と `STAT_CLASS` の型の検査で落ちる（一覧に仮の stat を足して確かめた）。
 
 **確かめた結果**（6 節。基の版は main の 44caa1eb）:
@@ -236,16 +238,15 @@ stat を 1 つ足すときに書く所（`allEnemiesBurstDamage` を足した #1
 - `npm test`・`npm run typecheck`・変えたファイルの lint が通る。期待値の書き換えは無い。
 - `BUFF_STATS` を JSON にした文が main と同じ（並びが同じなので、読み込みのエラー文は変わらない）。
 - 読み込みの結果・編成を通さない解決の結果・`runSimulation`（`trace` あり）の `SimResult` と `TeamResult`（4 編成と、比べる指定のある全部の観測値の入力）の JSON が、main と文字列で一致した。
-- 組んだ表は V8 の速い形のまま（46 個の鍵を `Object.fromEntries` で組んだオブジェクトで確かめた）。
 - 速さ: 9.1 節と同じ測り方。
 
 <!-- prettier-ignore -->
 | 編成 | main（ms） | 段の後（ms） | 比 |
 | --- | --- | --- | --- |
-| LRNAM | 95.02 | 97.76 | 1.029 |
-| 主力 | 100.95 | 98.84 | 0.979 |
-| Stage 8 の 5 人 | 53.55 | 54.89 | 1.025 |
-| 録画 0037 | 37.95 | 38.31 | 1.009 |
+| LRNAM | 94.86 | 95.64 | 1.008 |
+| 主力 | 98.10 | 100.56 | 1.025 |
+| Stage 8 の 5 人 | 55.94 | 54.34 | 0.971 |
+| 録画 0037 | 36.07 | 36.91 | 1.023 |
 
 ## 10. 経過
 
