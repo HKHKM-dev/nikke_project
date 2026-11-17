@@ -1,0 +1,58 @@
+{
+  "id": "1251",
+  "date": "2026-11-18",
+  "folder": "raid",
+  "file": "20261118-1251_solo_goddess-of-victory_team-b.mp4",
+  "original": "2026-11-18_00-15-56.mp4",
+  "durationSec": 214.6,
+  "frames": 12877,
+  "fps": 60,
+  "sizeMB": 260.1,
+  "sha256": "8145dac6dfe1",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 330,
+      "name": "クラウン",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 354,
+      "name": "マスト：ロマンチックメイド",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 513,
+      "name": "リトルマーメイド",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 870,
+      "name": "クイーン（真）",
+      "controlled": false
+    },
+    {
+      "slot": 5,
+      "rid": 871,
+      "name": "雪子",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "勝利の女神",
+    "element": null
+  },
+  "mode": null,
+  "fixedSpec": null,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "ソロレイド第 43 シーズン「勝利の女神」チャレンジモードの模擬戦闘（出撃画面に Lv.400[固定]）。5 人編成・オート射撃 ON・オートバースト ON・180 秒。V-0803（バリア・暗転・形態の時刻）",
+  "backup": {
+    "at": "2026-11-18T00:25+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
