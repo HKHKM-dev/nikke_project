@@ -82,6 +82,7 @@
 - 照合の指標 `perShotHitDamage`（`packages/core/src/records/observations/metrics/damage.ts`）は、引数のフレームの区間の 1 トリガーの値の `perShot` から 1 回の値を出し、その時刻の発が部分チャージの発かを見ない。2 パス目は部分チャージの発に、きっかけが `fullChargeShot` の分（`perShotFullCharge`）を乗せないので、部分チャージの発を読む観測値では、モデルに無い追加ダメージの値を出す。いまの比べる観測値は、どれも部分チャージの発から離れたフレームを指す（2026-11-15 に調べた）。部分チャージの発の 1 回の値を比べる観測値が要るときに、その発の値（`partialChargeTriggerDamage` を通した `perShot`）から出す（[design-full-charge-fold.md](design-full-charge-fold.md) 3.2 節）
 - 値の固定（timed の `lock`）は、持ち主の和を作る 3 か所（`skills/holders/views.ts` の `firingBuffs`・`damageBuffsAt`、`skills/timeline.ts` の `buildSegments`）でだけ当てている。`frame/plan.ts` の `withSameActivationEffects`・`withEarlierSequentialEffects` は固定を当て直さず、条件 `selfBuffed` と、きっかけ `{ buffApplied }` は止めた▲も付いたと数え、区間の表示は止めた常時の値（装備・キューブ）の量を 0 にしない。いまの定義にはどれも効く組が無い（固定を持つ 4 体に、自分のバーストのチャージ速度▲・リロード速度▲と、これらを読む条件・きっかけが無い）。使い手が出たら、効果の列から和を作る関数を 1 つにして（足す → `applyStatLocks`）、和を作る所がそれを使う形にする（[design-stat-lock.md](design-stat-lock.md) 3.4 節）
 - モダン UI のバッジの既定の色（`apps/web/src/styles.css` の `.badge-ui_*` と `[class^='badge-…_']` の差し色・地の色の規則）は、クラス 1 つ分の詳細度を持つ。このため、場所ごとに色を変える規則（設定のボタンのライトでの反転・操作キャラの印のダークでの反転・育成を変えたスロットの青い歯車など）は、要素名や親を足して詳細度を上げている。ui のバッジの図柄を白にする規則も、バッジを 1 つ足すたびに列挙が伸びる。バッジの絵の縦横の比（`150 / 130` など）も、CSS の 7 か所に書き写している。直すなら、既定の色の規則を `:where(...)` で包む。あわせて、BadgeIcon がグループのクラスと、viewBox から作る `aspect-ratio` を付ける形にする（[design-modern-ui.md](design-modern-ui.md) の経過）
+- heal の「両隣の味方」（`targetAdjacent`）は、解決（`packages/core/src/skills/resolve.ts` の `resolveInstant`）が `targetAdjacent` を写さないので、編成で決める枠（`fixedTargets`）の無い呼び出しを落とす守り（`skills/targets.ts` の `needsFixedTargets`）が働かず、隣でない味方にも掛かる（「基本バースト段階が N の」は、守りの印として写している）。最上位（`applyCompositionToTeam`）を通す呼び出し（画面・CLI・records 層）では `fixedTargets` が必ず書かれるので、計算の結果には出ない。直すなら、`resolve.ts` の `TARGET_KEYS.heal` に `targetAdjacent` を足す（解決済みの効果に欄が 1 つ増え、編成を通さない呼び出しが落ちるようになる）。[design-vocab-dedup.md](design-vocab-dedup.md) 9.1 節
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
 
@@ -115,6 +116,7 @@
 - アニス：スター（17）のバーストのコアの経路（2026-10-05）→ 一部完了: [design-anis-star-core-path.md](design-anis-star-core-path.md)。残りは 6 節
 - 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは 3 節
 - 戦闘力による一覧の並び替え（2026-11-07 起票）→ 一部完了: [design-combat-power-sort.md](design-combat-power-sort.md)。残りは 4 節
+- 語彙の定義の重なりを減らす（stat の一覧と対象の絞り込みの欄）（2026-11-17 起票）→ 一部完了（A は承認待ち）: [design-vocab-dedup.md](design-vocab-dedup.md) 4 節
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
