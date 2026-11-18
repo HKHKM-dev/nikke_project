@@ -4,7 +4,9 @@
 //
 // スカッシュマージでは、ブランチのコミットと main 上のコミットが別物になるので、放っておくと差分の表示に
 // マージ済みの変更が残る。そこで次の 2 つ（--prune-branches なら 3 つ）を行う。
-//   1. メインのチェックアウトが main で作業中の変更が無ければ、origin/main へ早送りする
+//   1. メインのチェックアウトが main なら、origin/main へ早送りする。作業中の変更（追跡していないファイルを含む）が、中身が全部
+//      origin/main と同じ（メインのチェックアウトで編集したものを PR でマージした）なら、それを index に入れてから早送りする
+//      （中身は origin/main にあるので失うものは無い）。origin/main と違う変更があれば早送りしない
 //   2. いまのブランチの PR がマージ済みで（リモートのブランチは自動で消える）、PR の最後のコミットが HEAD と同じで、
 //      作業中の変更が無ければ、ブランチを origin/main に揃える（中身はマージ済みなので失うものは無い）
 //   3. デスクトップ（CLAUDE_CODE_REMOTE でない）で、origin の claude/・antigrav/ のブランチのうち、最後のコミットと手元が今の先端を
@@ -15,7 +17,7 @@
 //      消さない
 //   4. --catch-up なら、fetch できたときに catch-up.ts でトピックブランチを origin/main へ取り込む（plan/design-workflow-simplification-13.md 2 節）
 // どれも条件に合わなければ何もしない。ただし 1 の main が origin/main より遅れたまま早送りできないとき
-// （作業中の変更がある・早送りに失敗した）は、黙っていると気づかれないので知らせる。早送りは Windows で途中で
+// （origin/main と違う作業中の変更がある・早送りに失敗した）は、黙っていると気づかれないので知らせる。早送りは Windows で途中で
 // 失敗すると、作業ツリーのファイルだけが書き換わり HEAD と index が残ることがある（2026-09-28、#54 の早送り）。
 // 失敗してもフックを止めない（常に終了コード 0）。
 //
@@ -34,6 +36,7 @@ import {
   bringsNothing,
   ciSettled,
   deleteArgs,
+  mergedEdits,
   mergeWaitState,
   openPrBranches,
   parseJson,
@@ -79,16 +82,29 @@ function syncAfterMerge(prune: boolean): string[] | null {
   const behind = main?.[1] ? git(['rev-list', '--count', 'main..origin/main'], main[1]) : null;
   if (main?.[1] && behind !== null && behind !== '0') {
     const status = `git -C "${main[1]}" status`;
-    if (!isClean(main[1]))
+    const at = main[1];
+    const edits = mergedEdits((args) => git(args, at), 'origin/main');
+    if (edits === null)
       done.push(
-        `メインのチェックアウトの main に作業中の変更があり、origin/main へ早送りできない（${behind} コミット遅れ。${status} で確かめる）`,
+        `メインのチェックアウトの main に origin/main と違う作業中の変更があり、早送りできない（${behind} コミット遅れ。${status} で確かめる）`,
       );
-    else if (git(['merge', '--ff-only', '--quiet', 'origin/main'], main[1]) !== null)
-      done.push('メインのチェックアウトの main を早送りした');
-    else
+    else if (edits.length > 0 && git(['add', '-A', '--', ...edits], at) === null)
+      done.push(
+        `メインのチェックアウトの、マージで main に入った作業中の変更を index に入れられず、早送りできない（${behind} コミット遅れ。${status} で確かめる）`,
+      );
+    else if (git(['merge', '--ff-only', '--quiet', 'origin/main'], at) !== null)
+      done.push(
+        edits.length > 0
+          ? `メインのチェックアウトの、マージで main に入った作業中の変更（${edits.length} 件）を片付けて、main を早送りした`
+          : 'メインのチェックアウトの main を早送りした',
+      );
+    else {
+      // index に入れた変更は index から外す（作業ツリーの中身はそのまま）
+      if (edits.length > 0) git(['reset', '--quiet', '--', ...edits], at);
       done.push(
         `メインのチェックアウトの main を origin/main へ早送りできなかった（${behind} コミット遅れ。${status} で確かめる。作業ツリーだけが書き換わっていることがある）`,
       );
+    }
   }
 
   // 2. いまのブランチ
