@@ -125,6 +125,17 @@ describe('Drive の打ち切り（手元のサーバーをトークンと API �
       expect(server.calls()).toBe(3);
     });
 
+    it('does not retry the daily limit, which waiting does not clear', async () => {
+      const server = await flaky(
+        1,
+        403,
+        JSON.stringify({ error: { errors: [{ domain: 'usageLimits', reason: 'dailyLimitExceeded' }] } }),
+      );
+      const e: unknown = await (await Drive.connect(1000, [1, 1])).file('f').catch((x: unknown) => x);
+      expect(isRateLimitError(e)).toBe(false);
+      expect(server.calls()).toBe(1);
+    });
+
     it('does not retry other 403s', async () => {
       const server = await flaky(
         1,

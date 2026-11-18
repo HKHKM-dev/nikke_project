@@ -19,7 +19,7 @@ import { spawnSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readdirSync, renameSync, rmSync } from 'node:fs';
 import { dirname, extname, join } from 'node:path';
 import { ffprobe, parseCrop } from './ffmpeg.ts';
-import { uploadFrame } from './frames-upload.ts';
+import { uploadFrames } from './frames-upload.ts';
 import { labelFontSize, outputs, parseSheet, pickFont, pickFrames, sheetFilters } from './still-lib.ts';
 import { cliArgs, fail, orFail } from '../../packages/core/scripts/cli.ts';
 
@@ -95,10 +95,12 @@ const args = [
   '-y',
   join(tmp, `%06d${extname(out)}`),
 ];
-let written: string[] = [];
+let written: string[];
 try {
   const result = spawnSync('ffmpeg', args, { stdio: 'inherit' });
-  if (result.status === 0) written = readdirSync(tmp).sort();
+  // 途中で失敗しても、書けた画は残す（終わりの方の壊れたフレームで止まることがある）
+  if (result.status !== 0) console.error(`注意: ffmpeg が終了コード ${result.status} で止まった`);
+  written = readdirSync(tmp).sort();
   for (const [i, file] of written.entries()) renameSync(join(tmp, file), planned[i]!.path);
 } finally {
   rmSync(tmp, { recursive: true, force: true });
@@ -114,8 +116,8 @@ for (const target of planned.slice(0, written.length)) {
       : `${target.path}  f${first}〜${last}（${target.frames.length} こま）` +
           (label === undefined ? `: ${target.frames.join(',')}` : ''),
   );
-  uploadFrame(target.path);
 }
+uploadFrames(planned.slice(0, written.length).map((t) => t.path));
 if (written.length < planned.length) {
   console.log(
     `注意: ${planned.length} 枚のうち ${written.length} 枚だけ書いた（録画の終わりを越えた番号がある。録画は ${ffprobe(video).nbFrames} フレーム）`,

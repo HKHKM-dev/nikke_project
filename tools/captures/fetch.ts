@@ -15,10 +15,18 @@
 // NIKKE_DRIVE_RECORD_FOLDER_ID（record フォルダの ID。drive: のときだけ）。フォルダの ID は
 // カンマ区切りで複数書ける（環境変数の設定欄は 1 行 1 変数なので改行では分けられない）。前に書いたフォルダから探し、
 // 最初に見つかったものを使う。--list は全部のフォルダの中身を合わせて出す（同名は前のフォルダのもの）。
-import { existsSync, mkdirSync, readFileSync, renameSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import type { RecordingEntry } from '../../packages/core/src/records/recordings.ts';
-import { LEGACY_PREFIX, capturesDir, driveRecordPath, legacyDir, recordDir, recordFetchDir, relPath } from './dirs.ts';
+import {
+  LEGACY_PREFIX,
+  capturesDir,
+  driveRecordPath,
+  legacyDir,
+  recordDir,
+  recordFetchDir,
+  relPath as normalizeRel,
+} from './dirs.ts';
 import { Drive, DRIVE_CALL_MS, type DriveFile } from './drive.ts';
 import { sha256 } from './ffmpeg.ts';
 import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
@@ -51,7 +59,7 @@ function toTarget(arg: string): Target {
   const fromRecord = driveRecordPath(arg);
   if (fromRecord !== null) return { area: 'record', relPath: fromRecord };
   if (!/^(\d{3,4}|L-[A-Z0-9]+)$/.test(arg)) {
-    return { area: values.legacy ? 'legacy' : 'captures', relPath: relPath(arg) };
+    return { area: values.legacy ? 'legacy' : 'captures', relPath: normalizeRel(arg) };
   }
   const path = new URL(`${arg}.json`, RECORDINGS_DIR);
   if (!existsSync(path)) throw new Error(`${arg}: records/recordings/${arg}.json がありません`);
@@ -124,11 +132,15 @@ let failed = 0;
 async function fetchFile(file: DriveFile, base: string, relPath: string, expected?: string): Promise<void> {
   const out = join(base, relPath);
   if (existsSync(out) && !values.force) {
-    if (!expected || (await sha256(out)).startsWith(expected)) {
+    // 台帳の sha256 が無ければ、Drive の大きさと比べる（Drive for desktop が上げ終える前に落とした途中の版を使い続けない）
+    const same = expected
+      ? (await sha256(out)).startsWith(expected)
+      : file.size === undefined || statSync(out).size === Number(file.size);
+    if (same) {
       console.log(`あり  ${out}`);
       return;
     }
-    console.log(`sha256 が台帳と違うので落とし直す: ${out}`);
+    console.log(`${expected ? 'sha256 が台帳' : '大きさが Drive'}と違うので落とし直す: ${out}`);
   }
   mkdirSync(dirname(out), { recursive: true });
   const part = `${out}.part`;
@@ -152,6 +164,8 @@ async function fetchTree(file: DriveFile, base: string, relPath: string, expecte
 for (const arg of positionals) {
   try {
     const target = toTarget(arg);
+    if (target.area === 'record' && target.relPath === '')
+      throw new Error(`${arg}: drive: の後に record の中のパスが要る（一覧は --list drive:）`);
     const localRecord = target.area === 'record' ? recordDir() : null;
     if (localRecord !== null) {
       const local = join(localRecord, target.relPath);

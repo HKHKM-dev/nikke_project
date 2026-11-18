@@ -102,23 +102,18 @@ export function isTransientDriveError(e: unknown): boolean {
 const RATE_LIMIT_WAITS_MS: readonly number[] = [2_000, 5_000];
 
 /**
- * Drive の呼び出しの失敗が、利用上限（少し待てば通る）か: 429 と、403 のうち理由が usageLimits の領域か
- * rateLimitExceeded・userRateLimitExceeded のもの（Drive.get の例外の reason・domain）
+ * Drive の呼び出しの失敗が、少し待てば通る利用上限か: 429 と、403 のうち理由が rateLimitExceeded・userRateLimitExceeded の
+ * もの（Drive.get の例外の reason。日の上限の dailyLimitExceeded・quotaExceeded は待っても通らないので数えない）
  */
 export function isRateLimitError(e: unknown): boolean {
-  const { status, reason, domain } = (e ?? {}) as { status?: unknown; reason?: unknown; domain?: unknown };
-  if (status === 429) return true;
-  return (
-    status === 403 && (domain === 'usageLimits' || (typeof reason === 'string' && /rateLimitExceeded$/i.test(reason)))
-  );
+  const { status, reason } = (e ?? {}) as { status?: unknown; reason?: unknown };
+  return status === 429 || (status === 403 && typeof reason === 'string' && /^(user)?rateLimitExceeded$/i.test(reason));
 }
 
-/** Drive API の失敗の本体（{ error: { errors: [{ reason, domain }] } }）の初めの理由。読めなければ空 */
-function errorReason(body: string): { reason?: string; domain?: string } {
+/** Drive API の失敗の本体（{ error: { errors: [{ reason }] } }）の初めの理由。読めなければ空 */
+function errorReason(body: string): { reason?: string } {
   try {
-    const first = (JSON.parse(body) as { error?: { errors?: { reason?: string; domain?: string }[] } }).error
-      ?.errors?.[0];
-    return { reason: first?.reason, domain: first?.domain };
+    return { reason: (JSON.parse(body) as { error?: { errors?: { reason?: string }[] } }).error?.errors?.[0]?.reason };
   } catch {
     return {};
   }
@@ -163,7 +158,7 @@ export class Drive {
   }
 
   /**
-   * 失敗の例外は status（HTTP の状態）と、本体から読めれば reason・domain を持つ。timeoutMs は、ふだんは本体を読み終えるまでに掛け、headersOnly なら応答の頭が
+   * 失敗の例外は status（HTTP の状態）と、本体から読めれば reason を持つ。timeoutMs は、ふだんは本体を読み終えるまでに掛け、headersOnly なら応答の頭が
    * 届くまでにだけ掛ける（本体は読み終えるまで待つ）
    */
   private async getOnce(path: string, params: Record<string, string>, headersOnly: boolean): Promise<Response> {
