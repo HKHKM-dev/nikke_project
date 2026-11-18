@@ -171,9 +171,15 @@ export function renderResiduals(
   return lines.join('\n');
 }
 
+/** 丸めない予測（NaN・Infinity・予測なしも区別する） */
+function exactValue(v: unknown): string {
+  if (v === undefined) return 'undefined';
+  return JSON.stringify(v, (_, x: unknown) => (typeof x === 'number' && !Number.isFinite(x) ? String(x) : x));
+}
+
 /**
  * 2 つの版の残差の、予測か判定が変わった行（records:residual -- --base。plan/design-workflow-simplification-15.md 5 節）。
- * 片方にしか無い観測値も出す。予測は表に出す桁（fmtValue）で比べる
+ * 片方にしか無い観測値も出す。予測は表に出す桁（fmtValue）で比べ、exact では丸めずに（exactValue）比べる
  */
 export function renderResidualChanges(
   base: readonly Residual[],
@@ -188,7 +194,7 @@ export function renderResidualChanges(
       ? { predicted: '（無い）', diff: '—', status: '（無い）' }
       : {
           // exact は丸めずに比べて出す（振る舞いを変えない作り替えの確かめ）
-          predicted: opts.exact === true ? JSON.stringify(r.predicted ?? null) : fmtValue(r.predicted),
+          predicted: opts.exact === true ? exactValue(r.predicted) : fmtValue(r.predicted),
           diff: fmtDiff(r),
           status: statusCell(r),
         };

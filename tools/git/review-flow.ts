@@ -57,7 +57,9 @@ function branchChanges(): { path: string; added: number; isNew: boolean }[] | nu
   const added = parseNumstat(git(['diff', '--numstat', '--no-renames', base]) ?? '');
   const created = new Set((git(['diff', '--name-only', '--diff-filter=A', base]) ?? '').split('\n').filter(Boolean));
   const files = added.map((f) => ({ ...f, isNew: created.has(f.path) }));
-  for (const path of (git(['ls-files', '--others', '--exclude-standard']) ?? '').split('\n').filter(Boolean))
+  for (const path of (git(['ls-files', '--others', '--exclude-standard', '--full-name', ':/']) ?? '')
+    .split('\n')
+    .filter(Boolean))
     files.push({ path, added: 0, isNew: true });
   return files;
 }

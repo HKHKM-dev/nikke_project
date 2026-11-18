@@ -24,12 +24,15 @@ const REVIEW_SKILLS = new Set(['simplify', 'code-review']);
  * PR の番号を対象にした見直し（`/code-review 123`）は今のブランチの作業ではないので数えない。自動マージの予約は Bash の
  * `gh pr merge --auto` か GitHub の MCP の enable_pr_auto_merge
  */
+/** 見直しのスキルの引数が PR の番号を指しているか（今のブランチの差分でなく、その PR を見直す） */
+function targetsPr(args: unknown): boolean {
+  return typeof args === 'string' && /(^|\s)#?\d+(\s|$)/.test(args.replace(/--max-findings\s+\S+/g, ''));
+}
+
 export function flowEvent(input: HookInput): 'start' | 'done' | null {
   const { skill, args, command } = input.tool_input ?? {};
   if (input.tool_name === 'Skill' && typeof skill === 'string' && REVIEW_SKILLS.has(skill))
-    return typeof args === 'string' && /(^|\s)#?\d+(\s|$)/.test(args.replace(/--max-findings\s+\S+/g, ''))
-      ? null
-      : 'start';
+    return targetsPr(args) ? null : 'start';
   if (input.tool_name === 'mcp__github__enable_pr_auto_merge') return 'done';
   if (input.tool_name === 'Bash' && typeof command === 'string' && /\bgh\s+pr\s+merge\b[^\n]*--auto\b/.test(command))
     return 'done';
@@ -95,10 +98,11 @@ export const HIGH_REVIEW_PATHS = ['packages/core/src/frame/', 'packages/core/src
 
 /**
  * /code-review を呼ぶ前の判定: 引数の段が low か medium で、ブランチの基からの差分が HIGH_REVIEW_PATHS に触れていれば、止める理由を
- * 返す。段を書かない呼び出しと high 以上は通す（null）
+ * 返す。段を書かない呼び出し・high 以上・PR の番号を指す呼び出しは通す（null）
  */
 export function reviewLevelGate(files: readonly { path: string }[], args: unknown): string | null {
-  const level = typeof args === 'string' ? /^\s*(low|medium)\b/.exec(args)?.[1] : undefined;
+  if (typeof args !== 'string' || targetsPr(args)) return null;
+  const level = /(?:^|\s)(low|medium)(?=\s|$)/.exec(args)?.[1];
   if (level === undefined) return null;
   const touched = HIGH_REVIEW_PATHS.filter((dir) => files.some((f) => f.path.startsWith(dir)));
   if (touched.length === 0) return null;

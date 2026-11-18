@@ -113,14 +113,26 @@ describe('catchUp', { timeout: 30_000 }, () => {
     expect(git(work, 'status', '--porcelain', '--untracked-files=no')).toBe('');
   });
 
-  it('rebases a branch that tracks origin/main without pushing to main', () => {
+  it('treats a branch that tracks origin/main as tracking origin/<branch>, and never pushes to main', () => {
     const { work } = setup();
     git(work, 'branch', '-q', '--set-upstream-to=origin/main');
     const main = git(work, 'rev-parse', 'origin/main');
-    expect(catchUp(work)).toContain('origin/main の 1 件をリベースで取り込んだ');
+    expect(catchUp(work)).toContain('origin/main の 1 件をリベースで取り込んだ。ブランチは強制 push した');
     expect(git(work, 'rev-list', '--count', 'HEAD..origin/main')).toBe('0');
     git(work, 'fetch', '-q', 'origin');
     expect(git(work, 'rev-parse', 'origin/main')).toBe(main);
+    expect(git(work, 'rev-parse', 'origin/claude/x')).toBe(git(work, 'rev-parse', 'HEAD'));
+  });
+
+  it('leaves a branch that tracks origin/main when origin/<branch> has commits it lacks', () => {
+    const { work, other } = setup();
+    git(work, 'branch', '-q', '--set-upstream-to=origin/main');
+    git(other, 'fetch', '-q', 'origin');
+    git(other, 'checkout', '-q', '-b', 'claude/x', 'origin/claude/x');
+    commit(other, 'other.txt', 'o\n', 'pushed from elsewhere');
+    git(other, 'push', '-q', 'origin', 'claude/x');
+    git(work, 'fetch', '-q', 'origin');
+    expect(catchUp(work)).toContain('手元に無い commit がある');
   });
 
   it('leaves the branch when origin has commits it lacks, or when work is in progress', () => {

@@ -3,9 +3,9 @@
 // shouldCatchUp に合うブランチ（claude/。作業中の変更が無く、リベースの途中でも pr:prep の途中でもなく、マージ済みでなく、origin/main が
 // 進んでいる）をリベースする。生成物の衝突は main の版を取り、生成物でないファイルが衝突したら元に戻して知らせる。追跡先があれば、
 // リベースの前の追跡先の sha を lease にして強制 push する（records:new・取り込みの道具の push が早送りで落ちないように）。
-// origin のブランチに手元に無い commit があるときは、上書きしないよう取り込まない（origin/main を追跡するブランチは追跡先が無いと
-// みる）。PR を出したブランチ（origin の refs/pull/*/head に追跡先の sha がある）も取り込まない（自動マージを待つ間に push すると
-// CI が回り直し、main が進むたびに繰り返すため）。
+// origin のブランチに手元に無い commit があるときは、上書きしないよう取り込まない（origin/main を追跡するブランチは、origin の
+// 同じ名前のブランチを追跡先とみる）。PR を出したブランチ（origin の refs/pull/*/head に追跡先の sha がある）も取り込まない
+// （自動マージを待つ間に push すると CI が回り直し、main が進むたびに繰り返すため）。
 import { execFileSync, spawnSync } from 'node:child_process';
 import { prPrepRunning } from './pr-prep-lock.ts';
 import { catchUpMessage, RULE_PATHS, shouldCatchUp } from './sync-after-merge-lib.ts';
@@ -41,9 +41,16 @@ export async function catchUp(): Promise<string | null> {
   };
   if (!shouldCatchUp(plan)) return null;
   // 追跡先の origin のブランチの名前（手元と違う名前でもよい）。origin/main を追跡するブランチ（git checkout -B <ブランチ> origin/main で
-  // 作り直したもの）は、追跡先が無いのと同じに扱う（main の commit を「手元に無い commit」とみない。main へは push しない）
-  const remoteBranch = git(['for-each-ref', '--format=%(upstream:lstrip=3)', ref]);
-  const upstream = remoteBranch === 'main' ? null : git(['rev-parse', '-q', '--verify', `${branch}@{upstream}`]);
+  // 作り直したもの）は、origin の同じ名前のブランチを追跡先とみる（無ければ追跡先なし。main の commit を「手元に無い commit」とみず、
+  // main へは push しない）
+  const tracked = git(['for-each-ref', '--format=%(upstream:lstrip=3)', ref]);
+  const remoteBranch = tracked === 'main' ? branch : tracked;
+  const upstream = git([
+    'rev-parse',
+    '-q',
+    '--verify',
+    tracked === 'main' ? `refs/remotes/origin/${branch}` : `${branch}@{upstream}`,
+  ]);
   if (upstream !== null && git(['rev-list', '--count', `HEAD..${upstream}`]) !== '0')
     return `origin の ${branch} に手元に無い commit があるので、main を取り込まなかった（git pull --rebase で揃えてから進める）`;
   if (upstream !== null && (git(['ls-remote', 'origin', 'refs/pull/*/head']) ?? '').includes(upstream)) return null;

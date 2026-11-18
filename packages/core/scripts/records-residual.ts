@@ -58,6 +58,10 @@ if (values.base !== undefined && git(['rev-parse', '--verify', '--quiet', `${val
 const { picked, missing, residuals } = await residualsOf(ROOT);
 if (missing.length > 0) console.error(`当たる観測値が無い: ${missing.join('、')}`);
 
+if (values.exact && values.base === undefined) {
+  console.error('--exact は --base と一緒に使う（基の版と丸めずに比べる）');
+  process.exit(2);
+}
 if (values.base !== undefined) {
   const dir = mkdtempSync(join(tmpdir(), 'records-residual-'));
   const added = git(['worktree', 'add', '--detach', '--quiet', dir, values.base]);

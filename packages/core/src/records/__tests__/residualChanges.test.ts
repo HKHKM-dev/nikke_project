@@ -49,5 +49,9 @@ describe('renderResidualChanges', () => {
     const lines = renderResidualChanges(base, head, { exact: true });
     expect(lines[0]).toContain('予測（丸めない）か判定が変わった 1 件');
     expect(lines[4]).toContain('10.0001 → 10.0002');
+    const nan = renderResidualChanges([residual('0001-01', Infinity, 'ok')], [residual('0001-01', NaN, 'ok')], {
+      exact: true,
+    });
+    expect(nan[4]).toContain('"Infinity" → "NaN"');
   });
 });
