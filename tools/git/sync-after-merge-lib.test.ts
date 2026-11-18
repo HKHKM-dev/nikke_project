@@ -1,6 +1,6 @@
 // 中身が main に入った origin のブランチの見分け（plan/design-workflow-simplification-10.md 2 節）。木の比べは一時のリポジトリで git を呼ぶ。
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -9,6 +9,7 @@ import {
   catchUpMessage,
   ciSettled,
   deleteArgs,
+  mergedEdits,
   mergeWaitState,
   openPrBranches,
   parseJson,
@@ -117,6 +118,63 @@ describe('prunableBranches', () => {
     expect(pruned).not.toContain('claude/just-pushed');
     // reflog の無い（読めない）ものは、コミットの時刻だけで決める
     expect(pruned).toContain('claude/old-work');
+  });
+});
+
+describe('mergedEdits', () => {
+  /** base の上に、a を変え・b を消し・c を足した target を作り、HEAD を base に戻したリポジトリ */
+  const repo = () => {
+    const dir = mkdtempSync(join(tmpdir(), 'sync-after-merge-'));
+    const git = gitAt(dir);
+    git(['init', '--quiet', '-b', 'main']);
+    writeFileSync(join(dir, 'a.txt'), 'a\n');
+    writeFileSync(join(dir, 'b.txt'), 'b\n');
+    git(['add', '.']);
+    git([...AUTHOR, 'commit', '--quiet', '-m', 'base']);
+    git(['checkout', '--quiet', '-b', 'target']);
+    writeFileSync(join(dir, 'a.txt'), 'a2\n');
+    git(['rm', '--quiet', 'b.txt']);
+    writeFileSync(join(dir, 'c.txt'), 'c\n');
+    git(['add', '.']);
+    git([...AUTHOR, 'commit', '--quiet', '-m', 'merged']);
+    git(['checkout', '--quiet', 'main']);
+    return { dir, git };
+  };
+  /** target と同じ編集を作業ツリーに置く（メインのチェックアウトで編集して、PR でマージした形） */
+  const editLikeTarget = (dir: string) => {
+    writeFileSync(join(dir, 'a.txt'), 'a2\n');
+    rmSync(join(dir, 'b.txt'));
+    writeFileSync(join(dir, 'c.txt'), 'c\n');
+  };
+
+  it('returns nothing to put away when there is no work in progress', () => {
+    const { git } = repo();
+    expect(mergedEdits(git, 'target')).toEqual([]);
+  });
+
+  it('returns the edits that equal target, and the fast-forward then succeeds without losing them', () => {
+    const { dir, git } = repo();
+    editLikeTarget(dir);
+    // target に無い追跡していないファイルは数えず、残す
+    writeFileSync(join(dir, 'note.txt'), 'n\n');
+    const edits = mergedEdits(git, 'target');
+    expect(edits?.sort()).toEqual(['a.txt', 'b.txt', 'c.txt']);
+    expect(git(['add', '-A', '--', ...edits!])).not.toBeNull();
+    expect(git(['merge', '--ff-only', '--quiet', 'target'])).not.toBeNull();
+    expect(git(['status', '--porcelain'])).toBe('?? note.txt');
+  });
+
+  it('keeps everything when a tracked change differs from target', () => {
+    const { dir, git } = repo();
+    editLikeTarget(dir);
+    writeFileSync(join(dir, 'a.txt'), 'a3\n');
+    expect(mergedEdits(git, 'target')).toBeNull();
+  });
+
+  it('keeps everything when an untracked file that target has differs from it', () => {
+    const { dir, git } = repo();
+    writeFileSync(join(dir, 'c.txt'), 'other\n');
+    expect(mergedEdits(git, 'target')).toBeNull();
   });
 });
 

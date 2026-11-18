@@ -70,6 +70,38 @@ export function bringsNothing(git: GitRun, main: string, ref: string): boolean {
   return mainTree !== null && merged !== undefined && merged === mainTree;
 }
 
+/** -z で区切った git の出力を、パスの並びにする */
+const zList = (out: string | null): string[] | null => (out === null ? null : out.split('\0').filter(Boolean));
+
+/**
+ * 作業中の変更（HEAD との違いと、追跡していないファイル）のうち、中身が target と同じもの（マージで target に入った編集）の
+ * パス。追跡中のファイルの変更が 1 つでも target と違うときと、target にある追跡していないファイルの中身が違うときは null
+ * （戻さない）。target に無い追跡していないファイルは、早送りの邪魔にならないので数えない。中身は git hash-object で比べる
+ * （改行の変換など、元に入れるときの変換を通した形）
+ */
+export function mergedEdits(git: GitRun, target: string): string[] | null {
+  const changed = zList(git(['diff', '--name-only', '-z', '--no-renames', 'HEAD']));
+  const deleted = zList(git(['diff', '--name-only', '-z', '--no-renames', '--diff-filter=D', 'HEAD']));
+  const untracked = zList(git(['ls-files', '-z', '--others', '--exclude-standard']));
+  if (changed === null || deleted === null || untracked === null) return null;
+  const paths = [...changed, ...untracked];
+  if (paths.length === 0) return [];
+  // target のブロブ（パス → ハッシュ）。ls-tree の行は「モード 種類 ハッシュ TAB パス」
+  const tree = zList(git(['ls-tree', '-r', '-z', target, '--', ...paths]));
+  if (tree === null) return null;
+  const inTarget = new Map(
+    tree.map((line) => [line.slice(line.indexOf('\t') + 1), line.slice(0, line.indexOf('\t')).split(' ')[2]!]),
+  );
+  const present = paths.filter((p) => !deleted.includes(p));
+  const hashes = present.length > 0 ? git(['hash-object', '--', ...present])?.split('\n') : [];
+  if (hashes === undefined || hashes.length !== present.length) return null;
+  const inWorktree = new Map(present.map((p, i) => [p, hashes[i]!]));
+  const same = (p: string) => inTarget.get(p) === inWorktree.get(p);
+  if (!changed.every(same)) return null;
+  const merged = untracked.filter((p) => inTarget.has(p));
+  return merged.every(same) ? [...changed, ...merged] : null;
+}
+
 /**
  * 消すブランチ: 最後のコミットと、手元が今の先端を見た時刻（seenAt。main から作って push しただけのブランチは、コミットが古くても
  * 今 push されたもの）の両方から PRUNE_AGE_MS 以上たち、残すもの（開いている PR の head・base）でなく、main に合わせても何も
