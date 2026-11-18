@@ -17,7 +17,7 @@
 //      消さない
 //   4. --catch-up なら、fetch できたときに catch-up.ts でトピックブランチを origin/main へ取り込む（plan/design-workflow-simplification-13.md 2 節）
 // どれも条件に合わなければ何もしない。ただし 1 の main が origin/main より遅れたまま早送りできないとき
-// （作業中の変更がある・早送りに失敗した）は、黙っていると気づかれないので知らせる。早送りは Windows で途中で
+// （origin/main と違う作業中の変更がある・早送りに失敗した）は、黙っていると気づかれないので知らせる。早送りは Windows で途中で
 // 失敗すると、作業ツリーのファイルだけが書き換わり HEAD と index が残ることがある（2026-09-28、#54 の早送り）。
 // 失敗してもフックを止めない（常に終了コード 0）。
 //
@@ -84,9 +84,13 @@ function syncAfterMerge(prune: boolean): string[] | null {
     const status = `git -C "${main[1]}" status`;
     const at = main[1];
     const edits = mergedEdits((args) => git(args, at), 'origin/main');
-    if (edits === null || (edits.length > 0 && git(['add', '-A', '--', ...edits], at) === null))
+    if (edits === null)
       done.push(
         `メインのチェックアウトの main に origin/main と違う作業中の変更があり、早送りできない（${behind} コミット遅れ。${status} で確かめる）`,
+      );
+    else if (edits.length > 0 && git(['add', '-A', '--', ...edits], at) === null)
+      done.push(
+        `メインのチェックアウトの、マージで main に入った作業中の変更を index に入れられず、早送りできない（${behind} コミット遅れ。${status} で確かめる）`,
       );
     else if (git(['merge', '--ff-only', '--quiet', 'origin/main'], at) !== null)
       done.push(
@@ -94,10 +98,13 @@ function syncAfterMerge(prune: boolean): string[] | null {
           ? `メインのチェックアウトの、マージで main に入った作業中の変更（${edits.length} 件）を片付けて、main を早送りした`
           : 'メインのチェックアウトの main を早送りした',
       );
-    else
+    else {
+      // index に入れた変更は index から外す（作業ツリーの中身はそのまま）
+      if (edits.length > 0) git(['reset', '--quiet', '--', ...edits], at);
       done.push(
         `メインのチェックアウトの main を origin/main へ早送りできなかった（${behind} コミット遅れ。${status} で確かめる。作業ツリーだけが書き換わっていることがある）`,
       );
+    }
   }
 
   // 2. いまのブランチ
