@@ -1,7 +1,7 @@
 // CLI の引数の読み取り（packages/core/scripts と tools の道具で共有。plan/design-workflow-simplification-16.md 2 節）。
 // 使い方は、各スクリプトの冒頭の // のコメントにだけ書く。-h・--help ではそれとオプションの一覧を出して終わり、知らない引数や
 // 値の形の誤りでは、エラーの 1 行と使い方を出して終わる（スタックトレースを出さない）。必須の引数が無いときなど、スクリプトが
-// 見つけた誤りは、fail で同じように出して終わる。
+// 見つけた誤りは fail で出して終わる（理由の文があれば、使い方の代わりに --help の案内を添える）。
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { parseArgs, type ParseArgsConfig } from 'node:util';
@@ -39,10 +39,13 @@ export function usageText(source: string, options: Options, extra?: string): str
 /** 使い方の文を作る（cliArgs が置く。1 つのプロセスで cliArgs は 1 回だけ呼ぶ） */
 let usageOfScript: (() => string) | undefined;
 
-/** message（あれば）と使い方を標準エラーに出して 2 で終わる（cliArgs の前に呼ぶと message だけ） */
+/**
+ * 誤りを標準エラーに出して 2 で終わる。message があればそれと --help の案内（長い使い方で理由が埋もれないように）、無ければ使い方
+ * （cliArgs の前に呼ぶと message だけ）
+ */
 export function fail(message?: string): never {
-  const usage = usageOfScript?.();
-  console.error([message, usage].filter((t) => t !== undefined).join('\n\n'));
+  if (message === undefined) console.error(usageOfScript?.() ?? '');
+  else console.error(usageOfScript === undefined ? message : `${message}\n（使い方は --help）`);
   process.exit(2);
 }
 
@@ -65,7 +68,8 @@ export function cliArgs<T extends Config>(
     parsed = parseArgs({ ...config, args, options } as T & { args: string[] });
   } catch (e) {
     if (!isParseArgsError(e)) throw e;
-    return fail(e.message);
+    console.error(`${e.message}\n\n${text()}`);
+    process.exit(2);
   }
   if ((parsed.values as { help?: boolean }).help === true) {
     console.log(text());

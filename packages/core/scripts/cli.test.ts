@@ -71,11 +71,13 @@ describe('cliArgs', () => {
     expect(text).not.toContain('    at ');
   });
 
-  it('lets the script fail with a message and the same usage', () => {
+  it('lets the script fail with a message and a pointer to --help, or with the usage', () => {
     cliArgs(import.meta.url, {}, { args: [] });
     mockExit();
     const error = vi.spyOn(console, 'error').mockImplementation(() => {});
     expect(() => fail('id が要る')).toThrow('exit 2');
-    expect(String(error.mock.calls[0]![0])).toMatch(/^id が要る\n\n[\s\S]*オプション:\n {2}-h, --help$/);
+    expect(error.mock.calls[0]![0]).toBe('id が要る\n（使い方は --help）');
+    expect(() => fail()).toThrow('exit 2');
+    expect(String(error.mock.calls[1]![0])).toContain('オプション:\n  -h, --help');
   });
 });
