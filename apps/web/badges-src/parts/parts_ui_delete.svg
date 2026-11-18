@@ -1,49 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   viewBox="0 0 130 130"
-   version="1.1"
-   id="svg1"
-   sodipodi:docname="ui_delete.svg"
-   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
-   width="130"
-   height="130"
-   xml:space="preserve"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
-     id="namedview1"
-     pagecolor="#505050"
-     bordercolor="#eeeeee"
-     borderopacity="1"
-     inkscape:showpageshadow="0"
-     inkscape:pageopacity="0"
-     inkscape:pagecheckerboard="true"
-     inkscape:deskcolor="#505050"
-     showguides="true"><sodipodi:guide
-       position="0,130"
-       orientation="0,130"
-       id="guide2"
-       inkscape:locked="false" /><sodipodi:guide
-       position="130,130"
-       orientation="130,0"
-       id="guide3"
-       inkscape:locked="false" /><sodipodi:guide
-       position="130,0"
-       orientation="0,-130"
-       id="guide4"
-       inkscape:locked="false" /><sodipodi:guide
-       position="0,0"
-       orientation="-130,0"
-       id="guide5"
-       inkscape:locked="false" /></sodipodi:namedview><defs
-     id="defs1" /><g id="g_parts" transform="translate(0,-10)">
-<path
-     style="fill:none;stroke:#ffffff;stroke-width:15;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none"
-     d="M 39.242641,49.242643 90.757358,100.75736"
-     id="path3"
-     inkscape:label="cross" /><path
-     style="fill:none;stroke:#ffffff;stroke-width:15;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none"
-     d="M 90.757357,49.242643 39.242642,100.75736"
-     id="path3-5"
-     inkscape:label="cross" /></g></svg>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<svg viewBox="0 0 130 130" version="1.1" id="svg1" sodipodi:docname="ui_delete.svg" inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)" width="130" height="130" xml:space="preserve" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview id="namedview1" pagecolor="#505050" bordercolor="#eeeeee" borderopacity="1" inkscape:showpageshadow="0" inkscape:pageopacity="0" inkscape:pagecheckerboard="true" inkscape:deskcolor="#505050" showguides="true">
+    <sodipodi:guide position="0,130" orientation="0,130" id="guide2" inkscape:locked="false" />
+    <sodipodi:guide position="130,130" orientation="130,0" id="guide3" inkscape:locked="false" />
+    <sodipodi:guide position="130,0" orientation="0,-130" id="guide4" inkscape:locked="false" />
+    <sodipodi:guide position="0,0" orientation="-130,0" id="guide5" inkscape:locked="false" />
+  </sodipodi:namedview>
+  <defs id="defs1" />
+  <g id="content" transform="translate(0,-10)" inkscape:label="content">
+<path style="fill:none;stroke:#ffffff;stroke-width:15;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none" d="M 39.242641,49.242643 90.757358,100.75736" id="cross-1" inkscape:label="cross-1" /><path style="fill:none;stroke:#ffffff;stroke-width:15;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none" d="M 90.757357,49.242643 39.242642,100.75736" id="cross-2" inkscape:label="cross-2" /></g>
+</svg>

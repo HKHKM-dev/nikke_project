@@ -1,69 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   viewBox="0 0 130 130"
-   version="1.1"
-   id="svg1"
-   sodipodi:docname="class_1attacker.svg"
-   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
-   width="130"
-   height="130"
-   xml:space="preserve"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
-     id="namedview1"
-     pagecolor="#505050"
-     bordercolor="#eeeeee"
-     borderopacity="1"
-     inkscape:showpageshadow="0"
-     inkscape:pageopacity="0"
-     inkscape:pagecheckerboard="true"
-     inkscape:deskcolor="#505050"
-     showguides="true"><sodipodi:guide
-       position="0,130"
-       orientation="0,130"
-       id="guide2"
-       inkscape:locked="false" /><sodipodi:guide
-       position="130,130"
-       orientation="130,0"
-       id="guide3"
-       inkscape:locked="false" /><sodipodi:guide
-       position="130,0"
-       orientation="0,-130"
-       id="guide4"
-       inkscape:locked="false" /><sodipodi:guide
-       position="0,0"
-       orientation="-130,0"
-       id="guide5"
-       inkscape:locked="false" /></sodipodi:namedview><defs
-     id="defs1" /><g id="g_parts" transform="translate(0,-10)">
-<path
-     d="m 71.688021,124.97152 5.042947,-29.36657 14.39931,6.5999 z"
-     fill="#ffffff"
-     fill-rule="evenodd"
-     id="path1-4"
-     style="display:inline;stroke-width:0.999999"
-     sodipodi:nodetypes="cccc"
-     inkscape:label="logo" /><path
-     d="M 58.311982,124.97152 53.269037,95.604951 38.869727,102.20485 Z"
-     fill="#ffffff"
-     fill-rule="evenodd"
-     id="path1"
-     style="display:inline;stroke-width:0.999999"
-     sodipodi:nodetypes="cccc"
-     inkscape:label="logo" /><path
-     d="M 65,39.54507 109.08413,83.727119 78.20468,75.129638 93.353091,95.105561 72.681925,86.292655 65,124.23712 57.31808,86.292655 36.646914,95.105561 51.795325,75.129638 20.915875,83.727119 65,39.54507 m 6.173937,40.382699 -0.313348,-2.203228 H 59.139416 l -0.313348,2.203228 z m -0.06855,-4.406456 5e-6,-6.027044 L 70.38567,62.817 69.65126,59.942 69.63657,56.916285 h -9.27314 l -0.01469,3.025715 -0.734408,2.875 -0.719722,6.677269 5e-6,6.027044 z M 69.166556,54.957866 68.843417,53.611454 65.724626,46.042144 65,44.920941 l -0.724621,1.121203 -3.118791,7.56931 -0.323139,1.346412 z"
-     fill="#ffffff"
-     fill-rule="evenodd"
-     id="path1-1"
-     style="display:inline;stroke-width:0.999999"
-     sodipodi:nodetypes="ccccccccccccccccccccccccccccccccccc"
-     inkscape:label="logo" /><path
-     d="m 104.5014,68.91164 3.72591,6.120077 c 0,0 1.97879,-4.908357 2.9768,-7.358779 C 83.14778,41.286761 65.46898,24.679373 65,24.587603 c -0.46899,0.09177 -18.147787,16.699158 -46.20412,43.085335 0.998011,2.450422 2.9768,7.358779 2.9768,7.358779 L 25.49859,68.91164 C 38.555871,56.916462 51.77232,44.363313 65,32.5535 78.22768,44.363313 91.44412,56.916462 104.5014,68.91164 Z"
-     fill="#ffffff"
-     fill-rule="evenodd"
-     id="path1-1-6"
-     style="display:inline;stroke-width:0.999999"
-     sodipodi:nodetypes="ccccccccc"
-     inkscape:label="logo" /></g></svg>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<svg viewBox="0 0 130 130" version="1.1" id="svg1" sodipodi:docname="class_1attacker.svg" inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)" width="130" height="130" xml:space="preserve" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview id="namedview1" pagecolor="#505050" bordercolor="#eeeeee" borderopacity="1" inkscape:showpageshadow="0" inkscape:pageopacity="0" inkscape:pagecheckerboard="true" inkscape:deskcolor="#505050" showguides="true">
+    <sodipodi:guide position="0,130" orientation="0,130" id="guide2" inkscape:locked="false" />
+    <sodipodi:guide position="130,130" orientation="130,0" id="guide3" inkscape:locked="false" />
+    <sodipodi:guide position="130,0" orientation="0,-130" id="guide4" inkscape:locked="false" />
+    <sodipodi:guide position="0,0" orientation="-130,0" id="guide5" inkscape:locked="false" />
+  </sodipodi:namedview>
+  <defs id="defs1" />
+  <g id="content" transform="translate(0,-10)" inkscape:label="content">
+<path d="m 71.688021,124.97152 5.042947,-29.36657 14.39931,6.5999 z" fill="#ffffff" fill-rule="evenodd" id="logo-1" style="display:inline;stroke-width:0.999999" sodipodi:nodetypes="cccc" inkscape:label="logo-1" /><path d="M 58.311982,124.97152 53.269037,95.604951 38.869727,102.20485 Z" fill="#ffffff" fill-rule="evenodd" id="logo-2" style="display:inline;stroke-width:0.999999" sodipodi:nodetypes="cccc" inkscape:label="logo-2" /><path d="M 65,39.54507 109.08413,83.727119 78.20468,75.129638 93.353091,95.105561 72.681925,86.292655 65,124.23712 57.31808,86.292655 36.646914,95.105561 51.795325,75.129638 20.915875,83.727119 65,39.54507 m 6.173937,40.382699 -0.313348,-2.203228 H 59.139416 l -0.313348,2.203228 z m -0.06855,-4.406456 5e-6,-6.027044 L 70.38567,62.817 69.65126,59.942 69.63657,56.916285 h -9.27314 l -0.01469,3.025715 -0.734408,2.875 -0.719722,6.677269 5e-6,6.027044 z M 69.166556,54.957866 68.843417,53.611454 65.724626,46.042144 65,44.920941 l -0.724621,1.121203 -3.118791,7.56931 -0.323139,1.346412 z" fill="#ffffff" fill-rule="evenodd" id="logo-3" style="display:inline;stroke-width:0.999999" sodipodi:nodetypes="ccccccccccccccccccccccccccccccccccc" inkscape:label="logo-3" /><path d="m 104.5014,68.91164 3.72591,6.120077 c 0,0 1.97879,-4.908357 2.9768,-7.358779 C 83.14778,41.286761 65.46898,24.679373 65,24.587603 c -0.46899,0.09177 -18.147787,16.699158 -46.20412,43.085335 0.998011,2.450422 2.9768,7.358779 2.9768,7.358779 L 25.49859,68.91164 C 38.555871,56.916462 51.77232,44.363313 65,32.5535 78.22768,44.363313 91.44412,56.916462 104.5014,68.91164 Z" fill="#ffffff" fill-rule="evenodd" id="logo-4" style="display:inline;stroke-width:0.999999" sodipodi:nodetypes="ccccccccc" inkscape:label="logo-4" /></g>
+</svg>
