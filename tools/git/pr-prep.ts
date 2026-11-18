@@ -57,7 +57,8 @@ import {
   short,
   splitGenerated,
 } from './pr-prep-lib.ts';
-import { gitRebaseIo, holdPrPrepLock, isRebasing, startRebase } from './git-rebase.ts';
+import { gitRebaseIo, isRebasing, startRebase } from './git-rebase.ts';
+import { holdPrPrepLock } from './pr-prep-lock.ts';
 import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
 const { values } = cliArgs(import.meta.url, {

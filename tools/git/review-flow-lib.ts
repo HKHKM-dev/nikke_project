@@ -7,6 +7,8 @@ export type HookInput = {
   tool_input?: { skill?: unknown; args?: unknown; command?: unknown };
   /** セッションの今のディレクトリ（worktree に入っていればその中） */
   cwd?: string;
+  /** ほかの Stop のフックが止めた後の終わり */
+  stop_hook_active?: boolean;
 };
 
 /** 見直しを始めた印（git のディレクトリに置く）。blocked は、この印で応答の終わりを一度止めたこと */
@@ -22,12 +24,15 @@ const REVIEW_SKILLS = new Set(['simplify', 'code-review']);
  * PR の番号を対象にした見直し（`/code-review 123`）は今のブランチの作業ではないので数えない。自動マージの予約は Bash の
  * `gh pr merge --auto` か GitHub の MCP の enable_pr_auto_merge
  */
+/** 見直しのスキルの引数が PR の番号を指しているか（今のブランチの差分でなく、その PR を見直す） */
+function targetsPr(args: unknown): boolean {
+  return typeof args === 'string' && /(^|\s)#?\d+(\s|$)/.test(args.replace(/--max-findings\s+\S+/g, ''));
+}
+
 export function flowEvent(input: HookInput): 'start' | 'done' | null {
   const { skill, args, command } = input.tool_input ?? {};
   if (input.tool_name === 'Skill' && typeof skill === 'string' && REVIEW_SKILLS.has(skill))
-    return typeof args === 'string' && /(^|\s)#?\d+(\s|$)/.test(args.replace(/--max-findings\s+\S+/g, ''))
-      ? null
-      : 'start';
+    return targetsPr(args) ? null : 'start';
   if (input.tool_name === 'mcp__github__enable_pr_auto_merge') return 'done';
   if (input.tool_name === 'Bash' && typeof command === 'string' && /\bgh\s+pr\s+merge\b[^\n]*--auto\b/.test(command))
     return 'done';
@@ -38,6 +43,10 @@ export const BLOCK_REASON =
   '見直しを始めた後、自動マージを予約する前に応答を終えようとしている。AGENTS.md「コミット手順」のとおり、オーナーに確かめずに' +
   'PR を出して自動マージを予約するまで続け、見直しの結果は PR の後にまとめて報告する。オーナーの判断がどうしても要るなら、' +
   'その理由を書いてもう一度終えれば通す。';
+
+export const PR_PREP_REASON =
+  'npm run pr:prep が裏で動いている。終わりを待ってから次へ進む（Bash の timeout を 600000 にして前で回すと、待たずに済む。' +
+  'pgrep と sleep で待たない）。';
 
 /**
  * 応答を終えるときの判定: 今のブランチで見直しを始めて自動マージをまだ予約していなければ止める（block。Claude Code の Stop の
@@ -81,6 +90,25 @@ export function simplifyGate(files: readonly { path: string; added: number; isNe
   return (
     `構造が変わる PR ではない（コードの新しいファイルが無く、追加は ${added} 行で ${SIMPLIFY_MIN_ADDED} 行以下。` +
     'AGENTS.md「コミット手順」の 1）ので、/simplify は回さない。/code-review へ進む。'
+  );
+}
+
+/** /code-review を high で回す場所（AGENTS.md「コミット手順」の 2） */
+export const HIGH_REVIEW_PATHS = ['packages/core/src/frame/', 'packages/core/src/sim/', 'tools/git/'] as const;
+
+/**
+ * /code-review を呼ぶ前の判定: 引数の段が low か medium で、ブランチの基からの差分が HIGH_REVIEW_PATHS に触れていれば、止める理由を
+ * 返す。段を書かない呼び出し・high 以上・PR の番号を指す呼び出しは通す（null）
+ */
+export function reviewLevelGate(files: readonly { path: string }[], args: unknown): string | null {
+  if (typeof args !== 'string' || targetsPr(args)) return null;
+  const level = /(?:^|\s)(low|medium)(?=\s|$)/.exec(args)?.[1];
+  if (level === undefined) return null;
+  const touched = HIGH_REVIEW_PATHS.filter((dir) => files.some((f) => f.path.startsWith(dir)));
+  if (touched.length === 0) return null;
+  return (
+    `${touched.join('・')} を変えた PR なので、/code-review は high で回す（AGENTS.md「コミット手順」の 2）。` +
+    `同じ引数の ${level} を high にして呼び直す。`
   );
 }
 

@@ -10,6 +10,7 @@ import {
   parseOnOff,
   parseRidArg,
   parseTreasureArg,
+  perRecording,
   reservedLabel,
   sequentialRecordingIds,
   UPLOAD_POLL_LIMIT,
@@ -61,6 +62,21 @@ describe('まとめて取り込むときの識別子と注記', () => {
     );
     expect(() => batchNamesAndNotes(3, 'a,b,c', ['x', 'y'])).toThrow(
       '--note は 1 つか、元ファイルと同じ数（3）を繰り返す（2 個あった）',
+    );
+  });
+});
+
+describe('録画ごとの値（--rid・--controlled・--treasure）', () => {
+  it('splits by ; per recording, or gives every recording the same value', () => {
+    expect(perRecording('--rid', '271,-,870;300', 2)).toEqual(['271,-,870', '300']);
+    expect(perRecording('--rid', '271,-,870', 2)).toEqual(['271,-,870', '271,-,870']);
+    expect(perRecording('--treasure', '2:3; ', 2)).toEqual(['2:3', undefined]);
+    expect(perRecording('--controlled', undefined, 2)).toEqual([undefined, undefined]);
+  });
+
+  it('refuses a count that does not match the sources', () => {
+    expect(() => perRecording('--rid', '1;2;3', 2)).toThrow(
+      '--rid を ; で区切るときは元ファイルと同じ数（2）を並べる（3 個あった）',
     );
   });
 });

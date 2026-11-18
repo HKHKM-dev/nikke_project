@@ -1,11 +1,12 @@
 // 録画の取り込み（plan/design-records-automation.md 3.3 節）: 命名規約でリネームして置き場所に移し、素性（長さ・フレーム数・fps・
 // 大きさ・sha256）を取り、records/recordings/<録画 id>.json を書く。編成・的・条件は引数で受け、無ければ空で出す（人が埋める）。
 //   node tools/captures/intake.ts <元ファイル>... --name <識別子>[,<識別子>...] [--id NNNN] [--folder range] [--date YYYY-MM-DD]
-//        [--rid 271,-,870] [--controlled 1] [--treasure 2:3] [--target BigArms --element Fire] [--mode range-3min]
+//        [--rid 271,-,870] [--controlled 1] [--treasure 2:3] [--target BigArms --element Fire --level 1] [--mode range-3min]
 //        [--fixed-spec on|off] [--build-snapshot <名前>|-] [--auto-fire on|off] [--auto-burst on|off] [--note "..."]... [--copy]
 //        [--no-backup] [--no-push]
 // 1 回の撮影の録画をまとめて取り込む（plan/design-workflow-simplification-2.md 1 節）。--name は元ファイルと同じ数を , で並べ、--note は
-// 1 つ（全部に同じ）か元ファイルと同じ数を繰り返す。ほかの引数は全部の録画に同じものを使う。番号は --id から順に、--id が無ければ
+// 1 つ（全部に同じ）か元ファイルと同じ数を繰り返す。--rid・--controlled・--treasure は ; で区切って録画ごとに書ける（区切らなければ
+// 全部に同じ。plan/design-workflow-simplification-17.md 9 節）。ほかの引数は全部の録画に同じものを使う。番号は --id から順に、--id が無ければ
 // どのブランチも使っていない次の番号から順に取る。1 本ずつ子のプロセスで取り込み、失敗したらそこで止める。終わりに npm run records:table
 // を回し、書いた録画の JSON と一覧だけを commit して push する（番号を押さえる。packages/core/scripts/reserve.ts。--no-push でしない）。
 // 宝物を持つキャラの枠の段階は、撮った日以前でいちばん新しい育成のスナップショット（スペック固定 OFF なら buildSnapshot）から埋める
@@ -78,6 +79,8 @@ import {
   parseOnOff,
   parseRidArg,
   parseTreasureArg,
+  perRecording,
+  PER_RECORDING_FLAGS,
   reservedLabel,
   sequentialRecordingIds,
   UPLOAD_POLL_LIMIT,
@@ -131,9 +134,12 @@ if (!values.child) {
   // まとめて取り込む（冒頭の説明）: 1 本ずつ子のプロセスで回し、終わりに一覧を作り直して番号を押さえる
   if (positionals.length === 0 || !values.name) fail('元ファイル・--name が要る');
   const { names, notes } = orFail(() => batchNamesAndNotes(positionals.length, values.name!, values.note));
-  if (positionals.length > 1 && values.rid !== undefined && new Set(names).size > 1) {
+  // 録画ごとに書ける引数（--rid・--controlled・--treasure）の、録画ごとの値
+  const perRec = PER_RECORDING_FLAGS.map((k) => orFail(() => perRecording(`--${k}`, values[k], positionals.length)));
+  const rids = perRec[0]!;
+  if (rids.length > 1 && rids[0] !== undefined && new Set(rids).size === 1 && new Set(names).size > 1) {
     console.error(
-      `注意: --rid ${values.rid} を ${positionals.length} 本の全部に書く（録画ごとに編成が違うなら 1 本ずつ取り込む）`,
+      `注意: --rid ${values.rid} を ${positionals.length} 本の全部に書く（録画ごとに編成が違うなら ; で区切って録画ごとに書く）`,
     );
   }
   let ids: string[];
@@ -146,10 +152,8 @@ if (!values.child) {
   const shared: [string, string | undefined][] = [
     ['--folder', values.folder],
     ['--date', values.date],
-    ['--rid', values.rid],
-    ['--controlled', values.controlled],
-    ['--treasure', values.treasure],
     ['--target', values.target],
+    ['--level', values.level],
     ['--element', values.element],
     ['--mode', values.mode],
     ['--fixed-spec', values['fixed-spec']],
@@ -174,7 +178,11 @@ if (!values.child) {
           id: ids[i]!,
           name: names[i]!,
           note,
-          shared: [...shared, ['--build-snapshot', snapshot]],
+          shared: [
+            ...shared,
+            ...PER_RECORDING_FLAGS.map((k, j) => [`--${k}`, perRec[j]![i]] as const),
+            ['--build-snapshot', snapshot],
+          ],
           flags,
         }),
       ],
@@ -231,6 +239,8 @@ if (values.element !== undefined && !(ELEMENTS as readonly string[]).includes(va
   fail(`--element は ${ELEMENTS.join(' / ')}`);
 }
 const onOff = (v: string | undefined, flag: string): boolean | null => orFail(() => parseOnOff(v, flag));
+const level = values.level === undefined ? undefined : Number(values.level);
+if (level !== undefined && !(Number.isInteger(level) && level >= 1)) fail('--level は 1 以上の整数');
 // 枠の順の rid（空枠は null）
 const rids = orFail(() => parseRidArg(values.rid));
 const controlled = orFail(() => parseControlledArg(values.controlled, rids));
@@ -475,7 +485,11 @@ const entry: ProjectRecording = {
           },
         ],
   ),
-  target: { name: values.target ?? '', element: (values.element as Element | undefined) ?? null },
+  target: {
+    name: values.target ?? '',
+    element: (values.element as Element | undefined) ?? null,
+    ...(level === undefined ? {} : { level }),
+  },
   mode: (values.mode as RecordingMode | undefined) ?? null,
   fixedSpec,
   ...(typeof buildSnapshot === 'string' ? { buildSnapshot } : {}),
