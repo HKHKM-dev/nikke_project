@@ -212,10 +212,7 @@ export function optimizeBadge(svg: string, name: string): string {
  * srcDir に SVG が 1 つも無ければ、何も書かず消さずに止める
  * （取り違えたフォルダや取り出し損ねで、書き出しを全部消さない）
  */
-export function buildBadges(
-  srcDir: string,
-  outDir: string,
-): { written: string[]; removed: string[] } {
+export function buildBadges(srcDir: string, outDir: string): { written: string[]; removed: string[] } {
   const written = svgFiles(srcDir);
   if (written.length === 0) throw new Error(`${srcDir} に SVG が無い（書き出しの ${outDir} は消さない）`);
   // 画面（src/components/modern/badges.ts）は <グループ>_<値> の名前でバッジを引く
@@ -235,8 +232,5 @@ export function buildBadges(
 
 if (import.meta.main) {
   const { written, removed } = buildBadges(BADGE_SRC_DIR, BADGE_OUT_DIR);
-  console.log(
-    `badges: ${written.length} written` +
-      (removed.length > 0 ? `, removed ${removed.join(', ')}` : ''),
-  );
+  console.log(`badges: ${written.length} written` + (removed.length > 0 ? `, removed ${removed.join(', ')}` : ''));
 }

@@ -23,13 +23,10 @@ describe('バッジの書き出し', () => {
     expect(svgFiles(BADGE_OUT_DIR)).toEqual([...sources.keys()]);
   });
 
-  it.each([...sources.keys()])(
-    '%s の書き出しは元を小さくしたもの（違うなら npm run badges:build）',
-    (file) => {
-      const source = sources.get(file)!;
-      expect(readFileSync(`${BADGE_OUT_DIR}/${file}`, 'utf8')).toBe(optimizeBadge(source, badgeNameOf(file)));
-    },
-  );
+  it.each([...sources.keys()])('%s の書き出しは元を小さくしたもの（違うなら npm run badges:build）', (file) => {
+    const source = sources.get(file)!;
+    expect(readFileSync(`${BADGE_OUT_DIR}/${file}`, 'utf8')).toBe(optimizeBadge(source, badgeNameOf(file)));
+  });
 
   it('グループと変種が同じ元は、枠の有無がそろう（ui は除く）', () => {
     const framed = new Map<string, Set<boolean>>();
