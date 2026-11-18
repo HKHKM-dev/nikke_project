@@ -22,6 +22,10 @@ const slotAreaAt = (index: number) => slotCardAt(index)?.querySelector('.modern-
 const ARRIVAL_WAIT_MS = 1000;
 const arrivalDeadline = () => performance.now() + ARRIVAL_WAIT_MS;
 
+/** 動いてきたものがスロットに描かれたかの印（ニケの立ち絵・空のスロットの枠。ニケがいるスロットの中の空の枠 modern-slot-arrival-face は除く） */
+const ARRIVED_CHARACTER = '.modern-slot-char-area .char-visual';
+const ARRIVED_EMPTY = '.modern-slot-char-area > .modern-slot-empty-area';
+
 export type SlotPlacement = {
   /** スロット index を空にし、外したニケの立ち絵を一覧へ動かす（content は動かす絵。無ければスロットの立ち絵の枠） */
   clearSlot: (index: number, content?: Element | null) => void;
@@ -46,11 +50,12 @@ export type SlotPlacement = {
 export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>): SlotPlacement {
   // 置いたニケがスロットへ動き始める位置。置いた後の描画（スロットに絵が入った後）で動かし始める
   // スロットにまだ絵が入っていない描画（置く操作と別の描画が先に来たとき）では動かさず、次の描画を待つ（ARRIVAL_WAIT_MS まで）
-  const arrivalsRef = useRef<{ index: number; from: DOMRect; until: number }[]>([]);
+  // empty は空のスロットの枠が動いてくるとき（空のスロットを持ち上げて入れ替えた）
+  const arrivalsRef = useRef<{ index: number; from: DOMRect; until: number; empty: boolean }[]>([]);
   useLayoutEffect(() => {
-    arrivalsRef.current = arrivalsRef.current.filter(({ index, from, until }) => {
+    arrivalsRef.current = arrivalsRef.current.filter(({ index, from, until, empty }) => {
       const card = slotCardAt(index);
-      if (card?.querySelector('.modern-slot-char-area .char-visual')) {
+      if (card?.querySelector(empty ? ARRIVED_EMPTY : ARRIVED_CHARACTER)) {
         flyIntoSlot(from, card);
         return false;
       }
@@ -58,12 +63,14 @@ export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>
     });
   });
 
-  /** スロット index へ、from から絵を動かす（置いた後の描画で動かし始める。前に動いていた写しは消す） */
-  const queueArrival = (index: number, from: DOMRect | undefined) => {
+  /**
+   * スロット index へ、from から絵を動かす（置いた後の描画で動かし始める。前に動いていた写しは消す）。empty は空のスロットの枠が動いてくるとき
+   */
+  const queueArrival = (index: number, from: DOMRect | undefined, empty = false) => {
     stopArrival(slotCardAt(index));
     // 同じスロットへ前に積んだ待ちは捨てる（後から来たものだけが着く）
     arrivalsRef.current = arrivalsRef.current.filter((a) => a.index !== index);
-    if (from) arrivalsRef.current.push({ index, from, until: arrivalDeadline() });
+    if (from) arrivalsRef.current.push({ index, from, until: arrivalDeadline(), empty });
   };
 
   /**
@@ -97,8 +104,9 @@ export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>
 
   const swapSlots = (fromIndex: number, toIndex: number, dragged?: DOMRect) => {
     // スロットの位置は入れ替えても変わらないので、落とした先の立ち絵の枠の位置が、入れ替わるものの元の位置
-    queueArrival(fromIndex, slotAreaAt(toIndex)?.getBoundingClientRect());
-    queueArrival(toIndex, dragged);
+    const isEmpty = (index: number) => (team.slots[index]?.resourceId ?? null) === null;
+    queueArrival(fromIndex, slotAreaAt(toIndex)?.getBoundingClientRect(), isEmpty(toIndex));
+    queueArrival(toIndex, dragged, isEmpty(fromIndex));
     dispatch({ type: 'swapSlots', fromIndex, toIndex });
   };
 

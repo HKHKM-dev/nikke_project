@@ -852,10 +852,27 @@ svg.settings-menu-icon,
 .modern-slot-card.modern-slot-arriving .modern-slot-char-area {
   visibility: hidden;
 }
+/* 着くまでは、立ち絵の場所に空のスロットの枠を出したままにする（ModernSlotCard。動く写しの中では出さない） */
+.modern-slot-arrival-face {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  translate: -50% 0;
+}
+.modern-slot-card.modern-slot-arriving .modern-slot-arrival-face {
+  display: block;
+  visibility: visible;
+}
 /* 持ち上げている間と戻る間は、立ち絵の枠だけを薄くする */
 .modern-slot-card.modern-slot-dragging .modern-slot-char-area,
 .modern-slot-card.drag-source-returning .modern-slot-char-area {
   opacity: 0.35;
+}
+/* その間、名前は持ち上げた絵だけに出す（元のカードの流れる名前が、持ち上げた絵の名前や隣のカードの名前と重なって見える） */
+.modern-slot-card.modern-slot-dragging .modern-slot-char-name,
+.modern-slot-card.drag-source-returning .modern-slot-char-name {
+  visibility: hidden;
 }
 /* 「操作」のコントローラーのアイコンの段。アイコン（30px）を、上はカードの上の余白（8px）へ 6px 寄せ、下は立ち絵の枠との間を 4px にする
    （.modern-slot-card の gap 8px へ 4px 食い込ませる）。段は中身が無くても置くので、アイコンの有無でカードの高さは変わらない */
