@@ -158,11 +158,17 @@ if (shown('cycles')) {
 }
 
 if (shown('cochange')) {
-  const log = execFileSync(
-    'git',
-    ['log', `--since=${values.since}`, '--no-merges', '--format=%x01', '--name-only', '--', ...REPO_IMPORT_GRAPH.dirs],
-    { cwd: root, encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 },
-  );
+  const git = (args: string[]): string =>
+    execFileSync('git', args, { cwd: root, encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
+  const log = git([
+    'log',
+    `--since=${values.since}`,
+    '--no-merges',
+    '--format=%x01',
+    '--name-only',
+    '--',
+    ...REPO_IMPORT_GRAPH.dirs,
+  ]);
   const commits = parseNameOnlyLog(log).map((changed) => changed.filter((file) => modules.has(file)));
   const links = new Map([...modules].map(([file, info]) => [file, linkedTargets(info)]));
   const all = coChangePairs(commits, (a, b) => links.get(a)?.has(b) ?? false, MAX_FILES_PER_COMMIT).filter(
@@ -175,6 +181,10 @@ if (shown('cochange')) {
     ['一緒', 'それぞれ', 'ファイル', 'ファイル'],
     rows,
   );
+  // 浅い clone（クラウドの環境など）では、履歴が途中で切れて回数が少なく出る
+  if (git(['rev-parse', '--is-shallow-repository']).trim() === 'true') {
+    console.log('\n注意: 浅い clone なので、手元にある commit だけを数える（全部は git fetch --unshallow の後）');
+  }
 }
 
 if (unresolved.length > 0) {
