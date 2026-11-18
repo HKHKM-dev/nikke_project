@@ -13,20 +13,10 @@ import type { NamedStateId } from '../../../skills/states.ts';
 import type { CompareSpec } from '../types.ts';
 import { firstCount, type Metric, type MetricContext, slotIndexOf, slotOf, withArgs } from './context.ts';
 
-/** eventFrames の省略できる引数（基準・範囲・切り方と、倍率ダメージの絞り（hitMatches）） */
-const EVENT_FILTERS = [
-  'anchor',
-  'within',
-  'from',
-  'skip',
-  'count',
-  'modulo',
-  'skill',
-  'percent',
-  'projectile',
-  'trigger',
-  'release',
-] as const;
+/** 倍率ダメージの絞り（hitMatches）の省略できる引数 */
+const HIT_FILTERS = ['percent', 'projectile', 'trigger', 'release'] as const;
+/** eventFrames の省略できる引数（基準・範囲・切り方と、倍率ダメージの絞り） */
+const EVENT_FILTERS = ['anchor', 'within', 'from', 'skip', 'count', 'modulo', 'skill', ...HIT_FILTERS] as const;
 
 export const skillHitsMetrics: Readonly<Record<string, Metric>> = {
   // skill（'skill1' | 'skill2' | 'burst'）を書けば、そのスロットの倍率ダメージだけを数える（任意）
@@ -81,7 +71,7 @@ export const skillHitsMetrics: Readonly<Record<string, Metric>> = {
   },
   dotTickOffsets: {
     description: 'n 回目（0 始まり）の発動から、そのバーストの持続ダメージの tick までの動画のフレームの列',
-    optional: ['from', 'skip', 'count', 'modulo', 'percent', 'projectile', 'trigger', 'release'],
+    optional: ['from', 'skip', 'count', 'modulo', ...HIT_FILTERS],
     args: ['slot', 'n'],
     sim: dotTickOffsets,
   },
@@ -89,26 +79,26 @@ export const skillHitsMetrics: Readonly<Record<string, Metric>> = {
   // 動画のフレーム（戦闘開始から）の頭の count 個（V-0546）
   dotHitVideoFrames: {
     description: '持続ダメージのヒット（kind: apply・tick）の動画のフレームの頭の count 個',
-    optional: ['anchor', 'within', 'from', 'skip', 'modulo', 'skill', 'percent', 'projectile', 'trigger', 'release'],
+    optional: ['anchor', 'within', 'from', 'skip', 'modulo', 'skill', ...HIT_FILTERS],
     args: ['slot', 'kind', 'count'],
     sim: dotHitVideoFrames,
   },
   skillHitVideoFrame: {
     description: 'スロット skill の倍率ダメージの n 回目（0 始まり）の動画のフレーム',
-    optional: ['anchor', 'within', 'from', 'skip', 'modulo', 'percent', 'projectile', 'trigger', 'release'],
+    optional: ['anchor', 'within', 'from', 'skip', 'modulo', ...HIT_FILTERS],
     args: ['slot', 'skill', 'n'],
     sim: (r, c) => skillHitVideoFrames(r, c)[Number(c.args.n)] ?? NaN,
   },
   // skillHitVideoFrame の頭の count 個の列（キャプチャーチェーンの 10 回の攻撃）（V-0546）
   skillHitVideoFrameList: {
     description: 'スロット skill の倍率ダメージの動画のフレームの頭の count 個',
-    optional: ['anchor', 'within', 'from', 'skip', 'modulo', 'percent', 'projectile', 'trigger', 'release'],
+    optional: ['anchor', 'within', 'from', 'skip', 'modulo', ...HIT_FILTERS],
     args: ['slot', 'skill', 'count'],
     sim: (r, c) => eventFrames(r, withArgs(c, { event: 'skillHit' })),
   },
   skillHitMeanInterval: {
     description: 'スロット skill の倍率ダメージの発動の間隔の平均（動画のフレーム）',
-    optional: ['anchor', 'within', 'from', 'skip', 'modulo', 'percent', 'projectile', 'trigger', 'release'],
+    optional: ['anchor', 'within', 'from', 'skip', 'modulo', ...HIT_FILTERS],
     args: ['slot', 'skill'],
     sim: skillHitMeanInterval,
   },
@@ -138,14 +128,14 @@ export const skillHitsMetrics: Readonly<Record<string, Metric>> = {
   // 倍率ダメージの、同じ回のバーストのヒットからの動画のフレーム数（V-0532）
   skillHitFromBurstHit: {
     description: 'スロット skill の倍率ダメージの、前の自分のバーストのヒットからの動画のフレーム（最初の count 回）',
-    optional: ['within', 'from', 'skip', 'modulo', 'percent', 'projectile', 'trigger', 'release'],
+    optional: ['within', 'from', 'skip', 'modulo', ...HIT_FILTERS],
     args: ['slot', 'skill', 'count'],
     sim: skillHitFromBurstHit,
   },
   // 効果の倍率ダメージの、n 回目のフルバーストの 00.00 からの動画のフレーム数（V-0537）
   skillHitFramesFromFullBurst: {
     description: 'fullBurst 回目（0 始まり）のフルバーストの窓の中の倍率ダメージの、窓の始まりからの動画のフレーム',
-    optional: ['kind', 'after', 'relative', 'skip', 'modulo', 'percent', 'projectile', 'trigger', 'release'],
+    optional: ['kind', 'after', 'relative', 'skip', 'modulo', ...HIT_FILTERS],
     args: ['slot', 'skill', 'fullBurst', 'count'],
     sim: skillHitFramesFromFullBurst,
   },

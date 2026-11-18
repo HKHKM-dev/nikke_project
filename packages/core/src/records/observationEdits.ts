@@ -5,7 +5,7 @@ import { observationIdsIn, type ClaimFile } from './claims.ts';
 import type { Observation, ObservationDraft } from './observations/types.ts';
 
 /** 下書きに書かせない欄（このコマンドが付ける・前の値を残す） */
-export const DRAFT_RESERVED_KEYS = ['id', 'recording', 'source', 'readAt'] as const;
+const DRAFT_RESERVED_KEYS = ['id', 'recording', 'source', 'readAt'] as const;
 
 /** 下書きの形の誤り（予約した欄・kind と description が無い）。records:new observation の足す・直すで同じ検査 */
 export function draftShapeErrors(drafts: readonly ObservationDraft[]): string[] {

@@ -203,8 +203,7 @@ export function claimDraft(input: ClaimDraftInput): ClaimDraft {
         reasons.push(`予測と合う仮説が ${fits.length} つ（${fits.join('・')}）`);
     }
   }
-  const basisIds = valid.map((o) => `\`${o.id}\``);
-  const basis = `${basisIds.length > 0 ? `${basisIds.join('・')}。` : ''}${input.verification}`;
+  const basis = `${valid.length > 0 ? `${basisIdsText(valid.map((o) => o.id))}。` : ''}${input.verification}`;
   const file: ClaimFile = {
     id: input.id,
     text: input.text ?? '（結論の文を書く）',
@@ -247,8 +246,12 @@ export function parseJudgment(text: string, today: string): Judgment | string[] 
  */
 export function appendBasis(basis: string, added: readonly string[], verification: string): string {
   if (added.length === 0) return basis;
-  const ids = added.map((id) => `\`${id}\``).join('・');
-  return `${basis.replace(/[。\s]+$/, '')}。${ids}${basis.includes(verification) ? '' : `。${verification}`}`;
+  return `${basis.replace(/[。\s]+$/, '')}。${basisIdsText(added)}${basis.includes(verification) ? '' : `。${verification}`}`;
+}
+
+/** 根拠の文の観測値の並び（`ID`・`ID`） */
+export function basisIdsText(ids: readonly string[]): string {
+  return ids.map((id) => `\`${id}\``).join('・');
 }
 
 /** 前の並びに、まだ無い要素（中身で比べる）を足す。どちらも無ければ undefined */

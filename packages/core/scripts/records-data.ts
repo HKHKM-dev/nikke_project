@@ -11,6 +11,7 @@ import {
   type BacklogFile,
   type BacklogItem,
 } from '../src/records/backlog.ts';
+import type { BacklogContext } from '../src/records/backlog.ts';
 import { toClaims, type Claim, type ClaimFile } from '../src/records/claims.ts';
 import { V_ID } from '../src/records/ids.ts';
 import { isMeasured, type Observation } from '../src/records/observations/types.ts';
@@ -284,12 +285,21 @@ export function pickObservations(
 export function addedObservationErrors(
   added: readonly Observation[],
   recordings: ReadonlyMap<string, RecordingEntry>,
+  all: readonly Observation[] = loadObservations(),
 ): string[] {
   const ids = new Set(added.map((o) => o.id));
-  const current = loadObservations().filter((o) => !ids.has(o.id));
+  const current = all.filter((o) => !ids.has(o.id));
   return validateObservations([...current, ...added], recordings, loadEnemies()).filter((e) =>
     ids.has(e.slice(0, e.indexOf(':'))),
   );
+}
+
+/** 課題の検査（validateBacklog）の文脈: 指してよい ID（結論・検証記録・録画・観測値の ID の並びを渡す）と、plan/ からのパスがあるか */
+export function backlogContext(...idLists: readonly Iterable<string>[]): BacklogContext {
+  return {
+    ids: new Set(idLists.flatMap((l) => [...l])),
+    exists: (path) => existsSync(`${ROOT}plan/${path}`),
+  };
 }
 
 /** 録画（と予測の編成）に出てくるキャラと、その定義・敵のプリセット */

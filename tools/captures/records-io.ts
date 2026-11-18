@@ -109,10 +109,18 @@ export function writeObservations(
   console.error(`${path} に ${finished.length} 件を足した（${finished.map((o) => o.id).join('・')}）`);
 }
 
-/** records/observations/<録画 id>.json を list で書き直して prettier で整える（records:new observation の --replace・--invalidate）。書いたパス */
-export function saveObservations(recordingId: string, list: readonly Observation[]): string {
+/**
+ * records/observations/<録画 id>.json を list で書き直して prettier で整える。format: false なら整えない（呼ぶ側がほかのファイルと
+ * まとめて整える。records:new observation の --replace・--invalidate）。書いたパス
+ */
+export function saveObservations(
+  recordingId: string,
+  list: readonly Observation[],
+  opts: { format?: boolean } = {},
+): string {
   const path = `${OBSERVATIONS_DIR}${recordingId}.json`;
   writeFileSync(path, `${JSON.stringify(list, null, 2)}\n`);
-  spawnSync(process.platform === 'win32' ? 'npx.cmd' : 'npx', ['prettier', '--write', path], { stdio: 'inherit' });
+  if (opts.format !== false)
+    spawnSync(process.platform === 'win32' ? 'npx.cmd' : 'npx', ['prettier', '--write', path], { stdio: 'inherit' });
   return path;
 }
