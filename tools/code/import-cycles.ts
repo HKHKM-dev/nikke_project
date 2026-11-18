@@ -25,29 +25,31 @@ export const REPO_IMPORT_GRAPH: ImportGraphOptions = {
 
 const SOURCE = /\.tsx?$/;
 
-/** ソース 1 つの、実行時に残る import・再公開の先（書いてあるとおりの指定） */
-export function runtimeImportsOf(fileName: string, text: string): string[] {
-  const source = ts.createSourceFile(
-    fileName,
-    text,
-    ts.ScriptTarget.Latest,
-    false,
-    fileName.endsWith('x') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
-  );
-  const specifiers: string[] = [];
-  for (const statement of source.statements) {
-    if (!ts.isImportDeclaration(statement) && !ts.isExportDeclaration(statement)) continue;
-    const typeOnly = ts.isImportDeclaration(statement)
-      ? statement.importClause?.phaseModifier === ts.SyntaxKind.TypeKeyword
-      : statement.isTypeOnly;
-    const specifier = statement.moduleSpecifier;
-    if (typeOnly || specifier === undefined || !ts.isStringLiteral(specifier)) continue;
-    specifiers.push(specifier.text);
-  }
-  return specifiers;
+/** ソースの構文木（.tsx は TSX として読む。parents で親を辿れるようにする） */
+export function parseSource(file: string, text: string, parents = true): ts.SourceFile {
+  const kind = file.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
+  return ts.createSourceFile(file, text, ts.ScriptTarget.Latest, parents, kind);
 }
 
-function sourceFilesUnder(dir: string): string[] {
+/** ソース 1 つの、実行時に残る import・再公開の先（書いてあるとおりの指定） */
+export function runtimeImportsOf(fileName: string, text: string): string[] {
+  return parseSource(fileName, text, false)
+    .statements.map(runtimeSpecifierOf)
+    .filter((specifier) => specifier !== undefined);
+}
+
+/** モジュールの最上位の文が実行時に残る import・再公開なら、その指定（書いてあるとおり） */
+export function runtimeSpecifierOf(statement: ts.Statement): string | undefined {
+  if (!ts.isImportDeclaration(statement) && !ts.isExportDeclaration(statement)) return undefined;
+  const typeOnly = ts.isImportDeclaration(statement)
+    ? statement.importClause?.phaseModifier === ts.SyntaxKind.TypeKeyword
+    : statement.isTypeOnly;
+  const specifier = statement.moduleSpecifier;
+  return typeOnly || specifier === undefined || !ts.isStringLiteral(specifier) ? undefined : specifier.text;
+}
+
+/** dir の下のソース（.ts・.tsx。.d.ts と、node_modules・dist・名前が . で始まるフォルダの中は除く）の絶対パス */
+export function sourceFilesUnder(dir: string): string[] {
   const out: string[] = [];
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     if (entry.name === 'node_modules' || entry.name === 'dist' || entry.name.startsWith('.')) continue;
@@ -58,40 +60,56 @@ function sourceFilesUnder(dir: string): string[] {
   return out;
 }
 
+/** root からの相対パス（区切りは /） */
+export const repoKey = (root: string, path: string): string => relative(root, path).split(sep).join('/');
+
+/**
+ * file（絶対パス）の import の指定 specifier が指すソースの絶対パス。外のパッケージ・ソースでない先（JSON・画像）は undefined。
+ * 辿れない指定（パッケージの中のパス・拡張子の無い指定・無いファイル）は投げる
+ */
+export function resolveImport(
+  root: string,
+  file: string,
+  specifier: string,
+  options: ImportGraphOptions,
+): string | undefined {
+  const packageNames = Object.keys(options.packages);
+  // パッケージの中のパス（@nikke/core/…）は入口の表に無いので、黙って辺から落とさない
+  if (packageNames.some((name) => specifier.startsWith(`${name}/`))) {
+    throw new Error(`${repoKey(root, file)}: import の先 "${specifier}" を辿れない（パッケージの入口だけを辿る）`);
+  }
+  const packageEntry = options.packages[specifier];
+  const target =
+    packageEntry !== undefined
+      ? join(root, packageEntry)
+      : specifier.startsWith('.')
+        ? resolve(dirname(file), specifier.replace(/[?#].*$/, ''))
+        : undefined;
+  // 外のパッケージは辺にしない
+  if (target === undefined) return undefined;
+  // 拡張子の無い指定（'./foo'・フォルダ）は、どのファイルかを決めないので、黙って辺から落とさない
+  if (extname(target) === '') {
+    throw new Error(`${repoKey(root, file)}: import の先 "${specifier}" を辿れない（拡張子まで書く）`);
+  }
+  // ソースでない先（JSON・画像）は辺にしない
+  if (!SOURCE.test(target)) return undefined;
+  if (!statSync(target, { throwIfNoEntry: false })?.isFile()) {
+    throw new Error(`${repoKey(root, file)}: import の先 "${specifier}" が無い`);
+  }
+  return target;
+}
+
 /** root の下の dirs のソース（.ts・.tsx）の、実行時に残る import のグラフ。キーと値は root からの相対パス（区切りは /） */
 export function readImportGraph(root: string, options: ImportGraphOptions): Map<string, Set<string>> {
-  const key = (path: string): string => relative(root, path).split(sep).join('/');
-  const packageNames = Object.keys(options.packages);
   const graph = new Map<string, Set<string>>();
   for (const dir of options.dirs) {
     for (const file of sourceFilesUnder(join(root, dir))) {
       const targets = new Set<string>();
       for (const specifier of runtimeImportsOf(file, readFileSync(file, 'utf8'))) {
-        // パッケージの中のパス（@nikke/core/…）は入口の表に無いので、黙って辺から落とさない
-        if (packageNames.some((name) => specifier.startsWith(`${name}/`))) {
-          throw new Error(`${key(file)}: import の先 "${specifier}" を辿れない（パッケージの入口だけを辿る）`);
-        }
-        const packageEntry = options.packages[specifier];
-        const target =
-          packageEntry !== undefined
-            ? join(root, packageEntry)
-            : specifier.startsWith('.')
-              ? resolve(dirname(file), specifier.replace(/[?#].*$/, ''))
-              : undefined;
-        // 外のパッケージは辺にしない
-        if (target === undefined) continue;
-        // 拡張子の無い指定（'./foo'・フォルダ）は、どのファイルかを決めないので、黙って辺から落とさない
-        if (extname(target) === '') {
-          throw new Error(`${key(file)}: import の先 "${specifier}" を辿れない（拡張子まで書く）`);
-        }
-        // ソースでない先（JSON・画像）は辺にしない
-        if (!SOURCE.test(target)) continue;
-        if (!statSync(target, { throwIfNoEntry: false })?.isFile()) {
-          throw new Error(`${key(file)}: import の先 "${specifier}" が無い`);
-        }
-        targets.add(key(target));
+        const target = resolveImport(root, file, specifier, options);
+        if (target !== undefined) targets.add(repoKey(root, target));
       }
-      graph.set(key(file), targets);
+      graph.set(repoKey(root, file), targets);
     }
   }
   return graph;
