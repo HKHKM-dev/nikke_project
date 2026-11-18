@@ -6,7 +6,7 @@
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { runSimulation } from '../sim/engine.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import {
   describeEveryShotInOneGroup,

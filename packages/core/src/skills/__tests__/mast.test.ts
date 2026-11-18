@@ -5,7 +5,7 @@ import { defenceAfterDown, type EnemyInput } from '../../damage.ts';
 import { applyResolvedEffect, ZERO_BUFFS } from '../buffs.ts';
 import { resolveDotEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveStateGrants } from '../resolve.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 

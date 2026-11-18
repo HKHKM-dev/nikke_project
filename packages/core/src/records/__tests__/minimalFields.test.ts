@@ -8,7 +8,7 @@ import {
   loadRecordsData,
   recordingMap,
 } from '../../../scripts/records-data.ts';
-import { parseSkillDefinition } from '../../skills/types.ts';
+import { parseSkillDefinition } from '../../skills/parse/definition.ts';
 import { validateMinimalFields, type Claim } from '../claims.ts';
 import type { Observation } from '../observations/types.ts';
 import { validateObservations, validateScope } from '../observations/validate.ts';

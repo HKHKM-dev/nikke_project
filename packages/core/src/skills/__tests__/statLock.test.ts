@@ -1,7 +1,7 @@
 // 値の固定（timed の lock。plan/design-stat-lock.md 3.1 節）の読み込みと、持ち主の和の上書き（applyStatLocks）
 import { describe, expect, it } from 'vitest';
 import { addRatioBuff, applyResolvedEffect, applyStatLocks, ZERO_BUFFS } from '../buffs.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { rawDefinition } from '../../__tests__/teamHelpers.ts';
 
 type Raw = { skills: Record<string, { effects: Record<string, unknown>[] }> };

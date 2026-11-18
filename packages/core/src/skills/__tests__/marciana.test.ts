@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { gameSecondsToFrames } from '../../time.ts';
 import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolvePassives, resolveTimed } from '../resolve.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 
 const marciana = characterOf(321);
 const def = parseSkillDefinition(rawDefinition(321));

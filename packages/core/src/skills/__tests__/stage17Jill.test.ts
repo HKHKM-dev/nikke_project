@@ -6,7 +6,7 @@ import type { EnemyInput } from '../../damage.ts';
 import { planTeamRun } from '../../frame/plan.ts';
 import type { TeamInput } from '../../team.ts';
 import { itemsOf } from '../holders.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from '../../__tests__/teamHelpers.ts';
 
 const JILL = 841;

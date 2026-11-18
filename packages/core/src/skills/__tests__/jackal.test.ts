@@ -6,9 +6,10 @@ import { makeCharacter } from '../../__tests__/fixtures.ts';
 import type { EnemyInput } from '../../damage.ts';
 import type { CharacterData, SkillRaw } from '../../types.ts';
 import { computeBurstHit, resolveBurstDamage, type ResolvedSkillDamage } from '../burstDamage.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { MAX_SKILL_LEVELS, targetPhraseOf } from '../resolve.ts';
 import { applyTreasure, TREASURE_PHASE_MAX } from '../treasure.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
+import type { SkillDefinition } from '../types.ts';
 
 const same = (v: string) => Array.from({ length: 10 }, () => v);
 const empty: SkillRaw = { id: 0, name: { ja: '', en: '' }, description: { ja: '', en: '' }, values: [] };

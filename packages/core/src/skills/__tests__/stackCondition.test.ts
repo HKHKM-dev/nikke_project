@@ -10,7 +10,8 @@ import { MAX_SKILL_LEVELS, resolveStackChanges, resolveTimed } from '../resolve.
 import { stackItems } from '../stacks.ts';
 import type { TimelineSlot } from '../timeline.ts';
 import type { FrameEvents } from '../triggers.ts';
-import { parseSkillDefinition, type SkillDefinition, type SkillEntry } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import type { SkillDefinition, SkillEntry } from '../types.ts';
 
 const D10 = gameSecondsToFrames(10);
 const FRAMES = 10 * D10;

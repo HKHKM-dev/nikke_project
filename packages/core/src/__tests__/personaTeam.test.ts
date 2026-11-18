@@ -11,13 +11,8 @@ import { planTeamRun } from '../frame/plan.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { isStateContent } from '../skills/resolve.ts';
 import { appliedFrames } from '../skills/timeline.ts';
-import {
-  parseSkillDefinition,
-  staticStatesOf,
-  type SkillDefinition,
-  type StateGrantEffect,
-  type TimedEffect,
-} from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
+import { staticStatesOf, type SkillDefinition, type StateGrantEffect, type TimedEffect } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { Element } from '../types.ts';
 import { applicationsOf, piecesOf, stateItemsOf } from './historyHelpers.ts';

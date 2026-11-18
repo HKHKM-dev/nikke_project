@@ -12,7 +12,7 @@ import { ZERO_BUFFS } from '../buffs.ts';
 import { computeSkillHit, resolveDotEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
 import { applyComposition } from '../composition.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 

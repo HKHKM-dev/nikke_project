@@ -56,7 +56,8 @@ import {
 import { itemsOf } from '../src/skills/holders.ts';
 import type { TreasurePhase } from '../src/skills/treasure.ts';
 import { compositionAllows, resolveSelfState, selfStateLookupsForTeam } from '../src/skills/composition.ts';
-import { SKILL_SLOTS, parseSkillDefinition, parseSkillIndex, type SkillEffect } from '../src/skills/types.ts';
+import { parseSkillDefinition, parseSkillIndex } from '../src/skills/parse/definition.ts';
+import { SKILL_SLOTS, type SkillEffect } from '../src/skills/types.ts';
 import { TEAM_SIZE, type TeamSlotInput } from '../src/team.ts';
 import type { BuildMasters, CharacterData, CharacterIndex, Element } from '../src/types.ts';
 import type { EnemyInput } from '../src/damage.ts';

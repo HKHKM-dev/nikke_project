@@ -1,8 +1,8 @@
 // 魔術師のカード編（plan/design-arcana-magician.md 2 節）: 状態の中身の「スキル N クールタイム X%▼」（skillCooldownDown）と、周期のきっかけの
 // クールタイムの印（cooldown）の読み込み、クールタイムを縮める窓の規則（cooldownTimer。ドロシーの発現と共通）
 import { describe, expect, it } from 'vitest';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { cooldownTimer } from '../timeline.ts';
-import { parseSkillDefinition } from '../types.ts';
 
 const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
 const def = (skill1: unknown[], skill2: unknown[] = []) => ({

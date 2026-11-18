@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { dotTickFrames, groupDotsByState } from '../../frame/plan.ts';
 import { resolveDamageEffects, resolveDotEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const nihilister = characterOf(261);

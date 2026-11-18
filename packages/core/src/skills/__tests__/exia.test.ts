@@ -5,7 +5,7 @@ import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { resolveBurstDamage, resolveDamageEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveStateContents, resolveTimed, type SkillLevels } from '../resolve.ts';
 import { applyTreasure, type TreasurePhase } from '../treasure.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 
 const EXIA = 210;

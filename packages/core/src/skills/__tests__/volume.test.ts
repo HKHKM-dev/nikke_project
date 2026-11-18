@@ -2,8 +2,8 @@
 // バーストの味方全体のクリティカル確率▲の解決（V-0757）。S1 の敵を倒した時の攻撃力▲は前提の外
 import { describe, expect, it } from 'vitest';
 import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolveTimed, type SkillLevels } from '../resolve.ts';
-import { parseSkillDefinition } from '../types.ts';
 
 const volume = characterOf(431);
 const def = parseSkillDefinition(rawDefinition(431));

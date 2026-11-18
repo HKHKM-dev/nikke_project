@@ -7,7 +7,7 @@ import { ZERO_BUFFS } from '../skills/buffs.ts';
 import { computeSkillHit } from '../skills/burstDamage.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { ENEMY, itemsOf, valuePiecesOf } from '../skills/holders.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { makeCharacter } from './fixtures.ts';

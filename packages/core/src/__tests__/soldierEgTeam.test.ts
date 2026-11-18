@@ -7,7 +7,7 @@ import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { chanceScaleAt, chanceValueOf } from '../skills/chance.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { piecesOf } from './historyHelpers.ts';

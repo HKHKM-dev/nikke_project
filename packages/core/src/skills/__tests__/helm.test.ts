@@ -7,7 +7,8 @@ import { applyChargeBuffs, ZERO_BUFFS } from '../buffs.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolveTimed } from '../resolve.ts';
 import { shotCountItems } from '../timeline.ts';
 import { applyTreasure } from '../treasure.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import type { SkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 

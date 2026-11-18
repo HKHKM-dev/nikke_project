@@ -3,8 +3,8 @@
 import { describe, expect, it } from 'vitest';
 import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { gameSecondsToFrames } from '../../time.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolvePassives, resolveTimed } from '../resolve.ts';
-import { parseSkillDefinition } from '../types.ts';
 
 const noise = characterOf(430);
 const def = parseSkillDefinition(rawDefinition(430));

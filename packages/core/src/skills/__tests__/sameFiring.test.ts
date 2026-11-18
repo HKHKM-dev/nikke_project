@@ -1,7 +1,7 @@
 // クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 3）: 条件 selfState の sameFiring（同じ発火で前に書いた付与が付ける
 // 分も数える）の読み込みの検査。同じ発火で上の段階が付くことは、編成のテスト（__tests__/quencyEscapeQueenTeam.test.ts）が見る
 import { describe, expect, it } from 'vitest';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 
 const empty = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
 const parse = (effects: Record<string, unknown>[]) =>

@@ -6,7 +6,8 @@ import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { applySelfHp } from '../composition.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
-import { parseSkillDefinition, selfHpThreshold } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import { selfHpThreshold } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from '../../__tests__/teamHelpers.ts';
 

@@ -10,7 +10,8 @@ import { MAX_SKILL_LEVELS, resolveTimed, resolveTrigger } from '../resolve.ts';
 import { triggerFrames } from '../timeline.ts';
 import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
 import { itemsOf, startOfFire } from '../holders.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import type { SkillDefinition } from '../types.ts';
 
 const tenLevels = (v: string) => Array.from({ length: 10 }, () => v);
 const skill = (values: string[]): SkillRaw => ({

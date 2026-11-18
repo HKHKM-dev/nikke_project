@@ -10,7 +10,7 @@ import { resolveBurstDamage } from '../skills/burstDamage.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS, skillValue } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
 import { characterOf, rawDefinition } from './data.ts';
 import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';

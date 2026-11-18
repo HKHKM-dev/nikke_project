@@ -15,7 +15,8 @@ import { loadRecordingsFile, loadRecordsData, recordingMap } from '../../scripts
 import { itemsOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../skills/resolve.ts';
 import { untilNextEndItems } from '../skills/timeline.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
+import type { SkillDefinition } from '../skills/types.ts';
 import type { TeamInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { gameSecondsToFrames } from '../time.ts';

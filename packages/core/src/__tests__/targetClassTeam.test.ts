@@ -6,7 +6,7 @@ import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { matchesTargetFilter } from '../skills/targets.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
 import { rawDefinition } from './data.ts';

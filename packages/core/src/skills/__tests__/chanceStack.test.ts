@@ -2,7 +2,7 @@
 // その読み込みの検査。分布は、乱数で多数回回した平均と突き合わせる。
 import { describe, expect, it } from 'vitest';
 import { chanceStackLevelsAt, chanceStackPieces, type ChanceOpportunity } from '../chance.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { rawDefinition } from '../../__tests__/data.ts';
 
 /** 決まった種の擬似乱数（mulberry32。テストを決定的にする） */

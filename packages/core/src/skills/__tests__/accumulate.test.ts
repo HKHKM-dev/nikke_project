@@ -11,7 +11,7 @@ import { runSimulation, type SimInput, type SimResult } from '../../sim/engine.t
 import type { TeamSlotInput } from '../../team.ts';
 import { fixedEnemy, fixedSlot, type FixedSlotOptions, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { framesToGameSeconds } from '../../time.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 
 const DOROTHY = 233;
 const DELTA = 20;

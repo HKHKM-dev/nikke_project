@@ -7,7 +7,7 @@ import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf, valuePiecesOf } from '../skills/holders.ts';
 import { appliedFrames } from '../skills/timeline.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { fixedEnemy, fixedSlot } from './teamHelpers.ts';
 

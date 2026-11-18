@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { computeTriggerDamage } from '../../damage.ts';
 import { computeFixedSpecAttack } from '../../fixedSpec.ts';
 import { ZERO_BUFFS, type BuffTotals } from '../buffs.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 

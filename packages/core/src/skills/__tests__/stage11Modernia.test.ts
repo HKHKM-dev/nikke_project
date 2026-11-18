@@ -12,7 +12,8 @@ import { stackItems } from '../stacks.ts';
 import type { TimelineSlot } from '../timeline.ts';
 import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
 import { itemsOf } from '../holders.ts';
-import { isFiringStat, isStateStat, parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import { isFiringStat, isStateStat } from '../types.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 

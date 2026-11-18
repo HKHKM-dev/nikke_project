@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { runSimulation } from '../sim/engine.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';

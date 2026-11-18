@@ -1,8 +1,8 @@
 // ソーダ：トゥインクルバニー S1 の数え方（V-0443・C-0580）: 回数のきっかけの発火の窓（firesDuring）。射撃は窓の外も含めて
 // 戦闘中ずっと数え、N の倍数に届いた発が窓の中のときだけ発火する。数える窓（during）との違いと、読み込みの検証
 import { describe, expect, it } from 'vitest';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { createTriggerTracker, type FrameEvents, type ShotEvent } from '../triggers.ts';
-import { parseSkillDefinition } from '../types.ts';
 
 const shot: ShotEvent = { lastShot: false, fullCharge: false, hits: 1, coreHits: 0 };
 const frameOf = (frame: number, s: ShotEvent | null, edge: 'start' | 'end' | null = null): FrameEvents => ({

@@ -2,7 +2,8 @@
 // 件数や ID の一覧は直書きしない（plan/design-stage20.md 3.6 節）。
 import { describe, expect, it } from 'vitest';
 import { loadClaims, loadSkillDefinitions } from '../../../scripts/records-data.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../../skills/types.ts';
+import { parseSkillDefinition } from '../../skills/parse/definition.ts';
+import type { SkillDefinition } from '../../skills/types.ts';
 import type { Claim } from '../claims.ts';
 import {
   claimCitations,

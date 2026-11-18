@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { fixedTargetsOf } from '../composition.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 
 function definitionWith(effect: Record<string, unknown>): unknown {
   const empty = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };

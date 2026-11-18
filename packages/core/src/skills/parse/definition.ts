@@ -1,4 +1,4 @@
-// スキル定義の読み込みの検査のうち、定義のファイル（data/skills/{resourceId}.json）と索引の読み込みの入口。types.ts が再び公開する。型は ../types.ts
+// スキル定義の読み込みの検査のうち、定義のファイル（data/skills/{resourceId}.json）と索引の読み込みの入口。型は ../types.ts
 import {
   type BurstStepChangeEffect,
   type ClaimRefs,

@@ -28,11 +28,10 @@ import { counterMax } from '../counters.ts';
 import { SKILL_LEVEL_MAX, targetPhraseOf } from '../resolve.ts';
 import { ATTACK_SPEED_WEAPONS } from '../parse/timed.ts';
 import { applyTreasure, TREASURE_PHASE_MAX } from '../treasure.ts';
+import { parseSkillDefinition, parseSkillIndex } from '../parse/definition.ts';
 import {
   isMaxStacksUpContent,
   isSkillCooldownDownContent,
-  parseSkillDefinition,
-  parseSkillIndex,
   SKILL_SLOTS,
   type SkillSlot,
   type StateContentItem,

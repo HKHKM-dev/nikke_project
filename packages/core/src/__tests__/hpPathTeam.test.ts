@@ -9,7 +9,7 @@ import { computeFixedSpecAttack, computeFixedSpecHp } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { applyResolvedEffect, ZERO_BUFFS } from '../skills/buffs.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { characterOf, rawDefinition } from './data.ts';
 import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from './teamHelpers.ts';

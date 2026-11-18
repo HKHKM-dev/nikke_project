@@ -6,7 +6,8 @@ import type { SkillRaw } from '../../types.ts';
 import { applyResolvedEffect, ZERO_BUFFS } from '../buffs.ts';
 import { resolveDamageEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolvePassives, resolveTimed } from '../resolve.ts';
-import { isFiringStat, parseSkillDefinition, type SkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import { isFiringStat, type SkillDefinition } from '../types.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 
 const tenLevels = (v: string) => Array.from({ length: 10 }, () => v);

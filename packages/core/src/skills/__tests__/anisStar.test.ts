@@ -7,7 +7,8 @@ import { resolveAllyGaugeAdd, resolvePerShotDamage } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolvePassives } from '../resolve.ts';
 import { burstUnitOf } from '../../burst/dynamic.ts';
 import { applyComposition, burstStepMixAllows } from '../composition.ts';
-import { burstReentryStepOf, parseSkillDefinition, staticStatesOf } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import { burstReentryStepOf, staticStatesOf } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const anis = characterOf(17);

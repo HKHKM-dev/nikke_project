@@ -6,7 +6,7 @@ import { effectFrameOf } from '../../burst/schedule.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { elapsedShortenedTimerFrames } from '../timeline.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 
 const DOROTHY = 233;
 /** このテストの枠の、既定と違う所 */

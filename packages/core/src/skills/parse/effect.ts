@@ -102,8 +102,7 @@ export function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect
 type EffectBodyParser = (v: Record<string, Json>, path: string, slot: SkillSlot) => SkillEffect;
 
 /**
- * 効果の種類ごとの読み込み（即時効果の種類は parseInstantEffect にまとめて渡す）。新しい種類はこの表に足す。
- * 値は関数の宣言だけを指す（最上位で types.ts の値を読まない。types.ts と parse/ は循環 import）
+ * 効果の種類ごとの読み込み（即時効果の種類は parseInstantEffect にまとめて渡す）。新しい種類はこの表に足す
  */
 const EFFECT_BODY_PARSERS = {
   passive: (v, path, slot) => {

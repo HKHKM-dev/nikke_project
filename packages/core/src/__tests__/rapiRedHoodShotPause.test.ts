@@ -6,7 +6,7 @@ import { METRICS } from '../records/observations/metrics/index.ts';
 import type { CompareSetup } from '../records/observations/setup.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { loadRecordingsFile, loadRecordsData, recordingMap } from '../../scripts/records-data.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 
 /** skill2 に効果を 1 つだけ置いた定義（検証にかける前の JSON） */
 function withSkill2(effect: unknown): unknown {

@@ -6,7 +6,8 @@ import { planTeamRun } from '../../frame/plan.ts';
 import type { TeamInput } from '../../team.ts';
 import { resolveShotGauges, resolveTimerGauges } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import type { SkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 

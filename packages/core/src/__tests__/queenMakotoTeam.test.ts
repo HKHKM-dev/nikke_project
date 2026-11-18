@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { elementMultiplier } from '../element.ts';
 import { MAX_SKILL_LEVELS, resolvePassives } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput } from '../team.ts';
 import type { Element } from '../types.ts';

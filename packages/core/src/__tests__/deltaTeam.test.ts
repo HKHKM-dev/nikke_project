@@ -2,7 +2,7 @@
 // 読まない。C-0589）。射撃の列のグループ分け（V-0027、C-0081）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';

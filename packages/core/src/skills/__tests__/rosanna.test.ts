@@ -13,7 +13,7 @@ import {
   type SkillLevels,
 } from '../resolve.ts';
 import { applyTreasure, type TreasurePhase } from '../treasure.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 
 const ROSANNA = 280;

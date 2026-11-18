@@ -13,7 +13,8 @@ import type { TeamInput } from '../../team.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import { applyComposition, burstStepInTeam, countsAsBurstStep } from '../composition.ts';
 import { MAX_SKILL_LEVELS, resolveInstant } from '../resolve.ts';
-import { burstStepChangeOf, parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import { burstStepChangeOf } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 import { fixedEnemy, fixedSlot, type FixedSlotOptions } from '../../__tests__/teamHelpers.ts';
 

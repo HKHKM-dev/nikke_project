@@ -5,7 +5,7 @@ import { MEASURED_BURST_DELAYS } from '../burst/landing.ts';
 import { HEXAGON_AFTER_ACTIVATION_FRAMES, effectFrameOf, hexagonFrameOf, hitFrameOf } from '../burst/schedule.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { timerFrames } from '../skills/timeline.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { dotTickFrames, planTeamRun } from '../frame/plan.ts';

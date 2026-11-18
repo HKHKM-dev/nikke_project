@@ -5,7 +5,7 @@ import { dotTickFrames, dotTickTracker, dotTicks, groupDotsByState } from '../..
 import { gameSecondsToFrame } from '../../time.ts';
 import { resolveDotEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const raven = characterOf(851);

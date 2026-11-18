@@ -7,7 +7,7 @@ import type { EnemyInput } from '../damage.ts';
 import { dotActiveSpans, dotTickFrames } from '../frame/dot.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
 import { rawDefinition } from './data.ts';
 import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';

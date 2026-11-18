@@ -10,7 +10,8 @@ import { planTeamRun } from '../frame/plan.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { itemsOf, selfHpRatioOf } from '../skills/holders.ts';
 import { resolveCondition } from '../skills/resolve.ts';
-import { parseSkillDefinition, selfHpHolds } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
+import { selfHpHolds } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import {
   characterOf,

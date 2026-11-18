@@ -11,7 +11,7 @@ import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { gameSecondsToFirstFrame } from '../../time.ts';
 import { computeBurstHit } from '../burstDamage.ts';
 import { shortenedTimerFrames, timerDamageFrames } from '../timeline.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 import { fixedEnemy, fixedTeam } from '../../__tests__/teamHelpers.ts';

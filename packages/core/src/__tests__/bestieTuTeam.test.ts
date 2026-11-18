@@ -8,7 +8,7 @@ import { burstHitsOfSlot } from '../burst/schedule.ts';
 import { computeTriggerDamage } from '../damage.ts';
 import { slotBurstHit } from '../skills/burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { burstHitBuffs, planTeamRun, sameActivationPiecesOf } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';

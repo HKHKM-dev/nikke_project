@@ -5,7 +5,7 @@ import { effectWindows, fixedTeam, rawDefinition, skillValueOf } from '../../__t
 import { planTeamRun } from '../../frame/plan.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import { counterMax } from '../counters.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 
 const VELVET = 316;
 const raw = rawDefinition(VELVET);

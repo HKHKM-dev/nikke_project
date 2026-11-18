@@ -24,7 +24,7 @@ import { planFixedCycle } from '../fixedCycle.ts';
 import { createTriggerTracker, replayEvents } from '../../skills/triggers.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../../skills/resolve.ts';
 import { applyTreasure } from '../../skills/treasure.ts';
-import { parseSkillDefinition } from '../../skills/types.ts';
+import { parseSkillDefinition } from '../../skills/parse/definition.ts';
 import type { CharacterData } from '../../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 

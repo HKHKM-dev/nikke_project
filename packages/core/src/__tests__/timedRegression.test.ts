@@ -9,7 +9,7 @@ import { MAX_SKILL_LEVELS, isTimedItem, type ItemEffect } from '../skills/resolv
 
 /** 窓の効果のトリガー（名前の付いた状態の中身はトリガーを持たない） */
 const triggerOf = (e: ItemEffect) => (isTimedItem(e) ? e.trigger : undefined);
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { runTeam } from './runTeam.ts';
 import { type TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';

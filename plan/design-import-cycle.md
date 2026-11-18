@@ -2,7 +2,7 @@
 
 - 何のための文書か: スキル定義の型（`skills/types.ts`）と読み込みの検査（`skills/parse/`）が互いを読み込んでいる循環を解消し、循環が戻らないようにする変更の、今の構造・案と得失・論点・段・確かめ方
 - 対象: `packages/core/src/skills/types.ts` の末尾の再公開、入口（`parseSkillDefinition`・`parseSkillIndex`・`parseSkillSupportIndex`）を読む側の import 文、`packages/core/src/index.ts`、循環を見る検査（新しく足す）。読み込みの検査の中身と、型・語彙は変えない
-- 状態: 承認待ち（4 節）
+- 状態: 完了（9 節）
 - 関連: [design-vocab-dedup.md](design-vocab-dedup.md) 9.2 節（この循環のために、表を読み込みの時に組む形を見送った）、[design-split-skill-holders.md](design-split-skill-holders.md)（`types.ts` を話題ごとのファイルに分けないと決めた）、[skills-guide.md](skills-guide.md) 1.4 節（語彙を足すときの手順）
 - 作成日: 2026-11-18
 - 調べた時点: main の 325dbd6e
@@ -146,6 +146,25 @@
 - 型の名前だけを並べた import 文 43 個を `import type` に直すこと。実行時に空の import として残るが、いまは循環に入っていない。入ったら 3.4 節の検査が落ちるので、その時にその文を `import type` に直す。
 - `skills/parse/` の表を、語彙の一覧から読み込みの時に組む形に直すこと（この変更の後に出来るようになるが、ここではしない）。
 
-## 9. 経過
+## 9. 作り（2026-11-18）
+
+論点は 3 つとも推奨の案で承認された（論点 1 は案 1、論点 2 は案 a、論点 3 は案 a）。
+
+- **循環を見る道具**: `tools/code/import-cycles.ts` に、ソース 1 つの実行時に残る import を読む `runtimeImportsOf`、リポジトリのグラフを作る `readImportGraph`（範囲は `REPO_IMPORT_GRAPH`）、循環の組を返す `findImportCycles` を置いた。テストは `tools/code/import-cycles.test.ts`（`tools/vitest.config.ts` の `include` に `code/**/*.test.ts` を足した）。再公開を消す前は、2.1 節の 1 組（17 ファイル）を並べて落ちた。
+- **import 文の書き換え**: 176 個（入口の名前だけの文 121 個・ほかの名前と一緒の文 55 個）。一緒の文は 2 つに分け、残りが型の名前だけになった 36 個は `import type` にした。足す文の置き場所は、相対パスの import がパスの順に並んでいるファイル（48）ではその順の所、並んでいないファイル（128）では元の文の所。
+- **再公開**: `skills/types.ts` の末尾の再公開を消し、`packages/core/src/index.ts` に入口の 3 つの再公開を足した。`types.ts` は値を 1 つも読み込まない。
+- **注記**: `types.ts` の冒頭・`parse/definition.ts` の冒頭・`parse/effect.ts` の `EFFECT_BODY_PARSERS` を今の形に直し、[skills-guide.md](skills-guide.md) 1.4 節に入口のファイルを書いた。
+
+**確かめた結果**（6 節。基の版は main の 23b428e4）:
+
+- `npm test`（409 ファイル）・`npm run typecheck`・変えたファイルの lint・`npm run build` が通る。
+- 循環の検査: 基の版は 1 組（17 ファイル）、後は 0 組。
+- 2.3 節の裏返し: `parse/timed.ts` の最上位に仮の表を足すと、node で `skills/types.ts`・`skills/parse/definition.ts`・`index.ts` のどれを先に読み込んでも 46 個、vitest でも 46 個になった（確かめた後に戻した）。
+- 差分: 書き換えた 176 ファイルで、import 文を除いた本文と、import する名前（型かどうかを含む）が基の版と同じ。
+- `@nikke/core` の公開面: `index.ts` が出す名前（682 個）と、その種類（関数・定数）が基の版と同じ。
+- 読み込みの結果・編成を通さない解決の結果・`runSimulation`（`trace` あり）の `SimResult` と `TeamResult`（4 編成と、比べる指定のある観測値の入力）の JSON が、基の版と文字列で一致した（3,553 行の要約が全部同じ）。
+
+## 10. 経過
 
 - 2026-11-18: 起案。
+- 2026-11-18: 承認。実装した（9 節）。

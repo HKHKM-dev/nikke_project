@@ -8,7 +8,7 @@ import { runSimulation } from '../../sim/engine.ts';
 import type { TeamSlotInput } from '../../team.ts';
 import { oneHitValue } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, skillValue } from '../resolve.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 

@@ -8,7 +8,7 @@ import { itemsOf } from '../holders.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import type { TimelineSlot } from '../timeline.ts';
 import { applyTreasure } from '../treasure.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 /** ミランダの宝物版 S2 の 3 行目（設計書 2 節の形） */

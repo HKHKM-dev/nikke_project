@@ -3,7 +3,7 @@
 // ターゲット指定は中身を持たない敵の状態（目録の withoutContents）で、S2 の条件 enemyState だけが読む（V-0660、C-0921〜C-0924）。
 import { describe, expect, it } from 'vitest';
 import { resolveBurstUsePause } from '../skills/burstDamage.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput } from '../team.ts';
 import { piecesOf, stateItemsOf } from './historyHelpers.ts';

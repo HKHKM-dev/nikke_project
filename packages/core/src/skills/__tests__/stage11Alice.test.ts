@@ -15,7 +15,7 @@ import {
 } from '../ranking.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolveTimed } from '../resolve.ts';
 import { canEverTarget, dependsOnContext, dependsOnRank, isEffectTarget } from '../targets.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 
 function definition(skills: Record<string, unknown>, resourceId = 1): unknown {
   const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };

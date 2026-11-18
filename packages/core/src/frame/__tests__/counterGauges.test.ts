@@ -9,7 +9,7 @@ import type { HolderLists } from '../../skills/holders.ts';
 import { MAX_SKILL_LEVELS } from '../../skills/resolve.ts';
 import type { TimelineSlot } from '../../skills/timeline.ts';
 import type { FrameEvents } from '../../skills/triggers.ts';
-import { parseSkillDefinition } from '../../skills/types.ts';
+import { parseSkillDefinition } from '../../skills/parse/definition.ts';
 import { latestDotTicks } from '../dot.ts';
 import { createCounterGauges } from '../firstPass/counterGauges.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';

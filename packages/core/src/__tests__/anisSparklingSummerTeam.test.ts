@@ -6,8 +6,8 @@
 import { describe, expect, it } from 'vitest';
 import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { timerFramesOf } from '../skills/timeline.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput } from '../team.ts';
 import {
   characterOf,

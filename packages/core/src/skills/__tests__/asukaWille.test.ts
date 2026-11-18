@@ -4,8 +4,9 @@
 import { describe, expect, it } from 'vitest';
 import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { resolveDamageEffects } from '../burstDamage.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { MAX_SKILL_LEVELS, resolveDotCancels, resolveTimed } from '../resolve.ts';
-import { isEndedTrigger, parseSkillDefinition } from '../types.ts';
+import { isEndedTrigger } from '../types.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
 type Raw = { skills: { skill1: Effects; skill2: Effects; burst: Effects } };

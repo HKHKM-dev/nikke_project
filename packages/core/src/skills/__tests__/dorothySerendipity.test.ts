@@ -3,8 +3,8 @@
 import { describe, expect, it } from 'vitest';
 import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { pelletsPerShot, ZERO_BUFFS } from '../buffs.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { resolveTimed } from '../resolve.ts';
-import { parseSkillDefinition } from '../types.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
 type Slot = 'skill1' | 'skill2' | 'burst';

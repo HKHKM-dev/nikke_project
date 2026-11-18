@@ -23,7 +23,7 @@ import {
   resolveStateGrants,
   skillValue,
 } from '../resolve.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const SNOW_WHITE_HA = 471;

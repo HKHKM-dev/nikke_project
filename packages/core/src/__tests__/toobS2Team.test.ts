@@ -11,7 +11,7 @@ import { variantDefinition } from '../records/sensitivity.ts';
 import { whileItems, type HeldOrigin } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS, resolvePassives, resolveWhileEffects } from '../skills/resolve.ts';
 import { applyTreasure, type TreasurePhase } from '../skills/treasure.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
 import { characterOf, rawDefinition } from './data.ts';

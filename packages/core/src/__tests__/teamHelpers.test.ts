@@ -7,8 +7,8 @@ import {
   computeFixedSpecHp,
   FIXED_SPEC_ENEMY_DEFENCE,
 } from '../fixedSpec.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
 import { characterOf, DEFINED_IDS, rawDefinition, type RawDefinition } from './data.ts';
 import {
   ENEMY_PRESETS,

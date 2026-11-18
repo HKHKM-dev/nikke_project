@@ -12,7 +12,7 @@ import {
   resolveTimed,
   resolveWhileEffects,
 } from '../resolve.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const misato = characterOf(833);
