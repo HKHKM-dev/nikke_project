@@ -176,3 +176,33 @@ export function backlogNameOfPath(path: string): string | undefined {
 export function isIssueSection(section: string): boolean {
   return section === '8' || section.startsWith('8.');
 }
+
+/** 課題を足すときの置き場所（records:new backlog）。name はファイル名（.json を除く）、order は `#` の列の無い節だけ */
+export type BacklogPlacement = { name: string; order?: number };
+
+/**
+ * 節 slot に課題を足すときの名前と order。`#` の列のある節は、その節の番号（手元の課題と、ほかのブランチが使った名前 taken）の
+ * 最大の次（2-NN）で、name は渡さない。ほかの節は name が要り、order は節の末尾（最大を 10 の倍数に切り捨てて 10 足す）か、first なら
+ * 先頭（最小 − 1）。誤りは文で返す
+ */
+export function backlogPlacement(
+  slot: BacklogSlot,
+  items: readonly BacklogItem[],
+  opts: { name?: string; first?: boolean; taken?: readonly string[] },
+): BacklogPlacement | string {
+  if (isNumbered(slot)) {
+    if (opts.name !== undefined)
+      return `節 ${slot.section} の課題の名前は番号（${slot.section}-NN）で、道具が振る（--name は渡さない）`;
+    const used = [...items.map((i) => i.name), ...(opts.taken ?? [])].flatMap((name) => {
+      const b = backlogNumber(name);
+      return b?.section === slot.section ? [b.n] : [];
+    });
+    return { name: `${slot.section}-${Math.max(0, ...used) + 1}` };
+  }
+  if (opts.name === undefined) return `節 ${slot.section} の課題には --name（英小文字・数字・ハイフン）が要る`;
+  if (items.some((i) => i.name === opts.name)) return `課題 ${opts.name} が既にある`;
+  const orders = items.filter((i) => i.section === slot.section && typeof i.order === 'number').map((i) => i.order!);
+  if (orders.length === 0) return { name: opts.name, order: 10 };
+  const order = opts.first === true ? Math.min(...orders) - 1 : Math.floor(Math.max(...orders) / 10) * 10 + 10;
+  return { name: opts.name, order };
+}

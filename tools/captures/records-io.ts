@@ -105,8 +105,14 @@ export function writeObservations(
   finished: readonly Observation[],
 ): void {
   if (finished.length === 0) return;
-  const path = `${OBSERVATIONS_DIR}${recordingId}.json`;
-  writeFileSync(path, `${JSON.stringify([...existing, ...finished], null, 2)}\n`);
-  spawnSync(process.platform === 'win32' ? 'npx.cmd' : 'npx', ['prettier', '--write', path], { stdio: 'inherit' });
+  const path = saveObservations(recordingId, [...existing, ...finished]);
   console.error(`${path} に ${finished.length} 件を足した（${finished.map((o) => o.id).join('・')}）`);
+}
+
+/** records/observations/<録画 id>.json を list で書き直して prettier で整える（records:new observation の --replace・--invalidate）。書いたパス */
+export function saveObservations(recordingId: string, list: readonly Observation[]): string {
+  const path = `${OBSERVATIONS_DIR}${recordingId}.json`;
+  writeFileSync(path, `${JSON.stringify(list, null, 2)}\n`);
+  spawnSync(process.platform === 'win32' ? 'npx.cmd' : 'npx', ['prettier', '--write', path], { stdio: 'inherit' });
+  return path;
 }
