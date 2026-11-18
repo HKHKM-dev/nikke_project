@@ -49,6 +49,15 @@ export function fail(message?: string): never {
   process.exit(2);
 }
 
+/** check の Error を、fail と同じ形（--help の案内つき）で出して止める */
+export function orFail<T>(check: () => T): T {
+  try {
+    return check();
+  } catch (e) {
+    return fail((e as Error).message);
+  }
+}
+
 const isParseArgsError = (e: unknown): e is Error =>
   e instanceof Error && 'code' in e && typeof e.code === 'string' && e.code.startsWith('ERR_PARSE_ARGS');
 

@@ -67,7 +67,7 @@ import { jstDate, parseSnapshotAnswer, snapshotForRecording, treasureForSlots } 
 import { gatewayUrl, move } from '../drive/gateway.ts';
 import { driveCaptures, driveHash, driveUnavailable, lsjson, rclone, remoteName } from '../drive/rclone.ts';
 import { relUnder, splitRel } from '../drive/sync-lib.ts';
-import { capturesDir, recordDir } from './dirs.ts';
+import { capturesDir, driveRecordPath, recordDir } from './dirs.ts';
 import {
   batchNamesAndNotes,
   checkRecordingId,
@@ -89,21 +89,12 @@ import {
 } from './intake-lib.ts';
 import { Drive, DRIVE_CALL_MS, isTransientDriveError, type DriveFile } from './drive.ts';
 import { ffprobe, sha256 } from './ffmpeg.ts';
-import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
+import { cliArgs, fail, orFail } from '../../packages/core/scripts/cli.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const ELEMENTS: readonly Element[] = ['Fire', 'Water', 'Wind', 'Electronic', 'Iron'];
 
 const { values, positionals } = cliArgs(import.meta.url, { allowPositionals: true, options: INTAKE_OPTIONS });
-
-/** intake-lib.ts の検査の Error を、使い方と一緒に出して止める */
-function orFail<T>(check: () => T): T {
-  try {
-    return check();
-  } catch (e) {
-    return fail((e as Error).message);
-  }
-}
 
 function envId(name: string): string {
   const v = process.env[name];
@@ -214,7 +205,7 @@ if (!values.child) {
 const source = positionals[0];
 if (!source || !values.id || !values.name) fail('元ファイル・--id・--name が要る');
 // drive:<相対パス> なら、Drive の record から取り込む（クラウド環境。冒頭の説明）
-const fromDrive = source.startsWith('drive:') ? source.slice('drive:'.length).replace(/^\/+/, '') : null;
+const fromDrive = driveRecordPath(source);
 if (fromDrive === null && !existsSync(source)) fail(`${source} が無い`);
 if (fromDrive !== null) {
   if (fromDrive === '') fail('drive: の後に record の中のパスが要る（--list-record で一覧）');
