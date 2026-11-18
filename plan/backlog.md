@@ -83,6 +83,7 @@
 - 照合の指標 `perShotHitDamage`（`packages/core/src/records/observations/metrics/damage.ts`）は、引数のフレームの区間の 1 トリガーの値の `perShot` から 1 回の値を出し、その時刻の発が部分チャージの発かを見ない。2 パス目は部分チャージの発に、きっかけが `fullChargeShot` の分（`perShotFullCharge`）を乗せないので、部分チャージの発を読む観測値では、モデルに無い追加ダメージの値を出す。いまの比べる観測値は、どれも部分チャージの発から離れたフレームを指す（2026-11-15 に調べた）。部分チャージの発の 1 回の値を比べる観測値が要るときに、その発の値（`partialChargeTriggerDamage` を通した `perShot`）から出す（[design-full-charge-fold.md](design-full-charge-fold.md) 3.2 節）
 - 値の固定（timed の `lock`）は、持ち主の和を作る 3 か所（`skills/holders/views.ts` の `firingBuffs`・`damageBuffsAt`、`skills/timeline.ts` の `buildSegments`）でだけ当てている。`frame/plan.ts` の `withSameActivationEffects`・`withEarlierSequentialEffects` は固定を当て直さず、条件 `selfBuffed` と、きっかけ `{ buffApplied }` は止めた▲も付いたと数え、区間の表示は止めた常時の値（装備・キューブ）の量を 0 にしない。いまの定義にはどれも効く組が無い（固定を持つ 4 体に、自分のバーストのチャージ速度▲・リロード速度▲と、これらを読む条件・きっかけが無い）。使い手が出たら、効果の列から和を作る関数を 1 つにして（足す → `applyStatLocks`）、和を作る所がそれを使う形にする（[design-stat-lock.md](design-stat-lock.md) 3.4 節）
 - モダン UI のバッジの既定の色（`apps/web/src/styles.css` の `.badge-ui_*` と `[class^='badge-…_']` の差し色・地の色の規則）は、クラス 1 つ分の詳細度を持つ。このため、場所ごとに色を変える規則（設定のボタンのライトでの反転・操作キャラの印のダークでの反転・育成を変えたスロットの青い歯車など）は、要素名や親を足して詳細度を上げている。ui のバッジの図柄を白にする規則も、バッジを 1 つ足すたびに列挙が伸びる。バッジの絵の縦横の比（`150 / 130` など）も、CSS の 7 か所に書き写している。直すなら、既定の色の規則を `:where(...)` で包む。あわせて、BadgeIcon がグループのクラスと、viewBox から作る `aspect-ratio` を付ける形にする（[design-modern-ui.md](design-modern-ui.md) の経過）
+- 型の名前だけを並べた import 文（`import { type A } from …`）は、`verbatimModuleSyntax` では中身が空の import として実行時に残る（読み込みが起きる）。lint の `consistent-type-imports`（`fixStyle: 'inline-type-imports'`）はこの形を作る。循環を見る検査（`tools/code/import-cycles.test.ts`）はこの文も辺に数えるので、型だけの参照で循環ができると落ちる。lint に `@typescript-eslint/no-import-type-side-effects` を足して自動で `import type` に直すと、型だけの参照が辺にならなくなる（[design-import-cycle.md](design-import-cycle.md) 2.4 節・8 節。2026-11-18 起票）
 - 取り込む前の下見（`tools/captures/fetch.ts drive:<パス>`）で落とした録画を、取り込み（`tools/captures/intake.ts drive:<パス>`）が Drive からもう一度落とす（録画 1 本分の時間と通信量）。intake が、下見の置き場所（`tools/captures/dirs.ts` の `recordFetchDir`）に同じ大きさのファイルがあればそれを使う形にする（plan/design-workflow-simplification-17.md 3 節）。
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
@@ -120,7 +121,6 @@
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
-- 使われていないコードを消し、型だけの import 文と値の写しを直す（2026-11-18 起票）→ 完了（2026-11-18）: [design-unused-code-cleanup.md](design-unused-code-cleanup.md)
 - `skills/types.ts` と `skills/parse/` の循環する import を解消する（2026-11-18 起票）→ 完了（2026-11-18）: [design-import-cycle.md](design-import-cycle.md)
 - テストの道具の重なりを共通の道具に寄せる（2026-11-18 起票）→ 完了（2026-11-18。段 T1〜T3）: [design-test-helpers.md](design-test-helpers.md)
 - 語彙の定義の重なりを減らす（stat の一覧と対象の絞り込みの欄）（2026-11-17 起票）→ 完了（2026-11-17）: [design-vocab-dedup.md](design-vocab-dedup.md)
