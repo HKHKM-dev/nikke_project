@@ -1,17 +1,12 @@
 // アスカ（830）: 属性で絞る対象（targetElement）の DSL・解決・対象の判定と、バーストの吸収回復の書き方（plan/design-asuka.md 2 節・経過）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import type { CharacterData } from '../../types.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolveTimed } from '../resolve.ts';
 import { canEverTarget, isEffectTarget } from '../targets.ts';
 import { parseSkillDefinition } from '../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const asuka = readJson<CharacterData>('../../../data/characters/830.json');
-const raw830 = readJson<{ skills: Record<string, { effects: unknown[] }> }>('../../../data/skills/830.json');
+const asuka = characterOf(830);
+const raw830 = rawDefinition<{ skills: Record<string, { effects: unknown[] }> }>(830);
 
 /** 830.json を写して、slot の effects を差し替えた定義を検証にかける */
 function withEffects(slot: 'skill1' | 'skill2' | 'burst', effects: unknown[]): unknown {

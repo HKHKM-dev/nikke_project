@@ -1,10 +1,8 @@
 // ミサト（833）: S1「射撃マニュアル」（状態。中身は命中率▲。60 発ごとに自分に 1 スタック・3 スタック・5 秒）の解決と、
 // S1 の回復（2 段目の段 8。残りの HP の割合が最も低い味方 1 機。C-0567）、S2 の射撃マニュアルのフルスタックの間の与える HP 回復量▲
 // （C-1334）と、バーストの味方全体の持続回復（5 秒間維持。C-0646）。V-0110・V-0797。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { gameSecondsToFrames } from '../../time.ts';
-import type { CharacterData } from '../../types.ts';
 import {
   MAX_SKILL_LEVELS,
   resolveInstant,
@@ -15,13 +13,10 @@ import {
   resolveWhileEffects,
 } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const misato = readJson<CharacterData>('../../../data/characters/833.json');
-const def = parseSkillDefinition(readJson<unknown>('../../../data/skills/833.json'));
+const misato = characterOf(833);
+const def = parseSkillDefinition(rawDefinition(833));
 
 describe('ミサト（833）の定義', () => {
   it('resolves S1 to Shooting Manual on self every 60 normal shots, 3 stacks for 5 s, holding a hit rate up', () => {

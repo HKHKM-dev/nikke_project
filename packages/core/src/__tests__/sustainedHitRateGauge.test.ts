@@ -3,7 +3,6 @@
 //   2. 当たりの件はスタックの段ごとに持つ（持ち主ごとの一覧編: 1 パス目の履歴。plan/design-holder-effects.md 段 B）
 //   3. アスカのバーストの▲は、フルバーストの窓に収まり、時刻表を変えない（設計書 0.1 節）
 //   4. 手入力の枠には持続の▲を効かせない
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
@@ -16,14 +15,10 @@ import { itemsOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { toTimelineSlots, type TeamInput, type TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { battleSecondsToFrames } from '../time.ts';
+import { characterOf, rawDefinition, readData } from './data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
+const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
 const enemy: EnemyInput = {
   defence: FIXED_SPEC_ENEMY_DEFENCE,
@@ -35,7 +30,7 @@ const enemy: EnemyInput = {
 };
 
 function fixedSlot(id: number, auto = true): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../data/characters/${id}.json`);
+  const character = characterOf(id);
   const fixed = computeFixedSpecAttack(character);
   return {
     character,
@@ -44,7 +39,7 @@ function fixedSlot(id: number, auto = true): TeamSlotInput {
     condition: { coreHitRate: 0.3, distanceBonus: true },
     ...(auto ? { conditionMode: 'auto' as const } : {}),
     skills: {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     },
   };

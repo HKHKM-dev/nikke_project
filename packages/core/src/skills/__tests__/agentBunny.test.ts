@@ -1,23 +1,16 @@
 // エード：エージェントバニー編（plan/design-agent-bunny.md 2 節）: 適正最小射程距離▲（minEffectiveRange）・条件 inEffectiveRange・
 // 貫通特化（pierce）・貫通ダメージ▲（pierceDamage）の語彙の検証と式
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTriggerDamage } from '../../damage.ts';
 import { computeFixedSpecAttack } from '../../fixedSpec.ts';
 import { ZERO_BUFFS, type BuffTotals } from '../buffs.ts';
 import { parseSkillDefinition } from '../types.ts';
-import type { CharacterData } from '../../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
 const ADE_AB = 315;
-const raw = readJson<{ skills: { skill1: Effects; skill2: Effects; burst: Effects } }>(
-  `../../../data/skills/${ADE_AB}.json`,
-);
-const character = readJson<CharacterData>(`../../../data/characters/${ADE_AB}.json`);
+const raw = rawDefinition<{ skills: { skill1: Effects; skill2: Effects; burst: Effects } }>(ADE_AB);
+const character = characterOf(ADE_AB);
 
 const patched = (slot: 'skill1' | 'skill2', index: number, patch: Record<string, unknown>) => {
   const copy = structuredClone(raw);
@@ -58,7 +51,7 @@ describe('貫通ダメージ▲の式（P1。plan/design-agent-bunny.md 2.3 節�
   });
 
   it("keeps Pierce Damage up, Projectile Explosion Damage up and Attack Damage up in one sum (I-DOLL Flower's explosion)", () => {
-    const flower = readJson<CharacterData>(`../../../data/characters/304.json`);
+    const flower = characterOf(304);
     const fixed = computeFixedSpecAttack(flower);
     const rl = (buffs: Partial<BuffTotals>) =>
       computeTriggerDamage({

@@ -1,23 +1,18 @@
 // 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 2〜4）: カウンタで続く状態の語彙。アークレンジャー・ブラック（570）の定義は
 // 撮影 A1 の後に書くので、ここでは語彙だけの定義で確かめる（バーストの代わりに戦闘開始時にバッテリーを 100 にする）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamSlotInput } from '../../team.ts';
 import { gameSecondsToFirstFrame } from '../../time.ts';
-import type { CharacterData } from '../../types.ts';
 import { itemsOf } from '../holders.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf } from '../../__tests__/data.ts';
 
 const ARK_RANGER_BLACK = 570;
-const character = readJson<CharacterData>(`../../../data/characters/${ARK_RANGER_BLACK}.json`);
+const character = characterOf(ARK_RANGER_BLACK);
 
 type Effect = Record<string, unknown>;
 

@@ -1,24 +1,19 @@
 // 2 段目の段 15 の PR 2（plan/design-skill-stage15.md 2.2・3.2 節）: ティア（451）。きっかけ { coverHealed }（「遮蔽物の HP を回復した時」）は、
 // 段 17 の PR 1 から、自分の枠が遮蔽物 HP 回復（coverHeal）を受けた出来事で発火する。T4 の▼は、発動の後に付いたもの（同じ発動から付いたものも）も
 // 走っている CT を縮める（V-0566）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
-import type { CharacterData } from '../../types.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, readData } from '../../__tests__/data.ts';
 
 const TIA = 451;
-const character = readJson<CharacterData>(`../../../data/characters/${TIA}.json`);
-const rawDefinition = readJson<Record<string, unknown>>(`../../../data/skills/${TIA}.json`);
+const character = characterOf(TIA);
+const rawDefinition = readData<Record<string, unknown>>(`skills/${TIA}.json`);
 const definition = parseSkillDefinition(rawDefinition);
 
 const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };

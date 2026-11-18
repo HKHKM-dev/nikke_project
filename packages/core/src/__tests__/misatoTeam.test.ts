@@ -1,7 +1,6 @@
 // ミサト（833）を含む編成: S1「射撃マニュアル」のスタック（60 発ごとに自分に命中率 5.04%▲・3 スタック・5 秒）が区間の N に入り、
 // 条件が自動の枠でコア命中率を C-0036 の式で上げること（C-0183・C-0184。持続の▲の入れ方は C-0170）と、射撃の列のグループ分け。V-0110。
 // バーストの味方全体の持続回復（1 秒間隔・5 秒間維持）は、付いた時に 1 回だけ回復を起こす（C-0646。仮説）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
@@ -15,14 +14,10 @@ import { hitRateNOf } from '../skills/buffs.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { piecesOf } from './historyHelpers.ts';
+import { characterOf, rawDefinition, readData } from './data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
+const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
 const rangeEnemy: EnemyInput = {
   defence: FIXED_SPEC_ENEMY_DEFENCE,
@@ -35,7 +30,7 @@ const rangeEnemy: EnemyInput = {
 const plainEnemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
 
 function fixedSlot(id: number, auto: boolean): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../data/characters/${id}.json`);
+  const character = characterOf(id);
   const fixed = computeFixedSpecAttack(character);
   return {
     character,
@@ -44,7 +39,7 @@ function fixedSlot(id: number, auto: boolean): TeamSlotInput {
     condition: { coreHitRate: 1, distanceBonus: false },
     ...(auto ? { conditionMode: 'auto' as const } : {}),
     skills: {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     },
   };

@@ -12,7 +12,14 @@ import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { runTeam } from './runTeam.ts';
-import { describeEveryShotInOneGroup, fixedSlot, readJson, skillValueOf, windowsFrom } from './teamHelpers.ts';
+import {
+  describeEveryShotInOneGroup,
+  fixedSlot,
+  rawDefinition,
+  readJson,
+  skillValueOf,
+  windowsFrom,
+} from './teamHelpers.ts';
 
 const JACKAL = 111;
 const ELEGG = 500;
@@ -52,7 +59,7 @@ const TEAMS: Record<string, TeamInput> = {
 const UP = skillValueOf(JACKAL, 'burst', 1) / 100;
 
 describe('ジャッカル（111）の定義', () => {
-  const def = parseSkillDefinition(readJson<unknown>('../../data/skills/111.json'));
+  const def = parseSkillDefinition(rawDefinition(111));
 
   it('writes the burst as a timed oneEnemyBurstDamage for all allies, and S1・S2 as notes only', () => {
     expect(def.skills.burst.effects).toEqual([

@@ -1,19 +1,14 @@
 // ロザンナ：シックオーシャン（283）: バーストの味方全体の持続ダメージ▲と敵全体の受けるダメージ▲（10 秒）の解決と、
 // パーツの効果だけの S1（noEffect）と、S2 の 30 秒ごとの持続ダメージ（発動の 8f 後に付く。ゲージは未対応で partial）。V-0760。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { gameSecondsToFrames } from '../../time.ts';
-import type { CharacterData } from '../../types.ts';
 import { resolveDotEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolvePassives, resolveTimed } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const rosanna = readJson<CharacterData>('../../../data/characters/283.json');
-const def = parseSkillDefinition(readJson<unknown>('../../../data/skills/283.json'));
+const rosanna = characterOf(283);
+const def = parseSkillDefinition(rawDefinition(283));
 
 describe('ロザンナ：シックオーシャン（283）の定義', () => {
   it('resolves the burst to sustained damage up and damage taken up on all allies for 10 s', () => {

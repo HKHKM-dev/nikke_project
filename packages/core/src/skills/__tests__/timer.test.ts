@@ -1,19 +1,14 @@
 // ニヒリスター（261）: 時間の周期のトリガー（{ everySeconds }）の DSL・解決・発火フレーム（plan/design-nihilister.md 8.1 節）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import type { CharacterData } from '../../types.ts';
 import { resolveDamageEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { timerFrames, triggerFrames } from '../timeline.ts';
 import { createTriggerTracker } from '../triggers.ts';
 import { parseSkillDefinition } from '../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const nihilister = readJson<CharacterData>('../../../data/characters/261.json');
-const raw261 = readJson<{ skills: Record<string, { effects: unknown[] }> }>('../../../data/skills/261.json');
+const nihilister = characterOf(261);
+const raw261 = rawDefinition<{ skills: Record<string, { effects: unknown[] }> }>(261);
 
 /** 261.json を写して、skill2 の effects を差し替えた定義を検証にかける */
 function withSkill2(effects: unknown[]): unknown {

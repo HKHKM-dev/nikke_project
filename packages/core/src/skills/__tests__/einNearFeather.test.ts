@@ -1,6 +1,5 @@
 // アインのニアフェザー編（plan/design-ein-near-feather.md 1 節）: 召喚の展開（kind: 'summon'）と、機数で間隔が変わる召喚の攻撃
 // （damage のきっかけ { summon }）。語彙の検証と、1 パス目の機数と進み（ヒットのフレーム・ゲージ）を、アイン（391）の定義で確かめる
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
@@ -8,17 +7,13 @@ import { effectFrameOf } from '../../burst/schedule.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamSlotInput } from '../../team.ts';
 import { GAME_SECONDS_PER_FRAME, gameSecondsToFrames } from '../../time.ts';
-import type { CharacterData } from '../../types.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition, summonCountsOf } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const EIN = 391;
-const character = readJson<CharacterData>(`../../../data/characters/${EIN}.json`);
-const definition = readJson<{ skills: Record<string, { effects: Effect[] }> }>(`../../../data/skills/${EIN}.json`);
+const character = characterOf(EIN);
+const definition = rawDefinition<{ skills: Record<string, { effects: Effect[] }> }>(EIN);
 
 type Effect = Record<string, unknown>;
 
@@ -132,7 +127,7 @@ describe('ニアフェザー（単騎・バーストなし。アインの定義�
 // バーストの展開（burstUse）: 効果のフレームで組を 6 機に置き換え、進みを 0 に戻す。リター I・デルタ II・アイン III（操作）
 describe('ニアフェザー（バーストあり。リター + デルタ + アイン）', () => {
   const slotOf = (id: number): TeamSlotInput => {
-    const c = readJson<CharacterData>(`../../../data/characters/${id}.json`);
+    const c = characterOf(id);
     const fixed = computeFixedSpecAttack(c);
     return {
       character: c,
@@ -141,7 +136,7 @@ describe('ニアフェザー（バーストあり。リター + デルタ + ア�
       hpOverride: computeFixedSpecHp(c),
       condition: { coreHitRate: 0, distanceBonus: false },
       skills: {
-        definition: parseSkillDefinition(readJson(`../../../data/skills/${id}.json`)),
+        definition: parseSkillDefinition(rawDefinition(id)),
         levels: MAX_SKILL_LEVELS,
       },
     };

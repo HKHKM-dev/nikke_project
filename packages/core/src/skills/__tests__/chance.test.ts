@@ -1,7 +1,5 @@
 // ソルジャーE.G.（300）: 確率のきっかけ（回数トリガーの chance / chanceRef）の DSL・解決・期待値の窓（plan/design-soldier-eg.md 3.1 節）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import type { CharacterData } from '../../types.ts';
 import {
   CHANCE_VALUE_DIGITS,
   chancePieces,
@@ -14,13 +12,10 @@ import { KEY_DIGITS } from '../timeline.ts';
 import { MAX_SKILL_LEVELS, resolveTimed, resolveTrigger } from '../resolve.ts';
 import { createTriggerTracker, type FrameEvents, type ShotEvent } from '../triggers.ts';
 import { parseSkillDefinition } from '../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const soldier = readJson<CharacterData>('../../../data/characters/300.json');
-const raw300 = readJson<{ skills: Record<string, { effects: unknown[] }> }>('../../../data/skills/300.json');
+const soldier = characterOf(300);
+const raw300 = rawDefinition<{ skills: Record<string, { effects: unknown[] }> }>(300);
 
 /** 300.json を写して、skill1 の effects を差し替えた定義を検証にかける */
 function withSkill1(effects: unknown[]): unknown {

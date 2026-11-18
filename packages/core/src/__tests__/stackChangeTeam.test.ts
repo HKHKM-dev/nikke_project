@@ -1,6 +1,5 @@
 // 2 段目の段 3 の PR 1（plan/design-skill-stage3.md 1.1・1.2・2.1 節）: スタック量の増加（stackChange）と、回数のきっかけの数える窓
 // （during）の付与・timed。定義は data/skills のもの（ソーダ：トゥインクルバニー・クイーン（真））と、それを書き換えたもの
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -10,21 +9,13 @@ import { itemsOf, valuePiecesOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 const SODA = 314;
 const QUEEN = 870;
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
 type RawDefinition = { skills: Record<string, { effects: Record<string, unknown>[]; notes?: unknown[] }> };
-const rawDefinition = (id: number) => readJson<RawDefinition>(`../../data/skills/${id}.json`);
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-
 function slotOf(id: number, definition?: unknown): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -32,7 +23,7 @@ function slotOf(id: number, definition?: unknown): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  const raw = definition ?? (DEFINED.has(id) ? rawDefinition(id) : undefined);
+  const raw = definition ?? (DEFINED_IDS.has(id) ? rawDefinition<RawDefinition>(id) : undefined);
   if (raw !== undefined) slot.skills = { definition: parseSkillDefinition(raw), levels: MAX_SKILL_LEVELS };
   return slot;
 }
@@ -102,7 +93,7 @@ describe('ソーダ：トゥインクルバニーのゴールデンチップ（C
   });
 
   it('stops at the max stacks of the grant', () => {
-    const raw = structuredClone(rawDefinition(SODA));
+    const raw = structuredClone(rawDefinition<RawDefinition>(SODA));
     raw.skills.skill1!.effects[0] = { ...raw.skills.skill1!.effects[0]!, amountRef: undefined, amount: 60 };
     const plan = run([slotOf(SODA, raw)], false, 0);
     expect(itemsOf(plan.history, { holder: 0, state: 'goldenChip' })).toHaveLength(50);
@@ -112,7 +103,7 @@ describe('ソーダ：トゥインクルバニーのゴールデンチップ（C
 describe('フルバースト中だけ数える付与（クイーン（真）の定義を書き換え）', () => {
   it('fires a grant with during: fullBurst only on shots inside the Full Burst windows', () => {
     const q = 2;
-    const raw = structuredClone(rawDefinition(QUEEN));
+    const raw = structuredClone(rawDefinition<RawDefinition>(QUEEN));
     raw.skills.skill1!.effects.push({
       kind: 'state',
       state: 'camouflage',

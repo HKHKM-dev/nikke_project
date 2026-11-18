@@ -2,7 +2,6 @@
 // 味方全員のダメージの和（C-0901）で、最大量で切る。爆発は窓の終わりの releaseDelayFrames 後（C-0902）。トロニー（501）の蓄積爆破は、
 // 付けた後、切れる 13f 前までの自分の発の値 × 割合を溜め、最大量に届いた発の 13f 後か、切れる時に出す（C-0903・C-0904・C-0927）。
 // 届いたかは 1 パス目が数える
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
@@ -10,15 +9,11 @@ import { effectFrameOf } from '../../burst/schedule.ts';
 import { planTeamRun } from '../../frame/plan.ts';
 import { runSimulation, type SimInput, type SimResult } from '../../sim/engine.ts';
 import type { TeamSlotInput } from '../../team.ts';
-import type { CharacterData } from '../../types.ts';
 import { rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { framesToGameSeconds } from '../../time.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf } from '../../__tests__/data.ts';
 
 const DOROTHY = 233;
 const DELTA = 20;
@@ -31,7 +26,7 @@ const WINDOW = 588;
 const DELAY = 211;
 
 function slotOf(rid: number, definition?: SkillDefinition): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../../data/characters/${rid}.json`);
+  const character = characterOf(rid);
   const fixed = computeFixedSpecAttack(character);
   return {
     character,
@@ -40,7 +35,7 @@ function slotOf(rid: number, definition?: SkillDefinition): TeamSlotInput {
     hpOverride: computeFixedSpecHp(character),
     condition: { coreHitRate: 1, distanceBonus: false, hitRate: 1 },
     skills: {
-      definition: definition ?? parseSkillDefinition(readJson<unknown>(`../../../data/skills/${rid}.json`)),
+      definition: definition ?? parseSkillDefinition(rawDefinition(rid)),
       levels: MAX_SKILL_LEVELS,
       treasurePhase: 0,
     },

@@ -1,7 +1,6 @@
 // 2 段目の段 1 の PR 2（plan/design-skill-stage1.md 1.2・1.4〜1.6 節・2.2 節）: 解除（removeState）、直前に自分がバーストを使用して
 // いれば（condition.usedBurst）、状態ごとの静的の決め方、時間で変わるバーストゲージのチャージ速度と、それで書き直したマナの定義。
 // 定義は data/skills のもの（クイーン（真）・マナ）と、それを書き換えたもの
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -11,23 +10,16 @@ import { itemsOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition, staticStatesOf, type SkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData, Element } from '../types.ts';
+import type { Element } from '../types.ts';
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
 type RawEffect = Record<string, unknown>;
 type RawDefinition = { skills: Record<string, { effects: RawEffect[]; notes?: unknown[] }> };
-const rawDefinition = (id: number) => readJson<RawDefinition>(`../../data/skills/${id}.json`);
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-
 const MANA = 290;
 const QUEEN = 870;
 
 function slotOf(id: number, definition?: unknown): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -35,7 +27,7 @@ function slotOf(id: number, definition?: unknown): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  const raw = definition ?? (DEFINED.has(id) ? rawDefinition(id) : undefined);
+  const raw = definition ?? (DEFINED_IDS.has(id) ? rawDefinition<RawDefinition>(id) : undefined);
   if (raw !== undefined) slot.skills = { definition: parseSkillDefinition(raw), levels: MAX_SKILL_LEVELS };
   return slot;
 }
@@ -121,9 +113,9 @@ describe('解除と usedBurst の読み込み', () => {
 describe('解除で閉じる件（クイーン（真）の定義を書き換え）', () => {
   /** ラム（I）+ デルタ（II）+ クイーン（真）（III・操作）。クイーン（真）だけが III なので、どのフルバーストでもクイーン（真）が撃つ */
   const q = 2;
-  const extra = rawDefinition(QUEEN).skills.skill1!.effects.length;
+  const extra = rawDefinition<RawDefinition>(QUEEN).skills.skill1!.effects.length;
   const withEffects = (effects: RawEffect[]) => {
-    const raw = structuredClone(rawDefinition(QUEEN));
+    const raw = structuredClone(rawDefinition<RawDefinition>(QUEEN));
     raw.skills.skill1!.effects.push(...effects);
     return run([slotOf(822), slotOf(20), slotOf(QUEEN, raw)], 'Wind', q);
   };
@@ -188,7 +180,7 @@ describe('解除で閉じる件（クイーン（真）の定義を書き換え�
 
 /** マナの定義を、2 段目の段 1 より前の書き方（マターシグマを常時パッシブ・フルバーストの開始の効果は毎回発動）に戻したもの */
 function manaBeforeStage1(): RawDefinition {
-  const raw = structuredClone(rawDefinition(MANA));
+  const raw = structuredClone(rawDefinition<RawDefinition>(MANA));
   const s2 = raw.skills.skill2!.effects;
   const conditionless = (e: RawEffect): RawEffect => {
     const { condition: _condition, ...rest } = e;
@@ -205,7 +197,7 @@ function manaBeforeStage1(): RawDefinition {
 
 describe('マナ（2 段目の段 1 の 2.2 節）', () => {
   it('writes Metal γ as a static state and Metal σ as a state removed at the start of Full Burst', () => {
-    const def = parseSkillDefinition(rawDefinition(MANA));
+    const def = parseSkillDefinition(rawDefinition<RawDefinition>(MANA));
     expect(staticStatesOf(def)).toEqual(['metalGamma']);
     expect(def.skills.skill2.effects.map((e) => e.kind)).toEqual([
       'state',

@@ -1,17 +1,12 @@
 // アリス：ワンダーランドバニー（195）の定義（V-0766）: S1 の 60 発ごとの回復とニンジンパーティー、S2 のフルバーストの開始・終わりの
 // 効果、バーストの再突入と回復。スタック量▲（S1 の 2 行目）は未対応の notes。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import type { CharacterData } from '../../types.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolveStateGrants, resolveTimed, type SkillLevels } from '../resolve.ts';
 import { burstReentryStepOf, parseSkillDefinition } from '../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const alice = readJson<CharacterData>('../../../data/characters/195.json');
-const def = parseSkillDefinition(readJson<unknown>('../../../data/skills/195.json'));
+const alice = characterOf(195);
+const def = parseSkillDefinition(rawDefinition(195));
 /** Lv10 でない解決値の例（S1 Lv7・S2 Lv7・バースト Lv4） */
 const MID_LEVELS: SkillLevels = { skill1: 7, skill2: 7, burst: 4 };
 

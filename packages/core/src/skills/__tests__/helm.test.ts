@@ -1,19 +1,14 @@
 // ヘルム編: DSL の追加（stat の normalCritRate・chargeDamageMultiplier、即時効果 burstGauge、timed の「N 発間維持」）。
 // plan/design-helm.md 2 節・V-0033。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { computeTriggerDamage } from '../../damage.ts';
-import type { CharacterData } from '../../types.ts';
 import { applyChargeBuffs, ZERO_BUFFS } from '../buffs.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolveTimed } from '../resolve.ts';
 import { shotCountItems } from '../timeline.ts';
 import { applyTreasure } from '../treasure.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 function definition(skills: Partial<Record<keyof SkillDefinition['skills'], unknown>>): unknown {
   const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
@@ -97,8 +92,8 @@ describe('parseSkillDefinition（ヘルム編）', () => {
 });
 
 describe('ヘルム（352）の定義の解決', () => {
-  const character = readJson<CharacterData>('../../../data/characters/352.json');
-  const base = parseSkillDefinition(readJson<unknown>('../../../data/skills/352.json'));
+  const character = characterOf(352);
+  const base = parseSkillDefinition(rawDefinition(352));
   const treasure = applyTreasure(character, base, 3);
 
   it('resolves the treasure version at Lv10 (段階 3)', () => {

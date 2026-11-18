@@ -1,5 +1,4 @@
 // 絞り込みの表（data/characters/filter.json。plan/design-character-filter.md 3 節）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   FILTER_EFFECTS,
@@ -13,12 +12,11 @@ import {
 } from '../filterTable.ts';
 import { buildFilterTable } from '../filterTableBuild.ts';
 import type { CharacterData, CharacterIndex } from '../types.ts';
+import { readData } from './data.ts';
 
-const data = <T>(path: string): T =>
-  JSON.parse(readFileSync(new URL(`../../data/${path}`, import.meta.url), 'utf8')) as T;
-const index = data<CharacterIndex>('characters/index.json').characters;
-const characters = index.map((c) => data<CharacterData>(`characters/${c.resourceId}.json`));
-const table = data<FilterTable>('characters/filter.json');
+const index = readData<CharacterIndex>('characters/index.json').characters;
+const characters = index.map((c) => readData<CharacterData>(`characters/${c.resourceId}.json`));
+const table = readData<FilterTable>('characters/filter.json');
 
 describe('絞り込みの表', () => {
   it('置いてある表は、キャラのデータから作ったものと同じ（違えば npm run filter-table で作り直す）', () => {

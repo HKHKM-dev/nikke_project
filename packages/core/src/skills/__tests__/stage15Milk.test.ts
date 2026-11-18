@@ -1,29 +1,23 @@
 // 2 段目の段 15 の PR 1（plan/design-skill-stage15.md 2.1・3.1 節）: ミルク（141）の宝物版。T4 のバーストスキルクールタイム▼を timed
 // （戦闘開始時・持続）で書いた最初の使い手と、即時の▼（フルチャージ 10 発ごと・味方全体）。HP の条件の即値（selfHp.atLeast。基礎版の S2）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
-import type { CharacterData } from '../../types.ts';
 import { applySelfHp } from '../composition.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition, selfHpThreshold } from '../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const character = (rid: number) => readJson<CharacterData>(`../../../data/characters/${rid}.json`);
-const definition = (rid: number) => parseSkillDefinition(readJson<unknown>(`../../../data/skills/${rid}.json`));
+const definition = (rid: number) => parseSkillDefinition(rawDefinition(rid));
 
 const MILK = 141;
 const DELTA = 20;
 const IDOLL_SUN = 308;
 
 function slotOf(rid: number, treasurePhase: 0 | 3 = 0): TeamSlotInput {
-  const c = character(rid);
+  const c = characterOf(rid);
   const fixed = computeFixedSpecAttack(c);
   return {
     character: c,
@@ -68,7 +62,7 @@ describe('selfHp.atLeast（説明文に即値で書かれた HP の閾値）', (
 
   it('keeps the base S2 at full HP and drops it below 80%', () => {
     const def = definition(MILK);
-    const milk = character(MILK);
+    const milk = characterOf(MILK);
     expect(applySelfHp(def, milk, MAX_SKILL_LEVELS, 1).skills.skill2.effects).toHaveLength(1);
     expect(applySelfHp(def, milk, MAX_SKILL_LEVELS, 0.79).skills.skill2.effects).toHaveLength(0);
   });

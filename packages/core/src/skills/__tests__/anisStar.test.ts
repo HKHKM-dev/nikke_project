@@ -2,26 +2,21 @@
 // 私だけの星（自分の攻撃力▲）と CT▼ は自分を除く基本バースト段階 1 の味方がいないときだけ、追加ダメージは射撃ごと（perShot）。
 // みんなの星はバースト再突入 I 段階（burstReentry。V-0121）。S2 のみんなの星のときの回復は heal + burstStepMix
 // （plan/design-heal-vocabulary.md 2.1 節）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import type { CharacterData } from '../../types.ts';
 import { resolveAllyGaugeAdd, resolvePerShotDamage } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolvePassives } from '../resolve.ts';
 import { burstUnitOf } from '../../burst/dynamic.ts';
 import { applyComposition, burstStepMixAllows } from '../composition.ts';
 import { burstReentryStepOf, parseSkillDefinition, staticStatesOf } from '../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const anis = readJson<CharacterData>('../../../data/characters/17.json');
-const flower = readJson<CharacterData>('../../../data/characters/304.json');
-const redHood = readJson<CharacterData>('../../../data/characters/470.json');
-const crown = readJson<CharacterData>('../../../data/characters/330.json');
-const avistar = readJson<CharacterData>('../../../data/characters/441.json');
-const delta = readJson<CharacterData>('../../../data/characters/20.json');
-const raw = readJson<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>('../../../data/skills/17.json');
+const anis = characterOf(17);
+const flower = characterOf(304);
+const redHood = characterOf(470);
+const crown = characterOf(330);
+const avistar = characterOf(441);
+const delta = characterOf(20);
+const raw = rawDefinition<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>(17);
 const def = parseSkillDefinition(raw);
 
 /** 定義の skill1 の 1 つ目の効果を差し替えた JSON（検証エラーを見る用） */

@@ -1,6 +1,5 @@
 // アニス：スター（17）の S1 の味方のゲージ（allyGaugeAdd。plan/design-anis-star-ally-gauge.md）: 味方のゲージ 1 回ごとに、
 // 自分の最初の発の着弾の前は 840、着弾から 1,680 を足す（C-0244〜C-0246・C-0620）。自分の分は ×1.06 のまま（C-0198）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { SG_PELLET_GAUGE_HIT_RATE } from '../burst/dynamic.ts';
 import type { BuildEffect } from '../buildEffects.ts';
@@ -11,13 +10,9 @@ import { planTeamRun } from '../frame/plan.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
+import { characterOf, rawDefinition, readData } from './data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
+const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
 const rangeEnemy: EnemyInput = {
   defence: FIXED_SPEC_ENEMY_DEFENCE,
@@ -29,7 +24,7 @@ const rangeEnemy: EnemyInput = {
 };
 
 function fixedSlot(id: number): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../data/characters/${id}.json`);
+  const character = characterOf(id);
   const fixed = computeFixedSpecAttack(character);
   return {
     character,
@@ -38,7 +33,7 @@ function fixedSlot(id: number): TeamSlotInput {
     condition: { coreHitRate: 1, distanceBonus: false },
     conditionMode: 'auto',
     skills: {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     },
   };
@@ -170,7 +165,7 @@ describe('アニス：スター S1 の味方のゲージ（allyGaugeAdd）', () 
   });
 
   it('allows at most one allyGaugeAdd per definition', () => {
-    const raw = readJson<{ skills: { skill2: { effects: unknown[] } } }>('../../data/skills/17.json');
+    const raw = rawDefinition<{ skills: { skill2: { effects: unknown[] } } }>(17);
     raw.skills.skill2.effects.push({ kind: 'allyGaugeAdd', ref: 1 });
     expect(() => parseSkillDefinition(raw)).toThrow(/at most one allyGaugeAdd/);
   });

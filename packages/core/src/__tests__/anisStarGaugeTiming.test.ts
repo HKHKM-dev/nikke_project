@@ -1,6 +1,5 @@
 // アニス：スター（17）の満タンと発動の時刻（plan/design-anis-star-gauge-timing.md）: 最初の発の物のゲージ（入力。C-0243）、
 // 誘導弾の飛ぶ時間（C-0413）、シューティングスターの飛ぶ時間（C-0504）。どれも 1 パス目のゲージの量と時刻だけを変える。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
@@ -11,13 +10,10 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { validateObstacleBreaks, type TeamInput, type TeamSlotInput } from '../team.ts';
 import { gameSecondsToFirstFrame, gameSecondsToFrames } from '../time.ts';
-import type { CharacterData, TargetProfile } from '../types.ts';
+import type { TargetProfile } from '../types.ts';
+import { characterOf, rawDefinition, readData } from './data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const rawMaster = readJson<Record<string, unknown>>('../../data/enemies.json');
+const rawMaster = readData<Record<string, unknown>>('enemies.json');
 const master = parseEnemyPresets(rawMaster);
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
 
@@ -37,7 +33,7 @@ const withFlight = rangeEnemy(profile);
 const withoutFlight = rangeEnemy(profileWithoutFlight);
 
 function fixedSlot(id: number): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../data/characters/${id}.json`);
+  const character = characterOf(id);
   const fixed = computeFixedSpecAttack(character);
   return {
     character,
@@ -46,7 +42,7 @@ function fixedSlot(id: number): TeamSlotInput {
     // 条件は手入力（照合の既定）。飛ぶ時間は条件の決め方に依らず、的の表と着地点で決まる（3.3 節）
     condition: { coreHitRate: 1, distanceBonus: false },
     skills: {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     },
   };

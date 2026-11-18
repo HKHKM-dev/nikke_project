@@ -1,7 +1,6 @@
 // Stage 8: 編成単位の確認（plan/design-stage8.md 8.4・8.5 節）。
 // - 倍率ダメージの発動が、撃った発の 10 回ごとに出る
 // - 録画 0021（クイーン（真）の分配ダメージ 6,323,975）と録画 0020（マナのゲージ速度で 1 回目の満タン）の回帰
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { slotPieces } from './historyHelpers.ts';
 import { summarizeSchedule } from '../burst/schedule.ts';
@@ -15,18 +14,12 @@ import { runTeam } from './runTeam.ts';
 import { simTeamResult } from '../sim/teamResult.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { type TeamInput, type TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { framesToGameSeconds, gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 /** スペック固定のニケ。定義があれば Lv10 で載せる */
 function fixedSlot(id: number): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../data/characters/${id}.json`);
+  const character = characterOf(id);
   const fixed = computeFixedSpecAttack(character);
   const slot: TeamSlotInput = {
     character,
@@ -34,9 +27,9 @@ function fixedSlot(id: number): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 0, distanceBonus: false },
   };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)) as SkillDefinition,
+      definition: parseSkillDefinition(rawDefinition(id)) as SkillDefinition,
       levels: MAX_SKILL_LEVELS,
     };
   }

@@ -2,7 +2,6 @@
 // 条件 inFullBurst）、名前の無い窓の
 // 周期の短縮（periodShorten の window。縮めた次の発動のフレームだけで見る）、防御力無視の倍率ダメージ（damageType "true"）、
 // burstUsers の基本バースト段階、特殊改造（チャージ速度▼の発数の維持）（V-0569）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { BurstSchedule } from '../../burst/schedule.ts';
 import type { EnemyInput } from '../../damage.ts';
@@ -10,15 +9,11 @@ import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } 
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { gameSecondsToFirstFrame } from '../../time.ts';
-import type { CharacterData } from '../../types.ts';
 import { computeBurstHit } from '../burstDamage.ts';
 import { shortenedTimerFrames, timerDamageFrames } from '../timeline.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
 const def = (skill2: unknown[], skill1: unknown[] = []) => ({
@@ -144,8 +139,8 @@ describe('防御力無視の倍率ダメージ（C-0783）', () => {
 
 describe('エイダ（V-0569）', () => {
   const read = (rid: number) => ({
-    character: readJson<CharacterData>(`../../../data/characters/${rid}.json`),
-    definition: parseSkillDefinition(readJson<Record<string, unknown>>(`../../../data/skills/${rid}.json`)),
+    character: characterOf(rid),
+    definition: parseSkillDefinition(rawDefinition<Record<string, unknown>>(rid)),
   });
   const slotOf = (rid: number): TeamSlotInput => {
     const { character, definition } = read(rid);

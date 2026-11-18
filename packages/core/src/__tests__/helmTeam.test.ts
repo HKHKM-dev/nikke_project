@@ -1,6 +1,5 @@
 // ヘルム（352）を含む編成: 宝物版（段階 3）の即時のゲージのチャージ・「10 発間維持」のチャージダメージ倍率▲・射撃の列のグループ分け
 // （plan/design-helm.md、V-0033）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -13,18 +12,11 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { burstHitBuffs, burstSnapshotState, planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { piecesOf } from './historyHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -32,9 +24,9 @@ function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput 
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
       treasurePhase,
     };

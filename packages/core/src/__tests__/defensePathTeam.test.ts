@@ -2,7 +2,6 @@
 // 対象の絞り込み「自分と自分より最終防御力が低い味方」（targetDefense: lowerThanSelf。アニス：スター（17）の S2 の発射体爆発ダメージ▲。
 // C-0587・C-0588）。撮影の見込みの編成（2.2 節の録画 A・B）と録画 0163 の編成の対象の枠、射撃の列のグループ分け。論点 4 の続き: 味方の
 // 防御力▲ も比べに入る（デルタ（20）の S2 を間接の notes から効果にした。C-0589。録画 0486 でデルタが外れ、録画 0488 で入る）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
@@ -21,24 +20,19 @@ import { MAX_SKILL_LEVELS, resolveTimed } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { battleSecondsToFrames, gameSecondsToFrames } from '../time.ts';
-import type { CharacterData } from '../types.ts';
 import { piecesOf } from './historyHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition, readData } from './data.ts';
 
 const ANIS_STAR = 17;
 const DELTA = 20;
 const ISABEL = 231;
 const FLOWER = 304;
 const CINDERELLA = 511;
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
-const definitionOf = (id: number) => parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`));
-const fixedDefence = (id: number) => computeFixedSpecDefence(character(id));
+const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
+const fixedDefence = (id: number) => computeFixedSpecDefence(characterOf(id));
 
 function fixedSlot(id: number, extra: Partial<TeamSlotInput> = {}): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   return {
     character: c,
@@ -66,7 +60,7 @@ const CONTROL = team([fixedSlot(ANIS_STAR), fixedSlot(DELTA), fixedSlot(CINDEREL
 const REC163 = team([fixedSlot(DELTA), fixedSlot(ANIS_STAR), fixedSlot(FLOWER), fixedSlot(ISABEL)], 1);
 // 録画 B の編成を、画面の既定（カスタムの敵に射撃場の的の表・条件は自動）で: II（デルタ）の CT 待ちで、アニス：スターの
 // 防御力▲（10 秒）が切れた後に始まるフルバーストがある
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
+const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
 const custom: EnemyInput = { defence: 100, element: null, hasCore: true };
 const profile = targetProfileForEnemy(master, custom)!;
 const WAITING: TeamInput = {
@@ -88,7 +82,7 @@ const JUMPING: TeamInput = {
 };
 
 /** バーストの防御力▲（説明文の値。スキル Lv10）の % を割合にしたもの */
-const burstDefenceUp = Number(character(ANIS_STAR).skills.burst.values[4]![9]) / 100;
+const burstDefenceUp = Number(characterOf(ANIS_STAR).skills.burst.values[4]![9]) / 100;
 
 type Fire = { start: number; slots: number[]; ends: number[] };
 
@@ -262,7 +256,7 @@ describe('自分と自分より最終防御力が低い味方（C-0586）', () =
 // バーストの防御力▲ が無い録画 0486 では、デルタは自分の防御力▲ でアニス：スターのバフ前を上回って対象から外れ、アニス：スターの
 // 防御力▲ が効いている間に始まる録画 0488 では入る（デルタは SR で、発射体爆発ダメージ▲ は値に効かない。付くかどうかだけが変わる）
 describe('デルタの S2 の防御力▲（C-0589）', () => {
-  const delta = character(DELTA);
+  const delta = characterOf(DELTA);
   const deltaUp = Number(delta.skills.skill2.values[0]![9]) / 100;
   const deltaSeconds = Number(delta.skills.skill2.values[1]![9]);
 
@@ -311,7 +305,7 @@ describe('デルタの S2 の防御力▲（C-0589）', () => {
 
   it('is what leaves Delta out: without it the 録画 0486 composition targets her, as before (間接の notes の形)', () => {
     const without = structuredClone(
-      readJson<{ skills: Record<string, { effects: unknown[]; notes?: unknown[] }> }>('../../data/skills/20.json'),
+      rawDefinition<{ skills: Record<string, { effects: unknown[]; notes?: unknown[] }> }>(20),
     );
     without.skills.skill2 = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
     const input = team(

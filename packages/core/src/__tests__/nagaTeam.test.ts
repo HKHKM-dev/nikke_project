@@ -1,6 +1,5 @@
 // ナガ（450）を含む編成: S2 の 1 つめ（通常攻撃 5 発ごとに、最終攻撃力の高い味方 2 機へコアダメージ▲ 5 秒。C-0592・C-0593）。
 // コアダメージ▲の付く先が 2 機であること。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -9,17 +8,10 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 function fixedSlot(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -27,9 +19,9 @@ function fixedSlot(id: number): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     };
   }

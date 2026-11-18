@@ -3,7 +3,6 @@
 //   1. 区間の状態の buffs.hitRate に持続の▲が入り、2 つの▲は和になる
 //   2. 1 トリガーの値が、その区間の N で出し直したコア命中率を使う
 //   3. 手入力の枠と、持続の▲の無い区間は今までと同じ
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
@@ -24,14 +23,10 @@ import { hitRateNOf } from '../skills/buffs.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { gameSecondsToFrames } from '../time.ts';
+import { characterOf, rawDefinition, readData } from './data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
+const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
 const enemy: EnemyInput = {
   defence: FIXED_SPEC_ENEMY_DEFENCE,
@@ -43,7 +38,7 @@ const enemy: EnemyInput = {
 };
 
 function fixedSlot(id: number, auto: boolean): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../data/characters/${id}.json`);
+  const character = characterOf(id);
   const fixed = computeFixedSpecAttack(character);
   return {
     character,
@@ -52,7 +47,7 @@ function fixedSlot(id: number, auto: boolean): TeamSlotInput {
     condition: { coreHitRate: 0.3, distanceBonus: true },
     ...(auto ? { conditionMode: 'auto' as const } : {}),
     skills: {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     },
   };

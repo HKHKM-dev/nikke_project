@@ -1,12 +1,12 @@
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeCadence, fullReloadFrames, reloadChunks, reloadStartOffset, simulateShotFrames } from '../cadence.ts';
 import { shotFramesUpTo } from '../frame/shooter.ts';
 import { firingParams, ZERO_FIRING_BUFFS, type StanceFrames } from '../frame/firing.ts';
 import type { ChangedWeapon } from '../skills/buffs.ts';
-import type { CharacterData, ShotParams } from '../types.ts';
+import type { ShotParams } from '../types.ts';
 import { framesToGameSeconds } from '../time.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
+import { characterOf } from './data.ts';
 
 function shot(overrides: Partial<ShotParams>): ShotParams {
   return {
@@ -268,9 +268,7 @@ describe('reloadChunks', () => {
 // ラム（822、SR）: 発と発の間 82f、構えは 11f（SR）で 1 発目は 70f。フラワー（304、RL）は構え 12f で 71f。紅蓮BS は stage11ScarletBsTeam.test.ts（30f）
 describe('first shot from hiding (C-0232)', () => {
   it('ラム fires the first shot 12f earlier than the interval, and after a reload at the full interval', () => {
-    const ram = JSON.parse(
-      readFileSync(new URL('../../data/characters/822.json', import.meta.url), 'utf8'),
-    ) as CharacterData;
+    const ram = characterOf(822);
     const c = computeCadence(ram.shot);
     expect(c.shotFrames[1]).toBe(82);
     expect(c.firstShotFrames).toBe(70);
@@ -278,9 +276,7 @@ describe('first shot from hiding (C-0232)', () => {
   });
 
   it('フラワー (RL) takes the full 12f aim from hiding: 71f', () => {
-    const flower = JSON.parse(
-      readFileSync(new URL('../../data/characters/304.json', import.meta.url), 'utf8'),
-    ) as CharacterData;
+    const flower = characterOf(304);
     const c = computeCadence(flower.shot);
     expect(c.shotFrames[1]).toBe(82);
     expect(c.firstShotFrames).toBe(71);

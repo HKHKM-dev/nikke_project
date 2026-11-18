@@ -2,7 +2,7 @@
 
 - 何のための文書か: `packages/core` のテストが 1 ファイルずつ自前で持っている同じ道具（JSON を読む・枠を作る・編成を作る・敵を作る）を、共通の道具（`packages/core/src/__tests__/` のテストでないファイル）に寄せる変更の、今の構造・案と得失・論点・段・確かめ方
 - 対象: `packages/core/src/` の下のテスト（`*.test.ts`）と、共通の道具（`__tests__/teamHelpers.ts` ほか）。本体のコードは変えない
-- 状態: 承認待ち（4 節の論点）
+- 状態: 進行中（5 節の段）
 - 関連: [skills-guide.md](skills-guide.md) 1.4 節の「テスト」（編成のテストの書き方と例）、[design-vocab-dedup.md](design-vocab-dedup.md)（本体の側の重なりを寄せた変更）、[design-split-long-functions.md](design-split-long-functions.md) 9 節・[design-split-first-pass.md](design-split-first-pass.md) 8 節（テストの分割は扱わないとした）
 - 作成日: 2026-11-18
 - 調べた時点: main の 37de18db
@@ -117,6 +117,8 @@
 
 ## 4. 論点（オーナーの判断）
 
+決定（2026-11-18、オーナー）: どの論点も推奨の案で承認。
+
 <!-- prettier-ignore -->
 | # | 論点 | 推奨 | ほかの案 |
 | --- | --- | --- | --- |
@@ -163,6 +165,26 @@
 - テストのファイルの名前（`stage8Team.test.ts` など）・長い `describe` の分割・テストの数を減らすこと。
 - 定義を作る道具（`definition`・`definitionWith`・`patched`。案 3）と、そのテストだけの作り物（`makeCharacter` を使う `character` など）。
 
-## 9. 経過
+## 9. 作り
+
+### 9.1 段 T1（2026-11-18）
+
+- `__tests__/data.ts` を足した（`readData`・`characterOf`・`rawDefinition`・`DEFINED_IDS`。import は `node:fs` と型だけ）。`teamHelpers.ts` の `characterOf`・`rawDefinition` は、これの再 export にした。`teamHelpers.ts` の `readJson`（`__tests__/` からの相対パスで読む）は、`data/enemies.json` を読む所が段 T3 まで使うので残した。
+- 置き換えたもの（使い捨ての脚本で、構文木から書き換えた）: 手元の `readJson`（テストの場所から解く 3 行の形）とその呼び出し、`character` などの 1 行の読み手（`(id) => readJson<CharacterData>(…)`）、`DEFINED`、直に書いた `JSON.parse(readFileSync(new URL(…)))`。置き換えで中身が共通の道具を呼ぶだけになった包み関数は消した。
+- 置き換える呼び出しは、書いてある相対パスをテストの場所から解いた先が `packages/core/data/` の下にあり、残りのパスが同じものだけ（読む先が同じことは、置き換えの条件で確かめている）。
+- 残したもの: `records/observations/` を読む手元の `readJson`（`kurumiTeam.test.ts`・`ravenTeam.test.ts`）、絶対パスを受ける `readJson`（`skills/__tests__/definitions.test.ts`）、名前も形も違う読み手（`read`・`load` など数か所）。段 T3 の lint の規則を足すときに、残すか寄せるかを決める。
+- 5 節から変えた所: `master`・`profile`（`data/enemies.json` の敵のプリセットと的）は段 T3 に回した。使う所の大半が `rangeEnemy` の写しの中で、`rangeEnemy` を寄せると使う所が減るため。
+- 手引き（[skills-guide.md](skills-guide.md) の「テスト」）の例を、共通の道具を使う `a2Team.test.ts` に替え、道具の写しを作らないことを 1 行足した。
+
+**確かめた結果**（基の版は main の 8148a615）:
+
+- `npm test` が通り、テストのファイルの数とテストの数が main と同じ。`npm run typecheck`・lint が通る。
+- 期待値の行（`expect(`・`it(`・`describe(`・`toBe`・`toEqual` を含む行）の差分は、呼び出しの名前の付け替え（`character(` → `characterOf(` など）だけ。付け替えを戻すと、足した行と引いた行が全部対になる。
+- 本体（テストでないファイル）の差分は、`__tests__/data.ts`・`__tests__/teamHelpers.ts` と、文書と課題のファイルだけ。
+- テストの時間（`npx vitest run` を main と段の後で交互に 3 回ずつ）: main は 70.9・73.1・77.4 秒、段の後は 71.0・76.2・76.9 秒。回ごとの揺れの中で、増えていない。
+
+## 10. 経過
 
 - 2026-11-18: 起案。
+- 2026-11-18: オーナーが、論点をすべて推奨の案で承認した。
+- 2026-11-18: 段 T1 を実装した（9.1 節）。`master`・`profile` は段 T3 に回した。

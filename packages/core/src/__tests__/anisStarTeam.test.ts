@@ -1,6 +1,5 @@
 // アニス：スター（17）を含む編成: S1 のバースト段階の構成の分岐（私だけの星の攻撃力▲は、自分を除く基本バースト段階 1 の味方がいないときだけ。
 // plan/design-anis-star-s1.md）、フルチャージの発ごとの追加ダメージ（perShot）、フルバースト終了時の CT▼、射撃の列のグループ分け。V-0116。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
@@ -12,13 +11,9 @@ import { runSimulation } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
+import { characterOf, rawDefinition, readData } from './data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
+const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
 const rangeEnemy: EnemyInput = {
   defence: FIXED_SPEC_ENEMY_DEFENCE,
@@ -31,7 +26,7 @@ const rangeEnemy: EnemyInput = {
 const plainEnemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
 
 function fixedSlot(id: number, auto: boolean): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../data/characters/${id}.json`);
+  const character = characterOf(id);
   const fixed = computeFixedSpecAttack(character);
   return {
     character,
@@ -40,7 +35,7 @@ function fixedSlot(id: number, auto: boolean): TeamSlotInput {
     condition: { coreHitRate: 1, distanceBonus: false },
     ...(auto ? { conditionMode: 'auto' as const } : {}),
     skills: {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     },
   };

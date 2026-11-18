@@ -1,7 +1,6 @@
 // 2 段目の段 11 の PR 1（plan/design-skill-stage11.md 2.1・2.2 節）: 状態のフルスタックで起こす使用武器の変更、CDN に無い変更後の武器の形
 // （rateOfFire・instantFire・firstShotDelayFrames）、残弾数減少（ammoDecrease）と変更の終わりのきっかけ（{ weaponChangeEnd }）。
 // 使い手はラプラス：アルティメットヒーロー（103）の S1（V-0528）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
@@ -9,18 +8,13 @@ import { drainAmmo, initialShooter } from '../../frame/shooter.ts';
 import { firingParams } from '../../frame/firing.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
-import type { CharacterData } from '../../types.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL } from '../../weapons.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const LAPLACE = 103;
-const character = (id: number) => readJson<CharacterData>(`../../../data/characters/${id}.json`);
-const definitionOf = (id: number) => parseSkillDefinition(readJson<unknown>(`../../../data/skills/${id}.json`));
+const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 
 const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
 function withSkill1(...effects: unknown[]): unknown {
@@ -91,7 +85,7 @@ describe('語彙の検証', () => {
 
   it('rejects rateOfFire when CDN gives the changed rate (a burst weapon change)', () => {
     const def = definitionOf(LAPLACE);
-    const c = character(LAPLACE);
+    const c = characterOf(LAPLACE);
     const burst = { ...def.skills.burst, effects: [{ ...change, trigger: 'burstUse' as const }] };
     const withCdn = { ...c, burstSkill: { ...c.burstSkill, changeWeapon: { rateOfFire: 1440, shotId: 1 } } };
     expect(() =>
@@ -102,7 +96,7 @@ describe('語彙の検証', () => {
 
 describe('残弾数減少', () => {
   it('drains the ammo and starts a reload at 0 (the last shot rule: the chunk minus 1)', () => {
-    const shot = { ...character(LAPLACE).shot };
+    const shot = { ...characterOf(LAPLACE).shot };
     const params = firingParams(shot);
     const state = initialShooter(shot, undefined, params);
     state.ammo = 115;
@@ -115,7 +109,7 @@ describe('残弾数減少', () => {
 });
 
 describe('ラプラス：アルティメットヒーローの S1（V-0528）', () => {
-  const c = character(LAPLACE);
+  const c = characterOf(LAPLACE);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,

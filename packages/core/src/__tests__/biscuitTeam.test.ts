@@ -1,6 +1,5 @@
 // ビスケット（381）の S1（フルバーストタイムの終わりに火力型の味方へ通常攻撃のクリティカル確率▲と持続回復）とバースト（支援型の味方へ
 // 攻撃力▲と吸収回復）を、撮影（V-0775）と同じ編成で見る。対象のクラスの絞り込みは targetClass（plan/design-skill-stage9.md 1.1 節）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import {
@@ -14,24 +13,19 @@ import { planTeamRun } from '../frame/plan.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { battleSecondsToFrames, gameSecondsToFrames } from '../time.ts';
 import { piecesOf } from './historyHelpers.ts';
 import { runTeam } from './runTeam.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from './data.ts';
 
 const FLOWER = 304;
 const BISCUIT = 381;
 const SOLDIER_EG = 300;
 const COCOA = 311;
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
-const definitionOf = (id: number) => parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`));
+const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 
 function fixedSlot(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   return {
     character: c,

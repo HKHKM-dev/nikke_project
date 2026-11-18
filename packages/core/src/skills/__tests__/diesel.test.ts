@@ -1,9 +1,7 @@
 // ディーゼル（72）の定義（plan/design-diesel.md）: 基礎版と宝物版の読み込みと、Lv ごとの解決値。イチゴキャンディ（命中 N 回ごと・
 // 10 スタック・最大装弾数▲）、フルスタックの消費のきっかけの弾丸チャージ・貫通ダメージ▲（2.1 節）、宝物版のヘイトと、ヘイトの間の
 // スタック量▲
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import type { CharacterData } from '../../types.ts';
 import {
   resolveInstant,
   resolveStackChanges,
@@ -15,18 +13,15 @@ import {
 } from '../resolve.ts';
 import { applyTreasure } from '../treasure.ts';
 import { parseSkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 type RawDefinition = {
   skills: Record<string, { effects: Record<string, unknown>[]; notes?: unknown[] }>;
   treasureSkills: Record<string, { effects: Record<string, unknown>[]; notes?: unknown[] }>;
 };
 
-const diesel = readJson<CharacterData>('../../../data/characters/72.json');
-const raw = readJson<RawDefinition>('../../../data/skills/72.json');
+const diesel = characterOf(72);
+const raw = rawDefinition<RawDefinition>(72);
 const def = parseSkillDefinition(raw);
 const LV1: SkillLevels = { skill1: 1, skill2: 1, burst: 1 };
 

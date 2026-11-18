@@ -1,6 +1,5 @@
 // 2 段目の段 3 の PR 2（plan/design-skill-stage3.md 1.3・2.2 節）: フルスタックの消費のきっかけ（{ fullStack }）と、それで書き直した
 // クラウン（330）の S2（リラックス 20 スタックで外れて回復。C-0271）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -10,15 +9,11 @@ import { itemsOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from './data.ts';
 
 const CROWN = 330;
-const crown = readJson<CharacterData>(`../../data/characters/${CROWN}.json`);
-const crownDefinition = () => parseSkillDefinition(readJson<unknown>(`../../data/skills/${CROWN}.json`));
+const crown = characterOf(CROWN);
+const crownDefinition = () => parseSkillDefinition(rawDefinition(CROWN));
 
 const empty = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
 const parse = (effects: Record<string, unknown>[]) =>

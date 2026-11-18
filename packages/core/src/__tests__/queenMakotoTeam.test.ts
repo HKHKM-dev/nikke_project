@@ -1,7 +1,6 @@
 // クイーン（真）（870）を含む編成: S1 の有利コードの攻撃ダメージ▲（持続。C-0296・V-0171）、S2 の鉄・拳・制・裁！の▲
 // （フルバースト終了まで。C-0307・V-0211）、S1 の 1more の分配ダメージ（発動の 24f 後にそのフレームのバフで出る。C-0310・V-0212）。
 // 有利の敵（風圧）で、▲が属性の倍率 1.1 に足されること（C-0119 と同じ elementDamage）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { elementMultiplier } from '../element.ts';
@@ -10,17 +9,11 @@ import { MAX_SKILL_LEVELS, resolvePassives } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData, Element } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
+import type { Element } from '../types.ts';
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 function fixedSlot(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -28,9 +21,9 @@ function fixedSlot(id: number): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     };
   }
@@ -50,7 +43,7 @@ const queen = 4;
 describe('クイーン（真）の S1 の有利コードの攻撃ダメージ▲', () => {
   // 名前の付いた状態の語彙編（plan/design-named-state.md 7.1 節）: ペルソナの静的な付与の中身（常時パッシブとして足す）
   it('is the content of the static Persona grant on skill1, resolved as a passive self elementDamage (C-0296)', () => {
-    const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${QUEEN}.json`));
+    const def = parseSkillDefinition(rawDefinition(QUEEN));
     expect(def.skills.skill1.effects).toContainEqual(
       expect.objectContaining({
         kind: 'state',
@@ -61,7 +54,7 @@ describe('クイーン（真）の S1 の有利コードの攻撃ダメージ▲
         contents: [expect.objectContaining({ stat: 'elementDamage', claims: ['C-0296'] })],
       }),
     );
-    const passives = resolvePassives(def, character(QUEEN), MAX_SKILL_LEVELS);
+    const passives = resolvePassives(def, characterOf(QUEEN), MAX_SKILL_LEVELS);
     expect(passives.filter((e) => e.stat === 'elementDamage')).toEqual([
       expect.objectContaining({ target: 'self', scaling: 'ratio', value: expect.closeTo(0.1359, 10) }),
     ]);
@@ -83,9 +76,7 @@ describe('クイーン（真）の S1 の 1more の分配ダメージ（C-0310�
   // 録画 0229・0230 と同じ、ラム（I）+ デルタ（II）+ クイーン（真）（III・操作）
   const minimal = team([822, 20, QUEEN], 2, 'Wind');
   const q = 2;
-  const raw = readJson<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>(
-    `../../data/skills/${QUEEN}.json`,
-  );
+  const raw = rawDefinition<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>(QUEEN);
   const oneMore = raw.skills.skill1.effects.find((e) => e.kind === 'damage')!;
   /** 1more の分配ダメージから delayFrames を外した定義（発動のフレームに、発動の直前のバフで出る） */
   const undelayed: TeamInput = {

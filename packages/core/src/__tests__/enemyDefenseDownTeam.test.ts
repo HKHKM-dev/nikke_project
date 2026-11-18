@@ -1,6 +1,5 @@
 // 2 段目の段 2（plan/design-skill-stage2.md）: 敵の防御力▼（enemyDefenseDown）。定義の検証、式（防御力 × (1 − Σ) を引く。Σ は 0〜1）、
 // 通常攻撃と倍率ダメージで同じ防御力を引くこと、敵の件として味方全員に写ること、ルドミラ（190）の S1（最後の弾丸の次のフレームから 10 秒）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTriggerDamage, defenceAfterDown, type EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -13,19 +12,12 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import type { CharacterData } from '../types.ts';
 import { makeCharacter } from './fixtures.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 const LUDMILLA = 190;
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-
 function slotOf(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -33,9 +25,9 @@ function slotOf(id: number): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     };
   }

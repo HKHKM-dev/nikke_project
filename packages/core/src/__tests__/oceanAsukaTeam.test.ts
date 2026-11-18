@@ -1,7 +1,6 @@
 // I-DOLL・オーシャン（305）を含む編成: バーストの味方全体への 1 回の回復（heal・burstUse）は、
 // 使うたびに全員に healed を起こす（plan/design-heal-vocabulary.md 1 節の表の 4。C-0554 は仮説）。
 // 受け手のアスカの S1 の窓と、実戦寄りの編成での 射撃の列のグループ分けを見る。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -11,18 +10,11 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { healsOf, piecesOf } from './historyHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 function fixedSlot(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -30,9 +22,9 @@ function fixedSlot(id: number): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     };
   }

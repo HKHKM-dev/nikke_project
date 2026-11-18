@@ -1,6 +1,5 @@
 // ココア（311）を含む編成: 定義はダメージに効く効果を持たない（S1 の遮蔽物 HP 回復は、遮蔽物を読む味方がいる時だけ効く。段 17 の PR 3、
 // C-0822。デバフ解除は、デバフの状態を持つ味方がいる時だけ効く。課題 2-59）。射撃の列のグループ分け（V-0031、C-0977）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -10,18 +9,11 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { piecesOf } from './historyHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 function fixedSlot(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -29,9 +21,9 @@ function fixedSlot(id: number): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     };
   }
@@ -59,7 +51,7 @@ const TEAMS: Record<string, { input: TeamInput; cocoa: number }> = {
 
 describe('ココアの定義', () => {
   it('has the S1 cover heal and the debuff removals (S1 and burst) as effects', () => {
-    const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${COCOA}.json`));
+    const def = parseSkillDefinition(rawDefinition(COCOA));
     expect(def.skills.skill1.effects.map((e) => e.kind)).toEqual(['coverHeal', 'removeDebuff']);
     expect(def.skills.burst.effects.map((e) => e.kind)).toEqual(['removeDebuff']);
     expect(def.skills.skill2.effects).toEqual([]);

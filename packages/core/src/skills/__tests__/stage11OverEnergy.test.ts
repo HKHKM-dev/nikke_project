@@ -1,22 +1,16 @@
 // 2 段目の段 11 の PR 2（plan/design-skill-stage11.md 2.3・2.4 節）: カウンタが最大になった時のきっかけ（{ counterFull }）、カウンタの値の
 // 間だけ効く常時の効果（while の selfCounter）、最大HP のみ▲（maxHpOnly）。使い手はラプラス：アルティメットヒーロー（103）の S2（V-0529）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
-import type { CharacterData } from '../../types.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const LAPLACE = 103;
-const character = (id: number) => readJson<CharacterData>(`../../../data/characters/${id}.json`);
-const definitionOf = (id: number) => parseSkillDefinition(readJson<unknown>(`../../../data/skills/${id}.json`));
+const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 
 const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
 function withSkill2(...effects: unknown[]): unknown {
@@ -87,7 +81,7 @@ describe('語彙の検証', () => {
 });
 
 describe('ラプラス：アルティメットヒーローの S2（V-0529）', () => {
-  const c = character(LAPLACE);
+  const c = characterOf(LAPLACE);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,

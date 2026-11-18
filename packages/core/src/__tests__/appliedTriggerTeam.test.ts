@@ -1,6 +1,5 @@
 // 2 段目の段 4 の PR 1（plan/design-skill-stage4.md 1.1・1.2・2.1 節）: { applied } を timed・状態の付与に開く、維持 0 秒の付与（名前の
 // 付いた即時効果の付いた記録）、トーブ（192）の宝物版 S1（代用弾丸が適用される時、味方全体に応急改造とクリティカルダメージ▲）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
@@ -13,19 +12,12 @@ import { appliedFrames } from '../skills/timeline.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 const TORB = 192;
 const RAPI = 10;
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-
 function slotOf(id: number, definition?: SkillDefinition, treasurePhase: TreasurePhase = 0): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -33,9 +25,7 @@ function slotOf(id: number, definition?: SkillDefinition, treasurePhase: Treasur
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  const def =
-    definition ??
-    (DEFINED.has(id) ? parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)) : undefined);
+  const def = definition ?? (DEFINED_IDS.has(id) ? parseSkillDefinition(rawDefinition(id)) : undefined);
   if (def !== undefined) slot.skills = { definition: def, levels: MAX_SKILL_LEVELS, treasurePhase };
   return slot;
 }

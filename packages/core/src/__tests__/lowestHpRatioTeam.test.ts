@@ -1,7 +1,6 @@
 // 2 段目の段 8（plan/design-skill-stage8.md）: 対象「残りの HP の割合が最も低い味方 N 機」（heal の lowestHpRatio）。枠の HP の割合の
 // 想定（TeamSlotInput.hpRatio）の低い順・同値は枠の若い順（C-0567）。ミサト（833）の S1 の回復と、回復を受けた時のアスカ（830）の S1
 // （F4 の録画 0472・0473 の編成）、射撃の列のグループ分け
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
@@ -18,20 +17,15 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { isEffectTarget } from '../skills/targets.ts';
 import { parseSkillDefinition, type SkillEffect } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { piecesOf } from './historyHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from './data.ts';
 
 const ASUKA = 830;
 const MISATO = 833;
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
-const definitionOf = (id: number) => parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`));
+const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 
 function fixedSlot(id: number, extra: Partial<TeamSlotInput> = {}): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   return {
     character: c,
@@ -111,7 +105,7 @@ describe('lowestHpRatio の読み込み', () => {
 describe('並べ方（HP の割合の想定の低い順・同値は枠の若い順）', () => {
   const heal = withEffect(HEAL).skills.skill1.effects[0] as SkillEffect;
   const members = (ratios: (number | undefined | null)[]): (CompositionCharacter | null)[] =>
-    ratios.map((r) => (r === null ? null : { ...character(ASUKA), ...(r === undefined ? {} : { hpRatio: r }) }));
+    ratios.map((r) => (r === null ? null : { ...characterOf(ASUKA), ...(r === undefined ? {} : { hpRatio: r }) }));
 
   it('keeps the slot order when every slot is at the assumed full HP (C-0567)', () => {
     expect(fixedTargetsOf(heal, members([undefined, undefined, undefined]), 1)).toEqual([0, 1, 2]);
@@ -122,7 +116,7 @@ describe('並べ方（HP の割合の想定の低い順・同値は枠の若い�
   });
 
   it('heals the first N slots of the order', () => {
-    const slot = character(ASUKA);
+    const slot = characterOf(ASUKA);
     const effect = { target: 'lowestHpRatio' as const, targetCount: 2, fixedTargets: [2, 0, 1] };
     expect([0, 1, 2].map((i) => isEffectTarget(effect, 0, i, slot))).toEqual([true, false, true]);
     expect(() => isEffectTarget({ target: 'lowestHpRatio', targetCount: 1 }, 0, 0, slot)).toThrow(/needs fixedTargets/);

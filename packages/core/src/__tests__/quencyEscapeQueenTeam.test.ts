@@ -1,7 +1,6 @@
 // クエンシー：エスケープクイーン（403）を含む編成: S2 のルート探索 1〜3 段階（通常攻撃 2 回ごと。2・3 段階は下の段階のフルスタックの時
 // だけ付く）の命中率▲・攻撃力▲のスタックと、S1 の「ルート探索 N 段階フルスタック状態の時のみ」の▲（while。2・3 段階は条件つきの付与の
 // 状態を見る）、バーストの分配ダメージと射撃の列のグループ分け。V-0702。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
@@ -12,14 +11,10 @@ import { runSimulation } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { runTeam } from './runTeam.ts';
+import { characterOf, rawDefinition, readData } from './data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
+const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
 const rangeEnemy: EnemyInput = {
   defence: FIXED_SPEC_ENEMY_DEFENCE,
@@ -32,7 +27,7 @@ const rangeEnemy: EnemyInput = {
 const plainEnemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
 
 function fixedSlot(id: number, auto: boolean): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../data/characters/${id}.json`);
+  const character = characterOf(id);
   const fixed = computeFixedSpecAttack(character);
   return {
     character,
@@ -41,7 +36,7 @@ function fixedSlot(id: number, auto: boolean): TeamSlotInput {
     condition: { coreHitRate: 1, distanceBonus: false },
     ...(auto ? { conditionMode: 'auto' as const } : {}),
     skills: {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     },
   };

@@ -1,6 +1,5 @@
 // 2 段目の段 10 の PR 3（plan/design-skill-stage10.md 3.3 節）: トーブ（192・宝物の段階 3）のバースト（その場しのぎの奇跡）。
 // 自分の状態のスタック数を付与のスタック数にする stacksFrom: { state }（応急改造スタックコピー）。録画 0676〜0678（V-0523）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { effectFrameOf } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
@@ -17,18 +16,13 @@ import type { TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from './data.ts';
 
 const TOOB = 192;
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
-const definitionOf = (id: number) => parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`));
+const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 
 function fixedSlot(id: number, definition: SkillDefinition, treasurePhase: TreasurePhase = 0): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   return {
     character: c,
@@ -80,9 +74,7 @@ describe('トーブ（宝物版）のバースト（その場しのぎの奇跡�
 
   it('keeps the copied count after Temporary Modification ends, and grants nothing at 0 stacks', () => {
     // 応急改造を戦闘開始時に 3 スタック・12 秒だけ付ける形にする（1 回目のバーストの窓の途中で切れ、2 回目は 0 スタック）
-    const def = readJson<{ treasureSkills: Record<string, { effects: Record<string, unknown>[] }> }>(
-      '../../data/skills/192.json',
-    );
+    const def = rawDefinition<{ treasureSkills: Record<string, { effects: Record<string, unknown>[] }> }>(192);
     const copy = structuredClone(def);
     copy.treasureSkills.skill1!.effects = [
       {
@@ -111,9 +103,7 @@ describe('トーブ（宝物版）のバースト（その場しのぎの奇跡�
   });
 
   it('rejects malformed stacksFrom', () => {
-    const def = readJson<{ treasureSkills: Record<string, { effects: Record<string, unknown>[] }> }>(
-      '../../data/skills/192.json',
-    );
+    const def = rawDefinition<{ treasureSkills: Record<string, { effects: Record<string, unknown>[] }> }>(192);
     const withEffect = (patch: Record<string, unknown>) => {
       const copy = structuredClone(def);
       copy.treasureSkills.burst!.effects[0] = { ...copy.treasureSkills.burst!.effects[0], ...patch };

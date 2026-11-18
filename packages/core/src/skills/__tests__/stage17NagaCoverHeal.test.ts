@@ -1,25 +1,19 @@
 // 2 段目の段 17 の PR 1（plan/design-skill-stage17.md 2.1・3.1 節）: 遮蔽物 HP 回復を受けた出来事（FrameEvents.coverHealed）と、
 // ナガ（450）の S1 の味方全体の遮蔽物 HP 回復。ティア（451）の S1 の { coverHealed } は、自分の枠が受けた遮蔽物 HP 回復で発火する。
 // 射撃の回数起点の回復は、撃った枠より後ろの枠には同じフレーム、自分と前の枠には次のフレーム（skills/heals.ts の healFrameOf。C-0628 の形）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { planTeamRun } from '../../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
-import type { CharacterData } from '../../types.ts';
 import { itemsOf } from '../holders.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const TIA = 451;
 const NAGA = 450;
-const characterOf = (rid: number) => readJson<CharacterData>(`../../../data/characters/${rid}.json`);
-const definitionOf = (rid: number) => parseSkillDefinition(readJson<unknown>(`../../../data/skills/${rid}.json`));
+const definitionOf = (rid: number) => parseSkillDefinition(rawDefinition(rid));
 
 function slotOf(rid: number, definition: SkillDefinition = definitionOf(rid)): TeamSlotInput {
   const character = characterOf(rid);

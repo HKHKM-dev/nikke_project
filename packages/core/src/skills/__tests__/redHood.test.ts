@@ -1,22 +1,15 @@
 // レッドフード編（plan/design-red-hood.md 2 節）: 使った段階の条件（burstStep）・戦闘中の発火の回数（maxFires）・チャージ速度の超過分の
 // 変換（chargeSpeedOverflow）の語彙の検証と式、Lv ごとの解決値
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import type { CharacterData } from '../../types.ts';
 import { addRatioBuff, applyChargeBuffs, type BuffTotals, chargeSpeedOverflowDamage, ZERO_BUFFS } from '../buffs.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolvePassives, resolveStateGrants, resolveTimed } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
 const RED_HOOD = 470;
-const raw = readJson<{ skills: { skill1: Effects; skill2: Effects; burst: Effects } }>(
-  `../../../data/skills/${RED_HOOD}.json`,
-);
-const character = readJson<CharacterData>(`../../../data/characters/${RED_HOOD}.json`);
+const raw = rawDefinition<{ skills: { skill1: Effects; skill2: Effects; burst: Effects } }>(RED_HOOD);
+const character = characterOf(RED_HOOD);
 const def = parseSkillDefinition(raw);
 const burstIndex = (kind: string, step: string) =>
   raw.skills.burst.effects.findIndex(

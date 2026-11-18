@@ -1,20 +1,13 @@
 // V-0602: 時間の周期のきっかけ（{ everySeconds }）の timed に delayFrames を書ける。窓は周期の発火の delayFrames 後から
 // （skills/holders/items.ts の startOfFire）。定義はエーテル（291）の S2 の防御力▼（S2 のヒットの次のフレームから。C-0832・C-0453）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import type { CharacterData } from '../../types.ts';
 import { startOfFire } from '../holders.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const rawEther = readJson<{ skills: Record<string, { effects: Record<string, unknown>[] }> }>(
-  '../../../data/skills/291.json',
-);
-const ether = readJson<CharacterData>('../../../data/characters/291.json');
+const rawEther = rawDefinition<{ skills: Record<string, { effects: Record<string, unknown>[] }> }>(291);
+const ether = characterOf(291);
 
 /** 291.json を写して、skill2 の防御力▼（effects[2]）の欄を差し替えた定義を検証にかける */
 function withDefDown(fields: Record<string, unknown>): unknown {

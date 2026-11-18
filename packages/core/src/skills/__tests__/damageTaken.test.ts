@@ -1,17 +1,14 @@
 // 受けるダメージ編: 敵の受けるダメージ▲（stat damageTaken）の検証と、倍率ダメージ・持続ダメージへの掛け方（plan/design-damage-taken.md）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import type { CharacterData } from '../../types.ts';
 import { computeBurstHit, resolveDotEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-const kurumi = JSON.parse(
-  readFileSync(new URL('../../../data/characters/862.json', import.meta.url), 'utf8'),
-) as CharacterData;
-const raw862 = JSON.parse(readFileSync(new URL('../../../data/skills/862.json', import.meta.url), 'utf8')) as {
+const kurumi = characterOf(862);
+const raw862 = rawDefinition<{
   skills: Record<string, { effects: Record<string, unknown>[] }>;
-};
+}>(862);
 
 /** 862.json を写して、burst の効果を書き換えた定義を検証にかける */
 function withBurstEffect(patch: Record<string, unknown>): unknown {

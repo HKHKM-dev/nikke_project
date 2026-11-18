@@ -1,6 +1,5 @@
 // 2 段目の段 9（plan/design-skill-stage9.md）: 対象の絞り込み「〈クラス〉型の味方」（targetClass）。エヌ：ミラクルフェアリー（121）の
 // S1（支援型の味方への吸収回復）とバースト（火力型の味方への回復と攻撃力▲）、射撃の列のグループ分け
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
@@ -16,22 +15,17 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { matchesTargetFilter } from '../skills/targets.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { piecesOf } from './historyHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from './data.ts';
 
 const N_MF = 121;
 const FLOWER = 304;
 const ISABEL = 231;
 const LITER = 82;
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
-const definitionOf = (id: number) => parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`));
+const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 
 function fixedSlot(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   return {
     character: c,

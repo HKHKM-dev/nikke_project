@@ -2,7 +2,6 @@
 // 状態の語彙編で fullBurst・targetStatus から改名。plan/design-named-state.md 5.5・5.6 節）の
 // DSL・トリガー・発火の絞り込み（plan/design-kurumi-s2.md 2 節）。3 節の読み（H1〜H3）を定義に差し込んで、語彙の働きを見る
 // （実測の値は持ち込まない）。クルミの定義は H3（V-0181・C-0276）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -12,19 +11,10 @@ import { runSimulation } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 const KURUMI = 862;
-const raw862 = readJson<{ skills: Record<string, { effects: unknown[]; notes?: unknown[] }> }>(
-  `../../data/skills/${KURUMI}.json`,
-);
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
-
+const raw862 = rawDefinition<{ skills: Record<string, { effects: unknown[]; notes?: unknown[] }> }>(KURUMI);
 /** 862.json を写して、skill2 を effects に差し替えた定義 */
 function withSkill2(effects: unknown[]): unknown {
   const copy = structuredClone(raw862);
@@ -132,7 +122,7 @@ describe('dotActiveSpans', () => {
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
 
 function slotOf(id: number, definition?: unknown): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -140,7 +130,7 @@ function slotOf(id: number, definition?: unknown): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  const raw = definition ?? (DEFINED.has(id) ? readJson<unknown>(`../../data/skills/${id}.json`) : undefined);
+  const raw = definition ?? (DEFINED_IDS.has(id) ? rawDefinition(id) : undefined);
   if (raw !== undefined) slot.skills = { definition: parseSkillDefinition(raw), levels: MAX_SKILL_LEVELS };
   return slot;
 }

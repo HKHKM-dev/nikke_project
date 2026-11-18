@@ -1,7 +1,6 @@
 // 2026-10-29 のアップデートのキャラ（マリアン：クイーン 19・紅蓮：神殺 472・ラプンツェル：サンクチュアリ 473）の定義を、実戦寄りの編成で回す
 // （plan/design-new-chars-1029.md。定義は仮実装で、根拠の結論は撮影の後）。臨戦の味方への▲・槍の周期と弱点露出・コア命中ダメージ・
 // 居合と身剣合一・クリティカル命中の弾丸チャージと満開の間の止まり方・射撃の列のグループ分けを見る
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -12,19 +11,12 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import type { CharacterData } from '../types.ts';
 import { piecesOf, stateItemsOf } from './historyHelpers.ts';
 import { runTeam } from './runTeam.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 function fixedSlot(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -32,9 +24,9 @@ function fixedSlot(id: number): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     };
   }
@@ -192,7 +184,7 @@ describe('射撃の列', () => {
 });
 
 describe('紅蓮：神殺の居合のゲージ（plan/design-new-chars-1029.md 12.2 節の b）', () => {
-  const raw = readJson<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>('../../data/skills/472.json');
+  const raw = rawDefinition<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>(472);
   const withIai = (patch: Record<string, unknown>) => {
     const copy = JSON.parse(JSON.stringify(raw)) as typeof raw;
     Object.assign(copy.skills.skill1.effects[2]!, patch);
@@ -207,7 +199,7 @@ describe('紅蓮：神殺の居合のゲージ（plan/design-new-chars-1029.md 1
 
   it('charges two shooter hits of gauge 6 frames after each shot', () => {
     // 単騎（スペック固定・射撃場の 3 分）: 通常攻撃 34,000 と居合 68,000 で、1 回目の満タンは 10 発目の居合（V-0675 の `0960-17`）
-    const c = character(SCARLET);
+    const c = characterOf(SCARLET);
     const solo: TeamInput = { ...input, slots: [fixedSlot(SCARLET)], controlledSlot: 0 };
     const p = planTeamRun(solo);
     const shots = p.shots[0]!.frames;

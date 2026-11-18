@@ -1,6 +1,5 @@
 // 2 段目の段 12 の PR 3（plan/design-skill-stage12.md 2.5・3.3 節）: バースト段階の変更 burstStepChange と、cooldownReduction の
 // 直書きの秒数 seconds。ラピ：レッドフード（16）の戦闘補助の側（録画 0731・0732。V-0541）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { loadRecordingsFile, loadRecordsData, recordingMap } from '../../../scripts/records-data.ts';
 import { burstStepOf, burstUnitOf } from '../../burst/dynamic.ts';
@@ -13,28 +12,21 @@ import type { Observation } from '../../records/observations/types.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { gameSecondsToFrames } from '../../time.ts';
-import type { CharacterData } from '../../types.ts';
 import { applyComposition, burstStepInTeam, countsAsBurstStep } from '../composition.ts';
 import { MAX_SKILL_LEVELS, resolveInstant } from '../resolve.ts';
 import { burstStepChangeOf, parseSkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const RAPI_RH = 16;
 const DELTA = 20;
 const SUN = 308;
 const LITER = 82;
-const character = (id: number) => readJson<CharacterData>(`../../../data/characters/${id}.json`);
-const raw = readJson<{ skills: Record<'skill1' | 'burst', { effects: Record<string, unknown>[] }> }>(
-  `../../../data/skills/${RAPI_RH}.json`,
-);
+const raw = rawDefinition<{ skills: Record<'skill1' | 'burst', { effects: Record<string, unknown>[] }> }>(RAPI_RH);
 const def = parseSkillDefinition(raw);
-const rapi = character(RAPI_RH);
+const rapi = characterOf(RAPI_RH);
 
 function slotOf(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   return {
     character: c,
@@ -43,7 +35,7 @@ function slotOf(id: number): TeamSlotInput {
     hpOverride: computeFixedSpecHp(c),
     condition: { coreHitRate: 1, distanceBonus: false },
     skills: {
-      definition: parseSkillDefinition(readJson<unknown>(`../../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     },
   };
@@ -87,8 +79,8 @@ describe('語彙の検証', () => {
 });
 
 describe('バースト段階の変更（戦闘補助）', () => {
-  const assist = [character(DELTA), character(SUN), rapi];
-  const withI = [character(LITER), character(DELTA), rapi];
+  const assist = [characterOf(DELTA), characterOf(SUN), rapi];
+  const withI = [characterOf(LITER), characterOf(DELTA), rapi];
 
   it('changes her burst stage to I only without an ally of base burst stage I', () => {
     const composed = applyComposition(def, assist, 2);

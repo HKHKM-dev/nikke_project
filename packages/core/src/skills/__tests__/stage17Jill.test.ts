@@ -1,27 +1,22 @@
 // 2 段目の段 17 の PR 4（plan/design-skill-stage17.md 2.2・3.4 節。V-0601、C-0823〜C-0825）: ジル（841）。リロード完了時の付与（{ reloadEnd } の
 // timed・状態の付与）、硫酸弾（状態 acidRound と、付くフレームの条件 selfState を持つ持続ダメージ）、バースト使用時の残弾数減少。1 回分が 0 フレームの
 // リロード（リロード速度 99.96%▲）も、最終弾の発の中で込め終えた込め終わりとして書く
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { planTeamRun } from '../../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
-import type { CharacterData } from '../../types.ts';
 import { itemsOf } from '../holders.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const JILL = 841;
 const LITER = 82;
 const DELTA = 20;
 
 function slotOf(rid: number): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../../data/characters/${rid}.json`);
+  const character = characterOf(rid);
   const fixed = computeFixedSpecAttack(character);
   return {
     character,
@@ -30,7 +25,7 @@ function slotOf(rid: number): TeamSlotInput {
     hpOverride: computeFixedSpecHp(character),
     condition: { coreHitRate: 1, distanceBonus: false, hitRate: 1 },
     skills: {
-      definition: parseSkillDefinition(readJson<unknown>(`../../../data/skills/${rid}.json`)),
+      definition: parseSkillDefinition(rawDefinition(rid)),
       levels: MAX_SKILL_LEVELS,
       treasurePhase: 0,
     },

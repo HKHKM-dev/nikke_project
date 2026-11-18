@@ -1,6 +1,5 @@
 // 2 段目の段 5 の PR 1（plan/design-skill-stage5.md 1.1・1.2・2.1 節）: バリアの状態（目録の家族 barrier）と、バリア適用状態の条件。
 // 使い手はラム（822）のバーストのバリアと、アスカ（830）の S2 の「自分がバリア適用状態なら有利コードの攻撃ダメージ▲」
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
@@ -13,20 +12,15 @@ import { stateMatches, statesMatching } from '../skills/states.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import type { CharacterData, Element } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import type { Element } from '../types.ts';
+import { characterOf, rawDefinition } from './data.ts';
 
 const RUM = 822;
 const DELTA = 20;
 const ASUKA = 830;
 const FLOWER = 304;
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
-
 function slotOf(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   return {
     character: c,
@@ -34,7 +28,7 @@ function slotOf(id: number): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
     skills: {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     },
   };

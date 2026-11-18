@@ -1,6 +1,5 @@
 // シンデレラ（511）を含む編成。S1 のフルチャージ攻撃の命中時の追加ダメージ（射撃ごとの倍率ダメージ。C-0583。V-0445）と、
 // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）の美しさ（最大HP▲）と S1 の最終最大HP 基準の攻撃力▲の読み直し。射撃の列のグループ分け
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
@@ -14,20 +13,15 @@ import { finalAttacksAt } from '../skills/ranking.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from './data.ts';
 
 const CINDERELLA = 511;
 const RAM = 822;
 const DELTA = 20;
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
-const definitionOf = (id: number) => parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`));
+const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 
 function fixedSlot(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   return {
     character: c,
@@ -92,7 +86,7 @@ describe('シンデレラの定義', () => {
 
   it('adds (attack − defence) × 136.6% to every full charge shot of the solo recordings (V-0445)', () => {
     const calc = runTeam(team([CINDERELLA], false, 0));
-    const c = character(CINDERELLA);
+    const c = characterOf(CINDERELLA);
     const expected = (computeFixedSpecAttack(c).attack - FIXED_SPEC_ENEMY_DEFENCE) * 1.366;
     for (const s of calc.slots[0]!.segments) {
       expect(s.trigger.perShot / s.trigger.hitRate).toBeGreaterThan(0);
@@ -124,7 +118,7 @@ describe.each([
 describe('美しさと S1 の攻撃力▲の読み直し（段 6 の PR 2）', () => {
   const input = team([RAM, DELTA, CINDERELLA], true, 2);
   const plan = planTeamRun(input);
-  const c = character(CINDERELLA);
+  const c = characterOf(CINDERELLA);
   const baseAttack = computeFixedSpecAttack(c).attack;
   const baseHp = computeFixedSpecHp(c);
   const s1 = Number(c.skills.skill1.values[0]![9]) / 100;
@@ -203,7 +197,7 @@ describe('最大HP▲ を読む発動者の最終最大HP（常時の効果・�
     });
     const slot: TeamSlotInput = { ...fixedSlot(CINDERELLA), skills: { definition, levels: MAX_SKILL_LEVELS } };
     const calc = runTeam({ slots: [slot], enemy, durationSeconds: 180, burst: false, controlledSlot: 0 });
-    const c = character(CINDERELLA);
+    const c = characterOf(CINDERELLA);
     const s1 = Number(c.skills.skill1.values[0]![9]) / 100;
     const up = Number(c.skills.skill2.values[1]![9]) / 100;
     const expected = Math.round(computeFixedSpecAttack(c).attack + s1 * computeFixedSpecHp(c) * (1 + up));

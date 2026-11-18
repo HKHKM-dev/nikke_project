@@ -1,5 +1,4 @@
 // 戦闘力の表（data/characters/combat.json。plan/design-combat-power-sort.md 6 節）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { emptyBuild } from '../build.ts';
 import {
@@ -22,15 +21,14 @@ import { fixedSpecGrowth } from '../fixedSpec.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { loadCombatPowerTable, MASTER_FILES } from '../load.ts';
 import type { BuildMasters, CharacterData, CharacterIndex } from '../types.ts';
+import { readData } from './data.ts';
 
-const data = <T>(path: string): T =>
-  JSON.parse(readFileSync(new URL(`../../data/${path}`, import.meta.url), 'utf8')) as T;
-const index = data<CharacterIndex>('characters/index.json').characters;
-const characters = index.map((c) => data<CharacterData>(`characters/${c.resourceId}.json`));
+const index = readData<CharacterIndex>('characters/index.json').characters;
+const characters = index.map((c) => readData<CharacterData>(`characters/${c.resourceId}.json`));
 const masters = Object.fromEntries(
-  Object.entries(MASTER_FILES).map(([k, f]) => [k, data<unknown>(`masters/${f}`)]),
+  Object.entries(MASTER_FILES).map(([k, f]) => [k, readData<unknown>(`masters/${f}`)]),
 ) as BuildMasters;
-const table = data<CombatPowerTable>('characters/combat.json');
+const table = readData<CombatPowerTable>('characters/combat.json');
 
 describe('戦闘力の表', () => {
   it('スペック固定の戦闘力は、キャラのデータにスペック固定の育成を入れて出すものと同じ（全キャラ・失敗なし）', () => {

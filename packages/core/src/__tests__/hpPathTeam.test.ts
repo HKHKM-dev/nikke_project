@@ -1,7 +1,6 @@
 // 2 段目の段 6 の PR 1（plan/design-skill-stage6.md 1・2 節）: HP の経路。
 // 発動者の最終最大HP 基準の攻撃力▲（scaling casterFinalMaxHp。ラプラス：アルティメットヒーロー（103）の S1）と、
 // 自分の HP の割合の条件（condition.selfHp。枠の HP の割合の想定 hpRatio。ノワール（271）の S1）。射撃の列のグループ分け
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
@@ -13,20 +12,15 @@ import { applyResolvedEffect, ZERO_BUFFS } from '../skills/buffs.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from './data.ts';
 
 const LAPLACE = 103;
 const NOIR = 271;
 const DELTA = 20;
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
-const definitionOf = (id: number) => parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`));
+const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 
 function fixedSlot(id: number, extra: Partial<TeamSlotInput> = {}): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   return {
     character: c,
@@ -47,7 +41,7 @@ function team(slots: TeamSlotInput[], burst = false): TeamInput {
 
 /** S1 の説明文の値（スキル Lv10）の % を割合にしたもの */
 function skillRatio(id: number, ref: number): number {
-  const values = character(id).skills.skill1.values[ref - 1]!;
+  const values = characterOf(id).skills.skill1.values[ref - 1]!;
   return Number(values[9]) / 100;
 }
 
@@ -96,7 +90,7 @@ describe('発動者の最終最大HP 基準の攻撃力▲（casterFinalMaxHp）
   it('adds X% of the fixed-spec max HP to the attack of Laplace from the start of battle (C-0579)', () => {
     const input = team([fixedSlot(LAPLACE)]);
     const calc = runTeam(input);
-    const c = character(LAPLACE);
+    const c = characterOf(LAPLACE);
     const expected = Math.round(computeFixedSpecAttack(c).attack + skillRatio(LAPLACE, 1) * computeFixedSpecHp(c));
     // 2 段目の段 11 の PR 2: S2 のオーバーエネルギーの段階の最大HP のみ▲ で最終最大HP が上がるので、最初の段階の前の区間だけを見る（C-0577）
     const firstStage = runSimulation(input).history.counters.find((x) => x.counter === 'overEnergyStage')!.frame;
@@ -106,7 +100,7 @@ describe('発動者の最終最大HP 基準の攻撃力▲（casterFinalMaxHp）
   });
 
   it('uses the max HP given by hpOverride (growth only without it)', () => {
-    const c = character(LAPLACE);
+    const c = characterOf(LAPLACE);
     const withHp = runTeam(team([fixedSlot(LAPLACE, { hpOverride: 1_000_000 })]));
     const base = computeFixedSpecAttack(c).attack;
     expect(withHp.slots[0]!.segments[0]!.trigger.attack).toBe(Math.round(base + skillRatio(LAPLACE, 1) * 1_000_000));

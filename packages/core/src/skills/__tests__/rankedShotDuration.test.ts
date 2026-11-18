@@ -1,20 +1,15 @@
 // 順位の発数編: 対象「最終攻撃力が最も高い味方 N 機」（topAttack）と「N 発間維持」（durationShots）の組み合わせ。
 // 窓は発火のフレームの順位で決まった枠の射撃で切る。会心率は 1 で頭打ち（plan/design-ranked-shot-duration.md 2 節・7 節）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
 import { gameSecondsToFrames } from '../../time.ts';
-import type { CharacterData } from '../../types.ts';
 import { applyCritBuffs, capCritRate, ZERO_BUFFS } from '../buffs.ts';
 import { itemsOf } from '../holders.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import type { TimelineSlot } from '../timeline.ts';
 import { applyTreasure } from '../treasure.ts';
 import { parseSkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 /** ミランダの宝物版 S2 の 3 行目（設計書 2 節の形） */
 const LINE3 = {
@@ -28,13 +23,13 @@ const LINE3 = {
   durationShotsRef: 9,
 };
 
-const miranda = readJson<CharacterData>('../../../data/characters/32.json');
-const delta = readJson<CharacterData>('../../../data/characters/20.json');
-const sun = readJson<CharacterData>('../../../data/characters/308.json');
+const miranda = characterOf(32);
+const delta = characterOf(20);
+const sun = characterOf(308);
 
 /** 宝物版のミランダ（S2 の 3 行目は C-0334） */
 function mirandaWithLine3() {
-  return applyTreasure(miranda, parseSkillDefinition(readJson<unknown>('../../../data/skills/32.json')), 3);
+  return applyTreasure(miranda, parseSkillDefinition(rawDefinition(32)), 3);
 }
 
 const FRAMES = gameSecondsToFrames(180);

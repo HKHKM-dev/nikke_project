@@ -2,7 +2,6 @@
 // オートファイア準備・受けるダメージ▲、フルチャージして攻撃した時のオートファイア）と、S2 のバーストに関わらない分（戦闘開始時の
 // チャージ時間の固定・フルチャージした時の攻撃力▲）。きっかけ { chargeTick }・{ chargeFull }、状態 autoFireReady、perCount { state } の
 // 1 つずつのヒット（録画 0774。V-0552）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
@@ -11,7 +10,6 @@ import { planTeamRun } from '../../frame/plan.ts';
 import { DEFAULT_WEAPON_MODEL } from '../../weapons.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { framesToGameSeconds, gameSecondsToFrames } from '../../time.ts';
-import type { CharacterData } from '../../types.ts';
 import { oneHitValue, perCountFrames, resolveDamageEffects } from '../burstDamage.ts';
 import { applyResolvedEffect, ZERO_BUFFS } from '../buffs.ts';
 import { runSimulation } from '../../sim/engine.ts';
@@ -26,16 +24,13 @@ import {
   skillValue,
 } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const SNOW_WHITE_HA = 471;
-const raw = readJson<{ skills: Record<'skill1' | 'skill2', { effects: Record<string, unknown>[] }> }>(
-  `../../../data/skills/${SNOW_WHITE_HA}.json`,
+const raw = rawDefinition<{ skills: Record<'skill1' | 'skill2', { effects: Record<string, unknown>[] }> }>(
+  SNOW_WHITE_HA,
 );
-const character = readJson<CharacterData>(`../../../data/characters/${SNOW_WHITE_HA}.json`);
+const character = characterOf(SNOW_WHITE_HA);
 const definition = parseSkillDefinition(raw);
 const s1 = (ref: number) => skillValue(character.skills.skill1, ref, MAX_SKILL_LEVELS.skill1);
 const s2 = (ref: number) => skillValue(character.skills.skill2, ref, MAX_SKILL_LEVELS.skill2);
@@ -250,7 +245,7 @@ const b = (ref: number) => skillValue(character.skills.burst, ref, MAX_SKILL_LEV
 
 function teamSlot(id: number, def = definition): TeamSlotInput {
   if (id === SNOW_WHITE_HA) return { ...slot(), skills: { definition: def, levels: MAX_SKILL_LEVELS } };
-  const c = readJson<CharacterData>(`../../../data/characters/${id}.json`);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   return {
     character: c,
@@ -258,7 +253,7 @@ function teamSlot(id: number, def = definition): TeamSlotInput {
     attackOverride: fixed.attack,
     hpOverride: computeFixedSpecHp(c),
     condition: { coreHitRate: 1, distanceBonus: false },
-    skills: { definition: parseSkillDefinition(readJson(`../../../data/skills/${id}.json`)), levels: MAX_SKILL_LEVELS },
+    skills: { definition: parseSkillDefinition(rawDefinition(id)), levels: MAX_SKILL_LEVELS },
   };
 }
 /** リター（I）・デルタ（II）・スノーホワイト：ヘビーアームズ（III・操作）。撮影 B（録画 0776・0777）の形（的のジャンプなし） */

@@ -1,8 +1,6 @@
 // フローラ（411）の定義（plan/design-adjacent-allies.md）: 基礎版と宝物版の読み込み・Lv ごとの解決値と、足した語彙の検査
 // （対象「両隣」と includeSelf・両隣の味方の HP の割合のきっかけ・味方の全部のスタック可能バフへのスタック量▲）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import type { CharacterData } from '../../types.ts';
 import { fixedTargetsOf } from '../composition.ts';
 import { adjacentSlotsOf, isEffectTarget } from '../targets.ts';
 import {
@@ -17,18 +15,15 @@ import {
 import { applyTreasure } from '../treasure.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { gameSecondsToFrames } from '../../time.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 type RawDefinition = {
   skills: Record<string, { effects: Record<string, unknown>[]; notes?: unknown[] }>;
   treasureSkills: Record<string, { effects: Record<string, unknown>[]; notes?: unknown[] }>;
 };
 
-const flora = readJson<CharacterData>('../../../data/characters/411.json');
-const raw = readJson<RawDefinition>('../../../data/skills/411.json');
+const flora = characterOf(411);
+const raw = rawDefinition<RawDefinition>(411);
 const def = parseSkillDefinition(raw);
 const LV7: SkillLevels = { skill1: 7, skill2: 7, burst: 7 };
 const treasure = applyTreasure(flora, def, 3);
@@ -149,4 +144,4 @@ describe('両隣の枠', () => {
   });
 });
 
-const EXIA_LIKE = readJson<CharacterData>('../../../data/characters/210.json');
+const EXIA_LIKE = characterOf(210);

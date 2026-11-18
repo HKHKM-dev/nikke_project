@@ -3,20 +3,15 @@
 // （足りなければ自分。宝物版 2 機 C-0322・基礎版 1 機 C-0325）、S2「ウェイクアップ！」はフルバーストタイムの発動時の
 // クリティカルダメージ▲（味方全体）と、宝物版の自分のクリティカル確率▲・攻撃ダメージ▲（C-0323・C-0324・C-0326。V-0216〜V-0218）、
 // 宝物版の自分を除く 1 位の味方の 1 発間のクリティカル確率▲（C-0334。V-0229）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { gameSecondsToFrames } from '../../time.ts';
-import type { CharacterData } from '../../types.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolveTimed } from '../resolve.ts';
 import { applyTreasure } from '../treasure.ts';
 import { parseSkillDefinition } from '../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const miranda = readJson<CharacterData>('../../../data/characters/32.json');
-const def = parseSkillDefinition(readJson<unknown>('../../../data/skills/32.json'));
+const miranda = characterOf(32);
+const def = parseSkillDefinition(rawDefinition(32));
 const FIVE_SECONDS = gameSecondsToFrames(5);
 const TEN_SECONDS = gameSecondsToFrames(10);
 

@@ -1,19 +1,14 @@
 // Stage 11 紅蓮BS 編: 段の循環（cycle）と間隔の変更（cycleEvery）の DSL・解決・発動の規則（plan/design-stage11-scarlet-bs.md 7.1・7.2 節）。
 // 規則は録画 0046・0047 の読み直し（同 0.3 節）: 通算カウンタの every の倍数で段が進み、窓の中は窓の every。窓の中の段はカウンタを戻さない。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import type { CharacterData } from '../../types.ts';
 import { cycleFires, resolveCycleEvery, resolveCycles } from '../cycles.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { gameSecondsToFrames } from '../../time.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const scarlet = readJson<CharacterData>('../../../data/characters/225.json');
-const raw225 = readJson<{ skills: Record<string, { effects: unknown[] }> }>('../../../data/skills/225.json');
+const scarlet = characterOf(225);
+const raw225 = rawDefinition<{ skills: Record<string, { effects: unknown[] }> }>(225);
 
 /** 225.json を写して、effects を差し替えた定義を検証にかける */
 function withEffects(slot: 'skill1' | 'skill2' | 'burst', effects: unknown[]): unknown {

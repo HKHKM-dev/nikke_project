@@ -1,6 +1,5 @@
 // マスト編（plan/design-mast.md）: マスト（350）を含む編成で、S1 の海風（敵に付くスタック・発動者基準の防御力▼）、S2 のクリティカル確率▲、
 // バーストのクリティカルダメージ▲と暴風（海風のスタックを写す 1 秒ごとのダメージ）が意図どおりに出るか
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { defenceAfterDown, type EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecDefence, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -11,18 +10,11 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import type { CharacterData } from '../types.ts';
 import { runTeam } from './runTeam.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 function fixedSlot(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -31,9 +23,9 @@ function fixedSlot(id: number): TeamSlotInput {
     defenceOverride: computeFixedSpecDefence(c),
     condition: { coreHitRate: 0.1, distanceBonus: true },
   };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     };
   }
@@ -68,7 +60,7 @@ const TEAMS: Record<string, { input: TeamInput; mast: number }> = {
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, mast }) => {
   const plan = planTeamRun(input);
   const result = runTeam(input);
-  const mastDefence = computeFixedSpecDefence(character(MAST));
+  const mastDefence = computeFixedSpecDefence(characterOf(MAST));
 
   it('stacks Sea Breeze on the enemy up to 50, and takes the enemy DEF to 0 with the caster-based DEF down', () => {
     const items = itemsOf(plan.history, { holder: ENEMY, state: 'seaBreeze' });

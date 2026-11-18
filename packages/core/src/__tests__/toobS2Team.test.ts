@@ -1,6 +1,5 @@
 // 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.2・1.3 節）: 攻撃速度▲（attackSpeed）と、状態の間だけ効く常時の効果（while）。
 // トーブ（192・宝物の段階 3）の S2 と、ソルジャーF.A.（301・SG）の編成（V-0458 の録画 0510〜0512。C-0599〜C-0602）、射撃の列のグループ分け
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
@@ -20,20 +19,15 @@ import { MAX_SKILL_LEVELS, resolvePassives, resolveWhileEffects } from '../skill
 import { applyTreasure, type TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { piecesOf } from './historyHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from './data.ts';
 
 const TOOB = 192;
 const FA = 301;
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
-const definitionOf = (id: number) => parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`));
+const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 
 function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   return {
     character: c,
@@ -138,7 +132,7 @@ describe('while と attackSpeed の読み込み', () => {
   });
 
   it('resolves while effects apart from the passives, with the stack condition', () => {
-    const applied = applyTreasure(character(TOOB), definitionOf(TOOB), 3);
+    const applied = applyTreasure(characterOf(TOOB), definitionOf(TOOB), 3);
     const definition = applied.definition!;
     expect(
       resolvePassives(definition, applied.character, MAX_SKILL_LEVELS).filter((e) => e.source.skill === 'skill2'),
@@ -216,7 +210,7 @@ describe('whileItems', () => {
 });
 
 describe('攻撃速度の刻み（C-0600）', () => {
-  const sg = character(FA).shot;
+  const sg = characterOf(FA).shot;
 
   it('multiplies the rate before the 1-shot-per-frame cap', () => {
     expect(rateAfterShots(sg, 3, 1.4224)).toBeCloseTo(90 * 1.4224, 9);

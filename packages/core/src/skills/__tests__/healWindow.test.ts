@@ -1,20 +1,15 @@
 // 維持時間のある回復（吸収回復）: heal の durationRef の DSL と解決（plan/design-heal-window.md 1.1 節。V-0024・C-0082）。
 // 付き直しで healed を起こさない窓は、持ち主ごとの一覧の件（skills/__tests__/holders.test.ts の「吸収回復の窓」）で見る。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import type { CharacterData } from '../../types.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import { MAX_SKILL_LEVELS, resolveInstant } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const yuni = readJson<CharacterData>('../../../data/characters/160.json');
-const asuka = readJson<CharacterData>('../../../data/characters/830.json');
-const raw160 = readJson<{ skills: Record<string, { effects: unknown[] }> }>('../../../data/skills/160.json');
-const raw830 = readJson<unknown>('../../../data/skills/830.json');
+const yuni = characterOf(160);
+const asuka = characterOf(830);
+const raw160 = rawDefinition<{ skills: Record<string, { effects: unknown[] }> }>(160);
+const raw830 = rawDefinition(830);
 
 function withSkill2Effects(effects: unknown[]): unknown {
   const copy = structuredClone(raw160);

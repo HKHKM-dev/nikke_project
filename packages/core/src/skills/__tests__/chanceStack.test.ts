@@ -1,13 +1,9 @@
 // トーブの基礎版編（plan/design-tove-base.md 2 節）: 確率のきっかけで付く、スタックする状態（スタック数の分布の期待値の小片）と、
 // その読み込みの検査。分布は、乱数で多数回回した平均と突き合わせる。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { chanceStackLevelsAt, chanceStackPieces, type ChanceOpportunity } from '../chance.ts';
 import { parseSkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { rawDefinition } from '../../__tests__/data.ts';
 
 /** 決まった種の擬似乱数（mulberry32。テストを決定的にする） */
 function seeded(seed: number): () => number {
@@ -118,9 +114,7 @@ describe('chanceStackPieces', () => {
 });
 
 describe('確率のきっかけの付与の読み込み', () => {
-  const raw = readJson<{ skills: Record<string, { effects: Record<string, unknown>[] }> }>(
-    '../../../data/skills/192.json',
-  );
+  const raw = rawDefinition<{ skills: Record<string, { effects: Record<string, unknown>[] }> }>(192);
   const withEffects = (slot: string, effects: Record<string, unknown>[]): unknown => {
     const copy = structuredClone(raw);
     copy.skills[slot]!.effects = effects;

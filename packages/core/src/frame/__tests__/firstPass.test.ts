@@ -21,15 +21,9 @@ import { parseSkillDefinition, type SkillDefinition, type SkillEffect } from '..
 import type { CharacterData, ShotParams, SkillRaw } from '../../types.ts';
 import { runFirstPass, settleLeadShots } from '../firstPass.ts';
 import { planShots, type ShotLog } from '../shots.ts';
+import { characterOf } from '../../__tests__/data.ts';
 
 const FRAMES = gameSecondsToFrames(180);
-
-function load(id: number): CharacterData {
-  return JSON.parse(
-    readFileSync(new URL(`../../../data/characters/${id}.json`, import.meta.url), 'utf8'),
-  ) as CharacterData;
-}
-
 function loadDefinition(id: number): SkillDefinition {
   return parseSkillDefinition(
     JSON.parse(readFileSync(new URL(`../../../data/skills/${id}.json`, import.meta.url), 'utf8')),
@@ -120,7 +114,7 @@ describe('runFirstPass: degeneration (1.3)', () => {
   ];
 
   it.each(teams)('matches planShots + planDynamicSchedule without firing / instant effects (%s)', (...ids) => {
-    const characters = ids.map(load);
+    const characters = ids.map(characterOf);
     // 射撃に効く効果の無い定義（またはなし）。常時のゲージ速度（マナ S2）は入れて、時刻表の受け渡しも確かめる。
     // マナ S2 のチャージ時間▼（C-0267。射撃に効く）は外す
     const slots = characters.map((c) => slotOf(c, c.resourceId === 290 ? manaWithoutFiring() : null));
@@ -146,7 +140,7 @@ describe('runFirstPass: degeneration (1.3)', () => {
   });
 
   it('keeps the fixed cycle and the no-burst case', () => {
-    const characters = [291, 20, 10].map(load);
+    const characters = [291, 20, 10].map(characterOf);
     const slots = characters.map((c) => slotOf(c));
     const fixed = runFirstPass(slots, { frames: FRAMES, burst: true, burstModel: 'fixed' });
     expect(fixed.schedule).toEqual(

@@ -1,26 +1,21 @@
 // 2 段目の段 18 の PR 1（plan/design-skill-stage18.md 2.2 節。V-0612）: ドロシー（233）の S2 の焦土化（20 秒ごと）と、バーストの発現
 // （periodShorten の elapsed。クールタイムを縮める窓）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { effectFrameOf } from '../../burst/schedule.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamSlotInput } from '../../team.ts';
-import type { CharacterData } from '../../types.ts';
 import { rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { elapsedShortenedTimerFrames } from '../timeline.ts';
 import { parseSkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf } from '../../__tests__/data.ts';
 
 const DOROTHY = 233;
 
 function slotOf(rid: number): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../../data/characters/${rid}.json`);
+  const character = characterOf(rid);
   const fixed = computeFixedSpecAttack(character);
   return {
     character,
@@ -29,7 +24,7 @@ function slotOf(rid: number): TeamSlotInput {
     hpOverride: computeFixedSpecHp(character),
     condition: { coreHitRate: 1, distanceBonus: false, hitRate: 1 },
     skills: {
-      definition: parseSkillDefinition(readJson<unknown>(`../../../data/skills/${rid}.json`)),
+      definition: parseSkillDefinition(rawDefinition(rid)),
       levels: MAX_SKILL_LEVELS,
       treasurePhase: 0,
     },
