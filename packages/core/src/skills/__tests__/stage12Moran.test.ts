@@ -3,13 +3,14 @@
 // （V-0540。撮影 C: デルタ・I-DOLL・サン・モラン）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
-import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { computeFixedSpecAttack, computeFixedSpecHp } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedEnemy, fixedTeam } from '../../__tests__/teamHelpers.ts';
 
 const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
 const withSkill2 = (...effects: unknown[]): unknown => ({
@@ -50,7 +51,7 @@ describe('モランの宝物版の S2（熱血状態のフルバースト発動�
   const ids = [20, 308, 281] as const;
   const characters = ids.map((id) => characterOf(id));
   const definitions = ids.map((id) => parseSkillDefinition(rawDefinition(id)));
-  const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
+  const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
   const run = (moran: SkillDefinition) => {
     const slots = characters.map((character, i): TeamSlotInput => {
       const fixed = computeFixedSpecAttack(character);
@@ -67,7 +68,7 @@ describe('モランの宝物版の S2（熱血状態のフルバースト発動�
         },
       };
     });
-    const input: TeamInput = { slots, enemy, durationSeconds: 180, burst: true, controlledSlot: 2 };
+    const input: TeamInput = fixedTeam(slots, 2, { enemy });
     return runSimulation(input);
   };
 

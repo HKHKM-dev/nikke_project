@@ -10,8 +10,9 @@ import { TEAM_SIZE, type SlotCondition, type TeamSlotInput } from '../team.ts';
 import type { SkillRaw } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 import { makeCharacter } from './fixtures.ts';
+import { fixedEnemy } from './teamHelpers.ts';
 
-const enemy: EnemyInput = { defence: 100, element: 'Wind', hasCore: true };
+const enemy: EnemyInput = fixedEnemy({ defence: 100, element: 'Wind' });
 const condition: SlotCondition = { coreHitRate: 1, distanceBonus: true };
 const growth = { level: 1, grade: 0, core: 0 };
 

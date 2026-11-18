@@ -13,7 +13,7 @@ import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { TargetProfile } from '../types.ts';
 import { readData } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const rawMaster = readData<Record<string, unknown>>('enemies.json');
 const master = parseEnemyPresets(rawMaster);
@@ -36,7 +36,7 @@ const withoutTable = rangeEnemy(profileWithoutTable);
 const FRAMES = gameSecondsToFrames(180);
 // 録画 0232・0401 と同じ: I-DOLL・フラワー（操作・撃たない扱いはしない）+ ウンファ：TU・BigArms 灼熱の 3 分モード
 function team(enemy: EnemyInput): TeamInput {
-  return { slots: [fixedSlot(304), fixedSlot(95)], enemy, durationSeconds: 180, burst: true, controlledSlot: 0 };
+  return fixedTeam([fixedSlot(304), fixedSlot(95)], 0, { enemy });
 }
 
 /** ウンファの各回の II の発動の印から、使用武器変更の最初の発までのフレーム（と、そのときの帯） */

@@ -3,19 +3,18 @@
 // F5（plan/design-heal-vocabulary.md 3.1・3.3 節）: S1 の持続回復は、付いた時に 1 回だけ回復を起こす（C-0578。仮説）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFirstFrame, gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
+const enemy: EnemyInput = fixedEnemy();
 
 function team(slots: TeamSlotInput[], controlledSlot: number, burst = true): TeamInput {
-  return { slots, enemy, durationSeconds: 180, burst, controlledSlot };
+  return fixedTeam(slots, controlledSlot, { enemy, burst });
 }
 
 const EMMA = 93;

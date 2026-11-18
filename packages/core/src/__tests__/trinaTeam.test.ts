@@ -4,7 +4,6 @@
 // 射撃場の 3 分モード（条件は自動）で見る
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { itemsOf } from '../skills/holders.ts';
@@ -12,33 +11,25 @@ import type { BuffStat } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { runTeam } from './runTeam.ts';
-import { describeEveryShotInOneGroup, fixedSlot, readJson, skillValueOf, windowsFrom } from './teamHelpers.ts';
+import {
+  describeEveryShotInOneGroup,
+  fixedSlot,
+  fixedTeam,
+  shootingRangeEnemy,
+  skillValueOf,
+  windowsFrom,
+} from './teamHelpers.ts';
 
 const TRINA = 412;
 const COCOA = 311;
 const SOLDIER_EG = 300;
 const MIHARA = 161;
 const SCARLET = 222;
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
-  defence: 100,
-  element: 'Fire',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
+const rangeEnemy: EnemyInput = shootingRangeEnemy({ defence: 100 });
 
 const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
-const team = (ids: number[], controlledSlot: number): TeamInput => ({
-  slots: ids.map(autoSlot),
-  enemy: rangeEnemy,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot,
-});
+const team = (ids: number[], controlledSlot: number): TeamInput =>
+  fixedTeam(ids.map(autoSlot), controlledSlot, { enemy: rangeEnemy });
 
 /** 編成ごとの、電撃 AR の枠と、そのうちいちばん左の枠 */
 type Case = { input: TeamInput; electricAr: number[]; leftmost: number };

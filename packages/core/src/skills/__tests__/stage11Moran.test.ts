@@ -3,7 +3,7 @@
 // T4。宝物版 S1 の熱血）。使い手はモラン（281）のバースト・S1（V-0530）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
-import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { computeFixedSpecAttack, computeFixedSpecHp } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { gameSecondsToFrames } from '../../time.ts';
@@ -11,6 +11,7 @@ import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { createTriggerTracker, type FrameEvents, type ShotEvent } from '../triggers.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedEnemy, fixedTeam } from '../../__tests__/teamHelpers.ts';
 
 const MORAN = 281;
 const character = characterOf(MORAN);
@@ -98,7 +99,7 @@ describe('stat burstCooldown（バーストスキルのクールタイム▼ の
 
 describe('モランのバースト・S1（V-0530）', () => {
   const fixed = computeFixedSpecAttack(character);
-  const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
+  const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
   const run = (treasurePhase: 0 | 3, def: SkillDefinition = definition) => {
     const slot: TeamSlotInput = {
       character,
@@ -108,7 +109,7 @@ describe('モランのバースト・S1（V-0530）', () => {
       condition: { coreHitRate: 0.5, distanceBonus: true, hitRate: 1 },
       skills: { definition: def, levels: MAX_SKILL_LEVELS, treasurePhase },
     };
-    const input: TeamInput = { slots: [slot], enemy, durationSeconds: 180, burst: true, controlledSlot: 0 };
+    const input: TeamInput = fixedTeam([slot], 0, { enemy });
     return runSimulation(input);
   };
   const treasure = run(3);

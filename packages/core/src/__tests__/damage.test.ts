@@ -9,12 +9,13 @@ import {
 } from '../damage.ts';
 import { ZERO_BUFFS, type BuffTotals } from '../skills/buffs.ts';
 import { makeCharacter } from './fixtures.ts';
+import { fixedEnemy } from './teamHelpers.ts';
 
 function input(overrides: Partial<TriggerDamageInput> = {}): TriggerDamageInput {
   return {
     character: makeCharacter(),
     growth: { level: 1, grade: 0, core: 0 },
-    enemy: { defence: 100, element: 'Wind', hasCore: true },
+    enemy: fixedEnemy({ defence: 100, element: 'Wind' }),
     condition: { coreHitRate: 1, distanceBonus: true },
     ...overrides,
   };
@@ -35,7 +36,7 @@ describe('computeTriggerDamage', () => {
   });
 
   it('ignores core hit rate when the enemy has no core', () => {
-    const r = computeTriggerDamage(input({ enemy: { defence: 100, element: null, hasCore: false } }));
+    const r = computeTriggerDamage(input({ enemy: fixedEnemy({ defence: 100, hasCore: false }) }));
     expect(r.boost.core).toBe(0);
     expect(r.elementMultiplier).toBe(1);
     expect(r.boost.total).toBeCloseTo(1.375, 10);
@@ -53,7 +54,7 @@ describe('computeTriggerDamage', () => {
   });
 
   it('clamps base hit to 1 when defence exceeds attack', () => {
-    const r = computeTriggerDamage(input({ enemy: { defence: 5000, element: null, hasCore: true } }));
+    const r = computeTriggerDamage(input({ enemy: fixedEnemy({ defence: 5000 }) }));
     expect(r.baseHit).toBe(1);
   });
 

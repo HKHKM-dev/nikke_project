@@ -14,7 +14,7 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { characterOf, rawDefinition } from './data.ts';
-import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from './teamHelpers.ts';
 
 const CINDERELLA = 511;
 const RAM = 822;
@@ -23,14 +23,13 @@ const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { hp: true };
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
-const team = (ids: number[], burst: boolean, controlledSlot: number): TeamInput => ({
-  slots: ids.map((id) => fixedSlot(id, SLOT_OPTIONS)),
-  enemy,
-  durationSeconds: 180,
-  burst,
-  controlledSlot,
-});
+const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
+const team = (ids: number[], burst: boolean, controlledSlot: number): TeamInput =>
+  fixedTeam(
+    ids.map((id) => fixedSlot(id, SLOT_OPTIONS)),
+    controlledSlot,
+    { enemy, burst },
+  );
 
 describe('シンデレラの定義', () => {
   it('defines the additional damage of S1 on every full charge shot (C-0583)', () => {
@@ -189,7 +188,7 @@ describe('最大HP▲ を読む発動者の最終最大HP（常時の効果・�
       ...fixedSlot(CINDERELLA, SLOT_OPTIONS),
       skills: { definition, levels: MAX_SKILL_LEVELS },
     };
-    const calc = runTeam({ slots: [slot], enemy, durationSeconds: 180, burst: false, controlledSlot: 0 });
+    const calc = runTeam(fixedTeam([slot], 0, { enemy, burst: false }));
     const c = characterOf(CINDERELLA);
     const s1 = Number(c.skills.skill1.values[0]![9]) / 100;
     const up = Number(c.skills.skill2.values[1]![9]) / 100;

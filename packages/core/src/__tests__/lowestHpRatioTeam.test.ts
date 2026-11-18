@@ -5,7 +5,6 @@ import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { fixedTargetsOf, type CompositionCharacter } from '../skills/composition.ts';
 import { isEffectTarget } from '../skills/targets.ts';
@@ -13,7 +12,7 @@ import { parseSkillDefinition, type SkillEffect } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
 import { characterOf, rawDefinition } from './data.ts';
-import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from './teamHelpers.ts';
 
 const ASUKA = 830;
 const MISATO = 833;
@@ -21,11 +20,11 @@ const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { hp: true, defence: true };
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
+const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
 
 /** F4 と同じくオートバースト OFF */
 function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
-  return { slots, enemy, durationSeconds: 180, burst: false, controlledSlot };
+  return fixedTeam(slots, controlledSlot, { enemy, burst: false });
 }
 
 // 録画 0472（A）: アスカ（1 枠目・操作）+ ミサト（2 枠目）。録画 0473（B）: ミサト（1 枠目）+ アスカ（2 枠目・操作）

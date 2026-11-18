@@ -2,14 +2,13 @@
 // 攻撃力▲と吸収回復）を、撮影（V-0775）と同じ編成で見る。対象のクラスの絞り込みは targetClass（plan/design-skill-stage9.md 1.1 節）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput } from '../team.ts';
 import { battleSecondsToFrames, gameSecondsToFrames } from '../time.ts';
 import { piecesOf } from './historyHelpers.ts';
 import { runTeam } from './runTeam.ts';
-import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from './teamHelpers.ts';
 
 const FLOWER = 304;
 const BISCUIT = 381;
@@ -18,16 +17,14 @@ const COCOA = 311;
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { hp: true, defence: true };
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
+const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
 
 // フラワー（防御型・I）・ビスケット（支援型・II）・ソルジャーE.G.（火力型・III）・ココア（支援型・I）
-const TEAM: TeamInput = {
-  slots: [FLOWER, BISCUIT, SOLDIER_EG, COCOA].map((id) => fixedSlot(id, SLOT_OPTIONS)),
-  enemy,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot: 2,
-};
+const TEAM: TeamInput = fixedTeam(
+  [FLOWER, BISCUIT, SOLDIER_EG, COCOA].map((id) => fixedSlot(id, SLOT_OPTIONS)),
+  2,
+  { enemy },
+);
 const BISCUIT_SLOT = 1;
 const BATTLE_END = battleSecondsToFrames(TEAM.durationSeconds);
 const TEN_SECONDS = gameSecondsToFrames(10);

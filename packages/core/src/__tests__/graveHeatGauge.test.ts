@@ -2,7 +2,7 @@
 // 1 回ごとに、グレイブの target_burst_energy_pershot × 38.96% を足す（C-1154）。持つ枠が 2 つ以上なら足し合わせる（同 2.2 節）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
+import { enemyEventsOf, enemyLandingsOf } from '../enemies.ts';
 import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { resolveAllyGaugeAdd } from '../skills/burstDamage.ts';
@@ -12,17 +12,15 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SimResult } from '../sim/engine.ts';
 import type { NamedStateId } from '../skills/states.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { fixedSlot, rawDefinition, readJson, skillValueOf } from './teamHelpers.ts';
+import { ENEMY_PRESETS, fixedSlot, RANGE_BIGARMS, rawDefinition, skillValueOf } from './teamHelpers.ts';
 
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
 const rangeEnemy: EnemyInput = {
   defence: FIXED_SPEC_ENEMY_DEFENCE,
   element: 'Fire',
   hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 60),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 60, profile),
+  events: enemyEventsOf(ENEMY_PRESETS, ['range-3min-jump'], 60),
+  target: RANGE_BIGARMS,
+  landings: enemyLandingsOf(ENEMY_PRESETS, ['range-3min-jump'], 60, RANGE_BIGARMS),
 };
 
 /** 射撃場の表で条件を決める枠（json は定義の差し替え） */

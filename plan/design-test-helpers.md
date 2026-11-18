@@ -2,7 +2,7 @@
 
 - 何のための文書か: `packages/core` のテストが 1 ファイルずつ自前で持っている同じ道具（JSON を読む・枠を作る・編成を作る・敵を作る）を、共通の道具（`packages/core/src/__tests__/` のテストでないファイル）に寄せる変更の、今の構造・案と得失・論点・段・確かめ方
 - 対象: `packages/core/src/` の下のテスト（`*.test.ts`）と、共通の道具（`__tests__/teamHelpers.ts` ほか）。本体のコードは変えない
-- 状態: 進行中（5 節の段）
+- 状態: 完了（段 T1〜T3。9 節）
 - 関連: [skills-guide.md](skills-guide.md) 1.4 節の「テスト」（編成のテストの書き方と例）、[design-vocab-dedup.md](design-vocab-dedup.md)（本体の側の重なりを寄せた変更）、[design-split-long-functions.md](design-split-long-functions.md) 9 節・[design-split-first-pass.md](design-split-first-pass.md) 8 節（テストの分割は扱わないとした）
 - 作成日: 2026-11-18
 - 調べた時点: main の 37de18db
@@ -198,9 +198,25 @@
 - 期待値の行の差分は、枠の呼び出しの書き換え 3 か所だけ。
 - 本体（テストでないファイル）の差分は、`__tests__/data.ts`・`__tests__/teamHelpers.ts` と、文書だけ。
 
+### 9.3 段 T3（2026-11-18）
+
+- `teamHelpers.ts` に足したもの: `fixedEnemy(overrides?)`（スペック固定の防御力・コードなし・コアありの敵）、`ENEMY_PRESETS`（`data/enemies.json` の敵のプリセット）、`RANGE_BIGARMS`（射撃場の的）、`shootingRangeEnemy(options?)`（射撃場の敵。3 分・ジャンプありの出来事と、的と着地点つき）。`fixedTeam` は、キャラの番号のほかに枠も受ける形にした。
+- 置き換えたもの（使い捨ての脚本）: 敵のプリセットと的の定数（`master`・`profile`）、敵のオブジェクト（防御力・コード・コアの 3 欄）、射撃場の敵のオブジェクト、編成のオブジェクト（`slots`・`enemy`・`durationSeconds: 180`・`burst`・`controlledSlot`）。手元の `team` などの関数は残し、中身を共通の `fixedTeam` の呼び出しにした（そのテストの敵・バーストの有無を引数に書く）。
+- 読む道具の残り: `teamHelpers.ts` の `readJson` は使う所が無くなったので消した。`records/observations/` を読む手元の `readJson`（2 ファイル）は、`data.ts` に足した `readObservations` に替えた。`skills/__tests__/definitions.test.ts` の `readJson` は `data.ts` の道具に替えた。テストに手元の `readJson` は残っていない。
+- lint の規則（論点 4）: `eslint.config.js` に、`packages/core/src/` のテストで `readJson`・`fixedSlot` という名前の関数・定数を定義したら落とす規則（`no-restricted-syntax`）を足した。`slotOf` は、枠の写しでない使い方（主役にだけ宝物を付ける・1 パス目の枠を作る）が残るので、規則に入れなかった。
+- 手引き（[skills-guide.md](skills-guide.md) の「テスト」）に、敵と編成の道具の名前を足した。
+
+**確かめた結果**（基の版は main の 2ab01271）:
+
+- `npm test` が通り、テストのファイルの数とテストの数が main と同じ。`npm run typecheck`・`npm run lint` が通る。lint の規則は、写しを書いた仮のテストで落ちることを確かめた。
+- エンジンに渡る入力が同じ（9.2 節と同じ比べ。2,704 件の要約の列が main と一致）。
+- 期待値の行の差分は、定数の名前の付け替え（`master` → `ENEMY_PRESETS`・`profile` → `RANGE_BIGARMS`）だけ。
+- 本体（テストでないファイル）の差分は、`__tests__/data.ts`・`__tests__/teamHelpers.ts`・`eslint.config.js` と、文書と課題のファイルだけ。
+
 ## 10. 経過
 
 - 2026-11-18: 起案。
 - 2026-11-18: オーナーが、論点をすべて推奨の案で承認した。
 - 2026-11-18: 段 T1 を実装した（9.1 節）。`master`・`profile` は段 T3 に回した。
 - 2026-11-18: 段 T2 を実装した（9.2 節）。
+- 2026-11-18: 段 T3 を実装し（9.3 節）、課題を閉じた。

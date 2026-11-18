@@ -1,7 +1,7 @@
 // 2 段目の段 19 の PR 2（plan/design-skill-stage19.md 2.2 節。論点 5）: ギルティ（400）の定義。借りていくよぉ…の攻撃力のコピー
 // （copyTopAttack。バフ前の攻撃力が最も高い味方を写す。C-0873）と、フルスタックのバーストの追加ダメージに同じバーストの防御力▼が乗ること（C-0874）
 import { describe, expect, it } from 'vitest';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { computeFixedSpecAttack } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput } from '../../team.ts';
 import type { CharacterData } from '../../types.ts';
@@ -9,6 +9,7 @@ import { fixedAttackBaseOf } from '../buffs.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition, type RawDefinition } from '../../__tests__/data.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 const guilty = characterOf(400);
 const sun = characterOf(308);
@@ -31,7 +32,7 @@ function slotOf(character: CharacterData, definition?: SkillDefinition, attack?:
 function team(slots: TeamInput['slots'], burst: boolean, controlledSlot = 0): TeamInput {
   return {
     slots,
-    enemy: { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true },
+    enemy: fixedEnemy(),
     durationSeconds: 60,
     burst,
     controlledSlot,

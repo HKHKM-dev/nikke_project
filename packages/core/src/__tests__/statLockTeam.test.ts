@@ -2,12 +2,10 @@
 // アスカ：WILLE の緊急修復のリロード速度の固定と、リバーレリオ・ラプンツェル：サンクチュアリのチャージ速度▲▼の無効が、味方の▲を
 // 足さないか。編成は撮影（設計書 5.2 節）と同じ。射撃場の 3 分モード（条件は自動）で見る
 import { describe, expect, it } from 'vitest';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput } from '../team.ts';
-import { fixedSlot, rawDefinition, readJson } from './teamHelpers.ts';
+import { fixedSlot, rawDefinition, shootingRangeEnemy } from './teamHelpers.ts';
 
 const EXIA = 210;
 const CROWN = 330;
@@ -19,17 +17,7 @@ const YUNI = 160;
 const RAPUNZEL_S = 473;
 const LIBERALIO = 262;
 const SOLDIER_FA = 301;
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
-  defence: FIXED_SPEC_ENEMY_DEFENCE,
-  element: 'Fire',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
+const rangeEnemy: EnemyInput = shootingRangeEnemy();
 
 type Raw = { skills: Record<string, { effects: Record<string, unknown>[] }>; treasureSkills?: Raw['skills'] };
 

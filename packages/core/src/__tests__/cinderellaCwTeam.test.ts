@@ -3,39 +3,30 @@
 // 届いた発で出ること、S2 のフルバーストの開始の効果（damage の usedBurst。C-1252）が自分のバーストで開いたフルバーストにだけ出ること、
 // バーストスキルダメージに同じ発動の▲が乗ること（C-1251）を、射撃場の 3 分モード（条件は自動）で見る
 import { describe, expect, it } from 'vitest';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import type { EnemyInput } from '../damage.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { runTeam } from './runTeam.ts';
-import { describeEveryShotInOneGroup, fixedSlot, rawDefinition, readJson, skillValueOf } from './teamHelpers.ts';
+import {
+  describeEveryShotInOneGroup,
+  fixedSlot,
+  fixedTeam,
+  rawDefinition,
+  shootingRangeEnemy,
+  skillValueOf,
+} from './teamHelpers.ts';
 
 const CINDERELLA_CW = 515;
 const LUDMILLA = 190;
 const DELTA = 20;
 const LAPLACE = 103;
 const CROWN = 330;
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
-  defence: 100,
-  element: 'Fire',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
+const rangeEnemy: EnemyInput = shootingRangeEnemy({ defence: 100 });
 
 const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
-const team = (ids: number[], controlledSlot: number): TeamInput => ({
-  slots: ids.map(autoSlot),
-  enemy: rangeEnemy,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot,
-});
+const team = (ids: number[], controlledSlot: number): TeamInput =>
+  fixedTeam(ids.map(autoSlot), controlledSlot, { enemy: rangeEnemy });
 
 const TEAMS: Record<string, TeamInput> = {
   'シンデレラ：クリスタルウェーブ単騎（撮影 A）': team([CINDERELLA_CW], 0),

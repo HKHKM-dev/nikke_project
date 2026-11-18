@@ -15,6 +15,7 @@ import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
 import { itemsOf } from '../holders.ts';
 import { parseSkillDefinition, type SkillDefinition, type SkillEntry, type SkillEffect } from '../types.ts';
 import { characterOf } from '../../__tests__/data.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 const FRAMES = gameSecondsToFrames(180);
 const H = FIXED_BURST_CYCLE.normalFrames;
@@ -302,7 +303,7 @@ describe('1 発の式の防御力無視ダメージ', () => {
   const input = (buffs = ZERO_BUFFS): TriggerDamageInput => ({
     character: makeCharacter(),
     growth: { level: 1, grade: 0, core: 0 },
-    enemy: { defence: 100, element: null, hasCore: true },
+    enemy: fixedEnemy({ defence: 100 }),
     condition: { coreHitRate: 0, distanceBonus: false },
     buffs,
   });

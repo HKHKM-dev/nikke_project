@@ -13,17 +13,11 @@ import { runSimulation } from '../sim/engine.ts';
 import { itemsOf, valuePiecesOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { characterOf, rawDefinition, type RawDefinition } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const SODA = 314;
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
-const team = (slots: TeamSlotInput[], controlledSlot: number): TeamInput => ({
-  slots,
-  enemy,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot,
-});
+const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
+const team = (slots: TeamSlotInput[], controlledSlot: number): TeamInput => fixedTeam(slots, controlledSlot, { enemy });
 
 /** 撮影計画の編成（ラム I・デルタ II・ソーダ：TB III（操作）） */
 const recordingTeam = (soda?: unknown) =>

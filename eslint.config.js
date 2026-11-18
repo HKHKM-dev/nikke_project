@@ -27,6 +27,21 @@ export default tseslint.config(
     languageOptions: { globals: globals.node },
   },
   {
+    // テストの道具の写しを作らない（plan/design-test-helpers.md）。データの読み込みは __tests__/data.ts、枠は
+    // __tests__/teamHelpers.ts の fixedSlot を使う
+    files: ['packages/core/src/**/*.test.ts'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: ':matches(FunctionDeclaration, VariableDeclarator)[id.name=/^(readJson|fixedSlot)$/]',
+          message:
+            'テストに readJson・fixedSlot の写しを作らない。__tests__/data.ts（readData・characterOf・rawDefinition）と __tests__/teamHelpers.ts（fixedSlot）を使う',
+        },
+      ],
+    },
+  },
+  {
     files: ['apps/**/*.tsx', 'apps/**/*.ts'],
     languageOptions: { globals: globals.browser },
     plugins: { 'react-hooks': reactHooks },

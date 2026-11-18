@@ -2,7 +2,7 @@
 // （damage のきっかけ { summon }）。語彙の検証と、1 パス目の機数と進み（ヒットのフレーム・ゲージ）を、アイン（391）の定義で確かめる
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
-import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { computeFixedSpecAttack, computeFixedSpecHp } from '../../fixedSpec.ts';
 import { effectFrameOf } from '../../burst/schedule.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamSlotInput } from '../../team.ts';
@@ -10,6 +10,7 @@ import { GAME_SECONDS_PER_FRAME, gameSecondsToFrames } from '../../time.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition, summonCountsOf } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedEnemy, fixedTeam } from '../../__tests__/teamHelpers.ts';
 
 const EIN = 391;
 const character = characterOf(EIN);
@@ -97,7 +98,7 @@ describe('ニアフェザー（単騎・バーストなし。アインの定義�
     condition: { coreHitRate: 0, distanceBonus: false },
     skills: { definition: parseSkillDefinition(definition), levels: MAX_SKILL_LEVELS },
   };
-  const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
+  const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
   const r = runSimulation({ slots: [slot], enemy, durationSeconds: 180, burst: false });
   const hits = r.skillHits.filter((h) => h.slotIndex === 0 && h.effect.source.skill === 'skill2').map((h) => h.frame);
 
@@ -141,14 +142,8 @@ describe('ニアフェザー（バーストあり。リター + デルタ + ア�
       },
     };
   };
-  const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
-  const r = runSimulation({
-    slots: [slotOf(82), slotOf(20), slotOf(EIN)],
-    enemy,
-    durationSeconds: 180,
-    burst: true,
-    controlledSlot: 2,
-  });
+  const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
+  const r = runSimulation(fixedTeam([slotOf(82), slotOf(20), slotOf(EIN)], 2, { enemy }));
   const hits = r.skillHits.filter((h) => h.slotIndex === 2 && h.effect.source.skill === 'skill2').map((h) => h.frame);
   const deploys = r.schedule!.activations.filter((a) => a.slotIndex === 2).map(effectFrameOf);
 

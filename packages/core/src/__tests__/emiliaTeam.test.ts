@@ -3,37 +3,28 @@
 // 氷結の魔女（次の 1 発のチャージ速度 300%▼・チャージダメージ▲）が意図どおりに出るか。射撃場の 3 分モード（条件は自動）で見る
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import { effectiveMaxAmmo } from '../frame/firing.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { applyChargeBuffs } from '../skills/buffs.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedSlot, readJson, skillValueOf } from './teamHelpers.ts';
+import {
+  characterOf,
+  describeEveryShotInOneGroup,
+  fixedSlot,
+  fixedTeam,
+  shootingRangeEnemy,
+  skillValueOf,
+} from './teamHelpers.ts';
 
 const EMILIA = 821;
 const LITER = 82;
 const DELTA = 20;
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
-  defence: 100,
-  element: 'Fire',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
+const rangeEnemy: EnemyInput = shootingRangeEnemy({ defence: 100 });
 
 const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
-const team = (ids: number[], controlledSlot: number): TeamInput => ({
-  slots: ids.map(autoSlot),
-  enemy: rangeEnemy,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot,
-});
+const team = (ids: number[], controlledSlot: number): TeamInput =>
+  fixedTeam(ids.map(autoSlot), controlledSlot, { enemy: rangeEnemy });
 
 const TEAMS: Record<string, TeamInput> = {
   'リター + デルタ + エミリア（操作。撮影の編成）': team([LITER, DELTA, EMILIA], 2),

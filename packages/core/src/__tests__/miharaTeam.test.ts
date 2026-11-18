@@ -4,7 +4,6 @@
 // （C-0564・C-0575）、追加ダメージは 3 ヒットのそれぞれに出てフルバースト補正が乗る（C-0565）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { burstDelaysOf } from '../burst/landing.ts';
 import { effectFrameOf, hitFramesOf, isInFullBurst } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -14,7 +13,7 @@ import { parseSkillDefinition, staticStatesOf } from '../skills/types.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { characterOf, rawDefinition } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const MIHARA = 161;
 const definition = (id: number) => parseSkillDefinition(rawDefinition(id));
@@ -38,14 +37,8 @@ describe('ミハラ（161）の定義', () => {
 
   it('gives the additional damage from the third Burst on, not seeing Highway to Hell 2 granted by the same Burst (V-0432。ラム + デルタ + ミハラ)', () => {
     const m = 2;
-    const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Wind', hasCore: true };
-    const input: TeamInput = {
-      slots: [fixedSlot(822), fixedSlot(20), fixedSlot(MIHARA)],
-      enemy,
-      durationSeconds: 180,
-      burst: true,
-      controlledSlot: m,
-    };
+    const enemy: EnemyInput = fixedEnemy({ element: 'Wind' });
+    const input: TeamInput = fixedTeam([fixedSlot(822), fixedSlot(20), fixedSlot(MIHARA)], m, { enemy });
     const plan = planTeamRun(applyCompositionToTeam(input));
     const bursts = plan.schedule!.activations.filter((a) => a.slotIndex === m);
     expect(bursts.length).toBeGreaterThanOrEqual(3);

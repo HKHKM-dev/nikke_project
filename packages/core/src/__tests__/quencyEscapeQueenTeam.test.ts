@@ -3,27 +3,15 @@
 // 状態を見る）、バーストの分配ダメージと射撃の列のグループ分け。V-0702。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runSimulation } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';
 import { runTeam } from './runTeam.ts';
-import { readData } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, shootingRangeEnemy } from './teamHelpers.ts';
 
-const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
-  defence: FIXED_SPEC_ENEMY_DEFENCE,
-  element: 'Fire',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
-const plainEnemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
+const rangeEnemy: EnemyInput = shootingRangeEnemy();
+const plainEnemy: EnemyInput = fixedEnemy();
 const QUENCY = 403;
 // Lv10 の値（説明文の値 02〜07 と S1 の値 01〜03）
 const HIT = [0.0136, 0.0271, 0.0408];
@@ -51,13 +39,11 @@ const BURST: TeamInput = {
   controlledSlot: 2,
 };
 // 実戦寄り（リター + デルタ + クエンシー：エスケープクイーン + アリス + モダニア）。手入力の条件
-const PRACTICAL: TeamInput = {
-  slots: [fixedSlot(82), fixedSlot(20), fixedSlot(QUENCY), fixedSlot(191), fixedSlot(260)],
-  enemy: plainEnemy,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot: 2,
-};
+const PRACTICAL: TeamInput = fixedTeam(
+  [fixedSlot(82), fixedSlot(20), fixedSlot(QUENCY), fixedSlot(191), fixedSlot(260)],
+  2,
+  { enemy: plainEnemy },
+);
 
 describe('ルート探索の段（単騎）', () => {
   const plan = planTeamRun(SOLO);

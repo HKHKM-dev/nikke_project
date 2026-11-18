@@ -4,7 +4,6 @@
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from './fixtures.ts';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
@@ -22,7 +21,7 @@ import type { CharacterData } from '../types.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { piecesOf } from './historyHelpers.ts';
 import { characterOf, rawDefinition } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 /** burst に weaponChange を 1 つだけ置いた定義（検証にかける前の JSON） */
 function withBurst(effect: unknown): unknown {
@@ -169,14 +168,8 @@ describe('untilNextEndItems', () => {
   });
 });
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
-const REC232: TeamInput = {
-  slots: [fixedSlot(304), fixedSlot(95)],
-  enemy,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot: 0,
-};
+const enemy: EnemyInput = fixedEnemy();
+const REC232: TeamInput = fixedTeam([fixedSlot(304), fixedSlot(95)], 0, { enemy });
 
 describe('録画 0232 の編成（フラワー + ウンファ：TU）', () => {
   const plan = planTeamRun(REC232);

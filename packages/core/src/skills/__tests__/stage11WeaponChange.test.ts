@@ -3,7 +3,7 @@
 // 使い手はラプラス：アルティメットヒーロー（103）の S1（V-0528）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
-import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { computeFixedSpecAttack, computeFixedSpecHp } from '../../fixedSpec.ts';
 import { drainAmmo, initialShooter } from '../../frame/shooter.ts';
 import { firingParams } from '../../frame/firing.ts';
 import { runSimulation } from '../../sim/engine.ts';
@@ -12,6 +12,7 @@ import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL } from '../../weapons.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedEnemy, fixedTeam } from '../../__tests__/teamHelpers.ts';
 
 const LAPLACE = 103;
 const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
@@ -119,8 +120,8 @@ describe('ラプラス：アルティメットヒーローの S1（V-0528）', (
     condition: { coreHitRate: 1, distanceBonus: false },
     skills: { definition: definitionOf(LAPLACE), levels: MAX_SKILL_LEVELS },
   };
-  const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
-  const input: TeamInput = { slots: [slot], enemy, durationSeconds: 180, burst: false, controlledSlot: 0 };
+  const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
+  const input: TeamInput = fixedTeam([slot], 0, { enemy, burst: false });
   const r = runSimulation(input);
   const log = r.shots[0]!;
   const changed = new Set(log.weaponChangeShotFrames ?? []);

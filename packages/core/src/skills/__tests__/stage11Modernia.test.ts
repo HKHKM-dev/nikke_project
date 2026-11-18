@@ -14,6 +14,7 @@ import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
 import { itemsOf } from '../holders.ts';
 import { isFiringStat, isStateStat, parseSkillDefinition } from '../types.ts';
 import { gameSecondsToFrames } from '../../time.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 function definition(skills: Record<string, unknown>, resourceId = 1): unknown {
   const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
@@ -240,7 +241,7 @@ describe('resolve (Stage 11 モダニア)', () => {
 
 describe('computeTriggerDamage with per-shot damage and a changed weapon (3.1)', () => {
   const character = modernia();
-  const enemy: EnemyInput = { defence: 100, element: null, hasCore: true };
+  const enemy: EnemyInput = fixedEnemy({ defence: 100 });
   const perShot = resolvePerShotDamage(parseSkillDefinition(definition(MODERNIA_DEF)), character, MAX_SKILL_LEVELS);
   const base = {
     character,

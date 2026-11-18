@@ -1,9 +1,7 @@
 // クルミ（862）を含む編成: S1 のハッキング（持続ダメージ dot。付いた 1 秒後から 1 秒ごと・付き直しで延びる）。
 // 射撃の列のグループ分けと、ハッキングの tick（plan/design-kurumi.md）と、tick のゲージ（V-0113。plan/design-raven-s1.md 10 節）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
@@ -13,20 +11,15 @@ import { dotTickFrames, planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFrame } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { rawDefinition } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
+import { rawDefinition, readObservations } from './data.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
+const enemy: EnemyInput = fixedEnemy();
 
 function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
-  return { slots, enemy, durationSeconds: 180, burst: true, controlledSlot };
+  return fixedTeam(slots, controlledSlot, { enemy });
 }
 
 const KURUMI = 862;
-const DEF_PATH = `../../data/skills/${KURUMI}.json`;
 // 撮影の計画の編成（クルミ単騎。V-0052）と、クルミが I の実戦寄りの 5 人
 const TEAMS: Record<string, { input: TeamInput; kurumi: number }> = {
   '撮影の計画の編成（クルミ単騎）': { input: team([fixedSlot(KURUMI)], 0), kurumi: 0 },
@@ -134,7 +127,7 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, kurumi }) =>
 // V-0113: クルミ単騎の録画 0057〜0062 の 1 回目の満タン。弾とハッキングの tick を 4,000 ずつ足した合計が、1,000,000 にちょうど
 // 届いたヒットのフレームで満タンになる（付けた回は足さない）。数は観測値から読む（テストに実測値を直書きしない）
 type Observation = { id: string; value: number | number[] };
-const observations = readJson<Observation[]>('../../../../records/observations/0057.json');
+const observations = readObservations<Observation[]>('0057');
 const obs = (id: string): Observation['value'] => {
   const o = observations.find((x) => x.id === id);
   if (o === undefined) throw new Error(`observation ${id} not found`);
@@ -158,7 +151,9 @@ describe('recordings 057–062 (Kurumi solo): the first full gauge (V-0113)', ()
   });
 
   it('fills the gauge later without the tick gauge', () => {
-    const plain = structuredClone(readJson<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>(DEF_PATH));
+    const plain = structuredClone(
+      rawDefinition<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>(KURUMI),
+    );
     for (const e of plain.skills.skill1.effects) delete e.gaugeOnTick;
     const slot = { ...input.slots[0]!, skills: { definition: parseSkillDefinition(plain), levels: MAX_SKILL_LEVELS } };
     const without = planTeamRun({ ...input, slots: [slot] });

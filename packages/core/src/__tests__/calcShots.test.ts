@@ -8,7 +8,6 @@
 // 足すと集計の値になることを固定する。
 import { describe, expect, it } from 'vitest';
 import type { EnemyEvent, EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
 import { runTeam } from './runTeam.ts';
@@ -16,12 +15,12 @@ import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { ShotParams } from '../types.ts';
 import { framesToGameSeconds } from '../time.ts';
 import { makeCharacter } from './fixtures.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
+const enemy: EnemyInput = fixedEnemy();
 
 function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
-  return { slots, enemy, durationSeconds: 180, burst: true, controlledSlot };
+  return fixedTeam(slots, controlledSlot, { enemy });
 }
 
 // 2026-09-28 の起票の編成（リター + ニヒリスター + アリス + 紅蓮BS + モダニア）。リターの S1 の最大装弾数▲は味方全体で、全枠が窓を持つ

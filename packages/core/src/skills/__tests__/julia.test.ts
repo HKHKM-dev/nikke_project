@@ -1,7 +1,7 @@
 // ジュリア（150）の語彙（plan/design-julia.md 2.1 節）: 倍率ダメージの会心をきっかけにする 1 ヒット（damage の onSkillCrit）の検証・解決と、
 // 期待値（値 × 倍率ダメージの会心率）と、出た時の 1 ヒットの値（oneHitValue は会心率を外す）
 import { describe, expect, it } from 'vitest';
-import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
+import { characterOf, fixedEnemy, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import type { EnemyInput } from '../../damage.ts';
 import { computeBurstHit, oneHitValue, resolveDamageEffects, type ResolvedSkillDamage } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
@@ -61,7 +61,7 @@ describe('解決', () => {
 });
 
 describe('computeBurstHit: onSkillCrit', () => {
-  const enemy: EnemyInput = { defence: 100, element: 'Wind', hasCore: false };
+  const enemy: EnemyInput = fixedEnemy({ defence: 100, element: 'Wind', hasCore: false });
   const source = { resourceId: JULIA, skill: 'skill2' as const, name: { ja: '', en: '' } };
   const marcato: ResolvedSkillDamage = { source, damageType: 'additional', multiplier: 0.88 };
   const follow: ResolvedSkillDamage = { source, damageType: 'additional', multiplier: 1, onSkillCrit: true };

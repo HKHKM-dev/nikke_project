@@ -6,7 +6,7 @@
 // 基礎版は宝物版の部分集合（S1 は効果なし、S2 の最大装弾数▲は 10 秒）。射撃の列のグループ分け。
 import { describe, expect, it } from 'vitest';
 import { activationFramesOfSlot } from '../burst/schedule.ts';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
+import { enemyEventsOf, enemyLandingsOf } from '../enemies.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { simTeamResult } from '../sim/teamResult.ts';
@@ -18,7 +18,8 @@ import {
   describeEveryShotInOneGroup,
   effectWindows,
   fixedTeam,
-  readJson,
+  ENEMY_PRESETS,
+  RANGE_BIGARMS,
   SHOOTING_RANGE_ENEMY,
   skillValueOf,
   windowsFrom,
@@ -137,8 +138,8 @@ describe.each([
 // バーストの命中率▲は区間の状態でなく、条件が自動の枠の着地点の命中率に入る（frame/landing.ts）。録画と同じ射撃場の敵で、
 // 平均の命中率▲が自分にだけ乗ることを見る
 describe('バーストの命中率▲（射撃場の敵・条件は自動）', () => {
-  const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-  const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
+  const master = ENEMY_PRESETS;
+  const profile = RANGE_BIGARMS;
   const input = team(TRIO, SUGAR_SLOT, 'Fire', 3);
   input.enemy = {
     ...input.enemy,

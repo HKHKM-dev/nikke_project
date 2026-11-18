@@ -14,6 +14,7 @@ import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { CharacterData } from '../types.ts';
 import { makeCharacter } from './fixtures.ts';
+import { fixedEnemy } from './teamHelpers.ts';
 
 const values = (v: string) => Array.from({ length: 10 }, () => v);
 
@@ -54,7 +55,7 @@ function run(effects: Record<string, unknown>[], hasCore = true, shot: Partial<C
     checkedAt: '2026-10-28',
     skills: { skill1: { effects }, skill2: empty, burst: empty },
   });
-  const enemy: EnemyInput = { defence: 100, element: null, hasCore };
+  const enemy: EnemyInput = fixedEnemy({ defence: 100, hasCore });
   const input: TeamInput = {
     slots: [
       {

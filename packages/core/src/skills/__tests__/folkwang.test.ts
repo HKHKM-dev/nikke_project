@@ -1,7 +1,7 @@
 // フォルクヴァン（242）の S2 のゲージ: 20 秒（ceil で 1177f）ごとの発動の 4f 後に、射手の 1 ヒットぶん（4,000）を溜める
 // （burstGaugeHit。C-0422。単騎の録画 0309 で、ゲージは戦闘開始から 1181f、その後 1177f ごとに伸びる）
 import { describe, expect, it } from 'vitest';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { computeFixedSpecAttack } from '../../fixedSpec.ts';
 import { planTeamRun } from '../../frame/plan.ts';
 import type { TeamInput } from '../../team.ts';
 import { resolveTimerGauges } from '../burstDamage.ts';
@@ -9,6 +9,7 @@ import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { timerFrames } from '../timeline.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 const folkwang = characterOf(242);
 const raw = rawDefinition<{ skills: Record<string, { effects: unknown[] }> }>(242);
@@ -34,7 +35,7 @@ function solo(definition: SkillDefinition): TeamInput {
         skills: { definition, levels: MAX_SKILL_LEVELS },
       },
     ],
-    enemy: { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true },
+    enemy: fixedEnemy(),
     durationSeconds: 180,
     burst: true,
     controlledSlot: 0,

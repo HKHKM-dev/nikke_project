@@ -2,16 +2,15 @@
 // コアダメージ▲の付く先が 2 機であること。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
+const enemy: EnemyInput = fixedEnemy();
 
 function team(slots: TeamSlotInput[], controlledSlot: number, burst: boolean): TeamInput {
-  return { slots, enemy, durationSeconds: 180, burst, controlledSlot };
+  return fixedTeam(slots, controlledSlot, { enemy, burst });
 }
 
 const NAGA = 450;

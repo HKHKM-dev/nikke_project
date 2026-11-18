@@ -11,6 +11,7 @@ import { itemsOf, stateEndFrames, type HeldItemView } from '../holders.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import type { NamedStateId } from '../states.ts';
 import { parseSkillDefinition } from '../types.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 const tenLevels = (v: string) => Array.from({ length: 10 }, () => v);
 const skill = (values: string[]): SkillRaw => ({
@@ -63,7 +64,7 @@ function run(effects: unknown[]) {
         skills: { definition, levels: MAX_SKILL_LEVELS },
       },
     ],
-    enemy: { defence: 100, element: null, hasCore: false },
+    enemy: fixedEnemy({ defence: 100, hasCore: false }),
     durationSeconds: 10,
     burst: false,
   };

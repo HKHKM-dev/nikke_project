@@ -11,8 +11,9 @@ import { type SlotCondition, type TeamInput, type TeamSlotInput } from '../team.
 import type { SkillRaw } from '../types.ts';
 import { makeCharacter } from './fixtures.ts';
 import { readData } from './data.ts';
+import { fixedEnemy } from './teamHelpers.ts';
 
-const enemy: EnemyInput = { defence: 100, element: 'Wind', hasCore: true };
+const enemy: EnemyInput = fixedEnemy({ defence: 100, element: 'Wind' });
 const growth = { level: 1, grade: 0, core: 0 };
 const tenLevels = (v: string) => Array.from({ length: 10 }, () => v);
 const empty: SkillRaw = { id: 0, name: { ja: '', en: '' }, description: { ja: '', en: '' }, values: [] };

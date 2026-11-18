@@ -3,16 +3,15 @@
 // V-0439 のマナ → アスカ）で、回復と、それで付くアスカの S1 の窓の始まりを見る。どちらもバーストは撃たない（オートバースト OFF）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput } from '../team.ts';
 import { healsOf, piecesOf } from './historyHelpers.ts';
-import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from './teamHelpers.ts';
 
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 0, distanceBonus: true } };
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
+const enemy: EnemyInput = fixedEnemy();
 const MANA_ID = 290;
 const ASUKA_ID = 830;
 
@@ -32,13 +31,10 @@ function asukaS1Starts(plan: ReturnType<typeof planTeamRun>, asuka: number): num
 describe('V-0490 の録画の編成（◎アスカ（1 枠目）→ マナ（2 枠目））', () => {
   const ASUKA = 0;
   const MANA = 1;
-  const input: TeamInput = {
-    slots: [fixedSlot(ASUKA_ID, SLOT_OPTIONS), fixedSlot(MANA_ID, SLOT_OPTIONS)],
+  const input: TeamInput = fixedTeam([fixedSlot(ASUKA_ID, SLOT_OPTIONS), fixedSlot(MANA_ID, SLOT_OPTIONS)], ASUKA, {
     enemy,
-    durationSeconds: 180,
     burst: false,
-    controlledSlot: ASUKA,
-  };
+  });
   const plan = planTeamRun(input);
   const manaShots = plan.shots[MANA]!.frames;
   const tenth = manaShots[9]!;
@@ -70,13 +66,10 @@ describe('V-0490 の録画の編成（◎アスカ（1 枠目）→ マナ（2 �
 describe('V-0439 の録画の編成（マナ（1 枠目）→ ◎アスカ（2 枠目））', () => {
   const MANA = 0;
   const ASUKA = 1;
-  const input: TeamInput = {
-    slots: [fixedSlot(MANA_ID, SLOT_OPTIONS), fixedSlot(ASUKA_ID, SLOT_OPTIONS)],
+  const input: TeamInput = fixedTeam([fixedSlot(MANA_ID, SLOT_OPTIONS), fixedSlot(ASUKA_ID, SLOT_OPTIONS)], ASUKA, {
     enemy,
-    durationSeconds: 180,
     burst: false,
-    controlledSlot: ASUKA,
-  };
+  });
   const plan = planTeamRun(input);
   const tenth = plan.shots[MANA]!.frames[9]!;
 

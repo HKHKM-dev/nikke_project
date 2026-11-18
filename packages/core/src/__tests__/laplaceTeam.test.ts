@@ -4,36 +4,24 @@
 import { describe, expect, it } from 'vitest';
 import { hexagonFrameOf, hitFrameOf } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rawDefinition, readJson } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rawDefinition, shootingRangeEnemy } from './teamHelpers.ts';
 
 const LAPLACE = 100;
 
 type Entry = { effects: Record<string, unknown>[] };
 type Raw = { skills: Record<string, Entry>; treasureSkills: Record<string, Entry> };
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
-  defence: FIXED_SPEC_ENEMY_DEFENCE,
-  element: 'Fire',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
+const rangeEnemy: EnemyInput = shootingRangeEnemy();
 
 /** 撮影の編成（ココア + ソルジャーF.A. + ラプラス（操作））。ラプラスは 3 枠目 */
 function rangeTeam(treasurePhase: TreasurePhase, raw?: Raw): TeamInput {
   const slots = [311, 301].map((id): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' }));
   const laplace: TeamSlotInput = fixedSlot(LAPLACE, { definition: raw, conditionMode: 'auto' });
   laplace.skills!.treasurePhase = treasurePhase;
-  return { slots: [...slots, laplace], enemy: rangeEnemy, durationSeconds: 180, burst: true, controlledSlot: 2 };
+  return fixedTeam([...slots, laplace], 2, { enemy: rangeEnemy });
 }
 
 /** 宝物版のヒーロービジョンを 3 秒にした定義（バーストの途中で切れる回を作る） */

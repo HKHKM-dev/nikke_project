@@ -5,7 +5,6 @@ import { loadRecordingsFile, loadRecordsData, recordingMap } from '../../../scri
 import { burstStepOf, burstUnitOf } from '../../burst/dynamic.ts';
 import { slotsByStep } from '../../burst/schedule.ts';
 import type { EnemyInput } from '../../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { buildTeamInput } from '../../records/observations/teamInput.ts';
 import { validateObservations } from '../../records/observations/validate.ts';
 import type { Observation } from '../../records/observations/types.ts';
@@ -16,7 +15,7 @@ import { applyComposition, burstStepInTeam, countsAsBurstStep } from '../composi
 import { MAX_SKILL_LEVELS, resolveInstant } from '../resolve.ts';
 import { burstStepChangeOf, parseSkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
-import { fixedSlot, type FixedSlotOptions } from '../../__tests__/teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions } from '../../__tests__/teamHelpers.ts';
 
 const RAPI_RH = 16;
 const DELTA = 20;
@@ -28,7 +27,7 @@ const rapi = characterOf(RAPI_RH);
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { hp: true };
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
+const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
 
 describe('語彙の検証', () => {
   const withEffects = (slot: 'skill1' | 'burst', ...effects: Record<string, unknown>[]) => {

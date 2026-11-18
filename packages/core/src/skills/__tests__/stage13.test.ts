@@ -21,6 +21,7 @@ import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { resolvePassiveStates, type TimelineSlot } from '../timeline.ts';
 import { BUFF_STATS, parseSkillDefinition } from '../types.ts';
 import { readData } from '../../__tests__/data.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 const masters: BuildMasters = {
   gear: readData('masters/gear.json'),
@@ -339,8 +340,8 @@ describe('BuffTotals への合成（3.1）: 装備した枠自身の常時バフ
 
 describe('新 stat の式（3.3）', () => {
   const character = makeCharacter(); // 炎 AR、コア倍率 2、会心 15% / 150%
-  const advantaged: EnemyInput = { defence: 100, element: 'Wind', hasCore: true };
-  const neutral: EnemyInput = { defence: 100, element: 'Water', hasCore: true };
+  const advantaged: EnemyInput = fixedEnemy({ defence: 100, element: 'Wind' });
+  const neutral: EnemyInput = fixedEnemy({ defence: 100, element: 'Water' });
   const trigger = (buffs: BuffTotals, enemy: EnemyInput = advantaged, c: CharacterData = character) =>
     computeTriggerDamage({
       character: c,
@@ -412,7 +413,7 @@ describe('新 stat の式（3.3）', () => {
 });
 
 describe('runTeam with build effects', () => {
-  const enemy: EnemyInput = { defence: 100, element: 'Wind', hasCore: true };
+  const enemy: EnemyInput = fixedEnemy({ defence: 100, element: 'Wind' });
   const slot = (buildEffects?: BuildEffect[]): TeamSlotInput => ({
     character: makeCharacter(),
     growth: { level: 1, grade: 0, core: 0 },

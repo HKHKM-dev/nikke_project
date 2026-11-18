@@ -3,13 +3,12 @@
 // 射撃の回数起点の回復は、撃った枠より後ろの枠には同じフレーム、自分と前の枠には次のフレーム（skills/heals.ts の healFrameOf。C-0628 の形）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { planTeamRun } from '../../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { itemsOf } from '../holders.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
-import { fixedSlot, type FixedSlotOptions } from '../../__tests__/teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from '../../__tests__/teamHelpers.ts';
 
 const TIA = 451;
 const NAGA = 450;
@@ -17,9 +16,9 @@ const definitionOf = (rid: number) => parseSkillDefinition(rawDefinition(rid));
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 1, distanceBonus: false, hitRate: 1 }, hp: true };
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
+const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
 const plan = (slots: TeamSlotInput[]) => {
-  const input: TeamInput = { slots, enemy, durationSeconds: 180, burst: true, controlledSlot: 1 };
+  const input: TeamInput = fixedTeam(slots, 1, { enemy });
   return planTeamRun(input);
 };
 

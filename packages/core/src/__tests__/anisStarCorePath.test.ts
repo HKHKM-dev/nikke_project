@@ -15,6 +15,7 @@ import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { TargetProfile, TargetRateRow } from '../types.ts';
 import { characterOf, rawDefinition, readData } from './data.ts';
+import { fixedEnemy, fixedTeam } from './teamHelpers.ts';
 
 const rawMaster = readData<Record<string, unknown>>('enemies.json');
 const master = parseEnemyPresets(rawMaster);
@@ -65,7 +66,7 @@ function soloSlot(definition: unknown): TeamSlotInput {
 
 // 録画 0164 と同じ: アニス：スター単騎・操作・オートバースト ON・BigArms 灼熱の 3 分モード
 function solo(enemy: EnemyInput, definition: unknown = raw): TeamInput {
-  return { slots: [soloSlot(definition)], enemy, durationSeconds: 180, burst: true, controlledSlot: 0 };
+  return fixedTeam([soloSlot(definition)], 0, { enemy });
 }
 
 const starTicks = (input: TeamInput) =>
@@ -83,7 +84,7 @@ describe('自動攻撃の core（plan/design-anis-star-core-path.md 3.1 節）',
     const plain = { ...effect, core: undefined };
     const base = {
       attack: 10_000,
-      enemy: { defence: 100, element: null, hasCore: true },
+      enemy: fixedEnemy({ defence: 100 }),
       crit: { rate: 0, damage: 1.5 },
       attackDamageMultiplier: 1,
       elementMultiplier: 1,

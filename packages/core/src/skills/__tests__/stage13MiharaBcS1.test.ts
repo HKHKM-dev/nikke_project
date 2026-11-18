@@ -10,6 +10,7 @@ import { oneHitValue } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, skillValue } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 const MIHARA_BC = 162;
 const mihara = characterOf(MIHARA_BC);
@@ -94,7 +95,7 @@ describe('戦闘開始時の攻撃とチェーンバインド（単騎・バー�
     condition: { coreHitRate: 1, distanceBonus: false },
     skills: { definition: parseSkillDefinition(raw), levels: MAX_SKILL_LEVELS },
   };
-  const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
+  const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
   const result = runSimulation({ slots: [slot], enemy, durationSeconds: 30, burst: false });
   const hits = result.skillHits.filter((h) => h.slotIndex === 0);
   const attacks = hits.filter((h) => h.effect.dot === undefined);

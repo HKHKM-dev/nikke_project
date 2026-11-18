@@ -3,7 +3,6 @@
 // 居合と身剣合一・クリティカル命中の弾丸チャージと満開の間の止まり方・射撃の列のグループ分けを見る
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { ENEMY, itemsOf } from '../skills/holders.ts';
@@ -13,21 +12,19 @@ import { gameSecondsToFrames } from '../time.ts';
 import { piecesOf, stateItemsOf } from './historyHelpers.ts';
 import { runTeam } from './runTeam.ts';
 import { characterOf, rawDefinition } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
+const enemy: EnemyInput = fixedEnemy();
 const MARIAN = 19;
 const SCARLET = 472;
 const RAPUNZEL = 473;
 
 // リター（I）+ ラプンツェル：サンクチュアリ（II）+ マリアン：クイーン（III・操作）+ 紅蓮：神殺（III）+ クラウン（II）
-const input: TeamInput = {
-  slots: [fixedSlot(82), fixedSlot(RAPUNZEL), fixedSlot(MARIAN), fixedSlot(SCARLET), fixedSlot(330)],
-  enemy,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot: 2,
-};
+const input: TeamInput = fixedTeam(
+  [fixedSlot(82), fixedSlot(RAPUNZEL), fixedSlot(MARIAN), fixedSlot(SCARLET), fixedSlot(330)],
+  2,
+  { enemy },
+);
 const [rapunzel, marian, scarlet] = [1, 2, 3];
 const plan = planTeamRun(input);
 const calc = runTeam(input);

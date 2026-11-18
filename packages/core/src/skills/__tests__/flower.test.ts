@@ -1,7 +1,7 @@
 // I-DOLL・フラワー（304）の定義（plan/skills-guide.md）。ダメージに効くのはバーストの倍率ダメージ 1 件だけ。
 // フラワー編: S2 は 15 秒ごとにゲージだけを溜める（burstGaugeHit。plan/design-flower-s2-gauge.md、C-0178）。
 import { describe, expect, it } from 'vitest';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { computeFixedSpecAttack } from '../../fixedSpec.ts';
 import { planTeamRun } from '../../frame/plan.ts';
 import type { TeamInput } from '../../team.ts';
 import { resolveBurstDamage, resolveTimerGauges } from '../burstDamage.ts';
@@ -9,6 +9,7 @@ import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { timerFrames } from '../timeline.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 const flower = characterOf(304);
 const raw = rawDefinition<{ skills: Record<string, { support: string; effects: unknown[] }> }>(304);
@@ -36,7 +37,7 @@ function solo(definition: SkillDefinition): TeamInput {
         skills: { definition, levels: MAX_SKILL_LEVELS },
       },
     ],
-    enemy: { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true },
+    enemy: fixedEnemy(),
     durationSeconds: 180,
     burst: true,
     controlledSlot: 0,

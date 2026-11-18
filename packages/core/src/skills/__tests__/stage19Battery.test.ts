@@ -2,7 +2,7 @@
 // 撮影 A1 の後に書くので、ここでは語彙だけの定義で確かめる（バーストの代わりに戦闘開始時にバッテリーを 100 にする）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
-import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { computeFixedSpecAttack, computeFixedSpecHp } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamSlotInput } from '../../team.ts';
 import { gameSecondsToFirstFrame } from '../../time.ts';
@@ -10,6 +10,7 @@ import { itemsOf } from '../holders.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { characterOf } from '../../__tests__/data.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 const ARK_RANGER_BLACK = 570;
 const character = characterOf(ARK_RANGER_BLACK);
@@ -167,7 +168,7 @@ describe('バッテリーで続く変身（単騎・バーストなし）', () =
     condition: { coreHitRate: 0, distanceBonus: false },
     skills: { definition: parseSkillDefinition(definitionOf(skill1, skill2, burst)), levels: MAX_SKILL_LEVELS },
   });
-  const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
+  const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
   const run = (burst: Effect[], durationSeconds = 30) =>
     runSimulation({ slots: [slotOf([transform, drain], [collider], burst)], enemy, durationSeconds, burst: false });
   type Result = ReturnType<typeof run>;

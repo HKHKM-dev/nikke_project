@@ -5,8 +5,6 @@
 import { describe, expect, it } from 'vitest';
 import { hitFramesOf } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { fullChargeFrameSet } from '../frame/shots.ts';
 import { itemsOf } from '../skills/holders.ts';
@@ -15,22 +13,12 @@ import type { TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFirstFrame, gameSecondsToFrames } from '../time.ts';
 import type { Element } from '../types.ts';
-import { describeEveryShotInOneGroup, fixedSlot, readJson } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, shootingRangeEnemy } from './teamHelpers.ts';
 
 const CENTI = 80;
 const PRODUCT08 = 302;
 const SOLINE = 71;
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy = (element: Element): EnemyInput => ({
-  defence: FIXED_SPEC_ENEMY_DEFENCE,
-  element,
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-});
+const rangeEnemy = (element: Element): EnemyInput => shootingRangeEnemy({ element });
 
 const slotOf = (id: number, treasurePhase: TreasurePhase): TeamSlotInput =>
   fixedSlot(id, { conditionMode: 'auto', ...(id === CENTI ? { treasurePhase } : {}) });
@@ -39,13 +27,12 @@ const team = (
   controlledSlot: number,
   element: Element = 'Fire',
   treasurePhase: TreasurePhase = 3,
-): TeamInput => ({
-  slots: ids.map((id) => slotOf(id, treasurePhase)),
-  enemy: rangeEnemy(element),
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot,
-});
+): TeamInput =>
+  fixedTeam(
+    ids.map((id) => slotOf(id, treasurePhase)),
+    controlledSlot,
+    { enemy: rangeEnemy(element) },
+  );
 
 const TEAMS: Record<string, TeamInput> = {
   'センチ単騎（撮影 A の編成）': team([CENTI], 0),

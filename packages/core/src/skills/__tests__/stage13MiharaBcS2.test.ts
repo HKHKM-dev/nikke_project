@@ -2,12 +2,13 @@
 // チェーンバインドのスタック量▲（stackChange の target enemy。録画 0748・0749・0754・0755。V-0548、C-0754・C-0751）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
-import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { computeFixedSpecAttack, computeFixedSpecHp } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamSlotInput } from '../../team.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedEnemy, fixedTeam } from '../../__tests__/teamHelpers.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
 const MIHARA_BC = 162;
@@ -55,8 +56,8 @@ describe('ラム・デルタ・シンデレラ・ミハラ：ボンディング�
       },
     };
   });
-  const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
-  const result = runSimulation({ slots, enemy, durationSeconds: 180, burst: true, controlledSlot: 3 });
+  const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
+  const result = runSimulation(fixedTeam(slots, 3, { enemy }));
   const window = result.schedule!.fullBurstWindows[0]!;
   const chains = result.skillHits.filter(
     (h) => h.slotIndex === 3 && h.effect.source.skill === 'skill1' && h.effect.dot,

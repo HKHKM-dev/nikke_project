@@ -6,6 +6,7 @@ import { computeFixedSpecAttack } from '../../fixedSpec.ts';
 import { ZERO_BUFFS, type BuffTotals } from '../buffs.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
 const ADE_AB = 315;
@@ -40,7 +41,7 @@ describe('貫通ダメージ▲の式（P1。plan/design-agent-bunny.md 2.3 節�
       character: { ...character, crit: { ...character.crit, rate: 0 } },
       growth,
       attackOverride: attack,
-      enemy: { defence: 100, element: null, hasCore: true },
+      enemy: fixedEnemy({ defence: 100 }),
       condition: { coreHitRate: 1, distanceBonus: true },
       buffs: { ...ZERO_BUFFS, ...buffs },
     }).normal;
@@ -58,7 +59,7 @@ describe('貫通ダメージ▲の式（P1。plan/design-agent-bunny.md 2.3 節�
         character: { ...flower, crit: { ...flower.crit, rate: 0 } },
         growth: fixed.growth,
         attackOverride: fixed.attack,
-        enemy: { defence: 100, element: null, hasCore: true },
+        enemy: fixedEnemy({ defence: 100 }),
         condition: { coreHitRate: 0, distanceBonus: false },
         buffs: { ...ZERO_BUFFS, ...buffs },
       }).normal;

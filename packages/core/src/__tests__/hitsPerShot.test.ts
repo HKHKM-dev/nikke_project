@@ -12,6 +12,7 @@ import type { SlotCondition } from '../team.ts';
 import type { CharacterData, LandingPoint } from '../types.ts';
 import { makeCharacter } from './fixtures.ts';
 import { characterOf, readData } from './data.ts';
+import { fixedEnemy } from './teamHelpers.ts';
 
 const raw = readData<Record<string, unknown>>('enemies.json');
 const master = parseEnemyPresets(raw);
@@ -75,7 +76,7 @@ describe('自動の条件と 1 トリガーの式', () => {
   });
 
   it('multiplies the normal attack only (not the per-shot skill damage)', () => {
-    const enemy: EnemyInput = { defence: 100, element: null, hasCore: true };
+    const enemy: EnemyInput = fixedEnemy({ defence: 100 });
     const base = { character: R750, growth: { level: 1, grade: 0, core: 0 }, enemy, attackOverride: 10_000 };
     const perShot = [
       {

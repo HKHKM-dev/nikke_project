@@ -2,14 +2,13 @@
 // selfCounter。使い手はラプラス：アルティメットヒーロー（103）のバーストの追加ダメージ（録画 0723・0724。V-0532）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { effectFrameOf, hitFrameOf, isInFullBurst } from '../../burst/schedule.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput } from '../../team.ts';
 import { MAX_SKILL_LEVELS, skillValue } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
-import { fixedSlot, type FixedSlotOptions } from '../../__tests__/teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from '../../__tests__/teamHelpers.ts';
 
 const LUDMILLA = 190;
 const BELORTA = 60;
@@ -40,14 +39,12 @@ describe('語彙の検証', () => {
 
 describe('ラプラス：アルティメットヒーローのバーストの追加ダメージ（V-0532）', () => {
   const m = 2;
-  const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
-  const input: TeamInput = {
-    slots: [fixedSlot(LUDMILLA, SLOT_OPTIONS), fixedSlot(BELORTA, SLOT_OPTIONS), fixedSlot(LAPLACE, SLOT_OPTIONS)],
-    enemy,
-    durationSeconds: 180,
-    burst: true,
-    controlledSlot: m,
-  };
+  const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
+  const input: TeamInput = fixedTeam(
+    [fixedSlot(LUDMILLA, SLOT_OPTIONS), fixedSlot(BELORTA, SLOT_OPTIONS), fixedSlot(LAPLACE, SLOT_OPTIONS)],
+    m,
+    { enemy },
+  );
   const r = runSimulation(input);
   const bursts = r.schedule!.activations.filter((a) => a.slotIndex === m);
   const additional = r.skillHits.filter((h) => h.slotIndex === m && h.effect.source.skill === 'burst');

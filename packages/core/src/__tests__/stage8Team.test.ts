@@ -13,13 +13,13 @@ import { simTeamResult } from '../sim/teamResult.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { type TeamInput } from '../team.ts';
 import { framesToGameSeconds, gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
-import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from './teamHelpers.ts';
 
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 0, distanceBonus: false } };
 
 /** 灼熱の的（射撃場の BigArms） */
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: false };
+const enemy: EnemyInput = fixedEnemy({ element: 'Fire', hasCore: false });
 
 // エーテル（I）+ デルタ（II）+ イサベル（III）+ ドレイク（III）+ クイーン（真）（III）
 const TEAM_IDS = [291, 20, 231, 101, 870];
@@ -178,13 +178,11 @@ describe('録画 0038: イサベル（III）+ ラム（I）+ デルタ（II）�
 
 describe('録画 0021: クイーン（真）のバースト 6,323,975（分配ダメージ 90.01%▲）', () => {
   // エーテル（I）+ デルタ（II）+ クイーン（真）（III）、クイーンを操作
-  const input: TeamInput = {
-    slots: [291, 20, 870].map((id) => fixedSlot(id, SLOT_OPTIONS)),
-    enemy,
-    durationSeconds: 180,
-    burst: true,
-    controlledSlot: 2,
-  };
+  const input: TeamInput = fixedTeam(
+    [291, 20, 870].map((id) => fixedSlot(id, SLOT_OPTIONS)),
+    2,
+    { enemy },
+  );
   const queen = runTeam(input).slots[2]!;
   const first = queen.burst.activations[0]!.hit;
 
@@ -201,13 +199,11 @@ describe('録画 0021: クイーン（真）のバースト 6,323,975（分配�
 });
 
 describe('録画 0020: マナのゲージ速度 70.4%', () => {
-  const input: TeamInput = {
-    slots: [291, 20, 290].map((id) => fixedSlot(id, SLOT_OPTIONS)),
-    enemy,
-    durationSeconds: 180,
-    burst: true,
-    controlledSlot: 2,
-  };
+  const input: TeamInput = fixedTeam(
+    [291, 20, 290].map((id) => fixedSlot(id, SLOT_OPTIONS)),
+    2,
+    { enemy },
+  );
   const { schedule } = planTeamRun(input);
 
   // 実測は観測値 0020-06（総ダメージが最初に増えてから本当の満タンまで。V-0028 で表示の 99.1% の 267f から直した）

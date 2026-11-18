@@ -2,7 +2,7 @@
 // ▲、S2 とバーストの「X% × ほろ酔いのスタック数」（timed の perCount）、フルスタックのフルバーストの終わりの解除と二日酔い（気絶 10 秒。
 // shotPause の { applied }。気絶の間はバーストの候補にもならない）（plan/design-maids.md、V-0668）。
 import { describe, expect, it } from 'vitest';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
+import { enemyEventsOf, enemyLandingsOf } from '../enemies.ts';
 import { effectFrameOf } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
@@ -14,7 +14,8 @@ import {
   fixedSlot,
   fixedTeam,
   rawDefinition,
-  readJson,
+  ENEMY_PRESETS,
+  RANGE_BIGARMS,
   skillValueOf,
   SHOOTING_RANGE_ENEMY,
 } from './teamHelpers.ts';
@@ -127,8 +128,8 @@ describe('condition の無い timed の perCount', () => {
 
 // plan/design-maids.md 8 節（C-0974・C-0975）: 条件が自動の枠で射撃場の的なら、ほろ酔いの区間のコア命中率・弾丸命中率は的の▼の表の値
 describe('ほろ酔いの命中率▼（的の▼の表）', () => {
-  const master = parseEnemyPresets(readJson<unknown>('../../data/enemies.json'));
-  const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
+  const master = ENEMY_PRESETS;
+  const profile = RANGE_BIGARMS;
   const base = team([304, MAST]);
   const input: TeamInput = {
     ...base,

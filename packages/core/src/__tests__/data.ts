@@ -27,3 +27,10 @@ export function rawDefinition<T = unknown>(id: number): T {
 export const DEFINED_IDS: ReadonlySet<number> = new Set(
   readData<{ resourceIds: number[] }>('skills/index.json').resourceIds,
 );
+
+/** records/observations/<録画 id>.json（その録画の観測値の列） */
+export function readObservations<T>(recording: string): T {
+  return JSON.parse(
+    readFileSync(new URL(`../../../../records/observations/${recording}.json`, import.meta.url), 'utf8'),
+  ) as T;
+}

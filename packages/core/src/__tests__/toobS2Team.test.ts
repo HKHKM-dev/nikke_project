@@ -5,7 +5,6 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { rateAfterShots, simulateShotFrames } from '../cadence.ts';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { firingParams, ZERO_FIRING_BUFFS } from '../frame/firing.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { variantDefinition } from '../records/sensitivity.ts';
@@ -16,7 +15,7 @@ import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
 import { characterOf, rawDefinition } from './data.ts';
-import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
 
 const TOOB = 192;
 const FA = 301;
@@ -24,7 +23,7 @@ const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { hp: true, defence: true };
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
+const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
 
 /** 録画 0510・0511 と同じ枠順（1 枠目ソルジャーF.A.（操作）・2 枠目トーブ（宝物の段階 3）） */
 const team = (treasurePhase: TreasurePhase): TeamInput => ({

@@ -4,7 +4,6 @@
 import { describe, expect, it } from 'vitest';
 import { isInFullBurst } from '../../burst/schedule.ts';
 import type { EnemyInput } from '../../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput } from '../../team.ts';
 import { GAME_SECONDS_PER_FRAME } from '../../time.ts';
@@ -13,7 +12,7 @@ import { oneHitValue } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, skillValue } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
-import { fixedSlot, type FixedSlotOptions } from '../../__tests__/teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions } from '../../__tests__/teamHelpers.ts';
 
 const RAPI_RH = 16;
 const LITER = 82;
@@ -24,7 +23,7 @@ const burstValue = (ref: number) => skillValue(rapi.skills.burst, ref, MAX_SKILL
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { hp: true };
 
-const enemyOf = (element: Element): EnemyInput => ({ defence: FIXED_SPEC_ENEMY_DEFENCE, element, hasCore: true });
+const enemyOf = (element: Element): EnemyInput => fixedEnemy({ element });
 
 describe('語彙の検証', () => {
   type Raw = { skills: Record<'skill2' | 'burst', { effects: Record<string, unknown>[] }> };

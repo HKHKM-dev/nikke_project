@@ -4,14 +4,13 @@
 // （実測の値は持ち込まない）。クルミの定義は H3（V-0181・C-0276）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { dotActiveSpans, dotTickFrames } from '../frame/dot.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput } from '../team.ts';
 import { rawDefinition } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const KURUMI = 862;
 const raw862 = rawDefinition<{ skills: Record<string, { effects: unknown[]; notes?: unknown[] }> }>(KURUMI);
@@ -119,18 +118,12 @@ describe('dotActiveSpans', () => {
   });
 });
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
+const enemy: EnemyInput = fixedEnemy();
 /** クルミ（I）+ デルタ（II）+ ドレイク（III）。フルバーストが起きる最小の 3 人 */
 function teamWith(s2: unknown[] | null | 'repo'): TeamInput {
   // null は S2 なし、'repo' はリポジトリの定義のまま
   const kurumi = s2 === 'repo' ? fixedSlot(KURUMI) : fixedSlot(KURUMI, { definition: withSkill2(s2 ?? []) });
-  return {
-    slots: [kurumi, fixedSlot(20), fixedSlot(101)],
-    enemy,
-    durationSeconds: 180,
-    burst: true,
-    controlledSlot: 0,
-  };
+  return fixedTeam([kurumi, fixedSlot(20), fixedSlot(101)], 0, { enemy });
 }
 
 const N = 36;

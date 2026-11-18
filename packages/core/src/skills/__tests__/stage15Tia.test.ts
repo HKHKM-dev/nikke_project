@@ -3,13 +3,14 @@
 // 走っている CT を縮める（V-0566）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
-import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { computeFixedSpecAttack, computeFixedSpecHp } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 import { characterOf, readData } from '../../__tests__/data.ts';
+import { fixedEnemy, fixedTeam } from '../../__tests__/teamHelpers.ts';
 
 const TIA = 451;
 const character = characterOf(TIA);
@@ -63,8 +64,8 @@ describe('ティア（V-0566）', () => {
       condition: { coreHitRate: 1, distanceBonus: false, hitRate: 1 },
       skills: { definition: d, levels: MAX_SKILL_LEVELS, treasurePhase: 0 },
     };
-    const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
-    const input: TeamInput = { slots: [slot], enemy, durationSeconds: 180, burst: true, controlledSlot: 0 };
+    const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
+    const input: TeamInput = fixedTeam([slot], 0, { enemy });
     return runSimulation(input);
   };
 

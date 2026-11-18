@@ -3,7 +3,6 @@
 // 条件つきの射撃ごとの倍率ダメージ（S1 の超火力状態の追加効果）。録画 0671〜0673（V-0503）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { effectFrameOf } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { resolveDamageEffects } from '../skills/burstDamage.ts';
@@ -13,20 +12,14 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput } from '../team.ts';
 import { characterOf, rawDefinition } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const NEON = 18;
 const definition = (id: number) => parseSkillDefinition(rawDefinition(id));
 function run() {
   const m = 2;
-  const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
-  const input: TeamInput = {
-    slots: [fixedSlot(822), fixedSlot(20), fixedSlot(NEON)],
-    enemy,
-    durationSeconds: 180,
-    burst: true,
-    controlledSlot: m,
-  };
+  const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
+  const input: TeamInput = fixedTeam([fixedSlot(822), fixedSlot(20), fixedSlot(NEON)], m, { enemy });
   const plan = planTeamRun(applyCompositionToTeam(input));
   const bursts = plan.schedule!.activations.filter((a) => a.slotIndex === m).map(effectFrameOf);
   return { m, plan, bursts };

@@ -3,26 +3,25 @@
 // 射撃の列のグループ分けも見る。V-0706。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
+import { enemyEventsOf, enemyLandingsOf } from '../enemies.ts';
 import { runSimulation } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';
 import {
   characterOf,
   describeEveryShotInOneGroup,
+  ENEMY_PRESETS,
   fixedSlot,
   fixedTeam,
-  readJson,
+  RANGE_BIGARMS,
   SHOOTING_RANGE_ENEMY,
 } from './teamHelpers.ts';
 
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
 const rangeEnemy: EnemyInput = {
   ...SHOOTING_RANGE_ENEMY,
   element: 'Fire',
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
+  events: enemyEventsOf(ENEMY_PRESETS, ['range-3min-jump'], 180),
+  target: RANGE_BIGARMS,
+  landings: enemyLandingsOf(ENEMY_PRESETS, ['range-3min-jump'], 180, RANGE_BIGARMS),
 };
 
 const NOAH = 232;

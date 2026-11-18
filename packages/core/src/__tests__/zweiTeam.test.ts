@@ -2,40 +2,27 @@
 // （フルバーストの 1 発間・10 秒・フルバーストの中の通常攻撃ごとのスタック）、宝物版のバーストの貫通学概論、S2 のクリ率▲が意図どおりに出るか。
 // 射撃場の 3 分モード（条件は自動）で見る
 import { describe, expect, it } from 'vitest';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { describeEveryShotInOneGroup, fixedSlot, readJson } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, shootingRangeEnemy } from './teamHelpers.ts';
 
 const ZWEI = 390;
 const SUN = 308;
 const ADE_AB = 315;
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
-  defence: FIXED_SPEC_ENEMY_DEFENCE,
-  element: 'Fire',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
+const rangeEnemy: EnemyInput = shootingRangeEnemy();
 
 const slotOf = (id: number, treasurePhase: TreasurePhase): TeamSlotInput =>
   fixedSlot(id, { conditionMode: 'auto', ...(id === ZWEI ? { treasurePhase } : {}) });
-const team = (ids: number[], controlledSlot: number, treasurePhase: TreasurePhase = 3): TeamInput => ({
-  slots: ids.map((id) => slotOf(id, treasurePhase)),
-  enemy: rangeEnemy,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot,
-});
+const team = (ids: number[], controlledSlot: number, treasurePhase: TreasurePhase = 3): TeamInput =>
+  fixedTeam(
+    ids.map((id) => slotOf(id, treasurePhase)),
+    controlledSlot,
+    { enemy: rangeEnemy },
+  );
 
 /** 編成と、持ち替えた武器の最初の発の待ち（宝物版 83f・基礎版 101f）と、貫通特化のある味方（エード：AB）の枠 */
 type Case = { input: TeamInput; delay: number; ade?: number };

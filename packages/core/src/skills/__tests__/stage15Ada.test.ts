@@ -5,7 +5,7 @@
 import { describe, expect, it } from 'vitest';
 import type { BurstSchedule } from '../../burst/schedule.ts';
 import type { EnemyInput } from '../../damage.ts';
-import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { computeFixedSpecAttack, computeFixedSpecHp } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { gameSecondsToFirstFrame } from '../../time.ts';
@@ -14,6 +14,7 @@ import { shortenedTimerFrames, timerDamageFrames } from '../timeline.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedEnemy, fixedTeam } from '../../__tests__/teamHelpers.ts';
 
 const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
 const def = (skill2: unknown[], skill1: unknown[] = []) => ({
@@ -154,15 +155,9 @@ describe('エイダ（V-0569）', () => {
       skills: { definition, levels: MAX_SKILL_LEVELS, treasurePhase: 0 },
     };
   };
-  const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
+  const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
   // 撮影 C の編成（リター・デルタ・エイダ）
-  const input: TeamInput = {
-    slots: [slotOf(82), slotOf(20), slotOf(840)],
-    enemy,
-    durationSeconds: 180,
-    burst: true,
-    controlledSlot: 2,
-  };
+  const input: TeamInput = fixedTeam([slotOf(82), slotOf(20), slotOf(840)], 2, { enemy });
   const result = runSimulation(input);
   const schedule = result.schedule!;
   const ada = 2;

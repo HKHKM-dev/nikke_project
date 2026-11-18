@@ -1,9 +1,9 @@
 // 編成のテスト（plan/skills-guide.md 1 節の「テスト」）の共通の道具: スペック固定・Lv 10 の枠、射撃場の的の編成、効果の窓、
 // 射撃の列がどのグループにも 1 回ずつ入ることの確かめ（partitions every shot）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { BurstSchedule } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
+import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import {
   computeFixedSpecAttack,
   computeFixedSpecDefence,
@@ -18,14 +18,11 @@ import type { TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { characterOf, DEFINED_IDS, rawDefinition, type RawDefinition } from './data.ts';
+import type { TargetProfile } from '../types.ts';
+import { characterOf, DEFINED_IDS, rawDefinition, type RawDefinition, readData } from './data.ts';
 import { slotPieces } from './historyHelpers.ts';
 
 export { characterOf, rawDefinition };
-
-export function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
 
 const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false };
 export const SHOOTING_RANGE_ENEMY: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
@@ -119,10 +116,45 @@ function fixedSlotDefinition(id: number, options: FixedSlotOptions): SkillDefini
   return parseSkillDefinition(raw);
 }
 
-/** 射撃場の的・180 秒の編成（extra で上書き） */
-export function fixedTeam(ids: readonly number[], controlledSlot: number, extra: Partial<TeamInput> = {}): TeamInput {
+/** スペック固定の防御力・コードなし・コアありの敵（overrides で上書き） */
+export function fixedEnemy(overrides: Partial<EnemyInput> = {}): EnemyInput {
+  return { ...SHOOTING_RANGE_ENEMY, ...overrides };
+}
+
+/** data/enemies.json の敵のプリセット */
+export const ENEMY_PRESETS = parseEnemyPresets(readData<unknown>('enemies.json'));
+
+/** 射撃場の的（条件が自動の枠が、コア命中率・距離ボーナス・弾丸命中率を引く表） */
+export const RANGE_BIGARMS: TargetProfile = ENEMY_PRESETS.targetProfiles.find((p) => p.id === 'range-bigarms')!;
+
+/**
+ * 射撃場の敵（3 分・ジャンプありの出来事と、的と着地点つき。条件が自動の枠のテスト用）。既定は、スペック固定の防御力・
+ * 火力コード・コアあり・的は RANGE_BIGARMS
+ */
+export function shootingRangeEnemy(
+  options: Partial<Pick<EnemyInput, 'defence' | 'element' | 'hasCore'>> & { target?: TargetProfile } = {},
+): EnemyInput {
+  const target = options.target ?? RANGE_BIGARMS;
   return {
-    slots: ids.map((id) => fixedSlot(id)),
+    defence: options.defence ?? FIXED_SPEC_ENEMY_DEFENCE,
+    element: options.element === undefined ? 'Fire' : options.element,
+    hasCore: options.hasCore ?? true,
+    events: enemyEventsOf(ENEMY_PRESETS, ['range-3min-jump'], 180),
+    target,
+    landings: enemyLandingsOf(ENEMY_PRESETS, ['range-3min-jump'], 180, target),
+  };
+}
+
+/**
+ * 射撃場の的・180 秒・バーストありの編成（extra で上書き）。slots は枠か、キャラの番号（fixedSlot の既定の枠にする）
+ */
+export function fixedTeam(
+  slots: readonly (number | TeamSlotInput | null)[],
+  controlledSlot: number | null | undefined,
+  extra: Partial<TeamInput> = {},
+): TeamInput {
+  return {
+    slots: slots.map((slot) => (typeof slot === 'number' ? fixedSlot(slot) : slot)),
     enemy: SHOOTING_RANGE_ENEMY,
     durationSeconds: 180,
     burst: true,

@@ -22,6 +22,7 @@ import type { ShotParams } from '../types.ts';
 import { makeCharacter } from './fixtures.ts';
 import { framesToGameSeconds } from '../time.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
+import { fixedEnemy } from './teamHelpers.ts';
 
 // SR: チャージ 1 秒（59f）・発と発の間 82f・戦闘開始から 70f（C-0232）・6 発
 const SR: Partial<ShotParams> = {
@@ -113,7 +114,7 @@ describe('partialChargeProgress（射手）', () => {
 
 describe('部分チャージの 1 発の値とゲージ', () => {
   const character = makeCharacter(SR);
-  const enemy: EnemyInput = { defence: 100, element: null, hasCore: true };
+  const enemy: EnemyInput = fixedEnemy({ defence: 100 });
   const condition: SlotCondition = { coreHitRate: 1, distanceBonus: false };
   const full = computeTriggerDamage({ character, growth: { level: 1, grade: 0, core: 0 }, enemy, condition });
 

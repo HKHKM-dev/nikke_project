@@ -4,7 +4,6 @@
 import { describe, expect, it } from 'vitest';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { isStateContent } from '../skills/resolve.ts';
@@ -17,15 +16,15 @@ import { gameSecondsToFrames } from '../time.ts';
 import type { Element } from '../types.ts';
 import { applicationsOf, piecesOf, stateItemsOf } from './historyHelpers.ts';
 import { rawDefinition, type RawDefinition } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const FLOWER = 304;
 const EUNHWA = 95;
 const SUN = 308;
 const QUEEN = 870;
 function team(slots: TeamSlotInput[], element: Element | null, controlledSlot: number): TeamInput {
-  const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element, hasCore: true };
-  return { slots, enemy, durationSeconds: 180, burst: true, controlledSlot };
+  const enemy: EnemyInput = fixedEnemy({ element });
+  return fixedTeam(slots, controlledSlot, { enemy });
 }
 
 const empty = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };

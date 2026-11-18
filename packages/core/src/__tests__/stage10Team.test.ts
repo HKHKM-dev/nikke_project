@@ -2,22 +2,21 @@
 // 実データのキャラ（スペック固定）で、既存の録画 0019・0037 の弾数表示と、撮影予定の録画 A・B の編成を固定する。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { firingParams } from '../frame/firing.ts';
 import { countShotsInRanges, type ShotLog } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { type TeamInput, type TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from './teamHelpers.ts';
 
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 0, distanceBonus: false } };
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: false };
+const enemy: EnemyInput = fixedEnemy({ element: 'Fire', hasCore: false });
 
 function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
-  return { slots, enemy, durationSeconds: 180, burst: true, controlledSlot };
+  return fixedTeam(slots, controlledSlot, { enemy });
 }
 
 /** 射撃の列をマガジンごとの発数に分ける（最後の弾丸で区切る。最後の不完全なマガジンは除く） */

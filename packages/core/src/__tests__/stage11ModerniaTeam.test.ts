@@ -3,7 +3,6 @@
 // 実測値は plan/verification.md Stage 11 モダニア節（録画 0044・0045、2026-09-24）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { firingParams } from '../frame/firing.ts';
 import { initialShooter, resumeShooter, stepShooter } from '../frame/shooter.ts';
 import { itemsOf } from '../skills/holders.ts';
@@ -15,12 +14,12 @@ import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { piecesOf, statePiecesOf } from './historyHelpers.ts';
 import { characterOf } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
+const enemy: EnemyInput = fixedEnemy();
 
 function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
-  return { slots, enemy, durationSeconds: 180, burst: true, controlledSlot };
+  return fixedTeam(slots, controlledSlot, { enemy });
 }
 
 const REC44 = team([fixedSlot(304), fixedSlot(20), fixedSlot(260)], 2);

@@ -1,5 +1,5 @@
 {
-  "section": "8",
-  "order": 150,
-  "text": "テストの道具の重なりを共通の道具に寄せる（2026-11-18 起票）→ 進行中: [design-test-helpers.md](design-test-helpers.md) 5 節"
+  "section": "8.2",
+  "order": -31,
+  "text": "テストの道具の重なりを共通の道具に寄せる（2026-11-18 起票）→ 完了（2026-11-18。段 T1〜T3）: [design-test-helpers.md](design-test-helpers.md)"
 }

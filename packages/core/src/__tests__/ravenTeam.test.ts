@@ -1,9 +1,7 @@
 // レイヴン（851）を含む編成: S1 のスタックする持続ダメージと、付けたとき・tick のゲージ（plan/design-raven-s1.md）。
 // 射撃の列のグループ分けと、tick のスタック・ゲージの予約。録画 0141 の観測値を入力にした tick・スタック・満タンの確かめ（6 節）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { BURST_GAUGE_MAX } from '../burst/controller.ts';
 import { energyPerTrigger } from '../burst/dynamic.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
@@ -11,17 +9,13 @@ import { runTeam } from './runTeam.ts';
 import { dotTicks, planTeamRun } from '../frame/plan.ts';
 import { countShotsInRanges, type ShotLog } from '../frame/shots.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { characterOf, rawDefinition } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition, readObservations } from './data.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
+const enemy: EnemyInput = fixedEnemy();
 
 function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
-  return { slots, enemy, durationSeconds: 180, burst: true, controlledSlot };
+  return fixedTeam(slots, controlledSlot, { enemy });
 }
 
 /** フルチャージの発（部分チャージの発を除く）のフレーム */
@@ -131,7 +125,7 @@ describe('the gauge of the damage over time moves the bursts earlier', () => {
 // plan/design-raven-s1.md 6 節: 録画 0141（レイヴン単騎・操作）の付いたフレームを入力にして、tick とスタックと満タンを確かめる。
 // 値は観測値から読む（テストに実測値を直書きしない）
 type Observation = { id: string; value: number | number[] };
-const observations = readJson<Observation[]>('../../../../records/observations/0141.json');
+const observations = readObservations<Observation[]>('0141');
 const obs = (id: string): Observation['value'] => {
   const o = observations.find((x) => x.id === id);
   if (o === undefined) throw new Error(`observation ${id} not found`);

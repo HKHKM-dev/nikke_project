@@ -2,7 +2,6 @@
 // 通常攻撃と倍率ダメージで同じ防御力を引くこと、敵の件として味方全員に写ること、ルドミラ（190）の S1（最後の弾丸の次のフレームから 10 秒）
 import { describe, expect, it } from 'vitest';
 import { computeTriggerDamage, defenceAfterDown, type EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { ZERO_BUFFS } from '../skills/buffs.ts';
 import { computeSkillHit } from '../skills/burstDamage.ts';
@@ -12,7 +11,7 @@ import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { makeCharacter } from './fixtures.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const LUDMILLA = 190;
 const empty = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
@@ -43,7 +42,7 @@ describe('敵の防御力▼の読み込み', () => {
 });
 
 describe('敵の防御力▼の式（plan/design-skill-stage2.md 1 節。C-0556）', () => {
-  const enemy: EnemyInput = { defence: 100, element: null, hasCore: true };
+  const enemy: EnemyInput = fixedEnemy({ defence: 100 });
 
   it('multiplies the defence by (1 − Σ) and keeps Σ within 0 to 1', () => {
     expect(defenceAfterDown(enemy, ZERO_BUFFS)).toBe(100);
@@ -99,8 +98,8 @@ describe('敵の防御力▼の式（plan/design-skill-stage2.md 1 節。C-0556�
 
 describe('ルドミラ（190）の S1（C-0556）', () => {
   const run = (slots: TeamSlotInput[]) => {
-    const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
-    const input: TeamInput = { slots, enemy, durationSeconds: 180, burst: false, controlledSlot: 0 };
+    const enemy: EnemyInput = fixedEnemy();
+    const input: TeamInput = fixedTeam(slots, 0, { enemy, burst: false });
     return planTeamRun(applyCompositionToTeam(input));
   };
 

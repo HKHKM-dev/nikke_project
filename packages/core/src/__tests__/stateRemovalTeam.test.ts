@@ -3,7 +3,6 @@
 // 定義は data/skills のもの（クイーン（真）・マナ）と、それを書き換えたもの
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { itemsOf } from '../skills/holders.ts';
@@ -11,15 +10,15 @@ import { parseSkillDefinition, staticStatesOf, type SkillDefinition } from '../s
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { Element } from '../types.ts';
 import { rawDefinition } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 type RawEffect = Record<string, unknown>;
 type RawDefinition = { skills: Record<string, { effects: RawEffect[]; notes?: unknown[] }> };
 const MANA = 290;
 const QUEEN = 870;
 function run(slots: TeamSlotInput[], element: Element | null, controlledSlot: number | null) {
-  const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element, hasCore: true };
-  const input: TeamInput = { slots, enemy, durationSeconds: 180, burst: true, controlledSlot };
+  const enemy: EnemyInput = fixedEnemy({ element });
+  const input: TeamInput = fixedTeam(slots, controlledSlot, { enemy });
   return planTeamRun(applyCompositionToTeam(input));
 }
 

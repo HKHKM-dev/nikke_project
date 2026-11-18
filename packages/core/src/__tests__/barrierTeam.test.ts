@@ -4,7 +4,6 @@ import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { stateMatches, statesMatching } from '../skills/states.ts';
@@ -12,15 +11,19 @@ import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { Element } from '../types.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const RUM = 822;
 const DELTA = 20;
 const ASUKA = 830;
 const FLOWER = 304;
 function teamOf(ids: number[], element: Element, controlledSlot = 0): TeamInput {
-  const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element, hasCore: true };
-  return { slots: ids.map((id) => fixedSlot(id)), enemy, durationSeconds: 180, burst: true, controlledSlot };
+  const enemy: EnemyInput = fixedEnemy({ element });
+  return fixedTeam(
+    ids.map((id) => fixedSlot(id)),
+    controlledSlot,
+    { enemy },
+  );
 }
 
 describe('目録の家族', () => {
