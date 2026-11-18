@@ -8,7 +8,7 @@
 // --legacy を付けると old_nikkecalc の下を指す。フォルダを指すと中身を全部落とす。置き場所は dirs.ts（既にあるものは
 // 落とさない。--force で落とし直す）。落としたもの・既にあるものは、手元のパスを「取得」「あり」の行に出す。
 // drive:<相対パス> は、まだ取り込んでいない録画（Drive の「マイ コンピュータ/record」。intake.ts の drive: と同じ指し方）を、
-// 取り込む前の下見のために落とす。置き場所はホームの下の record/（台帳が無いので突き合わせない。取り込みは intake.ts が
+// 取り込む前の下見のために落とす。置き場所は dirs.ts の recordFetchDir（台帳が無いので突き合わせない。取り込みは intake.ts が
 // 別に取り寄せる）。取り込み元のフォルダが手元にある環境（dirs.ts の recordDir。Windows）では落とさず、手元のパスを出す。
 // 環境変数: NIKKE_DRIVE_SA_KEY（drive.ts）、NIKKE_DRIVE_FOLDER_ID（nikke_project_captures フォルダの ID）、
 // NIKKE_DRIVE_LEGACY_FOLDER_ID（old_nikkecalc フォルダの ID。旧プロジェクトのものを取るときだけ）、
@@ -16,10 +16,9 @@
 // カンマ区切りで複数書ける（環境変数の設定欄は 1 行 1 変数なので改行では分けられない）。前に書いたフォルダから探し、
 // 最初に見つかったものを使う。--list は全部のフォルダの中身を合わせて出す（同名は前のフォルダのもの）。
 import { existsSync, mkdirSync, readFileSync, renameSync, rmSync } from 'node:fs';
-import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 import type { RecordingEntry } from '../../packages/core/src/records/recordings.ts';
-import { LEGACY_PREFIX, capturesDir, legacyDir, recordDir } from './dirs.ts';
+import { LEGACY_PREFIX, capturesDir, driveRecordPath, legacyDir, recordDir, recordFetchDir, relPath } from './dirs.ts';
 import { Drive, DRIVE_CALL_MS, type DriveFile } from './drive.ts';
 import { sha256 } from './ffmpeg.ts';
 import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
@@ -41,18 +40,18 @@ if (!values.list && positionals.length === 0) fail();
 type Area = 'captures' | 'legacy' | 'record';
 type Target = { area: Area; relPath: string; sha256?: string };
 
-const ROOTS: Record<Area, { env: string; folder: string }> = {
-  captures: { env: 'NIKKE_DRIVE_FOLDER_ID', folder: 'nikke_project_captures' },
-  legacy: { env: 'NIKKE_DRIVE_LEGACY_FOLDER_ID', folder: 'old_nikkecalc' },
-  record: { env: 'NIKKE_DRIVE_RECORD_FOLDER_ID', folder: 'マイ コンピュータ/record' },
+/** 区分ごとの Drive のフォルダ（環境変数とその名前）と、落とす先 */
+const ROOTS: Record<Area, { env: string; folder: string; local: () => string }> = {
+  captures: { env: 'NIKKE_DRIVE_FOLDER_ID', folder: 'nikke_project_captures', local: capturesDir },
+  legacy: { env: 'NIKKE_DRIVE_LEGACY_FOLDER_ID', folder: 'old_nikkecalc', local: legacyDir },
+  record: { env: 'NIKKE_DRIVE_RECORD_FOLDER_ID', folder: 'マイ コンピュータ/record', local: recordFetchDir },
 };
 
-const relPathOf = (arg: string) => arg.replace(/\\/g, '/').replace(/^\/+|\/+$/g, '');
-
 function toTarget(arg: string): Target {
-  if (arg.startsWith('drive:')) return { area: 'record', relPath: relPathOf(arg.slice('drive:'.length)) };
+  const fromRecord = driveRecordPath(arg);
+  if (fromRecord !== null) return { area: 'record', relPath: fromRecord };
   if (!/^(\d{3,4}|L-[A-Z0-9]+)$/.test(arg)) {
-    return { area: values.legacy ? 'legacy' : 'captures', relPath: relPathOf(arg) };
+    return { area: values.legacy ? 'legacy' : 'captures', relPath: relPath(arg) };
   }
   const path = new URL(`${arg}.json`, RECORDINGS_DIR);
   if (!existsSync(path)) throw new Error(`${arg}: records/recordings/${arg}.json がありません`);
@@ -68,13 +67,6 @@ function rootIds(area: Area): string[] {
   const ids = (process.env[env] ?? '').split(/[,\s]+/).filter((id) => id !== '');
   if (ids.length === 0) throw new Error(`環境変数 ${env}（Drive の ${folder} フォルダの ID）がありません`);
   return ids;
-}
-
-/** 落とす先。record はホームの下の record/（取り込み元のフォルダが手元にある環境では落とさない） */
-function localBase(area: Area): string {
-  if (area === 'legacy') return legacyDir();
-  if (area === 'record') return join(homedir(), 'record');
-  return capturesDir();
 }
 
 const message = (error: unknown) => (error instanceof Error ? error.message : String(error));
@@ -168,7 +160,7 @@ for (const arg of positionals) {
       continue;
     }
     const file = (await resolveIn(rootIds(target.area), target.relPath))[0]!;
-    await fetchTree(file, localBase(target.area), target.relPath, target.sha256);
+    await fetchTree(file, ROOTS[target.area].local(), target.relPath, target.sha256);
   } catch (error) {
     failed += 1;
     console.error(message(error));

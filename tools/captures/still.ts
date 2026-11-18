@@ -6,8 +6,8 @@
 // 番号で取らないと解析結果と対応が取れない。--range（両端を含む。--every で N フレームおき）と --frames（カンマ区切り）は、
 // 全部のフレームを 1 回のデコードで取り、最後のフレームを取ったところで止める。
 // 出力の名前:
-//   --frame（--sheet なし）: --out にそのまま書く。
-//   --range・--frames（--sheet なし）: 1 フレーム 1 枚。--out の拡張子の前に _f<番号> を足す（--out d/x.png → d/x_f1200.png）。
+//   --sheet なし: 1 フレーム 1 枚。1 枚だけなら --out にそのまま、複数なら --out の拡張子の前に _f<番号> を足す
+//   （--out d/x.png → d/x_f1200.png）。
 //   --sheet: 左上から行ごとに並べた画（並べ画）。1 枚に収まれば --out、収まらなければ _f<最初>-<最後> を足した名前で複数枚。
 //     各こまの左上に元のフレーム番号を焼く。フォントは --font、無ければ OS の既定の場所（still-lib.ts の fontCandidates）から
 //     あるものを選ぶ。どれも無いか ffmpeg に drawtext が無ければ、番号を焼かずに並べ、こまの番号を順に標準出力に出す。
@@ -18,10 +18,10 @@
 import { spawnSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readdirSync, renameSync, rmSync } from 'node:fs';
 import { dirname, extname, join } from 'node:path';
-import { ffprobe, parseCrop, writeStill } from './ffmpeg.ts';
+import { ffprobe, parseCrop } from './ffmpeg.ts';
 import { uploadFrame } from './frames-upload.ts';
 import { labelFontSize, outputs, parseSheet, pickFont, pickFrames, sheetFilters } from './still-lib.ts';
-import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
+import { cliArgs, fail, orFail } from '../../packages/core/scripts/cli.ts';
 
 const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
@@ -43,13 +43,6 @@ const out = values.out;
 if (!video || !out) fail();
 if (extname(out) === '') fail('--out には拡張子（.png・.jpg）を付ける');
 
-const orFail = <T>(f: () => T): T => {
-  try {
-    return f();
-  } catch (e) {
-    return fail((e as Error).message);
-  }
-};
 const pick = orFail(() => pickFrames(values));
 const crop = values.crop === undefined ? undefined : orFail(() => parseCrop(values.crop!));
 const scale = values.scale === undefined ? undefined : Number(values.scale);
@@ -58,12 +51,6 @@ const sheet = values.sheet === undefined ? undefined : orFail(() => parseSheet(v
 
 // 出力先のフォルダが無ければ作る（クラウドの新しい VM には frames/ が無い）
 mkdirSync(dirname(out), { recursive: true });
-
-if (values.frame !== undefined && sheet === undefined) {
-  writeStill(video, pick.frames[0]!, out, { crop, scale });
-  uploadFrame(out);
-  process.exit(0);
-}
 
 /** 番号を焼くフォント（焼けなければ null） */
 function labelFont(): string | null {
@@ -86,9 +73,8 @@ let label: { font: string; size: number } | undefined;
 if (sheet !== undefined) {
   const font = labelFont();
   if (font !== null) {
-    const probe = crop === undefined ? ffprobe(video) : undefined;
-    const { w, h } = crop ?? { w: probe!.width, h: probe!.height };
-    label = { font, size: labelFontSize(w, h, scale) };
+    const { width, height } = crop === undefined ? ffprobe(video) : { width: crop.w, height: crop.h };
+    label = { font, size: labelFontSize(width, height, scale) };
   }
 }
 
@@ -101,7 +87,7 @@ const args = [
   '-i',
   video,
   '-vf',
-  sheetFilters({ select: pick.select, crop, scale, label, tile: sheet }),
+  sheetFilters({ select: pick.select, last: pick.frames.at(-1)!, crop, scale, label, tile: sheet }),
   '-fps_mode',
   'vfr',
   '-frames:v',

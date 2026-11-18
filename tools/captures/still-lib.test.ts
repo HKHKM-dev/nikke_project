@@ -60,20 +60,22 @@ describe('フィルタの並び', () => {
   it('burns the frame number before select so it is the original number', () => {
     const vf = sheetFilters({
       select,
+      last: 5,
       crop: { x: 820, y: 10, w: 280, h: 50 },
       scale: 140,
       label: { font: 'C:/Windows/Fonts/arial.ttf', size: 28 },
       tile: { cols: 6, rows: 5 },
     });
     const parts = vf.split(/,(?=[a-z]+=)/);
-    expect(parts.map((p) => p.split('=')[0])).toEqual(['crop', 'drawtext', 'select', 'scale', 'tile']);
+    expect(parts.map((p) => p.split('=')[0])).toEqual(['trim', 'crop', 'drawtext', 'select', 'scale', 'tile']);
+    expect(vf).toContain('trim=end_frame=6,');
     expect(vf).toContain("drawtext=fontfile='C\\:/Windows/Fonts/arial.ttf':text='%{n}'");
     expect(vf).toContain(`enable='${select}'`);
     expect(vf).toContain('tile=6x5:padding=2');
   });
 
   it('leaves out what was not asked for', () => {
-    expect(sheetFilters({ select })).toBe(`select='${select}'`);
+    expect(sheetFilters({ select, last: 5 })).toBe(`trim=end_frame=6,select='${select}'`);
   });
 
   it('escapes a font path for the filter graph', () => {
@@ -116,6 +118,8 @@ describe('出力の名前', () => {
       { path: join('d', 'x_f3.png'), frames: [3] },
       { path: join('d', 'x_f5.png'), frames: [5] },
     ]);
+    // 1 枚だけなら --out のまま
+    expect(outputs(out, [3])).toEqual([{ path: out, frames: [3] }]);
   });
 
   it('writes one sheet to --out and splits the rest by frame range', () => {

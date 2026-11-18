@@ -5,9 +5,6 @@ import { basename, dirname, extname, join } from 'node:path';
 import { selectExpr } from './aim-lib.ts';
 import { type Crop, cropFilter } from './ffmpeg.ts';
 
-/** 取るフレーム（昇順・重なりなし）と、それを選ぶ select の式 */
-export type FramePick = { frames: number[]; select: string };
-
 const nonNegativeInt = (value: string, flag: string): number => {
   if (!/^\d+$/.test(value.trim())) throw new Error(`${flag} は 0 以上の整数で指定する（受け取った値: ${value}）`);
   return Number(value.trim());
@@ -32,8 +29,11 @@ export function parseSheet(value: string): { cols: number; rows: number } {
   return { cols, rows };
 }
 
-/** --frame・--frames・--range（と --every）のどれか 1 つから、取るフレームと select の式を作る */
-export function pickFrames(args: { frame?: string; frames?: string; range?: string; every?: string }): FramePick {
+/** --frame・--frames・--range（と --every）のどれか 1 つから、取るフレーム（昇順・重なりなし）と、それを選ぶ select の式を作る */
+export function pickFrames(args: { frame?: string; frames?: string; range?: string; every?: string }): {
+  frames: number[];
+  select: string;
+} {
   const given = [args.frame, args.frames, args.range].filter((v) => v !== undefined).length;
   if (given !== 1) throw new Error('--frame・--frames・--range のどれか 1 つを指定する');
   if (args.every !== undefined && args.range === undefined) throw new Error('--every は --range と一緒に使う');
@@ -45,8 +45,7 @@ export function pickFrames(args: { frame?: string; frames?: string; range?: stri
     for (let n = first; n <= last; n += every) frames.push(n);
     return { frames, select: selectExpr(first, last, every) };
   }
-  const list = args.frame !== undefined ? [args.frame] : args.frames!.split(',');
-  const flag = args.frame !== undefined ? '--frame' : '--frames';
+  const [list, flag] = args.frame !== undefined ? [[args.frame], '--frame'] : [args.frames!.split(','), '--frames'];
   const frames = [...new Set(list.map((v) => nonNegativeInt(v, flag)))].sort((a, b) => a - b);
   return { frames, select: frames.map((n) => `eq(n\\,${n})`).join('+') };
 }
@@ -95,8 +94,10 @@ export function labelFontSize(width: number, height: number, scale?: number): nu
   return Math.max(1, Math.min(size, Math.ceil(height * 0.6)));
 }
 
-export type SheetFilterOptions = {
+type SheetFilterOptions = {
   select: string;
+  /** 最後に取るフレーム（その後はデコードしない） */
+  last: number;
   crop?: Crop;
   scale?: number;
   /** 番号を焼くフォントと大きさ（無ければ焼かない） */
@@ -105,11 +106,12 @@ export type SheetFilterOptions = {
 };
 
 /**
- * 1 回のデコードで取る -vf の並び: crop → drawtext → select → scale → tile。
+ * 1 回のデコードで取る -vf の並び: trim → crop → drawtext → select → scale → tile。
+ * trim は最後に取るフレームの後で入力を終わらせる（tile がこまの余った最後の 1 枚を出すのに、録画の終わりまで読まないように）。
  * drawtext は select の前に置き、選ぶフレームでだけ動かす（enable）。%{n} は select の前の通し番号（元のフレーム番号）になる。
  */
 export function sheetFilters(o: SheetFilterOptions): string {
-  const filters: string[] = [];
+  const filters: string[] = [`trim=end_frame=${o.last + 1}`];
   if (o.crop) filters.push(cropFilter(o.crop));
   if (o.label) {
     filters.push(
@@ -140,7 +142,7 @@ export function withSuffix(out: string, suffix: string): string {
 }
 
 /** frames を size 個ずつに分ける */
-export function chunk<T>(items: readonly T[], size: number): T[][] {
+function chunk<T>(items: readonly T[], size: number): T[][] {
   const groups: T[][] = [];
   for (let i = 0; i < items.length; i += size) groups.push(items.slice(i, i + size));
   return groups;
@@ -148,9 +150,10 @@ export function chunk<T>(items: readonly T[], size: number): T[][] {
 
 /**
  * 書き出す画と、それぞれに入るフレーム。並べ画は 1 枚に収まれば out、収まらなければ _f<最初>-<最後> を足した名前で複数枚。
- * 並べ画でなければ 1 フレーム 1 枚で、_f<番号> を足した名前
+ * 並べ画でなければ 1 フレーム 1 枚で、1 枚だけなら out、複数なら _f<番号> を足した名前
  */
 export function outputs(out: string, frames: readonly number[], cells?: number): { path: string; frames: number[] }[] {
+  if (cells === undefined && frames.length === 1) return [{ path: out, frames: [...frames] }];
   if (cells === undefined) return frames.map((n) => ({ path: withSuffix(out, `_f${n}`), frames: [n] }));
   const groups = chunk(frames, cells);
   if (groups.length === 1) return [{ path: out, frames: groups[0]! }];

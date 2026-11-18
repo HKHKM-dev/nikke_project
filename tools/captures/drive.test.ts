@@ -110,6 +110,13 @@ describe('Drive の打ち切り（手元のサーバーをトークンと API �
       expect(server.calls()).toBe(3);
     });
 
+    it('retries a 429 the same way', async () => {
+      vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      const server = await flaky(1, 429, '');
+      expect((await (await Drive.connect(1000, [1, 1])).file('f')).name).toBe('a.mp4');
+      expect(server.calls()).toBe(2);
+    });
+
     it('gives up after the second retry', async () => {
       vi.spyOn(console, 'error').mockImplementation(() => undefined);
       const server = await flaky(3, 403, rateLimited);

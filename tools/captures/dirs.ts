@@ -31,6 +31,19 @@ export function recordDir(): string | null {
   return process.platform === 'win32' ? 'F:/record' : null;
 }
 
+/** 取り込む前の録画を下見のために落とす先（NIKKE_RECORD_FETCH_DIR。fetch.ts の drive:）。recordDir() の無い環境で使う */
+export function recordFetchDir(): string {
+  return dir('NIKKE_RECORD_FETCH_DIR', 'record');
+}
+
+/** drive:<record の中の相対パス>（intake.ts・fetch.ts の指し方）なら相対パス（\ は / に、前後の / は外す）、違えば null */
+export function driveRecordPath(arg: string): string | null {
+  return arg.startsWith('drive:') ? relPath(arg.slice('drive:'.length)) : null;
+}
+
+/** 相対パスの書き方をそろえる（\ は / に、前後の / は外す） */
+export const relPath = (arg: string): string => arg.replace(/\\/g, '/').replace(/^\/+|\/+$/g, '');
+
 /** 台帳の L- の録画の path の頭（オーナーの手元の置き場所。この下が legacyDir() と Drive の old_nikkecalc の下と同じ構成） */
 export const LEGACY_PREFIX = 'E:/old_nikkecalc/';
 

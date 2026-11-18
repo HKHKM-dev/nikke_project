@@ -85,7 +85,7 @@ const NETWORK_FAILURE_MESSAGES: ReadonlySet<string> = new Set(['fetch failed', '
 
 /**
  * Drive の呼び出しの失敗が、待てば直りうるものか: 通信の失敗（fetch の TypeError のうち NETWORK_FAILURE_MESSAGES）・
- * 打ち切り（timeoutMs の TimeoutError）と、HTTP の 429・5xx（Drive.get の例外の status）。ほかの HTTP の失敗と、
+ * 打ち切り（timeoutMs の TimeoutError）と、HTTP の 5xx（Drive.get の例外の status）・利用上限（isRateLimitError）。ほかの HTTP の失敗と、
  * 応答の読み違い・中のバグなどは直らないとみる
  */
 export function isTransientDriveError(e: unknown): boolean {
@@ -95,16 +95,33 @@ export function isTransientDriveError(e: unknown): boolean {
     );
   if ((e as { name?: unknown } | null)?.name === 'TimeoutError') return true;
   const status = (e as { status?: unknown } | null)?.status;
-  return typeof status === 'number' && (status === 429 || status >= 500);
+  return (typeof status === 'number' && status >= 500) || isRateLimitError(e);
 }
 
-/** 利用上限の 403 で再試行する前に待つ長さ。要素の数が再試行の回数 */
-export const RATE_LIMIT_WAITS_MS: readonly number[] = [2_000, 5_000];
+/** 利用上限で再試行する前に待つ長さ。要素の数が再試行の回数 */
+const RATE_LIMIT_WAITS_MS: readonly number[] = [2_000, 5_000];
 
-/** Drive の呼び出しの失敗が、利用上限の 403（usageLimits の rateLimitExceeded など。少し待てば通る）か */
+/**
+ * Drive の呼び出しの失敗が、利用上限（少し待てば通る）か: 429 と、403 のうち理由が usageLimits の領域か
+ * rateLimitExceeded・userRateLimitExceeded のもの（Drive.get の例外の reason・domain）
+ */
 export function isRateLimitError(e: unknown): boolean {
-  const status = (e as { status?: unknown } | null)?.status;
-  return status === 403 && e instanceof Error && /usageLimits|rateLimitExceeded/.test(e.message);
+  const { status, reason, domain } = (e ?? {}) as { status?: unknown; reason?: unknown; domain?: unknown };
+  if (status === 429) return true;
+  return (
+    status === 403 && (domain === 'usageLimits' || (typeof reason === 'string' && /rateLimitExceeded$/i.test(reason)))
+  );
+}
+
+/** Drive API の失敗の本体（{ error: { errors: [{ reason, domain }] } }）の初めの理由。読めなければ空 */
+function errorReason(body: string): { reason?: string; domain?: string } {
+  try {
+    const first = (JSON.parse(body) as { error?: { errors?: { reason?: string; domain?: string }[] } }).error
+      ?.errors?.[0];
+    return { reason: first?.reason, domain: first?.domain };
+  } catch {
+    return {};
+  }
 }
 
 export class Drive {
@@ -112,7 +129,7 @@ export class Drive {
   private readonly token: string;
   /** 1 回の呼び出しを打ち切るまで（無ければ打ち切らない） */
   private readonly timeoutMs: number | undefined;
-  /** 利用上限の 403 で再試行する前に待つ長さ（既定は RATE_LIMIT_WAITS_MS） */
+  /** 利用上限で再試行する前に待つ長さ（既定は RATE_LIMIT_WAITS_MS） */
   private readonly rateLimitWaitsMs: readonly number[];
 
   private constructor(token: string, timeoutMs: number | undefined, rateLimitWaitsMs: readonly number[]) {
@@ -123,13 +140,13 @@ export class Drive {
 
   /**
    * timeoutMs を渡すと、トークンの取得とどの呼び出しも、その長さで打ち切る（download は応答の頭が届くまで）。
-   * API の呼び出しが利用上限の 403 で失敗したら、rateLimitWaitsMs の長さずつ待って再試行する
+   * API の呼び出しが利用上限（isRateLimitError）で失敗したら、rateLimitWaitsMs の長さずつ待って再試行する
    */
   static async connect(timeoutMs?: number, rateLimitWaitsMs: readonly number[] = RATE_LIMIT_WAITS_MS): Promise<Drive> {
     return new Drive(await accessToken(timeoutMs), timeoutMs, rateLimitWaitsMs);
   }
 
-  /** getOnce を呼び、利用上限の 403（isRateLimitError）なら待って再試行する */
+  /** getOnce を呼び、利用上限（isRateLimitError）なら待って再試行する */
   private async get(path: string, params: Record<string, string>, headersOnly = false): Promise<Response> {
     for (let attempt = 0; ; attempt++) {
       try {
@@ -138,7 +155,7 @@ export class Drive {
         const wait = this.rateLimitWaitsMs[attempt];
         if (wait === undefined || !isRateLimitError(e)) throw e;
         console.error(
-          `Drive の利用上限（403）。${wait / 1000} 秒待って再試行する（${attempt + 1}/${this.rateLimitWaitsMs.length} 回目）`,
+          `Drive の利用上限（${(e as { status?: unknown }).status}）。${wait / 1000} 秒待って再試行する（${attempt + 1}/${this.rateLimitWaitsMs.length} 回目）`,
         );
         await sleep(wait);
       }
@@ -146,7 +163,7 @@ export class Drive {
   }
 
   /**
-   * 失敗の例外は status（HTTP の状態）を持つ。timeoutMs は、ふだんは本体を読み終えるまでに掛け、headersOnly なら応答の頭が
+   * 失敗の例外は status（HTTP の状態）と、本体から読めれば reason・domain を持つ。timeoutMs は、ふだんは本体を読み終えるまでに掛け、headersOnly なら応答の頭が
    * 届くまでにだけ掛ける（本体は読み終えるまで待つ）
    */
   private async getOnce(path: string, params: Record<string, string>, headersOnly: boolean): Promise<Response> {
@@ -160,10 +177,13 @@ export class Drive {
         headers: { authorization: `Bearer ${this.token}` },
         ...(ctl ? { signal: ctl.signal } : deadline(ms)),
       });
-      if (!res.ok)
-        throw Object.assign(new Error(`Drive API ${path} が失敗（${res.status}）: ${await res.text()}`), {
+      if (!res.ok) {
+        const body = await res.text();
+        throw Object.assign(new Error(`Drive API ${path} が失敗（${res.status}）: ${body}`), {
           status: res.status,
+          ...errorReason(body),
         });
+      }
       return res;
     } finally {
       clearTimeout(timer);
