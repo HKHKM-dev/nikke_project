@@ -25,16 +25,17 @@ export const REPO_IMPORT_GRAPH: ImportGraphOptions = {
 
 const SOURCE = /\.tsx?$/;
 
+/** ソースの構文木（.tsx は TSX として読む。親を辿れるようにする） */
+export function parseSource(file: string, text: string): ts.SourceFile {
+  const kind = file.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
+  return ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true, kind);
+}
+
 /** ソース 1 つの、実行時に残る import・再公開の先（書いてあるとおりの指定） */
 export function runtimeImportsOf(fileName: string, text: string): string[] {
-  const source = ts.createSourceFile(
-    fileName,
-    text,
-    ts.ScriptTarget.Latest,
-    false,
-    fileName.endsWith('x') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
-  );
-  return source.statements.map(runtimeSpecifierOf).filter((specifier) => specifier !== undefined);
+  return parseSource(fileName, text)
+    .statements.map(runtimeSpecifierOf)
+    .filter((specifier) => specifier !== undefined);
 }
 
 /** モジュールの最上位の文が実行時に残る import・再公開なら、その指定（書いてあるとおり） */

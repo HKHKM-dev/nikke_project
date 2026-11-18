@@ -3,14 +3,15 @@
 import ts from 'typescript';
 import { runtimeSpecifierOf } from './import-cycles.ts';
 
-/** ソースの構文木（親を辿れるようにする） */
-export function parseSource(file: string, text: string): ts.SourceFile {
-  const kind = file.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
-  return ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true, kind);
+/** key の並びに value を足す（無ければ作る） */
+function pushTo<K, V>(map: Map<K, V[]>, key: K, value: V): void {
+  const list = map.get(key);
+  if (list === undefined) map.set(key, [value]);
+  else list.push(value);
 }
 
 /** テストのファイル（.test.ts・.test.tsx と、__tests__ の下の補助） */
-export const isTestFile = (file: string): boolean => /\.test\.tsx?$/.test(file) || file.includes('/__tests__/');
+const isTestFile = (file: string): boolean => /\.test\.tsx?$/.test(file) || file.includes('/__tests__/');
 
 const lineAt = (source: ts.SourceFile, pos: number): number => source.getLineAndCharacterOfPosition(pos).line + 1;
 const startLine = (node: ts.Node, source: ts.SourceFile): number => lineAt(source, node.getStart(source));
@@ -32,7 +33,8 @@ function testCallbackFrame(fn: ts.Node): string | undefined {
 
 // ---- 長い関数 ----
 
-export type FunctionLength = { file: string; name: string; line: number; lines: number };
+/** lines は宣言の始めから終わりまで、own はそこから中に置いた関数の行を除いた行数 */
+export type FunctionLength = { file: string; name: string; line: number; lines: number; own: number };
 
 const oneLine = (text: string, max: number): string => {
   const flat = text.replace(/\s+/g, ' ');
@@ -65,17 +67,24 @@ function functionName(fn: ts.FunctionLikeDeclaration, source: ts.SourceFile): st
   return '(無名)';
 }
 
-/** 本体のある関数の行数（宣言の始めから終わりまで）。vitest の枠に渡す関数は数えない */
+/**
+ * 本体のある関数の行数（宣言の始めから終わりまでと、そこから中に置いた関数の行を除いたもの）。vitest の枠に渡す関数は数えない
+ * （その中の関数は、外の関数に含めない）
+ */
 export function functionLengths(file: string, source: ts.SourceFile): FunctionLength[] {
   const out: FunctionLength[] = [];
-  const visit = (node: ts.Node): void => {
+  const visit = (node: ts.Node, outer: FunctionLength | undefined): void => {
+    let current = outer;
     if (ts.isFunctionLike(node) && 'body' in node && node.body !== undefined && testCallbackFrame(node) === undefined) {
       const line = startLine(node, source);
-      out.push({ file, name: functionName(node, source), line, lines: endLine(node, source) - line + 1 });
+      const lines = endLine(node, source) - line + 1;
+      current = { file, name: functionName(node, source), line, lines, own: lines };
+      if (outer !== undefined) outer.own -= lines;
+      out.push(current);
     }
-    ts.forEachChild(node, visit);
+    ts.forEachChild(node, (child) => visit(child, current));
   };
-  visit(source);
+  visit(source, undefined);
   return out;
 }
 
@@ -190,13 +199,7 @@ export function findDuplicates(
   const runs = sources.flatMap(({ file, source }) => runsOf(file, source, shapes));
   // 文ごとに始まる所を、最初の文の形で分け、後ろへ同じ形が続く限り延ばす（分かれたら、その先の形ごとに分けて続ける）
   const byFirst = new Map<number, Span[]>();
-  for (const run of runs) {
-    run.ids.forEach((id, i) => {
-      const list = byFirst.get(id) ?? [];
-      list.push({ run, i, j: i });
-      byFirst.set(id, list);
-    });
-  }
+  for (const run of runs) run.ids.forEach((id, i) => pushTo(byFirst, id, { run, i, j: i }));
   const found: Occurrence[][] = [];
   const grow = (spans: Span[]): void => {
     for (;;) {
@@ -204,18 +207,14 @@ export function findDuplicates(
       if (next === undefined || spans.some((s) => s.run.ids[s.j + 1] !== next)) break;
       for (const s of spans) s.j++;
     }
-    const long = spans.filter((s) => spanLines(s) >= minLines);
-    const kept = long.length >= 2 ? withoutOverlaps(long) : [];
+    const kept = withoutOverlaps(spans.filter((s) => spanLines(s) >= minLines));
     if (kept.length >= 2) {
       found.push(kept.map((s) => ({ file: s.run.file, start: s.run.starts[s.i]!, end: s.run.ends[s.j]! })));
     }
     const branches = new Map<number, Span[]>();
     for (const s of spans) {
       const id = s.run.ids[s.j + 1];
-      if (id === undefined) continue;
-      const list = branches.get(id) ?? [];
-      list.push({ run: s.run, i: s.i, j: s.j + 1 });
-      branches.set(id, list);
+      if (id !== undefined) pushTo(branches, id, { run: s.run, i: s.i, j: s.j + 1 });
     }
     for (const branch of branches.values()) if (branch.length >= 2) grow(branch);
   };
@@ -223,7 +222,8 @@ export function findDuplicates(
   return dropContained(found);
 }
 
-const occurrenceKey = (o: Occurrence): string => `${o.file}:${o.start}-${o.end}`;
+/** 所の書き方（<ファイル>:<始め>-<終わり>） */
+export const occurrenceKey = (o: Occurrence): string => `${o.file}:${o.start}-${o.end}`;
 
 /** 同じ所の組を 1 つにし、所が全部ほかの組の所に含まれる組を除いて、重なった行の多い順に並べる */
 function dropContained(found: readonly Occurrence[][]): DuplicateGroup[] {
@@ -235,11 +235,7 @@ function dropContained(found: readonly Occurrence[][]): DuplicateGroup[] {
   const groups = [...unique.values()];
   const byFile = new Map<string, { group: number; o: Occurrence }[]>();
   groups.forEach((occurrences, group) => {
-    for (const o of occurrences) {
-      const list = byFile.get(o.file) ?? [];
-      list.push({ group, o });
-      byFile.set(o.file, list);
-    }
+    for (const o of occurrences) pushTo(byFile, o.file, { group, o });
   });
   const covered = (group: number, o: Occurrence): boolean =>
     byFile
@@ -301,11 +297,16 @@ export function readModule(source: ts.SourceFile, resolve: (specifier: string) =
     info.exports.push({ name, line: startLine(node, source), local });
   };
   for (const statement of source.statements) {
-    const runtime = runtimeSpecifierOf(statement);
-    const runtimeTarget = runtime === undefined ? undefined : resolve(runtime);
-    if (runtimeTarget !== undefined) info.runtime.push(runtimeTarget);
-    if (ts.isImportDeclaration(statement) && ts.isStringLiteral(statement.moduleSpecifier)) {
-      const target = resolve(statement.moduleSpecifier.text);
+    // import・再公開の先（文ごとに 1 回だけ辿る）
+    const specifier =
+      (ts.isImportDeclaration(statement) || ts.isExportDeclaration(statement)) &&
+      statement.moduleSpecifier !== undefined &&
+      ts.isStringLiteral(statement.moduleSpecifier)
+        ? statement.moduleSpecifier.text
+        : undefined;
+    const target = specifier === undefined ? undefined : resolve(specifier);
+    if (target !== undefined && runtimeSpecifierOf(statement) !== undefined) info.runtime.push(target);
+    if (ts.isImportDeclaration(statement)) {
       if (target === undefined) continue;
       const clause = statement.importClause;
       const bindings = clause?.namedBindings;
@@ -324,8 +325,6 @@ export function readModule(source: ts.SourceFile, resolve: (specifier: string) =
         }
         continue;
       }
-      if (!ts.isStringLiteral(statement.moduleSpecifier)) continue;
-      const target = resolve(statement.moduleSpecifier.text);
       if (target === undefined) continue;
       if (clause === undefined) info.stars.push(target);
       else if (ts.isNamespaceExport(clause)) info.reexports.push({ name: clause.name.text, target, imported: '*' });
@@ -398,7 +397,8 @@ export type UnusedExport = {
 
 /**
  * 読まれない export。読むかは、import・import()・型の import('…') と、再公開（`export … from`・`export *`）を辿って決める。
- * テストのファイルと、どのファイルも読まないファイル（スクリプト・設定・画面の入口）の export は出さない。ファイルとその中の順
+ * テストのファイルと、どのファイルも読まないファイル（スクリプト・設定・画面の入口）の export は出さない。どこからも読まずファイルの
+ * 中でも使わない（消せる）・どこからも読まない（export を外せる）・テストだけの順で、同じならファイルとその中の順
  */
 export function unusedExports(modules: ReadonlyMap<string, ModuleInfo>): UnusedExport[] {
   const used = new Set<string>();
@@ -436,7 +436,8 @@ export function unusedExports(modules: ReadonlyMap<string, ModuleInfo>): UnusedE
       out.push({ file, name: e.name, line: e.line, usedBy: used.has(key) ? 'tests' : 'none', usedInFile });
     }
   }
-  return out;
+  const rank = (u: UnusedExport): number => (u.usedBy === 'tests' ? 2 : u.usedInFile ? 1 : 0);
+  return out.sort((a, b) => rank(a) - rank(b));
 }
 
 // ---- 一緒に変わるファイル ----

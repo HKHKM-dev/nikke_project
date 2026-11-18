@@ -5,11 +5,11 @@ import {
   findDuplicates,
   functionLengths,
   parseNameOnlyLog,
-  parseSource,
   readModule,
   unusedExports,
   type ModuleInfo,
 } from './survey-lib.ts';
+import { parseSource } from './import-cycles.ts';
 
 const lines = (...rows: string[]): string => rows.join('\n');
 
@@ -32,12 +32,12 @@ describe('functionLengths', () => {
       '});', // 14
     );
     const found = functionLengths('a.ts', parseSource('a.ts', text));
-    expect(found.map((f) => [f.name, f.line, f.lines])).toEqual([
-      ['top', 1, 6],
-      ['inner', 2, 3],
-      ['Box.constructor', 8, 1],
-      ['Box.size', 9, 1],
-      ['[1].map(…) の引数', 12, 3],
+    expect(found.map((f) => [f.name, f.line, f.lines, f.own])).toEqual([
+      ['top', 1, 6, 3],
+      ['inner', 2, 3, 3],
+      ['Box.constructor', 8, 1, 1],
+      ['Box.size', 9, 1, 1],
+      ['[1].map(…) の引数', 12, 3, 3],
     ]);
   });
 
@@ -213,9 +213,9 @@ describe('unusedExports', () => {
     ]);
     expect(unusedExports(modules).map((u) => [u.file, u.name, u.usedBy, u.usedInFile])).toEqual([
       ['lib.ts', 'dead', 'none', false],
+      ['other.ts', 'unread', 'none', false],
       ['lib.ts', 'selfUsed', 'none', true],
       ['lib.ts', 'tested', 'tests', false],
-      ['other.ts', 'unread', 'none', false],
     ]);
   });
 

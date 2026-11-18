@@ -3,8 +3,9 @@
 //   npm run code:survey -- --only long,dup --top 30        節を選ぶ・各節の行数
 //   npm run code:survey -- --path packages/core/src/sim    出す行を、そのフォルダの下のファイルに絞る（読むのは全部）
 //   npm run code:survey -- --only cochange --since 2026-10-01
-// 見る範囲は packages・apps・tools の .ts・.tsx（node_modules・dist・名前が . で始まるフォルダ・.d.ts・生成物を除く）。節:
-//   long: 長い関数（宣言の始めから終わりまでの行数。vitest の describe・it などに渡す関数は数えない）
+// 見る範囲は packages・apps・tools の .ts・.tsx（node_modules・dist・名前が . で始まるフォルダ・.d.ts を除く）。節:
+//   long: 長い関数（中に置いた関数の行を除いた行数の順。宣言の始めから終わりまでの行数も出す。vitest の describe・it などに渡す
+//         関数は数えない。long だけなら --path の下のファイルだけを読む）
 //   dup: 同じ形の文の並び（名前と値を区別しない構文木の形）。import・型の宣言・describe・it などの呼び出しを区切りにし、テストの
 //        本体（it などに渡す関数の中）は見ない。--min-lines（既定 8）に満たない所は数えない
 //   unused: 読まれない export（どこからも・テストからだけ）。テストと、どのファイルも読まないファイル（スクリプト・設定・画面の
@@ -19,20 +20,24 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
-import { GENERATED_PATHS } from '../../packages/core/scripts/records-data.ts';
-import { findImportCycles, REPO_IMPORT_GRAPH, repoKey, resolveImport, sourceFilesUnder } from './import-cycles.ts';
+import {
+  findImportCycles,
+  parseSource,
+  REPO_IMPORT_GRAPH,
+  repoKey,
+  resolveImport,
+  sourceFilesUnder,
+} from './import-cycles.ts';
 import {
   coChangePairs,
   findDuplicates,
   functionLengths,
   linkedTargets,
+  occurrenceKey,
   parseNameOnlyLog,
-  parseSource,
   readModule,
   unusedExports,
   type ModuleInfo,
-  type Occurrence,
-  type UnusedExport,
 } from './survey-lib.ts';
 
 const SECTIONS = ['long', 'dup', 'unused', 'cycles', 'cochange'] as const;
@@ -67,17 +72,20 @@ const inPath = (file: string): boolean =>
 
 const started = performance.now();
 const root = fileURLToPath(new URL('../../', import.meta.url));
-const generated = new Set(GENERATED_PATHS);
-const files = REPO_IMPORT_GRAPH.dirs
+// 長い関数だけなら、出すファイルだけを読む（ほかの節は、全部のファイルの関係を見る）
+const onlyLong = only.every((section) => section === 'long');
+const sources = REPO_IMPORT_GRAPH.dirs
   .flatMap((dir) => sourceFilesUnder(join(root, dir)))
   .map((path) => ({ path, file: repoKey(root, path) }))
-  .filter(({ file }) => !generated.has(file));
-const sources = files.map(({ path, file }) => ({ path, file, source: parseSource(file, readFileSync(path, 'utf8')) }));
+  .filter(({ file }) => !onlyLong || inPath(file))
+  .map(({ path, file }) => ({ path, file, source: parseSource(file, readFileSync(path, 'utf8')) }));
 
 /** 辿れない指定（import-cycles.test.ts は実行時の import しか見ないので、import() や型の import('…') で出うる） */
 const unresolved: string[] = [];
 const modules = new Map<string, ModuleInfo>();
-for (const { path, file, source } of sources) {
+// import と export は、読まれない export・循環・一緒に変わるファイルの節だけが使う
+const needModules = shown('unused') || shown('cycles') || shown('cochange');
+for (const { path, file, source } of needModules ? sources : []) {
   const resolve = (specifier: string): string | undefined => {
     try {
       const target = resolveImport(root, path, specifier, REPO_IMPORT_GRAPH);
@@ -107,16 +115,15 @@ if (shown('long')) {
   const all = sources
     .filter(({ file }) => inPath(file))
     .flatMap(({ file, source }) => functionLengths(file, source))
-    .sort((a, b) => b.lines - a.lines || a.file.localeCompare(b.file) || a.line - b.line);
-  const rows = all.slice(0, top).map((f) => [f.lines, f.name, `${f.file}:${f.line}`]);
-  table('長い関数', all.length, ['行数', '関数', '場所'], rows);
+    .sort((a, b) => b.own - a.own || b.lines - a.lines || a.file.localeCompare(b.file) || a.line - b.line);
+  const rows = all.slice(0, top).map((f) => [f.own, f.lines, f.name, `${f.file}:${f.line}`]);
+  table('長い関数', all.length, ['行数（中の関数を除く）', '全体', '関数', '場所'], rows);
 }
 
 if (shown('dup')) {
-  const place = (o: Occurrence): string => `${o.file}:${o.start}-${o.end}`;
   const all = findDuplicates(sources, minLines).filter((g) => g.occurrences.some((o) => inPath(o.file)));
   const rows = all.slice(0, top).map((g) => {
-    const head = g.occurrences.slice(0, 3).map(place).join('、');
+    const head = g.occurrences.slice(0, 3).map(occurrenceKey).join('、');
     const rest = g.occurrences.length > 3 ? `、ほか ${g.occurrences.length - 3} か所` : '';
     return [g.lines, g.occurrences.length, head + rest];
   });
@@ -124,11 +131,7 @@ if (shown('dup')) {
 }
 
 if (shown('unused')) {
-  // どこからも読まずファイルの中でも使わない（消せる）・どこからも読まない（export を外せる）・テストだけの順（同じなら、ファイルの順）
-  const rank = (u: UnusedExport): number => (u.usedBy === 'tests' ? 2 : u.usedInFile ? 1 : 0);
-  const all = unusedExports(modules)
-    .filter((u) => inPath(u.file))
-    .sort((a, b) => rank(a) - rank(b));
+  const all = unusedExports(modules).filter((u) => inPath(u.file));
   const rows = all
     .slice(0, top)
     .map((u) => [
@@ -160,7 +163,10 @@ if (shown('cycles')) {
 if (shown('cochange')) {
   const git = (args: string[]): string =>
     execFileSync('git', args, { cwd: root, encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
+  // 日本語の名前のファイルも、包まずにそのまま出す
   const log = git([
+    '-c',
+    'core.quotePath=false',
     'log',
     `--since=${values.since}`,
     '--no-merges',
