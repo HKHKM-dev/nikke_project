@@ -1,12 +1,6 @@
 // ソルジャーE.G.（300）: 確率のきっかけ（回数トリガーの chance / chanceRef）の DSL・解決・期待値の窓（plan/design-soldier-eg.md 3.1 節）。
 import { describe, expect, it } from 'vitest';
-import {
-  chancePieces,
-  chanceScaleAt,
-  chanceValueOf,
-  type ChanceOpportunity,
-  type ChancePiece,
-} from '../chance.ts';
+import { chancePieces, chanceScaleAt, chanceValueOf, type ChanceOpportunity, type ChancePiece } from '../chance.ts';
 import { MAX_SKILL_LEVELS, resolveTimed, resolveTrigger } from '../resolve.ts';
 import { createTriggerTracker, type FrameEvents, type ShotEvent } from '../triggers.ts';
 import { parseSkillDefinition } from '../parse/definition.ts';
