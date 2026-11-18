@@ -33,13 +33,13 @@
 // 射撃に効く効果も即時効果も予約したゲージも無い編成では、射撃の列は planShots、時刻表は planDynamicSchedule と 1 フレームも違わない
 // （plan/design-stage10.md 1.3 節）。
 import { finishSchedule, type BurstTiming } from '../burst/controller.ts';
-import { type ResolvedDamageEffect } from '../skills/burstDamage.ts';
-import { type BurstSchedule, type BurstScheduleModel } from '../burst/schedule.ts';
-import { type BuffTotals, type HitRateN } from '../skills/buffs.ts';
-import { type ResolvedInstantEffect } from '../skills/resolve.ts';
+import type { ResolvedDamageEffect } from '../skills/burstDamage.ts';
+import type { BurstSchedule, BurstScheduleModel } from '../burst/schedule.ts';
+import type { BuffTotals, HitRateN } from '../skills/buffs.ts';
+import type { ResolvedInstantEffect } from '../skills/resolve.ts';
 import { createHolderLists, type HolderHistory, type LeadShots } from '../skills/holders.ts';
 import { resolvePassiveStates, type FrameRange, type TimelineSlot } from '../skills/timeline.ts';
-import { type ShotEvent } from '../skills/triggers.ts';
+import type { ShotEvent } from '../skills/triggers.ts';
 import type { SummonId } from '../skills/summons.ts';
 import { DEFAULT_WEAPON_MODEL, type WeaponModel } from '../weapons.ts';
 import type { ShotLog } from './shots.ts';

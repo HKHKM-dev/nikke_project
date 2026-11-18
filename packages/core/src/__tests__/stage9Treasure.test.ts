@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { runTeam } from './runTeam.ts';
-import { type TeamInput, type TeamSlotResult } from '../team.ts';
+import type { TeamInput, TeamSlotResult } from '../team.ts';
 import { gameSecondsToFrame } from '../time.ts';
 import { characterOf, readData } from './data.ts';
 import { fixedEnemy, fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';

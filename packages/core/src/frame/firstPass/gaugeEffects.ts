@@ -14,7 +14,7 @@ import {
   type ResolvedDamageEffect,
   resolveDamageEffects,
 } from '../../skills/burstDamage.ts';
-import { type BurstActivation } from '../../burst/schedule.ts';
+import type { BurstActivation } from '../../burst/schedule.ts';
 import {
   isResolvedShotCount,
   isResolvedTimer,

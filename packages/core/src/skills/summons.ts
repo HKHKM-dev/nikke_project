@@ -19,8 +19,3 @@ export const SUMMONS = {
 export type SummonId = keyof typeof SUMMONS;
 
 export const SUMMON_IDS = Object.keys(SUMMONS) as SummonId[];
-
-/** 召喚の画面の名前 */
-export function summonName(id: SummonId): LocalizedText {
-  return SUMMONS[id].name;
-}

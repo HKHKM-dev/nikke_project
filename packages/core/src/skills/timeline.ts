@@ -21,6 +21,7 @@ import {
   statLockOf,
   type BuffTotals,
 } from './buffs.ts';
+import { CHANCE_VALUE_DIGITS } from './chance.ts';
 import {
   isResolvedShotCount,
   isResolvedTimer,
@@ -240,8 +241,11 @@ const BUFF_FIELDS = [
   'singlePellet',
 ] as const satisfies readonly (keyof BuffTotals)[];
 
-/** key の桁数。最下位ビットのずれで同一状態が別グループに割れないよう固定桁で文字列化する */
-export const KEY_DIGITS = 6;
+/**
+ * key の桁数。最下位ビットのずれで同一状態が別グループに割れないよう固定桁で文字列化する。確率の窓の小片の値を丸める桁
+ * （skills/chance.ts）と同じにする
+ */
+export const KEY_DIGITS = CHANCE_VALUE_DIGITS;
 
 function keyOf(fullBurst: boolean, state: SlotBuffState, landing?: string | null): string {
   const parts: string[] = [fullBurst ? 'FB' : '--'];
@@ -656,7 +660,7 @@ type PassiveSource = { slotIndex: number; casterBaseAttack: number; casterMaxHp?
 const NO_BUILD_EFFECTS: readonly BuildEffect[] = Object.freeze([]);
 
 /**
- * 常時パッシブだけの状態（team.ts の resolveTeamBuffs と同じ結果になる）。空枠は null。
+ * 常時パッシブだけの状態。空枠は null。
  * 育成入力の効果層（TimelineSlot.buildEffects）はスキルの passive の後に、その枠自身へ比率で足す
  */
 export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffState | null)[] {

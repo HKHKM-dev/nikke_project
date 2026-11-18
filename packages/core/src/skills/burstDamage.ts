@@ -68,11 +68,6 @@ export { SKILL_HIT_FULL_BURST_BONUS } from '../damage.ts';
  * boost = 倍率グループに足す (1 + 会心 + フルバースト補正 + Σ)（H3）
  */
 export type SustainedDamagePlacement = 'separate' | 'attackDamage' | 'boost';
-export const SUSTAINED_DAMAGE_PLACEMENTS = [
-  'separate',
-  'attackDamage',
-  'boost',
-] as const satisfies readonly SustainedDamagePlacement[];
 
 /**
  * いまのモデルの置き場所。マナの録画（V-0185）の tick が H2 と合った（C-0299。H1 の C-0279 は棄却）。

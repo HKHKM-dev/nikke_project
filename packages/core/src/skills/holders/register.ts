@@ -525,4 +525,3 @@ export function createRegister({
     Object.fromEntries([...leads].filter(([, l]) => l.fired.length > 0).map(([g, l]) => [leadShotKey(g), l.fired]));
   return { leadShots, registerBattleStart, registerFrame };
 }
-export type Register = ReturnType<typeof createRegister>;

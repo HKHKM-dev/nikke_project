@@ -14,7 +14,7 @@ import {
 } from '../buffs.ts';
 import { chanceStackLevelsAt } from '../chance.ts';
 import { createSpanMemo } from '../spanMemo.ts';
-import { type ItemEffect } from '../resolve.ts';
+import type { ItemEffect } from '../resolve.ts';
 import { attackRankFor, finalAttacksAt, type AttackItem } from '../ranking.ts';
 import { stateMatches, statesMatching, type NamedStateId } from '../states.ts';
 import { dependsOnRank } from '../targets.ts';

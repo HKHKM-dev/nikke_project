@@ -25,7 +25,7 @@ import type {
 import type { HolderHistory } from './skills/holders.ts';
 import type { SlotCycleSummary, SlotEffectSummary, SlotStateSummary } from './skills/summaries.ts';
 import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect, type SkillLevels } from './skills/resolve.ts';
-import { resolvePassiveStates, type BuffTimeline, type FrameRange, type TimelineSlot } from './skills/timeline.ts';
+import type { BuffTimeline, FrameRange, TimelineSlot } from './skills/timeline.ts';
 import { treasureSlots, type TreasurePhase } from './skills/treasure.ts';
 import { SKILL_SLOTS, type SkillDefinition, type SkillSlot, type SkillSupport } from './skills/types.ts';
 import type { GrowthInput } from './stats.ts';
@@ -377,18 +377,6 @@ export function toTimelineSlots(slots: readonly (TeamSlotInput | null)[]): Timel
           hitRate: hitRateOf(slot.condition),
           coreHitRate: slot.condition.coreHitRate,
         },
-  );
-}
-
-export type SlotBuffs = { buffs: BuffTotals; appliedEffects: AppliedEffect[] };
-
-/**
- * 常時発動パッシブを枠間で配り、枠ごとの BuffTotals を作る（持続バフは含まない）。
- * 中身は skills/timeline.ts の resolvePassiveStates。
- */
-export function resolveTeamBuffs(slots: readonly (TeamSlotInput | null)[]): (SlotBuffs | null)[] {
-  return resolvePassiveStates(toTimelineSlots(slots)).map((state) =>
-    state === null ? null : { buffs: state.buffs, appliedEffects: state.passiveEffects },
   );
 }
 

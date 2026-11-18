@@ -4,7 +4,7 @@
 // （stateTracks）を作る。フルバーストの窓の判定（inFullBurstAt）もここに置く。
 import { groupDotsByState } from '../../frame/dot.ts';
 import { resolveDotEffects } from '../burstDamage.ts';
-import { type ChanceOpportunity } from '../chance.ts';
+import type { ChanceOpportunity } from '../chance.ts';
 import { resolveCycleEvery } from '../cycles.ts';
 import {
   isRecordTriggered,
@@ -32,8 +32,8 @@ import {
   resolveCounterWhileEffects,
   resolveHpWhileEffects,
 } from '../resolve.ts';
-import { type CounterId } from '../counters.ts';
-import { type NamedStateId } from '../states.ts';
+import type { CounterId } from '../counters.ts';
+import type { NamedStateId } from '../states.ts';
 import { canEverTarget, isEffectTarget } from '../targets.ts';
 import {
   createStateWindowTracker,

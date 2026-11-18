@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 4,
-  "text": "型の名前だけを並べた import 文（`import { type A } from …`）は、`verbatimModuleSyntax` では中身が空の import として実行時に残る（読み込みが起きる）。lint の `consistent-type-imports`（`fixStyle: 'inline-type-imports'`）はこの形を作る。循環を見る検査（`tools/code/import-cycles.test.ts`）はこの文も辺に数えるので、型だけの参照で循環ができると落ちる。lint に `@typescript-eslint/no-import-type-side-effects` を足して自動で `import type` に直すと、型だけの参照が辺にならなくなる（[design-import-cycle.md](design-import-cycle.md) 2.4 節・8 節。2026-11-18 起票）"
-}

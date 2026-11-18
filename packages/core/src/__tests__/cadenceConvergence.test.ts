@@ -16,7 +16,7 @@ import { runSimulation, simIntervalTotals } from '../sim/engine.ts';
 import { simTeamResult } from '../sim/teamResult.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SkillDefinition, TimedEffect } from '../skills/types.ts';
-import { type SlotCondition, type TeamInput, type TeamSlotInput, type TeamSlotResult } from '../team.ts';
+import type { SlotCondition, TeamInput, TeamSlotInput, TeamSlotResult } from '../team.ts';
 import type { BurstStep, ShotParams, SkillRaw } from '../types.ts';
 import { framesToGameSeconds, gameSecondsToFrames } from '../time.ts';
 import { FIXED_BURST_CYCLE } from '../burst/fixedCycle.ts';

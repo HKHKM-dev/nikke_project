@@ -12,8 +12,8 @@
 // fires.ts・sources.ts・read.ts・views.ts・conditions.ts・fire.ts・register.ts（plan/design-split-first-pass.md 3.3 節・9.2 節）、型は
 // holders/types.ts、件を作る純粋な関数は holders/items.ts、ループの後に履歴を閉じる関数（createHistory）と履歴を読む関数は
 // holders/history.ts に置く（外から使う名前は、ここから同じ名前で再公開する）。
-import { type TimelineSlot } from './timeline.ts';
-import { type HolderLists, type HolderListsOptions } from './holders/types.ts';
+import type { TimelineSlot } from './timeline.ts';
+import type { HolderLists, HolderListsOptions } from './holders/types.ts';
 import { lastAtOrBefore } from './holders/items.ts';
 import { createHistory } from './holders/history.ts';
 import type { HolderBase, LateReaders } from './holders/records.ts';
@@ -28,18 +28,12 @@ import { createRegister } from './holders/register.ts';
 
 export {
   ENEMY,
-  isEnemyEffect,
-  type HeldStage,
   type HeldOrigin,
   type HeldItem,
   type HeldTrack,
-  type AmplifierSource,
-  type AmplifiedPiece,
   type HolderHistory,
-  type HpRatioSteps,
   selfHpRatioOf,
   hpRatioStepIndexOf,
-  type RemoveDebuffGuess,
   type RemoveDebuffGuessRecord,
   pickRemoveDebuff,
   type CounterRecord,
@@ -52,7 +46,6 @@ export {
 export { startOfFire, shiftEdges, stacksHold, whileItems } from './holders/items.ts';
 export {
   type HeldItemView,
-  type HeldItemFilter,
   isStateOrigin,
   itemsOf,
   activeItemsAt,

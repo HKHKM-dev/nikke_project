@@ -347,13 +347,6 @@ export function replaceGeneratedSection(doc: string, name: string, body: string)
   return `${doc.slice(0, start + marker(name, false).length)}\n\n${body}\n\n${doc.slice(end)}`;
 }
 
-export function extractGeneratedSection(doc: string, name: string): string {
-  const start = doc.indexOf(marker(name, false));
-  const end = doc.indexOf(marker(name, true));
-  if (start < 0 || end < start) throw new Error(`台帳に ${marker(name, false)} と ${marker(name, true)} が無い`);
-  return doc.slice(start + marker(name, false).length, end);
-}
-
 const RECORDINGS_DOC_HEADER = `# 録画の一覧
 
 - **このファイルは生成する（手で書かない）**。録画は \`records/recordings/<録画 id>.json\` に 1 本 1 ファイルで置き、\`npm run records:check\` で作り直す（[design-stage20.md](../design-stage20.md) 3.5 節）。素性（尺・フレーム数・fps・サイズ・sha256）は録画の JSON にだけある。

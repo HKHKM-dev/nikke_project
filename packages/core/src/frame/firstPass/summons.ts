@@ -1,7 +1,7 @@
 // 1 パス目（../firstPass.ts の runFirstPassOnce）の召喚の攻撃（plan/design-split-first-pass.md 3.4 節。plan/design-ein-near-feather.md）:
 // 発動で召喚を置き、攻撃のフレームとゲージを数える。
 import { FRAMES_PER_GAME_SECOND, gameSecondsToFrames } from '../../time.ts';
-import { type ResolvedDamageEffect } from '../../skills/burstDamage.ts';
+import type { ResolvedDamageEffect } from '../../skills/burstDamage.ts';
 import { effectFrameOf } from '../../burst/schedule.ts';
 import { isSummonAttackTrigger, SKILL_SLOTS, type SummonAttackTrigger, type SummonEffect } from '../../skills/types.ts';
 import type { SummonId } from '../../skills/summons.ts';
@@ -107,5 +107,3 @@ export function createSummons({
   };
   return { countSummons, summonHits };
 }
-
-export type Summons = ReturnType<typeof createSummons>;

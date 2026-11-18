@@ -7,7 +7,7 @@ import { stanceFrames } from '../frame/firing.ts';
 import { countShotsInRanges, planShots } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun, type SkillHitEvent } from '../frame/plan.ts';
-import { type TeamInput, type TeamSlotInput, type TeamResult } from '../team.ts';
+import type { TeamInput, TeamSlotInput, TeamResult } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { cycleItemsOf, piecesOf } from './historyHelpers.ts';
 import { characterOf } from './data.ts';

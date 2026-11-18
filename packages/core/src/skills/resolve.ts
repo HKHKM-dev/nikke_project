@@ -621,11 +621,6 @@ export type ResolvedWhileEffect = ResolvedStateContent & {
   whileStacks?: 'full' | number;
 };
 
-/** while の効果か（状態の while） */
-export function isWhileEffect(effect: ItemEffect): effect is ResolvedWhileEffect {
-  return 'whileSource' in effect && 'whileState' in effect;
-}
-
 /**
  * 解決した、カウンタが N 以上の間だけ効く常時の効果（while の selfCounter。plan/design-skill-stage11.md 2.4 節）。
  * 窓は効果を出した枠（自分）のカウンタの記録から作る（skills/holders.ts）。状態の中身ではない（whileState を持たない）。effectIndex は

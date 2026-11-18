@@ -1,0 +1,5 @@
+{
+  "section": "8.2",
+  "order": -33,
+  "text": "使われていないコードを消し、型だけの import 文と値の写しを直す（2026-11-18 起票）→ 完了（2026-11-18）: [design-unused-code-cleanup.md](design-unused-code-cleanup.md)"
+}

@@ -1,14 +1,6 @@
 // ソルジャーE.G.（300）: 確率のきっかけ（回数トリガーの chance / chanceRef）の DSL・解決・期待値の窓（plan/design-soldier-eg.md 3.1 節）。
 import { describe, expect, it } from 'vitest';
-import {
-  CHANCE_VALUE_DIGITS,
-  chancePieces,
-  chanceScaleAt,
-  chanceValueOf,
-  type ChanceOpportunity,
-  type ChancePiece,
-} from '../chance.ts';
-import { KEY_DIGITS } from '../timeline.ts';
+import { chancePieces, chanceScaleAt, chanceValueOf, type ChanceOpportunity, type ChancePiece } from '../chance.ts';
 import { MAX_SKILL_LEVELS, resolveTimed, resolveTrigger } from '../resolve.ts';
 import { createTriggerTracker, type FrameEvents, type ShotEvent } from '../triggers.ts';
 import { parseSkillDefinition } from '../parse/definition.ts';
@@ -162,7 +154,6 @@ describe('期待値の窓', () => {
   });
 
   it('rounds the window value to the digits of the group key', () => {
-    expect(CHANCE_VALUE_DIGITS).toBe(KEY_DIGITS);
     expect(chanceValueOf(0.0792, 0.8)).toBe(0.06336);
     expect(chanceValueOf(0.0792, 1 - 0.95 ** 60)).toBe(0.075551);
   });

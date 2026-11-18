@@ -11,7 +11,7 @@ import { runSimulation } from '../sim/engine.ts';
 import { runTeam } from './runTeam.ts';
 import { simTeamResult } from '../sim/teamResult.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { type TeamInput } from '../team.ts';
+import type { TeamInput } from '../team.ts';
 import { framesToGameSeconds, gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
 import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from './teamHelpers.ts';
 

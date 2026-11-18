@@ -65,11 +65,6 @@ export type CounterId = keyof typeof COUNTERS;
 
 export const COUNTER_IDS = Object.keys(COUNTERS) as CounterId[];
 
-/** カウンタの画面の名前 */
-export function counterName(id: CounterId): LocalizedText {
-  return COUNTERS[id].name;
-}
-
 /** カウンタの上限 */
 export function counterMax(id: CounterId): number {
   return COUNTERS[id].max;
