@@ -96,6 +96,16 @@ describe('repointClaim', () => {
     expect(observationIdsIn(next.basis)).toEqual(['0101-01', '0101-02', '0101-03', '0102-01']);
     expect(repointClaim(claim, '0109-01', '0102-01', '2026-11-18')).toBeUndefined();
   });
+
+  it('keeps a range whose end is the old ID, and replaces every other mention', () => {
+    for (const from of ['0101-01', '0101-03']) {
+      const ranged = { ...claim, basis: '`0101-01`〜`0101-03`。V-0099' };
+      const next = repointClaim(ranged, from, '0102-01', '2026-11-18')!;
+      expect(observationIdsIn(next.basis)).toEqual(['0101-01', '0101-02', '0101-03', '0102-01']);
+    }
+    const twice = { ...claim, basis: '`0101-02`・`0101-05`。`0101-02`（注記）。V-0099' };
+    expect(repointClaim(twice, '0101-02', '0101-05', '2026-11-18')!.basis).toBe('`0101-05`。`0101-05`（注記）。V-0099');
+  });
 });
 
 describe('OBSERVATION_DRAFT_FIELDS（records:new observation --help の欄の一覧）', () => {

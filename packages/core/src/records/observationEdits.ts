@@ -37,24 +37,30 @@ export function invalidatedObservation(before: Observation, reason: string, date
 
 /**
  * 結論の根拠の観測値 from を to に付け替える（根拠の文の `from` を `to` に置き換え、runs・minimal の観測値の並びも置き換える）。
- * to が既に根拠にあれば、並びの中の `from`（前後が ・ で、注記の括弧が続かないもの）を外し、外せなければ置き換える（注記は消さない）。
- * from が範囲（`a-01`〜`a-04`）の中にだけあるときは、範囲を残して to を書き足す（範囲の中の from は無効のまま残る）。from を根拠に
+ * to が既に根拠にあれば、並びの中の `from`（前後が ・ で、注記の括弧が続かないもの）を外し、残りは置き換える（注記は消さない）。
+ * from が範囲（`a-01`〜`a-04`。端を含む）の中にだけあるときは、範囲を残して to を書き足す（範囲の中の from は無効のまま残る）。from を根拠に
  * していなければ undefined
  */
 export function repointClaim(claim: ClaimFile, from: string, to: string, today: string): ClaimFile | undefined {
   const ids = observationIdsIn(claim.basis);
   if (!ids.includes(from)) return undefined;
-  const literal = `\`${from}\``;
-  const listed = [`・${literal}`, `${literal}・`].find(
-    (part) => claim.basis.includes(part) && !claim.basis.includes(`${part}（`),
+  // 範囲（`a-01`〜`a-04`）の端の from は範囲の一部なので、置き換えない
+  const literal = `\`${from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\``;
+  const alone = new RegExp(`(?<!〜\\s*)${literal}(?!\\s*〜)`, 'g');
+  // 並びの中の from（前後が ・ で、注記の括弧も範囲も続かないもの）
+  const listed = [new RegExp(`・${literal}(?![\\s〜（])`), new RegExp(`(?<!〜\\s*)${literal}・`)].find((re) =>
+    re.test(claim.basis),
   );
-  const basis = !claim.basis.includes(literal)
-    ? ids.includes(to)
-      ? claim.basis
-      : `${claim.basis}・\`${to}\``
-    : ids.includes(to) && listed !== undefined
-      ? claim.basis.replace(listed, '')
-      : claim.basis.replaceAll(literal, `\`${to}\``);
+  const toLiteral = `\`${to}\``;
+  const basis =
+    claim.basis.search(alone) < 0
+      ? ids.includes(to)
+        ? claim.basis
+        : `${claim.basis}・${toLiteral}`
+      : (ids.includes(to) && listed !== undefined ? claim.basis.replace(listed, '') : claim.basis).replace(
+          alone,
+          toLiteral,
+        );
   const swap = (list: string[]) => [...new Set(list.map((o) => (o === from ? to : o)))];
   return {
     ...claim,

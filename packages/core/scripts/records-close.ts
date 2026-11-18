@@ -26,6 +26,7 @@ import {
   RESIDUALS_PATH,
   CLAIMS_DIR,
   ROOT,
+  formatFiles,
   loadClaims,
   loadObservations,
   loadPredictions,
@@ -130,6 +131,7 @@ const reasonsOf = (assumed: ReadonlySet<string>, targets: readonly string[]) => 
         ...(c.decidedOn === undefined ? {} : { decidedOn: c.decidedOn }),
         ...(c.runs === undefined ? {} : { runs: c.runs }),
         ...(c.parameterFree === undefined ? {} : { parameterFree: c.parameterFree }),
+        ...(c.judgment === undefined ? {} : { judgment: c.judgment }),
       });
       return [c.id, [...draft.reasons, ...claimTieErrors(basis, assumedClaims, invalid)]] as const;
     }),
@@ -200,10 +202,7 @@ if (values.mark && together.promoted.length > 0) {
       paths[i]!,
       `${JSON.stringify(confirm(JSON.parse(readFileSync(paths[i]!, 'utf8')) as ClaimFile, cid), null, 2)}\n`,
     );
-  if (
-    spawnSync(process.execPath, [`${ROOT}tools/format-retry.ts`, ...paths], { cwd: ROOT, stdio: 'ignore' }).status !== 0
-  )
-    console.error(`結論のファイルを整えられなかった（npx prettier --write で整える）: ${paths.join(' ')}`);
+  formatFiles(paths);
   console.log(`同じ記録の結論をまとめて確定にした: ${together.promoted.join('・')}`);
 }
 const run = (cmd: string): void => {

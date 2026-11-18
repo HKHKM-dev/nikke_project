@@ -297,8 +297,10 @@ export function updatedClaim(
   const reasons = [...draft.reasons];
   if (existing.when !== undefined || existing.edge !== undefined)
     reasons.push('when・edge は仮説にだけ書ける欄（確定にするなら、消してからもう一度回す）');
+  // 等級が変わったら、前の等級の理由（gradeReason）は外す
+  const { gradeReason: _reason, ...kept } = existing;
   const file: ClaimFile = {
-    ...existing,
+    ...(draft.file.grade === existing.grade ? existing : kept),
     ...merged,
     state: reasons.length === 0 ? '確定' : '仮説',
     ...(draft.file.grade === undefined ? {} : { grade: draft.file.grade }),

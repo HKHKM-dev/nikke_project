@@ -327,6 +327,11 @@ describe('records:new claim --update の欄', () => {
     const kept = updatedClaim(withWhen, draft, merged, basis, undefined);
     expect(kept.file.state).toBe('仮説');
     expect(kept.reasons[0]).toContain('when・edge');
+    // 等級が変われば、前の等級の理由（gradeReason）は外す。同じ等級なら残す
+    const reasoned = { ...existing, grade: '厳密一致' as const, gradeReason: '理由' };
+    expect(updatedClaim(reasoned, draft, merged, basis, undefined).file.gradeReason).toBeUndefined();
+    const same = { ...draft, file: { ...draft.file, grade: '厳密一致' as const } };
+    expect(updatedClaim(reasoned, same, merged, basis, undefined).file.gradeReason).toBe('理由');
     // 書き戻した結論は形の検査に通る
     expect(validateClaims(toClaims([{ ...result.file, replaces: [] }]), new Set(['0101-01', '0102-01']))).toEqual([]);
   });

@@ -42,7 +42,6 @@
 //   列ごとの --cell。records:check と同じ課題の検査を通ったら書く。
 // verification・claim（--update と --dry-run を除く）・backlog は、作ったファイルだけを commit して git push -u origin HEAD する（番号を
 //   ほかのブランチから見えるようにする。reserve.ts）。--no-push でしない。
-import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { backlogPlacement, parseBacklogTemplate, validateBacklog, type BacklogFile } from '../src/records/backlog.ts';
 import {
@@ -102,6 +101,7 @@ import {
   CLAIMS_DIR,
   ROOT,
   addedObservationErrors,
+  formatFiles,
   backlogContext,
   idsInBranches,
   loadBacklog,
@@ -221,15 +221,6 @@ function parseJudgmentOption(today: string): Judgment | undefined {
   const parsed = parseJudgment(values.judgment, today);
   if (Array.isArray(parsed)) fail(parsed.join('\n'));
   return parsed;
-}
-
-/** 書いたファイルを prettier で 1 回で整える（整えられなくても書いたまま） */
-function formatFiles(paths: readonly string[]): void {
-  if (paths.length === 0) return;
-  if (
-    spawnSync(process.execPath, [`${ROOT}tools/format-retry.ts`, ...paths], { cwd: ROOT, stdio: 'ignore' }).status !== 0
-  )
-    console.error(`整えられなかった（npx prettier --write で整える）: ${paths.join(' ')}`);
 }
 
 /** JSON のファイルを書いて整える */
@@ -450,15 +441,13 @@ if (kind === 'verification') {
         runs: merged.runs,
         parameterFree: merged.parameterFree,
         judgment: merged.judgment,
-        // 人が決めた等級（gradeReason を書いて候補より上にしたもの・候補の無いデータ明記）は残す。records:close の確定と違い、
-        // gradeReason の無い等級は前の候補とみて、新しい候補に合わせる
+        // 人が決めた等級は残す。候補が無ければ前の等級のまま（records:close の確定と同じ）。候補があれば、gradeReason を書いて
+        // 候補より上にしたものだけを残す（records:close と違い、gradeReason の無い等級は前の候補とみて、新しい候補に合わせる）
         grade: (candidate) =>
           existing.grade === undefined
             ? undefined
             : candidate === undefined
-              ? existing.grade === 'データ明記'
-                ? existing.grade
-                : undefined
+              ? existing.grade
               : existing.gradeReason !== undefined && gradeAboveCandidate(existing.grade, candidate)
                 ? existing.grade
                 : undefined,
@@ -574,14 +563,22 @@ if (kind === 'verification') {
     // 結論の付け替え（無効にする前に、書き換える結論を出しておく）
     const claims = loadClaims();
     const repointed = new Map<string, ClaimFile>();
+    // 棄却・範囲外の結論は、その時の根拠のまま残す（記録は書き換えない）
     if (by !== undefined)
       for (const [i, old] of ids.entries()) {
         const to = by.length === 1 ? by[0]! : by[i]!;
         for (const { observations: _o, ...c } of claims) {
+          if (c.state !== '仮説' && c.state !== '確定') continue;
           const next = repointClaim(repointed.get(c.id) ?? c, old, to, today);
           if (next !== undefined) repointed.set(c.id, next);
         }
       }
+    // 付け替えた runs が録画と食い違えば、何も書かずに止める
+    const runErrors = toClaims([...repointed.values()]).flatMap((c) => validateRuns(c));
+    if (runErrors.length > 0)
+      fail(
+        `付け替えた結論の runs が検査に通らないので書かない（結論を手で直す）:\n${runErrors.map((e) => `  ${e}`).join('\n')}`,
+      );
     const written = [...new Set(changed.map((o) => o.recording))].map((recording) =>
       saveObservations(
         recording,
@@ -599,7 +596,7 @@ if (kind === 'verification') {
     if (repointed.size > 0) console.log(`根拠を付け替えた結論: ${[...repointed.keys()].join('・')}`);
     // 付け替えなかった結論（--by が無い）は、無効の根拠を残したまま（records:check が、確定の結論の根拠がすべて無効なら止める）
     const citing = claims
-      .filter((c) => !repointed.has(c.id) && c.observations.some((o) => ids.includes(o)))
+      .filter((c) => c.state !== '棄却' && !repointed.has(c.id) && c.observations.some((o) => ids.includes(o)))
       .map((c) => `${c.id}（${c.state}）`);
     if (citing.length > 0)
       console.log(`無効にした観測値を根拠にしている結論（付け替えていない）: ${citing.join('・')}`);
