@@ -65,7 +65,7 @@ describe('白黒のバッジ', () => {
     expect(() => applyColorRoles(doc('<style>path{fill:#fff}</style>'), 'x_y')).toThrow(/<style>/);
   });
 
-  it('style が決める性質の属性は見ずに残す（枠の要素の stroke="#ff3b57"）', () => {
+  it('style が決める性質の属性は見ずに残す（stroke 属性と style の stroke の両方）', () => {
     const tag = '<polygon fill="none" stroke="#ff3b57" style="fill:none;stroke:#000000"/>';
     expect(applyColorRoles(doc(tag), 'x_y')).toContain(
       '<polygon fill="none" stroke="#ff3b57" style="fill:none;stroke:var(--badge-line,#000000)"/>',

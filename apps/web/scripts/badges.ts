@@ -111,7 +111,7 @@ function roleColor(name: string, prop: string, value: string): string {
 
 /**
  * 白黒のバッジの塗りと縁の色を、色の役の CSS の変数にする。役に無い色・陰でないグラデーションの色・<style> の要素があれば
- * 止める。style が同じ性質を決める要素の属性（枠の要素の stroke="#ff3b57" など）は描かれないので、見ずにそのまま残す。
+ * 止める。style が同じ性質を決める要素の属性（stroke="#ff3b57" と style の stroke の両方を持つ要素など）は描かれないので、見ずにそのまま残す。
  * マスクの中（<mask>〜</mask>）は、色が形（明るさ）なのでそのまま残す
  */
 export function applyColorRoles(svg: string, name: string): string {
