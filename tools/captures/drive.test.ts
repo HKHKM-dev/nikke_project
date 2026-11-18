@@ -5,7 +5,7 @@ import type { AddressInfo } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { Drive, isTransientDriveError } from './drive.ts';
+import { Drive, isRateLimitError, isTransientDriveError } from './drive.ts';
 
 describe('Drive の呼び出しの失敗が、待てば直りうるものか', () => {
   it('keeps waiting on network failures, timeouts, 429 and 5xx', () => {
@@ -35,6 +35,7 @@ describe('Drive の打ち切り（手元のサーバーをトークンと API �
   const servers: Server[] = [];
   afterEach(() => {
     vi.unstubAllEnvs();
+    vi.restoreAllMocks();
     for (const s of servers.splice(0)) s.close().closeAllConnections();
   });
 
@@ -78,6 +79,56 @@ describe('Drive の打ち切り（手元のサーバーをトークンと API �
     const e: unknown = await Drive.connect(1000).catch((x: unknown) => x);
     expect(e).toBeInstanceOf(TypeError);
     expect(isTransientDriveError(e)).toBe(true);
+  });
+
+  describe('利用上限の 403 は待って 2 回まで再試行する', () => {
+    const rateLimited = JSON.stringify({
+      error: { code: 403, errors: [{ domain: 'usageLimits', reason: 'userRateLimitExceeded' }] },
+    });
+    /** 初めの fails 回は status と body で答え、その後はファイルのメタデータを返す。呼ばれた回数を数える */
+    async function flaky(fails: number, status: number, body: string): Promise<{ calls: () => number }> {
+      let calls = 0;
+      pointTo(
+        await serve(
+          tokenThen((res) => {
+            calls += 1;
+            if (calls <= fails) {
+              res.writeHead(status);
+              res.end(body);
+            } else res.end(JSON.stringify({ id: 'f', name: 'a.mp4', mimeType: 'video/mp4' }));
+          }),
+        ),
+      );
+      return { calls: () => calls };
+    }
+
+    it('succeeds after two rate-limit errors', async () => {
+      vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      const server = await flaky(2, 403, rateLimited);
+      const file = await (await Drive.connect(1000, [1, 1])).file('f');
+      expect(file.name).toBe('a.mp4');
+      expect(server.calls()).toBe(3);
+    });
+
+    it('gives up after the second retry', async () => {
+      vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      const server = await flaky(3, 403, rateLimited);
+      const e: unknown = await (await Drive.connect(1000, [1, 1])).file('f').catch((x: unknown) => x);
+      expect(isRateLimitError(e)).toBe(true);
+      expect(server.calls()).toBe(3);
+    });
+
+    it('does not retry other 403s', async () => {
+      const server = await flaky(
+        1,
+        403,
+        JSON.stringify({ error: { errors: [{ reason: 'insufficientFilePermissions' }] } }),
+      );
+      const e: unknown = await (await Drive.connect(1000, [1, 1])).file('f').catch((x: unknown) => x);
+      expect((e as { status?: number }).status).toBe(403);
+      expect(isRateLimitError(e)).toBe(false);
+      expect(server.calls()).toBe(1);
+    });
   });
 
   describe('download は応答の頭が届くまでだけ打ち切る', () => {

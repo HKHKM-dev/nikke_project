@@ -5,6 +5,7 @@ import { createSign } from 'node:crypto';
 import { createWriteStream } from 'node:fs';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
+import { setTimeout as sleep } from 'node:timers/promises';
 import type { ReadableStream as NodeReadableStream } from 'node:stream/web';
 
 const SCOPE = 'https://www.googleapis.com/auth/drive.readonly';
@@ -97,27 +98,58 @@ export function isTransientDriveError(e: unknown): boolean {
   return typeof status === 'number' && (status === 429 || status >= 500);
 }
 
+/** 利用上限の 403 で再試行する前に待つ長さ。要素の数が再試行の回数 */
+export const RATE_LIMIT_WAITS_MS: readonly number[] = [2_000, 5_000];
+
+/** Drive の呼び出しの失敗が、利用上限の 403（usageLimits の rateLimitExceeded など。少し待てば通る）か */
+export function isRateLimitError(e: unknown): boolean {
+  const status = (e as { status?: unknown } | null)?.status;
+  return status === 403 && e instanceof Error && /usageLimits|rateLimitExceeded/.test(e.message);
+}
+
 export class Drive {
   // node の型の除去だけで動かすので、パラメータプロパティは使わない。
   private readonly token: string;
   /** 1 回の呼び出しを打ち切るまで（無ければ打ち切らない） */
   private readonly timeoutMs: number | undefined;
+  /** 利用上限の 403 で再試行する前に待つ長さ（既定は RATE_LIMIT_WAITS_MS） */
+  private readonly rateLimitWaitsMs: readonly number[];
 
-  private constructor(token: string, timeoutMs: number | undefined) {
+  private constructor(token: string, timeoutMs: number | undefined, rateLimitWaitsMs: readonly number[]) {
     this.token = token;
     this.timeoutMs = timeoutMs;
+    this.rateLimitWaitsMs = rateLimitWaitsMs;
   }
 
-  /** timeoutMs を渡すと、トークンの取得とどの呼び出しも、その長さで打ち切る（download は応答の頭が届くまで） */
-  static async connect(timeoutMs?: number): Promise<Drive> {
-    return new Drive(await accessToken(timeoutMs), timeoutMs);
+  /**
+   * timeoutMs を渡すと、トークンの取得とどの呼び出しも、その長さで打ち切る（download は応答の頭が届くまで）。
+   * API の呼び出しが利用上限の 403 で失敗したら、rateLimitWaitsMs の長さずつ待って再試行する
+   */
+  static async connect(timeoutMs?: number, rateLimitWaitsMs: readonly number[] = RATE_LIMIT_WAITS_MS): Promise<Drive> {
+    return new Drive(await accessToken(timeoutMs), timeoutMs, rateLimitWaitsMs);
+  }
+
+  /** getOnce を呼び、利用上限の 403（isRateLimitError）なら待って再試行する */
+  private async get(path: string, params: Record<string, string>, headersOnly = false): Promise<Response> {
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await this.getOnce(path, params, headersOnly);
+      } catch (e) {
+        const wait = this.rateLimitWaitsMs[attempt];
+        if (wait === undefined || !isRateLimitError(e)) throw e;
+        console.error(
+          `Drive の利用上限（403）。${wait / 1000} 秒待って再試行する（${attempt + 1}/${this.rateLimitWaitsMs.length} 回目）`,
+        );
+        await sleep(wait);
+      }
+    }
   }
 
   /**
    * 失敗の例外は status（HTTP の状態）を持つ。timeoutMs は、ふだんは本体を読み終えるまでに掛け、headersOnly なら応答の頭が
    * 届くまでにだけ掛ける（本体は読み終えるまで待つ）
    */
-  private async get(path: string, params: Record<string, string>, headersOnly = false): Promise<Response> {
+  private async getOnce(path: string, params: Record<string, string>, headersOnly: boolean): Promise<Response> {
     const url = `${api()}${path}?${new URLSearchParams({ supportsAllDrives: 'true', ...params })}`;
     const ms = this.timeoutMs;
     // headersOnly の打ち切りは、ok の応答を返すまで（失敗の本体を読む間も含む）
