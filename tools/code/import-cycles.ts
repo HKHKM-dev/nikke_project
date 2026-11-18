@@ -1,9 +1,9 @@
 // 実行時に残る import のグラフから、循環する import の組を探す（plan/design-import-cycle.md 3.4 節）。
 // このリポジトリは verbatimModuleSyntax なので、消えるのは `import type …`・`export type …` の文だけ。型の名前だけを並べた文
-// （`import { type A } from …`）は中身が空の import として残り、読み込みが起きる。import()（動的な読み込み）は、モジュールの
-// 読み込みの時の順に効かないので辺に数えない。
+// （`import { type A } from …`）は中身が空の import として残り、読み込みが起きる。import()（動的な読み込み）は辺に数えない
+// （関数の中から呼ぶ形は、モジュールの読み込みの時の順に効かない。モジュールの最上位で await する形は、ここでは見ない）。
 import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { dirname, join, relative, resolve, sep } from 'node:path';
+import { dirname, extname, join, relative, resolve, sep } from 'node:path';
 import ts from 'typescript';
 
 /** ファイル → そのファイルが実行時に読み込むファイル */
@@ -37,7 +37,9 @@ export function runtimeImportsOf(fileName: string, text: string): string[] {
   const specifiers: string[] = [];
   for (const statement of source.statements) {
     if (!ts.isImportDeclaration(statement) && !ts.isExportDeclaration(statement)) continue;
-    const typeOnly = ts.isImportDeclaration(statement) ? statement.importClause?.isTypeOnly : statement.isTypeOnly;
+    const typeOnly = ts.isImportDeclaration(statement)
+      ? statement.importClause?.phaseModifier === ts.SyntaxKind.TypeKeyword
+      : statement.isTypeOnly;
     const specifier = statement.moduleSpecifier;
     if (typeOnly || specifier === undefined || !ts.isStringLiteral(specifier)) continue;
     specifiers.push(specifier.text);
@@ -74,10 +76,16 @@ export function readImportGraph(root: string, options: ImportGraphOptions): Map<
           packageEntry !== undefined
             ? join(root, packageEntry)
             : specifier.startsWith('.')
-              ? resolve(dirname(file), specifier)
+              ? resolve(dirname(file), specifier.replace(/[?#].*$/, ''))
               : undefined;
-        // ソースでない先（JSON・画像・外のパッケージ）は辺にしない
-        if (target === undefined || !SOURCE.test(target)) continue;
+        // 外のパッケージは辺にしない
+        if (target === undefined) continue;
+        // 拡張子の無い指定（'./foo'・フォルダ）は、どのファイルかを決めないので、黙って辺から落とさない
+        if (extname(target) === '') {
+          throw new Error(`${key(file)}: import の先 "${specifier}" を辿れない（拡張子まで書く）`);
+        }
+        // ソースでない先（JSON・画像）は辺にしない
+        if (!SOURCE.test(target)) continue;
         if (!statSync(target, { throwIfNoEntry: false })?.isFile()) {
           throw new Error(`${key(file)}: import の先 "${specifier}" が無い`);
         }

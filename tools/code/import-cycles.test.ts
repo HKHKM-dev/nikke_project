@@ -1,5 +1,5 @@
 // 循環する import を探す道具と、リポジトリに循環が無いことの確かめ（plan/design-import-cycle.md 3.4 節）
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -72,6 +72,7 @@ describe('readImportGraph', () => {
           "import { b } from './b.tsx';",
           "import { lib } from '@x/lib';",
           "import data from './data.json';",
+          "import raw from './b.tsx?raw';",
           "import { it } from 'vitest';",
         ].join('\n'),
         'src/b.tsx': "import type { A } from './a.ts';",
@@ -98,7 +99,11 @@ describe('readImportGraph', () => {
       expect(() => readImportGraph(root, OPTIONS)).toThrow(/src\/a\.ts: import の先 ".\/missing\.ts" が無い/);
     });
     withFiles({ 'src/a.ts': "import '@x/lib/inner.ts';" }, (root) => {
-      expect(() => readImportGraph(root, OPTIONS)).toThrow(/辿れない/);
+      expect(() => readImportGraph(root, OPTIONS)).toThrow(/辿れない（パッケージの入口だけ/);
+    });
+    // 拡張子の無い指定は、ファイルがあっても辿らない
+    withFiles({ 'src/a.ts': "import './b';", 'src/b.ts': '' }, (root) => {
+      expect(() => readImportGraph(root, OPTIONS)).toThrow(/辿れない（拡張子まで書く）/);
     });
   });
 });
@@ -142,6 +147,21 @@ describe('リポジトリの import', () => {
     }
     // パッケージの名前の import は、その入口のファイルへの辺になる
     expect([...graph.values()].some((targets) => targets.has('packages/core/src/index.ts'))).toBe(true);
+  });
+
+  // 表に無いパッケージの名前の import は、外のパッケージとして辺から落ちる
+  it('lists the entry of every workspace package', () => {
+    const entries: Record<string, string> = {};
+    for (const dir of ['packages', 'apps']) {
+      for (const name of readdirSync(join(root, dir))) {
+        const path = join(root, dir, name, 'package.json');
+        if (!existsSync(path)) continue;
+        const json = JSON.parse(readFileSync(path, 'utf8')) as { name: string; exports?: Record<string, string> };
+        const entry = json.exports?.['.'];
+        if (entry !== undefined) entries[json.name] = [dir, name, entry.replace(/^\.\//, '')].join('/');
+      }
+    }
+    expect(REPO_IMPORT_GRAPH.packages).toEqual(entries);
   });
 
   // 循環があると、読み込みの順で、モジュールの最上位が相手の値をまだ読めないことがある（node は落ち、vitest は undefined を読む）。

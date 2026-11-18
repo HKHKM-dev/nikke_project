@@ -155,7 +155,7 @@
 - **再公開**: `skills/types.ts` の末尾の再公開を消し、`packages/core/src/index.ts` に入口の 3 つの再公開を足した。`types.ts` は値を 1 つも読み込まない。
 - **注記**: `types.ts` の冒頭・`parse/definition.ts` の冒頭・`parse/effect.ts` の `EFFECT_BODY_PARSERS` を今の形に直し、[skills-guide.md](skills-guide.md) 1.4 節に入口のファイルを書いた。
 
-**見直し**: 整理の観点（`/simplify`）で、強連結成分を再帰の形にして短くし、検査の範囲を広げ（上）、グラフを読む関数のテストを足した。見送った指摘: パッケージの入口の表を各 `package.json` から作ること（表は 1 行で、仕組みが増える）、型の名前だけを並べた import 文を lint で `import type` に直すこと（8 節。課題にした: `records/backlog/import-type-side-effects.json`）。
+**見直し**: 整理の観点（`/simplify`）で、強連結成分を再帰の形にして短くし、検査の範囲を広げ（上）、グラフを読む関数のテストを足した。見送った指摘: パッケージの入口の表を各 `package.json` から作ること（表は 1 行で、仕組みが増える）、型の名前だけを並べた import 文を lint で `import type` に直すこと（8 節。課題にした: `records/backlog/import-type-side-effects.json`）。バグの観点（`/code-review medium`）で、拡張子の無い相対の import を黙って辺から落とさず落ちるようにし、パッケージの入口の表が各ワークスペースの `package.json` の `exports` と合うことをテストで見るようにし、型だけの文の判定を TypeScript の非推奨でない欄（`phaseModifier`）に替え、`import()` の注記を直した（モジュールの最上位で await する形は見ない）。見送った指摘: リポジトリの直下の設定ファイル（`vitest.config.ts` など）を範囲に入れること（ほかのソースから読み込まれない）。
 
 **確かめた結果**（6 節。基の版は main の 23b428e4）:
 
