@@ -143,15 +143,17 @@
 論点は 3 つとも推奨の案で承認された（論点 1 は案 b、論点 2 は案 a、論点 3 は案 a）。
 
 - **読まれない宣言**: 2.1 節の「消す」の宣言と、論点 1 の名前の表と関数の 4 つ（`ENEMY_CONTENT_LABEL`・`ENEMY_EVENT_KIND_LABEL`・`counterName`・`summonName`）を消した。`VERSION`・`WEAPON_CHANGE_RESTORE`・`WEAPON_CHANGE_CORE` は残した。消した後に使わなくなったのは、`team.ts` の `resolvePassiveStates` の import だけ（消した）。
-- **再公開**: 2.2 節の 10 個を消した。
+- **再公開**: 2.2 節の 10 個のうち 9 個を消した。`frame/plan.ts` の `DOT_LATER_TICK_DELAY_SECONDS` は残した（見直しの指摘。結論 C-0101 が、この名前を `frame/plan.ts` のものとして指している）。
 - **import 文**: `eslint.config.js` に `@typescript-eslint/no-import-type-side-effects` を足し、自動修正で 43 個（27 ファイル）を `import type` に直した。課題 `records/backlog/import-type-side-effects.json` を閉じた。
 - **桁の定数**: `skills/timeline.ts` の `KEY_DIGITS` を `skills/chance.ts` の `CHANCE_VALUE_DIGITS` から取る形にし、突き合わせの 1 行を消した。
+
+**見直し**: バグの観点（`/code-review high`）で、上の再公開を戻し、消した `resolveTeamBuffs` を指していた `skills/timeline.ts` の注記と、桁の数字を直に書いていた `skills/chance.ts` の注記を直した。見送った指摘: `KEY_DIGITS` を `CHANCE_VALUE_DIGITS` から取る向きが、意味の向き（確率の窓の丸めが鍵の桁に合わせる）と逆であること（3.3 節で決めた形。関係は両方の注記に書いてある）。整理の観点（`/simplify`）は、構造が変わらないので行っていない。
 
 **確かめた結果**（6 節。基の版は main の f7d095d2）:
 
 - `npm test`（413 ファイル）・`npm run typecheck`・`npm run lint`・`npm run build` が通る。期待値の書き換えは無い。
 - `npm run code:survey -- --only unused`: 「どこからも・ファイルの中でも使わない」は、残した 3 つだけ。消したことで新しく読まれなくなった export は無い（前後の一覧を比べた）。
-- `@nikke/core` の公開面: `index.ts` が出す名前は 682 個から 672 個になり、減ったのは消した 10 個（`DOT_LATER_TICK_DELAY_SECONDS`・`ENEMY_CONTENT_LABEL`・`ENEMY_EVENT_KIND_LABEL`・`NO_BUILD_EFFECTS`・`SUSTAINED_DAMAGE_PLACEMENTS`・`counterName`・`isWhileEffect`・`resolveTeamBuffs`・`summonName`・`trackTriggerFrames`）だけ。
+- `@nikke/core` の公開面: `index.ts` が出す名前は 682 個から 673 個になり、減ったのは消した 9 個（`ENEMY_CONTENT_LABEL`・`ENEMY_EVENT_KIND_LABEL`・`NO_BUILD_EFFECTS`・`SUSTAINED_DAMAGE_PLACEMENTS`・`counterName`・`isWhileEffect`・`resolveTeamBuffs`・`summonName`・`trackTriggerFrames`）だけ。
 - 循環の検査が通る（0 組）。実行時に残る import の辺は 3,302 本から 3,259 本になった。
 - import 文: 自動修正の差分は import 文だけ（27 ファイル・52 行）。`import type` に変わった 43 個の先のモジュール（16 個）は、どれも最上位が宣言だけで、読み込みの時の処理を持たない。
 - 読み込みの結果・解決の結果・`runSimulation`（`trace` あり）の `SimResult` と `TeamResult`（4 編成と、比べる指定のある観測値の入力）の JSON が、基の版と文字列で一致した（3,553 行の要約が全部同じ）。

@@ -660,7 +660,7 @@ type PassiveSource = { slotIndex: number; casterBaseAttack: number; casterMaxHp?
 const NO_BUILD_EFFECTS: readonly BuildEffect[] = Object.freeze([]);
 
 /**
- * 常時パッシブだけの状態（team.ts の resolveTeamBuffs と同じ結果になる）。空枠は null。
+ * 常時パッシブだけの状態。空枠は null。
  * 育成入力の効果層（TimelineSlot.buildEffects）はスキルの passive の後に、その枠自身へ比率で足す
  */
 export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffState | null)[] {
