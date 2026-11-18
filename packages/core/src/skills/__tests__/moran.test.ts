@@ -1,13 +1,14 @@
 // モラン（281）の定義（plan/skills-guide.md）。S2 の挑発を付けたときのゲージ（burstGaugeHit の射撃の回数のトリガー。
 // plan/design-moran.md、C-0480）。バースト・S1・宝物版の熱血は 2 段目の段 11 の PR 3（V-0530。stage11Moran.test.ts）
 import { describe, expect, it } from 'vitest';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { computeFixedSpecAttack } from '../../fixedSpec.ts';
 import { planTeamRun } from '../../frame/plan.ts';
 import type { TeamInput } from '../../team.ts';
 import { resolveShotGauges, resolveTimerGauges } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 const moran = characterOf(281);
 const raw = rawDefinition<{ skills: Record<string, unknown> }>(281);
@@ -35,7 +36,7 @@ function solo(definition: SkillDefinition): TeamInput {
         skills: { definition, levels: MAX_SKILL_LEVELS },
       },
     ],
-    enemy: { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true },
+    enemy: fixedEnemy(),
     durationSeconds: 60,
     burst: true,
     controlledSlot: 0,

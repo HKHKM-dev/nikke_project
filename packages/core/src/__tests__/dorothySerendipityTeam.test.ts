@@ -2,38 +2,22 @@
 // 3 発（貫通特化・命中率▲・攻撃ダメージ▲・ペレットの数を 1 個に固定）、その発のペレットの命中の量とゲージ（1 個）、バーストのペレット数▲
 // （15 個で数える）と、固定が▲に勝つことが意図どおりに出るか。射撃場の 3 分モード（条件は自動）で見る
 import { describe, expect, it } from 'vitest';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { BuffStat } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { SkillSlot } from '../types.ts';
-import { describeEveryShotInOneGroup, fixedSlot, readJson } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const DOROTHY_S = 234;
 const FLOWER = 304;
 const DELTA = 20;
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
-  defence: 100,
-  element: 'Water',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents({ defence: 100, element: 'Water' });
 
 const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
-const team = (ids: number[], controlledSlot: number, burst: boolean): TeamInput => ({
-  slots: ids.map(autoSlot),
-  enemy: rangeEnemy,
-  durationSeconds: 180,
-  burst,
-  controlledSlot,
-});
+const team = (ids: number[], controlledSlot: number, burst: boolean): TeamInput =>
+  fixedTeam(ids.map(autoSlot), controlledSlot, { enemy: rangeEnemy, burst });
 
 const TEAMS: Record<string, TeamInput> = {
   'ドロシー：セレンディピティ単騎（撮影 A の編成）': team([DOROTHY_S], 0, false),

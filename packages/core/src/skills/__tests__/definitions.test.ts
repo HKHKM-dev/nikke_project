@@ -1,11 +1,10 @@
 // data/skills/ の手書き定義がキャラデータと整合していることを固定する。
 // Stage 9: 宝物版の定義（treasureSkills）は、宝物の全段階（3）で差し替えたキャラデータ・定義に同じ検査を掛ける。
-import { readFileSync, readdirSync } from 'node:fs';
+import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { burstDelaysOf } from '../../burst/landing.ts';
 import { stanceFrames } from '../../frame/firing.ts';
-import type { CharacterData } from '../../types.ts';
 import {
   resolveBurstDamage,
   resolveDamageEffects,
@@ -39,15 +38,11 @@ import {
   type StateContentItem,
   statContentsOf,
 } from '../types.ts';
+import { characterOf, rawDefinition, readData } from '../../__tests__/data.ts';
 
 const DATA_DIR = join(import.meta.dirname, '../../../data');
 const SKILLS_DIR = join(DATA_DIR, 'skills');
-
-function readJson(path: string): unknown {
-  return JSON.parse(readFileSync(path, 'utf8'));
-}
-
-const index = parseSkillIndex(readJson(join(SKILLS_DIR, 'index.json')));
+const index = parseSkillIndex(readData('skills/index.json'));
 const files = readdirSync(SKILLS_DIR)
   .filter((f) => /^\d+\.json$/.test(f))
   .map((f) => Number(f.replace('.json', '')))
@@ -115,8 +110,8 @@ describe('data/skills', () => {
 
   // 基礎版と、treasureSkills があれば宝物版（全段階で差し替えたもの）
   const variants = files.flatMap((resourceId) => {
-    const def = parseSkillDefinition(readJson(join(SKILLS_DIR, `${resourceId}.json`)));
-    const character = readJson(join(DATA_DIR, 'characters', `${resourceId}.json`)) as CharacterData;
+    const def = parseSkillDefinition(rawDefinition(resourceId));
+    const character = characterOf(resourceId);
     const base = { label: `${resourceId}`, resourceId, def, character };
     if (def.treasureSkills === undefined || character.treasure === null) return [base];
     const applied = applyTreasure(character, def, TREASURE_PHASE_MAX);
@@ -127,8 +122,8 @@ describe('data/skills', () => {
   });
 
   describe.each(files)('treasure definition %i (Stage 9)', (resourceId) => {
-    const def = parseSkillDefinition(readJson(join(SKILLS_DIR, `${resourceId}.json`)));
-    const character = readJson(join(DATA_DIR, 'characters', `${resourceId}.json`)) as CharacterData;
+    const def = parseSkillDefinition(rawDefinition(resourceId));
+    const character = characterOf(resourceId);
 
     // 宝物版の定義が無いスロットは unsupported になる（設計書 2.2 節）ので、スロットが揃っていることまでは求めない
     it('exists only for characters with a treasure', () => {

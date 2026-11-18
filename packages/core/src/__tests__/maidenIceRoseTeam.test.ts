@@ -3,34 +3,22 @@
 // 意図どおりに出るか
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { burstDelaysOf } from '../burst/landing.ts';
 import { effectFrameOf, hexagonFrameOf, hitFramesOf, hitShareOf } from '../burst/schedule.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { counterEffectiveFrom } from '../skills/holders/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, readJson } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const MAIDEN = 183;
 const SOLDIER_EG = 300;
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
-  defence: FIXED_SPEC_ENEMY_DEFENCE,
-  element: 'Fire',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 
 /** 撮影の編成。メイデンは 3 枠目（操作） */
 function rangeTeam(ids: readonly number[], extra: Partial<TeamInput> = {}): TeamInput {
   const slots = ids.map((id): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' }));
-  return { slots, enemy: rangeEnemy, durationSeconds: 180, burst: true, controlledSlot: 2, ...extra };
+  return fixedTeam(slots, 2, { enemy: rangeEnemy, ...extra });
 }
 
 /**

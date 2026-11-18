@@ -3,41 +3,28 @@
 // バーストの防御力▼とフルスタックの時の追加ダメージ・受けるダメージ▲、宝物版 S1 のフルバーストの時のリロード速度▲が意図どおりに出るか。
 // 射撃場の 3 分モード（条件は自動）で見る
 import { describe, expect, it } from 'vitest';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import type { EnemyInput } from '../damage.ts';
 import { hitFramesOf } from '../burst/schedule.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedSlot, readJson } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const EXIA = 210;
 const DELTA = 20;
 const SOLINE = 71;
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
-  defence: FIXED_SPEC_ENEMY_DEFENCE,
-  element: 'Fire',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 
 const slotOf = (id: number, treasurePhase: TreasurePhase): TeamSlotInput =>
   fixedSlot(id, { conditionMode: 'auto', ...(id === EXIA ? { treasurePhase } : {}) });
-const team = (ids: number[], controlledSlot: number, treasurePhase: TreasurePhase = 3): TeamInput => ({
-  slots: ids.map((id) => slotOf(id, treasurePhase)),
-  enemy: rangeEnemy,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot,
-});
+const team = (ids: number[], controlledSlot: number, treasurePhase: TreasurePhase = 3): TeamInput =>
+  fixedTeam(
+    ids.map((id) => slotOf(id, treasurePhase)),
+    controlledSlot,
+    { enemy: rangeEnemy },
+  );
 
 const TEAMS: Record<string, TeamInput> = {
   'エクシア単騎（撮影 E1 の編成）': team([EXIA], 0),

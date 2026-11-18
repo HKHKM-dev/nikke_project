@@ -14,6 +14,7 @@ import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
 import { applyComposition } from '../composition.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 const anis = characterOf(17);
 const flower = characterOf(304);
@@ -92,7 +93,7 @@ describe('アニス：スター（17）の S2 とバースト', () => {
     const trigger = computeTriggerDamage({
       character: anis,
       growth: { level: 200, grade: 3, core: 0 },
-      enemy: { defence: 100, element: null, hasCore: true },
+      enemy: fixedEnemy({ defence: 100 }),
       attackOverride: 100000,
       buffs,
       condition: { coreHitRate: 0, distanceBonus: false },

@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { ACC_EPSILON, fullReloadFrames, rateAfterShots, reloadStartOffset, simulateShotFrames } from '../../cadence.ts';
-import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { computeFixedSpecAttack, computeFixedSpecHp } from '../../fixedSpec.ts';
 import { changedWeaponShot, MAX_SKILL_LEVELS } from '../../skills/resolve.ts';
 import { parseSkillDefinition } from '../../skills/types.ts';
 import { runSimulation } from '../../sim/engine.ts';
@@ -14,6 +14,7 @@ import type { CharacterData } from '../../types.ts';
 import { DEFAULT_WEAPON_MODEL, hasSpinUp, MAX_RPM } from '../../weapons.ts';
 import { firingParams, ZERO_FIRING_BUFFS, type FiringParams } from '../firing.ts';
 import { initialShooter, spunBeforeLastShot, stepShooter, weaponChangeShooter, type ShooterState } from '../shooter.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 const model = DEFAULT_WEAPON_MODEL;
 // マガジンの終わりでも最高レート（1 フレーム 1 発）に届かない MG（全弾リロードの始まりのずれが 0 にならない）
@@ -222,7 +223,7 @@ describe('使用武器変更の終わりのずれ', () => {
           skills: { definition: parseSkillDefinition(definition), levels: MAX_SKILL_LEVELS },
         },
       ],
-      enemy: { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true },
+      enemy: fixedEnemy({ element: 'Fire' }),
       durationSeconds: 180,
       burst: false,
       controlledSlot: 0,

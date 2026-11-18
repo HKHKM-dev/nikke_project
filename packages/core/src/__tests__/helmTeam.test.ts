@@ -2,7 +2,6 @@
 // （plan/design-helm.md、V-0033）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runSimulation } from '../sim/engine.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { hexagonFrameOf } from '../burst/schedule.ts';
@@ -11,12 +10,12 @@ import { runTeam } from './runTeam.ts';
 import { burstHitBuffs, burstSnapshotState, planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
+const enemy: EnemyInput = fixedEnemy();
 
 function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
-  return { slots, enemy, durationSeconds: 180, burst: true, controlledSlot };
+  return fixedTeam(slots, controlledSlot, { enemy });
 }
 
 const HELM = 352;

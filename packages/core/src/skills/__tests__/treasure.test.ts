@@ -8,6 +8,7 @@ import type { CharacterData, SkillRaw } from '../../types.ts';
 import { MAX_SKILL_LEVELS, resolvePassives, resolveTimed } from '../resolve.ts';
 import { applyTreasure, applyTreasureToTeam, treasureSlots, validateTreasurePhase } from '../treasure.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 function raw(id: number, value: string): SkillRaw {
   return { id, name: { ja: `s${id}`, en: `s${id}` }, description: { ja: '', en: '' }, values: [Array(10).fill(value)] };
@@ -116,7 +117,7 @@ describe('applyTreasure', () => {
 });
 
 describe('applyTreasureToTeam', () => {
-  const enemy: EnemyInput = { defence: 0, element: null, hasCore: false };
+  const enemy: EnemyInput = fixedEnemy({ defence: 0, hasCore: false });
   const condition = { coreHitRate: 0, distanceBonus: false };
   const growth = { level: 1, grade: 0, core: 0 };
   const character = treasureCharacter();

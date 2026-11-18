@@ -4,18 +4,17 @@ import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf, valuePiecesOf } from '../skills/holders.ts';
 import { appliedFrames } from '../skills/timeline.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot } from './teamHelpers.ts';
 
 const TORB = 192;
 const RAPI = 10;
 function teamOf(slots: TeamSlotInput[], burst: boolean, controlledSlot = 0, durationSeconds = 60): TeamInput {
-  const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Wind', hasCore: true };
+  const enemy: EnemyInput = fixedEnemy({ element: 'Wind' });
   return { slots, enemy, durationSeconds, burst, controlledSlot };
 }
 

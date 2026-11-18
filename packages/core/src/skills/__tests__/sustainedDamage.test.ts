@@ -10,8 +10,9 @@ import {
   type ResolvedSkillDamage,
 } from '../burstDamage.ts';
 import { parseSkillDefinition } from '../types.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
-const enemy: EnemyInput = { defence: 100, element: 'Wind', hasCore: true };
+const enemy: EnemyInput = fixedEnemy({ defence: 100, element: 'Wind' });
 const source = { resourceId: 7, skill: 'burst' as const, name: { ja: '', en: '' } };
 const tick: ResolvedSkillDamage = { source, damageType: 'skill', multiplier: 3.96, sustained: true };
 const auto: ResolvedSkillDamage = { source, damageType: 'skill', multiplier: 3.96 };

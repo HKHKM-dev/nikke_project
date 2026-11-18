@@ -6,6 +6,7 @@ import { ZERO_BUFFS } from '../buffs.ts';
 import { BURST_SKILL_FULL_BURST_BONUS, computeBurstHit, resolveBurstDamage, slotBurstHit } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import type { SkillDefinition } from '../types.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 const tenLevels = (from: number, to: number) =>
   Array.from({ length: 10 }, (_, i) => String(Math.round((from + ((to - from) * i) / 9) * 100) / 100));
@@ -17,7 +18,7 @@ const burst: SkillRaw = {
   values: [tenLevels(207.79, 351.64), null, tenLevels(150, 266.4)],
 };
 const character = makeCharacter({}, { resourceId: 7, skills: { skill1: empty, skill2: empty, burst } });
-const enemy: EnemyInput = { defence: 100, element: 'Wind', hasCore: true };
+const enemy: EnemyInput = fixedEnemy({ defence: 100, element: 'Wind' });
 
 const definition: SkillDefinition = {
   formatVersion: 1,

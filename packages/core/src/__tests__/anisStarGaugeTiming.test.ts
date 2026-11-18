@@ -10,7 +10,7 @@ import { validateObstacleBreaks, type TeamInput } from '../team.ts';
 import { gameSecondsToFirstFrame, gameSecondsToFrames } from '../time.ts';
 import type { TargetProfile } from '../types.ts';
 import { readData } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const rawMaster = readData<Record<string, unknown>>('enemies.json');
 const master = parseEnemyPresets(rawMaster);
@@ -32,7 +32,7 @@ const withFlight = rangeEnemy(profile);
 const withoutFlight = rangeEnemy(profileWithoutFlight);
 // 録画 0164 と同じ: アニス：スター単騎・操作・オートバースト ON・BigArms 灼熱の 3 分モード
 function solo(enemy: EnemyInput, extra: Partial<TeamInput> = {}): TeamInput {
-  return { slots: [fixedSlot(17)], enemy, durationSeconds: 180, burst: true, controlledSlot: 0, ...extra };
+  return fixedTeam([fixedSlot(17)], 0, { enemy, ...extra });
 }
 
 describe('飛ぶ時間の表（plan/design-anis-star-gauge-timing.md 3.2・4.2 節）', () => {

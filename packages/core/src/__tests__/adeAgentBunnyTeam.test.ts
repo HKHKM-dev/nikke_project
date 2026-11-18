@@ -2,36 +2,28 @@
 // 1 スタック・適正最小射程距離▲）、S1・S2 の「適正射程距離内の対象に命中した時」の攻撃力▲・貫通ダメージ▲、フルスタックの間の貫通特化と
 // 攻撃力▲、バーストの適正最小射程距離▲・攻撃ダメージ▲・貫通ダメージ▲が意図どおりに出るか。射撃場の 3 分モード（条件は自動）で見る
 import { describe, expect, it } from 'vitest';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import type { EnemyInput } from '../damage.ts';
 import { distanceBonusAt, inEffectiveRangeAt } from '../frame/landing.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedSlot, readJson, skillValueOf } from './teamHelpers.ts';
+import {
+  characterOf,
+  describeEveryShotInOneGroup,
+  fixedSlot,
+  fixedTeam,
+  RANGE_BIGARMS,
+  rangeEnemyWithEvents,
+  skillValueOf,
+} from './teamHelpers.ts';
 
 const ADE_AB = 315;
 const FLOWER = 304;
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
-  defence: 100,
-  element: 'Fire',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents({ defence: 100 });
 
 const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
-const team = (ids: number[], controlledSlot: number, burst: boolean): TeamInput => ({
-  slots: ids.map(autoSlot),
-  enemy: rangeEnemy,
-  durationSeconds: 180,
-  burst,
-  controlledSlot,
-});
+const team = (ids: number[], controlledSlot: number, burst: boolean): TeamInput =>
+  fixedTeam(ids.map(autoSlot), controlledSlot, { enemy: rangeEnemy, burst });
 
 const TEAMS: Record<string, TeamInput> = {
   'エード：エージェントバニー単騎（撮影 A の編成）': team([ADE_AB], 0, false),
@@ -40,10 +32,10 @@ const TEAMS: Record<string, TeamInput> = {
 
 describe('適正射程距離（distanceBonusAt・inEffectiveRangeAt）', () => {
   const sr = characterOf(ADE_AB);
-  const landing = (id: string) => profile.landings.find((l) => l.id === id)!;
+  const landing = (id: string) => RANGE_BIGARMS.landings.find((l) => l.id === id)!;
 
   it('keeps the band check without Minimum Effective Range up (SR gets the range bonus only at the far landing)', () => {
-    expect(profile.landings.filter((l) => distanceBonusAt(sr, l)).map((l) => l.id)).toEqual(['farA', 'farB']);
+    expect(RANGE_BIGARMS.landings.filter((l) => distanceBonusAt(sr, l)).map((l) => l.id)).toEqual(['farA', 'farB']);
   });
 
   it('shortens the lower end to min × (1 − Σ) and checks the representative distance', () => {

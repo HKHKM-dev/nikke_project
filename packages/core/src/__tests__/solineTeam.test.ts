@@ -3,7 +3,6 @@
 // 出るか。追加ダメージの「HP が最大の場合」（倍率ダメージの条件 selfHp。2.1 節）は、バーストを使ったフレームの HP の割合で見るので、
 // 最大HP のみ▲ を配るエード（II）と組むと、どの回も出ない。射撃場の 3 分モード（条件は自動）で見る
 import { describe, expect, it } from 'vitest';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import type { EnemyInput } from '../damage.ts';
 import { burstDelaysOf } from '../burst/landing.ts';
 import { hitFramesOf, isInFullBurst } from '../burst/schedule.ts';
@@ -17,8 +16,9 @@ import {
   characterOf,
   describeEveryShotInOneGroup,
   fixedSlot,
+  fixedTeam,
   rawDefinition,
-  readJson,
+  rangeEnemyWithEvents,
   windowsFrom,
 } from './teamHelpers.ts';
 
@@ -26,26 +26,11 @@ const SOLINE = 71;
 const IDOLL_FLOWER = 304;
 const DELTA = 20;
 const ADE = 310;
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
-  defence: 100,
-  element: 'Fire',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents({ defence: 100 });
 
 const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
-const team = (ids: number[], controlledSlot: number): TeamInput => ({
-  slots: ids.map(autoSlot),
-  enemy: rangeEnemy,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot,
-});
+const team = (ids: number[], controlledSlot: number): TeamInput =>
+  fixedTeam(ids.map(autoSlot), controlledSlot, { enemy: rangeEnemy });
 
 const TEAMS: Record<string, TeamInput> = {
   'ソリン単騎（録画 1013・1014 の編成）': team([SOLINE], 0),

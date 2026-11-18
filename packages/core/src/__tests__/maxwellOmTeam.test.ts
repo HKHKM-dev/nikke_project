@@ -3,38 +3,26 @@
 // バーストゲージ、S1 の最大HP▲（30 スタック）が意図どおりに出るか
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, readJson, skillValueOf } from './teamHelpers.ts';
+import {
+  describeEveryShotInOneGroup,
+  fixedSlot,
+  fixedTeam,
+  rangeEnemyWithEvents,
+  skillValueOf,
+} from './teamHelpers.ts';
 
 const MAXWELL = 105;
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
-  defence: FIXED_SPEC_ENEMY_DEFENCE,
-  element: 'Electronic',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents({ element: 'Electronic' });
 const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
 
 /** 編成とマクスウェルの枠 */
 const CASES: Record<string, { input: TeamInput; maxwell: number }> = {
   '撮影の編成（I-DOLL・フラワー + ソルジャーE.G. + マクスウェル（操作））': {
-    input: {
-      slots: [304, 300, MAXWELL].map(autoSlot),
-      enemy: rangeEnemy,
-      durationSeconds: 180,
-      burst: true,
-      controlledSlot: 2,
-    },
+    input: fixedTeam([304, 300, MAXWELL].map(autoSlot), 2, { enemy: rangeEnemy }),
     maxwell: 2,
   },
   '実戦寄り（リター + マクスウェル + ドレイク + アリス + クラウン）': {

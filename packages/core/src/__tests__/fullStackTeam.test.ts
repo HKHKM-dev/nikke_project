@@ -2,7 +2,7 @@
 // クラウン（330）の S2（リラックス 20 スタックで外れて回復。C-0271）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { computeFixedSpecAttack } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { itemsOf } from '../skills/holders.ts';
@@ -10,6 +10,7 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { characterOf, rawDefinition } from './data.ts';
+import { fixedEnemy, fixedTeam } from './teamHelpers.ts';
 
 const CROWN = 330;
 const crown = characterOf(CROWN);
@@ -77,8 +78,8 @@ describe('クラウン（330）の S2（C-0271）', () => {
       condition: { coreHitRate: 1, distanceBonus: false },
       skills: { definition: crownDefinition(), levels: MAX_SKILL_LEVELS },
     };
-    const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
-    const input: TeamInput = { slots: [slot], enemy, durationSeconds: 180, burst: false, controlledSlot: 0 };
+    const enemy: EnemyInput = fixedEnemy();
+    const input: TeamInput = fixedTeam([slot], 0, { enemy, burst: false });
     return planTeamRun(applyCompositionToTeam(input));
   };
 

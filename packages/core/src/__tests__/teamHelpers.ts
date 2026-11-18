@@ -1,9 +1,9 @@
 // 編成のテスト（plan/skills-guide.md 1 節の「テスト」）の共通の道具: スペック固定・Lv 10 の枠、射撃場の的の編成、効果の窓、
 // 射撃の列がどのグループにも 1 回ずつ入ることの確かめ（partitions every shot）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { BurstSchedule } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
+import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import {
   computeFixedSpecAttack,
   computeFixedSpecDefence,
@@ -18,14 +18,11 @@ import type { TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { characterOf, DEFINED_IDS, rawDefinition, type RawDefinition } from './data.ts';
+import type { TargetProfile } from '../types.ts';
+import { characterOf, DEFINED_IDS, rawDefinition, type RawDefinition, readData } from './data.ts';
 import { slotPieces } from './historyHelpers.ts';
 
 export { characterOf, rawDefinition };
-
-export function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
 
 const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false };
 export const SHOOTING_RANGE_ENEMY: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
@@ -119,14 +116,64 @@ function fixedSlotDefinition(id: number, options: FixedSlotOptions): SkillDefini
   return parseSkillDefinition(raw);
 }
 
-/** 射撃場の的・180 秒の編成（extra で上書き） */
-export function fixedTeam(ids: readonly number[], controlledSlot: number, extra: Partial<TeamInput> = {}): TeamInput {
+/** スペック固定の防御力・コードなし・コアありの敵（overrides で上書き）。出来事・的は持たない（持つのは rangeEnemyWithEvents） */
+export function fixedEnemy(overrides: Partial<EnemyInput> = {}): EnemyInput {
+  return { ...SHOOTING_RANGE_ENEMY, ...overrides };
+}
+
+/** 入れ子の中まで凍らせる（共有する定数を、テストがその場で書き換えないように） */
+function deepFreeze<T>(value: T): T {
+  if (value !== null && typeof value === 'object' && !Object.isFrozen(value)) {
+    Object.freeze(value);
+    for (const child of Object.values(value)) deepFreeze(child);
+  }
+  return value;
+}
+
+/** data/enemies.json の敵のプリセット。全部のテストで共有するので凍らせてある（書き換えるテストは structuredClone する） */
+export const ENEMY_PRESETS = deepFreeze(parseEnemyPresets(readData<unknown>('enemies.json')));
+
+/** 射撃場の的（条件が自動の枠が、コア命中率・距離ボーナス・弾丸命中率を引く表）。ENEMY_PRESETS と同じく凍らせてある */
+export const RANGE_BIGARMS: TargetProfile = ENEMY_PRESETS.targetProfiles.find((p) => p.id === 'range-bigarms')!;
+
+/**
+ * 出来事と的のある射撃場の敵（ジャンプありの出来事と、的と着地点つき。条件が自動の枠のテスト用）。既定は、スペック固定の
+ * 防御力・火力コード・コアあり・的は RANGE_BIGARMS・180 秒。SHOOTING_RANGE_ENEMY・fixedEnemy（コードなし・出来事と的なし）とは別物
+ */
+export function rangeEnemyWithEvents(
+  options: Partial<Pick<EnemyInput, 'defence' | 'element' | 'hasCore'>> & {
+    target?: TargetProfile;
+    /** 出来事と着地点を作る戦闘時間（編成の durationSeconds と同じにする） */
+    durationSeconds?: number;
+  } = {},
+): EnemyInput {
+  const target = options.target ?? RANGE_BIGARMS;
+  const seconds = options.durationSeconds ?? 180;
   return {
-    slots: ids.map((id) => fixedSlot(id)),
+    defence: options.defence ?? FIXED_SPEC_ENEMY_DEFENCE,
+    element: options.element === undefined ? 'Fire' : options.element,
+    hasCore: options.hasCore ?? true,
+    events: enemyEventsOf(ENEMY_PRESETS, ['range-3min-jump'], seconds),
+    target,
+    landings: enemyLandingsOf(ENEMY_PRESETS, ['range-3min-jump'], seconds, target),
+  };
+}
+
+/**
+ * 射撃場の的・180 秒・バーストありの編成（extra で上書き）。slots は枠か、キャラの番号（fixedSlot の既定の枠にする）
+ */
+export function fixedTeam(
+  slots: readonly (number | TeamSlotInput | null)[],
+  controlledSlot: number | null | undefined,
+  extra: Partial<TeamInput> = {},
+): TeamInput {
+  return {
+    slots: slots.map((slot) => (typeof slot === 'number' ? fixedSlot(slot) : slot)),
     enemy: SHOOTING_RANGE_ENEMY,
     durationSeconds: 180,
     burst: true,
-    controlledSlot,
+    // 省いた操作キャラは、キーごと置かない
+    ...(controlledSlot === undefined ? {} : { controlledSlot }),
     ...extra,
   };
 }

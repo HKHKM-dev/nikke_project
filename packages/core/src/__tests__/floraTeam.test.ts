@@ -7,7 +7,7 @@ import { itemsOf } from '../skills/holders.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const FLORA = 411;
 const EXIA = 210;
@@ -22,14 +22,10 @@ function rangeTeam(floraPhase: TreasurePhase, noBurstSlots?: readonly number[]):
   exia.skills!.treasurePhase = 3;
   const flora: TeamSlotInput = fixedSlot(FLORA);
   flora.skills!.treasurePhase = floraPhase;
-  return {
-    slots: [exia, flora, fixedSlot(BESTI_TU)],
-    enemy: SHOOTING_RANGE_ENEMY,
-    durationSeconds: 180,
+  return fixedTeam([exia, flora, fixedSlot(BESTI_TU)], 2, {
     burst: noBurstSlots === undefined || noBurstSlots.length < 3,
-    controlledSlot: 2,
     ...(noBurstSlots === undefined || noBurstSlots.length === 3 ? {} : { noBurstSlots }),
-  };
+  });
 }
 
 const E = 0;

@@ -3,18 +3,17 @@
 // 段階 3 のドレイクで実測値を固定する（新規撮影なし）。段階 0（省略）は Stage 8 と同じになる。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runTeam } from './runTeam.ts';
 import { type TeamInput, type TeamSlotResult } from '../team.ts';
 import { gameSecondsToFrame } from '../time.ts';
 import { characterOf, readData } from './data.ts';
-import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
 
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 0, distanceBonus: false } };
 
 /** 灼熱の的（射撃場の BigArms）。ドレイクも灼熱なので属性有利なし */
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: false };
+const enemy: EnemyInput = fixedEnemy({ element: 'Fire', hasCore: false });
 
 type SkillHit = TeamSlotResult['skillHits']['activations'][number];
 

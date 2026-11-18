@@ -2,41 +2,28 @@
 // 隠れ身（5 秒。同じ状態の維持の違う付与。plan/design-rosanna.md 2 節）、宝物版 S2 の命中 500 回ごとの狂気（10 スタック）、バーストの
 // 隠れ身の時の追加ダメージ、宝物版バーストの水冷コードの敵への受けるダメージ▲が意図どおりに出るか。射撃場の 3 分モード（条件は自動）で見る
 import { describe, expect, it } from 'vitest';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import type { EnemyInput } from '../damage.ts';
 import { hitFramesOf } from '../burst/schedule.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import type { Element } from '../types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedSlot, readJson } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const ROSANNA = 280;
 const ELEGG = 500;
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy = (element: Element): EnemyInput => ({
-  defence: FIXED_SPEC_ENEMY_DEFENCE,
-  element,
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-});
+const rangeEnemy = (element: Element): EnemyInput => rangeEnemyWithEvents({ element });
 
 const slotOf = (id: number, treasurePhase: TreasurePhase): TeamSlotInput =>
   fixedSlot(id, { conditionMode: 'auto', ...(id === ROSANNA ? { treasurePhase } : {}) });
-const team = (ids: number[], controlledSlot: number, treasurePhase: TreasurePhase, element: Element): TeamInput => ({
-  slots: ids.map((id) => slotOf(id, treasurePhase)),
-  enemy: rangeEnemy(element),
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot,
-});
+const team = (ids: number[], controlledSlot: number, treasurePhase: TreasurePhase, element: Element): TeamInput =>
+  fixedTeam(
+    ids.map((id) => slotOf(id, treasurePhase)),
+    controlledSlot,
+    { enemy: rangeEnemy(element) },
+  );
 
 const TEAMS: Record<string, TeamInput> = {
   'ロザンナ単騎（水冷。撮影 E1 の編成）': team([ROSANNA], 0, 3, 'Water'),

@@ -22,6 +22,7 @@ import { framesToGameSeconds, gameSecondsToFrames } from '../time.ts';
 import { FIXED_BURST_CYCLE } from '../burst/fixedCycle.ts';
 import { averageCadence } from './averageCadence.ts';
 import { makeCharacter } from './fixtures.ts';
+import { fixedEnemy } from './teamHelpers.ts';
 
 const H = FIXED_BURST_CYCLE.normalFrames;
 
@@ -31,7 +32,7 @@ const H = FIXED_BURST_CYCLE.normalFrames;
  */
 const LONG_SIM_TIMEOUT_MS = 60_000;
 
-const enemy: EnemyInput = { defence: 100, element: 'Wind', hasCore: true };
+const enemy: EnemyInput = fixedEnemy({ defence: 100, element: 'Wind' });
 const condition: SlotCondition = { coreHitRate: 0.6, distanceBonus: true };
 const growth = { level: 1, grade: 0, core: 0 };
 const tenLevels = (v: string) => Array.from({ length: 10 }, () => v);

@@ -4,25 +4,13 @@ import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';
-import { readData } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
-const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
-  defence: FIXED_SPEC_ENEMY_DEFENCE,
-  element: 'Fire',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
-const plainEnemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
+const plainEnemy: EnemyInput = fixedEnemy();
 // V-0116 の撮影と同じ: アニス：スター単騎・操作・オートバースト OFF・BigArms 灼熱の 3 分モード（私だけの星）
 const SOLO: TeamInput = {
   slots: [fixedSlot(17, { conditionMode: 'auto' })],
@@ -40,13 +28,11 @@ const WITH_FLOWER: TeamInput = {
   controlledSlot: 1,
 };
 // 実戦寄り（アニス：スター + クラウン + デルタ + アリス + モダニア）。ほかに基本バースト段階 1 がいないので私だけの星。バーストあり
-const PRACTICAL: TeamInput = {
-  slots: [fixedSlot(17), fixedSlot(330), fixedSlot(20), fixedSlot(191), fixedSlot(260)],
-  enemy: plainEnemy,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot: 3,
-};
+const PRACTICAL: TeamInput = fixedTeam(
+  [fixedSlot(17), fixedSlot(330), fixedSlot(20), fixedSlot(191), fixedSlot(260)],
+  3,
+  { enemy: plainEnemy },
+);
 // 同じ編成のクラウンをリター（基本バースト段階 1）に替えたもの（みんなの星）
 const PRACTICAL_WITH_LITER: TeamInput = {
   ...PRACTICAL,

@@ -2,14 +2,13 @@
 // （戦闘開始時・持続）で書いた最初の使い手と、即時の▼（フルチャージ 10 発ごと・味方全体）。HP の条件の即値（selfHp.atLeast。基礎版の S2）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { applySelfHp } from '../composition.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition, selfHpThreshold } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
-import { fixedSlot, type FixedSlotOptions } from '../../__tests__/teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from '../../__tests__/teamHelpers.ts';
 
 const definition = (rid: number) => parseSkillDefinition(rawDefinition(rid));
 
@@ -20,8 +19,8 @@ const IDOLL_SUN = 308;
 const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 1, distanceBonus: false, hitRate: 1 }, hp: true };
 
 function run(slots: TeamSlotInput[], controlledSlot: number) {
-  const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
-  const input: TeamInput = { slots, enemy, durationSeconds: 180, burst: true, controlledSlot };
+  const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
+  const input: TeamInput = fixedTeam(slots, controlledSlot, { enemy });
   return runSimulation(input);
 }
 

@@ -2,13 +2,12 @@
 // ダンス → ボーカル → …）・ほかの II のチェーンの 3 段階突入時の消去・アンコール（ミントにボーカル・パフォーマンスの延長・プリカの CT▲）が
 // 意図どおりに出るか。V-0736 の撮影 B・C・D の編成（射撃場の 3 分モード・風圧・条件は自動）で見る
 import { describe, expect, it } from 'vitest';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedSlot, readJson } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const MINT = 600;
 const PRIKA = 601;
@@ -16,26 +15,10 @@ const NOAH = 232;
 const IDOLL_FLOWER = 304;
 const IDOLL_SUN = 308;
 const MIHARA = 161;
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
-  defence: 100,
-  element: 'Wind',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents({ defence: 100, element: 'Wind' });
 
 const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
-const team = (ids: number[]): TeamInput => ({
-  slots: ids.map(autoSlot),
-  enemy: rangeEnemy,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot: 2,
-});
+const team = (ids: number[]): TeamInput => fixedTeam(ids.map(autoSlot), 2, { enemy: rangeEnemy });
 
 const TEAMS: Record<string, TeamInput> = {
   'II はミントだけ（撮影 B）': team([IDOLL_FLOWER, IDOLL_SUN, MINT, MIHARA]),

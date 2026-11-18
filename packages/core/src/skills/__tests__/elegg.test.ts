@@ -1,7 +1,7 @@
 // エレグ（500）の定義（plan/design-elegg.md 段 1）。S2 の「ターゲットが出現した時、味方全体にバーストゲージのチャージ 100%」を、
 // 戦闘開始の burstGauge で入れる（C-0662）。段 3（plan/design-elegg-s3.md）: S2 の前半の攻撃力▲（C-0696・C-0697）と S1 の分配ダメージ（C-0766）
 import { describe, expect, it } from 'vitest';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { computeFixedSpecAttack } from '../../fixedSpec.ts';
 import { hexagonFrameOf } from '../../burst/schedule.ts';
 import { distributedHitMultiplier } from '../../damage.ts';
 import { burstSnapshotState, planTeamRun } from '../../frame/plan.ts';
@@ -11,6 +11,7 @@ import { computeBurstHit } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 const elegg = characterOf(500);
 const raw = rawDefinition<{ skills: Record<string, { effects: unknown[]; notes?: unknown[] }> }>(500);
@@ -38,7 +39,7 @@ function solo(definition: SkillDefinition): TeamInput {
         skills: { definition, levels: MAX_SKILL_LEVELS },
       },
     ],
-    enemy: { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true },
+    enemy: fixedEnemy(),
     durationSeconds: 60,
     burst: true,
     controlledSlot: 0,
@@ -85,7 +86,7 @@ function slotOf(id: number): TeamInput['slots'][number] {
 function teamC(): TeamInput {
   return {
     slots: [slotOf(SAKURA), slotOf(SUN), slotOf(500)],
-    enemy: { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true },
+    enemy: fixedEnemy(),
     durationSeconds: 60,
     burst: true,
     controlledSlot: 2,
@@ -272,7 +273,7 @@ describe('分配ダメージの受けるダメージ▲（C-0767）', () => {
   it('adds the damage taken increase to the distributed damage increase in one sum', () => {
     const input = {
       attack: 1000,
-      enemy: { defence: 0, element: null, hasCore: false },
+      enemy: fixedEnemy({ defence: 0, hasCore: false }),
       crit: { rate: 0, damage: 1.5 },
       attackDamageMultiplier: 1,
       elementMultiplier: 1,

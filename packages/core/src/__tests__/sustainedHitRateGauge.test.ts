@@ -5,8 +5,6 @@
 //   4. 手入力の枠には持続の▲を効かせない
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runFirstPass } from '../frame/firstPass.ts';
 import { bulletHitRateWithHitRateUp, hitRateSpanWith, hitRateSpansOf } from '../frame/landing.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -14,30 +12,14 @@ import { applyCompositionToTeam } from '../skills/composition.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { toTimelineSlots, type TeamInput, type TeamSlotInput } from '../team.ts';
 import { battleSecondsToFrames } from '../time.ts';
-import { readData } from './data.ts';
-import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
+import { fixedSlot, type FixedSlotOptions, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
-const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const enemy: EnemyInput = {
-  defence: FIXED_SPEC_ENEMY_DEFENCE,
-  element: 'Fire',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
+const enemy: EnemyInput = rangeEnemyWithEvents();
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 0.3, distanceBonus: true } };
 
-const team = (slots: TeamSlotInput[], sustained = true): TeamInput => ({
-  slots,
-  enemy,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot: null,
-  ...(sustained ? {} : { sustainedHitRateUp: false }),
-});
+const team = (slots: TeamSlotInput[], sustained = true): TeamInput =>
+  fixedTeam(slots, null, { enemy, ...(sustained ? {} : { sustainedHitRateUp: false }) });
 
 /** ミサト S1 の 1 段の命中率▲（C-0183） */
 const MISATO_S1 = 0.0504;

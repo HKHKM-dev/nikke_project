@@ -2,7 +2,6 @@
 // 戦闘補助でない側の S1（フルバーストの始まりの自分の攻撃力▲）とバースト III の追加ダメージ（録画 0116・0117。V-0535）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { effectFrameOf, isInFullBurst } from '../../burst/schedule.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput } from '../../team.ts';
@@ -10,7 +9,7 @@ import { applyCompositionToTeam } from '../composition.ts';
 import { MAX_SKILL_LEVELS, skillValue } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
-import { fixedSlot, type FixedSlotOptions } from '../../__tests__/teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions } from '../../__tests__/teamHelpers.ts';
 
 const RAPI_RH = 16;
 const LITER = 82;
@@ -18,7 +17,7 @@ const DELTA = 20;
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { hp: true };
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
+const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
 
 describe('語彙の検証', () => {
   const def = rawDefinition<{ skills: { burst: { effects: Record<string, unknown>[] } } }>(RAPI_RH);

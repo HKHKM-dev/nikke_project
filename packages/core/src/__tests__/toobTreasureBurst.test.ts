@@ -3,21 +3,20 @@
 import { describe, expect, it } from 'vitest';
 import { effectFrameOf } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { TeamInput } from '../team.ts';
 import { rawDefinition } from './data.ts';
-import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
 
 const TOOB = 192;
 const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { hp: true, defence: true };
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
+const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
 
 /** 録画 0676・0677 と同じ編成（1 枠目トーブ・2 枠目ソルジャーF.A.（SG）・3 枠目 I-DOLL・サン（操作）） */
 function run(toob: SkillDefinition = definitionOf(TOOB)) {

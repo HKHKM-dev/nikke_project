@@ -3,7 +3,6 @@
 // 終わる burstDamage（エレグ・ヘルム・I-DOLL・フラワー）にだけ乗り、「敵全体に」（紅蓮）には乗らないか。射撃場の 3 分モード
 // （条件は自動）で見る
 import { describe, expect, it } from 'vitest';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
@@ -15,8 +14,9 @@ import { runTeam } from './runTeam.ts';
 import {
   describeEveryShotInOneGroup,
   fixedSlot,
+  fixedTeam,
   rawDefinition,
-  readJson,
+  rangeEnemyWithEvents,
   skillValueOf,
   windowsFrom,
 } from './teamHelpers.ts';
@@ -27,26 +27,11 @@ const SCARLET = 222;
 const IDOLL_FLOWER = 304;
 const HELM = 352;
 const ONE_ENEMY = new Set([ELEGG, IDOLL_FLOWER, HELM]);
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
-  defence: 100,
-  element: 'Fire',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents({ defence: 100 });
 
 const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
-const team = (ids: number[], controlledSlot: number): TeamInput => ({
-  slots: ids.map(autoSlot),
-  enemy: rangeEnemy,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot,
-});
+const team = (ids: number[], controlledSlot: number): TeamInput =>
+  fixedTeam(ids.map(autoSlot), controlledSlot, { enemy: rangeEnemy });
 
 const TEAMS: Record<string, TeamInput> = {
   'ジャッカル + 紅蓮 + エレグ（操作。撮影の編成）': team([JACKAL, SCARLET, ELEGG], 2),

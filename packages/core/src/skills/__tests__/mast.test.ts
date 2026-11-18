@@ -7,6 +7,7 @@ import { resolveDotEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveStateGrants } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
 const MAST = 350;
@@ -94,7 +95,7 @@ describe('語彙の検証', () => {
 });
 
 describe('発動者基準の防御力▼の式', () => {
-  const enemy: EnemyInput = { defence: 100, element: null, hasCore: true };
+  const enemy: EnemyInput = fixedEnemy({ defence: 100 });
 
   it('subtracts the caster base DEF × X% per application, and needs the caster DEF', () => {
     const effect = { stat: 'enemyDefenseDown' as const, scaling: 'casterDefence' as const, value: 0.019 };

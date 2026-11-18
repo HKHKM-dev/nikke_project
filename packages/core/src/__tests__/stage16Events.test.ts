@@ -27,29 +27,26 @@ import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import type { ShotParams } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon } from '../weapons.ts';
 import { makeCharacter } from './fixtures.ts';
-import { characterOf } from './teamHelpers.ts';
+import { characterOf, ENEMY_PRESETS, fixedEnemy } from './teamHelpers.ts';
 import { battleSecondsToFrames, framesToGameSeconds, gameSecondsToFrame } from '../time.ts';
-import { readData } from './data.ts';
-
-const master = parseEnemyPresets(readData<unknown>('enemies.json'));
 
 describe('出来事のセット（data/enemies.json）', () => {
   it('has the 3-minute-mode jump on every shooting-range preset', () => {
-    expect(master.eventSets.map((s) => s.id)).toEqual(['range-3min-jump']);
-    for (const e of master.enemies.filter((p) => p.content === 'range'))
+    expect(ENEMY_PRESETS.eventSets.map((s) => s.id)).toEqual(['range-3min-jump']);
+    for (const e of ENEMY_PRESETS.enemies.filter((p) => p.content === 'range'))
       expect(e.eventSets).toEqual(['range-3min-jump']);
     // V-0009: 5 回ともジャンプを読めた録画（0041・0046・0055・0049・0050）の、ゲーム内の秒の中央値。間隔は回ごとに並べる（C-0539）
-    expect(master.eventSets[0]!.events).toEqual([
+    expect(ENEMY_PRESETS.eventSets[0]!.events).toEqual([
       { kind: 'untargetable', first: 32.35, duration: 2, every: [36.34, 39.66, 36.34, 33.17] },
     ]);
   });
 
   it('expands to 5 jumps in 180 game seconds, as every recording read so far (C-0552)', () => {
-    const events = enemyEventsOf(master, ['range-3min-jump'], 180);
+    const events = enemyEventsOf(ENEMY_PRESETS, ['range-3min-jump'], 180);
     expect(events.map((e) => e.start.toFixed(2))).toEqual(['32.35', '68.69', '108.35', '144.69', '177.86']);
     expect(events.every((e) => e.kind === 'untargetable')).toBe(true);
     expect(events[4]!.end).toBeCloseTo(179.86, 9);
-    expect(enemyEventsOf(master, [], 180)).toEqual([]);
+    expect(enemyEventsOf(ENEMY_PRESETS, [], 180)).toEqual([]);
   });
 
   it('repeats a list of intervals in order and then keeps its last interval (Stage 21)', () => {
@@ -72,8 +69,8 @@ describe('出来事のセット（data/enemies.json）', () => {
   });
 
   it('rejects malformed event sets and unknown references', () => {
-    const base = master.enemies[0]!;
-    const set = master.eventSets[0]!;
+    const base = ENEMY_PRESETS.enemies[0]!;
+    const set = ENEMY_PRESETS.eventSets[0]!;
     const parse =
       (eventSets: unknown[], enemies: unknown[] = [base]) =>
       () =>
@@ -412,14 +409,14 @@ describe('編成', () => {
       'Step3',
     ),
   ];
-  const baseEnemy: EnemyInput = { defence: 100, element: 'Wind', hasCore: true };
+  const baseEnemy: EnemyInput = fixedEnemy({ defence: 100, element: 'Wind' });
   const input = (events?: EnemyEvent[]): TeamInput => ({
     slots,
     enemy: events === undefined ? baseEnemy : { ...baseEnemy, events },
     durationSeconds: 180,
     burst: true,
   });
-  const jumps = enemyEventsOf(master, ['range-3min-jump'], 180);
+  const jumps = enemyEventsOf(ENEMY_PRESETS, ['range-3min-jump'], 180);
 
   it('is unchanged with no events or an empty list', () => {
     const none = runTeam(input());

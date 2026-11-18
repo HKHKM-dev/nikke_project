@@ -2,23 +2,21 @@
 // 射撃の列がどのグループにも 1 回ずつ入る。定義の形（遅れの表の行・同じ発動の▲の印）も見る。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { burstDelaysOf, sameActivationBuffsOnHit } from '../burst/landing.ts';
 import type { TeamInput } from '../team.ts';
 import { characterOf } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
-const team = (ids: number[], controlledSlot: number): TeamInput => ({
-  slots: ids.map((id) => fixedSlot(id)),
-  enemy,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot,
-});
+const enemy: EnemyInput = fixedEnemy();
+const team = (ids: number[], controlledSlot: number): TeamInput =>
+  fixedTeam(
+    ids.map((id) => fixedSlot(id)),
+    controlledSlot,
+    { enemy },
+  );
 
 describe('遅れの表の行', () => {
   it('puts the burst hits at the measured delays and marks the same-activation buffs', () => {

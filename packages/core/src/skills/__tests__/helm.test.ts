@@ -9,6 +9,7 @@ import { shotCountItems } from '../timeline.ts';
 import { applyTreasure } from '../treasure.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 function definition(skills: Partial<Record<keyof SkillDefinition['skills'], unknown>>): unknown {
   const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
@@ -158,7 +159,7 @@ describe('ダメージの式（ヘルム編）', () => {
       character,
       growth: {},
       attackOverride: 1100,
-      enemy: { defence: 100, element: null, hasCore: false },
+      enemy: fixedEnemy({ defence: 100, hasCore: false }),
       condition: { coreHitRate: 0, distanceBonus: false },
       buffs,
       perShot: [

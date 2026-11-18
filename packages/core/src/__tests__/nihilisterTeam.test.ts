@@ -1,7 +1,6 @@
 // ニヒリスター（261）を含む編成: バーストの倍率ダメージ・火傷（持続ダメージ dot）・最大装弾数▲。射撃の列のグループ分けと、火傷の tick（plan/design-nihilister.md）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { MEASURED_BURST_DELAYS } from '../burst/landing.ts';
 import { HEXAGON_AFTER_ACTIVATION_FRAMES, effectFrameOf, hexagonFrameOf, hitFrameOf } from '../burst/schedule.ts';
 import { gameSecondsToFrames } from '../time.ts';
@@ -13,12 +12,12 @@ import { dotTickFrames, planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
 import { rawDefinition } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
+const enemy: EnemyInput = fixedEnemy();
 
 function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
-  return { slots, enemy, durationSeconds: 180, burst: true, controlledSlot };
+  return fixedTeam(slots, controlledSlot, { enemy });
 }
 
 const NIHILISTER = 261;

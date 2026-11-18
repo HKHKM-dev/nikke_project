@@ -4,6 +4,7 @@ import { computeBurstHit, resolveDotEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 const kurumi = characterOf(862);
 const raw862 = rawDefinition<{
@@ -56,7 +57,7 @@ describe('computeBurstHit の damageTakenMultiplier', () => {
   const [hacking] = resolveDotEffects(parseSkillDefinition(raw862), kurumi, MAX_SKILL_LEVELS);
   const input = {
     attack: 79201,
-    enemy: { defence: 100, element: null, hasCore: true },
+    enemy: fixedEnemy({ defence: 100 }),
     crit: { rate: 0.15, damage: 1.5 },
     attackDamageMultiplier: 1,
     elementMultiplier: 1,

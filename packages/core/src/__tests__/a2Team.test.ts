@@ -7,7 +7,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { timerFramesOf } from '../skills/timeline.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedSlot, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
+import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const slot = (id: number): TeamSlotInput => ({
   ...fixedSlot(id),
@@ -16,13 +16,7 @@ const slot = (id: number): TeamSlotInput => ({
 });
 
 const A2 = 811;
-const team = (ids: number[], controlledSlot: number): TeamInput => ({
-  slots: ids.map(slot),
-  enemy: SHOOTING_RANGE_ENEMY,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot,
-});
+const team = (ids: number[], controlledSlot: number): TeamInput => fixedTeam(ids.map(slot), controlledSlot);
 
 const TEAMS: Record<string, TeamInput> = {
   'リター + デルタ + A2（V-0729 の編成）': team([82, 20, A2], 2),

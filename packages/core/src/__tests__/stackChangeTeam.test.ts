@@ -2,20 +2,19 @@
 // （during）の付与・timed。定義は data/skills のもの（ソーダ：トゥインクルバニー・クイーン（真））と、それを書き換えたもの
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { itemsOf, valuePiecesOf } from '../skills/holders.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { rawDefinition, type RawDefinition } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const SODA = 314;
 const QUEEN = 870;
 function run(slots: TeamSlotInput[], burst: boolean, controlledSlot: number) {
-  const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Wind', hasCore: true };
-  const input: TeamInput = { slots, enemy, durationSeconds: 180, burst, controlledSlot };
+  const enemy: EnemyInput = fixedEnemy({ element: 'Wind' });
+  const input: TeamInput = fixedTeam(slots, controlledSlot, { enemy, burst });
   return planTeamRun(applyCompositionToTeam(input));
 }
 

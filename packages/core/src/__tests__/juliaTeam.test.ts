@@ -5,34 +5,22 @@ import { describe, expect, it } from 'vitest';
 import { burstDelaysOf } from '../burst/landing.ts';
 import { hitFrameOf } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFirstFrame } from '../time.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { applyTreasure, type TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam, readJson } from './teamHelpers.ts';
+import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const JULIA = 150;
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
-  defence: FIXED_SPEC_ENEMY_DEFENCE,
-  element: 'Fire',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 
 /** 撮影の編成（ココア + ソルジャーF.A. + ジュリア（操作））。ジュリアは 3 枠目 */
 function rangeTeam(treasurePhase: TreasurePhase): TeamInput {
   const slots = [311, 301].map((id): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' }));
   const julia: TeamSlotInput = fixedSlot(JULIA, { conditionMode: 'auto' });
   julia.skills!.treasurePhase = treasurePhase;
-  return { slots: [...slots, julia], enemy: rangeEnemy, durationSeconds: 180, burst: true, controlledSlot: 2 };
+  return fixedTeam([...slots, julia], 2, { enemy: rangeEnemy });
 }
 
 const CASES: Record<string, { input: TeamInput; treasure: boolean }> = {

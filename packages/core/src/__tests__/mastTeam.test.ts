@@ -10,12 +10,12 @@ import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { runTeam } from './runTeam.ts';
 import { characterOf } from './data.ts';
-import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from './teamHelpers.ts';
 
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 0.1, distanceBonus: true }, defence: true };
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
+const enemy: EnemyInput = fixedEnemy();
 const MAST = 350;
 const LITER = 82;
 
@@ -35,19 +35,17 @@ const TEAMS: Record<string, { input: TeamInput; mast: number }> = {
     mast: 1,
   },
   '実戦寄り（リター + マスト + アリス + クラウン + ドレイク）': {
-    input: {
-      slots: [
+    input: fixedTeam(
+      [
         fixedSlot(LITER, SLOT_OPTIONS),
         fixedSlot(MAST, SLOT_OPTIONS),
         fixedSlot(191, SLOT_OPTIONS),
         fixedSlot(330, SLOT_OPTIONS),
         fixedSlot(101, SLOT_OPTIONS),
       ],
-      enemy,
-      durationSeconds: 180,
-      burst: true,
-      controlledSlot: 2,
-    },
+      2,
+      { enemy },
+    ),
     mast: 1,
   },
 };

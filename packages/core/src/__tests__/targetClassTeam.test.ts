@@ -4,14 +4,13 @@ import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { matchesTargetFilter } from '../skills/targets.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
 import { rawDefinition } from './data.ts';
-import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from './teamHelpers.ts';
 
 const N_MF = 121;
 const FLOWER = 304;
@@ -21,16 +20,14 @@ const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { hp: true, defence: true };
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
+const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
 
 // フラワー（防御型・I）・エヌ：ミラクルフェアリー（支援型・II）・イサベル（火力型・III）・リター（支援型・I）
-const TEAM: TeamInput = {
-  slots: [FLOWER, N_MF, ISABEL, LITER].map((id) => fixedSlot(id, SLOT_OPTIONS)),
-  enemy,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot: 2,
-};
+const TEAM: TeamInput = fixedTeam(
+  [FLOWER, N_MF, ISABEL, LITER].map((id) => fixedSlot(id, SLOT_OPTIONS)),
+  2,
+  { enemy },
+);
 
 const empty = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
 const withEffect = (effect: object) =>

@@ -4,12 +4,12 @@
 // 届いたかは 1 パス目が数える
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { computeFixedSpecAttack } from '../../fixedSpec.ts';
 import { effectFrameOf } from '../../burst/schedule.ts';
 import { planTeamRun } from '../../frame/plan.ts';
 import { runSimulation, type SimInput, type SimResult } from '../../sim/engine.ts';
 import type { TeamSlotInput } from '../../team.ts';
-import { fixedSlot, type FixedSlotOptions, rawDefinition } from '../../__tests__/teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { framesToGameSeconds } from '../../time.ts';
 import { parseSkillDefinition } from '../types.ts';
 
@@ -25,7 +25,7 @@ const DELAY = 211;
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 1, distanceBonus: false, hitRate: 1 }, hp: true };
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
+const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
 
 function inputOf(slots: TeamSlotInput[], controlledSlot = 0): SimInput {
   return { slots, enemy, durationSeconds: 180, burst: true, controlledSlot, trace: true };

@@ -10,6 +10,7 @@ import { resolveDamageEffects, resolveFixedShare, resolvePerShotDamage } from '.
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
 const def = (skill1: unknown[], skill2: unknown[] = []) => ({
@@ -111,7 +112,7 @@ describe('damageType fixedShare（plan/design-emilia.md 2.2 節）', () => {
     character: emilia,
     growth: { level: 400, grade: 0, core: 0 },
     attackOverride: 100000,
-    enemy: { defence: 100, element: null, hasCore: true },
+    enemy: fixedEnemy({ defence: 100 }),
     buffs: { ...ZERO_BUFFS, attackDamage: 0.3, damageTaken: 0.2 },
     perShot,
     fixedShare,

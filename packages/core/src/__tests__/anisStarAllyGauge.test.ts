@@ -4,24 +4,13 @@ import { describe, expect, it } from 'vitest';
 import { SG_PELLET_GAUGE_HIT_RATE } from '../burst/dynamic.ts';
 import type { BuildEffect } from '../buildEffects.ts';
 import type { EnemyInput } from '../damage.ts';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput } from '../team.ts';
-import { rawDefinition, readData } from './data.ts';
-import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
+import { rawDefinition } from './data.ts';
+import { fixedSlot, type FixedSlotOptions, rangeEnemyWithEvents } from './teamHelpers.ts';
 
-const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
-  defence: FIXED_SPEC_ENEMY_DEFENCE,
-  element: 'Fire',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { conditionMode: 'auto' };
 

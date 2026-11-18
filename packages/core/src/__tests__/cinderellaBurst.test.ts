@@ -3,7 +3,6 @@
 // 美しさのスタック数を掛けて出す（perCount）。録画 0480・0481（V-0502）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { burstDelaysOf } from '../burst/landing.ts';
 import { effectFrameOf, hitFramesOf, isInFullBurst } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -14,7 +13,7 @@ import { MAX_SKILL_LEVELS, skillValue } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput } from '../team.ts';
 import { characterOf, rawDefinition } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const CINDERELLA = 511;
 const definition = (id: number) => parseSkillDefinition(rawDefinition(id));
@@ -30,14 +29,8 @@ describe('シンデレラ（511）のバースト', () => {
 
   it('gives the additional damage on each of the 10 hits, times the Beauty stacks at Burst use (ラム + デルタ + シンデレラ)', () => {
     const m = 2;
-    const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
-    const input: TeamInput = {
-      slots: [fixedSlot(822), fixedSlot(20), fixedSlot(CINDERELLA)],
-      enemy,
-      durationSeconds: 180,
-      burst: true,
-      controlledSlot: m,
-    };
+    const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
+    const input: TeamInput = fixedTeam([fixedSlot(822), fixedSlot(20), fixedSlot(CINDERELLA)], m, { enemy });
     const plan = planTeamRun(applyCompositionToTeam(input));
     const bursts = plan.schedule!.activations.filter((a) => a.slotIndex === m);
     expect(bursts.length).toBeGreaterThanOrEqual(2);

@@ -1,13 +1,14 @@
 // ペレットの命中編（plan/design-pellet-hit.md）: 回数トリガー pelletHit（的に当たったペレットの数）と、
 // プリバティ：アンカインド・メイド（313）の S1 の定義（C-0408）。
 import { describe, expect, it } from 'vitest';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { computeFixedSpecAttack } from '../../fixedSpec.ts';
 import { planTeamRun } from '../../frame/plan.ts';
 import type { PelletHits, TeamInput } from '../../team.ts';
 import { MAX_SKILL_LEVELS, resolveTrigger } from '../resolve.ts';
 import { advanceShotCount, shotCountWeight } from '../triggers.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 const privaty = characterOf(313);
 const raw = rawDefinition<{ skills: Record<string, unknown> }>(313);
@@ -33,7 +34,7 @@ function solo(hitRate: number, pelletHits?: readonly PelletHits[]): TeamInput {
         skills: { definition: def, levels: MAX_SKILL_LEVELS },
       },
     ],
-    enemy: { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true },
+    enemy: fixedEnemy(),
     durationSeconds: 60,
     burst: false,
     controlledSlot: 0,

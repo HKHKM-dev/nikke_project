@@ -5,28 +5,16 @@ import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { exponentSumHitRateUp, landingPartsWith } from '../frame/landing.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { hitRateNOf } from '../skills/buffs.ts';
 import type { TeamInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { readData } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
-const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
-  defence: FIXED_SPEC_ENEMY_DEFENCE,
-  element: 'Fire',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
-const plainEnemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
+const plainEnemy: EnemyInput = fixedEnemy();
 const STACK = 0.0504;
 
 // V-0110 の撮影と同じ: ミサト単騎・AUTO（条件は自動）・オートバースト OFF・BigArms 灼熱の 3 分モード
@@ -39,25 +27,17 @@ const SOLO: TeamInput = {
 };
 // 実戦寄り（リター + ミサト + デルタ + アリス + モダニア）。手入力の条件とバーストあり。クラウンはミサトが居なくても
 // 2026-10-27 までの calc との差が 5% を超えた（クラウン側の差）ので入れていない
-const PRACTICAL: TeamInput = {
-  slots: [fixedSlot(82), fixedSlot(833), fixedSlot(20), fixedSlot(191), fixedSlot(260)],
-  enemy: plainEnemy,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot: 1,
-};
+const PRACTICAL: TeamInput = fixedTeam(
+  [fixedSlot(82), fixedSlot(833), fixedSlot(20), fixedSlot(191), fixedSlot(260)],
+  1,
+  { enemy: plainEnemy },
+);
 
 // ミサト（I）+ デルタ（II）+ アスカ（III・操作）。ミサトを 1 枠目にして、S1 の回復（HP の割合で選ぶ 1 機。C-0567）は
 // ミサト自身に当て、アスカの回復を受けた時の S1 にはバーストの持続回復だけが効くようにする
 const MISATO = 833;
 const ASUKA = 830;
-const BURST_HEAL: TeamInput = {
-  slots: [fixedSlot(MISATO), fixedSlot(20), fixedSlot(ASUKA)],
-  enemy: plainEnemy,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot: 2,
-};
+const BURST_HEAL: TeamInput = fixedTeam([fixedSlot(MISATO), fixedSlot(20), fixedSlot(ASUKA)], 2, { enemy: plainEnemy });
 
 describe('バーストの持続回復（C-0646）', () => {
   const plan = planTeamRun(BURST_HEAL);

@@ -6,8 +6,8 @@ import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets, targetProfileForEnemy } from '../enemies.ts';
-import { computeFixedSpecDefence, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { enemyEventsOf, enemyLandingsOf, targetProfileForEnemy } from '../enemies.ts';
+import { computeFixedSpecDefence } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { METRICS } from '../records/observations/metrics/index.ts';
 import { runSimulation } from '../sim/engine.ts';
@@ -16,8 +16,8 @@ import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { battleSecondsToFrames, gameSecondsToFrames } from '../time.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { characterOf, rawDefinition, readData } from './data.ts';
-import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
+import { characterOf, rawDefinition } from './data.ts';
+import { ENEMY_PRESETS, fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from './teamHelpers.ts';
 
 const ANIS_STAR = 17;
 const DELTA = 20;
@@ -29,10 +29,10 @@ const fixedDefence = (id: number) => computeFixedSpecDefence(characterOf(id));
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { hp: true, defence: true };
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
+const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
 
 function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
-  return { slots, enemy, durationSeconds: 180, burst: true, controlledSlot };
+  return fixedTeam(slots, controlledSlot, { enemy });
 }
 
 // 2.2 節の録画 A（同値）: フラワー（I・1 枠目）・アニス：スター（I・2 枠目）・デルタ（II）・シンデレラ（III・操作）
@@ -60,17 +60,14 @@ const REC163 = team(
   ],
   1,
 );
-// 録画 B の編成を、画面の既定（カスタムの敵に射撃場の的の表・条件は自動）で: II（デルタ）の CT 待ちで、アニス：スターの
-// 防御力▲（10 秒）が切れた後に始まるフルバーストがある
-const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
-const custom: EnemyInput = { defence: 100, element: null, hasCore: true };
-const profile = targetProfileForEnemy(master, custom)!;
+const custom: EnemyInput = fixedEnemy({ defence: 100 });
+const profile = targetProfileForEnemy(ENEMY_PRESETS, custom)!;
 const WAITING: TeamInput = {
   ...team(
     [ANIS_STAR, DELTA, CINDERELLA].map((id) => fixedSlot(id, { ...SLOT_OPTIONS, conditionMode: 'auto' })),
     2,
   ),
-  enemy: { ...custom, target: profile, landings: enemyLandingsOf(master, [], 180, profile) },
+  enemy: { ...custom, target: profile, landings: enemyLandingsOf(ENEMY_PRESETS, [], 180, profile) },
 };
 // 同じく、射撃場の的のジャンプ（3 分モード）も入れたもの（録画 0484・0485 の比べる設定と同じ出来事）。シンデレラ S1 のチャージ速度▲
 // （plan/design-cinderella-s1-charge.md）の後は、II の CT 待ちで防御力▲ が切れた後に始まる回が、こちらにだけある
@@ -78,8 +75,8 @@ const JUMPING: TeamInput = {
   ...WAITING,
   enemy: {
     ...WAITING.enemy,
-    events: enemyEventsOf(master, ['range-3min-jump'], 180),
-    landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
+    events: enemyEventsOf(ENEMY_PRESETS, ['range-3min-jump'], 180),
+    landings: enemyLandingsOf(ENEMY_PRESETS, ['range-3min-jump'], 180, profile),
   },
 };
 

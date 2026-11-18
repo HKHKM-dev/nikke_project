@@ -2,7 +2,6 @@
 // 射撃の列のグループ分けと、▲の窓・掛かる先（C-0160〜C-0163）、着弾の遅れ（C-0165。plan/design-burst-landing.md）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { MEASURED_BURST_DELAYS } from '../burst/landing.ts';
 import { activationFramesOfSlot, effectFrameOf, hexagonFrameOf, hitFrameOf } from '../burst/schedule.ts';
 import { runSimulation } from '../sim/engine.ts';
@@ -14,12 +13,16 @@ import { gameSecondsToFrame } from '../time.ts';
 import type { TeamInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
 import { rawDefinition } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
+const enemy: EnemyInput = fixedEnemy();
 
 function team(ids: number[], controlledSlot: number): TeamInput {
-  return { slots: ids.map((id) => fixedSlot(id)), enemy, durationSeconds: 180, burst: true, controlledSlot };
+  return fixedTeam(
+    ids.map((id) => fixedSlot(id)),
+    controlledSlot,
+    { enemy },
+  );
 }
 
 const ISABEL = 231;

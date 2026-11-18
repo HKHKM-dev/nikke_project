@@ -3,19 +3,18 @@
 // （ループの後の履歴は作り直されるので）ため、1 パス目を verifyItems で回し、ループの中で読むたびに、いまの入力から作り直した件と比べる。
 // 編成は、定義にある件の列の種類と分かれ道（3.1 節の表）がそろうように選んだ（状態の N 発の間・フルバーストの終わりまでは定義に無い）
 import { describe, expect, it } from 'vitest';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runFirstPass } from '../frame/firstPass.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import type { HeldTrack } from '../skills/holders.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import { toTimelineSlots, type TeamInput, type TeamSlotInput } from '../team.ts';
 import { battleSecondsToFrames } from '../time.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot } from './teamHelpers.ts';
 
 function team(slots: TeamSlotInput[], durationSeconds = 180): TeamInput {
   return {
     slots,
-    enemy: { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true },
+    enemy: fixedEnemy(),
     durationSeconds,
     burst: true,
     controlledSlot: 2,

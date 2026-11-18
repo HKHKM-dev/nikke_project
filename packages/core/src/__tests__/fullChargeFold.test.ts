@@ -2,13 +2,20 @@
 // 固定ダメージは、フルチャージでない発（部分チャージの発・チャージしない武器の発）に乗らず、ほかのきっかけの項は乗る
 import { describe, expect, it } from 'vitest';
 import { computeTriggerDamage, partialChargeTriggerDamage, type EnemyInput } from '../damage.ts';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import type { ResolvedSkillDamage } from '../skills/burstDamage.ts';
 import { ZERO_BUFFS } from '../skills/buffs.ts';
 import { runSimulation } from '../sim/engine.ts';
 import type { TargetProfile } from '../types.ts';
 import { isChargeWeapon } from '../weapons.ts';
-import { characterOf, fixedSlot, fixedTeam, rawDefinition, readJson } from './teamHelpers.ts';
+import {
+  characterOf,
+  fixedEnemy,
+  fixedSlot,
+  fixedTeam,
+  RANGE_BIGARMS,
+  rawDefinition,
+  rangeEnemyWithEvents,
+} from './teamHelpers.ts';
 
 const A2 = 811;
 const RAPUNZEL_SANCTUARY = 473;
@@ -16,21 +23,10 @@ const NAYUTA = 223;
 const LITER = 82;
 const ALICE = 191;
 const CROWN = 330;
-
-// 射撃場 3 分モード（敵のジャンプの始まりに部分チャージの発が出る。C-1001）
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const enemyWith = (target: TargetProfile): EnemyInput => ({
-  defence: 100,
-  element: 'Fire',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, target),
-});
-const rangeEnemy = enemyWith(profile);
+const enemyWith = (target: TargetProfile): EnemyInput => rangeEnemyWithEvents({ defence: 100, target });
+const rangeEnemy = enemyWith(RANGE_BIGARMS);
 // RL の飛ぶ時間を 400f 延ばした的（部分チャージの発が、撃った区間と別の区間に着く）
-const slowProfile = structuredClone(profile);
+const slowProfile = structuredClone(RANGE_BIGARMS);
 for (const row of Object.values(slowProfile.flightFrames!.shots!.RL!.byProjectile!))
   for (const key of Object.keys(row)) row[key]! += 400;
 const slowEnemy = enemyWith(slowProfile);
@@ -43,7 +39,7 @@ describe('1 トリガーの値（plan/design-full-charge-fold.md 3.2 節）', ()
   const input = {
     growth: { level: 400, grade: 0, core: 0 },
     attackOverride: 100000,
-    enemy: { defence: 100, element: null, hasCore: true },
+    enemy: fixedEnemy({ defence: 100 }),
     buffs: { ...ZERO_BUFFS, attackDamage: 0.3 },
     perShot: [fullChargeHit, everyHit],
     fixedShare: 0.5,

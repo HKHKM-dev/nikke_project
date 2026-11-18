@@ -5,14 +5,14 @@ import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { computeFixedSpecAttack, computeFixedSpecHp } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { applyResolvedEffect, ZERO_BUFFS } from '../skills/buffs.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { characterOf, rawDefinition } from './data.ts';
-import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from './teamHelpers.ts';
 
 const LAPLACE = 103;
 const NOIR = 271;
@@ -21,10 +21,10 @@ const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { hp: true };
 
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
+const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
 
 function team(slots: TeamSlotInput[], burst = false): TeamInput {
-  return { slots, enemy, durationSeconds: 180, burst, controlledSlot: 0 };
+  return fixedTeam(slots, 0, { enemy, burst });
 }
 
 /** S1 の説明文の値（スキル Lv10）の % を割合にしたもの */

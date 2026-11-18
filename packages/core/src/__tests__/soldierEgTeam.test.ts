@@ -5,33 +5,22 @@ import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
-import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { chanceScaleAt, chanceValueOf } from '../skills/chance.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { rawDefinition, readData } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { rawDefinition } from './data.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const SOLDIER = 300;
 const VALUE = 0.0792;
 const DURATION = gameSecondsToFrames(5);
-const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
-const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const rangeEnemy: EnemyInput = {
-  defence: FIXED_SPEC_ENEMY_DEFENCE,
-  element: 'Fire',
-  hasCore: true,
-  events: enemyEventsOf(master, ['range-3min-jump'], 180),
-  target: profile,
-  landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
-};
-const plainEnemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
+const plainEnemy: EnemyInput = fixedEnemy();
 function team(slots: TeamSlotInput[], enemy: EnemyInput, burst: boolean, controlledSlot: number): TeamInput {
-  return { slots, enemy, durationSeconds: 180, burst, controlledSlot };
+  return fixedTeam(slots, controlledSlot, { enemy, burst });
 }
 
 /** 枠 slotIndex の S1 の窓（期待値の小片） */

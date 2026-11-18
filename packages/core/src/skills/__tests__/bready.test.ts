@@ -1,7 +1,7 @@
 // ブレッディ編（plan/design-bready.md 2 節）: 「〈stat〉増加効果が適用された時」のきっかけ（{ buffApplied }）、条件「自分が〈stat〉増加状態で
 // なければ」（selfBuffed の present: false）、持続ダメージの効果▲（dotEffect）の語彙の検証と解決と、tick の式
 import { describe, expect, it } from 'vitest';
-import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
+import { characterOf, fixedEnemy, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { computeBurstHit, type BurstHitInput, type ResolvedSkillDamage } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveStateGrants, resolveTimed } from '../resolve.ts';
 import { namedStateGroup } from '../states.ts';
@@ -81,7 +81,7 @@ describe('解決', () => {
 describe('持続ダメージの効果▲の式', () => {
   const base: Omit<BurstHitInput, 'effects'> = {
     attack: 10_000,
-    enemy: { defence: 0, element: null, hasCore: false },
+    enemy: fixedEnemy({ defence: 0, hasCore: false }),
     crit: { rate: 0, damage: 0.5 },
     attackDamageMultiplier: 1.6,
     elementMultiplier: 1,

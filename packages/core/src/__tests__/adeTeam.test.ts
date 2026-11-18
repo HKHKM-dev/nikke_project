@@ -6,7 +6,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedSlot, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
+import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 /** 防御力もスペック固定にし、コア命中率を 0.1 にした枠 */
 const slot = (id: number): TeamSlotInput => ({
@@ -17,14 +17,8 @@ const slot = (id: number): TeamSlotInput => ({
 
 const ADE = 310;
 const FLOWER = 304;
-const team = (ids: number[], controlledSlot: number, extra: Partial<TeamInput> = {}): TeamInput => ({
-  slots: ids.map(slot),
-  enemy: SHOOTING_RANGE_ENEMY,
-  durationSeconds: 180,
-  burst: true,
-  controlledSlot,
-  ...extra,
-});
+const team = (ids: number[], controlledSlot: number, extra: Partial<TeamInput> = {}): TeamInput =>
+  fixedTeam(ids.map(slot), controlledSlot, extra);
 
 const TEAMS: Record<string, TeamInput> = {
   エード単騎: team([ADE], 0, { durationSeconds: 90, burst: false }),

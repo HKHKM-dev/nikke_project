@@ -2,7 +2,7 @@
 // 予約し、窓を作る時に burst_duration の秒に足す。使い手はソーダ：トゥインクルバニー（314）の S2 の時間延長 I・II（C-0877）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { computeFixedSpecAttack } from '../../fixedSpec.ts';
 import { planTeamRun } from '../../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { gameSecondsToFrames } from '../../time.ts';
@@ -10,6 +10,7 @@ import { itemsOf } from '../holders.ts';
 import { MAX_SKILL_LEVELS, resolveInstant } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedEnemy, fixedTeam } from '../../__tests__/teamHelpers.ts';
 
 const SODA = 314;
 const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
@@ -49,7 +50,7 @@ describe('fullBurstExtend の検証', () => {
 });
 
 describe('ソーダ：トゥインクルバニーの時間延長（ラム + デルタ + ソーダ：TB）', () => {
-  const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
+  const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
   function slot(id: number, raw?: unknown, c = characterOf(id)): TeamSlotInput {
     const fixed = computeFixedSpecAttack(c);
     return {
@@ -63,13 +64,7 @@ describe('ソーダ：トゥインクルバニーの時間延長（ラム + デ�
       },
     };
   }
-  const team = (soda?: unknown): TeamInput => ({
-    slots: [slot(822), slot(20), slot(SODA, soda)],
-    enemy,
-    durationSeconds: 180,
-    burst: true,
-    controlledSlot: 2,
-  });
+  const team = (soda?: unknown): TeamInput => fixedTeam([slot(822), slot(20), slot(SODA, soda)], 2, { enemy });
   const lengths = (input: TeamInput) => planTeamRun(input).schedule!.fullBurstWindows.map((w) => w.end - w.start);
 
   it('ゴールデンチップの段で窓が延び（I と II は 2 + 3 秒、I は 2 秒）、延長の無い定義ではどの窓も 10 秒', () => {

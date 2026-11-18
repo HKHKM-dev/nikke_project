@@ -7,7 +7,6 @@
 // 雪子が撃つ（plan/design-persona.md 9.1 節）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { isStateContent } from '../skills/resolve.ts';
@@ -23,7 +22,7 @@ import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { Element } from '../types.ts';
 import { applicationsOf, piecesOf, stateItemsOf } from './historyHelpers.ts';
 import { rawDefinition } from './data.ts';
-import { fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const RAM = 822;
 const DELTA = 20;
@@ -61,8 +60,8 @@ function personaOnly(resourceId: number): SkillDefinition {
   });
 }
 function team(slots: TeamSlotInput[], element: Element, controlledSlot = 2): TeamInput {
-  const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element, hasCore: true };
-  return { slots, enemy, durationSeconds: 180, burst: true, controlledSlot };
+  const enemy: EnemyInput = fixedEnemy({ element });
+  return fixedTeam(slots, controlledSlot, { enemy });
 }
 
 const pair = (element: Element) =>
