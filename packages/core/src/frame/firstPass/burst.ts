@@ -117,8 +117,7 @@ export function createBurstStep({
       throw new RangeError(
         `slot ${a.slotIndex}: hitsFrom needs ${counterMax(counter)} split hits in the burst delay table`,
       );
-    // カウンタが 0 で発動する形は撮っていない（メイデンは 1 段階突入で 0 なら回復するので、いまの定義では起きない）。
-    // ヒットを 0 個にして結果の発動を欠けさせずに止める
+    // カウンタが 0 で発動する形は撮っていないので止める（メイデンは 1 段階突入で 0 なら回復するので、いまの定義では起きない）
     const count = lists.counterValueAt(a.slotIndex, counter);
     if (count === 0)
       throw new RangeError(`slot ${a.slotIndex}: burst used with no ${counter} for hitsFrom (not observed)`);
