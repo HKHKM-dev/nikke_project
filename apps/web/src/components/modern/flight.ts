@@ -92,13 +92,14 @@ export function flyIntoSlot(from: DOMRect, card: Element): () => void {
   const content = card.querySelector('.modern-slot-char-area');
   if (!content) return () => undefined;
   stopArrival(card);
-  const ready = decodeImages(card);
-  const base = content.getBoundingClientRect();
-  const ghost = ghostOf(content, base);
   card.classList.add('modern-slot-arriving');
+  let ghost: HTMLElement | null = null;
+  let ready: Promise<void> = Promise.resolve();
+  let stopped = false;
   // 隠しを外すのは、このスロットへ動いている写しがこれのときだけ（後から別の写しが来ていれば、それが外す）
   const remove = () => {
-    ghost.remove();
+    stopped = true;
+    ghost?.remove();
     if (arrivals.get(card) !== remove) return;
     arrivals.delete(card);
     card.classList.remove('modern-slot-arriving');
@@ -110,7 +111,15 @@ export function flyIntoSlot(from: DOMRect, card: Element): () => void {
     finished = true;
     void ready.then(remove);
   };
-  ghost.animate([frameAt(from, base), frameAt(base, base)], FLIGHT).finished.then(done, done);
+  // 写しは、この描画の後（同じ描画の中で名前を測り直した後。useScrollingName）に取る。入れ替えた直後のスロットでは、
+  // 名前が流れるかの印がまだ前のニケのままで、短い名前が左揃えのまま写る。microtask は描く前に走るので、本物が見えるフレームは無い
+  queueMicrotask(() => {
+    if (stopped) return;
+    ready = decodeImages(card);
+    const base = content.getBoundingClientRect();
+    ghost = ghostOf(content, base);
+    ghost.animate([frameAt(from, base), frameAt(base, base)], FLIGHT).finished.then(done, done);
+  });
   return done;
 }
 
