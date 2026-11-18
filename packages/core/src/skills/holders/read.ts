@@ -1,7 +1,7 @@
 // 件の一覧の層 4: 件の読み（plan/design-split-first-pass.md 3.3 節・9.2 節）。件の列の件を、読む入力が伸びたときだけ作り直して返す（readItems）。
 // 最大スタック数▲で上がる上限、while の件、カウンタの while の件もここで作る。件の列に書く問い合わせ（吸収回復の窓・フルスタックの
 // 消費）と、使用武器の変更の窓の読みも返す。
-import { type ShotLog } from '../../frame/shots.ts';
+import type { ShotLog } from '../../frame/shots.ts';
 import {
   resolveMaxStacksUps,
   type ResolvedInstantEffect,
@@ -12,7 +12,7 @@ import {
 } from '../resolve.ts';
 import type { MaxStacksAt } from '../stacks.ts';
 import { statesMatching } from '../states.ts';
-import { type FullStackEvent } from '../triggers.ts';
+import type { FullStackEvent } from '../triggers.ts';
 import { ENEMY, type HeldItem, type HeldTrack, type HolderLists, counterEffectiveFrom } from './types.ts';
 import { ALL_READS, type TrackReads, buildTrackItems, insertSorted, setLength, whileItems } from './items.ts';
 import type { HolderBase, Records } from './records.ts';

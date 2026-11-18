@@ -123,5 +123,3 @@ export function createAccumulate({
   };
   return { accumulateReleases, addAccumulatedGauge, recordAccumulatorShots };
 }
-
-export type Accumulate = ReturnType<typeof createAccumulate>;

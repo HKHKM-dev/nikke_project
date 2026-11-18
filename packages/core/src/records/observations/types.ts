@@ -19,8 +19,6 @@ export type ObservationKind = (typeof OBSERVATION_KINDS)[number];
 /** 観測値の使い道 */
 export const OBSERVATION_USES = ['compare', 'input', 'record'] as const;
 
-export type ObservationUse = (typeof OBSERVATION_USES)[number];
-
 export type Tolerance = { rel: number } | { abs: number };
 
 export type CompareSpec = {

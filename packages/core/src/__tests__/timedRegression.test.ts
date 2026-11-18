@@ -11,7 +11,7 @@ import { MAX_SKILL_LEVELS, isTimedItem, type ItemEffect } from '../skills/resolv
 const triggerOf = (e: ItemEffect) => (isTimedItem(e) ? e.trigger : undefined);
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { runTeam } from './runTeam.ts';
-import { type TeamSlotInput } from '../team.ts';
+import type { TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { battleSecondsToFrames, framesToGameSeconds, gameSecondsToFrames } from '../time.ts';
 

@@ -635,13 +635,3 @@ export function trackTriggerFires(
   for (const ev of events) if (fires(ev)) fired.push({ frame: ev.frame, context: fireContextOf(trigger, ev) });
   return fired;
 }
-
-/** トリガーが起きたフレーム列（昇順）。出来事の列を TriggerTracker に流し直す */
-export function trackTriggerFrames(
-  trigger: ResolvedTrigger,
-  slotIndex: number,
-  schedule: BurstSchedule | null,
-  events: readonly FrameEvents[],
-): number[] {
-  return trackTriggerFires(trigger, slotIndex, schedule, events).map((f) => f.frame);
-}

@@ -167,8 +167,6 @@ export function arCuts(
   return cuts;
 }
 
-export const AR_SEGMENTS = ['中近', '近', '遠', '中遠', '近', '短い遠'] as const;
-
 type BandTable = { near: number; midNear: number; midFar: number; far: number };
 
 function arTable(): { core: BandTable; bullet: BandTable } {

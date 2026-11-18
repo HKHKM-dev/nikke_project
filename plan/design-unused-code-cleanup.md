@@ -2,7 +2,7 @@
 
 - 何のための文書か: どこからも読まれない宣言と再公開を消し、型の名前だけを並べた import 文を `import type` に直し、循環を避けるために写していた定数を 1 つにする変更の、今の状態・案・論点・段・確かめ方
 - 対象: `packages/core/src`・`apps/web/src`・`tools` の、読まれない宣言（3.1 節の表）と再公開、`eslint.config.js` の規則 1 つと、それで直る import 文、`skills/chance.ts` と `skills/timeline.ts` の桁の定数。計算の中身と結果は変えない
-- 状態: 承認待ち（4 節）
+- 状態: 完了（9 節）
 - 関連: [design-import-cycle.md](design-import-cycle.md) 2.4 節・8 節（型の名前だけを並べた import 文を扱わないとした）、[design-workflow-simplification-17.md](design-workflow-simplification-17.md) 10 節（コードを測る道具 `npm run code:survey`）
 - 作成日: 2026-11-18
 - 調べた時点: main の f7d095d2
@@ -138,6 +138,25 @@
 - テストだけが読む export（2.5 節）。
 - 持ち越しの候補（`styles.css` の整理・`catalogDoc.ts`・`sim-run.ts`・解決の決まり文句）と、引数の多い関数、録画の解析レシピの重なり。
 
-## 9. 経過
+## 9. 作り（2026-11-18）
+
+論点は 3 つとも推奨の案で承認された（論点 1 は案 b、論点 2 は案 a、論点 3 は案 a）。
+
+- **読まれない宣言**: 2.1 節の「消す」の宣言と、論点 1 の名前の表と関数の 4 つ（`ENEMY_CONTENT_LABEL`・`ENEMY_EVENT_KIND_LABEL`・`counterName`・`summonName`）を消した。`VERSION`・`WEAPON_CHANGE_RESTORE`・`WEAPON_CHANGE_CORE` は残した。消した後に使わなくなったのは、`team.ts` の `resolvePassiveStates` の import だけ（消した）。
+- **再公開**: 2.2 節の 10 個を消した。
+- **import 文**: `eslint.config.js` に `@typescript-eslint/no-import-type-side-effects` を足し、自動修正で 43 個（27 ファイル）を `import type` に直した。課題 `records/backlog/import-type-side-effects.json` を閉じた。
+- **桁の定数**: `skills/timeline.ts` の `KEY_DIGITS` を `skills/chance.ts` の `CHANCE_VALUE_DIGITS` から取る形にし、突き合わせの 1 行を消した。
+
+**確かめた結果**（6 節。基の版は main の f7d095d2）:
+
+- `npm test`（413 ファイル）・`npm run typecheck`・`npm run lint`・`npm run build` が通る。期待値の書き換えは無い。
+- `npm run code:survey -- --only unused`: 「どこからも・ファイルの中でも使わない」は、残した 3 つだけ。消したことで新しく読まれなくなった export は無い（前後の一覧を比べた）。
+- `@nikke/core` の公開面: `index.ts` が出す名前は 682 個から 672 個になり、減ったのは消した 10 個（`DOT_LATER_TICK_DELAY_SECONDS`・`ENEMY_CONTENT_LABEL`・`ENEMY_EVENT_KIND_LABEL`・`NO_BUILD_EFFECTS`・`SUSTAINED_DAMAGE_PLACEMENTS`・`counterName`・`isWhileEffect`・`resolveTeamBuffs`・`summonName`・`trackTriggerFrames`）だけ。
+- 循環の検査が通る（0 組）。実行時に残る import の辺は 3,302 本から 3,259 本になった。
+- import 文: 自動修正の差分は import 文だけ（27 ファイル・52 行）。`import type` に変わった 43 個の先のモジュール（16 個）は、どれも最上位が宣言だけで、読み込みの時の処理を持たない。
+- 読み込みの結果・解決の結果・`runSimulation`（`trace` あり）の `SimResult` と `TeamResult`（4 編成と、比べる指定のある観測値の入力）の JSON が、基の版と文字列で一致した（3,553 行の要約が全部同じ）。
+
+## 10. 経過
 
 - 2026-11-18: 起案。
+- 2026-11-18: 承認。実装した（9 節）。

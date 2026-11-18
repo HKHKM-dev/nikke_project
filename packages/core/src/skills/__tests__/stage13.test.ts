@@ -12,7 +12,7 @@ import {
 import { ELEMENT_DAMAGE_APPLIES_TO_SKILL_DAMAGE, computeTriggerDamage, type EnemyInput } from '../../damage.ts';
 import { elementMultiplier } from '../../element.ts';
 import { runTeam } from '../../__tests__/runTeam.ts';
-import { type TeamSlotInput } from '../../team.ts';
+import type { TeamSlotInput } from '../../team.ts';
 import type { BuildMasters, CharacterData, OverloadOption } from '../../types.ts';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { ZERO_BUFFS, scaleBasisPoints, type BuffTotals } from '../buffs.ts';

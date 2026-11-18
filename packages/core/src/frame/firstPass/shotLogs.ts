@@ -2,7 +2,7 @@
 // 枠ごとの射撃の記録（件の一覧が読むので、件の一覧の前に作る）と、チャージの溜めの周期と満ちた時の見張り。
 import { gameSecondsToFrames } from '../../time.ts';
 import { firesChargeShots } from '../../skills/resolve.ts';
-import { type TimelineSlot } from '../../skills/timeline.ts';
+import type { TimelineSlot } from '../../skills/timeline.ts';
 import { chargeTriggersOf, hasReloadEndEffect } from '../../skills/types.ts';
 import type { ShotLog } from '../shots.ts';
 

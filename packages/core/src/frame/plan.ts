@@ -110,15 +110,7 @@ import {
 import { untargetableRanges } from './events.ts';
 import type { FrameRange } from '../skills/timeline.ts';
 import { dotStacksAt, dotTicks, groupDotsByState } from './dot.ts';
-export {
-  DOT_LATER_TICK_DELAY_SECONDS,
-  dotTickFrames,
-  dotTickTracker,
-  dotTicks,
-  groupDotsByState,
-  type DotTick,
-  type DotTickTracker,
-} from './dot.ts';
+export { dotTickFrames, dotTickTracker, dotTicks, groupDotsByState } from './dot.ts';
 import { runFirstPass, type FirstPassResult, type InstantApplication } from './firstPass.ts';
 import {
   flightFramesAt,

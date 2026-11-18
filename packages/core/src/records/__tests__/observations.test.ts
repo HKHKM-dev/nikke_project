@@ -40,7 +40,7 @@ import {
 import { renderOtherRows, renderResiduals } from '../observations/render.ts';
 import { validateObservations } from '../observations/validate.ts';
 import { jumpWindowsOf } from '../observations/setup.ts';
-import { type ProjectRecording } from '../recordings.ts';
+import type { ProjectRecording } from '../recordings.ts';
 
 const file = loadRecordingsFile();
 const recordings = recordingMap(file);

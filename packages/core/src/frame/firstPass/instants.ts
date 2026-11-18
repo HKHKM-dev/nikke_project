@@ -2,7 +2,7 @@
 // 即時効果の出どころ（createInstantSources）と、フレームごとにゲージのチャージ・ほかの即時効果を当てる手順（createInstants）。
 import { gameSecondsToFrames } from '../../time.ts';
 import { extendCooldown, reduceCooldown, reserveFullBurstExtension } from '../../burst/controller.ts';
-import { type BurstScheduleModel } from '../../burst/schedule.ts';
+import type { BurstScheduleModel } from '../../burst/schedule.ts';
 import {
   isResolvedShotCount,
   isResolvedApplied,
@@ -349,5 +349,3 @@ export function createInstants({
   };
   return { addGaugeCharges, applyInstants };
 }
-
-export type Instants = ReturnType<typeof createInstants>;

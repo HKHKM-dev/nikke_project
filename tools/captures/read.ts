@@ -20,7 +20,7 @@ import type { Observation } from '../../packages/core/src/records/observations/t
 import { todayLocal } from '../../packages/core/src/records/predictions.ts';
 import { capturesDir } from './dirs.ts';
 import { RECIPES, findRecipe } from './recipes/index.ts';
-import { type RecipeContext, type RecipeObservation } from './recipes/types.ts';
+import type { RecipeContext, RecipeObservation } from './recipes/types.ts';
 import {
   existingVideoOf,
   loadObservations,

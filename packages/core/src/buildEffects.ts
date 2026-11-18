@@ -38,8 +38,6 @@ export type BuildEffectNote = { source: BuildEffectSource; level: BuildEffectNot
 
 export type BuildEffects = { effects: BuildEffect[]; notes: BuildEffectNote[] };
 
-export const NO_BUILD_EFFECTS: Readonly<BuildEffects> = Object.freeze({ effects: [], notes: [] });
-
 /** OL オプション → stat。null はダメージに効かない（防御力） */
 export const OVERLOAD_OPTION_STAT: Record<OverloadOption, BuffStat | null> = {
   elementDamage: 'elementDamage',

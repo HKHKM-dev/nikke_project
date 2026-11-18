@@ -8,7 +8,7 @@ import {
   type BurstActivation,
   type BurstStepKey,
 } from '../../burst/schedule.ts';
-import { type ResolvedInstantEffect } from '../../skills/resolve.ts';
+import type { ResolvedInstantEffect } from '../../skills/resolve.ts';
 import { healFrameOf } from '../../skills/heals.ts';
 import { fireContextOf, type FrameEvents } from '../../skills/triggers.ts';
 import type { FirstPassBase } from './base.ts';
@@ -239,5 +239,3 @@ export function createFrameEvents({
   };
   return { applyHeals, collectFrameEvents };
 }
-
-export type FrameEventsLayer = ReturnType<typeof createFrameEvents>;

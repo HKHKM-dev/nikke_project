@@ -312,5 +312,3 @@ export function createShooters({
   };
   return { stepShooters };
 }
-
-export type Shooters = ReturnType<typeof createShooters>;

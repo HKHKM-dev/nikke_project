@@ -1,11 +1,11 @@
 // 件の一覧の層 6: 判定（plan/design-split-first-pass.md 3.3 節・9.2 節）。効果の条件（holdsAt）・発火の文脈・{ ended } の発火・
 // カウンタの増減の条件。
 import { statTotal } from '../buffs.ts';
-import { type ResolvedTrigger } from '../resolve.ts';
+import type { ResolvedTrigger } from '../resolve.ts';
 import { statesMatching, type NamedStateId } from '../states.ts';
 import { fireContextOf, burstStepHolds, type FrameEvents } from '../triggers.ts';
 import { type BuffStat, isStacksCondition, selfBuffedOf, type EndedTrigger, type EffectCondition } from '../types.ts';
-import { type HeldItem, type HeldTrack } from './types.ts';
+import type { HeldItem, HeldTrack } from './types.ts';
 import { stacksHold, valueOf } from './items.ts';
 import { isStateOrigin } from './history.ts';
 import type { HolderBase, Records } from './records.ts';

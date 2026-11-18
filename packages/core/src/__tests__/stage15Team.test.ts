@@ -7,7 +7,7 @@ import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SkillDefinition } from '../skills/types.ts';
 import { runTeam } from './runTeam.ts';
-import { type SlotCondition, type TeamInput, type TeamSlotInput } from '../team.ts';
+import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import type { SkillRaw } from '../types.ts';
 import { makeCharacter } from './fixtures.ts';
 import { readData } from './data.ts';

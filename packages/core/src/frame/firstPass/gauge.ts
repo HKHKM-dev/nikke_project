@@ -3,7 +3,7 @@
 import { SG_PELLET_GAUGE_HIT_RATE, energyPerTrigger, fullChargeGaugeOf } from '../../burst/dynamic.ts';
 import { pelletsPerShot } from '../../skills/buffs.ts';
 import { muzzleHitsOf } from '../../weapons.ts';
-import { type LandingHitRateSpan } from '../landing.ts';
+import type { LandingHitRateSpan } from '../landing.ts';
 import type { FirstPassBase } from './base.ts';
 
 /** 枠ごとのゲージの量（速度・発・命中・ペレット・障害物）を作る */

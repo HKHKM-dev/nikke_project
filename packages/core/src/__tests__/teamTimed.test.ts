@@ -11,7 +11,7 @@ import type { SkillDefinition, SkillEntry } from '../skills/types.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { type SlotCondition, type TeamSlotInput } from '../team.ts';
+import type { SlotCondition, TeamSlotInput } from '../team.ts';
 import type { SkillRaw } from '../types.ts';
 import { averageCadence } from './averageCadence.ts';
 import { makeCharacter } from './fixtures.ts';

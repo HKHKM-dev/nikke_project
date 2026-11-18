@@ -30,13 +30,6 @@ export const ENEMY_CONTENTS = [
   'unionRaid',
 ] as const satisfies readonly EnemyContent[];
 
-export const ENEMY_CONTENT_LABEL: Record<EnemyContent, { ja: string; en: string }> = {
-  range: { ja: '射撃場', en: 'Shooting range' },
-  interception: { ja: '迎撃戦', en: 'Interception' },
-  soloRaid: { ja: 'ソロレイド', en: 'Solo Raid' },
-  unionRaid: { ja: 'ユニオンレイド', en: 'Union Raid' },
-};
-
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 export const ENEMY_EVENT_KINDS = [
@@ -44,12 +37,6 @@ export const ENEMY_EVENT_KINDS = [
   'invulnerable',
   'barrier',
 ] as const satisfies readonly EnemyEventKind[];
-
-export const ENEMY_EVENT_KIND_LABEL: Record<EnemyEventKind, { ja: string; en: string }> = {
-  untargetable: { ja: '狙えない', en: 'Untargetable' },
-  invulnerable: { ja: '無敵', en: 'Invulnerable' },
-  barrier: { ja: 'バリア', en: 'Barrier' },
-};
 
 /** 数値に効かせる出来事の種類（それ以外は型と表示だけ。plan/design-stage16.md 9.2 節） */
 export const IMPLEMENTED_ENEMY_EVENT_KINDS: readonly EnemyEventKind[] = ['untargetable'];

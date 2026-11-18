@@ -2,23 +2,23 @@
 // 件の列（tracks）・付いた記録・条件で落とした記録・順位・デバフ解除の読み・回復・強化の列、常時の値（passive）、カウンタの鍵と上限に
 // 届いたフレーム、件の列を作る・閉じる・消費する関数。層の作り手が共通に受けるもの（HolderBase）と、前の層が後の層の関数を、作った後に
 // 呼ばれた時に読む口（LateReaders）もここに置く。
-import { type ChanceOpportunity } from '../chance.ts';
-import { type ResolvedShotCountTrigger } from '../resolve.ts';
-import { type RankingRecord } from '../ranking.ts';
-import { type CounterId } from '../counters.ts';
-import { type NamedStateId } from '../states.ts';
-import { type HealRecord, type TriggerTracker } from '../triggers.ts';
+import type { ChanceOpportunity } from '../chance.ts';
+import type { ResolvedShotCountTrigger } from '../resolve.ts';
+import type { RankingRecord } from '../ranking.ts';
+import type { CounterId } from '../counters.ts';
+import type { NamedStateId } from '../states.ts';
+import type { HealRecord, TriggerTracker } from '../triggers.ts';
 import { resolvePassiveStates, type AppliedRecord, type ConditionSkip, type TimelineSlot } from '../timeline.ts';
-import {
-  type AmplifierSource,
-  type BuffAppliedRecord,
-  type HeldItem,
-  type HeldOrigin,
-  type HeldStage,
-  type HeldTrack,
-  type HolderListsOptions,
-  type RemoveDebuffGuessRecord,
-  type StateEndGuessRecord,
+import type {
+  AmplifierSource,
+  BuffAppliedRecord,
+  HeldItem,
+  HeldOrigin,
+  HeldStage,
+  HeldTrack,
+  HolderListsOptions,
+  RemoveDebuffGuessRecord,
+  StateEndGuessRecord,
 } from './types.ts';
 import { type TrackReads, insertSorted, trackReadsOf } from './items.ts';
 
