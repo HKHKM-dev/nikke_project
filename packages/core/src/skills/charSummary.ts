@@ -1,13 +1,16 @@
 // キャラのデータを、スキルを定義するときに読む分だけ詰めて出す（npm run char。plan/design-workflow-simplification-14.md 6 節）。
 // levelCurve などの大きな表は出さない。スキルの説明文は値を差し込み、効果の分類（catalogDoc.ts の effectKind）が重なる定義済みのキャラを
 // 手本の候補に並べる。説明文の値には {description_value_NN} の番号を添える（16.16{01}。スキル定義の ref で指す番号。
-// plan/design-workflow-simplification-15.md 9 節）。
+// plan/design-workflow-simplification-15.md 9 節）。--stats では、射撃場の「スペック固定」の攻撃力・最大HP・防御力（sim の --fixed-spec と同じ
+// fixedSpec.ts の値）と、通常攻撃の 1 発の倍率を出す（plan/design-workflow-simplification-17.md 6 節）。
+import { computeFixedSpecAttack, computeFixedSpecDefence, computeFixedSpecHp } from '../fixedSpec.ts';
 import { skillDefinitionPath } from '../load.ts';
 import type { CharacterData, Locale, SkillRaw } from '../types.ts';
 import type { CatalogEffect } from './catalog.ts';
 import { effectKind } from './catalogDoc.ts';
 import { fillSkillDescription } from './resolve.ts';
 import { SKILL_SLOTS } from './types.ts';
+import { isChargeWeapon, muzzleHitsOf } from '../weapons.ts';
 
 export type SimilarChar = { rid: number; name: string; shared: readonly string[] };
 
@@ -72,4 +75,30 @@ export function renderCharSummary(
       : `効果の分類が重なる定義済みのキャラ: ${opts.similar.map((x) => `${x.name}（${x.rid}。${x.shared.join('・')}）`).join('、')}`,
   );
   return out.join('\n');
+}
+
+/** 武器倍率（1e-4 単位）を % の文に（557 → 5.57%） */
+const percentOf = (basisPoints: number): string => `${Number((basisPoints / 100).toFixed(4))}%`;
+
+/**
+ * 射撃場の「スペック固定」の値（sim の --fixed-spec が使う fixedSpec.ts の値。バフ前）と、通常攻撃の 1 発の倍率（攻撃力に対する
+ * 武器倍率。SG は 1 トリガーの全ペレットの合計と 1 ペレット、チャージ武器はフルチャージの倍率を掛けた値も。二丁持ちは 1 ヒットごと）
+ */
+export function renderFixedSpecStats(c: CharacterData): string {
+  const atk = computeFixedSpecAttack(c);
+  const s = c.shot;
+  const hits = muzzleHitsOf(c.weaponType, s);
+  const shot = [
+    `1 発 ${percentOf(s.damage)}`,
+    ...(s.shotCount > 1 ? [`1 ペレット ${percentOf(s.damage / s.shotCount)}（${s.shotCount} ペレット）`] : []),
+    ...(isChargeWeapon(s)
+      ? [`フルチャージ ×${s.fullChargeDamage} で ${percentOf(s.damage * s.fullChargeDamage)}`]
+      : []),
+    ...(hits > 1 ? [`二丁持ちで 1 発 ${hits} ヒット（倍率は 1 ヒットごと）`] : []),
+  ];
+  return [
+    `# ${c.resourceId} ${c.name.ja}（${c.name.en}） ${c.class} ${c.weaponType}`,
+    `スペック固定（Lv${atk.growth.level}・好感度 rank${atk.affectionRank}。バフ前）: 攻撃力 ${atk.attack}・最大HP ${computeFixedSpecHp(c)}・防御力 ${computeFixedSpecDefence(c)}`,
+    `通常攻撃の倍率（攻撃力に対する）: ${shot.join('・')}`,
+  ].join('\n');
 }

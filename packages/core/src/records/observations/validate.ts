@@ -2,7 +2,7 @@
 // （plan/design-observations-split.md 3.3 節）
 import type { EnemyPresetMaster } from '../../types.ts';
 import type { RecordingEntry } from '../recordings.ts';
-import { METRICS } from './metrics/index.ts';
+import { METRICS, missingMetricArgs } from './metrics/index.ts';
 import { isFiniteValue } from './run.ts';
 import {
   FAR_LANDINGS,
@@ -122,8 +122,7 @@ function compareErrors(
   const metric = METRICS[c.metric];
   if (metric === undefined) return [`${at}: metric が語彙に無い: ${c.metric}`];
   const errors: string[] = [];
-  for (const name of metric.args)
-    if (c.args[name] === undefined) errors.push(`${at}: ${c.metric} の引数 ${name} が無い`);
+  for (const name of missingMetricArgs(metric, c.args)) errors.push(`${at}: ${c.metric} の引数 ${name} が無い`);
   if (c.model !== 'sim') errors.push(`${at}: model は sim だけ（calc は 2026-10-27 の一本化で消した）`);
   errors.push(...conditionErrors(c.setup, enemies, at));
   const filled = filledSlotsOf(recordings.get(o.recording));

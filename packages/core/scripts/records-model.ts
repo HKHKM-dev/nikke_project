@@ -1,13 +1,16 @@
 // 録画の編成・条件で sim を回し、指標のモデルの値を出す（観測値を書く前の見当。plan/design-workflow-simplification-14.md 4 節）。
 //   npm run records:model -- <録画 id> <指定>... --setup '<JSON>' [--args '<JSON>']
 //   npm run records:model -- --like <観測値 ID> [<指定>...] [--setup '<JSON>'] [--args '<JSON>']
+//   npm run records:model -- --list [<指標>]
 // 指定は「指標」「指標,指標」か「指標:{args の JSON}」で、並べると 1 回で全部を出す（args は --args に重ねる）。--like は、その観測値の
 // 録画・setup・args（指定が無ければ指標も。指標が違う指定には、その指標が要る引数だけ）を使い、--setup・--args はその上に重ねる（plan/design-workflow-simplification-15.md 6 節）。
 // 指定ごとに、比べる指定（compare）を持つ仮の観測値を作り、records:check と同じ検査（addedObservationErrors）に通してから、残差の計算と
 // 同じ predictCompare でモデルの値を出す。指標の語彙と args・setup の形は観測値の compare と同じなので、出した指定は
 // そのまま records:new observation の下書きに写せる。値は標準出力に 1 行ずつ「指定: 値」で出す。
+// --list は、指標ごとに要る引数・省略できる引数・一言の説明を 1 行ずつ出す（指標を書けばその行だけ。METRICS から作る）。指定の指標が無いか、
+// 重ねた後の args に要る引数が欠けていれば、その指標の行を出して止まる（sim は回さない）。
 import { predictCompare, type ModelCache } from '../src/records/observations/run.ts';
-import { METRICS } from '../src/records/observations/metrics/index.ts';
+import { METRICS, metricLine, missingMetricArgs } from '../src/records/observations/metrics/index.ts';
 import type { CompareSpec, Observation } from '../src/records/observations/types.ts';
 import {
   addedObservationErrors,
@@ -21,7 +24,12 @@ import { cliArgs, fail } from './cli.ts';
 
 const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
-  options: { args: { type: 'string' }, setup: { type: 'string' }, like: { type: 'string' } },
+  options: {
+    args: { type: 'string' },
+    setup: { type: 'string' },
+    like: { type: 'string' },
+    list: { type: 'boolean', default: false },
+  },
 });
 
 function parseObject(text: string, name: string): Record<string, unknown> {
@@ -43,6 +51,14 @@ function parseSpecs(texts: readonly string[]): { metric: string; args: Record<st
     const args = parseObject(text.slice(at + 1), text.slice(0, at));
     return splitIds(text.slice(0, at)).map((metric) => ({ metric, args, text: `${metric}${text.slice(at)}` }));
   });
+}
+
+if (values.list) {
+  const names = positionals.length > 0 ? positionals.flatMap((p) => splitIds(p)) : Object.keys(METRICS);
+  const unknown = names.filter((n) => METRICS[n] === undefined);
+  if (unknown.length > 0) fail(`指標が語彙に無い: ${unknown.join('・')}`);
+  for (const name of names) console.log(metricLine(name, METRICS[name]!));
+  process.exit(0);
 }
 
 // --like の観測値（録画・setup・指標・args の既定）。録画は残差の計算と同じく recording だけを見る
@@ -74,6 +90,17 @@ function argsOf(spec: (typeof specs)[number]): CompareSpec['args'] {
   );
   return { ...Object.fromEntries(inherited), ...extraArgs, ...spec.args } as CompareSpec['args'];
 }
+
+// 指標が無い・要る引数が欠けた指定は、その指標の行を出して止める（sim を回す前に）
+const wrong = specs.flatMap((s) => {
+  const metric = METRICS[s.metric];
+  if (metric === undefined) return [`${s.text}: 指標が語彙に無い（npm run records:model -- --list で一覧）`];
+  const missing = missingMetricArgs(metric, argsOf(s));
+  return missing.length === 0
+    ? []
+    : [`${s.text}: 引数 ${missing.join('・')} が無い\n  ${metricLine(s.metric, metric)}`];
+});
+if (wrong.length > 0) fail(wrong.join('\n'));
 
 const file = loadRecordingsFile();
 const recording = recordingMap(file).get(recordingId);

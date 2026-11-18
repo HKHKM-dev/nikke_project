@@ -10,8 +10,12 @@ export type MetricContext = {
 };
 
 export type Metric = {
+  /** 一言の説明（records:model --list が出す） */
+  description: string;
   /** 必須の引数 */
   args: readonly string[];
+  /** 省略できる引数（records:model --list が出す。検査には使わない） */
+  optional?: readonly string[];
   sim: (result: SimResult, ctx: MetricContext) => number | number[];
   /**
    * 1 本の録画の中で、この指標の事象が何回起きるか（予測の occurrencesOf が使う。撮影の本数の型。plan/verification-guide.md 4 節）。

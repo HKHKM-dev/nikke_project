@@ -18,53 +18,111 @@ import {
 import { hitMatches, slotSkillHits } from './skillHits.ts';
 
 export const damageMetrics: Readonly<Record<string, Metric>> = {
-  teamTotalDamage: { args: [], sim: (r) => r.totalDamage },
+  teamTotalDamage: { description: '編成の総ダメージ', args: [], sim: (r) => r.totalDamage },
   slotTotalDamage: {
+    description: '枠の総ダメージ',
     args: ['slot'],
     sim: (r, c) => slotOf(r.slots, c).totalDamage,
   },
   rangeDamage: {
+    description: 'ゲーム内の fromSec〜toSec 秒のダメージ（slot で枠を絞る）',
+    optional: ['slot'],
     args: ['fromSec', 'toSec'],
     sim: (r, c) => {
       const perSecond = c.args.slot === undefined ? r.damagePerSecond.total : slotOf(r.damagePerSecond.slots, c);
       return perSecond.slice(Number(c.args.fromSec), Number(c.args.toSec)).reduce((a, b) => a + b, 0);
     },
   },
-  critRateAt: { args: ['slot', 'frame'], sim: critRateAt },
-  hitDamage: { args: ['slot', 'frame', 'core', 'crit', 'distance'], sim: hitDamage },
-  hitDamageAtShot: { args: ['slot', 'shot', 'core', 'crit', 'distance'], sim: hitDamageAtShot },
-  hitWithSkillHits: { args: ['slot', 'frame', 'core', 'crit', 'distance'], sim: hitWithSkillHits },
+  critRateAt: { description: 'そのフレームの区間の、通常攻撃の会心率', args: ['slot', 'frame'], sim: critRateAt },
+  hitDamage: {
+    description: 'そのフレームの区間の、通常攻撃の 1 ヒットの値（core・crit・distance は true か false）',
+    optional: ['fullBurst', 'source'],
+    args: ['slot', 'frame', 'core', 'crit', 'distance'],
+    sim: hitDamage,
+  },
+  hitDamageAtShot: {
+    description: '枠の shot 発目を撃ったフレームの hitDamage（shot は並びも書ける）',
+    optional: ['fullBurst', 'source'],
+    args: ['slot', 'shot', 'core', 'crit', 'distance'],
+    sim: hitDamageAtShot,
+  },
+  hitWithSkillHits: {
+    description: 'frame 以後の最初の発の hitDamage と、同じフレームの倍率ダメージの和',
+    optional: ['fullBurst', 'source'],
+    args: ['slot', 'frame', 'core', 'crit', 'distance'],
+    sim: hitWithSkillHits,
+  },
   // 与えたダメージ量の X% の固定ダメージ（plan/design-emilia.md 2.2 節）: 同じ引数の hitDamage の X% と、その発の 1 ヒットとの和
   // （HUD の 1 つの増分に合わさるとき）
   fixedShareHitDamage: {
+    description: '与えたダメージ量の X% の固定ダメージ（hitDamage の X%）',
+    optional: ['fullBurst', 'source'],
     args: ['slot', 'frame', 'core', 'crit', 'distance'],
     sim: (r, c) => hitDamage(r, c) * fixedShareRatio(r, c),
   },
   hitWithFixedShare: {
+    description: 'hitDamage と、その X% の固定ダメージの和',
+    optional: ['fullBurst', 'source'],
     args: ['slot', 'frame', 'core', 'crit', 'distance'],
     sim: (r, c) => hitDamage(r, c) * (1 + fixedShareRatio(r, c)),
   },
   // 同じ区間・同じ部位の、会心した 1 ヒットと会心しない 1 ヒットの比（plan/design-target-vocab.md 4.1 節）。
   // 敵に掛かる別枠の乗数（受けるダメージ▲）と攻撃力は比で消え、倍率グループの会心の項（クリティカルダメージ）だけが残る
   critHitRatio: {
+    description: '同じ区間・同じ部位の、会心した 1 ヒットと会心しない 1 ヒットの比',
+    optional: ['fullBurst', 'source'],
     args: ['slot', 'frame', 'core', 'distance'],
     sim: (r, c) =>
       hitDamage(r, { ...c, args: { ...c.args, crit: true } }) /
       hitDamage(r, { ...c, args: { ...c.args, crit: false } }),
   },
-  coreHitRate: { args: ['slot', 'frame'], sim: coreHitRate },
-  bulletHitRate: { args: ['slot', 'frame'], sim: bulletHitRate },
+  coreHitRate: { description: 'そのフレームの区間の、通常攻撃のコア命中率', args: ['slot', 'frame'], sim: coreHitRate },
+  bulletHitRate: { description: 'そのフレームの区間の、弾丸命中率', args: ['slot', 'frame'], sim: bulletHitRate },
   coreHitRateDiff: {
+    description: 'frame と baseFrame の区間のコア命中率の差',
     args: ['slot', 'frame', 'baseFrame'],
     sim: (r, c) => coreHitRate(r, c) - coreHitRate(r, { ...c, args: { ...c.args, frame: c.args.baseFrame! } }),
   },
-  perShotHitDamage: { args: ['slot', 'frame', 'crit'], sim: perShotHitDamage },
-  burstHitDamage: { args: ['slot', 'n', 'crit'], sim: burstHitDamage },
-  burstHitWithSkillHits: { args: ['slot', 'n', 'crit'], sim: burstHitWithSkillHits },
-  dotHitDamage: { args: ['slot', 'n', 'crit'], sim: dotHitDamage },
-  dotStackTickDamage: { args: ['slot', 'frame', 'stacks', 'crit'], sim: dotStackTickDamage },
-  skillHitDamage: { args: ['slot', 'n', 'crit'], sim: skillHitDamage },
-  skillHitsDamage: { args: ['slot', 'n', 'count', 'crit'], sim: skillHitsDamage },
+  perShotHitDamage: {
+    description: 'そのフレームの区間の、射撃ごとの倍率ダメージの 1 回の値',
+    optional: ['fullBurst'],
+    args: ['slot', 'frame', 'crit'],
+    sim: perShotHitDamage,
+  },
+  burstHitDamage: {
+    description: 'バーストの倍率ダメージの n 回目（0 始まり）の 1 発動の値',
+    args: ['slot', 'n', 'crit'],
+    sim: burstHitDamage,
+  },
+  burstHitWithSkillHits: {
+    description: 'n 回目のバーストの倍率ダメージと、同じフレームの burst スロットの倍率ダメージの和',
+    args: ['slot', 'n', 'crit'],
+    sim: burstHitWithSkillHits,
+  },
+  dotHitDamage: {
+    description: '持続ダメージの n 回目（0 始まり）の 1 tick の値',
+    optional: ['frame', 'fullBurst', 'core', 'skill', 'percent', 'projectile', 'trigger', 'release'],
+    args: ['slot', 'n', 'crit'],
+    sim: dotHitDamage,
+  },
+  dotStackTickDamage: {
+    description: 'frame 以降の最初の持続ダメージの tick を、stacks スタックに組み直した値',
+    optional: ['skill', 'percent', 'projectile', 'trigger', 'release'],
+    args: ['slot', 'frame', 'stacks', 'crit'],
+    sim: dotStackTickDamage,
+  },
+  skillHitDamage: {
+    description: '倍率ダメージ（持続ダメージを除く）の n 回目（0 始まり）の 1 発動の値',
+    optional: ['frame', 'fullBurst', 'core', 'distance', 'skill', 'percent', 'projectile', 'trigger', 'release'],
+    args: ['slot', 'n', 'crit'],
+    sim: skillHitDamage,
+  },
+  skillHitsDamage: {
+    description: '倍率ダメージの n 回目から count 回の和',
+    optional: ['frame', 'fullBurst', 'core', 'distance', 'skill', 'percent', 'projectile', 'trigger', 'release'],
+    args: ['slot', 'n', 'count', 'crit'],
+    sim: skillHitsDamage,
+  },
 };
 
 /**

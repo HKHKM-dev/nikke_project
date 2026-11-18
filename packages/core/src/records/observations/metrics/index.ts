@@ -16,6 +16,18 @@ export const METRICS: Readonly<Record<string, Metric>> = joinMetrics([
   buffsMetrics,
 ]);
 
+/** 指標の 1 行（名前・要る引数・省略できる引数・説明。records:model --list と、引数が欠けたときの案内） */
+export function metricLine(name: string, metric: Metric): string {
+  const required = metric.args.length === 0 ? 'なし' : metric.args.join(', ');
+  const optional = metric.optional === undefined ? '' : `  任意: ${metric.optional.join(', ')}`;
+  return `${name}  要る: ${required}${optional}  — ${metric.description}`;
+}
+
+/** 指標の要る引数のうち、args に無いもの */
+export function missingMetricArgs(metric: Metric, args: Readonly<Record<string, unknown>>): string[] {
+  return metric.args.filter((name) => args[name] === undefined);
+}
+
 function joinMetrics(parts: readonly Readonly<Record<string, Metric>>[]): Record<string, Metric> {
   const out: Record<string, Metric> = {};
   for (const part of parts)
