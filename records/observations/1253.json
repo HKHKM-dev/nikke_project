@@ -1,0 +1,21 @@
+[
+  {
+    "id": "1253-01",
+    "recording": "1253",
+    "kind": "hit",
+    "use": "record",
+    "value": [19483, 27174, 38966],
+    "unit": "ダメージ",
+    "description": "累計ダメージの 1 フレーム差の増分の 1 ヒットの格子。コア 19,483（556 回）・コア会心 27,174（135 回）・コア 2 つの和 38,966（7 回）。録画 1246（前の日）の格子と同じ値",
+    "method": {
+      "tool": "hud.ts --screen raid --mode jumps --fallback",
+      "note": "1 フレーム差の増分の頻度を数えた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0804",
+    "readAt": "2026-11-18"
+  }
+]
