@@ -1,6 +1,9 @@
+import { parseArgs } from 'node:util';
 import { describe, expect, it } from 'vitest';
 import {
   batchNamesAndNotes,
+  childArgs,
+  INTAKE_OPTIONS,
   isRecordingName,
   nextRecordingIds,
   parseControlledArg,
@@ -59,6 +62,47 @@ describe('まとめて取り込むときの識別子と注記', () => {
     expect(() => batchNamesAndNotes(3, 'a,b,c', ['x', 'y'])).toThrow(
       '--note は 1 つか、元ファイルと同じ数（3）を繰り返す（2 個あった）',
     );
+  });
+});
+
+describe('子のプロセスへ渡す引数', () => {
+  /** 子が読むのと同じ形で読み直す */
+  const reparse = (args: string[]) => parseArgs({ args, allowPositionals: true, options: INTAKE_OPTIONS });
+
+  it('passes values starting with - to the child as values, not as option names', () => {
+    const args = childArgs({
+      src: 'C:/videos/a.mp4',
+      id: '0640',
+      name: 'helm-s1',
+      note: '-1 段目の注記',
+      shared: [
+        ['--rid', '-,-,300'],
+        ['--date', undefined],
+        ['--build-snapshot', '-'],
+      ],
+      flags: ['--copy'],
+    });
+    const { values, positionals } = reparse(args);
+    expect(positionals).toEqual(['C:/videos/a.mp4']);
+    expect(values).toMatchObject({
+      child: true,
+      id: '0640',
+      name: 'helm-s1',
+      note: ['-1 段目の注記'],
+      rid: '-,-,300',
+      'build-snapshot': '-',
+      copy: true,
+    });
+    // 値の無いキーは渡さない（子では既定値になる）
+    expect(values.date).toBeUndefined();
+    expect(args.some((a) => a.startsWith('--date'))).toBe(false);
+  });
+
+  it('keeps a source path starting with - as the source', () => {
+    const args = childArgs({ src: '-take2.mp4', id: '0641', name: 'a', note: undefined, shared: [], flags: [] });
+    const { values, positionals } = reparse(args);
+    expect(positionals).toEqual(['-take2.mp4']);
+    expect(values.note).toEqual([]);
   });
 });
 

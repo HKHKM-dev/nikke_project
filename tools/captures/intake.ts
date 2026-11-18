@@ -70,6 +70,8 @@ import { capturesDir, recordDir } from './dirs.ts';
 import {
   batchNamesAndNotes,
   checkRecordingId,
+  childArgs,
+  INTAKE_OPTIONS,
   isRecordingName,
   nextRecordingIds,
   parseControlledArg,
@@ -89,32 +91,7 @@ import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const ELEMENTS: readonly Element[] = ['Fire', 'Water', 'Wind', 'Electronic', 'Iron'];
 
-const { values, positionals } = cliArgs(import.meta.url, {
-  allowPositionals: true,
-  options: {
-    id: { type: 'string' },
-    name: { type: 'string' },
-    folder: { type: 'string', default: 'range' },
-    date: { type: 'string' },
-    rid: { type: 'string' },
-    controlled: { type: 'string' },
-    target: { type: 'string' },
-    element: { type: 'string' },
-    mode: { type: 'string' },
-    'fixed-spec': { type: 'string' },
-    'build-snapshot': { type: 'string' },
-    'auto-fire': { type: 'string' },
-    'auto-burst': { type: 'string' },
-    treasure: { type: 'string' },
-    note: { type: 'string', multiple: true, default: [] },
-    copy: { type: 'boolean', default: false },
-    'no-backup': { type: 'boolean', default: false },
-    'no-push': { type: 'boolean', default: false },
-    'list-record': { type: 'boolean', default: false },
-    // 1 本ずつの取り込み（まとめて取り込む親が渡す。人は使わない）
-    child: { type: 'boolean', default: false },
-  },
-});
+const { values, positionals } = cliArgs(import.meta.url, { allowPositionals: true, options: INTAKE_OPTIONS });
 
 /** intake-lib.ts の検査の Error を、使い方と一緒に出して止める */
 function orFail<T>(check: () => T): T {
@@ -192,17 +169,14 @@ if (!values.child) {
       process.execPath,
       [
         fileURLToPath(import.meta.url),
-        src,
-        '--child',
-        '--id',
-        ids[i]!,
-        // 値は --キー=値 で渡す（--rid -,-,300 や - で始まる --note を、子の parseArgs が引数の名前と取り違えないように）
-        `--name=${names[i]!}`,
-        ...(note !== undefined ? [`--note=${note}`] : []),
-        ...[...shared, ['--build-snapshot', snapshot] as const].flatMap(([k, v]) =>
-          v === undefined ? [] : [`${k}=${v}`],
-        ),
-        ...flags,
+        ...childArgs({
+          src,
+          id: ids[i]!,
+          name: names[i]!,
+          note,
+          shared: [...shared, ['--build-snapshot', snapshot]],
+          flags,
+        }),
       ],
       { stdio: 'inherit' },
     );

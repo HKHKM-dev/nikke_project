@@ -69,6 +69,7 @@ export function useCharacterCache(resourceIds: readonly (number | null)[], baseU
   }, [wantedKey, baseUrl, characters, errors]);
 
   // 画面全体で読み終えているもの（ほかの所で読んだ・先に読んだ）は、表に入る前のこの描画から出す（上の読み込みはすぐ済み、次の描画で表に入る）。
+  // ここで読めなかったものも、ほかの所で読み終えていれば、データを出してエラーは出さない（上の読み込みは依存が変わるまで回らない）。
   // 足すものが無ければ、持っている表をそのまま返す
   const extra =
     wantedKey === ''
@@ -80,5 +81,10 @@ export function useCharacterCache(resourceIds: readonly (number | null)[], baseU
   if (extra.length === 0) return { characters, errors };
   const merged = new Map(characters);
   for (const id of extra) merged.set(id, loaded.get(keyOf(baseUrl, id))!);
-  return { characters: merged, errors };
+  if (!extra.some((id) => errors.has(id))) return { characters: merged, errors };
+  // エラーの表は持っている状態から消す（描画のたびに新しい表を返さない。React はすぐ描き直し、次の描画ではここに来ない）
+  const remaining = new Map(errors);
+  for (const id of extra) remaining.delete(id);
+  setErrors(remaining);
+  return { characters: merged, errors: remaining };
 }

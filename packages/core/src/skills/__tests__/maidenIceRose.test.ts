@@ -93,3 +93,14 @@ describe('遅れの表', () => {
     expect(() => runSimulation(input)).toThrow(/hitsFrom needs 12 split hits/);
   });
 });
+
+describe('MP 0 の発動', () => {
+  it('stops instead of using the Burst with no hits when MP is 0 (not observed)', () => {
+    // S1 の 1 段階突入の回復を外すと、MP 0 のまま III を撃つ
+    const noRestore = structuredClone(raw);
+    noRestore.skills.skill1.effects.splice(0, 1);
+    const input = fixedTeam([311, 301, MAIDEN], 2);
+    input.slots[2]!.skills = { definition: parseSkillDefinition(noRestore), levels: MAX_SKILL_LEVELS };
+    expect(() => runSimulation(input)).toThrow(/burst used with no mp for hitsFrom \(not observed\)/);
+  });
+});
