@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest';
 import { resolveAppliedPauses } from '../burstDamage.ts';
 import { namedStateIsDebuff } from '../states.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { rawDefinition } from '../../__tests__/data.ts';
 
 type Effects = { effects: Record<string, unknown>[] };

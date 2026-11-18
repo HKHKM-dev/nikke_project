@@ -8,7 +8,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { chanceStackLevelsAt, chanceValueOf } from '../skills/chance.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { TeamInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';

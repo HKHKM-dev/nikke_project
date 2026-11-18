@@ -4,7 +4,8 @@
 import { describe, expect, it } from 'vitest';
 import { MAX_SKILL_LEVELS, resolveTrigger } from '../resolve.ts';
 import { createTriggerTracker, replayEvents, shotCountWeight, type FrameEvents, type ShotEvent } from '../triggers.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import type { SkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const character = characterOf(515);

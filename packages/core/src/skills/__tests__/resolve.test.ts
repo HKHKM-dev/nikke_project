@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import type { SkillRaw } from '../../types.ts';
 import { MAX_SKILL_LEVELS, renderSkillDescription, resolvePassives, resolveTimed, skillValue } from '../resolve.ts';
-import { parseSkillDefinition, parseSkillIndex, type SkillDefinition } from '../types.ts';
+import { parseSkillDefinition, parseSkillIndex } from '../parse/definition.ts';
+import type { SkillDefinition } from '../types.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 
 /** Lv1..10 で lv1 から step ずつ増える値の文字列配列 */

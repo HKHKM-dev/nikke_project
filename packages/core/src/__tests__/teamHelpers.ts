@@ -13,9 +13,10 @@ import {
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { simTeamResult } from '../sim/teamResult.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
+import type { SkillDefinition } from '../skills/types.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { TargetProfile } from '../types.ts';

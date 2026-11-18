@@ -9,7 +9,8 @@ import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { createTriggerTracker, type FrameEvents, type ShotEvent } from '../triggers.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import type { SkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 import { fixedEnemy, fixedTeam } from '../../__tests__/teamHelpers.ts';
 

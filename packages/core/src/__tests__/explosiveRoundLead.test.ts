@@ -9,7 +9,8 @@ import { buildTeamInput } from '../records/observations/teamInput.ts';
 import type { CompareSetup } from '../records/observations/setup.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
 import { ENEMY, itemsOf } from '../skills/holders.ts';
-import { parseSkillDefinition, type SkillDefinition, type StateGrantEffect } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
+import type { SkillDefinition, StateGrantEffect } from '../skills/types.ts';
 
 const file = loadRecordingsFile();
 const setup: CompareSetup = { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], burst: true };

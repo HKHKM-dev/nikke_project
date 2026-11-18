@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest';
 import { cycleFires, resolveCycleEvery, resolveCycles } from '../cycles.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 

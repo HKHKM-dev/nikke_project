@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { withAddedEffects } from '../../records/observations/setup.ts';
 import { isChargeWeapon } from '../../weapons.ts';
 import { firesChargeShots, MAX_SKILL_LEVELS, resolveStateGrants, resolveTimed } from '../resolve.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 type Effects = { effects: Record<string, unknown>[] };

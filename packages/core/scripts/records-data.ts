@@ -24,12 +24,8 @@ import { idsInPaths } from '../src/records/drafts.ts';
 import { parseVerification, sortVerifications, type Verification } from '../src/records/verifications.ts';
 import { buildSkillSupportIndex } from '../src/skills/support.ts';
 import { TREASURE_PHASE_MAX, treasureSlots } from '../src/skills/treasure.ts';
-import {
-  parseSkillDefinition,
-  parseSkillIndex,
-  type SkillDefinition,
-  type SkillSupportIndex,
-} from '../src/skills/types.ts';
+import { parseSkillDefinition, parseSkillIndex } from '../src/skills/parse/definition.ts';
+import type { SkillDefinition, SkillSupportIndex } from '../src/skills/types.ts';
 import type { BuildMasters, CharacterData } from '../src/types.ts';
 
 export const ROOT = fileURLToPath(new URL('../../../', import.meta.url));

@@ -2,7 +2,8 @@
 // 効果、バーストの再突入と回復。スタック量▲（S1 の 2 行目）は未対応の notes。
 import { describe, expect, it } from 'vitest';
 import { MAX_SKILL_LEVELS, resolveInstant, resolveStateGrants, resolveTimed, type SkillLevels } from '../resolve.ts';
-import { burstReentryStepOf, parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import { burstReentryStepOf } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const alice = characterOf(195);

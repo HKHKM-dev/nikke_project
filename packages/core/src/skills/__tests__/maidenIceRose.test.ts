@@ -6,8 +6,8 @@ import { characterOf, fixedTeam, rawDefinition } from '../../__tests__/teamHelpe
 import { computeFixedSpecAttack } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import { resolveBurstDamage } from '../burstDamage.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
-import { parseSkillDefinition } from '../types.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
 type Raw = { skills: { skill1: Effects; skill2: Effects; burst: Effects } };

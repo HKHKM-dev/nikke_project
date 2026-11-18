@@ -7,7 +7,8 @@ import { type TeamInput } from '../../team.ts';
 import type { CharacterData, SkillRaw } from '../../types.ts';
 import { MAX_SKILL_LEVELS, resolvePassives, resolveTimed } from '../resolve.ts';
 import { applyTreasure, applyTreasureToTeam, treasureSlots, validateTreasurePhase } from '../treasure.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import type { SkillDefinition } from '../types.ts';
 import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 function raw(id: number, value: string): SkillRaw {

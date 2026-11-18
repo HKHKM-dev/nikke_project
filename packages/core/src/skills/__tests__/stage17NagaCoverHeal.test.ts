@@ -6,7 +6,8 @@ import type { EnemyInput } from '../../damage.ts';
 import { planTeamRun } from '../../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { itemsOf } from '../holders.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import type { SkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from '../../__tests__/teamHelpers.ts';
 

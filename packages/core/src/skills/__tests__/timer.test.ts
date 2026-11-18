@@ -4,7 +4,7 @@ import { resolveDamageEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { timerFrames, triggerFrames } from '../timeline.ts';
 import { createTriggerTracker } from '../triggers.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const nihilister = characterOf(261);

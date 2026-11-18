@@ -2,9 +2,9 @@
 // 発数の弾丸チャージ（ammoRefill の scaling 'flat'）
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { MAX_SKILL_LEVELS, resolveInstant } from '../resolve.ts';
 import { advanceShotCount, shotCountWeight, type ShotEvent } from '../triggers.ts';
-import { parseSkillDefinition } from '../types.ts';
 
 const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
 const definition = (effect: unknown) => ({

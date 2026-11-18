@@ -7,7 +7,7 @@ import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { ACC_EPSILON, fullReloadFrames, rateAfterShots, reloadStartOffset, simulateShotFrames } from '../../cadence.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp } from '../../fixedSpec.ts';
 import { changedWeaponShot, MAX_SKILL_LEVELS } from '../../skills/resolve.ts';
-import { parseSkillDefinition } from '../../skills/types.ts';
+import { parseSkillDefinition } from '../../skills/parse/definition.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput } from '../../team.ts';
 import type { CharacterData } from '../../types.ts';

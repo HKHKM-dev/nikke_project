@@ -19,7 +19,8 @@ import { ZERO_BUFFS, scaleBasisPoints, type BuffTotals } from '../buffs.ts';
 import { computeSkillHit } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { resolvePassiveStates, type TimelineSlot } from '../timeline.ts';
-import { BUFF_STATS, parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import { BUFF_STATS } from '../types.ts';
 import { readData } from '../../__tests__/data.ts';
 import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 

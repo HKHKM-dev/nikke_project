@@ -2,8 +2,8 @@
 // （どちらも下位効果のスタック適用）、S1 の 10 秒ごとの味方全体の攻撃力▲の解決（V-0771）
 import { describe, expect, it } from 'vitest';
 import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolveTimed, type SkillLevels } from '../resolve.ts';
-import { parseSkillDefinition } from '../types.ts';
 
 const dolla = characterOf(202);
 const def = parseSkillDefinition(rawDefinition(202));

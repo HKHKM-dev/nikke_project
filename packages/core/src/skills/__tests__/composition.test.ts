@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { applyComposition, compositionAllows, countsAsBurstStep, fixedTargetsOf, squadAllows } from '../composition.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 
 const ram = makeCharacter({}, { squad: 'CE003', burstStep: 'Step1' });
 const rem = makeCharacter({}, { squad: 'CE003', burstStep: 'Step2' });

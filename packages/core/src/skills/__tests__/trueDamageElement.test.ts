@@ -13,7 +13,8 @@ import { MAX_SKILL_LEVELS, resolveStateContents, resolveStateGrants, resolveTime
 import { triggerFrames, untilNextEndItems, type TimelineSlot } from '../timeline.ts';
 import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
 import { itemsOf } from '../holders.ts';
-import { parseSkillDefinition, type SkillDefinition, type SkillEntry, type SkillEffect } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import type { SkillDefinition, SkillEntry, SkillEffect } from '../types.ts';
 import { characterOf } from '../../__tests__/data.ts';
 import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 

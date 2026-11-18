@@ -1,6 +1,7 @@
 // スキル定義（DSL）の型。定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
 // 効果の種類は SkillEffect、定義の全体は SkillDefinition。書き方の手順は plan/skills-guide.md。
-// 読み込みの検査は skills/parse/ に効果の種類ごとに置く（入口の parseSkillDefinition はこのファイルが公開する）。
+// 読み込みの検査は skills/parse/ に効果の種類ごとに置く（入口は parse/definition.ts の parseSkillDefinition）。このファイルは skills/parse/ を
+// 読み込まない（parse/ がこのファイルの値を読むので、読み込むと循環する import になる。tools/code/import-cycles.test.ts が見る）。
 // 効果と notes には、根拠の結論の ID（claims）を書ける（plan/skills-guide.md 3 節。実在の検査は records/skills.ts）。
 import type { Element, LocalizedText, NikkeClass, SkillSlot, WeaponType } from '../types.ts';
 import type { CounterId } from './counters.ts';
@@ -3018,6 +3019,3 @@ export type SkillSupportIndex = {
 
 /** 完全対応でないキャラの、未対応（unimplemented の notes）と仮定（assumes のある効果）の件数（skills/support.ts） */
 export type SkillSupportGap = { unimplemented: number; assumed: number };
-
-// 読み込みの検査（skills/parse/）の入口。parse/ は types.ts の値を読むので循環 import になる。parse/ の最上位（関数の外）では types.ts の値を読まない
-export { parseSkillDefinition, parseSkillIndex, parseSkillSupportIndex } from './parse/definition.ts';

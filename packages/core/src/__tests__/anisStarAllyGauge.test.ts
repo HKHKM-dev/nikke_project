@@ -5,7 +5,7 @@ import { SG_PELLET_GAUGE_HIT_RATE } from '../burst/dynamic.ts';
 import type { BuildEffect } from '../buildEffects.ts';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
 import { rawDefinition } from './data.ts';
 import { fixedSlot, type FixedSlotOptions, rangeEnemyWithEvents } from './teamHelpers.ts';

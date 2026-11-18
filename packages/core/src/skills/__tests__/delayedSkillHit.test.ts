@@ -1,7 +1,7 @@
 // 遅れて出る倍率ダメージ（plan/design-delayed-skill-hit.md 3.1 節）: damage の delayFrames の検証。
 // 時刻とバフの扱いは、クイーン（真）の編成のテスト（__tests__/queenMakotoTeam.test.ts）で見る。
 import { describe, expect, it } from 'vitest';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 
 /** skill1 に効果を並べた定義（検証にかける前の JSON） */
 function withSkill1(effects: unknown[]): unknown {

@@ -4,9 +4,9 @@ import { describe, expect, it } from 'vitest';
 import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import type { EnemyInput } from '../../damage.ts';
 import { computeBurstHit, oneHitValue, resolveDamageEffects, type ResolvedSkillDamage } from '../burstDamage.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { applyTreasure, TREASURE_PHASE_MAX } from '../treasure.ts';
-import { parseSkillDefinition } from '../types.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
 type Raw = { treasureSkills: { skill2: Effects } };

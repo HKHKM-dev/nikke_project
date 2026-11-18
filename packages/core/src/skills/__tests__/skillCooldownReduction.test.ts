@@ -5,8 +5,8 @@ import { describe, expect, it } from 'vitest';
 import { fixedTeam, fixedSlot, effectWindows } from '../../__tests__/teamHelpers.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import { gameSecondsToFirstFrame, gameSecondsToFrames } from '../../time.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { cooldownTimer } from '../timeline.ts';
-import { parseSkillDefinition } from '../types.ts';
 
 const CENTI = 80;
 type Effect = Record<string, unknown>;

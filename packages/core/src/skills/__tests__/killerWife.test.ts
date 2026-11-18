@@ -3,9 +3,9 @@
 import { describe, expect, it } from 'vitest';
 import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { gameSecondsToFrames } from '../../time.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
 import { holderHitStarts } from '../timeline.ts';
-import { parseSkillDefinition } from '../types.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
 const KILLER_WIFE = 43;

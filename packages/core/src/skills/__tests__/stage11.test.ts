@@ -17,7 +17,8 @@ import { itemsOf } from '../holders.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolveTimed } from '../resolve.ts';
 import { isEffectTarget } from '../targets.ts';
 import { triggerFrames, type TimelineSlot } from '../timeline.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import type { SkillDefinition } from '../types.ts';
 
 const tenLevels = (v: string) => Array.from({ length: 10 }, () => v);
 const skillRaw = (values: string[]): SkillRaw => ({

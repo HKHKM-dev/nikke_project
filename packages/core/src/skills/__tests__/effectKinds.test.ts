@@ -1,7 +1,8 @@
 // スキル定義の読み込みの検査（skills/parse/）の、効果の種類の振り分けの表。parse/ の最上位で types.ts の値を読まない約束（循環
 // import）は、types.ts を読み込むテストならどれでも落ちて分かる（types.ts から読み始めると parse/ が先に評価される）ので、ここでは見ない
 import { describe, expect, it } from 'vitest';
-import { parseSkillDefinition, SKILL_EFFECT_KINDS } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import { SKILL_EFFECT_KINDS } from '../types.ts';
 
 const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
 const withEffect = (effect: unknown): unknown => ({

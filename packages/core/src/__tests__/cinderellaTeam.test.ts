@@ -11,7 +11,7 @@ import { itemsOf } from '../skills/holders.ts';
 import { timerFrames } from '../skills/timeline.ts';
 import { finalAttacksAt } from '../skills/ranking.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { characterOf, rawDefinition } from './data.ts';
 import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from './teamHelpers.ts';

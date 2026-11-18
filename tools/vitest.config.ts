@@ -13,6 +13,7 @@ export default defineConfig({
       'git/**/*.test.ts',
       'artifact/**/*.test.ts',
       'builds/**/*.test.ts',
+      'code/**/*.test.ts',
     ],
   },
 });

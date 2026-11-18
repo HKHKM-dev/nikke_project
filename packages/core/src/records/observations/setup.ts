@@ -5,7 +5,8 @@ import type { BurstDelayOverride } from '../../burst/landing.ts';
 import type { DefenceRounding, EnemyDebuffTiming } from '../../damage.ts';
 import type { AttackRounding } from '../../skills/buffs.ts';
 import type { SustainedDamagePlacement } from '../../skills/burstDamage.ts';
-import { parseSkillDefinition, SKILL_SLOTS, type SkillDefinition, type SkillSlot } from '../../skills/types.ts';
+import { parseSkillDefinition } from '../../skills/parse/definition.ts';
+import { SKILL_SLOTS, type SkillDefinition, type SkillSlot } from '../../skills/types.ts';
 
 /** 予測の条件（録画に書かれていない、モデルの側の設定）。省略は既定値 */
 export type CompareSetup = {

@@ -11,7 +11,7 @@ import {
 import { KEY_DIGITS } from '../timeline.ts';
 import { MAX_SKILL_LEVELS, resolveTimed, resolveTrigger } from '../resolve.ts';
 import { createTriggerTracker, type FrameEvents, type ShotEvent } from '../triggers.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const soldier = characterOf(300);

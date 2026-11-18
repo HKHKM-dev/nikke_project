@@ -9,7 +9,8 @@ import { stateItemsOf } from '../../__tests__/historyHelpers.ts';
 import type { TeamInput } from '../../team.ts';
 import { computeBurstHit } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import type { SkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 

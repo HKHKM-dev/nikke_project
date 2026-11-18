@@ -6,7 +6,7 @@ import { computeFixedSpecAttack, computeFixedSpecHp } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 import { fixedEnemy, fixedTeam } from '../../__tests__/teamHelpers.ts';
 

@@ -3,9 +3,9 @@
 import { describe, expect, it } from 'vitest';
 import { characterOf, fixedEnemy, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { computeBurstHit, type BurstHitInput, type ResolvedSkillDamage } from '../burstDamage.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { MAX_SKILL_LEVELS, resolveStateGrants, resolveTimed } from '../resolve.ts';
 import { namedStateGroup } from '../states.ts';
-import { parseSkillDefinition } from '../types.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
 type Raw = { skills: { skill1: Effects; skill2: Effects; burst: Effects } };

@@ -9,7 +9,7 @@ import { ZERO_BUFFS } from '../skills/buffs.ts';
 import { ENEMY, itemsOf } from '../skills/holders.ts';
 import { createTriggerTracker, type FrameEvents, type ShotEvent } from '../skills/triggers.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { CharacterData } from '../types.ts';

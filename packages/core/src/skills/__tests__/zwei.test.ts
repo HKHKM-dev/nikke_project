@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { normalAttackDamageGroup } from '../../damage.ts';
 import { ZERO_BUFFS } from '../buffs.ts';
 import { shotCountStackItems } from '../timeline.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { rawDefinition } from '../../__tests__/teamHelpers.ts';
 
 type Effects = { effects: Record<string, unknown>[] };

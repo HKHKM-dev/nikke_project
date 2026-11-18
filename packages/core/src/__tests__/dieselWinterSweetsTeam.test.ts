@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { describeEveryShotInOneGroup, fixedTeam, rawDefinition, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';

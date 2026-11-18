@@ -9,7 +9,7 @@ import {
   sustainedMultiplier,
   type ResolvedSkillDamage,
 } from '../burstDamage.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 const enemy: EnemyInput = fixedEnemy({ defence: 100, element: 'Wind' });

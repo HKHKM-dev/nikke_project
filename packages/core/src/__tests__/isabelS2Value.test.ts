@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import { isInFullBurst } from '../burst/schedule.ts';
 import { burstSnapshotState, planTeamRun } from '../frame/plan.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import raw from '../../data/skills/231.json' with { type: 'json' };
 import { fixedTeam } from './teamHelpers.ts';
 

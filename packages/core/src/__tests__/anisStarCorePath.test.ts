@@ -9,8 +9,8 @@ import { landingFrameSpans, slotAutoAttackCoreRatesOf } from '../frame/landing.t
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { computeBurstHit, resolveDotEffects } from '../skills/burstDamage.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { TargetProfile, TargetRateRow } from '../types.ts';

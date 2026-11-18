@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest';
 import { gameSecondsToFrames } from '../../time.ts';
 import { MAX_SKILL_LEVELS, resolveInstant } from '../resolve.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const yuni = characterOf(160);

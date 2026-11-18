@@ -2,7 +2,7 @@
 // C-0822。デバフ解除は、デバフの状態を持つ味方がいる時だけ効く。課題 2-59）。射撃の列のグループ分け（V-0031、C-0977）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';

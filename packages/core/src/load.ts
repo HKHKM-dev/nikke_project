@@ -1,14 +1,8 @@
 import { COMBAT_TABLE_FILE, parseCombatPowerTable, type CombatPowerTable } from './combatTable.ts';
 import { parseEnemyPresets } from './enemies.ts';
 import { FILTER_TABLE_FILE, parseFilterTable, type FilterTable } from './filterTable.ts';
-import {
-  parseSkillDefinition,
-  parseSkillIndex,
-  parseSkillSupportIndex,
-  type SkillDefinition,
-  type SkillIndex,
-  type SkillSupportIndex,
-} from './skills/types.ts';
+import { parseSkillDefinition, parseSkillIndex, parseSkillSupportIndex } from './skills/parse/definition.ts';
+import type { SkillDefinition, SkillIndex, SkillSupportIndex } from './skills/types.ts';
 import type {
   AffectionMaster,
   BuildMasters,

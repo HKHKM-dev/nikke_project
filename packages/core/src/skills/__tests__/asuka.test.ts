@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import { MAX_SKILL_LEVELS, resolveInstant, resolveTimed } from '../resolve.ts';
 import { canEverTarget, isEffectTarget } from '../targets.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const asuka = characterOf(830);

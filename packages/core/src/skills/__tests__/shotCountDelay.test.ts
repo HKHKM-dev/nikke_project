@@ -8,7 +8,7 @@ import { resolveCycles } from '../cycles.ts';
 import { startOfFire } from '../holders.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolveTimed } from '../resolve.ts';
 import { applyTreasure } from '../treasure.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const rawNaga = rawDefinition<{ skills: Record<string, { effects: Record<string, unknown>[] }> }>(450);

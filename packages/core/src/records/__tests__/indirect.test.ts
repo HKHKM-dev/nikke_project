@@ -2,7 +2,8 @@
 // キャラ単位の判定、plan/skills.md の表示。録画とキャラは実データを使う（件数や ID の一覧は直書きしない）
 import { describe, expect, it } from 'vitest';
 import { loadClaims, loadRecordsData, loadRecordingsFile, recordingMap } from '../../../scripts/records-data.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../../skills/types.ts';
+import { parseSkillDefinition } from '../../skills/parse/definition.ts';
+import type { SkillDefinition } from '../../skills/types.ts';
 import type { ClaimState } from '../claims.ts';
 import { mechanismConfirmed } from '../minimal.ts';
 import type { Observation } from '../observations/types.ts';

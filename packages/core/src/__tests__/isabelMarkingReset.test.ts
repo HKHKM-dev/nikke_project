@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import type { BurstActivation } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { createTriggerTracker, type FrameEvents } from '../skills/triggers.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { gameSecondsToFrame } from '../time.ts';
 import raw from '../../data/skills/231.json' with { type: 'json' };
 import { fixedTeam } from './teamHelpers.ts';

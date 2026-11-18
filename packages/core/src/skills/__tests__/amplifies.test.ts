@@ -8,7 +8,8 @@ import { gameSecondsToFrame, gameSecondsToFrames } from '../../time.ts';
 import { ENEMY, valuePiecesOf } from '../holders.ts';
 import { MAX_SKILL_LEVELS, isTimedItem, resolveTimed } from '../resolve.ts';
 import type { TimelineSlot } from '../timeline.ts';
-import { parseSkillDefinition, type SkillDefinition, type SkillEffect } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import type { SkillDefinition, SkillEffect } from '../types.ts';
 import type { SkillRaw } from '../../types.ts';
 
 const FRAMES = gameSecondsToFrames(180);

@@ -4,9 +4,10 @@ import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { applyResolvedEffect, ZERO_BUFFS } from '../buffs.ts';
 import { applyComposition, fixedTargetsOf } from '../composition.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { attackRankFor, tiedAtCutoff, type RankSlot } from '../ranking.ts';
 import { canEverTarget, isEffectTarget } from '../targets.ts';
-import { parseSkillDefinition, type SkillEffect } from '../types.ts';
+import type { SkillEffect } from '../types.ts';
 
 function definitionWith(effect: Record<string, unknown>): unknown {
   const empty = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };

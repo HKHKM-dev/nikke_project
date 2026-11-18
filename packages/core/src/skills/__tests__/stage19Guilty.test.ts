@@ -7,7 +7,8 @@ import type { TeamInput } from '../../team.ts';
 import type { CharacterData } from '../../types.ts';
 import { fixedAttackBaseOf } from '../buffs.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import type { SkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition, type RawDefinition } from '../../__tests__/data.ts';
 import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 

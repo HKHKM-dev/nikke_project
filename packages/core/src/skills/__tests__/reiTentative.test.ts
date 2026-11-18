@@ -5,7 +5,8 @@ import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { applyComposition, grantedStatesOf, isHeldTargetState } from '../composition.ts';
 import { isEffectTarget } from '../targets.ts';
 import { MAX_SKILL_LEVELS, resolveDotStackUps, resolveEnemyStackUps } from '../resolve.ts';
-import { parseSkillDefinition, type SkillEffect } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
+import type { SkillEffect } from '../types.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
 type Raw = { skills: { skill1: Effects; skill2: Effects; burst: Effects } };

@@ -12,7 +12,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { METRICS } from '../records/observations/metrics/index.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { battleSecondsToFrames, gameSecondsToFrames } from '../time.ts';
 import { piecesOf } from './historyHelpers.ts';

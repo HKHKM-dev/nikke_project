@@ -5,7 +5,7 @@ import type { EnemyInput } from '../damage.ts';
 import { MEASURED_BURST_DELAYS } from '../burst/landing.ts';
 import { activationFramesOfSlot, effectFrameOf, hexagonFrameOf, hitFrameOf } from '../burst/schedule.ts';
 import { runSimulation } from '../sim/engine.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';

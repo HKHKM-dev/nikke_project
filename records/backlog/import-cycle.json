@@ -1,0 +1,5 @@
+{
+  "section": "8.2",
+  "order": -32,
+  "text": "`skills/types.ts` と `skills/parse/` の循環する import を解消する（2026-11-18 起票）→ 完了（2026-11-18）: [design-import-cycle.md](design-import-cycle.md)"
+}

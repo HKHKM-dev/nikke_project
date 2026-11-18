@@ -10,7 +10,7 @@ import type { SkillRaw } from '../../types.ts';
 import { itemsOf, stateEndFrames, type HeldItemView } from '../holders.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import type { NamedStateId } from '../states.ts';
-import { parseSkillDefinition } from '../types.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 const tenLevels = (v: string) => Array.from({ length: 10 }, () => v);
