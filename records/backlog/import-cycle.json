@@ -1,0 +1,5 @@
+{
+  "section": "8",
+  "order": 150,
+  "text": "`skills/types.ts` と `skills/parse/` の循環する import を解消する（2026-11-18 起票）→ 承認待ち: [design-import-cycle.md](design-import-cycle.md) 4 節"
+}
