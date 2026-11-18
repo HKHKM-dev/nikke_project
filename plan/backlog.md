@@ -116,6 +116,7 @@
 - アニス：スター（17）のバーストのコアの経路（2026-10-05）→ 一部完了: [design-anis-star-core-path.md](design-anis-star-core-path.md)。残りは 6 節
 - 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは 3 節
 - 戦闘力による一覧の並び替え（2026-11-07 起票）→ 一部完了: [design-combat-power-sort.md](design-combat-power-sort.md)。残りは 4 節
+- テストの道具の重なりを共通の道具に寄せる（2026-11-18 起票）→ 進行中: [design-test-helpers.md](design-test-helpers.md) 5 節
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
