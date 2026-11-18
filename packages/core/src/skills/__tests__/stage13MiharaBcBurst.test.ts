@@ -1,25 +1,18 @@
 // 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.4〜2.6・3.2 節）: ミハラ：ボンディングチェーン（162）がバーストを使う回
 // （プリング・チェーンのスタックコピーとチェーンバインドの消去、S1 のフルバースト終了時のチャージ。録画 0746・0747。V-0547、C-0746・C-0747）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { dotStacksAt, latestDotTicks } from '../../frame/dot.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamSlotInput } from '../../team.ts';
-import type { CharacterData } from '../../types.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
 const MIHARA_BC = 162;
-const raw = readJson<{ skills: { skill1: Effects; skill2: Effects; burst: Effects } }>(
-  `../../../data/skills/${MIHARA_BC}.json`,
-);
+const raw = rawDefinition<{ skills: { skill1: Effects; skill2: Effects; burst: Effects } }>(MIHARA_BC);
 
 describe('語彙の検証', () => {
   const withBurst = (index: number, patch: Record<string, unknown>) => {
@@ -98,7 +91,7 @@ describe('dotStacksAt と消去', () => {
 
 describe('リター・デルタ・ミハラ：ボンディングチェーンのバースト（V-0547 の撮影 A の編成）', () => {
   const ids = [82, 20, MIHARA_BC] as const;
-  const characters = ids.map((id) => readJson<CharacterData>(`../../../data/characters/${id}.json`));
+  const characters = ids.map((id) => characterOf(id));
   const slots = characters.map((character): TeamSlotInput => {
     const fixed = computeFixedSpecAttack(character);
     return {
@@ -108,7 +101,7 @@ describe('リター・デルタ・ミハラ：ボンディングチェーンの�
       hpOverride: computeFixedSpecHp(character),
       condition: { coreHitRate: 0.5, distanceBonus: true, hitRate: 1 },
       skills: {
-        definition: parseSkillDefinition(readJson<unknown>(`../../../data/skills/${character.resourceId}.json`)),
+        definition: parseSkillDefinition(rawDefinition(character.resourceId)),
         levels: MAX_SKILL_LEVELS,
       },
     };

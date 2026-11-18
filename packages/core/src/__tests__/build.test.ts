@@ -1,5 +1,5 @@
 // Stage 12: 育成入力（ステータス層）。スペック固定はこの入力の 1 つのプリセットで、computeFixedSpecAttack と同値（退化）
-import { readdirSync, readFileSync } from 'node:fs';
+import { readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   AFFECTION_RANK_MAX,
@@ -27,21 +27,16 @@ import {
   fixedSpecGrowth,
 } from '../fixedSpec.ts';
 import { applyCoreRatio, computeStat } from '../stats.ts';
-import type { BuildMasters, CharacterData, NikkeClass } from '../types.ts';
+import type { BuildMasters, NikkeClass } from '../types.ts';
+import { characterOf, readData } from './data.ts';
 
-function readJson<T>(relative: string): T {
-  return JSON.parse(readFileSync(new URL(relative, import.meta.url), 'utf8')) as T;
-}
-function loadCharacter(resourceId: number): CharacterData {
-  return readJson<CharacterData>(`../../data/characters/${resourceId}.json`);
-}
 const masters: BuildMasters = {
-  gear: readJson('../../data/masters/gear.json'),
-  affection: readJson('../../data/masters/affection.json'),
-  cubes: readJson('../../data/masters/cubes.json'),
-  collections: readJson('../../data/masters/collections.json'),
-  recycleRoom: readJson('../../data/masters/recycleRoom.json'),
-  overload: readJson('../../data/masters/overload.json'),
+  gear: readData('masters/gear.json'),
+  affection: readData('masters/affection.json'),
+  cubes: readData('masters/cubes.json'),
+  collections: readData('masters/collections.json'),
+  recycleRoom: readData('masters/recycleRoom.json'),
+  overload: readData('masters/overload.json'),
 };
 const CLASSES: NikkeClass[] = ['Attacker', 'Defender', 'Supporter'];
 
@@ -117,7 +112,7 @@ describe('computeCombatAttack', () => {
   it('with fixedSpecBuild equals computeFixedSpecAttack for every character (retreat)', () => {
     expect(allIds.length).toBeGreaterThan(100);
     for (const id of allIds) {
-      const c = loadCharacter(id);
+      const c = characterOf(id);
       const expected = computeFixedSpecAttack(c);
       const r = computeCombatAttack(c, fixedSpecGrowth(c), fixedSpecBuild(c), masters);
       expect(r.attack, `${id} ${c.name.ja}`).toBe(expected.attack);
@@ -129,7 +124,7 @@ describe('computeCombatAttack', () => {
 
   it('with fixedSpecBuild gives the HP of computeFixedSpecHp for every character (2 段目の段 6. retreat)', () => {
     for (const id of allIds) {
-      const c = loadCharacter(id);
+      const c = characterOf(id);
       const r = computeCombatStat(c, fixedSpecGrowth(c), fixedSpecBuild(c), masters, 'hp');
       expect(r.value, `${id} ${c.name.ja}`).toBe(computeFixedSpecHp(c));
     }
@@ -137,14 +132,14 @@ describe('computeCombatAttack', () => {
 
   it('with fixedSpecBuild gives the defence of computeFixedSpecDefence for every character (2 段目の段 7. retreat)', () => {
     for (const id of allIds) {
-      const c = loadCharacter(id);
+      const c = characterOf(id);
       const r = computeCombatStat(c, fixedSpecGrowth(c), fixedSpecBuild(c), masters, 'defence');
       expect(r.value, `${id} ${c.name.ja}`).toBe(computeFixedSpecDefence(c));
     }
   });
 
   it('with an empty build equals the plain computeStat (nothing added)', () => {
-    const emma = loadCharacter(90);
+    const emma = characterOf(90);
     const growth = { level: 200, grade: 3, core: 7 };
     const r = computeCombatAttack(emma, growth, emptyBuild(), masters);
     expect(r.attack).toBe(computeStat(emma, 'attack', growth));
@@ -153,7 +148,7 @@ describe('computeCombatAttack', () => {
   });
 
   it('adds gear / cube / collection outside the core multiplier and recycle room inside it (Stage 12 (b))', () => {
-    const emma = loadCharacter(90); // SSR Supporter, coreAttack 200 (2% / step)
+    const emma = characterOf(90); // SSR Supporter, coreAttack 200 (2% / step)
     const growth = { level: 400, grade: 3, core: 7 };
     const build: BuildInput = {
       ...emptyBuild(),
@@ -191,7 +186,7 @@ describe('computeCombatAttack', () => {
   // plan/verification.md Stage 12 節: ユーザーのリター（育成は ShiftyPad から取得）のキャラ画面の攻撃力。
   // 8 通りの合成順のうち、キューブ外・コレクション外・リサイクル内だけが 406,172 に一致する
   it('matches the character screen of a real build: Liter 406,172, and +2,780 with a Lv15 cube (outside the core)', () => {
-    const liter = loadCharacter(82); // SSR Supporter MISSILIS SMG
+    const liter = characterOf(82); // SSR Supporter MISSILIS SMG
     const growth = { level: 705, grade: 3, core: 7 };
     const ol = { type: 'OL' as const, level: 0 };
     const build: BuildInput = {
@@ -222,7 +217,7 @@ describe('computeCombatAttack', () => {
   });
 
   it('uses the treasure stats instead of the collection when the treasure is unlocked', () => {
-    const drake = loadCharacter(101); // 宝物あり
+    const drake = characterOf(101); // 宝物あり
     const growth = { level: 200, grade: 3, core: 0 };
     const withCollection = computeCombatAttack(
       drake,
@@ -233,13 +228,13 @@ describe('computeCombatAttack', () => {
     const withTreasure = computeCombatAttack(drake, growth, emptyBuild(), masters, { treasurePhase: 1 });
     expect(withTreasure.collection).toBe(9688);
     expect(withTreasure.attack).toBe(withCollection.attack);
-    expect(() => computeCombatAttack(loadCharacter(90), growth, emptyBuild(), masters, { treasurePhase: 1 })).toThrow(
+    expect(() => computeCombatAttack(characterOf(90), growth, emptyBuild(), masters, { treasurePhase: 1 })).toThrow(
       RangeError,
     );
   });
 
   it('rejects out-of-range or unknown inputs', () => {
-    const emma = loadCharacter(90);
+    const emma = characterOf(90);
     const bad = (patch: Partial<BuildInput>) => () => validateBuild(emma, { ...emptyBuild(), ...patch }, masters);
     expect(bad({ affectionRank: 0 })).toThrow(RangeError);
     expect(bad({ affectionRank: 41 })).toThrow(RangeError);

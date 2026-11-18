@@ -3,7 +3,6 @@
 // （55 以上）・命中率▲（25 以上）は、閾値ごとに別々に付く（C-0797・C-0800）。
 // S2: バースト使用から 10 秒の通常攻撃の変更（C-0799）と、通常攻撃 48 回命中ごとの防御力無視ダメージ（C-0814・C-0815）。
 // バースト: 超感覚 100 チャージと攻撃力▲（10 秒。C-0799）。射撃の列のグループ分け。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -13,26 +12,19 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { slotPieces } from './historyHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 const CHISATO = 860;
 const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false };
 
 function fixedSlot(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = { character: c, growth: fixed.growth, attackOverride: fixed.attack, condition: MANUAL };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     };
   }
@@ -60,7 +52,7 @@ function windows(plan: ReturnType<typeof planTeamRun>, slot: number, skill: stri
 }
 
 describe('千束の定義', () => {
-  const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${CHISATO}.json`));
+  const def = parseSkillDefinition(rawDefinition(CHISATO));
 
   it('defines every damage-relevant line of S1, S2 and the burst', () => {
     expect(def.skills.skill1.support).toBe('supported');

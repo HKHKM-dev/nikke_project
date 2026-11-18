@@ -1,7 +1,6 @@
 // Stage 9: 宝物版スキルの回帰（plan/design-stage9.md 8.2・8.3 節）。
 // ユーザーのドレイクは宝物（ヴィランのフィギュア）を 3 段階目まで解放している。録画 0036・0037 はすでに宝物版の数値で読み取ってあるので、
 // 段階 3 のドレイクで実測値を固定する（新規撮影なし）。段階 0（省略）は Stage 8 と同じになる。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -10,18 +9,12 @@ import type { TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { runTeam } from './runTeam.ts';
 import { type TeamInput, type TeamSlotInput, type TeamSlotResult } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { gameSecondsToFrame } from '../time.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
+import { characterOf, DEFINED_IDS, rawDefinition, readData } from './data.ts';
 
 /** スペック固定のニケ。定義があれば Lv10 と宝物の段階で載せる */
 function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../data/characters/${id}.json`);
+  const character = characterOf(id);
   const fixed = computeFixedSpecAttack(character);
   const slot: TeamSlotInput = {
     character,
@@ -29,9 +22,9 @@ function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput 
     attackOverride: fixed.attack,
     condition: { coreHitRate: 0, distanceBonus: false },
   };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
       treasurePhase,
     };
@@ -54,7 +47,7 @@ function byMultiplier(hits: readonly SkillHit[], multiplier: number): SkillHit[]
 }
 
 describe('ドレイクの宝物（データ）', () => {
-  const drake = readJson<CharacterData>('../../data/characters/101.json');
+  const drake = characterOf(101);
 
   it('is the Villain Figurine, unlocked in the order skill1 → skill2 → burst', () => {
     expect(drake.treasure?.favoriteId).toBe(200801);
@@ -70,9 +63,9 @@ describe('ドレイクの宝物（データ）', () => {
   });
 
   it('is present on exactly the 21 SSR treasure owners', () => {
-    const owners = readJson<{ characters: { resourceId: number }[] }>('../../data/characters/index.json')
+    const owners = readData<{ characters: { resourceId: number }[] }>('characters/index.json')
       .characters.map((c) => c.resourceId)
-      .filter((id) => readJson<CharacterData>(`../../data/characters/${id}.json`).treasure !== null)
+      .filter((id) => characterOf(id).treasure !== null)
       .sort((a, b) => a - b);
     expect(owners).toEqual([
       30, 32, 72, 80, 100, 101, 112, 140, 141, 142, 150, 170, 192, 210, 280, 281, 352, 390, 411, 550, 580,

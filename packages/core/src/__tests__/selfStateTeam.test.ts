@@ -1,7 +1,6 @@
 // 2 段目の段 1（plan/design-skill-stage1.md 1.1・1.3・1.4 節）: 自分の状態の条件（selfState）と、解除不可の印と、状態の表示。
 // 読み込みの検証、編成の段で決まる selfState（静的な状態・どの枠も付けない状態）、時間で変わる状態を見る段 1.5 の判定と damage の判定
 // （同じフレームに付いた件も見る）、枠に付いた状態のまとめ。定義は data/skills のもの（クイーン（真）・アニス：スター）と、それを書き換えたもの
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
@@ -13,23 +12,16 @@ import { appliedFrames } from '../skills/timeline.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData, Element } from '../types.ts';
+import type { Element } from '../types.ts';
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
 type RawDefinition = { skills: Record<string, { effects: Record<string, unknown>[]; notes?: unknown[] }> };
-const rawDefinition = (id: number) => readJson<RawDefinition>(`../../data/skills/${id}.json`);
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-
 const ANIS = 17;
 const FLOWER = 304;
 const QUEEN = 870;
 
 function slotOf(id: number, definition?: unknown): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -37,7 +29,7 @@ function slotOf(id: number, definition?: unknown): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  const raw = definition ?? (DEFINED.has(id) ? rawDefinition(id) : undefined);
+  const raw = definition ?? (DEFINED_IDS.has(id) ? rawDefinition<RawDefinition>(id) : undefined);
   if (raw !== undefined) slot.skills = { definition: parseSkillDefinition(raw), levels: MAX_SKILL_LEVELS };
   return slot;
 }
@@ -101,7 +93,7 @@ describe('selfState と undispellable の読み込み', () => {
 });
 
 describe('編成の段で決まる selfState（plan/design-skill-stage1.md 1.1 節）', () => {
-  const anis = character(ANIS);
+  const anis = characterOf(ANIS);
   const def = parse([
     forever('camouflage'),
     atk({ selfState: 'camouflage' }),
@@ -140,9 +132,9 @@ describe('編成の段で決まる selfState（plan/design-skill-stage1.md 1.1 �
 describe('時間で変わる状態を見る selfState（クイーン（真）の定義を書き換え）', () => {
   /** ラム（I）+ デルタ（II）+ クイーン（真）（III・操作）。S1 に、バースト使用時の付与（追撃。2 秒）と、それを見る効果を足す */
   const q = 2;
-  const grantIndex = rawDefinition(QUEEN).skills.skill1!.effects.length;
+  const grantIndex = rawDefinition<RawDefinition>(QUEEN).skills.skill1!.effects.length;
   const withEffects = (effects: Record<string, unknown>[]) => {
-    const raw = structuredClone(rawDefinition(QUEEN));
+    const raw = structuredClone(rawDefinition<RawDefinition>(QUEEN));
     raw.skills.skill1!.effects.push(
       { kind: 'state', state: 'followUp', trigger: 'burstUse', target: 'self', durationSeconds: 2 },
       ...effects,

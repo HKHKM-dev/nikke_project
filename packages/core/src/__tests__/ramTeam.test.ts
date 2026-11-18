@@ -1,7 +1,6 @@
 // ラム（822）を含む編成: ダメージに効く効果は S1 の「フルバースト終了時、同じ部隊の味方がいれば自分のバーストスキルクールタイム▼」
 // だけ（plan/design-ram-s1.md）。同じ部隊の味方がいない編成では起きない（C-0080。V-0026）。同じ部隊はゲーム内の部隊（C-0235。仮説）。
 // 射撃の列のグループ分け。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -13,17 +12,10 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 function fixedSlot(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -31,9 +23,9 @@ function fixedSlot(id: number): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     };
   }
@@ -75,7 +67,7 @@ const TEAMS: Record<string, { input: TeamInput; ram: number; sameSquad: boolean 
 };
 
 describe('ラムの定義', () => {
-  const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${RAM}.json`));
+  const def = parseSkillDefinition(rawDefinition(RAM));
 
   it('defines the burst cooldown cut of S1, conditioned on an ally from the same squad, and the barrier of the burst', () => {
     expect(def.skills.skill1.support).toBe('supported');
@@ -109,10 +101,10 @@ describe('ラムの定義', () => {
   });
 
   it('puts Rem and Emilia in the same squad as Ram', () => {
-    expect(character(RAM).squad).toBe('CE003');
-    expect(character(REM).squad).toBe('CE003');
-    expect(character(EMILIA).squad).toBe('CE003');
-    expect(character(20).squad).not.toBe('CE003');
+    expect(characterOf(RAM).squad).toBe('CE003');
+    expect(characterOf(REM).squad).toBe('CE003');
+    expect(characterOf(EMILIA).squad).toBe('CE003');
+    expect(characterOf(20).squad).not.toBe('CE003');
   });
 });
 

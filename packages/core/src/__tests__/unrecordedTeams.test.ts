@@ -1,6 +1,5 @@
 // 語彙はあるのに撮っていない効果の撮影（plan/design-skill-unrecorded.md）で定義したキャラを含む編成。撮った編成（3 節の撮り方 A〜E・G）で、
 // 射撃の列がどのグループにも 1 回ずつ入る。定義の形（遅れの表の行・同じ発動の▲の印）も見る。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -11,23 +10,17 @@ import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { burstDelaysOf, sameActivationBuffsOnHit } from '../burst/landing.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
 const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false };
 
 function fixedSlot(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = { character: c, growth: fixed.growth, attackOverride: fixed.attack, condition: MANUAL };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     };
   }
@@ -45,13 +38,13 @@ const team = (ids: number[], controlledSlot: number): TeamInput => ({
 
 describe('遅れの表の行', () => {
   it('puts the burst hits at the measured delays and marks the same-activation buffs', () => {
-    expect(burstDelaysOf(character(190))).toMatchObject({ hitFrames: 73 });
-    expect(burstDelaysOf(character(60))).toMatchObject({ hitFrames: 16 });
-    expect(burstDelaysOf(character(313))).toMatchObject({ hitFrames: 26, hitOffsets: [0, 21] });
-    expect(burstDelaysOf(character(90))).toMatchObject({ effectFrames: 20 });
-    expect(sameActivationBuffsOnHit(character(103))).toBe(true);
-    expect(sameActivationBuffsOnHit(character(313))).toBe(true);
-    expect(sameActivationBuffsOnHit(character(190))).toBe(false);
+    expect(burstDelaysOf(characterOf(190))).toMatchObject({ hitFrames: 73 });
+    expect(burstDelaysOf(characterOf(60))).toMatchObject({ hitFrames: 16 });
+    expect(burstDelaysOf(characterOf(313))).toMatchObject({ hitFrames: 26, hitOffsets: [0, 21] });
+    expect(burstDelaysOf(characterOf(90))).toMatchObject({ effectFrames: 20 });
+    expect(sameActivationBuffsOnHit(characterOf(103))).toBe(true);
+    expect(sameActivationBuffsOnHit(characterOf(313))).toBe(true);
+    expect(sameActivationBuffsOnHit(characterOf(190))).toBe(false);
   });
 });
 

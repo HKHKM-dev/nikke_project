@@ -1,20 +1,15 @@
 // エミリア（821）の語彙（plan/design-emilia.md 2 節）: scaling perFinalMaxAmmo（最終最大装弾数 1 発ごとのチャージダメージ▲）と
 // damageType fixedShare（与えたダメージ量の X% の固定ダメージ）の読み込みの検査と式、定義の Lv ごとの値
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTriggerDamage, partialChargeTriggerDamage } from '../../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamSlotInput } from '../../team.ts';
-import type { CharacterData } from '../../types.ts';
 import { applyChargeBuffs, applyResolvedEffect, PER_MAX_AMMO_CAP, ZERO_BUFFS } from '../buffs.ts';
 import { resolveDamageEffects, resolveFixedShare, resolvePerShotDamage } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
 const def = (skill1: unknown[], skill2: unknown[] = []) => ({
@@ -108,8 +103,8 @@ describe('damageType fixedShare（plan/design-emilia.md 2.2 節）', () => {
       );
   });
 
-  const emilia = readJson<CharacterData>('../../../data/characters/821.json');
-  const definition = parseSkillDefinition(readJson<unknown>('../../../data/skills/821.json'));
+  const emilia = characterOf(821);
+  const definition = parseSkillDefinition(rawDefinition(821));
   const perShot = resolvePerShotDamage(definition, emilia, MAX_SKILL_LEVELS);
   const fixedShare = resolveFixedShare(definition, emilia, MAX_SKILL_LEVELS);
   const input = {
@@ -152,8 +147,8 @@ describe('damageType fixedShare（plan/design-emilia.md 2.2 節）', () => {
 
 describe('固定ダメージのバーストゲージ（C-1333）', () => {
   it('charges one hit of the shooter (28,000) on the landing frame of each full charge shot', () => {
-    const emilia = readJson<CharacterData>('../../../data/characters/821.json');
-    const definition = parseSkillDefinition(readJson<unknown>('../../../data/skills/821.json'));
+    const emilia = characterOf(821);
+    const definition = parseSkillDefinition(rawDefinition(821));
     const fixed = computeFixedSpecAttack(emilia);
     const slot: TeamSlotInput = {
       character: emilia,
@@ -174,8 +169,8 @@ describe('固定ダメージのバーストゲージ（C-1333）', () => {
 
 describe('畳み込めない固定ダメージ', () => {
   it('rejects a fixedShare on a definition that fires uncharged shots', () => {
-    const emilia = readJson<CharacterData>('../../../data/characters/821.json');
-    const raw = readJson<{ skills: Record<string, { effects: unknown[] }> }>('../../../data/skills/821.json');
+    const emilia = characterOf(821);
+    const raw = rawDefinition<{ skills: Record<string, { effects: unknown[] }> }>(821);
     // 即着弾に替える使用武器の変更があると、フルチャージの発の毎回は畳み込まない（foldsIntoShot）
     raw.skills.burst!.effects.push({
       kind: 'weaponChange',
@@ -193,7 +188,7 @@ describe('畳み込めない固定ダメージ', () => {
 
 describe('エミリア（821）の定義', () => {
   it('resolves the Lv10 values of the description', () => {
-    const d = parseSkillDefinition(readJson<unknown>('../../../data/skills/821.json'));
+    const d = parseSkillDefinition(rawDefinition(821));
     expect(d.skills.skill1.effects.map((e) => e.kind)).toEqual(['timed', 'timed']);
     expect(d.skills.skill2.effects.map((e) => e.kind)).toEqual(['damage', 'timed']);
     expect(d.skills.burst.effects.map((e) => e.kind)).toEqual(['state']);

@@ -1,22 +1,17 @@
 // フォルクヴァン（242）の S2 のゲージ: 20 秒（ceil で 1177f）ごとの発動の 4f 後に、射手の 1 ヒットぶん（4,000）を溜める
 // （burstGaugeHit。C-0422。単騎の録画 0309 で、ゲージは戦闘開始から 1181f、その後 1177f ごとに伸びる）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { planTeamRun } from '../../frame/plan.ts';
 import type { TeamInput } from '../../team.ts';
-import type { CharacterData } from '../../types.ts';
 import { resolveTimerGauges } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { timerFrames } from '../timeline.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const folkwang = readJson<CharacterData>('../../../data/characters/242.json');
-const raw = readJson<{ skills: Record<string, { effects: unknown[] }> }>('../../../data/skills/242.json');
+const folkwang = characterOf(242);
+const raw = rawDefinition<{ skills: Record<string, { effects: unknown[] }> }>(242);
 const def = parseSkillDefinition(raw);
 
 /** S2 の効果を消した定義（ゲージを溜めない比べの相手） */

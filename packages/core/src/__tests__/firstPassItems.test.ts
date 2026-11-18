@@ -2,7 +2,6 @@
 // 読む入力の落とし漏れがあると、その入力が変わった後も古い件を読む。いまの定義では古い件を読んでも結果に出ないことがある
 // （ループの後の履歴は作り直されるので）ため、1 パス目を verifyItems で回し、ループの中で読むたびに、いまの入力から作り直した件と比べる。
 // 編成は、定義にある件の列の種類と分かれ道（3.1 節の表）がそろうように選んだ（状態の N 発の間・フルバーストの終わりまでは定義に無い）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runFirstPass } from '../frame/firstPass.ts';
@@ -13,11 +12,7 @@ import { applyTreasureToTeam, type TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { toTimelineSlots, type TeamInput, type TeamSlotInput } from '../team.ts';
 import { battleSecondsToFrames } from '../time.ts';
-import type { CharacterData } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from './data.ts';
 
 type RawDefinition = { skills: Record<string, { effects: Record<string, unknown>[] }> };
 
@@ -26,9 +21,9 @@ function fixedSlot(
   treasurePhase: TreasurePhase = 0,
   edit: (raw: RawDefinition) => void = () => {},
 ): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../data/characters/${id}.json`);
+  const character = characterOf(id);
   const fixed = computeFixedSpecAttack(character);
-  const raw = readJson<RawDefinition>(`../../data/skills/${id}.json`);
+  const raw = rawDefinition<RawDefinition>(id);
   edit(raw);
   return {
     character,

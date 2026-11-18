@@ -1,6 +1,5 @@
 // フォルクヴァン（242）のバーストの吸収回復: 対象は最終攻撃力の上位 2 機で、順位はバーストを使ったフレームに付く窓を入れずに出す
 // （plan/design-heal-top-attack.md 2 節の A・5 節）。録画 0710 の編成（V-0517、C-0695）で、回復の対象とアスカの S1 を見る。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -9,22 +8,17 @@ import { itemsOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { healsOf } from './historyHelpers.ts';
+import { characterOf, rawDefinition } from './data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
 type Raw = { skills: Record<string, { effects: Record<string, unknown>[] }> };
 
 /** 定義を読み、edit で生の JSON を書き換えてから解く（フォルクヴァンの回復のトリガー・機数を替え、効果を足すのに使う） */
 function fixedSlot(id: number, edit?: (raw: Raw) => void): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
-  const raw = readJson<Raw>(`../../data/skills/${id}.json`);
+  const raw = rawDefinition<Raw>(id);
   edit?.(raw);
   return {
     character: c,

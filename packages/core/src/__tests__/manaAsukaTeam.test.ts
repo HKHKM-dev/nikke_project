@@ -1,7 +1,6 @@
 // マナ（290）の S1 の通常攻撃 10 回ごとの回復（射撃の回数起点）: 撃ったマナより前の枠の味方には次のフレーム、後ろの枠の味方には
 // 同じフレームに当たる（skills/heals.ts の healFrameOf。V-0490、C-0628）。V-0490 の録画の 2 つの枠順（アスカ → マナと、
 // V-0439 のマナ → アスカ）で、回復と、それで付くアスカの S1 の窓の始まりを見る。どちらもバーストは撃たない（オートバースト OFF）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -9,15 +8,11 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { healsOf, piecesOf } from './historyHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from './data.ts';
 
 function fixedSlot(id: number): TeamSlotInput {
-  const c = readJson<CharacterData>(`../../data/characters/${id}.json`);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   return {
     character: c,
@@ -25,7 +20,7 @@ function fixedSlot(id: number): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 0, distanceBonus: true },
     skills: {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     },
   };

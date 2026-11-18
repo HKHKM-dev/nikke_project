@@ -13,8 +13,14 @@ import { itemsOf, selfHpRatioOf } from '../skills/holders.ts';
 import { resolveCondition } from '../skills/resolve.ts';
 import { parseSkillDefinition, selfHpHolds } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
-import { describeEveryShotInOneGroup, fixedSlot, readJson, windowsFrom } from './teamHelpers.ts';
+import {
+  characterOf,
+  describeEveryShotInOneGroup,
+  fixedSlot,
+  rawDefinition,
+  readJson,
+  windowsFrom,
+} from './teamHelpers.ts';
 
 const SOLINE = 71;
 const IDOLL_FLOWER = 304;
@@ -48,7 +54,7 @@ const TEAMS: Record<string, TeamInput> = {
 };
 
 describe('ソリン（71）の定義', () => {
-  const def = parseSkillDefinition(readJson<unknown>('../../data/skills/71.json'));
+  const def = parseSkillDefinition(rawDefinition(71));
 
   it('writes the additional damage per Burst hit with the at-least form of selfHp, and splits the Burst into three hits', () => {
     expect(def.skills.burst.effects[1]).toMatchObject({
@@ -58,12 +64,12 @@ describe('ソリン（71）の定義', () => {
       perBurstHit: true,
       condition: { selfHp: { atLeast: 100 } },
     });
-    const character = readJson<CharacterData>('../../data/characters/71.json');
+    const character = characterOf(71);
     expect(burstDelaysOf(character)).toEqual({ hitFrames: 17, effectFrames: 0, hitOffsets: [0, 20, 51] });
   });
 
   it('resolves atLeastRef to the value of the slot level, and judges the resolved at-least form', () => {
-    const character = readJson<CharacterData>('../../data/characters/71.json');
+    const character = characterOf(71);
     // 説明文の値を指す形（ブリッドなど）は、発火のフレームで見るためにスロットの Lv の値（% 表記）へ解く。S2 の値 1 を借りて確かめる
     const resolved = resolveCondition({ selfHp: { atLeastRef: 1 } }, character.skills.skill2, 10);
     expect(resolved).toEqual({ selfHp: { atLeast: 21.62 } });
@@ -73,7 +79,7 @@ describe('ソリン（71）の定義', () => {
   });
 
   it('rejects the at-most form of selfHp on a damage', () => {
-    const raw = readJson<{ skills: { burst: { effects: Record<string, unknown>[] } } }>('../../data/skills/71.json');
+    const raw = rawDefinition<{ skills: { burst: { effects: Record<string, unknown>[] } } }>(71);
     const copy = structuredClone(raw);
     copy.skills.burst.effects[1] = { ...copy.skills.burst.effects[1], condition: { selfHp: { atMost: 50 } } };
     expect(() => parseSkillDefinition(copy)).toThrow(/at-least form of selfHp/);

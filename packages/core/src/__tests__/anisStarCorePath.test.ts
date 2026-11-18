@@ -1,7 +1,6 @@
 // アニス：スター（17）のバーストのコアの経路（plan/design-anis-star-core-path.md 3.1・3.2 節）: 自動攻撃の core と、的の表の
 // coreHitRate.autoAttacks。行が無いあいだは数値が変わらないこと（退化）と、行があるときの式（boost に 割合 × (コア倍率 − 1)）を見る。
 // 実データの行は C-0466（単騎の録画 0164・0211 の合計）。式と引き方のテストの行の値はテスト用
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
@@ -14,18 +13,15 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import type { CharacterData, TargetProfile, TargetRateRow } from '../types.ts';
+import type { TargetProfile, TargetRateRow } from '../types.ts';
+import { characterOf, rawDefinition, readData } from './data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const rawMaster = readJson<Record<string, unknown>>('../../data/enemies.json');
+const rawMaster = readData<Record<string, unknown>>('enemies.json');
 const master = parseEnemyPresets(rawMaster);
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-const anis = readJson<CharacterData>('../../data/characters/17.json');
+const anis = characterOf(17);
 type RawDefinition = { skills: Record<'skill1' | 'skill2' | 'burst', { effects: Record<string, unknown>[] }> };
-const raw = readJson<RawDefinition>('../../data/skills/17.json');
+const raw = rawDefinition<RawDefinition>(17);
 
 function rangeEnemy(target: TargetProfile, hasCore = true): EnemyInput {
   return {

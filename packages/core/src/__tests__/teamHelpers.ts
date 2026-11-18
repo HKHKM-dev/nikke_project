@@ -12,8 +12,10 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import type { CharacterData } from '../types.ts';
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 import { slotPieces } from './historyHelpers.ts';
+
+export { characterOf, rawDefinition };
 
 export function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -22,21 +24,9 @@ export function readJson<T>(path: string): T {
 const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false };
 export const SHOOTING_RANGE_ENEMY: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
 
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-
-/** data/characters のキャラ */
-export function characterOf(id: number): CharacterData {
-  return readJson<CharacterData>(`../../data/characters/${id}.json`);
-}
-
 /** スロットの説明文の値（Lv10。値 ref は 1 始まり） */
 export function skillValueOf(id: number, slot: 'skill1' | 'skill2' | 'burst', ref: number): number {
   return Number(characterOf(id).skills[slot].values[ref - 1]![9]);
-}
-
-/** data/skills の生の定義（書き換えて fixedSlot に渡す用） */
-export function rawDefinition<T = unknown>(id: number): T {
-  return readJson<T>(`../../data/skills/${id}.json`);
 }
 
 /** スペック固定・Lv 10 の枠。定義のあるキャラは定義を付ける（json は定義の差し替え） */
@@ -44,7 +34,7 @@ export function fixedSlot(id: number, json?: unknown): TeamSlotInput {
   const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = { character: c, growth: fixed.growth, attackOverride: fixed.attack, condition: MANUAL };
-  if (json !== undefined || DEFINED.has(id)) {
+  if (json !== undefined || DEFINED_IDS.has(id)) {
     slot.skills = { definition: parseSkillDefinition(json ?? rawDefinition(id)), levels: MAX_SKILL_LEVELS };
   }
   return slot;

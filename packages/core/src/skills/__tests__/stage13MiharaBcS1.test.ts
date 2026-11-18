@@ -1,26 +1,19 @@
 // 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.1〜2.3 節）: ミハラ：ボンディングチェーン（162）の S1 の戦闘開始時の分
 // （キャプチャーチェーンの攻撃と、付けるたびに刻みを付け直すチェーンバインド。録画 0119・0490・0492。V-0546、C-0411・C-0745）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { latestDotTicks } from '../../frame/dot.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamSlotInput } from '../../team.ts';
-import type { CharacterData } from '../../types.ts';
 import { oneHitValue } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, skillValue } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const MIHARA_BC = 162;
-const mihara = readJson<CharacterData>(`../../../data/characters/${MIHARA_BC}.json`);
-const raw = readJson<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>(
-  `../../../data/skills/${MIHARA_BC}.json`,
-);
+const mihara = characterOf(MIHARA_BC);
+const raw = rawDefinition<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>(MIHARA_BC);
 const s1 = (ref: number) => skillValue(mihara.skills.skill1, ref, MAX_SKILL_LEVELS.skill1);
 
 describe('語彙の検証', () => {

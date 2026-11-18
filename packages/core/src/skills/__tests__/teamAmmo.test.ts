@@ -1,21 +1,14 @@
 // シンデレラ：クリスタルウェーブ編（plan/design-cinderella-cw.md 2.3・2.4 節）: 回数トリガー teamAmmo（味方が消費した弾の合計。C-1250）の
 // 読み込みの制約と数え方、damage の条件 usedBurst（C-1252）の読み込みの制約。リトルマーメイド編（plan/design-little-mermaid.md 2.1 節）の
 // damage（バブルバラージの N 回順番に攻撃）と、流し直しの装弾数無限の発
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { MAX_SKILL_LEVELS, resolveTrigger } from '../resolve.ts';
 import { createTriggerTracker, replayEvents, shotCountWeight, type FrameEvents, type ShotEvent } from '../triggers.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
-import type { CharacterData } from '../../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const character = readJson<CharacterData>('../../../data/characters/515.json');
-const raw = readJson<{ skills: Record<string, { effects: unknown[]; notes?: unknown[] }> }>(
-  '../../../data/skills/515.json',
-);
+const character = characterOf(515);
+const raw = rawDefinition<{ skills: Record<string, { effects: unknown[]; notes?: unknown[] }> }>(515);
 
 /** 515.json を写して、skill1 の effects を差し替えた定義 */
 function withSkill1Effects(effects: unknown[]): SkillDefinition {

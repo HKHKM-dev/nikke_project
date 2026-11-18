@@ -1,7 +1,6 @@
 // 鈴原サクラ（836）を含む編成（V-0213）。S1: 通常攻撃の命中 120 回ごとに敵の受けるダメージ▲（5 秒）。命中は期待値で数え、
 // 発火した発の次のフレームから乗る（C-0315）。S2（受ける HP 回復量▲・受けるダメージ▼）とバースト（持続回復）は効果なし（C-0316）。
 // 射撃の列のグループ分け。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -11,27 +10,20 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { piecesOf } from './historyHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 const SAKURA = 836;
 const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false };
 
 function fixedSlot(id: number, condition: SlotCondition = MANUAL): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = { character: c, growth: fixed.growth, attackOverride: fixed.attack, condition };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     };
   }
@@ -52,7 +44,7 @@ function s1Windows(input: TeamInput) {
 }
 
 describe('鈴原サクラの定義', () => {
-  const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${SAKURA}.json`));
+  const def = parseSkillDefinition(rawDefinition(SAKURA));
 
   it('defines S1 as Damage Taken on all allies, S2 without effects, and the burst as a heal over time on the 2 lowest-HP-ratio allies', () => {
     expect(def.skills.skill1.support).toBe('supported');

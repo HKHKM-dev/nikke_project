@@ -9,7 +9,7 @@ import { runSimulation } from '../sim/engine.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { runTeam } from './runTeam.ts';
-import { describeEveryShotInOneGroup, fixedSlot, readJson, skillValueOf } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedSlot, rawDefinition, readJson, skillValueOf } from './teamHelpers.ts';
 
 const CINDERELLA_CW = 515;
 const LUDMILLA = 190;
@@ -51,7 +51,7 @@ const EVERY = Number(skillValueOf(CINDERELLA_CW, 'skill1', 8));
 const CHARGE = skillValueOf(CINDERELLA_CW, 'skill1', 9) / 100;
 
 describe('シンデレラ：クリスタルウェーブ（515）の定義', () => {
-  const def = parseSkillDefinition(readJson<unknown>('../../data/skills/515.json'));
+  const def = parseSkillDefinition(rawDefinition(515));
 
   it('writes the ammo trigger as a teamAmmo burstGauge and the Full Burst damage with usedBurst', () => {
     expect(def.skills.skill1.effects[2]).toMatchObject({

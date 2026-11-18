@@ -1,6 +1,5 @@
 // アニス：スター（17）の S2「スターダスト」とバースト「スターアニス」（plan/design-anis-star-s2-burst.md）:
 // 発射体爆発ダメージ▲（projectileExplosionDamage）、チャージ時間の固定（fixedChargeTime）、周期の自動攻撃（autoAttack）の検証と解決。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { simulateShotFrames } from '../../cadence.ts';
 import { computeTriggerDamage, PROJECTILE_EXPLOSION_BUCKET, projectileExplosionMultiplier } from '../../damage.ts';
@@ -14,16 +13,13 @@ import { computeSkillHit, resolveDotEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
 import { applyComposition } from '../composition.ts';
 import { parseSkillDefinition } from '../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const anis = readJson<CharacterData>('../../../data/characters/17.json');
-const flower = readJson<CharacterData>('../../../data/characters/304.json');
-const delta = readJson<CharacterData>('../../../data/characters/20.json');
+const anis = characterOf(17);
+const flower = characterOf(304);
+const delta = characterOf(20);
 type RawDefinition = { skills: Record<'skill1' | 'skill2' | 'burst', { effects: Record<string, unknown>[] }> };
-const raw = readJson<RawDefinition>('../../../data/skills/17.json');
+const raw = rawDefinition<RawDefinition>(17);
 const def = parseSkillDefinition(raw);
 
 /** 定義の burst の効果を差し替えた JSON（検証エラーを見る用） */

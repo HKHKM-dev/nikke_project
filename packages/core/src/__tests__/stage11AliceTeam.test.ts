@@ -1,7 +1,6 @@
 // Stage 11 アリス編: アリス（191）を含む編成の順位・窓の一致と、射撃の列のグループ分け（plan/design-stage11.md 22.3〜22.6 節）。
 // 録画 0042（I-DOLL・フラワー + アドミ + アリス（操作）+ I-DOLL・サン）・録画 0043（I-DOLL・フラワー + クラウン + アリス（操作）+ マナ + アドミ）の
 // 実測値を固定する。数値は plan/verification.md Stage 11 アリス節。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -13,16 +12,10 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../data/characters/${id}.json`);
+  const character = characterOf(id);
   const fixed = computeFixedSpecAttack(character);
   const slot: TeamSlotInput = {
     character,
@@ -30,9 +23,9 @@ function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput 
     attackOverride: fixed.attack,
     condition: { coreHitRate: 0, distanceBonus: false },
   };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
       treasurePhase,
     };

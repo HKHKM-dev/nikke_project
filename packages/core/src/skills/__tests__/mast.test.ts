@@ -1,24 +1,17 @@
 // マスト編（plan/design-mast.md 2 節）: 敵に付く状態のスタック・発動者基準の防御力▼（casterDefence）・状態のスタックを写す周期のダメージ
 // （dot の stacksFrom の元に状態の付与・copyEachTick・sustained: false）・スタックの維持の数え方（stackRefresh）の語彙の検証と式
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { defenceAfterDown, type EnemyInput } from '../../damage.ts';
 import { applyResolvedEffect, ZERO_BUFFS } from '../buffs.ts';
 import { resolveDotEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, resolveStateGrants } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
-import type { CharacterData } from '../../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
 const MAST = 350;
-const raw = readJson<{ skills: { skill1: Effects; skill2: Effects; burst: Effects } }>(
-  `../../../data/skills/${MAST}.json`,
-);
-const character = readJson<CharacterData>(`../../../data/characters/${MAST}.json`);
+const raw = rawDefinition<{ skills: { skill1: Effects; skill2: Effects; burst: Effects } }>(MAST);
+const character = characterOf(MAST);
 const seaBreeze = raw.skills.skill1.effects.findIndex((e) => e.kind === 'state');
 const storm = raw.skills.burst.effects.findIndex((e) => e.kind === 'dot');
 

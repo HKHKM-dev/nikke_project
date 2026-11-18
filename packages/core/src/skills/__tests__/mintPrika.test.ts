@@ -1,23 +1,18 @@
 // ミント・プリカ編（plan/design-mint-prika.md 2 節）: 足した語彙（自分の状態の消去・切り替えの組・{ applied } の条件・対象 appliedCaster・
 // 状態の維持の延長・CT▲・回復の条件）の読み込みの検証と、Lv ごとの解決値
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { gameSecondsToFrames } from '../../time.ts';
-import type { CharacterData } from '../../types.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolveRemoveStates, resolveStateExtends } from '../resolve.ts';
 import { namedStateGroup } from '../states.ts';
 import { parseSkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
 type Raw = { skills: { skill1: Effects; skill2: Effects; burst: Effects } };
-const mintRaw = readJson<Raw>('../../../data/skills/600.json');
-const prikaRaw = readJson<Raw>('../../../data/skills/601.json');
-const mint = readJson<CharacterData>('../../../data/characters/600.json');
-const prika = readJson<CharacterData>('../../../data/characters/601.json');
+const mintRaw = rawDefinition<Raw>(600);
+const prikaRaw = rawDefinition<Raw>(601);
+const mint = characterOf(600);
+const prika = characterOf(601);
 
 const patched = (raw: Raw, slot: keyof Raw['skills'], index: number, patch: Record<string, unknown>) => {
   const copy = structuredClone(raw);

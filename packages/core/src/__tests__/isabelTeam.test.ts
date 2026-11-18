@@ -1,6 +1,5 @@
 // イサベル（231）を含む編成: バーストの段階 1 の受けるダメージ▲（2 回目の発動から 5 秒。V-0075）。
 // 射撃の列のグループ分けと、▲の窓・掛かる先（C-0160〜C-0163）、着弾の遅れ（C-0165。plan/design-burst-landing.md）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -14,18 +13,11 @@ import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFrame } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { piecesOf } from './historyHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 function fixedSlot(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -33,9 +25,9 @@ function fixedSlot(id: number): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     };
   }
@@ -60,7 +52,7 @@ const TEAMS: Record<string, { input: TeamInput; isabel: number }> = {
 
 describe('イサベルの定義', () => {
   it('has the burst skill damage, the tier 1 damage taken up from the 2nd use and the tier 2 / 3 damage', () => {
-    const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${ISABEL}.json`));
+    const def = parseSkillDefinition(rawDefinition(ISABEL));
     expect(def.skills.burst.support).toBe('supported');
     expect(def.skills.burst.sequential).toBe(true);
     expect(def.skills.burst.effects).toMatchObject([

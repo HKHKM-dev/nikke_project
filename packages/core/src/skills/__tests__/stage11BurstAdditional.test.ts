@@ -1,28 +1,22 @@
 // 2 段目の段 11 の PR 5（plan/design-skill-stage11.md 2.5 節）: 値 × カウンタの値（damage の perCount: { counter }）と、damage の条件
 // selfCounter。使い手はラプラス：アルティメットヒーロー（103）のバーストの追加ダメージ（録画 0723・0724。V-0532）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { effectFrameOf, hitFrameOf, isInFullBurst } from '../../burst/schedule.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
-import type { CharacterData } from '../../types.ts';
 import { MAX_SKILL_LEVELS, skillValue } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const LUDMILLA = 190;
 const BELORTA = 60;
 const LAPLACE = 103;
-const character = (id: number) => readJson<CharacterData>(`../../../data/characters/${id}.json`);
-const definitionOf = (id: number) => parseSkillDefinition(readJson<unknown>(`../../../data/skills/${id}.json`));
+const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 
 function slotOf(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   return {
     character: c,
@@ -35,9 +29,7 @@ function slotOf(id: number): TeamSlotInput {
 }
 
 describe('語彙の検証', () => {
-  const def = readJson<{ skills: { burst: { effects: Record<string, unknown>[] } } }>(
-    `../../../data/skills/${LAPLACE}.json`,
-  );
+  const def = rawDefinition<{ skills: { burst: { effects: Record<string, unknown>[] } } }>(LAPLACE);
   const withEffect = (patch: Record<string, unknown>) => {
     const copy = structuredClone(def);
     copy.skills.burst.effects[2] = { ...copy.skills.burst.effects[2], ...patch };
@@ -73,7 +65,7 @@ describe('ラプラス：アルティメットヒーローのバーストの追�
   const stages = r.history.counters.filter((x) => x.slotIndex === m && x.counter === 'overEnergyStage');
   // 条件 selfCounter と同じく、発火のフレームの前のフレームの終わりの値
   const stageAt = (frame: number) => stages.filter((x) => x.frame < frame).at(-1)?.value ?? 0;
-  const per = skillValue(character(LAPLACE).skills.burst, 4, MAX_SKILL_LEVELS.burst) / 100;
+  const per = skillValue(characterOf(LAPLACE).skills.burst, 4, MAX_SKILL_LEVELS.burst) / 100;
 
   it('fires only at the bursts with stage 1 or more, times the stage at Burst use', () => {
     const withStage = bursts.filter((b) => stageAt(effectFrameOf(b)) >= 1);

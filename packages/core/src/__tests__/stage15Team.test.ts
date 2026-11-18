@@ -1,5 +1,4 @@
 // Stage 15: 実戦との突き合わせの入力（plan/design-stage12.md 5.2 節）。命中率（SlotCondition.hitRate）の退化と掛かり方、敵のプリセット。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { SG_PELLET_GAUGE_HIT_RATE, energyPerTrigger } from '../burst/dynamic.ts';
 import { computeTriggerDamage, conditionNotes, type EnemyInput } from '../damage.ts';
@@ -11,6 +10,7 @@ import { runTeam } from './runTeam.ts';
 import { type SlotCondition, type TeamInput, type TeamSlotInput } from '../team.ts';
 import type { SkillRaw } from '../types.ts';
 import { makeCharacter } from './fixtures.ts';
+import { readData } from './data.ts';
 
 const enemy: EnemyInput = { defence: 100, element: 'Wind', hasCore: true };
 const growth = { level: 1, grade: 0, core: 0 };
@@ -117,9 +117,7 @@ describe('命中率（hitRate）: 掛かり方', () => {
 });
 
 describe('敵のプリセット（data/enemies.json）', () => {
-  const master = parseEnemyPresets(
-    JSON.parse(readFileSync(new URL('../../data/enemies.json', import.meta.url), 'utf8')) as unknown,
-  );
+  const master = parseEnemyPresets(readData<unknown>('enemies.json'));
 
   it('has the shooting-range BigArms with the fixed-spec defence', () => {
     const range = master.enemies.filter((e) => e.content === 'range');

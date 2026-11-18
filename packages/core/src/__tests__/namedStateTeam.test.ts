@@ -1,7 +1,6 @@
 // 名前の付いた状態の語彙編（plan/design-named-state.md・plan/design-named-state-impl.md 2 節）: 状態の付与（kind: 'state'）の検証、
 // 同じ状態の中身の窓を付与をまたいで和集合にすること、条件つき・順位の対象の付与と「〈状態名〉が適用された時」、1 パス目の順位、
 // calc の射撃の数え方。定義は data/skills のもの（ウンファ：TU・クイーン（真）・雪子）と、それを書き換えたもの
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
@@ -15,25 +14,18 @@ import { applyTreasureToTeam } from '../skills/treasure.ts';
 import { parseSkillDefinition, staticStatesOf, type SkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import type { CharacterData, Element } from '../types.ts';
+import type { Element } from '../types.ts';
 import { applicationsOf, piecesOf, stateItemsOf } from './historyHelpers.ts';
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
 type RawDefinition = { skills: Record<string, { effects: Record<string, unknown>[]; notes?: unknown[] }> };
-const rawDefinition = (id: number) => readJson<RawDefinition>(`../../data/skills/${id}.json`);
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-
 const FLOWER = 304;
 const EUNHWA = 95;
 const SUN = 308;
 const QUEEN = 870;
 
 function slotOf(id: number, definition?: unknown): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -41,7 +33,7 @@ function slotOf(id: number, definition?: unknown): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  const raw = definition ?? (DEFINED.has(id) ? rawDefinition(id) : undefined);
+  const raw = definition ?? (DEFINED_IDS.has(id) ? rawDefinition<RawDefinition>(id) : undefined);
   if (raw !== undefined) slot.skills = { definition: parseSkillDefinition(raw), levels: MAX_SKILL_LEVELS };
   return slot;
 }
@@ -176,7 +168,7 @@ describe('calc の射撃の数え方（一本化の段 A-1。plan/design-unify-s
   // 数え、持たない枠は窓の外を平均レートで置いた。いまはどの枠もどのグループも射撃の列から数える
   // バーストの受けるダメージ▲（weaponChangeShot）を外し、自分の射撃の回数で開く窓をカモフラージュのフルチャージの付与だけにする
   const withoutBurstTaken = () => {
-    const raw = structuredClone(rawDefinition(EUNHWA));
+    const raw = structuredClone(rawDefinition<RawDefinition>(EUNHWA));
     raw.skills.burst!.effects = raw.skills.burst!.effects.filter((x) => x.kind !== 'timed');
     // 炸裂弾（使用武器変更）を指す注記は、効果の番号が 1 つ詰まるので抜く
     raw.skills.burst!.notes = (raw.skills.burst!.notes ?? []).filter(
@@ -203,7 +195,7 @@ describe('calc の射撃の数え方（一本化の段 A-1。plan/design-unify-s
 describe('条件つき・順位の対象の付与と「〈状態名〉が適用された時」（クイーン（真）の定義を書き換え）', () => {
   /** ラム（I）+ デルタ（II）+ クイーン（真）（III・操作）。S1 に付与と、その状態が付いた時の分配ダメージを足す */
   const withGrant = (grant: Record<string, unknown>) => {
-    const raw = structuredClone(rawDefinition(QUEEN));
+    const raw = structuredClone(rawDefinition<RawDefinition>(QUEEN));
     raw.skills.skill1!.effects.push(grant, {
       kind: 'damage',
       trigger: { applied: 'followUp' },
@@ -213,7 +205,7 @@ describe('条件つき・順位の対象の付与と「〈状態名〉が適用�
     return team([slotOf(822), slotOf(20), slotOf(QUEEN, raw)], 'Wind', 2);
   };
   const q = 2;
-  const grantIndex = rawDefinition(QUEEN).skills.skill1!.effects.length;
+  const grantIndex = rawDefinition<RawDefinition>(QUEEN).skills.skill1!.effects.length;
 
   it('applies a conditional grant only while the condition holds, and fires the damage at each application', () => {
     // 「自分が分配ダメージ増加状態なら」（S2 のバースト 3 段階突入時の▲。C-0391）、通常攻撃 10 回ごと

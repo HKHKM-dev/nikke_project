@@ -1,7 +1,6 @@
 // 1 パス目の { counterFull } のきっかけのヒットのゲージ（frame/firstPass/counterGauges.ts。plan/design-mihara-bc-gauge.md 3 節。V-0761・C-1197）を、
 // 作り手を直接呼んで境目で見る。定義はミハラ：ボンディングチェーン（162）の S1 を、確かめる形に書き換えて使う。件の一覧は、カウンタが上限に
 // 届いた発火のフレームと敵の状態だけを返す形に差し替える
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { BurstActivation } from '../../burst/schedule.ts';
 import { effectHitFrames, perCountFrames, resolveDamageEffects } from '../../skills/burstDamage.ts';
@@ -11,20 +10,16 @@ import { MAX_SKILL_LEVELS } from '../../skills/resolve.ts';
 import type { TimelineSlot } from '../../skills/timeline.ts';
 import type { FrameEvents } from '../../skills/triggers.ts';
 import { parseSkillDefinition } from '../../skills/types.ts';
-import type { CharacterData } from '../../types.ts';
 import { latestDotTicks } from '../dot.ts';
 import { createCounterGauges } from '../firstPass/counterGauges.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 type RawEffect = Record<string, unknown>;
 type RawDefinition = { skills: Record<'skill1' | 'skill2' | 'burst', { effects: RawEffect[] }> };
 
 const MIHARA_BC = 162;
-const mihara = readJson<CharacterData>(`../../../data/characters/${MIHARA_BC}.json`);
-const raw = readJson<RawDefinition>(`../../../data/skills/${MIHARA_BC}.json`);
+const mihara = characterOf(MIHARA_BC);
+const raw = rawDefinition<RawDefinition>(MIHARA_BC);
 const CHAINS = raw.skills.skill1.effects.findIndex((e) => e.kind === 'dot');
 const STACK_UP = raw.skills.skill2.effects.findIndex((e) => e.kind === 'stackChange');
 const COUNTER: CounterId = 'restraintChains';

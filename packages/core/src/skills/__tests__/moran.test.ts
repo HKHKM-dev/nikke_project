@@ -1,21 +1,16 @@
 // モラン（281）の定義（plan/skills-guide.md）。S2 の挑発を付けたときのゲージ（burstGaugeHit の射撃の回数のトリガー。
 // plan/design-moran.md、C-0480）。バースト・S1・宝物版の熱血は 2 段目の段 11 の PR 3（V-0530。stage11Moran.test.ts）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { planTeamRun } from '../../frame/plan.ts';
 import type { TeamInput } from '../../team.ts';
-import type { CharacterData } from '../../types.ts';
 import { resolveShotGauges, resolveTimerGauges } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const moran = readJson<CharacterData>('../../../data/characters/281.json');
-const raw = readJson<{ skills: Record<string, unknown> }>('../../../data/skills/281.json');
+const moran = characterOf(281);
+const raw = rawDefinition<{ skills: Record<string, unknown> }>(281);
 const def = parseSkillDefinition(raw);
 
 const GAUGE = { kind: 'burstGaugeHit', trigger: { count: 'lastShot' } };

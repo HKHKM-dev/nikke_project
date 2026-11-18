@@ -1,7 +1,6 @@
 // 2 段目の段 10 の PR 2（plan/design-skill-stage10.md 2.3・3.2 節）: ネオン：ビジョン・アイ（18）の火力ゲージ。カウンタの増減
 // （counterChange）・カウンタの条件（selfCounter）・状態の終わりのきっかけ（{ ended }）・カウンタの値をスタック数にする付与（stacksFrom）と、
 // 条件つきの射撃ごとの倍率ダメージ（S1 の超火力状態の追加効果）。録画 0671〜0673（V-0503）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -13,19 +12,12 @@ import { itemsOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 const NEON = 18;
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
-const definition = (id: number) => parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`));
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-
+const definition = (id: number) => parseSkillDefinition(rawDefinition(id));
 function slotOf(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -33,7 +25,7 @@ function slotOf(id: number): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  if (DEFINED.has(id)) slot.skills = { definition: definition(id), levels: MAX_SKILL_LEVELS };
+  if (DEFINED_IDS.has(id)) slot.skills = { definition: definition(id), levels: MAX_SKILL_LEVELS };
   return slot;
 }
 
@@ -93,9 +85,7 @@ describe('ネオン：ビジョン・アイ（18）の火力ゲージ', () => {
   });
 
   it('rejects malformed counters', () => {
-    const def = readJson<{ skills: Record<string, { effects: Record<string, unknown>[] }> }>(
-      '../../data/skills/18.json',
-    );
+    const def = rawDefinition<{ skills: Record<string, { effects: Record<string, unknown>[] }> }>(18);
     const withEffect = (slot: string, index: number, patch: Record<string, unknown>) => {
       const copy = structuredClone(def);
       copy.skills[slot]!.effects[index] = { ...copy.skills[slot]!.effects[index], ...patch };
@@ -120,9 +110,9 @@ describe('ネオン：ビジョン・アイ（18）の火力ゲージ', () => {
 
   it('rejects a conditioned per-shot damage for SG (per pellet or per trigger is undecided)', () => {
     // S1 の超火力状態の追加効果（条件つきの射撃ごと）は、射撃ごとの発動として出す。SG なら畳み込む側と同じく拒否する
-    expect(() => resolveDamageEffects(definition(NEON), character(NEON), MAX_SKILL_LEVELS)).not.toThrow();
+    expect(() => resolveDamageEffects(definition(NEON), characterOf(NEON), MAX_SKILL_LEVELS)).not.toThrow();
     expect(() =>
-      resolveDamageEffects(definition(NEON), { ...character(NEON), weaponType: 'SG' }, MAX_SKILL_LEVELS),
+      resolveDamageEffects(definition(NEON), { ...characterOf(NEON), weaponType: 'SG' }, MAX_SKILL_LEVELS),
     ).toThrow(/not supported for SG/);
   });
 });

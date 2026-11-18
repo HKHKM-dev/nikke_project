@@ -1,6 +1,5 @@
 // Stage 13: 育成入力の拡張 B — 効果層（plan/design-stage12.md 3・12 節）。
 // OL の表の形、OL・キューブ・コレクションの BuffTotals への写像、新 stat（有利コード・コアダメージ・通常攻撃ダメージ倍率）の式。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { OVERLOAD_OPTIONS, emptyBuild, fixedSpecBuild, validateBuild, type BuildInput } from '../../build.ts';
 import {
@@ -21,17 +20,15 @@ import { computeSkillHit } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { resolvePassiveStates, type TimelineSlot } from '../timeline.ts';
 import { BUFF_STATS, parseSkillDefinition } from '../types.ts';
+import { readData } from '../../__tests__/data.ts';
 
-function readJson<T>(relative: string): T {
-  return JSON.parse(readFileSync(new URL(relative, import.meta.url), 'utf8')) as T;
-}
 const masters: BuildMasters = {
-  gear: readJson('../../../data/masters/gear.json'),
-  affection: readJson('../../../data/masters/affection.json'),
-  cubes: readJson('../../../data/masters/cubes.json'),
-  collections: readJson('../../../data/masters/collections.json'),
-  recycleRoom: readJson('../../../data/masters/recycleRoom.json'),
-  overload: readJson('../../../data/masters/overload.json'),
+  gear: readData('masters/gear.json'),
+  affection: readData('masters/affection.json'),
+  cubes: readData('masters/cubes.json'),
+  collections: readData('masters/collections.json'),
+  recycleRoom: readData('masters/recycleRoom.json'),
+  overload: readData('masters/overload.json'),
 };
 const ar = { weaponType: 'AR', corporation: 'ELYSION' } as const;
 const smg = { weaponType: 'SMG', corporation: 'ELYSION' } as const;

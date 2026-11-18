@@ -1,25 +1,17 @@
 // 2 段目の段 21 の PR 1（plan/design-skill-stage21.md 2.1・2.2 節）: フルバーストタイムの延長（fullBurstExtend）。窓の外の発火は次の窓に
 // 予約し、窓を作る時に burst_duration の秒に足す。使い手はソーダ：トゥインクルバニー（314）の S2 の時間延長 I・II（C-0877）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { planTeamRun } from '../../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { gameSecondsToFrames } from '../../time.ts';
-import type { CharacterData } from '../../types.ts';
 import { itemsOf } from '../holders.ts';
 import { MAX_SKILL_LEVELS, resolveInstant } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const SODA = 314;
-const character = (id: number) => readJson<CharacterData>(`../../../data/characters/${id}.json`);
-const rawOf = (id: number) => readJson<Record<string, unknown>>(`../../../data/skills/${id}.json`);
-
 const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
 function withSkill2(...effects: unknown[]): unknown {
   return {
@@ -48,8 +40,8 @@ describe('fullBurstExtend の検証', () => {
   });
 
   it('延長の秒は % にせず秒のまま解く', () => {
-    const def = parseSkillDefinition(rawOf(SODA));
-    const extensions = resolveInstant(def, character(SODA), MAX_SKILL_LEVELS).filter(
+    const def = parseSkillDefinition(rawDefinition<Record<string, unknown>>(SODA));
+    const extensions = resolveInstant(def, characterOf(SODA), MAX_SKILL_LEVELS).filter(
       (e) => e.kind === 'fullBurstExtend',
     );
     expect(extensions.map((e) => e.value)).toEqual([2, 3]);
@@ -58,14 +50,17 @@ describe('fullBurstExtend の検証', () => {
 
 describe('ソーダ：トゥインクルバニーの時間延長（ラム + デルタ + ソーダ：TB）', () => {
   const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
-  function slot(id: number, raw?: unknown, c = character(id)): TeamSlotInput {
+  function slot(id: number, raw?: unknown, c = characterOf(id)): TeamSlotInput {
     const fixed = computeFixedSpecAttack(c);
     return {
       character: c,
       growth: fixed.growth,
       attackOverride: fixed.attack,
       condition: { coreHitRate: 1, distanceBonus: false },
-      skills: { definition: parseSkillDefinition(raw ?? rawOf(id)), levels: MAX_SKILL_LEVELS },
+      skills: {
+        definition: parseSkillDefinition(raw ?? rawDefinition<Record<string, unknown>>(id)),
+        levels: MAX_SKILL_LEVELS,
+      },
     };
   }
   const team = (soda?: unknown): TeamInput => ({
@@ -80,7 +75,9 @@ describe('ソーダ：トゥインクルバニーの時間延長（ラム + デ�
   it('ゴールデンチップの段で窓が延び（I と II は 2 + 3 秒、I は 2 秒）、延長の無い定義ではどの窓も 10 秒', () => {
     const extended = lengths(team()).slice(0, 5);
     expect(extended).toEqual([15, 15, 15, 12, 10].map(gameSecondsToFrames));
-    const raw = structuredClone(rawOf(SODA)) as { skills: { skill2: { effects: { kind: string }[] } } };
+    const raw = structuredClone(rawDefinition<Record<string, unknown>>(SODA)) as {
+      skills: { skill2: { effects: { kind: string }[] } };
+    };
     raw.skills.skill2.effects = raw.skills.skill2.effects.filter((e) => e.kind !== 'fullBurstExtend');
     expect(lengths(team(raw)).slice(0, 5)).toEqual(Array(5).fill(gameSecondsToFrames(10)));
   });
@@ -103,7 +100,7 @@ describe('ソーダ：トゥインクルバニーの時間延長（ラム + デ�
   // 3 段階に入ってもソーダの CT が明けずにチェーンが切れると、状態機械は予約を捨てる（burst/controller.ts の resetChain）。捨てた延長は
   // 即時効果の記録（画面と trace）に残さない
   it('窓を作らずにチェーンが切れて捨てた延長は、即時効果の記録に残さない', () => {
-    const slow = character(SODA);
+    const slow = characterOf(SODA);
     slow.burstSkill = { ...slow.burstSkill!, cooldownSeconds: 100 };
     const input: TeamInput = { ...team(), slots: [slot(822), slot(20), slot(SODA, undefined, slow)] };
     const plan = planTeamRun(input);
@@ -140,9 +137,11 @@ describe('ソーダ：トゥインクルバニーの時間延長（ラム + デ�
     const D = 40;
     const plan = planTeamRun({ ...team(), slots: [slot(82), slot(20), slot(D)] });
     const schedule = plan.schedule!;
-    const extension = resolveInstant(parseSkillDefinition(rawOf(D)), character(D), MAX_SKILL_LEVELS).find(
-      (e) => e.kind === 'fullBurstExtend',
-    )!.value;
+    const extension = resolveInstant(
+      parseSkillDefinition(rawDefinition<Record<string, unknown>>(D)),
+      characterOf(D),
+      MAX_SKILL_LEVELS,
+    ).find((e) => e.kind === 'fullBurstExtend')!.value;
     const immunity = itemsOf(plan.history, { holder: 2, state: 'stunImmunity' });
     const activations = schedule.activations.filter((a) => a.slotIndex === 2).map((a) => a.frame);
 

@@ -3,7 +3,6 @@
 // S2: 15 秒ごとの敵全体の受けるダメージ▲と味方全体の防御力無視ダメージ▲（V-0531。周期は C-0418）。
 // バースト: 使用武器の変更（チャージしない 150rpm・リロードしない 10 秒）と命中した敵の受けるダメージ▲（V-0531。段 11 の PR 4）。
 // 射撃の列のグループ分け。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -13,26 +12,19 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { slotPieces } from './historyHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 const TAKINA = 861;
 const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false };
 
 function fixedSlot(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = { character: c, growth: fixed.growth, attackOverride: fixed.attack, condition: MANUAL };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     };
   }
@@ -46,7 +38,7 @@ function team(slots: TeamSlotInput[], controlledSlot: number, burst: boolean): T
 }
 
 describe('たきなの定義', () => {
-  const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${TAKINA}.json`));
+  const def = parseSkillDefinition(rawDefinition(TAKINA));
 
   it('defines every damage-relevant line of S1, S2 and the burst (only the unexplained missing shots stay in notes)', () => {
     expect(def.skills.skill1.support).toBe('supported');

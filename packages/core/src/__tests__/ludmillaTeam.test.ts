@@ -2,7 +2,6 @@
 // S1: 通常攻撃の命中 60 回ごとに受けるダメージ▲（3 秒）→ 追加ダメージ（同じ発火の▲が乗る。sequential）と、弾丸チャージ 20 発。
 // S2: コアの命中 60 回ごとに追加ダメージ、フルバースト開始時に自分のクリティカル確率▲。バースト: 自分の攻撃力▲・リロード速度▲。
 // 命中・コアの命中の回数は期待値で数える。射撃の列のグループ分け。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -12,26 +11,19 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { piecesOf } from './historyHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 const LUDMILLA = 194;
 const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false };
 
 function fixedSlot(id: number, condition: SlotCondition = MANUAL): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = { character: c, growth: fixed.growth, attackOverride: fixed.attack, condition };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     };
   }
@@ -55,7 +47,7 @@ function hitFrames(input: TeamInput, skill: 'skill1' | 'skill2'): number[] {
 }
 
 describe('ルドミラ：ウィンターオーナーの定義', () => {
-  const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${LUDMILLA}.json`));
+  const def = parseSkillDefinition(rawDefinition(LUDMILLA));
 
   it('defines every line of the description (all slots supported), with S1 in order', () => {
     for (const slot of ['skill1', 'skill2', 'burst'] as const) expect(def.skills[slot].support).toBe('supported');

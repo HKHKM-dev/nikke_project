@@ -1,6 +1,5 @@
 // Stage 10: 射撃に効くバフ・CT 短縮・弾丸チャージを含む編成の回帰と、射撃の列のグループ分け（plan/design-stage10.md 8.4・8.5 節）。
 // 実データのキャラ（スペック固定）で、既存の録画 0019・0037 の弾数表示と、撮影予定の録画 A・B の編成を固定する。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -12,17 +11,11 @@ import { parseSkillDefinition } from '../skills/types.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { type TeamInput, type TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { gameSecondsToFrames } from '../time.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../data/characters/${id}.json`);
+  const character = characterOf(id);
   const fixed = computeFixedSpecAttack(character);
   const slot: TeamSlotInput = {
     character,
@@ -30,9 +23,9 @@ function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput 
     attackOverride: fixed.attack,
     condition: { coreHitRate: 0, distanceBonus: false },
   };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
       treasurePhase,
     };

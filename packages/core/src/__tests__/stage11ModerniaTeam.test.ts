@@ -1,7 +1,6 @@
 // Stage 11 モダニア編: モダニア（260）を含む編成の窓の一致・射撃・射撃の列のグループ分け（plan/design-stage11-modernia.md 7.2〜7.5 節）。
 // 録画 0044（I-DOLL・フラワー + デルタ + モダニア（操作））の予測と実測値の回帰、実戦寄りの編成（リター + クラウン + モダニア + アリス + アドミ）。
 // 実測値は plan/verification.md Stage 11 モダニア節（録画 0044・0045、2026-09-24）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -14,19 +13,13 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput, TeamResult } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { piecesOf, statePiecesOf } from './historyHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 function fixedSlot(id: number): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../data/characters/${id}.json`);
+  const character = characterOf(id);
   const fixed = computeFixedSpecAttack(character);
   const slot: TeamSlotInput = {
     character,
@@ -34,9 +27,9 @@ function fixedSlot(id: number): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     };
   }
@@ -235,7 +228,7 @@ describe('実戦寄りの編成: 条件付きの攻撃力もアリスの順位�
 });
 
 describe('射手: 装弾数無限と基礎の武器に戻るとき（3.4・7.3）', () => {
-  const mg = readJson<CharacterData>('../../data/characters/260.json').shot;
+  const mg = characterOf(260).shot;
 
   it('does not spend ammo while infinite', () => {
     const params = { ...firingParams(mg), infiniteAmmo: true };

@@ -1,20 +1,15 @@
 // 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6・3.4 節）: cooldownReduction の発火の条件 condition（鍵は selfState だけ）。
 // 使い手はモラン（281）の宝物版の S2「フルバーストタイムが発動した時、自分が熱血状態なら、味方全体にバーストスキルクールタイム X 秒▼」
 // （V-0540。撮影 C: デルタ・I-DOLL・サン・モラン）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { gameSecondsToFrames } from '../../time.ts';
-import type { CharacterData } from '../../types.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
 const withSkill2 = (...effects: unknown[]): unknown => ({
@@ -53,8 +48,8 @@ describe('cooldownReduction の condition（定義の読み）', () => {
 
 describe('モランの宝物版の S2（熱血状態のフルバースト発動時のクールタイム▼。V-0540）', () => {
   const ids = [20, 308, 281] as const;
-  const characters = ids.map((id) => readJson<CharacterData>(`../../../data/characters/${id}.json`));
-  const definitions = ids.map((id) => parseSkillDefinition(readJson<unknown>(`../../../data/skills/${id}.json`)));
+  const characters = ids.map((id) => characterOf(id));
+  const definitions = ids.map((id) => parseSkillDefinition(rawDefinition(id)));
   const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
   const run = (moran: SkillDefinition) => {
     const slots = characters.map((character, i): TeamSlotInput => {

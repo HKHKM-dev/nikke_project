@@ -3,7 +3,6 @@
 //   1. データと検証: `<fireType>:<弾速>:<爆発の範囲>` の行は範囲が合うキャラだけが先に引き、ほかは今までの行のまま
 //   2. 自動の条件: 範囲 750 の誘導弾はコア 0・距離帯ごとのヒット数、範囲 500 は今までどおり（ヒット数なし）
 //   3. 1 トリガーの式: ヒット数は通常攻撃の分にだけ掛かり、射撃ごとの倍率ダメージとゲージには掛からない
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeTriggerDamage, hitsPerShotOf, type EnemyInput } from '../damage.ts';
 import { parseEnemyPresets } from '../enemies.ts';
@@ -12,11 +11,9 @@ import { ZERO_HIT_RATE } from '../skills/buffs.ts';
 import type { SlotCondition } from '../team.ts';
 import type { CharacterData, LandingPoint } from '../types.ts';
 import { makeCharacter } from './fixtures.ts';
+import { characterOf, readData } from './data.ts';
 
-const raw = JSON.parse(readFileSync(new URL('../../data/enemies.json', import.meta.url), 'utf8')) as Record<
-  string,
-  unknown
->;
+const raw = readData<Record<string, unknown>>('enemies.json');
 const master = parseEnemyPresets(raw);
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
 const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false, hitRate: 1 };
@@ -29,9 +26,7 @@ function homingRl(explosionRange: number): CharacterData {
 }
 const R500 = homingRl(500);
 const R750 = homingRl(750);
-const anis = JSON.parse(
-  readFileSync(new URL('../../data/characters/17.json', import.meta.url), 'utf8'),
-) as CharacterData;
+const anis = characterOf(17);
 
 // テスト用の hitsPerShot の表（実データには無い）
 const TEST_HITS = { RL: { byProjectile: { 'HomingProjectile:100:750': { near: 2, far: 1.3922 } } } };

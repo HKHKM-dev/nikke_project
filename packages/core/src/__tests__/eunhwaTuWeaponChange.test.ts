@@ -1,7 +1,6 @@
 // 使用武器変更の武器のパラメータ（plan/design-true-damage-element.md 9 節）: 変更後の武器のチャージ時間・フルチャージ倍率・最大装弾数と、
 // 撃ち切りで終わる変更。ウンファ：TU（95）のバーストの徹甲炸裂弾（C-0313）で、語彙の検証・解決・1 パス目と区間の窓の一致・
 // 射撃の列のグループ分けを見る。編成は録画 0232（I-DOLL・フラワー + ウンファ：TU。V-0207）と同じ
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from './fixtures.ts';
 import type { EnemyInput } from '../damage.ts';
@@ -22,13 +21,10 @@ import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { piecesOf } from './historyHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from './data.ts';
 
 function fixedSlot(id: number): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../data/characters/${id}.json`);
+  const character = characterOf(id);
   const fixed = computeFixedSpecAttack(character);
   return {
     character,
@@ -36,7 +32,7 @@ function fixedSlot(id: number): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
     skills: {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     },
   };
@@ -129,8 +125,8 @@ describe('回数トリガー weaponChangeShot（論点 12）', () => {
 });
 
 describe('解決', () => {
-  const character = readJson<CharacterData>('../../data/characters/95.json');
-  const definition = parseSkillDefinition(readJson<unknown>('../../data/skills/95.json'));
+  const character = characterOf(95);
+  const definition = parseSkillDefinition(rawDefinition(95));
 
   it('builds the Explosive Round from the description: 105.6%, 0.3 s, 300%, 1 round, true damage, ended by the empty magazine (C-0313)', () => {
     const weapon = resolveTimed(definition, character, MAX_SKILL_LEVELS).find((e) => e.stat === 'weapon')!;

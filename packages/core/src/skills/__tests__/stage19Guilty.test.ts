@@ -1,6 +1,5 @@
 // 2 段目の段 19 の PR 2（plan/design-skill-stage19.md 2.2 節。論点 5）: ギルティ（400）の定義。借りていくよぉ…の攻撃力のコピー
 // （copyTopAttack。バフ前の攻撃力が最も高い味方を写す。C-0873）と、フルスタックのバーストの追加ダメージに同じバーストの防御力▼が乗ること（C-0874）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
@@ -9,18 +8,15 @@ import type { CharacterData } from '../../types.ts';
 import { fixedAttackBaseOf } from '../buffs.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 type RawDefinition = { skills: Record<string, { effects: Record<string, unknown>[]; notes?: unknown[] }> };
 
-const guilty = readJson<CharacterData>('../../../data/characters/400.json');
-const sun = readJson<CharacterData>('../../../data/characters/308.json');
-const liter = readJson<CharacterData>('../../../data/characters/82.json');
-const literDef = parseSkillDefinition(readJson<RawDefinition>('../../../data/skills/82.json'));
-const raw = readJson<RawDefinition>('../../../data/skills/400.json');
+const guilty = characterOf(400);
+const sun = characterOf(308);
+const liter = characterOf(82);
+const literDef = parseSkillDefinition(rawDefinition<RawDefinition>(82));
+const raw = rawDefinition<RawDefinition>(400);
 const def = parseSkillDefinition(raw);
 
 function slotOf(character: CharacterData, definition?: SkillDefinition, attack?: number): TeamInput['slots'][number] {

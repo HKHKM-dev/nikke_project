@@ -1,6 +1,5 @@
 // エレグ（500）の定義（plan/design-elegg.md 段 1）。S2 の「ターゲットが出現した時、味方全体にバーストゲージのチャージ 100%」を、
 // 戦闘開始の burstGauge で入れる（C-0662）。段 3（plan/design-elegg-s3.md）: S2 の前半の攻撃力▲（C-0696・C-0697）と S1 の分配ダメージ（C-0766）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { hexagonFrameOf } from '../../burst/schedule.ts';
@@ -8,19 +7,13 @@ import { distributedHitMultiplier } from '../../damage.ts';
 import { burstSnapshotState, planTeamRun } from '../../frame/plan.ts';
 import { stateItemsOf } from '../../__tests__/historyHelpers.ts';
 import type { TeamInput } from '../../team.ts';
-import type { CharacterData } from '../../types.ts';
 import { computeBurstHit } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const elegg = readJson<CharacterData>('../../../data/characters/500.json');
-const raw = readJson<{ skills: Record<string, { effects: unknown[]; notes?: unknown[] }> }>(
-  '../../../data/skills/500.json',
-);
+const elegg = characterOf(500);
+const raw = rawDefinition<{ skills: Record<string, { effects: unknown[]; notes?: unknown[] }> }>(500);
 const def = parseSkillDefinition(raw);
 
 /** S2 のゲージを落とした定義 */
@@ -75,7 +68,7 @@ const SAKURA = 836;
 const SUN = 308;
 
 function slotOf(id: number): TeamInput['slots'][number] {
-  const c = id === 500 ? elegg : readJson<CharacterData>(`../../../data/characters/${id}.json`);
+  const c = id === 500 ? elegg : characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamInput['slots'][number] = {
     character: c,
@@ -83,8 +76,7 @@ function slotOf(id: number): TeamInput['slots'][number] {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  const definition =
-    id === 500 ? def : parseSkillDefinition(readJson<unknown>(`../../../data/skills/${id}.json`) as never);
+  const definition = id === 500 ? def : parseSkillDefinition(rawDefinition(id) as never);
   slot.skills = { definition, levels: MAX_SKILL_LEVELS };
   return slot;
 }

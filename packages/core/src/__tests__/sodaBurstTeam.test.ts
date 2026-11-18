@@ -1,7 +1,6 @@
 // 2 段目の段 3 の PR 3（plan/design-skill-stage3.md 1.4・1.5・2.3 節）: ソーダ：トゥインクルバニー（314）のバースト。ゴールデンチップの
 // スタック量別の効果（20 スタック以上で自分に命中率▲、30 スタック以上で攻撃力▲）と、効果の後の 17 個▼。編成は撮影計画と同じ
 // ラム + デルタ + ソーダ：TB（操作）と、実戦寄りの編成。damage の条件のスタック数（frame/plan.ts）と、射撃の列のグループ分け
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -15,20 +14,12 @@ import { itemsOf, valuePiecesOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 const SODA = 314;
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
 type RawDefinition = { skills: Record<string, { effects: Record<string, unknown>[]; notes?: unknown[] }> };
-const rawDefinition = (id: number) => readJson<RawDefinition>(`../../data/skills/${id}.json`);
-
 function fixedSlot(id: number, definition?: unknown): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -36,7 +27,7 @@ function fixedSlot(id: number, definition?: unknown): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  const raw = definition ?? (DEFINED.has(id) ? rawDefinition(id) : undefined);
+  const raw = definition ?? (DEFINED_IDS.has(id) ? rawDefinition<RawDefinition>(id) : undefined);
   if (raw !== undefined) slot.skills = { definition: parseSkillDefinition(raw), levels: MAX_SKILL_LEVELS };
   return slot;
 }
@@ -59,7 +50,7 @@ const S = 2;
  * この編成に残る（延長があると、どの窓も中の発の数が 3 の倍数の位相でそろい、数え方の見分けの例にならない）
  */
 function withoutExtension(): RawDefinition {
-  const raw = structuredClone(rawDefinition(SODA));
+  const raw = structuredClone(rawDefinition<RawDefinition>(SODA));
   raw.skills.skill2!.effects = raw.skills.skill2!.effects.filter((e) => e.kind !== 'fullBurstExtend');
   return raw;
 }
@@ -130,7 +121,7 @@ describe('ソーダ：トゥインクルバニーのバースト（ラム + デ�
   it('hits 96 frames after the Full Burst timer and carries the same burst ATK▲', () => {
     const activations = plan.schedule!.activations.filter((a) => a.slotIndex === S);
     for (const a of activations) expect(hitFrameOf(a) - hexagonFrameOf(a)).toBe(96);
-    const attack = computeFixedSpecAttack(character(SODA)).attack;
+    const attack = computeFixedSpecAttack(characterOf(SODA)).attack;
     const expected = [1, 1, 0, 0, 0].map(
       (up) => (up ? Math.floor(attack * 1.6525) : attack) - FIXED_SPEC_ENEMY_DEFENCE,
     );
@@ -143,7 +134,7 @@ describe('ソーダ：トゥインクルバニーのバースト（ラム + デ�
 describe('damage の条件のスタック数（frame/plan.ts）', () => {
   /** skill2 に、バースト使用時の追加ダメージ（スタック数の条件つき）を足したソーダ：TB */
   const withDamage = (stacks: number | 'full') => {
-    const raw = structuredClone(rawDefinition(SODA));
+    const raw = structuredClone(rawDefinition<RawDefinition>(SODA));
     raw.skills.skill2!.effects.push({
       kind: 'damage',
       trigger: 'burstUse',
@@ -198,7 +189,7 @@ describe('スタックの指標（records/observations/metrics/buffs.ts。V-0437
       (metric('fullBurstStackGainResidues', args, runSimulation(short), short) as number[]).some((r) => r !== 0),
     ).toBe(true);
     // フルバーストごとに数え直す読み（V-0437 の H1。V-0443 で棄却）なら余りは 0 だけ
-    const raw = structuredClone(rawDefinition(SODA));
+    const raw = structuredClone(rawDefinition<RawDefinition>(SODA));
     const grant = raw.skills.skill1!.effects[1]!;
     const { firesDuring: _, ...rest } = grant.trigger as Record<string, unknown>;
     raw.skills.skill1!.effects[1] = { ...grant, trigger: { ...rest, during: 'fullBurst', reset: 'fullBurstStart' } };

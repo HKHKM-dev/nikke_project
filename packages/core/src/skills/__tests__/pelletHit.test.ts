@@ -1,21 +1,16 @@
 // ペレットの命中編（plan/design-pellet-hit.md）: 回数トリガー pelletHit（的に当たったペレットの数）と、
 // プリバティ：アンカインド・メイド（313）の S1 の定義（C-0408）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { planTeamRun } from '../../frame/plan.ts';
 import type { PelletHits, TeamInput } from '../../team.ts';
-import type { CharacterData } from '../../types.ts';
 import { MAX_SKILL_LEVELS, resolveTrigger } from '../resolve.ts';
 import { advanceShotCount, shotCountWeight } from '../triggers.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const privaty = readJson<CharacterData>('../../../data/characters/313.json');
-const raw = readJson<{ skills: Record<string, unknown> }>('../../../data/skills/313.json');
+const privaty = characterOf(313);
+const raw = rawDefinition<{ skills: Record<string, unknown> }>(313);
 const def = parseSkillDefinition(raw);
 
 /** 313.json を写して、skill1 を差し替えた定義 */

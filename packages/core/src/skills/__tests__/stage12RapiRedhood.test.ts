@@ -1,29 +1,23 @@
 // 2 段目の段 12 の PR 1（plan/design-skill-stage12.md 2.1・3.1 節）: damage の編成の条件 burstStepMix と、ラピ：レッドフード（16）の
 // 戦闘補助でない側の S1（フルバーストの始まりの自分の攻撃力▲）とバースト III の追加ダメージ（録画 0116・0117。V-0535）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { effectFrameOf, isInFullBurst } from '../../burst/schedule.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
-import type { CharacterData } from '../../types.ts';
 import { applyCompositionToTeam } from '../composition.ts';
 import { MAX_SKILL_LEVELS, skillValue } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const RAPI_RH = 16;
 const LITER = 82;
 const DELTA = 20;
-const character = (id: number) => readJson<CharacterData>(`../../../data/characters/${id}.json`);
-const definitionOf = (id: number) => parseSkillDefinition(readJson<unknown>(`../../../data/skills/${id}.json`));
+const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 
 function slotOf(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   return {
     character: c,
@@ -38,9 +32,7 @@ function slotOf(id: number): TeamSlotInput {
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
 
 describe('語彙の検証', () => {
-  const def = readJson<{ skills: { burst: { effects: Record<string, unknown>[] } } }>(
-    `../../../data/skills/${RAPI_RH}.json`,
-  );
+  const def = rawDefinition<{ skills: { burst: { effects: Record<string, unknown>[] } } }>(RAPI_RH);
   const withEffect = (patch: Record<string, unknown>) => {
     const copy = structuredClone(def);
     copy.skills.burst.effects[0] = { ...copy.skills.burst.effects[0], ...patch };
@@ -95,7 +87,7 @@ describe('ラピ：レッドフードの S1 の攻撃力▲とバースト III �
   const schedule = r.schedule!;
   const bursts = schedule.activations.filter((a) => a.slotIndex === m);
   const additional = r.skillHits.filter((h) => h.slotIndex === m && h.effect.source.skill === 'burst');
-  const s1 = character(RAPI_RH).skills.skill1;
+  const s1 = characterOf(RAPI_RH).skills.skill1;
 
   it('lands 11 frames after each burst III, inside Full Burst, at 2808% with the Full Burst bonus', () => {
     expect(bursts.length).toBeGreaterThanOrEqual(2);
@@ -104,7 +96,7 @@ describe('ラピ：レッドフードの S1 の攻撃力▲とバースト III �
       expect(h.frame).toBe(effectFrameOf(bursts[k]!) + 11);
       expect(isInFullBurst(schedule, h.frame)).toBe(true);
       expect(h.hit.multiplier).toBeCloseTo(
-        skillValue(character(RAPI_RH).skills.burst, 5, MAX_SKILL_LEVELS.burst) / 100,
+        skillValue(characterOf(RAPI_RH).skills.burst, 5, MAX_SKILL_LEVELS.burst) / 100,
         9,
       );
       expect(h.hit.boost.fullBurst).toBe(0.5);

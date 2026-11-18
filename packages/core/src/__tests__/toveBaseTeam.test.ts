@@ -1,7 +1,6 @@
 // トーブの基礎版編（plan/design-tove-base.md 2 節）: 宝物なしのトーブ（192）。S1 の代用弾丸（攻撃した時の確率）で付く応急改造を、
 // スタック数の分布の期待値の小片で持ち、S2（フルスタックの時）にはフルスタックの確率を、バースト（応急改造スタックコピー）には
 // バーストの時のスタック数が各段以上の確率を掛ける（C-0986・C-0987）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { effectFrameOf } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
@@ -19,18 +18,12 @@ import type { TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { piecesOf } from './historyHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from './data.ts';
 
 const TOVE = 192;
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
-
 function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   return {
     character: c,
@@ -40,7 +33,7 @@ function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput 
     defenceOverride: computeFixedSpecDefence(c),
     condition: { coreHitRate: 1, distanceBonus: false },
     skills: {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
       treasurePhase,
     },
@@ -137,7 +130,7 @@ describe('トーブの基礎版の確率の件を、1 パス目でも期待値�
   it('counts the expected crit hits of each shot with the S2 Critical Rate up × the probability (as the second pass does)', () => {
     const { plan } = run();
     const fa = plan.shots[1]!;
-    const base = character(301).crit.rate;
+    const base = characterOf(301).crit.rate;
     const crit = piecesOf(plan).filter(
       (p) => p.slotIndex === 1 && (p.effect.stat === 'critRate' || p.effect.stat === 'normalCritRate'),
     );
@@ -151,8 +144,7 @@ describe('トーブの基礎版の確率の件を、1 パス目でも期待値�
 });
 
 describe('確率の状態を読む側の stat の検査', () => {
-  const definition = () =>
-    readJson<{ skills: Record<string, { effects: Record<string, unknown>[] }> }>(`../../data/skills/${TOVE}.json`);
+  const definition = () => rawDefinition<{ skills: Record<string, { effects: Record<string, unknown>[] }> }>(TOVE);
 
   it('rejects a while passive on the chance state with a stat that does not add up linearly', () => {
     for (const stat of ['reloadSpeed', 'hitRate', 'chargeSpeed']) {

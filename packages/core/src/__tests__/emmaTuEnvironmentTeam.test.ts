@@ -1,7 +1,6 @@
 // エマ：TU（93）の S1 の環境コントロール（敵全体の受けるダメージ▲。戦闘開始時と、そこから 30 秒ごと。C-0305）と、
 // S2 のフォーメーションAS の再発動周期 20 秒▼（編成にウンファ：TU がいれば 10 秒ごと。C-0306）。窓の時刻と、射撃の列のグループ分け。
 // F5（plan/design-heal-vocabulary.md 3.1・3.3 節）: S1 の持続回復は、付いた時に 1 回だけ回復を起こす（C-0578。仮説）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -12,18 +11,11 @@ import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFirstFrame, gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { piecesOf } from './historyHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 function fixedSlot(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -31,9 +23,9 @@ function fixedSlot(id: number): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     };
   }

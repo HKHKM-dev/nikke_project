@@ -1,6 +1,5 @@
 // Stage 11 紅蓮BS 編: 紅蓮：ブラックシャドウ（225）を含む編成の射撃の刻み・循環の段・1 発の値・射撃の列のグループ分け
 // （plan/design-stage11-scarlet-bs.md 7.3〜7.5 節）。実測値は録画 0046（単騎）・47（ラム + デルタ + 紅蓮BS（操作））、2026-09-24。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeCadence } from '../cadence.ts';
 import type { EnemyInput } from '../damage.ts';
@@ -12,19 +11,12 @@ import { parseSkillDefinition } from '../skills/types.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun, type SkillHitEvent } from '../frame/plan.ts';
 import { type TeamInput, type TeamSlotInput, type TeamResult } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { cycleItemsOf, piecesOf } from './historyHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 function fixedSlot(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -32,9 +24,9 @@ function fixedSlot(id: number): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     };
   }
@@ -69,23 +61,23 @@ const TIER_DELAYS = [10, 9, 9];
 
 describe('射撃の刻みの較正（3.3・7.3）', () => {
   it('fires 紅蓮BS every 43f and 172f across a reload (録画 0046。0046-21)', () => {
-    const cadence = computeCadence(character(225).shot);
+    const cadence = computeCadence(characterOf(225).shot);
     expect(cadence.shotFrames).toEqual([0, 43, 86, 129, 172, 215, 258, 301, 344]);
     // Stage 22-A: 戦闘開始の 1 発目は 43 − 13 = 30f（0046-19）。リロードの後は 43f のまま
     expect(cadence.firstShotFrames).toBe(30);
     expect(cadence.reloadFirstShotFrames).toBe(43);
     // リロード 2 秒 ÷ 0.017 + 11f（C-0149）を 1 回ごとに丸める（plan/design-reload-rounding.md 案 E）。どのリロードも 172f（実測も 172f）
     expect(cadence.reloadFrames).toBe(129);
-    const frames = planShots([{ character: character(225) }], 1200)[0]!.frames;
+    const frames = planShots([{ character: characterOf(225) }], 1200)[0]!.frames;
     const gaps = frames.slice(1).map((f, i) => f - frames[i]!);
     expect(gaps.slice(0, 10)).toEqual([43, 43, 43, 43, 43, 43, 43, 43, 172, 43]);
   });
 
   it('leaves the other charge weapons as they were (82f)', () => {
     for (const id of [304, 20, 822, 191, 172]) {
-      expect(stanceFrames(character(id).shot)).toBeNull();
+      expect(stanceFrames(characterOf(id).shot)).toBeNull();
     }
-    expect(computeCadence(character(304).shot).shotFrames[1]).toBe(82);
+    expect(computeCadence(characterOf(304).shot).shotFrames[1]).toBe(82);
   });
 });
 

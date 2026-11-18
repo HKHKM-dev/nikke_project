@@ -5,7 +5,6 @@
 // 編成は V-0233 と同じ: I・II に CT 20 秒のココア・ユニを置き、クイーン（真）（III・操作）+ 雪子（III）。III の候補は枠の若い順
 // （burst/controller.ts）なので、I・II の CT が 40 秒だとクイーン（真）が毎回撃ち、雪子は撃たない。CT 20 秒ならクイーン（真）の CT 中に
 // 雪子が撃つ（plan/design-persona.md 9.1 節）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -21,14 +20,10 @@ import {
   type TimedEffect,
 } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData, Element } from '../types.ts';
+import type { Element } from '../types.ts';
 import { applicationsOf, piecesOf, stateItemsOf } from './historyHelpers.ts';
+import { characterOf, rawDefinition } from './data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
 const RAM = 822;
 const DELTA = 20;
 /** CT 20 秒の I・II（V-0233 の編成） */
@@ -41,8 +36,7 @@ const AIGIS = 872;
 const note = (ja: string) => ({ ja, en: ja, kind: 'unimplemented' });
 
 /** data/skills の定義（クイーン（真）・雪子のペルソナの効果は C-0354〜C-0357。仮説） */
-const dataDefinition = (id: number): SkillDefinition =>
-  parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`));
+const dataDefinition = (id: number): SkillDefinition => parseSkillDefinition(rawDefinition(id));
 const queenDefinition = () => dataDefinition(QUEEN);
 const yukikoDefinition = () => dataDefinition(YUKIKO);
 
@@ -67,7 +61,7 @@ function personaOnly(resourceId: number): SkillDefinition {
 }
 
 function fixedSlot(id: number, definition?: SkillDefinition): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,

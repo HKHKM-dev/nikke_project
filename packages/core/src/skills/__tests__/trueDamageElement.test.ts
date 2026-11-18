@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { FIXED_BURST_CYCLE, planFixedCycle } from '../../burst/fixedCycle.ts';
 import { computeTriggerDamage, TRUE_DAMAGE_BUCKET, type TriggerDamageInput } from '../../damage.ts';
-import type { BurstStep, CharacterData, SkillRaw } from '../../types.ts';
+import type { BurstStep, SkillRaw } from '../../types.ts';
 import { gameSecondsToFirstFrame, gameSecondsToFrames } from '../../time.ts';
 import { ZERO_BUFFS, type ChangedWeapon } from '../buffs.ts';
 import { applyComposition, compositionAllows, enemyElementAllows, withCharacterAllows } from '../composition.ts';
@@ -14,6 +14,7 @@ import { triggerFrames, untilNextEndItems, type TimelineSlot } from '../timeline
 import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
 import { itemsOf } from '../holders.ts';
 import { parseSkillDefinition, type SkillDefinition, type SkillEntry, type SkillEffect } from '../types.ts';
+import { characterOf } from '../../__tests__/data.ts';
 
 const FRAMES = gameSecondsToFrames(180);
 const H = FIXED_BURST_CYCLE.normalFrames;
@@ -364,9 +365,7 @@ describe('1 発の式の防御力無視ダメージ', () => {
 });
 
 describe('ウンファ：TU の定義（data/skills/95.json）', () => {
-  const character = JSON.parse(
-    readFileSync(new URL('../../../data/characters/95.json', import.meta.url), 'utf8'),
-  ) as CharacterData;
+  const character = characterOf(95);
   const definition = parseSkillDefinition(
     JSON.parse(readFileSync(new URL('../../../data/skills/95.json', import.meta.url), 'utf8')),
   );

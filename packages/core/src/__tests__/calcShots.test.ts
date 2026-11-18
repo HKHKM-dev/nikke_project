@@ -6,7 +6,6 @@
 // 1 本になった。上の一致はグループへのまとめ（simTeamResult）の確かめとして残す。sim の 2 パス目は区間ごとの二分探索の集計になり、
 // フレームループは trace のときだけ回る。下の describe で、trace の有無で値が変わらないことと、trace のフレームループの出来事を
 // 足すと集計の値になることを固定する。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyEvent, EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -17,18 +16,13 @@ import type { TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { runTeam } from './runTeam.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData, ShotParams } from '../types.ts';
+import type { ShotParams } from '../types.ts';
 import { framesToGameSeconds } from '../time.ts';
 import { makeCharacter } from './fixtures.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../data/characters/${id}.json`);
+  const character = characterOf(id);
   const fixed = computeFixedSpecAttack(character);
   const slot: TeamSlotInput = {
     character,
@@ -36,9 +30,9 @@ function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput 
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
       treasurePhase,
     };

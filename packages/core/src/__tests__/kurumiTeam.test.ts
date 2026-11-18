@@ -12,18 +12,14 @@ import { runTeam } from './runTeam.ts';
 import { dotTickFrames, planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFrame } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { piecesOf } from './historyHelpers.ts';
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
 }
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
-
 function fixedSlot(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -31,9 +27,9 @@ function fixedSlot(id: number): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     };
   }
@@ -59,7 +55,7 @@ const TEAMS: Record<string, { input: TeamInput; kurumi: number }> = {
 
 describe('クルミの定義', () => {
   it('supports S1 (two hackings), S2 (additional damage in full burst, V-0181) and the burst (damage taken up)', () => {
-    const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${KURUMI}.json`));
+    const def = parseSkillDefinition(rawDefinition(KURUMI));
     expect(def.skills.skill1.support).toBe('supported');
     expect(def.skills.skill1.effects).toMatchObject([
       { kind: 'dot', state: 'hacked' },

@@ -3,7 +3,6 @@
 //   2. 射手: ハイド中のリロード（間に合えば満タン・間に合わなければ取り消し）、撃ち直し（MG のレートは最初から、チャージはし直し）
 //   3. バースト: 狙えない間はオートバーストが発動しない
 //   4. 編成: 出来事なしは今と同じ、ありなら合計が下がり注記が出る
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { initialBurstController, stepBurstController, type BurstUnit } from '../burst/controller.ts';
 import { computeCadence } from '../cadence.ts';
@@ -30,10 +29,9 @@ import { DEFAULT_WEAPON_MODEL, isChargeWeapon } from '../weapons.ts';
 import { makeCharacter } from './fixtures.ts';
 import { characterOf } from './teamHelpers.ts';
 import { battleSecondsToFrames, framesToGameSeconds, gameSecondsToFrame } from '../time.ts';
+import { readData } from './data.ts';
 
-const master = parseEnemyPresets(
-  JSON.parse(readFileSync(new URL('../../data/enemies.json', import.meta.url), 'utf8')) as unknown,
-);
+const master = parseEnemyPresets(readData<unknown>('enemies.json'));
 
 describe('出来事のセット（data/enemies.json）', () => {
   it('has the 3-minute-mode jump on every shooting-range preset', () => {

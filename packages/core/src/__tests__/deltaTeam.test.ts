@@ -1,6 +1,5 @@
 // デルタ（20）を含む編成: 定義はダメージに効く効果を持たない（S1 とバーストは noEffect。S2 の防御力▲ は自分に付く効果で、与ダメージの式は
 // 読まない。C-0589）。射撃の列のグループ分け（V-0027、C-0081）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -10,18 +9,11 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
 import { piecesOf } from './historyHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 function fixedSlot(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -29,9 +21,9 @@ function fixedSlot(id: number): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  if (DEFINED.has(id)) {
+  if (DEFINED_IDS.has(id)) {
     slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     };
   }
@@ -59,7 +51,7 @@ const TEAMS: Record<string, { input: TeamInput; delta: number }> = {
 
 describe('デルタの定義', () => {
   it('has no effects in S1 and the burst, and only the DEF up on herself in S2 (C-0081・C-0589)', () => {
-    const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${DELTA}.json`));
+    const def = parseSkillDefinition(rawDefinition(DELTA));
     for (const slot of ['skill1', 'burst'] as const) {
       expect(def.skills[slot].support).toBe('noEffect');
       expect(def.skills[slot].effects).toEqual([]);

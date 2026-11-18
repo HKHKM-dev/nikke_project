@@ -12,18 +12,15 @@ import { runTeam } from './runTeam.ts';
 import { dotTicks, planTeamRun } from '../frame/plan.ts';
 import { countShotsInRanges, type ShotLog } from '../frame/shots.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
 }
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
-const definitionOf = (id: number) => parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`));
+const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 
 function fixedSlot(id: number, definition?: SkillDefinition): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -31,7 +28,7 @@ function fixedSlot(id: number, definition?: SkillDefinition): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  if (definition !== undefined || DEFINED.has(id)) {
+  if (definition !== undefined || DEFINED_IDS.has(id)) {
     slot.skills = { definition: definition ?? definitionOf(id), levels: MAX_SKILL_LEVELS };
   }
   return slot;
@@ -50,7 +47,7 @@ function fullChargeFrames(log: ShotLog): number[] {
 }
 
 const RAVEN = 851;
-const raven = character(RAVEN);
+const raven = characterOf(RAVEN);
 // 撮影の編成（レイヴン単騎。V-0111）と、レイヴンが III の実戦寄りの 5 人（クルミの編成のクルミをレイヴンに替えたもの）
 const TEAMS: Record<string, { input: TeamInput; raven: number }> = {
   '撮影の編成（レイヴン単騎）': { input: team([fixedSlot(RAVEN)], 0), raven: 0 },

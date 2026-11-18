@@ -1,21 +1,17 @@
 // キャラの戦闘力（C-0981。V-0685）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeCombatStat, emptyBuild, OVERLOAD_OPTIONS, type BuildInput } from '../build.ts';
 import { computeCombatPower } from '../combatPower.ts';
-import type { BuildMasters, CharacterData, OverloadOption } from '../types.ts';
+import type { BuildMasters, OverloadOption } from '../types.ts';
+import { characterOf, readData } from './data.ts';
 
-function readJson<T>(relative: string): T {
-  return JSON.parse(readFileSync(new URL(relative, import.meta.url), 'utf8')) as T;
-}
-const loadCharacter = (resourceId: number) => readJson<CharacterData>(`../../data/characters/${resourceId}.json`);
 const masters: BuildMasters = {
-  gear: readJson('../../data/masters/gear.json'),
-  affection: readJson('../../data/masters/affection.json'),
-  cubes: readJson('../../data/masters/cubes.json'),
-  collections: readJson('../../data/masters/collections.json'),
-  recycleRoom: readJson('../../data/masters/recycleRoom.json'),
-  overload: readJson('../../data/masters/overload.json'),
+  gear: readData('masters/gear.json'),
+  affection: readData('masters/affection.json'),
+  cubes: readData('masters/cubes.json'),
+  collections: readData('masters/collections.json'),
+  recycleRoom: readData('masters/recycleRoom.json'),
+  overload: readData('masters/overload.json'),
 };
 const LV1 = { level: 1, grade: 0, core: 0 };
 const SKILLS_1 = { skill1: 1, skill2: 1, burst: 1 };
@@ -72,7 +68,7 @@ describe('computeCombatPower', () => {
     // 攻撃力 540・HP 10350・防御力 81（levelCurve の Lv1）、会心 15%・150%
     // S = 1.075 × 540 × 18 + (10350 + 81 × 100) × 0.7 = 10449 + 12915 = 23364、K = 1.3 + 0.01 × 2 + 0.02 = 1.34
     const result = computeCombatPower(
-      loadCharacter(10),
+      characterOf(10),
       { growth: LV1, build: emptyBuild(), skillLevels: SKILLS_1, treasure: false },
       masters,
     );
@@ -83,7 +79,7 @@ describe('computeCombatPower', () => {
   });
 
   it('adds the skill levels, OL lines, cube and collection to K', () => {
-    const rapi = loadCharacter(10); // AR
+    const rapi = characterOf(10); // AR
     const build: BuildInput = {
       ...emptyBuild(),
       gear: {
@@ -123,7 +119,7 @@ describe('computeCombatPower', () => {
   });
 
   it('adds the treasure stats and power whatever the collection field holds (V-0685)', () => {
-    const laplace = loadCharacter(100);
+    const laplace = characterOf(100);
     const withCollection = { ...emptyBuild(), collection: { rarity: 'SR' as const, level: 5 } };
     const input = { growth: LV1, skillLevels: SKILLS_1, treasure: true };
     const a = computeCombatPower(laplace, { ...input, build: emptyBuild() }, masters);
@@ -138,7 +134,7 @@ describe('computeCombatPower', () => {
   it('rejects skill levels out of 1..10', () => {
     const run = (burst: number) =>
       computeCombatPower(
-        loadCharacter(10),
+        characterOf(10),
         { growth: LV1, build: emptyBuild(), skillLevels: { ...SKILLS_1, burst }, treasure: false },
         masters,
       );

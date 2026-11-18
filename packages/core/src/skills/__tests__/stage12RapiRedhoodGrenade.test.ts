@@ -1,7 +1,6 @@
 // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2〜2.4 節）: ラピ：レッドフード（16）の S2 の粘着榴弾（付着・溜めて
 // フルバーストの始まりに起爆・フルバーストの中はすぐ起爆）、S2 の常時の発射体付着・爆発ダメージ▲と電撃コードへの有利コード、
 // バースト III の付着▲・回数条件▼（録画 0116・0117・0733・0734。V-0537）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { isInFullBurst } from '../../burst/schedule.ts';
 import type { EnemyInput } from '../../damage.ts';
@@ -9,26 +8,22 @@ import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } 
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { GAME_SECONDS_PER_FRAME } from '../../time.ts';
-import type { CharacterData, Element } from '../../types.ts';
+import type { Element } from '../../types.ts';
 import { oneHitValue } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, skillValue } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const RAPI_RH = 16;
 const LITER = 82;
 const DELTA = 20;
-const character = (id: number) => readJson<CharacterData>(`../../../data/characters/${id}.json`);
-const definitionOf = (id: number) => parseSkillDefinition(readJson<unknown>(`../../../data/skills/${id}.json`));
-const rapi = character(RAPI_RH);
+const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
+const rapi = characterOf(RAPI_RH);
 const s2 = (ref: number) => skillValue(rapi.skills.skill2, ref, MAX_SKILL_LEVELS.skill2) / 100;
 const burstValue = (ref: number) => skillValue(rapi.skills.burst, ref, MAX_SKILL_LEVELS.burst);
 
 function slotOf(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   return {
     character: c,
@@ -44,7 +39,7 @@ const enemyOf = (element: Element): EnemyInput => ({ defence: FIXED_SPEC_ENEMY_D
 
 describe('語彙の検証', () => {
   type Raw = { skills: Record<'skill2' | 'burst', { effects: Record<string, unknown>[] }> };
-  const def = readJson<Raw>(`../../../data/skills/${RAPI_RH}.json`);
+  const def = rawDefinition<Raw>(RAPI_RH);
   const withEffect = (slot: 'skill2' | 'burst', index: number, patch: Record<string, unknown>) => {
     const copy = structuredClone(def);
     copy.skills[slot].effects[index] = { ...copy.skills[slot].effects[index], ...patch };

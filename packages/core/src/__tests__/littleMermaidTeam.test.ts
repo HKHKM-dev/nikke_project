@@ -9,7 +9,7 @@ import type { EnemyInput } from '../damage.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { describeEveryShotInOneGroup, fixedSlot, readJson, skillValueOf } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedSlot, rawDefinition, readJson, skillValueOf } from './teamHelpers.ts';
 
 const LITTLE_MERMAID = 513;
 const DELTA = 20;
@@ -50,7 +50,7 @@ const BARRAGE_HITS = skillValueOf(LITTLE_MERMAID, 'skill2', 9);
 const FB_HITS = skillValueOf(LITTLE_MERMAID, 'skill2', 6);
 
 describe('リトルマーメイド（513）の定義', () => {
-  const def = parseSkillDefinition(readJson<unknown>('../../data/skills/513.json'));
+  const def = parseSkillDefinition(rawDefinition(513));
 
   it('writes the ammo triggers as teamAmmo and the Full Burst attack as a 1 s period inside Full Burst', () => {
     expect(def.skills.skill1.effects).toContainEqual(

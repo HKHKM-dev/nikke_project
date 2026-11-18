@@ -4,7 +4,6 @@
 // フルバーストタイムの発動時の効果（C-0323・C-0324）を、録画 0244・0245 と同じ編成で見る（V-0216〜V-0218）。
 // 宝物版 S2 の 3 行目（自分を除く 1 位に「1 発間」のクリティカル確率▲。topAttack × durationShots。C-0334）は、録画 0262 と
 // 同じ編成で見る（V-0229。plan/design-ranked-shot-duration.md）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
@@ -20,13 +19,9 @@ import { applyTreasureToTeam } from '../skills/treasure.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
-import type { CharacterData } from '../types.ts';
+import { characterOf, rawDefinition, readData } from './data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
+const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
 const rangeEnemy: EnemyInput = {
   defence: FIXED_SPEC_ENEMY_DEFENCE,
@@ -39,7 +34,7 @@ const rangeEnemy: EnemyInput = {
 const plainEnemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
 
 function fixedSlot(id: number, auto: boolean, treasurePhase: TreasurePhase = 0): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../data/characters/${id}.json`);
+  const character = characterOf(id);
   const fixed = computeFixedSpecAttack(character);
   return {
     character,
@@ -48,7 +43,7 @@ function fixedSlot(id: number, auto: boolean, treasurePhase: TreasurePhase = 0):
     condition: { coreHitRate: 1, distanceBonus: false },
     ...(auto ? { conditionMode: 'auto' as const } : {}),
     skills: {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
       treasurePhase,
     },

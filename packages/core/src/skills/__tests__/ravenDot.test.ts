@@ -1,20 +1,15 @@
 // レイヴン（851）: スタックする持続ダメージ（dot の maxStacksRef）と、持続ダメージのゲージ（gaugeOnApply・gaugeOnTick）の
 // DSL・解決・tick とスタック（plan/design-raven-s1.md 2 節・4 節・8 節）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { dotTickFrames, dotTickTracker, dotTicks, groupDotsByState } from '../../frame/plan.ts';
 import { gameSecondsToFrame } from '../../time.ts';
-import type { CharacterData } from '../../types.ts';
 import { resolveDotEffects } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const raven = readJson<CharacterData>('../../../data/characters/851.json');
-const raw851 = readJson<{ skills: Record<string, { effects: unknown[] }> }>('../../../data/skills/851.json');
+const raven = characterOf(851);
+const raw851 = rawDefinition<{ skills: Record<string, { effects: unknown[] }> }>(851);
 
 /** 851.json を写して、skill1 の effects を差し替えた定義を検証にかける */
 function withSkill1(effects: unknown[]): unknown {

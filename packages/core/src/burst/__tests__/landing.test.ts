@@ -1,6 +1,5 @@
 // バーストの着弾編（plan/design-burst-landing.md）: 遅れの表、発動のヒット・効果の発火のフレーム、出来事の列、
 // burst スロットの sequential の検証。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { C_ID } from '../../records/ids.ts';
 import {
@@ -27,11 +26,10 @@ import { MAX_SKILL_LEVELS, resolveTimed } from '../../skills/resolve.ts';
 import { applyTreasure } from '../../skills/treasure.ts';
 import { parseSkillDefinition } from '../../skills/types.ts';
 import type { CharacterData } from '../../types.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const ISABEL = 231;
-const character = (id: number): CharacterData =>
-  JSON.parse(readFileSync(new URL(`../../../data/characters/${id}.json`, import.meta.url), 'utf8')) as CharacterData;
-const withTreasure = (id: number): CharacterData => applyTreasure(character(id), null, 3).character;
+const withTreasure = (id: number): CharacterData => applyTreasure(characterOf(id), null, 3).character;
 const activation: BurstActivation = {
   frame: 600,
   step: 'Step3',
@@ -42,32 +40,30 @@ const activation: BurstActivation = {
 
 describe('遅れの表', () => {
   it('has Isabel (C-0165), Helm (C-0167) and returns 0 for characters not in the table', () => {
-    expect(burstDelaysOf(character(ISABEL))).toEqual({ hitFrames: 134, effectFrames: 134 });
+    expect(burstDelaysOf(characterOf(ISABEL))).toEqual({ hitFrames: 134, effectFrames: 134 });
     expect(burstDelaysOf(withTreasure(352))).toEqual({ hitFrames: 59, effectFrames: 0 });
-    expect(burstDelaysOf(character(862))).toEqual({ hitFrames: 0, effectFrames: 0 });
+    expect(burstDelaysOf(characterOf(862))).toEqual({ hitFrames: 0, effectFrames: 0 });
     for (const row of MEASURED_BURST_DELAYS) expect(row.claim).toMatch(C_ID);
   });
 
   it('adds delays only for characters in the table', () => {
-    expect(burstDelaysFieldOf(character(862))).toEqual({});
-    expect(burstDelaysFieldOf(character(ISABEL))).toEqual({ delays: { hitFrames: 134, effectFrames: 134 } });
+    expect(burstDelaysFieldOf(characterOf(862))).toEqual({});
+    expect(burstDelaysFieldOf(characterOf(ISABEL))).toEqual({ delays: { hitFrames: 134, effectFrames: 134 } });
   });
 
   // 効果の窓の終わり（plan/design-burst-effect-window-end.md 案 B）: 印のある行（モダニア）だけ、burstUse の効果の維持を縮める
   it('puts the same burst buffs on the hit only for Soda: Twinkle Bunny (C-0582), not for Rapi, Helm or Isabel', () => {
-    expect(sameActivationBuffsOnHit(character(314))).toBe(true);
-    for (const id of [10, 352, ISABEL]) expect(sameActivationBuffsOnHit(character(id))).toBe(false);
-    expect(burstDelaysOf(character(314))).toEqual({ hitFrames: 96, effectFrames: 0 });
+    expect(sameActivationBuffsOnHit(characterOf(314))).toBe(true);
+    for (const id of [10, 352, ISABEL]) expect(sameActivationBuffsOnHit(characterOf(id))).toBe(false);
+    expect(burstDelaysOf(characterOf(314))).toEqual({ hitFrames: 96, effectFrames: 0 });
   });
 
   it('counts the burst-use windows of Modernia from the activation (C-0452), and leaves other rows alone', () => {
-    expect(burstWindowTrimOf(character(260))).toBe(6);
-    expect(burstWindowTrimOf(character(ISABEL))).toBe(0);
-    expect(burstWindowTrimOf(character(862))).toBe(0);
-    const def = parseSkillDefinition(
-      JSON.parse(readFileSync(new URL('../../../data/skills/260.json', import.meta.url), 'utf8')) as unknown,
-    );
-    const resolved = resolveTimed(def, character(260), MAX_SKILL_LEVELS);
+    expect(burstWindowTrimOf(characterOf(260))).toBe(6);
+    expect(burstWindowTrimOf(characterOf(ISABEL))).toBe(0);
+    expect(burstWindowTrimOf(characterOf(862))).toBe(0);
+    const def = parseSkillDefinition(rawDefinition(260));
+    const resolved = resolveTimed(def, characterOf(260), MAX_SKILL_LEVELS);
     const burst = resolved.filter((r) => r.source.skill === 'burst');
     // 15 秒（882f）から効果の遅れ 6f を引く
     expect(burst.map((r) => [r.stat, r.durationFrames])).toEqual([
@@ -78,16 +74,16 @@ describe('遅れの表', () => {
 
   // 分かれたヒット編（plan/design-burst-split-hits.md 4.5 節）: 宝物の印のある行は、burst が宝物版のときだけ当てる
   it('applies the treasure rows only when the burst is the treasure version (Helm C-0167, Drake C-0228)', () => {
-    expect(isTreasureBurst(character(101))).toBe(false);
+    expect(isTreasureBurst(characterOf(101))).toBe(false);
     expect(isTreasureBurst(withTreasure(101))).toBe(true);
-    expect(isTreasureBurst(applyTreasure(character(101), null, 2).character)).toBe(false);
-    expect(burstDelaysOf(character(352))).toEqual({ hitFrames: 0, effectFrames: 0 });
-    expect(burstDelaysOf(character(101))).toEqual({ hitFrames: 0, effectFrames: 0 });
+    expect(isTreasureBurst(applyTreasure(characterOf(101), null, 2).character)).toBe(false);
+    expect(burstDelaysOf(characterOf(352))).toEqual({ hitFrames: 0, effectFrames: 0 });
+    expect(burstDelaysOf(characterOf(101))).toEqual({ hitFrames: 0, effectFrames: 0 });
     expect(burstDelaysOf(withTreasure(101))).toEqual({ hitFrames: 4, effectFrames: 0, hitOffsets: [0, 27, 55] });
   });
 
   it('splits the hits of Rapi (C-0227) and writes ascending offsets starting at 0 in every row', () => {
-    expect(burstDelaysOf(character(10))).toEqual({ hitFrames: 90, effectFrames: 0, hitOffsets: [0, 7, 14] });
+    expect(burstDelaysOf(characterOf(10))).toEqual({ hitFrames: 90, effectFrames: 0, hitOffsets: [0, 7, 14] });
     for (const row of MEASURED_BURST_DELAYS) {
       const offsets = row.delays.hitOffsets ?? [0];
       expect(offsets[0]).toBe(0);
@@ -167,9 +163,9 @@ describe('出来事の列の burstEffects', () => {
 });
 
 describe('burst スロットの sequential の検証', () => {
-  const raw = JSON.parse(readFileSync(new URL('../../../data/skills/231.json', import.meta.url), 'utf8')) as {
+  const raw = rawDefinition<{
     skills: Record<string, Record<string, unknown> & { effects: unknown[] }>;
-  };
+  }>(231);
 
   it('parses the burst of Isabel', () => {
     expect(parseSkillDefinition(raw).skills.burst.sequential).toBe(true);

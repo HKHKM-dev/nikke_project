@@ -1,7 +1,6 @@
 // ソルジャーE.G.（300）を含む編成（plan/design-soldier-eg.md）。S1: 通常攻撃の命中 1 発ごとに 5% の確率で自分に攻撃力▲（5 秒）を、
 // 期待値の窓（付いている確率 × 値。skills/chance.ts）で持つ（C-0372）。S2 は戦闘開始から 9 秒ごとの最大装弾数▲（C-0369）、バーストは burstDamage（C-0371）。
 // 窓の値の式と、射撃の列のグループ分け、順位（アリスの S1）に期待値の攻撃力が入ること。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
@@ -14,19 +13,15 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import type { CharacterData } from '../types.ts';
 import { piecesOf } from './historyHelpers.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition, readData } from './data.ts';
 
 const SOLDIER = 300;
 const VALUE = 0.0792;
 const DURATION = gameSecondsToFrames(5);
 const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false };
 
-const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
+const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
 const rangeEnemy: EnemyInput = {
   defence: FIXED_SPEC_ENEMY_DEFENCE,
@@ -39,7 +34,7 @@ const rangeEnemy: EnemyInput = {
 const plainEnemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
 
 function fixedSlot(id: number, condition: SlotCondition = MANUAL, auto = false): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../data/characters/${id}.json`);
+  const character = characterOf(id);
   const fixed = computeFixedSpecAttack(character);
   return {
     character,
@@ -48,7 +43,7 @@ function fixedSlot(id: number, condition: SlotCondition = MANUAL, auto = false):
     condition,
     ...(auto ? { conditionMode: 'auto' as const } : {}),
     skills: {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     },
   };
@@ -66,7 +61,7 @@ function s1Windows(input: TeamInput, slotIndex = 0) {
 }
 
 describe('ソルジャーE.G. の定義', () => {
-  const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${SOLDIER}.json`));
+  const def = parseSkillDefinition(rawDefinition(SOLDIER));
 
   it('defines S1 as a chance-based Attack up, S2 as Max Ammo up every 9 s, and the burst as burstDamage', () => {
     expect(def.skills.skill1.support).toBe('supported');

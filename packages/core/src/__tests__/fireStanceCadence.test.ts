@@ -1,5 +1,5 @@
 // 射撃姿勢維持型の武器の射撃の刻み（plan/design-fire-stance-cadence.md。V-0130、C-0149・C-0216・C-0217・C-0218）
-import { readdirSync, readFileSync } from 'node:fs';
+import { readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeCadence } from '../cadence.ts';
 import { chargeShotIntervalFrames, firingParams, stanceFrames, ZERO_FIRING_BUFFS } from '../frame/firing.ts';
@@ -15,28 +15,26 @@ import {
 import { planShots } from '../frame/shots.ts';
 import type { CharacterData } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon } from '../weapons.ts';
-
-const character = (id: number) =>
-  JSON.parse(readFileSync(new URL(`../../data/characters/${id}.json`, import.meta.url), 'utf8')) as CharacterData;
+import { characterOf, readData } from './data.ts';
 
 describe('姿勢の長さと満ちてから撃つまで（設計書 3.3 節）', () => {
   it('derives ⌈S⌉ and H from maintainFireStance and uptypeFireTiming', () => {
-    expect(stanceFrames(character(225).shot)).toEqual({ frames: 14, holdFrames: 1 });
-    expect(stanceFrames(character(851).shot)).toEqual({ frames: 49, holdFrames: 16 });
-    expect(stanceFrames(character(811).shot)).toEqual({ frames: 50, holdFrames: 24 });
-    expect(stanceFrames(character(304).shot)).toBeNull();
+    expect(stanceFrames(characterOf(225).shot)).toEqual({ frames: 14, holdFrames: 1 });
+    expect(stanceFrames(characterOf(851).shot)).toEqual({ frames: 49, holdFrames: 16 });
+    expect(stanceFrames(characterOf(811).shot)).toEqual({ frames: 50, holdFrames: 24 });
+    expect(stanceFrames(characterOf(304).shot)).toBeNull();
   });
 });
 
 describe('射撃の姿勢の長さの倍率（plan/design-a2-bmode-stance.md 3.2 節）', () => {
   it('scales S before rounding: A2 in Mode B is 25f and 12f (1084-15・1124-12)', () => {
-    expect(stanceFrames(character(811).shot, 0.5)).toEqual({ frames: 25, holdFrames: 12 });
-    expect(stanceFrames(character(811).shot, 1)).toEqual(stanceFrames(character(811).shot));
-    expect(stanceFrames(character(304).shot, 0.5)).toBeNull();
+    expect(stanceFrames(characterOf(811).shot, 0.5)).toEqual({ frames: 25, holdFrames: 12 });
+    expect(stanceFrames(characterOf(811).shot, 1)).toEqual(stanceFrames(characterOf(811).shot));
+    expect(stanceFrames(characterOf(304).shot, 0.5)).toBeNull();
   });
 
   it('fires A2 in Mode B every 74f (35.88%) and 82f (23.02%) (1084-11・1124-11)', () => {
-    const shot = character(811).shot;
+    const shot = characterOf(811).shot;
     const interval = (chargeSpeed: number) =>
       chargeShotIntervalFrames(
         firingParams(shot, { ...ZERO_FIRING_BUFFS, chargeSpeed, fireStanceScale: 0.5 }),
@@ -49,7 +47,7 @@ describe('射撃の姿勢の長さの倍率（plan/design-a2-bmode-stance.md 3.2
 
 describe('発と発の間・ハイドからの 1 発目・リロード', () => {
   it('fires レイヴン every 119f and 86f from hiding (0122-13・0122-14)', () => {
-    const c = computeCadence(character(851).shot);
+    const c = computeCadence(characterOf(851).shot);
     expect(c.shotFrames).toEqual([0, 119, 238, 357, 476, 595]);
     expect(c.firstShotFrames).toBe(86);
     expect(c.reloadFirstShotFrames).toBe(119);
@@ -58,7 +56,7 @@ describe('発と発の間・ハイドからの 1 発目・リロード', () => {
   });
 
   it('fires A2 every 120f and 94f from hiding (0123-06・0123-07)', () => {
-    const c = computeCadence(character(811).shot);
+    const c = computeCadence(characterOf(811).shot);
     expect(c.shotFrames).toEqual([0, 120, 240, 360, 480, 600]);
     expect(c.firstShotFrames).toBe(94);
     expect(c.reloadFirstShotFrames).toBe(120);
@@ -67,7 +65,7 @@ describe('発と発の間・ハイドからの 1 発目・リロード', () => {
   });
 
   it('keeps 紅蓮BS at 43f, 30f from hiding and 172f across a reload (C-0149・C-0218)', () => {
-    const c = computeCadence(character(225).shot);
+    const c = computeCadence(characterOf(225).shot);
     expect(c.shotFrames[1]).toBe(43);
     expect(c.firstShotFrames).toBe(30);
     // ⌈117.65 + 11 − 1.1 + 11.9⌉ − 11 = 129。リロードを挟む間は 129 + 43 = 172f（0046-21）
@@ -75,7 +73,7 @@ describe('発と発の間・ハイドからの 1 発目・リロード', () => {
   });
 
   it('crosses a reload in reload + 11f + the interval (レイヴン 247〜248f)', () => {
-    const frames = planShots([{ character: character(851) }], 1200)[0]!.frames;
+    const frames = planShots([{ character: characterOf(851) }], 1200)[0]!.frames;
     const gaps = frames.slice(1).map((f, i) => f - frames[i]!);
     expect(frames[0]).toBe(86);
     expect(gaps.slice(0, 5)).toEqual([119, 119, 119, 119, 119]);
@@ -86,7 +84,7 @@ describe('発と発の間・ハイドからの 1 発目・リロード', () => {
 describe('部分チャージ（設計書 3.2 節）', () => {
   /** 1 発撃った直後から n フレーム進めた射手 */
   const afterShot = (id: number, n: number) => {
-    const shot = character(id).shot;
+    const shot = characterOf(id).shot;
     const params = firingParams(shot);
     const state = initialShooter(shot);
     while (!stepShooter(state, shot, DEFAULT_WEAPON_MODEL, params, false));
@@ -162,7 +160,7 @@ describe('部分チャージ（設計書 3.2 節）', () => {
 describe('敵のジャンプの明けからの 1 発目（C-0229。V-0143）', () => {
   /** 1 発撃って 20f 後に窓に入り、200f 後に明けたときの、明けから次に撃つまでのフレーム数 */
   const fromWindowEnd = (id: number) => {
-    const shot = character(id).shot;
+    const shot = characterOf(id).shot;
     const params = firingParams(shot);
     const state = initialShooter(shot);
     while (!stepShooter(state, shot, DEFAULT_WEAPON_MODEL, params, false));
@@ -183,7 +181,7 @@ describe('敵のジャンプの明けからの 1 発目（C-0229。V-0143）', (
   });
 
   it('leaves the SR as from the battle start (11f aim at both. C-0232)', () => {
-    const ram = character(20).shot;
+    const ram = characterOf(20).shot;
     expect(ram.fireType).toBe('Instant');
     expect(fromWindowEnd(20)).toBe(computeCadence(ram).firstShotFrames);
     expect(fromWindowEnd(822)).toBe(70);
@@ -192,10 +190,7 @@ describe('敵のジャンプの明けからの 1 発目（C-0229。V-0143）', (
   it('identifies the RL by a projectile fireType (every RL and no other weapon)', () => {
     const all = readdirSync(new URL('../../data/characters/', import.meta.url))
       .filter((f) => /^\d+\.json$/.test(f))
-      .map(
-        (f) =>
-          JSON.parse(readFileSync(new URL(`../../data/characters/${f}`, import.meta.url), 'utf8')) as CharacterData,
-      );
+      .map((f) => readData<CharacterData>(`characters/${f}`));
     expect(all.length).toBeGreaterThan(200);
     // 2026-10-29 の取り込みで増えた紅蓮：神殺（472。AR）の InstantBox は飛ぶ弾ではない（弾速 0。damage.ts が未対応の注記を出す）。
     // チャージ武器でないので、入力が UP のチャージ武器を fireType で見分けるところ（weapons.ts）には掛からない

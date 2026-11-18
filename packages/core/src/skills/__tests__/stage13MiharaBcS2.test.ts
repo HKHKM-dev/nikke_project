@@ -1,22 +1,17 @@
 // 2 段目の段 13 の PR 3（plan/design-skill-stage13.md 2.6・3.3 節）: ミハラ：ボンディングチェーン（162）の S2 のフルバースト中の
 // チェーンバインドのスタック量▲（stackChange の target enemy。録画 0748・0749・0754・0755。V-0548、C-0754・C-0751）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamSlotInput } from '../../team.ts';
-import type { CharacterData } from '../../types.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
 const MIHARA_BC = 162;
-const raw = readJson<{ skills: { skill2: Effects } }>(`../../../data/skills/${MIHARA_BC}.json`);
+const raw = rawDefinition<{ skills: { skill2: Effects } }>(MIHARA_BC);
 
 describe('語彙の検証', () => {
   const up = raw.skills.skill2.effects.findIndex((e) => e.kind === 'stackChange');
@@ -45,7 +40,7 @@ describe('語彙の検証', () => {
 
 describe('ラム・デルタ・シンデレラ・ミハラ：ボンディングチェーン（V-0548 の撮影 C の編成）', () => {
   const ids = [822, 20, 511, MIHARA_BC] as const;
-  const characters = ids.map((id) => readJson<CharacterData>(`../../../data/characters/${id}.json`));
+  const characters = ids.map((id) => characterOf(id));
   const slots = characters.map((character): TeamSlotInput => {
     const fixed = computeFixedSpecAttack(character);
     return {
@@ -55,7 +50,7 @@ describe('ラム・デルタ・シンデレラ・ミハラ：ボンディング�
       hpOverride: computeFixedSpecHp(character),
       condition: { coreHitRate: 1, distanceBonus: true, hitRate: 1 },
       skills: {
-        definition: parseSkillDefinition(readJson<unknown>(`../../../data/skills/${character.resourceId}.json`)),
+        definition: parseSkillDefinition(rawDefinition(character.resourceId)),
         levels: MAX_SKILL_LEVELS,
       },
     };

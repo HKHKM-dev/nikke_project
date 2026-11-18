@@ -1,25 +1,20 @@
 // 2 段目の段 11 の PR 3（plan/design-skill-stage11.md 2.3・3.3 節）: 回数のきっかけの発火の窓 firesDuring: "weaponChange"（モラン S1 の
 // 「自分が武器変更状態の場合、通常攻撃が N 回命中した時」。H1）と、バーストスキルのクールタイム▼ の維持の付いた形（stat burstCooldown。
 // T4。宝物版 S1 の熱血）。使い手はモラン（281）のバースト・S1（V-0530）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { gameSecondsToFrames } from '../../time.ts';
-import type { CharacterData } from '../../types.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { createTriggerTracker, type FrameEvents, type ShotEvent } from '../triggers.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 const MORAN = 281;
-const character = readJson<CharacterData>(`../../../data/characters/${MORAN}.json`);
-const definition = parseSkillDefinition(readJson<unknown>(`../../../data/skills/${MORAN}.json`));
+const character = characterOf(MORAN);
+const definition = parseSkillDefinition(rawDefinition(MORAN));
 
 const none = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
 function withSkill1(...effects: unknown[]): unknown {

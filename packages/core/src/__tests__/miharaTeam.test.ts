@@ -2,7 +2,6 @@
 // スタック適用）と、バーストの「ペインロード2の状態なら」の追加ダメージ。追加ダメージは同じ発動で付いたペインロード 2 を見ず、
 // 3 回目のバーストから出る（V-0432）。ミハラのバースト編（plan/design-mihara-burst-hits.md）: バーストスキルダメージは 3 等分の 3 ヒット
 // （C-0564・C-0575）、追加ダメージは 3 ヒットのそれぞれに出てフルバースト補正が乗る（C-0565）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
@@ -15,19 +14,12 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition, staticStatesOf } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import type { CharacterData } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
 
 const MIHARA = 161;
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
-const definition = (id: number) => parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`));
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-
+const definition = (id: number) => parseSkillDefinition(rawDefinition(id));
 function slotOf(id: number): TeamSlotInput {
-  const c = character(id);
+  const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
   const slot: TeamSlotInput = {
     character: c,
@@ -35,7 +27,7 @@ function slotOf(id: number): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
   };
-  if (DEFINED.has(id)) slot.skills = { definition: definition(id), levels: MAX_SKILL_LEVELS };
+  if (DEFINED_IDS.has(id)) slot.skills = { definition: definition(id), levels: MAX_SKILL_LEVELS };
   return slot;
 }
 
@@ -54,7 +46,7 @@ describe('ミハラ（161）の定義', () => {
       condition: { selfState: { state: 'highwayToHell2', present: true } },
       perBurstHit: true,
     });
-    expect(burstDelaysOf(character(MIHARA))).toEqual({ hitFrames: 17, effectFrames: 0, hitOffsets: [0, 10, 22] });
+    expect(burstDelaysOf(characterOf(MIHARA))).toEqual({ hitFrames: 17, effectFrames: 0, hitOffsets: [0, 10, 22] });
   });
 
   it('gives the additional damage from the third Burst on, not seeing Highway to Hell 2 granted by the same Burst (V-0432。ラム + デルタ + ミハラ)', () => {
@@ -92,7 +84,7 @@ describe('ミハラ（161）の定義', () => {
   });
 
   it('rejects perBurstHit without the trigger burstUse or with delayFrames', () => {
-    const def = readJson<{ skills: { burst: { effects: Record<string, unknown>[] } } }>('../../data/skills/161.json');
+    const def = rawDefinition<{ skills: { burst: { effects: Record<string, unknown>[] } } }>(161);
     const withEffect = (patch: Record<string, unknown>) => {
       const copy = structuredClone(def);
       copy.skills.burst.effects[1] = { ...copy.skills.burst.effects[1], ...patch };

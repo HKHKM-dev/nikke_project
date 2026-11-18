@@ -1,6 +1,5 @@
 // ウンファ：タクティカル・アップ（95）のバーストの炸裂弾の時刻（plan/design-eunhwa-tu-burst-shot-timing.md）: 的の表の
 // weaponChangeFirstHitFrames があれば、使用武器変更の最初の発を、発動の印（六角形の替わり目）+ 帯の値のフレームに撃つ（C-0509）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { hexagonFrameOf } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
@@ -14,13 +13,10 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import type { CharacterData, TargetProfile } from '../types.ts';
+import type { TargetProfile } from '../types.ts';
+import { characterOf, rawDefinition, readData } from './data.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const rawMaster = readJson<Record<string, unknown>>('../../data/enemies.json');
+const rawMaster = readData<Record<string, unknown>>('enemies.json');
 const master = parseEnemyPresets(rawMaster);
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
 
@@ -41,7 +37,7 @@ const withoutTable = rangeEnemy(profileWithoutTable);
 const FRAMES = gameSecondsToFrames(180);
 
 function fixedSlot(id: number): TeamSlotInput {
-  const character = readJson<CharacterData>(`../../data/characters/${id}.json`);
+  const character = characterOf(id);
   const fixed = computeFixedSpecAttack(character);
   return {
     character,
@@ -49,7 +45,7 @@ function fixedSlot(id: number): TeamSlotInput {
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false },
     skills: {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(rawDefinition(id)),
       levels: MAX_SKILL_LEVELS,
     },
   };

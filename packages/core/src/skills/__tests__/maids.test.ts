@@ -1,20 +1,15 @@
 // メイド編（plan/design-maids.md 2 節）: timed の perCount（X% × 〈状態〉のスタック数）・shotPause の { applied }（気絶）・発動の回数の
 // 種類 fullBurstEnd の語彙の検証
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { resolveAppliedPauses } from '../burstDamage.ts';
 import { namedStateIsDebuff } from '../states.ts';
 import { parseSkillDefinition } from '../types.ts';
+import { rawDefinition } from '../../__tests__/data.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
 type Raw = { skills: { skill1: Effects; skill2: Effects; burst: Effects } };
-
-function readDef(id: number): Raw {
-  return JSON.parse(readFileSync(new URL(`../../../data/skills/${id}.json`, import.meta.url), 'utf8')) as Raw;
-}
-
-const MAST = readDef(354);
-const ANCHOR = readDef(355);
+const MAST = rawDefinition<Raw>(354);
+const ANCHOR = rawDefinition<Raw>(355);
 const reload = MAST.skills.skill2.effects.findIndex((e) => e.stat === 'reloadSpeed');
 const pause = MAST.skills.skill2.effects.findIndex((e) => e.kind === 'shotPause');
 
@@ -63,7 +58,7 @@ describe('語彙の検証', () => {
 
 // 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除（removeDebuff）の読み込み
 describe('removeDebuff の検証', () => {
-  const COCOA = readDef(311);
+  const COCOA = rawDefinition<Raw>(311);
   const burst = COCOA.skills.burst.effects.findIndex((e) => e.kind === 'removeDebuff');
   const s1 = COCOA.skills.skill1.effects.findIndex((e) => e.kind === 'removeDebuff');
 

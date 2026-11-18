@@ -1,6 +1,5 @@
 // 分類の設計書の論点 7（plan/design-indirect-notes.md）: 間接の notes（indirect・path）と読む側の印（reads）の読み込み、最小構成の検査、
 // キャラ単位の判定、plan/skills.md の表示。録画とキャラは実データを使う（件数や ID の一覧は直書きしない）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { loadClaims, loadRecordsData, loadRecordingsFile, recordingMap } from '../../../scripts/records-data.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../../skills/types.ts';
@@ -10,6 +9,7 @@ import type { Observation } from '../observations/types.ts';
 import type { RecordingEntry } from '../recordings.ts';
 import { elementsOf, notRelevantReason, unconfirmedReason, type RelevanceContext } from '../relevance.ts';
 import { renderSkills } from '../skills.ts';
+import { rawDefinition } from '../../__tests__/data.ts';
 
 const empty = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
 const parse = (skill1: Record<string, unknown>) =>
@@ -81,9 +81,9 @@ const named = (r: RecordingEntry, name: string, c: RelevanceContext = ctx) =>
 
 // デルタ S2 の防御力▲ は効果にした（2 段目の段 7。C-0589）。防御力の間接の notes のまま読む検査は、以前の定義（S2 が間接の notes だけ）に
 // デルタを差し替えた文脈で行う（録画 0162・0063 の編成と、読む側のアニス：スターは実データ）
-const oldDeltaRaw = JSON.parse(readFileSync(new URL('../../../data/skills/20.json', import.meta.url), 'utf8')) as {
+const oldDeltaRaw = rawDefinition<{
   skills: Record<string, unknown>;
-};
+}>(20);
 oldDeltaRaw.skills.skill2 = {
   effects: [],
   notes: [

@@ -1,5 +1,4 @@
 // ShiftyPad の育成データの写し方（plan/design-build-snapshot.md 3 節）。データは作った値（オーナーの実データは使わない）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { validateBuild } from '../build.ts';
 import { MASTER_FILES } from '../load.ts';
@@ -17,12 +16,10 @@ import {
   type ShiftyPadRaw,
 } from '../shiftypad.ts';
 import type { BuildMasters, CharacterIndexEntry } from '../types.ts';
+import { readData } from './data.ts';
 
 const masters = Object.fromEntries(
-  Object.entries(MASTER_FILES).map(([k, f]) => [
-    k,
-    JSON.parse(readFileSync(new URL(`../../data/masters/${f}`, import.meta.url), 'utf8')) as unknown,
-  ]),
+  Object.entries(MASTER_FILES).map(([k, f]) => [k, readData<unknown>(`masters/${f}`)]),
 ) as BuildMasters;
 
 const entry = (resourceId: number, nameCode: number, over: Partial<CharacterIndexEntry> = {}): CharacterIndexEntry => ({

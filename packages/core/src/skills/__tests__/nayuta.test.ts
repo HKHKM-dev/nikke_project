@@ -1,22 +1,17 @@
 // ナユタ編（plan/design-nayuta.md 2.5・2.6 節）: スタック量増減効果無効（stackImmutable）・使用武器の変更の状態（weaponChange の state）・
 // チャージしない武器からチャージ武器への変更の語彙の検証と、Lv ごとの解決値
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { withAddedEffects } from '../../records/observations/setup.ts';
-import type { CharacterData } from '../../types.ts';
 import { isChargeWeapon } from '../../weapons.ts';
 import { firesChargeShots, MAX_SKILL_LEVELS, resolveStateGrants, resolveTimed } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
 type Raw = { skills: { skill1: Effects; skill2: Effects; burst: Effects } };
 const NAYUTA = 223;
-const raw = readJson<Raw>(`../../../data/skills/${NAYUTA}.json`);
-const character = readJson<CharacterData>(`../../../data/characters/${NAYUTA}.json`);
+const raw = rawDefinition<Raw>(NAYUTA);
+const character = characterOf(NAYUTA);
 const absorption = raw.skills.skill2.effects.findIndex((e) => e.state === 'memoryAbsorption');
 
 /** 定義の記憶燃焼（使用武器の変更）の番号 */
