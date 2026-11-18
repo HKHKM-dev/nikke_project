@@ -5,13 +5,12 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
-import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { characterOf, rawDefinition, readData } from './data.ts';
+import type { TeamInput } from '../team.ts';
+import { readData } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
@@ -24,26 +23,9 @@ const rangeEnemy: EnemyInput = {
   landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
 };
 const plainEnemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
-
-function fixedSlot(id: number, auto: boolean): TeamSlotInput {
-  const character = characterOf(id);
-  const fixed = computeFixedSpecAttack(character);
-  return {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-    ...(auto ? { conditionMode: 'auto' as const } : {}),
-    skills: {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-    },
-  };
-}
-
 // V-0116 の撮影と同じ: アニス：スター単騎・操作・オートバースト OFF・BigArms 灼熱の 3 分モード（私だけの星）
 const SOLO: TeamInput = {
-  slots: [fixedSlot(17, true)],
+  slots: [fixedSlot(17, { conditionMode: 'auto' })],
   enemy: rangeEnemy,
   durationSeconds: 180,
   burst: false,
@@ -51,7 +33,7 @@ const SOLO: TeamInput = {
 };
 // V-0115 の録画 0150 と同じ: アニス：スター（AI）+ I-DOLL・フラワー（操作・撃たないが、モデルは撃つ）（みんなの星）
 const WITH_FLOWER: TeamInput = {
-  slots: [fixedSlot(17, true), fixedSlot(304, true)],
+  slots: [fixedSlot(17, { conditionMode: 'auto' }), fixedSlot(304, { conditionMode: 'auto' })],
   enemy: rangeEnemy,
   durationSeconds: 180,
   burst: false,
@@ -59,13 +41,7 @@ const WITH_FLOWER: TeamInput = {
 };
 // 実戦寄り（アニス：スター + クラウン + デルタ + アリス + モダニア）。ほかに基本バースト段階 1 がいないので私だけの星。バーストあり
 const PRACTICAL: TeamInput = {
-  slots: [
-    fixedSlot(17, false),
-    fixedSlot(330, false),
-    fixedSlot(20, false),
-    fixedSlot(191, false),
-    fixedSlot(260, false),
-  ],
+  slots: [fixedSlot(17), fixedSlot(330), fixedSlot(20), fixedSlot(191), fixedSlot(260)],
   enemy: plainEnemy,
   durationSeconds: 180,
   burst: true,
@@ -74,18 +50,17 @@ const PRACTICAL: TeamInput = {
 // 同じ編成のクラウンをリター（基本バースト段階 1）に替えたもの（みんなの星）
 const PRACTICAL_WITH_LITER: TeamInput = {
   ...PRACTICAL,
-  slots: [
-    fixedSlot(17, false),
-    fixedSlot(82, false),
-    fixedSlot(20, false),
-    fixedSlot(191, false),
-    fixedSlot(260, false),
-  ],
+  slots: [fixedSlot(17), fixedSlot(82), fixedSlot(20), fixedSlot(191), fixedSlot(260)],
 };
 
 // V-0121 の撮影と同じ: アニス：スター（操作）+ I-DOLL・フラワー + デルタ + イサベル、オートバースト ON（みんなの星）
 const REENTRY: TeamInput = {
-  slots: [fixedSlot(17, true), fixedSlot(304, true), fixedSlot(20, true), fixedSlot(231, true)],
+  slots: [
+    fixedSlot(17, { conditionMode: 'auto' }),
+    fixedSlot(304, { conditionMode: 'auto' }),
+    fixedSlot(20, { conditionMode: 'auto' }),
+    fixedSlot(231, { conditionMode: 'auto' }),
+  ],
   enemy: rangeEnemy,
   durationSeconds: 180,
   burst: true,
@@ -94,7 +69,11 @@ const REENTRY: TeamInput = {
 
 // V-0122 の撮影（録画 0162）と同じ: アニス：スター（操作）+ デルタ + イサベル、オートバースト ON（私だけの星）
 const CT_CUT: TeamInput = {
-  slots: [fixedSlot(17, true), fixedSlot(20, true), fixedSlot(231, true)],
+  slots: [
+    fixedSlot(17, { conditionMode: 'auto' }),
+    fixedSlot(20, { conditionMode: 'auto' }),
+    fixedSlot(231, { conditionMode: 'auto' }),
+  ],
   enemy: rangeEnemy,
   durationSeconds: 180,
   burst: true,
@@ -144,7 +123,14 @@ describe('みんなの星のバースト再突入 I 段階（V-0121）', () => {
   });
 
   it('does not re-enter with My Own Star (no other Burst I ally)', () => {
-    const solo = runSimulation({ ...REENTRY, slots: [fixedSlot(17, true), fixedSlot(20, true), fixedSlot(231, true)] });
+    const solo = runSimulation({
+      ...REENTRY,
+      slots: [
+        fixedSlot(17, { conditionMode: 'auto' }),
+        fixedSlot(20, { conditionMode: 'auto' }),
+        fixedSlot(231, { conditionMode: 'auto' }),
+      ],
+    });
     expect(solo.schedule!.activations[0]!.enteredStep).toBe('Step2');
   });
 });

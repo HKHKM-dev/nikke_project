@@ -3,44 +3,30 @@
 import { describe, expect, it } from 'vitest';
 import { effectFrameOf } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
-import {
-  computeFixedSpecAttack,
-  computeFixedSpecDefence,
-  computeFixedSpecHp,
-  FIXED_SPEC_ENEMY_DEFENCE,
-} from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import type { TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { characterOf, rawDefinition } from './data.ts';
+import type { TeamInput } from '../team.ts';
+import { rawDefinition } from './data.ts';
+import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
 
 const TOOB = 192;
 const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
-
-function fixedSlot(id: number, definition: SkillDefinition, treasurePhase: TreasurePhase = 0): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  return {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    hpOverride: computeFixedSpecHp(c),
-    defenceOverride: computeFixedSpecDefence(c),
-    condition: { coreHitRate: 1, distanceBonus: false },
-    skills: { definition, levels: MAX_SKILL_LEVELS, treasurePhase },
-  };
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { hp: true, defence: true };
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
 
 /** 録画 0676・0677 と同じ編成（1 枠目トーブ・2 枠目ソルジャーF.A.（SG）・3 枠目 I-DOLL・サン（操作）） */
 function run(toob: SkillDefinition = definitionOf(TOOB)) {
   const input: TeamInput = {
-    slots: [fixedSlot(TOOB, toob, 3), fixedSlot(301, definitionOf(301)), fixedSlot(308, definitionOf(308))],
+    slots: [
+      fixedSlot(TOOB, { ...SLOT_OPTIONS, parsed: toob, treasurePhase: 3 }),
+      fixedSlot(301, { ...SLOT_OPTIONS, parsed: definitionOf(301) }),
+      fixedSlot(308, { ...SLOT_OPTIONS, parsed: definitionOf(308) }),
+    ],
     enemy,
     durationSeconds: 180,
     burst: true,

@@ -3,15 +3,14 @@
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { flightFramesAt, slotFlightsOf } from '../frame/landing.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
-import { validateObstacleBreaks, type TeamInput, type TeamSlotInput } from '../team.ts';
+import { validateObstacleBreaks, type TeamInput } from '../team.ts';
 import { gameSecondsToFirstFrame, gameSecondsToFrames } from '../time.ts';
 import type { TargetProfile } from '../types.ts';
-import { characterOf, rawDefinition, readData } from './data.ts';
+import { readData } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 const rawMaster = readData<Record<string, unknown>>('enemies.json');
 const master = parseEnemyPresets(rawMaster);
@@ -31,23 +30,6 @@ function rangeEnemy(target: TargetProfile): EnemyInput {
 const { flightFrames: _flight, ...profileWithoutFlight } = profile;
 const withFlight = rangeEnemy(profile);
 const withoutFlight = rangeEnemy(profileWithoutFlight);
-
-function fixedSlot(id: number): TeamSlotInput {
-  const character = characterOf(id);
-  const fixed = computeFixedSpecAttack(character);
-  return {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    // 条件は手入力（照合の既定）。飛ぶ時間は条件の決め方に依らず、的の表と着地点で決まる（3.3 節）
-    condition: { coreHitRate: 1, distanceBonus: false },
-    skills: {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-    },
-  };
-}
-
 // 録画 0164 と同じ: アニス：スター単騎・操作・オートバースト ON・BigArms 灼熱の 3 分モード
 function solo(enemy: EnemyInput, extra: Partial<TeamInput> = {}): TeamInput {
   return { slots: [fixedSlot(17)], enemy, durationSeconds: 180, burst: true, controlledSlot: 0, ...extra };

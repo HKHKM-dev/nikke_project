@@ -143,7 +143,7 @@ describe('チャージ武器に替える使用武器変更の発（ナユタの�
   );
   const input = {
     ...fixedTeam([LITER, NAYUTA, ALICE], 1),
-    slots: [fixedSlot(LITER), fixedSlot(NAYUTA, json), fixedSlot(ALICE)],
+    slots: [fixedSlot(LITER), fixedSlot(NAYUTA, { definition: json }), fixedSlot(ALICE)],
   };
   const result = runSimulation(input);
   const log = result.shots[1]!;

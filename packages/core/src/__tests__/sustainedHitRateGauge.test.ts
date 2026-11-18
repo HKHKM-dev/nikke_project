@@ -6,17 +6,16 @@
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runFirstPass } from '../frame/firstPass.ts';
 import { bulletHitRateWithHitRateUp, hitRateSpanWith, hitRateSpansOf } from '../frame/landing.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { itemsOf } from '../skills/holders.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
 import { toTimelineSlots, type TeamInput, type TeamSlotInput } from '../team.ts';
 import { battleSecondsToFrames } from '../time.ts';
-import { characterOf, rawDefinition, readData } from './data.ts';
+import { readData } from './data.ts';
+import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
 
 const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
@@ -28,22 +27,8 @@ const enemy: EnemyInput = {
   target: profile,
   landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
 };
-
-function fixedSlot(id: number, auto = true): TeamSlotInput {
-  const character = characterOf(id);
-  const fixed = computeFixedSpecAttack(character);
-  return {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 0.3, distanceBonus: true },
-    ...(auto ? { conditionMode: 'auto' as const } : {}),
-    skills: {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-    },
-  };
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 0.3, distanceBonus: true } };
 
 const team = (slots: TeamSlotInput[], sustained = true): TeamInput => ({
   slots,
@@ -59,11 +44,11 @@ const MISATO_S1 = 0.0504;
 
 describe('1 パス目で持続の命中率▲の窓を追う', () => {
   describe('ミサト単騎（SMG・条件が自動）', () => {
-    const on = planTeamRun(team([fixedSlot(833)]));
-    const off = planTeamRun(team([fixedSlot(833)], false));
+    const on = planTeamRun(team([fixedSlot(833, { ...SLOT_OPTIONS, conditionMode: 'auto' })]));
+    const off = planTeamRun(team([fixedSlot(833, { ...SLOT_OPTIONS, conditionMode: 'auto' })], false));
     const spans = hitRateSpansOf(on.landing, 1)[0]!;
     const spanAt = (frame: number) => spans.find((s) => s.start <= frame && frame < s.end)!;
-    const misato = fixedSlot(833);
+    const misato = fixedSlot(833, { ...SLOT_OPTIONS, conditionMode: 'auto' });
     const planned = (frame: number) => spanAt(frame).hitRate;
     /**
      * 持続の▲ k 段での、計画の値に対する比。中遠のような配分の区間は着地点ごとに H2 を当ててから混ぜる（SMG の中遠は
@@ -114,7 +99,7 @@ describe('1 パス目で持続の命中率▲の窓を追う', () => {
   });
 
   it('keeps the hit rate items per stack', () => {
-    const plan = planTeamRun(team([fixedSlot(833)]));
+    const plan = planTeamRun(team([fixedSlot(833, { ...SLOT_OPTIONS, conditionMode: 'auto' })]));
     const hits = itemsOf(plan.history, { stat: 'hitRate' });
     expect(hits.length).toBeGreaterThan(0);
     expect(hits.some((i) => (i.stack ?? 0) > 1)).toBe(true);
@@ -122,7 +107,11 @@ describe('1 パス目で持続の命中率▲の窓を追う', () => {
 
   describe('アスカのバースト（設計書 0.1 節）', () => {
     // リター（I）・デルタ（II）・アスカ（III）
-    const slots = () => [fixedSlot(82), fixedSlot(20), fixedSlot(830)];
+    const slots = () => [
+      fixedSlot(82, { ...SLOT_OPTIONS, conditionMode: 'auto' }),
+      fixedSlot(20, { ...SLOT_OPTIONS, conditionMode: 'auto' }),
+      fixedSlot(830, { ...SLOT_OPTIONS, conditionMode: 'auto' }),
+    ];
     const plan = planTeamRun(team(slots()));
     const off = planTeamRun(team(slots(), false));
 
@@ -146,7 +135,7 @@ describe('1 パス目で持続の命中率▲の窓を追う', () => {
   it('does not apply the timed hit rate to manual slots', () => {
     const { first } = (() => {
       // 2 段目の段 8: ミサトの S1 の回復の対象（lowestHpRatio）は編成の段で決まるので、planTeamRun と同じく先に通す
-      const input = applyCompositionToTeam(team([fixedSlot(833, false)]));
+      const input = applyCompositionToTeam(team([fixedSlot(833, SLOT_OPTIONS)]));
       const frames = battleSecondsToFrames(input.durationSeconds);
       return {
         first: runFirstPass(toTimelineSlots(input.slots), {
@@ -160,8 +149,8 @@ describe('1 パス目で持続の命中率▲の窓を追う', () => {
       };
     })();
     expect(first.shots[0]!.frames.length).toBeGreaterThan(0);
-    const manualOn = planTeamRun(team([fixedSlot(833, false)]));
-    const manualOff = planTeamRun(team([fixedSlot(833, false)], false));
+    const manualOn = planTeamRun(team([fixedSlot(833, SLOT_OPTIONS)]));
+    const manualOff = planTeamRun(team([fixedSlot(833, SLOT_OPTIONS)], false));
     expect(manualOn.schedule).toEqual(manualOff.schedule);
   });
 });

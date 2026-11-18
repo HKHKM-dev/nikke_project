@@ -183,8 +183,23 @@
 - 本体（テストでないファイル）の差分は、`__tests__/data.ts`・`__tests__/teamHelpers.ts` と、文書と課題のファイルだけ。
 - テストの時間（`npx vitest run` を main と段の後で交互に 3 回ずつ）: main は 70.9・73.1・77.4 秒、段の後は 71.0・76.2・76.9 秒。回ごとの揺れの中で、増えていない。
 
+### 9.2 段 T2（2026-11-18）
+
+- `teamHelpers.ts` の `fixedSlot` を `fixedSlot(id, options?)` にした。`options`（`FixedSlotOptions`）は `condition`・`conditionMode`・`hp`・`defence`・`treasurePhase`・`definition`（差し替える定義の JSON。`null` は定義を付けない）・`parsed`（読み込み済みの定義）・`edit`（読み込む前の JSON を書き換える）・`extra`（ほかの欄の上書き）。既定は前と同じ（条件は `{ coreHitRate: 1, distanceBonus: false }`、定義のあるキャラにだけ定義を付ける）。
+- 3.2 節から変えた所: `always`（定義の無いキャラでも定義を読む）は足さなかった。「いつも付ける」写しは、渡すキャラがどれも定義のあるキャラで、既定と同じ枠になる（下の入力の比べで確かめた）。読み込み済みの定義を受ける写しがあったので `parsed` を、定義を付けない写しがあったので `definition: null` を足した。`edit` が受ける JSON の型は、`__tests__/data.ts` の `RawDefinition` にした。
+- 置き換えたもの（使い捨ての脚本）: 手元の `fixedSlot`・`slotOf` の写し 77 個を消し、呼び出しを共通の `fixedSlot` に書き換えた。そのテストの枠が既定と違う所（最大 HP を付ける・条件が違うなど）は、ファイルの頭の定数 `SLOT_OPTIONS` に書き、呼び出しに渡す。前の形（2 つ目の引数が定義の JSON）で呼んでいた 12 か所は `{ definition }` にした。使わなくなった import と手元の定数・関数は消した。
+- 残したもの: 共通の `fixedSlot` を包んで、主役のキャラにだけ宝物の段階を付ける `slotOf`（4 ファイル）、キャラのデータを受ける・別の型（1 パス目の枠）を返す `slotOf`（4 ファイル）。枠の写しではない。
+
+**確かめた結果**（基の版は main の d810b1e4）:
+
+- `npm test` が通り、テストのファイルの数とテストの数が main と同じ。`npm run typecheck`・lint が通る。
+- **エンジンに渡る入力が同じ**: 計算の入口（`applyTreasureToTeam`。`runSimulation`・`planTeamRun`・`simTeamResult` が通る）に、入力の要約（鍵を並べ直した JSON の hash。`treasurePhase: 0` は無いのと同じに数える）をテストのファイルごとに書き出す行を一時的に入れ、全部のテストを main と段の後で回して比べた。要約の列が一致した（main で 4,770 件。`records/__tests__/observations.test.ts` の分は、残差の覚えが効いて 2 回目は回らないので比べから外した。このテストは変えていない）。一時の行はコミットしていない。
+- 期待値の行の差分は、枠の呼び出しの書き換え 3 か所だけ。
+- 本体（テストでないファイル）の差分は、`__tests__/data.ts`・`__tests__/teamHelpers.ts` と、文書だけ。
+
 ## 10. 経過
 
 - 2026-11-18: 起案。
 - 2026-11-18: オーナーが、論点をすべて推奨の案で承認した。
 - 2026-11-18: 段 T1 を実装した（9.1 節）。`master`・`profile` は段 T3 に回した。
+- 2026-11-18: 段 T2 を実装した（9.2 節）。

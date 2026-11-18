@@ -4,15 +4,21 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { BurstSchedule } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import {
+  computeFixedSpecAttack,
+  computeFixedSpecDefence,
+  computeFixedSpecHp,
+  FIXED_SPEC_ENEMY_DEFENCE,
+} from '../fixedSpec.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { simTeamResult } from '../sim/teamResult.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import type { TreasurePhase } from '../skills/treasure.ts';
+import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
+import { characterOf, DEFINED_IDS, rawDefinition, type RawDefinition } from './data.ts';
 import { slotPieces } from './historyHelpers.ts';
 
 export { characterOf, rawDefinition };
@@ -29,15 +35,59 @@ export function skillValueOf(id: number, slot: 'skill1' | 'skill2' | 'burst', re
   return Number(characterOf(id).skills[slot].values[ref - 1]![9]);
 }
 
-/** スペック固定・Lv 10 の枠。定義のあるキャラは定義を付ける（json は定義の差し替え） */
-export function fixedSlot(id: number, json?: unknown): TeamSlotInput {
+/** fixedSlot の、既定と違う所 */
+export type FixedSlotOptions = {
+  /** 手入力の条件。省略は { coreHitRate: 1, distanceBonus: false } */
+  condition?: SlotCondition;
+  /** 条件の決め方（'auto' は射撃場の表から決める）。省略は手入力 */
+  conditionMode?: TeamSlotInput['conditionMode'];
+  /** スペック固定の最大 HP（hpOverride）を付ける */
+  hp?: boolean;
+  /** スペック固定の防御力（defenceOverride）を付ける */
+  defence?: boolean;
+  /** 宝物の段階。省略は 0 */
+  treasurePhase?: TreasurePhase;
+  /** 差し替える定義の JSON（読み込んで付ける）。null は、定義のあるキャラにも定義を付けない */
+  definition?: unknown;
+  /** 差し替える読み込み済みの定義 */
+  parsed?: SkillDefinition;
+  /** 定義の JSON（data/skills か definition）を、読み込む前に書き換える */
+  edit?: (raw: RawDefinition) => void;
+  /** ほかの欄（hpRatio など）。最後に上書きする */
+  extra?: Partial<TeamSlotInput>;
+};
+
+/**
+ * スペック固定・Lv 10 の枠。既定は、手入力の条件 { coreHitRate: 1, distanceBonus: false }・定義のあるキャラにだけ data/skills の
+ * 定義を付ける・宝物なし。テストごとの違いは options に書く
+ */
+export function fixedSlot(id: number, options: FixedSlotOptions = {}): TeamSlotInput {
   const c = characterOf(id);
   const fixed = computeFixedSpecAttack(c);
-  const slot: TeamSlotInput = { character: c, growth: fixed.growth, attackOverride: fixed.attack, condition: MANUAL };
-  if (json !== undefined || DEFINED_IDS.has(id)) {
-    slot.skills = { definition: parseSkillDefinition(json ?? rawDefinition(id)), levels: MAX_SKILL_LEVELS };
+  const slot: TeamSlotInput = {
+    character: c,
+    growth: fixed.growth,
+    attackOverride: fixed.attack,
+    condition: options.condition ?? MANUAL,
+  };
+  if (options.hp) slot.hpOverride = computeFixedSpecHp(c);
+  if (options.defence) slot.defenceOverride = computeFixedSpecDefence(c);
+  if (options.conditionMode !== undefined) slot.conditionMode = options.conditionMode;
+  const definition = fixedSlotDefinition(id, options);
+  if (definition !== undefined) {
+    slot.skills = { definition, levels: MAX_SKILL_LEVELS };
+    if (options.treasurePhase !== undefined) slot.skills.treasurePhase = options.treasurePhase;
   }
-  return slot;
+  return { ...slot, ...options.extra };
+}
+
+function fixedSlotDefinition(id: number, options: FixedSlotOptions): SkillDefinition | undefined {
+  if (options.parsed !== undefined) return options.parsed;
+  if (options.definition === null) return undefined;
+  const raw = options.definition ?? (DEFINED_IDS.has(id) ? rawDefinition(id) : undefined);
+  if (raw === undefined) return undefined;
+  options.edit?.(raw as RawDefinition);
+  return parseSkillDefinition(raw);
 }
 
 /** 射撃場の的・180 秒の編成（extra で上書き） */

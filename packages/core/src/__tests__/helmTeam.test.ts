@@ -2,37 +2,16 @@
 // （plan/design-helm.md、V-0033）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runSimulation } from '../sim/engine.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
 import { hexagonFrameOf } from '../burst/schedule.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { burstHitBuffs, burstSnapshotState, planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
-
-function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  const slot: TeamSlotInput = {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-  };
-  if (DEFINED_IDS.has(id)) {
-    slot.skills = {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-      treasurePhase,
-    };
-  }
-  return slot;
-}
+import { fixedSlot } from './teamHelpers.ts';
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
 
@@ -41,11 +20,15 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
 }
 
 const HELM = 352;
-const rec079 = (phase: TreasurePhase) => team([fixedSlot(822), fixedSlot(20), fixedSlot(HELM, phase)], 2);
+const rec079 = (phase: TreasurePhase) =>
+  team([fixedSlot(822), fixedSlot(20), fixedSlot(HELM, { treasurePhase: phase })], 2);
 const TEAMS: Record<string, { input: TeamInput; helm: number }> = {
   '録画 0079 の編成（ラム + デルタ + ヘルム・宝物 3）': { input: rec079(3), helm: 2 },
   '実戦寄り（リター + クラウン + ヘルム・宝物 3 + アリス + アドミ）': {
-    input: team([fixedSlot(82), fixedSlot(330), fixedSlot(HELM, 3), fixedSlot(191), fixedSlot(172)], 2),
+    input: team(
+      [fixedSlot(82), fixedSlot(330), fixedSlot(HELM, { treasurePhase: 3 }), fixedSlot(191), fixedSlot(172)],
+      2,
+    ),
     helm: 2,
   },
 };
@@ -117,7 +100,7 @@ describe('録画 0079 の編成: バーストのヒットの遅れ（C-0167）',
 
 describe('ヘルム単騎（録画 0082 の編成。V-0034）', () => {
   it('fills the gauge on the frame of the 3rd shot: 14.0% + charge 14.31% + additional damage hit 5.6% per shot (C-0103, V-0034)', () => {
-    const plan = planTeamRun(team([fixedSlot(HELM, 3)], 0));
+    const plan = planTeamRun(team([fixedSlot(HELM, { treasurePhase: 3 })], 0));
     const shots = plan.shots[0]!.frames;
     expect(plan.schedule!.gaugeFullFrames[0]).toBe(shots[2]!);
   });

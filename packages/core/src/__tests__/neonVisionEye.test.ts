@@ -3,7 +3,7 @@
 // 条件つきの射撃ごとの倍率ダメージ（S1 の超火力状態の追加効果）。録画 0671〜0673（V-0503）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { effectFrameOf } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { resolveDamageEffects } from '../skills/burstDamage.ts';
@@ -11,29 +11,17 @@ import { applyCompositionToTeam } from '../skills/composition.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
+import type { TeamInput } from '../team.ts';
+import { characterOf, rawDefinition } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 const NEON = 18;
 const definition = (id: number) => parseSkillDefinition(rawDefinition(id));
-function slotOf(id: number): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  const slot: TeamSlotInput = {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-  };
-  if (DEFINED_IDS.has(id)) slot.skills = { definition: definition(id), levels: MAX_SKILL_LEVELS };
-  return slot;
-}
-
 function run() {
   const m = 2;
   const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
   const input: TeamInput = {
-    slots: [slotOf(822), slotOf(20), slotOf(NEON)],
+    slots: [fixedSlot(822), fixedSlot(20), fixedSlot(NEON)],
     enemy,
     durationSeconds: 180,
     burst: true,

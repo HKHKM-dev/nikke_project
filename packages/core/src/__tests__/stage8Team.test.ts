@@ -6,35 +6,17 @@ import { slotPieces } from './historyHelpers.ts';
 import { summarizeSchedule } from '../burst/schedule.ts';
 import { computeCadence } from '../cadence.ts';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runSimulation } from '../sim/engine.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
 import { runTeam } from './runTeam.ts';
 import { simTeamResult } from '../sim/teamResult.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { type TeamInput, type TeamSlotInput } from '../team.ts';
+import { type TeamInput } from '../team.ts';
 import { framesToGameSeconds, gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
+import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
 
-/** スペック固定のニケ。定義があれば Lv10 で載せる */
-function fixedSlot(id: number): TeamSlotInput {
-  const character = characterOf(id);
-  const fixed = computeFixedSpecAttack(character);
-  const slot: TeamSlotInput = {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 0, distanceBonus: false },
-  };
-  if (DEFINED_IDS.has(id)) {
-    slot.skills = {
-      definition: parseSkillDefinition(rawDefinition(id)) as SkillDefinition,
-      levels: MAX_SKILL_LEVELS,
-    };
-  }
-  return slot;
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 0, distanceBonus: false } };
 
 /** 灼熱の的（射撃場の BigArms） */
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: false };
@@ -43,7 +25,12 @@ const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', 
 const TEAM_IDS = [291, 20, 231, 101, 870];
 
 describe('Stage 8 の定義の編成', () => {
-  const input: TeamInput = { slots: TEAM_IDS.map(fixedSlot), enemy, durationSeconds: 180, burst: true };
+  const input: TeamInput = {
+    slots: TEAM_IDS.map((id) => fixedSlot(id, SLOT_OPTIONS)),
+    enemy,
+    durationSeconds: 180,
+    burst: true,
+  };
   const sim = runSimulation(input);
   const calc = simTeamResult(input, sim);
 
@@ -66,7 +53,7 @@ describe('Stage 8 の定義の編成', () => {
 });
 
 describe('ドレイク: 10 回攻撃ごとの倍率ダメージ', () => {
-  const drake = fixedSlot(101);
+  const drake = fixedSlot(101, SLOT_OPTIONS);
   const team = runTeam({ slots: [drake], enemy, durationSeconds: 60 });
   const d = team.slots[0]!;
 
@@ -92,7 +79,12 @@ describe('ドレイク: 10 回攻撃ごとの倍率ダメージ', () => {
 
 describe('ドレイク: フルバースト中の倍率ダメージ（録画 0037）', () => {
   // 録画 0037: S2 / ペレットの比がフルバーストの外 118,059 / 25,672 と中 409,932 / 89,141 で同じ 4.5987
-  const input: TeamInput = { slots: [822, 20, 101].map(fixedSlot), enemy, durationSeconds: 180, burst: true };
+  const input: TeamInput = {
+    slots: [822, 20, 101].map((id) => fixedSlot(id, SLOT_OPTIONS)),
+    enemy,
+    durationSeconds: 180,
+    burst: true,
+  };
   const calc = runTeam(input);
   const drake = calc.slots[2]!;
   const windows = calc.schedule!.fullBurstWindows;
@@ -107,7 +99,12 @@ describe('ドレイク: フルバースト中の倍率ダメージ（録画 0037
 });
 
 describe('イサベル: 使用回数別の段階とフルバースト 5 秒', () => {
-  const input: TeamInput = { slots: [291, 20, 231].map(fixedSlot), enemy, durationSeconds: 180, burst: true };
+  const input: TeamInput = {
+    slots: [291, 20, 231].map((id) => fixedSlot(id, SLOT_OPTIONS)),
+    enemy,
+    durationSeconds: 180,
+    burst: true,
+  };
   const calc = runTeam(input);
   const isabel = calc.slots[2]!;
 
@@ -148,7 +145,12 @@ describe('イサベル: 使用回数別の段階とフルバースト 5 秒', ()
 describe('録画 0038: イサベル（III）+ ラム（I）+ デルタ（II）の実測値', () => {
   // 灼熱の的・距離ボーナスなしの数値で比べる。段階 2・3 の追加ダメージには、同じ発動の受けるダメージ 39.96%▲（段階 1）が
   // 乗る（C-0163。plan/design-burst-landing.md 3 節の sequential）
-  const input: TeamInput = { slots: [822, 20, 231].map(fixedSlot), enemy, durationSeconds: 180, burst: true };
+  const input: TeamInput = {
+    slots: [822, 20, 231].map((id) => fixedSlot(id, SLOT_OPTIONS)),
+    enemy,
+    durationSeconds: 180,
+    burst: true,
+  };
   const isabel = runTeam(input).slots[2]!;
   /** 非会心の値（倍率グループから会心期待値を外す） */
   const nonCrit = (hit: { perActivation: number; boost: { crit: number; total: number } }) =>
@@ -177,7 +179,7 @@ describe('録画 0038: イサベル（III）+ ラム（I）+ デルタ（II）�
 describe('録画 0021: クイーン（真）のバースト 6,323,975（分配ダメージ 90.01%▲）', () => {
   // エーテル（I）+ デルタ（II）+ クイーン（真）（III）、クイーンを操作
   const input: TeamInput = {
-    slots: [291, 20, 870].map(fixedSlot),
+    slots: [291, 20, 870].map((id) => fixedSlot(id, SLOT_OPTIONS)),
     enemy,
     durationSeconds: 180,
     burst: true,
@@ -200,7 +202,7 @@ describe('録画 0021: クイーン（真）のバースト 6,323,975（分配�
 
 describe('録画 0020: マナのゲージ速度 70.4%', () => {
   const input: TeamInput = {
-    slots: [291, 20, 290].map(fixedSlot),
+    slots: [291, 20, 290].map((id) => fixedSlot(id, SLOT_OPTIONS)),
     enemy,
     durationSeconds: 180,
     burst: true,

@@ -9,29 +9,17 @@ import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } 
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { applyResolvedEffect, ZERO_BUFFS } from '../skills/buffs.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { characterOf, rawDefinition } from './data.ts';
+import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
 
 const LAPLACE = 103;
 const NOIR = 271;
 const DELTA = 20;
 const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
-
-function fixedSlot(id: number, extra: Partial<TeamSlotInput> = {}): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  return {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    hpOverride: computeFixedSpecHp(c),
-    condition: { coreHitRate: 1, distanceBonus: false },
-    skills: { definition: definitionOf(id), levels: MAX_SKILL_LEVELS },
-    ...extra,
-  };
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { hp: true };
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
 
@@ -88,7 +76,7 @@ describe('発動者の最終最大HP 基準の攻撃力▲（casterFinalMaxHp）
   });
 
   it('adds X% of the fixed-spec max HP to the attack of Laplace from the start of battle (C-0579)', () => {
-    const input = team([fixedSlot(LAPLACE)]);
+    const input = team([fixedSlot(LAPLACE, SLOT_OPTIONS)]);
     const calc = runTeam(input);
     const c = characterOf(LAPLACE);
     const expected = Math.round(computeFixedSpecAttack(c).attack + skillRatio(LAPLACE, 1) * computeFixedSpecHp(c));
@@ -101,13 +89,15 @@ describe('発動者の最終最大HP 基準の攻撃力▲（casterFinalMaxHp）
 
   it('uses the max HP given by hpOverride (growth only without it)', () => {
     const c = characterOf(LAPLACE);
-    const withHp = runTeam(team([fixedSlot(LAPLACE, { hpOverride: 1_000_000 })]));
+    const withHp = runTeam(team([fixedSlot(LAPLACE, { ...SLOT_OPTIONS, extra: { hpOverride: 1_000_000 } })]));
     const base = computeFixedSpecAttack(c).attack;
     expect(withHp.slots[0]!.segments[0]!.trigger.attack).toBe(Math.round(base + skillRatio(LAPLACE, 1) * 1_000_000));
   });
 
   it('rejects an hpOverride that is not a positive number', () => {
-    expect(() => runTeam(team([fixedSlot(LAPLACE, { hpOverride: 0 })]))).toThrow(/hpOverride/);
+    expect(() => runTeam(team([fixedSlot(LAPLACE, { ...SLOT_OPTIONS, extra: { hpOverride: 0 } })]))).toThrow(
+      /hpOverride/,
+    );
   });
 });
 
@@ -162,8 +152,8 @@ describe('自分の HP の割合の条件（selfHp）', () => {
 
   // ノワール S1: 自分の HP が 70% 以上なら味方全体に攻撃力▲（発動者基準）。想定の既定は満タン（plan/design-skill-stage6.md 論点 4）
   const attackUp = (hpRatio: number | undefined) => {
-    const noir = fixedSlot(NOIR, hpRatio === undefined ? {} : { hpRatio });
-    const calc = runTeam(team([noir, fixedSlot(DELTA)]));
+    const noir = fixedSlot(NOIR, { ...SLOT_OPTIONS, extra: hpRatio === undefined ? {} : { hpRatio } });
+    const calc = runTeam(team([noir, fixedSlot(DELTA, SLOT_OPTIONS)]));
     return calc.slots.map((s) => s!.segments[0]!.trigger.buffs.attackFlat);
   };
 
@@ -185,8 +175,11 @@ describe('自分の HP の割合の条件（selfHp）', () => {
 });
 
 describe.each([
-  ['ラプラス：アルティメットヒーロー単騎（録画 0121 の編成）', team([fixedSlot(LAPLACE)])],
-  ['ノワール + デルタ（HP の割合 0.5）', team([fixedSlot(NOIR, { hpRatio: 0.5 }), fixedSlot(DELTA)], true)],
+  ['ラプラス：アルティメットヒーロー単騎（録画 0121 の編成）', team([fixedSlot(LAPLACE, SLOT_OPTIONS)])],
+  [
+    'ノワール + デルタ（HP の割合 0.5）',
+    team([fixedSlot(NOIR, { ...SLOT_OPTIONS, extra: { hpRatio: 0.5 } }), fixedSlot(DELTA, SLOT_OPTIONS)], true),
+  ],
 ])('編成: %s', (_name, input) => {
   const calc = runTeam(input);
   const plan = planTeamRun(input);

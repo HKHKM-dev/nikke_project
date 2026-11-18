@@ -114,7 +114,8 @@ describe('減らす操作（cooldownTimer の keep）', () => {
 });
 
 describe('1 パス目の発動と窓（センチの単騎・仮の周期）', () => {
-  const teamOf = (skill1: Effect[]) => fixedTeam([], 0, { slots: [fixedSlot(CENTI, def(skill1, [s2Attack]))] });
+  const teamOf = (skill1: Effect[]) =>
+    fixedTeam([], 0, { slots: [fixedSlot(CENTI, { definition: def(skill1, [s2Attack]) })] });
   const s2Starts = (sim: ReturnType<typeof runSimulation>) =>
     effectWindows(sim, 0, { resourceId: CENTI, skill: 'skill2', stat: 'attack' }).map((w) => w.start);
   const long = gameSecondsToFirstFrame(PERIOD);

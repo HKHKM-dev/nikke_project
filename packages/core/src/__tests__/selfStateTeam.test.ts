@@ -4,36 +4,21 @@
 import { describe, expect, it } from 'vitest';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { applyComposition, applyCompositionToTeam } from '../skills/composition.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { appliedFrames } from '../skills/timeline.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { Element } from '../types.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
+import { characterOf, rawDefinition } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 type RawDefinition = { skills: Record<string, { effects: Record<string, unknown>[]; notes?: unknown[] }> };
 const ANIS = 17;
 const FLOWER = 304;
 const QUEEN = 870;
-
-function slotOf(id: number, definition?: unknown): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  const slot: TeamSlotInput = {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-  };
-  const raw = definition ?? (DEFINED_IDS.has(id) ? rawDefinition<RawDefinition>(id) : undefined);
-  if (raw !== undefined) slot.skills = { definition: parseSkillDefinition(raw), levels: MAX_SKILL_LEVELS };
-  return slot;
-}
-
 function team(slots: TeamSlotInput[], element: Element | null, controlledSlot: number): TeamInput {
   const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element, hasCore: true };
   return { slots, enemy, durationSeconds: 180, burst: true, controlledSlot };
@@ -139,7 +124,9 @@ describe('時間で変わる状態を見る selfState（クイーン（真）の
       { kind: 'state', state: 'followUp', trigger: 'burstUse', target: 'self', durationSeconds: 2 },
       ...effects,
     );
-    return planTeamRun(applyCompositionToTeam(team([slotOf(822), slotOf(20), slotOf(QUEEN, raw)], 'Wind', q)));
+    return planTeamRun(
+      applyCompositionToTeam(team([fixedSlot(822), fixedSlot(20), fixedSlot(QUEEN, { definition: raw })], 'Wind', q)),
+    );
   };
   const queenBursts = (plan: ReturnType<typeof planTeamRun>) =>
     plan.schedule!.activations.filter((a) => a.slotIndex === q).map((a) => a.frame);
@@ -185,7 +172,7 @@ describe('時間で変わる状態を見る selfState（クイーン（真）の
 
 describe('枠に付いた状態のまとめ（アニス：スター。plan/design-skill-stage1.md 1.4 節）', () => {
   it('shows My Own Star as a static, undispellable state when Anis: Star is alone', () => {
-    const calc = runTeam(team([slotOf(ANIS)], null, 0));
+    const calc = runTeam(team([fixedSlot(ANIS)], null, 0));
     const [star, shooting, ...rest] = calc.slots[0]!.states;
     expect(star).toEqual({ state: 'myOwnStar', sourceSlotIndex: 0, count: 1, isStatic: true, undispellable: true });
     // バーストのたびに付くシューティングスター（中身の無い呼び名の状態。付いた回数はバーストの回数）
@@ -202,7 +189,7 @@ describe('枠に付いた状態のまとめ（アニス：スター。plan/desig
   });
 
   it("shows Everyone's Star with another Burst I ally", () => {
-    const calc = runTeam(team([slotOf(ANIS), slotOf(FLOWER)], null, 0));
+    const calc = runTeam(team([fixedSlot(ANIS), fixedSlot(FLOWER)], null, 0));
     expect(calc.slots[0]!.states.map((s) => [s.state, s.isStatic, s.undispellable])).toEqual([
       ['everyonesStar', true, true],
       ['shootingStar', false, false],

@@ -2,32 +2,22 @@
 // （戦闘開始時・持続）で書いた最初の使い手と、即時の▼（フルチャージ 10 発ごと・味方全体）。HP の条件の即値（selfHp.atLeast。基礎版の S2）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
-import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { applySelfHp } from '../composition.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition, selfHpThreshold } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedSlot, type FixedSlotOptions } from '../../__tests__/teamHelpers.ts';
 
 const definition = (rid: number) => parseSkillDefinition(rawDefinition(rid));
 
 const MILK = 141;
 const DELTA = 20;
 const IDOLL_SUN = 308;
-
-function slotOf(rid: number, treasurePhase: 0 | 3 = 0): TeamSlotInput {
-  const c = characterOf(rid);
-  const fixed = computeFixedSpecAttack(c);
-  return {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    hpOverride: computeFixedSpecHp(c),
-    condition: { coreHitRate: 1, distanceBonus: false, hitRate: 1 },
-    skills: { definition: definition(rid), levels: MAX_SKILL_LEVELS, treasurePhase },
-  };
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 1, distanceBonus: false, hitRate: 1 }, hp: true };
 
 function run(slots: TeamSlotInput[], controlledSlot: number) {
   const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
@@ -71,15 +61,22 @@ describe('selfHp.atLeast（説明文に即値で書かれた HP の閾値）', (
 describe('ミルクの宝物版（V-0559）', () => {
   it('bursts 7 times alone in 180 s with the S1 cooldown −20 s (5 times without the treasure)', () => {
     // C-0769: 単騎の I は、チェーンの待ちの後のゲージで決まる間隔（約 23 秒）で撃つ。宝物版でなければ CT 40 秒が律速
-    const treasure = run([slotOf(MILK, 3)], 0);
-    const base = run([slotOf(MILK, 0)], 0);
+    const treasure = run([fixedSlot(MILK, { ...SLOT_OPTIONS, treasurePhase: 3 })], 0);
+    const base = run([fixedSlot(MILK, SLOT_OPTIONS)], 0);
     expect(treasure.schedule!.activations).toHaveLength(7);
     expect(base.schedule!.activations).toHaveLength(5);
   });
 
   it('cuts every ally’s cooldown by 2.83 s on every 10th full charge shot', () => {
     // C-0770: デルタ・I-DOLL・サン・ミルク。▼は 10 発目・20 発目…のフルチャージの発のフレームに味方全体（自分も）に出る
-    const result = run([slotOf(DELTA), slotOf(IDOLL_SUN), slotOf(MILK, 3)], 2);
+    const result = run(
+      [
+        fixedSlot(DELTA, SLOT_OPTIONS),
+        fixedSlot(IDOLL_SUN, SLOT_OPTIONS),
+        fixedSlot(MILK, { ...SLOT_OPTIONS, treasurePhase: 3 }),
+      ],
+      2,
+    );
     const milkShots = result.shots[2]!.frames;
     const cuts = result.schedule!.cooldownReductions.filter((r) => r.sourceSlotIndex === 2);
     const cutFrames = [...new Set(cuts.map((r) => r.frame))];

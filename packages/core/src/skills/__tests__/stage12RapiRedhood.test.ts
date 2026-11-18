@@ -2,32 +2,21 @@
 // 戦闘補助でない側の S1（フルバーストの始まりの自分の攻撃力▲）とバースト III の追加ダメージ（録画 0116・0117。V-0535）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
-import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { effectFrameOf, isInFullBurst } from '../../burst/schedule.ts';
 import { runSimulation } from '../../sim/engine.ts';
-import type { TeamInput, TeamSlotInput } from '../../team.ts';
+import type { TeamInput } from '../../team.ts';
 import { applyCompositionToTeam } from '../composition.ts';
 import { MAX_SKILL_LEVELS, skillValue } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedSlot, type FixedSlotOptions } from '../../__tests__/teamHelpers.ts';
 
 const RAPI_RH = 16;
 const LITER = 82;
 const DELTA = 20;
-const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
-
-function slotOf(id: number): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  return {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    hpOverride: computeFixedSpecHp(c),
-    condition: { coreHitRate: 1, distanceBonus: false },
-    skills: { definition: definitionOf(id), levels: MAX_SKILL_LEVELS },
-  };
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { hp: true };
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
 
@@ -58,7 +47,11 @@ describe('戦闘補助でない側の効果は、基本バースト段階 I の�
   };
 
   it('keeps the S1 attack up and the burst III additional damage with an ally of base burst stage I', () => {
-    const input: TeamInput = { slots: [slotOf(LITER), slotOf(DELTA), slotOf(RAPI_RH)], enemy, durationSeconds: 180 };
+    const input: TeamInput = {
+      slots: [fixedSlot(LITER, SLOT_OPTIONS), fixedSlot(DELTA, SLOT_OPTIONS), fixedSlot(RAPI_RH, SLOT_OPTIONS)],
+      enemy,
+      durationSeconds: 180,
+    };
     const { skill1, burst } = effectsOf(input, 2);
     expect(skill1.map((e) => e.kind)).toEqual(['timed']);
     // PR 2: バースト III の付着▲（timed）と回数条件▼（cycleEvery）も同じ条件
@@ -66,7 +59,11 @@ describe('戦闘補助でない側の効果は、基本バースト段階 I の�
   });
 
   it('drops both without an ally of base burst stage I (Combat Assist)', () => {
-    const input: TeamInput = { slots: [slotOf(DELTA), slotOf(RAPI_RH)], enemy, durationSeconds: 180 };
+    const input: TeamInput = {
+      slots: [fixedSlot(DELTA, SLOT_OPTIONS), fixedSlot(RAPI_RH, SLOT_OPTIONS)],
+      enemy,
+      durationSeconds: 180,
+    };
     const { skill1, burst } = effectsOf(input, 1);
     // PR 3: 残るのは戦闘補助の側（段の変更・味方全体のクールタイム▼・攻撃ダメージ▲、バースト I のクールタイム▼・攻撃力▲）だけ
     expect(skill1.map((e) => e.kind)).toEqual(['burstStepChange', 'cooldownReduction', 'timed']);
@@ -78,7 +75,7 @@ describe('戦闘補助でない側の効果は、基本バースト段階 I の�
 describe('ラピ：レッドフードの S1 の攻撃力▲とバースト III の追加ダメージ（V-0535）', () => {
   const m = 2;
   const input: TeamInput = {
-    slots: [slotOf(LITER), slotOf(DELTA), slotOf(RAPI_RH)],
+    slots: [fixedSlot(LITER, SLOT_OPTIONS), fixedSlot(DELTA, SLOT_OPTIONS), fixedSlot(RAPI_RH, SLOT_OPTIONS)],
     enemy,
     durationSeconds: 180,
     burst: true,

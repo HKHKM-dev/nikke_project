@@ -5,17 +5,18 @@ import { loadRecordingsFile, loadRecordsData, recordingMap } from '../../../scri
 import { burstStepOf, burstUnitOf } from '../../burst/dynamic.ts';
 import { slotsByStep } from '../../burst/schedule.ts';
 import type { EnemyInput } from '../../damage.ts';
-import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { buildTeamInput } from '../../records/observations/teamInput.ts';
 import { validateObservations } from '../../records/observations/validate.ts';
 import type { Observation } from '../../records/observations/types.ts';
 import { runSimulation } from '../../sim/engine.ts';
-import type { TeamInput, TeamSlotInput } from '../../team.ts';
+import type { TeamInput } from '../../team.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import { applyComposition, burstStepInTeam, countsAsBurstStep } from '../composition.ts';
 import { MAX_SKILL_LEVELS, resolveInstant } from '../resolve.ts';
 import { burstStepChangeOf, parseSkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedSlot, type FixedSlotOptions } from '../../__tests__/teamHelpers.ts';
 
 const RAPI_RH = 16;
 const DELTA = 20;
@@ -24,22 +25,8 @@ const LITER = 82;
 const raw = rawDefinition<{ skills: Record<'skill1' | 'burst', { effects: Record<string, unknown>[] }> }>(RAPI_RH);
 const def = parseSkillDefinition(raw);
 const rapi = characterOf(RAPI_RH);
-
-function slotOf(id: number): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  return {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    hpOverride: computeFixedSpecHp(c),
-    condition: { coreHitRate: 1, distanceBonus: false },
-    skills: {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-    },
-  };
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { hp: true };
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
 
@@ -110,7 +97,7 @@ describe('バースト段階の変更（戦闘補助）', () => {
 
   it('chains I → II → III with her I, and shortens her own cooldown by 20 s on the same frame', () => {
     const input: TeamInput = {
-      slots: [slotOf(DELTA), slotOf(SUN), slotOf(RAPI_RH)],
+      slots: [fixedSlot(DELTA, SLOT_OPTIONS), fixedSlot(SUN, SLOT_OPTIONS), fixedSlot(RAPI_RH, SLOT_OPTIONS)],
       enemy,
       durationSeconds: 180,
       burst: true,

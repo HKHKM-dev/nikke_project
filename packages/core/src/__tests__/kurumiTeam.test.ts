@@ -3,7 +3,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
@@ -13,29 +13,12 @@ import { dotTickFrames, planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFrame } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
+import { rawDefinition } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
 }
-function fixedSlot(id: number): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  const slot: TeamSlotInput = {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-  };
-  if (DEFINED_IDS.has(id)) {
-    slot.skills = {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-    };
-  }
-  return slot;
-}
-
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
 
 function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {

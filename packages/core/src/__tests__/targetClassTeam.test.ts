@@ -4,45 +4,28 @@ import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
-import {
-  computeFixedSpecAttack,
-  computeFixedSpecDefence,
-  computeFixedSpecHp,
-  FIXED_SPEC_ENEMY_DEFENCE,
-} from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { matchesTargetFilter } from '../skills/targets.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import type { TeamInput, TeamSlotInput } from '../team.ts';
+import type { TeamInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { characterOf, rawDefinition } from './data.ts';
+import { rawDefinition } from './data.ts';
+import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
 
 const N_MF = 121;
 const FLOWER = 304;
 const ISABEL = 231;
 const LITER = 82;
 const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
-
-function fixedSlot(id: number): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  return {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    hpOverride: computeFixedSpecHp(c),
-    defenceOverride: computeFixedSpecDefence(c),
-    condition: { coreHitRate: 1, distanceBonus: false },
-    skills: { definition: definitionOf(id), levels: MAX_SKILL_LEVELS },
-  };
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { hp: true, defence: true };
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
 
 // フラワー（防御型・I）・エヌ：ミラクルフェアリー（支援型・II）・イサベル（火力型・III）・リター（支援型・I）
 const TEAM: TeamInput = {
-  slots: [FLOWER, N_MF, ISABEL, LITER].map(fixedSlot),
+  slots: [FLOWER, N_MF, ISABEL, LITER].map((id) => fixedSlot(id, SLOT_OPTIONS)),
   enemy,
   durationSeconds: 180,
   burst: true,

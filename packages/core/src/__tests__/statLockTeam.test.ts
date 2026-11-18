@@ -48,7 +48,10 @@ function withoutLock(id: number): unknown {
 function team(ids: number[], controlledSlot: number, unlocked?: number): TeamInput {
   return {
     slots: ids.map((id) => {
-      const slot = { ...fixedSlot(id, id === unlocked ? withoutLock(id) : undefined), conditionMode: 'auto' as const };
+      const slot = {
+        ...fixedSlot(id, { definition: id === unlocked ? withoutLock(id) : undefined }),
+        conditionMode: 'auto' as const,
+      };
       if (id === EXIA) slot.skills = { ...slot.skills!, treasurePhase: 3 };
       return slot;
     }),

@@ -3,40 +3,14 @@
 // （ループの後の履歴は作り直されるので）ため、1 パス目を verifyItems で回し、ループの中で読むたびに、いまの入力から作り直した件と比べる。
 // 編成は、定義にある件の列の種類と分かれ道（3.1 節の表）がそろうように選んだ（状態の N 発の間・フルバーストの終わりまでは定義に無い）
 import { describe, expect, it } from 'vitest';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runFirstPass } from '../frame/firstPass.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import type { HeldTrack } from '../skills/holders.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { applyTreasureToTeam, type TreasurePhase } from '../skills/treasure.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { applyTreasureToTeam } from '../skills/treasure.ts';
 import { toTimelineSlots, type TeamInput, type TeamSlotInput } from '../team.ts';
 import { battleSecondsToFrames } from '../time.ts';
-import { characterOf, rawDefinition } from './data.ts';
-
-type RawDefinition = { skills: Record<string, { effects: Record<string, unknown>[] }> };
-
-function fixedSlot(
-  id: number,
-  treasurePhase: TreasurePhase = 0,
-  edit: (raw: RawDefinition) => void = () => {},
-): TeamSlotInput {
-  const character = characterOf(id);
-  const fixed = computeFixedSpecAttack(character);
-  const raw = rawDefinition<RawDefinition>(id);
-  edit(raw);
-  return {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-    skills: {
-      definition: parseSkillDefinition(raw),
-      levels: MAX_SKILL_LEVELS,
-      treasurePhase,
-    },
-  };
-}
+import { fixedSlot } from './teamHelpers.ts';
 
 function team(slots: TeamSlotInput[], durationSeconds = 180): TeamInput {
   return {
@@ -52,7 +26,10 @@ const TEAMS: [string, TeamInput][] = [
   // 主力: スタック・消費・フルバーストの終わりまでの timed・循環の間隔の変更
   ['主力（82, 330, 271, 870, 225）', team([82, 330, 271, 870, 225].map((id) => fixedSlot(id)))],
   // N 発の間（ミランダの宝物版）・減少（ソーダ：トゥインクルバニー）・解除（マナ）
-  ['32 宝物 3, 20, 314, 290, 352', team([fixedSlot(32, 3), ...[20, 314, 290, 352].map((id) => fixedSlot(id))])],
+  [
+    '32 宝物 3, 20, 314, 290, 352',
+    team([fixedSlot(32, { treasurePhase: 3 }), ...[20, 314, 290, 352].map((id) => fixedSlot(id))]),
+  ],
   // 撃ち切り・リロードの込め終わりまで・確率のきっかけ・敵の状態・while（確かめが重いので 60 秒）
   [
     '103, 511, 300, 862, 95（60 秒）',
@@ -71,10 +48,12 @@ const TEAMS: [string, TeamInput][] = [
         fixedSlot(82),
         fixedSlot(330),
         fixedSlot(271),
-        fixedSlot(870, 0, (raw) => {
-          const effect = raw.skills['skill2']!.effects[2]!;
-          if (effect['durationUntil'] !== 'fullBurstEnd') throw new Error('870 の S2 の effects[2] が変わった');
-          effect['trigger'] = 'battleStart';
+        fixedSlot(870, {
+          edit: (raw) => {
+            const effect = raw.skills['skill2']!.effects[2]!;
+            if (effect['durationUntil'] !== 'fullBurstEnd') throw new Error('870 の S2 の effects[2] が変わった');
+            effect['trigger'] = 'battleStart';
+          },
         }),
         fixedSlot(225),
       ],

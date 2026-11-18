@@ -14,28 +14,18 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { characterOf, rawDefinition } from './data.ts';
+import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
 
 const CINDERELLA = 511;
 const RAM = 822;
 const DELTA = 20;
 const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
-
-function fixedSlot(id: number): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  return {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    hpOverride: computeFixedSpecHp(c),
-    condition: { coreHitRate: 1, distanceBonus: false },
-    skills: { definition: definitionOf(id), levels: MAX_SKILL_LEVELS },
-  };
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { hp: true };
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
 const team = (ids: number[], burst: boolean, controlledSlot: number): TeamInput => ({
-  slots: ids.map(fixedSlot),
+  slots: ids.map((id) => fixedSlot(id, SLOT_OPTIONS)),
   enemy,
   durationSeconds: 180,
   burst,
@@ -195,7 +185,10 @@ describe('最大HP▲ を読む発動者の最終最大HP（常時の効果・�
         skill2: { effects: [{ kind: 'passive', target: 'self', stat: 'maxHp', ref: 2 }] },
       },
     });
-    const slot: TeamSlotInput = { ...fixedSlot(CINDERELLA), skills: { definition, levels: MAX_SKILL_LEVELS } };
+    const slot: TeamSlotInput = {
+      ...fixedSlot(CINDERELLA, SLOT_OPTIONS),
+      skills: { definition, levels: MAX_SKILL_LEVELS },
+    };
     const calc = runTeam({ slots: [slot], enemy, durationSeconds: 180, burst: false, controlledSlot: 0 });
     const c = characterOf(CINDERELLA);
     const s1 = Number(c.skills.skill1.values[0]![9]) / 100;

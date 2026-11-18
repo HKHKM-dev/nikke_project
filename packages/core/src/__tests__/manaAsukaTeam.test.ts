@@ -3,28 +3,14 @@
 // V-0439 のマナ → アスカ）で、回復と、それで付くアスカの S1 の窓の始まりを見る。どちらもバーストは撃たない（オートバースト OFF）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import type { TeamInput, TeamSlotInput } from '../team.ts';
+import type { TeamInput } from '../team.ts';
 import { healsOf, piecesOf } from './historyHelpers.ts';
-import { characterOf, rawDefinition } from './data.ts';
+import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
 
-function fixedSlot(id: number): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  return {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 0, distanceBonus: true },
-    skills: {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-    },
-  };
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 0, distanceBonus: true } };
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
 const MANA_ID = 290;
@@ -47,7 +33,7 @@ describe('V-0490 の録画の編成（◎アスカ（1 枠目）→ マナ（2 �
   const ASUKA = 0;
   const MANA = 1;
   const input: TeamInput = {
-    slots: [fixedSlot(ASUKA_ID), fixedSlot(MANA_ID)],
+    slots: [fixedSlot(ASUKA_ID, SLOT_OPTIONS), fixedSlot(MANA_ID, SLOT_OPTIONS)],
     enemy,
     durationSeconds: 180,
     burst: false,
@@ -85,7 +71,7 @@ describe('V-0439 の録画の編成（マナ（1 枠目）→ ◎アスカ（2 �
   const MANA = 0;
   const ASUKA = 1;
   const input: TeamInput = {
-    slots: [fixedSlot(MANA_ID), fixedSlot(ASUKA_ID)],
+    slots: [fixedSlot(MANA_ID, SLOT_OPTIONS), fixedSlot(ASUKA_ID, SLOT_OPTIONS)],
     enemy,
     durationSeconds: 180,
     burst: false,

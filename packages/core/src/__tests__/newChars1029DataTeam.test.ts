@@ -3,35 +3,17 @@
 // 居合と身剣合一・クリティカル命中の弾丸チャージと満開の間の止まり方・射撃の列のグループ分けを見る
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { ENEMY, itemsOf } from '../skills/holders.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import type { TeamInput, TeamSlotInput } from '../team.ts';
+import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { piecesOf, stateItemsOf } from './historyHelpers.ts';
 import { runTeam } from './runTeam.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
-
-function fixedSlot(id: number): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  const slot: TeamSlotInput = {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-  };
-  if (DEFINED_IDS.has(id)) {
-    slot.skills = {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-    };
-  }
-  return slot;
-}
+import { characterOf, rawDefinition } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
 const MARIAN = 19;

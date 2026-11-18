@@ -3,37 +3,21 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { BURST_GAUGE_MAX } from '../burst/controller.ts';
 import { energyPerTrigger } from '../burst/dynamic.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
 import { runTeam } from './runTeam.ts';
 import { dotTicks, planTeamRun } from '../frame/plan.ts';
 import { countShotsInRanges, type ShotLog } from '../frame/shots.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
+import { characterOf, rawDefinition } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
 }
 const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
-
-function fixedSlot(id: number, definition?: SkillDefinition): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  const slot: TeamSlotInput = {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-  };
-  if (definition !== undefined || DEFINED_IDS.has(id)) {
-    slot.skills = { definition: definition ?? definitionOf(id), levels: MAX_SKILL_LEVELS };
-  }
-  return slot;
-}
-
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
 
 function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
@@ -138,8 +122,8 @@ describe('the gauge of the damage over time moves the bursts earlier', () => {
     delete dot.gaugeOnApply;
     delete dot.gaugeOnTick;
     const others = [330, 101, 191, 82].map((id) => fixedSlot(id));
-    const a = planTeamRun(team([fixedSlot(RAVEN, def), ...others], 0)).schedule!.activations;
-    const b = planTeamRun(team([fixedSlot(RAVEN, withoutGauge), ...others], 0)).schedule!.activations;
+    const a = planTeamRun(team([fixedSlot(RAVEN, { parsed: def }), ...others], 0)).schedule!.activations;
+    const b = planTeamRun(team([fixedSlot(RAVEN, { parsed: withoutGauge }), ...others], 0)).schedule!.activations;
     expect(a[0]!.frame).toBeLessThan(b[0]!.frame);
   });
 });

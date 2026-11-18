@@ -3,35 +3,20 @@
 // 定義は data/skills のもの（クイーン（真）・マナ）と、それを書き換えたもの
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { itemsOf } from '../skills/holders.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition, staticStatesOf, type SkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { Element } from '../types.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
+import { rawDefinition } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 type RawEffect = Record<string, unknown>;
 type RawDefinition = { skills: Record<string, { effects: RawEffect[]; notes?: unknown[] }> };
 const MANA = 290;
 const QUEEN = 870;
-
-function slotOf(id: number, definition?: unknown): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  const slot: TeamSlotInput = {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-  };
-  const raw = definition ?? (DEFINED_IDS.has(id) ? rawDefinition<RawDefinition>(id) : undefined);
-  if (raw !== undefined) slot.skills = { definition: parseSkillDefinition(raw), levels: MAX_SKILL_LEVELS };
-  return slot;
-}
-
 function run(slots: TeamSlotInput[], element: Element | null, controlledSlot: number | null) {
   const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element, hasCore: true };
   const input: TeamInput = { slots, enemy, durationSeconds: 180, burst: true, controlledSlot };
@@ -117,7 +102,7 @@ describe('解除で閉じる件（クイーン（真）の定義を書き換え�
   const withEffects = (effects: RawEffect[]) => {
     const raw = structuredClone(rawDefinition<RawDefinition>(QUEEN));
     raw.skills.skill1!.effects.push(...effects);
-    return run([slotOf(822), slotOf(20), slotOf(QUEEN, raw)], 'Wind', q);
+    return run([fixedSlot(822), fixedSlot(20), fixedSlot(QUEEN, { definition: raw })], 'Wind', q);
   };
   const camouflageItems = (plan: ReturnType<typeof run>) =>
     itemsOf(plan.history, { holder: q, state: 'camouflage' }).map((i) => [i.start, i.end]);
@@ -210,22 +195,27 @@ describe('マナ（2 段目の段 1 の 2.2 節）', () => {
   });
 
   it('gives the same gauge as the old passive while Mana bursts in every Full Burst (録画 0020 の編成)', () => {
-    const slots = (mana: unknown) => [slotOf(291), slotOf(20), slotOf(MANA, mana)];
+    const slots = (mana: unknown) => [fixedSlot(291), fixedSlot(20), fixedSlot(MANA, { definition: mana })];
     const now = run(slots(undefined), 'Electronic', 2);
     const before = run(slots(manaBeforeStage1()), 'Electronic', 2);
     expect(now.schedule!.fullBurstWindows.every((w) => w.burstUsers.includes(2))).toBe(true);
     expect(now.schedule!.gaugeFullFrames).toEqual(before.schedule!.gaugeFullFrames);
     expect(now.schedule!.fullBurstWindows).toEqual(before.schedule!.fullBurstWindows);
     // 単騎（フルバーストが無い）でも、1 回目の満タンは常時の値と同じ
-    const solo = run([slotOf(MANA)], 'Electronic', 0);
-    const soloBefore = run([slotOf(MANA, manaBeforeStage1())], 'Electronic', 0);
+    const solo = run([fixedSlot(MANA)], 'Electronic', 0);
+    const soloBefore = run([fixedSlot(MANA, { definition: manaBeforeStage1() })], 'Electronic', 0);
     expect(solo.schedule!.gaugeFullFrames).toEqual(soloBefore.schedule!.gaugeFullFrames);
   });
 
   it('does not re-grant Metal σ after a Full Burst in which Mana did not burst (録画 0043 の形の編成)', () => {
     // フラワー（I）+ クラウン（II）+ アリス（III）+ マナ（III）。III の候補は枠の若い順なので、アリスとマナが交互に撃つ
     const m = 3;
-    const slots = (mana: unknown) => [slotOf(304), slotOf(330), slotOf(191), slotOf(MANA, mana)];
+    const slots = (mana: unknown) => [
+      fixedSlot(304),
+      fixedSlot(330),
+      fixedSlot(191),
+      fixedSlot(MANA, { definition: mana }),
+    ];
     const now = run(slots(undefined), 'Fire', 2);
     const before = run(slots(manaBeforeStage1()), 'Fire', 2);
     const windows = now.schedule!.fullBurstWindows;

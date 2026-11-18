@@ -5,39 +5,21 @@ import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
-import {
-  computeFixedSpecAttack,
-  computeFixedSpecDefence,
-  computeFixedSpecHp,
-  FIXED_SPEC_ENEMY_DEFENCE,
-} from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { fixedTargetsOf, type CompositionCharacter } from '../skills/composition.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { isEffectTarget } from '../skills/targets.ts';
 import { parseSkillDefinition, type SkillEffect } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
 import { characterOf, rawDefinition } from './data.ts';
+import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
 
 const ASUKA = 830;
 const MISATO = 833;
 const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
-
-function fixedSlot(id: number, extra: Partial<TeamSlotInput> = {}): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  return {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    hpOverride: computeFixedSpecHp(c),
-    defenceOverride: computeFixedSpecDefence(c),
-    condition: { coreHitRate: 1, distanceBonus: false },
-    skills: { definition: definitionOf(id), levels: MAX_SKILL_LEVELS },
-    ...extra,
-  };
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { hp: true, defence: true };
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
 
@@ -47,8 +29,8 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
 }
 
 // 録画 0472（A）: アスカ（1 枠目・操作）+ ミサト（2 枠目）。録画 0473（B）: ミサト（1 枠目）+ アスカ（2 枠目・操作）
-const A = team([fixedSlot(ASUKA), fixedSlot(MISATO)], 0);
-const B = team([fixedSlot(MISATO), fixedSlot(ASUKA)], 1);
+const A = team([fixedSlot(ASUKA, SLOT_OPTIONS), fixedSlot(MISATO, SLOT_OPTIONS)], 0);
+const B = team([fixedSlot(MISATO, SLOT_OPTIONS), fixedSlot(ASUKA, SLOT_OPTIONS)], 1);
 
 const empty = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
 const withEffect = (effect: object) =>
@@ -150,7 +132,10 @@ describe('ミサトの S1 の回復と、回復を受けた時のアスカの S1
   });
 
   it('follows the assumed HP ratio: a lower ratio on Misato takes the heals from Asuka in the first slot', () => {
-    const lower = team([fixedSlot(ASUKA), fixedSlot(MISATO, { hpRatio: 0.9 })], 0);
+    const lower = team(
+      [fixedSlot(ASUKA, SLOT_OPTIONS), fixedSlot(MISATO, { ...SLOT_OPTIONS, extra: { hpRatio: 0.9 } })],
+      0,
+    );
     const heals = planTeamRun(lower).history.heals.filter((h) => h.sourceSlotIndex === 1);
     expect(heals.length).toBeGreaterThan(0);
     expect(heals.every((h) => h.slotIndex === 1)).toBe(true);

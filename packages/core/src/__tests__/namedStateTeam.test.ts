@@ -4,10 +4,10 @@
 import { describe, expect, it } from 'vitest';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
-import { MAX_SKILL_LEVELS, isStateContent } from '../skills/resolve.ts';
+import { isStateContent } from '../skills/resolve.ts';
 import { activeItemsAt, itemsOf } from '../skills/holders.ts';
 import { appliedFrames } from '../skills/timeline.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
@@ -16,28 +16,14 @@ import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { Element } from '../types.ts';
 import { applicationsOf, piecesOf, stateItemsOf } from './historyHelpers.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
+import { rawDefinition } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 type RawDefinition = { skills: Record<string, { effects: Record<string, unknown>[]; notes?: unknown[] }> };
 const FLOWER = 304;
 const EUNHWA = 95;
 const SUN = 308;
 const QUEEN = 870;
-
-function slotOf(id: number, definition?: unknown): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  const slot: TeamSlotInput = {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-  };
-  const raw = definition ?? (DEFINED_IDS.has(id) ? rawDefinition<RawDefinition>(id) : undefined);
-  if (raw !== undefined) slot.skills = { definition: parseSkillDefinition(raw), levels: MAX_SKILL_LEVELS };
-  return slot;
-}
-
 function team(slots: TeamSlotInput[], element: Element | null, controlledSlot: number): TeamInput {
   const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element, hasCore: true };
   return { slots, enemy, durationSeconds: 180, burst: true, controlledSlot };
@@ -130,7 +116,7 @@ describe('状態の付与の検証（parseSkillDefinition）', () => {
 describe('ウンファ：TU のカモフラージュ（付与をまたぐ和集合。録画 0233 の編成）', () => {
   // フラワー（I）+ ウンファ：TU（II）+ サン（III・操作）。モデルではフルバーストの中の炸裂弾がフルチャージの発として付け直し、
   // バースト使用時の窓と重なる（plan/design-named-state-impl.md 2 節）
-  const input = team([slotOf(FLOWER), slotOf(EUNHWA), slotOf(SUN)], 'Fire', 2);
+  const input = team([fixedSlot(FLOWER), fixedSlot(EUNHWA), fixedSlot(SUN)], 'Fire', 2);
   const plan = planTeamRun(applyCompositionToTeam(input));
   const e = 1;
   const states = stateItemsOf(plan).filter((w) => w.state === 'camouflage');
@@ -177,7 +163,7 @@ describe('calc の射撃の数え方（一本化の段 A-1。plan/design-unify-s
     return raw;
   };
   const sources = (raw: RawDefinition) => {
-    const calc = runTeam(team([slotOf(FLOWER), slotOf(EUNHWA, raw), slotOf(SUN)], 'Fire', 2));
+    const calc = runTeam(team([fixedSlot(FLOWER), fixedSlot(EUNHWA, { definition: raw }), fixedSlot(SUN)], 'Fire', 2));
     return new Set(calc.slots[1]!.segments.map((g) => g.triggerSource));
   };
 
@@ -202,7 +188,7 @@ describe('条件つき・順位の対象の付与と「〈状態名〉が適用�
       ref: 4,
       damageType: 'distributed',
     });
-    return team([slotOf(822), slotOf(20), slotOf(QUEEN, raw)], 'Wind', 2);
+    return team([fixedSlot(822), fixedSlot(20), fixedSlot(QUEEN, { definition: raw })], 'Wind', 2);
   };
   const q = 2;
   const grantIndex = rawDefinition<RawDefinition>(QUEEN).skills.skill1!.effects.length;
@@ -262,7 +248,7 @@ describe('条件つき・順位の対象の付与と「〈状態名〉が適用�
 
 describe('1 パス目の順位に入る状態の中身（アリス + クイーン（真）+ 雪子）', () => {
   // アリスの S1 の topAttack のチャージ速度▲（射撃に効く）があるので、1 パス目が順位を出す。追撃・バトンタッチの攻撃力▲も順位に入る
-  const input = team([slotOf(311), slotOf(160), slotOf(191), slotOf(QUEEN), slotOf(871)], 'Wind', 3);
+  const input = team([fixedSlot(311), fixedSlot(160), fixedSlot(191), fixedSlot(QUEEN), fixedSlot(871)], 'Wind', 3);
   const prepared = applyCompositionToTeam(applyTreasureToTeam(input));
   const plan = planTeamRun(prepared);
   const key = (i: { holder: number; start: number; end: number }) => `${i.holder}:${i.start}-${i.end}`;

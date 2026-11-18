@@ -3,12 +3,10 @@
 // 実測値は plan/verification.md Stage 11 モダニア節（録画 0044・0045、2026-09-24）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { firingParams } from '../frame/firing.ts';
 import { initialShooter, resumeShooter, stepShooter } from '../frame/shooter.ts';
 import { itemsOf } from '../skills/holders.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -16,25 +14,8 @@ import type { TeamInput, TeamSlotInput, TeamResult } from '../team.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { piecesOf, statePiecesOf } from './historyHelpers.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
-
-function fixedSlot(id: number): TeamSlotInput {
-  const character = characterOf(id);
-  const fixed = computeFixedSpecAttack(character);
-  const slot: TeamSlotInput = {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-  };
-  if (DEFINED_IDS.has(id)) {
-    slot.skills = {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-    };
-  }
-  return slot;
-}
+import { characterOf } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
 

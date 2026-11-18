@@ -6,16 +6,15 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { exponentSumHitRateUp, landingPartsWith } from '../frame/landing.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { hitRateNOf } from '../skills/buffs.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
-import type { TeamInput, TeamSlotInput } from '../team.ts';
+import type { TeamInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { characterOf, rawDefinition, readData } from './data.ts';
+import { readData } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
@@ -28,28 +27,11 @@ const rangeEnemy: EnemyInput = {
   landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
 };
 const plainEnemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
-
-function fixedSlot(id: number, auto: boolean): TeamSlotInput {
-  const character = characterOf(id);
-  const fixed = computeFixedSpecAttack(character);
-  return {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-    ...(auto ? { conditionMode: 'auto' as const } : {}),
-    skills: {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-    },
-  };
-}
-
 const STACK = 0.0504;
 
 // V-0110 の撮影と同じ: ミサト単騎・AUTO（条件は自動）・オートバースト OFF・BigArms 灼熱の 3 分モード
 const SOLO: TeamInput = {
-  slots: [fixedSlot(833, true)],
+  slots: [fixedSlot(833, { conditionMode: 'auto' })],
   enemy: rangeEnemy,
   durationSeconds: 180,
   burst: false,
@@ -58,13 +40,7 @@ const SOLO: TeamInput = {
 // 実戦寄り（リター + ミサト + デルタ + アリス + モダニア）。手入力の条件とバーストあり。クラウンはミサトが居なくても
 // 2026-10-27 までの calc との差が 5% を超えた（クラウン側の差）ので入れていない
 const PRACTICAL: TeamInput = {
-  slots: [
-    fixedSlot(82, false),
-    fixedSlot(833, false),
-    fixedSlot(20, false),
-    fixedSlot(191, false),
-    fixedSlot(260, false),
-  ],
+  slots: [fixedSlot(82), fixedSlot(833), fixedSlot(20), fixedSlot(191), fixedSlot(260)],
   enemy: plainEnemy,
   durationSeconds: 180,
   burst: true,
@@ -76,7 +52,7 @@ const PRACTICAL: TeamInput = {
 const MISATO = 833;
 const ASUKA = 830;
 const BURST_HEAL: TeamInput = {
-  slots: [fixedSlot(MISATO, false), fixedSlot(20, false), fixedSlot(ASUKA, false)],
+  slots: [fixedSlot(MISATO), fixedSlot(20), fixedSlot(ASUKA)],
   enemy: plainEnemy,
   durationSeconds: 180,
   burst: true,

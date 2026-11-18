@@ -5,12 +5,7 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { rateAfterShots, simulateShotFrames } from '../cadence.ts';
 import type { EnemyInput } from '../damage.ts';
-import {
-  computeFixedSpecAttack,
-  computeFixedSpecDefence,
-  computeFixedSpecHp,
-  FIXED_SPEC_ENEMY_DEFENCE,
-} from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { firingParams, ZERO_FIRING_BUFFS } from '../frame/firing.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { variantDefinition } from '../records/sensitivity.ts';
@@ -18,33 +13,22 @@ import { whileItems, type HeldOrigin } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS, resolvePassives, resolveWhileEffects } from '../skills/resolve.ts';
 import { applyTreasure, type TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import type { TeamInput, TeamSlotInput } from '../team.ts';
+import type { TeamInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
 import { characterOf, rawDefinition } from './data.ts';
+import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
 
 const TOOB = 192;
 const FA = 301;
 const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
-
-function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  return {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    hpOverride: computeFixedSpecHp(c),
-    defenceOverride: computeFixedSpecDefence(c),
-    condition: { coreHitRate: 1, distanceBonus: false },
-    skills: { definition: definitionOf(id), levels: MAX_SKILL_LEVELS, treasurePhase },
-  };
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { hp: true, defence: true };
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
 
 /** 録画 0510・0511 と同じ枠順（1 枠目ソルジャーF.A.（操作）・2 枠目トーブ（宝物の段階 3）） */
 const team = (treasurePhase: TreasurePhase): TeamInput => ({
-  slots: [fixedSlot(FA), fixedSlot(TOOB, treasurePhase)],
+  slots: [fixedSlot(FA, SLOT_OPTIONS), fixedSlot(TOOB, { ...SLOT_OPTIONS, treasurePhase })],
   enemy,
   durationSeconds: 180,
   burst: false,

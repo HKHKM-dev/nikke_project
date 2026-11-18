@@ -3,35 +3,16 @@
 // 実測値を固定する。数値は plan/verification.md Stage 11 アリス節。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { itemsOf } from '../skills/holders.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import type { TreasurePhase } from '../skills/treasure.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
+import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
 
-function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput {
-  const character = characterOf(id);
-  const fixed = computeFixedSpecAttack(character);
-  const slot: TeamSlotInput = {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 0, distanceBonus: false },
-  };
-  if (DEFINED_IDS.has(id)) {
-    slot.skills = {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-      treasurePhase,
-    };
-  }
-  return slot;
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 0, distanceBonus: false } };
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
 
@@ -39,16 +20,48 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
   return { slots, enemy, durationSeconds: 180, burst: true, controlledSlot };
 }
 
-const REC42 = team([fixedSlot(304), fixedSlot(172), fixedSlot(191), fixedSlot(308)], 2);
-const REC43 = team([fixedSlot(304), fixedSlot(330), fixedSlot(191), fixedSlot(290), fixedSlot(172)], 2);
+const REC42 = team(
+  [
+    fixedSlot(304, SLOT_OPTIONS),
+    fixedSlot(172, SLOT_OPTIONS),
+    fixedSlot(191, SLOT_OPTIONS),
+    fixedSlot(308, SLOT_OPTIONS),
+  ],
+  2,
+);
+const REC43 = team(
+  [
+    fixedSlot(304, SLOT_OPTIONS),
+    fixedSlot(330, SLOT_OPTIONS),
+    fixedSlot(191, SLOT_OPTIONS),
+    fixedSlot(290, SLOT_OPTIONS),
+    fixedSlot(172, SLOT_OPTIONS),
+  ],
+  2,
+);
 /** 設計書 22.6 節の（撮らなかった）編成。アドミだけで同じフレームの規則が分かれる */
-const SUN43 = team([fixedSlot(304), fixedSlot(330), fixedSlot(172), fixedSlot(191), fixedSlot(308)], 3);
+const SUN43 = team(
+  [
+    fixedSlot(304, SLOT_OPTIONS),
+    fixedSlot(330, SLOT_OPTIONS),
+    fixedSlot(172, SLOT_OPTIONS),
+    fixedSlot(191, SLOT_OPTIONS),
+    fixedSlot(308, SLOT_OPTIONS),
+  ],
+  3,
+);
 const TEAMS: Record<string, TeamInput> = {
   '録画 0042（I-DOLL・フラワー + アドミ + アリス + I-DOLL・サン）': REC42,
   '録画 0043（I-DOLL・フラワー + クラウン + アリス + マナ + アドミ）': REC43,
   '録画 0043 の代案（I-DOLL・フラワー + クラウン + アドミ + アリス + I-DOLL・サン）': SUN43,
   '実戦寄り（リター + クラウン + アリス + ドレイク宝物 3 + ラピ）': team(
-    [fixedSlot(82), fixedSlot(330), fixedSlot(191), fixedSlot(101, 3), fixedSlot(10)],
+    [
+      fixedSlot(82, SLOT_OPTIONS),
+      fixedSlot(330, SLOT_OPTIONS),
+      fixedSlot(191, SLOT_OPTIONS),
+      fixedSlot(101, { ...SLOT_OPTIONS, treasurePhase: 3 }),
+      fixedSlot(10, SLOT_OPTIONS),
+    ],
     2,
   ),
 };

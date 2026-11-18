@@ -4,32 +4,16 @@ import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf, valuePiecesOf } from '../skills/holders.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { appliedFrames } from '../skills/timeline.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
-import type { TreasurePhase } from '../skills/treasure.ts';
+import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 const TORB = 192;
 const RAPI = 10;
-function slotOf(id: number, definition?: SkillDefinition, treasurePhase: TreasurePhase = 0): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  const slot: TeamSlotInput = {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-  };
-  const def = definition ?? (DEFINED_IDS.has(id) ? parseSkillDefinition(rawDefinition(id)) : undefined);
-  if (def !== undefined) slot.skills = { definition: def, levels: MAX_SKILL_LEVELS, treasurePhase };
-  return slot;
-}
-
 function teamOf(slots: TeamSlotInput[], burst: boolean, controlledSlot = 0, durationSeconds = 60): TeamInput {
   const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Wind', hasCore: true };
   return { slots, enemy, durationSeconds, burst, controlledSlot };
@@ -116,7 +100,9 @@ describe('{ applied } を timed・付与に開く読み込み', () => {
 
 describe('{ applied } の発火（timed・付与）', () => {
   it('fires on each record of the state on self, from the record frame (the frame after the shot)', () => {
-    const plan = planTeamRun(teamOf([slotOf(TORB, defOf(TORB, [marker(5), onApplied('attack', 0.05)]))], false));
+    const plan = planTeamRun(
+      teamOf([fixedSlot(TORB, { parsed: defOf(TORB, [marker(5), onApplied('attack', 0.05)]) })], false),
+    );
     const shots = plan.shots[0]!.frames;
     const records = shots.filter((_, k) => (k + 1) % 5 === 0).map((f) => f + 1);
     expect(appliedFrames(plan.history, 'camouflage', 0)).toEqual(records.filter((f) => f < plan.history.frames));
@@ -144,7 +130,13 @@ describe('{ applied } の発火（timed・付与）', () => {
       durationUntil: 'battleEnd',
     };
     const plan = planTeamRun(
-      teamOf([slotOf(TORB, defOf(TORB, [atStart, stack])), slotOf(RAPI, defOf(RAPI, [atStart]))], false),
+      teamOf(
+        [
+          fixedSlot(TORB, { parsed: defOf(TORB, [atStart, stack]) }),
+          fixedSlot(RAPI, { parsed: defOf(RAPI, [atStart]) }),
+        ],
+        false,
+      ),
     );
     expect(plan.history.applications.filter((a) => a.state === 'camouflage' && a.slotIndex === 0)).toHaveLength(2);
     expect(itemsOf(plan.history, { holder: 0, state: 'batonPass' }).map((i) => i.stack)).toEqual([1]);
@@ -159,7 +151,7 @@ describe('{ applied } の発火（timed・付与）', () => {
       durationUntil: 'battleEnd',
     };
     const onPersona = { ...onApplied('attack', 1), trigger: { applied: 'persona' } };
-    const plan = planTeamRun(teamOf([slotOf(TORB, defOf(TORB, [persona, onPersona]))], false));
+    const plan = planTeamRun(teamOf([fixedSlot(TORB, { parsed: defOf(TORB, [persona, onPersona]) })], false));
     expect(itemsOf(plan.history, { holder: 0, kind: 'timed', stat: 'attack' }).map((i) => i.start)).toEqual([0]);
   });
 
@@ -174,7 +166,10 @@ describe('{ applied } の発火（timed・付与）', () => {
     };
     const onPass = { ...onApplied('attack', 1), trigger: { applied: 'batonPass' } };
     const plan = planTeamRun(
-      teamOf([slotOf(TORB, defOf(TORB, [atStart, pass])), slotOf(RAPI, defOf(RAPI, [onPass]))], false),
+      teamOf(
+        [fixedSlot(TORB, { parsed: defOf(TORB, [atStart, pass]) }), fixedSlot(RAPI, { parsed: defOf(RAPI, [onPass]) })],
+        false,
+      ),
     );
     expect(appliedFrames(plan.history, 'batonPass', 1)).toEqual([0]);
     expect(itemsOf(plan.history, { holder: 1, sourceSlotIndex: 1, kind: 'timed' })).toEqual([]);
@@ -192,7 +187,7 @@ describe('{ applied } の発火（timed・付与）', () => {
       condition: { selfBuffed: 'attack' },
     };
     const plan = planTeamRun(
-      teamOf([slotOf(TORB, defOf(TORB, [atStart, onApplied('attack', 1), conditional]))], false),
+      teamOf([fixedSlot(TORB, { parsed: defOf(TORB, [atStart, onApplied('attack', 1), conditional]) })], false),
     );
     const attack = plan.history.tracks.find((t) => t.origin.kind === 'timed' && t.origin.effect.stat === 'attack')!;
     expect(attack.stage).toBe(1);
@@ -200,14 +195,16 @@ describe('{ applied } の発火（timed・付与）', () => {
     expect(plan.history.conditionSkips).toEqual([]);
     // 見る状態の付与が条件つき（段 1.5）なら、{ applied } の効果も段 1.5
     const late = { ...atStart, condition: { selfBuffed: 'critRate' } };
-    const plan2 = planTeamRun(teamOf([slotOf(TORB, defOf(TORB, [late, onApplied('attack', 1)]))], false));
+    const plan2 = planTeamRun(
+      teamOf([fixedSlot(TORB, { parsed: defOf(TORB, [late, onApplied('attack', 1)]) })], false),
+    );
     const attack2 = plan2.history.tracks.find((t) => t.origin.kind === 'timed' && t.origin.effect.stat === 'attack')!;
     expect(attack2.stage).toBe(1.5);
   });
 });
 
 describe('トーブの宝物版 S1（代用弾丸・応急改造）', () => {
-  const run = () => planTeamRun(teamOf([slotOf(TORB, undefined, 3), slotOf(330), slotOf(314)], true));
+  const run = () => planTeamRun(teamOf([fixedSlot(TORB, { treasurePhase: 3 }), fixedSlot(330), fixedSlot(314)], true));
 
   it('refills ammo on every 10th normal shot and records Emergency-Crafted Bullets on the next frame, with no window', () => {
     const plan = run();
@@ -242,7 +239,7 @@ describe('トーブの宝物版 S1（代用弾丸・応急改造）', () => {
 
   it('rounds each refill with the max ammo raised by the same shot (V-0435: 3, 3, 4, … and magazines of 94 and 110)', () => {
     // C-0558・C-0561: 30 発目の代用弾丸の 3 スタック目（f + 1 から）を入れた 66 × 5.31% = 3.50 → 4。発のフレームの 64 なら 3
-    const plan = planTeamRun(teamOf([slotOf(TORB, undefined, 3)], false));
+    const plan = planTeamRun(teamOf([fixedSlot(TORB, { treasurePhase: 3 })], false));
     const refills = plan.instants.filter((e) => e.slotIndex === 0 && e.effect.kind === 'ammoRefill');
     expect(refills.slice(0, 8).map((e) => e.amount)).toEqual([3, 3, 4, 4, 4, 4, 4, 4]);
     const log = plan.shots[0]!;
@@ -252,9 +249,9 @@ describe('トーブの宝物版 S1（代用弾丸・応急改造）', () => {
 });
 
 const TEAMS: Record<string, TeamInput> = {
-  'トーブ単騎（宝物の段階 3）': teamOf([slotOf(TORB, undefined, 3)], false, 0, 180),
+  'トーブ単騎（宝物の段階 3）': teamOf([fixedSlot(TORB, { treasurePhase: 3 })], false, 0, 180),
   'トーブ（宝物の段階 3）+ クラウン + ソーダ：トゥインクルバニー': teamOf(
-    [slotOf(TORB, undefined, 3), slotOf(330), slotOf(314)],
+    [fixedSlot(TORB, { treasurePhase: 3 }), fixedSlot(330), fixedSlot(314)],
     true,
     0,
     180,

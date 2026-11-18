@@ -11,27 +11,12 @@ import { planTeamRun } from '../frame/plan.ts';
 import { METRICS } from '../records/observations/metrics/index.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { itemsOf, valuePiecesOf } from '../skills/holders.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
+import { characterOf, rawDefinition } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 const SODA = 314;
 type RawDefinition = { skills: Record<string, { effects: Record<string, unknown>[]; notes?: unknown[] }> };
-function fixedSlot(id: number, definition?: unknown): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  const slot: TeamSlotInput = {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-  };
-  const raw = definition ?? (DEFINED_IDS.has(id) ? rawDefinition<RawDefinition>(id) : undefined);
-  if (raw !== undefined) slot.skills = { definition: parseSkillDefinition(raw), levels: MAX_SKILL_LEVELS };
-  return slot;
-}
-
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
 const team = (slots: TeamSlotInput[], controlledSlot: number): TeamInput => ({
   slots,
@@ -42,7 +27,8 @@ const team = (slots: TeamSlotInput[], controlledSlot: number): TeamInput => ({
 });
 
 /** 撮影計画の編成（ラム I・デルタ II・ソーダ：TB III（操作）） */
-const recordingTeam = (soda?: unknown) => team([fixedSlot(822), fixedSlot(20), fixedSlot(SODA, soda)], 2);
+const recordingTeam = (soda?: unknown) =>
+  team([fixedSlot(822), fixedSlot(20), fixedSlot(SODA, { definition: soda })], 2);
 const S = 2;
 
 /**

@@ -7,10 +7,10 @@
 // 雪子が撃つ（plan/design-persona.md 9.1 節）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
-import { MAX_SKILL_LEVELS, isStateContent } from '../skills/resolve.ts';
+import { isStateContent } from '../skills/resolve.ts';
 import { appliedFrames } from '../skills/timeline.ts';
 import {
   parseSkillDefinition,
@@ -22,7 +22,8 @@ import {
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { Element } from '../types.ts';
 import { applicationsOf, piecesOf, stateItemsOf } from './historyHelpers.ts';
-import { characterOf, rawDefinition } from './data.ts';
+import { rawDefinition } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 const RAM = 822;
 const DELTA = 20;
@@ -59,20 +60,6 @@ function personaOnly(resourceId: number): SkillDefinition {
     skills: { skill1: { effects: [personaGrant] }, skill2: empty, burst: empty },
   });
 }
-
-function fixedSlot(id: number, definition?: SkillDefinition): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  const slot: TeamSlotInput = {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-  };
-  if (definition) slot.skills = { definition, levels: MAX_SKILL_LEVELS };
-  return slot;
-}
-
 function team(slots: TeamSlotInput[], element: Element, controlledSlot = 2): TeamInput {
   const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element, hasCore: true };
   return { slots, enemy, durationSeconds: 180, burst: true, controlledSlot };
@@ -81,10 +68,10 @@ function team(slots: TeamSlotInput[], element: Element, controlledSlot = 2): Tea
 const pair = (element: Element) =>
   team(
     [
-      fixedSlot(COCOA, dataDefinition(COCOA)),
-      fixedSlot(YUNI, dataDefinition(YUNI)),
-      fixedSlot(QUEEN, queenDefinition()),
-      fixedSlot(YUKIKO, yukikoDefinition()),
+      fixedSlot(COCOA, { parsed: dataDefinition(COCOA) }),
+      fixedSlot(YUNI, { parsed: dataDefinition(YUNI) }),
+      fixedSlot(QUEEN, { parsed: queenDefinition() }),
+      fixedSlot(YUKIKO, { parsed: yukikoDefinition() }),
     ],
     element,
   );
@@ -185,17 +172,22 @@ describe('ペルソナ状態の味方への絞り込み（skills/composition.ts�
   it('skips a Persona II (Aigis) and a III without the Persona state', () => {
     const withAigis = team(
       [
-        fixedSlot(RAM),
-        fixedSlot(AIGIS, personaOnly(AIGIS)),
-        fixedSlot(QUEEN, queenDefinition()),
-        fixedSlot(YUKIKO, yukikoDefinition()),
+        fixedSlot(RAM, { definition: null }),
+        fixedSlot(AIGIS, { parsed: personaOnly(AIGIS) }),
+        fixedSlot(QUEEN, { parsed: queenDefinition() }),
+        fixedSlot(YUKIKO, { parsed: yukikoDefinition() }),
       ],
       'Wind',
     );
     expect(targetsOf(withAigis, q, 'skill2', 'batonPass')).toEqual([y]);
     // 雪子に定義（ペルソナの静的な付与）が無ければペルソナ状態でない
     const undefinedYukiko = team(
-      [fixedSlot(RAM), fixedSlot(DELTA), fixedSlot(QUEEN, queenDefinition()), fixedSlot(YUKIKO)],
+      [
+        fixedSlot(RAM, { definition: null }),
+        fixedSlot(DELTA, { definition: null }),
+        fixedSlot(QUEEN, { parsed: queenDefinition() }),
+        fixedSlot(YUKIKO, { definition: null }),
+      ],
       'Wind',
     );
     expect(targetsOf(undefinedYukiko, q, 'skill2', 'batonPass')).toEqual([]);

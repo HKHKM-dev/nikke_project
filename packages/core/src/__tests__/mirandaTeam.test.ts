@@ -9,17 +9,15 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { coreHitRateWithHitRateUp, exponentSumHitRateUp, landingPartsWith } from '../frame/landing.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { hitRateNOf } from '../skills/buffs.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
-import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { TreasurePhase } from '../skills/treasure.ts';
-import { characterOf, rawDefinition, readData } from './data.ts';
+import type { TeamInput } from '../team.ts';
+import { readData } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
@@ -32,29 +30,11 @@ const rangeEnemy: EnemyInput = {
   landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
 };
 const plainEnemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
-
-function fixedSlot(id: number, auto: boolean, treasurePhase: TreasurePhase = 0): TeamSlotInput {
-  const character = characterOf(id);
-  const fixed = computeFixedSpecAttack(character);
-  return {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-    ...(auto ? { conditionMode: 'auto' as const } : {}),
-    skills: {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-      treasurePhase,
-    },
-  };
-}
-
 const N = 0.0544 + 0.0379;
 
 // V-0114 の撮影と同じ: ミランダ単騎（宝物 3 段階）・AUTO（条件は自動）・オートバースト OFF・BigArms 灼熱の 3 分モード
 const SOLO: TeamInput = {
-  slots: [fixedSlot(32, true, 3)],
+  slots: [fixedSlot(32, { conditionMode: 'auto', treasurePhase: 3 })],
   enemy: rangeEnemy,
   durationSeconds: 180,
   burst: false,
@@ -62,13 +42,7 @@ const SOLO: TeamInput = {
 };
 // 実戦寄り（ミランダ + リター + デルタ + アリス + モダニア）。手入力の条件とバーストあり。SMG はミランダとリター
 const PRACTICAL: TeamInput = {
-  slots: [
-    fixedSlot(32, false, 3),
-    fixedSlot(82, false),
-    fixedSlot(20, false),
-    fixedSlot(191, false),
-    fixedSlot(260, false),
-  ],
+  slots: [fixedSlot(32, { treasurePhase: 3 }), fixedSlot(82), fixedSlot(20), fixedSlot(191), fixedSlot(260)],
   enemy: plainEnemy,
   durationSeconds: 180,
   burst: true,
@@ -77,7 +51,7 @@ const PRACTICAL: TeamInput = {
 
 // V-0216 の撮影と同じ: ミランダ（宝物 3 段階・操作）+ デルタ。AUTO・オートバースト ON・BigArms 灼熱の 3 分モード。III なし
 const DUO: TeamInput = {
-  slots: [fixedSlot(32, true, 3), fixedSlot(20, true)],
+  slots: [fixedSlot(32, { conditionMode: 'auto', treasurePhase: 3 }), fixedSlot(20, { conditionMode: 'auto' })],
   enemy: rangeEnemy,
   durationSeconds: 180,
   burst: true,
@@ -85,7 +59,11 @@ const DUO: TeamInput = {
 };
 // V-0217・V-0218 の撮影と同じ: ミランダ（宝物 3 段階）+ デルタ + I-DOLL・サン（操作）。フルバーストあり
 const TRIO: TeamInput = {
-  slots: [fixedSlot(32, true, 3), fixedSlot(20, true), fixedSlot(308, true)],
+  slots: [
+    fixedSlot(32, { conditionMode: 'auto', treasurePhase: 3 }),
+    fixedSlot(20, { conditionMode: 'auto' }),
+    fixedSlot(308, { conditionMode: 'auto' }),
+  ],
   enemy: rangeEnemy,
   durationSeconds: 180,
   burst: true,
@@ -94,7 +72,11 @@ const TRIO: TeamInput = {
 
 // V-0229 の撮影（録画 0262）と同じ: TRIO で操作枠をミランダ（撃たない）に替えた編成
 const TRIO_LINE3: TeamInput = {
-  slots: [fixedSlot(32, true, 3), fixedSlot(20, true), fixedSlot(308, true)],
+  slots: [
+    fixedSlot(32, { conditionMode: 'auto', treasurePhase: 3 }),
+    fixedSlot(20, { conditionMode: 'auto' }),
+    fixedSlot(308, { conditionMode: 'auto' }),
+  ],
   enemy: rangeEnemy,
   durationSeconds: 180,
   burst: true,
