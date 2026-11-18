@@ -112,6 +112,45 @@ export type ObservationScope = {
   frames?: [number, number];
 };
 
+/** 下書きの欄の名前 */
+export type ObservationDraftKey = keyof ObservationDraft;
+
+/**
+ * 下書きの欄の一覧（records:new observation --help が出す）。required は欄が省けないか、shape は値の形。欄の名前と required は
+ * ObservationDraft と合うことを型で見る（observationEdits.test.ts）
+ */
+export const OBSERVATION_DRAFT_FIELDS = {
+  use: { required: true, shape: OBSERVATION_USES.join(' | ') },
+  kind: { required: true, shape: OBSERVATION_KINDS.join(' | ') },
+  value: { required: true, shape: '数か数の配列（use が record なら JSON の値。読めなかった要素は null）' },
+  description: { required: true, shape: '何の値か（1〜2 文）' },
+  unit: { required: false, shape: 'px・f・%・倍 など' },
+  spread: { required: false, shape: '{ kind: range | ci95, low, high }' },
+  method: { required: false, shape: '{ tool?, note? }（読んだ道具とメモ）' },
+  evidence: { required: false, shape: '証拠フレームなどの文字列の並び' },
+  compare: {
+    required: false,
+    shape:
+      '{ model: sim, metric, args, tolerance: { rel } | { abs }, setup }（指標と args は npm run records:model -- --list）',
+  },
+  scope: {
+    required: false,
+    shape: `{ slot: 枠 | 枠の並び | all, source: ${OBSERVATION_SOURCES.join(' | ')}, frames?: [始め, 終わり] }`,
+  },
+  recordings: {
+    required: false,
+    shape: '複数の録画にまたがる値の録画 id の並び（recording も含める。compare には使わない）',
+  },
+  invalid: { required: false, shape: '{ reason, date }（ふつうは records:new observation --invalidate で付ける）' },
+} as const satisfies { [K in ObservationDraftKey]-?: { required: boolean; shape: string } };
+
+/** 下書きの欄の一覧の文（records:new observation --help） */
+export function observationDraftFieldsText(): string {
+  return Object.entries(OBSERVATION_DRAFT_FIELDS)
+    .map(([name, f]) => `  ${name}${f.required ? '' : '?'}: ${f.shape}`)
+    .join('\n');
+}
+
 /** 値が数の配列か */
 export function isNumberArray(value: JsonValue): value is number[] {
   return Array.isArray(value) && value.every((x) => typeof x === 'number');

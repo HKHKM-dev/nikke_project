@@ -24,30 +24,116 @@ import { shotFramesIn } from './firing.ts';
 import { spanOf } from './skillHits.ts';
 
 export const buffsMetrics: Readonly<Record<string, Metric>> = {
-  buffWindowEnds: { args: ['slot', 'skill', 'stat'], sim: buffWindowEnds },
-  buffWindowStarts: { args: ['slot', 'skill', 'stat'], sim: buffWindowStarts },
-  buffFireStarts: { args: ['slot', 'skill', 'stat'], sim: buffFireStarts },
-  buffWindowStartIntervalMean: { args: ['slot', 'skill', 'stat', 'count'], sim: buffWindowStartIntervalMean },
+  buffWindowEnds: {
+    description: '枠が受ける timed の効果（skill・stat で絞る）の窓の終わりのフレーム',
+    optional: ['effect', 'count'],
+    args: ['slot', 'skill', 'stat'],
+    sim: buffWindowEnds,
+  },
+  buffWindowStarts: {
+    description: '枠が受ける timed の効果の窓の始まりのフレーム',
+    optional: ['effect', 'count', 'video'],
+    args: ['slot', 'skill', 'stat'],
+    sim: buffWindowStarts,
+  },
+  buffFireStarts: {
+    description: '枠が受ける timed の効果の、発火ごとの始まりのフレーム',
+    optional: ['effect', 'count', 'video'],
+    args: ['slot', 'skill', 'stat'],
+    sim: buffFireStarts,
+  },
+  buffWindowStartIntervalMean: {
+    description: '効果の窓の始まりの、最初の count 個の間隔の平均',
+    optional: ['effect', 'skip'],
+    args: ['slot', 'skill', 'stat', 'count'],
+    sim: buffWindowStartIntervalMean,
+  },
   buffWindowShotIntervalMean: {
+    description: '効果の窓の中（inside: true）か外の、2 発の間の平均',
+    optional: ['effect', 'minGap', 'maxGap'],
     args: ['slot', 'skill', 'stat', 'inside'],
     sim: buffWindowShotIntervalMean,
   },
-  buffWindowEndFromFullBurstEnd: { args: ['slot', 'skill', 'stat', 'n'], sim: buffWindowEndFromFullBurstEnd },
-  buffEdgeFromShot: { args: ['slot', 'skill', 'stat', 'from', 'shot', 'edge'], sim: buffEdgeFromShot },
-  buffEdgeFromActivation: { args: ['slot', 'skill', 'stat', 'from', 'n', 'edge'], sim: buffEdgeFromActivation },
-  chanceActiveRatio: { args: ['slot', 'skill'], sim: chanceActiveRatio },
-  chanceExpiries: { args: ['slot', 'skill'], sim: chanceExpiries },
+  buffWindowEndFromFullBurstEnd: {
+    description: 'n 回目のフルバーストで始まった効果の窓の終わりから、窓の終わりを引いたフレーム',
+    optional: ['effect', 'before'],
+    args: ['slot', 'skill', 'stat', 'n'],
+    sim: buffWindowEndFromFullBurstEnd,
+  },
+  buffEdgeFromShot: {
+    description: '枠 from の shot 発目から、効果の窓の付き始めか切れ目（edge）までの動画のフレーム',
+    optional: ['effect'],
+    args: ['slot', 'skill', 'stat', 'from', 'shot', 'edge'],
+    sim: buffEdgeFromShot,
+  },
+  buffEdgeFromActivation: {
+    description: '枠 from の n 回目の発動の印から、効果の窓の付き始めか切れ目（edge）までの動画のフレーム',
+    optional: ['effect', 'held', 'ticks', 'fromShot', 'originStat', 'originEffect'],
+    args: ['slot', 'skill', 'stat', 'from', 'n', 'edge'],
+    sim: buffEdgeFromActivation,
+  },
+  chanceActiveRatio: {
+    description: '枠の発のうち、スロット skill の確率の効果が付いている発の割合の期待値',
+    optional: ['from', 'to', 'burst'],
+    args: ['slot', 'skill'],
+    sim: chanceActiveRatio,
+  },
+  chanceExpiries: {
+    description: '続けて撃った 2 発で、確率の効果が前で付き後で切れた組の数の期待値',
+    optional: ['from', 'to', 'burst'],
+    args: ['slot', 'skill'],
+    sim: chanceExpiries,
+  },
   // スタック数の条件で付いたか・スタック量の減少・フルバースト中の数え方（ソーダ：トゥインクルバニーのバースト。V-0437）
-  burstBuffApplied: { args: ['slot', 'skill', 'stat'], sim: burstBuffApplied },
+  burstBuffApplied: {
+    description: '枠のバーストの発動ごとに、自分に効果が付いたか（1・0）',
+    optional: ['skip', 'count'],
+    args: ['slot', 'skill', 'stat'],
+    sim: burstBuffApplied,
+  },
   // フルバーストで、枠に効果（対象が最終防御力の比べで決まる発射体爆発ダメージ▲ など）が付いたか（V-0452）
-  fullBurstBuffApplied: { args: ['slot', 'skill', 'stat', 'n'], sim: fullBurstBuffApplied },
-  stateStackDrops: { args: ['slot', 'state'], sim: stateStackDrops },
+  fullBurstBuffApplied: {
+    description: 'n 回目のフルバーストで、枠に効果が付いたか（1・0）',
+    args: ['slot', 'skill', 'stat', 'n'],
+    sim: fullBurstBuffApplied,
+  },
+  stateStackDrops: {
+    description: '枠の状態 state のスタックの減少ごとの、段の差',
+    optional: ['skip', 'count'],
+    args: ['slot', 'state'],
+    sim: stateStackDrops,
+  },
   // カウンタの値・状態が付いた回・フルバーストの終わりのスタック数（V-0503）
-  counterAtBursts: { args: ['slot', 'counter'], sim: counterAtBursts },
-  counterAfterBursts: { args: ['slot', 'counter'], sim: counterAfterBursts },
-  stateAppliedAtBursts: { args: ['slot', 'state'], sim: stateAppliedAtBursts },
-  stateStacksAtFullBurstEnds: { args: ['slot', 'state'], sim: stateStacksAtFullBurstEnds },
-  fullBurstStackGainResidues: { args: ['slot', 'state', 'every'], sim: fullBurstStackGainResidues },
+  counterAtBursts: {
+    description: '発動ごとの、効果の発火の前のカウンタ counter の値',
+    optional: ['skip', 'count'],
+    args: ['slot', 'counter'],
+    sim: counterAtBursts,
+  },
+  counterAfterBursts: {
+    description: '発動ごとの、効果の発火の後のカウンタ counter の値',
+    optional: ['skip', 'count'],
+    args: ['slot', 'counter'],
+    sim: counterAfterBursts,
+  },
+  stateAppliedAtBursts: {
+    description: '発動ごとに、状態 state が付いたか（1・0）',
+    optional: ['skip', 'count'],
+    args: ['slot', 'state'],
+    sim: stateAppliedAtBursts,
+  },
+  stateStacksAtFullBurstEnds: {
+    description: 'フルバーストの窓の終わりの、状態 state のスタックの段',
+    optional: ['skip', 'count'],
+    args: ['slot', 'state'],
+    sim: stateStacksAtFullBurstEnds,
+  },
+  fullBurstStackGainResidues: {
+    description: 'フルバーストごとの、スタックの増え方から発の数 ÷ every を引いたもの',
+    optional: ['skip', 'count'],
+    args: ['slot', 'state', 'every'],
+    sim: fullBurstStackGainResidues,
+  },
 };
 
 /**

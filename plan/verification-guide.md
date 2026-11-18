@@ -62,6 +62,7 @@
 - A は、後の回が最初の回と同じ条件のときに限る（1 回目のバーストだけゲージの溜まり方が違うなど、初回だけ条件の違う事象は C）。後の回で値を合わせ直したら、その回も決めた回になる。
 - 予測ファイルを書けば、`records:predict` が指標ごとに 1 本の録画の中の回数を出す（2 回以上なら A の候補、1 回なら C の候補。回の番号・数の引数の無い 1 つの値の指標は出さない）。
 - 予測は任意。見分けられる録画かをモデルで確かめたいときは、予測ファイルの指標に許容の幅（`tolerance`。観測値の `compare.tolerance` と同じ形）を書くと、`records:predict` が、仮説どうしの予測の差がその幅の中の指標を「見分けられない」と出す。時刻の指標（フレーム）の幅は、動画とゲームの時刻のずれ（[captures/guide.md](captures/guide.md)「動画のフレームはゲーム内の時間とそろっていない」）を見込んで決める。そのうえで、予測ファイル `records/predictions/V-NNNN.json` に、撮影と同じ編成・仮説（`setup` の上書き）・比べる指標を書き、`npm run records:predict -- V-NNNN` で仮説 × 指標の値を書き込む（書式は [records/predictions/README.md](../records/predictions/README.md)）。細かく見たいときは `npm run sim -- --ids <編成> --fixed-spec --controlled <操作枠> ...`（オプションは `packages/core/scripts/sim-run.ts` の冒頭）。予測ファイルにできない仮説は、検証記録の「予測」に手で書いてよい。使わなければ「予測」は「なし」。予測の後にモデルが変わって値が古くなると、開いている検証なら `records:check` が「予測の後にモデルが変わった」と出す（[design-prediction-staleness.md](design-prediction-staleness.md)）。出し直すかどうかは撮影計画の都合で決め、古いわけを本文で説明しなくてよい。
+- 録画の無い段のモデルの値は、編成と敵が要る値（1 ヒット・回復量）なら `npm run sim -- --ids <id>,... --fixed-spec`、キャラ 1 人のスペック固定の攻撃力・最大HP・防御力と通常攻撃の 1 発の倍率なら `npm run char -- <id> --stats` で出す。
 - 撮影の手順と注意（編成と条件の選び方・撮る前の確かめ・映すもの・撮った後）は [captures/protocol.md](captures/protocol.md)。読み取りの注意は [captures/guide.md](captures/guide.md)。
 
 ## 5. 撮る・取り込む
@@ -73,8 +74,9 @@
 
 - 読み取りはレシピで: `npm run records:read -- <録画 id>[,<録画 id>...] --recipe <名前> --source V-NNNN --write`（録画は , で並べて 1 回で読める。クラウドで録画が手元に無ければ、道具が Drive から取り寄せる）。レシピと `--opt` の一覧は `npm run records:read -- --list`。観測値が `records/observations/<録画 id>.json` に足され、`source` に検証記録の ID、`method.tool` にレシピ名と版が入る。
 - HUD の増分を何人かの 1 ヒットの格子（コア × 会心 × 距離 × ▲の有無。SG はペレットの和。倍率ダメージ・持続ダメージの tick と、それらの同じフレームの和も）に当て、誰のどの発か・▲が乗っているかを決め、事象の前後で窓の端を挟むのは、レシピ `buff-edge` の `--opt grid`・`pair`（格子はモデルのフレームで指す。事象の時刻は `burst-panel` の観測値の ID で渡せる）。使い捨てのスクリプトで書き直さない（[design-buff-edge-recipe.md](design-buff-edge-recipe.md) 8・9 節）。
-- レシピに無い値は、解析ツール（[captures/tools.md](captures/tools.md)）か目で読み、`npm run records:new -- observation --from V-NNNN --recording <録画 id> --json '<下書き>'`（下書きは 1 つか配列。`--file` でも渡せる）で足す（`method.note` に読み方）。次の空き番号・`source`・`readAt` を付け、`records:check` と同じ観測値の検査に通らなければ書かない。観測値の形は `packages/core/src/records/observations/types.ts` の型（[design-records-automation.md](design-records-automation.md) 3.4 節）。
-- モデルと比べる値は、比べる指定（`compare`。指標は照合ランナーの `METRICS`）を書く。要る指標が無ければ、読むモデルの出力でテーマのファイル（`packages/core/src/records/observations/metrics/` の `skillHits`・`damage`・`firing`・`burst`・`buffs`）を選び、その表に足す（足した PR に入れる）。補助関数はそのテーマのファイルに置き、2 つ以上のテーマが使うものは `metrics/context.ts` に置く（テーマどうしの import が循環しないように）。予測ファイルの指標と `metric`・`args`・`setup` を同じにすると、予測と自動で結び付く。観測値を書く前にモデルの値を見るには `npm run records:model -- <録画 id> <指定>... --setup '<JSON>' [--args '<JSON>']`（指定は `指標` か `指標:{args}` で、並べると 1 回で出す。`--like <観測値 ID>` で、その観測値の録画・setup・args を使う）。撮る前に発・バースト・バフの出来事の列を見るには `npm run sim -- --ids <編成> --trace shots,bursts,buffs [--from 秒 --to 秒]`（オプションは `packages/core/scripts/sim-run.ts` の冒頭）。
+- レシピに無い値は、解析ツール（[captures/tools.md](captures/tools.md)）か目で読み、`npm run records:new -- observation --from V-NNNN --recording <録画 id> --json '<下書き>'`（下書きは 1 つか配列。`--file` でも渡せる）で足す（`method.note` に読み方）。次の空き番号・`source`・`readAt` を付け、`records:check` と同じ観測値の検査に通らなければ書かない。下書きの欄（必須・任意・値の形）は `npm run records:new -- observation --help`。観測値の形は `packages/core/src/records/observations/types.ts` の型（[design-records-automation.md](design-records-automation.md) 3.4 節）。
+- 書いた観測値を直すときは `npm run records:new -- observation --replace <観測値 ID> --json '<下書き>'`（同じ ID のまま欄を差し替える）、使えなくなったら `--invalidate <観測値 ID>[,...] --reason "<理由>" [--by <新しい観測値 ID>]`（`invalid` を付け、`--by` があれば、それを根拠にしている結論の根拠を付け替える）。
+- モデルと比べる値は、比べる指定（`compare`。指標は照合ランナーの `METRICS`）を書く。要る指標が無ければ、読むモデルの出力でテーマのファイル（`packages/core/src/records/observations/metrics/` の `skillHits`・`damage`・`firing`・`burst`・`buffs`）を選び、その表に足す（足した PR に入れる）。指標ごとの要る args・任意の args・説明は `npm run records:model -- --list [<指標>]`。補助関数はそのテーマのファイルに置き、2 つ以上のテーマが使うものは `metrics/context.ts` に置く（テーマどうしの import が循環しないように）。予測ファイルの指標と `metric`・`args`・`setup` を同じにすると、予測と自動で結び付く。観測値を書く前にモデルの値を見るには `npm run records:model -- <録画 id> <指定>... --setup '<JSON>' [--args '<JSON>']`（指定は `指標` か `指標:{args}` で、並べると 1 回で出す。`--like <観測値 ID>` で、その観測値の録画・setup・args を使う）。撮る前に発・バースト・バフの出来事の列を見るには `npm run sim -- --ids <編成> --trace shots,bursts,buffs [--from 秒 --to 秒]`（オプションは `packages/core/scripts/sim-run.ts` の冒頭）。
 - 繰り返し使う読み方はレシピにする（`tools/captures/recipes/`）。読み取りの落とし穴は [captures/guide.md](captures/guide.md)。
 
 ## 7. 比べる
@@ -86,11 +88,13 @@
 
 ## 8. 結論
 
-- `npm run records:new -- claim --from V-NNNN --text "<結論の文>"` に、結論の対象（定義の効果なら `--subject "data/skills/<rid>.json の <スロット> の effects[<番号>]"`、定義に結び付かない機構なら `--mechanism <機構>`。付録 A）と、`--decided-on <録画>:<仮説|値|読み方>`（無ければ `--decided-on none`）を付ける。録画の中の反復は `--run "<録画>|<観測値,…>|<後の回>[|<決めた回>]"`、合わせ込みの定数を持たない仮説は `--parameter-free "<式と定数の出どころ>"`（[design-grade-runs.md](design-grade-runs.md)）。根拠（この検証記録の観測値。`--observations <ID,…>` で絞れる）と等級の候補が埋まり、2.2 節の条件で状態が決まる。`model`（モデル側）は人が書く。番号は起案と同じく、道具が取ってすぐ push する（3 節）。
+- `npm run records:new -- claim --from V-NNNN --text "<結論の文>"` に、結論の対象（定義の効果なら `--subject "data/skills/<rid>.json の <スロット> の effects[<番号>]"`、定義に結び付かない機構なら `--mechanism <機構>`。付録 A）と、`--decided-on <録画>:<仮説|値|読み方>`（無ければ `--decided-on none`）を付ける。録画の中の反復は `--run "<録画>|<観測値,…>|<後の回>[|<決めた回>]"`、合わせ込みの定数を持たない仮説は `--parameter-free "<式と定数の出どころ>"`（[design-grade-runs.md](design-grade-runs.md)）。根拠（この検証記録の観測値。`--observations <ID,…>` で絞れる）と等級の候補が埋まり、2.2 節の条件で状態が決まる。`model`（モデル側）は人が書く（`--model "<モデル側>"` でも渡せる）。番号は起案と同じく、道具が取ってすぐ push する（3 節）。書く前に状態と確定にできない理由だけを見るには `--dry-run`（番号を取らない）。
+- 前からある仮説の結論を新しい検証で確定にするときは、`npm run records:new -- claim --update C-NNNN --from V-NNNN [--observations <ID,…>]` で上書きする（結論の文・対象・model を残して根拠を足し、等級の候補・状態・最小構成の検査を出し直す。番号は取らず、commit もしない）。結論の中身（式・値）が変わるときは、新しい結論を作り、古い結論を `棄却` にする（下の「合わなかったとき」）。
+- 結論の ID を書く定義・テスト・コードの注記は、先に `records:new claim` で番号を取ってから書く（仮の ID を置いて後で書き換えない）。
 - `decidedOn` の役割: `仮説の出どころ`（その録画の観測値や残差を見て仮説を立てた）・`値を合わせた`（値をその録画に合わせて決めた）・`読み方を合わせた`（その録画を見てから読み方を組んだ・替えた）。予測の前に値を見ていただけの録画と、読めなさを理由に読み方を替えた録画は入れない（[design-investigation-review.md](design-investigation-review.md) 1.4.2 節の後）。
 - 定義に結び付く結論の書き方（効果の `claims` に ID を書く）は [skills-guide.md](skills-guide.md) 3 節。
 - `確定` の結論に結び付いた観測値は、以後 `npm test` で比べられる（許容外なら落ちる）。
-- 人の判断で確定にするとき（機械の確定の条件の一部をオーナーの判断で上書きする）は、結論の `judgment` に、判断の日（`decided`）・上書きした条件（`overrides`: `指標なし`・`最小構成の警告`・`許容外`・`合う仮説が 2 つ以上`）・理由を書く（claims.md に「人の判断」と出る）。等級を機械の候補より上にした理由は `gradeReason`（録画の中の回は `runs` に書けば候補に入る）、最小構成の要素ごとの効かない理由は `minimal` の印に書く。判断は PR の前に対話で受け、検証と同じ PR に入れる（判断だけの PR は出さない）（[design-investigation-review.md](design-investigation-review.md) 3 節）。
+- 人の判断で確定にするとき（機械の確定の条件の一部をオーナーの判断で上書きする）は、結論の `judgment` に、判断の日（`decided`）・上書きした条件（`overrides`: `指標なし`・`最小構成の警告`・`許容外`・`合う仮説が 2 つ以上`）・理由を書く（claims.md に「人の判断」と出る。`records:new claim` の `--judgment "<条件>[・<条件>…]|<理由>"` で書ける）。等級を機械の候補より上にした理由は `gradeReason`（録画の中の回は `runs` に書けば候補に入る）、最小構成の要素ごとの効かない理由は `minimal` の印に書く。判断は PR の前に対話で受け、検証と同じ PR に入れる（判断だけの PR は出さない）（[design-investigation-review.md](design-investigation-review.md) 3 節）。
 - **合わなかったとき**
   - 根拠のある別の解釈があれば、定義やモデルを直して撮り直すか、既存の録画で比べ直す。
   - 古い結論は消さずに `棄却` にし、新しい結論の「置き換え」に古い ID を書く。スキル定義の `claims`・コードの注記の古い ID は新しい ID に差し替える（棄却の結論を `claims` が指すと `npm run records:check` が落ちる）。
@@ -100,7 +104,7 @@
 
 - 検証記録の「結果」「分かったこと・分からないこと」「次に撮るもの」を書き、冒頭の「結論」に ID を足し、`npm run records:close -- V-NNNN --mark` で閉じる前の検査を通して状態を `完了` にする。この記録の仮説の結論のうち、仮説の理由が最小構成の警告だけのもの（理由が残っていないものを含む。`when`・`edge` の無いもの）は、まとめて確定とみなして確定にできる条件を見直し、通ったものを、閉じる前の検査が通ったときに確定に書き換える（等級も機械の候補に合わせる。`--mark` が無ければ出すだけで、閉じる前の検査は確定にした後の結論で見る）。落ちた検査は道具が出す（検査の一覧は `packages/core/scripts/records-close.ts` の冒頭。`judgment` で上書きできるものは 8 節）。CI と同じ確認は PR の前の `npm run pr:prep` が回す（閉じるときにも回したければ `--ci`。こちらは書式と lint も全部のファイルを見る）。
 - 閉じた記録にも、録画・観測値・表・結果を書き足してよい（[design-investigation-review.md](design-investigation-review.md) 4.2 節）。結論の根拠が変わったら `records:close` を回し直す。
-- 課題の状態が変わったら、その課題のファイル（`records/backlog/`。書き方は [backlog.md](backlog.md) の冒頭）を直す（ID と経過は書かない。Stage の状態が変わったときだけ [roadmap.md](roadmap.md) の 1 行も）。commit して `npm run pr:prep -- --push` を回し、[AGENTS.md](../AGENTS.md)「コミット手順」で PR を出す。題名の案と本文の骨組みは `records:close` が出す。本文は骨組みに「変更」（コード・データ）を足し、値と読み方は検証記録にあるので書き写さない（結論は ID で指す。[design-workflow-simplification-5.md](design-workflow-simplification-5.md) 2 節）。
+- 課題の状態が変わったら、その課題のファイル（`records/backlog/`。書き方は [backlog.md](backlog.md) の冒頭。足すときは `npm run records:new -- backlog`）を直す（ID と経過は書かない。Stage の状態が変わったときだけ [roadmap.md](roadmap.md) の 1 行も）。commit して `npm run pr:prep -- --push` を回し、[AGENTS.md](../AGENTS.md)「コミット手順」で PR を出す。題名の案と本文の骨組みは `records:close` が出す。本文は骨組みに「変更」（コード・データ）を足し、値と読み方は検証記録にあるので書き写さない（結論は ID で指す。[design-workflow-simplification-5.md](design-workflow-simplification-5.md) 2 節）。
 
 ## 付録 A. 機構の検証
 

@@ -2,12 +2,14 @@
 //   npm run records:new -- verification --title "<題名>" --name <短い名前> --topic <話題> [--question "<問い>"] [--from V-NNNN]
 //   npm run records:new -- claim --from V-NNNN [--text "<結論の文>"] [--topic <話題>] [--subject "<定義の場所>" … | --mechanism <機構>]
 //     [--decided-on <録画>:<仮説|値|読み方> … | --decided-on none] [--run "<録画>|<観測値,…>|<後の回>[|<決めた回>]" …]
-//     [--parameter-free "<式と定数の出どころ>"]
+//     [--parameter-free "<式と定数の出どころ>"] [--model "<モデル側>"] [--judgment "<条件>[・<条件>…]|<理由>"] [--dry-run]
+//   npm run records:new -- claim --update C-NNNN --from V-NNNN [--observations …] [--subject … | --mechanism …] [--decided-on …]
+//     [--run …] [--parameter-free …] [--model …] [--judgment …] [--dry-run]
 // verification: 次の空き番号で records/verifications/V-NNNN-<短い名前>.md をひな形から作る（状態は調査中）。
 // claim: 次の空き番号で records/claims/C-NNNN.json を作る。話題はその検証記録の話題、根拠はその検証記録を source にする観測値、
 //   等級は機械の候補（3.5 節）、状態は確定にできる条件が全部そろえば確定、欠ければ仮説（欠けた条件を出す。3.6 節）。
 //   結論の対象（subject）は --subject（定義の場所。複数可）か --mechanism（plan/design-minimal-relevance.md 3.2 節）。
-//   最小構成の検査（同 5 節）は、下書きを確定とみて根拠の観測値の組を判定する。text と model は人が書く。
+//   最小構成の検査（同 5 節）は、下書きを確定とみて根拠の観測値の組を判定する。text は人が書く（model は --model でも書ける）。
 //   --decided-on は、仮説・値・読み方を決めるのに使った録画（decidedOn。plan/design-investigation-review.md 1.3 節）。等級の候補は、
 //   反復実測の再現にこれらの録画を数えない。仮説を立てた録画が無ければ none。
 //   --run は 1 本の録画の中の反復（runs。plan/design-grade-runs.md 2 節）。載せた観測値が許容内なら、その録画を 2 回と数え、後の回を
@@ -16,47 +18,100 @@
 //   --observations は根拠にする観測値（観測値 ID・録画 id・V-NNNN。records:residual と同じ選び方。無ければ、その検証記録を source にする
 //   観測値の全部）。等級の候補・状態・最小構成の検査は
 //   それで出す（plan/design-workflow-simplification-14.md 4 節）。
+//   --judgment は、人の判断で上書きする確定の条件と理由（judgment。records:close と同じ形で、decided は今日）。条件は
+//   指標なし・最小構成の警告・許容外・合う仮説が 2 つ以上 から選び、・ か , で区切る。上書きした条件は仮説の理由にしない。
+//   --update は、前からある結論（仮説か確定）を新しい検証で書き直す（plan/design-workflow-simplification-17.md 2 節）。結論の文・話題・
+//   model（--model を渡せば置き換え）・置き換え・印などを残し、根拠の文に --from の観測値（--observations で選べる。無ければ --from を
+//   source にする観測値）のうち、まだ根拠に無いものと --from を書き足す。等級の候補・状態・最小構成の検査は、前の根拠と足した根拠の全部で
+//   新しい結論と同じく出し直す。--decided-on・--run は前の並びに足し、--subject・--mechanism・--parameter-free・--judgment は置き換える。
+//   結論の中身（式・値）が変わるときは使わない（新しい結論を作り、古い結論を棄却にする）ので、--text・--topic は受けない。番号は取らず、
+//   commit もしない。
+//   --dry-run は書かずに、状態と確定にできない理由だけを出す（番号を取らず、commit もしない）。
 //   npm run records:new -- observation --from V-NNNN --recording <録画 id> (--json '<下書き>' | --file <下書きの JSON>)
-// observation: 観測値の下書き（1 つか配列。id・recording・source・readAt を除いた欄。observations/types.ts の ObservationDraft）に、次の空き番号・
+//   npm run records:new -- observation --replace <観測値 ID> (--json '<下書き>' | --file <下書きの JSON>)
+//   npm run records:new -- observation --invalidate <観測値 ID>[,...] --reason "<理由>" [--by <新しい観測値 ID>[,...]]
+// observation: 観測値の下書き（1 つか配列。id・recording・source・readAt を除いた欄。欄の一覧は下の「観測値の下書きの欄」）に、次の空き番号・
 //   source（--from）・readAt（今日）を付け、records:check と同じ観測値の検査を通ったら records/observations/<録画 id>.json に足す
-//   （通らなければ書かない。番号の振り方と同じ値の扱いは records:read --write と同じ。tools/captures/records-io.ts）。commit はしない。
-// 作ったファイルだけを commit して git push -u origin HEAD する（番号をほかのブランチから見えるようにする。reserve.ts）。--no-push で
-//   しない。
-import { spawnSync } from 'node:child_process';
+//   （通らなければ書かない。番号の振り方と同じ値の扱いは records:read --write と同じ。tools/captures/records-io.ts）。
+//   --replace は、その観測値の欄を下書き（1 つ）で差し替える（id・recording・source・readAt は前のまま）。同じ検査を通ったら書く。
+//   --invalidate は、観測値に invalid（理由と今日の日付）を付ける。--by を書くと、それを根拠にしている結論の根拠を新しい観測値に付け替える
+//   （--by が 1 つなら全部をそれに、並びなら同じ順の組で）。observation はどれも commit しない。
+//   npm run records:new -- backlog --section <節> [--name <名前>] (--text "<本文>" | --cell "<列>=<文>" …) [--first]
+// backlog: records/backlog/<名前>.json を作る（plan/backlog.md の冒頭の書き方）。2 節など # の列のある節は、名前を次の番号（2-NN。ほかの
+//   ブランチが使った番号も避ける）にし、ほかの節は --name の名前で、order を節の末尾（--first なら先頭）にする。箇条の節は --text、表の節は
+//   列ごとの --cell。records:check と同じ課題の検査を通ったら書く。
+// verification・claim（--update と --dry-run を除く）・backlog は、作ったファイルだけを commit して git push -u origin HEAD する（番号を
+//   ほかのブランチから見えるようにする。reserve.ts）。--no-push でしない。
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { backlogPlacement, parseBacklogTemplate, validateBacklog, type BacklogFile } from '../src/records/backlog.ts';
 import {
   CLAIM_MECHANISMS,
   CLAIM_TOPICS,
   DECIDED_ROLES,
+  gradeAboveCandidate,
   gradeCandidate,
   toClaims,
   type Claim,
+  type ClaimFile,
+  type ClaimGrade,
   type ClaimMechanism,
   type ClaimSubject,
   type ClaimTopic,
   type DecidedOn,
   type DecidedRole,
+  type Judgment,
   type RunRepeat,
   validateParameterFree,
   validateRuns,
 } from '../src/records/claims.ts';
-import { claimDraft, nextId, verificationFileName, verificationTemplate } from '../src/records/drafts.ts';
-import { invalidReasonsOf, type ObservationDraft } from '../src/records/observations/types.ts';
-import { prepareObservations, writeObservations } from '../../../tools/captures/records-io.ts';
+import {
+  appendBasis,
+  basisIdsText,
+  claimDraft,
+  mergeClaimUpdate,
+  nextId,
+  parseJudgment,
+  updatedClaim,
+  verificationFileName,
+  verificationTemplate,
+  type ClaimDraft,
+} from '../src/records/drafts.ts';
+import {
+  draftShapeErrors,
+  invalidatedObservation,
+  replacedObservation,
+  repointClaim,
+} from '../src/records/observationEdits.ts';
+import {
+  invalidReasonsOf,
+  observationDraftFieldsText,
+  type Observation,
+  type ObservationDraft,
+} from '../src/records/observations/types.ts';
+import {
+  loadObservations as loadRecordingObservations,
+  prepareObservations,
+  saveObservations,
+  writeObservations,
+} from '../../../tools/captures/records-io.ts';
 import { comparePredictions, todayLocal } from '../src/records/predictions.ts';
 import { relevanceOf } from '../src/records/relevance.ts';
 import { withFreshSensitivity } from '../src/records/sensitivity.ts';
 import {
+  CLAIMS_DIR,
   ROOT,
   addedObservationErrors,
+  formatFiles,
+  backlogContext,
   idsInBranches,
+  loadBacklog,
+  loadBacklogTemplate,
   loadClaims,
   loadObservations,
   loadPredictions,
   loadRecordingsFile,
   loadRecordsData,
   loadSensitivity,
-  loadSkillDefinitions,
   loadVerifications,
   pickObservations,
   splitIds,
@@ -66,8 +121,13 @@ import { reserve } from './reserve.ts';
 import { runObservationsCached } from './residual-cache.ts';
 import { cliArgs, fail } from './cli.ts';
 
-/** 使い方に足す、話題と機構の語彙 */
-const VOCABULARY = `話題: ${CLAIM_TOPICS.join(' / ')}\n機構: ${CLAIM_MECHANISMS.join(' / ')}`;
+/** 使い方に足す、話題と機構の語彙と、観測値の下書きの欄 */
+const VOCABULARY = [
+  `話題: ${CLAIM_TOPICS.join(' / ')}`,
+  `機構: ${CLAIM_MECHANISMS.join(' / ')}`,
+  '観測値の下書きの欄（? は省ける。observations/types.ts の ObservationDraft）:',
+  observationDraftFieldsText(),
+].join('\n');
 
 const { values, positionals } = cliArgs(
   import.meta.url,
@@ -85,10 +145,21 @@ const { values, positionals } = cliArgs(
       'decided-on': { type: 'string', multiple: true },
       run: { type: 'string', multiple: true },
       'parameter-free': { type: 'string' },
+      model: { type: 'string' },
+      judgment: { type: 'string' },
+      update: { type: 'string' },
+      'dry-run': { type: 'boolean', default: false },
       observations: { type: 'string' },
       recording: { type: 'string' },
       json: { type: 'string' },
       file: { type: 'string' },
+      replace: { type: 'string' },
+      invalidate: { type: 'string' },
+      reason: { type: 'string' },
+      by: { type: 'string' },
+      section: { type: 'string' },
+      cell: { type: 'string', multiple: true },
+      first: { type: 'boolean', default: false },
       'no-push': { type: 'boolean', default: false },
     },
   },
@@ -132,8 +203,39 @@ function parseRuns(given: readonly string[] | undefined): RunRepeat[] | undefine
   });
 }
 
-function format(path: string): void {
-  spawnSync(process.platform === 'win32' ? 'npx.cmd' : 'npx', ['prettier', '--write', path], { stdio: 'ignore' });
+/** --subject・--mechanism を結論の対象にする（plan/design-minimal-relevance.md 3.2 節）。どちらも無ければ undefined */
+function parseSubject(): ClaimSubject | undefined {
+  if (values.subject !== undefined && values.mechanism !== undefined) fail('--subject と --mechanism はどちらか 1 つ');
+  if (values.mechanism !== undefined && !(CLAIM_MECHANISMS as readonly string[]).includes(values.mechanism))
+    fail(`機構が語彙に無い: ${values.mechanism}`);
+  return values.mechanism !== undefined
+    ? { mechanism: values.mechanism as ClaimMechanism }
+    : values.subject !== undefined
+      ? { places: values.subject.map((s) => s.replaceAll('`', '').trim()) }
+      : undefined;
+}
+
+/** --judgment を judgment にする。指定が無ければ undefined */
+function parseJudgmentOption(today: string): Judgment | undefined {
+  if (values.judgment === undefined) return undefined;
+  const parsed = parseJudgment(values.judgment, today);
+  if (Array.isArray(parsed)) fail(parsed.join('\n'));
+  return parsed;
+}
+
+/** JSON のファイルを書いて整える */
+function writeJson(path: string, data: unknown): void {
+  writeFileSync(path, `${JSON.stringify(data, null, 2)}\n`);
+  formatFiles([path]);
+}
+
+function readDraftJson(): unknown {
+  if ((values.json === undefined) === (values.file === undefined)) fail('--json か --file のどちらか 1 つが要る');
+  try {
+    return JSON.parse(values.json ?? readFileSync(values.file!, 'utf8'));
+  } catch (e) {
+    return fail(`下書きの JSON が読めない: ${(e as Error).message}`);
+  }
 }
 
 /**
@@ -147,6 +249,109 @@ function freeId(prefix: 'V' | 'C', own: readonly string[]): string {
   const id = nextId(prefix, [...own, ...other.ids]);
   if (id !== ownOnly) console.log(`${ownOnly} から先はほかのブランチ（か main）が使っているので、${id} にした`);
   return id;
+}
+
+/** 結論の下書きの評価に使う、結論の欄（新しい結論は空の文で作り、--update は前の結論に重ねる） */
+type ClaimEvaluation = {
+  id: string;
+  from: string;
+  topic: ClaimTopic;
+  text: string | undefined;
+  basis: string;
+  /** 根拠の観測値（前の根拠と足した根拠） */
+  own: Observation[];
+  /** 等級の候補と確定の条件を出すときに重ねる欄（前の結論の欄を含む） */
+  base: Partial<ClaimFile>;
+  subject: ClaimSubject | undefined;
+  decidedOn: DecidedOn[] | undefined;
+  runs: RunRepeat[] | undefined;
+  parameterFree: string | undefined;
+  judgment: Judgment | undefined;
+  /** 人が決めた等級（前の結論の。claimDraft の grade） */
+  grade?: (candidate: ClaimGrade | undefined) => ClaimGrade | undefined;
+};
+
+/**
+ * 結論を確定とみなして、等級の候補・最小構成の検査・予測との比べを出し、claimDraft で状態と確定にできない理由を出す（新しい結論と
+ * --update で同じ）
+ */
+function evaluateClaim(e: ClaimEvaluation, claims: readonly Claim[], observations: readonly Observation[]): ClaimDraft {
+  const file = loadRecordingsFile();
+  const recordings = recordingMap(file);
+  const predictions = loadPredictions();
+  const data = loadRecordsData(
+    file,
+    predictions.flatMap((p) => p.team.map((m) => m.rid)),
+  );
+  const residuals = runObservationsCached(e.own, recordings, data);
+  const residualOf = new Map(
+    residuals.map((r) => [
+      r.observation.id,
+      { status: r.status, diff: r.diff, value: r.observation.value, metric: r.observation.compare?.metric },
+    ]),
+  );
+  const compared = new Map(
+    residuals.filter((r) => r.status !== 'invalid').map((r) => [r.observation.id, r.status === 'ok']),
+  );
+  const forCandidate = toClaims([
+    {
+      text: '',
+      grade: '推論',
+      model: '',
+      replaces: [],
+      ...e.base,
+      id: e.id,
+      state: '仮説',
+      topic: e.topic,
+      basis: e.basis,
+      updated: today,
+      ...(e.decidedOn === undefined ? {} : { decidedOn: e.decidedOn }),
+      ...(e.runs === undefined ? {} : { runs: e.runs }),
+      ...(e.parameterFree === undefined ? {} : { parameterFree: e.parameterFree }),
+    },
+  ])[0]!;
+  const shapeErrors = [
+    ...validateRuns(forCandidate),
+    ...validateParameterFree(forCandidate, new Map(claims.map((c) => [c.id, c]))),
+  ];
+  if (shapeErrors.length > 0) fail(shapeErrors.join('\n'));
+  const candidate = gradeCandidate(forCandidate, residualOf, new Set(invalidReasonsOf(observations).keys()));
+  // 最小構成の検査（plan/design-minimal-relevance.md 5 節）: 結論を確定とみて、根拠の観測値の組を判定する。感度はその場で計算して重ねる
+  const asConfirmed: Claim = {
+    ...forCandidate,
+    state: '確定',
+    observations: e.own.filter((o) => o.invalid === undefined).map((o) => o.id),
+    ...(e.subject === undefined ? {} : { subject: e.subject }),
+  };
+  const relevanceCtx = { recordings, ...data, claims: [...claims.filter((c) => c.id !== e.id), asConfirmed] };
+  const sensitivity = withFreshSensitivity(e.own, relevanceCtx, loadSensitivity());
+  const minimal = relevanceOf([asConfirmed], observations, relevanceCtx, sensitivity)[0]?.warnings ?? [];
+  const prediction = predictions.find((p) => p.verification === e.from);
+  const grade = e.grade?.(candidate);
+  return claimDraft({
+    id: e.id,
+    verification: e.from,
+    topic: e.topic,
+    text: e.text,
+    today,
+    observations: e.own,
+    gradeCandidate: candidate,
+    compared,
+    ...(e.subject === undefined ? {} : { subject: e.subject }),
+    minimal,
+    prediction: prediction === undefined ? undefined : comparePredictions(prediction, observations),
+    ...(e.decidedOn === undefined ? {} : { decidedOn: e.decidedOn }),
+    ...(e.runs === undefined ? {} : { runs: e.runs }),
+    ...(e.parameterFree === undefined ? {} : { parameterFree: e.parameterFree }),
+    ...(e.judgment === undefined ? {} : { judgment: e.judgment }),
+    ...(grade === undefined ? {} : { grade }),
+  });
+}
+
+function printReasons(reasons: readonly string[]): void {
+  if (reasons.length === 0) return;
+  console.log('確定にしなかった理由（人が確かめて書き換えてよい）:');
+  for (const r of reasons) console.log(`  - ${r}`);
 }
 
 const kind = positionals[0];
@@ -173,7 +378,7 @@ if (kind === 'verification') {
   const path = `${ROOT}records/verifications/${verificationFileName(draft)}`;
   if (existsSync(path)) fail(`${path} が既にある`);
   writeFileSync(path, verificationTemplate(draft));
-  format(path);
+  formatFiles([path]);
   console.log(
     `${path} を作った（状態: 調査中）。問い・条件・次に撮るもの（撮影計画。オーナーに頼む撮影は plan/captures/protocol.md「撮影の依頼」の型）を書く。予測は任意（撮影計画で仮説を見分けられるか確かめるなら、予測ファイル records/predictions/${id}.json を作って npm run records:predict -- ${id}）`,
   );
@@ -183,143 +388,299 @@ if (kind === 'verification') {
   if (!from) fail('--from V-NNNN が要る');
   const verification = verifications.find((v) => v.id === from);
   if (verification === undefined) fail(`検証記録 ${from} が無い`);
-  const topic = (values.topic ?? verification.topic) as ClaimTopic;
-  if (!(CLAIM_TOPICS as readonly string[]).includes(topic)) fail(`話題が語彙に無い: ${topic}`);
-  const file = loadRecordingsFile();
-  const recordings = recordingMap(file);
-  const predictions = loadPredictions();
-  const data = loadRecordsData(
-    file,
-    predictions.flatMap((p) => p.team.map((m) => m.rid)),
-  );
   const observations = loadObservations();
   const claims = loadClaims();
-  const id = freeId(
-    'C',
-    claims.map((c) => c.id),
-  );
   const picked =
     values.observations === undefined ? undefined : pickObservations(observations, splitIds(values.observations));
   if (picked !== undefined && picked.missing.length > 0)
     fail(`--observations に当たる観測値が無い: ${picked.missing.join('・')}`);
-  const own = picked?.picked ?? observations.filter((o) => o.source === from);
+  const given = picked?.picked ?? observations.filter((o) => o.source === from);
+  const subject = parseSubject();
   const decidedOn = parseDecidedOn(values['decided-on']);
   const runs = parseRuns(values.run);
-  const parameterFree = values['parameter-free'];
-  const residuals = runObservationsCached(own, recordings, data);
-  const residualOf = new Map(
-    residuals.map((r) => [
-      r.observation.id,
-      { status: r.status, diff: r.diff, value: r.observation.value, metric: r.observation.compare?.metric },
-    ]),
-  );
-  const compared = new Map(
-    residuals.filter((r) => r.status !== 'invalid').map((r) => [r.observation.id, r.status === 'ok']),
-  );
-  const basisForCandidate = toClaims([
-    {
-      id,
-      text: '',
-      state: '仮説',
-      topic,
-      grade: '推論',
-      basis: own.map((o) => `\`${o.id}\``).join('・'),
-      model: '',
-      replaces: [],
-      updated: today,
+  const judgment = parseJudgmentOption(today);
+  const dryRun = values['dry-run'];
+
+  if (values.update !== undefined) {
+    // 前からある結論を、新しい検証で書き直す（plan/design-workflow-simplification-17.md 2 節）
+    const id = values.update;
+    if (values.text !== undefined || values.topic !== undefined)
+      fail(
+        '--update では --text・--topic を使わない（結論の中身が変わるなら、新しい結論を作り、古い結論を棄却にする）',
+      );
+    const path = `${CLAIMS_DIR}${id}.json`;
+    const found = claims.find((c) => c.id === id);
+    if (found === undefined) fail(`結論 ${id} が無い`);
+    const { observations: beforeIds, ...existing } = found;
+    if (existing.state !== '仮説' && existing.state !== '確定')
+      fail(`${id} は ${existing.state}。--update は仮説か確定の結論にだけ使う`);
+    const before = new Set(beforeIds);
+    const added = given.filter((o) => !before.has(o.id)).map((o) => o.id);
+    if (added.length === 0)
+      console.log(`注意: ${from} の観測値はどれも ${id} の根拠に既にある（根拠は前のまま出し直す）`);
+    const basis = appendBasis(existing.basis, added, from);
+    const ownIds = new Set([...before, ...added]);
+    const merged = mergeClaimUpdate(existing, {
+      ...(subject === undefined ? {} : { subject }),
       ...(decidedOn === undefined ? {} : { decidedOn }),
       ...(runs === undefined ? {} : { runs }),
-      ...(parameterFree === undefined ? {} : { parameterFree }),
-    },
-  ])[0]!;
-  const shapeErrors = [
-    ...validateRuns(basisForCandidate),
-    ...validateParameterFree(basisForCandidate, new Map(claims.map((c) => [c.id, c]))),
-  ];
-  if (shapeErrors.length > 0) fail(shapeErrors.join('\n'));
-  const candidate = gradeCandidate(basisForCandidate, residualOf, new Set(invalidReasonsOf(observations).keys()));
-  // 結論の対象（plan/design-minimal-relevance.md 3.2 節）
-  if (values.subject !== undefined && values.mechanism !== undefined) fail('--subject と --mechanism はどちらか 1 つ');
-  if (values.mechanism !== undefined && !(CLAIM_MECHANISMS as readonly string[]).includes(values.mechanism))
-    fail(`機構が語彙に無い: ${values.mechanism}`);
-  const subject: ClaimSubject | undefined =
-    values.mechanism !== undefined
-      ? { mechanism: values.mechanism as ClaimMechanism }
-      : values.subject !== undefined
-        ? { places: values.subject.map((s) => s.replaceAll('`', '').trim()) }
-        : undefined;
-  // 最小構成の検査（同 5 節）: 下書きを確定とみて、根拠の観測値の組を判定する。感度はその場で計算して重ねる
-  const asConfirmed: Claim = {
-    ...basisForCandidate,
-    state: '確定',
-    observations: own.filter((o) => o.invalid === undefined).map((o) => o.id),
-    ...(subject === undefined ? {} : { subject }),
-  };
-  const relevanceCtx = { recordings, ...data, claims: [...claims, asConfirmed] };
-  const sensitivity = withFreshSensitivity(own, relevanceCtx, loadSensitivity());
-  const minimal = relevanceOf([asConfirmed], observations, relevanceCtx, sensitivity)[0]?.warnings ?? [];
-  const prediction = predictions.find((p) => p.verification === from);
-  const draft = claimDraft({
-    id,
-    verification: from,
-    topic,
-    text: values.text,
-    today,
-    observations: own,
-    gradeCandidate: candidate,
-    compared,
-    ...(subject === undefined ? {} : { subject }),
-    minimal,
-    prediction: prediction === undefined ? undefined : comparePredictions(prediction, observations),
-    ...(decidedOn === undefined ? {} : { decidedOn }),
-    ...(runs === undefined ? {} : { runs }),
-    ...(parameterFree === undefined ? {} : { parameterFree }),
-  });
-  const path = `${ROOT}records/claims/${id}.json`;
-  if (existsSync(path)) fail(`${path} が既にある`);
-  writeFileSync(path, `${JSON.stringify(draft.file, null, 2)}\n`);
-  format(path);
-  console.log(`${path} を作った: 状態 ${draft.file.state}・等級 ${draft.file.grade}・根拠の観測値 ${own.length} 件`);
-  if (draft.reasons.length > 0) {
-    console.log('確定にしなかった理由（人が確かめて書き換えてよい）:');
-    for (const r of draft.reasons) console.log(`  - ${r}`);
-  }
-  console.log(
-    'text（結論の文）と model（モデル側）を書き、検証記録の「結論」に ID を足してから npm run records:check を回す',
-  );
-  if (subject !== undefined && 'places' in subject)
-    console.log(
-      `subject の定義の場所（${subject.places.join('、')}）の claims にも ${id} を足す（records:check が確かめる）`,
+      ...(values['parameter-free'] === undefined ? {} : { parameterFree: values['parameter-free'] }),
+      ...(judgment === undefined ? {} : { judgment }),
+    });
+    const draft = evaluateClaim(
+      {
+        id,
+        from,
+        topic: existing.topic,
+        text: existing.text,
+        basis,
+        own: observations.filter((o) => ownIds.has(o.id)),
+        base: existing,
+        subject: merged.subject,
+        decidedOn: merged.decidedOn,
+        runs: merged.runs,
+        parameterFree: merged.parameterFree,
+        judgment: merged.judgment,
+        // 人が決めた等級は残す。候補が無ければ前の等級のまま（records:close の確定と同じ）。候補があれば、gradeReason を書いて
+        // 候補より上にしたものだけを残す（records:close と違い、gradeReason の無い等級は前の候補とみて、新しい候補に合わせる）
+        grade: (candidate) =>
+          existing.grade === undefined
+            ? undefined
+            : candidate === undefined
+              ? existing.grade
+              : existing.gradeReason !== undefined && gradeAboveCandidate(existing.grade, candidate)
+                ? existing.grade
+                : undefined,
+      },
+      claims,
+      observations,
     );
-  reserve([path], id, !values['no-push']);
-  void loadSkillDefinitions;
-} else if (kind === 'observation') {
-  const from = values.from;
-  const recordingId = values.recording;
-  if (!from || !recordingId) fail('--from V-NNNN と --recording <録画 id> が要る');
-  if (!verifications.some((v) => v.id === from)) fail(`検証記録 ${from} が無い`);
-  if ((values.json === undefined) === (values.file === undefined)) fail('--json か --file のどちらか 1 つが要る');
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(values.json ?? readFileSync(values.file!, 'utf8'));
-  } catch (e) {
-    fail(`下書きの JSON が読めない: ${(e as Error).message}`);
+    const result = updatedClaim(existing, draft, merged, basis, values.model);
+    const change = `状態 ${existing.state} → ${result.file.state}・等級 ${existing.grade ?? 'なし'} → ${result.file.grade ?? 'なし'}・足した根拠 ${added.length} 件（${added.join('・') || 'なし'}）`;
+    if (dryRun) {
+      console.log(`${id}（--dry-run。書かない）: ${change}`);
+      printReasons(result.reasons);
+    } else {
+      writeJson(path, result.file);
+      console.log(`${path} を書き直した: ${change}`);
+      printReasons(result.reasons);
+      if (existing.state === '確定' && result.file.state === '仮説')
+        console.log('注意: 確定の結論が仮説に戻った。理由を確かめ、確定のままにするなら根拠か judgment を直す');
+      console.log(
+        `検証記録 ${from} の「結論」に ${id} を足し、npm run records:check を回す（commit はしない。ほかの変更と一緒に commit する）`,
+      );
+    }
+  } else {
+    const topic = (values.topic ?? verification.topic) as ClaimTopic;
+    if (!(CLAIM_TOPICS as readonly string[]).includes(topic)) fail(`話題が語彙に無い: ${topic}`);
+    // --dry-run は番号を取らない（手元の結論の次の番号で評価する）
+    const id = (dryRun ? nextId : freeId)(
+      'C',
+      claims.map((c) => c.id),
+    );
+    const parameterFree = values['parameter-free'];
+    const draft = evaluateClaim(
+      {
+        id,
+        from,
+        topic,
+        text: values.text,
+        basis: basisIdsText(given.map((o) => o.id)),
+        own: given,
+        base: {},
+        subject,
+        decidedOn,
+        runs,
+        parameterFree,
+        judgment,
+      },
+      claims,
+      observations,
+    );
+    const file: ClaimFile = values.model === undefined ? draft.file : { ...draft.file, model: values.model };
+    if (dryRun) {
+      console.log(
+        `結論の下書き（--dry-run。書かず、番号も取らない）: 状態 ${file.state}・等級 ${file.grade}・根拠の観測値 ${given.length} 件`,
+      );
+      printReasons(draft.reasons);
+    } else {
+      const path = `${CLAIMS_DIR}${id}.json`;
+      if (existsSync(path)) fail(`${path} が既にある`);
+      writeJson(path, file);
+      console.log(`${path} を作った: 状態 ${file.state}・等級 ${file.grade}・根拠の観測値 ${given.length} 件`);
+      printReasons(draft.reasons);
+      console.log(
+        `text（結論の文）${values.model === undefined ? 'と model（モデル側）' : ''}を書き、検証記録の「結論」に ID を足してから npm run records:check を回す`,
+      );
+      if (subject !== undefined && 'places' in subject)
+        console.log(
+          `subject の定義の場所（${subject.places.join('、')}）の claims にも ${id} を足す（records:check が確かめる）`,
+        );
+      reserve([path], id, !values['no-push']);
+    }
   }
-  const drafts = (Array.isArray(parsed) ? parsed : [parsed]) as ObservationDraft[];
-  if (drafts.length === 0 || drafts.some((d) => d === null || typeof d !== 'object' || Array.isArray(d)))
-    fail('下書きは観測値の欄のオブジェクトか、その配列');
-  // 番号・録画・出どころ・読んだ日はこのコマンドが付ける（下書きの値で上書きさせない）
-  const given = drafts.flatMap((d) => ['id', 'recording', 'source', 'readAt'].filter((k) => k in d));
-  if (given.length > 0) fail(`下書きに ${[...new Set(given)].join('・')} を書かない（このコマンドが付ける）`);
-  if (drafts.some((d) => typeof d.description !== 'string' || typeof d.kind !== 'string'))
-    fail('下書きには kind と description（文字列）が要る');
+} else if (kind === 'observation') {
   const file = loadRecordingsFile();
   const recordings = recordingMap(file);
-  if (!recordings.has(recordingId)) fail(`録画 ${recordingId} が台帳に無い`);
-  const { existing, finished } = prepareObservations(recordingId, drafts, { source: from, readAt: today });
-  const errors = addedObservationErrors(finished, recordings);
-  if (errors.length > 0) fail(`観測値の検査に通らないので書かない:\n${errors.map((e) => `  ${e}`).join('\n')}`);
-  writeObservations(recordingId, existing, finished);
+  const all = loadObservations();
+  const checked = (changed: Observation[]): void => {
+    const errors = addedObservationErrors(changed, recordings, all);
+    if (errors.length > 0) fail(`観測値の検査に通らないので書かない:\n${errors.map((e) => `  ${e}`).join('\n')}`);
+  };
+  if (values.replace !== undefined) {
+    // 同じ ID のまま欄を差し替える（plan/design-workflow-simplification-17.md 3 節）
+    const parsed = readDraftJson();
+    if (Array.isArray(parsed)) fail('--replace の下書きは 1 つ（観測値の欄のオブジェクト）');
+    const draft = parsed as ObservationDraft;
+    const shape = draftShapeErrors([draft]);
+    if (shape.length > 0) fail(shape.join('\n'));
+    const before = all.find((o) => o.id === values.replace);
+    if (before === undefined) fail(`観測値 ${values.replace} が無い`);
+    if (before.invalid !== undefined)
+      fail(`${before.id} は無効（${before.invalid.reason}）。直さずに新しい観測値を足す`);
+    const after = replacedObservation(before, draft);
+    checked([after]);
+    const list = loadRecordingObservations(before.recording).map((o) => (o.id === before.id ? after : o));
+    const path = saveObservations(before.recording, list, { format: false });
+    formatFiles([path]);
+    console.log(`${path} の ${before.id} を差し替えた（commit はしない）`);
+  } else if (values.invalidate !== undefined) {
+    // 無効にし、--by があれば、それを根拠にしている結論を新しい観測値に付け替える
+    if (values.reason === undefined || values.reason.trim() === '') fail('--reason "<理由>" が要る');
+    const ids = splitIds(values.invalidate);
+    const by = values.by === undefined ? undefined : splitIds(values.by);
+    if (by !== undefined && by.length !== 1 && by.length !== ids.length)
+      fail(`--by は 1 つか、--invalidate と同じ数（${ids.length}）の並び`);
+    const byId = new Map(all.map((o) => [o.id, o]));
+    const missing = [...ids, ...(by ?? [])].filter((id) => !byId.has(id));
+    if (missing.length > 0) fail(`観測値が無い: ${missing.join('・')}`);
+    const already = ids.filter((id) => byId.get(id)!.invalid !== undefined);
+    if (already.length > 0) fail(`既に無効: ${already.join('・')}`);
+    const invalidNew = (by ?? []).filter((id) => byId.get(id)!.invalid !== undefined || ids.includes(id));
+    if (invalidNew.length > 0) fail(`--by の観測値が無効か、無効にする観測値: ${invalidNew.join('・')}`);
+    const changed = ids.map((id) => invalidatedObservation(byId.get(id)!, values.reason!.trim(), today));
+    checked(changed);
+    // 結論の付け替え（無効にする前に、書き換える結論を出しておく）
+    const claims = loadClaims();
+    const repointed = new Map<string, ClaimFile>();
+    // 棄却・範囲外の結論は、その時の根拠のまま残す（記録は書き換えない）
+    if (by !== undefined)
+      for (const [i, old] of ids.entries()) {
+        const to = by.length === 1 ? by[0]! : by[i]!;
+        for (const { observations: _o, ...c } of claims) {
+          if (c.state !== '仮説' && c.state !== '確定') continue;
+          const next = repointClaim(repointed.get(c.id) ?? c, old, to, today);
+          if (next !== undefined) repointed.set(c.id, next);
+        }
+      }
+    // 付け替えた runs が録画と食い違えば、何も書かずに止める
+    const runErrors = toClaims([...repointed.values()]).flatMap((c) => validateRuns(c));
+    if (runErrors.length > 0)
+      fail(
+        `付け替えた結論の runs が検査に通らないので書かない（結論を手で直す）:\n${runErrors.map((e) => `  ${e}`).join('\n')}`,
+      );
+    const written = [...new Set(changed.map((o) => o.recording))].map((recording) =>
+      saveObservations(
+        recording,
+        loadRecordingObservations(recording).map((o) => changed.find((x) => x.id === o.id) ?? o),
+        { format: false },
+      ),
+    );
+    for (const [cid, c] of repointed) {
+      const path = `${CLAIMS_DIR}${cid}.json`;
+      writeFileSync(path, `${JSON.stringify(c, null, 2)}\n`);
+      written.push(path);
+    }
+    formatFiles(written);
+    console.log(`無効にした（理由: ${values.reason.trim()}）: ${ids.join('・')}`);
+    if (repointed.size > 0) console.log(`根拠を付け替えた結論: ${[...repointed.keys()].join('・')}`);
+    // 付け替えなかった結論（--by が無い）は、無効の根拠を残したまま（records:check が、確定の結論の根拠がすべて無効なら止める）
+    const citing = claims
+      .filter((c) => c.state !== '棄却' && !repointed.has(c.id) && c.observations.some((o) => ids.includes(o)))
+      .map((c) => `${c.id}（${c.state}）`);
+    if (citing.length > 0)
+      console.log(`無効にした観測値を根拠にしている結論（付け替えていない）: ${citing.join('・')}`);
+    console.log('npm run records:check を回す（commit はしない）');
+  } else {
+    const from = values.from;
+    const recordingId = values.recording;
+    if (!from || !recordingId) fail('--from V-NNNN と --recording <録画 id> が要る');
+    if (!verifications.some((v) => v.id === from)) fail(`検証記録 ${from} が無い`);
+    const parsed = readDraftJson();
+    const drafts = (Array.isArray(parsed) ? parsed : [parsed]) as ObservationDraft[];
+    // 番号・録画・出どころ・読んだ日はこのコマンドが付ける（下書きの値で上書きさせない）
+    const shape = draftShapeErrors(drafts);
+    if (shape.length > 0) fail(shape.join('\n'));
+    if (!recordings.has(recordingId)) fail(`録画 ${recordingId} が台帳に無い`);
+    const { existing, finished } = prepareObservations(recordingId, drafts, { source: from, readAt: today });
+    checked(finished);
+    writeObservations(recordingId, existing, finished);
+  }
+} else if (kind === 'backlog') {
+  // 課題のファイルの起票（plan/design-workflow-simplification-17.md 9 節。書き方は plan/backlog.md の冒頭）
+  const section = values.section;
+  if (section === undefined) fail('--section <節> が要る');
+  const slots = parseBacklogTemplate(loadBacklogTemplate());
+  const slot = slots.find((s) => s.section === section);
+  if (slot === undefined)
+    fail(`節 ${section} が雛形（records/backlog/template.md）に無い（${slots.map((s) => s.section).join('・')}）`);
+  const items = loadBacklog();
+  // ほかのブランチが使った番号を見るのは、番号の列のある節だけ（git を回すので）
+  const columns = slot.columns?.filter((c) => c !== '#');
+  let taken: readonly string[] = [];
+  if (slot.columns?.includes('#') === true) {
+    const branches = idsInBranches();
+    if (branches.note !== '') console.log(`注意: ${branches.note}`);
+    taken = branches.ids;
+  }
+  const placed = backlogPlacement(slot, items, {
+    ...(values.name === undefined ? {} : { name: values.name }),
+    first: values.first,
+    taken,
+  });
+  if (typeof placed === 'string') fail(placed);
+  let body: Pick<BacklogFile, 'text' | 'cells'>;
+  if (columns === undefined) {
+    if (values.text === undefined || values.cell !== undefined)
+      fail(`節 ${section} は箇条なので --text（本文）だけを渡す`);
+    body = { text: values.text };
+  } else {
+    if (values.cell === undefined || values.text !== undefined)
+      fail(`節 ${section} は表なので、列ごとに --cell "<列>=<文>" を渡す（列: ${columns.join('・')}）`);
+    const given = new Map(
+      values.cell.map((c) => {
+        const at = c.indexOf('=');
+        if (at < 0) fail(`--cell は "<列>=<文>": ${c}`);
+        return [c.slice(0, at).trim(), c.slice(at + 1).trim()] as const;
+      }),
+    );
+    const unknown = [...given.keys()].filter((c) => !columns.includes(c));
+    if (unknown.length > 0) fail(`節 ${section} の表に無い列: ${unknown.join('・')}（列: ${columns.join('・')}）`);
+    body = { cells: Object.fromEntries(columns.map((c) => [c, given.get(c) ?? ''])) };
+  }
+  const item: BacklogFile = {
+    section,
+    ...(placed.order === undefined ? {} : { order: placed.order }),
+    ...body,
+  };
+  const errors = validateBacklog(
+    slots,
+    [{ ...item, name: placed.name }],
+    backlogContext(
+      loadClaims().map((c) => c.id),
+      verifications.map((v) => v.id),
+      recordingMap(loadRecordingsFile()).keys(),
+      loadObservations().map((o) => o.id),
+    ),
+  );
+  if (errors.length > 0) fail(`課題の検査に通らないので書かない:\n${errors.map((e) => `  ${e}`).join('\n')}`);
+  const path = `${ROOT}records/backlog/${placed.name}.json`;
+  if (existsSync(path)) fail(`${path} が既にある`);
+  writeJson(path, item);
+  console.log(
+    `${path} を作った（節 ${section}${placed.order === undefined ? '' : `・order ${placed.order}`}）。plan/backlog.md は npm run records:check が作り直す（生成物なので commit しない）`,
+  );
+  reserve([path], placed.name, !values['no-push']);
 } else {
-  fail('verification・claim・observation のどれかを指定する');
+  fail('verification・claim・observation・backlog のどれかを指定する');
 }

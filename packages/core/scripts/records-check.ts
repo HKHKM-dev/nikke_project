@@ -5,7 +5,7 @@
 // 残差の一覧は生成の節だけを差し替える。開いている検証記録の「結果」に印があれば、予測との比べの表を書き込む。
 // スキル定義の claims は結論と突き合わせる（plan/skills-guide.md 3 節）。
 // 使い方: npm run records:check（ルート。整形まで行う）
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { parseBacklogTemplate, renderBacklog, validateBacklog } from '../src/records/backlog.ts';
 import {
   claimTieErrors,
@@ -42,8 +42,8 @@ import {
 import {
   BACKLOG_PATH,
   CLAIMS_PATH,
-  ROOT,
   MINIMAL_PATH,
+  backlogContext,
   RESIDUALS_PATH,
   SKILLS_DOC_PATH,
   SKILL_SUPPORT_PATH,
@@ -110,15 +110,16 @@ const errors = [
     observations,
     recordingIds: new Set(recordings.keys()),
   }),
-  ...validateBacklog(parseBacklogTemplate(backlogTemplate), backlog, {
-    ids: new Set([
-      ...claims.map((c) => c.id),
-      ...verifications.map((v) => v.id),
-      ...recordings.keys(),
-      ...observations.map((o) => o.id),
-    ]),
-    exists: (path) => existsSync(`${ROOT}plan/${path}`),
-  }),
+  ...validateBacklog(
+    parseBacklogTemplate(backlogTemplate),
+    backlog,
+    backlogContext(
+      claims.map((c) => c.id),
+      verifications.map((v) => v.id),
+      recordings.keys(),
+      observations.map((o) => o.id),
+    ),
+  ),
 ];
 if (errors.length > 0) {
   console.error(errors.join('\n'));

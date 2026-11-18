@@ -20,6 +20,7 @@ import { eachOrOne, type Metric, type MetricContext, nthActivationOf, slotIndexO
 
 export const burstMetrics: Readonly<Record<string, Metric>> = {
   fullBurstCount: {
+    description: 'フルバーストの回数',
     args: [],
     sim: (r) => r.schedule?.fullBurstWindows.length ?? 0,
   },
@@ -28,6 +29,7 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
    * （C-0069）を足した動画のフレームの差なので、録画の戦闘開始のずれに依らない
    */
   fullBurstStartIntervals: {
+    description: 'フルバーストの入りどうしの間隔（最初の n 個。動画のフレーム）',
     args: ['n'],
     sim: (r, c) => fullBurstStartIntervals(r, c),
   },
@@ -36,32 +38,39 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
    * 入りの止まり（C-0069）を足す（videoFrameOf）。録画ではレシピ burst-panel の、六角形の所が灰色に替わったフレームまで
    */
   fullBurstLengths: {
+    description: '最初の n 回のフルバーストの、窓の始まりから終わりまでの動画のフレーム',
     args: ['n'],
     sim: (r, c) => fullBurstLengths(r, c),
   },
   /** バーストを撃った枠（1 始まり）の並び（最初の n 回（V-0121）。チェーンが切れた単独の発動も入る） */
   burstActivationSlots: {
+    description: 'バーストを撃った枠（1 始まり）の並び（最初の n 回）',
     args: ['n'],
     sim: (r, c) => burstActivationSlots(r, c),
   },
   burstActivationVideoFrames: {
+    description: '最初の n 回の発動の段の表示の、動画のフレーム',
     args: ['n'],
     sim: (r, c) => burstActivationVideoFrames(r, c),
   },
   fullBurstToNextActivation: {
+    description: 'n 回目（0 始まり）のフルバーストの入りから、次の発動までの動画のフレーム',
     args: ['n'],
     sim: (r, c) => fullBurstToNextActivation(r, c),
   },
   fullBurstToGaugeFull: {
+    description: 'n 回目のフルバーストの入りから、次にゲージが満タンになるまでの動画のフレーム',
     args: ['n'],
     sim: (r, c) => fullBurstToGaugeFull(r, c),
   },
   gaugeFullToActivation: {
+    description: 'n 回目（0 始まり）の満タンから、次の発動（I）までの動画のフレーム',
     args: ['n'],
     sim: (r, c) => gaugeFullToActivation(r, c),
   },
   // 枠のバーストの発動の回数（時刻表（V-0530）。burstCount は倍率ダメージのバーストの回数）
   burstActivationCount: {
+    description: '枠のバーストの発動の回数（時刻表）',
     args: ['slot'],
     sim: (r, c) => {
       if (r.schedule === null) throw new Error('バーストの時刻表が無い');
@@ -73,10 +82,12 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
    * フレームの CT▲ は負で入る（CooldownReduction.applied）
    */
   cooldownCutFrames: {
+    description: 'n 回目のフルバーストの入りに、枠のバーストスキル CT が縮んだフレーム',
     args: ['slot', 'n'],
     sim: (r, c) => cooldownCutFrames(r, c),
   },
   fullBurstStarts: {
+    description: 'フルバーストの窓の始まりのフレームの列',
     args: [],
     sim: (r) => r.schedule?.fullBurstWindows.map((w) => w.start) ?? [],
   },
@@ -84,6 +95,7 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
   // 録画では、即着弾の枠（SR）の 1 発目の増分から、III のタイマーの 00.00 までの動画のフレーム（間に入りの止まりが無い 1 回目に使う）。
   // 戦闘開始のフレームを読まずに済む
   fullBurstStartFromFirstShot: {
+    description: '枠の 1 発目から n 回目（0 始まり）のフルバーストの入りまでのフレーム',
     args: ['slot', 'n'],
     sim: (r, c) => {
       const start = r.schedule?.fullBurstWindows[Number(c.args.n)]?.start;
@@ -98,16 +110,19 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
    * 3 分モードの残り時間が 02:59 から 00:00 になるまでは fromSec 0・toSec 179
    */
   videoFramesBetween: {
+    description: 'ゲーム内の fromSec 秒から toSec 秒までの動画のフレーム数',
     args: ['fromSec', 'toSec'],
     sim: (r, c) => videoFramesBetween(r.schedule, c),
   },
   gaugeFullFrame: {
+    description: 'n 回目（0 始まり）にゲージが満タンになったフレーム',
     args: ['n'],
     sim: (r, c) => gaugeFull(r.schedule?.gaugeFullFrames, c),
   },
   // 録画 0045・0046・0082 の「n 回目に BURST バーが消えた発の番号」（V-0085）。モデルは全発が当たるので、外れた発のある録画では
   // 当たった発の番号と比べる。満タンが来なければ 0
   gaugeFullShotIndex: {
+    description: 'n 回目（0 始まり）の満タンまでに枠が撃った発の数',
     args: ['slot', 'n'],
     sim: (r, c) => {
       const full = r.schedule?.gaugeFullFrames[Number(c.args.n)];
@@ -119,6 +134,7 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
   // V-0235: n 回目（0 始まり）にチェーンが切れた（ゲージが 0 に戻った。C-0009）フレームの後から、次に BURST バーが消えたフレームまでに
   // 枠が撃った発の数。単騎のオートバーストで、チェーンの待ちの明けから次の満タンまでの溜まり方を比べる
   chainTimeoutToGaugeFullShots: {
+    description: 'n 回目のチェーン切れから次の満タンまでに、枠が撃った発の数',
     args: ['slot', 'n'],
     sim: (r, c) => {
       const timeout = r.schedule?.chainTimeouts[Number(c.args.n)];
@@ -129,23 +145,59 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
     },
   },
   burstCount: {
+    description: '枠の倍率ダメージのバーストの回数',
     args: ['slot'],
     sim: (r, c) => slotOf(r.slots, c).burst.activations.length,
   },
-  burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
-  gaugeFullToBurstHit: { args: ['slot', 'n'], sim: gaugeFullToBurstHit },
-  burstHitOffsets: { args: ['slot', 'n'], sim: burstHitOffsets },
-  burstEffectFirstShot: { args: ['slot', 'n'], sim: burstEffectFirstShot },
-  burstEffectDelay: { args: ['slot', 'n'], sim: burstEffectDelay },
-  fullBurstCrossingShotGauge: { args: ['slot'], sim: fullBurstCrossingShotGauge },
-  shotGauge: { args: ['slot', 'n'], sim: shotGauge },
+  burstHitDelays: {
+    description: '枠のバーストの、発動からヒットまでの動画のフレーム（最初の count 回）',
+    args: ['slot', 'count'],
+    sim: burstHitDelays,
+  },
+  gaugeFullToBurstHit: {
+    description: 'n 回目（0 始まり）の発動の前の満タンから、そのヒットまでの動画のフレーム',
+    args: ['slot', 'n'],
+    sim: gaugeFullToBurstHit,
+  },
+  burstHitOffsets: {
+    description: 'n 回目（0 始まり）の発動の、1 ヒット目から各ヒットまでの動画のフレーム',
+    args: ['slot', 'n'],
+    sim: burstHitOffsets,
+  },
+  burstEffectFirstShot: {
+    description: 'n 回目の発動の印から、効果の発火以後の枠の最初の発までのフレーム',
+    optional: ['fromShot', 'band', 'weaponChange', 'afterHits'],
+    args: ['slot', 'n'],
+    sim: burstEffectFirstShot,
+  },
+  burstEffectDelay: {
+    description: 'n 回目の発動の印から、バースト使用時の効果の発火までのフレーム',
+    args: ['slot', 'n'],
+    sim: burstEffectDelay,
+  },
+  fullBurstCrossingShotGauge: {
+    description: 'フルバーストの窓の終わりを跨ぐ発 1 つ分のゲージ（%）',
+    args: ['slot'],
+    sim: fullBurstCrossingShotGauge,
+  },
+  shotGauge: { description: '枠の n 発目（1 始まり）が溜めたゲージ（%）', args: ['slot', 'n'], sim: shotGauge },
   // フルバーストの終わりから frames の間に撃った発の 1 発のゲージの、ほかの時の 1 発に対する比（V-0638）
-  shotGaugeRatioAfterFullBurst: { args: ['slot', 'frames'], sim: shotGaugeRatioAfterFullBurst },
+  shotGaugeRatioAfterFullBurst: {
+    description: 'フルバーストの終わりから frames の間の 1 発のゲージの、ほかの時に対する比',
+    args: ['slot', 'frames'],
+    sim: shotGaugeRatioAfterFullBurst,
+  },
   // 枠 holder に状態 state が付いている間（n で n 回目の窓だけ）に着いた、枠の 1 回のゲージ（味方のゲージで足した量を入れる）の、
   // ほかの時に対する比（V-0751）。added が all なら、ほかの持つ枠が足した量も入れる
-  shotGaugeRatioInHolderState: { args: ['slot', 'holder', 'state'], sim: shotGaugeRatioInHolderState },
+  shotGaugeRatioInHolderState: {
+    description: '枠 holder に状態 state が付いている間の 1 回のゲージの、ほかの時に対する比',
+    optional: ['n', 'added'],
+    args: ['slot', 'holder', 'state'],
+    sim: shotGaugeRatioInHolderState,
+  },
   // 枠の n 回目（1 始まり）の周期のゲージ（burstGaugeHit）の量（バーの最大に対する %）（V-0483）
   timerGauge: {
+    description: '枠の n 回目（1 始まり）の周期のゲージの量（%）',
     args: ['slot', 'n'],
     sim: (r, c) => {
       const n = Number(c.args.n);
@@ -156,15 +208,18 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
   },
   // 比べる設定の拡張（plan/design-compare-setup-extension.md 5 節）: 右のバースト欄の表示の時刻
   ctEndToFullBurstStart: {
+    description: '枠の n 回目（0 始まり）の発動の、CT の明けから発動の印までの動画のフレーム',
     args: ['slot', 'n'],
     sim: (r, c) => ctEndToFullBurstStart(r, c),
   },
   // 枠の n 回目の発動の印から、その発動の CT の明けまでの動画のフレーム（V-0543）
   activationToCtEnd: {
+    description: '枠の n 回目（0 始まり）の発動の印から、その CT の明けまでの動画のフレーム',
     args: ['slot', 'n'],
     sim: (r, c) => activationToCtEnd(r, c),
   },
   chainStepIntervals: {
+    description: 'n 回目のフルバーストを開いたチェーンの、発動どうしの動画のフレーム',
     args: ['n'],
     sim: (r, c) => chainStepIntervals(r, c),
   },

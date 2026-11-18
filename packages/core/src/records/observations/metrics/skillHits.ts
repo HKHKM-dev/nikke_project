@@ -13,26 +13,48 @@ import type { NamedStateId } from '../../../skills/states.ts';
 import type { CompareSpec } from '../types.ts';
 import { firstCount, type Metric, type MetricContext, slotIndexOf, slotOf, withArgs } from './context.ts';
 
+/** 倍率ダメージの絞り（hitMatches）の省略できる引数 */
+const HIT_FILTERS = ['percent', 'projectile', 'trigger', 'release'] as const;
+/** eventFrames の省略できる引数（基準・範囲・切り方と、倍率ダメージの絞り） */
+const EVENT_FILTERS = ['anchor', 'within', 'from', 'skip', 'count', 'modulo', 'skill', ...HIT_FILTERS] as const;
+
 export const skillHitsMetrics: Readonly<Record<string, Metric>> = {
   // skill（'skill1' | 'skill2' | 'burst'）を書けば、そのスロットの倍率ダメージだけを数える（任意）
   skillHitCount: {
+    description: '枠の倍率ダメージの回数（skill でスロットを絞る）',
+    optional: ['skill'],
     args: ['slot'],
     sim: (r, c) =>
       c.args.skill === undefined
         ? slotOf(r.slots, c).skillHits.frames.length
         : r.skillHits.filter((h) => h.slotIndex === slotIndexOf(c) && h.effect.source.skill === c.args.skill).length,
   },
-  healHitCounts: { args: ['slot'], sim: healHitCounts },
+  healHitCounts: {
+    description: '回復ごとの、前の回復からその回復までの通常攻撃の命中の期待値',
+    args: ['slot'],
+    sim: healHitCounts,
+  },
   // 枠が出した n 回目（0 始まり）の回復の、録画の動画のフレーム（戦闘開始から（V-0501）。フルバーストの入りの止まりを足す）。
   // 録画では、回復の数字が画面に出たフレームと比べる（戦闘開始時の回復の数字は開始の 2f 後に出る。`0476-12`）
-  healVideoFrame: { args: ['slot', 'n'], sim: healVideoFrame },
+  healVideoFrame: {
+    description: '枠の n 回目（0 始まり）の回復の、動画のフレーム',
+    optional: ['anchor', 'within', 'from', 'skip', 'count', 'modulo'],
+    args: ['slot', 'n'],
+    sim: healVideoFrame,
+  },
   // 枠が出した回復のフレームの数（同じフレームの回復は 1 つ）（V-0501）。録画では、回復の数字が出たフレームの数と比べる
   // （同じフレームに 2 つの回復が重なっても数字の出始めは 1 つ）
-  healFrameCount: { args: ['slot'], sim: (r, c) => healFramesOf(r, c).length },
+  healFrameCount: {
+    description: '枠が回復を出したフレームの数（同じフレームの回復は 1 つ）',
+    args: ['slot'],
+    sim: (r, c) => healFramesOf(r, c).length,
+  },
   // 枠 windowSlot の HP の割合が下がった窓（最大HP のみ▲ の間など）ごとに、枠が出した回復のうち窓の中で最初に当たったものの対象の枠
   // （1 始まり）の並び。回復の来ない窓は飛ばし、skip・count で切る（V-0752）。録画では、窓の中で最初に HP のバーが伸びた枠。窓は
   // 時刻で録画と対応させない（モデルと録画で窓の数・時刻がずれる）ので、どの窓でも同じ枠になる問いに使う
   windowFirstHealTargets: {
+    description: '枠 windowSlot の HP の割合が下がった窓ごとの、最初の回復の対象の枠',
+    optional: ['skip', 'count'],
     args: ['slot', 'windowSlot'],
     sim: (r, c) => firstCount(windowFirstHeals(r, c), c, '回復の来た窓'),
     occurrences: (r, c) => windowFirstHeals(r, c).length,
@@ -41,43 +63,104 @@ export const skillHitsMetrics: Readonly<Record<string, Metric>> = {
   // （0 始まり）に当たったものの対象の枠（1 始まり）の並び。回復が n + 1 回来ない窓は飛ばし、skip・count で切る（V-0797）。録画では、
   // 窓の中で n + 1 回目に HP のバーが伸びた枠。windowFirstHealTargets と同じく、どの窓でも同じ枠になる問いに使う
   windowNthHealTargets: {
+    description: '枠 windowSlot の HP の割合が下がった窓ごとの、n 回目（0 始まり）の回復の対象の枠',
+    optional: ['skip', 'count'],
     args: ['slot', 'windowSlot', 'n'],
     sim: (r, c) => firstCount(windowNthHeals(r, c), c, `${Number(c.args.n) + 1} 回目の回復の来た窓`),
     occurrences: (r, c) => windowNthHeals(r, c).length,
   },
-  dotTickOffsets: { args: ['slot', 'n'], sim: dotTickOffsets },
+  dotTickOffsets: {
+    description: 'n 回目（0 始まり）の発動から、そのバーストの持続ダメージの tick までの動画のフレームの列',
+    optional: ['from', 'skip', 'count', 'modulo', ...HIT_FILTERS],
+    args: ['slot', 'n'],
+    sim: dotTickOffsets,
+  },
   // 持続ダメージの、付けた時の 1 スタックのヒット（kind apply）か、スタックの tick（kind tick）の、録画の
   // 動画のフレーム（戦闘開始から）の頭の count 個（V-0546）
-  dotHitVideoFrames: { args: ['slot', 'kind', 'count'], sim: dotHitVideoFrames },
+  dotHitVideoFrames: {
+    description: '持続ダメージのヒット（kind: apply・tick）の動画のフレームの頭の count 個',
+    optional: ['anchor', 'within', 'from', 'skip', 'modulo', 'skill', ...HIT_FILTERS],
+    args: ['slot', 'kind', 'count'],
+    sim: dotHitVideoFrames,
+  },
   skillHitVideoFrame: {
+    description: 'スロット skill の倍率ダメージの n 回目（0 始まり）の動画のフレーム',
+    optional: ['anchor', 'within', 'from', 'skip', 'modulo', ...HIT_FILTERS],
     args: ['slot', 'skill', 'n'],
     sim: (r, c) => skillHitVideoFrames(r, c)[Number(c.args.n)] ?? NaN,
   },
   // skillHitVideoFrame の頭の count 個の列（キャプチャーチェーンの 10 回の攻撃）（V-0546）
   skillHitVideoFrameList: {
+    description: 'スロット skill の倍率ダメージの動画のフレームの頭の count 個',
+    optional: ['anchor', 'within', 'from', 'skip', 'modulo', ...HIT_FILTERS],
     args: ['slot', 'skill', 'count'],
     sim: (r, c) => eventFrames(r, withArgs(c, { event: 'skillHit' })),
   },
-  skillHitMeanInterval: { args: ['slot', 'skill'], sim: skillHitMeanInterval },
-  skillHitShotIndices: { args: ['slot', 'skill', 'count'], sim: skillHitShotIndices },
+  skillHitMeanInterval: {
+    description: 'スロット skill の倍率ダメージの発動の間隔の平均（動画のフレーム）',
+    optional: ['anchor', 'within', 'from', 'skip', 'modulo', ...HIT_FILTERS],
+    args: ['slot', 'skill'],
+    sim: skillHitMeanInterval,
+  },
+  skillHitShotIndices: {
+    description: 'スロット skill の倍率ダメージの最初の count 回が、枠の何発目の射撃で出たか',
+    optional: ['skip'],
+    args: ['slot', 'skill', 'count'],
+    sim: skillHitShotIndices,
+  },
   // V-0616: 倍率ダメージの回の間の通常攻撃の命中の期待値の和（回数トリガーを命中で数えるか撃った数で数えるか）
-  skillHitNormalHits: { args: ['slot', 'skill'], sim: skillHitNormalHits },
-  skillHitShotDelay: { args: ['slot', 'skill'], sim: skillHitShotDelay },
-  skillHitBurstOrdinals: { args: ['slot', 'skill'], sim: skillHitBurstOrdinals },
+  skillHitNormalHits: {
+    description: 'スロット skill の倍率ダメージの回の間の、通常攻撃の命中の期待値の和',
+    optional: ['skip', 'count'],
+    args: ['slot', 'skill'],
+    sim: skillHitNormalHits,
+  },
+  skillHitShotDelay: {
+    description: 'スロット skill の倍率ダメージが、直前の発の何フレーム後に出たか（最頻値）',
+    args: ['slot', 'skill'],
+    sim: skillHitShotDelay,
+  },
+  skillHitBurstOrdinals: {
+    description: 'スロット skill の倍率ダメージが出た、枠の何回目（1 始まり）のバーストか',
+    args: ['slot', 'skill'],
+    sim: skillHitBurstOrdinals,
+  },
   // 倍率ダメージの、同じ回のバーストのヒットからの動画のフレーム数（V-0532）
-  skillHitFromBurstHit: { args: ['slot', 'skill', 'count'], sim: skillHitFromBurstHit },
+  skillHitFromBurstHit: {
+    description: 'スロット skill の倍率ダメージの、前の自分のバーストのヒットからの動画のフレーム（最初の count 回）',
+    optional: ['within', 'from', 'skip', 'modulo', ...HIT_FILTERS],
+    args: ['slot', 'skill', 'count'],
+    sim: skillHitFromBurstHit,
+  },
   // 効果の倍率ダメージの、n 回目のフルバーストの 00.00 からの動画のフレーム数（V-0537）
   skillHitFramesFromFullBurst: {
+    description: 'fullBurst 回目（0 始まり）のフルバーストの窓の中の倍率ダメージの、窓の始まりからの動画のフレーム',
+    optional: ['kind', 'after', 'relative', 'skip', 'modulo', ...HIT_FILTERS],
     args: ['slot', 'skill', 'fullBurst', 'count'],
     sim: skillHitFramesFromFullBurst,
   },
   // 簡素化・第 7 回の案 2: 出来事の動画のフレームの、基準からの差の列（eventFrames の注記）。上の skillHit…・dot…・healVideoFrame の
   // 時刻の指標はこれの包み
-  eventFrames: { args: ['slot', 'event'], sim: eventFrames },
+  eventFrames: {
+    description: '枠の出来事（event）の動画のフレームの、基準（anchor）からの差の列',
+    optional: [...EVENT_FILTERS, 'state', 'counter'],
+    args: ['slot', 'event'],
+    sim: eventFrames,
+  },
   // eventFrames と同じ出来事・基準・範囲の、出来事の数（B モードの間の現在の HP▼ の回数など）（V-0729）
-  eventCount: { args: ['slot', 'event'], sim: (r, c) => eventFrames(r, c).length },
+  eventCount: {
+    description: 'eventFrames と同じ出来事・基準・範囲の、出来事の数',
+    optional: [...EVENT_FILTERS, 'state', 'counter'],
+    args: ['slot', 'event'],
+    sim: (r, c) => eventFrames(r, c).length,
+  },
   // V-0622: 出来事ごとの、戦闘の始めからの枠の発の数か命中の期待値の和（回数のきっかけを通して数えるか、撃った数か命中か）
-  eventTallies: { args: ['slot', 'event', 'tally'], sim: eventTallies },
+  eventTallies: {
+    description: '出来事ごとの、戦闘の始めからの枠の発の数か命中の期待値の和（tally: shots・hits）',
+    optional: EVENT_FILTERS,
+    args: ['slot', 'event', 'tally'],
+    sim: eventTallies,
+  },
 };
 
 /** 枠が出した回復のフレーム（同じフレームの対象ごとの記録・ほかの効果の回復は 1 つにまとめる）の昇順（V-0501） */

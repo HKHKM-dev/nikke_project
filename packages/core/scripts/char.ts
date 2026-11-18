@@ -1,9 +1,11 @@
 // キャラのデータを詰めて出す（スキルを定義するときの下調べ。plan/design-workflow-simplification-14.md 6 節・-15.md 9 節）。
-//   npm run char -- <id か名前（の一部）>[,...] [--en]
+//   npm run char -- <id か名前（の一部）>[,...] [--en] [--stats]
 // 通常攻撃（会心率を含む）・バースト・スキルの説明文（値を差し込み、{description_value_NN} の番号を添える）と、定義の有無・効果の
 // 分類が重なる定義済みのキャラを出す。--en で説明文を英語にする。名前は日本語・英語の名前で引き、名前がぴったり合うキャラが
-// あればそれだけ、無ければ名前を含むキャラを全部出す。中身は packages/core/src/skills/charSummary.ts。
-import { renderCharSummary, similarDefined } from '../src/skills/charSummary.ts';
+// あればそれだけ、無ければ名前を含むキャラを全部出す。--stats は、射撃場の「スペック固定」の攻撃力・最大HP・防御力（sim の --fixed-spec と
+// 同じ値）と通常攻撃の 1 発の倍率だけを出す（録画の無い撮影計画の段の見当。plan/design-workflow-simplification-17.md 6 節）。
+// 中身は packages/core/src/skills/charSummary.ts。
+import { renderCharSummary, renderFixedSpecStats, similarDefined } from '../src/skills/charSummary.ts';
 import { classifyCharacters } from '../src/skills/catalog.ts';
 import type { CharacterData } from '../src/types.ts';
 import { loadCatalogInput, splitIds } from './records-data.ts';
@@ -11,7 +13,7 @@ import { cliArgs, fail } from './cli.ts';
 
 const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
-  options: { en: { type: 'boolean', default: false } },
+  options: { en: { type: 'boolean', default: false }, stats: { type: 'boolean', default: false } },
 });
 const keys = positionals.flatMap(splitIds);
 if (keys.length === 0) {
@@ -39,6 +41,10 @@ if (missing.length > 0) {
   process.exit(1);
 }
 const picked = [...new Set(found.flatMap((f) => f.hits))];
+if (values.stats) {
+  console.log(picked.map(renderFixedSpecStats).join('\n\n'));
+  process.exit(0);
+}
 const { effects } = classifyCharacters(characters, defined);
 console.log(
   picked

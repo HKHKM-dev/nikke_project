@@ -1,6 +1,12 @@
 // 残っている仕事の一覧（plan/backlog.md）を課題のファイルと雛形から作る（plan/design-backlog-files.md）
 import { describe, expect, it } from 'vitest';
-import { parseBacklogTemplate, renderBacklog, validateBacklog, type BacklogItem } from '../backlog.ts';
+import {
+  backlogPlacement,
+  parseBacklogTemplate,
+  renderBacklog,
+  validateBacklog,
+  type BacklogItem,
+} from '../backlog.ts';
 
 const TEMPLATE = [
   '# 一覧',
@@ -120,5 +126,35 @@ describe('validateBacklog', () => {
       'records/backlog/refs.json: V-0009 が無い',
       'records/backlog/refs.json: リンクの先 design-missing.md（plan/ からの相対パス）が無い',
     ]);
+  });
+});
+
+describe('backlogPlacement（records:new backlog）', () => {
+  const slots = parseBacklogTemplate(TEMPLATE);
+  const slot = (section: string) => slots.find((x) => x.section === section)!;
+
+  it('numbers a section with the # column after the largest number, including the names other branches used', () => {
+    expect(backlogPlacement(slot('2'), ITEMS, {})).toEqual({ name: '2-11' });
+    expect(backlogPlacement(slot('2'), ITEMS, { taken: ['2-14', 'C-0100', 'foo'] })).toEqual({ name: '2-15' });
+    expect(backlogPlacement(slot('2'), [], {})).toEqual({ name: '2-1' });
+    expect(backlogPlacement(slot('2'), ITEMS, { name: 'x' })).toContain('--name は渡さない');
+  });
+
+  it('puts a named item at the end of its section (or the top with first)', () => {
+    expect(backlogPlacement(slot('8'), ITEMS, { name: 'new-one' })).toEqual({ name: 'new-one', order: 30 });
+    expect(backlogPlacement(slot('8'), ITEMS, { name: 'new-one', first: true })).toEqual({
+      name: 'new-one',
+      order: -6,
+    });
+    expect(backlogPlacement(slot('1'), ITEMS, { name: 'new-one' })).toEqual({ name: 'new-one', order: 10 });
+    expect(backlogPlacement(slot('8'), ITEMS, {})).toContain('--name');
+    expect(backlogPlacement(slot('8'), ITEMS, { name: 'later' })).toContain('既にある');
+  });
+
+  it('makes an item that passes validateBacklog', () => {
+    const placed = backlogPlacement(slot('8'), ITEMS, { name: 'new-one' });
+    if (typeof placed === 'string') throw new Error(placed);
+    const item: BacklogItem = { ...placed, section: '8', text: '新しい課題' };
+    expect(validateBacklog(slots, [item], { ids: new Set(), exists: () => true })).toEqual([]);
   });
 });

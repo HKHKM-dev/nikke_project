@@ -1,5 +1,5 @@
 // records/ と packages/core/data を Node で読む（records-table.ts・records-check.ts・テストで共有）。
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { parseEnemyPresets } from '../src/enemies.ts';
@@ -8,6 +8,7 @@ import {
   backlogNameOfPath,
   backlogNumber,
   renderBacklog,
+  type BacklogContext,
   type BacklogFile,
   type BacklogItem,
 } from '../src/records/backlog.ts';
@@ -284,12 +285,30 @@ export function pickObservations(
 export function addedObservationErrors(
   added: readonly Observation[],
   recordings: ReadonlyMap<string, RecordingEntry>,
+  all: readonly Observation[] = loadObservations(),
 ): string[] {
   const ids = new Set(added.map((o) => o.id));
-  const current = loadObservations().filter((o) => !ids.has(o.id));
+  const current = all.filter((o) => !ids.has(o.id));
   return validateObservations([...current, ...added], recordings, loadEnemies()).filter((e) =>
     ids.has(e.slice(0, e.indexOf(':'))),
   );
+}
+
+/** 書いたファイルを tools/format-retry.ts（prettier）で 1 回で整える。整えられなくても書いたまま（出し直し方を出す） */
+export function formatFiles(paths: readonly string[]): void {
+  if (paths.length === 0) return;
+  if (
+    spawnSync(process.execPath, [`${ROOT}tools/format-retry.ts`, ...paths], { cwd: ROOT, stdio: 'ignore' }).status !== 0
+  )
+    console.error(`整えられなかった（npx prettier --write で整える）: ${paths.join(' ')}`);
+}
+
+/** 課題の検査（validateBacklog）の文脈: 指してよい ID（結論・検証記録・録画・観測値の ID の並びを渡す）と、plan/ からのパスがあるか */
+export function backlogContext(...idLists: readonly Iterable<string>[]): BacklogContext {
+  return {
+    ids: new Set(idLists.flatMap((l) => [...l])),
+    exists: (path) => existsSync(`${ROOT}plan/${path}`),
+  };
 }
 
 /** 録画（と予測の編成）に出てくるキャラと、その定義・敵のプリセット */

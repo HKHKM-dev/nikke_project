@@ -21,32 +21,116 @@ import {
 } from './context.ts';
 
 export const firingMetrics: Readonly<Record<string, Metric>> = {
-  gaugeFullToWeaponChangeShot: { args: ['slot', 'n'], sim: gaugeFullToWeaponChangeShot },
-  fullBurstToWeaponChangeShot: { args: ['slot', 'n'], sim: fullBurstToWeaponChangeShot },
-  fullBurstEndToNextShot: { args: ['slot', 'n'], sim: fullBurstEndToNextShot },
-  shotCount: { args: ['slot'], sim: (r, c) => shotFramesIn(r, c).length },
-  maxAmmoAt: { args: ['slot', 'frame'], sim: maxAmmoAt },
+  gaugeFullToWeaponChangeShot: {
+    description: 'n 回目（0 始まり）の満タンから、変更後の武器の最初の発までの動画のフレーム',
+    args: ['slot', 'n'],
+    sim: gaugeFullToWeaponChangeShot,
+  },
+  fullBurstToWeaponChangeShot: {
+    description: 'n 回目のフルバーストの窓の始まりから、変更後の武器の最初の発までの動画のフレーム',
+    args: ['slot', 'n'],
+    sim: fullBurstToWeaponChangeShot,
+  },
+  fullBurstEndToNextShot: {
+    description: 'n 回目のフルバーストの窓の終わりから、枠の次の発までの動画のフレーム',
+    args: ['slot', 'n'],
+    sim: fullBurstEndToNextShot,
+  },
+  shotCount: {
+    description: '枠の [from, to) の発の数（モデルのフレーム。burst を書くとその回の発動からの相対）',
+    optional: ['from', 'to', 'burst'],
+    args: ['slot'],
+    sim: (r, c) => shotFramesIn(r, c).length,
+  },
+  maxAmmoAt: { description: 'そのフレームの区間の最大装弾数', args: ['slot', 'frame'], sim: maxAmmoAt },
   // n 発目の最大装弾数と、弾丸チャージの発数（V-0435）
-  maxAmmoAtShot: { args: ['slot', 'shot'], sim: maxAmmoAtShot },
-  ammoRefillAmounts: { args: ['slot', 'count'], sim: ammoRefillAmounts },
-  stateWindowRefillShots: { args: ['slot', 'state', 'skill', 'n'], sim: stateWindowRefillShots },
-  reloadFramesAt: { args: ['slot', 'frame'], sim: reloadFramesAt },
-  reloadToNextShotAt: { args: ['slot', 'frame'], sim: reloadToNextShotAt },
-  hideReloadToWindowEnd: { args: ['slot', 'window'], sim: hideReloadToWindowEnd },
-  lastShotToWindowEnd: { args: ['slot', 'window'], sim: lastShotToWindowEnd },
-  windowEndToFirstShot: { args: ['slot', 'window'], sim: windowEndToFirstShot },
-  partialChargeProgress: { args: ['slot', 'window'], sim: partialChargeProgressIn },
+  maxAmmoAtShot: {
+    description: '枠の shot 発目（1 始まり）を撃ったフレームの最大装弾数',
+    args: ['slot', 'shot'],
+    sim: maxAmmoAtShot,
+  },
+  ammoRefillAmounts: {
+    description: '枠に入った弾丸チャージの発数（最初の count 回）',
+    args: ['slot', 'count'],
+    sim: ammoRefillAmounts,
+  },
+  stateWindowRefillShots: {
+    description: '状態 state の n 回目（1 始まり）の窓の中で、スロット skill の弾丸チャージが起きた発の番号',
+    optional: ['skip', 'count'],
+    args: ['slot', 'state', 'skill', 'n'],
+    sim: stateWindowRefillShots,
+  },
+  reloadFramesAt: {
+    description: 'そのフレームの区間のリロードの、最終弾から込め終わりまでのフレーム',
+    optional: ['n'],
+    args: ['slot', 'frame'],
+    sim: reloadFramesAt,
+  },
+  reloadToNextShotAt: {
+    description: 'そのフレームの区間のリロードの、最終弾から次のマガジンの 1 発目までのフレーム',
+    optional: ['n'],
+    args: ['slot', 'frame'],
+    sim: reloadToNextShotAt,
+  },
+  hideReloadToWindowEnd: {
+    description: 'window 回目の狙えない窓の中のハイド中のリロードの始まりから、窓の終わりまでのフレーム',
+    args: ['slot', 'window'],
+    sim: hideReloadToWindowEnd,
+  },
+  lastShotToWindowEnd: {
+    description: 'window 回目の狙えない窓の、前の最後の発から窓の終わりまでのフレーム',
+    args: ['slot', 'window'],
+    sim: lastShotToWindowEnd,
+  },
+  windowEndToFirstShot: {
+    description: 'window 回目の狙えない窓の終わりから、最初の発までのフレーム',
+    args: ['slot', 'window'],
+    sim: windowEndToFirstShot,
+  },
+  partialChargeProgress: {
+    description: 'window 回目の狙えない窓の中の部分チャージの発の、チャージの進み',
+    args: ['slot', 'window'],
+    sim: partialChargeProgressIn,
+  },
   // 戦闘の始めから count 本のマガジンの発数（リロードからリロードまで。
   // 最後の弾丸の発を含む。plan/design-ludmilla-wo.md 3 節）。弾丸チャージでマガジンが延びるかを見る
-  magazineShots: { args: ['slot', 'count'], sim: magazineShots },
-  steadyPauseShots: { args: ['slot'], sim: steadyPauseShots },
-  lastShotGapMedians: { args: ['slot', 'every'], sim: lastShotGapMedians },
-  fullBurstMagazineShots: { args: ['slot'], sim: fullBurstMagazineShots },
-  fullBurstShotsBeforeAmmoRestore: { args: ['slot', 'n'], sim: fullBurstShotsBeforeAmmoRestore },
-  cycleWindowResidues: { args: ['slot', 'every'], sim: cycleWindowResidues },
+  magazineShots: {
+    description: '戦闘の始めから count 本のマガジンの発数',
+    args: ['slot', 'count'],
+    sim: magazineShots,
+  },
+  steadyPauseShots: {
+    description: '1 フレーム 1 発の区間の、射撃の止まりから次の止まりまでの発の数',
+    optional: ['fullBurst'],
+    args: ['slot'],
+    sim: steadyPauseShots,
+  },
+  lastShotGapMedians: {
+    description: 'マガジンの最後の弾丸から次の発までの中央値（every 発の倍数の発とほか）',
+    args: ['slot', 'every'],
+    sim: lastShotGapMedians,
+  },
+  fullBurstMagazineShots: {
+    description: 'フルバーストごとの、開始から最初にマガジンを撃ち切るまでの発の数',
+    optional: ['count'],
+    args: ['slot'],
+    sim: fullBurstMagazineShots,
+  },
+  fullBurstShotsBeforeAmmoRestore: {
+    description: 'n 回目のフルバーストの窓の中で、2 発以上のマガジンの発の前までに撃った発の数',
+    args: ['slot', 'n'],
+    sim: fullBurstShotsBeforeAmmoRestore,
+  },
+  cycleWindowResidues: {
+    description: '段の間隔の変更の窓ごとの、段の数え方の余り（通算のカウンタなら 0）',
+    args: ['slot', 'every'],
+    sim: cycleWindowResidues,
+  },
   // 省略できる引数 video が true なら、録画の動画のフレームの間隔（フルバーストの入りの止まり・発動の止まりを
   // 含む。videoFrameOf。V-0569）。HUD の増分どうしの間隔と比べる（入りの止まりを挟む発の間隔）
   shotIntervals: {
+    description: '枠の [from, to) の発と発の間の列（video が true なら動画のフレーム）',
+    optional: ['from', 'to', 'burst', 'video'],
     args: ['slot'],
     sim: (r, c) => {
       const raw = shotFramesIn(r, c);
@@ -57,6 +141,8 @@ export const firingMetrics: Readonly<Record<string, Metric>> = {
   // 枠の [from, to) の発の、発と発の間の平均（(最後の発 − 最初の発) ÷ (発の数 − 1)。V-0458）。HUD の増分のフレームの
   // 1f の揺れが、両端の発にしか残らない（マガジンの中の 27・28f の並びは、揺れで隣どうしが 29・26f になることがある）
   shotIntervalMean: {
+    description: '枠の [from, to) の発の、発と発の間の平均',
+    optional: ['from', 'to', 'burst'],
     args: ['slot'],
     sim: (r, c) => {
       const frames = shotFramesIn(r, c);
@@ -67,6 +153,7 @@ export const firingMetrics: Readonly<Record<string, Metric>> = {
   // 枠の frame 以降の最初の発の、発射から着弾（発のゲージを足すフレーム）までのフレーム数（的の表の
   // flightFrames と着地点の時間割りで決まる。V-0463）。録画では、照準の横の残弾が減ったフレームから総ダメージの増分までを読む
   shotFlightAt: {
+    description: '枠の frame 以降の最初の発の、発射から着弾までのフレーム',
     args: ['slot', 'frame'],
     sim: (r, c) => {
       const frame = Number(c.args.frame);
@@ -77,7 +164,11 @@ export const firingMetrics: Readonly<Record<string, Metric>> = {
   },
   // n 回目（0 始まり）のフルバーストの窓の中の、枠の発と発の間の中央値から、窓の前の同じ長さの中央値を
   // 引いたもの（動画のフレーム）。チャージ時間▼が窓の間だけ効くかを見る（plan/design-target-vocab.md 4.2 節）
-  fullBurstShotIntervalDiff: { args: ['slot', 'n'], sim: fullBurstShotIntervalDiff },
+  fullBurstShotIntervalDiff: {
+    description: 'n 回目のフルバーストの窓の中の発の間の中央値から、窓の前の中央値を引いたもの',
+    args: ['slot', 'n'],
+    sim: fullBurstShotIntervalDiff,
+  },
 };
 
 function magazineShots(result: SimResult, ctx: MetricContext): number[] {

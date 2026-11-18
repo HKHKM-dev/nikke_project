@@ -2,11 +2,15 @@
 import { format, resolveConfig } from 'prettier';
 import { describe, expect, it } from 'vitest';
 import { loadClaims, loadRecordingsFile, loadRecordsData, recordingMap } from '../../../scripts/records-data.ts';
-import { toClaims, validateClaims, type ClaimFile, type ClaimState } from '../claims.ts';
+import { toClaims, validateClaims, type ClaimFile, type ClaimState, type Judgment } from '../claims.ts';
 import {
+  appendBasis,
   claimDraft,
   idsInPaths,
+  mergeClaimUpdate,
   nextId,
+  parseJudgment,
+  updatedClaim,
   RESULTS_MARKERS,
   verificationFileName,
   verificationTemplate,
@@ -200,6 +204,136 @@ describe('claimDraft（結論の下書きの状態）', () => {
     expect(claimDraft({ ...base, prediction: { file: late, targets: [], score: score(1, 1) } }).reasons[0]).toContain(
       '合う仮説が 2 つ',
     );
+  });
+
+  it('judgment で上書きした条件は理由にせず、judgment を結論に書く（records:close と同じ。設計書 17 の 2 節）', () => {
+    const judgment = (overrides: Judgment['overrides']): Judgment => ({
+      decided: '2026-11-18',
+      overrides,
+      reason: '理由',
+    });
+    const outside = { ...base, compared: new Map([['0101-01', false]]) };
+    expect(claimDraft(outside).file.state).toBe('仮説');
+    const judged = claimDraft({ ...outside, judgment: judgment(['許容外']) });
+    expect(judged.reasons).toEqual([]);
+    expect(judged.file.state).toBe('確定');
+    expect(judged.file.judgment).toEqual(judgment(['許容外']));
+    const warned = {
+      ...base,
+      minimal: [{ observation: '0101-01', recordings: ['0101'], elements: [{ name: 'a', reason: 'r' }], marked: [] }],
+    };
+    expect(claimDraft({ ...warned, judgment: judgment(['最小構成の警告']) }).reasons).toEqual([]);
+    // 指標なしを上書きしても、等級が確定にできるものでなければ仮説
+    const noMetric = claimDraft({ ...base, gradeCandidate: undefined, judgment: judgment(['指標なし']) });
+    expect(noMetric.file.state).toBe('仮説');
+    expect(noMetric.reasons[0]).toContain('等級が 単独実測');
+  });
+
+  it('人が決めた等級（grade）は等級の欄に入り、候補が確定にできる等級でないことを理由にしない', () => {
+    const kept = claimDraft({ ...base, gradeCandidate: '単独実測', grade: '反復実測' });
+    expect(kept.file.grade).toBe('反復実測');
+    expect(kept.reasons).toEqual([]);
+    // 比べる指標の無いデータ明記は、指標なしを上書きしなくても確定にできる（records:close と同じ）
+    const data = claimDraft({ ...base, gradeCandidate: undefined, grade: 'データ明記' });
+    expect(data.file.grade).toBe('データ明記');
+    expect(data.reasons).toEqual([]);
+  });
+});
+
+describe('parseJudgment', () => {
+  it('reads "<条件>・<条件>|<理由>" with today as the decided date', () => {
+    expect(parseJudgment('許容外・最小構成の警告|丸めの差', '2026-11-18')).toEqual({
+      decided: '2026-11-18',
+      overrides: ['許容外', '最小構成の警告'],
+      reason: '丸めの差',
+    });
+    expect(parseJudgment('合う仮説が 2 つ以上, 指標なし | 理由', '2026-11-18')).toMatchObject({
+      overrides: ['合う仮説が 2 つ以上', '指標なし'],
+      reason: '理由',
+    });
+  });
+
+  it('returns the problems for a wrong form', () => {
+    expect(parseJudgment('許容外', '2026-11-18')).toEqual([expect.stringContaining('--judgment は')]);
+    expect(parseJudgment('ほか|理由', '2026-11-18')).toEqual([expect.stringContaining('語彙に無い: ほか')]);
+    expect(parseJudgment('許容外|', '2026-11-18')).toEqual([expect.stringContaining('reason が空')]);
+  });
+});
+
+describe('records:new claim --update の欄', () => {
+  const existing: ClaimFile = {
+    id: 'C-0500',
+    text: '結論',
+    state: '仮説',
+    topic: '命中率・距離',
+    grade: '単独実測',
+    basis: '`0101-01`（注記）。V-0099',
+    model: 'モデル',
+    replaces: ['C-0400'],
+    updated: '2026-10-01',
+    decidedOn: [{ recording: '0101', role: '仮説の出どころ' }],
+    minimal: [{ observations: ['0101-01'], element: 'a', reason: 'r', decided: '2026-10-01' }],
+  };
+
+  it('appendBasis adds the new observations and the verification after the old basis', () => {
+    expect(appendBasis(existing.basis, ['0102-01', '0102-02'], 'V-0100')).toBe(
+      '`0101-01`（注記）。V-0099。`0102-01`・`0102-02`。V-0100',
+    );
+    expect(appendBasis(existing.basis, ['0101-02'], 'V-0099')).toBe('`0101-01`（注記）。V-0099。`0101-02`');
+    expect(appendBasis(existing.basis, [], 'V-0100')).toBe(existing.basis);
+  });
+
+  it('mergeClaimUpdate adds decidedOn・runs to the old lists and replaces the rest when given', () => {
+    const merged = mergeClaimUpdate(existing, {
+      decidedOn: [
+        { recording: '0101', role: '仮説の出どころ' },
+        { recording: '0102', role: '値を合わせた' },
+      ],
+      subject: { mechanism: 'targetTable' },
+    });
+    expect(merged.decidedOn).toEqual([
+      { recording: '0101', role: '仮説の出どころ' },
+      { recording: '0102', role: '値を合わせた' },
+    ]);
+    expect(merged.subject).toEqual({ mechanism: 'targetTable' });
+    expect('runs' in merged).toBe(false);
+    expect(mergeClaimUpdate(existing, {})).toEqual({ decidedOn: existing.decidedOn });
+  });
+
+  it('updatedClaim keeps the text, topic, model, replaces and marks, and takes the state, grade and date from the draft', () => {
+    const draft = {
+      file: { ...existing, state: '確定' as const, grade: '反復実測' as const, updated: '2026-11-18' },
+      reasons: [],
+    };
+    const merged = { decidedOn: existing.decidedOn!, subject: { mechanism: 'targetTable' as const } };
+    const basis = appendBasis(existing.basis, ['0102-01'], 'V-0100');
+    const result = updatedClaim(existing, draft, merged, basis, undefined);
+    expect(result.reasons).toEqual([]);
+    expect(result.file).toMatchObject({
+      text: '結論',
+      topic: '命中率・距離',
+      model: 'モデル',
+      replaces: ['C-0400'],
+      minimal: existing.minimal,
+      state: '確定',
+      grade: '反復実測',
+      basis,
+      subject: { mechanism: 'targetTable' },
+      updated: '2026-11-18',
+    });
+    expect(updatedClaim(existing, draft, merged, basis, '新しいモデル').file.model).toBe('新しいモデル');
+    // when・edge は仮説にだけ書ける欄なので、書いてあれば仮説のまま
+    const withWhen = { ...existing, when: { enemyElement: 'Fire' } } as ClaimFile;
+    const kept = updatedClaim(withWhen, draft, merged, basis, undefined);
+    expect(kept.file.state).toBe('仮説');
+    expect(kept.reasons[0]).toContain('when・edge');
+    // 等級が変われば、前の等級の理由（gradeReason）は外す。同じ等級なら残す
+    const reasoned = { ...existing, grade: '厳密一致' as const, gradeReason: '理由' };
+    expect(updatedClaim(reasoned, draft, merged, basis, undefined).file.gradeReason).toBeUndefined();
+    const same = { ...draft, file: { ...draft.file, grade: '厳密一致' as const } };
+    expect(updatedClaim(reasoned, same, merged, basis, undefined).file.gradeReason).toBe('理由');
+    // 書き戻した結論は形の検査に通る
+    expect(validateClaims(toClaims([{ ...result.file, replaces: [] }]), new Set(['0101-01', '0102-01']))).toEqual([]);
   });
 });
 
