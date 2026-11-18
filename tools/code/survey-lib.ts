@@ -33,7 +33,7 @@ function testCallbackFrame(fn: ts.Node): string | undefined {
 
 // ---- 長い関数 ----
 
-/** lines は宣言の始めから終わりまで、own はそこから中に置いた関数の行を除いた行数 */
+/** lines は宣言の始めから終わりまで、own はそこから中に置いた関数の行（始めと終わりの行は外と分け合うので除かない）を除いた行数 */
 export type FunctionLength = { file: string; name: string; line: number; lines: number; own: number };
 
 const oneLine = (text: string, max: number): string => {
@@ -73,16 +73,23 @@ function functionName(fn: ts.FunctionLikeDeclaration, source: ts.SourceFile): st
  */
 export function functionLengths(file: string, source: ts.SourceFile): FunctionLength[] {
   const out: FunctionLength[] = [];
-  const visit = (node: ts.Node, outer: FunctionLength | undefined): void => {
-    let current = outer;
+  /** outer は外の関数の数えている所（covered は、中の関数だけが使う行） */
+  type Frame = { fn: FunctionLength; covered: Set<number> };
+  const visit = (node: ts.Node, outer: Frame | undefined): void => {
     if (ts.isFunctionLike(node) && 'body' in node && node.body !== undefined && testCallbackFrame(node) === undefined) {
       const line = startLine(node, source);
-      const lines = endLine(node, source) - line + 1;
-      current = { file, name: functionName(node, source), line, lines, own: lines };
-      if (outer !== undefined) outer.own -= lines;
-      out.push(current);
+      const end = endLine(node, source);
+      const frame: Frame = {
+        fn: { file, name: functionName(node, source), line, lines: end - line + 1, own: 0 },
+        covered: new Set(),
+      };
+      out.push(frame.fn);
+      if (outer !== undefined) for (let l = line + 1; l < end; l++) outer.covered.add(l);
+      ts.forEachChild(node, (child) => visit(child, frame));
+      frame.fn.own = frame.fn.lines - frame.covered.size;
+      return;
     }
-    ts.forEachChild(node, (child) => visit(child, current));
+    ts.forEachChild(node, (child) => visit(child, outer));
   };
   visit(source, undefined);
   return out;
@@ -237,18 +244,31 @@ function dropContained(found: readonly Occurrence[][]): DuplicateGroup[] {
   groups.forEach((occurrences, group) => {
     for (const o of occurrences) pushTo(byFile, o.file, { group, o });
   });
-  const covered = (group: number, o: Occurrence): boolean =>
-    byFile
-      .get(o.file)!
-      .some(
-        (h) =>
-          h.group !== group &&
-          h.o.start <= o.start &&
-          o.end <= h.o.end &&
-          (h.o.start < o.start || o.end < h.o.end || groups[h.group]!.length > groups[group]!.length),
-      );
+  /** o を含むほかの組 */
+  const coveringGroups = (group: number, o: Occurrence): Set<number> =>
+    new Set(
+      byFile
+        .get(o.file)!
+        .filter(
+          (h) =>
+            h.group !== group &&
+            h.o.start <= o.start &&
+            o.end <= h.o.end &&
+            (h.o.start < o.start || o.end < h.o.end || groups[h.group]!.length > groups[group]!.length),
+        )
+        .map((h) => h.group),
+    );
+  // 所の全部が、同じ 1 つの組の所に含まれるなら除く（別々の組に含まれるだけなら、この組の重なりは残す）
+  const contained = (occurrences: readonly Occurrence[], group: number): boolean => {
+    let common = coveringGroups(group, occurrences[0]!);
+    for (const o of occurrences.slice(1)) {
+      const here = coveringGroups(group, o);
+      common = new Set([...common].filter((h) => here.has(h)));
+    }
+    return common.size > 0;
+  };
   return groups
-    .filter((occurrences, group) => !occurrences.every((o) => covered(group, o)))
+    .filter((occurrences, group) => !contained(occurrences, group))
     .map((occurrences) => ({ lines: Math.min(...occurrences.map((o) => o.end - o.start + 1)), occurrences }))
     .sort(
       (a, b) =>
@@ -293,8 +313,9 @@ function importTypeName(qualifier: ts.EntityName): string {
 /** import・export を読む。resolve は指定 → 先のキー（外のパッケージ・ソースでない先は undefined） */
 export function readModule(source: ts.SourceFile, resolve: (specifier: string) => string | undefined): ModuleInfo {
   const info: ModuleInfo = { exports: [], reexports: [], stars: [], uses: [], runtime: [], identifiers: new Map() };
+  // 多重定義・宣言の合併（同じ名前を何度も出す）は、最初の 1 つだけ
   const addExport = (name: string, node: ts.Node, local: string | undefined): void => {
-    info.exports.push({ name, line: startLine(node, source), local });
+    if (!info.exports.some((e) => e.name === name)) info.exports.push({ name, line: startLine(node, source), local });
   };
   for (const statement of source.statements) {
     // import・再公開の先（文ごとに 1 回だけ辿る）
@@ -358,9 +379,19 @@ export function readModule(source: ts.SourceFile, resolve: (specifier: string) =
   const visit = (node: ts.Node): void => {
     if (ts.isIdentifier(node)) {
       const parent = node.parent;
+      // プロパティ・メンバーの名前と、出す所（export { … }・export default の式）は、中で使うに数えない
       const isPropertyName =
-        ((ts.isPropertyAccessExpression(parent) || ts.isPropertyAssignment(parent)) && parent.name === node) ||
-        ts.isExportSpecifier(parent);
+        ((ts.isPropertyAccessExpression(parent) ||
+          ts.isPropertyAssignment(parent) ||
+          ts.isMethodDeclaration(parent) ||
+          ts.isPropertyDeclaration(parent) ||
+          ts.isMethodSignature(parent) ||
+          ts.isPropertySignature(parent) ||
+          ts.isGetAccessorDeclaration(parent) ||
+          ts.isSetAccessorDeclaration(parent)) &&
+          parent.name === node) ||
+        ts.isExportSpecifier(parent) ||
+        ts.isExportAssignment(parent);
       if (!isPropertyName) info.identifiers.set(node.text, (info.identifiers.get(node.text) ?? 0) + 1);
     } else if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword) {
       const arg = node.arguments[0];
@@ -454,18 +485,20 @@ export type CoChange = { a: string; b: string; together: number; commitsA: numbe
 
 /**
  * 2 回以上一緒に変わったファイルの組で、どちらも他方を直に読まないもの（linked が false）。maxFiles を超える commit（一括の書き換え）は
- * 数えない。一緒に変わった回数の多い順（同じなら、少ない方の変わった回数に対する割合の高い順）
+ * 数えない（大きさは counted で絞る前の commit で見る）。組と回数は counted のファイルだけで数える。一緒に変わった回数の多い順（同じなら、少ない方の変わった回数に対する割合の高い順）
  */
 export function coChangePairs(
   commits: readonly (readonly string[])[],
   linked: (a: string, b: string) => boolean,
   maxFiles: number,
+  counted: (file: string) => boolean = () => true,
 ): CoChange[] {
   const perFile = new Map<string, number>();
   const pairs = new Map<string, number>();
   for (const commit of commits) {
-    const files = [...new Set(commit)].sort();
-    if (files.length > maxFiles) continue;
+    const changed = new Set(commit);
+    if (changed.size > maxFiles) continue;
+    const files = [...changed].filter(counted).sort();
     for (const f of files) perFile.set(f, (perFile.get(f) ?? 0) + 1);
     for (let i = 0; i < files.length; i++) {
       for (let j = i + 1; j < files.length; j++) {

@@ -175,11 +175,14 @@ if (shown('cochange')) {
     '--',
     ...REPO_IMPORT_GRAPH.dirs,
   ]);
-  const commits = parseNameOnlyLog(log).map((changed) => changed.filter((file) => modules.has(file)));
+  const commits = parseNameOnlyLog(log);
   const links = new Map([...modules].map(([file, info]) => [file, linkedTargets(info)]));
-  const all = coChangePairs(commits, (a, b) => links.get(a)?.has(b) ?? false, MAX_FILES_PER_COMMIT).filter(
-    (c) => inPath(c.a) || inPath(c.b),
-  );
+  const all = coChangePairs(
+    commits,
+    (a, b) => links.get(a)?.has(b) ?? false,
+    MAX_FILES_PER_COMMIT,
+    (file) => modules.has(file),
+  ).filter((c) => inPath(c.a) || inPath(c.b));
   const rows = all.slice(0, top).map((c) => [c.together, `${c.commitsA}・${c.commitsB}`, c.a, c.b]);
   table(
     `一緒に変わるファイル（git log --since="${values.since}"）`,
@@ -194,7 +197,9 @@ if (shown('cochange')) {
 }
 
 if (unresolved.length > 0) {
-  console.log(`\n辿れない import の指定 ${unresolved.length} 件（読まれない export の判定から外した）:`);
+  console.log(
+    `\n辿れない import の指定 ${unresolved.length} 件（読まれない export・循環・一緒に変わるファイルの判定から外した）:`,
+  );
   for (const message of unresolved.slice(0, 5)) console.log(`  ${message}`);
 }
 console.log(`\n（${sources.length} ファイル、${((performance.now() - started) / 1000).toFixed(1)} 秒）`);

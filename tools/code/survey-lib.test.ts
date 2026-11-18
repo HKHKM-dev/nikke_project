@@ -32,8 +32,9 @@ describe('functionLengths', () => {
       '});', // 14
     );
     const found = functionLengths('a.ts', parseSource('a.ts', text));
+    // own は、中の関数の始めと終わりの間の行だけを除く（1 行の関数は外の行を分け合うので除かない）
     expect(found.map((f) => [f.name, f.line, f.lines, f.own])).toEqual([
-      ['top', 1, 6, 3],
+      ['top', 1, 6, 5],
       ['inner', 2, 3, 3],
       ['Box.constructor', 8, 1, 1],
       ['Box.size', 9, 1, 1],
@@ -178,6 +179,18 @@ describe('readModule', () => {
   it('counts the identifiers outside property names and export lists', () => {
     const info = read(lines('const a = 1;', 'const o = { a: a };', 'o.a;', 'export { a };'));
     expect(info.identifiers.get('a')).toBe(2);
+    // メンバーの名前と export default の式も数えない。多重定義は 1 つの export
+    const more = read(
+      lines(
+        'const run = 1;',
+        'class K { run() {} }',
+        'export default run;',
+        'export function f(a: string): void;',
+        'export function f(a: unknown) {}',
+      ),
+    );
+    expect(more.identifiers.get('run')).toBe(1);
+    expect(more.exports.map((e) => e.name)).toEqual(['default', 'f']);
   });
 });
 
@@ -251,5 +264,7 @@ describe('co-changes', () => {
       { a: 'd', b: 'e', together: 3, commitsA: 3, commitsB: 3 },
       { a: 'a', b: 'b', together: 2, commitsA: 4, commitsB: 2 },
     ]);
+    // 大きさは数える範囲で絞る前で見る（x・y・z を数えなくても、5 ファイルの commit は数えない）
+    expect(coChangePairs(commits, linked, 4, (f) => !['x', 'y', 'z'].includes(f))[0]!.together).toBe(3);
   });
 });
