@@ -20,7 +20,6 @@
 //   ticks    --at のフレームを、戦闘開始からのゲーム内のティック（止まりを除く）に直す（V-0302）。隣どうしの差も出す。
 //            その秒の中に止まりがある（直前と直後の 3 つの変わり目で下の縁が違う）フレームには * を付ける
 //   --start  戦闘開始（02:59 が出たフレーム）。省略すると、最初の 250f 以上の間隔の次の変わり目（C-0078）
-import { parseArgs } from 'node:util';
 import { cropFilter, parseCrop, rawFrames } from './ffmpeg.ts';
 import {
   gameTicksAt,
@@ -31,8 +30,9 @@ import {
   timerSteps,
   unkeptOffsets,
 } from './timer-ticks.ts';
+import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: {
     crop: { type: 'string', default: '1852,26,14,18' },

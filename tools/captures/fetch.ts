@@ -13,15 +13,15 @@
 // 最初に見つかったものを使う。--list は全部のフォルダの中身を合わせて出す（同名は前のフォルダのもの）。
 import { existsSync, mkdirSync, readFileSync, renameSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { parseArgs } from 'node:util';
 import type { RecordingEntry } from '../../packages/core/src/records/recordings.ts';
 import { LEGACY_PREFIX, capturesDir, legacyDir } from './dirs.ts';
 import { Drive, DRIVE_CALL_MS, type DriveFile } from './drive.ts';
 import { sha256 } from './ffmpeg.ts';
+import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
 const RECORDINGS_DIR = new URL('../../records/recordings/', import.meta.url);
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: {
     list: { type: 'boolean', default: false },

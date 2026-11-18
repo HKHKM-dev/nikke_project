@@ -46,12 +46,12 @@ export type RebaseIo = {
 
 /**
  * 両方が行を足しただけの衝突を直してよいファイル。設計書（並行の PR が「経過」の末尾に 1 行ずつ足す）・状態の目録（states.ts。
- * スキル定義の PR が状態を足す）・手引き（plan/*-guide.md。表に行を足す）。両方残して壊れたら、PR の前の pr:prep の確かめと CI が
+ * スキル定義の PR が状態を足す）・手引きと言い回しの表（plan/*-guide.md・plan/skill-phrases.md。表に行を足す）。両方残して壊れたら、PR の前の pr:prep の確かめと CI が
  * 見つける（フックの取り込みは確かめずにトピックブランチへ push する）
- * （plan/design-workflow-simplification-14.md 5 節・-15.md 8 節）
+ * （plan/design-workflow-simplification-14.md 5 節・-15.md 8 節・-16.md 1 節）
  */
 export const isAppendMergeable = (path: string): boolean =>
-  /^plan\/(?:design-[^/]+|[^/]+-guide)\.md$/.test(path) || path === 'packages/core/src/skills/states.ts';
+  /^plan\/(?:design-[^/]+|[^/]+-guide|skill-phrases)\.md$/.test(path) || path === 'packages/core/src/skills/states.ts';
 
 /**
  * diff3 の形の衝突の印（git checkout --conflict=diff3）のあるファイルの中身で、どの衝突も基の側が空（両方が同じ所に行を足しただけ）

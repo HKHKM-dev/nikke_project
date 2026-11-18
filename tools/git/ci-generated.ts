@@ -11,12 +11,12 @@ import { spawnSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { parseArgs } from 'node:util';
 import { GENERATED_PATHS, ROOT } from '../../packages/core/scripts/records-data.ts';
 import { commitGenerated, type GitRun } from './ci-generated-lib.ts';
 import { nulPaths, pathListArgs, splitGenerated } from './pr-prep-lib.ts';
+import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
-const { values } = parseArgs({ options: { commit: { type: 'boolean', default: false } } });
+const { values } = cliArgs(import.meta.url, { options: { commit: { type: 'boolean', default: false } } });
 
 /** git を呼ぶ（0 以外で終わっても投げない。標準エラーは結果に入れる） */
 function git(args: readonly string[], env?: Readonly<Record<string, string>>): GitRun {

@@ -11,14 +11,14 @@ import { mkdtempSync, rmSync, symlinkSync, unlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { parseArgs } from 'node:util';
 import { claimsByObservation } from '../src/records/claims.ts';
 import { renderOtherRows, renderResidualChanges, renderResidualRows } from '../src/records/observations/render.ts';
 import { ROOT, loadClaims, splitIds } from './records-data.ts';
 import type * as RecordsData from './records-data.ts';
 import type * as ResidualCache from './residual-cache.ts';
+import { cliArgs } from './cli.ts';
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: { all: { type: 'boolean', default: false }, base: { type: 'string' } },
 });

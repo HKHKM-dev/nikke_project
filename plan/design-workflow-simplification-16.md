@@ -1,6 +1,6 @@
 # 繰り返しの業務の簡素化の案・第 16 回（2026-11-18 の定期の見直し）
 
-- 何のための文書か: 検証 1 件ごと・PR ごと・セッションごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。オーナーの判断を受けてから直す（まだ何も変えていない）。
+- 何のための文書か: 検証 1 件ごと・PR ごと・セッションごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。2026-11-18 にオーナーが 1（案 A）・2 を承認し、実施した（4 節）。
 - 前の回: [design-workflow-simplification.md](design-workflow-simplification.md)・[-2](design-workflow-simplification-2.md)〜[-15](design-workflow-simplification-15.md)。どれも実施済み。見直しの段（[design-review-steps.md](design-review-steps.md)）・撮影の本数（[design-capture-count.md](design-capture-count.md)）も含め、そこで扱ったもの（使われ方の少ない道具・レシピ、生成物の戻し、`records:new` の `--help` など）は繰り返さない。
 - この回で見たもの: 第 15 回の後の PR 27 本（#1203〜#1229）が触るファイル、手書きの手引きの大きさとその伸び（2026-10-20 からの版ごと）、`npm run` と `tools/` の道具の `--help` の振る舞い、`scratch/` の使い捨てのスクリプト、バッジの書き出しの流れ。
 - 調べ方: origin/main（37de18db）のクラウドの環境で、git の履歴と道具を直に回して数えた（使い捨て。コミットしない）。この回の環境ではセッションの出来事の列を読めなかったので、所要の時間は測っていない。
@@ -62,3 +62,5 @@
 ## 4. 経過
 
 - 2026-11-18: 起案。
+- 2026-11-18: オーナーが 1 の案 A と 2 を承認した。
+- 2026-11-18: 1・2 を実装した。言い回しの表（110 行）を `plan/skill-phrases.md` に移し、両方残す衝突の範囲に足した。大分類での小見出しの分けは、表の行が作った順に並んでいて分けるには行ごとの判断が要るので、50KB に近づいたときに行う。引数の読み取りは `packages/core/scripts/cli.ts` の `cliArgs` にし、`parseArgs` を呼んでいた 33 本と、`records:check`（`--keep-generated`）・`records:table`（引数なし）を替えた。`records:new` は話題と機構の一覧を含む今の usage の文を渡す。フック（`review-flow.ts`・`sync-after-merge.ts`）と、位置引数だけを読む `probe.ts`・`format-retry.ts`・`check-pages-build.ts` は替えていない。

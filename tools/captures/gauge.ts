@@ -15,8 +15,8 @@
 //   events  「溜め始め」「満タン」「バー消失」のフレーム。1 回目の溜め始めからの相対フレームも出す
 // --subpixel（series だけ）: 充填を % ではなく px で、境目の画素の中間の明るさも足して 1px 未満まで出す（画素ごとに
 //   (輝度 − 未充填) ÷ (充填 − 未充填) を 0..1 に切って足す。V-0483）。背景の動く録画は 1 フレームが ±1px ほど揺れるので、区間の中央値をとる
-import { parseArgs } from 'node:util';
 import { rawFrames } from './ffmpeg.ts';
+import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
 const BARS = {
   right: { x: 1793, y: 442, w: 113, h: 2 },
@@ -31,7 +31,7 @@ const FULL_FILL = 111.5 / 113;
 /** 明るさの境目 */
 const THRESHOLD = (FILLED + EMPTY) / 2;
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: {
     from: { type: 'string', default: '0' },

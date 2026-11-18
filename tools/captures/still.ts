@@ -6,11 +6,11 @@
 // （道具の終わりの同期。plan/design-cloud-environment.md 4.2 節）。上げられなくても切り出しは済んでいて、次の同期で上がる。
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { parseArgs } from 'node:util';
 import { parseCrop, writeStill } from './ffmpeg.ts';
 import { uploadFrame } from './frames-upload.ts';
+import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: {
     frame: { type: 'string' },

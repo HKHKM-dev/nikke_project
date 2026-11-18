@@ -6,10 +6,10 @@
 //   summary  区間のフレーム数・重複フレーム数と、重複の続く区間（3 フレーム以上）の一覧
 //   list     重複フレームの番号
 //   diff     フレームごとの差の平均（しきい値を決めるとき用）
-import { parseArgs } from 'node:util';
 import { rawFrames } from './ffmpeg.ts';
+import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: {
     from: { type: 'string', default: '0' },

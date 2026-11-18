@@ -49,7 +49,6 @@ import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createInterface } from 'node:readline/promises';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { parseArgs } from 'node:util';
 import {
   type BackupVia,
   RECORDING_FOLDERS,
@@ -85,11 +84,12 @@ import {
 } from './intake-lib.ts';
 import { Drive, DRIVE_CALL_MS, isTransientDriveError, type DriveFile } from './drive.ts';
 import { ffprobe, sha256 } from './ffmpeg.ts';
+import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const ELEMENTS: readonly Element[] = ['Fire', 'Water', 'Wind', 'Electronic', 'Iron'];
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: {
     id: { type: 'string' },

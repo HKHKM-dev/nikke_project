@@ -3,13 +3,13 @@
 // 通常攻撃（会心率を含む）・バースト・スキルの説明文（値を差し込み、{description_value_NN} の番号を添える）と、定義の有無・効果の
 // 分類が重なる定義済みのキャラを出す。--en で説明文を英語にする。名前は日本語・英語の名前で引き、名前がぴったり合うキャラが
 // あればそれだけ、無ければ名前を含むキャラを全部出す。中身は packages/core/src/skills/charSummary.ts。
-import { parseArgs } from 'node:util';
 import { renderCharSummary, similarDefined } from '../src/skills/charSummary.ts';
 import { classifyCharacters } from '../src/skills/catalog.ts';
 import type { CharacterData } from '../src/types.ts';
 import { loadCatalogInput, splitIds } from './records-data.ts';
+import { cliArgs } from './cli.ts';
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: { en: { type: 'boolean', default: false } },
 });

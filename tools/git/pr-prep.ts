@@ -28,7 +28,6 @@ import { execFileSync, spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
-import { parseArgs } from 'node:util';
 import {
   BACKLOG_PATH,
   GENERATED_PATHS,
@@ -59,8 +58,9 @@ import {
   splitGenerated,
 } from './pr-prep-lib.ts';
 import { gitRebaseIo, holdPrPrepLock, isRebasing, startRebase } from './git-rebase.ts';
+import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
-const { values } = parseArgs({
+const { values } = cliArgs(import.meta.url, {
   options: {
     push: { type: 'boolean', default: false },
     'no-ci': { type: 'boolean', default: false },

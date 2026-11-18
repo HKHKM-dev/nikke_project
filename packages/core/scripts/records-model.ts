@@ -6,7 +6,6 @@
 // 指定ごとに、比べる指定（compare）を持つ仮の観測値を作り、records:check と同じ検査（addedObservationErrors）に通してから、残差の計算と
 // 同じ predictCompare でモデルの値を出す。指標の語彙と args・setup の形は観測値の compare と同じなので、出した指定は
 // そのまま records:new observation の下書きに写せる。値は標準出力に 1 行ずつ「指定: 値」で出す。
-import { parseArgs } from 'node:util';
 import { predictCompare, type ModelCache } from '../src/records/observations/run.ts';
 import { METRICS } from '../src/records/observations/metrics/index.ts';
 import type { CompareSpec, Observation } from '../src/records/observations/types.ts';
@@ -18,6 +17,7 @@ import {
   recordingMap,
   splitIds,
 } from './records-data.ts';
+import { cliArgs } from './cli.ts';
 
 const USAGE = [
   "usage: npm run records:model -- <録画 id> <指定>... --setup '<JSON>' [--args '<JSON>']",
@@ -25,7 +25,7 @@ const USAGE = [
   '       指定は 指標 か 指標,指標 か 指標:{"n":10}',
 ].join('\n');
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: { args: { type: 'string' }, setup: { type: 'string' }, like: { type: 'string' } },
 });

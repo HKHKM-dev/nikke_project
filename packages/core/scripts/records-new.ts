@@ -24,7 +24,6 @@
 //   しない。
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { parseArgs } from 'node:util';
 import {
   CLAIM_MECHANISMS,
   CLAIM_TOPICS,
@@ -65,29 +64,7 @@ import {
 } from './records-data.ts';
 import { reserve } from './reserve.ts';
 import { runObservationsCached } from './residual-cache.ts';
-
-const { values, positionals } = parseArgs({
-  allowPositionals: true,
-  options: {
-    title: { type: 'string' },
-    name: { type: 'string' },
-    topic: { type: 'string' },
-    question: { type: 'string' },
-    from: { type: 'string' },
-    text: { type: 'string' },
-    subject: { type: 'string', multiple: true },
-    mechanism: { type: 'string' },
-    'decided-on': { type: 'string', multiple: true },
-    run: { type: 'string', multiple: true },
-    'parameter-free': { type: 'string' },
-    observations: { type: 'string' },
-    recording: { type: 'string' },
-    json: { type: 'string' },
-    file: { type: 'string' },
-    'no-push': { type: 'boolean', default: false },
-    help: { type: 'boolean', short: 'h', default: false },
-  },
-});
+import { cliArgs } from './cli.ts';
 
 const USAGE =
   'usage: npm run records:new -- verification --title "<題名>" --name <短い名前> --topic <話題> [--question "<問い>"] [--from V-NNNN] [--no-push]\n' +
@@ -98,10 +75,31 @@ const USAGE =
   `話題: ${CLAIM_TOPICS.join(' / ')}\n` +
   `機構: ${CLAIM_MECHANISMS.join(' / ')}`;
 
-if (values.help) {
-  console.log(USAGE);
-  process.exit(0);
-}
+const { values, positionals } = cliArgs(
+  import.meta.url,
+  {
+    allowPositionals: true,
+    options: {
+      title: { type: 'string' },
+      name: { type: 'string' },
+      topic: { type: 'string' },
+      question: { type: 'string' },
+      from: { type: 'string' },
+      text: { type: 'string' },
+      subject: { type: 'string', multiple: true },
+      mechanism: { type: 'string' },
+      'decided-on': { type: 'string', multiple: true },
+      run: { type: 'string', multiple: true },
+      'parameter-free': { type: 'string' },
+      observations: { type: 'string' },
+      recording: { type: 'string' },
+      json: { type: 'string' },
+      file: { type: 'string' },
+      'no-push': { type: 'boolean', default: false },
+    },
+  },
+  { usage: USAGE },
+);
 
 function fail(message: string): never {
   console.error(message);

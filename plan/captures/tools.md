@@ -1,7 +1,7 @@
 # 解析ツール
 
 - 関連: [protocol.md](protocol.md)（撮影の手順）、[index.md](index.md)（命名規約・台帳・キャラの確かめ方）、[storage.md](storage.md)（置き場所・バックアップ・取り寄せ）、[guide.md](guide.md)（撮影と読み取りの落とし穴）、[../verification-guide.md](../verification-guide.md)（検証の流れ）
-- 使い方・引数・座標・既定値・読み方は、ツールの冒頭のコメントが正。レシピの一覧と `--opt` は `npm run records:read -- --list`。
+- 使い方・引数・座標・既定値・読み方は、ツールの冒頭のコメントが正（`--help` で、それとオプションの一覧を出す）。レシピの一覧と `--opt` は `npm run records:read -- --list`。
 
 ## フレーム番号の約束
 

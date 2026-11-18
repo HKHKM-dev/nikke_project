@@ -4,13 +4,13 @@
 // --a は▲ありの録画、--b は対照。各録画の records/observations/<録画>.json の、method.tool が recipe:fb-window-cores の
 // 観測値（--source を付ければ、その検証記録のもの。invalid の付いたものは除く）の最後の 1 つを使う。--landings は K・K_out・R_B・R_A に使う着地点
 // （省くと 6 つ全部。V-0542 は中近・近A・近B）。着地点ごとの数の表は、使わない着地点も出す。
-import { parseArgs } from 'node:util';
 import { countsFromValue, fbWindowK, type Estimate, type RecordingCounts } from './fb-window-k-lib.ts';
 import { LANDINGS, type Landing } from './recipes/fb-window-cores.ts';
 import { loadObservations } from './records-io.ts';
 import { isNumberArray } from '../../packages/core/src/records/observations/types.ts';
+import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
-const { values } = parseArgs({
+const { values } = cliArgs(import.meta.url, {
   options: { a: { type: 'string' }, b: { type: 'string' }, source: { type: 'string' }, landings: { type: 'string' } },
 });
 if (values.a === undefined || values.b === undefined) {

@@ -22,7 +22,6 @@
 import { execFileSync, spawnSync } from 'node:child_process';
 import { appendFileSync, existsSync, readdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { parseArgs } from 'node:util';
 import {
   type ManualSpot,
   mentions,
@@ -51,8 +50,9 @@ import {
 } from '../../../tools/captures/renumber-files.ts';
 import { RECORDING_ID } from '../src/records/ids.ts';
 import { ROOT, idsInBranches, observationIdsInBranches, recordingIdsInBranches } from './records-data.ts';
+import { cliArgs } from './cli.ts';
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: { 'dry-run': { type: 'boolean', default: false } },
 });

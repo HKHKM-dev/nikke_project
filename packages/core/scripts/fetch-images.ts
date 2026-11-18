@@ -11,17 +11,17 @@ import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { parseArgs } from 'node:util';
 import { fetchCdnBytes, mapWithConcurrency } from './blablalink/client.ts';
 import { characterImagePath, type CharacterImageKind } from './blablalink/path.ts';
 import { characterImageFile } from '../src/characterImage.ts';
 import type { CharacterIndex } from '../src/types.ts';
+import { cliArgs } from './cli.ts';
 
 const CHARACTERS_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'data', 'characters');
 /** 画像の種類ごとの置き場所（data/characters の下） */
 const KIND_DIRS: Record<CharacterImageKind, string> = { si: 'images', mi: 'portraits' };
 
-const { values: args } = parseArgs({
+const { values: args } = cliArgs(import.meta.url, {
   options: {
     refresh: { type: 'boolean', default: false },
     concurrency: { type: 'string', default: '6' },

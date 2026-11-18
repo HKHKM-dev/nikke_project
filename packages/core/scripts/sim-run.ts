@@ -5,7 +5,6 @@
 // 味方のバフは受ける）。
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { parseArgs } from 'node:util';
 import { slotsByStep } from '../src/burst/schedule.ts';
 import { computeCombatAttack, computeCombatStat, emptyBuild, type BuildInput } from '../src/build.ts';
 import { resolveBuildEffects } from '../src/buildEffects.ts';
@@ -62,6 +61,7 @@ import { TEAM_SIZE, type TeamSlotInput } from '../src/team.ts';
 import type { BuildMasters, CharacterData, CharacterIndex, Element } from '../src/types.ts';
 import type { EnemyInput } from '../src/damage.ts';
 import { framesToGameSeconds, gameSecondsToFrame } from '../src/time.ts';
+import { cliArgs } from './cli.ts';
 
 const DATA_DIR = join(import.meta.dirname, '../data');
 /** --trace の種類 */
@@ -138,7 +138,7 @@ function stateLabelOf(e: SkillEffect): string {
   return e.kind === 'state' || e.kind === 'removeState' ? ` ${e.state}` : '';
 }
 
-const { values } = parseArgs({
+const { values } = cliArgs(import.meta.url, {
   options: {
     // 編成（resourceId をカンマ区切り。1〜5 体）
     ids: { type: 'string' },

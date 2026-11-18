@@ -23,7 +23,6 @@
 //   mags    マガジンごとの 1 発目・最終弾（0 の表示）・次の最大の表示と、4f 以上止まった区間（MG のスピンアップ中の間隔も出る）
 //   series  各フレームの残弾と最大（表示が消えているフレームは残弾が空）
 import { readFileSync, writeFileSync } from 'node:fs';
-import { parseArgs } from 'node:util';
 import {
   buildTemplates,
   decodeAmmo,
@@ -38,12 +37,13 @@ import {
 import { cropFilter, parseCrop, rawFrames, type Crop } from './ffmpeg.ts';
 import { selectExpr } from './aim-lib.ts';
 import { ammoCrop, CARD_SLOTS } from './card-layout.ts';
+import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
 const TEMPLATE_FILE = new URL('./ammo-templates.json', import.meta.url);
 /** 最大の候補にする、「/」の右で最もよく合ったフレームの数の下限（--max を省いたとき） */
 const MAX_MIN_FRAMES = 30;
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: {
     crop: { type: 'string' },

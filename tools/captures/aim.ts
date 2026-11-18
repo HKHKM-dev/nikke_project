@@ -27,7 +27,6 @@
 // 背景に無い遮蔽物（壊れる前の緑の箱など）が的に接していると、外接矩形がそこまで広がる。遠い的の脚は霧で薄く、取れないことがある。
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { parseArgs } from 'node:util';
 import {
   FIELD,
   H,
@@ -47,8 +46,9 @@ import {
   type Rgb,
   type Target,
 } from './aim-lib.ts';
+import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: {
     from: { type: 'string', default: '0' },

@@ -16,7 +16,6 @@ import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { parseArgs } from 'node:util';
 import type { Observation } from '../../packages/core/src/records/observations/types.ts';
 import { todayLocal } from '../../packages/core/src/records/predictions.ts';
 import { capturesDir } from './dirs.ts';
@@ -30,8 +29,9 @@ import {
   videoOf,
   writeObservations,
 } from './records-io.ts';
+import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: {
     recipe: { type: 'string' },

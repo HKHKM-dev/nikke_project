@@ -11,7 +11,6 @@ import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSyn
 import { homedir, uptime } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { parseArgs } from 'node:util';
 import { capturesDir } from '../captures/dirs.ts';
 import { mainCheckout } from '../git/main-checkout.ts';
 import { driveCaptures, driveSync, driveUnavailable, lsjson, rclone } from './rclone.ts';
@@ -27,10 +26,11 @@ import {
   SYNC_MARKER,
   SYNC_MARKER_TEXT,
 } from './sync-lib.ts';
+import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 
-const { values } = parseArgs({
+const { values } = cliArgs(import.meta.url, {
   options: {
     pair: { type: 'string' },
     resync: { type: 'boolean', default: false },

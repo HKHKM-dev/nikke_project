@@ -5,7 +5,6 @@
 // 確かめるのに使う。指標ごとに、1 本の録画の中で何回起きるか（撮影の本数の型。plan/verification-guide.md 4 節）も出す。
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { parseArgs } from 'node:util';
 import { V_ID } from '../src/records/ids.ts';
 import {
   indistinguishableTargets,
@@ -16,8 +15,9 @@ import {
   type PredictionFile,
 } from '../src/records/predictions.ts';
 import { PREDICTIONS_DIR, ROOT, loadRecordingsFile, loadRecordsData, recordingMap } from './records-data.ts';
+import { cliArgs } from './cli.ts';
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: { date: { type: 'string' } },
 });

@@ -8,7 +8,6 @@
 // plan/design-workflow-simplification-4.md 2 節。--no-ci は前の既定の名残で、何もしない）。課題のファイル（records/backlog/）の更新と PR は人（エージェント）が行う。
 import { spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
-import { parseArgs } from 'node:util';
 import {
   claimTieErrors,
   gradeAboveCandidate,
@@ -39,8 +38,9 @@ import {
 } from './records-data.ts';
 import { dirtyGenerated, restoreGenerated } from './generated.ts';
 import { runObservationsCached } from './residual-cache.ts';
+import { cliArgs } from './cli.ts';
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: {
     mark: { type: 'boolean', default: false },

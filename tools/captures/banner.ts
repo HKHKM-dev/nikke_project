@@ -5,11 +5,11 @@
 //   node tools/captures/banner.ts <動画> --hits f1,f2,... [--window 140] [--crop ...]    # ヒットごとの立ち上がりとの差 D
 //   --mode white: 明るさの代わりに、帯の文字の部分（既定 crop 120,582,80,28）の白っぽい画素（帯の地）の数が 200 を越えたフレームを拾う。
 //   操作キャラが撃つ録画で、マズルフラッシュ（黄色・橙）を帯と取り違えない（V-0325）。帯の立ち上がりより約 4f 遅い
-import { parseArgs } from 'node:util';
 import { bannerRises, risesBeforeHits, whiteOnsets, whitePixels } from './banner-lib.ts';
 import { cropFilter, parseCrop, rawFrames } from './ffmpeg.ts';
+import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: {
     from: { type: 'string' },

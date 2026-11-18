@@ -18,7 +18,6 @@
 // 1 区間から複数枚サンプルする。
 import { mkdirSync } from 'node:fs';
 import { basename, extname, join } from 'node:path';
-import { parseArgs } from 'node:util';
 import { ffprobe, parseCrop, rawFrames, writeStill } from './ffmpeg.ts';
 import {
   PANEL_CROP,
@@ -32,11 +31,12 @@ import {
   tailOffset,
   type Run as Span,
 } from './probe-result-lib.ts';
+import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
 type Sample = { frame: number } & PanelFeatures;
 type Run = Span & PanelFeatures;
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: {
     list: { type: 'boolean', default: false },

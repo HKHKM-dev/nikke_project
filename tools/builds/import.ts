@@ -3,11 +3,11 @@
 //   npm run build:import -- <生の JSON>   取り込む（取るのは npm run build:fetch。fetch.ts）
 //   npm run build:import -- --rebuild     private/builds/ の生のデータを全部写し直す（写し方を直したとき）
 import { existsSync, readFileSync } from 'node:fs';
-import { parseArgs } from 'node:util';
 import type { ShiftyPadRaw } from '../../packages/core/src/shiftypad.ts';
 import { importRaw, rebuildAll } from './store.ts';
+import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   options: { rebuild: { type: 'boolean', default: false } },
   allowPositionals: true,
 });
