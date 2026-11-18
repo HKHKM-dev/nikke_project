@@ -21,8 +21,8 @@ type Props = {
   buttonClassName: string;
   /** ボタンとポップアップの読み上げの名前 */
   label: string;
-  /** ポップアップをボタンのどちらの端にそろえるか */
-  align: 'left' | 'right';
+  /** ポップアップをボタンのどちらの端にそろえるか。center は画面の中央に出す（中身が大きいとき） */
+  align: 'left' | 'right' | 'center';
   /** 中身。関数なら、ポップアップを閉じる関数を受ける（中のボタンを押したら閉じるとき） */
   children: ReactNode | ((close: () => void) => ReactNode);
 };
@@ -34,12 +34,12 @@ export function Popover({ button, buttonClassName, label, align, children }: Pro
   // 幅が狭いと、ボタンが画面の端に寄ってポップアップがはみ出すので、開いたときと画面の幅が変わったときに位置を直す
   useLayoutEffect(() => {
     const panel = panelRef.current;
-    if (!open || panel === null) return;
+    if (!open || panel === null || align === 'center') return;
     keepInViewport(panel);
     const onResize = () => keepInViewport(panel);
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
-  }, [open]);
+  }, [open, align]);
 
   useEffect(() => {
     if (!open) return;

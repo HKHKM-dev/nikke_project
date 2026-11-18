@@ -183,6 +183,13 @@ header h1 {
 .popover-panel-right {
   right: 0;
 }
+/* 中身が大きいポップアップ（ニケ一覧の絞り込み）は、ボタンの下でなく画面の中央に出す */
+.popover-panel-center {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+}
 .popover-group {
   margin: 0;
   padding: 0;

@@ -314,7 +314,7 @@ function TrayFilterMenu({
         button="絞り込み"
         buttonClassName={`char-tray-action-button ${active ? 'char-tray-filter-active' : ''}`}
         label="ニケ一覧の絞り込み"
-        align="left"
+        align="center"
       >
         <div className="classic-filter-panel char-tray-filter-panel">
           <label className="classic-filter-row">
