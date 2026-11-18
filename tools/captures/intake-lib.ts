@@ -44,6 +44,18 @@ export function batchNamesAndNotes(
   return { names, notes: names.map((_, i) => (notes.length === 1 ? notes[0] : notes[i])) };
 }
 
+/**
+ * まとめて取り込むときの、録画ごとの値（--rid・--controlled・--treasure）。; で区切って録画ごとに書くか、区切らずに全部に同じ値を書く。
+ * 区切るときは元ファイルと同じ数。値が無ければ全部 undefined
+ */
+export function perRecording(flag: string, value: string | undefined, count: number): (string | undefined)[] {
+  if (value === undefined || !value.includes(';')) return Array.from({ length: count }, () => value);
+  const parts = value.split(';').map((s) => s.trim());
+  if (parts.length !== count)
+    throw new Error(`${flag} を ; で区切るときは元ファイルと同じ数（${count}）を並べる（${parts.length} 個あった）`);
+  return parts.map((s) => (s === '' ? undefined : s));
+}
+
 /** intake.ts の引数（parseArgs の options）。子のプロセスへ渡す引数（childArgs）も、この形で読まれる */
 export const INTAKE_OPTIONS = {
   id: { type: 'string' },
@@ -53,6 +65,7 @@ export const INTAKE_OPTIONS = {
   rid: { type: 'string' },
   controlled: { type: 'string' },
   target: { type: 'string' },
+  level: { type: 'string' },
   element: { type: 'string' },
   mode: { type: 'string' },
   'fixed-spec': { type: 'string' },

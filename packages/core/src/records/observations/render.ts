@@ -175,7 +175,11 @@ export function renderResiduals(
  * 2 つの版の残差の、予測か判定が変わった行（records:residual -- --base。plan/design-workflow-simplification-15.md 5 節）。
  * 片方にしか無い観測値も出す。予測は表に出す桁（fmtValue）で比べる
  */
-export function renderResidualChanges(base: readonly Residual[], head: readonly Residual[]): string[] {
+export function renderResidualChanges(
+  base: readonly Residual[],
+  head: readonly Residual[],
+  opts: { exact?: boolean } = {},
+): string[] {
   const before = new Map(base.map((r) => [r.observation.id, r]));
   const after = new Map(head.map((r) => [r.observation.id, r]));
   const ids = [...new Set([...after.keys(), ...before.keys()])];
@@ -183,7 +187,8 @@ export function renderResidualChanges(base: readonly Residual[], head: readonly 
     r === undefined
       ? { predicted: '（無い）', diff: '—', status: '（無い）' }
       : {
-          predicted: fmtValue(r.predicted),
+          // exact は丸めずに比べて出す（振る舞いを変えない作り替えの確かめ）
+          predicted: opts.exact === true ? JSON.stringify(r.predicted ?? null) : fmtValue(r.predicted),
           diff: fmtDiff(r),
           status: statusCell(r),
         };
@@ -208,7 +213,7 @@ export function renderResidualChanges(base: readonly Residual[], head: readonly 
     );
   }
   return [
-    `比べた観測値 ${head.length} 件（基の版 ${base.length} 件）のうち、予測か判定が変わった ${rows.length} 件（両方にあって判定が変わった ${statusChanged} 件）`,
+    `比べた観測値 ${head.length} 件（基の版 ${base.length} 件）のうち、予測${opts.exact === true ? '（丸めない）' : ''}か判定が変わった ${rows.length} 件（両方にあって判定が変わった ${statusChanged} 件）`,
     ...(rows.length === 0
       ? []
       : [

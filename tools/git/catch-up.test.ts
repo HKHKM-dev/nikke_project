@@ -113,6 +113,16 @@ describe('catchUp', { timeout: 30_000 }, () => {
     expect(git(work, 'status', '--porcelain', '--untracked-files=no')).toBe('');
   });
 
+  it('rebases a branch that tracks origin/main without pushing to main', () => {
+    const { work } = setup();
+    git(work, 'branch', '-q', '--set-upstream-to=origin/main');
+    const main = git(work, 'rev-parse', 'origin/main');
+    expect(catchUp(work)).toContain('origin/main の 1 件をリベースで取り込んだ');
+    expect(git(work, 'rev-list', '--count', 'HEAD..origin/main')).toBe('0');
+    git(work, 'fetch', '-q', 'origin');
+    expect(git(work, 'rev-parse', 'origin/main')).toBe(main);
+  });
+
   it('leaves the branch when origin has commits it lacks, or when work is in progress', () => {
     const { work, other } = setup();
     git(other, 'fetch', '-q', 'origin');

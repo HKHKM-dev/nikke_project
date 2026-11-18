@@ -3,10 +3,12 @@
 //   node tools/git/review-flow.ts --post   PostToolUse（Skill・Bash・GitHub の MCP の enable_pr_auto_merge）
 //   node tools/git/review-flow.ts --stop   Stop
 // --pre: /simplify を呼ぶ前に、ブランチの基（origin/main との merge-base）からの作業ツリーの差分が構造が変わる PR か見て、当たらなければ
-// 止める（判定は simplifyGate。plan/design-workflow-simplification-13.md 3 節）。
+// 止める（判定は simplifyGate。plan/design-workflow-simplification-13.md 3 節）。/code-review を low か medium で呼ぶ前に、差分が
+// frame/・sim/・tools/git/ に触れていれば止めて high で呼び直すよう返す（判定は reviewLevelGate）。
 // --post: 見直しのスキル（/simplify・/code-review）を呼んだら、git のディレクトリに印（今のブランチと時刻）を置き、自動マージを
 // 予約したら消す。
-// --stop: 印があれば、応答の終わりを止めて、自動マージの予約まで続けるよう返す（判定は review-flow-lib.ts の stopDecision）。
+// --stop: pr:prep が裏で動いていれば、応答の終わりを止めて終わりを待つよう返す（ほかの Stop のフックが止めた後の終わりは通す）。
+// 印があれば、応答の終わりを止めて、自動マージの予約まで続けるよう返す（判定は review-flow-lib.ts の stopDecision）。
 // この印で一度止めた後の終わり（オーナーの判断が要るとき）は通して印を消す（plan/design-review-steps.md 3 節）。
 // フックの入力は標準入力の JSON。何が起きてもフックを壊さない（常に終了コード 0。止めるときだけ標準出力に JSON）。
 import { execFileSync } from 'node:child_process';
@@ -14,10 +16,12 @@ import { readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   BLOCK_REASON,
+  PR_PREP_REASON,
   flowEvent,
   type HookInput,
   parseFlowState,
   parseNumstat,
+  reviewLevelGate,
   simplifyGate,
   stopDecision,
 } from './review-flow-lib.ts';
@@ -59,14 +63,28 @@ function branchChanges(): { path: string; added: number; isNew: boolean }[] | nu
   return files;
 }
 
-function main(): void {
+function readText(path: string): string | null {
+  try {
+    return readFileSync(path, 'utf8');
+  } catch {
+    return null;
+  }
+}
+
+async function main(): Promise<void> {
   const mode = process.argv[2];
   const input = parseJson<HookInput>(readFileSync(0, 'utf8')) ?? {};
   if (typeof input.cwd === 'string') cwd = input.cwd;
   if (mode === '--pre') {
-    if (input.tool_input?.skill !== 'simplify') return; // matcher が Skill
+    const skill = input.tool_input?.skill; // matcher が Skill
+    if (skill !== 'simplify' && skill !== 'code-review') return;
     const files = branchChanges();
-    const reason = files === null ? null : simplifyGate(files);
+    const reason =
+      files === null
+        ? null
+        : skill === 'simplify'
+          ? simplifyGate(files)
+          : reviewLevelGate(files, input.tool_input?.args);
     if (reason !== null)
       process.stdout.write(
         JSON.stringify({
@@ -93,8 +111,17 @@ function main(): void {
     return;
   }
   if (mode === '--stop') {
-    const file = flowFile();
-    if (file === null) return;
+    const gitDir = git(['rev-parse', '--absolute-git-dir']);
+    if (gitDir === null) return;
+    if (input.stop_hook_active !== true) {
+      // pr:prep の部分は core を読むので、応答の終わりのときだけ読む
+      const { prPrepRunning } = await import('./git-rebase.ts');
+      if (prPrepRunning(gitDir, readText)) {
+        process.stdout.write(JSON.stringify({ decision: 'block', reason: PR_PREP_REASON }));
+        return;
+      }
+    }
+    const file = join(gitDir, FLOW_FILE);
     const state = parseFlowState(readFileSync(file, 'utf8')); // 印が無ければ外の catch で終わる
     const decision = stopDecision(state, { branch: currentBranch(), now: Date.now() });
     if (decision === 'release') rmSync(file, { force: true });
@@ -105,8 +132,6 @@ function main(): void {
   }
 }
 
-try {
-  main();
-} catch {
+await main().catch(() => {
   // フックを壊さない
-}
+});

@@ -8,6 +8,7 @@ import {
   parseFlowState,
   parseNumstat,
   SIMPLIFY_MIN_ADDED,
+  reviewLevelGate,
   simplifyGate,
   stopDecision,
 } from './review-flow-lib.ts';
@@ -97,5 +98,20 @@ describe('the line in AGENTS.md', () => {
     const rule = readFileSync(new URL('../../AGENTS.md', import.meta.url), 'utf8');
     expect(rule).toContain(`コードの追加が ${SIMPLIFY_MIN_ADDED} 行を超える`);
     expect(rule).toContain('コード（`packages/`・`apps/`・`tools/`）');
+  });
+});
+
+describe('reviewLevelGate', () => {
+  it('stops medium when the diff touches frame/, sim/ or tools/git/', () => {
+    const files = [{ path: 'tools/git/catch-up.ts' }, { path: 'plan/x.md' }];
+    expect(reviewLevelGate(files, 'medium origin/main...HEAD')).toContain('tools/git/ を変えた PR');
+    expect(reviewLevelGate([{ path: 'packages/core/src/frame/a.ts' }], 'low')).toContain('high で回す');
+  });
+  it('passes high, no level, and diffs elsewhere', () => {
+    const files = [{ path: 'packages/core/src/sim/engine.ts' }];
+    expect(reviewLevelGate(files, 'high')).toBeNull();
+    expect(reviewLevelGate(files, undefined)).toBeNull();
+    expect(reviewLevelGate(files, 'origin/main...HEAD')).toBeNull();
+    expect(reviewLevelGate([{ path: 'tools/captures/a.ts' }], 'medium')).toBeNull();
   });
 });

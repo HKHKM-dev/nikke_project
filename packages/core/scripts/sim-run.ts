@@ -31,6 +31,7 @@ import {
 } from '../src/enemies.ts';
 import {
   jumpWindowsOf,
+  manualBurstsOf,
   FAR_LANDINGS,
   landingFixed,
   MID_FAR_LANDINGS,
@@ -189,6 +190,9 @@ const { values } = cliArgs(import.meta.url, {
     // 出来事のセットの狙えない窓と着地点の区間の切れ目を、録画で読んだ窓に置き換える（V-0088。照合の setup.jumpWindows と同じ）。
     // 観測値の id（例 0056-11）か、[始まり, 終わり, …] の秒をカンマ区切りで渡す。--events に狙えない窓を持つ出来事のセットが要る
     'jump-windows': { type: 'string' },
+    // 手で撃ったチェーンの始まり（I の本当の発動）のフレームの並び（照合の setup.manualBursts と同じ。TeamInput.manualBursts）。
+    // 観測値の id か、昇順のフレームをカンマ区切りで渡す。動的サイクルだけ
+    'manual-bursts': { type: 'string' },
     // 出来事の列だけを短く出す（区間の表は出さない。plan/design-workflow-simplification-15.md 6 節）。種類をカンマ区切りで:
     // shots（通常射撃。枠ごとの発の番号つき）・bursts（バーストのヒット・フルバースト・ゲージ・チェーン切れ）・buffs（区間に効く値の
     // 付き始めと切れ目）・hits（倍率ダメージ）・instants（即時効果）。all で全部
@@ -419,22 +423,23 @@ for (const id of eventSetIds) {
     process.exit(2);
   }
 }
-/** --jump-windows: 観測値の id（録画 id-番号）か、秒をカンマ区切りで並べたもの */
-function jumpWindowsArg(arg: string): { start: number; end: number }[] {
-  let value: number | number[] | undefined;
-  if (/^[\d.,\s]+$/.test(arg)) {
-    value = arg.split(',').map((v) => Number(v.trim()));
-  } else {
-    const dash = arg.lastIndexOf('-');
-    const recording = dash < 0 ? arg : arg.slice(0, dash);
-    const path = join(OBSERVATIONS_DIR, `${recording}.json`);
-    const observations = existsSync(path) ? (readJson(path) as { id: string; value: number | number[] }[]) : [];
-    value = observations.find((o) => o.id === arg)?.value;
-    if (value === undefined) {
-      console.error(`--jump-windows: observation ${arg} not found in records/observations/${recording}.json`);
-      process.exit(2);
-    }
+/** --jump-windows・--manual-bursts の値: 観測値の id（録画 id-番号）か、数をカンマ区切りで並べたもの */
+function observationValueArg(flag: string, arg: string): number | number[] {
+  if (/^[\d.,\s]+$/.test(arg)) return arg.split(',').map((v) => Number(v.trim()));
+  const dash = arg.lastIndexOf('-');
+  const recording = dash < 0 ? arg : arg.slice(0, dash);
+  const path = join(OBSERVATIONS_DIR, `${recording}.json`);
+  const observations = existsSync(path) ? (readJson(path) as { id: string; value: number | number[] }[]) : [];
+  const value = observations.find((o) => o.id === arg)?.value;
+  if (value === undefined) {
+    console.error(`${flag}: observation ${arg} not found in records/observations/${recording}.json`);
+    process.exit(2);
   }
+  return value;
+}
+/** --jump-windows: 秒の並び */
+function jumpWindowsArg(arg: string): { start: number; end: number }[] {
+  const value = observationValueArg('--jump-windows', arg);
   const windows = jumpWindowsOf(value);
   if (windows === undefined) {
     console.error(`--jump-windows: ${arg} is not an ascending list of [start, end, …] seconds`);
@@ -445,6 +450,20 @@ function jumpWindowsArg(arg: string): { start: number; end: number }[] {
 const jumpWindows = values['jump-windows'] === undefined ? undefined : jumpWindowsArg(values['jump-windows']);
 if (jumpWindows !== undefined && eventSetIds.length === 0) {
   console.error('--jump-windows needs an untargetable event set (e.g. range-3min-jump; drop --no-jump)');
+  process.exit(2);
+}
+/** --manual-bursts: フレームの並び */
+function manualBurstsArg(arg: string): number[] {
+  const frames = manualBurstsOf(observationValueArg('--manual-bursts', arg));
+  if (frames === undefined) {
+    console.error(`--manual-bursts: ${arg} is not an ascending list of frames`);
+    process.exit(2);
+  }
+  return frames;
+}
+const manualBursts = values['manual-bursts'] === undefined ? undefined : manualBurstsArg(values['manual-bursts']);
+if (manualBursts !== undefined && (values['no-burst'] || values['fixed-cycle'])) {
+  console.error('--manual-bursts needs the dynamic burst cycle (drop --no-burst and --fixed-cycle)');
   process.exit(2);
 }
 const enemyEvents = enemyEventsOf(enemyPresets, eventSetIds, Number(values.duration), jumpWindows);
@@ -478,6 +497,7 @@ const input = {
   burst: !values['no-burst'],
   burstModel: values['fixed-cycle'] ? ('fixed' as const) : ('dynamic' as const),
   controlledSlot: values.controlled === undefined ? null : Number(values.controlled) - 1,
+  ...(manualBursts === undefined ? {} : { manualBursts }),
 };
 // 編成の条件（burstStepMix・squad・withCharacter・enemyElement・row）の付いた効果と、この編成で効くか（効かない効果は計算に入れない）
 const compositionCharacters = slots.map((s) => s.character);
@@ -548,7 +568,7 @@ const fmt = (n: number, digits = 0) => n.toLocaleString('en-US', { maximumFracti
 const pct = (n: number) => `${(n * 100).toFixed(3)}%`;
 
 console.log(
-  `duration ${input.durationSeconds}s (${sim.frames}f), burst ${input.burst ? input.burstModel : 'off'}, ` +
+  `duration ${input.durationSeconds}s (${sim.frames}f), burst ${input.burst ? input.burstModel : 'off'}${manualBursts === undefined ? '' : ` (manual bursts ${values['manual-bursts']})`}, ` +
     `fixed spec ${fixedSpec}, build ${values.build ?? 'none'}, controlled ${input.controlledSlot === null ? 'none (all AI)' : `slot ${input.controlledSlot + 1}`}, ` +
     `enemy ${enemyPreset?.id ?? 'custom'} defence ${input.enemy.defence}, element ${input.enemy.element ?? 'none'}, ` +
     `conditions ${conditionMode}${

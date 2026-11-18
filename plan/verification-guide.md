@@ -80,7 +80,7 @@
 ## 7. 比べる
 
 - `npm run records:check` で、生成物を全部作り直して検査する。生成物は PR に入れないので、終わりに HEAD の版へ戻す（回す前から書き換わっていたものは戻さない。中身を見たいときは `-- --keep-generated` か、感度も計算し直す `npm run records:minimal`。どちらも生成物を残す。PR の前は `pr:prep`、マージの後は CI が作り直す）。作り直すもの: 録画の一覧（[captures/recordings.md](captures/recordings.md)）・スキルの効果の分類（[skill-catalog.md](skill-catalog.md)）・残差の一覧（[residuals.md](residuals.md)）・結論の一覧（[claims.md](claims.md)）・検証記録の一覧（[verifications.md](verifications.md)。予測ファイルがあれば「予測との比べ」）・対応状況（[skills.md](skills.md)）・最小構成の検査（[minimal.md](minimal.md)）を作り直す。観測値のモデルの予測値は、モデルのコードとデータ（`packages/core/src`・`data`）が同じあいだ覚えておき（`node_modules/.cache/residuals/`。`npm test` も使う）、2 回目からは覚えていない観測値だけをモデルで回す。覚えを使わないときは `NIKKE_NO_RESIDUAL_CACHE=1`。
-- 残差の一覧には見る行（許容外・比べられない・失効）しか載らない。自分の観測値の残差は `npm run records:residual -- V-NNNN`（録画 id・観測値 ID でも引ける。許容内の行も同じ列で出す）。コード・データを変えた PR では `npm run records:residual -- --all --base origin/main` で、main の版と比べて予測か判定が変わった行だけを出す。
+- 残差の一覧には見る行（許容外・比べられない・失効）しか載らない。自分の観測値の残差は `npm run records:residual -- V-NNNN`（録画 id・観測値 ID でも引ける。許容内の行も同じ列で出す）。コード・データを変えた PR では `npm run records:residual -- --all --base origin/main` で、main の版と比べて予測か判定が変わった行だけを出す。振る舞いを変えないはずの作り替えでは `--exact` を足して予測を丸めずに比べ、変わった行が 0 件だったことを PR の本文に書く。
 - 最小構成の検査の感度（`npm run records:minimal`）は、閉じるとき（9 節）に `records:close` が計算し直す。それより前に見たいときは手で回す。既定は、鍵（スキル定義・録画の台帳・比べる指定）の変わった観測値だけを計算し直す（数秒）。鍵はモデルのコードを含まないので、モデルを大きく組み直す PR と、定期の見直しでは `npm run records:minimal -- --all` で全部を計算し直し、差が出ないことを見る（差が出たら鍵に足りない入力を足す。[design-workflow-simplification-5.md](design-workflow-simplification-5.md) 7.2 節）。
 - 合わないときは、まず読み取りと条件を疑う。機構の話にするのは、未確定の要素を 1 つにした編成で切り分けてから。残差を係数で埋めない（AGENTS.md）。
 

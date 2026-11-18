@@ -41,4 +41,13 @@ describe('renderResidualChanges', () => {
       '比べた観測値 1 件（基の版 1 件）のうち、予測か判定が変わった 0 件（両方にあって判定が変わった 0 件）',
     ]);
   });
+
+  it('with exact, lists a prediction that changed below the rounding', () => {
+    const base = [residual('0001-01', 10.0001, 'ok')];
+    const head = [residual('0001-01', 10.0002, 'ok')];
+    expect(renderResidualChanges(base, head)[0]).toContain('変わった 0 件');
+    const lines = renderResidualChanges(base, head, { exact: true });
+    expect(lines[0]).toContain('予測（丸めない）か判定が変わった 1 件');
+    expect(lines[4]).toContain('10.0001 → 10.0002');
+  });
 });
