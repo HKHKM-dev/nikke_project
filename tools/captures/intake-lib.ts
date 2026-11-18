@@ -44,8 +44,11 @@ export function batchNamesAndNotes(
   return { names, notes: names.map((_, i) => (notes.length === 1 ? notes[0] : notes[i])) };
 }
 
+/** まとめて取り込むときに、録画ごとに書ける引数 */
+export const PER_RECORDING_FLAGS = ['rid', 'controlled', 'treasure'] as const;
+
 /**
- * まとめて取り込むときの、録画ごとの値（--rid・--controlled・--treasure）。; で区切って録画ごとに書くか、区切らずに全部に同じ値を書く。
+ * まとめて取り込むときの、録画ごとの値（PER_RECORDING_FLAGS）。; で区切って録画ごとに書くか、区切らずに全部に同じ値を書く。
  * 区切るときは元ファイルと同じ数。値が無ければ全部 undefined
  */
 export function perRecording(flag: string, value: string | undefined, count: number): (string | undefined)[] {

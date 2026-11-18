@@ -24,11 +24,12 @@
 // （--wait-pr <番号>）を、切り離して起こす（次の発言を待たずに揃えるため。plan/design-sync-wait-merge.md）。同じ PR を待つ
 // 裏の処理が動いていれば起こさない。裏の処理の結果は知らせられない（次のフックは、もう揃っているので何も言わない）。
 import { execFileSync, spawn } from 'node:child_process';
-import { readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { rmSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 import { alive, type Lock, lockIsLive } from '../drive/sync-lib.ts';
+import { readText } from './pr-prep-lock.ts';
 import {
   bringsNothing,
   ciSettled,
@@ -174,15 +175,6 @@ function startWaiter(branch: string): void {
   })
     .on('error', () => {})
     .unref();
-}
-
-/** ファイルの中身。読めなければ null */
-function readText(path: string): string | null {
-  try {
-    return readFileSync(path, 'utf8');
-  } catch {
-    return null;
-  }
 }
 
 /** PR n のマージ（WAIT_MERGE_MS まで）と、マージのコミットの CI の終わり（マージから WAIT_CI_MS まで）を待って 1・2 を行う */

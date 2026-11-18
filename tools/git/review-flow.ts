@@ -25,6 +25,7 @@ import {
   simplifyGate,
   stopDecision,
 } from './review-flow-lib.ts';
+import { prPrepRunning } from './pr-prep-lock.ts';
 import { parseJson } from './sync-after-merge-lib.ts';
 
 const FLOW_FILE = 'claude-review-flow.json';
@@ -44,10 +45,8 @@ function git(args: readonly string[]): string | null {
   }
 }
 
-const flowFile = (): string | null => {
-  const gitDir = git(['rev-parse', '--absolute-git-dir']);
-  return gitDir === null ? null : join(gitDir, FLOW_FILE);
-};
+const gitDir = (): string | null => git(['rev-parse', '--absolute-git-dir']);
+const flowFile = (dir = gitDir()): string | null => (dir === null ? null : join(dir, FLOW_FILE));
 const currentBranch = (): string | null => git(['branch', '--show-current']) || null;
 
 /** ブランチの基からの作業ツリーの差分（追跡していない新しいファイルも入れる）。基が分からなければ null */
@@ -63,15 +62,7 @@ function branchChanges(): { path: string; added: number; isNew: boolean }[] | nu
   return files;
 }
 
-function readText(path: string): string | null {
-  try {
-    return readFileSync(path, 'utf8');
-  } catch {
-    return null;
-  }
-}
-
-async function main(): Promise<void> {
+function main(): void {
   const mode = process.argv[2];
   const input = parseJson<HookInput>(readFileSync(0, 'utf8')) ?? {};
   if (typeof input.cwd === 'string') cwd = input.cwd;
@@ -79,12 +70,8 @@ async function main(): Promise<void> {
     const skill = input.tool_input?.skill; // matcher が Skill
     if (skill !== 'simplify' && skill !== 'code-review') return;
     const files = branchChanges();
-    const reason =
-      files === null
-        ? null
-        : skill === 'simplify'
-          ? simplifyGate(files)
-          : reviewLevelGate(files, input.tool_input?.args);
+    if (files === null) return;
+    const reason = skill === 'simplify' ? simplifyGate(files) : reviewLevelGate(files, input.tool_input?.args);
     if (reason !== null)
       process.stdout.write(
         JSON.stringify({
@@ -111,17 +98,13 @@ async function main(): Promise<void> {
     return;
   }
   if (mode === '--stop') {
-    const gitDir = git(['rev-parse', '--absolute-git-dir']);
-    if (gitDir === null) return;
-    if (input.stop_hook_active !== true) {
-      // pr:prep の部分は core を読むので、応答の終わりのときだけ読む
-      const { prPrepRunning } = await import('./git-rebase.ts');
-      if (prPrepRunning(gitDir, readText)) {
-        process.stdout.write(JSON.stringify({ decision: 'block', reason: PR_PREP_REASON }));
-        return;
-      }
+    const dir = gitDir();
+    if (dir === null) return;
+    if (input.stop_hook_active !== true && prPrepRunning(dir)) {
+      process.stdout.write(JSON.stringify({ decision: 'block', reason: PR_PREP_REASON }));
+      return;
     }
-    const file = join(gitDir, FLOW_FILE);
+    const file = flowFile(dir)!;
     const state = parseFlowState(readFileSync(file, 'utf8')); // 印が無ければ外の catch で終わる
     const decision = stopDecision(state, { branch: currentBranch(), now: Date.now() });
     if (decision === 'release') rmSync(file, { force: true });
@@ -132,6 +115,8 @@ async function main(): Promise<void> {
   }
 }
 
-await main().catch(() => {
+try {
+  main();
+} catch {
   // フックを壊さない
-});
+}

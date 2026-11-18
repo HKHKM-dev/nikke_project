@@ -80,6 +80,7 @@ import {
   parseRidArg,
   parseTreasureArg,
   perRecording,
+  PER_RECORDING_FLAGS,
   reservedLabel,
   sequentialRecordingIds,
   UPLOAD_POLL_LIMIT,
@@ -133,10 +134,10 @@ if (!values.child) {
   // まとめて取り込む（冒頭の説明）: 1 本ずつ子のプロセスで回し、終わりに一覧を作り直して番号を押さえる
   if (positionals.length === 0 || !values.name) fail('元ファイル・--name が要る');
   const { names, notes } = orFail(() => batchNamesAndNotes(positionals.length, values.name!, values.note));
-  const each = (k: 'rid' | 'controlled' | 'treasure') =>
-    orFail(() => perRecording(`--${k}`, values[k], positionals.length));
-  const [rids, controlled, treasure] = [each('rid'), each('controlled'), each('treasure')];
-  if (positionals.length > 1 && values.rid !== undefined && !values.rid.includes(';') && new Set(names).size > 1) {
+  // 録画ごとに書ける引数（--rid・--controlled・--treasure）の、録画ごとの値
+  const perRec = PER_RECORDING_FLAGS.map((k) => orFail(() => perRecording(`--${k}`, values[k], positionals.length)));
+  const rids = perRec[0]!;
+  if (rids.length > 1 && rids[0] !== undefined && new Set(rids).size === 1 && new Set(names).size > 1) {
     console.error(
       `注意: --rid ${values.rid} を ${positionals.length} 本の全部に書く（録画ごとに編成が違うなら ; で区切って録画ごとに書く）`,
     );
@@ -179,9 +180,7 @@ if (!values.child) {
           note,
           shared: [
             ...shared,
-            ['--rid', rids[i]],
-            ['--controlled', controlled[i]],
-            ['--treasure', treasure[i]],
+            ...PER_RECORDING_FLAGS.map((k, j) => [`--${k}`, perRec[j]![i]] as const),
             ['--build-snapshot', snapshot],
           ],
           flags,

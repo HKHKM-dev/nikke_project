@@ -3,10 +3,11 @@
 // shouldCatchUp に合うブランチ（claude/。作業中の変更が無く、リベースの途中でも pr:prep の途中でもなく、マージ済みでなく、origin/main が
 // 進んでいる）をリベースする。生成物の衝突は main の版を取り、生成物でないファイルが衝突したら元に戻して知らせる。追跡先があれば、
 // リベースの前の追跡先の sha を lease にして強制 push する（records:new・取り込みの道具の push が早送りで落ちないように）。
-// origin のブランチに手元に無い commit があるときは、上書きしないよう取り込まない（origin/main を追跡するブランチは追跡先が無いとみる）。PR を出したブランチ（origin の refs/pull/*/head に
-// 追跡先の sha がある）も取り込まない（自動マージを待つ間に push すると CI が回り直し、main が進むたびに繰り返すため）。
+// origin のブランチに手元に無い commit があるときは、上書きしないよう取り込まない（origin/main を追跡するブランチは追跡先が無いと
+// みる）。PR を出したブランチ（origin の refs/pull/*/head に追跡先の sha がある）も取り込まない（自動マージを待つ間に push すると
+// CI が回り直し、main が進むたびに繰り返すため）。
 import { execFileSync, spawnSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { prPrepRunning } from './pr-prep-lock.ts';
 import { catchUpMessage, RULE_PATHS, shouldCatchUp } from './sync-after-merge-lib.ts';
 
 function git(args: readonly string[]): string | null {
@@ -20,14 +21,6 @@ function git(args: readonly string[]): string | null {
 const gitOk = (args: readonly string[]): boolean =>
   spawnSync('git', args, { stdio: 'ignore', timeout: 60_000 }).status === 0;
 
-function readText(path: string): string | null {
-  try {
-    return readFileSync(path, 'utf8');
-  } catch {
-    return null;
-  }
-}
-
 /** 取り込んだ・取り込めなかったときの知らせ。何もしなければ null */
 export async function catchUp(): Promise<string | null> {
   const branch = git(['symbolic-ref', '--short', '-q', 'HEAD']);
@@ -38,12 +31,12 @@ export async function catchUp(): Promise<string | null> {
   const gitDir = git(['rev-parse', '--absolute-git-dir']);
   if (gitDir === null || track === '[gone]' || behind === 0) return null;
   // リベースの部分は core を読むので、要るときだけ読む
-  const { isRebasing, prPrepRunning, rebaseOrAbort, startRebase } = await import('./git-rebase.ts');
+  const { isRebasing, rebaseOrAbort, startRebase } = await import('./git-rebase.ts');
   const plan = {
     branch,
     track,
     behind,
-    busy: isRebasing(gitDir) || prPrepRunning(gitDir, readText),
+    busy: isRebasing(gitDir) || prPrepRunning(gitDir),
     clean: git(['status', '--porcelain', '--untracked-files=no']) === '',
   };
   if (!shouldCatchUp(plan)) return null;

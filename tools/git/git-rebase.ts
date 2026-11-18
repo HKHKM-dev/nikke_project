@@ -1,11 +1,9 @@
 // 本物の git で origin/main へのリベースを進める部分。pr-prep.ts と、トピックブランチを取り込むフック（catch-up.ts）が使う。
 // 衝突の解き方の判断は pr-prep-lib.ts の finishRebase。
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { alive, type Lock, lockIsLive } from '../drive/sync-lib.ts';
 import { finishRebase, mergeAppends, nulPaths, pathListArgs, rebaseOutcome, type RebaseIo } from './pr-prep-lib.ts';
-import { parseJson } from './sync-after-merge-lib.ts';
 
 /** git の終了コード（エディタを開かない）。inherit なら git の出力をそのまま見せる */
 function gitStatus(cwd: string, args: readonly string[], inherit = false): number {
@@ -70,18 +68,4 @@ export function rebaseOrAbort(
   const end = finishRebase(gitRebaseIo(cwd, gitDir), generatedPaths);
   if (end.kind !== 'done') gitStatus(cwd, ['rebase', '--abort']);
   return end;
-}
-
-/** pr:prep が動いている間の印（git のディレクトリに置く）。フックの取り込みは、印が生きている間は動かない */
-const PR_PREP_LOCK = 'pr-prep.lock.json';
-
-export function holdPrPrepLock(gitDir: string): void {
-  const path = join(gitDir, PR_PREP_LOCK);
-  writeFileSync(path, JSON.stringify({ pid: process.pid, time: Date.now() } satisfies Lock));
-  process.on('exit', () => rmSync(path, { force: true }));
-}
-
-/** pr:prep が動いているか（印のプロセスが生きていて、1 時間より新しい） */
-export function prPrepRunning(gitDir: string, readText: (path: string) => string | null): boolean {
-  return lockIsLive(parseJson<Lock>(readText(join(gitDir, PR_PREP_LOCK))), Date.now(), alive, 60 * 60 * 1000);
 }
