@@ -7,7 +7,7 @@ import { renderCharSummary, similarDefined } from '../src/skills/charSummary.ts'
 import { classifyCharacters } from '../src/skills/catalog.ts';
 import type { CharacterData } from '../src/types.ts';
 import { loadCatalogInput, splitIds } from './records-data.ts';
-import { cliArgs } from './cli.ts';
+import { cliArgs, fail } from './cli.ts';
 
 const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
@@ -15,8 +15,7 @@ const { values, positionals } = cliArgs(import.meta.url, {
 });
 const keys = positionals.flatMap(splitIds);
 if (keys.length === 0) {
-  console.error('usage: npm run char -- <id か名前（の一部）>[,...] [--en]');
-  process.exit(1);
+  fail();
 }
 const { characters, defined } = loadCatalogInput();
 const byRid = new Map(characters.map((c) => [c.resourceId, c]));

@@ -37,7 +37,7 @@ import {
 import { cropFilter, parseCrop, rawFrames, type Crop } from './ffmpeg.ts';
 import { selectExpr } from './aim-lib.ts';
 import { ammoCrop, CARD_SLOTS } from './card-layout.ts';
-import { cliArgs } from '../../packages/core/scripts/cli.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
 const TEMPLATE_FILE = new URL('./ammo-templates.json', import.meta.url);
 /** 最大の候補にする、「/」の右で最もよく合ったフレームの数の下限（--max を省いたとき） */
@@ -60,11 +60,7 @@ const { values, positionals } = cliArgs(import.meta.url, {
 
 const video = positionals[0];
 if (!video) {
-  console.error(
-    'usage: node tools/captures/ammo.ts <動画> [--card N | --crop x,y,w,h] [--max 300[,...]] [--charge] [--mode mags|series] [--from N] [--to N]\n' +
-      '       node tools/captures/ammo.ts <動画> --make-templates frame:残弾/最大,... [--card N | --crop x,y,w,h] [--merge]',
-  );
-  process.exit(1);
+  fail();
 }
 
 function loadTemplates(): Templates {

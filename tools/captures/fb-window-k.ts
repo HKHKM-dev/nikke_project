@@ -8,16 +8,13 @@ import { countsFromValue, fbWindowK, type Estimate, type RecordingCounts } from 
 import { LANDINGS, type Landing } from './recipes/fb-window-cores.ts';
 import { loadObservations } from './records-io.ts';
 import { isNumberArray } from '../../packages/core/src/records/observations/types.ts';
-import { cliArgs } from '../../packages/core/scripts/cli.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
 const { values } = cliArgs(import.meta.url, {
   options: { a: { type: 'string' }, b: { type: 'string' }, source: { type: 'string' }, landings: { type: 'string' } },
 });
 if (values.a === undefined || values.b === undefined) {
-  console.error(
-    'usage: node tools/captures/fb-window-k.ts --a <録画>,... --b <録画>,... [--source V-NNNN] [--landings <着地点>,...]',
-  );
-  process.exit(1);
+  fail();
 }
 
 function load(id: string): RecordingCounts & { obs: string } {

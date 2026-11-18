@@ -64,16 +64,10 @@ import {
 } from './records-data.ts';
 import { reserve } from './reserve.ts';
 import { runObservationsCached } from './residual-cache.ts';
-import { cliArgs } from './cli.ts';
+import { cliArgs, fail } from './cli.ts';
 
-const USAGE =
-  'usage: npm run records:new -- verification --title "<題名>" --name <短い名前> --topic <話題> [--question "<問い>"] [--from V-NNNN] [--no-push]\n' +
-  '       npm run records:new -- claim --from V-NNNN [--text "<結論の文>"] [--topic <話題>] [--subject "<定義の場所>" … | --mechanism <機構>]\n' +
-  '         [--decided-on <録画>:<仮説|値|読み方> … | --decided-on none] [--run "<録画>|<観測値,…>|<後の回>[|<決めた回>]" …]\n' +
-  '         [--parameter-free "<式と定数の出どころ>"] [--observations <観測値 ID|録画 id|V-NNNN,…>] [--no-push]\n' +
-  "       npm run records:new -- observation --from V-NNNN --recording <録画 id> (--json '<下書き>' | --file <下書きの JSON>)\n" +
-  `話題: ${CLAIM_TOPICS.join(' / ')}\n` +
-  `機構: ${CLAIM_MECHANISMS.join(' / ')}`;
+/** 使い方に足す、話題と機構の語彙 */
+const VOCABULARY = `話題: ${CLAIM_TOPICS.join(' / ')}\n機構: ${CLAIM_MECHANISMS.join(' / ')}`;
 
 const { values, positionals } = cliArgs(
   import.meta.url,
@@ -98,14 +92,8 @@ const { values, positionals } = cliArgs(
       'no-push': { type: 'boolean', default: false },
     },
   },
-  { usage: USAGE },
+  { extra: VOCABULARY },
 );
-
-function fail(message: string): never {
-  console.error(message);
-  console.error(USAGE);
-  process.exit(1);
-}
 
 /** 「--decided-on 077:仮説」の短い名前 → 語彙 */
 const ROLE_SHORT: Readonly<Record<string, DecidedRole>> = {

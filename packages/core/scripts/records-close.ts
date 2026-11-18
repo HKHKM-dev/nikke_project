@@ -38,7 +38,7 @@ import {
 } from './records-data.ts';
 import { dirtyGenerated, restoreGenerated } from './generated.ts';
 import { runObservationsCached } from './residual-cache.ts';
-import { cliArgs } from './cli.ts';
+import { cliArgs, fail } from './cli.ts';
 
 const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
@@ -51,8 +51,7 @@ const { values, positionals } = cliArgs(import.meta.url, {
 });
 const id = positionals[0];
 if (!id || !V_ID.test(id)) {
-  console.error('usage: npm run records:close -- V-NNNN [--mark] [--ci] [--keep-generated]');
-  process.exit(1);
+  fail();
 }
 const verifications = loadVerifications();
 const verification = verifications.find((v) => v.id === id);

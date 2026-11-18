@@ -12,15 +12,14 @@ import { compareCombatPower, sortByCombatPower, type CombatPowerRow } from './co
 import { characterOf, index, masters, nameOf, readJson } from './data.ts';
 import { buildsDir, snapshotNames } from './dirs.ts';
 import { sortNames } from './import-lib.ts';
-import { cliArgs } from '../../packages/core/scripts/cli.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
 const { values, positionals } = cliArgs(import.meta.url, {
   options: { actual: { type: 'string' }, list: { type: 'boolean', default: false } },
   allowPositionals: true,
 });
 if (positionals.length > 1) {
-  console.error('usage: npm run build:combat-power -- [<スナップショット>] [--actual <生の JSON>] [--list]');
-  process.exit(2);
+  fail();
 }
 
 let snapshotPath = positionals[0];

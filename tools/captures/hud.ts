@@ -42,7 +42,7 @@ import {
   type Strip,
 } from './hud-interception.ts';
 import { capturesDir } from './dirs.ts';
-import { cliArgs } from '../../packages/core/scripts/cli.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
 const RANGE_TEMPLATE_FILE = new URL('./hud-templates.json', import.meta.url);
 const RAID_TEMPLATE_FILE = new URL('./hud-raid-templates.json', import.meta.url);
@@ -91,12 +91,7 @@ if (interception && values.fallback) {
 }
 const video = positionals[0];
 if (!video && !(interception && values['make-templates'] !== undefined)) {
-  console.error(
-    'usage: node tools/captures/hud.ts <動画> [--screen range|interception|raid] [--mode final|jumps|series] [--from N] [--to N] [--crop x,y,w,h] [--fallback]\n' +
-      '       node tools/captures/hud.ts <動画> --make-templates frame:value,... [--crop x,y,w,h]\n' +
-      '       node tools/captures/hud.ts --screen interception --make-templates 録画id:frame:value,...',
-  );
-  process.exit(1);
+  fail();
 }
 /** 切り出しの既定（元の画の px） */
 const RANGE_CROP = '810,34,300,38';

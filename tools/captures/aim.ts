@@ -46,7 +46,7 @@ import {
   type Rgb,
   type Target,
 } from './aim-lib.ts';
-import { cliArgs } from '../../packages/core/scripts/cli.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
 const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
@@ -64,11 +64,7 @@ const { values, positionals } = cliArgs(import.meta.url, {
 
 const video = positionals[0];
 if (!video) {
-  console.error(
-    'usage: node tools/captures/aim.ts <動画> [--from N] [--to N] [--step 60] [--csv out.csv] [--debug-dir DIR]\n' +
-      '                                  [--bg-from N] [--bg-to N] [--bg-step 120]',
-  );
-  process.exit(1);
+  fail();
 }
 const from = Number(values.from);
 const to = values.to === undefined ? undefined : Number(values.to);

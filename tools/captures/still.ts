@@ -8,7 +8,7 @@ import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { parseCrop, writeStill } from './ffmpeg.ts';
 import { uploadFrame } from './frames-upload.ts';
-import { cliArgs } from '../../packages/core/scripts/cli.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
 const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
@@ -22,8 +22,7 @@ const { values, positionals } = cliArgs(import.meta.url, {
 
 const video = positionals[0];
 if (!video || !values.frame || !values.out) {
-  console.error('usage: node tools/captures/still.ts <動画> --frame N --out out.png [--crop x,y,w,h] [--scale W]');
-  process.exit(1);
+  fail();
 }
 
 // 出力先のフォルダが無ければ作る（クラウドの新しい VM には frames/ が無い）

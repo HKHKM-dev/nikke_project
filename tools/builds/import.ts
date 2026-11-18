@@ -5,15 +5,14 @@
 import { existsSync, readFileSync } from 'node:fs';
 import type { ShiftyPadRaw } from '../../packages/core/src/shiftypad.ts';
 import { importRaw, rebuildAll } from './store.ts';
-import { cliArgs } from '../../packages/core/scripts/cli.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
 const { values, positionals } = cliArgs(import.meta.url, {
   options: { rebuild: { type: 'boolean', default: false } },
   allowPositionals: true,
 });
 if (values.rebuild === positionals.length > 0 || positionals.length > 1) {
-  console.error('usage: npm run build:import -- <生の JSON> | --rebuild');
-  process.exit(2);
+  fail();
 }
 
 if (values.rebuild) {

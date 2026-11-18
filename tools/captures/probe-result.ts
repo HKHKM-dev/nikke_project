@@ -31,7 +31,7 @@ import {
   tailOffset,
   type Run as Span,
 } from './probe-result-lib.ts';
-import { cliArgs } from '../../packages/core/scripts/cli.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
 type Sample = { frame: number } & PanelFeatures;
 type Run = Span & PanelFeatures;
@@ -53,10 +53,7 @@ const { values, positionals } = cliArgs(import.meta.url, {
 });
 
 if (positionals.length === 0) {
-  console.error(
-    'usage: node tools/captures/probe-result.ts <動画...> [--list] [--out-dir DIR] [--samples 3] [--tail 15] [--full]',
-  );
-  process.exit(1);
+  fail();
 }
 
 const step = Math.max(1, Number(values.step));

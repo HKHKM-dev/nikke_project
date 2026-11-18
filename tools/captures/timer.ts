@@ -30,7 +30,7 @@ import {
   timerSteps,
   unkeptOffsets,
 } from './timer-ticks.ts';
-import { cliArgs } from '../../packages/core/scripts/cli.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
 const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
@@ -44,10 +44,7 @@ const { values, positionals } = cliArgs(import.meta.url, {
   },
 });
 if (positionals.length === 0) {
-  console.error(
-    'usage: node tools/captures/timer.ts <動画...> [--mode summary|changes|steps|stalls|runs|ticks] [--crop x,y,w,h] [--threshold 90] [--start N] [--at f1,f2,...] [--window 35,5]',
-  );
-  process.exit(1);
+  fail();
 }
 const crop = parseCrop(values.crop);
 const threshold = Number(values.threshold);

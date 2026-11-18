@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { cliArgs, headerComment, optionList, usageText } from './cli.ts';
+import { cliArgs, fail, headerComment, optionList, usageText } from './cli.ts';
 
 const SOURCE = [
   '// 道具の説明',
@@ -19,7 +19,7 @@ describe('headerComment', () => {
   });
 });
 
-describe('optionList', () => {
+describe('usageText', () => {
   it('lists value, short and multiple options', () => {
     expect(
       optionList({
@@ -29,20 +29,20 @@ describe('optionList', () => {
     ).toBe('  --id <値> …\n  -a, --all');
   });
 
-  it('omits the option section when there are no options', () => {
-    expect(usageText(SOURCE, {})).toBe(headerComment(SOURCE));
+  it('puts the extra text between the header and the options', () => {
+    expect(usageText(SOURCE, { all: { type: 'boolean' } }, '語彙: a / b')).toBe(
+      `${headerComment(SOURCE)}\n語彙: a / b\n\nオプション:\n  --all`,
+    );
   });
 });
 
 describe('cliArgs', () => {
   afterEach(() => vi.restoreAllMocks());
 
-  const exitWith = () => {
-    const exit = vi.spyOn(process, 'exit').mockImplementation(((code?: number) => {
+  const mockExit = () =>
+    vi.spyOn(process, 'exit').mockImplementation(((code?: number) => {
       throw new Error(`exit ${code}`);
     }) as typeof process.exit);
-    return exit;
-  };
 
   it('parses options and positionals', () => {
     const { values, positionals } = cliArgs(
@@ -55,19 +55,27 @@ describe('cliArgs', () => {
   });
 
   it('prints the usage and exits 0 on --help', () => {
-    exitWith();
+    mockExit();
     const log = vi.spyOn(console, 'log').mockImplementation(() => {});
-    expect(() => cliArgs(import.meta.url, { options: {} }, { args: ['-h'], usage: 'U' })).toThrow('exit 0');
-    expect(log).toHaveBeenCalledWith('U');
+    expect(() => cliArgs(import.meta.url, {}, { args: ['-h'], extra: 'U' })).toThrow('exit 0');
+    expect(String(log.mock.calls[0]![0])).toContain('U\n\nオプション:\n  -h, --help');
   });
 
   it('prints the error and the usage without a stack trace on an unknown option', () => {
-    exitWith();
+    mockExit();
     const error = vi.spyOn(console, 'error').mockImplementation(() => {});
-    expect(() => cliArgs(import.meta.url, { options: {} }, { args: ['--nope'] })).toThrow('exit 2');
+    expect(() => cliArgs(import.meta.url, {}, { args: ['--nope'] })).toThrow('exit 2');
     const text = String(error.mock.calls[0]![0]);
     expect(text).toContain("'--nope'");
     expect(text).toContain('オプション:\n  -h, --help');
     expect(text).not.toContain('    at ');
+  });
+
+  it('lets the script fail with a message and the same usage', () => {
+    cliArgs(import.meta.url, {}, { args: [] });
+    mockExit();
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    expect(() => fail('id が要る')).toThrow('exit 2');
+    expect(String(error.mock.calls[0]![0])).toMatch(/^id が要る\n\n[\s\S]*オプション:\n {2}-h, --help$/);
   });
 });

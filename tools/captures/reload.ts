@@ -41,7 +41,7 @@ import {
   parseHudJumps,
   summarize,
 } from './reload-bar.ts';
-import { cliArgs } from '../../packages/core/scripts/cli.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
 const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
@@ -61,12 +61,7 @@ const { values, positionals } = cliArgs(import.meta.url, {
 
 const video = positionals[0];
 if (!video || !['series', 'segments', 'fit'].includes(values.mode)) {
-  console.error(
-    'usage: node tools/captures/reload.ts <動画> [--mode series|segments|fit] [--from N] [--to N]\n' +
-      '         [--crop x,y,w,h] [--white 200] [--min-rows 5] [--max-start 40] [--track-px 367]\n' +
-      '         [--shots <hud.ts --mode jumps の出力>]',
-  );
-  process.exit(1);
+  fail();
 }
 const crop = parseCrop(values.crop);
 const options = {

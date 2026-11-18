@@ -16,7 +16,7 @@
 // --subpixel（series だけ）: 充填を % ではなく px で、境目の画素の中間の明るさも足して 1px 未満まで出す（画素ごとに
 //   (輝度 − 未充填) ÷ (充填 − 未充填) を 0..1 に切って足す。V-0483）。背景の動く録画は 1 フレームが ±1px ほど揺れるので、区間の中央値をとる
 import { rawFrames } from './ffmpeg.ts';
-import { cliArgs } from '../../packages/core/scripts/cli.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
 const BARS = {
   right: { x: 1793, y: 442, w: 113, h: 2 },
@@ -45,10 +45,7 @@ const { values, positionals } = cliArgs(import.meta.url, {
 
 const video = positionals[0];
 if (!video) {
-  console.error(
-    'usage: node tools/captures/gauge.ts <動画> [--from N] [--to N] [--step 1] [--mode series|jumps|events] [--side right|left]',
-  );
-  process.exit(1);
+  fail();
 }
 const from = Number(values.from);
 const to = values.to === undefined ? undefined : Number(values.to);

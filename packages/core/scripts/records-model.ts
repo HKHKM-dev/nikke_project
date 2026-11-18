@@ -17,24 +17,12 @@ import {
   recordingMap,
   splitIds,
 } from './records-data.ts';
-import { cliArgs } from './cli.ts';
-
-const USAGE = [
-  "usage: npm run records:model -- <録画 id> <指定>... --setup '<JSON>' [--args '<JSON>']",
-  "       npm run records:model -- --like <観測値 ID> [<指定>...] [--setup '<JSON>'] [--args '<JSON>']",
-  '       指定は 指標 か 指標,指標 か 指標:{"n":10}',
-].join('\n');
+import { cliArgs, fail } from './cli.ts';
 
 const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: { args: { type: 'string' }, setup: { type: 'string' }, like: { type: 'string' } },
 });
-
-function fail(message: string): never {
-  console.error(message);
-  console.error(USAGE);
-  process.exit(1);
-}
 
 function parseObject(text: string, name: string): Record<string, unknown> {
   try {

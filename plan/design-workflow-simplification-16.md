@@ -63,4 +63,4 @@
 
 - 2026-11-18: 起案。
 - 2026-11-18: オーナーが 1 の案 A と 2 を承認した。
-- 2026-11-18: 1・2 を実装した。言い回しの表（110 行）を `plan/skill-phrases.md` に移し、両方残す衝突の範囲に足した。大分類での小見出しの分けは、表の行が作った順に並んでいて分けるには行ごとの判断が要るので、50KB に近づいたときに行う。引数の読み取りは `packages/core/scripts/cli.ts` の `cliArgs` にし、`parseArgs` を呼んでいた 33 本と、`records:check`（`--keep-generated`）・`records:table`（引数なし）を替えた。`records:new` は話題と機構の一覧を含む今の usage の文を渡す。フック（`review-flow.ts`・`sync-after-merge.ts`）と、位置引数だけを読む `probe.ts`・`format-retry.ts`・`check-pages-build.ts` は替えていない。
+- 2026-11-18: 1・2 を実装した。言い回しの表（110 行）を `plan/skill-phrases.md` に移し、両方残す衝突の範囲に足した。大分類での小見出しの分けは、表の行が作った順に並んでいて分けるには行ごとの判断が要るので、50KB に近づいたときに行う。引数の読み取りは `packages/core/scripts/cli.ts` の `cliArgs` にし、`parseArgs` を呼んでいた 33 本と、`records:check`（`--keep-generated`）・`records:table`（引数なし）を替えた。引数が足りないときなどにスクリプトが出していた手書きの usage の文（23 本）は消し、`cli.ts` の `fail` で冒頭のコメントとオプションの一覧を出す（終わりのコードは 2）。`records:new` は、実行時に決まる話題と機構の一覧だけを使い方に足す。フック（`review-flow.ts`・`sync-after-merge.ts`）と、位置引数だけを読む `probe.ts`・`format-retry.ts`・`check-pages-build.ts` は替えていない。

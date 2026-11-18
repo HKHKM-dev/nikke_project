@@ -7,7 +7,7 @@
 //   操作キャラが撃つ録画で、マズルフラッシュ（黄色・橙）を帯と取り違えない（V-0325）。帯の立ち上がりより約 4f 遅い
 import { bannerRises, risesBeforeHits, whiteOnsets, whitePixels } from './banner-lib.ts';
 import { cropFilter, parseCrop, rawFrames } from './ffmpeg.ts';
-import { cliArgs } from '../../packages/core/scripts/cli.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
 const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
@@ -22,10 +22,7 @@ const { values, positionals } = cliArgs(import.meta.url, {
 });
 const video = positionals[0];
 if (video === undefined || (values.hits === undefined && (values.from === undefined || values.to === undefined))) {
-  console.error(
-    'usage: node tools/captures/banner.ts <動画> (--from N --to N | --hits f1,f2,... [--window 140]) [--crop x,y,w,h]',
-  );
-  process.exit(1);
+  fail();
 }
 const white = values.mode === 'white';
 const crop = parseCrop(values.crop ?? (white ? '120,582,80,28' : '0,578,100,36'));

@@ -7,7 +7,7 @@
 //   list     重複フレームの番号
 //   diff     フレームごとの差の平均（しきい値を決めるとき用）
 import { rawFrames } from './ffmpeg.ts';
-import { cliArgs } from '../../packages/core/scripts/cli.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
 const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
@@ -20,10 +20,7 @@ const { values, positionals } = cliArgs(import.meta.url, {
 });
 const video = positionals[0];
 if (!video) {
-  console.error(
-    'usage: node tools/captures/dups.ts <動画> [--from N] [--to N] [--threshold 0.15] [--mode summary|list|diff]',
-  );
-  process.exit(1);
+  fail();
 }
 const W = 192;
 const H = 108;

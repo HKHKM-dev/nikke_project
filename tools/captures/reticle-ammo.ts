@@ -31,7 +31,7 @@ import {
   type Reading,
   type TemplateSample,
 } from './reticle-ammo-lib.ts';
-import { cliArgs } from '../../packages/core/scripts/cli.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
 const TEMPLATE_FILE = new URL('./reticle-ammo-templates.json', import.meta.url);
 /** --style box（照準の下の「AMMO | 008」の表示）の見本 */
@@ -80,11 +80,7 @@ const digitH = box ? BOX_DIGIT_H : DIGIT_H;
 
 const video = positionals[0];
 if (!video) {
-  console.error(
-    'usage: node tools/captures/reticle-ammo.ts <動画> [--mode mags|series] [--from N] [--to N] [--max 300]\n' +
-      '       node tools/captures/reticle-ammo.ts <動画> --make-templates frame:value,...',
-  );
-  process.exit(1);
+  fail();
 }
 const max = Number(values.max);
 

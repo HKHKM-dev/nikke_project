@@ -15,7 +15,7 @@ import {
   type PredictionFile,
 } from '../src/records/predictions.ts';
 import { PREDICTIONS_DIR, ROOT, loadRecordingsFile, loadRecordsData, recordingMap } from './records-data.ts';
-import { cliArgs } from './cli.ts';
+import { cliArgs, fail } from './cli.ts';
 
 const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
@@ -23,8 +23,7 @@ const { values, positionals } = cliArgs(import.meta.url, {
 });
 const id = positionals[0];
 if (!id || !V_ID.test(id)) {
-  console.error('usage: npm run records:predict -- V-NNNN [--date YYYY-MM-DD]');
-  process.exit(1);
+  fail();
 }
 const path = `${PREDICTIONS_DIR}${id}.json`;
 if (!existsSync(path)) {

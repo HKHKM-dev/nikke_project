@@ -1,6 +1,6 @@
 // ヘッドレスの実行口。編成を runSimulation → simTeamResult で計算し、枠別・区間別の内訳を表で出す。
 // 枠ごとに、効果層（OL・キューブ・コレクション）、CT 短縮・弾丸チャージ（即時効果）の記録、バフ状態ごとの区間表を出す。
-//   node scripts/sim-run.ts --ids 271,870 [オプション]（オプションの説明は下の parseArgs の定義）
+//   node scripts/sim-run.ts --ids 271,870 [オプション]（オプションの一覧は --help、説明は下の cliArgs の定義）
 // 育成値は、--build に無いキャラは Lv200・3 凸・コア 0。スキル定義は data/skills/ にあるものを読む（無ければ定義なし = 通常攻撃のみ、
 // 味方のバフは受ける）。
 import { existsSync, readFileSync } from 'node:fs';
@@ -61,7 +61,7 @@ import { TEAM_SIZE, type TeamSlotInput } from '../src/team.ts';
 import type { BuildMasters, CharacterData, CharacterIndex, Element } from '../src/types.ts';
 import type { EnemyInput } from '../src/damage.ts';
 import { framesToGameSeconds, gameSecondsToFrame } from '../src/time.ts';
-import { cliArgs } from './cli.ts';
+import { cliArgs, fail } from './cli.ts';
 
 const DATA_DIR = join(import.meta.dirname, '../data');
 /** --trace の種類 */
@@ -199,10 +199,7 @@ const { values } = cliArgs(import.meta.url, {
 });
 
 if (!values.ids) {
-  console.error(
-    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--no-jump] [--mid-far A] [--near A,B] [--far A,B] [--skill-levels 191:skill2=4] [--jump-windows 0056-11] [--trace shots,bursts,buffs --from 10 --to 20]',
-  );
-  process.exit(2);
+  fail();
 }
 const ids = values.ids.split(',').map((s) => Number(s.trim()));
 if (ids.length < 1 || ids.length > TEAM_SIZE || ids.some((id) => !Number.isInteger(id) || id < 1)) {
