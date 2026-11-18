@@ -9,7 +9,10 @@ import {
   loadRecordsData,
   misplacedRecordings,
 } from './records-data.ts';
+import { cliArgs } from './cli.ts';
 
+// 引数は取らない（知らない引数では書き出さずに使い方を出す）
+cliArgs(import.meta.url, {});
 const file = loadRecordingsFile();
 const errors = [...misplacedRecordings(), ...validateRecordings(file, knownRids())];
 if (errors.length > 0) {

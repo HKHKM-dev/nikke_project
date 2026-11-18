@@ -24,7 +24,6 @@
 //   しない。
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { parseArgs } from 'node:util';
 import {
   CLAIM_MECHANISMS,
   CLAIM_TOPICS,
@@ -65,49 +64,36 @@ import {
 } from './records-data.ts';
 import { reserve } from './reserve.ts';
 import { runObservationsCached } from './residual-cache.ts';
+import { cliArgs, fail } from './cli.ts';
 
-const { values, positionals } = parseArgs({
-  allowPositionals: true,
-  options: {
-    title: { type: 'string' },
-    name: { type: 'string' },
-    topic: { type: 'string' },
-    question: { type: 'string' },
-    from: { type: 'string' },
-    text: { type: 'string' },
-    subject: { type: 'string', multiple: true },
-    mechanism: { type: 'string' },
-    'decided-on': { type: 'string', multiple: true },
-    run: { type: 'string', multiple: true },
-    'parameter-free': { type: 'string' },
-    observations: { type: 'string' },
-    recording: { type: 'string' },
-    json: { type: 'string' },
-    file: { type: 'string' },
-    'no-push': { type: 'boolean', default: false },
-    help: { type: 'boolean', short: 'h', default: false },
+/** 使い方に足す、話題と機構の語彙 */
+const VOCABULARY = `話題: ${CLAIM_TOPICS.join(' / ')}\n機構: ${CLAIM_MECHANISMS.join(' / ')}`;
+
+const { values, positionals } = cliArgs(
+  import.meta.url,
+  {
+    allowPositionals: true,
+    options: {
+      title: { type: 'string' },
+      name: { type: 'string' },
+      topic: { type: 'string' },
+      question: { type: 'string' },
+      from: { type: 'string' },
+      text: { type: 'string' },
+      subject: { type: 'string', multiple: true },
+      mechanism: { type: 'string' },
+      'decided-on': { type: 'string', multiple: true },
+      run: { type: 'string', multiple: true },
+      'parameter-free': { type: 'string' },
+      observations: { type: 'string' },
+      recording: { type: 'string' },
+      json: { type: 'string' },
+      file: { type: 'string' },
+      'no-push': { type: 'boolean', default: false },
+    },
   },
-});
-
-const USAGE =
-  'usage: npm run records:new -- verification --title "<題名>" --name <短い名前> --topic <話題> [--question "<問い>"] [--from V-NNNN] [--no-push]\n' +
-  '       npm run records:new -- claim --from V-NNNN [--text "<結論の文>"] [--topic <話題>] [--subject "<定義の場所>" … | --mechanism <機構>]\n' +
-  '         [--decided-on <録画>:<仮説|値|読み方> … | --decided-on none] [--run "<録画>|<観測値,…>|<後の回>[|<決めた回>]" …]\n' +
-  '         [--parameter-free "<式と定数の出どころ>"] [--observations <観測値 ID|録画 id|V-NNNN,…>] [--no-push]\n' +
-  "       npm run records:new -- observation --from V-NNNN --recording <録画 id> (--json '<下書き>' | --file <下書きの JSON>)\n" +
-  `話題: ${CLAIM_TOPICS.join(' / ')}\n` +
-  `機構: ${CLAIM_MECHANISMS.join(' / ')}`;
-
-if (values.help) {
-  console.log(USAGE);
-  process.exit(0);
-}
-
-function fail(message: string): never {
-  console.error(message);
-  console.error(USAGE);
-  process.exit(1);
-}
+  { extra: VOCABULARY },
+);
 
 /** 「--decided-on 077:仮説」の短い名前 → 語彙 */
 const ROLE_SHORT: Readonly<Record<string, DecidedRole>> = {

@@ -5,16 +5,16 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { parseArgs } from 'node:util';
 import { COLLECTION_SKILL_EFFECTS, CUBE_SKILL_EFFECTS } from '../src/buildEffects.ts';
 import { characterDataPath, characterIndexPath } from '../src/load.ts';
 import type { CharacterData, CharacterIndex, CollectionMaster, CubeMaster } from '../src/types.ts';
 import { diffCharacters, diffJson, renderReport, type UnmappedSkill } from './data-diff/compare.ts';
+import { cliArgs } from './cli.ts';
 
 const PACKAGE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const MASTERS = 'data/masters';
 
-const { values: args } = parseArgs({ options: { base: { type: 'string', default: 'HEAD' } } });
+const { values: args } = cliArgs(import.meta.url, { options: { base: { type: 'string', default: 'HEAD' } } });
 const base = args.base;
 
 const git = (...gitArgs: string[]): string =>

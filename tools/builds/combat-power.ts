@@ -6,21 +6,20 @@
 // --list で、モデルの降順の並びと、実際の降順の並びの位置を全部出す。
 import { existsSync, readFileSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
-import { parseArgs } from 'node:util';
 import { cliSnapshotNotices, readBuildSnapshot, snapshotCombatPowers } from '../../packages/core/src/buildSnapshot.ts';
 import { gameCombatPowers, type ShiftyPadRaw } from '../../packages/core/src/shiftypad.ts';
 import { compareCombatPower, sortByCombatPower, type CombatPowerRow } from './combat-power-lib.ts';
 import { characterOf, index, masters, nameOf, readJson } from './data.ts';
 import { buildsDir, snapshotNames } from './dirs.ts';
 import { sortNames } from './import-lib.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   options: { actual: { type: 'string' }, list: { type: 'boolean', default: false } },
   allowPositionals: true,
 });
 if (positionals.length > 1) {
-  console.error('usage: npm run build:combat-power -- [<スナップショット>] [--actual <生の JSON>] [--list]');
-  process.exit(2);
+  fail();
 }
 
 let snapshotPath = positionals[0];

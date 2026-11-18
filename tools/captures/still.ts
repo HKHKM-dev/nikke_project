@@ -6,11 +6,11 @@
 // （道具の終わりの同期。plan/design-cloud-environment.md 4.2 節）。上げられなくても切り出しは済んでいて、次の同期で上がる。
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { parseArgs } from 'node:util';
 import { parseCrop, writeStill } from './ffmpeg.ts';
 import { uploadFrame } from './frames-upload.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: {
     frame: { type: 'string' },
@@ -22,8 +22,7 @@ const { values, positionals } = parseArgs({
 
 const video = positionals[0];
 if (!video || !values.frame || !values.out) {
-  console.error('usage: node tools/captures/still.ts <動画> --frame N --out out.png [--crop x,y,w,h] [--scale W]');
-  process.exit(1);
+  fail();
 }
 
 // 出力先のフォルダが無ければ作る（クラウドの新しい VM には frames/ が無い）

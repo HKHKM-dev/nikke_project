@@ -22,7 +22,6 @@
 // --shots に `hud.ts --mode jumps` の出力のファイルを渡すと、リロードごとに最終弾（見え始めより前の最後の増分）・
 // 最終弾 → 完了・完了 → 次の増分・遡った 0 の点 − 最終弾と、窓をまたいだ回・最終弾の読み違いの印を足し、
 // 集計を標準エラーに出す。
-import { parseArgs } from 'node:util';
 import { readFileSync } from 'node:fs';
 import { cropFilter, parseCrop, rawFrames } from './ffmpeg.ts';
 import {
@@ -42,8 +41,9 @@ import {
   parseHudJumps,
   summarize,
 } from './reload-bar.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: {
     crop: { type: 'string', default: '760,524,400,10' },
@@ -61,12 +61,7 @@ const { values, positionals } = parseArgs({
 
 const video = positionals[0];
 if (!video || !['series', 'segments', 'fit'].includes(values.mode)) {
-  console.error(
-    'usage: node tools/captures/reload.ts <動画> [--mode series|segments|fit] [--from N] [--to N]\n' +
-      '         [--crop x,y,w,h] [--white 200] [--min-rows 5] [--max-start 40] [--track-px 367]\n' +
-      '         [--shots <hud.ts --mode jumps の出力>]',
-  );
-  process.exit(1);
+  fail();
 }
 const crop = parseCrop(values.crop);
 const options = {

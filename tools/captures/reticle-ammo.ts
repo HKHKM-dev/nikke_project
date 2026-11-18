@@ -21,7 +21,6 @@
 //           （弾丸チャージ。STEP_UP 以上の増え）・増えたフレームと量。発数 = 減った量の合計（間のフレームが読めずに
 //           増えと減りが打ち消し合うと過小になるので、増えの回数と合わせて見る）
 import { readFileSync, writeFileSync } from 'node:fs';
-import { parseArgs } from 'node:util';
 import { rawFrames } from './ffmpeg.ts';
 import {
   averageTemplates,
@@ -32,6 +31,7 @@ import {
   type Reading,
   type TemplateSample,
 } from './reticle-ammo-lib.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
 const TEMPLATE_FILE = new URL('./reticle-ammo-templates.json', import.meta.url);
 /** --style box（照準の下の「AMMO | 008」の表示）の見本 */
@@ -62,7 +62,7 @@ const MIN_SCORE = 0.7;
 type Templates = { search: typeof SEARCH; digits: Record<string, number[]> };
 type Comp = { x0: number; x1: number; y0: number; y1: number };
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: {
     mode: { type: 'string', default: 'mags' },
@@ -80,11 +80,7 @@ const digitH = box ? BOX_DIGIT_H : DIGIT_H;
 
 const video = positionals[0];
 if (!video) {
-  console.error(
-    'usage: node tools/captures/reticle-ammo.ts <動画> [--mode mags|series] [--from N] [--to N] [--max 300]\n' +
-      '       node tools/captures/reticle-ammo.ts <動画> --make-templates frame:value,...',
-  );
-  process.exit(1);
+  fail();
 }
 const max = Number(values.max);
 

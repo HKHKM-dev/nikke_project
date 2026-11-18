@@ -9,7 +9,6 @@
 import { spawnSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { parseArgs } from 'node:util';
 import {
   SENSITIVITY_VERSION,
   relevanceOf,
@@ -30,8 +29,9 @@ import {
   recordingMap,
   type SensitivityFile,
 } from './records-data.ts';
+import { cliArgs } from './cli.ts';
 
-const { values } = parseArgs({ options: { all: { type: 'boolean', default: false } } });
+const { values } = cliArgs(import.meta.url, { options: { all: { type: 'boolean', default: false } } });
 const started = Date.now();
 const file = loadRecordingsFile();
 const recordings = recordingMap(file);

@@ -10,7 +10,6 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { parseArgs } from 'node:util';
 import { fetchCdnJson, mapWithConcurrency } from './blablalink/client.ts';
 import {
   attractiveLevelTablePath,
@@ -62,6 +61,7 @@ import type {
   OverloadMaster,
   TreasureData,
 } from '../src/types.ts';
+import { cliArgs } from './cli.ts';
 
 const PACKAGE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CACHE_DIR = path.join(PACKAGE_ROOT, '.cache');
@@ -71,7 +71,7 @@ const MASTERS_DIR = path.join(PACKAGE_ROOT, 'data', 'masters');
 const CUBE_FIRST_ID = 1000301;
 const CUBE_MAX_COUNT = 100;
 
-const { values: args } = parseArgs({
+const { values: args } = cliArgs(import.meta.url, {
   options: {
     limit: { type: 'string' },
     refresh: { type: 'boolean', default: false },

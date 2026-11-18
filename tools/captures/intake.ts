@@ -49,7 +49,6 @@ import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createInterface } from 'node:readline/promises';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { parseArgs } from 'node:util';
 import {
   type BackupVia,
   RECORDING_FOLDERS,
@@ -85,11 +84,12 @@ import {
 } from './intake-lib.ts';
 import { Drive, DRIVE_CALL_MS, isTransientDriveError, type DriveFile } from './drive.ts';
 import { ffprobe, sha256 } from './ffmpeg.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const ELEMENTS: readonly Element[] = ['Fire', 'Water', 'Wind', 'Electronic', 'Iron'];
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: {
     id: { type: 'string' },
@@ -115,19 +115,6 @@ const { values, positionals } = parseArgs({
     child: { type: 'boolean', default: false },
   },
 });
-
-const USAGE =
-  'usage: node tools/captures/intake.ts <元ファイル | drive:<record の中のパス>>... --name <識別子>[,<識別子>...] [--id NNNN]\n' +
-  '       [--folder range] [--date YYYY-MM-DD] [--rid 271,-,870] [--controlled 1] [--treasure 2:3] [--target BigArms --element Fire]\n' +
-  '       [--mode range-3min] [--fixed-spec on|off] [--build-snapshot <名前>|-] [--auto-fire on|off] [--auto-burst on|off]\n' +
-  '       [--note "..."]... [--copy] [--no-backup] [--no-push]\n' +
-  '       node tools/captures/intake.ts --list-record（Drive の record の一覧）';
-
-function fail(message: string): never {
-  console.error(message);
-  console.error(USAGE);
-  process.exit(1);
-}
 
 /** intake-lib.ts の検査の Error を、使い方と一緒に出して止める */
 function orFail<T>(check: () => T): T {

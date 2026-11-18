@@ -13,15 +13,15 @@
 // 最初に見つかったものを使う。--list は全部のフォルダの中身を合わせて出す（同名は前のフォルダのもの）。
 import { existsSync, mkdirSync, readFileSync, renameSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { parseArgs } from 'node:util';
 import type { RecordingEntry } from '../../packages/core/src/records/recordings.ts';
 import { LEGACY_PREFIX, capturesDir, legacyDir } from './dirs.ts';
 import { Drive, DRIVE_CALL_MS, type DriveFile } from './drive.ts';
 import { sha256 } from './ffmpeg.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
 const RECORDINGS_DIR = new URL('../../records/recordings/', import.meta.url);
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: {
     list: { type: 'boolean', default: false },
@@ -30,12 +30,7 @@ const { values, positionals } = parseArgs({
   },
 });
 
-const usage =
-  'usage: node tools/captures/fetch.ts <録画 id | 相対パス>... [--legacy] [--force]  /  --list [相対パス] [--legacy]';
-if (!values.list && positionals.length === 0) {
-  console.error(usage);
-  process.exit(2);
-}
+if (!values.list && positionals.length === 0) fail();
 
 /** legacy は old_nikkecalc（旧プロジェクトのアーカイブ）の下 */
 type Target = { legacy: boolean; relPath: string; sha256?: string };

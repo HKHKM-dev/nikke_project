@@ -22,7 +22,6 @@
 import { execFileSync, spawnSync } from 'node:child_process';
 import { appendFileSync, existsSync, readdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { parseArgs } from 'node:util';
 import {
   type ManualSpot,
   mentions,
@@ -51,20 +50,12 @@ import {
 } from '../../../tools/captures/renumber-files.ts';
 import { RECORDING_ID } from '../src/records/ids.ts';
 import { ROOT, idsInBranches, observationIdsInBranches, recordingIdsInBranches } from './records-data.ts';
+import { cliArgs, fail } from './cli.ts';
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: { 'dry-run': { type: 'boolean', default: false } },
 });
-
-const USAGE =
-  'usage: npm run records:renumber -- <古い ID> <新しい ID> [--dry-run]（V-NNNN・C-NNNN・<録画>-NN・録画の番号 NNNN）\n';
-
-function fail(message: string): never {
-  console.error(message);
-  console.error(USAGE);
-  process.exit(1);
-}
 
 const git = (args: string[]): string =>
   execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });

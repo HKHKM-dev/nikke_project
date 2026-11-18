@@ -98,7 +98,7 @@ NIKKE のダメージ計算ツール。
 | `plan/minimal.md` | 生成 | 最小構成の検査 |
 | `packages/core/data/skills/`・`plan/skills.md`・`plan/skill-catalog.md` | データ・生成 | スキル定義と、キャラ × スロットの対応状況・説明文の効果の分類 |
 | `plan/verification-guide.md` | 現状 | 検証の流れ（起案 → 撮影計画 → 撮る → 取り込み → 読む → 比べる → 結論 → 閉じる）と道具、確定にできる条件 |
-| `plan/skills-guide.md` | 現状 | キャラのスキルを定義する手順 |
+| `plan/skills-guide.md`・`plan/skill-phrases.md` | 現状 | キャラのスキルを定義する手順と、説明文の言い回しから語彙を引く表 |
 | `plan/captures/protocol.md` | 現状 | 撮影の手順と、撮影の依頼の型 |
 | `plan/captures/index.md` | 現状 | 命名規約・キャラ同定 |
 | `plan/captures/storage.md`・`plan/captures/tools.md` | 現状 | 録画の置き場所・バックアップ・取り寄せ（storage）と、解析ツール（tools） |

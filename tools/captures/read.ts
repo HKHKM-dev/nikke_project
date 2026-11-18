@@ -16,7 +16,6 @@ import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { parseArgs } from 'node:util';
 import type { Observation } from '../../packages/core/src/records/observations/types.ts';
 import { todayLocal } from '../../packages/core/src/records/predictions.ts';
 import { capturesDir } from './dirs.ts';
@@ -30,8 +29,9 @@ import {
   videoOf,
   writeObservations,
 } from './records-io.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: {
     recipe: { type: 'string' },
@@ -55,11 +55,7 @@ if (values.list) {
 const ids = positionals.flatMap((p) => p.split(',')).filter((x) => x !== '');
 const recipe = values.recipe === undefined ? undefined : findRecipe(values.recipe);
 if (ids.length === 0 || !values.recipe || !recipe) {
-  console.error(
-    'usage: node tools/captures/read.ts <録画 id>[,<録画 id>...] --recipe <名前> --source V-NNNN [--opt key=value ...] [--write] [--against ID,ID]\n' +
-      `recipes: ${RECIPES.map((r) => r.name).join(' ')}（--list で説明）`,
-  );
-  process.exit(1);
+  fail(`recipes: ${RECIPES.map((r) => r.name).join(' ')}（--list で説明）`);
 }
 if (!values.source && values.write) {
   console.error('--write には --source V-NNNN が要る');

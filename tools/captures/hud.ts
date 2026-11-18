@@ -28,7 +28,6 @@
 //   jumps   値が増えたフレームと増分（単騎で 1 フレームに 1 ヒットなら、増分がそのまま 1 ヒットの値）
 //   series  読めたフレームごとの値（落とした読みには「x」を付ける）
 import { readFileSync, writeFileSync } from 'node:fs';
-import { parseArgs } from 'node:util';
 import { cropFilter, parseCrop, rawFrames, type Crop } from './ffmpeg.ts';
 import { holes, type Component } from './hud-glyph.ts';
 import {
@@ -43,6 +42,7 @@ import {
   type Strip,
 } from './hud-interception.ts';
 import { capturesDir } from './dirs.ts';
+import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
 const RANGE_TEMPLATE_FILE = new URL('./hud-templates.json', import.meta.url);
 const RAID_TEMPLATE_FILE = new URL('./hud-raid-templates.json', import.meta.url);
@@ -66,7 +66,7 @@ const MIN_HOLE = 10;
 
 type Templates = { crop: Crop; digitHeight: number; digits: Record<string, number[]> };
 
-const { values, positionals } = parseArgs({
+const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
   options: {
     crop: { type: 'string' },
@@ -91,12 +91,7 @@ if (interception && values.fallback) {
 }
 const video = positionals[0];
 if (!video && !(interception && values['make-templates'] !== undefined)) {
-  console.error(
-    'usage: node tools/captures/hud.ts <動画> [--screen range|interception|raid] [--mode final|jumps|series] [--from N] [--to N] [--crop x,y,w,h] [--fallback]\n' +
-      '       node tools/captures/hud.ts <動画> --make-templates frame:value,... [--crop x,y,w,h]\n' +
-      '       node tools/captures/hud.ts --screen interception --make-templates 録画id:frame:value,...',
-  );
-  process.exit(1);
+  fail();
 }
 /** 切り出しの既定（元の画の px） */
 const RANGE_CROP = '810,34,300,38';

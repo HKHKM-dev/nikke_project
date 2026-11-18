@@ -4,8 +4,10 @@
 import { spawnSync } from 'node:child_process';
 import { dirtyGenerated, restoreGenerated } from './generated.ts';
 import { ROOT } from './records-data.ts';
+import { cliArgs } from './cli.ts';
 
-const keep = process.argv.includes('--keep-generated');
+const { values } = cliArgs(import.meta.url, { options: { 'keep-generated': { type: 'boolean', default: false } } });
+const keep = values['keep-generated'];
 // 回す前から書き換わっていた生成物（手で回した records:minimal の結果など）は戻さない
 const dirtyAtStart = dirtyGenerated();
 /**

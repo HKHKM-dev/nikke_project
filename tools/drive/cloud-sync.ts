@@ -26,7 +26,6 @@ import {
 import { homedir } from 'node:os';
 import { basename, dirname, join } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { parseArgs } from 'node:util';
 import { capturesDir } from '../captures/dirs.ts';
 import {
   CALL_MS,
@@ -47,8 +46,9 @@ import {
 import { gatewayUrl, put, trash, type SnapshotFile } from './gateway.ts';
 import { syncReader } from './sync-reader.ts';
 import { lockIsLive, memoryProjectName, type Lock } from './sync-lib.ts';
+import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
-const { values } = parseArgs({
+const { values } = cliArgs(import.meta.url, {
   options: {
     pull: { type: 'boolean', default: false },
     'pull-rest': { type: 'boolean', default: false },

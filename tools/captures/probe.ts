@@ -6,6 +6,7 @@ import { readdirSync, statSync } from 'node:fs';
 import { join, relative, resolve, sep } from 'node:path';
 import { capturesDir } from './dirs.ts';
 import { ffprobe, sha256 } from './ffmpeg.ts';
+import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
 function collect(target: string): string[] {
   if (statSync(target).isFile()) return [target];
@@ -18,7 +19,7 @@ function collect(target: string): string[] {
     });
 }
 
-const targets = process.argv.slice(2);
+const targets = cliArgs(import.meta.url, { allowPositionals: true }).positionals;
 const roots = (targets.length > 0 ? targets : [capturesDir()]).map((t) => resolve(t));
 
 console.log('| ファイル | 尺 | フレーム数 | 平均 fps | サイズ | sha256 (先頭 12) |');
