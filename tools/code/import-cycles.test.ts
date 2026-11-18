@@ -1,6 +1,9 @@
 // 循環する import を探す道具と、リポジトリに循環が無いことの確かめ（plan/design-import-cycle.md 3.4 節）
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { findImportCycles, readImportGraph, REPO_IMPORT_GRAPH, runtimeImportsOf } from './import-cycles.ts';
 
 const graphOf = (edges: Record<string, string[]>): Map<string, Set<string>> =>
@@ -41,11 +44,62 @@ describe('runtimeImportsOf', () => {
     expect(runtimeImportsOf('x.ts', text)).toEqual([]);
   });
 
-  it('reads a .tsx source, and lists a target once', () => {
-    const text = ["import { a } from './a.ts';", "export { b } from './a.ts';", 'export const C = () => <div />;'].join(
-      '\n',
-    );
+  it('reads a .tsx source', () => {
+    const text = ["import { a } from './a.ts';", 'export const C = () => <div>{a}</div>;'].join('\n');
     expect(runtimeImportsOf('x.tsx', text)).toEqual(['./a.ts']);
+  });
+});
+
+describe('readImportGraph', () => {
+  const OPTIONS = { dirs: ['src'], packages: { '@x/lib': 'src/lib/index.ts' } };
+  const withFiles = (files: Record<string, string>, run: (root: string) => void): void => {
+    const root = mkdtempSync(join(tmpdir(), 'import-cycles-'));
+    try {
+      for (const [path, text] of Object.entries(files)) {
+        mkdirSync(join(root, path, '..'), { recursive: true });
+        writeFileSync(join(root, path), text);
+      }
+      run(root);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+
+  it('follows relative sources and package entries, and skips the other targets and folders', () => {
+    withFiles(
+      {
+        'src/a.ts': [
+          "import { b } from './b.tsx';",
+          "import { lib } from '@x/lib';",
+          "import data from './data.json';",
+          "import { it } from 'vitest';",
+        ].join('\n'),
+        'src/b.tsx': "import type { A } from './a.ts';",
+        'src/lib/index.ts': "export * from '../b.tsx';",
+        'src/data.json': '{}',
+        'src/types.d.ts': "import './a.ts';",
+        'src/node_modules/dep/index.ts': "import '../../a.ts';",
+        'src/.cache/c.ts': "import '../a.ts';",
+      },
+      (root) => {
+        expect(readImportGraph(root, OPTIONS)).toEqual(
+          graphOf({
+            'src/a.ts': ['src/b.tsx', 'src/lib/index.ts'],
+            'src/b.tsx': [],
+            'src/lib/index.ts': ['src/b.tsx'],
+          }),
+        );
+      },
+    );
+  });
+
+  it('refuses a target it cannot follow', () => {
+    withFiles({ 'src/a.ts': "import './missing.ts';" }, (root) => {
+      expect(() => readImportGraph(root, OPTIONS)).toThrow(/src\/a\.ts: import の先 ".\/missing\.ts" が無い/);
+    });
+    withFiles({ 'src/a.ts': "import '@x/lib/inner.ts';" }, (root) => {
+      expect(() => readImportGraph(root, OPTIONS)).toThrow(/辿れない/);
+    });
   });
 });
 
@@ -73,21 +127,17 @@ describe('findImportCycles', () => {
   it('counts a file that imports itself, and ignores edges to files outside the graph', () => {
     expect(findImportCycles(graphOf({ self: ['self'], a: ['outside'] }))).toEqual([['self']]);
   });
-
-  it('walks a long chain without recursion', () => {
-    const edges: Record<string, string[]> = {};
-    for (let i = 0; i < 20000; i += 1) edges[`f${i}`] = [`f${i + 1}`];
-    edges.f20000 = [];
-    expect(findImportCycles(graphOf(edges))).toEqual([]);
-  });
 });
 
 describe('リポジトリの import', () => {
   const root = fileURLToPath(new URL('../../', import.meta.url));
-  const graph = readImportGraph(root, REPO_IMPORT_GRAPH);
+  let graph: Map<string, Set<string>>;
+  beforeAll(() => {
+    graph = readImportGraph(root, REPO_IMPORT_GRAPH);
+  });
 
-  it('reads the sources of every package', () => {
-    for (const dir of REPO_IMPORT_GRAPH.dirs) {
+  it('reads the sources of every workspace and the tools', () => {
+    for (const dir of ['packages/core/src', 'packages/core/scripts', 'apps/web/src', 'apps/web/scripts', 'tools/git']) {
       expect([...graph.keys()].some((file) => file.startsWith(`${dir}/`))).toBe(true);
     }
     // パッケージの名前の import は、その入口のファイルへの辺になる

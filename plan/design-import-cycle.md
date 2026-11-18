@@ -150,10 +150,12 @@
 
 論点は 3 つとも推奨の案で承認された（論点 1 は案 1、論点 2 は案 a、論点 3 は案 a）。
 
-- **循環を見る道具**: `tools/code/import-cycles.ts` に、ソース 1 つの実行時に残る import を読む `runtimeImportsOf`、リポジトリのグラフを作る `readImportGraph`（範囲は `REPO_IMPORT_GRAPH`）、循環の組を返す `findImportCycles` を置いた。テストは `tools/code/import-cycles.test.ts`（`tools/vitest.config.ts` の `include` に `code/**/*.test.ts` を足した）。再公開を消す前は、2.1 節の 1 組（17 ファイル）を並べて落ちた。
+- **循環を見る道具**: `tools/code/import-cycles.ts` に、ソース 1 つの実行時に残る import を読む `runtimeImportsOf`、リポジトリのグラフを作る `readImportGraph`（範囲は `REPO_IMPORT_GRAPH`）、循環の組を返す `findImportCycles` を置いた。テストは `tools/code/import-cycles.test.ts`（`tools/vitest.config.ts` の `include` に `code/**/*.test.ts` を足した）。再公開を消す前は、2.1 節の 1 組（17 ファイル）を並べて落ちた。範囲は、3.4 節の 5 つのフォルダでなく、ワークスペースの全部と `tools`（`packages`・`apps`・`tools`）にした（フォルダを足しても検査の外にならないように。整理の見直しの指摘）。パッケージの中のパス（`@nikke/core/…`）を読む import は、辿れないので落とす。
 - **import 文の書き換え**: 176 個（入口の名前だけの文 121 個・ほかの名前と一緒の文 55 個）。一緒の文は 2 つに分け、残りが型の名前だけになった 36 個は `import type` にした。足す文の置き場所は、相対パスの import がパスの順に並んでいるファイル（48）ではその順の所、並んでいないファイル（128）では元の文の所。
 - **再公開**: `skills/types.ts` の末尾の再公開を消し、`packages/core/src/index.ts` に入口の 3 つの再公開を足した。`types.ts` は値を 1 つも読み込まない。
 - **注記**: `types.ts` の冒頭・`parse/definition.ts` の冒頭・`parse/effect.ts` の `EFFECT_BODY_PARSERS` を今の形に直し、[skills-guide.md](skills-guide.md) 1.4 節に入口のファイルを書いた。
+
+**見直し**: 整理の観点（`/simplify`）で、強連結成分を再帰の形にして短くし、検査の範囲を広げ（上）、グラフを読む関数のテストを足した。見送った指摘: パッケージの入口の表を各 `package.json` から作ること（表は 1 行で、仕組みが増える）、型の名前だけを並べた import 文を lint で `import type` に直すこと（8 節。課題にした: `records/backlog/import-type-side-effects.json`）。
 
 **確かめた結果**（6 節。基の版は main の 23b428e4）:
 
