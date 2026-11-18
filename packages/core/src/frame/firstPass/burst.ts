@@ -117,7 +117,12 @@ export function createBurstStep({
       throw new RangeError(
         `slot ${a.slotIndex}: hitsFrom needs ${counterMax(counter)} split hits in the burst delay table`,
       );
-    a.hitOffsets = offsets.slice(0, lists.counterValueAt(a.slotIndex, counter));
+    // カウンタが 0 で発動する形は撮っていない（メイデンは 1 段階突入で 0 なら回復するので、いまの定義では起きない）。
+    // ヒットを 0 個にして結果の発動を欠けさせずに止める
+    const count = lists.counterValueAt(a.slotIndex, counter);
+    if (count === 0)
+      throw new RangeError(`slot ${a.slotIndex}: burst used with no ${counter} for hitsFrom (not observed)`);
+    a.hitOffsets = offsets.slice(0, count);
     a.hitShare = 1;
   };
   /** いま見ている（または次に来る）狙えない窓の添字 */

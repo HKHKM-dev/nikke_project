@@ -194,8 +194,8 @@
           },
           "addCasterMaxHpRef": 2,
           "assumes": {
-            "ja": "所持 MP 分の連続攻撃。発動のフレームの MP の数だけ、1 ヒットずつ説明文の値で出し、ヒットの攻撃力に自分の最終最大HP の 10% を足す。バーストスキルダメージと同じく、発動の直前のバフで出し、フルバースト補正も同じ発動の▲（S2 の MP 使用後の▲）も乗らない。ヒットの時刻は遅れの表の行。対象（照準線に最も近い敵 1 機）は的",
-            "en": "Consecutive attacks for the MP held. As many hits as MP at activation, each at the description value, with 10% of her final max HP added to the attack. Like other Burst Skill damage, they use the buffs just before activation and get neither the Full Burst bonus nor the same activation's increases (S2's post-MP buffs). Hit timings are in the burst delay table. The target (one enemy nearest the crosshair) is the shooting-range target"
+            "ja": "所持 MP 分の連続攻撃。発動のフレームの MP の数だけ、1 ヒットずつ説明文の値で出し、ヒットの攻撃力に自分の最終最大HP の 10% を足す。バーストスキルダメージと同じく、発動の直前のバフで出し、フルバースト補正も同じ発動の▲（S2 の MP 使用後の▲）も乗らない。ヒットの時刻は遅れの表の行で、5 ヒット目から先（MP 5 以上）は撮っておらず、4 ヒット目までと同じ間隔とみた。MP 0 で撃つ形は撮っていないので計算を止める。対象（照準線に最も近い敵 1 機）は的",
+            "en": "Consecutive attacks for the MP held. As many hits as MP at activation, each at the description value, with 10% of her final max HP added to the attack. Like other Burst Skill damage, they use the buffs just before activation and get neither the Full Burst bonus nor the same activation's increases (S2's post-MP buffs). Hit timings are in the burst delay table; the 5th hit onward (MP 5 or more) is not recorded and assumed to keep the interval of the first 4. Using the Burst with MP 0 is not recorded, so the calculation stops. The target (one enemy nearest the crosshair) is the shooting-range target"
           },
           "claims": [
             "C-1343",

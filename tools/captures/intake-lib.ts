@@ -44,6 +44,60 @@ export function batchNamesAndNotes(
   return { names, notes: names.map((_, i) => (notes.length === 1 ? notes[0] : notes[i])) };
 }
 
+/** intake.ts の引数（parseArgs の options）。子のプロセスへ渡す引数（childArgs）も、この形で読まれる */
+export const INTAKE_OPTIONS = {
+  id: { type: 'string' },
+  name: { type: 'string' },
+  folder: { type: 'string', default: 'range' },
+  date: { type: 'string' },
+  rid: { type: 'string' },
+  controlled: { type: 'string' },
+  target: { type: 'string' },
+  element: { type: 'string' },
+  mode: { type: 'string' },
+  'fixed-spec': { type: 'string' },
+  'build-snapshot': { type: 'string' },
+  'auto-fire': { type: 'string' },
+  'auto-burst': { type: 'string' },
+  treasure: { type: 'string' },
+  note: { type: 'string', multiple: true, default: [] as string[] },
+  copy: { type: 'boolean', default: false },
+  'no-backup': { type: 'boolean', default: false },
+  'no-push': { type: 'boolean', default: false },
+  'list-record': { type: 'boolean', default: false },
+  // 1 本ずつの取り込み（まとめて取り込む親が渡す。人は使わない）
+  child: { type: 'boolean', default: false },
+} as const;
+
+/**
+ * まとめて取り込むときに、1 本ずつの子のプロセス（--child）へ渡す引数。値は --キー=値 で渡し（--rid -,-,300 や - で始まる --note を、
+ * 子の parseArgs が引数の名前と取り違えないように）、元ファイルは -- の後に置く。値の無い（undefined の）キーは渡さない
+ */
+export function childArgs(input: {
+  src: string;
+  id: string;
+  name: string;
+  note: string | undefined;
+  /** 全部の録画に同じに渡す --キーと値 */
+  shared: readonly (readonly [string, string | undefined])[];
+  /** 値の無いフラグ（--copy など） */
+  flags: readonly string[];
+}): string[] {
+  const valued: (readonly [string, string | undefined])[] = [
+    ['--id', input.id],
+    ['--name', input.name],
+    ['--note', input.note],
+    ...input.shared,
+  ];
+  return [
+    '--child',
+    ...valued.flatMap(([k, v]) => (v === undefined ? [] : [`${k}=${v}`])),
+    ...input.flags,
+    '--',
+    input.src,
+  ];
+}
+
 /** 識別子（命名規約。英小文字・数字・-・_・+、頭は英小文字か数字）か */
 export function isRecordingName(name: string): boolean {
   return /^[a-z0-9][a-z0-9_+-]*$/.test(name);
