@@ -7,12 +7,12 @@ import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, shootingRangeEnemy } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const KILLER_WIFE = 43;
 const DELTA = 20;
 const IDOLL_SUN = 308;
-const rangeEnemy: EnemyInput = shootingRangeEnemy({ defence: 100 });
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents({ defence: 100 });
 
 const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
 const team = (ids: number[], controlledSlot: number): TeamInput =>

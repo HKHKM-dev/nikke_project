@@ -14,7 +14,7 @@ import {
   fixedTeam,
   RANGE_BIGARMS,
   rawDefinition,
-  shootingRangeEnemy,
+  rangeEnemyWithEvents,
 } from './teamHelpers.ts';
 
 const A2 = 811;
@@ -23,7 +23,7 @@ const NAYUTA = 223;
 const LITER = 82;
 const ALICE = 191;
 const CROWN = 330;
-const enemyWith = (target: TargetProfile): EnemyInput => shootingRangeEnemy({ defence: 100, target });
+const enemyWith = (target: TargetProfile): EnemyInput => rangeEnemyWithEvents({ defence: 100, target });
 const rangeEnemy = enemyWith(RANGE_BIGARMS);
 // RL の飛ぶ時間を 400f 延ばした的（部分チャージの発が、撃った区間と別の区間に着く）
 const slowProfile = structuredClone(RANGE_BIGARMS);

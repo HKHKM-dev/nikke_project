@@ -10,12 +10,12 @@ import { itemsOf } from '../skills/holders.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, shootingRangeEnemy } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const EXIA = 210;
 const DELTA = 20;
 const SOLINE = 71;
-const rangeEnemy: EnemyInput = shootingRangeEnemy();
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 
 const slotOf = (id: number, treasurePhase: TreasurePhase): TeamSlotInput =>
   fixedSlot(id, { conditionMode: 'auto', ...(id === EXIA ? { treasurePhase } : {}) });

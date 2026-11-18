@@ -116,32 +116,46 @@ function fixedSlotDefinition(id: number, options: FixedSlotOptions): SkillDefini
   return parseSkillDefinition(raw);
 }
 
-/** スペック固定の防御力・コードなし・コアありの敵（overrides で上書き） */
+/** スペック固定の防御力・コードなし・コアありの敵（overrides で上書き）。出来事・的は持たない（持つのは rangeEnemyWithEvents） */
 export function fixedEnemy(overrides: Partial<EnemyInput> = {}): EnemyInput {
   return { ...SHOOTING_RANGE_ENEMY, ...overrides };
 }
 
-/** data/enemies.json の敵のプリセット */
-export const ENEMY_PRESETS = parseEnemyPresets(readData<unknown>('enemies.json'));
+/** 入れ子の中まで凍らせる（共有する定数を、テストがその場で書き換えないように） */
+function deepFreeze<T>(value: T): T {
+  if (value !== null && typeof value === 'object' && !Object.isFrozen(value)) {
+    Object.freeze(value);
+    for (const child of Object.values(value)) deepFreeze(child);
+  }
+  return value;
+}
 
-/** 射撃場の的（条件が自動の枠が、コア命中率・距離ボーナス・弾丸命中率を引く表） */
+/** data/enemies.json の敵のプリセット。全部のテストで共有するので凍らせてある（書き換えるテストは structuredClone する） */
+export const ENEMY_PRESETS = deepFreeze(parseEnemyPresets(readData<unknown>('enemies.json')));
+
+/** 射撃場の的（条件が自動の枠が、コア命中率・距離ボーナス・弾丸命中率を引く表）。ENEMY_PRESETS と同じく凍らせてある */
 export const RANGE_BIGARMS: TargetProfile = ENEMY_PRESETS.targetProfiles.find((p) => p.id === 'range-bigarms')!;
 
 /**
- * 射撃場の敵（3 分・ジャンプありの出来事と、的と着地点つき。条件が自動の枠のテスト用）。既定は、スペック固定の防御力・
- * 火力コード・コアあり・的は RANGE_BIGARMS
+ * 出来事と的のある射撃場の敵（ジャンプありの出来事と、的と着地点つき。条件が自動の枠のテスト用）。既定は、スペック固定の
+ * 防御力・火力コード・コアあり・的は RANGE_BIGARMS・180 秒。SHOOTING_RANGE_ENEMY・fixedEnemy（コードなし・出来事と的なし）とは別物
  */
-export function shootingRangeEnemy(
-  options: Partial<Pick<EnemyInput, 'defence' | 'element' | 'hasCore'>> & { target?: TargetProfile } = {},
+export function rangeEnemyWithEvents(
+  options: Partial<Pick<EnemyInput, 'defence' | 'element' | 'hasCore'>> & {
+    target?: TargetProfile;
+    /** 出来事と着地点を作る戦闘時間（編成の durationSeconds と同じにする） */
+    durationSeconds?: number;
+  } = {},
 ): EnemyInput {
   const target = options.target ?? RANGE_BIGARMS;
+  const seconds = options.durationSeconds ?? 180;
   return {
     defence: options.defence ?? FIXED_SPEC_ENEMY_DEFENCE,
     element: options.element === undefined ? 'Fire' : options.element,
     hasCore: options.hasCore ?? true,
-    events: enemyEventsOf(ENEMY_PRESETS, ['range-3min-jump'], 180),
+    events: enemyEventsOf(ENEMY_PRESETS, ['range-3min-jump'], seconds),
     target,
-    landings: enemyLandingsOf(ENEMY_PRESETS, ['range-3min-jump'], 180, target),
+    landings: enemyLandingsOf(ENEMY_PRESETS, ['range-3min-jump'], seconds, target),
   };
 }
 
@@ -158,7 +172,8 @@ export function fixedTeam(
     enemy: SHOOTING_RANGE_ENEMY,
     durationSeconds: 180,
     burst: true,
-    controlledSlot,
+    // 省いた操作キャラは、キーごと置かない
+    ...(controlledSlot === undefined ? {} : { controlledSlot }),
     ...extra,
   };
 }

@@ -7,7 +7,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, shootingRangeEnemy } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const MINT = 600;
 const PRIKA = 601;
@@ -15,7 +15,7 @@ const NOAH = 232;
 const IDOLL_FLOWER = 304;
 const IDOLL_SUN = 308;
 const MIHARA = 161;
-const rangeEnemy: EnemyInput = shootingRangeEnemy({ defence: 100, element: 'Wind' });
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents({ defence: 100, element: 'Wind' });
 
 const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
 const team = (ids: number[]): TeamInput => fixedTeam(ids.map(autoSlot), 2, { enemy: rangeEnemy });

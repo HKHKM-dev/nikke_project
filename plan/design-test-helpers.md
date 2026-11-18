@@ -200,15 +200,17 @@
 
 ### 9.3 段 T3（2026-11-18）
 
-- `teamHelpers.ts` に足したもの: `fixedEnemy(overrides?)`（スペック固定の防御力・コードなし・コアありの敵）、`ENEMY_PRESETS`（`data/enemies.json` の敵のプリセット）、`RANGE_BIGARMS`（射撃場の的）、`shootingRangeEnemy(options?)`（射撃場の敵。3 分・ジャンプありの出来事と、的と着地点つき）。`fixedTeam` は、キャラの番号のほかに枠も受ける形にした。
+- `teamHelpers.ts` に足したもの: `fixedEnemy(overrides?)`（スペック固定の防御力・コードなし・コアありの敵）、`ENEMY_PRESETS`（`data/enemies.json` の敵のプリセット）、`RANGE_BIGARMS`（射撃場の的）、`rangeEnemyWithEvents(options?)`（出来事と的のある射撃場の敵。ジャンプありの出来事と、的と着地点つき。戦闘時間は `durationSeconds` で渡せる）。`fixedTeam` は、キャラの番号のほかに枠も受ける形にした。
 - 置き換えたもの（使い捨ての脚本）: 敵のプリセットと的の定数（`master`・`profile`）、敵のオブジェクト（防御力・コード・コアの 3 欄）、射撃場の敵のオブジェクト、編成のオブジェクト（`slots`・`enemy`・`durationSeconds: 180`・`burst`・`controlledSlot`）。手元の `team` などの関数は残し、中身を共通の `fixedTeam` の呼び出しにした（そのテストの敵・バーストの有無を引数に書く）。
+- 残したもの: 敵のプリセットを書き換えて使うテスト（的の表を差し替える・的を引数で受けるなど）の、手元の `master`・`profile`・`rangeEnemy` が数ファイルに残る。3 欄とも既定と違う敵は、オブジェクトのまま残した（道具が足すものが無い）。
+- 見直し（`/code-review medium`）で直した所: 共有する `ENEMY_PRESETS`・`RANGE_BIGARMS` を凍らせた（テストは `isolate: false` で回るので、1 つのテストの書き換えがほかのテストに出るのを防ぐ）。射撃場の敵の道具の名前を、`SHOOTING_RANGE_ENEMY`（コードなし・出来事と的なし）と紛れないように `rangeEnemyWithEvents` にし、戦闘時間の引数を足した。`fixedTeam` は、省いた操作キャラをキーごと置かない。敵と編成の道具のテストを `teamHelpers.test.ts` に足した。見送った指摘: lint の規則に敵・編成の写しを入れること（書き換えて使う正当な使い方と見分けられない）、式だけを見る単体テストが `fixedEnemy` のために `teamHelpers.ts` を import すること（テストは `isolate: false` で回り、読み込みはワーカーごとに 1 回）。
 - 読む道具の残り: `teamHelpers.ts` の `readJson` は使う所が無くなったので消した。`records/observations/` を読む手元の `readJson`（2 ファイル）は、`data.ts` に足した `readObservations` に替えた。`skills/__tests__/definitions.test.ts` の `readJson` は `data.ts` の道具に替えた。テストに手元の `readJson` は残っていない。
 - lint の規則（論点 4）: `eslint.config.js` に、`packages/core/src/` のテストで `readJson`・`fixedSlot` という名前の関数・定数を定義したら落とす規則（`no-restricted-syntax`）を足した。`slotOf` は、枠の写しでない使い方（主役にだけ宝物を付ける・1 パス目の枠を作る）が残るので、規則に入れなかった。
 - 手引き（[skills-guide.md](skills-guide.md) の「テスト」）に、敵と編成の道具の名前を足した。
 
 **確かめた結果**（基の版は main の 2ab01271）:
 
-- `npm test` が通り、テストのファイルの数とテストの数が main と同じ。`npm run typecheck`・`npm run lint` が通る。lint の規則は、写しを書いた仮のテストで落ちることを確かめた。
+- `npm test` が通る。テストは `teamHelpers.test.ts` に足した分だけ増え、ほかは main と同じ。`npm run typecheck`・`npm run lint` が通る。lint の規則は、写しを書いた仮のテストで落ちることを確かめた。
 - エンジンに渡る入力が同じ（9.2 節と同じ比べ。2,704 件の要約の列が main と一致）。
 - 期待値の行の差分は、定数の名前の付け替え（`master` → `ENEMY_PRESETS`・`profile` → `RANGE_BIGARMS`）だけ。
 - 本体（テストでないファイル）の差分は、`__tests__/data.ts`・`__tests__/teamHelpers.ts`・`eslint.config.js` と、文書と課題のファイルだけ。

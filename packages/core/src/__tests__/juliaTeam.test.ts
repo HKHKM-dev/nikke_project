@@ -10,10 +10,10 @@ import { gameSecondsToFirstFrame } from '../time.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { applyTreasure, type TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam, shootingRangeEnemy } from './teamHelpers.ts';
+import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const JULIA = 150;
-const rangeEnemy: EnemyInput = shootingRangeEnemy();
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 
 /** 撮影の編成（ココア + ソルジャーF.A. + ジュリア（操作））。ジュリアは 3 枠目 */
 function rangeTeam(treasurePhase: TreasurePhase): TeamInput {

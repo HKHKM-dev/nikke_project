@@ -12,12 +12,12 @@ import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { piecesOf } from './historyHelpers.ts';
 import { rawDefinition } from './data.ts';
-import { fixedEnemy, fixedSlot, fixedTeam, shootingRangeEnemy } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const SOLDIER = 300;
 const VALUE = 0.0792;
 const DURATION = gameSecondsToFrames(5);
-const rangeEnemy: EnemyInput = shootingRangeEnemy();
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 const plainEnemy: EnemyInput = fixedEnemy();
 function team(slots: TeamSlotInput[], enemy: EnemyInput, burst: boolean, controlledSlot: number): TeamInput {
   return fixedTeam(slots, controlledSlot, { enemy, burst });

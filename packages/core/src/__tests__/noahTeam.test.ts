@@ -2,27 +2,11 @@
 // スキルはどれもダメージに効く効果が無い（notes だけ。S2 の挑発はゲージを溜めない。C-1020）ので、定義の有無で値が変わらない。
 // 射撃の列のグループ分けも見る。V-0706。
 import { describe, expect, it } from 'vitest';
-import type { EnemyInput } from '../damage.ts';
-import { enemyEventsOf, enemyLandingsOf } from '../enemies.ts';
 import { runSimulation } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';
-import {
-  characterOf,
-  describeEveryShotInOneGroup,
-  ENEMY_PRESETS,
-  fixedSlot,
-  fixedTeam,
-  RANGE_BIGARMS,
-  SHOOTING_RANGE_ENEMY,
-} from './teamHelpers.ts';
+import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
-const rangeEnemy: EnemyInput = {
-  ...SHOOTING_RANGE_ENEMY,
-  element: 'Fire',
-  events: enemyEventsOf(ENEMY_PRESETS, ['range-3min-jump'], 180),
-  target: RANGE_BIGARMS,
-  landings: enemyLandingsOf(ENEMY_PRESETS, ['range-3min-jump'], 180, RANGE_BIGARMS),
-};
+const rangeEnemy = rangeEnemyWithEvents();
 
 const NOAH = 232;
 const noah = characterOf(NOAH);

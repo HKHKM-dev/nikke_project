@@ -13,7 +13,7 @@ import {
   fixedSlot,
   fixedTeam,
   rawDefinition,
-  shootingRangeEnemy,
+  rangeEnemyWithEvents,
   skillValueOf,
 } from './teamHelpers.ts';
 
@@ -21,7 +21,7 @@ const LITTLE_MERMAID = 513;
 const DELTA = 20;
 const I_DOLL_SUN = 308;
 const LAPLACE = 100;
-const rangeEnemy: EnemyInput = shootingRangeEnemy({ defence: 100 });
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents({ defence: 100 });
 
 const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
 const team = (ids: number[], controlledSlot: number): TeamInput =>

@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput } from '../team.ts';
-import { fixedSlot, rawDefinition, shootingRangeEnemy } from './teamHelpers.ts';
+import { fixedSlot, rawDefinition, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const EXIA = 210;
 const CROWN = 330;
@@ -17,7 +17,7 @@ const YUNI = 160;
 const RAPUNZEL_S = 473;
 const LIBERALIO = 262;
 const SOLDIER_FA = 301;
-const rangeEnemy: EnemyInput = shootingRangeEnemy();
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 
 type Raw = { skills: Record<string, { effects: Record<string, unknown>[] }>; treasureSkills?: Raw['skills'] };
 

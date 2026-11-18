@@ -8,12 +8,12 @@ import { gameSecondsToFrames } from '../time.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, shootingRangeEnemy } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const ZWEI = 390;
 const SUN = 308;
 const ADE_AB = 315;
-const rangeEnemy: EnemyInput = shootingRangeEnemy();
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 
 const slotOf = (id: number, treasurePhase: TreasurePhase): TeamSlotInput =>
   fixedSlot(id, { conditionMode: 'auto', ...(id === ZWEI ? { treasurePhase } : {}) });

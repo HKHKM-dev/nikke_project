@@ -15,7 +15,7 @@ import {
   describeEveryShotInOneGroup,
   fixedSlot,
   fixedTeam,
-  shootingRangeEnemy,
+  rangeEnemyWithEvents,
   skillValueOf,
   windowsFrom,
 } from './teamHelpers.ts';
@@ -25,7 +25,7 @@ const COCOA = 311;
 const SOLDIER_EG = 300;
 const MIHARA = 161;
 const SCARLET = 222;
-const rangeEnemy: EnemyInput = shootingRangeEnemy({ defence: 100 });
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents({ defence: 100 });
 
 const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
 const team = (ids: number[], controlledSlot: number): TeamInput =>

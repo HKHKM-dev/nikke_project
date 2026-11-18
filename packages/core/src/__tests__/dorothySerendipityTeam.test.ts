@@ -8,12 +8,12 @@ import { itemsOf } from '../skills/holders.ts';
 import type { BuffStat } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { SkillSlot } from '../types.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, shootingRangeEnemy } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const DOROTHY_S = 234;
 const FLOWER = 304;
 const DELTA = 20;
-const rangeEnemy: EnemyInput = shootingRangeEnemy({ defence: 100, element: 'Water' });
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents({ defence: 100, element: 'Water' });
 
 const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
 const team = (ids: number[], controlledSlot: number, burst: boolean): TeamInput =>

@@ -11,7 +11,6 @@ import { triggerFrames } from '../timeline.ts';
 import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
 import { itemsOf, startOfFire } from '../holders.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
-import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 const tenLevels = (v: string) => Array.from({ length: 10 }, () => v);
 const skill = (values: string[]): SkillRaw => ({
@@ -254,7 +253,7 @@ describe('damage effects and the distributed multiplier', () => {
     });
     const hit = computeBurstHit({
       attack: 1100,
-      enemy: fixedEnemy({ defence: 100, element: 'Fire', hasCore: false }),
+      enemy: { defence: 100, element: 'Fire', hasCore: false },
       crit: { rate: 0, damage: 1.5 },
       attackDamageMultiplier: 1,
       elementMultiplier: 1,

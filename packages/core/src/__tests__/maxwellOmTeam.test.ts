@@ -7,10 +7,16 @@ import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, shootingRangeEnemy, skillValueOf } from './teamHelpers.ts';
+import {
+  describeEveryShotInOneGroup,
+  fixedSlot,
+  fixedTeam,
+  rangeEnemyWithEvents,
+  skillValueOf,
+} from './teamHelpers.ts';
 
 const MAXWELL = 105;
-const rangeEnemy: EnemyInput = shootingRangeEnemy({ element: 'Electronic' });
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents({ element: 'Electronic' });
 const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
 
 /** 編成とマクスウェルの枠 */

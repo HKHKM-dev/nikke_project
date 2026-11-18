@@ -64,7 +64,7 @@
 - **テスト**
   - DSL の単体テストは `skills/__tests__/<名前>.test.ts`。定義の検証エラーと、Lv ごとの解決値を見る。
   - 編成のテストは `__tests__/<名前>Team.test.ts`。そのキャラを含む実戦的な編成で、そのキャラの効果（窓・発動・付与）と、射撃の列がどのグループにも 1 回ずつ入ること（`partitions every shot`）を見る（`describeEveryShotInOneGroup`。例は `a2Team.test.ts`）。
-  - データの読み込み（キャラ・定義・マスタ）は `__tests__/data.ts`（`characterOf`・`rawDefinition`・`readData`）、枠・編成・敵は `__tests__/teamHelpers.ts`（`fixedSlot`・`fixedTeam`・`fixedEnemy`・`shootingRangeEnemy`）の道具を使い、テストの中に同じ道具の写しを作らない。そのテストの枠が既定と違う所は、`fixedSlot` の options に書く。
+  - データの読み込み（キャラ・定義・マスタ）は `__tests__/data.ts`（`characterOf`・`rawDefinition`・`readData`）、枠・編成・敵は `__tests__/teamHelpers.ts`（`fixedSlot`・`fixedTeam`・`fixedEnemy`・`rangeEnemyWithEvents`）の道具を使い、テストの中に同じ道具の写しを作らない。そのテストの枠が既定と違う所は、`fixedSlot` の options に書く。
   - **テストに実測値を直書きしない**。実測との比較は観測値と照合ランナーで行う（[verification-guide.md](verification-guide.md) 6・7 節）。
 - **キャラ固有の分岐をコアに置かない**。実測でしか決まらない値（紅蓮BS の射撃の較正の `MEASURED_CHARGE_CADENCE` など）は、表の 1 行にして結論の ID を添える。
 

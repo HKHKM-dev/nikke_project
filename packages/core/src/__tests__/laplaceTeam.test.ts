@@ -8,13 +8,19 @@ import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rawDefinition, shootingRangeEnemy } from './teamHelpers.ts';
+import {
+  describeEveryShotInOneGroup,
+  fixedSlot,
+  fixedTeam,
+  rawDefinition,
+  rangeEnemyWithEvents,
+} from './teamHelpers.ts';
 
 const LAPLACE = 100;
 
 type Entry = { effects: Record<string, unknown>[] };
 type Raw = { skills: Record<string, Entry>; treasureSkills: Record<string, Entry> };
-const rangeEnemy: EnemyInput = shootingRangeEnemy();
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 
 /** 撮影の編成（ココア + ソルジャーF.A. + ラプラス（操作））。ラプラスは 3 枠目 */
 function rangeTeam(treasurePhase: TreasurePhase, raw?: Raw): TeamInput {

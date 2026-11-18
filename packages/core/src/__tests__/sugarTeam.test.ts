@@ -138,14 +138,12 @@ describe.each([
 // バーストの命中率▲は区間の状態でなく、条件が自動の枠の着地点の命中率に入る（frame/landing.ts）。録画と同じ射撃場の敵で、
 // 平均の命中率▲が自分にだけ乗ることを見る
 describe('バーストの命中率▲（射撃場の敵・条件は自動）', () => {
-  const master = ENEMY_PRESETS;
-  const profile = RANGE_BIGARMS;
   const input = team(TRIO, SUGAR_SLOT, 'Fire', 3);
   input.enemy = {
     ...input.enemy,
-    events: enemyEventsOf(master, ['range-3min-jump'], 180),
-    target: profile,
-    landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
+    events: enemyEventsOf(ENEMY_PRESETS, ['range-3min-jump'], 180),
+    target: RANGE_BIGARMS,
+    landings: enemyLandingsOf(ENEMY_PRESETS, ['range-3min-jump'], 180, RANGE_BIGARMS),
   };
   for (const slot of input.slots) if (slot !== null) slot.conditionMode = 'auto';
   const result = simTeamResult(input, runSimulation(input));

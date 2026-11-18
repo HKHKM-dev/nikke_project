@@ -18,7 +18,7 @@ import {
   fixedSlot,
   fixedTeam,
   rawDefinition,
-  shootingRangeEnemy,
+  rangeEnemyWithEvents,
   windowsFrom,
 } from './teamHelpers.ts';
 
@@ -26,7 +26,7 @@ const SOLINE = 71;
 const IDOLL_FLOWER = 304;
 const DELTA = 20;
 const ADE = 310;
-const rangeEnemy: EnemyInput = shootingRangeEnemy({ defence: 100 });
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents({ defence: 100 });
 
 const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
 const team = (ids: number[], controlledSlot: number): TeamInput =>

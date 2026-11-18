@@ -20,9 +20,9 @@ import { runSimulation } from '../sim/engine.ts';
 import { hitRateNOf } from '../skills/buffs.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { fixedSlot, type FixedSlotOptions, shootingRangeEnemy } from './teamHelpers.ts';
+import { fixedSlot, type FixedSlotOptions, rangeEnemyWithEvents } from './teamHelpers.ts';
 
-const enemy: EnemyInput = shootingRangeEnemy();
+const enemy: EnemyInput = rangeEnemyWithEvents();
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 0.3, distanceBonus: true } };
 

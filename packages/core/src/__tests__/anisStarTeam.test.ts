@@ -7,9 +7,9 @@ import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';
-import { fixedEnemy, fixedSlot, fixedTeam, shootingRangeEnemy } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
-const rangeEnemy: EnemyInput = shootingRangeEnemy();
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 const plainEnemy: EnemyInput = fixedEnemy();
 // V-0116 の撮影と同じ: アニス：スター単騎・操作・オートバースト OFF・BigArms 灼熱の 3 分モード（私だけの星）
 const SOLO: TeamInput = {

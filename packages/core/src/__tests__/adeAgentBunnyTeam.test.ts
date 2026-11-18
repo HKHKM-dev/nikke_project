@@ -13,13 +13,13 @@ import {
   fixedSlot,
   fixedTeam,
   RANGE_BIGARMS,
-  shootingRangeEnemy,
+  rangeEnemyWithEvents,
   skillValueOf,
 } from './teamHelpers.ts';
 
 const ADE_AB = 315;
 const FLOWER = 304;
-const rangeEnemy: EnemyInput = shootingRangeEnemy({ defence: 100 });
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents({ defence: 100 });
 
 const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
 const team = (ids: number[], controlledSlot: number, burst: boolean): TeamInput =>

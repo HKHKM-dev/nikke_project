@@ -1,9 +1,6 @@
 // グレイブ（514）の S1 の放熱の味方のゲージ（allyGaugeAdd の while。plan/design-grave-heat-gauge.md）: 放熱の間に着いた味方のゲージ
 // 1 回ごとに、グレイブの target_burst_energy_pershot × 38.96% を足す（C-1154）。持つ枠が 2 つ以上なら足し合わせる（同 2.2 節）。
 import { describe, expect, it } from 'vitest';
-import type { EnemyInput } from '../damage.ts';
-import { enemyEventsOf, enemyLandingsOf } from '../enemies.ts';
-import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { resolveAllyGaugeAdd } from '../skills/burstDamage.ts';
 import { itemsOf } from '../skills/holders.ts';
@@ -12,16 +9,9 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SimResult } from '../sim/engine.ts';
 import type { NamedStateId } from '../skills/states.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { ENEMY_PRESETS, fixedSlot, RANGE_BIGARMS, rawDefinition, skillValueOf } from './teamHelpers.ts';
+import { fixedSlot, rangeEnemyWithEvents, rawDefinition, skillValueOf } from './teamHelpers.ts';
 
-const rangeEnemy: EnemyInput = {
-  defence: FIXED_SPEC_ENEMY_DEFENCE,
-  element: 'Fire',
-  hasCore: true,
-  events: enemyEventsOf(ENEMY_PRESETS, ['range-3min-jump'], 60),
-  target: RANGE_BIGARMS,
-  landings: enemyLandingsOf(ENEMY_PRESETS, ['range-3min-jump'], 60, RANGE_BIGARMS),
-};
+const rangeEnemy = rangeEnemyWithEvents({ durationSeconds: 60 });
 
 /** 射撃場の表で条件を決める枠（json は定義の差し替え） */
 const slot = (id: number, json?: unknown): TeamSlotInput => ({

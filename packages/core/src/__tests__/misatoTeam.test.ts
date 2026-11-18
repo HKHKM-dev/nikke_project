@@ -11,9 +11,9 @@ import { runSimulation } from '../sim/engine.ts';
 import { hitRateNOf } from '../skills/buffs.ts';
 import type { TeamInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { fixedEnemy, fixedSlot, fixedTeam, shootingRangeEnemy } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
-const rangeEnemy: EnemyInput = shootingRangeEnemy();
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 const plainEnemy: EnemyInput = fixedEnemy();
 const STACK = 0.0504;
 

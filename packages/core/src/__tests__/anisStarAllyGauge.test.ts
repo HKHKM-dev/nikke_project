@@ -8,9 +8,9 @@ import { planTeamRun } from '../frame/plan.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput } from '../team.ts';
 import { rawDefinition } from './data.ts';
-import { fixedSlot, type FixedSlotOptions, shootingRangeEnemy } from './teamHelpers.ts';
+import { fixedSlot, type FixedSlotOptions, rangeEnemyWithEvents } from './teamHelpers.ts';
 
-const rangeEnemy: EnemyInput = shootingRangeEnemy();
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { conditionMode: 'auto' };
 

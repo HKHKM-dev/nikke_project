@@ -10,11 +10,11 @@ import type { TreasurePhase } from '../skills/treasure.ts';
 import type { Element } from '../types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, shootingRangeEnemy } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const ROSANNA = 280;
 const ELEGG = 500;
-const rangeEnemy = (element: Element): EnemyInput => shootingRangeEnemy({ element });
+const rangeEnemy = (element: Element): EnemyInput => rangeEnemyWithEvents({ element });
 
 const slotOf = (id: number, treasurePhase: TreasurePhase): TeamSlotInput =>
   fixedSlot(id, { conditionMode: 'auto', ...(id === ROSANNA ? { treasurePhase } : {}) });

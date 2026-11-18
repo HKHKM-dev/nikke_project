@@ -8,9 +8,9 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runSimulation } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';
 import { runTeam } from './runTeam.ts';
-import { fixedEnemy, fixedSlot, fixedTeam, shootingRangeEnemy } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
-const rangeEnemy: EnemyInput = shootingRangeEnemy();
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 const plainEnemy: EnemyInput = fixedEnemy();
 const QUENCY = 403;
 // Lv10 の値（説明文の値 02〜07 と S1 の値 01〜03）

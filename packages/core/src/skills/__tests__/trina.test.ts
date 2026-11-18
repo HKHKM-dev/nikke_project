@@ -10,7 +10,6 @@ import { fixedTargetsOf } from '../composition.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { applyTreasure, TREASURE_PHASE_MAX } from '../treasure.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
-import { fixedEnemy } from '../../__tests__/teamHelpers.ts';
 
 const same = (v: string) => Array.from({ length: 10 }, () => v);
 const empty: SkillRaw = { id: 0, name: { ja: '', en: '' }, description: { ja: '', en: '' }, values: [] };
@@ -54,7 +53,7 @@ describe('resolveBurstDamage: allEnemies', () => {
 });
 
 describe('computeBurstHit: allEnemiesBurstDamage', () => {
-  const enemy: EnemyInput = fixedEnemy({ defence: 100, element: 'Wind', hasCore: false });
+  const enemy: EnemyInput = { defence: 100, element: 'Wind', hasCore: false };
   const source = { resourceId: 7, skill: 'burst' as const, name: burst.name };
   const all: ResolvedSkillDamage = { source, damageType: 'skill', multiplier: 3, allEnemies: true };
   const other: ResolvedSkillDamage = { source, damageType: 'skill', multiplier: 2 };

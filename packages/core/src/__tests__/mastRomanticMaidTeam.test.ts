@@ -128,22 +128,20 @@ describe('condition の無い timed の perCount', () => {
 
 // plan/design-maids.md 8 節（C-0974・C-0975）: 条件が自動の枠で射撃場の的なら、ほろ酔いの区間のコア命中率・弾丸命中率は的の▼の表の値
 describe('ほろ酔いの命中率▼（的の▼の表）', () => {
-  const master = ENEMY_PRESETS;
-  const profile = RANGE_BIGARMS;
   const base = team([304, MAST]);
   const input: TeamInput = {
     ...base,
     slots: base.slots.map((s) => (s === null ? null : { ...s, conditionMode: 'auto' as const })),
     enemy: {
       ...base.enemy,
-      events: enemyEventsOf(master, ['range-3min-jump'], 180),
-      target: profile,
-      landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
+      events: enemyEventsOf(ENEMY_PRESETS, ['range-3min-jump'], 180),
+      target: RANGE_BIGARMS,
+      landings: enemyLandingsOf(ENEMY_PRESETS, ['range-3min-jump'], 180, RANGE_BIGARMS),
     },
   };
   const result = runSimulation(input);
   const slot = result.slots[MAST_SLOT]!;
-  const table = profile.hitRateDown!.MG!;
+  const table = RANGE_BIGARMS.hitRateDown!.MG!;
 
   it('uses the landing base × the stack ratio for the core hit rate, and the table rows for the bullet hit rate', () => {
     const seen = new Set<number>();
@@ -169,13 +167,13 @@ describe('ほろ酔いの命中率▼（的の▼の表）', () => {
       stat: 'hitRate',
       value: 0.2,
     };
-    const withUp = (target: typeof profile): TeamInput => ({
+    const withUp = (target: typeof RANGE_BIGARMS): TeamInput => ({
       ...input,
       slots: input.slots.map((s, i) => (s === null || i !== MAST_SLOT ? s : { ...s, buildEffects: [up] })),
       enemy: { ...input.enemy, target },
     });
-    const { hitRateDown: _, ...noTable } = profile;
-    const on = runSimulation(withUp(profile));
+    const { hitRateDown: _, ...noTable } = RANGE_BIGARMS;
+    const on = runSimulation(withUp(RANGE_BIGARMS));
     const off = runSimulation(withUp(noTable));
     const keyed = on.slots[MAST_SLOT]!.segments.filter(
       (s) => s.buffs.hitRateUp > 0 && Object.keys(table.core!.ratio).some((k) => close(Number(k), s.buffs.hitRate)),

@@ -12,9 +12,9 @@ import { applyCompositionToTeam } from '../skills/composition.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { toTimelineSlots, type TeamInput, type TeamSlotInput } from '../team.ts';
 import { battleSecondsToFrames } from '../time.ts';
-import { fixedSlot, type FixedSlotOptions, fixedTeam, shootingRangeEnemy } from './teamHelpers.ts';
+import { fixedSlot, type FixedSlotOptions, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
-const enemy: EnemyInput = shootingRangeEnemy();
+const enemy: EnemyInput = rangeEnemyWithEvents();
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 0.3, distanceBonus: true } };
 

@@ -1,9 +1,10 @@
-// テストの共通の道具: データ（packages/core/data/）を読む。import は node:fs と型だけにする（計算の本体を読み込まないので、
-// 定義の読み込みだけを見る単体テストも軽いまま使える）。枠・編成・敵を作る道具は teamHelpers.ts
+// テストの共通の道具: データ（packages/core/data/）と観測値（records/observations/）を読む。import は node:fs と型だけにする
+// （計算の本体を読み込まないので、定義の読み込みだけを見る単体テストも軽いまま使える）。枠・編成・敵を作る道具は teamHelpers.ts
 import { readFileSync } from 'node:fs';
 import type { CharacterData } from '../types.ts';
 
 const DATA_DIR = new URL('../../data/', import.meta.url);
+const OBSERVATIONS_DIR = new URL('../../../../records/observations/', import.meta.url);
 
 /** packages/core/data/ からの相対パスの JSON */
 export function readData<T>(path: string): T {
@@ -30,7 +31,5 @@ export const DEFINED_IDS: ReadonlySet<number> = new Set(
 
 /** records/observations/<録画 id>.json（その録画の観測値の列） */
 export function readObservations<T>(recording: string): T {
-  return JSON.parse(
-    readFileSync(new URL(`../../../../records/observations/${recording}.json`, import.meta.url), 'utf8'),
-  ) as T;
+  return JSON.parse(readFileSync(new URL(`${recording}.json`, OBSERVATIONS_DIR), 'utf8')) as T;
 }

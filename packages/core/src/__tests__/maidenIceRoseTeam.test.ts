@@ -9,11 +9,11 @@ import { effectFrameOf, hexagonFrameOf, hitFramesOf, hitShareOf } from '../burst
 import { itemsOf } from '../skills/holders.ts';
 import { counterEffectiveFrom } from '../skills/holders/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, shootingRangeEnemy } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const MAIDEN = 183;
 const SOLDIER_EG = 300;
-const rangeEnemy: EnemyInput = shootingRangeEnemy();
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 
 /** 撮影の編成。メイデンは 3 枠目（操作） */
 function rangeTeam(ids: readonly number[], extra: Partial<TeamInput> = {}): TeamInput {

@@ -14,9 +14,9 @@ import { runSimulation } from '../sim/engine.ts';
 import { hitRateNOf } from '../skills/buffs.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import type { TeamInput } from '../team.ts';
-import { fixedEnemy, fixedSlot, shootingRangeEnemy } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, rangeEnemyWithEvents } from './teamHelpers.ts';
 
-const rangeEnemy: EnemyInput = shootingRangeEnemy();
+const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 const plainEnemy: EnemyInput = fixedEnemy();
 const N = 0.0544 + 0.0379;
 
