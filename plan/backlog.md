@@ -3,7 +3,7 @@
 - **このファイルは生成する（手で書かない）**。課題は `records/backlog/<名前>.json` に 1 件 1 ファイルで置き、`npm run records:check` が雛形 `records/backlog/template.md`（題名・節の説明・表の列）と合わせて作り直す（[design-backlog-files.md](design-backlog-files.md)）。ここを手で直しても PR に入らない（`npm run pr:prep` が止める）。
 - 何のための文書か: いま残っている仕事を、種類ごとに 1 行ずつ並べたもの。開いている仕事だけを書き、閉じたら行を消す。経過・進み具合・数値は書かず、検証記録・結論・観測値の ID と、設計書の節で指す。
 - 書き方: 設計書のある課題は 8 節に 1 行で起票する。種類ごとの行（1〜7 節）が要る課題は、その節にも 1 行足す。
-- 課題のファイル: 1 行が 1 ファイル。足すときはファイルを足し、直す・閉じるときはそのファイルを直すか消す。
+- 課題のファイル: 1 行が 1 ファイル。足すときは `npm run records:new -- backlog --section <節> [--name <名前>] (--text "<本文>" | --cell "<列>=<文>" …) [--first]` でファイルを作り（名前と `order` を振り、下の検査を通ったら書いて、番号を押さえる commit と push をする）、直す・閉じるときはそのファイルを直すか消す。
   - 中身は `section`（節の番号）と、表の節なら `cells`（列の名前 → セルの文。列は節の表の見出しの順で、`#` の列は書かない）、箇条の節なら `text`（行頭の `- ` を除いた 1 行）。どちらも、この文書に置いたときの Markdown で書く（リンクは `plan/` からの相対パス。セルの `|` は `\|`）。
   - 名前は、2 節は番号（`2-NN`。`records/backlog/` の最大の次。並行するブランチと重なったら `npm run pr:prep` が止めて空いた番号を出す）。ほかの節は英小文字・数字・ハイフンの短い名前で、節を移っても変えない。
   - 並びは、2 節は番号順。ほかの節は `order`（数）の小さい順で、末尾に足すなら節の最大より大きい数、先頭なら最小より小さい数（負・小数でもよい）。
@@ -84,6 +84,7 @@
 - 値の固定（timed の `lock`）は、持ち主の和を作る 3 か所（`skills/holders/views.ts` の `firingBuffs`・`damageBuffsAt`、`skills/timeline.ts` の `buildSegments`）でだけ当てている。`frame/plan.ts` の `withSameActivationEffects`・`withEarlierSequentialEffects` は固定を当て直さず、条件 `selfBuffed` と、きっかけ `{ buffApplied }` は止めた▲も付いたと数え、区間の表示は止めた常時の値（装備・キューブ）の量を 0 にしない。いまの定義にはどれも効く組が無い（固定を持つ 4 体に、自分のバーストのチャージ速度▲・リロード速度▲と、これらを読む条件・きっかけが無い）。使い手が出たら、効果の列から和を作る関数を 1 つにして（足す → `applyStatLocks`）、和を作る所がそれを使う形にする（[design-stat-lock.md](design-stat-lock.md) 3.4 節）
 - モダン UI のバッジの既定の色（`apps/web/src/styles.css` の `.badge-ui_*` と `[class^='badge-…_']` の差し色・地の色の規則）は、クラス 1 つ分の詳細度を持つ。このため、場所ごとに色を変える規則（設定のボタンのライトでの反転・操作キャラの印のダークでの反転・育成を変えたスロットの青い歯車など）は、要素名や親を足して詳細度を上げている。ui のバッジの図柄を白にする規則も、バッジを 1 つ足すたびに列挙が伸びる。バッジの絵の縦横の比（`150 / 130` など）も、CSS の 7 か所に書き写している。直すなら、既定の色の規則を `:where(...)` で包む。あわせて、BadgeIcon がグループのクラスと、viewBox から作る `aspect-ratio` を付ける形にする（[design-modern-ui.md](design-modern-ui.md) の経過）
 - 型の名前だけを並べた import 文（`import { type A } from …`）は、`verbatimModuleSyntax` では中身が空の import として実行時に残る（読み込みが起きる）。lint の `consistent-type-imports`（`fixStyle: 'inline-type-imports'`）はこの形を作る。循環を見る検査（`tools/code/import-cycles.test.ts`）はこの文も辺に数えるので、型だけの参照で循環ができると落ちる。lint に `@typescript-eslint/no-import-type-side-effects` を足して自動で `import type` に直すと、型だけの参照が辺にならなくなる（[design-import-cycle.md](design-import-cycle.md) 2.4 節・8 節。2026-11-18 起票）
+- 取り込む前の下見（`tools/captures/fetch.ts drive:<パス>`）で落とした録画を、取り込み（`tools/captures/intake.ts drive:<パス>`）が Drive からもう一度落とす（録画 1 本分の時間と通信量）。intake が、下見の置き場所（`tools/captures/dirs.ts` の `recordFetchDir`）に同じ大きさのファイルがあればそれを使う形にする（plan/design-workflow-simplification-17.md 3 節）。
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
 
