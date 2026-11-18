@@ -111,7 +111,10 @@ describe('condition の無い timed の perCount', () => {
       for (const effect of entry.effects) if (effect.perCount !== undefined && delete effect.condition) removed++;
     expect(removed).toBeGreaterThan(0);
     const base = team([82, MAST, 308]);
-    const input: TeamInput = { ...base, slots: base.slots.map((s, i) => (i === MAST_SLOT ? fixedSlot(MAST, raw) : s)) };
+    const input: TeamInput = {
+      ...base,
+      slots: base.slots.map((s, i) => (i === MAST_SLOT ? fixedSlot(MAST, { definition: raw }) : s)),
+    };
     const perCountPieces = (t: TeamInput) =>
       piecesOf(planTeamRun(t))
         .filter((p) => p.sourceSlotIndex === MAST_SLOT && p.effect.source.skill !== 'skill1')
@@ -229,7 +232,7 @@ describe('遅れのあるデバフ解除の対象', () => {
   s1['delayFrames'] = DELAY;
   const input: TeamInput = {
     ...team([]),
-    slots: [fixedSlot(304), fixedSlot(COCOA, raw), fixedSlot(MAST)],
+    slots: [fixedSlot(304), fixedSlot(COCOA, { definition: raw }), fixedSlot(MAST)],
     controlledSlot: SLOT,
   };
   const plan = planTeamRun(input);
@@ -274,7 +277,7 @@ describe('デバフ解除の決め打ちの注記', () => {
     grant['target'] = 'allies';
     const notes = removalNotes({
       ...team([]),
-      slots: [fixedSlot(304), fixedSlot(COCOA), fixedSlot(MAST, raw)],
+      slots: [fixedSlot(304), fixedSlot(COCOA), fixedSlot(MAST, { definition: raw })],
       controlledSlot: 2,
     });
     expect(notes[1]!.map((n) => [n.level, n.code])).toEqual([['approx', 'remove-debuff-targets']]);

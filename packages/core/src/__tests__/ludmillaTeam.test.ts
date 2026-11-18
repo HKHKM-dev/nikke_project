@@ -4,32 +4,18 @@
 // 命中・コアの命中の回数は期待値で数える。射撃の列のグループ分け。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
+import { rawDefinition } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 const LUDMILLA = 194;
 const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false };
-
-function fixedSlot(id: number, condition: SlotCondition = MANUAL): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  const slot: TeamSlotInput = { character: c, growth: fixed.growth, attackOverride: fixed.attack, condition };
-  if (DEFINED_IDS.has(id)) {
-    slot.skills = {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-    };
-  }
-  return slot;
-}
-
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
 
 function team(slots: TeamSlotInput[], controlledSlot: number, target: EnemyInput = enemy): TeamInput {
@@ -37,7 +23,7 @@ function team(slots: TeamSlotInput[], controlledSlot: number, target: EnemyInput
 }
 
 const solo = (condition: SlotCondition = MANUAL, target: EnemyInput = enemy) =>
-  team([fixedSlot(LUDMILLA, condition)], 0, target);
+  team([fixedSlot(LUDMILLA, { condition })], 0, target);
 
 /** 枠 0 の、スロット skill の倍率ダメージの発動フレーム */
 function hitFrames(input: TeamInput, skill: 'skill1' | 'skill2'): number[] {

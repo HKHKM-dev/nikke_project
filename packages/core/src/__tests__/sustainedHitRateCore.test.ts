@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import {
   bulletHitRateWithHitRateUp,
   coreHitRateWithHitRateUp,
@@ -20,11 +20,10 @@ import {
 import { perShotDamageOf, planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { hitRateNOf } from '../skills/buffs.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
-import type { TeamInput, TeamSlotInput } from '../team.ts';
+import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { characterOf, rawDefinition, readData } from './data.ts';
+import { readData } from './data.ts';
+import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
 
 const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
@@ -36,26 +35,17 @@ const enemy: EnemyInput = {
   target: profile,
   landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
 };
-
-function fixedSlot(id: number, auto: boolean): TeamSlotInput {
-  const character = characterOf(id);
-  const fixed = computeFixedSpecAttack(character);
-  return {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 0.3, distanceBonus: true },
-    ...(auto ? { conditionMode: 'auto' as const } : {}),
-    skills: {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-    },
-  };
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 0.3, distanceBonus: true } };
 
 // モダニア（260）・ドレイク（101、操作）・デルタ（20）・リター（82）
 const team = (auto: boolean): TeamInput => ({
-  slots: [fixedSlot(260, auto), fixedSlot(101, auto), fixedSlot(20, auto), fixedSlot(82, auto)],
+  slots: [
+    fixedSlot(260, { ...SLOT_OPTIONS, conditionMode: auto ? 'auto' : undefined }),
+    fixedSlot(101, { ...SLOT_OPTIONS, conditionMode: auto ? 'auto' : undefined }),
+    fixedSlot(20, { ...SLOT_OPTIONS, conditionMode: auto ? 'auto' : undefined }),
+    fixedSlot(82, { ...SLOT_OPTIONS, conditionMode: auto ? 'auto' : undefined }),
+  ],
   enemy,
   durationSeconds: 180,
   burst: true,

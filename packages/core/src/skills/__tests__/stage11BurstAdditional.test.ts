@@ -2,31 +2,20 @@
 // selfCounter。使い手はラプラス：アルティメットヒーロー（103）のバーストの追加ダメージ（録画 0723・0724。V-0532）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
-import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { effectFrameOf, hitFrameOf, isInFullBurst } from '../../burst/schedule.ts';
 import { runSimulation } from '../../sim/engine.ts';
-import type { TeamInput, TeamSlotInput } from '../../team.ts';
+import type { TeamInput } from '../../team.ts';
 import { MAX_SKILL_LEVELS, skillValue } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedSlot, type FixedSlotOptions } from '../../__tests__/teamHelpers.ts';
 
 const LUDMILLA = 190;
 const BELORTA = 60;
 const LAPLACE = 103;
-const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
-
-function slotOf(id: number): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  return {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    hpOverride: computeFixedSpecHp(c),
-    condition: { coreHitRate: 1, distanceBonus: false },
-    skills: { definition: definitionOf(id), levels: MAX_SKILL_LEVELS },
-  };
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { hp: true };
 
 describe('語彙の検証', () => {
   const def = rawDefinition<{ skills: { burst: { effects: Record<string, unknown>[] } } }>(LAPLACE);
@@ -53,7 +42,7 @@ describe('ラプラス：アルティメットヒーローのバーストの追�
   const m = 2;
   const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
   const input: TeamInput = {
-    slots: [slotOf(LUDMILLA), slotOf(BELORTA), slotOf(LAPLACE)],
+    slots: [fixedSlot(LUDMILLA, SLOT_OPTIONS), fixedSlot(BELORTA, SLOT_OPTIONS), fixedSlot(LAPLACE, SLOT_OPTIONS)],
     enemy,
     durationSeconds: 180,
     burst: true,

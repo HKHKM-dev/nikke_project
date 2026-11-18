@@ -4,16 +4,14 @@
 // 届いたかは 1 パス目が数える
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
-import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { effectFrameOf } from '../../burst/schedule.ts';
 import { planTeamRun } from '../../frame/plan.ts';
 import { runSimulation, type SimInput, type SimResult } from '../../sim/engine.ts';
 import type { TeamSlotInput } from '../../team.ts';
-import { rawDefinition } from '../../__tests__/teamHelpers.ts';
+import { fixedSlot, type FixedSlotOptions, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { framesToGameSeconds } from '../../time.ts';
-import { MAX_SKILL_LEVELS } from '../resolve.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
-import { characterOf } from '../../__tests__/data.ts';
+import { parseSkillDefinition } from '../types.ts';
 
 const DOROTHY = 233;
 const DELTA = 20;
@@ -24,23 +22,8 @@ const MAST = 350;
 /** 烙印の 10 秒（588f）と、窓の終わりから爆発までの遅れ（data/skills/233.json） */
 const WINDOW = 588;
 const DELAY = 211;
-
-function slotOf(rid: number, definition?: SkillDefinition): TeamSlotInput {
-  const character = characterOf(rid);
-  const fixed = computeFixedSpecAttack(character);
-  return {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    hpOverride: computeFixedSpecHp(character),
-    condition: { coreHitRate: 1, distanceBonus: false, hitRate: 1 },
-    skills: {
-      definition: definition ?? parseSkillDefinition(rawDefinition(rid)),
-      levels: MAX_SKILL_LEVELS,
-      treasurePhase: 0,
-    },
-  };
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 1, distanceBonus: false, hitRate: 1 }, hp: true };
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
 
@@ -66,7 +49,7 @@ function damageIn(r: SimResult, start: number, end: number, except: number): num
 }
 
 describe('烙印（ドロシー単騎）', () => {
-  const r = run([slotOf(DOROTHY)]);
+  const r = run([fixedSlot(DOROTHY, SLOT_OPTIONS)]);
   const explosions = explosionsOf(r);
   const bursts = r.schedule!.activations.map(effectFrameOf).filter((f) => f + WINDOW + DELAY < r.frames);
 
@@ -94,10 +77,13 @@ describe('烙印（ドロシー単騎）', () => {
     const def = rawDefinition<{ skills: { burst: { effects: { ref: number }[] } } }>(DOROTHY);
     // 値 01（10%）を最大量にすると、累計より小さい
     def.skills.burst.effects[0]!.ref = 1;
-    const capped = explosionsOf(run([slotOf(DOROTHY, parseSkillDefinition(def))]));
+    const capped = explosionsOf(run([fixedSlot(DOROTHY, { ...SLOT_OPTIONS, parsed: parseSkillDefinition(def) })]));
     expect(capped.length).toBe(explosions.length);
     for (const h of capped) {
-      expect(h.accumulate!.cap).toBeCloseTo(computeFixedSpecAttack(slotOf(DOROTHY).character).attack * 0.1, 0);
+      expect(h.accumulate!.cap).toBeCloseTo(
+        computeFixedSpecAttack(fixedSlot(DOROTHY, SLOT_OPTIONS).character).attack * 0.1,
+        0,
+      );
       expect(h.hit.perActivation).toBe(h.accumulate!.cap);
     }
   });
@@ -105,7 +91,7 @@ describe('烙印（ドロシー単騎）', () => {
 
 describe('烙印（デルタと組んだ 2 体）', () => {
   it('includes the allies’ damage in the sum (C-0901)', () => {
-    const r = run([slotOf(DOROTHY), slotOf(DELTA)]);
+    const r = run([fixedSlot(DOROTHY, SLOT_OPTIONS), fixedSlot(DELTA, SLOT_OPTIONS)]);
     const explosions = explosionsOf(r);
     expect(explosions.length).toBeGreaterThan(0);
     for (const h of explosions) {
@@ -173,7 +159,7 @@ const BLAST = APPLY_DELAY + 294;
 const CAP_DELAY = 13;
 
 describe('蓄積爆破（トロニー単騎）', () => {
-  const input = inputOf([slotOf(TRONY)]);
+  const input = inputOf([fixedSlot(TRONY, SLOT_OPTIONS)]);
   const r = runSimulation(input);
   const explosions = explosionsOf(r);
   const releases = planTeamRun(input).accumulateReleases;
@@ -217,7 +203,7 @@ describe('蓄積爆破（トロニー単騎）', () => {
     const def = rawDefinition<{ skills: { skill1: { effects: unknown[]; notes: unknown[] } } }>(TRONY);
     def.skills.skill1.effects = [];
     def.skills.skill1.notes = [{ ja: 'テスト', en: 'test', kind: 'modeling' }];
-    const without = run([slotOf(TRONY, parseSkillDefinition(def))]);
+    const without = run([fixedSlot(TRONY, { ...SLOT_OPTIONS, parsed: parseSkillDefinition(def) })]);
     const first = (x: SimResult) => x.schedule!.gaugeFullFrames[0]!;
     expect(first(r)).toBeLessThan(first(without));
     // 単騎は 1 回目の満タンの前に爆発が 1 回あり、その 56,000 のぶん、フルチャージの発（140,000）1 回だけ早く満ちる
@@ -228,7 +214,10 @@ describe('蓄積爆破（トロニー単騎）', () => {
 });
 
 describe('蓄積爆破（リター・デルタ・トロニー）', () => {
-  const input = inputOf([slotOf(LITER), slotOf(DELTA), slotOf(TRONY)], 2);
+  const input = inputOf(
+    [fixedSlot(LITER, SLOT_OPTIONS), fixedSlot(DELTA, SLOT_OPTIONS), fixedSlot(TRONY, SLOT_OPTIONS)],
+    2,
+  );
   const r = runSimulation(input);
   const explosions = explosionsOf(r);
   const releases = planTeamRun(input).accumulateReleases;
@@ -290,7 +279,7 @@ describe('蓄積爆破（トロニーとマスト）', () => {
   ]) {
     it(`runs and agrees between the two passes (${order.join(', ')})`, () => {
       const input = inputOf(
-        order.map((rid) => slotOf(rid)),
+        order.map((rid) => fixedSlot(rid, SLOT_OPTIONS)),
         order.indexOf(TRONY),
       );
       const explosions = explosionsOf(runSimulation(input));

@@ -4,36 +4,25 @@
 import { describe, expect, it } from 'vitest';
 import { isInFullBurst } from '../../burst/schedule.ts';
 import type { EnemyInput } from '../../damage.ts';
-import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
-import type { TeamInput, TeamSlotInput } from '../../team.ts';
+import type { TeamInput } from '../../team.ts';
 import { GAME_SECONDS_PER_FRAME } from '../../time.ts';
 import type { Element } from '../../types.ts';
 import { oneHitValue } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS, skillValue } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedSlot, type FixedSlotOptions } from '../../__tests__/teamHelpers.ts';
 
 const RAPI_RH = 16;
 const LITER = 82;
 const DELTA = 20;
-const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 const rapi = characterOf(RAPI_RH);
 const s2 = (ref: number) => skillValue(rapi.skills.skill2, ref, MAX_SKILL_LEVELS.skill2) / 100;
 const burstValue = (ref: number) => skillValue(rapi.skills.burst, ref, MAX_SKILL_LEVELS.burst);
-
-function slotOf(id: number): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  return {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    hpOverride: computeFixedSpecHp(c),
-    condition: { coreHitRate: 1, distanceBonus: false },
-    skills: { definition: definitionOf(id), levels: MAX_SKILL_LEVELS },
-  };
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { hp: true };
 
 const enemyOf = (element: Element): EnemyInput => ({ defence: FIXED_SPEC_ENEMY_DEFENCE, element, hasCore: true });
 
@@ -79,7 +68,7 @@ describe('語彙の検証', () => {
 describe('粘着榴弾とバースト III の付着▲・回数条件▼（灼熱の的・リター（I）・デルタ（II）と組む）', () => {
   const m = 2;
   const input: TeamInput = {
-    slots: [slotOf(LITER), slotOf(DELTA), slotOf(RAPI_RH)],
+    slots: [fixedSlot(LITER, SLOT_OPTIONS), fixedSlot(DELTA, SLOT_OPTIONS), fixedSlot(RAPI_RH, SLOT_OPTIONS)],
     enemy: enemyOf('Fire'),
     durationSeconds: 180,
     burst: true,
@@ -159,7 +148,7 @@ describe('粘着榴弾とバースト III の付着▲・回数条件▼（灼�
 
 describe('電撃コードの敵への有利コード（単騎・オートバースト OFF）', () => {
   const solo = (element: Element) =>
-    runSimulation({ slots: [slotOf(RAPI_RH)], enemy: enemyOf(element), durationSeconds: 60 });
+    runSimulation({ slots: [fixedSlot(RAPI_RH, SLOT_OPTIONS)], enemy: enemyOf(element), durationSeconds: 60 });
   const electric = solo('Electronic');
   const fire = solo('Fire');
 

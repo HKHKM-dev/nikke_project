@@ -3,35 +3,17 @@
 import { describe, expect, it } from 'vitest';
 import { healsOf, slotPieces } from './historyHelpers.ts';
 import type { EnemyInput, TriggerDamage } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { MAX_SKILL_LEVELS, isTimedItem } from '../skills/resolve.ts';
-import type { TreasurePhase } from '../skills/treasure.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { isTimedItem } from '../skills/resolve.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { type TeamInput, type TeamSlotInput, type SlotSegmentResult } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
+import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
 
-function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput {
-  const character = characterOf(id);
-  const fixed = computeFixedSpecAttack(character);
-  const slot: TeamSlotInput = {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 0, distanceBonus: false },
-  };
-  if (DEFINED_IDS.has(id)) {
-    slot.skills = {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-      treasurePhase,
-    };
-  }
-  return slot;
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 0, distanceBonus: false } };
 
 // 録画 0041 の的は属性なし（有利コードの補正なし）
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
@@ -40,11 +22,24 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
   return { slots, enemy, durationSeconds: 180, burst: true, controlledSlot };
 }
 
-const REC41 = team([fixedSlot(304), fixedSlot(330), fixedSlot(20), fixedSlot(10)], 2);
+const REC41 = team(
+  [
+    fixedSlot(304, SLOT_OPTIONS),
+    fixedSlot(330, SLOT_OPTIONS),
+    fixedSlot(20, SLOT_OPTIONS),
+    fixedSlot(10, SLOT_OPTIONS),
+  ],
+  2,
+);
 const TEAMS: Record<string, TeamInput> = {
   '録画 0041（I-DOLL・フラワー + クラウン + デルタ + ラピ）': REC41,
   '実戦寄り（リター + クラウン + ドレイク宝物 3 + ラピ）': team(
-    [fixedSlot(82), fixedSlot(330), fixedSlot(101, 3), fixedSlot(10)],
+    [
+      fixedSlot(82, SLOT_OPTIONS),
+      fixedSlot(330, SLOT_OPTIONS),
+      fixedSlot(101, { ...SLOT_OPTIONS, treasurePhase: 3 }),
+      fixedSlot(10, SLOT_OPTIONS),
+    ],
     2,
   ),
 };

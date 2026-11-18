@@ -4,17 +4,16 @@ import { describe, expect, it } from 'vitest';
 import { hexagonFrameOf } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { flightFramesAt, landingFrameSpans, slotWeaponChangeFirstHitsOf } from '../frame/landing.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { METRICS } from '../records/observations/metrics/index.ts';
 import { runSimulation } from '../sim/engine.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
-import type { TeamInput, TeamSlotInput } from '../team.ts';
+import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { TargetProfile } from '../types.ts';
-import { characterOf, rawDefinition, readData } from './data.ts';
+import { readData } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 const rawMaster = readData<Record<string, unknown>>('enemies.json');
 const master = parseEnemyPresets(rawMaster);
@@ -35,22 +34,6 @@ const { weaponChangeFirstHitFrames: _table, ...profileWithoutTable } = profile;
 const withTable = rangeEnemy(profile);
 const withoutTable = rangeEnemy(profileWithoutTable);
 const FRAMES = gameSecondsToFrames(180);
-
-function fixedSlot(id: number): TeamSlotInput {
-  const character = characterOf(id);
-  const fixed = computeFixedSpecAttack(character);
-  return {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-    skills: {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-    },
-  };
-}
-
 // 録画 0232・0401 と同じ: I-DOLL・フラワー（操作・撃たない扱いはしない）+ ウンファ：TU・BigArms 灼熱の 3 分モード
 function team(enemy: EnemyInput): TeamInput {
   return { slots: [fixedSlot(304), fixedSlot(95)], enemy, durationSeconds: 180, burst: true, controlledSlot: 0 };

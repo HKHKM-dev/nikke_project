@@ -4,14 +4,14 @@
 // （実測の値は持ち込まない）。クルミの定義は H3（V-0181・C-0276）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { dotActiveSpans, dotTickFrames } from '../frame/dot.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
+import type { TeamInput } from '../team.ts';
+import { rawDefinition } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 const KURUMI = 862;
 const raw862 = rawDefinition<{ skills: Record<string, { effects: unknown[]; notes?: unknown[] }> }>(KURUMI);
@@ -120,26 +120,17 @@ describe('dotActiveSpans', () => {
 });
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
-
-function slotOf(id: number, definition?: unknown): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  const slot: TeamSlotInput = {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-  };
-  const raw = definition ?? (DEFINED_IDS.has(id) ? rawDefinition(id) : undefined);
-  if (raw !== undefined) slot.skills = { definition: parseSkillDefinition(raw), levels: MAX_SKILL_LEVELS };
-  return slot;
-}
-
 /** クルミ（I）+ デルタ（II）+ ドレイク（III）。フルバーストが起きる最小の 3 人 */
 function teamWith(s2: unknown[] | null | 'repo'): TeamInput {
   // null は S2 なし、'repo' はリポジトリの定義のまま
-  const kurumi = s2 === 'repo' ? slotOf(KURUMI) : slotOf(KURUMI, withSkill2(s2 ?? []));
-  return { slots: [kurumi, slotOf(20), slotOf(101)], enemy, durationSeconds: 180, burst: true, controlledSlot: 0 };
+  const kurumi = s2 === 'repo' ? fixedSlot(KURUMI) : fixedSlot(KURUMI, { definition: withSkill2(s2 ?? []) });
+  return {
+    slots: [kurumi, fixedSlot(20), fixedSlot(101)],
+    enemy,
+    durationSeconds: 180,
+    burst: true,
+    controlledSlot: 0,
+  };
 }
 
 const N = 36;
@@ -184,7 +175,7 @@ describe.each([
     // S1 の持続ダメージに状態が無ければ、敵はハッキング状態にならない（持続ダメージは出る）
     const raw = withSkill2([effect]) as typeof raw862;
     for (const e of raw.skills.skill1!.effects as Record<string, unknown>[]) delete e.state;
-    const none = planTeamRun({ ...input, slots: [slotOf(KURUMI, raw), ...input.slots.slice(1)] });
+    const none = planTeamRun({ ...input, slots: [fixedSlot(KURUMI, { definition: raw }), ...input.slots.slice(1)] });
     expect(none.skillHits.some((h) => h.slotIndex === 0 && h.effect.dot !== undefined)).toBe(true);
     expect(none.skillHits.filter((h) => h.slotIndex === 0 && h.effect.source.skill === 'skill2')).toHaveLength(0);
   });

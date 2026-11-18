@@ -7,12 +7,7 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets, targetProfileForEnemy } from '../enemies.ts';
-import {
-  computeFixedSpecAttack,
-  computeFixedSpecDefence,
-  computeFixedSpecHp,
-  FIXED_SPEC_ENEMY_DEFENCE,
-} from '../fixedSpec.ts';
+import { computeFixedSpecDefence, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { METRICS } from '../records/observations/metrics/index.ts';
 import { runSimulation } from '../sim/engine.ts';
@@ -22,6 +17,7 @@ import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { battleSecondsToFrames, gameSecondsToFrames } from '../time.ts';
 import { piecesOf } from './historyHelpers.ts';
 import { characterOf, rawDefinition, readData } from './data.ts';
+import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
 
 const ANIS_STAR = 17;
 const DELTA = 20;
@@ -30,21 +26,8 @@ const FLOWER = 304;
 const CINDERELLA = 511;
 const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 const fixedDefence = (id: number) => computeFixedSpecDefence(characterOf(id));
-
-function fixedSlot(id: number, extra: Partial<TeamSlotInput> = {}): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  return {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    hpOverride: computeFixedSpecHp(c),
-    defenceOverride: computeFixedSpecDefence(c),
-    condition: { coreHitRate: 1, distanceBonus: false },
-    skills: { definition: definitionOf(id), levels: MAX_SKILL_LEVELS },
-    ...extra,
-  };
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { hp: true, defence: true };
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
 
@@ -53,11 +36,30 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
 }
 
 // 2.2 節の録画 A（同値）: フラワー（I・1 枠目）・アニス：スター（I・2 枠目）・デルタ（II）・シンデレラ（III・操作）
-const TIE = team([fixedSlot(FLOWER), fixedSlot(ANIS_STAR), fixedSlot(DELTA), fixedSlot(CINDERELLA)], 3);
+const TIE = team(
+  [
+    fixedSlot(FLOWER, SLOT_OPTIONS),
+    fixedSlot(ANIS_STAR, SLOT_OPTIONS),
+    fixedSlot(DELTA, SLOT_OPTIONS),
+    fixedSlot(CINDERELLA, SLOT_OPTIONS),
+  ],
+  3,
+);
 // 同じく録画 B（対照）: アニス：スター（I）・デルタ（II）・シンデレラ（III・操作）
-const CONTROL = team([fixedSlot(ANIS_STAR), fixedSlot(DELTA), fixedSlot(CINDERELLA)], 2);
+const CONTROL = team(
+  [fixedSlot(ANIS_STAR, SLOT_OPTIONS), fixedSlot(DELTA, SLOT_OPTIONS), fixedSlot(CINDERELLA, SLOT_OPTIONS)],
+  2,
+);
 // 録画 0163 の編成: デルタ・アニス：スター（操作）・フラワー・イサベル
-const REC163 = team([fixedSlot(DELTA), fixedSlot(ANIS_STAR), fixedSlot(FLOWER), fixedSlot(ISABEL)], 1);
+const REC163 = team(
+  [
+    fixedSlot(DELTA, SLOT_OPTIONS),
+    fixedSlot(ANIS_STAR, SLOT_OPTIONS),
+    fixedSlot(FLOWER, SLOT_OPTIONS),
+    fixedSlot(ISABEL, SLOT_OPTIONS),
+  ],
+  1,
+);
 // 録画 B の編成を、画面の既定（カスタムの敵に射撃場の的の表・条件は自動）で: II（デルタ）の CT 待ちで、アニス：スターの
 // 防御力▲（10 秒）が切れた後に始まるフルバーストがある
 const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
@@ -65,7 +67,7 @@ const custom: EnemyInput = { defence: 100, element: null, hasCore: true };
 const profile = targetProfileForEnemy(master, custom)!;
 const WAITING: TeamInput = {
   ...team(
-    [ANIS_STAR, DELTA, CINDERELLA].map((id) => fixedSlot(id, { conditionMode: 'auto' })),
+    [ANIS_STAR, DELTA, CINDERELLA].map((id) => fixedSlot(id, { ...SLOT_OPTIONS, conditionMode: 'auto' })),
     2,
   ),
   enemy: { ...custom, target: profile, landings: enemyLandingsOf(master, [], 180, profile) },
@@ -186,7 +188,9 @@ describe('防御力▲ と targetDefense の読み込み', () => {
   });
 
   it('rejects a negative defenceOverride', () => {
-    expect(() => runTeam(team([fixedSlot(ANIS_STAR, { defenceOverride: -1 })], 0))).toThrow(/defenceOverride/);
+    expect(() => runTeam(team([fixedSlot(ANIS_STAR, { ...SLOT_OPTIONS, extra: { defenceOverride: -1 } })], 0))).toThrow(
+      /defenceOverride/,
+    );
   });
 });
 
@@ -236,7 +240,14 @@ describe('自分と自分より最終防御力が低い味方（C-0586）', () =
     const anisFinal = fixedDefence(ANIS_STAR) * (1 + burstDefenceUp);
     expect(Number.isInteger(anisFinal)).toBe(false);
     const withCinderella = (defenceOverride: number) =>
-      team([fixedSlot(ANIS_STAR), fixedSlot(DELTA), fixedSlot(CINDERELLA, { defenceOverride })], 2);
+      team(
+        [
+          fixedSlot(ANIS_STAR, SLOT_OPTIONS),
+          fixedSlot(DELTA, SLOT_OPTIONS),
+          fixedSlot(CINDERELLA, { ...SLOT_OPTIONS, extra: { defenceOverride } }),
+        ],
+        2,
+      );
     const below = projectileFires(withCinderella(Math.floor(anisFinal)), 0);
     const above = projectileFires(withCinderella(Math.ceil(anisFinal)), 0);
     expect(below.length).toBeGreaterThan(0);
@@ -310,10 +321,13 @@ describe('デルタの S2 の防御力▲（C-0589）', () => {
     without.skills.skill2 = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
     const input = team(
       [
-        fixedSlot(FLOWER),
-        fixedSlot(ANIS_STAR),
-        fixedSlot(DELTA, { skills: { definition: parseSkillDefinition(without), levels: MAX_SKILL_LEVELS } }),
-        fixedSlot(CINDERELLA),
+        fixedSlot(FLOWER, SLOT_OPTIONS),
+        fixedSlot(ANIS_STAR, SLOT_OPTIONS),
+        fixedSlot(DELTA, {
+          ...SLOT_OPTIONS,
+          definition: without,
+        }),
+        fixedSlot(CINDERELLA, SLOT_OPTIONS),
       ],
       3,
     );

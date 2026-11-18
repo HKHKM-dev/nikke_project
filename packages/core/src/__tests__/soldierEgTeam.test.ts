@@ -6,21 +6,19 @@ import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { chanceScaleAt, chanceValueOf } from '../skills/chance.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
+import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { characterOf, rawDefinition, readData } from './data.ts';
+import { rawDefinition, readData } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 const SOLDIER = 300;
 const VALUE = 0.0792;
 const DURATION = gameSecondsToFrames(5);
-const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false };
-
 const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
 const rangeEnemy: EnemyInput = {
@@ -32,23 +30,6 @@ const rangeEnemy: EnemyInput = {
   landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
 };
 const plainEnemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
-
-function fixedSlot(id: number, condition: SlotCondition = MANUAL, auto = false): TeamSlotInput {
-  const character = characterOf(id);
-  const fixed = computeFixedSpecAttack(character);
-  return {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition,
-    ...(auto ? { conditionMode: 'auto' as const } : {}),
-    skills: {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-    },
-  };
-}
-
 function team(slots: TeamSlotInput[], enemy: EnemyInput, burst: boolean, controlledSlot: number): TeamInput {
   return { slots, enemy, durationSeconds: 180, burst, controlledSlot };
 }
@@ -103,7 +84,7 @@ describe('ソルジャーE.G. 単騎（手入力の条件・全弾命中）', ()
 });
 
 describe('ソルジャーE.G. 単騎（射撃場・条件は自動）', () => {
-  const input = team([fixedSlot(SOLDIER, MANUAL, true)], rangeEnemy, false, 0);
+  const input = team([fixedSlot(SOLDIER, { conditionMode: 'auto' })], rangeEnemy, false, 0);
   const plan = planTeamRun(input);
 
   it('weights each shot by its bullet hit rate', () => {
@@ -139,10 +120,14 @@ describe('順位（アリスの S1。フルバースト時に最終攻撃力が�
 
 const TEAMS: Record<string, TeamInput> = {
   '単騎（手入力の条件）': team([fixedSlot(SOLDIER)], plainEnemy, false, 0),
-  '単騎（射撃場・条件は自動）': team([fixedSlot(SOLDIER, MANUAL, true)], rangeEnemy, false, 0),
+  '単騎（射撃場・条件は自動）': team([fixedSlot(SOLDIER, { conditionMode: 'auto' })], rangeEnemy, false, 0),
   // V-0247 の撮影と同じ編成（鈴原サクラ I・デルタ II・ソルジャーE.G. III。オートバースト）
   '鈴原サクラ + デルタ + ソルジャーE.G.（射撃場・条件は自動）': team(
-    [fixedSlot(836, MANUAL, true), fixedSlot(20, MANUAL, true), fixedSlot(SOLDIER, MANUAL, true)],
+    [
+      fixedSlot(836, { conditionMode: 'auto' }),
+      fixedSlot(20, { conditionMode: 'auto' }),
+      fixedSlot(SOLDIER, { conditionMode: 'auto' }),
+    ],
     rangeEnemy,
     true,
     2,

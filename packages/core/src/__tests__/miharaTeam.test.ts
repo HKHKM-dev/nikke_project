@@ -4,33 +4,20 @@
 // （C-0564・C-0575）、追加ダメージは 3 ヒットのそれぞれに出てフルバースト補正が乗る（C-0565）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { burstDelaysOf } from '../burst/landing.ts';
 import { effectFrameOf, hitFramesOf, isInFullBurst } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { itemsOf } from '../skills/holders.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition, staticStatesOf } from '../skills/types.ts';
-import type { TeamInput, TeamSlotInput } from '../team.ts';
+import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
+import { characterOf, rawDefinition } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 const MIHARA = 161;
 const definition = (id: number) => parseSkillDefinition(rawDefinition(id));
-function slotOf(id: number): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  const slot: TeamSlotInput = {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-  };
-  if (DEFINED_IDS.has(id)) slot.skills = { definition: definition(id), levels: MAX_SKILL_LEVELS };
-  return slot;
-}
-
 describe('ミハラ（161）の定義', () => {
   it('grants Highway to Hell 1 from the first Burst and 2 from the second, and is not static', () => {
     const def = definition(MIHARA);
@@ -53,7 +40,7 @@ describe('ミハラ（161）の定義', () => {
     const m = 2;
     const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Wind', hasCore: true };
     const input: TeamInput = {
-      slots: [slotOf(822), slotOf(20), slotOf(MIHARA)],
+      slots: [fixedSlot(822), fixedSlot(20), fixedSlot(MIHARA)],
       enemy,
       durationSeconds: 180,
       burst: true,

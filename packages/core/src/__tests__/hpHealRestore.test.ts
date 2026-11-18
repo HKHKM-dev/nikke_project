@@ -112,7 +112,7 @@ describe('紅蓮の現在の HP▼ とナガの S2 の回復', () => {
   });
 
   it('keeps the ratio falling without the amount (a heal that does not restore HP)', () => {
-    const plan = run(fixedSlot(NAGA, nagaWithoutAmount()));
+    const plan = run(fixedSlot(NAGA, { definition: nagaWithoutAmount() }));
     const { ratios } = plan.history.hpRatios[0]!;
     expect(ratios.every((r, i) => i === 0 || r < ratios[i - 1]!)).toBe(true);
     expect(s2Of(plan).length).toBeGreaterThan(0);

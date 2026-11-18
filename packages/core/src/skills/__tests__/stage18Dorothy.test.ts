@@ -2,34 +2,16 @@
 // （periodShorten の elapsed。クールタイムを縮める窓）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
-import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { effectFrameOf } from '../../burst/schedule.ts';
 import { runSimulation } from '../../sim/engine.ts';
-import type { TeamSlotInput } from '../../team.ts';
-import { rawDefinition } from '../../__tests__/teamHelpers.ts';
-import { MAX_SKILL_LEVELS } from '../resolve.ts';
+import { fixedSlot, type FixedSlotOptions, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { elapsedShortenedTimerFrames } from '../timeline.ts';
 import { parseSkillDefinition } from '../types.ts';
-import { characterOf } from '../../__tests__/data.ts';
 
 const DOROTHY = 233;
-
-function slotOf(rid: number): TeamSlotInput {
-  const character = characterOf(rid);
-  const fixed = computeFixedSpecAttack(character);
-  return {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    hpOverride: computeFixedSpecHp(character),
-    condition: { coreHitRate: 1, distanceBonus: false, hitRate: 1 },
-    skills: {
-      definition: parseSkillDefinition(rawDefinition(rid)),
-      levels: MAX_SKILL_LEVELS,
-      treasurePhase: 0,
-    },
-  };
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 1, distanceBonus: false, hitRate: 1 }, hp: true };
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
 
@@ -46,7 +28,13 @@ describe('クールタイムを縮める窓（elapsedShortenedTimerFrames）', (
 });
 
 describe('ドロシー単騎', () => {
-  const r = runSimulation({ slots: [slotOf(DOROTHY)], enemy, durationSeconds: 180, burst: true, controlledSlot: 0 });
+  const r = runSimulation({
+    slots: [fixedSlot(DOROTHY, SLOT_OPTIONS)],
+    enemy,
+    durationSeconds: 180,
+    burst: true,
+    controlledSlot: 0,
+  });
   const hits = r.skillHits.filter((h) => h.effect.source.skill === 'skill2').map((h) => h.frame);
   // 20 秒は 1177f、縮めた 2 秒は 118f。発現の窓の 5 回が入る 600f と、その後の 1 回まで戦闘の中にあるバーストだけを見る
   const LONG = 1177;

@@ -8,37 +8,15 @@
 // 足すと集計の値になることを固定する。
 import { describe, expect, it } from 'vitest';
 import type { EnemyEvent, EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import type { TreasurePhase } from '../skills/treasure.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
 import { runTeam } from './runTeam.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { ShotParams } from '../types.ts';
 import { framesToGameSeconds } from '../time.ts';
 import { makeCharacter } from './fixtures.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
-
-function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput {
-  const character = characterOf(id);
-  const fixed = computeFixedSpecAttack(character);
-  const slot: TeamSlotInput = {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-  };
-  if (DEFINED_IDS.has(id)) {
-    slot.skills = {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-      treasurePhase,
-    };
-  }
-  return slot;
-}
+import { fixedSlot } from './teamHelpers.ts';
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
 
@@ -49,7 +27,7 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
 // 2026-09-28 の起票の編成（リター + ニヒリスター + アリス + 紅蓮BS + モダニア）。リターの S1 の最大装弾数▲は味方全体で、全枠が窓を持つ
 const LRNAM = team([fixedSlot(82), fixedSlot(261), fixedSlot(191), fixedSlot(225), fixedSlot(260)], 2);
 // 録画 0037: 窓を持つのはドレイク（バーストの自分への最大装弾数▲）だけ
-const REC37 = team([fixedSlot(822), fixedSlot(20), fixedSlot(101, 3)], 2);
+const REC37 = team([fixedSlot(822), fixedSlot(20), fixedSlot(101, { treasurePhase: 3 })], 2);
 // Stage 8 の 5 人: 射撃の窓が 1 つも掛からない
 const STAGE8 = team([fixedSlot(291), fixedSlot(20), fixedSlot(231), fixedSlot(101), fixedSlot(870)], 2);
 

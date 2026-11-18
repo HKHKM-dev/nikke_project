@@ -29,7 +29,7 @@ const rangeEnemy: EnemyInput = {
 
 /** 撮影の編成。メイデンは 3 枠目（操作） */
 function rangeTeam(ids: readonly number[], extra: Partial<TeamInput> = {}): TeamInput {
-  const slots = ids.map((id): TeamSlotInput => ({ ...fixedSlot(id), conditionMode: 'auto' }));
+  const slots = ids.map((id): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' }));
   return { slots, enemy: rangeEnemy, durationSeconds: 180, burst: true, controlledSlot: 2, ...extra };
 }
 

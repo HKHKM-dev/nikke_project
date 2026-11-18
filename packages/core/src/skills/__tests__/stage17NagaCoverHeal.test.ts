@@ -3,30 +3,19 @@
 // 射撃の回数起点の回復は、撃った枠より後ろの枠には同じフレーム、自分と前の枠には次のフレーム（skills/heals.ts の healFrameOf。C-0628 の形）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
-import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { planTeamRun } from '../../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { itemsOf } from '../holders.ts';
-import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
+import { fixedSlot, type FixedSlotOptions } from '../../__tests__/teamHelpers.ts';
 
 const TIA = 451;
 const NAGA = 450;
 const definitionOf = (rid: number) => parseSkillDefinition(rawDefinition(rid));
-
-function slotOf(rid: number, definition: SkillDefinition = definitionOf(rid)): TeamSlotInput {
-  const character = characterOf(rid);
-  const fixed = computeFixedSpecAttack(character);
-  return {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    hpOverride: computeFixedSpecHp(character),
-    condition: { coreHitRate: 1, distanceBonus: false, hitRate: 1 },
-    skills: { definition, levels: MAX_SKILL_LEVELS, treasurePhase: 0 },
-  };
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 1, distanceBonus: false, hitRate: 1 }, hp: true };
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
 const plan = (slots: TeamSlotInput[]) => {
@@ -45,7 +34,7 @@ function withoutCoverHeal(): SkillDefinition {
 }
 
 describe('ナガの S1 の遮蔽物 HP 回復とティアの S1（ティア（1 枠目）・ナガ（2 枠目））', () => {
-  const p = plan([slotOf(TIA), slotOf(NAGA)]);
+  const p = plan([fixedSlot(TIA, SLOT_OPTIONS), fixedSlot(NAGA, SLOT_OPTIONS)]);
   const nagaShots = p.shots[1]!.frames;
   // 通常攻撃 12 回ごと（値 01）
   const every = Number(characterOf(NAGA).skills.skill1.values[0]![9]);
@@ -72,7 +61,7 @@ describe('ナガの S1 の遮蔽物 HP 回復とティアの S1（ティア（1 
   });
 
   it('does not start the window from Naga without her cover heal (only from Tia own burst)', () => {
-    const q = plan([slotOf(TIA), slotOf(NAGA, withoutCoverHeal())]);
+    const q = plan([fixedSlot(TIA, SLOT_OPTIONS), fixedSlot(NAGA, { ...SLOT_OPTIONS, parsed: withoutCoverHeal() })]);
     const items = itemsOf(q.history, { holder: 0, sourceSlotIndex: 0, kind: 'timed', stat: 'attackDamage' });
     const bursts = q.schedule!.activations.filter((a) => a.slotIndex === 0);
     expect(items.length).toBe(bursts.length);
@@ -80,7 +69,7 @@ describe('ナガの S1 の遮蔽物 HP 回復とティアの S1（ティア（1 
   });
 
   it('lands on the same frame for a later slot (Naga in front of Tia)', () => {
-    const q = plan([slotOf(NAGA), slotOf(TIA)]);
+    const q = plan([fixedSlot(NAGA, SLOT_OPTIONS), fixedSlot(TIA, SLOT_OPTIONS)]);
     const shots = q.shots[0]!.frames.filter((_, k) => (k + 1) % every === 0);
     const starts = new Set(
       q.history.tracks.filter((t) => t.holder === 1 && t.sourceSlotIndex === 1).flatMap((t) => t.starts),
@@ -100,7 +89,7 @@ describe('リターの S2 の遮蔽物 HP 回復とティアの S1', () => {
     itemsOf(p.history, { holder, sourceSlotIndex: holder, kind: 'timed', stat: 'attackDamage' }).map((i) => i.start);
 
   it('starts Tia S1 attack damage up 28 f after every 15 s activation in a 2-unit team (Tia never bursts first)', () => {
-    const p = plan([slotOf(LITER), slotOf(TIA)]);
+    const p = plan([fixedSlot(LITER, SLOT_OPTIONS), fixedSlot(TIA, SLOT_OPTIONS)]);
     const starts = startsOf(p, 1);
     const fromLiter = Array.from(
       { length: Math.floor((p.frames - 1 - DELAY) / PERIOD) },
@@ -110,7 +99,7 @@ describe('リターの S2 の遮蔽物 HP 回復とティアの S1', () => {
   });
 
   it('does not choose anyone in a team of 3 or more (not modeled)', () => {
-    const p = plan([slotOf(LITER), slotOf(DELTA), slotOf(TIA)]);
+    const p = plan([fixedSlot(LITER, SLOT_OPTIONS), fixedSlot(DELTA, SLOT_OPTIONS), fixedSlot(TIA, SLOT_OPTIONS)]);
     const starts = startsOf(p, 2);
     expect(starts.filter((f) => (f - DELAY) % PERIOD === 0 && f > DELAY)).toEqual([]);
   });

@@ -2,32 +2,13 @@
 // （plan/design-heal-top-attack.md 2 節の A・5 節）。録画 0710 の編成（V-0517、C-0695）で、回復の対象とアスカの S1 を見る。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { healsOf } from './historyHelpers.ts';
-import { characterOf, rawDefinition } from './data.ts';
-
-type Raw = { skills: Record<string, { effects: Record<string, unknown>[] }> };
-
-/** 定義を読み、edit で生の JSON を書き換えてから解く（フォルクヴァンの回復のトリガー・機数を替え、効果を足すのに使う） */
-function fixedSlot(id: number, edit?: (raw: Raw) => void): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  const raw = rawDefinition<Raw>(id);
-  edit?.(raw);
-  return {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-    skills: { definition: parseSkillDefinition(raw), levels: MAX_SKILL_LEVELS },
-  };
-}
+import { fixedSlot } from './teamHelpers.ts';
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
 
@@ -80,10 +61,12 @@ describe('録画 0710 の編成（ラム・I-DOLL・サン・フォルクヴァ�
 // 順位に入れればフォルクヴァンがアスカより上になる。いまの定義には、回復と同じフレームに付く攻撃力▲は無い（設計書 3 節）
 describe('同じフレームに付く攻撃力▲（録画 0710 の編成で、回復を 1 機にする）', () => {
   const boosted = (trigger: string) =>
-    fixedSlot(FOLKWANG, (raw) => {
-      const effects = raw.skills.burst!.effects;
-      Object.assign(effects[0]!, { targetCount: 1, trigger });
-      effects.push({ kind: 'timed', trigger: 'burstUse', target: 'self', stat: 'attack', ref: 3, durationRef: 4 });
+    fixedSlot(FOLKWANG, {
+      edit: (raw) => {
+        const effects = raw.skills.burst!.effects;
+        Object.assign(effects[0]!, { targetCount: 1, trigger });
+        effects.push({ kind: 'timed', trigger: 'burstUse', target: 'self', stat: 'attack', ref: 3, durationRef: 4 });
+      },
     });
 
   it('leaves out the attack increase applied in the frame of the burst use (A)', () => {

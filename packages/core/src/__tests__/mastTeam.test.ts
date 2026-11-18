@@ -2,35 +2,18 @@
 // バーストのクリティカルダメージ▲と暴風（海風のスタックを写す 1 秒ごとのダメージ）が意図どおりに出るか
 import { describe, expect, it } from 'vitest';
 import { defenceAfterDown, type EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, computeFixedSpecDefence, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { computeFixedSpecDefence, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { ENEMY, itemsOf } from '../skills/holders.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
-import type { TeamInput, TeamSlotInput } from '../team.ts';
+import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { runTeam } from './runTeam.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
+import { characterOf } from './data.ts';
+import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
 
-function fixedSlot(id: number): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  const slot: TeamSlotInput = {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    defenceOverride: computeFixedSpecDefence(c),
-    condition: { coreHitRate: 0.1, distanceBonus: true },
-  };
-  if (DEFINED_IDS.has(id)) {
-    slot.skills = {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-    };
-  }
-  return slot;
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 0.1, distanceBonus: true }, defence: true };
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
 const MAST = 350;
@@ -38,16 +21,28 @@ const LITER = 82;
 
 const TEAMS: Record<string, { input: TeamInput; mast: number }> = {
   マスト単騎: {
-    input: { slots: [fixedSlot(MAST)], enemy, durationSeconds: 60, burst: false, controlledSlot: 0 },
+    input: { slots: [fixedSlot(MAST, SLOT_OPTIONS)], enemy, durationSeconds: 60, burst: false, controlledSlot: 0 },
     mast: 0,
   },
   'リター + マスト（撮影 B の見込みの編成）': {
-    input: { slots: [fixedSlot(LITER), fixedSlot(MAST)], enemy, durationSeconds: 60, burst: true, controlledSlot: 1 },
+    input: {
+      slots: [fixedSlot(LITER, SLOT_OPTIONS), fixedSlot(MAST, SLOT_OPTIONS)],
+      enemy,
+      durationSeconds: 60,
+      burst: true,
+      controlledSlot: 1,
+    },
     mast: 1,
   },
   '実戦寄り（リター + マスト + アリス + クラウン + ドレイク）': {
     input: {
-      slots: [fixedSlot(LITER), fixedSlot(MAST), fixedSlot(191), fixedSlot(330), fixedSlot(101)],
+      slots: [
+        fixedSlot(LITER, SLOT_OPTIONS),
+        fixedSlot(MAST, SLOT_OPTIONS),
+        fixedSlot(191, SLOT_OPTIONS),
+        fixedSlot(330, SLOT_OPTIONS),
+        fixedSlot(101, SLOT_OPTIONS),
+      ],
       enemy,
       durationSeconds: 180,
       burst: true,

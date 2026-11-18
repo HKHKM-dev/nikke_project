@@ -123,7 +123,7 @@ describe('バーストのキャプチャー数の▼（下限 1）', () => {
   raw.skills.skill1.effects.shift();
   raw.skills.skill1.effects[0]!.trigger = { everySeconds: 30, carry: true };
   const input = fixedTeam([304, 232, ELEGG_BS, 300], 2, { noBurstSlots: [3] });
-  input.slots[2] = fixedSlot(ELEGG_BS, raw);
+  input.slots[2] = fixedSlot(ELEGG_BS, { definition: raw });
   const plan = planTeamRun(input);
   const records = plan.history.counters.filter((c) => c.slotIndex === 2 && c.counter === 'ghostCapture');
   const valueAt = (f: number, after: boolean) =>

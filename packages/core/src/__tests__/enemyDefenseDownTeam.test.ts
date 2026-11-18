@@ -2,38 +2,19 @@
 // 通常攻撃と倍率ダメージで同じ防御力を引くこと、敵の件として味方全員に写ること、ルドミラ（190）の S1（最後の弾丸の次のフレームから 10 秒）
 import { describe, expect, it } from 'vitest';
 import { computeTriggerDamage, defenceAfterDown, type EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { ZERO_BUFFS } from '../skills/buffs.ts';
 import { computeSkillHit } from '../skills/burstDamage.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { ENEMY, itemsOf, valuePiecesOf } from '../skills/holders.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { makeCharacter } from './fixtures.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 const LUDMILLA = 190;
-function slotOf(id: number): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  const slot: TeamSlotInput = {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-  };
-  if (DEFINED_IDS.has(id)) {
-    slot.skills = {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-    };
-  }
-  return slot;
-}
-
 const empty = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
 const parse = (effect: Record<string, unknown>) =>
   parseSkillDefinition({
@@ -124,7 +105,7 @@ describe('ルドミラ（190）の S1（C-0556）', () => {
   };
 
   it('holds the defense down on the enemy from the frame after each last bullet, for 10 seconds', () => {
-    const plan = run([slotOf(LUDMILLA)]);
+    const plan = run([fixedSlot(LUDMILLA)]);
     const lastShots = plan.shots[0]!.lastShotFrames!;
     expect(lastShots.length).toBeGreaterThan(2);
     const items = itemsOf(plan.history, { holder: ENEMY, stat: 'enemyDefenseDown' });
@@ -135,7 +116,7 @@ describe('ルドミラ（190）の S1（C-0556）', () => {
   });
 
   it('maps the enemy debuff onto every ally (the enemy takes all hits)', () => {
-    const plan = run([slotOf(LUDMILLA), slotOf(20)]);
+    const plan = run([fixedSlot(LUDMILLA), fixedSlot(20)]);
     const pieces = valuePiecesOf(plan.history).filter((p) => p.effect.stat === 'enemyDefenseDown');
     expect(new Set(pieces.map((p) => p.slotIndex))).toEqual(new Set([0, 1]));
     expect(pieces.every((p) => p.sourceSlotIndex === 0)).toBe(true);

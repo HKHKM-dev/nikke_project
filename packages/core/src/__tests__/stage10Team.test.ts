@@ -2,36 +2,17 @@
 // 実データのキャラ（スペック固定）で、既存の録画 0019・0037 の弾数表示と、撮影予定の録画 A・B の編成を固定する。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { firingParams } from '../frame/firing.ts';
 import { countShotsInRanges, type ShotLog } from '../frame/shots.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import type { TreasurePhase } from '../skills/treasure.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { type TeamInput, type TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
+import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
 
-function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput {
-  const character = characterOf(id);
-  const fixed = computeFixedSpecAttack(character);
-  const slot: TeamSlotInput = {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 0, distanceBonus: false },
-  };
-  if (DEFINED_IDS.has(id)) {
-    slot.skills = {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-      treasurePhase,
-    };
-  }
-  return slot;
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 0, distanceBonus: false } };
 
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: false };
 
@@ -55,12 +36,26 @@ function magazineSizes(log: ShotLog): number[] {
 }
 
 const TEAMS: Record<string, TeamInput> = {
-  '録画 0037（ラム + デルタ + ドレイク宝物 3）': team([fixedSlot(822), fixedSlot(20), fixedSlot(101, 3)], 2),
-  '録画 0019（エーテル + デルタ + ノワール）': team([fixedSlot(291), fixedSlot(20), fixedSlot(271)], 2),
-  '録画 A（リター + デルタ + ドレイク宝物 3）': team([fixedSlot(82), fixedSlot(20), fixedSlot(101, 3)], 2),
+  '録画 0037（ラム + デルタ + ドレイク宝物 3）': team(
+    [fixedSlot(822, SLOT_OPTIONS), fixedSlot(20, SLOT_OPTIONS), fixedSlot(101, { ...SLOT_OPTIONS, treasurePhase: 3 })],
+    2,
+  ),
+  '録画 0019（エーテル + デルタ + ノワール）': team(
+    [fixedSlot(291, SLOT_OPTIONS), fixedSlot(20, SLOT_OPTIONS), fixedSlot(271, SLOT_OPTIONS)],
+    2,
+  ),
+  '録画 A（リター + デルタ + ドレイク宝物 3）': team(
+    [fixedSlot(82, SLOT_OPTIONS), fixedSlot(20, SLOT_OPTIONS), fixedSlot(101, { ...SLOT_OPTIONS, treasurePhase: 3 })],
+    2,
+  ),
   // 録画 0040 と同じ枠順（アドミ・ユニ・ラム（操作）・クイーン（真））
   '録画 B（アドミ + ユニ + ラム + クイーン（真））': team(
-    [fixedSlot(172), fixedSlot(160), fixedSlot(822), fixedSlot(870)],
+    [
+      fixedSlot(172, SLOT_OPTIONS),
+      fixedSlot(160, SLOT_OPTIONS),
+      fixedSlot(822, SLOT_OPTIONS),
+      fixedSlot(870, SLOT_OPTIONS),
+    ],
     2,
   ),
 };
@@ -79,7 +74,9 @@ describe('録画 0037: ドレイクの最大装弾数（8.5）', () => {
   });
 
   it('holds 15 with the base burst only (9 × 1.7218 = 15.496, rounded to nearest)', () => {
-    const plan = planTeamRun(team([fixedSlot(822), fixedSlot(20), fixedSlot(101, 0)], 2));
+    const plan = planTeamRun(
+      team([fixedSlot(822, SLOT_OPTIONS), fixedSlot(20, SLOT_OPTIONS), fixedSlot(101, SLOT_OPTIONS)], 2),
+    );
     expect(Math.max(...magazineSizes(plan.shots[2]!))).toBe(15);
   });
 });
@@ -104,7 +101,11 @@ describe('録画 0019: ノワールの最大装弾数 +5 発と弾丸チャー�
   it('keeps the first gauge-full frame (no firing buff before the first full burst)', () => {
     const base = planTeamRun({
       ...TEAMS['録画 0019（エーテル + デルタ + ノワール）']!,
-      slots: [fixedSlot(291), fixedSlot(20), { ...fixedSlot(271), skills: undefined }],
+      slots: [
+        fixedSlot(291, SLOT_OPTIONS),
+        fixedSlot(20, SLOT_OPTIONS),
+        { ...fixedSlot(271, SLOT_OPTIONS), skills: undefined },
+      ],
     });
     expect(plan.schedule!.gaugeFullFrames[0]).toBe(base.schedule!.gaugeFullFrames[0]);
     expect(plan.schedule!.fullBurstWindows[0]).toEqual(base.schedule!.fullBurstWindows[0]);

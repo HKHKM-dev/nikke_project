@@ -5,12 +5,12 @@ import { SG_PELLET_GAUGE_HIT_RATE } from '../burst/dynamic.ts';
 import type { BuildEffect } from '../buildEffects.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
-import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { characterOf, rawDefinition, readData } from './data.ts';
+import type { TeamInput } from '../team.ts';
+import { rawDefinition, readData } from './data.ts';
+import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
 
 const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
@@ -22,26 +22,12 @@ const rangeEnemy: EnemyInput = {
   target: profile,
   landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
 };
-
-function fixedSlot(id: number): TeamSlotInput {
-  const character = characterOf(id);
-  const fixed = computeFixedSpecAttack(character);
-  return {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-    conditionMode: 'auto',
-    skills: {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-    },
-  };
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { conditionMode: 'auto' };
 
 // V-0482 の撮り方 1（録画 0545・0546）: アニス：スター（AI）+ クラウン（操作・AUTO）+ デルタ（AI）
 const TEAM: TeamInput = {
-  slots: [fixedSlot(17), fixedSlot(330), fixedSlot(20)],
+  slots: [fixedSlot(17, SLOT_OPTIONS), fixedSlot(330, SLOT_OPTIONS), fixedSlot(20, SLOT_OPTIONS)],
   enemy: rangeEnemy,
   durationSeconds: 30,
   burst: true,
@@ -106,11 +92,11 @@ describe('アニス：スター S1 の味方のゲージ（allyGaugeAdd）', () 
     // 1 発の当たったペレットの数の期待値を shotCount × SG_PELLET_GAUGE_HIT_RATE × 弾丸命中率 でここから出す
     const hitRate = 0.9;
     const sgTeam = (buildEffects?: readonly BuildEffect[]): TeamInput => {
-      const isabel = fixedSlot(231);
+      const isabel = fixedSlot(231, SLOT_OPTIONS);
       return {
         ...TEAM,
         slots: [
-          fixedSlot(17),
+          fixedSlot(17, SLOT_OPTIONS),
           { ...isabel, condition: { ...isabel.condition, hitRate }, conditionMode: 'manual', buildEffects },
         ],
       };

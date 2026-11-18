@@ -88,7 +88,7 @@ describe('ベスティー：タクティカル・アップ + ユニ（最大装�
   function run(withRemoval: boolean) {
     const json = raw();
     if (!withRemoval) json.skills.skill1.effects.splice(1, 1);
-    const input: TeamInput = { ...withYuni, slots: [fixedSlot(BESTIE, json), fixedSlot(YUNI)] };
+    const input: TeamInput = { ...withYuni, slots: [fixedSlot(BESTIE, { definition: json }), fixedSlot(YUNI)] };
     const plan = planTeamRun(input);
     const pieces = slotPieces(plan, 0).filter((p) => p.effect.source.skill === 'skill1');
     const guide = pieces.filter((p) => p.effect.stat === 'chargeSpeed');

@@ -3,34 +3,15 @@
 // 段階 3 のドレイクで実測値を固定する（新規撮影なし）。段階 0（省略）は Stage 8 と同じになる。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import type { TreasurePhase } from '../skills/treasure.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { runTeam } from './runTeam.ts';
-import { type TeamInput, type TeamSlotInput, type TeamSlotResult } from '../team.ts';
+import { type TeamInput, type TeamSlotResult } from '../team.ts';
 import { gameSecondsToFrame } from '../time.ts';
-import { characterOf, DEFINED_IDS, rawDefinition, readData } from './data.ts';
+import { characterOf, readData } from './data.ts';
+import { fixedSlot, type FixedSlotOptions } from './teamHelpers.ts';
 
-/** スペック固定のニケ。定義があれば Lv10 と宝物の段階で載せる */
-function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput {
-  const character = characterOf(id);
-  const fixed = computeFixedSpecAttack(character);
-  const slot: TeamSlotInput = {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 0, distanceBonus: false },
-  };
-  if (DEFINED_IDS.has(id)) {
-    slot.skills = {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-      treasurePhase,
-    };
-  }
-  return slot;
-}
+/** このテストの枠の、既定と違う所 */
+const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 0, distanceBonus: false } };
 
 /** 灼熱の的（射撃場の BigArms）。ドレイクも灼熱なので属性有利なし */
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: false };
@@ -74,7 +55,11 @@ describe('ドレイクの宝物（データ）', () => {
 });
 
 describe('録画 0036: ドレイク単騎（宝物 3 段階）', () => {
-  const input: TeamInput = { slots: [fixedSlot(101, 3)], enemy, durationSeconds: 60 };
+  const input: TeamInput = {
+    slots: [fixedSlot(101, { ...SLOT_OPTIONS, treasurePhase: 3 })],
+    enemy,
+    durationSeconds: 60,
+  };
   const calc = runTeam(input);
   const drake = calc.slots[0]!;
   const hits = drake.skillHits.activations;
@@ -98,7 +83,7 @@ describe('録画 0036: ドレイク単騎（宝物 3 段階）', () => {
   });
 
   it('is at least as strong as the base version, and phase 0 is the base version', () => {
-    const base = runTeam({ ...input, slots: [fixedSlot(101, 0)] }).slots[0]!;
+    const base = runTeam({ ...input, slots: [fixedSlot(101, SLOT_OPTIONS)] }).slots[0]!;
     expect(base.treasurePhase).toBe(0);
     expect(base.treasureSlots).toEqual([]);
     expect(byMultiplier(base.skillHits.activations, 2.016)).toHaveLength(0);
@@ -108,7 +93,11 @@ describe('録画 0036: ドレイク単騎（宝物 3 段階）', () => {
 
 describe('録画 0037: ラム + デルタ + ドレイク（宝物 3 段階）', () => {
   const input: TeamInput = {
-    slots: [fixedSlot(822), fixedSlot(20), fixedSlot(101, 3)],
+    slots: [
+      fixedSlot(822, SLOT_OPTIONS),
+      fixedSlot(20, SLOT_OPTIONS),
+      fixedSlot(101, { ...SLOT_OPTIONS, treasurePhase: 3 }),
+    ],
     enemy,
     durationSeconds: 180,
     burst: true,

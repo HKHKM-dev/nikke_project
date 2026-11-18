@@ -4,35 +4,18 @@
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { elementMultiplier } from '../element.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { MAX_SKILL_LEVELS, resolvePassives } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import type { TeamInput, TeamSlotInput } from '../team.ts';
+import type { TeamInput } from '../team.ts';
 import type { Element } from '../types.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
-
-function fixedSlot(id: number): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  const slot: TeamSlotInput = {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-  };
-  if (DEFINED_IDS.has(id)) {
-    slot.skills = {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-    };
-  }
-  return slot;
-}
+import { characterOf, rawDefinition } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 function team(ids: number[], controlledSlot: number, element: Element): TeamInput {
   const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element, hasCore: true };
-  return { slots: ids.map(fixedSlot), enemy, durationSeconds: 180, burst: true, controlledSlot };
+  return { slots: ids.map((id) => fixedSlot(id)), enemy, durationSeconds: 180, burst: true, controlledSlot };
 }
 
 const QUEEN = 870;

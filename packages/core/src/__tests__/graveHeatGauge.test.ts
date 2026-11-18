@@ -26,7 +26,10 @@ const rangeEnemy: EnemyInput = {
 };
 
 /** 射撃場の表で条件を決める枠（json は定義の差し替え） */
-const slot = (id: number, json?: unknown): TeamSlotInput => ({ ...fixedSlot(id, json), conditionMode: 'auto' });
+const slot = (id: number, json?: unknown): TeamSlotInput => ({
+  ...fixedSlot(id, { definition: json }),
+  conditionMode: 'auto',
+});
 
 const HEAT = 'heatEmission' as NamedStateId;
 /** S1 の値 4（Lv10 の 38.96%）× target_burst_energy_pershot（9,000） */
@@ -144,7 +147,7 @@ describe('グレイブ S1 の放熱の味方のゲージ（allyGaugeAdd の whil
       const raw = rawDefinition<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>(514);
       const effect = raw.skills.skill1.effects.find((e) => e.kind === 'allyGaugeAdd')!;
       effect.while = w;
-      return () => fixedSlot(514, raw);
+      return () => fixedSlot(514, { definition: raw });
     };
     expect(withWhile({ selfState: { state: 'heatEmission', stacks: 2 } })).toThrow(/stack conditions/);
     expect(withWhile({ selfCounter: { counter: 'battery', atLeast: 1 } })).toThrow(/needs \{ selfState \}/);

@@ -2,32 +2,17 @@
 // （during）の付与・timed。定義は data/skills のもの（ソーダ：トゥインクルバニー・クイーン（真））と、それを書き換えたもの
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { itemsOf, valuePiecesOf } from '../skills/holders.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { characterOf, DEFINED_IDS, rawDefinition } from './data.ts';
+import { rawDefinition, type RawDefinition } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 const SODA = 314;
 const QUEEN = 870;
-type RawDefinition = { skills: Record<string, { effects: Record<string, unknown>[]; notes?: unknown[] }> };
-function slotOf(id: number, definition?: unknown): TeamSlotInput {
-  const c = characterOf(id);
-  const fixed = computeFixedSpecAttack(c);
-  const slot: TeamSlotInput = {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-  };
-  const raw = definition ?? (DEFINED_IDS.has(id) ? rawDefinition<RawDefinition>(id) : undefined);
-  if (raw !== undefined) slot.skills = { definition: parseSkillDefinition(raw), levels: MAX_SKILL_LEVELS };
-  return slot;
-}
-
 function run(slots: TeamSlotInput[], burst: boolean, controlledSlot: number) {
   const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Wind', hasCore: true };
   const input: TeamInput = { slots, enemy, durationSeconds: 180, burst, controlledSlot };
@@ -81,7 +66,7 @@ describe('スタック量の増加の読み込み', () => {
 
 describe('ソーダ：トゥインクルバニーのゴールデンチップ（C-0128）', () => {
   it('stacks 50 Golden Chips at the start of battle and keeps them to the end (66% critical damage)', () => {
-    const plan = run([slotOf(SODA)], false, 0);
+    const plan = run([fixedSlot(SODA)], false, 0);
     const items = itemsOf(plan.history, { holder: 0, state: 'goldenChip' });
     expect(items).toHaveLength(50);
     expect(items.every((i) => i.start === 0 && i.end === plan.history.frames)).toBe(true);
@@ -95,7 +80,7 @@ describe('ソーダ：トゥインクルバニーのゴールデンチップ（C
   it('stops at the max stacks of the grant', () => {
     const raw = structuredClone(rawDefinition<RawDefinition>(SODA));
     raw.skills.skill1!.effects[0] = { ...raw.skills.skill1!.effects[0]!, amountRef: undefined, amount: 60 };
-    const plan = run([slotOf(SODA, raw)], false, 0);
+    const plan = run([fixedSlot(SODA, { definition: raw })], false, 0);
     expect(itemsOf(plan.history, { holder: 0, state: 'goldenChip' })).toHaveLength(50);
   });
 });
@@ -112,7 +97,7 @@ describe('フルバースト中だけ数える付与（クイーン（真）の�
       maxStacks: 3,
       durationSeconds: 1,
     });
-    const plan = run([slotOf(822), slotOf(20), slotOf(QUEEN, raw)], true, q);
+    const plan = run([fixedSlot(822), fixedSlot(20), fixedSlot(QUEEN, { definition: raw })], true, q);
     const windows = plan.schedule!.fullBurstWindows;
     const starts = plan.history.applications.filter((a) => a.state === 'camouflage').map((a) => a.frame);
     expect(starts.length).toBeGreaterThan(0);

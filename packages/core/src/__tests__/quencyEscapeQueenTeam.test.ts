@@ -4,15 +4,14 @@
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
+import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { runSimulation } from '../sim/engine.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
-import type { TeamInput, TeamSlotInput } from '../team.ts';
+import type { TeamInput } from '../team.ts';
 import { runTeam } from './runTeam.ts';
-import { characterOf, rawDefinition, readData } from './data.ts';
+import { readData } from './data.ts';
+import { fixedSlot } from './teamHelpers.ts';
 
 const master = parseEnemyPresets(readData<Record<string, unknown>>('enemies.json'));
 const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
@@ -25,23 +24,6 @@ const rangeEnemy: EnemyInput = {
   landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
 };
 const plainEnemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
-
-function fixedSlot(id: number, auto: boolean): TeamSlotInput {
-  const character = characterOf(id);
-  const fixed = computeFixedSpecAttack(character);
-  return {
-    character,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false },
-    ...(auto ? { conditionMode: 'auto' as const } : {}),
-    skills: {
-      definition: parseSkillDefinition(rawDefinition(id)),
-      levels: MAX_SKILL_LEVELS,
-    },
-  };
-}
-
 const QUENCY = 403;
 // Lv10 の値（説明文の値 02〜07 と S1 の値 01〜03）
 const HIT = [0.0136, 0.0271, 0.0408];
@@ -50,7 +32,7 @@ const STACKS = [10, 10, 5];
 
 // V-0702 の撮影 S と同じ: 単騎（操作）・条件は自動・バーストなし・BigArms 灼熱の 3 分モード
 const SOLO: TeamInput = {
-  slots: [fixedSlot(QUENCY, true)],
+  slots: [fixedSlot(QUENCY, { conditionMode: 'auto' })],
   enemy: rangeEnemy,
   durationSeconds: 180,
   burst: false,
@@ -58,7 +40,11 @@ const SOLO: TeamInput = {
 };
 // V-0702 の撮影 B と同じ: リター（I）+ デルタ（II）+ クエンシー：エスケープクイーン（III・操作）・オートバースト
 const BURST: TeamInput = {
-  slots: [fixedSlot(82, true), fixedSlot(20, true), fixedSlot(QUENCY, true)],
+  slots: [
+    fixedSlot(82, { conditionMode: 'auto' }),
+    fixedSlot(20, { conditionMode: 'auto' }),
+    fixedSlot(QUENCY, { conditionMode: 'auto' }),
+  ],
   enemy: rangeEnemy,
   durationSeconds: 180,
   burst: true,
@@ -66,13 +52,7 @@ const BURST: TeamInput = {
 };
 // 実戦寄り（リター + デルタ + クエンシー：エスケープクイーン + アリス + モダニア）。手入力の条件
 const PRACTICAL: TeamInput = {
-  slots: [
-    fixedSlot(82, false),
-    fixedSlot(20, false),
-    fixedSlot(QUENCY, false),
-    fixedSlot(191, false),
-    fixedSlot(260, false),
-  ],
+  slots: [fixedSlot(82), fixedSlot(20), fixedSlot(QUENCY), fixedSlot(191), fixedSlot(260)],
   enemy: plainEnemy,
   durationSeconds: 180,
   burst: true,
