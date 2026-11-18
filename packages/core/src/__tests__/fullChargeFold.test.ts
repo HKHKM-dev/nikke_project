@@ -102,7 +102,7 @@ describe.each([
   const id = ids[index]!;
   const result = runSimulation({
     ...fixedTeam(ids, index),
-    slots: ids.map((x) => ({ ...fixedSlot(x), conditionMode: 'auto' as const })),
+    slots: ids.map((x) => fixedSlot(x, { conditionMode: 'auto' })),
     enemy,
     trace: true,
   });

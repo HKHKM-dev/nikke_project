@@ -8,9 +8,7 @@ import type { CharacterData } from '../../types.ts';
 import { fixedAttackBaseOf } from '../buffs.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
-import { characterOf, rawDefinition } from '../../__tests__/data.ts';
-
-type RawDefinition = { skills: Record<string, { effects: Record<string, unknown>[]; notes?: unknown[] }> };
+import { characterOf, rawDefinition, type RawDefinition } from '../../__tests__/data.ts';
 
 const guilty = characterOf(400);
 const sun = characterOf(308);

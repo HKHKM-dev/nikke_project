@@ -16,10 +16,9 @@ import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { Element } from '../types.ts';
 import { applicationsOf, piecesOf, stateItemsOf } from './historyHelpers.ts';
-import { rawDefinition } from './data.ts';
+import { rawDefinition, type RawDefinition } from './data.ts';
 import { fixedSlot } from './teamHelpers.ts';
 
-type RawDefinition = { skills: Record<string, { effects: Record<string, unknown>[]; notes?: unknown[] }> };
 const FLOWER = 304;
 const EUNHWA = 95;
 const SUN = 308;

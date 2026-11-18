@@ -16,7 +16,7 @@ export function characterOf(id: number): CharacterData {
 }
 
 /** 生の定義（読み込む前の JSON）のうち、テストが書き換える所の形 */
-export type RawDefinition = { skills: Record<string, { effects: Record<string, unknown>[] }> };
+export type RawDefinition = { skills: Record<string, { effects: Record<string, unknown>[]; notes?: unknown[] }> };
 
 /** data/skills の生の定義（読み込む前の JSON。書き換えて読み込みに渡す用） */
 export function rawDefinition<T = unknown>(id: number): T {

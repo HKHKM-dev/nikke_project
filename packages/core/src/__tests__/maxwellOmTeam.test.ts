@@ -23,7 +23,7 @@ const rangeEnemy: EnemyInput = {
   target: profile,
   landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
 };
-const autoSlot = (id: number): TeamSlotInput => ({ ...fixedSlot(id), conditionMode: 'auto' });
+const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
 
 /** 編成とマクスウェルの枠 */
 const CASES: Record<string, { input: TeamInput; maxwell: number }> = {

@@ -30,8 +30,8 @@ const rangeEnemy: EnemyInput = {
 
 /** 撮影の編成（ココア + ソルジャーF.A. + ラプラス（操作））。ラプラスは 3 枠目 */
 function rangeTeam(treasurePhase: TreasurePhase, raw?: Raw): TeamInput {
-  const slots = [311, 301].map((id): TeamSlotInput => ({ ...fixedSlot(id), conditionMode: 'auto' }));
-  const laplace: TeamSlotInput = { ...fixedSlot(LAPLACE, { definition: raw }), conditionMode: 'auto' };
+  const slots = [311, 301].map((id): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' }));
+  const laplace: TeamSlotInput = fixedSlot(LAPLACE, { definition: raw, conditionMode: 'auto' });
   laplace.skills!.treasurePhase = treasurePhase;
   return { slots: [...slots, laplace], enemy: rangeEnemy, durationSeconds: 180, burst: true, controlledSlot: 2 };
 }

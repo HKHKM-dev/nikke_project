@@ -12,11 +12,10 @@ import { METRICS } from '../records/observations/metrics/index.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { itemsOf, valuePiecesOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { characterOf, rawDefinition } from './data.ts';
+import { characterOf, rawDefinition, type RawDefinition } from './data.ts';
 import { fixedSlot } from './teamHelpers.ts';
 
 const SODA = 314;
-type RawDefinition = { skills: Record<string, { effects: Record<string, unknown>[]; notes?: unknown[] }> };
 const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
 const team = (slots: TeamSlotInput[], controlledSlot: number): TeamInput => ({
   slots,

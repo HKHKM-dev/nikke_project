@@ -67,7 +67,7 @@ const custom: EnemyInput = { defence: 100, element: null, hasCore: true };
 const profile = targetProfileForEnemy(master, custom)!;
 const WAITING: TeamInput = {
   ...team(
-    [ANIS_STAR, DELTA, CINDERELLA].map((id) => fixedSlot(id, { ...SLOT_OPTIONS, extra: { conditionMode: 'auto' } })),
+    [ANIS_STAR, DELTA, CINDERELLA].map((id) => fixedSlot(id, { ...SLOT_OPTIONS, conditionMode: 'auto' })),
     2,
   ),
   enemy: { ...custom, target: profile, landings: enemyLandingsOf(master, [], 180, profile) },
@@ -325,7 +325,7 @@ describe('デルタの S2 の防御力▲（C-0589）', () => {
         fixedSlot(ANIS_STAR, SLOT_OPTIONS),
         fixedSlot(DELTA, {
           ...SLOT_OPTIONS,
-          extra: { skills: { definition: parseSkillDefinition(without), levels: MAX_SKILL_LEVELS } },
+          definition: without,
         }),
         fixedSlot(CINDERELLA, SLOT_OPTIONS),
       ],

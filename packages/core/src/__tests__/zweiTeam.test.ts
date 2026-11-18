@@ -27,11 +27,8 @@ const rangeEnemy: EnemyInput = {
   landings: enemyLandingsOf(master, ['range-3min-jump'], 180, profile),
 };
 
-const slotOf = (id: number, treasurePhase: TreasurePhase): TeamSlotInput => {
-  const slot: TeamSlotInput = { ...fixedSlot(id), conditionMode: 'auto' };
-  if (id === ZWEI) slot.skills = { ...slot.skills!, treasurePhase };
-  return slot;
-};
+const slotOf = (id: number, treasurePhase: TreasurePhase): TeamSlotInput =>
+  fixedSlot(id, { conditionMode: 'auto', ...(id === ZWEI ? { treasurePhase } : {}) });
 const team = (ids: number[], controlledSlot: number, treasurePhase: TreasurePhase = 3): TeamInput => ({
   slots: ids.map((id) => slotOf(id, treasurePhase)),
   enemy: rangeEnemy,

@@ -12,10 +12,9 @@ import { appliedFrames } from '../skills/timeline.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { Element } from '../types.ts';
-import { characterOf, rawDefinition } from './data.ts';
+import { characterOf, rawDefinition, type RawDefinition } from './data.ts';
 import { fixedSlot } from './teamHelpers.ts';
 
-type RawDefinition = { skills: Record<string, { effects: Record<string, unknown>[]; notes?: unknown[] }> };
 const ANIS = 17;
 const FLOWER = 304;
 const QUEEN = 870;

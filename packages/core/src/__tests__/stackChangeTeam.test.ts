@@ -8,12 +8,11 @@ import { applyCompositionToTeam } from '../skills/composition.ts';
 import { itemsOf, valuePiecesOf } from '../skills/holders.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { rawDefinition } from './data.ts';
+import { rawDefinition, type RawDefinition } from './data.ts';
 import { fixedSlot } from './teamHelpers.ts';
 
 const SODA = 314;
 const QUEEN = 870;
-type RawDefinition = { skills: Record<string, { effects: Record<string, unknown>[]; notes?: unknown[] }> };
 function run(slots: TeamSlotInput[], burst: boolean, controlledSlot: number) {
   const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Wind', hasCore: true };
   const input: TeamInput = { slots, enemy, durationSeconds: 180, burst, controlledSlot };

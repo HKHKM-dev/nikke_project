@@ -29,8 +29,8 @@ const rangeEnemy: EnemyInput = {
 
 /** 撮影の編成（ココア + ソルジャーF.A. + ジュリア（操作））。ジュリアは 3 枠目 */
 function rangeTeam(treasurePhase: TreasurePhase): TeamInput {
-  const slots = [311, 301].map((id): TeamSlotInput => ({ ...fixedSlot(id), conditionMode: 'auto' }));
-  const julia: TeamSlotInput = { ...fixedSlot(JULIA), conditionMode: 'auto' };
+  const slots = [311, 301].map((id): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' }));
+  const julia: TeamSlotInput = fixedSlot(JULIA, { conditionMode: 'auto' });
   julia.skills!.treasurePhase = treasurePhase;
   return { slots: [...slots, julia], enemy: rangeEnemy, durationSeconds: 180, burst: true, controlledSlot: 2 };
 }
