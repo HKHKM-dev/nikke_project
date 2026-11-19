@@ -1394,7 +1394,7 @@ html:has(.modern-view-container) {
   font-size: 0.85rem;
 }
 /* 縦長・四角の切り替えで、いまの形を強く出す */
-/* 立ち絵の形の切り替え（バッジ ui_mcu・ui_cu を横に並べる）。大きさは絞り込みのバッジの幅（24px）にそろえる */
+/* 立ち絵の形の切り替え（バッジ ui_mcu・矢印 ui_arrow・ui_cu を横に並べる）。大きさは絞り込みのバッジの幅（24px）にそろえる */
 .char-tray-shape-button {
   gap: 4px;
   padding: 2px;
@@ -1403,6 +1403,13 @@ html:has(.modern-view-container) {
   display: block;
   width: 24px;
   height: 24px;
+}
+/* 矢印は枠も地も無いので、文字の色で塗る（テーマで変わる） */
+.char-tray-shape-arrow {
+  display: block;
+  width: 16px;
+  height: 16px;
+  --badge-main: currentColor;
 }
 .char-tray-shape-icon:not(.char-tray-shape-current) {
   opacity: 0.45;

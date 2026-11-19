@@ -32,6 +32,11 @@ describe('バッジの対応表', () => {
     expect(ids.filter((id, i) => ids.indexOf(id) !== i)).toEqual([]);
   });
 
+  it('外の <svg> の塗り（書き出しが中の要素から移したもの）は、スプライトの symbol でも効く', () => {
+    const arrow = /<symbol id="badge-ui_arrow"[^>]*>([\s\S]*?)<\/symbol>/.exec(BADGE_SYMBOLS)?.[1];
+    expect(arrow).toMatch(/^<g fill="var\(--badge-main,#ffffff\)">/);
+  });
+
   // 名前を変えたり打ち間違えたりすると、そのバッジは差し色の既定の灰のままになる
   const css = readFileSync(fileURLToPath(new URL('../../styles.css', import.meta.url)), 'utf8');
   it('styles.css の値ごとの色（.badge-<名前>）は、スプライトにあるバッジを指す', () => {
