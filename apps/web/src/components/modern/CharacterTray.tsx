@@ -1,6 +1,6 @@
 import { useDroppable } from '@dnd-kit/core';
 import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
-import { memo, useContext, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
+import { Fragment, memo, useContext, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
 import {
   RETURN_BADGE,
   TRAY_SHAPE_BADGES,
@@ -520,12 +520,18 @@ function TrayShapeToggle({ shape, onToggle }: { shape: TrayShape; onToggle: () =
       aria-label={`立ち絵の形: ${TRAY_SHAPE_LABEL[shape]}（押すと切り替える）`}
       onClick={onToggle}
     >
-      {(['tall', 'square'] as const).map((s) => (
-        <BadgeIcon
-          key={s}
-          className={`char-tray-shape-icon ${s === shape ? 'char-tray-shape-current' : ''}`}
-          name={TRAY_SHAPE_BADGES[s]}
-        />
+      {(['tall', 'square'] as const).map((s, i) => (
+        <Fragment key={s}>
+          {i > 0 && (
+            <span className="char-tray-shape-arrow" aria-hidden="true">
+              ↔
+            </span>
+          )}
+          <BadgeIcon
+            className={`char-tray-shape-icon ${s === shape ? 'char-tray-shape-current' : ''}`}
+            name={TRAY_SHAPE_BADGES[s]}
+          />
+        </Fragment>
       ))}
     </button>
   );

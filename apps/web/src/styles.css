@@ -213,12 +213,11 @@ header h1 {
   align-items: center;
   gap: 8px;
 }
-/* 枠と地を出さず、絵だけのボタン（アカウントと設定・元に戻す・スロットの右上・絞り込みのクリア・立ち絵の形の切り替え） */
+/* 枠と地を出さず、絵だけのボタン（アカウントと設定・元に戻す・スロットの右上・絞り込みのクリア） */
 .settings-menu-button,
 .modern-slot-undo-button,
 .modern-slot-icon-button,
-.char-tray-filter-clear,
-.char-tray-shape-button {
+.char-tray-filter-clear {
   border: none;
   background: none;
   box-shadow: none;
@@ -1422,11 +1421,15 @@ html:has(.modern-view-container) {
   padding: 4px 10px;
   font-size: 0.85rem;
 }
-/* 縦長・四角の切り替えで、いまの形を強く出す */
-/* 立ち絵の形の切り替え（バッジ ui_mcu・ui_cu を横に並べる）。大きさは絞り込みのバッジの幅（24px）にそろえる */
+/* 立ち絵の形の切り替え（バッジ ui_mcu・ui_cu を、間に左右両向きの矢印を挟んで横に並べる。ほかのボタンと同じ枠で囲む）。
+   大きさは絞り込みのバッジの幅（24px）にそろえる */
 .char-tray-shape-button {
   gap: 4px;
-  padding: 2px;
+  padding: 2px 6px;
+}
+.char-tray-shape-arrow {
+  font-size: 1rem;
+  line-height: 1;
 }
 .char-tray-shape-icon {
   display: block;
