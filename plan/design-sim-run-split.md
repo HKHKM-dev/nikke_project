@@ -2,7 +2,7 @@
 
 - 何のための文書か: ヘッドレスの実行口 `packages/core/scripts/sim-run.ts` に直に書いてある表示（きっかけ・効果の値のラベル、表の行、`--trace` の行）を、行を作る関数に分けてテストを書く変更の、今の構造・案と得失・論点・段・確かめ方
 - 対象: `packages/core/scripts/sim-run.ts` と、新しく置く `packages/core/scripts/sim-run/` の下のファイルとテスト。計算（`runSimulation`・`simTeamResult`）と、出力の中身は変えない
-- 状態: 承認待ち（4 節）
+- 状態: 完了（9 節）
 - 関連: [verification-guide.md](verification-guide.md)・[skills-guide.md](skills-guide.md)（`npm run sim` を使う手順）、[design-workflow-simplification-15.md](design-workflow-simplification-15.md) 6 節（`--trace`）、[design-workflow-simplification-16.md](design-workflow-simplification-16.md) 2 節（引数の読み取り `cli.ts`）
 - 作成日: 2026-11-19
 - 調べた時点: main の 8be26a23
@@ -124,6 +124,34 @@
 - 出力の中身の見直し（列の名前・並び・英語と日本語が混ざっていること）。
 - `catalogDoc.ts` の `renderSkillCatalog` の分割、`fixedSpec.ts` の 3 つの関数の重なり（別の候補）。
 
-## 9. 経過
+## 9. 作り（2026-11-19）
+
+論点は 3 つとも推奨の案で承認された（論点 1 は案 b、論点 2・3 は案 a）。
+
+- **分けた先**（`packages/core/scripts/sim-run/`）:
+  - `labels.ts`: `effectValueText`・`itemLabel`・`triggerLabel`・`stateLabelOf`・`compactTimed`（中身は移しただけ）。
+  - `trace.ts`: `TRACE_KINDS`・`traceKindOf`・`traceText`・`parseTraceKinds`（出す種類と、知らない種類に分ける）・`traceLines`（種類と範囲で絞った行）。
+  - `tables.ts`: 表の行（`compositionRows`・`activationRows`・`rankingRows`・`instantRows`・`summaryRows`・`autoConditionRows`・`segmentRows`）と、1 行の文（`headerLine`・`landingsLine`・`enemyEventsLine`・`burstSummaryLine`・`chainTimeoutsLine`・`fullBurstIntervalsLine`・`totalLine`・`conditionNoteLines`・`conditionSkipsLine`・`dotLines`・`delayedHitLines`）、段の循環の 1 行と表（`cycleReport`）。どれも入力・`sim`・`result` を引数で受け、`console` を呼ばない。頭書きに出す引数は `RunSettings` にまとめた。
+- **`sim-run.ts`**: 988 行から 529 行。引数の読み取りと検査・入力の組み立て（中身は変えていない）と、`printReport`（行と文を今の順に出す）・`printTrace` だけ。`--help` に出る冒頭のコメントは変えていない。
+- **テスト**: 3 ファイル・54 件。きっかけの形ごとのラベル、全部の定義のきっかけを解決して通したラベルに穴（`undefined`・`NaN`）が無いこと、効果の値の種類ごとの文、状態の id、段のまとめ、`--trace` の行（種類・範囲・発の番号）、表の行と 1 行の文（決まった編成で、列・行の数・書式）。
+- [skills-guide.md](skills-guide.md) 1.4 節の CLI の表示の所を、分けた先に直した。
+
+**設計から変えた所**:
+
+- `--trace` の後の `process.exit(0)` を無くした（ふだんの経路と分かれ道にして、スクリプトの終わりまで進んで終わる）。出力をパイプで受けると、大きな出力の直後の `process.exit` で途中までしか出ないことがあった（単騎の `--trace all` をパイプで受けると 65,536 バイトで切れ、変更の後は 245,288 バイト全部が出る）。出す文は同じ。
+
+**見つけたが、変えていないもの**（出力と引数の検査を変えない決まりのため。課題にした）:
+
+- `--duration` に数でない値を渡すと、検査が無く、メモリを使い切って落ちる（`records/backlog/sim-run-duration-check.json`）。
+- 区間の表の `perTrigger` の内訳で、2 つ目・3 つ目の項にだけ小数が出る（`map` が渡す添字が、数を整える関数の桁の引数に入っている。`records/backlog/sim-run-per-trigger-digits.json`）。
+
+**確かめた結果**（6 節。基の版は main の 8be26a23）:
+
+- `npm run typecheck`・変えたファイルの lint・足したテストが通る。
+- **出力の突き合わせ**: 655 組で、標準出力・標準エラー・終了コードが基の版と一字も違わない（スタックトレースの行は、行番号が変わるので比べていない）。内訳は、定義のある全部のキャラの単騎とその `--trace all`（276 組）、10 編成 × オプションの組（約 320 組）、宝物の段階（24 組）、誤った引数と `--help`（35 組）。終了コードは 0 が 606 組、1 が 23 組、2 が 26 組。基の版は 2 回回して、出力が同じことを先に確かめた（パイプでなくファイルに受けた。上の `process.exit` のため）。
+- **分かれ道**: 出力の分かれ道（表・行・列に出る印 54 種類）を、突き合わせの組が通っているかを数えた。通らなかったのは 2 つで、「左端の味方」の印は編成を足して突き合わせ（3 組。同じ）、測っていない着地点（`unmeasured`）は単体テストで見ている。
+
+## 10. 経過
 
 - 2026-11-19: 起案。
+- 2026-11-19: 承認。実装した（9 節）。
