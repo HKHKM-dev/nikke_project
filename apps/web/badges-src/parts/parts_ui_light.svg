@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<svg viewBox="0 0 130 130" width="130" height="130" version="1.1" id="svg1" sodipodi:docname="parts_ui_light.svg" inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)" xml:space="preserve" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview id="namedview1" pagecolor="#505050" bordercolor="#eeeeee" borderopacity="1" inkscape:showpageshadow="0" inkscape:pageopacity="0" inkscape:pagecheckerboard="true" inkscape:deskcolor="#505050" showguides="true">
+    <sodipodi:guide position="0,130" orientation="0,130" id="guide2" inkscape:locked="false" />
+    <sodipodi:guide position="130,130" orientation="130,0" id="guide3" inkscape:locked="false" />
+    <sodipodi:guide position="130,0" orientation="0,-130" id="guide4" inkscape:locked="false" />
+    <sodipodi:guide position="0,0" orientation="-130,0" id="guide5" inkscape:locked="false" />
+  </sodipodi:namedview>
+  <defs id="defs1" />
+  <g id="content" inkscape:label="content">
+    <circle id="sun" inkscape:label="sun" cx="65" cy="65" r="17" style="fill:#ffffff;stroke:none" />
+    <g id="rays" inkscape:label="rays">
+      <path id="ray-1" inkscape:label="ray-1" d="M 65,39 V 26" style="fill:none;stroke:#ffffff;stroke-width:7.5;stroke-linecap:round" />
+      <path id="ray-2" inkscape:label="ray-2" d="M 83.385,46.615 92.577,37.423" style="fill:none;stroke:#ffffff;stroke-width:7.5;stroke-linecap:round" />
+      <path id="ray-3" inkscape:label="ray-3" d="M 91,65 H 104" style="fill:none;stroke:#ffffff;stroke-width:7.5;stroke-linecap:round" />
+      <path id="ray-4" inkscape:label="ray-4" d="M 83.385,83.385 92.577,92.577" style="fill:none;stroke:#ffffff;stroke-width:7.5;stroke-linecap:round" />
+      <path id="ray-5" inkscape:label="ray-5" d="M 65,91 V 104" style="fill:none;stroke:#ffffff;stroke-width:7.5;stroke-linecap:round" />
+      <path id="ray-6" inkscape:label="ray-6" d="M 46.615,83.385 37.423,92.577" style="fill:none;stroke:#ffffff;stroke-width:7.5;stroke-linecap:round" />
+      <path id="ray-7" inkscape:label="ray-7" d="M 39,65 H 26" style="fill:none;stroke:#ffffff;stroke-width:7.5;stroke-linecap:round" />
+      <path id="ray-8" inkscape:label="ray-8" d="M 46.615,46.615 37.423,37.423" style="fill:none;stroke:#ffffff;stroke-width:7.5;stroke-linecap:round" />
+    </g>
+  </g>
+</svg>
