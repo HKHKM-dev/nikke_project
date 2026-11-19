@@ -3,6 +3,7 @@ import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
 import { memo, useContext, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
 import {
   RETURN_BADGE,
+  TRAY_SHAPE_ARROW_BADGE,
   TRAY_SHAPE_BADGES,
   trayCollectionBadge,
   type BadgeFilters as BadgeFilterValues,
@@ -510,7 +511,7 @@ function TraySortMenu({ listOrder }: { listOrder: ListOrderControls }) {
   );
 }
 
-/** 立ち絵の縦長・四角の切り替え。絵はバッジ（縦長 ui_mcu・四角 ui_cu）で、いまの形でないほうを薄くする */
+/** 立ち絵の縦長・四角の切り替え。絵はバッジ（縦長 ui_mcu・矢印 ui_arrow・四角 ui_cu）で、いまの形でないほうを薄くする */
 function TrayShapeToggle({ shape, onToggle }: { shape: TrayShape; onToggle: () => void }) {
   return (
     <button
@@ -520,13 +521,15 @@ function TrayShapeToggle({ shape, onToggle }: { shape: TrayShape; onToggle: () =
       aria-label={`立ち絵の形: ${TRAY_SHAPE_LABEL[shape]}（押すと切り替える）`}
       onClick={onToggle}
     >
-      {(['tall', 'square'] as const).map((s) => (
-        <BadgeIcon
-          key={s}
-          className={`char-tray-shape-icon ${s === shape ? 'char-tray-shape-current' : ''}`}
-          name={TRAY_SHAPE_BADGES[s]}
-        />
-      ))}
+      <BadgeIcon
+        className={`char-tray-shape-icon ${shape === 'tall' ? 'char-tray-shape-current' : ''}`}
+        name={TRAY_SHAPE_BADGES.tall}
+      />
+      <BadgeIcon className="char-tray-shape-arrow" name={TRAY_SHAPE_ARROW_BADGE} />
+      <BadgeIcon
+        className={`char-tray-shape-icon ${shape === 'square' ? 'char-tray-shape-current' : ''}`}
+        name={TRAY_SHAPE_BADGES.square}
+      />
     </button>
   );
 }
