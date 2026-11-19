@@ -1,4 +1,4 @@
-// sim-run.ts の表に出す短いラベル: 効果の値・件の出どころ・きっかけ・状態の id と、同じ効果の段のまとめ
+// sim-run.ts の表に出す短いラベル: 効果の値・件の出どころ・きっかけ・状態の id
 import {
   isCounterWhileEffect,
   isHpWhileEffect,
@@ -76,24 +76,4 @@ export function triggerLabel(t: ResolvedTrigger): string {
 export function stateLabelOf(e: SkillEffect): string {
   if (e.kind === 'stackChange') return e.target === 'allies' ? ' allStackable' : ` ${e.state}`;
   return e.kind === 'state' || e.kind === 'removeState' ? ` ${e.state}` : '';
-}
-
-/** 同じ効果のスタックの段をまとめる（「critDamage+14.25% ×5」） */
-export function compactTimed<
-  T extends { sourceSlotIndex: number; effectIndex: number; subIndex?: number; source: { skill: string } },
->(effects: readonly T[]): { e: T; n: number }[] {
-  const out: { e: T; n: number }[] = [];
-  for (const e of effects) {
-    // 状態の中身は付与の中身の何番目か（subIndex）でも分ける
-    const found = out.find(
-      (x) =>
-        x.e.sourceSlotIndex === e.sourceSlotIndex &&
-        x.e.source.skill === e.source.skill &&
-        x.e.effectIndex === e.effectIndex &&
-        x.e.subIndex === e.subIndex,
-    );
-    if (found) found.n += 1;
-    else out.push({ e, n: 1 });
-  }
-  return out;
 }

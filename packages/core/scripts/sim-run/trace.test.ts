@@ -41,7 +41,10 @@ describe('出来事の列', () => {
       fixedSlot(id, { conditionMode: 'auto', hp: true, defence: true }),
     );
     events = runSimulation({
-      ...fixedTeam(slots, null, { enemy: rangeEnemyWithEvents({ element: null }) }),
+      ...fixedTeam(slots, null, {
+        durationSeconds: 30,
+        enemy: rangeEnemyWithEvents({ element: null, durationSeconds: 30 }),
+      }),
       trace: true,
     }).events;
   });
@@ -74,7 +77,7 @@ describe('出来事の列', () => {
     const before = events.filter((e) => e.kind === 'trigger' && e.slot === 0 && e.frame < start).length;
     expect(before).toBeGreaterThan(0);
     const line = traceLines(events, new Set(['shots']), start, Infinity).find((l) => l.includes(' 枠1 発 '))!;
-    expect(line.startsWith(`f${first.frame} `)).toBe(true);
+    expect(line).toMatch(new RegExp(`^f${first.frame} `));
     expect(line).toContain(` 枠1 発 ${before + 1}`);
   });
 });

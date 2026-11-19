@@ -1,16 +1,22 @@
 // sim-run.ts の表の行と 1 行の文
 import { beforeAll, describe, expect, it } from 'vitest';
+import { runTeam } from '../../src/__tests__/runTeam.ts';
 import { fixedSlot, fixedTeam, RANGE_BIGARMS, rangeEnemyWithEvents } from '../../src/__tests__/teamHelpers.ts';
+import type { CombatAttack } from '../../src/build.ts';
+import type { BuildEffects } from '../../src/buildEffects.ts';
 import { runSimulation, type SimResult } from '../../src/sim/engine.ts';
 import { simTeamResult } from '../../src/sim/teamResult.ts';
 import type { TeamInput, TeamResult, TeamSlotInput } from '../../src/team.ts';
 import {
   activationRows,
   autoConditionRows,
+  buildAttackLine,
+  buildEffectsLine,
   burstSummaryLine,
   chainTimeoutsLine,
+  compactTimed,
   compositionRows,
-  conditionNoteLines,
+  conditionNotesText,
   conditionSkipsLine,
   cycleReport,
   delayedHitLines,
@@ -22,6 +28,7 @@ import {
   landingsLine,
   rankingRows,
   segmentRows,
+  segmentsTitle,
   summaryRows,
   totalLine,
   type RunSettings,
@@ -29,19 +36,62 @@ import {
 
 const NUMBER = /^\d{1,3}(,\d{3})*$/;
 
-const SETTINGS: RunSettings = {
-  fixedSpec: true,
-  build: undefined,
-  manualBursts: undefined,
-  enemyPresetId: undefined,
-  conditionMode: 'auto',
-  condition: { coreHitRate: 1, hitRate: 1 },
-  midFar: undefined,
-  near: undefined,
-  far: undefined,
-};
+/** 条件が自動・スペック固定（最大 HP と防御力つき）の枠 */
+const autoSlot = (id: number, options: Parameters<typeof fixedSlot>[1] = {}): TeamSlotInput =>
+  fixedSlot(id, { conditionMode: 'auto', hp: true, defence: true, ...options });
+
+/** 出来事と的のある射撃場の敵（属性なし）での編成。既定は 180 秒 */
+const rangeTeam = (slots: readonly TeamSlotInput[], durationSeconds = 180): TeamInput =>
+  fixedTeam(slots, null, { durationSeconds, enemy: rangeEnemyWithEvents({ element: null, durationSeconds }) });
+
+describe('buildAttackLine・buildEffectsLine', () => {
+  it('writes the attack of a build with its parts', () => {
+    const combat: CombatAttack = {
+      attack: 120694,
+      growth: { level: 200, grade: 3, core: 0 },
+      gradeBase: 100000,
+      affection: 3000,
+      cube: 4000,
+      collection: 5000,
+      recycleRoom: 2000,
+      extra: 694,
+      gear: 6000,
+      coreSide: 105000,
+      withCore: 105000,
+    };
+    expect(buildAttackLine('名前', combat)).toBe(
+      'build 名前: attack 120694 = round((100000 + affection 3000 + recycle 2000) × core) 105000 + gear 6000 + cube 4000 + collection 5000 + extra 694',
+    );
+  });
+
+  it('lists the effects of a build and what was left out, and is undefined without either', () => {
+    const name = { ja: '名前', en: 'Name' };
+    const effect: BuildEffects['effects'][number] = {
+      source: { kind: 'cube', name, level: 6 },
+      stat: 'attack',
+      value: 0.0254,
+    };
+    const note: BuildEffects['notes'][number] = {
+      source: { kind: 'collection', name, level: 4 },
+      level: 'unsupported',
+      message: name,
+    };
+    expect(buildEffectsLine({ effects: [], notes: [] })).toBeUndefined();
+    expect(buildEffectsLine({ effects: [effect, effect], notes: [] })).toBe(
+      '  effects: cube attack +2.54%, cube attack +2.54%',
+    );
+    expect(buildEffectsLine({ effects: [], notes: [note] })).toBe(
+      '  effects: none; not applied: collection Name (unsupported)',
+    );
+  });
+});
 
 describe('headerLine', () => {
+  const SETTINGS: RunSettings = {
+    fixedSpec: true,
+    conditionMode: 'auto',
+    condition: { coreHitRate: 1, hitRate: 1 },
+  };
   const input = {
     durationSeconds: 180,
     burst: true,
@@ -79,16 +129,17 @@ describe('headerLine', () => {
     );
   });
 
-  it('writes the manual condition, and the burst that is off', () => {
-    const line = headerLine({ ...input, burst: false }, 10589, {
+  it('writes the manual condition without the fixed landings, and the burst that is off', () => {
+    const line = headerLine({ ...input, burst: false, burstModel: 'fixed' }, 10589, {
       ...SETTINGS,
       conditionMode: 'manual',
       condition: { coreHitRate: 0.5, hitRate: 0.8 },
-      // 手入力では、着地点の固定は出さない
       midFar: 'B',
     });
-    expect(line).toContain('burst off, ');
-    expect(line.endsWith('conditions manual (core 0.5, hit rate 0.8)')).toBe(true);
+    expect(line).toBe(
+      'duration 180s (10589f), burst off, fixed spec true, build none, controlled none (all AI), ' +
+        'enemy custom defence 100, element none, conditions manual (core 0.5, hit rate 0.8)',
+    );
   });
 });
 
@@ -101,12 +152,13 @@ describe('landingsLine・enemyEventsLine', () => {
         { start: 0, end: 600, landing: landing.id, band: landing.band },
         { start: 600, end: 1200, landing: mix, band: null },
         { start: 1200, end: 1800, landing: null, band: null },
-      ] as TeamResult['landings'],
+      ],
       RANGE_BIGARMS,
     );
     expect(line).toMatch(new RegExp(`^landings 0\\.0-\\d+\\.\\ds \\S.* \\[${landing.id}\\], `));
     expect(line).toMatch(/s \S.* \(mix\), /);
-    expect(line.endsWith('s unmeasured')).toBe(true);
+    expect(line).toMatch(/s unmeasured$/);
+    expect(landingsLine([], RANGE_BIGARMS)).toBeUndefined();
   });
 
   it('lists the events, with the jump windows when they were given', () => {
@@ -127,9 +179,39 @@ describe('conditionSkipsLine', () => {
       { frame: 60, sourceSlotIndex: 1 },
       { frame: 120, sourceSlotIndex: 0 },
       { frame: 180, sourceSlotIndex: 1 },
-    ] as unknown as TeamResult['history']['conditionSkips'];
+    ];
     expect(conditionSkipsLine(skips, 1)).toBe('condition skips: 2 (1.02, 3.06s)');
     expect(conditionSkipsLine(skips, 2)).toBeUndefined();
+  });
+});
+
+describe('compactTimed', () => {
+  const item = (sourceSlotIndex: number, skill: string, effectIndex: number, subIndex?: number) => ({
+    sourceSlotIndex,
+    effectIndex,
+    ...(subIndex === undefined ? {} : { subIndex }),
+    source: { skill },
+  });
+
+  it('merges the tiers of the same effect, keeping the first one and the order', () => {
+    const a = item(0, 'skill1', 0);
+    const b = item(1, 'skill1', 0);
+    expect(compactTimed([a, b, item(0, 'skill1', 0), item(0, 'skill1', 0)])).toEqual([
+      { e: a, n: 3 },
+      { e: b, n: 1 },
+    ]);
+  });
+
+  it('keeps apart the effects that differ in the slot, the skill, the effect index or the content index', () => {
+    const items = [
+      item(0, 'skill1', 0),
+      item(0, 'skill2', 0),
+      item(0, 'skill1', 1),
+      item(0, 'skill1', 0, 0),
+      item(0, 'skill1', 0, 1),
+    ];
+    expect(compactTimed(items).map((x) => x.n)).toEqual([1, 1, 1, 1, 1]);
+    expect(compactTimed([])).toEqual([]);
   });
 });
 
@@ -137,12 +219,11 @@ describe('計算の結果から作る行', () => {
   // 持続ダメージ（261）・段の循環（225）・最終攻撃力の順位・即時効果・遅れのある倍率ダメージがそろう編成
   const IDS = [82, 261, 191, 225, 260];
   let slots: TeamSlotInput[];
-  let input: TeamInput;
   let sim: SimResult;
   let result: TeamResult;
   beforeAll(() => {
-    slots = IDS.map((id) => fixedSlot(id, { conditionMode: 'auto', hp: true, defence: true }));
-    input = fixedTeam(slots, null, { enemy: rangeEnemyWithEvents({ element: null }) });
+    slots = IDS.map((id) => autoSlot(id));
+    const input = rangeTeam(slots);
     sim = runSimulation(input);
     result = simTeamResult(input, sim);
   });
@@ -169,16 +250,17 @@ describe('計算の結果から作る行', () => {
     for (const row of rows) expect(['I', 'II', 'III']).toContain(row.step);
 
     const intervals = fullBurstIntervalsLine(schedule);
-    expect(intervals.startsWith('full burst intervals ')).toBe(true);
+    expect(intervals).toMatch(/^full burst intervals \d/);
     expect(intervals.match(/\d+\.\d\ds/g)).toHaveLength(schedule.fullBurstWindows.length - 1);
     expect(chainTimeoutsLine({ ...schedule, chainTimeouts: [60, 600] })).toBe('chain timeouts at 1.02s, 10.20s');
+    expect(chainTimeoutsLine({ ...schedule, chainTimeouts: [] })).toBeUndefined();
   });
 
   it('lists the top-attack rankings once per fire and targets', () => {
     expect(result.history.rankings.length).toBeGreaterThan(0);
     const rows = rankingRows(result.history.rankings, slots);
     expect(rows.length).toBeGreaterThan(0);
-    expect(rows.length).toBeLessThanOrEqual(result.history.rankings.length);
+    expect(rows.length).toBeLessThan(result.history.rankings.length);
     expect(new Set(rows.map((r) => `${r.frame} ${r.from} ${r.targets}`)).size).toBe(rows.length);
     for (const row of rows) {
       expect(row.from).toMatch(/^slot \d (skill1|skill2|burst)$/);
@@ -187,16 +269,16 @@ describe('計算の結果から作る行', () => {
   });
 
   it('merges the instant effects of the same frame, kind and slot, keeping the total amount', () => {
-    expect(sim.instants.length).toBeGreaterThan(0);
     const rows = instantRows(sim.instants, slots);
-    expect(rows.length).toBeLessThanOrEqual(sim.instants.length);
+    expect(rows.length).toBeGreaterThan(0);
+    expect(rows.length).toBeLessThan(sim.instants.length);
     expect(new Set(rows.map((r) => `${r.time} ${r.kind} ${r.to}`)).size).toBe(rows.length);
     const total = (list: readonly { amount: number }[]) => list.reduce((sum, x) => sum + x.amount, 0);
     expect(total(rows)).toBeCloseTo(total(sim.instants), 6);
   });
 
   it('writes one summary row per slot, and the total', () => {
-    const rows = summaryRows(slots, sim, result);
+    const rows = summaryRows(sim, result, slots);
     expect(rows.map((r) => r.slot)).toEqual([1, 2, 3, 4, 5]);
     expect(rows.map((r) => r.name)).toEqual(slots.map((s) => s.character.name.ja));
     expect(Object.keys(rows[0]!)).toEqual([
@@ -228,10 +310,10 @@ describe('計算の結果から作る行', () => {
 
   it('shows the treasure phase and its slots', () => {
     // 宝物のあるキャラ（141）を段階 2 で回す
-    const treasure = [fixedSlot(141, { conditionMode: 'auto', hp: true, defence: true, treasurePhase: 2 })];
-    const team = fixedTeam(treasure, null, { enemy: rangeEnemyWithEvents({ element: null }) });
+    const treasure = [autoSlot(141, { treasurePhase: 2 })];
+    const team = rangeTeam(treasure, 30);
     const run = runSimulation(team);
-    expect(summaryRows(treasure, run, simTeamResult(team, run))[0]!.treasure).toMatch(/^2 \(\w+\+\w+\)$/);
+    expect(summaryRows(run, simTeamResult(team, run), treasure)[0]!.treasure).toMatch(/^2 \(\w+\+\w+\)$/);
   });
 
   it('lists the auto conditions and the condition notes of the slots', () => {
@@ -243,15 +325,18 @@ describe('計算の結果から作る行', () => {
       expect(row['distance bonus']).toMatch(/^\d+\.\d{3}%$/);
       expect(row.shots).toBeGreaterThan(0);
     }
-    for (const line of conditionNoteLines(result)) expect(line).toMatch(/^ {2}\[slot \d\] \w+: \S/);
+    const notes = conditionNotesText(result)!.split('\n');
+    expect(notes[0]).toBe('condition notes');
+    expect(notes.length).toBeGreaterThan(1);
+    for (const line of notes.slice(1)) expect(line).toMatch(/^ {2}\[slot \d\] \w+: \S/);
 
     // 手入力の条件の枠には、自動の条件の行が無い
     const manual = [fixedSlot(82)];
-    const team = fixedTeam(manual, null);
-    expect(autoConditionRows(simTeamResult(team, runSimulation(team)), manual)).toEqual([]);
+    expect(autoConditionRows(runTeam(fixedTeam(manual, null, { durationSeconds: 30 })), manual)).toEqual([]);
   });
 
   it('writes one row per segment, with the effects that hold in it', () => {
+    expect(segmentsTitle(1, slots[1]!)).toBe(`\n[slot 2] ${slots[1]!.character.name.ja} — segments`);
     for (const [i, slot] of slots.entries()) {
       const c = result.slots[i]!;
       const rows = segmentRows(slot, c);
@@ -260,11 +345,11 @@ describe('計算の結果から作る行', () => {
       for (const row of rows) {
         expect(row.ranges).toMatch(/^\d+\.\d-\d+\.\ds( \d+\.\d-\d+\.\ds)*$/);
         expect(row.damage).toMatch(NUMBER);
-        expect(String(row.perTrigger)).toMatch(/^\d[\d,]*( \(\d[\d,]*(\+\d[\d,.]*)+\))?$/);
+        expect(row.perTrigger).toMatch(/^\d[\d,]*( \(\d[\d,]*(\+\d[\d,.]*)+\))?$/);
         expect(row.timed).not.toMatch(/undefined|NaN|\[object/);
       }
     }
-    const timed = slots.flatMap((slot, i) => segmentRows(slot, result.slots[i]!).map((r) => String(r.timed)));
+    const timed = slots.flatMap((slot, i) => segmentRows(slot, result.slots[i]!).map((r) => r.timed));
     // 持続バフはきっかけ、同じ効果の段は ×N
     expect(timed.some((t) => /(^|, )burstUse \w+[+-]\d/.test(t))).toBe(true);
     expect(timed.some((t) => /% ×\d+/.test(t))).toBe(true);
@@ -272,28 +357,25 @@ describe('計算の結果から作る行', () => {
 
   it('shows the multiplier of one shot in the windows of a weapon change', () => {
     // バーストで使用武器が変わるキャラ（260）を、バーストが回る編成に入れる
-    const trio = [82, 261, 260].map((id) => fixedSlot(id, { conditionMode: 'auto', hp: true, defence: true }));
-    const team = fixedTeam(trio, null, { enemy: rangeEnemyWithEvents({ element: null }) });
-    const weapon = segmentRows(trio[2]!, simTeamResult(team, runSimulation(team)).slots[2]!).map((r) =>
-      String(r.weapon),
-    );
+    const trio = [82, 261, 260].map((id) => autoSlot(id));
+    const weapon = segmentRows(trio[2]!, runTeam(rangeTeam(trio, 30)).slots[2]!).map((r) => r.weapon);
     expect(weapon.some((w) => /^\d+\.\d\d%$/.test(w))).toBe(true);
     expect(weapon.some((w) => w === '')).toBe(true);
   });
 
   it('labels the contents of a state and the effects of a counter by what holds them', () => {
     // 状態の中身と、カウンタが N 以上の間だけ効く常時の効果を持つキャラ（103）
-    const solo = [fixedSlot(103, { conditionMode: 'auto', hp: true, defence: true })];
-    const team = fixedTeam(solo, null, { enemy: rangeEnemyWithEvents({ element: null }) });
-    const timed = segmentRows(solo[0]!, simTeamResult(team, runSimulation(team)).slots[0]!).map((r) => String(r.timed));
+    const solo = [autoSlot(103)];
+    const timed = segmentRows(solo[0]!, runTeam(rangeTeam(solo, 30)).slots[0]!).map((r) => r.timed);
     expect(timed.some((t) => /(^|, )while:[A-Za-z]+ \w+[+-]\d/.test(t))).toBe(true);
     expect(timed.some((t) => /(^|, )while:[A-Za-z]+>=\d+ \w+[+-]\d/.test(t))).toBe(true);
   });
 
   it('breaks down the cycle tiers, the dots and the delayed hits of the slots that have them', () => {
-    const cycles = slots.map((_, i) => cycleReport(i, result.slots[i]!, sim, result));
+    const cycles = slots.map((_, i) => cycleReport(i, sim, result));
     expect(cycles.map((c) => c !== undefined)).toEqual([false, false, false, true, false]);
     expect(cycles[3]!.line).toMatch(/^cycle tiers: A \d+\.\d\d% ×\d+ = \d[\d,]*(, [B-Z] \d+\.\d\d% ×\d+ = \d[\d,]*)*$/);
+    expect(cycles[3]!.rows.length).toBeGreaterThan(0);
     for (const row of cycles[3]!.rows) expect(row.window).toMatch(/^\d+\.\d\d-\d+\.\d\ds$/);
 
     const dots = slots.map((_, i) => dotLines(result.slots[i]!));
@@ -319,25 +401,41 @@ describe('計算の結果から作る行', () => {
 });
 
 describe('compositionRows', () => {
-  it('lists the effects with a composition condition, and whether they apply in the team', () => {
-    // 編成の条件のある効果を持つキャラ（271）
-    const withCondition = [271, 82].map((id) => fixedSlot(id));
-    const rows = compositionRows(withCondition, null);
-    expect(rows.length).toBeGreaterThan(0);
-    for (const row of rows) {
-      expect(row.slot).toBe(`slot 1 ${withCondition[0]!.character.name.ja}`);
-      expect(row.effect).toMatch(/^(skill1|skill2|burst)\[\d+\] \w+( \w+)?$/);
-      expect(row.condition).not.toBe('');
-      expect(typeof row.applies).toBe('boolean');
-    }
+  it('lists the effect with a squad condition, and whether a squad mate is in the team', () => {
+    // 同じ部隊の味方がいれば効く効果を持つキャラ（271）。270 は同じ部隊
+    const alone = [271, 82].map((id) => fixedSlot(id));
+    const row = {
+      slot: `slot 1 ${alone[0]!.character.name.ja}`,
+      effect: 'burst[2] timed',
+      condition: `same squad (${alone[0]!.character.squad}) present`,
+    };
+    expect(compositionRows(alone, null)).toEqual([{ ...row, applies: false }]);
+    const withMate = [271, 270].map((id) => fixedSlot(id));
+    expect(compositionRows(withMate, null).filter((r) => r.slot === row.slot)).toEqual([{ ...row, applies: true }]);
   });
 
-  it('is empty for a team without such effects, and for slots without a definition', () => {
-    expect(compositionRows([fixedSlot(82, { definition: null })], null)).toEqual([]);
-    const all = compositionRows(
-      [82, 261, 191, 225, 260].map((id) => fixedSlot(id)),
-      null,
-    );
-    for (const row of all) expect(row.condition).not.toBe('');
+  it('lists the effects that need a character in the team or out of it', () => {
+    // 95 がいるかどうかで効果が入れ替わるキャラ（93）
+    const rows = (ids: number[]) =>
+      compositionRows(
+        ids.map((id) => fixedSlot(id)),
+        null,
+      )
+        .filter((r) => r.slot.startsWith('slot 1 ') && r.effect.startsWith('skill1['))
+        .map((r) => `${r.effect}: ${r.condition} → ${r.applies}`);
+    expect(rows([93])).toEqual([
+      'skill1[0] timed: character 95 absent → true',
+      'skill1[1] timed: character 95 present → false',
+      'skill1[2] heal: character 95 absent → true',
+      'skill1[3] heal: character 95 present → false',
+    ]);
+    expect(rows([93, 95]).map((r) => r.endsWith('true'))).toEqual([false, true, false, true]);
+  });
+
+  it('adds the state id to a grant, and is empty for a slot without a definition', () => {
+    // バースト I の味方の有無で付与が入れ替わるキャラ（17）
+    const effects = compositionRows([fixedSlot(17)], null).map((r) => r.effect);
+    expect(effects.some((e) => /^skill1\[\d+\] state [A-Za-z]+$/.test(e))).toBe(true);
+    expect(compositionRows([fixedSlot(271, { definition: null })], null)).toEqual([]);
   });
 });

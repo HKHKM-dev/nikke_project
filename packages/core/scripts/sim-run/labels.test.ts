@@ -4,12 +4,15 @@ import { characterOf, DEFINED_IDS, rawDefinition } from '../../src/__tests__/dat
 import { parseSkillDefinition } from '../../src/skills/parse/definition.ts';
 import { resolveTrigger, type ItemEffect, type ResolvedTrigger } from '../../src/skills/resolve.ts';
 import { SKILL_SLOTS, type SkillEffect } from '../../src/skills/types.ts';
-import { compactTimed, effectValueText, stateLabelOf, triggerLabel } from './labels.ts';
+import { effectValueText, itemLabel, stateLabelOf, triggerLabel } from './labels.ts';
 
-/** 全部の定義の効果（キャラ・スロットつき） */
+/** 全部の定義の効果（そのスロットの説明文の値つき） */
 const EFFECTS = [...DEFINED_IDS].flatMap((rid) => {
   const definition = parseSkillDefinition(rawDefinition(rid));
-  return SKILL_SLOTS.flatMap((slot) => definition.skills[slot].effects.map((effect) => ({ rid, slot, effect })));
+  const character = characterOf(rid);
+  return SKILL_SLOTS.flatMap((slot) =>
+    definition.skills[slot].effects.map((effect) => ({ skill: character.skills[slot], effect })),
+  );
 });
 
 describe('triggerLabel', () => {
@@ -31,6 +34,7 @@ describe('triggerLabel', () => {
     [{ adjacentHpAtMost: 0.905 }, 'adjacentHp<=90.5%'],
     [{ adjacentHpFull: true }, 'adjacentHpFull'],
     [{ ended: 'firepowerCharge' }, 'ended:firepowerCharge'],
+    [{ summon: 'nearFeather', intervalSeconds: { 1: 6.7 }, startDelaySeconds: 0.67 }, 'summon:nearFeather'],
     [{ count: 'lastShot', every: 1 }, 'lastShot/1'],
     [{ count: 'normalShot', every: 1, chance: 0.05 }, 'normalShot@5%'],
     [{ count: 'teamHit', every: 100, during: { state: 'ghostPossession' } }, 'teamHit/100@ghostPossession'],
@@ -46,9 +50,9 @@ describe('triggerLabel', () => {
 
   // きっかけの形を足したときに、ラベルに穴（undefined・NaN・オブジェクトのまま）が出ないこと
   it('labels the trigger of every effect of every definition without holes', () => {
-    const labels = EFFECTS.flatMap(({ rid, slot, effect }) =>
+    const labels = EFFECTS.flatMap(({ skill, effect }) =>
       'trigger' in effect && effect.trigger !== undefined
-        ? [triggerLabel(resolveTrigger(effect.trigger, characterOf(rid).skills[slot], 10))]
+        ? [triggerLabel(resolveTrigger(effect.trigger, skill, 10))]
         : [],
     );
     expect(labels.length).toBeGreaterThan(0);
@@ -78,49 +82,28 @@ describe('effectValueText', () => {
   });
 });
 
-describe('stateLabelOf', () => {
-  it('adds the state id to the effects that name a state, and nothing to the others', () => {
-    const expected = (effect: SkillEffect): string => {
-      if (effect.kind === 'stackChange') return effect.target === 'allies' ? ' allStackable' : ` ${effect.state}`;
-      return effect.kind === 'state' || effect.kind === 'removeState' ? ` ${effect.state}` : '';
-    };
-    const kinds = new Set<string>();
-    for (const { effect } of EFFECTS) {
-      const label = stateLabelOf(effect);
-      expect(label).toBe(expected(effect));
-      if (label !== '') kinds.add(effect.kind);
-    }
-    // 定義に、状態を指す 3 種類が全部ある（どれかが無くなったら、このテストは何も見ていない）
-    expect([...kinds].sort()).toEqual(['removeState', 'stackChange', 'state']);
+describe('itemLabel', () => {
+  const item = (fields: Record<string, unknown>): ItemEffect => fields as unknown as ItemEffect;
+
+  it('labels an item by what holds it: the state, the counter, the HP ratio, or else the trigger', () => {
+    expect(itemLabel(item({ whileState: 'camouflage' }))).toBe('while:camouflage');
+    expect(itemLabel(item({ whileCounter: { counter: 'overEnergyStage', atLeast: 2 } }))).toBe(
+      'while:overEnergyStage>=2',
+    );
+    expect(itemLabel(item({ whileSelfHp: { atLeast: 0.5 } }))).toBe('while:hp>=0.5');
+    expect(itemLabel(item({ trigger: { count: 'burstUse', atLeast: 2 } }))).toBe('burstUse≥2');
   });
 });
 
-describe('compactTimed', () => {
-  const item = (sourceSlotIndex: number, skill: string, effectIndex: number, subIndex?: number) => ({
-    sourceSlotIndex,
-    effectIndex,
-    ...(subIndex === undefined ? {} : { subIndex }),
-    source: { skill },
-  });
+describe('stateLabelOf', () => {
+  const effect = (fields: Record<string, unknown>): SkillEffect => fields as unknown as SkillEffect;
 
-  it('merges the tiers of the same effect, keeping the first one and the order', () => {
-    const a = item(0, 'skill1', 0);
-    const b = item(1, 'skill1', 0);
-    expect(compactTimed([a, b, item(0, 'skill1', 0), item(0, 'skill1', 0)])).toEqual([
-      { e: a, n: 3 },
-      { e: b, n: 1 },
-    ]);
-  });
-
-  it('keeps apart the effects that differ in the slot, the skill, the effect index or the content index', () => {
-    const items = [
-      item(0, 'skill1', 0),
-      item(0, 'skill2', 0),
-      item(0, 'skill1', 1),
-      item(0, 'skill1', 0, 0),
-      item(0, 'skill1', 0, 1),
-    ];
-    expect(compactTimed(items).map((x) => x.n)).toEqual([1, 1, 1, 1, 1]);
-    expect(compactTimed([])).toEqual([]);
+  it('adds the state id to the effects that name a state, and nothing to the others', () => {
+    expect(stateLabelOf(effect({ kind: 'state', state: 'camouflage' }))).toBe(' camouflage');
+    expect(stateLabelOf(effect({ kind: 'removeState', state: 'metalSigma' }))).toBe(' metalSigma');
+    expect(stateLabelOf(effect({ kind: 'stackChange', state: 'relax', target: 'self' }))).toBe(' relax');
+    // 味方の全部のスタック可能バフへの増減は、状態を名指ししない
+    expect(stateLabelOf(effect({ kind: 'stackChange', target: 'allies', allStackable: true }))).toBe(' allStackable');
+    expect(stateLabelOf(effect({ kind: 'timed', trigger: 'burstUse' }))).toBe('');
   });
 });

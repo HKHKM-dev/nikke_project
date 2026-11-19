@@ -1,5 +1,7 @@
-// sim-run.ts が出す表の行と 1 行の文を作る（出すのは sim-run.ts。ここは console を呼ばない）。
-// 枠は 1 始まりで出す。秒はゲームの秒
+// sim-run.ts が標準出力に出す文字の全部を作る: 表の見出しと行、1 行の文（出すかどうかと順は sim-run.ts。ここは console を呼ばない）。
+// 出すものが無いときは、文は undefined、行は空の配列を返す。枠は 1 始まりで出す。秒はゲームの秒
+import type { CombatAttack } from '../../src/build.ts';
+import type { BuildEffects } from '../../src/buildEffects.ts';
 import { slotsByStep, type BurstSchedule } from '../../src/burst/schedule.ts';
 import type { EnemyEvent } from '../../src/damage.ts';
 import { LANDING_BAND_LABEL } from '../../src/enemies.ts';
@@ -11,12 +13,35 @@ import { SKILL_SLOTS } from '../../src/skills/types.ts';
 import type { TeamInput, TeamResult, TeamSlotInput, TeamSlotResult } from '../../src/team.ts';
 import { framesToGameSeconds, gameSecondsToFrame } from '../../src/time.ts';
 import type { Element, TargetProfile } from '../../src/types.ts';
-import { compactTimed, effectValueText, itemLabel, stateLabelOf, triggerLabel } from './labels.ts';
+import { effectValueText, itemLabel, stateLabelOf, triggerLabel } from './labels.ts';
 
 const fmt = (n: number, digits = 0) => n.toLocaleString('en-US', { maximumFractionDigits: digits });
 const pct = (n: number) => `${(n * 100).toFixed(3)}%`;
 
 type Slots = readonly TeamSlotInput[];
+
+/** 育成入力から作った戦闘中の攻撃力と、その内訳（--build の枠ごとに 1 行） */
+export function buildAttackLine(name: string, combat: CombatAttack): string {
+  return (
+    `build ${name}: attack ${combat.attack} = round((${combat.gradeBase} + affection ${combat.affection}` +
+    ` + recycle ${combat.recycleRoom}) × core) ${combat.withCore}` +
+    ` + gear ${combat.gear} + cube ${combat.cube} + collection ${combat.collection} + extra ${combat.extra}`
+  );
+}
+
+/** 育成入力の効果層（OL・キューブ・コレクション）の効果と、計算に入れなかったもの。どちらも無ければ undefined */
+export function buildEffectsLine(effects: BuildEffects): string | undefined {
+  if (effects.effects.length === 0 && effects.notes.length === 0) return undefined;
+  const pctOf = (v: number) => `${(v * 100).toFixed(2)}%`;
+  return (
+    `  effects: ${effects.effects.map((e) => `${e.source.kind} ${e.stat} +${pctOf(e.value)}`).join(', ') || 'none'}` +
+    (effects.notes.length > 0
+      ? `; not applied: ${effects.notes.map((n) => `${n.source.kind} ${n.source.name.en} (${n.level})`).join(', ')}`
+      : '')
+  );
+}
+
+export const COMPOSITION_TITLE = 'composition conditions (effects that do not apply are left out)';
 
 /**
  * 編成の条件（burstStepMix・squad・withCharacter・enemyElement・row）と、編成で決まる自分の状態の条件（selfState。
@@ -77,26 +102,23 @@ export function compositionRows(
 export type RunSettings = {
   fixedSpec: boolean;
   /** --build の値 */
-  build: string | undefined;
+  build?: string;
   /** --manual-bursts の値（渡したとおりの文） */
-  manualBursts: string | undefined;
+  manualBursts?: string;
   /** --enemy のプリセットの id */
-  enemyPresetId: string | undefined;
+  enemyPresetId?: string;
   conditionMode: 'auto' | 'manual';
   /** 手入力の条件 */
   condition: { coreHitRate: number; hitRate: number };
   /** 着地点の固定（--mid-far・--near・--far） */
-  midFar: string | undefined;
-  near: readonly string[] | undefined;
-  far: readonly string[] | undefined;
+  midFar?: string;
+  near?: readonly string[];
+  far?: readonly string[];
 };
 
 /** 頭書き（戦闘時間・バーストの回し方・育成・操作キャラ・敵・条件の決め方） */
 export function headerLine(
-  input: Pick<TeamInput, 'durationSeconds' | 'burst' | 'enemy'> & {
-    burstModel: 'fixed' | 'dynamic';
-    controlledSlot: number | null;
-  },
+  input: Required<Pick<TeamInput, 'durationSeconds' | 'burst' | 'enemy' | 'burstModel' | 'controlledSlot'>>,
   frames: number,
   settings: RunSettings,
 ): string {
@@ -116,8 +138,9 @@ export function headerLine(
   );
 }
 
-/** 着地点の区間（配分の区間は mix、測っていない区間は unmeasured） */
-export function landingsLine(landings: TeamResult['landings'], target: TargetProfile): string {
+/** 着地点の区間（配分の区間は mix、測っていない区間は unmeasured）。区間が無ければ undefined */
+export function landingsLine(landings: TeamResult['landings'], target: TargetProfile): string | undefined {
+  if (landings.length === 0) return undefined;
   const labelOf = (id: string | null): string => {
     if (id === null) return 'unmeasured';
     const band = target.landings.find((l) => l.id === id)?.band ?? id;
@@ -156,10 +179,7 @@ export function burstSummaryLine(
 const STEP_LABEL = { Step1: 'I', Step2: 'II', Step3: 'III' } as const;
 
 /** バーストの発動の表（フルバーストを開いた発動には、その長さと、開いたチェーンで撃った枠） */
-export function activationRows(
-  schedule: BurstSchedule,
-  slots: Slots,
-): { time: string; frame: number; step: string; nike: string; fullBurst: string; burstUsers: string }[] {
+export function activationRows(schedule: BurstSchedule, slots: Slots) {
   return schedule.activations.map((a) => ({
     time: `${framesToGameSeconds(a.frame).toFixed(2)}s`,
     frame: a.frame,
@@ -175,8 +195,9 @@ export function activationRows(
   }));
 }
 
-/** チェーン切れの秒 */
-export function chainTimeoutsLine(schedule: BurstSchedule): string {
+/** チェーン切れの秒。チェーン切れが無ければ undefined */
+export function chainTimeoutsLine(schedule: BurstSchedule): string | undefined {
+  if (schedule.chainTimeouts.length === 0) return undefined;
   return `chain timeouts at ${schedule.chainTimeouts.map((f) => `${framesToGameSeconds(f).toFixed(2)}s`).join(', ')}`;
 }
 
@@ -189,12 +210,11 @@ export function fullBurstIntervalsLine(schedule: BurstSchedule): string {
     .join(', ')}`;
 }
 
+export const RANKING_TITLE = 'top final ATK targets (topAttack)';
+
 /** 「最終攻撃力が最も高い味方 N 機」の発火ごとの順位。同じ発火の同じ対象（S1 の 2 効果など）はまとめる */
-export function rankingRows(
-  rankings: TeamResult['history']['rankings'],
-  slots: Slots,
-): Record<string, string | number>[] {
-  const merged = new Map<string, Record<string, string | number>>();
+export function rankingRows(rankings: TeamResult['history']['rankings'], slots: Slots) {
+  const merged = new Map<string, { time: string; frame: number; from: string; targets: string; tied: string }>();
   for (const r of rankings) {
     const key = `${r.frame}.${r.sourceSlotIndex}.${r.effect.source.skill}.${r.targets.join(',')}`;
     if (merged.has(key)) continue;
@@ -211,11 +231,11 @@ export function rankingRows(
   return [...merged.values()];
 }
 
+export const INSTANT_TITLE =
+  'instant effects (cooldownReduction: frames actually cut, negative when lengthened by an increase, ammoRefill: rounds added, heal: always 0, burstGauge: ratio of the gauge max)';
+
 /** 即時効果（CT 短縮・弾丸チャージ・回復など）。同じフレーム・同じ種類・同じ枠は量を足してまとめる */
-export function instantRows(
-  instants: SimResult['instants'],
-  slots: Slots,
-): { time: string; kind: string; from: string; to: string; amount: number }[] {
+export function instantRows(instants: SimResult['instants'], slots: Slots) {
   const merged = new Map<string, { time: string; kind: string; from: string; to: string; amount: number }>();
   for (const x of instants) {
     const key = `${x.frame}.${x.effect.kind}.${x.slotIndex}`;
@@ -233,7 +253,7 @@ export function instantRows(
 }
 
 /** 枠ごとの合計の表 */
-export function summaryRows(slots: Slots, sim: SimResult, result: TeamResult): Record<string, string | number>[] {
+export function summaryRows(sim: SimResult, result: TeamResult, slots: Slots) {
   return slots.map((slot, i) => {
     const s = sim.slots[i]!;
     const c = result.slots[i]!;
@@ -261,8 +281,10 @@ export function totalLine(result: TeamResult): string {
   return `TOTAL ${fmt(result.totalDamage)}`;
 }
 
+export const AUTO_CONDITION_TITLE = 'auto conditions (shot-weighted means)';
+
 /** 条件が自動の枠で使った条件の平均（1 パス目の射撃の列の発数で重みを付けた） */
-export function autoConditionRows(result: TeamResult, slots: Slots): Record<string, string | number>[] {
+export function autoConditionRows(result: TeamResult, slots: Slots) {
   return result.slots.flatMap((c, i) =>
     c?.autoCondition
       ? [
@@ -280,17 +302,43 @@ export function autoConditionRows(result: TeamResult, slots: Slots): Record<stri
   );
 }
 
-/** 条件の注記（自動の条件・着地点・命中率）の行 */
-export function conditionNoteLines(result: TeamResult): string[] {
-  return result.slots.flatMap((c, i) =>
+/** 条件の注記（自動の条件・着地点・命中率）。見出しと、注記ごとに 1 行。注記が無ければ undefined */
+export function conditionNotesText(result: TeamResult): string | undefined {
+  const lines = result.slots.flatMap((c, i) =>
     (c?.notes ?? [])
       .filter((n) => n.code.startsWith('auto-') || n.code.startsWith('landing-') || n.code === 'hit-rate')
       .map((n) => `  [slot ${i + 1}] ${n.level}: ${n.message.ja}`),
   );
+  return lines.length === 0 ? undefined : `condition notes\n${lines.join('\n')}`;
+}
+
+/** 枠ごとの区間の表の見出し（前に空行を 1 つ置く） */
+export function segmentsTitle(slotIndex: number, slot: TeamSlotInput): string {
+  return `\n[slot ${slotIndex + 1}] ${slot.character.name.ja} — segments`;
+}
+
+/** 同じ効果のスタックの段をまとめる（「critDamage+14.25% ×5」） */
+export function compactTimed<
+  T extends { sourceSlotIndex: number; effectIndex: number; subIndex?: number; source: { skill: string } },
+>(effects: readonly T[]): { e: T; n: number }[] {
+  const out: { e: T; n: number }[] = [];
+  for (const e of effects) {
+    // 状態の中身は付与の中身の何番目か（subIndex）でも分ける
+    const found = out.find(
+      (x) =>
+        x.e.sourceSlotIndex === e.sourceSlotIndex &&
+        x.e.source.skill === e.source.skill &&
+        x.e.effectIndex === e.effectIndex &&
+        x.e.subIndex === e.subIndex,
+    );
+    if (found) found.n += 1;
+    else out.push({ e, n: 1 });
+  }
+  return out;
 }
 
 /** バフ状態ごとの区間の表（枠 1 つ分）。発数は 1 パス目の射撃の列から数えた数 */
-export function segmentRows(slot: TeamSlotInput, c: TeamSlotResult): Record<string, string | number>[] {
+export function segmentRows(slot: TeamSlotInput, c: TeamSlotResult) {
   return c.segments.map((g) => ({
     ranges: g.ranges
       .map((r) => `${framesToGameSeconds(r.start).toFixed(1)}-${framesToGameSeconds(r.end).toFixed(1)}s`)
@@ -325,7 +373,7 @@ export function segmentRows(slot: TeamSlotInput, c: TeamSlotResult): Record<stri
 
 /** 条件「自分が 〈stat〉 増加状態なら」を満たさずに発火しなかった回数と秒（履歴の判定の記録）。無ければ undefined */
 export function conditionSkipsLine(
-  conditionSkips: TeamResult['history']['conditionSkips'],
+  conditionSkips: readonly { frame: number; sourceSlotIndex: number }[],
   slotIndex: number,
 ): string | undefined {
   const skips = conditionSkips.filter((x) => x.sourceSlotIndex === slotIndex);
@@ -338,13 +386,8 @@ export function conditionSkipsLine(
  * （窓の前の段なしの発数 p・窓の中の段・窓の後の最初の段が何発目か。plan/design-stage11-scarlet-bs.md 0.3・7.5 節）。
  * 段の循環の無い枠は undefined
  */
-export function cycleReport(
-  slotIndex: number,
-  c: TeamSlotResult,
-  sim: SimResult,
-  result: TeamResult,
-): { line: string; rows: Record<string, string | number>[] } | undefined {
-  const cycled = c.skillHits.activations.filter((a) => a.effect.cycle !== undefined);
+export function cycleReport(slotIndex: number, sim: SimResult, result: TeamResult) {
+  const cycled = (result.slots[slotIndex]?.skillHits.activations ?? []).filter((a) => a.effect.cycle !== undefined);
   if (cycled.length === 0) return undefined;
   const letter = (step: number) => String.fromCharCode(65 + step);
   const bySteps = new Map<number, { n: number; damage: number; multiplier: number }>();

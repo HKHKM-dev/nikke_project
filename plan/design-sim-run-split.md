@@ -129,16 +129,22 @@
 論点は 3 つとも推奨の案で承認された（論点 1 は案 b、論点 2・3 は案 a）。
 
 - **分けた先**（`packages/core/scripts/sim-run/`）:
-  - `labels.ts`: `effectValueText`・`itemLabel`・`triggerLabel`・`stateLabelOf`・`compactTimed`（中身は移しただけ）。
+  - `labels.ts`: `effectValueText`・`itemLabel`・`triggerLabel`・`stateLabelOf`（中身は移しただけ）。
   - `trace.ts`: `TRACE_KINDS`・`traceKindOf`・`traceText`・`parseTraceKinds`（出す種類と、知らない種類に分ける）・`traceLines`（種類と範囲で絞った行）。
-  - `tables.ts`: 表の行（`compositionRows`・`activationRows`・`rankingRows`・`instantRows`・`summaryRows`・`autoConditionRows`・`segmentRows`）と、1 行の文（`headerLine`・`landingsLine`・`enemyEventsLine`・`burstSummaryLine`・`chainTimeoutsLine`・`fullBurstIntervalsLine`・`totalLine`・`conditionNoteLines`・`conditionSkipsLine`・`dotLines`・`delayedHitLines`）、段の循環の 1 行と表（`cycleReport`）。どれも入力・`sim`・`result` を引数で受け、`console` を呼ばない。頭書きに出す引数は `RunSettings` にまとめた。
-- **`sim-run.ts`**: 988 行から 529 行。引数の読み取りと検査・入力の組み立て（中身は変えていない）と、`printReport`（行と文を今の順に出す）・`printTrace` だけ。`--help` に出る冒頭のコメントは変えていない。
-- **テスト**: 3 ファイル・54 件。きっかけの形ごとのラベル、全部の定義のきっかけを解決して通したラベルに穴（`undefined`・`NaN`）が無いこと、効果の値の種類ごとの文、状態の id、段のまとめ、`--trace` の行（種類・範囲・発の番号）、表の行と 1 行の文（決まった編成で、列・行の数・書式）。
+  - `tables.ts`: 標準出力に出す文字の全部を作る。表の見出し（定数）と行（`compositionRows`・`activationRows`・`rankingRows`・`instantRows`・`summaryRows`・`autoConditionRows`・`segmentRows`）、1 行の文（`buildAttackLine`・`buildEffectsLine`・`headerLine`・`landingsLine`・`enemyEventsLine`・`burstSummaryLine`・`chainTimeoutsLine`・`fullBurstIntervalsLine`・`totalLine`・`conditionNotesText`・`segmentsTitle`・`conditionSkipsLine`・`dotLines`・`delayedHitLines`）、段の循環の 1 行と表（`cycleReport`）、同じ効果の段のまとめ（`compactTimed`）。どれも入力・`sim`・`result` を引数で受け、`console` を呼ばない。出すものが無いときは、文は `undefined`、行は空の配列を返す。頭書きに出す引数は `RunSettings` にまとめた。
+- **`sim-run.ts`**: 988 行から 528 行。引数の読み取りと検査・入力の組み立て（中身は変えていない）と、出すかどうかと順を決める `printReport`・`printTrace` だけ。`--help` に出る冒頭のコメントは変えていない。
+- **テスト**: 4 ファイル・61 件。
+  - `sim-run/labels.test.ts`: きっかけの形ごとのラベル、全部の定義のきっかけを解決して通したラベルに穴（`undefined`・`NaN`）が無いこと、効果の値の種類ごとの文、件の出どころ、状態の id。
+  - `sim-run/trace.test.ts`: `--trace` の行（種類・範囲・発の番号）。
+  - `sim-run/tables.test.ts`: 表の行と 1 行の文（決まった編成で、列・行の数・書式。文は全文）。
+  - `sim-run.test.ts`: スクリプトを起動して、出す順・終了コード・標準エラーを見る（ふだんの経路と `--trace`）。
 - [skills-guide.md](skills-guide.md) 1.4 節の CLI の表示の所を、分けた先に直した。
 
 **設計から変えた所**:
 
 - `--trace` の後の `process.exit(0)` を無くした（ふだんの経路と分かれ道にして、スクリプトの終わりまで進んで終わる）。出力をパイプで受けると、大きな出力の直後の `process.exit` で途中までしか出ないことがあった（単騎の `--trace all` をパイプで受けると 65,536 バイトで切れ、変更の後は 245,288 バイト全部が出る）。出す文は同じ。
+
+**見直し**: 整理の観点（`/simplify`）で、表の見出しと `--build` の行（`build …`・`  effects: …`）も `tables.ts` に寄せ（境界を「標準出力の文字は全部 `sim-run/` が作る」にした）、「出すものが無い」の返し方をそろえ、`cycleReport` の引数から重なる枠の結果を外し、行の戻り値の型を推論に任せ、`compactTimed` を使う側（`tables.ts`）に移した。テストは、実装の写しになっていた期待値（状態の id・編成の条件）を直に書いた値に替え、追加の計算を 30 秒に縮め、起動して見るテストを足した。`process.exit` を呼ばない理由と、編成の条件の表を計算の前に出す理由を `sim-run.ts` の注記に書いた。見送った指摘: 出力をそのまま控えるテスト（計算の値が変わるたびに書き換えになる）、`toFixed(2)` の % の書式を 1 つの関数にまとめること（6 か所。桁の違う書式と名前を分けることになり、得が小さい）、編成の条件の取り出しが `skills/composition.ts` の写しであること（基の版からの形。課題にした: `records/backlog/composition-condition-rows.json`）。
 
 **見つけたが、変えていないもの**（出力と引数の検査を変えない決まりのため。課題にした）:
 

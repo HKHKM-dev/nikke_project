@@ -40,7 +40,7 @@ import {
 } from '../src/records/observations/setup.ts';
 import { ENEMY_PRESETS_PATH, MASTER_FILES } from '../src/load.ts';
 import type { GrowthInput } from '../src/stats.ts';
-import { runSimulation, type SimEvent, type SimResult } from '../src/sim/engine.ts';
+import { runSimulation, type SimEvent } from '../src/sim/engine.ts';
 import { simTeamResult } from '../src/sim/teamResult.ts';
 import { MAX_SKILL_LEVELS, type SkillLevels } from '../src/skills/resolve.ts';
 import type { TreasurePhase } from '../src/skills/treasure.ts';
@@ -52,11 +52,15 @@ import { gameSecondsToFrame } from '../src/time.ts';
 import { cliArgs, fail } from './cli.ts';
 import {
   activationRows,
+  AUTO_CONDITION_TITLE,
   autoConditionRows,
+  buildAttackLine,
+  buildEffectsLine,
   burstSummaryLine,
   chainTimeoutsLine,
+  COMPOSITION_TITLE,
   compositionRows,
-  conditionNoteLines,
+  conditionNotesText,
   conditionSkipsLine,
   cycleReport,
   delayedHitLines,
@@ -64,10 +68,13 @@ import {
   enemyEventsLine,
   fullBurstIntervalsLine,
   headerLine,
+  INSTANT_TITLE,
   instantRows,
   landingsLine,
+  RANKING_TITLE,
   rankingRows,
   segmentRows,
+  segmentsTitle,
   summaryRows,
   totalLine,
   type RunSettings,
@@ -309,21 +316,9 @@ function withBuild(
   const empty = emptyBuild();
   const build: BuildInput = { ...empty, ...rest, gear: { ...empty.gear, ...rest.gear } };
   const combat = computeCombatAttack(character, growth, build, masters, { treasurePhase: skills.treasurePhase });
-  console.log(
-    `build ${character.name.ja}: attack ${combat.attack} = round((${combat.gradeBase} + affection ${combat.affection}` +
-      ` + recycle ${combat.recycleRoom}) × core) ${combat.withCore}` +
-      ` + gear ${combat.gear} + cube ${combat.cube} + collection ${combat.collection} + extra ${combat.extra}`,
-  );
+  console.log(buildAttackLine(character.name.ja, combat));
   const effects = resolveBuildEffects(character, build, masters, { treasurePhase: skills.treasurePhase });
-  if (effects.effects.length > 0 || effects.notes.length > 0) {
-    const pctOf = (v: number) => `${(v * 100).toFixed(2)}%`;
-    console.log(
-      `  effects: ${effects.effects.map((e) => `${e.source.kind} ${e.stat} +${pctOf(e.value)}`).join(', ') || 'none'}` +
-        (effects.notes.length > 0
-          ? `; not applied: ${effects.notes.map((n) => `${n.source.kind} ${n.source.name.en} (${n.level})`).join(', ')}`
-          : ''),
-    );
-  }
+  say(buildEffectsLine(effects));
   // 同じ育成入力から戦闘中の最大HP と防御力（バフ前）も作る
   const hp = computeCombatStat(character, growth, build, masters, 'hp', { treasurePhase: skills.treasurePhase }).value;
   const defence = computeCombatStat(character, growth, build, masters, 'defence', {
@@ -448,55 +443,59 @@ const runSettings: RunSettings = {
   near,
   far,
 };
-// 編成の条件の付いた効果と、この編成で効くか（効かない効果は計算に入れない）
+// 編成の条件の付いた効果と、この編成で効くか（効かない効果は計算に入れない）。計算が入力の誤りで止まる（終了コード 1）ときにも出るように、
+// 計算の前に出す
 const compositionTable = compositionRows(slots, input.enemy.element);
 if (compositionTable.length > 0 && values.trace === undefined) {
-  console.log('composition conditions (effects that do not apply are left out)');
+  console.log(COMPOSITION_TITLE);
   console.table(compositionTable);
 }
 const sim = runSimulation(values.trace === undefined ? input : { ...input, trace: true });
-if (values.trace === undefined) printReport(sim);
+// 出した後は process.exit を呼ばずに、スクリプトの終わりまで進んで終わる（標準出力をパイプで受けると、大きな出力の直後の process.exit で
+// 途中までしか出ない）
+if (values.trace === undefined) printReport();
 else printTrace(sim.events, values.trace);
 
-/** 頭書きと表（バースト・順位・即時効果・枠ごとの合計・条件・枠ごとの区間と内訳）を出す。行と文は sim-run/tables.ts が作る */
-function printReport(sim: SimResult): void {
+/** 文があれば 1 行出す（sim-run/tables.ts は、出すものが無いとき undefined を返す） */
+function say(line: string | undefined): void {
+  if (line !== undefined) console.log(line);
+}
+
+/** 頭書きと表（バースト・順位・即時効果・枠ごとの合計・条件・枠ごとの区間と内訳）を出す。見出し・行・文は sim-run/tables.ts が作る */
+function printReport(): void {
   const result = simTeamResult(input, sim);
   console.log(headerLine(input, sim.frames, runSettings));
-  if (result.landings.length > 0 && target !== undefined) console.log(landingsLine(result.landings, target));
+  if (target !== undefined) say(landingsLine(result.landings, target));
   if (eventSetIds.length > 0) console.log(enemyEventsLine(eventSetIds, values['jump-windows'], enemyEvents));
   if (result.schedule && result.burstSummary) {
     console.log(burstSummaryLine(result.schedule, result.burstSummary, slots));
     console.table(activationRows(result.schedule, slots));
-    if (result.schedule.chainTimeouts.length > 0) console.log(chainTimeoutsLine(result.schedule));
+    say(chainTimeoutsLine(result.schedule));
     console.log(fullBurstIntervalsLine(result.schedule));
   }
   if (result.history.rankings.length > 0) {
-    console.log('top final ATK targets (topAttack)');
+    console.log(RANKING_TITLE);
     console.table(rankingRows(result.history.rankings, slots));
   }
   if (sim.instants.length > 0) {
-    console.log(
-      'instant effects (cooldownReduction: frames actually cut, negative when lengthened by an increase, ammoRefill: rounds added, heal: always 0, burstGauge: ratio of the gauge max)',
-    );
+    console.log(INSTANT_TITLE);
     console.table(instantRows(sim.instants, slots));
   }
-  console.table(summaryRows(slots, sim, result));
+  console.table(summaryRows(sim, result, slots));
   console.log(totalLine(result));
   const autoRows = autoConditionRows(result, slots);
   if (autoRows.length > 0) {
-    console.log('auto conditions (shot-weighted means)');
+    console.log(AUTO_CONDITION_TITLE);
     console.table(autoRows);
   }
-  const noteLines = conditionNoteLines(result);
-  if (noteLines.length > 0) console.log(`condition notes\n${noteLines.join('\n')}`);
+  say(conditionNotesText(result));
   for (const [i, slot] of slots.entries()) {
     const c = result.slots[i];
     if (!c) continue;
-    console.log(`\n[slot ${i + 1}] ${slot.character.name.ja} — segments`);
+    console.log(segmentsTitle(i, slot));
     console.table(segmentRows(slot, c));
-    const skips = conditionSkipsLine(result.history.conditionSkips, i);
-    if (skips !== undefined) console.log(skips);
-    const cycles = cycleReport(i, c, sim, result);
+    say(conditionSkipsLine(result.history.conditionSkips, i));
+    const cycles = cycleReport(i, sim, result);
     if (cycles !== undefined) {
       console.log(cycles.line);
       if (cycles.rows.length > 0) console.table(cycles.rows);

@@ -6,7 +6,7 @@ import { effectValueText, itemLabel } from './labels.ts';
 /** --trace の種類 */
 export const TRACE_KINDS = ['shots', 'bursts', 'buffs', 'hits', 'instants'] as const;
 
-export type TraceKind = (typeof TRACE_KINDS)[number];
+type TraceKind = (typeof TRACE_KINDS)[number];
 
 /** 出来事の種類 → --trace の種類（即時効果の種類は instants） */
 export function traceKindOf(e: SimEvent): TraceKind {
