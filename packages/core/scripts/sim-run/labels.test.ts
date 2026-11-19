@@ -1,4 +1,4 @@
-// sim-run.ts のラベル（きっかけ・効果の値・状態の id）と、同じ効果の段のまとめ
+// sim-run.ts のラベル（きっかけ・効果の値・件の出どころ・状態の id）
 import { describe, expect, it } from 'vitest';
 import { characterOf, DEFINED_IDS, rawDefinition } from '../../src/__tests__/data.ts';
 import { parseSkillDefinition } from '../../src/skills/parse/definition.ts';

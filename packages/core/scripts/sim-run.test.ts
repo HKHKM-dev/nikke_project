@@ -5,9 +5,12 @@ import { describe, expect, it } from 'vitest';
 
 const SCRIPT = join(import.meta.dirname, 'sim-run.ts');
 
+/** スクリプトを起動する。stderr は、スクリプトが出した行だけ（Node の警告の行は、Node の版と環境で出たり出なかったりするので外す） */
 function run(...args: string[]): { status: number | null; stdout: string; stderr: string } {
-  const { status, stdout, stderr } = spawnSync(process.execPath, [SCRIPT, ...args], { encoding: 'utf8' });
-  return { status, stdout, stderr };
+  const { NODE_OPTIONS: _options, ...env } = process.env;
+  const { status, stdout, stderr } = spawnSync(process.execPath, [SCRIPT, ...args], { encoding: 'utf8', env });
+  const own = stderr.split('\n').filter((line) => !/^\(node:\d+\) |^\(Use `node /.test(line));
+  return { status, stdout, stderr: own.join('\n') };
 }
 
 describe('sim-run.ts', () => {

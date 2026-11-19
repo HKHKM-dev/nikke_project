@@ -401,35 +401,35 @@ describe('計算の結果から作る行', () => {
 });
 
 describe('compositionRows', () => {
+  /** 行の中身を 1 行の文に（効果の番号は、定義に効果を足すと動くので見ない） */
+  const rowsOf = (ids: number[], condition: RegExp) =>
+    compositionRows(
+      ids.map((id) => fixedSlot(id)),
+      null,
+    )
+      .filter((r) => r.slot.startsWith('slot 1 ') && condition.test(r.condition))
+      .map((r) => {
+        expect(r.effect).toMatch(/^(skill1|skill2|burst)\[\d+\] [A-Za-z]+( [A-Za-z]+)?$/);
+        return `${r.condition} → ${r.applies}`;
+      });
+
   it('lists the effect with a squad condition, and whether a squad mate is in the team', () => {
     // 同じ部隊の味方がいれば効く効果を持つキャラ（271）。270 は同じ部隊
-    const alone = [271, 82].map((id) => fixedSlot(id));
-    const row = {
-      slot: `slot 1 ${alone[0]!.character.name.ja}`,
-      effect: 'burst[2] timed',
-      condition: `same squad (${alone[0]!.character.squad}) present`,
-    };
-    expect(compositionRows(alone, null)).toEqual([{ ...row, applies: false }]);
-    const withMate = [271, 270].map((id) => fixedSlot(id));
-    expect(compositionRows(withMate, null).filter((r) => r.slot === row.slot)).toEqual([{ ...row, applies: true }]);
+    const squad = fixedSlot(271).character.squad;
+    expect(rowsOf([271, 82], /squad/)).toEqual([`same squad (${squad}) present → false`]);
+    expect(rowsOf([271, 270], /squad/)).toEqual([`same squad (${squad}) present → true`]);
+    expect(compositionRows([fixedSlot(271), fixedSlot(82)], null)[0]!.slot).toBe(
+      `slot 1 ${fixedSlot(271).character.name.ja}`,
+    );
   });
 
   it('lists the effects that need a character in the team or out of it', () => {
     // 95 がいるかどうかで効果が入れ替わるキャラ（93）
-    const rows = (ids: number[]) =>
-      compositionRows(
-        ids.map((id) => fixedSlot(id)),
-        null,
-      )
-        .filter((r) => r.slot.startsWith('slot 1 ') && r.effect.startsWith('skill1['))
-        .map((r) => `${r.effect}: ${r.condition} → ${r.applies}`);
-    expect(rows([93])).toEqual([
-      'skill1[0] timed: character 95 absent → true',
-      'skill1[1] timed: character 95 present → false',
-      'skill1[2] heal: character 95 absent → true',
-      'skill1[3] heal: character 95 present → false',
-    ]);
-    expect(rows([93, 95]).map((r) => r.endsWith('true'))).toEqual([false, true, false, true]);
+    const alone = rowsOf([93], /^character 95 /);
+    expect(new Set(alone)).toEqual(new Set(['character 95 absent → true', 'character 95 present → false']));
+    const together = rowsOf([93, 95], /^character 95 /);
+    expect(together).toHaveLength(alone.length);
+    expect(new Set(together)).toEqual(new Set(['character 95 absent → false', 'character 95 present → true']));
   });
 
   it('adds the state id to a grant, and is empty for a slot without a definition', () => {
