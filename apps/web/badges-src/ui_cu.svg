@@ -54,7 +54,7 @@
      id="frame-in"
      inkscape:label="frame-in"
      style="fill:#1a1a1a;fill-opacity:1;stroke:#ffffff;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
-     d="m 7.5,122.5 c 38.333333,0 76.666667,0 115,0 0,-38.333333 0,-76.666667 0,-115 -38.333333,0 -76.666667,0 -115,0 0,38.333333 0,76.666667 0,115 z" /><g
+     d="M 7.5,122.5 H 122.5 V 7.5 H 7.5 Z" /><g
      id="content"
      inkscape:label="content"><circle
        id="head-bottom"

@@ -6,18 +6,8 @@
     <sodipodi:guide position="130,0" orientation="0,-130" id="guide4" inkscape:locked="false" />
     <sodipodi:guide position="0,0" orientation="-130,0" id="guide5" inkscape:locked="false" />
   </sodipodi:namedview>
-  <defs id="defs1">
-    <inkscape:path-effect effect="powermask" id="path-effect14" is_visible="true" lpeversion="1" uri="#mask-powermask-path-effect14" invert="false" hide_mask="false" background="true" background_color="#ffffffff" />
-    <mask maskUnits="userSpaceOnUse" id="mask-powermask-path-effect14">
-      <path id="mask-powermask-path-effect14_box" style="fill:#ffffff;fill-opacity:1" d="m 26,27 h 78 V 136 H 26 Z" />
-      <g id="g14" inkscape:label="mask" style="">
-        <path style="display:inline;fill:none;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;paint-order:markers fill stroke" d="M 45,70 65,50.5 85,70" id="path13" sodipodi:nodetypes="ccc" inkscape:label="mask" />
-        <rect style="fill:#000000;stroke:none;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;paint-order:markers fill stroke" id="rect13" width="18.384777" height="18.384777" x="96.166519" y="4.2426391" transform="rotate(45)" inkscape:label="mask" d="M 96.166519,4.2426391 H 114.5513 V 22.627416 H 96.166519 Z" />
-        <rect style="fill:#000000;stroke:none;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;paint-order:markers fill stroke" id="rect14" width="13.999999" height="60.000004" x="58" y="90" inkscape:label="mask" d="m 58,90 h 13.999999 v 60 H 58 Z" />
-      </g>
-    </mask>
-  </defs>
+  <defs id="defs1"></defs>
   <g id="content" transform="translate(0,-10)" inkscape:label="content">
-    <path style="fill:#ffffff;stroke:none;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;paint-order:markers fill stroke" d="M 65,28 27,66 65,135 103,66 Z" id="logo" sodipodi:nodetypes="ccccc" mask="url(#mask-powermask-path-effect14)" inkscape:path-effect="#path-effect14" inkscape:original-d="M 65,28 27,66 65,135 103,66 Z" inkscape:label="logo" />
+    <path style="fill:#ffffff;stroke:none;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;paint-order:markers fill stroke" d="M 65 28 L 27 66 L 58 122.28906 L 58 90 L 52 84 L 65 71 L 78 84 L 72 90 L 72 122.28906 L 103 66 L 65 28 z M 65 42.818359 L 88.839844 66.0625 L 81.160156 73.9375 L 65 58.181641 L 48.839844 73.9375 L 41.160156 66.0625 L 65 42.818359 z " id="logo" inkscape:label="logo" />
   </g>
 </svg>

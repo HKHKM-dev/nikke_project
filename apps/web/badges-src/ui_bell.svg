@@ -8,7 +8,7 @@
   </sodipodi:namedview>
   <defs id="defs1" />
   <path id="frame-out" inkscape:label="frame-out" style="fill:none;stroke:#000000;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 2.5,2.5 H 127.5 V 127.5 H 2.5 Z" />
-  <path id="frame-in" inkscape:label="frame-in" style="fill:#1a1a1a;fill-opacity:1;stroke:#ffffff;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 7.5,122.5 c 38.333333,0 76.666667,0 115,0 0,-38.333333 0,-76.666667 0,-115 -38.333333,0 -76.666667,0 -115,0 0,38.333333 0,76.666667 0,115 z" />
+  <path id="frame-in" inkscape:label="frame-in" style="fill:#1a1a1a;fill-opacity:1;stroke:#ffffff;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 7.5,122.5 H 122.5 V 7.5 H 7.5 Z" />
   <g id="content" transform="translate(65,65) scale(0.95) translate(-50,-50)" style="fill:#808080;stroke:none" inkscape:label="content">
     <path id="body" d="M44.5 17A5.5 5.5 0 0 1 55.5 17C68 19 74 29 74 44C74 58 79 65 85 70C86.5 71.2 86.5 74.5 84 74.5H16C13.5 74.5 13.5 71.2 15 70C21 65 26 58 26 44C26 29 32 19 44.5 17Z" style="fill:#808080" inkscape:label="body" />
     <path id="clapper" d="M40 79A10 10 0 0 0 60 79Z" style="fill:#808080" inkscape:label="clapper" />

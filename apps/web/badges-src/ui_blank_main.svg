@@ -7,6 +7,6 @@
     <sodipodi:guide position="0,0" orientation="-160,0" id="guide5" inkscape:locked="false" />
   </sodipodi:namedview>
   <defs id="defs1" />
-  <path id="frame-out" inkscape:label="frame-out" style="fill:none;stroke:#000000;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 2.50009,155.67155 C 23.333518,143.65267 44.166083,131.63228 65.000052,119.61432 85.834021,131.63228 106.66657,143.65267 127.5,155.67155 V 2.5 H 2.50009 Z" />
-  <path id="frame-in" inkscape:label="frame-in" style="fill:#1a1a1a;fill-opacity:1;stroke:#ffffff;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 7.50009,147.01367 c 19.166727,-11.05653 38.333323,-22.1133 57.5,-33.16992 19.166677,11.05662 38.33327,22.11339 57.5,33.16992 V 7.5 h -115 z" />
+  <path id="frame-out" inkscape:label="frame-out" style="fill:none;stroke:#000000;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 2.50009,155.67155 L 65.000052,119.61432 127.5,155.67155 V 2.5 H 2.50009 Z" />
+  <path id="frame-in" inkscape:label="frame-in" style="fill:#1a1a1a;fill-opacity:1;stroke:#ffffff;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 7.50009,147.01367 L 65.00009,113.84375 122.50009,147.01367 V 7.5 H 7.50009 Z" />
 </svg>
