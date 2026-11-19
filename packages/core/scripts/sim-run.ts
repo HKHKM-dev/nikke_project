@@ -5,7 +5,6 @@
 // 味方のバフは受ける）。
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { slotsByStep } from '../src/burst/schedule.ts';
 import { computeCombatAttack, computeCombatStat, emptyBuild, type BuildInput } from '../src/build.ts';
 import { resolveBuildEffects } from '../src/buildEffects.ts';
 import {
@@ -21,7 +20,6 @@ import {
   fixedSpecGrowth,
 } from '../src/fixedSpec.ts';
 import {
-  LANDING_BAND_LABEL,
   enemyEventsOf,
   enemyInputOf,
   enemyLandingsOf,
@@ -42,103 +40,49 @@ import {
 } from '../src/records/observations/setup.ts';
 import { ENEMY_PRESETS_PATH, MASTER_FILES } from '../src/load.ts';
 import type { GrowthInput } from '../src/stats.ts';
-import { runSimulation, simIntervalTotals, type SimEvent } from '../src/sim/engine.ts';
+import { runSimulation, type SimEvent } from '../src/sim/engine.ts';
 import { simTeamResult } from '../src/sim/teamResult.ts';
-import { firingParams } from '../src/frame/firing.ts';
-import {
-  MAX_SKILL_LEVELS,
-  isCounterWhileEffect,
-  isHpWhileEffect,
-  type ItemEffect,
-  isStateContent,
-  type ResolvedTrigger,
-  type SkillLevels,
-} from '../src/skills/resolve.ts';
-import { itemsOf } from '../src/skills/holders.ts';
+import { MAX_SKILL_LEVELS, type SkillLevels } from '../src/skills/resolve.ts';
 import type { TreasurePhase } from '../src/skills/treasure.ts';
-import { compositionAllows, resolveSelfState, selfStateLookupsForTeam } from '../src/skills/composition.ts';
 import { parseSkillDefinition, parseSkillIndex } from '../src/skills/parse/definition.ts';
-import { SKILL_SLOTS, type SkillEffect } from '../src/skills/types.ts';
 import { TEAM_SIZE, type TeamSlotInput } from '../src/team.ts';
 import type { BuildMasters, CharacterData, CharacterIndex, Element } from '../src/types.ts';
 import type { EnemyInput } from '../src/damage.ts';
-import { framesToGameSeconds, gameSecondsToFrame } from '../src/time.ts';
+import { gameSecondsToFrame } from '../src/time.ts';
 import { cliArgs, fail } from './cli.ts';
+import {
+  activationRows,
+  AUTO_CONDITION_TITLE,
+  autoConditionRows,
+  buildAttackLine,
+  buildEffectsLine,
+  burstSummaryLine,
+  chainTimeoutsLine,
+  COMPOSITION_TITLE,
+  compositionRows,
+  conditionNotesText,
+  conditionSkipsLine,
+  cycleReport,
+  delayedHitLines,
+  dotLines,
+  enemyEventsLine,
+  fullBurstIntervalsLine,
+  headerLine,
+  INSTANT_TITLE,
+  instantRows,
+  landingsLine,
+  RANKING_TITLE,
+  rankingRows,
+  segmentRows,
+  segmentsTitle,
+  summaryRows,
+  totalLine,
+  type RunSettings,
+} from './sim-run/tables.ts';
+import { parseTraceKinds, TRACE_KINDS, traceLines } from './sim-run/trace.ts';
 
 const DATA_DIR = join(import.meta.dirname, '../data');
-/** --trace の種類 */
-const TRACE_KINDS = ['shots', 'bursts', 'buffs', 'hits', 'instants'] as const;
 const OBSERVATIONS_DIR = join(import.meta.dirname, '../../../records/observations');
-
-/** 効果の値（比は %、固定値はそのまま。発動者の防御力の比は、分かれば掛けた後の量も） */
-function effectValueText(e: ItemEffect, appliedAmount?: number): string {
-  const pct = (v: number) => `${(v * 100).toFixed(2)}%`;
-  const value =
-    e.scaling === 'flat'
-      ? `${e.value}${e.stat === 'chargeSpeed' ? 's' : ''}`
-      : e.scaling === 'casterDefence'
-        ? `${appliedAmount === undefined ? '' : `${Math.round(appliedAmount)} `}(caster ${pct(e.value)})`
-        : e.scaling === 'perFinalMaxAmmo'
-          ? `${pct(e.value)} × max ammo`
-          : pct(e.value);
-  return `${e.stat}${e.value < 0 ? '' : '+'}${value}`;
-}
-
-/** 件を持つ効果の出どころの欄（状態・カウンタ・HP の割合の while は条件、持続バフはきっかけ） */
-function itemLabel(e: ItemEffect): string {
-  if (isStateContent(e)) return `while:${e.whileState}`;
-  if (isCounterWhileEffect(e)) return `while:${e.whileCounter.counter}>=${e.whileCounter.atLeast}`;
-  if (isHpWhileEffect(e)) return `while:hp>=${e.whileSelfHp.atLeast}`;
-  return triggerLabel(e.trigger);
-}
-
-/** 回数トリガーも 1 語で出す（normalShot/10、burstUse≥2） */
-function triggerLabel(t: ResolvedTrigger): string {
-  if (typeof t === 'string') return t;
-  // カウンタが上限に届いた時（counterFull:restraintChains）
-  if ('counterFull' in t) return `counterFull:${t.counterFull}`;
-  // 時間の周期のトリガー（every10s）
-  // 状態の付いた時から数える周期（every0.2s:since:transformation）
-  if ('everySeconds' in t) return `every${t.everySeconds}s${t.since === undefined ? '' : `:since:${t.since.applied}`}`;
-  // 状態が付いた時のトリガー（applied:followUp。id は名前の付いた状態の目録の id）
-  if ('applied' in t) return `applied:${t.applied}`;
-  // その stat の▲が付いた時（buffApplied:sustainedDamage）
-  if ('buffApplied' in t) return `buffApplied:${t.buffApplied}`;
-  // フルスタックの消費のきっかけ（fullStack:relax）
-  if ('fullStack' in t) return `fullStack:${t.fullStack}`;
-  // 使用武器の変更の終わり
-  if ('weaponChangeEnd' in t) return 'weaponChangeEnd';
-  // リロードの込め終わり
-  if ('reloadEnd' in t) return 'reloadEnd';
-  // 遮蔽物 HP 回復を受けた時
-  if ('coverHealed' in t) return 'coverHealed';
-  // 自分の〈スロット〉を発動した時（skillFired:skill2）
-  if ('skillFired' in t) return `skillFired:${t.skillFired}`;
-  // 溜めの周期（chargeTick0.2s）と、溜めが満ちた時
-  if ('chargeTick' in t) return `chargeTick${t.chargeTick.everySeconds}s`;
-  if ('chargeFull' in t) return 'chargeFull';
-  // 自分の HP の割合が閾値以下の間（hp<=70%）
-  if ('selfHpAtMost' in t) return `hp<=${+(t.selfHpAtMost * 100).toFixed(2)}%`;
-  // 両隣の味方の HP の割合（adjacentHp<=90%・adjacentHpFull）
-  if ('adjacentHpAtMost' in t) return `adjacentHp<=${+(t.adjacentHpAtMost * 100).toFixed(2)}%`;
-  if ('adjacentHpFull' in t) return 'adjacentHpFull';
-  // 召喚の攻撃（summon:nearFeather）
-  if ('summon' in t) return `summon:${t.summon}`;
-  // 自分の状態が終わった時（ended:prediction）
-  if ('ended' in t) return `ended:${t.ended}`;
-  // フルバースト中だけ数える回数トリガー（normalHit/36@fullBurst、数え直しなら @fullBurst!）
-  // 確率のきっかけ（normalHit@5%。窓は期待値の小片）
-  if ('every' in t && t.chance !== undefined) return `${t.count}@${+(t.chance * 100).toFixed(4)}%`;
-  if ('every' in t)
-    return `${t.count}/${t.every}${t.during ? `@${typeof t.during === 'object' ? t.during.state : t.during}${t.reset === 'fullBurstStart' ? '!' : ''}` : ''}`;
-  return `${t.count}≥${t.atLeast}${t.atMost !== undefined ? `≤${t.atMost}` : ''}`;
-}
-
-/** 効果の行に添える状態の id（付与・解除・スタック量の増減。味方の全部のスタック可能バフへの▲は allStackable） */
-function stateLabelOf(e: SkillEffect): string {
-  if (e.kind === 'stackChange') return e.target === 'allies' ? ' allStackable' : ` ${e.state}`;
-  return e.kind === 'state' || e.kind === 'removeState' ? ` ${e.state}` : '';
-}
 
 const { values } = cliArgs(import.meta.url, {
   options: {
@@ -372,21 +316,9 @@ function withBuild(
   const empty = emptyBuild();
   const build: BuildInput = { ...empty, ...rest, gear: { ...empty.gear, ...rest.gear } };
   const combat = computeCombatAttack(character, growth, build, masters, { treasurePhase: skills.treasurePhase });
-  console.log(
-    `build ${character.name.ja}: attack ${combat.attack} = round((${combat.gradeBase} + affection ${combat.affection}` +
-      ` + recycle ${combat.recycleRoom}) × core) ${combat.withCore}` +
-      ` + gear ${combat.gear} + cube ${combat.cube} + collection ${combat.collection} + extra ${combat.extra}`,
-  );
+  console.log(buildAttackLine(character.name.ja, combat));
   const effects = resolveBuildEffects(character, build, masters, { treasurePhase: skills.treasurePhase });
-  if (effects.effects.length > 0 || effects.notes.length > 0) {
-    const pctOf = (v: number) => `${(v * 100).toFixed(2)}%`;
-    console.log(
-      `  effects: ${effects.effects.map((e) => `${e.source.kind} ${e.stat} +${pctOf(e.value)}`).join(', ') || 'none'}` +
-        (effects.notes.length > 0
-          ? `; not applied: ${effects.notes.map((n) => `${n.source.kind} ${n.source.name.en} (${n.level})`).join(', ')}`
-          : ''),
-    );
-  }
+  say(buildEffectsLine(effects));
   // 同じ育成入力から戦闘中の最大HP と防御力（バフ前）も作る
   const hp = computeCombatStat(character, growth, build, masters, 'hp', { treasurePhase: skills.treasurePhase }).value;
   const defence = computeCombatStat(character, growth, build, masters, 'defence', {
@@ -499,413 +431,79 @@ const input = {
   controlledSlot: values.controlled === undefined ? null : Number(values.controlled) - 1,
   ...(manualBursts === undefined ? {} : { manualBursts }),
 };
-// 編成の条件（burstStepMix・squad・withCharacter・enemyElement・row）の付いた効果と、この編成で効くか（効かない効果は計算に入れない）
-const compositionCharacters = slots.map((s) => s.character);
-// 編成で決まる自分の状態の条件（selfState。plan/design-skill-stage1.md 1.1 節）
-const selfStates = selfStateLookupsForTeam(
-  slots.map((s) => s.skills?.definition ?? null),
-  compositionCharacters,
-  input.enemy.element,
-);
-const compositionRows = slots.flatMap((slot, i) =>
-  SKILL_SLOTS.flatMap((skill) =>
-    (slot.skills?.definition?.skills[skill].effects ?? []).flatMap((e, effectIndex) => {
-      const mix = 'burstStepMix' in e ? e.burstStepMix : undefined;
-      const squad = 'squad' in e ? e.squad : undefined;
-      const withCharacter = 'withCharacter' in e ? e.withCharacter : undefined;
-      const enemyElement = 'enemyElement' in e ? e.enemyElement : undefined;
-      const row = 'row' in e ? e.row : undefined;
-      const selfState = 'condition' in e ? e.condition?.selfState : undefined;
-      const decided = selfState !== undefined && selfStates[i]!(selfState.state) !== undefined;
-      if (
-        mix === undefined &&
-        squad === undefined &&
-        withCharacter === undefined &&
-        enemyElement === undefined &&
-        row === undefined &&
-        !decided
-      )
-        return [];
-      const conditions = [
-        mix && `other ${mix.otherBurstStep} ${mix.present ? 'present' : 'absent'}`,
-        squad && `same squad (${slot.character.squad}) ${squad.present ? 'present' : 'absent'}`,
-        withCharacter && `character ${withCharacter.rid} ${withCharacter.present ? 'present' : 'absent'}`,
-        enemyElement && `enemy ${enemyElement}`,
-        row && `${row} row`,
-        decided && selfState !== undefined && `self ${selfState.present ? 'in' : 'not in'} ${selfState.state}`,
-      ].filter(Boolean);
-      return [
-        {
-          slot: `slot ${i + 1} ${slot.character.name.ja}`,
-          // 付与の行には状態の id も出す（state camouflage）。解除も（removeState metalSigma）
-          effect: `${skill}[${effectIndex}] ${e.kind}${stateLabelOf(e)}`,
-          condition: conditions.join(' & '),
-          applies:
-            compositionAllows(e, compositionCharacters, i, input.enemy.element) &&
-            resolveSelfState(e, selfStates[i]!) !== null,
-        },
-      ];
-    }),
-  ),
-);
-if (compositionRows.length > 0 && values.trace === undefined) {
-  console.log('composition conditions (effects that do not apply are left out)');
-  console.table(compositionRows);
+// 頭書きに出す、引数で決まること
+const runSettings: RunSettings = {
+  fixedSpec,
+  build: values.build,
+  manualBursts: values['manual-bursts'],
+  enemyPresetId: enemyPreset?.id,
+  conditionMode,
+  condition,
+  midFar,
+  near,
+  far,
+};
+// 編成の条件の付いた効果と、この編成で効くか（効かない効果は計算に入れない）。計算が入力の誤りで止まる（終了コード 1）ときにも出るように、
+// 計算の前に出す
+const compositionTable = compositionRows(slots, input.enemy.element);
+if (compositionTable.length > 0 && values.trace === undefined) {
+  console.log(COMPOSITION_TITLE);
+  console.table(compositionTable);
 }
 const sim = runSimulation(values.trace === undefined ? input : { ...input, trace: true });
-if (values.trace !== undefined) {
-  printTrace(
-    sim.events,
-    values.trace,
-    values.from === undefined ? 0 : gameSecondsToFrame(seconds(values.from, '--from')),
-    values.to === undefined ? Infinity : gameSecondsToFrame(seconds(values.to, '--to')),
-  );
-  process.exit(0);
-}
-const result = simTeamResult(input, sim);
+// 出した後は process.exit を呼ばずに、スクリプトの終わりまで進んで終わる（標準出力をパイプで受けると、大きな出力の直後の process.exit で
+// 途中までしか出ない）
+if (values.trace === undefined) printReport();
+else printTrace(sim.events, values.trace);
 
-const fmt = (n: number, digits = 0) => n.toLocaleString('en-US', { maximumFractionDigits: digits });
-const pct = (n: number) => `${(n * 100).toFixed(3)}%`;
+/** 文があれば 1 行出す（sim-run/tables.ts は、出すものが無いとき undefined を返す） */
+function say(line: string | undefined): void {
+  if (line !== undefined) console.log(line);
+}
 
-console.log(
-  `duration ${input.durationSeconds}s (${sim.frames}f), burst ${input.burst ? input.burstModel : 'off'}${manualBursts === undefined ? '' : ` (manual bursts ${values['manual-bursts']})`}, ` +
-    `fixed spec ${fixedSpec}, build ${values.build ?? 'none'}, controlled ${input.controlledSlot === null ? 'none (all AI)' : `slot ${input.controlledSlot + 1}`}, ` +
-    `enemy ${enemyPreset?.id ?? 'custom'} defence ${input.enemy.defence}, element ${input.enemy.element ?? 'none'}, ` +
-    `conditions ${conditionMode}${
-      conditionMode === 'manual'
-        ? ` (core ${condition.coreHitRate}, hit rate ${condition.hitRate})`
-        : [midFar ? `mid-far ${midFar}` : '', near ? `near ${near.join(',')}` : '', far ? `far ${far.join(',')}` : '']
-            .filter(Boolean)
-            .map((x) => ` (${x})`)
-            .join('')
-    }`,
-);
-// 着地点の区間
-if (result.landings.length > 0 && target !== undefined) {
-  const labelOf = (id: string | null): string => {
-    if (id === null) return 'unmeasured';
-    const band = target.landings.find((l) => l.id === id)?.band ?? id;
-    const name = band in LANDING_BAND_LABEL ? LANDING_BAND_LABEL[band as keyof typeof LANDING_BAND_LABEL].en : id;
-    return id in target.mixes ? `${name} (mix)` : `${name} [${id}]`;
-  };
-  console.log(
-    `landings ${result.landings.map((s) => `${framesToGameSeconds(s.start).toFixed(1)}-${framesToGameSeconds(s.end).toFixed(1)}s ${labelOf(s.landing)}`).join(', ')}`,
-  );
-}
-if (eventSetIds.length > 0) {
-  console.log(
-    `enemy events ${eventSetIds.join(', ')}${jumpWindows === undefined ? '' : ` (jump windows ${values['jump-windows']})`}: ${enemyEvents.map((e) => `${e.kind} ${e.start.toFixed(1)}-${e.end.toFixed(1)}s`).join(', ')}`,
-  );
-}
-if (result.schedule && result.burstSummary) {
-  const byStep = slotsByStep(result.schedule);
-  const who = (list: number[]) =>
-    list.length === 0 ? '-' : list.map((i) => `slot ${i + 1} ${slots[i]!.character.name.ja}`).join(' / ');
-  const b = result.burstSummary;
-  const sec = (v: number | null) => (v === null ? '-' : `${v.toFixed(2)}s`);
-  console.log(
-    `full bursts ${b.fullBursts} (first ${sec(b.firstFullBurstSeconds)}, mean cycle ${sec(b.meanCycleSeconds)}, ` +
-      `uptime ${pct(b.fullBurstUptime)}), activations ${b.activations}, chain timeouts ${b.chainTimeouts}; ` +
-      `I: ${who(byStep.Step1)}, II: ${who(byStep.Step2)}, III: ${who(byStep.Step3)}`,
-  );
-  const STEP = { Step1: 'I', Step2: 'II', Step3: 'III' } as const;
-  console.table(
-    result.schedule.activations.map((a) => ({
-      time: `${framesToGameSeconds(a.frame).toFixed(2)}s`,
-      frame: a.frame,
-      step: STEP[a.step],
-      nike: `slot ${a.slotIndex + 1} ${slots[a.slotIndex]!.character.name.ja}`,
-      fullBurst: a.startsFullBurst
-        ? `start (${framesToGameSeconds((result.schedule?.fullBurstWindows.find((w) => w.start >= a.frame)?.end ?? a.frame) - a.frame).toFixed(1)}s)`
-        : '',
-      // そのフルバーストを開いたチェーンで撃った枠（「直前にバーストスキルを使用した味方」）
-      burstUsers: a.startsFullBurst
-        ? (result.schedule?.fullBurstWindows.find((w) => w.start >= a.frame)?.burstUsers ?? [])
-            .map((i) => i + 1)
-            .join(',')
-        : '',
-    })),
-  );
-  if (result.schedule.chainTimeouts.length > 0) {
-    console.log(
-      `chain timeouts at ${result.schedule.chainTimeouts.map((f) => `${framesToGameSeconds(f).toFixed(2)}s`).join(', ')}`,
-    );
+/** 頭書きと表（バースト・順位・即時効果・枠ごとの合計・条件・枠ごとの区間と内訳）を出す。見出し・行・文は sim-run/tables.ts が作る */
+function printReport(): void {
+  const result = simTeamResult(input, sim);
+  console.log(headerLine(input, sim.frames, runSettings));
+  if (target !== undefined) say(landingsLine(result.landings, target));
+  if (eventSetIds.length > 0) console.log(enemyEventsLine(eventSetIds, values['jump-windows'], enemyEvents));
+  if (result.schedule && result.burstSummary) {
+    console.log(burstSummaryLine(result.schedule, result.burstSummary, slots));
+    console.table(activationRows(result.schedule, slots));
+    say(chainTimeoutsLine(result.schedule));
+    console.log(fullBurstIntervalsLine(result.schedule));
   }
-  const starts = result.schedule.fullBurstWindows.map((w) => w.start);
-  console.log(
-    `full burst intervals ${starts
-      .slice(1)
-      .map((f, k) => `${framesToGameSeconds(f - starts[k]!).toFixed(2)}s`)
-      .join(', ')}`,
-  );
-}
-
-// 「最終攻撃力が最も高い味方 N 機」の発火ごとの順位。同じ発火の同じ対象（S1 の 2 効果など）はまとめる
-if (result.history.rankings.length > 0) {
-  const merged = new Map<string, Record<string, string | number>>();
-  for (const r of result.history.rankings) {
-    const key = `${r.frame}.${r.sourceSlotIndex}.${r.effect.source.skill}.${r.targets.join(',')}`;
-    if (merged.has(key)) continue;
-    merged.set(key, {
-      time: `${framesToGameSeconds(r.frame).toFixed(2)}s`,
-      frame: r.frame,
-      from: `slot ${r.sourceSlotIndex + 1} ${r.effect.source.skill}`,
-      targets: r.targets
-        .map((i) => `slot ${i + 1} ${slots[i]!.character.name.ja} ${fmt(r.finalAttacks[i]!)}`)
-        .join(' / '),
-      tied: r.tied ? 'yes (slot order)' : '',
-    });
+  if (result.history.rankings.length > 0) {
+    console.log(RANKING_TITLE);
+    console.table(rankingRows(result.history.rankings, slots));
   }
-  console.log('top final ATK targets (topAttack)');
-  console.table([...merged.values()]);
-}
-
-// 即時効果（CT 短縮・弾丸チャージ）。同じフレーム・同じ枠はまとめる。回復（heal）も出る
-if (sim.instants.length > 0) {
-  const merged = new Map<string, { time: string; kind: string; from: string; to: string; amount: number }>();
-  for (const x of sim.instants) {
-    const key = `${x.frame}.${x.effect.kind}.${x.slotIndex}`;
-    const row = merged.get(key) ?? {
-      time: `${framesToGameSeconds(x.frame).toFixed(2)}s`,
-      kind: x.effect.kind,
-      from: `slot ${x.sourceSlotIndex + 1}`,
-      to: `slot ${x.slotIndex + 1} ${slots[x.slotIndex]!.character.name.ja}`,
-      amount: 0,
-    };
-    row.amount += x.amount;
-    merged.set(key, row);
+  if (sim.instants.length > 0) {
+    console.log(INSTANT_TITLE);
+    console.table(instantRows(sim.instants, slots));
   }
-  console.log(
-    'instant effects (cooldownReduction: frames actually cut, negative when lengthened by an increase, ammoRefill: rounds added, heal: always 0, burstGauge: ratio of the gauge max)',
-  );
-  console.table([...merged.values()]);
-}
-
-const rows = slots.map((slot, i) => {
-  const s = sim.slots[i]!;
-  const c = result.slots[i]!;
-  return {
-    slot: i + 1,
-    name: slot.character.name.ja,
-    weapon: slot.character.weaponType,
-    burst: slot.character.burstStep,
-    // 宝物の段階（宝物版で計算したスロット数）
-    treasure: c.treasurePhase === 0 ? '-' : `${c.treasurePhase} (${c.treasureSlots.join('+')})`,
-    attack: fmt(c.segments[0]?.trigger.attack ?? c.baseAttack),
-    'normal (nonFB/FB triggers)': `${fmt(c.normalDamage)} (${simIntervalTotals(s).nonFullBurst.triggers}/${simIntervalTotals(s).fullBurst.triggers})`,
-    segments: c.segments.length,
-    'burst skill': `${fmt(s.burst.damage)} (${s.burst.activations.length}× ${fmt(s.burst.hit?.perActivation ?? 0)})`,
-    // トリガー付きの倍率ダメージ（damage）
-    'skill hits': `${fmt(s.skillHits.damage)} (${s.skillHits.frames.length}×)`,
-    total: fmt(c.totalDamage),
-    share: pct(c.share),
-  };
-});
-console.table(rows);
-
-console.log(`TOTAL ${fmt(result.totalDamage)}`);
-
-// 自動の枠で使った条件の平均（1 パス目の射撃の列の発数で重みを付けた）
-const autoRows = result.slots.flatMap((c, i) =>
-  c?.autoCondition
-    ? [
-        {
-          slot: i + 1,
-          name: slots[i]!.character.name.ja,
-          shots: c.autoCondition.shots,
-          'core hit rate': c.autoCondition.coreHitRate.toFixed(4),
-          'distance bonus': pct(c.autoCondition.distanceBonus),
-          'bullet hit rate': c.autoCondition.hitRate.toFixed(4),
-          'hit rate up': pct(c.autoCondition.hitRateUp),
-        },
-      ]
-    : [],
-);
-if (autoRows.length > 0) {
-  console.log('auto conditions (shot-weighted means)');
-  console.table(autoRows);
-}
-const noteLines = result.slots.flatMap((c, i) =>
-  (c?.notes ?? [])
-    .filter((n) => n.code.startsWith('auto-') || n.code.startsWith('landing-') || n.code === 'hit-rate')
-    .map((n) => `  [slot ${i + 1}] ${n.level}: ${n.message.ja}`),
-);
-if (noteLines.length > 0) console.log(`condition notes\n${noteLines.join('\n')}`);
-
-// バフ状態ごとの区間表（枠ごと）。発数は 1 パス目の射撃の列から数えた数
-for (const [i, slot] of slots.entries()) {
-  const c = result.slots[i];
-  if (!c) continue;
-  console.log(`
-[slot ${i + 1}] ${slot.character.name.ja} — segments`);
-  console.table(
-    c.segments.map((g) => ({
-      ranges: g.ranges
-        .map((r) => `${framesToGameSeconds(r.start).toFixed(1)}-${framesToGameSeconds(r.end).toFixed(1)}s`)
-        .join(' '),
-      sec: g.seconds.toFixed(1),
-      FB: g.fullBurst ? 'yes' : '',
-      attack: fmt(g.trigger.attack),
-      boost: g.trigger.boost.total.toFixed(3),
-      atkDmg: g.trigger.attackDamageMultiplier.toFixed(4),
-      // 使用武器の変更（1 発の倍率）と、最大装弾数（スタックの▼・装弾数無限込み）
-      weapon: g.buffs.weapon ? `${(g.trigger.weaponMultiplier * 100).toFixed(2)}%` : '',
-      ammo: g.buffs.infiniteAmmo > 0 ? '∞' : firingParams(slot.character.shot, g.buffs).maxAmmo,
-      // 1 トリガーの値と内訳（通常攻撃 + 射撃ごとの倍率ダメージ + 与えたダメージ量の X% の固定ダメージ。0 の項は省く）
-      perTrigger:
-        g.trigger.perShot > 0 || g.trigger.fixedShare > 0
-          ? `${fmt(g.trigger.perTrigger)} (${[g.trigger.normal, g.trigger.perShot, g.trigger.fixedShare]
-              .filter((v, k) => k === 0 || v > 0)
-              .map(fmt)
-              .join('+')})`
-          : fmt(g.trigger.perTrigger),
-      triggers: g.triggers,
-      damage: fmt(g.damage),
-      timed: compactTimed(g.timedEffects)
-        .map(
-          ({ e, n }) =>
-            // 状態の中身はトリガーの代わりに、効いている状態（while:camouflage）
-            `${itemLabel(e)} ${effectValueText(e, e.appliedAmount)}${n > 1 ? ` ×${n}` : ''}${e.targetWeapon ? ` (${e.targetWeapon}${e.targetLeftmost ? ', leftmost' : ''})` : ''}`,
-        )
-        .join(', '),
-    })),
-  );
-  // 条件「自分が 〈stat〉 増加状態なら」を満たさずに発火しなかった回数（履歴の判定の記録）
-  const skips = result.history.conditionSkips.filter((x) => x.sourceSlotIndex === i);
-  if (skips.length > 0) {
-    console.log(
-      `condition skips: ${skips.length} (${skips.map((x) => framesToGameSeconds(x.frame).toFixed(2)).join(', ')}s)`,
-    );
+  console.table(summaryRows(sim, result, slots));
+  console.log(totalLine(result));
+  const autoRows = autoConditionRows(result, slots);
+  if (autoRows.length > 0) {
+    console.log(AUTO_CONDITION_TITLE);
+    console.table(autoRows);
   }
-  printCycles(i, c);
-  printDots(c);
-  printDelayedHits(c);
-}
-
-/** delayFrames のある倍率ダメージの遅れと、出た秒・1 回の値（plan/design-delayed-skill-hit.md） */
-function printDelayedHits(c: NonNullable<(typeof result.slots)[number]>): void {
-  const delayed = c.skillHits.activations.filter((a) => a.effect.delayFrames !== undefined);
-  if (delayed.length === 0) return;
-  const byEffect = new Map<string, typeof delayed>();
-  for (const a of delayed) {
-    const key = `${a.effect.source.skill}.${a.effect.effectIndex}`;
-    byEffect.set(key, [...(byEffect.get(key) ?? []), a]);
-  }
-  for (const [key, list] of byEffect) {
-    const e = list[0]!.effect;
-    console.log(
-      `delayed hit ${key}: ${(e.multiplier * 100).toFixed(2)}% +${e.delayFrames}f after ${triggerLabel(e.trigger)} ×${list.length} = ${fmt(list.reduce((t, a) => t + a.hit.perActivation, 0))} (at ${list.map((a) => a.seconds.toFixed(2)).join(', ')}s)`,
-    );
-  }
-}
-
-/** 持続ダメージの内訳（効果ごとの tick の数・合計と、付いた回ごとの最初の tick の秒。plan/design-nihilister.md 2.1 節） */
-function printDots(c: NonNullable<(typeof result.slots)[number]>): void {
-  const ticks = c.skillHits.activations.filter((a) => a.effect.dot !== undefined);
-  if (ticks.length === 0) return;
-  const byEffect = new Map<
-    string,
-    {
-      n: number;
-      damage: number;
-      multiplier: number;
-      seconds: number[];
-      stacks: number[];
-      maxStacks: number;
-      label: string;
+  say(conditionNotesText(result));
+  for (const [i, slot] of slots.entries()) {
+    const c = result.slots[i];
+    if (!c) continue;
+    console.log(segmentsTitle(i, slot));
+    console.table(segmentRows(slot, c));
+    say(conditionSkipsLine(result.history.conditionSkips, i));
+    const cycles = cycleReport(i, sim, result);
+    if (cycles !== undefined) {
+      console.log(cycles.line);
+      if (cycles.rows.length > 0) console.table(cycles.rows);
     }
-  >();
-  for (const a of ticks) {
-    const key = `${a.effect.source.skill}.${a.effect.effectIndex}`;
-    const d = byEffect.get(key) ?? {
-      n: 0,
-      damage: 0,
-      multiplier: a.effect.multiplier,
-      seconds: [],
-      stacks: [],
-      maxStacks: a.effect.dot!.maxStacks,
-      // 周期の自動攻撃も dot の形で出す
-      label: a.effect.dot!.autoAttack ? 'autoAttack' : 'dot',
-    };
-    d.n += 1;
-    d.damage += a.hit.perActivation;
-    d.seconds.push(a.seconds);
-    // スタックする持続ダメージは tick ごとのスタックの数も出す
-    if (a.stacks !== undefined) d.stacks.push(a.stacks);
-    byEffect.set(key, d);
-  }
-  for (const [key, d] of byEffect) {
-    const perStack = d.maxStacks > 1 ? `/stack (max ${d.maxStacks})` : '';
-    const stacks = d.stacks.length > 0 ? ` (stacks ${d.stacks.join(', ')})` : '';
-    console.log(
-      `${d.label} ${key}: ${(d.multiplier * 100).toFixed(2)}%${perStack} ×${d.n} ticks = ${fmt(d.damage)} (ticks at ${d.seconds.map((x) => x.toFixed(2)).join(', ')}s)${stacks}`,
-    );
+    for (const line of dotLines(c)) console.log(line);
+    for (const line of delayedHitLines(c)) console.log(line);
   }
 }
-
-/**
- * 段の循環の内訳（段ごとの回数・合計）と、間隔の変更の窓ごとの並び
- * （窓の前の段なしの発数 p・窓の中の段・窓の後の最初の段が何発目か。plan/design-stage11-scarlet-bs.md 0.3・7.5 節）
- */
-function printCycles(slotIndex: number, c: NonNullable<(typeof result.slots)[number]>): void {
-  const cycled = c.skillHits.activations.filter((a) => a.effect.cycle !== undefined);
-  if (cycled.length === 0) return;
-  const letter = (step: number) => String.fromCharCode(65 + step);
-  const bySteps = new Map<number, { n: number; damage: number; multiplier: number }>();
-  for (const a of cycled) {
-    const s = bySteps.get(a.effect.cycle!.step) ?? { n: 0, damage: 0, multiplier: a.effect.multiplier };
-    s.n += 1;
-    s.damage += a.hit.perActivation;
-    bySteps.set(a.effect.cycle!.step, s);
-  }
-  console.log(
-    `cycle tiers: ${[...bySteps.entries()]
-      .sort((a, b) => a[0] - b[0])
-      .map(([step, s]) => `${letter(step)} ${(s.multiplier * 100).toFixed(2)}% ×${s.n} = ${fmt(s.damage)}`)
-      .join(', ')}`,
-  );
-  const shots = sim.shots[slotIndex]?.frames ?? [];
-  const stepAt = new Map(cycled.map((a) => [gameSecondsToFrame(a.seconds), a.effect.cycle!.step]));
-  // 間隔の変更の件（時刻の順）
-  const rows = itemsOf(result.history, { holder: slotIndex, kind: 'cycleEvery' }).map((w) => {
-    const before = shots.filter((f) => f < w.start);
-    let lastTier = before.length - 1;
-    while (lastTier >= 0 && !stepAt.has(before[lastTier]!)) lastTier -= 1;
-    const inside = shots.filter((f) => f >= w.start && f < w.end);
-    const after = shots.filter((f) => f >= w.end);
-    const k = after.findIndex((f) => stepAt.has(f));
-    return {
-      window: `${framesToGameSeconds(w.start).toFixed(2)}-${framesToGameSeconds(w.end).toFixed(2)}s`,
-      'last tier before': lastTier < 0 ? '-' : letter(stepAt.get(before[lastTier]!)!),
-      p: lastTier < 0 ? before.length : before.length - 1 - lastTier,
-      inside: `${inside.length} ${inside.map((f) => (stepAt.has(f) ? letter(stepAt.get(f)!) : '-')).join('')}`,
-      'first tier after': k < 0 ? '-' : `shot ${k + 1} (${letter(stepAt.get(after[k]!)!)})`,
-    };
-  });
-  if (rows.length > 0) console.table(rows);
-}
-
-/** 同じ効果のスタックの段をまとめる（「critDamage+14.25% ×5」） */
-function compactTimed<
-  T extends { sourceSlotIndex: number; effectIndex: number; subIndex?: number; source: { skill: string } },
->(effects: readonly T[]): { e: T; n: number }[] {
-  const out: { e: T; n: number }[] = [];
-  for (const e of effects) {
-    // 状態の中身は付与の中身の何番目か（subIndex）でも分ける
-    const found = out.find(
-      (x) =>
-        x.e.sourceSlotIndex === e.sourceSlotIndex &&
-        x.e.source.skill === e.source.skill &&
-        x.e.effectIndex === e.effectIndex &&
-        x.e.subIndex === e.subIndex,
-    );
-    if (found) found.n += 1;
-    else out.push({ e, n: 1 });
-  }
-  return out;
-}
-
-type TraceKind = (typeof TRACE_KINDS)[number];
 
 /** --from・--to の秒（数でなければ止める） */
 function seconds(text: string, name: string): number {
@@ -917,72 +515,14 @@ function seconds(text: string, name: string): number {
   return v;
 }
 
-/** 出来事の種類 → --trace の種類（即時効果の種類は instants） */
-function traceKindOf(e: SimEvent): TraceKind {
-  switch (e.kind) {
-    case 'trigger':
-      return 'shots';
-    case 'burst':
-    case 'fullBurstStart':
-    case 'fullBurstEnd':
-    case 'gaugeFull':
-    case 'chainTimeout':
-      return 'bursts';
-    case 'buffStart':
-    case 'buffEnd':
-      return 'buffs';
-    case 'skillHit':
-      return 'hits';
-    default:
-      return 'instants';
-  }
-}
-
-/** 出来事の 1 行の中身（shot は枠ごとの発の番号） */
-function traceText(e: SimEvent, shot: number): string {
-  const amount = (n: number) => Math.round(n).toLocaleString('en-US');
-  switch (e.kind) {
-    case 'trigger':
-      return `枠${e.slot + 1} 発 ${shot}${e.fullBurst ? '（FB）' : ''} ${amount(e.damage)}`;
-    case 'burst':
-      return `枠${e.slot + 1} バースト ${e.step} ${amount(e.damage)}`;
-    case 'fullBurstStart':
-    case 'fullBurstEnd':
-    case 'gaugeFull':
-    case 'chainTimeout':
-      return e.kind;
-    case 'buffStart':
-    case 'buffEnd':
-      return `枠${e.slot + 1} ${e.kind === 'buffStart' ? '付く' : '切れる'} ${itemLabel(e.effect)} ${effectValueText(e.effect)}`;
-    case 'skillHit':
-      return `枠${e.slot + 1} 倍率ダメージ ${amount(e.damage)}`;
-    default:
-      return `枠${e.slot + 1} ${e.kind} ${e.amount}（出どころ 枠${e.source + 1}）`;
-  }
-}
-
-/** 出来事の列を 1 行ずつ出す（--trace）。枠は 1 始まり。発の番号は枠ごとに 1 始まり（観測値の hitDamageAtShot の shot と同じ数え方） */
-function printTrace(events: readonly SimEvent[], kinds: string, start: number, end: number): void {
-  const known: readonly string[] = TRACE_KINDS;
-  const wanted = new Set(
-    kinds
-      .split(',')
-      .map((k) => k.trim())
-      .filter((k) => k !== ''),
-  );
-  const unknown = [...wanted].filter((k) => k !== 'all' && !known.includes(k));
+/** --trace: 出来事の列だけを 1 行ずつ出す（区間の表は出さない）。行は sim-run/trace.ts が作る */
+function printTrace(events: readonly SimEvent[], kinds: string): void {
+  const start = values.from === undefined ? 0 : gameSecondsToFrame(seconds(values.from, '--from'));
+  const end = values.to === undefined ? Infinity : gameSecondsToFrame(seconds(values.to, '--to'));
+  const { wanted, unknown } = parseTraceKinds(kinds);
   if (unknown.length > 0) {
-    console.error(`--trace の種類が無い: ${unknown.join(',')}（${known.join('・')}・all）`);
+    console.error(`--trace の種類が無い: ${unknown.join(',')}（${TRACE_KINDS.join('・')}・all）`);
     process.exit(2);
   }
-  const shotNo = new Map<number, number>();
-  const rows: string[] = [];
-  for (const e of events) {
-    // 発の番号は範囲の外でも数える
-    const shot = e.kind === 'trigger' ? (shotNo.get(e.slot) ?? 0) + 1 : 0;
-    if (e.kind === 'trigger') shotNo.set(e.slot, shot);
-    if (!(wanted.has('all') || wanted.has(traceKindOf(e))) || e.frame < start || e.frame >= end) continue;
-    rows.push(`f${e.frame} ${framesToGameSeconds(e.frame).toFixed(2)}s ${traceText(e, shot)}`);
-  }
-  console.log(rows.join('\n'));
+  console.log(traceLines(events, wanted, start, end).join('\n'));
 }

@@ -84,6 +84,10 @@
 - 値の固定（timed の `lock`）は、持ち主の和を作る 3 か所（`skills/holders/views.ts` の `firingBuffs`・`damageBuffsAt`、`skills/timeline.ts` の `buildSegments`）でだけ当てている。`frame/plan.ts` の `withSameActivationEffects`・`withEarlierSequentialEffects` は固定を当て直さず、条件 `selfBuffed` と、きっかけ `{ buffApplied }` は止めた▲も付いたと数え、区間の表示は止めた常時の値（装備・キューブ）の量を 0 にしない。いまの定義にはどれも効く組が無い（固定を持つ 4 体に、自分のバーストのチャージ速度▲・リロード速度▲と、これらを読む条件・きっかけが無い）。使い手が出たら、効果の列から和を作る関数を 1 つにして（足す → `applyStatLocks`）、和を作る所がそれを使う形にする（[design-stat-lock.md](design-stat-lock.md) 3.4 節）
 - モダン UI のバッジの既定の色（`apps/web/src/styles.css` の `.badge-ui_*` と `[class^='badge-…_']` の差し色・地の色の規則）は、クラス 1 つ分の詳細度を持つ。このため、場所ごとに色を変える規則（設定のボタンのライトでの反転・操作キャラの印のダークでの反転・育成を変えたスロットの青い歯車など）は、要素名や親を足して詳細度を上げている。ui のバッジの図柄を白にする規則も、バッジを 1 つ足すたびに列挙が伸びる。バッジの絵の縦横の比（`150 / 130` など）も、CSS の 7 か所に書き写している。直すなら、既定の色の規則を `:where(...)` で包む。あわせて、BadgeIcon がグループのクラスと、viewBox から作る `aspect-ratio` を付ける形にする（[design-modern-ui.md](design-modern-ui.md) の経過）
 - 取り込む前の下見（`tools/captures/fetch.ts drive:<パス>`）で落とした録画を、取り込み（`tools/captures/intake.ts drive:<パス>`）が Drive からもう一度落とす（録画 1 本分の時間と通信量）。intake が、下見の置き場所（`tools/captures/dirs.ts` の `recordFetchDir`）に同じ大きさのファイルがあればそれを使う形にする（plan/design-workflow-simplification-17.md 3 節）。
+- `npm run sim` の引数の検査の抜け: (1) `--duration` に数でない値（例 `--duration x`）を渡すと、計算がメモリを使い切って落ちる（終了コードが付かない）。(2) `--trace` に空の値（`--trace ""`・`--trace ,`）を渡すと、空の 1 行だけを出して終了コード 0 で終わる。どちらも、`packages/core/scripts/sim-run.ts` で値を読む所で、エラーの 1 行を出して終了コード 2 で終える（[design-sim-run-split.md](design-sim-run-split.md) 9 節。2026-11-19 起票）
+- `npm run sim` の区間の表の `perTrigger` の内訳（通常攻撃 + 射撃ごとの倍率ダメージ + 固定ダメージ）で、2 つ目の項に小数 1 桁、3 つ目の項に小数 2 桁までが出る（例 `22,880 (18,933+3,946.9)`）。`packages/core/scripts/sim-run/tables.ts` の `segmentRows` が `.map(fmt)` と書いていて、`map` が渡す添字が `fmt` の桁の引数に入っている。意図した桁でなければ `.map((v) => fmt(v))` に直す（出力が変わる。[design-sim-run-split.md](design-sim-run-split.md) 9 節。2026-11-19 起票）
+- `npm run sim` の編成の条件の表（`packages/core/scripts/sim-run/tables.ts` の `compositionRows`）は、効果から編成の条件（`burstStepMix`・`squad`・`withCharacter`・`enemyElement`・`row`）を取り出す所が、`skills/composition.ts` の `compositionAllows` の写しになっている。編成の条件の種類を足しても表には出ず、型もテストも気づかない。条件を返す関数を `composition.ts` に置き、両方が使う形にする（[design-sim-run-split.md](design-sim-run-split.md) 9 節。2026-11-19 起票）
+- `npm run sim` の即時効果の表（`packages/core/scripts/sim-run/tables.ts` の `instantRows`）は、同じフレーム・同じ種類・同じ枠の効果を 1 行にまとめ、`from` には最初の 1 件の出どころの枠だけを出す。出どころの違う効果（同じフレームに、2 つの枠が同じ枠へ弾丸チャージをするなど）もまとまり、量の和が 1 つの出どころのものに見える。まとめのキーに出どころの枠を足すか、`from` に出どころを全部並べる（出力が変わる。[design-sim-run-split.md](design-sim-run-split.md) 9 節。2026-11-19 起票）
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
 
@@ -120,6 +124,7 @@
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
+- `sim-run.ts` の表示を、テストのある関数に分ける（2026-11-19 起票）→ 完了（2026-11-19）: [design-sim-run-split.md](design-sim-run-split.md)
 - 使われていないコードを消し、型だけの import 文と値の写しを直す（2026-11-18 起票）→ 完了（2026-11-18）: [design-unused-code-cleanup.md](design-unused-code-cleanup.md)
 - `skills/types.ts` と `skills/parse/` の循環する import を解消する（2026-11-18 起票）→ 完了（2026-11-18）: [design-import-cycle.md](design-import-cycle.md)
 - テストの道具の重なりを共通の道具に寄せる（2026-11-18 起票）→ 完了（2026-11-18。段 T1〜T3）: [design-test-helpers.md](design-test-helpers.md)

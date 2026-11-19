@@ -213,11 +213,12 @@ header h1 {
   align-items: center;
   gap: 8px;
 }
-/* 枠と地を出さず、絵だけのボタン（アカウントと設定・元に戻す・スロットの右上・絞り込みのクリア） */
+/* 枠と地を出さず、絵だけのボタン（アカウントと設定・元に戻す・スロットの右上・絞り込みのクリア・立ち絵の形の切り替え） */
 .settings-menu-button,
 .modern-slot-undo-button,
 .modern-slot-icon-button,
-.char-tray-filter-clear {
+.char-tray-filter-clear,
+.char-tray-shape-button {
   border: none;
   background: none;
   box-shadow: none;
@@ -1082,13 +1083,15 @@ svg.settings-menu-icon,
 .badge-ui_delete {
   --badge-accent: #ff3b4f;
 }
-/* ⓘ の文字・操作キャラの印・設定とアカウントのボタンの図柄・元に戻すの矢印・スロットの育成・設定の歯車（差し色）は白にする */
+/* ⓘ の文字・操作キャラの印・設定とアカウントのボタンの図柄・元に戻すの矢印・スロットの育成・設定の歯車・立ち絵の形の切り替えの人（差し色）は白にする */
 .badge-ui_setting,
 .badge-ui_information,
 .badge-ui_controller,
 .badge-ui_window,
 .badge-ui_account,
-.badge-ui_return {
+.badge-ui_return,
+.badge-ui_cu,
+.badge-ui_mcu {
   --badge-accent: #ffffff;
 }
 .badge-core_plain {
@@ -1415,11 +1418,18 @@ html:has(.modern-view-container) {
   font-size: 0.85rem;
 }
 /* 縦長・四角の切り替えで、いまの形を強く出す */
-.char-tray-shape-button > span:not(.char-tray-shape-current) {
-  opacity: 0.45;
+/* 立ち絵の形の切り替え（バッジ ui_mcu・ui_cu を横に並べる）。大きさは絞り込みのバッジの幅（24px）にそろえる */
+.char-tray-shape-button {
+  gap: 4px;
+  padding: 2px;
 }
-.char-tray-shape-current {
-  font-weight: bold;
+.char-tray-shape-icon {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+.char-tray-shape-icon:not(.char-tray-shape-current) {
+  opacity: 0.45;
 }
 /* 並べ替えを開くボタンの名前。全部の並びの名前を 1 つのマスに重ねて幅を一番長い名前に合わせ、いまの並びだけを見せる */
 .char-tray-sort-label {
