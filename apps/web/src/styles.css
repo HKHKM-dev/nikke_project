@@ -1371,9 +1371,14 @@ svg.settings-menu-icon,
   width: 100%;
   height: 100%;
 }
+/* ニケ一覧の印は、押しやすいように大きくする（四角 18px・縦長 20px） */
 .char-visual-compact .char-unsupported-tag {
-  width: 13px;
-  height: 13px;
+  width: 18px;
+  height: 18px;
+}
+.char-visual-tall .char-unsupported-tag {
+  width: 20px;
+  height: 20px;
 }
 
 /* CharacterTray (パレット) */
