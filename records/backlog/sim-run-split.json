@@ -1,0 +1,5 @@
+{
+  "section": "8",
+  "order": 150,
+  "text": "`sim-run.ts` の表示を、テストのある関数に分ける（2026-11-19 起票）→ 承認待ち: [design-sim-run-split.md](design-sim-run-split.md) 4 節"
+}
