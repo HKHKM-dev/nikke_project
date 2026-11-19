@@ -16,6 +16,7 @@ import {
 import { rosterFields } from '../../roster.ts';
 import { BURST_STEP_LABEL, CLASS_LABEL } from '../../skillLabels.ts';
 import { CONSOLE_CORPORATIONS, CORPORATION_LABEL, type ConsoleCorporation } from '../../team.ts';
+import type { TrayShape } from '../../trayShape.ts';
 
 const BADGE_SVGS = import.meta.glob<string>(
   [
@@ -99,7 +100,10 @@ export const RETURN_BADGE = badgeName('ui_return');
 export const DELETE_BADGE = badgeName('ui_delete');
 export const BUILD_BADGE = badgeName('ui_setting');
 /** ニケ一覧の立ち絵の形の切り替え（CharacterTray の TrayShapeToggle）のバッジ。四角は顔、縦長は胸から上 */
-export const TRAY_SHAPE_BADGES = { square: badgeName('ui_cu'), tall: badgeName('ui_mcu') } as const;
+export const TRAY_SHAPE_BADGES: Readonly<Record<TrayShape, string>> = {
+  square: badgeName('ui_cu'),
+  tall: badgeName('ui_mcu'),
+};
 
 /**
  * コレクションのバッジ。ニケ一覧の宝物の絞り込みのボタンと、スロット・ニケ一覧のコレクション（collectionBadge）が同じ絵を使い、
