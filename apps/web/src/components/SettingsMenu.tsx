@@ -1,10 +1,11 @@
-// 右上の設定のメニュー（ボタンは、クラシックでは文字「設定」、モダン UI ではバッジ ui_window の絵）。サイト全体の設定をここに置く: テーマ・表示モードの切り替え。
+// 右上の設定のメニュー（ボタンは、クラシックでは文字「設定」、モダン UI ではバッジ ui_window の絵。モダン UI ではテーマの
+// 選択肢の前にもバッジ ui_light・ui_dark・ui_system を出す）。サイト全体の設定をここに置く: テーマ・表示モードの切り替え。
 // 一覧の並びは、クラシックはスロットの上の「並べ替え」（ClassicView）、モダン UI はニケ一覧の「並べ替え」で選ぶ。
 // 育成状況は左隣の「アカウント」のメニュー（AccountMenu.tsx）
 import { THEME_LABEL, useTheme, type Theme } from '../theme.ts';
 import { UI_MODE_LABEL, type UiMode } from '../uiMode.ts';
 import { BadgeIcon } from './modern/BadgeIcon.tsx';
-import { SETTING_BADGE } from './modern/badges.ts';
+import { SETTING_BADGE, THEME_BADGES } from './modern/badges.ts';
 import { Popover } from './Popover.tsx';
 
 const THEMES: readonly Theme[] = ['light', 'dark', 'system'];
@@ -38,6 +39,7 @@ export function SettingsMenu({ uiMode, onSelectUiMode }: Props) {
         {THEMES.map((t) => (
           <label key={t} className="popover-option">
             <input type="radio" name="theme" value={t} checked={theme === t} onChange={() => setTheme(t)} />
+            {uiMode === 'modern' && <BadgeIcon className="settings-theme-icon" name={THEME_BADGES[t]} />}
             <span>{THEME_LABEL[t]}</span>
           </label>
         ))}

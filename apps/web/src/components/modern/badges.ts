@@ -16,6 +16,7 @@ import {
 import { rosterFields } from '../../roster.ts';
 import { BURST_STEP_LABEL, CLASS_LABEL } from '../../skillLabels.ts';
 import { CONSOLE_CORPORATIONS, CORPORATION_LABEL, type ConsoleCorporation } from '../../team.ts';
+import type { Theme } from '../../theme.ts';
 import type { TrayShape } from '../../trayShape.ts';
 
 const BADGE_SVGS = import.meta.glob<string>(
@@ -40,6 +41,9 @@ const BADGE_SVGS = import.meta.glob<string>(
     '../../assets/badges/ui_cu.svg',
     '../../assets/badges/ui_mcu.svg',
     '../../assets/badges/ui_arrow.svg',
+    '../../assets/badges/ui_light.svg',
+    '../../assets/badges/ui_dark.svg',
+    '../../assets/badges/ui_system.svg',
   ],
   { eager: true, query: '?raw', import: 'default' },
 );
@@ -85,6 +89,12 @@ export const UNSUPPORTED_BADGE = badgeName('ui_information');
 export const CONTROLLER_BADGE = badgeName('ui_controller');
 /** 右上の設定のメニューのボタンのバッジ（モダン UI の SettingsMenu） */
 export const SETTING_BADGE = badgeName('ui_window');
+/** 設定のメニューのテーマの選択肢のバッジ（モダン UI の SettingsMenu） */
+export const THEME_BADGES: Readonly<Record<Theme, string>> = {
+  light: badgeName('ui_light'),
+  dark: badgeName('ui_dark'),
+  system: badgeName('ui_system'),
+};
 /** 右上のアカウントのメニューのボタンのバッジ（モダン UI の AccountMenu） */
 export const ACCOUNT_BADGE = badgeName('ui_account');
 /** お気に入りのバッジ（favorites.ts の FAVORITE_MARKS ごと）と、2 つ以上押したときに数を重ねる無地のバッジ */
