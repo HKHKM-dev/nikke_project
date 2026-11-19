@@ -8,5 +8,5 @@
   </sodipodi:namedview>
   <defs id="defs1" />
   <path id="frame-out" inkscape:label="frame-out" style="fill:none;stroke:#000000;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 64.999975,5.5901606 125.95488,127.50033 H 4.0450637 Z" />
-  <path id="frame-in" inkscape:label="frame-in" style="fill:#1a1a1a;fill-opacity:1;stroke:#ffffff;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 12.136719,122.5 c 35.242187,0 70.484375,0 105.726561,0 C 100.24219,87.257161 82.621094,52.014323 65,16.771484 47.378906,52.014323 29.757812,87.257161 12.136719,122.5 Z" />
+  <path id="frame-in" inkscape:label="frame-in" style="fill:#1a1a1a;fill-opacity:1;stroke:#ffffff;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 12.136719,122.5 H 117.86328 L 65,16.771484 Z" />
 </svg>

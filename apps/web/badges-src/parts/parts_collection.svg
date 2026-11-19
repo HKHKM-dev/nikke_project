@@ -6,15 +6,9 @@
     <sodipodi:guide position="130,0" orientation="0,-130" id="guide4" inkscape:locked="false" />
     <sodipodi:guide position="0,0" orientation="-130,0" id="guide5" inkscape:locked="false" />
   </sodipodi:namedview>
-  <defs id="defs1">
-    <inkscape:path-effect effect="powermask" id="path-effect4" is_visible="true" lpeversion="1" uri="#mask-powermask-path-effect4" invert="false" hide_mask="false" background="true" background_color="#ffffffff" />
-    <mask maskUnits="userSpaceOnUse" id="mask-powermask-path-effect4">
-      <path id="mask-powermask-path-effect4_box" style="fill:#ffffff;fill-opacity:1" d="M 30.09509,43.242281 H 99.90491 V 106.75772 H 30.09509 Z" />
-      <path style="fill:none;stroke:#000000;stroke-width:12;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none" d="M 29.925514,84.37794 C 59.878511,84.52488 89.495061,73.999468 104.88188,64.375338" id="path4" sodipodi:nodetypes="cc" inkscape:label="mask" />
-    </mask>
-  </defs>
+  <defs id="defs1"></defs>
   <g id="content" transform="translate(0,-10)" inkscape:label="content">
-    <path style="fill:#ffffff;stroke:none;stroke-linecap:square;stroke-linejoin:round" d="M 31.160251,61.411975 C 32.948902,46.899312 43.224385,42.88867 52.0199,44.618189 60.815416,46.347709 65,59.113878 65,59.113878 c 0,0 4.184584,-12.766169 12.9801,-14.495689 8.795515,-1.729519 19.070998,2.281123 20.859649,16.793786 C 100.6284,75.924638 65,105.75772 65,105.75772 c 0,0 -35.628401,-29.833082 -33.839749,-44.345745 z" id="heart" sodipodi:nodetypes="zzczzcz" inkscape:label="heart" mask="url(#mask-powermask-path-effect4)" inkscape:path-effect="#path-effect4" inkscape:original-d="M 31.160251,61.411975 C 32.948902,46.899312 43.224385,42.88867 52.0199,44.618189 60.815416,46.347709 65,59.113878 65,59.113878 c 0,0 4.184584,-12.766169 12.9801,-14.495689 8.795515,-1.729519 19.070998,2.281123 20.859649,16.793786 C 100.6284,75.924638 65,105.75772 65,105.75772 c 0,0 -35.628401,-29.833082 -33.839749,-44.345745 z" />
+    <path style="fill:#ffffff;stroke:none;stroke-linecap:square;stroke-linejoin:round" d="M 48.671875 44.248047 C 40.788321 44.055482 32.725226 48.713529 31.160156 61.412109 C 30.600975 65.94916 33.699766 71.982668 38.222656 78.134766 C 62.128382 76.639236 85.375744 68.548635 98.787109 61.011719 C 96.860387 46.825163 86.694681 42.905609 77.980469 44.619141 C 69.184953 46.348661 65 59.113281 65 59.113281 C 65 59.113281 60.815047 46.348661 52.019531 44.619141 C 50.920092 44.402951 49.798097 44.275556 48.671875 44.248047 z M 92.162109 77.609375 C 79.706527 82.906254 64.23859 87.407748 47.714844 89.351562 C 56.300495 98.472398 65 105.75781 65 105.75781 C 65 105.75781 82.273711 91.293954 92.162109 77.609375 z " id="heart" inkscape:label="heart" />
     <path style="fill:none;stroke:#ffffff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none" d="m 26.520184,74.617085 c -5.568011,2.204554 -6.486654,9.712328 3.40533,9.760855 29.952997,0.14694 59.569547,-10.378472 74.956366,-20.002602 9.55402,-5.975839 3.66388,-12.370733 -2.03921,-11.342961" id="line" sodipodi:nodetypes="cssc" inkscape:label="line" />
   </g>
 </svg>
