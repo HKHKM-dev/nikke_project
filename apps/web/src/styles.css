@@ -1190,6 +1190,8 @@ svg.settings-theme-icon,
   font-size: calc(var(--slot-portrait-h) / 16);
   /* ニケがいるときの絵（.char-visual-portrait）と同じ大きさ（大きさは下の .char-visual-portrait と共通の規則） */
   box-sizing: content-box;
+  /* ＋ を枠の真ん中に置く基準 */
+  position: relative;
 }
 /* 空のスロットの文字は選べる文字にしない（マウスを載せても I の形のカーソルにしない）。置き先待ちの間は押せる印のカーソル */
 .modern-slot-empty-area {
@@ -1202,16 +1204,20 @@ svg.settings-theme-icon,
 .modern-slot-empty-plus {
   font-size: 3em;
   line-height: 1;
-  /* 枠の中の表示（＋・番号など）を中央より下げる（FRONT・REAR とも）。中身の列は上下の中央に置いているので、上の余白を 102px 足すと 51px 下がる */
-  margin-top: calc(var(--slot-portrait-h) / 2.5);
+  /* ＋ は枠の真ん中に置く（ほかの文字の並びからは外す） */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
 }
 /* 空のスロットの ＋ の下: 番号（01〜05）・FRONT / REAR・EMPTY SLOT・位置（○○●○○） */
 .modern-slot-empty-number {
   font-size: 1.8em;
   font-weight: bold;
   line-height: 1.1;
-  /* 番号と FRONT・REAR の組を少し下げる */
-  margin-top: 0.5em;
+  /* 番号から下の文字を中央より下げる。中身の列は上下の中央に置いているので、上の余白を 77px 足すと 38px 下がる（位置の印 ○ が枠の下からはみ出ない高さ）。
+     ＋ を並びから外した分（高さ 3em と間 0.25em。枠の文字の大きさが基準）も足して、位置を変えない */
+  margin-top: calc(var(--slot-portrait-h) * 0.3 + var(--slot-portrait-h) * 3.25 / 16 + 0.5em);
 }
 .modern-slot-empty-row {
   font-size: 0.75em;
@@ -1350,12 +1356,15 @@ svg.settings-theme-icon,
 .char-visual-portrait,
 .char-visual-tall,
 .modern-slot-empty-area {
-  /* 空のスロットは、立ち絵の代わりにシルエットの絵（256×512。立ち絵と同じ 1:2）を枠いっぱいに出す。
-     塗りは基準を枠線の外側（border-box）にする。既定の padding-box だと、絵が繰り返されて上の枠線の 1px に下端の塗りの色が出る */
+  /* 塗りは基準を枠線の外側（border-box）にする。既定の padding-box だと、絵が繰り返されて上の枠線の 1px に下端の塗りの色が出る */
+  background: linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
+  border-image: linear-gradient(to bottom, transparent, var(--char-visual-line) 50%) 1;
+}
+/* 空のスロットだけ、立ち絵の代わりにシルエットの絵（256×512。立ち絵と同じ 1:2）を枠いっぱいに出す（ニケがいるスロットには出さない） */
+.modern-slot-empty-area {
   background:
     url('./assets/portrait_silhouette.webp') center / 100% 100% no-repeat,
     linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
-  border-image: linear-gradient(to bottom, transparent, var(--char-visual-line) 50%) 1;
 }
 .char-visual-img {
   width: 100%;
