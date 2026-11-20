@@ -11,6 +11,6 @@
     <rect style="fill:#ffffff;stroke:none;stroke-width:4.99998;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;paint-order:markers fill stroke" id="right" width="12.308252" height="83.175697" x="-85" y="40.414227" ry="0" transform="scale(-1,1)" inkscape:label="right" />
     <rect style="display:inline;fill:#ffffff;stroke:none;stroke-width:4.99998;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;paint-order:markers fill stroke" id="left" width="12.308252" height="83.182693" x="45" y="40.407227" ry="0" inkscape:label="left" />
     <path style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:square;stroke-dasharray:none" d="m 64.979847,54.5 -19.990048,-14 40,0 z" id="mid" sodipodi:nodetypes="cccc" inkscape:label="mid" />
-    <path style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:square;stroke-dasharray:none" id="top" inkscape:label="top" d="M 85 26.689453 L 64.990234 40.5 L 45 26.691406 L 45 41.410156 L 85 41.410156 L 85 26.689453 z " />
+    <path style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:square;stroke-dasharray:none" id="top" inkscape:label="top" d="M 85,26.689453 L 64.990234,40.5 45,26.691406 V 41.410156 H 85 Z" />
   </g>
 </svg>
