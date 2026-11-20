@@ -1202,8 +1202,8 @@ svg.settings-theme-icon,
 .modern-slot-empty-plus {
   font-size: 3em;
   line-height: 1;
-  /* 枠の中の表示（＋・番号など）を中央より下げる（FRONT・REAR とも）。中身の列は上下の中央に置いているので、上の余白を 64px 足すと 32px 下がる */
-  margin-top: calc(var(--slot-portrait-h) / 4);
+  /* 枠の中の表示（＋・番号など）を中央より下げる（FRONT・REAR とも）。中身の列は上下の中央に置いているので、上の余白を 102px 足すと 51px 下がる */
+  margin-top: calc(var(--slot-portrait-h) / 2.5);
 }
 /* 空のスロットの ＋ の下: 番号（01〜05）・FRONT / REAR・EMPTY SLOT・位置（○○●○○） */
 .modern-slot-empty-number {
