@@ -18,6 +18,7 @@ import { BURST_STEP_LABEL, CLASS_LABEL } from '../../skillLabels.ts';
 import { CONSOLE_CORPORATIONS, CORPORATION_LABEL, type ConsoleCorporation } from '../../team.ts';
 import type { Theme } from '../../theme.ts';
 import type { TrayShape } from '../../trayShape.ts';
+import type { UiMode } from '../../uiMode.ts';
 
 const BADGE_SVGS = import.meta.glob<string>(
   [
@@ -44,6 +45,8 @@ const BADGE_SVGS = import.meta.glob<string>(
     '../../assets/badges/ui_light.svg',
     '../../assets/badges/ui_dark.svg',
     '../../assets/badges/ui_system.svg',
+    '../../assets/badges/ui_classic.svg',
+    '../../assets/badges/ui_modern.svg',
   ],
   { eager: true, query: '?raw', import: 'default' },
 );
@@ -89,6 +92,11 @@ export const UNSUPPORTED_BADGE = badgeName('ui_information');
 export const CONTROLLER_BADGE = badgeName('ui_controller');
 /** 右上の設定のメニューのボタンのバッジ（モダン UI の SettingsMenu） */
 export const SETTING_BADGE = badgeName('ui_window');
+/** 設定のメニューの表示モードの選択肢のバッジ（モダン UI の SettingsMenu） */
+export const UI_MODE_BADGES: Readonly<Record<UiMode, string>> = {
+  classic: badgeName('ui_classic'),
+  modern: badgeName('ui_modern'),
+};
 /** 設定のメニューのテーマの選択肢のバッジ（モダン UI の SettingsMenu） */
 export const THEME_BADGES: Readonly<Record<Theme, string>> = {
   light: badgeName('ui_light'),
