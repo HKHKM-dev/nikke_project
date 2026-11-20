@@ -8,10 +8,10 @@
   </sodipodi:namedview>
   <defs id="defs1"></defs>
   <g id="content" transform="translate(0,-10)" inkscape:label="content">
-    <path style="fill:#ffffff;stroke:none" d="M 55.425781 27.277344 L 22.935547 59.769531 L 22.935547 71.082031 L 25.763672 68.253906 L 55.425781 38.591797 L 85.087891 68.253906 L 87.917969 71.082031 L 93.574219 65.425781 L 90.746094 62.597656 L 55.425781 27.277344 z " id="bracket-1" inkscape:label="bracket-1" />
-    <path style="fill:#ffffff;stroke:none" d="M 55.425781 46.425781 L 52.597656 49.253906 L 17.277344 84.574219 L 49.769531 117.06445 L 61.082031 117.06445 L 58.253906 114.23633 L 28.591797 84.574219 L 58.253906 54.912109 L 61.082031 52.082031 L 55.425781 46.425781 z " id="bracket-2" inkscape:label="bracket-2" />
-    <path style="fill:#ffffff;stroke:none" d="M 42.082031 78.917969 L 36.425781 84.574219 L 39.253906 87.402344 L 74.574219 122.72266 L 107.06445 90.230469 L 107.06445 78.917969 L 104.23633 81.746094 L 74.574219 111.4082 L 44.912109 81.746094 L 42.082031 78.917969 z " id="bracket-3" inkscape:label="bracket-3" />
-    <path style="display:inline;fill:#ffffff;stroke:none" d="M 68.917969 32.935547 L 71.746094 35.763672 L 101.4082 65.425781 L 71.746094 95.087891 L 68.917969 97.917969 L 74.574219 103.57422 L 77.402344 100.74609 L 112.72266 65.425781 L 80.230469 32.935547 L 68.917969 32.935547 z " id="bracket-4" inkscape:label="bracket-4" />
+    <path style="fill:#ffffff;stroke:none" d="M 55.425781,27.277344 L 22.935547,59.769531 V 71.082031 L 55.425781,38.591797 85.087891,68.253906 87.917969,71.082031 93.574219,65.425781 Z" id="bracket-1" inkscape:label="bracket-1" />
+    <path style="fill:#ffffff;stroke:none" d="M 55.425781,46.425781 L 17.277344,84.574219 49.769531,117.06445 H 61.082031 L 28.591797,84.574219 58.253906,54.912109 61.082031,52.082031 Z" id="bracket-2" inkscape:label="bracket-2" />
+    <path style="fill:#ffffff;stroke:none" d="M 42.082031,78.917969 L 36.425781,84.574219 74.574219,122.72266 107.06445,90.230469 V 78.917969 L 74.574219,111.4082 44.912109,81.746094 Z" id="bracket-3" inkscape:label="bracket-3" />
+    <path style="display:inline;fill:#ffffff;stroke:none" d="M 68.917969,32.935547 L 101.4082,65.425781 71.746094,95.087891 68.917969,97.917969 74.574219,103.57422 112.72266,65.425781 80.230469,32.935547 Z" id="bracket-4" inkscape:label="bracket-4" />
     <path style="display:inline;fill:none;stroke:#ffffff;stroke-width:8;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none" d="M 65.000001,61.656844 51.656842,75.000003 65.000003,88.343164 78.343162,75.000005 Z" id="diamond" sodipodi:nodetypes="ccccc" inkscape:label="diamond" />
   </g>
 </svg>
