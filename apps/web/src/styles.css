@@ -1218,7 +1218,7 @@ svg.settings-option-icon,
   font-weight: bold;
   line-height: 1.1;
   /* 番号から下の文字を中央より下げる。中身の列は上下の中央に置いているので、上の余白を 77px 足すと 38px 下がる（位置の印 ○ が枠の下からはみ出ない高さ）。
-     ＋ を並びから外した分（高さ 3em と間 0.25em。枠の文字の大きさが基準）も足して、位置を変えない */
+     ＋ は並びの外（枠の真ん中）にあるので、＋ の高さ 3em と間 0.25em（枠の文字の大きさが基準）の分も足して、番号を ＋ より下に置く */
   margin-top: calc(var(--slot-portrait-h) * 0.3 + var(--slot-portrait-h) * 3.25 / 16 + 0.8em);
 }
 .modern-slot-empty-row {

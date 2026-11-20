@@ -137,7 +137,7 @@ export function ModernSlotCard({
                 extraBadge={collectionBadge}
               />
               <SlotCharName name={characterEntry.name.ja} marks={growthMarks} />
-              {/* 置いたニケが一覧から動いてくる間（flight.ts の modern-slot-arriving）は、立ち絵の代わりに空のスロットの枠を出す */}
+              {/* 置いたニケが動いてくる間（flight.ts の modern-slot-arriving）と、ドラッグで持ち上げている間・戻る間は、立ち絵の代わりに空のスロットの枠を出す */}
               <div className="modern-slot-arrival-face" aria-hidden="true">
                 <EmptySlotFace slotIndex={slotIndex} />
               </div>

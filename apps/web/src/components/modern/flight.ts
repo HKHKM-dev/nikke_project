@@ -115,6 +115,11 @@ export function flyIntoSlot(from: DOMRect, card: Element): () => void {
   // 名前が流れるかの印がまだ前のニケのままで、短い名前が左揃えのまま写る。microtask は描く前に走るので、本物が見えるフレームは無い
   queueMicrotask(() => {
     if (stopped) return;
+    // 同じ描画でスロットが外れたら、写しは作らずに終える
+    if (!content.isConnected) {
+      remove();
+      return;
+    }
     ready = decodeImages(card);
     const base = content.getBoundingClientRect();
     ghost = ghostOf(content, base);
