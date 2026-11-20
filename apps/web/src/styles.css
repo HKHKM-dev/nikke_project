@@ -1191,6 +1191,14 @@ svg.settings-theme-icon,
   /* ニケがいるときの絵（.char-visual-portrait）と同じ大きさ（大きさは下の .char-visual-portrait と共通の規則） */
   box-sizing: content-box;
 }
+/* 空のスロットの文字は選べる文字にしない（マウスを載せても I の形のカーソルにしない）。置き先待ちの間は押せる印のカーソル */
+.modern-slot-empty-area {
+  cursor: default;
+  user-select: none;
+}
+.modern-slot-card.modern-slot-awaiting .modern-slot-empty-area {
+  cursor: pointer;
+}
 .modern-slot-empty-plus {
   font-size: 3em;
   line-height: 1;
