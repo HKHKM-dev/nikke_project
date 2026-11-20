@@ -1,0 +1,5 @@
+{
+  "section": "5",
+  "order": 50,
+  "text": "`tools/captures/fetch.ts` は、台帳に sha256 が無いファイルを、手元の大きさが Drive と違えば落とし直す（`fetchFile`）。この判定は録画だけでなく `frames/` などの指定にも効くので、クラウドで `still.ts` が作り直した画（応答の終わりの push まで Drive に上がらない）を、その前に `fetch.ts frames/` を回すと古い版で上書きする。落とし直すのを録画に限るか、上書きの前に知らせる。あわせて、`Drive.connect` を引数の処理より前に呼んでいるので、鍵の無いデスクトップで `drive:<パス>` を指すと、手元のパスを出す分岐に届く前に止まる。接続を要る所まで遅らせる（[design-workflow-simplification-17.md](design-workflow-simplification-17.md) 4 節。2026-11-20 起票）"
+}

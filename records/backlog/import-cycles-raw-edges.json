@@ -1,0 +1,5 @@
+{
+  "section": "5",
+  "order": 70,
+  "text": "循環の検査（`tools/code/import-cycles.ts`）は、import の指定から `?raw`・`?url` を外してから辺に数える。モジュールを実行しない `?raw` の import でも、ソースの先なら循環と判定する（偽の失敗）。いまは該当する import が無い。`?` の付いた指定は辺にしない形にして、テストを足す（[design-import-cycle.md](design-import-cycle.md) 9 節。2026-11-20 起票）"
+}
