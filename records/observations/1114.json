@@ -29,5 +29,52 @@
         "noFireSlots": [2]
       }
     }
+  },
+  {
+    "id": "1114-02",
+    "recording": "1114",
+    "kind": "timing",
+    "use": "input",
+    "value": [25.296, 27.217],
+    "unit": "秒",
+    "description": "シンデレラ（AI）・I-DOLL・サン（撃たない） の、的の 1 回目のジャンプで撃てなかった窓（ゲーム内の秒。始まり・終わり）。照合の setup.jumpWindows で、モデルの狙えない窓と着地点の区間の切れ目をこれに置き換える。録画は 1 回目のゲージの満タンの後で止めたので、2 回目からは無い",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "V-0086 の読み方。戦闘開始は動画 f779（残り時間の 02:59 が出たフレーム。C-0078。この録画のゲージの満タンの観測値と同じ起点）。HUD の総ダメージの増分（シンデレラの発）が、リロード（約 200f）より短い 114f 以上止まった所。終わりは着地の後の最初の増分（f2392）の 12f 前、始まりは終わりの 118f（2 秒）前と、止まる前の最後の増分（f2266）の 1f 後の遅いほう。動画の窓: 2267〜2380。窓より前にフルバーストもバーストの発動も無いので、ゲーム内の秒は戦闘開始からのフレームを 1f = 0.017 秒で数えた"
+    },
+    "source": "V-0805",
+    "readAt": "2026-11-20"
+  },
+  {
+    "id": "1114-03",
+    "recording": "1114",
+    "use": "compare",
+    "kind": "timing",
+    "value": 3112,
+    "unit": "f",
+    "description": "撮り方 A1（シンデレラ（AI）・I-DOLL・サン（操作・撃たない））の、戦闘開始から 1 回目にバーストゲージが満タンになる（BURST バーが消える。C-0083）までの動画のフレーム。的のジャンプの窓を録画の値（1114-02）にして比べる（値は 1114-01 と同じ）",
+    "method": {
+      "tool": "gauge.ts --mode events・timer.ts --mode runs",
+      "note": "1114-01 と同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [2],
+        "jumpWindows": "1114-02"
+      }
+    },
+    "source": "V-0805",
+    "readAt": "2026-11-20"
   }
 ]
