@@ -124,9 +124,12 @@
   border-width: 1px;
   border-style: solid;
   --char-visual-line: var(--slot-frame-line);
-  /* 文字は、シルエットの絵の上で読めるよう、ライトでは白・ダークでは黒にする */
-  color: light-dark(#ffffff, #000000);
+  /* 文字は、シルエットの絵の上で読めるよう、ライトでは白に近い灰色・ダークでは黒に近い灰色にする（＋ だけは白・黒） */
+  color: light-dark(#cccccc, #333333);
   opacity: 1;
+}
+:root[data-app-ui='modern'] .modern-slot-empty-plus {
+  color: light-dark(#ffffff, #000000);
 }
 /* ニケがいるときの立ち絵とニケ一覧の絵の枠も、空のスロットの枠と同じ色にする */
 :root[data-app-ui='modern'] .char-visual {
