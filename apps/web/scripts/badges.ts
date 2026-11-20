@@ -87,6 +87,8 @@ export const MONOCHROME_NAMES: ReadonlySet<string> = new Set([
   'ui_light',
   'ui_dark',
   'ui_system',
+  'ui_undo',
+  'ui_redo',
 ]);
 
 /** バッジ（拡張子なしの名前）が白黒で描くものか */

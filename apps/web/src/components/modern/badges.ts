@@ -44,6 +44,8 @@ const BADGE_SVGS = import.meta.glob<string>(
     '../../assets/badges/ui_light.svg',
     '../../assets/badges/ui_dark.svg',
     '../../assets/badges/ui_system.svg',
+    '../../assets/badges/ui_undo.svg',
+    '../../assets/badges/ui_redo.svg',
   ],
   { eager: true, query: '?raw', import: 'default' },
 );
@@ -107,8 +109,11 @@ export const FAVORITE_BADGES = {
 } as const;
 export const FAVORITE_COUNT_BADGE = badgeName('ui_blank_main');
 
-/** 元に戻すのボタン（ModernView）と、ニケ一覧の絞り込みを外すボタン（CharacterTray）のバッジ */
+/** ニケ一覧の絞り込みを外すボタン（CharacterTray）のバッジ */
 export const RETURN_BADGE = badgeName('ui_return');
+/** スロットの並びの元に戻す・やり直すのボタン（ModernView）のバッジ */
+export const UNDO_BADGE = badgeName('ui_undo');
+export const REDO_BADGE = badgeName('ui_redo');
 /** スロットの立ち絵の右上の、空にするボタンと育成・設定のボタン（ModernSlotCard）のバッジ */
 export const DELETE_BADGE = badgeName('ui_delete');
 export const BUILD_BADGE = badgeName('ui_setting');

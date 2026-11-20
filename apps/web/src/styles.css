@@ -748,20 +748,29 @@ svg.settings-theme-icon,
 
 /* 5スロットグリッド */
 /* 5 枚を 1 段に並べ、余った幅は左右に分けて中央に寄せる。幅が足りなければ立ち絵を縮めて収める（useSlotFit.ts が --slot-portrait-h を置く） */
-/* スロットの並びと、その上の端の中央の「元に戻す」のボタン（useSlotUndo）。ボタンの段は、出ていない間も空けておく（出し入れで並びが動かないように） */
+/* スロットの並びと、その上の端の中央の「元に戻す」「やり直す」のボタン（useSlotUndo）。ボタンの段の高さはいつも空けておく */
 .modern-slots-area {
   position: relative;
   padding-top: 30px;
 }
-.modern-slot-undo-button {
+.modern-slot-history {
   position: absolute;
   top: 0;
   left: 50%;
   translate: -50%;
   z-index: 3;
+  display: flex;
+  gap: 4px;
+}
+.modern-slot-undo-button {
   display: inline-flex;
-  padding: 3px 8px;
+  padding: 3px 4px;
   cursor: pointer;
+}
+/* 戻せる・やり直せる並びが無いときは、薄くして押せなくする */
+.modern-slot-undo-button:disabled {
+  cursor: default;
+  opacity: 0.3;
 }
 .modern-slot-undo-icon {
   display: block;
@@ -1089,13 +1098,15 @@ svg.settings-theme-icon,
 .badge-ui_delete {
   --badge-accent: #ff3b4f;
 }
-/* ⓘ の文字・操作キャラの印・設定とアカウントのボタンの図柄・元に戻すの矢印・スロットの育成・設定の歯車・立ち絵の形の切り替えの人・テーマの絵（差し色）は白にする */
+/* ⓘ の文字・操作キャラの印・設定とアカウントのボタンの図柄・元に戻すの矢印・やり直すの矢印・スロットの育成・設定の歯車・立ち絵の形の切り替えの人・テーマの絵（差し色）は白にする */
 .badge-ui_setting,
 .badge-ui_information,
 .badge-ui_controller,
 .badge-ui_window,
 .badge-ui_account,
 .badge-ui_return,
+.badge-ui_undo,
+.badge-ui_redo,
 .badge-ui_cu,
 .badge-ui_mcu,
 .badge-ui_light,
