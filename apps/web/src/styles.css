@@ -1342,8 +1342,11 @@ svg.settings-theme-icon,
 .char-visual-portrait,
 .char-visual-tall,
 .modern-slot-empty-area {
-  /* 基準を枠線の外側（border-box）にする。既定の padding-box だと、絵が繰り返されて上の枠線の 1px に下端の塗りの色が出る */
-  background: linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
+  /* 空のスロットは、立ち絵の代わりにシルエットの絵（256×512。立ち絵と同じ 1:2）を枠いっぱいに出す。
+     塗りは基準を枠線の外側（border-box）にする。既定の padding-box だと、絵が繰り返されて上の枠線の 1px に下端の塗りの色が出る */
+  background:
+    url('./assets/portrait_silhouette.webp') center / 100% 100% no-repeat,
+    linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
   border-image: linear-gradient(to bottom, transparent, var(--char-visual-line) 50%) 1;
 }
 .char-visual-img {
