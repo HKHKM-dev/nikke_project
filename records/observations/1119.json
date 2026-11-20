@@ -108,7 +108,11 @@
       }
     },
     "source": "V-0805",
-    "readAt": "2026-11-20"
+    "readAt": "2026-11-20",
+    "invalid": {
+      "reason": "比べに使った的のジャンプの窓（同じ録画の V-0805 の input）が、RL の着弾までの飛ぶ時間・MG の明けの外れた 1 発目を引いていなかった。読み直した窓で比べ直した観測値に置き換える",
+      "date": "2026-11-20"
+    }
   },
   {
     "id": "1119-05",
@@ -137,6 +141,92 @@
         "events": ["range-3min-jump"],
         "burst": true,
         "jumpWindows": "1119-03"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    },
+    "source": "V-0805",
+    "readAt": "2026-11-20",
+    "invalid": {
+      "reason": "比べに使った的のジャンプの窓（同じ録画の V-0805 の input）が、RL の着弾までの飛ぶ時間・MG の明けの外れた 1 発目を引いていなかった。読み直した窓で比べ直した観測値に置き換える",
+      "date": "2026-11-20"
+    }
+  },
+  {
+    "id": "1119-06",
+    "recording": "1119",
+    "kind": "timing",
+    "use": "input",
+    "unit": "秒",
+    "description": "ミハラ：ボンディングチェーン単騎（操作） の、的の 1 回目のジャンプで撃てなかった窓（ゲーム内の秒。始まり・終わり）。照合の setup.jumpWindows で、モデルの狙えない窓と着地点の区間の切れ目をこれに置き換える。録画は 1 回目のゲージの満タンの後で止めたので、2 回目からは無い",
+    "value": [28.662, 30.668],
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "1119-03 の読み直し。明けの最初の増分（f2595）からの増分の間隔は 13・10・8f で、MG の撃ち始めの間隔（23・13・10・8f。モデルと、明けの 1 発目が当たった 1118）の 2 番目から始まるので、1 発目（f2572。23f 前）は外れて増分に出ていない（MG の撃ち始めの外れ。plan/captures/guide.md「単騎の射撃の刻み」）。終わりは明けの 1 発目の発射の 12f 前（構え。C-0114）、始まりは終わりの 118f（2 秒）前と、止まる前の最後の増分（f2439）の 1f 後の遅いほう。動画の窓: 2442〜2560。戦闘開始（f756）とゲーム内の秒の数え方は 1119-03 と同じ"
+    },
+    "source": "V-0805",
+    "readAt": "2026-11-20"
+  },
+  {
+    "id": "1119-07",
+    "recording": "1119",
+    "use": "compare",
+    "kind": "timing",
+    "value": 1956,
+    "unit": "f",
+    "description": "撮り方 B2（ミハラ：ボンディングチェーン単騎（操作））の、戦闘開始から 1 回目にバーストゲージが満タンになる（BURST バーが消える。C-0083）までの動画のフレーム。的のジャンプの窓を録画の値（1119-06）にして比べる（値は 1119-01 と同じ）",
+    "method": {
+      "tool": "gauge.ts --mode events・timer.ts --mode runs",
+      "note": "1119-01 と同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "jumpWindows": "1119-06"
+      }
+    },
+    "source": "V-0805",
+    "readAt": "2026-11-20"
+  },
+  {
+    "id": "1119-08",
+    "recording": "1119",
+    "use": "compare",
+    "kind": "count",
+    "value": 955,
+    "unit": "発",
+    "description": "撮り方 B2（ミハラ：ボンディングチェーン単騎（操作））の、戦闘の始まりから 1 回目にゲージが満タンになった（BURST バーが消えた）フレームまでのミハラ：ボンディングチェーンの発の数。的のジャンプの窓を録画の値（1119-06）にして比べる（値は 1119-02 と同じ）",
+    "method": {
+      "tool": "reticle-ammo.ts（照準の左の残弾）・gauge.ts --mode events",
+      "note": "1119-02 と同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "jumpWindows": "1119-06"
       }
     },
     "scope": {

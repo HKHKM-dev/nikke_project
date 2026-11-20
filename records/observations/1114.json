@@ -75,6 +75,57 @@
       }
     },
     "source": "V-0805",
+    "readAt": "2026-11-20",
+    "invalid": {
+      "reason": "比べに使った的のジャンプの窓（同じ録画の V-0805 の input）が、RL の着弾までの飛ぶ時間・MG の明けの外れた 1 発目を引いていなかった。読み直した窓で比べ直した観測値に置き換える",
+      "date": "2026-11-20"
+    }
+  },
+  {
+    "id": "1114-04",
+    "recording": "1114",
+    "kind": "timing",
+    "use": "input",
+    "unit": "秒",
+    "description": "シンデレラ（AI）・I-DOLL・サン（撃たない） の、的の 1 回目のジャンプで撃てなかった窓（ゲーム内の秒。始まり・終わり）。照合の setup.jumpWindows で、モデルの狙えない窓と着地点の区間の切れ目をこれに置き換える。録画は 1 回目のゲージの満タンの後で止めたので、2 回目からは無い",
+    "value": [25.296, 27.115],
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "1114-02 の読み直し。明けの最初の増分（f2392）はシンデレラ（RL）の発の着弾で、発射はモデルの着弾までの 6f（中近・近）前の f2386（plan/captures/guide.md「録画の窓」）。終わりは明けの 1 発目の発射の 12f 前（構え。C-0114）、始まりは終わりの 118f（2 秒）前と、止まる前の最後の増分（f2266）の 1f 後の遅いほう。動画の窓: 2267〜2374。戦闘開始（f779）とゲーム内の秒の数え方は 1114-02 と同じ"
+    },
+    "source": "V-0805",
+    "readAt": "2026-11-20"
+  },
+  {
+    "id": "1114-05",
+    "recording": "1114",
+    "use": "compare",
+    "kind": "timing",
+    "value": 3112,
+    "unit": "f",
+    "description": "撮り方 A1（シンデレラ（AI）・I-DOLL・サン（操作・撃たない））の、戦闘開始から 1 回目にバーストゲージが満タンになる（BURST バーが消える。C-0083）までの動画のフレーム。的のジャンプの窓を録画の値（1114-04）にして比べる（値は 1114-01 と同じ）",
+    "method": {
+      "tool": "gauge.ts --mode events・timer.ts --mode runs",
+      "note": "1114-01 と同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [2],
+        "jumpWindows": "1114-04"
+      }
+    },
+    "source": "V-0805",
     "readAt": "2026-11-20"
   }
 ]
