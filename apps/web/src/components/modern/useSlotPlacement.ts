@@ -96,9 +96,11 @@ export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>
   };
 
   const swapSlots = (fromIndex: number, toIndex: number, dragged?: DOMRect) => {
-    // スロットの位置は入れ替えても変わらないので、落とした先の立ち絵の枠の位置が、入れ替わるものの元の位置
-    queueArrival(fromIndex, slotAreaAt(toIndex)?.getBoundingClientRect());
-    queueArrival(toIndex, dragged);
+    // スロットの位置は入れ替えても変わらないので、落とした先の立ち絵の枠の位置が、入れ替わるものの元の位置。
+    // 動かすのはニケだけ（空のスロットの枠は動かさず、その場で入れ替わる）
+    const isEmpty = (index: number) => (team.slots[index]?.resourceId ?? null) === null;
+    queueArrival(fromIndex, isEmpty(toIndex) ? undefined : slotAreaAt(toIndex)?.getBoundingClientRect());
+    queueArrival(toIndex, isEmpty(fromIndex) ? undefined : dragged);
     dispatch({ type: 'swapSlots', fromIndex, toIndex });
   };
 

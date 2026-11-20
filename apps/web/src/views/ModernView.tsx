@@ -12,7 +12,7 @@ import { ModernSlotCard } from '../components/modern/ModernSlotCard.tsx';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
 import { useSlotUndo } from '../components/modern/useSlotUndo.ts';
 import { BadgeIcon } from '../components/modern/BadgeIcon.tsx';
-import { RETURN_BADGE } from '../components/modern/badges.ts';
+import { REDO_BADGE, UNDO_BADGE } from '../components/modern/badges.ts';
 import { SlotDragOverlay } from '../components/modern/SlotDragOverlay.tsx';
 import { slotCollectionBadge, slotGrowthEdited, slotGrowthMarks } from '../components/modern/slotBadges.ts';
 import { useSlotDrag } from '../components/modern/useSlotDrag.ts';
@@ -160,18 +160,29 @@ export function ModernView({
           <PartyTabs active={parties.active} onSelect={selectParty} totals={totals.parties} />
 
           <div className="modern-slots-area">
-            {/* 元に戻す（スロットの並びの上の端の中央。戻せる並びがあるときだけ出す）。絵はバッジ ui_return */}
-            {slotUndo.canUndo && (
+            {/* 元に戻す・やり直す（スロットの並びの上の端の中央。戻せる・やり直せる並びが無いときは押せない）。絵はバッジ ui_undo・ui_redo */}
+            <div className="modern-slot-history">
               <button
                 type="button"
                 className="modern-slot-undo-button"
                 aria-label="元に戻す"
                 title="元に戻す"
+                disabled={!slotUndo.canUndo}
                 onClick={() => slotUndo.undo(placement)}
               >
-                <BadgeIcon className="modern-slot-undo-icon" name={RETURN_BADGE} />
+                <BadgeIcon className="modern-slot-undo-icon" name={UNDO_BADGE} />
               </button>
-            )}
+              <button
+                type="button"
+                className="modern-slot-undo-button"
+                aria-label="やり直す"
+                title="やり直す"
+                disabled={!slotUndo.canRedo}
+                onClick={() => slotUndo.redo(placement)}
+              >
+                <BadgeIcon className="modern-slot-undo-icon" name={REDO_BADGE} />
+              </button>
+            </div>
             <section ref={slotsGridRef} className="modern-slots-grid" aria-label="編成スロット一覧">
               {team.slots.map((slot, i) => {
                 const { character } = calc.slots[i]!;
