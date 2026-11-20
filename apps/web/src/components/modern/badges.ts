@@ -16,6 +16,7 @@ import {
 import { rosterFields } from '../../roster.ts';
 import { BURST_STEP_LABEL, CLASS_LABEL } from '../../skillLabels.ts';
 import { CONSOLE_CORPORATIONS, CORPORATION_LABEL, type ConsoleCorporation } from '../../team.ts';
+import type { Theme } from '../../theme.ts';
 import type { TrayShape } from '../../trayShape.ts';
 
 const BADGE_SVGS = import.meta.glob<string>(
@@ -39,6 +40,10 @@ const BADGE_SVGS = import.meta.glob<string>(
     '../../assets/badges/ui_setting.svg',
     '../../assets/badges/ui_cu.svg',
     '../../assets/badges/ui_mcu.svg',
+    '../../assets/badges/ui_arrow.svg',
+    '../../assets/badges/ui_light.svg',
+    '../../assets/badges/ui_dark.svg',
+    '../../assets/badges/ui_system.svg',
   ],
   { eager: true, query: '?raw', import: 'default' },
 );
@@ -54,7 +59,9 @@ export const BADGE_SYMBOLS = Object.entries(BADGE_SVGS)
     const viewBox = /\sviewBox="([^"]+)"/.exec(attrs)?.[1];
     if (viewBox === undefined) throw new Error(`バッジ ${name}.svg に viewBox が無い`);
     VIEW_BOXES.set(name, viewBox);
-    return `<symbol id="badge-${name}" viewBox="${viewBox}">${body}</symbol>`;
+    // 書き出し（svgo）は、中の要素に共通の塗りなどを外の <svg> に移すことがある。<symbol> には移らないので、<g> に写して中身を包む
+    const inherited = attrs.replace(/\s(?:xmlns(?::\w+)?|xml:space|width|height|viewBox)="[^"]*"/g, '').trim();
+    return `<symbol id="badge-${name}" viewBox="${viewBox}">${inherited ? `<g ${inherited}>${body}</g>` : body}</symbol>`;
   })
   .join('');
 
@@ -82,6 +89,12 @@ export const UNSUPPORTED_BADGE = badgeName('ui_information');
 export const CONTROLLER_BADGE = badgeName('ui_controller');
 /** 右上の設定のメニューのボタンのバッジ（モダン UI の SettingsMenu） */
 export const SETTING_BADGE = badgeName('ui_window');
+/** 設定のメニューのテーマの選択肢のバッジ（モダン UI の SettingsMenu） */
+export const THEME_BADGES: Readonly<Record<Theme, string>> = {
+  light: badgeName('ui_light'),
+  dark: badgeName('ui_dark'),
+  system: badgeName('ui_system'),
+};
 /** 右上のアカウントのメニューのボタンのバッジ（モダン UI の AccountMenu） */
 export const ACCOUNT_BADGE = badgeName('ui_account');
 /** お気に入りのバッジ（favorites.ts の FAVORITE_MARKS ごと）と、2 つ以上押したときに数を重ねる無地のバッジ */
@@ -99,11 +112,12 @@ export const RETURN_BADGE = badgeName('ui_return');
 /** スロットの立ち絵の右上の、空にするボタンと育成・設定のボタン（ModernSlotCard）のバッジ */
 export const DELETE_BADGE = badgeName('ui_delete');
 export const BUILD_BADGE = badgeName('ui_setting');
-/** ニケ一覧の立ち絵の形の切り替え（CharacterTray の TrayShapeToggle）のバッジ。四角は顔、縦長は胸から上 */
+/** ニケ一覧の立ち絵の形の切り替え（CharacterTray の TrayShapeToggle）のバッジ。四角は顔、縦長は胸から上。間に矢印（⇄）を置く */
 export const TRAY_SHAPE_BADGES: Readonly<Record<TrayShape, string>> = {
   square: badgeName('ui_cu'),
   tall: badgeName('ui_mcu'),
 };
+export const TRAY_SHAPE_ARROW_BADGE = badgeName('ui_arrow');
 
 /**
  * コレクションのバッジ。ニケ一覧の宝物の絞り込みのボタンと、スロット・ニケ一覧のコレクション（collectionBadge）が同じ絵を使い、

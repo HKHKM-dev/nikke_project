@@ -6,17 +6,11 @@
     <sodipodi:guide position="130,0" orientation="0,-130" id="guide4" inkscape:locked="false" />
     <sodipodi:guide position="0,0" orientation="-130,0" id="guide5" inkscape:locked="false" />
   </sodipodi:namedview>
-  <defs id="defs1">
-    <inkscape:path-effect effect="powermask" id="path-effect1" is_visible="true" lpeversion="1" uri="#mask-powermask-path-effect1" invert="false" hide_mask="false" background="true" background_color="#ffffffff" />
-    <mask maskUnits="userSpaceOnUse" id="mask-powermask-path-effect1">
-      <path id="mask-powermask-path-effect1_box" style="fill:#ffffff;fill-opacity:1" d="m 44,25.410074 h 42 v 17 H 44 Z" />
-      <path style="display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:square;stroke-dasharray:none" d="M 64.98955,40.5 44,26 l 42,1e-6 z" id="path1" sodipodi:nodetypes="cccc" inkscape:label="mask" />
-    </mask>
-  </defs>
+  <defs id="defs1"></defs>
   <g id="content" transform="translate(0,-10)" inkscape:label="content">
     <rect style="fill:#ffffff;stroke:none;stroke-width:4.99998;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;paint-order:markers fill stroke" id="right" width="12.308252" height="83.175697" x="-85" y="40.414227" ry="0" transform="scale(-1,1)" inkscape:label="right" />
     <rect style="display:inline;fill:#ffffff;stroke:none;stroke-width:4.99998;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;paint-order:markers fill stroke" id="left" width="12.308252" height="83.182693" x="45" y="40.407227" ry="0" inkscape:label="left" />
     <path style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:square;stroke-dasharray:none" d="m 64.979847,54.5 -19.990048,-14 40,0 z" id="mid" sodipodi:nodetypes="cccc" inkscape:label="mid" />
-    <path style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:square;stroke-dasharray:none" id="top" width="40" height="15" x="45" y="26.410074" inkscape:label="top" mask="url(#mask-powermask-path-effect1)" sodipodi:type="rect" inkscape:path-effect="#path-effect1" d="m 45,26.410074 h 40 v 15 H 45 Z" />
+    <path style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:square;stroke-dasharray:none" id="top" inkscape:label="top" d="M 85 26.689453 L 64.990234 40.5 L 45 26.691406 L 45 41.410156 L 85 41.410156 L 85 26.689453 z " />
   </g>
 </svg>

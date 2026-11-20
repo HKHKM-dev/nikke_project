@@ -235,9 +235,16 @@ header h1 {
   width: 34px;
   height: 34px;
 }
-/* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。設定とアカウントのボタン・未対応の印 ⓘ。
+/* 設定のメニューのテーマの選択肢の絵（モダン UI。バッジ ui_light・ui_dark・ui_system の正方形） */
+.settings-theme-icon {
+  display: block;
+  width: 22px;
+  height: 22px;
+}
+/* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。設定とアカウントのボタン・テーマの選択肢の絵・未対応の印 ⓘ。
    図柄を白にするバッジごとの規則より強くするため、要素名や親を付ける */
 svg.settings-menu-icon,
+svg.settings-theme-icon,
 .char-unsupported-tag > .badge-ui_information {
   --badge-ground: light-dark(#ffffff, #1a1a1a);
   --badge-main: light-dark(#1a1a1a, #ffffff);
@@ -1082,7 +1089,7 @@ svg.settings-menu-icon,
 .badge-ui_delete {
   --badge-accent: #ff3b4f;
 }
-/* ⓘ の文字・操作キャラの印・設定とアカウントのボタンの図柄・元に戻すの矢印・スロットの育成・設定の歯車・立ち絵の形の切り替えの人（差し色）は白にする */
+/* ⓘ の文字・操作キャラの印・設定とアカウントのボタンの図柄・元に戻すの矢印・スロットの育成・設定の歯車・立ち絵の形の切り替えの人・テーマの絵（差し色）は白にする */
 .badge-ui_setting,
 .badge-ui_information,
 .badge-ui_controller,
@@ -1090,7 +1097,10 @@ svg.settings-menu-icon,
 .badge-ui_account,
 .badge-ui_return,
 .badge-ui_cu,
-.badge-ui_mcu {
+.badge-ui_mcu,
+.badge-ui_light,
+.badge-ui_dark,
+.badge-ui_system {
   --badge-accent: #ffffff;
 }
 .badge-core_plain {
@@ -1421,26 +1431,22 @@ html:has(.modern-view-container) {
   padding: 4px 10px;
   font-size: 0.85rem;
 }
-/* 立ち絵の形の切り替え（バッジ ui_mcu・ui_cu を、間に左右両向きの矢印を挟んで横に並べる。ほかのボタンと同じ枠で囲む）。
-   大きさは絞り込みのバッジの幅（24px）にそろえる */
+/* 立ち絵の形の切り替え（バッジ ui_mcu・矢印 ui_arrow・ui_cu を横に並べ、ほかのボタンと同じ枠で囲む）。大きさは絞り込みのバッジの幅（24px）にそろえる */
 .char-tray-shape-button {
   gap: 4px;
   padding: 2px 6px;
-}
-/* 左右両向きの矢印（線だけの SVG。色は文字の色） */
-.char-tray-shape-arrow {
-  width: 16px;
-  height: 16px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }
 .char-tray-shape-icon {
   display: block;
   width: 24px;
   height: 24px;
+}
+/* 矢印は枠も地も無いので、文字の色で塗る（テーマで変わる） */
+.char-tray-shape-arrow {
+  display: block;
+  width: 16px;
+  height: 16px;
+  --badge-main: currentColor;
 }
 .char-tray-shape-icon:not(.char-tray-shape-current) {
   opacity: 0.45;

@@ -6,18 +6,9 @@
     <sodipodi:guide position="130,0" orientation="0,-130" id="guide4" inkscape:locked="false" />
     <sodipodi:guide position="0,0" orientation="-130,0" id="guide5" inkscape:locked="false" />
   </sodipodi:namedview>
-  <defs id="defs1">
-    <inkscape:path-effect effect="powermask" id="path-effect14" is_visible="true" lpeversion="1" uri="#mask-powermask-path-effect14" invert="false" hide_mask="false" background="true" background_color="#ffffffff" />
-    <mask maskUnits="userSpaceOnUse" id="mask-powermask-path-effect14">
-      <path id="mask-powermask-path-effect14_box" style="fill:#ffffff;fill-opacity:1" d="m 24,34 h 82 v 82 H 24 Z" />
-      <g id="g13" inkscape:label="mask" style="">
-        <rect style="fill:#000000;stroke:none;stroke-width:7.39501;stroke-linecap:round;stroke-linejoin:round" id="rect4" width="30" height="80" x="50" y="35" inkscape:label="mask" d="m 50,35 h 30 v 80 H 50 Z" />
-        <rect style="fill:#000000;stroke:none;stroke-width:7.39501;stroke-linecap:round;stroke-linejoin:round" id="rect13" width="30" height="80" x="60" y="-105" transform="rotate(90)" inkscape:label="mask" d="m 60,-105 h 30 v 80 H 60 Z" />
-      </g>
-    </mask>
-  </defs>
+  <defs id="defs1"></defs>
   <g id="content" transform="translate(0,-10)" inkscape:label="content">
-    <path style="fill:none;stroke:#ffffff;stroke-width:8;stroke-linejoin:round;stroke-dasharray:none" id="ring" inkscape:label="ring" mask="url(#mask-powermask-path-effect14)" inkscape:path-effect="#path-effect14" sodipodi:type="arc" sodipodi:cx="65" sodipodi:cy="75" sodipodi:rx="36" sodipodi:ry="36" d="M 101,75 A 36,36 0 0 1 65,111 36,36 0 0 1 29,75 36,36 0 0 1 65,39 36,36 0 0 1 101,75 Z" />
+    <path style="fill:#ffffff;stroke:none" id="ring" inkscape:label="ring" d="M 50 37.921875 C 39.994003 41.988107 31.988107 49.994003 27.921875 60 L 36.705078 60 C 39.700515 54.342963 44.342963 49.700515 50 46.705078 L 50 37.921875 z M 80 37.921875 L 80 46.705078 C 85.657037 49.700515 90.299485 54.342963 93.294922 60 L 102.07812 60 C 98.011893 49.994003 90.005997 41.988107 80 37.921875 z M 27.921875 90 C 31.988107 100.006 39.994003 108.01189 50 112.07812 L 50 103.29492 C 44.342963 100.29949 39.700515 95.657037 36.705078 90 L 27.921875 90 z M 93.294922 90 C 90.299485 95.657037 85.657037 100.29949 80 103.29492 L 80 112.07812 C 90.005997 108.01189 98.011893 100.006 102.07812 90 L 93.294922 90 z " />
     <circle style="fill:#ffffff;stroke:none;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none" id="dot" cx="65" cy="75" r="7.5" inkscape:label="dot" />
     <rect style="fill:#ffffff;stroke:none;stroke-width:13.083;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none" id="w" width="35" height="8" x="12" y="-78.999992" transform="scale(1,-1)" inkscape:label="w" />
     <rect style="fill:#ffffff;stroke:none;stroke-width:13.083;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none" id="s" width="35" height="8" x="93" y="-69" transform="rotate(90)" inkscape:label="s" />

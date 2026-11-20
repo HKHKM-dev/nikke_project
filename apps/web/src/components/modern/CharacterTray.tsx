@@ -1,8 +1,9 @@
 import { useDroppable } from '@dnd-kit/core';
 import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
-import { Fragment, memo, useContext, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
+import { memo, useContext, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
 import {
   RETURN_BADGE,
+  TRAY_SHAPE_ARROW_BADGE,
   TRAY_SHAPE_BADGES,
   trayCollectionBadge,
   type BadgeFilters as BadgeFilterValues,
@@ -510,7 +511,7 @@ function TraySortMenu({ listOrder }: { listOrder: ListOrderControls }) {
   );
 }
 
-/** 立ち絵の縦長・四角の切り替え。絵はバッジ（縦長 ui_mcu・四角 ui_cu）で、いまの形でないほうを薄くする */
+/** 立ち絵の縦長・四角の切り替え。絵はバッジ（縦長 ui_mcu・矢印 ui_arrow・四角 ui_cu）で、いまの形でないほうを薄くする */
 function TrayShapeToggle({ shape, onToggle }: { shape: TrayShape; onToggle: () => void }) {
   return (
     <button
@@ -520,19 +521,15 @@ function TrayShapeToggle({ shape, onToggle }: { shape: TrayShape; onToggle: () =
       aria-label={`立ち絵の形: ${TRAY_SHAPE_LABEL[shape]}（押すと切り替える）`}
       onClick={onToggle}
     >
-      {(['tall', 'square'] as const).map((s, i) => (
-        <Fragment key={s}>
-          {i > 0 && (
-            <svg className="char-tray-shape-arrow" viewBox="0 0 16 16" aria-hidden="true">
-              <path d="M1.5 8h13M5 4.5 1.5 8 5 11.5M11 4.5 14.5 8 11 11.5" />
-            </svg>
-          )}
-          <BadgeIcon
-            className={`char-tray-shape-icon ${s === shape ? 'char-tray-shape-current' : ''}`}
-            name={TRAY_SHAPE_BADGES[s]}
-          />
-        </Fragment>
-      ))}
+      <BadgeIcon
+        className={`char-tray-shape-icon ${shape === 'tall' ? 'char-tray-shape-current' : ''}`}
+        name={TRAY_SHAPE_BADGES.tall}
+      />
+      <BadgeIcon className="char-tray-shape-arrow" name={TRAY_SHAPE_ARROW_BADGE} />
+      <BadgeIcon
+        className={`char-tray-shape-icon ${shape === 'square' ? 'char-tray-shape-current' : ''}`}
+        name={TRAY_SHAPE_BADGES.square}
+      />
     </button>
   );
 }

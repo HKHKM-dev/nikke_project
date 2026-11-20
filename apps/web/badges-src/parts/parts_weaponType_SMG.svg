@@ -6,15 +6,9 @@
     <sodipodi:guide position="130,0" orientation="0,-130" id="guide4" inkscape:locked="false" />
     <sodipodi:guide position="0,0" orientation="-130,0" id="guide5" inkscape:locked="false" />
   </sodipodi:namedview>
-  <defs id="defs1">
-    <inkscape:path-effect effect="powermask" id="path-effect6" is_visible="true" lpeversion="1" uri="#mask-powermask-path-effect6" invert="false" hide_mask="false" background="true" background_color="#ffffffff" />
-    <mask maskUnits="userSpaceOnUse" id="mask-powermask-path-effect6">
-      <path id="mask-powermask-path-effect6_box" style="fill:#ffffff;fill-opacity:1" d="m 24,34 h 82 v 82 H 24 Z" />
-      <rect style="fill:#000000;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round" id="rect5" width="40" height="34" x="45" y="82" inkscape:label="mask" d="m 45,82 h 40 v 34 H 45 Z" />
-    </mask>
-  </defs>
+  <defs id="defs1"></defs>
   <g id="content" transform="translate(0,-10)" inkscape:label="content">
-    <path style="fill:none;stroke:#ffffff;stroke-width:8;stroke-linejoin:round;stroke-dasharray:none" id="ring" inkscape:label="ring" mask="url(#mask-powermask-path-effect6)" inkscape:path-effect="#path-effect6" sodipodi:type="arc" sodipodi:cx="65" sodipodi:cy="75" sodipodi:rx="36" sodipodi:ry="36" d="M 101,75 A 36,36 0 0 1 65,111 36,36 0 0 1 29,75 36,36 0 0 1 65,39 36,36 0 0 1 101,75 Z" />
+    <path style="fill:#ffffff;stroke:none" id="ring" inkscape:label="ring" d="M 65 35 C 42.955989 35 25 52.955989 25 75 C 25 89.765219 33.055785 102.6972 45 109.62695 L 45 100.01172 C 37.677282 94.155946 33 85.14182 33 75 C 33 57.279509 47.279509 43 65 43 C 82.720491 43 97 57.279509 97 75 C 97 85.14182 92.322718 94.155946 85 100.01172 L 85 109.62695 C 96.944215 102.6972 105 89.765219 105 75 C 105 52.955989 87.044011 35 65 35 z " />
     <circle style="fill:#ffffff;stroke:none;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none" id="dot" cx="65" cy="75" inkscape:label="dot" r="7.5" />
     <rect style="fill:#ffffff;stroke:none;stroke-width:0;stroke-linecap:round;stroke-linejoin:round" id="bar" width="10" height="28" x="60" y="87" inkscape:label="bar" />
   </g>

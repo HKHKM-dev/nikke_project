@@ -1,0 +1,5 @@
+{
+  "section": "5",
+  "order": 20,
+  "text": "`npm run records:new -- claim --update` は、`--observations` を渡さないと、検証記録の観測値を無効（`invalid`）のものも含めて取り（`packages/core/scripts/records-new.ts` の `given`）、根拠の文に書き足す。新しく結論を作る経路は有効な観測値だけを使うので、2 つの経路で振る舞いが違う。書き足した無効の観測値は、`packages/core/src/records/drafts.ts` が「失効した観測値がある」を仮説の理由にし、`--judgment` でも上書きできないので、確定の結論が仮説に戻って書かれる。`given` から無効の観測値を除き、`--update` の流れ（足す根拠・等級・状態）にテストを足す（[design-workflow-simplification-17.md](design-workflow-simplification-17.md) 2 節。2026-11-20 起票）"
+}
