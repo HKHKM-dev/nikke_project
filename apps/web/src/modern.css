@@ -124,12 +124,12 @@
   border-width: 1px;
   border-style: solid;
   --char-visual-line: var(--slot-frame-line);
-  /* 文字は、シルエットの絵の上で読めるよう、ライトでは白に近い灰色・ダークでは黒に近い灰色にする（＋ だけは白・黒） */
-  color: light-dark(#cccccc, #333333);
+  /* 文字は、シルエットの絵の上で読めるよう、ライトでは白より 30% 暗い灰色・ダークでは黒より 30% 明るい灰色にする（＋ は 10%） */
+  color: light-dark(#b3b3b3, #4d4d4d);
   opacity: 1;
 }
 :root[data-app-ui='modern'] .modern-slot-empty-plus {
-  color: light-dark(#ffffff, #000000);
+  color: light-dark(#e6e6e6, #1a1a1a);
 }
 /* ニケがいるときの立ち絵とニケ一覧の絵の枠も、空のスロットの枠と同じ色にする */
 :root[data-app-ui='modern'] .char-visual {
