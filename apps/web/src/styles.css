@@ -1210,20 +1210,28 @@ svg.settings-theme-icon,
   font-size: 1.8em;
   font-weight: bold;
   line-height: 1.1;
+  /* 番号と FRONT・REAR の組を少し下げる */
+  margin-top: 0.5em;
 }
 .modern-slot-empty-row {
   font-size: 0.75em;
   font-weight: bold;
   letter-spacing: 0.08em;
+  /* 番号に少し近づける */
+  margin-top: -0.3em;
 }
 .modern-slot-empty-label {
-  margin-top: calc(var(--slot-portrait-h) / 64);
+  /* EMPTY SLOT と位置の組を少し下げる */
+  margin-top: calc(var(--slot-portrait-h) / 64 + 0.8em);
   font-size: 0.7em;
+  font-weight: bold;
   letter-spacing: 0.06em;
 }
 .modern-slot-empty-position {
   font-size: 0.7em;
   letter-spacing: 0.1em;
+  /* EMPTY SLOT に少し近づける */
+  margin-top: -0.25em;
 }
 .modern-slot-error {
   color: #e53935;
