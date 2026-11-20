@@ -8,9 +8,8 @@
   </sodipodi:namedview>
   <defs id="defs1" />
   <g id="content" inkscape:label="content">
-    <path id="screen" inkscape:label="screen" style="fill:#ffffff;stroke:none" d="M 25,24 H 105 A 4,4 0 0 1 109,28 V 80 A 4,4 0 0 1 105,84 H 25 A 4,4 0 0 1 21,80 V 28 A 4,4 0 0 1 25,24 Z M 28,31 V 77 H 102 V 31 Z" />
-    <rect id="stand-neck" inkscape:label="stand-neck" x="59" y="84" width="12" height="12" style="fill:#ffffff;stroke:none" />
-    <rect id="stand-base" inkscape:label="stand-base" x="41" y="96" width="48" height="8" rx="2" style="fill:#ffffff;stroke:none" />
-    <path id="contrast" inkscape:label="contrast" style="fill:#ffffff;stroke:none" d="M 65,38.5 A 15.5,15.5 0 1 0 65,69.5 A 15.5,15.5 0 1 0 65,38.5 Z M 65,43 A 11,11 0 0 1 65,65 Z" />
+    <path id="screen" inkscape:label="screen" style="fill:#ffffff;stroke:none" d="M 30,29 H 100 A 4,4 0 0 1 104,33 V 78 A 4,4 0 0 1 100,82 H 30 A 4,4 0 0 1 26,78 V 33 A 4,4 0 0 1 30,29 Z M 32,35 V 76 H 98 V 35 Z" />
+    <rect id="stand-neck" inkscape:label="stand-neck" x="60" y="82" width="10" height="11" style="fill:#ffffff;stroke:none" />
+    <rect id="stand-base" inkscape:label="stand-base" x="44" y="93" width="42" height="7" rx="2" style="fill:#ffffff;stroke:none" />
   </g>
 </svg>

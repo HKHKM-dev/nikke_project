@@ -8,6 +8,6 @@
   </sodipodi:namedview>
   <defs id="defs1"></defs>
   <g id="content" transform="translate(0,-10)" inkscape:label="content">
-    <path style="fill:#ffffff;stroke:none;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;paint-order:markers fill stroke" d="M 65 28 L 27 66 L 58 122.28906 L 58 90 L 52 84 L 65 71 L 78 84 L 72 90 L 72 122.28906 L 103 66 L 65 28 z M 65 42.818359 L 88.839844 66.0625 L 81.160156 73.9375 L 65 58.181641 L 48.839844 73.9375 L 41.160156 66.0625 L 65 42.818359 z " id="logo" inkscape:label="logo" />
+    <path style="fill:#ffffff;stroke:none;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;paint-order:markers fill stroke" d="M 65,28 L 27,66 58,122.28906 V 90 L 52,84 65,71 78,84 72,90 V 122.28906 L 103,66 Z M 65,42.818359 L 88.839844,66.0625 81.160156,73.9375 65,58.181641 48.839844,73.9375 41.160156,66.0625 Z" id="logo" inkscape:label="logo" />
   </g>
 </svg>
