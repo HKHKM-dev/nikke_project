@@ -3,7 +3,7 @@ import { defaultDropAnimationSideEffects, type DropAnimation } from '@dnd-kit/co
 
 /**
  * 離したときのアニメーション。dnd-kit の既定は、戻る間ドラッグ元（スロットのカード・一覧の項目）を透明にして消すので、
- * 代わりに印（drag-source-returning）を付け、ドラッグ中と同じ薄さで残す（styles.css）
+ * 代わりに印（drag-source-returning）を付け、ドラッグ中と同じく空のスロットの枠を出す（styles.css）
  */
 const returnSideEffects = defaultDropAnimationSideEffects({ className: { active: 'drag-source-returning' } });
 
