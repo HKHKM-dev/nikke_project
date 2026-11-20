@@ -1360,11 +1360,21 @@ svg.settings-theme-icon,
   background: linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
   border-image: linear-gradient(to bottom, transparent, var(--char-visual-line) 50%) 1;
 }
-/* 空のスロットだけ、立ち絵の代わりにシルエットの絵（256×512。立ち絵と同じ 1:2）を枠いっぱいに出す（ニケがいるスロットには出さない） */
+/* 空のスロットだけ、立ち絵の代わりにシルエットの絵（256×512。立ち絵と同じ 1:2）を枠いっぱいに出す（ニケがいるスロットには出さない）。
+   絵は疑似要素に置き、枠の背景と中の文字の間に重ねる（isolation で枠の中に重なりの順を閉じる）。
+   明るさは、絵の形で切り抜いた色を上に重ねて変える（ライトは白を 20% 重ねて明るく、ダークは黒を 20% 重ねて暗く） */
 .modern-slot-empty-area {
-  background:
-    url('./assets/portrait_silhouette.webp') center / 100% 100% no-repeat,
-    linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
+  isolation: isolate;
+}
+.modern-slot-empty-area::before {
+  --silhouette: url('./assets/portrait_silhouette.webp') center / 100% 100% no-repeat;
+  --silhouette-tint: light-dark(rgb(255 255 255 / 0.2), rgb(0 0 0 / 0.2));
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(var(--silhouette-tint), var(--silhouette-tint)), var(--silhouette);
+  mask: var(--silhouette);
 }
 .char-visual-img {
   width: 100%;
