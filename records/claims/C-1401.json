@@ -1,0 +1,28 @@
+{
+  "id": "C-1401",
+  "text": "クロウのバースト「最終攻撃力が最も高い敵 1 機に、最終攻撃力の 915.75% のバーストスキルダメージ」は、敵 1 体の射撃場では 1 ヒット（分かれない）で、III のタイマーの 00.00 の 5f 後（動画で 27f。止まり 22f を含む。フルバーストの入りの止まりの後の最初の増分）に、説明文の値で出る。フルバースト補正は乗らない",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1281-09`・`1281-10`・`1281-11`。V-0816",
+  "model": "data/skills/110.json の burst の effects[0]（burstDamage・skill）と、遅れの表（burst/landing.ts）のクロウの行（hitFrames 5）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/110.json の burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1281",
+      "role": "値を合わせた"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "1281",
+      "decided": "1 回目のバースト",
+      "reproduced": "2〜5 回目のバースト",
+      "observations": ["1281-09", "1281-10", "1281-11"]
+    }
+  ]
+}
