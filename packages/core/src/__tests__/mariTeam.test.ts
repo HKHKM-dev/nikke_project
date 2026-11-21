@@ -2,7 +2,7 @@
 // バーストのバーストスキルダメージ（II の六角形の替わり目の 69f 後）・味方全体の攻撃ダメージ▲が意図どおりに出るか
 import { describe, expect, it } from 'vitest';
 import { burstDelaysOf } from '../burst/landing.ts';
-import { hexagonFrameOf, hitFramesOf } from '../burst/schedule.ts';
+import { effectFrameOf, hexagonFrameOf, hitFramesOf } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { itemsOf } from '../skills/holders.ts';
@@ -76,7 +76,13 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, mari, noPier
     expect(pierce.map((w) => w.start)).toEqual(s2Starts);
     for (const w of pierce) if (w.end < sim.frames) expect(w.end - w.start).toBe(gameSecondsToFrames(5));
     for (const holder of input.slots.keys()) {
-      const atk = itemsOf(sim.history, { sourceSlotIndex: mari, holder, kind: 'timed', skill: 'skill2', stat: 'attack' });
+      const atk = itemsOf(sim.history, {
+        sourceSlotIndex: mari,
+        holder,
+        kind: 'timed',
+        skill: 'skill2',
+        stat: 'attack',
+      });
       // マリには自分への▲と発動者基準の▲の 2 つ、ほかの味方には発動者基準の▲だけ
       expect(atk).toHaveLength(s2Starts.length * (holder === mari ? 2 : 1));
     }
@@ -110,7 +116,7 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, mari, noPier
         skill: 'burst',
         stat: 'attackDamage',
       });
-      expect(items.map((w) => w.start)).toEqual(uses.map((a) => a.frame).filter((f) => f < sim.frames));
+      expect(items.map((w) => w.start)).toEqual(uses.map((a) => effectFrameOf(a)).filter((f) => f < sim.frames));
       for (const w of items) if (w.end < sim.frames) expect(w.end - w.start).toBe(gameSecondsToFrames(10));
     }
   });
