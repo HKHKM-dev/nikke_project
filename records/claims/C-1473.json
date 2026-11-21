@@ -1,0 +1,15 @@
+{
+  "id": "C-1473",
+  "text": "ソーダのバーストの「灼熱コードの味方全体に、スタック可能バフ効果のスタック量 1 個▲」は、水冷の味方には付かない（上限の前のバーストで、ギロチン：ウィンタースレイヤーの経験値は射撃の数で付く段のほかに増えない）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`1322-07`・`1323-07`。V-0838",
+  "model": "反映（data/skills/312.json の burst の effects[1] の targetElement: Fire）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/312.json の burst の effects[1]"]
+  },
+  "decidedOn": []
+}

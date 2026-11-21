@@ -1,0 +1,211 @@
+[
+  {
+    "id": "1322-01",
+    "recording": "1322",
+    "kind": "timing",
+    "use": "compare",
+    "value": 713,
+    "unit": "f",
+    "description": "ソーダの S2（床掃除メイド）の 1 回目の発動の、戦闘開始からの動画のフレーム（左の「スキル2 床掃除メイド」の帯の立ち上がり）",
+    "method": {
+      "tool": "tools/captures/banner.ts --mode white・tools/captures/timer.ts --mode ticks",
+      "note": "戦闘開始は f785（timer.ts）。帯は f1498。帯の文字は画で確かめた。--mode white は帯の立ち上がりより約 4f 遅く、帯は発動の約 2f 後（V-0835）なので、発動より約 6f 遅い。ゲーム内のティックでは 711.7"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "healVideoFrame",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 10
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0838",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1322-02",
+    "recording": "1322",
+    "kind": "timing",
+    "use": "compare",
+    "value": 1420,
+    "unit": "f",
+    "description": "ソーダの S2 の 2 回目の発動の、戦闘開始からの動画のフレーム（帯の立ち上がり。メイド精神のフルスタックの前で、回復は 1 つ）",
+    "method": {
+      "tool": "tools/captures/banner.ts --mode white・tools/captures/timer.ts --mode ticks",
+      "note": "帯は f2205。1 回目と同じく、発動より約 6f 遅い"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "healVideoFrame",
+      "args": {
+        "slot": 1,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 10
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0838",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1322-03",
+    "recording": "1322",
+    "kind": "timing",
+    "use": "record",
+    "value": 706,
+    "unit": "ティック",
+    "description": "ソーダの S2 の帯の間隔の平均（1 回目から 14 回目までの 13 間隔。ゲーム内のティック）",
+    "method": {
+      "tool": "tools/captures/banner.ts --mode white・tools/captures/timer.ts --mode ticks",
+      "note": "帯（white）は f1498・2205・2911・3619・4326・5032・5738・6445・7151・7858・8564・9271・9977・10685。ティックの差はどれも 704〜708 で、平均は 706.0（ceil(12 ÷ 0.017) = 706）。フルバーストが無いので止まりは無い"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0838",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1322-04",
+    "recording": "1322",
+    "kind": "hit",
+    "use": "compare",
+    "value": 320718,
+    "unit": "ダメージ",
+    "description": "ソーダのバーストスキルダメージの 1 ヒット（会心なし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "7 回の発動の、替わり目の後の大きな増分: 372,846・331,839・481,077・382,719・414,108・331,839・444,720（会心の 481,077 = 320,718 × 1.5 のほかは、320,718 に同じフレームの通常攻撃（ソーダの 11,121 か、ギロチンの 1 ヒット）を足した和）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0838",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1322-05",
+    "recording": "1322",
+    "kind": "timing",
+    "use": "compare",
+    "value": [0],
+    "unit": "f",
+    "description": "ソーダのバーストの 1 回目の発動の、1 ヒット目から各ヒットまでの動画のフレーム（的 1 体に 1 ヒット）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "7 回のどの発動も、替わり目から 120f の中に、バーストスキルダメージ（320,718 か会心の 481,077）を含む増分は 1 つだけで、同じフレームの増分も 2 ヒットの和（641,436 以上）にならない"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0838",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1322-06",
+    "recording": "1322",
+    "kind": "timing",
+    "use": "compare",
+    "value": [65, 65, 65, 65, 65, 65, 65],
+    "unit": "f",
+    "description": "ソーダのバーストの、右のバースト欄の六角形が I から II に替わったフレームから、バーストスキルダメージのヒットまでの動画のフレーム（7 回）",
+    "method": {
+      "tool": "recipe:burst-panel@4・tools/captures/hud.ts --mode jumps",
+      "note": "六角形の替わり目（1636・3280・4626・6036・7683・9299・10678）と、ヒットの増分のフレームの差。フルバーストが無いので止まりは無い"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 1,
+        "count": 7
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0838",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1322-07",
+    "recording": "1322",
+    "kind": "timing",
+    "use": "record",
+    "value": 1636,
+    "unit": "f",
+    "description": "経験値が上限より前の 1 回目のソーダのバーストで、六角形が I から II に替わったフレーム。その前後で、水冷のギロチン：ウィンタースレイヤーの経験値は、射撃の数で付く段のほかに増えない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "胴体の 1 ヒットは 49,176（f1606）→ 49,641（f1611）→ 50,107（f1621）→ 50,573（f1652）→ 51,039（f1671）と 1 段（約 466）ずつ上がり、どの段も、コアでない 6 ヒット目（f1606・1642・1691）かコアの 3 ヒット目（f1616・1661）の次のヒットで上がる（勇者レベルの上がる f1696 の 52,128 も、コアでない 6 ヒット目の次）。六角形の替わり目（f1636）の後に、射撃の数で説明できない段は無い。替わり目の後の胴体の 1 ヒット（f1652）は 50,573 で、スタック量▲がギロチンに付く読みなら 51,039 になる。2 回目のバースト（上限の前）は、ほかの効果の増分が重なり、見分けていない"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0838",
+    "readAt": "2026-11-21"
+  }
+]
