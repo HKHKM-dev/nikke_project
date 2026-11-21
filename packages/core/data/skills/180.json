@@ -1,0 +1,45 @@
+{
+  "formatVersion": 1,
+  "resourceId": 180,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": { "count": "normalHit", "everyRef": 1 },
+          "target": "self",
+          "stat": "critRate",
+          "ref": 2,
+          "durationRef": 3
+        },
+        {
+          "kind": "currentHpDown",
+          "trigger": { "count": "normalHit", "everyRef": 1 },
+          "target": "self",
+          "ref": 4
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": { "count": "normalHit", "everyRef": 1 },
+          "target": "self",
+          "stat": "critDamage",
+          "ref": 2,
+          "durationRef": 3
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        { "kind": "burstDamage", "ref": 1, "damageType": "skill" }
+      ],
+      "notes": []
+    }
+  }
+}
