@@ -3,16 +3,16 @@
   "text": "基礎版のプリムの S1（通常攻撃の命中 値 01 回ごとに、対象に防御力 値 02 %▼・値 03 秒）は、シグナルの S1（C-1404）と同じく、通常攻撃の命中を戦闘中ずっと通算して数え、付いている間の 4 回目は維持を付け直して重ならない。基礎版・宝物版のバーストの防御力▼（値 03 %・値 04 秒）は、同じ発動のヒットには乗らず（宝物版で確かめた。C-1460）、その後の味方の発とヒットに効く（C-0556・C-0790 の式）。基礎版のバーストのダメージは、宝物版（C-1460）と同じ読み",
   "state": "仮説",
   "topic": "スキル・キャラ固有",
-  "grade": "厳密一致",
-  "basis": "`1307-07`・`1308-07`。V-0831",
-  "model": "反映（data/skills/142.json の skills.skill1 の effects[0]、skills.burst の effects[0]・effects[1]、treasureSkills.burst の effects[1]）",
+  "grade": "推論",
+  "basis": "`1307-07`・`1308-07`（宝物版のバーストのヒットに、同じ発動の▼が乗らないことだけ）。ほかは推論: 基礎版は撮っていない。バーストの▼が効いている間のプリムの発は防御力無視で、次のバーストは▼が切れた後なので、▼の効き目は見えていない。V-0831",
+  "model": "反映（data/skills/142.json の skill1 の effects[0]、burst の effects[0]・effects[1]、treasureSkills.burst の effects[1]）",
   "replaces": [],
   "updated": "2026-11-21",
   "subject": {
     "places": [
-      "data/skills/142.json の skills.skill1 の effects[0]",
-      "data/skills/142.json の skills.burst の effects[0]",
-      "data/skills/142.json の skills.burst の effects[1]",
+      "data/skills/142.json の skill1 の effects[0]",
+      "data/skills/142.json の burst の effects[0]",
+      "data/skills/142.json の burst の effects[1]",
       "data/skills/142.json の treasureSkills.burst の effects[1]"
     ]
   },

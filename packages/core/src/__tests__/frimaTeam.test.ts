@@ -82,16 +82,19 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     for (const w of wakeUp) expect(sixth).toContain(w.start - 1);
   });
 
-  it('gives the treasure S2 True Damage up only on full charge shots while awake', () => {
+  it('gives the treasure S2 True Damage up on full charge shots while awake, including the shot that grants Wake Up', () => {
     const up = items({ kind: 'timed', skill: 'skill2', stat: 'trueDamage' });
     if (!treasure) {
       expect(up).toEqual([]);
       return;
     }
     expect(up.length).toBeGreaterThan(0);
+    // 最初の▲は、起きたが付いた発（6 回目）から付く
+    expect(up[0]!.start).toBe(wakeUp[0]!.start);
     for (const w of up) {
       expect(fullCharge).toContain(w.start - 1);
-      expect(awakeAt(w.start - 1)).toBe(true);
+      // 起きたが付いた発の S2 も、同じ発で付いた起きたを見る（sameFiring。plan/design-frima.md 2 節）
+      expect(awakeAt(w.start)).toBe(true);
     }
   });
 

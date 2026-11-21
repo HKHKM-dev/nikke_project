@@ -1423,7 +1423,8 @@ export type SelfStateCondition = {
   /**
    * 「下位効果のスタック適用」の段階（plan/design-quency-eq.md 2 節の論点 3）。同じ発火で、同じスロットの
    * 前に書いた同じきっかけの付与が付ける分も数えてスタックを見る（下の段階が満ちた発火で上の段階も付く）。状態の付与の、スタックの
-   * 条件にだけ書ける（parse/crossChecks.ts の validateSameFiring）
+   * 条件に書ける。timed には、スタック数の無い形（付いていれば）で書け、同じ発で付いた状態も見る（プリムの宝物版 S2「自分が起きた状態なら」。
+   * plan/design-frima.md 2 節）。どちらも、次のフレームに効いている件を見る（parse/crossChecks.ts の validateSameFiring）
    */
   sameFiring?: true;
 };

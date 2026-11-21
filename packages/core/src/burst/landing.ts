@@ -206,6 +206,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   { resourceIds: [92], delays: { hitFrames: -1, effectFrames: 0 }, claim: 'C-1379' },
   // ベロータ: II の発動（六角形が II から III に替わるフレーム）からヒットまで 15〜16f。効果（味方全体のチャージ速度▲）の遅れは未測定（V-0510）
   { resourceIds: [60], delays: { hitFrames: 16, effectFrames: 0 }, claim: 'C-0677' },
+  // プリム（基礎版・宝物版）: I の発動の印（六角形が I から II に替わるフレーム）から 8・25・47f の 3 ヒットで、バーストのダメージを 3 等分する。
+  // 効果（防御力▼・防御力無視ダメージ▲）の発火のフレームは確かめていない（V-0831）
+  { resourceIds: [142], delays: { hitFrames: 8, effectFrames: 0, hitOffsets: [0, 17, 39] }, claim: 'C-1460' },
   // シグナル: II の発動の印（六角形が II から III に替わるフレーム）から 15・21・26f の 3 ヒットで、バーストスキルダメージを 3 等分する
   // （12 回とも同じ並び）。効果（敵の防御力▼）は 1 ヒット目と同じ 15f 後に付く（C-1403。V-0819）
   { resourceIds: [22], delays: { hitFrames: 15, effectFrames: 15, hitOffsets: [0, 6, 11] }, claim: 'C-1402' },

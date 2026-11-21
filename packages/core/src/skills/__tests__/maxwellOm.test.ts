@@ -111,7 +111,7 @@ describe('語彙の検証', () => {
 
   it('rejects sameFiring on a weapon change (the stage-1 grant of the same frame is already counted)', () => {
     expect(() => parseSkillDefinition(withStage(1, { ...conditionOf(1), sameFiring: true }))).toThrow(
-      /sameFiring is allowed only in a state grant/,
+      /sameFiring is allowed only in a state grant or timed/,
     );
   });
 });
