@@ -1,0 +1,22 @@
+{
+  "id": "C-1439",
+  "text": "2B の S2 の 300 回射撃ごとの倍率ダメージは、1 回ごとに射手の 1 ヒットぶん（target_burst_energy_pershot 4,000。本当のゲージの 0.4%）のバーストゲージを、ヒットのフレーム（2B の発と同じフレーム）に溜める",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1305-06`・`1305-07`・`1305-01`・`1305-02`・`1305-04`。V-0830",
+  "model": "data/skills/810.json の skill2 の effects[0] の gaugePerHit",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/810.json の skill2 の effects[0]"]
+  },
+  "decidedOn": [],
+  "runs": [
+    {
+      "recording": "1305",
+      "reproduced": "1305-07",
+      "observations": ["1305-06", "1305-07"]
+    }
+  ]
+}

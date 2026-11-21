@@ -704,5 +704,81 @@
       "slot": 3,
       "source": "skill"
     }
+  },
+  {
+    "id": "1264-30",
+    "recording": "1264",
+    "kind": "gauge",
+    "use": "record",
+    "unit": "px",
+    "value": {
+      "6305": 3,
+      "6306": 1,
+      "6311": 0,
+      "6316": 1,
+      "6317": 8
+    },
+    "description": "3 回目の 300 回射撃の倍率ダメージ（f6316。2B の発と同じ増分）の前後の、右の BURST バーの伸び（フレームごとの px の差）。f6305 はソルジャーF.A.、f6317 はココアのヒットで、間の 2B の発は f6306・f6311・f6316 の 3 つだけ",
+    "method": {
+      "tool": "tools/captures/gauge.ts --subpixel（series）と recipe:hud-jumps@3 の増分",
+      "note": "バーはおよそ 100px（満タンの前）。バーの値は整数の px に揃って読め、端数は読めない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "gauge"
+    },
+    "source": "V-0830",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1264-31",
+    "recording": "1264",
+    "kind": "gauge",
+    "use": "record",
+    "unit": "px",
+    "value": {
+      "9952": 6,
+      "9956": 1,
+      "9961": 1,
+      "9966": 1,
+      "9971": 0,
+      "9976": 1,
+      "9979": 7
+    },
+    "description": "5 回目の 300 回射撃の倍率ダメージ（f9956。2B の発と同じ増分）の前後の、右の BURST バーの伸び（2B の発のフレームごとの px の差。HUD の増分より 1f 遅れて伸びた発は、伸びたフレームを発に寄せた）。f9952 はソルジャーF.A.、f9979 はココアのヒットで、倍率ダメージは間の 2B の発の 1 発目",
+    "method": {
+      "tool": "tools/captures/gauge.ts --subpixel（series）と recipe:hud-jumps@3 の増分",
+      "note": "バーはおよそ 66〜76px"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "gauge"
+    },
+    "source": "V-0830",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1264-32",
+    "recording": "1264",
+    "kind": "gauge",
+    "use": "record",
+    "unit": "px",
+    "value": 0.54,
+    "spread": {
+      "kind": "range",
+      "low": 0.535,
+      "high": 0.545
+    },
+    "description": "2B の通常攻撃の 1 発あたりの、右の BURST バーの伸び（ほかのキャラのヒットの無い区間で、発ごとの伸びの並びを床関数で出せる 1 発の px）。target_burst_energy_pershot 4,000 ÷ バー 1px（本当のゲージの約 0.74%）の 0.54 と合う",
+    "method": {
+      "tool": "tools/captures/gauge.ts --subpixel（series）と recipe:hud-jumps@3 の増分",
+      "note": "ソルジャーF.A.・ココアのヒット（3px 以上の伸び）で区切った区間 88 のうち、0.535〜0.545 で 83 区間の並びが出せる（残りの 5 区間はどの値でも出せない）。ココアのヒット（56,000）をまたいで端数を引き継ぐと、出せない区間が増える"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "gauge"
+    },
+    "source": "V-0830",
+    "readAt": "2026-11-21"
   }
 ]
