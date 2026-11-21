@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<svg viewBox="0 0 130 130" width="130" height="130" version="1.1" id="svg1" sodipodi:docname="ui_stats.svg" inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)" xml:space="preserve" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview id="namedview1" pagecolor="#505050" bordercolor="#eeeeee" borderopacity="1" inkscape:showpageshadow="0" inkscape:pageopacity="0" inkscape:pagecheckerboard="true" inkscape:deskcolor="#505050" showguides="true" showgrid="true" inkscape:zoom="3.1038461" inkscape:cx="40.594796" inkscape:cy="33.345725" inkscape:window-width="1920" inkscape:window-height="1009" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:window-maximized="1" inkscape:current-layer="svg1">
+    <sodipodi:guide position="0,130" orientation="0,130" id="guide2" inkscape:locked="false" />
+    <sodipodi:guide position="130,130" orientation="130,0" id="guide3" inkscape:locked="false" />
+    <sodipodi:guide position="130,0" orientation="0,-130" id="guide4" inkscape:locked="false" />
+    <sodipodi:guide position="0,0" orientation="-130,0" id="guide5" inkscape:locked="false" />
+    <inkscape:grid id="grid1" units="px" originx="65" originy="65" spacingx="1" spacingy="1" empcolor="#0099e5" empopacity="0.30196078" color="#0099e5" opacity="0.14901961" empspacing="5" enabled="true" visible="true" dotted="false" />
+    <inkscape:grid id="grid3" units="px" originx="0" originy="0" spacingx="65" spacingy="65" empcolor="#009900" empopacity="0.30196078" color="#009900" opacity="0.14901961" empspacing="1" enabled="true" visible="true" />
+  </sodipodi:namedview>
+  <defs id="defs1" />
+  <path id="frame-out" inkscape:label="frame-out" style="fill:none;stroke:#000000;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 2.5,2.5 H 127.5 V 127.5 H 2.5 Z" />
+  <path id="frame-in" inkscape:label="frame-in" style="fill:#1a1a1a;fill-opacity:1;stroke:#ffffff;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 7.5,122.5 H 122.5 V 7.5 H 7.5 Z" />
+  <g id="content" inkscape:label="content">
+    <rect id="bar-1" inkscape:label="bar-1" style="fill:#808080;stroke:none" width="18" height="65" x="30" y="30" />
+    <rect id="bar-2" inkscape:label="bar-2" style="fill:#808080;stroke:none" width="18" height="50" x="56" y="45" />
+    <rect id="bar-3" inkscape:label="bar-3" style="fill:#808080;stroke:none" width="18" height="30" x="82" y="65" />
+    <rect id="line" inkscape:label="line" style="fill:#808080;stroke:none" width="70" height="5" x="30" y="100" />
+  </g>
+</svg>
