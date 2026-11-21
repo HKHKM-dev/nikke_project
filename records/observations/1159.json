@@ -241,5 +241,46 @@
     },
     "source": "V-0805",
     "readAt": "2026-11-20"
+  },
+  {
+    "id": "1159-09",
+    "recording": "1159",
+    "kind": "hit",
+    "use": "record",
+    "value": [
+      {
+        "start": 12,
+        "hits": "ooxoooooxoooo",
+        "misses": [48, 86]
+      },
+      {
+        "start": 569,
+        "hits": "oooxooxoxoooo",
+        "misses": [616, 634, 643]
+      },
+      {
+        "start": 1126,
+        "hits": "ooooxoooooooo",
+        "misses": [1180]
+      },
+      {
+        "start": 1683,
+        "hits": "o",
+        "misses": []
+      },
+      {
+        "start": 1816,
+        "hits": "xooooxooooooo",
+        "misses": [1816, 1876]
+      }
+    ],
+    "unit": "f",
+    "description": "クラウン（AI）・I-DOLL・サン（撃たない） の MG の撃ち始め（前の発から 30f 以上空いた発から、間が 3f 以上の発が続く間）ごとの、発の当たり（o）と外れ（x）の並びと、外れた発の戦闘開始（f777）からの発射のフレーム。start は撃ち始めの 1 発目のフレーム。1 回目のゲージの満タン（1159-01）まで",
+    "method": {
+      "tool": "tools/captures/ammo.ts --card 1 --max 300 --mode series（枠アイコンの上の残弾）・tools/captures/hud.ts --mode jumps（使い捨てのスクリプトで並べた）",
+      "note": "残弾が減ったフレームを発射とし、発射の ±1f に武器の発の増分（4000〜23000（クラウンの発））が無い発を外れとした（MG の発は撃ったフレームに当たる。C-0780）。前の発から 3f 未満の発は増分が 2 発分まとまるので調べていない。戦闘開始は、残弾の表示が出る前の読み誤り（0f に 10・1f に 7）を除き、表示が 300 で出た後に 26f から減る。1 発目は HUD の増分の 12f（4477）とした"
+    },
+    "source": "V-0822",
+    "readAt": "2026-11-21"
   }
 ]
