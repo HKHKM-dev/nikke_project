@@ -1,0 +1,273 @@
+[
+  {
+    "id": "1256-01",
+    "recording": "1256",
+    "use": "compare",
+    "kind": "hit",
+    "value": 70800,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの窓の中の、スノーホワイトの胴体・会心なし・距離ボーナスありの 1 発（バーストの攻撃力 97.2%▲・S2 の攻撃ダメージ 21.12%▲・フルバースト補正）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分（通しで 1 回）と recipe:burst-panel@4",
+      "note": "増分を、スノーホワイトの 1 発（窓の外と窓の中。距離ボーナス・会心・コアの有無を、フルバースト補正 0.5 と同じ加算の括弧に入れた）と、S1 の 1 ヒット（2 等分）・S2 の 1 ヒット（35 等分）の和に当てた（scratchpad の使い捨ての下読み）。ココア・ソルジャーF.A. の発と重なった増分は数えていない。f1600〜f2204 で 70,800 が続く"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1000,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0808",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1256-02",
+    "recording": "1256",
+    "use": "compare",
+    "kind": "hit",
+    "value": 7618,
+    "unit": "ダメージ",
+    "description": "バーストの窓の中で出た S2 の倍率ダメージの 1 ヒット（会心なし。35 等分の 1 つ。バーストの▲とフルバースト補正が乗る）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分（通しで 1 回）と recipe:burst-panel@4",
+      "note": "増分を、スノーホワイトの 1 発（窓の外と窓の中。距離ボーナス・会心・コアの有無を、フルバースト補正 0.5 と同じ加算の括弧に入れた）と、S1 の 1 ヒット（2 等分）・S2 の 1 ヒット（35 等分）の和に当てた（scratchpad の使い捨ての下読み）。ココア・ソルジャーF.A. の発と重なった増分は数えていない。窓の中の会心のまとまりは 10,158（(1 + 0.5 + 0.5) ÷ (1 + 0.5) 倍）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2",
+        "frame": 900
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0808",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1256-03",
+    "recording": "1256",
+    "use": "compare",
+    "kind": "hit",
+    "value": 407769,
+    "unit": "ダメージ",
+    "description": "バーストの窓の中で出た S1 の倍率ダメージの 1 ヒット（会心なし。2 等分の 1 つ）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分（通しで 1 回）と recipe:burst-panel@4",
+      "note": "増分を、スノーホワイトの 1 発（窓の外と窓の中。距離ボーナス・会心・コアの有無を、フルバースト補正 0.5 と同じ加算の括弧に入れた）と、S1 の 1 ヒット（2 等分）・S2 の 1 ヒット（35 等分）の和に当てた（scratchpad の使い捨ての下読み）。ココア・ソルジャーF.A. の発と重なった増分は数えていない。f2150・f2161、f7544・f7555 など。会心の 2 ヒットは 543,692 ずつ（f4918・f4929）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill1",
+        "frame": 900
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0808",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1256-04",
+    "recording": "1256",
+    "use": "compare",
+    "kind": "timing",
+    "value": 754,
+    "unit": "f",
+    "description": "スノーホワイトの最初の発（f839）から 1 回目のフルバーストの 00.00（f1595）までの動画のフレーム − I・II の発動の止まり 2f",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分（通しで 1 回）と recipe:burst-panel@4",
+      "note": "S2 の倍率ダメージがゲージを溜めない定義ではモデルは 777、35 ヒットのどれもが射手の 1 ヒットぶんを溜める定義では 753。S1 の 2 ヒットも溜める定義でも 753 で、3 回目の I の発動（最初の発から 3,443f）がモデルで 3,430f になる（溜めない定義では 3,444f）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstStartFromFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "gauge"
+    },
+    "source": "V-0808",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1256-05",
+    "recording": "1256",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": {
+      "fullBurstStart": [1595, 4340, 7397, 10161],
+      "s2InWindow": [
+        [1692, 1839, 2007, 2136],
+        [4463, 4610, 4757, 4904],
+        [7530, 7677, 7822, 7969],
+        [10247, 10394, 10541, 10688]
+      ],
+      "s1InWindow": [
+        [1856, 2014, 2150],
+        [4477, 4624, 4771, 4918],
+        [7544, 7839],
+        [10261, 10408, 10555]
+      ],
+      "s2BeforeWindow": [1100, 1423, 4103, 7010, 9897],
+      "s2AfterWindow4": 10983
+    },
+    "description": "フルバーストの窓の中の S2・S1 の倍率ダメージの最初のヒットの動画のフレーム（窓ごと）。窓の中の S2 は 147f（30 発）おきに 4 回出て、どれも S1 の 14〜17f 前（S2 の遅れ 20f と S1 の遅れ 36f の差）に始まる（通算の命中の回数が 30 の倍数の発がきっかけ）。窓の外は 245f（50 発）おき。4 回目の窓の後の S2 は f10983",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分（通しで 1 回）と recipe:burst-panel@4",
+      "note": "増分を、スノーホワイトの 1 発（窓の外と窓の中。距離ボーナス・会心・コアの有無を、フルバースト補正 0.5 と同じ加算の括弧に入れた）と、S1 の 1 ヒット（2 等分）・S2 の 1 ヒット（35 等分）の和に当てた（scratchpad の使い捨ての下読み）。ココア・ソルジャーF.A. の発と重なった増分は数えていない。f2007 のまとまりは最初の数ヒットが読めない。f1708・f7691・f7986・f10702 の S1 はほかの発と重なって拾えない。前の S2 から数え直す読みなら、窓の始まりの次の発で S2 が出て S1 と重ならず、4 回目の窓の後の S2 は f10933 前後になる"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0808",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1256-06",
+    "recording": "1256",
+    "use": "record",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": {
+      "preBurstTriggerInWindow": {
+        "frames": [7428, 7527],
+        "hit": 2126
+      },
+      "inWindowTriggerAfterWindow": {
+        "frames": [10771, 10786],
+        "hit": 7618
+      }
+    },
+    "description": "S2 の 35 ヒットの値は、きっかけの時に決まる。3 回目のバーストの直前（50 の倍数の発）がきっかけの回は、窓の中に出たヒットも窓の外の値（2,126）。4 回目の窓の最後の回は、窓が終わった後のヒット（f10771〜f10786。スノーホワイトの発は窓の外の値に戻っている）も窓の中の値（7,618）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分（通しで 1 回）と recipe:burst-panel@4",
+      "note": "増分を、スノーホワイトの 1 発（窓の外と窓の中。距離ボーナス・会心・コアの有無を、フルバースト補正 0.5 と同じ加算の括弧に入れた）と、S1 の 1 ヒット（2 等分）・S2 の 1 ヒット（35 等分）の和に当てた（scratchpad の使い捨ての下読み）。ココア・ソルジャーF.A. の発と重なった増分は数えていない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0808",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1256-07",
+    "recording": "1256",
+    "use": "record",
+    "kind": "count",
+    "unit": "発",
+    "value": {
+      "windowShots": [111, 112, 106, 108],
+      "maxGapInWindow": [24, 10, 10, 31],
+      "magazinesAcrossWindow": {
+        "1": 295,
+        "3": 218,
+        "4": 256
+      }
+    },
+    "description": "フルバーストの窓の中のスノーホワイトの発の数と発の間の最大（リロードの間は約 80f）。2 回目は 137 発を撃ち切った直後のバーストで、窓の中でリロードしない。1・3・4 回目の窓をまたぐマガジン（重なった増分を数えない下限）は最大装弾数 137 を超える（装弾数無限）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分（通しで 1 回）と recipe:burst-panel@4",
+      "note": "増分を、スノーホワイトの 1 発（窓の外と窓の中。距離ボーナス・会心・コアの有無を、フルバースト補正 0.5 と同じ加算の括弧に入れた）と、S1 の 1 ヒット（2 等分）・S2 の 1 ヒット（35 等分）の和に当てた（scratchpad の使い捨ての下読み）。ココア・ソルジャーF.A. の発と重なった増分は数えていない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "source": "V-0808",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1256-08",
+    "recording": "1256",
+    "use": "compare",
+    "kind": "count",
+    "value": 1470,
+    "unit": "ヒット",
+    "description": "180 秒の S2 の倍率ダメージのヒットの数（35 ヒットのまとまり 42 回 × 35）。バーストの窓の中は 30 回の命中ごとに出るので、窓ごとに 4 回出る",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分（通しで 1 回）",
+      "note": "S2 の 1 ヒットの値（窓の外 2,126・3,188、窓の中 7,618・10,158）の増分が 3f おきに続くまとまりを数えた（HUD の読めなかったフレームで 2 つに割れたものは 1 回、続けて出た 2 回は 2 回と数えた。scratchpad の使い捨ての下読み）。命中回数条件▼が無い定義ではモデルは 1,295。許容の幅は 2 回分（録画ごとに揺れる敵のジャンプの時刻で、180 秒の発の数が数十発変わる。C-0552）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 70
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0808",
+    "readAt": "2026-11-21"
+  }
+]

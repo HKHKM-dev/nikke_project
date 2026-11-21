@@ -1,0 +1,155 @@
+{
+  "formatVersion": 1,
+  "resourceId": 224,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "self",
+          "stat": "maxAmmo",
+          "ref": 2,
+          "maxStacksRef": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-1363"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 5
+          },
+          "damageType": "skill",
+          "ref": 6,
+          "delayFrames": 36,
+          "hitOffsetFrames": [
+            0,
+            11
+          ],
+          "valueBeforeFire": true,
+          "assumes": {
+            "ja": "値（バフ・フルバースト補正）は発火の直前のもので、2 ヒットとも同じ値で出す（S2 の倍率ダメージと同じとみた。S1 の 2 ヒットがバーストの窓の端をまたぐ回は撮れていない）。バーストゲージは溜めない",
+            "en": "The value (buffs and the full burst bonus) is taken just before the trigger and both hits use it (assumed to match the S2 damage; no recorded pair straddled a burst window edge). It does not charge the burst gauge"
+          },
+          "claims": [
+            "C-1363"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "damageType": "skill",
+          "ref": 2,
+          "delayFrames": 20,
+          "hitOffsetFrames": [
+            0,
+            3,
+            6,
+            9,
+            12,
+            15,
+            18,
+            21,
+            24,
+            27,
+            30,
+            33,
+            36,
+            38,
+            41,
+            44,
+            47,
+            50,
+            53,
+            56,
+            59,
+            62,
+            65,
+            68,
+            71,
+            74,
+            77,
+            80,
+            83,
+            86,
+            88,
+            91,
+            94,
+            97,
+            100
+          ],
+          "valueBeforeFire": true,
+          "gaugePerHit": true,
+          "claims": [
+            "C-1364",
+            "C-1365"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-1366"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "cycleEvery",
+          "trigger": "burstUse",
+          "slot": "skill2",
+          "decreaseRef": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "窓の間は、S2 の 50 回を 30 回にする（戦闘の始めからの通算の命中の回数が 30 の倍数の発で出す。窓の始まりと終わりで数え直さない）",
+            "en": "During the window the S2 count of 50 becomes 30 (it fires on hits whose running count since battle start is a multiple of 30; the count is not reset at the window start or end)"
+          },
+          "claims": [
+            "C-1366"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-1366"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "infiniteAmmo",
+          "durationRef": 5,
+          "claims": [
+            "C-1366"
+          ]
+        }
+      ]
+    }
+  }
+}
