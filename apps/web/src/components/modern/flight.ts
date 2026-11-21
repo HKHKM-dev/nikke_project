@@ -31,14 +31,14 @@ function decodeImages(node: Element): Promise<void> {
 }
 
 /**
- * 立ち絵の場所に出している空のスロットの枠（シルエットと文字。card の中の .modern-slot-arrival-face）を、動きの後半で少しずつ透明にする
+ * 立ち絵の場所に出している空のスロットの枠（シルエットと文字。card の中の .modern-slot-arrival-face）を、動きの後半で少しずつ透明にし、動きの 9 割で消し終える
  * （スロットへ着く・持ち上げた絵が元のスロットへ戻る）。返すアニメーションは、枠を隠し終えたら cancel する
  */
 export function fadeArrivalFace(card: Element): Animation | null {
   return (
     card
       .querySelector('.modern-slot-arrival-face')
-      ?.animate([{ opacity: 1 }, { opacity: 1, offset: 0.5 }, { opacity: 0 }], {
+      ?.animate([{ opacity: 1 }, { opacity: 1, offset: 0.5 }, { opacity: 0, offset: 0.9 }, { opacity: 0 }], {
         duration: FLIGHT.duration,
         fill: 'forwards',
       }) ?? null
