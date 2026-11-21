@@ -2062,7 +2062,8 @@ export type WeaponChangeEffect = {
   chargeReleaseSeconds?: number;
   /**
    * 同: 変更後の武器の最大装弾数の description_value_NN。書いたら維持の欄（durationRef・durationSeconds）は書かず、
-   * 変更後の武器はリロードせず、最後の弾丸を撃ったフレームの次のフレームに基礎の武器に戻る（撃ち切り。論点 8）
+   * 変更後の武器はリロードせず（狙えない窓のハイドでも込め直さない。C-1427）、最後の弾丸を撃ったフレームの次のフレームに基礎の武器に戻る
+   * （撃ち切り。論点 8）
    */
   maxAmmoRef?: number;
   /**
