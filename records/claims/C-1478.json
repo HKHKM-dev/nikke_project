@@ -1,0 +1,27 @@
+{
+  "id": "C-1478",
+  "text": "ファントムの宝物版 S2: 怪盗の短剣がフルスタックになった命中の次のフレームに、予告状の付いた敵へ最終攻撃力の 値 01 % の追加ダメージ（S1 の攻撃ダメージ▲は乗らない）が出て、予告状と短剣が外れる。同じ消費で自分に分配ダメージ 値 02 %▲（値 03 スタック・持続）が 1 段付き、消費の 4 フレーム後（次の発のフレーム）に出る分配ダメージ（値 04 %）に、同じ消費の段も乗る。通常攻撃の 値 05 回ごとに攻撃力 値 06 %▲（値 07 秒）と分配ダメージ 値 08 %▲（値 09 秒）が付く",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1324-05`・`1324-06`・`1324-07`・`1324-08`・`1325-05`・`1325-06`・`1325-07`。V-0839",
+  "model": "反映（data/skills/580.json の treasureSkills.skill2。フルスタックの消費の記録は skills/holders/read.ts の consumeFullStacks、倍率ダメージの発火は frame/plan.ts）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": [
+      "data/skills/580.json の treasureSkills.skill2 の effects[0]",
+      "data/skills/580.json の treasureSkills.skill2 の effects[1]",
+      "data/skills/580.json の treasureSkills.skill2 の effects[2]",
+      "data/skills/580.json の treasureSkills.skill2 の effects[4]",
+      "data/skills/580.json の treasureSkills.skill2 の effects[5]",
+      "data/skills/580.json の treasureSkills.skill2 の effects[6]"
+    ]
+  },
+  "decidedOn": [
+    {
+      "recording": "1324",
+      "role": "読み方を合わせた"
+    }
+  ]
+}
