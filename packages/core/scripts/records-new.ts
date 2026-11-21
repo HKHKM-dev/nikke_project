@@ -66,9 +66,10 @@ import {
   validateRuns,
 } from '../src/records/claims.ts';
 import {
-  appendBasis,
   basisIdsText,
+  claimBasisObservations,
   claimDraft,
+  claimUpdateBasis,
   mergeClaimUpdate,
   nextId,
   parseJudgment,
@@ -397,7 +398,8 @@ if (kind === 'verification') {
     values.observations === undefined ? undefined : pickObservations(observations, splitIds(values.observations));
   if (picked !== undefined && picked.missing.length > 0)
     fail(`--observations に当たる観測値が無い: ${picked.missing.join('・')}`);
-  const given = picked?.picked ?? observations.filter((o) => o.source === from);
+  const { given, excluded } = claimBasisObservations(observations, from, picked?.picked);
+  if (excluded.length > 0) console.log(`注意: 無効の観測値は根拠に足さない: ${excluded.map((o) => o.id).join('・')}`);
   const subject = parseSubject();
   const decidedOn = parseDecidedOn(values['decided-on']);
   const runs = parseRuns(values.run);
@@ -417,12 +419,18 @@ if (kind === 'verification') {
     const { observations: beforeIds, ...existing } = found;
     if (existing.state !== '仮説' && existing.state !== '確定')
       fail(`${id} は ${existing.state}。--update は仮説か確定の結論にだけ使う`);
-    const before = new Set(beforeIds);
-    const added = given.filter((o) => !before.has(o.id)).map((o) => o.id);
+    const { added, basis, own } = claimUpdateBasis(
+      { basis: existing.basis, observations: beforeIds },
+      given,
+      from,
+      observations,
+    );
     if (added.length === 0)
-      console.log(`注意: ${from} の観測値はどれも ${id} の根拠に既にある（根拠は前のまま出し直す）`);
-    const basis = appendBasis(existing.basis, added, from);
-    const ownIds = new Set([...before, ...added]);
+      console.log(
+        given.length === 0
+          ? `注意: ${from} に有効な観測値が無い（根拠は前のまま出し直す）`
+          : `注意: ${from} の観測値はどれも ${id} の根拠に既にある（根拠は前のまま出し直す）`,
+      );
     const merged = mergeClaimUpdate(existing, {
       ...(subject === undefined ? {} : { subject }),
       ...(decidedOn === undefined ? {} : { decidedOn }),
@@ -437,7 +445,7 @@ if (kind === 'verification') {
         topic: existing.topic,
         text: existing.text,
         basis,
-        own: observations.filter((o) => ownIds.has(o.id)),
+        own,
         base: existing,
         subject: merged.subject,
         decidedOn: merged.decidedOn,
