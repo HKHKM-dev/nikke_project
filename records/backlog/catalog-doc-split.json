@@ -1,0 +1,5 @@
+{
+  "section": "8",
+  "order": 150,
+  "text": "`catalogDoc.ts` の `renderSkillCatalog` を、節ごとの関数に分ける（2026-11-21 起票）→ 承認待ち: [design-catalog-doc-split.md](design-catalog-doc-split.md) 4 節"
+}
