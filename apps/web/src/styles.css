@@ -1669,7 +1669,8 @@ html:has(.modern-view-container) {
   /* 列の幅は、絵と項目の余白（左右 2px ずつ） */
   grid-template-columns: repeat(auto-fill, calc(var(--tray-visual-w) + 4px));
   justify-content: center;
-  gap: 2px;
+  /* 横の間は 1px（絵どうしの間は、項目の余白と合わせて 5px） */
+  gap: 2px 1px;
   /* 全キャラを出し、枠の中ではスクロールしない（ページのスクロールだけにする） */
   padding: 4px;
 }
