@@ -3,6 +3,7 @@
 import { describe, expect, it } from 'vitest';
 import { effectFrameOf } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
+import { firingMetrics } from '../records/observations/metrics/firing.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
@@ -73,25 +74,22 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, rem, rl, flo
   });
 
   it.runIf(flower !== undefined)(
-    'lets Flower reload up to 11 rounds in the window, and clips it back to 6 after (C-1488)',
+    'lets Flower reload up to 11 rounds in the window, and clips it back to 6 when the window ends (C-1488)',
     () => {
-      const log = sim.shots[flower!]!;
-      let first = 0;
-      const magazines = (log.lastShotFrames ?? []).map((end) => {
-        const last = log.frames.indexOf(end);
-        const n = last - first + 1;
-        first = last + 1;
-        return n;
-      });
-      expect(Math.max(...magazines)).toBe(11);
-      expect(magazines.filter((n) => n !== 6).length).toBeGreaterThan(0);
+      const magazines = firingMetrics.magazineShots!.sim(sim, {
+        args: { slot: flower! + 1, count: 12 },
+        input,
+      }) as number[];
+      // 窓の中で込め終えて撃ち切ったマガジンは 11 発、込め終えた後に窓が切れたマガジンは削られて 6 + 窓の中で撃った発（V-0844 の予測）
+      expect(magazines).toEqual([6, 6, 6, 6, 6, 6, 7, 6, 11, 6, 6, 9]);
     },
   );
 
   it('stacks the S1 ATK up only while Rem is in Demon’s Breath, up to 30 (C-1490)', () => {
     const stacks = itemsOf(sim.history, { holder: rem, kind: 'timed', skill: 'skill1', stat: 'attack' });
     expect(stacks.length).toBeGreaterThan(0);
-    for (const s of stacks) expect(breath.some((w) => w.start <= s.start && s.start <= w.end)).toBe(true);
+    // スタックはきっかけの命中の次のフレームから付くので、きっかけの命中のフレーム（start − 1）が鬼の気の窓 [start, end) の中にある
+    for (const s of stacks) expect(breath.some((w) => w.start <= s.start - 1 && s.start - 1 < w.end)).toBe(true);
     const top = Math.max(...stacks.map((s) => s.stack ?? 1));
     expect(top).toBeGreaterThan(10);
     expect(top).toBeLessThanOrEqual(30);
