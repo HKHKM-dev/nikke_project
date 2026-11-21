@@ -1928,7 +1928,10 @@ html:has(.modern-view-container) {
   padding: 2px;
   pointer-events: none;
 }
-.char-drag-overlay .char-visual {
+/* 持ち上げた絵の影。離した後に動く写しの下にも、同じ影を描いて少しずつ薄くする（.flight-lift-shadow。flight.ts の fadeLiftShadow） */
+.char-drag-overlay .char-visual,
+.slot-drag-overlay-portrait,
+.flight-lift-shadow {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
 }
 /* スロットから持ち上げた立ち絵（スロットの絵と同じ大きさ。位置はカードの中の絵の位置に合わせる） */
@@ -1938,7 +1941,6 @@ html:has(.modern-view-container) {
 }
 .slot-drag-overlay-portrait {
   position: absolute;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
 }
 
 /* 読めなかった編成の保存の知らせ（components/UnreadableSavesNotice.tsx） */

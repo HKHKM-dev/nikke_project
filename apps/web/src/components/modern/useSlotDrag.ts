@@ -16,7 +16,7 @@ import type { PartiesState, PartySlotRef } from '../../parties.ts';
 import type { TeamAction, TeamState } from '../../team.ts';
 import { trayCollectionBadge, type Badge } from './badges.ts';
 import { partyCardAt, setDropPlaced, slotCardAt } from './dropAnimation.ts';
-import { FLIGHT, flyControllerInto, flyOnto, flyToTray } from './flight.ts';
+import { FLIGHT, flyControllerInto, flyOnto, flyToTray, liftedRectOf } from './flight.ts';
 import { activeDragData, dropIntentOf, type SlotRef } from './dropIntent.ts';
 import { trayGrowthMarks, type GrowthMarks } from './GrowthMarks.tsx';
 import { slotCollectionBadge, slotGrowthMarks } from './slotBadges.ts';
@@ -265,13 +265,13 @@ export function useSlotDrag({
         break;
       case 'place': {
         // 持ち上げた絵は、離した位置からスロットへ動かす
-        const from = document.querySelector('.char-drag-overlay .char-tray-item-visual')?.getBoundingClientRect();
+        const from = liftedRectOf(document.querySelector('.char-drag-overlay .char-tray-item-visual'));
         if (placement.placeFromTray(intent.character.resourceId, intent.index, from)) setDropPlaced(true);
         break;
       }
       case 'place-party': {
         // 持ち上げた絵は、離した位置から選んでいない編成の行のスロットへ、そこにいたニケは一覧へ動かす
-        const from = document.querySelector('.char-drag-overlay .char-tray-item-visual')?.getBoundingClientRect();
+        const from = liftedRectOf(document.querySelector('.char-drag-overlay .char-tray-item-visual'));
         const replaced = resourceIdAt(intent.party, intent.index);
         const content = partyCardAt(intent.party, intent.index)?.querySelector('.modern-slot-char-area');
         setDropPlaced(true);
@@ -314,7 +314,7 @@ export function useSlotDrag({
         // 持ち上げた絵は、離した位置から落とした先へ、落とした先にいたニケは、その元の位置から持ち上げた元のスロットへ動かす
         const from = { party: partyOf(intent.from), index: intent.from.index };
         const to = { party: partyOf(intent.to), index: intent.to.index };
-        const dragged = document.querySelector('.slot-drag-overlay-portrait')?.getBoundingClientRect();
+        const dragged = liftedRectOf(document.querySelector('.slot-drag-overlay-portrait'));
         const displaced = areaRectAt(to.party, to.index);
         setDropPlaced(true);
         // 空のスロットは動かさない（その場で入れ替わる）
@@ -329,7 +329,7 @@ export function useSlotDrag({
         placement.swapSlots(
           intent.from,
           intent.to,
-          document.querySelector('.slot-drag-overlay-portrait')?.getBoundingClientRect(),
+          liftedRectOf(document.querySelector('.slot-drag-overlay-portrait')),
         );
         break;
     }
