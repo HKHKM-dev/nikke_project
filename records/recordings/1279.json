@@ -36,7 +36,7 @@
   "mode": "range-3min",
   "fixedSpec": true,
   "autoFire": true,
-  "autoBurst": false,
+  "autoBurst": true,
   "conditionNote": "",
   "backup": {
     "at": "2026-11-21T15:47+09:00",
