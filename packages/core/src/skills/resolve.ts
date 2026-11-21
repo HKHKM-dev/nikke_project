@@ -1731,6 +1731,7 @@ function resolveWeaponChange(
       ...(effect.returnCooldownFrames !== undefined ? { returnCooldownFrames: effect.returnCooldownFrames } : {}),
       ...(effect.infiniteAmmo ? { infiniteAmmo: true as const } : {}),
       ...(effect.chargeTimeFixed ? { fixedChargeTime: true as const } : {}),
+      ...(untilEmpty ? { untilEmpty: true as const } : {}),
       // 解放の秒はフレームの端数のまま渡す（射手が発ごとに持ち越す。plan/design-red-hood.md 7.1 節の論点 10）
       ...(effect.chargeReleaseSeconds !== undefined
         ? { chargeReleaseFrames: effect.chargeReleaseSeconds / GAME_SECONDS_PER_FRAME }

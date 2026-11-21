@@ -217,6 +217,8 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   { resourceIds: [103], sameActivationBuffsOnHit: true, delays: { hitFrames: 0, effectFrames: 0 }, claim: 'C-0683' },
   // シンデレラ：クリスタルウェーブ: III のタイマーの 00.00 の 0〜2f 前にヒット（遅れ 0）。ヒットに同じ発動の攻撃力▲・攻撃ダメージ▲が乗る（V-0782）
   { resourceIds: [515], sameActivationBuffsOnHit: true, delays: { hitFrames: 0, effectFrames: 0 }, claim: 'C-1251' },
+  // ドレイク：グレイトヴィラン: III のタイマーの 00.00 から 68f に 1 ヒット（動画で 89〜90f。止まり 22f を含む）。ヒットに同じ発動の攻撃ダメージ▲が乗る（V-0818）
+  { resourceIds: [104], sameActivationBuffsOnHit: true, delays: { hitFrames: 68, effectFrames: 0 }, claim: 'C-1430' },
   // プリバティ：アンカインド・メイド: III のタイマーの 00.00 から 1 ヒット目まで 26f（動画で 48〜49f。止まり 22f を含む）、2 ヒット目は 21f 後で、
   // バーストスキルダメージを 2 等分する。ヒットに同じ発動の攻撃ダメージ▲・クリティカルダメージ▲が乗る（C-0679）
   {

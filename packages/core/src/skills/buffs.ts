@@ -42,6 +42,11 @@ export type ChangedWeapon = {
   targetRowKey?: string;
   /** チャージ時間の固定（WeaponChangeEffect.chargeTimeFixed。plan/design-nayuta.md 2.4 節）。shot.chargeTime がチャージ速度▲を受けない */
   fixedChargeTime?: true;
+  /**
+   * 撃ち切りで終わる変更（WeaponChangeEffect.maxAmmoRef・maxAmmo）。変更後の武器はリロードせず、狙えない窓のハイドでも込め直さない
+   * （frame/shooter.ts の hideShooter。C-1427）
+   */
+  untilEmpty?: true;
 };
 
 /**

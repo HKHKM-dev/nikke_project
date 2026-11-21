@@ -1,0 +1,640 @@
+[
+  {
+    "id": "1296-01",
+    "recording": "1296",
+    "kind": "timing",
+    "use": "record",
+    "value": [1403, 2609, 3788, 5119, 6399, 7732, 8948, 10149, 11329],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 5・0・26・5・24・0・25・0・24f"
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-02",
+    "recording": "1296",
+    "kind": "timing",
+    "use": "record",
+    "value": [1432, 2638, 3817, 5148, 6428, 7761, 8977, 10179, 11358],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・25・6・24・0・25・0・15f"
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-03",
+    "recording": "1296",
+    "kind": "timing",
+    "use": "record",
+    "value": [1461, 3846, 6457, 9006, 11387],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-04",
+    "recording": "1296",
+    "kind": "timing",
+    "use": "record",
+    "value": [2070, 4455, 7066, 9615],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム。5 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-05",
+    "recording": "1296",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差。5 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-06",
+    "recording": "1296",
+    "kind": "timing",
+    "use": "record",
+    "value": [3782, 10143, 11323],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-07",
+    "recording": "1296",
+    "kind": "timing",
+    "use": "record",
+    "value": [3811, 11352],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-08",
+    "recording": "1296",
+    "kind": "timing",
+    "use": "record",
+    "value": [3834],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-09",
+    "recording": "1296",
+    "kind": "total",
+    "use": "record",
+    "value": 313164077,
+    "description": "ココア・ソルジャーF.A.・ドレイク：グレイトヴィラン の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11540。増分は 461 個"
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-10",
+    "recording": "1296",
+    "kind": "count",
+    "use": "record",
+    "value": 258,
+    "unit": "トリガー",
+    "description": "ココア・ソルジャーF.A.・ドレイク：グレイトヴィラン のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 461 個。前の増分から 30f 未満の増分（311 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 39f）から発の数を決めた（2 発になった組 54 個）"
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-11",
+    "recording": "1296",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 57585,
+    "description": "ドレイク：グレイトヴィランの元の SG の 1 ペレット（胴体・会心なし・距離ボーナスなし）。1 回目のフルバーストより前（最大HP のみ▲ 0 スタック）。攻撃力 79,954 + 最終最大HP 3,305,431 の 6.23%（遅刻）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "f1344 の増分 287,925（胴体 5 ペレット）。f1383 の 403,095（7）も同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-12",
+    "recording": "1296",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 78976,
+    "description": "ドレイク：グレイトヴィランの元の SG の 1 ペレット（胴体・会心なし・距離ボーナスなし）。1 回目のフルバーストの後、バーストの攻撃ダメージ▲ 27.5% の中（1 スタック）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "f2194 の増分 789,760（胴体 10 ペレット）。f2233 も同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-13",
+    "recording": "1296",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 80525,
+    "description": "ドレイク：グレイトヴィランの元の SG の 1 ペレット（胴体・会心なし・距離ボーナスあり）。攻撃ダメージ▲が切れた後、2 回目のフルバーストより前（1 スタック）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "f3518 の増分 724,725（距離ボーナスあり・胴体 9 ペレット）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2500,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-14",
+    "recording": "1296",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 66299,
+    "description": "ドレイク：グレイトヴィランの元の SG の 1 ペレット（胴体・会心なし・距離ボーナスなし）。2 回目の後、攻撃ダメージ▲が切れた後（2 スタック）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "f5518 の増分 397,793（胴体 6 ペレット）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 5000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-15",
+    "recording": "1296",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 70656,
+    "description": "ドレイク：グレイトヴィランの元の SG の 1 ペレット（胴体・会心なし・距離ボーナスなし）。3 回目の後、攻撃ダメージ▲が切れた後（3 スタック）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "f8027 の増分 423,936（胴体 6 ペレット）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 7500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-16",
+    "recording": "1296",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 97517,
+    "description": "ドレイク：グレイトヴィランの元の SG の 1 ペレット（胴体・会心なし・距離ボーナスあり）。4 回目の後、攻撃ダメージ▲が切れた後（4 スタック）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "f10787 の増分 975,170（距離ボーナスあり・胴体 10 ペレット）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 10000,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-17",
+    "recording": "1296",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 266447,
+    "description": "ドレイク：グレイトヴィランのオーバーオーバードライブの 1 ペレット（胴体・会心なし・距離ボーナスなし）。1 回目のフルバースト。1 トリガー 243.75% を 15 ペレットに割り、フルチャージ 300%・フルバースト補正・攻撃ダメージ▲が乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "f2041 の増分 3,996,706（胴体 15 ペレット）。1 回目のフルバーストの 6 発はどれもこの値の 15 ペレットまでの和の格子に合う"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 900,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-18",
+    "recording": "1296",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 4919023,
+    "description": "ドレイク：グレイトヴィランの 1 回目のバーストスキルダメージ（会心なし）。発動の直前のバフ（その時の最大HP のみ▲ 0 スタック）に、同じ発動の攻撃ダメージ▲ 27.5% が乗る。フルバースト補正は乗らない",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "f1550 の増分（00.00 の 89f 後）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-19",
+    "recording": "1296",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 5663377,
+    "description": "ドレイク：グレイトヴィランの 3 回目のバーストスキルダメージ（会心なし）。発動の直前のバフ（その時の最大HP のみ▲ 2 スタック）に、同じ発動の攻撃ダメージ▲ 27.5% が乗る。フルバースト補正は乗らない",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "f6547 の増分（00.00 の 90f 後）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-20",
+    "recording": "1296",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 6035563,
+    "description": "ドレイク：グレイトヴィランの 4 回目のバーストスキルダメージ（会心なし）。発動の直前のバフ（その時の最大HP のみ▲ 3 スタック）に、同じ発動の攻撃ダメージ▲ 27.5% が乗る。フルバースト補正は乗らない",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "f9096 の増分 6,174,987（00.00 の 90f 後）から、同じフレームのソルジャーF.A. の発（139,423 の格子。丸めで 1 違う）を引いた値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-21",
+    "recording": "1296",
+    "use": "record",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 6407732,
+    "description": "ドレイク：グレイトヴィランの 5 回目のバーストスキルダメージ（会心なし）。発動の直前のバフ（その時の最大HP のみ▲ 4 スタック）に、同じ発動の攻撃ダメージ▲ 27.5% が乗る。フルバースト補正は乗らない。モデルの 180 秒はフルバーストが 4 回で、5 回目は録画の戦闘の終わりの直前",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "f11477 の増分（00.00 の 90f 後。5 回目のフルバーストの始まり。4 スタック）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-22",
+    "recording": "1296",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": [89, null, 90, 90, 90],
+    "description": "ドレイク：グレイトヴィランのバーストスキルダメージの 1 ヒットの、III のタイマーの 00.00 からの動画のフレーム（回ごと。入りの止まり 22f を含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 は 1296-03。2 回目は HUD が 23f 読めなかった（ヒットのフレームが決まらない）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-23",
+    "recording": "1296",
+    "use": "compare",
+    "kind": "timing",
+    "unit": "f",
+    "value": 135,
+    "description": "1 回目のフルバーストの窓の始まり（III のタイマーの 00.00）から、ドレイク：グレイトヴィランのオーバーオーバードライブの最初の発までの動画のフレーム",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "回ごとは 135・135・135・128f。4 回目は持ち替えの時に元の SG がリロード中（残弾の表示が 1 → 0 の後）で、1〜3 回目は元の SG を撃っている途中"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstToWeaponChangeShot",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-24",
+    "recording": "1296",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": [
+      [135, 224, 313, 402, 491, 580],
+      [135, 224, 313, 402, 491, 580],
+      [135, 224, 313, 402, 491, 580],
+      [128, 217, 306, 395, 646, 736]
+    ],
+    "description": "フルバーストごとの、ドレイク：グレイトヴィランのオーバーオーバードライブの発の、III のタイマーの 00.00 からの動画のフレーム（1〜4 回目）。どれも 6 発",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "発の間は 88〜89f。4 回目は 4 発目の後に的のジャンプ（狙えない窓）が入り、5・6 発目はフルバーストの終わり（1296-04）の後に出た（値はフルバースト補正の無い格子に合う）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-25",
+    "recording": "1296",
+    "use": "compare",
+    "kind": "timing",
+    "unit": "f",
+    "value": 84,
+    "description": "1 回目のフルバーストの窓の終わりから、ドレイク：グレイトヴィランの元の SG の次の発までの動画のフレーム（オーバーオーバードライブの 6 発目の後、残弾数 100% 低下で 0 からリロードした後の最初の発）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts と recipe:hud-jumps@3 の増分",
+      "note": "f2154 の元の SG の発（残弾の表示が 9 → 8）。フルバーストの終わり f2070（1296-04）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstEndToNextShot",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-26",
+    "recording": "1296",
+    "use": "record",
+    "kind": "interval",
+    "unit": "f",
+    "value": [113, 125, 113, 112],
+    "description": "フルバーストごとの、オーバーオーバードライブの 6 発目からドレイク：グレイトヴィランの元の SG の最初の発までの動画のフレーム（1〜4 回目）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts と recipe:hud-jumps@3 の増分",
+      "note": "元の SG の発は残弾の表示が 9 → 8 に替わるフレーム。表示はその前に 0 から 9 に込め終わる"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-27",
+    "recording": "1296",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": [
+      [null, null],
+      [1481, 1520],
+      [1453, 1492],
+      [1473, 1512]
+    ],
+    "description": "ドレイク：グレイトヴィランのバーストの攻撃ダメージ▲が切れる時刻を、▲ありの最後の発と▲なしの最初の発で挟んだ幅（回ごと。III のタイマーの 00.00 から数えた動画のフレーム。1〜4 回目）",
+    "method": {
+      "tool": "recipe:buff-edge@7（--opt grid・pair）と tools/captures/reticle-ammo.ts",
+      "note": "元の SG の発を、▲あり（モデルの f1300・3900・6500・9300）と▲なし（f2500・5000・7500・10000）の 10 ペレットまでの和の格子に当てた。1 回目はジャンプの明けで読めない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0818",
+    "readAt": "2026-11-21"
+  }
+]

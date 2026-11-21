@@ -543,7 +543,7 @@ function hideReloadExtraFrames(model: WeaponModel, params: FiringParams): number
 /**
  * 敵を狙えなくなった（窓の最初のフレーム、stepShooter の前に呼ぶ）。
  * 撃てる状態で残弾が減っていれば、ハイド中のリロードを始める（チャージ中の分は捨てる）。
- * リロード中（弾切れ）・込め終えて 1 発目を待っている・装弾数無限・満タンならそのまま。
+ * リロード中（弾切れ）・込め終えて 1 発目を待っている・装弾数無限・満タン・撃ち切りで終わる変更後の武器（C-1427）ならそのまま。
  * C-0841（plan/design-hide-reload.md）: 込め終わりは hideReloadExtraFrames だけ遅い。
  * plan/design-hide-reload-detect.md 案 A: 射撃姿勢維持型は、前の発の姿勢の終わり（撃ってから ⌈S⌉ − H）より前には始めない。
  * startedFramesAgo は、このフレームより前に始まっていたとみなすフレーム数（射撃姿勢維持型でない武器が D の H 後に部分チャージで
@@ -556,7 +556,8 @@ export function hideShooter(
   params: FiringParams = firingParams(shot),
   startedFramesAgo = 0,
 ): void {
-  if (state.phase !== 'ready' || params.infiniteAmmo || state.ammo >= params.maxAmmo) return;
+  if (state.phase !== 'ready' || params.infiniteAmmo || state.ammo >= params.maxAmmo || params.weapon?.untilEmpty)
+    return;
   state.hideReload = true;
   // 射撃姿勢維持型: 前の発からの経過（chargeElapsed）が姿勢の終わりに届くまで待つ
   const stance = params.stance;
