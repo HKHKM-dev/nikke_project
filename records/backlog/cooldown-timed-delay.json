@@ -1,0 +1,5 @@
+{
+  "section": "5",
+  "order": 40,
+  "text": "CT の印（TimerTrigger の `cooldown`）のある周期の timed は遅れ（`delayFrames`）を書けない（`skills/parse/crossChecks.ts` の `validateCooldownTimers`。解決で `{ skillFired }` に置き換わり、窓は発動の次のフレームから）。発動から遅れて当たるヒットの次のフレームから付く▼（ノベルの S1 の防御力▼。C-1448）は印の無い同じ秒の周期で書くので、CT を縮める効果（`skillCooldownDown`・`skillCooldownReduction`）のある編成では、ダメージのヒットは早まるが▼の窓は元の周期のまま残る（`data/skills/212.json` の skill1 の effects[1] の assumes）。`{ skillFired }` のきっかけに遅れを足せるかを見る"
+}
