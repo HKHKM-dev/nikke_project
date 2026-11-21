@@ -1,0 +1,23 @@
+{
+  "id": "C-1508",
+  "text": "ディーゼルの宝物版 S1 の「通常攻撃が 150 回命中した時、自分がヘイト状態なら自分にスタック可能バフ効果のスタック量 1 個▲」は、イチゴキャンディ（C-1180）のほかに、ほかの味方のスキルで自分に付いたスタック可能バフ（センチの宝物版 S2 の攻撃力▲）にも 1 段足す。ヘイトの外の 150 の倍数の命中では足さない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1361-01`。V-0850",
+  "model": "data/skills/72.json の treasureSkills.skill1 の effects[0]（stackChange・allStackable・target self・条件 selfState attract）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/72.json の treasureSkills.skill1 の effects[0]"]
+  },
+  "decidedOn": [],
+  "runs": [
+    {
+      "recording": "1361",
+      "reproduced": "2 回目のヘイト（1100・1280・1500 発目）",
+      "observations": ["1361-01"]
+    }
+  ],
+  "parameterFree": "回数（値 04 の 150）と足す段（値 05 の 1）は 72 の宝物版の説明文、ヘイトの窓は C-1181、足される攻撃力▲の 1 段の値・上限・維持はセンチの C-1218"
+}
