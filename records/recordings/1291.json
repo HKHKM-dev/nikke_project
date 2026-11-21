@@ -1,0 +1,46 @@
+{
+  "id": "1291",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1291_snow-white-b-2.mp4",
+  "original": "2026-11-21_16-27-51.mp4",
+  "durationSec": 202.9,
+  "frames": 12172,
+  "fps": 60,
+  "sizeMB": 245.9,
+  "sha256": "ee6008615241",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 220,
+      "name": "スノーホワイト",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-21T16:32+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
