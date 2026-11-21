@@ -1301,6 +1301,9 @@
 | 1331 | `20261121-1331_rl+sr+sg_i-doll-flower+delta+maiden_fire.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎メイデン（181、SG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0841。I-DOLL・フラワー + デルタ + メイデン（操作）（撮影 B） |
 | 1332 | `20261121-1332_idoll-flower-rem.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ◎レム（820、MG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1333 | `20261121-1333_idoll-flower-rem.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ◎レム（820、MG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1348 | `20261121-1348_smg_k_fire.mp4` | ◎K（41、SMG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0848。K 単騎（操作）（撮影 A の 1 本目） |
+| 1349 | `20261121-1349_smg_k_fire.mp4` | ◎K（41、SMG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0848。K 単騎（操作）（撮影 A の 2 本目） |
+| 1350 | `20261121-1350_rl+sr+smg_i-doll-flower+delta+k_fire.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎K（41、SMG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0848。I-DOLL・フラワー + デルタ + K（操作）（撮影 B） |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
