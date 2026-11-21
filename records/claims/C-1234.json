@@ -27,13 +27,13 @@
   "minimal": [
     {
       "observations": ["1184-06", "1184-07", "1185-06", "1185-07"],
-      "element": ["フローラ treasureSkills.burst.effects[1]", "ベスティー：タクティカル・アップ burst.notes[0]"],
+      "element": "フローラ treasureSkills.burst.effects[1]",
       "reason": "撮影 A はバーストを一度も使わない",
       "decided": "2026-11-14"
     },
     {
       "observations": ["1184-06", "1184-07", "1185-06", "1185-07"],
-      "element": ["フローラ treasureSkills.skill2.notes[0]"],
+      "element": "フローラ treasureSkills.skill2.notes[0]",
       "reason": "比べた塊の前後に被弾の窓は無い（戦闘開始の直後の塊と、▲の無い塊。1185 の最初の被弾は f2680）",
       "decided": "2026-11-14"
     }

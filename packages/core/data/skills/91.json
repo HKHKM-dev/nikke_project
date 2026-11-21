@@ -7,9 +7,9 @@
       "effects": [],
       "notes": [
         {
-          "ja": "フルチャージ攻撃時の自分の爆発範囲▲（10 秒）は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）",
-          "en": "The explosion range increase on self on fully charged attacks (10 s) is not modeled (explosion range is not in the damage formula; its effect on the core hit rate is not checked)",
-          "kind": "unimplemented",
+          "ja": "フルチャージ攻撃時の自分の爆発範囲▲（10 秒）は、敵 1 体では複数の敵へのヒットを増やすだけで起きない",
+          "en": "The explosion range increase on self on fully charged attacks (10 s) only adds hits on more enemies, which does not happen against a single enemy",
+          "kind": "outOfScope",
           "effect": {
             "kind": "timed",
             "stat": "unknown",
