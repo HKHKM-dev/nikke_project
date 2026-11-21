@@ -1,0 +1,28 @@
+{
+  "id": "C-1408",
+  "text": "ブリッドのバーストのダメージは、最終防御力が最も高い敵 1 機（的 1 体）への 1 ヒットで、III のタイマーの 00.00 から動画で 62〜63f（フルバーストの入りの止まりを含む。遅れの表で 41f）に、最終攻撃力の 1440% を出す。フルバーストの中だがフルバースト補正は乗らない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1284-02`・`1284-04`・`1285-02`・`1285-04`。V-0821",
+  "model": "反映（data/skills/70.json の burst の effects[0] と、burst/landing.ts のブリッドの行（hitFrames: 41））",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/70.json の burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1284",
+      "role": "値を合わせた"
+    }
+  ],
+  "minimal": [
+    {
+      "observations": ["1284-04", "1285-04"],
+      "element": ["ソルジャーF.A. burst.notes[0]"],
+      "reason": "ソルジャーF.A. のバーストの最大HP▲は自分だけに付き、ブリッドのバーストのダメージの値と時刻に効かない",
+      "decided": "2026-11-21"
+    }
+  ]
+}

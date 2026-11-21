@@ -1,0 +1,159 @@
+[
+  {
+    "id": "1285-01",
+    "recording": "1285",
+    "kind": "hit",
+    "use": "compare",
+    "value": 26380,
+    "unit": "ダメージ",
+    "description": "ブリッドの 31 発目（f970）の 1 ヒット（S1 の攻撃力 18.52%▲が乗る・胴体・会心なし・距離ボーナスあり）。30 発目（f965）までのブリッドの発は、どれも▲の無い格子（22,255・30,814・39,373・47,933）に乗る",
+    "method": {
+      "tool": "hud-jumps@3 の増分と、burst-panel@4 の 00.00 と目視",
+      "note": "HUD の総ダメージの増分（3 人の和）から、5f おきのブリッドの発を戦闘の始めから数えた。ココア・ソルジャーF.A. の発（ほかの値）は別の増分か、和で分けた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 31,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0821",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1285-02",
+    "recording": "1285",
+    "kind": "interval",
+    "use": "compare",
+    "value": [63, 63, 63, 62],
+    "unit": "f",
+    "description": "1〜4 回目のフルバーストの始まり（III のタイマーの 00.00。1405・3882・6579・8990）から、ブリッドのバーストのダメージの増分までの動画のフレーム数（フルバーストの入りの止まりを含む）。どの回も 1 ヒット",
+    "method": {
+      "tool": "hud-jumps@3 の増分と、burst-panel@4 の 00.00 と目視"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 4
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0821",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1285-03",
+    "recording": "1285",
+    "kind": "hit",
+    "use": "compare",
+    "value": 5112036,
+    "unit": "ダメージ",
+    "description": "1 回目のバーストのヒットのフレーム（f1468）の増分。会心なしのバーストのダメージ 2,044,814（1440%。フルバースト補正なし）と、同じフレームの会心なしの追加ダメージ 3,067,222（1440% × フルバースト補正 1.5）の和。ほかの増分と重ならない",
+    "method": {
+      "tool": "hud-jumps@3 の増分と、burst-panel@4 の 00.00 と目視"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitWithSkillHits",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0821",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1285-04",
+    "recording": "1285",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2044814,
+    "unit": "ダメージ",
+    "description": "2 回目のバーストのダメージ（会心なし・追加ダメージなし。f3945 の増分）。フルバーストの中だがフルバースト補正は乗らない",
+    "method": {
+      "tool": "hud-jumps@3 の増分と、burst-panel@4 の 00.00 と目視"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0821",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1285-05",
+    "recording": "1285",
+    "kind": "count",
+    "use": "record",
+    "value": [1],
+    "unit": "回",
+    "description": "追加ダメージが出たバーストの回（1 始まり）。1 回目だけで、2 回目以降のバーストのヒットのフレームの増分は 2,044,814・2,044,814・3,067,222（バーストのダメージだけ。会心は ×1.5 の 3,067,221 前後）。1 回目の被弾の赤い画面は f3168（1 回目のバーストのヒットの後）で、2 回目以降のバーストはどれも被弾の後で HP が最大でない。モデルは被弾を扱わないので、どの回にも出す（前提の外）",
+    "method": {
+      "tool": "hud-jumps@3 の増分と目視",
+      "note": "被弾の赤い画面は、画面の左 200px の平均の赤 − 青が 25 を超え、約 85f 続いた区間。フルバーストの入りと窓の演出の赤（00.00 から約 28f と、その後の窓）は除いた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0821",
+    "readAt": "2026-11-21"
+  }
+]

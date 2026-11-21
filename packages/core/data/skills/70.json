@@ -1,0 +1,84 @@
+{
+  "formatVersion": 1,
+  "resourceId": 70,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 3
+          },
+          "target": "self",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-1406"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "everySeconds": 10,
+            "cooldown": true
+          },
+          "ref": 1,
+          "damageType": "skill",
+          "delayFrames": 49,
+          "assumes": {
+            "ja": "説明文にきっかけの無いアクティブ型のスキルで、戦闘開始からクールタイム 10 秒ごとに発動し（撃たない間も）、発動からヒットまで 49f（録画 1283 で読み、1282 で再現。C-1407）。値（撃つ側のバフ・フルバースト補正）を発動の時とヒットの時のどちらで決めるかは確かめていない（モデルはヒットの時）。ゲージを溜めるかは確かめていない（撃たない録画の BURST バーは見える範囲より下）ので書かない。最終防御力が最も高い敵 1 機は的 1 体で 1 ヒット",
+            "en": "An active skill with no trigger in its description, activating every 10 s cooldown from the start of combat (also while not firing), with 49 f from activation to hit (read in recording 1283, reproduced in 1282; C-1407). Whether the value (shooter buffs and the Full Burst bonus) is fixed at activation or at the hit is not verified (the model uses the hit). Whether it builds Burst gauge is not verified (the BURST bar in the no-fire recording stays below its visible range), so it is not written. The single highest-DEF enemy is the lone target, hit once"
+          },
+          "claims": [
+            "C-1407"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "最終防御力が最も高い敵 1 機は的 1 体で 1 ヒット。遅れの表（burst/landing.ts）のブリッドの行の時刻に出る",
+            "en": "The single highest-DEF enemy is the lone target, hit once, at the time in the Brid row of the landing table (burst/landing.ts)"
+          },
+          "claims": [
+            "C-1408"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 2,
+          "damageType": "additional",
+          "perBurstHit": true,
+          "condition": {
+            "selfHp": {
+              "atLeast": 100
+            }
+          },
+          "reads": [
+            "hp"
+          ],
+          "assumes": {
+            "ja": "同じ敵は、敵 1 体の前提ではその敵。バーストのダメージのヒットと同じフレームに出る。HP が最大かはバーストを使ったフレームで 1 回だけ見る。HP が最大は被弾の無い前提で成り立つ（射撃場の 3 分モードでは、的の攻撃を受けた後のバーストでは出ない）",
+            "en": "The same enemy is that enemy under the single-enemy premise. Dealt on the frame of the Burst damage hit. Max HP is checked once on the Burst-use frame. Max HP holds under the no-damage premise (in the 3-minute range mode it is not dealt on bursts after the target hits her)"
+          },
+          "claims": [
+            "C-1410"
+          ]
+        }
+      ]
+    }
+  }
+}

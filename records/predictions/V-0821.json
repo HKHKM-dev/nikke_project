@@ -1,0 +1,198 @@
+{
+  "verification": "V-0821",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 301
+    },
+    {
+      "rid": 70,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S1 は通常攻撃 30 発ごとに攻撃力▲ 10 秒、S2 は 20 秒（仮の値）ごとの倍率ダメージ、バーストのダメージと、HP が最大なら追加ダメージ）"
+    },
+    {
+      "id": "H-no-additional",
+      "note": "比べのため: バーストの追加ダメージが出ない（burst の effects[1] を落とす。被弾の後の HP が最大でないバーストの見え方）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 70,
+            "skill": "burst",
+            "index": 1
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "c-hit-before-s1",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 10,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 C: ブリッドの 10 発目の胴体・会心なしの 1 ヒット（S1 の攻撃力▲が付く前）"
+    },
+    {
+      "id": "c-hit-after-s1",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 40,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 C: ブリッドの 40 発目の胴体・会心なしの 1 ヒット（S1 の攻撃力 18.52%▲が付いた後。1 回目のバーストの前）"
+    },
+    {
+      "id": "c-s2-hit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 C: S2 の倍率ダメージの 1 回目の値（会心なし。211.2%。S1 の▲が乗る）"
+    },
+    {
+      "id": "c-s2-frames",
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "count": 8
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "撮影 C: S2 の倍率ダメージの最初の 8 回の動画のフレーム（クールタイム 20 秒・遅れ 0 は仮の値）"
+    },
+    {
+      "id": "c-burst-hit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 C: 1 回目のバーストのダメージ（会心なし。1440%）"
+    },
+    {
+      "id": "c-burst-with-additional",
+      "model": "sim",
+      "metric": "burstHitWithSkillHits",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 C: 1 回目のバーストのダメージと、同じフレームの追加ダメージの和（会心なし。HUD の 1 つの増分。追加ダメージにだけフルバースト補正が乗る）"
+    },
+    {
+      "id": "c-additional-count",
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "burst"
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "撮影 C: 追加ダメージの回数（モデルは被弾を扱わないので、どのバーストにも出る）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "34fa28952f6d0bdd6f88ad5140d47dc2dea03952",
+    "values": {
+      "H1": {
+        "c-hit-before-s1": 22254.502920000003,
+        "c-hit-after-s1": 26379.525770000004,
+        "c-s2-hit": 449859.16800000006,
+        "c-s2-frames": [1201, 2380, 3581, 4760, 5961, 7140, 8341, 9520],
+        "c-burst-hit": 2044814.4000000001,
+        "c-burst-with-additional": 5112036,
+        "c-additional-count": 5
+      },
+      "H-no-additional": {
+        "c-hit-before-s1": 22254.502920000003,
+        "c-hit-after-s1": 26379.525770000004,
+        "c-s2-hit": 449859.16800000006,
+        "c-s2-frames": [1201, 2380, 3581, 4760, 5961, 7140, 8341, 9520],
+        "c-burst-hit": 2044814.4000000001,
+        "c-burst-with-additional": 2044814.4000000001,
+        "c-additional-count": 0
+      }
+    }
+  }
+}
