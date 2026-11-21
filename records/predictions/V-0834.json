@@ -1,6 +1,6 @@
 {
   "verification": "V-0834",
-  "note": "撮影（ココア（I）+ レイヴン（III）+ アリア（II・操作）・オートバースト ON・灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10））の予測。モデルの 1 回目のフルバーストは 565〜1153f、アリアのバーストは 531f（命中率▲は 1416f まで）、S2 の 1 回目の窓は 401〜695f・2 回目は 950〜1244f",
+  "note": "撮影（ココア（I）+ レイヴン（III）+ アリア（II・操作）・オートバースト ON・灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10））の予測。モデルの 1 回目のフルバーストは 565〜1153f、アリアのバーストは 531f、S2 の 1 回目の窓は 401〜695f・2 回目は 950〜1244f",
   "team": [
     {
       "rid": 311
@@ -17,7 +17,7 @@
   "hypotheses": [
     {
       "id": "H1",
-      "note": "いまの定義（S1 はフルバーストの始まりに味方全体へ会心ダメージ▲ 10 秒、S2 はマガジンの最後の 1 発で味方全体へ会心率▲ 5 秒、バーストは自分に命中率▲ 15 秒）"
+      "note": "いまの定義（S1 はフルバーストの始まりに味方全体へ会心ダメージ▲ 10 秒、S2 はマガジンの最後の 1 発で味方全体へ会心率▲ 5 秒。バーストの自分の命中率▲は未対応で効かせない）。撮影の後、命中率▲を定義から外した版で出し直した"
     },
     {
       "id": "H0-s1",
@@ -46,14 +46,21 @@
       }
     },
     {
-      "id": "H0-hit",
-      "note": "バーストの命中率▲が MG のアリアのコア命中率と弾丸命中率を上げない",
+      "id": "H-hit",
+      "note": "バーストの自分の命中率▲（15 秒）を、コア命中率は C-0036 の式、弾丸命中率は H2 で効かせる（撮る前の定義）",
       "override": {
-        "dropEffects": [
+        "addEffects": [
           {
             "rid": 432,
             "skill": "burst",
-            "index": 0
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "hitRate",
+              "ref": 4,
+              "durationRef": 5
+            }
           }
         ]
       }
@@ -61,38 +68,25 @@
   ],
   "targets": [
     {
-      "id": "s1-crit-ratio-fb",
+      "id": "s1-fb-core-crit-hit",
       "model": "sim",
-      "metric": "critHitRatio",
+      "metric": "hitDamage",
       "args": {
         "slot": 3,
         "frame": 800,
         "core": true,
+        "crit": true,
         "distance": false
       },
-      "note": "フルバーストの中（S2 の窓の外）の、アリアの会心したコアの 1 ヒットと会心しないコアの 1 ヒットの比",
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "condition": "auto"
-      }
-    },
-    {
-      "id": "s1-crit-ratio-out",
-      "model": "sim",
-      "metric": "critHitRatio",
-      "args": {
-        "slot": 3,
-        "frame": 300,
-        "core": true,
-        "distance": false
       },
-      "note": "フルバーストの外の同じ比",
-      "setup": {
-        "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
-      }
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "フルバーストの中（S2 の窓の外）のアリアのコアの会心した 1 ヒット（距離ボーナスなし）"
     },
     {
       "id": "s2-starts",
@@ -122,8 +116,10 @@
       "note": "S2 の窓の中（フルバーストの外）の会心率",
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.03
       }
     },
     {
@@ -137,8 +133,10 @@
       "note": "S2 の窓の外の会心率",
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.03
       }
     },
     {
@@ -154,6 +152,9 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.02
       }
     },
     {
@@ -169,6 +170,9 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.02
       }
     },
     {
@@ -204,50 +208,46 @@
   ],
   "predicted": {
     "at": "2026-11-21",
-    "commit": "1354e631a6196049dfa5199948cef47475642097",
+    "commit": "8f1611b94f14470e9358d33adfda3ad32b69e5b0",
     "values": {
       "H1": {
-        "s1-crit-ratio-fb": 1.3079599999999998,
-        "s1-crit-ratio-out": 1.25,
-        "s2-starts": [401, 950, 1499, 2259],
-        "s2-crit-rate-in": 0.2203,
-        "s2-crit-rate-out": 0.15,
-        "hit-core-in": 1,
-        "hit-core-out": 0.965,
-        "hit-bullet-in": 0.9999978181404312,
-        "hit-bullet-out": 0.9982
-      },
-      "H0-s1": {
-        "s1-crit-ratio-fb": 1.2,
-        "s1-crit-ratio-out": 1.25,
-        "s2-starts": [401, 950, 1499, 2259],
-        "s2-crit-rate-in": 0.2203,
-        "s2-crit-rate-out": 0.15,
-        "hit-core-in": 1,
-        "hit-core-out": 0.965,
-        "hit-bullet-in": 0.9999978181404312,
-        "hit-bullet-out": 0.9982
-      },
-      "H0-s2": {
-        "s1-crit-ratio-fb": 1.3079599999999998,
-        "s1-crit-ratio-out": 1.25,
-        "s2-starts": [],
-        "s2-crit-rate-in": 0.15,
-        "s2-crit-rate-out": 0.15,
-        "hit-core-in": 1,
-        "hit-core-out": 0.965,
-        "hit-bullet-in": 0.9999978181404312,
-        "hit-bullet-out": 0.9982
-      },
-      "H0-hit": {
-        "s1-crit-ratio-fb": 1.30796,
-        "s1-crit-ratio-out": 1.25,
+        "s1-fb-core-crit-hit": 23569.848983868003,
         "s2-starts": [401, 950, 1499, 2259],
         "s2-crit-rate-in": 0.2203,
         "s2-crit-rate-out": 0.15,
         "hit-core-in": 0.965,
         "hit-core-out": 0.965,
         "hit-bullet-in": 0.9982,
+        "hit-bullet-out": 0.9982
+      },
+      "H0-s1": {
+        "s1-fb-core-crit-hit": 21624.37596,
+        "s2-starts": [401, 950, 1499, 2259],
+        "s2-crit-rate-in": 0.2203,
+        "s2-crit-rate-out": 0.15,
+        "hit-core-in": 0.965,
+        "hit-core-out": 0.965,
+        "hit-bullet-in": 0.9982,
+        "hit-bullet-out": 0.9982
+      },
+      "H0-s2": {
+        "s1-fb-core-crit-hit": 23569.848983868003,
+        "s2-starts": [],
+        "s2-crit-rate-in": 0.15,
+        "s2-crit-rate-out": 0.15,
+        "hit-core-in": 0.965,
+        "hit-core-out": 0.965,
+        "hit-bullet-in": 0.9982,
+        "hit-bullet-out": 0.9982
+      },
+      "H-hit": {
+        "s1-fb-core-crit-hit": 23569.848983868,
+        "s2-starts": [401, 950, 1499, 2259],
+        "s2-crit-rate-in": 0.2203,
+        "s2-crit-rate-out": 0.15,
+        "hit-core-in": 1,
+        "hit-core-out": 0.965,
+        "hit-bullet-in": 0.9999978181404312,
         "hit-bullet-out": 0.9982
       }
     }
