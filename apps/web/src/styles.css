@@ -845,6 +845,42 @@ svg.roster-revert-icon {
   /* 立ち絵どうしの横の間は 4px（カードの左右の余白 2px ×2 だけ）。落とす先の枠（立ち絵の外へ 2px 出る）が、隣どうしでちょうど重ならない */
   gap: 12px 0;
 }
+/* 編成のタブとスロットの並び（モダン UI）。700px 以上の画面では、タブをスロットの左に縦に並べ、ダメージを編成の番号の右に出す。
+   狭い画面では、これまでどおりタブを上に横に並べる（スロットの幅を残すため） */
+@media (min-width: 700px) {
+  .modern-party-slots {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  /* スロットの並びは、元の大きさの立ち絵 5 枚（幅 128px・枠線 2px・左右の余白）の幅まで広がり、足りなければ縮む（縮んだ幅に useSlotFit が立ち絵を合わせる） */
+  .modern-party-slots > .modern-slots-area {
+    flex: 0 1 calc(5 * (130px + 2 * 2px));
+    min-width: 0;
+  }
+  /* タブの上端は、スロットの立ち絵の上端にそろえる（並びの上の、元に戻す・やり直すのボタンの分の余白 30px と、カードの上の余白・
+     操作キャラの印の行（.modern-slot-card・.modern-slot-header）の 36px の下） */
+  .modern-party-slots > .party-tabs {
+    flex: none;
+    flex-direction: column;
+    margin-top: 0;
+    padding-top: calc(30px + 36px);
+    gap: 6px;
+  }
+  .modern-party-slots .party-tab-cell {
+    flex: none;
+    max-width: none;
+    container-type: normal;
+    grid-template-columns: 4em 5.5em;
+    align-items: center;
+    gap: 6px;
+  }
+  .modern-party-slots .party-tab-total {
+    font-size: 0.9rem;
+    text-align: left;
+  }
+}
 /* カードの幅は立ち絵（1:2 の枠と 1px の枠線）と左右の余白（.modern-slot-card の padding）だけにして、スロットの間を詰める */
 .modern-slots-grid > .modern-slot-card {
   box-sizing: border-box;
