@@ -1,0 +1,116 @@
+{
+  "verification": "V-0811",
+  "note": "撮影の予測。ココア（I）+ ソルジャーF.A.（II）+ キロ（III・操作）、射撃場の BigArms（灼熱）・3 分モード・スペック固定 ON（スキル Lv10）・オートバースト ON",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 301
+    },
+    {
+      "rid": 361,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（バーストの 1 ヒットの攻撃力を、キロの最終最大HP の 5% に置き換える）",
+      "override": {}
+    },
+    {
+      "id": "H-add",
+      "note": "最終最大HP の 5% を最終攻撃力に足す（メイデン：アイスローズのバーストと同じ合算の形）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 361,
+            "skill": "burst",
+            "replace": 0,
+            "effect": {
+              "kind": "burstDamage",
+              "damageType": "skill",
+              "ref": 2,
+              "addCasterMaxHpRef": 1
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "burst-hit",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "1 回目のバーストの 1 ヒット（会心なし）"
+    },
+    {
+      "id": "burst-hit-crit",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "1 回目のバーストの 1 ヒット（会心）"
+    },
+    {
+      "id": "burst-count",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "burstCount",
+      "args": {
+        "slot": 3
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "180 秒のキロのバーストの回数（毎回ダメージの側）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "ca64f02e13ffa0aef2ca6db74a1af471b2d3ad16",
+    "values": {
+      "H1": {
+        "burst-hit": 1900860.2660200002,
+        "burst-hit-crit": 2851290.3990300004,
+        "burst-count": 4
+      },
+      "H-add": {
+        "burst-hit": 2821002.8796200003,
+        "burst-hit-crit": 4231504.31943,
+        "burst-count": 4
+      }
+    }
+  }
+}

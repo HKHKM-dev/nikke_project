@@ -139,7 +139,11 @@ const KIND_INFO: Record<string, Info> = {
     'ok',
     'burstDamage の addCasterMaxHpRef（メイデン：アイスローズ編）',
   ],
-  'damage:hpConverted': ['最大HP を攻撃力として換算した倍率ダメージ', 'gap', 'なし'],
+  'damage:hpConverted': [
+    '最大HP を攻撃力として換算した倍率ダメージ',
+    'ok',
+    'burstDamage の convertCasterMaxHpRef（キロ）',
+  ],
   // 蓄積して爆発するダメージの定義（plan/design-accumulate-explosion.md 2 節。C-0901・C-0903・C-0904）
   'damage:accumulate': [
     '蓄積して爆発するダメージ',

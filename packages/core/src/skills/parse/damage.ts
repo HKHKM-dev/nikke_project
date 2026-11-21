@@ -47,6 +47,12 @@ export function parseBurstDamageEffect(v: Record<string, Json>, path: string): B
   }
   if (v.addCasterMaxHpRef !== undefined)
     effect.addCasterMaxHpRef = parseRef(v.addCasterMaxHpRef, `${path}.addCasterMaxHpRef`);
+  // 最大HP を攻撃力として換算する（plan/design-kilo.md 2.2 節）
+  if (v.convertCasterMaxHpRef !== undefined) {
+    if (effect.addCasterMaxHpRef !== undefined)
+      fail(`${path}.convertCasterMaxHpRef`, 'convertCasterMaxHpRef cannot be used with addCasterMaxHpRef');
+    effect.convertCasterMaxHpRef = parseRef(v.convertCasterMaxHpRef, `${path}.convertCasterMaxHpRef`);
+  }
   parseAssumes(v, effect, path);
   return effect;
 }

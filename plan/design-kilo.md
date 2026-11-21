@@ -4,7 +4,7 @@
 - 関連: [design-maiden-ice-rose.md](design-maiden-ice-rose.md) 2.2・8 節（最大HP を攻撃力に合算する `burstDamage` の `addCasterMaxHpRef`）、[design-skill-stage5.md](design-skill-stage5.md) 1.1・1.2 節（状態 `barrier` と状態の家族）、[design-skill-stage6.md](design-skill-stage6.md) 2.4 節（シンデレラのデコイ。被弾で壊れる分を扱わない、中身なしの持続の状態）、[design-trina.md](design-trina.md) 2.1 節（「敵全体に」で終わるバーストスキルダメージ）
 - 検証: V-0811
 - 作成日: 2026-11-21
-- 状態: 承認待ち（6 節）
+- 状態: 撮影待ち（V-0811）
 
 ## 0. 範囲
 
@@ -81,6 +81,8 @@
 
 ## 6. 論点（オーナーに決めてもらうこと）
 
+- 2026-11-21 に決めた: 1〜3 とも推奨どおり。
+
 1. **最大HP を攻撃力として換算するダメージの形**（2.2 節）。推奨: 案 A。`burstDamage` に `convertCasterMaxHpRef`（仮称。攻撃力を最終最大HP × 値 % に置き換える）を足して定義し、撮影で合算の形と見分ける。合算と分かったら `addCasterMaxHpRef` に替えて、足した欄を外す。代わりの案 B: 撮る前は既存の `addCasterMaxHpRef`（合算）で書き、置き換えと分かってから欄を足す。
 2. **ナノコーティングの書き方**（2.1 節）。推奨: 案 A。目録に状態 `nanoCoating`（家族 `barrier`）を足し、S1 の戦闘開始時の付与を中身なしの持続の状態で定義する。バーストの「ナノコーティング状態なら」は `assumes`（いつも満たす）、「状態でなければ」の 3 行と S2 のバリアの回復は前提の外の notes にする。代わりの案 B: 状態を足さず、S1 のバリアを間接の notes にする（S1 が `partial` になり、ほかのキャラの「バリア適用状態の味方」の読みからキロが外れる）。
 3. **撮影の編成と本数**（4 節）。推奨: ココア（I）・ソルジャーF.A.（II）・キロ（III・操作）、オートバースト ON・灼熱の BigArms で 1 本。
@@ -88,3 +90,4 @@
 ## 7. 経過
 
 - 2026-11-21: 起案（V-0811）。
+- 2026-11-21: 論点 1〜3 をオーナーが推奨どおりに決めた。2.1 節の状態 `nanoCoating` と 2.2 節の語彙（`burstDamage` の `convertCasterMaxHpRef`）を実装し、定義を入れた。撮影 V-0811 を依頼した。
