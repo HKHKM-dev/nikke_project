@@ -1,0 +1,31 @@
+[
+  {
+    "id": "1289-01",
+    "recording": "1289",
+    "kind": "total",
+    "use": "record",
+    "value": 59360507,
+    "description": "I-DOLL・フラワー・シグナル の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11397。増分は 3067 個"
+    },
+    "source": "V-0819",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1289-02",
+    "recording": "1289",
+    "kind": "count",
+    "use": "record",
+    "value": 237,
+    "unit": "トリガー",
+    "description": "I-DOLL・フラワー・シグナル のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 3067 個。前の増分から 30f 未満の増分（3027 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 41.5f）から発の数を決めた（2 発になった組 29 個）"
+    },
+    "source": "V-0819",
+    "readAt": "2026-11-21"
+  }
+]
