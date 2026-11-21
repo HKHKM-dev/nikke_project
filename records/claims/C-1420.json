@@ -1,0 +1,20 @@
+{
+  "id": "C-1420",
+  "text": "スノーホワイトのバーストの 1 発の後、AR は満タンで戻り、1 発の約 117f 後（8 回で 116〜123f）に撃ち始める。1 発から 106f の間に予定の来た自分の S2 の発動は待たされ、明けたフレームに発動し、周期はそこから数え直す（チャージの間に予定の来た発動は待たない）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1279-03`・`1279-07`・`1279-09`・`1291-02`・`1291-05`・`1291-06`。V-0815",
+  "model": "data/skills/220.json（returnFirstShotFrames・returnCooldownFrames）、frame/firstPass/shooters.ts・frame/firstPass/gaugeEffects.ts",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/220.json の burst の effects[0]", "data/skills/220.json の skill2 の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1279",
+      "role": "値を合わせた"
+    }
+  ]
+}
