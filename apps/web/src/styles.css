@@ -245,10 +245,12 @@ header h1 {
 svg.settings-option-icon.badge-ui_classic {
   height: calc(22px * 150 / 130);
 }
-/* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。設定とアカウントのボタン・設定のメニューの選択肢の絵・未対応の印 ⓘ。
-   図柄を白にするバッジごとの規則より強くするため、要素名や親を付ける */
+/* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。育成と設定のボタン・設定のメニューの選択肢の絵・未対応の印 ⓘ・
+   元に戻す・やり直すのボタン・ニケ一覧の絞り込みのクリア。図柄を白にするバッジごとの規則より強くするため、要素名や親を付ける */
 svg.settings-menu-icon,
 svg.settings-option-icon,
+svg.modern-slot-undo-icon,
+svg.char-tray-filter-clear-icon,
 .char-unsupported-tag > .badge-ui_information {
   --badge-ground: light-dark(#ffffff, #1a1a1a);
   --badge-main: light-dark(#1a1a1a, #ffffff);
