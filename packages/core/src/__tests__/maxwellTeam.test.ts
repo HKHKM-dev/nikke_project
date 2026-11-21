@@ -57,11 +57,15 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, maxwell, tar
     const own = plan.schedule!.activations.filter((a) => a.slotIndex === maxwell);
     expect(weapon.length).toBe(own.length);
     expect(weapon.length).toBeGreaterThanOrEqual(3);
-    for (const w of weapon) {
-      expect(shots.filter((f) => f >= w.start && f < w.end)).toHaveLength(1);
-      // 撃ち切りの後、基礎の SR が撃つ
-      expect(shots.some((f) => f >= w.end)).toBe(true);
-    }
+    const partial = new Set((plan.shots[maxwell]!.partialShots ?? []).map((p) => p.frame));
+    weapon.forEach((w, n) => {
+      const changed = shots.filter((f) => f >= w.start && f < w.end);
+      expect(changed).toHaveLength(1);
+      expect(partial.has(changed[0]!)).toBe(false);
+      // 撃ち切りの後、次の変更の窓（無ければ戦闘の終わり）までに基礎の SR が撃つ
+      const next = weapon[n + 1]?.start ?? plan.frames;
+      expect(shots.some((f) => f >= w.end && f < next)).toBe(true);
+    });
   });
 });
 
