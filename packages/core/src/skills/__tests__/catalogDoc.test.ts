@@ -1,5 +1,6 @@
 // スキルの効果の分類の一覧（plan/skill-catalog.md）の書き方: 節の並び・表の形・節ごとの行。
-// 区分の付け方（分類の表の中身）は見ない（スキルを定義するたびに変わる）。
+// 区分の付け方と分類の表の名前（スキルを定義するたびに変わる）は見ない。手で作る入力は、表に無い鍵
+// （名前は鍵のまま、状況は要確認で出る）と、区分がコードで決まる stat（「?」で始まる名前は要確認）を使う。
 import { describe, expect, it } from 'vitest';
 import { loadCatalogInput } from '../../../scripts/records-data.ts';
 import { classifyCharacters, type CatalogEffect, type CatalogLine, type CatalogStat } from '../catalog.ts';
@@ -35,11 +36,11 @@ const effect = (fields: Partial<CatalogEffect>): CatalogEffect => ({
   slot: 'skill1',
   li: 0,
   defined: false,
-  kind: 'damage:dot',
-  triggers: ['burstUse'],
+  kind: 'kindA',
+  triggers: ['trigA'],
   implicit: null,
   conditions: [],
-  targets: ['self'],
+  targets: ['tgtA'],
   side: 'self',
   quote: '',
   head: '',
@@ -51,7 +52,7 @@ const stat = (canon: string, fields: Partial<CatalogStat> = {}): CatalogStat => 
   name: canon,
   canon,
   dir: 'up',
-  scaling: 'ratio',
+  scaling: 'scA',
   ...fields,
 });
 
@@ -71,17 +72,31 @@ function under(doc: readonly string[], heading: string): string[] {
   return to < 0 ? rest : rest.slice(0, to);
 }
 
-/** 表の行（見出しと区切りの行を除く） */
-function tableUnder(doc: readonly string[], heading: string): string[][] {
-  return under(doc, heading)
-    .filter((l) => l.startsWith('| '))
-    .slice(2)
-    .map(cells);
+/** 表ごとの行（見出し・区切り・中身）を、欄に分けたもの */
+function tablesOf(doc: readonly string[]): string[][][] {
+  const tables: string[][][] = [];
+  let current: string[][] | undefined;
+  for (const l of doc) {
+    if (!l.startsWith('|')) current = undefined;
+    else if (current === undefined) tables.push((current = [cells(l)]));
+    else current.push(cells(l));
+  }
+  return tables;
 }
 
-/** 表の行を、最初の欄で引く */
-function rowsUnder(doc: readonly string[], heading: string): Map<string, string[]> {
-  return new Map(tableUnder(doc, heading).map((row) => [row[0]!, row]));
+/** 見出しの下の表の行（見出しと区切りの行を除く） */
+function tableUnder(doc: readonly string[], heading: string): string[][] {
+  const tables = tablesOf(under(doc, heading));
+  expect(tables).toHaveLength(1);
+  return tables[0]!.slice(2);
+}
+
+/** 表の行ごとの「件数・キャラ・定義あり」の 3 欄（その 3 欄の無い表は undefined） */
+function countsOf(table: readonly string[][]): string[][] | undefined {
+  const header = table[0]!;
+  const at = header.indexOf('キャラ');
+  if (at < 1 || !header[at + 1]?.includes('定義あり')) return undefined;
+  return table.slice(2).map((row) => row.slice(at - 1, at + 2));
 }
 
 const HEADINGS = [
@@ -109,22 +124,11 @@ const HEADINGS = [
   '### 7.3 対象',
 ];
 
-/** 表ごとの行（見出し・区切り・中身） */
-function tablesOf(doc: readonly string[]): string[][] {
-  const tables: string[][] = [];
-  let current: string[] | undefined;
-  for (const l of doc) {
-    if (!l.startsWith('|')) current = undefined;
-    else if (current === undefined) tables.push((current = [l]));
-    else current.push(l);
-  }
-  return tables;
-}
-
 describe('renderSkillCatalog', () => {
   const { characters, defined } = loadCatalogInput();
   const { lines, effects } = classifyCharacters(characters, defined);
   const doc = renderSkillCatalog(lines, effects).split('\n');
+  const tables = tablesOf(doc);
 
   it('writes the sections in the order of their numbers', () => {
     expect(doc.filter((l) => l.startsWith('#'))).toEqual(HEADINGS);
@@ -138,11 +142,9 @@ describe('renderSkillCatalog', () => {
   });
 
   it('writes every table with a header, a separator and rows of the same width', () => {
-    const tables = tablesOf(doc);
     // 1 節・2 節・3.1〜3.3 節・4.1〜4.3 節・4.5 節・4.6 節・5.1 節・5.2 節・6 節・7.1〜7.3 節
     expect(tables).toHaveLength(16);
-    for (const table of tables) {
-      const [header, separator, ...rows] = table.map(cells);
+    for (const [header, separator, ...rows] of tables) {
       expect(separator).toEqual(header!.map(() => '---'));
       expect(rows.length).toBeGreaterThan(0);
       expect(rows.filter((row) => row.length !== header!.length)).toEqual([]);
@@ -150,20 +152,11 @@ describe('renderSkillCatalog', () => {
   });
 
   it('writes the counts as numbers that nest (effects or lines ≥ characters ≥ defined characters)', () => {
-    let checked = 0;
-    for (const table of tablesOf(doc)) {
-      const [header, , ...rows] = table.map(cells);
-      const at = header!.indexOf('キャラ');
-      if (at < 1 || !header![at + 1]?.includes('定義あり')) continue;
-      for (const row of rows) {
-        const [count, chars, definedChars] = row.slice(at - 1, at + 2);
-        expect([count, chars, definedChars].filter((x) => !/^\d+$/.test(x!))).toEqual([]);
-        expect(Number(chars)).toBeLessThanOrEqual(Number(count));
-        expect(Number(definedChars)).toBeLessThanOrEqual(Number(chars));
-        checked++;
-      }
-    }
-    expect(checked).toBeGreaterThan(100);
+    const counts = tables.flatMap((table) => countsOf(table) ?? []);
+    expect(counts.length).toBeGreaterThan(100);
+    expect(counts.filter((row) => row.some((x) => !/^\d+$/.test(x)))).toEqual([]);
+    expect(counts.filter(([count, chars]) => Number(chars) > Number(count))).toEqual([]);
+    expect(counts.filter(([, chars, definedChars]) => Number(definedChars) > Number(chars))).toEqual([]);
   });
 
   it('leaves no holes in the text', () => {
@@ -177,9 +170,7 @@ describe('renderSkillCatalog', () => {
     const fixedRows = tablesOf(empty).filter((table) => table.length > 2);
     expect(fixedRows).toHaveLength(5);
     for (const table of fixedRows) {
-      const [header, , ...rows] = table.map(cells);
-      const at = header!.indexOf('キャラ');
-      expect(rows.map((row) => row.slice(at - 1, at + 2))).toEqual(rows.map(() => ['0', '0', '0']));
+      expect(countsOf(table)).toEqual(table.slice(2).map(() => ['0', '0', '0']));
     }
   });
 });
@@ -198,9 +189,9 @@ describe('familySection', () => {
   it('counts each effect once by what it does, the most frequent family first', () => {
     const E = [
       effect({ ...A, kind: 'damage:dot' }),
-      effect({ ...A, kind: 'stat', stat: stat('attack') }),
+      effect({ ...A, kind: 'stat', stat: stat('?a') }),
       // 状態の中身の stat は、stat に数えて「うち状態の中身」にも出す
-      effect({ ...B, kind: 'stat', stat: stat('attack'), state: 'X' }),
+      effect({ ...B, kind: 'stat', stat: stat('?a'), state: 'X' }),
       // 名前だけの付与は「うち状態の中身」に数えない
       effect({ ...B, kind: 'state:grant', state: 'Y' }),
     ];
@@ -208,7 +199,7 @@ describe('familySection', () => {
     expect(rows.map((row) => row.slice(0, 5))).toEqual([
       ['バフ・デバフ（stat の▲▼）', '2', '2', '1', '1'],
       ['ダメージ', '1', '1', '0', '0'],
-      ['状態の操作（名前だけの付与・解除・消去・切り替え・発動不可など）', '1', '1', '1', '0'],
+      [expect.stringContaining('状態の操作'), '1', '1', '1', '0'],
     ]);
     // 区分ごとの数の和は、効果の数
     for (const row of rows) {
@@ -218,77 +209,82 @@ describe('familySection', () => {
 });
 
 describe('slotGapSection', () => {
-  // 爆発範囲は要確認、パーツダメージは前提の外（どちらも式に無い stat）
-  const open = (who: typeof A, slot: string, fields: Partial<CatalogEffect> = {}) =>
-    effect({ ...who, slot, kind: 'stat', stat: stat('explosionRange'), ...fields });
+  const open = (who: typeof A, slot: string, canon: string, fields: Partial<CatalogEffect> = {}) =>
+    effect({ ...who, slot, kind: 'stat', stat: stat(canon), ...fields });
 
   it('collects what remains by slot, and counts the slots where it is the only one', () => {
     const E = [
-      open(A, 'skill1'),
-      open(A, 'skill1'),
-      open(B, 'skill1'),
-      open(B, 'skill1', { stat: stat('?unknown') }),
-      effect({ ...B, slot: 'skill2', kind: 'stat', stat: stat('partsDamage') }),
-      effect({ ...B, slot: 'burst', kind: 'stat', stat: stat('attack') }),
+      open(A, 'skill1', '?a'),
+      open(A, 'skill1', '?a'),
+      open(B, 'skill1', '?a'),
+      open(B, 'skill1', '?b'),
+      // 間接に効く効果（味方の防御力▲）は数えない
+      open(B, 'skill2', 'defense', { side: 'ally' }),
     ];
     const section = slotGapSection(E);
-    expect(section).toContain('- 残りのあるスロット: 2 / 4（効果の句のあるスロット）');
+    expect(section).toContain('- 残りのあるスロット: 2 / 3（効果の句のあるスロット）');
     expect(tableUnder(section, '## 2.')).toEqual([
-      ['効果: 爆発範囲', '2', '1'],
-      ['効果: ?unknown', '1', '0'],
+      ['効果: ?a', '2', '1'],
+      ['効果: ?b', '1', '0'],
+    ]);
+  });
+
+  it('marks what remains on the enemy side, and keeps one row for each kind of what remains', () => {
+    const E = [open(A, 'skill1', '?a', { side: 'enemy' }), open(A, 'skill1', '?a')];
+    expect(tableUnder(slotGapSection(E), '## 2.')).toEqual([
+      ['効果: ?a（敵）', '1', '0'],
+      ['効果: ?a', '1', '0'],
     ]);
   });
 
   it('keeps the active skills without a written trigger apart from what remains', () => {
     const E = [
-      effect({ ...A, slot: 'skill1', triggers: [], implicit: 'none', kind: 'stat', stat: stat('attack') }),
-      open(B, 'skill1', { triggers: [], implicit: 'none' }),
+      open(A, 'skill1', 'defense', { side: 'ally', triggers: [], implicit: 'none' }),
+      open(B, 'skill1', '?a', { triggers: [], implicit: 'none' }),
     ];
     const section = slotGapSection(E);
     expect(section.find((l) => l.startsWith('- 別枠'))).toContain(
       'のあるスロット 2（うち、ほかに残りの無いスロット 1）',
     );
-    expect([...rowsUnder(section, '## 2.').keys()]).toEqual(['効果: 爆発範囲']);
+    expect(tableUnder(section, '## 2.')).toEqual([['効果: ?a', '1', '1']]);
   });
 });
 
 describe('buffSection', () => {
   it('splits a stat by the side and the direction, with the defined characters first', () => {
     const E = [
-      effect({ ...A, kind: 'stat', stat: stat('attack') }),
-      effect({ ...B, kind: 'stat', stat: stat('attack'), side: 'ally' }),
-      effect({ ...A, kind: 'stat', stat: stat('attack'), side: 'ally' }),
-      effect({ ...B, kind: 'stat', stat: stat('defense', { dir: 'down' }), side: 'enemy' }),
+      effect({ ...A, kind: 'stat', stat: stat('?a') }),
+      effect({ ...B, kind: 'stat', stat: stat('?a'), side: 'ally' }),
+      effect({ ...A, kind: 'stat', stat: stat('?a'), side: 'ally' }),
+      effect({ ...B, kind: 'stat', stat: stat('?a', { dir: 'down' }), side: 'enemy' }),
       effect({ ...A, kind: 'damage:dot' }),
     ];
     const rows = tableUnder(buffSection([], E), '### 3.1');
-    expect(rows.map((row) => [...row.slice(0, 6), row.at(-1)])).toEqual([
-      ['攻撃力', '味方', '▲', '3', '2', '1', '**B**、A'],
-      ['防御力', '敵', '▼', '1', '1', '1', '**B**'],
+    expect(rows.map((row) => [...row.slice(0, 7), row.at(-1)])).toEqual([
+      ['?a', '味方', '▲', '3', '2', '1', '要確認', '**B**、A'],
+      ['?a', '敵', '▼', '1', '1', '1', '要確認', '**B**'],
     ]);
   });
 
   it('counts how the value is computed, over the stat effects only', () => {
     const E = [
-      effect({ ...A, kind: 'stat', stat: stat('attack') }),
-      effect({ ...A, kind: 'stat', stat: stat('maxAmmo', { scaling: 'flat' }) }),
-      effect({ ...B, kind: 'stat', stat: stat('critRate') }),
+      effect({ ...A, kind: 'stat', stat: stat('?a') }),
+      effect({ ...A, kind: 'stat', stat: stat('?b', { scaling: 'scB' }) }),
+      effect({ ...B, kind: 'stat', stat: stat('?c') }),
       effect({ ...B, kind: 'damage:dot' }),
     ];
-    const rows = tableUnder(buffSection([], E), '### 3.2');
-    expect(rows.map((row) => row.slice(0, 4))).toEqual([
-      ['対象自身の値の X%', '2', '2', '1'],
-      ['実数（発・個）', '1', '1', '0'],
+    expect(tableUnder(buffSection([], E), '### 3.2')).toEqual([
+      ['scA', '2', '2', '1', '要確認', '**B**、A'],
+      ['scB', '1', '1', '0', '要確認', 'A'],
     ]);
   });
 
   it('counts the modifiers of the effects and of the lines together', () => {
-    const L = [line({ ...B, lineMods: ['dur:seconds'] })];
-    const E = [effect({ ...A, mods: ['dur:seconds', 'stack:max'] }), effect({ ...A, mods: ['dur:seconds'] })];
-    const rows = tableUnder(buffSection(L, E), '### 3.3');
-    expect(rows.map((row) => row.slice(0, 4))).toEqual([
-      ['N 秒間維持', '3', '2', '1'],
-      ['N スタック', '1', '1', '0'],
+    const L = [line({ ...B, lineMods: ['modA'] })];
+    const E = [effect({ ...A, mods: ['modA', 'modB'] }), effect({ ...A, mods: ['modA'] })];
+    expect(tableUnder(buffSection(L, E), '### 3.3')).toEqual([
+      ['modA', '3', '2', '1', '要確認', '**B**、A'],
+      ['modB', '1', '1', '0', '要確認', 'A'],
     ]);
   });
 });
@@ -297,21 +293,20 @@ describe('stateSection', () => {
   it('lists the named states with the stages merged, the sides, the contents and whether a head refers to them', () => {
     const L = [line({ ...B, head: '自分がペインロード状態なら' })];
     const E = [
-      effect({ ...B, kind: 'stat', stat: stat('attack'), state: 'ペインロード1' }),
-      effect({ ...B, kind: 'stat', stat: stat('defense', { dir: 'down' }), state: 'ペインロード2', side: 'enemy' }),
-      effect({ ...A, kind: 'damage:dot', state: 'エグゾスパイン Mk2' }),
+      effect({ ...B, kind: 'stat', stat: stat('?a'), state: 'ペインロード1' }),
+      effect({ ...B, kind: 'stat', stat: stat('?b', { dir: 'down' }), state: 'ペインロード2', side: 'enemy' }),
+      effect({ ...A, state: 'エグゾスパイン Mk2' }),
     ];
-    const rows = tableUnder(stateSection(L, E), '### 4.1');
     // キャラの resourceId の順
-    expect(rows).toEqual([
-      ['エグゾスパイン Mk2', '味方', '—', '持続ダメージ', 'A'],
-      ['ペインロード', '味方・敵', 'あり', '攻撃力▲、防御力▼', '**B**'],
+    expect(tableUnder(stateSection(L, E), '### 4.1')).toEqual([
+      ['エグゾスパイン Mk2', '味方', '—', 'kindA', 'A'],
+      ['ペインロード', '味方・敵', 'あり', '?a▲、?b▼', '**B**'],
     ]);
   });
 
   it('counts the forms of the life of a state', () => {
     const E = [
-      effect({ ...A, kind: 'stat', stat: stat('attack'), state: 'X' }),
+      effect({ ...A, kind: 'stat', stat: stat('?a'), state: 'X' }),
       effect({ ...A, kind: 'damage:dot', state: 'X' }),
       effect({ ...B, kind: 'state:grant', state: 'Y' }),
       effect({ ...B, kind: 'state:remove', state: 'Y' }),
@@ -321,35 +316,43 @@ describe('stateSection', () => {
     expect(rows.map((row) => row[1])).toEqual(['1', '1', '1', '1', '1', '0', '0']);
   });
 
-  it('gives the heads that look at a state the status of the same key in section 7', () => {
-    const heads: [string, Partial<CatalogLine>, string][] = [
-      ['条件: 自分が〈状態〉なら', { conditions: ['selfState'] }, '### 7.1'],
-      ['条件: 自分が〈状態〉のフルスタックなら', { conditions: ['selfState:fullStack'] }, '### 7.1'],
-      ['条件: 自分が〈状態〉でなければ', { conditions: ['selfState:absent'] }, '### 7.1'],
-      ['条件: 自分に〈状態〉適用中', { conditions: ['selfState:while'] }, '### 7.1'],
-      ['条件: 対象（敵）が〈状態〉なら', { conditions: ['enemyState'] }, '### 7.1'],
-      ['きっかけ: 〈状態〉が適用された時', { triggers: ['stateApplied'] }, '### 7.2'],
-      ['きっかけ: 〈状態〉が終了した時', { triggers: ['stateEnded'] }, '### 7.2'],
-      ['きっかけ: フルスタックでスタック解除後', { triggers: ['fullStackConsume'] }, '### 7.2'],
-      ['対象: 〈状態〉状態の味方', { targets: ['ally:alliesFiltered'], head: '〈状態〉状態の味方全体に' }, '### 7.3'],
-    ];
-    for (const [form, fields, section] of heads) {
-      const viewers = rowsUnder(stateSection([line(fields)], []), '### 4.3');
-      expect([...viewers.keys()]).toEqual(heads.map(([name]) => name));
-      // 見る形の行にだけ 1 行が数えられる
-      expect([...viewers].filter(([, row]) => row[1] !== '0').map(([name]) => name)).toEqual([form]);
-      // 7 節は 1 行だけ（その鍵の行）
-      const [reference] = [
-        ...rowsUnder(headSection([effect({ ...fields, triggers: fields.triggers ?? [] })]), section),
-      ];
-      expect(form.endsWith(reference![0])).toBe(true);
-      expect(viewers.get(form)![4]).toBe(reference![1][4]);
-    }
-  });
+  // 見る形ごとに、その形だけを持つ行と、同じ鍵を持つ効果を作る
+  const VIEWERS: [kind: string, fields: Partial<CatalogLine>, section: string][] = [
+    ['条件', { conditions: ['selfState'] }, '### 7.1'],
+    ['条件', { conditions: ['selfState:fullStack'] }, '### 7.1'],
+    ['条件', { conditions: ['selfState:absent'] }, '### 7.1'],
+    ['条件', { conditions: ['selfState:while'] }, '### 7.1'],
+    ['条件', { conditions: ['enemyState'] }, '### 7.1'],
+    ['きっかけ', { triggers: ['stateApplied'] }, '### 7.2'],
+    ['きっかけ', { triggers: ['stateEnded'] }, '### 7.2'],
+    ['きっかけ', { triggers: ['fullStackConsume'] }, '### 7.2'],
+    ['対象', { targets: ['ally:alliesFiltered'], head: '〈状態〉状態の味方全体に' }, '### 7.3'],
+  ];
 
-  it('does not count「〈stat〉増加状態なら」as looking at a state', () => {
-    const L = [line({ conditions: ['selfState'], head: '自分が攻撃力増加状態なら' })];
-    expect(rowsUnder(stateSection(L, []), '### 4.3').get('条件: 自分が〈状態〉なら')![1]).toBe('0');
+  it.each(VIEWERS)(
+    'gives a head that looks at a state (%s %j) the name and the status of the same key in section 7',
+    (kind, fields, section) => {
+      const viewers = tableUnder(stateSection([line(fields)], []), '### 4.3');
+      expect(viewers.map((row) => row[0]!.split(': ')[0])).toEqual(VIEWERS.map(([k]) => k));
+      // 入力の 1 行は、見る形 1 つにだけ数える
+      const counted = viewers.filter((row) => row[1] !== '0');
+      expect(counted).toHaveLength(1);
+      // 7 節の表は、その鍵の 1 行だけ
+      const reference = tableUnder(headSection([effect({ triggers: [], targets: [], ...fields })]), section);
+      expect(reference).toHaveLength(1);
+      expect(counted[0]![0]).toBe(`${kind}: ${reference[0]![0]}`);
+      expect(counted[0]![4]).toBe(reference[0]![4]);
+    },
+  );
+
+  it('does not count「〈stat〉増加状態なら」or the full stack as looking at whether the state is there', () => {
+    const counts = (fields: Partial<CatalogLine>) =>
+      tableUnder(stateSection([line(fields)], []), '### 4.3').map((row) => row[1]);
+    expect(counts({ conditions: ['selfState'], head: '自分が攻撃力増加状態なら' })).toEqual(Array(9).fill('0'));
+    expect(counts({ conditions: ['selfState', 'selfState:fullStack'] })).toEqual([
+      ...['0', '1', '0', '0', '0'],
+      ...['0', '0', '0', '0'],
+    ]);
   });
 
   it('collects how effects and states come off, and whether what is erased or removed was granted undispellable', () => {
@@ -359,10 +362,10 @@ describe('stateSection', () => {
       line({ ...B, flat: '「バフ効果解除X個」' }),
     ];
     const section = stateSection(L, []);
-    const rows = rowsUnder(section, '### 4.5');
-    expect(rows.get('解除不可（効果解除で外れない）')!.slice(2, 5)).toEqual(['1', '1', '0']);
-    expect(rows.get('〈名前〉消去（同じスキルが外す）')!.slice(2, 5)).toEqual(['1', '1', '0']);
-    expect(rows.get('効果解除（バフ・デバフ効果解除 N 個）')!.slice(2, 5)).toEqual(['1', '1', '1']);
+    const rows = new Map(tableUnder(section, '### 4.5').map((row) => [row[0], row.slice(2, 5)]));
+    expect(rows.get('解除不可（効果解除で外れない）')).toEqual(['1', '1', '0']);
+    expect(rows.get('〈名前〉消去（同じスキルが外す）')).toEqual(['1', '1', '0']);
+    expect(rows.get('効果解除（バフ・デバフ効果解除 N 個）')).toEqual(['1', '1', '1']);
     expect(section).toContain('- 消去の相手: 変身（解除不可で付く）');
     // 効果解除は、名前の付いた状態の解除に数えない
     expect(section).toContain('- 解除の相手: 集中（解除不可でない）');
@@ -370,14 +373,14 @@ describe('stateSection', () => {
 
   it('splits the conditions by when they are judged', () => {
     const L = [
-      line({ ...A, conditions: ['hp'], triggers: ['burstUse'], head: 'バーストスキル使用時、HPがX％以上なら' }),
-      line({ ...A, li: 1, conditions: ['hp'], head: 'HPがX％以上の時に限り', flat: '「持続」「解除不可」' }),
-      line({ ...B, conditions: ['hp'], head: 'HPがX％以上なら' }),
+      line({ ...A, conditions: ['condA'], triggers: ['trigA'], head: 'バーストスキル使用時、HPがX％以上なら' }),
+      line({ ...A, li: 1, conditions: ['condA'], head: 'HPがX％以上の時に限り', flat: '「持続」「解除不可」' }),
+      line({ ...B, conditions: ['condA'], head: 'HPがX％以上なら' }),
       line({ ...B, li: 1, head: '条件の無い行' }),
     ];
     const section = stateSection(L, []);
-    const rows = tableUnder(section, '### 4.6');
-    expect(rows.map((row) => row.slice(1, 4))).toEqual([
+    // 発火の瞬間・続いている間・きっかけの無い条件
+    expect(tableUnder(section, '### 4.6').map((row) => row.slice(1, 4))).toEqual([
       ['1', '1', '0'],
       ['1', '1', '0'],
       ['1', '1', '1'],
@@ -391,20 +394,21 @@ describe('healSection', () => {
     const L = [line({ ...B, triggers: ['healed'] }), line({ ...A })];
     const E = [
       effect({ ...A, kind: 'heal:instant' }),
-      effect({ ...A, kind: 'heal:instant', targets: ['ally:allies'] }),
-      effect({ ...B, kind: 'heal:instant', mods: ['meta:interval'], conditions: ['selfState'] }),
+      effect({ ...A, kind: 'heal:instant', targets: ['tgtA', 'tgtB'] }),
+      effect({ ...B, kind: 'heal:instant', mods: ['meta:interval'], conditions: ['condA'] }),
       effect({ ...B, kind: 'damage:dot' }),
     ];
     const section = healSection(L, E);
-    expect(tableUnder(section, '### 5.1').map((row) => row.slice(0, 4))).toEqual([
-      ['回復（1 回）', '2', '1', '0'],
-      [expect.stringContaining('間隔'), '1', '1', '1'],
+    // 1 回の回復（2 件）と、間隔の付いた回復（1 件）
+    expect(tableUnder(section, '### 5.1').map((row) => row.slice(1, 4))).toEqual([
+      ['2', '1', '0'],
+      ['1', '1', '1'],
     ]);
     // きっかけ（条件）× 対象
     expect(tableUnder(section, '### 5.2').map((row) => row.slice(0, 2))).toEqual([
-      ['バーストスキル使用時（回数の段を含む） × 自分', '1'],
-      ['バーストスキル使用時（回数の段を含む） × 味方全体', '1'],
-      ['バーストスキル使用時（回数の段を含む）（自分が〈状態〉なら） × 自分', '1'],
+      ['trigA × tgtA', '1'],
+      ['trigA × tgtA・tgtB', '1'],
+      ['trigA（condA） × tgtA', '1'],
     ]);
     expect(section).toContain('- 行: 1。キャラ: **B**');
   });
@@ -431,44 +435,71 @@ describe('indirectSection', () => {
 describe('headSection', () => {
   it('counts an effect under each of its conditions, triggers and targets', () => {
     const E = [
-      effect({ ...A, conditions: ['selfState', 'hp'], triggers: ['burstUse', 'fullBurstStart'] }),
-      // 「自分が〈stat〉増加状態なら」は、状態を見る条件と分ける
-      effect({ ...B, conditions: ['selfState'], head: '自分が攻撃力増加状態なら', targets: [] }),
-      // きっかけが書かれていない: バーストのスロット・持続（常時）・CT ごと
-      effect({ ...B, triggers: [], implicit: 'burstUse' }),
-      effect({ ...B, triggers: [], implicit: 'none', mods: ['dur:permanent'] }),
-      effect({ ...B, triggers: [], implicit: 'none' }),
+      effect({ ...A, conditions: ['condA', 'condB'], triggers: ['trigA', 'trigB'], targets: ['tgtA', 'tgtB'] }),
+      effect({ ...B, conditions: ['condA'] }),
+      effect({ ...B }),
     ];
     const section = headSection(E);
-    expect(tableUnder(section, '### 7.1').map((row) => row.slice(0, 2))).toEqual([
-      ['自分が〈状態〉なら', '1'],
-      [expect.stringContaining('HP'), '1'],
-      ['自分が〈stat〉増加状態なら', '1'],
+    // 表に無い鍵は、鍵のまま・要確認で出す
+    expect(tableUnder(section, '### 7.1')).toEqual([
+      ['condA', '2', '2', '1', '要確認', '', '**B**、A'],
+      ['condB', '1', '1', '0', '要確認', '', 'A'],
     ]);
-    expect(tableUnder(section, '### 7.2').map((row) => row.slice(0, 2))).toEqual([
-      ['バーストスキル使用時（回数の段を含む）', '2'],
-      ['フルバーストタイム発動時', '1'],
-      ['（バーストのスロットで書かれていない＝バースト使用時）', '1'],
-      ['（スキルのスロットで書かれていない・持続＝常時）', '1'],
-      [expect.stringContaining('（スキルのスロットで書かれていない'), '1'],
+    expect(tableUnder(section, '### 7.2')).toEqual([
+      ['trigA', '3', '2', '1', '要確認', '**B**、A'],
+      ['trigB', '1', '1', '0', '要確認', 'A'],
     ]);
-    expect(tableUnder(section, '### 7.3').map((row) => row.slice(0, 2))).toEqual([
-      ['自分', '4'],
-      ['（対象を読み取れなかったもの）', '1'],
+    expect(tableUnder(section, '### 7.3')).toEqual([
+      ['tgtA', '3', '2', '1', '要確認', '**B**、A'],
+      ['tgtB', '1', '1', '0', '要確認', 'A'],
     ]);
   });
 
-  it('splits the filtered allies by how they are filtered', () => {
+  it('writes the name of the table for a key that the table has', () => {
+    const rows = tableUnder(headSection([effect({ triggers: ['burstUse'] })]), '### 7.2');
+    expect(rows).toHaveLength(1);
+    expect(rows[0]![0]).toContain('バースト');
+    expect(rows[0]![0]).not.toBe('burstUse');
+  });
+
+  it('files the effects without a written trigger or target under their own rows', () => {
     const E = [
-      effect({ ...A, targets: ['ally:alliesFiltered'], head: '〈状態〉状態の味方全体に' }),
-      // 行の頭ではなく、句の前の対象に味方が書かれていれば、そちらを読む
-      effect({ ...A, targets: ['ally:alliesFiltered'], head: '〈状態〉状態の味方全体に', subHead: '火力型の味方' }),
-      effect({ ...A, targets: ['ally:alliesFiltered'], head: '読み取れない絞り方の味方に' }),
+      // きっかけが書かれていない: バーストのスロット・持続（常時）・CT ごと
+      effect({ ...A, triggers: [], implicit: 'burstUse', targets: [] }),
+      effect({ ...A, triggers: [], implicit: 'none', mods: ['dur:permanent'] }),
+      effect({ ...A, triggers: [], implicit: 'none' }),
     ];
-    expect([...rowsUnder(headSection(E), '### 7.3').keys()]).toEqual([
-      '〈状態〉状態の味方',
-      '〈クラス〉型の味方',
-      '絞った味方全体（絞り方を読み取れなかったもの）',
+    const section = headSection(E);
+    expect(tableUnder(section, '### 7.2').map((row) => row.slice(0, 2))).toEqual([
+      [expect.stringContaining('バーストのスロットで書かれていない'), '1'],
+      [expect.stringContaining('常時'), '1'],
+      [expect.stringContaining('スキルのスロットで書かれていない'), '1'],
     ]);
+    expect(tableUnder(section, '### 7.3').map((row) => row.slice(0, 2))).toEqual([
+      ['tgtA', '2'],
+      [expect.stringContaining('読み取れなかった'), '1'],
+    ]);
+  });
+
+  it('files「自分が〈stat〉増加状態なら」apart from the conditions that look at a state', () => {
+    const E = [
+      effect({ ...A, conditions: ['selfState'], head: '自分が攻撃力増加状態なら' }),
+      effect({ ...A, conditions: ['selfState'], head: '自分が変身状態なら' }),
+    ];
+    const rows = tableUnder(headSection(E), '### 7.1');
+    expect(rows.map((row) => row[1])).toEqual(['1', '1']);
+    expect(rows[0]![0]).not.toBe(rows[1]![0]);
+  });
+
+  it('splits the filtered allies by how they are filtered', () => {
+    const filtered = (head: string, subHead = '') =>
+      tableUnder(headSection([effect({ targets: ['ally:alliesFiltered'], head, subHead })]), '### 7.3')[0]![0];
+    const byState = filtered('〈状態〉状態の味方全体に');
+    // 行の頭ではなく、句の前の対象に味方が書かれていれば、そちらを読む
+    const byClass = filtered('〈状態〉状態の味方全体に', '火力型の味方');
+    const unread = filtered('読み取れない絞り方の味方に');
+    expect(new Set([byState, byClass, unread]).size).toBe(3);
+    expect(byState).toContain('状態');
+    expect(byClass).toContain('型');
   });
 });

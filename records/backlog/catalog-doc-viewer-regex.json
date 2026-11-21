@@ -1,0 +1,5 @@
+{
+  "section": "8",
+  "order": 150,
+  "text": "`catalogDoc.ts` の 4.3 節（状態を見る側）に残る正規表現の写しを無くす: 「〈stat〉増加状態なら」の除外は `condKeys` と、「〈状態〉状態の味方」は `tgtKeys` と同じ正規表現を別に書いている。対象の行は、`tgtKeys` と読み方も違う（行の頭だけを見て、句の前の対象を見ない）。そろえると数が変わりうるので、生成物の差分を見て決める（2026-11-21 起票。[design-catalog-doc-split.md](design-catalog-doc-split.md) 9 節）"
+}

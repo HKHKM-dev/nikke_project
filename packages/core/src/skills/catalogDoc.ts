@@ -704,11 +704,24 @@ function rowCounts(items: readonly Who[]): string {
   return `${items.length} | ${cs.length} | ${cs.filter((c) => c.defined).length}`;
 }
 
-/** 分類の表の区分（鍵が表に無ければ投げる） */
-function statusIn(table: Record<string, Info>, key: string): Status {
-  const info = table[key];
+/** 分類の表の行（鍵が表に無ければ投げる） */
+function infoIn(infos: Record<string, Info>, key: string): Info {
+  const info = infos[key];
   if (info === undefined) throw new Error(`no such key in the table: ${key}`);
-  return info[1];
+  return info;
+}
+
+/** 表（見出し・区切り・行・終わりの空行） */
+function table(header: string, rows: readonly string[]): string[] {
+  return [header, header.replace(/[^|]+/g, ' --- '), ...rows, ''];
+}
+
+/** 分類の表で引く行（名前・件数の 3 列・状況・キャラの例）。件数の多い順。表に無い鍵は、鍵のまま・要確認 */
+function infoRows<T extends Who>(infos: Record<string, Info>, groups: Map<string, T[]>): string[] {
+  return byCount(groups).map(([k, items]) => {
+    const [label, status]: Info = infos[k] ?? [k, 'check'];
+    return `| ${label} | ${rowCounts(items)} | ${ST[status]} | ${fmtChars(items)} |`;
+  });
 }
 
 // ---- 節 ----
@@ -761,10 +774,10 @@ export function familySection(E: readonly CatalogEffect[]): string[] {
     '',
     '効果の句を中身の種類で 1 つずつに分けた。名前の付いた状態の付与で、中身（〈名前〉：…）が stat やダメージのものは、その中身の種類に数え、「うち状態の中身」にも出す（状態の付与と中身は直交する。状態ごとの形は 4.2 節）。',
     '',
-    `| 大分類 | 効果 | キャラ | うち定義あり | うち状態の中身 | ${ST_KEYS.map((k) => ST[k]).join(' | ')} |`,
-    `| --- | --- | --- | --- | --- | ${ST_KEYS.map(() => '---').join(' | ')} |`,
-    ...rows,
-    '',
+    ...table(
+      `| 大分類 | 効果 | キャラ | うち定義あり | うち状態の中身 | ${ST_KEYS.map((k) => ST[k]).join(' | ')} |`,
+      rows,
+    ),
   ];
 }
 
@@ -790,9 +803,8 @@ export function slotGapSection(E: readonly CatalogEffect[]): string[] {
     for (const t of trigs) if (remains(TRIG_INFO[t]?.[1])) gaps.add(`きっかけ: ${TRIG_INFO[t]![0]}`);
     for (const c of condKeys(e)) if (remains(COND_INFO[c]?.[1])) gaps.add(`条件: ${COND_INFO[c]![0]}`);
     for (const t of tgtKeys(e)) if (remains(TGT_INFO[t]?.[1])) gaps.add(`対象: ${TGT_INFO[t]![0]}`);
-    if (e.kind === 'stat' && ['casterHp', 'perMaxAmmo'].includes(scalingKeyOf(e))) {
-      gaps.add(`算出: ${SC[scalingKeyOf(e)]![0]}`);
-    }
+    const scaling = e.kind === 'stat' ? SC[scalingKeyOf(e)] : undefined;
+    if (scaling !== undefined && remains(scaling[1])) gaps.add(`算出: ${scaling[0]}`);
   }
   const gapCount = new Map<string, { all: number; only: number }>();
   for (const gaps of slotGaps.values()) {
@@ -813,10 +825,10 @@ export function slotGapSection(E: readonly CatalogEffect[]): string[] {
     `- 残りのあるスロット: ${slotsWithGaps} / ${slotGaps.size}（効果の句のあるスロット）`,
     `- 別枠: CT ごとのアクティブ（きっかけの書かれていないスキル）のあるスロット ${activeSlots.size}（うち、ほかに残りの無いスロット ${activeOnly}）。周期の語彙（everySeconds）はあり、周期の値をキャラごとに録画で読む（C-0453・C-0496・C-0502）。語彙の残りには数えない`,
     '',
-    '| 分類 | スロット | それだけ |',
-    '| --- | --- | --- |',
-    ...[...gapCount].sort((a, b) => b[1].all - a[1].all).map(([k, v]) => `| ${k} | ${v.all} | ${v.only} |`),
-    '',
+    ...table(
+      '| 分類 | スロット | それだけ |',
+      [...gapCount].sort((a, b) => b[1].all - a[1].all).map(([k, v]) => `| ${k} | ${v.all} | ${v.only} |`),
+    ),
   ];
 }
 
@@ -851,10 +863,7 @@ function statSection(statEffects: readonly CatalogEffect[]): string[] {
     '',
     '対象の側（味方＝自分か味方、敵）と向き（▲▼）で分けた。',
     '',
-    '| stat | 側 | 向き | 効果 | キャラ | 定義あり | 状況 | 語彙 | キャラ（例） |',
-    '| --- | --- | --- | --- | --- | --- | --- | --- | --- |',
-    ...rows,
-    '',
+    ...table('| stat | 側 | 向き | 効果 | キャラ | 定義あり | 状況 | 語彙 | キャラ（例） |', rows),
   ];
 }
 
@@ -863,13 +872,10 @@ function scalingSection(statEffects: readonly CatalogEffect[]): string[] {
   return [
     '### 3.2 値の算出',
     '',
-    '| 算出 | 効果 | キャラ | 定義あり | 状況 | キャラ（例） |',
-    '| --- | --- | --- | --- | --- | --- |',
-    ...byCount(group(statEffects, scalingKeyOf)).map(
-      ([k, items]) =>
-        `| ${SC[k]?.[0] ?? k} | ${rowCounts(items)} | ${ST[SC[k]?.[1] ?? 'check']} | ${fmtChars(items)} |`,
+    ...table(
+      '| 算出 | 効果 | キャラ | 定義あり | 状況 | キャラ（例） |',
+      infoRows(SC, group(statEffects, scalingKeyOf)),
     ),
-    '',
   ];
 }
 
@@ -882,13 +888,13 @@ function durationSection(L: readonly CatalogLine[], E: readonly CatalogEffect[])
   return [
     '### 3.3 持続の形（効果に付いた修飾）',
     '',
-    '| 形 | 効果 | キャラ | 定義あり | 状況 | キャラ（例） |',
-    '| --- | --- | --- | --- | --- | --- |',
-    ...byCount(group(mods, (x) => x.mod)).map(
-      ([k, items]) =>
-        `| ${DUR[k]?.[0] ?? k} | ${rowCounts(items)} | ${ST[DUR[k]?.[1] ?? 'check']} | ${fmtChars(items)} |`,
+    ...table(
+      '| 形 | 効果 | キャラ | 定義あり | 状況 | キャラ（例） |',
+      infoRows(
+        DUR,
+        group(mods, (x) => x.mod),
+      ),
     ),
-    '',
   ];
 }
 
@@ -915,15 +921,11 @@ export function stateSection(L: readonly CatalogLine[], E: readonly CatalogEffec
 
 /** 4.1 節: 名前の付いた状態と効果の呼び名（名前ごと） */
 function stateNameSection(L: readonly CatalogLine[], E: readonly CatalogEffect[]): string[] {
-  const named = new Map<string, CatalogEffect[]>();
-  for (const e of E) {
-    if (e.state === undefined) continue;
-    // 段階の番号（ペインロード 1・2 など）はまとめる。名前の一部の番号（エグゾスパイン Mk2）は残す
-    const n = e.state.replace(/(?<![A-Za-z])[XN\d]+$/, '');
-    const list = named.get(n);
-    if (list === undefined) named.set(n, [e]);
-    else list.push(e);
-  }
+  // 段階の番号（ペインロード 1・2 など）はまとめる。名前の一部の番号（エグゾスパイン Mk2）は残す
+  const named = group(
+    E.filter((e) => e.state !== undefined),
+    (e) => e.state!.replace(/(?<![A-Za-z])[XN\d]+$/, ''),
+  );
   const rows = [...named]
     .sort((a, b) => a[1][0]!.rid - b[1][0]!.rid)
     .map(([n, items]) => {
@@ -944,10 +946,7 @@ function stateNameSection(L: readonly CatalogLine[], E: readonly CatalogEffect[]
     '',
     '「参照」は、名前がどこかの行の頭（きっかけ・条件・対象）に出るもの。参照の無い名前（効果の呼び名）も目録に入れる（本体の論点 4）。参照の有無は、見る側の語彙が要るかの目安。',
     '',
-    '| 名前 | 側 | 参照 | 中身・付与の効果 | キャラ |',
-    '| --- | --- | --- | --- | --- |',
-    ...rows,
-    '',
+    ...table('| 名前 | 側 | 参照 | 中身・付与の効果 | キャラ |', rows),
   ];
 }
 
@@ -969,52 +968,55 @@ function stateFormSection(E: readonly CatalogEffect[]): string[] {
   return [
     '### 4.2 状態の一生（形）',
     '',
-    '| 形 | 効果 | キャラ | 定義あり | キャラ（例） |',
-    '| --- | --- | --- | --- | --- |',
-    ...stateForms.map(([k, items]) => `| ${k} | ${rowCounts(items)} | ${fmtChars(items)} |`),
-    '',
+    ...table(
+      '| 形 | 効果 | キャラ | 定義あり | キャラ（例） |',
+      stateForms.map(([k, items]) => `| ${k} | ${rowCounts(items)} | ${fmtChars(items)} |`),
+    ),
   ];
 }
 
-/** 4.3 節: 状態を見る側（頭の書き方）。状況は、条件・きっかけ・対象の表の区分 */
+/** 4.3 節: 状態を見る側（頭の書き方）。見る形の名前と状況は、条件・きっかけ・対象の表のもの */
 function stateViewerSection(L: readonly CatalogLine[]): string[] {
-  type Viewer = [form: string, status: Status, lines: CatalogLine[]];
-  const byCondition = (key: string, form: string, keep: (l: CatalogLine) => boolean = () => true): Viewer => [
-    `条件: ${form}`,
-    statusIn(COND_INFO, key),
-    L.filter((l) => l.conditions.includes(key) && keep(l)),
-  ];
-  const byTrigger = (key: string, form: string): Viewer => [
-    `きっかけ: ${form}`,
-    statusIn(TRIG_INFO, key),
-    L.filter((l) => l.triggers.includes(key)),
-  ];
-  const viewers: Viewer[] = [
-    byCondition(
-      'selfState',
-      '自分が〈状態〉なら',
-      (l) => !l.conditions.includes('selfState:fullStack') && !/自分が[^、]*増加状態/.test(l.head),
-    ),
-    byCondition('selfState:fullStack', '自分が〈状態〉のフルスタックなら'),
-    byCondition('selfState:absent', '自分が〈状態〉でなければ'),
-    byCondition('selfState:while', '自分に〈状態〉適用中'),
-    byCondition('enemyState', '対象（敵）が〈状態〉なら'),
-    byTrigger('stateApplied', '〈状態〉が適用された時'),
-    byTrigger('stateEnded', '〈状態〉が終了した時'),
-    byTrigger('fullStackConsume', 'フルスタックでスタック解除後'),
-    [
-      '対象: 〈状態〉状態の味方',
-      statusIn(TGT_INFO, 'ally:filter:state'),
-      L.filter((l) => /状態の味方|状態ではない味方/.test(l.head)),
-    ],
-  ];
+  const row = (kind: string, infos: Record<string, Info>, key: string, items: readonly CatalogLine[]) => {
+    const [label, status] = infoIn(infos, key);
+    return `| ${kind}: ${label} | ${rowCounts(items)} | ${ST[status]} | ${fmtChars(items)} |`;
+  };
+  const byCondition = (key: string, keep: (l: CatalogLine) => boolean = () => true) =>
+    row(
+      '条件',
+      COND_INFO,
+      key,
+      L.filter((l) => l.conditions.includes(key) && keep(l)),
+    );
+  const byTrigger = (key: string) =>
+    row(
+      'きっかけ',
+      TRIG_INFO,
+      key,
+      L.filter((l) => l.triggers.includes(key)),
+    );
   return [
     '### 4.3 状態を見る側（頭の書き方）',
     '',
-    '| 見る形 | 行 | キャラ | 定義あり | 状況 | キャラ（例） |',
-    '| --- | --- | --- | --- | --- | --- |',
-    ...viewers.map(([form, s, items]) => `| ${form} | ${rowCounts(items)} | ${ST[s]} | ${fmtChars(items)} |`),
-    '',
+    ...table('| 見る形 | 行 | キャラ | 定義あり | 状況 | キャラ（例） |', [
+      byCondition(
+        'selfState',
+        (l) => !l.conditions.includes('selfState:fullStack') && !/自分が[^、]*増加状態/.test(l.head),
+      ),
+      byCondition('selfState:fullStack'),
+      byCondition('selfState:absent'),
+      byCondition('selfState:while'),
+      byCondition('enemyState'),
+      byTrigger('stateApplied'),
+      byTrigger('stateEnded'),
+      byTrigger('fullStackConsume'),
+      row(
+        '対象',
+        TGT_INFO,
+        'ally:filter:state',
+        L.filter((l) => /状態の味方|状態ではない味方/.test(l.head)),
+      ),
+    ]),
   ];
 }
 
@@ -1080,10 +1082,7 @@ function removalSection(L: readonly CatalogLine[]): string[] {
     '',
     '説明文の行から、効果・状態が外れる書き方を拾った。英語版の言い回しを添える。',
     '',
-    '| 書き方 | 英語版 | 行 | キャラ | 定義あり | キャラ（例） |',
-    '| --- | --- | --- | --- | --- | --- |',
-    ...rows,
-    '',
+    ...table('| 書き方 | 英語版 | 行 | キャラ | 定義あり | キャラ（例） |', rows),
     `- 解除不可と N 秒間維持が同じ効果に付く行: ${withSec.length}（${fmtChars(withSec)}）`,
     `- 解除不可の状態に解除条件が書かれた行: ${withUntil.length}（${fmtChars(withUntil)}）。解除条件は維持の終わりとして持ち（アークレンジャー・ブラックの変身は durationUntil: { counterEmpty }。2 段目の段 19）、解除不可は解除・効果解除で外れない印のまま`,
     `- 消去の相手: ${[...erased].map((n) => n + mark(n)).join('、')}`,
@@ -1110,10 +1109,10 @@ function timingSection(L: readonly CatalogLine[]): string[] {
     '',
     '頭の条件を、発火の瞬間だけ見る書き方（「〜した時、〜なら」）と、続いている間だけ効く書き方（「〜の時に限り」「〜の時のみ」「〜である限り」「〜している限り」）と、きっかけの無い書き方（「〜なら、…持続」）に分けた。',
     '',
-    '| 書き方 | 行 | キャラ | 定義あり | キャラ（例） |',
-    '| --- | --- | --- | --- | --- |',
-    ...forms.map(([name, items]) => `| ${name} | ${rowCounts(items)} | ${fmtChars(items)} |`),
-    '',
+    ...table(
+      '| 書き方 | 行 | キャラ | 定義あり | キャラ（例） |',
+      forms.map(([name, items]) => `| ${name} | ${rowCounts(items)} | ${fmtChars(items)} |`),
+    ),
     `- 続いている間の条件で、効果が「持続」「解除不可」のもの: ${gateUndisp.length} 行（${fmtChars(gateUndisp)}）`,
     '',
   ];
@@ -1134,10 +1133,7 @@ function healFormSection(heals: readonly CatalogEffect[]): string[] {
   return [
     '### 5.1 回復の形',
     '',
-    '| 回復の形 | 効果 | キャラ | 定義あり | 状況 | 語彙 | キャラ（例） |',
-    '| --- | --- | --- | --- | --- | --- | --- |',
-    ...rows,
-    '',
+    ...table('| 回復の形 | 効果 | キャラ | 定義あり | 状況 | 語彙 | キャラ（例） |', rows),
   ];
 }
 
@@ -1159,10 +1155,10 @@ function healTriggerSection(heals: readonly CatalogEffect[]): string[] {
   return [
     '### 5.2 回復のきっかけと対象',
     '',
-    '| きっかけ × 対象 | 効果 | キャラ | 定義あり | キャラ（例） |',
-    '| --- | --- | --- | --- | --- |',
-    ...byCount(group(healEffects, healKey)).map(([k, items]) => `| ${k} | ${rowCounts(items)} | ${fmtChars(items)} |`),
-    '',
+    ...table(
+      '| きっかけ × 対象 | 効果 | キャラ | 定義あり | キャラ（例） |',
+      byCount(group(healEffects, healKey)).map(([k, items]) => `| ${k} | ${rowCounts(items)} | ${fmtChars(items)} |`),
+    ),
   ];
 }
 
@@ -1257,13 +1253,13 @@ export function indirectSection(L: readonly CatalogLine[], E: readonly CatalogEf
     '',
     'それ自体は与ダメージを変えないが、ほかの効果の値・対象・条件・きっかけを変える効果を、動かす側と読む側に分けた。読む側の効果が編成にいる時だけ与ダメージに届く。',
     '',
-    '| 経路 | 側 | 中身 | 件数 | キャラ | 定義あり | キャラ（例） |',
-    '| --- | --- | --- | --- | --- | --- | --- |',
-    ...paths.map(
-      ([pathName, side, name, items]) =>
-        `| ${pathName} | ${side} | ${name} | ${rowCounts(items)} | ${fmtChars(items)} |`,
+    ...table(
+      '| 経路 | 側 | 中身 | 件数 | キャラ | 定義あり | キャラ（例） |',
+      paths.map(
+        ([pathName, side, name, items]) =>
+          `| ${pathName} | ${side} | ${name} | ${rowCounts(items)} | ${fmtChars(items)} |`,
+      ),
     ),
-    '',
     '- 件数は、動かす側は効果、読む側は行の数（中身ごとに数え方が違う。目安）',
     '',
   ];
@@ -1285,14 +1281,7 @@ function conditionSection(E: readonly CatalogEffect[]): string[] {
     const info = COND_INFO[k];
     return `| ${info?.[0] ?? k} | ${rowCounts(items)} | ${ST[info?.[1] ?? 'check']} | ${info?.[2] ?? ''} | ${fmtChars(items)} |`;
   });
-  return [
-    '### 7.1 条件',
-    '',
-    '| 条件 | 効果 | キャラ | 定義あり | 状況 | 語彙 | キャラ（例） |',
-    '| --- | --- | --- | --- | --- | --- | --- |',
-    ...rows,
-    '',
-  ];
+  return ['### 7.1 条件', '', ...table('| 条件 | 効果 | キャラ | 定義あり | 状況 | 語彙 | キャラ（例） |', rows)];
 }
 
 /** 7.2 節: きっかけ */
@@ -1300,13 +1289,7 @@ function triggerSection(E: readonly CatalogEffect[]): string[] {
   return [
     '### 7.2 きっかけ',
     '',
-    '| きっかけ | 効果 | キャラ | 定義あり | 状況 | キャラ（例） |',
-    '| --- | --- | --- | --- | --- | --- |',
-    ...byCount(group(E, trigKeys)).map(
-      ([k, items]) =>
-        `| ${TRIG_INFO[k]?.[0] ?? k} | ${rowCounts(items)} | ${ST[TRIG_INFO[k]?.[1] ?? 'check']} | ${fmtChars(items)} |`,
-    ),
-    '',
+    ...table('| きっかけ | 効果 | キャラ | 定義あり | 状況 | キャラ（例） |', infoRows(TRIG_INFO, group(E, trigKeys))),
   ];
 }
 
@@ -1315,12 +1298,12 @@ function targetSection(E: readonly CatalogEffect[]): string[] {
   return [
     '### 7.3 対象',
     '',
-    '| 対象 | 効果 | キャラ | 定義あり | 状況 | キャラ（例） |',
-    '| --- | --- | --- | --- | --- | --- |',
-    ...byCount(group(E, (e) => (e.targets.length > 0 ? tgtKeys(e) : ['-']))).map(
-      ([k, items]) =>
-        `| ${TGT_INFO[k]?.[0] ?? k} | ${rowCounts(items)} | ${ST[TGT_INFO[k]?.[1] ?? 'check']} | ${fmtChars(items)} |`,
+    ...table(
+      '| 対象 | 効果 | キャラ | 定義あり | 状況 | キャラ（例） |',
+      infoRows(
+        TGT_INFO,
+        group(E, (e) => (e.targets.length > 0 ? tgtKeys(e) : ['-'])),
+      ),
     ),
-    '',
   ];
 }
