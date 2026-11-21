@@ -1,0 +1,16 @@
+{
+  "id": "C-1493",
+  "text": "ネヴェの S2 の「フルバーストタイムが発動した時、自分に攻撃力 124.8%▲・2 発間維持」（Lv10）は、フルバーストの始まりの後のネヴェの通常攻撃の 2 発にだけ乗る（3 発目から乗らない）。ココア・ソルジャーF.A.・ネヴェの録画で、5 回のフルバーストのどれでも、始まりの後の 1・2 発目は攻撃力▲の格子に、3 発目は▲の無い格子に合う",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`1336-09`・`1336-10`・`1336-11`。V-0843",
+  "model": "data/skills/193.json の skill2 の effects[1]（timed・attack・durationShotsRef。攻撃力に発数の維持を書けるようにした: skills/parse/timed.ts の SHOT_DURATION_TRACKED_STATS）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/193.json の skill2 の effects[1]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値（スキル Lv10 の 124.8%・2 発）と、確定の結論の 1 発の式・フルバースト補正・発数の維持の数え方だけから決めた。値を合わせた録画は無い"
+}
