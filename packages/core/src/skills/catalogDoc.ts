@@ -337,7 +337,11 @@ const TRIG_INFO: Record<string, Info> = {
   healed: ['回復効果が適用された時', 'ok'],
   chance: ['確率', 'check'],
   stateApplied: ['〈状態〉が適用された時', 'check'],
-  stateEnded: ['〈状態〉が終了した時', 'gap'],
+  stateEnded: [
+    '〈状態〉が終了した時',
+    'check',
+    '{ ended }（状態の付与・counterChange・ammoDecrease・timed・damage。plan/design-state-ended.md）と、使用武器の変更の終わりの { weaponChangeEnd }（ammoDecrease）だけ',
+  ],
   critHit: ['クリティカル命中した時', 'ok'],
   // オートの射撃はフルチャージを保たない（C-0839。要件 4.2 節）
   chargeHold: ['フルチャージを N 秒以上維持した時', 'premise', 'オートの射撃では起きない（C-0839）'],

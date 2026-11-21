@@ -1,0 +1,90 @@
+{
+  "formatVersion": 1,
+  "resourceId": 104,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "weaponChange",
+          "trigger": "fullBurstStart",
+          "damageRef": 1,
+          "chargeTimeSeconds": 1.5,
+          "chargeTimeFixed": true,
+          "fullChargeDamage": 300,
+          "shotCount": 15,
+          "maxAmmoRef": 2,
+          "assumes": {
+            "ja": "撮る前の形（V-0818）。フルバーストの始まりに、チャージ 1.5 秒（チャージ速度▲を受けない）・フルチャージ 300%・15 ペレット・6 発の SG に持ち替え、6 発目の次のフレームに基礎の SG に戻る（撃ち切り。フルバーストの終わりより後でも続く）。1 発の値 243.75% は 1 トリガーの値で、15 ペレットに割って配る（基礎の SG と同じ）。最初の発の待ち・当たり（コア命中率・ペレットの弾丸命中率）は録画で読む前の既定（基礎の SG の的の表の行）。自分が III を使わなかったフルバーストでも変わる読み。変更後の武器の発のバーストゲージは基礎の SG の 1 発の量",
+            "en": "Form before recording (V-0818). At the start of Full Burst, switches to an SG with a 1.5 s charge (not affected by Charge Speed), 300% full charge, 15 pellets and 6 rounds, and returns to the base SG on the frame after the sixth shot (ends when empty, even after Full Burst ends). The 243.75% is the value per trigger, split over the 15 pellets (as the base SG). The first-shot wait and hit rates (core hit rate, pellet hit rate) are the defaults before reading the recordings (the base SG rows of the target table). Read as also switching on Full Bursts where this unit did not use Burst III. Burst gauge per changed shot is one base SG shot"
+          }
+        },
+        {
+          "kind": "ammoDecrease",
+          "trigger": {
+            "weaponChangeEnd": true
+          },
+          "target": "self",
+          "ref": 3,
+          "assumes": {
+            "ja": "変更前の武器は、変更が終わると満タンで戻り（ラプラス：アルティメットヒーローの S1 と同じ扱い）、この残弾数低下で 0 になってリロードする",
+            "en": "The base weapon comes back full when the change ends (as Laplace: Ultimate Hero's Skill 1), and this ammo decrease empties it so it reloads"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstEnd",
+          "target": "allies",
+          "stat": "maxHpOnly",
+          "scaling": "casterMaxHp",
+          "ref": 2,
+          "maxStacksRef": 3,
+          "durationUntil": "battleEnd",
+          "assumes": {
+            "ja": "フルバーストの終わりごとに、ドレイク：グレイトヴィランのバフ前の最大HP × 値 02 を味方全体の最大HP に足す（HP は足さない。発動者基準。自分には値 02 の比率と同じ）。4 スタックで止まることは確かめていない（180 秒の撮影ではフルバーストが 4 回）。与ダメージには、S2 の最終最大HP 分の攻撃力▲を通してだけ効く",
+            "en": "At each end of Full Burst, adds Drake: Great Villain's pre-buff max HP × value 02 to the max HP of all allies (without restoring HP; caster-based; the same as the value 02 ratio for self). The cap of 4 stacks is unverified (Full Burst occurs 4 times in a 180 s recording). It affects damage only through the Skill 2 ATK buff based on the final max HP"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "attack",
+          "scaling": "casterFinalMaxHp",
+          "ref": 1,
+          "durationUntil": "battleEnd",
+          "reads": ["hp"],
+          "assumes": {
+            "ja": "遅刻。効いている各フレームの自分の最終最大HP（S2 の最大HP のみ▲ を含む）の 値 01 を攻撃力に足す（2B の S2・ラプラス：アルティメットヒーローの S1 と同じ読み）",
+            "en": "Late. Adds value 01 of this unit's final max HP at each frame (including the Skill 2 max HP only increase) to ATK (the same reading as 2B's Skill 2 and Laplace: Ultimate Hero's Skill 1)"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 1,
+          "durationRef": 2
+        },
+        {
+          "kind": "burstDamage",
+          "ref": 3,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "対象「敵全体」は単体ボス。撮る前は遅れの表の行が無い（III のタイマーの 00.00 に 1 ヒット・発動の直前のバフで出て、同じ発動の攻撃ダメージ▲は乗らない）。録画で読む",
+            "en": "The target (all enemies) is the lone boss. Before recording there is no delay table row (one hit at 00.00 of the Burst III timer with the buffs just before activation; the same activation's Attack Damage increase does not apply). To be read from recordings"
+          }
+        }
+      ]
+    }
+  }
+}
