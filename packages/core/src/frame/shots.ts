@@ -84,6 +84,11 @@ export type ShotLog = {
    */
   critHits?: number[];
   /**
+   * frames と同じ並びの、発ごとの当たったペレットのクリティカルの期待値（当たったペレットの数 × その発の会心率。1 パス目が書く。
+   * plan/design-k.md 2.2 節）。省略は 0
+   */
+  critPellets?: number[];
+  /**
    * frames と同じ並びの、発ごとに的に当たったペレットの数（期待値か、録画で
    * 数えた入力。1 パス目が書く。plan/design-pellet-hit.md 2 節）。省略は hits
    */

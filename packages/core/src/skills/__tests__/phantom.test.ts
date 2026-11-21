@@ -76,7 +76,8 @@ describe('フルスタックの消費のきっかけと敵の状態の解除', (
     expect(patched('skill2', REMOVE_CARD, { state: 'sleepy' })).toThrow(
       /a remove on the enemy needs a grant of "sleepy" on the enemy/,
     );
-    expect(patched('skill2', REMOVE_CARD, { target: 'allies' })).toThrow(/expected "self" or "enemy"/);
+    // 味方全体の解除（plan/design-k.md 2.1 節）は味方の状態だけを外すので、敵の状態は弾く
+    expect(patched('skill2', REMOVE_CARD, { target: 'allies' })).toThrow(/held by the enemy, not by the ally/);
   });
 
   it('rejects gaugePerHit on a full-stack damage', () => {

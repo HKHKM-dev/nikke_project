@@ -3,6 +3,7 @@ import {
   type CycleEffect,
   type CycleEveryEffect,
   type CycleStep,
+  isLastShotCount,
   isShotCountTrigger,
   SKILL_DAMAGE_TYPES,
   SKILL_SLOTS,
@@ -26,7 +27,7 @@ export function parseCycleEffect(v: Record<string, Json>, path: string): CycleEf
   rejectUnknownKeys(v, ['kind', 'trigger', 'steps', 'assumes', 'claims'], path);
   const trigger = parseTrigger(v.trigger, `${path}.trigger`);
   if (!isShotCountTrigger(trigger)) fail(`${path}.trigger`, 'a cycle needs a shot count trigger');
-  if (trigger.count === 'lastShot') fail(`${path}.trigger.count`, 'lastShot is not allowed in a cycle');
+  if (isLastShotCount(trigger.count)) fail(`${path}.trigger.count`, `${trigger.count} is not allowed in a cycle`);
   if (trigger.count === 'weaponChangeShot') fail(`${path}.trigger.count`, 'weaponChangeShot is not allowed in a cycle');
   if (trigger.count === 'pelletHit') fail(`${path}.trigger.count`, 'pelletHit is not allowed in a cycle');
   if (trigger.stacksRef !== undefined) fail(`${path}.trigger.stacksRef`, 'stacksRef is not allowed in a cycle');

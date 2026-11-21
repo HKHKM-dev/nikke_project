@@ -24,6 +24,7 @@ import {
   isShotCountTrigger,
   isStateCountWindow,
   noBuffStateReason,
+  isLastShotCount,
   isTimerTrigger,
   type SelfHpAtMostTrigger,
   type AdjacentHpAtMostTrigger,
@@ -86,6 +87,8 @@ export type TriggerOptions = {
   weaponChangeEnd?: boolean;
   /** リロードの込め終わり（{ reloadEnd }） */
   reloadEnd?: boolean;
+  /** 当たったペレットのクリティカル（{ count: "critPelletHit" }。damage だけ。plan/design-k.md 2.2 節） */
+  critPelletHit?: boolean;
   /** 味方が消費した弾の合計（{ count: "teamAmmo" }。burstGauge と damage だけ。plan/design-cinderella-cw.md 2.3 節・plan/design-little-mermaid.md 2.1 節） */
   teamAmmo?: boolean;
   /** カウンタが上がった時（{ counterUp }。ammoRefill・heal・timed だけ。plan/design-guillotine-ws.md 2.2 節） */
@@ -189,6 +192,9 @@ function parseTimerTrigger(v: Record<string, Json>, path: string, allowTimer: bo
   return timer;
 }
 
+/** スタック・数える窓・発火の窓・確率の鍵（teamAmmo と critPelletHit は組まない） */
+const WINDOW_AND_CHANCE_KEYS = ['stacksRef', 'during', 'reset', 'firesDuring', 'firesOutside', 'chance', 'chanceRef'];
+
 /** 射撃の回数のきっかけ { count }（毎 N 回・スタック・数える窓・発火の窓・確率） */
 function parseShotCountTrigger(v: Record<string, Json>, path: string, options: TriggerOptions): ShotCountTrigger {
   rejectUnknownKeys(
@@ -218,8 +224,15 @@ function parseShotCountTrigger(v: Record<string, Json>, path: string, options: T
   if (v.count === 'teamAmmo') {
     if (!options.teamAmmo) fail(`${path}.count`, 'a teamAmmo count is only allowed in burstGauge and damage');
     if (v.every === undefined && v.everyRef === undefined) fail(path, 'teamAmmo needs every or everyRef');
-    for (const key of ['stacksRef', 'during', 'reset', 'firesDuring', 'firesOutside', 'chance', 'chanceRef'])
+    for (const key of WINDOW_AND_CHANCE_KEYS)
       if (v[key] !== undefined) fail(`${path}.${key}`, `${key} cannot be used with teamAmmo`);
+  }
+  // 当たったペレットのクリティカルは 1 発で何回も発火する倍率ダメージだけ（plan/design-k.md 2.2 節）。窓・スタック・確率とは組まない
+  if (v.count === 'critPelletHit') {
+    if (!options.critPelletHit) fail(`${path}.count`, 'a critPelletHit count is only allowed in damage');
+    if (v.every === undefined && v.everyRef === undefined) fail(path, 'critPelletHit needs every or everyRef');
+    for (const key of WINDOW_AND_CHANCE_KEYS)
+      if (v[key] !== undefined) fail(`${path}.${key}`, `${key} cannot be used with critPelletHit`);
   }
   const trigger: ShotCountTrigger = { count: v.count as ShotCountKind };
   if (v.every !== undefined) trigger.every = parsePositiveInt(v.every, `${path}.every`);
@@ -288,7 +301,7 @@ function parsePhase(v: Record<string, Json>, trigger: ShotCountTrigger, path: st
 /** 数える窓（during）と発火の窓（firesDuring）は、スタック・最後の発・使用武器の変更の発と組まない */
 function rejectWindowCombos(trigger: ShotCountTrigger, key: 'during' | 'firesDuring', path: string): void {
   if (trigger.stacksRef !== undefined) fail(`${path}.${key}`, `${key} cannot be used with stacksRef`);
-  if (trigger.count === 'lastShot') fail(`${path}.${key}`, `${key} cannot be used with lastShot`);
+  if (isLastShotCount(trigger.count)) fail(`${path}.${key}`, `${key} cannot be used with ${trigger.count}`);
   if (trigger.count === 'weaponChangeShot') fail(`${path}.${key}`, `${key} cannot be used with weaponChangeShot`);
 }
 
@@ -498,7 +511,7 @@ export function parseDamageTrigger(v: Json, path: string): EffectTrigger {
     parseSummonAttackTrigger(v, path) ??
     parseCounterFullTrigger(v, path) ??
     parseAppliedTrigger(v, path) ??
-    parseTrigger(v, path, { timer: true, during: 'withState', teamAmmo: true, fullStack: true })
+    parseTrigger(v, path, { timer: true, during: 'withState', teamAmmo: true, critPelletHit: true, fullStack: true })
   );
 }
 

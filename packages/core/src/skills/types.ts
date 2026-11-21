@@ -633,6 +633,8 @@ export const BURST_USERS_TRIGGERS = ['fullBurstStart', 'fullBurstEnd'] as const 
  * nonCoreHit はコアでない命中の期待値（命中の期待値 − コアの命中の期待値。plan/design-guillotine-ws.md 2.1 節）を、coreHit と同じく足す。
  * カウンタはリロードでも戦闘中ずっとリセットしない（every: 10 は通算 10・20・30…回目）。
  * lastShot = 残弾を 0 にした射撃（「最後の弾丸で攻撃した時 / 命中した時」）。最大装弾数▲で遅れ、弾丸チャージで出なくなる。
+ * 二丁持ちは銃口ごとに最後の 2 発のそれぞれ（C-1400）。lastShotOnce は二丁持ちでもマガジンの最後の発の 1 回だけ（K の S1。
+ * plan/design-k.md 2.4 節。V-0848）。
  * weaponChangeShot = 使用武器の変更
  * （weaponChange）で持ち替えた武器で撃った射撃（「命中した敵に」付く徹甲炸裂弾の受けるダメージ▲。
  * その発自身には乗らない。plan/design-true-damage-element.md 9.6 節の論点 12）。循環（cycle）と during には書けない。
@@ -654,9 +656,11 @@ export type ShotCountKind =
   | 'nonCoreHit'
   | 'fullChargeShot'
   | 'lastShot'
+  | 'lastShotOnce'
   | 'weaponChangeShot'
   | 'pelletHit'
   | 'critHit'
+  | 'critPelletHit'
   | 'teamAmmo'
   | 'teamHit';
 export const SHOT_COUNT_KINDS = [
@@ -666,6 +670,7 @@ export const SHOT_COUNT_KINDS = [
   'nonCoreHit',
   'fullChargeShot',
   'lastShot',
+  'lastShotOnce',
   'weaponChangeShot',
   'pelletHit',
   // critHit = クリティカルの命中の期待値（1 発ごとに命中の期待値 ×
@@ -673,9 +678,19 @@ export const SHOT_COUNT_KINDS = [
   // 累計が N の倍数を越えた発で発火する（coreHit と同じ持ち越し）。乱数の
   // きっかけを期待値で持つ（確率のきっかけ chance と同じ考え方）
   'critHit',
+  // critPelletHit = 当たったペレットのクリティカルの期待値（1 発ごとに当たったペレットの数 × その発の会心率。二丁持ちの基礎の武器は
+  // ヒットごとに 1 ペレットで critHit と同じ量、使用武器変更の shotCount の武器は shotCount × 弾丸命中率で銃口の数を掛けない。
+  // plan/design-k.md 2.2 節。V-0848）。1 発の量が N を超えてよく、累計が N の倍数をまたいだ数だけその発で発火する。damage にだけ書け、
+  // every か everyRef が要り、数える窓・発火の窓・スタック・確率・ゲージとは組まない
+  'critPelletHit',
   'teamAmmo',
   'teamHit',
 ] as const satisfies readonly ShotCountKind[];
+
+/** 最後の弾丸の系の回数の種類か（循環・数える窓・発火の窓に書けず、射撃ごとの倍率ダメージに畳み込まない） */
+export function isLastShotCount(count: ShotCountKind): boolean {
+  return count === 'lastShot' || count === 'lastShotOnce';
+}
 
 /** 自分を含む編成の全員の発を数える回数の種類（自分が撃たないフレームでも、味方の発で起きる） */
 export const TEAM_COUNT_KINDS = ['teamAmmo', 'teamHit'] as const satisfies readonly ShotCountKind[];
@@ -2653,10 +2668,11 @@ export type RemoveStateEffect = {
   state: NamedStateId;
   trigger: EffectTrigger;
   /**
-   * self は自分の状態。enemy は敵の状態（plan/design-phantom.md 2.3 節）: 同じ定義の付与で敵に付ける状態の、敵の件の列（出どころは
-   * 問わない）を同じく f + 1 で閉じる（解除不可の件は閉じない）。味方の状態を外す例が出たら広げる
+   * self は自分の状態。allies は味方全体（敵を除くどの枠）の状態（plan/design-k.md 2.1 節）: その状態の件の列（出どころは問わない）を
+   * 自分と同じく f + 1 で閉じる。enemy は敵の状態（plan/design-phantom.md 2.3 節）: 同じ定義の付与で敵に付ける状態の、敵の件の列
+   * （出どころは問わない）を同じく f + 1 で閉じる。どれも解除不可の件は閉じない
    */
-  target: 'self' | 'enemy';
+  target: 'self' | 'allies' | 'enemy';
   condition?: EffectCondition;
   assumes?: LocalizedText;
 };

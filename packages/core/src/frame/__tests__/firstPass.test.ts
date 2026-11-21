@@ -71,13 +71,20 @@ function synthetic(
 }
 
 /** ルドミラ：ウィンターオーナー編: 1 パス目の射撃の列は発ごとの命中の期待値を持つ（planShots の列には無い）。射撃の列だけを比べる */
-// 2026-10-29 のキャラの編: クリティカルの命中の期待値（critHits）も同じ
+// クリティカルの命中の期待値（critHits）と当たったペレットのクリティカル（critPellets。plan/design-k.md 2.2 節）も同じ
 function withoutHits(
   logs: readonly (ShotLog | null)[],
-): (Omit<ShotLog, 'hits' | 'coreHits' | 'critHits' | 'pelletHits'> | null)[] {
+): (Omit<ShotLog, 'hits' | 'coreHits' | 'critHits' | 'critPellets' | 'pelletHits'> | null)[] {
   return logs.map((log) => {
     if (log === null) return null;
-    const { hits: _hits, coreHits: _coreHits, critHits: _critHits, pelletHits: _pelletHits, ...rest } = log;
+    const {
+      hits: _hits,
+      coreHits: _coreHits,
+      critHits: _critHits,
+      critPellets: _critPellets,
+      pelletHits: _pelletHits,
+      ...rest
+    } = log;
     return rest;
   });
 }
