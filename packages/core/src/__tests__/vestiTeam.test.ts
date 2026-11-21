@@ -7,6 +7,7 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { NamedStateId } from '../skills/states.ts';
 import { staticStatesOf } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
+import { gameSecondsToFrames } from '../time.ts';
 import { rawDefinition } from './data.ts';
 import {
   describeEveryShotInOneGroup,
@@ -74,6 +75,8 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
 
   it('applies each Survival Instinct stage from its use count on, on the Burst effect frame', () => {
     expect(bursts.length).toBeGreaterThanOrEqual(4);
+    // どの使用も前の使用から 45 秒以内（数え直しが起きない）
+    bursts.slice(1).forEach((b, i) => expect(b - bursts[i]!).toBeLessThanOrEqual(gameSecondsToFrames(45)));
     expect(applied('survivalInstinct1')).toEqual(bursts);
     expect(applied('survivalInstinct2')).toEqual(bursts.slice(1));
     expect(applied('survivalInstinct3')).toEqual(bursts.slice(2));

@@ -486,7 +486,10 @@ export const NAMED_STATES = {
    * plan/design-guillotine-ws.md 2.2 節）
    */
   exp: { name: { ja: '経験値', en: 'EXP' }, holder: 'ally' },
-  /** 生存本能 1（ベスティーの S2。バーストの使用 1 回目から。攻撃力▲・45 秒。バーストの「生存本能1」の追加ダメージ） */
+  /**
+   * 生存本能 1（ベスティーの S2。バーストの使用 1 回目から。前の使用から 45 秒より後の使用で数え直す。攻撃力▲・45 秒。バーストの
+   * 「生存本能1」の追加ダメージ）
+   */
   survivalInstinct1: { name: { ja: '生存本能1', en: 'Survival Instinct 1' }, holder: 'ally' },
   /** 生存本能 2（同。使用 2 回目から。クリティカルダメージ▲・45 秒） */
   survivalInstinct2: { name: { ja: '生存本能2', en: 'Survival Instinct 2' }, holder: 'ally' },
