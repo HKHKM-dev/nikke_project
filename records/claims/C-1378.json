@@ -1,0 +1,27 @@
+{
+  "id": "C-1378",
+  "text": "ウンファの S1 のチャージダメージ▲とチャージ速度▲（2 発間維持）は、最後の弾丸の次の 2 発（リロードの後の 1・2 発目）に効き、3 発目から外れる。チャージ速度▲（15.53%）で 1・2 発目の溜めが短くなり、オートの射撃の発と発の間は、最後の弾丸 → 1 発目が 210f、1 発目 → 2 発目が 73f（ふだんは 82f）。S2 の防御力▼は、最後の弾丸の次のフレームから 5 秒で切れ、最後の弾丸の 283f 後の発には乗り、299f 後の発には乗らない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1266-01`・`1266-02`・`1266-03`・`1266-04`・`1266-05`・`1266-06`・`1266-07`・`1266-08`・`1266-09`。V-0809",
+  "model": "data/skills/92.json の skill1 の effects[0]・[1]（timed・lastShot・durationShotsRef）と skill2 の effects[0]（timed・lastShot・durationRef）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": [
+      "data/skills/92.json の skill1 の effects[0]",
+      "data/skills/92.json の skill1 の effects[1]",
+      "data/skills/92.json の skill2 の effects[0]"
+    ]
+  },
+  "decidedOn": [],
+  "runs": [
+    {
+      "recording": "1266",
+      "reproduced": "3 本目のマガジン",
+      "observations": ["1266-06", "1266-07", "1266-08"]
+    }
+  ],
+  "parameterFree": "「N 発間維持」は、きっかけの発の次の発から N 発目まで（skills/types.ts の durationShots の決まり）、チャージ速度▲はチャージの長さを (1 − ▲) 倍（C-0786・C-1254）、値は説明文の Lv10 の値（2 発・15.53%・5 秒）だけで、録画で合わせた定数は無い"
+}
