@@ -27,7 +27,7 @@ const TEAMS: Record<string, { input: TeamInput; fire: boolean }> = {
   },
 };
 
-describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, fire }) => {
+describe.each(Object.entries(TEAMS))('編成: %s', (name, { input, fire }) => {
   const n = input.slots.findIndex((s) => s?.character.resourceId === NEON_BO);
   const plan = planTeamRun(input);
   const schedule = plan.schedule!;
@@ -53,7 +53,9 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, fire }) => {
   });
 
   it('counts Stage 3 entries of chains that end at II (more entries than own Bursts in the capture team)', () => {
-    if (_name.startsWith('撮影の編成')) expect(entries.length).toBeGreaterThan(mine.length);
+    // 撮影の編成では、ネオンの CT が明けずに II で切れるチェーンが挟まる
+    if (name.startsWith('撮影の編成')) expect(entries.length).toBeGreaterThan(mine.length);
+    else expect(entries.length).toBeGreaterThanOrEqual(mine.length);
   });
 
   it('changes the weapon for 7 seconds on each Burst, with an additional hit per changed shot only against Fire', () => {
