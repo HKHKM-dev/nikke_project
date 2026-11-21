@@ -1,5 +1,6 @@
 // 自動マージを待つ PR の衝突を直す GitHub Actions（auto-rebase.ts）の決まりごと（plan/design-auto-conflict-fix.md 2 節の案 A）。
-// GitHub と git を呼ぶ部分と分けてテストする。--find は npm ci の前に回るので、node のほかは読まない（型だけ読む）。
+// GitHub と git を呼ぶ部分と分けてテストする。--find は npm ci の前に回るので、node と import の無い ids.ts のほかは読まない（型だけ読む）。
+import { C_ID, ID_RECORD_DIRS, V_ID } from '../../packages/core/src/records/ids.ts';
 import type { Collision } from './pr-prep-lib.ts';
 
 /** GitHub の PR（REST の pulls の、使う欄だけ） */
@@ -17,7 +18,7 @@ export type Pull = {
 export type PullFile = { filename: string; status: string };
 
 /** 直してよいブランチ（エージェントのブランチ。AGENTS.md「併用ルール」） */
-export const BRANCH_PREFIXES = ['claude/', 'antigrav/'];
+const BRANCH_PREFIXES = ['claude/', 'antigrav/'];
 
 /** 直す対象か: 開いていて、自動マージを予約していて、head が同じリポジトリのエージェントのブランチ */
 export function isTarget(pr: Pull, repo: string): boolean {
@@ -33,8 +34,7 @@ export function isTarget(pr: Pull, repo: string): boolean {
 export function addsRecords(files: readonly PullFile[]): boolean {
   return files.some(
     (f) =>
-      (f.status === 'added' || f.status === 'renamed') &&
-      /^records\/(?:verifications|claims|recordings|backlog)\//.test(f.filename),
+      (f.status === 'added' || f.status === 'renamed') && ID_RECORD_DIRS.some((d) => f.filename.startsWith(`${d}/`)),
   );
 }
 
@@ -84,18 +84,11 @@ export function splitCollisions(found: readonly Collision[]): { renumber: Renumb
   const renumber: Renumber[] = [];
   const manual: Collision[] = [];
   for (const c of found) {
-    if (/^[VC]-\d+$/.test(c.id) && c.suggestion !== undefined) renumber.push({ from: c.id, to: c.suggestion });
+    if ((V_ID.test(c.id) || C_ID.test(c.id)) && c.suggestion !== undefined)
+      renumber.push({ from: c.id, to: c.suggestion });
     else manual.push(c);
   }
   return { renumber, manual };
-}
-
-/** 文の中の古い ID を新しい ID に置き換える（ID の前後が英数字・ハイフン・下線でない所だけ。全部を一度に置き換えるので連鎖しない） */
-export function replaceIds(text: string, pairs: readonly Renumber[]): string {
-  if (pairs.length === 0) return text;
-  const to = new Map(pairs.map((p) => [p.from, p.to]));
-  const alt = pairs.map((p) => p.from).join('|');
-  return text.replace(new RegExp(`(?<![A-Za-z0-9_-])(?:${alt})(?![0-9A-Za-z_-])`, 'g'), (m) => to.get(m) ?? m);
 }
 
 /**

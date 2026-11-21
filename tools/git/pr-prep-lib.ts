@@ -1,6 +1,6 @@
 // PR の前のリベースの決まりごと（plan/design-workflow-simplification-4.md 2 節）。git を呼ぶ部分（pr-prep.ts）と分けてテストする。
 import { idsInPaths, nextId } from '../../packages/core/src/records/drafts.ts';
-import { ID_DIGITS } from '../../packages/core/src/records/ids.ts';
+import { ID_DIGITS, ID_RECORD_DIRS } from '../../packages/core/src/records/ids.ts';
 import {
   backlogNameOfPath,
   backlogNumber,
@@ -145,9 +145,6 @@ export function collisions(
   return out;
 }
 
-/** ID が重なりうる記録のフォルダ（ブランチが足したファイルと main のファイルを比べる） */
-const ID_FOLDERS = ['records/verifications', 'records/claims', 'records/recordings', 'records/backlog'];
-
 /**
  * ブランチ（origin/main...HEAD）で足した ID のうち main も足したもの（collisions）と、main の記録のファイルの一覧。gitPaths は git を
  * 引数で呼んでパスの一覧を返すもの。taken はほかのブランチが使った ID（振り直しの案で避ける）
@@ -157,7 +154,7 @@ export function branchCollisions(
   taken: readonly string[],
 ): { found: Collision[]; mainFiles: string[] } {
   const added = gitPaths(['diff', '--name-only', '--diff-filter=AR', 'origin/main...HEAD', '--', 'records']);
-  const mainFiles = gitPaths(['ls-tree', '-r', '--name-only', 'origin/main', '--', ...ID_FOLDERS]);
+  const mainFiles = gitPaths(['ls-tree', '-r', '--name-only', 'origin/main', '--', ...ID_RECORD_DIRS]);
   return { found: collisions(added, mainFiles, taken), mainFiles };
 }
 

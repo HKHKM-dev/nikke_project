@@ -11,7 +11,6 @@ import {
   type Pull,
   pushOutcome,
   renumberedComment,
-  replaceIds,
   splitCollisions,
   tail,
   worthFixing,
@@ -98,23 +97,6 @@ describe('splitCollisions', () => {
       ],
       manual: [{ id: '0718' }, { id: '2-12', suggestion: '2-13' }],
     });
-  });
-});
-
-describe('replaceIds', () => {
-  it('replaces whole IDs at once without chaining', () => {
-    const pairs = [
-      { from: 'C-1449', to: 'C-1462' },
-      { from: 'C-1462', to: 'C-1463' },
-    ];
-    expect(replaceIds('スキル: レオナ（C-1447、C-1449、C-1462）', pairs)).toBe(
-      'スキル: レオナ（C-1447、C-1462、C-1463）',
-    );
-  });
-  it('leaves longer IDs and IDs inside names alone', () => {
-    expect(replaceIds('C-14490 xC-1449 C-1449-a C-1449', [{ from: 'C-1449', to: 'C-1500' }])).toBe(
-      'C-14490 xC-1449 C-1449-a C-1500',
-    );
   });
 });
 

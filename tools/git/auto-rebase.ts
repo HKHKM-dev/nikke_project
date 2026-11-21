@@ -5,7 +5,7 @@
 // 1. origin のブランチが、問い合わせた head のままか確かめる（進んでいれば、次の実行に任せる）。
 // 2. ブランチで足した ID が main と重なっていれば（pr:prep と同じ判定）、検証記録・結論は records:renumber で振り直す。ブランチを
 //    1 つの commit にまとめる（振り直す前の ID のファイルを足した commit が、リベースで main と衝突しないように）。
-//    録画と課題の番号の重なり、人が直す範囲の書き方（records:renumber --fail-on-ranges）があれば、直さずにコメントする。
+//    録画と課題の番号の重なり、人が直す範囲の書き方（records:renumber --fail-on-ranges が 3 で終わる）があれば、直さずにコメントする。
 // 3. npm run pr:prep -- --no-ci --allow-progress（リベース・生成物と行を足しただけの衝突の解消・生成物を main の版に戻す）。止まったら
 //    コメントする。型・テスト・ビルドは、push で起きる PR の CI に任せる。
 // 4. デプロイキーで、問い合わせた head を期待値にして --force-with-lease で push する（セッションが先に push していたら断られて何もしない）。
@@ -29,7 +29,6 @@ import {
   pushOutcome,
   type Renumber,
   renumberedComment,
-  replaceIds,
   splitCollisions,
   worthFixing,
 } from './auto-rebase-lib.ts';
@@ -71,14 +70,18 @@ async function comment(n: number, kind: MarkKind, sha: string, body: string): Pr
 
 if (values.find) {
   const prs = (await api<Pull[]>('/pulls?state=open&per_page=100')).filter((p) => isTarget(p, repo));
-  const targets: number[] = [];
-  for (const p of prs) {
-    const mergeable = await pollMergeable(async () => (await pull(p.number)).mergeable ?? null, sleep);
-    const files = await api<PullFile[]>(`/pulls/${p.number}/files?per_page=100`);
-    const failed = commented(await commentBodies(p.number), 'failed', p.head.sha);
-    console.log(`#${p.number} ${p.head.ref}: mergeable=${mergeable}${failed ? '（この head は直せなかった）' : ''}`);
-    if (!failed && worthFixing(mergeable, files)) targets.push(p.number);
-  }
+  // mergeable は PR ごとに GitHub が計算するので、全部を並べて待つ
+  const picked = await Promise.all(
+    prs.map(async (p) => {
+      const mergeable = await pollMergeable(async () => (await pull(p.number)).mergeable ?? null, sleep);
+      // 変えたファイルは、衝突していない PR の ID の重なりを見るときだけ要る
+      const files = mergeable === true ? await api<PullFile[]>(`/pulls/${p.number}/files?per_page=100`) : [];
+      const failed = worthFixing(mergeable, files) && commented(await commentBodies(p.number), 'failed', p.head.sha);
+      console.log(`#${p.number} ${p.head.ref}: mergeable=${mergeable}${failed ? '（この head は直せなかった）' : ''}`);
+      return !failed && worthFixing(mergeable, files) ? [p.number] : [];
+    }),
+  );
+  const targets = picked.flat();
   console.log(`直してみる PR: ${targets.map((n) => `#${n}`).join('・') || 'なし'}`);
   const out = process.env['GITHUB_OUTPUT'];
   if (out) appendFileSync(out, `targets=${targets.join(' ')}\n`);
@@ -90,6 +93,7 @@ if (!values.fix) throw new Error('--find か --fix を付ける');
 // ここからは npm ci の後（core を読む）
 const { AUTO_REBASE_COMMITTER, AUTO_REBASE_ENV, branchCollisions, nulPaths, pathListArgs } =
   await import('./pr-prep-lib.ts');
+const { renumberInText } = await import('../../packages/core/src/records/renumber.ts');
 const { idsInBranches } = await import('../../packages/core/scripts/records-data.ts');
 const { sshEnv, sshRemote } = await import('./deploy-key.ts');
 
@@ -128,7 +132,7 @@ function cleanUp(): void {
 }
 
 type Outcome =
-  | { kind: 'skip' | 'stale' }
+  | { kind: 'skip' }
   | { kind: 'pushed'; head: string; renumbered: Renumber[] }
   | { kind: 'failed'; reason: string; output?: string };
 
@@ -140,7 +144,6 @@ function fix(pr: Pull): Outcome {
     return { kind: 'skip' };
   }
   git(['checkout', '--quiet', '-B', branch, `origin/${branch}`]);
-  git(['branch', '--quiet', `--set-upstream-to=origin/${branch}`]);
 
   const { found } = branchCollisions(gitPaths, idsInBranches().ids);
   const { renumber, manual } = splitCollisions(found);
@@ -154,24 +157,17 @@ function fix(pr: Pull): Outcome {
     return { kind: 'skip' };
   }
   for (const r of renumber) {
-    const dry = run('node', [
-      'packages/core/scripts/records-renumber.ts',
-      r.from,
-      r.to,
-      '--dry-run',
-      '--fail-on-ranges',
-    ]);
-    if (dry.status === 3)
+    // 範囲の書き方があれば 3 で終わる（置き換えは片付けで捨てる）
+    const done = run('node', ['packages/core/scripts/records-renumber.ts', r.from, r.to, '--fail-on-ranges']);
+    if (done.status !== 0)
       return {
         kind: 'failed',
-        reason: `${r.from} が範囲の書き方の中にあり、振り直すと範囲が崩れる`,
-        output: dry.output,
+        reason:
+          done.status === 3
+            ? `${r.from} が範囲の書き方の中にあり、振り直すと範囲が崩れる`
+            : `records:renumber ${r.from} ${r.to} が止まった`,
+        output: done.output,
       };
-    if (dry.status !== 0)
-      return { kind: 'failed', reason: `records:renumber ${r.from} ${r.to} が止まった`, output: dry.output };
-    const done = run('node', ['packages/core/scripts/records-renumber.ts', r.from, r.to]);
-    if (done.status !== 0)
-      return { kind: 'failed', reason: `records:renumber ${r.from} ${r.to} が止まった`, output: done.output };
   }
   // ブランチを 1 つの commit にまとめてからリベースする（PR はスカッシュでマージする）。まとめないと、振り直す前の ID のファイルを足した
   // commit がリベースで main と衝突する。途中の commit だけが衝突することも無くなる
@@ -187,12 +183,12 @@ function fix(pr: Pull): Outcome {
       reason: '`pr:prep` が止まった（生成物でないファイルの中身の衝突など）',
       output: prep.output,
     };
-  if (git(['rev-parse', 'HEAD']) === sha) {
+  const head = git(['rev-parse', 'HEAD']);
+  if (head === sha) {
     console.log(`#${pr.number}: 取り込むものが無かった`);
     return { kind: 'skip' };
   }
 
-  const head = git(['rev-parse', 'HEAD']);
   const push = run(
     'git',
     ['push', `--force-with-lease=refs/heads/${branch}:${sha}`, sshRemote(repo!), `HEAD:refs/heads/${branch}`],
@@ -200,10 +196,15 @@ function fix(pr: Pull): Outcome {
   );
   const outcome = pushOutcome(push.status, push.output);
   if (outcome === 'error') return { kind: 'failed', reason: 'push が落ちた', output: push.output };
-  return outcome === 'pushed' ? { kind: 'pushed', head, renumbered: renumber } : { kind: 'stale' };
+  if (outcome === 'pushed') return { kind: 'pushed', head, renumbered: renumber };
+  console.log(`#${pr.number}: push の間にブランチが進んだ（セッションが直した）。何もしない`);
+  return { kind: 'skip' };
 }
 
 let failures = 0;
+const pushed: { n: number; head: string }[] = [];
+const replaceIds = (text: string, pairs: readonly Renumber[]) =>
+  pairs.reduce((t, r) => renumberInText(t, r.from, r.to).text, text);
 for (const n of (process.env['TARGETS'] ?? '')
   .split(/\s+/)
   .filter((s) => s !== '')
@@ -226,7 +227,6 @@ for (const n of (process.env['TARGETS'] ?? '')
     await comment(n, 'failed', pr.head.sha, failureComment(pr.head.sha, outcome.reason, outcome.output));
     continue;
   }
-  if (outcome.kind === 'stale') console.log(`#${n}: push の間にブランチが進んだ（セッションが直した）。何もしない`);
   if (outcome.kind !== 'pushed') continue;
   const { head } = outcome;
   console.log(`#${n}: 直して push した（${head.slice(0, 8)}）`);
@@ -237,8 +237,10 @@ for (const n of (process.env['TARGETS'] ?? '')
     });
     await comment(n, 'renumbered', head, renumberedComment(head, outcome.renumbered));
   }
-  // push の後に GitHub が予約を外すかは非同期なので、少し待ってから見る
-  await sleep(10_000);
-  if ((await pull(n)).auto_merge == null) await comment(n, 'auto-merge', head, autoMergeLostComment(head));
+  pushed.push({ n, head });
 }
+// push の後に GitHub が予約を外すかは非同期なので、少し待ってからまとめて見る
+if (pushed.length > 0) await sleep(10_000);
+for (const { n, head } of pushed)
+  if ((await pull(n)).auto_merge == null) await comment(n, 'auto-merge', head, autoMergeLostComment(head));
 console.log(failures > 0 ? `直せなかった PR が ${failures} 本（コメントした）` : '終わった');

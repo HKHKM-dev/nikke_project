@@ -18,7 +18,8 @@
 //   Drive の名前を受け口（tools/drive/gateway.ts の move）で変える（plan/design-cloud-environment.md 6.3 節）。
 // - リベース・マージの途中では動かない（main と自分のブランチが同じ番号を足していると、どちらの参照か見分けられない）。リベースを
 //   中止し（git rebase --abort）、自分のブランチで振り直してから取り込み直す。
-// --fail-on-ranges は、人が直す範囲の書き方があれば終了コード 3 で終わる（--dry-run と使う。自動の振り直し tools/git/auto-rebase.ts）。
+// --fail-on-ranges は、人が直す範囲の書き方があれば、置き換えた後に終了コード 3 で終わる（呼ぶ側が置き換えを捨てる。自動の振り直し
+// tools/git/auto-rebase.ts）。
 // 振り直した後は npm run records:check（生成物を作り直して検査する）。
 import { execFileSync, spawnSync } from 'node:child_process';
 import { appendFileSync, existsSync, readdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';

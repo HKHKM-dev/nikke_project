@@ -24,8 +24,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          # ID の空きはどのブランチも足していない番号から選ぶので、全部のブランチを取る
-          fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-node@v7
         with:
@@ -34,11 +32,9 @@ jobs:
         run: node tools/git/auto-rebase.ts --find
         env:
           GITHUB_TOKEN: ${{ github.token }}
+      # ID の空きはどのブランチも足していない番号から選び、PR のブランチを取り出すので、全部のブランチの履歴を取る
       - if: steps.find.outputs.targets != ''
-        uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          cache: npm
+        run: git fetch --quiet --unshallow origin '+refs/heads/*:refs/remotes/origin/*'
       - if: steps.find.outputs.targets != ''
         run: npm ci
       # pr:prep の records:minimal が使う、観測値のモデルの予測値の覚え（ci.yml と同じキー）
