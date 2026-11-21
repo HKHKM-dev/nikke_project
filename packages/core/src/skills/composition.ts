@@ -129,6 +129,26 @@ export function rowAllows(row: FormationRow | undefined, selfIndex: number): boo
   return row === undefined || formationRowOf(selfIndex) === row;
 }
 
+/** 効果の編成の条件（持たない条件は undefined） */
+export type CompositionConditions = {
+  burstStepMix: BurstStepMixCondition | undefined;
+  squad: SquadCondition | undefined;
+  withCharacter: WithCharacterCondition | undefined;
+  enemyElement: Element | undefined;
+  row: FormationRow | undefined;
+};
+
+/** 効果の編成の条件を取り出す。compositionAllows と、npm run sim の編成の条件の表（scripts/sim-run/tables.ts）が読む */
+export function compositionConditionsOf(effect: SkillEffect): CompositionConditions {
+  return {
+    burstStepMix: 'burstStepMix' in effect ? effect.burstStepMix : undefined,
+    squad: 'squad' in effect ? effect.squad : undefined,
+    withCharacter: 'withCharacter' in effect ? effect.withCharacter : undefined,
+    enemyElement: 'enemyElement' in effect ? effect.enemyElement : undefined,
+    row: 'row' in effect ? effect.row : undefined,
+  };
+}
+
 /** 効果の編成の条件をすべて満たすか（条件の無い効果は true）。enemyElement は敵の属性（属性なしは null） */
 export function compositionAllows(
   effect: SkillEffect,
@@ -136,17 +156,13 @@ export function compositionAllows(
   selfIndex: number,
   enemyElement: Element | null = null,
 ): boolean {
-  const mix = 'burstStepMix' in effect ? effect.burstStepMix : undefined;
-  const squad = 'squad' in effect ? effect.squad : undefined;
-  const withCharacter = 'withCharacter' in effect ? effect.withCharacter : undefined;
-  const element = 'enemyElement' in effect ? effect.enemyElement : undefined;
-  const row = 'row' in effect ? effect.row : undefined;
+  const c = compositionConditionsOf(effect);
   return (
-    rowAllows(row, selfIndex) &&
-    burstStepMixAllows(mix, characters, selfIndex) &&
-    squadAllows(squad, characters, selfIndex) &&
-    withCharacterAllows(withCharacter, characters, selfIndex) &&
-    enemyElementAllows(element, enemyElement)
+    rowAllows(c.row, selfIndex) &&
+    burstStepMixAllows(c.burstStepMix, characters, selfIndex) &&
+    squadAllows(c.squad, characters, selfIndex) &&
+    withCharacterAllows(c.withCharacter, characters, selfIndex) &&
+    enemyElementAllows(c.enemyElement, enemyElement)
   );
 }
 

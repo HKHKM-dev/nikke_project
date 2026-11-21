@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 11,
-  "text": "`npm run sim` の引数の検査の抜け: (1) `--duration` に数でない値（例 `--duration x`）を渡すと、計算がメモリを使い切って落ちる（終了コードが付かない）。(2) `--trace` に空の値（`--trace \"\"`・`--trace ,`）を渡すと、空の 1 行だけを出して終了コード 0 で終わる。どちらも、`packages/core/scripts/sim-run.ts` で値を読む所で、エラーの 1 行を出して終了コード 2 で終える（[design-sim-run-split.md](design-sim-run-split.md) 9 節。2026-11-19 起票）"
-}
