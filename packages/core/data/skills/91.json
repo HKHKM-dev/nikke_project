@@ -1,0 +1,169 @@
+{
+  "formatVersion": 1,
+  "resourceId": 91,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルチャージ攻撃時の自分の爆発範囲▲（10 秒）は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）",
+          "en": "The explosion range increase on self on fully charged attacks (10 s) is not modeled (explosion range is not in the damage formula; its effect on the core hit rate is not checked)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "fullChargeShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "survivalInstinct1",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 1
+          },
+          "target": "self",
+          "durationRef": 2,
+          "contents": [
+            {
+              "stat": "attack",
+              "ref": 1
+            }
+          ],
+          "assumes": {
+            "ja": "使用回数は戦闘を通したバーストの使用の数。下位効果のスタック適用は、2 回目以降の使用でも生存本能 1 を付け直す形で書いた",
+            "en": "The use count is the number of Burst uses over the battle. 'Each subsequent effect triggers all effects before it' is written as re-applying Survival Instinct 1 on the 2nd and later uses"
+          }
+        },
+        {
+          "kind": "state",
+          "state": "survivalInstinct2",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 2
+          },
+          "target": "self",
+          "durationRef": 4,
+          "contents": [
+            {
+              "stat": "critDamage",
+              "ref": 3
+            }
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "survivalInstinct3",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 3
+          },
+          "target": "self",
+          "durationRef": 6,
+          "contents": [
+            {
+              "stat": "critRate",
+              "ref": 5
+            }
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "summon",
+          "summon": "missileContainer",
+          "trigger": "burstUse",
+          "lifetimesSeconds": [18, 18],
+          "assumes": {
+            "ja": "ミサイルコンテナ 2 機を 18 秒展開する",
+            "en": "Deploys two Missile Containers for 18 s"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "summon": "missileContainer",
+            "intervalSeconds": {
+              "2": 1
+            },
+            "startDelaySeconds": 0
+          },
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "1 機目のミサイルコンテナの攻撃。残りの HP が最も低い敵は単体ボス。1 秒ごとに 1 ヒット（展開から 1 秒後が 1 回目。18 秒ちょうどは消えるのが先で、1 機 17 回）。バーストゲージは溜めない",
+            "en": "Attacks of the first Missile Container. The enemy with the lowest remaining HP is the single boss. One hit every second (the first one 1 s after deploying; at exactly 18 s the container expires first, so 17 hits each). Does not charge the Burst Gauge"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "summon": "missileContainer",
+            "intervalSeconds": {
+              "2": 1
+            },
+            "startDelaySeconds": 0
+          },
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "2 機目のミサイルコンテナの攻撃。1 機目と同じフレームに出る",
+            "en": "Attacks of the second Missile Container, on the same frames as the first"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 2,
+          "damageType": "additional",
+          "condition": {
+            "selfState": "survivalInstinct1"
+          },
+          "assumes": {
+            "ja": "生存本能 1 の段の追加ダメージ。同じ発動で S2 が付けた生存本能は見ない（発動の前の状態を見る。ミハラの C-0566 と同じ読み）",
+            "en": "Additional damage of the Survival Instinct 1 stage. It does not see the Survival Instinct applied by S2 in the same activation (it reads the state before the activation, as with Mihara, C-0566)"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 3,
+          "damageType": "additional",
+          "condition": {
+            "selfState": "survivalInstinct2"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 4,
+          "damageType": "additional",
+          "condition": {
+            "selfState": "survivalInstinct3"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルバーストタイム 5 秒▼は burst_duration（5 秒）から時刻表に入る",
+          "en": "The Full Burst Time −5 s comes from burst_duration (5 s) in the schedule",
+          "kind": "modeling",
+          "effect": {
+            "kind": "unknown"
+          },
+          "claims": [
+            "C-0011"
+          ]
+        }
+      ]
+    }
+  }
+}
