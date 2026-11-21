@@ -1,0 +1,76 @@
+{
+  "formatVersion": 1,
+  "resourceId": 220,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": { "count": "normalHit", "everyRef": 1 },
+          "ref": 2,
+          "damageType": "additional",
+          "assumes": {
+            "ja": "命中 値 01（30）回ごと（通算 30・60…回目）に、対象（敵 1 体の前提で的）に 1 ヒット。きっかけの発と同じフレームに出る（分かれたヒットと遅れは確かめていない。plan/design-snow-white.md 2.1 節）。バーストで持ち替えた武器の 1 発も命中に数える（同 2.5 節）",
+            "en": "Every 30 hits (value 01; the 30th, 60th, ... cumulative hit), one hit on the target (the range target, as there is one enemy). It lands on the same frame as the triggering shot (split hits and delay not verified; plan/design-snow-white.md 2.1). The single shot of the Burst weapon also counts as a hit (2.5)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": { "count": "normalHit", "everyRef": 1 },
+          "target": "self",
+          "stat": "attack",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "effects[0] と同じきっかけで、きっかけの発の次のフレームから付く（同じ回の追加ダメージには乗らない。確かめていない）。付いている間にまた付いたら維持を付け直す",
+            "en": "Same trigger as effects[0]; applied from the frame after the triggering shot (not on the same trigger's additional damage; not verified). Reapplying refreshes the duration"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "攻撃範囲内の敵への倍率ダメージ（最終攻撃力の 値 01）は、説明文にきっかけの無いクールタイムごとのアクティブで、クールタイムが説明文にもデータにも無い。録画で周期を読むまで定義しない（plan/design-snow-white.md 2.2 節）",
+          "en": "The damage to enemies within attack range (value 01 of final ATK) is a cooldown-based active skill with no trigger in the description, and the cooldown is in neither the description nor the data. Not defined until the period is read from recordings (plan/design-snow-white.md 2.2)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "target": "enemy",
+            "trigger": "unknown"
+          }
+        },
+        {
+          "ja": "フルバーストタイムの持続中に発動した時の自分の会心率▲（値 02・値 03 秒）は、上の倍率ダメージと同じクールタイムで発動する。周期を読むまで定義しない（plan/design-snow-white.md 2.3 節）",
+          "en": "The self Critical Rate increase (value 02 for value 03 s) when activated during Full Burst fires on the same cooldown as the damage above. Not defined until the period is read (plan/design-snow-white.md 2.3)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "critRate",
+            "target": "self",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "damageRef": 1,
+          "chargeTimeSeconds": 5,
+          "fullChargeDamage": 1000,
+          "maxAmmoRef": 2,
+          "pierce": true,
+          "assumes": {
+            "ja": "AR を押下チャージ型のチャージ武器（5 秒）に替え、1 発撃つと AR に戻る（持続と解除は説明文に無く、撃つまで続く）。最初の発の待ちと、コア命中率・距離ボーナスは確かめていない（いまの既定の待ちと基礎の AR の当たり。plan/design-snow-white.md 2.4 節）。貫通特化は、貫通ダメージ▲を読む側のいない編成では値を変えない（確かめていない）",
+            "en": "Turns the AR into a press-and-hold charge weapon (5 s) and returns to the AR after one shot (no duration or end condition in the description; it lasts until the shot). The first-shot wait, core hit rate and range bonus are not verified (the default wait and the base AR rates; plan/design-snow-white.md 2.4). Pierce does not change values without an ally that reads Pierce Damage (not verified)"
+          }
+        }
+      ]
+    }
+  }
+}
