@@ -158,6 +158,38 @@ export function branchCollisions(
   return { found: collisions(added, mainFiles, taken), mainFiles };
 }
 
+/**
+ * ブランチの途中の commit で足し、HEAD には無く、main にはあるパス（振り直す前の番号のファイルなど）。リベースは足した commit を
+ * 当て直すので、main の同じパスのファイルと衝突する（add/add。plan/design-auto-conflict-fix.md 8 節）。gitPaths は branchCollisions と同じ
+ */
+export function branchStaleAdds(gitPaths: (args: readonly string[]) => string[]): string[] {
+  const added = new Set(
+    gitPaths(['log', '--format=', '--name-only', '--no-renames', '--diff-filter=A', 'origin/main..HEAD']),
+  );
+  if (added.size === 0) return [];
+  return gitPaths(['diff', '--name-only', '--no-renames', '--diff-filter=A', 'HEAD', 'origin/main']).filter((p) =>
+    added.has(p),
+  );
+}
+
+/**
+ * ブランチ（main との分かれ目から HEAD まで）を、作業ツリーの変更も入れて 1 つの commit にまとめる。メッセージは題名・まとめたわけと、
+ * 元の commit のメッセージ（帰属の行を含む。rewrite で書き換えられる）。git は引数で git を呼んで標準出力（前後の空白を除く）を返すもの。
+ * pr:prep と、自動マージを待つ PR の衝突の直し（auto-rebase.ts）が使う
+ */
+export function squashBranch(
+  git: (args: readonly string[]) => string,
+  title: string,
+  why: string,
+  rewrite: (text: string) => string = (t) => t,
+): void {
+  const base = git(['merge-base', 'origin/main', 'HEAD']);
+  const messages = rewrite(git(['log', '--format=%B', `${base}..HEAD`]));
+  git(['add', '--all']);
+  git(['reset', '--quiet', '--soft', base]);
+  git(['commit', '--quiet', '-m', `${title}\n\n${why}\n\n${messages}`]);
+}
+
 /** 自動マージを待つ PR の衝突を直す GitHub Actions（tools/git/auto-rebase.ts）が commit に使う身元 */
 export const AUTO_REBASE_COMMITTER = { name: 'nikke-auto-rebase', email: 'auto-rebase@nikke-project.invalid' };
 
