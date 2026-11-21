@@ -1,0 +1,20 @@
+{
+  "id": "C-1363",
+  "text": "スノーホワイト：イノセントデイズの S1（Lv10）は説明文どおり、通常攻撃の命中 30 回ごとに、自分に最大装弾数 25.66%▲（5 スタック・5 秒。付くたびに全スタックの維持を付け直す）を付け、最終攻撃力の 188.68% の倍率ダメージを出す。最大装弾数が増えても残弾は増えず、リロードで 60 → 91 → 137 発になる。倍率ダメージは 2 ヒットに等分され、30 回目の命中の発の 36f 後と、その 11f 後に出る（2 ヒットの会心はきっかけごとに決まる）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1254-01`・`1254-03`・`1254-05`・`1255-01`・`1255-03`・`1255-05`・`1256-03`。V-0808",
+  "model": "data/skills/224.json の skill1（timed の maxAmmo・maxStacksRef 3・durationRef 4、damage の delayFrames 36・hitOffsetFrames [0, 11]・valueBeforeFire）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/224.json の skill1 の effects[0]", "data/skills/224.json の skill1 の effects[1]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1254",
+      "role": "値を合わせた"
+    }
+  ]
+}
