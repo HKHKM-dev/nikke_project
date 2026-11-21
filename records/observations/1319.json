@@ -1,0 +1,92 @@
+[
+  {
+    "id": "1319-01",
+    "recording": "1319",
+    "kind": "hit",
+    "use": "compare",
+    "value": 62001,
+    "unit": "ダメージ",
+    "description": "経験値が上限（100 スタック）に届いた後の、ギロチン：ウィンタースレイヤーの胴体の会心しない 1 ヒット（距離ボーナスなし）。上限の後のペッパーのバースト 7 回（f3706〜11090）の前後で変わらない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "胴体の 1 ヒットの増分の並びは、経験値 1 段ごとに約 460〜480 ずつ上がり、f3530（戦闘開始から 2,747.7 ティック）から最後まで 62,001 のまま（f5549 の 64,001 は読み違いで、直後は 62,001）。上限を 1 上げる読みなら、1 回目のバーストの後で約 62,387 になる"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 10000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0835",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1319-02",
+    "recording": "1319",
+    "kind": "timing",
+    "use": "compare",
+    "value": [83, 84, 84, 84, 84, 84, 84, 84, 84],
+    "unit": "f",
+    "description": "ペッパーのバーストの、右のバースト欄の六角形が I から II に替わったフレームから、バーストスキルダメージのヒットまでの動画のフレーム（9 回）",
+    "method": {
+      "tool": "recipe:burst-panel@4・tools/captures/hud.ts --mode jumps",
+      "note": "六角形の替わり目（1350・2528・3706・4943・6130・7427・8688・9912・11090）と、ヒットの増分（1,235,334 か会心の 1,853,002。ギロチンの 1 ヒットと同じフレームの回は和）のフレームの差"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 1,
+        "count": 9
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0835",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1319-03",
+    "recording": "1319",
+    "kind": "timing",
+    "use": "record",
+    "value": 1350,
+    "unit": "f",
+    "description": "経験値が上限より前の 1 回目のペッパーのバーストで、六角形が I から II に替わったフレームに、ギロチンの胴体の 1 ヒットが経験値 1 段ぶん上がった（20 段目で勇者レベルも 3 に上がった）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "胴体の 1 ヒットは 34,690（f1335・1340）→ 35,726（f1350）。前の段（f1335）から 3 ヒット（1340・1345・1350）しか経っておらず、射撃で付く間隔（コアでない 6 ヒットかコアの 3 ヒット）に足りない。次の段は f1360（+466）で、射撃の間隔に戻る。2 回目（f2528）は、バーストの演出で HUD の読めないフレーム（f2518〜2533）に掛かり、見分けていない"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0835",
+    "readAt": "2026-11-21"
+  }
+]

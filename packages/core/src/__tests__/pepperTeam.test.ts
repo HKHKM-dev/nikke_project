@@ -1,13 +1,15 @@
 // ペッパー（131。V-0835）を含む編成で、S1 の最後の弾丸ごとの回復とリフレッシュハート、S2 の CT ごとのダメージ、
 // バーストのバーストスキルダメージ・スタック可能バフのスタック量▲・フルスタックのときの回復が意図どおりに出るか
 import { describe, expect, it } from 'vitest';
+import { burstDelaysOf } from '../burst/landing.ts';
+import { hexagonFrameOf, hitFramesOf } from '../burst/schedule.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { timerFramesOf } from '../skills/timeline.ts';
 import type { TeamInput } from '../team.ts';
 import { rawDefinition } from './data.ts';
-import { describeEveryShotInOneGroup, fixedTeam } from './teamHelpers.ts';
+import { characterOf, describeEveryShotInOneGroup, fixedTeam } from './teamHelpers.ts';
 
 const PEPPER = 131;
 const GUILLOTINE_WS = 182;
@@ -41,9 +43,10 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   const uses = sim.schedule!.activations.filter((a) => a.slotIndex === pepper);
   const lastShots = sim.shots[pepper]!.frames.filter((_, k) => (k + 1) % sim.shots[pepper]!.magazine === 0);
 
-  it('deals the S2 damage every 10 s from 10 s', () => {
+  it('deals the S2 damage 7 f after each activation every 10 s from 10 s (C-1462)', () => {
     const hits = sim.skillHits.filter((h) => h.slotIndex === pepper && h.effect.source.skill === 'skill2');
-    expect(hits.map((h) => h.frame)).toEqual(timerFramesOf({ everySeconds: 10 }, sim.frames));
+    const starts = timerFramesOf({ everySeconds: 10 }, sim.frames).filter((f) => f + 7 < sim.frames);
+    expect(hits.map((h) => h.frame)).toEqual(starts.map((f) => f + 7));
   });
 
   it('gives every ally a Refresh Heart stack on each last bullet, capped at 5', () => {
@@ -60,6 +63,9 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   it('adds one stack to stackable buffs on each Burst, and heals all allies only at full Refresh Heart', () => {
     expect(uses.length).toBeGreaterThan(2);
     expect(sim.slots[pepper]!.burst.hits).toHaveLength(uses.length);
+    // 六角形の替わり目からヒットまで 84f、効果は遅れ 0（C-1463・C-1464）
+    expect(burstDelaysOf(characterOf(PEPPER))).toEqual({ hitFrames: 84, effectFrames: 0 });
+    for (const a of uses) expect(hitFramesOf(a)).toEqual([hexagonFrameOf(a) + 84]);
     const heals = sim.instants.filter(
       (i) => i.sourceSlotIndex === pepper && i.effect.kind === 'heal' && i.effect.source.skill === 'burst',
     );
