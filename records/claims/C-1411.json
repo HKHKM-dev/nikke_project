@@ -1,0 +1,15 @@
+{
+  "id": "C-1411",
+  "text": "ネオン：ブルーオーシャンのバーストの使用武器変更（フルハイドロショット）は、7 秒のあいだ CDN の changeWeapon のレート（毎分 90 発。発の間 38〜41f）で撃つ武器に持ち替え、1 発は最終攻撃力の 33% の 1 ヒット（コア倍率は基礎の MG と同じ。フルバースト補正が乗る）で、1 回のバーストで 11 発。水冷の敵のコアの 1 発はモデルと 1 以内で合う",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1286-10`・`1286-12`・`1287-16`・`1288-15`。V-0817",
+  "model": "`data/skills/14.json` の burst の effects[0]（`weaponChange`・`damageRef: 1`・`durationRef: 2`。レートは CDN の `burstSkill.changeWeapon`）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/14.json の burst の effects[0]"]
+  },
+  "decidedOn": []
+}
