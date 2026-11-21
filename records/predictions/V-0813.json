@@ -1,0 +1,179 @@
+{
+  "verification": "V-0813",
+  "note": "撮影の予測。ココア（I）+ ソルジャーF.A.（II）+ E.H.（III・操作）、オートバースト ON。射撃場の BigArms（鉄甲。風圧に有利コード）・3 分モード・スペック固定 ON（スキル Lv10）。バーストの武器の最初の発の待ち・コア命中率・戻った SMG の撃ち始めは、撮る前のいまのモデルの形",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 301
+    },
+    {
+      "rid": 113,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S1 の攻撃力▲ 1 本分が戦闘開始の直後から、S2 の有利コードの攻撃ダメージ▲が戦闘開始から 15 秒）",
+      "override": {}
+    },
+    {
+      "id": "H-noS1",
+      "note": "S1 の攻撃力▲が付かない（弾倉ができない）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 113,
+            "skill": "skill1",
+            "index": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-noElem",
+      "note": "S2 の有利コードの攻撃ダメージ▲が戦闘開始時に付かない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 113,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "shot-pre",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "1 回目のバーストより前（戦闘開始から 15 秒の中）の E.H. の SMG の 1 ヒット（胴体・会心なし・距離ボーナスあり）"
+    },
+    {
+      "id": "shot-post",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "1 回目のフルバーストの後（15 秒の後・バーストの攻撃力▲の後）の SMG の 1 ヒット"
+    },
+    {
+      "id": "weapon-1",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 29,
+        "core": false,
+        "crit": false,
+        "distance": true,
+        "fullBurst": 0
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "1 回目のバーストの武器の 1 発（胴体・会心なし・距離ボーナスあり。1 回目のフルバーストの窓の始まりから 29f の区間）"
+    },
+    {
+      "id": "weapon-wait-1",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "fullBurstToWeaponChangeShot",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "1 回目のフルバーストの窓の始まりから、バーストの武器の発までの動画のフレーム"
+    },
+    {
+      "id": "weapon-wait-2",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "fullBurstToWeaponChangeShot",
+      "args": {
+        "slot": 3,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "2 回目の同じ値"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "b343b7538970f31df32b2d3bf8407b560a59e1c6",
+    "values": {
+      "H1": {
+        "shot-pre": 21409.616150208003,
+        "shot-post": 18637.684208,
+        "weapon-1": 2235157.7093820004,
+        "weapon-wait-1": 51,
+        "weapon-wait-2": 51
+      },
+      "H-noS1": {
+        "shot-pre": 19914.793119936,
+        "shot-post": 17336.397935999998,
+        "weapon-1": 2203968.2200380005,
+        "weapon-wait-1": 51,
+        "weapon-wait-2": 51
+      },
+      "H-noElem": {
+        "shot-pre": 18637.684208,
+        "shot-post": 18637.684208,
+        "weapon-1": 1945768.8195000004,
+        "weapon-wait-1": 51,
+        "weapon-wait-2": 51
+      }
+    }
+  }
+}
