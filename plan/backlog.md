@@ -125,11 +125,11 @@
 - アニス：スター（17）のバーストのコアの経路（2026-10-05）→ 一部完了: [design-anis-star-core-path.md](design-anis-star-core-path.md)。残りは 6 節
 - 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは 3 節
 - 戦闘力による一覧の並び替え（2026-11-07 起票）→ 一部完了: [design-combat-power-sort.md](design-combat-power-sort.md)。残りは 4 節
-- スキルの効果の分類（`catalog.ts`）で、条件の中の「」で囲んだ状態の名前（トーブ S2 の「自分が「応急改造」のフルスタック状態の時のみ」）を効果の句として読み、「名前だけの付与」の効果にする（2 節の残りに効く）。条件の中の名前は効果に数えない（2026-11-21 起票。[design-catalog-doc-split.md](design-catalog-doc-split.md) 11 節）
 - スキルの効果の分類（`catalog.ts`）で、行の頭や「効果N：」の小項目の頭から対象を決めるとき、条件の節（「〈状態〉状態の味方がいる場合、」など）に書かれた対象も読む。句の前の文と同じ規則（`targetsIn`）をかけると、いまのデータで多くの句の対象が変わり、合うものと合わなくなるものが混ざるので、条件の節の終わりの語と「、」で並べた対象の読み方を見直してからかける（2026-11-21 起票。[design-catalog-doc-split.md](design-catalog-doc-split.md) 11 節）
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
+- スキルの効果の分類（`catalog.ts`）で、条件の中の「」で囲んだ状態の名前（トーブ S2 の「自分が「応急改造」のフルスタック状態の時のみ」）を効果の句として読み、「名前だけの付与」の効果にする（2026-11-21 起票）→ 完了（2026-11-21。句の後ろが「の」「状態」で続き、最初の「、」の前で条件の節を終える句は効果に数えず、行の頭もその句で切らない）: [design-catalog-doc-split.md](design-catalog-doc-split.md) 12 節
 - スキルの効果の分類で、句の途中や項目の後ろから決めた絞った味方の対象を、`tgtKeys` が小項目の頭か行の頭から読み、絞り方を取り違える（2026-11-21 起票）→ 完了（2026-11-21。効果に対象を決めた文 `targetText` を持たせ、`tgtKeys` はそれを読む。句の前の文は最後の「、」の後ろから対象を読む）: [design-catalog-doc-split.md](design-catalog-doc-split.md) 11 節
 - `catalogDoc.ts` の 4.3 節（状態を見る側）に残る正規表現の写しを無くす（2026-11-21 起票）→ 完了（2026-11-21。4.3 節は `condKeys` と、効果ごとの `tgtKeys` を使う。生成物は変わらない）: [design-catalog-doc-split.md](design-catalog-doc-split.md) 10 節
 - `catalogDoc.ts` の `renderSkillCatalog` を、節ごとの関数に分ける（2026-11-21 起票）→ 完了（2026-11-21）: [design-catalog-doc-split.md](design-catalog-doc-split.md)

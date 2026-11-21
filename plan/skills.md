@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 163・効果 1144（根拠あり 1122）・notes 383（根拠あり 158）
+件数: キャラ 164・効果 1149（根拠あり 1127）・notes 384（根拠あり 158）
 
-notes の種類: 未対応 50・前提の外 120・計算に無関係 75・補足 43・間接 95
+notes の種類: 未対応 50・前提の外 120・計算に無関係 76・補足 43・間接 95
 
-スロット: supported 437・partial 35・unsupported 11・noEffect 60
+スロット: supported 440・partial 35・unsupported 11・noEffect 60
 
 ## 10 ラピ
 
@@ -1515,6 +1515,18 @@ notes の種類: 未対応 50・前提の外 120・計算に無関係 75・補�
 - **burst**: supported
   - effects[0] removeDebuff・burstUse・デバフ 1 個: C-0976（確定）、C-0979（確定）、C-1088（確定）
   - notes[0] 計算に無関係: プロケチャップがフルスタックのときの敵全体の攻撃力▼は、ダメージに関係しない: C-0977（確定）
+
+## 312 ソーダ
+
+- **skill1**: supported
+  - effects[0] state・normalShot・maidSpirit（maxHp）: C-1474（仮説）
+- **skill2**: supported
+  - effects[0] heal・12 秒ごと: C-1471（確定）
+  - effects[1] heal・12 秒ごと: C-1471（確定）、C-1474（仮説）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1472（確定）
+  - effects[1] stackChange・burstUse・スタック可能バフの全部: C-1473（仮説）、C-1474（仮説）
+  - notes[0] 計算に無関係: 敵の気絶（1 秒）はダメージに関係しない: 根拠なし
 
 ## 313 プリバティ：アンカインド・メイド
 

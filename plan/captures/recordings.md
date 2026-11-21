@@ -1289,6 +1289,8 @@
 | 1319 | `20261121-1319_pepper-guillotine-ws.mp4` | ペッパー（131、SG・風圧・SSR） + ◎ギロチン：ウィンタースレイヤー（182、AR・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1320 | `20261121-1320_sakura-1.mp4` | デルタ（20、SR・風圧・SR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎サクラ（282、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | BigArms（灼熱タブ・3 分モード・スペック固定 ON。デルタ（II）+ I-DOLL・サン（III）+ サクラ（I・操作）・AUTO 射撃 ON・オートバースト ON）。V-0837 の撮影 |
 | 1321 | `20261121-1321_sakura-2.mp4` | デルタ（20、SR・風圧・SR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎サクラ（282、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | BigArms（灼熱タブ・3 分モード・スペック固定 ON。デルタ（II）+ I-DOLL・サン（III）+ サクラ（I・操作）・AUTO 射撃 ON・オートバースト ON）。V-0837 の撮影 |
+| 1322 | `20261121-1322_soda-guillotine-ws.mp4` | ソーダ（312、MG・灼熱・SSR） + ◎ギロチン：ウィンタースレイヤー（182、AR・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1323 | `20261121-1323_soda-guillotine-ws.mp4` | ソーダ（312、MG・灼熱・SSR） + ◎ギロチン：ウィンタースレイヤー（182、AR・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 

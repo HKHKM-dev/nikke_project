@@ -35767,6 +35767,326 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "1322-01",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "c36b68edd6e0eaa8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1322-01",
+      "element": "ソーダ burst.effects[1]",
+      "key": "c36b68edd6e0eaa8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1322-01",
+      "element": "ソーダ skill1.effects[0]",
+      "key": "c36b68edd6e0eaa8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1322-01",
+      "element": "ソーダ skill2.effects[1]",
+      "key": "c36b68edd6e0eaa8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1322-02",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "17ffa4a0a26c4b31",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1322-02",
+      "element": "ソーダ burst.effects[1]",
+      "key": "17ffa4a0a26c4b31",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1322-02",
+      "element": "ソーダ skill1.effects[0]",
+      "key": "17ffa4a0a26c4b31",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1322-02",
+      "element": "ソーダ skill2.effects[1]",
+      "key": "17ffa4a0a26c4b31",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1322-04",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "c258bcfc4d15c6bb",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1322-04",
+      "element": "ソーダ burst.effects[1]",
+      "key": "c258bcfc4d15c6bb",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1322-04",
+      "element": "ソーダ skill1.effects[0]",
+      "key": "c258bcfc4d15c6bb",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1322-04",
+      "element": "ソーダ skill2.effects[1]",
+      "key": "c258bcfc4d15c6bb",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1322-05",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "0b813873557bbf20",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1322-05",
+      "element": "ソーダ burst.effects[1]",
+      "key": "0b813873557bbf20",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1322-05",
+      "element": "ソーダ skill1.effects[0]",
+      "key": "0b813873557bbf20",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1322-05",
+      "element": "ソーダ skill2.effects[1]",
+      "key": "0b813873557bbf20",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1322-06",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "6d84866602fc7eb3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1322-06",
+      "element": "ソーダ burst.effects[1]",
+      "key": "6d84866602fc7eb3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1322-06",
+      "element": "ソーダ skill1.effects[0]",
+      "key": "6d84866602fc7eb3",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1322-06",
+      "element": "ソーダ skill2.effects[1]",
+      "key": "6d84866602fc7eb3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1323-01",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "3e5dc728a92ffdb9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1323-01",
+      "element": "ソーダ burst.effects[1]",
+      "key": "3e5dc728a92ffdb9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1323-01",
+      "element": "ソーダ skill1.effects[0]",
+      "key": "3e5dc728a92ffdb9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1323-01",
+      "element": "ソーダ skill2.effects[1]",
+      "key": "3e5dc728a92ffdb9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1323-02",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "f2dcd1352e44ea70",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1323-02",
+      "element": "ソーダ burst.effects[1]",
+      "key": "f2dcd1352e44ea70",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1323-02",
+      "element": "ソーダ skill1.effects[0]",
+      "key": "f2dcd1352e44ea70",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1323-02",
+      "element": "ソーダ skill2.effects[1]",
+      "key": "f2dcd1352e44ea70",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1323-04",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "de8cff7d04b601e2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1323-04",
+      "element": "ソーダ burst.effects[1]",
+      "key": "de8cff7d04b601e2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1323-04",
+      "element": "ソーダ skill1.effects[0]",
+      "key": "de8cff7d04b601e2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1323-04",
+      "element": "ソーダ skill2.effects[1]",
+      "key": "de8cff7d04b601e2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1323-05",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "ef8d019afcd3fd41",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1323-05",
+      "element": "ソーダ burst.effects[1]",
+      "key": "ef8d019afcd3fd41",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1323-05",
+      "element": "ソーダ skill1.effects[0]",
+      "key": "ef8d019afcd3fd41",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1323-05",
+      "element": "ソーダ skill2.effects[1]",
+      "key": "ef8d019afcd3fd41",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1323-06",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "8da0adc567c123ae",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1323-06",
+      "element": "ソーダ burst.effects[1]",
+      "key": "8da0adc567c123ae",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1323-06",
+      "element": "ソーダ skill1.effects[0]",
+      "key": "8da0adc567c123ae",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1323-06",
+      "element": "ソーダ skill2.effects[1]",
+      "key": "8da0adc567c123ae",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }
