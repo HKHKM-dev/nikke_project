@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 158・効果 1119（根拠あり 1097）・notes 376（根拠あり 155）
+件数: キャラ 159・効果 1125（根拠あり 1103）・notes 378（根拠あり 155）
 
-notes の種類: 未対応 49・前提の外 118・計算に無関係 73・補足 43・間接 93
+notes の種類: 未対応 49・前提の外 118・計算に無関係 74・補足 43・間接 94
 
-スロット: supported 424・partial 34・unsupported 11・noEffect 59
+スロット: supported 427・partial 34・unsupported 11・noEffect 59
 
 ## 10 ラピ
 
@@ -617,6 +617,20 @@ notes の種類: 未対応 49・前提の外 118・計算に無関係 73・補�
   - effects[0] heal・burstUse: C-0618（確定）、C-0845（確定）、C-0846（仮説）
   - effects[1] timed・burstUse・attack: C-0595（確定）、C-0596（確定）
   - notes[0] 前提の外: 戦闘不能の火力型の味方の復活は、味方が倒れないので起きない（要件 5.2 節）: C-0443（範囲外）
+
+## 131 ペッパー
+
+- **skill1**: supported
+  - effects[0] heal・lastShot: C-1465（仮説）
+  - effects[1] state・lastShot・refreshHeart: C-1465（仮説）
+  - notes[0] 間接（HP）: リフレッシュハートの中身の、味方全体の受けるHP回復量▲（5 スタック・15 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く。受けるHP回復量▲は語彙に無い。plan/design-heal-amount-up.md 2.3 節）: 根拠なし
+- **skill2**: supported
+  - effects[0] damage・10 秒ごと・skill: C-1462（確定）
+  - notes[0] 計算に無関係: 敵の攻撃力▼（5 秒）はダメージに関係しない: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1463（確定）
+  - effects[1] stackChange・burstUse・スタック可能バフの全部: C-1464（確定）
+  - effects[2] heal・burstUse: C-1465（仮説）
 
 ## 140 シュガー
 
