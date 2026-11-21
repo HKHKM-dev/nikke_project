@@ -461,7 +461,7 @@ function FilterButtonRow<K extends string | number>({
 function TraySortMenu({ listOrder }: { listOrder: ListOrderControls }) {
   return (
     <>
-      {/* 並びの種類を 1 つずつボタンにする。押すとその並び（既定の向き）にし、いまの並びをもう一度押すと昇順・降順を入れ替える
+      {/* 並びの種類を 1 つずつボタンにする。押すとその並び（既定の向き）にする。向きは右の三角のボタンで入れ替える
           （続けて押せるように、押しても閉じない） */}
       <Popover
         button={
@@ -487,13 +487,11 @@ function TraySortMenu({ listOrder }: { listOrder: ListOrderControls }) {
                 type="button"
                 className="char-tray-action-button char-tray-sort-option"
                 aria-pressed={current}
-                title={current ? `${LIST_DIRECTION_LABEL[listOrder.direction]}（押すと入れ替える）` : undefined}
-                onClick={() => (current ? listOrder.toggleDirection() : listOrder.select(o))}
+                onClick={() => {
+                  if (!current) listOrder.select(o);
+                }}
               >
                 {LIST_ORDER_LABEL[o]}
-                <span className="char-tray-sort-mark" aria-hidden="true">
-                  {LIST_DIRECTION_MARK[listOrder.direction]}
-                </span>
               </button>
             );
           })}

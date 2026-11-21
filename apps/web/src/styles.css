@@ -1514,21 +1514,14 @@ html:has(.modern-view-container) {
 .char-tray-sort-label > .char-tray-sort-current {
   visibility: visible;
 }
-/* 並べ替えのポップアップの並びのボタン。どれも一番長いボタンの幅にそろえ、向きの印の場所はどのボタンにも取っておく
-   （いまの並びを切り替えても幅が変わらない。太字にすると幅が変わるので、いまの並びは枠だけで示す） */
+/* 並べ替えのポップアップの並びのボタン。どれも一番長いボタンの幅にそろえる（太字にすると幅が変わるので、いまの並びは枠だけで示す） */
 .char-tray-sort-options {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 6px;
 }
-.char-tray-sort-option {
-  justify-content: space-between;
-}
 .char-tray-sort-option[aria-pressed='true'] {
   outline: 2px solid var(--placing-blue);
-}
-.char-tray-sort-option[aria-pressed='false'] .char-tray-sort-mark {
-  visibility: hidden;
 }
 /* 押せないボタン（何も選んでいないときのクリア）。マウスを重ねても禁止の印（〇に斜線）は出さない（オーナーの指示）。押せる印（指の形）も出さない */
 .char-tray-action-button[aria-disabled='true'] {
