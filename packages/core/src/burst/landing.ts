@@ -274,12 +274,12 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
     claim: 'C-1329',
   },
   // メイデン：アイスローズ: III のタイマーの 00.00 から「所持 MP 分の連続攻撃」の 1 ヒット目まで 40f（動画で 61〜62f。止まり 22f を含む）。
-  // k 個目は 1 ヒット目から 5.5k f（四捨五入。動画で 0・6・10〜11・16〜17f）。ヒットの数は MP（burstDamage の hitsFrom）で、表は上限の 12 個。
-  // 5 個目からは読んでいない（同じ間隔とみた）
+  // k 個目は 1 ヒット目から 0・6・11・17f と、そこから 6f おき（動画でも同じ。MP 9 の 9 個目まで読んだ）。ヒットの数は MP（burstDamage の
+  // hitsFrom）で、表は上限の 12 個。10 個目からは読んでいない（6f おきとみた）
   {
     resourceIds: [183],
-    delays: { hitFrames: 40, effectFrames: 0, hitOffsets: [0, 6, 11, 17, 22, 28, 33, 39, 44, 50, 55, 61] },
-    claim: 'C-1345',
+    delays: { hitFrames: 40, effectFrames: 0, hitOffsets: [0, 6, 11, 17, 23, 29, 35, 41, 47, 53, 59, 65] },
+    claim: 'C-1496',
   },
   // エピネル: III のタイマーの 00.00 から「敵全体に」のバーストスキルダメージの 1 ヒットまで 39f（動画で 60〜61f。止まり 22f を含む）
   { resourceIds: [241], delays: { hitFrames: 39, effectFrames: 0 }, claim: 'C-1361' },

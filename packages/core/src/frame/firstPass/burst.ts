@@ -50,6 +50,7 @@ export function createBurstSchedule({
         ),
         options.timing ?? DEFAULT_BURST_TIMING,
         options.manualBursts ?? null,
+        options.manualStep3Slots ?? null,
       );
     }
   }
