@@ -16,7 +16,10 @@
           "assumes": {
             "ja": "命中 値 01（30）回ごと（通算 30・60…回目）に、対象（敵 1 体の前提で的）に 1 ヒット。きっかけの発と同じフレームに出る。バーストで持ち替えた武器の 1 発も命中に数える",
             "en": "Every 30 hits (value 01; the 30th, 60th, ... cumulative hit), one hit on the target (the range target, as there is one enemy), on the same frame as the triggering shot. The single shot of the Burst weapon also counts as a hit"
-          }
+          },
+          "claims": [
+            "C-1415"
+          ]
         },
         {
           "kind": "timed",
@@ -31,7 +34,10 @@
           "assumes": {
             "ja": "effects[0] と同じきっかけで、きっかけの発の次のフレームから付く（同じ回の追加ダメージには乗らない）。付いている間にまた付いたら維持を付け直す",
             "en": "Same trigger as effects[0]; applied from the frame after the triggering shot (not on the same trigger's additional damage). Reapplying refreshes the duration"
-          }
+          },
+          "claims": [
+            "C-1415"
+          ]
         }
       ]
     },
@@ -50,7 +56,12 @@
           "assumes": {
             "ja": "説明文にきっかけの無いクールタイムごとのアクティブ。戦闘開始から 15 秒ごと（撃たない間も）に発動し、発動の 34f 後に、攻撃範囲内の敵（敵 1 体の前提で的）に 1 ヒット。値は発動の直前のもの。バーストの 1 発の後の待ち（burst の returnCooldownFrames）の間に予定が来たら、明けたフレームに発動し、そこから数え直す。ゲージを溜めるかは確かめていない（1 ヒットで見分けられない）",
             "en": "A cooldown-based active skill with no trigger in the description. It activates every 15 s from the start of battle (even when not firing) and lands one hit on enemies within attack range (the range target, as there is one enemy) 34 frames later, valued just before the activation. If an activation falls in the wait after the Burst shot (returnCooldownFrames of the Burst), it activates when the wait ends and the period restarts from there. Whether it charges the Burst gauge is not verified (one hit cannot tell)"
-          }
+          },
+          "claims": [
+            "C-1416",
+            "C-1417",
+            "C-1420"
+          ]
         },
         {
           "kind": "timed",
@@ -68,7 +79,10 @@
           "assumes": {
             "ja": "effects[0] の発動のフレームがフルバーストの窓の中の時だけ、次のフレームから付く",
             "en": "Applied from the next frame only when the activation frame of effects[0] is inside a Full Burst window"
-          }
+          },
+          "claims": [
+            "C-1418"
+          ]
         }
       ]
     },
@@ -88,7 +102,11 @@
           },
           "firstShotDelayFrames": 307,
           "returnFirstShotFrames": 117,
-          "returnCooldownFrames": 106
+          "returnCooldownFrames": 106,
+          "claims": [
+            "C-1419",
+            "C-1420"
+          ]
         }
       ]
     }
