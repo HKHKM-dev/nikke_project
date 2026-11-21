@@ -1210,7 +1210,7 @@ svg.settings-option-icon,
   cursor: pointer;
 }
 .modern-slot-empty-plus {
-  font-size: 3em;
+  font-size: 3.6em;
   line-height: 1;
   /* ＋ は枠の真ん中に置く（ほかの文字の並びからは外す） */
   position: absolute;
