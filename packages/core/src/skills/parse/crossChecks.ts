@@ -17,6 +17,7 @@ import {
   isStateEndUntil,
   isStatContent,
   isStacksCondition,
+  isAllStackableChange,
   isStaticStateGrant,
   isSummonAttackTrigger,
   isSkillFiredTrigger,
@@ -448,8 +449,8 @@ function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEntry>>, r
   );
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
-      // 味方の全部のスタック可能バフへの▲（allies）は、ほかの枠の付与にも足すので同じ定義の付与は要らない
-      if (e.kind !== 'stackChange' || e.target === 'enemy' || e.target === 'allies') return;
+      // 味方の全部のスタック可能バフへの▲（allStackable）は、ほかの枠の付与にも足すので同じ定義の付与は要らない
+      if (e.kind !== 'stackChange' || isAllStackableChange(e) || e.target === 'enemy') return;
       if (!hasSelfStackingGrant(entries, e.state)) {
         fail(
           `${root}.${slot}.effects[${i}]`,

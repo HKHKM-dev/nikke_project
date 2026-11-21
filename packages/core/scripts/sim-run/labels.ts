@@ -6,7 +6,7 @@ import {
   type ItemEffect,
   type ResolvedTrigger,
 } from '../../src/skills/resolve.ts';
-import type { SkillEffect } from '../../src/skills/types.ts';
+import { isAllStackableChange, type SkillEffect } from '../../src/skills/types.ts';
 
 /** 効果の値（比は %、固定値はそのまま。発動者の防御力の比は、分かれば掛けた後の量も） */
 export function effectValueText(e: ItemEffect, appliedAmount?: number): string {
@@ -77,7 +77,7 @@ export function triggerLabel(t: ResolvedTrigger): string {
 
 /** 効果の行に添える状態の id（付与・解除・スタック量の増減。味方の全部のスタック可能バフへの▲は allStackable） */
 export function stateLabelOf(e: SkillEffect): string {
-  if (e.kind === 'stackChange') return e.target === 'allies' ? ' allStackable' : ` ${e.state}`;
+  if (e.kind === 'stackChange') return isAllStackableChange(e) ? ' allStackable' : ` ${e.state}`;
   // 敵の状態の解除は (enemy) を添える（plan/design-phantom.md 2.3 節）
   if (e.kind === 'removeState') return e.target === 'enemy' ? ` ${e.state}(enemy)` : ` ${e.state}`;
   return e.kind === 'state' ? ` ${e.state}` : '';

@@ -12,6 +12,7 @@ import {
   SKILL_SLOTS,
   contentStatOf,
   isCoverHealedTrigger,
+  isAllStackableChange,
   isAllyDecrease,
   type BuffStat,
   type IndirectPath,
@@ -250,7 +251,7 @@ function shapeOfEffect(e: SkillEffect, def: SkillDefinition): NonNullable<Minima
     // 自分の状態の消去（cancelState の self）と状態の維持の延長（stateExtend）も、解除と同じく相手の状態の中身
     ...(e.kind === 'state' ||
     e.kind === 'removeState' ||
-    (e.kind === 'stackChange' && e.target !== 'allies') ||
+    (e.kind === 'stackChange' && !isAllStackableChange(e)) ||
     e.kind === 'stateExtend' ||
     (e.kind === 'cancelState' && e.target === 'self')
       ? { stats: stateStatsOf(def, e.state) }

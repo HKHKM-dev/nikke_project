@@ -37,16 +37,17 @@
       "effects": [
         {
           "kind": "stackChange",
-          "state": "mindIfIBorrowThis",
+          "allStackable": true,
           "trigger": {
             "count": "normalShot",
             "everyRef": 1
           },
-          "target": "self",
+          "target": "allies",
+          "targetElement": "Wind",
           "amountRef": 2,
           "assumes": {
-            "ja": "自分の借りていくよぉ…に足す分だけ。S1 と同じ発で起きる時の順は見分けていない（どちらの順でも同じ段になる）",
-            "en": "Only the part added to own Mind If I Borrow This?. The order when it fires on the same shot as Skill 1 is not distinguished (either order gives the same stack count)"
+            "ja": "通常攻撃 値 01（12）回ごとに、風圧コードの味方（自分も入る）が持つ、上限のある状態と timed のスタックのバフの全部に、付いていれば 値 02 段足す（上限は上げない。付いていなければ足さない。ディーゼルの宝物版 S1 と同じ読み。C-1182）。自分の借りていくよぉ…に足す分は C-0873 で確かめた（S1 と同じ発で起きる時は、S1 の付与を付いているとみなす。どちらの順でも同じ段になる）。ほかの風圧コードの味方のバフ（ほかの味方のスキルで付いたものも）に足すことと、足すと全部の段の維持を付け直す（付与と同じに数える）ことは確かめていない（V-0850）",
+            "en": "Every value 01 (12) normal attacks, adds value 02 stacks to every stackable buff (states and timed buffs with a stack cap) held by Wind Code allies (self included), only if present (the cap is not raised; not when absent; same reading as Diesel treasure S1, C-1182). The part added to her own Mind If I Borrow This? is verified (C-0873; on the shot shared with Skill 1, the Skill 1 application counts as present, and either order gives the same stack count). Adding to buffs on other Wind Code allies (including those from other allies' skills) and refreshing the duration of all stacks on adding (counted like an application) are not verified (V-0850)"
           },
           "claims": [
             "C-0873"
@@ -68,18 +69,7 @@
           ]
         }
       ],
-      "notes": [
-        {
-          "ja": "風圧コードのほかの味方のスタック可能バフ効果のスタック量▲は未対応（自分の借りていくよぉ…の分だけ扱う）",
-          "en": "The stack count increase of stackable buffs on other Wind Code allies is not modeled (only own Mind If I Borrow This? is handled)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "stackChange",
-            "target": "allies",
-            "trigger": "normalShot"
-          }
-        }
-      ]
+      "notes": []
     },
     "burst": {
       "effects": [
