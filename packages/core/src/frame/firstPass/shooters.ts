@@ -113,6 +113,7 @@ export function createShooters({
   paramsAt,
   passiveFiring,
   pauseLeft,
+  muzzleHits,
   pelletsAt,
   shooters,
   shotEvents,
@@ -299,6 +300,19 @@ export function createShooters({
       );
       const critHits = hits * critRate;
       log.critHits!.push(critHits);
+      // 当たったペレットのクリティカル（plan/design-k.md 2.2 節。V-0848）。ペレット数を替える使用武器変更の発は、変更後のペレット数で
+      // 数える。SG でない基礎の武器は変更後のペレット数 × 1 銃口の命中の期待値（二丁持ちの銃口の数を掛けない）、SG の基礎の武器は当たった
+      // ペレットの数を変更後のペレット数の比で直す。ほかは当たったペレットの数
+      const base = slot.character.shot;
+      const changedPellets = params.weapon !== null && shot.shotCount !== base.shotCount;
+      const critPellets =
+        critRate *
+        (!changedPellets
+          ? pelletCount
+          : slot.character.weaponType === 'SG'
+            ? (pelletCount * shot.shotCount) / base.shotCount
+            : (shot.shotCount * hits) / muzzleHits[i]!);
+      log.critPellets!.push(critPellets);
       log.pelletHits!.push(pelletCount);
       shotEvents[i] = {
         lastShot: state.lastShot,
@@ -306,6 +320,7 @@ export function createShooters({
         hits,
         coreHits,
         critHits,
+        critPellets,
         pellets: pelletCount,
       };
       if (params.weapon !== null) shotEvents[i]!.weaponChange = true;

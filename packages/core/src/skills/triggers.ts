@@ -72,6 +72,11 @@ export type ShotEvent = {
    */
   critHits?: number;
   /**
+   * この射撃の当たったペレットのクリティカルの期待値（当たったペレットの数 × その発の通常攻撃の会心率。plan/design-k.md 2.2 節）。
+   * critPelletHit の回数に足す。省略は 0
+   */
+  critPellets?: number;
+  /**
    * この射撃で的に当たったペレットの数（期待値か、録画で数えた入力。plan/design-pellet-hit.md 2 節）。
    * pelletHit の回数に足す。省略は hits（1 ペレットの武器）
    */
@@ -102,10 +107,15 @@ export function shotCountWeight(kind: ShotCountKind, shot: ShotEvent): number {
       return Math.max(0, shot.hits - shot.coreHits);
     case 'critHit':
       return shot.critHits ?? 0;
+    case 'critPelletHit':
+      return shot.critPellets ?? 0;
     case 'fullChargeShot':
       return shot.fullCharge ? 1 : 0;
     case 'lastShot':
       return (shot.lastBullet ?? shot.lastShot) ? 1 : 0;
+    // 二丁持ちでもマガジンの最後の発だけ（plan/design-k.md 2.4 節）
+    case 'lastShotOnce':
+      return shot.lastShot ? 1 : 0;
     case 'weaponChangeShot':
       return shot.weaponChange === true ? 1 : 0;
     case 'pelletHit':
@@ -178,9 +188,7 @@ export function createStateWindowTracker(
     if (conditionState !== undefined && startOfHeld(conditionState, ev.frame, ev.frame + 1) === undefined) return false;
     // 全員の発の和は 1 フレームで N を超えうるので、teamAmmo と同じく、N の倍数を越えたら 1 回だけ発火する
     if (team) {
-      const fired =
-        Math.floor((count + weight) / trigger.every + COUNT_EPSILON) >
-        Math.floor(count / trigger.every + COUNT_EPSILON);
+      const fired = crossedMultiples(count, weight, trigger.every) > 0;
       count += weight;
       return fired;
     }
@@ -204,9 +212,12 @@ export function advanceShotCount(count: number, weight: number, every: number): 
   if (weight > every + COUNT_EPSILON) {
     throw new RangeError(`a count trigger got ${weight} in one shot, more than every (${every})`);
   }
-  const next = count + weight;
-  const fired = Math.floor(next / every + COUNT_EPSILON) > Math.floor(count / every + COUNT_EPSILON);
-  return { count: next, fired };
+  return { count: count + weight, fired: crossedMultiples(count, weight, every) > 0 };
+}
+
+/** 累計 count に weight を足すと、N（every）の倍数をいくつまたぐか（端数の誤差は COUNT_EPSILON で許す） */
+export function crossedMultiples(count: number, weight: number, every: number): number {
+  return Math.floor((count + weight) / every + COUNT_EPSILON) - Math.floor(count / every + COUNT_EPSILON);
 }
 
 /** 1 フレームの出来事 */
@@ -335,6 +346,31 @@ export function createTriggerTracker(
   scheduleModel: BurstScheduleModel | null,
   everyAt?: ShotCountEveryAt,
 ): TriggerTracker {
+  const fires = trackerBody(trigger, slotIndex, scheduleModel, everyAt);
+  return (ev) => Number(fires(ev)) > 0;
+}
+
+/**
+ * createTriggerTracker の、そのフレームの発火の数を返す版。1 発で何回も発火するのは critPelletHit だけ（plan/design-k.md 2.2 節）で、
+ * ほかは 0 か 1。倍率ダメージの発動（trackTriggerFires）が、その数だけ同じフレームに並べる
+ */
+export function createFireCounter(
+  trigger: ResolvedTrigger,
+  slotIndex: number,
+  scheduleModel: BurstScheduleModel | null,
+  everyAt?: ShotCountEveryAt,
+): (ev: FrameEvents) => number {
+  const fires = trackerBody(trigger, slotIndex, scheduleModel, everyAt);
+  return (ev) => Number(fires(ev));
+}
+
+/** 追い手の中身。critPelletHit の発火の数のほかは真偽を返す */
+function trackerBody(
+  trigger: ResolvedTrigger,
+  slotIndex: number,
+  scheduleModel: BurstScheduleModel | null,
+  everyAt?: ShotCountEveryAt,
+): (ev: FrameEvents) => boolean | number {
   let count = 0;
   let lastEventFrame: number | undefined;
   const t = trigger;
@@ -364,7 +400,7 @@ export function createTriggerTracker(
       if (t.count === 'teamAmmo') {
         const weight = teamShotWeight('teamAmmo', ev.shots);
         const every = t.every;
-        const fired = Math.floor((count + weight) / every) > Math.floor(count / every);
+        const fired = crossedMultiples(count, weight, every) > 0;
         count += weight;
         return fired;
       }
@@ -372,6 +408,13 @@ export function createTriggerTracker(
       if (!shot) return false;
       // 確率のきっかけは、回数の量が正の射撃のたびに引く（付く確率は skills/chance.ts。plan/design-soldier-eg.md 3.1 節）
       if (t.chance !== undefined) return shotCountWeight(t.count, shot) > 0;
+      // 当たったペレットのクリティカルは、1 発で N の倍数をまたいだ数だけ発火する（plan/design-k.md 2.2 節。窓は組まない）
+      if (t.count === 'critPelletHit') {
+        const weight = shotCountWeight(t.count, shot);
+        const fires = crossedMultiples(count, weight, everyAt?.(ev.frame) ?? t.every);
+        count += weight;
+        return fires;
+      }
       const next = advanceShotCount(count, shotCountWeight(t.count, shot), everyAt?.(ev.frame) ?? t.every);
       count = next.count;
       // ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 窓の外の発も数え、窓の外で届いた回は発火せずに過ぎる
@@ -568,6 +611,8 @@ export function replayEvents(
       };
       const critHits = log.critHits?.[k];
       if (critHits !== undefined) shot.critHits = critHits;
+      const critPellets = log.critPellets?.[k];
+      if (critPellets !== undefined) shot.critPellets = critPellets;
       const pellets = log.pelletHits?.[k];
       if (pellets !== undefined) shot.pellets = pellets;
       if (lastBullets !== null) shot.lastBullet = lastBullets.has(f);
@@ -656,8 +701,14 @@ export function trackTriggerFires(
   events: readonly FrameEvents[],
   everyAt?: ShotCountEveryAt,
 ): TriggerFire[] {
-  const fires = createTriggerTracker(trigger, slotIndex, schedule?.model ?? null, everyAt);
+  const fires = createFireCounter(trigger, slotIndex, schedule?.model ?? null, everyAt);
   const fired: TriggerFire[] = [];
-  for (const ev of events) if (fires(ev)) fired.push({ frame: ev.frame, context: fireContextOf(trigger, ev) });
+  for (const ev of events) {
+    // 1 発で何回も発火したら、同じフレームに数だけ並べる（critPelletHit。plan/design-k.md 2.2 節）
+    const n = fires(ev);
+    if (n === 0) continue;
+    const fire = { frame: ev.frame, context: fireContextOf(trigger, ev) };
+    for (let k = 0; k < n; k++) fired.push(fire);
+  }
   return fired;
 }

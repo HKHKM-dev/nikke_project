@@ -309,7 +309,7 @@ const KIND_INFO: Record<string, Info> = {
   'state:remove': [
     '状態・スタックの解除（同じスキルが外す。解除不可の状態は外さない読み）',
     'ok',
-    'removeState（自分の状態。2 段目の段 1。味方の状態はなし）',
+    'removeState（自分の状態（2 段目の段 1）・味方全体の状態・敵の状態）',
   ],
   'state:cancel': [
     '状態の消去（同じスキルが外す。解除不可の状態も外す）',

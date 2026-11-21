@@ -203,6 +203,9 @@ function parseGaugeHitsAndCondition(v: Record<string, Json>, effect: DamageEffec
     if (trigger.stacksRef !== undefined) fail(`${path}.gaugeHits`, 'gaugeHits cannot be used with stacksRef');
     // 1 パス目のゲージの予約は自分の発だけを数える（味方が消費した弾の合計とは数え方が違う）
     if (trigger.count === 'teamAmmo') fail(`${path}.gaugeHits`, 'gaugeHits cannot be used with a teamAmmo count');
+    // 1 パス目のゲージの予約は 1 発で 1 回だけ数える（plan/design-k.md 2.2 節）
+    if (trigger.count === 'critPelletHit')
+      fail(`${path}.gaugeHits`, 'gaugeHits cannot be used with a critPelletHit count');
     effect.gaugeHits = parseGaugeHits(v.gaugeHits, `${path}.gaugeHits`, 0);
   }
   // 発火の条件。timed と同じ型（鍵は inFullBurst・enemyState）
@@ -407,6 +410,8 @@ function parseDamageGaugePerHit(v: Record<string, Json>, effect: DamageEffect, p
   // 味方が消費した弾の合計の倍率ダメージがゲージを溜めるかは確かめていない（plan/design-little-mermaid.md 2.1 節）
   if (isShotCountTrigger(trigger) && trigger.count === 'teamAmmo')
     fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with a teamAmmo count');
+  if (isShotCountTrigger(trigger) && trigger.count === 'critPelletHit')
+    fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with a critPelletHit count');
   if (effect.periodShorten?.window !== undefined)
     fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with a periodShorten window');
   // 1 パス目は発火のフレームより後のゲージだけを予約できる。条件は 1 パス目の後に絞るので組み合わせない

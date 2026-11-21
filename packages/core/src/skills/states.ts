@@ -533,6 +533,13 @@ export const NAMED_STATES = {
    * 読む）
    */
   demonsBreath: { name: { ja: '鬼の気', en: "Demon's Breath" }, holder: 'ally' },
+  /**
+   * 傾く天秤（K の S1。最後の弾丸で自分にクリティカル確率▲のスタック・持続。フルバーストタイムの終わりに解除。S2 の「傾く天秤が付与された時」が
+   * 読む）
+   */
+  tiltedScale: { name: { ja: '傾く天秤', en: 'Tilted Scale' }, holder: 'ally' },
+  /** 正義の実現（K の S2。味方全体に最大装弾数▼・攻撃ダメージ▲・10 秒。フルバーストタイムの終わりに解除） */
+  fulfillmentOfRighteousness: { name: { ja: '正義の実現', en: 'Fulfillment of Righteousness' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

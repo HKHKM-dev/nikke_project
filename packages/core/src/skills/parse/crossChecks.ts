@@ -260,10 +260,25 @@ function validateFullStackTriggers(entries: Partial<Record<SkillSlot, SkillEntry
   }
 }
 
-/** 敵の状態の解除（removeState の enemy）は、同じ定義にその状態を敵に付ける付与が要る（plan/design-phantom.md 2.3 節） */
+/**
+ * 敵の状態の解除（removeState の enemy）は、同じ定義にその状態を敵に付ける付与が要る（plan/design-phantom.md 2.3 節）。味方全体の解除
+ * （allies）は、同じ定義にその状態を味方全体に付ける付与が要る（plan/design-k.md 2.1 節。静的な状態の決め方が同じ定義の解除だけを見るので、
+ * ほかの枠の定義が付ける状態は外せない）
+ */
 function validateEnemyRemoves(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
+      if (e.kind === 'removeState' && e.target === 'allies') {
+        const granted = SKILL_SLOTS.flatMap((s) => entries[s]?.effects ?? []).some(
+          (g) => g.kind === 'state' && g.state === e.state && g.target === 'allies' && g.enemy !== true,
+        );
+        if (!granted)
+          fail(
+            `${root}.${slot}.effects[${i}].state`,
+            `a remove on all allies needs a grant of "${e.state}" on all allies in the definition`,
+          );
+        return;
+      }
       if (e.kind !== 'removeState' || e.target !== 'enemy') return;
       if (!hasSelfStackingGrant(entries, e.state, 'enemy', false))
         fail(

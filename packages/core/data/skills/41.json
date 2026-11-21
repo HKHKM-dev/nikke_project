@@ -1,0 +1,156 @@
+{
+  "formatVersion": 1,
+  "resourceId": 41,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "tiltedScale",
+          "trigger": {
+            "count": "lastShotOnce"
+          },
+          "target": "self",
+          "maxStacksRef": 2,
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "critRate",
+              "ref": 1
+            }
+          ],
+          "assumes": {
+            "ja": "「持続」は、フルバーストタイムの終わりの解除（effects[3]）まで続く読み（戦闘の終わりまでの維持と、解除で書く）。最後の弾丸ごとに 1 スタック付き、同じ発の effects[1] のスタック量▲と合わせて 1 + 値 03 スタック（Lv10 は 30）増える。二丁持ちでも最後の弾丸は 1 マガジンに 1 回（lastShotOnce。V-0848 の単騎の会心率の上がり方）。付与だけが 1 マガジンに 2 回（31 スタック）とは見分けられない",
+            "en": "\"Continuous\" is read as lasting until the removal at the end of Full Burst (effects[3]) (written as lasting until the end of battle plus the removal). Each last bullet adds 1 stack, and with the stack increase of effects[1] on the same shot, 1 + value 03 stacks (30 at Lv10). The last bullet fires once per magazine even for a dual-wield weapon (lastShotOnce; the rise of the critical rate in the solo runs of V-0848). It cannot be told apart from the grant alone firing twice per magazine (31 stacks)"
+          },
+          "claims": [
+            "C-1498"
+          ]
+        },
+        {
+          "kind": "stackChange",
+          "state": "tiltedScale",
+          "trigger": {
+            "count": "lastShotOnce"
+          },
+          "target": "self",
+          "amountRef": 3,
+          "claims": [
+            "C-1498"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "critPelletHit",
+            "everyRef": 4
+          },
+          "damageType": "additional",
+          "ref": 5,
+          "assumes": {
+            "ja": "「ペレットごとのクリティカル攻撃」は、発ごとに当たったペレットの数 × その発の会心率を足して数え（critPelletHit。乱数を期待値で持つ）、1 発で 4 の倍数をまたいだ数だけ追加ダメージを出す。基礎の SMG は二丁持ちの 2 ヒット × 1 ペレット、バーストの使用武器変更の発は 10 ペレット × 弾丸命中率（V-0848 のフルバーストの中の発の分解）。追加ダメージは発と同じフレームに出る（V-0848 の単騎の HUD の増分）",
+            "en": "\"Critical hits per pellet\" are counted by adding, per shot, the pellets that hit times that shot's critical rate (critPelletHit; the randomness is kept as an expectation), and one shot deals as many additional damages as multiples of 4 it crosses. The base SMG counts two dual-wield hits of one pellet each; a shot of the burst weapon change counts 10 pellets times the bullet hit rate (the decomposition of the shots in Full Burst in V-0848). The additional damage lands on the same frame as the shot (the HUD increments of the solo runs in V-0848)"
+          },
+          "claims": [
+            "C-1499",
+            "C-1501"
+          ]
+        },
+        {
+          "kind": "removeState",
+          "state": "tiltedScale",
+          "trigger": "fullBurstEnd",
+          "target": "self",
+          "claims": [
+            "C-1502"
+          ]
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "fulfillmentOfRighteousness",
+          "trigger": {
+            "applied": "tiltedScale"
+          },
+          "target": "allies",
+          "durationRef": 2,
+          "contents": [
+            {
+              "stat": "maxAmmo",
+              "ref": 1,
+              "decrease": true
+            },
+            {
+              "stat": "attackDamage",
+              "ref": 3
+            }
+          ],
+          "assumes": {
+            "ja": "傾く天秤が付くたび（最後の弾丸ごと。スタックが上限でも）に付き直し、10 秒の維持を始めから数え直す読み（同一効果は重複不可。確かめていない）。効果 1・2 の維持（値 02・04）はどちらも 10 秒なので、状態の維持にそろえた",
+            "en": "Read as re-applied each time Tilted Scale is applied (each last bullet, even at max stacks), restarting the 10 s duration (similar effects cannot be stacked; unchecked). The durations of Effects 1 and 2 (values 02 and 04) are both 10 s, so they follow the state's duration"
+          },
+          "claims": [
+            "C-1497"
+          ]
+        },
+        {
+          "kind": "removeState",
+          "state": "fulfillmentOfRighteousness",
+          "trigger": "fullBurstEnd",
+          "target": "allies",
+          "claims": [
+            "C-1502"
+          ]
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "damageRef": 1,
+          "durationRef": 2,
+          "shotCount": 10,
+          "assumes": {
+            "ja": "変更後の武器のレートは CDN の changeWeapon（144rpm。説明文の攻撃速度 90%▼ と同じ）。1 発のダメージは説明文の値 × 二丁持ちの 2 ヒットの和で、ゲームでは 10 ペレット（1 ペレットは値 × 2 ÷ 10）が独立に会心・コアを決める（V-0848 のフルバーストの中の発の分解。モデルは 2 ヒット × 10 ペレットで持ち、期待値は同じ）。残弾・リロード・コアに当たる割合・最初の発の待ちは基礎の武器の扱いのまま（確かめていない）",
+            "en": "The changed weapon fires at the CDN changeWeapon rate (144 rpm, matching Attack Speed ▼ 90% in the text). The damage per shot is the text value times two dual-wield hits, and in the game 10 pellets (each value × 2 ÷ 10) roll critical and core independently (the decomposition of the shots in Full Burst in V-0848; the model holds 2 hits × 10 pellets with the same expectation). Ammo, reload, core hit rate and the first-shot wait follow the base weapon (unchecked)"
+          },
+          "claims": [
+            "C-1500"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-1500"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 5,
+          "durationRef": 6,
+          "claims": [
+            "C-1500"
+          ]
+        }
+      ],
+      "notes": []
+    }
+  }
+}

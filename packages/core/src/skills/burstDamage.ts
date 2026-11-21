@@ -27,6 +27,7 @@ import {
   isAppliedTrigger,
   isShotCountTrigger,
   isTimerTrigger,
+  isLastShotCount,
   SKILL_SLOTS,
   splitsPerCount,
   type DamageEffect,
@@ -749,7 +750,9 @@ export function isPerShotTrigger(trigger: ResolvedTrigger): boolean {
     typeof trigger === 'object' &&
     'every' in trigger &&
     trigger.every === 1 &&
-    trigger.count !== 'lastShot' &&
+    !isLastShotCount(trigger.count) &&
+    // 1 発で何回も発火しうる（plan/design-k.md 2.2 節）
+    trigger.count !== 'critPelletHit' &&
     trigger.during === undefined &&
     trigger.firesDuring === undefined
   );

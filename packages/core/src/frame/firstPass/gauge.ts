@@ -144,6 +144,7 @@ export function createGauge({ controlledSlot, lists, options, passive, slots }: 
     gaugeHitsOf,
     hitGaugeEnergy,
     hitsAt,
+    muzzleHits,
     obstacleEnergyAt,
     obstacles,
     pelletsAt,
