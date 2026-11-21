@@ -59,7 +59,10 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, eh: E }) => 
     const weapon = windows({ holder: E, kind: 'timed', skill: 'burst', stat: 'weapon' });
     expect(uses.length).toBeGreaterThan(0);
     expect(weapon).toHaveLength(uses.length);
+    expect(weapon.filter((w) => w.end <= lastShot).length).toBeGreaterThan(0);
     for (const w of weapon) {
+      // 戦闘の終わりの直前の回は、撃つ前に戦闘が終わる
+      if (w.end > lastShot) continue;
       expect(shots.filter((f) => f >= w.start && f < w.end)).toHaveLength(1);
       // 撃ち切った後も SMG で撃ち続ける
       expect(shots.some((f) => f > w.end)).toBe(true);

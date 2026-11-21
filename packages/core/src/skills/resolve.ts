@@ -1564,6 +1564,8 @@ export type ChangedWeaponOverrides = {
   /** フルチャージダメージ（倍率。3 = 300%） */
   fullChargeDamage?: number;
   maxAmmo?: number;
+  /** コアの倍率（2 = ×2.0。plan/design-eh.md 8.1 節） */
+  coreDamageRate?: number;
   /** 1 発の弾の数（ペレット数。plan/design-zwei.md 2.2 節） */
   shotCount?: number;
   /** 即着弾でチャージしない武器にする（instantFire。plan/design-skill-stage11.md 2.1 節） */
@@ -1594,6 +1596,7 @@ export function changedWeaponShot(
     ...(overrides.chargeTime !== undefined ? { chargeTime: overrides.chargeTime } : {}),
     ...(overrides.fullChargeDamage !== undefined ? { fullChargeDamage: overrides.fullChargeDamage } : {}),
     ...(overrides.maxAmmo !== undefined ? { maxAmmo: overrides.maxAmmo } : {}),
+    ...(overrides.coreDamageRate !== undefined ? { coreDamageRate: overrides.coreDamageRate } : {}),
     ...(overrides.shotCount !== undefined ? { shotCount: overrides.shotCount } : {}),
     ...(overrides.chargeInput === true ? { inputType: 'DOWN_Charge' } : {}),
     // 即着弾でチャージしない（チャージ時間 0・押下型・Instant。飛ぶ弾の欄は外す）
@@ -1673,6 +1676,7 @@ function resolveWeaponChange(
     overrides.maxAmmo = n;
   }
   if (effect.maxAmmo !== undefined) overrides.maxAmmo = effect.maxAmmo;
+  if (effect.coreDamageRate !== undefined) overrides.coreDamageRate = effect.coreDamageRate;
   if (effect.instantFire === true) overrides.instantFire = true;
   if (effect.shotCount !== undefined) overrides.shotCount = effect.shotCount;
   const untilEmpty = effect.maxAmmoRef !== undefined || effect.maxAmmo !== undefined;

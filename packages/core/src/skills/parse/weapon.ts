@@ -33,6 +33,7 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
       'chargeTimeRef',
       'chargeTimeFixed',
       'fullChargeDamage',
+      'coreDamageRate',
       'chargeReleaseSeconds',
       'maxAmmoRef',
       'maxAmmo',
@@ -94,6 +95,13 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
     const percent = v.fullChargeDamage;
     assertPositiveFinite(percent, `${path}.fullChargeDamage`);
     effect.fullChargeDamage = percent;
+  }
+  // 変更後の武器のコアの倍率（録画で読む即値。plan/design-eh.md 8.1 節）
+  if (v.coreDamageRate !== undefined) {
+    const rate = v.coreDamageRate;
+    assertPositiveFinite(rate, `${path}.coreDamageRate`);
+    if (rate < 1) fail(`${path}.coreDamageRate`, `expected at least 1, got ${rate}`);
+    effect.coreDamageRate = rate;
   }
   if (v.chargeReleaseSeconds !== undefined) {
     const seconds = v.chargeReleaseSeconds;

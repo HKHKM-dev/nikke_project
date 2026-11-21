@@ -298,5 +298,324 @@
     },
     "source": "V-0813",
     "readAt": "2026-11-21"
+  },
+  {
+    "id": "1271-18",
+    "recording": "1271",
+    "kind": "hit",
+    "use": "compare",
+    "value": 3476912,
+    "unit": "ダメージ",
+    "description": "1 回目のバーストの使用武器変更の発（コア・距離ボーナスあり・会心なし。f1559）。変更後の 1 発（最終攻撃力の 61% × 250%）に、コア ×2.0・フルバースト補正・バーストの攻撃力▲が乗った値（S2 の有利コードの攻撃ダメージ▲も）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "部位・会心・距離ボーナスは、増分がモデルの格子のどれに合うかで決めた。距離ボーナスの有無は直後の SMG の発と同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 45,
+        "fullBurst": 0,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0813",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1271-19",
+    "recording": "1271",
+    "kind": "hit",
+    "use": "compare",
+    "value": 3026752,
+    "unit": "ダメージ",
+    "description": "2 回目のバーストの使用武器変更の発（コア・距離ボーナスあり・会心なし。f3977）。変更後の 1 発（最終攻撃力の 61% × 250%）に、コア ×2.0・フルバースト補正・バーストの攻撃力▲が乗った値",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "部位・会心・距離ボーナスは、増分がモデルの格子のどれに合うかで決めた。距離ボーナスの有無は直後の SMG の発と同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 45,
+        "fullBurst": 1,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0813",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1271-20",
+    "recording": "1271",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2702457,
+    "unit": "ダメージ",
+    "description": "4 回目のバーストの使用武器変更の発（コア・距離ボーナスなし・会心なし。f9142）。変更後の 1 発（最終攻撃力の 61% × 250%）に、コア ×2.0・フルバースト補正・バーストの攻撃力▲が乗った値",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "部位・会心・距離ボーナスは、増分がモデルの格子のどれに合うかで決めた。距離ボーナスの有無は直後の SMG の発と同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 45,
+        "fullBurst": 3,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0813",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1271-21",
+    "recording": "1271",
+    "kind": "timing",
+    "use": "compare",
+    "value": [92],
+    "unit": "f",
+    "description": "1 回目のバーストの使用武器変更の後の、SMG の最初の発の、III のタイマーの 00.00（f1476）からの動画のフレーム（入りの止まり 22f を含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "フルバーストの窓の中の E.H. の発のうち、使用武器変更の発の次の発（変更の発の増分より先に SMG が撃った回は、その SMG の発）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "shot",
+        "anchor": "fullBurst:0",
+        "within": "window",
+        "skip": 1,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0813",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1271-22",
+    "recording": "1271",
+    "kind": "timing",
+    "use": "compare",
+    "value": [92],
+    "unit": "f",
+    "description": "2 回目のバーストの使用武器変更の後の、SMG の最初の発の、III のタイマーの 00.00（f3899）からの動画のフレーム（入りの止まり 22f を含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "フルバーストの窓の中の E.H. の発のうち、使用武器変更の発の次の発（変更の発の増分より先に SMG が撃った回は、その SMG の発）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "shot",
+        "anchor": "fullBurst:1",
+        "within": "window",
+        "skip": 1,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0813",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1271-23",
+    "recording": "1271",
+    "kind": "timing",
+    "use": "compare",
+    "value": [92],
+    "unit": "f",
+    "description": "3 回目のバーストの使用武器変更の後の、SMG の最初の発の、III のタイマーの 00.00（f6461）からの動画のフレーム（入りの止まり 22f を含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "フルバーストの窓の中の E.H. の発のうち、使用武器変更の発の次の発（変更の発の増分より先に SMG が撃った回は、その SMG の発）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "shot",
+        "anchor": "fullBurst:2",
+        "within": "window",
+        "skip": 1,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0813",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1271-24",
+    "recording": "1271",
+    "kind": "timing",
+    "use": "compare",
+    "value": [92],
+    "unit": "f",
+    "description": "4 回目のバーストの使用武器変更の後の、SMG の最初の発の、III のタイマーの 00.00（f9051）からの動画のフレーム（入りの止まり 22f を含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "フルバーストの窓の中の E.H. の発のうち、使用武器変更の発の次の発（変更の発の増分より先に SMG が撃った回は、その SMG の発）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "shot",
+        "anchor": "fullBurst:3",
+        "within": "window",
+        "skip": 1,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0813",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1271-25",
+    "recording": "1271",
+    "kind": "hit",
+    "use": "compare",
+    "value": 148327,
+    "unit": "ダメージ",
+    "description": "E.H. の SMG の 1 ヒット（胴体・会心なし・距離ボーナスあり）の、1 回目のフルバーストの中で使用武器変更の発の後・戦闘開始から 15 秒の前。バーストの攻撃力 430.05%▲・フルバースト補正・S1・S2 の▲が乗った値",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "00.00（f1476）の 92f 後からの SMG の発（レシピ buff-edge の格子 EHb）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0813",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1271-26",
+    "recording": "1271",
+    "kind": "hit",
+    "use": "compare",
+    "value": 129122,
+    "unit": "ダメージ",
+    "description": "同じ 1 ヒットの、1 回目のフルバーストの中で戦闘開始から 15 秒の後（バーストの攻撃力▲の窓の中）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "格子 EHb2"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1000,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0813",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1271-27",
+    "recording": "1271",
+    "kind": "hit",
+    "use": "record",
+    "value": 21410,
+    "unit": "ダメージ",
+    "description": "1 回目のバーストの 00.00（f1476）の 27f 後（動画）の E.H. の SMG の 1 ヒット（胴体・会心なし・距離ボーナスあり）。バーストの攻撃力▲もフルバースト補正も乗らない値（S1・S2 の▲だけ）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "同じ形の発（00.00 の 27f 後に▲の無い SMG の発）は、録画 1272 の 1・2 回目にもある（21,410・18,638）。モデルでは発動から使用武器変更の発まで E.H. は撃たない"
+    },
+    "source": "V-0813",
+    "readAt": "2026-11-21"
   }
 ]

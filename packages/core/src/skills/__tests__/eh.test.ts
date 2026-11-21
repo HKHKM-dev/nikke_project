@@ -1,4 +1,5 @@
-// E.H. 編（plan/design-eh.md 2.3 節）: 使用武器の変更の即値の最大装弾数（weaponChange の maxAmmo）の検証と、Lv ごとの解決値
+// E.H. 編（plan/design-eh.md 2.3・8.1 節）: 使用武器の変更の即値の最大装弾数（weaponChange の maxAmmo）と、変更後の武器のコアの倍率
+// （coreDamageRate）の検証と、Lv ごとの解決値
 import { describe, expect, it } from 'vitest';
 import { MAX_SKILL_LEVELS, resolveCounterWhileEffects, resolveTimed } from '../resolve.ts';
 import { parseSkillDefinition } from '../parse/definition.ts';
@@ -39,6 +40,27 @@ describe('即値の最大装弾数（weaponChange の maxAmmo）', () => {
     expect(weapon.durationUntil).toBe('ammoSpent');
     expect(weapon.value).toBeCloseTo(0.61);
     expect(weapon.weapon!.shot).toMatchObject({ maxAmmo: 1, chargeTime: 0.4, fullChargeDamage: 2.5 });
+  });
+});
+
+describe('変更後の武器のコアの倍率（weaponChange の coreDamageRate）', () => {
+  it('replaces the core multiplier of the changed weapon only', () => {
+    const weapon = resolveTimed(parseSkillDefinition(raw), character, MAX_SKILL_LEVELS).find(
+      (t) => t.stat === 'weapon',
+    )!;
+    expect(weapon.weapon!.shot.coreDamageRate).toBe(2);
+    expect(character.shot.coreDamageRate).toBe(2.5);
+    const without = resolveTimed(
+      parseSkillDefinition(withChange({ coreDamageRate: undefined })),
+      character,
+      MAX_SKILL_LEVELS,
+    );
+    expect(without.find((t) => t.stat === 'weapon')!.weapon!.shot.coreDamageRate).toBe(2.5);
+  });
+
+  it('needs a multiplier of at least 1', () => {
+    for (const bad of [0.5, 0, -1, '2'])
+      expect(() => parseSkillDefinition(withChange({ coreDamageRate: bad }))).toThrow();
   });
 });
 
