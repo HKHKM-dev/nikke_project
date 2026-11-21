@@ -2026,7 +2026,12 @@ export type WeaponChangeEffect = {
    * 変更後の武器はリロードせず、最後の弾丸を撃ったフレームの次のフレームに基礎の武器に戻る（撃ち切り。論点 8）
    */
   maxAmmoRef?: number;
-  /** 維持秒数の description_value_NN。durationSeconds とちょうど片方（maxAmmoRef を書いたらどちらも書かない） */
+  /**
+   * 変更後の武器の最大装弾数（発・即値。plan/design-eh.md 2.3 節）。説明文に番号の無い装弾数（E.H. のバーストの「1 発 × 自家製弾倉の数」）に
+   * 書く。maxAmmoRef とちょうど片方で、ほかは maxAmmoRef と同じ（撃ち切りで終わる）
+   */
+  maxAmmo?: number;
+  /** 維持秒数の description_value_NN。durationSeconds とちょうど片方（maxAmmoRef・maxAmmo を書いたらどちらも書かない） */
   durationRef?: number;
   durationSeconds?: number;
   /**

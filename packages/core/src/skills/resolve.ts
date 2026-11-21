@@ -587,7 +587,7 @@ export type ResolvedTimedEffect = ResolvedEffect & {
 };
 
 /**
- * 解決後の維持の終わりの出来事。'ammoSpent' は、最大装弾数を書いた使用武器の変更（weaponChange の maxAmmoRef）が、
+ * 解決後の維持の終わりの出来事。'ammoSpent' は、最大装弾数を書いた使用武器の変更（weaponChange の maxAmmoRef・maxAmmo）が、
  * 最後の弾丸を撃ったフレームの次のフレームに終わる（plan/design-true-damage-element.md 9 節）。
  * DSL の timed には書けない（weaponChange を解決したときだけ付く）
  */
@@ -1672,9 +1672,10 @@ function resolveWeaponChange(
     }
     overrides.maxAmmo = n;
   }
+  if (effect.maxAmmo !== undefined) overrides.maxAmmo = effect.maxAmmo;
   if (effect.instantFire === true) overrides.instantFire = true;
   if (effect.shotCount !== undefined) overrides.shotCount = effect.shotCount;
-  const untilEmpty = effect.maxAmmoRef !== undefined;
+  const untilEmpty = effect.maxAmmoRef !== undefined || effect.maxAmmo !== undefined;
   const r: ResolvedTimedEffect = {
     source: { resourceId: character.resourceId, skill: slot, name: skill.name },
     target: 'self',

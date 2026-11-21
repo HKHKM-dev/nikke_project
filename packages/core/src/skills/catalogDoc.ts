@@ -434,7 +434,7 @@ const COND_INFO: Record<string, Info> = {
   enemyIsTarget: ['対象がターゲットなら', 'check', '射撃場の的をターゲットとみなす読み（18 の assumes）'],
   range: ['適正射程距離内なら', 'ok', 'inEffectiveRange（距離ボーナスと同じ判定）'],
   enemyType: ['ラプチャーなら', 'premise', '的はラプチャー'],
-  resource: ['固有のカウンタの値', 'gap', 'なし'],
+  resource: ['固有のカウンタの値', 'check', '条件 selfCounter（atLeast・below。目録のカウンタだけ）'],
   selfBarrier: ['自分がバリア適用状態なら', 'indirect', 'バリアの経路（付与の窓で決まる）'],
 };
 

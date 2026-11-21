@@ -120,3 +120,5 @@
 | 自分の HP が X% 以下の場合（倍率ダメージ） | damage の `condition.selfHp: { "atMostRef": N }`（バーストを使ったフレームの HP の割合で見る） | ギロチンのバースト | 同 2.2 節 |
 | 最終最大HP の X% を攻撃力として換算した Y% のダメージ | burstDamage の `convertCasterMaxHpRef`（攻撃力を最終最大HP × X% に置き換える。`addCasterMaxHpRef` と組まない） | キロのバースト | [design-kilo.md](design-kilo.md) 2.2 節 |
 | 〈名前〉：最終最大HP の X% のバリア「持続」・〈名前〉状態なら（自分へのバリア） | 目録の家族 `barrier` の状態の付与（中身なし・`durationUntil: "battleEnd"`）。被弾で切れる分は扱わない | キロの S1 のナノコーティング | 同 2.1 節 |
+| 〈カウンタ〉を N 個回収した時（N は上限）、〈別のカウンタ〉が M 本未満なら「〈カウンタ〉数リセット」「〈別のカウンタ〉1 本増加」／「X% × 〈別のカウンタ〉の数▲」「持続」 | `counterChange` 2 つ（きっかけ `{ "counterFull": 〈カウンタ〉 }`・条件 `selfCounter` の `below: M`）／閾値ごとの `passive`（`while.selfCounter`）。前提の中で届かない段は前提の外の notes | E.H. の S1 の廃品・自家製弾倉 | [design-eh.md](design-eh.md) 2.2 節 |
+| 使用武器変更の「最大装弾数：N 発 × 〈カウンタ〉の数」（説明文に番号の無い装弾数） | `weaponChange` の即値の `maxAmmo`（`maxAmmoRef` とちょうど片方。撃ち切りで終わる） | E.H. のバースト | 同 2.3 節 |

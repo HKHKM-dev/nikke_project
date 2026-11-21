@@ -1,0 +1,141 @@
+{
+  "formatVersion": 1,
+  "resourceId": 113,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "counterChange",
+          "counter": "scrap",
+          "trigger": {
+            "counterFull": "scrap"
+          },
+          "target": "self",
+          "amount": 10,
+          "decrease": true,
+          "condition": {
+            "selfCounter": {
+              "counter": "homemadeMagazine",
+              "below": 4
+            }
+          },
+          "assumes": {
+            "ja": "「廃品を 10 個回収した時」を、廃品が上限 10 に届いた次のフレームとして書いた。「廃品数リセット」は上限と同じ量の減少",
+            "en": "\"On obtaining 10 Scraps\" is written as the frame after Scrap reaches its cap of 10. \"Removes Scraps\" is a decrease by the cap"
+          }
+        },
+        {
+          "kind": "counterChange",
+          "counter": "homemadeMagazine",
+          "trigger": {
+            "counterFull": "scrap"
+          },
+          "target": "self",
+          "amount": 1,
+          "condition": {
+            "selfCounter": {
+              "counter": "homemadeMagazine",
+              "below": 4
+            }
+          }
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "attack",
+          "ref": 3,
+          "while": {
+            "selfCounter": {
+              "counter": "homemadeMagazine",
+              "atLeast": 1
+            }
+          },
+          "assumes": {
+            "ja": "「攻撃力 X% × 自家製弾倉数」の 1 本目の分。弾倉は戦闘開始の直後（廃品が 10 個に届いた次のフレーム）に 1 本でき、その次のフレームから効く",
+            "en": "The first magazine's share of \"ATK ▲ X% x the number of homemade magazines\". The magazine is crafted just after the start of battle (the frame after Scrap reaches 10) and the buff applies from the next frame"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "自家製弾倉の 2〜4 本目と、その分の攻撃力▲は、廃品が戦闘開始時の 10 個のほかに増えない前提（発射体・パーツ・敵の破壊が起きない。要件 4.2 節）では起きない",
+          "en": "The 2nd to 4th homemade magazines and their ATK ▲ do not occur under the assumptions, where Scrap grows only by the 10 at the start of battle (no projectile, part or enemy is destroyed; requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "passive",
+            "stat": "attack",
+            "target": "self"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "counterChange",
+          "counter": "scrap",
+          "trigger": "battleStart",
+          "target": "self",
+          "amountRef": 7
+        },
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "elementDamage",
+          "ref": 5,
+          "durationRef": 6,
+          "assumes": {
+            "ja": "「廃品を回収した時」は、前提の中では戦闘開始時の 10 個の回収だけなので、戦闘開始時として書いた",
+            "en": "\"On obtaining Scraps\" is written as the start of battle, since under the assumptions the only Scrap obtained is the 10 at the start of battle"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "味方が破壊可能な発射体を破壊した時（1 個）・パーツを破壊した時（5 個）・敵が破壊された時（2 個）の廃品▲と、その回収の有利コードの攻撃ダメージ▲は、敵の発射体・パーツ・敵の破壊を扱わない前提（要件 4.2 節）の外",
+          "en": "The Scrap gains when an ally destroys a destructible projectile (1), destroys a part (5) or an enemy is neutralized (2), and the Elemental Advantage Attack Damage ▲ from obtaining them, are outside the assumptions (no enemy projectiles, parts or destroyed enemies; requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "counterChange"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "damageRef": 1,
+          "chargeTimeSeconds": 0.4,
+          "fullChargeDamage": 250,
+          "maxAmmo": 1,
+          "assumes": {
+            "ja": "SMG を押下チャージ型のチャージ武器（0.4 秒）に替える。最大装弾数「1 発 × 自家製弾倉の数」は、前提の中で弾倉がいつも 1 本なので 1 発。撃ち切ったら次のフレームに基礎の SMG に戻る。持続時間 10 秒の終わりは、1 発を撃ち切るより先に来ない。最初の発の待ち・コア命中率・戻った SMG の撃ち始めは、いまのモデルの形（録画で読む）",
+            "en": "Turns the SMG into a press-and-hold charge weapon (0.4 s). Max ammo \"1 x the number of homemade magazines\" is 1, as there is always one magazine under the assumptions. After the round is fired, the base SMG returns on the next frame. The 10 s duration never ends before the round is fired. The first-shot wait, core hit rate and how the SMG resumes follow the current model (to be read from recordings)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "ref": 3,
+          "durationRef": 4
+        }
+      ],
+      "notes": [
+        {
+          "ja": "自家製弾倉が 2 本以上のときの最大装弾数（2 発以上）は、弾倉が 1 本で止まる前提（S1 の notes）の外",
+          "en": "Max ammo with two or more homemade magazines (two rounds or more) is outside the assumptions, where there is only one magazine (see the S1 notes)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "weaponChange"
+          }
+        }
+      ]
+    }
+  }
+}
