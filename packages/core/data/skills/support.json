@@ -47,6 +47,7 @@
     201,
     202,
     210,
+    212,
     220,
     222,
     224,
@@ -64,6 +65,7 @@
     280,
     281,
     282,
+    283,
     290,
     291,
     300,
@@ -206,10 +208,6 @@
       "unimplemented": 1,
       "assumed": 7
     },
-    "212": {
-      "unimplemented": 1,
-      "assumed": 5
-    },
     "223": {
       "unimplemented": 1,
       "assumed": 11
@@ -229,10 +227,6 @@
     "270": {
       "unimplemented": 1,
       "assumed": 3
-    },
-    "283": {
-      "unimplemented": 1,
-      "assumed": 2
     },
     "307": {
       "unimplemented": 1,

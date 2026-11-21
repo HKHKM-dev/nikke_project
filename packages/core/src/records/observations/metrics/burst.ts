@@ -215,7 +215,8 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
       const kind = c.args.kind;
       if (kind !== 'apply' && kind !== 'tick') throw new Error(`kind は apply か tick（${String(kind)}）`);
       const g = r.dotGauges.filter((x) => x.slotIndex === slotIndexOf(c) && x.kind === kind)[n - 1];
-      if (g === undefined) throw new Error(`枠 ${String(c.args.slot)} の ${n} 回目の持続ダメージのゲージ（${kind}）が無い`);
+      if (g === undefined)
+        throw new Error(`枠 ${String(c.args.slot)} の ${n} 回目の持続ダメージのゲージ（${kind}）が無い`);
       return Math.round((g.energy / BURST_GAUGE_MAX) * 10_000) / 100;
     },
   },

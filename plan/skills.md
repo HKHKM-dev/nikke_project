@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 169・効果 1192（根拠あり 1170）・notes 391（根拠あり 159）
+件数: キャラ 169・効果 1193（根拠あり 1171）・notes 389（根拠あり 159）
 
-notes の種類: 未対応 50・前提の外 125・計算に無関係 78・補足 43・間接 95
+notes の種類: 未対応 48・前提の外 125・計算に無関係 78・補足 43・間接 95
 
-スロット: supported 456・partial 35・unsupported 11・noEffect 62
+スロット: supported 458・partial 33・unsupported 11・noEffect 62
 
 ## 10 ラピ
 
@@ -1060,10 +1060,10 @@ notes の種類: 未対応 50・前提の外 125・計算に無関係 78・補�
 
 ## 212 ノベル
 
-- **skill1**: partial
+- **skill1**: supported
   - effects[0] damage・10 秒ごと・skill: C-1448（確定）
   - effects[1] timed・10 秒ごと・enemyDefenseDown: C-1448（確定）、C-0556（確定）、C-0790（確定）
-  - notes[0] 未対応: S1 のヒットがバーストゲージを溜めるかは撮っていない（溜めても 1 回で通常攻撃の 1 ヒットぶんの見込み）: 根拠なし
+  - effects[2] burstGaugeHit・10 秒ごと: C-1503（確定）、C-1448（確定）
 - **skill2**: supported
   - effects[0] state・normalHit・collectEvidence（defense）: C-1449（確定）
 - **burst**: supported
@@ -1415,10 +1415,9 @@ notes の種類: 未対応 50・前提の外 125・計算に無関係 78・補�
 - **skill1**: noEffect
   - notes[0] 前提の外: 戦闘開始時の味方全体のパーツダメージ▲は、射撃場の的にパーツが無いので効かない: C-0443（範囲外）
   - notes[1] 前提の外: 味方の誰かがパーツを破壊した時の、味方全体へのスキル発動者基準の攻撃力▲（5 スタック・30 秒）は、射撃場の的にパーツが無いので起きない: C-0443（範囲外）
-- **skill2**: partial
-  - effects[0] dot・30 秒ごと: C-1196（確定）
+- **skill2**: supported
+  - effects[0] dot・30 秒ごと: C-1196（確定）、C-1504（確定）
   - notes[0] 前提の外: 味方全体のパーツダメージ▲は、射撃場の的にパーツが無いので効かない: C-0443（範囲外）
-  - notes[1] 未対応: 持続ダメージの tick がバーストゲージを溜めるかは確かめていない（単騎の 1 回目の満タンは最初の発動より前）。モデルは溜めない: 根拠なし
 - **burst**: supported
   - effects[0] timed・burstUse・sustainedDamage: C-1198（確定）
   - effects[1] timed・burstUse・damageTaken: C-1198（確定）
