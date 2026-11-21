@@ -136,7 +136,7 @@ if (!rebasing()) {
   // Actions の中（auto-rebase.ts）は自分の直しの上に直すので見ない
   if (
     process.env[AUTO_REBASE_ENV] !== '1' &&
-    tryGit(['rev-parse', '--verify', '--quiet', `refs/remotes/${upstream}`]) === 0
+    spawnSync('git', ['rev-parse', '--verify', '--quiet', `refs/remotes/${upstream}`], { cwd: ROOT }).status === 0
   ) {
     const inHead = tryGit(['merge-base', '--is-ancestor', upstream, 'HEAD']) === 0;
     if (fixedByAutoRebase(inHead, git(['log', '-1', '--format=%ce', upstream])))

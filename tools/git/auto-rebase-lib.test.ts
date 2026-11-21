@@ -10,7 +10,7 @@ import {
   pollMergeable,
   type Pull,
   pushOutcome,
-  renumberedComment,
+  fixedComment,
   splitCollisions,
   tail,
   worthFixing,
@@ -117,13 +117,16 @@ describe('comments', () => {
     expect(body).toContain('npm run pr:prep -- --push');
     expect(commented([body], 'failed', '0123456789ab')).toBe(true);
     expect(commented([body], 'failed', 'other')).toBe(false);
-    expect(commented([body], 'renumbered', '0123456789ab')).toBe(false);
+    expect(commented([body], 'fixed', '0123456789ab')).toBe(false);
   });
   it('omits the output block when there is no output', () => {
     expect(failureComment('s', 'r')).not.toContain('<details>');
   });
   it('lists the renumbered IDs and asks to re-enable auto-merge', () => {
-    expect(renumberedComment('s', [{ from: 'C-1449', to: 'C-1462' }])).toContain('- C-1449 → C-1462');
+    expect(fixedComment('s', 'claude/x', [{ from: 'C-1449', to: 'C-1462' }])).toContain('- C-1449 → C-1462');
+    const plain = fixedComment('s', 'claude/x', []);
+    expect(plain).toContain('git reset --hard origin/claude/x');
+    expect(plain).not.toContain('振り直し');
     expect(autoMergeLostComment('s')).toContain(mark('auto-merge', 's'));
   });
   it('keeps the last lines of the output', () => {

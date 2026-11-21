@@ -63,7 +63,7 @@ export async function pollMergeable(
   return null;
 }
 
-export type MarkKind = 'failed' | 'renumbered' | 'auto-merge';
+export type MarkKind = 'failed' | 'fixed' | 'auto-merge';
 
 /** コメントに入れる印（同じ head に同じコメントを 2 回書かない） */
 export const mark = (kind: MarkKind, sha: string): string => `<!-- auto-rebase:${kind}:${sha} -->`;
@@ -120,16 +120,24 @@ export function failureComment(sha: string, reason: string, output?: string): st
   return body.join('\n');
 }
 
-/** 振り直したときのコメント（新旧の対応を残す） */
-export function renumberedComment(sha: string, pairs: readonly Renumber[]): string {
-  return [
-    mark('renumbered', sha),
-    `main と重なった番号を振り直し、main を取り込んで push しました（head ${sha.slice(0, 8)}）。題名と本文の番号も書き換えました。`,
+/**
+ * 直して push したときのコメント（振り直したら新旧の対応を残す）。手元を揃えてもらう: マージの後のフック（sync-after-merge.ts）は、
+ * PR の head と手元の HEAD が同じときだけブランチを origin/main に揃えるので
+ */
+export function fixedComment(sha: string, branch: string, pairs: readonly Renumber[]): string {
+  const lines = [mark('fixed', sha)];
+  if (pairs.length > 0)
+    lines.push(
+      `main と重なった番号を振り直し、main を取り込んで push しました（head ${sha.slice(0, 8)}）。題名と本文の番号も書き換えました。`,
+      '',
+      ...pairs.map((p) => `- ${p.from} → ${p.to}`),
+    );
+  else lines.push(`main を取り込んで push しました（head ${sha.slice(0, 8)}）。`);
+  lines.push(
     '',
-    ...pairs.map((p) => `- ${p.from} → ${p.to}`),
-    '',
-    'セッションの手元のブランチは古くなっています。続けて直すときは `git reset --hard origin/<ブランチ>` で取ってから直してください（マージの後はフックが揃えます）。',
-  ].join('\n');
+    `セッションの手元のブランチは古くなりました。\`git fetch origin && git reset --hard origin/${branch}\` で揃えてください（揃えないと、マージの後にフックがブランチを origin/main に揃えません）。`,
+  );
+  return lines.join('\n');
 }
 
 /** push の後に自動マージが外れていたときのコメント（Actions は予約し直さない。plan/design-auto-conflict-fix.md 4 節の 4） */

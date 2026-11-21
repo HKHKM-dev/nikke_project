@@ -9,9 +9,10 @@
 // 3. npm run pr:prep -- --no-ci --allow-progress（リベース・生成物と行を足しただけの衝突の解消・生成物を main の版に戻す）。止まったら
 //    コメントする。型・テスト・ビルドは、push で起きる PR の CI に任せる。
 // 4. デプロイキーで、問い合わせた head を期待値にして --force-with-lease で push する（セッションが先に push していたら断られて何もしない）。
-// 5. 振り直したら、PR の題名・本文の ID を書き換えてコメントする。push の後に自動マージが外れていたらコメントする（予約し直さない。
+// 5. 振り直したら PR の題名・本文の ID を書き換え、手元を揃えてもらうコメントを書く。push の後に自動マージが外れていたらコメントする（予約し直さない。
 //    GITHUB_TOKEN で予約すると、マージの push で main の CI が起きない）。
-// コメントには head の印を入れ、同じ head に同じコメントを 2 回書かない。直せなかった head は --find が飛ばす。
+// コメントには head の印を入れ、同じ head に同じコメントを 2 回書かない。直せなかった head は --find が飛ばす（通信などの一時の失敗は
+// コメントせず、次の実行で直し直す）。
 // commit の身元は AUTO_REBASE_COMMITTER（pr:prep は、origin のブランチの先頭がこの身元で手元に無ければ止める）。
 import { execFileSync, spawnSync } from 'node:child_process';
 import { appendFileSync } from 'node:fs';
@@ -28,7 +29,7 @@ import {
   type PullFile,
   pushOutcome,
   type Renumber,
-  renumberedComment,
+  fixedComment,
   splitCollisions,
   worthFixing,
 } from './auto-rebase-lib.ts';
@@ -59,8 +60,15 @@ async function api<T>(path: string, init?: { method: string; body: unknown }): P
 }
 
 const pull = (n: number) => api<Pull>(`/pulls/${n}`);
-const commentBodies = async (n: number) =>
-  (await api<{ body: string | null }[]>(`/issues/${n}/comments?per_page=100`)).map((c) => c.body ?? '');
+/** PR のコメントの本文（全部のページ） */
+async function commentBodies(n: number): Promise<string[]> {
+  const out: string[] = [];
+  for (let page = 1; ; page++) {
+    const got = await api<{ body: string | null }[]>(`/issues/${n}/comments?per_page=100&page=${page}`);
+    out.push(...got.map((c) => c.body ?? ''));
+    if (got.length < 100) return out;
+  }
+}
 
 async function comment(n: number, kind: MarkKind, sha: string, body: string): Promise<void> {
   if (commented(await commentBodies(n), kind, sha)) return;
@@ -134,11 +142,16 @@ function cleanUp(): void {
 type Outcome =
   | { kind: 'skip' }
   | { kind: 'pushed'; head: string; renumbered: Renumber[] }
-  | { kind: 'failed'; reason: string; output?: string };
+  /** retry: 通信などの一時の失敗。コメントせず、次の実行で直し直す（コメントすると --find がこの head を飛ばし続ける） */
+  | { kind: 'failed'; reason: string; output?: string; retry?: true };
+
+const replaceIds = (text: string, pairs: readonly Renumber[]) =>
+  pairs.reduce((t, r) => renumberInText(t, r.from, r.to).text, text);
 
 function fix(pr: Pull): Outcome {
   const { ref: branch, sha } = pr.head;
-  if (!gitOk(['fetch', '--quiet', 'origin'])) return { kind: 'failed', reason: 'git fetch origin が落ちた' };
+  if (!gitOk(['fetch', '--quiet', 'origin']))
+    return { kind: 'failed', reason: 'git fetch origin が落ちた', retry: true };
   if (git(['rev-parse', `origin/${branch}`]) !== sha) {
     console.log(`#${pr.number}: origin のブランチが進んでいる。次の実行に任せる`);
     return { kind: 'skip' };
@@ -171,10 +184,18 @@ function fix(pr: Pull): Outcome {
   }
   // ブランチを 1 つの commit にまとめてからリベースする（PR はスカッシュでマージする）。まとめないと、振り直す前の ID のファイルを足した
   // commit がリベースで main と衝突する。途中の commit だけが衝突することも無くなる
-  git(['add', '--all']);
-  git(['reset', '--quiet', '--soft', git(['merge-base', 'origin/main', 'HEAD'])]);
+  // メッセージは元の commit のもの（帰属の行を含む）を、振り直した題名の下に残す
+  const base = git(['merge-base', 'origin/main', 'HEAD']);
+  const messages = replaceIds(git(['log', '--format=%B', `${base}..HEAD`]), renumber);
   const note = renumber.length > 0 ? `。番号の振り直し: ${renumber.map((r) => `${r.from} → ${r.to}`).join('、')}` : '';
-  git(['commit', '--quiet', '-m', `${pr.title}\n\n衝突の直し（自動）で、main を取り込む前に 1 つにまとめた${note}`]);
+  git(['add', '--all']);
+  git(['reset', '--quiet', '--soft', base]);
+  git([
+    'commit',
+    '--quiet',
+    '-m',
+    `${replaceIds(pr.title, renumber)}\n\n衝突の直し（自動）で、main を取り込む前に 1 つにまとめた${note}\n\n${messages}`,
+  ]);
 
   const prep = run('node', ['tools/git/pr-prep.ts', '--no-ci', '--allow-progress']);
   if (prep.status !== 0)
@@ -195,7 +216,7 @@ function fix(pr: Pull): Outcome {
     ssh,
   );
   const outcome = pushOutcome(push.status, push.output);
-  if (outcome === 'error') return { kind: 'failed', reason: 'push が落ちた', output: push.output };
+  if (outcome === 'error') return { kind: 'failed', reason: 'push が落ちた', output: push.output, retry: true };
   if (outcome === 'pushed') return { kind: 'pushed', head, renumbered: renumber };
   console.log(`#${pr.number}: push の間にブランチが進んだ（セッションが直した）。何もしない`);
   return { kind: 'skip' };
@@ -203,8 +224,6 @@ function fix(pr: Pull): Outcome {
 
 let failures = 0;
 const pushed: { n: number; head: string }[] = [];
-const replaceIds = (text: string, pairs: readonly Renumber[]) =>
-  pairs.reduce((t, r) => renumberInText(t, r.from, r.to).text, text);
 for (const n of (process.env['TARGETS'] ?? '')
   .split(/\s+/)
   .filter((s) => s !== '')
@@ -224,19 +243,19 @@ for (const n of (process.env['TARGETS'] ?? '')
   if (outcome.kind === 'failed') {
     failures++;
     console.log(`::warning::#${n}: ${outcome.reason}`);
+    if (outcome.retry) continue;
     await comment(n, 'failed', pr.head.sha, failureComment(pr.head.sha, outcome.reason, outcome.output));
     continue;
   }
   if (outcome.kind !== 'pushed') continue;
   const { head } = outcome;
   console.log(`#${n}: 直して push した（${head.slice(0, 8)}）`);
-  if (outcome.renumbered.length > 0) {
+  if (outcome.renumbered.length > 0)
     await api(`/pulls/${n}`, {
       method: 'PATCH',
       body: { title: replaceIds(pr.title, outcome.renumbered), body: replaceIds(pr.body ?? '', outcome.renumbered) },
     });
-    await comment(n, 'renumbered', head, renumberedComment(head, outcome.renumbered));
-  }
+  await comment(n, 'fixed', head, fixedComment(head, pr.head.ref, outcome.renumbered));
   pushed.push({ n, head });
 }
 // push の後に GitHub が予約を外すかは非同期なので、少し待ってからまとめて見る
