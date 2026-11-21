@@ -168,6 +168,26 @@ export function flyToTray(content: Element, to: DOMRect | null): void {
 }
 
 /**
+ * 持ち上げた絵（content）を、その位置から to の位置・大きさへ動かし、着く前の終わりの 2 割で消す（編成の番号を別の番号に落とした。
+ * 番号は動かないので、持ち上げた番号は落とした先の番号の上で消える）
+ */
+export function flyOnto(content: Element, to: DOMRect): void {
+  const base = content.getBoundingClientRect();
+  const ghost = ghostOf(content, base);
+  const remove = () => ghost.remove();
+  ghost
+    .animate(
+      [
+        { ...frameAt(base, base), opacity: 1 },
+        { ...frameAt(to, base), opacity: 1, offset: 0.8 },
+        { ...frameAt(to, base), opacity: 0 },
+      ],
+      FLIGHT,
+    )
+    .finished.then(remove, remove);
+}
+
+/**
  * 操作の印を、離した位置（from。持ち上げた印の箱）から、移した先のスロット（card。描き直しの後に引く）の印の場所へ滑り込ませる。
  * 印は描き直しの後に移した先へ出るので、印が出た描画で、その印を離した位置から元の場所へ動かす（出るまで CONTROLLER_WAIT_FRAMES の描画まで待つ）
  */

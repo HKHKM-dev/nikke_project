@@ -16,7 +16,7 @@ import type { PartiesState, PartySlotRef } from '../../parties.ts';
 import type { TeamAction, TeamState } from '../../team.ts';
 import { trayCollectionBadge, type Badge } from './badges.ts';
 import { partyCardAt, setDropPlaced, slotCardAt } from './dropAnimation.ts';
-import { FLIGHT, flyControllerInto, flyToTray } from './flight.ts';
+import { FLIGHT, flyControllerInto, flyOnto, flyToTray } from './flight.ts';
 import { activeDragData, dropIntentOf, type SlotRef } from './dropIntent.ts';
 import { trayGrowthMarks, type GrowthMarks } from './GrowthMarks.tsx';
 import { slotCollectionBadge, slotGrowthMarks } from './slotBadges.ts';
@@ -290,11 +290,14 @@ export function useSlotDrag({
         break;
       }
       case 'swap-parties': {
-        // 番号は動かず、中身（スロットの並び）が入れ替わる。持ち上げた番号は、離した位置から元の番号の場所へ戻す
-        // （行き先を決めない。DROP_ANIMATION が戻す）
+        // 番号は動かず、中身（スロットの並び）が入れ替わる。持ち上げた番号は、離した位置から落とした先の番号の場所へ動かして消す
         const rectOf = (party: number) => slotsGridOf(party)?.getBoundingClientRect();
         const fromA = rectOf(intent.a);
         const fromB = rectOf(intent.b);
+        const dragged = document.querySelector('.party-label-drag-overlay');
+        const target = document.querySelectorAll('.modern-party-row-label')[intent.b]?.getBoundingClientRect();
+        setDropPlaced(true);
+        if (dragged && target) flyOnto(dragged, target);
         if (fromA && fromB) {
           rowFlipRef.current = {
             before: parties,

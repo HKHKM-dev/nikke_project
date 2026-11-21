@@ -855,9 +855,8 @@ svg.roster-revert-icon {
   grid-template-columns: 4em;
   align-items: center;
 }
-/* 編成の番号を持ち上げている間と、離して元の場所へ戻る間は、元の番号を隠す。持ち上げた番号を重ねている番号（落とす先）には、スロットと同じ印を付ける */
-.modern-party-row-label.party-label-dragging .party-tab,
-.modern-party-row-label.drag-source-returning .party-tab {
+/* 編成の番号を持ち上げている間は、元の番号を隠す。持ち上げた番号を重ねている番号（落とす先）には、スロットと同じ印を付ける */
+.modern-party-row-label.party-label-dragging .party-tab {
   visibility: hidden;
 }
 .modern-party-row-label.party-label-over .party-tab {
