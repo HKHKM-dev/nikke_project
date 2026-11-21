@@ -2,6 +2,7 @@ import { DndContext, pointerWithin } from '@dnd-kit/core';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DamageTotalPanel } from '../components/DamageTotalPanel.tsx';
 import { ErrorBoundary } from '../components/ErrorBoundary.tsx';
+import { InertButton } from '../components/InertButton.tsx';
 import { NotesSummary } from '../components/NotesSummary.tsx';
 import { TeamSettingsForm } from '../components/TeamSettingsForm.tsx';
 import type { ViewProps } from './ViewProps.ts';
@@ -165,26 +166,22 @@ export function ModernView({
           <div className="modern-slots-area">
             {/* 元に戻す・やり直す（スロットの並びの上の端の中央。戻せる・やり直せる並びが無いときは押せない）。絵はバッジ ui_undo・ui_redo */}
             <div className="modern-slot-history">
-              <button
-                type="button"
+              <InertButton
                 className="modern-slot-undo-button"
-                aria-label="元に戻す"
-                title="元に戻す"
-                disabled={!slotUndo.canUndo}
-                onClick={() => slotUndo.undo(placement)}
+                label="元に戻す"
+                enabled={slotUndo.canUndo}
+                onPress={() => slotUndo.undo(placement)}
               >
                 <BadgeIcon className="modern-slot-undo-icon" name={UNDO_BADGE} />
-              </button>
-              <button
-                type="button"
+              </InertButton>
+              <InertButton
                 className="modern-slot-undo-button"
-                aria-label="やり直す"
-                title="やり直す"
-                disabled={!slotUndo.canRedo}
-                onClick={() => slotUndo.redo(placement)}
+                label="やり直す"
+                enabled={slotUndo.canRedo}
+                onPress={() => slotUndo.redo(placement)}
               >
                 <BadgeIcon className="modern-slot-undo-icon" name={REDO_BADGE} />
-              </button>
+              </InertButton>
             </div>
             {parties.parties.map((party, p) => (
               <div key={p} className={`modern-party-row ${p === parties.active ? 'modern-party-row-active' : ''}`}>

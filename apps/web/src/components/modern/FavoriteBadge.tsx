@@ -44,7 +44,6 @@ export function FavoriteButtons({
         className={buttonClassName}
         aria-pressed={pressed}
         aria-label={`お気に入り（${FAVORITE_LABEL[mark]}）`}
-        title={FAVORITE_LABEL[mark]}
         onClick={() => onToggle(mark)}
       >
         <FavoriteBadge mark={mark} on={colorAll || pressed} />

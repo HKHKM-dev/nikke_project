@@ -34,7 +34,7 @@ type Props = {
 /** 編集済みの印 */
 function EditedMark() {
   return (
-    <span className="roster-edit-mark" role="img" aria-label="編集済み" title="編集済み">
+    <span className="roster-edit-mark" role="img" aria-label="編集済み">
       ✎
     </span>
   );

@@ -14,6 +14,7 @@ import { BadgeFilters } from './BadgeFilter.tsx';
 import { FavoriteButtons } from './FavoriteBadge.tsx';
 import { filterByFavorites, FavoritesContext, toggleFavoriteMark, type FavoriteMark } from '../../favorites.ts';
 import { BadgeIcon } from './BadgeIcon.tsx';
+import { InertButton } from '../InertButton.tsx';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
 import { activeDragData, type OverDragData } from './dropIntent.ts';
 import { trayGrowthMarks } from './GrowthMarks.tsx';
@@ -273,7 +274,6 @@ function TrayFilters({
         className="char-tray-action-button char-tray-filter-clear"
         aria-disabled={!filtering}
         aria-label="クリア"
-        title="クリア"
         onClick={() => {
           if (!filtering) return;
           onFiltersChange({});
@@ -400,14 +400,9 @@ function TrayFilterMenu({
             <p className="hint">表を読み終えるまで、名前のほかでは絞らない</p>
           )}
           <div className="char-tray-filter-footer">
-            <button
-              type="button"
-              className="classic-filter-button"
-              disabled={!active}
-              onClick={() => onChange(EMPTY_TRAY_FILTER)}
-            >
+            <InertButton className="classic-filter-button" enabled={active} onPress={() => onChange(EMPTY_TRAY_FILTER)}>
               すべて外す
-            </button>
+            </InertButton>
           </div>
         </div>
       </Popover>
@@ -489,7 +484,6 @@ function TraySortMenu({ listOrder }: { listOrder: ListOrderControls }) {
                   type="button"
                   className="char-tray-action-button char-tray-sort-option"
                   aria-pressed={current}
-                  title={current ? `${LIST_DIRECTION_LABEL[listOrder.direction]}（押すと入れ替える）` : undefined}
                   onClick={() => (current ? listOrder.toggleDirection() : listOrder.select(o))}
                 >
                   {LIST_ORDER_LABEL[o]}
@@ -506,7 +500,6 @@ function TraySortMenu({ listOrder }: { listOrder: ListOrderControls }) {
           type="button"
           className="char-tray-action-button char-tray-sort-direction"
           aria-label={`${LIST_DIRECTION_LABEL[listOrder.direction]}（押すと入れ替える）`}
-          title={`${LIST_DIRECTION_LABEL[listOrder.direction]}（押すと入れ替える）`}
           onClick={listOrder.toggleDirection}
         >
           {LIST_DIRECTION_MARK[listOrder.direction]}

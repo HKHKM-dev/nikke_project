@@ -8,7 +8,7 @@ type Props = {
   /** 押せるときに押した */
   onPress: () => void;
   className?: string;
-  /** ボタンの名前（中身が絵だけのとき。読み上げとマウスを重ねたときの文字） */
+  /** ボタンの名前（中身が絵だけのとき。読み上げにだけ渡す。マウスを重ねたときの文字（title）は出さない: オーナーの指示） */
   label?: string;
   children: ReactNode;
 };
@@ -19,7 +19,6 @@ export function InertButton({ enabled, onPress, className = 'advanced-settings-b
       type="button"
       className={className}
       aria-label={label}
-      title={label}
       aria-disabled={!enabled}
       onClick={() => enabled && onPress()}
     >

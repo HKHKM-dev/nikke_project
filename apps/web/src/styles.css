@@ -299,7 +299,10 @@ svg.roster-revert-icon {
 }
 /* 使えないとき（育成状況が無いときの「書き出す」「消す」など）は色を変えて、押せないと分かるようにする */
 .advanced-settings-button[aria-disabled='true'],
-.advanced-settings-button[aria-disabled='true']:hover {
+.advanced-settings-button[aria-disabled='true']:hover,
+.slot-button[aria-disabled='true'],
+.classic-filter-button[aria-disabled='true'],
+.classic-filter-clear[aria-disabled='true'] {
   color: color-mix(in srgb, var(--app-fg) 35%, transparent);
   background: color-mix(in srgb, var(--app-fg) 6%, var(--app-bg));
   border-color: color-mix(in srgb, var(--app-fg) 12%, transparent);
@@ -828,8 +831,8 @@ svg.roster-revert-icon {
   padding: 3px 4px;
   cursor: pointer;
 }
-/* 戻せる・やり直せる並びが無いときは、薄くして押せなくする */
-.modern-slot-undo-button:disabled {
+/* 戻せる・やり直せる並びが無いときは、薄くして押せなくする（disabled でなく aria-disabled。InertButton） */
+.modern-slot-undo-button[aria-disabled='true'] {
   cursor: default;
   opacity: 0.3;
 }
