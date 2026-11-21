@@ -31,7 +31,10 @@
           "assumes": {
             "ja": "開始回数別の効果（下位効果のスタック適用）の 1 回目の段。編成がバースト 3 段階に突入するたび（II → III の替わり目。II で切れたチェーンも数える）に付く。段ごとに別の▲で、2・3 回目の段（effects[1]・[2]）と足す。有利コード（灼熱）の敵にだけ効く",
             "en": "The first tier of the effects by entry count (lower tiers stack). Applied each time the squad enters Burst Stage 3 (the II-to-III switch; chains cut at II also count). Each tier is a separate buff added to the second and third tiers (effects[1], [2]). Applies only against an enemy of the disadvantaged code (Fire)"
-          }
+          },
+          "claims": [
+            "C-1409"
+          ]
         },
         {
           "kind": "timed",
@@ -46,7 +49,10 @@
           "assumes": {
             "ja": "2 回目の段。同じ突入で付け直した 1 回目の段（effects[0]）と足す",
             "en": "The second tier. It adds to the first tier (effects[0]) reapplied on the same entry"
-          }
+          },
+          "claims": [
+            "C-1409"
+          ]
         },
         {
           "kind": "timed",
@@ -61,7 +67,10 @@
           "assumes": {
             "ja": "3 回目の段。3 回目以降の突入では 3 つの段がどれも付け直され、足される",
             "en": "The third tier. From the third entry on, all three tiers are reapplied and added"
-          }
+          },
+          "claims": [
+            "C-1409"
+          ]
         }
       ]
     },
@@ -73,9 +82,15 @@
           "damageRef": 1,
           "durationRef": 2,
           "assumes": {
-            "ja": "変更後の武器のレートは CDN の changeWeapon（毎分 90 発）。ほかの値（1 発のヒット数・コア・最初の発・残弾）は録画で読んでいない（基礎の MG のまま）",
-            "en": "The changed weapon fires at the CDN changeWeapon rate (90 rpm). Other values (hits per shot, core, first shot, ammo) are not yet read from recordings (left as the base MG)"
-          }
+            "ja": "変更後の武器は CDN の changeWeapon のレート（毎分 90 発）で、1 発は最終攻撃力の 33% の 1 ヒット（コア倍率は基礎の MG と同じ）。1 回のバーストで 11 発撃つ。コアに当たる割合は的の表の 14:burst の行。最初の発は持ち替えの時の基礎の武器の状態から数える（firstShotAfterSwapFrames 0。紅蓮：神殺と同じ形）。録画では着弾が的の距離で遅れ（III のタイマーの 00.00 から最初の発まで、近 42〜45f・中近 57f・中遠 62〜74f・遠 82〜86f）、モデルは即着弾で扱わない",
+            "en": "The changed weapon fires at the CDN changeWeapon rate (90 rpm); each shot is one hit of 33% of final ATK (core multiplier as the base MG), 11 shots per Burst. Core hit rates come from the 14:burst row of the target table. The first shot counts from the base weapon state at the swap (firstShotAfterSwapFrames 0, as Scarlet: Goddeath). In recordings the hits land later with target distance (first hit 42-45f near, 57f mid-near, 62-74f mid-far, 82-86f far after 00.00 of the Burst III timer); the model treats them as instant hits"
+          },
+          "firstShotAfterSwapFrames": 0,
+          "claims": [
+            "C-1411",
+            "C-1413",
+            "C-1414"
+          ]
         },
         {
           "kind": "damage",
@@ -86,9 +101,12 @@
           "ref": 3,
           "enemyElement": "Fire",
           "assumes": {
-            "ja": "変更後の武器の発ごとに、灼熱コードの敵へ 1 ヒット（発と同じフレーム）。バーストを使った時に 1 回だけ出る読みと、録画のヒットの数で見分ける",
-            "en": "One hit per changed-weapon shot against a Fire Code enemy (on the shot frame). To be told apart from a single hit on Burst use by the number of hits in recordings"
-          }
+            "ja": "変更後の武器の発ごとに、灼熱コードの敵へ 1 ヒット（発と同じフレーム）。会心はほかの倍率ダメージと同じに判定する（期待値）",
+            "en": "One hit per changed-weapon shot against a Fire Code enemy (on the shot frame). Crits are judged as for other skill damage (expected value)"
+          },
+          "claims": [
+            "C-1412"
+          ]
         }
       ]
     }
