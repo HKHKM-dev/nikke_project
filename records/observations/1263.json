@@ -1,0 +1,36 @@
+[
+  {
+    "id": "1263-01",
+    "recording": "1263",
+    "use": "compare",
+    "kind": "timing",
+    "value": 755,
+    "unit": "f",
+    "description": "スノーホワイトの最初の発（f822）から 1 回目のフルバーストの 00.00（f1579）までの動画のフレーム − I・II の発動の止まり 2f",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分（通しで 1 回）と recipe:burst-panel@4",
+      "note": "最初の増分（f822。HUD の 0 からの最初の増分）を最初の発とした（1256-04 と同じ読み方）。S2 の倍率ダメージがゲージを溜めない定義ではモデルは 786"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstStartFromFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "gauge"
+    },
+    "source": "V-0808",
+    "readAt": "2026-11-21"
+  }
+]
