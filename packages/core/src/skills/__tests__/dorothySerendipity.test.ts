@@ -46,9 +46,7 @@ describe('語彙の検証', () => {
     ).toThrow(/pelletCount is only allowed in timed/);
   });
 
-  it('allows a duration in shots on Hit Rate up, Pierce and the single pellet, but not on ATK', () => {
-    const hit = indexOf('skill1', 'hitRate');
-    expect(patched('skill1', hit, { stat: 'attack' })).toThrow(/a duration in shots is not supported for "attack"/);
+  it('allows a duration in shots on Hit Rate up, Pierce and the single pellet, but not on the Pellet count up', () => {
     expect(patched('burst', indexOf('burst', 'pelletCount'), { durationRef: undefined, durationShotsRef: 6 })).toThrow(
       /a duration in shots is not supported for "pelletCount"/,
     );

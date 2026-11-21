@@ -862,10 +862,14 @@ function parseTimedDuration(
   // （発数の維持の件は射撃の記録が伸びるたびに作り直す。skills/holders/items.ts の trackReadsOf。
   // plan/design-skill-stage15.md 2.3 節。V-0569）ので書ける。溜めの途中で付いても、それまでに
   // 溜めたフレームは残り、伸びたチャージ時間まで溜める（frame/shooter.ts の chargeProgressFrames。エイダの特殊改造）
-  // 命中率▲・貫通特化・ペレットの数の固定も、同じ件の列の閉じ方で書ける（plan/design-dorothy-serendipity.md 2.3 節）
+  // 命中率▲・貫通特化・ペレットの数の固定も、同じ件の列の閉じ方で書ける（plan/design-dorothy-serendipity.md 2.3 節）。
+  // 攻撃力も同じ閉じ方で書ける。攻撃力は射撃の時刻を変えないので、件の列の作り直しで窓が後から変わらない（plan/design-neve.md 2.1 節）
+  // 攻撃力の発数の維持は、順位の対象（topAttack。2 段目で窓を切る）には書けない（使い手がいない。plan/design-neve.md 2.1 節）
+  const tracked =
+    stat !== undefined && SHOT_DURATION_TRACKED_STATS.includes(stat) && !(stat === 'attack' && target === 'topAttack');
   if (
     stat !== undefined &&
-    !SHOT_DURATION_TRACKED_STATS.includes(stat) &&
+    !tracked &&
     (stat === 'attack' || isFiringStat(stat) || isStateStat(stat) || isFlagStat(stat) || isPelletStat(stat))
   ) {
     fail(
@@ -882,7 +886,7 @@ function parseTimedDuration(
  * 1 パス目で窓を追う stat のうち、発数の維持を書けるもの。どれも 1 パス目の件の列が持ち主の発で窓を閉じる。同じ閉じ方で書ける stat は
  * ほかにもある（ペレット数▲・適正最小射程距離▲など）が、使い手のいるものだけ許す（plan/design-dorothy-serendipity.md 2.3 節）
  */
-const SHOT_DURATION_TRACKED_STATS: readonly BuffStat[] = ['chargeSpeed', 'hitRate', 'pierce', 'singlePellet'];
+const SHOT_DURATION_TRACKED_STATS: readonly BuffStat[] = ['chargeSpeed', 'hitRate', 'pierce', 'singlePellet', 'attack'];
 
 /**
  * 1 パス目のループで窓を追う stat か（攻撃力・射撃に効く stat・状態の stat）。追う stat には、durationShots・durationUntil・

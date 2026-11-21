@@ -433,6 +433,9 @@ function parseStateContentItem(
   }
   // ペレットの数の固定は timed にだけ書ける（使い手がいない）。ペレット数▲は中身にも書ける（plan/design-fortune-mate.md 2.3 節）
   if (timed.stat === 'singlePellet') fail(`${path}.stat`, `${timed.stat} is only allowed in timed`);
+  // 攻撃力の発数の維持は timed にだけ書ける（状態の中身は使い手がいない。plan/design-neve.md 2.1 節）
+  if (timed.stat === 'attack' && (timed.durationShots !== undefined || timed.durationShotsRef !== undefined))
+    fail(`${path}.stat`, 'a duration in shots is not supported for "attack" in the contents of a state');
   const out: StatContentItem = { stat: timed.stat };
   if (timed.ref !== undefined) out.ref = timed.ref;
   if (timed.value !== undefined) out.value = timed.value;

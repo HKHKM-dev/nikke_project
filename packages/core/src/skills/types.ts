@@ -1203,9 +1203,9 @@ export type TimedEffect = TargetCountFields &
      * きっかけの発の次の発から数える（きっかけの発自身には付かない）。
      * 対象ごとにその枠の射撃を数え、維持中にまた付いたら数え直す。スタック（timed だけ）は付くたびに 1 段増え、持ち主の N 発目で全部
      * 切れる（plan/design-zwei.md 2.3 節）。条件は selfState だけ組める。窓は 1 パス目の射撃の列で決まるので、
-     * 1 パス目のループの中で窓を追う stat（攻撃力・射撃に効く stat・状態の stat）には書けない。
+     * 1 パス目のループの中で窓を追う stat（攻撃力・射撃に効く stat・状態の stat）には、次の例外のほかは書けない。
      * 例外は、1 パス目の件の列が持ち主の発で窓を閉じる stat（チャージ速度、命中率▲・貫通特化・
-     * ペレットの数の固定。plan/design-dorothy-serendipity.md 2.3 節）。チャージ速度は、溜めの途中で付いても、それまでに溜めたフレームは
+     * ペレットの数の固定。plan/design-dorothy-serendipity.md 2.3 節。攻撃力（状態の中身と topAttack を除く）。plan/design-neve.md 2.1 節）。チャージ速度は、溜めの途中で付いても、それまでに溜めたフレームは
      * 残る（plan/design-skill-stage15.md 2.3 節）
      */
     durationShots?: number;

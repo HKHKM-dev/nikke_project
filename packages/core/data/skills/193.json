@@ -38,21 +38,20 @@
           "stat": "pierce",
           "durationShotsRef": 1,
           "assumes": {
-            "ja": "フルバーストの始まりの次のフレームから、自分の 2 発目の通常攻撃まで付く。それ自体は射撃場の的 1 体への与ダメージを変えず（C-0076）、味方の貫通ダメージ▲を読む編成でだけ効く",
-            "en": "Applies from the frame after the Full Burst start through her 2nd normal attack. By itself it does not change damage on the single range target (C-0076); it matters only with allies' Pierce Damage ups in the team"
+            "ja": "フルバーストの始まりのフレームから、自分の 2 発目の通常攻撃まで付く。それ自体は射撃場の的 1 体への与ダメージを変えず（C-0076）、味方の貫通ダメージ▲を読む編成でだけ効く",
+            "en": "Applies from the Full Burst start frame through her 2nd normal attack. By itself it does not change damage on the single range target (C-0076); it matters only with allies' Pierce Damage ups in the team"
           }
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "フルバーストの始まりの、自分への攻撃力▲（2 発間維持）は、攻撃力に発数の維持を書く語彙が無いので定義していない（plan/design-neve.md で諮っている）",
-          "en": "The ATK up on herself at the Full Burst start (for 2 rounds) is not defined, since there is no vocabulary for a duration in shots on ATK (proposed in plan/design-neve.md)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "self",
-            "trigger": "fullBurstStart"
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "stat": "attack",
+          "ref": 2,
+          "durationShotsRef": 3,
+          "assumes": {
+            "ja": "フルバーストの始まりのフレームから、自分の 2 発目の通常攻撃まで付く（貫通特化と同じ窓）。窓の中に出た S1 のヒットにも乗る（確かめていない）",
+            "en": "Applies from the Full Burst start frame through her 2nd normal attack (the same window as Pierce). It also applies to an S1 hit landing inside the window (not verified)"
           }
         }
       ]
