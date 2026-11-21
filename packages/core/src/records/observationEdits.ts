@@ -24,23 +24,24 @@ export function draftShapeErrors(drafts: readonly ObservationDraft[]): string[] 
 }
 
 /**
- * 新しく増えた欄を置く順（records/observations/ の多くの観測値の並び）。source・readAt は前の観測値の位置に残るので、ここには無い
+ * 新しく増えた欄を置く順（records/observations/ の多くの観測値の並び）。観測値の欄を全部持つ（source・readAt は前の観測値の位置に残り、
+ * invalid は下書きに書かない）
  */
-const FIELD_ORDER = [
-  'id',
-  'recording',
-  'recordings',
-  'kind',
-  'use',
-  'value',
-  'unit',
-  'spread',
-  'description',
-  'method',
-  'evidence',
-  'compare',
-  'scope',
-];
+const FIELD_RANK = {
+  id: 0,
+  recording: 1,
+  recordings: 2,
+  kind: 3,
+  use: 4,
+  value: 5,
+  unit: 6,
+  spread: 7,
+  description: 8,
+  method: 9,
+  evidence: 10,
+  compare: 11,
+  scope: 12,
+} satisfies Record<Exclude<keyof Observation, 'source' | 'readAt' | 'invalid'>, number>;
 
 /** 欄の順を問わずに同じ JSON の値か */
 function sameJson(a: unknown, b: unknown): boolean {
@@ -51,24 +52,23 @@ function sameJson(a: unknown, b: unknown): boolean {
   const bk = Object.keys(b);
   const ar = a as Record<string, unknown>;
   const br = b as Record<string, unknown>;
-  return ak.length === bk.length && ak.every((k) => k in br && sameJson(ar[k], br[k]));
+  return ak.length === bk.length && ak.every((k) => Object.hasOwn(br, k) && sameJson(ar[k], br[k]));
 }
 
 /**
  * id・recording・source・readAt を前の観測値のまま残し、ほかの欄を下書きで差し替える。欄の並びは前の観測値のまま（下書きに無い欄は
- * 消え、値が同じ欄は前の値を残すので、中の欄の並びも変わらない）。新しく増えた欄は FIELD_ORDER で前にある欄の、最後のものの後に置く
+ * 消え、値が同じ欄は前の値を残すので、中の欄の並びも変わらない）。新しく増えた欄は、FIELD_RANK で前か同じ順の欄（知らない欄は
+ * source・readAt を除く全部）の、最後のものの後に置く
  */
 export function replacedObservation(before: Observation, draft: ObservationDraft): Observation {
   const prior = before as unknown as Record<string, unknown>;
   const given = draft as unknown as Record<string, unknown>;
   const reserved: readonly string[] = DRAFT_RESERVED_KEYS;
-  const keys = Object.keys(prior).filter((k) => reserved.includes(k) || k in given);
-  const rank = (k: string) => {
-    const i = FIELD_ORDER.indexOf(k);
-    return i < 0 ? FIELD_ORDER.length : i;
-  };
-  for (const k of Object.keys(given).filter((k) => !(k in prior))) {
-    const after = keys.findLastIndex((p) => FIELD_ORDER.includes(p) && rank(p) <= rank(k));
+  const keys = Object.keys(prior).filter((k) => reserved.includes(k) || Object.hasOwn(given, k));
+  const ranks: Record<string, number> = FIELD_RANK;
+  const rank = (k: string) => (Object.hasOwn(ranks, k) ? ranks[k]! : Object.keys(ranks).length);
+  for (const k of Object.keys(given).filter((k) => !Object.hasOwn(prior, k))) {
+    const after = keys.findLastIndex((p) => p !== 'source' && p !== 'readAt' && rank(p) <= rank(k));
     keys.splice(after + 1, 0, k);
   }
   const value = (k: string) => (reserved.includes(k) || sameJson(prior[k], given[k]) ? prior[k] : given[k]);

@@ -207,6 +207,11 @@ describe('replacedObservation・invalidatedObservation', () => {
     ]);
   });
 
+  it('keeps the draft order of new unknown fields after the known ones, also for names on Object.prototype', () => {
+    const draft = { ...draftOf(head), foo: 1, constructor: 2, bar: 3 } as unknown as ObservationDraft;
+    expect(Object.keys(replacedObservation(head, draft)).slice(-3)).toEqual(['foo', 'constructor', 'bar']);
+  });
+
   it('adds invalid with the reason and the date', () => {
     expect(invalidatedObservation(before, '読み違い', '2026-11-18')).toEqual({
       ...before,
