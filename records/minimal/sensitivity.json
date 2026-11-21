@@ -34244,6 +34244,182 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "1271-13",
+      "element": "E.H. burst.effects[0]",
+      "key": "66f3169466ee7633",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1271-14",
+      "element": "E.H. burst.effects[0]",
+      "key": "5bebc0195167ce86",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1271-18",
+      "element": "E.H. burst.effects[0]",
+      "key": "b28fb248504f56f9",
+      "effective": true,
+      "minus": -3204980.0183737436,
+      "plus": null
+    },
+    {
+      "observation": "1271-19",
+      "element": "E.H. burst.effects[0]",
+      "key": "1126f8b5bd251a88",
+      "effective": true,
+      "minus": -2790026.923244,
+      "plus": null
+    },
+    {
+      "observation": "1271-20",
+      "element": "E.H. burst.effects[0]",
+      "key": "3f9e1ba0618d7bbd",
+      "effective": true,
+      "minus": -2487252.53579,
+      "plus": null
+    },
+    {
+      "observation": "1271-21",
+      "element": "E.H. burst.effects[0]",
+      "key": "3212a2b794201fea",
+      "effective": true,
+      "minus": -67,
+      "plus": null
+    },
+    {
+      "observation": "1271-22",
+      "element": "E.H. burst.effects[0]",
+      "key": "abacdab819688a1f",
+      "effective": true,
+      "minus": -68,
+      "plus": null
+    },
+    {
+      "observation": "1271-23",
+      "element": "E.H. burst.effects[0]",
+      "key": "03026dc5615a3940",
+      "effective": true,
+      "minus": -67,
+      "plus": null
+    },
+    {
+      "observation": "1271-24",
+      "element": "E.H. burst.effects[0]",
+      "key": "1ac07b3658b47e15",
+      "effective": true,
+      "minus": -60,
+      "plus": null
+    },
+    {
+      "observation": "1271-25",
+      "element": "E.H. burst.effects[0]",
+      "key": "6c87f158e98426ef",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1271-26",
+      "element": "E.H. burst.effects[0]",
+      "key": "18129eb4e341c0b9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1272-12",
+      "element": "E.H. burst.effects[0]",
+      "key": "028002fe95203fab",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1272-13",
+      "element": "E.H. burst.effects[0]",
+      "key": "b09fb16764432ede",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1272-17",
+      "element": "E.H. burst.effects[0]",
+      "key": "0121045becdf6772",
+      "effective": true,
+      "minus": -3784655.345626584,
+      "plus": null
+    },
+    {
+      "observation": "1272-18",
+      "element": "E.H. burst.effects[0]",
+      "key": "fb629fa49e359f8f",
+      "effective": true,
+      "minus": -3294650.9023339995,
+      "plus": null
+    },
+    {
+      "observation": "1272-20",
+      "element": "E.H. burst.effects[0]",
+      "key": "040630654245e772",
+      "effective": true,
+      "minus": -2790026.923244,
+      "plus": null
+    },
+    {
+      "observation": "1272-21",
+      "element": "E.H. burst.effects[0]",
+      "key": "90ed9045ffd6cb02",
+      "effective": true,
+      "minus": -67,
+      "plus": null
+    },
+    {
+      "observation": "1272-22",
+      "element": "E.H. burst.effects[0]",
+      "key": "a8ab9db68403c717",
+      "effective": true,
+      "minus": -68,
+      "plus": null
+    },
+    {
+      "observation": "1272-23",
+      "element": "E.H. burst.effects[0]",
+      "key": "bffdc537a57ba4b8",
+      "effective": true,
+      "minus": -67,
+      "plus": null
+    },
+    {
+      "observation": "1272-24",
+      "element": "E.H. burst.effects[0]",
+      "key": "3997fd38420e45ed",
+      "effective": true,
+      "minus": -60,
+      "plus": null
+    },
+    {
+      "observation": "1272-25",
+      "element": "E.H. burst.effects[0]",
+      "key": "6fb6d7ea1ad1a2e7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1272-26",
+      "element": "E.H. burst.effects[0]",
+      "key": "c8728c9ecbf0c9b1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }

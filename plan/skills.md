@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 144・効果 1049（根拠あり 1027）・notes 352（根拠あり 147）
+件数: キャラ 145・効果 1056（根拠あり 1034）・notes 355（根拠あり 150）
 
-notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補足 42・間接 87
+notes の種類: 未対応 44・前提の外 113・計算に無関係 69・補足 42・間接 87
 
-スロット: supported 390・partial 31・unsupported 9・noEffect 53
+スロット: supported 393・partial 31・unsupported 9・noEffect 53
 
 ## 10 ラピ
 
@@ -519,6 +519,22 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[0] timed・burstUse・oneEnemyBurstDamage: C-1229（確定）、C-1230（仮説）
   - notes[0] 未対応: 「〜敵1機に」で終わるバーストスキルダメージ▲は、行の対象の句が「敵1機に」で終わるバーストの追加ダメージ・持続ダメージ（ラピ：レッドフード・マナなど）に乗るかを確かめていない。モデルは乗せない（plan/design-jackal.md 2.2 節）: 根拠なし
   - notes[1] 間接（防御力）: 味方全体の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: 根拠なし
+
+## 113 E.H.
+
+- **skill1**: supported
+  - effects[0] counterChange・scrap が最大になった時・scrap（減少）: C-1387（確定）
+  - effects[1] counterChange・scrap が最大になった時・homemadeMagazine: C-1387（確定）
+  - effects[2] passive・homemadeMagazine 1 以上の間・attack: C-1387（確定）
+  - notes[0] 前提の外: 自家製弾倉の 2〜4 本目と、その分の攻撃力▲は、廃品が戦闘開始時の 10 個のほかに増えない前提（発射体・パーツ・敵の破壊が起きない。要件 4.2 節）では起きない: C-1387（確定）
+- **skill2**: supported
+  - effects[0] counterChange・battleStart・scrap: C-1387（確定）
+  - effects[1] timed・battleStart・elementDamage: C-1387（確定）
+  - notes[0] 前提の外: 味方が破壊可能な発射体を破壊した時（1 個）・パーツを破壊した時（5 個）・敵が破壊された時（2 個）の廃品▲と、その回収の有利コードの攻撃ダメージ▲は、敵の発射体・パーツ・敵の破壊を扱わない前提（要件 4.2 節）の外: C-1387（確定）
+- **burst**: supported
+  - effects[0] weaponChange・burstUse: C-1388（確定）、C-1389（仮説）、C-1390（確定）
+  - effects[1] timed・burstUse・attack: C-1391（確定）
+  - notes[0] 前提の外: 自家製弾倉が 2 本以上のときの最大装弾数（2 発以上）は、弾倉が 1 本で止まる前提（S1 の notes）の外: C-1387（確定）
 
 ## 121 エヌ : ミラクルフェアリー
 
