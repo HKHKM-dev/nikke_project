@@ -1,0 +1,23 @@
+{
+  "id": "C-1380",
+  "text": "ウンファのバーストのダメージ（最終攻撃力の 85.62%。Lv10）は、発動の時点の敵の防御力▼（S2 の 29%）を見て、同じ発動の防御力▼は乗らない（C-0795・C-0813 の形）。バーストの防御力▼（2.43%）は発動の頃から 15 秒、味方全体の発に効き、S2 の▼と重なると和で効く（的の防御力 100 は、バーストの▼だけで 98、S2 の▼と重なって 69）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1267-01`・`1267-02`・`1267-03`・`1267-04`・`1267-05`・`1267-07`・`1267-08`・`1267-09`・`1267-10`。V-0809",
+  "model": "data/skills/92.json の burst の effects[0]（burstDamage）・effects[1]（timed・burstUse・enemyDefenseDown）。1 ヒットは skills/burstDamage.ts の computeBurstHit と frame/plan.ts の burstHitBuffs、防御力は damage.ts の defenceAfterDown",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/92.json の burst の effects[0]", "data/skills/92.json の burst の effects[1]"]
+  },
+  "decidedOn": [],
+  "runs": [
+    {
+      "recording": "1267",
+      "reproduced": "8 回目のバースト",
+      "observations": ["1267-09"]
+    }
+  ],
+  "parameterFree": "1 ヒットの式は倍率ダメージの式（C-0795・C-0813 の発動の時点の値）と敵の防御力▼の式（C-0556・C-0790）、値は説明文の Lv10 の値（85.62%・2.43%・15 秒）とスペック固定の攻撃力だけで、録画で合わせた定数は無い"
+}
