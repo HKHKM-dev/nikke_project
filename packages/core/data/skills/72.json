@@ -103,12 +103,13 @@
           "target": "self",
           "amountRef": 5,
           "assumes": {
-            "ja": "命中は戦闘を通して数え、150 回目にヘイト状態なら、自分が持つ、上限のある状態と timed のスタックのバフの全部（イチゴキャンディと、ほかの味方のスキルで自分に付いたもの）に、付いていれば 1 段足す（付いていなければ足さない。C-1182）。イチゴキャンディに足す分は C-1180・C-1182 で確かめた。ほかの味方のスキルで付いたバフに足すことと、足すと全部の段の維持を付け直す（付与と同じに数える）ことは確かめていない（V-0850）",
-            "en": "Hits are counted through the battle; on the 150th hit, if in the Attract state, adds one stack to every stackable buff (states and timed buffs with a stack cap) held by self (Strawberry Candy and those from other allies' skills), only if present (not when absent; C-1182). The part added to Strawberry Candy is verified (C-1180, C-1182). Adding to buffs from other allies' skills and refreshing the duration of all stacks on adding (counted like an application) are not verified (V-0850)"
+            "ja": "命中は戦闘を通して数え、150 回目にヘイト状態なら、自分が持つ、上限のある状態と timed のスタックのバフの全部（イチゴキャンディと、ほかの味方のスキルで自分に付いたもの）に、付いていれば 1 段足す（付いていなければ足さない。C-1182）。イチゴキャンディに足す分は C-1180・C-1182、ほかの味方のスキルで付いたバフに足す分は C-1508 で確かめた。足すと全部の段の維持を付け直す（付与と同じに数える。C-1507 は仮説）",
+            "en": "Hits are counted through the battle; on the 150th hit, if in the Attract state, adds one stack to every stackable buff (states and timed buffs with a stack cap) held by self (Strawberry Candy and those from other allies' skills), only if present (not when absent; C-1182). The part added to Strawberry Candy is verified by C-1180 and C-1182, and the part added to buffs from other allies' skills by C-1508. Adding refreshes the duration of all stacks (counted like an application; C-1507 is a hypothesis)"
           },
           "claims": [
             "C-1180",
-            "C-1182"
+            "C-1182",
+            "C-1508"
           ]
         }
       ],
