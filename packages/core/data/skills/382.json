@@ -1,0 +1,132 @@
+{
+  "formatVersion": 1,
+  "resourceId": 382,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "roar",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "allies",
+          "maxStacksRef": 3,
+          "durationRef": 4,
+          "contents": [
+            {
+              "stat": "critRate",
+              "ref": 2
+            }
+          ],
+          "assumes": {
+            "ja": "通常攻撃の {01} 発ごとに、自分を含む味方全体に 1 スタック足し、全段の維持を付け直す。スタックは次のフレームから効く",
+            "en": "Every {01} normal attacks add one stack to all allies, including this unit, and refresh all stacks. A stack works from the next frame"
+          },
+          "claims": [
+            "C-1443"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 5
+          },
+          "target": "allies",
+          "targetWeapon": "SG",
+          "stat": "maxEffectiveRange",
+          "ref": 6,
+          "durationRef": 7,
+          "assumes": {
+            "ja": "通常攻撃の {05} 発ごとに付き直す。適正射程距離の上端を 上端 × (1 + Σ) に広げ、効いている間は着地点の代表の距離で比べる（SG の帯 0〜25 は 30 になり、射撃場の中近が入る）",
+            "en": "Reapplied every {05} normal attacks. It widens the upper end of the effective range to upper × (1 + Σ) and compares the landing point's representative distance while active (the SG range 0–25 becomes 30, which includes the Shooting range mid-near landing)"
+          },
+          "claims": [
+            "C-1447",
+            "C-1451"
+          ]
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "hitRate",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "SG の弾丸命中率に効かせるのは近だけ（中近・中遠・遠の効き方は決まっていない）",
+            "en": "For SG it raises bullet hit rate only at the near landings (how it works at mid-near, mid-far and far is not settled)"
+          },
+          "claims": [
+            "C-1466"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "topAttack",
+          "targetCountRef": 3,
+          "targetWeapon": "SG",
+          "stat": "pelletCount",
+          "scaling": "flat",
+          "ref": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "SG の味方だけを、フルバーストの開始のフレームの最終攻撃力の高い順に並べた上位 {03} 機（同値は枠の若い順）",
+            "en": "The top {03} SG allies ranked by final ATK at the Full Burst start frame (ties go to the earlier slot)"
+          },
+          "claims": [
+            "C-1444"
+          ]
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "critDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-1445"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "targetWeapon": "SG",
+          "stat": "critRate",
+          "ref": 3,
+          "durationRef": 4,
+          "condition": {
+            "selfState": {
+              "state": "roar",
+              "stacks": "full"
+            }
+          },
+          "assumes": {
+            "ja": "咆哮のフルスタックかはバーストを使ったフレームで見る",
+            "en": "Whether Roar is at max stacks is checked at the frame the Burst is used"
+          },
+          "claims": [
+            "C-1446"
+          ]
+        }
+      ],
+      "notes": []
+    }
+  }
+}

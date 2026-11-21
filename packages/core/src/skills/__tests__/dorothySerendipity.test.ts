@@ -29,10 +29,12 @@ describe('語彙の検証', () => {
     expect(() => parseSkillDefinition(raw)).not.toThrow();
   });
 
-  it('takes Pellet count up only with scaling "flat" and target "self"', () => {
+  it('takes Pellet count up only with scaling "flat" and target "self", "allies" or "topAttack"', () => {
     const i = indexOf('burst', 'pelletCount');
     expect(patched('burst', i, { scaling: undefined })).toThrow(/pelletCount needs scaling "flat"/);
-    expect(patched('burst', i, { target: 'allies' })).toThrow(/pelletCount is only allowed with target "self"/);
+    expect(patched('burst', i, { target: 'longestChargeTime', targetCount: 1 })).toThrow(
+      /pelletCount is only allowed with target "self", "allies" or "topAttack"/,
+    );
   });
 
   it('takes the single pellet as a flag of self in timed only', () => {

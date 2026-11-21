@@ -506,6 +506,12 @@ export const NAMED_STATES = {
    * バーストの「自分がリフレッシュハートのフルスタック状態なら」の回復が読む）
    */
   refreshHeart: { name: { ja: 'リフレッシュハート', en: 'Refresh Heart' }, holder: 'ally' },
+  /**
+  /**
+   * 咆哮（レオナの S1。通常攻撃 5 回ごとに味方全体に 1 スタック・5 スタック・5 秒。中身は会心率▲。バーストの「咆哮のフルスタック状態なら」が
+   * 見る。plan/design-leona.md 2.3 節）
+   */
+  roar: { name: { ja: '咆哮', en: 'Roar' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

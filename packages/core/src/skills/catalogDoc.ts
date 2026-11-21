@@ -76,7 +76,7 @@ const STAT_INFO: Record<string, readonly [label: string, status: Status | null, 
     'ok',
     'minEffectiveRange（距離ボーナスの帯の下端を縮める。エード：エージェントバニー編）',
   ],
-  range: ['適正最大射程距離', 'gap', 'なし（距離ボーナスの乗る範囲を上に広げる。ツールチップ T6）'],
+  range: ['適正最大射程距離', 'ok', 'maxEffectiveRange（距離ボーナスの帯の上端を広げる。レオナ編）'],
   spinUp: ['マシンガン立ち上げ速度', 'ok', 'spinUpSpeed（MG のレートの上がり幅。読みは仮説）'],
   currentHp: [
     '現在のHP',

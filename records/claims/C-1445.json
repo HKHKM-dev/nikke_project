@@ -1,0 +1,16 @@
+{
+  "id": "C-1445",
+  "text": "レオナ（382）のバーストの「味方全体にクリティカルダメージ 34.64%▲」は、自分以外の味方（ルドミラ）の会心の 1 ヒットの会心の項に 34.64% を足す（Lv10）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1315-18`・`1316-18`。V-0826",
+  "model": "data/skills/382.json（burst の effects[0]）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/382.json の burst の effects[0]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値とスペック固定のスキル Lv10（C-0029）"
+}

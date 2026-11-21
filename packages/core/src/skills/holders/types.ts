@@ -3,7 +3,7 @@
 import type { BurstScheduleModel, FullBurstWindow } from '../../burst/schedule.ts';
 import { lowerBound, type ShotLog } from '../../frame/shots.ts';
 import type { ResolvedDamageEffect } from '../burstDamage.ts';
-import type { BuffTotals, HitRateN } from '../buffs.ts';
+import type { BuffTotals, HitRateN, RangeUp } from '../buffs.ts';
 import type { ChanceOpportunity } from '../chance.ts';
 import type { ResolvedCycleEvery } from '../cycles.ts';
 import type {
@@ -302,10 +302,10 @@ export type HolderListsOptions = {
   leadShots?: LeadShots;
   /**
    * 条件 inEffectiveRange の判定（plan/design-agent-bunny.md 2.2 節）。枠 slotIndex のフレーム frame の着地点が、
-   * 適正最小射程距離▲ の和 minRange で縮めた適正射程距離の中か（frame/landing.ts の inEffectiveRangeAt）。省略は成り立つ（距離ボーナスあり
+   * 適正射程距離の▲ range で動かした適正射程距離の中か（frame/landing.ts の inEffectiveRangeAt）。省略は成り立つ（距離ボーナスあり
    * の手入力の条件の既定と同じ）
    */
-  effectiveRangeAt?: (slotIndex: number, frame: number, minRange: number) => boolean;
+  effectiveRangeAt?: (slotIndex: number, frame: number, range: RangeUp) => boolean;
 };
 
 /** leadFrames のある付与ごとの、発火した発のフレーム（昇順。leadShotKey ごと。発火の無い付与は入らない） */
@@ -420,10 +420,11 @@ export type HolderLists = {
   /** 当たりの stat の件の列があるか */
   readonly hasHitTracks: boolean;
   /**
-   * 枠 holder にフレーム frame に効いている、時間で変わる適正最小射程距離▲の和
-   * （timed・状態の中身。常時の値は含まない。plan/design-agent-bunny.md 2.1 節）。条件 inEffectiveRange と、蓄積爆破の 1 パス目の発の値が読む
+   * 枠 holder にフレーム frame に効いている、時間で変わる適正射程距離の▲（適正最小射程距離▲・適正最大射程距離▲の和。
+   * timed・状態の中身。常時の値は含まない。plan/design-agent-bunny.md 2.1 節・plan/design-leona.md 2.1 節）。条件 inEffectiveRange と、
+   * 蓄積爆破の 1 パス目の発の値が読む
    */
-  minEffectiveRangeAt(holder: number, frame: number): number;
+  rangeUpAt(holder: number, frame: number): RangeUp;
   /**
    * 枠 holder にフレーム frame に効いている、時間で変わる会心率▲と
    * 通常攻撃のクリティカル確率▲の和（timed・状態の中身。常時の値は含まない。plan/design-new-chars-1029.md 5.7 節）。critHit の回数の量に使う

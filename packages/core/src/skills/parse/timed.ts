@@ -431,9 +431,17 @@ function parseTimedTarget(
   if (stat === 'trueDamageConversion' && target !== 'self') {
     fail(`${path}.target`, 'trueDamageConversion is only allowed with target "self"');
   }
-  // ペレットの数の stat は自分にだけ（1 パス目が持ち主の発の数え方とゲージに読む）
-  if (stat !== undefined && isPelletStat(stat) && target !== 'self') {
-    fail(`${path}.target`, `${stat} is only allowed with target "self"`);
+  // ペレットの数の stat は、1 パス目が持ち主の発の数え方とゲージに読む。ペレット数▲は自分・味方全体・順位の対象（topAttack）に
+  // 書ける（plan/design-leona.md 2.2 節）。ペレットの数の固定は自分にだけ
+  if (stat === 'pelletCount' && target !== 'self' && target !== 'allies' && target !== 'topAttack') {
+    fail(`${path}.target`, `pelletCount is only allowed with target "self", "allies" or "topAttack"`);
+  }
+  // 自分以外へのペレット数▲は SG の味方にだけ（ペレットを持たない武器の 1 発を分けない）
+  if (stat === 'pelletCount' && target !== 'self' && narrowing.targetWeapon !== 'SG') {
+    fail(`${path}.targetWeapon`, 'pelletCount on allies needs targetWeapon "SG"');
+  }
+  if (stat === 'singlePellet' && target !== 'self') {
+    fail(`${path}.target`, 'singlePellet is only allowed with target "self"');
   }
   return { target, narrowing, count };
 }

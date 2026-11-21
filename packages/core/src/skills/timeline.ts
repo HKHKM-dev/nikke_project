@@ -274,8 +274,9 @@ function keyOf(fullBurst: boolean, state: SlotBuffState, landing?: string | null
   if (landing !== undefined) {
     parts.push(`L:${landing ?? '?'}`, `N:${state.buffs.hitRate.toFixed(KEY_DIGITS)}`);
     if (state.buffs.hitRateUp !== 0) parts.push(`U:${state.buffs.hitRateUp.toFixed(KEY_DIGITS)}`);
-    // 適正最小射程距離▲ も距離ボーナスを変える（frame/landing.ts の landingPartsWith）
+    // 適正射程距離の▲も距離ボーナスを変える（frame/landing.ts の landingPartsWith）
     if (state.buffs.minEffectiveRange !== 0) parts.push(`R:${state.buffs.minEffectiveRange.toFixed(KEY_DIGITS)}`);
+    if (state.buffs.maxEffectiveRange !== 0) parts.push(`X:${state.buffs.maxEffectiveRange.toFixed(KEY_DIGITS)}`);
   }
   return parts.join('|');
 }
@@ -838,7 +839,7 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
         e.lock !== true && locked.has(e.stat) ? { ...e, appliedAmount: 0 } : e,
       );
     }
-    // 状態だけの stat の小片は timedEffects には入れない（表示は履歴の値の小片から作る）。buffs.hitRate・minEffectiveRange だけを足す
+    // 状態だけの stat の小片は timedEffects には入れない（表示は履歴の値の小片から作る）。buffs.hitRate・minEffectiveRange・maxEffectiveRange だけを足す
     for (const p of stateActive(start)) {
       const state = slotStates[p.slotIndex];
       if (!state) continue;
