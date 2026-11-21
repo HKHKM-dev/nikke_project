@@ -26,9 +26,16 @@ describe('失った HP 1% ごとの▲（perLostHp）', () => {
     expect(lostHpSteps(0)).toBe(100);
   });
 
-  it('scales only the perLostHp effects by the lost HP steps', () => {
-    expect(lostHpScaled({ scaling: 'perLostHp' as const, value: 0.0096 }, 0.6939).value).toBeCloseTo(0.288, 12);
-    expect(lostHpScaled({ scaling: 'ratio' as const, value: 0.0096 }, 0.5).value).toBe(0.0096);
+  it('scales only the perLostHp effects by the lost HP steps into a ratio, reading the HP ratio only for them', () => {
+    const scaled = lostHpScaled({ scaling: 'perLostHp' as const, value: 0.0096 }, () => 0.6939);
+    expect(scaled.scaling).toBe('ratio');
+    expect(scaled.value).toBeCloseTo(0.288, 12);
+    const ratio = { scaling: 'ratio' as const, value: 0.0096 };
+    expect(
+      lostHpScaled(ratio, () => {
+        throw new Error('not read');
+      }),
+    ).toBe(ratio);
   });
 
   it('writes the S2 ATK up as a perLostHp timed effect on self while the HP is at 70% or lower', () => {

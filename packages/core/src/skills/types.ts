@@ -346,9 +346,13 @@ export function lostHpSteps(ratio: number): number {
   return Math.max(0, Math.floor(100 * (1 - ratio) + 1e-9));
 }
 
-/** 効果の値を、HP の割合 ratio の失った HP の段で掛けた効果（scaling 'perLostHp' のときだけ。ほかはそのまま） */
-export function lostHpScaled<E extends { scaling?: BuffScaling; value: number }>(effect: E, ratio: number): E {
-  return effect.scaling === 'perLostHp' ? { ...effect, value: effect.value * lostHpSteps(ratio) } : effect;
+/**
+ * 効果の値を、持ち主の HP の割合（ratioOf。perLostHp のときだけ読む）の失った HP の段で掛け、比率（scaling 'ratio'）にした効果
+ * （scaling 'perLostHp' のときだけ。ほかはそのまま）
+ */
+export function lostHpScaled<E extends { scaling?: BuffScaling; value: number }>(effect: E, ratioOf: () => number): E {
+  if (effect.scaling !== 'perLostHp') return effect;
+  return { ...effect, scaling: 'ratio', value: effect.value * lostHpSteps(ratioOf()) };
 }
 
 /** 攻撃力に実数を固定加算するスケーリング（比率で足さない。stat は attack だけ） */

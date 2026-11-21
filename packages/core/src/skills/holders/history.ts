@@ -5,7 +5,7 @@ import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, fixedAttackBaseOf, type 
 import { isStateContent, type AppliedEffect, isTimedItem, type ItemEffect } from '../resolve.ts';
 import { stateMatches, type NamedStateId } from '../states.ts';
 import { isEffectTarget } from '../targets.ts';
-import { SKILL_SLOTS, isMaxHpStat, isStateStat, lostHpSteps, type BuffStat } from '../types.ts';
+import { SKILL_SLOTS, isMaxHpStat, isStateStat, lostHpScaled, lostHpSteps, type BuffStat } from '../types.ts';
 import type { SkillSlot } from '../../types.ts';
 import { unionRanges } from '../../frame/events.ts';
 import {
@@ -458,15 +458,16 @@ export function valuePiecesOf(
  */
 function splitByLostHp(piece: ValuePiece, steps: HpRatioSteps): ValuePiece[] {
   const out: ValuePiece[] = [];
+  const lostAt = (i: number): number => lostHpSteps(steps.ratios[i]!);
   let i = hpRatioStepIndexOf(steps, piece.start);
   let start = piece.start;
   while (start < piece.end) {
-    const lost = lostHpSteps(steps.ratios[i]!);
     // 段の数が変わるまで進める
     let j = i + 1;
-    while (j < steps.frames.length && steps.frames[j]! < piece.end && lostHpSteps(steps.ratios[j]!) === lost) j += 1;
+    while (j < steps.frames.length && steps.frames[j]! < piece.end && lostAt(j) === lostAt(i)) j += 1;
     const end = Math.min(piece.end, steps.frames[j] ?? piece.end);
-    out.push({ ...piece, effect: { ...piece.effect, value: piece.effect.value * lost }, start, end });
+    const ratio = steps.ratios[i]!;
+    out.push({ ...piece, effect: lostHpScaled(piece.effect, () => ratio), start, end });
     start = end;
     i = j;
   }

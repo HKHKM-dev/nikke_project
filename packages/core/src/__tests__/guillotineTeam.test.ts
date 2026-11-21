@@ -6,9 +6,10 @@ import { hitFramesOf, isInFullBurst } from '../burst/schedule.ts';
 import { computeFixedSpecDefence } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { applyAttackBuffs, ZERO_BUFFS } from '../skills/buffs.ts';
-import { itemsOf, selfHpRatioOf, valuePiecesOf } from '../skills/holders.ts';
+import { itemsOf, selfHpRatioOf } from '../skills/holders.ts';
 import { lostHpSteps } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
+import { slotPieces } from './historyHelpers.ts';
 import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 /** 防御力もスペック固定にし、コア命中率を 0.1 にした枠 */
@@ -38,9 +39,8 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   const g = input.slots.findIndex((s) => s?.character.resourceId === GUILLOTINE);
   const plan = planTeamRun(input);
   const hpDowns = plan.instants.filter((i) => i.slotIndex === g && i.effect.kind === 'currentHpDown');
-  const s2Attack = valuePiecesOf(plan.history).filter(
-    (p) => p.slotIndex === g && p.effect.source.skill === 'skill2' && p.effect.stat === 'attack',
-  );
+  const attackPieces = slotPieces(plan, g).filter((p) => p.effect.stat === 'attack');
+  const s2Attack = attackPieces.filter((p) => p.effect.source.skill === 'skill2');
 
   it('lowers the current HP by 2.01% of the current HP on every S1 firing', () => {
     expect(hpDowns.length).toBeGreaterThan(FIRES_TO_50);
@@ -103,10 +103,8 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
       for (const r of rankings) {
         // 比率の▲の小片だけで決まる回で比べる（同じフレームに始まる発動者基準の固定加算（クラウンの S1）は、同じフレームの登録の順で
         // 順位に入るかが変わるので外す）
-        const pieces = valuePiecesOf(plan.history).filter(
-          (p) => p.slotIndex === g && p.effect.stat === 'attack' && p.start <= r.frame && r.frame < p.end,
-        );
-        if (pieces.some((p) => !['ratio', 'perLostHp', undefined].includes(p.effect.scaling))) continue;
+        const pieces = attackPieces.filter((p) => p.start <= r.frame && r.frame < p.end);
+        if (pieces.some((p) => (p.effect.scaling ?? 'ratio') !== 'ratio')) continue;
         compared += 1;
         const up = pieces.reduce((sum, p) => sum + p.effect.value, 0);
         expect(r.finalAttacks[g]).toBeCloseTo(applyAttackBuffs(base, { ...ZERO_BUFFS, attackRatio: up }), 6);
