@@ -90,6 +90,14 @@
   background: var(--m-accent);
   color: var(--m-accent-fg);
 }
+/* 押している絞り込みの文字のボタンは、ブラウザのアクセントの色（チェックボックスをオンにしたときの色）で塗る。対応しないブラウザは styles.css の Highlight のまま */
+@supports (color: AccentColor) {
+  :root[data-app-ui='modern'] .classic-filter-button[aria-pressed='true'] {
+    border-color: AccentColor;
+    background: AccentColor;
+    color: AccentColorText;
+  }
+}
 :root[data-app-ui='modern'] .popover-panel {
   background: var(--m-surface);
   border-radius: 12px;
