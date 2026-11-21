@@ -64,8 +64,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "scope": {
@@ -102,8 +101,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "scope": {
@@ -234,6 +232,40 @@
     "scope": {
       "slot": 3,
       "source": "firing"
+    },
+    "source": "V-0808",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1256-08",
+    "recording": "1256",
+    "use": "compare",
+    "kind": "count",
+    "value": 1470,
+    "unit": "ヒット",
+    "description": "180 秒の S2 の倍率ダメージのヒットの数（35 ヒットのまとまり 42 回 × 35）。バーストの窓の中は 30 回の命中ごとに出るので、窓ごとに 4 回出る",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分（通しで 1 回）",
+      "note": "S2 の 1 ヒットの値（窓の外 2,126・3,188、窓の中 7,618・10,158）の増分が 3f おきに続くまとまりを数えた（HUD の読めなかったフレームで 2 つに割れたものは 1 回、続けて出た 2 回は 2 回と数えた。scratchpad の使い捨ての下読み）。命中回数条件▼が無い定義ではモデルは 1,295。許容の幅は 2 回分（録画ごとに揺れる敵のジャンプの時刻で、180 秒の発の数が数十発変わる。C-0552）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 70
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
     },
     "source": "V-0808",
     "readAt": "2026-11-21"

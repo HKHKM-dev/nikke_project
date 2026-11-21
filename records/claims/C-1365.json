@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "単独実測",
   "basis": "`1256-04`。V-0808",
-  "model": "data/skills/224.json の skill2 の effects[0] の gaugePerHit（S1 の effects[1] には書かない）",
+  "model": "data/skills/224.json の skill2 の effects[0]（damage の gaugePerHit）。S1 の倍率ダメージには gaugePerHit を書かない",
   "replaces": [],
   "updated": "2026-11-21",
   "subject": {
