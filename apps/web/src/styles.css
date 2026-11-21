@@ -207,13 +207,13 @@ header h1 {
   padding: 3px 0;
   cursor: pointer;
 }
-/* 見出しの行の右の、アカウントと設定のボタンを横に並べる */
+/* 見出しの行の右の、育成と設定のボタンを横に並べる */
 .app-header-actions {
   display: flex;
   align-items: center;
   gap: 8px;
 }
-/* 枠と地を出さず、絵だけのボタン（アカウントと設定・元に戻す・スロットの右上・絞り込みのクリア） */
+/* 枠と地を出さず、絵だけのボタン（育成と設定・元に戻す・スロットの右上・絞り込みのクリア・共通育成の「育成状況の値に戻す」） */
 .settings-menu-button,
 .modern-slot-undo-button,
 .modern-slot-icon-button,
@@ -222,7 +222,25 @@ header h1 {
   background: none;
   box-shadow: none;
 }
-/* アカウントと設定のボタン（モダン UI。絵はバッジ ui_account・ui_window の正方形） */
+/* 共通育成の「育成状況の値に戻す」（モダン UI。絵だけのボタン。バッジ ui_return）。戻せないときは、元に戻すのボタンと同じく薄くする */
+.roster-revert-icon-button {
+  display: inline-flex;
+  padding: 0 4px;
+  border: none;
+  background: none;
+  box-shadow: none;
+  cursor: pointer;
+}
+.roster-revert-icon-button[aria-disabled='true'] {
+  cursor: default;
+  opacity: 0.3;
+}
+.roster-revert-icon {
+  display: block;
+  width: 26px;
+  height: 26px;
+}
+/* 育成と設定のボタン（モダン UI。絵はバッジ ui_account・ui_window の正方形） */
 .settings-menu-button {
   display: grid;
   place-items: center;
@@ -241,16 +259,20 @@ header h1 {
   display: block;
   width: 22px;
 }
-/* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。設定とアカウントのボタン・設定のメニューの選択肢の絵・未対応の印 ⓘ */
+/* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。育成と設定のボタン・設定のメニューの選択肢の絵・未対応の印 ⓘ・
+   元に戻す・やり直すのボタン・ニケ一覧の絞り込みのクリア・共通育成の「育成状況の値に戻す」 */
 .settings-menu-icon,
 .settings-option-icon,
-.char-unsupported-icon {
+.char-unsupported-icon,
+.modern-slot-undo-icon,
+.char-tray-filter-clear-icon,
+.roster-revert-icon {
   --badge-ground: light-dark(#ffffff, #1a1a1a);
   --badge-main: light-dark(#1a1a1a, #ffffff);
   --badge-accent: light-dark(#1a1a1a, #ffffff);
   --badge-line: light-dark(#ffffff, #000000);
 }
-/* 見出しの行の右の、アカウント（育成状況の読み書き）と設定（クラシック）の文字のボタン */
+/* 見出しの行の右の、育成（育成状況の読み書き）と設定（クラシック）の文字のボタン */
 .header-menu-button {
   height: 34px;
   padding: 0 10px;
@@ -1652,12 +1674,12 @@ html:has(.modern-view-container) {
   /* 全キャラを出し、枠の中ではスクロールしない（ページのスクロールだけにする） */
   padding: 4px;
 }
-/* モダンの画面では、ニケ一覧の絵の幅をスロットの立ち絵（枠線込み）と同じにし、1 行に 5 枚並べる。列の幅（絵と左右の余白 2px ずつ）が
-   スロットのカードの幅と同じで、列どうしの間も同じ 0 なので、一覧の行はスロットの並びと同じ幅になる。狭い画面では立ち絵と一緒に縮む（useSlotFit） */
-.modern-view-container {
+/* ニケ一覧の行に元の大きさの絵が 5 枚入らない狭い画面（data-tray-fit。useSlotFit）では、一覧の絵の幅をスロットの立ち絵（枠線込み）と同じにし、
+   1 行に 5 枚並べる。列の幅（絵と左右の余白 2px ずつ）がスロットのカードの幅と同じで、列どうしの間も同じ 0 なので、一覧の行はスロットの並びと同じ幅になる */
+.modern-view-container[data-tray-fit] {
   --tray-visual-w: calc(var(--slot-portrait-h) / 2 + 2px);
 }
-.modern-view-container .char-tray-list {
+.modern-view-container[data-tray-fit] .char-tray-list {
   grid-template-columns: repeat(5, calc(var(--tray-visual-w) + 4px));
 }
 .char-tray-empty {
@@ -2075,7 +2097,7 @@ html:has(.modern-view-container) {
 .slot-growth-panel .roster-revert-button {
   margin-top: 6px;
 }
-/* アカウントのメニューの「全部を読み込んだ値に戻す」の行 */
+/* 育成のメニューの「全部を読み込んだ値に戻す」の行 */
 .roster-revert-all-row {
   margin-top: 6px;
 }

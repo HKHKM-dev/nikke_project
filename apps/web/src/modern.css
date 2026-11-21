@@ -90,6 +90,12 @@
   background: var(--m-accent);
   color: var(--m-accent-fg);
 }
+/* 押している絞り込みの文字のボタンは、編成のタブの選んでいるもの（.toggle-button）と同じアプリの青で塗る */
+:root[data-app-ui='modern'] .classic-filter-button[aria-pressed='true'] {
+  border-color: var(--m-accent);
+  background: var(--m-accent);
+  color: var(--m-accent-fg);
+}
 :root[data-app-ui='modern'] .popover-panel {
   background: var(--m-surface);
   border-radius: 12px;
