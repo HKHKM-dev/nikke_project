@@ -1,0 +1,16 @@
+{
+  "id": "C-1381",
+  "text": "ウンファのバーストのクリティカル確率▲（4.65%。Lv10）は、発動から 15 秒、味方（リター）の通常攻撃の会心率に足す（窓の中の会心率は 0.15 + 0.0465。窓の外は基礎の 0.15）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1268-01`・`1268-02`・`1269-01`・`1269-02`。V-0809",
+  "model": "data/skills/92.json の burst の effects[2]（timed・burstUse・allies・critRate）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/92.json の burst の effects[2]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "会心率は基礎の 15% にクリティカル確率▲を足す形（C-0859・C-0863 と同じ）、値は説明文の Lv10 の値（4.65%・15 秒）だけで、録画で合わせた定数は無い"
+}
