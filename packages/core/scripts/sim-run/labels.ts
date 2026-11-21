@@ -78,5 +78,7 @@ export function triggerLabel(t: ResolvedTrigger): string {
 /** 効果の行に添える状態の id（付与・解除・スタック量の増減。味方の全部のスタック可能バフへの▲は allStackable） */
 export function stateLabelOf(e: SkillEffect): string {
   if (e.kind === 'stackChange') return e.target === 'allies' ? ' allStackable' : ` ${e.state}`;
-  return e.kind === 'state' || e.kind === 'removeState' ? ` ${e.state}` : '';
+  // 敵の状態の解除は (enemy) を添える（plan/design-phantom.md 2.3 節）
+  if (e.kind === 'removeState') return e.target === 'enemy' ? ` ${e.state}(enemy)` : ` ${e.state}`;
+  return e.kind === 'state' ? ` ${e.state}` : '';
 }

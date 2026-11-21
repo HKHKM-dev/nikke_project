@@ -407,7 +407,6 @@ function parseDamageGaugePerHit(v: Record<string, Json>, effect: DamageEffect, p
   // 味方が消費した弾の合計の倍率ダメージがゲージを溜めるかは確かめていない（plan/design-little-mermaid.md 2.1 節）
   if (isShotCountTrigger(trigger) && trigger.count === 'teamAmmo')
     fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with a teamAmmo count');
-  // 1 パス目は名前の無い窓の短縮を追わない（使い手のエイダの S2 はゲージを溜めるかを確かめていない）
   if (effect.periodShorten?.window !== undefined)
     fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with a periodShorten window');
   // 1 パス目は発火のフレームより後のゲージだけを予約できる。条件は 1 パス目の後に絞るので組み合わせない

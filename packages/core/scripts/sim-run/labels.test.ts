@@ -104,6 +104,9 @@ describe('stateLabelOf', () => {
   it('adds the state id to the effects that name a state, and nothing to the others', () => {
     expect(stateLabelOf(effect({ kind: 'state', state: 'camouflage' }))).toBe(' camouflage');
     expect(stateLabelOf(effect({ kind: 'removeState', state: 'metalSigma' }))).toBe(' metalSigma');
+    expect(stateLabelOf(effect({ kind: 'removeState', state: 'callingCard', target: 'enemy' }))).toBe(
+      ' callingCard(enemy)',
+    );
     expect(stateLabelOf(effect({ kind: 'stackChange', state: 'relax', target: 'self' }))).toBe(' relax');
     // 味方の全部のスタック可能バフへの増減は、状態を名指ししない
     expect(stateLabelOf(effect({ kind: 'stackChange', target: 'allies', allStackable: true }))).toBe(' allStackable');

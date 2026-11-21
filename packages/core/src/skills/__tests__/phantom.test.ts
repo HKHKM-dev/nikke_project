@@ -79,6 +79,12 @@ describe('フルスタックの消費のきっかけと敵の状態の解除', (
     expect(patched('skill2', REMOVE_CARD, { target: 'allies' })).toThrow(/expected "self" or "enemy"/);
   });
 
+  it('rejects gaugePerHit on a full-stack damage', () => {
+    expect(patched('skill2', ADDITIONAL, { gaugePerHit: true, delayFrames: 1, condition: undefined })).toThrow(
+      /gaugePerHit needs a timer trigger/,
+    );
+  });
+
   it('needs a grant of the consumed state with stacks for the damage trigger', () => {
     expect(patched('skill2', ADDITIONAL, { trigger: { fullStack: 'wakeUp' } })).toThrow(
       /a full-stack trigger of "wakeUp" needs grants of the same state on self/,
