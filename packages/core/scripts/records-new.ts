@@ -29,15 +29,18 @@
 //   commit もしない。
 //   --dry-run は書かずに、状態と確定にできない理由だけを出す（番号を取らず、commit もしない）。
 //   npm run records:new -- observation --from V-NNNN --recording <録画 id> (--json '<下書き>' | --file <下書きの JSON>)
-//   npm run records:new -- observation --replace <観測値 ID> (--json '<下書き>' | --file <下書きの JSON>)
+//   npm run records:new -- observation --replace <観測値 ID> (--json '<下書き>' | --file <下書きの JSON>) [--allow-cited]
 //   npm run records:new -- observation --invalidate <観測値 ID>[,...] --reason "<理由>" [--by <新しい観測値 ID>[,...]]
 // observation: 観測値の下書き（1 つか配列。id・recording・source・readAt を除いた欄。欄の一覧は下の「観測値の下書きの欄」）に、次の空き番号・
 //   source（--from）・readAt（今日）を付け、records:check と同じ観測値の検査を通ったら records/observations/<録画 id>.json に足す
 //   （通らなければ書かない。番号の振り方と同じ値の扱いは records:read --write と同じ。tools/captures/records-io.ts）。
+//   下書きに invalid は書けない（無効にするのは --invalidate）。
 //   --replace は、その観測値の欄を下書き（1 つ）で差し替える（id・recording・source・readAt は前のまま）。同じ検査を通ったら書く。
+//   仮説か確定の結論の根拠になっている観測値（入力なら、それを setup で指す比べが根拠のもの）は、その結論を出して止める（--allow-cited で差し替える。結論は出し直さない）。
 //   --invalidate は、観測値に invalid（理由と今日の日付）を付ける。--by を書くと、それを根拠にしている結論の根拠と、それを setup で指して
 //   いる比べ（jumpWindows など）の参照を新しい観測値に付け替える（--by が 1 つなら全部をそれに、並びなら同じ順の組で）。入力を読み直した
-//   ときは、比べを写さずにこれで付け替える（plan/design-workflow-simplification-18.md 1 節）。observation はどれも commit しない。
+//   ときは、比べを写さずにこれで付け替える（plan/design-workflow-simplification-18.md 1 節）。付け替えた結論は、等級・状態・許容内かを
+//   claim --update と同じく出し直す（確定にできる条件がそろわなければ仮説に戻し、理由を出す。仮説は確定に上げない。予測とは比べない）。observation はどれも commit しない。
 //   npm run records:new -- backlog --section <節> [--name <名前>] (--text "<本文>" | --cell "<列>=<文>" …) [--first]
 // backlog: records/backlog/<名前>.json を作る（plan/backlog.md の冒頭の書き方）。2 節など # の列のある節は、名前を次の番号（2-NN。ほかの
 //   ブランチが使った番号も避ける）にし、ほかの節は --name の名前で、order を節の末尾（--first なら先頭）にする。箇条の節は --text、表の節は
@@ -50,7 +53,6 @@ import {
   CLAIM_MECHANISMS,
   CLAIM_TOPICS,
   DECIDED_ROLES,
-  gradeAboveCandidate,
   gradeCandidate,
   toClaims,
   type Claim,
@@ -71,6 +73,8 @@ import {
   claimBasisObservations,
   claimDraft,
   claimUpdateBasis,
+  keepHypothesis,
+  keptClaimGrade,
   mergeClaimUpdate,
   nextId,
   parseJudgment,
@@ -78,9 +82,12 @@ import {
   verificationFileName,
   verificationTemplate,
   type ClaimDraft,
+  type ClaimUpdate,
 } from '../src/records/drafts.ts';
 import {
+  claimsCiting,
   draftShapeErrors,
+  repointedClaimOwn,
   invalidatedObservation,
   replacedObservation,
   repointClaim,
@@ -162,6 +169,7 @@ const { values, positionals } = cliArgs(
       invalidate: { type: 'string' },
       reason: { type: 'string' },
       by: { type: 'string' },
+      'allow-cited': { type: 'boolean', default: false },
       section: { type: 'string' },
       cell: { type: 'string', multiple: true },
       first: { type: 'boolean', default: false },
@@ -259,7 +267,8 @@ function freeId(prefix: 'V' | 'C', own: readonly string[]): string {
 /** 結論の下書きの評価に使う、結論の欄（新しい結論は空の文で作り、--update は前の結論に重ねる） */
 type ClaimEvaluation = {
   id: string;
-  from: string;
+  /** 予測を引く検証記録（無ければ予測と比べない） */
+  from: string | undefined;
   topic: ClaimTopic;
   text: string | undefined;
   basis: string;
@@ -276,18 +285,30 @@ type ClaimEvaluation = {
   grade?: (candidate: ClaimGrade | undefined) => ClaimGrade | undefined;
 };
 
-/**
- * 結論を確定とみなして、等級の候補・最小構成の検査・予測との比べを出し、claimDraft で状態と確定にできない理由を出す（新しい結論と
- * --update で同じ）
- */
-function evaluateClaim(e: ClaimEvaluation, claims: readonly Claim[], observations: readonly Observation[]): ClaimDraft {
+let evaluationCache: ReturnType<typeof loadEvaluationInputs> | undefined;
+
+function loadEvaluationInputs() {
   const file = loadRecordingsFile();
-  const recordings = recordingMap(file);
   const predictions = loadPredictions();
   const data = loadRecordsData(
     file,
     predictions.flatMap((p) => p.team.map((m) => m.rid)),
   );
+  return { recordings: recordingMap(file), predictions, data };
+}
+
+/** evaluateClaim が読む録画・予測・データ（--invalidate --by で結論を何件出し直しても 1 回だけ読む） */
+function evaluationInputs(): ReturnType<typeof loadEvaluationInputs> {
+  evaluationCache ??= loadEvaluationInputs();
+  return evaluationCache;
+}
+
+/**
+ * 結論を確定とみなして、等級の候補・最小構成の検査・予測との比べを出し、claimDraft で状態と確定にできない理由を出す（新しい結論と
+ * --update で同じ）
+ */
+function evaluateClaim(e: ClaimEvaluation, claims: readonly Claim[], observations: readonly Observation[]): ClaimDraft {
+  const { recordings, predictions, data } = evaluationInputs();
   const residuals = runObservationsCached(e.own, recordings, data);
   const residualOf = new Map(
     residuals.map((r) => [
@@ -331,11 +352,11 @@ function evaluateClaim(e: ClaimEvaluation, claims: readonly Claim[], observation
   const relevanceCtx = { recordings, ...data, claims: [...claims.filter((c) => c.id !== e.id), asConfirmed] };
   const sensitivity = withFreshSensitivity(e.own, relevanceCtx, loadSensitivity());
   const minimal = relevanceOf([asConfirmed], observations, relevanceCtx, sensitivity)[0]?.warnings ?? [];
-  const prediction = predictions.find((p) => p.verification === e.from);
+  const prediction = e.from === undefined ? undefined : predictions.find((p) => p.verification === e.from);
   const grade = e.grade?.(candidate);
   return claimDraft({
     id: e.id,
-    verification: e.from,
+    verification: e.from ?? '',
     topic: e.topic,
     text: e.text,
     today,
@@ -351,6 +372,48 @@ function evaluateClaim(e: ClaimEvaluation, claims: readonly Claim[], observation
     ...(e.judgment === undefined ? {} : { judgment: e.judgment }),
     ...(grade === undefined ? {} : { grade }),
   });
+}
+
+/**
+ * 前からある結論を、根拠の文 basis と根拠の観測値 own で出し直す（--update と、観測値の --invalidate --by の付け替えで同じ）。
+ * 等級の候補・最小構成の検査・状態は新しい結論と同じく出し、人が決めた等級（keptClaimGrade）と前の欄を残す
+ */
+function rewriteClaim(
+  existing: ClaimFile,
+  next: { from: string | undefined; basis: string; own: Observation[]; merged: ClaimUpdate; model?: string },
+  claims: readonly Claim[],
+  observations: readonly Observation[],
+): ClaimDraft {
+  const draft = evaluateClaim(
+    {
+      id: existing.id,
+      from: next.from,
+      topic: existing.topic,
+      text: existing.text,
+      basis: next.basis,
+      own: next.own,
+      base: existing,
+      subject: next.merged.subject,
+      decidedOn: next.merged.decidedOn,
+      runs: next.merged.runs,
+      parameterFree: next.merged.parameterFree,
+      judgment: next.merged.judgment,
+      grade: (candidate) => keptClaimGrade(existing, candidate),
+    },
+    claims,
+    observations,
+  );
+  return updatedClaim(existing, draft, next.merged, next.basis, next.model);
+}
+
+/** 出し直した結論の状態と等級の変わり方を head の後ろに付けて出し、確定にしなかった理由と、確定から仮説に戻ったことを知らせる */
+function reportRewrite(head: string, before: ClaimFile, result: ClaimDraft, tail = ''): void {
+  console.log(
+    `${head}: 状態 ${before.state} → ${result.file.state}・等級 ${before.grade ?? 'なし'} → ${result.file.grade ?? 'なし'}${tail}`,
+  );
+  printReasons(result.reasons);
+  if (before.state === '確定' && result.file.state === '仮説')
+    console.log('注意: 確定の結論が仮説に戻った。理由を確かめ、確定のままにするなら根拠か judgment を直す');
 }
 
 function printReasons(reasons: readonly string[]): void {
@@ -444,45 +507,12 @@ if (kind === 'verification') {
       ...(values['parameter-free'] === undefined ? {} : { parameterFree: values['parameter-free'] }),
       ...(judgment === undefined ? {} : { judgment }),
     });
-    const draft = evaluateClaim(
-      {
-        id,
-        from,
-        topic: existing.topic,
-        text: existing.text,
-        basis,
-        own,
-        base: existing,
-        subject: merged.subject,
-        decidedOn: merged.decidedOn,
-        runs: merged.runs,
-        parameterFree: merged.parameterFree,
-        judgment: merged.judgment,
-        // 人が決めた等級は残す。候補が無ければ前の等級のまま（records:close の確定と同じ）。候補があれば、gradeReason を書いて
-        // 候補より上にしたものだけを残す（records:close と違い、gradeReason の無い等級は前の候補とみて、新しい候補に合わせる）
-        grade: (candidate) =>
-          existing.grade === undefined
-            ? undefined
-            : candidate === undefined
-              ? existing.grade
-              : existing.gradeReason !== undefined && gradeAboveCandidate(existing.grade, candidate)
-                ? existing.grade
-                : undefined,
-      },
-      claims,
-      observations,
-    );
-    const result = updatedClaim(existing, draft, merged, basis, values.model);
-    const change = `状態 ${existing.state} → ${result.file.state}・等級 ${existing.grade ?? 'なし'} → ${result.file.grade ?? 'なし'}・足した根拠 ${added.length} 件（${added.join('・') || 'なし'}）`;
-    if (dryRun) {
-      console.log(`${id}（--dry-run。書かない）: ${change}`);
-      printReasons(result.reasons);
-    } else {
+    const result = rewriteClaim(existing, { from, basis, own, merged, model: values.model }, claims, observations);
+    const tail = `・足した根拠 ${added.length} 件（${added.join('・') || 'なし'}）`;
+    if (dryRun) reportRewrite(`${id}（--dry-run。書かない）`, existing, result, tail);
+    else {
       writeJson(path, result.file);
-      console.log(`${path} を書き直した: ${change}`);
-      printReasons(result.reasons);
-      if (existing.state === '確定' && result.file.state === '仮説')
-        console.log('注意: 確定の結論が仮説に戻った。理由を確かめ、確定のままにするなら根拠か judgment を直す');
+      reportRewrite(`${path} を書き直した`, existing, result, tail);
       console.log(
         `検証記録 ${from} の「結論」に ${id} を足し、npm run records:check を回す（commit はしない。ほかの変更と一緒に commit する）`,
       );
@@ -560,10 +590,23 @@ if (kind === 'verification') {
       fail(`${before.id} は無効（${before.invalid.reason}）。直さずに新しい観測値を足す`);
     const after = replacedObservation(before, draft);
     checked([after]);
+    // 仮説か確定の結論の根拠になっている観測値は、--allow-cited が無ければ差し替えない（値や許容幅が変わると、結論の等級と状態が変わりうる）
+    // 入力（setup が ID で指す観測値）は、それを指す比べを根拠にしている結論も問う
+    const referring = all.filter((o) => setupRefIds(o).includes(before.id)).map((o) => o.id);
+    const cited = claimsCiting(loadClaims(), [before.id, ...referring]).map((c) => `${c.id}（${c.state}）`);
+    if (cited.length > 0 && !values['allow-cited'])
+      fail(
+        `${before.id} は結論の根拠${referring.length > 0 ? `（setup で指す比べ ${referring.join('・')} を含む）` : ''}になっているので差し替えない: ${cited.join('・')}\n` +
+          '  読み違いなら --invalidate --reason "<理由>" --by <新しい観測値> で付け替える。承知の上で差し替えるなら --allow-cited を付ける',
+      );
     const list = loadRecordingObservations(before.recording).map((o) => (o.id === before.id ? after : o));
     const path = saveObservations(before.recording, list, { format: false });
     formatFiles([path]);
     console.log(`${path} の ${before.id} を差し替えた（commit はしない）`);
+    if (cited.length > 0)
+      console.log(
+        `差し替えた観測値を根拠にしている結論（等級・状態は出し直していない。records:new claim --update で出し直すか確かめる）: ${cited.join('・')}`,
+      );
   } else if (values.invalidate !== undefined) {
     // 無効にし、--by があれば、それを根拠にしている結論を新しい観測値に付け替える
     if (values.reason === undefined || values.reason.trim() === '') fail('--reason "<理由>" が要る');
@@ -602,10 +645,8 @@ if (kind === 'verification') {
     // 結論の付け替え（無効にする前に、書き換える結論を出しておく）
     const claims = loadClaims();
     const repointed = new Map<string, ClaimFile>();
-    // 棄却・範囲外の結論は、その時の根拠のまま残す（記録は書き換えない）
     for (const [old, to] of pairs)
-      for (const { observations: _o, ...c } of claims) {
-        if (c.state !== '仮説' && c.state !== '確定') continue;
+      for (const { observations: _o, ...c } of claimsCiting(claims, [old])) {
         const next = repointClaim(repointed.get(c.id) ?? c, old, to, today);
         if (next !== undefined) repointed.set(c.id, next);
       }
@@ -615,16 +656,28 @@ if (kind === 'verification') {
       fail(
         `付け替えた結論の runs が検査に通らないので書かない（結論を手で直す）:\n${runErrors.map((e) => `  ${e}`).join('\n')}`,
       );
-    const written = [...new Set(changed.map((o) => o.recording))].map((recording) =>
-      saveObservations(
-        recording,
-        loadRecordingObservations(recording).map((o) => changed.find((x) => x.id === o.id) ?? o),
-        { format: false },
-      ),
-    );
+    // 付け替えた結論の等級・状態・許容内かを、無効にした後の観測値で出し直す（新しい結論と同じ確定にできる条件）。予測は結論を作った
+    // ときに見たので比べない。仮説は確定に上げない（keepHypothesis）
+    const changedById = new Map(changed.map((o) => [o.id, o]));
+    const withChanged = (o: Observation) => changedById.get(o.id) ?? o;
+    const afterAll = all.map(withChanged);
+    const rewritten = new Map<string, ClaimDraft>();
     for (const [cid, c] of repointed) {
+      const own = repointedClaimOwn(c, afterAll, ids);
+      const result = rewriteClaim(
+        c,
+        { from: undefined, basis: c.basis, own, merged: mergeClaimUpdate(c, {}) },
+        claims,
+        afterAll,
+      );
+      rewritten.set(cid, keepHypothesis(c.state, result));
+    }
+    const written = [...new Set(changed.map((o) => o.recording))].map((recording) =>
+      saveObservations(recording, loadRecordingObservations(recording).map(withChanged), { format: false }),
+    );
+    for (const [cid, { file }] of rewritten) {
       const path = `${CLAIMS_DIR}${cid}.json`;
-      writeFileSync(path, `${JSON.stringify(c, null, 2)}\n`);
+      writeFileSync(path, `${JSON.stringify(file, null, 2)}\n`);
       written.push(path);
     }
     formatFiles(written);
@@ -639,10 +692,15 @@ if (kind === 'verification') {
       console.log(
         `無効にした観測値を setup で指している比べ（付け替えていない。--by で付け替えるか、比べも無効にする）: ${referring.join('・')}`,
       );
-    if (repointed.size > 0) console.log(`根拠を付け替えた結論: ${[...repointed.keys()].join('・')}`);
+    for (const [cid, result] of rewritten)
+      reportRewrite(
+        `根拠を付け替えた結論 ${cid}`,
+        claims.find((c) => c.id === cid)!,
+        result,
+      );
     // 付け替えなかった結論（--by が無い）は、無効の根拠を残したまま（records:check が、確定の結論の根拠がすべて無効なら止める）
-    const citing = claims
-      .filter((c) => c.state !== '棄却' && !repointed.has(c.id) && c.observations.some((o) => ids.includes(o)))
+    const citing = claimsCiting(claims, ids)
+      .filter((c) => !repointed.has(c.id))
       .map((c) => `${c.id}（${c.state}）`);
     if (citing.length > 0)
       console.log(`無効にした観測値を根拠にしている結論（付け替えていない）: ${citing.join('・')}`);

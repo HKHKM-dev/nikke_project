@@ -4,6 +4,7 @@ import {
   CLAIM_TOPICS,
   CONFIRMABLE_GRADES,
   JUDGMENT_OVERRIDES,
+  gradeAboveCandidate,
   validateJudgment,
   type ClaimFile,
   type ClaimGrade,
@@ -317,6 +318,35 @@ export function mergeClaimUpdate(existing: ClaimFile, update: ClaimUpdate): Clai
     judgment: update.judgment ?? existing.judgment,
   };
   return Object.fromEntries(Object.entries(merged).filter(([, v]) => v !== undefined)) as ClaimUpdate;
+}
+
+/**
+ * 前からある結論を出し直すとき（--update・観測値の --invalidate --by の付け替え）に残す、人が決めた等級（claimDraft の grade）。候補が
+ * 無ければ前の等級のまま（records:close の確定と同じ）。候補があれば、gradeReason を書いて候補より上にしたものだけを残す
+ * （records:close と違い、gradeReason の無い等級は前の候補とみて、新しい候補に合わせる）
+ */
+export function keptClaimGrade(
+  existing: Pick<ClaimFile, 'grade' | 'gradeReason'>,
+  candidate: ClaimGrade | undefined,
+): ClaimGrade | undefined {
+  if (existing.grade === undefined) return undefined;
+  if (candidate === undefined) return existing.grade;
+  return existing.gradeReason !== undefined && gradeAboveCandidate(existing.grade, candidate)
+    ? existing.grade
+    : undefined;
+}
+
+/** keepHypothesis が仮説のままにしたときの理由 */
+export const KEPT_HYPOTHESIS_REASON =
+  '付け替えでは仮説を確定にしない（確定にできる条件はそろった。claim --update で確かめる）';
+
+/**
+ * 観測値の --invalidate --by の付け替えで出し直した結論。前が仮説なら、確定にできる条件がそろっても仮説のままにする（仮説に残すと
+ * 人が決めた結論もあり、その印は結論の側に無い）
+ */
+export function keepHypothesis(before: ClaimFile['state'], result: ClaimDraft): ClaimDraft {
+  if (before !== '仮説' || result.file.state !== '確定') return result;
+  return { file: { ...result.file, state: '仮説' }, reasons: [...result.reasons, KEPT_HYPOTHESIS_REASON] };
 }
 
 /**

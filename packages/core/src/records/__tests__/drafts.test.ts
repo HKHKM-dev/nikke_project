@@ -9,6 +9,9 @@ import {
   claimDraft,
   claimUpdateBasis,
   idsInPaths,
+  keepHypothesis,
+  keptClaimGrade,
+  KEPT_HYPOTHESIS_REASON,
   mergeClaimUpdate,
   nextId,
   parseJudgment,
@@ -19,6 +22,7 @@ import {
   type ClaimDraftInput,
 } from '../drafts.ts';
 import { mechanismConfirmed, normalConditionMeasured } from '../minimal.ts';
+import { invalidatedObservation, repointClaim } from '../observationEdits.ts';
 import { elementsOf } from '../relevance.ts';
 import type { Observation } from '../observations/types.ts';
 import { parseVerification } from '../verifications.ts';
@@ -408,6 +412,69 @@ describe('records:new claim --update の欄', () => {
     const withInvalid = claimDraft({ ...input, observations: all });
     expect(withInvalid.file.state).toBe('仮説');
     expect(withInvalid.reasons).toEqual(['失効した観測値がある（0102-02）']);
+  });
+
+  it('keptClaimGrade keeps a grade without a candidate, or one written above the candidate with gradeReason', () => {
+    expect(keptClaimGrade({}, '反復実測')).toBeUndefined();
+    expect(keptClaimGrade({ grade: 'データ明記' }, undefined)).toBe('データ明記');
+    expect(keptClaimGrade({ grade: '厳密一致' }, '反復実測')).toBeUndefined();
+    expect(keptClaimGrade({ grade: '厳密一致', gradeReason: '理由' }, '反復実測')).toBe('厳密一致');
+    expect(keptClaimGrade({ grade: '単独実測', gradeReason: '理由' }, '反復実測')).toBeUndefined();
+  });
+
+  // records:new observation --invalidate 0101-01 --by 0102-01 の付け替えの後の出し直し（records-new.ts の rewriteClaim の evaluateClaim を除いた組み立て）
+  it('--invalidate --by re-evaluates the repointed claim: out of tolerance goes back to a hypothesis', () => {
+    const confirmed: ClaimFile = {
+      ...existing,
+      state: '確定',
+      grade: '反復実測',
+      subject: { mechanism: 'targetTable' },
+      decidedOn: [],
+    };
+    const after = [invalidatedObservation(obs('0101-01'), '読み違い', '2026-11-21'), obs('0102-01')];
+    const repointed = repointClaim(confirmed, '0101-01', '0102-01', '2026-11-21')!;
+    const ownIds = toClaims([repointed])[0]!.observations;
+    expect(ownIds).toEqual(['0102-01']);
+    const own = after.filter((o) => ownIds.includes(o.id));
+    const merged = mergeClaimUpdate(repointed, {});
+    const rewrite = (inTolerance: boolean, candidate: ClaimDraftInput['gradeCandidate']) =>
+      updatedClaim(
+        repointed,
+        claimDraft({
+          id: repointed.id,
+          verification: 'V-0100',
+          topic: repointed.topic,
+          text: repointed.text,
+          today: '2026-11-21',
+          observations: own,
+          gradeCandidate: candidate,
+          compared: new Map([['0102-01', inTolerance]]),
+          subject: merged.subject,
+          minimal: [],
+          prediction: undefined,
+          decidedOn: merged.decidedOn,
+          judgment: merged.judgment,
+          grade: keptClaimGrade(repointed, candidate),
+        }),
+        merged,
+        repointed.basis,
+        undefined,
+      );
+    const outside = rewrite(false, '反復実測');
+    expect(outside.file.state).toBe('仮説');
+    expect(outside.reasons).toEqual(['許容外の観測値がある（0102-01）']);
+    expect(outside.file.basis).toBe('`0102-01`（注記）。V-0099');
+    // 1 本の録画に減って等級の候補が単独実測になれば、等級も下がって仮説
+    const single = rewrite(true, '単独実測');
+    expect(single.file).toMatchObject({ state: '仮説', grade: '単独実測' });
+    // 許容内で候補が確定にできる等級なら確定のまま
+    expect(rewrite(true, '反復実測').file).toMatchObject({ state: '確定', grade: '反復実測', updated: '2026-11-21' });
+    // 前が仮説なら、条件がそろっても仮説のまま（理由を足す）。確定のままのものと、仮説に戻ったものはそのまま
+    const raised = keepHypothesis('仮説', rewrite(true, '反復実測'));
+    expect(raised.file.state).toBe('仮説');
+    expect(raised.reasons).toEqual([KEPT_HYPOTHESIS_REASON]);
+    expect(keepHypothesis('確定', rewrite(true, '反復実測')).file.state).toBe('確定');
+    expect(keepHypothesis('仮説', outside)).toBe(outside);
   });
 });
 
