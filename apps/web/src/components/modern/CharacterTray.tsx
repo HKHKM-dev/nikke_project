@@ -462,53 +462,55 @@ function TraySortMenu({ listOrder }: { listOrder: ListOrderControls }) {
   return (
     <>
       {/* 並びの種類を 1 つずつボタンにする。押すとその並び（既定の向き）にし、いまの並びをもう一度押すと昇順・降順を入れ替える
-          （続けて押せるように、押しても閉じない） */}
-      <Popover
-        button={
-          // 全部の並びの名前を同じ所に重ね、いまの並びだけを見せる（ボタンの幅を一番長い名前に合わせ、切り替えても変えない）
-          <span className="char-tray-sort-label">
-            {LIST_ORDERS.map((o) => (
-              <span key={o} className={o === listOrder.order ? 'char-tray-sort-current' : undefined}>
-                {LIST_ORDER_LABEL[o]}
-              </span>
-            ))}
-          </span>
-        }
-        buttonClassName="char-tray-action-button"
-        label={listOrderLabel(listOrder.order, listOrder.direction)}
-        align="left"
-      >
-        <div className="char-tray-sort-options" role="group" aria-label="並べ替え">
-          {LIST_ORDERS.map((o) => {
-            const current = listOrder.order === o;
-            return (
-              <button
-                key={o}
-                type="button"
-                className="char-tray-action-button char-tray-sort-option"
-                aria-pressed={current}
-                title={current ? `${LIST_DIRECTION_LABEL[listOrder.direction]}（押すと入れ替える）` : undefined}
-                onClick={() => (current ? listOrder.toggleDirection() : listOrder.select(o))}
-              >
-                {LIST_ORDER_LABEL[o]}
-                <span className="char-tray-sort-mark" aria-hidden="true">
-                  {LIST_DIRECTION_MARK[listOrder.direction]}
+          （続けて押せるように、押しても閉じない）。昇順・降順の三角のボタンとくっつけて 1 つの枠にし、縦線で仕切る */}
+      <div className="char-tray-sort-group">
+        <Popover
+          button={
+            // 全部の並びの名前を同じ所に重ね、いまの並びだけを見せる（ボタンの幅を一番長い名前に合わせ、切り替えても変えない）
+            <span className="char-tray-sort-label">
+              {LIST_ORDERS.map((o) => (
+                <span key={o} className={o === listOrder.order ? 'char-tray-sort-current' : undefined}>
+                  {LIST_ORDER_LABEL[o]}
                 </span>
-              </button>
-            );
-          })}
-        </div>
-      </Popover>
-      {/* 昇順・降順の三角は別のボタンにし、押すたびに入れ替える */}
-      <button
-        type="button"
-        className="char-tray-action-button char-tray-sort-direction"
-        aria-label={`${LIST_DIRECTION_LABEL[listOrder.direction]}（押すと入れ替える）`}
-        title={`${LIST_DIRECTION_LABEL[listOrder.direction]}（押すと入れ替える）`}
-        onClick={listOrder.toggleDirection}
-      >
-        {LIST_DIRECTION_MARK[listOrder.direction]}
-      </button>
+              ))}
+            </span>
+          }
+          buttonClassName="char-tray-action-button"
+          label={listOrderLabel(listOrder.order, listOrder.direction)}
+          align="left"
+        >
+          <div className="char-tray-sort-options" role="group" aria-label="並べ替え">
+            {LIST_ORDERS.map((o) => {
+              const current = listOrder.order === o;
+              return (
+                <button
+                  key={o}
+                  type="button"
+                  className="char-tray-action-button char-tray-sort-option"
+                  aria-pressed={current}
+                  title={current ? `${LIST_DIRECTION_LABEL[listOrder.direction]}（押すと入れ替える）` : undefined}
+                  onClick={() => (current ? listOrder.toggleDirection() : listOrder.select(o))}
+                >
+                  {LIST_ORDER_LABEL[o]}
+                  <span className="char-tray-sort-mark" aria-hidden="true">
+                    {LIST_DIRECTION_MARK[listOrder.direction]}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </Popover>
+        {/* 昇順・降順の三角は別のボタンにし、押すたびに入れ替える */}
+        <button
+          type="button"
+          className="char-tray-action-button char-tray-sort-direction"
+          aria-label={`${LIST_DIRECTION_LABEL[listOrder.direction]}（押すと入れ替える）`}
+          title={`${LIST_DIRECTION_LABEL[listOrder.direction]}（押すと入れ替える）`}
+          onClick={listOrder.toggleDirection}
+        >
+          {LIST_DIRECTION_MARK[listOrder.direction]}
+        </button>
+      </div>
       {/* クラシックの「一覧の並び」の欄と同じ知らせ */}
       {listOrder.order === 'combatPower' && listOrder.tableError !== null && (
         <span className="hint">戦闘力の表を読めない: {listOrder.tableError}</span>

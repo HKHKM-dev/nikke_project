@@ -1514,6 +1514,22 @@ html:has(.modern-view-container) {
 .char-tray-sort-label > .char-tray-sort-current {
   visibility: visible;
 }
+/* 並べ替えのボタンと昇順・降順の三角のボタンは、くっつけて 1 つの枠にする。間の縦線は並べ替えのボタンの右の枠線 */
+.char-tray-sort-group {
+  display: flex;
+}
+.char-tray-sort-group > .popover {
+  display: flex;
+}
+.char-tray-sort-group .popover-button {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.char-tray-sort-group > .char-tray-sort-direction {
+  border-left-width: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
 /* 並べ替えのポップアップの並びのボタン。どれも一番長いボタンの幅にそろえ、向きの印の場所はどのボタンにも取っておく
    （いまの並びを切り替えても幅が変わらない。太字にすると幅が変わるので、いまの並びは枠だけで示す） */
 .char-tray-sort-options {
