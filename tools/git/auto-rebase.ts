@@ -99,7 +99,7 @@ if (values.find) {
 if (!values.fix) throw new Error('--find か --fix を付ける');
 
 // ここからは npm ci の後（core を読む）
-const { AUTO_REBASE_COMMITTER, AUTO_REBASE_ENV, branchCollisions, nulPaths, pathListArgs } =
+const { AUTO_REBASE_COMMITTER, AUTO_REBASE_ENV, branchCollisions, nulPaths, pathListArgs, squashBranch } =
   await import('./pr-prep-lib.ts');
 const { renumberInText } = await import('../../packages/core/src/records/renumber.ts');
 const { idsInBranches } = await import('../../packages/core/scripts/records-data.ts');
@@ -184,18 +184,14 @@ function fix(pr: Pull): Outcome {
   }
   // ブランチを 1 つの commit にまとめてからリベースする（PR はスカッシュでマージする）。まとめないと、振り直す前の ID のファイルを足した
   // commit がリベースで main と衝突する。途中の commit だけが衝突することも無くなる
-  // メッセージは元の commit のもの（帰属の行を含む）を、振り直した題名の下に残す
-  const base = git(['merge-base', 'origin/main', 'HEAD']);
-  const messages = replaceIds(git(['log', '--format=%B', `${base}..HEAD`]), renumber);
   const note = renumber.length > 0 ? `。番号の振り直し: ${renumber.map((r) => `${r.from} → ${r.to}`).join('、')}` : '';
   git(['add', '--all']);
-  git(['reset', '--quiet', '--soft', base]);
-  git([
-    'commit',
-    '--quiet',
-    '-m',
-    `${replaceIds(pr.title, renumber)}\n\n衝突の直し（自動）で、main を取り込む前に 1 つにまとめた${note}\n\n${messages}`,
-  ]);
+  squashBranch(
+    git,
+    replaceIds(pr.title, renumber),
+    `衝突の直し（自動）で、main を取り込む前に 1 つにまとめた${note}`,
+    (t) => replaceIds(t, renumber),
+  );
 
   const prep = run('node', ['tools/git/pr-prep.ts', '--no-ci', '--allow-progress']);
   if (prep.status !== 0)
