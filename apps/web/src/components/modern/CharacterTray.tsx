@@ -469,7 +469,7 @@ function TraySortMenu({ listOrder }: { listOrder: ListOrderControls }) {
           <span className="char-tray-sort-label">
             {LIST_ORDERS.map((o) => (
               <span key={o} className={o === listOrder.order ? 'char-tray-sort-current' : undefined}>
-                {LIST_ORDER_LABEL[o]} {LIST_DIRECTION_MARK[listOrder.direction]}
+                {LIST_ORDER_LABEL[o]}
               </span>
             ))}
           </span>
@@ -499,6 +499,16 @@ function TraySortMenu({ listOrder }: { listOrder: ListOrderControls }) {
           })}
         </div>
       </Popover>
+      {/* 昇順・降順の三角は別のボタンにし、押すたびに入れ替える */}
+      <button
+        type="button"
+        className="char-tray-action-button char-tray-sort-direction"
+        aria-label={`${LIST_DIRECTION_LABEL[listOrder.direction]}（押すと入れ替える）`}
+        title={`${LIST_DIRECTION_LABEL[listOrder.direction]}（押すと入れ替える）`}
+        onClick={listOrder.toggleDirection}
+      >
+        {LIST_DIRECTION_MARK[listOrder.direction]}
+      </button>
       {/* クラシックの「一覧の並び」の欄と同じ知らせ */}
       {listOrder.order === 'combatPower' && listOrder.tableError !== null && (
         <span className="hint">戦闘力の表を読めない: {listOrder.tableError}</span>
