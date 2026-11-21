@@ -785,8 +785,8 @@ svg.settings-option-icon,
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  /* 立ち絵どうしの横の間は 8px（カードの左右の余白 2px ×2 と、この 4px） */
-  gap: 12px 4px;
+  /* 立ち絵どうしの横の間は 4px（カードの左右の余白 2px ×2 だけ）。落とす先の枠（立ち絵の外へ 2px 出る）が、隣どうしでちょうど重ならない */
+  gap: 12px 0;
 }
 /* カードの幅は立ち絵（1:2 の枠と 1px の枠線）と左右の余白（.modern-slot-card の padding）だけにして、スロットの間を詰める */
 .modern-slots-grid > .modern-slot-card {
