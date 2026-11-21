@@ -1,0 +1,46 @@
+{
+  "id": "1264",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1264_2b-1.mp4",
+  "original": "2026-11-21_13-58-32.mp4",
+  "durationSec": 203.5,
+  "frames": 12207,
+  "fps": 60,
+  "sizeMB": 246.4,
+  "sha256": "2687c6c9d0f6",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 810,
+      "name": "2B",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-21T14:06+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
