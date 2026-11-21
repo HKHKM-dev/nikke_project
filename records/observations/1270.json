@@ -1,0 +1,344 @@
+[
+  {
+    "id": "1270-01",
+    "recording": "1270",
+    "kind": "timing",
+    "use": "record",
+    "value": [1433, 2712, 3897, 5251, 6547, 7923, 9166, 10453],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・24・0・25・0・25・0f"
+    },
+    "source": "V-0811",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1270-02",
+    "recording": "1270",
+    "kind": "timing",
+    "use": "record",
+    "value": [1462, 2742, 3926, 5280, 6576, 7952, 9195, 10482],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・6・24・0・25・0・25・0f"
+    },
+    "source": "V-0811",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1270-03",
+    "recording": "1270",
+    "kind": "timing",
+    "use": "record",
+    "value": [1491, 3955, 6605, 9224],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0811",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1270-04",
+    "recording": "1270",
+    "kind": "timing",
+    "use": "record",
+    "value": [2100, 4564, 7215, 9833],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0811",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1270-05",
+    "recording": "1270",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 610, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0811",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1270-06",
+    "recording": "1270",
+    "kind": "timing",
+    "use": "record",
+    "value": [3914],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0811",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1270-07",
+    "recording": "1270",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 2851298,
+    "description": "キロの 1 回目のバーストのバーストスキルダメージ（会心。1 ヒット）。同じフレームのキロの発（コア会心 13,344）を引いた値",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00（`1270-03`）の後の 100 万を超える増分は各回 1 つ: 1491→1529 が 2,864,642、3955→3993 が 1,911,986、6605→6644 が 2,851,298、9224→9262 が 1,914,210。同じフレームのキロの MG の発（フルバーストの中。コア 11,120・コア会心 13,344。1 発の胴体 4,448 の 2.5・3 倍）を引くと、会心なし 1,900,866、会心 2,851,298。キロの発の格子のほかの引き方は、4 回で同じ値にならない"
+    },
+    "scope": {
+      "slot": [3],
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0811",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1270-08",
+    "recording": "1270",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 1900866,
+    "description": "キロの 2 回目のバーストのバーストスキルダメージ（会心なし。1 ヒット）。同じフレームのキロの発（コア 11,120）を引いた値",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00（`1270-03`）の後の 100 万を超える増分は各回 1 つ: 1491→1529 が 2,864,642、3955→3993 が 1,911,986、6605→6644 が 2,851,298、9224→9262 が 1,914,210。同じフレームのキロの MG の発（フルバーストの中。コア 11,120・コア会心 13,344。1 発の胴体 4,448 の 2.5・3 倍）を引くと、会心なし 1,900,866、会心 2,851,298。キロの発の格子のほかの引き方は、4 回で同じ値にならない"
+    },
+    "scope": {
+      "slot": [3],
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0811",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1270-09",
+    "recording": "1270",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 2851298,
+    "description": "キロの 3 回目のバーストのバーストスキルダメージ（会心。1 ヒット。同じフレームにほかの発は無い）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00（`1270-03`）の後の 100 万を超える増分は各回 1 つ: 1491→1529 が 2,864,642、3955→3993 が 1,911,986、6605→6644 が 2,851,298、9224→9262 が 1,914,210。同じフレームのキロの MG の発（フルバーストの中。コア 11,120・コア会心 13,344。1 発の胴体 4,448 の 2.5・3 倍）を引くと、会心なし 1,900,866、会心 2,851,298。キロの発の格子のほかの引き方は、4 回で同じ値にならない"
+    },
+    "scope": {
+      "slot": [3],
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0811",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1270-10",
+    "recording": "1270",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 1900866,
+    "description": "キロの 4 回目のバーストのバーストスキルダメージ（会心なし。1 ヒット）。同じフレームのキロの発（コア会心 13,344）を引いた値",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00（`1270-03`）の後の 100 万を超える増分は各回 1 つ: 1491→1529 が 2,864,642、3955→3993 が 1,911,986、6605→6644 が 2,851,298、9224→9262 が 1,914,210。同じフレームのキロの MG の発（フルバーストの中。コア 11,120・コア会心 13,344。1 発の胴体 4,448 の 2.5・3 倍）を引くと、会心なし 1,900,866、会心 2,851,298。キロの発の格子のほかの引き方は、4 回で同じ値にならない"
+    },
+    "scope": {
+      "slot": [3],
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0811",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1270-11",
+    "recording": "1270",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [38],
+    "description": "キロの 1 回目のバーストの、III のタイマーの 00.00 からバーストスキルダメージのヒットまでの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "どの回も 1 ヒットで、00.00 の 38〜39f 後: 1491→1529・3955→3993・6605→6644・9224→9262"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "burstHit",
+        "anchor": "fullBurst:0",
+        "within": "window"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0811",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1270-12",
+    "recording": "1270",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [38],
+    "description": "キロの 4 回目のバーストの、III のタイマーの 00.00 からバーストスキルダメージのヒットまでの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "どの回も 1 ヒットで、00.00 の 38〜39f 後: 1491→1529・3955→3993・6605→6644・9224→9262"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "burstHit",
+        "anchor": "fullBurst:3",
+        "within": "window"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0811",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1270-13",
+    "recording": "1270",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": 4,
+    "description": "キロのバーストの回数（180 秒。どの回もバーストスキルダメージが出た。最大HP▲の側の回は無い）",
+    "method": {
+      "tool": "recipe:burst-panel@4 の 00.00 と recipe:hud-jumps@3 の増分",
+      "note": "III のタイマーの 00.00 は f1491・3955・6605・9224 の 4 回（`1270-03`）。I・II だけで III に届かなかったチェーンが 4 回ある（`1270-01`・`1270-02` の 2712・5251・7923・10453）。4 回ともヒットがある"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstCount",
+      "args": {
+        "slot": 3
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0811",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1270-14",
+    "recording": "1270",
+    "kind": "count",
+    "use": "record",
+    "unit": "コマ",
+    "value": [13, 13],
+    "description": "キロ（枠 3）の体力の表示の右端に水色の帯（バリア。ナノコーティング）が見えたコマの数と、見たコマの数（f900〜f11000）",
+    "method": {
+      "tool": "目視",
+      "note": "f900・1800・2600・3600・4400・5200・6000・6900・7700・8600・9500・10300・11000 の画面下の顔のカードの体力の表示（1920×1080 の y 約 1020〜1040）を切り出して並べた。どのコマもキロの帯の右端に同じくらいの長さの水色の帯があり、ココアとソルジャーF.A. には無い。戦闘履歴のキロの盾の欄は 0"
+    },
+    "scope": {
+      "slot": [3],
+      "source": "burst"
+    },
+    "source": "V-0811",
+    "readAt": "2026-11-21"
+  }
+]

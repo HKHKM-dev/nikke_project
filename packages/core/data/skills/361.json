@@ -14,7 +14,10 @@
           "assumes": {
             "ja": "ナノコーティング（自分へのバリア）は、中身なしの持続の状態とみなし、被弾でバリアの HP が尽きて切れる分は扱わない（要件 4.2 節）。家族はバリアなので、「バリア適用状態」を読む効果はキロをバリア適用状態とみる。バリアの量はダメージに関係しない",
             "en": "Nano Coating (a shield on self) is taken as a continuous state without contents; running out from enemy hits is not modeled (requirements 4.2). It is in the barrier family, so effects reading the barrier state see Kilo as shielded. The shield amount does not affect damage"
-          }
+          },
+          "claims": [
+            "C-1383"
+          ]
         }
       ],
       "notes": [
@@ -22,12 +25,17 @@
           "ja": "バーストを使った時、ナノコーティング状態でなければ自分に付くナノコーティングは、被弾でナノコーティングが切れたときだけ起きるので、被弾を扱わないモデルでは起きない（要件 4.2 節）",
           "en": "The Nano Coating applied on self on Burst use while not in Nano Coating happens only after hits have broken Nano Coating, so it never happens in the model, which has no damage taken (requirements 4.2)",
           "kind": "outOfScope",
-          "reads": ["barrier"],
+          "reads": [
+            "barrier"
+          ],
           "effect": {
             "kind": "state",
             "target": "self",
             "trigger": "burstUse"
-          }
+          },
+          "claims": [
+            "C-1383"
+          ]
         }
       ]
     },
@@ -38,24 +46,34 @@
           "ja": "通常攻撃 200 回ごとの、ナノコーティング状態の時のバリアの HP 回復は、被弾で減ったバリアを戻してナノコーティングを保つだけで、被弾を扱わないモデルでは何も変えない（要件 4.2 節）",
           "en": "The shield HP restore every 200 normal attacks while in Nano Coating only refills a shield worn down by hits to keep Nano Coating, so it changes nothing in the model, which has no damage taken (requirements 4.2)",
           "kind": "outOfScope",
-          "reads": ["barrier"],
+          "reads": [
+            "barrier"
+          ],
           "effect": {
             "kind": "heal",
             "target": "self",
             "trigger": "normalShot"
-          }
+          },
+          "claims": [
+            "C-1383"
+          ]
         },
         {
           "ja": "バーストを使った時、ナノコーティング状態でなければ自分に付く使用回数別の次のバリアの HP▲（持続）は、被弾でナノコーティングが切れたときだけ起きるので、被弾を扱わないモデルでは起きない（要件 4.2 節）",
           "en": "The next-shield HP increases by number of uses (continuous) applied on self on Burst use while not in Nano Coating happen only after hits have broken Nano Coating, so they never happen in the model, which has no damage taken (requirements 4.2)",
           "kind": "outOfScope",
-          "reads": ["barrier"],
+          "reads": [
+            "barrier"
+          ],
           "effect": {
             "kind": "timed",
             "stat": "unknown",
             "target": "self",
             "trigger": "burstUse"
-          }
+          },
+          "claims": [
+            "C-1383"
+          ]
         }
       ]
     },
@@ -67,9 +85,13 @@
           "ref": 2,
           "convertCasterMaxHpRef": 1,
           "assumes": {
-            "ja": "「自分がナノコーティング状態なら」は、被弾が無ければナノコーティングが切れないので、いつも満たす。ヒットの攻撃力を、発動の直前のバフの自分の最終最大HP の 5% に置き換える（最終攻撃力は使わない）。敵全体は単体ボスの 1 ヒット",
-            "en": "\"If the skill user is in Nano Coating\" always holds, since Nano Coating never breaks without damage taken. The hit's ATK is replaced by 5% of her final max HP with the buffs just before activation (her final ATK is not used). All enemies is one hit on the single boss"
-          }
+            "ja": "「自分がナノコーティング状態なら」は、被弾が無ければナノコーティングが切れないので、いつも満たす。ヒットの攻撃力を、発動の直前のバフの自分の最終最大HP の 5% を四捨五入した値に置き換え（最終攻撃力は使わない）、防御力を引く。フルバースト補正は乗らない。敵全体は単体ボスの 1 ヒット",
+            "en": "\"If the skill user is in Nano Coating\" always holds, since Nano Coating never breaks without damage taken. The hit's ATK is replaced by 5% of her final max HP with the buffs just before activation, rounded to an integer (her final ATK is not used), before subtracting DEF. No Full Burst bonus. All enemies is one hit on the single boss"
+          },
+          "claims": [
+            "C-1382",
+            "C-1383"
+          ]
         }
       ],
       "notes": [
@@ -77,13 +99,18 @@
           "ja": "ナノコーティング状態でなければ自分に付く最大HP▲（20 秒）は、被弾でナノコーティングが切れたときだけ起きるので、被弾を扱わないモデルでは起きない（要件 4.2 節）",
           "en": "The max HP increase on self (20 s) while not in Nano Coating happens only after hits have broken Nano Coating, so it never happens in the model, which has no damage taken (requirements 4.2)",
           "kind": "outOfScope",
-          "reads": ["barrier"],
+          "reads": [
+            "barrier"
+          ],
           "effect": {
             "kind": "timed",
             "stat": "maxHp",
             "target": "self",
             "trigger": "burstUse"
-          }
+          },
+          "claims": [
+            "C-1383"
+          ]
         }
       ]
     }

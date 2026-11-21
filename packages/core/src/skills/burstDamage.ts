@@ -1163,11 +1163,13 @@ export function slotBurstHit(
     throw new RangeError(
       `character ${character.resourceId}: addCasterMaxHpRef and convertCasterMaxHpRef need the caster`,
     );
+  // 最大HP から作る攻撃力は、最終攻撃力と同じく整数に丸めてから防御力を引く（C-0027。キロの換算で 1 の位まで合う。V-0811）
+  const hpAttack = (ratio: number) => Math.round(ratio * finalMaxHpOf(caster!, buffs));
   const attacked =
     add !== undefined
-      ? { ...trigger, attack: trigger.attack + add * finalMaxHpOf(caster!, buffs) }
+      ? { ...trigger, attack: trigger.attack + hpAttack(add) }
       : convert !== undefined
-        ? { ...trigger, attack: convert * finalMaxHpOf(caster!, buffs) }
+        ? { ...trigger, attack: hpAttack(convert) }
         : trigger;
   return computeSkillHit(effects, character, enemy, attacked, buffs, BURST_SKILL_FULL_BURST_BONUS);
 }
