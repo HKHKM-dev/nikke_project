@@ -2,7 +2,7 @@
 
 - 何のための文書か: スキルの効果の分類の一覧（生成物 [skill-catalog.md](skill-catalog.md)）を書く `packages/core/src/skills/catalogDoc.ts` の `renderSkillCatalog`（1 つの関数で全部の節を書いている）を、節ごとの関数に分けてテストを書く変更の、今の構造・案と得失・論点・段・確かめ方
 - 対象: `packages/core/src/skills/catalogDoc.ts` の `renderSkillCatalog` と、同じファイルの `write…Section` の 3 つ、足すテスト。生成物の中身と、分類の決まり（ファイルの前半の表）は変えない
-- 状態: 承認待ち（4 節）
+- 状態: 完了（9 節）
 - 関連: [design-skill-catalog.md](design-skill-catalog.md)（一覧の作り方と区分）、[design-skill-catalog-classes.md](design-skill-catalog-classes.md)（分類の別紙。節の番号の元）、[design-sim-run-split.md](design-sim-run-split.md)（同じ進め方で CLI の表示を分けた）
 - 作成日: 2026-11-21
 - 調べた時点: main の fa433057
@@ -124,6 +124,38 @@
 - 説明文を読む側（`skills/catalog.ts`）。
 - 一覧の中身（節・列・区分の付け方）の見直し。
 
-## 9. 経過
+## 9. 作り（2026-11-21）
+
+論点は 3 つとも推奨の案で承認された（論点 1 は案 b、論点 2・3 は案 a）。
+
+- **節の関数**（どれも、その節の行の配列を返す。終わりの空行まで）:
+  - 頭書き `headerLines`、1 節 `familySection`、2 節 `slotGapSection`、6 節 `indirectSection`。
+  - 3 節 `buffSection`（小節は `statSection`・`scalingSection`・`durationSection`）。
+  - 4 節 `stateSection`（小節は `stateNameSection`・`stateFormSection`・`stateViewerSection`・`removalSection`・`timingSection`）。
+  - 5 節 `healSection`（小節は `healFormSection`・`healTriggerSection`・`healReceiverSection`）。
+  - 7 節 `headSection`（小節は `conditionSection`・`triggerSection`・`targetSection`）。
+  - 見出し（`##`）ごとの 8 つは export する（テストが節ごとに読む）。小節の関数は、節の関数が絞った入力（stat の効果・回復の効果）を受ける。
+- **`renderSkillCatalog`**: 8 つを出す順に呼んで、改行でつなぐだけ。節ごとに行をためて並べ直す仕組み（`sections`・`begin`・`order`）は無くした。
+- **4.3 節の状況**: 分類の表から `statusIn(表, 鍵)` で引く（鍵が表に無ければ投げる）。
+- **長さ**: 一番長い関数は 6 節の `indirectSection`（88 行。大半は経路の表の 23 行）。ファイルは 1,261 行から 1,326 行（行の配列を、1 要素 1 行で書く形にしたため）。
+- **テスト**（`skills/__tests__/catalogDoc.test.ts`。22 件）:
+  - 全部のキャラの入力: 見出しの並びと前後の空行、表の形（見出し・区切り・行の欄の数がそろう）、件数の欄が数で「効果か行 ≧ キャラ ≧ 定義あり」になること、穴（`undefined`・`NaN`）が無いこと。空の入力でも全部の節を書くこと。
+  - 手で作った小さい入力: 節ごとの行（頭書きの数、大分類と状態の中身、スロットごとの残りと「それだけ」、stat の側と向き、算出、修飾、状態の名前のまとめ方と参照、状態の一生、外れ方、判定のタイミング、回復、間接の経路、条件・きっかけ・対象）。
+  - 4.3 節の状況は、値を書かずに、同じ入力で書いた 7 節の同じ鍵の行と比べる（区分はスキルを定義するたびに変わるので、区分の値をテストに書かない）。
+
+**設計から変えた所**:
+
+- 4.3 節の条件ときっかけの行は、鍵 1 つから、状況と「その鍵を持つ行」の両方を作る形にした（設計は状況だけを表から引く案。鍵を 2 回書かずに済む）。
+
+**確かめた結果**（6 節。基の版は main の 02755d28）:
+
+- `npm run typecheck`・`npm run lint`・`npm test` が通る。
+- **生成物**: 作り直した [skill-catalog.md](skill-catalog.md) が、基の版で作り直したものと一字も違わない。
+- **入力を変えた突き合わせ**: 408 通り（全部のキャラ・空・1 体ずつ 206 通り・無作為の部分集合 200 通り）で、基の版の `renderSkillCatalog` と出力が同じ（出力は 407 種類。合わせて約 860 万字）。
+- `npm run char` の出力は、全部のキャラ（206 体）で基の版と同じ。
+- **テストが気づくか**: 本体を 9 か所、1 つずつわざと壊して（節の順・4.3 節の鍵と表の取り違え・終わりの空行・算出の入力・名前のまとめ・対象の無い効果・「それだけ」の数・区切りの行の欄の数）、どれもテストが落ちることを見た。
+
+## 10. 経過
 
 - 2026-11-21: 起案。
+- 2026-11-21: 承認。実装した（9 節）。
