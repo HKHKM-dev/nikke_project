@@ -79,7 +79,7 @@
             "en": "Turns the AR into a press-and-hold charge weapon (5 s) and returns to the AR after one shot (no duration or end condition in the description; it lasts until the shot). The first-shot wait, core hit rate and range bonus are not verified (the default wait and the base AR rates; plan/design-snow-white.md 2.4). Pierce does not change values without an ally that reads Pierce Damage (not verified)"
           },
           "firstShotDelayFrames": 307,
-          "returnFirstShotFrames": 116
+          "returnFirstShotFrames": 118
         }
       ]
     }

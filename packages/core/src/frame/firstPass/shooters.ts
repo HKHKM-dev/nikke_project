@@ -186,9 +186,14 @@ export function createShooters({
           }
         } else {
           changedShooters[i] = null;
-          resumeShooter(shooters[i]!, slot.character.shot, model, params);
-          // 撃ち切りで戻った後の待ち（録画で読む即値。plan/design-snow-white.md 8.1 節の論点 4）。戻るのは最後の弾丸の次のフレーム
-          if (ended?.returnFirstShotFrames !== undefined) shooters[i]!.wait = ended.returnFirstShotFrames - 1;
+          // 撃ち切りで戻った後の待ち（録画で読む即値。plan/design-snow-white.md 8.1 節の論点 4）は、変更後の武器の最後の弾丸
+          // （枠の最後の発）から数える（戻るフレームは最後の弾丸の次のフレームより遅れることがある）
+          const lastShot = logs[i]?.frames.at(-1);
+          const wait =
+            ended?.returnFirstShotFrames !== undefined && lastShot !== undefined
+              ? Math.max(0, lastShot + ended.returnFirstShotFrames - f)
+              : undefined;
+          resumeShooter(shooters[i]!, slot.character.shot, model, params, wait);
         }
       }
       const state = params.weapon !== null ? changedShooters[i]! : shooters[i]!;
