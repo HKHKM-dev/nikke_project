@@ -6,8 +6,9 @@
 //   npm run records:new -- claim --update C-NNNN --from V-NNNN [--observations …] [--subject … | --mechanism …] [--decided-on …]
 //     [--run …] [--parameter-free …] [--model …] [--judgment …] [--dry-run]
 // verification: 次の空き番号で records/verifications/V-NNNN-<短い名前>.md をひな形から作る（状態は調査中）。
-// claim: 次の空き番号で records/claims/C-NNNN.json を作る。話題はその検証記録の話題、根拠はその検証記録を source にする観測値、
-//   等級は機械の候補（3.5 節）、状態は確定にできる条件が全部そろえば確定、欠ければ仮説（欠けた条件を出す。3.6 節）。
+// claim: 次の空き番号で records/claims/C-NNNN.json を作る。話題はその検証記録の話題、根拠はその検証記録を source にする有効な観測値
+//   （無効の観測値は除いて知らせる）、等級は機械の候補（3.5 節）、状態は確定にできる条件が全部そろえば確定、欠ければ仮説（欠けた
+//   条件を出す。3.6 節）。
 //   結論の対象（subject）は --subject（定義の場所。複数可）か --mechanism（plan/design-minimal-relevance.md 3.2 節）。
 //   最小構成の検査（同 5 節）は、下書きを確定とみて根拠の観測値の組を判定する。text は人が書く（model は --model でも書ける）。
 //   --decided-on は、仮説・値・読み方を決めるのに使った録画（decidedOn。plan/design-investigation-review.md 1.3 節）。等級の候補は、
@@ -16,14 +17,14 @@
 //   再現にする。決めた回は、その録画を --decided-on に書いたときだけ書く。
 //   --parameter-free は、合わせ込みの定数を持たない仮説の式と定数の出どころ（parameterFree。同 3 節）。仮説の出どころの録画も再現に数える。
 //   --observations は根拠にする観測値（観測値 ID・録画 id・V-NNNN。records:residual と同じ選び方。無ければ、その検証記録を source にする
-//   観測値の全部）。等級の候補・状態・最小構成の検査は
+//   観測値の全部。無効のものは除く）。等級の候補・状態・最小構成の検査は
 //   それで出す（plan/design-workflow-simplification-14.md 4 節）。
 //   --judgment は、人の判断で上書きする確定の条件と理由（judgment。records:close と同じ形で、decided は今日）。条件は
 //   指標なし・最小構成の警告・許容外・合う仮説が 2 つ以上 から選び、・ か , で区切る。上書きした条件は仮説の理由にしない。
 //   --update は、前からある結論（仮説か確定）を新しい検証で書き直す（plan/design-workflow-simplification-17.md 2 節）。結論の文・話題・
 //   model（--model を渡せば置き換え）・置き換え・印などを残し、根拠の文に --from の観測値（--observations で選べる。無ければ --from を
-//   source にする観測値）のうち、まだ根拠に無いものと --from を書き足す。等級の候補・状態・最小構成の検査は、前の根拠と足した根拠の全部で
-//   新しい結論と同じく出し直す。--decided-on・--run は前の並びに足し、--subject・--mechanism・--parameter-free・--judgment は置き換える。
+//   source にする観測値。無効のものは除く）のうち、まだ根拠に無いものと --from を書き足す。等級の候補・状態・最小構成の検査は、前の
+//   根拠と足した根拠の全部で新しい結論と同じく出し直す。--decided-on・--run は前の並びに足し、--subject・--mechanism・--parameter-free・--judgment は置き換える。
 //   結論の中身（式・値）が変わるときは使わない（新しい結論を作り、古い結論を棄却にする）ので、--text・--topic は受けない。番号は取らず、
 //   commit もしない。
 //   --dry-run は書かずに、状態と確定にできない理由だけを出す（番号を取らず、commit もしない）。
@@ -66,9 +67,10 @@ import {
   validateRuns,
 } from '../src/records/claims.ts';
 import {
-  appendBasis,
   basisIdsText,
+  claimBasisObservations,
   claimDraft,
+  claimUpdateBasis,
   mergeClaimUpdate,
   nextId,
   parseJudgment,
@@ -397,7 +399,11 @@ if (kind === 'verification') {
     values.observations === undefined ? undefined : pickObservations(observations, splitIds(values.observations));
   if (picked !== undefined && picked.missing.length > 0)
     fail(`--observations に当たる観測値が無い: ${picked.missing.join('・')}`);
-  const given = picked?.picked ?? observations.filter((o) => o.source === from);
+  const { given, excluded } = claimBasisObservations(observations, from, picked?.picked);
+  const givenFrom = picked === undefined ? from : '--observations で選んだ観測値';
+  const noteExcluded = (ids: readonly string[]) => {
+    if (ids.length > 0) console.log(`注意: 無効の観測値は根拠に足さない: ${ids.join('・')}`);
+  };
   const subject = parseSubject();
   const decidedOn = parseDecidedOn(values['decided-on']);
   const runs = parseRuns(values.run);
@@ -417,12 +423,20 @@ if (kind === 'verification') {
     const { observations: beforeIds, ...existing } = found;
     if (existing.state !== '仮説' && existing.state !== '確定')
       fail(`${id} は ${existing.state}。--update は仮説か確定の結論にだけ使う`);
-    const before = new Set(beforeIds);
-    const added = given.filter((o) => !before.has(o.id)).map((o) => o.id);
+    // 前の根拠にある無効の観測値は根拠に残る（確定にできない理由に「失効した観測値がある」で出る）
+    noteExcluded(excluded.filter((o) => !beforeIds.includes(o.id)).map((o) => o.id));
+    const { added, basis, own } = claimUpdateBasis(
+      { basis: existing.basis, observations: beforeIds },
+      given,
+      from,
+      observations,
+    );
     if (added.length === 0)
-      console.log(`注意: ${from} の観測値はどれも ${id} の根拠に既にある（根拠は前のまま出し直す）`);
-    const basis = appendBasis(existing.basis, added, from);
-    const ownIds = new Set([...before, ...added]);
+      console.log(
+        given.length === 0
+          ? `注意: ${givenFrom} に有効な観測値が無い（根拠は前のまま出し直す）`
+          : `注意: ${from} の観測値はどれも ${id} の根拠に既にある（根拠は前のまま出し直す）`,
+      );
     const merged = mergeClaimUpdate(existing, {
       ...(subject === undefined ? {} : { subject }),
       ...(decidedOn === undefined ? {} : { decidedOn }),
@@ -437,7 +451,7 @@ if (kind === 'verification') {
         topic: existing.topic,
         text: existing.text,
         basis,
-        own: observations.filter((o) => ownIds.has(o.id)),
+        own,
         base: existing,
         subject: merged.subject,
         decidedOn: merged.decidedOn,
@@ -474,6 +488,9 @@ if (kind === 'verification') {
       );
     }
   } else {
+    noteExcluded(excluded.map((o) => o.id));
+    if (given.length === 0 && excluded.length > 0)
+      fail(`${givenFrom} に有効な観測値が無い（無効のものだけ）。根拠にする有効な観測値を足してから回す`);
     const topic = (values.topic ?? verification.topic) as ClaimTopic;
     if (!(CLAIM_TOPICS as readonly string[]).includes(topic)) fail(`話題が語彙に無い: ${topic}`);
     // --dry-run は番号を取らない（手元の結論の次の番号で評価する）

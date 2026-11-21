@@ -5,7 +5,9 @@ import { loadClaims, loadRecordingsFile, loadRecordsData, recordingMap } from '.
 import { toClaims, validateClaims, type ClaimFile, type ClaimState, type Judgment } from '../claims.ts';
 import {
   appendBasis,
+  claimBasisObservations,
   claimDraft,
+  claimUpdateBasis,
   idsInPaths,
   mergeClaimUpdate,
   nextId,
@@ -334,6 +336,78 @@ describe('records:new claim --update の欄', () => {
     expect(updatedClaim(reasoned, same, merged, basis, undefined).file.gradeReason).toBe('理由');
     // 書き戻した結論は形の検査に通る
     expect(validateClaims(toClaims([{ ...result.file, replaces: [] }]), new Set(['0101-01', '0102-01']))).toEqual([]);
+  });
+
+  // 新しい検証 V-0100 の観測値: 0102-01 は有効、0102-02 は無効
+  const fromV0100 = (o: Observation): Observation => ({ ...o, source: 'V-0100' });
+  const all = [obs('0101-01'), fromV0100(obs('0102-01')), fromV0100(obs('0102-02', '2026-10-02', true))];
+
+  it('claimBasisObservations leaves out invalid observations, from the verification or from --observations', () => {
+    const byVerification = claimBasisObservations(all, 'V-0100', undefined);
+    expect(byVerification.given.map((o) => o.id)).toEqual(['0102-01']);
+    expect(byVerification.excluded.map((o) => o.id)).toEqual(['0102-02']);
+    const picked = claimBasisObservations(all, 'V-0100', [all[0]!, all[2]!]);
+    expect(picked.given.map((o) => o.id)).toEqual(['0101-01']);
+    expect(picked.excluded.map((o) => o.id)).toEqual(['0102-02']);
+  });
+
+  it('claimUpdateBasis adds only the observations not in the old basis, and keeps the old ones in own', () => {
+    const { given } = claimBasisObservations(all, 'V-0100', undefined);
+    const update = claimUpdateBasis({ basis: existing.basis, observations: ['0101-01'] }, given, 'V-0100', all);
+    expect(update.added).toEqual(['0102-01']);
+    expect(update.basis).toBe('`0101-01`（注記）。V-0099。`0102-01`。V-0100');
+    expect(update.own.map((o) => o.id)).toEqual(['0101-01', '0102-01']);
+    // 足すものが無ければ根拠の文は前のまま
+    const none = claimUpdateBasis(
+      { basis: existing.basis, observations: ['0101-01', '0102-01'] },
+      given,
+      'V-0100',
+      all,
+    );
+    expect(none.added).toEqual([]);
+    expect(none.basis).toBe(existing.basis);
+  });
+
+  it('--update with a verification that has an invalid observation keeps a confirmed claim confirmed', () => {
+    const confirmed: ClaimFile = {
+      ...existing,
+      state: '確定',
+      grade: '反復実測',
+      subject: { mechanism: 'targetTable' },
+      decidedOn: [],
+    };
+    const { given } = claimBasisObservations(all, 'V-0100', undefined);
+    const { added, basis, own } = claimUpdateBasis(
+      { basis: confirmed.basis, observations: ['0101-01'] },
+      given,
+      'V-0100',
+      all,
+    );
+    const merged = mergeClaimUpdate(confirmed, {});
+    const input: ClaimDraftInput = {
+      id: confirmed.id,
+      verification: 'V-0100',
+      topic: confirmed.topic,
+      text: confirmed.text,
+      today: '2026-11-21',
+      observations: own,
+      gradeCandidate: '反復実測',
+      compared: new Map(own.map((o) => [o.id, true])),
+      subject: merged.subject,
+      minimal: [],
+      prediction: undefined,
+      decidedOn: merged.decidedOn,
+    };
+    const draft = claimDraft(input);
+    const result = updatedClaim(confirmed, draft, merged, basis, undefined);
+    expect(added).toEqual(['0102-01']);
+    expect(result.reasons).toEqual([]);
+    expect(result.file).toMatchObject({ state: '確定', grade: '反復実測', basis, updated: '2026-11-21' });
+    expect(result.file.basis).not.toContain('0102-02');
+    // 無効の観測値を根拠に入れると、失効を理由に仮説に戻る（除く理由）
+    const withInvalid = claimDraft({ ...input, observations: all });
+    expect(withInvalid.file.state).toBe('仮説');
+    expect(withInvalid.reasons).toEqual(['失効した観測値がある（0102-02）']);
   });
 });
 

@@ -249,6 +249,42 @@ export function appendBasis(basis: string, added: readonly string[], verificatio
   return `${basis.replace(/[。\s]+$/, '')}。${basisIdsText(added)}${basis.includes(verification) ? '' : `。${verification}`}`;
 }
 
+/**
+ * records:new claim の根拠の観測値。--observations で選んだもの（無ければ検証記録の観測値）のうち、無効（invalid）でないもの。
+ * 無効の観測値は excluded に返す（新しい結論も --update も、無効の観測値を根拠に足さない）
+ */
+export function claimBasisObservations(
+  observations: readonly Observation[],
+  verification: string,
+  picked: readonly Observation[] | undefined,
+): { given: Observation[]; excluded: Observation[] } {
+  const all = picked ?? observations.filter((o) => o.source === verification);
+  return {
+    given: all.filter((o) => o.invalid === undefined),
+    excluded: all.filter((o) => o.invalid !== undefined),
+  };
+}
+
+/**
+ * --update で前の結論の根拠に足す観測値（前の根拠に無いもの）と、書き足した根拠の文と、評価に使う根拠の観測値（前の根拠と足した根拠。
+ * 前の根拠の観測値は、無効になっていてもそのまま入れる）
+ */
+export function claimUpdateBasis(
+  existing: { basis: string; observations: readonly string[] },
+  given: readonly Observation[],
+  verification: string,
+  observations: readonly Observation[],
+): { added: string[]; basis: string; own: Observation[] } {
+  const before = new Set(existing.observations);
+  const added = given.filter((o) => !before.has(o.id)).map((o) => o.id);
+  const ownIds = new Set([...before, ...added]);
+  return {
+    added,
+    basis: appendBasis(existing.basis, added, verification),
+    own: observations.filter((o) => ownIds.has(o.id)),
+  };
+}
+
 /** 根拠の文の観測値の並び（`ID`・`ID`） */
 export function basisIdsText(ids: readonly string[]): string {
   return ids.map((id) => `\`${id}\``).join('・');
