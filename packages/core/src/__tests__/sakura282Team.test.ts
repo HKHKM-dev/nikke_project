@@ -85,7 +85,7 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, sakura }) =>
         stat: 'attack',
       });
       // 効果は I の六角形の替わり目の 49f 後に発火する（遅れの表の行。C-1470）
-      expect(items.map((w) => w.start)).toEqual(own.map((a) => effectFrameOf(a)));
+      expect(items.map((w) => w.start)).toEqual(own.map((a) => effectFrameOf(a)).filter((f) => f < plan.frames));
       expect(burstDelaysOf(characterOf(SAKURA)).effectFrames).toBe(49);
       for (const w of items) if (w.end < plan.frames) expect(w.end - w.start).toBe(gameSecondsToFrames(10));
     }
