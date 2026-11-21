@@ -1432,6 +1432,8 @@ svg.roster-revert-icon {
 /* スロットの立ち絵では、下部に重ねる名前と限界突破・コア強化の行（.modern-slot-char-name）の上に出す（行の上にはみ出すコア強化の印にも掛けない） */
 .char-visual-portrait .char-unsupported-tag {
   bottom: 54px;
+  /* 右端は、下のコア強化の印（名前の行 .modern-slot-char-name の右の余白 6px の内側）とそろえる */
+  right: 6px;
 }
 /* 未対応の印（ⓘ。CharacterVisual）。バッジ ui_information を出す。マウスを載せると件数が出る */
 .char-unsupported-tag {
@@ -1439,8 +1441,9 @@ svg.roster-revert-icon {
   bottom: 2px;
   right: 2px;
   display: inline-flex;
-  width: 16px;
-  height: 16px;
+  /* 大きさは、その絵の左上のバッジの幅（--badge-w。スロットの立ち絵は立ち絵と一緒に縮む）と同じ */
+  width: var(--badge-w);
+  height: var(--badge-w);
   z-index: 2;
   cursor: help;
 }
@@ -1470,20 +1473,6 @@ svg.roster-revert-icon {
   --badge-main: #1a1a1a;
   --badge-accent: #1a1a1a;
 }
-/* 印の大きさは表示ごとに変える（スロットの立ち絵 24px・ニケ一覧の四角・縦長 18px。ほかは上の 16px） */
-.char-visual-portrait .char-unsupported-tag {
-  width: 24px;
-  height: 24px;
-}
-.char-visual-compact .char-unsupported-tag {
-  width: 18px;
-  height: 18px;
-}
-.char-visual-tall .char-unsupported-tag {
-  width: 18px;
-  height: 18px;
-}
-
 /* CharacterTray (パレット) */
 .char-tray-panel {
   display: flex;
