@@ -31,6 +31,7 @@ import type { HolderLists } from '../../skills/holders.ts';
 import type { ShooterStates } from './shooters.ts';
 import type { BurstScheduleLayer, BurstStep } from './burst.ts';
 import { WEAPON_CHANGE_END_DELAY } from './shotLogs.ts';
+import { lastBulletShotsOf } from '../../weapons.ts';
 
 type InstantSource = {
   sourceSlotIndex: number;
@@ -340,6 +341,15 @@ export function createInstants({
             fired.lastBullet = false;
             if (log.lastBulletFrames!.at(-1) === f) log.lastBulletFrames!.pop();
           }
+        } else if (
+          // 二丁持ちの最後の弾丸の前の発（残弾 1）と同じ発の弾丸チャージも、同じくその発を最後の弾丸に数えない
+          fired?.lastBullet === true &&
+          !fired.lastShot &&
+          state.ammo >= lastBulletShotsOf(slot.character.weaponType, slot.character.shot)
+        ) {
+          fired.lastBullet = false;
+          const log = logs[target]!;
+          if (log.lastBulletFrames!.at(-1) === f) log.lastBulletFrames!.pop();
         }
         instants.push({
           frame: f,

@@ -23,8 +23,8 @@
           "damageType": "additional",
           "ref": 1,
           "assumes": {
-            "ja": "敵 1 体。「最後の弾丸が命中した時」は二丁持ちの銃口ごとに起き、マガジンの最後の 2 発のそれぞれで 1 つ出す（weapons.ts の lastBulletShotsOf）。最後の弾丸はいつも命中する（外れた銃口の分が出ないのは入れない。ルドミラの S1 と同じ）。バーストゲージは確かめていない（溜めない形）",
-            "en": "One enemy. \"When the last bullet hits\" fires per muzzle of the dual-wield weapon: once on each of the last two shots of the magazine (lastBulletShotsOf in weapons.ts). The last bullets are assumed to always hit (not firing for a missed muzzle is not modeled; as for Ludmilla S1). The Burst Gauge is not verified (modeled as not charging it)"
+            "ja": "敵 1 体。「最後の弾丸が命中した時」は二丁持ちの銃口ごとに起き、マガジンの最後の 2 発のそれぞれで 1 つ出す（weapons.ts の lastBulletShotsOf）。最後の弾丸はいつも命中する（外れた銃口の分が出ないのは入れない。ルドミラの S1 と同じ）。残弾 1 にした発の直後に的のジャンプでマガジンが切れた回も、その発の 1 つは出す（確かめていない）。バーストゲージは確かめていない（溜めない形）",
+            "en": "One enemy. \"When the last bullet hits\" fires per muzzle of the dual-wield weapon: once on each of the last two shots of the magazine (lastBulletShotsOf in weapons.ts). The last bullets are assumed to always hit (not firing for a missed muzzle is not modeled; as for Ludmilla S1). When the magazine is cut by a target jump right after the shot leaving one round, that shot still fires its one (not verified). The Burst Gauge is not verified (modeled as not charging it)"
           },
           "claims": [
             "C-1400"
