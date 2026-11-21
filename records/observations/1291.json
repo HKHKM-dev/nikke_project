@@ -1,0 +1,129 @@
+[
+  {
+    "id": "1291-01",
+    "recording": "1291",
+    "use": "compare",
+    "kind": "timing",
+    "value": [323, 324, 324, 324],
+    "unit": "f",
+    "description": "フルバーストの窓の始まり（III のタイマーの 00.00）から、バーストの変更後の武器の 1 発までの動画のフレーム（1〜4 回目。5 回目は戦闘の終わりの部分チャージの発）",
+    "method": {
+      "tool": "recipe:burst-panel@4 の 00.00 と recipe:hud-jumps@3 の増分",
+      "note": "1 発は 1738・4142・6671・9147"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstToWeaponChangeShot",
+      "args": {
+        "slot": 3,
+        "n": "0,1,2,3"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0815",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1291-02",
+    "recording": "1291",
+    "use": "compare",
+    "kind": "timing",
+    "value": [117, 117, 117, 116],
+    "unit": "f",
+    "description": "バーストの変更後の武器の 1 発から、AR の 1 発目までの動画のフレーム（1〜4 回目）。戻った後の AR は満タン",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "増分を、スノーホワイトの AR の 1 発・S1・S2・バーストの 1 発（最終攻撃力 × 499.5% × 1000%）と、ココアの SR の 1 発・ソルジャーF.A. の SG の当たったペレットの和の格子（会心・コア・距離ボーナス・フルバースト補正・S1 の攻撃力▲の有無）に当てた（scratchpad の使い捨ての下読み）。フルバーストの窓は recipe:burst-panel の 00.00（1415・3818・6347・8823・11281）と終わり。AR の 1 発目は 1855・4259・6788・9263"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "weaponChangeShotToNextShot",
+      "args": {
+        "slot": 3,
+        "n": "0,1,2,3"
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0815",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1291-03",
+    "recording": "1291",
+    "use": "record",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": {
+      "frames": [1738, 4142, 6671, 9147, 11438],
+      "values": [16866276, 15059175, 15059175, 16866276, 8017844],
+      "ratioToBase": [2.8, 2.5, 2.5, 2.8, 1.331]
+    },
+    "description": "バーストの変更後の武器の 1 発の値と、最終攻撃力 × 499.5% × 1000%（6,023,670）に対する比。1〜4 回目はコア・会心なしで、距離ボーナスは基礎の AR の帯どおり。5 回目は 00.00（11281）の 157f 後、戦闘の終わり（HUD の最後の増分）で出て格子に乗らない（部分チャージとみる。課題 2-68）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "増分を、スノーホワイトの AR の 1 発・S1・S2・バーストの 1 発（最終攻撃力 × 499.5% × 1000%）と、ココアの SR の 1 発・ソルジャーF.A. の SG の当たったペレットの和の格子（会心・コア・距離ボーナス・フルバースト補正・S1 の攻撃力▲の有無）に当てた（scratchpad の使い捨ての下読み）。フルバーストの窓は recipe:burst-panel の 00.00（1415・3818・6347・8823・11281）と終わり"
+    },
+    "source": "V-0815",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1291-04",
+    "recording": "1291",
+    "use": "record",
+    "kind": "count",
+    "unit": "発",
+    "value": {
+      "arShotsBetweenS1": [29, 29, 29, 29]
+    },
+    "description": "バーストの前の最後の S1 の発から、後の最初の S1 の発までの AR の発の数（1〜4 回目）。バーストの 1 発を足すと 30",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "増分を、スノーホワイトの AR の 1 発・S1・S2・バーストの 1 発（最終攻撃力 × 499.5% × 1000%）と、ココアの SR の 1 発・ソルジャーF.A. の SG の当たったペレットの和の格子（会心・コア・距離ボーナス・フルバースト補正・S1 の攻撃力▲の有無）に当てた（scratchpad の使い捨ての下読み）。フルバーストの窓は recipe:burst-panel の 00.00（1415・3818・6347・8823・11281）と終わり。S1 は 1405→1993、3742→4333、6145→6842、8732→9323。読みが割れて 2 つに出た増分は 1 発に数え、AR の刻みに乗らない増分は数えない"
+    },
+    "source": "V-0815",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1291-05",
+    "recording": "1291",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": {
+      "s2HitFromStart": [1031, 1916, 2800, 3707, 4592, 5477, 6382, 7267, 8174, 9057, 9943],
+      "firstS2": {
+        "burstShot": 1738,
+        "s2Hit": 1877,
+        "activation": 1843,
+        "firstArShot": 1855
+      }
+    },
+    "description": "S2 のヒットの、戦闘開始（動画 846）からの動画のフレーム（録画 1279 の 1279-07 とほぼ同じ並び）。1 回目の S2 の発動の予定は、バーストの 1 発の後の戻りの待ちの中で、実際の発動（ヒットの 34f 前）は AR の 1 発目の 12f 前（1279 と同じ）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と tools/captures/timer.ts --mode changes",
+      "note": "増分を、スノーホワイトの AR の 1 発・S1・S2・バーストの 1 発（最終攻撃力 × 499.5% × 1000%）と、ココアの SR の 1 発・ソルジャーF.A. の SG の当たったペレットの和の格子（会心・コア・距離ボーナス・フルバースト補正・S1 の攻撃力▲の有無）に当てた（scratchpad の使い捨ての下読み）。フルバーストの窓は recipe:burst-panel の 00.00（1415・3818・6347・8823・11281）と終わり"
+    },
+    "source": "V-0815",
+    "readAt": "2026-11-21"
+  }
+]

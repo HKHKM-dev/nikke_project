@@ -18,7 +18,7 @@ const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 const S2_PERIOD = gameSecondsToFirstFrame(15);
 const S2_DELAY = 34;
 /** バーストの 1 発から AR の最初の発まで（returnFirstShotFrames） */
-const RETURN_WAIT = 118;
+const RETURN_WAIT = 117;
 
 describe('語彙の検証（returnFirstShotFrames）', () => {
   const withBurst = (patch: Record<string, unknown>) => {
@@ -92,7 +92,7 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, slot: S }) =
   });
 
   if (S !== 0) {
-    it('fires one charged shot per Burst and resumes the AR 118 frames later unless the enemy is out of reach', () => {
+    it('fires one charged shot per Burst and resumes the AR 117 frames later unless the enemy is out of reach', () => {
       const jumps = (input.enemy?.events ?? []).filter((e) => e.kind === 'untargetable');
       expect(changed.size).toBeGreaterThan(1);
       for (const shot of changed) {
