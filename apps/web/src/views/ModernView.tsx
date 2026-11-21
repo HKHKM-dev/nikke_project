@@ -185,12 +185,7 @@ export function ModernView({
             </div>
             {parties.parties.map((party, p) => (
               <div key={p} className={`modern-party-row ${p === parties.active ? 'modern-party-row-active' : ''}`}>
-                <PartyRowLabel
-                  partyIndex={p}
-                  active={p === parties.active}
-                  total={totals.parties[p]}
-                  onSelect={() => selectParty(p)}
-                />
+                <PartyRowLabel partyIndex={p} active={p === parties.active} onSelect={() => selectParty(p)} />
                 {p === parties.active ? (
                   <section ref={slotsGridRef} className="modern-slots-grid" aria-label="編成スロット一覧">
                     {team.slots.map((slot, i) => {

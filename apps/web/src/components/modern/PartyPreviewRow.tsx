@@ -3,8 +3,6 @@
 import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
 import type { Party } from '../../parties.ts';
 import { partyLabel, partyNumber } from '../../parties.ts';
-import { formatDamage } from '../../format.ts';
-import type { PartyTotal } from '../../partyTotals.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { trayGrowthMarks } from './GrowthMarks.tsx';
 import { EmptySlotFace, SlotCharName } from './ModernSlotCard.tsx';
@@ -53,16 +51,14 @@ export function PartyPreviewRow({ partyIndex, party, indexMap, roster, fixedSpec
   );
 }
 
-/** 行の左の、編成の番号（押すとその編成を選ぶ）とダメージ。PartyTabs の 1 つ分と同じ見た目 */
+/** 行の左の、編成の番号（押すとその編成を選ぶ）。PartyTabs の 1 つ分と同じ見た目。編成ごとのダメージは出さない（オーナーのコメント） */
 export function PartyRowLabel({
   partyIndex,
   active,
-  total,
   onSelect,
 }: {
   partyIndex: number;
   active: boolean;
-  total: PartyTotal | undefined;
   onSelect: () => void;
 }) {
   return (
@@ -76,15 +72,6 @@ export function PartyRowLabel({
       >
         {partyNumber(partyIndex)}
       </button>
-      {/* 値の欄（出せない値は「—」）。エラーの文は読み上げにだけ渡す */}
-      <span
-        className="party-tab-total"
-        data-computing={total?.computing ?? false}
-        role={total?.error === undefined ? undefined : 'img'}
-        aria-label={total?.error === undefined ? undefined : `計算できない: ${total.error}`}
-      >
-        {formatDamage(total?.total ?? null)}
-      </span>
     </div>
   );
 }

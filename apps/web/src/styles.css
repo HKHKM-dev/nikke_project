@@ -869,13 +869,8 @@ svg.roster-revert-icon {
   flex: none;
   max-width: none;
   container-type: normal;
-  grid-template-columns: 4em 5.5em;
+  grid-template-columns: 4em;
   align-items: center;
-  gap: 6px;
-}
-.modern-party-row-label .party-tab-total {
-  font-size: 0.9rem;
-  text-align: left;
 }
 /* 選んでいない編成の行は、ボタンの見た目を消してスロットだけを見せる。少し薄くし、マウスを重ねると濃くする */
 .modern-slots-grid.modern-party-preview {
@@ -1392,13 +1387,17 @@ svg.roster-revert-icon {
   /* 左上のバッジの幅。元の大きさ（ニケ一覧の四角と同じ 256/3 px）でニケ一覧と同じ 20px にし、立ち絵が縮むと一緒に縮める（右上のボタンも同じ大きさ） */
   --badge-w: calc(var(--slot-portrait-h) * 60 / 256);
 }
-/* ニケ一覧の縦長の絵と空のスロットの枠は、背景も枠線と同じく上の 5 割で上へ行くほど透明にする。枠線: 上を消し、横は上の 5 割で上へ行くほど薄くして一番上で消す（下は実線）。
+/* ニケ一覧の縦長の絵は、背景も枠線と同じく上の 5 割で上へ行くほど透明にする。枠線: 上を消し、横は上の 5 割で上へ行くほど薄くして一番上で消す（下は実線）。
    枠線の太さは変えないので、絵の大きさは同じ。色は枠線の色（--char-visual-line） */
-.char-visual-tall,
-.modern-slot-empty-area {
+.char-visual-tall {
   /* 塗りは基準を枠線の外側（border-box）にする。既定の padding-box だと、絵が繰り返されて上の枠線の 1px に下端の塗りの色が出る */
   background: linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
   border-image: linear-gradient(to bottom, transparent, var(--char-visual-line) 50%) 1;
+}
+/* 空のスロットの枠は、透明にせず、塗りと枠線を上から下まで同じ色にする（オーナーのコメント） */
+.modern-slot-empty-area {
+  background: var(--char-visual-fill);
+  border-color: var(--char-visual-line);
 }
 .char-visual-img {
   width: 100%;
