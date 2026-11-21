@@ -626,8 +626,8 @@ function trigKeys(e: CatalogEffect): string[] {
   return (e.mods ?? []).includes('dur:permanent') ? ['implicit:passive'] : ['implicit:active'];
 }
 
-/** 条件: 「自分が〈stat〉増加状態なら」は selfBuffed */
-function condKeys(e: CatalogEffect): string[] {
+/** 条件: 「自分が〈stat〉増加状態なら」は selfBuffed（条件と頭は行のものなので、行にも使う） */
+function condKeys(e: Pick<CatalogLine, 'conditions' | 'head'>): string[] {
   return e.conditions.map((c) => (c === 'selfState' && /自分が[^、]*増加状態/.test(e.head) ? 'selfBuffed' : c));
 }
 
@@ -917,7 +917,7 @@ export function stateSection(L: readonly CatalogLine[], E: readonly CatalogEffec
     '',
     ...stateNameSection(L, E),
     ...stateFormSection(E),
-    ...stateViewerSection(L),
+    ...stateViewerSection(L, E),
     ...removalSection(L),
     ...timingSection(L),
   ];
@@ -979,8 +979,12 @@ function stateFormSection(E: readonly CatalogEffect[]): string[] {
   ];
 }
 
-/** 4.3 節: 状態を見る側（頭の書き方）。見る形の名前と状況は、条件・きっかけ・対象の表のもの */
-function stateViewerSection(L: readonly CatalogLine[]): string[] {
+/**
+ * 4.3 節: 状態を見る側（頭の書き方）。見る形の名前・状況と鍵の読み方は、7 節の条件・きっかけ・対象のもの。
+ * 対象は句ごとに決まるので、その鍵の効果を 1 つでも持つ行を数える
+ */
+function stateViewerSection(L: readonly CatalogLine[], E: readonly CatalogEffect[]): string[] {
+  const lineId = (x: CatalogLine | CatalogEffect) => `${x.rid}:${x.slot}:${x.li}`;
   const row = (kind: string, infos: Record<string, Info>, key: string, items: readonly CatalogLine[]) => {
     const [label, status] = infoIn(infos, key);
     return `| ${kind}: ${label} | ${rowCounts(items)} | ${ST[status]} | ${fmtChars(items)} |`;
@@ -990,7 +994,7 @@ function stateViewerSection(L: readonly CatalogLine[]): string[] {
       '条件',
       COND_INFO,
       key,
-      L.filter((l) => l.conditions.includes(key) && keep(l)),
+      L.filter((l) => condKeys(l).includes(key) && keep(l)),
     );
   const byTrigger = (key: string) =>
     row(
@@ -999,14 +1003,20 @@ function stateViewerSection(L: readonly CatalogLine[]): string[] {
       key,
       L.filter((l) => l.triggers.includes(key)),
     );
+  const byTarget = (key: string) => {
+    const ids = new Set(E.filter((e) => tgtKeys(e).includes(key)).map(lineId));
+    return row(
+      '対象',
+      TGT_INFO,
+      key,
+      L.filter((l) => ids.has(lineId(l))),
+    );
+  };
   return [
     '### 4.3 状態を見る側（頭の書き方）',
     '',
     ...table('| 見る形 | 行 | キャラ | 定義あり | 状況 | キャラ（例） |', [
-      byCondition(
-        'selfState',
-        (l) => !l.conditions.includes('selfState:fullStack') && !/自分が[^、]*増加状態/.test(l.head),
-      ),
+      byCondition('selfState', (l) => !l.conditions.includes('selfState:fullStack')),
       byCondition('selfState:fullStack'),
       byCondition('selfState:absent'),
       byCondition('selfState:while'),
@@ -1014,12 +1024,7 @@ function stateViewerSection(L: readonly CatalogLine[]): string[] {
       byTrigger('stateApplied'),
       byTrigger('stateEnded'),
       byTrigger('fullStackConsume'),
-      row(
-        '対象',
-        TGT_INFO,
-        'ally:filter:state',
-        L.filter((l) => /状態の味方|状態ではない味方/.test(l.head)),
-      ),
+      byTarget('ally:filter:state'),
     ]),
   ];
 }

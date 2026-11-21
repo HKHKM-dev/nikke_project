@@ -332,13 +332,14 @@ describe('stateSection', () => {
   it.each(VIEWERS)(
     'gives a head that looks at a state (%s %j) the name and the status of the same key in section 7',
     (kind, fields, section) => {
-      const viewers = tableUnder(stateSection([line(fields)], []), '### 4.3');
+      const e = effect({ triggers: [], targets: [], ...fields });
+      const viewers = tableUnder(stateSection([line(fields)], [e]), '### 4.3');
       expect(viewers.map((row) => row[0]!.split(': ')[0])).toEqual(VIEWERS.map(([k]) => k));
       // 入力の 1 行は、見る形 1 つにだけ数える
       const counted = viewers.filter((row) => row[1] !== '0');
       expect(counted).toHaveLength(1);
       // 7 節の表は、その鍵の 1 行だけ
-      const reference = tableUnder(headSection([effect({ triggers: [], targets: [], ...fields })]), section);
+      const reference = tableUnder(headSection([e]), section);
       expect(reference).toHaveLength(1);
       expect(counted[0]![0]).toBe(`${kind}: ${reference[0]![0]}`);
       expect(counted[0]![4]).toBe(reference[0]![4]);
@@ -353,6 +354,30 @@ describe('stateSection', () => {
       ...['0', '1', '0', '0', '0'],
       ...['0', '0', '0', '0'],
     ]);
+  });
+
+  it('counts a line as targeting allies in a state when one of its effects does, reading the head before the quote', () => {
+    const counts = (l: Partial<CatalogLine>, e: Partial<CatalogEffect>) =>
+      tableUnder(stateSection([line(l)], [effect(e)]), '### 4.3').map((row) => row[1]);
+    const targeting = [...Array(8).fill('0'), '1'];
+    // 「効果N：」の小項目の頭に書かれた対象
+    expect(
+      counts({}, { targets: ['ally:alliesFiltered'], head: '', subHead: '〈状態〉状態ではない味方全体に' }),
+    ).toEqual(targeting);
+    // 行の頭にあっても、句の対象が絞った味方でなければ数えない
+    expect(
+      counts({ head: '〈状態〉状態の味方全体に' }, { targets: ['ally:self'], head: '〈状態〉状態の味方全体に' }),
+    ).toEqual(Array(9).fill('0'));
+    // 効果は、同じキャラ・スロット・番号の行にだけ数える
+    const state = { targets: ['ally:alliesFiltered'], subHead: '〈状態〉状態の味方全体に' };
+    const viewer = (L: CatalogLine[]) =>
+      tableUnder(stateSection(L, [effect({ ...state, slot: 'burst', li: 1 })]), '### 4.3')
+        .at(-1)!
+        .slice(1, 3);
+    expect(
+      viewer([line({ slot: 'burst', li: 0 }), line({ slot: 'skill1', li: 1 }), line({ rid: 2, slot: 'burst', li: 1 })]),
+    ).toEqual(['0', '0']);
+    expect(viewer([line({ slot: 'burst', li: 1 }), line({ slot: 'skill1', li: 1 })])).toEqual(['1', '1']);
   });
 
   it('collects how effects and states come off, and whether what is erased or removed was granted undispellable', () => {
