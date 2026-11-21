@@ -37,7 +37,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "",
+  "conditionNote": "敵の属性は出撃画面の属性タブで確かめた（灼熱）",
   "backup": {
     "at": "2026-11-21T16:22+09:00",
     "via": "cloud-move",

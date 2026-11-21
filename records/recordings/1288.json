@@ -31,13 +31,13 @@
   ],
   "target": {
     "name": "BigArms",
-    "element": "Water"
+    "element": "Fire"
   },
   "mode": "range-3min",
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "",
+  "conditionNote": "敵の属性は出撃画面の属性タブで確かめた（灼熱）。撮影の依頼の表とは撮った順が逆（1 本目が水冷）",
   "backup": {
     "at": "2026-11-21T16:22+09:00",
     "via": "cloud-move",
