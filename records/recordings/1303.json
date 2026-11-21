@@ -36,8 +36,8 @@
   "mode": "range-3min",
   "fixedSpec": true,
   "autoFire": true,
-  "autoBurst": null,
-  "conditionNote": "",
+  "autoBurst": false,
+  "conditionNote": "V-0825 の撮影の依頼の 2 行目（手動のバースト）。オートバーストは OFF で、ベスティーの 2 回目と 3 回目の III の 00.00 の間は 3,127f（1303-03）。編成は戦闘履歴のパネルで確かめた",
   "backup": {
     "at": "2026-11-21T17:44+09:00",
     "via": "cloud-move",

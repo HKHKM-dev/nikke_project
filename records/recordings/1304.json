@@ -37,7 +37,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": null,
-  "conditionNote": "",
+  "conditionNote": "V-0825 の撮影の依頼の 2 行目（手動のバースト）。オートバーストは途中で替えた（左上のボタン。50 秒・140 秒の画で ON、90 秒の画で OFF）。ベスティーの 1・2・4 回目は使えるようになってすぐ、2 回目と 3 回目の III の 00.00 の間は 3,323f（1304-03）。編成は戦闘履歴のパネルで確かめた",
   "backup": {
     "at": "2026-11-21T17:44+09:00",
     "via": "cloud-move",
