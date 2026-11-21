@@ -9,8 +9,9 @@
 // 落とさない。比べ方と、手元と違うときの扱いは fetch-lib.ts。--force で落とし直す）。落としたもの・既にあるものは、
 // 手元のパスを「取得」「あり」の行に出す。
 // drive:<相対パス> は、まだ取り込んでいない録画（Drive の「マイ コンピュータ/record」。intake.ts の drive: と同じ指し方）を、
-// 取り込む前の下見のために落とす。置き場所は dirs.ts の recordFetchDir（台帳が無いので突き合わせない。取り込みは intake.ts が
-// 別に取り寄せる）。取り込み元のフォルダが手元にある環境（dirs.ts の recordDir。Windows）では落とさず、手元のパスを出す。
+// 取り込む前の下見のために落とす。置き場所は dirs.ts の recordFetchDir（台帳が無いので突き合わせない。取り込みの intake.ts は、
+// ここに落としたもので大きさとハッシュが record の写しと同じものがあれば、取り寄せずにそれを使う）。取り込み元のフォルダが
+// 手元にある環境（dirs.ts の recordDir。Windows）では落とさず、手元のパスを出す。
 // 環境変数: NIKKE_DRIVE_SA_KEY（drive.ts）、NIKKE_DRIVE_FOLDER_ID（nikke_project_captures フォルダの ID）、
 // NIKKE_DRIVE_LEGACY_FOLDER_ID（old_nikkecalc フォルダの ID。旧プロジェクトのものを取るときだけ）、
 // NIKKE_DRIVE_RECORD_FOLDER_ID（record フォルダの ID。drive: のときだけ）。フォルダの ID は
