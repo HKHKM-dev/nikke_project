@@ -78,11 +78,16 @@ export function frameAt(target: Box, base: Box): Keyframe {
   };
 }
 
+/** 名前を小さい文字で出す、四角の絵の入れ物 */
+const SQUARE_SOURCES = '.modern-party-preview-card, .char-tray-square-area, .slot-drag-overlay-square';
+
 /** node の写しを、いまの node の位置・大きさで画面に重ねる */
 function ghostOf(node: Element, base: DOMRect): HTMLElement {
   const ghost = cloneForAnimation(node);
   // スロットの立ち絵は並びの幅で縮む（useSlotFit）。写しを置く body の外でも同じ大きさにする
   for (const [name, value] of Object.entries(slotSizeVars(node))) ghost.style.setProperty(name, value);
+  // 四角の絵（選んでいない編成の行・ニケ一覧の四角・持ち上げた四角の絵）の名前は小さい文字（styles.css）。写しは body に置くので、印を付けてそろえる
+  if (node.closest(SQUARE_SOURCES)) ghost.classList.add('flight-ghost-square');
   Object.assign(ghost.style, {
     position: 'fixed',
     left: `${base.left}px`,

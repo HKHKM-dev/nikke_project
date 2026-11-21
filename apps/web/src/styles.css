@@ -1364,7 +1364,8 @@ svg.roster-revert-icon {
 /* 四角の絵（顔の絵）の名前 */
 .char-tray-square-area .modern-slot-char-name,
 .modern-party-preview-card .modern-slot-char-name,
-.slot-drag-overlay-square .modern-slot-char-name {
+.slot-drag-overlay-square .modern-slot-char-name,
+.flight-ghost-square .modern-slot-char-name {
   /* 四角の絵は低いので、名前の文字を少し小さくする */
   font-size: 0.7rem;
 }
