@@ -1,0 +1,20 @@
+{
+  "id": "C-1365",
+  "text": "スノーホワイト：イノセントデイズの S2 の倍率ダメージの 35 ヒットは、どれも射手の 1 ヒットぶんのバーストゲージを溜める（S1 の倍率ダメージの 2 ヒットは溜めない読みで合う）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`1256-04`。V-0808",
+  "model": "data/skills/224.json の skill2 の effects[0] の gaugePerHit（S1 の effects[1] には書かない）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/224.json の skill2 の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1256",
+      "role": "値を合わせた"
+    }
+  ]
+}
