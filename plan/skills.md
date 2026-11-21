@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 153・効果 1093（根拠あり 1071）・notes 365（根拠あり 153）
+件数: キャラ 154・効果 1099（根拠あり 1077）・notes 368（根拠あり 154）
 
-notes の種類: 未対応 45・前提の外 117・計算に無関係 73・補足 42・間接 88
+notes の種類: 未対応 47・前提の外 117・計算に無関係 73・補足 43・間接 88
 
-スロット: supported 411・partial 32・unsupported 9・noEffect 58
+スロット: supported 412・partial 33・unsupported 10・noEffect 58
 
 ## 10 ラピ
 
@@ -384,6 +384,21 @@ notes の種類: 未対応 45・前提の外 117・計算に無関係 73・補�
   - notes[0] 間接（HP）: 自分の HP が 90% 以上の時の、味方全体の受けるHP回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
 - **burst**: supported
   - effects[0] heal・burstUse: C-0686（確定）、C-0687（仮説）
+
+## 91 ベスティー
+
+- **skill1**: unsupported
+  - notes[0] 未対応: フルチャージ攻撃時の自分の爆発範囲▲（10 秒）は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）: 根拠なし
+- **skill2**: supported
+  - effects[0] state・burstUse・survivalInstinct1（attack）: C-1442（確定）
+  - effects[1] state・burstUse・survivalInstinct2（critDamage）: C-1442（確定）
+  - effects[2] state・burstUse・survivalInstinct3（critRate）: C-1442（確定）
+- **burst**: partial
+  - effects[0] damage・burstUse・additional: C-1441（確定）
+  - effects[1] damage・burstUse・additional: C-1441（確定）
+  - effects[2] damage・burstUse・additional: C-1441（確定）
+  - notes[0] 未対応: ミサイルコンテナ 2 機の攻撃（最終攻撃力の 15.56% のダメージ・攻撃間隔 1 秒・18 秒）は未対応。1 ヒットの値は式どおりだが、射撃場の的では 1 回のバーストのヒットの数が 1 秒に 2 回の 34〜36 回にならず、録画とバーストで大きく違う（V-0825）: 根拠なし
+  - notes[1] 補足: フルバーストタイム 5 秒▼は burst_duration（5 秒）から時刻表に入る: C-0011（確定）
 
 ## 92 ウンファ
 
@@ -2160,7 +2175,7 @@ notes の種類: 未対応 45・前提の外 117・計算に無関係 73・補�
   - effects[1] timed・burstUse・maxHp: C-1374（確定）
   - effects[2] timed・burstUse・maxHp: C-1374（確定）
 - **skill2**: supported
-  - effects[0] damage・normalShot・skill: C-1377（確定）
+  - effects[0] damage・normalShot・skill: C-1377（確定）、C-1439（確定）
   - effects[1] timed・battleStart・attack（読む: HP）: C-1374（確定）
 - **burst**: supported
   - effects[0] burstDamage・distributed: C-1375（確定）
