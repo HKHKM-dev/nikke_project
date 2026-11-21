@@ -81,8 +81,14 @@ describe('読み込み', () => {
     expect(parseWith('skills', 'skill2', 1, { trigger: { adjacentHpFull: false } })).toThrow(/must be true/);
   });
 
-  it('takes allStackable only on allies, without a state', () => {
-    expect(parseWith('skills', 'skill1', 1, { target: 'self' })).toThrow(/allStackable must target "allies"/);
+  it('takes allStackable only on allies or self, without a state', () => {
+    expect(parseWith('skills', 'skill1', 1, { target: 'enemy' })).toThrow(
+      /allStackable must target "allies" or "self"/,
+    );
+    // self は絞り込みと組まない
+    expect(parseWith('skills', 'skill1', 1, { target: 'self' })).toThrow(
+      /targetElement.*only allowed with target "allies"/,
+    );
     expect(parseWith('skills', 'skill1', 1, { state: 'barrier' })).toThrow(/state/);
   });
 });

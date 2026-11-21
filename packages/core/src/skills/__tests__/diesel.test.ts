@@ -4,6 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   resolveInstant,
+  resolveAllStackableChanges,
   resolveStackChanges,
   resolveStateContents,
   resolveStateGrants,
@@ -40,8 +41,22 @@ describe('読み込み', () => {
 
   it('takes existingOnly only on an increase on self', () => {
     const copy = structuredClone(raw);
-    copy.treasureSkills.skill1!.effects[0]!.decrease = true;
+    copy.treasureSkills.skill1!.effects[0] = {
+      kind: 'stackChange',
+      state: 'strawberryCandy',
+      trigger: { count: 'normalHit', everyRef: 4 },
+      target: 'self',
+      amountRef: 5,
+      existingOnly: true,
+      decrease: true,
+    };
     expect(() => parseSkillDefinition(copy)).toThrow(/existingOnly needs an increase/);
+  });
+
+  it('takes allStackable on self without target filters', () => {
+    const copy = structuredClone(raw);
+    copy.treasureSkills.skill1!.effects[0]!.targetElement = 'Wind';
+    expect(() => parseSkillDefinition(copy)).toThrow(/targetElement.*only allowed with target "allies"/);
   });
 
   it('needs a self stacking grant on a shot count for the full-stack refill', () => {
@@ -95,13 +110,13 @@ describe('宝物版（段階 3）の解決値', () => {
     );
   });
 
-  it('adds one stack of Strawberry Candy every 150 hits while in Attract, only when Candy is present', () => {
-    expect(resolveStackChanges(definition!, character, MAX_SKILL_LEVELS)).toEqual([
+  it('adds one stack to all stackable buffs on self every 150 hits while in Attract', () => {
+    expect(resolveStackChanges(definition!, character, MAX_SKILL_LEVELS)).toEqual([]);
+    expect(resolveAllStackableChanges(definition!, character, MAX_SKILL_LEVELS)).toEqual([
       expect.objectContaining({
-        state: 'strawberryCandy',
+        target: 'self',
         trigger: { count: 'normalHit', every: 150 },
         amount: 1,
-        existingOnly: true,
         condition: { selfState: { state: 'attract', present: true } },
       }),
     ]);

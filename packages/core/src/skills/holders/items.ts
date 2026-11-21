@@ -24,7 +24,14 @@ import { stackItems, STACK_REFRESH, type MaxStacksAt, type StackDecrease } from 
 import type { NamedStateId } from '../states.ts';
 import { dependsOnDefense, dependsOnRank } from '../targets.ts';
 import type { ShotCountEveryAt, TriggerTracker } from '../triggers.ts';
-import { type BuffStat, conditionReadsItems, SKILL_SLOTS, type EdgeShift, type EffectCondition } from '../types.ts';
+import {
+  type BuffStat,
+  conditionReadsItems,
+  isAllStackableChange,
+  SKILL_SLOTS,
+  type EdgeShift,
+  type EffectCondition,
+} from '../types.ts';
 import {
   effectItems,
   holderHitStarts,
@@ -656,7 +663,9 @@ export function appliedStagesOf(slots: readonly TimelineSlot[]): (state: NamedSt
         bump(effect.state, stageOfStackChange(effect));
       }
       const def = slot.definition;
-      if (SKILL_SLOTS.some((s) => def.skills[s].effects.some((e) => e.kind === 'stackChange' && e.target === 'allies')))
+      if (
+        SKILL_SLOTS.some((s) => def.skills[s].effects.some((e) => e.kind === 'stackChange' && isAllStackableChange(e)))
+      )
         allStackable = true;
     }
     // 味方の全部のスタック可能バフへの▲（段 1.5）は、編成のどの上限のある状態にも足しうる（plan/design-adjacent-allies.md 2.5 節）

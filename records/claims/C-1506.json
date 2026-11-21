@@ -1,0 +1,23 @@
+{
+  "id": "C-1506",
+  "text": "ギルティの S2 の「通常攻撃で 12 回攻撃した時、風圧コードの味方全体にスタック可能バフ効果のスタック量 1 個▲」は、自分の借りていくよぉ…（C-0873）のほかに、自分に付いたほかの味方のスキルのスタック可能バフ（センチの宝物版 S2 の攻撃力▲）にも、12 の倍数の発の次から 1 段足す",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1357-01`。V-0850",
+  "model": "data/skills/400.json の skill2 の effects[0]（stackChange・allStackable・targetElement Wind）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/400.json の skill2 の effects[0]"]
+  },
+  "decidedOn": [],
+  "runs": [
+    {
+      "recording": "1357",
+      "reproduced": "2・3 回目（24・36 発目の後）",
+      "observations": ["1357-01"]
+    }
+  ],
+  "parameterFree": "回数（値 01 の 12）と足す段（値 02 の 1）は 400 の説明文、足される攻撃力▲の 1 段の値・上限・維持はセンチの C-1218、借りていくよぉ…と S2 の攻撃力▲は C-0873"
+}
