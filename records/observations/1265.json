@@ -1,0 +1,796 @@
+[
+  {
+    "id": "1265-01",
+    "recording": "1265",
+    "kind": "timing",
+    "use": "record",
+    "value": [1354, 2570, 3758, 5054, 6288, 7667, 8857, 10104, 11283],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・5・25・5・24・0・25f"
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-02",
+    "recording": "1265",
+    "kind": "timing",
+    "use": "record",
+    "value": [1384, 2599, 3787, 5083, 6317, 7695, 8886, 10133, 11313],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・25・6・25・0・24・0・24f"
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-03",
+    "recording": "1265",
+    "kind": "timing",
+    "use": "record",
+    "value": [1412, 3816, 6346, 8915, 11342],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-04",
+    "recording": "1265",
+    "kind": "timing",
+    "use": "record",
+    "value": [2541, 4425, 6955, 9524],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム。5 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21",
+    "invalid": {
+      "reason": "1 回目のフルバーストの終わりを f2541 と読み違えた（2B の発の値は f2026 までフルバースト補正が乗り、f2031 から乗らない。00.00 の f1412 から 609f 前後で、2〜4 回目と同じ）。2〜4 回目の値は正しいが、並びで 1 つの観測値なので全体を外す",
+      "date": "2026-11-21"
+    }
+  },
+  {
+    "id": "1265-05",
+    "recording": "1265",
+    "kind": "interval",
+    "use": "record",
+    "value": [1129, 609, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差。5 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21",
+    "invalid": {
+      "reason": "1 回目のフルバーストの終わりを f2541 と読み違えた（2B の発の値は f2026 までフルバースト補正が乗り、f2031 から乗らない。00.00 の f1412 から 609f 前後で、2〜4 回目と同じ）。2〜4 回目の値は正しいが、並びで 1 つの観測値なので全体を外す",
+      "date": "2026-11-21"
+    }
+  },
+  {
+    "id": "1265-06",
+    "recording": "1265",
+    "kind": "timing",
+    "use": "record",
+    "value": [11277],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-07",
+    "recording": "1265",
+    "kind": "timing",
+    "use": "record",
+    "value": [3772, 11306],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f2579・f8869"
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-08",
+    "recording": "1265",
+    "kind": "total",
+    "use": "record",
+    "value": 210018750,
+    "description": "ココア・ソルジャーF.A.・2B の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11557。増分は 1930 個"
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-09",
+    "recording": "1265",
+    "kind": "count",
+    "use": "record",
+    "value": 269,
+    "unit": "トリガー",
+    "description": "ココア・ソルジャーF.A.・2B のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 1930 個。前の増分から 30f 未満の増分（1902 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 38.5f）から発の数を決めた（2 発になった組 21 個）"
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-10",
+    "recording": "1265",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 22074,
+    "description": "2B の通常攻撃の 1 ヒット（胴体・会心なし・距離ボーナスあり）。1 回目のバーストの前。攻撃力 79,954 + 最終最大HP 3,305,431 の 6.16%（S2）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "f861〜f1382 の 63 個"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-11",
+    "recording": "1265",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 23664,
+    "description": "同じ 1 ヒットの、1 回目のバーストのフルバーストの後（2 回目の前）。最終最大HP に S1 の 1 回目の段（10.03%）が入った値",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "f2031〜f2769 の 81 個"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-12",
+    "recording": "1265",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 20650,
+    "description": "同じ 1 ヒット（距離ボーナスなし）の、2 回目のバーストのフルバーストの後（3 回目の前）。S1 の 1・2 回目の段の和（30.09%）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "f4487〜f6336 の 201 個"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 5000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-13",
+    "recording": "1265",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 36003,
+    "description": "同じ 1 ヒット（距離ボーナスあり）の、3 回目のバーストのフルバーストの後（4 回目の前）。S1 の 3 つの段の和（87.85%）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "f7439〜f8904 の 175 個"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 7000,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-14",
+    "recording": "1265",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 27694,
+    "description": "同じ 1 ヒット（距離ボーナスなし）の、4 回目のバーストの後。3 回目の後と同じ段の和で、4・5 回目のバーストでは上がらない（5 回目のフルバーストの中の発は 27,694 × 1.5 = 41,542）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "f6960〜f11339 の 167 個（同）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 9500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-15",
+    "recording": "1265",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 6914829,
+    "description": "2B の 1 回目のバーストの分配ダメージ（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 の 37f 後の増分 6,965,798 から、同じフレームの 2B の発（50,969。フルバーストのコア）を引いた値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.000001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-16",
+    "recording": "1265",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 7412995,
+    "description": "2 回目のバーストの分配ダメージ（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 の 37f 後の 1 つの増分（f3853）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.000001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-17",
+    "recording": "1265",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 12614028,
+    "description": "3 回目のバーストの分配ダメージ（会心）。8,409,352 × 1.5",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 の 37f 後の 1 つの増分 12,614,028（f6383）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": true
+      },
+      "tolerance": {
+        "rel": 0.000001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-18",
+    "recording": "1265",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 16917351,
+    "description": "4 回目のバーストの分配ダメージ（会心）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 の 37f 後の 1 つの増分 16,917,351（f8952）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": true
+      },
+      "tolerance": {
+        "rel": 0.000001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-19",
+    "recording": "1265",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 11278234,
+    "description": "5 回目のバーストの分配ダメージ（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 の 36f 後の 1 つの増分（f11378）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.000001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-20",
+    "recording": "1265",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 3610225,
+    "description": "1 回目のバーストの追加ダメージ（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 の 73f 後の 1 つの増分（f1485）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "rel": 0.000001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-21",
+    "recording": "1265",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 4095464,
+    "description": "2 回目のバーストの追加ダメージ（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 の 74f 後の 1 つの増分（f3890）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "rel": 0.000001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-22",
+    "recording": "1265",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 5492646,
+    "description": "3 回目のバーストの追加ダメージ（会心なし）。4・5 回目も同じ値",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 の 74f 後の 1 つの増分（f6420）。4・5 回目は f8989・f11415（74・73f 後）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "rel": 0.000001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-23",
+    "recording": "1265",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 508865,
+    "description": "1 回目の 300 回射撃の倍率ダメージ（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "f2627 の増分 532,529 から、同じフレームの 2B の発（23,664）を引いた値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "rel": 0.000001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-24",
+    "recording": "1265",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 865891,
+    "description": "2 回目の 300 回射撃の倍率ダメージ（会心なし・フルバーストの中）。(攻撃力 344,836 − 100) × 167.45% × 1.5",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "f4405 の増分 917,515 から、同じフレームの 2B の発（51,624。フルバーストのコア）を引いた値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "rel": 0.000001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-25",
+    "recording": "1265",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 577260,
+    "description": "3 回目の 300 回射撃の倍率ダメージ（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "f6251 の増分 608,235 から、同じフレームの 2B の発（30,975。会心の胴体）を引いた値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "rel": 0.000001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-26",
+    "recording": "1265",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 774195,
+    "description": "4 回目の 300 回射撃の倍率ダメージ（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "f8108 の増分 810,198 から、同じフレームの 2B の発（36,003）を引いた値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "rel": 0.000001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-27",
+    "recording": "1265",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 1161293,
+    "description": "5 回目の 300 回射撃の倍率ダメージ（会心）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "f9889 の増分 1,188,987 から、同じフレームの 2B の発（27,694）を引いた 1,161,293（774,195 × 1.5）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "crit": true,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "rel": 0.000001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1265-28",
+    "recording": "1265",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [37, 37, 37, 37, 36],
+    "description": "2B のバーストの分配ダメージの 1 ヒットの、III のタイマーの 00.00 からの動画のフレーム（1〜5 回目。入りの止まり 22f を含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 は 1265-03"
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21",
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "1265-29",
+    "recording": "1265",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [73, 74, 74, 74, 73],
+    "description": "2B のバーストの追加ダメージの、III のタイマーの 00.00 からの動画のフレーム（1〜5 回目）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 は 1265-03"
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21",
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "1265-30",
+    "recording": "1265",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [41, 41],
+    "description": "S1 の段の乗った 2B の最初の発の、00.00 からの動画のフレーム（1・3 回目のバースト）。段の無い最後の発は +32・+36",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "1 回目は +32 の 30,564 と +41 の 50,969（1 回目の段のコア）、3 回目は +36 の 30,975（2 回目までの段の胴体）と +41 の 41,542（3 回目の段の胴体）"
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21",
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1265-31",
+    "recording": "1265",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [45, 35, 35, 35, 34],
+    "description": "300 回射撃の倍率ダメージの、通算 300 の倍数の発（残弾で数えた）からの動画のフレーム",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts と recipe:hud-jumps@3 の増分",
+      "note": "1 回目は 309 発目（f2627）で 300 発目 f2582。2 回目から先は数えた発が 1264 より 2 発少なく、2 回目の前で 2 発を数え落としたとみると、どれも 44〜45f"
+    },
+    "source": "V-0810",
+    "readAt": "2026-11-21",
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  }
+]

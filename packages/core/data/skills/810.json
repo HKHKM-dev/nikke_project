@@ -16,9 +16,12 @@
           "ref": 1,
           "durationUntil": "battleEnd",
           "assumes": {
-            "ja": "開始回数別の効果（下位効果のスタック適用）の 1 回目の段。段ごとに別の持続の▲で、2・3 回目の段（effects[1]・[2]）と足す。与ダメージには、S2 の最終最大HP 分の攻撃力▲を通してだけ効く",
-            "en": "The first tier of the effects by activation count (lower tiers stack). Each tier is a separate continuous buff that adds to the second and third tiers (effects[1], [2]). It affects damage only through the S2 ATK buff based on the final max HP"
-          }
+            "ja": "開始回数別の効果（下位効果のスタック適用）の 1 回目の段。付くのは III のタイマーの 00.00 の 15f 後（遅れの表の行）。段ごとに別の持続の▲で、2・3 回目の段（effects[1]・[2]）と足す。与ダメージには、S2 の最終最大HP 分の攻撃力▲を通してだけ効く",
+            "en": "The first tier of the effects by activation count (lower tiers stack). It is applied 15f after 00.00 of the Burst III timer (the delay table row). Each tier is a separate continuous buff that adds to the second and third tiers (effects[1], [2]). It affects damage only through the S2 ATK buff based on the final max HP"
+          },
+          "claims": [
+            "C-1374"
+          ]
         },
         {
           "kind": "timed",
@@ -33,7 +36,10 @@
           "assumes": {
             "ja": "2 回目の段。1 回目の段（effects[0]）の▲も残って足される",
             "en": "The second tier. The first-tier buff (effects[0]) stays and adds to it"
-          }
+          },
+          "claims": [
+            "C-1374"
+          ]
         },
         {
           "kind": "timed",
@@ -48,7 +54,10 @@
           "assumes": {
             "ja": "3 回目の段。1・2 回目の段（effects[0]・[1]）の▲も残って足される（3 回目以降は 3 つの和）。4 回目以降のバーストでは、どの段も付け直すだけで値は変わらない",
             "en": "The third tier. The first- and second-tier buffs (effects[0], [1]) stay and add to it (the sum of the three from the third use on). Later Bursts only reapply each tier without changing the value"
-          }
+          },
+          "claims": [
+            "C-1374"
+          ]
         }
       ]
     },
@@ -63,9 +72,13 @@
           "damageType": "skill",
           "ref": 2,
           "assumes": {
-            "ja": "撃った発を戦闘開始から通算して数え（リロードで数え直さない）、300 の倍数に届いた発で 1 ヒット。敵全体は単体ボス。ヒットは発と同じフレームで、バーストゲージは溜めない（撮る前の仮の形）",
-            "en": "Counts shots fired from the start of battle (not reset by reloading) and hits once on the shot reaching each multiple of 300. All enemies is the single boss. The hit is on the shot's frame and does not charge the Burst Gauge (a provisional form before recording)"
-          }
+            "ja": "撃った発を戦闘開始から通算して数え（リロードで数え直さない）、300 の倍数に届いた発の 45f 後に 1 ヒット。値はヒットのフレームのバフで出て、フルバースト補正が乗る。敵全体は単体ボス。バーストゲージを溜めるかは確かめていない（溜めない形で回す）",
+            "en": "Counts shots fired from the start of battle (not reset by reloading) and hits once 45f after the shot reaching each multiple of 300. The value uses the buffs on the hit frame and takes the Full Burst bonus. All enemies is the single boss. Whether it charges the Burst Gauge is unverified (it is run without charging)"
+          },
+          "delayFrames": 45,
+          "claims": [
+            "C-1377"
+          ]
         },
         {
           "kind": "timed",
@@ -75,11 +88,16 @@
           "scaling": "casterFinalMaxHp",
           "ref": 3,
           "durationUntil": "battleEnd",
-          "reads": ["hp"],
+          "reads": [
+            "hp"
+          ],
           "assumes": {
             "ja": "値は、効いている各フレームの自分の最終最大HP（S1 の最大HP▲ を含む）の 6.16%。戦闘開始の後に S1 で最大HP が上がると、▲も追って上がる",
             "en": "The value is 6.16% of her own final max HP on each frame it is active (including the S1 max HP buffs). When S1 raises her max HP after the start of battle, the buff follows"
-          }
+          },
+          "claims": [
+            "C-1374"
+          ]
         }
       ]
     },
@@ -90,9 +108,12 @@
           "ref": 1,
           "damageType": "distributed",
           "assumes": {
-            "ja": "敵全体への分配ダメージは、的 1 体では全額が当たる。III のタイマーの 00.00 に 1 ヒット（遅れの表に行が無い。撮る前の仮の形）",
-            "en": "The distributed damage to all enemies lands in full on a single target. One hit at 00.00 of the Burst III timer (no row in the delay table; a provisional form before recording)"
-          }
+            "ja": "敵全体への分配ダメージは、的 1 体では全額が当たる。1 ヒットで、III のタイマーの 00.00 の 15f 後（遅れの表の行）に、発動の直前のバフで出る（同じ発動の S1 の最大HP▲ は乗らない）",
+            "en": "The distributed damage to all enemies lands in full on a single target. One hit 15f after 00.00 of the Burst III timer (the delay table row), using the buffs just before the activation (the same activation’s S1 max HP buff does not apply)"
+          },
+          "claims": [
+            "C-1375"
+          ]
         },
         {
           "kind": "damage",
@@ -100,9 +121,13 @@
           "ref": 3,
           "damageType": "additional",
           "assumes": {
-            "ja": "対象「残りHP の値が最も高い敵 1 機」は単体ボス。ヒットは発動のフレームで、そのフレームのバフで出る（撮る前の仮の形）",
-            "en": "The target 'the 1 enemy with the highest remaining HP' is the single boss. The hit is on the activation frame and uses the buffs of that frame (a provisional form before recording)"
-          }
+            "ja": "対象「残りHP の値が最も高い敵 1 機」は単体ボス。ヒットは S1 の効果の発火（00.00 の 15f 後）の 36f 後で、そのフレームのバフ（同じ発動の S1 の最大HP▲ を含む）とフルバースト補正で出る",
+            "en": "The target ‘the 1 enemy with the highest remaining HP’ is the single boss. The hit comes 36f after the S1 effects fire (15f after 00.00) and uses the buffs of that frame (including the same activation’s S1 max HP buff) and the Full Burst bonus"
+          },
+          "delayFrames": 36,
+          "claims": [
+            "C-1376"
+          ]
         }
       ]
     }
