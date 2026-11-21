@@ -53,7 +53,7 @@ describe('sectionRefs', () => {
     const text = [
       `// 何か（plan/${D}a.md 3 節）`,
       `理由は [${D}b.md](${D}b.md) の 2.5 節と ${D}c-2.md 10 節`,
-      `${D}d.md「経過」は拾わない`,
+      `${D}d.md「経過」と docs/${D}e.md 1 節は拾わない`,
     ].join('\r\n');
     expect(sectionRefs('x.ts', text)).toEqual([
       { path: 'x.ts', line: 1, doc: `plan/${D}a.md`, section: '3' },
@@ -65,7 +65,17 @@ describe('sectionRefs', () => {
 
 describe('headingNumbers', () => {
   it('見出しの頭の番号（"3." "2.5" の形）', () => {
-    const text = ['# 題', '## 0. 要約', '## 3. 案', '### 2.5 バッジ', '#### 2.5.1', '## 経過', '本文 4 節'].join('\n');
+    const text = [
+      '# 題',
+      '## 0. 要約',
+      '## 3. 案',
+      '### 2.5 バッジ',
+      '#### 2.5.1',
+      '```',
+      '## 7. 例',
+      '```',
+      '## 経過',
+    ].join('\n');
     expect([...headingNumbers(text)]).toEqual(['0', '3', '2.5', '2.5.1']);
   });
 });

@@ -7,7 +7,7 @@
 ## 1. いまの困りごと
 
 - 設計書（`plan/design-*.md`・`plan/burst-effect-delay-candidates.md`）は「記録」の型で、「書いた事実は書き換えず、訂正は棄却か新しい記録で行う」。設計書から記述を消す根拠が無い。
-- 設計書は 286 本ある。目安の 50KB を超えるものが 10 本ほどある（design-stage12・stage18・stage11・stage11-modernia・stage10・stage16・split-first-pass・stage20・stage6・modern-ui など）。
+- 目安の 50KB を超える設計書が多くある（design-stage12・stage18・stage11・stage11-modernia・stage10・stage16・split-first-pass・stage20・stage6 など。一覧は `npm run pr:prep` の大きさの知らせと同じ見方で出せる）。
 - 大きくなる中身は、設計書として読み返すことが少ないもの: 設計の前の調査の途中経過、実装の時の差分と知見（コードと git の履歴にある）、実測（検証記録・観測値と重なる）、「次に撮るもの」のような済んだ段取り、経過の細かい行（modern-ui は経過だけで約 40KB）。
 - 開いている PR（design-modern-ui の整理。claude/design-modern-ui-trim）が、オーナーの指示で design-modern-ui.md を 58KB から 16KB にした。消したもの・残したものの線引きは PR の本文にある。ほかの設計書が番号で指す 2.5 節の決定の番号は残した。これを一般の決まりにする。
 
@@ -54,9 +54,9 @@ AGENTS.md「文書の書き方」の型に「設計」を足し、「記録の�
 
 ## 5. 参照の切れを pr:prep で止める
 
-いま、`packages`・`apps`・`tools` のコードから設計書の節（「design-x.md 3 節」「design-x.md の 2.5 節」の形）を指す所は約 2,400 か所、現状の文書（plan の手引きなど）からは約 750 か所ある。調べたら、コードからの参照は全部、指す節の見出しがあった。現状の文書からは、生成物を除くと 1 か所（requirements.md が指す design-ui-rebuild.md 5.3 節）が無かった。
+いま、`packages`・`apps`・`tools` のコードから設計書の節（「design-x.md 3 節」「design-x.md の 2.5 節」の形）を指す所は多く、現状の文書（plan の手引きなど）からもある。調べたら、コードからの参照は全部、指す節の見出しがあった。現状の文書からは、生成物を除くと 1 か所（requirements.md が指す design-ui-rebuild.md 5.3 節）が無かった。
 
-`npm run pr:prep` に次の確かめを足す（`tools/git/pr-prep-lib.ts`）:
+`npm run pr:prep` に次の確かめを足す（実装で変えた所は 9 節の 3）:
 
 - 見る側: 現状の型のファイル（`packages`・`apps`・`tools` のソース、AGENTS.md・README.md、`plan/` の現状の文書、`records/backlog/`、records の README）。設計書・記録・生成物・凍結の文書は見ない（記録は書いた時点の版を指す）。
 - 見るもの: 「design-x.md」（リンクの形も）の直後の「N 節」「の N 節」が、その設計書に「## N」「### N.M」などの見出しとしてあるか。
@@ -81,7 +81,7 @@ AGENTS.md「文書の書き方」の型に「設計」を足し、「記録の�
 ## 7. 開いている PR（design-modern-ui の整理）との関係
 
 - その PR の線引き（消したもの・残したもの）は 3 節と同じ。決定 1 を、取りやめた（決定 6）ので消し、2〜8 の番号を残した扱いも 4 節と同じ。
-- この PR は AGENTS.md・道具・この設計書だけを変え、design-modern-ui.md は触らないので、どちらが先にマージされても衝突しない。
+- この PR は AGENTS.md・道具・この設計書・requirements.md の参照・課題のファイルだけを変え、design-modern-ui.md は触らないので、どちらが先にマージされても衝突しない。
 
 ## 8. 論点（オーナーに決めてほしいこと）
 

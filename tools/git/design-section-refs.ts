@@ -1,7 +1,8 @@
 // 設計書のほかのファイル（コード・データ・AGENTS.md・手引きなど）が「設計書のファイル名と N 節」の形で指す設計書の節が、その設計書に
 // 見出しとしてあるかを見る（plan/design-design-doc-trim.md 5 節・9 節）。設計書は要らない記述を消してよいが、現状の文書・コードの
 // コメント・データが指す節は残す（AGENTS.md「文書の書き方」の設計の型）。記録・設計書・生成物・凍結の文書は書いた時点の版を指すので
-// 見ない。リポジトリの全部を見る確かめは design-section-refs.test.ts にあり、npm test（pr:prep と GitHub の CI）で回る。
+// 見ない。リポジトリの全部を見る確かめは design-section-refs.test.ts にあり、npm test（pr:prep と GitHub の CI）で回る。テストや例で
+// 仮の設計書の名前と節を書くときは、文字列をつないで書く（そのまま書くと、切れた参照として落ちる）。
 
 /** 設計書のパス（AGENTS.md「記録の置き場所」の設計書の行） */
 const DESIGN_DOC = /^plan\/(?:design-[^/]+|burst-effect-delay-candidates)\.md$/;
@@ -33,22 +34,29 @@ export interface SectionRef {
   section: string;
 }
 
-// 設計書のファイル名（リンクの形・plan/ 付きも）の直後の「3 節」「の 2.5 節」
-const REF = /(design-[\w.-]+?|burst-effect-delay-candidates)\.md\)?\s*(?:の\s*)?(\d+(?:\.\d+)*)\s*節/g;
+// 設計書のファイル名（リンクの形・plan/ 付きも）の直後の「3 節」「の 2.5 節」。1 つ目の組はファイル名の前のディレクトリ
+const REF =
+  /(?<![\w./-])((?:[\w.-]+\/)*)(design-[\w.-]+?|burst-effect-delay-candidates)\.md\)?\s*(?:の\s*)?(\d+(?:\.\d+)*)\s*節/g;
 
 /** 文の中の、設計書の節への参照 */
 export function sectionRefs(path: string, text: string): SectionRef[] {
   const out: SectionRef[] = [];
   text.split(/\r?\n/).forEach((l, i) => {
-    for (const m of l.matchAll(REF)) out.push({ path, line: i + 1, doc: `plan/${m[1]}.md`, section: m[2]! });
+    for (const m of l.matchAll(REF))
+      // plan/ のほかのディレクトリの design-*.md は設計書でない
+      if (m[1] === '' || m[1]!.endsWith('plan/'))
+        out.push({ path, line: i + 1, doc: `plan/${m[2]}.md`, section: m[3]! });
   });
   return out;
 }
 
-/** 設計書の見出し（"## 3. 題" "### 2.5 題" など）の節の番号 */
+/** 設計書の見出し（"## 3. 題" "### 2.5 題" など）の節の番号。コードブロック（``` か ~~~ で囲んだ行）の中は見ない */
 export function headingNumbers(text: string): Set<string> {
   const out = new Set<string>();
+  let fenced = false;
   for (const l of text.split(/\r?\n/)) {
+    if (/^\s*(?:```|~~~)/.test(l)) fenced = !fenced;
+    if (fenced) continue;
     const m = /^#{1,6}\s+(\d+(?:\.\d+)*)(?:[.\s]|$)/.exec(l);
     if (m) out.add(m[1]!);
   }
