@@ -44,22 +44,21 @@ export const DROP_ANIMATION: DropAnimation = {
     return [at(initial), at(dropPlaced ? initial : final)];
   },
   // 元のスロットへ戻るときは、着くときと同じく、元の場所に出している空のスロットの枠を動きの後半で少しずつ透明にする。
-  // 持ち上げた影は、戻るにつれて少しずつ薄くする
+  // 持ち上げた影は、戻るにつれて少しずつ薄くする。影を薄くしたアニメーションは終わりに取り消さない（取り消すと、持ち上げた絵が
+  // 消えるまでの 1 描画だけ影が元の濃さで出る。持ち上げた絵は戻った後に消えるので、そのままでよい）
   sideEffects: (params) => {
     const cleanup = returnSideEffects(params);
     const fade = dropPlaced ? null : fadeArrivalFace(params.active.node);
     const shadow = params.dragOverlay.node.querySelector(LIFT_SHADOW_SOURCES);
-    const unshadow = dropPlaced
-      ? null
-      : (shadow?.animate([{ boxShadow: getComputedStyle(shadow).boxShadow }, { boxShadow: 'none' }], {
-          duration: FLIGHT.duration,
-          easing: FLIGHT.easing,
-          fill: 'forwards',
-        }) ?? null);
+    if (!dropPlaced)
+      shadow?.animate([{ boxShadow: getComputedStyle(shadow).boxShadow }, { boxShadow: 'none' }], {
+        duration: FLIGHT.duration,
+        easing: FLIGHT.easing,
+        fill: 'forwards',
+      });
     return () => {
       cleanup?.();
       fade?.cancel();
-      unshadow?.cancel();
     };
   },
 };
