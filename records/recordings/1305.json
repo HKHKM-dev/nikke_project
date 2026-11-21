@@ -18,15 +18,15 @@
     },
     {
       "slot": 2,
-      "rid": 20,
-      "name": "デルタ",
-      "controlled": true
-    },
-    {
-      "slot": 3,
       "rid": 810,
       "name": "2B",
       "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": true
     }
   ],
   "target": {
