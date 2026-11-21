@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 147・効果 1070（根拠あり 1048）・notes 357（根拠あり 150）
+件数: キャラ 151・効果 1087（根拠あり 1065）・notes 360（根拠あり 151）
 
-notes の種類: 未対応 44・前提の外 113・計算に無関係 70・補足 42・間接 88
+notes の種類: 未対応 44・前提の外 114・計算に無関係 72・補足 42・間接 88
 
-スロット: supported 398・partial 31・unsupported 9・noEffect 54
+スロット: supported 408・partial 31・unsupported 9・noEffect 56
 
 ## 10 ラピ
 
@@ -23,6 +23,18 @@ notes の種類: 未対応 44・前提の外 113・計算に無関係 70・補�
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0227（確定）
   - effects[1] timed・burstUse・attack: C-0457（確定）、C-0469（確定）、C-0513（仮説）、C-0611（確定）
+
+## 14 ネオン：ブルーオーシャン
+
+- **skill1**: noEffect
+  - notes[0] 前提の外: バーストスキルを使用した時の開始回数別のパーツダメージ▲（1〜3 回目の段）は、射撃場の的にパーツが無いので効かない: C-0443（範囲外）
+- **skill2**: supported
+  - effects[0] timed・burstStage3Enter・elementDamage: C-1409（確定）
+  - effects[1] timed・burstStage3Enter・elementDamage: C-1409（確定）
+  - effects[2] timed・burstStage3Enter・elementDamage: C-1409（確定）
+- **burst**: supported
+  - effects[0] weaponChange・burstUse: C-1411（確定）、C-1413（仮説）、C-1414（仮説）
+  - effects[1] damage・weaponChangeShot・additional: C-1412（確定）
 
 ## 15 アニス：スパークリングサマー
 
@@ -142,6 +154,17 @@ notes の種類: 未対応 44・前提の外 113・計算に無関係 70・補�
   - notes[0] 間接（デコイ）: デコイ（分身）は、それ自体は与ダメージを変えない（デコイを読む効果のある編成でだけ効く）: C-0081（確定）
   - notes[1] 計算に無関係: 挑発はダメージに関係しない: C-0081（確定）
 
+## 22 シグナル
+
+- **skill1**: supported
+  - effects[0] timed・normalHit・enemyDefenseDown: C-1404（確定）
+  - notes[0] 計算に無関係: 通常攻撃で 60 回命中した時の対象の攻撃力▼はダメージに関係しない: 根拠なし
+- **skill2**: noEffect
+  - notes[0] 計算に無関係: フルバーストタイムが発動した時の自分の吸収回復（攻撃ダメージの X% 回復・10 秒）は、ダメージに関係しない（自分にだけ付き、シグナルに回復を受けた時の効果は無いので、どの味方のスキルの発動も変えない）: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1402（確定）
+  - effects[1] timed・burstUse・enemyDefenseDown: C-1403（確定）、C-1405（仮説）
+
 ## 30 ポリ
 
 - **skill1**: supported
@@ -224,6 +247,16 @@ notes の種類: 未対応 44・前提の外 113・計算に無関係 70・補�
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0676（確定）、C-0677（確定）
   - effects[1] timed・burstUse・chargeSpeed: C-0678（確定）
+
+## 70 ブリッド
+
+- **skill1**: supported
+  - effects[0] timed・normalShot・attack: C-1406（確定）
+- **skill2**: supported
+  - effects[0] damage・10 秒ごと・skill: C-1407（確定）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1408（確定）
+  - effects[1] damage・burstUse・additional（読む: HP）: C-1410（確定）
 
 ## 71 ソリン
 
@@ -891,6 +924,17 @@ notes の種類: 未対応 44・前提の外 113・計算に無関係 70・補�
   - effects[1] timed・burstUse・enemyDefenseDown: C-1190（確定）
   - effects[2] damage・burstUse・additional: C-1190（確定）
   - effects[3] timed・burstUse・damageTaken: C-1190（確定）
+
+## 220 スノーホワイト
+
+- **skill1**: supported
+  - effects[0] damage・normalHit・additional: C-1415（確定）
+  - effects[1] timed・normalHit・attack: C-1415（確定）
+- **skill2**: supported
+  - effects[0] damage・15 秒ごと・skill: C-1416（確定）、C-1417（仮説）、C-1420（確定）
+  - effects[1] timed・15 秒ごと・critRate: C-1418（確定）
+- **burst**: supported
+  - effects[0] weaponChange・burstUse: C-1419（確定）、C-1420（確定）
 
 ## 222 紅蓮
 
