@@ -907,7 +907,7 @@ notes の種類: 未対応 50・前提の外 125・計算に無関係 78・補�
   - effects[3] timed・burstUse・attack: C-1346（確定）
   - effects[4] damage・fullChargeShot・skill: C-1348（確定）
 - **burst**: supported
-  - effects[0] burstDamage・skill: C-1343（確定）、C-1344（確定）、C-1345（確定）
+  - effects[0] burstDamage・skill: C-1343（確定）、C-1344（確定）、C-1496（確定）
 
 ## 190 ルドミラ
 
