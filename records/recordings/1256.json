@@ -1,0 +1,46 @@
+{
+  "id": "1256",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1256_snow-white-id-b-1.mp4",
+  "original": "2026-11-21_13-09-43.mp4",
+  "durationSec": 201.7,
+  "frames": 12101,
+  "fps": 60,
+  "sizeMB": 244.5,
+  "sha256": "a0cc9a8f56ff",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 224,
+      "name": "スノーホワイト：イノセントデイズ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0808 の撮影 B: ココア（I）・ソルジャーF.A.（II）・スノーホワイト：イノセントデイズ（III・操作）、オートバースト ON",
+  "backup": {
+    "at": "2026-11-21T13:16+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
