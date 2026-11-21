@@ -11,5 +11,13 @@
   "subject": {
     "places": ["data/skills/113.json の burst の effects[1]"]
   },
-  "decidedOn": []
+  "decidedOn": [],
+  "minimal": [
+    {
+      "observations": "*",
+      "element": ["E.H. skill1.notes[0]", "E.H. skill2.notes[0]", "E.H. burst.notes[0]"],
+      "reason": "廃品が増えるきっかけ（発射体・パーツ・敵の破壊）は録画で起きていない。バーストの武器は 8 回とも 1 発で撃ち切り、自家製弾倉は 1 本のまま（C-1387）",
+      "decided": "2026-11-21"
+    }
+  ]
 }

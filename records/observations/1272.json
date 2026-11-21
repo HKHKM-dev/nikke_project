@@ -376,32 +376,17 @@
     "id": "1272-19",
     "recording": "1272",
     "kind": "hit",
-    "use": "compare",
+    "use": "record",
     "value": 1621474,
     "unit": "ダメージ",
     "description": "3 回目のバーストの使用武器変更の発（胴体・距離ボーナスなし・会心なし。f6596）。変更後の 1 発（最終攻撃力の 61% × 250%）に、コア ×2.0・フルバースト補正・バーストの攻撃力▲が乗った値",
     "method": {
       "tool": "recipe:hud-jumps@3 の増分",
-      "note": "部位・会心・距離ボーナスは、増分がモデルの格子のどれに合うかで決めた。距離ボーナスの有無は直後の SMG の発と同じ"
+      "note": "部位・会心・距離ボーナスは、増分がモデルの格子のどれに合うかで決めた。距離ボーナスの有無は直後の SMG の発と同じ。モデル（hitDamage {\"slot\":3,\"frame\":45,\"fullBurst\":2,\"core\":false,\"crit\":false,\"distance\":false}）の値と 1 の位まで合う。胴体の発の読みが 2 つに割れる（C-1389）ので、比べに使わず記録にした"
     },
-    "compare": {
-      "model": "sim",
-      "metric": "hitDamage",
-      "args": {
-        "slot": 3,
-        "frame": 45,
-        "fullBurst": 2,
-        "core": false,
-        "crit": false,
-        "distance": false
-      },
-      "tolerance": {
-        "abs": 1
-      },
-      "setup": {
-        "enemy": "range-bigarms-iron",
-        "events": ["range-3min-jump"]
-      }
+    "scope": {
+      "slot": 3,
+      "source": "burst"
     },
     "source": "V-0813",
     "readAt": "2026-11-21"

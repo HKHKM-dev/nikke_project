@@ -23,7 +23,10 @@
           "assumes": {
             "ja": "「廃品を 10 個回収した時」を、廃品が上限 10 に届いた次のフレームとして書いた。「廃品数リセット」は上限と同じ量の減少",
             "en": "\"On obtaining 10 Scraps\" is written as the frame after Scrap reaches its cap of 10. \"Removes Scraps\" is a decrease by the cap"
-          }
+          },
+          "claims": [
+            "C-1387"
+          ]
         },
         {
           "kind": "counterChange",
@@ -38,7 +41,10 @@
               "counter": "homemadeMagazine",
               "below": 4
             }
-          }
+          },
+          "claims": [
+            "C-1387"
+          ]
         },
         {
           "kind": "passive",
@@ -54,7 +60,10 @@
           "assumes": {
             "ja": "「攻撃力 X% × 自家製弾倉数」の 1 本目の分。弾倉は戦闘開始の直後（廃品が 10 個に届いた次のフレーム）に 1 本でき、その次のフレームから効く",
             "en": "The first magazine's share of \"ATK ▲ X% x the number of homemade magazines\". The magazine is crafted just after the start of battle (the frame after Scrap reaches 10) and the buff applies from the next frame"
-          }
+          },
+          "claims": [
+            "C-1387"
+          ]
         }
       ],
       "notes": [
@@ -66,7 +75,10 @@
             "kind": "passive",
             "stat": "attack",
             "target": "self"
-          }
+          },
+          "claims": [
+            "C-1387"
+          ]
         }
       ]
     },
@@ -77,7 +89,10 @@
           "counter": "scrap",
           "trigger": "battleStart",
           "target": "self",
-          "amountRef": 7
+          "amountRef": 7,
+          "claims": [
+            "C-1387"
+          ]
         },
         {
           "kind": "timed",
@@ -89,7 +104,10 @@
           "assumes": {
             "ja": "「廃品を回収した時」は、前提の中では戦闘開始時の 10 個の回収だけなので、戦闘開始時として書いた",
             "en": "\"On obtaining Scraps\" is written as the start of battle, since under the assumptions the only Scrap obtained is the 10 at the start of battle"
-          }
+          },
+          "claims": [
+            "C-1387"
+          ]
         }
       ],
       "notes": [
@@ -99,7 +117,10 @@
           "kind": "outOfScope",
           "effect": {
             "kind": "counterChange"
-          }
+          },
+          "claims": [
+            "C-1387"
+          ]
         }
       ]
     },
@@ -117,7 +138,12 @@
           "assumes": {
             "ja": "SMG を押下チャージ型のチャージ武器（0.4 秒）に替える。最大装弾数「1 発 × 自家製弾倉の数」は、前提の中で弾倉がいつも 1 本なので 1 発。撃ち切ったら次のフレームに基礎の SMG に戻る。持続時間 10 秒の終わりは、1 発を撃ち切るより先に来ない。変更後の武器のコアの倍率は ×2.0 で、フルバースト補正が乗る（補正が乗らずコアが ×2.5 の読みも録画の値に合い、見分けていない）。最初の発の待ち（50f）は、変更の後の SMG の撃ち始め（III のタイマーの 00.00 から動画で 92f）に合わせた値で、発は撃ったフレームに着くとみなす（録画の着弾は的が遠いほど遅く、00.00 から 77〜98f）。コア命中率は基礎の SMG の行",
             "en": "Turns the SMG into a press-and-hold charge weapon (0.4 s). Max ammo \"1 x the number of homemade magazines\" is 1, as there is always one magazine under the assumptions. After the round is fired, the base SMG returns on the next frame. The 10 s duration never ends before the round is fired. The changed weapon has a x2.0 core multiplier and gets the Full Burst bonus (no bonus with a x2.5 core also fits the recordings and was not separated). The first-shot wait (50 f) is set so that the SMG resumes as recorded (92 video frames after Burst III reaches 00.00), and the round is taken to hit on the frame it is fired (recorded hits come later for farther targets, 77-98 frames after 00.00). The core hit rate is the base SMG row"
-          }
+          },
+          "claims": [
+            "C-1388",
+            "C-1389",
+            "C-1390"
+          ]
         },
         {
           "kind": "timed",
@@ -125,7 +151,10 @@
           "target": "self",
           "stat": "attack",
           "ref": 3,
-          "durationRef": 4
+          "durationRef": 4,
+          "claims": [
+            "C-1391"
+          ]
         }
       ],
       "notes": [
@@ -135,7 +164,10 @@
           "kind": "outOfScope",
           "effect": {
             "kind": "weaponChange"
-          }
+          },
+          "claims": [
+            "C-1387"
+          ]
         }
       ]
     }

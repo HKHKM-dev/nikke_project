@@ -4,12 +4,26 @@
   "state": "仮説",
   "topic": "スキル・キャラ固有",
   "grade": "単独実測",
-  "basis": "`1272-14`。V-0813",
+  "basis": "`1272-14`・`1272-19`・`0950-17`。V-0813",
   "model": "data/skills/113.json（burst の weaponChange の coreDamageRate）",
   "replaces": [],
   "updated": "2026-11-21",
   "subject": {
-    "places": ["data/skills/113.json の burst の effects[0]"]
+    "places": [
+      "data/skills/113.json の burst の effects[0]"
+    ]
   },
-  "decidedOn": []
+  "decidedOn": [],
+  "minimal": [
+    {
+      "observations": "*",
+      "element": [
+        "E.H. skill1.notes[0]",
+        "E.H. skill2.notes[0]",
+        "E.H. burst.notes[0]"
+      ],
+      "reason": "廃品が増えるきっかけ（発射体・パーツ・敵の破壊）は録画で起きていない。バーストの武器は 8 回とも 1 発で撃ち切り、自家製弾倉は 1 本のまま（C-1387）",
+      "decided": "2026-11-21"
+    }
+  ]
 }
