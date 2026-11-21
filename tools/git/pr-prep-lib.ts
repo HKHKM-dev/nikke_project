@@ -1,6 +1,6 @@
 // PR の前のリベースの決まりごと（plan/design-workflow-simplification-4.md 2 節）。git を呼ぶ部分（pr-prep.ts）と分けてテストする。
 import { idsInPaths, nextId } from '../../packages/core/src/records/drafts.ts';
-import { ID_DIGITS } from '../../packages/core/src/records/ids.ts';
+import { ID_DIGITS, ID_RECORD_DIRS } from '../../packages/core/src/records/ids.ts';
 import {
   backlogNameOfPath,
   backlogNumber,
@@ -143,6 +143,34 @@ export function collisions(
     out.push(suggestion === undefined ? { id } : { id, suggestion });
   }
   return out;
+}
+
+/**
+ * ブランチ（origin/main...HEAD）で足した ID のうち main も足したもの（collisions）と、main の記録のファイルの一覧。gitPaths は git を
+ * 引数で呼んでパスの一覧を返すもの。taken はほかのブランチが使った ID（振り直しの案で避ける）
+ */
+export function branchCollisions(
+  gitPaths: (args: readonly string[]) => string[],
+  taken: readonly string[],
+): { found: Collision[]; mainFiles: string[] } {
+  const added = gitPaths(['diff', '--name-only', '--diff-filter=AR', 'origin/main...HEAD', '--', 'records']);
+  const mainFiles = gitPaths(['ls-tree', '-r', '--name-only', 'origin/main', '--', ...ID_RECORD_DIRS]);
+  return { found: collisions(added, mainFiles, taken), mainFiles };
+}
+
+/** 自動マージを待つ PR の衝突を直す GitHub Actions（tools/git/auto-rebase.ts）が commit に使う身元 */
+export const AUTO_REBASE_COMMITTER = { name: 'nikke-auto-rebase', email: 'auto-rebase@nikke-project.invalid' };
+
+/** auto-rebase.ts が子の pr:prep に渡す環境変数（1 なら fixedByAutoRebase の確かめを省く。古い pr:prep でも落ちないよう、引数でなく環境変数） */
+export const AUTO_REBASE_ENV = 'NIKKE_AUTO_REBASE';
+
+/**
+ * origin のブランチを、自動マージを待つ PR の衝突を直す Actions が書き換えたか（plan/design-auto-conflict-fix.md 4 節の 3）。
+ * 手元に入っていない（originInHead が false）origin の先頭の commit の committer が Actions の身元なら true。このまま
+ * --force-with-lease で push すると、fetch で進んだ追跡先を期待値にして Actions の直しを上書きする
+ */
+export function fixedByAutoRebase(originInHead: boolean, originCommitterEmail: string | undefined): boolean {
+  return !originInHead && originCommitterEmail === AUTO_REBASE_COMMITTER.email;
 }
 
 /**

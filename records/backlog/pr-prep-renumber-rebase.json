@@ -1,0 +1,5 @@
+{
+  "section": "5",
+  "order": 50,
+  "text": "`npm run pr:prep` が ID の重なりで出す `records:renumber` の手順どおりに振り直して commit しても、リベースは振り直す前の ID のファイルを足した commit から当て直すので、main の同じ ID のファイルと衝突して止まる（add/add。2026-11-21 に PR #1309 の写しで確かめた）。自動マージを待つ PR の衝突の直し（`tools/git/auto-rebase.ts`）は、ブランチを 1 つの commit にまとめてからリベースして避けている。`pr:prep` でも、重なりを振り直した後のリベースの前にまとめるか、手順の案内を直す（2026-11-21 起票。plan/design-auto-conflict-fix.md の実装で見つけた）"
+}
