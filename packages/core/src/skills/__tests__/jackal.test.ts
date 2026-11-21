@@ -149,6 +149,7 @@ describe('data: which burstDamage get the oneEnemy mark', () => {
       '180',
       '183',
       '202',
+      '212',
       '304',
       '352',
       '352t',

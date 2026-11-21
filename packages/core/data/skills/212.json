@@ -1,0 +1,107 @@
+{
+  "formatVersion": 1,
+  "resourceId": 212,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "everySeconds": 20,
+            "cooldown": true
+          },
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から 20 秒ごとに発動する（CT 20 秒は撮る前の仮の値。録画で読む）。最終防御力が最も高い敵 3 機は敵 1 体で 1 ヒット",
+            "en": "The description gives no trigger. It is an active skill on a cooldown, activating every 20 s from the start of combat (the 20 s cooldown is a provisional value before recording). The 3 highest-DEF enemies are the lone enemy, hit once"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 20,
+            "cooldown": true
+          },
+          "target": "allies",
+          "stat": "enemyDefenseDown",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "最終防御力が最も高い敵 3 機は敵 1 体。CT は effects[0] と同じ",
+            "en": "The 3 highest-DEF enemies are the lone enemy. Cooldown as effects[0]"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "S1 のヒットがバーストゲージを溜めるかは撮っていない（溜めても 1 回で通常攻撃の 1 ヒットぶんの見込み）",
+          "en": "Whether the S1 hit builds Burst gauge is not recorded (if it does, about one normal-attack hit per activation)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "burstGaugeHit",
+            "target": "self",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "collectEvidence",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "self",
+          "maxStacksRef": 3,
+          "durationRef": 4,
+          "contents": [
+            {
+              "stat": "defense",
+              "ref": 2
+            }
+          ],
+          "assumes": {
+            "ja": "通常攻撃の命中は期待値で数える（1 発ごとに弾丸命中率を足す）。付くたびに全部のスタックの維持を付け直す。防御力▲はそれ自体は与ダメージを変えない（バーストのフルスタックの条件が状態を読む）",
+            "en": "Normal-attack hits are counted as expected hits (each shot adds its bullet hit rate). Each application refreshes the duration of all stacks. The DEF increase does not change damage by itself (the Burst's full-stack condition reads the state)"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "最終攻撃力が最も高い敵 1 機は敵 1 体。同じバーストの受けるダメージ▲（effects[1]）は乗らない（発動の時点の値。C-0795）",
+            "en": "The enemy with the highest final ATK is the lone enemy. The damage-taken increase of the same Burst (effects[1]) does not apply (values at the activation; C-0795)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 4,
+          "durationRef": 5,
+          "condition": {
+            "selfState": {
+              "state": "collectEvidence",
+              "stacks": "full"
+            }
+          },
+          "assumes": {
+            "ja": "敵 1 機は敵 1 体",
+            "en": "The one enemy is the lone enemy"
+          }
+        }
+      ]
+    }
+  }
+}

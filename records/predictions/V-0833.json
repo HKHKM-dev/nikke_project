@@ -1,0 +1,298 @@
+{
+  "verification": "V-0833",
+  "note": "撮影 A（ノベル単騎・操作）と撮影 B（I-DOLL・フラワー（I）+ ノベル（II）+ ユルハ（III・操作）・オートバースト ON）の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。S1 の CT 20 秒は撮る前の仮の値で、録画の左の帯とヒットで読み、定義を直す（S1 の窓の時刻の指標は、読んだ CT で出し直す）。B のモデルはノベルのバーストが約 8・28・48・68・88 秒（20 秒ごと）で、1 回目は証拠品収集が 2 スタック（フルスタックでない）、2 回目は約 27 秒でフルスタックに届いた直後（際どいので比べに使わない）、3 回目からはフルスタック",
+  "team": [
+    {
+      "rid": 212,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S2: 通常攻撃の命中 100 回ごとに証拠品収集を 1 スタック。付くたびに全部のスタックの維持を付け直すので、約 27 秒で 5 スタックに届く。burst の effects[1]: フルスタックの時だけ受けるダメージ 67.5%▲（5 秒））"
+    },
+    {
+      "id": "H2",
+      "note": "証拠品収集のスタックが、スタックごとに独立に 15 秒で切れる（3 スタックまでしか重ならず、受けるダメージ▲は付かない）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 212,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "state",
+              "state": "collectEvidence",
+              "trigger": {
+                "count": "normalHit",
+                "everyRef": 1
+              },
+              "target": "self",
+              "maxStacksRef": 3,
+              "durationRef": 4,
+              "stackRefresh": "each",
+              "contents": [
+                {
+                  "stat": "defense",
+                  "ref": 2
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H3",
+      "note": "受けるダメージ▲がフルスタックの条件なしで、バーストのたびに付く",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 212,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 4,
+              "durationRef": 5
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-s1-starts",
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "enemyDefenseDown",
+        "count": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "note": "撮影 A: S1 の防御力▼の 1・2 回目の窓の始まり（フレーム。CT は仮の値）"
+    },
+    {
+      "id": "A-base-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "tolerance": {
+        "abs": 0.6
+      },
+      "note": "撮影 A: S1 の窓の外のコアの会心しない 1 ヒット"
+    },
+    {
+      "id": "A-s1-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1250,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "tolerance": {
+        "abs": 0.6
+      },
+      "note": "撮影 A: S1 の防御力▼の窓の中のコアの会心しない 1 ヒット（防御力 100 × (1 − 7.05%) = 92.95 を四捨五入した 93 を引く。C-0790）"
+    },
+    {
+      "id": "A-s1-skill-hit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "note": "撮影 A: S1 のダメージの 1 回目の 1 ヒット（会心なし）"
+    },
+    {
+      "id": "B-burst-hit-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "team": [
+        {
+          "rid": 304
+        },
+        {
+          "rid": 212
+        },
+        {
+          "rid": 171,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "撮影 B: ノベルのバーストスキルダメージの 1 回目（会心なし）"
+    },
+    {
+      "id": "B-hit-after-burst-1",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 304
+        },
+        {
+          "rid": 212
+        },
+        {
+          "rid": 171,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "frame": 550,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "撮影 B: 1 回目のバースト（証拠品収集 2 スタック）の後の 5 秒のノベルのコアの会心しない 1 ヒット（フルバーストの中）"
+    },
+    {
+      "id": "B-hit-after-burst-3",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 304
+        },
+        {
+          "rid": 212
+        },
+        {
+          "rid": 171,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "frame": 2900,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "撮影 B: 3 回目のバースト（フルスタック）の後の 5 秒のノベルのコアの会心しない 1 ヒット（フルバーストの中）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "69ed4c3b3699c1dd1c2fde6adf183e23aa1f6d62",
+    "values": {
+      "H1": {
+        "A-s1-starts": [
+          1178,
+          2355
+        ],
+        "A-base-hit": 12936.348,
+        "A-s1-hit": 12937.482,
+        "A-s1-skill-hit": 41811.5544,
+        "B-burst-hit-1": 264005.3094,
+        "B-hit-after-burst-1": 16170.435,
+        "B-hit-after-burst-3": 27085.478625
+      },
+      "H2": {
+        "A-s1-starts": [
+          1178,
+          2355
+        ],
+        "A-base-hit": 12936.348,
+        "A-s1-hit": 12937.482,
+        "A-s1-skill-hit": 41811.5544,
+        "B-burst-hit-1": 264005.3094,
+        "B-hit-after-burst-1": 16170.435,
+        "B-hit-after-burst-3": 16170.435
+      },
+      "H3": {
+        "A-s1-starts": [
+          1178,
+          2355
+        ],
+        "A-base-hit": 12936.348,
+        "A-s1-hit": 12937.482,
+        "A-s1-skill-hit": 41811.5544,
+        "B-burst-hit-1": 264005.3094,
+        "B-hit-after-burst-1": 27085.478625,
+        "B-hit-after-burst-3": 27085.478625
+      }
+    }
+  }
+}
