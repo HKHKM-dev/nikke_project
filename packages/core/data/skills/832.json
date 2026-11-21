@@ -1,0 +1,112 @@
+{
+  "formatVersion": 1,
+  "resourceId": 832,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "coreHit"
+          },
+          "target": "allies",
+          "stat": "pierceDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "reads": [
+            "pierce"
+          ],
+          "assumes": {
+            "ja": "コアの命中（期待値。1 発ごとに弾丸命中率 × コア命中率を足し、累計が整数を越えた発）ごとに付き直す。射撃場の的では SR のコア命中率が 1 なので、どの発でも付き直す。付くのは発の次のフレームから。乗るのは貫通特化の効いている味方の発だけ（この定義では S2 の間のマリ自身）",
+            "en": "Re-applied on each core hit (expected value: each shot adds bullet hit rate × core hit rate; fires on the shot where the total passes an integer). On the range target an SR's core hit rate is 1, so every shot re-applies it. Applies from the frame after the shot. It only adds to shots of allies with Pierce (in this definition, Mari herself during S2)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルチャージして攻撃した時の味方全体のバリアに与えるダメージ▲（3 秒）は、射撃場の敵にバリアが無いのでダメージに関係しない",
+          "en": "Damage dealt to shields up for all allies on a Full Charge attack (3 s) does not affect damage (the shooting range enemy has no shield)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "fullChargeShot"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 10,
+            "cooldown": true
+          },
+          "target": "self",
+          "stat": "pierce",
+          "durationRef": 1,
+          "assumes": {
+            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から 10 秒ごとに発動する（撃たない間も。1 回目も 10 秒）とみなす。CT 10 秒は外部の資料の値で、録画ではまだ確かめていない",
+            "en": "The description gives no trigger. It is taken as an active skill on a cooldown, activating every 10 s from the start of combat (also while not firing; the first also at 10 s). The 10 s cooldown is from external sources and not yet confirmed by recordings"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 10,
+            "cooldown": true
+          },
+          "target": "self",
+          "stat": "attack",
+          "ref": 4,
+          "durationRef": 5
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 10,
+            "cooldown": true
+          },
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "味方全体はマリ自身を含む。マリには、自分への攻撃力▲（効果 2）とこの発動者基準の▲の両方が乗るとみなす",
+            "en": "All allies include Mari herself. Mari is taken to receive both the self ATK up (effect 2) and this caster-based ATK up"
+          }
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "敵全体は、敵 1 体の前提でその敵。ヒットは 1 回とみなす（ミサイルの数とヒットの時刻は録画で読む）",
+            "en": "All enemies are that enemy, given one enemy. Taken as one hit (the number of missiles and the hit timing are to be read from recordings)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 2,
+          "durationRef": 3
+        }
+      ],
+      "notes": []
+    }
+  }
+}
