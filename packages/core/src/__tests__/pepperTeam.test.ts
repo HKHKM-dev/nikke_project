@@ -8,8 +8,8 @@ import { itemsOf } from '../skills/holders.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { timerFramesOf } from '../skills/timeline.ts';
 import type { TeamInput } from '../team.ts';
-import { rawDefinition } from './data.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedTeam } from './teamHelpers.ts';
+import { rawDefinition, type RawDefinition } from './data.ts';
+import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const PEPPER = 131;
 const GUILLOTINE_WS = 182;
@@ -41,7 +41,7 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   const pepper = input.slots.findIndex((s) => s?.character.resourceId === PEPPER);
   const sim = runSimulation(input);
   const uses = sim.schedule!.activations.filter((a) => a.slotIndex === pepper);
-  const lastShots = sim.shots[pepper]!.frames.filter((_, k) => (k + 1) % sim.shots[pepper]!.magazine === 0);
+  const lastShots = sim.shots[pepper]!.lastShotFrames ?? [];
 
   it('deals the S2 damage 7 f after each activation every 10 s from 10 s (C-1462)', () => {
     const hits = sim.skillHits.filter((h) => h.slotIndex === pepper && h.effect.source.skill === 'skill2');
@@ -53,10 +53,11 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     for (let holder = 0; holder < input.slots.length; holder++) {
       const items = itemsOf(sim.history, { holder, state: 'refreshHeart' });
       expect(items.length).toBeGreaterThan(0);
-      expect(Math.max(...items.map((i) => i.stack))).toBe(5);
+      expect(Math.max(...items.map((i) => i.stack ?? 1))).toBe(5);
     }
     const applied = sim.history.applications.filter((a) => a.state === 'refreshHeart' && a.slotIndex === pepper);
     // 射撃の回数のきっかけは次のフレームに付く
+    expect(lastShots.length).toBeGreaterThan(2);
     expect(applied.map((a) => a.frame - 1)).toEqual(expect.arrayContaining(lastShots));
   });
 
@@ -89,7 +90,17 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     const atCap = uses.filter((a) => held(a.frame - 1) === 100);
     expect(below.length).toBeGreaterThan(0);
     expect(atCap.length).toBeGreaterThan(0);
-    for (const a of below) expect(exp.some((i) => i.start === a.frame)).toBe(true);
+    // 1 回目のバーストまでは、スタック量▲を外した定義の編成と同じに進むので、バーストのフレームの段の差がスタック量▲の分
+    const raw = structuredClone(rawDefinition<RawDefinition>(PEPPER));
+    raw.skills.burst!.effects.splice(1, 1);
+    const slots = input.slots.map((s) =>
+      s?.character.resourceId === PEPPER ? fixedSlot(PEPPER, { definition: raw }) : s,
+    );
+    const plain = itemsOf(runSimulation({ ...input, slots }).history, { holder: guillotine, state: 'exp' });
+    const first = uses[0]!;
+    expect(below[0]).toBe(first);
+    const heldPlain = plain.filter((i) => i.start <= first.frame && first.frame < i.end).length;
+    expect(held(first.frame) - heldPlain).toBe(1);
     for (const a of atCap) expect(held(a.frame + 1)).toBe(100);
   });
 });
