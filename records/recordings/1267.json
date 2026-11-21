@@ -1,0 +1,40 @@
+{
+  "id": "1267",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1267_flower+unfa_auto.mp4",
+  "original": "2026-11-21_14-09-43.mp4",
+  "durationSec": 201.5,
+  "frames": 12092,
+  "fps": 60,
+  "sizeMB": 244.2,
+  "sha256": "1d69f731e500",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 92,
+      "name": "ウンファ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0809 の撮影 B。I-DOLL・フラワー + ウンファ（操作）・オートバースト ON",
+  "backup": {
+    "at": "2026-11-21T14:22+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
