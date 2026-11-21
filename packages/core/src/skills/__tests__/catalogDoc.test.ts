@@ -45,6 +45,7 @@ const effect = (fields: Partial<CatalogEffect>): CatalogEffect => ({
   quote: '',
   head: '',
   subHead: '',
+  targetText: '',
   ...fields,
 });
 
@@ -139,6 +140,23 @@ describe('renderSkillCatalog', () => {
       expect(doc[i + 1]).toBe('');
     }
     expect(doc.at(-1)).toBe('');
+  });
+
+  it('reads the filtered allies decided in the middle of a line (トーブ S2・ラプンツェル：サンクチュアリのバースト)', () => {
+    const targetsOf = (name: string, slot: string, li: number) =>
+      effects
+        .filter((e) => e.name === name && e.slot === slot && e.li === li && e.targets.length > 0)
+        .map((e) => [e.quote, tableUnder(headSection([e]), '### 7.3').map((row) => row[0])]);
+    // 「自分が「応急改造」のフルスタック状態の時のみ、ショットガンを所持する味方全体に「…」」
+    expect(targetsOf('トーブ', 'skill2', 1)).toEqual([['攻撃速度X％▲', ['〈武器〉を所持する味方']]]);
+    // 「…戦闘不能状態の味方がX機以上の場合、戦闘不能状態の味方全体に「…」…戦闘不能状態の味方がX機以下の場合、味方全体に「…」」
+    const filtered = ['〈状態〉状態の味方'];
+    expect(targetsOf('ラプンツェル：サンクチュアリ', 'burst', 0)).toEqual([
+      ['ナノ粒子投与：HPX％で復活', filtered],
+      ['スキル発動者基準で攻撃力X％▲', filtered],
+      ['スキル発動者基準で防御力X％▲', filtered],
+      ['スキル発動者基準で攻撃力X％▲', ['味方全体']],
+    ]);
   });
 
   it('writes every table with a header, a separator and rows of the same width', () => {
@@ -332,7 +350,7 @@ describe('stateSection', () => {
   it.each(VIEWERS)(
     'gives a head that looks at a state (%s %j) the name and the status of the same key in section 7',
     (kind, fields, section) => {
-      const e = effect({ triggers: [], targets: [], ...fields });
+      const e = effect({ triggers: [], targets: [], ...fields, targetText: fields.head ?? '' });
       const viewers = tableUnder(stateSection([line(fields)], [e]), '### 4.3');
       expect(viewers.map((row) => row[0]!.split(': ')[0])).toEqual(VIEWERS.map(([k]) => k));
       // 入力の 1 行は、見る形 1 つにだけ数える
@@ -356,20 +374,20 @@ describe('stateSection', () => {
     ]);
   });
 
-  it('counts a line as targeting allies in a state when one of its effects does, reading the head before the quote', () => {
+  it('counts a line as targeting allies in a state when one of its effects does, reading the text that decided the target', () => {
     const counts = (l: Partial<CatalogLine>, e: Partial<CatalogEffect>) =>
       tableUnder(stateSection([line(l)], [effect(e)]), '### 4.3').map((row) => row[1]);
     const targeting = [...Array(8).fill('0'), '1'];
-    // 「効果N：」の小項目の頭に書かれた対象
+    // 対象を決めた文（ここでは「効果N：」の小項目の頭）に書かれた対象
     expect(
-      counts({}, { targets: ['ally:alliesFiltered'], head: '', subHead: '〈状態〉状態ではない味方全体に' }),
+      counts({}, { targets: ['ally:alliesFiltered'], head: '', targetText: '〈状態〉状態ではない味方全体に' }),
     ).toEqual(targeting);
     // 行の頭にあっても、句の対象が絞った味方でなければ数えない
     expect(
       counts({ head: '〈状態〉状態の味方全体に' }, { targets: ['ally:self'], head: '〈状態〉状態の味方全体に' }),
     ).toEqual(Array(9).fill('0'));
     // 効果は、同じキャラ・スロット・番号の行にだけ数える
-    const state = { targets: ['ally:alliesFiltered'], subHead: '〈状態〉状態の味方全体に' };
+    const state = { targets: ['ally:alliesFiltered'], targetText: '〈状態〉状態の味方全体に' };
     const viewer = (L: CatalogLine[]) =>
       tableUnder(stateSection(L, [effect({ ...state, slot: 'burst', li: 1 })]), '### 4.3')
         .at(-1)!
@@ -516,13 +534,16 @@ describe('headSection', () => {
     expect(rows[0]![0]).not.toBe(rows[1]![0]);
   });
 
-  it('splits the filtered allies by how they are filtered', () => {
-    const filtered = (head: string, subHead = '') =>
-      tableUnder(headSection([effect({ targets: ['ally:alliesFiltered'], head, subHead })]), '### 7.3')[0]![0];
+  it('splits the filtered allies by how they are filtered, reading the text that decided the target', () => {
+    const filtered = (targetText: string, head = '', subHead = '') =>
+      tableUnder(
+        headSection([effect({ targets: ['ally:alliesFiltered'], head, subHead, targetText })]),
+        '### 7.3',
+      )[0]![0];
     const byState = filtered('〈状態〉状態の味方全体に');
-    // 行の頭ではなく、句の前の対象に味方が書かれていれば、そちらを読む
-    const byClass = filtered('〈状態〉状態の味方全体に', '火力型の味方');
-    const unread = filtered('読み取れない絞り方の味方に');
+    // 行の頭や小項目の頭ではなく、対象を決めた文を読む
+    const byClass = filtered('火力型の味方に', '〈状態〉状態の味方全体に', '〈状態〉状態の味方全体に');
+    const unread = filtered('読み取れない絞り方の味方に', '火力型の味方に');
     expect(new Set([byState, byClass, unread]).size).toBe(3);
     expect(byState).toContain('状態');
     expect(byClass).toContain('型');

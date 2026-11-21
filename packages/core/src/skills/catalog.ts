@@ -62,6 +62,8 @@ export type CatalogEffect = QuoteReading & {
   quote: string;
   head: string;
   subHead: string;
+  /** 対象を決めた文（行の頭・小項目の頭・項目の後ろの「の対象：…」・句の前の文のどれか） */
+  targetText: string;
 };
 
 type Rules = readonly (readonly [RegExp, string])[];
@@ -545,19 +547,31 @@ export function classifyCharacters(
           const subTargets = normTargets(tagsOf(TARGETS, subHead));
           const subTriggers = tagsOf(TRIGGERS, subHead);
           let targets = subTargets.length > 0 ? subTargets : lineTargets;
+          let targetText = subTargets.length > 0 ? subHead : head;
           // 「効果N の対象：敵全体」のように、対象が項目の後ろに書かれている形
           const trailing = /の対象：(.+)$/.exec(part)?.[1];
           if (trailing !== undefined) {
-            const t = normTargets(tagsOf(TARGETS, `${trailing.replace(/（.*$/, '')}に`));
-            if (t.length > 0) targets = t;
+            const text = `${trailing.replace(/（.*$/, '')}に`;
+            const t = normTargets(tagsOf(TARGETS, text));
+            if (t.length > 0) {
+              targets = t;
+              targetText = text;
+            }
           }
           let prevEnd = q;
           for (const m of part.matchAll(/「([^」]*)」/g)) {
             // 項目の途中で対象が変わる形（「自分に：「…」命中した敵に：「…」」）
             const between = part.slice(prevEnd, m.index);
             prevEnd = m.index + m[0].length;
-            const midTargets = normTargets(tagsOf(TARGETS, between));
-            if (between.length > 0 && midTargets.length > 0) targets = midTargets;
+            // 句の前の文に条件の節（「〜の場合、」）があれば、対象は最後の「、」の後ろから読む（そこに無ければ文の全部から）
+            const clause = between.slice(between.lastIndexOf('、') + 1);
+            const clauseTargets = normTargets(tagsOf(TARGETS, clause));
+            const midText = clauseTargets.length > 0 ? clause : between;
+            const midTargets = clauseTargets.length > 0 ? clauseTargets : normTargets(tagsOf(TARGETS, between));
+            if (between.length > 0 && midTargets.length > 0) {
+              targets = midTargets;
+              targetText = midText;
+            }
             const quote = m[1] ?? '';
             const reading = classifyQuote(quote);
             if (reading.kind === 'meta:weaponProp') continue;
@@ -582,6 +596,7 @@ export function classifyCharacters(
               quote,
               head,
               subHead,
+              targetText,
             };
             effects.push(rec);
             last = rec;
