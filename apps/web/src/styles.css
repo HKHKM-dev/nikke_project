@@ -889,6 +889,11 @@ svg.settings-option-icon,
   display: block;
   visibility: visible;
 }
+/* 空のスロットを持ち上げている間と戻る間は、元の場所に空のスロットの枠をそのまま出す */
+.modern-slot-card.modern-slot-dragging .modern-slot-empty-area,
+.modern-slot-card.drag-source-returning .modern-slot-empty-area {
+  visibility: visible;
+}
 /* 「操作」のコントローラーのアイコンの段。アイコン（30px）を、上はカードの上の余白（8px）へ 6px 寄せ、下は立ち絵の枠との間を 4px にする
    （.modern-slot-card の gap 8px へ 4px 食い込ませる）。段は中身が無くても置くので、アイコンの有無でカードの高さは変わらない */
 .modern-slot-header {
