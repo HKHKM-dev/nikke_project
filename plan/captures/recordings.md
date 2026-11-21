@@ -1287,6 +1287,8 @@
 | 1317 | `20261121-1317_pepper-solo.mp4` | ◎ペッパー（131、SG・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1318 | `20261121-1318_pepper-solo.mp4` | ◎ペッパー（131、SG・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1319 | `20261121-1319_pepper-guillotine-ws.mp4` | ペッパー（131、SG・風圧・SSR） + ◎ギロチン：ウィンタースレイヤー（182、AR・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1322 | `20261121-1322_soda-guillotine-ws.mp4` | ソーダ（312、MG・灼熱・SSR） + ◎ギロチン：ウィンタースレイヤー（182、AR・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1323 | `20261121-1323_soda-guillotine-ws.mp4` | ソーダ（312、MG・灼熱・SSR） + ◎ギロチン：ウィンタースレイヤー（182、AR・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
