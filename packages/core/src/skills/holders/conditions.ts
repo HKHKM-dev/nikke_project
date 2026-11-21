@@ -60,12 +60,14 @@ export function createConditions({
     if (condition.selfState !== undefined) {
       const { state, present, sameFiring } = condition.selfState;
       if (!isStacksCondition(condition.selfState)) {
-        // timed の sameFiring（plan/design-frima.md 2 節）は、同じ発で付いた件（射撃の回数のきっかけの件は次のフレームから）も見る
-        const has = sameFiring
-          ? statesMatching(state).some((s) =>
+        // timed の sameFiring（plan/design-frima.md 2 節）は、発のフレームに付いている件に加えて、同じ発で付いた件（射撃の回数の
+        // きっかけの件は次のフレームから。段 1.5 の付与は同じフレームの段 1.5 の timed より先に登録される）も見る
+        const has =
+          hasStateAt(sourceSlotIndex, state, frame) ||
+          (sameFiring === true &&
+            statesMatching(state).some((s) =>
               (stateTracks[sourceSlotIndex]?.get(s) ?? []).some((t) => activeAt(t, frame + 1).length > 0),
-            )
-          : hasStateAt(sourceSlotIndex, state, frame);
+            ));
         if (has !== present) return false;
       } else {
         const family = statesMatching(state);
