@@ -3,7 +3,8 @@
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { hitFramesOf } from '../burst/schedule.ts';
+import { burstDelaysOf } from '../burst/landing.ts';
+import { hexagonFrameOf, hitFramesOf } from '../burst/schedule.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { staticStatesOf } from '../skills/types.ts';
@@ -36,8 +37,10 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, kilo: K }) =
 
   it('hits once at every Burst use of hers', () => {
     expect(mine.length).toBeGreaterThan(0);
-    // 遅れの表に行が無い（既定の遅れ）。時刻は録画で読む
-    for (const a of mine) expect(hitFramesOf(a).length).toBe(1);
+    // 遅れの表の 361 の行（C-1382）
+    const { hitFrames } = burstDelaysOf(input.slots[K]!.character);
+    expect(hitFrames).toBe(16);
+    for (const a of mine) expect(hitFramesOf(a)).toEqual([hexagonFrameOf(a) + hitFrames]);
     const result = runSimulation(input).slots[K]!.burst;
     expect(result.activations.length).toBe(mine.length);
     expect(result.damage).toBeGreaterThan(0);
