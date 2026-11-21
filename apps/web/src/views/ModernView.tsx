@@ -145,80 +145,83 @@ export function ModernView({
         accessibility={{ restoreFocus: false }}
       >
         <div className="modern-view-container">
-          {/* 敵情報・共通育成・合計ダメージ。広い画面では 1 行に並べる（styles.css の .modern-summary-row） */}
-          <div className="modern-summary-row">
-            <TeamSettingsForm
-              element={team.enemy.element}
-              fixedSpec={team.fixedSpec}
-              consoleInput={team.console}
-              synchroLevel={team.synchroLevel}
-              durationSeconds={team.durationSeconds}
-              rangeJump={team.rangeJump}
-              rosterCommon={roster && commonGrowthOf(roster)}
-              revertIcon
-              dispatch={dispatch}
-            />
+          {/* 左に敵情報・共通育成・合計ダメージの枠を縦に並べ、右に編成のスロットを置く（オーナーのコメント）。狭い画面では上下に並べる（styles.css の .modern-top-row） */}
+          <div className="modern-top-row">
+            {/* 敵情報・共通育成・合計ダメージ（縦に 1 列。styles.css の .modern-summary-row） */}
+            <div className="modern-summary-row">
+              <TeamSettingsForm
+                element={team.enemy.element}
+                fixedSpec={team.fixedSpec}
+                consoleInput={team.console}
+                synchroLevel={team.synchroLevel}
+                durationSeconds={team.durationSeconds}
+                rangeJump={team.rangeJump}
+                rosterCommon={roster && commonGrowthOf(roster)}
+                revertIcon
+                dispatch={dispatch}
+              />
 
-            <DamageTotalPanel title="合計ダメージ" value={totals.total} computing={totalsPending} />
-          </div>
-          {/* 5 つの編成のスロットを 1 行ずつ並べる（オーナーの指示）。行の左に編成の番号とダメージ。選んでいる編成の行だけ操作でき、
-              ほかの行は押すとその編成を選ぶ（PartyPreviewRow）。元に戻す・やり直すは、選んでいる編成のもの */}
-          <div className="modern-slots-area">
-            {/* 元に戻す・やり直す（スロットの並びの上の端の中央。戻せる・やり直せる並びが無いときは押せない）。絵はバッジ ui_undo・ui_redo */}
-            <div className="modern-slot-history">
-              <InertButton
-                className="modern-slot-undo-button"
-                label="元に戻す"
-                enabled={slotUndo.canUndo}
-                onPress={() => slotUndo.undo(placement)}
-              >
-                <BadgeIcon className="modern-slot-undo-icon" name={UNDO_BADGE} />
-              </InertButton>
-              <InertButton
-                className="modern-slot-undo-button"
-                label="やり直す"
-                enabled={slotUndo.canRedo}
-                onPress={() => slotUndo.redo(placement)}
-              >
-                <BadgeIcon className="modern-slot-undo-icon" name={REDO_BADGE} />
-              </InertButton>
+              <DamageTotalPanel title="合計ダメージ" value={totals.total} computing={totalsPending} />
             </div>
-            {parties.parties.map((party, p) => (
-              <div key={p} className={`modern-party-row ${p === parties.active ? 'modern-party-row-active' : ''}`}>
-                <PartyRowLabel partyIndex={p} active={p === parties.active} onSelect={() => selectParty(p)} />
-                {p === parties.active ? (
-                  <section ref={slotsGridRef} className="modern-slots-grid" aria-label="編成スロット一覧">
-                    {team.slots.map((slot, i) => {
-                      const characterEntry = slot.resourceId !== null ? indexMap.get(slot.resourceId) : undefined;
-
-                      return (
-                        <ModernSlotCard
-                          key={i}
-                          slotIndex={i}
-                          characterEntry={characterEntry}
-                          error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
-                          growthMarks={slotGrowthMarks(calc, team, roster, i)}
-                          growthEdited={slotGrowthEdited(team, roster, i)}
-                          controlled={team.controlledSlot === i}
-                          onPlacePending={pendingId !== null ? () => handlePlacePending(i) : undefined}
-                          onOpenBuildModal={() => setEditingSlotIndex(i)}
-                          onClear={() => clearSlot(i)}
-                        />
-                      );
-                    })}
-                  </section>
-                ) : (
-                  <PartyPreviewRow
-                    partyIndex={p}
-                    party={party}
-                    indexMap={indexMap}
-                    roster={roster}
-                    fixedSpec={team.fixedSpec}
-                    onSelect={() => selectParty(p)}
-                  />
-                )}
+            {/* 5 つの編成のスロットを 1 行ずつ並べる（オーナーの指示）。行の左に編成の番号とダメージ。選んでいる編成の行だけ操作でき、
+              ほかの行は押すとその編成を選ぶ（PartyPreviewRow）。元に戻す・やり直すは、選んでいる編成のもの */}
+            <div className="modern-slots-area">
+              {/* 元に戻す・やり直す（スロットの並びの上の端の中央。戻せる・やり直せる並びが無いときは押せない）。絵はバッジ ui_undo・ui_redo */}
+              <div className="modern-slot-history">
+                <InertButton
+                  className="modern-slot-undo-button"
+                  label="元に戻す"
+                  enabled={slotUndo.canUndo}
+                  onPress={() => slotUndo.undo(placement)}
+                >
+                  <BadgeIcon className="modern-slot-undo-icon" name={UNDO_BADGE} />
+                </InertButton>
+                <InertButton
+                  className="modern-slot-undo-button"
+                  label="やり直す"
+                  enabled={slotUndo.canRedo}
+                  onPress={() => slotUndo.redo(placement)}
+                >
+                  <BadgeIcon className="modern-slot-undo-icon" name={REDO_BADGE} />
+                </InertButton>
               </div>
-            ))}
+              {parties.parties.map((party, p) => (
+                <div key={p} className={`modern-party-row ${p === parties.active ? 'modern-party-row-active' : ''}`}>
+                  <PartyRowLabel partyIndex={p} active={p === parties.active} onSelect={() => selectParty(p)} />
+                  {p === parties.active ? (
+                    <section ref={slotsGridRef} className="modern-slots-grid" aria-label="編成スロット一覧">
+                      {team.slots.map((slot, i) => {
+                        const characterEntry = slot.resourceId !== null ? indexMap.get(slot.resourceId) : undefined;
+
+                        return (
+                          <ModernSlotCard
+                            key={i}
+                            slotIndex={i}
+                            characterEntry={characterEntry}
+                            error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
+                            growthMarks={slotGrowthMarks(calc, team, roster, i)}
+                            growthEdited={slotGrowthEdited(team, roster, i)}
+                            controlled={team.controlledSlot === i}
+                            onPlacePending={pendingId !== null ? () => handlePlacePending(i) : undefined}
+                            onOpenBuildModal={() => setEditingSlotIndex(i)}
+                            onClear={() => clearSlot(i)}
+                          />
+                        );
+                      })}
+                    </section>
+                  ) : (
+                    <PartyPreviewRow
+                      partyIndex={p}
+                      party={party}
+                      indexMap={indexMap}
+                      roster={roster}
+                      fixedSpec={team.fixedSpec}
+                      onSelect={() => selectParty(p)}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
           <CharacterTray

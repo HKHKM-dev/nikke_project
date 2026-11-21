@@ -733,9 +733,29 @@ svg.roster-revert-icon {
   display: grid;
   gap: 16px;
 }
-/* 敵情報・共通育成・合計ダメージ（モダン UI）。狭い画面では縦に、700px からは敵情報と共通育成を横に並べて合計ダメージを下に、
-   1100px からは 3 つを 1 行に並べる。敵情報と共通育成の枠（TeamSettingsForm の .settings-row）はほどいて、この並びの中に置く */
-/* 敵情報・共通育成・合計ダメージの枠は、画面の幅によらず縦に 1 列に並べる（オーナーのコメント） */
+/* 左に敵情報・共通育成・合計ダメージの列、右に編成のスロット（オーナーのコメント）。並べる幅が無いときは折り返して上下にする */
+.modern-top-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px;
+}
+.modern-top-row > .modern-summary-row {
+  flex: 0 0 420px;
+  min-width: 0;
+}
+/* 横に並べる幅（420px・間・スロットの列）が無いときは、枠の列を横いっぱいにしてスロットの上に置く */
+@media (max-width: 1079px) {
+  .modern-top-row > .modern-summary-row {
+    flex-basis: 100%;
+  }
+}
+/* スロットの列は、編成の番号（4em）・間 12px・元の大きさの絵 5 枚の幅まで広がる */
+.modern-top-row > .modern-slots-area {
+  flex: 1 1 calc(4em + 12px + 5 * (256px / 3 + 2px + 2 * 2px) + 1px);
+  min-width: 0;
+}
+/* 敵情報・共通育成・合計ダメージの枠は縦に 1 列に並べる（オーナーのコメント）。敵情報と共通育成の枠（TeamSettingsForm の .settings-row）はほどいて、この並びの中に置く */
 .modern-summary-row {
   display: grid;
   gap: 10px;
