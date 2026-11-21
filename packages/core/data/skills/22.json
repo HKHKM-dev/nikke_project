@@ -18,7 +18,10 @@
           "assumes": {
             "ja": "対象（命中した敵）は敵 1 体。命中は戦闘中ずっと通算で数え、60 の倍数に届いた命中の発の次のフレームから付く（その発自身に乗るかは確かめていない）。付いている間に次の 60 回目が来たら、維持を付け直す（重ならない）",
             "en": "The target (the enemy hit) is the lone enemy. Hits are counted throughout the battle, and it applies from the frame after the shot that reaches a multiple of 60 (whether that shot itself gets it is unverified). If the next 60th hit comes while it is active, the duration is refreshed (it does not stack)"
-          }
+          },
+          "claims": [
+            "C-1404"
+          ]
         }
       ],
       "notes": [
@@ -46,9 +49,12 @@
           "ref": 1,
           "damageType": "skill",
           "assumes": {
-            "ja": "攻撃範囲内の敵は単体ボスで 1 ヒット",
-            "en": "Enemies in range are a lone boss, so it lands once"
-          }
+            "ja": "攻撃範囲内の敵は単体ボス。3 ヒットに分かれ、値を 3 等分する（遅れの表）。どのヒットも発動の時点の▼で出て、同じ発動の▼（effects[1]）は乗らない",
+            "en": "Enemies in range are a lone boss. It splits into 3 hits sharing the value equally (burst delay table). Every hit uses the DEF decreases at the activation, so the DEF decrease of the same Burst (effects[1]) does not apply"
+          },
+          "claims": [
+            "C-1402"
+          ]
         },
         {
           "kind": "timed",
@@ -58,9 +64,13 @@
           "ref": 2,
           "durationRef": 3,
           "assumes": {
-            "ja": "攻撃範囲内の敵は単体ボス",
-            "en": "Enemies in range are a lone boss"
-          }
+            "ja": "攻撃範囲内の敵は単体ボス。1 ヒット目と同じフレームから付き、そこから 10 秒で切れる。録画の切れ目は 3 ヒット目から 10 秒で、約 11f 遅い（3 ヒットごとに付け直す形は未対応）",
+            "en": "Enemies in range are a lone boss. It applies from the frame of the first hit and ends 10 s later. In recordings it ends 10 s after the third hit, about 11 frames later (re-applying on each of the 3 hits is not modeled)"
+          },
+          "claims": [
+            "C-1403",
+            "C-1405"
+          ]
         }
       ]
     }

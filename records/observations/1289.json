@@ -57,5 +57,381 @@
     },
     "source": "V-0819",
     "readAt": "2026-11-21"
+  },
+  {
+    "id": "1289-05",
+    "recording": "1289",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [15, 15, 15, 15, 15, 15],
+    "description": "I-DOLL・フラワー + シグナル（22。操作）・オートバースト ON で、シグナルの発動の印（右のバースト欄の六角形が II から III に替わったフレーム）から、シグナルのバーストの 1 ヒット目（HUD の増分）までの動画のフレーム（6 回）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、シグナルのバーストの 1 ヒット（説明文の値の 3 分の 1。防御 100・94・82 × 会心の有無）の値で拾った。II の印は recipe:burst-panel@1 の「II から III に替わったフレーム」（1865・3666・5550・7485・9269・10906）",
+      "note": "1 ヒット目は f1880・3681・5565・7500・9284・10921。ほかの増分と同じフレームに重なった回も、和から重なった発の格子を引くと 1 ヒットの値が残る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 2,
+        "count": 6
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0819",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1289-06",
+    "recording": "1289",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [0, 6, 11],
+    "description": "I-DOLL・フラワー + シグナル（22。操作）・オートバースト ON で、シグナルの 1 回目のバーストの 1 ヒット目から各ヒットまでの動画のフレーム",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、シグナルのバーストの 1 ヒット（説明文の値の 3 分の 1）の値で拾った",
+      "note": "6 回とも 0・6・11f の 3 ヒットで、3 ヒットの値はどの回も同じ（3 つとも会心か、3 つとも会心なし）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 2,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0819",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1289-07",
+    "recording": "1289",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 166190,
+    "description": "I-DOLL・フラワー + シグナル（22。操作）・オートバースト ON で、S1 の防御力▼だけの間（シグナルのバーストの▼の外）の、フラワーのフルチャージのコア・会心なしの 1 ヒット（防御 94）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（フラワーのフルチャージとシグナルの通常攻撃を、防御 100・94・88・82 × コア・会心・距離の組と、2 人の同じフレームの和）に当てた（recipe:buff-edge@7 の --opt grid。防御 94 と 82 のシグナルの 1 発の差が 1 前後なので、シグナルの発を使う端は ±0.45 で当てた）",
+      "note": "フラワーの通常攻撃のうち格子に当たった 97 発: 防御 94 が 62 発（S1 だけの間）、82 が 34 発（シグナルのバーストの▼の間）、100 は戦闘開始の 1 発目（f881）だけ。88 に当たる発は無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0819",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1289-08",
+    "recording": "1289",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 166227,
+    "description": "I-DOLL・フラワー + シグナル（22。操作）・オートバースト ON で、シグナルのバーストの防御力▼と S1 の防御力▼が重なる間の、フラワーのフルチャージのコア・会心なしの 1 ヒット（防御 82。和で効く）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（フラワーのフルチャージとシグナルの通常攻撃を、防御 100・94・88・82 × コア・会心・距離の組と、2 人の同じフレームの和）に当てた（recipe:buff-edge@7 の --opt grid。防御 94 と 82 のシグナルの 1 発の差が 1 前後なので、シグナルの発を使う端は ±0.45 で当てた）",
+      "note": "大きい方だけが効く形（防御 88）なら 166,208.8"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0819",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1289-09",
+    "recording": "1289",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 149.5,
+    "spread": {
+      "kind": "range",
+      "low": 143,
+      "high": 156
+    },
+    "description": "I-DOLL・フラワー + シグナル（22。操作）・オートバースト ON で、シグナルの 1 発目（HUD の最初の増分）から、S1 の防御力▼の最初の付き始めまでの動画のフレームの幅（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（フラワーのフルチャージとシグナルの通常攻撃を、防御 100・94・88・82 × コア・会心・距離の組と、2 人の同じフレームの和）に当てた（recipe:buff-edge@7 の --opt grid。防御 94 と 82 のシグナルの 1 発の差が 1 前後なので、シグナルの発を使う端は ±0.45 で当てた）",
+      "note": "最後の防御 100 の発はシグナルのコアの発（シグナルの 1 発目 f807 の 143f 後）、最初の防御 94 の発はフラワーの 2 発目（156f 後）。シグナルのコアの発は防御 100 で 19,407、94 で 19,408 に分かれる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "enemyDefenseDown",
+        "from": 2,
+        "shot": 1,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 6.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0819",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1289-10",
+    "recording": "1289",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 411915,
+    "description": "I-DOLL・フラワー + シグナル（22。操作）・オートバースト ON で、シグナルの 1 回目のバーストの 3 ヒットの和（会心あり）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、シグナルのバーストの 1 ヒット（説明文の値の 3 分の 1。防御 100・94・82 × 会心の有無）の値で拾った",
+      "note": "f1880・1886・1891 の 3 ヒット（137,305 ずつ。1 ヒット目は印の 15f 後）。発動の時点の S1 の▼（防御 94）で、同じ発動の▼（82）は乗らない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0819",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1289-11",
+    "recording": "1289",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 274611,
+    "description": "I-DOLL・フラワー + シグナル（22。操作）・オートバースト ON で、シグナルの 3 回目のバーストの 3 ヒットの和（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、シグナルのバーストの 1 ヒット（説明文の値の 3 分の 1。防御 100・94・82 × 会心の有無）の値で拾った",
+      "note": "f5565・5571・5576 の 3 ヒット（91,537 ずつ）。防御 94"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0819",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1289-12",
+    "recording": "1289",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 179263,
+    "description": "I-DOLL・フラワー + シグナル（22。操作）・オートバースト ON で、フラワーの 5 回目のバーストのヒット（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、フラワーのバーストの 1 ヒット（防御 100・94・82 × 会心の有無）の値で拾った",
+      "note": "f9254（単独の増分）。I の印 f9240 の 14f 後で、発動の時点の S1 の▼（防御 94）が乗る。ほかの回も防御 94"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 4,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    },
+    "source": "V-0819",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1289-13",
+    "recording": "1289",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 15.5,
+    "spread": {
+      "kind": "range",
+      "low": 14,
+      "high": 17
+    },
+    "description": "I-DOLL・フラワー + シグナル（22。操作）・オートバースト ON で、シグナルの 5 回目のバーストの印から、バーストの防御力▼の付き始めまでの動画のフレームの幅（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（フラワーのフルチャージとシグナルの通常攻撃を、防御 100・94・88・82 × コア・会心・距離の組と、2 人の同じフレームの和）に当てた（recipe:buff-edge@7 の --opt grid。防御 94 と 82 のシグナルの 1 発の差が 1 前後なので、シグナルの発を使う端は ±0.45 で当てた）。II の印は recipe:burst-panel@1 の「II から III に替わったフレーム」（1865・3666・5550・7485・9269・10906）",
+      "note": "シグナルの発で、防御 94 の最後は印の 14f 後、82 の最初は 17f 後。ほかの回の幅: 2 回目 13〜18・3 回目 13〜18・4 回目 10〜17（1 回目はシグナルの発が止まっていて 1〜40 の外まで広い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 1,
+        "skill": "burst",
+        "stat": "enemyDefenseDown",
+        "from": 2,
+        "n": 4,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0819",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1289-14",
+    "recording": "1289",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 612.5,
+    "spread": {
+      "kind": "range",
+      "low": 611,
+      "high": 614
+    },
+    "description": "I-DOLL・フラワー + シグナル（22。操作）・オートバースト ON で、シグナルの 5 回目のバーストの印から、バーストの防御力▼の切れ目までの動画のフレームの幅（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（フラワーのフルチャージとシグナルの通常攻撃を、防御 100・94・88・82 × コア・会心・距離の組と、2 人の同じフレームの和）に当てた（recipe:buff-edge@7 の --opt grid。防御 94 と 82 のシグナルの 1 発の差が 1 前後なので、シグナルの発を使う端は ±0.45 で当てた）。II の印は recipe:burst-panel@1 の「II から III に替わったフレーム」（1865・3666・5550・7485・9269・10906）",
+      "note": "シグナルの発で、防御 82 の最後は印の 611f 後、94 の最初は 614f 後。ほかの回: 1 回目 611〜614・3 回目 609〜614・4 回目 613〜615（2 回目はジャンプで広い）。共通部分は 613〜614"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 1,
+        "skill": "burst",
+        "stat": "enemyDefenseDown",
+        "from": 2,
+        "n": 4,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0819",
+    "readAt": "2026-11-21"
   }
 ]
