@@ -1,0 +1,28 @@
+{
+  "id": "C-1449",
+  "text": "ノベルの S2 の証拠品収集（防御力▲）は、通常攻撃の命中 100 回ごとに自分に 1 スタック付き、付くたびに全部のスタックの維持（15 秒）を付け直すので、撃ち続ければ約 27 秒で 5 スタックに届いて保つ。バーストの受けるダメージ 67.5%▲（スキル Lv10。5 秒）は、自分が証拠品収集のフルスタックの時だけ付き（約 9 秒の 1 回目のバーストでは付かない）、バーストスキルダメージのヒットのフレームから付く（同じ発動のヒットと、その前に発動した味方のバーストのヒットには乗らない）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1310-07`・`1310-08`・`1310-09`・`1310-10`・`1310-11`。V-0833",
+  "model": "反映（data/skills/212.json の skill2 の effects[0]（state collectEvidence・normalHit 100 回ごと・5 スタック・15 秒・付くたびに全部の維持を付け直す）と burst の effects[1]（timed・burstUse・damageTaken・条件 selfState full）。効果の発火はヒットと同じ 80f（burst/landing.ts のノベルの行の effectFrames））",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/212.json の skill2 の effects[0]", "data/skills/212.json の burst の effects[1]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1310",
+      "role": "値を合わせた"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "1310",
+      "decided": "1・2 回目",
+      "reproduced": "4 回目",
+      "observations": ["1310-10"]
+    }
+  ]
+}
