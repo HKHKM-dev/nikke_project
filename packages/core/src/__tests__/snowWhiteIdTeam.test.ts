@@ -65,10 +65,15 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, slot: S }) =
     expect(hits).toEqual(expectedHits((f) => (inWindow(f) ? 30 : 50), 20, offsets));
   });
 
-  it('gives herself attack and infinite ammo for 10 seconds on every own Burst use', () => {
+  it('gives herself attack, infinite ammo and the S2 attack damage for 10 seconds on every own Burst use', () => {
     const uses = (plan.schedule?.activations ?? []).filter((a) => a.slotIndex === S).map(effectFrameOf);
-    for (const stat of ['attack', 'infiniteAmmo'] as const) {
-      const own = itemsOf(plan.history, { sourceSlotIndex: S, holder: S, kind: 'timed', skill: 'burst', stat });
+    const windowsOf = [
+      { skill: 'burst', stat: 'attack' },
+      { skill: 'burst', stat: 'infiniteAmmo' },
+      { skill: 'skill2', stat: 'attackDamage' },
+    ] as const;
+    for (const { skill, stat } of windowsOf) {
+      const own = itemsOf(plan.history, { sourceSlotIndex: S, holder: S, kind: 'timed', skill, stat });
       expect(own.map((w) => w.start)).toEqual(uses);
       // 戦闘の終わりで切れる窓のほかは 10 秒
       for (const w of own) expect(w.end === plan.frames || w.end - w.start === 588).toBe(true);

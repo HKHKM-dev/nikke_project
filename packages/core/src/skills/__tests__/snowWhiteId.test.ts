@@ -17,7 +17,6 @@ describe('定義の検証', () => {
   it('accepts the definition', () => {
     expect(() => parseSkillDefinition(raw)).not.toThrow();
   });
-
 });
 
 describe('解決', () => {
