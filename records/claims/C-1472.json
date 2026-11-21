@@ -1,0 +1,20 @@
+{
+  "id": "C-1472",
+  "text": "ソーダのバーストの「ランダムの敵 2 機」へのダメージ（最終攻撃力の 321.28%。スキル Lv10）は、的 1 体には 1 ヒットで、I の発動（六角形が I から II に替わるフレーム）の 65f 後に出る（会心なしで 320,718）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1322-04`・`1322-05`・`1322-06`・`1323-04`・`1323-05`・`1323-06`。V-0838",
+  "model": "反映（data/skills/312.json の burst の effects[0]、burst/landing.ts のソーダの行の hitFrames）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/312.json の burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1322",
+      "role": "値を合わせた"
+    }
+  ]
+}
