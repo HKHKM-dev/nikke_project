@@ -1,0 +1,28 @@
+{
+  "id": "C-1414",
+  "text": "ネオン：ブルーオーシャンのバーストの変更後の武器の発（射撃場の敵）は、コアに当たる割合が距離帯で大きく違い、基礎の MG の帯の値（0.96 ほど）と違う。コアの値の発の割合は、近 46/51（0.902。着地の後の発を含む）・中近 20/31（0.645）・中遠 3/6（0.5。4 回目のバーストのジャンプの前の数発だけ）・遠 1/33（0.030）で、的の表の coreHitRate.weaponChanges の 14:burst の行にする。遠と中遠の胴体の発には距離ボーナスが乗る",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`1286-13`・`1287-17`・`1288-16`。V-0817",
+  "model": "`data/enemies.json` の `coreHitRate.weaponChanges` の `14:burst`（`frame/landing.ts` の `weaponChangeParts`）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "mechanism": "targetTable"
+  },
+  "decidedOn": [
+    {
+      "recording": "1286",
+      "role": "値を合わせた"
+    },
+    {
+      "recording": "1287",
+      "role": "値を合わせた"
+    },
+    {
+      "recording": "1288",
+      "role": "値を合わせた"
+    }
+  ]
+}
