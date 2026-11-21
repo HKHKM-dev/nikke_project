@@ -1,0 +1,233 @@
+{
+  "verification": "V-0823",
+  "note": "撮影 A（ユルハ単騎・操作）と撮影 B（I-DOLL・フラワー（I）+ デルタ（II）+ ユルハ（III・操作）・オートバースト ON）の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。S2 の CT 30 秒は外部の資料の値で、録画の左の帯で読む。B のモデルはユルハがバーストを 180 秒に 5 回使い（約 8・48・88・128・168 秒）、どれも S2 の窓（30 秒ごとに 5 秒）の外。バーストスキルダメージのヒットの遅れは表に行が無い（00.00 と同じフレーム）ので、録画で読んで表に足す",
+  "team": [
+    {
+      "rid": 304
+    },
+    {
+      "rid": 20
+    },
+    {
+      "rid": 171,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S2 の effects[0]: CT 30 秒ごとのアクティブで、戦闘開始から 30 秒ごとに味方全体に攻撃力 90.75%▲（5 秒）。1 回目も 30 秒。burst の effects[0]: 最終攻撃力の 457.87% のバーストスキルダメージ）"
+    },
+    {
+      "id": "H2",
+      "note": "S2 の 1 回目が戦闘開始時（その後 30 秒ごと）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 171,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 30,
+                "atStart": true
+              },
+              "target": "allies",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-s2-interval",
+      "model": "sim",
+      "metric": "buffWindowStartIntervalMean",
+      "team": [
+        {
+          "rid": 171,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "attack",
+        "count": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: S2 の攻撃力▲の窓の始まりの間隔（1〜5 回目の 4 間隔の平均。ゲーム内のティック）"
+    },
+    {
+      "id": "A-s2-starts",
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "team": [
+        {
+          "rid": 171,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "attack",
+        "count": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "note": "撮影 A: S2 の攻撃力▲の 1・2 回目の窓の始まり（フレーム）"
+    },
+    {
+      "id": "A-base-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 171,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 1000,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "撮影 A: S2 の窓の外の、ユルハのコアに当たった会心しない（距離ボーナスなし）フルチャージの 1 ヒット（対照）"
+    },
+    {
+      "id": "A-s2-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 171,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 1900,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "撮影 A: S2 の窓の中の、ユルハのコアに当たった会心しない（距離ボーナスなし）フルチャージの 1 ヒット（攻撃力 90.75%▲）"
+    },
+    {
+      "id": "B-ally-base-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "撮影 B: S2 の窓とフルバーストの外の、I-DOLL・フラワーの胴体の会心しない 1 ヒット（対照）"
+    },
+    {
+      "id": "B-ally-s2-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1900,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "撮影 B: S2 の窓の中（フルバーストの外）の、I-DOLL・フラワーの胴体の会心しない 1 ヒット（味方にも付くか）"
+    },
+    {
+      "id": "B-burst-hit-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "撮影 B: ユルハの 2 回目のバーストスキルダメージ（会心なし。S2 の窓の外）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "4c761dfdb54c11fa99d8762ce1342151639c69ef",
+    "values": {
+      "H1": {
+        "A-s2-interval": 1765,
+        "A-s2-starts": [1766, 3531],
+        "A-base-hit": 408684.054,
+        "A-s2-hit": 779875.723,
+        "B-ally-base-hit": 83086.01999999999,
+        "B-ally-s2-hit": 158626.01,
+        "B-burst-hit-1": 548509.9452000001
+      },
+      "H2": {
+        "A-s2-interval": 1765,
+        "A-s2-starts": [0, 1765],
+        "A-base-hit": 408684.054,
+        "A-s2-hit": 779875.723,
+        "B-ally-base-hit": 83086.01999999999,
+        "B-ally-s2-hit": 158626.01,
+        "B-burst-hit-1": 548509.9452000001
+      }
+    }
+  }
+}

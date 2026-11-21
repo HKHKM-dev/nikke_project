@@ -1,0 +1,74 @@
+{
+  "formatVersion": 1,
+  "resourceId": 171,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "30 回攻撃を受けた時の、自分の平常心（クリティカル確率▲・20 秒）は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは、操作キャラが的の攻撃を受けると数えられうる（C-0551）",
+          "en": "Calm on self (crit rate up, 20 s) after being attacked 30 times does not happen, as being hit is not modeled (requirements 4.2). In the 3-minute shooting range mode, the target's attacks on the controlled character may count toward it (C-0551)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "critRate",
+            "target": "self",
+            "trigger": "damaged"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 30,
+            "cooldown": true
+          },
+          "target": "allies",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から 30 秒ごとに発動する（CT 30 秒は外部の資料の値。1 回目も 30 秒）",
+            "en": "The description gives no trigger. It is an active skill on a cooldown, activating every 30 s from the start of combat (the 30 s cooldown is from external sources; the first also at 30 s)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "味方全体の受けるダメージ均等分配（10 秒）は防御系でダメージに関係しない",
+          "en": "Equal sharing of damage taken for all allies (10 s) is defensive and does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "敵全体は、敵 1 体の前提でその敵",
+            "en": "All enemies are that enemy, given one enemy"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "自分が平常心状態のときの追加ダメージ（最終攻撃力の X%）は、平常心が被弾でしか付かない（S1）ので起きない（要件 4.2 節）",
+          "en": "The additional damage while the user is in Calm (X% of final ATK) does not happen, as Calm comes only from being hit (S1; requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "damage",
+            "target": "enemy",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}
