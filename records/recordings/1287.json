@@ -1,0 +1,46 @@
+{
+  "id": "1287",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1287_neon-blue-ocean-2.mp4",
+  "original": "2026-11-21_16-13-04.mp4",
+  "durationSec": 199.7,
+  "frames": 11983,
+  "fps": 60,
+  "sizeMB": 242.1,
+  "sha256": "0767d9507ccb",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 14,
+      "name": "ネオン：ブルーオーシャン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-21T16:22+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
