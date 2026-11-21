@@ -145,19 +145,22 @@ export function ModernView({
         accessibility={{ restoreFocus: false }}
       >
         <div className="modern-view-container">
-          <TeamSettingsForm
-            element={team.enemy.element}
-            fixedSpec={team.fixedSpec}
-            consoleInput={team.console}
-            synchroLevel={team.synchroLevel}
-            durationSeconds={team.durationSeconds}
-            rangeJump={team.rangeJump}
-            rosterCommon={roster && commonGrowthOf(roster)}
-            revertIcon
-            dispatch={dispatch}
-          />
+          {/* 敵情報・共通育成・合計ダメージ。広い画面では 1 行に並べる（styles.css の .modern-summary-row） */}
+          <div className="modern-summary-row">
+            <TeamSettingsForm
+              element={team.enemy.element}
+              fixedSpec={team.fixedSpec}
+              consoleInput={team.console}
+              synchroLevel={team.synchroLevel}
+              durationSeconds={team.durationSeconds}
+              rangeJump={team.rangeJump}
+              rosterCommon={roster && commonGrowthOf(roster)}
+              revertIcon
+              dispatch={dispatch}
+            />
 
-          <DamageTotalPanel title="合計ダメージ" value={totals.total} computing={totalsPending} />
+            <DamageTotalPanel title="合計ダメージ" value={totals.total} computing={totalsPending} />
+          </div>
           <PartyTabs active={parties.active} onSelect={selectParty} totals={totals.parties} />
 
           <div className="modern-slots-area">

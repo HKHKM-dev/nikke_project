@@ -730,6 +730,43 @@ svg.roster-revert-icon {
   display: grid;
   gap: 16px;
 }
+/* 敵情報・共通育成・合計ダメージ（モダン UI）。狭い画面では縦に、700px からは敵情報と共通育成を横に並べて合計ダメージを下に、
+   1100px からは 3 つを 1 行に並べる。敵情報と共通育成の枠（TeamSettingsForm の .settings-row）はほどいて、この並びの中に置く */
+.modern-summary-row {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+}
+.modern-summary-row > .settings-row {
+  display: contents;
+}
+@media (min-width: 700px) {
+  .modern-summary-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .modern-summary-row > .damage-total {
+    grid-column: 1 / -1;
+  }
+}
+@media (min-width: 1100px) {
+  .modern-summary-row {
+    grid-template-columns: max-content max-content minmax(0, 1fr);
+  }
+  .modern-summary-row > .damage-total {
+    grid-column: auto;
+  }
+}
+/* 合計ダメージの帯は、ほかの枠の入力欄の行と同じくらいの高さにする */
+.modern-summary-row > .damage-total {
+  margin-top: 0;
+}
+.modern-summary-row .team-total-bar {
+  box-sizing: border-box;
+  height: 34px;
+  padding: 0 12px;
+  margin: 2px 0;
+}
 .modern-badge-banner {
   padding: 6px 12px;
   background: color-mix(in srgb, Highlight 15%, transparent);
