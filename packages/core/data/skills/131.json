@@ -1,0 +1,113 @@
+{
+  "formatVersion": 1,
+  "resourceId": 131,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "heal",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "lowestHpRatio",
+          "targetCountRef": 1,
+          "ref": 2,
+          "scaling": "casterFinalMaxHp",
+          "assumes": {
+            "ja": "「最後の弾丸が命中した時」は、残弾を 0 にした射撃で起こす（全弾命中の前提）。残りの HP の割合が最も低い味方 1 機の回復。受けた味方の「回復効果が適用された時」を起こす。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く（与えるHP回復量▲・受けるHP回復量▲は掛けない。plan/design-hp-heal-restore.md 2.2 節）",
+            "en": "\"When the last bullet hits\" fires on the shot that empties the magazine (assuming every shot hits). Heals the one ally with the lowest HP ratio, triggering \"when healed\" on that ally. The amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs (Outgoing/Incoming Healing ups are not applied; plan/design-hp-heal-restore.md 2.2)"
+          }
+        },
+        {
+          "kind": "state",
+          "state": "refreshHeart",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "allies",
+          "maxStacksRef": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "回復と同じ最後の弾丸で、味方全体に 1 スタック付き、付くたびに全部のスタックの維持を付け直す（いまの既定）。中身の受けるHP回復量▲は notes[0]。バーストの「リフレッシュハートのフルスタック状態なら」が読む",
+            "en": "On the same last bullet as the heal, all allies get one stack, and each application refreshes the duration of all stacks (the current default). Its contents (Incoming Healing up) are notes[0]. Read by the Burst's \"if Refresh Heart is at full stacks\""
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "リフレッシュハートの中身の、味方全体の受けるHP回復量▲（5 スタック・15 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く。受けるHP回復量▲は語彙に無い。plan/design-heal-amount-up.md 2.3 節）",
+          "en": "The contents of Refresh Heart, Incoming Healing up for all allies (5 stacks, 15 s), do not change damage by themselves (they matter only with an effect reading HP in the team; Incoming Healing up has no vocabulary; plan/design-heal-amount-up.md 2.3)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "everySeconds": 10,
+            "cooldown": true
+          },
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から CT ごとに発動する（撃たない間も。CT は録画の左のスキルの帯の間隔で読む。1 回目も 1 周期後）。最終攻撃力が最も高い敵 1 機は的 1 体で 1 ヒット",
+            "en": "The description gives no trigger. It is an active skill on a cooldown, activating every cooldown from the start of combat (also while not firing; the cooldown is read from the interval of the skill banners on the left in recordings; the first also after one period). The single highest-ATK enemy is the lone target, hit once"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "敵の攻撃力▼（5 秒）はダメージに関係しない",
+          "en": "Enemy ATK down (5 s) does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "最終攻撃力が最も高い敵 1 機は的 1 体で 1 ヒット",
+            "en": "The single highest-ATK enemy is the lone target, hit once"
+          }
+        },
+        {
+          "kind": "stackChange",
+          "allStackable": true,
+          "trigger": "burstUse",
+          "target": "allies",
+          "amountRef": 3,
+          "assumes": {
+            "ja": "味方全体が持つ、上限のある状態と timed のスタックのバフの全部に、付いていれば 1 段足す（上限は上げない。付いていなければ足さない。ディーゼルの宝物版 S1 と同じ読み。C-1182）",
+            "en": "Adds one stack to every stackable buff (states and timed buffs with a stack cap) held by all allies, only if present (the cap is not raised; not when absent; same reading as Diesel treasure S1, C-1182)"
+          }
+        },
+        {
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 4,
+          "scaling": "casterFinalMaxHp",
+          "condition": {
+            "selfState": {
+              "state": "refreshHeart",
+              "stacks": "full"
+            }
+          },
+          "assumes": {
+            "ja": "バーストを使った時に、ペッパー自身のリフレッシュハートがフルスタックなら、味方全体の回復。受けた味方の「回復効果が適用された時」を起こす。フルスタックかを effects[1] のスタック量▲の前と後のどちらで見るかは確かめていない",
+            "en": "When the Burst is used, if Pepper's own Refresh Heart is at full stacks, heals all allies, triggering \"when healed\" on them. Whether full stacks are checked before or after the stack increase of effects[1] is not verified"
+          }
+        }
+      ],
+      "notes": []
+    }
+  }
+}
