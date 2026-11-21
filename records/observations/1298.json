@@ -1,0 +1,252 @@
+[
+  {
+    "id": "1298-01",
+    "recording": "1298",
+    "kind": "timing",
+    "use": "record",
+    "value": -5.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -46,
+      "high": 35
+    },
+    "description": "S2 の攻撃力▲が ユルハ の 1 発に付くまでの時刻の幅（3 番目の事象 f6080 から数えた動画のフレーム）。▲の無い最後の発は -47f、▲の乗った最初の発は 35f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@7",
+      "note": "ユルハ（枠 1）の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の hitDamage の格子に ±1.5 で当てた。▲なしはモデルの f1000（204,342.03・265,644.64・306,513.04・367,815.65・408,684.05・469,986.66・510,855.07・572,157.68）、▲ありは f1900（389,937.86・506,919.22・584,906.79・701,888.15・779,875.72・896,857.08・974,844.65・1,091,826.01）。範囲は事象の -60〜60f。▲なし 4・▲あり 4・区別できない 0・外れ 0・食い違い（▲の乗った最初の発より後の▲の無い発） 0"
+    },
+    "source": "V-0823",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1298-02",
+    "recording": "1298",
+    "kind": "timing",
+    "use": "record",
+    "value": -15.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -56,
+      "high": 25
+    },
+    "description": "S2 の攻撃力▲が ユルハ の 1 発に付くまでの時刻の幅（4 番目の事象 f7845 から数えた動画のフレーム）。▲の無い最後の発は -57f、▲の乗った最初の発は 25f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@7",
+      "note": "ユルハ（枠 1）の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の hitDamage の格子に ±1.5 で当てた。▲なしはモデルの f1000（204,342.03・265,644.64・306,513.04・367,815.65・408,684.05・469,986.66・510,855.07・572,157.68）、▲ありは f1900（389,937.86・506,919.22・584,906.79・701,888.15・779,875.72・896,857.08・974,844.65・1,091,826.01）。範囲は事象の -60〜60f。▲なし 4・▲あり 4・区別できない 0・外れ 0・食い違い（▲の乗った最初の発より後の▲の無い発） 0"
+    },
+    "source": "V-0823",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1298-03",
+    "recording": "1298",
+    "kind": "timing",
+    "use": "record",
+    "value": 2.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -38,
+      "high": 43
+    },
+    "description": "S2 の攻撃力▲が ユルハ の 1 発に付くまでの時刻の幅（5 番目の事象 f9612 から数えた動画のフレーム）。▲の無い最後の発は -39f、▲の乗った最初の発は 43f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@7",
+      "note": "ユルハ（枠 1）の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の hitDamage の格子に ±1.5 で当てた。▲なしはモデルの f1000（204,342.03・265,644.64・306,513.04・367,815.65・408,684.05・469,986.66・510,855.07・572,157.68）、▲ありは f1900（389,937.86・506,919.22・584,906.79・701,888.15・779,875.72・896,857.08・974,844.65・1,091,826.01）。範囲は事象の -60〜60f。▲なし 4・▲あり 4・区別できない 0・外れ 0・食い違い（▲の乗った最初の発より後の▲の無い発） 0"
+    },
+    "source": "V-0823",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1298-04",
+    "recording": "1298",
+    "kind": "timing",
+    "use": "record",
+    "value": -4,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -24,
+      "high": 16
+    },
+    "description": "S2 の攻撃力▲が ユルハ の 1 発に付くまでの時刻の幅の、5 回の事象（f2549・4314・6080・7845・9612）の共通部分（事象から数えた動画のフレーム）。▲の無い最後の発の最も遅いものは -25f、▲の乗った最初の発の最も早いものは 16f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@7",
+      "note": "ユルハ（枠 1）の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の hitDamage の格子に ±1.5 で当てた。▲なしはモデルの f1000（204,342.03・265,644.64・306,513.04・367,815.65・408,684.05・469,986.66・510,855.07・572,157.68）、▲ありは f1900（389,937.86・506,919.22・584,906.79・701,888.15・779,875.72・896,857.08・974,844.65・1,091,826.01）。範囲は事象の -60〜60f。▲なし 4・▲あり 4・区別できない 0・外れ 0・食い違い（▲の乗った最初の発より後の▲の無い発） 0"
+    },
+    "source": "V-0823",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1298-05",
+    "recording": "1298",
+    "kind": "timing",
+    "use": "compare",
+    "value": 1765.3,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 1764.8,
+      "high": 1765.8
+    },
+    "description": "ユルハの S2（ウィークメイカー）の左の帯の間隔（1 回目から 5 回目までの 4 間隔の平均）の、止まりを引いたゲーム内のティック",
+    "method": {
+      "tool": "tools/captures/banner.ts --mode white・tools/captures/timer.ts --mode ticks",
+      "note": "帯のフレーム（2549・4314・6080・7845・9612。文字は静止画で確かめた）を timer.ts --mode ticks で戦闘開始からのティックに直し（1771.2・3536.1・5300.9・7066.3・8832.2）、(5 回目 − 1 回目) ÷ 4 にした。帯は発動の数ティック後に出るので、間隔は窓の始まりの間隔と同じ。幅は帯の読みの ±0.5 ティック"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowStartIntervalMean",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "attack",
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0823",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1298-06",
+    "recording": "1298",
+    "kind": "timing",
+    "use": "compare",
+    "value": [1771.2, 3536.1],
+    "unit": "f",
+    "description": "ユルハの S2 の 1・2 回目の帯の、戦闘開始からのゲーム内のティック。戦闘開始の直後には帯も攻撃力▲も無い",
+    "method": {
+      "tool": "tools/captures/banner.ts --mode white・tools/captures/timer.ts --mode ticks",
+      "note": "1 周期（ceil(30 ÷ 0.017) = 1,765）+ 数ティック（帯の white の読みは立ち上がりより約 4f 遅い）で、戦闘開始の発動は無い。戦闘開始から 1 回目の帯までのユルハの発は、どれも S2 なしの格子に合う。モデルの窓の始まりは 1,766・3,531（buffWindowStarts）。許容の 6 は、帯が発動の数ティック後に出る分"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "attack",
+        "count": 2
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0823",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1298-07",
+    "recording": "1298",
+    "kind": "hit",
+    "use": "compare",
+    "value": 408684,
+    "unit": "ダメージ",
+    "description": "S2 の窓の外の、ユルハのコアに当たった会心しない 1 ヒット（距離ボーナスなし。窓の外で最も多い増分）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "単騎なので増分がそのまま 1 ヒット。窓の外の会心しない増分はどれも 408,684（距離ボーナスのある回は 1.15 倍の 469,987）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1000,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0823",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1298-08",
+    "recording": "1298",
+    "kind": "hit",
+    "use": "compare",
+    "value": 779876,
+    "unit": "ダメージ",
+    "description": "S2 の窓の中の、ユルハのコアに当たった会心しない 1 ヒット（距離ボーナスなし。攻撃力 90.75%▲）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "窓の中の会心しない増分はどれも 779,876（1.9083 倍。会心は 974,845 = × 1.25、距離ボーナスは 896,857）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1900,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0823",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1298-09",
+    "recording": "1298",
+    "kind": "interval",
+    "use": "record",
+    "value": [289, 309],
+    "unit": "f",
+    "description": "ユルハの S2 の攻撃力▲の窓の切れ目（5 回の帯から数えた、▲の乗った最後の発と▲の無い最初の発の共通部分。動画のフレーム）。付き始めは帯から (-25, 16]f",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps と使い捨てのスクリプト（増分を 1 ヒットの格子に当てた）",
+      "note": "増分を、モデルの hitDamage の胴体（204,342.03）× (1 + コア 1 + 会心 0.5 + 距離 0.3 の組み合わせ) × 攻撃力（1 か 1.9083）の格子に ±1.5 で当てた。外れ 3（フルチャージでない発とみられる）。窓の外に▲ありの発は無く、窓の中に▲なしの発は無い。モデルの窓は floor(5 ÷ 0.017) = 294f。SR は発の間が約 82f と長く、窓の端の幅は広い"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0823",
+    "readAt": "2026-11-21"
+  }
+]

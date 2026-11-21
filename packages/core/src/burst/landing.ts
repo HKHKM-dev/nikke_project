@@ -279,6 +279,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // クロウ: III のタイマーの 00.00 からバーストスキルダメージの 1 ヒット（分かれない）まで 5f（動画で 27f。止まり 22f を含む）。
   // バースト使用時の効果は無い
   { resourceIds: [110], delays: { hitFrames: 5, effectFrames: 0 }, claim: 'C-1401' },
+  // ユルハ: III のタイマーの 00.00 から「敵全体に」のバーストスキルダメージの 1 ヒット目まで 116f（動画で 138f。止まり 22f を含む）。
+  // 倍率を 2 等分した 2 ヒットで、2 ヒット目は 7f 後。バースト使用時の効果は無い
+  { resourceIds: [171], delays: { hitFrames: 116, effectFrames: 0, hitOffsets: [0, 7] }, claim: 'C-1437' },
 ];
 
 /**
