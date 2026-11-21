@@ -3,13 +3,7 @@ import { characterImageFile, type CharacterIndexEntry } from '@nikke/core';
 import { useReducer, type ReactNode } from 'react';
 import { BadgeIcon } from './BadgeIcon.tsx';
 import { FavoriteRibbons } from './FavoriteBadge.tsx';
-import {
-  COMPACT_BADGE_KINDS,
-  ELEMENT_BADGE_KIND,
-  UNSUPPORTED_BADGE,
-  VISUAL_BADGE_KINDS,
-  type Badge,
-} from './badges.ts';
+import { UNSUPPORTED_BADGE, VISUAL_BADGE_KINDS, type Badge } from './badges.ts';
 
 type Props = {
   character: CharacterIndexEntry;
@@ -57,10 +51,8 @@ export function CharacterVisual({
   const failed = failedImages.has(imageSrc);
   // 読めなかったときに描き直す（読めたかどうかは failedImages が持つ）
   const [, rerender] = useReducer((n: number) => n + 1, 0);
-  // ニケ一覧の正方形の絵は、左上に武器種・バースト段階、右下に属性。ほかは左上に属性・武器種・バースト段階（2.5 節）
-  const compact = size === 'compact';
-  const columnKinds = compact ? COMPACT_BADGE_KINDS : VISUAL_BADGE_KINDS;
-  const elementBadge = compact ? ELEMENT_BADGE_KIND.badges[character.element] : undefined;
+  // バッジは、どの絵でも左上に属性・武器種・バースト段階の順に縦に並べる（2.5 節）
+  const columnKinds = VISUAL_BADGE_KINDS;
 
   return (
     <div className={`char-visual ${size === 'normal' ? '' : `char-visual-${size}`}`}>
@@ -87,8 +79,7 @@ export function CharacterVisual({
           {extraBadge && <CharBadge badge={extraBadge} />}
         </div>
       )}
-      {badges && elementBadge && <CharBadge badge={elementBadge} className="char-badge char-visual-corner-badge" />}
-      {badges && <FavoriteRibbons resourceId={character.resourceId} corner={compact} />}
+      {badges && <FavoriteRibbons resourceId={character.resourceId} />}
       {overlay}
       {unsupportedNote !== null && (
         // 印はバッジ ui_information。色は定義の状況で変える（未定義は赤・未対応ありは橙・仮定だけは黄）。知らせはマウスを載せると出る

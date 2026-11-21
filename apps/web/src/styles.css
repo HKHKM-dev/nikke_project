@@ -1038,7 +1038,7 @@ svg.roster-revert-icon {
    絵はバッジ（八角形で縦横 130:130）。大きさは左上のバッジの幅（.char-visual-portrait の --badge-w）と同じで、立ち絵が縮むと一緒に縮める。
    押すボタンなので 18px より小さくしない（狭い画面では左上のバッジより大きくなる） */
 .modern-slot-icon-button {
-  --slot-icon-w: max(18px, var(--slot-portrait-h) * 24 / 256);
+  --slot-icon-w: max(18px, var(--slot-portrait-h) * 60 / 512);
   position: absolute;
   right: 2px;
   z-index: 4;
@@ -1087,14 +1087,15 @@ svg.roster-revert-icon {
   left: 1px;
   right: 1px;
   bottom: 1px;
-  padding: 10px 6px 3px;
+  /* 文字の大きさと余白は、スロットとニケ一覧（四角・縦長）で同じ */
+  padding: 6px 4px 2px;
   /* 横だけ切る（流れる名前）。上は切らない（限界突破・コア強化の行から上にはみ出すコア強化の印を出す） */
   overflow-x: clip;
   overflow-y: visible;
   white-space: nowrap;
   text-align: right;
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #fff;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
@@ -1113,9 +1114,11 @@ svg.roster-revert-icon {
   font-size: 0.8rem;
   line-height: 1.1;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
-  /* 限界突破の星とコア強化の印は、バッジの絵（assets/badges の grade_star・core_plain）。大きさは置き場所で変える */
-  --growth-star-w: 13px;
-  --growth-core-w: 24px;
+  /* 限界突破の星とコア強化の印は、バッジの絵（assets/badges の grade_star・core_plain）。大きさはスロットとニケ一覧で同じ */
+  --growth-star-w: 9px;
+  --growth-core-w: var(--tray-core-w);
+  /* 右端から 2px に置く（名前の右の余白より 2px 右へ。ⓘ・右上の P○ のバッジと右端をそろえる） */
+  margin-right: -2px;
 }
 /* 星の色は色の役の変数で決める。上の差し色（--badge-accent）から下の主の色（--badge-main）への
    グラデーションになる。突破していない星は灰、突破した星（.is-filled）は金。テーマで変えるときは light-dark(ライト, ダーク) で書く */
@@ -1242,21 +1245,6 @@ svg.roster-revert-icon {
 }
 .growth-marks-core .growth-marks-core-max {
   letter-spacing: -0.06em;
-}
-.char-tray-growth {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  z-index: 2;
-  font-size: 0.65rem;
-  /* ニケ一覧の絵は小さいので、星とコアの印も小さくする（.growth-marks の既定より後に置いて上書きする） */
-  --growth-star-w: 9px;
-  --growth-core-w: var(--tray-core-w);
-}
-.char-tray-growth .growth-marks-core {
-  /* 四角の絵の右上（上端に寄せてある）では、はみ出しを下へ */
-  margin-top: 0;
-  margin-bottom: calc(var(--growth-star-w) - var(--growth-core-w));
 }
 .scrolling-name {
   text-align: left;
@@ -1426,16 +1414,11 @@ svg.roster-revert-icon {
 .char-tray-tall-area {
   width: 100%;
 }
-.char-tray-tall-area .modern-slot-char-name {
-  padding: 6px 4px 2px;
-  font-size: 0.8rem;
-}
-/* 限界突破・コア強化の大きさは、四角の表示（.char-tray-growth）と同じ */
-.char-tray-tall-area .growth-marks {
-  --growth-star-w: 9px;
-  --growth-core-w: var(--tray-core-w);
-  /* 右端からの距離を四角の表示（.char-tray-growth）とそろえる（名前の右の余白より 2px 右へ） */
-  margin-right: -2px;
+/* 四角の絵（顔の絵）の名前は、背景を暗くして読みやすくする（顔の絵は名前の後ろまで明るい色が多い） */
+.char-tray-square-area .modern-slot-char-name {
+  /* 四角の絵は低いので、名前の文字を少し小さくする */
+  font-size: 0.7rem;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.85) 40%);
 }
 /* スロットのカードの縦長の絵（portraits）。元の絵（256×512）と同じ 1:2 の枠に、切らずに出す。高さで大きさを決める。
    空のスロットの枠も同じ大きさにする */
@@ -1447,8 +1430,8 @@ svg.roster-revert-icon {
 }
 .char-visual-portrait {
   max-width: none;
-  /* 左上のバッジの幅。立ち絵の高さ 256px で 24px にし、立ち絵が縮むと一緒に縮める（右上のボタンも同じ大きさ） */
-  --badge-w: calc(var(--slot-portrait-h) * 24 / 256);
+  /* 左上のバッジの幅。元の大きさ（ニケ一覧の縦長と同じ高さ 512/3 px）でニケ一覧と同じ 20px にし、立ち絵が縮むと一緒に縮める（右上のボタンも同じ大きさ） */
+  --badge-w: calc(var(--slot-portrait-h) * 60 / 512);
 }
 /* スロットの立ち絵とニケ一覧の縦長の絵は、背景も枠線と同じく上の 5 割で上へ行くほど透明にする。枠線: 上を消し、横は上の 5 割で上へ行くほど薄くして一番上で消す（下は実線）。
    枠線の太さは変えないので、絵の大きさは同じ。色は枠線の色（--char-visual-line） */
@@ -1487,23 +1470,13 @@ svg.roster-revert-icon {
   width: var(--badge-w);
   aspect-ratio: 130 / 150;
 }
-/* ニケ一覧の正方形の絵では、属性のバッジを右下に出す */
-.char-visual-corner-badge {
-  position: absolute;
-  right: 2px;
-  bottom: 2px;
-  z-index: 2;
-}
-/* そのため「未」の札は左下に出す */
+/* ニケ一覧の四角の絵でも、縦長と同じく右下の、名前と限界突破・コア強化の行の上に出す */
 .char-visual-compact .char-unsupported-tag {
-  right: auto;
-  left: 2px;
+  bottom: 46px;
 }
-/* スロットの立ち絵では、下部に重ねる名前と限界突破・コア強化の行（.modern-slot-char-name）の上に出す（行の上にはみ出すコア強化の印にも掛けない） */
+/* スロットの立ち絵では、下部に重ねる名前と限界突破・コア強化の行（.modern-slot-char-name）の上に出す（ニケ一覧と同じ位置） */
 .char-visual-portrait .char-unsupported-tag {
-  bottom: 54px;
-  /* 右端は、下のコア強化の印（名前の行 .modern-slot-char-name の右の余白 6px の内側）とそろえる */
-  right: 6px;
+  bottom: 46px;
 }
 /* 未対応の印（ⓘ。CharacterVisual）。バッジ ui_information を出す。マウスを載せると件数が出る */
 .char-unsupported-tag {
@@ -1815,17 +1788,6 @@ html:has(.modern-view-container) {
 .char-tray-item.char-tray-item-other-party {
   cursor: default;
 }
-/* 四角の絵の下の名前。収まらない名前は流す（.scrolling-name。useScrollingName.tsx） */
-.char-tray-item-name {
-  font-size: 0.75rem;
-  line-height: 1.2;
-  text-align: center;
-  width: 100%;
-  white-space: nowrap;
-  /* 横だけ切る（上下も切ると、流れる名前ごとに合成の層の組み直しが重くなり、ドラッグが重い。縦長の名前の .modern-slot-char-name と同じ） */
-  overflow-x: clip;
-  overflow-y: visible;
-}
 /* 絵の枠。いまの編成にいるニケは、実機の部隊編成と同じく水色の枠・薄い水色の重ね・✓ を絵に重ねる */
 .char-tray-item-visual {
   position: relative;
@@ -1871,7 +1833,7 @@ html:has(.modern-view-container) {
   flex: 1;
   color: var(--placing-blue);
 }
-/* ニケを選んでいる編成の番号（P1・P2）。絵の右上に縦に並べ、四角の絵で限界突破・コア強化を出すときはその下に置く */
+/* ニケを選んでいる編成の番号（P1・P2）。絵の右上に縦に並べる */
 .char-tray-item-parties {
   position: absolute;
   top: 2px;
@@ -1882,10 +1844,6 @@ html:has(.modern-view-container) {
   align-items: flex-end;
   gap: 1px;
   pointer-events: none;
-}
-.char-tray-item-parties-below-growth {
-  /* .char-tray-growth（top 2px）のコアの印（高さ --tray-core-w）の下に 2px 空ける */
-  top: calc(var(--tray-core-w) + 4px);
 }
 .party-number-badge {
   background: var(--placing-blue);
@@ -1991,9 +1949,6 @@ html:has(.modern-view-container) {
 }
 .char-visual-favorites .favorite-badge {
   width: 10px;
-}
-.char-visual-portrait .char-visual-favorites .favorite-badge {
-  width: 14px;
 }
 /* ニケ一覧の四角の絵では、右下の属性のバッジ（高さ --badge-w × 150/130）の上に 1 つだけ出す。幅は属性のバッジと同じ。
    上の P○ のバッジと重ならないように、帯の下の切れ込み（深さは幅の 27.7%）に六角形の上の角を収めるところまで下げる */
