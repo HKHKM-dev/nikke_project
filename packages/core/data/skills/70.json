@@ -33,10 +33,26 @@
           "damageType": "skill",
           "delayFrames": 49,
           "assumes": {
-            "ja": "説明文にきっかけの無いアクティブ型のスキルで、戦闘開始からクールタイム 10 秒ごとに発動し（撃たない間も）、発動からヒットまで 49f（録画 1283 で読み、1282 で再現。C-1407）。値（撃つ側のバフ・フルバースト補正）を発動の時とヒットの時のどちらで決めるかは確かめていない（モデルはヒットの時）。ゲージを溜めるかは確かめていない（撃たない録画の BURST バーは見える範囲より下）ので書かない。最終防御力が最も高い敵 1 機は的 1 体で 1 ヒット",
-            "en": "An active skill with no trigger in its description, activating every 10 s cooldown from the start of combat (also while not firing), with 49 f from activation to hit (read in recording 1283, reproduced in 1282; C-1407). Whether the value (shooter buffs and the Full Burst bonus) is fixed at activation or at the hit is not verified (the model uses the hit). Whether it builds Burst gauge is not verified (the BURST bar in the no-fire recording stays below its visible range), so it is not written. The single highest-DEF enemy is the lone target, hit once"
+            "ja": "説明文にきっかけの無いアクティブ型のスキルで、戦闘開始からクールタイム 10 秒ごとに発動し（撃たない間も）、発動からヒットまで 49f（録画 1283 で読み、1282 で再現。C-1407）。値（撃つ側のバフ・フルバースト補正）を発動の時とヒットの時のどちらで決めるかは確かめていない（モデルはヒットの時）。ゲージは effects[1]。最終防御力が最も高い敵 1 機は的 1 体で 1 ヒット",
+            "en": "An active skill with no trigger in its description, activating every 10 s cooldown from the start of combat (also while not firing), with 49 f from activation to hit (read in recording 1283, reproduced in 1282; C-1407). Whether the value (shooter buffs and the Full Burst bonus) is fixed at activation or at the hit is not verified (the model uses the hit). The gauge is effects[1]. The single highest-DEF enemy is the lone target, hit once"
           },
           "claims": [
+            "C-1407"
+          ]
+        },
+        {
+          "kind": "burstGaugeHit",
+          "trigger": {
+            "everySeconds": 10,
+            "cooldown": true
+          },
+          "delayFrames": 49,
+          "assumes": {
+            "ja": "S2 のヒットは、射手の 1 ヒットぶん（target_burst_energy_pershot）のバーストゲージを、ダメージと同じく発動の 49f 後のヒットのフレームに溜める",
+            "en": "The S2 hit builds Burst gauge equal to one shooter hit (target_burst_energy_pershot) on the hit frame, 49 f after activation like the damage"
+          },
+          "claims": [
+            "C-1431",
             "C-1407"
           ]
         }

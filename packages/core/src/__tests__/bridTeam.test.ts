@@ -44,6 +44,12 @@ describe('ブリッド（70）の定義', () => {
       damageType: 'skill',
       delayFrames: 49,
     });
+    // S2 のヒットは、ダメージと同じフレームに射手の 1 ヒットぶんのゲージを溜める（C-1431）
+    expect(def.skills.skill2.effects[1]).toMatchObject({
+      kind: 'burstGaugeHit',
+      trigger: { everySeconds: 10, cooldown: true },
+      delayFrames: 49,
+    });
     expect(def.skills.burst.effects[1]).toMatchObject({
       kind: 'damage',
       trigger: 'burstUse',
