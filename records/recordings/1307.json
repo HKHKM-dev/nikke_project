@@ -1,0 +1,35 @@
+{
+  "id": "1307",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1307_sr_frima_fire.mp4",
+  "original": "2026-11-21_18-06-09.mp4",
+  "durationSec": 200.4,
+  "frames": 12024,
+  "fps": 60,
+  "sizeMB": 243,
+  "sha256": "62d1fcb22928",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 142,
+      "name": "プリム",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-21T18:15+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

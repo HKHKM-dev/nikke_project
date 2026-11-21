@@ -1,0 +1,250 @@
+[
+  {
+    "id": "1308-01",
+    "recording": "1308",
+    "kind": "timing",
+    "use": "record",
+    "value": [1565, 2907, 4323, 5631, 7052, 8379, 9775, 11228],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25・25・14・25・25f"
+    },
+    "source": "V-0831",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1308-02",
+    "recording": "1308",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": [329173, 329186, 329199, 329213, 329226, 329239],
+    "description": "プリム（142。宝物版）単騎・操作で、1・2・3・4・5・6 発目の 1 ヒット（コア・会心なし・距離ボーナスなし）。眠いの防御力▼が発ごとに 1 スタックずつ積まれる",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "発のフレーム 873・955・1037・1119・1201・1283。1 発 1 ヒット"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": "1,2,3,4,5,6",
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0831",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1308-03",
+    "recording": "1308",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": [422291, 422291],
+    "description": "同じ録画の 7・8 発目の 1 ヒット（コア・会心なし・距離ボーナスなし）。起きた（防御力無視）と S2 の防御力無視ダメージ▲が乗る",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "発のフレーム 1454・1536。6 発目までと同じマガジンの区切り（残弾 6 発）で、7 発目はリロード明けの 1 発目"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": "7,8",
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0831",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1308-04",
+    "recording": "1308",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": [586943, 586943],
+    "description": "同じ録画の 11・12 発目（1 回目のバーストの窓の中）の 1 ヒット（コア・会心なし・距離ボーナスなし）。S2 とバーストの防御力無視ダメージ▲の和が乗る",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "発のフレーム 1783・1865。番号はバーストの直後の当たらなかった 1 発（残弾は減った）を数えたもの"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": "11,12",
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0831",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1308-05",
+    "recording": "1308",
+    "use": "compare",
+    "kind": "timing",
+    "unit": "f",
+    "value": [8, 8, 8, 7, 8],
+    "description": "同じ録画の、プリムの発動の印（右のバースト欄の六角形が I から II に替わったフレーム）から、バーストの 1 ヒット目（HUD の増分）までの動画のフレーム（5 回）",
+    "method": {
+      "tool": "recipe:burst-panel@4・hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "印 1565・2907・4323・5631・7052（1308-01）、1 ヒット目 1573・2915・4331・5638・7060。6 回目（印 8379）は 1 ヒット目の増分が 13f 後に読めた（2・3 ヒット目は 25・47f 後）ので、5 回までにした"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 1,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    },
+    "source": "V-0831",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1308-06",
+    "recording": "1308",
+    "use": "compare",
+    "kind": "timing",
+    "unit": "f",
+    "value": [0, 17, 39],
+    "description": "同じ録画の、プリムの 3 回目のバーストの 1 ヒット目から各ヒットまでの動画のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "ヒットのフレーム 4331・4348・4370"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 1,
+        "n": 2
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    },
+    "source": "V-0831",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1308-07",
+    "recording": "1308",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 101502,
+    "description": "同じ録画の、プリムの 3 回目のバーストの 3 ヒットの和（会心なし。1 ヒット 33,834）",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "ヒットのフレーム 4331・4348・4370"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    },
+    "source": "V-0831",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1308-08",
+    "recording": "1308",
+    "use": "record",
+    "kind": "count",
+    "unit": "発",
+    "value": [17, 18],
+    "description": "同じ録画の、1 回目のバーストの後に起きたが切れて防御力を引く値（329,239）に戻った発の番号。19 発目から防御力無視と S2 の▲（422,291）に戻る",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）・照準の左の残弾（AMMO）",
+      "note": "発のフレーム 2468・2550（17・18 発目）。番号は、バーストの直後の当たらなかった 1 発（f1618 ごろ。照準の左の残弾が 4 から 3 に減った）を数えたもの。19 発目 f2632 から 422,291"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0831",
+    "readAt": "2026-11-21"
+  }
+]

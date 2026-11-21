@@ -68,6 +68,7 @@
 | 現在のHP X%▼ | 即時効果 `kind: "currentHpDown"`（自分だけ） | 紅蓮の S1 | [design-scarlet.md](design-scarlet.md) 2.1 節 |
 | 自分の HP が X% 以下の場合（発火で付く効果） | timed の `condition.selfHp: { "atMostRef": N }`（即値は `atMost`） | 紅蓮のバースト | 同 2.2 節 |
 | 段階別の効果・下位効果のスタック適用（N 段階：N−1 段階フルスタック状態なら） | 段階ごとの状態の付与（同じきっかけ）と、上の段階の条件 `selfState` の `stacks: "full"`・`sameFiring: true` | クエンシー：エスケープクイーンの S2 | [design-quency-eq.md](design-quency-eq.md) 2 節の論点 3 |
+| 〈攻撃〉した時、自分が〈状態〉なら（同じ攻撃で別のスキルが〈状態〉を付ける） | timed の条件 `selfState` の `present: true`・`sameFiring: true`（同じ発で付いた状態も見る。きっかけは射撃の回数で、状態の付与と同じ回数の種類） | プリムの宝物版 S2 | [design-frima.md](design-frima.md) 2 節 |
 | 適正最小射程距離 X%▲／フルチャージ攻撃が適正射程距離内の対象に命中した時 | stat `minEffectiveRange`（状態だけの stat）／fullChargeShot の timed の `condition.inEffectiveRange: true` | エード：エージェントバニーの S1・S2・バースト | [design-agent-bunny.md](design-agent-bunny.md) 2.1・2.2 節 |
 | 貫通特化／貫通ダメージ X%▲ | フラグの stat `pierce`（timed・passive（`while` も書ける）・状態の中身）／stat `pierceDamage` | エード：エージェントバニーの S2・バースト | 同 2.3 節 |
 | 使用武器変更の「追加効果：貫通特化」／変更後の武器の 1 発の弾の数（説明文に無く、録画で読む） | `weaponChange` の `pierce: true`／`shotCount` | ツバイのバースト | [design-zwei.md](design-zwei.md) 2.1・2.2 節 |

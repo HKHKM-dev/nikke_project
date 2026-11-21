@@ -1,0 +1,23 @@
+{
+  "id": "C-1460",
+  "text": "プリムの宝物版のバーストのダメージ（最終攻撃力の 値 02 %）は、I の発動の印（六角形が I から II に替わるフレーム）の 8・25・47f 後の 3 ヒットに分かれ、(最終攻撃力 × 値 02 % − 防御力) を 3 等分する（1 ヒット 33,834。発動の時点の眠いの 5 スタックの▼で防御 80 になり、同じ発動の防御力▼は乗らない）。自分が起きた状態の発動では、味方全体に防御力無視ダメージ 値 07 %▲（値 08 秒）が付き、S2 の▲と同じ和で防御力無視の発に乗る（バーストの後の発は 586,943 = 329,503 × (1 + 28.16% + 49.97%)）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1307-04`・`1307-05`・`1307-06`・`1307-07`・`1308-04`・`1308-05`・`1308-06`・`1308-07`。V-0831",
+  "model": "反映（data/skills/142.json の treasureSkills.burst の effects[0]・effects[2]。ヒットの遅れと分かれ方は burst/landing.ts の MEASURED_BURST_DELAYS のプリムの行）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": [
+      "data/skills/142.json の treasureSkills.burst の effects[0]",
+      "data/skills/142.json の treasureSkills.burst の effects[2]"
+    ]
+  },
+  "decidedOn": [
+    {
+      "recording": "1307",
+      "role": "値を合わせた"
+    }
+  ]
+}

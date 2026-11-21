@@ -16,11 +16,13 @@ import {
   isStateCountWindow,
   isStateEndUntil,
   isStatContent,
+  isStacksCondition,
   isStaticStateGrant,
   isSummonAttackTrigger,
   isSkillFiredTrigger,
   isStateStacksTrigger,
   isTimerTrigger,
+  type SelfStateCondition,
   type ShotCountTrigger,
   SKILL_SLOTS,
   type SkillEffect,
@@ -307,8 +309,17 @@ function validateSameFiring(entries: Partial<Record<SkillSlot, SkillEntry>>, roo
         fail(`${path}.while.selfState.sameFiring`, 'sameFiring is not allowed in while');
       const self = 'condition' in e ? e.condition?.selfState : undefined;
       if (self?.sameFiring !== true) return;
+      if (e.kind === 'timed') {
+        validateTimedSameFiring(entries, e.trigger, self, `${path}.condition.selfState.sameFiring`);
+        return;
+      }
       if (e.kind !== 'state')
-        fail(`${path}.condition.selfState.sameFiring`, 'sameFiring is allowed only in a state grant');
+        fail(`${path}.condition.selfState.sameFiring`, 'sameFiring is allowed only in a state grant or timed');
+      if (!isStacksCondition(self))
+        fail(
+          `${path}.condition.selfState.sameFiring`,
+          'needs a stack count (stacks, stacksRef or stacksBelow) in a state grant',
+        );
       const trigger = JSON.stringify(e.trigger);
       const lower = effects
         .slice(0, i)
@@ -330,6 +341,25 @@ function validateSameFiring(entries: Partial<Record<SkillSlot, SkillEntry>>, roo
         );
     });
   }
+}
+
+/**
+ * timed の sameFiring（plan/design-frima.md 2 節）: スタック数の無い形で、きっかけは射撃の回数。見る状態を自分に付ける付与が同じ定義にあり、
+ * そのきっかけが同じ回数の種類であること（同じ発で付いた件を、次のフレームの件で見る）
+ */
+function validateTimedSameFiring(
+  entries: Partial<Record<SkillSlot, SkillEntry>>,
+  trigger: EffectTrigger,
+  self: SelfStateCondition,
+  at: string,
+): void {
+  if (isStacksCondition(self)) fail(at, 'sameFiring in timed is only for a presence condition (no stack count)');
+  if (!isShotCountTrigger(trigger)) fail(at, 'sameFiring in timed needs a shot count trigger');
+  const grants = SKILL_SLOTS.flatMap((x) => entries[x]?.effects ?? []).filter(
+    (g): g is StateGrantEffect => g.kind === 'state' && g.state === self.state && g.target === 'self',
+  );
+  if (!grants.some((g) => isShotCountTrigger(g.trigger) && g.trigger.count === trigger.count))
+    fail(at, `needs a grant of "${self.state}" on self with a "${trigger.count}" trigger in the same definition`);
 }
 
 /**

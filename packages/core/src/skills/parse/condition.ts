@@ -211,13 +211,13 @@ function parseSelfStateCondition(v: Json, path: string): SelfStateCondition {
   rejectUnknownKeys(v, ['state', 'present', 'stacks', 'stacksRef', 'stacksBelow', 'sameFiring'], path);
   if (v.sameFiring !== undefined) {
     if (v.sameFiring !== true) fail(`${path}.sameFiring`, 'expected true');
-    if (v.stacks === undefined && v.stacksRef === undefined && v.stacksBelow === undefined)
-      fail(`${path}.sameFiring`, 'needs a stack count (stacks, stacksRef or stacksBelow)');
   }
   const state = parseNamedStateId(v.state, `${path}.state`, 'ally');
   if (v.stacks === undefined && v.stacksRef === undefined && v.stacksBelow === undefined) {
     if (typeof v.present !== 'boolean') fail(`${path}.present`, `expected a boolean, got ${JSON.stringify(v.present)}`);
-    return { state, present: v.present };
+    if (v.sameFiring === true && v.present !== true)
+      fail(`${path}.sameFiring`, 'sameFiring cannot be combined with present: false');
+    return v.sameFiring === true ? { state, present: true, sameFiring: true } : { state, present: v.present };
   }
   if (v.present !== undefined && v.present !== true) {
     fail(`${path}.present`, 'a stack count condition cannot be negated (present must be true or omitted)');
