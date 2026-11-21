@@ -765,6 +765,19 @@ svg.roster-revert-icon {
 .modern-summary-row > .settings-row {
   display: contents;
 }
+/* 共通育成の 1 行は、間と入力欄の幅を詰めて折り返さずに 1 行に並べる（オーナーのコメント）。シンクロ LV は 3 桁 */
+.modern-summary-row .common-growth-row {
+  flex-wrap: nowrap;
+  gap: 4px 8px;
+}
+.modern-summary-row .common-growth-row .field {
+  gap: 4px 6px;
+  grid-template-columns: max-content 3.5em;
+}
+.modern-summary-row .common-growth-row .field.checkbox {
+  gap: 4px;
+  grid-template-columns: auto auto;
+}
 /* 合計ダメージの帯は、ほかの枠の入力欄の行と同じくらいの高さにする */
 .modern-summary-row > .damage-total {
   margin-top: 0;
@@ -873,7 +886,7 @@ svg.roster-revert-icon {
   grid-template-columns: 4em;
   align-items: center;
 }
-/* 選んでいない編成の行は、ボタンの見た目を消してスロットだけを見せる。少し薄くし、マウスを重ねると濃くする */
+/* 選んでいない編成の行は、ボタンの見た目を消してスロットだけを見せる（薄くはしない） */
 .modern-slots-grid.modern-party-preview {
   padding: 0;
   border: none;
@@ -883,10 +896,6 @@ svg.roster-revert-icon {
   font: inherit;
   text-align: inherit;
   cursor: pointer;
-  opacity: 0.75;
-}
-.modern-slots-grid.modern-party-preview:hover {
-  opacity: 1;
 }
 @media (max-width: 699px) {
   .modern-party-row {
