@@ -72,11 +72,13 @@ type Params = {
   calc: CalcView;
   roster: BuildSnapshot | null;
   placement: SlotPlacement;
+  /** 一覧のニケを、選んでいない編成 party のスロット index に置く（ModernView。その編成を選んでから置く）。from は動き始める位置 */
+  placeInParty: (resourceId: number, party: number, index: number, from: DOMRect | undefined) => void;
   /** ドラッグを始めたとき */
   onDragStart: () => void;
 };
 
-export function useSlotDrag({ team, dispatch, calc, roster, placement, onDragStart }: Params) {
+export function useSlotDrag({ team, dispatch, calc, roster, placement, placeInParty, onDragStart }: Params) {
   const [draggedCharacter, setDraggedCharacter] = useState<CharacterIndexEntry | null>(null);
   const [draggingController, setDraggingController] = useState(false);
   const [draggedEmptyIndex, setDraggedEmptyIndex] = useState<number | null>(null);
@@ -174,6 +176,13 @@ export function useSlotDrag({ team, dispatch, calc, roster, placement, onDragSta
         // 持ち上げた絵は、離した位置からスロットへ動かす
         const from = document.querySelector('.char-drag-overlay .char-tray-item-visual')?.getBoundingClientRect();
         if (placement.placeFromTray(intent.character.resourceId, intent.index, from)) setDropPlaced(true);
+        break;
+      }
+      case 'place-party': {
+        // 持ち上げた絵は、離した位置から、選んだ編成のスロットへ動かす
+        const from = document.querySelector('.char-drag-overlay .char-tray-item-visual')?.getBoundingClientRect();
+        setDropPlaced(true);
+        placeInParty(intent.character.resourceId, intent.party, intent.index, from);
         break;
       }
       case 'swap':

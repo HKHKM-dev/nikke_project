@@ -41,6 +41,8 @@ export type SlotPlacement = {
    * 操作は send で送る（元に戻すの履歴に積まない dispatch を渡せる）
    */
   rearrange: (target: Arrangement, send?: Dispatch<TeamAction>) => void;
+  /** スロット index へ、from から絵を動かす（次の描画で、そのスロットに絵が入ってから動かし始める）。ほかの編成に置くとき（ModernView）に使う */
+  queueArrival: (index: number, from: DOMRect | undefined) => void;
 };
 
 export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>): SlotPlacement {
@@ -124,5 +126,5 @@ export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>
     for (const action of actions) send(action);
   };
 
-  return { clearSlot, placeFromTray, swapSlots, rearrange };
+  return { clearSlot, placeFromTray, swapSlots, rearrange, queueArrival };
 }

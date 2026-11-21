@@ -1,10 +1,13 @@
-// モダン UI の、選んでいない編成の行（スロット 5 枚を、選んでいる編成と同じ大きさで並べる）。見るだけで、✕・⚙・配置・ドラッグはできない。
+// モダン UI の、選んでいない編成の行（スロット 5 枚を、選んでいる編成と同じ大きさで並べる）。✕・⚙ はなく、ここから持ち上げることはできない。一覧のニケは落とせる（その編成を選んでから置く）。
 // 行を押すと、その編成を選ぶ（ModernView の selectParty）
+import { useDroppable } from '@dnd-kit/core';
 import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
+import type { ReactNode } from 'react';
 import type { Party } from '../../parties.ts';
 import { partyLabel, partyNumber } from '../../parties.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { trayGrowthMarks } from './GrowthMarks.tsx';
+import type { OverDragData } from './dropIntent.ts';
 import { EmptySlotFace, SlotCharName } from './ModernSlotCard.tsx';
 
 type Props = {
@@ -31,23 +34,42 @@ export function PartyPreviewRow({ partyIndex, party, indexMap, roster, fixedSpec
         const resourceId = party?.slots[i]?.resourceId ?? null;
         const entry = resourceId === null ? undefined : indexMap.get(resourceId);
         return (
-          <div className="modern-slot-card modern-party-preview-card" key={i}>
-            <div className="modern-slot-body">
-              <div className="modern-slot-char-area">
-                {entry ? (
-                  <>
-                    <CharacterVisual character={entry} size="portrait" />
-                    <SlotCharName name={entry.name.ja} marks={trayGrowthMarks(entry, roster, fixedSpec)} />
-                  </>
-                ) : (
-                  <EmptySlotFace />
-                )}
-              </div>
-            </div>
-          </div>
+          <PreviewCard key={i} partyIndex={partyIndex} slotIndex={i}>
+            {entry ? (
+              <>
+                <CharacterVisual character={entry} size="portrait" />
+                <SlotCharName name={entry.name.ja} marks={trayGrowthMarks(entry, roster, fixedSpec)} />
+              </>
+            ) : (
+              <EmptySlotFace />
+            )}
+          </PreviewCard>
         );
       })}
     </button>
+  );
+}
+
+/** 選んでいない編成のスロット 1 枚。一覧のニケを落とせる（その編成を選んでから置く。useSlotDrag の place-party） */
+function PreviewCard({
+  partyIndex,
+  slotIndex,
+  children,
+}: {
+  partyIndex: number;
+  slotIndex: number;
+  children: ReactNode;
+}) {
+  const { isOver, setNodeRef } = useDroppable({
+    id: `party-${partyIndex}-slot-${slotIndex}`,
+    data: { type: 'party-slot', partyIndex, slotIndex } satisfies OverDragData,
+  });
+  return (
+    <div ref={setNodeRef} className={`modern-slot-card modern-party-preview-card ${isOver ? 'modern-slot-over' : ''}`}>
+      <div className="modern-slot-body">
+        <div className="modern-slot-char-area">{children}</div>
+      </div>
+    </div>
   );
 }
 

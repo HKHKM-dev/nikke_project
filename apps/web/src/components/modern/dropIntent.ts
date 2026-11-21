@@ -12,8 +12,11 @@ export type ActiveDragData =
   /** 一覧のニケ（CharacterTrayItem） */
   | { type: 'tray-character'; character: CharacterIndexEntry };
 
-/** 離す所の data（useDroppable の data）: スロット（ModernSlotCard）・ニケ一覧（CharacterTray） */
-export type OverDragData = { type: 'slot'; slotIndex: number } | { type: 'tray' };
+/** 離す所の data（useDroppable の data）: スロット（ModernSlotCard）・選んでいない編成のスロット（PartyPreviewRow）・ニケ一覧（CharacterTray） */
+export type OverDragData =
+  | { type: 'slot'; slotIndex: number }
+  | { type: 'party-slot'; partyIndex: number; slotIndex: number }
+  | { type: 'tray' };
 
 /**
  * dnd-kit の data（Active・Over の data.current）に型を付け直す。中身は確かめない（形は作る側の satisfies が保つ。
@@ -32,7 +35,9 @@ export type DropIntent =
   /** 一覧のニケをスロットに置く（どこかのスロットにいるニケは置かない。placeCharacterAction） */
   | { kind: 'place'; character: CharacterIndexEntry; index: number }
   /** スロットどうしを入れ替える（空のスロットも） */
-  | { kind: 'swap'; from: number; to: number };
+  | { kind: 'swap'; from: number; to: number }
+  /** 一覧のニケを、選んでいない編成 party のスロット index に置く（その編成を選んでから置く） */
+  | { kind: 'place-party'; character: CharacterIndexEntry; party: number; index: number };
 
 const NONE: DropIntent = { kind: 'none' };
 
@@ -42,6 +47,12 @@ export function dropIntentOf(activeData: Data | undefined, overData: Data | unde
   if (!active || !over) return NONE;
   if (over.type === 'tray') {
     return active.type === 'slot-character' && active.character ? { kind: 'unplace', index: active.slotIndex } : NONE;
+  }
+  // 選んでいない編成のスロットには、一覧のニケだけを置ける
+  if (over.type === 'party-slot') {
+    return active.type === 'tray-character'
+      ? { kind: 'place-party', character: active.character, party: over.partyIndex, index: over.slotIndex }
+      : NONE;
   }
   if (over.type !== 'slot') return NONE;
   const to = over.slotIndex;

@@ -91,6 +91,13 @@ export function ModernView({
     calc,
     roster,
     placement,
+    // 選んでいない編成のスロットに落としたら、その編成を選んでから置く（元に戻すの履歴は編成を選ぶと空になるので、履歴に積まない dispatch で送る）。
+    // 一覧で持ち上げられるのは、どの編成にもいないニケだけ（CharacterTrayItem）
+    placeInParty: (resourceId, party, index, from) => {
+      selectParty(party);
+      placement.queueArrival(index, from);
+      dispatch({ type: 'selectCharacter', index, resourceId });
+    },
     onDragStart: () => setPendingId(null),
   });
 

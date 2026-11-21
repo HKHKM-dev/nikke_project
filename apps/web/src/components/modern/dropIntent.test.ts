@@ -49,4 +49,11 @@ describe('dropIntentOf', () => {
     expect(dropIntentOf(emptySlot(4), slot(0))).toEqual({ kind: 'swap', from: 4, to: 0 });
     expect(dropIntentOf(slotNikke(2), slot(2))).toEqual({ kind: 'none' });
   });
+
+  it('選んでいない編成のスロットには、一覧のニケだけを置く（スロットのニケ・操作の印は何もしない）', () => {
+    const partySlot: OverDragData = { type: 'party-slot', partyIndex: 3, slotIndex: 1 };
+    expect(dropIntentOf(trayNikke, partySlot)).toEqual({ kind: 'place-party', character: nikke, party: 3, index: 1 });
+    expect(dropIntentOf(slotNikke(0), partySlot)).toEqual({ kind: 'none' });
+    expect(dropIntentOf(controller, partySlot)).toEqual({ kind: 'none' });
+  });
 });

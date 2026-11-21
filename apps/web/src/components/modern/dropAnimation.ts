@@ -23,7 +23,9 @@ export function setDropPlaced(placed: boolean): void {
 export const slotCardAt = (index: number | null) =>
   index === null
     ? null
-    : (document.querySelectorAll<HTMLElement>('.modern-slots-grid > .modern-slot-card')[index] ?? null);
+    : (document.querySelectorAll<HTMLElement>('.modern-slots-grid:not(.modern-party-preview) > .modern-slot-card')[
+        index
+      ] ?? null);
 
 /** 離したときのアニメーション。行き先が決まらなかったときだけ、持ち上げた絵をドラッグ元へ戻す */
 export const DROP_ANIMATION: DropAnimation = {
