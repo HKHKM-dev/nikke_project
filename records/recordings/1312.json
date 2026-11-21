@@ -1,0 +1,46 @@
+{
+  "id": "1312",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1312_aria-cocoa-raven.mp4",
+  "original": "2026-11-21_18-33-38.mp4",
+  "durationSec": 226,
+  "frames": 13560,
+  "fps": 60,
+  "sizeMB": 273.4,
+  "sha256": "6631653d7b2d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 851,
+      "name": "レイヴン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 432,
+      "name": "アリア",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-21T18:39+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
