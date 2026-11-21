@@ -282,6 +282,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // ユルハ: III のタイマーの 00.00 から「敵全体に」のバーストスキルダメージの 1 ヒット目まで 116f（動画で 138f。止まり 22f を含む）。
   // 倍率を 2 等分した 2 ヒットで、2 ヒット目は 7f 後。バースト使用時の効果は無い
   { resourceIds: [171], delays: { hitFrames: 116, effectFrames: 0, hitOffsets: [0, 7] }, claim: 'C-1437' },
+  // ノベル: II の発動（六角形の替わり目）からバーストスキルダメージのヒットまで 80f（フルバーストに入る回は、III の 00.00 の後の入りの止まりを
+  // 挟んで動画で 100〜101f）。フルスタックの時の受けるダメージ▲（burst の effects[1]。burstUse）もヒットと同じフレームから付く
+  { resourceIds: [212], delays: { hitFrames: 80, effectFrames: 80 }, claim: 'C-1450' },
 ];
 
 /**
