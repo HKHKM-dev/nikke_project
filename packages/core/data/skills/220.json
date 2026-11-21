@@ -7,7 +7,10 @@
       "effects": [
         {
           "kind": "damage",
-          "trigger": { "count": "normalHit", "everyRef": 1 },
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
           "ref": 2,
           "damageType": "additional",
           "assumes": {
@@ -17,7 +20,10 @@
         },
         {
           "kind": "timed",
-          "trigger": { "count": "normalHit", "everyRef": 1 },
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
           "target": "self",
           "stat": "attack",
           "ref": 3,
@@ -30,28 +36,30 @@
       ]
     },
     "skill2": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "攻撃範囲内の敵への倍率ダメージ（最終攻撃力の 値 01）は、説明文にきっかけの無いクールタイムごとのアクティブで、クールタイムが説明文にもデータにも無い。録画で周期を読むまで定義しない（plan/design-snow-white.md 2.2 節）",
-          "en": "The damage to enemies within attack range (value 01 of final ATK) is a cooldown-based active skill with no trigger in the description, and the cooldown is in neither the description nor the data. Not defined until the period is read from recordings (plan/design-snow-white.md 2.2)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
-            "target": "enemy",
-            "trigger": "unknown"
-          }
+          "kind": "damage",
+          "trigger": {
+            "everySeconds": 15,
+            "cooldown": true
+          },
+          "ref": 1,
+          "damageType": "skill",
+          "delayFrames": 38
         },
         {
-          "ja": "フルバーストタイムの持続中に発動した時の自分の会心率▲（値 02・値 03 秒）は、上の倍率ダメージと同じクールタイムで発動する。周期を読むまで定義しない（plan/design-snow-white.md 2.3 節）",
-          "en": "The self Critical Rate increase (value 02 for value 03 s) when activated during Full Burst fires on the same cooldown as the damage above. Not defined until the period is read (plan/design-snow-white.md 2.3)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "critRate",
-            "target": "self",
-            "trigger": "unknown"
-          }
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 15,
+            "cooldown": true
+          },
+          "condition": {
+            "inFullBurst": true
+          },
+          "target": "self",
+          "stat": "critRate",
+          "ref": 2,
+          "durationRef": 3
         }
       ]
     },
