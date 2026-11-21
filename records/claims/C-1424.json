@@ -1,0 +1,35 @@
+{
+  "id": "C-1424",
+  "text": "ルピーのバーストの「自分がマイレージのフルスタック状態なら、味方全体に攻撃力 19.8%▲（5 秒）」は、フルスタックでバーストを使うと、ルピーとココアに II の発動の印の約 5f 前から 5 秒付く。マイレージの無い時（ルピーが撃たない）のバーストでは付かない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1292-17`・`1292-18`・`1292-19`・`1292-20`・`1293-17`・`1293-18`・`1293-19`・`1294-07`。V-0820",
+  "model": "data/skills/200.json の burst の effects[1]（timed。条件 selfState の mileage・stacks full）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/200.json の burst の effects[1]"]
+  },
+  "decidedOn": [],
+  "runs": [
+    {
+      "recording": "1292",
+      "reproduced": "2〜7 回目のバースト",
+      "observations": ["1292-20"]
+    },
+    {
+      "recording": "1294",
+      "reproduced": "2〜4 回目のバースト",
+      "observations": ["1294-07"]
+    }
+  ],
+  "minimal": [
+    {
+      "observations": ["1294-07"],
+      "element": ["ルピー skill1.effects[1]"],
+      "reason": "S1 のクリティカル確率▲は、バーストの攻撃力▲が付くかを変えない。撮影 B ではルピーは撃たず、S1 は起きない（比べの setup でも外す）",
+      "decided": "2026-11-21"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "section": "6",
+  "order": 50,
+  "cells": {
+    "要るもの": "定義の書き直しと撮影（語彙は `stackChange` の `allStackable`。[design-rupee.md](design-rupee.md) 8 節）",
+    "対象": "アリス：ワンダーランドバニーの S1・ギルティの S2・ディーゼルの宝物版 S1 の、ほかの味方のスタック可能バフへのスタック量▲（`allStackable` を足す前に書いた未対応の notes）"
+  }
+}

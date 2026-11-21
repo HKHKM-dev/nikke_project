@@ -204,6 +204,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // ウンファ: II の発動の印（六角形が II から III に替わるフレーム）の動画で 1f 前にヒット（9 回のうち 8 回。1 回は 2f 前）。
   // 効果（敵の防御力▼・味方全体のクリティカル確率▲）の付き始めは発の値で挟めるだけで、遅れ 0 と合う（V-0809）
   { resourceIds: [92], delays: { hitFrames: -1, effectFrames: 0 }, claim: 'C-1379' },
+  // ルピー: II の発動の印（六角形が II から III に替わるフレーム）の動画で 89f 後にヒット（18 回とも）。値は発動の直前のバフで、
+  // 同じ発動の味方全体の攻撃力▲は乗らない。攻撃力▲の付き始めは印の 6〜5f 前で、遅れ 0 と合う（V-0820）
+  { resourceIds: [200], delays: { hitFrames: 89, effectFrames: 0 }, claim: 'C-1421' },
   // ベロータ: II の発動（六角形が II から III に替わるフレーム）からヒットまで 15〜16f。効果（味方全体のチャージ速度▲）の遅れは未測定（V-0510）
   { resourceIds: [60], delays: { hitFrames: 16, effectFrames: 0 }, claim: 'C-0677' },
   // プリム（基礎版・宝物版）: I の発動の印（六角形が I から II に替わるフレーム）から 8・25・47f の 3 ヒットで、バーストのダメージを 3 等分する。

@@ -1,0 +1,219 @@
+[
+  {
+    "id": "1294-01",
+    "recording": "1294",
+    "kind": "total",
+    "use": "record",
+    "value": 37789790,
+    "description": "ココア・ルピー の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11375。増分は 104 個"
+    },
+    "source": "V-0820",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1294-02",
+    "recording": "1294",
+    "kind": "count",
+    "use": "record",
+    "value": 104,
+    "unit": "トリガー",
+    "description": "ココア・ルピー のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 104 個。前の増分から 30f 未満の増分（4 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 31f）から発の数を決めた（2 発になった組 4 個）"
+    },
+    "source": "V-0820",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1294-03",
+    "recording": "1294",
+    "kind": "timing",
+    "use": "record",
+    "value": [2789, 5341, 7873, 10425],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25f"
+    },
+    "source": "V-0820",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1294-04",
+    "recording": "1294",
+    "kind": "timing",
+    "use": "record",
+    "value": [2818, 5370, 7902, 10454],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25f"
+    },
+    "source": "V-0820",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1294-05",
+    "recording": "1294",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [89, 89, 89, 89],
+    "description": "ココア + ルピー（200。操作・オート射撃 OFF で撃たない）・オートバースト ON で、ルピーの発動の印から、ルピーのバーストのヒット（HUD の増分）までの動画のフレーム（4 回）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（ルピー: マイレージ 0〜6 段 × バーストの攻撃力▲の有無 × コア・会心・距離の組、ココア: バーストの攻撃力▲の有無 × 部位の組、ルピーのバーストの 1 ヒット）に ±1.5 で当てた（使い捨てのスクリプト。V-0820「読み方」）。II の印は recipe:burst-panel@4 の「II から III に替わったフレーム」（2818・5370・7902・10454）",
+      "note": "ヒットは f2907・5459・7991・10543。値はどれも会心なしの 328,576"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 2,
+        "count": 4
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [2],
+        "dropEffects": [
+          {
+            "rid": 200,
+            "skill": "skill2",
+            "index": 0
+          },
+          {
+            "rid": 200,
+            "skill": "skill1",
+            "index": 1
+          },
+          {
+            "rid": 200,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0820",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1294-06",
+    "recording": "1294",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 328576,
+    "description": "ココア + ルピー（200。操作・オート射撃 OFF で撃たない）・オートバースト ON で、ルピーの 1 回目のバーストの倍率ダメージ（会心なし。マイレージなし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（ルピー: マイレージ 0〜6 段 × バーストの攻撃力▲の有無 × コア・会心・距離の組、ココア: バーストの攻撃力▲の有無 × 部位の組、ルピーのバーストの 1 ヒット）に ±1.5 で当てた（使い捨てのスクリプト。V-0820「読み方」）",
+      "note": "f2907 の 1 つの増分。4 回とも同じ値。ルピーは撃っていない（ルピーの 1 発の格子に合う増分が無い）。モデルは、撃たない枠を弾丸命中率 0 で近似し（noFireSlots）、撃った発と命中で数える S1・S2 を外して回す"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [2],
+        "dropEffects": [
+          {
+            "rid": 200,
+            "skill": "skill2",
+            "index": 0
+          },
+          {
+            "rid": 200,
+            "skill": "skill1",
+            "index": 1
+          },
+          {
+            "rid": 200,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0820",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1294-07",
+    "recording": "1294",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": [0, 0, 0, 0],
+    "description": "ココア + ルピー（200。操作・オート射撃 OFF で撃たない）・オートバースト ON で、ルピーのバーストごとに、バーストの攻撃力▲（味方全体）が付いたか（1・0）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（ルピー: マイレージ 0〜6 段 × バーストの攻撃力▲の有無 × コア・会心・距離の組、ココア: バーストの攻撃力▲の有無 × 部位の組、ルピーのバーストの 1 ヒット）に ±1.5 で当てた（使い捨てのスクリプト。V-0820「読み方」）",
+      "note": "ルピーが撃たないので、ココアの発で読んだ（味方全体に同じ効果が付く）。どの回も、印の後 5 秒のココアの発は▲の無い値（344,596・396,285。▲なら 412,894・474,828）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstBuffApplied",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "stat": "attack"
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [2],
+        "dropEffects": [
+          {
+            "rid": 200,
+            "skill": "skill2",
+            "index": 0
+          },
+          {
+            "rid": 200,
+            "skill": "skill1",
+            "index": 1
+          },
+          {
+            "rid": 200,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0820",
+    "readAt": "2026-11-21"
+  }
+]

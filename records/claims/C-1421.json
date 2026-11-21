@@ -1,0 +1,41 @@
+{
+  "id": "C-1421",
+  "text": "ルピーのバーストの倍率ダメージ（攻撃範囲内の敵に最終攻撃力の 274.28%）は、II の発動の印（右のバースト欄の六角形の替わり目）の 89f 後の 1 ヒットで、発動の直前のバフで出る。同じ発動の味方全体の攻撃力▲は、ヒットの時には付いているが乗らない（マイレージ 5 段で会心なし 555,483、マイレージなしで 328,576）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1292-15`・`1292-16`・`1293-15`・`1293-16`・`1294-05`・`1294-06`。V-0820",
+  "model": "burst/landing.ts の 200 の行（hitFrames 89・effectFrames 0）と data/skills/200.json の burst の effects[0]（burstDamage）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/200.json の burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1292",
+      "role": "値を合わせた"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "1292",
+      "decided": "1 回目のバースト",
+      "reproduced": "2〜7 回目のバースト",
+      "observations": ["1292-15"]
+    },
+    {
+      "recording": "1294",
+      "reproduced": "1〜4 回目のバースト",
+      "observations": ["1294-05"]
+    }
+  ],
+  "minimal": [
+    {
+      "observations": ["1294-05", "1294-06"],
+      "element": ["ルピー skill1.effects[1]"],
+      "reason": "S1 のクリティカル確率▲は会心の起きる割合だけを変え、ヒットの時刻と会心なしの値は変えない。撮影 B ではルピーは撃たず、S1 は起きない（比べの setup でも外す）",
+      "decided": "2026-11-21"
+    }
+  ]
+}
