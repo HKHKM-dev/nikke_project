@@ -1,0 +1,15 @@
+{
+  "id": "C-1495",
+  "text": "tmp",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`1336-05`。V-0843",
+  "model": "（モデル側を書く。未反映ならそう書く）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/193.json の burst の effects[0]"]
+  },
+  "decidedOn": []
+}
