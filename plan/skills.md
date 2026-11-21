@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 154・効果 1099（根拠あり 1077）・notes 368（根拠あり 154）
+件数: キャラ 156・効果 1106（根拠あり 1084）・notes 371（根拠あり 155）
 
-notes の種類: 未対応 47・前提の外 117・計算に無関係 73・補足 43・間接 88
+notes の種類: 未対応 49・前提の外 117・計算に無関係 73・補足 43・間接 89
 
-スロット: supported 412・partial 33・unsupported 10・noEffect 58
+スロット: supported 416・partial 34・unsupported 11・noEffect 58
 
 ## 10 ラピ
 
@@ -963,6 +963,18 @@ notes の種類: 未対応 47・前提の外 117・計算に無関係 73・補�
   - effects[2] damage・burstUse・additional: C-1190（確定）
   - effects[3] timed・burstUse・damageTaken: C-1190（確定）
 
+## 212 ノベル
+
+- **skill1**: partial
+  - effects[0] damage・10 秒ごと・skill: C-1448（確定）
+  - effects[1] timed・10 秒ごと・enemyDefenseDown: C-1448（確定）、C-0556（確定）、C-0790（確定）
+  - notes[0] 未対応: S1 のヒットがバーストゲージを溜めるかは撮っていない（溜めても 1 回で通常攻撃の 1 ヒットぶんの見込み）: 根拠なし
+- **skill2**: supported
+  - effects[0] state・normalHit・collectEvidence（defense）: C-1449（確定）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1450（確定）、C-0795（確定）
+  - effects[1] timed・burstUse・damageTaken: C-1449（確定）
+
 ## 220 スノーホワイト
 
 - **skill1**: supported
@@ -1821,6 +1833,16 @@ notes の種類: 未対応 47・前提の外 117・計算に無関係 73・補�
   - effects[5] timed・burstUse・critDamage: C-1172（確定）
 - **burst**: supported
   - effects[0] timed・burstUse・critRate: C-1173（確定）
+
+## 432 アリア
+
+- **skill1**: supported
+  - effects[0] timed・fullBurstStart・critDamage: C-1452（確定）
+- **skill2**: supported
+  - effects[0] timed・lastShot・critRate: C-1453（確定）
+- **burst**: unsupported
+  - notes[0] 未対応: 自分の命中率▲（15 秒）は定義していない。MG のアリアでは、窓の中でもリロードの明けの撃ち始めのコアの外れと外れた発が残り、命中率▲をコア命中率（C-0036 の式）と弾丸命中率（H2。C-0192）に効かせるモデルの形（窓の中はほぼ全部の発がコアに当たる）と合わない。どれだけ減らすかは決まっていない: C-1454（確定）
+  - notes[1] 間接（バリア）: 味方全体へのバリア（スキル発動者の最終最大HP の X%・10 秒）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは味方がバリア適用状態にならない。バリアの量は要件 5.2 節の外）: 根拠なし
 
 ## 450 ナガ
 
