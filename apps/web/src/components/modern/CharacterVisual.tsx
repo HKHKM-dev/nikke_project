@@ -92,7 +92,7 @@ export function CharacterVisual({
       {unsupportedNote !== null && (
         // 印はバッジ ui_information。知らせはマウスを載せると出る
         <span className="char-unsupported-tag" role="img" aria-label={unsupportedNote} title={unsupportedNote}>
-          <BadgeIcon name={UNSUPPORTED_BADGE} />
+          <BadgeIcon className="char-unsupported-icon" name={UNSUPPORTED_BADGE} />
         </span>
       )}
     </div>

@@ -236,20 +236,15 @@ header h1 {
   height: 34px;
 }
 /* 設定のメニューの表示モードとテーマの選択肢の絵（モダン UI。バッジ ui_classic・ui_modern と ui_light・ui_dark・ui_system） */
+/* 幅をそろえ、高さは絵の縦横の比で決まる（クラシックの絵は 130×150 の六角形で、ほかの絵（130×130）より高い） */
 .settings-option-icon {
   display: block;
   width: 22px;
-  height: 22px;
 }
-/* クラシックの絵（130×150 の六角形）は、幅をほかの絵（130×130）と同じ 22px にそろえ、高さを縦横の比で伸ばす */
-svg.settings-option-icon.badge-ui_classic {
-  height: calc(22px * 150 / 130);
-}
-/* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。設定とアカウントのボタン・設定のメニューの選択肢の絵・未対応の印 ⓘ。
-   図柄を白にするバッジごとの規則より強くするため、要素名や親を付ける */
-svg.settings-menu-icon,
-svg.settings-option-icon,
-.char-unsupported-tag > .badge-ui_information {
+/* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。設定とアカウントのボタン・設定のメニューの選択肢の絵・未対応の印 ⓘ */
+.settings-menu-icon,
+.settings-option-icon,
+.char-unsupported-icon {
   --badge-ground: light-dark(#ffffff, #1a1a1a);
   --badge-main: light-dark(#1a1a1a, #ffffff);
   --badge-accent: light-dark(#1a1a1a, #ffffff);
@@ -910,13 +905,10 @@ svg.settings-option-icon,
   -webkit-mask: var(--icon) center / contain no-repeat;
   mask: var(--icon) center / contain no-repeat;
 }
-/* 操作キャラの印（バッジ ui_controller。ModernSlotCard の ControllerIcon） */
+/* 操作キャラの印（バッジ ui_controller。ModernSlotCard の ControllerIcon）。ダークでは色を反転する（地を白、縁と図柄を暗い色、外の線を白） */
 .modern-slot-focus-icon {
   width: 30px;
   height: 30px;
-}
-/* 操作キャラの印は、ダークでは色を反転する（地を白、縁と図柄を暗い色、外の線を白） */
-.modern-slot-focus-icon.badge-ui_controller {
   --badge-ground: light-dark(#1a1a1a, #ffffff);
   --badge-main: light-dark(#ffffff, #1a1a1a);
   --badge-accent: light-dark(#ffffff, #1a1a1a);
@@ -967,8 +959,8 @@ svg.settings-option-icon,
 .modern-slot-build-button {
   top: calc(2px + var(--slot-icon-w) + 2px);
 }
-/* 育成を変えたスロットは、歯車を青にする（白の規則より詳細度を上げる） */
-.modern-slot-build-edited > svg.badge-ui_setting {
+/* 育成を変えたスロットは、歯車を青にする */
+.modern-slot-build-edited > .modern-slot-icon {
   --badge-accent: var(--placing-blue);
 }
 
@@ -1036,93 +1028,72 @@ svg.settings-option-icon,
   --badge-accent: #ffa900;
   --badge-main: #ffd500;
 }
-/* バッジの値ごとの色（差し色。BadgeIcon が名前のクラス badge-<名前> を付ける）。元の SVG では #808080 で描いてある。
+/* バッジの既定の色（BadgeIcon がグループのクラス badge-group-<グループ>・名前のクラス badge-<名前> を付ける）。元の SVG では差し色を #808080 で
+   描いてある。既定の色は :where で包んで詳細度を 0 にする（場所ごとに色を変える規則は、クラス 1 つで上書きできる）。同じ詳細度なので、後の規則が勝つ。
    テーマで変えるときは light-dark(ライト, ダーク) で書く */
 /* 属性は、内の六角形の縁（主の色）も値の色にする */
-[class^='badge-element_'] {
+:where(.badge-group-element) {
   --badge-main: var(--badge-accent);
 }
-.badge-element_Fire {
+:where(.badge-element_Fire) {
   --badge-accent: #ff0000;
 }
-.badge-element_Water {
+:where(.badge-element_Water) {
   --badge-accent: #007cff;
 }
-.badge-element_Wind {
+:where(.badge-element_Wind) {
   --badge-accent: #00ff00;
 }
-.badge-element_Iron {
+:where(.badge-element_Iron) {
   --badge-accent: #feba02;
 }
-.badge-element_Electronic {
+:where(.badge-element_Electronic) {
   --badge-accent: #ff02de;
 }
 /* バースト段階は、地を値の色にし、数字（差し色）を白にする */
-[class^='badge-burstStep_'] {
+:where(.badge-group-burstStep) {
   --badge-accent: #ffffff;
 }
-.badge-burstStep_Step1 {
+:where(.badge-burstStep_Step1) {
   --badge-ground: #008000;
 }
-.badge-burstStep_Step2 {
+:where(.badge-burstStep_Step2) {
   --badge-ground: #b27800;
 }
-.badge-burstStep_Step3 {
+:where(.badge-burstStep_Step3) {
   --badge-ground: #cc0000;
 }
-.badge-burstStep_AllStep {
+:where(.badge-burstStep_AllStep) {
   --badge-ground: #8b00cc;
 }
-/* クラス・武器種・企業・コレクション（宝物の絞り込みのボタン）は、図柄（差し色）を白にする。コレクションのレア度の色（tone）は下で上書きする */
-[class^='badge-class_'],
-[class^='badge-weaponType_'],
-[class^='badge-corporation_'],
-.badge-collection_plain {
+/* クラス・武器種・企業・コレクション（宝物の絞り込みのボタン）・ui は、図柄（差し色）を白にする。
+   コレクションのレア度の色（tone）と、ui のうち空にする ✕ の赤は下で上書きする */
+:where(.badge-group-class, .badge-group-weaponType, .badge-group-corporation, .badge-group-collection, .badge-group-ui) {
   --badge-accent: #ffffff;
 }
-.badge-tone-R {
+:where(.badge-tone-R) {
   --badge-accent: #19a2e6;
 }
-.badge-tone-SR {
+:where(.badge-tone-SR) {
   --badge-accent: #bf40bf;
 }
-.badge-tone-SSR {
+:where(.badge-tone-SSR) {
   --badge-accent: #ff8000;
 }
 /* コレクションのバッジ（collection_plain）。レア度の色（tone）があるときは、縁もその色にして地を白にする。
    LV が上限・宝物が最後の段階の版（variant の max）は、地を元の暗い色に戻す（initial で SVG の既定の色になる）。tone の無い宝物の絞り込みのボタンは元の色のまま */
-.badge-collection_plain.badge-tone-R,
-.badge-collection_plain.badge-tone-SR,
-.badge-collection_plain.badge-tone-SSR {
+:where(.badge-collection_plain:is(.badge-tone-R, .badge-tone-SR, .badge-tone-SSR)) {
   --badge-main: var(--badge-accent);
   --badge-ground: #ffffff;
 }
-.badge-collection_plain.badge-variant-max {
+:where(.badge-collection_plain.badge-variant-max) {
   --badge-ground: initial;
 }
 /* スロットの空にする ✕（差し色）は赤 */
-.badge-ui_delete {
+:where(.badge-ui_delete) {
   --badge-accent: #ff3b4f;
 }
-/* ⓘ の文字・操作キャラの印・設定とアカウントのボタンの図柄・元に戻すの矢印・やり直すの矢印・スロットの育成・設定の歯車・立ち絵の形の切り替えの人・表示モードとテーマの絵（差し色）は白にする */
-.badge-ui_setting,
-.badge-ui_information,
-.badge-ui_controller,
-.badge-ui_window,
-.badge-ui_account,
-.badge-ui_return,
-.badge-ui_undo,
-.badge-ui_redo,
-.badge-ui_cu,
-.badge-ui_mcu,
-.badge-ui_light,
-.badge-ui_dark,
-.badge-ui_system,
-.badge-ui_classic,
-.badge-ui_modern {
-  --badge-accent: #ffffff;
-}
-.badge-core_plain {
+:where(.badge-core_plain) {
   --badge-accent: #e600e6;
 }
 /* コアの印の中央（黒い丸）に段階（01〜07）を重ねる。字は印の SVG の中に描く（GrowthMarks.tsx の CoreLabel。大きさは印に合わせて変わる） */
@@ -1395,7 +1366,6 @@ svg.settings-option-icon,
 .char-badge {
   display: block;
   width: var(--badge-w);
-  aspect-ratio: 130 / 150;
 }
 /* ニケ一覧の正方形の絵では、属性のバッジを右下に出す */
 .char-visual-corner-badge {
@@ -1641,6 +1611,8 @@ html:has(.modern-view-container) {
   display: flex;
   /* バッジの絵どうしの間は 4px（ボタンの枠 2px を両側） */
   gap: 0;
+  /* 高さの違うバッジ（お気に入り）は縦の中央にそろえる */
+  align-items: center;
   padding-right: 3px;
   border-right: 1px solid color-mix(in srgb, var(--app-fg) 15%, transparent);
 }
@@ -1653,9 +1625,9 @@ html:has(.modern-view-container) {
   cursor: pointer;
   line-height: 0;
 }
-/* お気に入りのバッジ（130×180）は、高さをほかのバッジ（130×150）にそろえる */
+/* お気に入りのバッジ（130×160）は、ほかのバッジ（130×150）より縦に長いので、幅を --badge-w の 5/6 にする */
 .char-tray-badge-button .favorite-badge {
-  width: calc(var(--badge-w) * 150 / 180);
+  width: calc(var(--badge-w) * 5 / 6);
 }
 .char-tray-badge-button[aria-pressed='true'] {
   border-color: var(--app-fg);
@@ -1752,14 +1724,13 @@ html:has(.modern-view-container) {
 }
 /* 絞り込みのクリアの印（バッジ ui_return） */
 .char-tray-filter-clear {
-  /* 外の大きさは絞り込みのバッジのボタン（余白なしで枠 2px）とそろえる */
+  /* 余白は絞り込みのバッジのボタンの枠 2px と同じ */
   padding: 2px;
 }
-/* 大きさは絞り込みのバッジ（.char-tray-badge-filter の --badge-w の幅、130×150）と同じ */
+/* 幅は絞り込みのバッジ（.char-tray-badge-filter の --badge-w）と同じ */
 .char-tray-filter-clear-icon {
   display: block;
   width: 24px;
-  height: calc(24px * 150 / 130);
 }
 /* ✓ の中身（.mask-icon。バッジの絵 ui_check.svg を型にして水色で塗る） */
 .char-tray-item-check > .mask-icon {
@@ -1849,10 +1820,9 @@ html:has(.modern-view-container) {
 .slot-build-favorite-button .favorite-badge {
   width: 20px;
 }
-/* お気に入りのバッジ（FavoriteBadge.tsx。130×180）。押していないバッジは図柄が灰色（元の色）、押したバッジは図柄と枠（主の色）をバッジごとの色にする */
+/* お気に入りのバッジ（FavoriteBadge.tsx。130×160）。押していないバッジは図柄が灰色（元の色）、押したバッジは図柄と枠（主の色）をバッジごとの色にする */
 .favorite-badge {
   display: block;
-  aspect-ratio: 130 / 180;
 }
 .favorite-badge-on {
   --badge-main: var(--badge-accent);
