@@ -1,0 +1,15 @@
+{
+  "id": "C-1474",
+  "text": "x",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`1322-07`。V-0838",
+  "model": "（モデル側を書く。未反映ならそう書く）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/312.json の skill1 の effects[0]"]
+  },
+  "decidedOn": []
+}
