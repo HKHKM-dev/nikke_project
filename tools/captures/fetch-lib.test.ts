@@ -76,7 +76,7 @@ describe('fetchTarget', () => {
     expect(read('frames/a.jpg')).toBe('new-remade');
     expect(read('frames/b.jpg')).toBe('bbb');
     expect(drive.downloads).toEqual(['frames/b.jpg']);
-    expect(lines.some((l) => l.includes('frames/a.jpg') && l.includes('手元を残す'))).toBe(true);
+    expect(lines.some((l) => l.includes(join('frames', 'a.jpg')) && l.includes('手元を残す'))).toBe(true);
   });
 
   it('redownloads a recording whose size differs from Drive (a partial upload fetched earlier)', async () => {
