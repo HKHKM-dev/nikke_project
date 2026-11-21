@@ -1,0 +1,86 @@
+{
+  "formatVersion": 1,
+  "resourceId": 241,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "敵を倒した時の自分のスーパールーキー（攻撃力▲・5 スタック・15 秒）は、射撃場の的が倒れないので起きない（敵 1 体の前提。要件 4.2 節）",
+          "en": "Super Rookie on self (ATK up, 5 stacks, 15 s) when defeating an enemy does not occur, since the range target is never defeated (a single enemy; requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "state",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "unknown"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "self",
+          "stat": "critRate",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "最後の弾丸はいつも命中する（外れた時に付かないのは入れない。ルドミラの S1 と同じ）",
+            "en": "The last bullet always hits (not applying it on a miss is not modeled; as for Ludmilla S1)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "self",
+          "stat": "critDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "最後の弾丸はいつも命中する（外れた時に付かないのは入れない。ルドミラの S1 と同じ）",
+            "en": "The last bullet always hits (not applying it on a miss is not modeled; as for Ludmilla S1)"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "対象「敵全体」は単体ボス",
+            "en": "The target (all enemies) is the lone boss"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "スーパールーキーのフルスタック状態の時の、同じ敵への追加ダメージは、スーパールーキーが付かない（S1 は射撃場の的が倒れないので起きない）ので出ない（要件 4.2 節）",
+          "en": "The additional damage to the same enemy at full Super Rookie stacks does not occur, since Super Rookie is never applied (S1 needs a defeated enemy, and the range target is never defeated; requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "damage",
+            "target": "enemy",
+            "trigger": "burstUse"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    }
+  }
+}
