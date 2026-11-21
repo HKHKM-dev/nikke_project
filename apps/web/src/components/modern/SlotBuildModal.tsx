@@ -51,7 +51,7 @@ export function SlotBuildModal({
       title={
         <span className="slot-build-title">
           {character.name.ja}
-          {/* お気に入り。押したバッジは色が付き、立ち絵の上端にも出る（FavoriteRibbons） */}
+          {/* お気に入り。押したバッジは色が付く（立ち絵には出さない。オーナーのコメント）。ニケ一覧の絞り込みに使う */}
           <span className="slot-build-favorites" role="group" aria-label="お気に入り">
             <FavoriteButtons
               marks={favoriteMarks}

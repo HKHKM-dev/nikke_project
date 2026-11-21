@@ -1,7 +1,6 @@
 import { characterImageFile, type CharacterIndexEntry } from '@nikke/core';
 import { useReducer, type ReactNode } from 'react';
 import { BadgeIcon } from './BadgeIcon.tsx';
-import { FavoriteRibbons } from './FavoriteBadge.tsx';
 import { VISUAL_BADGE_KINDS, type Badge } from './badges.ts';
 
 type Props = {
@@ -80,7 +79,6 @@ export function CharacterVisual({
           {extraBadge && <CharBadge badge={extraBadge} />}
         </div>
       )}
-      {badges && <FavoriteRibbons resourceId={character.resourceId} />}
       {overlay}
     </div>
   );

@@ -129,7 +129,7 @@ export function ModernView({
   const editingResourceId = editingSlotIndex !== null ? team.slots[editingSlotIndex]!.resourceId : null;
 
   return (
-    // 立ち絵（CharacterVisual）は、ここで渡すお気に入りのバッジを上端に出す
+    // お気に入り（育成・設定の窓で付け、ニケ一覧の絞り込みに使う。立ち絵には出さない）
     <FavoritesContext value={favorites}>
       <DndContext
         sensors={drag.sensors}

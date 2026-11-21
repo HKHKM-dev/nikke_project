@@ -91,7 +91,6 @@ export const FAVORITE_BADGES = {
   diamond: badgeName('main_diamond'),
   club: badgeName('main_club'),
 } as const;
-export const FAVORITE_COUNT_BADGE = badgeName('ui_blank_main');
 
 /** ニケ一覧の絞り込みを外すボタン（CharacterTray）のバッジ */
 export const RETURN_BADGE = badgeName('ui_return');

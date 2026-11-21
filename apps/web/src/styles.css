@@ -1865,50 +1865,6 @@ html:has(.modern-view-container) {
 .favorite-badge-club.favorite-badge-on {
   --badge-accent: #2fc25b;
 }
-/* 立ち絵の上端の中央に下げるお気に入りのバッジ（FavoriteRibbons）。絵の幅に合わせて縮む */
-.char-visual-favorites {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 1px;
-  pointer-events: none;
-  z-index: 1;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
-}
-.char-visual-favorites .favorite-badge {
-  width: 10px;
-}
-/* ニケ一覧の四角の絵では、右下の属性のバッジ（高さ --badge-w × 150/130）の上に 1 つだけ出す。幅は属性のバッジと同じ。
-   上の P○ のバッジと重ならないように、帯の下の切れ込み（深さは幅の 27.7%）に六角形の上の角を収めるところまで下げる */
-.char-visual-favorite-corner {
-  position: absolute;
-  right: 2px;
-  bottom: calc(2px + var(--badge-w) * 150 / 130 - var(--badge-w) * 0.277 + 1px);
-  z-index: 2;
-  width: var(--badge-w);
-  pointer-events: none;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
-}
-.char-visual-favorite-corner .favorite-badge {
-  width: 100%;
-}
-/* 2 つ以上のときに無地の ui_blank_main に重ねる数（帯の切れ込みより上の、四角の部分の中央） */
-.char-visual-favorite-count {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 75%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 0.75rem;
-  font-weight: bold;
-  line-height: 1;
-}
 .modal-close-button {
   background: transparent;
   border: none;
