@@ -1,0 +1,60 @@
+{
+  "formatVersion": 1,
+  "resourceId": 110,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルバーストタイムが発動した時の、敵全体の攻撃力▼はダメージに関係しない",
+          "en": "The attack decrease on all enemies when Full Burst Time starts does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "damageType": "additional",
+          "ref": 1,
+          "assumes": {
+            "ja": "敵 1 体。「最後の弾丸が命中した時」は二丁持ちの銃口ごとに起き、マガジンの最後の 2 発のそれぞれで 1 つ出す（weapons.ts の lastBulletShotsOf）。最後の弾丸はいつも命中する（外れた銃口の分が出ないのは入れない。ルドミラの S1 と同じ）。残弾 1 にした発の直後に的のジャンプでマガジンが切れた回も、その発の 1 つは出す（確かめていない）。バーストゲージは確かめていない（溜めない形）",
+            "en": "One enemy. \"When the last bullet hits\" fires per muzzle of the dual-wield weapon: once on each of the last two shots of the magazine (lastBulletShotsOf in weapons.ts). The last bullets are assumed to always hit (not firing for a missed muzzle is not modeled; as for Ludmilla S1). When the magazine is cut by a target jump right after the shot leaving one round, that shot still fires its one (not verified). The Burst Gauge is not verified (modeled as not charging it)"
+          },
+          "claims": [
+            "C-1400"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "最後の弾丸が命中した時の、自分の防御力▲（5 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "The DEF increase on self when the last bullet hits (5 s) does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "最終攻撃力が最も高い敵 1 機は敵 1 体",
+            "en": "The enemy with the highest final ATK is the lone enemy"
+          },
+          "claims": [
+            "C-1401"
+          ]
+        }
+      ]
+    }
+  }
+}

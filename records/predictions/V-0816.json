@@ -1,0 +1,195 @@
+{
+  "verification": "V-0816",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 301
+    },
+    {
+      "rid": 110,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S2 の追加ダメージは、残弾を 0 にした射撃で 1 回、同じフレームに出る。バーストは遅れの表に行が無く、III のタイマーの 00.00 に 1 ヒット）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "a-s2-shots",
+      "model": "sim",
+      "metric": "skillHitShotIndices",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "count": 6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": false,
+        "noFireSlots": [1, 2]
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "撮影 A（単騎）の代わりに、ココアとソルジャーF.A. が撃たずバーストの無い編成で: S2 の追加ダメージの最初の 6 回が、クロウの何発目で出たか"
+    },
+    {
+      "id": "a-s2-count",
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": false,
+        "noFireSlots": [1, 2]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 A の代わり: 180 秒の S2 の追加ダメージの数（H2 なら約 2 倍）"
+    },
+    {
+      "id": "a-s2-delay",
+      "model": "sim",
+      "metric": "skillHitShotDelay",
+      "args": {
+        "slot": 3,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": false,
+        "noFireSlots": [1, 2]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A の代わり: S2 の追加ダメージが、直前の発（最後の弾丸）の何フレーム後に出たか"
+    },
+    {
+      "id": "a-s2-hit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": false,
+        "noFireSlots": [1, 2]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A の代わり: S2 の追加ダメージの 1 ヒット（会心なし）"
+    },
+    {
+      "id": "b-burst-hit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 1 回目のバーストスキルダメージの値（会心なし。分かれたヒットなら和）"
+    },
+    {
+      "id": "b-burst-count",
+      "model": "sim",
+      "metric": "burstCount",
+      "args": {
+        "slot": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "撮影 B: 180 秒のクロウのバーストの回数"
+    },
+    {
+      "id": "b-burst-delays",
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 B: 発動からバーストの 1 ヒット目までの動画のフレーム（いまのモデルは遅れの表に行が無い）"
+    },
+    {
+      "id": "b-s2-hit-fb",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2",
+        "frame": 0,
+        "fullBurst": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 1 回目のフルバーストの窓の中の、最初の S2 の追加ダメージの 1 ヒット（会心なし。フルバースト補正が乗る）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "d7c1995d7231d6077beef0a1293700926fd47067",
+    "values": {
+      "H1": {
+        "a-s2-shots": [119, 120, 239, 240, 359, 360],
+        "a-s2-count": 48,
+        "a-s2-delay": 0,
+        "a-s2-hit": 71141.92860000001,
+        "b-burst-hit": 731263.0050000001,
+        "b-burst-count": 5,
+        "b-burst-delays": [27, 27, 27, 27],
+        "b-s2-hit-fb": 106712.8929
+      }
+    }
+  }
+}

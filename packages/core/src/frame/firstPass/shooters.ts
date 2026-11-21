@@ -4,7 +4,7 @@ import { stunSlot } from '../../burst/controller.ts';
 import { partialGaugeRatio } from '../../burst/dynamic.ts';
 import { effectFrameOf, hexagonFrameOf } from '../../burst/schedule.ts';
 import { capCritRate, ZERO_BUFFS } from '../../skills/buffs.ts';
-import { isChargeWeapon } from '../../weapons.ts';
+import { isChargeWeapon, lastBulletShotsOf } from '../../weapons.ts';
 import { firingParams, isZeroFiring, type FiringParams } from '../firing.ts';
 import {
   beginHide,
@@ -292,6 +292,15 @@ export function createShooters({
         pellets: pelletCount,
       };
       if (params.weapon !== null) shotEvents[i]!.weaponChange = true;
+      // 「最後の弾丸」が最後の 1 発でない武器（二丁持ち）は、撃った後の残弾がその発の数より少ない発がきっかけ
+      // （基礎の武器だけ。装弾数無限の発は残弾が減らないので起きない）
+      const bullets = params.weapon === null ? lastBulletShotsOf(slot.character.weaponType, shot) : 1;
+      if (bullets > 1) {
+        const lastBullet = state.lastShot || (!params.infiniteAmmo && state.ammo < bullets);
+        shotEvents[i]!.lastBullet = lastBullet;
+        log.lastBulletFrames ??= [];
+        if (lastBullet) log.lastBulletFrames.push(f);
+      }
       // 装弾数無限の発は残弾を減らさないので、味方が消費した弾の合計（teamAmmo）に数えない（plan/design-cinderella-cw.md 2.3 節）。
       // 流し直し（replayEvents）も同じに数えるよう、射撃の列にも残す
       if (params.infiniteAmmo) {
