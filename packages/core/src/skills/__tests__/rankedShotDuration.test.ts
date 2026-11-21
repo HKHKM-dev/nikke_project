@@ -68,8 +68,8 @@ describe('parseSkillDefinition（順位の発数編）', () => {
     expect(() => parseSkillDefinition(definition(LINE3))).not.toThrow();
   });
 
-  it('still rejects stats tracked in the first pass', () => {
-    expect(() => parseSkillDefinition(definition({ ...LINE3, stat: 'attack' }))).toThrow(/first pass/);
+  it('still rejects ATK up in shots on topAttack', () => {
+    expect(() => parseSkillDefinition(definition({ ...LINE3, stat: 'attack' }))).toThrow(/with target "topAttack"/);
   });
 });
 

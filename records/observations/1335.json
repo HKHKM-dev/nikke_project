@@ -1,0 +1,174 @@
+[
+  {
+    "id": "1335-01",
+    "recording": "1335",
+    "kind": "timing",
+    "use": "compare",
+    "value": 604,
+    "unit": "f",
+    "description": "ネヴェの S1 の 1 回目のヒットの、戦闘開始からの動画のフレーム",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（recipe:hud-jumps@3）・tools/captures/timer.ts --mode ticks",
+      "note": "戦闘開始は f809（timer.ts）。ヒットは HUD の増分 151,888（会心は 227,832）の f1413。左の「スキル1 ホッキョクグマの力」の帯（banner.ts --mode white）はヒットの 7〜9f 前"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrame",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0843",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1335-02",
+    "recording": "1335",
+    "kind": "timing",
+    "use": "compare",
+    "value": 1193,
+    "unit": "f",
+    "description": "ネヴェの S1 の 2 回目のヒットの、戦闘開始からの動画のフレーム",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（recipe:hud-jumps@3）・tools/captures/timer.ts --mode ticks",
+      "note": "ヒットは f2002"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrame",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0843",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1335-03",
+    "recording": "1335",
+    "kind": "timing",
+    "use": "compare",
+    "value": 589,
+    "unit": "f",
+    "description": "ネヴェの S1 のヒットの間隔の平均（17 回・16 間隔。動画のフレーム）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（recipe:hud-jumps@3）・tools/captures/timer.ts --mode ticks",
+      "note": "ヒットは f1413・2002・2591・3180・3769・4357・4947・5536・6125・6714・7303・7892・8481・9070・9659・10248・10837。間隔は 589〜590f（単騎でフルバーストが無く、止まりは無い。ceil(10 ÷ 0.017) = 589）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitMeanInterval",
+      "args": {
+        "slot": 1,
+        "skill": "skill1"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0843",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1335-04",
+    "recording": "1335",
+    "kind": "hit",
+    "use": "compare",
+    "value": 151888,
+    "description": "ネヴェの S1 の 1 ヒットの値（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分 151,888 が 11 回、1.5 倍の 227,832（会心）が 6 回（f1413・2002・2591・3180・4947・9070）。どれも単独の増分（同じフレームに通常攻撃の発が無い）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0843",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1335-05",
+    "recording": "1335",
+    "kind": "hit",
+    "use": "compare",
+    "value": 227832,
+    "description": "ネヴェの S1 の 1 ヒットの値（会心）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "会心の 227,832 の増分（f1413・2002・2591・3180・4947・9070）。S1 のヒットは会心する"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0843",
+    "readAt": "2026-11-21"
+  }
+]

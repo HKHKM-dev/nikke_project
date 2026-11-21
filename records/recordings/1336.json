@@ -1,0 +1,47 @@
+{
+  "id": "1336",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1336_neve-cocoa-fa.mp4",
+  "original": "2026-11-21_22-32-00.mp4",
+  "durationSec": 203.5,
+  "frames": 12211,
+  "fps": 60,
+  "sizeMB": 246.6,
+  "sha256": "9fd7b0eb33f5",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 193,
+      "name": "ネヴェ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire",
+    "level": 1
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0843 の撮影 B（ココア・ソルジャーF.A.・ネヴェ（操作））。戦闘履歴の画で編成を確かめた",
+  "backup": {
+    "at": "2026-11-21T22:47+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
