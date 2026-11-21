@@ -1323,92 +1323,10 @@ svg.roster-revert-icon {
   left: 50%;
   translate: -50% -50%;
 }
-/* 空のスロットの ＋ の下: 番号（01〜05）・FRONT / REAR・EMPTY SLOT・位置（○○●○○） */
-.modern-slot-empty-number {
-  font-size: 1.8em;
-  font-weight: bold;
-  line-height: 1.1;
-  /* 番号から下の文字を中央より下げる。中身の列は上下の中央に置いているので、上の余白を 77px 足すと 38px 下がる（位置の印 ○ が枠の下からはみ出ない高さ）。
-     ＋ は並びの外（枠の真ん中）にあるので、＋ の高さ 3em と間 0.25em（枠の文字の大きさが基準）の分も足して、番号を ＋ より下に置く */
-  /* 正方形の枠では、＋ の下（枠の下端の近く）に置く */
-  position: absolute;
-  bottom: 0.9em;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: 1.1em;
-}
-.modern-slot-empty-row {
-  font-size: 0.65em;
-  font-weight: bold;
-  letter-spacing: 0.08em;
-  /* 番号の下（枠の下端） */
-  position: absolute;
-  bottom: 0.3em;
-  left: 0;
-  right: 0;
-  text-align: center;
-}
-/* 正方形の枠には入らないので、EMPTY SLOT と位置の印（○○●○○）は出さない */
-.modern-slot-empty-label,
-.modern-slot-empty-position {
-  display: none;
-}
-.modern-slot-empty-label {
-  /* EMPTY SLOT と位置の組を少し下げる */
-  margin-top: calc(var(--slot-portrait-h) / 64 + 0.8em);
-  font-size: 0.7em;
-  font-weight: bold;
-  letter-spacing: 0.06em;
-}
-.modern-slot-empty-position {
-  font-size: 0.7em;
-  letter-spacing: 0.1em;
-  /* EMPTY SLOT に少し近づける */
-  margin-top: -0.45em;
-}
 .modern-slot-error {
   color: #e53935;
   font-size: 0.75rem;
   margin: 0;
-}
-
-/* ダメージ表示 & 割合バー（文字の大きさと余白は em で書き、立ち絵の高さに比べて縮める。空のスロットの文字も同じ） */
-/* 幅はスロットの絵（.char-visual-portrait。正方形の枠と 1px の枠線）と同じにし、中央にそろえる */
-.modern-slot-damage-section {
-  box-sizing: border-box;
-  width: calc(var(--slot-portrait-h) + 2px);
-  align-self: center;
-  display: flex;
-  flex-direction: column;
-  gap: 0.1875em;
-  padding: 0.25em 0.375em;
-  font-size: calc(var(--slot-portrait-h) / 8);
-  background: color-mix(in srgb, var(--app-fg) 5%, transparent);
-  border: 1px solid color-mix(in srgb, var(--app-fg) 10%, transparent);
-}
-.modern-slot-damage-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-.modern-slot-damage-value {
-  font-size: 0.95em;
-  font-weight: bold;
-  font-variant-numeric: tabular-nums;
-}
-.modern-slot-damage-bar-track {
-  height: 4px;
-  background: color-mix(in srgb, var(--app-fg) 12%, transparent);
-  overflow: hidden;
-}
-/* 割合のバー。色はバーの長さでなく枠の位置で決める（左から水色・黄色、50% で赤、その先は赤のまま）。
-   塗る部分の背景の大きさを枠の幅にそろえる（ModernSlotCard.tsx が background-size を 100 / 割合 倍にする） */
-.modern-slot-damage-bar-fill {
-  height: 100%;
-  background-image: linear-gradient(90deg, #38bdf8 0%, #facc15 25%, #ef4444 50%, #ef4444 100%);
-  background-repeat: no-repeat;
-  transition: width 0.2s ease-out;
 }
 
 /* 絵の枠と空のスロットの枠の塗りの色 */
@@ -1479,12 +1397,6 @@ svg.roster-revert-icon {
   background: linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
   border-image: linear-gradient(to bottom, transparent, var(--char-visual-line) 50%) 1;
 }
-/* 空のスロットだけ、顔の絵の代わりにシルエットの絵（256×512）の上半分を、幅いっぱいに出す（ニケがいるスロットには出さない） */
-.modern-slot-empty-area {
-  background:
-    url('./assets/portrait_silhouette.webp') center top / 100% auto no-repeat,
-    linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
-}
 .char-visual-img {
   width: 100%;
   height: 100%;
@@ -1512,10 +1424,6 @@ svg.roster-revert-icon {
   bottom: 46px;
 }
 /* スロットの立ち絵では、下部に重ねる名前と限界突破・コア強化の行（.modern-slot-char-name）の上に出す（ニケ一覧と同じ位置） */
-.char-visual-portrait .char-unsupported-tag {
-  bottom: auto;
-  top: calc(2px + max(18px, var(--badge-w)) + 2px);
-}
 /* 未対応の印（ⓘ。CharacterVisual）。バッジ ui_information を出す。マウスを載せると件数が出る */
 .char-unsupported-tag {
   position: absolute;

@@ -58,7 +58,7 @@ export function SlotDragOverlay({
                 <SlotCharName name={draggedCharacter.name.ja} marks={draggedMarks} />
               </div>
             ) : (
-              <EmptySlotFace slotIndex={draggedEmptyIndex!} />
+              <EmptySlotFace />
             )}
           </div>
         </div>

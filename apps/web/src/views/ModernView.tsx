@@ -31,7 +31,6 @@ export function ModernView({
   mastersError,
   calc,
   shown,
-  slotResults,
   parties,
   otherPartyIds,
   selectParty,
@@ -198,25 +197,20 @@ export function ModernView({
                 {p === parties.active ? (
                   <section ref={slotsGridRef} className="modern-slots-grid" aria-label="編成スロット一覧">
                     {team.slots.map((slot, i) => {
-                      const { character } = calc.slots[i]!;
                       const characterEntry = slot.resourceId !== null ? indexMap.get(slot.resourceId) : undefined;
 
                       return (
                         <ModernSlotCard
                           key={i}
                           slotIndex={i}
-                          character={character}
                           characterEntry={characterEntry}
-                          unsupportedNote={slot.resourceId === null ? null : unsupportedNote(slot.resourceId)}
                           error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
-                          slotResult={slotResults[i] ?? null}
                           growthMarks={slotGrowthMarks(calc, team, roster, i)}
                           growthEdited={slotGrowthEdited(team, roster, i)}
                           controlled={team.controlledSlot === i}
                           onPlacePending={pendingId !== null ? () => handlePlacePending(i) : undefined}
                           onOpenBuildModal={() => setEditingSlotIndex(i)}
                           onClear={() => clearSlot(i)}
-                          partyTotalDamage={totals.parties[parties.active]?.total ?? null}
                         />
                       );
                     })}
@@ -225,9 +219,7 @@ export function ModernView({
                   <PartyPreviewRow
                     partyIndex={p}
                     party={party}
-                    total={totals.parties[p]}
                     indexMap={indexMap}
-                    unsupportedNote={unsupportedNote}
                     roster={roster}
                     fixedSpec={team.fixedSpec}
                     onSelect={() => selectParty(p)}

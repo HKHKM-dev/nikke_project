@@ -1,21 +1,18 @@
 // モダン UI の、選んでいない編成の行（スロット 5 枚を、選んでいる編成と同じ大きさで並べる）。見るだけで、✕・⚙・配置・ドラッグはできない。
-// 行を押すと、その編成を選ぶ（ModernView の selectParty）。ダメージは全編成の合計の計算の結果（partyTotals.ts の slotDamages）
+// 行を押すと、その編成を選ぶ（ModernView の selectParty）
 import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
 import type { Party } from '../../parties.ts';
 import { partyLabel, partyNumber } from '../../parties.ts';
 import { formatDamage } from '../../format.ts';
 import type { PartyTotal } from '../../partyTotals.ts';
-import type { UnsupportedNote } from '../../useSkillDefinitions.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { trayGrowthMarks } from './GrowthMarks.tsx';
-import { EmptySlotFace, SlotCharName, SlotDamage } from './ModernSlotCard.tsx';
+import { EmptySlotFace, SlotCharName } from './ModernSlotCard.tsx';
 
 type Props = {
   partyIndex: number;
   party: Party | null;
-  total: PartyTotal | undefined;
   indexMap: ReadonlyMap<number, CharacterIndexEntry>;
-  unsupportedNote: (resourceId: number) => UnsupportedNote | null;
   roster: BuildSnapshot | null;
   fixedSpec: boolean;
   onSelect: () => void;
@@ -24,16 +21,7 @@ type Props = {
 /** 編成のスロットの数（parties.ts の Party の slots と同じ 5） */
 const SLOT_COUNT = 5;
 
-export function PartyPreviewRow({
-  partyIndex,
-  party,
-  total,
-  indexMap,
-  unsupportedNote,
-  roster,
-  fixedSpec,
-  onSelect,
-}: Props) {
+export function PartyPreviewRow({ partyIndex, party, indexMap, roster, fixedSpec, onSelect }: Props) {
   return (
     <button
       type="button"
@@ -50,19 +38,14 @@ export function PartyPreviewRow({
               <div className="modern-slot-char-area">
                 {entry ? (
                   <>
-                    <CharacterVisual
-                      character={entry}
-                      unsupportedNote={unsupportedNote(entry.resourceId)}
-                      size="portrait"
-                    />
+                    <CharacterVisual character={entry} size="portrait" />
                     <SlotCharName name={entry.name.ja} marks={trayGrowthMarks(entry, roster, fixedSpec)} />
                   </>
                 ) : (
-                  <EmptySlotFace slotIndex={i} />
+                  <EmptySlotFace />
                 )}
               </div>
             </div>
-            <SlotDamage damage={entry ? (total?.slotDamages?.[i] ?? null) : null} partyTotal={total?.total ?? null} />
           </div>
         );
       })}

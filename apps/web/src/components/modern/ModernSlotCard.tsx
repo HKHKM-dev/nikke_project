@@ -1,8 +1,5 @@
-import type { UnsupportedNote } from '../../useSkillDefinitions.ts';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
-import type { CharacterData, CharacterIndexEntry } from '@nikke/core';
-import type { SlotResultView } from '../../calcView.ts';
-import { formatDamage } from '../../format.ts';
+import type { CharacterIndexEntry } from '@nikke/core';
 import { BadgeIcon } from './BadgeIcon.tsx';
 import { BUILD_BADGE, CONTROLLER_BADGE, DELETE_BADGE } from './badges.ts';
 import selectionCircle from '../../assets/badges/ui_selection_circle.svg';
@@ -44,11 +41,8 @@ type Props = {
   slotIndex: number;
   /** 操作キャラのスロット（操作の印を付ける） */
   controlled: boolean;
-  character: CharacterData | undefined;
   characterEntry: CharacterIndexEntry | undefined;
-  unsupportedNote: UnsupportedNote | null;
   error: string | undefined;
-  slotResult: SlotResultView | null;
   /** 名前の上に出す限界突破とコア強化の段階（ニケがいないときは null） */
   growthMarks: GrowthMarks | null;
   /** 育成を変えたか（育成・設定のボタンの歯車を青にする。slotGrowthEdited） */
@@ -57,26 +51,20 @@ type Props = {
   onPlacePending?: () => void;
   onOpenBuildModal: () => void;
   onClear: () => void;
-  partyTotalDamage: number | null;
 };
 
 export function ModernSlotCard({
   slotIndex,
   controlled,
-  character,
   characterEntry,
-  unsupportedNote,
   error,
-  slotResult,
   growthMarks,
   growthEdited,
   onPlacePending,
   onOpenBuildModal,
   onClear,
-  partyTotalDamage,
 }: Props) {
   const awaitingPlacement = onPlacePending !== undefined;
-  const currentDamage = character && slotResult ? slotResult.result.totalDamage : null;
 
   // ドロップ受け入れ（トレイからの配置、または他スロットからのスワップ）
   const { isOver, setNodeRef: setDropRef } = useDroppable({
@@ -120,15 +108,15 @@ export function ModernSlotCard({
             <img className="modern-slot-target-arrow" src={selectionTriangle} alt="" aria-hidden="true" />
           </>
         )}
-        {/* 置き先待ちのクリックは立ち絵の枠でだけ受ける（カードの上下の段・ダメージの欄では置かない） */}
+        {/* 置き先待ちのクリックは立ち絵の枠でだけ受ける（カードの上の段では置かない） */}
         <div className="modern-slot-char-area" onClick={onPlacePending}>
           {characterEntry ? (
             <>
-              <CharacterVisual character={characterEntry} unsupportedNote={unsupportedNote} size="portrait" />
+              <CharacterVisual character={characterEntry} size="portrait" />
               <SlotCharName name={characterEntry.name.ja} marks={growthMarks} />
               {/* 置いたニケが動いてくる間（flight.ts の modern-slot-arriving）と、ドラッグで持ち上げている間・戻る間は、立ち絵の代わりに空のスロットの枠を出す */}
               <div className="modern-slot-arrival-face" aria-hidden="true">
-                <EmptySlotFace slotIndex={slotIndex} />
+                <EmptySlotFace />
               </div>
               <button
                 type="button"
@@ -161,14 +149,12 @@ export function ModernSlotCard({
             </>
           ) : (
             // ニケがいるときの絵と同じ大きさにして、選んでもカードの大きさが変わらないようにする
-            <EmptySlotFace slotIndex={slotIndex} />
+            <EmptySlotFace />
           )}
         </div>
       </div>
 
       {error && <p className="modern-slot-error">{error}</p>}
-
-      <SlotDamage damage={currentDamage} partyTotal={partyTotalDamage} />
     </div>
   );
 }
@@ -187,38 +173,11 @@ export function SlotCharName({ name, marks }: { name: string; marks: GrowthMarks
   );
 }
 
-/** 空のスロットの枠（＋・番号・FRONT か REAR・EMPTY SLOT・5 つのうちの位置）。持ち上げたときの絵（ModernView の DragOverlay）にも使う */
-export function EmptySlotFace({ slotIndex }: { slotIndex: number }) {
+/** 空のスロットの枠（真ん中の ＋ だけ）。持ち上げたときの絵（SlotDragOverlay）・選んでいない編成の行（PartyPreviewRow）にも使う */
+export function EmptySlotFace() {
   return (
     <div className="modern-slot-empty-area">
       <span className="modern-slot-empty-plus">＋</span>
-      <span className="modern-slot-empty-number">{String(slotIndex + 1).padStart(2, '0')}</span>
-      <span className="modern-slot-empty-row">{slotIndex % 2 === 0 ? 'FRONT' : 'REAR'}</span>
-      <span className="modern-slot-empty-label">EMPTY SLOT</span>
-      <span className="modern-slot-empty-position" aria-hidden="true">
-        {Array.from({ length: 5 }, (_, i) => (i === slotIndex ? '●' : '○')).join('')}
-      </span>
-    </div>
-  );
-}
-
-/** スロットの下のダメージの欄（値と、編成の合計に占める割合のバー）。選んでいない編成の行（PartySlotRows）も使う */
-export function SlotDamage({ damage, partyTotal }: { damage: number | null; partyTotal: number | null }) {
-  const percent = partyTotal && damage && partyTotal > 0 ? Math.min(100, Math.round((damage / partyTotal) * 100)) : 0;
-  return (
-    <div className="modern-slot-damage-section">
-      <div className="modern-slot-damage-row">
-        <span className="modern-slot-damage-value">{formatDamage(damage)}</span>
-      </div>
-      <div className="modern-slot-damage-bar-track">
-        <div
-          className="modern-slot-damage-bar-fill"
-          style={{
-            width: `${percent}%`,
-            backgroundSize: percent > 0 ? `${10000 / percent}% 100%` : undefined,
-          }}
-        />
-      </div>
     </div>
   );
 }
