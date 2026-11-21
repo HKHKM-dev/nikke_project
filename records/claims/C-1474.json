@@ -1,15 +1,19 @@
 {
   "id": "C-1474",
-  "text": "x",
+  "text": "ソーダの S1 のメイド精神（通常攻撃 180 発ごとに自分に 1 スタック・5 スタック・10 秒・最大HP▲）と S2 のフルスタックのときの追加の回復、バーストのスタック量▲が灼熱コードの味方（ソーダ自身を含む）のスタックのバフに、付いていれば上限の中で 1 段足すことは、説明文とペッパーのバーストの読み（C-1464）どおり（射撃場では、回復の量・メイド精神のスタックの数・灼熱の味方のスタックがダメージに出ず、確かめていない）。回復を受けた時の効果を持つ味方のいない編成では、回復は与ダメージに効かない",
   "state": "仮説",
   "topic": "スキル・キャラ固有",
-  "grade": "単独実測",
-  "basis": "`1322-07`。V-0838",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "grade": "推論",
+  "basis": "説明文の読み（直接は測っていない）。V-0838 の録画 1322・1323 では、回復の量とメイド精神のスタックの数はダメージに出ず、灼熱の味方はソーダだけ",
+  "model": "反映（data/skills/312.json の skill1 の effects[0]、skill2 の effects[1]、burst の effects[1]）",
   "replaces": [],
   "updated": "2026-11-21",
   "subject": {
-    "places": ["data/skills/312.json の skill1 の effects[0]"]
+    "places": [
+      "data/skills/312.json の skill1 の effects[0]",
+      "data/skills/312.json の skill2 の effects[1]",
+      "data/skills/312.json の burst の effects[1]"
+    ]
   },
   "decidedOn": []
 }

@@ -24,7 +24,10 @@
           "assumes": {
             "ja": "通常攻撃 値 01（180）発ごとに自分に 1 スタック付き、付くたびに全部のスタックの維持を付け直す（いまの既定）。撃ち続ければ 10 秒が切れる前に次のスタックが付き、5 スタックに届く。最大HP▲はそれ自体は与ダメージを変えない（S2 の回復の量と、S2 の「メイド精神のフルスタック状態なら」が読む）",
             "en": "One stack on self every value 01 (180) normal shots; each application refreshes the duration of all stacks (the current default). With continuous fire the next stack comes before the 10 s run out, reaching 5 stacks. The Max HP increase does not change damage by itself (read by the S2 heal amount and the S2 \"if Maid Spirit is at full stacks\")"
-          }
+          },
+          "claims": [
+            "C-1474"
+          ]
         }
       ]
     },
@@ -39,9 +42,12 @@
           "ref": 1,
           "scaling": "casterFinalMaxHp",
           "assumes": {
-            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から 12 秒ごとに発動する（CT 12 秒は外部の資料の値。1 回目も 12 秒）。回復はクールタイムの印（cooldown）を書けないので、印のある周期を縮める効果（スキルクールタイム▼）は効かない形で書いた。味方全体の回復で、受けた味方の「回復効果が適用された時」を起こす。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く（plan/design-hp-heal-restore.md 2.2 節）",
-            "en": "The description gives no trigger. It is an active skill on a cooldown, activating every 12 s from the start of combat (the 12 s cooldown is from external sources; the first also at 12 s). A heal cannot carry the cooldown mark, so effects shortening marked cooldowns (skill cooldown down) are written as not applying. Heals all allies, triggering \"when healed\" on them. The amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs (plan/design-hp-heal-restore.md 2.2)"
-          }
+            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から 12 秒ごとに発動する（1 回目も 12 秒。戦闘開始時には発動しない）。回復はクールタイムの印（cooldown）を書けないので、印のある周期を縮める効果（スキルクールタイム▼）は効かない形で書いた。味方全体の回復で、受けた味方の「回復効果が適用された時」を起こす。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く（plan/design-hp-heal-restore.md 2.2 節）",
+            "en": "The description gives no trigger. It is an active skill on a cooldown, activating every 12 s from the start of combat (the first also at 12 s; not at the start of combat). A heal cannot carry the cooldown mark, so effects shortening marked cooldowns (skill cooldown down) are written as not applying. Heals all allies, triggering \"when healed\" on them. The amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs (plan/design-hp-heal-restore.md 2.2)"
+          },
+          "claims": [
+            "C-1471"
+          ]
         },
         {
           "kind": "heal",
@@ -60,7 +66,11 @@
           "assumes": {
             "ja": "effects[0] と同じ発動で、ソーダ自身のメイド精神がフルスタックなら、味方全体をさらに回復する（受けた味方の「回復効果が適用された時」を起こす）。effects[0] と別の回復として数えるかは確かめていない",
             "en": "On the same activation as effects[0], if Soda's own Maid Spirit is at full stacks, heals all allies again (triggering \"when healed\" on them). Whether it counts as a heal separate from effects[0] is not verified"
-          }
+          },
+          "claims": [
+            "C-1471",
+            "C-1474"
+          ]
         }
       ]
     },
@@ -71,9 +81,12 @@
           "ref": 2,
           "damageType": "skill",
           "assumes": {
-            "ja": "「ランダムの敵 2 機」は的 1 体で 1 ヒット",
-            "en": "\"2 random enemies\" is the lone target, hit once"
-          }
+            "ja": "「ランダムの敵 2 機」は的 1 体で 1 ヒット（2 機が同じ敵を選んで 2 回当たることはない）",
+            "en": "\"2 random enemies\" is the lone target, hit once (the two picks do not both land on the same enemy)"
+          },
+          "claims": [
+            "C-1472"
+          ]
         },
         {
           "kind": "stackChange",
@@ -83,9 +96,13 @@
           "targetElement": "Fire",
           "amountRef": 3,
           "assumes": {
-            "ja": "灼熱コードの味方（自分も入る）が持つ、上限のある状態と timed のスタックのバフの全部に、付いていれば 1 段足す（上限は上げない。付いていなければ足さない。ペッパーのバーストと同じ読み。C-1464）",
-            "en": "Adds one stack to every stackable buff (states and timed buffs with a stack cap) held by Fire Code allies (self included), only if present (the cap is not raised; not when absent; same reading as Pepper's Burst, C-1464)"
-          }
+            "ja": "灼熱コードの味方（自分も入る）が持つ、上限のある状態と timed のスタックのバフの全部に、付いていれば 1 段足す（上限は上げない。付いていなければ足さない。ペッパーのバーストと同じ読み。C-1464）。水冷の味方には付かないことは確かめた。灼熱の味方に付くことと、効く時刻（遅れ 0）は確かめていない",
+            "en": "Adds one stack to every stackable buff (states and timed buffs with a stack cap) held by Fire Code allies (self included), only if present (the cap is not raised; not when absent; same reading as Pepper's Burst, C-1464). Verified not to apply to Water allies; applying to Fire allies and its timing (no delay) are not verified"
+          },
+          "claims": [
+            "C-1473",
+            "C-1474"
+          ]
         }
       ],
       "notes": [
