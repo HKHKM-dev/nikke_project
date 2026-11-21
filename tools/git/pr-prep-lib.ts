@@ -173,9 +173,10 @@ export function branchStaleAdds(gitPaths: (args: readonly string[]) => string[])
 }
 
 /**
- * ブランチ（main との分かれ目から HEAD まで）を、作業ツリーの変更も入れて 1 つの commit にまとめる。メッセージは題名・まとめたわけと、
- * 元の commit のメッセージ（帰属の行を含む。rewrite で書き換えられる）。git は引数で git を呼んで標準出力（前後の空白を除く）を返すもの。
- * pr:prep と、自動マージを待つ PR の衝突の直し（auto-rebase.ts）が使う
+ * ブランチ（main との分かれ目から HEAD まで）を、index に入れた変更も含めて 1 つの commit にまとめる（作業ツリーは add しない。
+ * 追跡していないファイルを入れないため）。メッセージは題名・まとめたわけと、元の commit のメッセージ（帰属の行を含む。rewrite で
+ * 書き換えられる）。差分が無くなっても commit を作る（commit が落ちてブランチが分かれ目に残らないように）。git は引数で git を呼んで
+ * 標準出力（前後の空白を除く）を返すもの。pr:prep と、自動マージを待つ PR の衝突の直し（auto-rebase.ts）が使う
  */
 export function squashBranch(
   git: (args: readonly string[]) => string,
@@ -185,9 +186,8 @@ export function squashBranch(
 ): void {
   const base = git(['merge-base', 'origin/main', 'HEAD']);
   const messages = rewrite(git(['log', '--format=%B', `${base}..HEAD`]));
-  git(['add', '--all']);
   git(['reset', '--quiet', '--soft', base]);
-  git(['commit', '--quiet', '-m', `${title}\n\n${why}\n\n${messages}`]);
+  git(['commit', '--quiet', '--allow-empty', '-m', `${title}\n\n${why}\n\n${messages}`]);
 }
 
 /** 自動マージを待つ PR の衝突を直す GitHub Actions（tools/git/auto-rebase.ts）が commit に使う身元 */

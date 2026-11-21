@@ -234,7 +234,7 @@ if (!rebasing()) {
         `pr:prep で、main を取り込む前に 1 つにまとめた（途中の commit で足して後で消したファイルが main にあり、リベースで衝突するので: ${stale.join('・')}）`,
       );
       console.log(
-        `途中の commit で足して後で消したファイルが main にあるので、ブランチを 1 つの commit にまとめた: ${stale.join('・')}`,
+        `途中の commit で足して後で消したファイルが main にあるので、ブランチを 1 つの commit にまとめた: ${stale.join('・')}（題名は最初の commit のもの。振り直す前の番号が題名にあれば、PR の題名で直す）`,
       );
     }
     const outcome = startRebase(ROOT, gitDir, true);

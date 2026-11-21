@@ -185,6 +185,7 @@ function fix(pr: Pull): Outcome {
   // ブランチを 1 つの commit にまとめてからリベースする（PR はスカッシュでマージする）。まとめないと、振り直す前の ID のファイルを足した
   // commit がリベースで main と衝突する。途中の commit だけが衝突することも無くなる
   const note = renumber.length > 0 ? `。番号の振り直し: ${renumber.map((r) => `${r.from} → ${r.to}`).join('、')}` : '';
+  git(['add', '--all']);
   squashBranch(
     git,
     replaceIds(pr.title, renumber),

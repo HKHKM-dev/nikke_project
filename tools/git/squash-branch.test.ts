@@ -89,6 +89,18 @@ describe('renumbered branch', () => {
     expect(git(['show', 'HEAD:records/claims/C-0001.json'])).toBe('{"main":1}');
   });
 
+  it('keeps untracked files out and commits even when nothing is left to change', () => {
+    const { cwd, git } = setup();
+    write(cwd, 'draft.md', 'draft\n');
+    git(['reset', '--quiet', '--hard', 'HEAD~1']);
+    git(['rm', '-q', 'records/claims/C-0001.json', 'note.txt']);
+    git(['commit', '-q', '-m', 'drop']);
+    squashBranch(git, 't', 'why');
+    expect(git(['rev-list', '--count', 'origin/main..HEAD'])).toBe('1');
+    expect(git(['diff', '--name-only', 'main~1', 'HEAD'])).toBe('');
+    expect(git(['status', '--porcelain'])).toBe('?? draft.md');
+  });
+
   it('finds nothing when no file added in the branch is in main', () => {
     const { cwd, git } = setup();
     git(['update-ref', 'refs/remotes/origin/main', 'main~1']);
