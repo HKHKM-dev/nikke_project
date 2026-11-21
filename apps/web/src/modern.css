@@ -161,11 +161,3 @@
   border-radius: 14px;
   overflow: hidden;
 }
-
-/* 編成の行の左の番号のボタン（選んでいない編成）は、ライトとダークの色を入れ替える（ライトでダークの地と文字、ダークでライトの地と文字。
-   オーナーのコメント）。選んでいる編成は強調色（styles.css の .toggle-button[aria-pressed='true']）のまま */
-:root[data-app-ui='modern'] .modern-party-row-label .party-tab:not([aria-pressed='true']) {
-  background: light-dark(#1b2433, #f3f5f9);
-  color: light-dark(#e6eaf2, #141a24);
-  border-color: light-dark(#2a3448, #c8d0dd);
-}
