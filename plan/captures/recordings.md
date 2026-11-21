@@ -1227,6 +1227,10 @@
 | 1256 | `20261121-1256_snow-white-id-b-1.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎スノーホワイト：イノセントデイズ（224、AR・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0808 の撮影 B: ココア（I）・ソルジャーF.A.（II）・スノーホワイト：イノセントデイズ（III・操作）、オートバースト ON |
 | 1257 | `20261121-1257_epinel-a-1.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎エピネル（241、SMG・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0806 の撮影 A: ココア（I）・ソルジャーF.A.（II）・エピネル（III・操作）。オートバースト ON |
 | 1258 | `20261121-1258_epinel-a-2.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎エピネル（241、SMG・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0806 の撮影 A: ココア（I）・ソルジャーF.A.（II）・エピネル（III・操作）。オートバースト ON |
+| 1259 | `20261121-1259_mg_guillotine_fire.mp4` | ◎ギロチン（180、MG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
+| 1260 | `20261121-1260_mg_guillotine_fire.mp4` | ◎ギロチン（180、MG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
+| 1261 | `20261121-1261_smg+sr+mg_liter+delta+guillotine_fire.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎ギロチン（180、MG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1262 | `20261121-1262_smg+sr+mg_liter+delta+guillotine_fire.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎ギロチン（180、MG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1263 | `20261121-1263_snow-white-id-b-2.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎スノーホワイト：イノセントデイズ（224、AR・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0808 の撮影 B の 2 本目（C-1365 の再現）: ココア（I）・ソルジャーF.A.（II）・スノーホワイト：イノセントデイズ（III・操作）、オートバースト ON |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
