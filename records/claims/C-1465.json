@@ -1,0 +1,19 @@
+{
+  "id": "C-1465",
+  "text": "ペッパーの S1 の最後の弾丸ごとの回復（HP の割合が最も低い味方 1 機）とリフレッシュハート（味方全体・5 スタック・15 秒）、バーストのフルスタックのときの味方全体の回復は、説明文どおり（射撃場では HP が満たんで回復の量も、リフレッシュハートのスタックの数もダメージに出ず、確かめていない）。回復を受けた時の効果を持つ味方のいない編成では与ダメージに効かない",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`1317-01`。V-0835",
+  "model": "反映（data/skills/131.json の skill1 の effects[0]・effects[1]、burst の effects[2]）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": [
+      "data/skills/131.json の skill1 の effects[0]",
+      "data/skills/131.json の skill1 の effects[1]",
+      "data/skills/131.json の burst の effects[2]"
+    ]
+  },
+  "decidedOn": []
+}
