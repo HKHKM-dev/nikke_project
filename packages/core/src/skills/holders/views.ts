@@ -8,8 +8,10 @@ import {
   applyResolvedEffect,
   applyStatLocks,
   fixedAttackBaseOf,
+  rangeUpOf,
   statLockOf,
   type BuffTotals,
+  type RangeUp,
   type StatLock,
 } from '../buffs.ts';
 import { chanceStackLevelsAt } from '../chance.ts';
@@ -183,13 +185,20 @@ export function createViews({
     }
     return n === 0 && up === 0 ? ZERO_HIT_RATE : { n, up };
   };
-  // 条件 inEffectiveRange が読む適正最小射程距離▲（当たりと同じ段の件。plan/design-agent-bunny.md 2.2 節）
-  const rangeViews = hitStageViewsOf('minEffectiveRange');
-  const minEffectiveRangeAt = (holder: number, frame: number): number => sumAt(rangeViews[holder], frame);
+  // 条件 inEffectiveRange が読む適正射程距離の▲（plan/design-agent-bunny.md 2.2 節・plan/design-leona.md 2.1 節）。順位の材料で
+  // ないので、順位の対象（段 2）の件も入れる（2 パス目の区間と同じ件）
+  const minRangeViews = viewsOf((_track, e) => e.stat === 'minEffectiveRange');
+  const maxRangeViews = viewsOf((_track, e) => e.stat === 'maxEffectiveRange');
+  const rangeUpAt = (holder: number, frame: number): RangeUp =>
+    rangeUpOf({
+      minEffectiveRange: sumAt(minRangeViews[holder], frame),
+      maxEffectiveRange: sumAt(maxRangeViews[holder], frame),
+    });
   // 会心率▲・通常攻撃のクリティカル確率▲（当たりと同じ段の件。plan/design-new-chars-1029.md 5.7 節）
   const critViews = hitStageViewsOf('critRate', 'normalCritRate');
-  // ペレット数▲・ペレットの数の固定（当たりと同じ段の件）
-  const pelletCountViews = hitStageViewsOf('pelletCount');
+  // ペレット数▲・ペレットの数の固定（当たりと同じ段の件）。ペレット数▲は順位の対象（段 2）の件も入れる（ペレット数は順位の材料で
+  // ないので循環しない。plan/design-leona.md 2.2 節）
+  const pelletCountViews = viewsOf((track, e) => e.stat === 'pelletCount');
   const singlePelletViews = hitStageViewsOf('singlePellet');
   const hasPellets = slots.map((_, h) => pelletCountViews[h]!.length > 0 || singlePelletViews[h]!.length > 0);
   // 条件 selfBuffed: 段 1 の件
@@ -542,7 +551,7 @@ export function createViews({
     hpRatioStepsOf,
     lowerCurrentHp,
     lowerDefenseAt,
-    minEffectiveRangeAt,
+    rangeUpAt,
     pelletCountViews,
     rankContext,
     rankSlots,

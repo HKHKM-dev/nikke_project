@@ -1,0 +1,15 @@
+{
+  "id": "C-1451",
+  "text": "レオナ（382）の S1 の適正最大射程距離▲は、通常攻撃 15 回ごとに、15 の倍数の発の次のフレームから 10 秒付く。1306 の 30 発目の境は合うが、1305 では 32 発目まで距離ボーナスのない発があり、合わない",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`1315-20`・`1316-20`。V-0826",
+  "model": "data/skills/382.json（skill1 の effects[1]）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/382.json の skill1 の effects[1]"]
+  },
+  "decidedOn": []
+}

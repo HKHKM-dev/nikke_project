@@ -1,0 +1,15 @@
+{
+  "id": "C-1447",
+  "text": "レオナ（382）の S1 の「SG を所持する味方全体に適正最大射程距離 20%▲」は、効いている間、SG の帯（0〜25）の外の中近の SG の発に距離ボーナスを乗せる。モデルの式（上端 × (1 + 20%) = 30 と、着地点の代表の距離で比べる）で合う",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1315-17`・`1316-17`。V-0826",
+  "model": "data/skills/382.json（skill1 の effects[1]）・frame/landing.ts の distanceBonusAt・skills/buffs.ts の RangeUp",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/382.json の skill1 の effects[1]"]
+  },
+  "decidedOn": []
+}

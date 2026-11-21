@@ -1,0 +1,16 @@
+{
+  "id": "C-1444",
+  "text": "レオナ（382）の S2 の「SG を所持する最終攻撃力が最も高い味方 2 機にペレット数 5 個▲」は、SG が 2 体の編成ではレオナと自分以外の SG の味方（アニス：スパークリングサマー）の両方に付き、1 発の総ダメージを変えずに 15 個のペレットで分ける（C-1076 と同じ）。SG が 3 体以上の時の順位の付け方（SG の味方だけで並べるか）は見分けていない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1315-16`・`1316-16`。V-0826",
+  "model": "data/skills/382.json（skill2 の effects[1]）・skills/holders/views.ts の pelletCountViews",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/382.json の skill2 の effects[1]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の 5 個・ペレット数▲の分け方（C-1076）"
+}

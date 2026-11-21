@@ -1,0 +1,15 @@
+{
+  "id": "C-1466",
+  "text": "レオナ（382）の S2 の「フルバーストタイムが発動した時、味方全体に命中率 20.28%▲（10 秒）」は説明文どおりに付き、SG の弾丸命中率には近だけ効かせる（C-0631）と読む。近のフルバーストの SG の当たったペレットの割合は記録したが、命中率▲の有無を見分けられる数ではない",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`1315-19`・`1316-19`。V-0826",
+  "model": "data/skills/382.json（skill2 の effects[0]）・frame/landing.ts の hitRateUpRaisesBulletHitRate",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/382.json の skill2 の effects[0]"]
+  },
+  "decidedOn": []
+}

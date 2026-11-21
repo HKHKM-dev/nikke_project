@@ -1,6 +1,6 @@
 // 1 パス目（../firstPass.ts の runFirstPassOnce）の蓄積して爆発するダメージ（plan/design-split-first-pass.md 3.4 節。
 // plan/design-accumulate-explosion.md）: 付いている間の発を溜め、爆発のゲージを足す。
-import { ZERO_BUFFS } from '../../skills/buffs.ts';
+import { ZERO_BUFFS, isNoRangeUp } from '../../skills/buffs.ts';
 import type { AccumulateRelease } from '../firstPass.ts';
 import type { FirstPassBase } from './base.ts';
 import type { Gauge } from './gauge.ts';
@@ -54,9 +54,14 @@ export function createAccumulate({
       const timed = lists.hitRateAt(i, frame);
       buffs = { ...buffs, hitRate: buffs.hitRate + timed.n, hitRateUp: buffs.hitRateUp + timed.up };
     }
-    // 時間で変わる適正最小射程距離▲も、2 パス目の区間と同じに足す（距離ボーナスの出し直し）
-    const range = lists.minEffectiveRangeAt(i, frame);
-    if (range !== 0) buffs = { ...buffs, minEffectiveRange: buffs.minEffectiveRange + range };
+    // 時間で変わる適正射程距離の▲も、2 パス目の区間と同じに足す（距離ボーナスの出し直し）
+    const range = lists.rangeUpAt(i, frame);
+    if (!isNoRangeUp(range))
+      buffs = {
+        ...buffs,
+        minEffectiveRange: buffs.minEffectiveRange + range.min,
+        maxEffectiveRange: buffs.maxEffectiveRange + range.max,
+      };
     const fullBurst = windowsOf().some((w) => w.start <= frame && frame < w.end);
     return { ...shotValueAt!(i, frame, buffs, fullBurst, progress), buffs };
   };

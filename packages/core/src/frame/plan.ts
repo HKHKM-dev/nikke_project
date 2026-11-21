@@ -71,9 +71,11 @@ import {
   applyResolvedEffect,
   fixedAttackBaseOf,
   hitRateNOf,
+  rangeUpOf,
   type AttackRounding,
   type BuffTotals,
   type HitRateN,
+  type RangeUp,
 } from '../skills/buffs.ts';
 import type { CounterId } from '../skills/counters.ts';
 import { stateMatches, statesMatching, type NamedStateId } from '../skills/states.ts';
@@ -195,7 +197,7 @@ export function slotTriggerDamage(
     // 変更の区間は、的の表の変更後の武器の行のコア命中率。適正最小射程距離▲ の区間は距離ボーナスも出し直す
     weaponChangeParts(
       enemy,
-      landingPartsWith(landing, slot, index, segmentLanding, hitRateNOf(buffs), buffs.minEffectiveRange),
+      landingPartsWith(landing, slot, index, segmentLanding, hitRateNOf(buffs), rangeUpOf(buffs)),
       buffs.weapon?.targetRowKey,
     ),
     fullBurst,
@@ -300,8 +302,8 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
             hitRateSpanWith(landing, slots[slotIndex]!, slotIndex, span, timed),
         }),
     // 条件「適正射程距離内なら」（着地点の計画が無ければ手入力の距離ボーナス。plan/design-agent-bunny.md 2.2 節）
-    effectiveRangeAt: (slotIndex: number, frame: number, minRange: number) =>
-      inEffectiveRangeAt(landing, slots[slotIndex]!, slotIndex, frame, minRange),
+    effectiveRangeAt: (slotIndex: number, frame: number, range: RangeUp) =>
+      inEffectiveRangeAt(landing, slots[slotIndex]!, slotIndex, frame, range),
     // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 蓄積爆破の発の値は、2 パス目の区間と同じ関数で数える
     shotValueAt: (slotIndex, frame, buffs, fullBurst, progress) => {
       const slot = slots[slotIndex]!;

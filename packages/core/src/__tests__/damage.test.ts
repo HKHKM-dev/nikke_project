@@ -138,6 +138,7 @@ describe('computeTriggerDamage', () => {
       trueDamage: 0,
       trueDamageConversion: 0,
       minEffectiveRange: 0,
+      maxEffectiveRange: 0,
       pierce: 0,
       pierceDamage: 0,
       pelletCount: 0,

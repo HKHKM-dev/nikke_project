@@ -70,11 +70,12 @@
 | 段階別の効果・下位効果のスタック適用（N 段階：N−1 段階フルスタック状態なら） | 段階ごとの状態の付与（同じきっかけ）と、上の段階の条件 `selfState` の `stacks: "full"`・`sameFiring: true` | クエンシー：エスケープクイーンの S2 | [design-quency-eq.md](design-quency-eq.md) 2 節の論点 3 |
 | 〈攻撃〉した時、自分が〈状態〉なら（同じ攻撃で別のスキルが〈状態〉を付ける） | timed の条件 `selfState` の `present: true`・`sameFiring: true`（同じ発で付いた状態も見る。きっかけは射撃の回数で、状態の付与と同じ回数の種類） | プリムの宝物版 S2 | [design-frima.md](design-frima.md) 2 節 |
 | 適正最小射程距離 X%▲／フルチャージ攻撃が適正射程距離内の対象に命中した時 | stat `minEffectiveRange`（状態だけの stat）／fullChargeShot の timed の `condition.inEffectiveRange: true` | エード：エージェントバニーの S1・S2・バースト | [design-agent-bunny.md](design-agent-bunny.md) 2.1・2.2 節 |
+| 適正最大射程距離 X%▲ | stat `maxEffectiveRange`（状態だけの stat。上端 × (1 + Σ)）。対象は自分に限らない（`targetWeapon` で絞れる） | レオナの S1 | [design-leona.md](design-leona.md) 2.1 節 |
 | 貫通特化／貫通ダメージ X%▲ | フラグの stat `pierce`（timed・passive（`while` も書ける）・状態の中身）／stat `pierceDamage` | エード：エージェントバニーの S2・バースト | 同 2.3 節 |
 | 使用武器変更の「追加効果：貫通特化」／変更後の武器の 1 発の弾の数（説明文に無く、録画で読む） | `weaponChange` の `pierce: true`／`shotCount` | ツバイのバースト | [design-zwei.md](design-zwei.md) 2.1・2.2 節 |
 | 「N スタック」「N 発間維持」 | timed の `maxStacksRef` と `durationShotsRef` | ツバイの宝物版 S1 | 同 2.3 節 |
 | デバフ効果解除 N 個（味方全体／デバフのかかった味方からランダムに N 機） | `removeDebuff`（`target: "allies"`／`"debuffedRandom"` と `targetCount`） | ココアの S1・バースト | [design-debuff-removal.md](design-debuff-removal.md) 2.2 節・[design-debuff-removal-timed.md](design-debuff-removal-timed.md) 2.1 節 |
-| ペレットの数を 1 個に固定／ペレット数 N 個▲（N 発間維持の貫通特化・命中率▲） | フラグの stat `singlePellet`／stat `pelletCount` と `scaling: "flat"`（どちらも timed の self。`pelletCount` は自分に付く状態の中身にも）／`durationShotsRef` を `hitRate`・`pierce`・`singlePellet` にも書ける | ドロシー：セレンディピティの S1・バースト、アルカナ：フォーチュンメイトの S2 の幸せな思い出 | [design-dorothy-serendipity.md](design-dorothy-serendipity.md) 2 節・[design-fortune-mate.md](design-fortune-mate.md) 2.3 節 |
+| ペレットの数を 1 個に固定／ペレット数 N 個▲（N 発間維持の貫通特化・命中率▲） | フラグの stat `singlePellet`／stat `pelletCount` と `scaling: "flat"`（`singlePellet` は timed の self。`pelletCount` は timed の self・allies・topAttack と、自分に付く状態の中身）／`durationShotsRef` を `hitRate`・`pierce`・`singlePellet` にも書ける | ドロシー：セレンディピティの S1・バースト、アルカナ：フォーチュンメイトの S2 の幸せな思い出、レオナの S2（SG の上位 2 機） | [design-dorothy-serendipity.md](design-dorothy-serendipity.md) 2 節・[design-fortune-mate.md](design-fortune-mate.md) 2.3 節・[design-leona.md](design-leona.md) 2.2 節 |
 | 〈状態〉が終了した時（残弾数減少・状態の付与） | きっかけ `{ "ended": 〈状態〉 }`（counterChange・ammoDecrease・状態の付与） | グレイブの S1 | [design-grave.md](design-grave.md) 2.1 節 |
 | 〈状態〉：…「最大装弾リロード完了時に解除」 | 状態の付与の `durationUntil: "reloadEnd"` | グレイブの S2 の過熱I | 同 2.2 節 |
 | 〈状態〉が終了した時（倍率ダメージ・timed・敵の状態の消去）／終了の N f 後のヒット | きっかけ `{ ended }`／damage と敵の消去の `delayFrames` | アスカ：WILLE の殲滅・緊急修復 | [design-asuka-wille.md](design-asuka-wille.md) 2.1 節・決めたこと |

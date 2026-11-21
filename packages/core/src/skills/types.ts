@@ -65,13 +65,16 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * minEffectiveRange = 適正最小射程距離▲（比率。plan/design-agent-bunny.md 2.1・2.3 節）。
  * 状態だけの stat（STATE_STATS）。適正射程距離（bonusRange）の下端を 下端 × (1 − Σ) に
  * 縮める（C-1043。式は R1 の仮説 C-1033）。条件が自動の枠の距離ボーナス（frame/landing.ts の distanceBonusAt）と、条件 inEffectiveRange が読む。射撃は変えない。
+ * maxEffectiveRange = 適正最大射程距離▲（比率。plan/design-leona.md 2.1 節）。状態だけの stat（STATE_STATS）。適正射程距離の上端を
+ * 上端 × (1 + Σ) に広げる（M1）。読む所と書ける所は minEffectiveRange と同じ（対象は自分に限らない）。
  * pierce = 貫通特化。値を持たないフラグ（ref を書かない）。それ自体は与ダメージを変えず、pierceDamage の乗る発にする。
  * pierceDamage = 貫通ダメージ▲（比率）。貫通特化（pierce）の効いている枠の通常攻撃にだけ、攻撃ダメージ▲と同じ和に足す（P1。C-1031）。
  * 倍率ダメージには足さない（C-1243）。バーストのダメージにも足さない（確かめていない）。定義を書くときの決まり: この効果に読む側の印 reads: ["pierce"] を書く
  * pelletCount = ペレット数 N 個▲（scaling 'flat'。値は個の数。plan/design-dorothy-serendipity.md 2.1・2.2 節）。
  * singlePellet = 「ペレットの数を 1 個に固定」。値を持たないフラグ
- * （ref を書かない）。効いていれば 1 発のペレットは 1 個で、▲より勝つ（C-1077）。どちらも self だけ（PELLET_STATS）で、singlePellet は
- * timed だけ、pelletCount は自分に付く状態の中身にも書ける（スタックの値は 1 スタックあたり。plan/design-fortune-mate.md 2.3 節）
+ * （ref を書かない）。効いていれば 1 発のペレットは 1 個で、▲より勝つ（C-1077）。singlePellet は timed の self だけ。pelletCount は
+ * timed の self・allies・topAttack（plan/design-leona.md 2.2 節）と、自分に付く状態の中身に書ける（スタックの値は 1 スタックあたり。
+ * plan/design-fortune-mate.md 2.3 節）
  */
 export const BUFF_STATS = [
   'attack',
@@ -150,6 +153,7 @@ export const BUFF_STATS = [
   'accumulateRatio',
   // 適正最小射程距離▲・貫通特化（フラグ）・貫通ダメージ▲（plan/design-agent-bunny.md 2.1・2.3 節）
   'minEffectiveRange',
+  'maxEffectiveRange',
   'pierce',
   'pierceDamage',
   // ペレット数▲（個。flat）・ペレットの数を 1 個に固定（フラグ。plan/design-dorothy-serendipity.md 2.1・2.2 節）
@@ -184,7 +188,7 @@ export function isFiringStat(stat: BuffStat | 'weapon'): boolean {
  * 状態だけを表す stat（射撃に効かない）。timed の件は区間の timedEffects に入れない。区間を割り、区間の
  * buffs と鍵に入るのは、着地点の計画（条件が自動の枠）があるときだけ（C-0170。手入力の枠の区間・グループは変わらない）
  */
-export const STATE_STATS = ['hitRate', 'minEffectiveRange'] as const satisfies readonly BuffStat[];
+export const STATE_STATS = ['hitRate', 'minEffectiveRange', 'maxEffectiveRange'] as const satisfies readonly BuffStat[];
 
 export function isStateStat(stat: BuffStat | 'weapon'): boolean {
   return (STATE_STATS as readonly string[]).includes(stat);
@@ -1325,8 +1329,8 @@ export function isStateEndUntil(u: unknown): u is StateEndUntil {
  * burstStep = この発動を撃った段階が N なら（plan/design-red-hood.md 2.1 節。『バーストⅠで使用時』など）。burstUse の
  * きっかけの timed・付与・cooldownReduction・weaponChange にだけ書ける。発火の文脈（このフレームの自分の発動の段階）だけで決まるので、
  * usedBurst と同じく件を見ず、効果の段を上げない。書けるのは burstStep が AllStep のキャラの定義だけ（definitions.test.ts）
- * inEffectiveRange = 発火のフレームの自分の着地点が、適正最小射程距離▲（minEffectiveRange）で縮めた適正射程距離の中なら
- * （plan/design-agent-bunny.md 2.2 節。距離ボーナスが乗る着地点と同じ判定。timed だけ）。条件が手入力の枠は、
+ * inEffectiveRange = 発火のフレームの自分の着地点が、適正最小射程距離▲（minEffectiveRange）・適正最大射程距離▲
+ * （maxEffectiveRange）で動かした適正射程距離の中なら（plan/design-agent-bunny.md 2.2 節・plan/design-leona.md 2.1 節。距離ボーナスが乗る着地点と同じ判定。timed だけ）。条件が手入力の枠は、
  * 手入力の距離ボーナスの有無で決める
  */
 export type EffectCondition = {
