@@ -93,6 +93,7 @@
 - モダン UI のバッジの既定の色（`apps/web/src/styles.css` の `.badge-ui_*` と `[class^='badge-…_']` の差し色・地の色の規則）は、クラス 1 つ分の詳細度を持つ。このため、場所ごとに色を変える規則（設定のボタンのライトでの反転・操作キャラの印のダークでの反転・育成を変えたスロットの青い歯車など）は、要素名や親を足して詳細度を上げている。ui のバッジの図柄を白にする規則も、バッジを 1 つ足すたびに列挙が伸びる。バッジの絵の縦横の比（`150 / 130` など）も、CSS の 7 か所に書き写している。直すなら、既定の色の規則を `:where(...)` で包む。あわせて、BadgeIcon がグループのクラスと、viewBox から作る `aspect-ratio` を付ける形にする（[design-modern-ui.md](design-modern-ui.md) の経過）
 - `npm run records:new -- observation --replace` は、中身が同じ下書きで差し替えても観測値の欄の並びを変える（`source`・`readAt` が後ろに回り、`method` などの後になる）。`packages/core/src/records/observationEdits.ts` の `replacedObservation` が、下書きを広げた後に `source`・`readAt` を置くため。中身は変わらないが、差分に余計な行が出る。前の観測値の欄の並びを残して差し替える（2026-11-21 起票。PR #1304 の見直しで見つけた）
 - CT の印（TimerTrigger の `cooldown`）のある周期の timed は遅れ（`delayFrames`）を書けない（`skills/parse/crossChecks.ts` の `validateCooldownTimers`。解決で `{ skillFired }` に置き換わり、窓は発動の次のフレームから）。発動から遅れて当たるヒットの次のフレームから付く▼（ノベルの S1 の防御力▼。C-1448）は印の無い同じ秒の周期で書くので、CT を縮める効果（`skillCooldownDown`・`skillCooldownReduction`）のある編成では、ダメージのヒットは早まるが▼の窓は元の周期のまま残る（`data/skills/212.json` の skill1 の effects[1] の assumes）。`{ skillFired }` のきっかけに遅れを足せるかを見る
+- `npm run pr:prep` が ID の重なりで出す `records:renumber` の手順どおりに振り直して commit しても、リベースは振り直す前の ID のファイルを足した commit から当て直すので、main の同じ ID のファイルと衝突して止まる（add/add。2026-11-21 に PR #1309 の写しで確かめた）。自動マージを待つ PR の衝突の直し（`tools/git/auto-rebase.ts`）は、ブランチを 1 つの commit にまとめてからリベースして避けている。`pr:prep` でも、重なりを振り直した後のリベースの前にまとめるか、手順の案内を直す（2026-11-21 起票。plan/design-auto-conflict-fix.md の実装で見つけた）
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
 
