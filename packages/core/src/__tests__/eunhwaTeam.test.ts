@@ -3,16 +3,27 @@
 // 意図どおりに出るか。射撃場の 3 分モード（条件は自動）で見る
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { planTeamRun } from '../frame/plan.ts';
+import { hexagonFrameOf, hitFrameOf } from '../burst/schedule.ts';
+import { burstHitBuffs, burstSnapshotState, planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import {
+  describeEveryShotInOneGroup,
+  fixedSlot,
+  fixedTeam,
+  rangeEnemyWithEvents,
+  skillValueOf,
+} from './teamHelpers.ts';
 
 const EUNHWA = 92;
 const FLOWER = 304;
 const LITER = 82;
 const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
+// バーストの防御力▼（Lv10）
+const BURST_DOWN = skillValueOf(EUNHWA, 'burst', 3) / 100;
+// S2 の防御力▼（Lv10）
+const S2_DOWN = skillValueOf(EUNHWA, 'skill2', 1) / 100;
 
 const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
 const team = (ids: number[], controlledSlot: number): TeamInput =>
@@ -68,6 +79,21 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
       for (const up of windows) {
         expect(up.map((w) => w.start)).toEqual(uses);
         for (const w of up) if (w.end < plan.frames) expect(w.end - w.start).toBe(gameSecondsToFrames(15));
+      }
+    });
+
+    it('lands the Burst hit 1 frame before the II mark, without the DEF down of the same activation (C-1379, C-1380)', () => {
+      const mine = plan.schedule!.activations.filter((a) => a.slotIndex === e);
+      for (const a of mine) expect(hitFrameOf(a)).toBe(hexagonFrameOf(a) - 1);
+      // 発動の時点の値で出すので、同じ発動の▼（ヒットの時点では付いている）は乗らない
+      for (const a of mine) {
+        const atHit = burstSnapshotState(plan.timeline, hitFrameOf(a), e, true).buffs;
+        const used = burstHitBuffs(plan.timeline, a.frame, hitFrameOf(a), e, true);
+        const atUse = burstSnapshotState(plan.timeline, a.frame, e, true).buffs;
+        expect(used).toEqual(atUse);
+        // この編成でほかに敵の防御力▼を付けるのは S2 だけなので、使う値は 0 か S2 の値（バーストの▼が入っていない）
+        expect([0, S2_DOWN].some((v) => Math.abs(used.enemyDefenseDown - v) < 1e-12)).toBe(true);
+        expect(atHit.enemyDefenseDown).toBeGreaterThanOrEqual(BURST_DOWN - 1e-12);
       }
     });
   }

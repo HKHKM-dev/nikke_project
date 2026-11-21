@@ -180,7 +180,7 @@ describe('data/skills', () => {
       expect(def.checkedAt <= new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Tokyo' })).toBe(true);
     });
 
-    it('references values that exist for every level (buffs ≤ 100%, burst damage ≥ 50% at Lv10)', () => {
+    it('references values that exist for every level (buffs ≤ 100%, burst damage ≥ 100% at Lv10)', () => {
       for (const slot of SKILL_SLOTS) {
         for (const effect of def.skills[slot].effects) {
           // Stage 11 モダニア: 使用武器の変更は damageRef、フラグの stat（装弾数無限）は ref を持たない
@@ -226,9 +226,9 @@ describe('data/skills', () => {
               const v = skillValue(character.skills[slot], ref, lv);
               expect(v).toBeGreaterThan(0);
               // イサベルのバーストは Lv1 で 93.65%（Lv10 で 149.85%）なので、下限は Lv10 だけで見る。
-              // ウンファのバーストは Lv10 で 85.62% なので、下限は 50% で見る
+              // ウンファのバーストは Lv10 で 85.62% なので、ウンファだけ下限を 80% で見る
               if (effect.kind === 'burstDamage') {
-                if (lv === SKILL_LEVEL_MAX) expect(v).toBeGreaterThanOrEqual(50);
+                if (lv === SKILL_LEVEL_MAX) expect(v).toBeGreaterThanOrEqual(resourceId === 92 ? 80 : 100);
               }
               // Stage 8 の倍率ダメージは 100% 未満もある（ドレイク S2 98.55%）ので上限を見ない。持続ダメージの 1 tick も倍率
               // ダメージなので上限を見ない（マナのバーストは Lv10 で 396%）。使用武器の変更の 1 発・装弾数も上限を見ない
