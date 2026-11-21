@@ -2,12 +2,14 @@ import { describe, expect, it } from 'vitest';
 import type { CharacterIndexEntry } from '@nikke/core';
 import {
   INITIAL_PARTIES,
+  moveSlotToParty,
   otherPartyResourceIds,
   partyOf,
   readParties,
   type PartiesState,
   serializeParties,
   switchParty,
+  updateOtherParty,
   withoutCrossPartyDuplicates,
 } from './parties.ts';
 import { INITIAL_TEAM_STATE, TEAM_FORMAT_VERSION, TEAM_SHAPE_ERROR, teamReducer, type TeamState } from './team.ts';
@@ -170,5 +172,36 @@ describe('parties', () => {
     const next = withoutCrossPartyDuplicates(state, team);
     expect(next.parties).toBe(state);
     expect(next.team).toBe(team);
+  });
+});
+
+describe('ほかの編成へ置く・移す（モダン UI のドラッグ）', () => {
+  it('一覧のニケを、選んでいる編成を変えずに、ほかの編成のスロットに置く', () => {
+    const team = withCharacter(INITIAL_TEAM_STATE, 0, 10);
+    const next = updateOtherParty(INITIAL_PARTIES, team, 2, { type: 'selectCharacter', index: 1, resourceId: 11 });
+    expect(next.active).toBe(0);
+    expect(next.parties[2]!.slots[1]!.resourceId).toBe(11);
+    // 選んでいる編成・範囲の外には置かない
+    expect(updateOtherParty(INITIAL_PARTIES, team, 0, { type: 'selectCharacter', index: 1, resourceId: 11 })).toBe(
+      INITIAL_PARTIES,
+    );
+    expect(updateOtherParty(INITIAL_PARTIES, team, 5, { type: 'selectCharacter', index: 1, resourceId: 11 })).toBe(
+      INITIAL_PARTIES,
+    );
+  });
+
+  it('選んでいる編成のニケを、ほかの編成のスロットへ移す（いたニケと、スロットの設定ごと入れ替える）', () => {
+    let team = withCharacter(INITIAL_TEAM_STATE, 0, 10);
+    team = { ...team, slots: team.slots.map((s, i) => (i === 0 ? { ...s, hpRatio: 0.5 } : s)) };
+    const placed = updateOtherParty(INITIAL_PARTIES, team, 1, { type: 'selectCharacter', index: 3, resourceId: 11 });
+    const moved = moveSlotToParty(placed, team, 0, 1, 3);
+    expect(moved.parties.active).toBe(0);
+    expect(moved.parties.parties[1]!.slots[3]!.resourceId).toBe(10);
+    expect(moved.parties.parties[1]!.slots[3]!.hpRatio).toBe(0.5);
+    expect(moved.team.slots[0]!.resourceId).toBe(11);
+    // 空の編成へ移すと、元のスロットは空になる
+    const toEmpty = moveSlotToParty(INITIAL_PARTIES, team, 0, 4, 0);
+    expect(toEmpty.parties.parties[4]!.slots[0]!.resourceId).toBe(10);
+    expect(toEmpty.team.slots[0]!.resourceId).toBeNull();
   });
 });

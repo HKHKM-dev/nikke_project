@@ -72,13 +72,24 @@ type Params = {
   calc: CalcView;
   roster: BuildSnapshot | null;
   placement: SlotPlacement;
-  /** 一覧のニケを、選んでいない編成 party のスロット index に置く（ModernView。その編成を選んでから置く）。from は動き始める位置 */
-  placeInParty: (resourceId: number, party: number, index: number, from: DOMRect | undefined) => void;
+  /** 一覧のニケを、選んでいない編成 party のスロット index に置く（ModernView。選んでいる編成は変えない） */
+  placeInParty: (resourceId: number, party: number, index: number) => void;
+  /** 選んでいる編成のスロット from のニケを、選んでいない編成 party のスロット index へ移す（ModernView） */
+  moveToParty: (from: number, party: number, index: number) => void;
   /** ドラッグを始めたとき */
   onDragStart: () => void;
 };
 
-export function useSlotDrag({ team, dispatch, calc, roster, placement, placeInParty, onDragStart }: Params) {
+export function useSlotDrag({
+  team,
+  dispatch,
+  calc,
+  roster,
+  placement,
+  placeInParty,
+  moveToParty,
+  onDragStart,
+}: Params) {
   const [draggedCharacter, setDraggedCharacter] = useState<CharacterIndexEntry | null>(null);
   const [draggingController, setDraggingController] = useState(false);
   const [draggedEmptyIndex, setDraggedEmptyIndex] = useState<number | null>(null);
@@ -178,13 +189,16 @@ export function useSlotDrag({ team, dispatch, calc, roster, placement, placeInPa
         if (placement.placeFromTray(intent.character.resourceId, intent.index, from)) setDropPlaced(true);
         break;
       }
-      case 'place-party': {
-        // 持ち上げた絵は、離した位置から、選んだ編成のスロットへ動かす
-        const from = document.querySelector('.char-drag-overlay .char-tray-item-visual')?.getBoundingClientRect();
+      case 'place-party':
+        // 置いたニケは選んでいない編成の行に出るので、持ち上げた絵は一覧へ戻さず、その場で消す
         setDropPlaced(true);
-        placeInParty(intent.character.resourceId, intent.party, intent.index, from);
+        placeInParty(intent.character.resourceId, intent.party, intent.index);
         break;
-      }
+      case 'move-party':
+        // 移したニケは選んでいない編成の行に出るので、持ち上げた絵は元のスロットへ戻さず、その場で消す
+        setDropPlaced(true);
+        moveToParty(intent.from, intent.party, intent.index);
+        break;
       case 'swap':
         // 持ち上げた絵は、離した位置から落とした先へ、落とした先にいたものは、その元の位置からドラッグ元へ動かす
         setDropPlaced(true);

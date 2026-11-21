@@ -2,7 +2,6 @@ import { DndContext, pointerWithin } from '@dnd-kit/core';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DamageTotalPanel } from '../components/DamageTotalPanel.tsx';
 import { ErrorBoundary } from '../components/ErrorBoundary.tsx';
-import { InertButton } from '../components/InertButton.tsx';
 import { NotesSummary } from '../components/NotesSummary.tsx';
 import { TeamSettingsForm } from '../components/TeamSettingsForm.tsx';
 import type { ViewProps } from './ViewProps.ts';
@@ -11,11 +10,8 @@ import { useSlotFit } from '../components/modern/useSlotFit.ts';
 import { ModernSlotCard } from '../components/modern/ModernSlotCard.tsx';
 import { PartyPreviewRow, PartyRowLabel } from '../components/modern/PartyPreviewRow.tsx';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
-import { useSlotUndo } from '../components/modern/useSlotUndo.ts';
-import { BadgeIcon } from '../components/modern/BadgeIcon.tsx';
-import { REDO_BADGE, UNDO_BADGE } from '../components/modern/badges.ts';
 import { SlotDragOverlay } from '../components/modern/SlotDragOverlay.tsx';
-import { slotGrowthEdited, slotGrowthMarks } from '../components/modern/slotBadges.ts';
+import { slotCollectionBadge, slotGrowthEdited, slotGrowthMarks } from '../components/modern/slotBadges.ts';
 import { useSlotDrag } from '../components/modern/useSlotDrag.ts';
 import { useSlotPlacement } from '../components/modern/useSlotPlacement.ts';
 import { commonGrowthOf, rosterGrowthOf } from '../roster.ts';
@@ -34,6 +30,8 @@ export function ModernView({
   parties,
   otherPartyIds,
   selectParty,
+  placeInParty,
+  moveToParty,
   totals,
   totalsPending,
   summarySlots,
@@ -79,24 +77,19 @@ export function ModernView({
   useSlotFit(slotsGridRef, team.slots.length, parties.active);
 
   // 置く・外す（絵を飛ばす）と、ドラッグ
-  // スロットのニケの並びを元に戻す（スロットの並びの上の中央のボタン）
-  const slotUndo = useSlotUndo(team, dispatch, parties.active);
-  const placement = useSlotPlacement(team, slotUndo.trackedDispatch);
+  const placement = useSlotPlacement(team, dispatch);
   const { clearSlot, placeFromTray } = placement;
   // ドラッグを始めたら、一覧のクリックで待っているニケをやめる
   const drag = useSlotDrag({
     team,
-    dispatch: slotUndo.trackedDispatch,
+    dispatch,
     calc,
     roster,
     placement,
-    // 選んでいない編成のスロットに落としたら、その編成を選んでから置く（元に戻すの履歴は編成を選ぶと空になるので、履歴に積まない dispatch で送る）。
-    // 一覧で持ち上げられるのは、どの編成にもいないニケだけ（CharacterTrayItem）
-    placeInParty: (resourceId, party, index, from) => {
-      selectParty(party);
-      placement.queueArrival(index, from);
-      dispatch({ type: 'selectCharacter', index, resourceId });
-    },
+    // 選んでいない編成の行のスロットに落としたら、一覧のニケはそこへ置き、選んでいる編成のニケはそこへ移す（いたニケと入れ替える）。
+    // どちらも選んでいる編成は変えない（オーナーの指示）。一覧で持ち上げられるのは、どの編成にもいないニケだけ（CharacterTrayItem）
+    placeInParty,
+    moveToParty,
     onDragStart: () => setPendingId(null),
   });
 
@@ -169,28 +162,9 @@ export function ModernView({
 
               <DamageTotalPanel title="合計ダメージ" value={totals.total} computing={totalsPending} />
             </div>
-            {/* 5 つの編成のスロットを 1 行ずつ並べる（オーナーの指示）。行の左に編成の番号とダメージ。選んでいる編成の行だけ操作でき、
-              ほかの行は押すとその編成を選ぶ（PartyPreviewRow）。元に戻す・やり直すは、選んでいる編成のもの */}
+            {/* 5 つの編成のスロットを 1 行ずつ並べる（オーナーの指示）。行の左に編成の番号。選んでいる編成の行だけ操作でき、
+              ほかの行は押すとその編成を選ぶ。ドラッグで、一覧のニケを置き、選んでいる編成のニケを移せる（PartyPreviewRow） */}
             <div className="modern-slots-area">
-              {/* 元に戻す・やり直す（スロットの並びの上の端の中央。戻せる・やり直せる並びが無いときは押せない）。絵はバッジ ui_undo・ui_redo */}
-              <div className="modern-slot-history">
-                <InertButton
-                  className="modern-slot-undo-button"
-                  label="元に戻す"
-                  enabled={slotUndo.canUndo}
-                  onPress={() => slotUndo.undo(placement)}
-                >
-                  <BadgeIcon className="modern-slot-undo-icon" name={UNDO_BADGE} />
-                </InertButton>
-                <InertButton
-                  className="modern-slot-undo-button"
-                  label="やり直す"
-                  enabled={slotUndo.canRedo}
-                  onPress={() => slotUndo.redo(placement)}
-                >
-                  <BadgeIcon className="modern-slot-undo-icon" name={REDO_BADGE} />
-                </InertButton>
-              </div>
               {parties.parties.map((party, p) => (
                 <div key={p} className={`modern-party-row ${p === parties.active ? 'modern-party-row-active' : ''}`}>
                   <PartyRowLabel partyIndex={p} active={p === parties.active} onSelect={() => selectParty(p)} />
@@ -206,6 +180,7 @@ export function ModernView({
                             characterEntry={characterEntry}
                             error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
                             growthMarks={slotGrowthMarks(calc, team, roster, i)}
+                            collectionBadge={slotCollectionBadge(calc, i)}
                             growthEdited={slotGrowthEdited(team, roster, i)}
                             controlled={team.controlledSlot === i}
                             onPlacePending={pendingId !== null ? () => handlePlacePending(i) : undefined}

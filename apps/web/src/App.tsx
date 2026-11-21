@@ -8,12 +8,20 @@ import { SettingsMenu } from './components/SettingsMenu.tsx';
 import { UnreadableSavesNotice } from './components/UnreadableSavesNotice.tsx';
 import { INITIAL_TEAM_STATE, teamReducer, type TeamAction } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
-import { INITIAL_PARTIES, otherPartyResourceIds, switchParty, type PartiesState } from './parties.ts';
+import {
+  INITIAL_PARTIES,
+  moveSlotToParty,
+  otherPartyResourceIds,
+  switchParty,
+  updateOtherParty,
+  type PartiesState,
+} from './parties.ts';
 import { slotSkillsStatus, useSkillDefinitions } from './useSkillDefinitions.ts';
 import { orderCharacters } from './listOrder.ts';
 import { ListOrderContext, useListOrder } from './useListOrder.ts';
 import { useMasters } from './useMasters.ts';
 import { usePartyTotals } from './usePartyTotals.ts';
+import { withRosterFields } from './roster.ts';
 import { useRoster } from './useRoster.ts';
 import { useSavedTeam } from './useSavedTeam.ts';
 import { useTeamComputation } from './useTeamComputation.ts';
@@ -59,6 +67,12 @@ export function App() {
 
   const selectParty = (to: number) => {
     const next = switchParty(parties, team, to);
+    setParties(next.parties);
+    dispatch({ type: 'replace', state: next.team });
+  };
+  // 選んでいる編成のスロット from のニケを、ほかの編成 party のスロット index へ移す（いたニケと入れ替える。選んでいる編成は変えない）
+  const moveToParty = (from: number, party: number, index: number) => {
+    const next = moveSlotToParty(parties, team, from, party, index);
     setParties(next.parties);
     dispatch({ type: 'replace', state: next.team });
   };
@@ -114,6 +128,13 @@ export function App() {
   const summarySlots = useMemo(() => notesSummarySlots(calc, slotResults), [calc, slotResults]);
 
   const otherPartyIds = useMemo(() => otherPartyResourceIds(parties), [parties]);
+  // 一覧のニケを、ほかの編成 party のスロット index に置く（育成状況の育成を付ける。選んでいる編成は変えない）。
+  // どこかの編成にいるニケは置かない（ソロレイドでは同じニケを 2 つの編成に入れられない）
+  const placeInParty = (resourceId: number, party: number, index: number) => {
+    if (otherPartyIds.has(resourceId) || team.slots.some((s) => s.resourceId === resourceId)) return;
+    const action = withRosterFields({ type: 'selectCharacter', index, resourceId }, rosterControls.roster);
+    setParties(updateOtherParty(parties, team, party, action));
+  };
   // ほかの編成で使っているニケは、いまの編成に入れない（ソロレイドでは同じニケを 2 つの編成に入れられない）。
   // 一覧と選択肢でも選べなくしてあるが、編成を変える操作はすべてここを通るので、ここで止める
   const dispatchToTeam = useCallback(
@@ -139,6 +160,8 @@ export function App() {
         parties,
         otherPartyIds,
         selectParty,
+        placeInParty,
+        moveToParty,
         totals,
         totalsPending,
         summarySlots,

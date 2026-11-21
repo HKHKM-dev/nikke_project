@@ -11,7 +11,9 @@ import {
   isRecord,
   parseTeamObject,
   readVersionedJson,
+  teamReducer,
   type SlotState,
+  type TeamAction,
   type TeamState,
 } from './team.ts';
 
@@ -124,6 +126,45 @@ export function switchParty(
   const next = withParty(team, parties[to] ?? null);
   parties[to] = null;
   return { parties: { active: to, parties }, team: next };
+}
+
+/**
+ * ほかの編成 to のスロットを、編成の操作 action で変える（一覧のニケを選んでいない編成の行に置く。モダン UI）。選んでいる編成は変えない。
+ * to が選んでいる編成・範囲の外なら何もしない
+ */
+export function updateOtherParty(state: PartiesState, team: TeamState, to: number, action: TeamAction): PartiesState {
+  if (to === state.active || to < 0 || to >= PARTY_COUNT) return state;
+  const before = withParty(team, state.parties[to] ?? null);
+  const after = teamReducer(before, action);
+  if (after === before) return state;
+  const parties = state.parties.slice();
+  parties[to] = partyOf(after);
+  return { ...state, parties };
+}
+
+/**
+ * 選んでいる編成のスロット from を、ほかの編成 to のスロット index と入れ替える（ニケを選んでいない編成の行へ移す。モダン UI）。
+ * 育成・スキル・スロットの詳細設定はニケと一緒に動く（スロットの中身ごと入れ替える）。移した先にいたニケは from に来る。
+ * 選んでいる編成は変えない。to が選んでいる編成・範囲の外なら何もしない
+ */
+export function moveSlotToParty(
+  state: PartiesState,
+  team: TeamState,
+  from: number,
+  to: number,
+  index: number,
+): { parties: PartiesState; team: TeamState } {
+  if (to === state.active || to < 0 || to >= PARTY_COUNT) return { parties: state, team };
+  const target = state.parties[to] ?? partyOf(INITIAL_TEAM_STATE);
+  const moving = team.slots[from];
+  const staying = target.slots[index];
+  if (moving === undefined || staying === undefined) return { parties: state, team };
+  const parties = state.parties.slice();
+  parties[to] = { ...target, slots: target.slots.map((s, i) => (i === index ? moving : s)) };
+  return {
+    parties: { ...state, parties },
+    team: { ...team, slots: team.slots.map((s, i) => (i === from ? staying : s)) },
+  };
 }
 
 export function serializeParties(state: PartiesState): string {

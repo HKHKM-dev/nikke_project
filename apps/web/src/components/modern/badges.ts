@@ -95,9 +95,6 @@ export const FAVORITE_COUNT_BADGE = badgeName('ui_blank_main');
 
 /** ニケ一覧の絞り込みを外すボタン（CharacterTray）のバッジ */
 export const RETURN_BADGE = badgeName('ui_return');
-/** スロットの並びの元に戻す・やり直すのボタン（ModernView）のバッジ */
-export const UNDO_BADGE = badgeName('ui_undo');
-export const REDO_BADGE = badgeName('ui_redo');
 /** スロットの立ち絵の右上の、空にするボタンと育成・設定のボタン（ModernSlotCard）のバッジ */
 export const DELETE_BADGE = badgeName('ui_delete');
 export const BUILD_BADGE = badgeName('ui_setting');

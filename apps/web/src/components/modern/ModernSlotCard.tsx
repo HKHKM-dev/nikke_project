@@ -8,6 +8,7 @@ import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
 import type { ActiveDragData, OverDragData } from './dropIntent.ts';
 import { useScrollingName } from './useScrollingName.tsx';
+import type { Badge } from './badges.ts';
 
 /** 操作キャラの印（バッジ ui_controller）。ModernSlotCard の上の段と、ドラッグ中の重ねる絵（SlotDragOverlay）が使う */
 export function ControllerIcon() {
@@ -44,6 +45,8 @@ type Props = {
   error: string | undefined;
   /** 名前の上に出す限界突破とコア強化の段階（ニケがいないときは null） */
   growthMarks: GrowthMarks | null;
+  /** 絵のバッジの列の最後に出すコレクション（宝物）のバッジ（slotCollectionBadge） */
+  collectionBadge: Badge | null;
   /** 育成を変えたか（育成・設定のボタンの歯車を青にする。slotGrowthEdited） */
   growthEdited: boolean;
   /** 一覧でクリックしたニケが、置くスロットのクリックを待っているときだけ渡す（このスロットに置く） */
@@ -58,6 +61,7 @@ export function ModernSlotCard({
   characterEntry,
   error,
   growthMarks,
+  collectionBadge,
   growthEdited,
   onPlacePending,
   onOpenBuildModal,
@@ -111,7 +115,7 @@ export function ModernSlotCard({
         <div className="modern-slot-char-area" onClick={onPlacePending}>
           {characterEntry ? (
             <>
-              <CharacterVisual character={characterEntry} size="portrait" tallImage />
+              <CharacterVisual character={characterEntry} size="portrait" tallImage extraBadge={collectionBadge} />
               <SlotCharName name={characterEntry.name.ja} marks={growthMarks} />
               {/* 置いたニケが動いてくる間（flight.ts の modern-slot-arriving）と、ドラッグで持ち上げている間・戻る間は、立ち絵の代わりに空のスロットの枠を出す */}
               <div className="modern-slot-arrival-face" aria-hidden="true">

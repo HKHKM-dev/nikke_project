@@ -13,7 +13,6 @@ import {
   TEAM_FORMAT_VERSION,
   initialTeamState,
   placeCharacterAction,
-  rearrangeActions,
   readTeamJson,
   serializeTeamState,
   takenResourceIds,
@@ -122,39 +121,6 @@ describe('teamReducer', () => {
     const s = withCharacters([10, 20, null, 30]);
     expect([...takenResourceIds(s, 1)].sort()).toEqual([10, 30]);
     expect([...takenResourceIds(s, 2)].sort()).toEqual([10, 20, 30]);
-  });
-});
-
-describe('rearrangeActions', () => {
-  const arrange = (current: (number | null)[], target: (number | null)[]) => {
-    let state = initialTeamState();
-    current.forEach((id, i) => {
-      if (id !== null) state = teamReducer(state, { type: 'selectCharacter', index: i, resourceId: id });
-    });
-    // 育成がニケと一緒に動くかを見る印（スロットの HP の割合の想定を、ニケの番号から決めた値にする）
-    state = {
-      ...state,
-      slots: state.slots.map((s) => ({ ...s, hpRatio: s.resourceId === null ? 1 : s.resourceId / 100 })),
-    };
-    for (const action of rearrangeActions(current, target)) state = teamReducer(state, action);
-    return state;
-  };
-
-  it('restores the arrangement, moving the slot settings with each nikke', () => {
-    const state = arrange([1, 2, 3, null, 5], [3, null, 1, 2, 4]);
-    expect(state.slots.map((s) => s.resourceId)).toEqual([3, null, 1, 2, 4]);
-    expect(state.slots[0]!.hpRatio).toBe(0.03);
-    expect(state.slots[2]!.hpRatio).toBe(0.01);
-    expect(state.slots[3]!.hpRatio).toBe(0.02);
-  });
-
-  it('does nothing when the arrangement is the same', () => {
-    expect(rearrangeActions([1, null, 3], [1, null, 3])).toEqual([]);
-  });
-
-  it('handles a cycle of moves', () => {
-    const state = arrange([1, 2, 3, 4, 5], [5, 1, 2, 3, 4]);
-    expect(state.slots.map((s) => s.resourceId)).toEqual([5, 1, 2, 3, 4]);
   });
 });
 

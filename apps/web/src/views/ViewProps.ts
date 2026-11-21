@@ -25,6 +25,10 @@ export type ViewProps = {
   /** ほかの編成で選んでいるニケ（parties.ts の otherPartyResourceIds） */
   otherPartyIds: OtherParties;
   selectParty: (to: number) => void;
+  /** 一覧のニケを、ほかの編成 party のスロット index に置く（選んでいる編成は変えない） */
+  placeInParty: (resourceId: number, party: number, index: number) => void;
+  /** 選んでいる編成のスロット from のニケを、ほかの編成 party のスロット index へ移す（いたニケと入れ替える） */
+  moveToParty: (from: number, party: number, index: number) => void;
   totals: { parties: PartyTotal[]; total: number | null };
   totalsPending: boolean;
   summarySlots: readonly (NotesSummarySlot | null)[];

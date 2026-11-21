@@ -1,13 +1,6 @@
 // モダン UI で、一覧のニケをスロットに置く・スロットから外す操作と、そのときに絵を飛ばすアニメーション（flight.ts）
 import { useLayoutEffect, useRef, type Dispatch } from 'react';
-import {
-  arrangementOf,
-  placeCharacterAction,
-  rearrangeActions,
-  type Arrangement,
-  type TeamAction,
-  type TeamState,
-} from '../../team.ts';
+import { placeCharacterAction, type TeamAction, type TeamState } from '../../team.ts';
 import { slotCardAt } from './dropAnimation.ts';
 import { flyIntoSlot, flyToTray, stopArrival } from './flight.ts';
 
@@ -35,14 +28,6 @@ export type SlotPlacement = {
    * toIndex にいたもの（ニケ）は、その元の位置から fromIndex へ動かす
    */
   swapSlots: (fromIndex: number, toIndex: number, dragged?: DOMRect) => void;
-  /**
-   * スロットのニケの並びを target にする（元に戻す。useSlotUndo）。育成・設定はニケと一緒に動き、いまの値のまま（rearrangeActions）。
-   * 外れるニケは一覧へ、動くニケは前のスロットから、一覧から入るニケは一覧の絵から、それぞれのスロットへ動かす。
-   * 操作は send で送る（元に戻すの履歴に積まない dispatch を渡せる）
-   */
-  rearrange: (target: Arrangement, send?: Dispatch<TeamAction>) => void;
-  /** スロット index へ、from から絵を動かす（次の描画で、そのスロットに絵が入ってから動かし始める）。ほかの編成に置くとき（ModernView）に使う */
-  queueArrival: (index: number, from: DOMRect | undefined) => void;
 };
 
 export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>): SlotPlacement {
@@ -106,25 +91,5 @@ export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>
     dispatch({ type: 'swapSlots', fromIndex, toIndex });
   };
 
-  const rearrange = (target: Arrangement, send: Dispatch<TeamAction> = dispatch) => {
-    const current = arrangementOf(team);
-    const actions = rearrangeActions(current, target);
-    if (actions.length === 0) return;
-    // 動く前のスロットの立ち絵の位置（スロットの間を動くニケは、ここから動かす）
-    const slotRects = new Map<number, DOMRect>();
-    current.forEach((id, i) => {
-      const rect = slotAreaAt(i)?.getBoundingClientRect();
-      if (id !== null && rect) slotRects.set(id, rect);
-    });
-    current.forEach((id, i) => {
-      if (id !== null && !target.includes(id)) sendToTray(i);
-    });
-    target.forEach((id, i) => {
-      if (id !== null && current[i] !== id)
-        queueArrival(i, slotRects.get(id) ?? trayVisualAt(id)?.getBoundingClientRect());
-    });
-    for (const action of actions) send(action);
-  };
-
-  return { clearSlot, placeFromTray, swapSlots, rearrange, queueArrival };
+  return { clearSlot, placeFromTray, swapSlots };
 }

@@ -288,3 +288,7 @@
 - 2026-11-21: オーナーのコメントで、選んでいない編成の行のスロットにも、ニケ一覧のニケをドラッグで置けるようにした（PartyPreviewRow のカードを受け口にし、dropIntent の place-party。落とすと、その編成を選んでから置く）。スロットのニケ・操作の印は、ほかの編成の行へは落とせない。あわせて、5 行を出してからスロットのカードを番号で探す slotCardAt が選んでいない行のカードも数えていたのを、選んでいる行だけにした
 - 2026-11-21: オーナーのコメントで、共通育成のシンクロ LV の欄を、増減のボタンがあっても 4 桁の数字が全部見える幅（5.5em）にした。行の左の編成の番号のボタンを、幅（4em）はそのままで正方形にした
 - 2026-11-21: オーナーのコメントで、ニケ一覧の ⓘ（未対応の印）を外した。これで画面から ⓘ は無くなった（CharacterVisual の印・styles.css の .char-unsupported-tag・トレイと ModernView・ViewProps・App の受け渡し・UNSUPPORTED_BADGE を削除）。未対応・近似・仮定は「未対応・近似・仮定の一覧」に出る。知らせの文を作る unsupportedNoteOf（useSkillDefinitions.ts）とテストは残す
+- 2026-11-21: オーナーのコメントで、スロットの並びの上の「元に戻す」「やり直す」のボタンを外した（useSlotUndo とそのテスト・useSlotPlacement の rearrange・team.ts の rearrangeActions と arrangementOf・UNDO_BADGE と REDO_BADGE・styles.css の規則を削除。バッジの絵 ui_undo・ui_redo は scripts/badges.ts に残す）
+- 2026-11-21: オーナーのコメントと指示で、選んでいない編成の行へのドラッグを変えた。選んでいる編成のスロットのニケを、ほかの編成の行のスロットへ移せるようにした（dropIntent の move-party。いたニケとスロットの設定ごと入れ替える。parties.ts の moveSlotToParty）。一覧のニケを置くときも、その編成を選ばずに置く（parties.ts の updateOtherParty。育成状況の育成を付ける）。どちらも選んでいる編成は切り替えない
+- 2026-11-21: オーナーの指示で、スロットが埋まっているときに一覧のニケをクリックして出る ◎ と ▼ を、縦長の立ち絵の中央に合わせた（top を --slot-portrait-h の 1 倍に。縦長にしたとき半分のままだった）。縦長のスロットの立ち絵（と持ち上げた絵）に、コレクションのバッジを戻した（ModernSlotCard の collectionBadge）
+- 2026-11-21: オーナーのコメントで、編成の行の左の番号のボタン（選んでいない編成）の色を、ライトとダークで入れ替えた（modern.css）

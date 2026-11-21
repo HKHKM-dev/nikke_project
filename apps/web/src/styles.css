@@ -213,16 +213,15 @@ header h1 {
   align-items: center;
   gap: 8px;
 }
-/* 枠と地を出さず、絵だけのボタン（アカウントと設定・元に戻す・スロットの右上・絞り込みのクリア） */
+/* 枠と地を出さず、絵だけのボタン（アカウントと設定・スロットの右上・絞り込みのクリア） */
 .settings-menu-button,
-.modern-slot-undo-button,
 .modern-slot-icon-button,
 .char-tray-filter-clear {
   border: none;
   background: none;
   box-shadow: none;
 }
-/* 共通育成の「育成状況の値に戻す」（モダン UI。絵だけのボタン。バッジ ui_return）。戻せないときは、元に戻すのボタンと同じく薄くする */
+/* 共通育成の「育成状況の値に戻す」（モダン UI。絵だけのボタン。バッジ ui_return）。戻せないときは薄くする */
 .roster-revert-icon-button {
   display: inline-flex;
   padding: 0 4px;
@@ -264,10 +263,9 @@ svg.settings-option-icon.badge-ui_classic {
   height: calc(22px * 150 / 130);
 }
 /* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。育成と設定のボタン・設定のメニューの選択肢の絵・
-   元に戻す・やり直すのボタン・ニケ一覧の絞り込みのクリア・共通育成の「育成状況の値に戻す」。図柄を白にするバッジごとの規則より強くするため、要素名や親を付ける */
+   ニケ一覧の絞り込みのクリア・共通育成の「育成状況の値に戻す」。図柄を白にするバッジごとの規則より強くするため、要素名や親を付ける */
 svg.settings-menu-icon,
 svg.settings-option-icon,
-svg.modern-slot-undo-icon,
 svg.char-tray-filter-clear-icon,
 svg.roster-revert-icon {
   --badge-ground: light-dark(#ffffff, #1a1a1a);
@@ -826,35 +824,6 @@ svg.roster-revert-icon {
 
 /* 5スロットグリッド */
 /* 5 枚を 1 段に並べ、余った幅は左右に分けて中央に寄せる。幅が足りなければ立ち絵を縮めて収める（useSlotFit.ts が --slot-portrait-h を置く） */
-/* スロットの並びと、その上の端の中央の「元に戻す」「やり直す」のボタン（useSlotUndo）。ボタンの段の高さはいつも空けておく */
-.modern-slots-area {
-  position: relative;
-  padding-top: 30px;
-}
-.modern-slot-history {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  translate: -50%;
-  z-index: 3;
-  display: flex;
-  gap: 4px;
-}
-.modern-slot-undo-button {
-  display: inline-flex;
-  padding: 3px 4px;
-  cursor: pointer;
-}
-/* 戻せる・やり直せる並びが無いときは、薄くして押せなくする（disabled でなく aria-disabled。InertButton） */
-.modern-slot-undo-button[aria-disabled='true'] {
-  cursor: default;
-  opacity: 0.3;
-}
-.modern-slot-undo-icon {
-  display: block;
-  width: 26px;
-  height: 26px;
-}
 .modern-slots-grid {
   display: flex;
   flex-wrap: wrap;
@@ -940,8 +909,8 @@ svg.roster-revert-icon {
 }
 .modern-slot-target {
   position: absolute;
-  /* 立ち絵（.modern-slot-char-area の先頭、高さ --slot-portrait-h）の中央 */
-  top: calc(var(--slot-portrait-h) / 2);
+  /* 立ち絵（.modern-slot-char-area の先頭。縦長で、高さは --slot-portrait-h の 2 倍）の中央 */
+  top: var(--slot-portrait-h);
   left: 50%;
   /* 外の輪の外径が絵の幅の 3/4 × 0.84（元の大きさで約 54px）。絵は外の輪が枠の端まで描かれている。絵が縮むと一緒に縮む */
   width: calc(var(--slot-portrait-h) * 3 / 4 * 0.84);
@@ -966,8 +935,8 @@ svg.roster-revert-icon {
 /* ◎ の上の ▼（ui_selection_triangle.svg）。◎ が縮むときに上へ、広がるときに下へ動く（◎ と同じ周期と緩急） */
 .modern-slot-target-arrow {
   position: absolute;
-  /* ◎ の外の輪の少し上（絵の中央から、絵の幅の 3/8 + 3/20 だけ上）。枠の上 19% は絵の空き */
-  top: calc(var(--slot-portrait-h) / 2 - var(--slot-portrait-h) * 3 / 8 - var(--slot-portrait-h) * 3 / 20);
+  /* ◎ の外の輪の少し上（縦長の絵の中央から、絵の幅の 3/8 + 3/20 だけ上）。枠の上 19% は絵の空き */
+  top: calc(var(--slot-portrait-h) - var(--slot-portrait-h) * 3 / 8 - var(--slot-portrait-h) * 3 / 20);
   left: 50%;
   /* 絵の三角は枠の幅の 76%（左右 12% ずつ空き）。三角の幅を絵の幅の 3/16 にする */
   width: calc(var(--slot-portrait-h) * 3 / 16 / 0.76);
