@@ -262,6 +262,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   },
   // エピネル: III のタイマーの 00.00 から「敵全体に」のバーストスキルダメージの 1 ヒットまで 39f（動画で 60〜61f。止まり 22f を含む）
   { resourceIds: [241], delays: { hitFrames: 39, effectFrames: 0 }, claim: 'C-1361' },
+  // 2B: III のタイマーの 00.00 から分配ダメージ（1 ヒット）まで 15f（動画で 36〜37f。止まり 22f を含む）。S1 の最大HP▲（{ count: burstUse }）は
+  // 00.00 の 14〜18f 後（動画で 36〜40f）に付くので、ヒットと同じ 15f にした。分配ダメージに同じ発動の▲は乗らない（V-0810）
+  { resourceIds: [810], delays: { hitFrames: 15, effectFrames: 15 }, claim: 'C-1375' },
 ];
 
 /**

@@ -1,0 +1,319 @@
+{
+  "verification": "V-0810",
+  "note": "撮影の予測。ココア（I）+ ソルジャーF.A.（II）+ 2B（III・操作）、オートバースト ON。射撃場の BigArms（灼熱）・3 分モード・スペック固定 ON（スキル Lv10）。S2 の倍率ダメージの遅れとゲージ、バーストの遅れの表の行、追加ダメージの遅れは撮る前の仮の形。S1 の段が置き換わる読み（H-replace）と、バーストの値に同じ発動の S1 の段が乗る読み（H-same。遅れの表の sameActivationBuffsOnHit は burst スロットの効果だけを足す）は予測ファイルにできないので、検証記録に手で書く",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 301
+    },
+    {
+      "rid": 810,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S1 の段は足していく持続の▲。S2 の攻撃力▲は各フレームの最終最大HP を読み直す。バーストの分配ダメージに同じ発動の▲は乗らない）",
+      "override": {}
+    },
+    {
+      "id": "H-fixed",
+      "note": "S2 の攻撃力▲が戦闘開始の最終最大HP で固まり、後の最大HP▲ を追わない（S1 の 3 つの効果を落として近似する。2B の与ダメージで最大HP を読むのは S2 の▲だけなので同じ値になる）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 810,
+            "skill": "skill1",
+            "index": 2
+          },
+          {
+            "rid": 810,
+            "skill": "skill1",
+            "index": 1
+          },
+          {
+            "rid": 810,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "shot-pre",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "1 回目のバーストより前の 2B の通常攻撃の 1 ヒット（胴体・会心なし）"
+    },
+    {
+      "id": "shot-b1",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "1 回目のバーストのフルバーストの後（2 回目の前）の 1 ヒット"
+    },
+    {
+      "id": "shot-b2",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3800,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "2 回目のバーストのフルバーストの後の 1 ヒット"
+    },
+    {
+      "id": "shot-b3",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 6300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "3 回目のバーストのフルバーストの後の 1 ヒット"
+    },
+    {
+      "id": "shot-b4",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 9000,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "4 回目のバーストのフルバーストの後の 1 ヒット（3 回目の後と同じ値の見込み）"
+    },
+    {
+      "id": "burst-1",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "1 回目のバーストの分配ダメージ（会心なし。00.00 に 1 ヒットの仮の形）"
+    },
+    {
+      "id": "burst-2",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "2 回目のバーストの分配ダメージ（会心なし。00.00 に 1 ヒットの仮の形）"
+    },
+    {
+      "id": "burst-3",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "3 回目のバーストの分配ダメージ（会心なし。00.00 に 1 ヒットの仮の形）"
+    },
+    {
+      "id": "burst-4",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "4 回目のバーストの分配ダメージ（会心なし。00.00 に 1 ヒットの仮の形）"
+    },
+    {
+      "id": "additional-1",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "1 回目のバーストの追加ダメージ（会心なし。発動のフレームの仮の形）"
+    },
+    {
+      "id": "s2-1",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "1 回目の 300 回射撃の倍率ダメージ（会心なし）"
+    },
+    {
+      "id": "s2-count",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "skill2"
+      },
+      "note": "300 回射撃の倍率ダメージの回数"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "bbfad4f8156294d67a33f47a72215bbd9ef29144",
+    "values": {
+      "H1": {
+        "shot-pre": 22073.73103,
+        "shot-b1": 23663.992169999998,
+        "shot-b2": 26844.592320000003,
+        "shot-b3": 36002.72728000001,
+        "shot-b4": 36002.72728000001,
+        "burst-1": 6914829.3984,
+        "burst-2": 7412995.497600001,
+        "burst-3": 8409352.089600002,
+        "burst-4": 11278234.5984,
+        "additional-1": 2245074.48,
+        "s2-1": 508865.47949999996,
+        "s2-count": 5
+      },
+      "H-fixed": {
+        "shot-pre": 22073.73103,
+        "shot-b1": 22073.73103,
+        "shot-b2": 22073.73103,
+        "shot-b3": 22073.73103,
+        "shot-b4": 22073.73103,
+        "burst-1": 6914829.3984,
+        "burst-2": 6914829.3984,
+        "burst-3": 6914829.3984,
+        "burst-4": 6914829.3984,
+        "additional-1": 2245074.48,
+        "s2-1": 474668.84049999993,
+        "s2-count": 5
+      }
+    }
+  }
+}
