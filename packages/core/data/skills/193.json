@@ -16,7 +16,10 @@
           "assumes": {
             "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から 10 秒ごとに発動する（1 回目も 10 秒。戦闘開始時には発動しない）。「残りの HP の割合が最も低い敵 1 機」は、射撃場の的 1 体に 1 ヒット。発動からヒットまで 15f。ヒットは会心しうる",
             "en": "The description gives no trigger. It is an active skill on a cooldown, activating every 10 s from the start of combat (the first also at 10 s; not at the start of combat). \"1 enemy with the lowest remaining HP ratio\" is one hit on the single range target. 15 f from activation to hit. The hit can be critical"
-          }
+          },
+          "claims": [
+            "C-1492"
+          ]
         }
       ],
       "notes": [
@@ -41,7 +44,10 @@
           "assumes": {
             "ja": "フルバーストの始まりのフレームから、自分の 2 発目の通常攻撃まで付く。それ自体は射撃場の的 1 体への与ダメージを変えず（C-0076）、味方の貫通ダメージ▲を読む編成でだけ効く",
             "en": "Applies from the Full Burst start frame through her 2nd normal attack. By itself it does not change damage on the single range target (C-0076); it matters only with allies' Pierce Damage ups in the team"
-          }
+          },
+          "claims": [
+            "C-1494"
+          ]
         },
         {
           "kind": "timed",
@@ -53,7 +59,10 @@
           "assumes": {
             "ja": "フルバーストの始まりのフレームから、自分の 2 発目の通常攻撃まで付く（貫通特化と同じ窓）。窓の中に出た S1 のヒットにも乗る（確かめていない）",
             "en": "Applies from the Full Burst start frame through her 2nd normal attack (the same window as Pierce). It also applies to an S1 hit landing inside the window (not verified)"
-          }
+          },
+          "claims": [
+            "C-1493"
+          ]
         }
       ]
     },
@@ -65,7 +74,10 @@
           "target": "self",
           "stat": "critRate",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-1495"
+          ]
         },
         {
           "kind": "timed",
@@ -77,7 +89,10 @@
           "assumes": {
             "ja": "SG の命中率▲は、近（近 A・近 B）でだけ弾丸命中率を上げる形で回す（C-0631）。中近・中遠・遠は上げない形（C-0527。仮説で、帯ごとには確かめていない）",
             "en": "Hit Rate up on an SG raises the pellet hit rate only at near (near A/B) (C-0631). At mid-near, mid-far and far it is run as having no effect (C-0527; a hypothesis, not verified per band)"
-          }
+          },
+          "claims": [
+            "C-1495"
+          ]
         }
       ]
     }
