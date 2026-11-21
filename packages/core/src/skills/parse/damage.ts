@@ -9,6 +9,7 @@ import {
   isAppliedTrigger,
   isCounterFullTrigger,
   isEndedTrigger,
+  isFullStackTrigger,
   isShotCountTrigger,
   isSummonAttackTrigger,
   isTimerTrigger,
@@ -220,7 +221,7 @@ function parseGaugeHitsAndCondition(v: Record<string, Json>, effect: DamageEffec
  * 「〈効果名〉が適用された時」（クイーン（真）S1 の追撃。plan/design-persona.md 9.3 節）と、
  * 周期のスキルの発動（時間の周期のトリガー。C-0453。plan/design-timer-ceil.md 2 節の論点 4）と、
  * 射撃の回数のきっかけ（確率を除く。plan/design-shot-count-trigger-frame.md 6.6 節）と、カウンタが上限に届いた時（{ counterFull }）と、
- * 〈状態〉が終了した時（{ ended }）
+ * 〈状態〉が終了した時（{ ended }）と、フルスタックの消費（{ fullStack }。ファントムの宝物版 S2 の分配ダメージ。plan/design-phantom.md 2.4 節）
  */
 function parseDamageDelay(v: Record<string, Json>, effect: DamageEffect, path: string): void {
   if (v.delayFrames === undefined) return;
@@ -237,11 +238,12 @@ function parseDamageDelay(v: Record<string, Json>, effect: DamageEffect, path: s
     !isAppliedTrigger(trigger) &&
     !isTimerTrigger(trigger) &&
     !isCounterFullTrigger(trigger) &&
-    !isEndedTrigger(trigger)
+    !isEndedTrigger(trigger) &&
+    !isFullStackTrigger(trigger)
   ) {
     fail(
       `${path}.delayFrames`,
-      'delayFrames needs the trigger "burstUse", { applied }, { everySeconds }, { counterFull }, { ended } or a shot count trigger',
+      'delayFrames needs the trigger "burstUse", { applied }, { everySeconds }, { counterFull }, { ended }, { fullStack } or a shot count trigger',
     );
   }
   effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);

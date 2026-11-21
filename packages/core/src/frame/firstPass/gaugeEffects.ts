@@ -24,6 +24,7 @@ import {
 import { cooldownTimer, shortenedTimer, timerFramesOf } from '../../skills/timeline.ts';
 import { advanceShotCount, type FrameEvents, type ShotCountEveryAt, shotCountWeight } from '../../skills/triggers.ts';
 import {
+  enemyStateOf,
   isCounterFullTrigger,
   isSummonAttackTrigger,
   isTimerTrigger,
@@ -368,7 +369,7 @@ export function createGaugeEffects({
     everyAt: ShotCountEveryAt | undefined;
     n: number;
     /** エレグの S1（C-0773）: 条件 enemyState（発火のフレームに敵がその状態なら予約する） */
-    enemyState?: NamedStateId;
+    enemyState?: { state: NamedStateId; present: boolean };
   }[] = [];
   /** 枠ごとの倍率ダメージ（ヒットごとのゲージ・蓄積爆破・召喚の攻撃が読む。枠ごとに 1 回だけ解く） */
   const damageEffects = slots.map((slot) =>
@@ -387,7 +388,7 @@ export function createGaugeEffects({
         damageTimerGauges.push({ slotIndex: i, effect, fires });
       } else if (isResolvedShotCount(trigger)) {
         if (trigger.count === 'fullChargeShot' && !logs[i]!.fullCharge) continue;
-        const enemyState = effect.condition?.enemyState;
+        const enemyState = enemyStateOf(effect.condition);
         shotDamageGauges.push({
           slotIndex: i,
           effect,
@@ -451,7 +452,7 @@ export function createGaugeEffects({
       const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), t.everyAt?.(f) ?? t.every);
       t.n = counted.count;
       if (!counted.fired) continue;
-      if (t.enemyState !== undefined && !lists.enemyStateAt(t.enemyState, f)) continue;
+      if (t.enemyState !== undefined && lists.enemyStateAt(t.enemyState.state, f) !== t.enemyState.present) continue;
       const per = t.effect.perCount;
       const count = per !== undefined && 'state' in per ? lists.selfStackCountAt(t.slotIndex, per.state, f) : undefined;
       const energy = hitGaugeEnergy(t.slotIndex) * t.effect.gaugePerHit!;

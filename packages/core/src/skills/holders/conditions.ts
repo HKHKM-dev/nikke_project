@@ -4,7 +4,14 @@ import { ZERO_BUFFS, addRangeUp, rangeUpOf, statTotal } from '../buffs.ts';
 import type { ResolvedTrigger } from '../resolve.ts';
 import { statesMatching, type NamedStateId } from '../states.ts';
 import { fireContextOf, burstStepHolds, type FrameEvents } from '../triggers.ts';
-import { type BuffStat, isStacksCondition, selfBuffedOf, type EndedTrigger, type EffectCondition } from '../types.ts';
+import {
+  type BuffStat,
+  isStacksCondition,
+  selfBuffedOf,
+  enemyStateOf,
+  type EndedTrigger,
+  type EffectCondition,
+} from '../types.ts';
 import type { HeldItem, HeldTrack } from './types.ts';
 import { stacksHold, valueOf } from './items.ts';
 import { isStateOrigin } from './history.ts';
@@ -92,7 +99,8 @@ export function createConditions({
     if (buffed !== undefined && buffedAt(sourceSlotIndex, buffed.stat, frame) !== buffed.present) return false;
     // 解除の「フルバースト状態でなければ」（inFullBurst: false）も
     if (condition.inFullBurst !== undefined && inFullBurstAt(frame) !== condition.inFullBurst) return false;
-    if (condition.enemyState !== undefined && !enemyStateAt(condition.enemyState, frame)) return false;
+    const enemy = enemyStateOf(condition);
+    if (enemy !== undefined && enemyStateAt(enemy.state, frame) !== enemy.present) return false;
     // 適正射程距離内なら（発火のフレームの着地点と、常時の値とそのフレームに
     // 効いている件の適正射程距離の▲。射撃の回数のきっかけの付与は次のフレームから効くので、
     // その発自身のスタックは入らない。plan/design-agent-bunny.md 2.2 節）

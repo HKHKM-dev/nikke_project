@@ -10,7 +10,7 @@ import {
 } from '../../skills/burstDamage.ts';
 import { resolveDotCancels, resolveDotStackUps } from '../../skills/resolve.ts';
 import { createTriggerTracker, type FrameEvents, type TriggerTracker } from '../../skills/triggers.ts';
-import { isCounterFullTrigger } from '../../skills/types.ts';
+import { enemyStateOf, isCounterFullTrigger } from '../../skills/types.ts';
 import type { NamedStateId } from '../../skills/states.ts';
 import { groupDotsByState, latestTickFrame, latestTickIntervalFrames } from '../dot.ts';
 import type { FirstPassResult } from '../firstPass.ts';
@@ -46,7 +46,7 @@ type DotTickGauge = {
   k: number;
   cancels: TriggerTracker[];
   /** 敵のスタック量▲（frame/plan.ts の dotStackUps と同じく、同じ状態の付与として基点を付け直す。▲のヒットのゲージは溜めない） */
-  ups: { tracker: TriggerTracker; enemyState: NamedStateId | undefined }[];
+  ups: { tracker: TriggerTracker; enemyState: { state: NamedStateId; present: boolean } | undefined }[];
 };
 
 export function createCounterGauges({
@@ -110,7 +110,10 @@ export function createCounterGauges({
             .map((u) => {
               if (Object.keys(u.condition).some((k) => k !== 'enemyState'))
                 throw new RangeError('a stack up of a dot with tick gauge supports only the condition enemyState');
-              return { tracker: createTriggerTracker(u.trigger, i, scheduleModel), enemyState: u.condition.enemyState };
+              return {
+                tracker: createTriggerTracker(u.trigger, i, scheduleModel),
+                enemyState: enemyStateOf(u.condition),
+              };
             }),
         };
         tickGauges.push(ticks);
@@ -162,7 +165,11 @@ export function createCounterGauges({
       while (t.applies.length > 0 && t.applies[0]! <= f) rebase(t, t.applies.shift()!);
       if (ev !== null) {
         for (const up of t.ups)
-          if (up.tracker(ev) && (up.enemyState === undefined || lists.enemyStateAt(up.enemyState, f))) rebase(t, f);
+          if (
+            up.tracker(ev) &&
+            (up.enemyState === undefined || lists.enemyStateAt(up.enemyState.state, f) === up.enemyState.present)
+          )
+            rebase(t, f);
         // 消去はそのフレームの判定の後に閉じるので、消去のフレームまでの刻みは出て、その後は次に付けるまで出ない
         let cancelled = false;
         for (const c of t.cancels) if (c(ev)) cancelled = true;

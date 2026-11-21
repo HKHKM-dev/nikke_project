@@ -309,7 +309,7 @@ export function parseTimedFields(
  * 「チャージ中の時、N 秒ごとに」（{ chargeTick }）と
  * 「フルチャージした時」（{ chargeFull }）も書ける（plan/design-skill-stage14.md 2.1・2.6 節）
  * 「遮蔽物の HP を回復した時」（{ coverHealed }）は timed だけ（plan/design-skill-stage17.md 2.1 節）
- * 「〈名前〉のフルスタック状態の時、スタック解除後」（{ fullStack }）も timed だけ（plan/design-diesel.md 2.1 節）
+ * 「〈名前〉のフルスタック状態の時、スタック解除後」（{ fullStack }）も（plan/design-diesel.md 2.1 節・plan/design-phantom.md 2.2 節）
  * 「〈カウンタ〉が 100% になった時」（{ counterFull }）は状態の付与だけ
  * （validateCounterGrant。plan/design-skill-stage19.md 2.1 節）
  */
@@ -344,7 +344,7 @@ function parseTimedTrigger(
       during: stat === undefined ? 'withState' : true,
       chance: allowChance,
       reloadEnd: true,
-      fullStack: stat !== undefined,
+      fullStack: true,
       // 「〈カウンタ〉が上がった時」は timed だけ（plan/design-guillotine-ws.md 2.2 節）
       counterUp: stat !== undefined,
     })
@@ -534,10 +534,15 @@ function parseTimedStacks(
   const byShots = effect.durationShots !== undefined || effect.durationShotsRef !== undefined;
   // 発数の維持のスタックは、付き直すたびに 1 段増え、持ち主の N 発目で全部切れる（timed だけ。
   // 状態の付与は parse/state.ts が弾く。plan/design-zwei.md 2.3 節）
-  // 条件は自分の状態（selfState）だけ組める（発火のフレームで判定し、窓は
-  // 発数で切る。「フルアクティブ状態の場合のみ、フルチャージした時」の 1 発間の▲。plan/design-skill-stage14.md 2.7 節）
-  if (byShots && isRecord(v.condition) && Object.keys(v.condition).some((key) => key !== 'selfState'))
-    fail(`${path}.condition`, 'a duration in shots can only have the condition selfState');
+  // 条件は自分の状態（selfState）と敵の状態（enemyState）だけ組める（発火のフレームで判定し、窓は
+  // 発数で切る。「フルアクティブ状態の場合のみ、フルチャージした時」の 1 発間の▲。plan/design-skill-stage14.md 2.7 節。
+  // 「対象が予告状状態なら」の 1 発間の▲。plan/design-phantom.md 2.1 節）
+  if (
+    byShots &&
+    isRecord(v.condition) &&
+    Object.keys(v.condition).some((key) => key !== 'selfState' && key !== 'enemyState')
+  )
+    fail(`${path}.condition`, 'a duration in shots can only have the conditions selfState and enemyState');
   if ((effect.durationUntil === 'fullBurstEnd' || effect.durationUntil === 'reloadEnd') && stacks) {
     fail(path, 'a duration until an event cannot stack');
   }

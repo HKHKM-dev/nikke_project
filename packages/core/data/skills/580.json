@@ -1,0 +1,374 @@
+{
+  "formatVersion": 1,
+  "resourceId": 580,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "callingCard",
+          "trigger": {
+            "count": "normalHit"
+          },
+          "target": "enemy",
+          "condition": {
+            "enemyState": {
+              "state": "callingCard",
+              "present": false
+            }
+          },
+          "durationRef": 2,
+          "contents": [
+            {
+              "stat": "enemyDefenseDown",
+              "ref": 1
+            }
+          ],
+          "assumes": {
+            "ja": "射撃場の敵はラプチャー（C-0706・C-1291）。付いていない時の命中で付き、付いている間の命中では付き直さない（同じ発で付いた予告状は、同じ発の短剣の条件から見えない）",
+            "en": "The range enemy is a Rapture (C-0706, C-1291). It applies on a hit while absent and is not reapplied while present (the Calling Card applied by a shot is not visible to the Dagger condition of the same shot)"
+          }
+        },
+        {
+          "kind": "state",
+          "state": "thiefsDagger",
+          "trigger": {
+            "count": "normalHit"
+          },
+          "target": "self",
+          "condition": {
+            "enemyState": {
+              "state": "callingCard",
+              "present": false
+            }
+          },
+          "maxStacksRef": 4,
+          "durationRef": 5,
+          "contents": [
+            {
+              "stat": "hitRate",
+              "ref": 3
+            }
+          ],
+          "assumes": {
+            "ja": "敵 1 体では、予告状と短剣が同じ発で付いて同じフレームに切れるので、短剣は 2 段に届かない（S2 のフルスタックの行は発火しない）。基礎版は撮れない（宝物 2 段階で宝物版が出る）。撮った宝物版の同じ文の読み（推論の仮説）",
+            "en": "Against one enemy the Calling Card and the Dagger apply on the same shot and expire on the same frame, so the Dagger never reaches 2 stacks (the S2 full-stack lines do not fire). The base version cannot be recorded (Treasure phase 2 shows the treasure version). Read the same way as the recorded treasure line (an inferred hypothesis)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "対象が予告状状態の時の命中の攻撃ダメージ▲（値 06・1 発間）は未対応（単騎の録画で、予告状の付いた敵への通常攻撃にも S2 のダメージにも乗る発が無かった。乗る場面は分かっていない）",
+          "en": "Attack Damage up (value 06, 1 round) on a hit against a target with the Calling Card is not implemented (in solo recordings it applied neither to normal attacks on the marked enemy nor to the S2 damage; when it applies is unknown)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attackDamage",
+            "target": "self",
+            "trigger": "normalHit"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "fullStack": "thiefsDagger"
+          },
+          "condition": {
+            "enemyState": "callingCard"
+          },
+          "ref": 8,
+          "damageType": "additional",
+          "assumes": {
+            "ja": "短剣が 3 段目になった命中の次のフレームに出る（1 パス目のフルスタックの消費）。その時に予告状が付いていれば出て、予告状の▼が乗る。基礎版は撮れない（宝物 2 段階で宝物版が出る）。撮った宝物版の同じ文の読み（推論の仮説）",
+            "en": "Lands the frame after the hit that adds the third Dagger stack (the full-stack consumption of the first pass). It needs the Calling Card at that frame and carries its DEF decrease. The base version cannot be recorded (Treasure phase 2 shows the treasure version). Read the same way as the recorded treasure line (an inferred hypothesis)"
+          }
+        },
+        {
+          "kind": "removeState",
+          "state": "callingCard",
+          "trigger": {
+            "fullStack": "thiefsDagger"
+          },
+          "target": "enemy",
+          "assumes": {
+            "ja": "基礎版は撮れない（宝物 2 段階で宝物版が出る）。撮った宝物版の同じ文の読み（推論の仮説）",
+            "en": "The base version cannot be recorded (Treasure phase 2 shows the treasure version). Read the same way as the recorded treasure line (an inferred hypothesis)"
+          }
+        },
+        {
+          "kind": "state",
+          "state": "thiefsVision",
+          "trigger": {
+            "fullStack": "thiefsDagger"
+          },
+          "target": "self",
+          "maxStacksRef": 2,
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "distributedDamage",
+              "ref": 1
+            }
+          ],
+          "assumes": {
+            "ja": "基礎版は撮れない（宝物 2 段階で宝物版が出る）。撮った宝物版の同じ文の読み（推論の仮説）",
+            "en": "The base version cannot be recorded (Treasure phase 2 shows the treasure version). Read the same way as the recorded treasure line (an inferred hypothesis)"
+          }
+        },
+        {
+          "kind": "removeState",
+          "state": "thiefsVision",
+          "trigger": "burstUse",
+          "target": "self"
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 3
+          },
+          "target": "self",
+          "stat": "attack",
+          "ref": 4,
+          "durationRef": 5
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 3
+          },
+          "target": "self",
+          "stat": "distributedDamage",
+          "ref": 6,
+          "durationRef": 7
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "distributed",
+          "assumes": {
+            "ja": "敵全体への分配ダメージは、敵 1 体では全額が当たる",
+            "en": "The distributed damage to all enemies lands in full on the lone enemy"
+          }
+        }
+      ],
+      "notes": []
+    }
+  },
+  "treasureSkills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "callingCard",
+          "trigger": {
+            "count": "normalHit"
+          },
+          "target": "enemy",
+          "condition": {
+            "enemyState": {
+              "state": "callingCard",
+              "present": false
+            }
+          },
+          "durationRef": 2,
+          "contents": [
+            {
+              "stat": "enemyDefenseDown",
+              "ref": 1
+            }
+          ],
+          "assumes": {
+            "ja": "射撃場の敵はラプチャー（C-0706・C-1291）。付いていない時の命中で付き、付いている間の命中では付き直さない（同じ発で付いた予告状は、同じ発の短剣の条件から見えない）",
+            "en": "The range enemy is a Rapture (C-0706, C-1291). It applies on a hit while absent and is not reapplied while present (the Calling Card applied by a shot is not visible to the Dagger condition of the same shot)"
+          }
+        },
+        {
+          "kind": "state",
+          "state": "thiefsDagger",
+          "trigger": {
+            "count": "normalHit"
+          },
+          "target": "self",
+          "condition": {
+            "enemyState": {
+              "state": "callingCard",
+              "present": false
+            }
+          },
+          "maxStacksRef": 4,
+          "durationRef": 5,
+          "contents": [
+            {
+              "stat": "hitRate",
+              "ref": 3
+            }
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "thiefsDagger",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 6
+          },
+          "target": "self",
+          "maxStacksRef": 8,
+          "durationRef": 9,
+          "assumes": {
+            "ja": "射撃場の敵はステージのターゲット（C-0662・C-0963）。命中は戦闘中ずっと通算で数える。中身（命中率▲・値 07）は effects[1] と同じ状態の中身",
+            "en": "The range enemy is the stage target (C-0662, C-0963). Hits are counted throughout the battle. The contents (Hit Rate up, value 07) are those of the same state in effects[1]"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "対象が予告状状態の時の命中の攻撃ダメージ▲（値 10・1 発間）は未対応（単騎の録画で、予告状の付いた敵への通常攻撃にも S2 のダメージにも乗る発が無かった。乗る場面は分かっていない）",
+          "en": "Attack Damage up (value 10, 1 round) on a hit against a target with the Calling Card is not implemented (in solo recordings it applied neither to normal attacks on the marked enemy nor to the S2 damage; when it applies is unknown)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attackDamage",
+            "target": "self",
+            "trigger": "normalHit"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "fullStack": "thiefsDagger"
+          },
+          "condition": {
+            "enemyState": "callingCard"
+          },
+          "ref": 1,
+          "damageType": "additional",
+          "assumes": {
+            "ja": "短剣が 3 段目になった命中の次のフレームに出る（1 パス目のフルスタックの消費）。その時に予告状が付いていれば出て、予告状の▼が乗る",
+            "en": "Lands the frame after the hit that adds the third Dagger stack (the full-stack consumption of the first pass). It needs the Calling Card at that frame and carries its DEF decrease"
+          }
+        },
+        {
+          "kind": "removeState",
+          "state": "callingCard",
+          "trigger": {
+            "fullStack": "thiefsDagger"
+          },
+          "target": "enemy"
+        },
+        {
+          "kind": "state",
+          "state": "thiefsVision",
+          "trigger": {
+            "fullStack": "thiefsDagger"
+          },
+          "target": "self",
+          "maxStacksRef": 3,
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "distributedDamage",
+              "ref": 2
+            }
+          ]
+        },
+        {
+          "kind": "removeState",
+          "state": "thiefsVision",
+          "trigger": "burstUse",
+          "target": "self"
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "fullStack": "thiefsDagger"
+          },
+          "ref": 4,
+          "damageType": "distributed",
+          "delayFrames": 5,
+          "assumes": {
+            "ja": "敵全体への分配ダメージは、敵 1 体では全額が当たる。消費の 5 フレーム後（短剣が満ちた命中の 6 フレーム後）に出て、同じ消費の分配ダメージ▲の段も乗る",
+            "en": "The distributed damage to all enemies lands in full on the lone enemy. It lands 5 frames after the consumption (6 frames after the hit filling the Dagger) and carries the Distributed Damage stack of the same consumption"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 5
+          },
+          "target": "self",
+          "stat": "attack",
+          "ref": 6,
+          "durationRef": 7
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 5
+          },
+          "target": "self",
+          "stat": "distributedDamage",
+          "ref": 8,
+          "durationRef": 9
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "distributed",
+          "assumes": {
+            "ja": "敵全体への分配ダメージは、敵 1 体では全額が当たる。宝物版は撮っていない（宝物の段階が足りない）。撮った基礎版の同じ文の読み（推論の仮説）",
+            "en": "The distributed damage to all enemies lands in full on the lone enemy. The treasure version is not recorded (the treasure phase is short); read the same way as the recorded base version (an inferred hypothesis)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "damageTaken",
+          "enemyElement": "Fire",
+          "ref": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "射撃場の敵はステージのターゲット（C-0662・C-0963）。灼熱コードの敵にだけ付く。宝物版は撮っていない（推論の仮説）",
+            "en": "The range enemy is the stage target (C-0662, C-0963). Applies only to a Fire Code enemy. The treasure version is not recorded (an inferred hypothesis)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "maxAmmo",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "宝物版は撮っていない（推論の仮説）",
+            "en": "The treasure version is not recorded (an inferred hypothesis)"
+          }
+        }
+      ],
+      "notes": []
+    }
+  }
+}

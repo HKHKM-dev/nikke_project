@@ -870,7 +870,8 @@ export type BuffAppliedTrigger = { buffApplied: BuffStat };
 /**
  * 「〈名前〉のフルスタック状態の時、スタック解除後」（plan/design-skill-stage3.md 1.3 節）。持ち主（自分）のその状態の件が
  * フルスタックになったフレームに発火し、その状態のスタックを全部外す（次のフレームで閉じる。同じフレームに付いた件も外す）。
- * 回復（heal）・使用武器の変更・弾丸チャージ（ammoRefill）・timed に書ける（1 パス目が回復の前にフルスタックを見つける。
+ * 回復（heal）・使用武器の変更・弾丸チャージ（ammoRefill）・timed・状態の付与・解除（removeState）・倍率ダメージ（damage。2 パス目は
+ * 1 パス目の履歴の消費の記録 fullStacks のフレームで発火する。plan/design-phantom.md 2.2 節）に書ける（1 パス目が回復の前にフルスタックを見つける。
  * frame/firstPass.ts。弾丸チャージは外した後の最大装弾数で数える。plan/design-diesel.md 2.1 節）。その状態は、同じ定義の付与で
  * 自分にスタックで付き、付与はどれも射撃の回数のきっかけ（フルスタックになる件が前のフレームまでに登録される）
  */
@@ -1315,7 +1316,8 @@ export function isStateEndUntil(u: unknown): u is StateEndUntil {
  * enemyState = 敵（1 体の前提）にその状態が付いているなら（damage。付いている区間は
  * 同じ状態の dot の最初の発火から最後の tick まで。編成のどの枠の dot でもよい）。
  * timed・付与にも書け、敵に付く状態の付与（エレグのブームインストール）の窓も見る（damage も同じ。そのフレームに付いた件も入れる。
- * plan/design-elegg-s3.md 3.2 節）。
+ * plan/design-elegg-s3.md 3.2 節）。{ state, present: false } は「敵が〈状態〉でなければ」（plan/design-phantom.md 2.1 節。同じフレームの見え方は
+ * 付いている形と同じ）。
  * selfState = 自分（効果を出した枠）にその状態が付いているか（plan/design-skill-stage1.md 1.1 節。timed・付与・damage）。
  * usedBurst = 直前に自分がバーストスキルを使用していれば（同 1.5 節。timed・付与・解除・damage（plan/design-cinderella-cw.md 2.4 節。C-1252）。フルバーストの開始・終了のきっかけだけ。
  * 発火の文脈の burstUsers に自分がいるか。件を見ないので、これだけの条件は効果の段を上げない）。
@@ -1341,7 +1343,7 @@ export type EffectCondition = {
    * 外なら（counterChange・removeState・stat のある timed。plan/design-skill-stage12.md 2.2 節・plan/design-velvet.md 2.1 節）
    */
   inFullBurst?: boolean;
-  enemyState?: NamedStateId;
+  enemyState?: NamedStateId | { state: NamedStateId; present: false };
   selfState?: SelfStateCondition;
   usedBurst?: boolean;
   selfHp?: SelfHpCondition;
@@ -1444,6 +1446,15 @@ export function isStacksCondition(self: SelfStateCondition | undefined): boolean
 
 /** 条件のキー */
 export type ConditionKey = keyof EffectCondition;
+
+/** 条件 enemyState の状態と、付いていることを求めるか（present。「でなければ」は false）。無ければ undefined */
+export function enemyStateOf(
+  condition: EffectCondition | undefined,
+): { state: NamedStateId; present: boolean } | undefined {
+  const c = condition?.enemyState;
+  if (c === undefined) return undefined;
+  return typeof c === 'string' ? { state: c, present: true } : c;
+}
 
 /** 条件 selfBuffed の stat と、増加状態を求めるか（present。「でなければ」は false）。無ければ undefined */
 export function selfBuffedOf(condition: EffectCondition | undefined): { stat: BuffStat; present: boolean } | undefined {
@@ -2611,15 +2622,19 @@ export type StacksFrom = { counter: CounterId } | { state: NamedStateId };
  * 「〈名前〉解除」（Removes。plan/design-skill-stage1.md 1.2 節）。発火のフレーム f に、持ち主（自分）のその状態の件
  * （出どころは問わない。スタックはすべて）を f + 1 で閉じる（f の判定には付いている）。解除不可の件（付与の undispellable）は
  * 閉じない。同じフレーム f に同じ状態が付いた件の列は閉じない（付与が勝つ）。段は、条件なし（と usedBurst だけ）は 1、件を見る
- * 条件つきは 1.5。消去（Cancels。解除不可の件も閉じる）は、使い手を定義する時に別の種類で足す（分類の設計書の論点 8）
+ * 条件つきは 1.5。消去（Cancels。解除不可の件も閉じる）は別の種類（cancelState）。
+ * きっかけに「〈名前〉のフルスタック状態の時」（{ fullStack }）も書ける（plan/design-phantom.md 2.3 節）
  */
 export type RemoveStateEffect = {
   kind: 'removeState';
-  /** 目録の id（持ち主が味方の状態） */
+  /** 目録の id（持ち主が味方の状態。target が enemy なら持ち主が敵の状態） */
   state: NamedStateId;
   trigger: EffectTrigger;
-  /** 説明文の例はどれも自分なので、自分だけ（味方の状態を外す例が出たら広げる） */
-  target: 'self';
+  /**
+   * self は自分の状態。enemy は敵の状態（plan/design-phantom.md 2.3 節）: 同じ定義の付与で敵に付ける状態の、敵の件の列（出どころは
+   * 問わない）を同じく f + 1 で閉じる（解除不可の件は閉じない）。味方の状態を外す例が出たら広げる
+   */
+  target: 'self' | 'enemy';
   condition?: EffectCondition;
   assumes?: LocalizedText;
 };

@@ -4,6 +4,7 @@ import type { ChanceOpportunity } from '../chance.ts';
 import {
   isRecordTriggered,
   isResolvedApplied,
+  isResolvedFullStack,
   type ResolvedEffect,
   type ResolvedShotCountTrigger,
 } from '../resolve.ts';
@@ -221,15 +222,20 @@ export function createFire({
   };
   /**
    * 解除の発火 1 つ（plan/design-skill-stage1.md 1.2 節）。持ち主（自分）のその状態の件の列（出どころは問わない）に、
-   * 閉じるフレームを足す。解除不可の件の列は閉じない
+   * 閉じるフレームを足す（きっかけがフルスタックの消費なら、同じフレームに付いた件も外す）。解除不可の件の列は閉じない。敵の状態の解除は、敵のその状態の件の列（出どころは問わない。
+   * plan/design-phantom.md 2.3 節）
    */
   const fireRemove = (src: RemoveSource, frame: number): void => {
+    const holder = src.effect.enemy === true ? ENEMY : src.sourceSlotIndex;
     for (const track of tracks) {
       const o = track.origin;
-      if (track.holder !== src.sourceSlotIndex || o.kind !== 'state' || o.state !== src.effect.state) continue;
+      if (track.holder !== holder || o.kind !== 'state' || o.state !== src.effect.state) continue;
       // 消去（cancel）は解除不可の件も閉じる（plan/design-mint-prika.md 2.1 節）
       if (o.grant.undispellable === true && src.effect.cancel !== true) continue;
-      closeTrack(track, frame);
+      // フルスタックの消費のきっかけの解除は、消費と同じく同じフレームに付いた件も外す（短剣が満ちた命中で付いた予告状。
+      // plan/design-phantom.md 2.3 節）
+      if (isResolvedFullStack(src.effect.trigger)) consumeTrack(track, frame);
+      else closeTrack(track, frame);
     }
   };
   /**

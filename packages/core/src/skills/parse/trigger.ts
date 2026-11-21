@@ -111,11 +111,14 @@ export function parseTrigger(v: Json, path: string, options: TriggerOptions = {}
       'an ended trigger ({ ended }) is only allowed in counterChange, ammoDecrease, state grants, damage, timed and cancelState on the enemy',
     );
   }
-  // フルスタックの消費のきっかけは heal・weaponChange・ammoRefill・timed だけ（plan/design-skill-stage3.md 1.3 節、
-  // plan/design-skill-stage11.md 2.1 節、plan/design-diesel.md 2.1 節）
+  // フルスタックの消費のきっかけは heal・weaponChange・ammoRefill・timed・状態の付与・removeState・damage だけ
+  // （plan/design-skill-stage3.md 1.3 節、plan/design-skill-stage11.md 2.1 節、plan/design-diesel.md 2.1 節、plan/design-phantom.md 2.2 節）
   if (v.fullStack !== undefined) {
     if (!options.fullStack)
-      fail(path, 'a full-stack trigger ({ fullStack }) is only allowed in heal, weaponChange, ammoRefill and timed');
+      fail(
+        path,
+        'a full-stack trigger ({ fullStack }) is only allowed in heal, weaponChange, ammoRefill, timed, state grants, removeState and damage',
+      );
     rejectUnknownKeys(v, ['fullStack'], path);
     return { fullStack: parseNamedStateId(v.fullStack, `${path}.fullStack`, 'ally') };
   }
@@ -495,7 +498,7 @@ export function parseDamageTrigger(v: Json, path: string): EffectTrigger {
     parseSummonAttackTrigger(v, path) ??
     parseCounterFullTrigger(v, path) ??
     parseAppliedTrigger(v, path) ??
-    parseTrigger(v, path, { timer: true, during: 'withState', teamAmmo: true })
+    parseTrigger(v, path, { timer: true, during: 'withState', teamAmmo: true, fullStack: true })
   );
 }
 

@@ -151,7 +151,20 @@ export function parseCondition(
       fail(`${path}.inFullBurst`, outsideFullBurst ? 'expected a boolean' : 'expected true');
     condition.inFullBurst = c.inFullBurst;
   }
-  if (c.enemyState !== undefined) condition.enemyState = parseNamedStateId(c.enemyState, `${path}.enemyState`, 'enemy');
+  if (c.enemyState !== undefined) {
+    // 「敵が〈状態〉でなければ」は { state, present: false }（plan/design-phantom.md 2.1 節）
+    const absent = isRecord(c.enemyState) ? c.enemyState : undefined;
+    if (absent === undefined) condition.enemyState = parseNamedStateId(c.enemyState, `${path}.enemyState`, 'enemy');
+    else {
+      rejectUnknownKeys(absent, ['state', 'present'], `${path}.enemyState`);
+      if (absent.present !== false)
+        fail(`${path}.enemyState.present`, 'expected false (write the state alone for "if the enemy has it")');
+      condition.enemyState = {
+        state: parseNamedStateId(absent.state, `${path}.enemyState.state`, 'enemy'),
+        present: false,
+      };
+    }
+  }
   if (c.selfState !== undefined) condition.selfState = parseSelfStateCondition(c.selfState, `${path}.selfState`);
   if (c.usedBurst !== undefined) {
     if (typeof c.usedBurst !== 'boolean') fail(`${path}.usedBurst`, 'expected a boolean');

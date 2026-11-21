@@ -31,6 +31,7 @@ import { cycleFires, cycleShotFrames, resolveCycles } from '../skills/cycles.ts'
 import {
   MAX_SKILL_LEVELS,
   isResolvedApplied,
+  isResolvedFullStack,
   isResolvedTimer,
   isResolvedEventCount,
   isResolvedShotCount,
@@ -94,6 +95,7 @@ import {
   selfHpHolds,
   splitsPerCount,
   staticStatesOf,
+  enemyStateOf,
   type EffectCondition,
   type SelfStateCondition,
   type SkillDefinition,
@@ -442,7 +444,7 @@ export function planSkillHits(input: SkillHitsInput): SkillHitEvent[] {
 /** planSkillHits が読む 1 パス目の履歴 */
 type SkillHitsHistory = Pick<
   HolderHistory,
-  'tracks' | 'amplified' | 'slots' | 'applications' | 'counters' | 'hpRatios'
+  'tracks' | 'amplified' | 'slots' | 'applications' | 'counters' | 'hpRatios' | 'fullStacks'
 >;
 
 /**
@@ -772,7 +774,12 @@ function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
               : // 自分の状態の間だけ数える回数は、1 パス目の履歴の件で窓を見る（plan/design-elegg-bs.md 2.2 節）
                 isResolvedShotCount(t) && isStateCountWindow(t.during)
                 ? stateWindowTriggerFrames(t, t.during.state, slotIndex, schedule, frames, shots, ownStartOfHeld)
-                : triggerFrames(t, schedule, slotIndex, frames, shots, undefined, everyAtFor(effect.source.skill));
+                : // フルスタックの消費は 1 パス目の記録のフレーム（plan/design-phantom.md 2.2 節）
+                  isResolvedFullStack(t)
+                  ? history.fullStacks
+                      .filter((x) => x.slotIndex === slotIndex && x.state === t.fullStack)
+                      .map((x) => x.frame)
+                  : triggerFrames(t, schedule, slotIndex, frames, shots, undefined, everyAtFor(effect.source.skill));
     for (const frame of fires) {
       if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, self)) continue;
       if (!usedBurstHolds(effect.condition, t, frame, schedule, slotIndex)) continue;
@@ -1035,7 +1042,8 @@ function damageConditionHolds(
     if (below !== undefined && value >= below) return false;
   }
   if (condition.inFullBurst === true && (schedule === null || !isInFullBurst(schedule, frame))) return false;
-  if (condition.enemyState !== undefined && !enemyStateSpansHold(enemySpans, condition.enemyState, frame)) return false;
+  const enemy = enemyStateOf(condition);
+  if (enemy !== undefined && enemyStateSpansHold(enemySpans, enemy.state, frame) !== enemy.present) return false;
   return true;
 }
 

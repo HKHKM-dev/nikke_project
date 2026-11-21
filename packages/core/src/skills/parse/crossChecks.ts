@@ -259,6 +259,21 @@ function validateFullStackTriggers(entries: Partial<Record<SkillSlot, SkillEntry
   }
 }
 
+/** 敵の状態の解除（removeState の enemy）は、同じ定義にその状態を敵に付ける付与が要る（plan/design-phantom.md 2.3 節） */
+function validateEnemyRemoves(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const all = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []);
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (e.kind !== 'removeState' || e.target !== 'enemy') return;
+      if (!all.some((g) => g.kind === 'state' && g.state === e.state && g.enemy === true))
+        fail(
+          `${root}.${slot}.effects[${i}].state`,
+          `a remove on the enemy needs a grant of "${e.state}" on the enemy in the definition`,
+        );
+    });
+  }
+}
+
 /**
  * timed・付与の { applied } は連鎖させない（plan/design-skill-stage4.md 1.1 節）。同じ定義の中で、{ applied } の付与が
  * 付ける状態を、ほかの timed・付与の { applied } が見ない（damage の { applied } は見てよい。ダメージは記録を作らないので閉じる）
@@ -758,6 +773,7 @@ export function validateCrossChecks(entries: Partial<Record<SkillSlot, SkillEntr
     validateStackChanges,
     validateStateContentKinds,
     validateFullStackTriggers,
+    validateEnemyRemoves,
     validateAppliedTriggers,
     validateSameFiring,
     validateOwnStateTriggers,

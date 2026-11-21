@@ -29,7 +29,14 @@ import { counterMax, type CounterId } from '../counters.ts';
 import type { StackDecrease } from '../stacks.ts';
 import type { NamedStateId } from '../states.ts';
 import type { dependsOnRank, FireContext } from '../targets.ts';
-import type { FrameEvents, FullStackEvent, HealRecord, ShotCountEveryAt, TriggerTracker } from '../triggers.ts';
+import type {
+  FrameEvents,
+  FullStackEvent,
+  FullStackRecord,
+  HealRecord,
+  ShotCountEveryAt,
+  TriggerTracker,
+} from '../triggers.ts';
 import { type BuffStat, isEnemyHeldStat, type TimerTrigger } from '../types.ts';
 import type { SkillSlot } from '../../types.ts';
 import type { AppliedRecord, ConditionSkip, SlotBuffState, TimelineSlot } from '../timeline.ts';
@@ -184,6 +191,8 @@ export type HolderHistory = {
   stateEndGuesses: readonly StateEndGuessRecord[];
   /** 回復の記録（回復を起こした適用。吸収回復の付き直しは入らない） */
   heals: readonly HealRecord[];
+  /** フルスタックの消費の記録（フレームの順） */
+  fullStacks: readonly FullStackRecord[];
   /** ループで分かったフルバーストの窓（終わりで閉じる件を作り直すのに使う） */
   fullBurstWindows: readonly FullBurstWindow[];
   logs: readonly (ShotLog | null)[];
