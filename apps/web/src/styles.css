@@ -765,14 +765,14 @@ svg.roster-revert-icon {
 .modern-summary-row > .settings-row {
   display: contents;
 }
-/* 共通育成の 1 行は、間と入力欄の幅を詰めて折り返さずに 1 行に並べる（オーナーのコメント）。シンクロ LV は 3 桁 */
+/* 共通育成の 1 行は、間を詰めて折り返さずに 1 行に並べる（オーナーのコメント）。シンクロ LV の欄は、増減のボタンがあっても 4 桁の数字が全部見える幅 */
 .modern-summary-row .common-growth-row {
   flex-wrap: nowrap;
   gap: 4px 8px;
 }
 .modern-summary-row .common-growth-row .field {
   gap: 4px 6px;
-  grid-template-columns: max-content 3.5em;
+  grid-template-columns: max-content 5.5em;
 }
 .modern-summary-row .common-growth-row .field.checkbox {
   gap: 4px;
@@ -885,6 +885,11 @@ svg.roster-revert-icon {
   container-type: normal;
   grid-template-columns: 4em;
   align-items: center;
+}
+/* 編成の番号のボタンは、幅（4em）はそのままで正方形にする（オーナーのコメント） */
+.modern-party-row-label .party-tab {
+  aspect-ratio: 1 / 1;
+  padding: 0;
 }
 /* 選んでいない編成の行は、ボタンの見た目を消してスロットだけを見せる（薄くはしない） */
 .modern-slots-grid.modern-party-preview {
