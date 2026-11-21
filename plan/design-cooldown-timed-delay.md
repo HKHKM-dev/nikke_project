@@ -4,7 +4,7 @@
 - 関連: [design-centi.md](design-centi.md) 2.2・2.3 節（きっかけ `{ skillFired }`・timed の印 `cooldown`）、[design-arcana-magician.md](design-arcana-magician.md) 2.2 節（印のある周期）、[design-new-chars-1029.md](design-new-chars-1029.md) 10.2 節の e（時間の周期のきっかけの遅れ）、[design-snow-white.md](design-snow-white.md) 8.3 節の論点 7（印のある周期の発動の待ち）
 - 結論: C-1448（ノベルの S1 の防御力▼）
 - 作成日: 2026-11-21
-- 状態: 承認待ち
+- 状態: 完了
 
 ## 0. 範囲
 
@@ -82,3 +82,4 @@
 ## 経過
 
 - 2026-11-21: 起案した。
+- 2026-11-21: 6 節の論点を推奨のとおりに決めた（オーナー）。印のある timed の遅れを実装し、ノベルの S1 の防御力▼を印のある周期 + 遅れ 65 に書き直した。

@@ -960,7 +960,8 @@ export function isSelfHpAtMostTrigger(t: unknown): t is SelfHpAtMostTrigger {
  * 発動（1 パス目がフレームの順に追った記録。縮んだ発動も入る）の次のフレームに発火する（1 パス目の FrameEvents.skillFired。発動を決めるのが
  * 件の登録の後なので）。流し直し（replayEvents）では作らないので、1 パス目が件を登録する timed にだけ書ける。同じ定義のそのスロットに
  * 印のある周期が要る（parse/crossChecks.ts の validateCooldownTimers）。印のある周期の timed は、解決で自分のスロットのこのきっかけに
- * 置き換わる（skills/resolve.ts の resolveTimedTrigger）
+ * 置き換わり、遅れ（delayFrames）を発動のフレームから数える（skills/resolve.ts の resolveTimedTrigger・skills/holders/items.ts の startOfFire）。
+ * このきっかけを直に書いた timed には遅れを書けない
  */
 export type SkillFiredTrigger = { skillFired: 'skill1' | 'skill2' };
 
@@ -1232,8 +1233,9 @@ export type TimedEffect = TargetCountFields &
      * 書かなければ次のフレームから。plan/design-shot-count-trigger-frame.md 6 節）。測った遅れを即値で書き、
      * 根拠の結論を claims に結ぶ。
      * 確率のきっかけ・付与には書けない。V-0602: 時間の周期のきっかけ（{ everySeconds }）にも書け、窓を周期の発火の delayFrames 後から
-     * 始める（書かなければ発火のフレームから）。1 パス目で窓を追う stat には書けない。周期のスキルのヒットから付く効果で、ヒットその
-     * ものに乗らないなら、ヒットの遅れ + 1 を書く
+     * 始める（書かなければ発火のフレームから）。クールタイムの印（cooldown）のある周期では、窓を発動の delayFrames 後から始める
+     * （書かなければ発動の次のフレームから。plan/design-cooldown-timed-delay.md 1 節）。1 パス目で窓を追う stat には書けない。周期のスキルの
+     * ヒットから付く効果で、ヒットそのものに乗らないなら、ヒットの遅れ + 1 を書く
      */
     delayFrames?: number;
     /**

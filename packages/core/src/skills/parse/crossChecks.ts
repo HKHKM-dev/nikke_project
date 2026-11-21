@@ -468,8 +468,9 @@ function validateStateContentKinds(entries: Partial<Record<SkillSlot, SkillEntry
  * 周期のクールタイムの印（cooldown）は damage・burstGaugeHit・timed にだけ書け、
  * carry・atStart・periodShorten・gaugePerHit とは組まない（plan/design-arcana-magician.md 2.2 節・plan/design-centi.md 2.3 節）。
  * burstGaugeHit は遅れ（delayFrames）が要る（1 パス目が発火のフレームの
- * 後で予約するので、発火と同じフレームのゲージには足せない）。timed は遅れを書けない（解決で { skillFired } に置き換わり、窓は発動の次の
- * フレームから）。同じスロットの印のある周期は同じ秒（1 つのスキルのクールタイム）。
+ * 後で予約するので、発火と同じフレームのゲージには足せない）。timed の遅れは発動のフレームから数える（解決で { skillFired } に置き換わり、
+ * 窓は発動の delayFrames 後から。書かなければ発動の次のフレームから。plan/design-cooldown-timed-delay.md 1 節）。同じスロットの印のある周期は
+ * 同じ秒（1 つのスキルのクールタイム）。
  * { skillFired } のきっかけと skillCooldownReduction は、相手のスロットに印のある周期が要る（plan/design-centi.md 2.1・2.2 節）
  */
 function validateCooldownTimers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
@@ -487,7 +488,6 @@ function validateCooldownTimers(entries: Partial<Record<SkillSlot, SkillEntry>>,
         fail(path, 'cooldown cannot be used with periodShorten or gaugePerHit');
       if (e.kind === 'burstGaugeHit' && e.delayFrames === undefined)
         fail(path, 'cooldown in burstGaugeHit needs delayFrames');
-      if (e.kind === 'timed' && e.delayFrames !== undefined) fail(path, 'cooldown in timed cannot have delayFrames');
       if (slot === 'burst') fail(path, 'cooldown is only allowed in skill1 and skill2');
       if (seconds !== undefined && seconds !== e.trigger.everySeconds)
         fail(path, `cooldown timers in one slot need the same everySeconds (${seconds} and ${e.trigger.everySeconds})`);
