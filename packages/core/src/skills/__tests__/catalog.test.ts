@@ -123,7 +123,10 @@ describe('skill catalog', () => {
     expect(targetsOf('ビスケット', 'skill2', 0)).toEqual([['ally:alliesFiltered'], ['ally:alliesFiltered']]);
     expect(targetsOf('トリナ', 'skill1', 1)).toEqual([['ally:lowestHpRatio']]);
     // 条件の節でない「遮蔽物が破壊された〜味方」は変わらない（「〜味方のうち、」は上のココアのテスト）
-    expect(targetsOf('リリー', 'burst', 0).every((t) => t.includes('cover'))).toBe(true);
+    expect(targetsOf('リリー', 'burst', 0)).toEqual([
+      ['ally:random', 'cover'],
+      ['ally:random', 'cover'],
+    ]);
   });
 
   it('reads the targets after the condition clause, past a listing comma and a note in parentheses', () => {
@@ -145,7 +148,14 @@ describe('skill catalog', () => {
     // 「対象に」は条件の節の対象を指す。条件の節に対象が無ければ、命中した敵
     expect(targetsOf('■防御型の味方のHPがX％以下なら、対象に「乙」')).toEqual([['乙', ['ally:alliesFiltered']]]);
     expect(targetsOf('■フルチャージ攻撃が命中した時、対象に「乙」')).toEqual([['乙', ['enemy:hit']]]);
-    // 条件の節の後ろで「、」で並べた対象と、括弧の中の「、」
+    expect(targetsOf('■自分に「甲」効果2：自分に丙が適用中の場合、対象に「乙」')).toEqual([
+      ['甲', ['self']],
+      ['乙', ['enemy:hit']],
+    ]);
+    // 条件の節の後ろで「、」で並べた対象と、括弧（全角・半角）の中の「、」
+    expect(
+      targetsOf('■遮蔽物が攻撃を受けた時、自分を除く味方全体に(対象が足りない場合、自分も対象となる)「乙」'),
+    ).toEqual([['乙', ['ally:alliesExceptSelf']]]);
     expect(targetsOf('■遮蔽物が攻撃を受けた時、敵全体、及び対象に「乙」')).toEqual([
       ['乙', ['enemy:all', 'enemy:hit']],
     ]);

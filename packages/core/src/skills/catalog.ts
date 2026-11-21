@@ -488,8 +488,8 @@ function conditionClauseEnd(text: string): number {
   let depth = 0;
   for (let i = text.length - 1; i >= 0; i--) {
     const ch = text[i];
-    if (ch === '）') depth++;
-    else if (ch === '（') depth = Math.max(0, depth - 1);
+    if (ch === '）' || ch === ')') depth++;
+    else if (ch === '（' || ch === '(') depth = Math.max(0, depth - 1);
     else if (ch === '、' && depth === 0 && CONDITION_CLAUSE_END.test(text.slice(0, i))) return i;
   }
   return -1;
@@ -498,7 +498,8 @@ function conditionClauseEnd(text: string): number {
 /**
  * 文の対象と、対象を決めた文。条件の節の後ろに対象があれば、そこだけを読む
  * （条件の節の「〈状態〉状態の味方が…」「遮蔽物が攻撃を受けた時」を対象に数えない）。
- * 後ろが「対象に」なら、その対象は条件の節に書かれた対象を指す（「防御型の味方の誰かのHPがX％以下なら、対象に」）
+ * 後ろが「対象に」なら、その対象は条件の節に書かれた自分以外の対象を指す（「防御型の味方の誰かのHPがX％以下なら、対象に」。
+ * 「自分に〈状態〉が適用中なら、対象に」の対象は命中した敵）
  */
 function targetsIn(text: string): { targets: string[]; text: string } {
   const ci = conditionClauseEnd(text);
@@ -506,7 +507,7 @@ function targetsIn(text: string): { targets: string[]; text: string } {
     const clause = text.slice(ci + 1);
     if (clause.startsWith('対象に')) {
       const cond = text.slice(0, ci);
-      const condTargets = normTargets(tagsOf(TARGETS, cond));
+      const condTargets = normTargets(tagsOf(TARGETS, cond)).filter((t) => t !== 'self');
       if (condTargets.length > 0) return { targets: condTargets, text: cond };
     }
     const targets = normTargets(tagsOf(TARGETS, clause));
@@ -586,7 +587,8 @@ export function classifyCharacters(
         const headTags = head.replace(/「[^」]*」/g, '「」');
         const triggers = lineTriggers(headTags);
         const conditions = tagsOf(CONDITIONS, headTags);
-        // 頭の対象は条件の節の後ろから読む。対象を決めた文は、頭の全部を読んだときは句の中身を伏せない頭にする
+        // 頭の対象は条件の節の後ろから読む。対象を決めた文は、頭の全部を読んだときは句の中身を伏せない頭にし、
+        // 一部を読んだときは句の中身を伏せた文（「「」状態の味方全体に」）にする
         const lineRead = targetsIn(headTags);
         const lineTargets = lineRead.targets;
         const lineTargetText = lineRead.text === headTags ? head : lineRead.text;
