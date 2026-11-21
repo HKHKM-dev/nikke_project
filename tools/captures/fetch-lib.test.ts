@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -99,6 +100,19 @@ describe('fetchTarget', () => {
       context(async () => drive),
     );
     expect(read('reference/tip.png')).toBe('complete');
+  });
+
+  it('redownloads a file whose sha256 differs from the ledger even when the size matches', async () => {
+    const drive = fakeDrive({ 'r/x.mp4': 'complete' });
+    put('r/x.mp4', 'abcdefgh');
+    const expected = createHash('sha256').update('complete').digest('hex').slice(0, 12);
+    await fetchTarget(
+      { area: 'captures', relPath: 'r/x.mp4', sha256: expected },
+      '0001',
+      context(async () => drive),
+    );
+    expect(read('r/x.mp4')).toBe('complete');
+    expect(lines[0]).toContain('sha256 が台帳と違う');
   });
 
   it('overwrites a differing frame with --force', async () => {

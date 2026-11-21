@@ -75,7 +75,13 @@ function rootIds(area: Area): string[] {
 }
 
 const ctx: FetchContext = {
-  drive: once(() => Drive.connect(DRIVE_CALL_MS)),
+  // 繋げなければ、残りの指定でも同じ理由で止まるので、1 回だけ出して終える
+  drive: once(() =>
+    Drive.connect(DRIVE_CALL_MS).catch((error: unknown) => {
+      console.error(reason(error));
+      process.exit(1);
+    }),
+  ),
   roots: rootIds,
   localBase: (area) => ROOTS[area].local(),
   recordDir,
