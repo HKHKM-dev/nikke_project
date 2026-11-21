@@ -198,6 +198,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // ルドミラ: I の発動（六角形が I から II に替わるフレーム）からヒットまで、動画で 96f（印からの動画のフレーム。hitFrames は本当の発動からの
   // ゲーム内のフレームで 73）。バースト使用時の効果（防御力▲。間接）の遅れは未測定（V-0509）
   { resourceIds: [190], delays: { hitFrames: 73, effectFrames: 0 }, claim: 'C-0675' },
+  // ウンファ: II の発動の印（六角形が II から III に替わるフレーム）の動画で 1f 前にヒット（9 回のうち 8 回。1 回は 2f 前）。
+  // 効果（敵の防御力▼・味方全体のクリティカル確率▲）の付き始めは発の値で挟めるだけで、遅れ 0 と合う（V-0809）
+  { resourceIds: [92], delays: { hitFrames: -1, effectFrames: 0 }, claim: 'C-1379' },
   // ベロータ: II の発動（六角形が II から III に替わるフレーム）からヒットまで 15〜16f。効果（味方全体のチャージ速度▲）の遅れは未測定（V-0510）
   { resourceIds: [60], delays: { hitFrames: 16, effectFrames: 0 }, claim: 'C-0677' },
   // ラプラス：アルティメットヒーロー: III のタイマーの 00.00 の 1〜2f 前にヒット（雪子と同じく遅れ 0）。ヒットに同じ発動の攻撃力▲が乗る

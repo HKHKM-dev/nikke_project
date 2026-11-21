@@ -1,0 +1,316 @@
+[
+  {
+    "id": "1266-01",
+    "recording": "1266",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 489293,
+    "description": "ウンファ（92）単騎・オートで、7 発目（2 本目のマガジンの 1 発目。S1 のチャージダメージ▲と S2 の防御力▼の中）のコア・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（防御力 100・98・71・69 × フルチャージ倍率 2.5・2.8728 × コア・会心・距離の組）に ±1.5 で当てた（使い捨てのスクリプト。V-0809「読み方」）",
+      "note": "f1521。1 本目の最後の弾丸（f1311）の 210f 後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 7,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0809",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1266-02",
+    "recording": "1266",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 425695,
+    "description": "ウンファ（92）単騎・オートで、6 発目（1 本目のマガジンの最後の弾丸。S1・S2 の▲▼なし）のコア・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（防御力 100・98・71・69 × フルチャージ倍率 2.5・2.8728 × コア・会心・距離の組）に ±1.5 で当てた（使い捨てのスクリプト。V-0809「読み方」）",
+      "note": "f1311。それまでの 5 発も同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 6,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0809",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1266-03",
+    "recording": "1266",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "value": [210, 73, 82],
+    "description": "ウンファ（92）単騎・オートで、2 本目のマガジンの最後の弾丸から次の 3 発までの発と発の間（最後の弾丸 → 1 発目 → 2 発目 → 3 発目。動画のフレーム）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分のフレームの差",
+      "note": "f1922・2132・2205・2287。的のジャンプを挟まないリロードでは、どの回も 209〜210・72〜73・82（ほかの発と発の間は 82。ジャンプを挟む回と、発の外れた回を除く）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "from": 1050,
+        "to": 1500,
+        "video": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "source": "V-0809",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1266-04",
+    "recording": "1266",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 489293,
+    "description": "ウンファ（92）単騎・オートで、8 発目（2 本目のマガジンの 2 発目。S1 のチャージダメージ▲と S2 の防御力▼の中）のコア・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（防御力 100・98・71・69 × フルチャージ倍率 2.5・2.8728 × コア・会心・距離の組）に ±1.5 で当てた（使い捨てのスクリプト。V-0809「読み方」）",
+      "note": "f1594。最後の弾丸の 283f 後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 8,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0809",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1266-05",
+    "recording": "1266",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 425695,
+    "description": "ウンファ（92）単騎・オートで、10 発目（2 本目のマガジンの 4 発目。S1・S2 の▲▼なし）のコア・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（防御力 100・98・71・69 × フルチャージ倍率 2.5・2.8728 × コア・会心・距離の組）に ±1.5 で当てた（使い捨てのスクリプト。V-0809「読み方」）",
+      "note": "f1758。3 発目（f1676 の頃）は的のジャンプで外れて増分が無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 10,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0809",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1266-06",
+    "recording": "1266",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 489293,
+    "description": "ウンファ（92）単騎・オートで、13 発目（3 本目のマガジンの 1 発目。S1 のチャージダメージ▲と S2 の防御力▼の中）のコア・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（防御力 100・98・71・69 × フルチャージ倍率 2.5・2.8728 × コア・会心・距離の組）に ±1.5 で当てた（使い捨てのスクリプト。V-0809「読み方」）",
+      "note": "f2132。2 本目の最後の弾丸（f1922）の 210f 後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 13,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0809",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1266-07",
+    "recording": "1266",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 489293,
+    "description": "ウンファ（92）単騎・オートで、14 発目（3 本目のマガジンの 2 発目。S1 のチャージダメージ▲と S2 の防御力▼の中）のコア・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（防御力 100・98・71・69 × フルチャージ倍率 2.5・2.8728 × コア・会心・距離の組）に ±1.5 で当てた（使い捨てのスクリプト。V-0809「読み方」）",
+      "note": "f2205。最後の弾丸の 283f 後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 14,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0809",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1266-08",
+    "recording": "1266",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 425695,
+    "description": "ウンファ（92）単騎・オートで、15 発目（3 本目のマガジンの 3 発目。S1・S2 の▲▼なし）のコア・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（防御力 100・98・71・69 × フルチャージ倍率 2.5・2.8728 × コア・会心・距離の組）に ±1.5 で当てた（使い捨てのスクリプト。V-0809「読み方」）",
+      "note": "f2287。3 発目から▲▼なし"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 15,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0809",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1266-09",
+    "recording": "1266",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [283, 299, 328],
+    "description": "ウンファ（92）単騎・オートで、マガジンの最後の弾丸から、次のマガジンの 2 発目まで（S2 の防御力▼あり。的のジャンプを挟まない回の最も遅い発）と、的のジャンプでリロードの後の 1 発目が遅れた 2 回（▼なし。S1 のチャージダメージ▲はあり）の動画のフレーム",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子に ±1.5 で当てた（使い捨てのスクリプト。V-0809「読み方」）",
+      "note": "283 はジャンプを挟まないリロードのどの回も（2 発目は 489,293・562,687・611,616・685,010 のどれかで、どれも防御力 71）。299 は最後の弾丸 f8797 → f9096（489,175。防御力 100・チャージダメージ▲あり・コア）、328 は f10719 → f11047（684,845。防御力 100・チャージダメージ▲あり・コア・距離・会心）。どちらもその次の発（f9168・f11120）も▲あり・▼なしで、3 発目から▲なし。▼の窓の終わりは最後の弾丸の 283f 後と 299f 後の間（モデルは最後の弾丸の次のフレームから 294f）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0809",
+    "readAt": "2026-11-21"
+  }
+]

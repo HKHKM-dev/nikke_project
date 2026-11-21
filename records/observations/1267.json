@@ -1,0 +1,385 @@
+[
+  {
+    "id": "1267-01",
+    "recording": "1267",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 489301,
+    "description": "I-DOLL・フラワー + ウンファ（92。操作）・オートで、ウンファの 7 発目（2 本目のマガジンの 1 発目。S1 のチャージダメージ▲・S2 の防御力▼・バーストの防御力▼の中。防御力 69）のコア・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（ウンファ: 防御力 100・98・71・69 × フルチャージ倍率 2.5・2.8728 × コア・会心・距離の組とバーストの 1 ヒット、I-DOLL・フラワー: 防御力 4 通り × 部位の組とバーストの 1 ヒット）に ±1.5 で当てた（使い捨てのスクリプト。V-0809「読み方」）",
+      "note": "f1552。1 回目のバースト（II の印 f1398）の後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 2,
+        "shot": 7,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0809",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1267-02",
+    "recording": "1267",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 489301,
+    "description": "I-DOLL・フラワー + ウンファ（92。操作）・オートで、ウンファの 8 発目（2 本目のマガジンの 2 発目。S1 のチャージダメージ▲・S2 の防御力▼・バーストの防御力▼の中。防御力 69）のコア・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（ウンファ: 防御力 100・98・71・69 × フルチャージ倍率 2.5・2.8728 × コア・会心・距離の組とバーストの 1 ヒット、I-DOLL・フラワー: 防御力 4 通り × 部位の組とバーストの 1 ヒット）に ±1.5 で当てた（使い捨てのスクリプト。V-0809「読み方」）",
+      "note": "f1625。1 回目のバースト（II の印 f1398）の後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 2,
+        "shot": 8,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0809",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1267-03",
+    "recording": "1267",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 532128,
+    "description": "I-DOLL・フラワー + ウンファ（92。操作）・オートで、ウンファの 9 発目（2 本目のマガジンの 3 発目。バーストの防御力▼だけの中。防御力 98）のコア・会心あり・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（ウンファ: 防御力 100・98・71・69 × フルチャージ倍率 2.5・2.8728 × コア・会心・距離の組とバーストの 1 ヒット、I-DOLL・フラワー: 防御力 4 通り × 部位の組とバーストの 1 ヒット）に ±1.5 で当てた（使い捨てのスクリプト。V-0809「読み方」）",
+      "note": "f1707。1 回目のバースト（II の印 f1398）の後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 2,
+        "shot": 9,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0809",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1267-04",
+    "recording": "1267",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 425702,
+    "description": "I-DOLL・フラワー + ウンファ（92。操作）・オートで、ウンファの 10 発目（2 本目のマガジンの 4 発目。バーストの防御力▼だけの中。防御力 98）のコア・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（ウンファ: 防御力 100・98・71・69 × フルチャージ倍率 2.5・2.8728 × コア・会心・距離の組とバーストの 1 ヒット、I-DOLL・フラワー: 防御力 4 通り × 部位の組とバーストの 1 ヒット）に ±1.5 で当てた（使い捨てのスクリプト。V-0809「読み方」）",
+      "note": "f1789。1 回目のバースト（II の印 f1398）の後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 2,
+        "shot": 10,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0809",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1267-05",
+    "recording": "1267",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 425702,
+    "description": "I-DOLL・フラワー + ウンファ（92。操作）・オートで、ウンファの 12 発目（2 本目のマガジンの 6 発目。バーストの防御力▼だけの中。防御力 98）のコア・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（ウンファ: 防御力 100・98・71・69 × フルチャージ倍率 2.5・2.8728 × コア・会心・距離の組とバーストの 1 ヒット、I-DOLL・フラワー: 防御力 4 通り × 部位の組とバーストの 1 ヒット）に ±1.5 で当てた（使い捨てのスクリプト。V-0809「読み方」）",
+      "note": "f1953。1 回目のバースト（II の印 f1398）の後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 2,
+        "shot": 12,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0809",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1267-06",
+    "recording": "1267",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [-1, -1, -1, -1, -1, -1, -2, -1],
+    "description": "I-DOLL・フラワー + ウンファ（92。操作）・オートバースト ON で、ウンファの発動の印（右のバースト欄の六角形が II から III に替わったフレーム）から、ウンファのバーストのヒット（HUD の増分）までの動画のフレーム（最初の 8 回。負は印より前）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（ウンファ: 防御力 100・98・71・69 × フルチャージ倍率 2.5・2.8728 × コア・会心・距離の組とバーストの 1 ヒット、I-DOLL・フラワー: 防御力 4 通り × 部位の組とバーストの 1 ヒット）に ±1.5 で当てた（使い捨てのスクリプト。V-0809「読み方」）。II の印は recipe:burst-panel@4 の「II から III に替わったフレーム」（1398・2700・3879・5312・6536・7715・8938・10155・11415）",
+      "note": "ヒットは f1397・2699・3878・5311・6535・7714・8936・10154・11414。I-DOLL・フラワーのバーストのヒットは、どの回も I の印（I から II に替わったフレーム）の 14f 後（C-0220 と同じ）。9 回目（f11414。印 f11415）も −1f。モデルは 180 秒の発動が 8 回なので、最初の 8 回で比べる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 2,
+        "count": 8
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0809",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1267-07",
+    "recording": "1267",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 102594,
+    "description": "I-DOLL・フラワー + ウンファ（92。操作）・オートバースト ON で、ウンファの 1 回目のバーストのヒット（会心なし。発動の時点に S2 の防御力▼あり・同じ発動のバーストの防御力▼なし。防御力 71）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（ウンファ: 防御力 100・98・71・69 × フルチャージ倍率 2.5・2.8728 × コア・会心・距離の組とバーストの 1 ヒット、I-DOLL・フラワー: 防御力 4 通り × 部位の組とバーストの 1 ヒット）に ±1.5 で当てた（使い捨てのスクリプト。V-0809「読み方」）",
+      "note": "f1397。会心なしの 6 回（1・2・4・6・7・8 回目）は同じ値。会心の 2 回（3・5 回目）は 153,891（防御力 71）。9 回目（会心）は 153,854 で、発動の前 5 秒に最後の弾丸が無く、防御力 100。どの回も、同じ発動のバーストの防御力▼（98・69）の値ではない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0809",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1267-08",
+    "recording": "1267",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 886.5,
+    "spread": {
+      "kind": "range",
+      "low": 874,
+      "high": 899
+    },
+    "description": "I-DOLL・フラワー + ウンファ（92。操作）・オートバースト ON で、ウンファの 4 回目のバーストの印（f5312）から、バーストの防御力▼の切れ目までの動画のフレームの幅（▼ありの最後の発 874f・▼なしの最初の発 899f。値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（ウンファ: 防御力 100・98・71・69 × フルチャージ倍率 2.5・2.8728 × コア・会心・距離の組とバーストの 1 ヒット、I-DOLL・フラワー: 防御力 4 通り × 部位の組とバーストの 1 ヒット）に ±1.5 で当てた（使い捨てのスクリプト。V-0809「読み方」）。II の印は recipe:burst-panel@4 の「II から III に替わったフレーム」（1398・2700・3879・5312・6536・7715・8938・10155・11415）",
+      "note": "防御力 98・69 の格子の発を▼あり、100・71 の発を▼なしとした。ほかの回の幅: 1 回目 853〜920・2 回目 844〜917・3 回目 805〜1001・5 回目 861〜905・6 回目 868〜905・7 回目 835〜912・8 回目 806〜883（9 回目は録画の終わり）。全部の回の共通部分は 874〜883"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "stat": "enemyDefenseDown",
+        "from": 2,
+        "n": 3,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 12.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0809",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1267-09",
+    "recording": "1267",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 844.5,
+    "spread": {
+      "kind": "range",
+      "low": 806,
+      "high": 883
+    },
+    "description": "I-DOLL・フラワー + ウンファ（92。操作）・オートバースト ON で、ウンファの 8 回目のバーストの印（f10155）から、バーストの防御力▼の切れ目までの動画のフレームの幅（▼ありの最後の発 806f・▼なしの最初の発 883f。値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（ウンファ: 防御力 100・98・71・69 × フルチャージ倍率 2.5・2.8728 × コア・会心・距離の組とバーストの 1 ヒット、I-DOLL・フラワー: 防御力 4 通り × 部位の組とバーストの 1 ヒット）に ±1.5 で当てた（使い捨てのスクリプト。V-0809「読み方」）。II の印は recipe:burst-panel@4 の「II から III に替わったフレーム」（1398・2700・3879・5312・6536・7715・8938・10155・11415）",
+      "note": "防御力 98・69 の格子の発を▼あり、100・71 の発を▼なしとした"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "stat": "enemyDefenseDown",
+        "from": 2,
+        "n": 7,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 38.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0809",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1267-10",
+    "recording": "1267",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": -12,
+    "spread": {
+      "kind": "range",
+      "low": -41,
+      "high": 17
+    },
+    "description": "I-DOLL・フラワー + ウンファ（92。操作）・オートバースト ON で、ウンファの 4 回目のバーストの印（f5312）から、バーストの防御力▼の付き始めまでの動画のフレームの幅（▼なしの最後の発 −41f・▼ありの最初の発 17f。値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（ウンファ: 防御力 100・98・71・69 × フルチャージ倍率 2.5・2.8728 × コア・会心・距離の組とバーストの 1 ヒット、I-DOLL・フラワー: 防御力 4 通り × 部位の組とバーストの 1 ヒット）に ±1.5 で当てた（使い捨てのスクリプト。V-0809「読み方」）。II の印は recipe:burst-panel@4 の「II から III に替わったフレーム」（1398・2700・3879・5312・6536・7715・8938・10155・11415）",
+      "note": "5 回目も −43〜17f。ほかの回はもっと広い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "stat": "enemyDefenseDown",
+        "from": 2,
+        "n": 3,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 29
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0809",
+    "readAt": "2026-11-21"
+  }
+]
