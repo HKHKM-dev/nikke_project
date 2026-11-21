@@ -1,0 +1,340 @@
+{
+  "verification": "V-0836",
+  "team": [
+    {
+      "rid": 301
+    },
+    {
+      "rid": 851
+    },
+    {
+      "rid": 201,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S2 の攻撃力▲は受け手の攻撃力に対する割合で、きっかけのフルチャージの発の後から付く。S1 はフルバースト開始時に味方全体へチャージダメージ▲ 10 秒）"
+    },
+    {
+      "id": "H-caster",
+      "note": "S2 の攻撃力▲がヤンの攻撃力を基準にする（scaling: casterAttack）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 201,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "yan-first",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 1,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "yan-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "yan-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "yan-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "yan-after-jump-1",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 31,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "yan-after-jump-1-next",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 32,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "yan-after-jump-2",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 49,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "yan-after-jump-2-next",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 50,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "raven-first",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 2,
+        "shot": 1,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "raven-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "raven-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "yan-burst-fb-round",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "yan-burst-timeout-round",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "9b73e473d4056b6286e84f6783bed00f74804fde",
+    "values": {
+      "H1": {
+        "yan-first": 428349.075,
+        "yan-base": 440226.56299999997,
+        "yan-fb": 584164.92672375,
+        "yan-after": 440226.56299999997,
+        "yan-after-jump-1": 428349.075,
+        "yan-after-jump-1-next": 440226.56299999997,
+        "yan-after-jump-2": 428349.075,
+        "yan-after-jump-2-next": 440226.5629999999,
+        "raven-first": 367174.74,
+        "raven-base": 377353.60500000004,
+        "raven-fb": 749453.533345,
+        "yan-burst-fb-round": 357772.5689000001,
+        "yan-burst-timeout-round": 357772.5689000001
+      },
+      "H-caster": {
+        "yan-first": 428349.075,
+        "yan-base": 440226.56299999997,
+        "yan-fb": 584164.92672375,
+        "yan-after": 440226.56299999997,
+        "yan-after-jump-1": 428349.075,
+        "yan-after-jump-1-next": 440226.56299999997,
+        "yan-after-jump-2": 428349.075,
+        "yan-after-jump-2-next": 440226.5629999999,
+        "raven-first": 367174.74,
+        "raven-base": 375658.66000000003,
+        "raven-fb": 747152.2217712499,
+        "yan-burst-fb-round": 357772.5689000001,
+        "yan-burst-timeout-round": 357772.5689000001
+      }
+    }
+  }
+}

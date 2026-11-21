@@ -1,0 +1,46 @@
+{
+  "id": "1313",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1313_yan-1.mp4",
+  "original": "2026-11-21_18-37-58.mp4",
+  "durationSec": 212.3,
+  "frames": 12736,
+  "fps": 60,
+  "sizeMB": 257,
+  "sha256": "4148f71f9439",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 851,
+      "name": "レイヴン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 201,
+      "name": "ヤン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON。ソルジャーF.A.（II）+ レイヴン（III）+ ヤン（I・操作）・AUTO 射撃 ON・オートバースト ON）。戦闘履歴のパネルで 3 体（LV.400）と枠順を確かめた。V-0836 の撮影",
+  "backup": {
+    "at": "2026-11-21T18:46+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

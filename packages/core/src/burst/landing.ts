@@ -285,6 +285,8 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // ノベル: II の発動（六角形の替わり目）からバーストスキルダメージのヒットまで 80f（フルバーストに入る回は、III の 00.00 の後の入りの止まりを
   // 挟んで動画で 100〜101f）。フルスタックの時の受けるダメージ▲（burst の effects[1]。burstUse）もヒットと同じフレームから付く
   { resourceIds: [212], delays: { hitFrames: 80, effectFrames: 80 }, claim: 'C-1450' },
+  // ヤン: I の六角形の替わり目からバーストスキルダメージの 1 ヒットまで 1f（動画で 0〜1f）。バースト使用時の効果は無い
+  { resourceIds: [201], delays: { hitFrames: 1, effectFrames: 0 }, claim: 'C-1457' },
 ];
 
 /**
