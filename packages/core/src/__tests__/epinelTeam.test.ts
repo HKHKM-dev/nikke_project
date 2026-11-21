@@ -1,6 +1,7 @@
 // エピネル編（plan/design-epinel.md）: エピネル（241）を含む編成で、S2 の最後の弾丸の後の会心率▲・会心ダメージ▲（5 秒）と、
 // バーストの 1 ヒットが意図どおりに出るか。S1 と、バーストのフルスタックの時の追加ダメージは前提の外（V-0806）
 import { describe, expect, it } from 'vitest';
+import { burstDelaysOf } from '../burst/landing.ts';
 import { burstHitsOfSlot } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -9,7 +10,7 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFirstFrame } from '../time.ts';
 import { rawDefinition } from './data.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const EPINEL = 241;
 const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
@@ -61,7 +62,8 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, slot }) => {
   it('ends each S2 window before the next last bullet (5 s is shorter than a magazine and its reload)', () => {
     const windows = s2('critDamage');
     windows.forEach((w, k) => {
-      expect(w.end - w.start).toBeLessThanOrEqual(S2_DURATION + 1);
+      // 最後の弾丸の次のフレームから付き、最後の弾丸から 5 秒に達するフレームで切れる
+      if (w.end < plan.frames) expect(w.end).toBe(ends[k]! + S2_DURATION);
       const next = ends[k + 1];
       if (next !== undefined) expect(w.end).toBeLessThanOrEqual(next);
     });
@@ -76,6 +78,8 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, slot }) => {
     // 敵全体（単体の的）に 1 ヒット。倍率ダメージ（追加ダメージ）は出ない
     const landed = burstHitsOfSlot(plan.schedule!, slot, plan.frames);
     expect(landed.map((h) => h.share)).toEqual(landed.map(() => 1));
+    // 遅れの表の行: III のタイマーの 00.00 から 39f（C-1361）
+    expect(burstDelaysOf(characterOf(EPINEL)).hitFrames).toBe(39);
     expect(new Set(landed.map((h) => h.activationFrame)).size).toBe(landed.length);
     expect(plan.skillHits.filter((h) => h.slotIndex === slot)).toEqual([]);
   });
