@@ -58,13 +58,17 @@ describe('sim-run.ts', () => {
     expect(unknown.stderr).toBe('--trace の種類が無い: nope（shots・bursts・buffs・hits・instants・all）\n');
   });
 
-  it('stops with status 2 on a --trace without kinds', () => {
+  it('stops with status 2 on a --trace without kinds, or a --from that is not seconds', () => {
     for (const kinds of ['', ',']) {
       const empty = run('--ids', '82', '--fixed-spec', '--duration', '10', '--trace', kinds);
       expect(empty.status).toBe(2);
       expect(empty.stdout).toBe('');
       expect(empty.stderr).toBe(`--trace に種類が無い: "${kinds}"（shots・bursts・buffs・hits・instants・all）\n`);
     }
+    const from = run('--ids', '82', '--fixed-spec', '--duration', '10', '--trace', 'shots', '--from', 'x');
+    expect(from.status).toBe(2);
+    expect(from.stdout).toBe('');
+    expect(from.stderr).toBe('--from は 0 以上の秒（数）: x\n');
   });
 
   it('stops with status 2 on a --duration that is not a positive number', () => {

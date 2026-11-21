@@ -155,14 +155,12 @@ if (ids.length < 1 || ids.length > TEAM_SIZE || ids.some((id) => !Number.isInteg
   console.error(`--ids must list 1..${TEAM_SIZE} resource ids`);
   process.exit(2);
 }
-// 戦闘時間（数でない値を計算に渡すと、メモリを使い切って落ちる）
-const durationSeconds = Number(values.duration);
-if (values.duration.trim() === '' || !Number.isFinite(durationSeconds) || durationSeconds <= 0) {
-  console.error(`--duration は 0 より大きい秒（数）: ${values.duration}`);
-  process.exit(2);
-}
-// --trace で出す種類（計算の前に検査する）
+// 戦闘時間（数でない値（NaN）を計算に渡すと、メモリを使い切って落ちる）
+const durationSeconds = seconds(values.duration, '--duration', true);
+// --trace で出す種類と範囲のフレーム（計算の前に検査する）
 const traceKinds = values.trace === undefined ? undefined : traceKindsArg(values.trace);
+const traceStart = values.from === undefined ? 0 : gameSecondsToFrame(seconds(values.from, '--from'));
+const traceEnd = values.to === undefined ? Infinity : gameSecondsToFrame(seconds(values.to, '--to'));
 
 const treasurePhases = new Map<number, number>();
 for (const entry of values.treasure?.split(',') ?? []) {
@@ -513,11 +511,11 @@ function printReport(): void {
   }
 }
 
-/** --from・--to の秒（数でなければ止める） */
-function seconds(text: string, name: string): number {
+/** --duration・--from・--to の秒（数でないか、0 未満（positive なら 0 以下）なら止める） */
+function seconds(text: string, name: string, positive = false): number {
   const v = Number(text);
-  if (text.trim() === '' || !Number.isFinite(v) || v < 0) {
-    console.error(`${name} は 0 以上の秒（数）: ${text}`);
+  if (text.trim() === '' || !Number.isFinite(v) || v < 0 || (positive && v === 0)) {
+    console.error(`${name} は ${positive ? '0 より大きい' : '0 以上の'}秒（数）: ${text}`);
     process.exit(2);
   }
   return v;
@@ -536,7 +534,5 @@ function traceKindsArg(kinds: string): ReadonlySet<string> {
 
 /** --trace: 出来事の列だけを 1 行ずつ出す（区間の表は出さない）。行は sim-run/trace.ts が作る */
 function printTrace(events: readonly SimEvent[], wanted: ReadonlySet<string>): void {
-  const start = values.from === undefined ? 0 : gameSecondsToFrame(seconds(values.from, '--from'));
-  const end = values.to === undefined ? Infinity : gameSecondsToFrame(seconds(values.to, '--to'));
-  console.log(traceLines(events, wanted, start, end).join('\n'));
+  console.log(traceLines(events, wanted, traceStart, traceEnd).join('\n'));
 }
