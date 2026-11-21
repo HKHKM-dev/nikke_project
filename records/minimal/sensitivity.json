@@ -2018,7 +2018,7 @@
     {
       "observation": "0123-24",
       "element": "A2 skill2.effects[0]",
-      "key": "c0e0faa93a6543b8",
+      "key": "9ba46bc655427c69",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2026,7 +2026,7 @@
     {
       "observation": "0123-25",
       "element": "A2 skill2.effects[0]",
-      "key": "00e6f1ce17d591d3",
+      "key": "baccb59df04dfe92",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2034,7 +2034,7 @@
     {
       "observation": "0123-31",
       "element": "A2 skill2.effects[0]",
-      "key": "280555cfafd948c4",
+      "key": "1e25947490c063dd",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2042,7 +2042,7 @@
     {
       "observation": "0123-32",
       "element": "A2 skill2.effects[0]",
-      "key": "ae726a558d5fbf02",
+      "key": "ca2dbf5a22739b53",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2050,7 +2050,7 @@
     {
       "observation": "0123-33",
       "element": "A2 skill2.effects[0]",
-      "key": "158afff84581a4fd",
+      "key": "e18e11371164fc24",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2058,7 +2058,7 @@
     {
       "observation": "0123-34",
       "element": "A2 skill2.effects[0]",
-      "key": "16fc5b8eb898f8e3",
+      "key": "2a5a1d5d1f7d3942",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19240,7 +19240,7 @@
     {
       "observation": "0819-06",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "ddad98677aca7030",
+      "key": "0421cf92bcf3a745",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19248,7 +19248,7 @@
     {
       "observation": "0819-06",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "ddad98677aca7030",
+      "key": "0421cf92bcf3a745",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -19256,7 +19256,7 @@
     {
       "observation": "0819-06",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "ddad98677aca7030",
+      "key": "0421cf92bcf3a745",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19264,7 +19264,7 @@
     {
       "observation": "0819-07",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "aa9186c20a0e064d",
+      "key": "913536d3763b6ab8",
       "effective": false,
       "minus": 4.656612873077393e-10,
       "plus": null
@@ -19272,7 +19272,7 @@
     {
       "observation": "0819-07",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "aa9186c20a0e064d",
+      "key": "913536d3763b6ab8",
       "effective": true,
       "minus": -78369.51804914698,
       "plus": 0
@@ -19280,7 +19280,7 @@
     {
       "observation": "0819-07",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "aa9186c20a0e064d",
+      "key": "913536d3763b6ab8",
       "effective": false,
       "minus": 9.313225746154785e-10,
       "plus": null
@@ -19288,7 +19288,7 @@
     {
       "observation": "0819-08",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "cc7073e1a7fcd128",
+      "key": "6aea59acb312d9ed",
       "effective": false,
       "minus": -4.656612873077393e-10,
       "plus": null
@@ -19296,7 +19296,7 @@
     {
       "observation": "0819-08",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "cc7073e1a7fcd128",
+      "key": "6aea59acb312d9ed",
       "effective": true,
       "minus": -68151.63112692535,
       "plus": 0
@@ -19304,7 +19304,7 @@
     {
       "observation": "0819-08",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "cc7073e1a7fcd128",
+      "key": "6aea59acb312d9ed",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19312,7 +19312,7 @@
     {
       "observation": "0819-09",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "d42f2ca24ff28799",
+      "key": "f56e00339cb432fc",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19320,7 +19320,7 @@
     {
       "observation": "0819-09",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "d42f2ca24ff28799",
+      "key": "f56e00339cb432fc",
       "effective": true,
       "minus": -63660.3092989116,
       "plus": 0
@@ -19328,7 +19328,7 @@
     {
       "observation": "0819-09",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "d42f2ca24ff28799",
+      "key": "f56e00339cb432fc",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19336,7 +19336,7 @@
     {
       "observation": "0819-10",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "3868e481774a485e",
+      "key": "42513cccc181707b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19344,7 +19344,7 @@
     {
       "observation": "0819-10",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "3868e481774a485e",
+      "key": "42513cccc181707b",
       "effective": true,
       "minus": -15763.5952741144,
       "plus": 0
@@ -19352,7 +19352,7 @@
     {
       "observation": "0819-10",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "3868e481774a485e",
+      "key": "42513cccc181707b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19360,7 +19360,7 @@
     {
       "observation": "0819-13",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "2d84a3807b733e4b",
+      "key": "b9119ccbce9ad78a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19368,7 +19368,7 @@
     {
       "observation": "0819-13",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "2d84a3807b733e4b",
+      "key": "b9119ccbce9ad78a",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -19376,7 +19376,7 @@
     {
       "observation": "0819-13",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "2d84a3807b733e4b",
+      "key": "b9119ccbce9ad78a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19384,7 +19384,7 @@
     {
       "observation": "0820-06",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "d97b3df54054156a",
+      "key": "ab2de2181995ff57",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19392,7 +19392,7 @@
     {
       "observation": "0820-06",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "d97b3df54054156a",
+      "key": "ab2de2181995ff57",
       "effective": true,
       "minus": -135978.95076707564,
       "plus": 0
@@ -19400,7 +19400,7 @@
     {
       "observation": "0820-06",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "d97b3df54054156a",
+      "key": "ab2de2181995ff57",
       "effective": true,
       "minus": -640942.4307634346,
       "plus": null
@@ -19408,7 +19408,7 @@
     {
       "observation": "0820-08",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "64a1d1482ce348eb",
+      "key": "f410846998dc8e06",
       "effective": false,
       "minus": -4.656612873077393e-10,
       "plus": null
@@ -19416,7 +19416,7 @@
     {
       "observation": "0820-08",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "64a1d1482ce348eb",
+      "key": "f410846998dc8e06",
       "effective": true,
       "minus": -68151.63112692535,
       "plus": 0
@@ -19424,7 +19424,7 @@
     {
       "observation": "0820-08",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "64a1d1482ce348eb",
+      "key": "f410846998dc8e06",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19432,7 +19432,7 @@
     {
       "observation": "0820-09",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "9320d2d34a6684da",
+      "key": "e32f840e6aa931a7",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19440,7 +19440,7 @@
     {
       "observation": "0820-09",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "9320d2d34a6684da",
+      "key": "e32f840e6aa931a7",
       "effective": true,
       "minus": -63660.3092989116,
       "plus": 0
@@ -19448,7 +19448,7 @@
     {
       "observation": "0820-09",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "9320d2d34a6684da",
+      "key": "e32f840e6aa931a7",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19456,7 +19456,7 @@
     {
       "observation": "0820-10",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "b4f8b16eca7990b9",
+      "key": "6c15df27188148f4",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19464,7 +19464,7 @@
     {
       "observation": "0820-10",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "b4f8b16eca7990b9",
+      "key": "6c15df27188148f4",
       "effective": true,
       "minus": -15763.5952741144,
       "plus": 0
@@ -19472,7 +19472,7 @@
     {
       "observation": "0820-10",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "b4f8b16eca7990b9",
+      "key": "6c15df27188148f4",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19480,7 +19480,7 @@
     {
       "observation": "0820-11",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "36d1b409272cc2a2",
+      "key": "e5173416d01928f3",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19488,7 +19488,7 @@
     {
       "observation": "0820-11",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "36d1b409272cc2a2",
+      "key": "e5173416d01928f3",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -19496,7 +19496,7 @@
     {
       "observation": "0820-11",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "36d1b409272cc2a2",
+      "key": "e5173416d01928f3",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20168,7 +20168,7 @@
     {
       "observation": "0836-06",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "635359439f06b97c",
+      "key": "bce189d6fc10f2a1",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20176,7 +20176,7 @@
     {
       "observation": "0836-07",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "26dea1dc220d1221",
+      "key": "2d5382dd168db5fc",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20184,7 +20184,7 @@
     {
       "observation": "0836-08",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "84208111465deb86",
+      "key": "e3a3acf4dca2fe9b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20192,7 +20192,7 @@
     {
       "observation": "0837-06",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "2b103057a6d532b6",
+      "key": "43e97c821a81426b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20200,7 +20200,7 @@
     {
       "observation": "0837-07",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "234bb2701203c19b",
+      "key": "db7698e9c25136e6",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20208,7 +20208,7 @@
     {
       "observation": "0837-08",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "c6d99025492396ec",
+      "key": "ec86819006b3d671",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20216,7 +20216,7 @@
     {
       "observation": "0838-06",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "f905eb6b7247efd4",
+      "key": "39fe6eae0dc95b29",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20224,7 +20224,7 @@
     {
       "observation": "0838-07",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "a7c451043f783379",
+      "key": "16a1c055ba537904",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20232,7 +20232,7 @@
     {
       "observation": "0838-08",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "85c258bc1906e6f5",
+      "key": "a42cb4bd35ed1508",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21144,7 +21144,7 @@
     {
       "observation": "0864-05",
       "element": "A2 skill2.effects[0]",
-      "key": "80fb5612e6452a11",
+      "key": "4e114a912f95fc40",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21152,7 +21152,7 @@
     {
       "observation": "0864-06",
       "element": "A2 skill2.effects[0]",
-      "key": "79126e886c1344fb",
+      "key": "bfb871ff4a9cdf2a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21160,7 +21160,7 @@
     {
       "observation": "0864-08",
       "element": "A2 skill2.effects[0]",
-      "key": "8bed5fb832303bf5",
+      "key": "a3a85e8f7ffb7d2c",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21168,7 +21168,7 @@
     {
       "observation": "0864-09",
       "element": "A2 skill2.effects[0]",
-      "key": "72252f7f9a7f6286",
+      "key": "f7243f24631166df",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21176,7 +21176,7 @@
     {
       "observation": "0864-16",
       "element": "A2 skill2.effects[0]",
-      "key": "818415889869cc65",
+      "key": "adebf0fff33c66fc",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21184,7 +21184,7 @@
     {
       "observation": "0864-17",
       "element": "A2 skill2.effects[0]",
-      "key": "665ae9b2384e56b3",
+      "key": "6aa15eb163688b72",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21192,7 +21192,7 @@
     {
       "observation": "0864-18",
       "element": "A2 skill2.effects[0]",
-      "key": "43f5338b48e2bb94",
+      "key": "d6466e98be95d77d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21200,7 +21200,7 @@
     {
       "observation": "0864-19",
       "element": "A2 skill2.effects[0]",
-      "key": "8ee6fc35ce4c097a",
+      "key": "ab4a910a4b0d310b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21208,7 +21208,7 @@
     {
       "observation": "0865-05",
       "element": "A2 skill2.effects[0]",
-      "key": "ecf7ad523e748f97",
+      "key": "76bc6aedb58bb536",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21216,7 +21216,7 @@
     {
       "observation": "0865-06",
       "element": "A2 skill2.effects[0]",
-      "key": "4cbf98086e92c5cd",
+      "key": "577880631ffbec4c",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21224,7 +21224,7 @@
     {
       "observation": "0865-08",
       "element": "A2 skill2.effects[0]",
-      "key": "4c7787981a978fdb",
+      "key": "81926d938dcedae2",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21232,7 +21232,7 @@
     {
       "observation": "0865-09",
       "element": "A2 skill2.effects[0]",
-      "key": "e213fdef4e853090",
+      "key": "5a6458806b85b4e9",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21240,7 +21240,7 @@
     {
       "observation": "0865-16",
       "element": "A2 skill2.effects[0]",
-      "key": "e4e39648947ec41b",
+      "key": "00a5dea3176d1622",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21248,7 +21248,7 @@
     {
       "observation": "0865-17",
       "element": "A2 skill2.effects[0]",
-      "key": "c783d5caa3660e6d",
+      "key": "274954b5ba676aec",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21256,7 +21256,7 @@
     {
       "observation": "0865-18",
       "element": "A2 skill2.effects[0]",
-      "key": "691dc0f34bf2b7aa",
+      "key": "0809872c85feca23",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21264,7 +21264,7 @@
     {
       "observation": "0865-19",
       "element": "A2 skill2.effects[0]",
-      "key": "ba7de77db37b88d4",
+      "key": "38a68c66cf987fa5",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -27324,7 +27324,7 @@
     {
       "observation": "1036-08",
       "element": "アルカナ skill1.effects[2]",
-      "key": "f2e0b27ddf3e664a",
+      "key": "82ac7be2eb21426b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -27332,7 +27332,7 @@
     {
       "observation": "1036-08",
       "element": "アルカナ skill1.effects[2].contents[0]",
-      "key": "f2e0b27ddf3e664a",
+      "key": "82ac7be2eb21426b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -27340,7 +27340,7 @@
     {
       "observation": "1036-09",
       "element": "アルカナ skill1.effects[2]",
-      "key": "12458cf335b46e48",
+      "key": "78cd5628a3e27879",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -27348,7 +27348,7 @@
     {
       "observation": "1036-09",
       "element": "アルカナ skill1.effects[2].contents[0]",
-      "key": "12458cf335b46e48",
+      "key": "78cd5628a3e27879",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -27356,7 +27356,7 @@
     {
       "observation": "1036-10",
       "element": "アルカナ skill1.effects[2]",
-      "key": "5b1321b6e47a5a5b",
+      "key": "5f46fa853030729a",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -27364,7 +27364,7 @@
     {
       "observation": "1036-10",
       "element": "アルカナ skill1.effects[2].contents[0]",
-      "key": "5b1321b6e47a5a5b",
+      "key": "5f46fa853030729a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -27372,7 +27372,7 @@
     {
       "observation": "1037-06",
       "element": "アルカナ skill1.effects[2]",
-      "key": "dea00e038b7fd6f2",
+      "key": "285fb6d8f62ae2e3",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -27380,7 +27380,7 @@
     {
       "observation": "1037-06",
       "element": "アルカナ skill1.effects[2].contents[0]",
-      "key": "dea00e038b7fd6f2",
+      "key": "285fb6d8f62ae2e3",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -27388,7 +27388,7 @@
     {
       "observation": "1037-07",
       "element": "アルカナ skill1.effects[2]",
-      "key": "c9563789e0853590",
+      "key": "cab08ef6c2663b11",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -27396,7 +27396,7 @@
     {
       "observation": "1037-07",
       "element": "アルカナ skill1.effects[2].contents[0]",
-      "key": "c9563789e0853590",
+      "key": "cab08ef6c2663b11",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -27404,7 +27404,7 @@
     {
       "observation": "1037-08",
       "element": "アルカナ skill1.effects[2]",
-      "key": "4e745650c4f2c6d3",
+      "key": "73474d77d1db94c2",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -27412,7 +27412,7 @@
     {
       "observation": "1037-08",
       "element": "アルカナ skill1.effects[2].contents[0]",
-      "key": "4e745650c4f2c6d3",
+      "key": "73474d77d1db94c2",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -28452,7 +28452,7 @@
     {
       "observation": "1084-09",
       "element": "A2 burst.effects[0].contents[2]",
-      "key": "15651317fe5df024",
+      "key": "70368e720f003199",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -28460,7 +28460,7 @@
     {
       "observation": "1084-09",
       "element": "A2 skill2.effects[0]",
-      "key": "15651317fe5df024",
+      "key": "70368e720f003199",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -28468,7 +28468,7 @@
     {
       "observation": "1084-10",
       "element": "A2 burst.effects[0].contents[2]",
-      "key": "d58d9ccb37ab7e34",
+      "key": "bdc54bee9f489e49",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -28476,7 +28476,7 @@
     {
       "observation": "1084-10",
       "element": "A2 skill2.effects[0]",
-      "key": "d58d9ccb37ab7e34",
+      "key": "bdc54bee9f489e49",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -28484,7 +28484,7 @@
     {
       "observation": "1084-12",
       "element": "A2 burst.effects[0].contents[2]",
-      "key": "0950a02b41b93cd0",
+      "key": "b482cece4bbb835d",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -28492,7 +28492,7 @@
     {
       "observation": "1084-12",
       "element": "A2 skill2.effects[0]",
-      "key": "0950a02b41b93cd0",
+      "key": "b482cece4bbb835d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -28500,7 +28500,7 @@
     {
       "observation": "1084-13",
       "element": "A2 burst.effects[0].contents[2]",
-      "key": "250662b0a39c0bcf",
+      "key": "73dd23598e99b5f2",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -28508,7 +28508,7 @@
     {
       "observation": "1084-13",
       "element": "A2 skill2.effects[0]",
-      "key": "250662b0a39c0bcf",
+      "key": "73dd23598e99b5f2",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -28516,7 +28516,7 @@
     {
       "observation": "1084-14",
       "element": "A2 burst.effects[0].contents[2]",
-      "key": "e2f9ee8f2e4592f2",
+      "key": "c07fbe7a8babad7f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -28524,7 +28524,7 @@
     {
       "observation": "1084-14",
       "element": "A2 skill2.effects[0]",
-      "key": "e2f9ee8f2e4592f2",
+      "key": "c07fbe7a8babad7f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -28532,7 +28532,7 @@
     {
       "observation": "1085-09",
       "element": "A2 burst.effects[0].contents[2]",
-      "key": "0d0df26f94d695ec",
+      "key": "b45b7ddadd5c4c31",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -28540,7 +28540,7 @@
     {
       "observation": "1085-09",
       "element": "A2 skill2.effects[0]",
-      "key": "0d0df26f94d695ec",
+      "key": "b45b7ddadd5c4c31",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -28548,7 +28548,7 @@
     {
       "observation": "1085-10",
       "element": "A2 burst.effects[0].contents[2]",
-      "key": "896d77f37c83fcec",
+      "key": "da3f7a86799bbb31",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -28556,7 +28556,7 @@
     {
       "observation": "1085-10",
       "element": "A2 skill2.effects[0]",
-      "key": "896d77f37c83fcec",
+      "key": "da3f7a86799bbb31",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -28564,7 +28564,7 @@
     {
       "observation": "1085-12",
       "element": "A2 burst.effects[0].contents[2]",
-      "key": "0d85a843c95c6d88",
+      "key": "682cfc76be53d6e5",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -28572,7 +28572,7 @@
     {
       "observation": "1085-12",
       "element": "A2 skill2.effects[0]",
-      "key": "0d85a843c95c6d88",
+      "key": "682cfc76be53d6e5",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -28580,7 +28580,7 @@
     {
       "observation": "1085-13",
       "element": "A2 burst.effects[0].contents[2]",
-      "key": "0e50a3581ee45b37",
+      "key": "4237ef917bba8fca",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -28588,7 +28588,7 @@
     {
       "observation": "1085-13",
       "element": "A2 skill2.effects[0]",
-      "key": "0e50a3581ee45b37",
+      "key": "4237ef917bba8fca",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -28596,7 +28596,7 @@
     {
       "observation": "1085-14",
       "element": "A2 burst.effects[0].contents[2]",
-      "key": "95b5a977743ca1da",
+      "key": "9b039c524ee3e317",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -28604,7 +28604,7 @@
     {
       "observation": "1085-14",
       "element": "A2 skill2.effects[0]",
-      "key": "95b5a977743ca1da",
+      "key": "9b039c524ee3e317",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -29640,7 +29640,7 @@
     {
       "observation": "1123-10",
       "element": "A2 burst.effects[0].contents[2]",
-      "key": "ede760dc1cfdc119",
+      "key": "7ae4f445ea804dbc",
       "effective": true,
       "minus": 0,
       "plus": -25
@@ -29648,7 +29648,7 @@
     {
       "observation": "1123-10",
       "element": "A2 skill2.effects[0]",
-      "key": "ede760dc1cfdc119",
+      "key": "7ae4f445ea804dbc",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -29656,7 +29656,7 @@
     {
       "observation": "1123-11",
       "element": "A2 burst.effects[0].contents[2]",
-      "key": "bd92a7bf4c458bbe",
+      "key": "39083af20a3ba35b",
       "effective": true,
       "minus": 0,
       "plus": 8.333333333333329
@@ -29664,7 +29664,7 @@
     {
       "observation": "1123-11",
       "element": "A2 skill2.effects[0]",
-      "key": "bd92a7bf4c458bbe",
+      "key": "39083af20a3ba35b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -29672,7 +29672,7 @@
     {
       "observation": "1123-12",
       "element": "A2 burst.effects[0].contents[2]",
-      "key": "e8000806a01c32c1",
+      "key": "8e2078cff50cf214",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -29680,7 +29680,7 @@
     {
       "observation": "1123-12",
       "element": "A2 skill2.effects[0]",
-      "key": "e8000806a01c32c1",
+      "key": "8e2078cff50cf214",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -29688,7 +29688,7 @@
     {
       "observation": "1123-13",
       "element": "A2 burst.effects[0].contents[2]",
-      "key": "3402ccb08241fe55",
+      "key": "02f659d1ff76ab90",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -29696,7 +29696,7 @@
     {
       "observation": "1123-13",
       "element": "A2 skill2.effects[0]",
-      "key": "3402ccb08241fe55",
+      "key": "02f659d1ff76ab90",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -29704,7 +29704,7 @@
     {
       "observation": "1123-14",
       "element": "A2 burst.effects[0].contents[2]",
-      "key": "97056d69535472fc",
+      "key": "c9a1d6a40df16799",
       "effective": true,
       "minus": 0,
       "plus": -8.333333333333329
@@ -29712,7 +29712,7 @@
     {
       "observation": "1123-14",
       "element": "A2 skill2.effects[0]",
-      "key": "97056d69535472fc",
+      "key": "c9a1d6a40df16799",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -29720,7 +29720,7 @@
     {
       "observation": "1123-15",
       "element": "A2 burst.effects[0].contents[2]",
-      "key": "d79e621597f10bd8",
+      "key": "89afdc08fe66ee5d",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -29728,7 +29728,7 @@
     {
       "observation": "1123-15",
       "element": "A2 skill2.effects[0]",
-      "key": "d79e621597f10bd8",
+      "key": "89afdc08fe66ee5d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31240,7 +31240,7 @@
     {
       "observation": "1184-01",
       "element": "フローラ treasureSkills.burst.effects[0]",
-      "key": "89e21a182948882f",
+      "key": "3bec876d2122127a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31248,7 +31248,7 @@
     {
       "observation": "1184-01",
       "element": "フローラ treasureSkills.burst.effects[1]",
-      "key": "89e21a182948882f",
+      "key": "3bec876d2122127a",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31256,7 +31256,7 @@
     {
       "observation": "1184-01",
       "element": "フローラ treasureSkills.skill1.effects[1]",
-      "key": "89e21a182948882f",
+      "key": "3bec876d2122127a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31264,7 +31264,7 @@
     {
       "observation": "1184-01",
       "element": "フローラ treasureSkills.skill2.effects[1]",
-      "key": "89e21a182948882f",
+      "key": "3bec876d2122127a",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31272,7 +31272,7 @@
     {
       "observation": "1184-02",
       "element": "フローラ treasureSkills.burst.effects[0]",
-      "key": "164257fb50061d62",
+      "key": "3ebd47a2a5877eb7",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31280,7 +31280,7 @@
     {
       "observation": "1184-02",
       "element": "フローラ treasureSkills.burst.effects[1]",
-      "key": "164257fb50061d62",
+      "key": "3ebd47a2a5877eb7",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31288,7 +31288,7 @@
     {
       "observation": "1184-02",
       "element": "フローラ treasureSkills.skill1.effects[1]",
-      "key": "164257fb50061d62",
+      "key": "3ebd47a2a5877eb7",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31296,7 +31296,7 @@
     {
       "observation": "1184-02",
       "element": "フローラ treasureSkills.skill2.effects[1]",
-      "key": "164257fb50061d62",
+      "key": "3ebd47a2a5877eb7",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31304,7 +31304,7 @@
     {
       "observation": "1184-03",
       "element": "フローラ treasureSkills.burst.effects[0]",
-      "key": "05b98eb2cf503f1b",
+      "key": "ea4cddafe861a4be",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31312,7 +31312,7 @@
     {
       "observation": "1184-03",
       "element": "フローラ treasureSkills.burst.effects[1]",
-      "key": "05b98eb2cf503f1b",
+      "key": "ea4cddafe861a4be",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31320,7 +31320,7 @@
     {
       "observation": "1184-03",
       "element": "フローラ treasureSkills.skill1.effects[1]",
-      "key": "05b98eb2cf503f1b",
+      "key": "ea4cddafe861a4be",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31328,7 +31328,7 @@
     {
       "observation": "1184-03",
       "element": "フローラ treasureSkills.skill2.effects[1]",
-      "key": "05b98eb2cf503f1b",
+      "key": "ea4cddafe861a4be",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31336,7 +31336,7 @@
     {
       "observation": "1185-01",
       "element": "フローラ treasureSkills.burst.effects[0]",
-      "key": "8513365d82811d5c",
+      "key": "7ba9ee547c3d3d39",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31344,7 +31344,7 @@
     {
       "observation": "1185-01",
       "element": "フローラ treasureSkills.burst.effects[1]",
-      "key": "8513365d82811d5c",
+      "key": "7ba9ee547c3d3d39",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31352,7 +31352,7 @@
     {
       "observation": "1185-01",
       "element": "フローラ treasureSkills.skill1.effects[1]",
-      "key": "8513365d82811d5c",
+      "key": "7ba9ee547c3d3d39",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31360,7 +31360,7 @@
     {
       "observation": "1185-01",
       "element": "フローラ treasureSkills.skill2.effects[1]",
-      "key": "8513365d82811d5c",
+      "key": "7ba9ee547c3d3d39",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31368,7 +31368,7 @@
     {
       "observation": "1185-02",
       "element": "フローラ treasureSkills.burst.effects[0]",
-      "key": "ecca746e7174a499",
+      "key": "aa1510b3f122199c",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31376,7 +31376,7 @@
     {
       "observation": "1185-02",
       "element": "フローラ treasureSkills.burst.effects[1]",
-      "key": "ecca746e7174a499",
+      "key": "aa1510b3f122199c",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31384,7 +31384,7 @@
     {
       "observation": "1185-02",
       "element": "フローラ treasureSkills.skill1.effects[1]",
-      "key": "ecca746e7174a499",
+      "key": "aa1510b3f122199c",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31392,7 +31392,7 @@
     {
       "observation": "1185-02",
       "element": "フローラ treasureSkills.skill2.effects[1]",
-      "key": "ecca746e7174a499",
+      "key": "aa1510b3f122199c",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31400,7 +31400,7 @@
     {
       "observation": "1185-03",
       "element": "フローラ treasureSkills.burst.effects[0]",
-      "key": "733ff3412035865c",
+      "key": "ee6dc5e068ad1e39",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31408,7 +31408,7 @@
     {
       "observation": "1185-03",
       "element": "フローラ treasureSkills.burst.effects[1]",
-      "key": "733ff3412035865c",
+      "key": "ee6dc5e068ad1e39",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31416,7 +31416,7 @@
     {
       "observation": "1185-03",
       "element": "フローラ treasureSkills.skill1.effects[1]",
-      "key": "733ff3412035865c",
+      "key": "ee6dc5e068ad1e39",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31424,7 +31424,7 @@
     {
       "observation": "1185-03",
       "element": "フローラ treasureSkills.skill2.effects[1]",
-      "key": "733ff3412035865c",
+      "key": "ee6dc5e068ad1e39",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31432,7 +31432,7 @@
     {
       "observation": "1186-01",
       "element": "フローラ treasureSkills.burst.effects[0]",
-      "key": "493b0f569acfc1b9",
+      "key": "b036e50bbf218ebc",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31440,7 +31440,7 @@
     {
       "observation": "1186-01",
       "element": "フローラ treasureSkills.burst.effects[1]",
-      "key": "493b0f569acfc1b9",
+      "key": "b036e50bbf218ebc",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31448,7 +31448,7 @@
     {
       "observation": "1186-01",
       "element": "フローラ treasureSkills.skill1.effects[1]",
-      "key": "493b0f569acfc1b9",
+      "key": "b036e50bbf218ebc",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31456,7 +31456,7 @@
     {
       "observation": "1186-01",
       "element": "フローラ treasureSkills.skill2.effects[1]",
-      "key": "493b0f569acfc1b9",
+      "key": "b036e50bbf218ebc",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31464,7 +31464,7 @@
     {
       "observation": "1186-03",
       "element": "フローラ treasureSkills.burst.effects[0]",
-      "key": "adb7eb3d952fec0e",
+      "key": "bfae42b43c82538b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31472,7 +31472,7 @@
     {
       "observation": "1186-03",
       "element": "フローラ treasureSkills.burst.effects[1]",
-      "key": "adb7eb3d952fec0e",
+      "key": "bfae42b43c82538b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31480,7 +31480,7 @@
     {
       "observation": "1186-03",
       "element": "フローラ treasureSkills.skill1.effects[1]",
-      "key": "adb7eb3d952fec0e",
+      "key": "bfae42b43c82538b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31488,7 +31488,7 @@
     {
       "observation": "1186-03",
       "element": "フローラ treasureSkills.skill2.effects[1]",
-      "key": "adb7eb3d952fec0e",
+      "key": "bfae42b43c82538b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31496,7 +31496,7 @@
     {
       "observation": "1187-01",
       "element": "フローラ treasureSkills.burst.effects[0]",
-      "key": "c3a82b9d07024c06",
+      "key": "6f617f947f86e473",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31504,7 +31504,7 @@
     {
       "observation": "1187-01",
       "element": "フローラ treasureSkills.burst.effects[1]",
-      "key": "c3a82b9d07024c06",
+      "key": "6f617f947f86e473",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31512,7 +31512,7 @@
     {
       "observation": "1187-01",
       "element": "フローラ treasureSkills.skill1.effects[1]",
-      "key": "c3a82b9d07024c06",
+      "key": "6f617f947f86e473",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31520,7 +31520,7 @@
     {
       "observation": "1187-01",
       "element": "フローラ treasureSkills.skill2.effects[1]",
-      "key": "c3a82b9d07024c06",
+      "key": "6f617f947f86e473",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31528,7 +31528,7 @@
     {
       "observation": "1187-03",
       "element": "フローラ treasureSkills.burst.effects[0]",
-      "key": "71e4b7730d246c2a",
+      "key": "c588beaa58d5ec4f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31536,7 +31536,7 @@
     {
       "observation": "1187-03",
       "element": "フローラ treasureSkills.burst.effects[1]",
-      "key": "71e4b7730d246c2a",
+      "key": "c588beaa58d5ec4f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -31544,7 +31544,7 @@
     {
       "observation": "1187-03",
       "element": "フローラ treasureSkills.skill1.effects[1]",
-      "key": "71e4b7730d246c2a",
+      "key": "c588beaa58d5ec4f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -31552,7 +31552,7 @@
     {
       "observation": "1187-03",
       "element": "フローラ treasureSkills.skill2.effects[1]",
-      "key": "71e4b7730d246c2a",
+      "key": "c588beaa58d5ec4f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -32323,7 +32323,7 @@
     {
       "observation": "1203-01",
       "element": "ブレッディ skill1.effects[2]",
-      "key": "a32423c4fe5e8a21",
+      "key": "e50d89e7de3e9034",
       "effective": true,
       "minus": 0,
       "plus": null
@@ -32331,7 +32331,7 @@
     {
       "observation": "1203-02",
       "element": "ブレッディ skill1.effects[2]",
-      "key": "2836dbfca1a1777f",
+      "key": "2279bf3fcc2cea52",
       "effective": true,
       "minus": 0,
       "plus": null
@@ -32339,7 +32339,7 @@
     {
       "observation": "1203-03",
       "element": "ブレッディ skill1.effects[2]",
-      "key": "c8f532a762718f06",
+      "key": "df84f472d20e87b7",
       "effective": true,
       "minus": 0,
       "plus": 5
@@ -32347,7 +32347,7 @@
     {
       "observation": "1203-04",
       "element": "ブレッディ skill1.effects[2]",
-      "key": "e67fdbc1012a0f0c",
+      "key": "3f311a80f92fe295",
       "effective": true,
       "minus": 0,
       "plus": 0.33244695584732115
@@ -32355,7 +32355,7 @@
     {
       "observation": "1203-05",
       "element": "ブレッディ skill1.effects[2]",
-      "key": "4a0c51cf4d46f89c",
+      "key": "e6e2951ac762d8e5",
       "effective": true,
       "minus": 0,
       "plus": 0.33244695584732115
@@ -32363,7 +32363,7 @@
     {
       "observation": "1203-06",
       "element": "ブレッディ skill1.effects[2]",
-      "key": "371404a295308ebd",
+      "key": "bcebd8093080c3b8",
       "effective": true,
       "minus": 0,
       "plus": 17.381012822510776
@@ -32371,7 +32371,7 @@
     {
       "observation": "1203-07",
       "element": "ブレッディ skill1.effects[2]",
-      "key": "ef86e5581c5eab8d",
+      "key": "dc6b857ba9b04ac8",
       "effective": true,
       "minus": 0,
       "plus": 0.3746176415506586
@@ -32379,7 +32379,7 @@
     {
       "observation": "1203-08",
       "element": "ブレッディ skill1.effects[2]",
-      "key": "de618cc330485f5c",
+      "key": "2d2e3ddec5f728a5",
       "effective": true,
       "minus": 0,
       "plus": 0.07713831959464537
@@ -32387,7 +32387,7 @@
     {
       "observation": "1203-09",
       "element": "ブレッディ skill1.effects[2]",
-      "key": "b567681fb159da98",
+      "key": "102fd18a7db52509",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -32395,7 +32395,7 @@
     {
       "observation": "1203-10",
       "element": "ブレッディ skill1.effects[2]",
-      "key": "822b3fd9c81d98a8",
+      "key": "5fa568b817aad519",
       "effective": true,
       "minus": 0,
       "plus": -0.07161412623744992
@@ -32403,7 +32403,7 @@
     {
       "observation": "1204-01",
       "element": "ブレッディ skill1.effects[2]",
-      "key": "eb6bc5c4cc96faa9",
+      "key": "7f61efe7f743d54c",
       "effective": true,
       "minus": 0,
       "plus": 5
@@ -32411,7 +32411,7 @@
     {
       "observation": "1204-02",
       "element": "ブレッディ skill1.effects[2]",
-      "key": "c74645ca1f00cec3",
+      "key": "84aadc11d3c8a2ae",
       "effective": true,
       "minus": 0,
       "plus": 0.33244695584732115
@@ -32419,7 +32419,7 @@
     {
       "observation": "1204-03",
       "element": "ブレッディ skill1.effects[2]",
-      "key": "a330110825b32ef1",
+      "key": "7f3b288b4e06f7c4",
       "effective": true,
       "minus": 0,
       "plus": 15.338678064454022
