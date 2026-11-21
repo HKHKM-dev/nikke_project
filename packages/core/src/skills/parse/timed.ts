@@ -601,7 +601,8 @@ function parseTimedDelay(
     effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
   } else if (isTimerTrigger(trigger)) {
     // V-0602: 時間の周期のきっかけの timed も、周期の発火の delayFrames 後から（エーテルの S2 の防御力▼は、S2 のヒットから。
-    // C-0453・C-0832）。窓は 2 パス目の件（skills/holders/items.ts の startOfFire）で作るので、1 パス目で窓を追う stat には書けない
+    // C-0453・C-0832）。窓は 2 パス目の件（skills/holders/items.ts の startOfFire）で作るので、1 パス目で窓を追う stat には書けない。
+    // クールタイムの印のある周期も同じ制限で、遅れは発動のフレームから数える（plan/design-cooldown-timed-delay.md 1 節）
     if (isFirstPassTrackedStat(stat)) {
       fail(
         `${path}.delayFrames`,

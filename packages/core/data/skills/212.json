@@ -25,7 +25,8 @@
         {
           "kind": "timed",
           "trigger": {
-            "everySeconds": 10
+            "everySeconds": 10,
+            "cooldown": true
           },
           "target": "allies",
           "stat": "enemyDefenseDown",
@@ -33,8 +34,8 @@
           "durationRef": 4,
           "delayFrames": 65,
           "assumes": {
-            "ja": "最終防御力が最も高い敵 3 機は敵 1 体。窓は S1 のヒット（発動の 64f 後）の次のフレームから維持の秒数。周期は effects[0] と同じ 10 秒だが、CT の印を付けない（timed は印と遅れを組めない）ので、CT を縮める効果では窓が動かない",
-            "en": "The 3 highest-DEF enemies are the lone enemy. The window starts the frame after the S1 hit (64 f after activation) and lasts the duration. The period is the same 10 s as effects[0] but carries no cooldown mark (timed cannot combine the mark with a delay), so cooldown reductions do not move the window"
+            "ja": "最終防御力が最も高い敵 3 機は敵 1 体。窓は S1 のヒット（発動の 64f 後）の次のフレーム（発動の 65f 後）から維持の秒数。周期は effects[0] と同じ CT の発動なので、CT を縮める効果ではヒットとともに動く",
+            "en": "The 3 highest-DEF enemies are the lone enemy. The window starts the frame after the S1 hit (65 f after activation, the hit being at 64 f) and lasts the duration. It follows the same cooldown activations as effects[0], so cooldown reductions move it with the hit"
           },
           "claims": [
             "C-1448",

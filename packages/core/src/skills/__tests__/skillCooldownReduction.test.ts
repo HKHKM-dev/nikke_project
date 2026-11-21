@@ -72,14 +72,20 @@ describe('読み込み', () => {
     fails([{ ...cut, trigger: { count: 'fullChargeShot', stacksRef: 1 } }], [s2Attack], /only takes count, every/);
   });
 
-  it('keeps skillFired to timed, and the cooldown timed without a delay', () => {
+  it('keeps skillFired to timed without a delay, and the cooldown timed delay off first-pass stats', () => {
     fails(
       [{ kind: 'damage', trigger: { skillFired: 'skill2' }, ref: 1, damageType: 'skill' }],
       [s2Attack],
       /only allowed in timed/,
     );
     fails([{ ...onS2, trigger: { skillFired: 'burst' } }], [s2Attack], /skillFired/);
-    fails([], [{ ...s2Attack, stat: 'critRate', delayFrames: 3 }], /cannot have delayFrames/);
+    fails([{ ...onS2, delayFrames: 3 }], [s2Attack], /delayFrames needs a shot count trigger/);
+    fails([], [{ ...s2Attack, delayFrames: 3 }], /tracked inside the first pass/);
+    expect(
+      parseSkillDefinition(def([], [{ ...s2Attack, stat: 'attackDamage', delayFrames: 3 }])).skills.skill2.effects[0],
+    ).toMatchObject({
+      delayFrames: 3,
+    });
     expect(() =>
       parseSkillDefinition({ ...def([], []), skills: { ...def([], []).skills, burst: { effects: [s2Attack] } } }),
     ).toThrow(/only allowed in skill1 and skill2/);
@@ -129,6 +135,27 @@ describe('1 パス目の発動と窓（センチの単騎・仮の周期）', ()
     expect(effectWindows(sim, 0, { resourceId: CENTI, skill: 'skill1', stat: 'attackDamage' })).toEqual(
       fires.map((f) => ({ start: f + 1, end: f + 1 + gameSecondsToFrames(1) })),
     );
+  });
+
+  it('starts the delayed cooldown timed delayFrames after the fire, and drops windows past the battle end', () => {
+    const plain = runSimulation(teamOf([]));
+    const fires = Array.from({ length: Math.floor((plain.frames - 2) / long) }, (_, k) => (k + 1) * long);
+    const startsWith = (delayFrames: number) =>
+      effectWindows(
+        runSimulation(
+          fixedTeam([], 0, {
+            slots: [fixedSlot(CENTI, { definition: def([], [{ ...s2Attack, stat: 'attackDamage', delayFrames }]) })],
+          }),
+        ),
+        0,
+        { resourceId: CENTI, skill: 'skill2', stat: 'attackDamage' },
+      ).map((w) => w.start);
+    // 遅れ 1 は遅れ無しと同じ（発動の次のフレーム）
+    expect(startsWith(1)).toEqual(fires.map((f) => f + 1));
+    // 最後の発動の遅れの後が戦闘の外になる遅れ
+    const late = plain.frames - fires.at(-1)! + 5;
+    expect(late).toBeLessThan(long);
+    expect(startsWith(late)).toEqual(fires.slice(0, -1).map((f) => f + late));
   });
 
   it('multiplies the remaining by (1 − 9.16%) on every full charge shot', () => {
