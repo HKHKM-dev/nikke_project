@@ -1453,13 +1453,27 @@ export type ConditionKey = keyof EffectCondition;
  */
 export type EnemySameFiring = { state: NamedStateId; present: true; sameFiring: true };
 
-/** 条件 enemyState の状態と、付いていることを求めるか（present。「でなければ」は false）と sameFiring。無ければ undefined */
-export function enemyStateOf(
-  condition: EffectCondition | undefined,
-): { state: NamedStateId; present: boolean; sameFiring?: true } | undefined {
+/** 条件 enemyState の状態と、付いていることを求めるか（present。「でなければ」は false）と sameFiring */
+export type EnemyStateCheck = { state: NamedStateId; present: boolean; sameFiring?: true };
+
+/** 条件 enemyState を EnemyStateCheck の形にする。無ければ undefined */
+export function enemyStateOf(condition: EffectCondition | undefined): EnemyStateCheck | undefined {
   const c = condition?.enemyState;
   if (c === undefined) return undefined;
   return typeof c === 'string' ? { state: c, present: true } : c;
+}
+
+/**
+ * 条件 enemyState がフレーム frame に成り立つか（無ければ成り立つ）。at は敵がその状態を持つか。sameFiring は次のフレームの件を見る
+ * （plan/design-phantom.md 2.6 節）
+ */
+export function enemyStateHolds(
+  check: EnemyStateCheck | undefined,
+  frame: number,
+  at: (state: NamedStateId, frame: number) => boolean,
+): boolean {
+  if (check === undefined) return true;
+  return at(check.state, check.sameFiring === true ? frame + 1 : frame) === check.present;
 }
 
 /** 条件 selfBuffed の stat と、増加状態を求めるか（present。「でなければ」は false）。無ければ undefined */

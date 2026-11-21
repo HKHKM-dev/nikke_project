@@ -227,6 +227,7 @@ export function createFire({
    */
   const fireRemove = (src: RemoveSource, frame: number): void => {
     const holder = src.effect.enemy === true ? ENEMY : src.sourceSlotIndex;
+    const consume = isResolvedFullStack(src.effect.trigger);
     for (const track of tracks) {
       const o = track.origin;
       if (track.holder !== holder || o.kind !== 'state' || o.state !== src.effect.state) continue;
@@ -234,7 +235,7 @@ export function createFire({
       if (o.grant.undispellable === true && src.effect.cancel !== true) continue;
       // フルスタックの消費のきっかけの解除は、消費と同じく同じフレームに付いた件も外す（短剣が満ちた命中で付いた予告状。
       // plan/design-phantom.md 2.3 節）
-      if (isResolvedFullStack(src.effect.trigger)) consumeTrack(track, frame);
+      if (consume) consumeTrack(track, frame);
       else closeTrack(track, frame);
     }
   };

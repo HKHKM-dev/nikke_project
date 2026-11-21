@@ -153,18 +153,18 @@ export function parseCondition(
   }
   if (c.enemyState !== undefined) {
     // 「敵が〈状態〉でなければ」は { state, present: false }（plan/design-phantom.md 2.1 節）
-    const absent = isRecord(c.enemyState) ? c.enemyState : undefined;
-    if (absent === undefined) condition.enemyState = parseNamedStateId(c.enemyState, `${path}.enemyState`, 'enemy');
+    const form = isRecord(c.enemyState) ? c.enemyState : undefined;
+    if (form === undefined) condition.enemyState = parseNamedStateId(c.enemyState, `${path}.enemyState`, 'enemy');
     else {
       // 「同じ発の付与の後に」は { state, present: true, sameFiring: true }（plan/design-phantom.md 2.6 節）
-      rejectUnknownKeys(absent, ['state', 'present', 'sameFiring'], `${path}.enemyState`);
-      const state = parseNamedStateId(absent.state, `${path}.enemyState.state`, 'enemy');
-      if (absent.sameFiring !== undefined) {
-        if (absent.sameFiring !== true || absent.present !== true)
+      rejectUnknownKeys(form, ['state', 'present', 'sameFiring'], `${path}.enemyState`);
+      const state = parseNamedStateId(form.state, `${path}.enemyState.state`, 'enemy');
+      if (form.sameFiring !== undefined) {
+        if (form.sameFiring !== true || form.present !== true)
           fail(`${path}.enemyState.sameFiring`, 'expected sameFiring: true with present: true');
         condition.enemyState = { state, present: true, sameFiring: true };
       } else {
-        if (absent.present !== false)
+        if (form.present !== false)
           fail(`${path}.enemyState.present`, 'expected false (write the state alone for "if the enemy has it")');
         condition.enemyState = { state, present: false };
       }

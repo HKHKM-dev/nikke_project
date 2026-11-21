@@ -95,6 +95,7 @@ import {
   selfHpHolds,
   splitsPerCount,
   staticStatesOf,
+  enemyStateHolds,
   enemyStateOf,
   type EffectCondition,
   type SelfStateCondition,
@@ -1042,8 +1043,7 @@ function damageConditionHolds(
     if (below !== undefined && value >= below) return false;
   }
   if (condition.inFullBurst === true && (schedule === null || !isInFullBurst(schedule, frame))) return false;
-  const enemy = enemyStateOf(condition);
-  if (enemy !== undefined && enemyStateSpansHold(enemySpans, enemy.state, frame) !== enemy.present) return false;
+  if (!enemyStateHolds(enemyStateOf(condition), frame, (s, f) => enemyStateSpansHold(enemySpans, s, f))) return false;
   return true;
 }
 
