@@ -111,17 +111,19 @@ export function ModernSlotCard({
         <div className="modern-slot-char-area" onClick={onPlacePending}>
           {characterEntry ? (
             <>
-              <CharacterVisual character={characterEntry} size="portrait" />
+              <CharacterVisual character={characterEntry} size="portrait" tallImage />
               <SlotCharName name={characterEntry.name.ja} marks={growthMarks} />
               {/* 置いたニケが動いてくる間（flight.ts の modern-slot-arriving）と、ドラッグで持ち上げている間・戻る間は、立ち絵の代わりに空のスロットの枠を出す */}
               <div className="modern-slot-arrival-face" aria-hidden="true">
-                <EmptySlotFace />
+                <EmptySlotFace tall />
               </div>
               <button
                 type="button"
                 className="modern-slot-icon-button modern-slot-clear-button"
                 aria-label="スロットを空にする"
                 onClick={(e) => {
+                  // 置き先待ちの間は、押しても立ち絵の枠のクリック（置く）にする（クリックを止めずに枠へ渡す）
+                  if (awaitingPlacement) return;
                   e.stopPropagation();
                   onClear();
                 }}
@@ -136,6 +138,8 @@ export function ModernSlotCard({
                 className={`modern-slot-icon-button modern-slot-build-button ${growthEdited ? 'modern-slot-build-edited' : ''}`}
                 aria-label="育成・設定"
                 onClick={(e) => {
+                  // 置き先待ちの間は、押しても立ち絵の枠のクリック（置く）にする（クリックを止めずに枠へ渡す）
+                  if (awaitingPlacement) return;
                   e.stopPropagation();
                   onOpenBuildModal();
                 }}
@@ -148,7 +152,7 @@ export function ModernSlotCard({
             </>
           ) : (
             // ニケがいるときの絵と同じ大きさにして、選んでもカードの大きさが変わらないようにする
-            <EmptySlotFace />
+            <EmptySlotFace tall />
           )}
         </div>
       </div>
@@ -172,10 +176,13 @@ export function SlotCharName({ name, marks }: { name: string; marks: GrowthMarks
   );
 }
 
-/** 空のスロットの枠（真ん中の ＋ だけ）。持ち上げたときの絵（SlotDragOverlay）・選んでいない編成の行（PartyPreviewRow）にも使う */
-export function EmptySlotFace() {
+/**
+ * 空のスロットの枠（真ん中の ＋ だけ）。持ち上げたときの絵（SlotDragOverlay）・選んでいない編成の行（PartyPreviewRow）にも使う。
+ * tall は選んでいる編成のスロット（縦長の絵と同じ 1:2 の枠）
+ */
+export function EmptySlotFace({ tall = false }: { tall?: boolean }) {
   return (
-    <div className="modern-slot-empty-area">
+    <div className={`modern-slot-empty-area ${tall ? 'modern-slot-empty-tall' : ''}`}>
       <span className="modern-slot-empty-plus">＋</span>
     </div>
   );

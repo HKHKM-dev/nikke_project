@@ -810,10 +810,6 @@ svg.roster-revert-icon {
 .char-tray-item-taken .char-tray-item-visual::after {
   background: color-mix(in srgb, var(--placing-blue) 30%, transparent);
 }
-/* 置き先待ちの間は、スロットの ✕・⚙ のボタンを反応させず、立ち絵の枠のクリック（置く）にする */
-.modern-slot-card.modern-slot-awaiting .modern-slot-icon-button {
-  pointer-events: none;
-}
 
 /* 5スロットグリッド */
 /* 5 枚を 1 段に並べ、余った幅は左右に分けて中央に寄せる。幅が足りなければ立ち絵を縮めて収める（useSlotFit.ts が --slot-portrait-h を置く） */
@@ -1084,9 +1080,8 @@ svg.roster-revert-icon {
   top: 2px;
 }
 .modern-slot-build-button {
-  /* 正方形の絵では、✕ の左に並べる（右の列の下には ⓘ と限界突破・コア強化を置く） */
-  top: 2px;
-  right: calc(2px + var(--slot-icon-w) + 2px);
+  /* ✕ の下に縦に並べる（オーナーのコメント） */
+  top: calc(2px + var(--slot-icon-w) + 2px);
 }
 /* 育成を変えたスロットは、歯車を青にする（白の規則より詳細度を上げる） */
 .modern-slot-build-edited > svg.badge-ui_setting {
@@ -1386,6 +1381,12 @@ svg.roster-revert-icon {
   height: var(--slot-portrait-h);
   width: auto;
   aspect-ratio: 1 / 1;
+}
+/* 選んでいる編成のスロットは、縦長の絵（1:2。ニケ一覧の縦長の絵と同じ作り）にする（オーナーのコメント）。幅は四角の絵と同じで、高さを 2 倍にする */
+.char-visual-portrait.char-visual-tall-image,
+.modern-slot-empty-area.modern-slot-empty-tall {
+  height: calc(var(--slot-portrait-h) * 2);
+  aspect-ratio: 1 / 2;
 }
 .char-visual-portrait {
   max-width: none;

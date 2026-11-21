@@ -54,11 +54,11 @@ export function SlotDragOverlay({
             {draggedCharacter ? (
               // スロットと同じく、名前と限界突破・コア強化も一緒に持ち上げる
               <div className="modern-slot-char-area">
-                <CharacterVisual character={draggedCharacter} size="portrait" />
+                <CharacterVisual character={draggedCharacter} size="portrait" tallImage />
                 <SlotCharName name={draggedCharacter.name.ja} marks={draggedMarks} />
               </div>
             ) : (
-              <EmptySlotFace />
+              <EmptySlotFace tall />
             )}
           </div>
         </div>
