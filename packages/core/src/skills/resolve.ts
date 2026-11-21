@@ -13,6 +13,7 @@ import {
   selfHpThreshold,
   isEndedTrigger,
   isCounterFullTrigger,
+  isStateStacksTrigger,
   isFlagStat,
   isSelfHpAtMostTrigger,
   isAdjacentHpAtMostTrigger,
@@ -50,6 +51,7 @@ import {
   type EffectTrigger,
   type EndedTrigger,
   type CounterFullTrigger,
+  type CounterUpTrigger,
   type EventCountTrigger,
   type SummonAttackTrigger,
   type InstantKind,
@@ -95,6 +97,10 @@ export type ResolvedTrigger =
   // カウンタが上限に届いた次のフレーム。damage・dot・counterChange・状態の付与だけ。1 パス目のカウンタの記録で決まる
   // （skills/holders/types.ts の counterFullFrames）ので、出来事の列では追わない
   | CounterFullTrigger
+  // カウンタが増えた次のフレーム（ammoRefill・heal・timed）と、状態のスタック数が N の倍数を越えたフレーム（counterChange。step は N）。
+  // 1 パス目の件の一覧が追う（skills/holders/fires.ts の firesOf）ので、出来事の列では追わない。plan/design-guillotine-ws.md 2.2 節
+  | CounterUpTrigger
+  | ResolvedStacksTrigger
   // 召喚の攻撃。1 パス目が機数と進みを追って発火を決める（frame/firstPass.ts）ので、出来事の列では追わない
   | SummonAttackTrigger
   // 自分の HP の割合が閾値（比率。説明文の X% ÷ 100。plan/design-mast.md 8 節）以下に下がった時。timed だけ。1 パス目の件の一覧が
@@ -110,6 +116,19 @@ export type ResolvedTrigger =
   // その stat の▲が自分に付いた時（plan/design-bready.md 2.1 節）。状態の付与だけ。件の一覧が付いた記録から発火する
   // （skills/holders/fire.ts の dispatchApplied）ので、出来事の列では追わない
   | BuffAppliedTrigger;
+
+/** 状態のスタック数のきっかけ（解決済み。step は N。every の名前は射撃の回数のきっかけの印なので使わない） */
+export type ResolvedStacksTrigger = { stateStacks: NamedStateId; step: number };
+
+/** 状態のスタック数のきっかけ（{ stateStacks }）か */
+export function isResolvedStacks(t: ResolvedTrigger): t is ResolvedStacksTrigger {
+  return typeof t === 'object' && 'stateStacks' in t;
+}
+
+/** カウンタが増えた時のきっかけ（{ counterUp }）か */
+export function isResolvedCounterUp(t: ResolvedTrigger): t is CounterUpTrigger {
+  return typeof t === 'object' && 'counterUp' in t;
+}
 
 /** 自分の HP の割合の窓のきっかけ（{ selfHpAtMost }）か */
 export function isResolvedSelfHpAtMost(t: ResolvedTrigger): t is { selfHpAtMost: number } {
@@ -223,7 +242,15 @@ export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: n
   if (isSelfHpAtMostTrigger(trigger)) return { selfHpAtMost: selfHpRatioOfRef(skill, trigger.selfHpAtMostRef, level) };
   if (isAdjacentHpAtMostTrigger(trigger))
     return { adjacentHpAtMost: selfHpRatioOfRef(skill, trigger.adjacentHpAtMostRef, level) };
-  if (!isShotCountTrigger(trigger)) return typeof trigger === 'object' ? { ...trigger } : trigger;
+  // 状態のスタック数の N（plan/design-guillotine-ws.md 2.2 節）
+  if (isStateStacksTrigger(trigger)) {
+    const step = trigger.everyRef === undefined ? trigger.every! : skillValue(skill, trigger.everyRef, level);
+    if (!Number.isInteger(step) || step < 1) {
+      throw new RangeError(`skill ${skill.id}: stacks trigger must be a positive integer, got ${step}`);
+    }
+    return { stateStacks: trigger.stateStacks, step };
+  }
+  if (!isShotCountTrigger(trigger)) return typeof trigger === 'object' ? { ...trigger } : (trigger as BuffTrigger);
   // 確率のきっかけは 1 発ごとに引く（every 1）。確率は % → 比率
   if (trigger.chance !== undefined || trigger.chanceRef !== undefined) {
     const percent = trigger.chance ?? skillValue(skill, trigger.chanceRef!, level);
@@ -572,8 +599,11 @@ export type ResolvedTimedEffect = ResolvedEffect & {
   edgeShift?: EdgeShift;
   /** 定義の delayFrames を写したもの（skills/holders/items.ts の startOfFire。plan/design-shot-count-trigger-frame.md 6 節） */
   delayFrames?: number;
-  /** 定義の perCount を写したもの（値 × 発火のフレームのスタック数。skills/holders/fire.ts の fireTimed。plan/design-maids.md 2.1 節） */
-  perCount?: { state: NamedStateId };
+  /**
+   * 定義の perCount を写したもの（値 × 発火のフレームのスタック数かカウンタの値。skills/holders/fire.ts の fireTimed。
+   * plan/design-maids.md 2.1 節・plan/design-guillotine-ws.md 2.3 節）
+   */
+  perCount?: { state: NamedStateId } | { counter: CounterId };
   /**
    * 定義の decrease（▼）を写したもの（値は負にした後。plan/design-debuff-removal-timed.md 2.1 節）。味方に付く▼はデバフ
    * 解除で外れる（skills/holders/fire.ts の fireRemoveDebuff）

@@ -21,6 +21,7 @@ import {
 import { gameSecondsToFrames } from '../time.ts';
 import type { CharacterData, LocalizedText } from '../types.ts';
 import { applyAttackDamageBuffs, applyCritBuffs, type BuffTotals } from './buffs.ts';
+import type { CounterId } from './counters.ts';
 import type { NamedStateId } from './states.ts';
 import {
   isAppliedTrigger,
@@ -222,7 +223,9 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
      * 敵にスタックで付く状態の付与の state（海風。plan/design-mast.md 2.3 節）
      */
     stacksFrom?: NamedStateId;
-    /** stacksFrom を tick ごとに写し直す（skills/types.ts の DotEffect.copyEachTick） */
+    /** tick のスタックの数にする自分のカウンタ（× 〈カウンタ〉数分の持続ダメージ。plan/design-guillotine-ws.md 2.4 節） */
+    stacksFromCounter?: CounterId;
+    /** stacksFrom・stacksFromCounter を tick ごとに写し直す（skills/types.ts の DotEffect.copyEachTick） */
     copyEachTick?: true;
     /**
      * 「〈状態〉解除まで」の状態（定義の durationUntil: { stateEnd }。durationSeconds は無限）。付いたフレームを含む自分の件の
@@ -711,7 +714,11 @@ export function resolveDotEffects(
             : {}),
           ...(!auto && effect.hitOnApply === true ? { hitOnApply: true as const } : {}),
           ...(!auto && effect.delayFrames !== undefined ? { applyDelayFrames: effect.delayFrames } : {}),
-          ...(!auto && effect.stacksFrom !== undefined ? { stacksFrom: effect.stacksFrom.enemyState } : {}),
+          ...(!auto && effect.stacksFrom !== undefined
+            ? 'counter' in effect.stacksFrom
+              ? { stacksFromCounter: effect.stacksFrom.counter }
+              : { stacksFrom: effect.stacksFrom.enemyState }
+            : {}),
           ...(!auto && effect.copyEachTick === true ? { copyEachTick: true as const } : {}),
           ...(typeof until === 'object' ? { untilStateEnd: until.stateEnd } : {}),
         },

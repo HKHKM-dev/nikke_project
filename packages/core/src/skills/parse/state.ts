@@ -5,9 +5,7 @@ import { dependsOnContext } from '../targets.ts';
 import {
   type CancelStateEffect,
   type CounterChangeEffect,
-  type CounterFullTrigger,
   type EffectTrigger,
-  type EndedTrigger,
   isAppliedTrigger,
   isBuffAppliedTrigger,
   isChanceTrigger,
@@ -49,6 +47,7 @@ import { parseTargetClass, parseTargetCount, parseTargetElement, parseTargetWeap
 import {
   parseAppliedTrigger,
   parseCounterFullTrigger,
+  parseStateStacksTrigger,
   parseEndedTrigger,
   parseSinceTimerTrigger,
   parseTimerDelayFrames,
@@ -566,12 +565,15 @@ export function parseCounterChangeEffect(v: Record<string, Json>, path: string):
     path,
   );
   const counter = oneOf(COUNTER_IDS, v.counter, `${path}.counter`);
-  let trigger: EffectTrigger | EndedTrigger | CounterFullTrigger;
+  let trigger: EffectTrigger;
   const ended = parseEndedTrigger(v.trigger, `${path}.trigger`);
   if (ended !== undefined) {
     trigger = ended;
   } else if (isRecord(v.trigger) && v.trigger.counterFull !== undefined) {
     trigger = parseCounterFullTrigger(v.trigger, `${path}.trigger`)!;
+  } else if (isRecord(v.trigger) && v.trigger.stateStacks !== undefined) {
+    // 「〈状態〉N スタックごとに」（plan/design-guillotine-ws.md 2.2 節）
+    trigger = parseStateStacksTrigger(v.trigger, `${path}.trigger`)!;
   } else if (isRecord(v.trigger) && v.trigger.applied !== undefined) {
     // 「変身後、バッテリー N%▼」（plan/design-skill-stage19.md 2.1 節。論点 3）
     trigger = parseAppliedTrigger(v.trigger, `${path}.trigger`)!;

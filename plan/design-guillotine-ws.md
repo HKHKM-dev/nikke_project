@@ -4,7 +4,7 @@
 - 関連: [design-skill-stage10.md](design-skill-stage10.md) 2.1・2.3 節（カウンタの目録・`counterChange`・条件 `selfCounter`・付与の `stacksFrom`）、[design-skill-stage11.md](design-skill-stage11.md) 2.4 節（`{ counterFull }`・passive の `while.selfCounter`）、[design-maids.md](design-maids.md) 2.1 節（timed の `perCount`。発火ごとに上書き）、[design-skill-stage13.md](design-skill-stage13.md) 2.5 節・[design-mast.md](design-mast.md) 2.3 節（dot の `stacksFrom`・`copyEachTick`）、[design-maiden-ice-rose.md](design-maiden-ice-rose.md) 2.1 節（カウンタを目録に足した前例）、[design-hp-heal-restore.md](design-hp-heal-restore.md) 2.2 節（最終最大HP に比例する回復）
 - 検証: V-0812
 - 作成日: 2026-11-21
-- 状態: 承認待ち（7 節）
+- 状態: 撮影待ち（8 節）
 
 ## 0. 範囲
 
@@ -131,6 +131,8 @@
 
 ## 7. 論点（オーナーに決めてもらうこと）
 
+- 2026-11-21 に決めた: 1〜8 とも推奨どおり。
+
 1. **「通常攻撃が 6 回命中した時、コアでなければ」の数え方**（2.1 節）
    - 推奨: 回数の種類 `nonCoreHit`（仮称）を足し、コアでない命中を通算で 6 回ごとに数える（N1）。N2・N3 も予測に書き、撮影 A で選ぶ。
    - 代わりの案: 撮る前は書かずに未対応の notes にし、撮った後に読みを決めて足す（予測が出せず、勇者レベルの時刻もモデルで出ない）。
@@ -152,6 +154,15 @@
 8. **PR の範囲**
    - 推奨: 1 体 1 PR。2.1〜2.4 節の語彙・定義・撮影 A・B の結論を 1 本にする。
 
-## 8. 経過
+## 8. 決めたこと
+
+### 8.1 実装で決めたこと（撮る前）
+
+- 状態のスタック数のきっかけの名前は `{ stateStacks: <状態>, everyRef: N }` にした（2.2 節の仮称 `{ stacks }` は、射撃の回数のきっかけの解決後の欄 `stacks` と重なるため）。解決後は `{ stateStacks, step }`。1 つのフレームで 2 つの倍数を越えても 1 回だけ発火する（スタックは 1 つの付与で 1 つずつ付くので、N が付与の数より大きければ起きない）。
+- `{ counterUp }` は、戦闘開始時の増減（勇者レベルの最初の 1）では発火しない。勇者レベルアップの効果は、経験値のスタックが見えたフレームの 2 フレーム後に出る（2.2 節）。
+- 単騎の sim（スペック固定・灼熱）では、勇者レベルアップは 4.6 秒から 49.3 秒までの 10 回。撮影 B の編成の 1 回目のバーストは 9.6 秒（勇者レベル 2）。
+
+## 9. 経過
 
 - 2026-11-21: 起案（V-0812）。説明文とコードを照らし、語彙が 4 つ足りないと分かった（0 節）。論点 1〜8 をオーナーに諮る。
+- 2026-11-21: オーナーが論点 1〜8 を推奨どおりに決めた。2.1〜2.4 節の語彙（`nonCoreHit`・`{ stateStacks }`・`{ counterUp }`・timed の `perCount: { counter }`・dot の `stacksFrom: { counter }`）と目録の `heroLevel`・`exp` を実装し、定義 `data/skills/182.json` を本命の読み（N1・L1・U1・D1）で書いた（8.1 節）。撮影 A・B を依頼した（V-0812）。

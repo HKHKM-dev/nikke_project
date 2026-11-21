@@ -566,6 +566,11 @@ export type HolderLists = {
    */
   counterFullFiresAt(holder: number, counter: CounterId, frame: number): boolean;
   /**
+   * 枠 holder のカウンタ counter の { counterUp } が、フレーム frame に発火するか（増えた記録の次のフレーム。戦闘開始時の増減は入れない。
+   * plan/design-guillotine-ws.md 2.2 節）。弾丸チャージ・回復（frame/firstPass/instants.ts）が読む
+   */
+  counterUpFiresAt(holder: number, counter: CounterId, frame: number): boolean;
+  /**
    * 枠 holder のカウンタ counter のいまの値（そのフレームの増減は、すべての判定の後に足すので、手順 2 で呼べば前のフレームの終わりの値）。
    * 1 パス目が、所持カウンタ分の連続攻撃（burstDamage の hitsFrom）のヒットの数を発動のフレームに決めるのに使う（plan/design-maiden-ice-rose.md 8 節）
    */

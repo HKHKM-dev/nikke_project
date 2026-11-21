@@ -261,6 +261,8 @@ function triggerLabel(e: SkillEffect): string | undefined {
   if ('reloadEnd' in t) return '最大弾数のリロードが完了した時';
   if ('coverHealed' in t) return '遮蔽物の HP を回復した時';
   if ('counterFull' in t) return `${t.counterFull} が最大になった時`;
+  if ('counterUp' in t) return `${t.counterUp} が上がった時`;
+  if ('stateStacks' in t) return `${t.stateStacks} のスタック数が N の倍数を越えた時`;
   if ('chargeTick' in t) return `チャージ中の ${t.chargeTick.everySeconds} 秒ごと`;
   if ('chargeFull' in t) return 'フルチャージした時';
   // 下がったフレームに発火する（続く長さは維持で決まる。selfHpAbove なら閾値以下の間、秒の維持なら N 秒）

@@ -17,6 +17,8 @@ import {
 import { fullChargeFrameSet, type ShotLog } from '../frame/shots.ts';
 import {
   isResolvedApplied,
+  isResolvedCounterUp,
+  isResolvedStacks,
   isResolvedBuffApplied,
   isResolvedEventCount,
   isResolvedFullStack,
@@ -90,6 +92,9 @@ export function shotCountWeight(kind: ShotCountKind, shot: ShotEvent): number {
       return shot.hits;
     case 'coreHit':
       return shot.coreHits;
+    // コアでない命中（plan/design-guillotine-ws.md 2.1 節）
+    case 'nonCoreHit':
+      return Math.max(0, shot.hits - shot.coreHits);
     case 'critHit':
       return shot.critHits ?? 0;
     case 'fullChargeShot':
@@ -410,6 +415,13 @@ export function createTriggerTracker(
   // カウンタが上限に届いた時は 1 パス目のカウンタの記録で決まる（skills/holders/fires.ts の firesOf と、skills/holders/types.ts の counterFullFrames）
   if (isCounterFullTrigger(t)) {
     throw new RangeError(`a counterFull trigger (${t.counterFull}) is not tracked per event; use counterFullFrames`);
+  }
+  // カウンタが増えた時と、状態のスタック数の N ごとも 1 パス目の件の一覧が追う（skills/holders/fires.ts の firesOf）
+  if (isResolvedCounterUp(t)) {
+    throw new RangeError(`a counterUp trigger (${t.counterUp}) is not tracked per event; the holder lists track it`);
+  }
+  if (isResolvedStacks(t)) {
+    throw new RangeError(`a stateStacks trigger (${t.stateStacks}) is not tracked per event; the holder lists track it`);
   }
   // 状態の終わりは 1 パス目の件の一覧が追う（skills/holders/conditions.ts の endedAt。plan/design-grave.md 2.1 節）。出来事の列では追わない
   if (isEndedTrigger(t)) {

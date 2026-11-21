@@ -4,7 +4,9 @@ import {
   isResolvedAdjacentHp,
   isRecordTriggered,
   isResolvedSelfHpAtMost,
+  isResolvedCounterUp,
   isResolvedShotCount,
+  isResolvedStacks,
   isResolvedTimer,
   type ResolvedTrigger,
 } from '../resolve.ts';
@@ -25,6 +27,7 @@ const BELOW_FULL_HP = 1 - 2 * HP_RATIO_EPS;
 export function createFires({
   counterFullAt,
   counterKey,
+  counterUpAt,
   frames,
   options,
   late,
@@ -106,6 +109,22 @@ export function createFires({
     if (isCounterFullTrigger(trigger)) {
       const key = counterKey(slotIndex, trigger.counterFull);
       return (ev) => counterFullAt.get(key) === ev.frame;
+    }
+    // カウンタが増えた次のフレーム（registerCounters が counterUpAt に書く。plan/design-guillotine-ws.md 2.2 節）
+    if (isResolvedCounterUp(trigger)) {
+      const key = counterKey(slotIndex, trigger.counterUp);
+      return (ev) => counterUpAt.get(key)?.has(ev.frame) === true;
+    }
+    // 自分のその状態のスタック数が N の倍数を越えたフレーム（同 2.2 節）。毎フレームの判定で、前に見た段と比べる
+    if (isResolvedStacks(trigger)) {
+      const { stateStacks: state, step } = trigger;
+      let seen = 0;
+      return (ev) => {
+        const level = late.stackLevelAt(slotIndex, state, ev.frame);
+        const crossed = Math.floor(level / step) > Math.floor(seen / step);
+        seen = level;
+        return crossed;
+      };
     }
     // 自分のその状態の件が外れた最初のフレーム（counterChange の { ended } と同じ endedAt。plan/design-grave.md 2.1 節）
     if (isEndedTrigger(trigger)) {

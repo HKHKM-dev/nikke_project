@@ -93,9 +93,15 @@ export function createFire({
   /** timed の発火 1 つを、対象の持ち主の件の列に足す。対象になった枠を返す */
   const fireTimed = (src: TimedSource, start: number, context: FireContext): number[] => {
     if (start >= frames) return [];
-    // 値 × 発火のフレームの自分のその状態のスタック数（0 なら出さない。plan/design-maids.md 2.1 節）
+    // 値 × 発火のフレームの自分のその状態のスタック数（0 なら出さない。plan/design-maids.md 2.1 節）か、自分のカウンタの値
+    // （前のフレームの終わりの値。plan/design-guillotine-ws.md 2.3 節）
     const per = src.effect.perCount;
-    const scale = per === undefined ? undefined : stackLevelAt(src.sourceSlotIndex, per.state, start);
+    const scale =
+      per === undefined
+        ? undefined
+        : 'counter' in per
+          ? counterValue(src.sourceSlotIndex, per.counter)
+          : stackLevelAt(src.sourceSlotIndex, per.state, start);
     if (scale !== undefined && scale <= 0) return [];
     const targets: number[] = [];
     slots.forEach((target, holder) => {

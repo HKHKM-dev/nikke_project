@@ -19,6 +19,7 @@ import {
   isStaticStateGrant,
   isSummonAttackTrigger,
   isSkillFiredTrigger,
+  isStateStacksTrigger,
   isTimerTrigger,
   type ShotCountTrigger,
   SKILL_SLOTS,
@@ -188,11 +189,11 @@ function validateInstantFireCoreHits(entries: Partial<Record<SkillSlot, SkillEnt
         'trigger' in e &&
         !isEndedTrigger(e.trigger) &&
         isShotCountTrigger(e.trigger) &&
-        e.trigger.count === 'coreHit'
+        (e.trigger.count === 'coreHit' || e.trigger.count === 'nonCoreHit')
       ) {
         fail(
           `${root}.${slot}.effects[${i}].trigger`,
-          'a coreHit count trigger cannot be combined with an instantFire weapon change',
+          'a coreHit or nonCoreHit count trigger cannot be combined with an instantFire weapon change',
         );
       }
     });
@@ -332,7 +333,7 @@ function validateSameFiring(entries: Partial<Record<SkillSlot, SkillEntry>>, roo
 }
 
 /**
- * counterChange・dot の { applied } と、周期の since が見る状態は、同じ定義にその状態を
+ * counterChange・dot の { applied } と、周期の since と、counterChange の { stateStacks } が見る状態は、同じ定義にその状態を
  * 自分に付ける付与が要る（自分に付いた記録と、自分の件の終わりを読む。plan/design-skill-stage19.md 2.1 節）。currentHpDown の since も同じ
  */
 function validateOwnStateTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
@@ -364,7 +365,14 @@ function validateOwnStateTriggers(entries: Partial<Record<SkillSlot, SkillEntry>
       }
       if (e.kind !== 'counterChange' && e.kind !== 'dot' && e.kind !== 'currentHpDown') return;
       const t = e.trigger;
-      const state = isAppliedTrigger(t) ? t.applied : isTimerTrigger(t) ? t.since?.applied : undefined;
+      // 「〈状態〉N スタックごとに」（counterChange。plan/design-guillotine-ws.md 2.2 節）
+      const state = isAppliedTrigger(t)
+        ? t.applied
+        : isTimerTrigger(t)
+          ? t.since?.applied
+          : isStateStacksTrigger(t)
+            ? t.stateStacks
+            : undefined;
       if (state === undefined) return;
       needGrant(state, `${at}.trigger`, e.kind);
     });
@@ -528,7 +536,7 @@ function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, r
           `${e.kind} of "${e.state}" needs a dot of the same state with firstTick halfAfterLatest in the definition`,
         );
       // 元は、同じ定義の dot の状態か、敵にスタックで付く状態の付与（海風。plan/design-mast.md 2.3 節）
-      const from = e.kind === 'dot' ? e.stacksFrom?.enemyState : undefined;
+      const from = e.kind === 'dot' && e.stacksFrom !== undefined && 'enemyState' in e.stacksFrom ? e.stacksFrom.enemyState : undefined;
       if (from !== undefined && !dots.some((d) => d.state === from) && !hasSelfStackingGrant(entries, from, 'enemy'))
         fail(
           `${root}.${slot}.effects[${i}].stacksFrom`,

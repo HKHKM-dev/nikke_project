@@ -212,15 +212,21 @@ function parseDotCounter(v: Record<string, Json>, effect: DotEffect, path: strin
   }
 }
 
-/** 敵の状態のスタック数から取るスタック（stacksFrom）と、tick ごとに写し直す印（plan/design-mast.md 2.3 節）・持続ダメージでない印 */
+/**
+ * 敵の状態のスタック数か自分のカウンタの値から取るスタック（stacksFrom。plan/design-mast.md 2.3 節・plan/design-guillotine-ws.md 2.4 節）と、
+ * tick ごとに写し直す印・持続ダメージでない印
+ */
 function parseDotStacks(v: Record<string, Json>, effect: DotEffect, path: string): void {
   if (v.stacksFrom !== undefined) {
     const from = v.stacksFrom;
-    if (!isRecord(from) || from.enemyState === undefined || Object.keys(from).length !== 1)
-      fail(`${path}.stacksFrom`, 'expected { enemyState }');
+    if (!isRecord(from) || Object.keys(from).length !== 1 || (from.enemyState === undefined && from.counter === undefined))
+      fail(`${path}.stacksFrom`, 'expected { enemyState } or { counter }');
     if (effect.maxStacksRef !== undefined || effect.perCount !== undefined)
       fail(`${path}.stacksFrom`, 'stacksFrom cannot be used with maxStacksRef or perCount');
-    effect.stacksFrom = { enemyState: parseNamedStateId(from.enemyState, `${path}.stacksFrom.enemyState`, 'enemy') };
+    effect.stacksFrom =
+      from.counter !== undefined
+        ? { counter: oneOf(COUNTER_IDS, from.counter, `${path}.stacksFrom.counter`) }
+        : { enemyState: parseNamedStateId(from.enemyState, `${path}.stacksFrom.enemyState`, 'enemy') };
   }
   if (v.copyEachTick !== undefined) {
     if (v.copyEachTick !== true) fail(`${path}.copyEachTick`, 'expected true');

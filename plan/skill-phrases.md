@@ -123,3 +123,8 @@
 | 〈カウンタ〉を N 個回収した時（N は上限）、〈別のカウンタ〉が M 本未満なら「〈カウンタ〉数リセット」「〈別のカウンタ〉1 本増加」／「X% × 〈別のカウンタ〉の数▲」「持続」 | `counterChange` 2 つ（きっかけ `{ "counterFull": 〈カウンタ〉 }`・条件 `selfCounter` の `below: M`）／閾値ごとの `passive`（`while.selfCounter`）。前提の中で届かない段は前提の外の notes | E.H. の S1 の廃品・自家製弾倉 | [design-eh.md](design-eh.md) 2.2 節 |
 | 使用武器変更の「最大装弾数：N 発 × 〈カウンタ〉の数」（説明文に番号の無い装弾数） | `weaponChange` の即値の `maxAmmo`（`maxAmmoRef` とちょうど片方。撃ち切りで終わる） | E.H. のバースト | 同 2.3 節 |
 | 使用武器変更の武器のコアの倍率（説明文に無く、録画で読む） | `weaponChange` の `coreDamageRate`（即値。省略は基礎の武器のまま） | E.H. のバースト（×2.0） | [design-eh.md](design-eh.md) 8.1 節 |
+| 通常攻撃が N 回命中した時、コアでなければ | 回数の種類 `nonCoreHit`（コアでない命中の期待値を通算で数える） | ギロチン：ウィンタースレイヤーの S2 の経験値 | [design-guillotine-ws.md](design-guillotine-ws.md) 2.1 節 |
+| 〈状態〉N スタックごとに（〈カウンタ〉が上がる） | `counterChange` のきっかけ `{ "stateStacks": 〈状態〉, "everyRef": N }` | ギロチン：ウィンタースレイヤーの S1 の勇者レベル | 同 2.2 節 |
+| 〈カウンタ〉アップ時（〈カウンタ〉が上がった時） | 弾丸チャージ・回復・timed のきっかけ `{ "counterUp": 〈カウンタ〉 }`（戦闘開始時の増減では起きない） | 同上の勇者レベルアップ効果 | 同 2.2 節 |
+| X% × 〈カウンタ〉数分▲「持続」（上がるたびに付け直す） | timed の `perCount: { "counter": 〈カウンタ〉 }` と `durationUntil: "battleEnd"` | ギロチン：ウィンタースレイヤーの S1 | 同 2.3 節 |
+| 最終攻撃力の X% × 〈カウンタ〉数分の持続ダメージ | dot の `stacksFrom: { "counter": 〈カウンタ〉 }`（付けた時の値。tick ごとに読むなら `copyEachTick`） | ギロチン：ウィンタースレイヤーのバースト | 同 2.4 節 |

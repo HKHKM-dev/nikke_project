@@ -10,6 +10,7 @@ import {
   type BuffStat,
   type BuffTarget,
   type GrantDurationUntil,
+  isCounterUpTrigger,
   DURATION_UNTILS,
   type EffectTrigger,
   EXCLUDE_SELF,
@@ -344,6 +345,8 @@ function parseTimedTrigger(
       chance: allowChance,
       reloadEnd: true,
       fullStack: stat !== undefined,
+      // 「〈カウンタ〉が上がった時」は timed だけ（plan/design-guillotine-ws.md 2.2 節）
+      counterUp: stat !== undefined,
     })
   );
 }
@@ -609,7 +612,10 @@ function parseTimedDelay(
   } else effect.delayFrames = parseShotCountDelay(v.delayFrames, trigger, `${path}.delayFrames`);
 }
 
-/** 値 × 自分の状態のスタック数（perCount。plan/design-maids.md 2.1 節）。出来事のきっかけだけ */
+/**
+ * 値 × 自分の状態のスタック数かカウンタの値（perCount。plan/design-maids.md 2.1 節・plan/design-guillotine-ws.md 2.3 節）。出来事の
+ * きっかけだけ（{ counter } は { counterUp } も。維持は戦闘の終わりまでも書ける）
+ */
 function parseTimedPerCount(
   v: Record<string, Json>,
   effect: GrantTimedFields,
@@ -620,21 +626,24 @@ function parseTimedPerCount(
   const at = `${path}.perCount`;
   if (stat === undefined) fail(at, 'perCount in a state grant is not supported (use stacksFrom)');
   const per = v.perCount;
-  if (!isRecord(per) || Object.keys(per).length !== 1 || per.state === undefined) fail(at, 'expected { state }');
+  if (!isRecord(per) || Object.keys(per).length !== 1 || (per.state === undefined && per.counter === undefined))
+    fail(at, 'expected { state } or { counter }');
+  const byCounter = per.counter !== undefined;
   const { trigger } = effect;
-  if (typeof trigger !== 'string' || !PER_COUNT_TIMED_TRIGGERS.includes(trigger))
-    fail(at, `perCount needs one of the triggers ${PER_COUNT_TIMED_TRIGGERS.join(', ')}`);
-  for (const key of [
-    'maxStacks',
-    'maxStacksRef',
-    'amplifies',
-    'durationShots',
-    'durationShotsRef',
-    'durationUntil',
-  ] as const) {
+  const eventTrigger = typeof trigger === 'string' && PER_COUNT_TIMED_TRIGGERS.includes(trigger);
+  if (!eventTrigger && !(byCounter && isCounterUpTrigger(trigger)))
+    fail(
+      at,
+      `perCount needs one of the triggers ${PER_COUNT_TIMED_TRIGGERS.join(', ')}${byCounter ? ' or { counterUp }' : ''}`,
+    );
+  for (const key of ['maxStacks', 'maxStacksRef', 'amplifies', 'durationShots', 'durationShotsRef'] as const) {
     if (v[key] !== undefined) fail(at, `perCount cannot be combined with ${key}`);
   }
-  effect.perCount = { state: parseNamedStateId(per.state, `${at}.state`, 'ally') };
+  if (v.durationUntil !== undefined && !(byCounter && v.durationUntil === 'battleEnd'))
+    fail(at, 'perCount cannot be combined with durationUntil (only { counter } with "battleEnd")');
+  effect.perCount = byCounter
+    ? { counter: oneOf(COUNTER_IDS, per.counter, `${at}.counter`) }
+    : { state: parseNamedStateId(per.state, `${at}.state`, 'ally') };
 }
 
 /** 「〈状態〉の対象に命中させた味方に」（holderHit。plan/design-killer-wife.md 2.2 節） */

@@ -35,6 +35,9 @@ export function triggerLabel(t: ResolvedTrigger): string {
   if (typeof t === 'string') return t;
   // カウンタが上限に届いた時（counterFull:restraintChains）
   if ('counterFull' in t) return `counterFull:${t.counterFull}`;
+  // カウンタが増えた時（counterUp:heroLevel）と、状態のスタック数の N ごと（stateStacks:exp/10）
+  if ('counterUp' in t) return `counterUp:${t.counterUp}`;
+  if ('stateStacks' in t) return `stateStacks:${t.stateStacks}/${t.step}`;
   // 時間の周期のトリガー（every10s）
   // 状態の付いた時から数える周期（every0.2s:since:transformation）
   if ('everySeconds' in t) return `every${t.everySeconds}s${t.since === undefined ? '' : `:since:${t.since.applied}`}`;

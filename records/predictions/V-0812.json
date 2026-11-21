@@ -1,0 +1,349 @@
+{
+  "verification": "V-0812",
+  "note": "既定の定義が本命の読み（N1・L1・U1・D1）。N2・N3・U2 は語彙で書けないので、検証記録の「予測」に手で書く",
+  "team": [
+    {
+      "rid": 182,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "N1L1U1D1",
+      "note": "本命: コアでない命中を通算で 6 回ごと・コアの命中 3 回ごとに経験値 1 スタック。勇者レベルは 1 から始まり 10 スタックごとに 1 上がる。S1 の▲は値 × 勇者レベルに上書き。持続ダメージはバーストを使った時の勇者レベル",
+      "override": {}
+    },
+    {
+      "id": "L0",
+      "note": "勇者レベルが 0 から始まる（10 スタックで 1。最大は 100 スタックで 10）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 182,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "U3",
+      "note": "S1 の▲は、値が勇者レベルアップの回数だけ重なる（値 × (勇者レベル − 1)）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 182,
+            "skill": "skill1",
+            "replace": 4,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "counterUp": "heroLevel"
+              },
+              "target": "allies",
+              "targetElement": "Water",
+              "stat": "elementDamage",
+              "ref": 4,
+              "maxStacks": 10,
+              "durationUntil": "battleEnd"
+            }
+          },
+          {
+            "rid": 182,
+            "skill": "skill1",
+            "replace": 5,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "counterUp": "heroLevel"
+              },
+              "target": "allies",
+              "targetElement": "Water",
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 5,
+              "maxStacks": 10,
+              "durationUntil": "battleEnd"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "D2",
+      "note": "持続ダメージは tick ごとに、その時の勇者レベルで出る",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 182,
+            "skill": "burst",
+            "replace": 2,
+            "effect": {
+              "kind": "dot",
+              "trigger": "burstUse",
+              "ref": 6,
+              "intervalSeconds": 1,
+              "durationRef": 7,
+              "stacksFrom": {
+                "counter": "heroLevel"
+              },
+              "copyEachTick": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-levelups",
+      "model": "sim",
+      "metric": "buffFireStarts",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "elementDamage"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "note": "撮影 A（単騎）: 勇者レベルアップ（S1 の▲の付き直し）のフレーム。録画では弾丸チャージ（残弾 +6）の時刻で読む"
+    },
+    {
+      "id": "A-refills",
+      "model": "sim",
+      "metric": "ammoRefillAmounts",
+      "args": {
+        "slot": 1,
+        "count": 10
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "撮影 A: 弾丸チャージの発数（勇者レベルアップは 10 回）"
+    },
+    {
+      "id": "A-noncrit-L1",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 20,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 最初の勇者レベルアップの前の 1 ヒット（会心なし・胴体・距離あり）。経験値のスタックだけが乗る"
+    },
+    {
+      "id": "A-noncrit-L2",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 56,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 1 回目と 2 回目の勇者レベルアップの間の 1 ヒット（L1 なら勇者レベル 2・S2 の▲あり、L0 なら 1・S2 の▲なし。U3 は S1 の▲が値 × 1）"
+    },
+    {
+      "id": "A-noncrit-L11",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 800,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 経験値 100 スタック・勇者レベル最大の後の 1 ヒット"
+    },
+    {
+      "id": "B-level-at-bursts",
+      "model": "sim",
+      "metric": "counterAtBursts",
+      "args": {
+        "slot": 3,
+        "counter": "heroLevel"
+      },
+      "team": [
+        {
+          "rid": 190,
+          "controlled": false
+        },
+        {
+          "rid": 20,
+          "controlled": false
+        },
+        {
+          "rid": 182,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "撮影 B（ルドミラ + デルタ + ウィンタースレイヤー）: バーストを使った時の勇者レベル"
+    },
+    {
+      "id": "B-dot-first-0",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "team": [
+        {
+          "rid": 190,
+          "controlled": false
+        },
+        {
+          "rid": 20,
+          "controlled": false
+        },
+        {
+          "rid": 182,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "rel": 0.01
+      },
+      "note": "撮影 B: 1 回目のバーストの持続ダメージの最初の tick（会心なし）"
+    },
+    {
+      "id": "B-dot-first-9",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 9,
+        "crit": false
+      },
+      "team": [
+        {
+          "rid": 190,
+          "controlled": false
+        },
+        {
+          "rid": 20,
+          "controlled": false
+        },
+        {
+          "rid": 182,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "rel": 0.01
+      },
+      "note": "撮影 B: 1 回目のバーストの持続ダメージの最後の tick（会心なし。D2 なら勇者レベルが上がった後の値）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "97f3a374a43d0156a623ab39c5e109c7586e74d5",
+    "values": {
+      "N1L1U1D1": {
+        "A-levelups": [269, 588, 897, 1220, 1470, 1779, 2119, 2325, 2614, 2898],
+        "A-refills": [6, 6, 6, 1, 6, 6, 6, 6, 6, 6],
+        "A-noncrit-L1": 24654.299670000008,
+        "A-noncrit-L2": 31000.148068889997,
+        "A-noncrit-L11": 80601.4067859,
+        "B-level-at-bursts": [2, 11, 11, 11, 11],
+        "B-dot-first-0": 103946.38805499194,
+        "B-dot-first-9": 200698.07479702483
+      },
+      "L0": {
+        "A-levelups": [269, 588, 897, 1220, 1470, 1779, 2119, 2325, 2614, 2898],
+        "A-refills": [6, 6, 6, 1, 6, 6, 6, 6, 6, 6],
+        "A-noncrit-L1": 24654.299670000008,
+        "A-noncrit-L2": 28554.010572360006,
+        "A-noncrit-L11": 79633.55179143,
+        "B-level-at-bursts": [1, 10, 10, 10, 10],
+        "B-dot-first-0": 48413.38517482682,
+        "B-dot-first-9": 98997.12053681986
+      },
+      "U3": {
+        "A-levelups": [269, 588, 897, 1220, 1470, 1779, 2119, 2325, 2614, 2898],
+        "A-refills": [6, 6, 6, 1, 6, 6, 6, 6, 6, 6],
+        "A-noncrit-L1": 24654.299670000008,
+        "A-noncrit-L2": 30470.28368202001,
+        "A-noncrit-L11": 79633.55179143,
+        "B-level-at-bursts": [2, 11, 11, 11, 11],
+        "B-dot-first-0": 102386.98670565715,
+        "B-dot-first-9": 197994.2410736397
+      },
+      "D2": {
+        "A-levelups": [269, 588, 897, 1220, 1470, 1779, 2119, 2325, 2614, 2898],
+        "A-refills": [6, 6, 6, 1, 6, 6, 6, 6, 6, 6],
+        "A-noncrit-L1": 24654.299670000008,
+        "A-noncrit-L2": 31000.148068889997,
+        "A-noncrit-L11": 80601.4067859,
+        "B-level-at-bursts": [2, 11, 11, 11, 11],
+        "B-dot-first-0": 103946.38805499194,
+        "B-dot-first-9": 401396.14959404967
+      }
+    }
+  }
+}
