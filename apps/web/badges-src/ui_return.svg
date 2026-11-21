@@ -7,27 +7,13 @@
     <sodipodi:guide position="0,0" orientation="-130,0" id="guide5" inkscape:locked="false" />
   </sodipodi:namedview>
   <defs id="defs1">
-    <marker style="overflow:visible" id="Triangle" refX="0" refY="0" orient="auto-start-reverse" inkscape:stockid="Triangle arrow" markerWidth="5.5" markerHeight="5.5" viewBox="0 0 1 1" inkscape:isstock="true" inkscape:collect="always" preserveAspectRatio="xMidYMid" markerUnits="userSpaceOnUse">
-      <path style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:0.5pt" d="M 2.885,0 -1.44,2.5 v -5 z" id="path135" />
+    <marker style="overflow:visible" id="Triangle" refX="0" refY="0" orient="auto-start-reverse" inkscape:stockid="Triangle arrow" markerWidth="6" markerHeight="6" viewBox="0 0 1 1" inkscape:isstock="true" inkscape:collect="always" preserveAspectRatio="xMidYMid" markerUnits="userSpaceOnUse">
+      <path transform="scale(0.5)" style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt" d="M 5.77,0 -2.88,5 V -5 Z" id="path135" />
     </marker>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
   </defs>
   <path id="frame-out" inkscape:label="frame-out" style="fill:none;stroke:#000000;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 2.5,2.5 H 127.5 V 127.5 H 2.5 Z" />
   <path id="frame-in" inkscape:label="frame-in" style="fill:#1a1a1a;fill-opacity:1;stroke:#ffffff;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 7.5,122.5 H 122.5 V 7.5 H 7.5 Z" />
   <g id="content" inkscape:label="content">
-    <path style="fill:none;stroke:#808080;stroke-width:12;stroke-dasharray:none;marker-start:url(#Triangle);stroke-linecap:round" id="arrow" d="M 96.996902,65.003098 A 32,32 0 0 1 77.242772,94.567243 32,32 0 0 1 42.369485,87.630514 32,32 0 0 1 35.432758,52.757227 32,32 0 0 1 64.996902,33.003098" sodipodi:type="arc" sodipodi:arc-type="arc" sodipodi:open="true" sodipodi:start="0" sodipodi:end="4.712389" sodipodi:ry="32" sodipodi:rx="32" sodipodi:cy="65.003098" sodipodi:cx="64.996902" inkscape:label="arrow" />
+    <path style="fill:none;stroke:#808080;stroke-width:12;stroke-dasharray:none;marker-start:url(#Triangle)" id="arrow" d="M 87.626529,42.376458 A 32,32 0 0 1 94.563246,77.24955 A 32,32 0 0 1 64.999112,97.004699 A 32,32 0 0 1 35.434977,77.24955 A 32,32 0 0 1 42.371695,42.376458" inkscape:label="arrow" />
   </g>
 </svg>
