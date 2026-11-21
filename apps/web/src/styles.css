@@ -207,13 +207,13 @@ header h1 {
   padding: 3px 0;
   cursor: pointer;
 }
-/* 見出しの行の右の、アカウントと設定のボタンを横に並べる */
+/* 見出しの行の右の、育成と設定のボタンを横に並べる */
 .app-header-actions {
   display: flex;
   align-items: center;
   gap: 8px;
 }
-/* 枠と地を出さず、絵だけのボタン（アカウントと設定・元に戻す・スロットの右上・絞り込みのクリア） */
+/* 枠と地を出さず、絵だけのボタン（育成と設定・元に戻す・スロットの右上・絞り込みのクリア・共通育成の「育成状況の値に戻す」） */
 .settings-menu-button,
 .modern-slot-undo-button,
 .modern-slot-icon-button,
@@ -240,7 +240,7 @@ header h1 {
   width: 26px;
   height: 26px;
 }
-/* アカウントと設定のボタン（モダン UI。絵はバッジ ui_account・ui_window の正方形） */
+/* 育成と設定のボタン（モダン UI。絵はバッジ ui_account・ui_window の正方形） */
 .settings-menu-button {
   display: grid;
   place-items: center;
@@ -272,7 +272,7 @@ header h1 {
   --badge-accent: light-dark(#1a1a1a, #ffffff);
   --badge-line: light-dark(#ffffff, #000000);
 }
-/* 見出しの行の右の、アカウント（育成状況の読み書き）と設定（クラシック）の文字のボタン */
+/* 見出しの行の右の、育成（育成状況の読み書き）と設定（クラシック）の文字のボタン */
 .header-menu-button {
   height: 34px;
   padding: 0 10px;
@@ -2097,7 +2097,7 @@ html:has(.modern-view-container) {
 .slot-growth-panel .roster-revert-button {
   margin-top: 6px;
 }
-/* アカウントのメニューの「全部を読み込んだ値に戻す」の行 */
+/* 育成のメニューの「全部を読み込んだ値に戻す」の行 */
 .roster-revert-all-row {
   margin-top: 6px;
 }

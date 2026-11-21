@@ -1,4 +1,4 @@
-// 育成状況の編集画面（plan/design-roster-edit.md 6 節）。アカウントのメニューの「編集」から開くモーダルで、クラシックと
+// 育成状況の編集画面（plan/design-roster-edit.md 6 節）。育成のメニューの「編集」から開くモーダルで、クラシックと
 // モダン UI で同じもの。左の一覧でニケか「アカウント全体」を選び、右の欄で直す。欄を確定するたびに保存され（useRoster.ts の
 // RosterEditor）、そのニケのいるスロット・共通育成にも写る。スペック固定の間も、育成状況の値を出して編集できる
 import type { BuildMasters, CharacterData, CharacterIndexEntry, SnapshotCharacter } from '@nikke/core';

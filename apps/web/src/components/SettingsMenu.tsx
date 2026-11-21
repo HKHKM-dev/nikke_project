@@ -1,7 +1,7 @@
 // 右上の設定のメニュー（ボタンは、クラシックでは文字「設定」、モダン UI ではバッジ ui_window の絵。モダン UI では表示モードと
 // テーマの選択肢の前にもバッジ ui_classic・ui_modern と ui_light・ui_dark・ui_system を出す）。サイト全体の設定をここに置く: テーマ・表示モードの切り替え。
 // 一覧の並びは、クラシックはスロットの上の「並べ替え」（ClassicView）、モダン UI はニケ一覧の「並べ替え」で選ぶ。
-// 育成状況は左隣の「アカウント」のメニュー（AccountMenu.tsx）
+// 育成状況は左隣の「育成」のメニュー（AccountMenu.tsx）
 import { THEME_LABEL, useTheme, type Theme } from '../theme.ts';
 import { UI_MODE_LABEL, type UiMode } from '../uiMode.ts';
 import { BadgeIcon } from './modern/BadgeIcon.tsx';

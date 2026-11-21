@@ -1,4 +1,4 @@
-// アカウントのメニューの「育成状況」の欄: 読み込む・書き出す・編集・消すと、全部を読み込んだ値に戻す
+// 育成のメニューの「育成状況」の欄: 読み込む・書き出す・編集・消すと、全部を読み込んだ値に戻す
 // （plan/design-combat-power-sort.md 5 節・plan/design-roster-edit.md 6.1 節）
 import { useRef } from 'react';
 import { REVERT_ALL_LABEL } from '../roster.ts';

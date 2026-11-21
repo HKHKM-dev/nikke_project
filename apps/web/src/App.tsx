@@ -42,7 +42,7 @@ export function App() {
 
   // 育成状況（roster.ts）。キャラをスロットに入れる操作は、育成状況の育成を写す dispatch を通す
   const { controls: rosterControls, dispatchWithRoster } = useRoster({ index, team, parties, dispatch, setParties });
-  // 育成状況の編集画面を開いているか（アカウントのメニューの「編集」。plan/design-roster-edit.md 6 節）
+  // 育成状況の編集画面を開いているか（育成のメニューの「編集」。plan/design-roster-edit.md 6 節）
   const [rosterEditing, setRosterEditing] = useState(false);
   const closeRosterEdit = useCallback(() => setRosterEditing(false), []);
   // 一覧の並び（listOrder.ts）。並べたキャラの一覧を画面に渡し、トレイと選択肢はその順のまま出す
