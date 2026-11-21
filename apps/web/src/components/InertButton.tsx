@@ -8,12 +8,21 @@ type Props = {
   /** 押せるときに押した */
   onPress: () => void;
   className?: string;
+  /** ボタンの名前（中身が絵だけのとき。読み上げとマウスを重ねたときの文字） */
+  label?: string;
   children: ReactNode;
 };
 
-export function InertButton({ enabled, onPress, className = 'advanced-settings-button', children }: Props) {
+export function InertButton({ enabled, onPress, className = 'advanced-settings-button', label, children }: Props) {
   return (
-    <button type="button" className={className} aria-disabled={!enabled} onClick={() => enabled && onPress()}>
+    <button
+      type="button"
+      className={className}
+      aria-label={label}
+      title={label}
+      aria-disabled={!enabled}
+      onClick={() => enabled && onPress()}
+    >
       {children}
     </button>
   );
