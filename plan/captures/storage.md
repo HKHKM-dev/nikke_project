@@ -136,6 +136,6 @@ node tools/captures/fetch.ts --list drive:          # record の中身を見る
 - 置き場所は環境変数 `NIKKE_CAPTURES_DIR`。無ければ Windows は `E:/nikke_project_captures`、それ以外はホームの下の `nikke_project_captures`（`tools/captures/dirs.ts`）。種別フォルダの構成は E: と同じ。旧プロジェクトのものは `NIKKE_LEGACY_DIR`（無ければ `E:/old_nikkecalc`、それ以外はホームの下の `old_nikkecalc`）。
 - 旧プロジェクトの録画は台帳に sha256 が無いので、突き合わせない。
 - `drive:` は、取り込む前の録画（Drive の「マイ コンピュータ/record」。環境変数 `NIKKE_DRIVE_RECORD_FOLDER_ID`）を `NIKKE_RECORD_FETCH_DIR`（無ければホームの下の `record/`）に落とす。台帳が無いので突き合わせない。Drive for desktop が上げている途中なら、途中までの版が落ちる。取り込みは `intake.ts drive:<パス>` が別に取り寄せる。
-- 既にあるファイルは取り直さない。録画は、sha256 が台帳と違えば取り直す。sha256 を突き合わせない録画（旧プロジェクト・`drive:`・相対パスで指したもの）は、大きさが Drive と違えば取り直す（Drive for desktop が上げている途中の版を落としていたとき）。録画のほかのファイル（`frames/` の画など）は、大きさが Drive と違っても手元を残し、そう出す（`still.ts` が手元で作り直した画は、応答の終わりに Drive へ上がるまで Drive の版が古い）。`--force` で取り直す。
+- 既にあるファイルは取り直さない。sha256 が台帳と違うか、台帳に sha256 が無くて大きさが Drive と違えば取り直す（Drive for desktop が上げている途中の版を落としていたとき）。ただし証拠フレーム（`frames/`）は、大きさが Drive と違っても手元を残し、そう出す（`still.ts` が手元で作り直した画は、Drive へ上がるまで Drive の版が古い）。`--force` で取り直す。
 - Drive に無いと言われたら、手元の E: から同期（上の「バックアップ」）していないことが多い。
 - クラウド環境のディスクはセッションごとに消える。取り寄せた録画は残らない。クラウドで `frames/` に切り出した証拠フレームは、応答の終わりのフックが Apps Script の受け口で Drive に戻し、デスクトップの次の同期で E: に届く（受け口の準備が済んだ環境だけ。[../cloud-guide.md](../cloud-guide.md)）。

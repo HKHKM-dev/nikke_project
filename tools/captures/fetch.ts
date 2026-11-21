@@ -28,7 +28,8 @@ import {
   relPath as normalizeRel,
 } from './dirs.ts';
 import { Drive, DRIVE_CALL_MS, type DriveFile } from './drive.ts';
-import { type Area, type FetchContext, type Target, fetchTarget, message, once, resolveIn } from './fetch-lib.ts';
+import { type Area, type FetchContext, type Target, fetchTarget, once, resolveIn } from './fetch-lib.ts';
+import { reason } from '../drive/cloud-lib.ts';
 import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
 const RECORDINGS_DIR = new URL('../../records/recordings/', import.meta.url);
@@ -102,7 +103,7 @@ if (values.list) {
       console.log(`${f.name}${size}`);
     }
   } catch (error) {
-    console.error(message(error));
+    console.error(reason(error));
     process.exit(1);
   }
   process.exit(0);
@@ -114,7 +115,7 @@ for (const arg of positionals) {
     await fetchTarget(toTarget(arg), arg, ctx);
   } catch (error) {
     failed += 1;
-    console.error(message(error));
+    console.error(reason(error));
   }
 }
 if (failed > 0) process.exit(1);

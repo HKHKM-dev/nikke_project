@@ -90,6 +90,17 @@ describe('fetchTarget', () => {
     expect(lines[0]).toContain('落とし直す');
   });
 
+  it('redownloads a non-frame file whose size differs from Drive', async () => {
+    const drive = fakeDrive({ 'reference/tip.png': 'complete' });
+    put('reference/tip.png', 'part');
+    await fetchTarget(
+      { area: 'captures', relPath: 'reference' },
+      'reference',
+      context(async () => drive),
+    );
+    expect(read('reference/tip.png')).toBe('complete');
+  });
+
   it('overwrites a differing frame with --force', async () => {
     const drive = fakeDrive({ 'frames/a.jpg': 'old' });
     put('frames/a.jpg', 'new-remade');
