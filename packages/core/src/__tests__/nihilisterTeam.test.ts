@@ -34,12 +34,12 @@ const TEAMS: Record<string, { input: TeamInput; nihilister: number }> = {
 };
 
 describe('ニヒリスターの定義', () => {
-  it('supports S1 (pierce. V-0722), S2 (partly: the gauge of the hit is a note) and the burst', () => {
+  it('supports S1 (pierce. V-0722), S2 (the hit and its gauge. C-1486) and the burst', () => {
     const def = parseSkillDefinition(rawDefinition(NIHILISTER));
     expect(def.skills.skill1.support).toBe('supported');
     expect(def.skills.skill1.effects.map((e) => ('stat' in e ? e.stat : e.kind))).toEqual(['pierce']);
-    // S2 のヒットのゲージは確かめていない（notes の未対応）
-    expect(def.skills.skill2.support).toBe('partial');
+    expect(def.skills.skill2.support).toBe('supported');
+    expect(def.skills.skill2.effects.map((e) => e.kind)).toEqual(['damage', 'burstGaugeHit']);
     expect(def.skills.burst.support).toBe('supported');
     expect(def.skills.burst.effects.map((e) => e.kind)).toEqual(['burstDamage', 'dot', 'timed']);
   });
