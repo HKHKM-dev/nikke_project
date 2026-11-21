@@ -65,8 +65,7 @@
             "en": "The second line (Charge Damage up for N rounds) is outside the \"Missile Guide:\" name, so it is a timed effect separate from the missileGuide state (not removed on a full reload). It is applied under the same condition as the first line (conditions in the same frame see the state before application). Re-applying while active restarts the 3-round count (not distinguished in recordings 839 and 840 from a separate non-stacking application)"
           }
         }
-      ],
-      "notes": []
+      ]
     },
     "skill2": {
       "effects": [
@@ -121,8 +120,7 @@
             "C-0809"
           ]
         }
-      ],
-      "notes": []
+      ]
     },
     "burst": {
       "effects": [
@@ -144,19 +142,6 @@
           "claims": [
             "C-0807"
           ]
-        }
-      ],
-      "notes": [
-        {
-          "ja": "爆発範囲▲は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）",
-          "en": "Explosion range up is not modeled (explosion range is not in the damage formula; its effect on the core hit rate is not checked)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "unknown",
-            "target": "self",
-            "trigger": "burstUse"
-          }
         }
       ]
     }
