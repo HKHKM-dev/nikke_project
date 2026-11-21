@@ -30,6 +30,21 @@ function decodeImages(node: Element): Promise<void> {
   return Promise.race([decoded, new Promise((resolve) => setTimeout(resolve, DECODE_WAIT_MS))]).then(() => undefined);
 }
 
+/**
+ * 立ち絵の場所に出している空のスロットの枠（シルエットと文字。card の中の .modern-slot-arrival-face）を、動きの後半で少しずつ透明にする
+ * （スロットへ着く・持ち上げた絵が元のスロットへ戻る）。返すアニメーションは、枠を隠し終えたら cancel する
+ */
+export function fadeArrivalFace(card: Element): Animation | null {
+  return (
+    card
+      .querySelector('.modern-slot-arrival-face')
+      ?.animate([{ opacity: 1 }, { opacity: 1, offset: 0.5 }, { opacity: 0 }], {
+        duration: FLIGHT.duration,
+        fill: 'forwards',
+      }) ?? null
+  );
+}
+
 /** スロット（カード）→ そこへ動いている写しを、いま消して本物に切り替える関数 */
 const arrivals = new WeakMap<Element, () => void>();
 
@@ -126,14 +141,7 @@ export function flyIntoSlot(from: DOMRect, card: Element): () => void {
     const base = content.getBoundingClientRect();
     ghost = ghostOf(content, base);
     ghost.animate([frameAt(from, base), frameAt(base, base)], FLIGHT).finished.then(done, done);
-    // 立ち絵の場所に出している空のスロットの枠（シルエットと文字）は、動きの後半で少しずつ透明にする
-    fade =
-      card
-        .querySelector('.modern-slot-arrival-face')
-        ?.animate([{ opacity: 1 }, { opacity: 1, offset: 0.5 }, { opacity: 0 }], {
-          duration: FLIGHT.duration,
-          fill: 'forwards',
-        }) ?? null;
+    fade = fadeArrivalFace(card);
   });
   return done;
 }
