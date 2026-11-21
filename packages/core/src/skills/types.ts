@@ -2013,6 +2013,11 @@ export type WeaponChangeEffect = {
    * ナユタの記憶燃焼では確かめていない（C-0939）
    */
   chargeTimeFixed?: true;
+  /**
+   * 変更後の武器のコアの倍率（即値。2 = ×2.0。録画で読む。plan/design-eh.md 8.1 節）。省略は基礎の武器のまま
+   * （ShotParams.coreDamageRate）。コアダメージ▲はこの倍率に足す
+   */
+  coreDamageRate?: number;
   /** 同: 変更後の武器のフルチャージダメージ（%・即値。300 = 300%）。省略は基礎の武器のまま。チャージ武器にだけ書ける */
   fullChargeDamage?: number;
   /**
@@ -2026,7 +2031,12 @@ export type WeaponChangeEffect = {
    * 変更後の武器はリロードせず、最後の弾丸を撃ったフレームの次のフレームに基礎の武器に戻る（撃ち切り。論点 8）
    */
   maxAmmoRef?: number;
-  /** 維持秒数の description_value_NN。durationSeconds とちょうど片方（maxAmmoRef を書いたらどちらも書かない） */
+  /**
+   * 変更後の武器の最大装弾数（発・即値。plan/design-eh.md 2.3 節）。説明文に番号の無い装弾数（E.H. のバーストの「1 発 × 自家製弾倉の数」）に
+   * 書く。maxAmmoRef とちょうど片方で、ほかは maxAmmoRef と同じ（撃ち切りで終わる）
+   */
+  maxAmmo?: number;
+  /** 維持秒数の description_value_NN。durationSeconds とちょうど片方（maxAmmoRef・maxAmmo を書いたらどちらも書かない） */
   durationRef?: number;
   durationSeconds?: number;
   /**

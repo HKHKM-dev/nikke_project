@@ -1,0 +1,23 @@
+{
+  "id": "C-1391",
+  "text": "E.H. のバーストの攻撃力 430.05%▲（10 秒）は、バーストの武器の発と、その後の SMG の発に乗る。III のタイマーの 00.00 の 27f 後（動画）の SMG の発には乗らない（モデルは発動のフレームから付けるが、モデルではその間に E.H. が撃たないので、値は変わらない）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1271-25`・`1271-26`・`1271-27`・`1272-25`・`1272-26`。V-0813",
+  "model": "data/skills/113.json（burst の timed）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/113.json の burst の effects[1]"]
+  },
+  "decidedOn": [],
+  "minimal": [
+    {
+      "observations": "*",
+      "element": ["E.H. skill1.notes[0]", "E.H. skill2.notes[0]", "E.H. burst.notes[0]"],
+      "reason": "廃品が増えるきっかけ（発射体・パーツ・敵の破壊）は録画で起きていない。バーストの武器は 8 回とも 1 発で撃ち切り、自家製弾倉は 1 本のまま（C-1387）",
+      "decided": "2026-11-21"
+    }
+  ]
+}

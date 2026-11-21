@@ -587,7 +587,7 @@ export type ResolvedTimedEffect = ResolvedEffect & {
 };
 
 /**
- * 解決後の維持の終わりの出来事。'ammoSpent' は、最大装弾数を書いた使用武器の変更（weaponChange の maxAmmoRef）が、
+ * 解決後の維持の終わりの出来事。'ammoSpent' は、最大装弾数を書いた使用武器の変更（weaponChange の maxAmmoRef・maxAmmo）が、
  * 最後の弾丸を撃ったフレームの次のフレームに終わる（plan/design-true-damage-element.md 9 節）。
  * DSL の timed には書けない（weaponChange を解決したときだけ付く）
  */
@@ -1564,6 +1564,8 @@ export type ChangedWeaponOverrides = {
   /** フルチャージダメージ（倍率。3 = 300%） */
   fullChargeDamage?: number;
   maxAmmo?: number;
+  /** コアの倍率（2 = ×2.0。plan/design-eh.md 8.1 節） */
+  coreDamageRate?: number;
   /** 1 発の弾の数（ペレット数。plan/design-zwei.md 2.2 節） */
   shotCount?: number;
   /** 即着弾でチャージしない武器にする（instantFire。plan/design-skill-stage11.md 2.1 節） */
@@ -1594,6 +1596,7 @@ export function changedWeaponShot(
     ...(overrides.chargeTime !== undefined ? { chargeTime: overrides.chargeTime } : {}),
     ...(overrides.fullChargeDamage !== undefined ? { fullChargeDamage: overrides.fullChargeDamage } : {}),
     ...(overrides.maxAmmo !== undefined ? { maxAmmo: overrides.maxAmmo } : {}),
+    ...(overrides.coreDamageRate !== undefined ? { coreDamageRate: overrides.coreDamageRate } : {}),
     ...(overrides.shotCount !== undefined ? { shotCount: overrides.shotCount } : {}),
     ...(overrides.chargeInput === true ? { inputType: 'DOWN_Charge' } : {}),
     // 即着弾でチャージしない（チャージ時間 0・押下型・Instant。飛ぶ弾の欄は外す）
@@ -1672,9 +1675,11 @@ function resolveWeaponChange(
     }
     overrides.maxAmmo = n;
   }
+  if (effect.maxAmmo !== undefined) overrides.maxAmmo = effect.maxAmmo;
+  if (effect.coreDamageRate !== undefined) overrides.coreDamageRate = effect.coreDamageRate;
   if (effect.instantFire === true) overrides.instantFire = true;
   if (effect.shotCount !== undefined) overrides.shotCount = effect.shotCount;
-  const untilEmpty = effect.maxAmmoRef !== undefined;
+  const untilEmpty = effect.maxAmmoRef !== undefined || effect.maxAmmo !== undefined;
   const r: ResolvedTimedEffect = {
     source: { resourceId: character.resourceId, skill: slot, name: skill.name },
     target: 'self',

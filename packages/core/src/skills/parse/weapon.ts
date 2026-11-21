@@ -33,8 +33,10 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
       'chargeTimeRef',
       'chargeTimeFixed',
       'fullChargeDamage',
+      'coreDamageRate',
       'chargeReleaseSeconds',
       'maxAmmoRef',
+      'maxAmmo',
       'durationRef',
       'durationSeconds',
       'rateOfFire',
@@ -49,12 +51,15 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
     ],
     path,
   );
-  // 最大装弾数を書いた変更は撃ち切りで終わる（維持の欄を書かない。design-true-damage-element.md 9 節）
-  const untilEmpty = v.maxAmmoRef !== undefined;
+  // 最大装弾数（番号か即値。plan/design-eh.md 2.3 節）を書いた変更は撃ち切りで終わる（維持の欄を書かない。
+  // design-true-damage-element.md 9 節）
+  if (v.maxAmmoRef !== undefined && v.maxAmmo !== undefined)
+    fail(`${path}.maxAmmo`, 'expected at most one of maxAmmoRef and maxAmmo');
+  const untilEmpty = v.maxAmmoRef !== undefined || v.maxAmmo !== undefined;
   if (untilEmpty && (v.durationRef !== undefined || v.durationSeconds !== undefined)) {
     fail(
       path,
-      'a weapon change with maxAmmoRef ends when its magazine is empty; durationRef/durationSeconds are not allowed',
+      'a weapon change with maxAmmoRef or maxAmmo ends when its magazine is empty; durationRef/durationSeconds are not allowed',
     );
   }
   const effect: WeaponChangeEffect = {
@@ -62,7 +67,11 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
     // 状態のフルスタックで起こす変更（plan/design-skill-stage11.md 2.1 節）
     trigger: parseTrigger(v.trigger, `${path}.trigger`, { fullStack: true }),
     damageRef: parseRef(v.damageRef, `${path}.damageRef`),
-    ...(untilEmpty ? { maxAmmoRef: parseRef(v.maxAmmoRef, `${path}.maxAmmoRef`) } : parseDuration(v, path)),
+    ...(v.maxAmmoRef !== undefined
+      ? { maxAmmoRef: parseRef(v.maxAmmoRef, `${path}.maxAmmoRef`) }
+      : v.maxAmmo !== undefined
+        ? { maxAmmo: parsePositiveInt(v.maxAmmo, `${path}.maxAmmo`) }
+        : parseDuration(v, path)),
   };
   if (v.chargeTimeSeconds !== undefined) {
     const seconds = v.chargeTimeSeconds;
@@ -86,6 +95,13 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
     const percent = v.fullChargeDamage;
     assertPositiveFinite(percent, `${path}.fullChargeDamage`);
     effect.fullChargeDamage = percent;
+  }
+  // 変更後の武器のコアの倍率（録画で読む即値。plan/design-eh.md 8.1 節）
+  if (v.coreDamageRate !== undefined) {
+    const rate = v.coreDamageRate;
+    assertPositiveFinite(rate, `${path}.coreDamageRate`);
+    if (rate < 1) fail(`${path}.coreDamageRate`, `expected at least 1, got ${rate}`);
+    effect.coreDamageRate = rate;
   }
   if (v.chargeReleaseSeconds !== undefined) {
     const seconds = v.chargeReleaseSeconds;
@@ -136,7 +152,7 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
 
   if (v.infiniteAmmo !== undefined) {
     parseTrue(v.infiniteAmmo, `${path}.infiniteAmmo`);
-    if (untilEmpty) fail(`${path}.infiniteAmmo`, 'infiniteAmmo cannot be combined with maxAmmoRef');
+    if (untilEmpty) fail(`${path}.infiniteAmmo`, 'infiniteAmmo cannot be combined with maxAmmoRef or maxAmmo');
     effect.infiniteAmmo = true;
   }
   // 追加効果「貫通特化」（pierce）も、true だけを受ける旗（plan/design-zwei.md 2.1 節）
@@ -149,7 +165,7 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
   // 変更の窓の間の状態（付与は parse/definition.ts の parseEntry が足す。plan/design-nayuta.md 2.5 節）
   if (v.state !== undefined) {
     if (untilEmpty)
-      fail(`${path}.state`, 'state cannot be combined with maxAmmoRef (the window ends on the last shot)');
+      fail(`${path}.state`, 'state cannot be combined with maxAmmoRef or maxAmmo (the window ends on the last shot)');
     effect.state = parseNamedStateId(v.state, `${path}.state`, 'ally');
   }
   parseAssumes(v, effect, path);

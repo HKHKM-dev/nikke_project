@@ -59,6 +59,15 @@ export const COUNTERS = {
    * 始まりに 1 以上なら 1 足し、バーストの使用で全部消える。バーストは MP の数だけ攻撃する。上限 12（説明文の「最大12まで蓄積可能」）
    */
   mp: { name: { ja: 'MP', en: 'MP' }, max: 12 },
+  /**
+   * 廃品（E.H. の S1・S2。plan/design-eh.md 2.1 節）。戦闘開始時に 10、上限に届いた次のフレームに、自家製弾倉が 4 本未満なら 0 に戻して
+   * 自家製弾倉を 1 本作る。発射体・パーツ・敵の破壊での増加は前提の外。上限 10（S2 の説明文の値 02）
+   */
+  scrap: { name: { ja: '廃品', en: 'Scrap' }, max: 10 },
+  /**
+   * 自家製弾倉（E.H. の S1・バースト。同）。廃品 10 個ごとに 1 本。前提の中では戦闘開始の直後の 1 本で止まる。上限 4（S1 の説明文の値 02）
+   */
+  homemadeMagazine: { name: { ja: '自家製弾倉', en: 'Homemade magazines' }, max: 4 },
 } as const satisfies Record<string, CounterInfo>;
 
 export type CounterId = keyof typeof COUNTERS;

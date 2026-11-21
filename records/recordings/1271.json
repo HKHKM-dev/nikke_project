@@ -1,0 +1,46 @@
+{
+  "id": "1271",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1271_eh-1.mp4",
+  "original": "2026-11-21_15-07-52.mp4",
+  "durationSec": 201.7,
+  "frames": 12101,
+  "fps": 60,
+  "sizeMB": 244.7,
+  "sha256": "c76ec5371bb8",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 113,
+      "name": "E.H.",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Iron"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-21T15:16+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
