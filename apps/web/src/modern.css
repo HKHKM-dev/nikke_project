@@ -135,6 +135,14 @@
   color: color-mix(in srgb, var(--app-fg) 30%, transparent);
   opacity: 1;
 }
+/* 縦長の空のスロット（選んでいる編成。以前の見た目）の文字は、シルエットの絵（ライトで約 #b0b0b0・ダークで約 #505050）の上で読めるよう、
+   ライトでは白より 20% 暗い灰色・ダークでは黒より 20% 明るい灰色にする（＋ は 10%） */
+:root[data-app-ui='modern'] .modern-slot-empty-area.modern-slot-empty-tall {
+  color: light-dark(#cccccc, #333333);
+}
+:root[data-app-ui='modern'] .modern-slot-empty-tall .modern-slot-empty-plus {
+  color: light-dark(#e6e6e6, #1a1a1a);
+}
 /* ニケがいるときの立ち絵とニケ一覧の絵の枠も、空のスロットの枠と同じ色にする */
 :root[data-app-ui='modern'] .char-visual {
   --char-visual-line: var(--slot-frame-line);

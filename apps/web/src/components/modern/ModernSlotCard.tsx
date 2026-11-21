@@ -115,7 +115,7 @@ export function ModernSlotCard({
               <SlotCharName name={characterEntry.name.ja} marks={growthMarks} />
               {/* 置いたニケが動いてくる間（flight.ts の modern-slot-arriving）と、ドラッグで持ち上げている間・戻る間は、立ち絵の代わりに空のスロットの枠を出す */}
               <div className="modern-slot-arrival-face" aria-hidden="true">
-                <EmptySlotFace tall />
+                <EmptySlotFace tall slotIndex={slotIndex} />
               </div>
               <button
                 type="button"
@@ -152,7 +152,7 @@ export function ModernSlotCard({
             </>
           ) : (
             // ニケがいるときの絵と同じ大きさにして、選んでもカードの大きさが変わらないようにする
-            <EmptySlotFace tall />
+            <EmptySlotFace tall slotIndex={slotIndex} />
           )}
         </div>
       </div>
@@ -178,12 +178,23 @@ export function SlotCharName({ name, marks }: { name: string; marks: GrowthMarks
 
 /**
  * 空のスロットの枠（真ん中の ＋ だけ）。持ち上げたときの絵（SlotDragOverlay）・選んでいない編成の行（PartyPreviewRow）にも使う。
- * tall は選んでいる編成のスロット（縦長の絵と同じ 1:2 の枠）
+ * tall は選んでいる編成のスロット（縦長の絵と同じ 1:2 の枠）。以前の見た目（シルエットの絵と、＋ の下の番号・FRONT か REAR・EMPTY SLOT・
+ * 5 つのうちの位置）で出す（オーナーのコメント）。slotIndex は tall のときの番号と位置
  */
-export function EmptySlotFace({ tall = false }: { tall?: boolean }) {
+export function EmptySlotFace({ tall = false, slotIndex = 0 }: { tall?: boolean; slotIndex?: number }) {
   return (
     <div className={`modern-slot-empty-area ${tall ? 'modern-slot-empty-tall' : ''}`}>
       <span className="modern-slot-empty-plus">＋</span>
+      {tall && (
+        <>
+          <span className="modern-slot-empty-number">{String(slotIndex + 1).padStart(2, '0')}</span>
+          <span className="modern-slot-empty-row">{slotIndex % 2 === 0 ? 'FRONT' : 'REAR'}</span>
+          <span className="modern-slot-empty-label">EMPTY SLOT</span>
+          <span className="modern-slot-empty-position" aria-hidden="true">
+            {Array.from({ length: 5 }, (_, i) => (i === slotIndex ? '●' : '○')).join('')}
+          </span>
+        </>
+      )}
     </div>
   );
 }

@@ -1379,7 +1379,7 @@ svg.roster-revert-icon {
 }
 /* 四角の絵（顔の絵）の名前は、背景を暗くして読みやすくする（顔の絵は名前の後ろまで明るい色が多い） */
 .char-tray-square-area .modern-slot-char-name,
-.modern-slot-card .modern-slot-char-name {
+.modern-party-preview-card .modern-slot-char-name {
   /* 四角の絵は低いので、名前の文字を少し小さくする */
   font-size: 0.7rem;
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.85) 40%);
@@ -1396,6 +1396,46 @@ svg.roster-revert-icon {
 .modern-slot-empty-area.modern-slot-empty-tall {
   height: calc(var(--slot-portrait-h) * 2);
   aspect-ratio: 1 / 2;
+  /* 以前の見た目（オーナーのコメント）: 背景も枠線と同じく上の 5 割で上へ行くほど透明にする（ニケ一覧の縦長の絵と同じ） */
+  background: linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
+  border-image: linear-gradient(to bottom, transparent, var(--char-visual-line) 50%) 1;
+}
+/* 縦長の空のスロットは、シルエットの絵（256×512。立ち絵と同じ 1:2）を枠いっぱいに出す */
+.modern-slot-empty-area.modern-slot-empty-tall {
+  background:
+    url(./assets/portrait_silhouette.webp) center / 100% 100% no-repeat,
+    linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
+}
+.modern-slot-empty-tall .modern-slot-empty-plus {
+  font-size: 3.6em;
+}
+/* 縦長の空のスロットの ＋ の下: 番号（01〜05）・FRONT / REAR・EMPTY SLOT・位置（○○●○○）。H は枠の高さ（--slot-portrait-h の 2 倍） */
+.modern-slot-empty-number {
+  font-size: 1.8em;
+  font-weight: bold;
+  line-height: 1.1;
+  /* 番号から下の文字を中央より下げる。＋ は並びの外（枠の真ん中）にあるので、＋ の高さと間の分も足して、番号を ＋ より下に置く */
+  margin-top: calc(var(--slot-portrait-h) * 2 * 0.3 + var(--slot-portrait-h) * 2 * 3.25 / 16 + 0.8em);
+}
+.modern-slot-empty-row {
+  font-size: 0.75em;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  /* 番号に少し近づける */
+  margin-top: -0.55em;
+}
+.modern-slot-empty-label {
+  /* EMPTY SLOT と位置の組を少し下げる */
+  margin-top: calc(var(--slot-portrait-h) * 2 / 64 + 0.8em);
+  font-size: 0.7em;
+  font-weight: bold;
+  letter-spacing: 0.06em;
+}
+.modern-slot-empty-position {
+  font-size: 0.7em;
+  letter-spacing: 0.1em;
+  /* EMPTY SLOT に少し近づける */
+  margin-top: -0.45em;
 }
 .char-visual-portrait {
   max-width: none;
