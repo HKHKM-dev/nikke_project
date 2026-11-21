@@ -1,0 +1,67 @@
+{
+  "formatVersion": 1,
+  "resourceId": 432,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "critDamage",
+          "ref": 1,
+          "durationRef": 2
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "allies",
+          "stat": "critRate",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "「最後の弾丸」はマガジンの最後の 1 発で、いつも命中する（撃ち始めの外れは撃ち始めの 1〜11 発目に集まり、最後の発には無いとみる。C-0780）。付き直すと 5 秒から数え直す",
+            "en": "\"The last bullet\" is the last round of the magazine and always hits (MG misses cluster at the first 1-11 shots of a fire start, not the last; C-0780). Re-applying restarts the 5 s"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "hitRate",
+          "ref": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "MG の命中率▲は、コア命中率を C-0036 の式（p ÷ (1 − N)²、上限 1）で、弾丸命中率を H2（C-0192）で上げる形で回す。どちらの式も MG では確かめていない（確かめたのは SMG）。MG の的の表の値（帯の平均）の外れは撃ち始めの約 10 ヒットに集まり（C-0545）、▲の窓の中ではモデルの値はどの帯もほぼ 1 になる",
+            "en": "Hit Rate up on an MG is run as raising core hit rate by C-0036 (p ÷ (1 − N)², capped at 1) and bullet hit rate by H2 (C-0192). Neither form is verified on MG (verified on SMG). The misses in the MG table values (band averages) cluster in the first ~10 hits of a fire start (C-0545); inside the window the model's values are nearly 1 in every band"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "味方全体へのバリア（スキル発動者の最終最大HP の X%・10 秒）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは味方がバリア適用状態にならない。バリアの量は要件 5.2 節の外）",
+          "en": "The barrier on all allies (X% of the caster's final max HP, 10 s) does not change damage by itself (it matters only with an effect reading barriers in the team; this grant is not defined, so the model does not put allies in a barrier state; the barrier amount is out of scope, requirements 5.2)",
+          "kind": "indirect",
+          "path": "barrier",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}
