@@ -495,6 +495,8 @@ export const NAMED_STATES = {
   survivalInstinct2: { name: { ja: '生存本能2', en: 'Survival Instinct 2' }, holder: 'ally' },
   /** 生存本能 3（同。使用 3 回目から。クリティカル確率▲・45 秒） */
   survivalInstinct3: { name: { ja: '生存本能3', en: 'Survival Instinct 3' }, holder: 'ally' },
+  /** 証拠品収集（ノベルの S2。防御力▲のスタック。バーストの「証拠品収集のフルスタック状態なら」の受けるダメージ▲が見る） */
+  collectEvidence: { name: { ja: '証拠品収集', en: 'Collecting Evidence' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

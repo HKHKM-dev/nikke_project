@@ -1,0 +1,337 @@
+[
+  {
+    "id": "1310-01",
+    "recording": "1310",
+    "kind": "timing",
+    "use": "compare",
+    "value": [678, 1267, 1858, 2447],
+    "unit": "f",
+    "description": "ノベルの S1 のダメージの 1〜4 回目の、戦闘開始（f817）からの動画のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f1495 の 62,717（フルバーストの中の 41,812 × 1.5）、f2084 の 50,221（41,812 と通常攻撃 8,409 の和）、f2675 の 70,034（受けるダメージ▲の窓の中の 41,812 × 1.675）、f3264 の 208,005（41,812 とフラワーの 166,193 の和）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 2,
+        "event": "skillHit",
+        "count": 4
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0833",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1310-02",
+    "recording": "1310",
+    "kind": "hit",
+    "use": "compare",
+    "value": 264005,
+    "description": "ノベルのバーストスキルダメージの 1 ヒット（会心なし。1 回目の発動）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f1375 の増分。2・5・6・7・9 回目（f2555・4935・6135・7315・10895）も 264,005。3・8 回目は同じフレームの通常攻撃との和（283,507 = 264,005 + 19,502、278,089 = 264,005 + 14,084）。フルスタックの回も、同じ発動の受けるダメージ▲は乗らない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0833",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1310-03",
+    "recording": "1310",
+    "kind": "timing",
+    "use": "compare",
+    "value": [101],
+    "unit": "f",
+    "description": "ノベルの 1 回目のバーストの、II の発動（右のバースト欄の六角形の II → III の替わり目。recipe:burst-panel@4）からバーストスキルダメージのヒットまでの動画のフレーム（フルバーストの入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4・hud.ts --mode jumps",
+      "note": "替わり目 1274・2475・3654・4855・6035・7236・8414・9615・10794 からヒットまで 101・80・101・80・100・79・101・80・101f。フルバーストに入る回（III の 00.00 がある回）が 100〜101f、入らない回（ユルハの CT 待ちで連鎖が切れる）が 79〜80f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 2,
+        "event": "burstHit",
+        "anchor": "activation:0",
+        "within": "untilNext"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0833",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1310-04",
+    "recording": "1310",
+    "kind": "timing",
+    "use": "compare",
+    "value": [80],
+    "unit": "f",
+    "description": "ノベルの 2 回目のバースト（フルバーストに入らない）の、II の発動からバーストスキルダメージのヒットまでの動画のフレーム",
+    "method": {
+      "tool": "recipe:burst-panel@4・hud.ts --mode jumps",
+      "note": "替わり目 2475、ヒット f2555"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 2,
+        "event": "burstHit",
+        "anchor": "activation:1",
+        "within": "untilNext"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0833",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1310-05",
+    "recording": "1310",
+    "kind": "timing",
+    "use": "compare",
+    "value": [100],
+    "unit": "f",
+    "description": "ノベルの 5 回目のバースト（フルバーストに入る）の、II の発動からバーストスキルダメージのヒットまでの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4・hud.ts --mode jumps",
+      "note": "替わり目 6035、ヒット f6135"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 2,
+        "event": "burstHit",
+        "anchor": "activation:4",
+        "within": "untilNext"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0833",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1310-06",
+    "recording": "1310",
+    "kind": "timing",
+    "use": "compare",
+    "value": [79],
+    "unit": "f",
+    "description": "ノベルの 6 回目のバースト（フルバーストに入らない）の、II の発動からバーストスキルダメージのヒットまでの動画のフレーム",
+    "method": {
+      "tool": "recipe:burst-panel@4・hud.ts --mode jumps",
+      "note": "替わり目 7236、ヒット f7315"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 2,
+        "event": "burstHit",
+        "anchor": "activation:5",
+        "within": "untilNext"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0833",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1310-07",
+    "recording": "1310",
+    "kind": "hit",
+    "use": "compare",
+    "value": 11643,
+    "description": "ノベルの 1 回目のバースト（証拠品収集は 5 スタックに届いていない）の後の 5 秒の、通常攻撃の距離ボーナスあり・会心なし・コアなしの 1 ヒット（フルバーストの中。f1390）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "バーストのヒット f1375 の後の f1376〜1493 のノベルの増分は 11,643 と 14,877（コア）で、受けるダメージ▲の 1.675 倍（19,502）は無い。f1496 からは S1 の防御力▼の 11,644"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 573,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 0.6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0833",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1310-08",
+    "recording": "1310",
+    "kind": "hit",
+    "use": "compare",
+    "value": 8409,
+    "description": "ノベルの 2 回目のバーストの前の、通常攻撃の距離ボーナスあり・会心なし・コアなしの 1 ヒット（f2539）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f2520〜2554 の増分は 8,409・14,877・11,643・18,111"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1694,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 0.6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0833",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1310-09",
+    "recording": "1310",
+    "kind": "hit",
+    "use": "compare",
+    "value": 14084,
+    "description": "ノベルの 2 回目のバースト（約 30 秒。証拠品収集が 5 スタック）の後の、通常攻撃の距離ボーナスあり・会心なし・コアなしの 1 ヒット（f2580）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "バーストのヒット f2555 の次の発 f2556 から 14,084（8,408.63 × 1.675）と 19,502（11,642.71 × 1.675）。ヒットの前の f2554 は 11,643。f2613 からはユルハの S2 の攻撃力▲も乗る。ユルハのバースト（この回は使わない）以外の▲は無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1735,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 0.6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0833",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1310-10",
+    "recording": "1310",
+    "kind": "hit",
+    "use": "compare",
+    "value": 10834,
+    "description": "ノベルの 4 回目のバーストの後の、通常攻撃の距離ボーナスなし・会心なし・コアなしの 1 ヒット（f5047）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f5047〜5228 の増分は 10,834・10,835（6,468.17 × 1.675。f5069 からは S1 の防御力▼の 6,468.74 × 1.675）と 16,253（9,702.26 × 1.675）。f5233 からは 9,703・6,469 に戻る。3・5 回目の後も 1.675 倍（3 回目の後の f3757 からの 19,502 など。ヒットと同じフレームの f3755 も 264,005 + 19,502、5 回目の後の 31,018 = 18,519 × 1.675）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 4173,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 0.6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0833",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1310-11",
+    "recording": "1310",
+    "kind": "hit",
+    "use": "record",
+    "value": 274255,
+    "description": "ユルハの 3 回目のバースト（ノベルの 5 回目のバーストの受けるダメージ▲の窓の中に出るヒット。f6201・6208）の 1 ヒット",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "受けるダメージ▲の窓（ノベルのヒット f6135 から）の中に出るが、▲の無い 274,255（C-1437 の値）。ユルハの発動（III の 00.00 f6064）がノベルのヒットより前で、バーストのヒットの値は発動の時点で決まる（C-0795）形と合う"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0833",
+    "readAt": "2026-11-21"
+  }
+]

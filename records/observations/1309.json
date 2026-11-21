@@ -1,0 +1,146 @@
+[
+  {
+    "id": "1309-01",
+    "recording": "1309",
+    "kind": "timing",
+    "use": "compare",
+    "value": [654, 1243, 1832, 2421, 3010, 3599, 4188, 4777, 5366, 5956, 6544, 7133, 7722, 8311, 8900],
+    "unit": "f",
+    "description": "S1 のダメージ（41,812 の増分。会心の回は 62,717、同じフレームの通常攻撃との和を含む）の 1〜15 回目の、戦闘開始（f796）からの動画のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps・timer.ts --mode ticks",
+      "note": "左の「スキル1」の帯（banner.ts --mode white）は f1391 から 589f ほどごとで、どれも帯の 58〜59f 後に S1 のヒットの増分が出る。ゲーム内のティックでは帯が 594.1・1,183.9…（間隔 588.1〜589.9）、ヒットが 652.9・1,241.9…（間隔 588.1〜589.6）。1 回目も戦闘開始から 1 周期後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 1,
+        "event": "skillHit",
+        "count": 15
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0833",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1309-02",
+    "recording": "1309",
+    "kind": "hit",
+    "use": "compare",
+    "value": 41812,
+    "description": "S1 のダメージの 1 ヒット（会心なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f1450・2628・3806・4395 などの 1 ヒットだけの増分（f2039・3217 は同じフレームの通常攻撃 8,409 との和 50,221、f4984 は 6,469 との和 48,281）。同じ発動の防御力▼が乗れば約 41,815"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0833",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1309-03",
+    "recording": "1309",
+    "kind": "hit",
+    "use": "compare",
+    "value": 14877,
+    "description": "S1 の防御力▼の窓の外の、通常攻撃のコア・距離ボーナスあり・会心なしの 1 ヒット（f2583）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "窓の外の同じ種類の増分はどれも 14,877（会心と距離は 11,643、距離だけは 8,409）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1787,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 0.6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0833",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1309-04",
+    "recording": "1309",
+    "kind": "hit",
+    "use": "compare",
+    "value": 14878,
+    "description": "S1 の防御力▼の窓の中の、通常攻撃のコア・距離ボーナスあり・会心なしの 1 ヒット（f2688。3 回目の S1 のヒットの 60f 後）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "窓の中の同じ種類の増分はどれも 14,878（会心と距離は 11,644）。防御力 100 × (1 − 7.05%) を四捨五入した 93 を引く値（C-0790）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1892,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 0.6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0833",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1309-05",
+    "recording": "1309",
+    "kind": "timing",
+    "use": "record",
+    "value": [293, 294],
+    "unit": "f",
+    "description": "S1 のヒットから、防御力▼の乗った最後の通常攻撃（15 回のうち最も遅いもの）と、▼の無い最初の通常攻撃（最も早いもの）までの動画のフレーム。▼の付き始めは、どの回もヒットの 1〜5f 後の最初の発から乗り、ヒットの前の発には乗らない",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "15 回の S1 のヒットの前後の増分を、窓の外（14,877・11,643・8,409 など）と中（14,878・11,644 など）の格子に当てた（使い捨てのスクリプト）。距離だけの 8,409 は両方の格子で同じなので数えない。窓はヒットの次のフレームから 294f（5 秒）の形と合う"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0833",
+    "readAt": "2026-11-21"
+  }
+]
