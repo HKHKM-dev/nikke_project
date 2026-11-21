@@ -108,3 +108,16 @@ export function repointSetup(o: Observation, from: string, to: string): Observat
 export function claimsCiting(claims: readonly Claim[], ids: readonly string[]): Claim[] {
   return claims.filter((c) => isActiveClaim(c) && c.observations.some((o) => ids.includes(o)));
 }
+
+/**
+ * 付け替えた結論の、出し直しに使う根拠の観測値（根拠の文にある観測値）。無効にした観測値 invalidated は外す（範囲の中にあって
+ * 根拠の文に残っても、付け替え先に置き換えたものとみる）
+ */
+export function repointedClaimOwn(
+  claim: Pick<ClaimFile, 'basis'>,
+  observations: readonly Observation[],
+  invalidated: readonly string[],
+): Observation[] {
+  const ids = new Set(observationIdsIn(claim.basis));
+  return observations.filter((o) => ids.has(o.id) && !invalidated.includes(o.id));
+}

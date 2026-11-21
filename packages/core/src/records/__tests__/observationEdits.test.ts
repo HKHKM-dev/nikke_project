@@ -7,6 +7,7 @@ import {
   invalidatedObservation,
   replacedObservation,
   repointClaim,
+  repointedClaimOwn,
   repointSetup,
   setupRefIds,
 } from '../observationEdits.ts';
@@ -129,6 +130,25 @@ describe('repointClaim', () => {
     expect(repointClaim(plain, '0101-02', '0101-05', '2026-11-18')!.basis).toBe('`0101-01`・`0101-05`。V-0099');
     const noted = { ...claim, basis: '`0101-05`・`0101-02`（注記）。V-0099' };
     expect(repointClaim(noted, '0101-02', '0101-05', '2026-11-18')!.basis).toBe('`0101-05`・`0101-05`（注記）。V-0099');
+  });
+
+  it('repointedClaimOwn leaves out the invalidated observation kept inside a range', () => {
+    const ranged = repointClaim(
+      { ...claim, basis: '`0101-01`〜`0101-03`。V-0099' },
+      '0101-02',
+      '0102-01',
+      '2026-11-18',
+    )!;
+    const observations = ['0101-01', '0101-02', '0101-03', '0102-01', '0103-01'].map((id) => ({
+      ...before,
+      id,
+      recording: id.slice(0, 4),
+    }));
+    expect(repointedClaimOwn(ranged, observations, ['0101-02']).map((o) => o.id)).toEqual([
+      '0101-01',
+      '0101-03',
+      '0102-01',
+    ]);
   });
 
   it('keeps a range and adds the new ID, and returns undefined for a claim without the old ID', () => {

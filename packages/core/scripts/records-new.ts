@@ -36,11 +36,11 @@
 //   （通らなければ書かない。番号の振り方と同じ値の扱いは records:read --write と同じ。tools/captures/records-io.ts）。
 //   下書きに invalid は書けない（無効にするのは --invalidate）。
 //   --replace は、その観測値の欄を下書き（1 つ）で差し替える（id・recording・source・readAt は前のまま）。同じ検査を通ったら書く。
-//   仮説か確定の結論の根拠になっている観測値は、その結論を出して止める（--allow-cited で差し替える。結論は出し直さない）。
+//   仮説か確定の結論の根拠になっている観測値（入力なら、それを setup で指す比べが根拠のもの）は、その結論を出して止める（--allow-cited で差し替える。結論は出し直さない）。
 //   --invalidate は、観測値に invalid（理由と今日の日付）を付ける。--by を書くと、それを根拠にしている結論の根拠と、それを setup で指して
 //   いる比べ（jumpWindows など）の参照を新しい観測値に付け替える（--by が 1 つなら全部をそれに、並びなら同じ順の組で）。入力を読み直した
 //   ときは、比べを写さずにこれで付け替える（plan/design-workflow-simplification-18.md 1 節）。付け替えた結論は、等級・状態・許容内かを
-//   claim --update と同じく出し直す（確定にできる条件がそろわなければ仮説に戻し、理由を出す）。observation はどれも commit しない。
+//   claim --update と同じく出し直す（確定にできる条件がそろわなければ仮説に戻し、理由を出す。仮説は確定に上げない。予測とは比べない）。observation はどれも commit しない。
 //   npm run records:new -- backlog --section <節> [--name <名前>] (--text "<本文>" | --cell "<列>=<文>" …) [--first]
 // backlog: records/backlog/<名前>.json を作る（plan/backlog.md の冒頭の書き方）。2 節など # の列のある節は、名前を次の番号（2-NN。ほかの
 //   ブランチが使った番号も避ける）にし、ほかの節は --name の名前で、order を節の末尾（--first なら先頭）にする。箇条の節は --text、表の節は
@@ -54,7 +54,6 @@ import {
   CLAIM_TOPICS,
   DECIDED_ROLES,
   gradeCandidate,
-  observationIdsIn,
   toClaims,
   type Claim,
   type ClaimFile,
@@ -74,6 +73,7 @@ import {
   claimBasisObservations,
   claimDraft,
   claimUpdateBasis,
+  keepHypothesis,
   keptClaimGrade,
   mergeClaimUpdate,
   nextId,
@@ -87,6 +87,7 @@ import {
 import {
   claimsCiting,
   draftShapeErrors,
+  repointedClaimOwn,
   invalidatedObservation,
   replacedObservation,
   repointClaim,
@@ -266,7 +267,8 @@ function freeId(prefix: 'V' | 'C', own: readonly string[]): string {
 /** 結論の下書きの評価に使う、結論の欄（新しい結論は空の文で作り、--update は前の結論に重ねる） */
 type ClaimEvaluation = {
   id: string;
-  from: string;
+  /** 予測を引く検証記録（無ければ予測と比べない） */
+  from: string | undefined;
   topic: ClaimTopic;
   text: string | undefined;
   basis: string;
@@ -350,11 +352,11 @@ function evaluateClaim(e: ClaimEvaluation, claims: readonly Claim[], observation
   const relevanceCtx = { recordings, ...data, claims: [...claims.filter((c) => c.id !== e.id), asConfirmed] };
   const sensitivity = withFreshSensitivity(e.own, relevanceCtx, loadSensitivity());
   const minimal = relevanceOf([asConfirmed], observations, relevanceCtx, sensitivity)[0]?.warnings ?? [];
-  const prediction = predictions.find((p) => p.verification === e.from);
+  const prediction = e.from === undefined ? undefined : predictions.find((p) => p.verification === e.from);
   const grade = e.grade?.(candidate);
   return claimDraft({
     id: e.id,
-    verification: e.from,
+    verification: e.from ?? '',
     topic: e.topic,
     text: e.text,
     today,
@@ -378,7 +380,7 @@ function evaluateClaim(e: ClaimEvaluation, claims: readonly Claim[], observation
  */
 function rewriteClaim(
   existing: ClaimFile,
-  next: { from: string; basis: string; own: Observation[]; merged: ClaimUpdate; model?: string },
+  next: { from: string | undefined; basis: string; own: Observation[]; merged: ClaimUpdate; model?: string },
   claims: readonly Claim[],
   observations: readonly Observation[],
 ): ClaimDraft {
@@ -589,10 +591,12 @@ if (kind === 'verification') {
     const after = replacedObservation(before, draft);
     checked([after]);
     // 仮説か確定の結論の根拠になっている観測値は、--allow-cited が無ければ差し替えない（値や許容幅が変わると、結論の等級と状態が変わりうる）
-    const cited = claimsCiting(loadClaims(), [before.id]).map((c) => `${c.id}（${c.state}）`);
+    // 入力（setup が ID で指す観測値）は、それを指す比べを根拠にしている結論も問う
+    const referring = all.filter((o) => setupRefIds(o).includes(before.id)).map((o) => o.id);
+    const cited = claimsCiting(loadClaims(), [before.id, ...referring]).map((c) => `${c.id}（${c.state}）`);
     if (cited.length > 0 && !values['allow-cited'])
       fail(
-        `${before.id} は結論の根拠になっているので差し替えない: ${cited.join('・')}\n` +
+        `${before.id} は結論の根拠${referring.length > 0 ? `（setup で指す比べ ${referring.join('・')} を含む）` : ''}になっているので差し替えない: ${cited.join('・')}\n` +
           '  読み違いなら --invalidate --reason "<理由>" --by <新しい観測値> で付け替える。承知の上で差し替えるなら --allow-cited を付ける',
       );
     const list = loadRecordingObservations(before.recording).map((o) => (o.id === before.id ? after : o));
@@ -640,32 +644,33 @@ if (kind === 'verification') {
     checked(changed);
     // 結論の付け替え（無効にする前に、書き換える結論を出しておく）
     const claims = loadClaims();
-    // 付け替えた結論と、付け替え先の検証記録（出し直しで予測を引く。付け替え先が並ぶときは最初の組の）
-    const repointed = new Map<string, { claim: ClaimFile; from: string }>();
+    const repointed = new Map<string, ClaimFile>();
     for (const [old, to] of pairs)
       for (const { observations: _o, ...c } of claimsCiting(claims, [old])) {
-        const prev = repointed.get(c.id);
-        const next = repointClaim(prev?.claim ?? c, old, to, today);
-        if (next !== undefined) repointed.set(c.id, { claim: next, from: prev?.from ?? byId.get(to)!.source });
+        const next = repointClaim(repointed.get(c.id) ?? c, old, to, today);
+        if (next !== undefined) repointed.set(c.id, next);
       }
     // 付け替えた runs が録画と食い違えば、何も書かずに止める
-    const runErrors = toClaims([...repointed.values()].map((r) => r.claim)).flatMap((c) => validateRuns(c));
+    const runErrors = toClaims([...repointed.values()]).flatMap((c) => validateRuns(c));
     if (runErrors.length > 0)
       fail(
         `付け替えた結論の runs が検査に通らないので書かない（結論を手で直す）:\n${runErrors.map((e) => `  ${e}`).join('\n')}`,
       );
-    // 付け替えた結論の等級・状態・許容内かを、無効にした後の観測値で出し直す（新しい結論と同じ確定にできる条件）
+    // 付け替えた結論の等級・状態・許容内かを、無効にした後の観測値で出し直す（新しい結論と同じ確定にできる条件）。予測は結論を作った
+    // ときに見たので比べない。仮説は確定に上げない（keepHypothesis）
     const changedById = new Map(changed.map((o) => [o.id, o]));
     const withChanged = (o: Observation) => changedById.get(o.id) ?? o;
     const afterAll = all.map(withChanged);
     const rewritten = new Map<string, ClaimDraft>();
-    for (const [cid, { claim: c, from }] of repointed) {
-      const ownIds = new Set(observationIdsIn(c.basis));
-      const own = afterAll.filter((o) => ownIds.has(o.id));
-      rewritten.set(
-        cid,
-        rewriteClaim(c, { from, basis: c.basis, own, merged: mergeClaimUpdate(c, {}) }, claims, afterAll),
+    for (const [cid, c] of repointed) {
+      const own = repointedClaimOwn(c, afterAll, ids);
+      const result = rewriteClaim(
+        c,
+        { from: undefined, basis: c.basis, own, merged: mergeClaimUpdate(c, {}) },
+        claims,
+        afterAll,
       );
+      rewritten.set(cid, keepHypothesis(c.state, result));
     }
     const written = [...new Set(changed.map((o) => o.recording))].map((recording) =>
       saveObservations(recording, loadRecordingObservations(recording).map(withChanged), { format: false }),

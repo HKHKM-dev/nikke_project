@@ -336,6 +336,19 @@ export function keptClaimGrade(
     : undefined;
 }
 
+/** keepHypothesis が仮説のままにしたときの理由 */
+export const KEPT_HYPOTHESIS_REASON =
+  '付け替えでは仮説を確定にしない（確定にできる条件はそろった。claim --update で確かめる）';
+
+/**
+ * 観測値の --invalidate --by の付け替えで出し直した結論。前が仮説なら、確定にできる条件がそろっても仮説のままにする（仮説に残すと
+ * 人が決めた結論もあり、その印は結論の側に無い）
+ */
+export function keepHypothesis(before: ClaimFile['state'], result: ClaimDraft): ClaimDraft {
+  if (before !== '仮説' || result.file.state !== '確定') return result;
+  return { file: { ...result.file, state: '仮説' }, reasons: [...result.reasons, KEPT_HYPOTHESIS_REASON] };
+}
+
 /**
  * --update で書き戻す結論。結論の文・話題・置き換え・印などの前の欄を残し、重ねた欄（mergeClaimUpdate）・根拠の文・model（渡したとき
  * だけ）と、claimDraft の状態・等級・更新日を入れる。when・edge は仮説にだけ書ける欄なので、書いてある結論は仮説のままにし、理由を足す

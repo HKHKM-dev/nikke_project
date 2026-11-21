@@ -9,7 +9,9 @@ import {
   claimDraft,
   claimUpdateBasis,
   idsInPaths,
+  keepHypothesis,
   keptClaimGrade,
+  KEPT_HYPOTHESIS_REASON,
   mergeClaimUpdate,
   nextId,
   parseJudgment,
@@ -467,6 +469,12 @@ describe('records:new claim --update の欄', () => {
     expect(single.file).toMatchObject({ state: '仮説', grade: '単独実測' });
     // 許容内で候補が確定にできる等級なら確定のまま
     expect(rewrite(true, '反復実測').file).toMatchObject({ state: '確定', grade: '反復実測', updated: '2026-11-21' });
+    // 前が仮説なら、条件がそろっても仮説のまま（理由を足す）。確定のままのものと、仮説に戻ったものはそのまま
+    const raised = keepHypothesis('仮説', rewrite(true, '反復実測'));
+    expect(raised.file.state).toBe('仮説');
+    expect(raised.reasons).toEqual([KEPT_HYPOTHESIS_REASON]);
+    expect(keepHypothesis('確定', rewrite(true, '反復実測')).file.state).toBe('確定');
+    expect(keepHypothesis('仮説', outside)).toBe(outside);
   });
 });
 
