@@ -1,0 +1,46 @@
+{
+  "id": "1275",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1275_smg+sr+ar_ludmilla+delta+guillotine-ws_fire.mp4",
+  "original": "2026-11-21_15-22-08.mp4",
+  "durationSec": 333.2,
+  "frames": 19991,
+  "fps": 60,
+  "sizeMB": 401.7,
+  "sha256": "724ec4822471",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 190,
+      "name": "ルドミラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 182,
+      "name": "ギロチン：ウィンタースレイヤー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-21T15:38+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
