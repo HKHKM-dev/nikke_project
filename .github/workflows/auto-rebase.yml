@@ -1,0 +1,56 @@
+name: 衝突の直し
+
+# 自動マージを予約した PR が、main が進んで衝突になったか、足した ID が main と重なったら、main を取り込んで push し直す
+# （plan/design-auto-conflict-fix.md。中身は tools/git/auto-rebase.ts）。PR のブランチへの push はデプロイキー（secret の
+# GENERATED_DEPLOY_KEY）で行うので、PR の CI が起きる。GITHUB_TOKEN は PR を読み、題名・本文を直し、コメントを書くだけ
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+# 1 本ずつ回す。走っている実行は止めない（直している途中で止めない）。待っている古い実行は後の実行に置き換わり、後の実行が全部を見直す
+concurrency:
+  group: auto-rebase
+  cancel-in-progress: false
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # ID の空きはどのブランチも足していない番号から選ぶので、全部のブランチを取る
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - id: find
+        run: node tools/git/auto-rebase.ts --find
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - if: steps.find.outputs.targets != ''
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - if: steps.find.outputs.targets != ''
+        run: npm ci
+      # pr:prep の records:minimal が使う、観測値のモデルの予測値の覚え（ci.yml と同じキー）
+      - if: steps.find.outputs.targets != ''
+        uses: actions/cache@v6
+        with:
+          path: node_modules/.cache/residuals
+          key: residuals-${{ hashFiles('packages/core/src/**', 'packages/core/data/**', 'packages/core/scripts/records-data.ts', 'packages/core/scripts/residual-cache.ts') }}
+          restore-keys: residuals-
+      - if: steps.find.outputs.targets != ''
+        run: node tools/git/auto-rebase.ts --fix
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          DEPLOY_KEY: ${{ secrets.GENERATED_DEPLOY_KEY }}
+          TARGETS: ${{ steps.find.outputs.targets }}

@@ -1,6 +1,6 @@
 # 自動マージを待つ PR の衝突を GitHub Actions が直す（2026-11-21）
 
-- 何のための文書か: 自動マージを予約した PR が、main が進んで衝突になったときに、セッションが気づくまで止まる時間をなくす案と論点を出す。
+- 何のための文書か: 自動マージを予約した PR が、main が進んで衝突になったときに、セッションが気づくまで止まる時間をなくす案と論点を出す。2026-11-21 にオーナーが案 A を承認し、実装した（7 節）。
 - 関連: 生成物の衝突をなくした回（[design-pr-conflicts.md](design-pr-conflicts.md)。1 節の頻度・5 節のデプロイキー）、`pr:prep`（`tools/git/pr-prep.ts`）、番号の振り直し（`packages/core/scripts/records-renumber.ts`）、PR の見張りを既定の動きに任せた回（[design-workflow-simplification-17.md](design-workflow-simplification-17.md) 12 節）。
 
 ## 1. いま起きていること
@@ -72,6 +72,18 @@ GitHub の上でしか試せないので、この PR のマージの後に次を
 2. 衝突している PR（そのとき開いていれば #1299 か #1309。無ければ使い捨ての 2 本の PR で同じ行を変えて作る）を直して push し、PR の CI が回り、自動マージが残るか。
 3. 直せない衝突で書いたコメントが、`subscribe_pr_activity` の見張りのイベントとしてセッションに届くか（github-actions[bot] のコメント）。届かないなら、コメントの代わりの起こし方を別に考える（この設計の範囲の外。課題に起票する）。
 
+## 7. 決定と実施
+
+- 決定（2026-11-21、オーナー）: 案 A。デプロイキーで PR のブランチ（このリポジトリの `claude/`・`antigrav/`）に push してよい。検証記録・結論の ID は自動で振り直してよい（範囲の書き方の中にあるものは振り直さずコメントする）。
+- 実装: `.github/workflows/auto-rebase.yml` と `tools/git/auto-rebase.ts`（判断は `auto-rebase-lib.ts`）。`records:renumber` に `--fail-on-ranges`（人が直す範囲の書き方があれば終了コード 3）、`pr:prep` に 2 節の 5 の確かめ（`fixedByAutoRebase`）、ID の重なりの判定の共有（`branchCollisions`）、デプロイキーの ssh の共有（`tools/git/deploy-key.ts`）を足した。
+- 案からの変更:
+  - 振り直しの後、ブランチを 1 つの commit にまとめてから `pr:prep` を回す。PR #1309 の写しで試すと、振り直しを別の commit にしても、リベースは振り直す前の C-1449 のファイルを足した commit から当て直すので、main の C-1449 と衝突して止まった。まとめると、取り込みは通った（`states.ts` は「両方が行を足しただけ」で解けた）。PR はスカッシュでマージするので、途中の commit は要らない。衝突の有無にかかわらずまとめる（途中の commit だけの衝突も無くなる）。セッションの `pr:prep` の手順にも同じ問題がある（課題 `pr-prep-renumber-rebase.json`）。
+  - Actions の中の `pr:prep` は、環境変数 `NIKKE_AUTO_REBASE=1` で 2 節の 5 の確かめを省く（2 回目の直しで、自分の前の直しに当たって止まるので）。
+  - `--find` は GitHub の API だけで決め（npm ci の前）、衝突か、決まらなかったか、ID の重なりうる記録（検証記録・結論・録画・課題の番号）を足した PR を `--fix` に渡す。ID の重なりは `--fix` が git で確かめる。直せなかった head は、コメントの印を見て次から飛ばす。
+- 制約: `--fix` は PR のブランチを取り出してから、そのブランチの版の `records:renumber`・`pr:prep` を回す（道具は自分のいる作業ツリーを書き換えるため）。この PR より前に main から分かれたブランチでは `--fail-on-ranges` が無いので、振り直しが要るときは止まってコメントになる。
+- 確かめたこと: 道具の判断の部分のテスト（`auto-rebase-lib.test.ts`・`pr-prep-lib.test.ts`）。PR #1309 の写しで、`branchCollisions` が C-1449 の重なりと空いた番号を出し、振り直し → 1 つにまとめる → `pr:prep --no-ci --allow-progress` が通ること。`records:renumber --dry-run --fail-on-ranges` が範囲の書き方のある結論で 3 で終わること。なお #1309 は `plan/design-leona.md` に「C-1443〜C-1451」があるので、実際にはコメントになる。GitHub の上の動き（6 節）はマージの後に確かめる。
+
 ## 経過
 
 - 2026-11-21: 起案した。
+- 2026-11-21: 案 A を実装した（7 節）。

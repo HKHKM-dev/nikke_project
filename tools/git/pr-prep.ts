@@ -2,6 +2,7 @@
 // 生成物は PR に入れない（main の版に戻して push する。マージの後に GitHub の CI が main で作り直して commit する。plan/design-pr-conflicts.md 3.1 節）。
 //   npm run pr:prep [-- --push] [--no-ci] [--allow-progress]
 // 1. 作業中の変更が無いこと（生成物だけの変更は HEAD の版へ戻して進む）と、main の上でないことを確かめ、git fetch origin。
+//    origin の同じ名前のブランチを、自動マージを待つ PR の衝突を直す Actions が直していたら止める（plan/design-auto-conflict-fix.md）。
 // 2. ブランチで足した検証記録・結論・録画の ID が main と重なっていたら、リベースの前に止めて records:renumber のコマンドを出す。
 //    課題のファイルで足した 2 節の番号（records/backlog/2-NN.json）が main と重なっていたら、止めて空いた番号を出す。
 //    8 節・8.2 節の課題のファイル（records/backlog/）・段の一覧の経過・設計書の「状態」の行に進み具合を書き写していたら、止めて行を
@@ -48,7 +49,9 @@ import {
   handEditedLines,
   handRemovedLines,
   checkSteps,
-  collisions,
+  branchCollisions,
+  fixedByAutoRebase,
+  AUTO_REBASE_ENV,
   finishRebase,
   nulPaths,
   pathListArgs,
@@ -129,20 +132,20 @@ if (!rebasing()) {
     console.log(`作業中の生成物の変更を HEAD の版に戻した: ${dirty.generated.join('・')}`);
   }
   if (tryGit(['fetch', '--quiet', 'origin']) !== 0) fail('git fetch origin が落ちた');
+  const upstream = `origin/${branch}`;
+  // Actions の中（auto-rebase.ts）は自分の直しの上に直すので見ない
+  if (
+    process.env[AUTO_REBASE_ENV] !== '1' &&
+    tryGit(['rev-parse', '--verify', '--quiet', `refs/remotes/${upstream}`]) === 0
+  ) {
+    const inHead = tryGit(['merge-base', '--is-ancestor', upstream, 'HEAD']) === 0;
+    if (fixedByAutoRebase(inHead, git(['log', '-1', '--format=%ce', upstream])))
+      fail(
+        `${upstream} は、自動マージを待つ PR の衝突を直す Actions が直して push した（plan/design-auto-conflict-fix.md）。手元の変更が push 済みなら git reset --hard ${upstream} で取ってから回し直す（push していない commit があれば、取った上に cherry-pick する）`,
+      );
+  }
 
-  const added = gitPaths(['diff', '--name-only', '--diff-filter=AR', 'origin/main...HEAD', '--', 'records']);
-  const mainFiles = gitPaths([
-    'ls-tree',
-    '-r',
-    '--name-only',
-    'origin/main',
-    '--',
-    'records/verifications',
-    'records/claims',
-    'records/recordings',
-    'records/backlog',
-  ]);
-  const found = collisions(added, mainFiles, idsInBranches().ids);
+  const { found, mainFiles } = branchCollisions(gitPaths, idsInBranches().ids);
   if (found.length > 0) {
     console.error('ブランチで足した番号が main と重なっている。振り直して commit してから、もう一度回す:');
     for (const c of found)

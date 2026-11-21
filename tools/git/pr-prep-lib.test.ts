@@ -12,7 +12,10 @@ import {
   branchOversizedDocs,
   changedChecks,
   checkSteps,
+  AUTO_REBASE_COMMITTER,
+  branchCollisions,
   collisions,
+  fixedByAutoRebase,
   finishRebase,
   isAppendMergeable,
   mergeAppends,
@@ -565,5 +568,32 @@ describe('mergeAppends', () => {
     expect(isAppendMergeable('plan/captures/guide.md')).toBe(false);
     expect(isAppendMergeable('packages/core/src/skills/states.ts')).toBe(true);
     expect(isAppendMergeable('packages/core/src/skills/resolve.ts')).toBe(false);
+  });
+});
+
+describe('branchCollisions', () => {
+  it('compares the records the branch added with the files on main', () => {
+    const calls: string[][] = [];
+    const gitPaths = (args: readonly string[]) => {
+      calls.push([...args]);
+      return args[0] === 'diff'
+        ? ['records/claims/C-0701.json', 'records/claims/C-0702.json']
+        : ['records/claims/C-0701.json', 'records/verifications/V-0001-a.md'];
+    };
+    const r = branchCollisions(gitPaths, []);
+    expect(r.found).toEqual([{ id: 'C-0701', suggestion: 'C-0703' }]);
+    expect(r.mainFiles).toEqual(['records/claims/C-0701.json', 'records/verifications/V-0001-a.md']);
+    expect(calls[0]).toEqual(['diff', '--name-only', '--diff-filter=AR', 'origin/main...HEAD', '--', 'records']);
+    expect(calls[1]?.slice(0, 4)).toEqual(['ls-tree', '-r', '--name-only', 'origin/main']);
+  });
+});
+
+describe('fixedByAutoRebase', () => {
+  it('stops only when origin has a commit by the auto-rebase action that HEAD does not have', () => {
+    expect(fixedByAutoRebase(false, AUTO_REBASE_COMMITTER.email)).toBe(true);
+    expect(fixedByAutoRebase(true, AUTO_REBASE_COMMITTER.email)).toBe(false);
+    // 自分のリベースの前の版が origin に残っているだけ
+    expect(fixedByAutoRebase(false, 'someone@example.com')).toBe(false);
+    expect(fixedByAutoRebase(false, undefined)).toBe(false);
   });
 });
