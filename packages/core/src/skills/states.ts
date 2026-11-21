@@ -514,7 +514,10 @@ export const NAMED_STATES = {
    * 見る。plan/design-leona.md 2.3 節）
    */
   roar: { name: { ja: '咆哮', en: 'Roar' }, holder: 'ally' },
-  /** メイド精神（ソーダの S1。通常攻撃 180 回ごとに自分に 1 スタック・5 スタック・10 秒・最大HP▲。S2 の「メイド精神のフルスタック状態なら」が読む） */
+  /**
+   * メイド精神（ソーダの S1。通常攻撃 180 回ごとに自分に 1 スタック・5 スタック・10 秒・最大HP▲。S2 の「メイド精神のフルスタック状態なら」が
+   * 読む）
+   */
   maidSpirit: { name: { ja: 'メイド精神', en: 'Maid Spirit' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
