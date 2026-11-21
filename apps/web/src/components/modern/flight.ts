@@ -3,7 +3,7 @@
 import { slotSizeVars } from './useSlotFit.ts';
 
 /** 動く時間（ms）と動き方 */
-const FLIGHT = { duration: 250, easing: 'ease', fill: 'forwards' } as const;
+export const FLIGHT = { duration: 250, easing: 'ease', fill: 'forwards' } as const;
 
 /**
  * アニメーションで動かす立ち絵の枠の写し。立ち絵の画像は遅延読み込み・非同期の描画（CharacterVisual）なので、写しのままだと
