@@ -1,0 +1,46 @@
+{
+  "id": "1257",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1257_epinel-a-1.mp4",
+  "original": "2026-11-21_13-13-37.mp4",
+  "durationSec": 203.4,
+  "frames": 12203,
+  "fps": 60,
+  "sizeMB": 246.6,
+  "sha256": "a752e5aba670",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 241,
+      "name": "エピネル",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0806 の撮影 A: ココア（I）・ソルジャーF.A.（II）・エピネル（III・操作）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-21T13:22+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

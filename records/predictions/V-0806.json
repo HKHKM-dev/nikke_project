@@ -1,0 +1,219 @@
+{
+  "verification": "V-0806",
+  "note": "撮影 A（ココア（I）・ソルジャーF.A.（II）・エピネル（III・操作）・オートバースト ON）の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。フレームはモデルの射撃の列で選んだ（1 マガジン目の最後の弾丸が f304、5 回目が f1429。S2 の窓は最後の弾丸の次のフレームから 5 秒）。1 ヒットはコア・距離ボーナスなしで出した（録画で読む種類に合わせて読んだ後に直す）",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 301
+    },
+    {
+      "rid": 241,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S2 は最後の弾丸の次のフレームから 5 秒、会心率 5.05%・会心ダメージ 6.4% の▲）"
+    },
+    {
+      "id": "H0-s2",
+      "note": "S2 の▲が付かない（skill2 の effects[0]・[1] を落とす）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 241,
+            "skill": "skill2",
+            "index": 0
+          },
+          {
+            "rid": 241,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "crit-mag1",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 200,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 マガジン目の会心の 1 ヒット（S2 の窓の前。どちらの仮説も ×1.5）"
+    },
+    {
+      "id": "crit-in",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目の最後の弾丸（f1054）の後の窓の中の会心の 1 ヒット（H1 は ×1.564）"
+    },
+    {
+      "id": "crit-out",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1400,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "同じ窓が切れた後、5 回目の最後の弾丸（f1429）の前の会心の 1 ヒット（どちらの仮説も ×1.5）"
+    },
+    {
+      "id": "body-in",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "窓の中の会心なしの 1 ヒット（S2 で変わらない）"
+    },
+    {
+      "id": "crit-rate-in",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 3,
+        "frame": 1300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "note": "窓の中の通常攻撃の会心率（H1 は 20.05%）。録画では区間の会心の割合（乱数なので幅を広く取る）"
+    },
+    {
+      "id": "crit-rate-out",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 3,
+        "frame": 1400
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "note": "窓の外の通常攻撃の会心率（15%）"
+    },
+    {
+      "id": "burst-hit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目のバーストスキルダメージの 1 発動の値（会心なし）"
+    },
+    {
+      "id": "burst-hit-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のバーストスキルダメージの 1 発動の値（会心。発動が S2 の窓の中なので、H1 は会心ダメージ▲が乗る）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "68c2b8bf9894f8a7f33b3393f705a7b7d326d800",
+    "values": {
+      "H1": {
+        "crit-mag1": 36370.0656,
+        "crit-in": 37145.9603328,
+        "crit-out": 36370.0656,
+        "body-in": 30308.388,
+        "crit-rate-in": 0.20049999999999998,
+        "crit-rate-out": 0.15,
+        "burst-hit": 548509.9452000001,
+        "burst-hit-crit": 857869.5542928
+      },
+      "H0-s2": {
+        "crit-mag1": 36370.0656,
+        "crit-in": 36370.0656,
+        "crit-out": 36370.0656,
+        "body-in": 30308.388000000006,
+        "crit-rate-in": 0.15,
+        "crit-rate-out": 0.15,
+        "burst-hit": 548509.9452000001,
+        "burst-hit-crit": 822764.9178000002
+      }
+    }
+  }
+}
