@@ -305,6 +305,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // ソーダ: I の発動（六角形が I から II に替わるフレーム）からバーストスキルダメージのヒットまで 65f（ギロチン：ウィンタースレイヤーとの
   // 2 本の 14 回のうち 13 回。1 回は 64f）。バースト使用時の効果（スタック量▲）は遅れ 0（確かめていない）
   { resourceIds: [312], delays: { hitFrames: 65, effectFrames: 0 }, claim: 'C-1472' },
+  // マリ: II の発動（六角形が II から III に替わるフレーム）からバーストスキルダメージの 1 ヒットまで 69f（ココアとの 1 本の、読めた 8 回のうち
+  // 6 回。68f・70f が 1 回ずつ）。ヒットに同じ発動の攻撃ダメージ▲は乗らない。攻撃ダメージ▲（burstUse）は遅れ 0 で付く
+  { resourceIds: [832], delays: { hitFrames: 69, effectFrames: 0 }, claim: 'C-1483' },
 ];
 
 /**
