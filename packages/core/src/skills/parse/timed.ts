@@ -865,8 +865,9 @@ function parseTimedDuration(
   // 命中率▲・貫通特化・ペレットの数の固定も、同じ件の列の閉じ方で書ける（plan/design-dorothy-serendipity.md 2.3 節）。
   // 攻撃力も同じ閉じ方で書ける。攻撃力は射撃の時刻を変えないので、件の列の作り直しで窓が後から変わらない（plan/design-neve.md 2.1 節）
   // 攻撃力の発数の維持は、順位の対象（topAttack。2 段目で窓を切る）には書けない（使い手がいない。plan/design-neve.md 2.1 節）
-  const tracked =
-    stat !== undefined && SHOT_DURATION_TRACKED_STATS.includes(stat) && !(stat === 'attack' && target === 'topAttack');
+  if (stat === 'attack' && target === 'topAttack')
+    fail(`${path}.stat`, 'a duration in shots on "attack" is not supported with target "topAttack"');
+  const tracked = stat !== undefined && SHOT_DURATION_TRACKED_STATS.includes(stat);
   if (
     stat !== undefined &&
     !tracked &&
