@@ -4,7 +4,7 @@ import type { CharacterData, CharacterIndexEntry } from '@nikke/core';
 import type { SlotResultView } from '../../calcView.ts';
 import { formatDamage } from '../../format.ts';
 import { BadgeIcon } from './BadgeIcon.tsx';
-import { BUILD_BADGE, CONTROLLER_BADGE, DELETE_BADGE, type Badge } from './badges.ts';
+import { BUILD_BADGE, CONTROLLER_BADGE, DELETE_BADGE } from './badges.ts';
 import selectionCircle from '../../assets/badges/ui_selection_circle.svg';
 import selectionTriangle from '../../assets/badges/ui_selection_triangle.svg';
 import { CharacterVisual } from './CharacterVisual.tsx';
@@ -51,8 +51,6 @@ type Props = {
   slotResult: SlotResultView | null;
   /** 名前の上に出す限界突破とコア強化の段階（ニケがいないときは null） */
   growthMarks: GrowthMarks | null;
-  /** 絵のバッジの列の最後に出すコレクション（宝物）のバッジ */
-  collectionBadge: Badge | null;
   /** 育成を変えたか（育成・設定のボタンの歯車を青にする。slotGrowthEdited） */
   growthEdited: boolean;
   /** 一覧でクリックしたニケが、置くスロットのクリックを待っているときだけ渡す（このスロットに置く） */
@@ -70,7 +68,6 @@ export function ModernSlotCard({
   unsupportedNote,
   error,
   slotResult,
-  collectionBadge,
   growthMarks,
   growthEdited,
   onPlacePending,
@@ -80,10 +77,6 @@ export function ModernSlotCard({
 }: Props) {
   const awaitingPlacement = onPlacePending !== undefined;
   const currentDamage = character && slotResult ? slotResult.result.totalDamage : null;
-  const damagePercent =
-    partyTotalDamage && currentDamage && partyTotalDamage > 0
-      ? Math.min(100, Math.round((currentDamage / partyTotalDamage) * 100))
-      : 0;
 
   // ドロップ受け入れ（トレイからの配置、または他スロットからのスワップ）
   const { isOver, setNodeRef: setDropRef } = useDroppable({
@@ -131,12 +124,7 @@ export function ModernSlotCard({
         <div className="modern-slot-char-area" onClick={onPlacePending}>
           {characterEntry ? (
             <>
-              <CharacterVisual
-                character={characterEntry}
-                unsupportedNote={unsupportedNote}
-                size="portrait"
-                extraBadge={collectionBadge}
-              />
+              <CharacterVisual character={characterEntry} unsupportedNote={unsupportedNote} size="portrait" />
               <SlotCharName name={characterEntry.name.ja} marks={growthMarks} />
               {/* 置いたニケが動いてくる間（flight.ts の modern-slot-arriving）と、ドラッグで持ち上げている間・戻る間は、立ち絵の代わりに空のスロットの枠を出す */}
               <div className="modern-slot-arrival-face" aria-hidden="true">
@@ -180,20 +168,7 @@ export function ModernSlotCard({
 
       {error && <p className="modern-slot-error">{error}</p>}
 
-      <div className="modern-slot-damage-section">
-        <div className="modern-slot-damage-row">
-          <span className="modern-slot-damage-value">{formatDamage(currentDamage)}</span>
-        </div>
-        <div className="modern-slot-damage-bar-track">
-          <div
-            className="modern-slot-damage-bar-fill"
-            style={{
-              width: `${damagePercent}%`,
-              backgroundSize: damagePercent > 0 ? `${10000 / damagePercent}% 100%` : undefined,
-            }}
-          />
-        </div>
-      </div>
+      <SlotDamage damage={currentDamage} partyTotal={partyTotalDamage} />
     </div>
   );
 }
@@ -223,6 +198,27 @@ export function EmptySlotFace({ slotIndex }: { slotIndex: number }) {
       <span className="modern-slot-empty-position" aria-hidden="true">
         {Array.from({ length: 5 }, (_, i) => (i === slotIndex ? '●' : '○')).join('')}
       </span>
+    </div>
+  );
+}
+
+/** スロットの下のダメージの欄（値と、編成の合計に占める割合のバー）。選んでいない編成の行（PartySlotRows）も使う */
+export function SlotDamage({ damage, partyTotal }: { damage: number | null; partyTotal: number | null }) {
+  const percent = partyTotal && damage && partyTotal > 0 ? Math.min(100, Math.round((damage / partyTotal) * 100)) : 0;
+  return (
+    <div className="modern-slot-damage-section">
+      <div className="modern-slot-damage-row">
+        <span className="modern-slot-damage-value">{formatDamage(damage)}</span>
+      </div>
+      <div className="modern-slot-damage-bar-track">
+        <div
+          className="modern-slot-damage-bar-fill"
+          style={{
+            width: `${percent}%`,
+            backgroundSize: percent > 0 ? `${10000 / percent}% 100%` : undefined,
+          }}
+        />
+      </div>
     </div>
   );
 }

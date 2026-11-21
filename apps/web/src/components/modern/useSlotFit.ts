@@ -1,12 +1,12 @@
 // 編成のスロット 5 枚を、画面の幅に収めて 1 段に並べる。並びの幅が足りないときは、立ち絵の高さ（--slot-portrait-h。
-// 元はニケ一覧の縦長の絵と同じ 512/3 px）を縮めてモダンの画面（.modern-view-container。無ければこの並び .modern-slots-grid）に置く。ニケ一覧の行に元の大きさの絵が
+// 元はニケ一覧の四角の絵と同じ 256/3 px。絵は正方形で、幅も同じ）を縮めてモダンの画面（.modern-view-container。無ければこの並び .modern-slots-grid）に置く。ニケ一覧の行に元の大きさの絵が
 // TRAY_COLUMNS 枚入らないときは、画面に data-tray-fit を付け、一覧の絵をスロットの立ち絵と同じ幅にして 1 行に TRAY_COLUMNS 枚並べる（styles.css）。
 // ダメージの欄・空のスロットの文字は、この高さから文字の大きさを決める（styles.css）。カードの左右の余白（padding）とカードどうしの間（gap）は縮めない（styles.css の値を読む）。
 // 並びの外に写す絵（ドラッグ中の重ねる絵・動くアニメーションの写し）は、この値を写して同じ大きさにする（slotSizeVars）
 import { useLayoutEffect, type RefObject } from 'react';
 
-/** 立ち絵の高さの上限（元の絵 256×512 の 1/3 で、ニケ一覧の縦長の絵と同じ。styles.css の :root の --slot-portrait-h と同じ） */
-export const PORTRAIT_MAX_H = 512 / 3;
+/** 絵の高さ（＝幅）の上限（顔の絵 128×128 の 2/3 で、ニケ一覧の四角の絵と同じ。styles.css の :root の --slot-portrait-h と同じ） */
+export const PORTRAIT_MAX_H = 256 / 3;
 /** 立ち絵の枠線（左右 1px ずつ） */
 const PORTRAIT_BORDER_X = 2;
 const SLOT_SIZE_VAR = '--slot-portrait-h';
@@ -19,13 +19,16 @@ const TRAY_ITEM_PADDING_X = 4;
 export function fitPortraitHeight(width: number, count: number, gap: number, cardPaddingX: number): number {
   if (count <= 0) return PORTRAIT_MAX_H;
   const cardWidth = (width - gap * (count - 1)) / count;
-  const h = 2 * (cardWidth - cardPaddingX - PORTRAIT_BORDER_X);
+  const h = cardWidth - cardPaddingX - PORTRAIT_BORDER_X;
   // 上限（端数のある 512/3）まで入るなら上限のまま（偶数に切り下げると、入るのに上限より小さくなる）
   if (h >= PORTRAIT_MAX_H) return PORTRAIT_MAX_H;
   return Math.max(0, Math.floor(h / 2) * 2);
 }
 
-export function useSlotFit(gridRef: RefObject<HTMLElement | null>, count: number): void {
+/**
+ * 並びの大きさを見張る。remountKey は並びの要素を作り直す鍵（選んでいる編成。編成を選ぶと、並びが別の行に作り直されるので見張り直す）
+ */
+export function useSlotFit(gridRef: RefObject<HTMLElement | null>, count: number, remountKey: unknown = null): void {
   useLayoutEffect(() => {
     const grid = gridRef.current;
     if (!grid) return;
@@ -57,7 +60,8 @@ export function useSlotFit(gridRef: RefObject<HTMLElement | null>, count: number
     const observer = new ResizeObserver(fit);
     observer.observe(grid);
     return () => observer.disconnect();
-  }, [gridRef, count]);
+    // remountKey は中では読まないが、変わったら見張り直す
+  }, [gridRef, count, remountKey]);
 }
 
 /** node のいまのスロットの大きさの変数（並びの外に写す絵の style に置く。並びの外の node では :root の元の大きさ） */

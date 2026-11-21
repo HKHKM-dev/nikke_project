@@ -10,8 +10,8 @@ type Props = {
   /** 未対応の印（ⓘ）の知らせと定義の状況（useSkillDefinitions の unsupportedNoteOf）。null なら印を出さない */
   unsupportedNote?: UnsupportedNote | null;
   /**
-   * normal・compact は顔のアイコン（正方形）、portrait は縦長の絵（スロットのカード）、
-   * tall は縦長の絵をニケ一覧の幅に縮めたもの（ニケ一覧の縦長の表示。バッジの置き方は portrait と同じ）
+   * normal・compact は顔のアイコン（正方形）、portrait はスロットのカードの顔の絵（正方形。大きさは --slot-portrait-h で、狭い画面では縮む）、
+   * tall は縦長の絵をニケ一覧の幅に縮めたもの（ニケ一覧の縦長の表示）
    */
   size?: 'normal' | 'compact' | 'portrait' | 'tall';
   /** バッジの列の最後に足すバッジ（スロットのコレクション） */
@@ -44,7 +44,7 @@ export function CharacterVisual({
   overlay = null,
   badges = true,
 }: Props) {
-  const imageDir = size === 'portrait' || size === 'tall' ? 'portraits' : 'images';
+  const imageDir = size === 'tall' ? 'portraits' : 'images';
   const imageSrc = `${BASE_URL}characters/${imageDir}/${characterImageFile(character.resourceId)}`;
   // 画像が読めなかったキャラ（画像の無い配信・CDN に無いキャラ）は、絵の枠とバッジだけを出す。名前は絵の外（ニケ一覧の四角は絵の下、
   // 縦長は下部に重ねる名前）にあるので、絵の中には出さない（オーナーの指示）

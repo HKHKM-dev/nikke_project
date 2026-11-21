@@ -782,9 +782,9 @@ svg.roster-revert-icon {
   --placing-blue: light-dark(#0ea5e9, #38bdf8);
   /* ニケ一覧のコア強化のアイコンの幅（左上のバッジ .char-visual の --badge-w と同じ）。P○ のバッジの幅と位置もこれで決める */
   --tray-core-w: 20px;
-  /* スロットのカードの縦長の絵の高さ（枠線の内側。.char-visual-portrait と空のスロットの枠）。立ち絵（256×512）の 1/3 で、ニケ一覧の縦長の絵
-     （.char-visual-tall）と同じ大きさ。狭い画面では useSlotFit が並びに縮めた値を置く（上限は useSlotFit.ts の PORTRAIT_MAX_H と同じ） */
-  --slot-portrait-h: calc(512px / 3);
+  /* スロットのカードの絵の高さ（＝幅。枠線の内側。.char-visual-portrait と空のスロットの枠）。四角の顔の絵で、ニケ一覧の四角の絵
+     （.char-visual-compact）と同じ大きさ。狭い画面では useSlotFit が並びに縮めた値を置く（上限は useSlotFit.ts の PORTRAIT_MAX_H と同じ） */
+  --slot-portrait-h: calc(256px / 3);
 }
 /* 置き先待ちのスロットの立ち絵と、いまの編成にいるニケ・置き先待ちのニケの絵に重ねる箱（枠は下の .char-tray-item-visual の後の規則） */
 .modern-slot-card.modern-slot-awaiting .modern-slot-char-area::after,
@@ -845,47 +845,68 @@ svg.roster-revert-icon {
   /* 立ち絵どうしの横の間は 4px（カードの左右の余白 2px ×2 だけ）。落とす先の枠（立ち絵の外へ 2px 出る）が、隣どうしでちょうど重ならない */
   gap: 12px 0;
 }
-/* 編成のタブとスロットの並び（モダン UI）。700px 以上の画面では、タブをスロットの左に縦に並べ、ダメージを編成の番号の右に出す。
-   狭い画面では、これまでどおりタブを上に横に並べる（スロットの幅を残すため） */
-@media (min-width: 700px) {
-  .modern-party-slots {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 12px;
-  }
-  /* スロットの並びは、元の大きさの立ち絵 5 枚（幅 256/3 px・枠線 2px・左右の余白）の幅まで広がり、足りなければ縮む（縮んだ幅に useSlotFit が立ち絵を合わせる） */
-  .modern-party-slots > .modern-slots-area {
-    /* 1px は端数のぶん（useSlotFit は幅を切り下げて測るので、ちょうどの幅では上限より少し小さくなる） */
-    flex: 0 1 calc(5 * (256px / 3 + 2px + 2 * 2px) + 1px);
-    min-width: 0;
-  }
-  /* タブの上端は、スロットの立ち絵の上端にそろえる（並びの上の、元に戻す・やり直すのボタンの分の余白 30px と、カードの上の余白・
-     操作キャラの印の行（.modern-slot-card・.modern-slot-header）の 36px の下） */
-  .modern-party-slots > .party-tabs {
-    flex: none;
+/* 5 つの編成の行（モダン UI。ModernView）。左に編成の番号とダメージ（PartyRowLabel）、右にスロット 5 枚。選んでいる編成の行だけ操作でき、
+   ほかの行（PartyPreviewRow）は押すとその編成を選ぶ。狭い画面では、番号とダメージをスロットの上に置く */
+.modern-party-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+.modern-party-row + .modern-party-row {
+  margin-top: 4px;
+}
+/* スロットの並びは、元の大きさの絵 5 枚（幅 256/3 px・枠線 2px・左右の余白）の幅まで広がり、足りなければ縮む（縮んだ幅に useSlotFit が絵を合わせる）。
+   1px は端数のぶん（useSlotFit は幅を切り下げて測るので、ちょうどの幅では上限より少し小さくなる） */
+.modern-party-row > .modern-slots-grid {
+  flex: 0 1 calc(5 * (256px / 3 + 2px + 2 * 2px) + 1px);
+  min-width: 0;
+}
+.modern-party-row-label {
+  flex: none;
+  max-width: none;
+  container-type: normal;
+  grid-template-columns: 4em 5.5em;
+  align-items: center;
+  gap: 6px;
+}
+.modern-party-row-label .party-tab-total {
+  font-size: 0.9rem;
+  text-align: left;
+}
+/* 選んでいない編成の行は、ボタンの見た目を消してスロットだけを見せる。少し薄くし、マウスを重ねると濃くする */
+.modern-slots-grid.modern-party-preview {
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  opacity: 0.75;
+}
+.modern-slots-grid.modern-party-preview:hover {
+  opacity: 1;
+}
+@media (max-width: 699px) {
+  .modern-party-row {
     flex-direction: column;
-    margin-top: 0;
-    padding-top: calc(30px + 36px);
-    gap: 6px;
+    align-items: stretch;
+    gap: 2px;
   }
-  .modern-party-slots .party-tab-cell {
+  .modern-party-row-label {
+    justify-self: center;
+    margin-inline: auto;
+  }
+  .modern-party-row > .modern-slots-grid {
     flex: none;
-    max-width: none;
-    container-type: normal;
-    grid-template-columns: 4em 5.5em;
-    align-items: center;
-    gap: 6px;
-  }
-  .modern-party-slots .party-tab-total {
-    font-size: 0.9rem;
-    text-align: left;
   }
 }
-/* カードの幅は立ち絵（1:2 の枠と 1px の枠線）と左右の余白（.modern-slot-card の padding）だけにして、スロットの間を詰める */
+/* カードの幅は絵（正方形の枠と 1px の枠線）と左右の余白（.modern-slot-card の padding）だけにして、スロットの間を詰める */
 .modern-slots-grid > .modern-slot-card {
   box-sizing: border-box;
-  width: calc(var(--slot-portrait-h) / 2 + 2px + 2 * var(--slot-card-pad-x));
+  width: calc(var(--slot-portrait-h) + 2px + 2 * var(--slot-card-pad-x));
 }
 
 /* モダンカード。カードの枠と背景は出さない（立ち絵とダメージの欄だけを並べる） */
@@ -894,8 +915,9 @@ svg.roster-revert-icon {
   flex-direction: column;
   /* 左右は、置き先待ちの水色の枠（立ち絵の外へ 2px 出る）が収まるだけ空ける */
   --slot-card-pad-x: 2px;
-  padding: 8px var(--slot-card-pad-x);
-  gap: 8px;
+  /* 5 つの編成を縦に並べるので、上下は詰める */
+  padding: 4px var(--slot-card-pad-x);
+  gap: 4px;
   position: relative;
 }
 /* 一覧でクリックしたニケの置き先を待っている間は、どのスロットも立ち絵の枠のクリックで置ける。
@@ -908,9 +930,9 @@ svg.roster-revert-icon {
   /* 立ち絵（.modern-slot-char-area の先頭、高さ --slot-portrait-h）の中央 */
   top: calc(var(--slot-portrait-h) / 2);
   left: 50%;
-  /* 外の輪の外径が立ち絵の幅の 3/4 × 0.84（元の大きさで約 81px）。絵は外の輪が枠の端まで描かれている。立ち絵が縮むと一緒に縮む */
-  width: calc(var(--slot-portrait-h) * 3 / 8 * 0.84);
-  height: calc(var(--slot-portrait-h) * 3 / 8 * 0.84);
+  /* 外の輪の外径が絵の幅の 3/4 × 0.84（元の大きさで約 54px）。絵は外の輪が枠の端まで描かれている。絵が縮むと一緒に縮む */
+  width: calc(var(--slot-portrait-h) * 3 / 4 * 0.84);
+  height: calc(var(--slot-portrait-h) * 3 / 4 * 0.84);
   transform: translate(-50%, -50%) scale(0.92);
   filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.35));
   pointer-events: none;
@@ -931,11 +953,11 @@ svg.roster-revert-icon {
 /* ◎ の上の ▼（ui_selection_triangle.svg）。◎ が縮むときに上へ、広がるときに下へ動く（◎ と同じ周期と緩急） */
 .modern-slot-target-arrow {
   position: absolute;
-  /* ◎ の外の輪の少し上（立ち絵の中央から、立ち絵の高さの 3/16 + 3/40 だけ上）。枠の上 19% は絵の空き */
-  top: calc(var(--slot-portrait-h) / 2 - var(--slot-portrait-h) * 3 / 16 - var(--slot-portrait-h) * 3 / 40);
+  /* ◎ の外の輪の少し上（絵の中央から、絵の幅の 3/8 + 3/20 だけ上）。枠の上 19% は絵の空き */
+  top: calc(var(--slot-portrait-h) / 2 - var(--slot-portrait-h) * 3 / 8 - var(--slot-portrait-h) * 3 / 20);
   left: 50%;
-  /* 絵の三角は枠の幅の 76%（左右 12% ずつ空き）。三角の幅を立ち絵の高さの 3/32 にする */
-  width: calc(var(--slot-portrait-h) * 3 / 32 / 0.76);
+  /* 絵の三角は枠の幅の 76%（左右 12% ずつ空き）。三角の幅を絵の幅の 3/16 にする */
+  width: calc(var(--slot-portrait-h) * 3 / 16 / 0.76);
   filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.35));
   pointer-events: none;
   z-index: 3;
@@ -1038,7 +1060,7 @@ svg.roster-revert-icon {
    絵はバッジ（八角形で縦横 130:130）。大きさは左上のバッジの幅（.char-visual-portrait の --badge-w）と同じで、立ち絵が縮むと一緒に縮める。
    押すボタンなので 18px より小さくしない（狭い画面では左上のバッジより大きくなる） */
 .modern-slot-icon-button {
-  --slot-icon-w: max(18px, var(--slot-portrait-h) * 60 / 512);
+  --slot-icon-w: max(18px, var(--slot-portrait-h) * 60 / 256);
   position: absolute;
   right: 2px;
   z-index: 4;
@@ -1059,7 +1081,9 @@ svg.roster-revert-icon {
   top: 2px;
 }
 .modern-slot-build-button {
-  top: calc(2px + var(--slot-icon-w) + 2px);
+  /* 正方形の絵では、✕ の左に並べる（右の列の下には ⓘ と限界突破・コア強化を置く） */
+  top: 2px;
+  right: calc(2px + var(--slot-icon-w) + 2px);
 }
 /* 育成を変えたスロットは、歯車を青にする（白の規則より詳細度を上げる） */
 .modern-slot-build-edited > svg.badge-ui_setting {
@@ -1069,7 +1093,6 @@ svg.roster-revert-icon {
 /* カードボディ・キャラ表示 */
 .modern-slot-body {
   position: relative;
-  min-height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1277,7 +1300,7 @@ svg.roster-revert-icon {
   gap: 0.25em;
   opacity: 0.5;
   /* 中の文字の大きさの基準（元の大きさで 16px。立ち絵の高さに比べて縮める。中の文字と余白は em で書く） */
-  font-size: calc(var(--slot-portrait-h) / 16);
+  font-size: calc(var(--slot-portrait-h) / 8);
   /* ニケがいるときの絵（.char-visual-portrait）と同じ大きさ（大きさは下の .char-visual-portrait と共通の規則） */
   box-sizing: content-box;
   /* ＋ を枠の真ん中に置く基準 */
@@ -1292,7 +1315,7 @@ svg.roster-revert-icon {
   cursor: pointer;
 }
 .modern-slot-empty-plus {
-  font-size: 3.6em;
+  font-size: 3em;
   line-height: 1;
   /* ＋ は枠の真ん中に置く（ほかの文字の並びからは外す） */
   position: absolute;
@@ -1307,14 +1330,29 @@ svg.roster-revert-icon {
   line-height: 1.1;
   /* 番号から下の文字を中央より下げる。中身の列は上下の中央に置いているので、上の余白を 77px 足すと 38px 下がる（位置の印 ○ が枠の下からはみ出ない高さ）。
      ＋ は並びの外（枠の真ん中）にあるので、＋ の高さ 3em と間 0.25em（枠の文字の大きさが基準）の分も足して、番号を ＋ より下に置く */
-  margin-top: calc(var(--slot-portrait-h) * 0.3 + var(--slot-portrait-h) * 3.25 / 16 + 0.8em);
+  /* 正方形の枠では、＋ の下（枠の下端の近く）に置く */
+  position: absolute;
+  bottom: 0.9em;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 1.1em;
 }
 .modern-slot-empty-row {
-  font-size: 0.75em;
+  font-size: 0.65em;
   font-weight: bold;
   letter-spacing: 0.08em;
-  /* 番号に少し近づける */
-  margin-top: -0.55em;
+  /* 番号の下（枠の下端） */
+  position: absolute;
+  bottom: 0.3em;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+/* 正方形の枠には入らないので、EMPTY SLOT と位置の印（○○●○○）は出さない */
+.modern-slot-empty-label,
+.modern-slot-empty-position {
+  display: none;
 }
 .modern-slot-empty-label {
   /* EMPTY SLOT と位置の組を少し下げる */
@@ -1336,16 +1374,16 @@ svg.roster-revert-icon {
 }
 
 /* ダメージ表示 & 割合バー（文字の大きさと余白は em で書き、立ち絵の高さに比べて縮める。空のスロットの文字も同じ） */
-/* 幅は立ち絵（.char-visual-portrait。1:2 の枠と 1px の枠線）と同じにし、中央にそろえる */
+/* 幅はスロットの絵（.char-visual-portrait。正方形の枠と 1px の枠線）と同じにし、中央にそろえる */
 .modern-slot-damage-section {
   box-sizing: border-box;
-  width: calc(var(--slot-portrait-h) / 2 + 2px);
+  width: calc(var(--slot-portrait-h) + 2px);
   align-self: center;
   display: flex;
   flex-direction: column;
   gap: 0.1875em;
   padding: 0.25em 0.375em;
-  font-size: calc(var(--slot-portrait-h) / 16);
+  font-size: calc(var(--slot-portrait-h) / 8);
   background: color-mix(in srgb, var(--app-fg) 5%, transparent);
   border: 1px solid color-mix(in srgb, var(--app-fg) 10%, transparent);
 }
@@ -1415,37 +1453,36 @@ svg.roster-revert-icon {
   width: 100%;
 }
 /* 四角の絵（顔の絵）の名前は、背景を暗くして読みやすくする（顔の絵は名前の後ろまで明るい色が多い） */
-.char-tray-square-area .modern-slot-char-name {
+.char-tray-square-area .modern-slot-char-name,
+.modern-slot-card .modern-slot-char-name {
   /* 四角の絵は低いので、名前の文字を少し小さくする */
   font-size: 0.7rem;
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.85) 40%);
 }
-/* スロットのカードの縦長の絵（portraits）。元の絵（256×512）と同じ 1:2 の枠に、切らずに出す。高さで大きさを決める。
-   空のスロットの枠も同じ大きさにする */
+/* スロットのカードの絵（顔の絵。ニケ一覧の四角の絵と同じ正方形）。高さで大きさを決める。空のスロットの枠も同じ大きさにする */
 .char-visual-portrait,
 .modern-slot-empty-area {
   height: var(--slot-portrait-h);
   width: auto;
-  aspect-ratio: 1 / 2;
+  aspect-ratio: 1 / 1;
 }
 .char-visual-portrait {
   max-width: none;
-  /* 左上のバッジの幅。元の大きさ（ニケ一覧の縦長と同じ高さ 512/3 px）でニケ一覧と同じ 20px にし、立ち絵が縮むと一緒に縮める（右上のボタンも同じ大きさ） */
-  --badge-w: calc(var(--slot-portrait-h) * 60 / 512);
+  /* 左上のバッジの幅。元の大きさ（ニケ一覧の四角と同じ 256/3 px）でニケ一覧と同じ 20px にし、立ち絵が縮むと一緒に縮める（右上のボタンも同じ大きさ） */
+  --badge-w: calc(var(--slot-portrait-h) * 60 / 256);
 }
-/* スロットの立ち絵とニケ一覧の縦長の絵は、背景も枠線と同じく上の 5 割で上へ行くほど透明にする。枠線: 上を消し、横は上の 5 割で上へ行くほど薄くして一番上で消す（下は実線）。
+/* ニケ一覧の縦長の絵と空のスロットの枠は、背景も枠線と同じく上の 5 割で上へ行くほど透明にする。枠線: 上を消し、横は上の 5 割で上へ行くほど薄くして一番上で消す（下は実線）。
    枠線の太さは変えないので、絵の大きさは同じ。色は枠線の色（--char-visual-line） */
-.char-visual-portrait,
 .char-visual-tall,
 .modern-slot-empty-area {
   /* 塗りは基準を枠線の外側（border-box）にする。既定の padding-box だと、絵が繰り返されて上の枠線の 1px に下端の塗りの色が出る */
   background: linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
   border-image: linear-gradient(to bottom, transparent, var(--char-visual-line) 50%) 1;
 }
-/* 空のスロットだけ、立ち絵の代わりにシルエットの絵（256×512。立ち絵と同じ 1:2）を枠いっぱいに出す（ニケがいるスロットには出さない） */
+/* 空のスロットだけ、顔の絵の代わりにシルエットの絵（256×512）の上半分を、幅いっぱいに出す（ニケがいるスロットには出さない） */
 .modern-slot-empty-area {
   background:
-    url('./assets/portrait_silhouette.webp') center / 100% 100% no-repeat,
+    url('./assets/portrait_silhouette.webp') center top / 100% auto no-repeat,
     linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
 }
 .char-visual-img {
@@ -1476,7 +1513,8 @@ svg.roster-revert-icon {
 }
 /* スロットの立ち絵では、下部に重ねる名前と限界突破・コア強化の行（.modern-slot-char-name）の上に出す（ニケ一覧と同じ位置） */
 .char-visual-portrait .char-unsupported-tag {
-  bottom: 46px;
+  bottom: auto;
+  top: calc(2px + max(18px, var(--badge-w)) + 2px);
 }
 /* 未対応の印（ⓘ。CharacterVisual）。バッジ ui_information を出す。マウスを載せると件数が出る */
 .char-unsupported-tag {
@@ -1755,7 +1793,7 @@ html:has(.modern-view-container) {
 /* ニケ一覧の行に元の大きさの絵が 5 枚入らない狭い画面（data-tray-fit。useSlotFit）では、一覧の絵の幅をスロットの立ち絵（枠線込み）と同じにし、
    1 行に 5 枚並べる。列の幅（絵と左右の余白 2px ずつ）がスロットのカードの幅と同じで、列どうしの間も同じ 0 なので、一覧の行はスロットの並びと同じ幅になる */
 .modern-view-container[data-tray-fit] {
-  --tray-visual-w: calc(var(--slot-portrait-h) / 2 + 2px);
+  --tray-visual-w: calc(var(--slot-portrait-h) + 2px);
 }
 .modern-view-container[data-tray-fit] .char-tray-list {
   grid-template-columns: repeat(5, calc(var(--tray-visual-w) + 4px));

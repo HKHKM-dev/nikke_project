@@ -39,7 +39,14 @@ export function partyInputs(state: PartiesState, shared: SharedSettings, deps: P
  * 編成ごとの合計ダメージ。値が無い（空・読み込み中・計算中で前の結果も無い・エラー）は null。
  * computing は、出している値が前の入力のもの（いまの入力を計算中）
  */
-export type PartyTotal = { kind: PartyInput['kind']; total: number | null; computing: boolean; error?: string };
+export type PartyTotal = {
+  kind: PartyInput['kind'];
+  total: number | null;
+  computing: boolean;
+  error?: string;
+  /** スロットごとのダメージ（スロットの並び。空のスロットは null）。計算の結果があるときだけ（モダン UI の、選んでいない編成の行） */
+  slotDamages?: readonly (number | null)[];
+};
 
 /** 計算の結果と、それがいまの入力のものでないか */
 export type PartyComputed = { computed: Computed | null; computing: boolean };
@@ -62,7 +69,12 @@ export function partyTotals(
           : { computed: null, computing: false };
     if (computed === null) return { kind: p.kind, total: null, computing };
     return computed.ok
-      ? { kind: p.kind, total: computed.result.totalDamage, computing }
+      ? {
+          kind: p.kind,
+          total: computed.result.totalDamage,
+          computing,
+          slotDamages: computed.result.slots?.map((slot) => slot?.totalDamage ?? null),
+        }
       : { kind: p.kind, total: null, computing, error: computed.error };
   });
   const values = parties.flatMap((p) => (p.total === null ? [] : [p.total]));

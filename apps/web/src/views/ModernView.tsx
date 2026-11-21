@@ -3,18 +3,18 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { DamageTotalPanel } from '../components/DamageTotalPanel.tsx';
 import { ErrorBoundary } from '../components/ErrorBoundary.tsx';
 import { NotesSummary } from '../components/NotesSummary.tsx';
-import { PartyTabs } from '../components/PartyTabs.tsx';
 import { TeamSettingsForm } from '../components/TeamSettingsForm.tsx';
 import type { ViewProps } from './ViewProps.ts';
 import { CharacterTray } from '../components/modern/CharacterTray.tsx';
 import { useSlotFit } from '../components/modern/useSlotFit.ts';
 import { ModernSlotCard } from '../components/modern/ModernSlotCard.tsx';
+import { PartyPreviewRow, PartyRowLabel } from '../components/modern/PartyPreviewRow.tsx';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
 import { useSlotUndo } from '../components/modern/useSlotUndo.ts';
 import { BadgeIcon } from '../components/modern/BadgeIcon.tsx';
 import { REDO_BADGE, UNDO_BADGE } from '../components/modern/badges.ts';
 import { SlotDragOverlay } from '../components/modern/SlotDragOverlay.tsx';
-import { slotCollectionBadge, slotGrowthEdited, slotGrowthMarks } from '../components/modern/slotBadges.ts';
+import { slotGrowthEdited, slotGrowthMarks } from '../components/modern/slotBadges.ts';
 import { useSlotDrag } from '../components/modern/useSlotDrag.ts';
 import { useSlotPlacement } from '../components/modern/useSlotPlacement.ts';
 import { commonGrowthOf, rosterGrowthOf } from '../roster.ts';
@@ -77,7 +77,7 @@ export function ModernView({
 
   // スロット 5 枚を画面の幅に収める（足りなければ立ち絵を縮める）
   const slotsGridRef = useRef<HTMLElement>(null);
-  useSlotFit(slotsGridRef, team.slots.length);
+  useSlotFit(slotsGridRef, team.slots.length, parties.active);
 
   // 置く・外す（絵を飛ばす）と、ドラッグ
   // スロットのニケの並びを元に戻す（スロットの並びの上の中央のボタン）
@@ -161,61 +161,80 @@ export function ModernView({
 
             <DamageTotalPanel title="合計ダメージ" value={totals.total} computing={totalsPending} />
           </div>
-          {/* 編成のタブとスロットの並び。700px 以上の画面では、タブをスロットの左に縦に並べる（styles.css の .modern-party-slots） */}
-          <div className="modern-party-slots">
-            <PartyTabs active={parties.active} onSelect={selectParty} totals={totals.parties} />
-
-            <div className="modern-slots-area">
-              {/* 元に戻す・やり直す（スロットの並びの上の端の中央。戻せる・やり直せる並びが無いときは押せない）。絵はバッジ ui_undo・ui_redo */}
-              <div className="modern-slot-history">
-                <button
-                  type="button"
-                  className="modern-slot-undo-button"
-                  aria-label="元に戻す"
-                  title="元に戻す"
-                  disabled={!slotUndo.canUndo}
-                  onClick={() => slotUndo.undo(placement)}
-                >
-                  <BadgeIcon className="modern-slot-undo-icon" name={UNDO_BADGE} />
-                </button>
-                <button
-                  type="button"
-                  className="modern-slot-undo-button"
-                  aria-label="やり直す"
-                  title="やり直す"
-                  disabled={!slotUndo.canRedo}
-                  onClick={() => slotUndo.redo(placement)}
-                >
-                  <BadgeIcon className="modern-slot-undo-icon" name={REDO_BADGE} />
-                </button>
-              </div>
-              <section ref={slotsGridRef} className="modern-slots-grid" aria-label="編成スロット一覧">
-                {team.slots.map((slot, i) => {
-                  const { character } = calc.slots[i]!;
-                  const characterEntry = slot.resourceId !== null ? indexMap.get(slot.resourceId) : undefined;
-
-                  return (
-                    <ModernSlotCard
-                      key={i}
-                      slotIndex={i}
-                      character={character}
-                      characterEntry={characterEntry}
-                      unsupportedNote={slot.resourceId === null ? null : unsupportedNote(slot.resourceId)}
-                      error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
-                      slotResult={slotResults[i] ?? null}
-                      growthMarks={slotGrowthMarks(calc, team, roster, i)}
-                      collectionBadge={slotCollectionBadge(calc, i)}
-                      growthEdited={slotGrowthEdited(team, roster, i)}
-                      controlled={team.controlledSlot === i}
-                      onPlacePending={pendingId !== null ? () => handlePlacePending(i) : undefined}
-                      onOpenBuildModal={() => setEditingSlotIndex(i)}
-                      onClear={() => clearSlot(i)}
-                      partyTotalDamage={totals.parties[parties.active]?.total ?? null}
-                    />
-                  );
-                })}
-              </section>
+          {/* 5 つの編成のスロットを 1 行ずつ並べる（オーナーの指示）。行の左に編成の番号とダメージ。選んでいる編成の行だけ操作でき、
+              ほかの行は押すとその編成を選ぶ（PartyPreviewRow）。元に戻す・やり直すは、選んでいる編成のもの */}
+          <div className="modern-slots-area">
+            {/* 元に戻す・やり直す（スロットの並びの上の端の中央。戻せる・やり直せる並びが無いときは押せない）。絵はバッジ ui_undo・ui_redo */}
+            <div className="modern-slot-history">
+              <button
+                type="button"
+                className="modern-slot-undo-button"
+                aria-label="元に戻す"
+                title="元に戻す"
+                disabled={!slotUndo.canUndo}
+                onClick={() => slotUndo.undo(placement)}
+              >
+                <BadgeIcon className="modern-slot-undo-icon" name={UNDO_BADGE} />
+              </button>
+              <button
+                type="button"
+                className="modern-slot-undo-button"
+                aria-label="やり直す"
+                title="やり直す"
+                disabled={!slotUndo.canRedo}
+                onClick={() => slotUndo.redo(placement)}
+              >
+                <BadgeIcon className="modern-slot-undo-icon" name={REDO_BADGE} />
+              </button>
             </div>
+            {parties.parties.map((party, p) => (
+              <div key={p} className={`modern-party-row ${p === parties.active ? 'modern-party-row-active' : ''}`}>
+                <PartyRowLabel
+                  partyIndex={p}
+                  active={p === parties.active}
+                  total={totals.parties[p]}
+                  onSelect={() => selectParty(p)}
+                />
+                {p === parties.active ? (
+                  <section ref={slotsGridRef} className="modern-slots-grid" aria-label="編成スロット一覧">
+                    {team.slots.map((slot, i) => {
+                      const { character } = calc.slots[i]!;
+                      const characterEntry = slot.resourceId !== null ? indexMap.get(slot.resourceId) : undefined;
+
+                      return (
+                        <ModernSlotCard
+                          key={i}
+                          slotIndex={i}
+                          character={character}
+                          characterEntry={characterEntry}
+                          unsupportedNote={slot.resourceId === null ? null : unsupportedNote(slot.resourceId)}
+                          error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
+                          slotResult={slotResults[i] ?? null}
+                          growthMarks={slotGrowthMarks(calc, team, roster, i)}
+                          growthEdited={slotGrowthEdited(team, roster, i)}
+                          controlled={team.controlledSlot === i}
+                          onPlacePending={pendingId !== null ? () => handlePlacePending(i) : undefined}
+                          onOpenBuildModal={() => setEditingSlotIndex(i)}
+                          onClear={() => clearSlot(i)}
+                          partyTotalDamage={totals.parties[parties.active]?.total ?? null}
+                        />
+                      );
+                    })}
+                  </section>
+                ) : (
+                  <PartyPreviewRow
+                    partyIndex={p}
+                    party={party}
+                    total={totals.parties[p]}
+                    indexMap={indexMap}
+                    unsupportedNote={unsupportedNote}
+                    roster={roster}
+                    fixedSpec={team.fixedSpec}
+                    onSelect={() => selectParty(p)}
+                  />
+                )}
+              </div>
+            ))}
           </div>
 
           <CharacterTray
