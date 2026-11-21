@@ -34,7 +34,7 @@ export type CatalogLine = {
   slot: string;
   /** スロットの中の行の番号 */
   li: number;
-  /** 最初の「 か「機能」より前（きっかけ・条件・対象） */
+  /** 条件の節の中にない最初の「 か「機能」より前（きっかけ・条件・対象） */
   head: string;
   /** 改行を除いた行の全体 */
   flat: string;
@@ -494,6 +494,28 @@ function targetsIn(text: string): { targets: string[]; text: string } {
   return { targets: normTargets(tagsOf(TARGETS, text)), text };
 }
 
+/**
+ * 句が条件の節の中にあるか: 句の後ろが「の」「状態」で句に続き、次の「 までの最初の「、」の前で条件の節を終える
+ * （「自分が「応急改造」のフルスタック状態の時のみ、味方全体に」の「応急改造」）。その句は状態の名前で、効果に数えない。
+ * 句の後ろで別の文が始まる形（「…「解除不可」基本バースト段階がⅠの味方がいる場合、」）は、句が節の外にある
+ */
+function inConditionClause(part: string, end: number): boolean {
+  const next = part.indexOf('「', end);
+  const after = part.slice(end, next >= 0 ? next : part.length);
+  const ci = after.indexOf('、');
+  return /^(の|状態)/.test(after) && ci >= 0 && CONDITION_CLAUSE_END.test(after.slice(0, ci));
+}
+
+/** 行の最初の効果の句の「 の位置（条件の節の中の句を飛ばす。閉じていない「 はそこを句の始まりとみる）。無ければ -1 */
+function effectQuoteStart(flat: string): number {
+  for (let i = flat.indexOf('「'); i >= 0; i = flat.indexOf('「', i + 1)) {
+    const close = flat.indexOf('」', i);
+    if (close < 0 || !inConditionClause(flat, close + 1)) return i;
+    i = close;
+  }
+  return -1;
+}
+
 function sideOf(targets: readonly string[]): CatalogSide {
   if (targets.length === 0) return 'unknown';
   if (targets.every((t) => t.startsWith('enemy'))) return 'enemy';
@@ -536,12 +558,14 @@ export function classifyCharacters(
         .filter(Boolean);
       raw.forEach((line, li) => {
         const flat = line.replace(/\n/g, '');
-        // 頭: 最初の「 か「機能」の前
-        const cut = Math.min(...[flat.indexOf('「'), flat.indexOf('機能')].filter((i) => i >= 0), flat.length);
+        // 頭: 条件の節の中にない最初の「 か「機能」の前
+        const cut = Math.min(...[effectQuoteStart(flat), flat.indexOf('機能')].filter((i) => i >= 0), flat.length);
         const head = flat.slice(0, cut);
-        const triggers = lineTriggers(head);
-        const conditions = tagsOf(CONDITIONS, head);
-        const lineTargets = normTargets(tagsOf(TARGETS, head));
+        // 条件の節の句の中身（状態の名前）は、きっかけ・条件・対象の規則にかけない
+        const headTags = head.replace(/「[^」]*」/g, '「」');
+        const triggers = lineTriggers(headTags);
+        const conditions = tagsOf(CONDITIONS, headTags);
+        const lineTargets = normTargets(tagsOf(TARGETS, headTags));
         const lineRec: CatalogLine = {
           rid: c.resourceId,
           name: c.name.ja,
@@ -581,6 +605,7 @@ export function classifyCharacters(
             prevEnd = m.index + m[0].length;
             const mid = targetsIn(between);
             if (between.length > 0 && mid.targets.length > 0) ({ targets, text: targetText } = mid);
+            if (inConditionClause(part, prevEnd)) continue;
             const quote = m[1] ?? '';
             const reading = classifyQuote(quote);
             if (reading.kind === 'meta:weaponProp') continue;

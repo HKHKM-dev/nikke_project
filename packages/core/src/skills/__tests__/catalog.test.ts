@@ -68,6 +68,47 @@ describe('skill catalog', () => {
     expect(dispel?.conditions).toEqual([]);
   });
 
+  it('does not read the name of a state inside a condition as an effect (トーブ S2)', () => {
+    const tove = effects.filter((e) => e.name === 'トーブ' && e.slot === 'skill2');
+    expect(tove.map((e) => [e.li, e.quote])).toEqual([
+      [0, 'クリティカル確率X％▲'],
+      [1, '攻撃速度X％▲'],
+    ]);
+    // 頭は条件の節の後ろまで延び、宝物版（「」の無い書き方）と同じく条件を読む
+    expect(tove.map((e) => e.head)).toEqual([
+      '自分が「応急改造」のフルスタック状態の時のみ、味方全体に',
+      '自分が「応急改造」のフルスタック状態の時のみ、ショットガンを所持する味方全体に',
+    ]);
+    expect(tove.every((e) => e.conditions.includes('selfState:fullStack'))).toBe(true);
+  });
+
+  it('skips a quote that a condition clause encloses, and keeps a quote that ends before a new clause', () => {
+    const base = characters[0]!;
+    const quotesOf = (text: string) => {
+      const skill = { ...base.skills.skill1, description: { ...base.skills.skill1.description, ja: text } };
+      const c = { ...base, treasure: null, skills: { ...base.skills, skill1: skill } };
+      return classifyCharacters([c], new Set())
+        .effects.filter((e) => e.slot === 'skill1')
+        .map((e) => [e.quote, e.targets, e.mods ?? []]);
+    };
+    expect(quotesOf('■自分が「甲」のフルスタック状態の時のみ、味方全体に「攻撃力X％▲」「持続」')).toEqual([
+      ['攻撃力X％▲', ['ally:allies'], ['dur:permanent']],
+    ]);
+    expect(quotesOf('■自分が「甲」状態なら、自分に「乙」')).toEqual([['乙', ['self'], []]]);
+    // 行の途中の条件の節
+    expect(quotesOf('■自分に「乙」自分が「甲」状態なら、敵全体に「丙」')).toEqual([
+      ['乙', ['self'], []],
+      ['丙', ['enemy:all'], []],
+    ]);
+    // 句の後ろで別の文が始まり、その文が条件の節で終わる形は、句を節の外とみる
+    expect(quotesOf('■自分に「攻撃力X％▲」「持続」「解除不可」敵がX機以上の場合、自分に「乙」')).toEqual([
+      ['攻撃力X％▲', ['self'], ['dur:permanent', 'meta:undispellable']],
+      ['乙', ['self'], []],
+    ]);
+    // 「：機能：〜時、」の説明が続く句は効果
+    expect(quotesOf('■敵全体に「丙」：機能：丙が終了した時、追加でダメージ').map(([q]) => q)).toEqual(['丙']);
+  });
+
   it('keeps every line and effect of every character', () => {
     expect(new Set(lines.map((l) => l.rid)).size).toBe(characters.length);
     expect(effects.every((e) => !e.kind.startsWith('meta:'))).toBe(true);
