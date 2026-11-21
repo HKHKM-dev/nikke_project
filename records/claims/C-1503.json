@@ -1,0 +1,28 @@
+{
+  "id": "C-1503",
+  "text": "ノベルの S1 の倍率ダメージのヒットは、射手の 1 ヒットぶん（target_burst_energy_pershot。2,000）のバーストゲージを、ダメージと同じヒットのフレームに溜める。撃たない単騎の録画で、左の BURST バーが S1 のヒット 17 回で 1 回 2,000 の並びどおりに伸びた",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1348-01`・`1348-02`。V-0847",
+  "model": "反映（data/skills/212.json の skill1 の effects[2]。burstGaugeHit・everySeconds: 10・cooldown: true・delayFrames: 64）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/212.json の skill1 の effects[2]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1309",
+      "role": "仮説の出どころ"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "1348",
+      "reproduced": "S1 の 9〜17 回目",
+      "observations": ["1348-02"]
+    }
+  ],
+  "parameterFree": "射手の target_burst_energy_pershot（2,000。CDN）・S1 の時刻（C-1448）・左の BURST バーの縮尺（0367-01）"
+}

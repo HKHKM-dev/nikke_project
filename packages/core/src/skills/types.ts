@@ -2324,12 +2324,14 @@ export type DotEffect = {
   maxStacksRef?: number;
   /**
    * 発火（付けた）ごとに、射手の 1 ヒットぶんのバーストゲージ（targetBurstEnergyPerShot。フルチャージ
-   * 倍率なし）を発火のフレームに足す（C-0181）。トリガーは射撃の回数トリガーだけ
+   * 倍率なし）を発火のフレームに足す（C-0181）。トリガーは射撃の回数トリガーか、クールタイムの印・since の無い周期のトリガー（状態の名前は組まない）
+   * （C-1504。plan/design-rosanna-co.md 7 節）
    */
   gaugeOnApply?: true;
   /**
    * 付けたときのゲージ（gaugeOnApply）を、発火の
-   * フレームの delayFrames 後に足す（1 以上の整数。レイヴンは 6。C-0181・C-0661。plan/design-shot-count-trigger-frame.md 6.6 節）。tick の時刻は動かさない
+   * フレームの delayFrames 後に足す（1 以上の整数。レイヴンは 6。C-0181・C-0661。plan/design-shot-count-trigger-frame.md 6.6 節。
+   * ロザンナ：シックオーシャンは付くまでの遅れと同じ 8。C-1504）。tick の時刻は動かさない
    */
   gaugeOnApplyDelayFrames?: number;
   /**
@@ -2342,8 +2344,8 @@ export type DotEffect = {
   /**
    * tick ごとに、射手の 1 ヒットぶんのバーストゲージを tick のフレームに足す。スタックの数によらない
    * （C-0181）。firstTick: afterInterval で、維持が間隔の整数倍のときだけ（8 節の 2。解決のときに見る）。トリガーは射撃の回数トリガーか、
-   * burstUse（クルミのハッキング。C-0196。plan/design-raven-s1.md 10 節）。同じ state の効果は、どれも同じ値にする（tick は持続ダメージ
-   * 1 つの性質なので）
+   * burstUse（クルミのハッキング。C-0196。plan/design-raven-s1.md 10 節）か、gaugeOnApply と同じ周期のトリガー（firstTick は atApplication も
+   * 書ける。C-1504。plan/design-rosanna-co.md 7 節）。同じ state の効果は、どれも同じ値にする（tick は持続ダメージ 1 つの性質なので）
    */
   gaugeOnTick?: true;
   assumes?: LocalizedText;

@@ -1,6 +1,6 @@
 // ノベル（212。V-0833）を含む編成で、S1 の 10 秒ごとのダメージ（発動の 64f 後）と防御力▼（ヒットの次のフレームから 5 秒。C-1448）、
 // S2 の証拠品収集（命中 100 回ごとに 5 スタック）と、バーストのダメージ（II の発動の 80f 後。C-1450）・フルスタックの時だけの
-// 受けるダメージ▲（ヒットのフレームから。C-1449）が意図どおりに出るか
+// 受けるダメージ▲（ヒットのフレームから。C-1449）と、S1 のヒットのゲージ（ヒットのフレームに射手の 1 ヒットぶん。C-1503）が意図どおりに出るか
 import { describe, expect, it } from 'vitest';
 import { burstDelaysOf } from '../burst/landing.ts';
 import { hexagonFrameOf, hitFramesOf } from '../burst/schedule.ts';
@@ -19,9 +19,9 @@ const PERIOD = 589;
 describe('ノベルの定義', () => {
   const def = parseSkillDefinition(rawDefinition(NOVEL));
 
-  it('defines every slot, leaving only the S1 Burst gauge unimplemented', () => {
-    expect(def.skills.skill1.support).toBe('partial');
-    expect(def.skills.skill1.notes?.map((n) => n.kind)).toEqual(['unimplemented']);
+  it('defines every slot', () => {
+    expect(def.skills.skill1.support).toBe('supported');
+    expect(def.skills.skill1.effects.map((e) => e.kind)).toEqual(['damage', 'timed', 'burstGaugeHit']);
     expect(def.skills.skill2.support).toBe('supported');
     expect(def.skills.burst.support).toBe('supported');
     expect(burstDelaysOf(characterOf(NOVEL))).toEqual({ hitFrames: 80, effectFrames: 80 });
@@ -47,6 +47,12 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     const down = items({ kind: 'timed', skill: 'skill1', stat: 'enemyDefenseDown' });
     expect(down.map((w) => w.start)).toEqual(s1Hits.map((h) => h.frame + 1));
     for (const w of down.filter((x) => x.end < plan.frames)) expect(w.end - w.start).toBe(gameSecondsToFrames(5));
+  });
+
+  it('charges one shooter hit of gauge (2,000) on the frame of every S1 hit (C-1503)', () => {
+    const gauges = plan.timerGauges.filter((g) => g.slotIndex === s);
+    expect(gauges.map((g) => g.frame)).toEqual(s1Hits.map((h) => h.frame));
+    for (const g of gauges) expect(g.energy).toBeGreaterThanOrEqual(2000);
   });
 
   const evidence = items({ holder: s, kind: 'state', state: 'collectEvidence' });

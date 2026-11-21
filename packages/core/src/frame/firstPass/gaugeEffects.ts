@@ -172,6 +172,19 @@ export function createGaugeEffects({
     /** 自動攻撃のヒットの飛ぶ時間（plan/design-anis-star-gauge-timing.md 4 節。持続ダメージ・表に無いものは null） */
     flight: FlightFrameSpan[] | null;
   }[] = [];
+  // 周期で付く持続ダメージのゲージ（V-0847。plan/design-rosanna-co.md 7 節）。発火は射撃に依らないので、発火のフレーム → 付けた
+  // 持続ダメージの並び（同じまとまりは同じ追跡）を前もって作り、そのフレームの頭（reserveTimerGauges）で付けたときと tick の分を予約する
+  const timerDotFires = new Map<
+    number,
+    {
+      slotIndex: number;
+      onApply: boolean;
+      applyDelay: number;
+      tickDelay: number;
+      tracker: DotTickTracker;
+      onTick: boolean;
+    }[]
+  >();
   slots.forEach((slot, i) => {
     if (slot === null || slot.definition === null) return;
     for (const group of groupDotsByState(resolveDotEffects(slot.definition, slot.character, slot.levels))) {
@@ -181,6 +194,23 @@ export function createGaugeEffects({
       // tick のゲージは同じ状態でそろっている（groupDotsByState）。付けたときのゲージは効果ごと
       const onTick = dot.gaugeOnTick === true;
       if (!onTick && !group.some((e) => e.dot!.gaugeOnApply === true)) continue;
+      if (group.some((e) => isResolvedTimer(e.trigger))) {
+        const tracker = dotTickTracker(dot.intervalSeconds, dot.durationSeconds, frames, dot.firstTick);
+        const applyDelay = Math.max(0, ...group.map((e) => e.dot!.gaugeOnApplyDelayFrames ?? 0));
+        const tickDelay = dot.tickDelayFrames ?? 0;
+        for (const e of group) {
+          if (!isResolvedTimer(e.trigger) || e.trigger.cooldown === true) {
+            throw new RangeError('a dot with gauge on a timer needs timers without cooldown in its whole group');
+          }
+          const onApply = e.dot!.gaugeOnApply === true;
+          for (const f of timerFramesOf(e.trigger, frames)) {
+            const fires = timerDotFires.get(f) ?? [];
+            fires.push({ slotIndex: i, onApply, applyDelay, tickDelay, tracker, onTick });
+            timerDotFires.set(f, fires);
+          }
+        }
+        continue;
+      }
       const effects: { count: ShotCountKind; every: number; n: number; onApply: boolean }[] = [];
       let onBurstUse = false;
       for (const e of group) {
@@ -484,13 +514,31 @@ export function createGaugeEffects({
       t.step = (t.step + 1) % t.gaugeHits.length;
     }
   };
-  /** 時間で変わる速度の枠の、周期のゲージを予約する */
+  /**
+   * 時間で変わる速度の枠の、周期のゲージを予約する。周期で付く持続ダメージは、付けたときの分を発火の applyDelay 後に、tick の分を
+   * 発火の tickDelay 後を起点にした刻みに予約する（どれも発火のフレームより前にはならない。このフレームの分は、このすぐ後の
+   * takeReservedGauge が取る）。時間で変わるゲージ速度は、発火のフレームの速度で tick の分も決める
+   */
   const reserveTimerGauges = (f: number): void => {
     for (const t of timedTimerGauges.get(f) ?? []) {
       reserveTimerGauge(t.slotIndex, f, f + t.delayFrames, hitGaugeEnergy(t.slotIndex));
     }
+    for (const t of timerDotFires.get(f) ?? []) {
+      const energy = hitGaugeEnergy(t.slotIndex);
+      if (t.onApply && f + t.applyDelay < frames) {
+        reserveGauge(f + t.applyDelay, energy);
+        dotGauges.push({ slotIndex: t.slotIndex, kind: 'apply', frame: f + t.applyDelay, energy });
+      }
+      const { ticks } = t.tracker.fire(f + t.tickDelay);
+      if (!t.onTick) continue;
+      for (const tick of ticks) {
+        if (tick >= frames) continue;
+        reserveGauge(tick, energy);
+        dotGauges.push({ slotIndex: t.slotIndex, kind: 'tick', frame: tick, energy });
+      }
+    }
   };
-  /** フレーム at のゲージに energy を予約する（at は予約するフレームより後） */
+  /** フレーム at のゲージに energy を予約する（at は予約するフレームより後か、takeReservedGauge の前のそのフレーム） */
   const reserveGauge = (at: number, energy: number): void => {
     if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
   };

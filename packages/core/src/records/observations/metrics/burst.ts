@@ -206,6 +206,20 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
       return Math.round((g.energy / BURST_GAUGE_MAX) * 10_000) / 100;
     },
   },
+  // 枠の n 回目（1 始まり）の持続ダメージのゲージ（付けた時 apply か tick。dot の gaugeOnApply・gaugeOnTick）の量（%）（V-0847）
+  dotGauge: {
+    description: '枠の n 回目（1 始まり）の持続ダメージのゲージ（kind: apply は付けた時、tick は刻み）の量（%）',
+    args: ['slot', 'n', 'kind'],
+    sim: (r, c) => {
+      const n = Number(c.args.n);
+      const kind = c.args.kind;
+      if (kind !== 'apply' && kind !== 'tick') throw new Error(`kind は apply か tick（${String(kind)}）`);
+      const g = r.dotGauges.filter((x) => x.slotIndex === slotIndexOf(c) && x.kind === kind)[n - 1];
+      if (g === undefined)
+        throw new Error(`枠 ${String(c.args.slot)} の ${n} 回目の持続ダメージのゲージ（${kind}）が無い`);
+      return Math.round((g.energy / BURST_GAUGE_MAX) * 10_000) / 100;
+    },
+  },
   // 比べる設定の拡張（plan/design-compare-setup-extension.md 5 節）: 右のバースト欄の表示の時刻
   ctEndToFullBurstStart: {
     description: '枠の n 回目（0 始まり）の発動の、CT の明けから発動の印までの動画のフレーム',

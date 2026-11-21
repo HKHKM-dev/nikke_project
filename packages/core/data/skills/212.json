@@ -42,18 +42,22 @@
             "C-0556",
             "C-0790"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "S1 のヒットがバーストゲージを溜めるかは撮っていない（溜めても 1 回で通常攻撃の 1 ヒットぶんの見込み）",
-          "en": "Whether the S1 hit builds Burst gauge is not recorded (if it does, about one normal-attack hit per activation)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "burstGaugeHit",
-            "target": "self",
-            "trigger": "unknown"
-          }
+          "kind": "burstGaugeHit",
+          "trigger": {
+            "everySeconds": 10,
+            "cooldown": true
+          },
+          "delayFrames": 64,
+          "assumes": {
+            "ja": "S1 のヒットは、射手の 1 ヒットぶん（target_burst_energy_pershot）のバーストゲージを、ダメージと同じく発動の 64f 後のヒットのフレームに溜める",
+            "en": "The S1 hit builds Burst gauge equal to one shooter hit (target_burst_energy_pershot) on the hit frame, 64 f after activation like the damage"
+          },
+          "claims": [
+            "C-1503",
+            "C-1448"
+          ]
         }
       ]
     },

@@ -683,8 +683,9 @@ export function resolveDotEffects(
         throw new RangeError(`skill ${skill.id}: dot max stacks must be a positive integer, got ${maxStacks}`);
       }
       // tick のゲージは 1 パス目で発火のたびに後の tick を予約するので、
-      // 付け直しで延びた tick が付け直しより後に出る形（afterInterval で、維持が間隔の整数倍）だけを許す（plan/design-raven-s1.md 8 節の 2）
-      if (gaugeOnTick) {
+      // 付け直しで延びた tick が付け直しより後に出る形（afterInterval で、維持が間隔の整数倍）だけを許す（plan/design-raven-s1.md 8 節の 2）。
+      // 周期のきっかけは発火のフレームで刻みを決めるので見ない（plan/design-rosanna-co.md 7 節）
+      if (gaugeOnTick && !isTimerTrigger(effect.trigger)) {
         const ratio = durationSeconds / effect.intervalSeconds;
         if (Math.abs(ratio - Math.round(ratio)) > 1e-9) {
           throw new RangeError(

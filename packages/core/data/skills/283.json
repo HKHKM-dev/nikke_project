@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 283,
-  "checkedAt": "2026-11-12",
+  "checkedAt": "2026-11-21",
   "skills": {
     "skill1": {
       "effects": [],
@@ -48,12 +48,16 @@
           "durationRef": 4,
           "firstTick": "atApplication",
           "tickDelayFrames": 8,
+          "gaugeOnApply": true,
+          "gaugeOnApplyDelayFrames": 8,
+          "gaugeOnTick": true,
           "assumes": {
-            "ja": "戦闘開始から 30 秒ごと（CT 30 秒は録画から読んだ値）に発動し、その 8f 後に付く。照準線に最も近い敵 1 機は敵 1 体。tick は付いた瞬間と、その 1.5 秒後から 1 秒ごと（計 15 回）。フルバースト補正・攻撃ダメージ▲・持続ダメージ▲・受けるダメージ▲は tick ごとにその時点の状態で乗る",
-            "en": "Activates every 30 s from the start of battle (the 30 s cooldown was read from recordings) and is applied 8 frames later. The one enemy nearest the crosshair is the single enemy. It ticks on application, then every second from 1.5 s after (15 ticks). The Full Burst bonus, ATK damage up, sustained damage up and damage taken up apply per tick by the state at that tick"
+            "ja": "戦闘開始から 30 秒ごと（CT 30 秒は録画から読んだ値）に発動し、その 8f 後に付く。照準線に最も近い敵 1 機は敵 1 体。tick は付いた瞬間と、その 1.5 秒後から 1 秒ごと（計 15 回）。フルバースト補正・攻撃ダメージ▲・持続ダメージ▲・受けるダメージ▲は tick ごとにその時点の状態で乗る。付いたとき（発動の 8f 後。1 回目の tick と同じフレーム）と tick ごとに、射手の 1 ヒットぶん（target_burst_energy_pershot）のバーストゲージを溜める",
+            "en": "Activates every 30 s from the start of battle (the 30 s cooldown was read from recordings) and is applied 8 frames later. The one enemy nearest the crosshair is the single enemy. It ticks on application, then every second from 1.5 s after (15 ticks). The Full Burst bonus, ATK damage up, sustained damage up and damage taken up apply per tick by the state at that tick. On application (8 frames after activation, the frame of the first tick) and on each tick it builds Burst gauge equal to one shooter hit (target_burst_energy_pershot)"
           },
           "claims": [
-            "C-1196"
+            "C-1196",
+            "C-1504"
           ]
         }
       ],
@@ -71,14 +75,6 @@
           "claims": [
             "C-0443"
           ]
-        },
-        {
-          "ja": "持続ダメージの tick がバーストゲージを溜めるかは確かめていない（単騎の 1 回目の満タンは最初の発動より前）。モデルは溜めない",
-          "en": "Whether the sustained damage ticks build burst gauge has not been verified (the first full gauge solo comes before the first activation). The model does not add gauge",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "burstGaugeHit"
-          }
         }
       ]
     },
