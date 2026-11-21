@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { CharacterIndexEntry } from '@nikke/core';
 import {
   INITIAL_PARTIES,
-  moveSlotToParty,
+  exchangePartySlots,
   otherPartyResourceIds,
   partyOf,
   readParties,
@@ -194,14 +194,28 @@ describe('ほかの編成へ置く・移す（モダン UI のドラッグ）', 
     let team = withCharacter(INITIAL_TEAM_STATE, 0, 10);
     team = { ...team, slots: team.slots.map((s, i) => (i === 0 ? { ...s, hpRatio: 0.5 } : s)) };
     const placed = updateOtherParty(INITIAL_PARTIES, team, 1, { type: 'selectCharacter', index: 3, resourceId: 11 });
-    const moved = moveSlotToParty(placed, team, 0, 1, 3);
+    const moved = exchangePartySlots(placed, team, { party: 0, index: 0 }, { party: 1, index: 3 });
     expect(moved.parties.active).toBe(0);
     expect(moved.parties.parties[1]!.slots[3]!.resourceId).toBe(10);
     expect(moved.parties.parties[1]!.slots[3]!.hpRatio).toBe(0.5);
     expect(moved.team.slots[0]!.resourceId).toBe(11);
     // 空の編成へ移すと、元のスロットは空になる
-    const toEmpty = moveSlotToParty(INITIAL_PARTIES, team, 0, 4, 0);
+    const toEmpty = exchangePartySlots(INITIAL_PARTIES, team, { party: 0, index: 0 }, { party: 4, index: 0 });
     expect(toEmpty.parties.parties[4]!.slots[0]!.resourceId).toBe(10);
     expect(toEmpty.team.slots[0]!.resourceId).toBeNull();
+  });
+
+  it('選んでいない編成どうし・同じ編成の中でも入れ替える。同じスロット・範囲の外は何もしない', () => {
+    const team = INITIAL_TEAM_STATE;
+    let state = updateOtherParty(INITIAL_PARTIES, team, 1, { type: 'selectCharacter', index: 0, resourceId: 10 });
+    state = updateOtherParty(state, team, 2, { type: 'selectCharacter', index: 4, resourceId: 11 });
+    const across = exchangePartySlots(state, team, { party: 1, index: 0 }, { party: 2, index: 4 });
+    expect(across.parties.parties[1]!.slots[0]!.resourceId).toBe(11);
+    expect(across.parties.parties[2]!.slots[4]!.resourceId).toBe(10);
+    expect(across.team).toBe(team);
+    const within = exchangePartySlots(state, team, { party: 1, index: 0 }, { party: 1, index: 2 });
+    expect(within.parties.parties[1]!.slots.map((s) => s.resourceId)).toEqual([null, null, 10, null, null]);
+    expect(exchangePartySlots(state, team, { party: 1, index: 0 }, { party: 1, index: 0 }).parties).toBe(state);
+    expect(exchangePartySlots(state, team, { party: 1, index: 0 }, { party: 5, index: 0 }).parties).toBe(state);
   });
 });

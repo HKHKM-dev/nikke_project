@@ -10,11 +10,12 @@ import { INITIAL_TEAM_STATE, teamReducer, type TeamAction } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
 import {
   INITIAL_PARTIES,
-  moveSlotToParty,
+  exchangePartySlots,
   otherPartyResourceIds,
   switchParty,
   updateOtherParty,
   type PartiesState,
+  type PartySlotRef,
 } from './parties.ts';
 import { slotSkillsStatus, useSkillDefinitions } from './useSkillDefinitions.ts';
 import { orderCharacters } from './listOrder.ts';
@@ -70,11 +71,11 @@ export function App() {
     setParties(next.parties);
     dispatch({ type: 'replace', state: next.team });
   };
-  // 選んでいる編成のスロット from のニケを、ほかの編成 party のスロット index へ移す（いたニケと入れ替える。選んでいる編成は変えない）
-  const moveToParty = (from: number, party: number, index: number) => {
-    const next = moveSlotToParty(parties, team, from, party, index);
+  // 2 つのスロット（どの編成でも）の中身を入れ替える（ニケを編成の行どうしの間で移す。選んでいる編成は変えない）
+  const exchangeSlots = (a: PartySlotRef, b: PartySlotRef) => {
+    const next = exchangePartySlots(parties, team, a, b);
     setParties(next.parties);
-    dispatch({ type: 'replace', state: next.team });
+    if (next.team !== team) dispatch({ type: 'replace', state: next.team });
   };
 
   // ほかの編成のキャラも読む（全編成の合計ダメージ）
@@ -135,6 +136,9 @@ export function App() {
     const action = withRosterFields({ type: 'selectCharacter', index, resourceId }, rosterControls.roster);
     setParties(updateOtherParty(parties, team, party, action));
   };
+  // ほかの編成 party のスロット index を空にする（ニケを一覧へ戻す）
+  const clearPartySlot = (party: number, index: number) =>
+    setParties(updateOtherParty(parties, team, party, { type: 'clearSlot', index }));
   // ほかの編成で使っているニケは、いまの編成に入れない（ソロレイドでは同じニケを 2 つの編成に入れられない）。
   // 一覧と選択肢でも選べなくしてあるが、編成を変える操作はすべてここを通るので、ここで止める
   const dispatchToTeam = useCallback(
@@ -161,7 +165,8 @@ export function App() {
         otherPartyIds,
         selectParty,
         placeInParty,
-        moveToParty,
+        clearPartySlot,
+        exchangeSlots,
         totals,
         totalsPending,
         summarySlots,

@@ -33,7 +33,7 @@ export function SlotDragOverlay({
         // 離したときのアニメーションは、この外側の箱をドラッグ元（カード）の位置へ戻す。外側をカードと同じ大きさにし、
         // 立ち絵をカードの中と同じ位置に置くと、立ち絵が元あった場所へ戻る
         <div
-          className="slot-drag-overlay"
+          className={`slot-drag-overlay ${draggedPortrait.square ? 'slot-drag-overlay-square' : ''}`}
           style={
             {
               width: draggedPortrait.cardWidth,
@@ -57,7 +57,7 @@ export function SlotDragOverlay({
                 <CharacterVisual
                   character={draggedCharacter}
                   size="portrait"
-                  tallImage
+                  tallImage={!draggedPortrait.square}
                   extraBadge={draggedCollection}
                 />
                 <SlotCharName name={draggedCharacter.name.ja} marks={draggedMarks} />

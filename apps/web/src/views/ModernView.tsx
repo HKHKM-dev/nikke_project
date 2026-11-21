@@ -31,7 +31,8 @@ export function ModernView({
   otherPartyIds,
   selectParty,
   placeInParty,
-  moveToParty,
+  clearPartySlot,
+  exchangeSlots,
   totals,
   totalsPending,
   summarySlots,
@@ -82,14 +83,17 @@ export function ModernView({
   // ドラッグを始めたら、一覧のクリックで待っているニケをやめる
   const drag = useSlotDrag({
     team,
+    parties,
     dispatch,
     calc,
     roster,
     placement,
-    // 選んでいない編成の行のスロットに落としたら、一覧のニケはそこへ置き、選んでいる編成のニケはそこへ移す（いたニケと入れ替える）。
-    // どちらも選んでいる編成は変えない（オーナーの指示）。一覧で持ち上げられるのは、どの編成にもいないニケだけ（CharacterTrayItem）
+    // 選んでいない編成の行のスロットに落としたら、一覧のニケはそこへ置き、編成の行のニケはそこへ移す（いたニケと入れ替える）。
+    // 選んでいない編成の行のニケは、一覧へ戻せる。どれも選んでいる編成は変えない（オーナーの指示）。
+    // 一覧で持ち上げられるのは、どの編成にもいないニケだけ（CharacterTrayItem）
     placeInParty,
-    moveToParty,
+    clearPartySlot,
+    exchangeSlots,
     onDragStart: () => setPendingId(null),
   });
 

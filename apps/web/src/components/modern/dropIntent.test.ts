@@ -53,8 +53,33 @@ describe('dropIntentOf', () => {
   it('選んでいない編成のスロットには、一覧のニケを置き、スロットのニケを移す（空のスロット・操作の印は何もしない）', () => {
     const partySlot: OverDragData = { type: 'party-slot', partyIndex: 3, slotIndex: 1 };
     expect(dropIntentOf(trayNikke, partySlot)).toEqual({ kind: 'place-party', character: nikke, party: 3, index: 1 });
-    expect(dropIntentOf(slotNikke(0), partySlot)).toEqual({ kind: 'move-party', from: 0, party: 3, index: 1 });
+    expect(dropIntentOf(slotNikke(0), partySlot)).toEqual({
+      kind: 'exchange',
+      from: { party: null, index: 0 },
+      to: { party: 3, index: 1 },
+    });
     expect(dropIntentOf(emptySlot(0), partySlot)).toEqual({ kind: 'none' });
     expect(dropIntentOf(controller, partySlot)).toEqual({ kind: 'none' });
+  });
+
+  it('選んでいない編成のニケは、スロット・ほかの行のスロットと入れ替え、一覧に離すと外す。同じスロットは何もしない', () => {
+    const partyNikke: ActiveDragData = { type: 'party-character', partyIndex: 2, slotIndex: 4, character: nikke };
+    expect(dropIntentOf(partyNikke, slot(1))).toEqual({
+      kind: 'exchange',
+      from: { party: 2, index: 4 },
+      to: { party: null, index: 1 },
+    });
+    expect(dropIntentOf(partyNikke, { type: 'party-slot', partyIndex: 3, slotIndex: 0 })).toEqual({
+      kind: 'exchange',
+      from: { party: 2, index: 4 },
+      to: { party: 3, index: 0 },
+    });
+    expect(dropIntentOf(partyNikke, { type: 'party-slot', partyIndex: 2, slotIndex: 1 })).toEqual({
+      kind: 'exchange',
+      from: { party: 2, index: 4 },
+      to: { party: 2, index: 1 },
+    });
+    expect(dropIntentOf(partyNikke, { type: 'party-slot', partyIndex: 2, slotIndex: 4 })).toEqual({ kind: 'none' });
+    expect(dropIntentOf(partyNikke, TRAY)).toEqual({ kind: 'unplace-party', party: 2, index: 4 });
   });
 });

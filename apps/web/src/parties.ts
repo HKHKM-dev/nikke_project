@@ -142,29 +142,44 @@ export function updateOtherParty(state: PartiesState, team: TeamState, to: numbe
   return { ...state, parties };
 }
 
+/** 編成 party のスロット index（選んでいる編成も含む） */
+export type PartySlotRef = { party: number; index: number };
+
 /**
- * 選んでいる編成のスロット from を、ほかの編成 to のスロット index と入れ替える（ニケを選んでいない編成の行へ移す。モダン UI）。
- * 育成・スキル・スロットの詳細設定はニケと一緒に動く（スロットの中身ごと入れ替える）。移した先にいたニケは from に来る。
- * 選んでいる編成は変えない。to が選んでいる編成・範囲の外なら何もしない
+ * 2 つのスロット a・b の中身を入れ替える（モダン UI のドラッグで、編成の行どうしの間でニケを移す）。どちらも、選んでいる編成（中身は team）・
+ * ほかの編成のどちらでもよく、同じ編成の中でもよい。育成・スキル・スロットの詳細設定はニケと一緒に動く（スロットの中身ごと入れ替える）。
+ * 選んでいる編成は変えない。同じスロット・範囲の外なら何もしない
  */
-export function moveSlotToParty(
+export function exchangePartySlots(
   state: PartiesState,
   team: TeamState,
-  from: number,
-  to: number,
-  index: number,
+  a: PartySlotRef,
+  b: PartySlotRef,
 ): { parties: PartiesState; team: TeamState } {
-  if (to === state.active || to < 0 || to >= PARTY_COUNT) return { parties: state, team };
-  const target = state.parties[to] ?? partyOf(INITIAL_TEAM_STATE);
-  const moving = team.slots[from];
-  const staying = target.slots[index];
-  if (moving === undefined || staying === undefined) return { parties: state, team };
-  const parties = state.parties.slice();
-  parties[to] = { ...target, slots: target.slots.map((s, i) => (i === index ? moving : s)) };
-  return {
-    parties: { ...state, parties },
-    team: { ...team, slots: team.slots.map((s, i) => (i === from ? staying : s)) },
+  const unchanged = { parties: state, team };
+  if (a.party === b.party && a.index === b.index) return unchanged;
+  const slotsOf = (party: number) =>
+    party === state.active ? team.slots : (state.parties[party] ?? partyOf(INITIAL_TEAM_STATE)).slots;
+  const inRange = (r: PartySlotRef) => r.party >= 0 && r.party < PARTY_COUNT && slotsOf(r.party)[r.index] !== undefined;
+  if (!inRange(a) || !inRange(b)) return unchanged;
+  const slotA = slotsOf(a.party)[a.index]!;
+  const slotB = slotsOf(b.party)[b.index]!;
+  // 書き換えた編成のスロット（a と b が同じ編成なら、続けて書き換える）
+  const changed = new Map<number, SlotState[]>();
+  const put = (r: PartySlotRef, slot: SlotState) => {
+    const slots = changed.get(r.party) ?? slotsOf(r.party).slice();
+    slots[r.index] = slot;
+    changed.set(r.party, slots);
   };
+  put(a, slotB);
+  put(b, slotA);
+  let nextTeam = team;
+  const parties = state.parties.slice();
+  for (const [party, slots] of changed) {
+    if (party === state.active) nextTeam = { ...team, slots };
+    else parties[party] = { ...(state.parties[party] ?? partyOf(INITIAL_TEAM_STATE)), slots };
+  }
+  return { parties: { ...state, parties }, team: nextTeam };
 }
 
 export function serializeParties(state: PartiesState): string {

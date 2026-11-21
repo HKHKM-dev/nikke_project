@@ -2,7 +2,7 @@ import type { BuildMasters, BuildSnapshot, CharacterData, CharacterIndexEntry } 
 import type { Dispatch } from 'react';
 import type { CalcView, NotesSummarySlot, SlotResultView } from '../calcView.ts';
 import type { Shown } from '../compute.ts';
-import type { OtherParties, PartiesState } from '../parties.ts';
+import type { OtherParties, PartiesState, PartySlotRef } from '../parties.ts';
 import type { PartyTotal } from '../partyTotals.ts';
 import type { TeamAction, TeamState } from '../team.ts';
 import type { ListOrderControls } from '../useListOrder.ts';
@@ -27,8 +27,10 @@ export type ViewProps = {
   selectParty: (to: number) => void;
   /** 一覧のニケを、ほかの編成 party のスロット index に置く（選んでいる編成は変えない） */
   placeInParty: (resourceId: number, party: number, index: number) => void;
-  /** 選んでいる編成のスロット from のニケを、ほかの編成 party のスロット index へ移す（いたニケと入れ替える） */
-  moveToParty: (from: number, party: number, index: number) => void;
+  /** ほかの編成 party のスロット index を空にする */
+  clearPartySlot: (party: number, index: number) => void;
+  /** 2 つのスロット（どの編成でも）の中身を入れ替える（選んでいる編成は変えない） */
+  exchangeSlots: (a: PartySlotRef, b: PartySlotRef) => void;
   totals: { parties: PartyTotal[]; total: number | null };
   totalsPending: boolean;
   summarySlots: readonly (NotesSummarySlot | null)[];

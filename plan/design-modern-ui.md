@@ -296,3 +296,4 @@
 - 2026-11-21: オーナーのコメントで、編成の番号のボタンのライトとダークの色の入れ替えを取りやめ、元の色に戻した
 - 2026-11-21: オーナーの指示で、縦長の絵（スロットとニケ一覧の縦長）の名前の後ろの影を、欄の下端から高さ 20px にし、下端を黒 100% にした（四角の絵の名前は別の規則のまま）
 - 2026-11-21: オーナーの指示で、名前の後ろの影の下端を黒 85% にし、四角の絵（ニケ一覧の四角・ほかの編成の行）の名前も同じ影（下端から 20px）にした
+- 2026-11-21: オーナーの指示で、選んでいない編成の行のニケもドラッグで持ち上げられるようにした（PartyPreviewRow の useDraggable。dropIntent の party-character）。ほかのスロット（選んでいる編成・ほかの行・同じ行）へ落とすと入れ替え（exchange。parties.ts の exchangePartySlots で、moveSlotToParty を置き換えた）、一覧へ落とすと外す（unplace-party）。どれも選んでいる編成は変えない。同じ行の中で離した後に行のボタンのクリックが届くので、離した直後のクリックを 1 回止める（useSlotDrag の suppressNextClick）。編成の行どうしの移動・一覧から選んでいない行へ置く・選んでいない行から一覧へ外すときにも、絵が動くアニメーションを付けた（useSlotPlacement の queueArrivalAt と dropAnimation の partyCardAt。どの行のカードにも flyIntoSlot・flyToTray を使う）

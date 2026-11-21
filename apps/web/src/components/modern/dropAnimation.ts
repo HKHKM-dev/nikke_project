@@ -27,6 +27,11 @@ export const slotCardAt = (index: number | null) =>
         index
       ] ?? null);
 
+/** 編成 party（0 から。選んでいる編成も）の行の、スロット index のカード（無ければ null）。行は編成の番号の順に並ぶ（ModernView） */
+export const partyCardAt = (party: number, index: number) =>
+  document.querySelectorAll('.modern-party-row')[party]?.querySelectorAll<HTMLElement>('.modern-slot-card')[index] ??
+  null;
+
 /** 離したときのアニメーション。行き先が決まらなかったときだけ、持ち上げた絵をドラッグ元へ戻す */
 export const DROP_ANIMATION: DropAnimation = {
   // 長さは flight.ts の動きと同じ（空のスロットの枠を透明にする fadeArrivalFace も、この長さで動く）
