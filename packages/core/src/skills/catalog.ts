@@ -61,7 +61,8 @@ export type CatalogEffect = QuoteReading & {
   side: CatalogSide;
   quote: string;
   head: string;
-  subHead: string;
+  /** 対象を決めた文（行の頭・小項目の頭・項目の後ろの「の対象：…」・句の前の文のどれか） */
+  targetText: string;
 };
 
 type Rules = readonly (readonly [RegExp, string])[];
@@ -476,6 +477,23 @@ function normTargets(t: string[]): string[] {
   return out;
 }
 
+/** 条件の節の終わり（「〜の場合、」「〜時、」「〜なら、」など） */
+const CONDITION_CLAUSE_END = /(場合|時|時のみ|時に限り|なら|なければ|限り)$/;
+
+/**
+ * 文の対象と、対象を決めた文。条件の節の後ろ（最後の「、」の後ろ）に対象があれば、そこだけを読む
+ * （条件の節の「〈状態〉状態の味方が…」を対象に数えない）
+ */
+function targetsIn(text: string): { targets: string[]; text: string } {
+  const ci = text.lastIndexOf('、');
+  if (ci >= 0 && CONDITION_CLAUSE_END.test(text.slice(0, ci))) {
+    const clause = text.slice(ci + 1);
+    const targets = normTargets(tagsOf(TARGETS, clause));
+    if (targets.length > 0) return { targets, text: clause };
+  }
+  return { targets: normTargets(tagsOf(TARGETS, text)), text };
+}
+
 function sideOf(targets: readonly string[]): CatalogSide {
   if (targets.length === 0) return 'unknown';
   if (targets.every((t) => t.startsWith('enemy'))) return 'enemy';
@@ -545,19 +563,24 @@ export function classifyCharacters(
           const subTargets = normTargets(tagsOf(TARGETS, subHead));
           const subTriggers = tagsOf(TRIGGERS, subHead);
           let targets = subTargets.length > 0 ? subTargets : lineTargets;
+          let targetText = subTargets.length > 0 ? subHead : head;
           // 「効果N の対象：敵全体」のように、対象が項目の後ろに書かれている形
           const trailing = /の対象：(.+)$/.exec(part)?.[1];
           if (trailing !== undefined) {
-            const t = normTargets(tagsOf(TARGETS, `${trailing.replace(/（.*$/, '')}に`));
-            if (t.length > 0) targets = t;
+            const text = `${trailing.replace(/（.*$/, '')}に`;
+            const t = normTargets(tagsOf(TARGETS, text));
+            if (t.length > 0) {
+              targets = t;
+              targetText = text;
+            }
           }
           let prevEnd = q;
           for (const m of part.matchAll(/「([^」]*)」/g)) {
             // 項目の途中で対象が変わる形（「自分に：「…」命中した敵に：「…」」）
             const between = part.slice(prevEnd, m.index);
             prevEnd = m.index + m[0].length;
-            const midTargets = normTargets(tagsOf(TARGETS, between));
-            if (between.length > 0 && midTargets.length > 0) targets = midTargets;
+            const mid = targetsIn(between);
+            if (between.length > 0 && mid.targets.length > 0) ({ targets, text: targetText } = mid);
             const quote = m[1] ?? '';
             const reading = classifyQuote(quote);
             if (reading.kind === 'meta:weaponProp') continue;
@@ -581,7 +604,7 @@ export function classifyCharacters(
               side: sideOf(targets),
               quote,
               head,
-              subHead,
+              targetText,
             };
             effects.push(rec);
             last = rec;

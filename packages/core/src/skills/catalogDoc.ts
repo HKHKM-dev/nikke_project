@@ -631,11 +631,11 @@ function condKeys(e: Pick<CatalogLine, 'conditions' | 'head'>): string[] {
   return e.conditions.map((c) => (c === 'selfState' && /自分が[^、]*増加状態/.test(e.head) ? 'selfBuffed' : c));
 }
 
-/** 対象: 絞った味方全体を絞り方で分ける */
+/** 対象: 絞った味方全体を、対象を決めた文から絞り方で分ける */
 function tgtKeys(e: CatalogEffect): string[] {
   return e.targets.flatMap((t) => {
     if (t !== 'ally:alliesFiltered') return [t];
-    const h = /味方/.test(e.subHead) ? e.subHead : e.head;
+    const h = e.targetText;
     const out: string[] = [];
     if (/を所持する/.test(h)) out.push('ally:filter:weapon');
     if (/コードの味方/.test(h)) out.push('ally:filter:element');
