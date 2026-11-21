@@ -183,7 +183,6 @@ export function ModernSlotCard({
       <div className="modern-slot-damage-section">
         <div className="modern-slot-damage-row">
           <span className="modern-slot-damage-value">{formatDamage(currentDamage)}</span>
-          {damagePercent > 0 && <span className="modern-slot-damage-percent">{damagePercent}%</span>}
         </div>
         <div className="modern-slot-damage-bar-track">
           <div

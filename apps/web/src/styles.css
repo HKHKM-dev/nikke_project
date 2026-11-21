@@ -1370,10 +1370,6 @@ svg.roster-revert-icon {
   font-weight: bold;
   font-variant-numeric: tabular-nums;
 }
-.modern-slot-damage-percent {
-  font-size: 0.75em;
-  opacity: 0.7;
-}
 .modern-slot-damage-bar-track {
   height: 4px;
   background: color-mix(in srgb, var(--app-fg) 12%, transparent);
