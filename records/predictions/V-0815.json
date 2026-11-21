@@ -1,0 +1,177 @@
+{
+  "verification": "V-0815",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 301
+    },
+    {
+      "rid": 220,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S1 は命中 30 回ごとに遅れの無い 1 ヒットの追加ダメージと、次のフレームからの攻撃力▲。バーストの 1 発も命中に数える。S2 は周期が分からないので定義しない。バーストはチャージ 5 秒・1 発の武器で、待ちはいまの既定、当たりは基礎の AR）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "a-s1-shots",
+      "model": "sim",
+      "metric": "skillHitShotIndices",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "count": 6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": false,
+        "noFireSlots": [1, 2]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: S1 の追加ダメージの最初の 6 回が、何発目で出たか（命中 30 回ごと）"
+    },
+    {
+      "id": "a-s1-first",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill1"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": false,
+        "noFireSlots": [1, 2]
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 A: 1 回目の S1 の追加ダメージ（会心なし。同じ回の攻撃力▲は乗らない）"
+    },
+    {
+      "id": "a-s1-second",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false,
+        "skill": "skill1"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": false,
+        "noFireSlots": [1, 2]
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 A: 2 回目の S1 の追加ダメージ（会心なし。1 回目の攻撃力▲が乗る）"
+    },
+    {
+      "id": "b-s1-shots",
+      "model": "sim",
+      "metric": "skillHitShotIndices",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "count": 6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: S1 の追加ダメージの最初の 6 回の発の番号（バーストの 1 発も 1 発に数える。1 回目のバーストの後の位置で、1 発を命中に数えるかを見る）"
+    },
+    {
+      "id": "b-wc-from-fb",
+      "model": "sim",
+      "metric": "fullBurstToWeaponChangeShot",
+      "args": {
+        "slot": 3,
+        "n": "0,1,2,3"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "撮影 B: フルバーストの窓の始まり（III のタイマーの 00.00）から、変更後の武器の 1 発までの動画のフレーム（チャージ 5 秒を含む待ち）"
+    },
+    {
+      "id": "b-wc-hit",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 91,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 B: 1 回目のバーストの変更後の武器の 1 発（91 発目）の、胴体・会心なし・距離ボーナスなしの値（最終攻撃力の 499.5% × フルチャージ 1000%。S1 の攻撃力▲はチャージの間に切れて乗らない）"
+    },
+    {
+      "id": "b-mags",
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 3,
+        "count": 8
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "撮影 B: AR のマガジンの発の数。バーストの 1 発の後、AR は満タン（60 発）に込め直した状態で戻る"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "2dd92e6f03a8c13458f66f25eb24cdbb3c4b73e0",
+    "values": {
+      "H1": {
+        "a-s1-shots": [31, 61, 91, 121, 151, 181],
+        "a-s1-first": 99851.832,
+        "a-s1-second": 108126.036,
+        "b-s1-shots": [31, 61, 91, 121, 151, 181],
+        "b-wc-from-fb": [322, 322, 322, 322],
+        "b-wc-hit": 9035505.45,
+        "b-mags": [60, 31, 60, 60, 104, 60, 29, 60]
+      }
+    }
+  }
+}

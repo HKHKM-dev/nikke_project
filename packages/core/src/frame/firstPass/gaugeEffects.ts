@@ -275,12 +275,15 @@ export function createGaugeEffects({
       : resolveSkillCooldownDowns(slot.definition, slot.character, slot.levels),
   );
   const cooldownTimerFires: FirstPassResult['cooldownTimerFires'] = [];
+  // 枠ごとの、クールタイムの印のある周期の発動を待たせる終わり（このフレームより前は発動しない）。撃ち切りで終わる使用武器の変更の
+  // 最後の弾丸で、射手（firstPass/shooters.ts）が書く（WeaponChangeEffect.returnCooldownFrames。plan/design-snow-white.md 8.3 節の論点 7）
+  const cooldownHoldUntil: number[] = slots.map(() => 0);
   const cooldownTrackers: {
     slotIndex: number;
     skill: SkillSlot;
     /** そのスロットを縮める状態と、その縮めた周期（フレーム） */
     downs: { state: NamedStateId; short: number }[];
-    tick: (f: number, started: number | undefined, held: () => number | undefined, keep?: number) => boolean;
+    tick: ReturnType<typeof cooldownTimer>;
     /** 同じスロットの印のある burstGaugeHit の遅れ（ループの前の予約の代わりに、発火で予約する） */
     gaugeDelays: number[];
     /** そのスロットを即時に縮める効果（きっかけの射撃の数え・残りに掛ける割合） */
@@ -428,7 +431,7 @@ export function createGaugeEffects({
           throw new RangeError(`two or more states shorten the cooldown of ${t.skill} at once (not implemented)`);
         return on[0]?.short;
       };
-      if (!t.tick(f, started, held, cutAt(t))) continue;
+      if (!t.tick(f, started, held, cutAt(t), f < cooldownHoldUntil[i]!)) continue;
       t.fires.push(f);
       if (t.skill !== 'burst') (fired ??= []).push({ slotIndex: i, skill: t.skill });
       const energy = hitGaugeEnergy(i);
@@ -582,6 +585,7 @@ export function createGaugeEffects({
     allyGauges,
     damageEffects,
     addShotGauges,
+    cooldownHoldUntil,
     cooldownTimerFires,
     countCooldownTimers,
     skillFiredBefore,

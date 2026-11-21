@@ -61,6 +61,7 @@
 | 「スタック量増減効果無効」 | 付与の `stackImmutable: true` | ナユタの記憶吸収 | [design-nayuta.md](design-nayuta.md) 2.5 節 |
 | 「〈名前〉：使用武器変更」（自分が〈名前〉状態なら） | `weaponChange` の `state` と、読む側の `condition.selfState` | — | 同上 |
 | チャージしない武器から、チャージ時間 N 秒のチャージ武器への使用武器変更 | `weaponChange` の `chargeTimeSeconds`（基礎の武器がチャージしなくても書ける）と、最初の発の `firstShotDelayFrames`・的の表の `coreHitRate.weaponChanges`・`bulletHitRate.weaponChanges` の行 | ナユタの記憶燃焼 | 同 2.6 節 |
+| 使用武器変更の「最大装弾数：N 発」で撃ち切って戻った後の、基礎の武器の 1 発目までの待ち（説明文に無く、録画で読む） | `weaponChange` の `returnFirstShotFrames`（`maxAmmoRef` の変更だけ）と、その後の同じ枠のクールタイムの周期の発動の待ち `returnCooldownFrames` | スノーホワイトのバースト | [design-snow-white.md](design-snow-white.md) 8.1 節の論点 4・8.3 節の論点 7 |
 | 「チャージ時間：N 秒固定」（使用武器変更の武器） | `weaponChange` の `chargeTimeFixed: true` | ナユタの記憶燃焼 | 同 2.4 節 |
 | 使用武器変更の「チャージ時間：N 秒」（N が説明文の値） | `weaponChange` の `chargeTimeRef` | マクスウェル：オーディナリーメカニックのバースト | [design-maxwell-om.md](design-maxwell-om.md) 2.1 節 |
 | 〈状態〉の段階別の効果・各段階の効果のみ適用（使用武器変更のチャージ時間） | 段階ごとの `weaponChange` と、条件 `selfState` の `stacks`・`stacksBelow`（N スタック未満） | マクスウェル：オーディナリーメカニックのバーストの過電流 | 同 2.2 節 |

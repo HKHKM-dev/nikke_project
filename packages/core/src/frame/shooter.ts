@@ -398,20 +398,24 @@ export function resumeAfterLastShotRefill(
  */
 export const WEAPON_CHANGE_RESTORE = 'refill' as const;
 
-/** 使用武器の変更が終わった枠の基礎の武器の状態を戻す（state を書き換える） */
+/**
+ * 使用武器の変更が終わった枠の基礎の武器の状態を戻す（state を書き換える）。wait を渡すと、新しいマガジンの 1 発目を、このフレームから
+ * wait フレーム後に撃つ（撃ち切りで戻った後の待ち。WeaponChangeEffect.returnFirstShotFrames。plan/design-snow-white.md 8.1 節の論点 4）
+ */
 export function resumeShooter(
   state: ShooterState,
   shot: ShotParams,
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
+  wait?: number,
 ): void {
-  // リロード中・込め終えて 1 発目を待っていた枠は、込め終えたマガジンの 1 発目から（スピンアップも最初から）
-  if (state.phase !== 'ready') startMagazine(state);
+  // リロード中・込め終えて 1 発目を待っていた枠と、待ちを渡した枠は、込め終えたマガジンの 1 発目から（スピンアップも最初から）
+  if (state.phase !== 'ready' || wait !== undefined) startMagazine(state);
   delete state.reloadLead;
   delete state.chargeElapsed;
   state.ammo = params.maxAmmo;
   state.lastShot = false;
-  state.wait = reloadFirstShotFrames(shot, model, params);
+  state.wait = wait ?? reloadFirstShotFrames(shot, model, params);
 }
 
 /**

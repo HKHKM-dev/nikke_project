@@ -3,7 +3,7 @@
 import { stunSlot } from '../../burst/controller.ts';
 import { partialGaugeRatio } from '../../burst/dynamic.ts';
 import { effectFrameOf, hexagonFrameOf } from '../../burst/schedule.ts';
-import { capCritRate, ZERO_BUFFS } from '../../skills/buffs.ts';
+import { capCritRate, ZERO_BUFFS, type ChangedWeapon } from '../../skills/buffs.ts';
 import { isChargeWeapon, lastBulletShotsOf } from '../../weapons.ts';
 import { firingParams, isZeroFiring, type FiringParams } from '../firing.ts';
 import {
@@ -98,6 +98,7 @@ export function createShooters({
   chargeGaugeOf,
   chargeWatches,
   controlledSlot,
+  cooldownHoldUntil,
   controller,
   energyAt,
   gaugeHitsOf,
@@ -125,6 +126,8 @@ export function createShooters({
   /** 使用武器の変更中の射手の状態と、その武器の識別子（変更していなければ null） */
   const changedShooters: (ShooterState | null)[] = slots.map(() => null);
   const activeWeapon: (string | null)[] = slots.map(() => null);
+  // 枠がいま持っている変更後の武器（戻る時に、戻りの待ちの欄を読む）
+  const heldWeapon: (ChangedWeapon | null)[] = slots.map(() => null);
   const shotCounts = slots.map(() => 0);
   /**
    * フレーム f に始まった枠 i の使用武器変更（識別子
@@ -166,6 +169,8 @@ export function createShooters({
       const weaponId = params.weapon?.id ?? null;
       if (weaponId !== activeWeapon[i]) {
         activeWeapon[i] = weaponId;
+        const ended = heldWeapon[i];
+        heldWeapon[i] = params.weapon;
         if (params.weapon !== null) {
           changedShooters[i] = weaponChangeShooter(params.weapon.shot, model, params);
           const firstHit = weaponChangeFirstHitAt(i, params.weapon.id, f);
@@ -182,7 +187,14 @@ export function createShooters({
           }
         } else {
           changedShooters[i] = null;
-          resumeShooter(shooters[i]!, slot.character.shot, model, params);
+          // 撃ち切りで戻った後の待ち（録画で読む即値。plan/design-snow-white.md 8.1 節の論点 4）は、変更後の武器の最後の弾丸
+          // （枠の最後の発）から数える（戻るフレームは最後の弾丸の次のフレームより遅れることがある）
+          const lastShot = logs[i]?.frames.at(-1);
+          const wait =
+            ended?.returnFirstShotFrames !== undefined && lastShot !== undefined
+              ? Math.max(0, lastShot + ended.returnFirstShotFrames - f)
+              : undefined;
+          resumeShooter(shooters[i]!, slot.character.shot, model, params, wait);
         }
       }
       const state = params.weapon !== null ? changedShooters[i]! : shooters[i]!;
@@ -234,6 +246,10 @@ export function createShooters({
           ? chargeProgressFrames(state, params, model)
           : null;
       const fired = stepShooter(state, shot, model, params, slotBlocked);
+      // 撃ち切りで終わる変更の最後の弾丸から、この枠のクールタイムの周期の発動を待たせる（plan/design-snow-white.md 8.3 節の論点 7）
+      if (fired && params.weapon?.returnCooldownFrames !== undefined && state.ammo === 0) {
+        cooldownHoldUntil[i] = f + params.weapon.returnCooldownFrames;
+      }
       const log = logs[i]!;
       if (chargeWatches[i] !== null) {
         const shotNow = fired || partial !== null;

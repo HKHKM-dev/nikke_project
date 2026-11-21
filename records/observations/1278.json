@@ -1,0 +1,181 @@
+[
+  {
+    "id": "1278-01",
+    "recording": "1278",
+    "use": "compare",
+    "kind": "hit",
+    "value": 99852,
+    "unit": "ダメージ",
+    "description": "1 回目の S1 の追加ダメージ（会心なし。▲なし）。30 発目と同じフレーム（動画 938）の増分から、その発の AR の 1 発を引いた値。同じ回の攻撃力▲は乗らず、次の発から乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "増分を、スノーホワイトの AR の 1 発（コア・会心・距離ボーナス・S1 の攻撃力▲の有無）と、S1（82.8%）・S2（144.73%）の 1 ヒット（会心・▲の有無）の和の格子に当てた（scratchpad の使い捨ての下読み）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false,
+        "skill": "skill1"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0815",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1278-02",
+    "recording": "1278",
+    "use": "compare",
+    "kind": "hit",
+    "value": 108126,
+    "unit": "ダメージ",
+    "description": "2 回目の S1 の追加ダメージ（会心なし。1 回目の攻撃力▲が乗る。動画 1085）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "増分を、スノーホワイトの AR の 1 発（コア・会心・距離ボーナス・S1 の攻撃力▲の有無）と、S1（82.8%）・S2（144.73%）の 1 ヒット（会心・▲の有無）の和の格子に当てた（scratchpad の使い捨ての下読み）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 1,
+        "crit": false,
+        "skill": "skill1"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0815",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1278-03",
+    "recording": "1278",
+    "use": "compare",
+    "kind": "count",
+    "value": [30, 60, 90, 120, 150, 180],
+    "unit": "発",
+    "description": "S1 の追加ダメージの最初の 6 回が出た発の番号（その発までに撃った発の数）。どれも 30 の倍数の発と同じフレーム（外れた発は無い）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "増分を、スノーホワイトの AR の 1 発（コア・会心・距離ボーナス・S1 の攻撃力▲の有無）と、S1（82.8%）・S2（144.73%）の 1 ヒット（会心・▲の有無）の和の格子に当てた（scratchpad の使い捨ての下読み）。HUD の読めなかったフレームをまたぐ増分は無い区間"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitShotIndices",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "count": 6
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0815",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1278-04",
+    "recording": "1278",
+    "use": "compare",
+    "kind": "hit",
+    "value": 188999,
+    "unit": "ダメージ",
+    "description": "1 回目の S2 の倍率ダメージ（会心なし。S1 の攻撃力▲が乗る）。1 ヒット（分かれない）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "増分を、スノーホワイトの AR の 1 発（コア・会心・距離ボーナス・S1 の攻撃力▲の有無）と、S1（82.8%）・S2（144.73%）の 1 ヒット（会心・▲の有無）の和の格子に当てた（scratchpad の使い捨ての下読み）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0815",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1278-05",
+    "recording": "1278",
+    "use": "compare",
+    "kind": "timing",
+    "value": [917, 1800, 2683, 3566, 4449, 5332, 6215, 7098, 7982, 8864, 9748],
+    "unit": "f",
+    "description": "S2 の倍率ダメージの 11 回のヒットの、戦闘開始（timer.ts --mode changes の +86f の変わり目。動画 783。C-0078）からの動画のフレーム。883 ティック（15 秒）ごとで、ヒットは発動（周期）の 34f 後",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と tools/captures/timer.ts --mode changes",
+      "note": "S2 は 144.73% の 1 ヒットの格子（会心・▲の有無）だけに合う増分。左の「スキル2」の帯（banner.ts --mode white）からヒットまでは 6 回とも 28f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 1,
+        "event": "skillHit",
+        "skill": "skill2",
+        "count": 11
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0815",
+    "readAt": "2026-11-21"
+  }
+]

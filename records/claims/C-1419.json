@@ -1,0 +1,20 @@
+{
+  "id": "C-1419",
+  "text": "スノーホワイトのバーストの使用武器変更は、AR をチャージ 5 秒の押下チャージ型の武器に替え、フルバーストの窓の始まり（III のタイマーの 00.00）の 323〜324f 後（動画）に 1 発（最終攻撃力 × 499.5% × フルチャージ 1000%）を撃って AR に戻る。1 発はコアに当たり、距離ボーナスは基礎の AR の帯どおりで、S1 の攻撃力▲（チャージの間に切れる）は乗らない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1279-01`・`1279-02`・`1279-04`・`1291-01`・`1291-03`。V-0815",
+  "model": "data/skills/220.json、data/enemies.json の coreHitRate.weaponChanges・bulletHitRate.weaponChanges の 220:burst の行",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/220.json の burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1279",
+      "role": "値を合わせた"
+    }
+  ]
+}
