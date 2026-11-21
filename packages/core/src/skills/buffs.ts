@@ -28,6 +28,8 @@ export type ChangedWeapon = {
   firstShotAfterSwapFrames?: number;
   /** 撃ち切りの最後の弾丸から基礎の武器の最初の発まで（WeaponChangeEffect.returnFirstShotFrames） */
   returnFirstShotFrames?: number;
+  /** 撃ち切りの最後の弾丸から、同じ枠のクールタイムの周期の発動の待ちが明けるまで（WeaponChangeEffect.returnCooldownFrames） */
+  returnCooldownFrames?: number;
   /** 変更後の武器は撃っても残弾を減らさない（WeaponChangeEffect.infiniteAmmo） */
   infiniteAmmo?: true;
   /** 変更後の武器の解放の長さ（フレーム。端数あり。WeaponChangeEffect.chargeReleaseSeconds） */

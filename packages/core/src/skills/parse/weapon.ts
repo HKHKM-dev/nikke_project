@@ -44,6 +44,7 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
       'firstShotDelayFrames',
       'firstShotAfterSwapFrames',
       'returnFirstShotFrames',
+      'returnCooldownFrames',
       'infiniteAmmo',
       'state',
       'condition',
@@ -154,6 +155,11 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
   if (v.returnFirstShotFrames !== undefined) {
     if (!untilEmpty) fail(`${path}.returnFirstShotFrames`, 'returnFirstShotFrames needs maxAmmoRef');
     effect.returnFirstShotFrames = parsePositiveInt(v.returnFirstShotFrames, `${path}.returnFirstShotFrames`);
+  }
+  // 撃ち切りの後に、同じ枠のクールタイムの周期の発動を待たせる長さ（plan/design-snow-white.md 8.3 節の論点 7）
+  if (v.returnCooldownFrames !== undefined) {
+    if (!untilEmpty) fail(`${path}.returnCooldownFrames`, 'returnCooldownFrames needs maxAmmoRef');
+    effect.returnCooldownFrames = parsePositiveInt(v.returnCooldownFrames, `${path}.returnCooldownFrames`);
   }
 
   if (v.infiniteAmmo !== undefined) {

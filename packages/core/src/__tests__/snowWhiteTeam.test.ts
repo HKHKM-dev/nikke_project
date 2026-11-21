@@ -17,8 +17,9 @@ const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 /** S2 の周期（15 秒）と、発動からヒットまで（V-0815） */
 const S2_PERIOD = gameSecondsToFirstFrame(15);
 const S2_DELAY = 34;
-/** バーストの 1 発から AR の最初の発まで（returnFirstShotFrames） */
+/** バーストの 1 発から AR の最初の発まで（returnFirstShotFrames）と、S2 の発動の待ちが明けるまで（returnCooldownFrames） */
 const RETURN_WAIT = 117;
+const COOLDOWN_WAIT = 106;
 
 describe('語彙の検証（returnFirstShotFrames）', () => {
   const withBurst = (patch: Record<string, unknown>) => {
@@ -38,6 +39,9 @@ describe('語彙の検証（returnFirstShotFrames）', () => {
       /returnFirstShotFrames needs maxAmmoRef/,
     );
     expect(() => parseSkillDefinition(withBurst({ returnFirstShotFrames: 0 }))).toThrow(/positive integer/);
+    expect(() =>
+      parseSkillDefinition(withBurst({ maxAmmoRef: undefined, returnFirstShotFrames: undefined, durationSeconds: 10 })),
+    ).toThrow(/returnCooldownFrames needs maxAmmoRef/);
   });
 });
 
@@ -78,16 +82,28 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, slot: S }) =
     for (const w of own('skill1', 'attack')) expect(s1Shots).toContain(w.start - 1);
   });
 
-  it('fires S2 every 15 s from the start of battle and lands 34 frames later', () => {
-    const expected = Array.from({ length: 20 }, (_, k) => (k + 1) * S2_PERIOD + S2_DELAY).filter(
-      (f) => f < plan.frames,
-    );
-    expect(hitsOf('skill2')).toEqual(expected);
+  /**
+   * S2 の発動: 15 秒ごと。バーストの 1 発から 106 フレームの間に予定が来たら、明けたフレームに発動し、そこから数え直す
+   * （チャージの間は待たない）
+   */
+  const s2Fired = (() => {
+    const held = (f: number) => [...changed].some((s) => s <= f && f < s + COOLDOWN_WAIT);
+    const out: number[] = [];
+    for (let next = S2_PERIOD, f = 1; f < plan.frames; f++) {
+      if (f < next || held(f)) continue;
+      out.push(f);
+      next = f + S2_PERIOD;
+    }
+    return out;
+  })();
+
+  it('fires S2 every 15 s, waits out the return after the Burst shot, and lands 34 frames later', () => {
+    expect(hitsOf('skill2')).toEqual(s2Fired.map((f) => f + S2_DELAY).filter((f) => f < plan.frames));
+    if (S !== 0) expect(s2Fired.some((f) => f % S2_PERIOD !== 0)).toBe(true);
   });
 
   it('gives the S2 critical rate only to activations inside a Full Burst window', () => {
-    const fired = Array.from({ length: 20 }, (_, k) => (k + 1) * S2_PERIOD).filter((f) => f < plan.frames);
-    const inWindow = fired.filter((f) => plan.schedule !== null && isInFullBurst(plan.schedule, f));
+    const inWindow = s2Fired.filter((f) => plan.schedule !== null && isInFullBurst(plan.schedule, f));
     expect(own('skill2', 'critRate').map((w) => w.start - 1)).toEqual(inWindow);
   });
 

@@ -48,8 +48,8 @@
           "delayFrames": 34,
           "valueBeforeFire": true,
           "assumes": {
-            "ja": "説明文にきっかけの無いクールタイムごとのアクティブ。戦闘開始から 15 秒ごと（撃たない間も）に発動し、発動の 34f 後に、攻撃範囲内の敵（敵 1 体の前提で的）に 1 ヒット。値は発動の直前のもの。ゲージを溜めるかは確かめていない（1 ヒットで見分けられない）。自分の使用武器の変更とその戻りの間に発動が待たされるか（撮影 B の 1 回）は扱っていない",
-            "en": "A cooldown-based active skill with no trigger in the description. It activates every 15 s from the start of battle (even when not firing) and lands one hit on enemies within attack range (the range target, as there is one enemy) 34 frames later, valued just before the activation. Whether it charges the Burst gauge is not verified (one hit cannot tell). A possible wait of the activation during her own weapon change and its return (seen once in recording B) is not modelled"
+            "ja": "説明文にきっかけの無いクールタイムごとのアクティブ。戦闘開始から 15 秒ごと（撃たない間も）に発動し、発動の 34f 後に、攻撃範囲内の敵（敵 1 体の前提で的）に 1 ヒット。値は発動の直前のもの。バーストの 1 発の後の待ち（burst の returnCooldownFrames）の間に予定が来たら、明けたフレームに発動し、そこから数え直す。ゲージを溜めるかは確かめていない（1 ヒットで見分けられない）",
+            "en": "A cooldown-based active skill with no trigger in the description. It activates every 15 s from the start of battle (even when not firing) and lands one hit on enemies within attack range (the range target, as there is one enemy) 34 frames later, valued just before the activation. If an activation falls in the wait after the Burst shot (returnCooldownFrames of the Burst), it activates when the wait ends and the period restarts from there. Whether it charges the Burst gauge is not verified (one hit cannot tell)"
           }
         },
         {
@@ -83,11 +83,12 @@
           "maxAmmoRef": 2,
           "pierce": true,
           "assumes": {
-            "ja": "AR を押下チャージ型のチャージ武器（5 秒）に替え、1 発撃つと AR に戻る（持続と解除は説明文に無く、撃つまで続く）。1 発はフルバーストの窓の始まりの 324f 後（動画。待ち 307）で、コアに当たり（的の表の 220:burst の行）、距離ボーナスは基礎の AR の帯どおり。戻った AR は満タンで、1 発の 117f 後に撃ち始める。チャージの途中で戦闘が終わった時の発は扱っていない（課題 2-68）。貫通特化は、貫通ダメージ▲を読む側のいない編成で撮ったので確かめていない",
-            "en": "Turns the AR into a press-and-hold charge weapon (5 s) and returns to the AR after one shot (no duration or end condition in the description; it lasts until the shot). The shot comes 324 video frames after the Full Burst window starts (wait 307), hits the core (the 220:burst rows of the target table), and gets the range bonus of the base AR band. The AR comes back full and fires 117 frames after the shot. A shot at the end of battle during the charge is not handled (backlog 2-68). Pierce is not verified, as it was recorded without an ally that reads Pierce Damage"
+            "ja": "AR を押下チャージ型のチャージ武器（5 秒）に替え、1 発撃つと AR に戻る（持続と解除は説明文に無く、撃つまで続く）。1 発はフルバーストの窓の始まりの 324f 後（動画。待ち 307）で、コアに当たり（的の表の 220:burst の行）、距離ボーナスは基礎の AR の帯どおり。戻った AR は満タンで、1 発の 117f 後に撃ち始める。1 発の後 106f の間は、S2 の発動が待たされる（チャージの間は待たない）。チャージの途中で戦闘が終わった時の発は扱っていない（課題 2-68）。貫通特化は、貫通ダメージ▲を読む側のいない編成で撮ったので確かめていない",
+            "en": "Turns the AR into a press-and-hold charge weapon (5 s) and returns to the AR after one shot (no duration or end condition in the description; it lasts until the shot). The shot comes 324 video frames after the Full Burst window starts (wait 307), hits the core (the 220:burst rows of the target table), and gets the range bonus of the base AR band. The AR comes back full and fires 117 frames after the shot. For 106 frames after the shot, Skill 2 activations wait (not during the charge). A shot at the end of battle during the charge is not handled (backlog 2-68). Pierce is not verified, as it was recorded without an ally that reads Pierce Damage"
           },
           "firstShotDelayFrames": 307,
-          "returnFirstShotFrames": 117
+          "returnFirstShotFrames": 117,
+          "returnCooldownFrames": 106
         }
       ]
     }

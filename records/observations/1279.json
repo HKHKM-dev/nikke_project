@@ -80,7 +80,7 @@
     "description": "バーストの変更後の武器の 1 発から、AR の 1 発目までの動画のフレーム（1〜4 回目）。戻った後の AR は満タン（次のリロードまで約 60 発）",
     "method": {
       "tool": "recipe:hud-jumps@3 の増分",
-      "note": "増分を、スノーホワイトの AR の 1 発・S1・S2・バーストの 1 発（最終攻撃力 × 499.5% × 1000%）と、ココアの SR の 1 発・ソルジャーF.A. の SG の当たったペレットの和の格子（会心・コア・距離ボーナス・フルバースト補正・S1 の攻撃力▲の有無）に当てた（scratchpad の使い捨ての下読み）。フルバーストの窓は recipe:burst-panel の 00.00 と終わり。AR の 1 発目は 1816・4226・6700・9206（3 回目の 6692 の増分は AR の刻みに乗らず、ココアの発とみた）"
+      "note": "増分を、スノーホワイトの AR の 1 発・S1・S2・バーストの 1 発（最終攻撃力 × 499.5% × 1000%）と、ココアの SR の 1 発・ソルジャーF.A. の SG の当たったペレットの和の格子（会心・コア・距離ボーナス・フルバースト補正・S1 の攻撃力▲の有無）に当てた（scratchpad の使い捨ての下読み）。フルバーストの窓は recipe:burst-panel の 00.00 と終わり。AR の 1 発目は 1816・4226・6700・9206（3 回目の 6692 の増分は AR の刻みに乗らず、ココアの発とみた）。許容は 2 本の 8 回の読みの幅（116〜123f）から"
     },
     "compare": {
       "model": "sim",
@@ -90,7 +90,7 @@
         "n": "0,1,2,3"
       },
       "tolerance": {
-        "abs": 5
+        "abs": 6
       },
       "setup": {
         "enemy": "range-bigarms-fire",
@@ -204,6 +204,42 @@
     "method": {
       "tool": "recipe:hud-jumps@3 の増分",
       "note": "増分を、スノーホワイトの AR の 1 発・S1・S2・バーストの 1 発（最終攻撃力 × 499.5% × 1000%）と、ココアの SR の 1 発・ソルジャーF.A. の SG の当たったペレットの和の格子（会心・コア・距離ボーナス・フルバースト補正・S1 の攻撃力▲の有無）に当てた（scratchpad の使い捨ての下読み）。フルバーストの窓は recipe:burst-panel の 00.00 と終わり"
+    },
+    "source": "V-0815",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1279-09",
+    "recording": "1279",
+    "use": "compare",
+    "kind": "timing",
+    "value": [1030, 1916, 2799, 3706, 4591, 5497, 6381, 7266, 8173, 9057, 9942],
+    "unit": "f",
+    "description": "S2 の倍率ダメージのヒットの、戦闘開始（動画 808。timer.ts --mode changes）からの動画のフレーム（最初の 11 回）。1 回目の発動はバーストの 1 発の後の待ちで遅れ、その後は 883 ティックおき",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と tools/captures/timer.ts --mode changes",
+      "note": "S2 は 144.73% の 1 ヒットの格子（会心・▲・フルバースト補正の有無）だけに合う増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "skillHit",
+        "skill": "skill2",
+        "count": 11
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
     },
     "source": "V-0815",
     "readAt": "2026-11-21"
