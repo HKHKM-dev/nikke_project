@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 139・効果 1021（根拠あり 999）・notes 348（根拠あり 143）
+件数: キャラ 140・効果 1028（根拠あり 1006）・notes 348（根拠あり 143）
 
 notes の種類: 未対応 44・前提の外 106・計算に無関係 69・補足 42・間接 87
 
-スロット: supported 376・partial 31・unsupported 9・noEffect 52
+スロット: supported 379・partial 31・unsupported 9・noEffect 52
 
 ## 10 ラピ
 
@@ -858,6 +858,19 @@ notes の種類: 未対応 44・前提の外 106・計算に無関係 69・補�
   - effects[3] timed・burstUse・infiniteAmmo: C-0936（確定）
   - effects[4] state・burstUse・memoryIncineration: C-0936（確定）、C-0939（仮説）
 
+## 224 スノーホワイト：イノセントデイズ
+
+- **skill1**: supported
+  - effects[0] timed・normalHit・maxAmmo: C-1363（確定）
+  - effects[1] damage・normalHit・skill: C-1363（確定）
+- **skill2**: supported
+  - effects[0] damage・normalHit・skill: C-1364（確定）、C-1365（仮説）
+  - effects[1] timed・burstUse・attackDamage: C-1366（確定）
+- **burst**: supported
+  - effects[0] cycleEvery・burstUse: C-1366（確定）
+  - effects[1] timed・burstUse・attack: C-1366（確定）
+  - effects[2] timed・burstUse・infiniteAmmo: C-1366（確定）
+
 ## 225 紅蓮：ブラックシャドウ
 
 - **skill1**: supported
@@ -956,13 +969,13 @@ notes の種類: 未対応 44・前提の外 106・計算に無関係 69・補�
 ## 241 エピネル
 
 - **skill1**: noEffect
-  - notes[0] 前提の外: 敵を倒した時の自分のスーパールーキー（攻撃力▲・5 スタック・15 秒）は、射撃場の的が倒れないので起きない（敵 1 体の前提。要件 4.2 節）: C-0443（範囲外）
+  - notes[0] 前提の外: 敵を倒した時の自分のスーパールーキー（攻撃力▲・5 スタック・15 秒）は、射撃場の的が倒れないので起きない（敵 1 体の前提。要件 4.2 節）: C-0443（範囲外）、C-1362（確定）
 - **skill2**: supported
   - effects[0] timed・lastShot・critRate: C-1360（確定）、C-1359（確定）
   - effects[1] timed・lastShot・critDamage: C-1359（確定）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-1361（確定）
-  - notes[0] 前提の外: スーパールーキーのフルスタック状態の時の、同じ敵への追加ダメージは、スーパールーキーが付かない（S1 は射撃場の的が倒れないので起きない）ので出ない（要件 4.2 節）: C-0443（範囲外）
+  - notes[0] 前提の外: スーパールーキーのフルスタック状態の時の、同じ敵への追加ダメージは、スーパールーキーが付かない（S1 は射撃場の的が倒れないので起きない）ので出ない（要件 4.2 節）: C-0443（範囲外）、C-1362（確定）
 
 ## 242 フォルクヴァン
 
