@@ -6,7 +6,8 @@
 // 先頭 12 桁を台帳と突き合わせる。旧プロジェクトの録画 id（L-）は台帳の path から old_nikkecalc の下を引く（台帳に
 // sha256 が無いので突き合わせない）。相対パス（例: frames/064_xxx.jpg、reference/tooltips）は Drive 上のそのままで、
 // --legacy を付けると old_nikkecalc の下を指す。フォルダを指すと中身を全部落とす。置き場所は dirs.ts（既にあるものは
-// 落とさない。--force で落とし直す）。落としたもの・既にあるものは、手元のパスを「取得」「あり」の行に出す。
+// 落とさない。比べ方と、手元と違うときの扱いは fetch-lib.ts。--force で落とし直す）。落としたもの・既にあるものは、
+// 手元のパスを「取得」「あり」の行に出す。
 // drive:<相対パス> は、まだ取り込んでいない録画（Drive の「マイ コンピュータ/record」。intake.ts の drive: と同じ指し方）を、
 // 取り込む前の下見のために落とす。置き場所は dirs.ts の recordFetchDir（台帳が無いので突き合わせない。取り込みは intake.ts が
 // 別に取り寄せる）。取り込み元のフォルダが手元にある環境（dirs.ts の recordDir。Windows）では落とさず、手元のパスを出す。
@@ -15,8 +16,7 @@
 // NIKKE_DRIVE_RECORD_FOLDER_ID（record フォルダの ID。drive: のときだけ）。フォルダの ID は
 // カンマ区切りで複数書ける（環境変数の設定欄は 1 行 1 変数なので改行では分けられない）。前に書いたフォルダから探し、
 // 最初に見つかったものを使う。--list は全部のフォルダの中身を合わせて出す（同名は前のフォルダのもの）。
-import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, statSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { existsSync, readFileSync } from 'node:fs';
 import type { RecordingEntry } from '../../packages/core/src/records/recordings.ts';
 import {
   LEGACY_PREFIX,
@@ -28,7 +28,7 @@ import {
   relPath as normalizeRel,
 } from './dirs.ts';
 import { Drive, DRIVE_CALL_MS, type DriveFile } from './drive.ts';
-import { sha256 } from './ffmpeg.ts';
+import { type Area, type FetchContext, type Target, fetchTarget, message, once, resolveIn } from './fetch-lib.ts';
 import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
 
 const RECORDINGS_DIR = new URL('../../records/recordings/', import.meta.url);
@@ -43,10 +43,6 @@ const { values, positionals } = cliArgs(import.meta.url, {
 });
 
 if (!values.list && positionals.length === 0) fail();
-
-/** Drive の根: captures は nikke_project_captures、legacy は old_nikkecalc（旧プロジェクトのアーカイブ）、record は取り込み元 */
-type Area = 'captures' | 'legacy' | 'record';
-type Target = { area: Area; relPath: string; sha256?: string };
 
 /** 区分ごとの Drive のフォルダ（環境変数とその名前）と、落とす先 */
 const ROOTS: Record<Area, { env: string; folder: string; local: () => string }> = {
@@ -77,38 +73,23 @@ function rootIds(area: Area): string[] {
   return ids;
 }
 
-const message = (error: unknown) => (error instanceof Error ? error.message : String(error));
-
-let drive: Drive;
-try {
-  drive = await Drive.connect(DRIVE_CALL_MS);
-} catch (error) {
-  console.error(message(error));
-  process.exit(1);
-}
-
-/** 根のフォルダ（複数）の中で relPath を引く。前のフォルダにあればそれ。all は見つかったものを全部返す */
-async function resolveIn(roots: string[], relPath: string, all = false): Promise<DriveFile[]> {
-  const found: DriveFile[] = [];
-  const errors: string[] = [];
-  for (const root of roots) {
-    try {
-      found.push(await drive.resolve(root, relPath));
-      if (!all) break;
-    } catch (error) {
-      errors.push(roots.length > 1 ? `${message(error)}（フォルダ ${root}）` : message(error));
-    }
-  }
-  if (found.length === 0) throw new Error(errors.join('\n'));
-  return found;
-}
+const ctx: FetchContext = {
+  drive: once(() => Drive.connect(DRIVE_CALL_MS)),
+  roots: rootIds,
+  localBase: (area) => ROOTS[area].local(),
+  recordDir,
+  force: values.force,
+  log: (line) => console.log(line),
+};
 
 if (values.list) {
   try {
     const target = toTarget(positionals[0] ?? '');
+    const roots = rootIds(target.area);
+    const drive = await ctx.drive();
     const seen = new Set<string>();
     const entries: DriveFile[] = [];
-    for (const folder of await resolveIn(rootIds(target.area), target.relPath, true)) {
+    for (const folder of await resolveIn(drive, roots, target.relPath, true)) {
       for (const f of await drive.children(folder.id)) {
         if (seen.has(f.name)) continue;
         seen.add(f.name);
@@ -128,53 +109,9 @@ if (values.list) {
 }
 
 let failed = 0;
-
-async function fetchFile(file: DriveFile, base: string, relPath: string, expected?: string): Promise<void> {
-  const out = join(base, relPath);
-  if (existsSync(out) && !values.force) {
-    // 台帳の sha256 が無ければ、Drive の大きさと比べる（Drive for desktop が上げ終える前に落とした途中の版を使い続けない）
-    const same = expected
-      ? (await sha256(out)).startsWith(expected)
-      : file.size === undefined || statSync(out).size === Number(file.size);
-    if (same) {
-      console.log(`あり  ${out}`);
-      return;
-    }
-    console.log(`${expected ? 'sha256 が台帳' : '大きさが Drive'}と違うので落とし直す: ${out}`);
-  }
-  mkdirSync(dirname(out), { recursive: true });
-  const part = `${out}.part`;
-  await drive.download(file.id, part);
-  if (expected) {
-    const digest = await sha256(part);
-    if (!digest.startsWith(expected)) {
-      rmSync(part);
-      throw new Error(`${relPath}: sha256 が台帳（${expected}）と違う（${digest.slice(0, 12)}）`);
-    }
-  }
-  renameSync(part, out);
-  console.log(`取得  ${out}（${(Number(file.size ?? 0) / 1024 / 1024).toFixed(1)} MB）`);
-}
-
-async function fetchTree(file: DriveFile, base: string, relPath: string, expected?: string): Promise<void> {
-  if (!drive.isFolder(file)) return fetchFile(file, base, relPath, expected);
-  for (const child of await drive.children(file.id)) await fetchTree(child, base, `${relPath}/${child.name}`);
-}
-
 for (const arg of positionals) {
   try {
-    const target = toTarget(arg);
-    if (target.area === 'record' && target.relPath === '')
-      throw new Error(`${arg}: drive: の後に record の中のパスが要る（一覧は --list drive:）`);
-    const localRecord = target.area === 'record' ? recordDir() : null;
-    if (localRecord !== null) {
-      const local = join(localRecord, target.relPath);
-      if (!existsSync(local)) throw new Error(`${arg}: 手元の取り込み元に無い（${local}）`);
-      console.log(`あり  ${local}`);
-      continue;
-    }
-    const file = (await resolveIn(rootIds(target.area), target.relPath))[0]!;
-    await fetchTree(file, ROOTS[target.area].local(), target.relPath, target.sha256);
+    await fetchTarget(toTarget(arg), arg, ctx);
   } catch (error) {
     failed += 1;
     console.error(message(error));
