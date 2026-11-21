@@ -1,0 +1,15 @@
+{
+  "id": "C-1412",
+  "text": "ネオン：ブルーオーシャンのバーストの「対象が灼熱コードなら対象に最終攻撃力の 11% の追加ダメージ」は、変更後の武器の発ごとに、同じフレームに 1 ヒット出る（バーストの使用に 1 回ではない。会心もある）。灼熱の敵では、変更後の武器のどの発にも足され、発との和はモデルと 1 以内で合う。水冷の敵では出ない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1287-13`・`1287-14`・`1288-12`・`1288-13`・`1286-10`・`1287-18`・`1288-17`。V-0817",
+  "model": "`data/skills/14.json` の burst の effects[1]（`damage`・`{ count: weaponChangeShot }`・`additional`・`enemyElement: Fire`）と、1 トリガーの値に畳み込まない決まり（`skills/burstDamage.ts` の `foldsIntoShot`）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/14.json の burst の effects[1]"]
+  },
+  "decidedOn": []
+}
