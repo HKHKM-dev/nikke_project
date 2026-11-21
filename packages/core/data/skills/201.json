@@ -1,0 +1,95 @@
+{
+  "formatVersion": 1,
+  "resourceId": 201,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "chargeDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-1456"
+          ],
+          "assumes": {
+            "ja": "倍率の無いチャージダメージ▲で、フルチャージ倍率に足す（C-0020・C-0134 と同じ置き場所）。チャージ武器でない味方には効かない",
+            "en": "A Charge Damage up without \"multiplier\"; it is added to the full charge multiplier (same place as C-0020 and C-0134). It has no effect on allies without a charge weapon"
+          }
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "allies",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-1455"
+          ],
+          "assumes": {
+            "ja": "フルチャージの発ごとに、その発の後から付け直す（その発自身には乗らない。ウンファ：タクティカル・アップの S1 の同じきっかけの読み C-0314）。チャージ途中の発で付くかは確かめていない（モデルはチャージ途中の発を撃たない）",
+            "en": "Reapplied after each Full Charge shot (not on that shot itself; same reading as the same trigger on Eunhwa: Tactical Upgrade's S1, C-0314). Whether a partially charged shot grants it is unverified (the model never fires partial charges)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "allies",
+          "stat": "critRate",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-1455"
+          ],
+          "assumes": {
+            "ja": "きっかけと窓は effects[0] と同じ。値（Lv10 で 1.33%）は会心の割合では見分けられないので、窓は effects[0] で確かめ、値は説明文から取る",
+            "en": "Same trigger and window as effects[0]. The value (1.33% at Lv10) cannot be told apart from crit ratios, so the window is checked through effects[0] and the value is taken from the description"
+          }
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "claims": [
+            "C-1457"
+          ],
+          "assumes": {
+            "ja": "攻撃範囲内の敵は単体ボスで 1 ヒット。ヒットは遅れの表（burst/landing.ts）の時刻（I の六角形の替わり目から 1f）に出し、値は発動の直前のバフで出す",
+            "en": "The enemies within attack range are the lone boss; one hit. The hit comes at the time in the delay table (burst/landing.ts; 1 frame after the Burst I hexagon change), with the buffs just before the activation"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "攻撃範囲の中心への強制移動（2 秒）は、静止した単体ボスの前提では与ダメージを変えない（敵が複数のとき、範囲攻撃に入る敵の数が変わりうる）",
+          "en": "The forced movement toward the center of the attack range (2 s) does not change damage under the single stationary boss assumption (with several enemies it could change how many enemies area attacks hit)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "enemy",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}
