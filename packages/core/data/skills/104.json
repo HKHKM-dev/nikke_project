@@ -14,10 +14,14 @@
           "fullChargeDamage": 300,
           "shotCount": 15,
           "maxAmmoRef": 2,
+          "firstShotDelayFrames": 112,
           "assumes": {
-            "ja": "撮る前の形（V-0818）。フルバーストの始まりに、チャージ 1.5 秒（チャージ速度▲を受けない）・フルチャージ 300%・15 ペレット・6 発の SG に持ち替え、6 発目の次のフレームに基礎の SG に戻る（撃ち切り。フルバーストの終わりより後でも続く）。1 発の値 243.75% は 1 トリガーの値で、15 ペレットに割って配る（基礎の SG と同じ）。最初の発の待ち・当たり（コア命中率・ペレットの弾丸命中率）は録画で読む前の既定（基礎の SG の的の表の行）。自分が III を使わなかったフルバーストでも変わる読み。変更後の武器の発のバーストゲージは基礎の SG の 1 発の量",
-            "en": "Form before recording (V-0818). At the start of Full Burst, switches to an SG with a 1.5 s charge (not affected by Charge Speed), 300% full charge, 15 pellets and 6 rounds, and returns to the base SG on the frame after the sixth shot (ends when empty, even after Full Burst ends). The 243.75% is the value per trigger, split over the 15 pellets (as the base SG). The first-shot wait and hit rates (core hit rate, pellet hit rate) are the defaults before reading the recordings (the base SG rows of the target table). Read as also switching on Full Bursts where this unit did not use Burst III. Burst gauge per changed shot is one base SG shot"
-          }
+            "ja": "変更後の武器の形は録画で読んだ（V-0818）: フルバーストの始まりに持ち替え、1 トリガーの 243.75% を 15 ペレットに割り（フルチャージ 300%）、1.5 秒おきに 6 発で、6 発目の次のフレームに元の SG に戻る（撃ち切り。フルバーストの終わりの後も 6 発目まで続く）。最初の発は窓が射手に見えてから 112f（III のタイマーの 00.00 から動画で 135f。持ち替えの時に元の SG を撃っている途中の回の値）。当たり（コア命中率・ペレットの弾丸命中率）は元の SG の的の表の行のまま（録画の発は当たったペレットの数が発ごとに揺れる和で、行を変える根拠は無い）。チャージ速度▲を受けないこと、自分が III を使わなかったフルバーストでも変わること、変更後の武器の発のバーストゲージ（モデルは元の SG の 1 発の量）は確かめていない",
+            "en": "The changed weapon was read from recordings (V-0818): it switches at the start of Full Burst, splits the 243.75% per trigger over 15 pellets (300% full charge), fires 6 shots 1.5 s apart, and returns to the base SG on the frame after the sixth shot (ends when empty; continues after Full Burst ends until the sixth shot). The first shot comes 112 f after the change becomes visible (135 video frames after 00.00 of the Burst III timer; the value when the base SG was firing at the switch). Hit rates (core hit rate, pellet hit rate) stay on the base SG rows of the target table (the recorded shots are sums whose number of hit pellets varies by shot, with no ground to change the rows). Not verified: immunity to Charge Speed, switching on Full Bursts where this unit did not use Burst III, and the burst gauge of the changed shots (the model uses one base SG shot)"
+          },
+          "claims": [
+            "C-1427"
+          ]
         },
         {
           "kind": "ammoDecrease",
@@ -29,7 +33,24 @@
           "assumes": {
             "ja": "変更前の武器は、変更が終わると満タンで戻り（ラプラス：アルティメットヒーローの S1 と同じ扱い）、この残弾数低下で 0 になってリロードする",
             "en": "The base weapon comes back full when the change ends (as Laplace: Ultimate Hero's Skill 1), and this ammo decrease empties it so it reloads"
-          }
+          },
+          "claims": [
+            "C-1428"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "持ち替えの時に元の SG がリロード中だった回は、オーバーオーバードライブの最初の発が、撃っている途中だった回より 7〜12f 早い（V-0818 の 4 回目のフルバースト）。モデルはどの回も同じ待ち（firstShotDelayFrames）で、元の SG の状態による違いは扱っていない",
+          "en": "When the base SG was reloading at the switch, the first Over Overdrive shot came 7 to 12 f earlier than when it was firing (the fourth Full Burst in V-0818). The model uses one wait (firstShotDelayFrames) for every switch and does not model the difference by the base SG state",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "weaponChange",
+            "trigger": "fullBurstStart"
+          },
+          "claims": [
+            "C-1427"
+          ]
         }
       ]
     },
@@ -45,9 +66,12 @@
           "maxStacksRef": 3,
           "durationUntil": "battleEnd",
           "assumes": {
-            "ja": "フルバーストの終わりごとに、ドレイク：グレイトヴィランのバフ前の最大HP × 値 02 を味方全体の最大HP に足す（HP は足さない。発動者基準。自分には値 02 の比率と同じ）。4 スタックで止まることは確かめていない（180 秒の撮影ではフルバーストが 4 回）。与ダメージには、S2 の最終最大HP 分の攻撃力▲を通してだけ効く",
-            "en": "At each end of Full Burst, adds Drake: Great Villain's pre-buff max HP × value 02 to the max HP of all allies (without restoring HP; caster-based; the same as the value 02 ratio for self). The cap of 4 stacks is unverified (Full Burst occurs 4 times in a 180 s recording). It affects damage only through the Skill 2 ATK buff based on the final max HP"
-          }
+            "ja": "フルバーストの終わりごとに、ドレイク：グレイトヴィランのバフ前の最大HP × 値 02 を味方全体の最大HP に足す（HP は足さない。発動者基準。自分には値 02 の比率と同じ）。4 スタックで止まることは確かめていない（180 秒の撮影ではフルバーストの終わりが 4 回）。与ダメージには、S2 の最終最大HP 分の攻撃力▲を通してだけ効く",
+            "en": "At each end of Full Burst, adds Drake: Great Villain's pre-buff max HP × value 02 to the max HP of all allies (without restoring HP; caster-based; the same as the value 02 ratio for self). The cap of 4 stacks is unverified (Full Burst ends 4 times in a 180 s recording). It affects damage only through the Skill 2 ATK buff based on the final max HP"
+          },
+          "claims": [
+            "C-1429"
+          ]
         },
         {
           "kind": "timed",
@@ -57,11 +81,16 @@
           "scaling": "casterFinalMaxHp",
           "ref": 1,
           "durationUntil": "battleEnd",
-          "reads": ["hp"],
+          "reads": [
+            "hp"
+          ],
           "assumes": {
             "ja": "遅刻。効いている各フレームの自分の最終最大HP（S2 の最大HP のみ▲ を含む）の 値 01 を攻撃力に足す（2B の S2・ラプラス：アルティメットヒーローの S1 と同じ読み）",
             "en": "Late. Adds value 01 of this unit's final max HP at each frame (including the Skill 2 max HP only increase) to ATK (the same reading as 2B's Skill 2 and Laplace: Ultimate Hero's Skill 1)"
-          }
+          },
+          "claims": [
+            "C-1429"
+          ]
         }
       ]
     },
@@ -73,16 +102,22 @@
           "target": "self",
           "stat": "attackDamage",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-1430"
+          ]
         },
         {
           "kind": "burstDamage",
           "ref": 3,
           "damageType": "skill",
           "assumes": {
-            "ja": "対象「敵全体」は単体ボス。撮る前は遅れの表の行が無い（III のタイマーの 00.00 に 1 ヒット・発動の直前のバフで出て、同じ発動の攻撃ダメージ▲は乗らない）。録画で読む",
-            "en": "The target (all enemies) is the lone boss. Before recording there is no delay table row (one hit at 00.00 of the Burst III timer with the buffs just before activation; the same activation's Attack Damage increase does not apply). To be read from recordings"
-          }
+            "ja": "対象「敵全体」は単体ボス。III のタイマーの 00.00 から動画で 89〜90f の 1 ヒット（遅れの表の行）で、同じ発動の攻撃ダメージ▲が乗る",
+            "en": "The target (all enemies) is the lone boss. One hit 89 to 90 video frames after 00.00 of the Burst III timer (the delay table row), with the same activation's Attack Damage increase applied"
+          },
+          "claims": [
+            "C-1430"
+          ]
         }
       ]
     }
