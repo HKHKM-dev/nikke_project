@@ -225,9 +225,10 @@ describe('data/skills', () => {
             for (let lv = 1; lv <= SKILL_LEVEL_MAX; lv++) {
               const v = skillValue(character.skills[slot], ref, lv);
               expect(v).toBeGreaterThan(0);
-              // イサベルのバーストは Lv1 で 93.65%（Lv10 で 149.85%）なので、下限は Lv10 だけで見る
+              // イサベルのバーストは Lv1 で 93.65%（Lv10 で 149.85%）なので、下限は Lv10 だけで見る。
+              // ウンファのバーストは Lv10 で 85.62% なので、ウンファだけ下限を 80% で見る
               if (effect.kind === 'burstDamage') {
-                if (lv === SKILL_LEVEL_MAX) expect(v).toBeGreaterThanOrEqual(100);
+                if (lv === SKILL_LEVEL_MAX) expect(v).toBeGreaterThanOrEqual(resourceId === 92 ? 80 : 100);
               }
               // Stage 8 の倍率ダメージは 100% 未満もある（ドレイク S2 98.55%）ので上限を見ない。持続ダメージの 1 tick も倍率
               // ダメージなので上限を見ない（マナのバーストは Lv10 で 396%）。使用武器の変更の 1 発・装弾数も上限を見ない

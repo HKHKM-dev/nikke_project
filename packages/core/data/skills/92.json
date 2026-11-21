@@ -1,0 +1,103 @@
+{
+  "formatVersion": 1,
+  "resourceId": 92,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "self",
+          "stat": "chargeDamage",
+          "ref": 1,
+          "durationShotsRef": 2,
+          "claims": [
+            "C-1367",
+            "C-1378"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "self",
+          "stat": "chargeSpeed",
+          "ref": 3,
+          "durationShotsRef": 4,
+          "claims": [
+            "C-1378"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "allies",
+          "stat": "enemyDefenseDown",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "対象（最後の弾丸で攻撃した敵）は敵 1 体",
+            "en": "The target (the enemy attacked with the last bullet) is the lone enemy"
+          },
+          "claims": [
+            "C-1367",
+            "C-1378"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "対象「最終攻撃力が最も高い敵 10 機」は単体ボス",
+            "en": "The target (最終攻撃力が最も高い敵 10 機) is the lone boss"
+          },
+          "claims": [
+            "C-1379",
+            "C-1380"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "enemyDefenseDown",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "対象「最終攻撃力が最も高い敵 10 機」は単体ボス",
+            "en": "The target (最終攻撃力が最も高い敵 10 機) is the lone boss"
+          },
+          "claims": [
+            "C-1380"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "critRate",
+          "ref": 5,
+          "durationRef": 6,
+          "claims": [
+            "C-1381"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "C-1367",
+  "text": "ウンファの S1 のチャージダメージ▲（Lv10 で 37.28%）と S2 の防御力▼（29%）は、最後の弾丸の後の発（次のマガジンの 1 発目）に両方乗る。チャージダメージ▲はフルチャージ倍率に足し（2.5 + 0.3728。C-0134）、防御力▼は C-0556・C-0790 の式で的の防御力 100 を 71 にする。最後の弾丸の発自身にはどちらも乗らない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0551-09`・`0551-10`・`0553-08`・`0553-09`。V-0809",
+  "model": "data/skills/92.json の skill1 の effects[0]（timed・lastShot・chargeDamage）と skill2 の effects[0]（timed・lastShot・enemyDefenseDown）。式は skills/buffs.ts の applyChargeBuffs と damage.ts の defenceAfterDown",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/92.json の skill1 の effects[0]", "data/skills/92.json の skill2 の effects[0]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "式はフルチャージ倍率にチャージダメージ▲を足す形（C-0134）と敵の防御力▼の式（C-0556・C-0790）、値は説明文の Lv10 の値（S1 の 37.28%・S2 の 29%）とスペック固定の攻撃力だけで、録画で合わせた定数は無い"
+}

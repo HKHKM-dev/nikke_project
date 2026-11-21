@@ -1,0 +1,40 @@
+{
+  "id": "1269",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1269_liter+unfa_auto.mp4",
+  "original": "2026-11-21_14-16-36.mp4",
+  "durationSec": 199.6,
+  "frames": 11975,
+  "fps": 60,
+  "sizeMB": 242,
+  "sha256": "411890758534",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 92,
+      "name": "ウンファ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0809 の撮影 C の 2 本目。リター + ウンファ（操作）・オートバースト ON",
+  "backup": {
+    "at": "2026-11-21T14:23+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

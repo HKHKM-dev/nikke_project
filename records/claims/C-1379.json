@@ -1,0 +1,28 @@
+{
+  "id": "C-1379",
+  "text": "ウンファのバーストのヒット（最終攻撃力が最も高い敵 10 機への倍率ダメージ。的には 1 ヒット）は、II の発動の印（右のバースト欄の六角形が II から III に替わるフレーム）の動画で 1f 前に出る",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1267-06`。V-0809",
+  "model": "burst/landing.ts の 92 の行（hitFrames −1・effectFrames 0）と data/skills/92.json の burst の effects[0]（burstDamage）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/92.json の burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1267",
+      "role": "値を合わせた"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "1267",
+      "decided": "1 回目のバースト",
+      "reproduced": "2〜8 回目のバースト",
+      "observations": ["1267-06"]
+    }
+  ]
+}
