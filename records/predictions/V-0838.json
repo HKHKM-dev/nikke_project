@@ -1,0 +1,246 @@
+{
+  "verification": "V-0838",
+  "note": "撮影（ソーダ（I）+ ギロチン：ウィンタースレイヤー（III・操作）・オートバースト ON）の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。S2 の CT は外部の資料の 12 秒（H1）で、録画の左の帯で読む。II がいないので、ソーダのバーストのたびにチェーンが切れ、ギロチンはバーストを使わない。ギロチンの経験値（攻撃力▲・100 スタック・持続）は約 45 秒で上限に届き、ソーダの 1 回目のバースト（約 14 秒）は上限の前",
+  "team": [
+    {
+      "rid": 312
+    },
+    {
+      "rid": 182,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S2 は CT 12 秒ごとで 1 回目も 12 秒。バーストは的に 1 ヒット。スタック量▲は灼熱コードの味方だけに付き、水冷のギロチンの経験値は増えない）"
+    },
+    {
+      "id": "H2",
+      "note": "S2 の CT が 10 秒",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 312,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "heal",
+              "trigger": {
+                "everySeconds": 10
+              },
+              "target": "allies",
+              "ref": 1,
+              "scaling": "casterFinalMaxHp"
+            }
+          },
+          {
+            "rid": 312,
+            "skill": "skill2",
+            "replace": 1,
+            "effect": {
+              "kind": "heal",
+              "trigger": {
+                "everySeconds": 10
+              },
+              "target": "allies",
+              "ref": 2,
+              "scaling": "casterFinalMaxHp",
+              "condition": {
+                "selfState": {
+                  "state": "maidSpirit",
+                  "stacks": "full"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H3",
+      "note": "S2 の CT が 15 秒",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 312,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "heal",
+              "trigger": {
+                "everySeconds": 15
+              },
+              "target": "allies",
+              "ref": 1,
+              "scaling": "casterFinalMaxHp"
+            }
+          },
+          {
+            "rid": 312,
+            "skill": "skill2",
+            "replace": 1,
+            "effect": {
+              "kind": "heal",
+              "trigger": {
+                "everySeconds": 15
+              },
+              "target": "allies",
+              "ref": 2,
+              "scaling": "casterFinalMaxHp",
+              "condition": {
+                "selfState": {
+                  "state": "maidSpirit",
+                  "stacks": "full"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H4",
+      "note": "スタック量▲がコードで絞られず、味方全体に付く（ペッパーのバーストと同じ）。1 回目のバーストでギロチンの経験値が 1 段増える",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 312,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "stackChange",
+              "allStackable": true,
+              "trigger": "burstUse",
+              "target": "allies",
+              "amountRef": 3
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "s2-first",
+      "model": "sim",
+      "metric": "healVideoFrame",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 10
+      },
+      "note": "S2 の 1 回目の発動（回復）の動画のフレーム（戦闘開始の 0 から）。録画では左の「スキル2 床掃除メイド」の帯の立ち上がり"
+    },
+    {
+      "id": "s2-second",
+      "model": "sim",
+      "metric": "healVideoFrame",
+      "args": {
+        "slot": 1,
+        "n": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 10
+      },
+      "note": "S2 の 2 回目の発動の動画のフレーム（メイド精神のフルスタックの前なので、回復は 1 つ）"
+    },
+    {
+      "id": "burst-hit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "1 回目のバーストスキルダメージの 1 ヒット（会心なし）"
+    },
+    {
+      "id": "burst-offsets",
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "1 回目のバーストの、1 ヒット目から各ヒットまでの動画のフレーム（長さがヒットの数。ランダムの 2 機が同じ的を選ぶ読み（予測ファイルの外）なら 2）"
+    },
+    {
+      "id": "exp-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.002
+      },
+      "note": "ソーダの 1 回目のバーストの後の、ギロチンの胴体の会心しない 1 ヒット。H4 なら経験値 1 段（攻撃力 1.81%）ぶん高い。録画では、バーストの前後の増分の並びに、射撃の数で説明できない段があるかで見る"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "6f177d918c027b4f200c471ff4b6efbf624e8324",
+    "values": {
+      "H1": {
+        "s2-first": 706,
+        "s2-second": 1413,
+        "burst-hit": 320717.75999999995,
+        "burst-offsets": [0],
+        "exp-after": 42096.410237700016
+      },
+      "H2": {
+        "s2-first": 589,
+        "s2-second": 1179,
+        "burst-hit": 320717.75999999995,
+        "burst-offsets": [0],
+        "exp-after": 42096.410237700016
+      },
+      "H3": {
+        "s2-first": 884,
+        "s2-second": 1767,
+        "burst-hit": 320717.75999999995,
+        "burst-offsets": [0],
+        "exp-after": 42096.410237700016
+      },
+      "H4": {
+        "s2-first": 706,
+        "s2-second": 1413,
+        "burst-hit": 320717.75999999995,
+        "burst-offsets": [0],
+        "exp-after": 42464.94849870002
+      }
+    }
+  }
+}
