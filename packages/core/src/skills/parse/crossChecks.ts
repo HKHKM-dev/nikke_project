@@ -50,14 +50,22 @@ export function validateBurstHitTriggers(effects: readonly SkillEffect[], slot: 
 }
 
 /**
- * 所持カウンタ分の連続攻撃（hitsFrom）と最大HP の合算（addCasterMaxHpRef）は、ヒットの切り方と攻撃力が発動ごとに 1 つなので、
- * burst スロットの burstDamage が 1 つのときだけ書ける（plan/design-maiden-ice-rose.md 8 節）
+ * 所持カウンタ分の連続攻撃（hitsFrom）と最大HP の合算（addCasterMaxHpRef）・換算（convertCasterMaxHpRef）は、ヒットの切り方と
+ * 攻撃力が発動ごとに 1 つなので、burst スロットの burstDamage が 1 つのときだけ書ける（plan/design-maiden-ice-rose.md 8 節・
+ * plan/design-kilo.md 2.2 節）
  */
 function validateSingleBurstDamage(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   const damages = (entries.burst?.effects ?? []).filter((e) => e.kind === 'burstDamage');
   if (damages.length < 2) return;
-  if (damages.some((e) => e.hitsFrom !== undefined || e.addCasterMaxHpRef !== undefined))
-    fail(`${root}.burst`, 'hitsFrom and addCasterMaxHpRef need the only burstDamage of the slot');
+  if (
+    damages.some(
+      (e) => e.hitsFrom !== undefined || e.addCasterMaxHpRef !== undefined || e.convertCasterMaxHpRef !== undefined,
+    )
+  )
+    fail(
+      `${root}.burst`,
+      'hitsFrom, addCasterMaxHpRef and convertCasterMaxHpRef need the only burstDamage of the slot',
+    );
 }
 
 /**

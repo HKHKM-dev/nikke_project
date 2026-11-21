@@ -1463,9 +1463,15 @@ export type BurstDamageEffect = {
   /**
    * 「スキル発動者の最終最大HP の X% を攻撃力に合算して」の X の description_value_NN（plan/design-maiden-ice-rose.md 2.2 節）。ヒットの
    * 攻撃力を、ヒットの値を決めるバフ（発動の直前）の最終攻撃力 + 自分の最終最大HP（バフ前の最大HP × (1 + 最大HP▲ と最大HP のみ▲ の比率の和)）
-   * × X% にして、いまの式（防御力を引いて倍率を掛ける）に入れる。バーストのスロットのほかの burstDamage とは組まない
+   * × X%（この分を四捨五入。C-0027）にして、いまの式（防御力を引いて倍率を掛ける）に入れる。バーストのスロットのほかの burstDamage とは組まない
    */
   addCasterMaxHpRef?: number;
+  /**
+   * 「最終最大HP の X% を攻撃力として換算した Y% のダメージ」の X の description_value_NN（plan/design-kilo.md 2.2 節）。ヒットの攻撃力を、
+   * ヒットの値を決めるバフ（発動の直前）の自分の最終最大HP × X% を四捨五入した値（C-0027）に置き換えて（最終攻撃力は使わない）、いまの式に入れる。
+   * addCasterMaxHpRef とも、バーストのスロットのほかの burstDamage とも組まない
+   */
+  convertCasterMaxHpRef?: number;
   /** 常に満たすとみなした条件。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };

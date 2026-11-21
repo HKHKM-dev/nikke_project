@@ -82,6 +82,10 @@ export const NAMED_STATES = {
    */
   barrier: { name: { ja: 'バリア', en: 'Barrier' }, holder: 'ally', family: 'barrier' },
   /**
+   * ナノコーティング（キロの S1。自分へのバリア・持続。家族 barrier。被弾で減って壊れる分は扱わない。plan/design-kilo.md 2.1 節）
+   */
+  nanoCoating: { name: { ja: 'ナノコーティング', en: 'Nano Coating' }, holder: 'ally', family: 'barrier' },
+  /**
    * デコイ（シンデレラの S2 の分身。中身なし・持続。被弾で壊れる分は
    * 扱わない。plan/design-skill-stage6.md 2.4 節）。「デコイが存在する時」（selfState）が読む。判定は自分のデコイだけ
    */

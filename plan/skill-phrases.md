@@ -118,3 +118,5 @@
 | 〈カウンタ〉が 0 なら・1 以上なら（カウンタの増減と timed のきっかけ） | 条件 `selfCounter` の `below: 1`・`atLeast: 1` | メイデン：アイスローズの S1・S2 の MP | 同 2.1・2.4 節 |
 | 自分の HP が X% 以下の場合に限り、失った HP 1% ごとに攻撃力 Y%▲「持続」 | timed の `scaling: "perLostHp"`（`attack`・`self` だけ）と、きっかけ `{ "selfHpAtMostRef": N }`・`durationUntil: "selfHpAbove"` | ギロチンの S2 | [design-guillotine.md](design-guillotine.md) 2.1 節 |
 | 自分の HP が X% 以下の場合（倍率ダメージ） | damage の `condition.selfHp: { "atMostRef": N }`（バーストを使ったフレームの HP の割合で見る） | ギロチンのバースト | 同 2.2 節 |
+| 最終最大HP の X% を攻撃力として換算した Y% のダメージ | burstDamage の `convertCasterMaxHpRef`（攻撃力を最終最大HP × X% に置き換える。`addCasterMaxHpRef` と組まない） | キロのバースト | [design-kilo.md](design-kilo.md) 2.2 節 |
+| 〈名前〉：最終最大HP の X% のバリア「持続」・〈名前〉状態なら（自分へのバリア） | 目録の家族 `barrier` の状態の付与（中身なし・`durationUntil: "battleEnd"`）。被弾で切れる分は扱わない | キロの S1 のナノコーティング | 同 2.1 節 |
