@@ -124,5 +124,71 @@
     },
     "source": "V-0805",
     "readAt": "2026-11-20"
+  },
+  {
+    "id": "1115-06",
+    "recording": "1115",
+    "kind": "hit",
+    "use": "record",
+    "value": [794],
+    "unit": "f",
+    "description": "シンデレラ単騎（操作）の 2 本目のマガジンで、HUD に増分が出なかった 3 発目の、戦闘開始（f785）からの着弾のフレーム（前後の着弾の間から見積もった）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "増分は 774f と 813f の間が 39f（ほかは 19〜20f）で、前後の増分は 1 発の値。1115 と 1116 で同じフレーム。残弾は読んでいない"
+    },
+    "source": "V-0814",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1115-07",
+    "recording": "1115",
+    "kind": "count",
+    "use": "compare",
+    "value": 75,
+    "unit": "発",
+    "description": "撮り方 A2（シンデレラ単騎（操作））の、戦闘の始まりから 1 回目にゲージが満タンになった（BURST バーが消えた）フレームまでに、ゲージを溜めたシンデレラの発の数（HUD に増分が出ない発も、ゲージのバーが増えたので数える）。的のジャンプの窓は 1115-04",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series --subpixel（使い捨てのスクリプトで数えた）",
+      "note": "HUD の総ダメージの増分（V-0805 で読んだ hud.ts --mode jumps）74 発を、戦闘開始（f785）からバー消失（1115-01）のフレームまで数え、増分が出ないがバーが増えた 1 発（1115-06・1115-08）を足した。残弾は読んでいない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "jumpWindows": "1115-04"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    },
+    "source": "V-0814",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1115-08",
+    "recording": "1115",
+    "kind": "gauge",
+    "use": "record",
+    "value": [41.99, 32.86],
+    "unit": "px",
+    "description": "シンデレラ単騎（操作）の、2 本目のマガジン（HUD に増分が出ない 1 発を含む）と 3 本目のマガジンの初めの 19 発（増分がどれも出た）の間のゲージのバーの伸び（px。前後の 11 フレームの平均の差）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series --subpixel",
+      "note": "2 本目は戦闘開始から 700f と 1250f、3 本目は 1300f と 1850f のバーの差。3 本目の 1 発は 1.73px で、2 本目の伸びは 24 発ぶん（23 発ぶんなら 39.8px）。バーは HUD に増分が出ない発の 792f にも 1px 増え、2 本目の間に 24 回増える"
+    },
+    "source": "V-0814",
+    "readAt": "2026-11-21"
   }
 ]
