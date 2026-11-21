@@ -90,6 +90,123 @@ describe('replacedObservation・invalidatedObservation', () => {
     });
   });
 
+  // records:new observation --replace が書くファイル（JSON.stringify の 2 字下げ。prettier は欄の並びを変えない）
+  const text = (o: Observation) => JSON.stringify([o], null, 2);
+  const draftOf = (o: Observation): ObservationDraft => {
+    const { id: _id, recording: _recording, source: _source, readAt: _readAt, ...draft } = o;
+    return draft as ObservationDraft;
+  };
+  const changedLines = (a: string, b: string) => {
+    const x = a.split('\n');
+    const y = b.split('\n');
+    expect(y.length).toBe(x.length);
+    return y.filter((line, i) => line !== x[i]);
+  };
+  // source・readAt が後ろの観測値と、recording の後の観測値（records/observations/ にどちらもある）
+  const tail: Observation = {
+    id: '0101-03',
+    recording: '0101',
+    kind: 'timing',
+    use: 'record',
+    value: [1.5, 2.5],
+    unit: '秒',
+    description: '前',
+    method: { tool: 'hud.ts', note: 'メモ' },
+    source: 'V-0099',
+    readAt: '2026-10-02',
+    scope: { slot: [1, 2], source: 'normal', frames: [10, 20] },
+  };
+  const head: Observation = {
+    id: '0101-04',
+    recording: '0101',
+    source: 'V-0099',
+    readAt: '2026-10-02',
+    kind: 'count',
+    use: 'record',
+    value: 3,
+    description: '前',
+    method: { note: 'メモ' },
+  };
+
+  it('writes the same bytes when the draft has the same content, whatever the order of its fields', () => {
+    for (const o of [before, tail, head]) {
+      expect(text(replacedObservation(o, draftOf(o)))).toBe(text(o));
+      // 下書きの欄の並び（中の欄も）が違っても、前の観測値の並びを残す
+      const reversed = Object.fromEntries(
+        Object.entries(draftOf(o))
+          .reverse()
+          .map(([k, v]) => [
+            k,
+            v !== null && typeof v === 'object' && !Array.isArray(v)
+              ? Object.fromEntries(Object.entries(v).reverse())
+              : v,
+          ]),
+      ) as ObservationDraft;
+      expect(text(replacedObservation(o, reversed))).toBe(text(o));
+    }
+  });
+
+  it('changes only the lines of the fields whose values change', () => {
+    expect(changedLines(text(tail), text(replacedObservation(tail, { ...draftOf(tail), description: '後' })))).toEqual([
+      '    "description": "後",',
+    ]);
+    expect(changedLines(text(head), text(replacedObservation(head, { ...draftOf(head), value: 4 })))).toEqual([
+      '    "value": 4,',
+    ]);
+    expect(
+      changedLines(
+        text(tail),
+        text(replacedObservation(tail, { ...draftOf(tail), method: { tool: 'hud.ts', note: '直した' } })),
+      ),
+    ).toEqual(['      "note": "直した"']);
+  });
+
+  it('drops the fields missing from the draft and puts new fields where most observations have them', () => {
+    const { unit: _unit, scope: _scope, ...withoutUnit } = draftOf(tail);
+    const dropped = replacedObservation(tail, withoutUnit);
+    expect(Object.keys(dropped)).toEqual([
+      'id',
+      'recording',
+      'kind',
+      'use',
+      'value',
+      'description',
+      'method',
+      'source',
+      'readAt',
+    ]);
+    const scope = { slot: 1, source: 'normal' } as const;
+    expect(Object.keys(replacedObservation(dropped, { ...withoutUnit, unit: '秒', scope }))).toEqual([
+      'id',
+      'recording',
+      'kind',
+      'use',
+      'value',
+      'unit',
+      'description',
+      'method',
+      'scope',
+      'source',
+      'readAt',
+    ]);
+    expect(
+      Object.keys(replacedObservation(head, { ...draftOf(head), unit: '回', scope, recordings: ['0101', '0102'] })),
+    ).toEqual([
+      'id',
+      'recording',
+      'recordings',
+      'source',
+      'readAt',
+      'kind',
+      'use',
+      'value',
+      'unit',
+      'description',
+      'method',
+      'scope',
+    ]);
+  });
+
   it('adds invalid with the reason and the date', () => {
     expect(invalidatedObservation(before, '読み違い', '2026-11-18')).toEqual({
       ...before,

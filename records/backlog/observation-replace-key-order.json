@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 20,
-  "text": "`npm run records:new -- observation --replace` は、中身が同じ下書きで差し替えても観測値の欄の並びを変える（`source`・`readAt` が後ろに回り、`method` などの後になる）。`packages/core/src/records/observationEdits.ts` の `replacedObservation` が、下書きを広げた後に `source`・`readAt` を置くため。中身は変わらないが、差分に余計な行が出る。前の観測値の欄の並びを残して差し替える（2026-11-21 起票。PR #1304 の見直しで見つけた）"
-}
