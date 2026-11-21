@@ -1,13 +1,13 @@
 {
   "verification": "V-0850",
-  "note": "撮影 A（アリス：ワンダーランドバニー（操作）+ センチ（宝物版））・B（ギルティ（操作）+ センチ）・C（I-DOLL・フラワー + ディーゼル（宝物版・操作）+ センチ）の予測。風圧の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オートバースト ON。指標はどれも、センチの宝物版 S2 の攻撃力▲の段が仮説で分かれる発の、対象のキャラの 1 ヒット（胴体・会心なし）。足すと維持を付け直さない読み（H-norefresh）は予測ファイルにできないので、検証記録に手で書く",
+  "note": "撮影 A（アリス：ワンダーランドバニー（操作）+ センチ（宝物版））・B（ギルティ（操作）+ センチ）・C（I-DOLL・フラワー + ディーゼル（宝物版）+ センチ）の予測。風圧の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オートバースト ON。指標はどれも、センチの宝物版 S2 の攻撃力▲の段が仮説で分かれる発の、対象のキャラの 1 ヒット（胴体・会心なし）。足すと維持を付け直さない読み（H-norefresh）は予測ファイルにできないので、検証記録に手で書く。撮影 A・B は読んだ後に、指標を録画 1356・1357（操作はセンチ）と観測値と同じ発にそろえた。撮影 C の編成も、操作をセンチにした（撮り直しの前）",
   "team": [
     {
-      "rid": 195,
-      "controlled": true
+      "rid": 195
     },
     {
       "rid": 80,
+      "controlled": true,
       "treasurePhase": 3
     }
   ],
@@ -45,18 +45,9 @@
   ],
   "targets": [
     {
-      "id": "a-181",
+      "id": "a-steps",
       "model": "sim",
-      "team": [
-        {
-          "rid": 195,
-          "controlled": true
-        },
-        {
-          "rid": 80,
-          "treasurePhase": 3
-        }
-      ],
+      "recording": "1356",
       "setup": {
         "enemy": "range-bigarms-wind",
         "events": ["range-3min-jump"]
@@ -64,29 +55,20 @@
       "metric": "hitDamageAtShot",
       "args": {
         "slot": 1,
-        "shot": 181,
+        "shot": "180,181,270,271,360,361,450,451,540,541,630,631",
         "core": false,
         "crit": false,
         "distance": true
       },
       "tolerance": {
-        "rel": 0.001
+        "abs": 2
       },
-      "note": "撮影 A のアリスの 181 発目（180 発目の S1 の後。H1 はセンチの▲が 2 段、H0 は 1 段）"
+      "note": "撮影 A のアリスの、90 の倍数の発とその次の発（H1 は次の発で 1 段上がる）（読んだ後に、観測値 1356-01 と同じ発にそろえた）"
     },
     {
-      "id": "a-431",
+      "id": "b-steps",
       "model": "sim",
-      "team": [
-        {
-          "rid": 195,
-          "controlled": true
-        },
-        {
-          "rid": 80,
-          "treasurePhase": 3
-        }
-      ],
+      "recording": "1357",
       "setup": {
         "enemy": "range-bigarms-wind",
         "events": ["range-3min-jump"]
@@ -94,165 +76,15 @@
       "metric": "hitDamageAtShot",
       "args": {
         "slot": 1,
-        "shot": 431,
+        "shot": "12,13,18,19,24,25,26,27,37",
         "core": false,
         "crit": false,
-        "distance": true
+        "distance": false
       },
       "tolerance": {
-        "rel": 0.001
+        "abs": 3
       },
-      "note": "撮影 A のアリスの 431 発目（センチの 3 回目の S2 の後）"
-    },
-    {
-      "id": "a-631",
-      "model": "sim",
-      "team": [
-        {
-          "rid": 195,
-          "controlled": true
-        },
-        {
-          "rid": 80,
-          "treasurePhase": 3
-        }
-      ],
-      "setup": {
-        "enemy": "range-bigarms-wind",
-        "events": ["range-3min-jump"]
-      },
-      "metric": "hitDamageAtShot",
-      "args": {
-        "slot": 1,
-        "shot": 631,
-        "core": false,
-        "crit": false,
-        "distance": true
-      },
-      "tolerance": {
-        "rel": 0.001
-      },
-      "note": "撮影 A のアリスの 631 発目（630 発目の S1 の後。H1 は 10 段）"
-    },
-    {
-      "id": "a-702",
-      "model": "sim",
-      "team": [
-        {
-          "rid": 195,
-          "controlled": true
-        },
-        {
-          "rid": 80,
-          "treasurePhase": 3
-        }
-      ],
-      "setup": {
-        "enemy": "range-bigarms-wind",
-        "events": ["range-3min-jump"]
-      },
-      "metric": "hitDamageAtShot",
-      "args": {
-        "slot": 1,
-        "shot": 702,
-        "core": false,
-        "crit": false,
-        "distance": true
-      },
-      "tolerance": {
-        "rel": 0.001
-      },
-      "note": "撮影 A のアリスの 702 発目（的のジャンプでセンチの発が止まり、センチに付いた▲が切れた後）"
-    },
-    {
-      "id": "b-27",
-      "model": "sim",
-      "team": [
-        {
-          "rid": 400,
-          "controlled": true
-        },
-        {
-          "rid": 80,
-          "treasurePhase": 3
-        }
-      ],
-      "setup": {
-        "enemy": "range-bigarms-wind",
-        "events": ["range-3min-jump"]
-      },
-      "metric": "hitDamageAtShot",
-      "args": {
-        "slot": 1,
-        "shot": 27,
-        "core": false,
-        "crit": false,
-        "distance": true
-      },
-      "tolerance": {
-        "rel": 0.001
-      },
-      "note": "撮影 B のギルティの 27 発目（24 発目の S2 の後）"
-    },
-    {
-      "id": "b-37",
-      "model": "sim",
-      "team": [
-        {
-          "rid": 400,
-          "controlled": true
-        },
-        {
-          "rid": 80,
-          "treasurePhase": 3
-        }
-      ],
-      "setup": {
-        "enemy": "range-bigarms-wind",
-        "events": ["range-3min-jump"]
-      },
-      "metric": "hitDamageAtShot",
-      "args": {
-        "slot": 1,
-        "shot": 37,
-        "core": false,
-        "crit": false,
-        "distance": true
-      },
-      "tolerance": {
-        "rel": 0.001
-      },
-      "note": "撮影 B のギルティの 37 発目（36 発目の S2 の後）"
-    },
-    {
-      "id": "b-42",
-      "model": "sim",
-      "team": [
-        {
-          "rid": 400,
-          "controlled": true
-        },
-        {
-          "rid": 80,
-          "treasurePhase": 3
-        }
-      ],
-      "setup": {
-        "enemy": "range-bigarms-wind",
-        "events": ["range-3min-jump"]
-      },
-      "metric": "hitDamageAtShot",
-      "args": {
-        "slot": 1,
-        "shot": 42,
-        "core": false,
-        "crit": false,
-        "distance": true
-      },
-      "tolerance": {
-        "rel": 0.001
-      },
-      "note": "撮影 B のギルティの 42 発目（的のジャンプでセンチの発が止まり、センチに付いた▲が切れた後）"
+      "note": "撮影 B のギルティの 1 ペレットの胴体（12・24・36 発目の後に H1 は 1 段上がる）（読んだ後に、観測値 1357-01 と同じ発にそろえた）"
     },
     {
       "id": "c-452",
@@ -263,11 +95,11 @@
         },
         {
           "rid": 72,
-          "controlled": true,
           "treasurePhase": 3
         },
         {
           "rid": 80,
+          "controlled": true,
           "treasurePhase": 3
         }
       ],
@@ -297,11 +129,11 @@
         },
         {
           "rid": 72,
-          "controlled": true,
           "treasurePhase": 3
         },
         {
           "rid": 80,
+          "controlled": true,
           "treasurePhase": 3
         }
       ],
@@ -331,11 +163,11 @@
         },
         {
           "rid": 72,
-          "controlled": true,
           "treasurePhase": 3
         },
         {
           "rid": 80,
+          "controlled": true,
           "treasurePhase": 3
         }
       ],
@@ -359,28 +191,30 @@
   ],
   "predicted": {
     "at": "2026-11-21",
-    "commit": "2c6a288167b356103c2027fa41cd83f155ad69ef",
+    "commit": "cfd6f568408af3858607d8e407a6a57a257033fa",
     "values": {
       "H1": {
-        "a-181": 14100.73236,
-        "a-431": 16036.111520000004,
-        "a-631": 17971.62224,
-        "a-702": 17971.62224,
-        "b-27": 58945.97981999999,
-        "b-37": 61158.81173999999,
-        "b-42": 62265.22770000001,
+        "a-steps": [
+          13616.85468, 14100.73236, 14100.73236, 14584.610040000001, 15068.487720000001, 15552.233839999999,
+          16036.111520000004, 16519.989199999996, 16519.989199999996, 17003.86688, 17487.74456, 17971.62224
+        ],
+        "b-steps": [
+          31016.1618, 37901.4688, 37901.4688, 41196.6048, 40050.943400000004, 44491.972200000004, 44491.972200000004,
+          45343.06139999999, 47045.239799999996
+        ],
         "c-452": 6099.4674,
         "c-603": 6613.946040000001,
-        "c-903": 7385.59406
+        "c-903": 6871.11542
       },
       "H0": {
-        "a-181": 13616.85468,
-        "a-431": 14584.610040000001,
-        "a-631": 15068.487720000001,
-        "a-702": 13616.85468,
-        "b-27": 53555.58624,
-        "b-37": 57839.56386000001,
-        "b-42": 54520.616799999996,
+        "a-steps": [
+          13616.85468, 13616.85468, 13616.85468, 13616.85468, 14100.73236, 14100.73236, 14584.610040000001,
+          14584.610040000001, 14584.610040000001, 14584.610040000001, 15068.487720000001, 15068.487720000001
+        ],
+        "b-steps": [
+          31016.1618, 34606.3328, 34606.3328, 37901.4688, 36755.807400000005, 40345.5156, 40345.5156, 41196.6048,
+          44491.972200000004
+        ],
         "c-452": 5842.22808,
         "c-603": 6099.4674,
         "c-903": 6099.4674

@@ -51,9 +51,13 @@
           "targetElement": "Water",
           "amountRef": 7,
           "assumes": {
-            "ja": "通常攻撃 値 06（90）回ごと（撃った発の通算。リロードをまたいで数える。値 01 の回復と同じ数え方）に、水冷コードの味方（自分も入る）が持つ、上限のある状態と timed のスタックのバフの全部に、付いていれば 1 段足す（上限は上げない。付いていなければ足さない。ディーゼルの宝物版 S1 と同じ読み。C-1182）。足すと全部の段の維持を付け直す（付与と同じに数える）。自分のニンジンパーティーにも足す（ダメージに効かない）。どれも確かめていない（V-0850）",
-            "en": "Every value 06 (90) normal attacks (shots fired overall, counted across reloads, the same count as value 01 heal), adds one stack to every stackable buff (states and timed buffs with a stack cap) held by Water Code allies (self included), only if present (the cap is not raised; not when absent; same reading as Diesel treasure S1, C-1182). Adding refreshes the duration of all stacks (counted like an application). Also adds to her own Carrot Party (no effect on damage). None of this is verified (V-0850)"
-          }
+            "ja": "通常攻撃 値 06（90）回ごと（撃った発の通算。リロードをまたいで数える。値 01 の回復と同じ数え方）に、水冷コードの味方（自分も入る）が持つ、上限のある状態と timed のスタックのバフの全部に、付いていれば 1 段足す（上限は上げない。付いていなければ足さない。ディーゼルの宝物版 S1 と同じ読み。C-1182）。ほかの味方のスキルで自分に付いたバフにも足し、上限で止まる（C-1505）。足すと全部の段の維持を付け直す（付与と同じに数える。C-1507 は仮説）。自分のニンジンパーティーにも足す（ダメージに効かない）。ほかの水冷コードの味方に付いたバフに足すことは確かめていない",
+            "en": "Every value 06 (90) normal attacks (shots fired overall, counted across reloads, the same count as value 01 heal), adds one stack to every stackable buff (states and timed buffs with a stack cap) held by Water Code allies (self included), only if present (the cap is not raised; not when absent; same reading as Diesel treasure S1, C-1182). It also adds to buffs on self from other allies' skills and stops at the cap (C-1505). Adding refreshes the duration of all stacks (counted like an application; C-1507 is a hypothesis). Also adds to her own Carrot Party (no effect on damage). Adding to buffs on other Water Code allies is not verified"
+          },
+          "claims": [
+            "C-1505",
+            "C-1507"
+          ]
         }
       ],
       "notes": [

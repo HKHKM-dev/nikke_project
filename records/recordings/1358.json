@@ -38,8 +38,8 @@
   "mode": "range-3min",
   "fixedSpec": true,
   "autoFire": true,
-  "autoBurst": true,
-  "conditionNote": "",
+  "autoBurst": false,
+  "conditionNote": "戦闘の始めから終わりまで、右のバースト欄が I（I-DOLL・フラワー）のままでゲージが満ちていても、バーストが一度も出ない（f900〜11700 を 400f おきに見た）。オートバーストが OFF だったとみる。撮影計画（オートバースト ON）と違うので、V-0850 の撮影 C は撮り直す",
   "backup": {
     "at": "2026-11-22T00:10+09:00",
     "via": "cloud-move",

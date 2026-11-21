@@ -46,11 +46,13 @@
           "targetElement": "Wind",
           "amountRef": 2,
           "assumes": {
-            "ja": "通常攻撃 値 01（12）回ごとに、風圧コードの味方（自分も入る）が持つ、上限のある状態と timed のスタックのバフの全部に、付いていれば 値 02 段足す（上限は上げない。付いていなければ足さない。ディーゼルの宝物版 S1 と同じ読み。C-1182）。自分の借りていくよぉ…に足す分は C-0873 で確かめた（S1 と同じ発で起きる時は、S1 の付与を付いているとみなす。どちらの順でも同じ段になる）。ほかの風圧コードの味方のバフ（ほかの味方のスキルで付いたものも）に足すことと、足すと全部の段の維持を付け直す（付与と同じに数える）ことは確かめていない（V-0850）",
-            "en": "Every value 01 (12) normal attacks, adds value 02 stacks to every stackable buff (states and timed buffs with a stack cap) held by Wind Code allies (self included), only if present (the cap is not raised; not when absent; same reading as Diesel treasure S1, C-1182). The part added to her own Mind If I Borrow This? is verified (C-0873; on the shot shared with Skill 1, the Skill 1 application counts as present, and either order gives the same stack count). Adding to buffs on other Wind Code allies (including those from other allies' skills) and refreshing the duration of all stacks on adding (counted like an application) are not verified (V-0850)"
+            "ja": "通常攻撃 値 01（12）回ごとに、風圧コードの味方（自分も入る）が持つ、上限のある状態と timed のスタックのバフの全部に、付いていれば 値 02 段足す（上限は上げない。付いていなければ足さない。ディーゼルの宝物版 S1 と同じ読み。C-1182）。自分の借りていくよぉ…に足す分は C-0873、ほかの味方のスキルで自分に付いたバフに足す分は C-1506 で確かめた（S1 と同じ発で起きる時は、S1 の付与を付いているとみなす。どちらの順でも同じ段になる）。足すと全部の段の維持を付け直す（付与と同じに数える。C-1507 は仮説）。ほかの風圧コードの味方に付いたバフに足すことは確かめていない",
+            "en": "Every value 01 (12) normal attacks, adds value 02 stacks to every stackable buff (states and timed buffs with a stack cap) held by Wind Code allies (self included), only if present (the cap is not raised; not when absent; same reading as Diesel treasure S1, C-1182). The part added to her own Mind If I Borrow This? is verified by C-0873, and the part added to buffs on self from other allies' skills by C-1506 (on the shot shared with Skill 1, the Skill 1 application counts as present, and either order gives the same stack count). Adding refreshes the duration of all stacks (counted like an application; C-1507 is a hypothesis). Adding to buffs on other Wind Code allies is not verified"
           },
           "claims": [
-            "C-0873"
+            "C-0873",
+            "C-1506",
+            "C-1507"
           ]
         },
         {
