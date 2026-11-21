@@ -1,0 +1,20 @@
+{
+  "id": "C-1372",
+  "text": "ギロチンのバーストのバーストスキルダメージ（Lv10 で最終攻撃力の 1237.5%）は、III のタイマーの 00.00 から 105f（動画で 127f。フルバーストの入りの止まり 22f を含む）後に出て、発動の直前の値で計算し、フルバースト補正は乗らない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1262-09`・`1261-12`・`1262-11`。V-0807",
+  "model": "反映（data/skills/180.json の burst の effects[0] と、burst/landing.ts の遅れの表のギロチンの行）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/180.json の burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1261",
+      "role": "値を合わせた"
+    }
+  ]
+}

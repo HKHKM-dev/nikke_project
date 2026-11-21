@@ -5,7 +5,7 @@ import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, fixedAttackBaseOf, type 
 import { isStateContent, type AppliedEffect, isTimedItem, type ItemEffect } from '../resolve.ts';
 import { stateMatches, type NamedStateId } from '../states.ts';
 import { isEffectTarget } from '../targets.ts';
-import { SKILL_SLOTS, isMaxHpStat, isStateStat, type BuffStat } from '../types.ts';
+import { SKILL_SLOTS, isMaxHpStat, isStateStat, lostHpScaled, lostHpSteps, type BuffStat } from '../types.ts';
 import type { SkillSlot } from '../../types.ts';
 import { unionRanges } from '../../frame/events.ts';
 import {
@@ -27,6 +27,8 @@ import {
   type HeldTrack,
   type HolderHistory,
   type HolderLists,
+  type HpRatioSteps,
+  hpRatioStepIndexOf,
   isEnemyEffect,
 } from './types.ts';
 import { STAGE_RANK, scaledEffect, valueOf } from './items.ts';
@@ -419,12 +421,18 @@ function passiveStatesOf(history: HolderHistory): (SlotBuffState | null)[] {
 }
 
 /** 履歴の値の小片（味方の枠ごと。並びは時刻の順。区間の値はこの順に足す） */
-export function valuePiecesOf(history: Pick<HolderHistory, 'tracks' | 'amplified' | 'slots'>): ValuePiece[] {
+export function valuePiecesOf(
+  history: Pick<HolderHistory, 'tracks' | 'amplified' | 'slots' | 'hpRatios'>,
+): ValuePiece[] {
   const keyed: { piece: ValuePiece; key: number[] }[] = [];
   for (const track of history.tracks) {
     const kind = track.origin.kind;
     if (kind !== 'timed' && kind !== 'state' && kind !== 'while') continue;
-    for (const piece of piecesOfTrack(track, history.slots)) keyed.push({ piece, key: pieceKey(piece) });
+    for (const whole of piecesOfTrack(track, history.slots)) {
+      const pieces =
+        whole.effect.scaling === 'perLostHp' ? splitByLostHp(whole, history.hpRatios[whole.slotIndex]!) : [whole];
+      for (const piece of pieces) keyed.push({ piece, key: pieceKey(piece) });
+    }
   }
   // 強化は、履歴を閉じる時に作った値の小片から（敵が持つ小片は、効果の対象の味方の各枠に写す）
   for (const p of history.amplified) {
@@ -442,6 +450,28 @@ export function valuePiecesOf(history: Pick<HolderHistory, 'tracks' | 'amplified
     }
   }
   return keyed.sort((a, b) => compareKeys(a.key, b.key)).map((x) => x.piece);
+}
+
+/**
+ * 失った HP 1% ごとの▲（scaling perLostHp）の小片を、持ち主の HP の割合の段 steps の変わり目で切り、段ごとに値を
+ * 比率 × 失った HP の段の数（lostHpSteps）にする。段の数が同じ並びは 1 つの小片にまとめる（plan/design-guillotine.md 2.1 節）
+ */
+function splitByLostHp(piece: ValuePiece, steps: HpRatioSteps): ValuePiece[] {
+  const out: ValuePiece[] = [];
+  const lostAt = (i: number): number => lostHpSteps(steps.ratios[i]!);
+  let i = hpRatioStepIndexOf(steps, piece.start);
+  let start = piece.start;
+  while (start < piece.end) {
+    // 段の数が変わるまで進める
+    let j = i + 1;
+    while (j < steps.frames.length && steps.frames[j]! < piece.end && lostAt(j) === lostAt(i)) j += 1;
+    const end = Math.min(piece.end, steps.frames[j] ?? piece.end);
+    const ratio = steps.ratios[i]!;
+    out.push({ ...piece, effect: lostHpScaled(piece.effect, () => ratio), start, end });
+    start = end;
+    i = j;
+  }
+  return out;
 }
 
 /**

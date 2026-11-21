@@ -1,0 +1,46 @@
+{
+  "id": "1261",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1261_smg+sr+mg_liter+delta+guillotine_fire.mp4",
+  "original": "2026-11-21_13-28-56.mp4",
+  "durationSec": 201.6,
+  "frames": 12094,
+  "fps": 60,
+  "sizeMB": 244.6,
+  "sha256": "4587ee7ec74c",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 180,
+      "name": "ギロチン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-21T13:38+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

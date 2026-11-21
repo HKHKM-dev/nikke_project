@@ -64,11 +64,11 @@ describe('ソリン（71）の定義', () => {
     expect(() => selfHpHolds({ atLeastRef: 1 }, 1)).toThrow(/not resolved/);
   });
 
-  it('rejects the at-most form of selfHp on a damage', () => {
+  it('also takes the at-most form of selfHp on a damage (plan/design-guillotine.md 2.2 節)', () => {
     const raw = rawDefinition<{ skills: { burst: { effects: Record<string, unknown>[] } } }>(71);
     const copy = structuredClone(raw);
     copy.skills.burst.effects[1] = { ...copy.skills.burst.effects[1], condition: { selfHp: { atMost: 50 } } };
-    expect(() => parseSkillDefinition(copy)).toThrow(/at-least form of selfHp/);
+    expect(parseSkillDefinition(copy).skills.burst.effects[1]).toMatchObject({ condition: { selfHp: { atMost: 50 } } });
   });
 });
 

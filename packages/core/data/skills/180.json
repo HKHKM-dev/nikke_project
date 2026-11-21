@@ -1,0 +1,125 @@
+{
+  "formatVersion": 1,
+  "resourceId": 180,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "self",
+          "stat": "critRate",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "通常攻撃の命中 30 回ごと（命中は期待値で数える）に付き、スタックせずに維持を付け直す",
+            "en": "Applied every 30 normal-attack hits (counted as expected hits); it does not stack and refreshes its duration"
+          },
+          "claims": [
+            "C-1369"
+          ]
+        },
+        {
+          "kind": "currentHpDown",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "self",
+          "ref": 4,
+          "assumes": {
+            "ja": "クリティカル確率▲と同じ発火（通常攻撃の命中 30 回ごと。命中は期待値で数える）で、自分の現在の HP を 2.01% 下げる（HP の割合に 1 − 0.0201 を掛ける。最大HP は変えない）。HP の割合を読む S2 の攻撃力▲・バーストの追加ダメージは次のフレームから読む。味方の回復（スキル発動者の最終最大HP の X%）で戻る（ギロチンは回復を持たない）",
+            "en": "On the same trigger as the CRIT Rate up (every 30 normal-attack hits, counted as expected hits), lowers own current HP by 2.01% (the HP ratio is multiplied by 1 − 0.0201; max HP is unchanged). The S2 ATK up and the burst additional damage that read the HP ratio see it from the next frame. Allies' heals of X% of the caster's final max HP restore it (Guillotine has no heal)"
+          },
+          "claims": [
+            "C-1368"
+          ]
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "self",
+          "stat": "critDamage",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "通常攻撃の命中 150 回ごと（命中は期待値で数える）に付き、スタックせずに維持を付け直す",
+            "en": "Applied every 150 normal-attack hits (counted as expected hits); it does not stack and refreshes its duration"
+          },
+          "claims": [
+            "C-1370"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "selfHpAtMostRef": 4
+          },
+          "durationUntil": "selfHpAbove",
+          "target": "self",
+          "stat": "attack",
+          "ref": 5,
+          "scaling": "perLostHp",
+          "assumes": {
+            "ja": "自分の HP の割合が 70% 以下に下がったフレームの次から付き、上回るまで続く。値は 0.96% × 失った HP の % の切り捨て（HP の割合が変わるたびに付け直す。plan/design-guillotine.md 2.1 節）。被弾の無い前提では、S1 の現在の HP▼ で下がり、味方の回復（スキル発動者の最終最大HP の X%）でだけ戻る（射撃場の的の攻撃で減る分は扱わない）",
+            "en": "Applied from the frame after own HP ratio falls to 70% or lower, until it rises above. The value is 0.96% × the lost HP % rounded down, recomputed whenever the HP ratio changes (plan/design-guillotine.md 2.1). With no damage taken, S1's current HP down lowers it and only allies' heals (X% of the caster's final max HP) raise it (the small loss from the shooting range target attacks is not modeled)"
+          },
+          "claims": [
+            "C-1371",
+            "C-1368"
+          ]
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "最終攻撃力が最も高い敵 1 機は単体ボス。III のタイマーの 00.00 の 105f 後に出て、発動の直前の値で計算する（フルバースト補正は乗らない。遅れは burst/landing.ts の表）",
+            "en": "The one enemy with the highest final ATK is the single boss. It lands 105 f after the Step III timer shows 00.00 and uses the values just before the activation (no Full Burst bonus; the delay is in the burst/landing.ts table)"
+          },
+          "claims": [
+            "C-1372"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "damageType": "additional",
+          "ref": 3,
+          "condition": {
+            "selfHp": {
+              "atMostRef": 2
+            }
+          },
+          "assumes": {
+            "ja": "バーストスキルダメージと同じ 00.00 の 105f 後に発火し、そのフレームの自分の HP の割合（それより前の S1 の現在の HP▼ で下げた値）が 50% 以下なら出る（使った瞬間とは、被弾の無い前提では 50% をまたがないので見分けていない。plan/design-guillotine.md 2.2・8 節）。フルバーストの中に出るのでフルバースト補正が乗る。同じ敵は単体ボス",
+            "en": "Fires at the same 105 f after 00.00 as the Burst Skill damage, and is dealt if own HP ratio at that frame (lowered by earlier S1 current HP downs) is 50% or lower (not told apart from the burst-use moment, since with no damage taken the HP does not cross 50% in between; plan/design-guillotine.md 2.2 and 8). It lands inside Full Burst, so the Full Burst bonus applies. The same enemy is the single boss"
+          },
+          "claims": [
+            "C-1373",
+            "C-1368",
+            "C-1372"
+          ]
+        }
+      ],
+      "notes": []
+    }
+  }
+}

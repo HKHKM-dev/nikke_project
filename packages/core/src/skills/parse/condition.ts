@@ -66,7 +66,7 @@ export const CONDITION_KEYS_OF = {
     'selfHp',
   ],
   // damage にも selfCounter（ラプラス：アルティメットヒーローのバーストの追加ダメージ）
-  // selfHp（以上の形だけ。parse/damage.ts。発火のフレームの HP の割合で見る。plan/design-soline.md 2.1 節）
+  // selfHp（以上・以下の形。発火のフレームの HP の割合で見る。plan/design-soline.md 2.1 節・plan/design-guillotine.md 2.2 節）
   // usedBurst（フルバーストの開始・終了のきっかけだけ。plan/design-cinderella-cw.md 2.4 節）
   damage: ['inFullBurst', 'enemyState', 'selfState', 'selfCounter', 'selfHp', 'usedBurst'],
   // 持続ダメージは付くフレームの自分の状態だけ（ジルの硫酸弾。plan/design-skill-stage17.md 2.2 節）

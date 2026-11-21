@@ -116,3 +116,5 @@
 | 〈倍率ダメージ〉がクリティカル命中した時、同じ敵に（追加ダメージ） | damage の `onSkillCrit: true`（相手と同じきっかけ。期待値は値 × 倍率ダメージの会心率） | ジュリアの宝物版 S2 のマルカート | [design-julia.md](design-julia.md) 2.1 節 |
 | スキル発動者の最終最大HP の X% を攻撃力に合算して Y% ダメージ／〈カウンタ〉分の連続攻撃 | burstDamage の `addCasterMaxHpRef`／burstDamage の `hitsFrom: { counter }` と、遅れの表の行のカウンタの上限の数の `hitOffsets` | メイデン：アイスローズのバースト | [design-maiden-ice-rose.md](design-maiden-ice-rose.md) 2.2・8 節 |
 | 〈カウンタ〉が 0 なら・1 以上なら（カウンタの増減と timed のきっかけ） | 条件 `selfCounter` の `below: 1`・`atLeast: 1` | メイデン：アイスローズの S1・S2 の MP | 同 2.1・2.4 節 |
+| 自分の HP が X% 以下の場合に限り、失った HP 1% ごとに攻撃力 Y%▲「持続」 | timed の `scaling: "perLostHp"`（`attack`・`self` だけ）と、きっかけ `{ "selfHpAtMostRef": N }`・`durationUntil: "selfHpAbove"` | ギロチンの S2 | [design-guillotine.md](design-guillotine.md) 2.1 節 |
+| 自分の HP が X% 以下の場合（倍率ダメージ） | damage の `condition.selfHp: { "atMostRef": N }`（バーストを使ったフレームの HP の割合で見る） | ギロチンのバースト | 同 2.2 節 |

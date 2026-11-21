@@ -41,6 +41,7 @@ export function createRegister({
   fireGrant,
   fireRemove,
   fireRemoveDebuff,
+  advanceSelfHpStates,
   firesOf,
   fireStackChange,
   fireAllStackable,
@@ -188,6 +189,8 @@ export function createRegister({
         const ends = track.untilEnds!;
         if (ends.at(-1) !== f && endedAt(track.holder, state, f)) ends.push(f);
       }
+    // HP の割合が閾値を上回るまでの窓（plan/design-mast.md 8 節）の終わりを、同じフレームの読み手より前に決める
+    if (!battleStartOnly) advanceSelfHpStates(f);
     // HP の割合で解除される件（plan/design-hp-down-interval.md 2.2 節）: f より前に付いた件が f に効いていて、持ち主の HP の割合が閾値以下と読めたら、
     // f + 1 で閉じる（f には付いている。HP の割合は f より前の現在の HP▼ から。付いた時にすでに以下なら付かない（段 1 の付与））
     if (!battleStartOnly)

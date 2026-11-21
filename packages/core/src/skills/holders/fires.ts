@@ -123,6 +123,13 @@ export function createFires({
     const at = new Set(timerFramesOf(trigger, frames));
     return (ev) => at.has(ev.frame);
   };
-  return { firesOf, selfHpStateOf };
+  /**
+   * フレーム frame の HP の割合の追跡を全部進める（判定はフレームごとに 1 回で、後のきっかけの判定は同じ結果を読む）。上回ったフレームを、
+   * 同じフレームの読み手（1 パス目の順位が読む攻撃力の窓など。plan/design-guillotine.md 2.1 節）より前に窓の終わりに足す（registerEnds）
+   */
+  const advanceSelfHpStates = (frame: number): void => {
+    for (const state of selfHpStates.values()) selfHpDropped(state, frame);
+  };
+  return { firesOf, selfHpStateOf, advanceSelfHpStates };
 }
 export type Fires = ReturnType<typeof createFires>;

@@ -106,6 +106,9 @@ function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path:
   if (scaling === 'perFinalMaxAmmo' && stat !== 'chargeDamage') {
     fail(`${path}.scaling`, `perFinalMaxAmmo is only allowed with stat "chargeDamage", got "${stat}"`);
   }
+  if (scaling === 'perLostHp' && stat !== 'attack') {
+    fail(`${path}.scaling`, `perLostHp is only allowed with stat "attack", got "${stat}"`);
+  }
   if (scaling === 'casterChargeTime' && stat !== 'chargeSpeed') {
     fail(`${path}.scaling`, `casterChargeTime is only allowed with stat "chargeSpeed", got "${stat}"`);
   }
@@ -124,10 +127,11 @@ function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path:
 
 /**
  * timed だけに書ける scaling。発動者の最大HP 基準（casterMaxHp）は対象の枠ごとに件の列で直し（plan/design-hp-ratio-readers.md 9 節）、
- * 最終最大装弾数 1 発ごと（perFinalMaxAmmo）は使い手が timed だけ（plan/design-emilia.md 2.1 節）。passive と状態の中身は拒む
+ * 最終最大装弾数 1 発ごと（perFinalMaxAmmo）と失った HP 1% ごと（perLostHp）は使い手が timed だけ（plan/design-emilia.md 2.1 節・
+ * plan/design-guillotine.md 2.1 節）。passive と状態の中身は拒む
  */
 export function rejectTimedOnlyScaling(scaling: BuffScaling | undefined, path: string): void {
-  if (scaling === 'casterMaxHp' || scaling === 'perFinalMaxAmmo')
+  if (scaling === 'casterMaxHp' || scaling === 'perFinalMaxAmmo' || scaling === 'perLostHp')
     fail(`${path}.scaling`, `${scaling} is only allowed in timed`);
 }
 
@@ -444,6 +448,9 @@ function parseTimedValue(
   // 最終最大装弾数 1 発ごとの▲は持ち主の発の時点の装弾数で出すので、自分にだけ（plan/design-emilia.md 2.1 節）
   if (scaling === 'perFinalMaxAmmo' && target !== 'self')
     fail(`${path}.target`, 'perFinalMaxAmmo is only allowed with target "self"');
+  // 失った HP 1% ごとの▲は持ち主の HP の割合で出すので、自分にだけ（plan/design-guillotine.md 2.1 節）
+  if (scaling === 'perLostHp' && target !== 'self')
+    fail(`${path}.target`, 'perLostHp is only allowed with target "self"');
   validateFlatChargeTime(stat, scaling, v, path);
   validateDamageTaken(stat, target, v, path);
   validateAttackSpeed(stat, target, v, path);
@@ -806,7 +813,12 @@ function parseTimedDuration(
     // HP の割合の窓は、窓の始まりの順位で対象を決めて窓の終わりまで続く
     if (target === 'topAttack' && until !== 'selfHpAbove')
       fail(`${path}.target`, 'a duration until an event cannot target "topAttack"');
-    if (until === 'selfHpAbove' && (stat === undefined || isFirstPassTrackedStat(stat) || isFlagStat(stat)))
+    // 攻撃力は書ける: 1 パス目の読み手（順位・蓄積して爆発するダメージ・自分が攻撃力増加状態なら）は読むフレームの件を
+    // そのつど読み、窓の終わりはフレームの初め（skills/holders/register.ts の registerEnds）で決まる（plan/design-guillotine.md 2.1 節）
+    if (
+      until === 'selfHpAbove' &&
+      (stat === undefined || (isFirstPassTrackedStat(stat) && stat !== 'attack') || isFlagStat(stat))
+    )
       fail(
         `${path}.durationUntil`,
         'a duration until the HP rises is only supported for timed effects of a value not tracked in the first pass',
