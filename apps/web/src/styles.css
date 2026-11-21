@@ -1068,7 +1068,13 @@ header h1 {
 }
 /* クラス・武器種・企業・コレクション（宝物の絞り込みのボタン）・ui は、図柄（差し色）を白にする。
    コレクションのレア度の色（tone）と、ui のうち空にする ✕ の赤は下で上書きする */
-:where(.badge-group-class, .badge-group-weaponType, .badge-group-corporation, .badge-group-collection, .badge-group-ui) {
+:where(
+  .badge-group-class,
+  .badge-group-weaponType,
+  .badge-group-corporation,
+  .badge-group-collection,
+  .badge-group-ui
+) {
   --badge-accent: #ffffff;
 }
 :where(.badge-tone-R) {
@@ -1611,8 +1617,6 @@ html:has(.modern-view-container) {
   display: flex;
   /* バッジの絵どうしの間は 4px（ボタンの枠 2px を両側） */
   gap: 0;
-  /* 高さの違うバッジ（お気に入り）は縦の中央にそろえる */
-  align-items: center;
   padding-right: 3px;
   border-right: 1px solid color-mix(in srgb, var(--app-fg) 15%, transparent);
 }
@@ -1625,9 +1629,11 @@ html:has(.modern-view-container) {
   cursor: pointer;
   line-height: 0;
 }
-/* お気に入りのバッジ（130×160）は、ほかのバッジ（130×150）より縦に長いので、幅を --badge-w の 5/6 にする */
+/* お気に入りのバッジ（130×160）は、幅を --badge-w の 5/6 にし、箱の高さをほかのバッジ（130×150 の六角形）にそろえる
+   （押したときの枠の高さがそろう。絵は箱の縦の中央に描かれる） */
 .char-tray-badge-button .favorite-badge {
   width: calc(var(--badge-w) * 5 / 6);
+  height: calc(var(--badge-w) * 150 / 130);
 }
 .char-tray-badge-button[aria-pressed='true'] {
   border-color: var(--app-fg);

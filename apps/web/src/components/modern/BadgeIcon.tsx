@@ -40,7 +40,13 @@ export function BadgeIcon({
   const [, , width, height] = viewBox.split(' ');
   return (
     <svg
-      className={[`badge-group-${name.slice(0, name.indexOf('_'))}`, `badge-${name}`, tone && `badge-tone-${tone}`, variant && `badge-variant-${variant}`, className]
+      className={[
+        `badge-group-${name.split('_')[0]}`,
+        `badge-${name}`,
+        tone && `badge-tone-${tone}`,
+        variant && `badge-variant-${variant}`,
+        className,
+      ]
         .filter(Boolean)
         .join(' ')}
       viewBox={viewBox}
