@@ -1,0 +1,223 @@
+{
+  "verification": "V-0841",
+  "note": "撮影 A（メイデン単騎・操作）と撮影 B（I-DOLL・フラワー（I）+ デルタ（II）+ メイデン（III・操作）・オートバースト ON）の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。S2 の周期（30 秒・1 回目も 30 秒）は C-0506 の値。B のモデルはメイデンがバーストを 180 秒に 5 回使い（約 8・48・88・128・169 秒）、3 回目（約 128 秒）だけ S2 の窓（30 秒ごとに 10 秒）の中。バーストスキルダメージのヒットの遅れは表に行が無い（00.00 と同じフレーム）ので、録画で読んで表に足す",
+  "team": [
+    {
+      "rid": 304
+    },
+    {
+      "rid": 20
+    },
+    {
+      "rid": 181,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S2 の effects[0]: CT 30 秒ごとのアクティブで、戦闘開始から 30 秒ごとに自分にクリティカルダメージ 152.84%▲（10 秒）。1 回目も 30 秒。effects[1]: 発動の 4f 後に射手の 1 ヒットぶんのゲージ。burst の effects[0]: 最終攻撃力の 457.87% のバーストスキルダメージ）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-s2-interval",
+      "model": "sim",
+      "metric": "buffWindowStartIntervalMean",
+      "team": [
+        {
+          "rid": 181,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "critDamage",
+        "count": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: S2 のクリティカルダメージ▲の窓の始まりの間隔（1〜5 回目の 4 間隔の平均。ゲーム内のティック）"
+    },
+    {
+      "id": "A-s2-starts",
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "team": [
+        {
+          "rid": 181,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "critDamage",
+        "count": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "note": "撮影 A: S2 のクリティカルダメージ▲の 1・2 回目の窓の始まり（フレーム）"
+    },
+    {
+      "id": "A-base-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 181,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 1000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "撮影 A: S2 の窓の外の、メイデンの胴体に当たった会心しない（距離ボーナスなし）1 ペレット（対照。窓の中でも同じ値）"
+    },
+    {
+      "id": "A-base-crit-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 181,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 1000,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "撮影 A: S2 の窓の外の、メイデンの胴体に当たった会心した（距離ボーナスなし）1 ペレット（会心の項 0.5）"
+    },
+    {
+      "id": "A-s2-crit-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 181,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 1900,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "撮影 A: S2 の窓の中の、メイデンの胴体に当たった会心した（距離ボーナスなし）1 ペレット（会心の項 0.5 + 1.5284）"
+    },
+    {
+      "id": "B-burst-hit-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "撮影 B: メイデンの 1 回目のバーストスキルダメージ（会心なし。S2 の窓の外）"
+    },
+    {
+      "id": "B-burst-crit-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "撮影 B: メイデンの 1 回目のバーストスキルダメージが会心した時の値（S2 の窓の外）"
+    },
+    {
+      "id": "B-burst-crit-3",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "撮影 B: メイデンの 3 回目のバーストスキルダメージが会心した時の値（S2 の窓の中。会心しなければ B-burst-hit-1 と同じ値）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "2a3a980fea834156ddb653da587e60e27940578f",
+    "values": {
+      "H1": {
+        "A-s2-interval": 1765,
+        "A-s2-starts": [1766, 3531],
+        "A-base-hit": 27744.753599999996,
+        "A-base-crit-hit": 41617.130399999995,
+        "A-s2-crit-hit": 84022.21180223998,
+        "B-burst-hit-1": 548509.9452000001,
+        "B-burst-crit-1": 822764.9178000002,
+        "B-burst-crit-3": 822764.9178000002
+      }
+    }
+  }
+}
