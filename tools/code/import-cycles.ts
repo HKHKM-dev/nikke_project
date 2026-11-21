@@ -64,7 +64,8 @@ export function sourceFilesUnder(dir: string): string[] {
 export const repoKey = (root: string, path: string): string => relative(root, path).split(sep).join('/');
 
 /**
- * file（絶対パス）の import の指定 specifier が指すソースの絶対パス。外のパッケージ・ソースでない先（JSON・画像）は undefined。
+ * file（絶対パス）の import の指定 specifier が指すソースの絶対パス。外のパッケージ・ソースでない先（JSON・画像）と、
+ * `?` の付いた指定（`?raw`・`?url`。モジュールを実行しない）は undefined。
  * 辿れない指定（パッケージの中のパス・拡張子の無い指定・無いファイル）は投げる
  */
 export function resolveImport(
@@ -96,7 +97,7 @@ export function resolveImport(
   if (!statSync(target, { throwIfNoEntry: false })?.isFile()) {
     throw new Error(`${repoKey(root, file)}: import の先 "${specifier}" が無い`);
   }
-  return target;
+  return specifier.includes('?') ? undefined : target;
 }
 
 /** root の下の dirs のソース（.ts・.tsx）の、実行時に残る import のグラフ。キーと値は root からの相対パス（区切りは /） */

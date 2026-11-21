@@ -193,3 +193,4 @@
 - 2026-11-18: 10 を実装した。`npm run code:survey`（`tools/code/survey.ts`。ファイルと git を読まない部分は `tools/code/survey-lib.ts` とそのテスト）が、長い関数・同じ形の文の並び（テストの補助関数を含み、テストの本体は見ない）・読まれない export・循環する import・一緒に変わるファイルを表で出す。依存は足さず、TypeScript の構文解析と git だけで読む（リポジトリの全部で数秒）。指定の解決とソースの探し方は `tools/code/import-cycles.ts` と共有にした。作り替えの洗い出しを書いた現状の文書が無いので、手引きには書かない。
 - 2026-11-21: 2 の `records:new claim` が、無効の観測値を根拠に足さないようにした（新しい結論と `--update` の両方。`--observations` で選んでも除き、除いたものを知らせる）。`--update` は無効の観測値を書き足して確定の結論を「失効した観測値がある」で仮説に戻していた。足す根拠と根拠の文は `drafts.ts` の `claimBasisObservations`・`claimUpdateBasis` に移し、`--update` の流れのテストを足した。
 - 2026-11-21: 4 節の取り寄せの上書きの課題を直した（大きさが Drive と違う証拠フレームは手元を残して知らせる・Drive への接続を要る所まで遅らせる。`fetch-lib.ts` とそのテスト）。
+- 2026-11-21: `still.ts` の並べ画で、録画の終わりを越えたこまを、枚数でなく録画のフレーム数と比べて知らせるようにした。`intake.ts drive:` は、下見で落としたもので大きさとハッシュが record の写しと同じものがあれば落とし直さずに使う（`fetch.ts` の冒頭の注記を合わせる直しは課題 `fetch-comment-intake-reuse.json` に残した）。
