@@ -497,6 +497,10 @@ export const NAMED_STATES = {
   survivalInstinct3: { name: { ja: '生存本能3', en: 'Survival Instinct 3' }, holder: 'ally' },
   /** 証拠品収集（ノベルの S2。防御力▲のスタック。バーストの「証拠品収集のフルスタック状態なら」の受けるダメージ▲が見る） */
   collectEvidence: { name: { ja: '証拠品収集', en: 'Collecting Evidence' }, holder: 'ally' },
+  /** 眠い（プリムの宝物版 S1。敵の防御力▼のスタック。フルスタックが起きたのきっかけの条件） */
+  sleepy: { name: { ja: '眠い', en: 'Sleepy' }, holder: 'enemy' },
+  /** 起きた（プリムの宝物版 S1。通常攻撃を防御力無視ダメージに。S2・バーストの防御力無視ダメージ▲の条件） */
+  wakeUp: { name: { ja: '起きた', en: 'Wake Up' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;
