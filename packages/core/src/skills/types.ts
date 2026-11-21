@@ -309,7 +309,10 @@ export function isAllyDecrease(effect: { stat: string; decrease?: true }): boole
  * 作る時に直す（skills/holders.ts）。plan/design-hp-ratio-readers.md 9 節の論点 8。V-0730）。定義を書くときの決まり: 自分にだけ付く効果には
  * 書かない（比率は X のままなので ratio で書く）、
  * perFinalMaxAmmo = 「自分の最終最大装弾数 1 発ごとに X%▲」（stat が chargeDamage の timed の self だけ。plan/design-emilia.md 2.1 節）。
- * 値は比率 × その発の時点の最終最大装弾数（上限 50 発）で、damage.ts がフルチャージの発の 1 トリガーの値を出すときに掛ける
+ * 値は比率 × その発の時点の最終最大装弾数（上限 50 発）で、damage.ts がフルチャージの発の 1 トリガーの値を出すときに掛ける、
+ * perLostHp = 「失った HP 1% ごとに X%▲」（stat が attack の timed の self だけ。plan/design-guillotine.md 2.1 節）。値は比率 ×
+ * 失った HP の 1% 刻みの段の数（lostHpSteps）。HP の割合（skills/holders/views.ts の selfHpRatioAt）が変わるたびに付け直す。
+ * 2 パス目は値の小片を持ち主の HP の割合の段で切り（skills/holders/history.ts の valuePiecesOf）、1 パス目は読むフレームの割合で出す
  */
 export type BuffScaling =
   | 'ratio'
@@ -320,7 +323,8 @@ export type BuffScaling =
   | 'casterDefence'
   | 'copyTopAttack'
   | 'casterMaxHp'
-  | 'perFinalMaxAmmo';
+  | 'perFinalMaxAmmo'
+  | 'perLostHp';
 export const BUFF_SCALINGS = [
   'ratio',
   'casterAttack',
@@ -331,7 +335,21 @@ export const BUFF_SCALINGS = [
   'copyTopAttack',
   'casterMaxHp',
   'perFinalMaxAmmo',
+  'perLostHp',
 ] as const satisfies readonly BuffScaling[];
+
+/**
+ * 失った HP の 1% 刻みの段の数（scaling 'perLostHp'。100 × (1 − HP の割合) を切り捨てる。境は 1e-9 を許す。
+ * plan/design-guillotine.md 2.1 節）
+ */
+export function lostHpSteps(ratio: number): number {
+  return Math.max(0, Math.floor(100 * (1 - ratio) + 1e-9));
+}
+
+/** 効果の値を、HP の割合 ratio の失った HP の段で掛けた効果（scaling 'perLostHp' のときだけ。ほかはそのまま） */
+export function lostHpScaled<E extends { scaling?: BuffScaling; value: number }>(effect: E, ratio: number): E {
+  return effect.scaling === 'perLostHp' ? { ...effect, value: effect.value * lostHpSteps(ratio) } : effect;
+}
 
 /** 攻撃力に実数を固定加算するスケーリング（比率で足さない。stat は attack だけ） */
 export function isFixedAttackScaling(scaling: BuffScaling | undefined): boolean {
@@ -1262,8 +1280,9 @@ export function isStateEndUntil(u: unknown): u is StateEndUntil {
  * 回数のきっかけ（{ count: 'fullBurstStart' | 'fullBurstEnd' }）にも書ける。
  * selfHp = 自分の HP の割合が閾値以上なら（plan/design-skill-stage6.md 1.4 節。passive だけ。HP の割合は枠の想定で
  * 戦闘中一定なので、編成の段で決まる）。閾値以下なら（atMost の形。timed だけ。発火のフレームの
- * HP の割合で見る。件の一覧が発火の文脈の条件と同じ所で見る。plan/design-scarlet.md 2.2 節）。damage にも以上の形を書ける
- * （発火のフレームの HP の割合を 2 パス目の frame/plan.ts が見る。編成の段では決めない。plan/design-soline.md 2.1 節）。
+ * HP の割合で見る。件の一覧が発火の文脈の条件と同じ所で見る。plan/design-scarlet.md 2.2 節）。damage にも以上・以下の形を書ける
+ * （発火のフレームの HP の割合を 2 パス目の frame/plan.ts が見る。編成の段では決めない。plan/design-soline.md 2.1 節・
+ * plan/design-guillotine.md 2.2 節）。
  * burstStep = この発動を撃った段階が N なら（plan/design-red-hood.md 2.1 節。『バーストⅠで使用時』など）。burstUse の
  * きっかけの timed・付与・cooldownReduction・weaponChange にだけ書ける。発火の文脈（このフレームの自分の発動の段階）だけで決まるので、
  * usedBurst と同じく件を見ず、効果の段を上げない。書けるのは burstStep が AllStep のキャラの定義だけ（definitions.test.ts）
@@ -1303,7 +1322,8 @@ export type SelfCounterCondition = { counter: CounterId; atLeast?: number; below
  * （skills/holders/views.ts の selfHpRatioAt）で見る。付いた後は維持の終わりまで続く。編成の段では決めない。1 パス目で窓を追う stat には
  * 書けない。plan/design-scarlet.md 2.2 節）。
  * passive は atLeast の形だけ、timed は atMost の形だけ書ける。
- * damage は atLeast の形だけ（「自分の HP が最大の場合」は atLeast 100。発火のフレームで見る。plan/design-soline.md 2.1 節）。
+ * damage は両方の形を書ける（「自分の HP が最大の場合」は atLeast 100。発火のフレームで見る。plan/design-soline.md 2.1 節・
+ * plan/design-guillotine.md 2.2 節）。
  * 定義を書くときの決まり: HP は被弾で減りうるので、この条件を assumes で満たすとみなさない（plan/design-skill-catalog.md の論点 12）
  */
 export type SelfHpCondition =
@@ -1319,7 +1339,7 @@ export function isSelfHpAtMost(hp: SelfHpCondition): boolean {
 
 /**
  * 解いた selfHp（atLeast・atMost。% 表記。plan/design-soline.md 2.1 節）を、HP の割合 ratio が満たすか（境は 1e-9 を許す）。
- * 発火のフレームで見る条件（timed の以下の形・damage の以上の形）が読む。解いていない形（atLeastRef・atMostRef）は投げる
+ * 発火のフレームで見る条件（timed の以下の形・damage の両方の形）が読む。解いていない形（atLeastRef・atMostRef）は投げる
  */
 export function selfHpHolds(hp: SelfHpCondition, ratio: number): boolean {
   if (hp.atLeast !== undefined) return ratio >= hp.atLeast / 100 - 1e-9;

@@ -1,0 +1,170 @@
+{
+  "verification": "V-0807",
+  "note": "既定の定義が本命の読み（H1・A1・Hb1）。A1c・A2・A3・H2 は語彙で書けないので、検証記録の「予測」に手で書く",
+  "team": [
+    {
+      "rid": 180,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "A1",
+      "note": "本命: S1 は現在の HP の 2.01% を引き、S2 の攻撃力▲は 70% 以下の間、0.96% × 失った HP の % の切り捨て。バーストの追加ダメージは使った瞬間の HP が 50% 以下の時だけ",
+      "override": {}
+    },
+    {
+      "id": "A0",
+      "note": "S2 の攻撃力▲が付かない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 180,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "Hb0",
+      "note": "バーストの追加ダメージが HP によらず毎回出る",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 180,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "damage",
+              "trigger": "burstUse",
+              "damageType": "additional",
+              "ref": 3
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-noncrit-before",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 500,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A（単騎）: HP 70% を切る前（S1 は 16 回）の 1 ヒット（会心なし・胴体・距離あり）。どの読みも同じ"
+    },
+    {
+      "id": "A-noncrit-first",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 560,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 18 回目の発火（約 543 発目）で HP が 70% を切った直後の 1 ヒット（失った HP 30%）"
+    },
+    {
+      "id": "A-noncrit-late",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 5000,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 終盤（S1 は 166 回。HP 約 3.4%・失った HP 96%）の 1 ヒット"
+    },
+    {
+      "id": "B-additional-count",
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "burst"
+      },
+      "team": [
+        {
+          "rid": 82,
+          "controlled": false
+        },
+        {
+          "rid": 20,
+          "controlled": false
+        },
+        {
+          "rid": 180,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "撮影 B（リター + デルタ + ギロチン）: バーストの追加ダメージの数（1 回目のバーストは HP 約 82%）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "8b9fe79ffde0b824da188d2fcdca6243ba1c0d44",
+    "values": {
+      "A1": {
+        "A-noncrit-before": 8674.42836,
+        "A-noncrit-first": 11174.745659999999,
+        "A-noncrit-late": 16675.44372,
+        "B-additional-count": 4
+      },
+      "A0": {
+        "A-noncrit-before": 8674.42836,
+        "A-noncrit-first": 8674.42836,
+        "A-noncrit-late": 8674.42836,
+        "B-additional-count": 4
+      },
+      "Hb0": {
+        "A-noncrit-before": 8674.42836,
+        "A-noncrit-first": 11174.745659999999,
+        "A-noncrit-late": 16675.44372,
+        "B-additional-count": 5
+      }
+    }
+  }
+}

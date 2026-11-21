@@ -77,7 +77,9 @@ describe('語彙の検証', () => {
     // エード編: 秒の維持（durationRef・durationSeconds）とも組める
     expect(patched('skill1', hpCrit, { durationUntil: undefined, durationRef: 5 })).not.toThrow();
     expect(patched('skill1', hpCrit, { durationUntil: undefined, durationSeconds: 7 })).not.toThrow();
-    expect(patched('skill1', hpCrit, { stat: 'attack' })).toThrow(/a duration until the HP rises is only supported/);
+    expect(patched('skill1', hpCrit, { stat: 'defense' })).toThrow(/a duration until the HP rises is only supported/);
+    // ギロチン編: 攻撃力は書ける（窓の終わりはフレームの初めに決まる。plan/design-guillotine.md 2.1 節）
+    expect(patched('skill1', hpCrit, { stat: 'attack' })).not.toThrow();
     expect(patched('skill1', hpCrit, { trigger: { selfHpAtMostRef: 5, extra: 1 } })).toThrow(/unknown field/);
   });
 

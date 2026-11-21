@@ -472,6 +472,8 @@ const TGT_INFO: Record<string, Info> = {
 function scalingKeyOf(e: CatalogEffect): string {
   const stat = e.stat!;
   if (stat.scaling === 'casterHp') return stat.canon === 'attack' ? 'casterHp:ok' : 'casterHp';
+  // 自分の失った HP 1% ごとの攻撃力▲は語彙あり（perLostHp。plan/design-guillotine.md 2.1 節）。ほかの stat は読む側の間接
+  if (stat.scaling === 'lostHp') return stat.canon === 'attack' && e.side !== 'enemy' ? 'lostHp:ok' : 'lostHp';
   if (stat.scaling !== 'casterBased') return stat.scaling;
   // 敵に付く発動者基準の防御力▼は語彙あり（casterDefence。plan/design-mast.md 2.2 節）
   if (stat.canon === 'defense' && e.side === 'enemy' && stat.dir === 'down') return 'casterBased:enemyDefense';
@@ -492,6 +494,7 @@ const SC: Record<string, Info> = {
   casterHp: ['発動者の最大HP 基準の、攻撃力のほかの値', 'gap'],
   // timed の perCount: { state }（付いた時の自分のスタック数を掛ける。plan/design-maids.md 2.1 節）
   perStack: ['X% × 〈状態〉のスタック数', 'ok', 'timed の perCount: { state }'],
+  'lostHp:ok': ['自分の失った HP 1% ごとの攻撃力▲（perLostHp）', 'ok'],
   lostHp: ['失った HP N% ごと（HP の経路の読む側）', 'indirect'],
   perMaxAmmo: ['最大装弾数 N 発ごと', 'gap'],
   casterDefense: ['発動者の防御力に比例（防御力の経路の動かす側。最終の付かない値を読む）', 'indirect'],

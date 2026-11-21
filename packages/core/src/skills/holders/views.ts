@@ -24,6 +24,7 @@ import {
   HIT_STATE_STATS,
   isStateStat,
   isSelfHpAtMost,
+  lostHpScaled,
   selfHpHolds,
   staticStatesOf,
   type BuffStat,
@@ -143,7 +144,8 @@ export function createViews({
     const locks: StatLock[] = [];
     for (const v of (damageViews[holder] ??= damageViewsOf(holder))) {
       for (const it of activeAt(v.track, frame)) {
-        const effect = scaledEffect(v.effect, it);
+        // 失った HP 1% ごとの▲は、持ち主のそのフレームの HP の割合で出す（plan/design-guillotine.md 2.1 節）
+        const effect = lostHpScaled(scaledEffect(v.effect, it), selfHpRatioAt(holder, frame));
         const lock = statLockOf(effect);
         if (lock !== null) locks.push(lock);
         buffs = applyResolvedEffect(
@@ -491,7 +493,11 @@ export function createViews({
           windows.push({
             slotIndex: holder,
             sourceSlotIndex: v.track.sourceSlotIndex,
-            effect: { stat: v.effect.stat, scaling: v.effect.scaling, value: valueOf(v.effect, it) },
+            // 失った HP 1% ごとの▲は、持ち主のそのフレームの HP の割合で出す（plan/design-guillotine.md 2.1 節）
+            effect: lostHpScaled(
+              { stat: v.effect.stat, scaling: v.effect.scaling, value: valueOf(v.effect, it) },
+              selfHpRatioAt(holder, frame),
+            ),
             start: it.start,
             end: it.end,
             ...(casterMaxHp === undefined ? {} : { casterMaxHp }),

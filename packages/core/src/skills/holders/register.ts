@@ -1,7 +1,13 @@
 // 件の一覧の層 8: 1 フレームの登録（plan/design-split-first-pass.md 3.3 節・9.2 節）。段ごとの出どころの列と前の回の発を作り、
 // フレームの出来事から、前の処理 → 段 1 → 敵の状態 → 段 1.5 → 段 2 → デバフ解除 → 強化 → カウンタの順に登録する（plan/design-holder-effects.md 2.4 節）。
 // 戦闘開始時とフレームごとの登録（registerBattleStart・registerFrame）と、leadFrames のある付与が発火した発のフレーム（leadShots）を返す。
-import { isRecordTriggered, isResolvedApplied, isResolvedChance, type ResolvedTrigger } from '../resolve.ts';
+import {
+  isRecordTriggered,
+  isResolvedApplied,
+  isResolvedChance,
+  isResolvedSelfHpAtMost,
+  type ResolvedTrigger,
+} from '../resolve.ts';
 import { attackRankFor } from '../ranking.ts';
 import { counterMax, type CounterId } from '../counters.ts';
 import { dependsOnDefense, type FireContext } from '../targets.ts';
@@ -85,6 +91,10 @@ export function createRegister({
   const stage1Timed = timedAt(1);
   const stage15Timed = timedAt(1.5);
   const stage2Timed = timedAt(2);
+  /** HP の割合が閾値を上回るまでの timed（durationUntil selfHpAbove。窓の終わりは registerEnds で決める） */
+  const selfHpAboveTimed = timedSources.filter(
+    (s) => isResolvedSelfHpAtMost(s.effect.trigger) && s.effect.durationUntil === 'selfHpAbove',
+  );
   const grantsAt = (stage: HeldStage): GrantSource[] =>
     stateGroups.flatMap((group) =>
       group.grants.filter((g) => g.stage === stage && !isRecordTriggered(g.grant.trigger)),
@@ -188,6 +198,9 @@ export function createRegister({
         const ends = track.untilEnds!;
         if (ends.at(-1) !== f && endedAt(track.holder, state, f)) ends.push(f);
       }
+    // HP の割合が閾値を上回るまでの窓（plan/design-mast.md 8 節）: 上回ったフレームを、同じフレームの読み手（1 パス目の順位が読む
+    // 攻撃力の窓など。plan/design-guillotine.md 2.1 節）より前に窓の終わりに足す。きっかけの判定はフレームごとに 1 回で、後の段の発火も同じ結果を読む
+    if (!battleStartOnly) for (const src of selfHpAboveTimed) src.fires(ev);
     // HP の割合で解除される件（plan/design-hp-down-interval.md 2.2 節）: f より前に付いた件が f に効いていて、持ち主の HP の割合が閾値以下と読めたら、
     // f + 1 で閉じる（f には付いている。HP の割合は f より前の現在の HP▼ から。付いた時にすでに以下なら付かない（段 1 の付与））
     if (!battleStartOnly)
