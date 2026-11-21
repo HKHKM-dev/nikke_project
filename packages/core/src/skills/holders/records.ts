@@ -43,6 +43,8 @@ export type LateReaders = {
   readItems: (track: HeldTrack) => HeldItem[];
   /** 層 4（read）: 件の列のうち、そのフレームに効いている件 */
   activeAt: (track: HeldTrack, frame: number) => HeldItem[];
+  /** 層 5（views）: 枠のその状態の、フレームのスタックの段の最大（{ stateStacks } の発火） */
+  stackLevelAt: (holder: number, state: NamedStateId, frame: number) => number;
 };
 
 /** 層の作り手が共通に受けるもの */
@@ -120,6 +122,11 @@ export function createRecords({ options, slots }: HolderBase) {
   };
   /** 枠のカウンタが上限に届いたフレームの次のフレーム（{ counterFull } の発火。届くたびに書き替える） */
   const counterFullAt = new Map<string, number>();
+  /** 枠のカウンタが増えたフレームの次のフレーム（{ counterUp } の発火。戦闘開始時の増減は入れない。plan/design-guillotine-ws.md 2.2 節） */
+  const counterUpAt = new Map<string, Set<number>>();
+  /** 枠のカウンタの { counterUp } が、フレーム frame に発火するか */
+  const counterUpFiresAt = (slotIndex: number, counter: CounterId, frame: number): boolean =>
+    counterUpAt.get(counterKey(slotIndex, counter))?.has(frame) === true;
   return {
     amplifiers,
     applications,
@@ -129,6 +136,8 @@ export function createRecords({ options, slots }: HolderBase) {
     consumeTrack,
     counterFullAt,
     counterKey,
+    counterUpAt,
+    counterUpFiresAt,
     frames,
     heals,
     itemsSeen,

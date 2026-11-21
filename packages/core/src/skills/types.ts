@@ -626,6 +626,7 @@ export const BURST_USERS_TRIGGERS = ['fullBurstStart', 'fullBurstEnd'] as const 
  * normalHit は命中の期待値（plan/design-ludmilla-wo.md 2.2・2.3 節。1 発ごとにその発の弾丸命中率。
  * SG は 1 トリガーを 1 回）、coreHit はコアの命中の期待値（弾丸命中率 × コア命中率）を足し、累計が N の倍数を越えた発で発火する
  * （skills/triggers.ts）。弾丸命中率が 1 の枠では normalHit は normalShot と同じ列になる。
+ * nonCoreHit はコアでない命中の期待値（命中の期待値 − コアの命中の期待値。plan/design-guillotine-ws.md 2.1 節）を、coreHit と同じく足す。
  * カウンタはリロードでも戦闘中ずっとリセットしない（every: 10 は通算 10・20・30…回目）。
  * lastShot = 残弾を 0 にした射撃（「最後の弾丸で攻撃した時 / 命中した時」）。最大装弾数▲で遅れ、弾丸チャージで出なくなる。
  * weaponChangeShot = 使用武器の変更
@@ -646,6 +647,7 @@ export type ShotCountKind =
   | 'normalShot'
   | 'normalHit'
   | 'coreHit'
+  | 'nonCoreHit'
   | 'fullChargeShot'
   | 'lastShot'
   | 'weaponChangeShot'
@@ -657,6 +659,7 @@ export const SHOT_COUNT_KINDS = [
   'normalShot',
   'normalHit',
   'coreHit',
+  'nonCoreHit',
   'fullChargeShot',
   'lastShot',
   'weaponChangeShot',
@@ -985,6 +988,28 @@ export function isAdjacentHpFullTrigger(t: unknown): t is AdjacentHpFullTrigger 
   return typeof t === 'object' && t !== null && 'adjacentHpFull' in t;
 }
 
+/**
+ * 「〈状態〉N スタックごとに」（plan/design-guillotine-ws.md 2.2 節）。自分のその状態のスタック数（条件 selfState と同じ件の段の最大）が
+ * N の倍数を越えたフレームに発火する（1 つのフレームで 2 つの倍数を越えても 1 回）。スタックが減って越え直しても発火する。
+ * counterChange にだけ書ける。その状態は、同じ定義の付与で自分にスタックで付く（parse/crossChecks.ts の validateOwnStateTriggers）
+ */
+export type StateStacksTrigger = { stateStacks: NamedStateId; everyRef: number };
+
+export function isStateStacksTrigger(t: unknown): t is StateStacksTrigger {
+  return typeof t === 'object' && t !== null && 'stateStacks' in t;
+}
+
+/**
+ * 「〈カウンタ〉が上がった時」（勇者レベルアップ時。plan/design-guillotine-ws.md 2.2 節）。自分のそのカウンタが増えたフレームの次の
+ * フレームに発火する（{ counterFull } と同じく、前のフレームの終わりの値を見る。perCount の { counter } は上がった後の値を読む）。
+ * 上限で止まって増えなかったフレームと、戦闘開始時の増減では発火しない。弾丸チャージ・回復・timed（stat のあるもの）に書ける
+ */
+export type CounterUpTrigger = { counterUp: CounterId };
+
+export function isCounterUpTrigger(t: unknown): t is CounterUpTrigger {
+  return typeof t === 'object' && t !== null && 'counterUp' in t;
+}
+
 /** JSON に書くトリガー。文字列は BuffTrigger、オブジェクトは回数トリガー・時間の周期のトリガー・効果名のトリガーなど */
 export type EffectTrigger =
   | BuffTrigger
@@ -1010,6 +1035,9 @@ export type EffectTrigger =
   | AdjacentHpFullTrigger
   // { counterFull }（damage・dot・counterChange・状態の付与だけが受ける。parseCounterFullTrigger）
   | CounterFullTrigger
+  // { counterUp }（ammoRefill・heal・timed だけが受ける）・{ stateStacks }（counterChange だけが受ける）
+  | CounterUpTrigger
+  | StateStacksTrigger
   // { summon }（damage だけが受ける。parseSummonAttackTrigger）
   | SummonAttackTrigger
   // { ended }（counterChange・ammoDecrease・状態の付与・damage・timed・敵の状態の消去だけが受ける。plan/design-grave.md 2.1 節・
@@ -1145,10 +1173,12 @@ export type TimedEffect = TargetCountFields &
     /**
      * 「X% × 〈状態〉のスタック数」（plan/design-maids.md 2.1 節）。値に、発火のフレームの自分のその状態のスタック数（発火の
      * フレームより前に付いた件。条件 selfState と同じ見え方。damage の perCount と同じ）を掛ける。0 なら出さない。掛けた値は付いた時に
-     * 決まり、維持の間は変えない。出来事のきっかけ（burstUse・バースト N 段階突入時・フルバーストの始まりと終わり）だけに書け、スタック・
-     * 確率・発数や出来事の維持・amplifies とは組まない
+     * 決まり、維持の間は変えない（次の発火で前の件を切る）。出来事のきっかけ（burstUse・バースト N 段階突入時・フルバーストの始まりと
+     * 終わり）だけに書け、スタック・確率・発数や出来事の維持・amplifies とは組まない。
+     * { counter } は「X% × 〈カウンタ〉数分」（plan/design-guillotine-ws.md 2.3 節）。発火のフレームの自分のそのカウンタの値（前のフレームの
+     * 終わり。条件 selfCounter と同じ見え方）を掛ける。きっかけは出来事のきっかけと { counterUp }。維持は durationUntil: battleEnd も書ける
      */
-    perCount?: { state: NamedStateId };
+    perCount?: { state: NamedStateId } | { counter: CounterId };
     /** 編成に特定のキャラがいる条件 */
     withCharacter?: WithCharacterCondition;
     /** 敵の属性の条件 */
@@ -2201,13 +2231,19 @@ export type DotEffect = {
    */
   perCount?: { counter: CounterId };
   perCountIntervalFrames?: number;
+  /**
+   * 付く（1 回目の tick の）フレームの、発火からの遅れ（1 以上の整数の実測）。{ counterFull } の perCount と、burstUse（ゲージを溜めない・
+   * 名前の付いた状態でない dot）に書ける。ギロチン：ウィンタースレイヤーのバーストは 5（III の 00.00 の 1f 前。plan/design-guillotine-ws.md 8.2 節）
+   */
   delayFrames?: number;
   /**
    * 「個別対象ごとに〈名前〉スタックコピー」（plan/design-skill-stage13.md 2.5 節）。付けた時の tick のスタックの数を、
    * 発火のフレームに敵に付いている、同じ枠の別の dot（その state）のスタックの数にする（0 なら付かない。後で元が増減しても変わらない）。
-   * tick の値は 1 スタックの倍率 × その数（ミハラ：ボンディングチェーンのプリング・チェーン）
+   * tick の値は 1 スタックの倍率 × その数（ミハラ：ボンディングチェーンのプリング・チェーン）。
+   * { counter } は「× 〈カウンタ〉数分の持続ダメージ」（plan/design-guillotine-ws.md 2.4 節）。数を、付いたフレーム（発火の delayFrames 後）の
+   * 自分のそのカウンタの値（前のフレームの終わり）にする（copyEachTick なら tick のフレームの値）
    */
-  stacksFrom?: { enemyState: NamedStateId };
+  stacksFrom?: { enemyState: NamedStateId } | { counter: CounterId };
   /**
    * stacksFrom の数を、付けた時に 1 回だけでなく tick ごとに写し直す（その tick のフレームの判定で
    * 敵に付いている元のスタックの数。0 の tick は出さない。plan/design-mast.md 2.3 節）。stacksFrom のときだけ書ける。写す時刻を撮影で

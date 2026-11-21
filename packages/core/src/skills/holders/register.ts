@@ -24,6 +24,7 @@ export function createRegister({
   counterConditionHolds,
   counterEmptyTracks,
   counterFullAt,
+  counterUpAt,
   counterKey,
   counterRecords,
   counterSources,
@@ -175,6 +176,12 @@ export function createRegister({
           : { frame: f, slotIndex, counter, value: after },
       );
       if (after === counterMax(counter)) counterFullAt.set(key, (battleStartOnly ? 0 : f) + 1);
+      // 増えた次のフレームに { counterUp } が発火する（戦闘開始時の増減では起きない。plan/design-guillotine-ws.md 2.2 節）
+      if (after > before && !battleStartOnly) {
+        let ups = counterUpAt.get(key);
+        if (ups === undefined) counterUpAt.set(key, (ups = new Set()));
+        ups.add(f + 1);
+      }
       // 0 に届いたら、そのカウンタで続く自分の状態の件の列を次のフレームで閉じる（解除不可でも）
       if (after === 0)
         for (const track of counterEmptyTracks.get(key) ?? []) closeTrack(track, battleStartOnly ? 0 : f);

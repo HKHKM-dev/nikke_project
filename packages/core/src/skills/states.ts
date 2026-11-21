@@ -481,6 +481,11 @@ export const NAMED_STATES = {
    * plan/design-heal-amount-up.md 2.2 節）
    */
   shootingManual: { name: { ja: '射撃マニュアル', en: 'Shooting Manual' }, holder: 'ally' },
+  /**
+   * 経験値（ギロチン：ウィンタースレイヤーの S2。攻撃力▲のスタック。100 スタック・持続。S1 の勇者レベルは 10 スタックごとに上がる。
+   * plan/design-guillotine-ws.md 2.2 節）
+   */
+  exp: { name: { ja: '経験値', en: 'EXP' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

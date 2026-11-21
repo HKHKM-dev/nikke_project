@@ -21,6 +21,7 @@ import {
 import { gameSecondsToFrames } from '../time.ts';
 import type { CharacterData, LocalizedText } from '../types.ts';
 import { applyAttackDamageBuffs, applyCritBuffs, type BuffTotals } from './buffs.ts';
+import type { CounterId } from './counters.ts';
 import type { NamedStateId } from './states.ts';
 import {
   isAppliedTrigger,
@@ -219,9 +220,10 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
     applyDelayFrames?: number;
     /**
      * tick のスタックの数を写す、敵に付いた別の dot の state（プリング・チェーン）か、
-     * 敵にスタックで付く状態の付与の state（海風。plan/design-mast.md 2.3 節）
+     * 敵にスタックで付く状態の付与の state（海風。plan/design-mast.md 2.3 節）か、自分のカウンタ（× 〈カウンタ〉数分。
+     * plan/design-guillotine-ws.md 2.4 節）
      */
-    stacksFrom?: NamedStateId;
+    stacksFrom?: { enemyState: NamedStateId } | { counter: CounterId };
     /** stacksFrom を tick ごとに写し直す（skills/types.ts の DotEffect.copyEachTick） */
     copyEachTick?: true;
     /**
@@ -711,7 +713,7 @@ export function resolveDotEffects(
             : {}),
           ...(!auto && effect.hitOnApply === true ? { hitOnApply: true as const } : {}),
           ...(!auto && effect.delayFrames !== undefined ? { applyDelayFrames: effect.delayFrames } : {}),
-          ...(!auto && effect.stacksFrom !== undefined ? { stacksFrom: effect.stacksFrom.enemyState } : {}),
+          ...(!auto && effect.stacksFrom !== undefined ? { stacksFrom: effect.stacksFrom } : {}),
           ...(!auto && effect.copyEachTick === true ? { copyEachTick: true as const } : {}),
           ...(typeof until === 'object' ? { untilStateEnd: until.stateEnd } : {}),
         },

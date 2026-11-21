@@ -1,0 +1,424 @@
+[
+  {
+    "id": "1275-01",
+    "recording": "1275",
+    "kind": "total",
+    "use": "record",
+    "value": 292562280,
+    "description": "ルドミラ・デルタ・ギロチン：ウィンタースレイヤー の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11565。増分は 3499 個"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1275-02",
+    "recording": "1275",
+    "kind": "count",
+    "use": "record",
+    "value": 256,
+    "unit": "トリガー",
+    "description": "ルドミラ・デルタ・ギロチン：ウィンタースレイヤー のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 3499 個。前の増分から 30f 未満の増分（3475 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 40f）から発の数を決めた（2 発になった組 19 個）"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1275-03",
+    "recording": "1275",
+    "kind": "timing",
+    "use": "record",
+    "value": [1374, 2665, 3843, 5164, 7596, 8774, 10003, 11223],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・5・0・25・0・25f"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1275-04",
+    "recording": "1275",
+    "kind": "timing",
+    "use": "record",
+    "value": [1403, 3872, 6424, 8803, 11252],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25・25f"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1275-05",
+    "recording": "1275",
+    "kind": "timing",
+    "use": "record",
+    "value": [1433, 3901, 6453, 8832, 11281],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1275-06",
+    "recording": "1275",
+    "kind": "timing",
+    "use": "record",
+    "value": [2041, 4509, 7062, 9441],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム。5 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1275-07",
+    "recording": "1275",
+    "kind": "interval",
+    "use": "record",
+    "value": [608, 608, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差。5 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1275-08",
+    "recording": "1275",
+    "kind": "timing",
+    "use": "record",
+    "value": [3837, 7590, 8768],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1275-09",
+    "recording": "1275",
+    "kind": "timing",
+    "use": "record",
+    "value": [8796],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1275-10",
+    "recording": "1275",
+    "kind": "timing",
+    "use": "record",
+    "value": [8825],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1275-11",
+    "recording": "1275",
+    "kind": "hit",
+    "use": "record",
+    "value": 103946,
+    "unit": "ダメージ",
+    "description": "ルドミラ・デルタ・ウィンタースレイヤーの、1 回目のバーストの持続ダメージの 1 tick 目（00.00 の 2f 前。会心なし）。勇者レベル 2 の値（モデルの 1 回目の 1 tick 目と同じ 103,946）。モデルの経験値の溜まり方はコア命中率の期待値なので、モデルとは比べず記録にする",
+    "method": {
+      "tool": "使い捨てのスクリプト（hud.ts の増分の当てはめ）",
+      "note": "III の 00.00（burst-panel）の前後の大きい増分を、モデルの持続ダメージの tick の値（会心なし・会心）と、ほかの枠の 1 ヒットとの和に当てた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1275-12",
+    "recording": "1275",
+    "kind": "hit",
+    "use": "record",
+    "value": 202807,
+    "unit": "ダメージ",
+    "description": "ルドミラ・デルタ・ウィンタースレイヤーの、1 回目のバーストの持続ダメージの 10 tick 目（00.00 の 578f 後。会心なし）。その間に勇者レベルは 2 から上がった（単騎の録画では 10 秒の間に 1〜2 回上がる）が、値は勇者レベル 2 のままの値（モデルの 10 tick 目と同じ 202,807）。tick ごとにその時の勇者レベルで出るなら約 2 倍（モデルで 4 前後）。モデルの経験値の溜まり方はコア命中率の期待値なので、モデルとは比べず記録にする",
+    "method": {
+      "tool": "使い捨てのスクリプト（hud.ts の増分の当てはめ）",
+      "note": "III の 00.00（burst-panel）の前後の大きい増分を、モデルの持続ダメージの tick の値（会心なし・会心）と、ほかの枠の 1 ヒットとの和に当てた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1275-13",
+    "recording": "1275",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1970830,
+    "unit": "ダメージ",
+    "description": "ルドミラ・デルタ・ウィンタースレイヤーの、2 回目のバーストの持続ダメージの 2 tick 目（勇者レベル 11。フルバースト補正あり）（会心なし）",
+    "method": {
+      "tool": "使い捨てのスクリプト（hud.ts の増分の当てはめ）",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）のうち、III の 00.00（burst-panel）の前後の大きい増分を、モデルの持続ダメージの tick の値（会心なし・会心）と、ほかの枠の 1 ヒットとの和に当てた（使い捨てのスクリプト）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 11,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1275-14",
+    "recording": "1275",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2627773,
+    "unit": "ダメージ",
+    "description": "ルドミラ・デルタ・ウィンタースレイヤーの、2 回目のバーストの持続ダメージの 6 tick 目（勇者レベル 11）（会心）",
+    "method": {
+      "tool": "使い捨てのスクリプト（hud.ts の増分の当てはめ）",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）のうち、III の 00.00（burst-panel）の前後の大きい増分を、モデルの持続ダメージの tick の値（会心なし・会心）と、ほかの枠の 1 ヒットとの和に当てた（使い捨てのスクリプト）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 15,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1275-15",
+    "recording": "1275",
+    "kind": "timing",
+    "use": "record",
+    "value": [
+      -1, 108, 167, 225, 284, 343, 402, 460, 519, 578, -1, 108, 167, 225, 284, 343, 402, 461, 519, 578, -1, 108, 167,
+      225, 284, 343, 402, 461, 519, 578
+    ],
+    "unit": "f",
+    "description": "ルドミラ・デルタ・ウィンタースレイヤーの、バーストの持続ダメージの tick の、III の 00.00 からの動画のフレーム（2 回目から 4 回目のバーストの 10 tick ずつ）。どの回も 00.00 の 1f 前に 1 tick（フルバースト補正の乗らない値）、108f 後から 58〜59f ごとに 9 tick の計 10 tick。1 回目の tick から 2 回目の tick まで 109f（1.86 秒）で、ニヒリスターの火傷の 1.5 秒（C-0101）より遅い",
+    "method": {
+      "tool": "使い捨てのスクリプト（hud.ts の増分の当てはめ）",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）のうち、III の 00.00（burst-panel）の前後の大きい増分を、モデルの持続ダメージの tick の値（会心なし・会心）と、ほかの枠の 1 ヒットとの和に当てた（使い捨てのスクリプト）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1275-16",
+    "recording": "1275",
+    "kind": "hit",
+    "use": "compare",
+    "value": 164833,
+    "unit": "ダメージ",
+    "description": "ルドミラ（水冷）の 2 回目のバーストスキルダメージ（会心なし。I の 74f 後）。ウィンタースレイヤーの S1 の有利コードの攻撃ダメージ▲・攻撃力▲（スキル発動者基準。値 × 勇者レベル）が乗った値で、乗らなければ 143,280",
+    "method": {
+      "tool": "使い捨てのスクリプト（hud.ts の増分）",
+      "note": "burst-panel の I → II の替わり目の後の増分をモデルの 1 発動の値と比べた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1275-17",
+    "recording": "1275",
+    "kind": "hit",
+    "use": "compare",
+    "value": 183932,
+    "unit": "ダメージ",
+    "description": "ルドミラ（水冷）の 4 回目のバーストスキルダメージ（会心なし）。ウィンタースレイヤーの勇者レベル 11 の S1 の▲が乗った値（乗らなければ 143,280）",
+    "method": {
+      "tool": "使い捨てのスクリプト（hud.ts の増分）",
+      "note": "burst-panel の I → II の替わり目の 74f 後の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1275-18",
+    "recording": "1275",
+    "kind": "hit",
+    "use": "compare",
+    "value": 26597,
+    "unit": "ダメージ",
+    "description": "ルドミラ（水冷）の、フルバースト中（勇者レベル 11 の 2・4 回目）の 1 ヒット（胴体・距離あり・会心なし）。ウィンタースレイヤーのバーストの攻撃ダメージ▲・有利コードの攻撃ダメージ▲が乗った値で、136 回当たった。乗らない値（20,949 など、会心・コア・距離の 8 つの組）には 1 回も当たらない",
+    "method": {
+      "tool": "使い捨てのスクリプト（hud.ts の増分）",
+      "note": "2・4 回目のフルバーストの窓の中の増分を、モデルのルドミラの 1 ヒットの 8 つの組（▲あり・▲なし）に ±2 で当てて数えた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3100,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1275-19",
+    "recording": "1275",
+    "kind": "timing",
+    "use": "compare",
+    "value": [-1, 108, 167, 225, 284, 343, 402, 460, 519, 578],
+    "unit": "f",
+    "description": "ルドミラ・デルタ・ウィンタースレイヤーの、2 回目のバーストの持続ダメージの 10 tick の、III の 00.00 からの動画のフレーム。1 tick 目は 00.00 の 1f 前（フルバースト補正なし）、2 tick 目は 00.00 の 108f 後（入りの止まり 22f を除くと 1 tick 目の 87f 後 = 1.5 秒）、その後は 58〜59f ごと",
+    "method": {
+      "tool": "使い捨てのスクリプト（hud.ts の増分の当てはめ）",
+      "note": "III の 00.00（burst-panel）の前後の大きい増分を、モデルの持続ダメージの tick の値（会心なし・会心）と、ほかの枠の 1 ヒットとの和に当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotTickOffsets",
+      "args": {
+        "slot": 3,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  }
+]

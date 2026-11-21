@@ -10,6 +10,7 @@ import {
   type ChargeFullTrigger,
   type ChargeTickTrigger,
   type CounterFullTrigger,
+  type StateStacksTrigger,
   type CoverHealedTrigger,
   type SkillFiredTrigger,
   type EffectTrigger,
@@ -87,6 +88,8 @@ export type TriggerOptions = {
   reloadEnd?: boolean;
   /** 味方が消費した弾の合計（{ count: "teamAmmo" }。burstGauge と damage だけ。plan/design-cinderella-cw.md 2.3 節・plan/design-little-mermaid.md 2.1 節） */
   teamAmmo?: boolean;
+  /** カウンタが上がった時（{ counterUp }。ammoRefill・heal・timed だけ。plan/design-guillotine-ws.md 2.2 節） */
+  counterUp?: boolean;
 };
 
 /**
@@ -136,6 +139,14 @@ export function parseTrigger(v: Json, path: string, options: TriggerOptions = {}
       fail(path, 'a reload end trigger ({ reloadEnd }) is only allowed in removeState, timed and state grants');
     return parseTrueOnlyTrigger(v, 'reloadEnd', path);
   }
+  // カウンタが上がった時（plan/design-guillotine-ws.md 2.2 節）
+  if (v.counterUp !== undefined) {
+    if (!options.counterUp) fail(path, 'a { counterUp } trigger is only allowed in ammoRefill, heal and timed');
+    rejectUnknownKeys(v, ['counterUp'], path);
+    return { counterUp: oneOf(COUNTER_IDS, v.counterUp, `${path}.counterUp`) };
+  }
+  // 状態のスタック数のきっかけは counterChange だけ（parseStateStacksTrigger で先に読む）
+  if (v.stateStacks !== undefined) fail(path, 'a { stateStacks } trigger is only allowed in counterChange');
   if (v.everySeconds !== undefined) return parseTimerTrigger(v, path, options.timer ?? false);
   if ((SHOT_COUNT_KINDS as readonly string[]).includes(v.count as string))
     return parseShotCountTrigger(v, path, options);
@@ -507,6 +518,16 @@ function parseSummonAttackTrigger(v: Json, path: string): SummonAttackTrigger | 
   if (typeof delay !== 'number' || !(delay >= 0))
     fail(`${path}.startDelaySeconds`, `expected a non-negative number, got ${JSON.stringify(delay)}`);
   return { summon, intervalSeconds, startDelaySeconds: delay };
+}
+
+/** { stateStacks, everyRef }（「〈状態〉N スタックごとに」。plan/design-guillotine-ws.md 2.2 節）。それ以外の形なら undefined */
+export function parseStateStacksTrigger(v: Json, path: string): StateStacksTrigger | undefined {
+  if (!isRecord(v) || v.stateStacks === undefined) return undefined;
+  rejectUnknownKeys(v, ['stateStacks', 'everyRef'], path);
+  return {
+    stateStacks: parseNamedStateId(v.stateStacks, `${path}.stateStacks`, 'ally'),
+    everyRef: parseRef(v.everyRef, `${path}.everyRef`),
+  };
 }
 
 /** { counterFull: カウンタ }。それ以外の形なら undefined */

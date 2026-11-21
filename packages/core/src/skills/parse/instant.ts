@@ -175,6 +175,8 @@ function parseInstantTrigger(v: Record<string, Json>, kind: InstantKind, path: s
       teamAmmo: kind === 'burstGauge',
       // 弾丸チャージは自分の状態の窓で数える回数も（plan/design-fortune-mate.md 2.2 節）
       during: kind === 'ammoRefill' ? 'stateOnly' : false,
+      // 勇者レベルアップの効果（plan/design-guillotine-ws.md 2.2 節）
+      counterUp: kind === 'heal' || kind === 'ammoRefill',
     });
   // 残弾数減少は自分にだけ。きっかけは使用武器の変更の終わり（plan/design-skill-stage11.md 2.2 節）と、
   // バースト使用時（ジルのバースト。100% で残弾 0 になり、リロードを始める。plan/design-skill-stage17.md 2.2 節）

@@ -360,7 +360,7 @@ const TRIG_INFO: Record<string, Info> = {
   resourceEvent: [
     '固有のカウンタの出来事',
     'check',
-    'カウンタが最大になった時の { counterFull }（counterChange のきっかけ。2 段目の段 11）だけ',
+    'カウンタが最大になった時の { counterFull }（counterChange のきっかけ。2 段目の段 11）、カウンタが上がった時の { counterUp }（弾丸チャージ・回復・timed）、状態のスタック数の N ごとの { stateStacks }（counterChange。ギロチン：ウィンタースレイヤー編）だけ',
   ],
   skillEvent: [
     'ほかのスキルの発動・命中',
@@ -434,7 +434,11 @@ const COND_INFO: Record<string, Info> = {
   enemyIsTarget: ['対象がターゲットなら', 'check', '射撃場の的をターゲットとみなす読み（18 の assumes）'],
   range: ['適正射程距離内なら', 'ok', 'inEffectiveRange（距離ボーナスと同じ判定）'],
   enemyType: ['ラプチャーなら', 'premise', '的はラプチャー'],
-  resource: ['固有のカウンタの値', 'check', '条件 selfCounter（atLeast・below。目録のカウンタだけ）'],
+  resource: [
+    '固有のカウンタの値',
+    'check',
+    '条件・passive の while の selfCounter（atLeast・below。目録のカウンタだけ。勇者レベルが 2 以上はギロチン：ウィンタースレイヤー編）',
+  ],
   selfBarrier: ['自分がバリア適用状態なら', 'indirect', 'バリアの経路（付与の窓で決まる）'],
 };
 

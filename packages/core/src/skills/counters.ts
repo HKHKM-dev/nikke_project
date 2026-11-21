@@ -68,6 +68,12 @@ export const COUNTERS = {
    * 自家製弾倉（E.H. の S1・バースト。同）。廃品 10 個ごとに 1 本。前提の中では戦闘開始の直後の 1 本で止まる。上限 4（S1 の説明文の値 02）
    */
   homemadeMagazine: { name: { ja: '自家製弾倉', en: 'Homemade magazines' }, max: 4 },
+  /**
+   * 勇者レベル（ギロチン：ウィンタースレイヤーの S1・S2・バースト。plan/design-guillotine-ws.md 2.2 節）。戦闘開始時に 1、経験値 10 スタック
+   * ごとに 1 上がる。上がるたびに S1 の勇者レベルアップの効果が出る。値で S2 の▲の条件（2 以上）と、S1 の▲・バーストの持続ダメージの
+   * 倍率が決まる。上限 11（説明文の「最大11レベルまで成長」）
+   */
+  heroLevel: { name: { ja: '勇者レベル', en: 'Hero Level' }, max: 11 },
 } as const satisfies Record<string, CounterInfo>;
 
 export type CounterId = keyof typeof COUNTERS;
