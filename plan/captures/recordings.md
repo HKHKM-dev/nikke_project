@@ -1316,11 +1316,14 @@
 | 1346 | `20261121-1346_maiden-ir-hits-1.mp4` | ソルジャーE.G.（300、AR・電撃・R） + クロウ（110、SMG・灼熱・SSR） + ◎メイデン：アイスローズ（183、RL・電撃・SSR） + ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
 | 1347 | `20261121-1347_maiden-ir-hits-2.mp4` | ソルジャーE.G.（300、AR・電撃・R） + クロウ（110、SMG・灼熱・SSR） + ◎メイデン：アイスローズ（183、RL・電撃・SSR） + ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
 | 1348 | `20261121-1348_smg_novel_nofire_left.mp4` | ◎ノベル（212、SMG・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | ノベル単騎・操作・オート射撃 OFF で撃たない・オートバースト OFF・バーストの欄を左に出した。V-0847 の撮影 |
+| 1349 | `20261121-1349_smg_k_fire.mp4` | ◎K（41、SMG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0848。K 単騎（操作）（撮影 A の 2 本目） |
+| 1350 | `20261121-1350_rl+sr+smg_i-doll-flower+delta+k_fire.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎K（41、SMG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0848。I-DOLL・フラワー + デルタ + K（操作）（撮影 B） |
 | 1351 | `20261121-1351_ar_rosanna-chic-ocean_nofire_left.mp4` | ◎ロザンナ：シックオーシャン（283、AR・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | ロザンナ：シックオーシャン単騎・操作・オート射撃 OFF で撃たない・オートバースト OFF・バーストの欄を左に出した。V-0847 の撮影 |
 | 1352 | `20261121-1352_sr+sr+rl_ram+delta+neon-ve_fb-core-manual.mp4` | ラム（822、SR・風圧・SR） + デルタ（20、SR・風圧・SR） + ◎ネオン：ビジョン・アイ（18、RL・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0845 の撮影 C。ラム（I）・デルタ（II）・ネオン：ビジョン・アイ（III・操作・オート射撃 ON）・オートバースト OFF。残り時間 2:35 で手でバーストを 1 回 |
 | 1353 | `20261121-1353_sr+sr+rl_ram+delta+neon-ve_fb-core-manual.mp4` | ラム（822、SR・風圧・SR） + デルタ（20、SR・風圧・SR） + ◎ネオン：ビジョン・アイ（18、RL・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0845 の撮影 C。ラム（I）・デルタ（II）・ネオン：ビジョン・アイ（III・操作・オート射撃 ON）・オートバースト OFF。残り時間 2:35 で手でバーストを 1 回 |
 | 1354 | `20261121-1354_sr+sr+rl_ram+delta+maiden-ir_fb-core-manual.mp4` | ラム（822、SR・風圧・SR） + デルタ（20、SR・風圧・SR） + ◎メイデン：アイスローズ（183、RL・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0845 の撮影 C。ラム（I）・デルタ（II）・メイデン：アイスローズ（III・操作・オート射撃 ON）・オートバースト OFF。残り時間 2:35 で手でバーストを 1 回 |
 | 1355 | `20261121-1355_sr+sr+rl_ram+delta+maiden-ir_fb-core-manual.mp4` | ラム（822、SR・風圧・SR） + デルタ（20、SR・風圧・SR） + ◎メイデン：アイスローズ（183、RL・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0845 の撮影 C。ラム（I）・デルタ（II）・メイデン：アイスローズ（III・操作・オート射撃 ON）・オートバースト OFF。残り時間 2:35 で手でバーストを 1 回 |
+| 1360 | `20261121-1360_smg_k_fire.mp4` | ◎K（41、SMG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0848。K 単騎（操作）（撮影 A の 1 本目） |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 

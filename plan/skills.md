@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 169・効果 1193（根拠あり 1171）・notes 383（根拠あり 159）
+件数: キャラ 170・効果 1202（根拠あり 1180）・notes 383（根拠あり 159）
 
 notes の種類: 未対応 40・前提の外 127・計算に無関係 78・補足 43・間接 95
 
-スロット: supported 464・partial 27・unsupported 9・noEffect 64
+スロット: supported 467・partial 27・unsupported 9・noEffect 64
 
 ## 10 ラピ
 
@@ -222,6 +222,21 @@ notes の種類: 未対応 40・前提の外 127・計算に無関係 78・補�
   - effects[0] burstDamage・skill: C-0887（確定）
   - effects[1] fullBurstExtend・burstUse: C-0886（確定）
   - notes[0] 前提の外: 火力型の味方全体へのパーツダメージ▲は、パーツを扱わないので効かない（要件の前提の外）: C-0443（範囲外）
+
+## 41 K
+
+- **skill1**: supported
+  - effects[0] state・lastShotOnce・tiltedScale（critRate）: C-1498（確定）
+  - effects[1] stackChange・lastShotOnce・tiltedScale: C-1498（確定）
+  - effects[2] damage・critPelletHit・additional: C-1499（確定）、C-1501（仮説）
+  - effects[3] removeState・fullBurstEnd・tiltedScale: C-1502（仮説）
+- **skill2**: supported
+  - effects[0] state・tiltedScale が適用された時・fulfillmentOfRighteousness（maxAmmo・attackDamage）: C-1497（確定）
+  - effects[1] removeState・fullBurstEnd・fulfillmentOfRighteousness: C-1502（仮説）
+- **burst**: supported
+  - effects[0] weaponChange・burstUse: C-1500（確定）
+  - effects[1] timed・burstUse・attack: C-1500（確定）
+  - effects[2] timed・burstUse・attackDamage: C-1500（確定）
 
 ## 43 D：キラーワイフ
 

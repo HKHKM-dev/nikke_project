@@ -36367,6 +36367,144 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "1349-01",
+      "element": "K skill1.effects[2]",
+      "key": "1d917ba2b8ee2c59",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1349-02",
+      "element": "K skill1.effects[2]",
+      "key": "47e521d4936dff45",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1349-03",
+      "element": "K skill1.effects[2]",
+      "key": "3e42127a39ed44e9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1349-04",
+      "element": "K skill1.effects[2]",
+      "key": "9952c3c47413ce85",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1349-05",
+      "element": "K skill1.effects[2]",
+      "key": "ac6ba3e7dec0014a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1349-06",
+      "element": "K skill1.effects[2]",
+      "key": "e0d16ad029557fa9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1349-07",
+      "element": "K skill1.effects[2]",
+      "key": "84f60e7c4c562401",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1350-01",
+      "element": "K skill1.effects[2]",
+      "key": "3b5a9c9f6261e1a4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1350-01",
+      "element": "K skill1.effects[3]",
+      "key": "3b5a9c9f6261e1a4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1350-01",
+      "element": "K skill2.effects[1]",
+      "key": "3b5a9c9f6261e1a4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1360-01",
+      "element": "K skill1.effects[2]",
+      "key": "e6202f91f33e832c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1360-02",
+      "element": "K skill1.effects[2]",
+      "key": "c4e82a4dd120889c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1360-03",
+      "element": "K skill1.effects[2]",
+      "key": "854ea0171feb93c0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1360-04",
+      "element": "K skill1.effects[2]",
+      "key": "a2e4dc49bcf49e2c",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1360-05",
+      "element": "K skill1.effects[2]",
+      "key": "60f0d73e555e00c3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1360-06",
+      "element": "K skill1.effects[2]",
+      "key": "1eb21b09a23796a0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1360-07",
+      "element": "K skill1.effects[2]",
+      "key": "54d99967f5c1af54",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }
