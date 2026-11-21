@@ -74,7 +74,6 @@ export function resolveImport(
   specifier: string,
   options: ImportGraphOptions,
 ): string | undefined {
-  if (specifier.includes('?')) return undefined;
   const packageNames = Object.keys(options.packages);
   // パッケージの中のパス（@nikke/core/…）は入口の表に無いので、黙って辺から落とさない
   if (packageNames.some((name) => specifier.startsWith(`${name}/`))) {
@@ -85,7 +84,7 @@ export function resolveImport(
     packageEntry !== undefined
       ? join(root, packageEntry)
       : specifier.startsWith('.')
-        ? resolve(dirname(file), specifier.replace(/#.*$/, ''))
+        ? resolve(dirname(file), specifier.replace(/[?#].*$/, ''))
         : undefined;
   // 外のパッケージは辺にしない
   if (target === undefined) return undefined;
@@ -98,7 +97,7 @@ export function resolveImport(
   if (!statSync(target, { throwIfNoEntry: false })?.isFile()) {
     throw new Error(`${repoKey(root, file)}: import の先 "${specifier}" が無い`);
   }
-  return target;
+  return specifier.includes('?') ? undefined : target;
 }
 
 /** root の下の dirs のソース（.ts・.tsx）の、実行時に残る import のグラフ。キーと値は root からの相対パス（区切りは /） */

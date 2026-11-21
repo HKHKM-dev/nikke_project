@@ -25,7 +25,7 @@
 // plan/design-workflow-simplification.md 2 節）。JSON は置く前に書くので、backup の無い JSON は置けたと確かめていない。
 // クラウド環境では、元ファイルを drive:<record の中の相対パス> で指す（plan/design-cloud-environment.md 6.3 節）。サービスアカウントで
 // record から取り寄せ（Drive for desktop が上げ終えるまで待ってから。waitUploaded。Drive の sha256 と突き合わせる。下見の
-// fetch.ts drive: で落とした同じ大きさのもの（dirs.ts の fetchedRecord）があれば、落とし直さずにそれを使う）、受け口の
+// fetch.ts drive: で落とした、大きさとハッシュが record の写しと同じものがあれば、落とし直さずにそれを使う）、受け口の
 // move で種別フォルダへ規約名で移す（移せなければコピーと元のごみ箱への移動）。PC を付けると Drive for desktop が F:/record の写しを消し、
 // bisync が E: に降ろす。--copy は使えない。record の一覧は --list-record。
 // 環境変数: NIKKE_DRIVE_SA_KEY・NIKKE_DRIVE_RECORD_FOLDER_ID・NIKKE_DRIVE_FOLDER_ID（drive.ts・fetch.ts）と受け口（gateway.ts）。
@@ -433,7 +433,7 @@ function copyFromRecord(src: string): boolean {
   return true;
 }
 
-/** src を dest へ移す（別のドライブなら複製してから消す） */
+/** src を to へ移す（別のドライブなら複製してから消す） */
 function moveFile(src: string, to: string): void {
   try {
     renameSync(src, to);
@@ -443,9 +443,22 @@ function moveFile(src: string, to: string): void {
   }
 }
 
+/** 下見（fetch.ts drive:）で落としたもののうち、大きさとハッシュが record の写しと同じもの。無ければ null（取り寄せる） */
+async function fetchedPreview(): Promise<string | null> {
+  const path = fetchedRecord(fromDrive!, driveSource!.size);
+  if (path === null) return null;
+  const sums = await drive!.checksums(driveSource!.id);
+  const same =
+    sums.sha256 !== undefined
+      ? sums.sha256 === (await sha256(path))
+      : sums.md5 !== undefined && sums.md5 === (await md5(path));
+  if (!same) console.log(`${path} は record の写しとハッシュが違う（か突き合わせられない）ので、取り寄せる`);
+  return same ? path : null;
+}
+
 mkdirSync(dir, { recursive: true });
-// 下見（fetch.ts drive:）で落とした同じ大きさのものがあれば、落とし直さずに移す（中身は後で record の写しのハッシュと突き合わせる）
-const fetched = drive === null ? null : fetchedRecord(fromDrive!, driveSource!.size);
+// 下見（fetch.ts drive:）で落とした同じものがあれば、取り寄せずに移す
+const fetched = drive === null ? null : await fetchedPreview();
 if (fetched !== null) moveFile(fetched, dest);
 else if (drive !== null) {
   // 取り寄せは .part に書いてから名前を変える（途中で止まったものを録画と見なさない。fetch.ts と同じ）

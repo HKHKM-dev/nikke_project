@@ -119,7 +119,12 @@ for (const target of planned.slice(0, written.length)) {
 }
 uploadFrames(planned.slice(0, written.length).map((t) => t.path));
 // 越えたこまが最後の 1 枚に収まると枚数は予定と同じになるので、録画のフレーム数と比べて知らせる
-const nbFrames = ffprobe(video).nbFrames;
+let nbFrames = 0;
+try {
+  nbFrames = ffprobe(video).nbFrames;
+} catch {
+  // 読めなければフレーム数が分からないものとして扱う（画は書けている）
+}
 const beyond = framesBeyond(pick.frames, nbFrames);
 if (beyond.length > 0) {
   console.log(
