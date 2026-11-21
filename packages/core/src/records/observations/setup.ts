@@ -113,6 +113,12 @@ export type CompareSetup = {
    */
   manualBursts?: string;
   /**
+   * 同 9 節: manualBursts の各チェーンで III を撃った枠の並びを持つ観測値の id（同じ録画・use が input・値は 0 以上の整数の配列で、
+   * 長さは manualBursts 以下。n は枠 n（1 始まり。III の枠）、0 はモデルに任せる（CT の明けた左の枠）。TeamInput.manualStep3Slots）。
+   * manualBursts があるときだけ。省略は全部のチェーンをモデルに任せる
+   */
+  manualStep3Slots?: string;
+  /**
    * 語彙はあるのに撮っていない効果の撮影（plan/design-skill-unrecorded.md 5 節）: バーストを使わない枠（1 始まり。オートバースト OFF で
    * 手で撃たなかった枠。TeamInput.noBurstSlots）。burst が true のときだけ。省略は全員使う
    */
@@ -133,10 +139,11 @@ export type CompareSetup = {
 };
 
 /** setup が観測値の ID で指す欄 */
-export type SetupRefField = 'jumpWindows' | 'obstacles' | 'pelletHits' | 'manualBursts' | 'holdFire';
+export type SetupRefField =
+  'jumpWindows' | 'obstacles' | 'pelletHits' | 'manualBursts' | 'manualStep3Slots' | 'holdFire';
 
 /**
- * setup が観測値の ID で指す欄（jumpWindows・obstacles の count・pelletHits の counts・manualBursts・holdFire の frames）の ID を、
+ * setup が観測値の ID で指す欄（jumpWindows・obstacles の count・pelletHits の counts・manualBursts・manualStep3Slots・holdFire の frames）の ID を、
  * 欄の順に map で置き換えた setup。参照の検査（validate.ts の setupErrors）と、参照の付け替え（records:new observation --invalidate --by）
  * が、この 1 つの一覧で欄を回す
  */
@@ -151,6 +158,9 @@ export function mapSetupRefs(setup: CompareSetup, map: (id: string, field: Setup
       ? {}
       : { pelletHits: setup.pelletHits.map((x) => ({ ...x, counts: map(x.counts, 'pelletHits') })) }),
     ...(setup.manualBursts === undefined ? {} : { manualBursts: map(setup.manualBursts, 'manualBursts') }),
+    ...(setup.manualStep3Slots === undefined
+      ? {}
+      : { manualStep3Slots: map(setup.manualStep3Slots, 'manualStep3Slots') }),
     ...(setup.holdFire === undefined
       ? {}
       : { holdFire: setup.holdFire.map((x) => ({ ...x, frames: map(x.frames, 'holdFire') })) }),
@@ -280,6 +290,12 @@ export function manualBurstsOf(value: ObservationValue | undefined): number[] | 
   if (!Array.isArray(value)) return undefined;
   const ok = value.every((f, i) => Number.isInteger(f) && f >= 0 && (i === 0 || f > value[i - 1]!));
   return ok ? value : undefined;
+}
+
+/** plan/design-compare-setup-extension.md 9 節: III の枠の並び（0 以上の整数の配列。0 はモデルに任せる）。形が違えば undefined */
+export function manualStep3SlotsOf(value: ObservationValue | undefined): number[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  return value.every((s) => Number.isInteger(s) && s >= 0) ? value : undefined;
 }
 
 /** V-0605: オート射撃を OFF にしていた時間（[OFF, ON, …] の昇順の 0 以上の整数で偶数個）を [start, end) の並びにする。形が違えば undefined */

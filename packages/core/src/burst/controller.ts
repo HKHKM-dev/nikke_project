@@ -137,6 +137,11 @@ export type BurstControllerState = {
   readonly manualBursts: readonly number[] | null;
   /** manualBursts の次に使う番号 */
   manualNext: number;
+  /**
+   * 比べる設定の拡張（plan/design-compare-setup-extension.md 9 節）: manualBursts の各チェーンで III を撃った枠（0 始まり）の並び。
+   * 枠があるチェーンの III はその枠だけを候補にする（CT が明けるまで待つ）。null の要素・並びの外・null はオートと同じ（左側優先）
+   */
+  readonly manualStep3Slots: readonly (number | null)[] | null;
 };
 
 function validateTiming(t: BurstTiming): void {
@@ -157,8 +162,19 @@ export function initialBurstController(
   units: readonly BurstUnit[],
   timing: Readonly<BurstTiming> = DEFAULT_BURST_TIMING,
   manualBursts: readonly number[] | null = null,
+  manualStep3Slots: readonly (number | null)[] | null = null,
 ): BurstControllerState {
   validateTiming(timing);
+  if (manualStep3Slots !== null) {
+    if (manualBursts === null) throw new RangeError('manualStep3Slots needs manualBursts');
+    if (manualStep3Slots.length > manualBursts.length)
+      throw new RangeError('manualStep3Slots must not be longer than manualBursts');
+    for (const s of manualStep3Slots)
+      if (s !== null && (!Number.isInteger(s) || s < 0 || s >= units.length || units[s]?.burstStep !== 'Step3'))
+        throw new RangeError(
+          `manualStep3Slots must be slot indexes of Step3 units, got ${JSON.stringify(manualStep3Slots)}`,
+        );
+  }
   if (manualBursts !== null) {
     manualBursts.forEach((f, i) => {
       if (!Number.isInteger(f) || f < 0 || (i > 0 && f <= manualBursts[i - 1]!))
@@ -195,6 +211,7 @@ export function initialBurstController(
     fullBurstExtensionSeconds: 0,
     manualBursts,
     manualNext: 0,
+    manualStep3Slots,
   };
 }
 
@@ -203,15 +220,17 @@ export function initialBurstController(
  * AllStep の枠は、このチェーンで撃っていても CT が明けていれば候補にする（plan/design-red-hood.md 7.1 節の論点 7）
  */
 function pickCandidate(state: BurstControllerState, step: BurstStepKey, frame: number): number {
+  const ready = (u: BurstUnit, i: number): boolean =>
+    u !== null &&
+    state.cooldownEnd[i]! <= frame &&
+    (state.stunnedUntil?.[i] ?? 0) <= frame &&
+    ((u.burstStep === step && !state.usedInChain[i]) || u.burstStep === 'AllStep');
+  // 手で撃ったチェーンの III の枠が決まっていれば、その枠だけ（manualNext はこのチェーンの I で進んでいる）
+  const chosen = step === 'Step3' ? state.manualStep3Slots?.[state.manualNext - 1] : undefined;
+  if (chosen !== undefined && chosen !== null) return ready(state.units[chosen]!, chosen) ? chosen : -1;
   // 専任と AllStep を分けず、撃てる候補を枠の若い順に選ぶ（オーナーの言う「左側優先」。plan/design-red-hood.md 7.1 節の論点 12。AllStep の枠が
   // 撃てる専任より左にいる録画は無い）
-  return state.units.findIndex(
-    (u, i) =>
-      u !== null &&
-      state.cooldownEnd[i]! <= frame &&
-      (state.stunnedUntil?.[i] ?? 0) <= frame &&
-      ((u.burstStep === step && !state.usedInChain[i]) || u.burstStep === 'AllStep'),
-  );
+  return state.units.findIndex(ready);
 }
 
 const NEXT_OF: Record<BurstStepKey, BurstStepKey | 'StepFull'> = {
@@ -314,7 +333,7 @@ export function stepBurstController(state: BurstControllerState, frame: number, 
     }
   }
   // 手で撃つ（manualBursts）: 満タンの後の I は、満タンの readyDelayFrames 後と並びの次のフレームの遅い方。並びが尽きたら撃たない。
-  // 録画で撃った時刻なので、的を狙えない間（blocked）でも撃つ。II・III はオートと同じ
+  // 録画で撃った時刻なので、的を狙えない間（blocked）でも撃つ。II・III はオートと同じ（III の枠は manualStep3Slots があればそれ）
   const manualReady = state.phase === 'ready' && state.manualBursts !== null;
   if (manualReady) {
     const next = state.manualBursts![state.manualNext];

@@ -134,9 +134,14 @@ export type TeamInput = {
   /**
    * 比べる設定の拡張（plan/design-compare-setup-extension.md 3 節）: 手で撃ったチェーンの始まり（I の本当の発動）のゲーム内の
    * フレームの並び（昇順）。満タンの後の I をこのフレーム（満タンの 23f 後より前なら 23f 後）で撃ち、並びが尽きたら撃たない。
-   * II・III はオートと同じ。burst が true の動的サイクルだけ。録画の照合（records/observations/teamInput.ts）だけが使う。利用者の計算には出さない
+   * II・III はオートと同じ（III の枠は manualStep3Slots があればそれ）。burst が true の動的サイクルだけ。録画の照合（records/observations/teamInput.ts）だけが使う。利用者の計算には出さない
    */
   manualBursts?: readonly number[];
+  /**
+   * 同 9 節: manualBursts の各チェーンで III を撃った枠（0 始まり）の並び。null の要素と並びの外はオートと同じ（CT の明けた左の枠）。
+   * manualBursts があるときだけ。録画の照合（records/observations/teamInput.ts）だけが使う。利用者の計算には出さない
+   */
+  manualStep3Slots?: readonly (number | null)[];
   /**
    * 語彙はあるのに撮っていない効果の撮影（plan/design-skill-unrecorded.md 5 節）: バーストを使わない枠（0 始まり）。オートバースト OFF で
    * 手で撃たなかった枠（録画 0507 のナガ）を、チェーンの候補から外す。burst が true の動的サイクルだけ。録画の照合

@@ -45,6 +45,7 @@ function fmtArgs(args: CompareSpec['args'], setup?: CompareSetup): string {
   if (setup?.nearLanding !== undefined) entries.push(['near', setup.nearLanding.join('・')]);
   if (setup?.farLanding !== undefined) entries.push(['far', setup.farLanding.join('・')]);
   if (setup?.manualBursts !== undefined) entries.push(['manualBursts', setup.manualBursts]);
+  if (setup?.manualStep3Slots !== undefined) entries.push(['manualStep3Slots', setup.manualStep3Slots]);
   if (setup?.noBurstSlots !== undefined) entries.push(['noBurstSlots', setup.noBurstSlots.join('・')]);
   if (setup?.noFireSlots !== undefined) entries.push(['noFireSlots', setup.noFireSlots.join('・')]);
   for (const h of setup?.holdFire ?? []) entries.push([`holdFire[${h.slot}]`, h.frames]);

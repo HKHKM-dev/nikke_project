@@ -6,7 +6,7 @@
   "grade": "厳密一致",
   "basis": "`1240-15`・`1240-16`・`1241-11`・`1242-11`・`1346-11`・`1347-11`・`1346-12`・`1347-12`。V-0849",
   "model": "packages/core/src/burst/landing.ts の 183 の行（hitFrames 40・hitOffsets）",
-  "replaces": [],
+  "replaces": ["C-1345"],
   "updated": "2026-11-21",
   "subject": {
     "mechanism": "burstChain"

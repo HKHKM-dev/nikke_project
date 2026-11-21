@@ -286,6 +286,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     burstModel: input.burstModel ?? 'dynamic',
     controlledSlot: input.controlledSlot ?? null,
     ...(input.manualBursts === undefined ? {} : { manualBursts: input.manualBursts }),
+    ...(input.manualStep3Slots === undefined ? {} : { manualStep3Slots: input.manualStep3Slots }),
     ...(input.noBurstSlots === undefined ? {} : { noBurstSlots: input.noBurstSlots }),
     untargetable,
     ...(input.holdFire === undefined ? {} : { holdFire: input.holdFire }),

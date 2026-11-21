@@ -73,6 +73,8 @@ export type FirstPassOptions = {
    * （TeamInput.manualBursts）。動的サイクルだけ。省略はオートバースト
    */
   manualBursts?: readonly number[];
+  /** 同 9 節: manualBursts の各チェーンで III を撃った枠（0 始まり。TeamInput.manualStep3Slots）。省略はオートと同じ選び方 */
+  manualStep3Slots?: readonly (number | null)[];
   /** バーストを使わない枠（0 始まり。TeamInput.noBurstSlots）。動的サイクルだけ。省略は全員使う */
   noBurstSlots?: readonly number[];
   /** 敵を狙えない窓（昇順・重なりなし。frame/events.ts の untargetableRanges）。省略・空なら今までと同じ */
