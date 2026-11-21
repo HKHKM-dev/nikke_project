@@ -1,0 +1,35 @@
+{
+  "id": "1324",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1324_ar_phantom.mp4",
+  "original": "2026-11-21_20-40-45.mp4",
+  "durationSec": 204,
+  "frames": 12240,
+  "fps": 60,
+  "sizeMB": 247.1,
+  "sha256": "8d33bc7b25cd",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 580,
+      "name": "ファントム",
+      "controlled": true,
+      "treasurePhase": 2
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-21T20:53+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
