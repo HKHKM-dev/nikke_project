@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 156・効果 1106（根拠あり 1084）・notes 371（根拠あり 155）
+件数: キャラ 158・効果 1119（根拠あり 1097）・notes 376（根拠あり 155）
 
-notes の種類: 未対応 49・前提の外 117・計算に無関係 73・補足 43・間接 89
+notes の種類: 未対応 49・前提の外 118・計算に無関係 73・補足 43・間接 93
 
-スロット: supported 416・partial 34・unsupported 11・noEffect 58
+スロット: supported 424・partial 34・unsupported 11・noEffect 59
 
 ## 10 ラピ
 
@@ -668,6 +668,28 @@ notes の種類: 未対応 49・前提の外 117・計算に無関係 73・補�
   - effects[1] heal・burstUse: 根拠なし
   - notes[0] 間接（HP）: 味方全体の受ける HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
 
+## 142 プリム
+
+- **skill1**: supported
+  - effects[0] timed・normalHit・enemyDefenseDown: C-1461（仮説）
+- **skill2**: noEffect
+  - notes[0] 間接（HP）: フルチャージして攻撃した時の味方全体の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1461（仮説）
+  - effects[1] timed・burstUse・enemyDefenseDown: C-1461（仮説）
+  - notes[0] 間接（HP）: 味方全体の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+- **宝物版 skill1**: supported
+  - effects[0] state・fullChargeShot・sleepy（enemyDefenseDown）: C-1459（確定）
+  - effects[1] state・fullChargeShot・wakeUp（trueDamageConversion）: C-1459（確定）
+- **宝物版 skill2**: supported
+  - effects[0] timed・fullChargeShot・trueDamage: C-1458（確定）
+  - notes[0] 間接（HP）: フルチャージして攻撃した時の味方全体の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+- **宝物版 burst**: supported
+  - effects[0] burstDamage・skill: C-1460（確定）
+  - effects[1] timed・burstUse・enemyDefenseDown: C-1461（仮説）
+  - effects[2] timed・burstUse・trueDamage: C-1460（確定）
+  - notes[0] 間接（HP）: 味方全体の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+
 ## 143 ミルク：ブルーミングバニー
 
 - **skill1**: supported
@@ -924,6 +946,17 @@ notes の種類: 未対応 49・前提の外 117・計算に無関係 73・補�
   - effects[0] burstReentry: C-1169（確定）
   - effects[1] heal・burstUse: C-1170（仮説）
   - notes[0] 間接（HP）: 自分がニンジンパーティーのフルスタック状態の時の、味方全体の受ける HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+
+## 201 ヤン
+
+- **skill1**: supported
+  - effects[0] timed・fullBurstStart・chargeDamage: C-1456（確定）
+- **skill2**: supported
+  - effects[0] timed・fullChargeShot・attack: C-1455（確定）
+  - effects[1] timed・fullChargeShot・critRate: C-1455（確定）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1457（確定）
+  - notes[0] 前提の外: 攻撃範囲の中心への強制移動（2 秒）は、静止した単体ボスの前提では与ダメージを変えない（敵が複数のとき、範囲攻撃に入る敵の数が変わりうる）: 根拠なし
 
 ## 202 ドラー
 
