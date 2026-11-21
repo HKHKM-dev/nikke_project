@@ -1,0 +1,91 @@
+{
+  "formatVersion": 1,
+  "resourceId": 224,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "self",
+          "stat": "maxAmmo",
+          "ref": 2,
+          "maxStacksRef": 3,
+          "durationRef": 4
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 5
+          },
+          "damageType": "skill",
+          "ref": 6,
+          "assumes": {
+            "ja": "バーストゲージを溜めない（確かめていない。ココア・ソルジャーF.A. とのチェーンでは、溜める形とのゲージの満タンの差がモデルで 4f 以下）",
+            "en": "It does not charge the burst gauge (not verified; in the chain with Cocoa and Soldier F.A. the model moves the gauge-full frame by 4f or less if it did)"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "damageType": "skill",
+          "ref": 2,
+          "assumes": {
+            "ja": "バーストゲージを溜めない（確かめていない。ココア・ソルジャーF.A. とのチェーンでは、溜める形とのゲージの満タンの差がモデルで 4f 以下）",
+            "en": "It does not charge the burst gauge (not verified; in the chain with Cocoa and Soldier F.A. the model moves the gauge-full frame by 4f or less if it did)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 3,
+          "durationRef": 4
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "cycleEvery",
+          "trigger": "burstUse",
+          "slot": "skill2",
+          "decreaseRef": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "窓の間は、S2 の 50 回を 30 回にする（戦闘の始めからの通算の命中の回数が 30 の倍数の発で出す。窓の始まりと終わりで数え直さない）",
+            "en": "During the window the S2 count of 50 becomes 30 (it fires on hits whose running count since battle start is a multiple of 30; the count is not reset at the window start or end)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "ref": 3,
+          "durationRef": 4
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "infiniteAmmo",
+          "durationRef": 5
+        }
+      ]
+    }
+  }
+}

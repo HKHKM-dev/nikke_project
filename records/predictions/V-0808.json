@@ -1,0 +1,178 @@
+{
+  "verification": "V-0808",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 301
+    },
+    {
+      "rid": 224,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S1 は命中 30 回ごとに最大装弾数▲のスタックと倍率ダメージ、S2 は命中 50 回ごとに倍率ダメージ、バーストの窓の間は S2 の 50 回が 30 回で、通算の命中の回数の倍数で数える）"
+    },
+    {
+      "id": "H-no-decrease",
+      "note": "比べのため: バーストの命中回数条件▼が無い（burst の effects[0] を落とす）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 224,
+            "skill": "burst",
+            "index": 0
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "b-s2-shots",
+      "model": "sim",
+      "metric": "skillHitShotIndices",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "count": 8
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 B: S2 の倍率ダメージの最初の 8 回が、スノーホワイトの何発目で出たか（1 回目のバーストの窓の中の位置）"
+    },
+    {
+      "id": "b-s1-shots",
+      "model": "sim",
+      "metric": "skillHitShotIndices",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "count": 10
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 B: S1 の倍率ダメージの最初の 10 回が、何発目で出たか（命中 30 回ごと）"
+    },
+    {
+      "id": "b-s1-hit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill1"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 B: S1 の倍率ダメージの 1 回目の値（会心なし。188.68%）"
+    },
+    {
+      "id": "b-s2-hit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 B: S2 の倍率ダメージの 1 回目の値（会心なし。61.69%）"
+    },
+    {
+      "id": "b-hit-window",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1000,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 1 回目のバーストの窓の中の、スノーホワイトの胴体・会心なしの 1 ヒット（攻撃力 97.2%▲・攻撃ダメージ 21.12%▲・フルバースト補正）"
+    },
+    {
+      "id": "a-mags",
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 3,
+        "count": 8
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": false,
+        "noFireSlots": [1, 2]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A（単騎）の代わりに、ココアとソルジャーF.A. が撃たずバーストの無い編成で: 戦闘の始めから 8 本のマガジンの発数（最大装弾数▲のスタックの積み上がり）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "f128adb06e043e829aae2ca88d5590b8ef4b458d",
+    "values": {
+      "H1": {
+        "b-s2-shots": [51, 101, 151, 181, 211, 241, 251, 302],
+        "b-s1-shots": [31, 61, 91, 121, 151, 181, 211, 241, 272, 302],
+        "b-s1-hit": 227536.7592,
+        "b-s2-hit": 74394.4386,
+        "b-hit-window": 70799.77706256,
+        "a-mags": [60, 75, 122, 220, 137, 243, 137, 137]
+      },
+      "H-no-decrease": {
+        "b-s2-shots": [51, 101, 151, 201, 251, 302, 352, 402],
+        "b-s1-shots": [31, 61, 91, 121, 151, 181, 211, 241, 272, 302],
+        "b-s1-hit": 227536.7592,
+        "b-s2-hit": 74394.4386,
+        "b-hit-window": 70799.77706256,
+        "a-mags": [60, 75, 122, 220, 137, 243, 137, 137]
+      }
+    }
+  }
+}
