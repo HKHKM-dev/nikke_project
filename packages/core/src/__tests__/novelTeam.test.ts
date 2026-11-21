@@ -31,7 +31,7 @@ describe('ノベルの定義', () => {
 const TEAMS: Record<string, TeamInput> = {
   '撮影 A の編成（ノベル単騎）': fixedTeam([NOVEL], 0),
   '撮影 B の編成（I-DOLL・フラワー + ノベル + ユルハ）': fixedTeam([304, NOVEL, 171], 2),
-  '実戦寄り（リター + ノベル + レッドフード + アリス + マクスウェル）': fixedTeam([82, NOVEL, 470, 191, 280], 2),
+  '実戦寄り（リター + ノベル + レッドフード + アリス + ロザンナ）': fixedTeam([82, NOVEL, 470, 191, 280], 2),
 };
 
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {

@@ -113,8 +113,8 @@
             }
           },
           "assumes": {
-            "ja": "敵 1 機は敵 1 体。バーストスキルダメージのヒット（発動の 80f 後）のフレームから 5 秒。それより前に発動した味方のバーストのヒットには乗らない（発動の時点の値）",
-            "en": "The one enemy is the lone enemy. Lasts 5 s from the frame of the Burst skill damage hit (80 f after the activation). Bursts of allies activated earlier do not get it (values at their activation)"
+            "ja": "敵 1 機は敵 1 体。バーストスキルダメージのヒット（発動の 80f 後）のフレームから 5 秒。それより前に発動した味方のバーストのヒットには乗らない（発動の時点の値）。フルスタックの条件もヒットのフレームで見る（発動とヒットの間の 80f に 5 スタックに届いた回を、ゲームが発動の時点で見るかは撮っていない）",
+            "en": "The one enemy is the lone enemy. Lasts 5 s from the frame of the Burst skill damage hit (80 f after the activation). Bursts of allies activated earlier do not get it (values at their activation). The full-stack condition is also checked on the hit frame (whether the game checks it at the activation, for stacks reaching 5 within the 80 f between activation and hit, is not recorded)"
           },
           "claims": [
             "C-1449"
