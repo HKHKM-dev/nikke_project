@@ -142,5 +142,39 @@
     },
     "source": "V-0821",
     "readAt": "2026-11-21"
+  },
+  {
+    "id": "1282-05",
+    "recording": "1282",
+    "kind": "count",
+    "use": "compare",
+    "value": 248,
+    "unit": "発",
+    "description": "1 回目に BURST バーが消えた（本当の満タン。C-0083）f2429 までの、ブリッドの通常攻撃の命中の数（HUD の増分のうち、ブリッドの発を含むもの）。その前の S2 の倍率ダメージは 2 回（f1456 は S2 だけの増分、f2044 は S2 とブリッドの発の和）。命中 248 回の 992,000 では満タン（1,000,000）に届かず、S2 の 2 回が射手の 1 ヒットぶん（4,000）ずつ溜めれば、f2429 の 248 回目でちょうど届く",
+    "method": {
+      "tool": "hud-jumps@3 の増分と gauge.ts --mode events",
+      "note": "バーが消えたフレームは gauge.ts --mode events の「バー消失」。ブリッドの発は 4〜5f おきの増分で、S2 の増分（299,906・449,859 とその和）と分けて数えた。f2429 は 249 個目の増分で、S2 だけの増分（f1456）を除いて 248"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0827",
+    "readAt": "2026-11-21"
   }
 ]
