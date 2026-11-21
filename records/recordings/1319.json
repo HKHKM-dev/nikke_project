@@ -1,0 +1,40 @@
+{
+  "id": "1319",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1319_pepper-guillotine-ws.mp4",
+  "original": "2026-11-21_18-53-33.mp4",
+  "durationSec": 222.3,
+  "frames": 13335,
+  "fps": 60,
+  "sizeMB": 268.9,
+  "sha256": "360bf8c58f02",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 131,
+      "name": "ペッパー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 182,
+      "name": "ギロチン：ウィンタースレイヤー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-21T19:00+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
