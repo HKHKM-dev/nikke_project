@@ -322,6 +322,13 @@ function validateSameFiring(entries: Partial<Record<SkillSlot, SkillEntry>>, roo
       const path = `${root}.${slot}.effects[${i}]`;
       if (e.kind === 'passive' && e.while !== undefined && 'selfState' in e.while && e.while.selfState.sameFiring)
         fail(`${path}.while.selfState.sameFiring`, 'sameFiring is not allowed in while');
+      // 敵の状態の sameFiring は、射撃の回数のきっかけの timed だけ（plan/design-phantom.md 2.6 節）
+      const enemy = 'condition' in e ? e.condition?.enemyState : undefined;
+      if (typeof enemy === 'object' && 'sameFiring' in enemy && (e.kind !== 'timed' || !isShotCountTrigger(e.trigger)))
+        fail(
+          `${path}.condition.enemyState.sameFiring`,
+          'sameFiring of enemyState is allowed only in timed with a shot count trigger',
+        );
       const self = 'condition' in e ? e.condition?.selfState : undefined;
       if (self?.sameFiring !== true) return;
       if (e.kind === 'timed') {
@@ -359,7 +366,7 @@ function validateSameFiring(entries: Partial<Record<SkillSlot, SkillEntry>>, roo
 }
 
 /**
- * timed の sameFiring（plan/design-frima.md 2 節）: スタック数の無い形で、きっかけは射撃の回数。見る状態を自分に付ける付与が同じ定義にあり、
+ * timed の sameFiring（plan/design-frima.md 2 節）: スタック数の無い形か、上の端（stacksBelow）だけの形（plan/design-phantom.md 2.6 節）で、きっかけは射撃の回数。見る状態を自分に付ける付与が同じ定義にあり、
  * そのきっかけが同じ回数の種類であること（同じ発で付いた件を、次のフレームの件で見る）
  */
 function validateTimedSameFiring(
@@ -368,7 +375,9 @@ function validateTimedSameFiring(
   self: SelfStateCondition,
   at: string,
 ): void {
-  if (isStacksCondition(self)) fail(at, 'sameFiring in timed is only for a presence condition (no stack count)');
+  // スタックの上の端（stacksBelow）だけは書ける（「同じ発の後に〈状態〉が N 段未満なら」。plan/design-phantom.md 2.6 節）
+  if (self.stacks !== undefined || self.stacksRef !== undefined)
+    fail(at, 'sameFiring in timed is only for a presence condition or stacksBelow');
   if (!isShotCountTrigger(trigger)) fail(at, 'sameFiring in timed needs a shot count trigger');
   const grants = SKILL_SLOTS.flatMap((x) => entries[x]?.effects ?? []).filter(
     (g): g is StateGrantEffect => g.kind === 'state' && g.state === self.state && g.target === 'self',

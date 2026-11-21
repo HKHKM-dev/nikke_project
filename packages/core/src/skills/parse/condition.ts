@@ -156,13 +156,18 @@ export function parseCondition(
     const absent = isRecord(c.enemyState) ? c.enemyState : undefined;
     if (absent === undefined) condition.enemyState = parseNamedStateId(c.enemyState, `${path}.enemyState`, 'enemy');
     else {
-      rejectUnknownKeys(absent, ['state', 'present'], `${path}.enemyState`);
-      if (absent.present !== false)
-        fail(`${path}.enemyState.present`, 'expected false (write the state alone for "if the enemy has it")');
-      condition.enemyState = {
-        state: parseNamedStateId(absent.state, `${path}.enemyState.state`, 'enemy'),
-        present: false,
-      };
+      // 「同じ発の付与の後に」は { state, present: true, sameFiring: true }（plan/design-phantom.md 2.6 節）
+      rejectUnknownKeys(absent, ['state', 'present', 'sameFiring'], `${path}.enemyState`);
+      const state = parseNamedStateId(absent.state, `${path}.enemyState.state`, 'enemy');
+      if (absent.sameFiring !== undefined) {
+        if (absent.sameFiring !== true || absent.present !== true)
+          fail(`${path}.enemyState.sameFiring`, 'expected sameFiring: true with present: true');
+        condition.enemyState = { state, present: true, sameFiring: true };
+      } else {
+        if (absent.present !== false)
+          fail(`${path}.enemyState.present`, 'expected false (write the state alone for "if the enemy has it")');
+        condition.enemyState = { state, present: false };
+      }
     }
   }
   if (c.selfState !== undefined) condition.selfState = parseSelfStateCondition(c.selfState, `${path}.selfState`);

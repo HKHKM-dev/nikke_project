@@ -1343,7 +1343,7 @@ export type EffectCondition = {
    * 外なら（counterChange・removeState・stat のある timed。plan/design-skill-stage12.md 2.2 節・plan/design-velvet.md 2.1 節）
    */
   inFullBurst?: boolean;
-  enemyState?: NamedStateId | { state: NamedStateId; present: false };
+  enemyState?: NamedStateId | { state: NamedStateId; present: false } | EnemySameFiring;
   selfState?: SelfStateCondition;
   usedBurst?: boolean;
   selfHp?: SelfHpCondition;
@@ -1447,10 +1447,16 @@ export function isStacksCondition(self: SelfStateCondition | undefined): boolean
 /** 条件のキー */
 export type ConditionKey = keyof EffectCondition;
 
-/** 条件 enemyState の状態と、付いていることを求めるか（present。「でなければ」は false）。無ければ undefined */
+/**
+ * 条件 enemyState の「同じ発の付与の後に、敵が〈状態〉なら」（plan/design-phantom.md 2.6 節）。selfState の sameFiring と同じく、
+ * 次のフレームに効いている敵の件を見る（同じ発で付いた件が入り、同じ発で外れる件も次のフレームまでは入る）。射撃の回数のきっかけの timed だけ
+ */
+export type EnemySameFiring = { state: NamedStateId; present: true; sameFiring: true };
+
+/** 条件 enemyState の状態と、付いていることを求めるか（present。「でなければ」は false）と sameFiring。無ければ undefined */
 export function enemyStateOf(
   condition: EffectCondition | undefined,
-): { state: NamedStateId; present: boolean } | undefined {
+): { state: NamedStateId; present: boolean; sameFiring?: true } | undefined {
   const c = condition?.enemyState;
   if (c === undefined) return undefined;
   return typeof c === 'string' ? { state: c, present: true } : c;

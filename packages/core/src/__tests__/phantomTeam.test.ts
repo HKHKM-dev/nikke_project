@@ -18,7 +18,7 @@ describe('ファントムの定義', () => {
   const def = parseSkillDefinition(rawDefinition(PHANTOM));
 
   it('defines every slot of both versions', () => {
-    expect(def.skills.skill1.effects.map((e) => e.kind)).toEqual(['state', 'state']);
+    expect(def.skills.skill1.effects.map((e) => e.kind)).toEqual(['state', 'state', 'timed']);
     expect(def.skills.skill2.effects.map((e) => e.kind)).toEqual([
       'damage',
       'removeState',
@@ -27,7 +27,7 @@ describe('ファントムの定義', () => {
       'timed',
       'timed',
     ]);
-    expect(def.treasureSkills?.skill1?.effects.map((e) => e.kind)).toEqual(['state', 'state', 'state']);
+    expect(def.treasureSkills?.skill1?.effects.map((e) => e.kind)).toEqual(['state', 'state', 'state', 'timed']);
     expect(def.treasureSkills?.skill2?.effects.map((e) => e.kind)).toEqual([
       'damage',
       'removeState',
@@ -37,10 +37,7 @@ describe('ファントムの定義', () => {
       'timed',
       'timed',
     ]);
-    // S1 の 1 発間の攻撃ダメージ▲は未対応（V-0839）
-    expect(def.skills.skill1.support).toBe('partial');
-    expect(def.treasureSkills?.skill1?.support).toBe('partial');
-    for (const slot of ['skill2', 'burst'] as const) {
+    for (const slot of ['skill1', 'skill2', 'burst'] as const) {
       expect(def.skills[slot].support).toBe('supported');
       expect(def.treasureSkills?.[slot]?.support).toBe('supported');
     }
@@ -91,9 +88,9 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     }
     expect(consumed.length).toBeGreaterThan(5);
     const frames = consumed.map((x) => x.frame);
-    // 追加ダメージは消費のフレーム、分配ダメージ（宝物版）はその 5 フレーム後（V-0839）
+    // 追加ダメージは消費のフレーム、分配ダメージ（宝物版）はその 4 フレーム後（V-0839）
     expect(s2Hits.map((h) => h.frame).sort((a, b) => a - b)).toEqual(
-      frames.flatMap((f) => [f, f + 5]).filter((f) => f < sim.history.frames),
+      frames.flatMap((f) => [f, f + 4]).filter((f) => f < sim.history.frames),
     );
     for (const f of frames) {
       // 予告状は消費の次のフレームで外れる（同じ発で付いた件も）
@@ -113,6 +110,17 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
 
   it('removes the Distributed Damage stacks on its own Burst', () => {
     for (const b of bursts) expect(vision.some((w) => w.start <= b.frame + 1 && b.frame + 1 < w.end)).toBe(false);
+  });
+
+  it('gives Attack Damage up from the hit on the Calling Card until the next shot, except on the hit where S2 removes it', () => {
+    const shots = sim.shots[s]!.frames;
+    const up = items({ holder: s, kind: 'timed', skill: 'skill1', stat: 'attackDamage' });
+    // 最初の命中（条件は自動なので、命中の期待値が 1 に届いた発）で付いた予告状を同じ発で見て、次の発に乗る
+    const first = card[0]!.start;
+    expect(shots).toContain(first - 1);
+    expect(up[0]!.start).toBe(first);
+    // S2 の消費の発（消費の前の発）の命中からは付かない
+    for (const f of consumed.map((x) => x.frame)) expect(up.some((w) => w.start === f)).toBe(false);
   });
 
   it('gives ATK and Distributed Damage up every 10 shots', () => {

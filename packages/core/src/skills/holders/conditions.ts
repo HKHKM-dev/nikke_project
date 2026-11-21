@@ -99,8 +99,13 @@ export function createConditions({
     if (buffed !== undefined && buffedAt(sourceSlotIndex, buffed.stat, frame) !== buffed.present) return false;
     // 解除の「フルバースト状態でなければ」（inFullBurst: false）も
     if (condition.inFullBurst !== undefined && inFullBurstAt(frame) !== condition.inFullBurst) return false;
+    // sameFiring は、次のフレームに効いている件（同じ発で付いた件も入る。plan/design-phantom.md 2.6 節）
     const enemy = enemyStateOf(condition);
-    if (enemy !== undefined && enemyStateAt(enemy.state, frame) !== enemy.present) return false;
+    if (
+      enemy !== undefined &&
+      enemyStateAt(enemy.state, enemy.sameFiring === true ? frame + 1 : frame) !== enemy.present
+    )
+      return false;
     // 適正射程距離内なら（発火のフレームの着地点と、常時の値とそのフレームに
     // 効いている件の適正射程距離の▲。射撃の回数のきっかけの付与は次のフレームから効くので、
     // その発自身のスタックは入らない。plan/design-agent-bunny.md 2.2 節）

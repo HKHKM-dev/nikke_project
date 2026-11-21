@@ -1,0 +1,37 @@
+[
+  {
+    "id": "1326-01",
+    "recording": "1326",
+    "kind": "hit",
+    "use": "compare",
+    "value": 15239142,
+    "unit": "ダメージ",
+    "description": "ファントムの 3 回目のバーストの分配ダメージ（会心なし）。S1 の攻撃ダメージ▲が乗る（▲の無いモデルの値の 1.7517 倍）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f6590 の増分。1 回目（f1497）は会心、2 回目（f4024）は予告状の無い時のヒット（防御力▼の分だけ 1,532 小さい）、4 回目（f9023）は値が違い、モデルのバーストの時刻の状態と揃わないので比べない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0839",
+    "readAt": "2026-11-21"
+  }
+]
