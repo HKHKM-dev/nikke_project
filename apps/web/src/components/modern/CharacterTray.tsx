@@ -1,3 +1,4 @@
+import type { UnsupportedNote } from '../../useSkillDefinitions.ts';
 import { useDroppable } from '@dnd-kit/core';
 import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
 import { memo, useContext, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
@@ -59,7 +60,7 @@ type Props = {
   /** いまの編成の番号（1 から。いまの編成にいるニケに P○ のバッジを出す） */
   activeParty: number;
   /** 未対応の印の知らせ（useSkillDefinitions の unsupportedNoteOf。完全対応なら null） */
-  unsupportedNote: (resourceId: number) => string | null;
+  unsupportedNote: (resourceId: number) => UnsupportedNote | null;
   /** 置くスロットのクリックを待っているニケ */
   pendingId: number | null;
   /** 読み込んだ育成状況（各ニケの限界突破・コア強化を出す。無ければ出さない） */

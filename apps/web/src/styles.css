@@ -263,14 +263,13 @@ header h1 {
 svg.settings-option-icon.badge-ui_classic {
   height: calc(22px * 150 / 130);
 }
-/* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。育成と設定のボタン・設定のメニューの選択肢の絵・未対応の印 ⓘ・
+/* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。育成と設定のボタン・設定のメニューの選択肢の絵・
    元に戻す・やり直すのボタン・ニケ一覧の絞り込みのクリア・共通育成の「育成状況の値に戻す」。図柄を白にするバッジごとの規則より強くするため、要素名や親を付ける */
 svg.settings-menu-icon,
 svg.settings-option-icon,
 svg.modern-slot-undo-icon,
 svg.char-tray-filter-clear-icon,
-svg.roster-revert-icon,
-.char-unsupported-tag > .badge-ui_information {
+svg.roster-revert-icon {
   --badge-ground: light-dark(#ffffff, #1a1a1a);
   --badge-main: light-dark(#1a1a1a, #ffffff);
   --badge-accent: light-dark(#1a1a1a, #ffffff);
@@ -1449,14 +1448,40 @@ svg.roster-revert-icon,
   width: 100%;
   height: 100%;
 }
-/* ニケ一覧の印は、押しやすいように大きくする（四角 18px・縦長 20px） */
+/* 印の色は定義の状況で決め、テーマでは変えない（地を状況の色、縁と i を白か黒、外の線を黒）。未定義は赤・未対応ありは橙・仮定だけは黄。
+   ⓘ の i を白にするバッジごとの規則（.badge-ui_information）より強くするため、親を付ける */
+.char-unsupported-tag > .badge-ui_information {
+  --badge-ground: var(--unsupported-color);
+  --badge-main: #ffffff;
+  --badge-accent: #ffffff;
+  --badge-line: #000000;
+}
+.char-unsupported-undefined {
+  --unsupported-color: #e53935;
+}
+.char-unsupported-unimplemented {
+  --unsupported-color: #f57c00;
+}
+/* 黄の地に白い i は読みにくいので、i と縁は黒にする */
+.char-unsupported-assumed {
+  --unsupported-color: #fbc02d;
+}
+.char-unsupported-assumed > .badge-ui_information {
+  --badge-main: #1a1a1a;
+  --badge-accent: #1a1a1a;
+}
+/* 印の大きさは表示ごとに変える（スロットの立ち絵 24px・ニケ一覧の四角 18px・ニケ一覧の縦長 14px。ほかは上の 16px） */
+.char-visual-portrait .char-unsupported-tag {
+  width: 24px;
+  height: 24px;
+}
 .char-visual-compact .char-unsupported-tag {
   width: 18px;
   height: 18px;
 }
 .char-visual-tall .char-unsupported-tag {
-  width: 20px;
-  height: 20px;
+  width: 14px;
+  height: 14px;
 }
 
 /* CharacterTray (パレット) */

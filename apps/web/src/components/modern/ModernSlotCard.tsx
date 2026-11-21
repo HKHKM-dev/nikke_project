@@ -1,3 +1,4 @@
+import type { UnsupportedNote } from '../../useSkillDefinitions.ts';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import type { CharacterData, CharacterIndexEntry } from '@nikke/core';
 import type { SlotResultView } from '../../calcView.ts';
@@ -45,7 +46,7 @@ type Props = {
   controlled: boolean;
   character: CharacterData | undefined;
   characterEntry: CharacterIndexEntry | undefined;
-  unsupportedNote: string | null;
+  unsupportedNote: UnsupportedNote | null;
   error: string | undefined;
   slotResult: SlotResultView | null;
   /** 名前の上に出す限界突破とコア強化の段階（ニケがいないときは null） */

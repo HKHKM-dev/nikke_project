@@ -85,20 +85,38 @@ export function useSkillDefinitions(resourceIds: readonly (number | null)[], bas
 }
 
 /**
- * キャラの未対応の印（モダン UI の絵の ⓘ）にマウスを載せたときの知らせ。完全対応のキャラと、索引の読み込み前は null（印を出さない）。
- * 定義の無いキャラは「スキル未定義」、ほかは未対応と仮定の件数（仮定は 1 件以上のときだけ）
+ * 未対応の印の定義の状況。印の色を決める（styles.css の .char-unsupported-tag。未定義は赤・未対応ありは橙・仮定だけは黄）。
+ * undefined: スキル定義が無い。unimplemented: 未対応が 1 件以上（件数の無い古い索引も含む）。assumed: 未対応は無く、仮定だけある
+ */
+export type UnsupportedLevel = 'undefined' | 'unimplemented' | 'assumed';
+
+/** 未対応の印の知らせ（text はマウスを載せたときと読み上げの文） */
+export interface UnsupportedNote {
+  text: string;
+  level: UnsupportedLevel;
+}
+
+/**
+ * キャラの未対応の印（モダン UI の絵の ⓘ）の知らせ。完全対応のキャラと、索引の読み込み前は null（印を出さない）。
+ * 定義の無いキャラは「スキル未定義」、ほかは未対応と仮定の件数（それぞれ 1 件以上のときだけ。未対応が無く仮定だけなら仮定の件数だけ）
  */
 export function unsupportedNoteOf(
   cache: Pick<SkillDefinitionCache, 'index' | 'fullySupported' | 'supportGaps'>,
   resourceId: number,
-): string | null {
+): UnsupportedNote | null {
   const { index, fullySupported, supportGaps } = cache;
   if (fullySupported === null || fullySupported.has(resourceId)) return null;
-  if (index !== null && !index.has(resourceId)) return 'スキル未定義';
+  if (index !== null && !index.has(resourceId)) return { text: 'スキル未定義', level: 'undefined' };
   const gap = supportGaps?.get(resourceId);
   // 件数の無い古い索引（デプロイの直後）では件数を出さない
-  if (gap === undefined) return 'スキル定義に未対応あり';
-  return [`未対応 ${gap.unimplemented} 件`, ...(gap.assumed > 0 ? [`仮定 ${gap.assumed} 件`] : [])].join('\n');
+  if (gap === undefined) return { text: 'スキル定義に未対応あり', level: 'unimplemented' };
+  return {
+    text: [
+      ...(gap.unimplemented > 0 || gap.assumed === 0 ? [`未対応 ${gap.unimplemented} 件`] : []),
+      ...(gap.assumed > 0 ? [`仮定 ${gap.assumed} 件`] : []),
+    ].join('\n'),
+    level: gap.unimplemented > 0 ? 'unimplemented' : 'assumed',
+  };
 }
 
 export function slotSkillsStatus(cache: SkillDefinitionCache, resourceId: number): SlotSkillsStatus {

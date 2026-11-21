@@ -1,3 +1,4 @@
+import type { UnsupportedNote } from '../../useSkillDefinitions.ts';
 import { useDraggable } from '@dnd-kit/core';
 import { memo, type ReactNode } from 'react';
 import checkIcon from '../../assets/badges/ui_check.svg';
@@ -20,7 +21,7 @@ type Props = {
   inOtherParty: boolean;
   /** 右上（限界突破・コア強化の下）に P1・P2 と出す編成の番号（1 から。いまの編成にいればいまの編成、ほかは otherParties） */
   partyNumbers: readonly number[];
-  unsupportedNote: string | null;
+  unsupportedNote: UnsupportedNote | null;
   /** 置くスロットのクリックを待っている */
   isPending: boolean;
   /** 右上に出す限界突破・コア強化（育成状況に無ければ null） */
@@ -44,7 +45,7 @@ function TrayVisual({
   shape,
 }: {
   character: CharacterIndexEntry;
-  unsupportedNote: string | null;
+  unsupportedNote: UnsupportedNote | null;
   growthMarks: GrowthMarks | null;
   collectionBadge: Badge | null;
   shape: TrayShape;
@@ -95,7 +96,7 @@ export function TrayItemFace({
   overlay,
 }: {
   character: CharacterIndexEntry;
-  unsupportedNote: string | null;
+  unsupportedNote: UnsupportedNote | null;
   growthMarks: GrowthMarks | null;
   collectionBadge: Badge | null;
   shape: TrayShape;

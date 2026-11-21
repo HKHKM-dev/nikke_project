@@ -1,3 +1,4 @@
+import type { UnsupportedNote } from '../../useSkillDefinitions.ts';
 import { characterImageFile, type CharacterIndexEntry } from '@nikke/core';
 import { useReducer, type ReactNode } from 'react';
 import { BadgeIcon } from './BadgeIcon.tsx';
@@ -12,8 +13,8 @@ import {
 
 type Props = {
   character: CharacterIndexEntry;
-  /** 未対応の印（ⓘ）にマウスを載せたときの知らせ（useSkillDefinitions の unsupportedNoteOf）。null なら印を出さない */
-  unsupportedNote?: string | null;
+  /** 未対応の印（ⓘ）の知らせと定義の状況（useSkillDefinitions の unsupportedNoteOf）。null なら印を出さない */
+  unsupportedNote?: UnsupportedNote | null;
   /**
    * normal・compact は顔のアイコン（正方形）、portrait は縦長の絵（スロットのカード）、
    * tall は縦長の絵をニケ一覧の幅に縮めたもの（ニケ一覧の縦長の表示。バッジの置き方は portrait と同じ）
@@ -90,8 +91,13 @@ export function CharacterVisual({
       {badges && <FavoriteRibbons resourceId={character.resourceId} corner={compact} />}
       {overlay}
       {unsupportedNote !== null && (
-        // 印はバッジ ui_information。知らせはマウスを載せると出る
-        <span className="char-unsupported-tag" role="img" aria-label={unsupportedNote} title={unsupportedNote}>
+        // 印はバッジ ui_information。色は定義の状況で変える（未定義は赤・未対応ありは橙・仮定だけは黄）。知らせはマウスを載せると出る
+        <span
+          className={`char-unsupported-tag char-unsupported-${unsupportedNote.level}`}
+          role="img"
+          aria-label={unsupportedNote.text}
+          title={unsupportedNote.text}
+        >
           <BadgeIcon name={UNSUPPORTED_BADGE} />
         </span>
       )}
