@@ -572,6 +572,14 @@ if (kind === 'verification') {
         const next = repointSetup(resetup.get(o.id) ?? o, old, to);
         if (next !== undefined) resetup.set(o.id, next);
       }
+    // setup の参照は同じ録画の観測値に限る（--by が 1 つで録画をまたぐと、ほかの録画の比べが別の録画を指す）
+    const crossed = [...resetup.values()].filter((o) =>
+      setupRefIds(o).some((id) => byId.get(id)?.recording !== o.recording),
+    );
+    if (crossed.length > 0)
+      fail(
+        `付け替え先が別の録画の観測値になる比べがある（--by を --invalidate と同じ順の並びにする）: ${crossed.map((o) => o.id).join('・')}`,
+      );
     const changed = [...invalidated, ...resetup.values()];
     checked(changed);
     // 結論の付け替え（無効にする前に、書き換える結論を出しておく）
@@ -607,7 +615,9 @@ if (kind === 'verification') {
     if (resetup.size > 0) console.log(`setup の参照を付け替えた比べ: ${[...resetup.keys()].join('・')}`);
     // 付け替えなかった比べ（--by が無い）は、無効の観測値を指したまま（records:check が止める）
     const referring =
-      by === undefined ? all.filter((o) => setupRefIds(o).some((id) => ids.includes(id))).map((o) => o.id) : [];
+      by === undefined
+        ? all.filter((o) => !ids.includes(o.id) && setupRefIds(o).some((id) => ids.includes(id))).map((o) => o.id)
+        : [];
     if (referring.length > 0)
       console.log(
         `無効にした観測値を setup で指している比べ（付け替えていない。--by で付け替えるか、比べも無効にする）: ${referring.join('・')}`,

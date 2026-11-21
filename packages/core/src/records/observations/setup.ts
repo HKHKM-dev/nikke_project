@@ -132,7 +132,6 @@ export type CompareSetup = {
   holdFire?: { slot: number; frames: string }[];
 };
 
-/** CompareSetup.burstDelays の 1 件 */
 /** setup が観測値の ID で指す欄 */
 export type SetupRefField = 'jumpWindows' | 'obstacles' | 'pelletHits' | 'manualBursts' | 'holdFire';
 
@@ -158,6 +157,7 @@ export function mapSetupRefs(setup: CompareSetup, map: (id: string, field: Setup
   };
 }
 
+/** CompareSetup.burstDelays の 1 件 */
 export type BurstDelayOverrideSetup = {
   rid: number;
   treasure?: boolean;
