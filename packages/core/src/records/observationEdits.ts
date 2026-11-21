@@ -2,7 +2,7 @@
 // 直しは同じ ID のまま欄を下書きで差し替え、無効は invalid（observations/types.ts）を付ける。無効にした観測値を根拠にしている結論は、
 // 新しい観測値に付け替えられる（根拠の文・runs・minimal の ID を置き換える）。比べの setup が ID で指している観測値（入力）を無効にしたときは、
 // 比べを写さずに setup の参照を新しい観測値に付け替える（plan/design-workflow-simplification-18.md 1 節）。
-import { observationIdsIn, type Claim, type ClaimFile } from './claims.ts';
+import { isActiveClaim, observationIdsIn, type Claim, type ClaimFile } from './claims.ts';
 import { mapSetupRefs } from './observations/setup.ts';
 import type { Observation, ObservationDraft } from './observations/types.ts';
 
@@ -104,9 +104,7 @@ export function repointSetup(o: Observation, from: string, to: string): Observat
   return { ...o, compare: { ...o.compare!, setup } } as Observation;
 }
 
-/** 観測値 ids のどれかを根拠にしている、仮説か確定の結論（棄却・範囲外の結論は、その時の根拠のまま残す記録なので問わない） */
+/** 観測値 ids のどれかを根拠にしている、仮説か確定の結論（isActiveClaim。棄却・範囲外の結論は問わない） */
 export function claimsCiting(claims: readonly Claim[], ids: readonly string[]): Claim[] {
-  return claims.filter(
-    (c) => (c.state === '仮説' || c.state === '確定') && c.observations.some((o) => ids.includes(o)),
-  );
+  return claims.filter((c) => isActiveClaim(c) && c.observations.some((o) => ids.includes(o)));
 }

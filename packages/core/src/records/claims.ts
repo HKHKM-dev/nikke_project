@@ -480,9 +480,14 @@ export function claimsByObservation(claims: readonly Claim[]): Map<string, strin
   return map;
 }
 
+/** 生きている結論（確定か仮説）。棄却・範囲外の結論は、その時の根拠のまま残す記録 */
+export function isActiveClaim(c: Pick<ClaimFile, 'state'>): boolean {
+  return c.state === '確定' || c.state === '仮説';
+}
+
 /** 結論に結び付いた観測値（状態が確定か仮説の結論の根拠）。手入力の条件で比べる観測値は、どれかに結び付ける */
 export function supportedObservations(claims: readonly Claim[]): Set<string> {
-  return new Set(claims.filter((c) => c.state === '確定' || c.state === '仮説').flatMap((c) => c.observations));
+  return new Set(claims.filter(isActiveClaim).flatMap((c) => c.observations));
 }
 
 /**

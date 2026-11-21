@@ -420,7 +420,7 @@ describe('records:new claim --update の欄', () => {
     expect(keptClaimGrade({ grade: '単独実測', gradeReason: '理由' }, '反復実測')).toBeUndefined();
   });
 
-  // records:new observation --invalidate 0101-01 --by 0102-01 の付け替えの後の出し直し（records-new.ts の rewriteClaim と同じ組み立て）
+  // records:new observation --invalidate 0101-01 --by 0102-01 の付け替えの後の出し直し（records-new.ts の rewriteClaim の evaluateClaim を除いた組み立て）
   it('--invalidate --by re-evaluates the repointed claim: out of tolerance goes back to a hypothesis', () => {
     const confirmed: ClaimFile = {
       ...existing,

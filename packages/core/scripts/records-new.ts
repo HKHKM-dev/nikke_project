@@ -54,6 +54,7 @@ import {
   CLAIM_TOPICS,
   DECIDED_ROLES,
   gradeCandidate,
+  observationIdsIn,
   toClaims,
   type Claim,
   type ClaimFile,
@@ -282,18 +283,30 @@ type ClaimEvaluation = {
   grade?: (candidate: ClaimGrade | undefined) => ClaimGrade | undefined;
 };
 
-/**
- * 結論を確定とみなして、等級の候補・最小構成の検査・予測との比べを出し、claimDraft で状態と確定にできない理由を出す（新しい結論と
- * --update で同じ）
- */
-function evaluateClaim(e: ClaimEvaluation, claims: readonly Claim[], observations: readonly Observation[]): ClaimDraft {
+let evaluationCache: ReturnType<typeof loadEvaluationInputs> | undefined;
+
+function loadEvaluationInputs() {
   const file = loadRecordingsFile();
-  const recordings = recordingMap(file);
   const predictions = loadPredictions();
   const data = loadRecordsData(
     file,
     predictions.flatMap((p) => p.team.map((m) => m.rid)),
   );
+  return { recordings: recordingMap(file), predictions, data };
+}
+
+/** evaluateClaim が読む録画・予測・データ（--invalidate --by で結論を何件出し直しても 1 回だけ読む） */
+function evaluationInputs(): ReturnType<typeof loadEvaluationInputs> {
+  evaluationCache ??= loadEvaluationInputs();
+  return evaluationCache;
+}
+
+/**
+ * 結論を確定とみなして、等級の候補・最小構成の検査・予測との比べを出し、claimDraft で状態と確定にできない理由を出す（新しい結論と
+ * --update で同じ）
+ */
+function evaluateClaim(e: ClaimEvaluation, claims: readonly Claim[], observations: readonly Observation[]): ClaimDraft {
+  const { recordings, predictions, data } = evaluationInputs();
   const residuals = runObservationsCached(e.own, recordings, data);
   const residualOf = new Map(
     residuals.map((r) => [
@@ -391,13 +404,15 @@ function rewriteClaim(
   return updatedClaim(existing, draft, next.merged, next.basis, next.model);
 }
 
-/** 出し直した結論の状態と等級の変わり方 */
-function stateChange(before: ClaimFile, after: ClaimFile): string {
-  return `状態 ${before.state} → ${after.state}・等級 ${before.grade ?? 'なし'} → ${after.grade ?? 'なし'}`;
+/** 出し直した結論の状態と等級の変わり方を head の後ろに付けて出し、確定にしなかった理由と、確定から仮説に戻ったことを知らせる */
+function reportRewrite(head: string, before: ClaimFile, result: ClaimDraft, tail = ''): void {
+  console.log(
+    `${head}: 状態 ${before.state} → ${result.file.state}・等級 ${before.grade ?? 'なし'} → ${result.file.grade ?? 'なし'}${tail}`,
+  );
+  printReasons(result.reasons);
+  if (before.state === '確定' && result.file.state === '仮説')
+    console.log('注意: 確定の結論が仮説に戻った。理由を確かめ、確定のままにするなら根拠か judgment を直す');
 }
-
-const CONFIRMED_TO_HYPOTHESIS =
-  '注意: 確定の結論が仮説に戻った。理由を確かめ、確定のままにするなら根拠か judgment を直す';
 
 function printReasons(reasons: readonly string[]): void {
   if (reasons.length === 0) return;
@@ -490,21 +505,12 @@ if (kind === 'verification') {
       ...(values['parameter-free'] === undefined ? {} : { parameterFree: values['parameter-free'] }),
       ...(judgment === undefined ? {} : { judgment }),
     });
-    const result = rewriteClaim(
-      existing,
-      { from, basis, own, merged, ...(values.model === undefined ? {} : { model: values.model }) },
-      claims,
-      observations,
-    );
-    const change = `${stateChange(existing, result.file)}・足した根拠 ${added.length} 件（${added.join('・') || 'なし'}）`;
-    if (dryRun) {
-      console.log(`${id}（--dry-run。書かない）: ${change}`);
-      printReasons(result.reasons);
-    } else {
+    const result = rewriteClaim(existing, { from, basis, own, merged, model: values.model }, claims, observations);
+    const tail = `・足した根拠 ${added.length} 件（${added.join('・') || 'なし'}）`;
+    if (dryRun) reportRewrite(`${id}（--dry-run。書かない）`, existing, result, tail);
+    else {
       writeJson(path, result.file);
-      console.log(`${path} を書き直した: ${change}`);
-      printReasons(result.reasons);
-      if (existing.state === '確定' && result.file.state === '仮説') console.log(CONFIRMED_TO_HYPOTHESIS);
+      reportRewrite(`${path} を書き直した`, existing, result, tail);
       console.log(
         `検証記録 ${from} の「結論」に ${id} を足し、npm run records:check を回す（commit はしない。ほかの変更と一緒に commit する）`,
       );
@@ -634,46 +640,35 @@ if (kind === 'verification') {
     checked(changed);
     // 結論の付け替え（無効にする前に、書き換える結論を出しておく）
     const claims = loadClaims();
-    const repointed = new Map<string, ClaimFile>();
-    // 棄却・範囲外の結論は、その時の根拠のまま残す（記録は書き換えない）
+    // 付け替えた結論と、付け替え先の検証記録（出し直しで予測を引く。付け替え先が並ぶときは最初の組の）
+    const repointed = new Map<string, { claim: ClaimFile; from: string }>();
     for (const [old, to] of pairs)
       for (const { observations: _o, ...c } of claimsCiting(claims, [old])) {
-        const next = repointClaim(repointed.get(c.id) ?? c, old, to, today);
-        if (next !== undefined) repointed.set(c.id, next);
+        const prev = repointed.get(c.id);
+        const next = repointClaim(prev?.claim ?? c, old, to, today);
+        if (next !== undefined) repointed.set(c.id, { claim: next, from: prev?.from ?? byId.get(to)!.source });
       }
     // 付け替えた runs が録画と食い違えば、何も書かずに止める
-    const runErrors = toClaims([...repointed.values()]).flatMap((c) => validateRuns(c));
+    const runErrors = toClaims([...repointed.values()].map((r) => r.claim)).flatMap((c) => validateRuns(c));
     if (runErrors.length > 0)
       fail(
         `付け替えた結論の runs が検査に通らないので書かない（結論を手で直す）:\n${runErrors.map((e) => `  ${e}`).join('\n')}`,
       );
-    // 付け替えた結論の等級・状態・許容内かを、無効にした後の観測値で出し直す（新しい結論と同じ確定にできる条件。from は付け替え先の検証記録）
-    const afterAll = all.map((o) => changed.find((x) => x.id === o.id) ?? o);
+    // 付け替えた結論の等級・状態・許容内かを、無効にした後の観測値で出し直す（新しい結論と同じ確定にできる条件）
+    const changedById = new Map(changed.map((o) => [o.id, o]));
+    const withChanged = (o: Observation) => changedById.get(o.id) ?? o;
+    const afterAll = all.map(withChanged);
     const rewritten = new Map<string, ClaimDraft>();
-    for (const [cid, c] of repointed) {
-      const ownIds = new Set(toClaims([c])[0]!.observations);
-      const to = pairs.find(([, t]) => ownIds.has(t))![1];
+    for (const [cid, { claim: c, from }] of repointed) {
+      const ownIds = new Set(observationIdsIn(c.basis));
+      const own = afterAll.filter((o) => ownIds.has(o.id));
       rewritten.set(
         cid,
-        rewriteClaim(
-          c,
-          {
-            from: byId.get(to)!.source,
-            basis: c.basis,
-            own: afterAll.filter((o) => ownIds.has(o.id)),
-            merged: mergeClaimUpdate(c, {}),
-          },
-          claims,
-          afterAll,
-        ),
+        rewriteClaim(c, { from, basis: c.basis, own, merged: mergeClaimUpdate(c, {}) }, claims, afterAll),
       );
     }
     const written = [...new Set(changed.map((o) => o.recording))].map((recording) =>
-      saveObservations(
-        recording,
-        loadRecordingObservations(recording).map((o) => changed.find((x) => x.id === o.id) ?? o),
-        { format: false },
-      ),
+      saveObservations(recording, loadRecordingObservations(recording).map(withChanged), { format: false }),
     );
     for (const [cid, { file }] of rewritten) {
       const path = `${CLAIMS_DIR}${cid}.json`;
@@ -692,15 +687,15 @@ if (kind === 'verification') {
       console.log(
         `無効にした観測値を setup で指している比べ（付け替えていない。--by で付け替えるか、比べも無効にする）: ${referring.join('・')}`,
       );
-    for (const [cid, result] of rewritten) {
-      const before = claims.find((c) => c.id === cid)!;
-      console.log(`根拠を付け替えた結論 ${cid}: ${stateChange(before, result.file)}`);
-      printReasons(result.reasons);
-      if (before.state === '確定' && result.file.state === '仮説') console.log(CONFIRMED_TO_HYPOTHESIS);
-    }
+    for (const [cid, result] of rewritten)
+      reportRewrite(
+        `根拠を付け替えた結論 ${cid}`,
+        claims.find((c) => c.id === cid)!,
+        result,
+      );
     // 付け替えなかった結論（--by が無い）は、無効の根拠を残したまま（records:check が、確定の結論の根拠がすべて無効なら止める）
-    const citing = claims
-      .filter((c) => c.state !== '棄却' && !repointed.has(c.id) && c.observations.some((o) => ids.includes(o)))
+    const citing = claimsCiting(claims, ids)
+      .filter((c) => !repointed.has(c.id))
       .map((c) => `${c.id}（${c.state}）`);
     if (citing.length > 0)
       console.log(`無効にした観測値を根拠にしている結論（付け替えていない）: ${citing.join('・')}`);
