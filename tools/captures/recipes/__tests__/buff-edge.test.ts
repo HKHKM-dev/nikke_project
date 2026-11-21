@@ -211,6 +211,18 @@ describe('gridsOf・sumValues', () => {
     expect(() => parseGrids('a=1@10;b=a+a/d1')).toThrow(/\/d は通常攻撃の格子だけ/);
   });
 
+  it('版 9: 通常攻撃の格子をコアの片方に絞る（和の格子と倍率ダメージの格子には書けない）', () => {
+    const mk = { ...m, cells: () => [cell(false, false, false, 100.4), cell(true, false, false, 200.8)] };
+    expect(gridsOf(parseGrids('胴=1@900/k0;核=1@900/k1;両=1@900'), mk).map((g) => g.values)).toEqual([
+      [100.4],
+      [200.8],
+      [100.4, 200.8],
+    ]);
+    expect(() => parseGrids('a=1@10/k2')).toThrow(/\/k0 か \/k1/);
+    expect(() => parseGrids('a=1@skill@10/k1')).toThrow(/\/k は通常攻撃の格子だけ/);
+    expect(() => parseGrids('a=1@10;b=a+a/k1')).toThrow(/\/k は通常攻撃の格子だけ/);
+  });
+
   it('格子を指定の順に出し、和は和でない格子の値（倍率の版を含む）から出す', () => {
     const grids = gridsOf(parseGrids('和=通常+槍;通常=1@900;槍=1@skill@0/*2'), m);
     expect(grids.map((g) => g.name)).toEqual(['和', '通常', '槍']);
