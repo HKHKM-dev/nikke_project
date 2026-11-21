@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 142・効果 1041（根拠あり 1019）・notes 348（根拠あり 143）
+件数: キャラ 143・効果 1047（根拠あり 1025）・notes 348（根拠あり 143）
 
 notes の種類: 未対応 44・前提の外 106・計算に無関係 69・補足 42・間接 87
 
-スロット: supported 385・partial 31・unsupported 9・noEffect 52
+スロット: supported 388・partial 31・unsupported 9・noEffect 52
 
 ## 10 ラピ
 
@@ -350,6 +350,18 @@ notes の種類: 未対応 44・前提の外 106・計算に無関係 69・補�
   - notes[0] 間接（HP）: 自分の HP が 90% 以上の時の、味方全体の受けるHP回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
 - **burst**: supported
   - effects[0] heal・burstUse: C-0686（確定）、C-0687（仮説）
+
+## 92 ウンファ
+
+- **skill1**: supported
+  - effects[0] timed・lastShot・chargeDamage: C-1367（確定）、C-1378（確定）
+  - effects[1] timed・lastShot・chargeSpeed: C-1378（確定）
+- **skill2**: supported
+  - effects[0] timed・lastShot・enemyDefenseDown: C-1367（確定）、C-1378（確定）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1379（確定）、C-1380（確定）
+  - effects[1] timed・burstUse・enemyDefenseDown: C-1380（確定）
+  - effects[2] timed・burstUse・critRate: C-1381（確定）
 
 ## 93 エマ：タクティカル・アップ
 
