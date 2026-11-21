@@ -1,0 +1,29 @@
+{
+  "id": "C-1504",
+  "text": "ロザンナ：シックオーシャンの S2 の持続ダメージは、付いたとき（発動の 8f 後。1 回目の tick と同じフレーム）と tick ごとに、射手の 1 ヒットぶん（target_burst_energy_pershot。4,000）のバーストゲージを溜める。撃たない単騎の録画で、左の BURST バーが tick 75 回（5 回の発動）でこの並びどおりに伸び、付いたときの分の無い形はどの量でも合わない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1351-01`・`1351-02`・`1351-03`。V-0847",
+  "model": "反映（data/skills/283.json の skill2 の effects[0]。gaugeOnApply・gaugeOnApplyDelayFrames: 8・gaugeOnTick。1 パス目は周期の発火のフレームで予約する（frame/firstPass/gaugeEffects.ts の reserveTimerGauges。plan/design-rosanna-co.md 7 節））",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/283.json の skill2 の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1351",
+      "role": "仮説の出どころ"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "1351",
+      "decided": "1〜2 回目の発動",
+      "reproduced": "3〜5 回目の発動",
+      "observations": ["1351-02", "1351-03"]
+    }
+  ],
+  "parameterFree": "射手の target_burst_energy_pershot（4,000。CDN）・tick の時刻（C-1196）・左の BURST バーの縮尺（0367-01）。付けたときと tick の両方に溜める形はレイヴンの S1（C-0181）と同じ"
+}
