@@ -473,7 +473,7 @@ function scalingKeyOf(e: CatalogEffect): string {
   const stat = e.stat!;
   if (stat.scaling === 'casterHp') return stat.canon === 'attack' ? 'casterHp:ok' : 'casterHp';
   // 自分の失った HP 1% ごとの攻撃力▲は語彙あり（perLostHp。plan/design-guillotine.md 2.1 節）。ほかの stat は読む側の間接
-  if (stat.scaling === 'lostHp') return stat.canon === 'attack' && e.side !== 'enemy' ? 'lostHp:ok' : 'lostHp';
+  if (stat.scaling === 'lostHp') return stat.canon === 'attack' && e.side === 'self' ? 'lostHp:ok' : 'lostHp';
   if (stat.scaling !== 'casterBased') return stat.scaling;
   // 敵に付く発動者基準の防御力▼は語彙あり（casterDefence。plan/design-mast.md 2.2 節）
   if (stat.canon === 'defense' && e.side === 'enemy' && stat.dir === 'down') return 'casterBased:enemyDefense';
