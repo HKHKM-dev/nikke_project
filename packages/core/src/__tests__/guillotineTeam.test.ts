@@ -1,8 +1,8 @@
 // ギロチン編（plan/design-guillotine.md）: ギロチン（180）を含む編成で、S1 の現在の HP▼（30 命中ごと）、それで HP の割合が 70% 以下に
-// 下がった後の S2 の攻撃力▲（失った HP の 1% ごと。HP の割合の段ごとに付け直す）、バーストの使用の瞬間に 50% 以下ならの追加ダメージが
+// 下がった後の S2 の攻撃力▲（失った HP の 1% ごと。HP の割合の段ごとに付け直す）、バーストのヒットの時に 50% 以下ならの追加ダメージが
 // 意図どおりに出るか。攻撃力の順位（アリスの S1 の対象）も、そのフレームの失った HP の段で読む
 import { describe, expect, it } from 'vitest';
-import { activationFramesOfSlot } from '../burst/schedule.ts';
+import { hitFramesOf, isInFullBurst } from '../burst/schedule.ts';
 import { computeFixedSpecDefence } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { applyAttackBuffs, ZERO_BUFFS } from '../skills/buffs.ts';
@@ -75,15 +75,23 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(new Set(s2Attack.map((p) => p.effect.value)).size).toBe(s2Attack.length);
   });
 
-  it.skipIf(!input.burst)('deals the burst additional damage only on burst uses at 50% HP or lower', () => {
-    const uses = activationFramesOfSlot(plan.schedule!, g);
-    const additional = plan.skillHits.filter((h) => h.slotIndex === g && h.effect.source.skill === 'burst');
-    const downsBefore = (frame: number) => hpDowns.filter((i) => i.frame < frame).length;
-    expect(uses.some((a) => downsBefore(a) < FIRES_TO_50)).toBe(true);
-    expect(uses.some((a) => downsBefore(a) >= FIRES_TO_50)).toBe(true);
-    expect(additional.map((h) => h.frame)).toEqual(uses.filter((a) => downsBefore(a) >= FIRES_TO_50));
-    for (const h of additional) expect(h.hit.multiplier).toBeCloseTo(12.375, 6);
-  });
+  // 追加ダメージはバーストスキルダメージと同じ III の 00.00 の 105f 後に発火し（C-1372）、そのフレームの HP の割合で決まる（C-1373）
+  it.skipIf(!input.burst)(
+    'deals the burst additional damage with the burst hit, only when HP is at 50% or lower then',
+    () => {
+      const hits = (plan.schedule?.activations.filter((a) => a.slotIndex === g) ?? []).flatMap(hitFramesOf);
+      const additional = plan.skillHits.filter((h) => h.slotIndex === g && h.effect.source.skill === 'burst');
+      const downsBefore = (frame: number) => hpDowns.filter((i) => i.frame < frame).length;
+      expect(hits.some((f) => downsBefore(f) < FIRES_TO_50)).toBe(true);
+      expect(hits.some((f) => downsBefore(f) >= FIRES_TO_50)).toBe(true);
+      expect(additional.map((h) => h.frame)).toEqual(hits.filter((f) => downsBefore(f) >= FIRES_TO_50));
+      for (const h of additional) {
+        expect(h.hit.multiplier).toBeCloseTo(12.375, 6);
+        expect(isInFullBurst(plan.schedule!, h.frame)).toBe(true);
+        expect(h.hit.boost.fullBurst).toBe(0.5);
+      }
+    },
+  );
 
   it.skipIf(!input.slots.some((s) => s?.character.resourceId === ALICE))(
     'ranks the final ATK of Guillotine with the lost HP steps of the ranking frame',

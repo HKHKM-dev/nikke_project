@@ -1,0 +1,239 @@
+[
+  {
+    "id": "1262-01",
+    "recording": "1262",
+    "kind": "total",
+    "use": "record",
+    "value": 276744666,
+    "description": "リター・デルタ・ギロチン の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11500。増分は 6636 個"
+    },
+    "source": "V-0807",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1262-02",
+    "recording": "1262",
+    "kind": "count",
+    "use": "record",
+    "value": 257,
+    "unit": "トリガー",
+    "description": "リター・デルタ・ギロチン のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 6636 個。前の増分から 30f 未満の増分（6619 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 39f）から発の数を決めた（2 発になった組 13 個）"
+    },
+    "source": "V-0807",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1262-03",
+    "recording": "1262",
+    "kind": "timing",
+    "use": "record",
+    "value": [1458, 2841, 4074, 5510, 6886, 8192, 9532, 10824],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・0・25・0・25・0f"
+    },
+    "source": "V-0807",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1262-04",
+    "recording": "1262",
+    "kind": "timing",
+    "use": "record",
+    "value": [1487, 4103, 6915, 9561],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25f"
+    },
+    "source": "V-0807",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1262-05",
+    "recording": "1262",
+    "kind": "timing",
+    "use": "record",
+    "value": [1516, 4132, 6944, 9590],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0807",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1262-06",
+    "recording": "1262",
+    "kind": "timing",
+    "use": "record",
+    "value": [2125, 4741, 7553, 10199],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0807",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1262-07",
+    "recording": "1262",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0807",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1262-08",
+    "recording": "1262",
+    "kind": "timing",
+    "use": "input",
+    "unit": "f",
+    "value": [708, 2067, 3299, 4711, 6086, 7368, 8707, 9975],
+    "spread": {
+      "kind": "range",
+      "low": -2,
+      "high": 2
+    },
+    "description": "チェーンの始まり（I の本当の発動）のゲーム内のフレーム（戦闘開始から）の並び",
+    "method": {
+      "tool": "recipe:burst-panel@4 と tools/captures/timer.ts の戦闘開始",
+      "note": "戦闘開始は動画の f744（timer.ts）。I → II の六角形の替わり目（`1262-03`）の動画のフレームから、戦闘開始・替わり目までの 5f と発動の止まり 1f（C-0503）・それより前のフルバーストの入りの止まり 22f（C-0069）と I・II の発動の止まり 1f ずつを引いた（V-0783 の 1194-01 と同じ）。II を押さずに時間切れになったチェーンも入る。幅は戦闘開始の読みの揺れ"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burst"
+    },
+    "source": "V-0807",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1262-09",
+    "recording": "1262",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2461722,
+    "unit": "ダメージ",
+    "description": "ギロチンの 1 回目のバーストのバーストスキルダメージ（会心なし。HP 約 82% で追加ダメージ無し）。ヒットの増分 2,496,590 から、同じフレームのギロチンの通常攻撃 1 発（34,868。前後に並ぶ値）を引いた",
+    "method": {
+      "tool": "recipe:hud-jumps@3 と recipe:burst-panel@4",
+      "note": "III の 00.00（`1262-05`）の 127f 後の増分（f1643）から、通常攻撃 1 発を引いた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "1262-08"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0807",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1262-10",
+    "recording": "1262",
+    "kind": "count",
+    "use": "compare",
+    "value": 3,
+    "unit": "回",
+    "description": "ギロチンのバーストの追加ダメージの数（2 回目からの 3 回。1 回目は出ない）。各回のバーストのヒットの増分を、モデルのバーストスキルダメージと追加ダメージの会心の組で分けた（下の分解の観測値）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 と recipe:burst-panel@4",
+      "note": "III の 00.00 の 127f 後の 1 つの大きい増分を、モデルの 1 ヒット（チェーンの始まりを録画に揃えた sim）の和に当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "1262-08"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0807",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1262-11",
+    "recording": "1262",
+    "kind": "timing",
+    "use": "record",
+    "value": [127, 127, 127, 127],
+    "unit": "f",
+    "description": "ギロチンのバーストスキルダメージ（2 回目からは追加ダメージとの和）の増分の、III のタイマーの 00.00（`1262-05`）からの動画のフレーム（増分は f1643・f4259・f7071・f9717）。フルバーストの入りの止まり 22f を含むので、ゲーム内は 105f",
+    "method": {
+      "tool": "recipe:hud-jumps@3 と recipe:burst-panel@4",
+      "note": "00.00 の後で 50 万を超える最初の増分。間（gap）が 1 でない増分は、HUD の読みが途切れた後の和"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0807",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1262-12",
+    "recording": "1262",
+    "kind": "hit",
+    "use": "record",
+    "value": [2496590, 11968728, 12855193, 12610636],
+    "unit": "ダメージ",
+    "description": "ギロチンのバーストのヒットの増分（4 回）と、モデルの 1 ヒットの和との差。1 回目: 会心なしのバーストスキルダメージ 2,461,722 + 通常攻撃 1 発 34,868（同じ録画に並ぶ値）。2 回目: 片方が会心のバースト + 追加ダメージの和と差 0。3 回目: 同じ組と差 1,103。4 回目: 会心のバーストと会心なしの追加の和より 22,193 大きい",
+    "method": {
+      "tool": "recipe:hud-jumps@3 と records:model",
+      "note": "モデルの値は、チェーンの始まり（`1262-08`）を録画に揃えた sim の burstHitDamage・skillHitDamage（n 回目・会心の有無）。追加ダメージはモデルではバーストスキルダメージの 1.5 倍（フルバースト補正。会心は同じ量を足す）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0807",
+    "readAt": "2026-11-21"
+  }
+]

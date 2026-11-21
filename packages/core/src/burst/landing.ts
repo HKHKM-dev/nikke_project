@@ -66,6 +66,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // マリアン：クイーン: III のタイマーの 00.00 からヒットまで 5f（動画で 27f。止まり 22f を含む）。バーストスキルダメージには同じ発動の
   // 攻撃力▲・攻撃ダメージ▲が乗る（同じ発動の▲がヒットに乗る行。C-0582 と同じ形）。効果の発火の遅れは 0
   { resourceIds: [19], sameActivationBuffsOnHit: true, delays: { hitFrames: 5, effectFrames: 0 }, claim: 'C-0742' },
+  // ギロチン: III のタイマーの 00.00 からバーストスキルダメージと追加ダメージ（burst の effects[1]）まで、どちらも 105f（動画で 127f。
+  // 止まり 22f を含む。2 つは HUD の同じ増分に出る）
+  { resourceIds: [180], delays: { hitFrames: 105, effectFrames: 105 }, claim: 'C-1372' },
   // レイ（仮称）: III のタイマーの 00.00 からヒットまで 11f（動画で 33f。止まり 22f を含む）。バーストスキルダメージには同じ発動の
   // 攻撃態勢（攻撃力▲・攻撃ダメージ▲）が乗り、フルバーストの開始の▲（S2 の攻撃力▲）は乗らない。効果の発火の遅れは 0（V-0788）
   { resourceIds: [834], sameActivationBuffsOnHit: true, delays: { hitFrames: 11, effectFrames: 0 }, claim: 'C-1295' },
