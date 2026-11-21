@@ -79,7 +79,7 @@ const zList = (out: string | null): string[] | null => (out === null ? null : ou
  * 中身が違う・stage した版が作業ツリーと違うパスがある（部分的な stage や、index から外しただけで作業ツリーに残したファイル。
  * index に入れ直すと stage した版を失う）。target に無い追跡していないファイルは、早送りの邪魔にならないので数えず、hash もしない
  * （入れ子のリポジトリのような hash できないものを渡さない）。中身は git hash-object で比べる（改行の変換など、元に入れるときの
- * 変換を通した形）。パスは glob として読ませない（--literal-pathspecs）
+ * 変換を通した形）
  */
 export function mergedEdits(git: GitRun, target: string): string[] | null {
   const diff = (...args: string[]) => zList(git(['diff', '--name-only', '-z', '--no-renames', ...args]));
@@ -91,8 +91,9 @@ export function mergedEdits(git: GitRun, target: string): string[] | null {
   if (changed === null || deleted === null || staged === null || unstaged === null || untracked === null) return null;
   if (staged.some((p) => unstaged.includes(p) || untracked.includes(p))) return null;
   if (changed.length === 0 && untracked.length === 0) return [];
-  // target のブロブ（パス → ハッシュ）。ls-tree の行は「モード 種類 ハッシュ TAB パス」
-  const tree = zList(git(['--literal-pathspecs', 'ls-tree', '-r', '-z', target, '--', ...changed, ...untracked]));
+  // target のブロブ（パス → ハッシュ）。ls-tree の行は「モード 種類 ハッシュ TAB パス」。パスを渡さずに全部取る（追跡していない
+  // ファイルが多くても、コマンドラインの長さに当たらない）
+  const tree = zList(git(['ls-tree', '-r', '-z', target]));
   if (tree === null) return null;
   const inTarget = new Map(
     tree.map((line) => [line.slice(line.indexOf('\t') + 1), line.slice(0, line.indexOf('\t')).split(' ')[2]!]),
@@ -116,16 +117,19 @@ export type FastForwardResult =
 
 /**
  * target へ早送りする。中身が target と同じ作業中の変更（mergedEdits）は、index に入れてから早送りする（中身は target にあるので
- * 失うものは無い）。index に入れるのや早送りに失敗したら、index を入れる前の形（write-tree で取った木）に戻す（作業ツリーの中身は
- * そのまま）
+ * 失うものは無い）。stage して消したもの（index にも作業ツリーにも無い）は、もう入っているので add に渡さない。index に入れるのや
+ * 早送りに失敗したら、add に渡したパスの index を入れる前の形（write-tree で取った木）に戻す（ほかのパスの index の印と、作業ツリーの
+ * 中身はそのまま）。パスは glob として読ませない（--literal-pathspecs）
  */
 export function fastForward(git: GitRun, target: string): FastForwardResult {
   const edits = mergedEdits(git, target);
   if (edits === null) return { kind: 'differs' };
-  const saved = edits.length > 0 ? git(['write-tree']) : '';
-  if (saved === null) return { kind: 'stageFailed' };
-  const restore = () => edits.length > 0 && git(['read-tree', saved]);
-  if (edits.length > 0 && git(['--literal-pathspecs', 'add', '-A', '--', ...edits]) === null) {
+  const gone = zList(git(['diff', '--name-only', '-z', '--no-renames', '--cached', '--diff-filter=D', 'HEAD']));
+  const toStage = gone === null ? null : edits.filter((p) => !gone.includes(p));
+  const saved = toStage?.length ? git(['write-tree']) : '';
+  if (toStage === null || saved === null) return { kind: 'stageFailed' };
+  const restore = () => toStage.length > 0 && git(['--literal-pathspecs', 'reset', '--quiet', saved, '--', ...toStage]);
+  if (toStage.length > 0 && git(['--literal-pathspecs', 'add', '-A', '--', ...toStage]) === null) {
     restore();
     return { kind: 'stageFailed' };
   }

@@ -254,9 +254,20 @@ describe('mergedEdits・fastForward', () => {
     git([...AUTHOR, 'commit', '--quiet', '-m', 'side']);
     editLikeTarget(dir);
     git(['add', 'c.txt']);
+    // 片付けと関係ないパスの index の印は残す
+    git(['update-index', '--skip-worktree', 'd.txt']);
     const before = git(['status', '--porcelain']);
     expect(fastForward(git, 'target')).toEqual({ kind: 'failed' });
     expect(git(['status', '--porcelain'])).toBe(before);
+    expect(git(['ls-files', '-v', 'd.txt'])).toBe('S d.txt');
+  });
+
+  it('fastForward takes a deletion already staged with git rm', () => {
+    const { dir, git } = repo();
+    editLikeTarget(dir);
+    git(['rm', '--quiet', '--cached', 'b.txt']);
+    expect(fastForward(git, 'target')).toEqual({ kind: 'forwarded', cleaned: 3 });
+    expect(git(['status', '--porcelain'])).toBe('');
   });
 });
 
