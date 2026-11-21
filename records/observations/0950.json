@@ -390,5 +390,39 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "0950-17",
+    "recording": "0950",
+    "kind": "hit",
+    "use": "compare",
+    "value": 6042581,
+    "unit": "ダメージ",
+    "description": "ナユタの記憶燃焼の変更後の武器の 1 発（コア・距離ボーナスあり・非会心）の、1 回目のフルバーストの中の値（f1664。1 回目の窓の 2 発目）。フルバースト補正の乗った値で、使用武器変更の発にもフルバースト補正が乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "E.H. の変更後の発の値の読み（V-0813）を分けるために読み直した。同じ窓の 3〜5 発目（f1770・1876・1982）は 4,154,827・4,242,156・4,182,532 で、3 発目は下の比べの値と同じ（リターのバーストの▲の切れた後）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 207,
+        "fullBurst": 0,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0813",
+    "readAt": "2026-11-21"
   }
 ]
