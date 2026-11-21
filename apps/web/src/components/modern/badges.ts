@@ -2,7 +2,8 @@
 // ファイル名は <キャラのデータの項目名>_<その値>.svg（命名規則は apps/web/scripts/badges.ts の冒頭）なので、項目と値からファイルを引く。
 // 画面は読んだバッジを 1 つのスプライト（BadgeSprite）にして文書に 1 度だけ置き、バッジは <use> で出す（BadgeIcon。
 // plan/design-badge-color.md）。色の役の CSS の変数（--badge-<役>）が <use> の中まで届くので、白黒のバッジの色は CSS で決まる。
-// 束に入るのは下の glob が読むバッジだけ（文字列で束に入る。アーティファクトのファイル数を使わない）。
+// 束に入るのは下の glob が読む assets/badges/sprite のバッジだけ（文字列で束に入る。アーティファクトのファイル数を使わない）。どのバッジを
+// sprite に置くかは書き出しの道具（apps/web/scripts/badges.ts の SPRITE_GROUPS・SPRITE_NAMES）が決める。
 import {
   COLLECTION_LEVEL_MAX,
   ELEMENT_LABEL,
@@ -20,38 +21,11 @@ import type { Theme } from '../../theme.ts';
 import type { TrayShape } from '../../trayShape.ts';
 import type { UiMode } from '../../uiMode.ts';
 
-const BADGE_SVGS = import.meta.glob<string>(
-  [
-    '../../assets/badges/element_*.svg',
-    '../../assets/badges/burstStep_*.svg',
-    '../../assets/badges/class_*.svg',
-    '../../assets/badges/weaponType_*.svg',
-    '../../assets/badges/corporation_*.svg',
-    '../../assets/badges/collection_*.svg',
-    '../../assets/badges/grade_*.svg',
-    '../../assets/badges/core_*.svg',
-    '../../assets/badges/main_*.svg',
-    '../../assets/badges/ui_blank_main.svg',
-    '../../assets/badges/ui_information.svg',
-    '../../assets/badges/ui_controller.svg',
-    '../../assets/badges/ui_window.svg',
-    '../../assets/badges/ui_return.svg',
-    '../../assets/badges/ui_account.svg',
-    '../../assets/badges/ui_delete.svg',
-    '../../assets/badges/ui_setting.svg',
-    '../../assets/badges/ui_cu.svg',
-    '../../assets/badges/ui_mcu.svg',
-    '../../assets/badges/ui_arrow.svg',
-    '../../assets/badges/ui_light.svg',
-    '../../assets/badges/ui_dark.svg',
-    '../../assets/badges/ui_system.svg',
-    '../../assets/badges/ui_undo.svg',
-    '../../assets/badges/ui_redo.svg',
-    '../../assets/badges/ui_classic.svg',
-    '../../assets/badges/ui_modern.svg',
-  ],
-  { eager: true, query: '?raw', import: 'default' },
-);
+const BADGE_SVGS = import.meta.glob<string>('../../assets/badges/sprite/*.svg', {
+  eager: true,
+  query: '?raw',
+  import: 'default',
+});
 
 /** 読んだバッジの viewBox（拡張子なしの名前 → viewBox） */
 const VIEW_BOXES = new Map<string, string>();
@@ -73,7 +47,10 @@ export const BADGE_SYMBOLS = Object.entries(BADGE_SVGS)
 /** バッジ（拡張子なしの名前）の viewBox。無ければ落とす */
 export function badgeViewBox(name: string): string {
   const viewBox = VIEW_BOXES.get(name);
-  if (viewBox === undefined) throw new Error(`バッジ ${name}.svg が assets/badges に無い（か glob で読んでいない）`);
+  if (viewBox === undefined)
+    throw new Error(
+      `バッジ ${name}.svg が assets/badges/sprite に無い（apps/web/scripts/badges.ts の SPRITE_NAMES に足して書き出す）`,
+    );
   return viewBox;
 }
 

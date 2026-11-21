@@ -14,6 +14,7 @@
 //    生成物でないファイルが 1 つでもあれば、そこで止めてファイルを出す（人が直して git add し、もう一度 npm run pr:prep を回すと続きから）。
 // 4. 生成物を 1 回だけ作り直す（records:minimal。感度は変わった組だけ計算し直し、records:check も回る）。作り直しで生成物でない
 //    ファイル（開いている検証記録の予測との比べの表・手で書いた records/ の JSON の整形）が変わったら、「records:check の書き換え」の
+//    commit を足す。バッジを元（apps/web/badges-src）から書き出し（npm run badges:build）、書き出しが変わったら「バッジの書き出し」の
 //    commit を足す。
 // 5. CI と同じ確認（--no-ci で省く）。書式（prettier）と lint（eslint）は、ブランチで変えたファイルだけを見る（全部は GitHub の CI が
 //    見る。設定を変えたブランチは全部。plan/design-workflow-simplification-8.md 1 節）。npm run ci のほかの段（型・テスト・ビルド）は
@@ -255,6 +256,17 @@ if (rewritten.length > 0) {
   git(['add', '--', ...rewritten]);
   git(['commit', '--quiet', '-m', 'records:check の書き換え']);
   console.log(`records:check が書き換えた生成物でないファイルを commit した: ${rewritten.join('・')}`);
+}
+
+// バッジの書き出しは元（apps/web/badges-src）から決まるので、合っていなければ書き出して commit する
+// （plan/design-workflow-simplification-18.md 3 節）
+const BADGE_OUT = 'apps/web/src/assets/badges'; // apps/web/scripts/badges.ts の BADGE_OUT_DIR
+npm('badges:build');
+git(['add', '--all', '--', BADGE_OUT]);
+const badgeOutputs = gitPaths(['diff', '--cached', '--name-only', '--', BADGE_OUT]);
+if (badgeOutputs.length > 0) {
+  git(['commit', '--quiet', '-m', 'バッジの書き出し']);
+  console.log(`バッジを書き出して commit した: ${badgeOutputs.length} 件`);
 }
 
 if (!values['no-ci']) {

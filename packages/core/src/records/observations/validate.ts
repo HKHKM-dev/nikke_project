@@ -9,9 +9,11 @@ import {
   holdFireRangesOf,
   jumpWindowsOf,
   manualBurstsOf,
+  mapSetupRefs,
   MID_FAR_LANDINGS,
   NEAR_LANDINGS,
   type CompareSetup,
+  type SetupRefField,
 } from './setup.ts';
 import {
   type CompareSpec,
@@ -159,7 +161,7 @@ function conditionErrors(setup: CompareSetup, enemies: Enemies, at: string): str
   return errors;
 }
 
-/** 比べる設定の欄（ID で指す観測値・遅れの上書き・枠の並び）。欄の順に見る */
+/** 比べる設定の欄（遅れの上書き・枠の並び・ID で指す観測値）。ID で指す観測値は最後に見る */
 function setupErrors(
   o: Observation,
   setup: CompareSetup,
@@ -168,18 +170,14 @@ function setupErrors(
 ): string[] {
   const at = o.id;
   const errors: string[] = [];
-  const ref = (id: string, label: string, rule: RefRule) => errors.push(...refErrors(o, byId.get(id), id, label, rule));
-  if (setup.jumpWindows !== undefined) ref(setup.jumpWindows, 'jumpWindows', JUMP_WINDOWS);
   for (const ob of setup.obstacles ?? []) {
     if (!Number.isInteger(ob.slot) || ob.slot < 1 || !Number.isInteger(ob.shot) || ob.shot < 1)
       errors.push(`${at}: obstacles の slot・shot は 1 以上の整数`);
     else if (filled !== undefined && !filled.has(ob.slot)) errors.push(`${at}: obstacles の枠 ${ob.slot} が編成の外`);
-    ref(ob.count, 'obstacles', OBSTACLES);
   }
   for (const ph of setup.pelletHits ?? []) {
     if (!Number.isInteger(ph.slot) || ph.slot < 1) errors.push(`${at}: pelletHits の slot は 1 以上の整数`);
     else if (filled !== undefined && !filled.has(ph.slot)) errors.push(`${at}: pelletHits の枠 ${ph.slot} が編成の外`);
-    ref(ph.counts, 'pelletHits', PELLET_HITS);
   }
   errors.push(...burstDelaysErrors(setup, at));
   const holdFireSlots = (setup.holdFire ?? []).map((h) => h.slot);
@@ -196,12 +194,14 @@ function setupErrors(
     errors.push(`${at}: noBurstSlots は burst が true のときだけ書く`);
   if (setup.noFireSlots !== undefined && setup.condition === 'auto')
     errors.push(`${at}: noFireSlots は condition が auto のときには書かない`);
-  if (setup.manualBursts !== undefined) {
-    if (setup.burst === false) errors.push(`${at}: manualBursts は burst が false のときには書かない`);
-    ref(setup.manualBursts, 'manualBursts', MANUAL_BURSTS);
-  }
-  for (const h of setup.holdFire ?? []) ref(h.frames, 'holdFire', HOLD_FIRE);
+  if (setup.manualBursts !== undefined && setup.burst === false)
+    errors.push(`${at}: manualBursts は burst が false のときには書かない`);
   if (new Set(holdFireSlots).size !== holdFireSlots.length) errors.push(`${at}: holdFire の枠が重なっている`);
+  // ID で指す観測値（欄の一覧は setup.ts の mapSetupRefs）
+  mapSetupRefs(setup, (id, field) => {
+    errors.push(...refErrors(o, byId.get(id), id, field, REF_RULES[field]));
+    return id;
+  });
   return errors;
 }
 
@@ -232,6 +232,13 @@ const HOLD_FIRE: RefRule = {
   input: true,
   valueOk: (v) => holdFireRangesOf(v) !== undefined,
   shape: 'の値は昇順の 0 以上の整数の、偶数個の配列',
+};
+const REF_RULES: Readonly<Record<SetupRefField, RefRule>> = {
+  jumpWindows: JUMP_WINDOWS,
+  obstacles: OBSTACLES,
+  pelletHits: PELLET_HITS,
+  manualBursts: MANUAL_BURSTS,
+  holdFire: HOLD_FIRE,
 };
 
 /** 比べる設定が ID で指す観測値の検査: 有るか・同じ録画か・use が input か・失効していないか・値の形 */

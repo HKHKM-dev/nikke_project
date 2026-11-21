@@ -1,7 +1,14 @@
 // 観測値の直しと無効（records:new observation --replace・--invalidate。plan/design-workflow-simplification-17.md 3 節）と、下書きの欄の一覧
 import { describe, expect, expectTypeOf, it } from 'vitest';
 import { observationIdsIn, type ClaimFile } from '../claims.ts';
-import { draftShapeErrors, invalidatedObservation, replacedObservation, repointClaim } from '../observationEdits.ts';
+import {
+  draftShapeErrors,
+  invalidatedObservation,
+  replacedObservation,
+  repointClaim,
+  repointSetup,
+  setupRefIds,
+} from '../observationEdits.ts';
 import {
   OBSERVATION_DRAFT_FIELDS,
   observationDraftFieldsText,
@@ -105,6 +112,49 @@ describe('repointClaim', () => {
     }
     const twice = { ...claim, basis: '`0101-02`・`0101-05`。`0101-02`（注記）。V-0099' };
     expect(repointClaim(twice, '0101-02', '0101-05', '2026-11-18')!.basis).toBe('`0101-05`。`0101-05`（注記）。V-0099');
+  });
+});
+
+describe('setupRefIds・repointSetup', () => {
+  const compare: Observation = {
+    ...before,
+    compare: {
+      model: 'sim',
+      metric: 'gaugeFullFrame',
+      args: { n: 0 },
+      tolerance: { abs: 3 },
+      setup: {
+        enemy: 'range-bigarms-fire',
+        jumpWindows: '0101-03',
+        obstacles: [{ slot: 1, shot: 2, count: '0101-04' }],
+        pelletHits: [{ slot: 1, counts: '0101-05' }],
+        manualBursts: '0101-06',
+        holdFire: [{ slot: 1, frames: '0101-03' }],
+      },
+    },
+  } as Observation;
+
+  it('lists the observations the setup points at', () => {
+    expect(setupRefIds(compare)).toEqual(['0101-03', '0101-04', '0101-05', '0101-06', '0101-03']);
+    expect(setupRefIds(before)).toEqual([]);
+    expect(setupRefIds(invalidatedObservation(compare, '誤り', '2026-11-21'))).toEqual([]);
+  });
+
+  it('repoints every field that points at the old observation and keeps the rest', () => {
+    const after = repointSetup(compare, '0101-03', '0101-09');
+    expect(after?.compare?.setup).toEqual({
+      ...compare.compare!.setup,
+      jumpWindows: '0101-09',
+      holdFire: [{ slot: 1, frames: '0101-09' }],
+    });
+    expect(after?.id).toBe(compare.id);
+    expect(after?.value).toBe(compare.value);
+  });
+
+  it('leaves observations that do not point at it and invalid comparisons alone', () => {
+    expect(repointSetup(compare, '0101-99', '0101-09')).toBeUndefined();
+    expect(repointSetup(before, '0101-03', '0101-09')).toBeUndefined();
+    expect(repointSetup(invalidatedObservation(compare, '誤り', '2026-11-21'), '0101-03', '0101-09')).toBeUndefined();
   });
 });
 

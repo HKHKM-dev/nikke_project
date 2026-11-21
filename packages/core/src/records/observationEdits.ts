@@ -1,7 +1,9 @@
 // 観測値の直しと無効（records:new observation --replace・--invalidate の純粋な部分。plan/design-workflow-simplification-17.md 3 節）。
 // 直しは同じ ID のまま欄を下書きで差し替え、無効は invalid（observations/types.ts）を付ける。無効にした観測値を根拠にしている結論は、
-// 新しい観測値に付け替えられる（根拠の文・runs・minimal の ID を置き換える）。
+// 新しい観測値に付け替えられる（根拠の文・runs・minimal の ID を置き換える）。比べの setup が ID で指している観測値（入力）を無効にしたときは、
+// 比べを写さずに setup の参照を新しい観測値に付け替える（plan/design-workflow-simplification-18.md 1 節）。
 import { observationIdsIn, type ClaimFile } from './claims.ts';
+import { mapSetupRefs } from './observations/setup.ts';
 import type { Observation, ObservationDraft } from './observations/types.ts';
 
 /** 下書きに書かせない欄（このコマンドが付ける・前の値を残す） */
@@ -77,4 +79,25 @@ export function repointClaim(claim: ClaimFile, from: string, to: string, today: 
         }),
     updated: today,
   };
+}
+
+/** 比べの setup が ID で指している観測値（無効の比べと setup の無い観測値は空） */
+export function setupRefIds(o: Observation): string[] {
+  const setup = o.compare?.setup;
+  if (setup === undefined || o.invalid !== undefined) return [];
+  const ids: string[] = [];
+  mapSetupRefs(setup, (id) => {
+    ids.push(id);
+    return id;
+  });
+  return ids;
+}
+
+/**
+ * 比べの setup が ID で指す欄の from を to に置き換える。無効の比べ（記録は書き換えない）と、from を指していない観測値は undefined
+ */
+export function repointSetup(o: Observation, from: string, to: string): Observation | undefined {
+  if (!setupRefIds(o).includes(from)) return undefined;
+  const setup = mapSetupRefs(o.compare!.setup, (id) => (id === from ? to : id));
+  return { ...o, compare: { ...o.compare!, setup } } as Observation;
 }

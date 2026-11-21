@@ -132,6 +132,31 @@ export type CompareSetup = {
   holdFire?: { slot: number; frames: string }[];
 };
 
+/** setup が観測値の ID で指す欄 */
+export type SetupRefField = 'jumpWindows' | 'obstacles' | 'pelletHits' | 'manualBursts' | 'holdFire';
+
+/**
+ * setup が観測値の ID で指す欄（jumpWindows・obstacles の count・pelletHits の counts・manualBursts・holdFire の frames）の ID を、
+ * 欄の順に map で置き換えた setup。参照の検査（validate.ts の setupErrors）と、参照の付け替え（records:new observation --invalidate --by）
+ * が、この 1 つの一覧で欄を回す
+ */
+export function mapSetupRefs(setup: CompareSetup, map: (id: string, field: SetupRefField) => string): CompareSetup {
+  return {
+    ...setup,
+    ...(setup.jumpWindows === undefined ? {} : { jumpWindows: map(setup.jumpWindows, 'jumpWindows') }),
+    ...(setup.obstacles === undefined
+      ? {}
+      : { obstacles: setup.obstacles.map((x) => ({ ...x, count: map(x.count, 'obstacles') })) }),
+    ...(setup.pelletHits === undefined
+      ? {}
+      : { pelletHits: setup.pelletHits.map((x) => ({ ...x, counts: map(x.counts, 'pelletHits') })) }),
+    ...(setup.manualBursts === undefined ? {} : { manualBursts: map(setup.manualBursts, 'manualBursts') }),
+    ...(setup.holdFire === undefined
+      ? {}
+      : { holdFire: setup.holdFire.map((x) => ({ ...x, frames: map(x.frames, 'holdFire') })) }),
+  };
+}
+
 /** CompareSetup.burstDelays の 1 件 */
 export type BurstDelayOverrideSetup = {
   rid: number;

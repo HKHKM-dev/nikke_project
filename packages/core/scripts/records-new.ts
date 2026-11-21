@@ -34,8 +34,9 @@
 //   source（--from）・readAt（今日）を付け、records:check と同じ観測値の検査を通ったら records/observations/<録画 id>.json に足す
 //   （通らなければ書かない。番号の振り方と同じ値の扱いは records:read --write と同じ。tools/captures/records-io.ts）。
 //   --replace は、その観測値の欄を下書き（1 つ）で差し替える（id・recording・source・readAt は前のまま）。同じ検査を通ったら書く。
-//   --invalidate は、観測値に invalid（理由と今日の日付）を付ける。--by を書くと、それを根拠にしている結論の根拠を新しい観測値に付け替える
-//   （--by が 1 つなら全部をそれに、並びなら同じ順の組で）。observation はどれも commit しない。
+//   --invalidate は、観測値に invalid（理由と今日の日付）を付ける。--by を書くと、それを根拠にしている結論の根拠と、それを setup で指して
+//   いる比べ（jumpWindows など）の参照を新しい観測値に付け替える（--by が 1 つなら全部をそれに、並びなら同じ順の組で）。入力を読み直した
+//   ときは、比べを写さずにこれで付け替える（plan/design-workflow-simplification-18.md 1 節）。observation はどれも commit しない。
 //   npm run records:new -- backlog --section <節> [--name <名前>] (--text "<本文>" | --cell "<列>=<文>" …) [--first]
 // backlog: records/backlog/<名前>.json を作る（plan/backlog.md の冒頭の書き方）。2 節など # の列のある節は、名前を次の番号（2-NN。ほかの
 //   ブランチが使った番号も避ける）にし、ほかの節は --name の名前で、order を節の末尾（--first なら先頭）にする。箇条の節は --text、表の節は
@@ -81,6 +82,8 @@ import {
   invalidatedObservation,
   replacedObservation,
   repointClaim,
+  repointSetup,
+  setupRefIds,
 } from '../src/records/observationEdits.ts';
 import {
   invalidReasonsOf,
@@ -558,20 +561,36 @@ if (kind === 'verification') {
     if (already.length > 0) fail(`既に無効: ${already.join('・')}`);
     const invalidNew = (by ?? []).filter((id) => byId.get(id)!.invalid !== undefined || ids.includes(id));
     if (invalidNew.length > 0) fail(`--by の観測値が無効か、無効にする観測値: ${invalidNew.join('・')}`);
-    const changed = ids.map((id) => invalidatedObservation(byId.get(id)!, values.reason!.trim(), today));
+    const invalidated = ids.map((id) => invalidatedObservation(byId.get(id)!, values.reason!.trim(), today));
+    // 付け替えの組（無効にする観測値 → 新しい観測値。--by が 1 つなら全部をそれに）
+    const pairs = by === undefined ? [] : ids.map((old, i) => [old, by.length === 1 ? by[0]! : by[i]!] as const);
+    // 無効にする観測値を setup で指している比べは、比べを写さずに参照を付け替える
+    const resetup = new Map<string, Observation>();
+    for (const [old, to] of pairs)
+      for (const o of all) {
+        if (ids.includes(o.id)) continue;
+        const next = repointSetup(resetup.get(o.id) ?? o, old, to);
+        if (next !== undefined) resetup.set(o.id, next);
+      }
+    // setup の参照は同じ録画の観測値に限る（--by が 1 つで録画をまたぐと、ほかの録画の比べが別の録画を指す）
+    const crossed = [...resetup.values()].filter((o) =>
+      setupRefIds(o).some((id) => byId.get(id)?.recording !== o.recording),
+    );
+    if (crossed.length > 0)
+      fail(
+        `付け替え先が別の録画の観測値になる比べがある（--by を --invalidate と同じ順の並びにする）: ${crossed.map((o) => o.id).join('・')}`,
+      );
+    const changed = [...invalidated, ...resetup.values()];
     checked(changed);
     // 結論の付け替え（無効にする前に、書き換える結論を出しておく）
     const claims = loadClaims();
     const repointed = new Map<string, ClaimFile>();
     // 棄却・範囲外の結論は、その時の根拠のまま残す（記録は書き換えない）
-    if (by !== undefined)
-      for (const [i, old] of ids.entries()) {
-        const to = by.length === 1 ? by[0]! : by[i]!;
-        for (const { observations: _o, ...c } of claims) {
-          if (c.state !== '仮説' && c.state !== '確定') continue;
-          const next = repointClaim(repointed.get(c.id) ?? c, old, to, today);
-          if (next !== undefined) repointed.set(c.id, next);
-        }
+    for (const [old, to] of pairs)
+      for (const { observations: _o, ...c } of claims) {
+        if (c.state !== '仮説' && c.state !== '確定') continue;
+        const next = repointClaim(repointed.get(c.id) ?? c, old, to, today);
+        if (next !== undefined) repointed.set(c.id, next);
       }
     // 付け替えた runs が録画と食い違えば、何も書かずに止める
     const runErrors = toClaims([...repointed.values()]).flatMap((c) => validateRuns(c));
@@ -593,6 +612,16 @@ if (kind === 'verification') {
     }
     formatFiles(written);
     console.log(`無効にした（理由: ${values.reason.trim()}）: ${ids.join('・')}`);
+    if (resetup.size > 0) console.log(`setup の参照を付け替えた比べ: ${[...resetup.keys()].join('・')}`);
+    // 付け替えなかった比べ（--by が無い）は、無効の観測値を指したまま（records:check が止める）
+    const referring =
+      by === undefined
+        ? all.filter((o) => !ids.includes(o.id) && setupRefIds(o).some((id) => ids.includes(id))).map((o) => o.id)
+        : [];
+    if (referring.length > 0)
+      console.log(
+        `無効にした観測値を setup で指している比べ（付け替えていない。--by で付け替えるか、比べも無効にする）: ${referring.join('・')}`,
+      );
     if (repointed.size > 0) console.log(`根拠を付け替えた結論: ${[...repointed.keys()].join('・')}`);
     // 付け替えなかった結論（--by が無い）は、無効の根拠を残したまま（records:check が、確定の結論の根拠がすべて無効なら止める）
     const citing = claims
