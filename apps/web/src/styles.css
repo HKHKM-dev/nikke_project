@@ -1470,7 +1470,7 @@ svg.roster-revert-icon {
   --badge-main: #1a1a1a;
   --badge-accent: #1a1a1a;
 }
-/* 印の大きさは表示ごとに変える（スロットの立ち絵 24px・ニケ一覧の四角 18px・ニケ一覧の縦長 14px。ほかは上の 16px） */
+/* 印の大きさは表示ごとに変える（スロットの立ち絵 24px・ニケ一覧の四角・縦長 18px。ほかは上の 16px） */
 .char-visual-portrait .char-unsupported-tag {
   width: 24px;
   height: 24px;
@@ -1480,8 +1480,8 @@ svg.roster-revert-icon {
   height: 18px;
 }
 .char-visual-tall .char-unsupported-tag {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
 }
 
 /* CharacterTray (パレット) */
