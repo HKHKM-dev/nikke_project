@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 159・効果 1125（根拠あり 1103）・notes 378（根拠あり 155）
+件数: キャラ 162・効果 1142（根拠あり 1120）・notes 379（根拠あり 156）
 
-notes の種類: 未対応 49・前提の外 118・計算に無関係 74・補足 43・間接 94
+notes の種類: 未対応 50・前提の外 118・計算に無関係 74・補足 43・間接 94
 
-スロット: supported 427・partial 34・unsupported 11・noEffect 59
+スロット: supported 435・partial 35・unsupported 11・noEffect 59
 
 ## 10 ラピ
 
@@ -549,6 +549,19 @@ notes の種類: 未対応 49・前提の外 118・計算に無関係 74・補�
   - effects[1] burstDamage・skill: C-0682（確定）、C-0683（確定）
   - effects[2] damage・burstUse・additional: C-0707（確定）
 
+## 104 ドレイク：グレイトヴィラン
+
+- **skill1**: partial
+  - effects[0] weaponChange・fullBurstStart: C-1427（確定）
+  - effects[1] ammoDecrease・使用武器の変更が終了した時: C-1428（確定）
+  - notes[0] 未対応: 持ち替えの時に元の SG がリロード中だった回は、オーバーオーバードライブの最初の発が、撃っている途中だった回より 7〜12f 早い（V-0818 の 4 回目のフルバースト）。モデルはどの回も同じ待ち（firstShotDelayFrames）で、元の SG の状態による違いは扱っていない: C-1427（確定）
+- **skill2**: supported
+  - effects[0] timed・fullBurstEnd・maxHpOnly: C-1429（確定）
+  - effects[1] timed・battleStart・attack（読む: HP）: C-1429（確定）
+- **burst**: supported
+  - effects[0] timed・burstUse・attackDamage: C-1430（確定）
+  - effects[1] burstDamage・skill: C-1430（確定）
+
 ## 105 マクスウェル：オーディナリーメカニック
 
 - **skill1**: supported
@@ -960,6 +973,17 @@ notes の種類: 未対応 49・前提の外 118・計算に無関係 74・補�
   - effects[0] burstReentry: C-1169（確定）
   - effects[1] heal・burstUse: C-1170（仮説）
   - notes[0] 間接（HP）: 自分がニンジンパーティーのフルスタック状態の時の、味方全体の受ける HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+
+## 200 ルピー
+
+- **skill1**: supported
+  - effects[0] stackChange・normalHit・スタック可能バフの全部: C-1423（確定）
+  - effects[1] timed・normalHit・critRate: C-1467（仮説）
+- **skill2**: supported
+  - effects[0] state・normalShot・mileage（attack）: C-1422（確定）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1421（確定）
+  - effects[1] timed・burstUse・attack: C-1424（確定）
 
 ## 201 ヤン
 
@@ -1718,6 +1742,18 @@ notes の種類: 未対応 49・前提の外 118・計算に無関係 74・補�
   - effects[0] timed・burstUse・attack: C-1223（確定）
   - effects[1] heal・burstUse: C-1225（仮説）
   - notes[0] 前提の外: 遮蔽物が破壊された味方ランダムに 2 機への遮蔽物の復活は、被弾を扱わないので遮蔽物が壊れず、起きない（要件 5.2 節）: 根拠なし
+
+## 382 レオナ
+
+- **skill1**: supported
+  - effects[0] state・normalShot・roar（critRate）: C-1443（確定）
+  - effects[1] timed・normalShot・maxEffectiveRange: C-1447（確定）、C-1451（仮説）
+- **skill2**: supported
+  - effects[0] timed・fullBurstStart・hitRate: C-1466（仮説）
+  - effects[1] timed・fullBurstStart・pelletCount: C-1444（確定）
+- **burst**: supported
+  - effects[0] timed・burstUse・critDamage: C-1445（確定）
+  - effects[1] timed・burstUse・critRate: C-1446（確定）
 
 ## 390 ツバイ
 

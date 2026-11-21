@@ -35046,6 +35046,505 @@
       "plus": null
     },
     {
+      "observation": "1292-05",
+      "element": "ルピー skill1.effects[1]",
+      "key": "eb9204225d0c44f1",
+      "effective": false,
+      "minus": 0,
+      "plus": -3.637978807091713e-12
+    },
+    {
+      "observation": "1292-06",
+      "element": "ルピー skill1.effects[1]",
+      "key": "8925ef198f9a71fc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1292-07",
+      "element": "ルピー skill1.effects[1]",
+      "key": "409962d5f8d4ef78",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1292-08",
+      "element": "ルピー skill1.effects[1]",
+      "key": "a80cc15f95c9ece6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1292-09",
+      "element": "ルピー skill1.effects[1]",
+      "key": "fb0c677a0e809c23",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1292-10",
+      "element": "ルピー skill1.effects[1]",
+      "key": "d372da71995c99ae",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1292-11",
+      "element": "ルピー skill1.effects[1]",
+      "key": "970cd7107c0bbf01",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1292-12",
+      "element": "ルピー skill1.effects[1]",
+      "key": "f5fb10ff6adbab8c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1292-13",
+      "element": "ルピー skill1.effects[1]",
+      "key": "23287e30b47190e1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1292-14",
+      "element": "ルピー skill1.effects[1]",
+      "key": "94e69c0c5465448b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1292-15",
+      "element": "ルピー skill1.effects[1]",
+      "key": "b4b6d9f96ce0ce30",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1292-16",
+      "element": "ルピー skill1.effects[1]",
+      "key": "93cc7591c5183184",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1292-17",
+      "element": "ルピー skill1.effects[1]",
+      "key": "3fe63971e5665376",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1292-18",
+      "element": "ルピー skill1.effects[1]",
+      "key": "0f10cbd5e53400ec",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1292-19",
+      "element": "ルピー skill1.effects[1]",
+      "key": "9f17c117787ab4ae",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1292-20",
+      "element": "ルピー skill1.effects[1]",
+      "key": "c8097639f4528448",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1293-05",
+      "element": "ルピー skill1.effects[1]",
+      "key": "24c6bb5cb0229f9b",
+      "effective": false,
+      "minus": 0,
+      "plus": -3.637978807091713e-12
+    },
+    {
+      "observation": "1293-06",
+      "element": "ルピー skill1.effects[1]",
+      "key": "c680ea4bc2741686",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1293-07",
+      "element": "ルピー skill1.effects[1]",
+      "key": "70ab99ce78b5bd11",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1293-08",
+      "element": "ルピー skill1.effects[1]",
+      "key": "a54f21d540412e1c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1293-09",
+      "element": "ルピー skill1.effects[1]",
+      "key": "73dd1634a4c337d1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1293-10",
+      "element": "ルピー skill1.effects[1]",
+      "key": "eb297f639d3c55dc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1293-11",
+      "element": "ルピー skill1.effects[1]",
+      "key": "7f1d0adbe61b9960",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1293-12",
+      "element": "ルピー skill1.effects[1]",
+      "key": "9ec105d5ae0dd4fe",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1293-13",
+      "element": "ルピー skill1.effects[1]",
+      "key": "e342541e5c30de63",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1293-14",
+      "element": "ルピー skill1.effects[1]",
+      "key": "944fdb6b664f3032",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1293-15",
+      "element": "ルピー skill1.effects[1]",
+      "key": "a97b1c5ffccd04c2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1293-16",
+      "element": "ルピー skill1.effects[1]",
+      "key": "c6bc80fbebbfb61e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1293-17",
+      "element": "ルピー skill1.effects[1]",
+      "key": "fad23b168d577ed3",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1293-18",
+      "element": "ルピー skill1.effects[1]",
+      "key": "ebb302abd99cf64e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1293-19",
+      "element": "ルピー skill1.effects[1]",
+      "key": "21f5dba76d87247a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1294-05",
+      "element": "ルピー skill1.effects[1]",
+      "key": "27a752b75ad482b4",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: dropEffects: rid 200 の skill1 に 1 番目の効果が無い"
+    },
+    {
+      "observation": "1294-06",
+      "element": "ルピー skill1.effects[1]",
+      "key": "a645188ce697d58b",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: dropEffects: rid 200 の skill1 に 1 番目の効果が無い"
+    },
+    {
+      "observation": "1294-07",
+      "element": "ルピー skill1.effects[1]",
+      "key": "bf5bcb84ab2f516f",
+      "effective": true,
+      "minus": null,
+      "plus": 0,
+      "error": "minus: dropEffects: rid 200 の skill1 に 1 番目の効果が無い"
+    },
+    {
+      "observation": "1315-12",
+      "element": "レオナ skill1.effects[1]",
+      "key": "33462b0a78d17d5f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1315-12",
+      "element": "レオナ skill2.effects[0]",
+      "key": "33462b0a78d17d5f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1315-13",
+      "element": "レオナ skill1.effects[1]",
+      "key": "48b35e5bdac665c0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1315-13",
+      "element": "レオナ skill2.effects[0]",
+      "key": "48b35e5bdac665c0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1315-14",
+      "element": "レオナ skill1.effects[1]",
+      "key": "5384ddc3241a220e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1315-14",
+      "element": "レオナ skill2.effects[0]",
+      "key": "5384ddc3241a220e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1315-15",
+      "element": "レオナ skill1.effects[1]",
+      "key": "5cc109d72c5d8694",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1315-15",
+      "element": "レオナ skill2.effects[0]",
+      "key": "5cc109d72c5d8694",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1315-16",
+      "element": "レオナ skill1.effects[1]",
+      "key": "ca3252b8c6ee3ebd",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1315-16",
+      "element": "レオナ skill2.effects[0]",
+      "key": "ca3252b8c6ee3ebd",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1315-17",
+      "element": "レオナ skill1.effects[1]",
+      "key": "73bd55744670b8cf",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1315-17",
+      "element": "レオナ skill2.effects[0]",
+      "key": "73bd55744670b8cf",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1315-18",
+      "element": "レオナ skill1.effects[1]",
+      "key": "3bcb61cdffbe356a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1315-18",
+      "element": "レオナ skill2.effects[0]",
+      "key": "3bcb61cdffbe356a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1316-12",
+      "element": "レオナ skill1.effects[1]",
+      "key": "a45c8b7a5d65220f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1316-12",
+      "element": "レオナ skill2.effects[0]",
+      "key": "a45c8b7a5d65220f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1316-13",
+      "element": "レオナ skill1.effects[1]",
+      "key": "f7ed72098de30fc2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1316-13",
+      "element": "レオナ skill2.effects[0]",
+      "key": "f7ed72098de30fc2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1316-14",
+      "element": "レオナ skill1.effects[1]",
+      "key": "b798f2a609f7563f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1316-14",
+      "element": "レオナ skill2.effects[0]",
+      "key": "b798f2a609f7563f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1316-15",
+      "element": "レオナ skill1.effects[1]",
+      "key": "fa55f78cd3b402f7",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1316-15",
+      "element": "レオナ skill2.effects[0]",
+      "key": "fa55f78cd3b402f7",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1316-16",
+      "element": "レオナ skill1.effects[1]",
+      "key": "28c105f84b0a7d31",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1316-16",
+      "element": "レオナ skill2.effects[0]",
+      "key": "28c105f84b0a7d31",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1316-17",
+      "element": "レオナ skill1.effects[1]",
+      "key": "4df332b4c7c1c85b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1316-17",
+      "element": "レオナ skill2.effects[0]",
+      "key": "4df332b4c7c1c85b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1316-18",
+      "element": "レオナ skill1.effects[1]",
+      "key": "30cf550d9264cfd6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1316-18",
+      "element": "レオナ skill2.effects[0]",
+      "key": "30cf550d9264cfd6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "1317-01",
       "element": "ペッパー skill1.effects[0]",
       "key": "334a25985dc80031",

@@ -1260,6 +1260,11 @@
 | 1289 | `20261121-1289_flower+signal_auto.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ◎シグナル（22、SMG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0819。I-DOLL・フラワー + シグナル（操作）・オートバースト ON |
 | 1290 | `20261121-1290_flower+signal_auto.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ◎シグナル（22、SMG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0819。I-DOLL・フラワー + シグナル（操作）・オートバースト ON |
 | 1291 | `20261121-1291_snow-white-b-2.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎スノーホワイト（220、AR・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1292 | `20261121-1292_rupee-a-1.mp4` | ココア（311、SR・灼熱・SSR） + ◎ルピー（200、AR・鉄甲・SSR） | BigArms・灼熱・Lv.1 | 射撃場 3 分 | ON | ON / ON | V-0820 の撮影 A: ココア（I）+ ルピー（II・操作・オート射撃 ON）。オートバースト ON |
+| 1293 | `20261121-1293_rupee-a-2.mp4` | ココア（311、SR・灼熱・SSR） + ◎ルピー（200、AR・鉄甲・SSR） | BigArms・灼熱・Lv.1 | 射撃場 3 分 | ON | ON / ON | V-0820 の撮影 A: ココア（I）+ ルピー（II・操作・オート射撃 ON）。オートバースト ON |
+| 1294 | `20261121-1294_rupee-b-nofire.mp4` | ココア（311、SR・灼熱・SSR） + ◎ルピー（200、AR・鉄甲・SSR） | BigArms・灼熱・Lv.1 | 射撃場 3 分 | ON | OFF / ON | V-0820 の撮影 B: ココア（I）+ ルピー（II・操作・オート射撃 OFF で撃たない）。オートバースト ON |
+| 1295 | `20261121-1295_drake-gv-1.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎ドレイク：グレイトヴィラン（104、SG・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1296 | `20261121-1296_drake-gv-2.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎ドレイク：グレイトヴィラン（104、SG・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1297 | `20261121-1297_sr_yulha_fire.mp4` | ◎ユルハ（171、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1298 | `20261121-1298_sr_yulha_fire.mp4` | ◎ユルハ（171、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1299 | `20261121-1299_rl+sr+sr_i-doll-flower+delta+yulha_fire.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎ユルハ（171、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
@@ -1277,6 +1282,8 @@
 | 1312 | `20261121-1312_aria-cocoa-raven.mp4` | ココア（311、SR・灼熱・SSR） + レイヴン（851、RL・鉄甲・SSR） + ◎アリア（432、MG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1313 | `20261121-1313_yan-1.mp4` | ソルジャーF.A.（301、SG・鉄甲・R） + レイヴン（851、RL・鉄甲・SSR） + ◎ヤン（201、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | BigArms（灼熱タブ・3 分モード・スペック固定 ON。ソルジャーF.A.（II）+ レイヴン（III）+ ヤン（I・操作）・AUTO 射撃 ON・オートバースト ON）。戦闘履歴のパネルで 3 体（LV.400）と枠順を確かめた。V-0836 の撮影 |
 | 1314 | `20261121-1314_yan-2.mp4` | ソルジャーF.A.（301、SG・鉄甲・R） + レイヴン（851、RL・鉄甲・SSR） + ◎ヤン（201、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | BigArms（灼熱タブ・3 分モード・スペック固定 ON。ソルジャーF.A.（II）+ レイヴン（III）+ ヤン（I・操作）・AUTO 射撃 ON・オートバースト ON）。戦闘履歴のパネルで 3 体（LV.400）と枠順を確かめた。V-0836 の撮影 |
+| 1315 | `20261121-1315_ludmilla+leona+anis-ss_auto.mp4` | ルドミラ（190、SMG・水冷・SSR） + レオナ（382、SG・水冷・SSR） + ◎アニス：スパークリングサマー（15、SG・電撃・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON | V-0826。ルドミラ + レオナ + アニス：スパークリングサマー（操作）・オートバースト ON |
+| 1316 | `20261121-1316_ludmilla+leona+anis-ss_auto.mp4` | ルドミラ（190、SMG・水冷・SSR） + レオナ（382、SG・水冷・SSR） + ◎アニス：スパークリングサマー（15、SG・電撃・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON | V-0826。ルドミラ + レオナ + アニス：スパークリングサマー（操作）・オートバースト ON |
 | 1317 | `20261121-1317_pepper-solo.mp4` | ◎ペッパー（131、SG・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1318 | `20261121-1318_pepper-solo.mp4` | ◎ペッパー（131、SG・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1319 | `20261121-1319_pepper-guillotine-ws.mp4` | ペッパー（131、SG・風圧・SSR） + ◎ギロチン：ウィンタースレイヤー（182、AR・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
