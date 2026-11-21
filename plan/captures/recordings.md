@@ -1291,6 +1291,9 @@
 | 1321 | `20261121-1321_sakura-2.mp4` | デルタ（20、SR・風圧・SR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎サクラ（282、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | BigArms（灼熱タブ・3 分モード・スペック固定 ON。デルタ（II）+ I-DOLL・サン（III）+ サクラ（I・操作）・AUTO 射撃 ON・オートバースト ON）。V-0837 の撮影 |
 | 1322 | `20261121-1322_soda-guillotine-ws.mp4` | ソーダ（312、MG・灼熱・SSR） + ◎ギロチン：ウィンタースレイヤー（182、AR・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1323 | `20261121-1323_soda-guillotine-ws.mp4` | ソーダ（312、MG・灼熱・SSR） + ◎ギロチン：ウィンタースレイヤー（182、AR・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1324 | `20261121-1324_ar_phantom.mp4` | ◎ファントム（580、AR・水冷・SSR、宝物 2） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1325 | `20261121-1325_ar_phantom.mp4` | ◎ファントム（580、AR・水冷・SSR、宝物 2） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1326 | `20261121-1326_ar_liter_delta_phantom.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎ファントム（580、AR・水冷・SSR、宝物 2） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 

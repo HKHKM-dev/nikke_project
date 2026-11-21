@@ -15,7 +15,7 @@
 - 根拠の `0010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 1061・仮説 201・棄却 157・範囲外 2（計 1421）
+件数: 確定 1066・仮説 202・棄却 157・範囲外 2（計 1427）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -651,6 +651,20 @@
   - 検証記録: V-0758
   - 定義: `data/skills/811.json` の burst の effects[0].contents[2]
   - 等級の候補（機械）: 厳密一致
+- **C-1475** 射撃場 3 分モードで、入力が UP の SR・RL（射撃姿勢維持型を含む）は、チャージの途中で戦闘が終わっても撃たない（部分チャージの発は出ない）。チャージの表示が 105〜228%（フル 250%）の 5 本で、最後の発の後に総ダメージは増えない
+  - 状態: 確定・等級: 反復実測・人の判断・更新日: 2026-11-21
+  - 根拠: `0076-16`・`1266-10`・`1105-04`・`0786-08`・`0886-11`。V-0840
+  - モデル側: 反映（モデルは戦闘の最後のフレームより後に発を作らず、戦闘の終わりに部分チャージの発も作らない）
+  - 人の判断（2026-11-21）: 指標なしを上書きした。戦闘の終わりの後の発の数は 0 で、モデルも作らない（形で一致する。比べる指標の要らない読み）
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0840
+- **C-1476** チャージしない基礎の武器から使用武器の変更で替えたチャージ武器（モデルの chargeInput。発と発の間はチャージ時間だけの押下チャージ型）は、射撃場 3 分モードの敵のジャンプの始まりにチャージの途中だと、入力が UP のチャージ武器と同じく部分チャージで撃つ（スノーホワイト 2 回・ツバイ 1 回。発の後に的が跳ぶ）。基礎の武器が押下チャージ型のキャラ（C-1001）とは違う。部分チャージの発の値（チャージの進み）は合わせていない（スノーホワイトは C-0843 の式でモデルより約 14f 分大きく、ツバイは着地点の区間を読んでいない）
+  - 状態: 確定・等級: 反復実測・人の判断・更新日: 2026-11-21
+  - 根拠: `1279-12`・`1291-10`・`1056-14`。V-0840
+  - モデル側: 反映（ShotParams.jumpPartialCharge。frame/shooter.ts の partialChargeProgress が、chargeInput の変更後の武器にも進みを返す。plan/design-weapon-change-jump-partial.md）
+  - 人の判断（2026-11-21）: 指標なしを上書きした。発が出たかと、その後に的が跳んだかを画で読んだ（モデルも同じ窓で撃つことはテストで見る）
+  - 決めるのに使った録画: 1279（仮説の出どころ）
+  - 検証記録: V-0840
 
 ## バーストゲージ
 
@@ -9871,6 +9885,34 @@
   - 決めるのに使った録画: なし
   - 検証記録: V-0838
   - 定義: `data/skills/312.json` の skill1 の effects[0]、`data/skills/312.json` の skill2 の effects[1]、`data/skills/312.json` の burst の effects[1]
+- **C-1477** ファントムの宝物版 S1: 予告状（防御力 値 01 %▼・値 02 秒）は、予告状の付いていない敵への通常攻撃の命中で付き（射撃場の敵はラプチャー。C-0706・C-1291）、同じ命中で自分に怪盗の短剣（値 04 スタック・値 05 秒）が 1 段付く。短剣は、通算 値 06 回の命中ごとにも 1 段付く（射撃場の敵はターゲット。C-0662・C-0963）。攻撃ダメージ 値 10 %▲は、予告状の付いた敵への命中（同じ命中で付いた予告状も入る。同じ命中で S2 が予告状を外す時は入らない）で付き、次の発まで続く（次の発と、その間のバーストに乗る。S2 のダメージには乗らない）。1 発目は▲なし、2 発目から▲が乗り、S2 の次の発は乗らず、その次の発から乗る
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-21
+  - 根拠: `1324-01`・`1324-02`・`1324-03`・`1324-04`・`1325-01`・`1325-02`・`1325-03`・`1325-04`・`1326-01`。V-0839
+  - モデル側: 反映（data/skills/580.json の treasureSkills.skill1。条件 enemyState の否定形と sameFiring・selfState の stacksBelow の sameFiring は skills/holders/conditions.ts、敵の状態の解除は skills/holders/fire.ts の fireRemove）
+  - 決めるのに使った録画: 1324（読み方を合わせた）
+  - 検証記録: V-0839
+  - 定義: `data/skills/580.json` の treasureSkills.skill1 の effects[0]、`data/skills/580.json` の treasureSkills.skill1 の effects[1]、`data/skills/580.json` の treasureSkills.skill1 の effects[2]、`data/skills/580.json` の treasureSkills.skill1 の effects[3]
+- **C-1478** ファントムの宝物版 S2: 怪盗の短剣がフルスタックになった命中の次のフレームに、予告状の付いた敵へ最終攻撃力の 値 01 % の追加ダメージ（S1 の攻撃ダメージ▲は乗らない）が出て、予告状と短剣が外れる。同じ消費で自分に分配ダメージ 値 02 %▲（値 03 スタック・持続）が 1 段付き、消費の 4 フレーム後（次の発のフレーム）に出る分配ダメージ（値 04 %）に、同じ消費の段も乗る。通常攻撃の 値 05 回ごとに攻撃力 値 06 %▲（値 07 秒）と分配ダメージ 値 08 %▲（値 09 秒）が付く
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-21
+  - 根拠: `1324-05`・`1324-06`・`1324-07`・`1324-08`・`1325-05`・`1325-06`・`1325-07`。V-0839
+  - モデル側: 反映（data/skills/580.json の treasureSkills.skill2。フルスタックの消費の記録は skills/holders/read.ts の consumeFullStacks、倍率ダメージの発火は frame/plan.ts）
+  - 決めるのに使った録画: 1324（読み方を合わせた）
+  - 検証記録: V-0839
+  - 定義: `data/skills/580.json` の treasureSkills.skill2 の effects[0]、`data/skills/580.json` の treasureSkills.skill2 の effects[1]、`data/skills/580.json` の treasureSkills.skill2 の effects[2]、`data/skills/580.json` の treasureSkills.skill2 の effects[4]、`data/skills/580.json` の treasureSkills.skill2 の effects[5]、`data/skills/580.json` の treasureSkills.skill2 の effects[6]
+- **C-1479** ファントムの基礎版のバーストの敵全体への分配ダメージ（最終攻撃力の 値 01 %）は、敵 1 体では全額が 1 ヒットで当たり、S1 の攻撃ダメージ▲（付いていれば）が乗る
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-21
+  - 根拠: `1326-01`。V-0839
+  - モデル側: 反映（data/skills/580.json の burst の effects[0]）
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0839
+  - 定義: `data/skills/580.json` の burst の effects[0]
+- **C-1480** ファントムの撮っていない行は、撮った版と同じ文の読みで書く: 基礎版の S1（宝物版の S1 から通算の命中の行を除いたもの。敵 1 体では、予告状と短剣が同じ命中で付いて同じフレームに切れるので、短剣は 2 段に届かない）、基礎版の S2（宝物版の S2 から分配ダメージの行を除いたもの。敵 1 体では発火しない。10 回攻撃の行は同じ）、S2 の分配ダメージ▲のスタックのバーストスキル使用時の解除、宝物版のバースト（基礎版の分配ダメージに、灼熱コードのターゲット（射撃場の敵。C-0662・C-0963）への受けるダメージ 値 04 %▲（値 05 秒）と、自分の最大装弾数 値 02 %▲（値 03 秒）が足される）。値はどれも説明文の値
+  - 状態: 仮説・等級: 推論・更新日: 2026-11-21
+  - 根拠: 推論: 基礎版の S1・S2 と宝物版のバーストは、宝物の段階（2）で撮れない。S2 の分配ダメージ▲のバーストでの解除は、バーストの後の S2 の分配ダメージの段を読んでいない。撮った版は C-1477〜C-1479。V-0839
+  - モデル側: 反映（data/skills/580.json の skill1・skill2 の効果、treasureSkills.skill2 の effects[3]、treasureSkills.burst の効果）
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0839
+  - 定義: `data/skills/580.json` の skill1 の effects[0]、`data/skills/580.json` の skill1 の effects[1]、`data/skills/580.json` の skill1 の effects[2]、`data/skills/580.json` の skill2 の effects[0]、`data/skills/580.json` の skill2 の effects[1]、`data/skills/580.json` の skill2 の effects[2]、`data/skills/580.json` の skill2 の effects[3]、`data/skills/580.json` の skill2 の effects[4]、`data/skills/580.json` の skill2 の effects[5]、`data/skills/580.json` の treasureSkills.skill2 の effects[3]、`data/skills/580.json` の treasureSkills.burst の effects[0]、`data/skills/580.json` の treasureSkills.burst の effects[1]、`data/skills/580.json` の treasureSkills.burst の effects[2]
 
 ## 敵・的・場面
 

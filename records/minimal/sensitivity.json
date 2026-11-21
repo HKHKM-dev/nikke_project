@@ -36087,6 +36087,14 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "1326-01",
+      "element": "ファントム treasureSkills.skill2.effects[3]",
+      "key": "57cf64426d5d2f0b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }

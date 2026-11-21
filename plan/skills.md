@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 164・効果 1149（根拠あり 1127）・notes 384（根拠あり 158）
+件数: キャラ 165・効果 1173（根拠あり 1151）・notes 384（根拠あり 158）
 
 notes の種類: 未対応 50・前提の外 120・計算に無関係 76・補足 43・間接 95
 
-スロット: supported 440・partial 35・unsupported 11・noEffect 60
+スロット: supported 446・partial 35・unsupported 11・noEffect 60
 
 ## 10 ラピ
 
@@ -2218,6 +2218,39 @@ notes の種類: 未対応 50・前提の外 120・計算に無関係 76・補�
   - effects[2] dot・burstUse: C-0866（確定）
   - effects[3] timed・burstUse・sustainedDamage: C-0867（確定）
   - notes[0] 前提の外: 自分が変身状態ならバッテリー 50%▲は、射撃場では起きない。変身状態でバーストを使うには、バースト以外でバッテリーを満たす（味方のパーツの破壊。的にパーツが無い）必要がある。バーストの緊急チャージで付いた変身は約 10 秒で外れ、バーストの CT（40 秒）より短い: C-0443（範囲外）
+
+## 580 ファントム
+
+- **skill1**: supported
+  - effects[0] state・normalHit・callingCard（enemyDefenseDown）: C-1480（仮説）
+  - effects[1] state・normalHit・thiefsDagger（hitRate）: C-1480（仮説）
+  - effects[2] timed・normalHit・attackDamage: C-1480（仮説）
+- **skill2**: supported
+  - effects[0] damage・thiefsDagger のフルスタック・additional: C-1480（仮説）
+  - effects[1] removeState・thiefsDagger のフルスタック・callingCard: C-1480（仮説）
+  - effects[2] state・thiefsDagger のフルスタック・thiefsVision（distributedDamage）: C-1480（仮説）
+  - effects[3] removeState・burstUse・thiefsVision: C-1480（仮説）
+  - effects[4] timed・normalShot・attack: C-1480（仮説）
+  - effects[5] timed・normalShot・distributedDamage: C-1480（仮説）
+- **burst**: supported
+  - effects[0] burstDamage・distributed: C-1479（確定）
+- **宝物版 skill1**: supported
+  - effects[0] state・normalHit・callingCard（enemyDefenseDown）: C-1477（確定）
+  - effects[1] state・normalHit・thiefsDagger（hitRate）: C-1477（確定）
+  - effects[2] state・normalHit・thiefsDagger: C-1477（確定）
+  - effects[3] timed・normalHit・attackDamage: C-1477（確定）
+- **宝物版 skill2**: supported
+  - effects[0] damage・thiefsDagger のフルスタック・additional: C-1478（確定）
+  - effects[1] removeState・thiefsDagger のフルスタック・callingCard: C-1478（確定）
+  - effects[2] state・thiefsDagger のフルスタック・thiefsVision（distributedDamage）: C-1478（確定）
+  - effects[3] removeState・burstUse・thiefsVision: C-1480（仮説）
+  - effects[4] damage・thiefsDagger のフルスタック・distributed: C-1478（確定）
+  - effects[5] timed・normalShot・attack: C-1478（確定）
+  - effects[6] timed・normalShot・distributedDamage: C-1478（確定）
+- **宝物版 burst**: supported
+  - effects[0] burstDamage・distributed: C-1480（仮説）
+  - effects[1] timed・burstUse・damageTaken: C-1480（仮説）
+  - effects[2] timed・burstUse・maxAmmo: C-1480（仮説）
 
 ## 581 アルカナ
 
