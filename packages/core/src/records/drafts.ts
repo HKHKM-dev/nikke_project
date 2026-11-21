@@ -4,6 +4,7 @@ import {
   CLAIM_TOPICS,
   CONFIRMABLE_GRADES,
   JUDGMENT_OVERRIDES,
+  gradeAboveCandidate,
   validateJudgment,
   type ClaimFile,
   type ClaimGrade,
@@ -317,6 +318,22 @@ export function mergeClaimUpdate(existing: ClaimFile, update: ClaimUpdate): Clai
     judgment: update.judgment ?? existing.judgment,
   };
   return Object.fromEntries(Object.entries(merged).filter(([, v]) => v !== undefined)) as ClaimUpdate;
+}
+
+/**
+ * 前からある結論を出し直すとき（--update・観測値の --invalidate --by の付け替え）に残す、人が決めた等級（claimDraft の grade）。候補が
+ * 無ければ前の等級のまま（records:close の確定と同じ）。候補があれば、gradeReason を書いて候補より上にしたものだけを残す
+ * （records:close と違い、gradeReason の無い等級は前の候補とみて、新しい候補に合わせる）
+ */
+export function keptClaimGrade(
+  existing: Pick<ClaimFile, 'grade' | 'gradeReason'>,
+  candidate: ClaimGrade | undefined,
+): ClaimGrade | undefined {
+  if (existing.grade === undefined) return undefined;
+  if (candidate === undefined) return existing.grade;
+  return existing.gradeReason !== undefined && gradeAboveCandidate(existing.grade, candidate)
+    ? existing.grade
+    : undefined;
 }
 
 /**

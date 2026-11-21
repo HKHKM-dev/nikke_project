@@ -194,3 +194,4 @@
 - 2026-11-21: 2 の `records:new claim` が、無効の観測値を根拠に足さないようにした（新しい結論と `--update` の両方。`--observations` で選んでも除き、除いたものを知らせる）。`--update` は無効の観測値を書き足して確定の結論を「失効した観測値がある」で仮説に戻していた。足す根拠と根拠の文は `drafts.ts` の `claimBasisObservations`・`claimUpdateBasis` に移し、`--update` の流れのテストを足した。
 - 2026-11-21: 4 節の取り寄せの上書きの課題を直した（大きさが Drive と違う証拠フレームは手元を残して知らせる・Drive への接続を要る所まで遅らせる。`fetch-lib.ts` とそのテスト）。
 - 2026-11-21: `still.ts` の並べ画で、録画の終わりを越えたこまを、枚数でなく録画のフレーム数と比べて知らせるようにした。`intake.ts drive:` は、下見で落としたもので大きさとハッシュが record の写しと同じものがあれば落とし直さずに使う（`fetch.ts` の冒頭の注記を合わせる直しは課題 `fetch-comment-intake-reuse.json` に残した）。
+- 2026-11-21: 3 節の観測値の直しの課題を、オーナーの指示で 3 つとも直した。`--replace` は仮説か確定の結論の根拠になっている観測値なら、その結論を出して止める（`--allow-cited` で通す。結論は出し直さない）。下書きの `invalid` を止める（無効は `--invalidate` だけ）。`--invalidate --by` で付け替えた結論は、`claim --update` と同じ組み立て（`records-new.ts` の `rewriteClaim`・`drafts.ts` の `keptClaimGrade`）で等級・状態・許容内かを出し直す。

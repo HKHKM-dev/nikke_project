@@ -2,20 +2,22 @@
 // 直しは同じ ID のまま欄を下書きで差し替え、無効は invalid（observations/types.ts）を付ける。無効にした観測値を根拠にしている結論は、
 // 新しい観測値に付け替えられる（根拠の文・runs・minimal の ID を置き換える）。比べの setup が ID で指している観測値（入力）を無効にしたときは、
 // 比べを写さずに setup の参照を新しい観測値に付け替える（plan/design-workflow-simplification-18.md 1 節）。
-import { observationIdsIn, type ClaimFile } from './claims.ts';
+import { observationIdsIn, type Claim, type ClaimFile } from './claims.ts';
 import { mapSetupRefs } from './observations/setup.ts';
 import type { Observation, ObservationDraft } from './observations/types.ts';
 
 /** 下書きに書かせない欄（このコマンドが付ける・前の値を残す） */
 const DRAFT_RESERVED_KEYS = ['id', 'recording', 'source', 'readAt'] as const;
 
-/** 下書きの形の誤り（予約した欄・kind と description が無い）。records:new observation の足す・直すで同じ検査 */
+/** 下書きの形の誤り（予約した欄・invalid・kind と description が無い）。records:new observation の足す・直すで同じ検査 */
 export function draftShapeErrors(drafts: readonly ObservationDraft[]): string[] {
   const errors: string[] = [];
   if (drafts.length === 0 || drafts.some((d) => d === null || typeof d !== 'object' || Array.isArray(d)))
     return ['下書きは観測値の欄のオブジェクトか、その配列'];
   const given = drafts.flatMap((d) => DRAFT_RESERVED_KEYS.filter((k) => k in d));
   if (given.length > 0) errors.push(`下書きに ${[...new Set(given)].join('・')} を書かない（このコマンドが付ける）`);
+  // 無効にするのは --invalidate だけ（理由を要り、根拠にしている結論を付け替えられる）
+  if (drafts.some((d) => 'invalid' in d)) errors.push('下書きに invalid を書かない（無効にするのは --invalidate）');
   if (drafts.some((d) => typeof d.description !== 'string' || typeof d.kind !== 'string'))
     errors.push('下書きには kind と description（文字列）が要る');
   return errors;
@@ -100,4 +102,11 @@ export function repointSetup(o: Observation, from: string, to: string): Observat
   if (!setupRefIds(o).includes(from)) return undefined;
   const setup = mapSetupRefs(o.compare!.setup, (id) => (id === from ? to : id));
   return { ...o, compare: { ...o.compare!, setup } } as Observation;
+}
+
+/** 観測値 ids のどれかを根拠にしている、仮説か確定の結論（棄却・範囲外の結論は、その時の根拠のまま残す記録なので問わない） */
+export function claimsCiting(claims: readonly Claim[], ids: readonly string[]): Claim[] {
+  return claims.filter(
+    (c) => (c.state === '仮説' || c.state === '確定') && c.observations.some((o) => ids.includes(o)),
+  );
 }

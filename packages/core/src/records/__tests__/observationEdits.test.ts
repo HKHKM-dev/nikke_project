@@ -1,7 +1,8 @@
 // 観測値の直しと無効（records:new observation --replace・--invalidate。plan/design-workflow-simplification-17.md 3 節）と、下書きの欄の一覧
 import { describe, expect, expectTypeOf, it } from 'vitest';
-import { observationIdsIn, type ClaimFile } from '../claims.ts';
+import { observationIdsIn, toClaims, type ClaimFile, type ClaimState } from '../claims.ts';
 import {
+  claimsCiting,
   draftShapeErrors,
   invalidatedObservation,
   replacedObservation,
@@ -37,6 +38,39 @@ describe('draftShapeErrors', () => {
       'kind と description',
     );
     expect(draftShapeErrors([])[0]).toContain('オブジェクト');
+  });
+
+  it('rejects invalid in a draft, so that only --invalidate makes an observation invalid', () => {
+    const invalid = { kind: 'count', description: 'x', use: 'record', value: 1, invalid: { reason: 'r', date: 'd' } };
+    expect(draftShapeErrors([invalid as unknown as ObservationDraft])).toEqual([
+      '下書きに invalid を書かない（無効にするのは --invalidate）',
+    ]);
+  });
+});
+
+describe('claimsCiting（--replace が止める結論）', () => {
+  const claim = (id: string, state: ClaimState, basis: string): ClaimFile => ({
+    id,
+    text: 't',
+    state,
+    topic: '命中率・距離',
+    grade: '単独実測',
+    basis,
+    model: 'm',
+    replaces: [],
+    updated: '2026-10-01',
+  });
+  const claims = toClaims([
+    claim('C-0501', '確定', '`0101-01`〜`0101-03`。V-0099'),
+    claim('C-0502', '仮説', '`0101-02`。V-0099'),
+    claim('C-0503', '棄却', '`0101-02`。V-0099'),
+    claim('C-0504', '範囲外', '`0101-02`。V-0099'),
+    claim('C-0505', '確定', '`0101-04`。V-0099'),
+  ]);
+
+  it('lists the hypothesis and confirmed claims citing the observation, including inside a range', () => {
+    expect(claimsCiting(claims, ['0101-02']).map((c) => c.id)).toEqual(['C-0501', 'C-0502']);
+    expect(claimsCiting(claims, ['0101-09'])).toEqual([]);
   });
 });
 
