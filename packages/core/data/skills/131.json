@@ -54,8 +54,8 @@
           "ref": 2,
           "damageType": "skill",
           "assumes": {
-            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から CT ごとに発動する（撃たない間も。CT は録画の左のスキルの帯の間隔で読む。1 回目も 1 周期後）。最終攻撃力が最も高い敵 1 機は的 1 体で 1 ヒット",
-            "en": "The description gives no trigger. It is an active skill on a cooldown, activating every cooldown from the start of combat (also while not firing; the cooldown is read from the interval of the skill banners on the left in recordings; the first also after one period). The single highest-ATK enemy is the lone target, hit once"
+            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から CT ごとに発動する（撃たない間も。CT は録画の左のスキルの帯の間隔で読む。1 回目も 1 周期後）。最終攻撃力が最も高い敵 1 機は的 1 体で 1 ヒット。ゲージを溜めるかは確かめていない（1 ヒットはペッパーの 1 発の 10 分の 1 のゲージで、見分けられない）",
+            "en": "The description gives no trigger. It is an active skill on a cooldown, activating every cooldown from the start of combat (also while not firing; the cooldown is read from the interval of the skill banners on the left in recordings; the first also after one period). The single highest-ATK enemy is the lone target, hit once. Whether it builds gauge is not verified (one hit is a tenth of the gauge of one Pepper shot and cannot be told apart)"
           }
         }
       ],
