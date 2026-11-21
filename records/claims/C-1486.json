@@ -1,0 +1,16 @@
+{
+  "id": "C-1486",
+  "text": "ニヒリスターの S2 の倍率ダメージのヒットは、射手の 1 ヒットぶん（target_burst_energy_pershot。56,000）のバーストゲージを、ダメージと同じヒットのフレームに溜める。操作枠でもフルチャージ倍率（×2.5）は乗らない。S2 だけのフレームで、右の BURST バーがどの回も約 7.4〜7.6px（約 5.5%）伸びた",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0081-23`・`0084-15`・`0085-09`。V-0846",
+  "model": "反映（data/skills/261.json の skill2 の effects[1]。burstGaugeHit・everySeconds: 10・delayFrames: 15）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/261.json の skill2 の effects[1]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "射手の target_burst_energy_pershot（56,000。CDN）・S2 の時刻（C-0401・C-0453）・BURST バーの縮尺（C-0084）"
+}
