@@ -1,0 +1,322 @@
+{
+  "verification": "V-0824",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 301
+    },
+    {
+      "rid": 102,
+      "controlled": true
+    },
+    {
+      "rid": 851
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S1 はフルバースト開始時に最終攻撃力の上位 2 機（自分も候補）にチャージ速度▲・攻撃力▲ 10 秒。バーストはチャージ 2 秒・フルチャージ 300% の 1 発への変更）"
+    },
+    {
+      "id": "H-excl",
+      "note": "S1 の「味方 2 機」が自分を除く（excludeSelf: always。対象はレイヴンとココア）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 102,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "topAttack",
+              "targetCount": 2,
+              "excludeSelf": "always",
+              "stat": "chargeSpeed",
+              "ref": 1,
+              "durationRef": 2
+            }
+          },
+          {
+            "rid": 102,
+            "skill": "skill1",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "topAttack",
+              "targetCount": 2,
+              "excludeSelf": "always",
+              "stat": "attack",
+              "ref": 3,
+              "durationRef": 4
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "maxwell-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "マクスウェルの基礎の SR の 1 発（最初のフルバーストより前。コア・会心なし）"
+    },
+    {
+      "id": "maxwell-fb-own",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "マクスウェルが III の回のフルバーストの中の、基礎の SR の 1 発（S1 の攻撃力▲とフルバーストの補正）"
+    },
+    {
+      "id": "maxwell-fb-raven-round",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1600,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "レイヴンが III の回のフルバーストの中の、マクスウェルの 1 発（S1 の攻撃力▲とフルバーストの補正）"
+    },
+    {
+      "id": "maxwell-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 960,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のフルバーストの後の、マクスウェルの 1 発（S1 が 10 秒で切れた後）"
+    },
+    {
+      "id": "maxwell-changed-shot",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 477,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "変更後の武器の 1 発（フルチャージ 300%・S1 の攻撃力▲・フルバーストの補正。コア）"
+    },
+    {
+      "id": "raven-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "レイヴンの 1 発（最初のフルバーストより前）"
+    },
+    {
+      "id": "raven-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 450,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "マクスウェルが III の回のフルバーストの中の、レイヴンの 1 発（レイヴンの S1 と、マクスウェルの S1 の 2 機目）"
+    },
+    {
+      "id": "cocoa-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "ココアの 1 発（最初のフルバーストより前）"
+    },
+    {
+      "id": "cocoa-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 450,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "フルバーストの中のココアの 1 発（S1 の 3 位で▲が付かない）"
+    },
+    {
+      "id": "raven-interval-maxwell-round",
+      "model": "sim",
+      "metric": "fullBurstShotIntervalDiff",
+      "args": {
+        "slot": 4,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "マクスウェルが III の回のフルバーストの中のレイヴンの発の間隔の差（S1 のチャージ速度▲）"
+    },
+    {
+      "id": "changed-shot-timing",
+      "model": "sim",
+      "metric": "fullBurstToWeaponChangeShot",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "1 回目のフルバーストの窓の始まりから、変更後の武器の 1 発までの動画のフレーム（最初の発の待ちを読む）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "2fd0f83bcc16aec421bc96be4811fe65e82c7bf4",
+    "values": {
+      "H1": {
+        "maxwell-base": 475566.16079999995,
+        "maxwell-fb-own": 828685.0488,
+        "maxwell-fb-raven-round": 828685.0488,
+        "maxwell-after": 475566.16079999995,
+        "maxwell-changed-shot": 11716147.028879998,
+        "raven-base": 367174.74,
+        "raven-fb": 875233.7375,
+        "cocoa-base": 396285.285,
+        "cocoa-fb": 482434.26,
+        "raven-interval-maxwell-round": -3,
+        "changed-shot-timing": 146
+      },
+      "H-excl": {
+        "maxwell-base": 475566.16079999995,
+        "maxwell-fb-own": 578950.1087999999,
+        "maxwell-fb-raven-round": 578950.1087999999,
+        "maxwell-after": 475566.16079999995,
+        "maxwell-changed-shot": 8185334.834879999,
+        "raven-base": 367174.74,
+        "raven-fb": 875233.7375,
+        "cocoa-base": 396285.285,
+        "cocoa-fb": 690573.2903999999,
+        "raven-interval-maxwell-round": -3,
+        "changed-shot-timing": 146
+      }
+    }
+  }
+}

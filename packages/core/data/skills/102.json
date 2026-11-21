@@ -1,0 +1,67 @@
+{
+  "formatVersion": 1,
+  "resourceId": 102,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "topAttack",
+          "targetCount": 2,
+          "stat": "chargeSpeed",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "対象は発火のフレームの最終攻撃力の上位 2 機（自分も候補）で、アリスの S1 と同じ読み（C-0474）。チャージ速度▲は受け手のチャージ速度に足す（「スキル発動者基準」の言い回しが無い）",
+            "en": "The targets are the top 2 allies by final ATK at the firing frame (self included), read as Alice's S1 (C-0474). Charge Speed is added to the receiver's own charge speed (no \"based on the caster\" wording)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "topAttack",
+          "targetCount": 2,
+          "stat": "attack",
+          "ref": 3,
+          "durationRef": 4
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "ニケを除いた敵が 5 機以上の時だけの自分の会心率▲・会心ダメージ▲は、敵 1 体では起きない",
+          "en": "The self Critical Rate and Critical Damage increases only while there are 5 or more enemies (excluding Nikkes) do not occur against a single enemy",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "passive",
+            "stat": "critRate",
+            "target": "self",
+            "trigger": "unknown"
+          },
+          "claims": ["C-0443"]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "damageRef": 1,
+          "chargeTimeSeconds": 2,
+          "fullChargeDamage": 300,
+          "maxAmmoRef": 2,
+          "pierce": true,
+          "assumes": {
+            "ja": "基礎の SR を、チャージ 2 秒・フルチャージ 300% の 1 発（最大装弾数 1 発）に替え、撃ち切ったら基礎の SR に戻る。チャージ時間に「固定」が無いので、チャージ速度▲を受ける読み。最初の発までの待ちは録画で読む。追加効果「貫通特化」は weaponChange の pierce で、変更後の発に味方の貫通ダメージ▲が乗る。変更後の発のバーストゲージと、撃ち切りの後の基礎の SR の戻り方は、いまのモデルの形（確かめていない）",
+            "en": "Turns the base SR into one shot (max ammo 1) with a 2 s charge and 300% full charge damage, and goes back to the base SR when spent. The charge time has no \"fixed\", so it is read as affected by Charge Speed ups. The wait to the first shot is read from recordings. The additional Pierce is the weaponChange pierce, so allies' Pierce Damage ups apply to the changed shot. The burst gauge of the changed shot and how the base SR resumes follow the current model (unverified)"
+          }
+        }
+      ]
+    }
+  }
+}
