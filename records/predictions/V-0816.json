@@ -178,16 +178,16 @@
   ],
   "predicted": {
     "at": "2026-11-21",
-    "commit": "81aa23ec10d595469319769da123235dbdb9de4c",
+    "commit": "d7c1995d7231d6077beef0a1293700926fd47067",
     "values": {
       "H1": {
-        "a-s2-shots": [120, 240, 360, 480, 600, 720],
-        "a-s2-count": 24,
+        "a-s2-shots": [119, 120, 239, 240, 359, 360],
+        "a-s2-count": 48,
         "a-s2-delay": 0,
         "a-s2-hit": 71141.92860000001,
         "b-burst-hit": 731263.0050000001,
         "b-burst-count": 5,
-        "b-burst-delays": [0, 0, 0, 0],
+        "b-burst-delays": [27, 27, 27, 27],
         "b-s2-hit-fb": 106712.8929
       }
     }

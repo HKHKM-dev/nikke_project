@@ -26,6 +26,14 @@ export function muzzleHitsOf(weaponType: WeaponType, shot: Pick<ShotParams, 'muz
   return isDualWieldWeapon(weaponType) && shot.muzzleCount > 1 ? shot.muzzleCount : 1;
 }
 
+/**
+ * 「最後の弾丸」のきっかけになる、マガジンの最後の発の数。二丁持ちは銃口ごとに最後の弾丸があり、最後の銃口の数の発の
+ * それぞれで起きる（クロウの S2 は 120 発のマガジンの 119・120 発目。C-1400）。ほかの武器は最後の 1 発
+ */
+export function lastBulletShotsOf(weaponType: WeaponType, shot: Pick<ShotParams, 'muzzleCount'>): number {
+  return muzzleHitsOf(weaponType, shot);
+}
+
 export const WEAPON_TYPES = ['AR', 'SMG', 'SR', 'RL', 'SG', 'MG'] as const satisfies readonly WeaponType[];
 
 export const WEAPON_LABEL: Record<WeaponType, { ja: string; en: string }> = {

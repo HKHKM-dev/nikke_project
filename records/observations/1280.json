@@ -1,0 +1,171 @@
+[
+  {
+    "id": "1280-01",
+    "recording": "1280",
+    "use": "compare",
+    "kind": "count",
+    "value": [119, 120, 239, 240, 359, 360],
+    "unit": "発",
+    "description": "S2 の追加ダメージが乗った増分が、クロウの何発目か（最初の 3 マガジン。どれも 120 発で、最後の 2 発に 1 つずつ）",
+    "method": {
+      "tool": "recipe:buff-edge@7（--opt grid）",
+      "note": "HUD の増分を、クロウの 1 発（2 ヒットまでの和）と、その和に S2 の追加ダメージ（89.09%。会心あり・なし）を足した格子に当てた。最初の 3 マガジン（f780〜1072・f1194〜1486・f1608〜1900）はどれも 120 個の増分（全部の発に 1 ヒット以上が当たった）で、S2 は 119・120 個目（f1070・1072、f1484・1486、f1898・1900）に乗る。最後の 1 発の増分に 2 つ乗る回は無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitShotIndices",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "count": 6
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0816",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1280-02",
+    "recording": "1280",
+    "use": "compare",
+    "kind": "hit",
+    "value": 71142,
+    "unit": "ダメージ",
+    "description": "S2 の追加ダメージの 1 ヒット（会心なし。フルバーストの外）",
+    "method": {
+      "tool": "recipe:buff-edge@7（--opt grid）",
+      "note": "f1072 の増分 82,748 から、クロウの 1 発（2 ヒット・距離ボーナスあり・会心なし 11,606）を引いた値。同じ値が 23 本のマガジンの終わりに繰り返し出る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0816",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1280-03",
+    "recording": "1280",
+    "use": "compare",
+    "kind": "hit",
+    "value": 106713,
+    "unit": "ダメージ",
+    "description": "S2 の追加ダメージの 1 ヒット（会心。フルバーストの外）",
+    "method": {
+      "tool": "recipe:buff-edge@7（--opt grid）",
+      "note": "f1070 の増分 118,319 から、クロウの 1 発（11,606）を引いた値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": true,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0816",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1280-04",
+    "recording": "1280",
+    "use": "compare",
+    "kind": "interval",
+    "value": 0,
+    "unit": "f",
+    "description": "S2 の追加ダメージが、きっかけの発（マガジンの最後の 2 発）から何フレーム後に出たか",
+    "method": {
+      "tool": "recipe:buff-edge@7（--opt grid）",
+      "note": "どの追加ダメージも、きっかけの発と同じ HUD の増分に乗り（クロウの 1 発 + 追加ダメージの和）、発の無い増分に単独で出る回は無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitShotDelay",
+      "args": {
+        "slot": 1,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0816",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1280-05",
+    "recording": "1280",
+    "use": "record",
+    "kind": "count",
+    "value": {
+      "s2Total": 41,
+      "magazinesWithLastShot": 24,
+      "twoS2": 18,
+      "oneS2": 5,
+      "noS2": 1,
+      "oneS2LastFrames": [4644, 5472, 6712, 7556, 11056],
+      "noS2LastFrame": 5058,
+      "cutMagazinesLastFrames": [2253, 4392, 10814, 11357]
+    },
+    "unit": "回",
+    "description": "180 秒の S2 の追加ダメージの数と、撃ち切ったマガジンごとの数（2 つ・1 つ・0）",
+    "method": {
+      "tool": "recipe:buff-edge@7（--opt grid）",
+      "note": "40f を超える空きでマガジンを分けた。1 つ・0 のマガジンは、どれも最後の 2 発のどちらかの増分が 1 ヒットだけ（片方の銃口が外れた）。1 つのマガジンで出たのは、f4644・7556・11056 は最後の発、f6712 は後ろから 2 発目、f5472 は最後の発（その増分も 1 ヒット + 追加ダメージ）。的のジャンプで途中で切れたマガジン（最後の増分 f2253・4392・10814、録画の終わりの f11357）には出ない。モデル（最後の弾丸はいつも命中する）は 48"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0816",
+    "readAt": "2026-11-21"
+  }
+]

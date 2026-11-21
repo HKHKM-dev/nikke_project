@@ -23,9 +23,12 @@
           "damageType": "additional",
           "ref": 1,
           "assumes": {
-            "ja": "敵 1 体。「最後の弾丸が命中した時」は、残弾を 0 にした射撃（二丁持ちの 1 発 2 ヒット）で 1 回起こす。最後の弾丸はいつも命中する（外れた時に出ないのは入れない。ルドミラの S1 と同じ）。バーストゲージは確かめていない（溜めない形）",
-            "en": "One enemy. \"When the last bullet hits\" fires once on the shot that empties the magazine (one dual-wield shot of two hits). The last bullet is assumed to always hit (not firing on a miss is not modeled; as for Ludmilla S1). The Burst Gauge is not verified (modeled as not charging it)"
-          }
+            "ja": "敵 1 体。「最後の弾丸が命中した時」は二丁持ちの銃口ごとに起き、マガジンの最後の 2 発のそれぞれで 1 つ出す（weapons.ts の lastBulletShotsOf）。最後の弾丸はいつも命中する（外れた銃口の分が出ないのは入れない。ルドミラの S1 と同じ）。バーストゲージは確かめていない（溜めない形）",
+            "en": "One enemy. \"When the last bullet hits\" fires per muzzle of the dual-wield weapon: once on each of the last two shots of the magazine (lastBulletShotsOf in weapons.ts). The last bullets are assumed to always hit (not firing for a missed muzzle is not modeled; as for Ludmilla S1). The Burst Gauge is not verified (modeled as not charging it)"
+          },
+          "claims": [
+            "C-1400"
+          ]
         }
       ],
       "notes": [
@@ -46,7 +49,10 @@
           "assumes": {
             "ja": "最終攻撃力が最も高い敵 1 機は敵 1 体",
             "en": "The enemy with the highest final ATK is the lone enemy"
-          }
+          },
+          "claims": [
+            "C-1401"
+          ]
         }
       ]
     }

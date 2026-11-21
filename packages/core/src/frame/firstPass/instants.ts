@@ -336,6 +336,10 @@ export function createInstants({
           fired.lastShot = false;
           const log = logs[target]!;
           if (log.lastShotFrames![log.lastShotFrames!.length - 1] === f) log.lastShotFrames!.pop();
+          if (fired.lastBullet === true) {
+            fired.lastBullet = false;
+            if (log.lastBulletFrames!.at(-1) === f) log.lastBulletFrames!.pop();
+          }
         }
         instants.push({
           frame: f,

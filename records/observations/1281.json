@@ -118,5 +118,222 @@
     },
     "source": "V-0816",
     "readAt": "2026-11-21"
+  },
+  {
+    "id": "1281-09",
+    "recording": "1281",
+    "use": "compare",
+    "kind": "timing",
+    "value": [27, 27, 27, 27, 27],
+    "unit": "f",
+    "description": "III のタイマーの 00.00 から、クロウのバーストスキルダメージのヒット（を含む増分）までの動画のフレーム（5 回）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 と recipe:burst-panel@1（1281-03）",
+      "note": "00.00（f1325・3705・6130・8582・10972）から、フルバーストの入りの止まり（HUD の空き 25f）の後の最初の増分（f1352・3732・6157・8609・10999）まで。どの回もその増分にバーストスキルダメージの 1 ヒットが乗り（1281-10）、その後の増分に 2 つ目のヒットは無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0816",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1281-10",
+    "recording": "1281",
+    "use": "compare",
+    "kind": "hit",
+    "value": 731263,
+    "unit": "ダメージ",
+    "description": "1 回目のバーストスキルダメージ（1 ヒット。会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 と recipe:buff-edge@7（--opt grid）",
+      "note": "f1352 の増分 781,705 から、同じ増分のクロウの 3 発（窓の中の 16,070・16,070・18,302）を引いた値。3・4・5 回目も、f6157 の 758,047 − 2 発（13,392 × 2）、f8609 の 773,671 − 3 発（13,392・13,392・15,624）、f10999 の 779,473 − 3 発（16,070 × 3）で同じ 731,263 になる。2 回目（f3732 の 1,037,740）は、ほかの枠の発と重なって分けられない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0816",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1281-11",
+    "recording": "1281",
+    "use": "compare",
+    "kind": "hit",
+    "value": 731263,
+    "unit": "ダメージ",
+    "description": "5 回目のバーストスキルダメージ（1 ヒット。会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 と recipe:buff-edge@7（--opt grid）",
+      "note": "f10999 の増分 779,473 から、同じ増分のクロウの 3 発（16,070 × 3）を引いた値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0816",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1281-12",
+    "recording": "1281",
+    "use": "compare",
+    "kind": "hit",
+    "value": 142284,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの窓の中の S2 の追加ダメージの 1 ヒット（会心。フルバースト補正が乗る）",
+    "method": {
+      "tool": "recipe:buff-edge@7（--opt grid）",
+      "note": "f1579 の増分 160,586 から、クロウの窓の中の 1 発（18,302）を引いた値。窓の外では会心でも 106,713 で、この値はフルバースト補正（+0.5）が無いと出ない。4 回目の窓の f8629（162,372 − 20,088）、2 回目の窓の f4224（167,282 − 24,998）も同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true,
+        "skill": "skill2",
+        "frame": 0,
+        "fullBurst": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0816",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1281-13",
+    "recording": "1281",
+    "use": "compare",
+    "kind": "hit",
+    "value": 71142,
+    "unit": "ダメージ",
+    "description": "フルバーストの窓の外の S2 の追加ダメージの 1 ヒット（会心なし）",
+    "method": {
+      "tool": "recipe:buff-edge@7（--opt grid）",
+      "note": "f1141 の増分 82,748 から、クロウの 1 発（11,606）を引いた値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0816",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1281-14",
+    "recording": "1281",
+    "use": "record",
+    "kind": "timing",
+    "value": [
+      [1141, 1143],
+      [1579, 1581],
+      [1993, 1995],
+      [2957, 2960],
+      [3372, 3374],
+      [3810, 3812],
+      [4224, 4226],
+      [5560, 5562],
+      [5974, 5976],
+      [6412, 6414],
+      [6826, 6828],
+      [7777, 7779],
+      [8629, 8631],
+      [9043, 9045],
+      [9587, 9589],
+      [10003, 10005],
+      [10416, 10419],
+      [10831, 10833],
+      [11389, 11392]
+    ],
+    "unit": "f",
+    "description": "S2 の追加ダメージが乗った増分の組（同じマガジンの終わりで 2〜3f 離れた 2 つ。動画のフレーム）",
+    "method": {
+      "tool": "recipe:buff-edge@7（--opt grid）",
+      "note": "3 人の発の格子と、クロウの 1 発 + S2 の格子に当てた。組にならない回（f2409・4638・5146・7364・8193）は、もう片方の増分がほかの枠の発と重なって当たらないか、片方の銃口が外れた回"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0816",
+    "readAt": "2026-11-21"
   }
 ]

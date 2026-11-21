@@ -48,8 +48,13 @@ import { GAME_SECONDS_PER_FRAME } from '../time.ts';
 
 /** 1 枠の 1 回の射撃 */
 export type ShotEvent = {
-  /** この射撃で残弾が 0 になったか（「最後の弾丸」） */
+  /** この射撃で残弾が 0 になったか（マガジンの最後の発） */
   lastShot: boolean;
+  /**
+   * 「最後の弾丸」のきっかけ（回数の種類 lastShot）になる発か。二丁持ちはマガジンの最後の銃口の数の発
+   * （weapons.ts の lastBulletShotsOf）。省略は lastShot と同じ
+   */
+  lastBullet?: boolean;
   /** チャージ武器の射撃か（常にフルチャージのモデルなので fullChargeShot になる） */
   fullCharge: boolean;
   /**
@@ -95,7 +100,7 @@ export function shotCountWeight(kind: ShotCountKind, shot: ShotEvent): number {
     case 'fullChargeShot':
       return shot.fullCharge ? 1 : 0;
     case 'lastShot':
-      return shot.lastShot ? 1 : 0;
+      return (shot.lastBullet ?? shot.lastShot) ? 1 : 0;
     case 'weaponChangeShot':
       return shot.weaponChange === true ? 1 : 0;
     case 'pelletHit':
@@ -530,6 +535,7 @@ export function replayEvents(
   shots.forEach((log, slotIndex) => {
     if (!log) return;
     const last = new Set(log.lastShotFrames ?? []);
+    const lastBullets = log.lastBulletFrames === undefined ? null : new Set(log.lastBulletFrames);
     const changed = new Set(log.weaponChangeShotFrames ?? []);
     const infinite = new Set(log.infiniteAmmoShotFrames ?? []);
     const full = fullChargeFrameSet(log);
@@ -545,6 +551,7 @@ export function replayEvents(
       if (critHits !== undefined) shot.critHits = critHits;
       const pellets = log.pelletHits?.[k];
       if (pellets !== undefined) shot.pellets = pellets;
+      if (lastBullets !== null) shot.lastBullet = lastBullets.has(f);
       if (changed.has(f)) shot.weaponChange = true;
       if (infinite.has(f)) shot.ammo = 0;
       (at(f).shots as (ShotEvent | null)[])[slotIndex] = shot;
