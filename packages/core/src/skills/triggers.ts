@@ -421,7 +421,9 @@ export function createTriggerTracker(
     throw new RangeError(`a counterUp trigger (${t.counterUp}) is not tracked per event; the holder lists track it`);
   }
   if (isResolvedStacks(t)) {
-    throw new RangeError(`a stateStacks trigger (${t.stateStacks}) is not tracked per event; the holder lists track it`);
+    throw new RangeError(
+      `a stateStacks trigger (${t.stateStacks}) is not tracked per event; the holder lists track it`,
+    );
   }
   // 状態の終わりは 1 パス目の件の一覧が追う（skills/holders/conditions.ts の endedAt。plan/design-grave.md 2.1 節）。出来事の列では追わない
   if (isEndedTrigger(t)) {

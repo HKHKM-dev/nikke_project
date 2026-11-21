@@ -88,7 +88,9 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, input) => {
       for (const h of own) expect(h.stacks).toBe(levelBefore(f));
     }
     // 付くのはバーストを使った 5f 後（III の 00.00 の 1f 前。C-0101 の刻みで 1.5 秒後から 1 秒ごとの計 10 tick）
-    const second = ticks.filter((h) => h.frame >= uses[1]! && h.frame < uses[1]! + 11 * 60).map((h) => h.frame - uses[1]!);
+    const second = ticks
+      .filter((h) => h.frame >= uses[1]! && h.frame < uses[1]! + 11 * 60)
+      .map((h) => h.frame - uses[1]!);
     expect(second.slice(0, 3)).toEqual([5, 93, 152]);
     expect(second).toHaveLength(10);
     // 1 回目は勇者レベルが上がっている途中、2 回目からは 11
