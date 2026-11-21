@@ -782,9 +782,9 @@ svg.roster-revert-icon {
   --placing-blue: light-dark(#0ea5e9, #38bdf8);
   /* ニケ一覧のコア強化のアイコンの幅（左上のバッジ .char-visual の --badge-w と同じ）。P○ のバッジの幅と位置もこれで決める */
   --tray-core-w: 20px;
-  /* スロットのカードの縦長の絵の高さ（枠線の内側。.char-visual-portrait と空のスロットの枠）。立ち絵（256×512）の 1/2。狭い画面では
-     useSlotFit が並びに縮めた値を置く（上限は useSlotFit.ts の PORTRAIT_MAX_H と同じ） */
-  --slot-portrait-h: 256px;
+  /* スロットのカードの縦長の絵の高さ（枠線の内側。.char-visual-portrait と空のスロットの枠）。立ち絵（256×512）の 1/3 で、ニケ一覧の縦長の絵
+     （.char-visual-tall）と同じ大きさ。狭い画面では useSlotFit が並びに縮めた値を置く（上限は useSlotFit.ts の PORTRAIT_MAX_H と同じ） */
+  --slot-portrait-h: calc(512px / 3);
 }
 /* 置き先待ちのスロットの立ち絵と、いまの編成にいるニケ・置き先待ちのニケの絵に重ねる箱（枠は下の .char-tray-item-visual の後の規則） */
 .modern-slot-card.modern-slot-awaiting .modern-slot-char-area::after,
@@ -854,9 +854,10 @@ svg.roster-revert-icon {
     align-items: flex-start;
     gap: 12px;
   }
-  /* スロットの並びは、元の大きさの立ち絵 5 枚（幅 128px・枠線 2px・左右の余白）の幅まで広がり、足りなければ縮む（縮んだ幅に useSlotFit が立ち絵を合わせる） */
+  /* スロットの並びは、元の大きさの立ち絵 5 枚（幅 256/3 px・枠線 2px・左右の余白）の幅まで広がり、足りなければ縮む（縮んだ幅に useSlotFit が立ち絵を合わせる） */
   .modern-party-slots > .modern-slots-area {
-    flex: 0 1 calc(5 * (130px + 2 * 2px));
+    /* 1px は端数のぶん（useSlotFit は幅を切り下げて測るので、ちょうどの幅では上限より少し小さくなる） */
+    flex: 0 1 calc(5 * (256px / 3 + 2px + 2 * 2px) + 1px);
     min-width: 0;
   }
   /* タブの上端は、スロットの立ち絵の上端にそろえる（並びの上の、元に戻す・やり直すのボタンの分の余白 30px と、カードの上の余白・

@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { fitPortraitHeight } from './useSlotFit.ts';
+import { PORTRAIT_MAX_H, fitPortraitHeight } from './useSlotFit.ts';
 
 describe('fitPortraitHeight', () => {
-  it('広い並びでは元の高さ（256px）のまま', () => {
-    expect(fitPortraitHeight(1284, 5, 4, 4)).toBe(256);
+  it('広い並びでは元の高さ（ニケ一覧の縦長の絵と同じ 512/3 px）のまま', () => {
+    expect(PORTRAIT_MAX_H).toBeCloseTo(170.67, 2);
+    expect(fitPortraitHeight(1284, 5, 4, 4)).toBe(PORTRAIT_MAX_H);
   });
   it('幅 420px の画面（並びの幅 404px）では 5 枚が 1 段に収まる高さに縮める', () => {
     // カードの幅 (404 - 4×4) / 5 = 77.6、絵の幅 77.6 - 4 - 2 = 71.6、高さ 143.2 → 偶数に切り下げて 142
