@@ -167,13 +167,14 @@ function hasSelfStackingGrant(
   entries: Partial<Record<SkillSlot, SkillEntry>>,
   state: NamedStateId,
   holder: 'self' | 'enemy' = 'self',
+  stacking = true,
 ): boolean {
   return SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).some(
     (g) =>
       g.kind === 'state' &&
       g.state === state &&
       (holder === 'enemy' ? g.enemy === true : g.target === 'self') &&
-      (g.maxStacks !== undefined || g.maxStacksRef !== undefined),
+      (!stacking || g.maxStacks !== undefined || g.maxStacksRef !== undefined),
   );
 }
 
@@ -259,6 +260,20 @@ function validateFullStackTriggers(entries: Partial<Record<SkillSlot, SkillEntry
   }
 }
 
+/** 敵の状態の解除（removeState の enemy）は、同じ定義にその状態を敵に付ける付与が要る（plan/design-phantom.md 2.3 節） */
+function validateEnemyRemoves(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (e.kind !== 'removeState' || e.target !== 'enemy') return;
+      if (!hasSelfStackingGrant(entries, e.state, 'enemy', false))
+        fail(
+          `${root}.${slot}.effects[${i}].state`,
+          `a remove on the enemy needs a grant of "${e.state}" on the enemy in the definition`,
+        );
+    });
+  }
+}
+
 /**
  * timed・付与の { applied } は連鎖させない（plan/design-skill-stage4.md 1.1 節）。同じ定義の中で、{ applied } の付与が
  * 付ける状態を、ほかの timed・付与の { applied } が見ない（damage の { applied } は見てよい。ダメージは記録を作らないので閉じる）
@@ -307,6 +322,13 @@ function validateSameFiring(entries: Partial<Record<SkillSlot, SkillEntry>>, roo
       const path = `${root}.${slot}.effects[${i}]`;
       if (e.kind === 'passive' && e.while !== undefined && 'selfState' in e.while && e.while.selfState.sameFiring)
         fail(`${path}.while.selfState.sameFiring`, 'sameFiring is not allowed in while');
+      // 敵の状態の sameFiring は、射撃の回数のきっかけの timed だけ（plan/design-phantom.md 2.6 節）
+      const enemy = 'condition' in e ? e.condition?.enemyState : undefined;
+      if (typeof enemy === 'object' && 'sameFiring' in enemy && (e.kind !== 'timed' || !isShotCountTrigger(e.trigger)))
+        fail(
+          `${path}.condition.enemyState.sameFiring`,
+          'sameFiring of enemyState is allowed only in timed with a shot count trigger',
+        );
       const self = 'condition' in e ? e.condition?.selfState : undefined;
       if (self?.sameFiring !== true) return;
       if (e.kind === 'timed') {
@@ -344,7 +366,7 @@ function validateSameFiring(entries: Partial<Record<SkillSlot, SkillEntry>>, roo
 }
 
 /**
- * timed の sameFiring（plan/design-frima.md 2 節）: スタック数の無い形で、きっかけは射撃の回数。見る状態を自分に付ける付与が同じ定義にあり、
+ * timed の sameFiring（plan/design-frima.md 2 節）: スタック数の無い形か、上の端（stacksBelow）だけの形（plan/design-phantom.md 2.6 節）で、きっかけは射撃の回数。見る状態を自分に付ける付与が同じ定義にあり、
  * そのきっかけが同じ回数の種類であること（同じ発で付いた件を、次のフレームの件で見る）
  */
 function validateTimedSameFiring(
@@ -353,7 +375,9 @@ function validateTimedSameFiring(
   self: SelfStateCondition,
   at: string,
 ): void {
-  if (isStacksCondition(self)) fail(at, 'sameFiring in timed is only for a presence condition (no stack count)');
+  // スタックの上の端（stacksBelow）だけは書ける（「同じ発の後に〈状態〉が N 段未満なら」。plan/design-phantom.md 2.6 節）
+  if (self.stacks !== undefined || self.stacksRef !== undefined)
+    fail(at, 'sameFiring in timed is only for a presence condition or stacksBelow');
   if (!isShotCountTrigger(trigger)) fail(at, 'sameFiring in timed needs a shot count trigger');
   const grants = SKILL_SLOTS.flatMap((x) => entries[x]?.effects ?? []).filter(
     (g): g is StateGrantEffect => g.kind === 'state' && g.state === self.state && g.target === 'self',
@@ -758,6 +782,7 @@ export function validateCrossChecks(entries: Partial<Record<SkillSlot, SkillEntr
     validateStackChanges,
     validateStateContentKinds,
     validateFullStackTriggers,
+    validateEnemyRemoves,
     validateAppliedTriggers,
     validateSameFiring,
     validateOwnStateTriggers,

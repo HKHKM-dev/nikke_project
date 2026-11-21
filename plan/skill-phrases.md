@@ -133,3 +133,6 @@
 | 最終攻撃力の X% × 〈カウンタ〉数分の持続ダメージ | dot の `stacksFrom: { "counter": 〈カウンタ〉 }`（付けた時の値。tick ごとに読むなら `copyEachTick`）。付く時刻の遅れの実測は `delayFrames`（ゲージを溜めない `burstUse` の dot にも書ける） | ギロチン：ウィンタースレイヤーのバースト | 同 2.4・8.2 節 |
 | バースト 3 段階突入時、「開始回数別の効果」「下位効果のスタック適用」 | 段ごとの効果に、出来事の回数のきっかけ `{ "count": "burstStage3Enter", "atLeast": N }`（編成の段階 3 への突入を数える。II で切れたチェーンも数える） | ネオン：ブルーオーシャンの S2 | [design-neon-bo.md](design-neon-bo.md) 2.1 節 |
 | 使用武器変更の後の「対象が〈コード〉なら対象に追加ダメージ」（変更後の武器の発ごと） | damage のきっかけ `{ "count": "weaponChangeShot" }` と `enemyElement`（1 トリガーの値に畳み込まず、変更後の武器の発にだけ出す） | ネオン：ブルーオーシャンのバースト | 同 2.4 節 |
+| 対象が〈状態〉状態ではないなら（敵の状態の否定。敵への付与・自分への付与）／対象が〈状態〉状態なら「N 発間維持」 | 条件 `enemyState: { "state": "<id>", "present": false }`（敵への付与にも書ける）／発数の維持の timed の条件 `enemyState`（同じ発で付いた状態も見るなら `{ "state": "<id>", "present": true, "sameFiring": true }`。同じ発で S2 が外す時を除くなら、timed の `selfState` の `stacksBelow` と `sameFiring`） | ファントムの S1 の予告状・怪盗の短剣・攻撃ダメージ▲ | [design-phantom.md](design-phantom.md) 2.1・2.6 節 |
+| 〈名前〉フルスタック状態なら、対象に追加ダメージ・効果発動後〈敵の状態〉解除・スタック解除後自分に〈状態〉・敵全体に分配ダメージ | damage・状態の付与・解除のきっかけ `{ "fullStack": "<id>" }`／敵の状態の解除は `removeState` の `target: "enemy"`（同じフレームに付いた件も外す） | ファントムの S2 | 同 2.2・2.3 節 |
+| 「持続」「バーストスキル使用時スタック解除」 | 状態の付与の `durationUntil: "battleEnd"` と、`removeState` のきっかけ `burstUse` | ファントムの S2 の分配ダメージ▲ | 同 1 節 |

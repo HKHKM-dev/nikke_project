@@ -7,7 +7,7 @@ import type { ResolvedShotCountTrigger } from '../resolve.ts';
 import type { RankingRecord } from '../ranking.ts';
 import type { CounterId } from '../counters.ts';
 import type { NamedStateId } from '../states.ts';
-import type { HealRecord, TriggerTracker } from '../triggers.ts';
+import type { FullStackRecord, HealRecord, TriggerTracker } from '../triggers.ts';
 import { resolvePassiveStates, type AppliedRecord, type ConditionSkip, type TimelineSlot } from '../timeline.ts';
 import type {
   AmplifierSource,
@@ -65,6 +65,7 @@ export function createRecords({ options, slots }: HolderBase) {
   const removeDebuffGuesses: RemoveDebuffGuessRecord[] = [];
   const stateEndGuesses: StateEndGuessRecord[] = [];
   const heals: HealRecord[] = [];
+  const fullStacks: FullStackRecord[] = [];
   const amplifiers: AmplifierSource[] = [];
   /**
    * 件の列ごとの、件を作る関数が読む入力（trackReadsOf）と、件を作った時の入力の長さ（始まり・機会・射撃・使用武器の変更の終わり・
@@ -139,6 +140,7 @@ export function createRecords({ options, slots }: HolderBase) {
     counterUpAt,
     counterUpFiresAt,
     frames,
+    fullStacks,
     heals,
     itemsSeen,
     logs,

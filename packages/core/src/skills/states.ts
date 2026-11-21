@@ -503,6 +503,15 @@ export const NAMED_STATES = {
   sleepy: { name: { ja: '眠い', en: 'Sleepy' }, holder: 'enemy' },
   /** 起きた（プリムの宝物版 S1。通常攻撃を防御力無視ダメージに。S2・バーストの防御力無視ダメージ▲の条件） */
   wakeUp: { name: { ja: '起きた', en: 'Wake Up' }, holder: 'ally' },
+  /** 予告状（ファントムの S1。敵の防御力▼・5 秒。付いていない時の命中で付き、S2 の追加ダメージの後に解除される） */
+  callingCard: { name: { ja: '予告状', en: 'Calling Card' }, holder: 'enemy' },
+  /** 怪盗の短剣（ファントムの S1。命中率▲・3 スタック・5 秒。フルスタックで S2 が発火し、スタックを外す） */
+  thiefsDagger: { name: { ja: '怪盗の短剣', en: "Thief's Dagger" }, holder: 'ally' },
+  /**
+   * 怪盗の鑑定眼（ファントムの S2 の分配ダメージ▲のスタック。説明文に状態の名前が無いので、スロットの名前で呼ぶ。3 スタック・持続。
+   * バーストスキル使用時に解除する）
+   */
+  thiefsVision: { name: { ja: '怪盗の鑑定眼', en: "Thief's Vision" }, holder: 'ally' },
   /**
    * リフレッシュハート（ペッパーの S1。味方全体・5 スタック・15 秒。中身の受けるHP回復量▲は語彙に無いので書かず、間接の notes。
    * バーストの「自分がリフレッシュハートのフルスタック状態なら」の回復が読む）

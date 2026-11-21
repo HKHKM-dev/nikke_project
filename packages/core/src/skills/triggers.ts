@@ -237,9 +237,9 @@ export type FrameEvents = {
   healed: readonly boolean[];
   /**
    * このフレームにフルスタックになって外れた状態（持ち主の枠と状態。plan/design-skill-stage3.md 1.3 節）。1 パス目が
-   * 回復の前に件の一覧から出す（skills/holders/read.ts の consumeFullStacks）。流し直し（replayEvents）では作らないので、
-   * フルスタックの消費のきっかけは 1 パス目で当てる効果（回復・使用武器の変更・弾丸チャージ・1 パス目が件を登録する timed）にだけ書ける。
-   * 省略は無し
+   * 回復の前に件の一覧から出す（skills/holders/read.ts の consumeFullStacks）。流し直し（replayEvents）では作らない。1 パス目で当てる
+   * 効果（回復・使用武器の変更・弾丸チャージ・timed・状態の付与・解除）はこれを見て、2 パス目の倍率ダメージは 1 パス目の履歴の
+   * fullStacks のフレームで発火する（frame/plan.ts。plan/design-phantom.md 2.2 節）。省略は無し
    */
   fullStacks?: readonly FullStackEvent[];
   /**
@@ -283,6 +283,9 @@ export type ChargeTickEvent = { slotIndex: number; everySeconds: number };
 
 /** フルスタックになって外れた状態 */
 export type FullStackEvent = { slotIndex: number; state: NamedStateId };
+
+/** フルスタックの消費の記録（1 パス目の履歴。2 パス目の倍率ダメージのきっかけ { fullStack } が読む。plan/design-phantom.md 2.2 節） */
+export type FullStackRecord = FullStackEvent & { frame: number };
 
 /** 回復の記録。frame に slotIndex の枠が sourceSlotIndex の heal 効果で回復を受けた */
 export type HealRecord = {

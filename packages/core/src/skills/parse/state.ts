@@ -76,9 +76,10 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
     for (const key of ENEMY_GRANT_FORBIDDEN_KEYS) {
       if (v[key] !== undefined) fail(`${path}.${key}`, 'not allowed in a grant on the enemy (target "enemy")');
     }
-    // 条件は自分の状態（selfState）だけ（アンチA.T.フィールドの「自分が殲滅態勢状態の時に限り」。plan/design-asuka-wille.md 2.4 節）
-    if (isRecord(v.condition) && Object.keys(v.condition).some((key) => key !== 'selfState'))
-      fail(`${path}.condition`, 'a grant on the enemy can only have the condition selfState');
+    // 条件は自分の状態（selfState。アンチA.T.フィールドの「自分が殲滅態勢状態の時に限り」。plan/design-asuka-wille.md 2.4 節）と
+    // 敵の状態（enemyState。予告状の「予告状状態ではないなら」。plan/design-phantom.md 2.1 節）だけ
+    if (isRecord(v.condition) && Object.keys(v.condition).some((key) => key !== 'selfState' && key !== 'enemyState'))
+      fail(`${path}.condition`, 'a grant on the enemy can only have the conditions selfState and enemyState');
     v = { ...v, target: 'allies' };
   }
   const state = parseNamedStateId(v.state, `${path}.state`, onEnemy ? 'enemy' : 'ally');
@@ -738,16 +739,19 @@ function parseAllStackableChange(v: Record<string, Json>, path: string): AllStac
  */
 export function parseRemoveStateEffect(v: Record<string, Json>, path: string): RemoveStateEffect {
   rejectUnknownKeys(v, ['kind', 'state', 'trigger', 'target', 'condition', 'assumes', 'claims'], path);
-  const state = parseNamedStateId(v.state, `${path}.state`, 'ally');
-  // 自分の状態の窓で数える回数も（憑依のキャプチャーで憑依を外す。plan/design-elegg-bs.md 2.2 節）
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`, { reloadEnd: true, during: 'stateOnly' });
-  if (v.target !== 'self') {
+  if (v.target !== 'self' && v.target !== 'enemy') {
     fail(
       `${path}.target`,
-      `expected "self" (removing a state of an ally is not supported), got ${JSON.stringify(v.target)}`,
+      `expected "self" or "enemy" (removing a state of an ally is not supported), got ${JSON.stringify(v.target)}`,
     );
   }
-  const effect: RemoveStateEffect = { kind: 'removeState', state, trigger, target: 'self' };
+  const target = v.target;
+  // 敵の状態の解除（plan/design-phantom.md 2.3 節）
+  const state = parseNamedStateId(v.state, `${path}.state`, target === 'enemy' ? 'enemy' : 'ally');
+  // 自分の状態の窓で数える回数も（憑依のキャプチャーで憑依を外す。plan/design-elegg-bs.md 2.2 節）。フルスタックの消費も
+  // （予告状の解除。plan/design-phantom.md 2.3 節）
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, { reloadEnd: true, during: 'stateOnly', fullStack: true });
+  const effect: RemoveStateEffect = { kind: 'removeState', state, trigger, target };
   if (v.condition !== undefined) {
     // 「フルバースト状態でなければ」（inFullBurst: false）も書ける
     // （「通常攻撃をした時、フルバースト状態でなければ、フルアクティブ解除」。plan/design-skill-stage14.md 2.7 節）

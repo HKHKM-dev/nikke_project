@@ -25,6 +25,7 @@ export function createRead({
   consuming,
   counterRecords,
   frames,
+  fullStacks,
   healKey,
   healTracks,
   heals,
@@ -220,6 +221,7 @@ export function createRead({
       if (!full) continue;
       for (const t of own) consumeTrack(t, frame);
       out.push({ slotIndex: holder, state });
+      fullStacks.push({ frame, slotIndex: holder, state });
     }
     return out;
   };

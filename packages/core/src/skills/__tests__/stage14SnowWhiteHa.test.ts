@@ -275,13 +275,13 @@ describe('語彙の検証（PR 3）', () => {
   const uses = rawBurst.skills.skill1.effects.findIndex((e) => e.kind === 'stackChange');
   const charge = rawBurst.skills.skill2.effects.findIndex((e) => e.stat === 'chargeDamage');
 
-  it('opens a duration in shots to the selfState condition only', () => {
+  it('opens a duration in shots to the selfState and enemyState conditions only', () => {
     expect(withEffect('skill2', charge, { condition: { inFullBurst: true } })).toThrow(
-      /a duration in shots can only have the condition selfState/,
+      /a duration in shots can only have the conditions selfState and enemyState/,
     );
     expect(
       withEffect('skill2', charge, { condition: { selfState: 'sevenDwarvesFullyActive', inFullBurst: true } }),
-    ).toThrow(/only have the condition selfState/);
+    ).toThrow(/only have the conditions selfState and enemyState/);
   });
 
   it('needs maxStacks for stacksPerFireRef and decrease for closesAtZero', () => {

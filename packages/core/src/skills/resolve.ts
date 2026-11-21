@@ -1190,6 +1190,8 @@ export type ResolvedRemoveState = {
   condition?: EffectCondition;
   /** 自分の状態の消去（cancelState の self。plan/design-mint-prika.md 2.1 節）。解除不可の件も閉じる */
   cancel?: true;
+  /** 敵の状態の解除（removeState の enemy。plan/design-phantom.md 2.3 節） */
+  enemy?: true;
 };
 
 /** 定義の解除を Lv の数値に解く（解くのはトリガーの回数の参照だけ） */
@@ -1215,6 +1217,7 @@ export function resolveRemoveStates(
       };
       if (effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
       if (effect.kind === 'cancelState') r.cancel = true;
+      if (effect.target === 'enemy') r.enemy = true;
       out.push(r);
     });
   }

@@ -151,7 +151,25 @@ export function parseCondition(
       fail(`${path}.inFullBurst`, outsideFullBurst ? 'expected a boolean' : 'expected true');
     condition.inFullBurst = c.inFullBurst;
   }
-  if (c.enemyState !== undefined) condition.enemyState = parseNamedStateId(c.enemyState, `${path}.enemyState`, 'enemy');
+  if (c.enemyState !== undefined) {
+    // 「敵が〈状態〉でなければ」は { state, present: false }（plan/design-phantom.md 2.1 節）
+    const form = isRecord(c.enemyState) ? c.enemyState : undefined;
+    if (form === undefined) condition.enemyState = parseNamedStateId(c.enemyState, `${path}.enemyState`, 'enemy');
+    else {
+      // 「同じ発の付与の後に」は { state, present: true, sameFiring: true }（plan/design-phantom.md 2.6 節）
+      rejectUnknownKeys(form, ['state', 'present', 'sameFiring'], `${path}.enemyState`);
+      const state = parseNamedStateId(form.state, `${path}.enemyState.state`, 'enemy');
+      if (form.sameFiring !== undefined) {
+        if (form.sameFiring !== true || form.present !== true)
+          fail(`${path}.enemyState.sameFiring`, 'expected sameFiring: true with present: true');
+        condition.enemyState = { state, present: true, sameFiring: true };
+      } else {
+        if (form.present !== false)
+          fail(`${path}.enemyState.present`, 'expected false (write the state alone for "if the enemy has it")');
+        condition.enemyState = { state, present: false };
+      }
+    }
+  }
   if (c.selfState !== undefined) condition.selfState = parseSelfStateCondition(c.selfState, `${path}.selfState`);
   if (c.usedBurst !== undefined) {
     if (typeof c.usedBurst !== 'boolean') fail(`${path}.usedBurst`, 'expected a boolean');

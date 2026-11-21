@@ -3,7 +3,7 @@
 // 静的な状態の記録）を、件の列を作る順（tracks の並びと準備の検査が投げる順）に呼び、件の列が出そろった後に、持ち主ごとの状態の件の列
 // （stateTracks）を作る。フルバーストの窓の判定（inFullBurstAt）もここに置く。
 import { groupDotsByState } from '../../frame/dot.ts';
-import { resolveDotEffects } from '../burstDamage.ts';
+import { resolveDamageEffects, resolveDotEffects } from '../burstDamage.ts';
 import type { ChanceOpportunity } from '../chance.ts';
 import { resolveCycleEvery } from '../cycles.ts';
 import {
@@ -19,6 +19,7 @@ import {
   resolvePassives,
   resolveRemoveDebuffs,
   resolveRemoveStates,
+  resolveStateGrants,
   resolveStateExtends,
   resolveStackChanges,
   resolveAllStackableChanges,
@@ -560,8 +561,8 @@ function createCounterSources(
 
 /**
  * フルスタックの消費（定義の回復のきっかけ { fullStack } の状態。自分だけ。plan/design-skill-stage3.md 1.3 節）。
- * 使用武器の変更（plan/design-skill-stage11.md 2.1 節）・弾丸チャージ・timed（plan/design-diesel.md 2.1 節）のきっかけ
- * { fullStack } の状態も
+ * 使用武器の変更（plan/design-skill-stage11.md 2.1 節）・弾丸チャージ・timed（plan/design-diesel.md 2.1 節）・状態の付与・解除・
+ * 倍率ダメージ（plan/design-phantom.md 2.2 節）のきっかけ { fullStack } の状態も
  */
 function consumingStatesOf({ slots }: SourceDeps) {
   const consuming: { holder: number; state: NamedStateId }[] = [];
@@ -570,6 +571,9 @@ function consumingStatesOf({ slots }: SourceDeps) {
     const effects = [
       ...resolveInstant(slot.definition, slot.character, slot.levels),
       ...resolveTimed(slot.definition, slot.character, slot.levels),
+      ...resolveStateGrants(slot.definition, slot.character, slot.levels),
+      ...resolveRemoveStates(slot.definition, slot.character, slot.levels),
+      ...resolveDamageEffects(slot.definition, slot.character, slot.levels),
     ];
     for (const effect of effects) {
       if (!isResolvedFullStack(effect.trigger)) continue;
