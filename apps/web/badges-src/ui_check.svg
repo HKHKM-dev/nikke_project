@@ -1,13 +1,85 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<svg viewBox="0 0 100 100" version="1.1" id="svg1" sodipodi:docname="check.svg" inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)" width="100" height="100" xml:space="preserve" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
-  <sodipodi:namedview id="namedview1" pagecolor="#505050" bordercolor="#eeeeee" borderopacity="1" inkscape:showpageshadow="0" inkscape:pageopacity="0" inkscape:pagecheckerboard="true" inkscape:deskcolor="#505050" inkscape:zoom="4" inkscape:cx="41.125" inkscape:cy="47.375" inkscape:window-width="1920" inkscape:window-height="1009" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:window-maximized="1" inkscape:current-layer="svg1" showguides="true">
-    <sodipodi:guide position="0,130" orientation="0,130" id="guide9" inkscape:locked="false" />
-    <sodipodi:guide position="130,130" orientation="130,0" id="guide10" inkscape:locked="false" />
-    <sodipodi:guide position="130,0" orientation="0,-130" id="guide11" inkscape:locked="false" />
-    <sodipodi:guide position="0,0" orientation="-130,0" id="guide12" inkscape:locked="false" />
-  </sodipodi:namedview>
-  <defs id="defs1"></defs>
-  <g id="content" inkscape:label="content">
-    <path style="fill:#ffffff;fill-rule:nonzero;stroke:none;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none" d="M 84.851562,36.478516 L 35.355469,85.976562 17.677734,68.296875 H 3.535156 L 35.355469,100.11719 98.994141,36.478516 Z" id="check" transform="translate(-1.265243,-14.762193)" inkscape:label="check" />
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 130 130"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="ui_check.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   width="130"
+   height="130"
+   xml:space="preserve"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+   id="namedview1"
+   pagecolor="#505050"
+   bordercolor="#eeeeee"
+   borderopacity="1"
+   inkscape:showpageshadow="0"
+   inkscape:pageopacity="0"
+   inkscape:pagecheckerboard="true"
+   inkscape:deskcolor="#505050"
+   inkscape:zoom="4.0000001"
+   inkscape:cx="64.999998"
+   inkscape:cy="65.124998"
+   inkscape:window-width="1920"
+   inkscape:window-height="1009"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="svg1"
+   showguides="true"
+   showgrid="true">
+    
+    
+    
+    
+  <inkscape:grid
+   id="grid1"
+   units="px"
+   originx="0"
+   originy="0"
+   spacingx="1"
+   spacingy="1"
+   empcolor="#0099e5"
+   empopacity="0.30196078"
+   color="#0099e5"
+   opacity="0.14901961"
+   empspacing="5"
+   enabled="true"
+   visible="true"
+   snapvisiblegridlinesonly="true"
+   dotted="false" /><sodipodi:guide
+   position="0,130"
+   orientation="0,130"
+   id="guide1"
+   inkscape:locked="false" /><sodipodi:guide
+   position="130,130"
+   orientation="130,0"
+   id="guide2"
+   inkscape:locked="false" /><sodipodi:guide
+   position="130,0"
+   orientation="0,-130"
+   id="guide3"
+   inkscape:locked="false" /><sodipodi:guide
+   position="0,0"
+   orientation="-130,0"
+   id="guide4"
+   inkscape:locked="false" /></sodipodi:namedview>
+  <defs
+   id="defs1" />
+  <g
+   id="content"
+   inkscape:label="content"
+   transform="scale(1.3)"
+   style="stroke-width:0.769231">
+    <path
+   style="fill:#ffffff;fill-rule:nonzero;stroke:none;stroke-width:7.69231;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none"
+   d="M 76.923077,23.076923 38.461538,61.538462 23.076923,46.153846 H 7.6923073 L 38.461538,76.923077 92.307693,23.076923 Z"
+   id="check"
+   inkscape:label="check"
+   sodipodi:nodetypes="ccccccc" />
   </g>
 </svg>
