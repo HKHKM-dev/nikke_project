@@ -114,8 +114,9 @@
   color: var(--m-muted);
 }
 
+/* 落とす先の枠は、置き先待ちの枠と同じ水色 */
 :root[data-app-ui='modern'] .modern-slot-card.modern-slot-over .modern-slot-char-area {
-  outline-color: var(--m-accent);
+  outline-color: var(--placing-blue);
 }
 :root[data-app-ui='modern'] .modern-slot-empty-area {
   /* ニケがいるときの絵（.char-visual-portrait）と同じ箱（内容の幅・1px の枠）にして、大きさと枠の太さをそろえる */

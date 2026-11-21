@@ -1711,6 +1711,11 @@ html:has(.modern-view-container) {
   /* 絵の枠（1px の枠線）と外形がそろうように、絵の箱と同じ大きさに描く */
   border: 2px solid var(--placing-blue);
 }
+/* スロットの置き先待ちの枠は、ドラッグで重ねた落とす先の枠（.modern-slot-over。立ち絵の内へ 1px・外へ 2px の 3px）と同じ大きさにする */
+.modern-slot-card.modern-slot-awaiting .modern-slot-char-area::after {
+  inset: -2px;
+  border-width: 3px;
+}
 .char-tray-item-check {
   position: absolute;
   top: 50%;
