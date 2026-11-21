@@ -690,7 +690,7 @@ export function parseStackChangeEffect(v: Record<string, Json>, path: string): S
 
 /**
  * 味方の全部のスタック可能バフへのスタック量▲（plan/design-adjacent-allies.md 2.5 節）。対象は allies（武器種・コード・クラスで
- * 絞れる）。増加だけで、付いている件にだけ足す（existingOnly は書かない。いつもその読み）。条件は解除と同じ鍵
+ * 絞れる）か self（自分の枠だけ。絞り込みは書けない。plan/design-diesel.md 9 節）。増加だけで、付いている件にだけ足す（existingOnly は書かない。いつもその読み）。条件は解除と同じ鍵
  */
 function parseAllStackableChange(v: Record<string, Json>, path: string): AllStackableChangeEffect {
   rejectUnknownKeys(
@@ -712,15 +712,16 @@ function parseAllStackableChange(v: Record<string, Json>, path: string): AllStac
     path,
   );
   parseTrue(v.allStackable, `${path}.allStackable`);
-  if (v.target !== 'allies')
-    fail(`${path}.target`, `allStackable must target "allies", got ${JSON.stringify(v.target)}`);
+  if (v.target !== 'allies' && v.target !== 'self')
+    fail(`${path}.target`, `allStackable must target "allies" or "self", got ${JSON.stringify(v.target)}`);
+  const target = v.target;
   const trigger = parseTrigger(v.trigger, `${path}.trigger`);
-  const effect: AllStackableChangeEffect = { kind: 'stackChange', allStackable: true, trigger, target: 'allies' };
-  const targetWeapon = parseTargetWeapon(v, 'allies', path);
+  const effect: AllStackableChangeEffect = { kind: 'stackChange', allStackable: true, trigger, target };
+  const targetWeapon = parseTargetWeapon(v, target, path);
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
-  const targetElement = parseTargetElement(v, 'allies', path);
+  const targetElement = parseTargetElement(v, target, path);
   if (targetElement !== undefined) effect.targetElement = targetElement;
-  const targetClass = parseTargetClass(v, 'allies', path);
+  const targetClass = parseTargetClass(v, target, path);
   if (targetClass !== undefined) effect.targetClass = targetClass;
   if ((v.amount === undefined) === (v.amountRef === undefined))
     fail(path, 'expected exactly one of amount and amountRef');

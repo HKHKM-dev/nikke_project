@@ -68,6 +68,7 @@ import {
   type StacksFrom,
   type StateGrantEffect,
   type TimedEffect,
+  isAllStackableChange,
   staticStatesOf,
 } from './types.ts';
 import type { NamedStateId } from './states.ts';
@@ -1407,7 +1408,7 @@ export function resolveStackChanges(
     const skill = character.skills[slot];
     def.skills[slot].effects.forEach((effect, effectIndex) => {
       // 敵のスタック量▲は resolveDotStackUps・resolveEnemyStackUps、味方の全部のスタック可能バフへの▲は resolveAllStackableChanges
-      if (effect.kind !== 'stackChange' || effect.target === 'enemy' || effect.target === 'allies') return;
+      if (effect.kind !== 'stackChange' || isAllStackableChange(effect) || effect.target === 'enemy') return;
       const amount = amountOf(effect, skill, levels[slot]);
       const r: ResolvedStackChange = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
@@ -1453,7 +1454,7 @@ export type ResolvedAllStackableChange = {
   source: ResolvedEffect['source'];
   effectIndex: number;
   trigger: ResolvedTrigger;
-  target: 'allies';
+  target: 'allies' | 'self';
   amount: number;
   condition?: EffectCondition;
 } & Pick<TargetFields, (typeof TARGET_KEYS.filter)[number]>;
@@ -1471,12 +1472,12 @@ export function resolveAllStackableChanges(
   for (const slot of SKILL_SLOTS) {
     const skill = character.skills[slot];
     def.skills[slot].effects.forEach((effect, effectIndex) => {
-      if (effect.kind !== 'stackChange' || effect.target !== 'allies') return;
+      if (effect.kind !== 'stackChange' || !isAllStackableChange(effect)) return;
       const r: ResolvedAllStackableChange = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
         effectIndex,
         trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
-        target: 'allies',
+        target: effect.target,
         amount: amountOf(effect, skill, levels[slot]),
       };
       copyTargetFields(r, effect, TARGET_KEYS.filter);

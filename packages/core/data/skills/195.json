@@ -39,6 +39,21 @@
           "claims": [
             "C-1166"
           ]
+        },
+        {
+          "kind": "stackChange",
+          "allStackable": true,
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 6
+          },
+          "target": "allies",
+          "targetElement": "Water",
+          "amountRef": 7,
+          "assumes": {
+            "ja": "通常攻撃 値 06（90）回ごと（撃った発の通算。リロードをまたいで数える。値 01 の回復と同じ数え方）に、水冷コードの味方（自分も入る）が持つ、上限のある状態と timed のスタックのバフの全部に、付いていれば 1 段足す（上限は上げない。付いていなければ足さない。ディーゼルの宝物版 S1 と同じ読み。C-1182）。足すと全部の段の維持を付け直す（付与と同じに数える）。自分のニンジンパーティーにも足す（ダメージに効かない）。どれも確かめていない（V-0850）",
+            "en": "Every value 06 (90) normal attacks (shots fired overall, counted across reloads, the same count as value 01 heal), adds one stack to every stackable buff (states and timed buffs with a stack cap) held by Water Code allies (self included), only if present (the cap is not raised; not when absent; same reading as Diesel treasure S1, C-1182). Adding refreshes the duration of all stacks (counted like an application). Also adds to her own Carrot Party (no effect on damage). None of this is verified (V-0850)"
+          }
         }
       ],
       "notes": [
@@ -55,16 +70,6 @@
           "claims": [
             "C-0443"
           ]
-        },
-        {
-          "ja": "通常攻撃 90 回ごとの、水冷コードの味方全体（自分を含む）のスタック可能バフ効果のスタック量▲は未対応（stackChange は同じ定義で自分に付けた状態にしか書けず、ほかの味方のどのバフのスタックを足すかを読む語彙が無い。自分のニンジンパーティーの分はダメージに効かない）",
-          "en": "The stack count increase of stackable buffs on all Water Code allies (herself included) every 90 normal attacks is not modeled (stackChange can only target a state the definition grants to self, and there is no vocabulary for which buffs of other allies get the stack; the part on her own Carrot Party does not affect damage)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "stackChange",
-            "target": "allies",
-            "trigger": "normalShot"
-          }
         }
       ]
     },

@@ -7,6 +7,7 @@ import {
   INDIRECT_PATH_NAMES,
   SKILL_NOTE_KINDS,
   SKILL_SLOTS,
+  isAllStackableChange,
   contentStatOf,
   type IndirectPath,
   type SkillDefinition,
@@ -298,7 +299,7 @@ export function effectLabel(e: SkillEffect): string {
         : e.kind === 'removeDebuff'
           ? `デバフ ${e.count} 個${e.target === 'debuffedRandom' ? `（デバフのかかった味方 ${e.targetCount ?? `値 ${e.targetCountRef}`} 機）` : ''}`
           : e.kind === 'stackChange'
-            ? e.target === 'allies'
+            ? isAllStackableChange(e)
               ? 'スタック可能バフの全部'
               : `${e.state}${e.decrease ? '（減少）' : ''}`
             : e.kind === 'counterChange'

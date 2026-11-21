@@ -3,9 +3,9 @@
 - 手順: [skills-guide.md](skills-guide.md)（1 体 1 PR）・[verification-guide.md](verification-guide.md)
 - 計画の上の位置: 段の番号を使わない段の外で進める（段の一覧 [design-skill-stages.md](design-skill-stages.md) には書かない）
 - 前提の語彙: [design-skill-stage3.md](design-skill-stage3.md) 1.1・1.3 節（`stackChange`・フルスタックの消費のきっかけ `{ fullStack }`）、[design-skill-stage4.md](design-skill-stage4.md) 1.2 節（弾丸チャージ `ammoRefill`）、[design-skill-stage17.md](design-skill-stage17.md) 2.1 節（1 パス目だけが作るきっかけを timed に書く形。`{ coverHealed }`）、[design-agent-bunny.md](design-agent-bunny.md) 2.3 節（貫通ダメージ▲ `pierceDamage`）、[design-skill-stage19.md](design-skill-stage19.md) 2.2 節（スタック可能バフ効果のスタック量▲を自分の状態の分だけ書く形）
-- 検証記録: V-0763
+- 検証記録: V-0763・V-0850
 - 作成日: 2026-11-12
-- 状態: 完了
+- 状態: 撮影待ち（9 節）
 
 ## 0. 範囲
 
@@ -103,6 +103,20 @@
   - 2 回目以降の窓の読み（150 の倍数の発の 1 段・0 段の時の不発）は記録の観測値にし、0 段の時の不発の結論は人の判断（指標なし）で確定にする。
   - モデルの 1 回目のチェーンの間隔のずれは、課題（`records/backlog/`）に起票する。
 
+## 9. ほかの味方のスキルで自分に付いたスタック可能バフへのスタック量▲（論点 7）
+
+- 宝物版 S1 の「通常攻撃が 150 回命中した時、自分がヘイト状態なら自分に「スタック可能バフ効果のスタック量 1 個▲」」の足す先は、自分が持つスタック可能バフの全部（イチゴキャンディと、ほかの味方のスキルで自分に付いた上限のある状態と timed）。いまの定義（`stackChange`・`state: strawberryCandy`・`existingOnly`。8.1 節）はイチゴキャンディの分だけで、ほかの分は未対応の notes（2.2 節）。
+- 足す先をまとめて書く語彙 `stackChange` の `allStackable`（[design-adjacent-allies.md](design-adjacent-allies.md) 2.5 節）は、足す先の読み（上限のある状態の付与と timed の件の列の全部・付いていなければ足さない・段 1.5）がこの文と同じだが、対象は `allies`（武器種・コード・クラスで絞る）だけで、「自分に」を書けない（`skills/parse/state.ts` の `parseAllStackableChange`）。
+- 推奨: `allStackable` に `target: "self"` を許す。
+  - 足す先は自分の枠の件の列だけ。絞り込み（`targetWeapon`・`targetElement`・`targetClass`）とは組まない。ほかの読み（付いていなければ足さない・段 1.5・増加だけ・条件の鍵）は `allies` と同じ。対象の枠を決める `isEffectTarget`（`skills/targets.ts`）は `self` をそのまま扱う。
+  - 宝物版 S1 の `effects[0]` を、`allStackable`・`target: "self"`（きっかけ・条件・`amountRef` は今のまま）に置き換え、未対応の notes を消す。イチゴキャンディも足す先に入るので、イチゴキャンディに足す振る舞い（C-1180・C-1182）は変わらない見込みで、既存の観測値の予測が変わらないことで確かめる。
+  - 実装: 型（`AllStackableChangeEffect` の `target` を `'allies' | 'self'`）と読み込みの検査。`allStackable` を対象（`target === 'allies'`）で見分けている所（`skills/resolve.ts` の 2 か所・`skills/holders/items.ts`・`skills/parse/crossChecks.ts`・`records/relevance.ts`）を、`allStackable` の有無で見分けるように直す。
+- 代わりの案:
+  - イチゴキャンディの `stackChange` を残し、ほかの分だけを別の効果にする: イチゴキャンディを除いて足す語彙が要り、足す先の読みが 2 つに分かれる。
+  - 未対応の notes のままにする: ほかの味方のスタック可能バフ（センチの宝物版 S2 など）を付けた編成で、ヘイトの間のディーゼルの段が 1 段ずつ足りなくなる。
+- 退化: `target: "self"` を書かない定義は変わらない。
+- 撮って確かめる問い: 撮影は V-0850（編成・予測・撮影の依頼はそちら）。センチの宝物版 S2 の攻撃力▲がディーゼルに付いている間に、ヘイトの中の 150 回目で、ディーゼルの攻撃力▲の段がほかの味方（センチ・フラワー）の段より 1 段多くなるか。
+
 ## 経過
 
 - 2026-11-12: 起案。V-0763 を起こした。
@@ -110,3 +124,5 @@
 - 2026-11-14: 録画 1133 を取り込んで読んだ。8 節の論点 5・6 を起案し、オーナーが推奨どおり承認した。`existingOnly` を実装し、V-0763 を閉じた（C-1179〜C-1185）。チェーンの間隔のずれは課題 2-58 に起票した。
 - 2026-11-14: 課題 2-58 を V-0769 で閉じた（1 回目のチェーンの後の満タンの早さは、フラワーの発が壊した物のゲージ。C-1199）。3 回目からの溜まりの差（ディーゼルとフラワーのマガジンの位相）は課題 2-67 に起票した。
 - 2026-11-15: 課題 2-67 を V-0795 で閉じた（3 回目からの溜まりの差は、ディーゼルのリロードで込める最大装弾数の段の違い。フラワーへの弾丸チャージではない。C-1317）。
+- 2026-11-21: ほかの味方のスキルで自分に付いたスタック可能バフへのスタック量▲（9 節）を起案した（V-0850）。論点 7 をオーナーに諮る。
+- 2026-11-21: オーナーが論点 7 を推奨どおりに決めた。語彙と定義を入れ（既存の観測値の予測は変わらない）、撮影 V-0850 を依頼した。

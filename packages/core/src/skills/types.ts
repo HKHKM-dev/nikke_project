@@ -2750,9 +2750,14 @@ export type StateExtendEffect = {
 /** スタック量の増減。自分か敵の 1 つの状態（OwnStackChangeEffect）か、味方の全部のスタック可能バフ（AllStackableChangeEffect） */
 export type StackChangeEffect = OwnStackChangeEffect | AllStackableChangeEffect;
 
+/** 味方の全部のスタック可能バフへのスタック量▲か（対象は allies か self） */
+export function isAllStackableChange(effect: StackChangeEffect): effect is AllStackableChangeEffect {
+  return 'allStackable' in effect;
+}
+
 /**
  * 「〈味方〉に、スタック可能バフ効果のスタック量 N 個▲」（plan/design-adjacent-allies.md 2.5 節）。対象の枠（allies を
- * targetWeapon・targetElement・targetClass で絞った枠）が持つ、上限のある状態の付与の件の列（敵に付く状態・stackImmutable を除く）と、
+ * targetWeapon・targetElement・targetClass で絞った枠。self なら自分の枠だけ。plan/design-diesel.md 9 節）が持つ、上限のある状態の付与の件の列（敵に付く状態・stackImmutable を除く）と、
  * 上限のある timed の件の列（確率のきっかけを除く）の全部に、足す段の始まりのフレーム（射撃の回数のきっかけは発の次のフレーム）に
  * 件が付いていれば始まりを amount 個足す（付いていなければ足さない。OwnStackChangeEffect の existingOnly と同じ。C-1182）。
  * どの枠の定義から付いた件でもよい。増加だけ。段は 1.5（件を読む）
@@ -2761,7 +2766,8 @@ export type AllStackableChangeEffect = FixedTargetFields & {
   kind: 'stackChange';
   allStackable: true;
   trigger: EffectTrigger;
-  target: 'allies';
+  /** self は絞り込み（targetWeapon・targetElement・targetClass）と組まない */
+  target: 'allies' | 'self';
   targetWeapon?: WeaponType;
   targetElement?: Element;
   targetClass?: NikkeClass;
