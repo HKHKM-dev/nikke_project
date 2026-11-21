@@ -11,13 +11,17 @@ export type ActiveDragData =
   | { type: 'slot-character'; slotIndex: number; character: CharacterIndexEntry | undefined }
   /** 一覧のニケ（CharacterTrayItem） */
   | { type: 'tray-character'; character: CharacterIndexEntry }
-  /** 選んでいない編成の行のニケ（PartyPreviewRow）。ニケのいるスロットだけ持ち上げられる */
-  | { type: 'party-character'; partyIndex: number; slotIndex: number; character: CharacterIndexEntry };
+  /** 選んでいない編成の行のスロット（PartyPreviewRow）。空のスロットも持ち上げられ、character が無い */
+  | { type: 'party-character'; partyIndex: number; slotIndex: number; character: CharacterIndexEntry | undefined }
+  /** 行の左の編成の番号（PartyRowLabel） */
+  | { type: 'party-label'; partyIndex: number };
 
 /** 離す所の data（useDroppable の data）: スロット（ModernSlotCard）・選んでいない編成のスロット（PartyPreviewRow）・ニケ一覧（CharacterTray） */
 export type OverDragData =
   | { type: 'slot'; slotIndex: number }
   | { type: 'party-slot'; partyIndex: number; slotIndex: number }
+  /** 行の左の編成の番号（PartyRowLabel） */
+  | { type: 'party-label'; partyIndex: number }
   | { type: 'tray' };
 
 /**
@@ -46,7 +50,9 @@ export type DropIntent =
    */
   | { kind: 'exchange'; from: SlotRef; to: SlotRef }
   /** 選んでいない編成 party のスロット index のニケを一覧へ戻し、そのスロットを空にする */
-  | { kind: 'unplace-party'; party: number; index: number };
+  | { kind: 'unplace-party'; party: number; index: number }
+  /** 編成 a と b の中身を入れ替える（編成の番号を別の番号に落とした。選んでいる編成の番号は変えない） */
+  | { kind: 'swap-parties'; a: number; b: number };
 
 /** スロットの場所。party が null なら選んでいる編成（ドラッグの data は、選んでいる編成のスロットに編成の番号を持たない） */
 export type SlotRef = { party: number | null; index: number };
@@ -57,17 +63,23 @@ export function dropIntentOf(activeData: Data | undefined, overData: Data | unde
   const active = activeDragData(activeData);
   const over = overDragData(overData);
   if (!active || !over) return NONE;
+  // 編成の番号は、別の番号に落としたときだけ入れ替える（番号にはほかのものを落とせない）
+  if (active.type === 'party-label' || over.type === 'party-label') {
+    return active.type === 'party-label' && over.type === 'party-label' && active.partyIndex !== over.partyIndex
+      ? { kind: 'swap-parties', a: active.partyIndex, b: over.partyIndex }
+      : NONE;
+  }
   if (over.type === 'tray') {
     if (active.type === 'party-character')
-      return { kind: 'unplace-party', party: active.partyIndex, index: active.slotIndex };
+      return active.character ? { kind: 'unplace-party', party: active.partyIndex, index: active.slotIndex } : NONE;
     return active.type === 'slot-character' && active.character ? { kind: 'unplace', index: active.slotIndex } : NONE;
   }
-  // 選んでいない編成のスロットには、一覧のニケを置き、選んでいる編成・選んでいない編成のニケを移す（空のスロット・操作の印は何もしない）
+  // 選んでいない編成のスロットには、一覧のニケを置き、選んでいる編成・選んでいない編成のスロットと入れ替える（空のスロットも。操作の印は何もしない）
   if (over.type === 'party-slot') {
     const to = { party: over.partyIndex, index: over.slotIndex };
     if (active.type === 'tray-character')
       return { kind: 'place-party', character: active.character, party: over.partyIndex, index: over.slotIndex };
-    if (active.type === 'slot-character' && active.character)
+    if (active.type === 'slot-character')
       return { kind: 'exchange', from: { party: null, index: active.slotIndex }, to };
     if (active.type === 'party-character') {
       const same = active.partyIndex === to.party && active.slotIndex === to.index;

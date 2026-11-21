@@ -31,6 +31,8 @@ export type ViewProps = {
   clearPartySlot: (party: number, index: number) => void;
   /** 2 つのスロット（どの編成でも）の中身を入れ替える（選んでいる編成は変えない） */
   exchangeSlots: (a: PartySlotRef, b: PartySlotRef) => void;
+  /** 編成 a と b の中身を入れ替える（選んでいる編成の番号は変えない） */
+  swapPartyContents: (a: number, b: number) => void;
   totals: { parties: PartyTotal[]; total: number | null };
   totalsPending: boolean;
   summarySlots: readonly (NotesSummarySlot | null)[];

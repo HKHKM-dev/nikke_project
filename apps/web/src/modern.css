@@ -121,6 +121,7 @@
 }
 
 /* 落とす先の枠は、置き先待ちの枠と同じ水色 */
+:root[data-app-ui='modern'] .modern-party-row-label.party-label-over .party-tab,
 :root[data-app-ui='modern'] .modern-slot-card.modern-slot-over .modern-slot-char-area {
   outline-color: var(--placing-blue);
 }

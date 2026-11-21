@@ -9,6 +9,7 @@ import {
   type PartiesState,
   serializeParties,
   switchParty,
+  swapParties,
   updateOtherParty,
   withoutCrossPartyDuplicates,
 } from './parties.ts';
@@ -172,6 +173,29 @@ describe('parties', () => {
     const next = withoutCrossPartyDuplicates(state, team);
     expect(next.parties).toBe(state);
     expect(next.team).toBe(team);
+  });
+});
+
+describe('swapParties（編成の番号のドラッグ）', () => {
+  it('選んでいる編成の番号は変えず、中身（スロットと操作キャラ）を入れ替える', () => {
+    let team = withCharacter(INITIAL_TEAM_STATE, 0, 10);
+    team = teamReducer(team, { type: 'setControlledSlot', index: 0 });
+    team = teamReducer(team, { type: 'setDuration', durationSeconds: 60 });
+    const state = updateOtherParty(INITIAL_PARTIES, team, 2, { type: 'selectCharacter', index: 1, resourceId: 11 });
+    const swapped = swapParties(state, team, 0, 2);
+    expect(swapped.parties.active).toBe(0);
+    expect(swapped.parties.parties[0]).toBeNull();
+    expect(swapped.team.slots.map((s) => s.resourceId)).toEqual([null, 11, null, null, null]);
+    expect(swapped.team.durationSeconds).toBe(60);
+    expect(swapped.parties.parties[2]!.slots[0]!.resourceId).toBe(10);
+    expect(swapped.parties.parties[2]!.controlledSlot).toBe(0);
+    // 選んでいない編成どうし（空の編成とも）
+    const others = swapParties(state, team, 2, 4);
+    expect(others.team).toBe(team);
+    expect(others.parties.parties[2]).toBeNull();
+    expect(others.parties.parties[4]!.slots[1]!.resourceId).toBe(11);
+    expect(swapParties(state, team, 1, 1).parties).toBe(state);
+    expect(swapParties(state, team, 1, 5).parties).toBe(state);
   });
 });
 

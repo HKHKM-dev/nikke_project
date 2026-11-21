@@ -855,6 +855,18 @@ svg.roster-revert-icon {
   grid-template-columns: 4em;
   align-items: center;
 }
+/* 編成の番号を持ち上げている間は、元の番号を隠す。持ち上げた番号を重ねている番号（落とす先）には、スロットと同じ印を付ける */
+.modern-party-row-label.party-label-dragging .party-tab {
+  visibility: hidden;
+}
+.modern-party-row-label.party-label-over .party-tab {
+  outline: 3px solid Highlight;
+  outline-offset: -1px;
+}
+/* 持ち上げた番号（DragOverlay）。行の左の番号と同じ幅 */
+.party-label-drag-overlay {
+  width: 4em;
+}
 /* 編成の番号のボタンは、幅（4em）はそのままで正方形にする（オーナーのコメント） */
 .modern-party-row-label .party-tab {
   aspect-ratio: 1 / 1;

@@ -33,6 +33,7 @@ export function ModernView({
   placeInParty,
   clearPartySlot,
   exchangeSlots,
+  swapPartyContents,
   totals,
   totalsPending,
   summarySlots,
@@ -94,6 +95,8 @@ export function ModernView({
     placeInParty,
     clearPartySlot,
     exchangeSlots,
+    // 編成の番号を別の番号に落としたら、2 つの編成の中身を入れ替える（選んでいる編成の番号は変えない）
+    swapPartyContents,
     onDragStart: () => setPendingId(null),
   });
 

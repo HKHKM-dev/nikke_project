@@ -10,13 +10,13 @@ import {
   type MouseSensorOptions,
 } from '@dnd-kit/core';
 import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
-import { useRef, useState, type Dispatch, type MouseEvent as ReactMouseEvent } from 'react';
+import { useLayoutEffect, useRef, useState, type Dispatch, type MouseEvent as ReactMouseEvent } from 'react';
 import type { CalcView } from '../../calcView.ts';
 import type { PartiesState, PartySlotRef } from '../../parties.ts';
 import type { TeamAction, TeamState } from '../../team.ts';
 import { trayCollectionBadge, type Badge } from './badges.ts';
 import { partyCardAt, setDropPlaced, slotCardAt } from './dropAnimation.ts';
-import { flyControllerInto, flyToTray } from './flight.ts';
+import { FLIGHT, flyControllerInto, flyToTray } from './flight.ts';
 import { activeDragData, dropIntentOf, type SlotRef } from './dropIntent.ts';
 import { trayGrowthMarks, type GrowthMarks } from './GrowthMarks.tsx';
 import { slotCollectionBadge, slotGrowthMarks } from './slotBadges.ts';
@@ -62,6 +62,8 @@ export type DragOverlayState = {
   draggedCharacter: CharacterIndexEntry | null;
   /** 持ち上げた空のスロットの番号（空のスロットを持ち上げていなければ null） */
   draggedEmptyIndex: number | null;
+  /** 持ち上げた編成の番号（0 から）と、それが選んでいる編成か（番号を持ち上げていなければ null） */
+  draggedPartyLabel: { index: number; active: boolean } | null;
   /** スロットから持ち上げた立ち絵（一覧から持ち上げたときは null） */
   draggedPortrait: DraggedPortrait | null;
   /** 持ち上げたものの限界突破・コア強化とコレクションのバッジ（持ち上げた絵に、名前と一緒に出す） */
@@ -83,6 +85,8 @@ type Params = {
   clearPartySlot: (party: number, index: number) => void;
   /** 2 つのスロット（どの編成でも）の中身を入れ替える（選んでいる編成は変えない） */
   exchangeSlots: (a: PartySlotRef, b: PartySlotRef) => void;
+  /** 編成 a と b の中身を入れ替える（選んでいる編成の番号は変えない） */
+  swapPartyContents: (a: number, b: number) => void;
   /** ドラッグを始めたとき */
   onDragStart: () => void;
 };
@@ -91,6 +95,10 @@ type Params = {
  * ドラッグを離した直後のクリックを 1 回だけ止める。選んでいない編成の行は、押すとその編成を選ぶボタンで、同じ行の中で持ち上げて
  * 離すと、離した後にそのボタンのクリックが届く（押した所と離した所の共通の親）。クリックは離した直後に届くので、次のタスクで外す
  */
+/** 編成 party（0 から）の行のスロットの並び（無ければ null） */
+const slotsGridOf = (party: number) =>
+  document.querySelectorAll('.modern-party-row')[party]?.querySelector<HTMLElement>('.modern-slots-grid') ?? null;
+
 function suppressNextClick(): void {
   const stop = (event: MouseEvent) => {
     event.stopPropagation();
@@ -110,11 +118,13 @@ export function useSlotDrag({
   placeInParty,
   clearPartySlot,
   exchangeSlots,
+  swapPartyContents,
   onDragStart,
 }: Params) {
   const [draggedCharacter, setDraggedCharacter] = useState<CharacterIndexEntry | null>(null);
   const [draggingController, setDraggingController] = useState(false);
   const [draggedEmptyIndex, setDraggedEmptyIndex] = useState<number | null>(null);
+  const [draggedPartyLabel, setDraggedPartyLabel] = useState<DragOverlayState['draggedPartyLabel']>(null);
   const [draggedPortrait, setDraggedPortrait] = useState<DraggedPortrait | null>(null);
   const [draggedExtras, setDraggedExtras] = useState<{ marks: GrowthMarks | null; collection: Badge | null }>({
     marks: null,
@@ -138,7 +148,26 @@ export function useSlotDrag({
     setDraggedCharacter(null);
     setDraggedEmptyIndex(null);
     setDraggedPortrait(null);
+    setDraggedPartyLabel(null);
   };
+
+  // 編成を入れ替えたら、入れ替えた 2 つの行のスロットの並びを、入れ替える前の相手の行の位置から自分の行の位置へ動かす。
+  // 入れ替えの後の描画（編成の一覧が変わった描画）で動かし始める
+  const rowFlipRef = useRef<{ before: PartiesState; rows: { party: number; from: DOMRect }[] } | null>(null);
+  useLayoutEffect(() => {
+    const flip = rowFlipRef.current;
+    if (!flip || flip.before === parties) return;
+    rowFlipRef.current = null;
+    for (const { party, from } of flip.rows) {
+      const grid = slotsGridOf(party);
+      if (!grid) continue;
+      const to = grid.getBoundingClientRect();
+      grid.animate(
+        [{ transform: `translate(${from.left - to.left}px, ${from.top - to.top}px)` }, { transform: 'none' }],
+        { duration: FLIGHT.duration, easing: FLIGHT.easing },
+      );
+    }
+  });
 
   const handleDragStart = (event: DragStartEvent) => {
     onDragStart();
@@ -152,10 +181,15 @@ export function useSlotDrag({
       setDraggingController(true);
       return;
     }
+    if (data?.type === 'party-label') {
+      setDraggedPartyLabel({ index: data.partyIndex, active: data.partyIndex === parties.active });
+      return;
+    }
     if (data?.character) setDraggedCharacter(data.character);
     const fromSlot = data?.type === 'slot-character' ? data : null;
     const fromParty = data?.type === 'party-character' ? data : null;
-    setDraggedEmptyIndex(fromSlot && !fromSlot.character ? fromSlot.slotIndex : null);
+    const fromAny = fromSlot ?? fromParty;
+    setDraggedEmptyIndex(fromAny && !fromAny.character ? fromAny.slotIndex : null);
     if (fromSlot) {
       setDraggedExtras({
         marks: slotGrowthMarks(calc, team, roster, fromSlot.slotIndex),
@@ -163,7 +197,8 @@ export function useSlotDrag({
       });
     } else if (fromParty) {
       // 選んでいない編成の行と同じく、限界突破・コア強化は育成状況の値（コレクションは出さない。PartyPreviewRow）
-      setDraggedExtras({ marks: trayGrowthMarks(fromParty.character, roster, team.fixedSpec), collection: null });
+      const marks = fromParty.character ? trayGrowthMarks(fromParty.character, roster, team.fixedSpec) : null;
+      setDraggedExtras({ marks, collection: null });
     } else if (data?.type === 'tray-character') {
       setDraggedExtras({
         marks: trayGrowthMarks(data.character, roster, team.fixedSpec),
@@ -210,7 +245,9 @@ export function useSlotDrag({
 
   const handleDragEnd = (event: DragEndEvent) => {
     clearDragged();
-    if (activeDragData(event.active.data.current)?.type === 'party-character') suppressNextClick();
+    // 選んでいない編成の行と編成の番号は、押すと編成を選ぶボタン。離した後に届くクリックで選ばないようにする
+    const activeType = activeDragData(event.active.data.current)?.type;
+    if (activeType === 'party-character' || activeType === 'party-label') suppressNextClick();
     const intent = dropIntentOf(event.active.data.current, event.over?.data.current);
     switch (intent.kind) {
       case 'controller': {
@@ -252,6 +289,24 @@ export function useSlotDrag({
         clearPartySlot(intent.party, intent.index);
         break;
       }
+      case 'swap-parties': {
+        // 番号は動かず、中身（スロットの並び）が入れ替わる。持ち上げた番号はその場で消す
+        const rectOf = (party: number) => slotsGridOf(party)?.getBoundingClientRect();
+        const fromA = rectOf(intent.a);
+        const fromB = rectOf(intent.b);
+        setDropPlaced(true);
+        if (fromA && fromB) {
+          rowFlipRef.current = {
+            before: parties,
+            rows: [
+              { party: intent.a, from: fromB },
+              { party: intent.b, from: fromA },
+            ],
+          };
+        }
+        swapPartyContents(intent.a, intent.b);
+        break;
+      }
       case 'exchange': {
         // 持ち上げた絵は、離した位置から落とした先へ、落とした先にいたニケは、その元の位置から持ち上げた元のスロットへ動かす
         const from = { party: partyOf(intent.from), index: intent.from.index };
@@ -259,7 +314,8 @@ export function useSlotDrag({
         const dragged = document.querySelector('.slot-drag-overlay-portrait')?.getBoundingClientRect();
         const displaced = areaRectAt(to.party, to.index);
         setDropPlaced(true);
-        arriveAt(to.party, to.index, dragged);
+        // 空のスロットは動かさない（その場で入れ替わる）
+        arriveAt(to.party, to.index, resourceIdAt(from.party, from.index) === null ? undefined : dragged);
         arriveAt(from.party, from.index, displaced);
         exchangeSlots(from, to);
         break;
@@ -280,6 +336,7 @@ export function useSlotDrag({
     draggingController,
     draggedCharacter,
     draggedEmptyIndex,
+    draggedPartyLabel,
     draggedPortrait,
     draggedMarks: draggedExtras.marks,
     draggedCollection: draggedExtras.collection,

@@ -1,6 +1,7 @@
 // モダン UI の持ち上げた絵（DragOverlay）。操作の印・スロットから持ち上げた立ち絵・一覧から持ち上げた絵のどれか
 import { DragOverlay } from '@dnd-kit/core';
 import type { CSSProperties } from 'react';
+import { partyNumber } from '../../parties.ts';
 import type { TrayShape } from '../../trayShape.ts';
 import { TrayItemFace } from './CharacterTrayItem.tsx';
 import { CharacterVisual } from './CharacterVisual.tsx';
@@ -13,6 +14,7 @@ export function SlotDragOverlay({
     draggingController,
     draggedCharacter,
     draggedEmptyIndex,
+    draggedPartyLabel,
     draggedPortrait,
     draggedMarks,
     draggedCollection,
@@ -29,6 +31,19 @@ export function SlotDragOverlay({
         <span className="controller-drag-overlay">
           <ControllerIcon />
         </span>
+      ) : draggedPartyLabel ? (
+        // 編成の番号（行の左のボタン）と同じ見た目
+        <div className="party-tab-cell modern-party-row-label party-label-drag-overlay" aria-hidden="true">
+          {/* 見た目を番号のボタンとそろえるため button で描く（持ち上げた絵なので、押せず、フォーカスも受けない） */}
+          <button
+            type="button"
+            tabIndex={-1}
+            className="toggle-button party-tab"
+            aria-pressed={draggedPartyLabel.active}
+          >
+            {partyNumber(draggedPartyLabel.index)}
+          </button>
+        </div>
       ) : (draggedCharacter || draggedEmptyIndex !== null) && draggedPortrait ? (
         // 離したときのアニメーションは、この外側の箱をドラッグ元（カード）の位置へ戻す。外側をカードと同じ大きさにし、
         // 立ち絵をカードの中と同じ位置に置くと、立ち絵が元あった場所へ戻る
@@ -63,7 +78,7 @@ export function SlotDragOverlay({
                 <SlotCharName name={draggedCharacter.name.ja} marks={draggedMarks} />
               </div>
             ) : (
-              <EmptySlotFace tall slotIndex={draggedEmptyIndex!} />
+              <EmptySlotFace tall={!draggedPortrait.square} slotIndex={draggedEmptyIndex!} />
             )}
           </div>
         </div>

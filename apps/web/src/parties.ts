@@ -182,6 +182,30 @@ export function exchangePartySlots(
   return { parties: { ...state, parties }, team: nextTeam };
 }
 
+/**
+ * 編成 a と b の中身（スロットと操作キャラ）を入れ替える（モダン UI で、編成の番号をドラッグして入れ替える）。選んでいる編成の番号は変えず、
+ * 選んでいる編成が入れ替わるなら、画面の編成（team）の中身を入れ替えた先のものにする。同じ編成・範囲の外なら何もしない
+ */
+export function swapParties(
+  state: PartiesState,
+  team: TeamState,
+  a: number,
+  b: number,
+): { parties: PartiesState; team: TeamState } {
+  const inRange = (i: number) => i >= 0 && i < PARTY_COUNT;
+  if (a === b || !inRange(a) || !inRange(b)) return { parties: state, team };
+  const contentOf = (i: number) => (i === state.active ? partyOf(team) : (state.parties[i] ?? null));
+  const parties = state.parties.slice();
+  const nextA = contentOf(b);
+  const nextB = contentOf(a);
+  parties[a] = nextA;
+  parties[b] = nextB;
+  const active = parties[state.active] ?? null;
+  const nextTeam = a === state.active || b === state.active ? withParty(team, active) : team;
+  parties[state.active] = null;
+  return { parties: { ...state, parties }, team: nextTeam };
+}
+
 export function serializeParties(state: PartiesState): string {
   return JSON.stringify({ formatVersion: TEAM_FORMAT_VERSION, ...state });
 }

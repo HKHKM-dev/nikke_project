@@ -12,6 +12,7 @@ import {
   INITIAL_PARTIES,
   exchangePartySlots,
   otherPartyResourceIds,
+  swapParties,
   switchParty,
   updateOtherParty,
   type PartiesState,
@@ -74,6 +75,13 @@ export function App() {
   // 2 つのスロット（どの編成でも）の中身を入れ替える（ニケを編成の行どうしの間で移す。選んでいる編成は変えない）
   const exchangeSlots = (a: PartySlotRef, b: PartySlotRef) => {
     const next = exchangePartySlots(parties, team, a, b);
+    setParties(next.parties);
+    if (next.team !== team) dispatch({ type: 'replace', state: next.team });
+  };
+
+  // 編成 a と b の中身を入れ替える（選んでいる編成の番号は変えない）
+  const swapPartyContents = (a: number, b: number) => {
+    const next = swapParties(parties, team, a, b);
     setParties(next.parties);
     if (next.team !== team) dispatch({ type: 'replace', state: next.team });
   };
@@ -167,6 +175,7 @@ export function App() {
         placeInParty,
         clearPartySlot,
         exchangeSlots,
+        swapPartyContents,
         totals,
         totalsPending,
         summarySlots,

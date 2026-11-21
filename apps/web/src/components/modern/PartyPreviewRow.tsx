@@ -39,6 +39,10 @@ export function PartyPreviewRow({ partyIndex, party, indexMap, roster, fixedSpec
               <>
                 <CharacterVisual character={entry} size="portrait" />
                 <SlotCharName name={entry.name.ja} marks={trayGrowthMarks(entry, roster, fixedSpec)} />
+                {/* 持ち上げている間・戻る間と、ニケが動いてくる間は、絵の代わりに空のスロットの枠を出す（選んでいる編成のスロットと同じ） */}
+                <div className="modern-slot-arrival-face" aria-hidden="true">
+                  <EmptySlotFace />
+                </div>
               </>
             ) : (
               <EmptySlotFace />
@@ -51,7 +55,7 @@ export function PartyPreviewRow({ partyIndex, party, indexMap, roster, fixedSpec
 }
 
 /**
- * 選んでいない編成のスロット 1 枚。ニケを落とせ（useSlotDrag の place-party・exchange）、ニケのいるスロットは持ち上げられる。
+ * 選んでいない編成のスロット 1 枚。ニケを落とせ（useSlotDrag の place-party・exchange）、持ち上げられる（空のスロットも）。
  * 行（button）の中なので、ドラッグの部品の役割（attributes の role="button" など）は付けない
  */
 function PreviewCard({
@@ -75,8 +79,7 @@ function PreviewCard({
     isDragging,
   } = useDraggable({
     id: `party-${partyIndex}-drag-${slotIndex}`,
-    disabled: !character,
-    data: character && ({ type: 'party-character', partyIndex, slotIndex, character } satisfies ActiveDragData),
+    data: { type: 'party-character', partyIndex, slotIndex, character } satisfies ActiveDragData,
   });
   const setCardRef = (node: HTMLDivElement | null) => {
     setDropRef(node);
@@ -95,7 +98,10 @@ function PreviewCard({
   );
 }
 
-/** 行の左の、編成の番号（押すとその編成を選ぶ）。PartyTabs の 1 つ分と同じ見た目。編成ごとのダメージは出さない（オーナーのコメント） */
+/**
+ * 行の左の、編成の番号（押すとその編成を選ぶ）。PartyTabs の 1 つ分と同じ見た目。編成ごとのダメージは出さない（オーナーのコメント）。
+ * ドラッグして別の番号に落とすと、2 つの編成の中身を入れ替える（useSlotDrag の swap-parties）
+ */
 export function PartyRowLabel({
   partyIndex,
   active,
@@ -105,8 +111,28 @@ export function PartyRowLabel({
   active: boolean;
   onSelect: () => void;
 }) {
+  const { isOver, setNodeRef: setDropRef } = useDroppable({
+    id: `party-label-drop-${partyIndex}`,
+    data: { type: 'party-label', partyIndex } satisfies OverDragData,
+  });
+  const {
+    listeners,
+    setNodeRef: setDragRef,
+    isDragging,
+  } = useDraggable({
+    id: `party-label-drag-${partyIndex}`,
+    data: { type: 'party-label', partyIndex } satisfies ActiveDragData,
+  });
+  const setCellRef = (node: HTMLDivElement | null) => {
+    setDropRef(node);
+    setDragRef(node);
+  };
   return (
-    <div className="party-tab-cell modern-party-row-label">
+    <div
+      ref={setCellRef}
+      className={`party-tab-cell modern-party-row-label ${isOver ? 'party-label-over' : ''} ${isDragging ? 'party-label-dragging' : ''}`}
+      {...listeners}
+    >
       <button
         type="button"
         className="toggle-button party-tab"

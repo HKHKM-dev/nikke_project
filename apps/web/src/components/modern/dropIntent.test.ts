@@ -50,7 +50,7 @@ describe('dropIntentOf', () => {
     expect(dropIntentOf(slotNikke(2), slot(2))).toEqual({ kind: 'none' });
   });
 
-  it('選んでいない編成のスロットには、一覧のニケを置き、スロットのニケを移す（空のスロット・操作の印は何もしない）', () => {
+  it('選んでいない編成のスロットには、一覧のニケを置き、スロットと入れ替える（空のスロットも。操作の印は何もしない）', () => {
     const partySlot: OverDragData = { type: 'party-slot', partyIndex: 3, slotIndex: 1 };
     expect(dropIntentOf(trayNikke, partySlot)).toEqual({ kind: 'place-party', character: nikke, party: 3, index: 1 });
     expect(dropIntentOf(slotNikke(0), partySlot)).toEqual({
@@ -58,7 +58,11 @@ describe('dropIntentOf', () => {
       from: { party: null, index: 0 },
       to: { party: 3, index: 1 },
     });
-    expect(dropIntentOf(emptySlot(0), partySlot)).toEqual({ kind: 'none' });
+    expect(dropIntentOf(emptySlot(0), partySlot)).toEqual({
+      kind: 'exchange',
+      from: { party: null, index: 0 },
+      to: { party: 3, index: 1 },
+    });
     expect(dropIntentOf(controller, partySlot)).toEqual({ kind: 'none' });
   });
 
@@ -81,5 +85,23 @@ describe('dropIntentOf', () => {
     });
     expect(dropIntentOf(partyNikke, { type: 'party-slot', partyIndex: 2, slotIndex: 4 })).toEqual({ kind: 'none' });
     expect(dropIntentOf(partyNikke, TRAY)).toEqual({ kind: 'unplace-party', party: 2, index: 4 });
+    // 空のスロットも入れ替える。一覧に離しても何もしない
+    const partyEmpty: ActiveDragData = { type: 'party-character', partyIndex: 2, slotIndex: 0, character: undefined };
+    expect(dropIntentOf(partyEmpty, slot(3))).toEqual({
+      kind: 'exchange',
+      from: { party: 2, index: 0 },
+      to: { party: null, index: 3 },
+    });
+    expect(dropIntentOf(partyEmpty, TRAY)).toEqual({ kind: 'none' });
+  });
+
+  it('編成の番号は、別の番号に離すと編成を入れ替える。ほかの所・ほかのものとは何もしない', () => {
+    const label = (partyIndex: number) => ({ type: 'party-label', partyIndex }) as const;
+    expect(dropIntentOf(label(0), label(3))).toEqual({ kind: 'swap-parties', a: 0, b: 3 });
+    expect(dropIntentOf(label(3), label(3))).toEqual({ kind: 'none' });
+    expect(dropIntentOf(label(0), slot(1))).toEqual({ kind: 'none' });
+    expect(dropIntentOf(label(0), TRAY)).toEqual({ kind: 'none' });
+    expect(dropIntentOf(trayNikke, label(1))).toEqual({ kind: 'none' });
+    expect(dropIntentOf(slotNikke(0), label(1))).toEqual({ kind: 'none' });
   });
 });
