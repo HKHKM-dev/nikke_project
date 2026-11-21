@@ -42,8 +42,9 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(windows.length).toBeGreaterThanOrEqual(2);
     expect(runs.length).toBeGreaterThanOrEqual(2);
     runs.forEach((run, k) => {
-      // 最初の発は窓が射手に見えてから 112f（firstShotDelayFrames）。戻るのは最後の発の次のフレーム
-      expect(run[0]! - windows[k]!.start).toBe(113);
+      // 最初の発は、その前に始まったフルバーストの窓が射手に見えてから 112f（firstShotDelayFrames）。戻るのは最後の発の次のフレーム
+      const start = windows.filter((w) => w.start <= run[0]!).at(-1)!.start;
+      expect(run[0]! - start).toBe(113);
       expect(ends[k]).toBe(run.at(-1)! + 1);
       // 味方の最大装弾数▲が無ければ 6 発（的のジャンプでハイドしても込め直さない）
       if (input.slots.every((s) => s === null || [311, 301, DRAKE_GV].includes(s.character.resourceId)))
@@ -69,12 +70,11 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
       sim.slots[d]!.segments.find((g) => g.start <= f && f < g.end)!.buffs.attackParts.find(
         (x) => x.source === '104.skill2',
       )!.flat;
-    // 戦闘開始の▲から、枠のバフ前の最大HP を逆に出す（スタックの無い間の値）
-    const hp = lateAt(0) / LATE;
+    // 1 スタックごとの上がり幅は、ドレイク：グレイトヴィランのバフ前の最大HP × 最大HP のみ▲ × 遅刻（味方のほかの最大HP▲によらない）
+    const steps = fbEnds.slice(0, 4).map((f) => lateAt(f + 1) - lateAt(f - 1));
+    const hp = steps[0]! / (MAX_HP_ONLY * LATE);
     expect(hp).toBeGreaterThan(1_000_000);
-    fbEnds.slice(0, 4).forEach((f, k) => {
-      expect(lateAt(f + 1)).toBeCloseTo(hp * (1 + MAX_HP_ONLY * (k + 1)) * LATE, 3);
-    });
+    for (const step of steps) expect(step).toBeCloseTo(hp * MAX_HP_ONLY * LATE, 3);
   });
 
   it('hits the Burst skill damage once per Burst', () => {
