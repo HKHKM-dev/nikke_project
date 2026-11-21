@@ -1,0 +1,46 @@
+{
+  "id": "1310",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1310_rl+smg+sr_i-doll-flower+novel+yulha_fire.mp4",
+  "original": "2026-11-21_18-26-00.mp4",
+  "durationSec": 201.5,
+  "frames": 12089,
+  "fps": 60,
+  "sizeMB": 244.3,
+  "sha256": "363217374546",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 212,
+      "name": "ノベル",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 171,
+      "name": "ユルハ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-21T18:33+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
