@@ -80,9 +80,6 @@ function git(args: readonly string[]): string {
   return gitRaw(args).trim();
 }
 
-/** バッジの書き出し（apps/web/scripts/badges.ts の BADGE_OUT_DIR） */
-const BADGE_OUT = 'apps/web/src/assets/badges';
-
 /** パスの一覧（-z で読む。ASCII でないパスも、そのままの形で） */
 function gitPaths(args: readonly string[]): string[] {
   return nulPaths(gitRaw(pathListArgs(args)));
@@ -263,6 +260,7 @@ if (rewritten.length > 0) {
 
 // バッジの書き出しは元（apps/web/badges-src）から決まるので、合っていなければ書き出して commit する
 // （plan/design-workflow-simplification-18.md 3 節）
+const BADGE_OUT = 'apps/web/src/assets/badges'; // apps/web/scripts/badges.ts の BADGE_OUT_DIR
 npm('badges:build');
 git(['add', '--all', '--', BADGE_OUT]);
 const badgeOutputs = gitPaths(['diff', '--cached', '--name-only', '--', BADGE_OUT]);

@@ -112,8 +112,7 @@ export const inSprite = (name: string): boolean =>
   Object.hasOwn(SPRITE_NAMES, name) || SPRITE_GROUPS.has(groupOf(name));
 
 /** バッジ（拡張子なしの名前）が白黒で描くものか */
-export const isMonochrome = (name: string): boolean =>
-  Object.hasOwn(SPRITE_NAMES, name) ? SPRITE_NAMES[name] === 'monochrome' : SPRITE_GROUPS.has(groupOf(name));
+export const isMonochrome = (name: string): boolean => inSprite(name) && SPRITE_NAMES[name] !== 'color';
 
 /** 書き出しのフォルダの中で、そのバッジ（元のファイル名）を置く所（スプライトに入るものは sprite/） */
 export const badgeOutPath = (file: string): string => (inSprite(badgeNameOf(file)) ? `sprite/${file}` : file);

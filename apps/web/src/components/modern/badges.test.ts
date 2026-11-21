@@ -1,7 +1,8 @@
 import { COLLECTION_LEVEL_MAX } from '@nikke/core';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { outputFiles } from '../../../scripts/badges.ts';
 import viteConfig from '../../../vite.config.ts';
 import {
   BADGE_KINDS,
@@ -17,8 +18,7 @@ import {
 } from './badges.ts';
 
 const BADGE_DIR = fileURLToPath(new URL('../../assets/badges', import.meta.url));
-/** 書き出したバッジ（直下と sprite/。BADGE_DIR からの相対のパス） */
-const BADGE_FILES = readdirSync(BADGE_DIR, { recursive: true, encoding: 'utf8' }).filter((f) => f.endsWith('.svg'));
+const BADGE_FILES = outputFiles(BADGE_DIR);
 
 describe('バッジの対応表', () => {
   // 使っていないバッジも置く（読んだものだけを Vite が束に入れる。plan/design-modern-ui.md 2.5 節）

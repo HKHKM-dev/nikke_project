@@ -3,7 +3,7 @@
 // 新しい観測値に付け替えられる（根拠の文・runs・minimal の ID を置き換える）。比べの setup が ID で指している観測値（入力）を無効にしたときは、
 // 比べを写さずに setup の参照を新しい観測値に付け替える（plan/design-workflow-simplification-18.md 1 節）。
 import { observationIdsIn, type ClaimFile } from './claims.ts';
-import type { CompareSetup } from './observations/setup.ts';
+import { mapSetupRefs } from './observations/setup.ts';
 import type { Observation, ObservationDraft } from './observations/types.ts';
 
 /** 下書きに書かせない欄（このコマンドが付ける・前の値を残す） */
@@ -78,25 +78,6 @@ export function repointClaim(claim: ClaimFile, from: string, to: string, today: 
           ),
         }),
     updated: today,
-  };
-}
-
-/**
- * 比べの setup が観測値の ID で指す欄（jumpWindows・obstacles の count・pelletHits の counts・manualBursts・holdFire の frames。
- * observations/validate.ts の setupErrors が ref で見る欄）の ID を map で置き換えた setup
- */
-function mapSetupRefs(setup: CompareSetup, map: (id: string) => string): CompareSetup {
-  return {
-    ...setup,
-    ...(setup.jumpWindows === undefined ? {} : { jumpWindows: map(setup.jumpWindows) }),
-    ...(setup.obstacles === undefined
-      ? {}
-      : { obstacles: setup.obstacles.map((x) => ({ ...x, count: map(x.count) })) }),
-    ...(setup.pelletHits === undefined
-      ? {}
-      : { pelletHits: setup.pelletHits.map((x) => ({ ...x, counts: map(x.counts) })) }),
-    ...(setup.manualBursts === undefined ? {} : { manualBursts: map(setup.manualBursts) }),
-    ...(setup.holdFire === undefined ? {} : { holdFire: setup.holdFire.map((x) => ({ ...x, frames: map(x.frames) })) }),
   };
 }
 

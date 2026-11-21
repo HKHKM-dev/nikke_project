@@ -562,16 +562,15 @@ if (kind === 'verification') {
     const invalidNew = (by ?? []).filter((id) => byId.get(id)!.invalid !== undefined || ids.includes(id));
     if (invalidNew.length > 0) fail(`--by の観測値が無効か、無効にする観測値: ${invalidNew.join('・')}`);
     const invalidated = ids.map((id) => invalidatedObservation(byId.get(id)!, values.reason!.trim(), today));
+    // 付け替えの組（無効にする観測値 → 新しい観測値。--by が 1 つなら全部をそれに）
+    const pairs = by === undefined ? [] : ids.map((old, i) => [old, by.length === 1 ? by[0]! : by[i]!] as const);
     // 無効にする観測値を setup で指している比べは、比べを写さずに参照を付け替える
     const resetup = new Map<string, Observation>();
-    if (by !== undefined)
-      for (const [i, old] of ids.entries()) {
-        const to = by.length === 1 ? by[0]! : by[i]!;
-        for (const o of all) {
-          if (ids.includes(o.id)) continue;
-          const next = repointSetup(resetup.get(o.id) ?? o, old, to);
-          if (next !== undefined) resetup.set(o.id, next);
-        }
+    for (const [old, to] of pairs)
+      for (const o of all) {
+        if (ids.includes(o.id)) continue;
+        const next = repointSetup(resetup.get(o.id) ?? o, old, to);
+        if (next !== undefined) resetup.set(o.id, next);
       }
     const changed = [...invalidated, ...resetup.values()];
     checked(changed);
@@ -579,14 +578,11 @@ if (kind === 'verification') {
     const claims = loadClaims();
     const repointed = new Map<string, ClaimFile>();
     // 棄却・範囲外の結論は、その時の根拠のまま残す（記録は書き換えない）
-    if (by !== undefined)
-      for (const [i, old] of ids.entries()) {
-        const to = by.length === 1 ? by[0]! : by[i]!;
-        for (const { observations: _o, ...c } of claims) {
-          if (c.state !== '仮説' && c.state !== '確定') continue;
-          const next = repointClaim(repointed.get(c.id) ?? c, old, to, today);
-          if (next !== undefined) repointed.set(c.id, next);
-        }
+    for (const [old, to] of pairs)
+      for (const { observations: _o, ...c } of claims) {
+        if (c.state !== '仮説' && c.state !== '確定') continue;
+        const next = repointClaim(repointed.get(c.id) ?? c, old, to, today);
+        if (next !== undefined) repointed.set(c.id, next);
       }
     // 付け替えた runs が録画と食い違えば、何も書かずに止める
     const runErrors = toClaims([...repointed.values()]).flatMap((c) => validateRuns(c));
@@ -610,9 +606,8 @@ if (kind === 'verification') {
     console.log(`無効にした（理由: ${values.reason.trim()}）: ${ids.join('・')}`);
     if (resetup.size > 0) console.log(`setup の参照を付け替えた比べ: ${[...resetup.keys()].join('・')}`);
     // 付け替えなかった比べ（--by が無い）は、無効の観測値を指したまま（records:check が止める）
-    const referring = all
-      .filter((o) => o.invalid === undefined && !resetup.has(o.id) && setupRefIds(o).some((id) => ids.includes(id)))
-      .map((o) => o.id);
+    const referring =
+      by === undefined ? all.filter((o) => setupRefIds(o).some((id) => ids.includes(id))).map((o) => o.id) : [];
     if (referring.length > 0)
       console.log(
         `無効にした観測値を setup で指している比べ（付け替えていない。--by で付け替えるか、比べも無効にする）: ${referring.join('・')}`,
