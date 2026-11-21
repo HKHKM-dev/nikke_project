@@ -1,0 +1,28 @@
+{
+  "id": "C-1437",
+  "text": "ユルハのバーストのダメージ（最終攻撃力の 457.87%。スキル Lv10）は、III のタイマーの 00.00 の 138・145f 後の 2 ヒットに分かれ、説明文の値を 2 等分する（5 回とも同じ並び）。2 ヒットとも発動の時点のバフで出る（どの回も S2 の窓の外で 274,255 ずつ）。2 ヒットの会心は、5 回とも 2 つとも会心なしだった（期待値のモデルには効かない）。平常心のときの追加ダメージは、どの回にも出なかった",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`1299-04`・`1299-05`・`1299-06`。V-0823",
+  "model": "反映（data/skills/171.json の burst の effects[0]、burst/landing.ts のユルハの行の hitFrames・hitOffsets）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/171.json の burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1299",
+      "role": "値を合わせた"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "1299",
+      "decided": "1 回目",
+      "reproduced": "2〜5 回目",
+      "observations": ["1299-04", "1299-05"]
+    }
+  ]
+}
