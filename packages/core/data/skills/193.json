@@ -12,9 +12,10 @@
           },
           "ref": 2,
           "damageType": "skill",
+          "delayFrames": 15,
           "assumes": {
-            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から 10 秒ごとに発動する（1 回目も 10 秒。戦闘開始時には発動しない）。CT 10 秒は外部の資料の値で、録画では確かめていない。「残りの HP の割合が最も低い敵 1 機」は、射撃場の的 1 体に 1 ヒットと読む。発動からヒットまでの遅れは読んでいない（0f で回す）",
-            "en": "The description gives no trigger. It is an active skill on a cooldown, activating every 10 s from the start of combat (the first also at 10 s; not at the start of combat). The 10 s cooldown is from external sources and not verified on recordings. \"1 enemy with the lowest remaining HP ratio\" is read as one hit on the single range target. The delay from activation to hit has not been read (run as 0 f)"
+            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から 10 秒ごとに発動する（1 回目も 10 秒。戦闘開始時には発動しない）。「残りの HP の割合が最も低い敵 1 機」は、射撃場の的 1 体に 1 ヒット。発動からヒットまで 15f。ヒットは会心しうる",
+            "en": "The description gives no trigger. It is an active skill on a cooldown, activating every 10 s from the start of combat (the first also at 10 s; not at the start of combat). \"1 enemy with the lowest remaining HP ratio\" is one hit on the single range target. 15 f from activation to hit. The hit can be critical"
           }
         }
       ],

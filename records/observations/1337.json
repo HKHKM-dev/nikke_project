@@ -1,0 +1,318 @@
+[
+  {
+    "id": "1337-01",
+    "recording": "1337",
+    "kind": "timing",
+    "use": "record",
+    "value": [1304, 2505, 3685, 4887, 6066, 7267, 8446, 9760, 10939],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・24・5・24・5・25・0・25f"
+    },
+    "source": "V-0843",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1337-02",
+    "recording": "1337",
+    "kind": "timing",
+    "use": "record",
+    "value": [1333, 2534, 3714, 4916, 6095, 7404, 8583, 9789, 10968],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・24・6・24・7・24・0・25f"
+    },
+    "source": "V-0843",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1337-03",
+    "recording": "1337",
+    "kind": "timing",
+    "use": "record",
+    "value": [1362, 3743, 6124, 8612, 10997],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0843",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1337-04",
+    "recording": "1337",
+    "kind": "timing",
+    "use": "record",
+    "value": [1971, 4352, 6732, 9221, 11557],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0843",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1337-05",
+    "recording": "1337",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 608, 609, 560],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0843",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1337-06",
+    "recording": "1337",
+    "kind": "timing",
+    "use": "record",
+    "value": [2499, 3678, 4880, 6059, 7260, 8439, 10933],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0843",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1337-07",
+    "recording": "1337",
+    "kind": "timing",
+    "use": "record",
+    "value": [2528, 3707, 4909, 6089, 8576, 9778, 10962],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f7290"
+    },
+    "source": "V-0843",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1337-08",
+    "recording": "1337",
+    "kind": "timing",
+    "use": "record",
+    "value": [3736, 6117, 10985],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0843",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1337-09",
+    "recording": "1337",
+    "kind": "hit",
+    "use": "compare",
+    "value": 127940,
+    "description": "撮影 P: 1 回目のフルバーストの始まりの後のネヴェの 1 発目の 1 ペレット（胴体。S2 の攻撃力▲・フルバースト補正・ツバイの貫通ダメージ▲（S1 の 1 発間・10 秒、宝物版バーストの貫通学概論、宝物版 S1 の 1 スタック））",
+    "method": {
+      "tool": "recipe:buff-edge@8（grid P1k0=3@411/x10;P1k1=3@434/x10;P1k2=P1k1 の ×1.13867;P2k0=3@439/x10;P2k1=3@459/x10;P2k2=P2k1 の ×1.15611;NA=3@411/x10 の ×0.644247;NF=3@600/x10;ZB=1@420/x2 と ZB との和。events 1337-03・from 20・to 150）",
+      "note": "00.00（1337-03）の +55f 1,663,214 が P1k1 だけに合う。ほかの回の 1 発目は、2 回目 +29f・5 回目 +38f が P1k0 か NA（区別できない）、4 回目 +101f が P1k2、3 回目 +44f はツバイのバーストの発と重なって外れ"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 10,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 301
+        },
+        {
+          "rid": 193,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0843",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1337-10",
+    "recording": "1337",
+    "kind": "hit",
+    "use": "compare",
+    "value": 113648,
+    "description": "撮影 P: フルバーストの始まりの後のネヴェの 2 発目の 1 ペレット（胴体。S2 の攻撃力▲・フルバースト補正・ツバイの貫通ダメージ▲（10 秒・貫通学概論・宝物版 S1 の 1 スタック））",
+    "method": {
+      "tool": "recipe:buff-edge@8（grid P1k0=3@411/x10;P1k1=3@434/x10;P1k2=P1k1 の ×1.13867;P2k0=3@439/x10;P2k1=3@459/x10;P2k2=P2k1 の ×1.15611;NA=3@411/x10 の ×0.644247;NF=3@600/x10;ZB=1@420/x2 と ZB との和。events 1337-03・from 20・to 150）",
+      "note": "2 発目は、2 回目 +69f 1,742,610・5 回目 +78f 1,704,727・4 回目 +141f 1,515,310 が P2k1（か ×1.15611 の版）に合う。1 回目 +94f 1,374,667・3 回目 +83f 991,039 は P2k0（宝物版 S1 のスタック 0。ツバイの発がネヴェの 1 発目と 2 発目の間に無い回）に合う。どの回の 2 発目も NA（貫通ダメージ▲の無い格子）には合わない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 11,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 301
+        },
+        {
+          "rid": 193,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0843",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1337-11",
+    "recording": "1337",
+    "kind": "hit",
+    "use": "compare",
+    "value": 95907,
+    "description": "撮影 P: フルバーストの始まりの後のネヴェの 2 発目のうち、前のネヴェの発からツバイの通常攻撃が無かった回の 1 ペレット（胴体。宝物版 S1 のスタック 0）",
+    "method": {
+      "tool": "recipe:buff-edge@8（grid P1k0=3@411/x10;P1k1=3@434/x10;P1k2=P1k1 の ×1.13867;P2k0=3@439/x10;P2k1=3@459/x10;P2k2=P2k1 の ×1.15611;NA=3@411/x10 の ×0.644247;NF=3@600/x10;ZB=1@420/x2 と ZB との和。events 1337-03・from 20・to 150）",
+      "note": "1 回目 +94f 1,374,667・3 回目 +83f 991,039 が P2k0 だけに合う。モデルの f439 の区間（ネヴェの 1 発目の後・ツバイの次の発の前）の値"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 445,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 301
+        },
+        {
+          "rid": 193,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0843",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1337-12",
+    "recording": "1337",
+    "kind": "hit",
+    "use": "compare",
+    "value": 31563,
+    "description": "撮影 P: フルバーストの始まりの後のネヴェの 3 発目の 1 ペレット（胴体。フルバースト補正だけ。貫通特化の後なので貫通ダメージ▲は乗らない）",
+    "method": {
+      "tool": "recipe:buff-edge@8（grid P1k0=3@411/x10;P1k1=3@434/x10;P1k2=P1k1 の ×1.13867;P2k0=3@439/x10;P2k1=3@459/x10;P2k2=P2k1 の ×1.15611;NA=3@411/x10 の ×0.644247;NF=3@600/x10;ZB=1@420/x2 と ZB との和。events 1337-03・from 20・to 150）",
+      "note": "3 発目は、1 回目 +134f 336,672・2 回目 +108f 505,002・3 回目 +122f 336,672・5 回目 +117f 505,002 が NF だけに合う"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 12,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 301
+        },
+        {
+          "rid": 193,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0843",
+    "readAt": "2026-11-21"
+  }
+]

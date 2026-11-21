@@ -57,11 +57,11 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, neve }) => {
   const s2 = (stat: 'pierce' | 'attack') =>
     itemsOf(plan.history, { sourceSlotIndex: neve, holder: neve, kind: 'timed', skill: 'skill2', stat });
 
-  it('hits the target with S1 every 10 s from the start of battle', () => {
+  it('hits the target with S1 every 10 s from the start of battle, 15 frames after each activation', () => {
     const hits = plan.skillHits.filter((h) => h.slotIndex === neve && h.effect.source.skill === 'skill1');
     const period = gameSecondsToFirstFrame(10);
     expect(hits.length).toBeGreaterThan(10);
-    hits.forEach((h, k) => expect(h.frame).toBe((k + 1) * period));
+    hits.forEach((h, k) => expect(h.frame).toBe((k + 1) * period + 15));
   });
 
   it('gives Pierce and ATK up on her first 2 shots after every Full Burst start', () => {
