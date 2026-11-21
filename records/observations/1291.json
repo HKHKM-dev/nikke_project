@@ -264,5 +264,40 @@
     },
     "source": "V-0815",
     "readAt": "2026-11-21"
+  },
+  {
+    "id": "1291-10",
+    "recording": "1291",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": {
+      "fullBurstZero": 11281,
+      "cocoaPrevShot": 11415,
+      "cocoaPartial": {
+        "frame": 11437,
+        "value": 214940
+      },
+      "snowWhitePartial": {
+        "frame": 11438,
+        "value": 8017844,
+        "ratioToFullCore": 0.5324
+      },
+      "targetAirborne": 11470,
+      "arAimedAgain": 11555,
+      "battleEnd": 11565,
+      "incrementsAfter11438": 0
+    },
+    "description": "5 回目のバーストの変更後の武器の発（f11438）は、敵の 5 回目のジャンプの始まりの発。1f 前（f11437）にココア（SR・入力 UP）も、前の発の 22f 後に値の小さい発を撃ち、その後に的が跳び（f11470 で宙）、スノーホワイトは AR（残弾 60）に戻って構え直した（f11555）。戦闘の終わりは f11565 で、f11438 から HUD は増えない。値はコア・会心なし・距離ボーナスなし（近）の満ちた発（2.5 倍の格子）の 0.5324 倍",
+    "method": {
+      "tool": "tools/captures/hud.ts・timer.ts・still.ts",
+      "note": "読み方は 1279 と同じ。0.5324 は (1 + 9p) / 10 で p = 0.480（141.7f）。モデルの溜め始めから D までは 128f（p = 0.434）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "source": "V-0840",
+    "readAt": "2026-11-21"
   }
 ]

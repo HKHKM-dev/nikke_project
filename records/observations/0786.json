@@ -272,5 +272,36 @@
         "burst": true
       }
     }
+  },
+  {
+    "id": "0786-08",
+    "recording": "0786",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": {
+      "battleStart": 777,
+      "battleEnd10588": 11365,
+      "lastIncrement": 11328,
+      "lastReadable": 11375,
+      "chargeShown": {
+        "11353": 182,
+        "11361": 202,
+        "11366": 215,
+        "11371": 228
+      },
+      "incrementsAfterLastShot": 0
+    },
+    "description": "ティア単騎（RL・入力 UP・フルチャージ 250%）の戦闘の終わり。最後の発（f11328）の後はチャージの途中で、表示が 228%（f11371）の後に画面が切り替わり、HUD は増えない。戦闘の終わりに部分チャージの発は出ない",
+    "method": {
+      "tool": "tools/captures/hud.ts・timer.ts・still.ts",
+      "note": "戦闘開始は timer.ts --mode changes の、最初の 250f 以上の間隔の次の変わり目（C-0078）。HUD の増分は hud.ts --mode series（最後の 2300f）の値の増え。チャージの表示は still.ts で照準の横の CHARGE を拡大して読んだ。チャージの表示は照準の右の数字"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "source": "V-0840",
+    "readAt": "2026-11-21"
   }
 ]
