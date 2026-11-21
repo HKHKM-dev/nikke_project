@@ -125,7 +125,9 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, slot: S }) =
 
   if (input.enemy?.events !== undefined && S !== 0) {
     it('fires the charging Burst weapon with partial charge at D + H after a jump window starts (V-0840)', () => {
-      const starts = input.enemy!.events!.filter((e) => e.kind === 'untargetable').map((e) => gameSecondsToFrames(e.start));
+      const starts = input
+        .enemy!.events!.filter((e) => e.kind === 'untargetable')
+        .map((e) => gameSecondsToFrames(e.start));
       const partial = log.partialShots ?? [];
       // 撮影 B の既定の時刻では、5 回目のバーストのチャージの途中に 5 回目のジャンプが来る
       expect(partial.length).toBeGreaterThan(0);

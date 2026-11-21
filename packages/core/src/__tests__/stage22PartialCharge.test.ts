@@ -101,7 +101,18 @@ describe('partialChargeProgress（射手）', () => {
     const wait = state.wait;
     expect(wait).toBeGreaterThan(1);
     const params = firingParams(changed);
-    expect(partialChargeProgress(state, changed)).toBeCloseTo((params.chargeFrames + 1 - wait) / params.chargeFrames, 12);
+    expect(partialChargeProgress(state, changed)).toBeCloseTo(
+      (params.chargeFrames + 1 - wait) / params.chargeFrames,
+      12,
+    );
+    // 撃った後の溜め（chargeElapsed で数える押下チャージ型の刻み）も、1 フレームに 1 / C ずつ進み、撃つはずのフレームで 1
+    const after = shooterAfter(changed, firstShotFrames(changed) + 11);
+    expect(after.chargeElapsed).toBeDefined();
+    const now = partialChargeProgress(after, changed)!;
+    stepShooter(after, changed);
+    expect(partialChargeProgress(after, changed)! - now).toBeCloseTo(1 / params.chargeFrames, 12);
+    while (after.wait > 0) stepShooter(after, changed);
+    expect(partialChargeProgress(after, changed)).toBe(1);
   });
 
   it('drops the pending wait when the window ends before D + H, without a partial-charge shot or hiding', () => {
