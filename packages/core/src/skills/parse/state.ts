@@ -733,19 +733,13 @@ function parseAllStackableChange(v: Record<string, Json>, path: string): AllStac
 }
 
 /**
- * 解除（plan/design-skill-stage1.md 1.2 節）。対象は自分だけ。トリガーの確率のきっかけ・{ applied }・時間の周期の
+ * 解除（plan/design-skill-stage1.md 1.2 節）。対象は自分・味方全体（plan/design-k.md 2.1 節）・敵（plan/design-phantom.md 2.3 節）。トリガーの確率のきっかけ・{ applied }・時間の周期の
  * きっかけは書けない（使い手の時に足す）。条件は、自分がその状態なら（selfState）のように、外す状態を見てもよい（閉じるのは f + 1 で、
  * f の判定には付いている）
  */
 export function parseRemoveStateEffect(v: Record<string, Json>, path: string): RemoveStateEffect {
   rejectUnknownKeys(v, ['kind', 'state', 'trigger', 'target', 'condition', 'assumes', 'claims'], path);
-  if (v.target !== 'self' && v.target !== 'enemy') {
-    fail(
-      `${path}.target`,
-      `expected "self" or "enemy" (removing a state of an ally is not supported), got ${JSON.stringify(v.target)}`,
-    );
-  }
-  const target = v.target;
+  const target = oneOf(['self', 'allies', 'enemy'] as const, v.target, `${path}.target`);
   // 敵の状態の解除（plan/design-phantom.md 2.3 節）
   const state = parseNamedStateId(v.state, `${path}.state`, target === 'enemy' ? 'enemy' : 'ally');
   // 自分の状態の窓で数える回数も（憑依のキャプチャーで憑依を外す。plan/design-elegg-bs.md 2.2 節）。フルスタックの消費も
@@ -797,7 +791,7 @@ export function parseCancelStateEffect(v: Record<string, Json>, path: string): C
   // self は自分の状態の消去（解除と同じ書き方。解除不可の件も閉じる。plan/design-mint-prika.md 2.1 節）
   if (v.target === 'self') {
     const { kind: _, ...rest } = parseRemoveStateEffect({ ...v, kind: 'removeState' }, path);
-    return { ...rest, kind: 'cancelState' };
+    return { ...rest, kind: 'cancelState', target: 'self' };
   }
   if (v.condition !== undefined) fail(`${path}.condition`, 'a cancel on the enemy cannot have a condition');
   if (v.target !== 'enemy') fail(`${path}.target`, `expected "enemy" or "self", got ${JSON.stringify(v.target)}`);

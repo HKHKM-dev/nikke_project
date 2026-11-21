@@ -136,3 +136,4 @@
 | 対象が〈状態〉状態ではないなら（敵の状態の否定。敵への付与・自分への付与）／対象が〈状態〉状態なら「N 発間維持」 | 条件 `enemyState: { "state": "<id>", "present": false }`（敵への付与にも書ける）／発数の維持の timed の条件 `enemyState`（同じ発で付いた状態も見るなら `{ "state": "<id>", "present": true, "sameFiring": true }`。同じ発で S2 が外す時を除くなら、timed の `selfState` の `stacksBelow` と `sameFiring`） | ファントムの S1 の予告状・怪盗の短剣・攻撃ダメージ▲ | [design-phantom.md](design-phantom.md) 2.1・2.6 節 |
 | 〈名前〉フルスタック状態なら、対象に追加ダメージ・効果発動後〈敵の状態〉解除・スタック解除後自分に〈状態〉・敵全体に分配ダメージ | damage・状態の付与・解除のきっかけ `{ "fullStack": "<id>" }`／敵の状態の解除は `removeState` の `target: "enemy"`（同じフレームに付いた件も外す） | ファントムの S2 | 同 2.2・2.3 節 |
 | 「持続」「バーストスキル使用時スタック解除」 | 状態の付与の `durationUntil: "battleEnd"` と、`removeState` のきっかけ `burstUse` | ファントムの S2 の分配ダメージ▲ | 同 1 節 |
+| フルバーストタイムが終了した時、味方全体に〈名前〉解除 | `removeState` の `target: "allies"`（味方全体のその状態の件を、出どころを問わず外す） | K の S2 の正義の実現 | [design-k.md](design-k.md) 2.1 節 |

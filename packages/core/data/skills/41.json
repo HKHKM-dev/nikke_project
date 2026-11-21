@@ -1,0 +1,128 @@
+{
+  "formatVersion": 1,
+  "resourceId": 41,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "tiltedScale",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "self",
+          "maxStacksRef": 2,
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "critRate",
+              "ref": 1
+            }
+          ],
+          "assumes": {
+            "ja": "「持続」は、フルバーストタイムの終わりの解除（effects[3]）まで続く読み（戦闘の終わりまでの維持と、解除で書く）。最後の弾丸ごとに 1 スタック付き、同じ発の effects[1] のスタック量▲と合わせて 1 + 値 03 スタック（Lv10 は 30）増える読み。二丁持ちの最後の弾丸は 1 マガジンの最後の 2 発のそれぞれ（C-1400 のクロウと同じ読み）なので、1 マガジンに 2 回付く（確かめていない）",
+            "en": "\"Continuous\" is read as lasting until the removal at the end of Full Burst (effects[3]) (written as lasting until the end of battle plus the removal). Each last bullet adds 1 stack, and with the stack increase of effects[1] on the same shot, 1 + value 03 stacks (30 at Lv10). The last bullet of a dual-wield weapon is each of the last two shots of a magazine (the same reading as Crow, C-1400), so it is applied twice per magazine (unchecked)"
+          }
+        },
+        {
+          "kind": "stackChange",
+          "state": "tiltedScale",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "self",
+          "amountRef": 3
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "critHit",
+            "everyRef": 4
+          },
+          "damageType": "additional",
+          "ref": 5,
+          "assumes": {
+            "ja": "「ペレットごとのクリティカル攻撃」は、発ごとに命中の期待値 × その発の通常攻撃の会心率を足して数える（critHit。乱数を期待値で持つ。二丁持ちの 1 発は 2 ヒット）。基礎の SMG は 1 ヒット 1 ペレットなので、ヒットで数えてもペレットで数えても同じ。バーストの使用武器変更（ペレット 10 個）の発も、ペレットの数を数えずに同じく数える（モデルの置き方。ペレットごとに数えるなら 1 発で何回も発火しうる。plan/design-k.md 2.2 節。確かめていない）。追加ダメージは発と同じフレームに出す（確かめていない）",
+            "en": "\"Critical hits per pellet\" are counted by adding, per shot, the expected hits times that shot's normal attack critical rate (critHit; the randomness is kept as an expectation; a dual-wield shot is two hits). The base SMG has one pellet per hit, so counting hits or pellets is the same. Shots of the burst weapon change (10 pellets) are counted the same way without counting pellets (the model's placement; counting per pellet could fire several times per shot; plan/design-k.md 2.2; unchecked). The additional damage lands on the same frame as the shot (unchecked)"
+          }
+        },
+        {
+          "kind": "removeState",
+          "state": "tiltedScale",
+          "trigger": "fullBurstEnd",
+          "target": "self"
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "fulfillmentOfRighteousness",
+          "trigger": {
+            "applied": "tiltedScale"
+          },
+          "target": "allies",
+          "durationRef": 2,
+          "contents": [
+            {
+              "stat": "maxAmmo",
+              "ref": 1,
+              "decrease": true
+            },
+            {
+              "stat": "attackDamage",
+              "ref": 3
+            }
+          ],
+          "assumes": {
+            "ja": "傾く天秤が付くたび（最後の弾丸ごと。スタックが上限でも）に付き直し、10 秒の維持を始めから数え直す読み（同一効果は重複不可。確かめていない）。効果 1・2 の維持（値 02・04）はどちらも 10 秒なので、状態の維持にそろえた",
+            "en": "Read as re-applied each time Tilted Scale is applied (each last bullet, even at max stacks), restarting the 10 s duration (similar effects cannot be stacked; unchecked). The durations of Effects 1 and 2 (values 02 and 04) are both 10 s, so they follow the state's duration"
+          }
+        },
+        {
+          "kind": "removeState",
+          "state": "fulfillmentOfRighteousness",
+          "trigger": "fullBurstEnd",
+          "target": "allies"
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "damageRef": 1,
+          "durationRef": 2,
+          "shotCount": 10,
+          "assumes": {
+            "ja": "変更後の武器のレートは CDN の changeWeapon（144rpm。説明文の攻撃速度 90%▼ と同じ）で、1 発 10 ペレット。1 発のダメージは説明文の値 × 二丁持ちの 2 ヒット（ペレットの数で増やさない）と読む。残弾・リロード・コアに当たる割合・最初の発の待ちは基礎の武器の扱いのまま（plan/design-k.md 2.3 節。確かめていない）",
+            "en": "The changed weapon fires at the CDN changeWeapon rate (144 rpm, matching Attack Speed ▼ 90% in the text), 10 pellets per shot. The damage per shot is read as the text value times two dual-wield hits (not multiplied by the pellet count). Ammo, reload, core hit rate and the first-shot wait follow the base weapon (plan/design-k.md 2.3; unchecked)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 3,
+          "durationRef": 4
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 5,
+          "durationRef": 6
+        }
+      ],
+      "notes": []
+    }
+  }
+}

@@ -2651,10 +2651,11 @@ export type RemoveStateEffect = {
   state: NamedStateId;
   trigger: EffectTrigger;
   /**
-   * self は自分の状態。enemy は敵の状態（plan/design-phantom.md 2.3 節）: 同じ定義の付与で敵に付ける状態の、敵の件の列（出どころは
-   * 問わない）を同じく f + 1 で閉じる（解除不可の件は閉じない）。味方の状態を外す例が出たら広げる
+   * self は自分の状態。allies は味方全体（敵を除くどの枠）の状態（plan/design-k.md 2.1 節）: その状態の件の列（出どころは問わない）を
+   * 自分と同じく f + 1 で閉じる。enemy は敵の状態（plan/design-phantom.md 2.3 節）: 同じ定義の付与で敵に付ける状態の、敵の件の列
+   * （出どころは問わない）を同じく f + 1 で閉じる。どれも解除不可の件は閉じない
    */
-  target: 'self' | 'enemy';
+  target: 'self' | 'allies' | 'enemy';
   condition?: EffectCondition;
   assumes?: LocalizedText;
 };

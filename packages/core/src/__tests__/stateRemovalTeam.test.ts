@@ -60,8 +60,14 @@ describe('解除と usedBurst の読み込み', () => {
     });
   });
 
-  it('rejects a removal of an ally, of an enemy state, with a chance or timer trigger, and unknown fields', () => {
-    expect(() => parse([remove('camouflage', { target: 'allies' })])).toThrow(/expected "self"/);
+  it('reads a removal of a state on all allies (plan/design-k.md 2.1)', () => {
+    expect(parse([remove('camouflage', { target: 'allies' })]).skills.skill1.effects[0]).toMatchObject({
+      target: 'allies',
+    });
+  });
+
+  it('rejects an unknown target, an enemy state, a chance or timer trigger, and unknown fields', () => {
+    expect(() => parse([remove('camouflage', { target: 'topAttack' })])).toThrow(/target/);
     expect(() => parse([remove('hacked')])).toThrow(/held by the enemy/);
     expect(() => parse([remove('camouflage', { trigger: { count: 'normalHit', chance: 50 } })])).toThrow(/chance/);
     expect(() => parse([remove('camouflage', { trigger: { everySeconds: 5 } })])).toThrow(/timer trigger/);
@@ -160,6 +166,20 @@ describe('解除で閉じる件（クイーン（真）の定義を書き換え�
     expect(camouflageItems(sameFrame)).toEqual([[0, sameFrame.history.frames]]);
     const undispellable = withEffects([forever('camouflage', { undispellable: true }), remove('camouflage')]);
     expect(camouflageItems(undispellable)).toEqual([[0, undispellable.history.frames]]);
+  });
+
+  it('closes the items of every ally with target allies, and only the holder with target self (plan/design-k.md 2.1)', () => {
+    const itemsAt = (plan: ReturnType<typeof run>, holder: number) =>
+      itemsOf(plan.history, { holder, state: 'camouflage' }).map((i) => [i.start, i.end]);
+    const allies = withEffects([
+      forever('camouflage', { target: 'allies' }),
+      remove('camouflage', { target: 'allies' }),
+    ]);
+    const start = fullBursts(allies)[0]!.start;
+    for (const holder of [0, 1, q]) expect(itemsAt(allies, holder)).toEqual([[0, start + 1]]);
+    const self = withEffects([forever('camouflage', { target: 'allies' }), remove('camouflage')]);
+    expect(itemsAt(self, q)).toEqual([[0, start + 1]]);
+    for (const holder of [0, 1]) expect(itemsAt(self, holder)).toEqual([[0, self.history.frames]]);
   });
 });
 

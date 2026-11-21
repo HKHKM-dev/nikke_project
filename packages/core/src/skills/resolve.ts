@@ -1179,7 +1179,7 @@ export function resolveHpWhileEffects(
 }
 
 /**
- * 解決した解除（removeState。plan/design-skill-stage1.md 1.2 節）。対象は自分。effectIndex は解除のスロットの
+ * 解決した解除（removeState。plan/design-skill-stage1.md 1.2 節）。対象は自分（印で味方全体・敵）。effectIndex は解除のスロットの
  * 何番目の効果か
  */
 export type ResolvedRemoveState = {
@@ -1192,6 +1192,8 @@ export type ResolvedRemoveState = {
   cancel?: true;
   /** 敵の状態の解除（removeState の enemy。plan/design-phantom.md 2.3 節） */
   enemy?: true;
+  /** 味方全体の状態の解除（removeState の allies。plan/design-k.md 2.1 節） */
+  allies?: true;
 };
 
 /** 定義の解除を Lv の数値に解く（解くのはトリガーの回数の参照だけ） */
@@ -1218,6 +1220,7 @@ export function resolveRemoveStates(
       if (effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
       if (effect.kind === 'cancelState') r.cancel = true;
       if (effect.target === 'enemy') r.enemy = true;
+      if (effect.target === 'allies') r.allies = true;
       out.push(r);
     });
   }
