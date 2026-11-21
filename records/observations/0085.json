@@ -141,5 +141,39 @@
       "slot": 2,
       "source": "skill"
     }
+  },
+  {
+    "id": "0085-09",
+    "recording": "0085",
+    "use": "compare",
+    "kind": "gauge",
+    "value": 5.55,
+    "unit": "%",
+    "description": "ココア + ニヒリスター（II・AI）+ ラプンツェル：ピュアグレイス（操作）で、ニヒリスターの S2 の倍率ダメージ（135,837・203,756）だけが出たフレームに溜まったゲージ（本当の量。6 回の平均）",
+    "method": {
+      "tool": "gauge.ts --mode series --subpixel（BURST バーの充填の px を、境目の画素の中間の明るさまで足して 1px 未満まで読む。V-0483「読み方」）と hud.ts --mode jumps",
+      "note": "S2 のヒットのフレーム（0085-07）のうち、HUD の増分が S2 だけで（前 3f・後 2f にほかの増分が無い）、前 3f と後 3f のバーが読めて揺れが 0.3px 以内で、バーが 2px 以上（右のバーの下の端の見えない幅（C-0084）の外）のもの。中央値の差は f1421 +7.43・f5020 +7.56・f6250 +7.56・f6839 +7.41・f9379 +7.48・f11161 +7.55px（平均 7.50px）。C-0084 の 1px ≈ 0.74% で本当の量にした。ほかの回はバーが出ていない（チェーン中・フルバースト中）か、同じフレームのまわりにほかの発があるか、バーが下の端（f3191 は 0px のまま、f4432 は 0.92 → 6.41px）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "timerGauge",
+      "args": {
+        "slot": 2,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 0.3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    },
+    "source": "V-0846",
+    "readAt": "2026-11-21"
   }
 ]
