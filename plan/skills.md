@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 168・効果 1187（根拠あり 1165）・notes 390（根拠あり 159）
+件数: キャラ 169・効果 1192（根拠あり 1170）・notes 391（根拠あり 159）
 
-notes の種類: 未対応 49・前提の外 125・計算に無関係 78・補足 43・間接 95
+notes の種類: 未対応 50・前提の外 125・計算に無関係 78・補足 43・間接 95
 
-スロット: supported 454・partial 34・unsupported 11・noEffect 62
+スロット: supported 456・partial 35・unsupported 11・noEffect 62
 
 ## 10 ラピ
 
@@ -956,6 +956,18 @@ notes の種類: 未対応 49・前提の外 125・計算に無関係 78・補�
 - **宝物版 burst**: supported
   - effects[0] state・burstUse・miracleOfMakeshifts（attack）: C-0668（確定）、C-0669（確定）、C-0670（確定）
   - effects[1] state・burstUse・miracleOfMakeshiftsShotgun（attack）: C-0669（確定）、C-0670（確定）
+
+## 193 ネヴェ
+
+- **skill1**: partial
+  - effects[0] damage・10 秒ごと・skill: C-1492（確定）
+  - notes[0] 未対応: S1 のヒットがバーストゲージを溜めるかは確かめていない（イサベル・エーテル・ラピの S2 の CT ごとのヒットは溜める。C-0404・C-0409）。モデルは溜めない: 根拠なし
+- **skill2**: supported
+  - effects[0] timed・fullBurstStart・pierce: C-1494（確定）
+  - effects[1] timed・fullBurstStart・attack: C-1493（確定）
+- **burst**: supported
+  - effects[0] timed・burstUse・critRate: C-1495（仮説）
+  - effects[1] timed・burstUse・hitRate: C-1495（仮説）
 
 ## 194 ルドミラ：ウィンターオーナー
 

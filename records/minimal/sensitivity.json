@@ -36255,6 +36255,118 @@
       "effective": true,
       "minus": 0,
       "plus": 5
+    },
+    {
+      "observation": "1336-09",
+      "element": "ネヴェ burst.effects[0]",
+      "key": "ad0b11e866f678cf",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1336-09",
+      "element": "ネヴェ burst.effects[1]",
+      "key": "ad0b11e866f678cf",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1336-10",
+      "element": "ネヴェ burst.effects[0]",
+      "key": "8fe650218fe3feb0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1336-10",
+      "element": "ネヴェ burst.effects[1]",
+      "key": "8fe650218fe3feb0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1336-11",
+      "element": "ネヴェ burst.effects[0]",
+      "key": "5ccd5c9a6cc00b45",
+      "effective": false,
+      "minus": 7.275957614183426e-12,
+      "plus": 0
+    },
+    {
+      "observation": "1336-11",
+      "element": "ネヴェ burst.effects[1]",
+      "key": "5ccd5c9a6cc00b45",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1337-09",
+      "element": "ネヴェ burst.effects[0]",
+      "key": "a02d566a64f1c269",
+      "effective": false,
+      "minus": 2.9103830456733704e-11,
+      "plus": 0
+    },
+    {
+      "observation": "1337-09",
+      "element": "ネヴェ burst.effects[1]",
+      "key": "a02d566a64f1c269",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1337-10",
+      "element": "ネヴェ burst.effects[0]",
+      "key": "cf80c32164bec5ec",
+      "effective": false,
+      "minus": -1.4551915228366852e-11,
+      "plus": 0
+    },
+    {
+      "observation": "1337-10",
+      "element": "ネヴェ burst.effects[1]",
+      "key": "cf80c32164bec5ec",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1337-11",
+      "element": "ネヴェ burst.effects[0]",
+      "key": "c86ca2829bc02c05",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1337-11",
+      "element": "ネヴェ burst.effects[1]",
+      "key": "c86ca2829bc02c05",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1337-12",
+      "element": "ネヴェ burst.effects[0]",
+      "key": "bb63400862af1353",
+      "effective": false,
+      "minus": -7.275957614183426e-12,
+      "plus": 0
+    },
+    {
+      "observation": "1337-12",
+      "element": "ネヴェ burst.effects[1]",
+      "key": "bb63400862af1353",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }
