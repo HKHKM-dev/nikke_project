@@ -1,0 +1,28 @@
+{
+  "id": "C-1483",
+  "text": "マリのバースト（スキル Lv10）の「敵全体に最終攻撃力の 639.36% のバーストスキルダメージ」は、敵 1 体では、II の発動の印（六角形が II から III に替わるフレーム）の 69f 後に 1 ヒットで出る（会心なしで 638,241）。ヒットには発動の時点の▲（S2 の攻撃力▲）が乗り、同じ発動の攻撃ダメージ▲は乗らない。「味方全体に攻撃ダメージ 40.99%▲（10 秒）」は、発動の頃から 10 秒、マリとココアの通常攻撃に乗る",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`1329-05`・`1329-06`・`1329-08`・`1329-09`・`1329-11`・`1329-12`。V-0842",
+  "model": "反映（data/skills/832.json の burst の effects[0]・[1]、burst/landing.ts のマリの行の hitFrames）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/832.json の burst の effects[0]", "data/skills/832.json の burst の effects[1]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1329",
+      "role": "値を合わせた"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "1329",
+      "decided": "1 回目のバースト",
+      "reproduced": "2〜6 回目のバースト",
+      "observations": ["1329-06"]
+    }
+  ]
+}
