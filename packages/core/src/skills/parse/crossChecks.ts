@@ -316,7 +316,10 @@ function validateSameFiring(entries: Partial<Record<SkillSlot, SkillEntry>>, roo
       if (e.kind !== 'state')
         fail(`${path}.condition.selfState.sameFiring`, 'sameFiring is allowed only in a state grant or timed');
       if (!isStacksCondition(self))
-        fail(`${path}.condition.selfState.sameFiring`, 'needs a stack count (stacks, stacksRef or stacksBelow) in a state grant');
+        fail(
+          `${path}.condition.selfState.sameFiring`,
+          'needs a stack count (stacks, stacksRef or stacksBelow) in a state grant',
+        );
       const trigger = JSON.stringify(e.trigger);
       const lower = effects
         .slice(0, i)
