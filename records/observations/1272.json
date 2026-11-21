@@ -150,6 +150,10 @@
       "tool": "recipe:buff-edge@7",
       "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-iron\",\"events\":[\"range-3min-jump\"],\"condition\":\"auto\"}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は EH: 枠 3（E.H.）のモデルの f1300、EHe: 枠 3（E.H.）のモデルの f300、EHb: 枠 3（E.H.）のモデルの f700、EHb2: 枠 3（E.H.）のモデルの f1000、W: 枠 3（E.H.）のモデルの f622、ココア: 枠 1（ココア）のモデルの f1300、FA: 枠 2（ソルジャーF.A.）のモデルの f1300のペレット 10 個までの和。境は EHb → EHb2（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 100〜600f。EHb 81・EHb2 85・区別できない 0・外れ 16・食い違い（EHb2の最初の発より後のEHbの発） 0"
     },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
     "source": "V-0813",
     "readAt": "2026-11-21"
   },
@@ -169,6 +173,10 @@
     "method": {
       "tool": "recipe:buff-edge@7",
       "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-iron\",\"events\":[\"range-3min-jump\"],\"condition\":\"auto\"}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は EH: 枠 3（E.H.）のモデルの f1300、EHe: 枠 3（E.H.）のモデルの f300、EHb: 枠 3（E.H.）のモデルの f700、EHb2: 枠 3（E.H.）のモデルの f1000、W: 枠 3（E.H.）のモデルの f622、ココア: 枠 1（ココア）のモデルの f1300、FA: 枠 2（ソルジャーF.A.）のモデルの f1300のペレット 10 個までの和。境は EHb → EHb2（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 100〜600f。EHb 81・EHb2 85・区別できない 0・外れ 16・食い違い（EHb2の最初の発より後のEHbの発） 0"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
     },
     "source": "V-0813",
     "readAt": "2026-11-21"
@@ -251,6 +259,10 @@
       "note": "同じ回の SMG の胴体・会心なし・距離ボーナスなしの 1 ヒットを 1 発の倍率（10.12%）で割り、変更後の 1 発（61% × 250%）を掛けた値を単位 u（フルバースト補正もコアも会心も無い値）とした。発の増分は u の 3.3・3.3・1.5・2.8 倍。直後の SMG の発の距離ボーナスの有無と、どの回も合う（2.8・3.3 は距離ボーナスあり、2.5・1.5 はなし）"
     },
     "unit": "ダメージ",
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
     "source": "V-0813",
     "readAt": "2026-11-21"
   },
@@ -266,6 +278,10 @@
       "tool": "recipe:hud-jumps@3 の増分",
       "note": "替わり目は 1421・3842・6469・9110（burst-panel）、発は 1533・3948・6596・9226。直後の SMG の発に距離ボーナスがある回（近・中近）は短く、無い回（中遠・遠）は長い"
     },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
     "source": "V-0813",
     "readAt": "2026-11-21"
   },
@@ -280,6 +296,10 @@
     "method": {
       "tool": "recipe:hud-jumps@3 の増分",
       "note": "00.00 は 1450・3871・6498・9140。3 回目は、使用武器変更の発より前に SMG の発が出た（SMG の発の後に変更の発の増分）。どの回も変更の発の増分とは別に、ほぼ同じ時刻に SMG が撃ち始める"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
     },
     "source": "V-0813",
     "readAt": "2026-11-21"
