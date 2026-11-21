@@ -57,8 +57,8 @@
           "ref": 2,
           "durationShotsRef": 3,
           "assumes": {
-            "ja": "フルバーストの始まりのフレームから、自分の 2 発目の通常攻撃まで付く（貫通特化と同じ窓）。窓の中に出た S1 のヒットにも乗る（確かめていない）",
-            "en": "Applies from the Full Burst start frame through her 2nd normal attack (the same window as Pierce). It also applies to an S1 hit landing inside the window (not verified)"
+            "ja": "フルバーストの始まりのフレームから、自分の 2 発目の通常攻撃まで付く（貫通特化と同じ窓）。窓の中に出た S1 のヒットにも乗る形で回す（録画では、始まりの直後の S1 のヒットに乗らなかった回があり、値を決める時点を見分けていない。課題 2-74）",
+            "en": "Applies from the Full Burst start frame through her 2nd normal attack (the same window as Pierce). It is run as also applying to an S1 hit landing inside the window (a recording has an S1 hit right after the start without it; which moment fixes the value is not distinguished. Backlog 2-74)"
           },
           "claims": [
             "C-1493"
