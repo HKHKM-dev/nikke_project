@@ -91,8 +91,6 @@
 
 - 照合の指標 `perShotHitDamage`（`packages/core/src/records/observations/metrics/damage.ts`）は、引数のフレームの区間の 1 トリガーの値の `perShot` から 1 回の値を出し、その時刻の発が部分チャージの発かを見ない。2 パス目は部分チャージの発に、きっかけが `fullChargeShot` の分（`perShotFullCharge`）を乗せないので、部分チャージの発を読む観測値では、モデルに無い追加ダメージの値を出す。いまの比べる観測値は、どれも部分チャージの発から離れたフレームを指す（2026-11-15 に調べた）。部分チャージの発の 1 回の値を比べる観測値が要るときに、その発の値（`partialChargeTriggerDamage` を通した `perShot`）から出す（[design-full-charge-fold.md](design-full-charge-fold.md) 3.2 節）
 - 値の固定（timed の `lock`）は、持ち主の和を作る 3 か所（`skills/holders/views.ts` の `firingBuffs`・`damageBuffsAt`、`skills/timeline.ts` の `buildSegments`）でだけ当てている。`frame/plan.ts` の `withSameActivationEffects`・`withEarlierSequentialEffects` は固定を当て直さず、条件 `selfBuffed` と、きっかけ `{ buffApplied }` は止めた▲も付いたと数え、区間の表示は止めた常時の値（装備・キューブ）の量を 0 にしない。いまの定義にはどれも効く組が無い（固定を持つ 4 体に、自分のバーストのチャージ速度▲・リロード速度▲と、これらを読む条件・きっかけが無い）。使い手が出たら、効果の列から和を作る関数を 1 つにして（足す → `applyStatLocks`）、和を作る所がそれを使う形にする（[design-stat-lock.md](design-stat-lock.md) 3.4 節）
-- モダン UI のバッジの既定の色（`apps/web/src/styles.css` の `.badge-ui_*` と `[class^='badge-…_']` の差し色・地の色の規則）は、クラス 1 つ分の詳細度を持つ。このため、場所ごとに色を変える規則（設定のボタンのライトでの反転・操作キャラの印のダークでの反転・育成を変えたスロットの青い歯車など）は、要素名や親を足して詳細度を上げている。ui のバッジの図柄を白にする規則も、バッジを 1 つ足すたびに列挙が伸びる。バッジの絵の縦横の比（`150 / 130` など）も、CSS の 7 か所に書き写している。直すなら、既定の色の規則を `:where(...)` で包む。あわせて、BadgeIcon がグループのクラスと、viewBox から作る `aspect-ratio` を付ける形にする（[design-modern-ui.md](design-modern-ui.md) の経過）
-- `npm run pr:prep` が ID の重なりで出す `records:renumber` の手順どおりに振り直して commit しても、リベースは振り直す前の ID のファイルを足した commit から当て直すので、main の同じ ID のファイルと衝突して止まる（add/add。2026-11-21 に PR #1309 の写しで確かめた）。自動マージを待つ PR の衝突の直し（`tools/git/auto-rebase.ts`）は、ブランチを 1 つの commit にまとめてからリベースして避けている。`pr:prep` でも、重なりを振り直した後のリベースの前にまとめるか、手順の案内を直す（2026-11-21 起票。plan/design-auto-conflict-fix.md の実装で見つけた）
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
 
@@ -127,10 +125,12 @@
 - アニス：スター（17）のバーストのコアの経路（2026-10-05）→ 一部完了: [design-anis-star-core-path.md](design-anis-star-core-path.md)。残りは 6 節
 - 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは 3 節
 - 戦闘力による一覧の並び替え（2026-11-07 起票）→ 一部完了: [design-combat-power-sort.md](design-combat-power-sort.md)。残りは 4 節
-- スキルの効果の分類（`catalog.ts`・`catalogDoc.ts`）で、句の途中（「自分に：「…」〈対象〉に：「…」」）や項目の後ろ（「の対象：…」）から決めた絞った味方の対象を、`tgtKeys` が小項目の頭か行の頭から読み、絞り方を取り違える。例はトーブ S2 の「ショットガンを所持する味方」、ラプンツェル：サンクチュアリのバーストの「戦闘不能状態の味方」（7.3 節と 4.3 節の数に効く）。対象を決めた文を効果に持たせ、`tgtKeys` はそれを読む（2026-11-21 起票。[design-catalog-doc-split.md](design-catalog-doc-split.md) 10 節）
+- スキルの効果の分類（`catalog.ts`）で、条件の中の「」で囲んだ状態の名前（トーブ S2 の「自分が「応急改造」のフルスタック状態の時のみ」）を効果の句として読み、「名前だけの付与」の効果にする（2 節の残りに効く）。条件の中の名前は効果に数えない（2026-11-21 起票。[design-catalog-doc-split.md](design-catalog-doc-split.md) 11 節）
+- スキルの効果の分類（`catalog.ts`）で、行の頭や「効果N：」の小項目の頭から対象を決めるとき、条件の節（「〈状態〉状態の味方がいる場合、」など）に書かれた対象も読む。句の前の文と同じ規則（`targetsIn`）をかけると、いまのデータで多くの句の対象が変わり、合うものと合わなくなるものが混ざるので、条件の節の終わりの語と「、」で並べた対象の読み方を見直してからかける（2026-11-21 起票。[design-catalog-doc-split.md](design-catalog-doc-split.md) 11 節）
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
+- スキルの効果の分類で、句の途中や項目の後ろから決めた絞った味方の対象を、`tgtKeys` が小項目の頭か行の頭から読み、絞り方を取り違える（2026-11-21 起票）→ 完了（2026-11-21。効果に対象を決めた文 `targetText` を持たせ、`tgtKeys` はそれを読む。句の前の文は最後の「、」の後ろから対象を読む）: [design-catalog-doc-split.md](design-catalog-doc-split.md) 11 節
 - `catalogDoc.ts` の 4.3 節（状態を見る側）に残る正規表現の写しを無くす（2026-11-21 起票）→ 完了（2026-11-21。4.3 節は `condKeys` と、効果ごとの `tgtKeys` を使う。生成物は変わらない）: [design-catalog-doc-split.md](design-catalog-doc-split.md) 10 節
 - `catalogDoc.ts` の `renderSkillCatalog` を、節ごとの関数に分ける（2026-11-21 起票）→ 完了（2026-11-21）: [design-catalog-doc-split.md](design-catalog-doc-split.md)
 - `sim-run.ts` の表示を、テストのある関数に分ける（2026-11-19 起票）→ 完了（2026-11-19）: [design-sim-run-split.md](design-sim-run-split.md)
