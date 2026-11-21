@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 145・効果 1056（根拠あり 1034）・notes 355（根拠あり 150）
+件数: キャラ 147・効果 1070（根拠あり 1048）・notes 357（根拠あり 150）
 
-notes の種類: 未対応 44・前提の外 113・計算に無関係 69・補足 42・間接 87
+notes の種類: 未対応 44・前提の外 113・計算に無関係 70・補足 42・間接 88
 
-スロット: supported 393・partial 31・unsupported 9・noEffect 53
+スロット: supported 398・partial 31・unsupported 9・noEffect 54
 
 ## 10 ラピ
 
@@ -507,6 +507,16 @@ notes の種類: 未対応 44・前提の外 113・計算に無関係 69・補�
   - effects[4] weaponChange・burstUse: C-1157（確定）
   - effects[5] timed・burstUse・attackDamage: C-1158（確定）
 
+## 110 クロウ
+
+- **skill1**: noEffect
+  - notes[0] 計算に無関係: フルバーストタイムが発動した時の、敵全体の攻撃力▼はダメージに関係しない: 根拠なし
+- **skill2**: supported
+  - effects[0] damage・lastShot・additional: C-1400（確定）
+  - notes[0] 間接（防御力）: 最後の弾丸が命中した時の、自分の防御力▲（5 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1401（確定）
+
 ## 111 ジャッカル
 
 - **skill1**: noEffect
@@ -732,6 +742,24 @@ notes の種類: 未対応 44・前提の外 113・計算に無関係 69・補�
 - **burst**: supported
   - effects[0] burstDamage・skill: C-1372（確定）
   - effects[1] damage・burstUse・additional: C-1373（確定）、C-1368（確定）、C-1372（確定）
+
+## 182 ギロチン：ウィンタースレイヤー
+
+- **skill1**: supported
+  - effects[0] counterChange・battleStart・heroLevel: C-1393（確定）
+  - effects[1] counterChange・exp の値 01 スタックごと・heroLevel: C-1393（確定）
+  - effects[2] ammoRefill・heroLevel が上がった時: C-1394（確定）
+  - effects[3] heal・heroLevel が上がった時: C-1395（仮説）
+  - effects[4] timed・heroLevel が上がった時・elementDamage: C-1396（確定）
+  - effects[5] timed・heroLevel が上がった時・attack: C-1396（確定）
+- **skill2**: supported
+  - effects[0] state・nonCoreHit・exp（attack）: C-1392（確定）
+  - effects[1] state・coreHit・exp: C-1392（確定）
+  - effects[2] passive・heroLevel 2 以上の間・elementDamage: C-1396（確定）
+- **burst**: supported
+  - effects[0] timed・burstUse・attackDamage: C-1397（確定）
+  - effects[1] timed・burstUse・elementDamage: C-1397（確定）
+  - effects[2] dot・burstUse: C-1398（確定）
 
 ## 183 メイデン：アイスローズ
 

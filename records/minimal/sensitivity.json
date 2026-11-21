@@ -34420,6 +34420,190 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "1273-03",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "f024f8871bed048e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1273-04",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "aba3336d165de214",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1273-05",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "9000e61654cd6077",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1273-06",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "0cf8cbef5ec8970c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1273-07",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "5cf1f6c620a0982f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1273-10",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "d9e0de47c9437b00",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1274-03",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "53b0911d791f4504",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1274-04",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "8aa610b74677aefe",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1274-05",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "bb91c7985b9c6c75",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1274-06",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "bddefde9a5fee0e6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1274-07",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "0cfa12a02ccfa28d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1274-10",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "ba20ceb5fe7a1dc2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1275-13",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "ba606884c2f55305",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1275-14",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "facde02dd4ae9252",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1275-17",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "beb96b1aa2a64411",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1275-18",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "320cde11bdc1b84c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1275-19",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "5e6d643b299e1498",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1276-11",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "7c085675a35e4302",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1276-12",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "b365301fb1ee4780",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1276-13",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "01037f884f896dad",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1276-16",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "b4605b8e79d6ba29",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1276-17",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "1cb0f175f87d2254",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1276-18",
+      "element": "ギロチン：ウィンタースレイヤー skill1.effects[3]",
+      "key": "1a58954fb4fed260",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }

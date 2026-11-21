@@ -1241,6 +1241,12 @@
 | 1270 | `20261121-1270_kilo-1.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎キロ（361、MG・灼熱・SSR） | BigArms・灼熱・Lv.1 | 射撃場 3 分 | ON | ON / ON |  |
 | 1271 | `20261121-1271_eh-1.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎E.H.（113、SMG・風圧・SSR） | BigArms・鉄甲 | 射撃場 3 分 | ON | ON / ON |  |
 | 1272 | `20261121-1272_eh-2.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎E.H.（113、SMG・風圧・SSR） | BigArms・鉄甲 | 射撃場 3 分 | ON | ON / ON |  |
+| 1273 | `20261121-1273_ar_guillotine-ws_fire.mp4` | ◎ギロチン：ウィンタースレイヤー（182、AR・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
+| 1274 | `20261121-1274_ar_guillotine-ws_fire.mp4` | ◎ギロチン：ウィンタースレイヤー（182、AR・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
+| 1275 | `20261121-1275_smg+sr+ar_ludmilla+delta+guillotine-ws_fire.mp4` | ルドミラ（190、SMG・水冷・SSR） + デルタ（20、SR・風圧・SR） + ◎ギロチン：ウィンタースレイヤー（182、AR・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1276 | `20261121-1276_smg+sr+ar_ludmilla+delta+guillotine-ws_fire.mp4` | ルドミラ（190、SMG・水冷・SSR） + デルタ（20、SR・風圧・SR） + ◎ギロチン：ウィンタースレイヤー（182、AR・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1280 | `20261121-1280_crow-a-1.mp4` | ◎クロウ（110、SMG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0816 の撮影 A: クロウ（110）の単騎（操作） |
+| 1281 | `20261121-1281_crow-b-1.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎クロウ（110、SMG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0816 の撮影 B: ココア（I）・ソルジャーF.A.（II）・クロウ（III・操作）、オートバースト ON |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
