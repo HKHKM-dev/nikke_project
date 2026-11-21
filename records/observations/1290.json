@@ -1,0 +1,61 @@
+[
+  {
+    "id": "1290-01",
+    "recording": "1290",
+    "kind": "total",
+    "use": "record",
+    "value": 60007628,
+    "description": "I-DOLL・フラワー・シグナル の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11403。増分は 3096 個"
+    },
+    "source": "V-0819",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1290-02",
+    "recording": "1290",
+    "kind": "count",
+    "use": "record",
+    "value": 238,
+    "unit": "トリガー",
+    "description": "I-DOLL・フラワー・シグナル のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 3096 個。前の増分から 30f 未満の増分（3056 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 41.5f）から発の数を決めた（2 発になった組 29 個）"
+    },
+    "source": "V-0819",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1290-03",
+    "recording": "1290",
+    "kind": "timing",
+    "use": "record",
+    "value": [1835, 3618, 5459, 7297, 9084, 10764],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・25・25・24・24・25f"
+    },
+    "source": "V-0819",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1290-04",
+    "recording": "1290",
+    "kind": "timing",
+    "use": "record",
+    "value": [1864, 3647, 5488, 7325, 9113, 10793],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25・25・25f"
+    },
+    "source": "V-0819",
+    "readAt": "2026-11-21"
+  }
+]
