@@ -1,4 +1,4 @@
-// 右上の「アカウント」のメニュー（設定のボタンの左。ボタンは、クラシックでは文字、モダン UI ではバッジ ui_account の絵）。アカウントの育成状況（JSON）の読み込み・書き出し・編集・消去を置く
+// 右上の「育成」のメニュー（設定のボタンの左。ボタンは、クラシックでは文字、モダン UI ではバッジ ui_account の絵）。アカウントの育成状況（JSON）の読み込み・書き出し・編集・消去を置く
 import type { UiMode } from '../uiMode.ts';
 import type { RosterControls } from '../useRoster.ts';
 import { BadgeIcon } from './modern/BadgeIcon.tsx';
@@ -16,9 +16,9 @@ type Props = {
 export function AccountMenu({ uiMode, roster, onEditRoster }: Props) {
   return (
     <Popover
-      button={uiMode === 'modern' ? <BadgeIcon className="settings-menu-icon" name={ACCOUNT_BADGE} /> : 'アカウント'}
+      button={uiMode === 'modern' ? <BadgeIcon className="settings-menu-icon" name={ACCOUNT_BADGE} /> : '育成'}
       buttonClassName={uiMode === 'modern' ? 'settings-menu-button' : 'header-menu-button'}
-      label="アカウント"
+      label="育成"
       align="right"
     >
       {(close) => (
