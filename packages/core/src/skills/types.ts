@@ -762,13 +762,16 @@ export const SHOT_COUNT_RESETS = ['fullBurstStart', 'never'] as const satisfies 
  * 発動の回数の段階（「使用回数別の効果」「開始回数別の効果」、下位効果のスタック適用）。
  * atLeast 回目以降の発動のたびに発火する。burstUse = 自分がバーストスキルを使った回数、fullBurstStart = フルバーストの回数（編成全体）。
  * fullBurstEnd = フルバーストタイムが終了した回数（編成全体。終わりのフレームで発火する。plan/design-maids.md 2.3 節）。
+ * burstStage3Enter = バースト 3 段階に突入した回数（編成全体。文字列のきっかけ burstStage3Enter と同じ II → III の替わり目のフレームで
+ * 発火し、III の CT が明けずに II で切れたチェーンも数える。plan/design-neon-bo.md 2.1 節）。
  * 回数は戦闘中ずっと数え、リセットしない（resetAfterSeconds を書いたものを除く）。
  */
-export type EventCountKind = 'burstUse' | 'fullBurstStart' | 'fullBurstEnd';
+export type EventCountKind = 'burstUse' | 'fullBurstStart' | 'fullBurstEnd' | 'burstStage3Enter';
 export const EVENT_COUNT_KINDS = [
   'burstUse',
   'fullBurstStart',
   'fullBurstEnd',
+  'burstStage3Enter',
 ] as const satisfies readonly EventCountKind[];
 
 export type EventCountTrigger = {

@@ -1,0 +1,96 @@
+{
+  "formatVersion": 1,
+  "resourceId": 14,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "バーストスキルを使用した時の開始回数別のパーツダメージ▲（1〜3 回目の段）は、射撃場の的にパーツが無いので効かない",
+          "en": "The Damage to Parts increases by Burst Skill use count (tiers 1 to 3) have no effect because the shooting-range target has no parts",
+          "kind": "outOfScope",
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstStage3Enter",
+            "atLeast": 1
+          },
+          "target": "self",
+          "stat": "elementDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "開始回数別の効果（下位効果のスタック適用）の 1 回目の段。編成がバースト 3 段階に突入するたび（II → III の替わり目。II で切れたチェーンも数える）に付く。段ごとに別の▲で、2・3 回目の段（effects[1]・[2]）と足す。有利コード（灼熱）の敵にだけ効く",
+            "en": "The first tier of the effects by entry count (lower tiers stack). Applied each time the squad enters Burst Stage 3 (the II-to-III switch; chains cut at II also count). Each tier is a separate buff added to the second and third tiers (effects[1], [2]). Applies only against an enemy of the disadvantaged code (Fire)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstStage3Enter",
+            "atLeast": 2
+          },
+          "target": "self",
+          "stat": "elementDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "2 回目の段。同じ突入で付け直した 1 回目の段（effects[0]）と足す",
+            "en": "The second tier. It adds to the first tier (effects[0]) reapplied on the same entry"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstStage3Enter",
+            "atLeast": 3
+          },
+          "target": "self",
+          "stat": "elementDamage",
+          "ref": 5,
+          "durationRef": 6,
+          "assumes": {
+            "ja": "3 回目の段。3 回目以降の突入では 3 つの段がどれも付け直され、足される",
+            "en": "The third tier. From the third entry on, all three tiers are reapplied and added"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "damageRef": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "変更後の武器のレートは CDN の changeWeapon（毎分 90 発）。ほかの値（1 発のヒット数・コア・最初の発・残弾）は録画で読んでいない（基礎の MG のまま）",
+            "en": "The changed weapon fires at the CDN changeWeapon rate (90 rpm). Other values (hits per shot, core, first shot, ammo) are not yet read from recordings (left as the base MG)"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "weaponChangeShot"
+          },
+          "damageType": "additional",
+          "ref": 3,
+          "enemyElement": "Fire",
+          "assumes": {
+            "ja": "変更後の武器の発ごとに、灼熱コードの敵へ 1 ヒット（発と同じフレーム）。バーストを使った時に 1 回だけ出る読みと、録画のヒットの数で見分ける",
+            "en": "One hit per changed-weapon shot against a Fire Code enemy (on the shot frame). To be told apart from a single hit on Burst use by the number of hits in recordings"
+          }
+        }
+      ]
+    }
+  }
+}
