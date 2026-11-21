@@ -936,9 +936,10 @@ svg.settings-option-icon,
   cursor: grabbing;
 }
 /* 立ち絵の右上に重ねるボタン（上から、空にする（バッジ ui_delete）・育成と設定（バッジ ui_setting））。置き先待ちの水色の重ね・◎ より上。
-   絵はバッジ（八角形で縦横 130:130）。大きさは左上のバッジの幅（.char-visual-portrait の --badge-w）と同じで、立ち絵が縮むと一緒に縮める */
+   絵はバッジ（八角形で縦横 130:130）。大きさは左上のバッジの幅（.char-visual-portrait の --badge-w）と同じで、立ち絵が縮むと一緒に縮める。
+   押すボタンなので 18px より小さくしない（狭い画面では左上のバッジより大きくなる） */
 .modern-slot-icon-button {
-  --slot-icon-w: calc(var(--slot-portrait-h) * 24 / 256);
+  --slot-icon-w: max(18px, var(--slot-portrait-h) * 24 / 256);
   position: absolute;
   right: 2px;
   z-index: 4;
