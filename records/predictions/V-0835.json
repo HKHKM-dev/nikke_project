@@ -1,0 +1,232 @@
+{
+  "verification": "V-0835",
+  "note": "撮影 A（ペッパー単騎・操作）と撮影 B（ペッパー（I）+ ギロチン：ウィンタースレイヤー（III・操作）・オートバースト ON）の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。S2 の CT は外部の資料で確かめられなかったので、録画の左の帯とダメージの増分で読む（H1 は仮の 10 秒）。B は II がいないので、ペッパーのバーストのたびにチェーンが切れ、ギロチンはバーストを使わない。ギロチンの経験値（攻撃力▲・100 スタック・持続）は約 45 秒で上限に届き、ペッパーの 3 回目からのバースト（約 49 秒から）は上限の後",
+  "team": [
+    {
+      "rid": 131
+    },
+    {
+      "rid": 182,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S2 は CT 10 秒ごとで 1 回目も 10 秒・ヒットは発動と同じフレーム・ゲージを溜めない。バーストのスタック量▲は付いているスタックのバフに 1 段足し、上限は上げない）"
+    },
+    {
+      "id": "H2",
+      "note": "S2 の CT が 15 秒",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 131,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "everySeconds": 15,
+                "cooldown": true
+              },
+              "ref": 2,
+              "damageType": "skill"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H3",
+      "note": "S2 の CT が 20 秒",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 131,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "everySeconds": 20,
+                "cooldown": true
+              },
+              "ref": 2,
+              "damageType": "skill"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-s2-interval",
+      "model": "sim",
+      "metric": "skillHitMeanInterval",
+      "team": [
+        {
+          "rid": 131,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "撮影 A: S2 のダメージの間隔の平均（動画のフレーム）"
+    },
+    {
+      "id": "A-s2-first",
+      "model": "sim",
+      "metric": "skillHitVideoFrame",
+      "team": [
+        {
+          "rid": 131,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 10
+      },
+      "note": "撮影 A: S2 の 1 回目のダメージの動画のフレーム（戦闘開始の 0 から）"
+    },
+    {
+      "id": "A-s2-hit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "team": [
+        {
+          "rid": 131,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "撮影 A: S2 の 1 回目のダメージ（会心なし）"
+    },
+    {
+      "id": "A-burst-hit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "team": [
+        {
+          "rid": 131,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "撮影 A: 1 回目のバーストスキルダメージ（会心なし）"
+    },
+    {
+      "id": "B-exp-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 2800,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.002
+      },
+      "note": "撮影 B: 経験値が上限の後、ペッパーの 3 回目のバーストの前の、ギロチンの胴体の会心しない 1 ヒット（対照）"
+    },
+    {
+      "id": "B-exp-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 3100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.002
+      },
+      "note": "撮影 B: ペッパーの 3 回目のバーストの後（次のバーストの前）の、ギロチンの胴体の会心しない 1 ヒット。上限を 1 上げる読み（予測ファイルの外）なら、経験値 1 段（攻撃力 1.81%）ぶん上がる"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "028991ae1dc6210c3f328956c65b70399f4afd9e",
+    "values": {
+      "H1": {
+        "A-s2-interval": 589.4375,
+        "A-s2-first": 589,
+        "A-s2-hit": 159720,
+        "A-burst-hit": 1235334.375,
+        "B-exp-before": 62001.08214300001,
+        "B-exp-after": 62001.08214300001
+      },
+      "H2": {
+        "A-s2-interval": 883.6,
+        "A-s2-first": 884,
+        "A-s2-hit": 159720,
+        "A-burst-hit": 1235334.375,
+        "B-exp-before": 62001.08214300001,
+        "B-exp-after": 62001.08214300001
+      },
+      "H3": {
+        "A-s2-interval": 1177.857142857143,
+        "A-s2-first": 1178,
+        "A-s2-hit": 159720,
+        "A-burst-hit": 1235334.375,
+        "B-exp-before": 62001.08214300001,
+        "B-exp-after": 62001.08214300001
+      }
+    }
+  }
+}

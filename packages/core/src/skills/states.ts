@@ -501,6 +501,11 @@ export const NAMED_STATES = {
   sleepy: { name: { ja: '眠い', en: 'Sleepy' }, holder: 'enemy' },
   /** 起きた（プリムの宝物版 S1。通常攻撃を防御力無視ダメージに。S2・バーストの防御力無視ダメージ▲の条件） */
   wakeUp: { name: { ja: '起きた', en: 'Wake Up' }, holder: 'ally' },
+  /**
+   * リフレッシュハート（ペッパーの S1。味方全体・5 スタック・15 秒。中身の受けるHP回復量▲は語彙に無いので書かず、間接の notes。
+   * バーストの「自分がリフレッシュハートのフルスタック状態なら」の回復が読む）
+   */
+  refreshHeart: { name: { ja: 'リフレッシュハート', en: 'Refresh Heart' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

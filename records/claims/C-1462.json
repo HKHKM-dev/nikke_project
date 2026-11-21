@@ -1,0 +1,20 @@
+{
+  "id": "C-1462",
+  "text": "ペッパーの S2（説明文にきっかけが無い。敵 1 体に最終攻撃力の 160% のダメージ。スキル Lv10）は、CT 10 秒ごとのアクティブで、戦闘開始から ceil(10 ÷ 0.017) = 589 ティックごとに発動し（1 回目も 1 周期後）、発動の 7f 後（左の帯の立ち上がりから 5f 後）に 159,720 の 1 ヒットを出す",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1317-01`・`1317-02`・`1317-03`・`1318-01`・`1318-02`・`1318-03`。V-0835",
+  "model": "反映（data/skills/131.json の skill2 の effects[0]（damage・everySeconds 10・cooldown・delayFrames 7））",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/131.json の skill2 の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1317",
+      "role": "値を合わせた"
+    }
+  ]
+}

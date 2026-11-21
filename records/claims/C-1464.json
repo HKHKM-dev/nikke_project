@@ -1,0 +1,23 @@
+{
+  "id": "C-1464",
+  "text": "ペッパーのバーストの「スタック可能バフ効果のスタック量 1 個▲」は、味方が持つスタックのバフに、上限の中で 1 段足し（上限は上げない）、発動（六角形の替わり目）のフレームまでに効く。上限に達したギロチン：ウィンタースレイヤーの経験値は、バーストの後も 100 段のまま",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1319-01`・`1319-03`。V-0835",
+  "model": "反映（data/skills/131.json の burst の effects[1]（stackChange・allStackable）、burst/landing.ts のペッパーの行の effectFrames 0）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/131.json の burst の effects[1]"]
+  },
+  "decidedOn": [],
+  "minimal": [
+    {
+      "observations": ["1319-01", "1319-03"],
+      "element": ["ペッパー skill1.effects[1]", "ペッパー skill2.effects[0]", "ペッパー burst.effects[0]"],
+      "reason": "読んだのはギロチンの胴体の 1 ヒットの増分の並びだけ。ペッパーの S2 とバーストのダメージは別の増分（159,720・1,235,334 か、その和）で、ギロチンの値を変えない。リフレッシュハートは中身が無い（受けるHP回復量▲は回復の量だけを変え、ギロチンの値を変えない）",
+      "decided": "2026-11-21"
+    }
+  ]
+}
