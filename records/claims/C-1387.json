@@ -1,0 +1,21 @@
+{
+  "id": "C-1387",
+  "text": "E.H. の S1・S2 は説明文どおりで、戦闘開始時に廃品が 10 個溜まり、次のフレームに自家製弾倉が 1 本できて、弾倉 1 本分の攻撃力 7.5%▲（持続）が付く。有利コードの攻撃ダメージ 16.36%▲ は戦闘開始から 15 秒乗る。前提の中では廃品はほかに増えず、弾倉は 1 本のまま（どのバーストの武器も 1 発で撃ち切る）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1271-11`・`1271-13`・`1271-14`・`1271-15`・`1272-10`・`1272-12`・`1272-13`・`1272-14`。V-0813",
+  "model": "data/skills/113.json（skill1・skill2）、skills/counters.ts の scrap・homemadeMagazine",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": [
+      "data/skills/113.json の skill1 の effects[0]",
+      "data/skills/113.json の skill1 の effects[1]",
+      "data/skills/113.json の skill1 の effects[2]",
+      "data/skills/113.json の skill2 の effects[0]",
+      "data/skills/113.json の skill2 の effects[1]"
+    ]
+  },
+  "decidedOn": []
+}
