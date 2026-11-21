@@ -1102,7 +1102,8 @@ svg.roster-revert-icon {
   font-size: 0.8rem;
   color: #fff;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+  /* 名前の後ろの影は、欄の下端から高さ 20px だけに描き、上端の透明から下端の黒 100% へ変える（オーナーの指示）。欄の高さ（文字と余白）は変えない */
+  background: linear-gradient(transparent, #000) bottom / 100% 20px no-repeat;
   /* マウスの操作は受ける（アーティファクトのコメントで名前と限界突破を選べるように）。押したときのドラッグ・クリックはカードに届く */
   z-index: 1;
 }
