@@ -9,10 +9,13 @@ import {
   applyColorRoles,
   badgeNameOf,
   buildBadges,
-  MONOCHROME_GROUPS,
-  MONOCHROME_NAMES,
+  SPRITE_GROUPS,
+  SPRITE_NAMES,
+  badgeOutPath,
+  inSprite,
   isMonochrome,
   optimizeBadge,
+  outputFiles,
   svgFiles,
 } from './badges.ts';
 
@@ -20,13 +23,18 @@ const sources = new Map(svgFiles(BADGE_SRC_DIR).map((f) => [f, readFileSync(`${B
 
 describe('バッジの書き出し', () => {
   it('元と書き出しのファイルが同じ顔ぶれ', () => {
-    expect(svgFiles(BADGE_OUT_DIR)).toEqual([...sources.keys()]);
+    expect(outputFiles(BADGE_OUT_DIR).sort()).toEqual([...sources.keys()].map(badgeOutPath).sort());
   });
 
-  it.each([...sources.keys()])('%s の書き出しは元を小さくしたもの（違うなら npm run badges:build）', (file) => {
-    const source = sources.get(file)!;
-    expect(readFileSync(`${BADGE_OUT_DIR}/${file}`, 'utf8')).toBe(optimizeBadge(source, badgeNameOf(file)));
-  });
+  it.each([...sources.keys()])(
+    '%s の書き出しは元を小さくしたもの（違うなら npm run badges:build。pr:prep も回す）',
+    (file) => {
+      const source = sources.get(file)!;
+      expect(readFileSync(`${BADGE_OUT_DIR}/${badgeOutPath(file)}`, 'utf8')).toBe(
+        optimizeBadge(source, badgeNameOf(file)),
+      );
+    },
+  );
 
   it('グループと変種が同じ元は、枠の有無がそろう（ui は除く）', () => {
     const framed = new Map<string, Set<boolean>>();
@@ -81,25 +89,28 @@ describe('白黒のバッジ', () => {
     );
   });
 
-  // 画面のスプライトに入るグループ（画面の badges.ts の glob）を足したのに白黒に足し忘れると、色が変数にならない
-  it('白黒のグループは、画面のスプライトに入るグループと同じ', () => {
-    const screen = readFileSync(new URL('../src/components/modern/badges.ts', import.meta.url), 'utf8');
-    const globbed = [...screen.matchAll(/'\.\.\/\.\.\/assets\/badges\/([^_]+)_\*\.svg'/g)].map(([, group]) => group);
-    expect(globbed.sort()).toEqual([...MONOCHROME_GROUPS].sort());
+  it('スプライトに入るバッジの名前は、どれも元がある', () => {
+    const names = new Set([...sources.keys()].map(badgeNameOf));
+    expect(Object.keys(SPRITE_NAMES).filter((name) => !names.has(name))).toEqual([]);
+    expect([...SPRITE_GROUPS].filter((group) => ![...names].some((name) => name.startsWith(`${group}_`)))).toEqual([]);
   });
 
-  it('グループの外で画面のスプライトに 1 枚ずつ入れるバッジは、無地の ui_blank_main のほかは白黒', () => {
-    const screen = readFileSync(new URL('../src/components/modern/badges.ts', import.meta.url), 'utf8');
-    const single = [...screen.matchAll(/'\.\.\/\.\.\/assets\/badges\/([^*']+)\.svg'/g)].map(([, name]) => name!);
-    expect(single).toContain('ui_information');
-    expect(single.filter((name) => name !== 'ui_blank_main').sort()).toEqual([...MONOCHROME_NAMES].sort());
+  it('スプライトに入るグループのバッジは白黒で、グループの外は SPRITE_NAMES の描き方', () => {
+    expect(isMonochrome('element_Fire')).toBe(true);
+    expect(isMonochrome('ui_information')).toBe(true);
+    expect(isMonochrome('ui_blank_main')).toBe(false);
+    expect(inSprite('ui_blank_main')).toBe(true);
+    expect(inSprite('ui_check')).toBe(false);
+    expect(isMonochrome('ui_check')).toBe(false);
+    expect(badgeOutPath('ui_check.svg')).toBe('ui_check.svg');
+    expect(badgeOutPath('element_Fire.svg')).toBe('sprite/element_Fire.svg');
   });
 
   it('書き出しは、白黒のグループのバッジの色を変数にし、id の前に名前を付ける', () => {
     const names = [...sources.keys()].map(badgeNameOf).filter(isMonochrome);
     expect(names).toContain('element_Fire');
     for (const name of names) {
-      const out = readFileSync(`${BADGE_OUT_DIR}/${name}.svg`, 'utf8');
+      const out = readFileSync(`${BADGE_OUT_DIR}/${badgeOutPath(`${name}.svg`)}`, 'utf8');
       expect(out).toMatch(/var\(--badge-/);
       for (const [, id] of out.matchAll(/\sid="([^"]+)"/g)) expect(id).toMatch(new RegExp(`^${name}__`));
     }
@@ -135,6 +146,14 @@ describe('buildBadges', () => {
     expect(removed).toEqual(['old_z.svg']);
     expect(svgFiles(outDir).sort()).toEqual(['a_x.svg', 'b_y.svg']);
     expect(readFileSync(join(outDir, 'b_y.svg'), 'utf8')).toBe(optimizeBadge(svg, 'b_y'));
+  });
+
+  it('puts the badges that go into the sprite under sprite/ and removes them from the top level', () => {
+    const { srcDir, outDir } = setup(['element_x.svg', 'a_x.svg'], ['element_x.svg']);
+    const { written, removed } = buildBadges(srcDir, outDir);
+    expect(written.sort()).toEqual(['a_x.svg', 'sprite/element_x.svg']);
+    expect(removed).toEqual(['element_x.svg']);
+    expect(outputFiles(outDir).sort()).toEqual(['a_x.svg', 'sprite/element_x.svg']);
   });
 
   it('stops without removing anything when the source folder has no SVG', () => {

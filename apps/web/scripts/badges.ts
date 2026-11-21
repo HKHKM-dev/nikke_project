@@ -1,18 +1,20 @@
 // モダン UI のバッジを、元の SVG（apps/web/badges-src。Inkscape で描いたもの）から小さくして src/assets/badges に書き出す
 // （plan/design-modern-ui.md 2.5 節）。
 //   npm run badges:build
-// バッジを直すときは badges-src のほうを Inkscape で直し、これを回す。書き出したものが元と合っているかは badges.test.ts が見る。
+// バッジを直すときは badges-src のほうを Inkscape で直す。書き出しは npm run pr:prep が回して commit する（手元で画面を見るときはこれを
+// 回す）。書き出したものが元と合っているかは badges.test.ts が見る。
 // 書き出すのは badges-src の直下の SVG だけ。枠の無い図柄だけの部品（parts/parts_*.svg。バッジを描くときに写す元）は書き出さない。
 //
 // 枠（plan/design-badge-frame.md）: 元の枠（frame-out・frame-in）は元ごとに Inkscape で描き、書き出しは手を加えない。枠のある
 // 新しいバッジは、同じ形の型（ui_blank_<形>）を写して中身を描く。
 //
-// 白黒のバッジ（plan/design-badge-color.md）: MONOCHROME_GROUPS のグループのバッジは、色の役（COLOR_ROLES）の色だけで描き、
+// 白黒のバッジ（plan/design-badge-color.md）: SPRITE_GROUPS のグループと SPRITE_NAMES の monochrome のバッジは、色の役（COLOR_ROLES）の色だけで描き、
 // 書き出しで塗りと縁の色を CSS の変数（--badge-<役>）にする。色は画面の CSS が決める（値ごとの色・状態のクラス・
 // light-dark() でテーマ）。値ごとに色の違う部分（属性の図柄など）は差し色（#808080）で描く。
 // グラデーションの色は画面から変えられない（<use> で出すと、グラデーションは置いた場所の色のまま）ので、グラデーションは陰
 // （白か黒の不透明度）にだけ使う。マスクの中の色は形（明るさ）なので、そのまま残す。
-// 画面は全部のバッジを 1 つの文書に置く（スプライト）ので、書き出しは id の前にバッジの名前を付け、viewBox を残す。
+// 画面はスプライトに入るバッジ（SPRITE_GROUPS・SPRITE_NAMES）を 1 つの文書に置くので、書き出しはそれを sprite/ に置き、id の前に
+// バッジの名前を付け、viewBox を残す。ほか（<img> で読むものと、使っていないもの）は src/assets/badges の直下に置く。
 //
 // ファイル名の命名規則: <グループ>_<値>[-<変種>].svg
 // - グループ: キャラのデータ（CharacterIndexEntry）にある項目は、その項目名のまま（element・burstStep・class・weaponType・
@@ -23,7 +25,7 @@
 // - 変種: 同じ値の別の版は後ろに -<小文字> を付ける（背景の六角形を付けた版は -badge）
 // - 並びの番号は付けない（並びは使う側のコードが決める）
 // - 規則に合わない名前（<グループ>_ の無いもの）があると、書き出しは止まる
-import { existsSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { optimize } from 'svgo';
 
@@ -31,6 +33,9 @@ export const BADGE_SRC_DIR = fileURLToPath(new URL('../badges-src', import.meta.
 export const BADGE_OUT_DIR = fileURLToPath(new URL('../src/assets/badges', import.meta.url));
 
 export const svgFiles = (dir: string): string[] => readdirSync(dir).filter((f) => f.endsWith('.svg'));
+
+/** 元の SVG のファイル名から、拡張子なしの名前（画面がバッジを引く名前） */
+export const badgeNameOf = (file: string): string => file.slice(0, -'.svg'.length);
 
 function viewBoxOf(svg: string): string {
   const viewBox = /<svg\b[^>]*\sviewBox="([^"]*)"/.exec(svg)?.[1];
@@ -59,8 +64,11 @@ export const COLOR_ROLES: Readonly<Record<string, string>> = {
   '#808080': 'accent',
 };
 
-/** 白黒で描くバッジのグループ（画面のスプライトに入るもの）。色は画面の CSS で付ける */
-export const MONOCHROME_GROUPS: ReadonlySet<string> = new Set([
+/**
+ * 画面のスプライトに入るバッジのグループ。どれも白黒で描き、色は画面の CSS で付ける。書き出しは sprite/ に置き、画面は sprite/ を
+ * 1 つの glob で読む（src/components/modern/badges.ts）
+ */
+export const SPRITE_GROUPS: ReadonlySet<string> = new Set([
   'element',
   'burstStep',
   'class',
@@ -72,30 +80,43 @@ export const MONOCHROME_GROUPS: ReadonlySet<string> = new Set([
   'main',
 ]);
 
-/** グループの外で、白黒で描くバッジ（画面が図柄の色を CSS で変えるもの） */
-export const MONOCHROME_NAMES: ReadonlySet<string> = new Set([
-  'ui_information',
-  'ui_controller',
-  'ui_window',
-  'ui_account',
-  'ui_return',
-  'ui_delete',
-  'ui_setting',
-  'ui_cu',
-  'ui_mcu',
-  'ui_arrow',
-  'ui_light',
-  'ui_dark',
-  'ui_system',
-  'ui_undo',
-  'ui_redo',
-  'ui_classic',
-  'ui_modern',
-]);
+/**
+ * グループの外で、画面のスプライトに入るバッジ（拡張子なしの名前 → 描き方）。monochrome は白黒で描き、画面が図柄の色を CSS で変える。
+ * color は色のまま（無地の ui_blank_main）。画面のバッジを足すときは、ここに 1 行足して、使う場所の定数（badges.ts の badgeName）を足す
+ */
+export const SPRITE_NAMES: Readonly<Record<string, 'monochrome' | 'color'>> = {
+  ui_blank_main: 'color',
+  ui_information: 'monochrome',
+  ui_controller: 'monochrome',
+  ui_window: 'monochrome',
+  ui_account: 'monochrome',
+  ui_return: 'monochrome',
+  ui_delete: 'monochrome',
+  ui_setting: 'monochrome',
+  ui_cu: 'monochrome',
+  ui_mcu: 'monochrome',
+  ui_arrow: 'monochrome',
+  ui_light: 'monochrome',
+  ui_dark: 'monochrome',
+  ui_system: 'monochrome',
+  ui_undo: 'monochrome',
+  ui_redo: 'monochrome',
+  ui_classic: 'monochrome',
+  ui_modern: 'monochrome',
+};
+
+const groupOf = (name: string): string => name.slice(0, name.indexOf('_'));
+
+/** バッジ（拡張子なしの名前）が画面のスプライトに入るものか */
+export const inSprite = (name: string): boolean =>
+  Object.hasOwn(SPRITE_NAMES, name) || SPRITE_GROUPS.has(groupOf(name));
 
 /** バッジ（拡張子なしの名前）が白黒で描くものか */
 export const isMonochrome = (name: string): boolean =>
-  MONOCHROME_NAMES.has(name) || MONOCHROME_GROUPS.has(name.slice(0, name.indexOf('_')));
+  Object.hasOwn(SPRITE_NAMES, name) ? SPRITE_NAMES[name] === 'monochrome' : SPRITE_GROUPS.has(groupOf(name));
+
+/** 書き出しのフォルダの中で、そのバッジ（元のファイル名）を置く所（スプライトに入るものは sprite/） */
+export const badgeOutPath = (file: string): string => (inSprite(badgeNameOf(file)) ? `sprite/${file}` : file);
 
 /** 塗りと縁の色 */
 const PAINT = new Set(['fill', 'stroke']);
@@ -189,9 +210,6 @@ const resolveUserSpace = (size: Record<Axis, number>) => ({
   }),
 });
 
-/** 元の SVG のファイル名から、拡張子なしの名前（画面がバッジを引く名前） */
-export const badgeNameOf = (file: string): string => file.slice(0, -'.svg'.length);
-
 /**
  * 元の SVG（拡張子なしの名前が name）を書き出しにする。白黒のバッジは色を CSS の変数にしてから小さくする。
  * - convertTransform は切る（corporation_TETRA の反転を含む変換が別の変換に書き換わり、図柄が崩れる）
@@ -217,8 +235,15 @@ export function optimizeBadge(svg: string, name: string): string {
   return out;
 }
 
+/** 書き出しのフォルダにある SVG（直下と sprite/。outDir からの相対のパス） */
+export const outputFiles = (outDir: string): string[] => [
+  ...svgFiles(outDir),
+  ...(existsSync(`${outDir}/sprite`) ? svgFiles(`${outDir}/sprite`).map((f) => `sprite/${f}`) : []),
+];
+
 /**
- * srcDir の元を小さくして outDir に書き（written）、元の無い書き出しを消す（removed。元を消したときや名前を変えたとき）。
+ * srcDir の元を小さくして outDir（スプライトに入るものは outDir/sprite）に書き（written。outDir からの相対のパス）、元の無い書き出しを
+ * 消す（removed。元を消したとき・名前を変えたとき・スプライトに入るかが変わったとき）。
  * srcDir に SVG が 1 つも無ければ、何も書かず消さずに止める
  * （取り違えたフォルダや取り出し損ねで、書き出しを全部消さない）
  */
@@ -228,16 +253,18 @@ export function buildBadges(srcDir: string, outDir: string): { written: string[]
   // 画面（src/components/modern/badges.ts）は <グループ>_<値> の名前でバッジを引く
   const misnamed = written.filter((f) => !/^[^_]+_[^-]+(?:-.+)?\.svg$/.test(f));
   if (misnamed.length > 0) throw new Error(`badges: 命名規則に合わない ${misnamed.join(', ')}`);
+  mkdirSync(`${outDir}/sprite`, { recursive: true });
   for (const file of written) {
     const svg = readFileSync(`${srcDir}/${file}`, 'utf8');
     // 中身が変わらない書き出しは書かない（dev サーバーの監視を無駄に起こさない）
     const out = optimizeBadge(svg, badgeNameOf(file));
-    const outPath = `${outDir}/${file}`;
+    const outPath = `${outDir}/${badgeOutPath(file)}`;
     if (!existsSync(outPath) || readFileSync(outPath, 'utf8') !== out) writeFileSync(outPath, out);
   }
-  const removed = svgFiles(outDir).filter((f) => !written.includes(f));
+  const placed = written.map(badgeOutPath);
+  const removed = outputFiles(outDir).filter((f) => !placed.includes(f));
   for (const file of removed) rmSync(`${outDir}/${file}`);
-  return { written, removed };
+  return { written: placed, removed };
 }
 
 if (import.meta.main) {

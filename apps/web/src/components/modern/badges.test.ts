@@ -17,7 +17,8 @@ import {
 } from './badges.ts';
 
 const BADGE_DIR = fileURLToPath(new URL('../../assets/badges', import.meta.url));
-const BADGE_FILES = readdirSync(BADGE_DIR).filter((f) => f.endsWith('.svg'));
+/** 書き出したバッジ（直下と sprite/。BADGE_DIR からの相対のパス） */
+const BADGE_FILES = readdirSync(BADGE_DIR, { recursive: true, encoding: 'utf8' }).filter((f) => f.endsWith('.svg'));
 
 describe('バッジの対応表', () => {
   // 使っていないバッジも置く（読んだものだけを Vite が束に入れる。plan/design-modern-ui.md 2.5 節）

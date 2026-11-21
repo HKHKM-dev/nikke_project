@@ -73,3 +73,4 @@
 ## 5. 経過
 
 - 2026-11-20: 起案した。
+- 2026-11-21: オーナーが 1〜3 を承認した。1・2・3 を 1 つの PR で実装した（ブランチを 1 本で進めたため、案の 2 本には分けなかった）。1 は `observationEdits.ts` の `repointSetup`・`setupRefIds` で、`--by` が無いときは setup で指したままの比べを出す。2 はグループの外の一覧を `SPRITE_NAMES`（名前 → `monochrome`・`color`）にした。3 は `pr:prep` の手順 4 の後で回す。
