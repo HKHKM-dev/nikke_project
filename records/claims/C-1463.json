@@ -1,0 +1,20 @@
+{
+  "id": "C-1463",
+  "text": "ペッパーのバーストスキルダメージ（最終攻撃力の 1237.5%。スキル Lv10）は、I の発動（六角形が I から II に替わるフレーム）の 84f 後に 1 ヒットで出る（会心なしで 1,235,334）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1317-04`・`1317-05`・`1318-04`・`1318-05`・`1319-02`。V-0835",
+  "model": "反映（data/skills/131.json の burst の effects[0]、burst/landing.ts のペッパーの行の hitFrames）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/131.json の burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1317",
+      "role": "値を合わせた"
+    }
+  ]
+}
