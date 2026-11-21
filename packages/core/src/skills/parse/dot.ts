@@ -208,9 +208,17 @@ function parseDotCounter(v: Record<string, Json>, effect: DotEffect, path: strin
   if (counterFull && effect.perCount === undefined) fail(`${path}.trigger`, '{ counterFull } needs perCount');
   if (v.delayFrames !== undefined) {
     // バースト使用時の付く時刻の遅れ（plan/design-guillotine-ws.md 8.2 節）。付けた時・tick のゲージは発火のフレームで数えるので組まない
-    const burstUse = effect.trigger === 'burstUse' && v.gaugeOnApply === undefined && v.gaugeOnTick === undefined;
+    // 名前の付いた状態の dot は、スタック量▲・消去が発火のフレームで数えるので組まない
+    const burstUse =
+      effect.trigger === 'burstUse' &&
+      v.gaugeOnApply === undefined &&
+      v.gaugeOnTick === undefined &&
+      v.state === undefined;
     if (!counterFull && !burstUse)
-      fail(`${path}.delayFrames`, 'delayFrames needs the trigger { counterFull }, or "burstUse" without gauge');
+      fail(
+        `${path}.delayFrames`,
+        'delayFrames needs the trigger { counterFull }, or "burstUse" without gauge and state',
+      );
     effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
   }
 }
@@ -222,7 +230,11 @@ function parseDotCounter(v: Record<string, Json>, effect: DotEffect, path: strin
 function parseDotStacks(v: Record<string, Json>, effect: DotEffect, path: string): void {
   if (v.stacksFrom !== undefined) {
     const from = v.stacksFrom;
-    if (!isRecord(from) || Object.keys(from).length !== 1 || (from.enemyState === undefined && from.counter === undefined))
+    if (
+      !isRecord(from) ||
+      Object.keys(from).length !== 1 ||
+      (from.enemyState === undefined && from.counter === undefined)
+    )
       fail(`${path}.stacksFrom`, 'expected { enemyState } or { counter }');
     if (effect.maxStacksRef !== undefined || effect.perCount !== undefined)
       fail(`${path}.stacksFrom`, 'stacksFrom cannot be used with maxStacksRef or perCount');

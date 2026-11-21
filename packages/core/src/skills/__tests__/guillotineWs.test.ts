@@ -43,7 +43,7 @@ describe('語彙の検証', () => {
     ).toThrow(/only allowed in counterChange/);
     expect(() =>
       parseSkillDefinition(patched('skill1', LEVEL_UP, { trigger: { stateStacks: 'shootingManual', everyRef: 1 } })),
-    ).toThrow(/needs a grant of the same state on self/);
+    ).toThrow(/needs a grant of the same state on self with stacks/);
     expect(() =>
       parseSkillDefinition(patched('skill1', LEVEL_UP, { trigger: { stateStacks: 'exp', every: 10 } })),
     ).toThrow(/every/);
@@ -75,7 +75,8 @@ describe('語彙の検証', () => {
     ).toThrow(/perCount cannot be combined with durationUntil/);
   });
 
-  it('accepts delayFrames on a burstUse dot only without gauge', () => {
+  it('accepts delayFrames on a burstUse dot only without gauge and state', () => {
+    expect(() => parseSkillDefinition(patched('burst', DOT, { state: 'hacked' }))).toThrow(/delayFrames needs/);
     expect(() => parseSkillDefinition(patched('burst', DOT, { gaugeOnTick: true }))).toThrow(/delayFrames needs/);
     expect(() => parseSkillDefinition(patched('burst', DOT, { trigger: 'fullBurstStart' }))).toThrow(
       /delayFrames needs/,

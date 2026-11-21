@@ -365,14 +365,16 @@ function validateOwnStateTriggers(entries: Partial<Record<SkillSlot, SkillEntry>
       }
       if (e.kind !== 'counterChange' && e.kind !== 'dot' && e.kind !== 'currentHpDown') return;
       const t = e.trigger;
-      // 「〈状態〉N スタックごとに」（counterChange。plan/design-guillotine-ws.md 2.2 節）
-      const state = isAppliedTrigger(t)
-        ? t.applied
-        : isTimerTrigger(t)
-          ? t.since?.applied
-          : isStateStacksTrigger(t)
-            ? t.stateStacks
-            : undefined;
+      // 「〈状態〉N スタックごとに」（counterChange。plan/design-guillotine-ws.md 2.2 節）は、スタックで付ける付与が要る
+      if (isStateStacksTrigger(t)) {
+        if (!hasSelfStackingGrant(entries, t.stateStacks))
+          fail(
+            `${at}.trigger`,
+            `a { stateStacks } on "${t.stateStacks}" needs a grant of the same state on self with stacks`,
+          );
+        return;
+      }
+      const state = isAppliedTrigger(t) ? t.applied : isTimerTrigger(t) ? t.since?.applied : undefined;
       if (state === undefined) return;
       needGrant(state, `${at}.trigger`, e.kind);
     });
@@ -536,7 +538,10 @@ function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, r
           `${e.kind} of "${e.state}" needs a dot of the same state with firstTick halfAfterLatest in the definition`,
         );
       // 元は、同じ定義の dot の状態か、敵にスタックで付く状態の付与（海風。plan/design-mast.md 2.3 節）
-      const from = e.kind === 'dot' && e.stacksFrom !== undefined && 'enemyState' in e.stacksFrom ? e.stacksFrom.enemyState : undefined;
+      const from =
+        e.kind === 'dot' && e.stacksFrom !== undefined && 'enemyState' in e.stacksFrom
+          ? e.stacksFrom.enemyState
+          : undefined;
       if (from !== undefined && !dots.some((d) => d.state === from) && !hasSelfStackingGrant(entries, from, 'enemy'))
         fail(
           `${root}.${slot}.effects[${i}].stacksFrom`,
