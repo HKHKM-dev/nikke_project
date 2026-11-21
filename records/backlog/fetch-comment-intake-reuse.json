@@ -1,0 +1,5 @@
+{
+  "section": "5",
+  "order": 10,
+  "text": "`tools/captures/fetch.ts` の冒頭の注記は、`drive:` の下見について「取り込みは intake.ts が別に取り寄せる」と書いている。intake は下見で落とした同じ大きさのもの（`tools/captures/dirs.ts` の `fetchedRecord`）を使うようになったので、注記をそれに合わせる（plan/design-workflow-simplification-17.md 12 節。2026-11-21 起票）"
+}

@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 10,
-  "text": "取り込む前の下見（`tools/captures/fetch.ts drive:<パス>`）で落とした録画を、取り込み（`tools/captures/intake.ts drive:<パス>`）が Drive からもう一度落とす（録画 1 本分の時間と通信量）。intake が、下見の置き場所（`tools/captures/dirs.ts` の `recordFetchDir`）に同じ大きさのファイルがあればそれを使う形にする（plan/design-workflow-simplification-17.md 3 節）。"
-}

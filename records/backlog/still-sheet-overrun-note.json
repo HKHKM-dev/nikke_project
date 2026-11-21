@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 80,
-  "text": "`tools/captures/still.ts` の並べ画（`--sheet`）で、録画の終わりを越えたこまが最後の 1 枚に収まると、書けた枚数が予定と同じになり、「録画の終わりを越えた番号がある」の注意が出ない（注意は `written.length < planned.length` のときだけ）。越えたこまの数を、録画のフレーム数と比べて知らせる（[design-workflow-simplification-17.md](design-workflow-simplification-17.md) 4 節。2026-11-20 起票）"
-}

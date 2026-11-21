@@ -20,7 +20,7 @@ import { mkdirSync, mkdtempSync, readdirSync, renameSync, rmSync } from 'node:fs
 import { dirname, extname, join } from 'node:path';
 import { ffprobe, parseCrop } from './ffmpeg.ts';
 import { uploadFrames } from './frames-upload.ts';
-import { labelFontSize, outputs, parseSheet, pickFont, pickFrames, sheetFilters } from './still-lib.ts';
+import { framesBeyond, labelFontSize, outputs, parseSheet, pickFont, pickFrames, sheetFilters } from './still-lib.ts';
 import { cliArgs, fail, orFail } from '../../packages/core/scripts/cli.ts';
 
 const { values, positionals } = cliArgs(import.meta.url, {
@@ -118,8 +118,16 @@ for (const target of planned.slice(0, written.length)) {
   );
 }
 uploadFrames(planned.slice(0, written.length).map((t) => t.path));
+// 越えたこまが最後の 1 枚に収まると枚数は予定と同じになるので、録画のフレーム数と比べて知らせる
+const nbFrames = ffprobe(video).nbFrames;
+const beyond = framesBeyond(pick.frames, nbFrames);
+if (beyond.length > 0) {
+  console.log(
+    `注意: ${beyond.length} こまが録画の終わりを越えた番号（f${beyond[0]} から。録画は ${nbFrames} フレームで、番号は 0 から）`,
+  );
+}
 if (written.length < planned.length) {
   console.log(
-    `注意: ${planned.length} 枚のうち ${written.length} 枚だけ書いた（録画の終わりを越えた番号がある。録画は ${ffprobe(video).nbFrames} フレーム）`,
+    `注意: ${planned.length} 枚のうち ${written.length} 枚だけ書いた（録画は ${nbFrames > 0 ? `${nbFrames} フレーム` : 'フレーム数が分からない'}）`,
   );
 }

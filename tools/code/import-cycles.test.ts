@@ -94,6 +94,18 @@ describe('readImportGraph', () => {
     );
   });
 
+  it('does not count a specifier with a query, which does not run the module', () => {
+    withFiles(
+      {
+        'src/a.ts': ["import raw from './b.ts?raw';", "import url from './b.ts?url';"].join('\n'),
+        'src/b.ts': "import './a.ts';",
+      },
+      (root) => {
+        expect(readImportGraph(root, OPTIONS)).toEqual(graphOf({ 'src/a.ts': [], 'src/b.ts': ['src/a.ts'] }));
+      },
+    );
+  });
+
   it('refuses a target it cannot follow', () => {
     withFiles({ 'src/a.ts': "import './missing.ts';" }, (root) => {
       expect(() => readImportGraph(root, OPTIONS)).toThrow(/src\/a\.ts: import の先 ".\/missing\.ts" が無い/);

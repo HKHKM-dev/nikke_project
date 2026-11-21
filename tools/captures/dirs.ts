@@ -1,6 +1,7 @@
 // 録画の置き場所（plan/captures/storage.md「置き場所」「クラウド環境での取り寄せ」）。
 // 環境変数があればそれ。無ければ Windows（オーナーの手元）は E:、それ以外（クラウド環境）はホームの下にする。
 // リポジトリの中には置かない（録画は公開しない）。
+import { statSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
@@ -34,6 +35,17 @@ export function recordDir(): string | null {
 /** 取り込む前の録画を下見のために落とす先（NIKKE_RECORD_FETCH_DIR。fetch.ts の drive:）。recordDir() の無い環境で使う */
 export function recordFetchDir(): string {
   return dir('NIKKE_RECORD_FETCH_DIR', 'record');
+}
+
+/**
+ * 下見で落とした取り込み前の録画（recordFetchDir() の下の rel）が、Drive の大きさ size（バイト）と同じならそのパス。
+ * 無い・大きさが違う・Drive の大きさが分からないときは null（Drive for desktop が上げ終える前に落とした途中の版を使わない）
+ */
+export function fetchedRecord(rel: string, size: string | undefined): string | null {
+  if (size === undefined) return null;
+  const path = join(recordFetchDir(), rel);
+  const stat = statSync(path, { throwIfNoEntry: false });
+  return stat?.isFile() && stat.size === Number(size) ? path : null;
 }
 
 /** drive:<record の中の相対パス>（intake.ts・fetch.ts の指し方）なら相対パス（\ は / に、前後の / は外す）、違えば null */

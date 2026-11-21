@@ -2,6 +2,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
   filterPath,
+  framesBeyond,
   fontCandidates,
   labelFontSize,
   outputs,
@@ -129,5 +130,14 @@ describe('出力の名前', () => {
       { path: join('d', 'x_f30-40.png'), frames: [30, 40] },
       { path: join('d', 'x_f50-50.png'), frames: [50] },
     ]);
+  });
+});
+
+describe('録画の終わりを越えた番号', () => {
+  it('lists the frames at or after the frame count, which starts from 0', () => {
+    expect(framesBeyond([97, 98, 99, 100, 101], 100)).toEqual([100, 101]);
+    expect(framesBeyond([1, 2], 100)).toEqual([]);
+    // フレーム数が分からなければ見ない
+    expect(framesBeyond([1, 200], 0)).toEqual([]);
   });
 });

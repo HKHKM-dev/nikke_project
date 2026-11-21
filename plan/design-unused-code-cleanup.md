@@ -162,3 +162,4 @@
 
 - 2026-11-18: 起案。
 - 2026-11-18: 承認。実装した（9 節）。
+- 2026-11-21: `consistent-type-imports` の `fixStyle` を `separate-type-imports` にした（`no-import-type-side-effects` と直す形が揃う。リポジトリの全部に `eslint --fix` を当てても書き換わるファイルは無い）。

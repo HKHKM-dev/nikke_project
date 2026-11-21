@@ -64,7 +64,8 @@ export function sourceFilesUnder(dir: string): string[] {
 export const repoKey = (root: string, path: string): string => relative(root, path).split(sep).join('/');
 
 /**
- * file（絶対パス）の import の指定 specifier が指すソースの絶対パス。外のパッケージ・ソースでない先（JSON・画像）は undefined。
+ * file（絶対パス）の import の指定 specifier が指すソースの絶対パス。外のパッケージ・ソースでない先（JSON・画像）と、
+ * `?` の付いた指定（`?raw`・`?url`。モジュールを実行しない）は undefined。
  * 辿れない指定（パッケージの中のパス・拡張子の無い指定・無いファイル）は投げる
  */
 export function resolveImport(
@@ -73,6 +74,7 @@ export function resolveImport(
   specifier: string,
   options: ImportGraphOptions,
 ): string | undefined {
+  if (specifier.includes('?')) return undefined;
   const packageNames = Object.keys(options.packages);
   // パッケージの中のパス（@nikke/core/…）は入口の表に無いので、黙って辺から落とさない
   if (packageNames.some((name) => specifier.startsWith(`${name}/`))) {
@@ -83,7 +85,7 @@ export function resolveImport(
     packageEntry !== undefined
       ? join(root, packageEntry)
       : specifier.startsWith('.')
-        ? resolve(dirname(file), specifier.replace(/[?#].*$/, ''))
+        ? resolve(dirname(file), specifier.replace(/#.*$/, ''))
         : undefined;
   // 外のパッケージは辺にしない
   if (target === undefined) return undefined;
