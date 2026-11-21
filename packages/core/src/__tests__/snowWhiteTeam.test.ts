@@ -9,6 +9,7 @@ import { gameSecondsToFirstFrame, gameSecondsToFrames } from '../time.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
+import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 import { rawDefinition } from './data.ts';
 import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
@@ -118,6 +119,21 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, slot: S }) =
           (e) => gameSecondsToFrames(e.start) <= shot + RETURN_WAIT && shot < gameSecondsToFrames(e.end),
         );
         if (!blocked) expect(next - shot).toBe(RETURN_WAIT);
+      }
+    });
+  }
+
+  if (input.enemy?.events !== undefined && S !== 0) {
+    it('fires the charging Burst weapon with partial charge at D + H after a jump window starts (V-0840)', () => {
+      const starts = input.enemy!.events!.filter((e) => e.kind === 'untargetable').map((e) => gameSecondsToFrames(e.start));
+      const partial = log.partialShots ?? [];
+      // 撮影 B の既定の時刻では、5 回目のバーストのチャージの途中に 5 回目のジャンプが来る
+      expect(partial.length).toBeGreaterThan(0);
+      for (const p of partial) {
+        expect(changed.has(p.frame)).toBe(true);
+        expect(starts).toContain(p.frame - DEFAULT_WEAPON_MODEL.hideDetectFrames - 1);
+        expect(p.progress).toBeGreaterThan(0);
+        expect(p.progress).toBeLessThan(1);
       }
     });
   }

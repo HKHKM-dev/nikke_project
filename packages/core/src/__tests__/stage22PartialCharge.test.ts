@@ -15,6 +15,7 @@ import {
 } from '../frame/shooter.ts';
 import type { ShotLog } from '../frame/shots.ts';
 import { runSimulation } from '../sim/engine.ts';
+import { firingParams } from '../frame/firing.ts';
 import { cycleShotFrames } from '../skills/cycles.ts';
 import { replayEvents } from '../skills/triggers.ts';
 import type { SlotCondition, TeamInput } from '../team.ts';
@@ -92,6 +93,15 @@ describe('partialChargeProgress（射手）', () => {
     expect(partialChargeProgress(shooterAfter(down, 60), down)).toBeNull();
     const ar = makeCharacter({}).shot;
     expect(partialChargeProgress(shooterAfter(ar, 3), ar)).toBeNull();
+  });
+
+  it('fires a changed weapon made DOWN_Charge from a non-charging base like an UP weapon (jumpPartialCharge。V-0840)', () => {
+    const changed = makeCharacter({ ...SR, inputType: 'DOWN_Charge', jumpPartialCharge: true }).shot;
+    const state = shooterAfter(changed, 60);
+    const wait = state.wait;
+    expect(wait).toBeGreaterThan(1);
+    const params = firingParams(changed);
+    expect(partialChargeProgress(state, changed)).toBeCloseTo((params.chargeFrames + 1 - wait) / params.chargeFrames, 12);
   });
 
   it('drops the pending wait when the window ends before D + H, without a partial-charge shot or hiding', () => {

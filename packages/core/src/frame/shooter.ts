@@ -501,7 +501,8 @@ export function weaponFreeFrameAtSwap(
  *   ほかのチャージ武器は H = 1 で、満ちた次のフレームで撃つ。射撃姿勢維持型は満ちてから H フレーム待つので、その間は p = 1。
  *   plan/design-fire-stance-cadence.md 3.2 節）。0 以下は構え解除・構えの間（撃たない）。k = 0（このフレームに撃つはずだった）は p = 1。
  * - 押下チャージ型（DOWN_Charge）・チャージの無い武器は null（design-stage22.md 0.4 節。アニス：スター単騎の録画 0161 でも、
- *   的のジャンプの前にフルチャージでない発は無い。V-0134）。
+ *   的のジャンプの前にフルチャージでない発は無い。V-0134）。ただし、チャージしない基礎の武器から替えた変更後の武器
+ *   （ShotParams.jumpPartialCharge）は、入力が UP のチャージ武器と同じに撃つ（V-0840）。
  * - リロード中は null。込め終えて 1 発目を待っている（priming）枠は、そのマガジンの 1 発目の溜めの進み
  */
 export function partialChargeProgress(
@@ -510,7 +511,7 @@ export function partialChargeProgress(
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
 ): number | null {
-  if (!isChargeWeapon(shot) || shot.inputType === 'DOWN_Charge') return null;
+  if (!isChargeWeapon(shot) || (shot.inputType === 'DOWN_Charge' && shot.jumpPartialCharge !== true)) return null;
   if (state.phase === 'reloading') return null;
   const charge = params.chargeFrames;
   return charge <= 0 ? 1 : Math.min(1, chargeProgressFrames(state, params, model) / charge);

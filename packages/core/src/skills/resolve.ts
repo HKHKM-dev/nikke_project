@@ -1604,7 +1604,8 @@ export type ChangedWeaponOverrides = {
    * チャージしない基礎の武器から、押下チャージ型のチャージ武器（入力 DOWN_Charge。chargeTime と
    * 組む。plan/design-nayuta.md 2.6 節）にする。発と発の間はチャージ時間だけで、
    * 持ち替えの後の最初の発だけ解放の分を足す（記憶燃焼の 106f おきの発と、持ち替えから 129f の
-   * 最初の発。V-0666）。フルチャージのゲージの倍率（fullChargeBurstEnergy）・精度・弾は基礎の武器のまま
+   * 最初の発。V-0666）。敵のジャンプの始まりには、入力が UP のチャージ武器と同じく部分チャージで撃つ（jumpPartialCharge。V-0840）。
+   * フルチャージのゲージの倍率（fullChargeBurstEnergy）・精度・弾は基礎の武器のまま
    */
   chargeInput?: boolean;
 };
@@ -1628,7 +1629,7 @@ export function changedWeaponShot(
     ...(overrides.maxAmmo !== undefined ? { maxAmmo: overrides.maxAmmo } : {}),
     ...(overrides.coreDamageRate !== undefined ? { coreDamageRate: overrides.coreDamageRate } : {}),
     ...(overrides.shotCount !== undefined ? { shotCount: overrides.shotCount } : {}),
-    ...(overrides.chargeInput === true ? { inputType: 'DOWN_Charge' } : {}),
+    ...(overrides.chargeInput === true ? { inputType: 'DOWN_Charge', jumpPartialCharge: true } : {}),
     // 即着弾でチャージしない（チャージ時間 0・押下型・Instant。飛ぶ弾の欄は外す）
     ...(overrides.instantFire === true
       ? { chargeTime: 0, fullChargeDamage: 1, inputType: 'DOWN', fireType: 'Instant', projectile: undefined }
