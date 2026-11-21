@@ -222,6 +222,24 @@ header h1 {
   background: none;
   box-shadow: none;
 }
+/* 共通育成の「育成状況の値に戻す」（モダン UI。絵だけのボタン。バッジ ui_return）。戻せないときは、元に戻すのボタンと同じく薄くする */
+.roster-revert-icon-button {
+  display: inline-flex;
+  padding: 0 4px;
+  border: none;
+  background: none;
+  box-shadow: none;
+  cursor: pointer;
+}
+.roster-revert-icon-button[aria-disabled='true'] {
+  cursor: default;
+  opacity: 0.3;
+}
+.roster-revert-icon {
+  display: block;
+  width: 26px;
+  height: 26px;
+}
 /* アカウントと設定のボタン（モダン UI。絵はバッジ ui_account・ui_window の正方形） */
 .settings-menu-button {
   display: grid;
@@ -242,12 +260,13 @@ header h1 {
   width: 22px;
 }
 /* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。育成と設定のボタン・設定のメニューの選択肢の絵・未対応の印 ⓘ・
-   元に戻す・やり直すのボタン・ニケ一覧の絞り込みのクリア */
+   元に戻す・やり直すのボタン・ニケ一覧の絞り込みのクリア・共通育成の「育成状況の値に戻す」 */
 .settings-menu-icon,
 .settings-option-icon,
 .char-unsupported-icon,
 .modern-slot-undo-icon,
-.char-tray-filter-clear-icon {
+.char-tray-filter-clear-icon,
+.roster-revert-icon {
   --badge-ground: light-dark(#ffffff, #1a1a1a);
   --badge-main: light-dark(#1a1a1a, #ffffff);
   --badge-accent: light-dark(#1a1a1a, #ffffff);

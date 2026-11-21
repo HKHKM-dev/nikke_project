@@ -7,6 +7,8 @@ import { InertButton } from './InertButton.tsx';
 import { IntInput } from './IntInput.tsx';
 import { Popover } from './Popover.tsx';
 import { ROSTER_REVERT_LABEL } from './RosterRevertButton.tsx';
+import { BadgeIcon } from './modern/BadgeIcon.tsx';
+import { RETURN_BADGE } from './modern/badges.ts';
 
 /** スペック固定の間にリサイクルルームの欄に出す値（計算は研究なし） */
 const NO_CONSOLE = emptyConsole();
@@ -26,6 +28,8 @@ type Props = {
    * （plan/design-roster-edit.md 7 節）
    */
   rosterCommon: RosterCommonGrowth | null;
+  /** 「育成状況の値に戻す」を文字でなく戻る矢印のアイコン（バッジ ui_return）で出す（モダン UI） */
+  revertIcon?: boolean;
   dispatch: Dispatch<TeamAction>;
 };
 
@@ -42,6 +46,7 @@ export function TeamSettingsForm({
   durationSeconds,
   rangeJump,
   rosterCommon,
+  revertIcon = false,
   dispatch,
 }: Props) {
   // 育成状況の値に戻せるか: スペック固定の間と、いまの値が育成状況と同じときは押せない
@@ -139,13 +144,15 @@ export function TeamSettingsForm({
           </Popover>
           {rosterCommon !== null && (
             <InertButton
+              className={revertIcon ? 'roster-revert-icon-button' : undefined}
+              label={revertIcon ? ROSTER_REVERT_LABEL : undefined}
               enabled={canRevert}
               onPress={() => {
                 dispatch({ type: 'setSynchroLevel', synchroLevel: rosterCommon.synchroLevel });
                 dispatch({ type: 'setConsole', console: rosterCommon.console });
               }}
             >
-              {ROSTER_REVERT_LABEL}
+              {revertIcon ? <BadgeIcon className="roster-revert-icon" name={RETURN_BADGE} /> : ROSTER_REVERT_LABEL}
             </InertButton>
           )}
         </div>

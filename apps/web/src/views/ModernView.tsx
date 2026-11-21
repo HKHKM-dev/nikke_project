@@ -153,6 +153,7 @@ export function ModernView({
             durationSeconds={team.durationSeconds}
             rangeJump={team.rangeJump}
             rosterCommon={roster && commonGrowthOf(roster)}
+            revertIcon
             dispatch={dispatch}
           />
 
