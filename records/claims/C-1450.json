@@ -1,0 +1,28 @@
+{
+  "id": "C-1450",
+  "text": "ノベルのバーストスキルダメージは、最終攻撃力の 330.61%（スキル Lv10）の 1 ヒットで、II の発動（右のバースト欄の六角形の替わり目）の 80f 後に出る（フルバーストに入る回は、III の 00.00 の後の入りの止まりを挟んで動画で 100〜101f）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1310-02`・`1310-03`・`1310-04`・`1310-05`・`1310-06`。V-0833",
+  "model": "反映（data/skills/212.json の burst の effects[0]（burstDamage・skill）と、burst/landing.ts のノベルの行（hitFrames 80・effectFrames 80））",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/212.json の burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1310",
+      "role": "値を合わせた"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "1310",
+      "decided": "1・2 回目",
+      "reproduced": "5・6 回目",
+      "observations": ["1310-05", "1310-06"]
+    }
+  ]
+}
