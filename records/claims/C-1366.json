@@ -1,0 +1,27 @@
+{
+  "id": "C-1366",
+  "text": "スノーホワイト：イノセントデイズのバースト（Lv10）は説明文どおり、自分に攻撃力 97.2%▲・装弾数無限・S2 の命中回数条件 20 回▼（どれも 10 秒）を付け、S2 のバースト使用時の攻撃ダメージ 21.12%▲（10 秒）も付く。命中回数条件▼の窓の間、S2 の倍率ダメージは戦闘の始めからの通算の命中の回数が 30 の倍数の発（S1 と同じ発）をきっかけに出て、窓の外は 50 の倍数の発（窓の始まりと終わりで数え直さない。窓の中に来た 50 の倍数では出ない）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1256-01`・`1256-05`・`1256-07`・`1256-08`。V-0808",
+  "model": "data/skills/224.json の burst（cycleEvery の decreaseRef 1・durationRef 2、timed の attack、timed の infiniteAmmo）と skill2 の effects[1]（burstUse の attackDamage）。窓の間の数え方は skills/triggers.ts の everyAtOf（C-0727 と同じ）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": [
+      "data/skills/224.json の burst の effects[0]",
+      "data/skills/224.json の burst の effects[1]",
+      "data/skills/224.json の burst の effects[2]",
+      "data/skills/224.json の skill2 の effects[1]"
+    ]
+  },
+  "decidedOn": [],
+  "runs": [
+    {
+      "recording": "1256",
+      "reproduced": "3・4 回目のフルバースト",
+      "observations": ["1256-05"]
+    }
+  ]
+}
