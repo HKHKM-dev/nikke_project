@@ -1681,8 +1681,9 @@ html:has(.modern-view-container) {
 .char-tray-item.char-tray-item-other-party {
   filter: brightness(0.4);
 }
+/* 選べないニケは、マウスを重ねても禁止の印（〇に斜線）は出さない（オーナーの指示）。押せる印（指の形）も出さない */
 .char-tray-item.char-tray-item-other-party {
-  cursor: not-allowed;
+  cursor: default;
 }
 /* 四角の絵の下の名前。収まらない名前は流す（.scrolling-name。useScrollingName.tsx） */
 .char-tray-item-name {
