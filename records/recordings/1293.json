@@ -1,0 +1,41 @@
+{
+  "id": "1293",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1293_rupee-a-2.mp4",
+  "original": "2026-11-21_16-35-40.mp4",
+  "durationSec": 204,
+  "frames": 12239,
+  "fps": 60,
+  "sizeMB": 247.5,
+  "sha256": "8489edbe5a6a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 200,
+      "name": "ルピー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire",
+    "level": 1
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0820 の撮影 A: ココア（I）+ ルピー（II・操作・オート射撃 ON）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-21T16:45+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

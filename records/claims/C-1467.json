@@ -1,0 +1,15 @@
+{
+  "id": "C-1467",
+  "text": "ルピーの S1 のクリティカル確率 2.24%▲（10 秒）は説明文どおり（S1 の窓の中のルピーの通常攻撃の会心の割合は 2 本で 18.75%。▲が無い時の 15% より高く、説明文どおりの 17.24% と二項の約 2σ で合う。窓の外の発が少なく、中と外の差は見分けていない）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`1292-21`・`1293-20`。V-0820",
+  "model": "data/skills/200.json の skill1 の effects[1]（timed critRate）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/200.json の skill1 の effects[1]"]
+  },
+  "decidedOn": []
+}

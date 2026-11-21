@@ -1,0 +1,109 @@
+{
+  "formatVersion": 1,
+  "resourceId": 200,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "stackChange",
+          "allStackable": true,
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "allies",
+          "targetElement": "Iron",
+          "amountRef": 2,
+          "assumes": {
+            "ja": "通常攻撃の命中 値 01（100）回ごとに、鉄甲コードの味方（自分も入る）が持つ、上限のある状態と timed のスタックのバフの全部に、付いていれば 1 段足す（付いていなければ足さない。フローラの S1 と同じ読み）。上限で止まる（6 段にならない）。足すと全部の段の維持を付け直す（付与と同じに数える。確かめていない）。自分のマイレージにも足す",
+            "en": "Every value 01 (100) normal-attack hits, adds one stack to every stackable buff (states and timed buffs with a stack cap) held by Iron Code allies (self included), only if present (same reading as Flora's S1). Stops at the cap (never a 6th stack). Adding refreshes the duration of all stacks (counted like an application; unverified). Also adds to her own Mileage"
+          },
+          "claims": [
+            "C-1423"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "allies",
+          "targetElement": "Iron",
+          "stat": "critRate",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-1467"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "mileage",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "self",
+          "maxStacksRef": 3,
+          "durationRef": 4,
+          "contents": [
+            {
+              "stat": "attack",
+              "ref": 2
+            }
+          ],
+          "assumes": {
+            "ja": "撃った発を戦闘開始から通算して数え、30 発ごとに 1 段（5 段で止まる）。付くたびにすべてのスタックの維持を付け直す（いまの既定）。撃ち続ける間は 15 秒の維持より短い間で付き直すので切れず、切れ方は確かめていない。バーストの「マイレージのフルスタック状態なら」が読む",
+            "en": "Counts shots fired from the start of battle; one stack per 30 (capped at 5). Each application refreshes the duration of all stacks (the current default). While she keeps firing it reapplies well within the 15-sec duration and never expires; how it expires is unverified. Read by the Burst's \"if Mileage is at full stacks\""
+          },
+          "claims": [
+            "C-1422"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "対象「攻撃範囲内の敵」は単体ボスで 1 ヒット。ヒットは II の発動の印の 89f 後（遅れの表の行）で、値は発動の直前のバフ（同じ発動の攻撃力▲は乗らない）",
+            "en": "The target (enemies within attack range) is the lone boss; one hit. It lands 89f after the Burst II mark (the delay table row) and uses the buffs just before activation (the ATK buff of the same activation does not apply)"
+          },
+          "claims": [
+            "C-1421"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "ref": 2,
+          "durationRef": 3,
+          "condition": {
+            "selfState": {
+              "state": "mileage",
+              "stacks": "full"
+            }
+          },
+          "assumes": {
+            "ja": "フルスタックかはバーストを使った時に見る",
+            "en": "Full stacks are checked when the Burst is used"
+          },
+          "claims": [
+            "C-1424"
+          ]
+        }
+      ]
+    }
+  }
+}
