@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 165・効果 1173（根拠あり 1151）・notes 384（根拠あり 158）
+件数: キャラ 166・効果 1179（根拠あり 1157）・notes 385（根拠あり 159）
 
-notes の種類: 未対応 50・前提の外 120・計算に無関係 76・補足 43・間接 95
+notes の種類: 未対応 50・前提の外 121・計算に無関係 76・補足 43・間接 95
 
-スロット: supported 446・partial 35・unsupported 11・noEffect 60
+スロット: supported 449・partial 35・unsupported 11・noEffect 60
 
 ## 10 ラピ
 
@@ -2407,6 +2407,19 @@ notes の種類: 未対応 50・前提の外 120・計算に無関係 76・補�
   - effects[0] burstDamage・skill: C-1067（確定）
   - effects[1] timed・burstUse・attackDamage: C-1065（確定）
   - notes[0] 間接（バリア）: 灼熱コードの味方全体へのバリア（最終最大HP の X%）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは味方がバリア適用状態にならない。バリアの量は要件 5.2 節の外）: C-0443（範囲外）
+
+## 832 マリ
+
+- **skill1**: supported
+  - effects[0] timed・coreHit・pierceDamage（読む: 貫通）: C-1482（確定）
+  - notes[0] 前提の外: フルチャージして攻撃した時の味方全体のバリアに与えるダメージ▲（3 秒）は、射撃場の敵にバリアが無いのでダメージに関係しない: C-0443（範囲外）
+- **skill2**: supported
+  - effects[0] timed・10 秒ごと・pierce: C-1481（確定）
+  - effects[1] timed・10 秒ごと・attack: C-1481（確定）
+  - effects[2] timed・10 秒ごと・attack: C-1481（確定）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1483（確定）
+  - effects[1] timed・burstUse・attackDamage: C-1483（確定）
 
 ## 833 ミサト
 

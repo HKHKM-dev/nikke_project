@@ -1294,6 +1294,9 @@
 | 1324 | `20261121-1324_ar_phantom.mp4` | ◎ファントム（580、AR・水冷・SSR、宝物 2） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1325 | `20261121-1325_ar_phantom.mp4` | ◎ファントム（580、AR・水冷・SSR、宝物 2） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1326 | `20261121-1326_ar_liter_delta_phantom.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎ファントム（580、AR・水冷・SSR、宝物 2） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1327 | `20261121-1327_mari-solo-1.mp4` | ◎マリ（832、SR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | BigArms（灼熱タブ・3 分モード・スペック固定 ON。マリ単騎（操作）・AUTO 射撃 ON・オートバースト ON）。V-0842 の撮影 A |
+| 1328 | `20261121-1328_mari-solo-2.mp4` | ◎マリ（832、SR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | BigArms（灼熱タブ・3 分モード・スペック固定 ON。マリ単騎（操作）・AUTO 射撃 ON・オートバースト ON）。V-0842 の撮影 A |
+| 1329 | `20261121-1329_cocoa-mari.mp4` | ココア（311、SR・灼熱・SSR） + ◎マリ（832、SR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | BigArms（灼熱タブ・3 分モード・スペック固定 ON。ココア（I）+ マリ（II・操作）・AUTO 射撃 ON・オートバースト ON）。V-0842 の撮影 B |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
