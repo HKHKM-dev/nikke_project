@@ -1,0 +1,182 @@
+[
+  {
+    "id": "1254-01",
+    "recording": "1254",
+    "use": "compare",
+    "kind": "hit",
+    "value": 113768,
+    "unit": "ダメージ",
+    "description": "S1 の命中 30 回ごとの倍率ダメージの 1 ヒット（会心なし）。最終攻撃力の 188.68% を 2 ヒットに分けた値（2 ヒットの和がモデルの 1 回の値）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分（通しで 1 回）",
+      "note": "増分を、スノーホワイトの 1 発（距離ボーナス・会心・コアの有無）と、S1 の 1 ヒット（倍率ダメージの 2 等分）・S2 の 1 ヒット（35 等分）の和（会心の有無も）に当て、HUD の読めなかったフレームをまたぐ増分は間のフレーム数から発の数を数えた（scratchpad の使い捨ての下読み）。S1 は 116 ヒットのうち会心 20"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false,
+        "skill": "skill1"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0808",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1254-02",
+    "recording": "1254",
+    "use": "compare",
+    "kind": "hit",
+    "value": 2126,
+    "unit": "ダメージ",
+    "description": "S2 の命中 50 回ごとの倍率ダメージの 1 ヒット（会心なし）。最終攻撃力の 61.69% を 35 ヒットに分けた値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分（通しで 1 回）",
+      "note": "増分を、スノーホワイトの 1 発（距離ボーナス・会心・コアの有無）と、S1 の 1 ヒット（倍率ダメージの 2 等分）・S2 の 1 ヒット（35 等分）の和（会心の有無も）に当て、HUD の読めなかったフレームをまたぐ増分は間のフレーム数から発の数を数えた（scratchpad の使い捨ての下読み）。S2 は 1,184 ヒットのうち会心 235。1 回の 35 ヒットは、全部が会心か全部が会心でないか（会心はきっかけごとに決まる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0808",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1254-03",
+    "recording": "1254",
+    "use": "compare",
+    "kind": "count",
+    "value": [37, 39, 60, 60, 97, 99],
+    "unit": "発",
+    "description": "S1 の倍率ダメージの最初の 6 ヒット（3 回分）が出たフレームまでに撃った発の数。30・60・90 発目の 36〜37f 後に 1 ヒット目、その 11f 後に 2 ヒット目（60 発目の回はリロードの間）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分（通しで 1 回）",
+      "note": "増分を、スノーホワイトの 1 発（距離ボーナス・会心・コアの有無）と、S1 の 1 ヒット（倍率ダメージの 2 等分）・S2 の 1 ヒット（35 等分）の和（会心の有無も）に当て、HUD の読めなかったフレームをまたぐ増分は間のフレーム数から発の数を数えた（scratchpad の使い捨ての下読み）。動画のフレーム 964・975・1111・1122・1336・1347"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitShotIndices",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "count": 6
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0808",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1254-04",
+    "recording": "1254",
+    "use": "compare",
+    "kind": "count",
+    "value": [
+      54, 54, 55, 56, 56, 57, 57, 58, 59, 59, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
+      60, 60, 60, 60, 60, 60, 60, 104, 104, 105, 106, 106, 107, 107, 108, 109, 109, 110, 110, 111, 112, 112, 113, 113,
+      114, 115, 115, 116, 116, 117, 118, 118, 119, 119, 120, 121, 121, 122, 122, 123, 124, 124
+    ],
+    "unit": "発",
+    "description": "S2 の倍率ダメージの最初の 2 回（70 ヒット）のそれぞれが出たフレームまでに撃った発の数。50・100 発目の約 20f 後から、35 ヒットを 100f かけて出す（1 回目はリロードにまたがる）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分（通しで 1 回）",
+      "note": "増分を、スノーホワイトの 1 発（距離ボーナス・会心・コアの有無）と、S1 の 1 ヒット（倍率ダメージの 2 等分）・S2 の 1 ヒット（35 等分）の和（会心の有無も）に当て、HUD の読めなかったフレームをまたぐ増分は間のフレーム数から発の数を数えた（scratchpad の使い捨ての下読み）。動画のフレーム 1045〜1145・1368〜1468。35 ヒットの間（1 ヒット目からの動画のフレーム）は、読めなかったフレームの無い回で 0・3・6…33・36・38・41…86・88・91・94・97・100"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitShotIndices",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "count": 70
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0808",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1254-05",
+    "recording": "1254",
+    "use": "compare",
+    "kind": "count",
+    "value": [60, 91, 138],
+    "unit": "発",
+    "description": "戦闘の始めから 3 本のマガジンの発の数。S1 の最大装弾数▲が付いても残弾は増えず、リロードで 60 → 91（2 スタック）→ 137（5 スタック）発になる",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分（通しで 1 回）",
+      "note": "増分を、スノーホワイトの 1 発（距離ボーナス・会心・コアの有無）と、S1 の 1 ヒット（倍率ダメージの 2 等分）・S2 の 1 ヒット（35 等分）の和（会心の有無も）に当て、HUD の読めなかったフレームをまたぐ増分は間のフレーム数から発の数を数えた（scratchpad の使い捨ての下読み）。発の間が 30f を超える所（リロード）で切った。数えた値は 60・90・138（2 本目は、リロードの明けの 1 発目の後の残弾の表示 90 で 91 発と確かめた）（数えは ±1）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 1,
+        "count": 3
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "source": "V-0808",
+    "readAt": "2026-11-21"
+  }
+]

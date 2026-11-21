@@ -25,9 +25,15 @@
           },
           "damageType": "skill",
           "ref": 6,
+          "delayFrames": 36,
+          "hitOffsetFrames": [
+            0,
+            11
+          ],
+          "valueBeforeFire": true,
           "assumes": {
-            "ja": "バーストゲージを溜めない（確かめていない。ココア・ソルジャーF.A. とのチェーンでは、溜める形とのゲージの満タンの差がモデルで 4f 以下）",
-            "en": "It does not charge the burst gauge (not verified; in the chain with Cocoa and Soldier F.A. the model moves the gauge-full frame by 4f or less if it did)"
+            "ja": "値（バフ・フルバースト補正）は発火の直前のもので、2 ヒットとも同じ値で出す（S2 の倍率ダメージと同じとみた。S1 の 2 ヒットがバーストの窓の端をまたぐ回は撮れていない）。バーストゲージは溜めない",
+            "en": "The value (buffs and the full burst bonus) is taken just before the trigger and both hits use it (assumed to match the S2 damage; no recorded pair straddled a burst window edge). It does not charge the burst gauge"
           }
         }
       ]
@@ -42,10 +48,46 @@
           },
           "damageType": "skill",
           "ref": 2,
-          "assumes": {
-            "ja": "バーストゲージを溜めない（確かめていない。ココア・ソルジャーF.A. とのチェーンでは、溜める形とのゲージの満タンの差がモデルで 4f 以下）",
-            "en": "It does not charge the burst gauge (not verified; in the chain with Cocoa and Soldier F.A. the model moves the gauge-full frame by 4f or less if it did)"
-          }
+          "delayFrames": 20,
+          "hitOffsetFrames": [
+            0,
+            3,
+            6,
+            9,
+            12,
+            15,
+            18,
+            21,
+            24,
+            27,
+            30,
+            33,
+            36,
+            38,
+            41,
+            44,
+            47,
+            50,
+            53,
+            56,
+            59,
+            62,
+            65,
+            68,
+            71,
+            74,
+            77,
+            80,
+            83,
+            86,
+            88,
+            91,
+            94,
+            97,
+            100
+          ],
+          "valueBeforeFire": true,
+          "gaugePerHit": true
         },
         {
           "kind": "timed",
