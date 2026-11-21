@@ -528,6 +528,11 @@ export const NAMED_STATES = {
    * 読む）
    */
   maidSpirit: { name: { ja: 'メイド精神', en: 'Maid Spirit' }, holder: 'ally' },
+  /**
+   * 鬼の気（レムのバースト。自分に 10 秒・クリティカル確率▲。S1 の「自分が鬼の気状態なら、通常攻撃が N 回命中した時」の攻撃力▲が
+   * 読む）
+   */
+  demonsBreath: { name: { ja: '鬼の気', en: "Demon's Breath" }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;
