@@ -23060,6 +23060,62 @@
       "plus": null
     },
     {
+      "observation": "0904-01",
+      "element": "ギルティ skill2.effects[0]",
+      "key": "4bf184051d2106f8",
+      "effective": true,
+      "minus": -2444.2782000000007,
+      "plus": null
+    },
+    {
+      "observation": "0905-01",
+      "element": "ギルティ skill2.effects[0]",
+      "key": "70c926bae938a1c1",
+      "effective": true,
+      "minus": -2444.2782000000007,
+      "plus": null
+    },
+    {
+      "observation": "0906-01",
+      "element": "ギルティ skill2.effects[0]",
+      "key": "0a2ec7f0cd2450e1",
+      "effective": true,
+      "minus": -30029.878400000045,
+      "plus": null
+    },
+    {
+      "observation": "0906-02",
+      "element": "ギルティ skill2.effects[0]",
+      "key": "a8b8f82516cb74de",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0906-03",
+      "element": "ギルティ skill2.effects[0]",
+      "key": "3ca175fef653fdab",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0907-01",
+      "element": "ギルティ skill2.effects[0]",
+      "key": "6a2de3a5cc193386",
+      "effective": true,
+      "minus": -45044.81759999995,
+      "plus": null
+    },
+    {
+      "observation": "0907-02",
+      "element": "ギルティ skill2.effects[0]",
+      "key": "78f34400c2114917",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0912-03",
       "element": "イサベル skill2.effects[1]",
       "key": "2aff870397e3ef0c",
@@ -29760,7 +29816,7 @@
     {
       "observation": "1133-04",
       "element": "ディーゼル treasureSkills.skill2.effects[1]",
-      "key": "248adec85e34de29",
+      "key": "f00104a4ba848777",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -29768,7 +29824,7 @@
     {
       "observation": "1133-04",
       "element": "ディーゼル treasureSkills.skill2.effects[2]",
-      "key": "248adec85e34de29",
+      "key": "f00104a4ba848777",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -29776,7 +29832,7 @@
     {
       "observation": "1133-05",
       "element": "ディーゼル treasureSkills.skill2.effects[1]",
-      "key": "e48318264a054ad7",
+      "key": "ed1cd23e38aa2df1",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -29784,7 +29840,7 @@
     {
       "observation": "1133-05",
       "element": "ディーゼル treasureSkills.skill2.effects[2]",
-      "key": "e48318264a054ad7",
+      "key": "ed1cd23e38aa2df1",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -29792,7 +29848,7 @@
     {
       "observation": "1133-06",
       "element": "ディーゼル treasureSkills.skill2.effects[1]",
-      "key": "40d63e7983be76b8",
+      "key": "49ffa2599318fdd6",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -29800,7 +29856,7 @@
     {
       "observation": "1133-06",
       "element": "ディーゼル treasureSkills.skill2.effects[2]",
-      "key": "40d63e7983be76b8",
+      "key": "49ffa2599318fdd6",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -29808,7 +29864,7 @@
     {
       "observation": "1133-07",
       "element": "ディーゼル treasureSkills.skill2.effects[1]",
-      "key": "e421c927dcd8acf4",
+      "key": "24b48b8b2b3a5b92",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -29816,7 +29872,7 @@
     {
       "observation": "1133-07",
       "element": "ディーゼル treasureSkills.skill2.effects[2]",
-      "key": "e421c927dcd8acf4",
+      "key": "24b48b8b2b3a5b92",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -29824,7 +29880,7 @@
     {
       "observation": "1133-08",
       "element": "ディーゼル treasureSkills.skill2.effects[1]",
-      "key": "6b9d58e9f5e14bde",
+      "key": "eea6aee99e30d5f8",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -29832,7 +29888,7 @@
     {
       "observation": "1133-08",
       "element": "ディーゼル treasureSkills.skill2.effects[2]",
-      "key": "6b9d58e9f5e14bde",
+      "key": "eea6aee99e30d5f8",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -29840,7 +29896,7 @@
     {
       "observation": "1133-09",
       "element": "ディーゼル treasureSkills.skill2.effects[1]",
-      "key": "7264572ad4cfae4d",
+      "key": "a253c0e2ffb27a0b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -29848,7 +29904,7 @@
     {
       "observation": "1133-09",
       "element": "ディーゼル treasureSkills.skill2.effects[2]",
-      "key": "7264572ad4cfae4d",
+      "key": "a253c0e2ffb27a0b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -29856,7 +29912,7 @@
     {
       "observation": "1133-10",
       "element": "ディーゼル treasureSkills.skill2.effects[1]",
-      "key": "b576535c7fed5c61",
+      "key": "31252728f2188c4f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -29864,7 +29920,7 @@
     {
       "observation": "1133-10",
       "element": "ディーゼル treasureSkills.skill2.effects[2]",
-      "key": "b576535c7fed5c61",
+      "key": "31252728f2188c4f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -29872,7 +29928,7 @@
     {
       "observation": "1133-11",
       "element": "ディーゼル treasureSkills.skill2.effects[1]",
-      "key": "0344c522aa21cc99",
+      "key": "f2e40b3a631a67c7",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -29880,7 +29936,7 @@
     {
       "observation": "1133-11",
       "element": "ディーゼル treasureSkills.skill2.effects[2]",
-      "key": "0344c522aa21cc99",
+      "key": "f2e40b3a631a67c7",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -29888,7 +29944,7 @@
     {
       "observation": "1133-12",
       "element": "ディーゼル treasureSkills.skill2.effects[1]",
-      "key": "3116781ed41dc84d",
+      "key": "5d50fa762b1b540b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -29896,7 +29952,7 @@
     {
       "observation": "1133-12",
       "element": "ディーゼル treasureSkills.skill2.effects[2]",
-      "key": "3116781ed41dc84d",
+      "key": "5d50fa762b1b540b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -29904,7 +29960,7 @@
     {
       "observation": "1133-13",
       "element": "ディーゼル treasureSkills.skill2.effects[1]",
-      "key": "61a93fc101a0a8c0",
+      "key": "76a881413501b23e",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -29912,7 +29968,7 @@
     {
       "observation": "1133-13",
       "element": "ディーゼル treasureSkills.skill2.effects[2]",
-      "key": "61a93fc101a0a8c0",
+      "key": "76a881413501b23e",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -29920,7 +29976,7 @@
     {
       "observation": "1133-14",
       "element": "ディーゼル treasureSkills.skill2.effects[1]",
-      "key": "5a3c31f1651b1856",
+      "key": "dbb772519a95df30",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -29928,7 +29984,7 @@
     {
       "observation": "1133-14",
       "element": "ディーゼル treasureSkills.skill2.effects[2]",
-      "key": "5a3c31f1651b1856",
+      "key": "dbb772519a95df30",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -29936,7 +29992,7 @@
     {
       "observation": "1133-15",
       "element": "ディーゼル treasureSkills.skill2.effects[1]",
-      "key": "fa83cd8faa25a4c6",
+      "key": "4e74c4738cc29440",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -29944,7 +30000,7 @@
     {
       "observation": "1133-15",
       "element": "ディーゼル treasureSkills.skill2.effects[2]",
-      "key": "fa83cd8faa25a4c6",
+      "key": "4e74c4738cc29440",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -30240,7 +30296,15 @@
     {
       "observation": "1141-09",
       "element": "アリス：ワンダーランドバニー burst.effects[1]",
-      "key": "4c391cbfc287340a",
+      "key": "a1cce06f74a19362",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1141-09",
+      "element": "アリス：ワンダーランドバニー skill1.effects[2]",
+      "key": "a1cce06f74a19362",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -30248,7 +30312,7 @@
     {
       "observation": "1141-09",
       "element": "アリス：ワンダーランドバニー skill2.effects[0]",
-      "key": "4c391cbfc287340a",
+      "key": "a1cce06f74a19362",
       "effective": true,
       "minus": 0,
       "plus": -6
@@ -30256,7 +30320,15 @@
     {
       "observation": "1141-14",
       "element": "アリス：ワンダーランドバニー burst.effects[1]",
-      "key": "01404e705302add3",
+      "key": "a10b50ac55c41d4b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1141-14",
+      "element": "アリス：ワンダーランドバニー skill1.effects[2]",
+      "key": "a10b50ac55c41d4b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -30264,7 +30336,7 @@
     {
       "observation": "1141-14",
       "element": "アリス：ワンダーランドバニー skill2.effects[0]",
-      "key": "01404e705302add3",
+      "key": "a10b50ac55c41d4b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -30272,7 +30344,15 @@
     {
       "observation": "1141-16",
       "element": "アリス：ワンダーランドバニー burst.effects[1]",
-      "key": "cfa72317289ff8e6",
+      "key": "9d4cf5072ecbc00e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1141-16",
+      "element": "アリス：ワンダーランドバニー skill1.effects[2]",
+      "key": "9d4cf5072ecbc00e",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -30280,7 +30360,7 @@
     {
       "observation": "1141-16",
       "element": "アリス：ワンダーランドバニー skill2.effects[0]",
-      "key": "cfa72317289ff8e6",
+      "key": "9d4cf5072ecbc00e",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -30288,7 +30368,15 @@
     {
       "observation": "1142-09",
       "element": "アリス：ワンダーランドバニー burst.effects[1]",
-      "key": "6626e87796a40b32",
+      "key": "522744a786c8090a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1142-09",
+      "element": "アリス：ワンダーランドバニー skill1.effects[2]",
+      "key": "522744a786c8090a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -30296,7 +30384,7 @@
     {
       "observation": "1142-09",
       "element": "アリス：ワンダーランドバニー skill2.effects[0]",
-      "key": "6626e87796a40b32",
+      "key": "522744a786c8090a",
       "effective": true,
       "minus": 0,
       "plus": -6
@@ -30304,7 +30392,15 @@
     {
       "observation": "1142-14",
       "element": "アリス：ワンダーランドバニー burst.effects[1]",
-      "key": "4de74da6b45759c1",
+      "key": "415a29e2ada08ec9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1142-14",
+      "element": "アリス：ワンダーランドバニー skill1.effects[2]",
+      "key": "415a29e2ada08ec9",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -30312,7 +30408,7 @@
     {
       "observation": "1142-14",
       "element": "アリス：ワンダーランドバニー skill2.effects[0]",
-      "key": "4de74da6b45759c1",
+      "key": "415a29e2ada08ec9",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -30320,7 +30416,15 @@
     {
       "observation": "1142-16",
       "element": "アリス：ワンダーランドバニー burst.effects[1]",
-      "key": "fef8911fb85eec0e",
+      "key": "d0fe760f44c48276",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1142-16",
+      "element": "アリス：ワンダーランドバニー skill1.effects[2]",
+      "key": "d0fe760f44c48276",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -30328,7 +30432,7 @@
     {
       "observation": "1142-16",
       "element": "アリス：ワンダーランドバニー skill2.effects[0]",
-      "key": "fef8911fb85eec0e",
+      "key": "d0fe760f44c48276",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -30336,7 +30440,15 @@
     {
       "observation": "1143-14",
       "element": "アリス：ワンダーランドバニー burst.effects[1]",
-      "key": "a30093420fcef4dd",
+      "key": "1493b5aa8fb183f5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1143-14",
+      "element": "アリス：ワンダーランドバニー skill1.effects[2]",
+      "key": "1493b5aa8fb183f5",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -30344,7 +30456,7 @@
     {
       "observation": "1143-14",
       "element": "アリス：ワンダーランドバニー skill2.effects[0]",
-      "key": "a30093420fcef4dd",
+      "key": "1493b5aa8fb183f5",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -36450,6 +36562,70 @@
       "plus": null
     },
     {
+      "observation": "1356-01",
+      "element": "アリス：ワンダーランドバニー burst.effects[1]",
+      "key": "8a32c3014397f852",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1356-01",
+      "element": "アリス：ワンダーランドバニー skill1.effects[2]",
+      "key": "8a32c3014397f852",
+      "effective": true,
+      "minus": -2903.1345199999996,
+      "plus": null
+    },
+    {
+      "observation": "1356-01",
+      "element": "アリス：ワンダーランドバニー skill2.effects[0]",
+      "key": "8a32c3014397f852",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1356-01",
+      "element": "センチ treasureSkills.burst.effects[2]",
+      "key": "8a32c3014397f852",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1356-01",
+      "element": "センチ treasureSkills.skill1.effects[2]",
+      "key": "8a32c3014397f852",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1357-01",
+      "element": "ギルティ skill2.effects[0]",
+      "key": "b0a6df6f89367658",
+      "effective": true,
+      "minus": -4146.456600000005,
+      "plus": null
+    },
+    {
+      "observation": "1357-01",
+      "element": "センチ treasureSkills.burst.effects[2]",
+      "key": "b0a6df6f89367658",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1357-01",
+      "element": "センチ treasureSkills.skill1.effects[2]",
+      "key": "b0a6df6f89367658",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "1360-01",
       "element": "K skill1.effects[2]",
       "key": "e6202f91f33e832c",
@@ -36505,6 +36681,38 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "1361-01",
+      "element": "センチ treasureSkills.burst.effects[2]",
+      "key": "9294fe703f24d479",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1361-01",
+      "element": "センチ treasureSkills.skill1.effects[2]",
+      "key": "9294fe703f24d479",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1361-01",
+      "element": "ディーゼル treasureSkills.skill2.effects[1]",
+      "key": "9294fe703f24d479",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1361-01",
+      "element": "ディーゼル treasureSkills.skill2.effects[2]",
+      "key": "9294fe703f24d479",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }
