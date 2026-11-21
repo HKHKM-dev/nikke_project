@@ -1,0 +1,16 @@
+{
+  "id": "C-1488",
+  "text": "レムのバーストの「ロケットランチャーを所持する味方全体に最大装弾数 5 発▲（Lv10・10 秒）」は、RL の味方（I-DOLL・フラワー）の最大装弾数を 6 から 11 にするだけで、付いた時に残弾を足さない。窓の中のリロードで 11 発まで込め、窓が切れた時に残弾が 6 より多ければ 6 に削る（C-0017 の形）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1332-10`・`1332-11`・`1332-12`・`1332-13`・`1333-10`・`1333-11`・`1333-12`・`1333-13`。V-0844",
+  "model": "反映（data/skills/820.json の burst の effects[2]。frame/firing.ts の effectiveMaxAmmo・frame/shooter.ts の MAX_AMMO_CLAMP_ON_DECREASE）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/820.json の burst の effects[2]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値（バーストの値 05・06）と、最大装弾数▲の形（加算して丸め、切れたら削る。C-0017・C-1307）"
+}
