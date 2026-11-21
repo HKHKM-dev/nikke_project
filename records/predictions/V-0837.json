@@ -1,0 +1,227 @@
+{
+  "verification": "V-0837",
+  "team": [
+    {
+      "rid": 20
+    },
+    {
+      "rid": 308
+    },
+    {
+      "rid": 282,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S2 の CT▼はフルバーストの始まりのたびに味方全体の走っている CT を縮める。バーストの攻撃力▲はバーストのたびに付く）"
+    },
+    {
+      "id": "H-once",
+      "note": "バーストの攻撃力▲にも「戦闘中 1 回発動」が掛かる（1 回目のバーストでだけ付く）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 282,
+            "skill": "burst",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "burstUse",
+                "atLeast": 1,
+                "atMost": 1
+              },
+              "target": "allies",
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 4,
+              "durationRef": 5
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-self",
+      "note": "S2 の CT▼が自分（サクラ）の CT だけを縮める",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 282,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "cooldownReduction",
+              "trigger": "fullBurstStart",
+              "target": "self",
+              "ref": 2
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "full-burst-intervals",
+      "model": "sim",
+      "metric": "fullBurstStartIntervals",
+      "args": {
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 10
+      },
+      "note": "フルバーストの入りどうしの間隔（動画のフレーム）の最初の 3 つ。デルタ・I-DOLL・サン・サクラの CT（40 秒）が律速"
+    },
+    {
+      "id": "delta-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 200,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のバーストより前のデルタの 1 発（▲なし）"
+    },
+    {
+      "id": "delta-fb1",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のフルバーストの中のデルタの 1 発（サクラの攻撃力▲あり）"
+    },
+    {
+      "id": "delta-after1",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1300,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のバーストの後、▲の切れたデルタの 1 発"
+    },
+    {
+      "id": "delta-fb2",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2700,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目のフルバーストの中のデルタの 1 発（H1 は▲あり、H-once は▲なし）"
+    },
+    {
+      "id": "sakura-fb2",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2700,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目のフルバーストの中のサクラの 1 発（H1 は▲あり、H-once は▲なし）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "80f11e50f116176e93edffebc771ba9b071134ac",
+    "values": {
+      "H1": {
+        "full-burst-intervals": [2092, 2092, 2092],
+        "delta-base": 239920.16449999996,
+        "delta-fb1": 401681.6649999999,
+        "delta-after1": 239920.16449999996,
+        "delta-fb2": 401681.6649999999,
+        "sakura-fb2": 579529.2299999999
+      },
+      "H-once": {
+        "full-burst-intervals": [2092, 2092, 2092],
+        "delta-base": 239920.16449999996,
+        "delta-fb1": 401681.6649999999,
+        "delta-after1": 239920.16449999996,
+        "delta-fb2": 292076.7219999999,
+        "sakura-fb2": 468179.24999999994
+      },
+      "H-self": {
+        "full-burst-intervals": [2376, 4161, 2376],
+        "delta-base": 239920.16449999996,
+        "delta-fb1": 401681.6649999999,
+        "delta-after1": 239920.16449999996,
+        "delta-fb2": 329952.79624999996,
+        "sakura-fb2": 476041.8675
+      }
+    }
+  }
+}
