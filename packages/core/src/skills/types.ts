@@ -993,7 +993,7 @@ export function isAdjacentHpFullTrigger(t: unknown): t is AdjacentHpFullTrigger 
  * N の倍数を越えたフレームに発火する（1 つのフレームで 2 つの倍数を越えても 1 回）。スタックが減って越え直しても発火する。
  * counterChange にだけ書ける。その状態は、同じ定義の付与で自分にスタックで付く（parse/crossChecks.ts の validateOwnStateTriggers）
  */
-export type StateStacksTrigger = { stateStacks: NamedStateId; every?: number; everyRef?: number };
+export type StateStacksTrigger = { stateStacks: NamedStateId; everyRef: number };
 
 export function isStateStacksTrigger(t: unknown): t is StateStacksTrigger {
   return typeof t === 'object' && t !== null && 'stateStacks' in t;

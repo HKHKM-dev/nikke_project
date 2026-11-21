@@ -88,7 +88,7 @@ describe('語彙の検証', () => {
     expect(dots).toHaveLength(1);
     expect(dots[0]!.sustained).toBeUndefined();
     expect(dots[0]!.dot).toMatchObject({
-      stacksFrom: 'seaBreeze',
+      stacksFrom: { enemyState: 'seaBreeze' },
       state: 'storm',
       intervalSeconds: 1,
       durationSeconds: 7,

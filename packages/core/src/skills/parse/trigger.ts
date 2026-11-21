@@ -520,18 +520,17 @@ function parseSummonAttackTrigger(v: Json, path: string): SummonAttackTrigger | 
   return { summon, intervalSeconds, startDelaySeconds: delay };
 }
 
-/** { counterFull: カウンタ }。それ以外の形なら undefined */
-/** { stateStacks, everyRef | every }（「〈状態〉N スタックごとに」。plan/design-guillotine-ws.md 2.2 節）。それ以外の形なら undefined */
+/** { stateStacks, everyRef }（「〈状態〉N スタックごとに」。plan/design-guillotine-ws.md 2.2 節）。それ以外の形なら undefined */
 export function parseStateStacksTrigger(v: Json, path: string): StateStacksTrigger | undefined {
   if (!isRecord(v) || v.stateStacks === undefined) return undefined;
-  rejectUnknownKeys(v, ['stateStacks', 'every', 'everyRef'], path);
-  const state = parseNamedStateId(v.stateStacks, `${path}.stateStacks`, 'ally');
-  if ((v.every === undefined) === (v.everyRef === undefined)) fail(path, 'expected exactly one of every and everyRef');
-  return v.every !== undefined
-    ? { stateStacks: state, every: parsePositiveInt(v.every, `${path}.every`) }
-    : { stateStacks: state, everyRef: parseRef(v.everyRef, `${path}.everyRef`) };
+  rejectUnknownKeys(v, ['stateStacks', 'everyRef'], path);
+  return {
+    stateStacks: parseNamedStateId(v.stateStacks, `${path}.stateStacks`, 'ally'),
+    everyRef: parseRef(v.everyRef, `${path}.everyRef`),
+  };
 }
 
+/** { counterFull: カウンタ }。それ以外の形なら undefined */
 export function parseCounterFullTrigger(v: Json, path: string): CounterFullTrigger | undefined {
   if (!isRecord(v) || v.counterFull === undefined) return undefined;
   rejectUnknownKeys(v, ['counterFull'], path);

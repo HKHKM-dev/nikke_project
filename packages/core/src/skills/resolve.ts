@@ -244,13 +244,13 @@ export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: n
     return { adjacentHpAtMost: selfHpRatioOfRef(skill, trigger.adjacentHpAtMostRef, level) };
   // 状態のスタック数の N（plan/design-guillotine-ws.md 2.2 節）
   if (isStateStacksTrigger(trigger)) {
-    const step = trigger.everyRef === undefined ? trigger.every! : skillValue(skill, trigger.everyRef, level);
+    const step = skillValue(skill, trigger.everyRef, level);
     if (!Number.isInteger(step) || step < 1) {
       throw new RangeError(`skill ${skill.id}: stacks trigger must be a positive integer, got ${step}`);
     }
     return { stateStacks: trigger.stateStacks, step };
   }
-  if (!isShotCountTrigger(trigger)) return typeof trigger === 'object' ? { ...trigger } : (trigger as BuffTrigger);
+  if (!isShotCountTrigger(trigger)) return typeof trigger === 'object' ? { ...trigger } : trigger;
   // 確率のきっかけは 1 発ごとに引く（every 1）。確率は % → 比率
   if (trigger.chance !== undefined || trigger.chanceRef !== undefined) {
     const percent = trigger.chance ?? skillValue(skill, trigger.chanceRef!, level);

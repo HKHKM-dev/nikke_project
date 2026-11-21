@@ -42,11 +42,11 @@ describe('語彙の検証', () => {
       parseSkillDefinition(patched('skill1', REFILL, { trigger: { stateStacks: 'exp', everyRef: 1 } })),
     ).toThrow(/only allowed in counterChange/);
     expect(() =>
-      parseSkillDefinition(patched('skill1', LEVEL_UP, { trigger: { stateStacks: 'shootingManual', every: 10 } })),
+      parseSkillDefinition(patched('skill1', LEVEL_UP, { trigger: { stateStacks: 'shootingManual', everyRef: 1 } })),
     ).toThrow(/needs a grant of the same state on self/);
     expect(() =>
-      parseSkillDefinition(patched('skill1', LEVEL_UP, { trigger: { stateStacks: 'exp', every: 10, everyRef: 1 } })),
-    ).toThrow(/exactly one of every and everyRef/);
+      parseSkillDefinition(patched('skill1', LEVEL_UP, { trigger: { stateStacks: 'exp', every: 10 } })),
+    ).toThrow(/every/);
   });
 
   it('allows { counterUp } only in ammoRefill, heal and timed', () => {
@@ -77,7 +77,9 @@ describe('語彙の検証', () => {
 
   it('accepts delayFrames on a burstUse dot only without gauge', () => {
     expect(() => parseSkillDefinition(patched('burst', DOT, { gaugeOnTick: true }))).toThrow(/delayFrames needs/);
-    expect(() => parseSkillDefinition(patched('burst', DOT, { trigger: 'fullBurstStart' }))).toThrow(/delayFrames needs/);
+    expect(() => parseSkillDefinition(patched('burst', DOT, { trigger: 'fullBurstStart' }))).toThrow(
+      /delayFrames needs/,
+    );
   });
 
   it('accepts stacksFrom { counter } on a dot and rejects an unknown counter', () => {

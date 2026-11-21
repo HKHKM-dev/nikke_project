@@ -916,22 +916,25 @@ function dotHits(ctx: SkillHitsContext, s: SlotReaders): void {
     }
     return { dot, fires, cancels };
   });
+  // 写す数の読み口: 自分のカウンタの値か、敵に付いた状態のスタックの数（元は同じ定義の dot か、敵にスタックで付く状態の付与。
+  // skills/parse/crossChecks.ts の validateDotStateRefs）
+  const stacksSourceAt = (
+    from: NonNullable<NonNullable<ResolvedDamageEffect['dot']>['stacksFrom']>,
+  ): ((frame: number) => number) => {
+    if ('counter' in from) return (frame) => self.counterAt(from.counter, frame);
+    const state = from.enemyState;
+    const source = dotGroups.find((g) => g.dot.state === state);
+    if (source === undefined) return (frame) => enemyGrantStacksAt(slotIndex, state, frame);
+    const sourceFires = source.fires.map((x) => x.f);
+    return (frame) => dotStacksAt(sourceFires, source.cancels, source.dot.maxStacks, frame);
+  };
   for (const { dot, fires, cancels } of dotGroups) {
     const { maxStacks } = dot;
     // スタックコピー。付けた時に元の持続ダメージのスタックの数を写し、その数の tick を出す（0 なら付かない）。
     // 自分のカウンタの値を数にする形（× 〈カウンタ〉数分。plan/design-guillotine-ws.md 2.4 節）も同じ道筋
     const from = dot.stacksFrom;
-    const fromCounter = dot.stacksFromCounter;
-    if (from !== undefined || fromCounter !== undefined) {
-      // 元は同じ定義の dot か、敵にスタックで付く状態の付与（skills/parse/crossChecks.ts の validateDotStateRefs）
-      const source = from === undefined ? undefined : dotGroups.find((g) => g.dot.state === from);
-      const sourceFires = source?.fires.map((x) => x.f) ?? [];
-      const stacksAt = (frame: number): number =>
-        fromCounter !== undefined
-          ? self.counterAt(fromCounter, frame)
-          : source !== undefined
-            ? dotStacksAt(sourceFires, source.cancels, source.dot.maxStacks, frame)
-            : enemyGrantStacksAt(slotIndex, from!, frame);
+    if (from !== undefined) {
+      const stacksAt = stacksSourceAt(from);
       for (const { f, effect } of fires) {
         const copied = stacksAt(f);
         if (copied === 0) continue;

@@ -124,6 +124,9 @@ export function createRecords({ options, slots }: HolderBase) {
   const counterFullAt = new Map<string, number>();
   /** 枠のカウンタが増えたフレームの次のフレーム（{ counterUp } の発火。戦闘開始時の増減は入れない。plan/design-guillotine-ws.md 2.2 節） */
   const counterUpAt = new Map<string, Set<number>>();
+  /** 枠のカウンタの { counterUp } が、フレーム frame に発火するか */
+  const counterUpFiresAt = (slotIndex: number, counter: CounterId, frame: number): boolean =>
+    counterUpAt.get(counterKey(slotIndex, counter))?.has(frame) === true;
   return {
     amplifiers,
     applications,
@@ -134,6 +137,7 @@ export function createRecords({ options, slots }: HolderBase) {
     counterFullAt,
     counterKey,
     counterUpAt,
+    counterUpFiresAt,
     frames,
     heals,
     itemsSeen,

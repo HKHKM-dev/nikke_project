@@ -27,7 +27,7 @@ const BELOW_FULL_HP = 1 - 2 * HP_RATIO_EPS;
 export function createFires({
   counterFullAt,
   counterKey,
-  counterUpAt,
+  counterUpFiresAt,
   frames,
   options,
   late,
@@ -112,8 +112,8 @@ export function createFires({
     }
     // カウンタが増えた次のフレーム（registerCounters が counterUpAt に書く。plan/design-guillotine-ws.md 2.2 節）
     if (isResolvedCounterUp(trigger)) {
-      const key = counterKey(slotIndex, trigger.counterUp);
-      return (ev) => counterUpAt.get(key)?.has(ev.frame) === true;
+      const counter = trigger.counterUp;
+      return (ev) => counterUpFiresAt(slotIndex, counter, ev.frame);
     }
     // 自分のその状態のスタック数が N の倍数を越えたフレーム（同 2.2 節）。毎フレームの判定で、前に見た段と比べる
     if (isResolvedStacks(trigger)) {
