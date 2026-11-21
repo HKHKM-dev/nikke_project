@@ -864,7 +864,7 @@ notes の種類: 未対応 44・前提の外 106・計算に無関係 69・補�
   - effects[0] timed・normalHit・maxAmmo: C-1363（確定）
   - effects[1] damage・normalHit・skill: C-1363（確定）
 - **skill2**: supported
-  - effects[0] damage・normalHit・skill: C-1364（確定）、C-1365（仮説）
+  - effects[0] damage・normalHit・skill: C-1364（確定）、C-1365（確定）
   - effects[1] timed・burstUse・attackDamage: C-1366（確定）
 - **burst**: supported
   - effects[0] cycleEvery・burstUse: C-1366（確定）
