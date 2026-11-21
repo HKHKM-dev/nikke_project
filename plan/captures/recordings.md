@@ -1302,6 +1302,7 @@
 | 1332 | `20261121-1332_idoll-flower-rem.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ◎レム（820、MG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1333 | `20261121-1333_idoll-flower-rem.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ◎レム（820、MG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1348 | `20261121-1348_smg_novel_nofire_left.mp4` | ◎ノベル（212、SMG・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | ノベル単騎・操作・オート射撃 OFF で撃たない・オートバースト OFF・バーストの欄を左に出した。V-0847 の撮影 |
+| 1351 | `20261121-1351_ar_rosanna-chic-ocean_nofire_left.mp4` | ◎ロザンナ：シックオーシャン（283、AR・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | ロザンナ：シックオーシャン単騎・操作・オート射撃 OFF で撃たない・オートバースト OFF・バーストの欄を左に出した。V-0847 の撮影 |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
