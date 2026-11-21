@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 151・効果 1087（根拠あり 1065）・notes 360（根拠あり 151）
+件数: キャラ 153・効果 1093（根拠あり 1071）・notes 365（根拠あり 153）
 
-notes の種類: 未対応 44・前提の外 114・計算に無関係 72・補足 42・間接 88
+notes の種類: 未対応 45・前提の外 117・計算に無関係 73・補足 42・間接 88
 
-スロット: supported 408・partial 31・unsupported 9・noEffect 56
+スロット: supported 411・partial 32・unsupported 9・noEffect 58
 
 ## 10 ラピ
 
@@ -254,6 +254,7 @@ notes の種類: 未対応 44・前提の外 114・計算に無関係 72・補�
   - effects[0] timed・normalShot・attack: C-1406（確定）
 - **skill2**: supported
   - effects[0] damage・10 秒ごと・skill: C-1407（確定）
+  - effects[1] burstGaugeHit・10 秒ごと: C-1431（確定）、C-1407（確定）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-1408（確定）
   - effects[1] damage・burstUse・additional（読む: HP）: C-1410（確定）
@@ -499,6 +500,17 @@ notes の種類: 未対応 44・前提の外 114・計算に無関係 72・補�
   - effects[0] burstDamage・skill: C-0228（確定）
   - effects[1] timed・burstUse・attackDamage: C-0420（確定）
   - effects[2] timed・burstUse・maxAmmo: C-0420（確定）
+
+## 102 マクスウェル
+
+- **skill1**: supported
+  - effects[0] timed・fullBurstStart・chargeSpeed: C-1432（確定）
+  - effects[1] timed・fullBurstStart・attack: C-1432（確定）
+- **skill2**: noEffect
+  - notes[0] 前提の外: ニケを除いた敵が 5 機以上の時だけの自分の会心率▲・会心ダメージ▲は、敵 1 体では起きない: C-0443（範囲外）
+- **burst**: partial
+  - effects[0] weaponChange・burstUse: C-1433（確定）
+  - notes[0] 未対応: 持ち替えの直前（III のタイマーの 00.00 の 10〜15f 前）に基礎の SR を撃った回は、変更後の武器の 1 発が 3〜8f 遅れた（V-0824）。モデルは待ちの即値で、基礎の SR の状態を見ない: C-1433（確定）
 
 ## 103 ラプラス：アルティメットヒーロー
 
@@ -753,6 +765,17 @@ notes の種類: 未対応 44・前提の外 114・計算に無関係 72・補�
   - effects[2] state・burstUse・designatedTarget: C-0922（確定）
   - effects[3] shotPause・burstUse: C-0925（確定）
   - notes[0] 計算に無関係: 敵全体の気絶と、ターゲット指定の攻撃力▼はダメージに関係しない: 根拠なし
+
+## 171 ユルハ
+
+- **skill1**: noEffect
+  - notes[0] 前提の外: 30 回攻撃を受けた時の、自分の平常心（クリティカル確率▲・20 秒）は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは、操作キャラが的の攻撃を受けると数えられうる（C-0551）: 根拠なし
+- **skill2**: supported
+  - effects[0] timed・30 秒ごと・attack: C-1436（確定）
+  - notes[0] 計算に無関係: 味方全体の受けるダメージ均等分配（10 秒）は防御系でダメージに関係しない: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1437（確定）
+  - notes[0] 前提の外: 自分が平常心状態のときの追加ダメージ（最終攻撃力の X%）は、平常心が被弾でしか付かない（S1）ので起きない（要件 4.2 節）: 根拠なし
 
 ## 172 アドミ
 

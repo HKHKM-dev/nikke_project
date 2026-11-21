@@ -32,6 +32,7 @@
     160,
     161,
     162,
+    171,
     172,
     180,
     182,
@@ -148,6 +149,10 @@
     "100": {
       "unimplemented": 1,
       "assumed": 8
+    },
+    "102": {
+      "unimplemented": 1,
+      "assumed": 2
     },
     "103": {
       "unimplemented": 1,

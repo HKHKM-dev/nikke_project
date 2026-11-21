@@ -1260,6 +1260,11 @@
 | 1289 | `20261121-1289_flower+signal_auto.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ◎シグナル（22、SMG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0819。I-DOLL・フラワー + シグナル（操作）・オートバースト ON |
 | 1290 | `20261121-1290_flower+signal_auto.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ◎シグナル（22、SMG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0819。I-DOLL・フラワー + シグナル（操作）・オートバースト ON |
 | 1291 | `20261121-1291_snow-white-b-2.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎スノーホワイト（220、AR・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1297 | `20261121-1297_sr_yulha_fire.mp4` | ◎ユルハ（171、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1298 | `20261121-1298_sr_yulha_fire.mp4` | ◎ユルハ（171、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1299 | `20261121-1299_rl+sr+sr_i-doll-flower+delta+yulha_fire.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎ユルハ（171、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1300 | `20261121-1300_maxwell-1.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎マクスウェル（102、SR・鉄甲・SSR） + レイヴン（851、RL・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1301 | `20261121-1301_maxwell-2.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎マクスウェル（102、SR・鉄甲・SSR） + レイヴン（851、RL・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
