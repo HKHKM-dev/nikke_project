@@ -1,13 +1,10 @@
-// 現状の型のファイルが指す設計書の節が、設計書に見出しとしてあるかの確かめ（plan/design-design-doc-trim.md 5 節）
+// 設計書のほかのファイルが指す設計書の節が、設計書に見出しとしてあるかの確かめ（plan/design-design-doc-trim.md 5 節・9 節）
+import { execFileSync } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import {
-  branchBrokenSectionRefs,
-  brokenSectionRefs,
-  headingNumbers,
-  isCurrentSource,
-  isDesignDoc,
-  sectionRefs,
-} from './design-section-refs.ts';
+import { GENERATED_PATHS, ROOT } from '../../packages/core/scripts/records-data.ts';
+import { brokenSectionRefs, headingNumbers, isCurrentSource, isDesignDoc, sectionRefs } from './design-section-refs.ts';
 
 // このファイルも見る側なので、参照の形の文はつないで作る（そのまま書くと、このファイルの参照として切れて見える）
 const D = 'design-';
@@ -20,14 +17,15 @@ describe('isDesignDoc・isCurrentSource', () => {
     expect(isDesignDoc('plan/roadmap.md')).toBe(false);
   });
 
-  it('見る側は現状の型のファイルだけ', () => {
+  it('見る側は、設計書・記録・生成物・凍結の文書のほかの、文を持つファイル', () => {
     const gen = ['plan/claims.md'];
     for (const p of [
       'tools/git/pr-prep.ts',
       'apps/web/src/App.tsx',
-      'packages/core/src/sim/engine.ts',
+      'apps/web/src/styles.css',
+      'packages/core/data/skills/a.json',
+      '.github/workflows/ci.yml',
       'AGENTS.md',
-      'README.md',
       'plan/requirements.md',
       'plan/captures/guide.md',
       'records/backlog/2-1.json',
@@ -44,7 +42,7 @@ describe('isDesignDoc・isCurrentSource', () => {
       'plan/captures/backup-log-old1.md',
       'records/verifications/V-0001.md',
       'records/claims/C-0001.json',
-      'packages/core/data/skills/a.json',
+      'apps/web/src/assets/a.png',
     ])
       expect(isCurrentSource(p, gen), p).toBe(false);
   });
@@ -73,50 +71,27 @@ describe('headingNumbers', () => {
 });
 
 describe('brokenSectionRefs', () => {
-  const files: Record<string, string> = {
-    [`plan/${D}a.md`]: '## 1. 目的\n### 1.2 決定\n',
-    'tools/x.ts': `// plan/${D}a.md 1.2 節\n// plan/${D}a.md 4 節\n`,
-    'tools/y.ts': `// plan/${D}a.md 5 節\n// plan/${D}gone.md 1 節\n`,
-  };
-  const read = (p: string) => files[p];
-  const sources = ['tools/x.ts', 'tools/y.ts'];
-
-  it('ブランチで変えたファイルの参照は、どの設計書を指していても見る', () => {
-    expect(brokenSectionRefs(sources, new Set(['tools/y.ts']), new Set(), read)).toEqual([
-      { path: 'tools/y.ts', line: 1, doc: `plan/${D}a.md`, section: '5' },
-      { path: 'tools/y.ts', line: 2, doc: `plan/${D}gone.md`, section: '1' },
-    ]);
-  });
-
-  it('ブランチで変えた設計書を指す参照は、変えていないファイルでも見る', () => {
-    expect(brokenSectionRefs(sources, new Set(), new Set([`plan/${D}a.md`]), read)).toEqual([
+  it('指す節の見出しが無い参照と、指す設計書が無い参照', () => {
+    const files: Record<string, string> = {
+      [`plan/${D}a.md`]: '## 1. 目的\n### 1.2 決定\n',
+      'tools/x.ts': `// plan/${D}a.md 1.2 節\n// plan/${D}a.md 4 節\n// plan/${D}gone.md 1 節\n`,
+    };
+    expect(brokenSectionRefs(['tools/x.ts', 'tools/deleted.ts'], (p) => files[p])).toEqual([
       { path: 'tools/x.ts', line: 2, doc: `plan/${D}a.md`, section: '4' },
-      { path: 'tools/y.ts', line: 1, doc: `plan/${D}a.md`, section: '5' },
+      { path: 'tools/x.ts', line: 3, doc: `plan/${D}gone.md`, section: '1' },
     ]);
-  });
-
-  it('どちらでもない参照は、切れていても見ない', () => {
-    expect(brokenSectionRefs(sources, new Set(), new Set([`plan/${D}b.md`]), read)).toEqual([]);
   });
 });
 
-describe('branchBrokenSectionRefs', () => {
-  it('ブランチが設計書も見る側も変えていなければ、ファイルの一覧を読まない', () => {
-    const calls: string[][] = [];
-    const paths = (args: readonly string[]) => {
-      calls.push([...args]);
-      return args[0] === 'diff' ? ['records/verifications/V-0001.md'] : [];
-    };
-    expect(branchBrokenSectionRefs('origin/main', paths, [], () => undefined)).toEqual([]);
-    expect(calls).toEqual([['diff', '--name-only', 'origin/main...HEAD']]);
-  });
-
-  it('消した設計書を指す参照も切れとして出す', () => {
-    const paths = (args: readonly string[]) =>
-      args[0] === 'diff' ? [`plan/${D}gone.md`] : ['tools/x.ts', `plan/${D}a.md`, 'plan/claims.md'];
-    const read = (p: string) => ({ 'tools/x.ts': `// ${D}gone.md 2 節`, 'plan/claims.md': `${D}gone.md 2 節` })[p];
-    expect(branchBrokenSectionRefs('origin/main', paths, ['plan/claims.md'], read)).toEqual([
-      { path: 'tools/x.ts', line: 1, doc: `plan/${D}gone.md`, section: '2' },
-    ]);
+describe('リポジトリ', () => {
+  it('設計書のほかのファイルが指す設計書の節は、全部その設計書にある', () => {
+    const files = execFileSync('git', ['ls-files', '-z'], { cwd: ROOT, encoding: 'utf8' }).split('\0');
+    const read = (p: string) => (existsSync(join(ROOT, p)) ? readFileSync(join(ROOT, p), 'utf8') : undefined);
+    const broken = brokenSectionRefs(
+      files.filter((p) => p !== '' && isCurrentSource(p, GENERATED_PATHS)),
+      read,
+    ).map((r) => `${r.path}:${r.line}: ${r.doc} ${r.section} 節`);
+    // 切れたら、節を設計書に残すか、指している側を直す（AGENTS.md「文書の書き方」の設計の型）
+    expect(broken).toEqual([]);
   });
 });

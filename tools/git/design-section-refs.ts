@@ -1,31 +1,25 @@
-// 現状の型のファイル（コード・AGENTS.md・手引きなど）が「設計書のファイル名と N 節」の形で指す設計書の節が、その設計書に見出しとしてあるかを見る
-// （plan/design-design-doc-trim.md 5 節）。設計書は要らない記述を消してよいが、現状の文書とコードのコメントが指す節は残す（AGENTS.md
-// 「文書の書き方」の設計の型）。記録・設計書・生成物・凍結の文書は書いた時点の版を指すので見ない。
+// 設計書のほかのファイル（コード・データ・AGENTS.md・手引きなど）が「設計書のファイル名と N 節」の形で指す設計書の節が、その設計書に
+// 見出しとしてあるかを見る（plan/design-design-doc-trim.md 5 節・9 節）。設計書は要らない記述を消してよいが、現状の文書・コードの
+// コメント・データが指す節は残す（AGENTS.md「文書の書き方」の設計の型）。記録・設計書・生成物・凍結の文書は書いた時点の版を指すので
+// 見ない。リポジトリの全部を見る確かめは design-section-refs.test.ts にあり、npm test（pr:prep と GitHub の CI）で回る。
 
 /** 設計書のパス（AGENTS.md「記録の置き場所」の設計書の行） */
 const DESIGN_DOC = /^plan\/(?:design-[^/]+|burst-effect-delay-candidates)\.md$/;
 
-/** 凍結の文書と、記録の型の plan/ の文書（AGENTS.md「記録の置き場所」） */
-const NOT_CURRENT = [
-  /^plan\/verification\.md$/,
-  /^plan\/roadmap-archive\.md$/,
-  /^plan\/captures\/legacy-usage\.md$/,
-  /^plan\/captures\/backup-log[^/]*\.md$/,
-];
+/** 書いた時点の版を指してよいもの: 記録（records/ のうち課題と README のほか）と、凍結の文書・記録の型の plan/ の文書 */
+const POINT_IN_TIME =
+  /^(?:records\/(?!backlog\/|(?:[^/]+\/)*README\.md$)|plan\/(?:verification|roadmap-archive|captures\/legacy-usage|captures\/backup-log[^/]*)\.md$)/;
+
+/** 文を持つファイル */
+const TEXT = /\.(?:ts|tsx|mts|js|mjs|cjs|json|md|ya?ml|css|html)$/;
 
 export function isDesignDoc(path: string): boolean {
   return DESIGN_DOC.test(path);
 }
 
-/** 参照を見る側（現状の型のファイル）か。generated は生成物のパス */
+/** 参照を見る側か。generated は生成物のパス */
 export function isCurrentSource(path: string, generated: readonly string[]): boolean {
-  if (generated.includes(path)) return false;
-  if (/^(?:packages|apps|tools)\/.+\.(?:ts|tsx|mts|js|mjs|cjs)$/.test(path)) return !path.includes('/node_modules/');
-  if (path === 'AGENTS.md' || path === 'README.md') return true;
-  if (/^records\/backlog\/[^/]+\.json$/.test(path)) return true;
-  if (/^records\/(?:[^/]+\/)*README\.md$/.test(path)) return true;
-  if (/^plan\/.+\.md$/.test(path)) return !isDesignDoc(path) && !NOT_CURRENT.some((re) => re.test(path));
-  return false;
+  return TEXT.test(path) && !isDesignDoc(path) && !POINT_IN_TIME.test(path) && !generated.includes(path);
 }
 
 export interface SectionRef {
@@ -61,15 +55,9 @@ export function headingNumbers(text: string): Set<string> {
   return out;
 }
 
-/**
- * 切れた参照（指す設計書が無いか、指す節の見出しが無い）。見るのは、ブランチで変えた見る側のファイル（changedSources）の参照と、
- * ブランチで変えた（消した）設計書（changedDesigns）を指す参照だけ（main に切れた参照があっても、関係の無いブランチを止めない）。
- * sources は見る側のファイルの全部、read はファイルの中身（無ければ undefined）
- */
+/** 見る側のファイル（sources）の、切れた参照（指す設計書が無いか、指す節の見出しが無い）。read はファイルの中身（無ければ undefined） */
 export function brokenSectionRefs(
   sources: readonly string[],
-  changedSources: ReadonlySet<string>,
-  changedDesigns: ReadonlySet<string>,
   read: (path: string) => string | undefined,
 ): SectionRef[] {
   const heads = new Map<string, Set<string> | undefined>();
@@ -82,28 +70,6 @@ export function brokenSectionRefs(
   };
   return sources.flatMap((path) => {
     const text = read(path);
-    if (text === undefined) return [];
-    return sectionRefs(path, text).filter(
-      (r) => (changedSources.has(path) || changedDesigns.has(r.doc)) && !headsOf(r.doc)?.has(r.section),
-    );
+    return text === undefined ? [] : sectionRefs(path, text).filter((r) => !headsOf(r.doc)?.has(r.section));
   });
-}
-
-/**
- * git でファイルの一覧とブランチ（base...HEAD）の変更を読んで、brokenSectionRefs で決める。run は git を引数で呼んで標準出力を返すもの
- * （-z の出力を nul で分けるのは呼ぶ側の paths）、read は作業ツリーのファイルの中身。ブランチが設計書も見る側のファイルも変えていなければ
- * ファイルを読まない
- */
-export function branchBrokenSectionRefs(
-  base: string,
-  paths: (args: readonly string[]) => string[],
-  generated: readonly string[],
-  read: (path: string) => string | undefined,
-): SectionRef[] {
-  const changed = paths(['diff', '--name-only', `${base}...HEAD`]);
-  const changedDesigns = new Set(changed.filter(isDesignDoc));
-  const changedSources = new Set(changed.filter((p) => isCurrentSource(p, generated)));
-  if (changedDesigns.size === 0 && changedSources.size === 0) return [];
-  const sources = paths(['ls-files']).filter((p) => isCurrentSource(p, generated));
-  return brokenSectionRefs(sources, changedSources, changedDesigns, read);
 }

@@ -15,8 +15,6 @@
 //    設計書（plan/design-*.md）・手引き（plan/*-guide.md）・状態の目録（packages/core/src/skills/states.ts）の、両方が同じ所に行を
 //    足しただけの衝突は、main の行・ブランチの行の順に両方残して続ける（plan/design-workflow-simplification-14.md 5 節・-15.md 8 節）。
 //    生成物でないファイルが 1 つでもあれば、そこで止めてファイルを出す（人が直して git add し、もう一度 npm run pr:prep を回すと続きから）。
-//    取り込んだ後、現状の型のファイル（コード・AGENTS.md・手引きなど）が指す設計書の節が見出しとして無ければ止めて参照を出す。見るのは
-//    ブランチで変えたファイルの参照と、ブランチで変えた設計書を指す参照だけ（plan/design-design-doc-trim.md 5 節）。
 // 4. 生成物を 1 回だけ作り直す（records:minimal。感度は変わった組だけ計算し直し、records:check も回る）。作り直しで生成物でない
 //    ファイル（開いている検証記録の予測との比べの表・手で書いた records/ の JSON の整形）が変わったら、「records:check の書き換え」の
 //    commit を足す。バッジを元（apps/web/badges-src）から書き出し（npm run badges:build）、書き出しが変わったら「バッジの書き出し」の
@@ -67,7 +65,6 @@ import {
   short,
   splitGenerated,
 } from './pr-prep-lib.ts';
-import { branchBrokenSectionRefs } from './design-section-refs.ts';
 import { gitRebaseIo, isRebasing, startRebase } from './git-rebase.ts';
 import { holdPrPrepLock } from './pr-prep-lock.ts';
 import { cliArgs } from '../../packages/core/scripts/cli.ts';
@@ -272,18 +269,6 @@ if (rebased.kind === 'conflict') {
   process.exit(1);
 }
 if (rebased.kind === 'error') fail(rebased.message);
-
-// 現状の文書とコードのコメントが指す設計書の節は、設計書から消さない（plan/design-design-doc-trim.md 5 節）
-const brokenRefs = branchBrokenSectionRefs('origin/main', gitPaths, GENERATED_PATHS, (p) =>
-  existsSync(join(ROOT, p)) ? readFileSync(join(ROOT, p), 'utf8') : undefined,
-);
-if (brokenRefs.length > 0) {
-  console.error(
-    '現状の文書かコードが、設計書に無い節を指している（AGENTS.md「文書の書き方」の設計の型）。節を残すか、指している側を直して commit し、もう一度回す:',
-  );
-  for (const r of brokenRefs) console.error(`  ${r.path}:${r.line}: ${r.doc} ${r.section} 節`);
-  process.exit(1);
-}
 
 console.log('生成物を作り直す（npm run records:minimal）');
 npm('records:minimal');
