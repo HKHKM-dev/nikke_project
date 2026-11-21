@@ -75,6 +75,11 @@ describe('語彙の検証', () => {
     ).toThrow(/perCount cannot be combined with durationUntil/);
   });
 
+  it('accepts delayFrames on a burstUse dot only without gauge', () => {
+    expect(() => parseSkillDefinition(patched('burst', DOT, { gaugeOnTick: true }))).toThrow(/delayFrames needs/);
+    expect(() => parseSkillDefinition(patched('burst', DOT, { trigger: 'fullBurstStart' }))).toThrow(/delayFrames needs/);
+  });
+
   it('accepts stacksFrom { counter } on a dot and rejects an unknown counter', () => {
     expect(() =>
       parseSkillDefinition(patched('burst', DOT, { stacksFrom: { counter: 'heroLevel' }, copyEachTick: true })),

@@ -1,0 +1,299 @@
+[
+  {
+    "id": "1274-01",
+    "recording": "1274",
+    "kind": "total",
+    "use": "record",
+    "value": 132263351,
+    "description": "ギロチン：ウィンタースレイヤー の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11396。増分は 1612 個"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1274-02",
+    "recording": "1274",
+    "kind": "count",
+    "use": "record",
+    "value": 230,
+    "unit": "トリガー",
+    "description": "ギロチン：ウィンタースレイヤー のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 1612 個。前の増分から 30f 未満の増分（1585 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 40f）から発の数を決めた（2 発になった組 26 個）"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1274-03",
+    "recording": "1274",
+    "kind": "hit",
+    "use": "compare",
+    "value": 24654,
+    "unit": "ダメージ",
+    "description": "ウィンタースレイヤー単騎の、経験値 3 スタック・勇者レベル 1 の 1 ヒット（胴体・距離あり・会心なし）。この組に 4 回当たった",
+    "method": {
+      "tool": "使い捨てのスクリプト（hud.ts の増分の当てはめ）",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、使い捨てのスクリプトで 1 発ずつ（経験値 n・勇者レベル L・距離・コア・会心の組）に当てた。1 ヒット = (round(119,896 × (1 + 0.0181n) + 119,896 × 0.0091L) − 100) × 0.1365 × (1 + 距離 0.3 + コア 1 + 会心 0.5) × (1.1 + 0.0116L + 0.0746)（L ≥ 2。L = 1 は ▲なし）の ±2 に当てた。モデルのフレーム 100 は経験値 3・勇者レベル 1 の区間"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 100,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1274-04",
+    "recording": "1274",
+    "kind": "hit",
+    "use": "compare",
+    "value": 31000,
+    "unit": "ダメージ",
+    "description": "ウィンタースレイヤー単騎の、経験値 11 スタック・勇者レベル 2 の 1 ヒット（胴体・距離あり・会心なし）。この組に 6 回当たった",
+    "method": {
+      "tool": "使い捨てのスクリプト（hud.ts の増分の当てはめ）",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、使い捨てのスクリプトで 1 発ずつ（経験値 n・勇者レベル L・距離・コア・会心の組）に当てた。1 ヒット = (round(119,896 × (1 + 0.0181n) + 119,896 × 0.0091L) − 100) × 0.1365 × (1 + 距離 0.3 + コア 1 + 会心 0.5) × (1.1 + 0.0116L + 0.0746)（L ≥ 2。L = 1 は ▲なし）の ±2 に当てた。モデルのフレーム 300 は経験値 11・勇者レベル 2 の区間"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1274-05",
+    "recording": "1274",
+    "kind": "hit",
+    "use": "compare",
+    "value": 52330,
+    "unit": "ダメージ",
+    "description": "ウィンタースレイヤー単騎の、経験値 51 スタック・勇者レベル 6 の 1 ヒット（胴体・距離あり・会心なし）。この組に 3 回当たった",
+    "method": {
+      "tool": "使い捨てのスクリプト（hud.ts の増分の当てはめ）",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、使い捨てのスクリプトで 1 発ずつ（経験値 n・勇者レベル L・距離・コア・会心の組）に当てた。1 ヒット = (round(119,896 × (1 + 0.0181n) + 119,896 × 0.0091L) − 100) × 0.1365 × (1 + 距離 0.3 + コア 1 + 会心 0.5) × (1.1 + 0.0116L + 0.0746)（L ≥ 2。L = 1 は ▲なし）の ±2 に当てた。モデルのフレーム 1500 は経験値 51・勇者レベル 6 の区間"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1500,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1274-06",
+    "recording": "1274",
+    "kind": "hit",
+    "use": "compare",
+    "value": 62001,
+    "unit": "ダメージ",
+    "description": "ウィンタースレイヤー単騎の、経験値 100 スタック・勇者レベル 11 の 1 ヒット（胴体・距離なし・会心なし）。この組に 499 回当たった",
+    "method": {
+      "tool": "使い捨てのスクリプト（hud.ts の増分の当てはめ）",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、使い捨てのスクリプトで 1 発ずつ（経験値 n・勇者レベル L・距離・コア・会心の組）に当てた。1 ヒット = (round(119,896 × (1 + 0.0181n) + 119,896 × 0.0091L) − 100) × 0.1365 × (1 + 距離 0.3 + コア 1 + 会心 0.5) × (1.1 + 0.0116L + 0.0746)（L ≥ 2。L = 1 は ▲なし）の ±2 に当てた。モデルのフレーム 4000 は経験値 100・勇者レベル 11 の区間"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 4000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1274-07",
+    "recording": "1274",
+    "kind": "hit",
+    "use": "compare",
+    "value": 124002,
+    "unit": "ダメージ",
+    "description": "ウィンタースレイヤー単騎の、経験値 100 スタック・勇者レベル 11 の 1 ヒット（コア・距離なし・会心なし）。この組に 191 回当たった",
+    "method": {
+      "tool": "使い捨てのスクリプト（hud.ts の増分の当てはめ）",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、使い捨てのスクリプトで 1 発ずつ（経験値 n・勇者レベル L・距離・コア・会心の組）に当てた。1 ヒット = (round(119,896 × (1 + 0.0181n) + 119,896 × 0.0091L) − 100) × 0.1365 × (1 + 距離 0.3 + コア 1 + 会心 0.5) × (1.1 + 0.0116L + 0.0746)（L ≥ 2。L = 1 は ▲なし）の ±2 に当てた。モデルのフレーム 4000 は経験値 100・勇者レベル 11 の区間"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 4000,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1274-08",
+    "recording": "1274",
+    "kind": "count",
+    "use": "record",
+    "value": 438,
+    "unit": "増分",
+    "description": "ウィンタースレイヤー単騎の、経験値 100 スタックまでの増分 438 個（命中はコア 162・コアでない 277）で、経験値の段（攻撃力 1.81%▲ずつ）が上がった増分は、どれも「コアでない命中を通算で 6 回ごと・コアの命中を通算で 3 回ごと」に数えた命中の次の増分だった（1 つもずれない。N1）。6 の倍数の命中がコアでなければ付く読み（N2）は 7 番目の増分で、コアでない命中が 6 回続いた時に付く読み（N3）は 8 番目の増分でずれる",
+    "method": {
+      "tool": "使い捨てのスクリプト（hud.ts の増分の当てはめと、規則ごとの数え）",
+      "note": "2 発以上の和の増分（0 個）は、発の数とコアの数の組を全部試し、最もずれの少ない組で数えた"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1274-09",
+    "recording": "1274",
+    "kind": "count",
+    "use": "record",
+    "value": 10,
+    "unit": "回",
+    "description": "ウィンタースレイヤー単騎の、勇者レベルアップの回数（10 回）。勇者レベルは経験値 10・20・…・100 スタックの段に上がった増分から、2・3・…・11 の値（S1 の有利コードの攻撃ダメージ 1.16% × L・攻撃力 0.91% × L（スキル発動者基準）と、S2 の 7.46%▲）で当たり、11 の後は上がらない。増分 1,612 個のうち 2 発以上の和を除く全部が、勇者レベルが 1 から始まり値 × L に付け直す読み（L1・U1）の ±2 に当たり、値が回数だけ重なる読み（U3）・0 から始まる読み（L0）・値 × L が重なる読み（U2）は最初の勇者レベルアップの後で当たらない。",
+    "method": {
+      "tool": "使い捨てのスクリプト（hud.ts の増分の当てはめ）",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、使い捨てのスクリプトで 1 発ずつ（経験値 n・勇者レベル L・距離・コア・会心の組）に当てた。1 ヒット = (round(119,896 × (1 + 0.0181n) + 119,896 × 0.0091L) − 100) × 0.1365 × (1 + 距離 0.3 + コア 1 + 会心 0.5) × (1.1 + 0.0116L + 0.0746)（L ≥ 2。L = 1 は ▲なし）の ±2 に当てた"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1274-10",
+    "recording": "1274",
+    "kind": "count",
+    "use": "compare",
+    "value": [6, 6],
+    "unit": "発",
+    "description": "ウィンタースレイヤー単騎の、1・2 回目の勇者レベルアップの弾丸チャージの発数。照準の横の残弾が 013 → 018、026 → 031 と、1 発撃って +6",
+    "method": {
+      "tool": "目視（照準の横の残弾の表示）",
+      "note": "動画の f1044〜1071・f1382〜1409 を 3f ごとに並べて読んだ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "ammoRefillAmounts",
+      "args": {
+        "slot": 1,
+        "count": 2
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0812",
+    "readAt": "2026-11-21"
+  }
+]

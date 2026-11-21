@@ -207,7 +207,10 @@ function parseDotCounter(v: Record<string, Json>, effect: DotEffect, path: strin
   } else if (v.perCountIntervalFrames !== undefined) fail(`${path}.perCountIntervalFrames`, 'needs perCount');
   if (counterFull && effect.perCount === undefined) fail(`${path}.trigger`, '{ counterFull } needs perCount');
   if (v.delayFrames !== undefined) {
-    if (!counterFull) fail(`${path}.delayFrames`, 'delayFrames needs the trigger { counterFull }');
+    // バースト使用時の付く時刻の遅れ（plan/design-guillotine-ws.md 8.2 節）。付けた時・tick のゲージは発火のフレームで数えるので組まない
+    const burstUse = effect.trigger === 'burstUse' && v.gaugeOnApply === undefined && v.gaugeOnTick === undefined;
+    if (!counterFull && !burstUse)
+      fail(`${path}.delayFrames`, 'delayFrames needs the trigger { counterFull }, or "burstUse" without gauge');
     effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
   }
 }

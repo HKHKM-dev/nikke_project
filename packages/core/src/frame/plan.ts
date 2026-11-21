@@ -868,9 +868,13 @@ function dotHits(ctx: SkillHitsContext, s: SlotReaders): void {
     if (isResolvedApplied(t)) return appliedFrames(history, t.applied, slotIndex);
     if (!isCounterFullTrigger(t)) {
       const at = triggerFrames(t, schedule, slotIndex, frames, shots);
-      return effect.condition === undefined
-        ? at
-        : at.filter((f) => damageConditionHolds(effect.condition, f, schedule, enemySpans, self));
+      const held =
+        effect.condition === undefined
+          ? at
+          : at.filter((f) => damageConditionHolds(effect.condition, f, schedule, enemySpans, self));
+      // バースト使用時の付く時刻の遅れ（plan/design-guillotine-ws.md 8.2 節）。条件は発火のフレーム、tick の値は tick のフレームで読む
+      const delay = effect.dot!.applyDelayFrames ?? 0;
+      return delay === 0 ? held : held.map((f) => f + delay).filter((f) => f < frames);
     }
     const per = effect.perCount;
     if (per === undefined || !('counter' in per) || effect.perCountIntervalFrames === undefined)

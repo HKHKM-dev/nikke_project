@@ -2231,6 +2231,10 @@ export type DotEffect = {
    */
   perCount?: { counter: CounterId };
   perCountIntervalFrames?: number;
+  /**
+   * 付く（1 回目の tick の）フレームの、発火からの遅れ（1 以上の整数の実測）。{ counterFull } の perCount と、burstUse（ゲージを溜めない
+   * dot）に書ける。ギロチン：ウィンタースレイヤーのバーストは 5（III の 00.00 の 1f 前。plan/design-guillotine-ws.md 8.2 節）
+   */
   delayFrames?: number;
   /**
    * 「個別対象ごとに〈名前〉スタックコピー」（plan/design-skill-stage13.md 2.5 節）。付けた時の tick のスタックの数を、

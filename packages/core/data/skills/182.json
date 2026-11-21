@@ -14,68 +14,101 @@
           "assumes": {
             "ja": "勇者レベルは 1 から始まる（経験値の上限 100 スタックでちょうど最大 11 に届く読み。S2 の「勇者レベルが 2 以上の時のみ」とも合う。plan/design-guillotine-ws.md 2.2 節）。戦闘開始時の 1 は勇者レベルアップに数えない",
             "en": "Hero Level starts at 1 (read so that the EXP cap of 100 stacks reaches the max of 11 exactly; it also fits S2's 'only when Hero Level is 2 or above'; plan/design-guillotine-ws.md 2.2). The 1 at the start of battle is not counted as a level up"
-          }
+          },
+          "claims": [
+            "C-1393"
+          ]
         },
         {
           "kind": "counterChange",
           "counter": "heroLevel",
-          "trigger": { "stateStacks": "exp", "everyRef": 1 },
+          "trigger": {
+            "stateStacks": "exp",
+            "everyRef": 1
+          },
           "target": "self",
           "amount": 1,
           "assumes": {
             "ja": "経験値（S2）のスタック数が 10 の倍数を越えたフレームに 1 上がる。上限 11 は目録の値で、経験値が 100 スタックで止まると同時に 11 に届く",
             "en": "Rises by 1 at the frame the EXP stack count (S2) passes a multiple of 10. The cap of 11 is the catalog value, reached exactly when EXP stops at 100 stacks"
-          }
+          },
+          "claims": [
+            "C-1393"
+          ]
         },
         {
           "kind": "ammoRefill",
-          "trigger": { "counterUp": "heroLevel" },
+          "trigger": {
+            "counterUp": "heroLevel"
+          },
           "target": "self",
           "ref": 2,
           "assumes": {
             "ja": "勇者レベルが上がった次のフレームに、最大装弾数 × 10.26% を四捨五入した弾数（60 発なら 6 発）を足す",
             "en": "On the frame after Hero Level rises, adds max ammo × 10.26% rounded to the nearest round (6 rounds for 60)"
-          }
+          },
+          "claims": [
+            "C-1394"
+          ]
         },
         {
           "kind": "heal",
-          "trigger": { "counterUp": "heroLevel" },
+          "trigger": {
+            "counterUp": "heroLevel"
+          },
           "target": "self",
           "ref": 3,
           "scaling": "casterFinalMaxHp",
           "assumes": {
-            "ja": "勇者レベルが上がった次のフレームに、自分の最終最大HP の 2.44% を回復する（HP が満タンでも回復を受けたとみなす）。回復を受けた時の効果を持つ味方のいない編成では与ダメージに効かない",
-            "en": "On the frame after Hero Level rises, heals 2.44% of own final max HP (treated as healed even at full HP). It does not change damage unless an ally has an effect on being healed"
-          }
+            "ja": "勇者レベルが上がった次のフレームに、自分の最終最大HP の 2.44% を回復する（HP が満タンでも回復を受けたとみなす）。回復を受けた時の効果を持つ味方のいない編成では与ダメージに効かない。射撃場では HP が満タンで量が見えず、確かめていない",
+            "en": "On the frame after Hero Level rises, heals 2.44% of own final max HP (treated as healed even at full HP). It does not change damage unless an ally has an effect on being healed. At the range HP is full and the amount is not visible, so it is not checked"
+          },
+          "claims": [
+            "C-1395"
+          ]
         },
         {
           "kind": "timed",
-          "trigger": { "counterUp": "heroLevel" },
+          "trigger": {
+            "counterUp": "heroLevel"
+          },
           "target": "allies",
           "targetElement": "Water",
           "stat": "elementDamage",
           "ref": 4,
-          "perCount": { "counter": "heroLevel" },
+          "perCount": {
+            "counter": "heroLevel"
+          },
           "durationUntil": "battleEnd",
           "assumes": {
             "ja": "勇者レベルが上がるたびに、値 × 上がった後の勇者レベルの▲に付け直す（前の▲を上書きし、重ねない。plan/design-guillotine-ws.md 2.3 節）。水冷コードの味方全体で、自分も入る",
             "en": "Each time Hero Level rises, re-applied as value × the new Hero Level (replacing the previous increase, not stacking; plan/design-guillotine-ws.md 2.3). All Water Code allies, including self"
-          }
+          },
+          "claims": [
+            "C-1396"
+          ]
         },
         {
           "kind": "timed",
-          "trigger": { "counterUp": "heroLevel" },
+          "trigger": {
+            "counterUp": "heroLevel"
+          },
           "target": "allies",
           "targetElement": "Water",
           "stat": "attack",
           "scaling": "casterAttack",
           "ref": 5,
-          "perCount": { "counter": "heroLevel" },
+          "perCount": {
+            "counter": "heroLevel"
+          },
           "durationUntil": "battleEnd",
           "assumes": {
             "ja": "スキル発動者基準の攻撃力▲。勇者レベルが上がるたびに、値 × 上がった後の勇者レベルの▲に付け直す（上書き）。水冷コードの味方全体で、自分も入る",
             "en": "ATK increase based on the skill user's ATK. Each time Hero Level rises, re-applied as value × the new Hero Level (replacing). All Water Code allies, including self"
-          }
+          },
+          "claims": [
+            "C-1396"
+          ]
         }
       ],
       "notes": []
@@ -85,38 +118,63 @@
         {
           "kind": "state",
           "state": "exp",
-          "trigger": { "count": "nonCoreHit", "everyRef": 1 },
+          "trigger": {
+            "count": "nonCoreHit",
+            "everyRef": 1
+          },
           "target": "self",
           "maxStacksRef": 3,
           "durationUntil": "battleEnd",
-          "contents": [{ "stat": "attack", "ref": 2 }],
+          "contents": [
+            {
+              "stat": "attack",
+              "ref": 2
+            }
+          ],
           "assumes": {
             "ja": "コアでない命中を通算で数え（コアの命中は数えず、数え直さない）、6 の倍数を越えた発で 1 スタック付く（plan/design-guillotine-ws.md 2.1 節の N1）。命中は期待値で、コアでない量は 1 発ごとに命中 × (1 − 射撃場の敵のコア命中率。距離の帯で変わる)。下の付与と同じ経験値のスタックに積む",
             "en": "Non-core hits are counted cumulatively (core hits are not counted and do not reset the count); one stack is added on the shot that passes a multiple of 6 (reading N1 in plan/design-guillotine-ws.md 2.1). Hits are expected values; the non-core share per shot is hit × (1 − the range enemy's core hit rate, which changes with the distance band). Stacks into the same EXP as the grant below"
-          }
+          },
+          "claims": [
+            "C-1392"
+          ]
         },
         {
           "kind": "state",
           "state": "exp",
-          "trigger": { "count": "coreHit", "everyRef": 4 },
+          "trigger": {
+            "count": "coreHit",
+            "everyRef": 4
+          },
           "target": "self",
           "maxStacksRef": 6,
           "durationUntil": "battleEnd",
           "assumes": {
             "ja": "コアの命中（期待値）を通算で数え、3 の倍数を越えた発で、上の付与と同じ経験値に 1 スタック付く（値 05 は値 02 と同じ）",
             "en": "Core hits (expected values) are counted cumulatively; one stack of the same EXP as the grant above is added on the shot that passes a multiple of 3 (value 05 equals value 02)"
-          }
+          },
+          "claims": [
+            "C-1392"
+          ]
         },
         {
           "kind": "passive",
           "target": "self",
           "stat": "elementDamage",
           "ref": 7,
-          "while": { "selfCounter": { "counter": "heroLevel", "atLeast": 2 } },
+          "while": {
+            "selfCounter": {
+              "counter": "heroLevel",
+              "atLeast": 2
+            }
+          },
           "assumes": {
             "ja": "勇者レベルが 2 以上の間（最初の勇者レベルアップの後）。有利コードの攻撃ダメージ▲は、有利コードの倍率 1.1 に足す",
             "en": "While Hero Level is 2 or above (after the first level up). The advantage-code damage increase is added to the advantage multiplier 1.1"
-          }
+          },
+          "claims": [
+            "C-1396"
+          ]
         }
       ],
       "notes": []
@@ -134,7 +192,10 @@
           "assumes": {
             "ja": "水冷コードの味方全体（自分も入る）",
             "en": "All Water Code allies (including self)"
-          }
+          },
+          "claims": [
+            "C-1397"
+          ]
         },
         {
           "kind": "timed",
@@ -147,7 +208,10 @@
           "assumes": {
             "ja": "水冷コードの味方全体（自分も入る）",
             "en": "All Water Code allies (including self)"
-          }
+          },
+          "claims": [
+            "C-1397"
+          ]
         },
         {
           "kind": "dot",
@@ -155,11 +219,17 @@
           "ref": 6,
           "intervalSeconds": 1,
           "durationRef": 7,
-          "stacksFrom": { "counter": "heroLevel" },
+          "delayFrames": 5,
+          "stacksFrom": {
+            "counter": "heroLevel"
+          },
           "assumes": {
-            "ja": "最終最大HP が最も高い敵 1 機は単体ボス。tick の値は、バーストを使ったフレームの勇者レベルで決まり、10 秒の間は変えない（plan/design-guillotine-ws.md 2.4 節の D1）。tick の時刻・付くまでの遅れ・ゲージは録画で読む前の既定（付いた瞬間と 1.5 秒後から 1 秒ごと・遅れなし・ゲージなし）",
-            "en": "The one enemy with the highest final max HP is the single boss. The tick value is set by the Hero Level at the frame the Burst is used and does not change for the 10 seconds (reading D1 in plan/design-guillotine-ws.md 2.4). Tick timing, delay and gauge are defaults before reading a recording (at application and every 1 s from 1.5 s, no delay, no gauge)"
-          }
+            "ja": "最終最大HP が最も高い敵 1 機は単体ボス。バーストを使った 5f 後（III の 00.00 の 1f 前。フルバーストの前なのでフルバースト補正は乗らない）に付いて 1 tick、その 1.5 秒後から 1 秒ごとの計 10 tick。tick の値は付いたフレームの勇者レベルで決まり、10 秒の間は変えない。ゲージは溜めない読み（確かめていない）",
+            "en": "The one enemy with the highest final max HP is the single boss. Applied 5 f after the Burst use (1 f before the Step III timer shows 00.00, so no Full Burst bonus) with one tick, then every 1 s from 1.5 s later, 10 ticks in all. The tick value is set by the Hero Level at the frame it is applied and does not change for the 10 seconds. Read as not charging the gauge (not checked)"
+          },
+          "claims": [
+            "C-1398"
+          ]
         }
       ],
       "notes": []
