@@ -17,7 +17,8 @@
             "trigger": "unknown"
           },
           "claims": [
-            "C-0443"
+            "C-0443",
+            "C-1362"
           ]
         }
       ]
@@ -87,7 +88,8 @@
             "trigger": "burstUse"
           },
           "claims": [
-            "C-0443"
+            "C-0443",
+            "C-1362"
           ]
         }
       ]
