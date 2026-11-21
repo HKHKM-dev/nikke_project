@@ -44,7 +44,6 @@ const effect = (fields: Partial<CatalogEffect>): CatalogEffect => ({
   side: 'self',
   quote: '',
   head: '',
-  subHead: '',
   targetText: '',
   ...fields,
 });
@@ -535,14 +534,11 @@ describe('headSection', () => {
   });
 
   it('splits the filtered allies by how they are filtered, reading the text that decided the target', () => {
-    const filtered = (targetText: string, head = '', subHead = '') =>
-      tableUnder(
-        headSection([effect({ targets: ['ally:alliesFiltered'], head, subHead, targetText })]),
-        '### 7.3',
-      )[0]![0];
+    const filtered = (targetText: string, head = '') =>
+      tableUnder(headSection([effect({ targets: ['ally:alliesFiltered'], head, targetText })]), '### 7.3')[0]![0];
     const byState = filtered('〈状態〉状態の味方全体に');
-    // 行の頭や小項目の頭ではなく、対象を決めた文を読む
-    const byClass = filtered('火力型の味方に', '〈状態〉状態の味方全体に', '〈状態〉状態の味方全体に');
+    // 行の頭ではなく、対象を決めた文を読む
+    const byClass = filtered('火力型の味方に', '〈状態〉状態の味方全体に');
     const unread = filtered('読み取れない絞り方の味方に', '火力型の味方に');
     expect(new Set([byState, byClass, unread]).size).toBe(3);
     expect(byState).toContain('状態');

@@ -61,7 +61,6 @@ export type CatalogEffect = QuoteReading & {
   side: CatalogSide;
   quote: string;
   head: string;
-  subHead: string;
   /** 対象を決めた文（行の頭・小項目の頭・項目の後ろの「の対象：…」・句の前の文のどれか） */
   targetText: string;
 };
@@ -478,6 +477,23 @@ function normTargets(t: string[]): string[] {
   return out;
 }
 
+/** 条件の節の終わり（「〜の場合、」「〜時、」「〜なら、」など） */
+const CONDITION_CLAUSE_END = /(場合|時|時のみ|時に限り|なら|なければ|限り)$/;
+
+/**
+ * 文の対象と、対象を決めた文。条件の節の後ろ（最後の「、」の後ろ）に対象があれば、そこだけを読む
+ * （条件の節の「〈状態〉状態の味方が…」を対象に数えない）
+ */
+function targetsIn(text: string): { targets: string[]; text: string } {
+  const ci = text.lastIndexOf('、');
+  if (ci >= 0 && CONDITION_CLAUSE_END.test(text.slice(0, ci))) {
+    const clause = text.slice(ci + 1);
+    const targets = normTargets(tagsOf(TARGETS, clause));
+    if (targets.length > 0) return { targets, text: clause };
+  }
+  return { targets: normTargets(tagsOf(TARGETS, text)), text };
+}
+
 function sideOf(targets: readonly string[]): CatalogSide {
   if (targets.length === 0) return 'unknown';
   if (targets.every((t) => t.startsWith('enemy'))) return 'enemy';
@@ -563,15 +579,8 @@ export function classifyCharacters(
             // 項目の途中で対象が変わる形（「自分に：「…」命中した敵に：「…」」）
             const between = part.slice(prevEnd, m.index);
             prevEnd = m.index + m[0].length;
-            // 句の前の文に条件の節（「〜の場合、」）があれば、対象は最後の「、」の後ろから読む（そこに無ければ文の全部から）
-            const clause = between.slice(between.lastIndexOf('、') + 1);
-            const clauseTargets = normTargets(tagsOf(TARGETS, clause));
-            const midText = clauseTargets.length > 0 ? clause : between;
-            const midTargets = clauseTargets.length > 0 ? clauseTargets : normTargets(tagsOf(TARGETS, between));
-            if (between.length > 0 && midTargets.length > 0) {
-              targets = midTargets;
-              targetText = midText;
-            }
+            const mid = targetsIn(between);
+            if (between.length > 0 && mid.targets.length > 0) ({ targets, text: targetText } = mid);
             const quote = m[1] ?? '';
             const reading = classifyQuote(quote);
             if (reading.kind === 'meta:weaponProp') continue;
@@ -595,7 +604,6 @@ export function classifyCharacters(
               side: sideOf(targets),
               quote,
               head,
-              subHead,
               targetText,
             };
             effects.push(rec);
