@@ -2324,7 +2324,7 @@ export type DotEffect = {
   maxStacksRef?: number;
   /**
    * 発火（付けた）ごとに、射手の 1 ヒットぶんのバーストゲージ（targetBurstEnergyPerShot。フルチャージ
-   * 倍率なし）を発火のフレームに足す（C-0181）。トリガーは射撃の回数トリガーか、クールタイムの印・since の無い周期のトリガー
+   * 倍率なし）を発火のフレームに足す（C-0181）。トリガーは射撃の回数トリガーか、クールタイムの印・since の無い周期のトリガー（状態の名前は組まない）
    * （C-1504。plan/design-rosanna-co.md 7 節）
    */
   gaugeOnApply?: true;

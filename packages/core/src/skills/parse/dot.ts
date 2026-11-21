@@ -256,7 +256,7 @@ function parseDotStacks(v: Record<string, Json>, effect: DotEffect, path: string
 
 /**
  * ゲージ: 付けた時（gaugeOnApply とその遅れ）と刻みごと（gaugeOnTick）。刻みの遅れ（tickDelayFrames）は射撃の回数のきっかけか、
- * 周期のきっかけ（plan/design-rosanna-co.md 2 節）。周期のきっかけのゲージは、クールタイムの印・since の無い周期だけで、
+ * 周期のきっかけ（plan/design-rosanna-co.md 2 節）。周期のきっかけのゲージは、クールタイムの印・since・状態の名前の無い dot だけで、
  * 刻みは atApplication か afterInterval（1 パス目が発火のフレームで予約する。同 7 節）。カウンタが上限に届いた時（{ counterFull }）の
  * dot は、付けた時と、firstTick halfAfterLatest の刻みごと（遅れは組まない。plan/design-mihara-bc-gauge.md 2 節）
  */
@@ -321,9 +321,11 @@ function validateTimerDotGauge(effect: DotEffect, path: string): void {
   const trigger = effect.trigger;
   if (!isTimerTrigger(trigger)) return;
   // 1 パス目は発火を timerFramesOf で前もって出すので、ループの中で追う周期（クールタイムの印・since）は組まない
-  // （条件のある dot はゲージを書けない。parseDotCondition）
+  // （条件のある dot はゲージを書けない。parseDotCondition）。状態の名前は、同じ状態のほかの dot とのまとまり・解除・スタック量▲を
+  // 1 パス目が追わないので組まない
   if (trigger.cooldown === true || trigger.since !== undefined)
     fail(path, 'a dot with gauge on a timer needs a timer without cooldown or since');
+  if (effect.state !== undefined) fail(path, 'a dot with gauge on a timer cannot apply a state');
 }
 
 /** { counterFull } の dot のゲージの形（parseDotGauge）。1 パス目の frame/firstPass/counterGauges.ts が追う */

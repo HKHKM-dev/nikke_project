@@ -68,7 +68,7 @@ describe('dot の maxStacksRef・gaugeOnApply・gaugeOnTick の検証', () => {
   });
 
   // V-0847（plan/design-rosanna-co.md 7 節）: 周期のきっかけの dot も、付けたときと tick のゲージを書ける（刻みは atApplication も）。
-  // クールタイムの印・since のある周期は、1 パス目が発火を前もって出せないので書けない
+  // クールタイムの印・since のある周期と状態の名前は、1 パス目が追わないので書けない
   it('accepts the gauge flags with a plain timer, ticking on application or after the interval', () => {
     const { maxStacksRef: _, ...plain } = SHOCK;
     const timer = { ...plain, trigger: { everySeconds: 30 }, gaugeOnApplyDelayFrames: 8, tickDelayFrames: 8 };
@@ -88,6 +88,10 @@ describe('dot の maxStacksRef・gaugeOnApply・gaugeOnTick の検証', () => {
     expect(() =>
       parseSkillDefinition(withSkill1([{ ...timer, trigger: { everySeconds: 30, cooldown: true } }])),
     ).toThrow(/gaugeOnApply: a dot with gauge on a timer needs a timer without cooldown or since/);
+    const { tickDelayFrames: __, ...noDelay } = timer;
+    expect(() => parseSkillDefinition(withSkill1([{ ...noDelay, state: 'hacked' }]))).toThrow(
+      /a dot with gauge on a timer cannot apply a state/,
+    );
   });
 });
 

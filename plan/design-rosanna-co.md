@@ -46,10 +46,10 @@
 
 - 何が要るか: 撃たない単騎の録画（V-0847）で、S2 の持続ダメージは、付いたとき（1 回目の tick と同じフレーム）と tick ごとに、射手の 1 ヒットぶんのゲージを溜めた（C-1504）。レイヴンの S1（C-0181）と同じ形だが、いまの語彙は `gaugeOnApply` を射撃の回数のきっかけに、`gaugeOnTick` を射撃の回数のきっかけか `burstUse` の `afterInterval` に限っている。
 - 決定: dot の `gaugeOnApply`・`gaugeOnApplyDelayFrames`・`gaugeOnTick` を、周期のきっかけ（`{ everySeconds }`）にも書けるようにする。
-  - 読み込み（`skills/parse/dot.ts` の `parseDotGauge`）: 周期のきっかけは、クールタイムの印・`since` の無いものだけ（条件のある dot は、もとからゲージを書けない）。`gaugeOnApplyDelayFrames` は 1 以上の整数。`gaugeOnTick` の刻みは `atApplication` か `afterInterval`。
+  - 読み込み（`skills/parse/dot.ts` の `parseDotGauge`）: 周期のきっかけは、クールタイムの印・`since`・状態の名前（`state`）の無いものだけ（条件のある dot は、もとからゲージを書けない）。解決の「維持が間隔の整数倍」の検査は、周期のきっかけには当てない。`gaugeOnApplyDelayFrames` は 1 以上の整数。`gaugeOnTick` の刻みは `atApplication` か `afterInterval`。
   - 1 パス目（`frame/firstPass/gaugeEffects.ts`）: 発火のフレームを `timerFramesOf` で前もって出し、ループの中の発火のフレームの頭（`reserveTimerGauges`。周期の `burstGaugeHit` と同じ所）で、付けたときの分を `gaugeOnApplyDelayFrames` 後に、tick の分を `tickDelayFrames` 後を起点にした刻み（`dotTickTracker`。2 パス目と同じ規則）に予約する。時間で変わるゲージ速度は発火のフレームの速度で読む。
   - 照合: sim の結果に 1 パス目の `dotGauges` を出し、指標 `dotGauge`（枠の n 回目の付けた時・tick のゲージの %）で比べる。
-- 理由: 周期の発火は射撃に依らないので、射撃の回数のきっかけのように 1 発ずつ追わなくてよく、発火のフレームに付け直しも含めて刻みが決まる。そのため、射撃の回数のきっかけで `afterInterval` に限った理由（付け直しで延びた tick がループの中で後から予約できる形だけ。[design-raven-s1.md](design-raven-s1.md) 8 節の 2）は当たらず、`atApplication` も書ける。クールタイムの印・`since` のある周期は、発火をループの中で追うので組まない（使い手が出たら広げる）。
+- 理由: 周期の発火は射撃に依らないので、射撃の回数のきっかけのように 1 発ずつ追わなくてよく、発火のフレームに付け直しも含めて刻みが決まる。そのため、射撃の回数のきっかけで `afterInterval` に限った理由（付け直しで延びた tick がループの中で後から予約できる形だけ。[design-raven-s1.md](design-raven-s1.md) 8 節の 2）は当たらず、`atApplication` も書ける。クールタイムの印・`since` のある周期は、発火をループの中で追うので組まない。状態の名前のある dot は、同じ状態のほかの dot とのまとまり・解除・スタック量▲を 2 パス目だけが見るので組まない（どちらも使い手が出たら広げる）。
 - 退化の見込み: 周期のきっかけでゲージを溜める dot の使い手はロザンナ：シックオーシャンだけ。ほかの定義の予測は変わらない（V-0847 の `records:residual -- --all`）。
 
 ## 6. 経過
