@@ -409,18 +409,13 @@ export function resumeShooter(
   params: FiringParams = firingParams(shot),
   wait?: number,
 ): void {
-  // リロード中・込め終えて 1 発目を待っていた枠は、込め終えたマガジンの 1 発目から（スピンアップも最初から）
-  if (state.phase !== 'ready') startMagazine(state);
+  // リロード中・込め終えて 1 発目を待っていた枠と、待ちを渡した枠は、込め終えたマガジンの 1 発目から（スピンアップも最初から）
+  if (state.phase !== 'ready' || wait !== undefined) startMagazine(state);
   delete state.reloadLead;
   delete state.chargeElapsed;
   state.ammo = params.maxAmmo;
   state.lastShot = false;
-  if (wait === undefined) {
-    state.wait = reloadFirstShotFrames(shot, model, params);
-    return;
-  }
-  startMagazine(state);
-  state.wait = wait;
+  state.wait = wait ?? reloadFirstShotFrames(shot, model, params);
 }
 
 /**

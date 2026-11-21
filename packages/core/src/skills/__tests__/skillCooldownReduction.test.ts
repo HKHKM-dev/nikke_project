@@ -142,3 +142,22 @@ describe('1 パス目の発動と窓（センチの単騎・仮の周期）', ()
     expect(s2Starts(sim)).toEqual(fires.map((f) => f + 1));
   });
 });
+
+describe('発動の待ち（cooldownTimer の hold。plan/design-snow-white.md 8.3 節の論点 7）', () => {
+  /** [from, to) のフレームを待たせて、1 から frames − 1 まで回した発動 */
+  const run = (long: number, from: number, to: number, frames: number) => {
+    const tick = cooldownTimer(long);
+    const out: number[] = [];
+    for (let f = 1; f < frames; f++)
+      if (tick(f, undefined, () => undefined, undefined, from <= f && f < to)) out.push(f);
+    return out;
+  };
+
+  it('fires on the first frame after the wait and counts the next period from there', () => {
+    expect(run(589, 500, 650, 1500)).toEqual([650, 1239]);
+  });
+
+  it('leaves the schedule as it is when no fire falls in the wait', () => {
+    expect(run(589, 600, 700, 1500)).toEqual([589, 1178]);
+  });
+});
