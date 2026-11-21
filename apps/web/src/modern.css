@@ -114,8 +114,9 @@
   color: var(--m-muted);
 }
 
+/* 落とす先の枠は、置き先待ちの枠と同じ水色 */
 :root[data-app-ui='modern'] .modern-slot-card.modern-slot-over .modern-slot-char-area {
-  outline-color: var(--m-accent);
+  outline-color: var(--placing-blue);
 }
 :root[data-app-ui='modern'] .modern-slot-empty-area {
   /* ニケがいるときの絵（.char-visual-portrait）と同じ箱（内容の幅・1px の枠）にして、大きさと枠の太さをそろえる */
@@ -124,8 +125,8 @@
   border-width: 1px;
   border-style: solid;
   --char-visual-line: var(--slot-frame-line);
-  /* 文字は、シルエットの絵の上で読めるよう、ライトでは白より 30% 暗い灰色・ダークでは黒より 30% 明るい灰色にする（＋ は 10%） */
-  color: light-dark(#b3b3b3, #4d4d4d);
+  /* 文字は、シルエットの絵（ライトで約 #b0b0b0・ダークで約 #505050）の上で読めるよう、ライトでは白より 20% 暗い灰色・ダークでは黒より 20% 明るい灰色にする（＋ は 10%） */
+  color: light-dark(#cccccc, #333333);
   opacity: 1;
 }
 :root[data-app-ui='modern'] .modern-slot-empty-plus {

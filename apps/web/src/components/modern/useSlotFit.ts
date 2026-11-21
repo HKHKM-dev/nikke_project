@@ -1,5 +1,5 @@
 // 編成のスロット 5 枚を、画面の幅に収めて 1 段に並べる。並びの幅が足りないときは、立ち絵の高さ（--slot-portrait-h。
-// 元は 256px）を縮めてこの並び（.modern-slots-grid）に置く。ダメージの欄・空のスロットの文字は、この高さから文字の大きさを
+// 元は 256px）を縮めてモダンの画面（.modern-view-container。無ければこの並び .modern-slots-grid）に置く。ニケ一覧の絵の幅も、この高さから決める（styles.css）。ダメージの欄・空のスロットの文字は、この高さから文字の大きさを
 // 決める（styles.css）。カードの左右の余白（padding）とカードどうしの間（gap）は縮めない（styles.css の値を読む）。
 // 並びの外に写す絵（ドラッグ中の重ねる絵・動くアニメーションの写し）は、この値を写して同じ大きさにする（slotSizeVars）
 import { useLayoutEffect, type RefObject } from 'react';
@@ -35,7 +35,7 @@ export function useSlotFit(gridRef: RefObject<HTMLElement | null>, count: number
       const value = `${fitPortraitHeight(width, count, gap, paddingX)}px`;
       if (value === last) return;
       last = value;
-      grid.style.setProperty(SLOT_SIZE_VAR, value);
+      (grid.closest<HTMLElement>('.modern-view-container') ?? grid).style.setProperty(SLOT_SIZE_VAR, value);
     };
     fit();
     const observer = new ResizeObserver(fit);

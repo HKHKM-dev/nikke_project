@@ -3,7 +3,7 @@
 import { slotSizeVars } from './useSlotFit.ts';
 
 /** 動く時間（ms）と動き方 */
-const FLIGHT = { duration: 250, easing: 'ease', fill: 'forwards' } as const;
+export const FLIGHT = { duration: 250, easing: 'ease', fill: 'forwards' } as const;
 
 /**
  * アニメーションで動かす立ち絵の枠の写し。立ち絵の画像は遅延読み込み・非同期の描画（CharacterVisual）なので、写しのままだと
@@ -28,6 +28,21 @@ const DECODE_WAIT_MS = 500;
 function decodeImages(node: Element): Promise<void> {
   const decoded = Promise.all([...node.querySelectorAll('img')].map((img) => img.decode().catch(() => undefined)));
   return Promise.race([decoded, new Promise((resolve) => setTimeout(resolve, DECODE_WAIT_MS))]).then(() => undefined);
+}
+
+/**
+ * 立ち絵の場所に出している空のスロットの枠（シルエットと文字。card の中の .modern-slot-arrival-face）を、動きの 2 割から少しずつ透明にし、動きの 8 割で消し終える
+ * （スロットへ着く・持ち上げた絵が元のスロットへ戻る）。返すアニメーションは、枠を隠し終えたら cancel する
+ */
+export function fadeArrivalFace(card: Element): Animation | null {
+  return (
+    card
+      .querySelector('.modern-slot-arrival-face')
+      ?.animate([{ opacity: 1 }, { opacity: 1, offset: 0.2 }, { opacity: 0, offset: 0.8 }, { opacity: 0 }], {
+        duration: FLIGHT.duration,
+        fill: 'forwards',
+      }) ?? null
+  );
 }
 
 /** スロット（カード）→ そこへ動いている写しを、いま消して本物に切り替える関数 */
@@ -94,12 +109,14 @@ export function flyIntoSlot(from: DOMRect, card: Element): () => void {
   stopArrival(card);
   card.classList.add('modern-slot-arriving');
   let ghost: HTMLElement | null = null;
+  let fade: Animation | null = null;
   let ready: Promise<void> = Promise.resolve();
   let stopped = false;
   // 隠しを外すのは、このスロットへ動いている写しがこれのときだけ（後から別の写しが来ていれば、それが外す）
   const remove = () => {
     stopped = true;
     ghost?.remove();
+    fade?.cancel();
     if (arrivals.get(card) !== remove) return;
     arrivals.delete(card);
     card.classList.remove('modern-slot-arriving');
@@ -124,6 +141,7 @@ export function flyIntoSlot(from: DOMRect, card: Element): () => void {
     const base = content.getBoundingClientRect();
     ghost = ghostOf(content, base);
     ghost.animate([frameAt(from, base), frameAt(base, base)], FLIGHT).finished.then(done, done);
+    fade = fadeArrivalFace(card);
   });
   return done;
 }

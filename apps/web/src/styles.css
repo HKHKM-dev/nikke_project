@@ -785,8 +785,8 @@ svg.settings-option-icon,
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  /* 立ち絵どうしの横の間は 8px（カードの左右の余白 2px ×2 と、この 4px） */
-  gap: 12px 4px;
+  /* 立ち絵どうしの横の間は 4px（カードの左右の余白 2px ×2 だけ）。落とす先の枠（立ち絵の外へ 2px 出る）が、隣どうしでちょうど重ならない */
+  gap: 12px 0;
 }
 /* カードの幅は立ち絵（1:2 の枠と 1px の枠線）と左右の余白（.modern-slot-card の padding）だけにして、スロットの間を詰める */
 .modern-slots-grid > .modern-slot-card {
@@ -887,6 +887,11 @@ svg.settings-option-icon,
 .modern-slot-card.modern-slot-dragging .modern-slot-arrival-face,
 .modern-slot-card.drag-source-returning .modern-slot-arrival-face {
   display: block;
+  visibility: visible;
+}
+/* 空のスロットを持ち上げている間と戻る間は、元の場所に空のスロットの枠をそのまま出す */
+.modern-slot-card.modern-slot-dragging .modern-slot-empty-area,
+.modern-slot-card.drag-source-returning .modern-slot-empty-area {
   visibility: visible;
 }
 /* 「操作」のコントローラーのアイコンの段。アイコン（30px）を、上はカードの上の余白（8px）へ 6px 寄せ、下は立ち絵の枠との間を 4px にする
@@ -1205,7 +1210,7 @@ svg.settings-option-icon,
   cursor: pointer;
 }
 .modern-slot-empty-plus {
-  font-size: 3em;
+  font-size: 3.6em;
   line-height: 1;
   /* ＋ は枠の真ん中に置く（ほかの文字の並びからは外す） */
   position: absolute;
@@ -1509,6 +1514,22 @@ html:has(.modern-view-container) {
 .char-tray-sort-label > .char-tray-sort-current {
   visibility: visible;
 }
+/* 並べ替えのボタンと昇順・降順の三角のボタンは、くっつけて 1 つの枠にする。間の縦線は並べ替えのボタンの右の枠線 */
+.char-tray-sort-group {
+  display: flex;
+}
+.char-tray-sort-group > .popover {
+  display: flex;
+}
+.char-tray-sort-group .popover-button {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.char-tray-sort-group > .char-tray-sort-direction {
+  border-left-width: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
 /* 並べ替えのポップアップの並びのボタン。どれも一番長いボタンの幅にそろえ、向きの印の場所はどのボタンにも取っておく
    （いまの並びを切り替えても幅が変わらない。太字にすると幅が変わるので、いまの並びは枠だけで示す） */
 .char-tray-sort-options {
@@ -1648,9 +1669,18 @@ html:has(.modern-view-container) {
   /* 列の幅は、絵と項目の余白（左右 2px ずつ） */
   grid-template-columns: repeat(auto-fill, calc(var(--tray-visual-w) + 4px));
   justify-content: center;
-  gap: 2px;
+  /* 横の間は空けない（絵どうしの間は、項目の余白と合わせて 4px） */
+  gap: 2px 0;
   /* 全キャラを出し、枠の中ではスクロールしない（ページのスクロールだけにする） */
   padding: 4px;
+}
+/* モダンの画面では、ニケ一覧の絵の幅をスロットの立ち絵（枠線込み）と同じにし、1 行に 5 枚並べる。列の幅（絵と左右の余白 2px ずつ）が
+   スロットのカードの幅と同じで、列どうしの間も同じ 0 なので、一覧の行はスロットの並びと同じ幅になる。狭い画面では立ち絵と一緒に縮む（useSlotFit） */
+.modern-view-container {
+  --tray-visual-w: calc(var(--slot-portrait-h) / 2 + 2px);
+}
+.modern-view-container .char-tray-list {
+  grid-template-columns: repeat(5, calc(var(--tray-visual-w) + 4px));
 }
 .char-tray-empty {
   grid-column: 1 / -1;
@@ -1676,8 +1706,9 @@ html:has(.modern-view-container) {
 .char-tray-item.char-tray-item-other-party {
   filter: brightness(0.4);
 }
+/* 選べないニケは、マウスを重ねても禁止の印（〇に斜線）は出さない（オーナーの指示）。押せる印（指の形）も出さない */
 .char-tray-item.char-tray-item-other-party {
-  cursor: not-allowed;
+  cursor: default;
 }
 /* 四角の絵の下の名前。収まらない名前は流す（.scrolling-name。useScrollingName.tsx） */
 .char-tray-item-name {
@@ -1714,9 +1745,8 @@ html:has(.modern-view-container) {
   height: 40%;
   transform: translate(-50%, -50%);
   display: flex;
-  /* 縁取りの影は、ライトモードでは黒、ダークモードでは白 */
-  filter: drop-shadow(0 0 1px light-dark(#000, #fff))
-    drop-shadow(0 0 2px light-dark(rgba(0, 0, 0, 0.8), rgba(255, 255, 255, 0.8)));
+  /* 縁取りの影は、ライトモードでは黒、ダークモードでは白（薄いぼかしだけ。濃い縁取りは付けない） */
+  filter: drop-shadow(0 0 1.5px light-dark(rgba(0, 0, 0, 0.8), rgba(255, 255, 255, 0.8)));
   pointer-events: none;
   z-index: 3;
 }

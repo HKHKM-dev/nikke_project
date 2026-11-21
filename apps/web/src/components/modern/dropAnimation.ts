@@ -1,5 +1,6 @@
 // モダン UI のスロットと一覧の間のドラッグで、離したときのアニメーション（DragOverlay の dropAnimation）と、その材料
 import { defaultDropAnimationSideEffects, type DropAnimation } from '@dnd-kit/core';
+import { FLIGHT, fadeArrivalFace } from './flight.ts';
 
 /**
  * 離したときのアニメーション。dnd-kit の既定は、戻る間ドラッグ元（スロットのカード・一覧の項目）を透明にして消すので、
@@ -26,6 +27,8 @@ export const slotCardAt = (index: number | null) =>
 
 /** 離したときのアニメーション。行き先が決まらなかったときだけ、持ち上げた絵をドラッグ元へ戻す */
 export const DROP_ANIMATION: DropAnimation = {
+  // 長さは flight.ts の動きと同じ（空のスロットの枠を透明にする fadeArrivalFace も、この長さで動く）
+  duration: FLIGHT.duration,
   // 行き先が決まったとき（dropPlaced）は動かさない（始めと終わりが同じなら、dnd-kit はアニメーションをしない）
   keyframes: ({ transform: { initial, final } }) => {
     const at = (t: typeof initial) => ({
@@ -33,5 +36,13 @@ export const DROP_ANIMATION: DropAnimation = {
     });
     return [at(initial), at(dropPlaced ? initial : final)];
   },
-  sideEffects: returnSideEffects,
+  // 元のスロットへ戻るときは、着くときと同じく、元の場所に出している空のスロットの枠を動きの後半で少しずつ透明にする
+  sideEffects: (params) => {
+    const cleanup = returnSideEffects(params);
+    const fade = dropPlaced ? null : fadeArrivalFace(params.active.node);
+    return () => {
+      cleanup?.();
+      fade?.cancel();
+    };
+  },
 };
