@@ -290,11 +290,11 @@ export function useSlotDrag({
         break;
       }
       case 'swap-parties': {
-        // 番号は動かず、中身（スロットの並び）が入れ替わる。持ち上げた番号はその場で消す
+        // 番号は動かず、中身（スロットの並び）が入れ替わる。持ち上げた番号は、離した位置から元の番号の場所へ戻す
+        // （行き先を決めない。DROP_ANIMATION が戻す）
         const rectOf = (party: number) => slotsGridOf(party)?.getBoundingClientRect();
         const fromA = rectOf(intent.a);
         const fromB = rectOf(intent.b);
-        setDropPlaced(true);
         if (fromA && fromB) {
           rowFlipRef.current = {
             before: parties,
