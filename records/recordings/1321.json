@@ -1,0 +1,46 @@
+{
+  "id": "1321",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1321_sakura-2.mp4",
+  "original": "2026-11-21_20-14-59.mp4",
+  "durationSec": 203.1,
+  "frames": 12184,
+  "fps": 60,
+  "sizeMB": 246.1,
+  "sha256": "09cd9717badc",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 282,
+      "name": "サクラ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱タブ・3 分モード・スペック固定 ON。デルタ（II）+ I-DOLL・サン（III）+ サクラ（I・操作）・AUTO 射撃 ON・オートバースト ON）。V-0837 の撮影",
+  "backup": {
+    "at": "2026-11-21T20:20+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
