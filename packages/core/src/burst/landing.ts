@@ -170,6 +170,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // ソリン: III のタイマーの 00.00 から 1 ヒット目まで 17f（動画で 38〜39f。止まり 22f を含む）、2・3 ヒット目は 20f・51f 後で、
   // バーストの倍率ダメージを 3 等分する。追加ダメージ（burst の effects[1]）は perBurstHit で 3 ヒットのそれぞれに出る。効果の遅れは無い（バースト使用時の効果が無い）
   { resourceIds: [71], delays: { hitFrames: 17, effectFrames: 0, hitOffsets: [0, 20, 51] }, claim: 'C-1113' },
+  // ブリッド: III のタイマーの 00.00 からヒットまで 41f（動画で 62〜63f の最も多い 63f。止まり 22f を含む）の 1 ヒット。追加ダメージ（burst の
+  // effects[1]）は perBurstHit で同じフレームに出る。効果の遅れは無い（バースト使用時の効果が無い）
+  { resourceIds: [70], delays: { hitFrames: 41, effectFrames: 0 }, claim: 'C-1408' },
   // プリバティ（宝物あり）: III のタイマーの 00.00 から 1 ヒット目まで 40f（動画で 62〜63f。止まり 22f を含む）、2・3 ヒット目は
   // 25f・55f 後で、バーストスキルダメージを 3 等分する。ヒットに同じ発動の有利コードの攻撃ダメージ▲が乗る。宝物なしは未測定
   {

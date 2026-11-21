@@ -1,0 +1,124 @@
+[
+  {
+    "id": "1283-01",
+    "recording": "1283",
+    "kind": "timing",
+    "use": "compare",
+    "value": [638, 1227, 1816, 2405, 2994, 3583, 4172, 4761, 5350, 5939, 6529, 7118, 7707, 8295, 8884, 9473, 10062],
+    "unit": "f",
+    "description": "ブリッドが撃たない録画の、S2 の倍率ダメージ（HUD の増分はこれだけ）の 17 回の、戦闘開始（タイマーの 02:59 が出た f799）からの動画のフレーム。間は 588〜590f（平均 589.0f）。撃たない間も発動する",
+    "method": {
+      "tool": "hud-jumps@3 の増分と目視",
+      "note": "増分は 253,009（15 回）と会心の 379,514（2 回）だけ。戦闘開始は timer.ts --mode changes の WARNING の演出の次の変わり目"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "count": 17
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 70,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0821",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1283-02",
+    "recording": "1283",
+    "kind": "hit",
+    "use": "compare",
+    "value": 253009,
+    "unit": "ダメージ",
+    "description": "ブリッドが撃たない録画の、S2 の倍率ダメージの 1 回目（f1437）の値（会心なし。S1 の攻撃力▲が乗らない）。会心の回は 379,514（×1.5）",
+    "method": {
+      "tool": "hud-jumps@3 の増分と目視"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 70,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0821",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1283-03",
+    "recording": "1283",
+    "kind": "interval",
+    "use": "record",
+    "value": 47,
+    "unit": "f",
+    "description": "S2 の帯（左のスキルの帯）の立ち上がりから、倍率ダメージの HUD の増分までの動画のフレーム数。17 回とも 47f",
+    "method": {
+      "tool": "banner.ts --hits"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0821",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1283-04",
+    "recording": "1283",
+    "kind": "interval",
+    "use": "record",
+    "value": 0,
+    "unit": "px",
+    "description": "右の BURST バーの長さ。戦闘の始まりの演出の後は戦闘の終わりまで 0px。S2 の 17 回がどれも射手の 1 ヒットぶん（約 0.4%）を溜めても約 7% で、バーが映し始める約 12.6%（C-0084）に届かないので、S2 がゲージを溜めるかはこの録画では決まらない",
+    "method": {
+      "tool": "gauge.ts --mode series --subpixel（600f おき）と --mode jumps"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0821",
+    "readAt": "2026-11-21"
+  }
+]
