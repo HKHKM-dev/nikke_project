@@ -102,11 +102,12 @@
           "ref": 5,
           "durationRef": 6,
           "assumes": {
-            "ja": "最大装弾数だけを上げ、付いた時に残弾は足さない（窓の中のリロードで上げた最大装弾数まで込め、切れた時に残弾が多ければ削る。C-0017 の形）。窓の付き始めと長さは、遅れの表に行の無いキャラの既定（本当の発動から 10 秒）。実測の窓の終わり（削りの表示）はモデルより 3〜4f 遅く、原因は確かめていない（V-0844）",
-            "en": "Only the max ammo is raised and no rounds are added when it is applied (a reload inside the window fills up to the raised max, and when it ends the remaining ammo is clipped if above the max; the form of C-0017). The window start and length are the default for characters without a row in the delay table (10 s from the true activation). The measured window end (the clipping on the display) is 3–4 f later than the model; the cause is not checked (V-0844)"
+            "ja": "最大装弾数だけを上げ、付いた時に残弾は足さない（窓の中のリロードで上げた最大装弾数まで込め、切れた時に残弾が多ければ削る。C-0017 の形）。窓の付き始めと長さは、遅れの表に行の無いキャラの既定（本当の発動から 10 秒）。実測の窓の終わりはモデルより 3〜4f 遅く、原因は分けていない（C-1491）",
+            "en": "Only the max ammo is raised and no rounds are added when it is applied (a reload inside the window fills up to the raised max, and when it ends the remaining ammo is clipped if above the max; the form of C-0017). The window start and length are the default for characters without a row in the delay table (10 s from the true activation). The measured window end is 3–4 f later than the model; the cause is not separated (C-1491)"
           },
           "claims": [
-            "C-1488"
+            "C-1488",
+            "C-1491"
           ]
         }
       ],
