@@ -1,0 +1,16 @@
+{
+  "id": "C-1468",
+  "text": "サクラの S2 の「フルバーストタイムが発動した時、味方全体にバーストスキルクールタイム 4.84 秒▼」（Lv10）は、フルバーストの始まりのたびに、自分を含む味方全体の走っている CT の残りを 4.84 秒縮める即時の▼（cooldownReduction）。デルタ・I-DOLL・サン・サクラ（4 体とも CT 40 秒）の編成では、2 回目からのフルバーストの入りどうしの間隔が 40 秒より 4.84 秒短い（▼が自分だけなら 40 秒台）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1320-11`・`1321-11`。V-0837",
+  "model": "data/skills/282.json の skill2 の effects[0]（cooldownReduction）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/282.json の skill2 の effects[0]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値（スキル Lv10 の 4.84 秒）と、確定の結論の即時の CT▼（cooldownReduction）・CT・チェーンの機構だけから決めた。値を合わせた録画は無い"
+}
