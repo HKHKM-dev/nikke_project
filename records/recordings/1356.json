@@ -1,0 +1,41 @@
+{
+  "id": "1356",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1356_alice-wb-centi.mp4",
+  "original": "2026-11-21_23-54-59.mp4",
+  "durationSec": 197.4,
+  "frames": 11842,
+  "fps": 60,
+  "sizeMB": 239.5,
+  "sha256": "0f9b307cf350",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 195,
+      "name": "アリス：ワンダーランドバニー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 80,
+      "name": "センチ",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-22T00:09+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

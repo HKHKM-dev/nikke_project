@@ -1,0 +1,41 @@
+{
+  "id": "1357",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1357_guilty-centi.mp4",
+  "original": "2026-11-21_23-59-49.mp4",
+  "durationSec": 200.2,
+  "frames": 12014,
+  "fps": 60,
+  "sizeMB": 242.7,
+  "sha256": "bb1353be67fd",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 400,
+      "name": "ギルティ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 80,
+      "name": "センチ",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-22T00:09+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

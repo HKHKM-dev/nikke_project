@@ -1,0 +1,48 @@
+{
+  "id": "1358",
+  "date": "2026-11-22",
+  "folder": "range",
+  "file": "20261122-1358_idoll-flower-diesel-centi.mp4",
+  "original": "2026-11-22_00-03-54.mp4",
+  "durationSec": 205.1,
+  "frames": 12306,
+  "fps": 60,
+  "sizeMB": 248.6,
+  "sha256": "5b54cc168bef",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 72,
+      "name": "ディーゼル",
+      "controlled": false,
+      "treasurePhase": 3
+    },
+    {
+      "slot": 3,
+      "rid": 80,
+      "name": "センチ",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-22T00:10+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
