@@ -1,4 +1,3 @@
-import type { UnsupportedNote } from '../../useSkillDefinitions.ts';
 import { useDroppable } from '@dnd-kit/core';
 import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
 import { memo, useContext, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
@@ -60,8 +59,6 @@ type Props = {
   otherPartyIds: OtherParties;
   /** いまの編成の番号（1 から。いまの編成にいるニケに P○ のバッジを出す） */
   activeParty: number;
-  /** 未対応の印の知らせ（useSkillDefinitions の unsupportedNoteOf。完全対応なら null） */
-  unsupportedNote: (resourceId: number) => UnsupportedNote | null;
   /** 置くスロットのクリックを待っているニケ */
   pendingId: number | null;
   /** 読み込んだ育成状況（各ニケの限界突破・コア強化を出す。無ければ出さない） */
@@ -81,7 +78,6 @@ export function CharacterTray({
   takenIds,
   otherPartyIds,
   activeParty,
-  unsupportedNote,
   pendingId,
   roster,
   fixedSpec,
@@ -151,7 +147,6 @@ export function CharacterTray({
         takenIds={takenIds}
         otherPartyIds={otherPartyIds}
         activeParty={activeParty}
-        unsupportedNote={unsupportedNote}
         pendingId={pendingId}
         roster={roster}
         fixedSpec={fixedSpec}
@@ -164,15 +159,7 @@ export function CharacterTray({
 
 type TrayListProps = Pick<
   Props,
-  | 'takenIds'
-  | 'otherPartyIds'
-  | 'activeParty'
-  | 'unsupportedNote'
-  | 'pendingId'
-  | 'roster'
-  | 'fixedSpec'
-  | 'shape'
-  | 'onSelectCharacter'
+  'takenIds' | 'otherPartyIds' | 'activeParty' | 'pendingId' | 'roster' | 'fixedSpec' | 'shape' | 'onSelectCharacter'
 > & { characters: readonly CharacterIndexEntry[] };
 
 /**
@@ -184,7 +171,6 @@ const TrayList = memo(function TrayList({
   takenIds,
   otherPartyIds,
   activeParty,
-  unsupportedNote,
   pendingId,
   roster,
   fixedSpec,
@@ -208,7 +194,6 @@ const TrayList = memo(function TrayList({
               isTaken={isTaken}
               inOtherParty={otherParties.length > 0}
               partyNumbers={isTaken ? activeParties : otherParties}
-              unsupportedNote={unsupportedNote(char.resourceId)}
               isPending={pendingId === char.resourceId}
               growthMarks={trayGrowthMarks(char, roster, fixedSpec)}
               // コレクションのバッジは縦長の絵にだけ出す

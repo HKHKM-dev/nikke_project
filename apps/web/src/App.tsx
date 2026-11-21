@@ -9,7 +9,7 @@ import { UnreadableSavesNotice } from './components/UnreadableSavesNotice.tsx';
 import { INITIAL_TEAM_STATE, teamReducer, type TeamAction } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
 import { INITIAL_PARTIES, otherPartyResourceIds, switchParty, type PartiesState } from './parties.ts';
-import { slotSkillsStatus, unsupportedNoteOf, useSkillDefinitions } from './useSkillDefinitions.ts';
+import { slotSkillsStatus, useSkillDefinitions } from './useSkillDefinitions.ts';
 import { orderCharacters } from './listOrder.ts';
 import { ListOrderContext, useListOrder } from './useListOrder.ts';
 import { useMasters } from './useMasters.ts';
@@ -70,12 +70,6 @@ export function App() {
   );
   const cache = useCharacterCache(resourceIds, BASE_URL);
   const skills = useSkillDefinitions(resourceIds, BASE_URL);
-  // 印の知らせは索引だけで決まる（スロットの定義の読み込みでは作り直さない）
-  const { index: skillIndex, fullySupported, supportGaps } = skills;
-  const unsupportedNote = useCallback(
-    (resourceId: number) => unsupportedNoteOf({ index: skillIndex, fullySupported, supportGaps }, resourceId),
-    [skillIndex, fullySupported, supportGaps],
-  );
 
   // 枠ごとのスキル定義の状態（未選択は null）
   const skillsStatuses = useMemo(
@@ -137,7 +131,6 @@ export function App() {
         index: orderedIndex,
         characterCache: cache,
         fullySupported: skills.fullySupported,
-        unsupportedNote,
         masters,
         mastersError,
         calc,

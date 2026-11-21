@@ -1375,10 +1375,6 @@ svg.roster-revert-icon {
   /* 絵の部分（枠線の内側）を 1:2 にする（枠線込みの箱を 1:2 にすると、絵の部分が 2px 縦に長くなる） */
   height: calc((var(--tray-visual-w) - 2px) * 2 + 2px);
 }
-/* 「未」の札は、下部に重ねる名前の行の上に出す */
-.char-visual-tall .char-unsupported-tag {
-  bottom: 46px;
-}
 .char-tray-tall-area {
   width: 100%;
 }
@@ -1480,49 +1476,6 @@ svg.roster-revert-icon {
   display: block;
   width: var(--badge-w);
   aspect-ratio: 130 / 150;
-}
-/* ニケ一覧の四角の絵でも、縦長と同じく右下の、名前と限界突破・コア強化の行の上に出す */
-.char-visual-compact .char-unsupported-tag {
-  bottom: 46px;
-}
-/* スロットの立ち絵では、下部に重ねる名前と限界突破・コア強化の行（.modern-slot-char-name）の上に出す（ニケ一覧と同じ位置） */
-/* 未対応の印（ⓘ。CharacterVisual）。バッジ ui_information を出す。マウスを載せると件数が出る */
-.char-unsupported-tag {
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
-  display: inline-flex;
-  /* 大きさは、その絵の左上のバッジの幅（--badge-w。スロットの立ち絵は立ち絵と一緒に縮む）と同じ */
-  width: var(--badge-w);
-  height: var(--badge-w);
-  z-index: 2;
-  cursor: help;
-}
-.char-unsupported-tag > svg {
-  width: 100%;
-  height: 100%;
-}
-/* 印の色は定義の状況で決め、テーマでは変えない（地を状況の色、縁と i を白か黒、外の線を黒）。未定義は赤・未対応ありは橙・仮定だけは黄。
-   ⓘ の i を白にするバッジごとの規則（.badge-ui_information）より強くするため、親を付ける */
-.char-unsupported-tag > .badge-ui_information {
-  --badge-ground: var(--unsupported-color);
-  --badge-main: #ffffff;
-  --badge-accent: #ffffff;
-  --badge-line: #000000;
-}
-.char-unsupported-undefined {
-  --unsupported-color: #e53935;
-}
-.char-unsupported-unimplemented {
-  --unsupported-color: #f57c00;
-}
-/* 黄の地に白い i は読みにくいので、i と縁は黒にする */
-.char-unsupported-assumed {
-  --unsupported-color: #fbc02d;
-}
-.char-unsupported-assumed > .badge-ui_information {
-  --badge-main: #1a1a1a;
-  --badge-accent: #1a1a1a;
 }
 /* CharacterTray (パレット) */
 .char-tray-panel {

@@ -67,7 +67,6 @@ export function SlotDragOverlay({
           {/* 一覧の項目と同じ入れ物で包み、絵の大きさを一覧とそろえる */}
           <TrayItemFace
             character={draggedCharacter}
-            unsupportedNote={null}
             growthMarks={draggedMarks}
             collectionBadge={draggedCollection}
             shape={trayShape}

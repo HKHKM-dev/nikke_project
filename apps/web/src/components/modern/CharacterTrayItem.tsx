@@ -1,4 +1,3 @@
-import type { UnsupportedNote } from '../../useSkillDefinitions.ts';
 import { useDraggable } from '@dnd-kit/core';
 import { memo, type ReactNode } from 'react';
 import checkIcon from '../../assets/badges/ui_check.svg';
@@ -20,7 +19,6 @@ type Props = {
   inOtherParty: boolean;
   /** 右上（限界突破・コア強化の下）に P1・P2 と出す編成の番号（1 から。いまの編成にいればいまの編成、ほかは otherParties） */
   partyNumbers: readonly number[];
-  unsupportedNote: UnsupportedNote | null;
   /** 置くスロットのクリックを待っている */
   isPending: boolean;
   /** 右上に出す限界突破・コア強化（育成状況に無ければ null） */
@@ -38,13 +36,11 @@ type Props = {
  */
 function TrayVisual({
   character,
-  unsupportedNote,
   growthMarks,
   collectionBadge,
   shape,
 }: {
   character: CharacterIndexEntry;
-  unsupportedNote: UnsupportedNote | null;
   growthMarks: GrowthMarks | null;
   collectionBadge: Badge | null;
   shape: TrayShape;
@@ -52,12 +48,7 @@ function TrayVisual({
   if (shape === 'tall') {
     return (
       <div className="modern-slot-char-area char-tray-tall-area">
-        <CharacterVisual
-          character={character}
-          unsupportedNote={unsupportedNote}
-          size="tall"
-          extraBadge={collectionBadge}
-        />
+        <CharacterVisual character={character} size="tall" extraBadge={collectionBadge} />
         <SlotCharName name={character.name.ja} marks={growthMarks} />
       </div>
     );
@@ -65,7 +56,7 @@ function TrayVisual({
   // 四角も縦長と同じく、名前と限界突破・コア強化を絵の下部に重ねる（名前の背景は縦長より暗くする。styles.css の .char-tray-square-area）
   return (
     <div className="modern-slot-char-area char-tray-tall-area char-tray-square-area">
-      <CharacterVisual character={character} unsupportedNote={unsupportedNote} size="compact" />
+      <CharacterVisual character={character} size="compact" />
       <SlotCharName name={character.name.ja} marks={growthMarks} />
     </div>
   );
@@ -77,14 +68,12 @@ function TrayVisual({
  */
 export function TrayItemFace({
   character,
-  unsupportedNote,
   growthMarks,
   collectionBadge,
   shape,
   overlay,
 }: {
   character: CharacterIndexEntry;
-  unsupportedNote: UnsupportedNote | null;
   growthMarks: GrowthMarks | null;
   collectionBadge: Badge | null;
   shape: TrayShape;
@@ -93,13 +82,7 @@ export function TrayItemFace({
   return (
     <>
       <span className="char-tray-item-visual">
-        <TrayVisual
-          character={character}
-          unsupportedNote={unsupportedNote}
-          growthMarks={growthMarks}
-          collectionBadge={collectionBadge}
-          shape={shape}
-        />
+        <TrayVisual character={character} growthMarks={growthMarks} collectionBadge={collectionBadge} shape={shape} />
         {overlay}
       </span>
     </>
@@ -111,7 +94,6 @@ export function CharacterTrayItem({
   isTaken,
   inOtherParty,
   partyNumbers,
-  unsupportedNote,
   isPending,
   growthMarks,
   collectionBadge,
@@ -147,7 +129,6 @@ export function CharacterTrayItem({
         character={character}
         isTaken={isTaken}
         partyNumbers={partyNumbers}
-        unsupportedNote={unsupportedNote}
         growthMarks={growthMarks}
         collectionBadge={collectionBadge}
         shape={shape}
@@ -164,7 +145,6 @@ const TrayItemContent = memo(function TrayItemContent({
   character,
   isTaken,
   partyNumbers,
-  unsupportedNote,
   growthMarks,
   collectionBadge,
   shape,
@@ -172,7 +152,6 @@ const TrayItemContent = memo(function TrayItemContent({
   return (
     <TrayItemFace
       character={character}
-      unsupportedNote={unsupportedNote}
       growthMarks={growthMarks}
       collectionBadge={collectionBadge}
       shape={shape}

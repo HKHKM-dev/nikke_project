@@ -66,8 +66,7 @@ function badgeName(name: string): string {
  */
 export const GROWTH_BADGES = { star: badgeName('grade_star'), core: badgeName('core_plain') } as const;
 
-/** 未対応の印（ⓘ。CharacterVisual）と、操作キャラの印（ModernSlotCard の ControllerIcon）のバッジ */
-export const UNSUPPORTED_BADGE = badgeName('ui_information');
+/** 操作キャラの印（ModernSlotCard の ControllerIcon）のバッジ */
 export const CONTROLLER_BADGE = badgeName('ui_controller');
 /** 右上の設定のメニューのボタンのバッジ（モダン UI の SettingsMenu） */
 export const SETTING_BADGE = badgeName('ui_window');

@@ -6,7 +6,6 @@ import type { OtherParties, PartiesState } from '../parties.ts';
 import type { PartyTotal } from '../partyTotals.ts';
 import type { TeamAction, TeamState } from '../team.ts';
 import type { ListOrderControls } from '../useListOrder.ts';
-import type { UnsupportedNote } from '../useSkillDefinitions.ts';
 
 export type ViewProps = {
   team: TeamState;
@@ -17,8 +16,6 @@ export type ViewProps = {
     errors: ReadonlyMap<number, string>;
   };
   fullySupported: ReadonlySet<number> | null;
-  /** 未対応の印（モダン UI）にマウスを載せたときの知らせ（useSkillDefinitions の unsupportedNoteOf。完全対応なら null） */
-  unsupportedNote: (resourceId: number) => UnsupportedNote | null;
   masters: BuildMasters | null;
   mastersError: string | null;
   calc: CalcView;
