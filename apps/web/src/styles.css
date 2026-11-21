@@ -1454,7 +1454,7 @@ svg.roster-revert-icon {
   left: 0;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 0;
   z-index: 2;
 }
 /* 水色の枠（2px。いまの編成にいるニケ・置き先待ちのニケ・置き先待ちのスロット）を重ねている間は、その枠の内側に置く */
