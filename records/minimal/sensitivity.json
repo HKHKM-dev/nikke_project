@@ -1676,7 +1676,7 @@
     {
       "observation": "0084-01",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "1446c9a644ba6527",
+      "key": "f0ae3d6a9418d633",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -1692,7 +1692,7 @@
     {
       "observation": "0084-02",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "da74dfef149e348e",
+      "key": "46f5d23144199df6",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -1708,7 +1708,7 @@
     {
       "observation": "0084-03",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "8b7a7d5fd6883852",
+      "key": "5f2f1c617dc7e7fa",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -1724,7 +1724,7 @@
     {
       "observation": "0084-07",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "fdcf7e99c8b4efe0",
+      "key": "4d8c782f5a354cb0",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -1740,7 +1740,7 @@
     {
       "observation": "0084-09",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "c8eaafb1844efde2",
+      "key": "f18487e7b6102b2a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -1756,7 +1756,7 @@
     {
       "observation": "0084-10",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "10d76bedecf964be",
+      "key": "a524199bf45b7746",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -1772,23 +1772,7 @@
     {
       "observation": "0084-11",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "64bd06ca00a6eb9f",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 4],
-          "end": [0, 4]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "0084-15",
-      "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "7d3d42abf76f9bb8",
+      "key": "7e6417f6e3d5643b",
       "effective": false,
       "minus": null,
       "plus": null,
