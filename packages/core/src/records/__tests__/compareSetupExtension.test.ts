@@ -192,6 +192,16 @@ describe('manualStep3Slots（手で撃ったチェーンの III の枠。9 節�
     expect(errors).toContain(
       '1346-91: manualStep3Slots の観測値 1346-90 の値は 0 以上の整数の配列（チェーンごとの III の枠。0 はモデルに任せる）',
     );
+    // 枠が編成の外・並びがチェーンの数より長い
+    const chains: Observation = { ...ref, id: '1346-89', value: [100] };
+    const wide: Observation = { ...ref, value: [6, 1] };
+    const both: Observation = {
+      ...base,
+      compare: { ...base.compare!, setup: { ...base.compare!.setup, manualBursts: '1346-89' } },
+    };
+    const errors2 = validateObservations([chains, wide, both], recordings, data.enemies);
+    expect(errors2).toContain('1346-91: manualStep3Slots の枠 6 が編成の外');
+    expect(errors2).toContain('1346-91: manualStep3Slots の並びが manualBursts のチェーンの数より長い');
   });
 });
 

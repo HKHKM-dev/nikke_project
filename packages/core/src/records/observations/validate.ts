@@ -199,6 +199,19 @@ function setupErrors(
     errors.push(`${at}: manualBursts は burst が false のときには書かない`);
   if (setup.manualStep3Slots !== undefined && setup.manualBursts === undefined)
     errors.push(`${at}: manualStep3Slots は manualBursts があるときだけ書く`);
+  const valueOf = (id: string | undefined) => {
+    const v = id === undefined ? undefined : byId.get(id)?.value;
+    return v !== undefined && isObservationValue(v) ? v : undefined;
+  };
+  const step3Slots = manualStep3SlotsOf(valueOf(setup.manualStep3Slots));
+  if (step3Slots !== undefined) {
+    for (const s of step3Slots)
+      if (s !== 0 && filled !== undefined && !filled.has(s))
+        errors.push(`${at}: manualStep3Slots の枠 ${s} が編成の外`);
+    const chains = manualBurstsOf(valueOf(setup.manualBursts));
+    if (chains !== undefined && step3Slots.length > chains.length)
+      errors.push(`${at}: manualStep3Slots の並びが manualBursts のチェーンの数より長い`);
+  }
   if (new Set(holdFireSlots).size !== holdFireSlots.length) errors.push(`${at}: holdFire の枠が重なっている`);
   // ID で指す観測値（欄の一覧は setup.ts の mapSetupRefs）
   mapSetupRefs(setup, (id, field) => {
