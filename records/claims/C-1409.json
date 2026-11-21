@@ -1,0 +1,19 @@
+{
+  "id": "C-1409",
+  "text": "ネオン：ブルーオーシャンの S2 の「バースト 3 段階突入時、開始回数別の有利コードの攻撃ダメージ▲（下位効果のスタック適用）」は、編成のバースト 3 段階への突入（II → III の替わり目。III の CT が明けずに II で切れたチェーンも数える）ごとに付き、段が足される（1 回目の突入の後 20.56%、2 回目の後 20.56 + 20.2%、3 回目以降 20.56 + 20.2 + 20.2%。どれも 10 秒）。灼熱コードの敵へのネオンの通常攻撃の 1 ヒットは、どの段もモデルと 1 以内で合う。水冷の敵には効かない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1287-09`・`1287-10`・`1287-11`・`1287-12`・`1288-08`・`1288-09`・`1288-10`・`1288-11`・`1286-08`・`1286-09`。V-0817",
+  "model": "`data/skills/14.json` の skill2 の effects[0]〜[2]（`timed`・`{ count: burstStage3Enter }`・`elementDamage`）と、回数のきっかけの種類 `burstStage3Enter`（`skills/triggers.ts`）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": [
+      "data/skills/14.json の skill2 の effects[0]",
+      "data/skills/14.json の skill2 の effects[1]",
+      "data/skills/14.json の skill2 の effects[2]"
+    ]
+  },
+  "decidedOn": []
+}

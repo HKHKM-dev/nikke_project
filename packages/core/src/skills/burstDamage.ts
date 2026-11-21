@@ -364,6 +364,9 @@ function foldsIntoShot(effect: DamageEffect, trigger: ResolvedTrigger, def: Skil
       trigger.count === 'fullChargeShot' &&
       firesUnchargedShots(def)
     ) &&
+    // 変更後の武器の発ごとの倍率ダメージは基礎の武器の発に乗らないので、畳み込まず変更後の武器の発にだけ 1 件ずつ出す
+    // （plan/design-neon-bo.md 2.4 節）
+    !(typeof trigger === 'object' && 'count' in trigger && trigger.count === 'weaponChangeShot') &&
     effect.damageType !== 'true' &&
     effect.condition === undefined &&
     effect.delayFrames === undefined &&
