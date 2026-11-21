@@ -256,11 +256,13 @@ function parseDotStacks(v: Record<string, Json>, effect: DotEffect, path: string
 
 /**
  * ゲージ: 付けた時（gaugeOnApply とその遅れ）と刻みごと（gaugeOnTick）。刻みの遅れ（tickDelayFrames）は射撃の回数のきっかけか、
- * 周期のきっかけ（ゲージを溜めない。plan/design-rosanna-co.md 2 節）。カウンタが上限に届いた時（{ counterFull }）の dot は、付けた時と、
- * firstTick halfAfterLatest の刻みごと（遅れは組まない。plan/design-mihara-bc-gauge.md 2 節）
+ * 周期のきっかけ（plan/design-rosanna-co.md 2 節）。周期のきっかけのゲージは、クールタイムの印・since の無い周期だけで、
+ * 刻みは atApplication か afterInterval（1 パス目が発火のフレームで予約する。同 7 節）。カウンタが上限に届いた時（{ counterFull }）の
+ * dot は、付けた時と、firstTick halfAfterLatest の刻みごと（遅れは組まない。plan/design-mihara-bc-gauge.md 2 節）
  */
 function parseDotGauge(v: Record<string, Json>, effect: DotEffect, path: string): void {
   const counterFull = isCounterFullTrigger(effect.trigger);
+  const timer = isTimerTrigger(effect.trigger);
   for (const key of ['gaugeOnApply', 'gaugeOnTick'] as const) {
     if (v[key] === undefined) continue;
     if (v[key] !== true) fail(`${path}.${key}`, 'expected true');
@@ -273,10 +275,17 @@ function parseDotGauge(v: Record<string, Json>, effect: DotEffect, path: string)
       effect[key] = true;
       continue;
     }
+    if (timer) {
+      validateTimerDotGauge(effect, `${path}.${key}`);
+      effect[key] = true;
+      continue;
+    }
     if (!isShotCountTrigger(effect.trigger)) {
       fail(
         `${path}.${key}`,
-        key === 'gaugeOnTick' ? 'needs a shot count trigger or burstUse' : 'needs a shot count trigger',
+        key === 'gaugeOnTick'
+          ? 'needs a shot count trigger, a timer or burstUse'
+          : 'needs a shot count trigger or a timer',
       );
     }
     effect[key] = true;
@@ -287,11 +296,9 @@ function parseDotGauge(v: Record<string, Json>, effect: DotEffect, path: string)
   }
   if (v.gaugeOnApplyDelayFrames !== undefined) {
     if (effect.gaugeOnApply !== true) fail(`${path}.gaugeOnApplyDelayFrames`, 'needs gaugeOnApply');
-    effect.gaugeOnApplyDelayFrames = parseShotCountDelay(
-      v.gaugeOnApplyDelayFrames,
-      effect.trigger,
-      `${path}.gaugeOnApplyDelayFrames`,
-    );
+    effect.gaugeOnApplyDelayFrames = timer
+      ? parsePositiveInt(v.gaugeOnApplyDelayFrames, `${path}.gaugeOnApplyDelayFrames`)
+      : parseShotCountDelay(v.gaugeOnApplyDelayFrames, effect.trigger, `${path}.gaugeOnApplyDelayFrames`);
   }
   if (v.tickDelayFrames !== undefined) {
     if (effect.state !== undefined) fail(`${path}.tickDelayFrames`, 'cannot be combined with state');
@@ -299,9 +306,24 @@ function parseDotGauge(v: Record<string, Json>, effect: DotEffect, path: string)
       ? parsePositiveInt(v.tickDelayFrames, `${path}.tickDelayFrames`)
       : parseShotCountDelay(v.tickDelayFrames, effect.trigger, `${path}.tickDelayFrames`);
   }
-  if (effect.gaugeOnTick === true && effect.firstTick !== 'afterInterval') {
-    fail(`${path}.gaugeOnTick`, 'needs firstTick afterInterval');
+  // 周期のきっかけは、発火のフレームで付け直しを含めて刻みを決めるので atApplication も書ける（plan/design-rosanna-co.md 7 節）
+  const firstTick = effect.firstTick ?? 'atApplication';
+  if (effect.gaugeOnTick === true && firstTick !== 'afterInterval' && !(timer && firstTick === 'atApplication')) {
+    fail(
+      `${path}.gaugeOnTick`,
+      timer ? 'needs firstTick atApplication or afterInterval' : 'needs firstTick afterInterval',
+    );
   }
+}
+
+/** 周期のきっかけの dot のゲージの形（parseDotGauge）。1 パス目の frame/firstPass/gaugeEffects.ts が発火のフレームで予約する */
+function validateTimerDotGauge(effect: DotEffect, path: string): void {
+  const trigger = effect.trigger;
+  if (!isTimerTrigger(trigger)) return;
+  // 1 パス目は発火を timerFramesOf で前もって出すので、ループの中で追う周期（クールタイムの印・since）は組まない
+  // （条件のある dot はゲージを書けない。parseDotCondition）
+  if (trigger.cooldown === true || trigger.since !== undefined)
+    fail(path, 'a dot with gauge on a timer needs a timer without cooldown or since');
 }
 
 /** { counterFull } の dot のゲージの形（parseDotGauge）。1 パス目の frame/firstPass/counterGauges.ts が追う */

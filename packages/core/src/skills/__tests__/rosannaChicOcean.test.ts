@@ -1,5 +1,6 @@
 // ロザンナ：シックオーシャン（283）: バーストの味方全体の持続ダメージ▲と敵全体の受けるダメージ▲（10 秒）の解決と、
-// パーツの効果だけの S1（noEffect）と、S2 の 30 秒ごとの持続ダメージ（発動の 8f 後に付く。ゲージは未対応で partial）。V-0760。
+// パーツの効果だけの S1（noEffect）と、S2 の 30 秒ごとの持続ダメージ（発動の 8f 後に付く。付いたときと tick ごとにゲージを溜める）。
+// V-0760・V-0847。
 import { describe, expect, it } from 'vitest';
 import { gameSecondsToFrames } from '../../time.ts';
 import { resolveDotEffects } from '../burstDamage.ts';
@@ -35,12 +36,21 @@ describe('ロザンナ：シックオーシャン（283）の定義', () => {
     expect(dot).toMatchObject({
       trigger: { everySeconds: 30 },
       sustained: true,
-      dot: { intervalSeconds: 1, durationSeconds: 15, firstTick: 'atApplication', maxStacks: 1, tickDelayFrames: 8 },
+      dot: {
+        intervalSeconds: 1,
+        durationSeconds: 15,
+        firstTick: 'atApplication',
+        maxStacks: 1,
+        tickDelayFrames: 8,
+        gaugeOnApply: true,
+        gaugeOnApplyDelayFrames: 8,
+        gaugeOnTick: true,
+      },
     });
     expect(dot!.source.skill).toBe('skill2');
     expect(dot!.multiplier).toBeCloseTo(0.704, 12);
-    // tick のゲージは未対応の notes
-    expect(def.skills.skill2.support).toBe('partial');
+    // 付いたときと tick のゲージ（C-1504）
+    expect(def.skills.skill2.support).toBe('supported');
   });
 
   it('defines nothing for S1 (parts only) and nothing else', () => {

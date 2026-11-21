@@ -66,6 +66,17 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(groups.map((g) => g[0])).toEqual([1, 2, 3, 4, 5].map((k) => 1765 * k + 8));
     for (const g of groups) expect(g).toHaveLength(15);
   });
+
+  it('charges the gauge on each application and on every tick of the S2 sustained damage, on the frames of the ticks (C-1504)', () => {
+    const ticks = sim.skillHits.filter((h) => h.slotIndex === rosanna).map((h) => h.frame);
+    const gauges = sim.dotGauges.filter((g) => g.slotIndex === rosanna);
+    expect(gauges.filter((g) => g.kind === 'tick').map((g) => g.frame)).toEqual(ticks);
+    expect(gauges.filter((g) => g.kind === 'apply').map((g) => g.frame)).toEqual(
+      [1, 2, 3, 4, 5].map((k) => 1765 * k + 8),
+    );
+    // 射手の 1 ヒットぶん（4,000。ゲージ速度があればその倍）
+    for (const g of gauges) expect(g.energy).toBeGreaterThanOrEqual(4000);
+  });
 });
 
 describeEveryShotInOneGroup(TEAMS);

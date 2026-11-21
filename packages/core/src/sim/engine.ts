@@ -154,6 +154,8 @@ export type SimResult = {
   allyGauges: TeamPlan['allyGauges'];
   /** 周期のゲージ（1 パス目の記録（V-0483）。照合用） */
   timerGauges: TeamPlan['timerGauges'];
+  /** 持続ダメージのゲージ（付けた時と tick。1 パス目の記録（V-0847）。照合用） */
+  dotGauges: TeamPlan['dotGauges'];
   /** 1 パス目の件の一覧の履歴（観測値の指標が読む。plan/design-holder-effects.md 段 D の 5） */
   history: TeamPlan['history'];
   /** trace: false なら空 */
@@ -193,6 +195,7 @@ export function runSimulation(simInput: SimInput): SimResult {
     shotGauges,
     allyGauges,
     timerGauges,
+    dotGauges,
     history,
   } = planTeamRun({
     ...input,
@@ -317,6 +320,7 @@ export function runSimulation(simInput: SimInput): SimResult {
     shotGauges,
     allyGauges,
     timerGauges,
+    dotGauges,
     history,
     events,
   };
