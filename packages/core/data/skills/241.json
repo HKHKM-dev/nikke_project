@@ -36,7 +36,11 @@
           "assumes": {
             "ja": "最後の弾丸はいつも命中する（外れた時に付かないのは入れない。ルドミラの S1 と同じ）",
             "en": "The last bullet always hits (not applying it on a miss is not modeled; as for Ludmilla S1)"
-          }
+          },
+          "claims": [
+            "C-1360",
+            "C-1359"
+          ]
         },
         {
           "kind": "timed",
@@ -50,7 +54,10 @@
           "assumes": {
             "ja": "最後の弾丸はいつも命中する（外れた時に付かないのは入れない。ルドミラの S1 と同じ）",
             "en": "The last bullet always hits (not applying it on a miss is not modeled; as for Ludmilla S1)"
-          }
+          },
+          "claims": [
+            "C-1359"
+          ]
         }
       ]
     },
@@ -63,7 +70,10 @@
           "assumes": {
             "ja": "対象「敵全体」は単体ボス",
             "en": "The target (all enemies) is the lone boss"
-          }
+          },
+          "claims": [
+            "C-1361"
+          ]
         }
       ],
       "notes": [

@@ -5,16 +5,11 @@
   "topic": "スキル・キャラ固有",
   "grade": "単独実測",
   "basis": "`1257-20`・`1258-21`。V-0806",
-  "model": "data/skills/241.json の skill1 の notes と burst の notes（前提の外）",
+  "model": "未反映（モデルは的が倒れることを扱わない。エピネルの S1 とバーストのフルスタックの追加ダメージは、定義の前提の外の notes で、C-0443 で裏付ける）",
   "replaces": [],
   "updated": "2026-11-21",
   "subject": {
-    "places": ["data/skills/241.json の skill1 の notes", "data/skills/241.json の burst の notes"]
+    "mechanism": "target"
   },
-  "decidedOn": [],
-  "judgment": {
-    "decided": "2026-11-21",
-    "overrides": ["指標なし"],
-    "reason": "射撃場の 3 分モードの的は倒れないので、S1 のきっかけ（敵を倒した時）が起きないことを、攻撃力▲の乗った 1 ヒットが無いこととバーストの追加ダメージが無いことで確かめた。比べるモデルの指標は無い（モデルは S1 を定義しない）"
-  }
+  "decidedOn": []
 }

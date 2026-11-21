@@ -257,6 +257,8 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
     delays: { hitFrames: 40, effectFrames: 0, hitOffsets: [0, 6, 11, 17, 22, 28, 33, 39, 44, 50, 55, 61] },
     claim: 'C-1345',
   },
+  // エピネル: III のタイマーの 00.00 から「敵全体に」のバーストスキルダメージの 1 ヒットまで 39f（動画で 60〜61f。止まり 22f を含む）
+  { resourceIds: [241], delays: { hitFrames: 39, effectFrames: 0 }, claim: 'C-1361' },
 ];
 
 /**
