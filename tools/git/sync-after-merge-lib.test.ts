@@ -1,6 +1,6 @@
 // 中身が main に入った origin のブランチの見分け（plan/design-workflow-simplification-10.md 2 節）。木の比べは一時のリポジトリで git を呼ぶ。
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -9,6 +9,7 @@ import {
   catchUpMessage,
   ciSettled,
   deleteArgs,
+  fastForward,
   mergedEdits,
   mergeWaitState,
   openPrBranches,
@@ -121,7 +122,7 @@ describe('prunableBranches', () => {
   });
 });
 
-describe('mergedEdits', () => {
+describe('mergedEdits・fastForward', () => {
   /** base の上に、a を変え・b を消し・c を足した target を作り、HEAD を base に戻したリポジトリ */
   const repo = () => {
     const dir = mkdtempSync(join(tmpdir(), 'sync-after-merge-'));
@@ -175,6 +176,87 @@ describe('mergedEdits', () => {
     const { dir, git } = repo();
     writeFileSync(join(dir, 'c.txt'), 'other\n');
     expect(mergedEdits(git, 'target')).toBeNull();
+  });
+
+  it('keeps everything when a staged version differs from the work tree (adding it again would lose the staged version)', () => {
+    const { dir, git } = repo();
+    editLikeTarget(dir);
+    writeFileSync(join(dir, 'a.txt'), 'staged\n');
+    git(['add', 'a.txt']);
+    writeFileSync(join(dir, 'a.txt'), 'a2\n');
+    expect(mergedEdits(git, 'target')).toBeNull();
+  });
+
+  it('keeps everything when a file was only taken out of the index and stays in the work tree', () => {
+    const { dir, git } = repo();
+    writeFileSync(join(dir, 'a.txt'), 'a2\n');
+    writeFileSync(join(dir, 'c.txt'), 'c\n');
+    git(['rm', '--quiet', '--cached', 'b.txt']);
+    expect(mergedEdits(git, 'target')).toBeNull();
+  });
+
+  it('takes staged edits whose staged version equals the work tree', () => {
+    const { dir, git } = repo();
+    editLikeTarget(dir);
+    git(['add', 'a.txt', 'c.txt']);
+    expect(mergedEdits(git, 'target')?.sort()).toEqual(['a.txt', 'b.txt', 'c.txt']);
+  });
+
+  it('does not hash untracked things that target does not have (a nested repository cannot be hashed)', () => {
+    const { dir, git } = repo();
+    editLikeTarget(dir);
+    mkdirSync(join(dir, 'nested'));
+    gitAt(join(dir, 'nested'))(['init', '--quiet']);
+    expect(mergedEdits(git, 'target')?.sort()).toEqual(['a.txt', 'b.txt', 'c.txt']);
+  });
+
+  it('fastForward puts the edits away and fast-forwards, keeping what target does not have', () => {
+    const { dir, git } = repo();
+    editLikeTarget(dir);
+    writeFileSync(join(dir, 'note.txt'), 'n\n');
+    expect(fastForward(git, 'target')).toEqual({ kind: 'forwarded', cleaned: 3 });
+    expect(git(['rev-parse', 'HEAD'])).toBe(git(['rev-parse', 'target']));
+    expect(git(['status', '--porcelain'])).toBe('?? note.txt');
+  });
+
+  it('fastForward reads paths literally, not as globs', () => {
+    const { dir, git } = repo();
+    git(['checkout', '--quiet', 'target']);
+    writeFileSync(join(dir, '[xy].txt'), 'g\n');
+    git(['add', '[xy].txt']);
+    git([...AUTHOR, 'commit', '--quiet', '-m', 'glob']);
+    git(['checkout', '--quiet', 'main']);
+    editLikeTarget(dir);
+    writeFileSync(join(dir, '[xy].txt'), 'g\n');
+    // glob としての [xy].txt に当たる、target に無い追跡していないファイル
+    writeFileSync(join(dir, 'x.txt'), 'x\n');
+    expect(fastForward(git, 'target')).toEqual({ kind: 'forwarded', cleaned: 4 });
+    expect(git(['status', '--porcelain'])).toBe('?? x.txt');
+  });
+
+  it('fastForward leaves the work in progress and the index as they were when something differs', () => {
+    const { dir, git } = repo();
+    editLikeTarget(dir);
+    writeFileSync(join(dir, 'a.txt'), 'staged\n');
+    git(['add', 'a.txt']);
+    writeFileSync(join(dir, 'a.txt'), 'a2\n');
+    const before = git(['status', '--porcelain']);
+    expect(fastForward(git, 'target')).toEqual({ kind: 'differs' });
+    expect(git(['status', '--porcelain'])).toBe(before);
+    expect(git(['show', ':a.txt'])).toBe('staged');
+  });
+
+  it('fastForward puts the index back when the fast-forward fails', () => {
+    const { dir, git } = repo();
+    // main だけにあるコミット（target へ早送りできない）
+    writeFileSync(join(dir, 'd.txt'), 'd\n');
+    git(['add', 'd.txt']);
+    git([...AUTHOR, 'commit', '--quiet', '-m', 'side']);
+    editLikeTarget(dir);
+    git(['add', 'c.txt']);
+    const before = git(['status', '--porcelain']);
+    expect(fastForward(git, 'target')).toEqual({ kind: 'failed' });
+    expect(git(['status', '--porcelain'])).toBe(before);
   });
 });
 

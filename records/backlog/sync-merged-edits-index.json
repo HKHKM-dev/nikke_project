@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 40,
-  "text": "マージの後の早送りの片付け（`tools/git/sync-after-merge-lib.ts` の `mergedEdits` と、`tools/git/sync-after-merge.ts` の add → 早送り → 失敗したら reset）の抜け: (1) `git diff HEAD` で作業ツリーしか見ないので、stage した版の後に作業ツリーを origin/main と同じに戻すと、`git add -A` が index を上書きし、stage した版が残らない（早送りに失敗したときの reset も index を HEAD に戻す）。(2) origin/main に無い追跡していないファイルまで `git hash-object` に渡すので、hash できないもの（入れ子の git リポジトリなど）が 1 つあると全体が null になり、「origin/main と違う作業中の変更がある」と原因を取り違えて知らせる。(3) `git add -A -- <パス>` はパスを glob として読む（`[ab].txt` のような名前で、関係ないファイルまで stage される。いまは該当する名前が無い）。hash-object には origin/main にあるパスだけを渡す、index と作業ツリーが違うパスがあれば null にする、git に `--literal-pathspecs` を付ける、フック側の流れと部分的な stage のテストを足す（[design-sync-wait-merge.md](design-sync-wait-merge.md) 3 節。2026-11-20 起票）"
-}
