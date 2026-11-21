@@ -331,5 +331,40 @@
     },
     "source": "V-0815",
     "readAt": "2026-11-21"
+  },
+  {
+    "id": "1279-12",
+    "recording": "1279",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": {
+      "fullBurstZero": 11232,
+      "cocoaPrevShot": 11377,
+      "cocoaPartial": {
+        "frame": 11393,
+        "value": 214940
+      },
+      "snowWhitePartial": {
+        "frame": 11399,
+        "value": 8516839,
+        "ratioToFullCore": 0.56556
+      },
+      "targetAirborne": 11450,
+      "arAimedAgain": 11515,
+      "battleEnd": 11525,
+      "incrementsAfter11399": 0
+    },
+    "description": "5 回目のバーストの変更後の武器の発（f11399。V-0815 で戦闘の終わりの発とみたもの）は、敵の 5 回目のジャンプの始まりの発。6f 前（f11393）にココア（SR・入力 UP）も、前の発の 16f 後に値の小さい発を撃ち、その後に的が跳び（f11450 で宙）、スノーホワイトは AR（残弾 60）に戻って構え直した（f11515）。戦闘の終わり（残り時間の最後の変わり目）は f11525 で、f11399 から HUD は増えない。値はコア・会心なし・距離ボーナスなし（近）の満ちた発（2.5 倍の格子）の 0.56556 倍",
+    "method": {
+      "tool": "tools/captures/hud.ts・timer.ts・still.ts",
+      "note": "HUD の増分は hud.ts --mode series。的が跳んだことと AR に戻ったことは still.ts の画（f11385〜11524）。満ちた発の値は 1279-04 の格子（最終攻撃力 × 499.5% × 1000% × 2.5）。0.56556 は (1 + 9p) / 10 で p = 0.517（チャージ 295f で 152.6f）。モデルの溜め始め（00.00 の 28f 後。満ちた発が 324f 後・チャージ 295f・H 1f）から D（発の 1f 前）までは 138f（p = 0.468）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "source": "V-0840",
+    "readAt": "2026-11-21"
   }
 ]

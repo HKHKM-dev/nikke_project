@@ -246,8 +246,9 @@ export function createShooters({
           ? chargeProgressFrames(state, params, model)
           : null;
       const fired = stepShooter(state, shot, model, params, slotBlocked);
-      // 撃ち切りで終わる変更の最後の弾丸から、この枠のクールタイムの周期の発動を待たせる（plan/design-snow-white.md 8.3 節の論点 7）
-      if (fired && params.weapon?.returnCooldownFrames !== undefined && state.ammo === 0) {
+      // 撃ち切りで終わる変更の最後の弾丸から、この枠のクールタイムの周期の発動を待たせる（plan/design-snow-white.md 8.3 節の論点 7）。
+      // 敵のジャンプの始まりの部分チャージの発で撃ち切った回も同じ（V-0840）
+      if ((fired || partial !== null) && params.weapon?.returnCooldownFrames !== undefined && state.ammo === 0) {
         cooldownHoldUntil[i] = f + params.weapon.returnCooldownFrames;
       }
       const log = logs[i]!;

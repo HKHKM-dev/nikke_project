@@ -182,8 +182,8 @@
           "pierce": true,
           "firstShotDelayFrames": 83,
           "assumes": {
-            "ja": "変更後の武器の形は CDN に無いので録画で読んだ（V-0718）: 1 発は 2 つの銃口の 1 弾ずつで 2 ヒット（shotCount 1。銃口の数は基礎の SG のまま）、どちらもコアに当たる（的の表の 390:burst の行）。最初の発は、変更の窓が射手に見えてから 83f（チャージ 1.2 秒を含む）。1 発撃つと基礎の SG に戻る（最大装弾数 1 の撃ち切り）。追加効果の貫通特化で、その発に貫通ダメージ▲が乗る。変更後の発のゲージは確かめていない（モデルは基礎の SG の 1 発の量）",
-            "en": "The changed weapon is not in CDN, so it was read from recordings (V-0718): each shot is one bullet from each of the two muzzles (2 hits; shotCount 1, base SG muzzles), both hitting the core (target table row 390:burst). The first shot comes 83 f after the change becomes visible to the shooter (including the 1.2 s charge). After one shot it returns to the base SG (max ammo 1). The added Pierce makes Pierce Damage ups apply to that shot. Burst gauge from the changed shot is unverified (the model uses one base SG shot)"
+            "ja": "変更後の武器の形は CDN に無いので録画で読んだ（V-0718）: 1 発は 2 つの銃口の 1 弾ずつで 2 ヒット（shotCount 1。銃口の数は基礎の SG のまま）、どちらもコアに当たる（的の表の 390:burst の行）。最初の発は、変更の窓が射手に見えてから 83f（チャージ 1.2 秒を含む）。1 発撃つと基礎の SG に戻る（最大装弾数 1 の撃ち切り）。追加効果の貫通特化で、その発に貫通ダメージ▲が乗る。変更後の発のゲージは確かめていない（モデルは基礎の SG の 1 発の量）。敵のジャンプの始まりにチャージの途中なら、入力が UP のチャージ武器と同じく部分チャージで撃つ（1056 の 1 回。V-0840）",
+            "en": "The changed weapon is not in CDN, so it was read from recordings (V-0718): each shot is one bullet from each of the two muzzles (2 hits; shotCount 1, base SG muzzles), both hitting the core (target table row 390:burst). The first shot comes 83 f after the change becomes visible to the shooter (including the 1.2 s charge). After one shot it returns to the base SG (max ammo 1). The added Pierce makes Pierce Damage ups apply to that shot. Burst gauge from the changed shot is unverified (the model uses one base SG shot). If an enemy jump starts during the charge, it fires a partial-charge shot as UP-input charge weapons do (1 time in 1056; V-0840)"
           },
           "claims": ["C-1069", "C-1070"]
         },

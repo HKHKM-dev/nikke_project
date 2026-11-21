@@ -312,5 +312,35 @@
     },
     "source": "V-0809",
     "readAt": "2026-11-21"
+  },
+  {
+    "id": "1266-10",
+    "recording": "1266",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": {
+      "battleStart": 830,
+      "battleEnd10588": 11418,
+      "lastIncrement": 11366,
+      "lastReadable": 11422,
+      "chargeShown": {
+        "11406": 146,
+        "11414": 166,
+        "11419": 179
+      },
+      "incrementsAfterLastShot": 0
+    },
+    "description": "ウンファ単騎（SR・入力 UP・フルチャージ 250%）の戦闘の終わり。最後の発（f11366）の後はチャージの途中で、表示が 179%（f11419）の後に画面が切り替わり、HUD は増えない。戦闘の終わりに部分チャージの発は出ない",
+    "method": {
+      "tool": "tools/captures/hud.ts・timer.ts・still.ts",
+      "note": "戦闘開始は timer.ts --mode changes の、最初の 250f 以上の間隔の次の変わり目（C-0078）。HUD の増分は hud.ts --mode series（最後の 2300f）の値の増え。チャージの表示は still.ts で照準の横の CHARGE を拡大して読んだ"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "source": "V-0840",
+    "readAt": "2026-11-21"
   }
 ]

@@ -392,5 +392,32 @@
       "slot": 1,
       "source": "normal"
     }
+  },
+  {
+    "id": "1056-14",
+    "recording": "1056",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": {
+      "gaugeFull": 9267,
+      "tsubaiPartial": {
+        "frame": 9339,
+        "value": 504026
+      },
+      "targetAirborne": 9440,
+      "nextIncrement": 9458
+    },
+    "description": "ツバイの 6 回目のバーストの変更後の武器の発（満タンの 72f 後。1056-10 の注記で比べなかった回）は、敵のジャンプの始まりの発。その後に的が跳び（f9440 で宙）、f9458 から次の増分が出る。値は満ちた発の格子に乗らない（近の満ちた発 873,082 の 0.5773 倍、近の外の 759,202 の 0.6639 倍）",
+    "method": {
+      "tool": "tools/captures/hud.ts・still.ts",
+      "note": "HUD の増分は hud.ts --mode jumps（f9150〜9600）、的は still.ts の画（f9300〜9520）。満タンのフレームは 1056-10 の注記。比は (1 + 2p) / 3（フルチャージ 300%）で、近なら p = 0.366、近の外なら p = 0.496。モデルの溜め始め（満タンの 36f 後。満ちた発が 108f 後・チャージ 71f・H 1f）から D（発の 1f 前）までは 35f（p = 0.493）。着地点の区間は読んでいない"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "source": "V-0840",
+    "readAt": "2026-11-21"
   }
 ]

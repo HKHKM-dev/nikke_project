@@ -109,5 +109,34 @@
       "slot": 1,
       "source": "normal"
     }
+  },
+  {
+    "id": "1105-04",
+    "recording": "1105",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": {
+      "battleStart": 798,
+      "battleEnd10588": 11386,
+      "lastIncrement": 11245,
+      "lastReadable": 11390,
+      "chargeShown": {
+        "11382": 100,
+        "11387": 105
+      },
+      "incrementsAfterLastShot": 0
+    },
+    "description": "プリカ単騎（SR・入力 UP・フルチャージ 250%）の戦闘の終わり。最後の発（f11245）の後のリロードを終えて構え、チャージの途中（表示 105%。f11387）で画面が切り替わり、HUD は増えない。戦闘の終わりに部分チャージの発は出ない",
+    "method": {
+      "tool": "tools/captures/hud.ts・timer.ts・still.ts",
+      "note": "戦闘開始は timer.ts --mode changes の、最初の 250f 以上の間隔の次の変わり目（C-0078）。HUD の増分は hud.ts --mode series（最後の 2300f）の値の増え。チャージの表示は still.ts で照準の横の CHARGE を拡大して読んだ"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "source": "V-0840",
+    "readAt": "2026-11-21"
   }
 ]
