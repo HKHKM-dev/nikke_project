@@ -792,5 +792,31 @@
       "slot": 3,
       "source": "skill"
     }
+  },
+  {
+    "id": "1265-32",
+    "recording": "1265",
+    "kind": "gauge",
+    "use": "record",
+    "unit": "px",
+    "value": {
+      "9860": 0,
+      "9865": 1,
+      "9870": 0,
+      "9874": 1,
+      "9879": 0,
+      "9884": 1,
+      "9889": 1
+    },
+    "description": "5 回目の 300 回射撃の倍率ダメージ（f9889。2B の発と同じ増分）の前の、右の BURST バーの伸び（2B の発のフレームごとの px の差）。倍率ダメージは、ほかのキャラのヒットの無い区間（f9855〜f9893）の最後の 2B の発で、後の発はココアのヒット（f9896）の後",
+    "method": {
+      "tool": "tools/captures/gauge.ts --subpixel（series）と recipe:hud-jumps@3 の増分"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "gauge"
+    },
+    "source": "V-0830",
+    "readAt": "2026-11-21"
   }
 ]
