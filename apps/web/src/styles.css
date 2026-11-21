@@ -1652,12 +1652,12 @@ html:has(.modern-view-container) {
   /* 全キャラを出し、枠の中ではスクロールしない（ページのスクロールだけにする） */
   padding: 4px;
 }
-/* モダンの画面では、ニケ一覧の絵の幅をスロットの立ち絵（枠線込み）と同じにし、1 行に 5 枚並べる。列の幅（絵と左右の余白 2px ずつ）が
-   スロットのカードの幅と同じで、列どうしの間も同じ 0 なので、一覧の行はスロットの並びと同じ幅になる。狭い画面では立ち絵と一緒に縮む（useSlotFit） */
-.modern-view-container {
+/* ニケ一覧の行に元の大きさの絵が 5 枚入らない狭い画面（data-tray-fit。useSlotFit）では、一覧の絵の幅をスロットの立ち絵（枠線込み）と同じにし、
+   1 行に 5 枚並べる。列の幅（絵と左右の余白 2px ずつ）がスロットのカードの幅と同じで、列どうしの間も同じ 0 なので、一覧の行はスロットの並びと同じ幅になる */
+.modern-view-container[data-tray-fit] {
   --tray-visual-w: calc(var(--slot-portrait-h) / 2 + 2px);
 }
-.modern-view-container .char-tray-list {
+.modern-view-container[data-tray-fit] .char-tray-list {
   grid-template-columns: repeat(5, calc(var(--tray-visual-w) + 4px));
 }
 .char-tray-empty {
