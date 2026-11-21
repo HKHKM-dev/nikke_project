@@ -1,0 +1,494 @@
+[
+  {
+    "id": "1300-01",
+    "recording": "1300",
+    "kind": "total",
+    "use": "record",
+    "value": 586336784,
+    "description": "ココア・ソルジャーF.A.・マクスウェル・レイヴン の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11695。増分は 631 個"
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1300-02",
+    "recording": "1300",
+    "kind": "count",
+    "use": "record",
+    "value": 272,
+    "unit": "トリガー",
+    "description": "ココア・ソルジャーF.A.・マクスウェル・レイヴン のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 631 個。前の増分から 30f 未満の増分（510 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 38f）から発の数を決めた（2 発になった組 77 個）"
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1300-03",
+    "recording": "1300",
+    "kind": "timing",
+    "use": "record",
+    "value": [1225, 2427, 3629, 4829, 6031, 7232, 8433, 9724, 10925],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・5・0・5・5・5・0・0f"
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1300-04",
+    "recording": "1300",
+    "kind": "timing",
+    "use": "record",
+    "value": [1255, 2456, 3657, 4859, 6060, 7261, 8462, 9753, 10954],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 6・0・0・6・6・6・6・0・0f"
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1300-05",
+    "recording": "1300",
+    "kind": "timing",
+    "use": "record",
+    "value": [1284, 2486, 3686, 4887, 6089, 7290, 8491, 9782, 10983],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1300-06",
+    "recording": "1300",
+    "kind": "timing",
+    "use": "record",
+    "value": [1876, 3074, 4291, 5496, 6609, 7872, 9099, 10314, 11541],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1300-07",
+    "recording": "1300",
+    "kind": "interval",
+    "use": "record",
+    "value": [592, 588, 605, 609, 520, 582, 608, 532, 558],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1300-08",
+    "recording": "1300",
+    "kind": "timing",
+    "use": "record",
+    "value": [2421, 3622, 4823, 6024, 7225, 8426, 10919],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f9627"
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1300-09",
+    "recording": "1300",
+    "kind": "timing",
+    "use": "record",
+    "value": [2450, 3651, 4852, 6053, 7254, 8455, 10948],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1300-10",
+    "recording": "1300",
+    "kind": "timing",
+    "use": "record",
+    "value": [3680, 6081, 8485],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1300-11",
+    "recording": "1300",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 413536,
+    "description": "マクスウェルの基礎の SR の 1 発（コア・会心なし・距離ボーナスなし）。フルバーストの外",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（recipe:buff-edge@7 の grid で格子に当てた）",
+      "note": "どのフルバーストより前の区間でも同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1300-12",
+    "recording": "1300",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 739897,
+    "description": "マクスウェルが III の回のフルバーストの中の、基礎の SR の 1 発（コア・会心なし・距離ボーナスなし。S1 の攻撃力▲とフルバースト補正）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（recipe:buff-edge@7 の grid で格子に当てた）",
+      "note": "変更後の武器の 1 発の後の発。どの回も同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1300-13",
+    "recording": "1300",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 739897,
+    "description": "レイヴンが III の回のフルバーストの中の、マクスウェルの 1 発（コア・会心なし・距離ボーナスなし。S1 の攻撃力▲とフルバースト補正）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（recipe:buff-edge@7 の grid で格子に当てた）",
+      "note": "どの回も同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1300-14",
+    "recording": "1300",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 413536,
+    "description": "フルバーストの後（S1 の 10 秒の後）の、マクスウェルの 1 発（コア・会心なし・距離ボーナスなし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（recipe:buff-edge@7 の grid で格子に当てた）",
+      "note": "窓の外の値に戻る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 960,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1300-15",
+    "recording": "1300",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 10460845,
+    "description": "マクスウェルの変更後の武器の 1 発（コア・会心なし・距離ボーナスなし。フルチャージ 300%・S1 の攻撃力▲・フルバースト補正）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（recipe:buff-edge@7 の grid で格子に当てた）",
+      "note": "1 回のバーストに 1 発。どの回もコアの値（距離ボーナス・会心の付いた回は同じ格子の別の値）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 467,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1300-16",
+    "recording": "1300",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 875234,
+    "description": "フルバーストの中のレイヴンの 1 発（コア・会心なし。レイヴン自身の S1 と、マクスウェルの S1 の攻撃力▲）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（recipe:buff-edge@7 の grid で格子に当てた）",
+      "note": "マクスウェルが III の回もレイヴンが III の回も同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 450,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1300-17",
+    "recording": "1300",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 430745,
+    "description": "フルバーストの中のココアの 1 発（コア・会心なし・距離ボーナスなし。フルバースト補正だけで、S1 の▲は乗らない）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（recipe:buff-edge@7 の grid で格子に当てた）",
+      "note": "窓の外は 344,596（同じ格子のコアの値）。S1 の▲が乗った値（616,000 ほど）は無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 450,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1300-18",
+    "recording": "1300",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "動画のフレーム",
+    "value": [136, 136, 137, 136],
+    "description": "マクスウェルが III の回（0,4,6,8 回目のフルバースト。0 始まり）の、III のタイマーの 00.00 から変更後の武器の 1 発の増分までの動画のフレーム",
+    "method": {
+      "tool": "recipe:burst-panel@4 の 00.00 と recipe:hud-jumps@3 の増分",
+      "note": "持ち替えの 20f より前に基礎の SR を撃った回。直前に撃った回は別の観測値（記録）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstToWeaponChangeShot",
+      "args": {
+        "slot": 3,
+        "n": "0,4,6,8"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1300-19",
+    "recording": "1300",
+    "kind": "timing",
+    "use": "record",
+    "unit": "動画のフレーム",
+    "value": 139,
+    "description": "2 回目のフルバースト（マクスウェルが III の回）の、00.00 から変更後の武器の 1 発までの動画のフレーム。基礎の SR の最後の発が 00.00 の 15f 前で、ほかの回より遅い",
+    "method": {
+      "tool": "recipe:burst-panel@4 の 00.00 と recipe:hud-jumps@3 の増分",
+      "note": "持ち替えの直前に基礎の SR を撃った回の遅れ。モデル（待ちの即値）は扱わない"
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1300-20",
+    "recording": "1300",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "フレーム",
+    "value": -2,
+    "description": "2 回目（0 始まり。マクスウェルが III の回）のフルバーストの窓の中のレイヴンの発の間隔の中央値から、窓の前の同じ長さの中央値を引いたもの（S1 のチャージ速度▲）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分のうちレイヴンの格子（R・RF）に合う発のフレーム。窓は recipe:burst-panel@4 の 00.00 と終わり",
+      "note": "間隔（中・前）: 中 117・117・117、前 120・118。的のジャンプ・リロードをまたぐ 135f 以上の間隔は除いた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstShotIntervalDiff",
+      "args": {
+        "slot": 4,
+        "n": 2
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1300-21",
+    "recording": "1300",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "フレーム",
+    "value": -3,
+    "description": "6 回目（0 始まり。マクスウェルが III の回）のフルバーストの窓の中のレイヴンの発の間隔の中央値から、窓の前の同じ長さの中央値を引いたもの（S1 のチャージ速度▲）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分のうちレイヴンの格子（R・RF）に合う発のフレーム。窓は recipe:burst-panel@4 の 00.00 と終わり",
+      "note": "間隔（中・前）: 中 117、前 120・119・121。的のジャンプ・リロードをまたぐ 135f 以上の間隔は除いた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstShotIntervalDiff",
+      "args": {
+        "slot": 4,
+        "n": 6
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0824",
+    "readAt": "2026-11-21"
+  }
+]

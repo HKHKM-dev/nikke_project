@@ -14,9 +14,12 @@
           "ref": 1,
           "durationRef": 2,
           "assumes": {
-            "ja": "対象は発火のフレームの最終攻撃力の上位 2 機（自分も候補）で、アリスの S1 と同じ読み（C-0474）。チャージ速度▲は受け手のチャージ速度に足す（「スキル発動者基準」の言い回しが無い）",
-            "en": "The targets are the top 2 allies by final ATK at the firing frame (self included), read as Alice's S1 (C-0474). Charge Speed is added to the receiver's own charge speed (no \"based on the caster\" wording)"
-          }
+            "ja": "対象は発火のフレームの最終攻撃力の上位 2 機（自分も候補）で、アリスの S1 と同じ読み。チャージ速度▲は受け手のチャージ速度に足す（「スキル発動者基準」の言い回しが無い）。基礎のチャージ時間がマクスウェルと同じ 1 秒の味方でしか確かめていないので、発動者基準の読みとは分けていない",
+            "en": "The targets are the top 2 allies by final ATK at the firing frame (self included), read as Alice’s S1. Charge Speed is added to the receiver’s own charge speed (no \"based on the caster\" wording). Checked only on allies whose base charge time is 1 s like Maxwell’s, so not separated from the caster-based reading"
+          },
+          "claims": [
+            "C-1432"
+          ]
         },
         {
           "kind": "timed",
@@ -25,7 +28,10 @@
           "targetCount": 2,
           "stat": "attack",
           "ref": 3,
-          "durationRef": 4
+          "durationRef": 4,
+          "claims": [
+            "C-1432"
+          ]
         }
       ]
     },
@@ -42,7 +48,9 @@
             "target": "self",
             "trigger": "unknown"
           },
-          "claims": ["C-0443"]
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     },
@@ -56,10 +64,28 @@
           "fullChargeDamage": 300,
           "maxAmmoRef": 2,
           "pierce": true,
+          "firstShotDelayFrames": 119,
           "assumes": {
-            "ja": "基礎の SR を、チャージ 2 秒・フルチャージ 300% の 1 発（最大装弾数 1 発）に替え、撃ち切ったら基礎の SR に戻る。チャージ時間に「固定」が無いので、チャージ速度▲を受ける読み。最初の発までの待ちは録画で読む。追加効果「貫通特化」は weaponChange の pierce で、変更後の発に味方の貫通ダメージ▲が乗る。変更後の発のバーストゲージと、撃ち切りの後の基礎の SR の戻り方は、いまのモデルの形（確かめていない）",
-            "en": "Turns the base SR into one shot (max ammo 1) with a 2 s charge and 300% full charge damage, and goes back to the base SR when spent. The charge time has no \"fixed\", so it is read as affected by Charge Speed ups. The wait to the first shot is read from recordings. The additional Pierce is the weaponChange pierce, so allies' Pierce Damage ups apply to the changed shot. The burst gauge of the changed shot and how the base SR resumes follow the current model (unverified)"
-          }
+            "ja": "基礎の SR を、チャージ 2 秒・フルチャージ 300% の 1 発（最大装弾数 1 発）に替え、撃ち切ったら基礎の SR に戻る。最初の発までの待ちは録画で読んだ即値で、III のタイマーの 00.00 から 136f（V-0824）。チャージ時間に「固定」が無いのでチャージ速度▲を受ける読みだが、撮った編成ではマクスウェルが自分のバーストの回にいつも S1 のチャージ速度▲を受け、その分は読んだ待ちに入っているので、確かめていない。射撃場の的では、変更後の発はどれもコアに当たった。追加効果「貫通特化」は weaponChange の pierce で、変更後の発に味方の貫通ダメージ▲が乗る。変更後の発のバーストゲージは、いまのモデルの形（確かめていない）",
+            "en": "Turns the base SR into one shot (max ammo 1) with a 2 s charge and 300% full charge damage, and goes back to the base SR when spent. The wait to the first shot is read from recordings: 136 frames after 00.00 of the Burst III timer (V-0824). The charge time has no \"fixed\", so it is read as affected by Charge Speed ups; unverified, as in the recorded team Maxwell always had her own S1 Charge Speed up at her bursts, which is inside the read wait. On the range target every changed shot hit the core. The additional Pierce is the weaponChange pierce, so allies’ Pierce Damage ups apply to the changed shot. The burst gauge of the changed shot follows the current model (unverified)"
+          },
+          "claims": [
+            "C-1433"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "持ち替えの直前（III のタイマーの 00.00 の 10〜15f 前）に基礎の SR を撃った回は、変更後の武器の 1 発が 3〜8f 遅れた（V-0824）。モデルは待ちの即値で、基礎の SR の状態を見ない",
+          "en": "When the base SR fired just before the swap (10 to 15 frames before 00.00 of the Burst III timer), the changed shot came 3 to 8 frames later (V-0824). The model uses a fixed wait and does not look at the base SR state",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "weaponChange",
+            "trigger": "burstUse"
+          },
+          "claims": [
+            "C-1433"
+          ]
         }
       ]
     }

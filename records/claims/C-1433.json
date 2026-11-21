@@ -1,11 +1,11 @@
 {
   "id": "C-1433",
   "text": "マクスウェルのバーストは、基礎の SR を、最終攻撃力の 813.42% × フルチャージ 300% の 1 発（最大装弾数 1 発。射撃場の的ではコアに当たる）に替え、撃ち切ったら基礎の SR に戻る。変更後の 1 発は、III のタイマーの 00.00 から 136f（動画のフレーム）に出る",
-  "state": "仮説",
+  "state": "確定",
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`1300-15`・`1300-18`・`1301-15`・`1301-18`。V-0824",
-  "model": "反映（data/skills/102.json の burst の effects[0]（weaponChange・burstUse・chargeTimeSeconds 2・fullChargeDamage 300・maxAmmoRef 2・pierce・firstShotDelayFrames 119）。持ち替えの直前に基礎の SR を撃った回の遅れ（1300-19・1301-19）は未対応（burst の notes）",
+  "model": "反映（data/skills/102.json の burst の effects[0]（weaponChange・burstUse・chargeTimeSeconds 2・fullChargeDamage 300・maxAmmoRef 2・pierce・firstShotDelayFrames 119）。持ち替えの直前に基礎の SR を撃った回の遅れ（1300-19・1301-19）は未対応（burst の notes））",
   "replaces": [],
   "updated": "2026-11-21",
   "subject": {
@@ -23,6 +23,14 @@
       "decided": "1",
       "reproduced": "2,3,4",
       "observations": ["1300-18"]
+    }
+  ],
+  "minimal": [
+    {
+      "observations": ["1300-18", "1301-18"],
+      "element": "マクスウェル burst.notes[0]",
+      "reason": "この観測値は、基礎の SR の最後の発が III のタイマーの 00.00 の 20f より前だった回だけを並べたもの。notes[0] の遅れ（持ち替えの直前に撃った回）は別の観測値（1300-19・1301-19。記録）に分けた",
+      "decided": "2026-11-21"
     }
   ]
 }
