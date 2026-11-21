@@ -26,8 +26,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "source": "V-0842",
@@ -59,8 +58,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "source": "V-0842",
@@ -176,6 +174,10 @@
     "method": {
       "tool": "recipe:buff-edge@8 の pair（M0>M・M>M0）。事象は帯の立ち上がり",
       "note": "付き始め: ▲なしの最後は f3714 の −7f、▲ありの最初は f7837 の +11f（f4303 の +14f も▲あり）。f6659 の +12f の▲なしの増分は、HUD が 20f 読めなかった後の増分（gap 20）で、射撃の刻みでは帯の −2f の発。切れ目: ▲ありの最後は f8426 の +278f、▲なしの最初は f4303 の +296f"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
     },
     "source": "V-0842",
     "readAt": "2026-11-21"
