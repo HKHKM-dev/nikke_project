@@ -174,6 +174,9 @@
           "103:skill1": {
             "all": 1
           },
+          "220:burst": {
+            "all": 1
+          },
           "861:burst": {
             "near": 0.4805,
             "midNear": 0.3188,
@@ -204,6 +207,9 @@
       },
       "bulletHitRate": {
         "weaponChanges": {
+          "220:burst": {
+            "all": 1
+          },
           "223:burst": {
             "all": 1
           },

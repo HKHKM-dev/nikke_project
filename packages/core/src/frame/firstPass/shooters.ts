@@ -3,7 +3,7 @@
 import { stunSlot } from '../../burst/controller.ts';
 import { partialGaugeRatio } from '../../burst/dynamic.ts';
 import { effectFrameOf, hexagonFrameOf } from '../../burst/schedule.ts';
-import { capCritRate, ZERO_BUFFS } from '../../skills/buffs.ts';
+import { capCritRate, ZERO_BUFFS, type ChangedWeapon } from '../../skills/buffs.ts';
 import { isChargeWeapon, lastBulletShotsOf } from '../../weapons.ts';
 import { firingParams, isZeroFiring, type FiringParams } from '../firing.ts';
 import {
@@ -125,6 +125,8 @@ export function createShooters({
   /** 使用武器の変更中の射手の状態と、その武器の識別子（変更していなければ null） */
   const changedShooters: (ShooterState | null)[] = slots.map(() => null);
   const activeWeapon: (string | null)[] = slots.map(() => null);
+  // 枠がいま持っている変更後の武器（戻る時に、戻りの待ちの欄を読む）
+  const heldWeapon: (ChangedWeapon | null)[] = slots.map(() => null);
   const shotCounts = slots.map(() => 0);
   /**
    * フレーム f に始まった枠 i の使用武器変更（識別子
@@ -166,6 +168,8 @@ export function createShooters({
       const weaponId = params.weapon?.id ?? null;
       if (weaponId !== activeWeapon[i]) {
         activeWeapon[i] = weaponId;
+        const ended = heldWeapon[i];
+        heldWeapon[i] = params.weapon;
         if (params.weapon !== null) {
           changedShooters[i] = weaponChangeShooter(params.weapon.shot, model, params);
           const firstHit = weaponChangeFirstHitAt(i, params.weapon.id, f);
@@ -183,6 +187,8 @@ export function createShooters({
         } else {
           changedShooters[i] = null;
           resumeShooter(shooters[i]!, slot.character.shot, model, params);
+          // 撃ち切りで戻った後の待ち（録画で読む即値。plan/design-snow-white.md 8.1 節の論点 4）。戻るのは最後の弾丸の次のフレーム
+          if (ended?.returnFirstShotFrames !== undefined) shooters[i]!.wait = ended.returnFirstShotFrames - 1;
         }
       }
       const state = params.weapon !== null ? changedShooters[i]! : shooters[i]!;

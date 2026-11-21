@@ -43,6 +43,7 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
       'instantFire',
       'firstShotDelayFrames',
       'firstShotAfterSwapFrames',
+      'returnFirstShotFrames',
       'infiniteAmmo',
       'state',
       'condition',
@@ -148,6 +149,11 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
       v.firstShotAfterSwapFrames,
       `${path}.firstShotAfterSwapFrames`,
     );
+  }
+  // 撃ち切りで戻った後の基礎の武器の最初の発までの待ち（plan/design-snow-white.md 8.1 節の論点 4）
+  if (v.returnFirstShotFrames !== undefined) {
+    if (!untilEmpty) fail(`${path}.returnFirstShotFrames`, 'returnFirstShotFrames needs maxAmmoRef');
+    effect.returnFirstShotFrames = parsePositiveInt(v.returnFirstShotFrames, `${path}.returnFirstShotFrames`);
   }
 
   if (v.infiniteAmmo !== undefined) {

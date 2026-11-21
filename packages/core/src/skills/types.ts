@@ -2093,6 +2093,12 @@ export type WeaponChangeEffect = {
    */
   firstShotAfterSwapFrames?: number;
   /**
+   * 撃ち切りで終わる変更（maxAmmoRef）の、変更後の武器の最後の弾丸を撃ったフレームから、基礎の武器の最初の発までのフレーム
+   * （即値。録画で読む。plan/design-snow-white.md 8.1 節の論点 4）。基礎の武器は満タンで戻る（frame/shooter.ts の resumeShooter）のは
+   * 同じで、待ちだけを替える。省略は resumeShooter の待ち（リロードの明けの 1 発目の遅延）。maxAmmoRef の変更にだけ書ける
+   */
+  returnFirstShotFrames?: number;
+  /**
    * 変更後の武器は撃っても残弾を減らさない（維持の間リロードしない。plan/design-skill-stage11.md 3.4 節）。
    * 説明文に「装弾数無限」の行が無い変更で、録画で読む（たきなのバースト。C-0708）。維持の欄（durationRef・durationSeconds）の変更にだけ書ける
    */

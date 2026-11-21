@@ -78,7 +78,8 @@
             "ja": "AR を押下チャージ型のチャージ武器（5 秒）に替え、1 発撃つと AR に戻る（持続と解除は説明文に無く、撃つまで続く）。最初の発の待ちと、コア命中率・距離ボーナスは確かめていない（いまの既定の待ちと基礎の AR の当たり。plan/design-snow-white.md 2.4 節）。貫通特化は、貫通ダメージ▲を読む側のいない編成では値を変えない（確かめていない）",
             "en": "Turns the AR into a press-and-hold charge weapon (5 s) and returns to the AR after one shot (no duration or end condition in the description; it lasts until the shot). The first-shot wait, core hit rate and range bonus are not verified (the default wait and the base AR rates; plan/design-snow-white.md 2.4). Pierce does not change values without an ally that reads Pierce Damage (not verified)"
           },
-          "firstShotDelayFrames": 307
+          "firstShotDelayFrames": 307,
+          "returnFirstShotFrames": 116
         }
       ]
     }

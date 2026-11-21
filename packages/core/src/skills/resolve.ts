@@ -1727,6 +1727,7 @@ function resolveWeaponChange(
       ...(effect.firstShotAfterSwapFrames !== undefined
         ? { firstShotAfterSwapFrames: effect.firstShotAfterSwapFrames }
         : {}),
+      ...(effect.returnFirstShotFrames !== undefined ? { returnFirstShotFrames: effect.returnFirstShotFrames } : {}),
       ...(effect.infiniteAmmo ? { infiniteAmmo: true as const } : {}),
       ...(effect.chargeTimeFixed ? { fixedChargeTime: true as const } : {}),
       // 解放の秒はフレームの端数のまま渡す（射手が発ごとに持ち越す。plan/design-red-hood.md 7.1 節の論点 10）

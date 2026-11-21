@@ -26,6 +26,8 @@ export type ChangedWeapon = {
   firstShotDelayFrames?: number;
   /** 持ち替えから最初の発まで（WeaponChangeEffect.firstShotAfterSwapFrames） */
   firstShotAfterSwapFrames?: number;
+  /** 撃ち切りの最後の弾丸から基礎の武器の最初の発まで（WeaponChangeEffect.returnFirstShotFrames） */
+  returnFirstShotFrames?: number;
   /** 変更後の武器は撃っても残弾を減らさない（WeaponChangeEffect.infiniteAmmo） */
   infiniteAmmo?: true;
   /** 変更後の武器の解放の長さ（フレーム。端数あり。WeaponChangeEffect.chargeReleaseSeconds） */
