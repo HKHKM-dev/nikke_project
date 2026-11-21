@@ -94,12 +94,14 @@ export function flyIntoSlot(from: DOMRect, card: Element): () => void {
   stopArrival(card);
   card.classList.add('modern-slot-arriving');
   let ghost: HTMLElement | null = null;
+  let fade: Animation | null = null;
   let ready: Promise<void> = Promise.resolve();
   let stopped = false;
   // 隠しを外すのは、このスロットへ動いている写しがこれのときだけ（後から別の写しが来ていれば、それが外す）
   const remove = () => {
     stopped = true;
     ghost?.remove();
+    fade?.cancel();
     if (arrivals.get(card) !== remove) return;
     arrivals.delete(card);
     card.classList.remove('modern-slot-arriving');
@@ -124,6 +126,14 @@ export function flyIntoSlot(from: DOMRect, card: Element): () => void {
     const base = content.getBoundingClientRect();
     ghost = ghostOf(content, base);
     ghost.animate([frameAt(from, base), frameAt(base, base)], FLIGHT).finished.then(done, done);
+    // 立ち絵の場所に出している空のスロットの枠（シルエットと文字）は、動きの後半で少しずつ透明にする
+    fade =
+      card
+        .querySelector('.modern-slot-arrival-face')
+        ?.animate([{ opacity: 1 }, { opacity: 1, offset: 0.5 }, { opacity: 0 }], {
+          duration: FLIGHT.duration,
+          fill: 'forwards',
+        }) ?? null;
   });
   return done;
 }
