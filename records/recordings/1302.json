@@ -1,0 +1,46 @@
+{
+  "id": "1302",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1302_vesti-1.mp4",
+  "original": "2026-11-21_17-24-04.mp4",
+  "durationSec": 203.7,
+  "frames": 12221,
+  "fps": 60,
+  "sizeMB": 246.9,
+  "sha256": "7190acae8a1c",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 91,
+      "name": "ベスティー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Water"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0825 の撮影の依頼の 1 行目（オートバースト ON）。左上のボタンで確かめた。編成は戦闘履歴のパネルで確かめた",
+  "backup": {
+    "at": "2026-11-21T17:43+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
