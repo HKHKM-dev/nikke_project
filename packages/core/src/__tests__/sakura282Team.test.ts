@@ -1,6 +1,8 @@
 // サクラ編（V-0837）: サクラ（282）を含む編成で、S2 のフルバースト開始時の味方全体へのバーストスキルクールタイム▼と、バーストの
-// 発動者基準の攻撃力▲（10 秒）が意図どおりに出るか
+// 発動者基準の攻撃力▲（I の六角形の替わり目の 49f 後から 10 秒）が意図どおりに出るか
 import { describe, expect, it } from 'vitest';
+import { burstDelaysOf } from '../burst/landing.ts';
+import { effectFrameOf } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
@@ -72,7 +74,7 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, sakura }) =>
     expect(cuts).toHaveLength(fullBursts.length * input.slots.length);
   });
 
-  it('gives caster-based ATK up to every ally at every own Burst activation, for 10 s', () => {
+  it('gives caster-based ATK up to every ally 49 frames after every own Burst activation mark, for 10 s', () => {
     expect(own.length).toBeGreaterThan(2);
     for (const holder of input.slots.keys()) {
       const items = itemsOf(plan.history, {
@@ -82,7 +84,9 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, sakura }) =>
         skill: 'burst',
         stat: 'attack',
       });
-      expect(items.map((w) => w.start)).toEqual(own.map((a) => a.frame));
+      // 効果は I の六角形の替わり目の 49f 後に発火する（遅れの表の行。C-1470）
+      expect(items.map((w) => w.start)).toEqual(own.map((a) => effectFrameOf(a)));
+      expect(burstDelaysOf(characterOf(SAKURA)).effectFrames).toBe(49);
       for (const w of items) if (w.end < plan.frames) expect(w.end - w.start).toBe(gameSecondsToFrames(10));
     }
   });

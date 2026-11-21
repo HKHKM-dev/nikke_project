@@ -1,0 +1,764 @@
+[
+  {
+    "id": "1321-01",
+    "recording": "1321",
+    "kind": "timing",
+    "use": "record",
+    "value": [1180, 3272, 5365, 7458, 9551],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・0・0・0f"
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-02",
+    "recording": "1321",
+    "kind": "timing",
+    "use": "record",
+    "value": [1209, 3301, 5394, 7487, 9580],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・0・0・0f"
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-03",
+    "recording": "1321",
+    "kind": "timing",
+    "use": "record",
+    "value": [1238, 3330, 5423, 7516, 9609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-04",
+    "recording": "1321",
+    "kind": "timing",
+    "use": "record",
+    "value": [1846, 3939, 6032, 8125, 10218],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-05",
+    "recording": "1321",
+    "kind": "interval",
+    "use": "record",
+    "value": [608, 609, 609, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-06",
+    "recording": "1321",
+    "kind": "timing",
+    "use": "record",
+    "value": [3266, 5359, 7452, 9545],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-07",
+    "recording": "1321",
+    "kind": "timing",
+    "use": "record",
+    "value": [3295, 5388, 7481, 9574],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-08",
+    "recording": "1321",
+    "kind": "timing",
+    "use": "record",
+    "value": [3324, 5417, 7510, 9603],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-09",
+    "recording": "1321",
+    "kind": "total",
+    "use": "record",
+    "value": 100440525,
+    "description": "デルタ・I-DOLL・サン・サクラ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11536。増分は 1811 個"
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-10",
+    "recording": "1321",
+    "kind": "count",
+    "use": "record",
+    "value": 264,
+    "unit": "トリガー",
+    "description": "デルタ・I-DOLL・サン・サクラ のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 1811 個。前の増分から 30f 未満の増分（1781 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 37f）から発の数を決めた（2 発になった組 25 個）"
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-11",
+    "recording": "1321",
+    "kind": "interval",
+    "use": "compare",
+    "value": [2092, 2093, 2093],
+    "unit": "f",
+    "description": "フルバーストの入り（III のタイマーの 00.00）どうしの間隔（動画のフレーム）の最初の 3 つ。2 回目からのチェーンはデルタ・I-DOLL・サン・サクラの CT（40 秒）が律速",
+    "method": {
+      "tool": "`1321-03` の差",
+      "note": "間にフルバーストの入りの止まりを含む。どの回も I の段の CT の明け（`1321-06`）の直後に I を使っている"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstStartIntervals",
+      "args": {
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-12",
+    "recording": "1321",
+    "kind": "hit",
+    "use": "compare",
+    "value": 358644,
+    "description": "デルタの1 回目のフルバーストの中（攻撃力▲あり）の 1 発（コア・会心なし・距離ボーナスなし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@8 の grid（D0=1@200;D=1@370;S0=3@200;S=3@370;U0=2@200;U=2@370;DF=1@600;DF0=1@960;SF=3@600;SF0=3@960;UF=2@600;UF0=2@960）",
+      "note": "動画の f1510 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      }
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-13",
+    "recording": "1321",
+    "kind": "hit",
+    "use": "compare",
+    "value": 517437,
+    "description": "サクラの1 回目のフルバーストの中（攻撃力▲あり）の 1 発（コア・会心なし・距離ボーナスなし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@8 の grid（D0=1@200;D=1@370;S0=3@200;S=3@370;U0=2@200;U=2@370;DF=1@600;DF0=1@960;SF=3@600;SF0=3@960;UF=2@600;UF0=2@960）",
+      "note": "動画の f1520 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      }
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-14",
+    "recording": "1321",
+    "kind": "hit",
+    "use": "compare",
+    "value": 208626,
+    "description": "デルタの1 回目の攻撃力▲が切れた後（▲なし）の 1 発（コア・会心なし・距離ボーナスなし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@8 の grid（D0=1@200;D=1@370;S0=3@200;S=3@370;U0=2@200;U=2@370;DF=1@600;DF0=1@960;SF=3@600;SF0=3@960;UF=2@600;UF0=2@960）",
+      "note": "動画の f1920 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      }
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-15",
+    "recording": "1321",
+    "kind": "hit",
+    "use": "compare",
+    "value": 334414,
+    "description": "サクラの1 回目の攻撃力▲が切れた後（▲なし）の 1 発（コア・会心なし・距離ボーナスなし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@8 の grid（D0=1@200;D=1@370;S0=3@200;S=3@370;U0=2@200;U=2@370;DF=1@600;DF0=1@960;SF=3@600;SF0=3@960;UF=2@600;UF0=2@960）",
+      "note": "動画の f1930 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      }
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-16",
+    "recording": "1321",
+    "kind": "hit",
+    "use": "compare",
+    "value": 358644,
+    "description": "デルタの2 回目のフルバーストの中（攻撃力▲あり）の 1 発（コア・会心なし・距離ボーナスなし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@8 の grid（D0=1@200;D=1@370;S0=3@200;S=3@370;U0=2@200;U=2@370;DF=1@600;DF0=1@960;SF=3@600;SF0=3@960;UF=2@600;UF0=2@960）",
+      "note": "動画の f3421 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      }
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-17",
+    "recording": "1321",
+    "kind": "hit",
+    "use": "compare",
+    "value": 517437,
+    "description": "サクラの2 回目のフルバーストの中（攻撃力▲あり）の 1 発（コア・会心なし・距離ボーナスなし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@8 の grid（D0=1@200;D=1@370;S0=3@200;S=3@370;U0=2@200;U=2@370;DF=1@600;DF0=1@960;SF=3@600;SF0=3@960;UF=2@600;UF0=2@960）",
+      "note": "動画の f3430 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      }
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-18",
+    "recording": "1321",
+    "kind": "hit",
+    "use": "compare",
+    "value": 358644,
+    "description": "デルタの5 回目のフルバーストの中（攻撃力▲あり）の 1 発（コア・会心なし・距離ボーナスなし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@8 の grid（D0=1@200;D=1@370;S0=3@200;S=3@370;U0=2@200;U=2@370;DF=1@600;DF0=1@960;SF=3@600;SF0=3@960;UF=2@600;UF0=2@960）",
+      "note": "動画の f10019 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 8900,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      }
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-19",
+    "recording": "1321",
+    "kind": "hit",
+    "use": "compare",
+    "value": 517437,
+    "description": "サクラの5 回目のフルバーストの中（攻撃力▲あり）の 1 発（コア・会心なし・距離ボーナスなし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@8 の grid（D0=1@200;D=1@370;S0=3@200;S=3@370;U0=2@200;U=2@370;DF=1@600;DF0=1@960;SF=3@600;SF0=3@960;UF=2@600;UF0=2@960）",
+      "note": "動画の f10029 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 8900,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      }
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-20",
+    "recording": "1321",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 50,
+    "spread": {
+      "kind": "range",
+      "low": 45,
+      "high": 55
+    },
+    "description": "サクラの 2 回目の発動の印（I の六角形の替わり目）から、味方全体の攻撃力▲の付き始めまでの動画のフレーム（デルタ・I-DOLL・サン・サクラの▲の無い最後の発と乗った最初の発で挟んだ幅の中央）",
+    "method": {
+      "tool": "recipe:buff-edge@8 の pair（D0,S0,U0>D,S,U）。印は recipe:burst-panel@4 の I → II の替わり目（1180・3272・5365・7458・9551）",
+      "note": "▲の無い最後の発 +44f・▲の乗った最初の発 +55f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "stat": "attack",
+        "from": 3,
+        "n": 1,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-21",
+    "recording": "1321",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 50,
+    "spread": {
+      "kind": "range",
+      "low": 48,
+      "high": 52
+    },
+    "description": "サクラの 3 回目の発動の印（I の六角形の替わり目）から、味方全体の攻撃力▲の付き始めまでの動画のフレーム（デルタ・I-DOLL・サン・サクラの▲の無い最後の発と乗った最初の発で挟んだ幅の中央）",
+    "method": {
+      "tool": "recipe:buff-edge@8 の pair（D0,S0,U0>D,S,U）。印は recipe:burst-panel@4 の I → II の替わり目（1180・3272・5365・7458・9551）",
+      "note": "▲の無い最後の発 +47f・▲の乗った最初の発 +52f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "stat": "attack",
+        "from": 3,
+        "n": 2,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-22",
+    "recording": "1321",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 49,
+    "spread": {
+      "kind": "range",
+      "low": 47,
+      "high": 51
+    },
+    "description": "サクラの 5 回目の発動の印（I の六角形の替わり目）から、味方全体の攻撃力▲の付き始めまでの動画のフレーム（デルタ・I-DOLL・サン・サクラの▲の無い最後の発と乗った最初の発で挟んだ幅の中央）",
+    "method": {
+      "tool": "recipe:buff-edge@8 の pair（D0,S0,U0>D,S,U）。印は recipe:burst-panel@4 の I → II の替わり目（1180・3272・5365・7458・9551）",
+      "note": "▲の無い最後の発 +46f・▲の乗った最初の発 +51f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "stat": "attack",
+        "from": 3,
+        "n": 4,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-23",
+    "recording": "1321",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 659.5,
+    "spread": {
+      "kind": "range",
+      "low": 659,
+      "high": 660
+    },
+    "description": "サクラの 1 回目の発動の印（I の六角形の替わり目）から、味方全体の攻撃力▲の切れ目までの動画のフレーム（デルタ・I-DOLL・サン・サクラの▲の乗った最後の発と無い最初の発で挟んだ幅の中央）",
+    "method": {
+      "tool": "recipe:buff-edge@8 の pair（D,S,U,DF,SF,UF>D0,S0,U0,DF0,SF0,UF0）。印は recipe:burst-panel@4 の I → II の替わり目（1180・3272・5365・7458・9551）",
+      "note": "▲の乗った最後の発 +658f・▲の無い最初の発 +660f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "stat": "attack",
+        "from": 3,
+        "n": 0,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-24",
+    "recording": "1321",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 661,
+    "spread": {
+      "kind": "range",
+      "low": 659,
+      "high": 663
+    },
+    "description": "サクラの 2 回目の発動の印（I の六角形の替わり目）から、味方全体の攻撃力▲の切れ目までの動画のフレーム（デルタ・I-DOLL・サン・サクラの▲の乗った最後の発と無い最初の発で挟んだ幅の中央）",
+    "method": {
+      "tool": "recipe:buff-edge@8 の pair（D,S,U,DF,SF,UF>D0,S0,U0,DF0,SF0,UF0）。印は recipe:burst-panel@4 の I → II の替わり目（1180・3272・5365・7458・9551）",
+      "note": "▲の乗った最後の発 +658f・▲の無い最初の発 +663f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "stat": "attack",
+        "from": 3,
+        "n": 1,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-25",
+    "recording": "1321",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 660.5,
+    "spread": {
+      "kind": "range",
+      "low": 658,
+      "high": 663
+    },
+    "description": "サクラの 3 回目の発動の印（I の六角形の替わり目）から、味方全体の攻撃力▲の切れ目までの動画のフレーム（デルタ・I-DOLL・サン・サクラの▲の乗った最後の発と無い最初の発で挟んだ幅の中央）",
+    "method": {
+      "tool": "recipe:buff-edge@8 の pair（D,S,U,DF,SF,UF>D0,S0,U0,DF0,SF0,UF0）。印は recipe:burst-panel@4 の I → II の替わり目（1180・3272・5365・7458・9551）",
+      "note": "▲の乗った最後の発 +657f・▲の無い最初の発 +663f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "stat": "attack",
+        "from": 3,
+        "n": 2,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 2.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-26",
+    "recording": "1321",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 659,
+    "spread": {
+      "kind": "range",
+      "low": 657,
+      "high": 661
+    },
+    "description": "サクラの 4 回目の発動の印（I の六角形の替わり目）から、味方全体の攻撃力▲の切れ目までの動画のフレーム（デルタ・I-DOLL・サン・サクラの▲の乗った最後の発と無い最初の発で挟んだ幅の中央）",
+    "method": {
+      "tool": "recipe:buff-edge@8 の pair（D,S,U,DF,SF,UF>D0,S0,U0,DF0,SF0,UF0）。印は recipe:burst-panel@4 の I → II の替わり目（1180・3272・5365・7458・9551）",
+      "note": "▲の乗った最後の発 +656f・▲の無い最初の発 +661f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "stat": "attack",
+        "from": 3,
+        "n": 3,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1321-27",
+    "recording": "1321",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 658,
+    "spread": {
+      "kind": "range",
+      "low": 656,
+      "high": 660
+    },
+    "description": "サクラの 5 回目の発動の印（I の六角形の替わり目）から、味方全体の攻撃力▲の切れ目までの動画のフレーム（デルタ・I-DOLL・サン・サクラの▲の乗った最後の発と無い最初の発で挟んだ幅の中央）",
+    "method": {
+      "tool": "recipe:buff-edge@8 の pair（D,S,U,DF,SF,UF>D0,S0,U0,DF0,SF0,UF0）。印は recipe:burst-panel@4 の I → II の替わり目（1180・3272・5365・7458・9551）",
+      "note": "▲の乗った最後の発 +655f・▲の無い最初の発 +660f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "stat": "attack",
+        "from": 3,
+        "n": 4,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0837",
+    "readAt": "2026-11-21"
+  }
+]

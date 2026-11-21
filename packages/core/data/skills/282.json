@@ -24,7 +24,10 @@
           "assumes": {
             "ja": "フルバーストの始まりのたびに、自分を含む味方全体の走っている CT の残りを説明文の値だけ縮める（即時。明けている枠には何もしない）",
             "en": "Each Full Burst start shortens the remaining running cooldown of all allies including self by the description value (instant; nothing for slots whose cooldown is already over)"
-          }
+          },
+          "claims": [
+            "C-1468"
+          ]
         }
       ],
       "notes": [
@@ -38,7 +41,9 @@
             "target": "allies",
             "trigger": "unknown"
           },
-          "claims": ["C-0443"]
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     },
@@ -53,9 +58,13 @@
           "ref": 4,
           "durationRef": 5,
           "assumes": {
-            "ja": "発動者基準（発動者のバフ前攻撃力 × 説明文の値）の固定加算で、自分にも付く。同じ ■ の「戦闘中 1 回発動」は前の受けるダメージ▼にだけ掛かり、攻撃力▲はバーストのたびに付く",
-            "en": "A flat addition based on the caster (the caster's pre-buff ATK × the description value), which also applies to self. The \"once per battle\" in the same block applies only to the preceding damage-taken decrease, and the ATK increase applies on every burst"
-          }
+            "ja": "発動者基準（発動者のバフ前攻撃力 × 説明文の値）の固定加算で、自分にも付く。同じ ■ の「戦闘中 1 回発動」は前の受けるダメージ▼にだけ掛かり、攻撃力▲はバーストのたびに付く。I の六角形の替わり目の 49f 後に付き、窓は遅れた始まりから数える（burst/landing.ts の遅れの表）",
+            "en": "A flat addition based on the caster (the caster's pre-buff ATK × the description value), which also applies to self. The \"once per battle\" in the same block applies only to the preceding damage-taken decrease, and the ATK increase applies on every burst. It starts 49 frames after the I hexagon changes, and the window counts from the delayed start (the delay table in burst/landing.ts)"
+          },
+          "claims": [
+            "C-1469",
+            "C-1470"
+          ]
         }
       ],
       "notes": [
@@ -74,7 +83,9 @@
             "target": "allies",
             "trigger": "burstUse"
           },
-          "claims": ["C-0443"]
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     }
