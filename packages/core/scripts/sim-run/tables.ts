@@ -7,9 +7,15 @@ import type { EnemyEvent } from '../../src/damage.ts';
 import { LANDING_BAND_LABEL } from '../../src/enemies.ts';
 import { firingParams } from '../../src/frame/firing.ts';
 import { simIntervalTotals, type SimResult } from '../../src/sim/engine.ts';
-import { compositionAllows, resolveSelfState, selfStateLookupsForTeam } from '../../src/skills/composition.ts';
+import {
+  compositionAllows,
+  compositionConditionsOf,
+  resolveSelfState,
+  selfStateLookupsForTeam,
+  type CompositionConditions,
+} from '../../src/skills/composition.ts';
 import { itemsOf } from '../../src/skills/holders.ts';
-import { SKILL_SLOTS } from '../../src/skills/types.ts';
+import { SKILL_SLOTS, type SkillEffect } from '../../src/skills/types.ts';
 import type { TeamInput, TeamResult, TeamSlotInput, TeamSlotResult } from '../../src/team.ts';
 import { framesToGameSeconds, gameSecondsToFrame } from '../../src/time.ts';
 import type { Element, TargetProfile } from '../../src/types.ts';
@@ -43,6 +49,28 @@ export function buildEffectsLine(effects: BuildEffects): string | undefined {
 
 export const COMPOSITION_TITLE = 'composition conditions (effects that do not apply are left out)';
 
+/** 編成の条件の表の、条件ごとの文（CompositionConditions の項目を全部持つ。並びは表の並び） */
+const COMPOSITION_CONDITION_TEXTS: {
+  [K in keyof CompositionConditions]: (condition: NonNullable<CompositionConditions[K]>, slot: TeamSlotInput) => string;
+} = {
+  burstStepMix: (mix) => `other ${mix.otherBurstStep} ${mix.present ? 'present' : 'absent'}`,
+  squad: (squad, slot) => `same squad (${slot.character.squad}) ${squad.present ? 'present' : 'absent'}`,
+  withCharacter: (w) => `character ${w.rid} ${w.present ? 'present' : 'absent'}`,
+  enemyElement: (element) => `enemy ${element}`,
+  row: (row) => `${row} row`,
+};
+
+/** 効果の編成の条件の文（持つ条件だけ） */
+function compositionConditionTexts(effect: SkillEffect, slot: TeamSlotInput): string[] {
+  const conditions = compositionConditionsOf(effect);
+  return (Object.keys(COMPOSITION_CONDITION_TEXTS) as (keyof CompositionConditions)[]).flatMap((key) => {
+    const condition = conditions[key];
+    if (condition === undefined) return [];
+    const text = COMPOSITION_CONDITION_TEXTS[key] as (c: typeof condition, s: TeamSlotInput) => string;
+    return [text(condition, slot)];
+  });
+}
+
 /**
  * 編成の条件（burstStepMix・squad・withCharacter・enemyElement・row）と、編成で決まる自分の状態の条件（selfState。
  * plan/design-skill-stage1.md 1.1 節）の付いた効果と、この編成で効くか（効かない効果は計算に入らない）
@@ -60,30 +88,13 @@ export function compositionRows(
   return slots.flatMap((slot, i) =>
     SKILL_SLOTS.flatMap((skill) =>
       (slot.skills?.definition?.skills[skill].effects ?? []).flatMap((e, effectIndex) => {
-        const mix = 'burstStepMix' in e ? e.burstStepMix : undefined;
-        const squad = 'squad' in e ? e.squad : undefined;
-        const withCharacter = 'withCharacter' in e ? e.withCharacter : undefined;
-        const elementCondition = 'enemyElement' in e ? e.enemyElement : undefined;
-        const row = 'row' in e ? e.row : undefined;
         const selfState = 'condition' in e ? e.condition?.selfState : undefined;
         const decided = selfState !== undefined && selfStates[i]!(selfState.state) !== undefined;
-        if (
-          mix === undefined &&
-          squad === undefined &&
-          withCharacter === undefined &&
-          elementCondition === undefined &&
-          row === undefined &&
-          !decided
-        )
-          return [];
         const conditions = [
-          mix && `other ${mix.otherBurstStep} ${mix.present ? 'present' : 'absent'}`,
-          squad && `same squad (${slot.character.squad}) ${squad.present ? 'present' : 'absent'}`,
-          withCharacter && `character ${withCharacter.rid} ${withCharacter.present ? 'present' : 'absent'}`,
-          elementCondition && `enemy ${elementCondition}`,
-          row && `${row} row`,
-          decided && selfState !== undefined && `self ${selfState.present ? 'in' : 'not in'} ${selfState.state}`,
-        ].filter(Boolean);
+          ...compositionConditionTexts(e, slot),
+          ...(decided ? [`self ${selfState.present ? 'in' : 'not in'} ${selfState.state}`] : []),
+        ];
+        if (conditions.length === 0) return [];
         return [
           {
             slot: `slot ${i + 1} ${slot.character.name.ja}`,
@@ -234,11 +245,14 @@ export function rankingRows(rankings: TeamResult['history']['rankings'], slots: 
 export const INSTANT_TITLE =
   'instant effects (cooldownReduction: frames actually cut, negative when lengthened by an increase, ammoRefill: rounds added, heal: always 0, burstGauge: ratio of the gauge max)';
 
-/** 即時効果（CT 短縮・弾丸チャージ・回復など）。同じフレーム・同じ種類・同じ枠は量を足してまとめる */
+/**
+ * 即時効果（CT 短縮・弾丸チャージ・回復など）。同じフレーム・同じ種類・同じ出どころの枠・同じ枠は量を足してまとめる（1 行の量は
+ * 1 つの出どころのもの。plan/design-sim-run-split.md 10 節）
+ */
 export function instantRows(instants: SimResult['instants'], slots: Slots) {
   const merged = new Map<string, { time: string; kind: string; from: string; to: string; amount: number }>();
   for (const x of instants) {
-    const key = `${x.frame}.${x.effect.kind}.${x.slotIndex}`;
+    const key = `${x.frame}.${x.effect.kind}.${x.sourceSlotIndex}.${x.slotIndex}`;
     const row = merged.get(key) ?? {
       time: `${framesToGameSeconds(x.frame).toFixed(2)}s`,
       kind: x.effect.kind,
@@ -356,7 +370,7 @@ export function segmentRows(slot: TeamSlotInput, c: TeamSlotResult) {
       g.trigger.perShot > 0 || g.trigger.fixedShare > 0
         ? `${fmt(g.trigger.perTrigger)} (${[g.trigger.normal, g.trigger.perShot, g.trigger.fixedShare]
             .filter((v, k) => k === 0 || v > 0)
-            .map(fmt)
+            .map((v) => fmt(v))
             .join('+')})`
         : fmt(g.trigger.perTrigger),
     triggers: g.triggers,

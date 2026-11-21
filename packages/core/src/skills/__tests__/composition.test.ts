@@ -3,7 +3,14 @@
 // ここに置く
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
-import { applyComposition, compositionAllows, countsAsBurstStep, fixedTargetsOf, squadAllows } from '../composition.ts';
+import {
+  applyComposition,
+  compositionAllows,
+  compositionConditionsOf,
+  countsAsBurstStep,
+  fixedTargetsOf,
+  squadAllows,
+} from '../composition.ts';
 import { parseSkillDefinition } from '../parse/definition.ts';
 
 const ram = makeCharacter({}, { squad: 'CE003', burstStep: 'Step1' });
@@ -21,6 +28,29 @@ function definitionWith(effect: Record<string, unknown>): unknown {
 }
 
 const cut = { kind: 'cooldownReduction', trigger: 'fullBurstEnd', target: 'self', ref: 4 };
+
+describe('編成の条件の取り出し（compositionConditionsOf）', () => {
+  it('returns every composition condition of the effect, undefined for the missing ones', () => {
+    const effectOf = (fields: Record<string, unknown>) =>
+      parseSkillDefinition(definitionWith({ kind: 'passive', target: 'self', stat: 'attack', ref: 1, ...fields }))
+        .skills.skill1.effects[0]!;
+    expect(compositionConditionsOf(effectOf({}))).toEqual({
+      burstStepMix: undefined,
+      squad: undefined,
+      withCharacter: undefined,
+      enemyElement: undefined,
+      row: undefined,
+    });
+    const all = {
+      burstStepMix: { otherBurstStep: 'Step2', present: true },
+      squad: { present: false },
+      withCharacter: { rid: 95, present: true },
+      enemyElement: 'Fire',
+      row: 'back',
+    };
+    expect(compositionConditionsOf(effectOf(all))).toEqual(all);
+  });
+});
 
 describe('同じ部隊の味方の条件（squad）', () => {
   const present = { present: true } as const;
