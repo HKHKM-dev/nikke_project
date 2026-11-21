@@ -20,9 +20,12 @@
           "maxStacksRef": 3,
           "durationRef": 4,
           "assumes": {
-            "ja": "通常攻撃の命中の期待値を戦闘の通算で数え（鬼の気の外でも数える）、{01} 回に届いた発で自分が鬼の気なら 1 スタック足す。付くたびに全部のスタックの維持を付け直す既定。鬼の気の中だけを数えるか・維持の数え方は録画で確かめていない（V-0844）",
-            "en": "Expected normal-attack hits are counted over the whole battle (also outside Demon's Breath), and on the shot that reaches {01} hits one stack is added if self is in Demon's Breath. Each application refreshes the duration of all stacks (the default). Whether only hits inside Demon's Breath count, and how the duration is counted, are not yet checked on recordings (V-0844)"
-          }
+            "ja": "通常攻撃の命中の期待値を戦闘の通算で数え（鬼の気の外でも数える。鬼の気が付くたびに数え直さない）、{01} 回に届いた発で自分が鬼の気なら 1 スタック足す。付くたびに全部のスタックの維持を付け直し、最後のスタックから維持の秒数で全部が一度に外れる",
+            "en": "Expected normal-attack hits are counted over the whole battle (also outside Demon's Breath; the count does not restart when Demon's Breath is applied), and on the shot that reaches {01} hits one stack is added if self is in Demon's Breath. Each application refreshes the duration of all stacks, and all stacks drop at once when the duration has passed since the last stack"
+          },
+          "claims": [
+            "C-1490"
+          ]
         }
       ],
       "notes": [
@@ -72,10 +75,9 @@
               "ref": 1
             }
           ],
-          "assumes": {
-            "ja": "鬼の気の付き始めと長さは、ほかのバーストの効果と同じ（バーストの使用から 10 秒）とみなした。録画で確かめていない（V-0844）",
-            "en": "Demon's Breath is assumed to start and last like other Burst effects (10 s from the Burst use); not yet checked on recordings (V-0844)"
-          }
+          "claims": [
+            "C-1489"
+          ]
         },
         {
           "kind": "timed",
@@ -85,7 +87,10 @@
           "stat": "attack",
           "scaling": "casterAttack",
           "ref": 3,
-          "durationRef": 4
+          "durationRef": 4,
+          "claims": [
+            "C-1487"
+          ]
         },
         {
           "kind": "timed",
@@ -97,9 +102,12 @@
           "ref": 5,
           "durationRef": 6,
           "assumes": {
-            "ja": "最大装弾数だけを上げ、残弾は足さない（次のリロードで上げた最大装弾数まで込める。切れたら残弾を削る。C-0017 の形）。RL の味方の射撃の列にこの形で効くかは録画で確かめていない（V-0844）",
-            "en": "Only the max ammo is raised and no rounds are added (the next reload fills up to the raised max; when it ends, the remaining ammo is clipped; the form of C-0017). Whether it acts on an RL ally's shot sequence in this form is not yet checked on recordings (V-0844)"
-          }
+            "ja": "最大装弾数だけを上げ、付いた時に残弾は足さない（窓の中のリロードで上げた最大装弾数まで込め、切れた時に残弾が多ければ削る。C-0017 の形）。窓の付き始めと長さは、遅れの表に行の無いキャラの既定（本当の発動から 10 秒）。実測の窓の終わり（削りの表示）はモデルより 3〜4f 遅く、原因は確かめていない（V-0844）",
+            "en": "Only the max ammo is raised and no rounds are added when it is applied (a reload inside the window fills up to the raised max, and when it ends the remaining ammo is clipped if above the max; the form of C-0017). The window start and length are the default for characters without a row in the delay table (10 s from the true activation). The measured window end (the clipping on the display) is 3–4 f later than the model; the cause is not checked (V-0844)"
+          },
+          "claims": [
+            "C-1488"
+          ]
         }
       ],
       "notes": []

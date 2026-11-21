@@ -12,5 +12,19 @@
     "places": ["data/skills/820.json の skill1 の effects[0]"]
   },
   "decidedOn": [],
-  "parameterFree": "説明文の値（S1 の値 01〜04）と、スタックの維持の既定（付くたびに全部を付け直す。skills/stacks.ts の STACK_REFRESH）"
+  "parameterFree": "説明文の値（S1 の値 01〜04）と、スタックの維持の既定（付くたびに全部を付け直す。skills/stacks.ts の STACK_REFRESH）",
+  "minimal": [
+    {
+      "observations": ["1332-05", "1332-06", "1332-07", "1333-05", "1333-06", "1333-07"],
+      "element": "レム burst.effects[0]",
+      "reason": "鬼の気のクリティカル確率▲は会心の割合だけを変える。比べたのは会心しない 1 ヒットの値で、会心した 1 ヒットは格子の値（× 1.25）で分けて除いた",
+      "decided": "2026-11-21"
+    },
+    {
+      "observations": ["1332-06", "1332-15", "1332-16", "1332-17", "1333-06", "1333-15", "1333-16", "1333-17"],
+      "element": "レム burst.effects[2]",
+      "reason": "最大装弾数▲は RL の味方（フラワー）だけに付き、MG のレムの発の列・命中の数・1 ヒットの値を変えない",
+      "decided": "2026-11-21"
+    }
+  ]
 }
