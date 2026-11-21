@@ -30,8 +30,8 @@
           "ref": 1,
           "durationRef": 2,
           "assumes": {
-            "ja": "「最後の弾丸」はマガジンの最後の 1 発で、いつも命中する（撃ち始めの外れは撃ち始めの 1〜11 発目に集まり、最後の発には無いとみる。C-0780）。付き直すと 5 秒から数え直す",
-            "en": "\"The last bullet\" is the last round of the magazine and always hits (MG misses cluster at the first 1-11 shots of a fire start, not the last; C-0780). Re-applying restarts the 5 s"
+            "ja": "「最後の弾丸」はマガジンの最後の 1 発で、いつも命中する（MG の外れは撃ち始めに集まり、最後の発には無いとみる。C-0780・C-1454）。付き直すと 5 秒から数え直す",
+            "en": "\"The last bullet\" is the last round of the magazine and always hits (MG misses cluster at the start of firing, not the last round; C-0780, C-1454). Re-applying restarts the 5 s"
           },
           "claims": [
             "C-1453"
@@ -43,8 +43,8 @@
       "effects": [],
       "notes": [
         {
-          "ja": "自分の命中率▲（15 秒）は定義していない。MG のアリアでは、窓の中でもリロードの明けの撃ち始めのコアの外れと外れた発が残り、命中率▲をコア命中率（C-0036 の式）と弾丸命中率（H2）に効かせるモデルの形（窓の中はほぼ全部の発がコアに当たる）と合わない。どれだけ減らすかは決まっていない",
-          "en": "Hit Rate up on self (15 s) is not defined. On Aria (MG), core misses and missed shots at the start of firing after a reload remain inside the window, which does not match the model form applying Hit Rate up to core hit rate (C-0036) and bullet hit rate (H2) (nearly every shot on the core inside the window). How much it reduces them is not determined",
+          "ja": "自分の命中率▲（15 秒）は定義していない。MG のアリアでは、窓の中でもリロードの明けの撃ち始めのコアの外れと外れた発が残り、命中率▲をコア命中率（C-0036 の式）と弾丸命中率（H2。C-0192）に効かせるモデルの形（窓の中はほぼ全部の発がコアに当たる）と合わない。どれだけ減らすかは決まっていない",
+          "en": "Hit Rate up on self (15 s) is not defined. On Aria (MG), core misses and missed shots at the start of firing after a reload remain inside the window, which does not match the model form applying Hit Rate up to core hit rate (C-0036) and bullet hit rate (H2; C-0192) (nearly every shot on the core inside the window). How much it reduces them is not determined",
           "kind": "unimplemented",
           "effect": {
             "kind": "timed",
