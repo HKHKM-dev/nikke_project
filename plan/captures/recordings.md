@@ -1299,6 +1299,8 @@
 | 1329 | `20261121-1329_cocoa-mari.mp4` | ココア（311、SR・灼熱・SSR） + ◎マリ（832、SR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | BigArms（灼熱タブ・3 分モード・スペック固定 ON。ココア（I）+ マリ（II・操作）・AUTO 射撃 ON・オートバースト ON）。V-0842 の撮影 B |
 | 1330 | `20261121-1330_sg_maiden_fire.mp4` | ◎メイデン（181、SG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0841。メイデン単騎・操作（撮影 A） |
 | 1331 | `20261121-1331_rl+sr+sg_i-doll-flower+delta+maiden_fire.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎メイデン（181、SG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0841。I-DOLL・フラワー + デルタ + メイデン（操作）（撮影 B） |
+| 1332 | `20261121-1332_idoll-flower-rem.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ◎レム（820、MG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1333 | `20261121-1333_idoll-flower-rem.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ◎レム（820、MG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 

@@ -36111,6 +36111,150 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "1332-03",
+      "element": "レム burst.effects[2]",
+      "key": "054cc2e2fe89972f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1332-04",
+      "element": "レム burst.effects[2]",
+      "key": "aec581f3c885fc2c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1332-05",
+      "element": "レム burst.effects[2]",
+      "key": "c415e93c88c64459",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1332-06",
+      "element": "レム burst.effects[2]",
+      "key": "3cd46ff01c17e9b5",
+      "effective": true,
+      "minus": 0,
+      "plus": 1550.1309999999976
+    },
+    {
+      "observation": "1332-07",
+      "element": "レム burst.effects[2]",
+      "key": "d2eb5f113aebe46c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1332-08",
+      "element": "レム burst.effects[2]",
+      "key": "b58c33ded7038a0f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1332-09",
+      "element": "レム burst.effects[2]",
+      "key": "66b05d3cd96caae5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1332-10",
+      "element": "レム burst.effects[2]",
+      "key": "ecc681892803ca1e",
+      "effective": true,
+      "minus": -5,
+      "plus": 0
+    },
+    {
+      "observation": "1332-11",
+      "element": "レム burst.effects[2]",
+      "key": "b525cb3447307c13",
+      "effective": true,
+      "minus": 0,
+      "plus": 5
+    },
+    {
+      "observation": "1333-03",
+      "element": "レム burst.effects[2]",
+      "key": "ddfd875b6ab0f6a6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1333-04",
+      "element": "レム burst.effects[2]",
+      "key": "9bc53f3622f0496d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1333-05",
+      "element": "レム burst.effects[2]",
+      "key": "5f75f7494912ae70",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1333-06",
+      "element": "レム burst.effects[2]",
+      "key": "52d853cd8f06fbb4",
+      "effective": true,
+      "minus": 0,
+      "plus": 1550.1309999999976
+    },
+    {
+      "observation": "1333-07",
+      "element": "レム burst.effects[2]",
+      "key": "79f45058718a4dcd",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1333-08",
+      "element": "レム burst.effects[2]",
+      "key": "9e6d742b4c2a9d5e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1333-09",
+      "element": "レム burst.effects[2]",
+      "key": "2251f875c9faf0ac",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1333-10",
+      "element": "レム burst.effects[2]",
+      "key": "f07550d48040a1e7",
+      "effective": true,
+      "minus": -5,
+      "plus": 0
+    },
+    {
+      "observation": "1333-11",
+      "element": "レム burst.effects[2]",
+      "key": "1dee9e7d675941d2",
+      "effective": true,
+      "minus": 0,
+      "plus": 5
     }
   ]
 }
