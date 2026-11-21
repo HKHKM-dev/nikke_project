@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 141・効果 1034（根拠あり 1012）・notes 348（根拠あり 143）
+件数: キャラ 142・効果 1041（根拠あり 1019）・notes 348（根拠あり 143）
 
 notes の種類: 未対応 44・前提の外 106・計算に無関係 69・補足 42・間接 87
 
-スロット: supported 382・partial 31・unsupported 9・noEffect 52
+スロット: supported 385・partial 31・unsupported 9・noEffect 52
 
 ## 10 ラピ
 
@@ -2017,6 +2017,19 @@ notes の種類: 未対応 44・前提の外 106・計算に無関係 69・補�
   - effects[0] state・burstUse・performance（chargeDamage）: C-1127（確定）
   - effects[1] heal・burstUse: C-1135（仮説）
   - notes[0] 補足: パフォーマンスの持続回復（1 秒間隔・解除不可）は、付いた時に 1 回だけ「回復効果が適用された時」を起こす（C-0578 と同じ読み）。アンコールの延長は回復の出来事を起こさない。持続回復とチャージダメージ▲の維持はどちらも 25 秒なので、付与の維持は値 06 で持つ。回復量はダメージに関係しない: C-1135（仮説）
+
+## 810 2B
+
+- **skill1**: supported
+  - effects[0] timed・burstUse・maxHp: C-1374（確定）
+  - effects[1] timed・burstUse・maxHp: C-1374（確定）
+  - effects[2] timed・burstUse・maxHp: C-1374（確定）
+- **skill2**: supported
+  - effects[0] damage・normalShot・skill: C-1377（確定）
+  - effects[1] timed・battleStart・attack（読む: HP）: C-1374（確定）
+- **burst**: supported
+  - effects[0] burstDamage・distributed: C-1375（確定）
+  - effects[1] damage・burstUse・additional: C-1376（確定）
 
 ## 811 A2
 
