@@ -503,6 +503,13 @@ export const NAMED_STATES = {
   sleepy: { name: { ja: '眠い', en: 'Sleepy' }, holder: 'enemy' },
   /** 起きた（プリムの宝物版 S1。通常攻撃を防御力無視ダメージに。S2・バーストの防御力無視ダメージ▲の条件） */
   wakeUp: { name: { ja: '起きた', en: 'Wake Up' }, holder: 'ally' },
+  /**
+   * おばけの仮装（ベロータ：パンプキンウィッチの S1。フルバーストタイムの始まりに自分に 10 秒。単一攻撃の対象からの除外と被弾での解除は
+   * 前提の外なので中身なし。S2 の「自分がおばけの仮装状態なら」が見る）
+   */
+  ghostCostume: { name: { ja: 'おばけの仮装', en: 'Ghost Costume' }, holder: 'ally' },
+  /** おばけのイタズラ（ベロータ：パンプキンウィッチの S2。敵の受けるダメージ▲・10 秒） */
+  ghostlyPrank: { name: { ja: 'おばけのイタズラ', en: 'Ghostly Prank' }, holder: 'enemy' },
   /** 予告状（ファントムの S1。敵の防御力▼・5 秒。付いていない時の命中で付き、S2 の追加ダメージの後に解除される） */
   callingCard: { name: { ja: '予告状', en: 'Calling Card' }, holder: 'enemy' },
   /** 怪盗の短剣（ファントムの S1。命中率▲・3 スタック・5 秒。フルスタックで S2 が発火し、スタックを外す） */

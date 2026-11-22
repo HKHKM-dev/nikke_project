@@ -1,0 +1,416 @@
+[
+  {
+    "id": "1379-01",
+    "recording": "1379",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1326063,
+    "unit": "ダメージ",
+    "description": "右隣のレイヴンの、フルバーストの中（S1・バーストの右隣への攻撃力▲、クルミのバーストの受けるダメージ▲、おばけのイタズラ）の通常攻撃のコア・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子に当てた（recipe:buff-edge@9 の --opt grid）",
+      "note": "9 回（f3952・f4190・f6250・f6369・f6488・f6607 ほか）。どれも 1,326,063"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "fullBurst": 1,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0859",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1379-02",
+    "recording": "1379",
+    "kind": "hit",
+    "use": "compare",
+    "value": 20831,
+    "unit": "ダメージ",
+    "description": "左隣のクルミの、フルバーストの中（S1・バーストの右隣への攻撃力▲、クルミのバーストの受けるダメージ▲、おばけのイタズラ）の通常攻撃の胴体・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子に当てた（recipe:buff-edge@9 の --opt grid）",
+      "note": "155 回（f3846・f3851・f3860・f3870・f3885・f3890 ほか）。どれも 20,831"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "fullBurst": 1,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0859",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1379-03",
+    "recording": "1379",
+    "kind": "hit",
+    "use": "compare",
+    "value": 541104,
+    "unit": "ダメージ",
+    "description": "ベロータ：パンプキンウィッチの、フルバーストの中（S1・バーストの右隣への攻撃力▲、クルミのバーストの受けるダメージ▲、おばけのイタズラ）の通常攻撃のコア・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子に当てた（recipe:buff-edge@9 の --opt grid）",
+      "note": "6 回（f1643・f4119・f6304・f6667・f9029・f11225）。どれも 541,104"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "fullBurst": 1,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0859",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1379-04",
+    "recording": "1379",
+    "kind": "hit",
+    "use": "compare",
+    "value": 405948,
+    "unit": "ダメージ",
+    "description": "右隣のレイヴンの、フルバーストとクルミの▲の後の、おばけのイタズラだけが残る間の通常攻撃のコア・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子に当てた（recipe:buff-edge@9 の --opt grid）",
+      "note": "13 回（f2035・f2273・f2392・f4438・f4558・f4676 ほか）。どれも 405,948"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 800,
+        "fullBurst": 1,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0859",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1379-05",
+    "recording": "1379",
+    "kind": "hit",
+    "use": "compare",
+    "value": 11937,
+    "unit": "ダメージ",
+    "description": "左隣のクルミの、フルバーストとクルミの▲の後の、おばけのイタズラだけが残る間の通常攻撃の胴体・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子に当てた（recipe:buff-edge@9 の --opt grid）",
+      "note": "112 回（f4474・f4479・f4643・f4648・f4677・f4711 ほか）。どれも 11,937"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 800,
+        "fullBurst": 1,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0859",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1379-06",
+    "recording": "1379",
+    "kind": "hit",
+    "use": "compare",
+    "value": 372101,
+    "unit": "ダメージ",
+    "description": "ベロータ：パンプキンウィッチの、フルバーストとクルミの▲の後の、おばけのイタズラだけが残る間の通常攻撃のコア・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子に当てた（recipe:buff-edge@9 の --opt grid）",
+      "note": "13 回（f2336・f4367・f4449・f4531・f4730・f4811 ほか）。どれも 372,101"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 800,
+        "fullBurst": 1,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0859",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1379-07",
+    "recording": "1379",
+    "kind": "hit",
+    "use": "compare",
+    "value": 367175,
+    "unit": "ダメージ",
+    "description": "右隣のレイヴンの、最初のバーストの前の通常攻撃のコア・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子に当てた（recipe:buff-edge@9 の --opt grid）",
+      "note": "3 回（f930・f1168・f1287）。どれも 367,175"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 400,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0859",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1379-08",
+    "recording": "1379",
+    "kind": "hit",
+    "use": "compare",
+    "value": 8410854,
+    "unit": "ダメージ",
+    "description": "右隣のレイヴン（S1 の持続ダメージ）の、フルバーストの中（S1・バーストの右隣への攻撃力▲、クルミのバーストの受けるダメージ▲、おばけのイタズラ）の持続ダメージの 1 tick（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子に当てた（recipe:buff-edge@9 の --opt grid）",
+      "note": "25 回（f3863・f3922・f3981・f4039・f4098・f4157 ほか）。どれも 8,410,854"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 300,
+        "fullBurst": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0859",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1379-09",
+    "recording": "1379",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1087802,
+    "unit": "ダメージ",
+    "description": "右隣のレイヴン（S1 の持続ダメージ）の、フルバーストとクルミの▲の後の、おばけのイタズラだけが残る間（S2 の持続ダメージ▲あり）の持続ダメージの 1 tick（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子に当てた（recipe:buff-edge@9 の --opt grid）",
+      "note": "17 回（f2191・f2308・f2485・f4451・f4510・f4569 ほか）。どれも 1,087,802"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 800,
+        "fullBurst": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0859",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1379-10",
+    "recording": "1379",
+    "kind": "hit",
+    "use": "compare",
+    "value": 45686,
+    "unit": "ダメージ",
+    "description": "左隣のクルミ（S1 のハッキング）の、フルバーストとクルミの▲の後の、おばけのイタズラだけが残る間の持続ダメージの 1 tick（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子に当てた（recipe:buff-edge@9 の --opt grid）",
+      "note": "21 回（f1990・f2049・f2107・f2166・f2225・f2343 ほか）。どれも 45,686"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "frame": 800,
+        "fullBurst": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0859",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1379-11",
+    "recording": "1379",
+    "kind": "timing",
+    "use": "record",
+    "value": [583, 588],
+    "unit": "f",
+    "description": "おばけのイタズラの切れ目の、仮装中のベロータ：パンプキンウィッチの最後の命中からのフレーム（2 回目のフルバースト。最後のイタズラの乗った増分〜最初の乗らない増分）",
+    "method": {
+      "tool": "recipe:buff-edge@9 の --opt grid（格子 Kpr・Bpr・Rpr = イタズラだけ、K0・Kk = なし）",
+      "note": "仮装中の最後の命中 f4285（541,104。フルバーストの 00.00 f3753 の 532f 後）。イタズラの乗った最後の増分 f4868（クルミ 11,937）、乗らない最初の増分 f4873（クルミ 14,036）。3 回目は 565〜613f、4 回目は 567〜594f（どちらも 10 秒 ≈ 588 ティックを含む）。1 回目は 623〜673f で、00.00 の 598f 後の命中（f1972 の 558,151。ほかのヒットと重なり格子に合わない）が仮装の終わりの前で付け直したとみると 540〜590f"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0859",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1379-12",
+    "recording": "1379",
+    "kind": "timing",
+    "use": "record",
+    "value": [0, 4],
+    "unit": "f",
+    "description": "おばけのイタズラの付き始めの、フルバーストの中のベロータ：パンプキンウィッチの最初の命中からのフレーム（2 回目のフルバースト）",
+    "method": {
+      "tool": "recipe:buff-edge@9 の --opt grid",
+      "note": "最初の命中 f3837（596,014 = コア・会心・フルバースト・クルミの▲、イタズラなし）。その前のクルミの f3831 は 19,121（イタズラなし）、後の f3841 は 41,662（イタズラあり）。命中した発自身には乗らない。4 回目も最初の命中の後（f10939 → f10948）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0859",
+    "readAt": "2026-11-22"
+  }
+]

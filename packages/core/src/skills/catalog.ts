@@ -444,6 +444,7 @@ const CONDITIONS: Rules = [
 
 const TARGETS: Rules = [
   [/自分と自分の両隣|両隣/, 'ally:neighbors'],
+  [/右隣/, 'ally:rightNeighbor'],
   [/直前にバーストスキルを使用した/, 'ally:burstUsers'],
   [/最終攻撃力が最も高い味方|攻撃力が最も高い味方/, 'ally:topAttack'],
   // HP の割合の順（lowestHpRatio）と値の順を分ける（plan/design-skill-stage20.md 6 節の論点 5）

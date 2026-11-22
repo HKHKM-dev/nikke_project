@@ -1,5 +1,6 @@
 // ルージュ（272）の語彙（plan/design-rouge.md 2 節）: 対象「両隣の味方」（targetAdjacent・includeSelf）と、編成の条件「後列に
-// 配置されている時」（row）の読み込みと、編成の段（skills/composition.ts）で決まる枠
+// 配置されている時」（row）の読み込みと、編成の段（skills/composition.ts）で決まる枠。右隣の味方 1 機（targetAdjacent: "right"）は
+// plan/design-belorta-pw.md 2.1 節
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { compositionAllows, fixedTargetsOf } from '../composition.ts';
@@ -59,7 +60,7 @@ describe('「両隣の味方」（targetAdjacent）', () => {
 
   it('is only allowed as true with target allies, on timed and state grants, without other slot filters', () => {
     expect(() => parseSkillDefinition(definitionWith({ ...grant, targetAdjacent: false }))).toThrow(
-      /targetAdjacent: must be true/,
+      /targetAdjacent: must be true or "right"/,
     );
     expect(() => parseSkillDefinition(definitionWith({ ...timed, target: 'self' }))).toThrow(
       /targetAdjacent: only allowed with target "allies"/,
@@ -83,6 +84,34 @@ describe('「両隣の味方」（targetAdjacent）', () => {
       parseSkillDefinition(definitionWith({ ...timed, targetAdjacent: undefined, includeSelf: true })),
     ).toThrow(/includeSelf: only allowed with targetState or targetAdjacent/);
     expect(effectOf({ ...grant, includeSelf: true })).toMatchObject({ targetAdjacent: true, includeSelf: true });
+  });
+});
+
+describe('「自分の右隣の味方 1 機」（targetAdjacent: "right"。plan/design-belorta-pw.md 2.1 節）', () => {
+  const five = [makeCharacter(), makeCharacter(), makeCharacter(), makeCharacter(), makeCharacter()];
+  const right = { ...timed, targetAdjacent: 'right' };
+
+  it('targets only the next slot', () => {
+    expect(fixedTargetsOf(effectOf(right), five, 0)).toEqual([1]);
+    expect(fixedTargetsOf(effectOf(right), five, 2)).toEqual([3]);
+    expect(fixedTargetsOf(effectOf({ ...grant, targetAdjacent: 'right' }), five, 3)).toEqual([4]);
+  });
+
+  it('targets nobody in the last slot or next to an empty slot', () => {
+    expect(fixedTargetsOf(effectOf(right), five, 4)).toEqual([]);
+    const gap = [makeCharacter(), null, makeCharacter()];
+    // 空枠を飛ばして次の味方を探さない
+    expect(fixedTargetsOf(effectOf(right), gap, 0)).toEqual([]);
+    expect(fixedTargetsOf(effectOf(right), gap, 2)).toEqual([]);
+  });
+
+  it('does not go with includeSelf', () => {
+    expect(() => parseSkillDefinition(definitionWith({ ...right, includeSelf: true }))).toThrow(
+      /includeSelf: cannot be combined with targetAdjacent "right"/,
+    );
+    expect(() => parseSkillDefinition(definitionWith({ ...timed, targetAdjacent: 'left' }))).toThrow(
+      /targetAdjacent: must be true or "right"/,
+    );
   });
 });
 

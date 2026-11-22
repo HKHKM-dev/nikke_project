@@ -18,6 +18,7 @@ import {
   NIKKE_CLASSES,
   TARGET_SQUADS,
   type TargetCountFields,
+  type TargetAdjacent,
   type TargetSquad,
 } from '../types.ts';
 import { fail, type Json, oneOf, parseNamedStateId, parsePositiveInt, parseRef } from './common.ts';
@@ -44,7 +45,7 @@ export function parseTargetCharacter(v: Record<string, Json>, target: BuffTarget
 export type PersonaTargetFields = {
   targetState?: NamedStateId;
   includeSelf?: true;
-  targetAdjacent?: true;
+  targetAdjacent?: TargetAdjacent;
   targetBurstStep?: BasicBurstStep;
 };
 
@@ -59,20 +60,22 @@ export function parsePersonaTargetFields(
 ): PersonaTargetFields {
   const out: PersonaTargetFields = {};
   if (v.targetState !== undefined) out.targetState = parseNamedStateId(v.targetState, `${path}.targetState`, 'ally');
-  // 「両隣の味方」（plan/design-rouge.md 2.1 節）
+  // 「両隣の味方」（plan/design-rouge.md 2.1 節）・「右隣の味方 1 機」（plan/design-belorta-pw.md 2.1 節）
   if (v.targetAdjacent !== undefined) {
-    if (v.targetAdjacent !== true) fail(`${path}.targetAdjacent`, 'must be true');
+    if (v.targetAdjacent !== true && v.targetAdjacent !== 'right')
+      fail(`${path}.targetAdjacent`, 'must be true or "right"');
     if (target !== 'allies') fail(`${path}.targetAdjacent`, `only allowed with target "allies", got "${target}"`);
     for (const key of ['targetState', 'targetBurstStep', 'targetSquad', 'targetCharacter', 'excludeSelf'] as const) {
       if (v[key] !== undefined) fail(`${path}.targetAdjacent`, `cannot be combined with ${key}`);
     }
-    out.targetAdjacent = true;
+    out.targetAdjacent = v.targetAdjacent;
   }
   // 「自分と〈状態〉の味方」（plan/design-new-chars-1029.md 5.1 節）・「自分と両隣」
   if (v.includeSelf !== undefined) {
     if (v.includeSelf !== true) fail(`${path}.includeSelf`, 'must be true');
     if (out.targetState === undefined && out.targetAdjacent === undefined)
       fail(`${path}.includeSelf`, 'only allowed with targetState or targetAdjacent');
+    if (out.targetAdjacent === 'right') fail(`${path}.includeSelf`, 'cannot be combined with targetAdjacent "right"');
     out.includeSelf = true;
   }
   const step = parseTargetBurstStep(v, target, path);

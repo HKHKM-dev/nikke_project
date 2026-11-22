@@ -8,7 +8,7 @@
 //     先頭 targetCount 枠に掛ける（plan/design-skill-stage8.md 1.1 節）。
 import type { Element, NikkeClass, WeaponType } from '../types.ts';
 import type { NamedStateId } from './states.ts';
-import type { BasicBurstStep, BuffTarget, ExcludeSelf, TargetDefense, TargetSquad } from './types.ts';
+import type { BasicBurstStep, BuffTarget, ExcludeSelf, TargetAdjacent, TargetDefense, TargetSquad } from './types.ts';
 
 /**
  * 発火の文脈。
@@ -66,8 +66,8 @@ export type TargetFields = {
    * 自分を足す
    */
   includeSelf?: true;
-  /** 「両隣の味方」（plan/design-rouge.md 2.1 節）。枠は最上位の skills/composition.ts が fixedTargets に書く */
-  targetAdjacent?: true;
+  /** 「両隣の味方」（plan/design-rouge.md 2.1 節）・「右隣の味方 1 機」。枠は最上位の skills/composition.ts が fixedTargets に書く */
+  targetAdjacent?: TargetAdjacent;
   /** 「基本バースト段階が N の」 */
   targetBurstStep?: BasicBurstStep;
   /** 「部隊の一番左側にいる〈絞り込み〉の味方 1 機」（plan/design-trina.md 2.2 節）。枠は skills/composition.ts が fixedTargets に書く */
@@ -202,16 +202,17 @@ export function isEffectTarget(
 
 /**
  * 枠 selfIndex の「両隣」の枠（左右の枠のうち空でないもの。枠の若い順）。withSelf なら自分の枠も入れる。ゲーム内の用語のツールチップの
- * 「両隣」（編成の枠の左右）の読み（plan/design-rouge.md 2.1 節・plan/design-adjacent-allies.md 2.1 節）
+ * 「両隣」（編成の枠の左右）の読み（plan/design-rouge.md 2.1 節・plan/design-adjacent-allies.md 2.1 節）。side が 'right' なら
+ * 右隣（自分の次の枠）だけ（枠の番号の若い方が左。plan/design-belorta-pw.md 2.1 節）
  */
 export function adjacentSlotsOf(
   characters: readonly (unknown | null)[],
   selfIndex: number,
   withSelf: boolean,
+  side: TargetAdjacent = true,
 ): number[] {
-  return [selfIndex - 1, ...(withSelf ? [selfIndex] : []), selfIndex + 1].filter(
-    (i) => i >= 0 && i < characters.length && characters[i] !== null && characters[i] !== undefined,
-  );
+  const sides = side === 'right' ? [selfIndex + 1] : [selfIndex - 1, ...(withSelf ? [selfIndex] : []), selfIndex + 1];
+  return sides.filter((i) => i >= 0 && i < characters.length && characters[i] !== null && characters[i] !== undefined);
 }
 
 /** 文脈しだいで掛かりうるか（burstUsers・topAttack は武器種・属性の条件だけで見る）。1 パス目で「窓を持ちうる枠」を決めるのに使う */

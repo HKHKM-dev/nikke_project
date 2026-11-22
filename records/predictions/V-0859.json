@@ -1,0 +1,509 @@
+{
+  "verification": "V-0859",
+  "note": "撮影 A（クルミ（I）+ ベロータ：パンプキンウィッチ（II）+ レイヴン（III・操作））と撮影 B（クルミ（I）+ レイヴン（III）+ ベロータ：パンプキンウィッチ（II・操作。右端））の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オートバースト ON。frame は 2 回目（fullBurst: 1）のフルバーストの窓の始まりからのモデルのフレーム。300 はフルバーストの中（S1・バーストの攻撃力▲・クルミのバーストの受けるダメージ▲・おばけのイタズラ）、800 はフルバーストとクルミの▲の後でおばけのイタズラだけが残る所。対照の A-raven-hit-base だけは戦闘の始めからの 400（最初のバーストの前）",
+  "team": [
+    {
+      "rid": 862
+    },
+    {
+      "rid": 63
+    },
+    {
+      "rid": 851,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（右隣 = 編成の枠の順で自分の次の枠。右端なら誰にも付かない）"
+    },
+    {
+      "id": "H-both",
+      "note": "右隣の 4 つの効果が両隣（左右の枠）に付く",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 63,
+            "skill": "skill1",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "allies",
+              "targetAdjacent": true,
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 4,
+              "durationRef": 5
+            }
+          },
+          {
+            "rid": 63,
+            "skill": "skill2",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "target": "allies",
+              "targetAdjacent": true,
+              "stat": "sustainedDamage",
+              "ref": 3,
+              "durationRef": 4
+            }
+          },
+          {
+            "rid": 63,
+            "skill": "burst",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "targetAdjacent": true,
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          },
+          {
+            "rid": 63,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "targetAdjacent": true,
+              "stat": "sustainedDamage",
+              "ref": 3,
+              "durationRef": 4
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-noPrank",
+      "note": "S2 のおばけのイタズラ（敵の受けるダメージ▲）が付かない（対照）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 63,
+            "skill": "skill2",
+            "index": 0
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-raven-hit-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 862
+        },
+        {
+          "rid": 63
+        },
+        {
+          "rid": 851,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "fullBurst": 1,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "右隣のレイヴン。フルバーストの中"
+    },
+    {
+      "id": "A-raven-hit-prank",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 862
+        },
+        {
+          "rid": 63
+        },
+        {
+          "rid": 851,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "frame": 800,
+        "fullBurst": 1,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "右隣のレイヴン。おばけのイタズラだけ"
+    },
+    {
+      "id": "A-raven-hit-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 862
+        },
+        {
+          "rid": 63
+        },
+        {
+          "rid": 851,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "frame": 400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "右隣のレイヴン。最初のバーストの前（戦闘の始めからのフレーム。対照）"
+    },
+    {
+      "id": "A-kurumi-hit-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 862
+        },
+        {
+          "rid": 63
+        },
+        {
+          "rid": 851,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "fullBurst": 1,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "左隣のクルミ。フルバーストの中"
+    },
+    {
+      "id": "A-kurumi-hit-prank",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 862
+        },
+        {
+          "rid": 63
+        },
+        {
+          "rid": 851,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 800,
+        "fullBurst": 1,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "左隣のクルミ。おばけのイタズラだけ"
+    },
+    {
+      "id": "A-belorta-hit-prank",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 862
+        },
+        {
+          "rid": 63
+        },
+        {
+          "rid": 851,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "frame": 800,
+        "fullBurst": 1,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "ベロータ：パンプキンウィッチ自身。おばけのイタズラだけ"
+    },
+    {
+      "id": "A-raven-dot-fb",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "team": [
+        {
+          "rid": 862
+        },
+        {
+          "rid": 63
+        },
+        {
+          "rid": 851,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 300,
+        "fullBurst": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "レイヴンの S1 の持続ダメージの、frame 以後の最初の tick"
+    },
+    {
+      "id": "A-raven-dot-prank",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "team": [
+        {
+          "rid": 862
+        },
+        {
+          "rid": 63
+        },
+        {
+          "rid": 851,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 800,
+        "fullBurst": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "同。S2 の持続ダメージ▲とおばけのイタズラ"
+    },
+    {
+      "id": "A-kurumi-dot-prank",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "team": [
+        {
+          "rid": 862
+        },
+        {
+          "rid": 63
+        },
+        {
+          "rid": 851,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "frame": 800,
+        "fullBurst": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "クルミのハッキングの持続ダメージの tick"
+    },
+    {
+      "id": "B-raven-hit-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 862
+        },
+        {
+          "rid": 851
+        },
+        {
+          "rid": 63,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "fullBurst": 1,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "左隣のレイヴン（ベロータ：パンプキンウィッチが右端）。フルバーストの中"
+    },
+    {
+      "id": "B-raven-dot-prank",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "team": [
+        {
+          "rid": 862
+        },
+        {
+          "rid": 851
+        },
+        {
+          "rid": 63,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "frame": 800,
+        "fullBurst": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "同。持続ダメージの tick"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-22",
+    "commit": "7f58d355f7665eeda60159aea03ce92d830ac131",
+    "values": {
+      "H1": {
+        "A-raven-hit-fb": 795641.0337794999,
+        "A-raven-hit-prank": 202974.19627199997,
+        "A-raven-hit-base": 183587.37,
+        "A-kurumi-hit-fb": 20831.20484445,
+        "A-kurumi-hit-prank": 11937.479954399998,
+        "A-belorta-hit-prank": 186050.36109000002,
+        "A-raven-dot-fb": 8410885.89574613,
+        "A-raven-dot-prank": 1087802.119940901,
+        "A-kurumi-dot-prank": 45686.00386943999,
+        "B-raven-hit-fb": 522650.37488474994,
+        "B-raven-dot-prank": 906728.4487296
+      },
+      "H-both": {
+        "A-raven-hit-fb": 795641.0337794999,
+        "A-raven-hit-prank": 202974.19627199997,
+        "A-raven-hit-base": 183587.37,
+        "A-kurumi-hit-fb": 45146.5229124,
+        "A-kurumi-hit-prank": 11937.479954399998,
+        "A-belorta-hit-prank": 186050.36109000002,
+        "A-raven-dot-fb": 8410885.89574613,
+        "A-raven-dot-prank": 1087802.119940901,
+        "A-kurumi-dot-prank": 54809.49884216716,
+        "B-raven-hit-fb": 795641.0337794999,
+        "B-raven-dot-prank": 1087802.119940901
+      },
+      "H-noPrank": {
+        "A-raven-hit-fb": 730317.0614835001,
+        "A-raven-hit-prank": 183587.37,
+        "A-raven-hit-base": 183587.37,
+        "A-kurumi-hit-fb": 19120.914662850002,
+        "A-kurumi-hit-prank": 10797.2865,
+        "A-belorta-hit-prank": 168279.99375000002,
+        "A-raven-dot-fb": 7720332.676502787,
+        "A-raven-dot-prank": 983902.0621752001,
+        "A-kurumi-dot-prank": 41322.3624,
+        "B-raven-hit-fb": 479739.56817675,
+        "B-raven-dot-prank": 820123.4160000001
+      }
+    }
+  }
+}

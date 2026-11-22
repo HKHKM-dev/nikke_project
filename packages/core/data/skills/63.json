@@ -1,0 +1,153 @@
+{
+  "formatVersion": 1,
+  "resourceId": 63,
+  "checkedAt": "2026-11-22",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "ghostCostume",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "durationRef": 1,
+          "assumes": {
+            "ja": "おばけの仮装は S2 の受けるダメージ▲の条件として名前だけを持つ（中身なし）。単一攻撃の対象からの除外と、直接攻撃を受けた時の解除は被弾の無い前提では起きない（notes）。10 秒ずっと続くとみなす",
+            "en": "Ghost Costume only carries its name as the condition of the S2 Damage Taken up (no contents). Its exclusion from single-target attacks and its removal on a direct hit do not happen under the no-damage assumption (notes). It is taken to last the full 10 s"
+          },
+          "claims": [
+            "C-1536"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "targetAdjacent": "right",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "右隣は、編成の枠の順で自分の次の枠（枠の番号の若い方が左）。右端（最後の枠）か、次の枠が空なら、誰にも付かない（その先の枠には飛ばない）",
+            "en": "The ally to the right is the next slot in team order (lower slot numbers are on the left). In the last slot, or when the next slot is empty, nobody gets it (it does not skip to a farther slot)"
+          },
+          "claims": [
+            "C-1537"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "おばけの仮装の単一攻撃の対象からの除外と、直接攻撃を受けた時の解除は起きない（被弾しない前提）",
+          "en": "Ghost Costume's exclusion from single-target attacks and its removal on a direct hit do not happen (no damage taken is assumed)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "damaged"
+          }
+        },
+        {
+          "ja": "フルバーストタイムが発動した時の自分の最大HP▲（イタズラ準備）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Max HP up on self when Full Burst starts (Prank Preparation) does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp",
+          "effect": {
+            "kind": "timed",
+            "stat": "maxHp",
+            "target": "self",
+            "trigger": "fullBurstStart"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "ghostlyPrank",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "condition": {
+            "selfState": "ghostCostume"
+          },
+          "target": "enemy",
+          "durationRef": 2,
+          "contents": [
+            {
+              "stat": "damageTaken",
+              "ref": 1
+            }
+          ],
+          "assumes": {
+            "ja": "敵 1 体。「フルチャージ攻撃が命中した時」は、フルチャージの発の次のフレームから付くとみなす（誘導弾の飛ぶ時間は入れず、その発自身には乗らない）。中身の受けるダメージ▲は、ほかの受けるダメージ▲と同じ別の乗数で、味方全体の与ダメージに掛かる。付け直しは維持を 10 秒に戻す",
+            "en": "One enemy. \"When a Full Charge attack hits\" is taken as applying from the frame after the Full Charge shot (no homing flight time, and that shot itself does not get it). The Damage Taken up is the same separate multiplier as other Damage Taken ups and multiplies all allies' damage. Reapplying resets the duration to 10 s"
+          },
+          "claims": [
+            "C-1536"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "allies",
+          "targetAdjacent": "right",
+          "stat": "sustainedDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "右隣は S1 と同じ読み。持続ダメージ▲は右隣の持続ダメージの tick にだけ効く。フルチャージの発の次のフレームから付き、付け直しは維持を 5 秒に戻す",
+            "en": "Same reading of the ally to the right as S1. Sustained Damage up affects only the right ally's damage-over-time ticks. It applies from the frame after the Full Charge shot, and reapplying resets the duration to 5 s"
+          },
+          "claims": [
+            "C-1537"
+          ]
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "targetAdjacent": "right",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "右隣は S1 と同じ読み。S1 の発動者基準の攻撃力▲と同じ和に足す",
+            "en": "Same reading of the ally to the right as S1. Added to the same sum as the S1 caster-based ATK up"
+          },
+          "claims": [
+            "C-1537"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "targetAdjacent": "right",
+          "stat": "sustainedDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "右隣は S1 と同じ読み。S2 の持続ダメージ▲と同じ和に足す",
+            "en": "Same reading of the ally to the right as S1. Added to the same sum as the S2 Sustained Damage up"
+          },
+          "claims": [
+            "C-1537"
+          ]
+        }
+      ],
+      "notes": []
+    }
+  }
+}
