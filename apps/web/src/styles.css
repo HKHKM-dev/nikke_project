@@ -2005,12 +2005,6 @@ html:has(.modern-view-container) {
 .slot-drag-overlay-portrait {
   position: absolute;
 }
-/* 持ち上げた立ち絵と、動く立ち絵の写し（flight.ts）は、下地を画面の背景の色で塗る。縦長の立ち絵は上の半分が透けていて、下にある
-   空のスロットのシルエット（行き先・元の場所の枠）が透けて見え、絵と一緒に動かないので、ずれて見えた（オーナーの指示） */
-.slot-drag-overlay-portrait,
-.flight-ghost-portrait {
-  background: var(--app-bg);
-}
 
 /* 読めなかった編成の保存の知らせ（components/UnreadableSavesNotice.tsx） */
 .unreadable-saves {

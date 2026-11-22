@@ -126,8 +126,6 @@ function ghostOf(node: Element, base: DOMRect): HTMLElement {
   for (const [name, value] of Object.entries(slotSizeVars(node))) ghost.style.setProperty(name, value);
   // 四角の絵（選んでいない編成の行・ニケ一覧の四角・持ち上げた四角の絵）の名前は小さい文字（styles.css）。写しは body に置くので、印を付けてそろえる
   if (node.closest(SQUARE_SOURCES)) ghost.classList.add('flight-ghost-square');
-  // 立ち絵の枠の写しは、下地を画面の背景の色で塗る（styles.css の .flight-ghost-portrait）
-  if (node.matches('.modern-slot-char-area')) ghost.classList.add('flight-ghost-portrait');
   Object.assign(ghost.style, {
     position: 'fixed',
     left: `${base.left}px`,
