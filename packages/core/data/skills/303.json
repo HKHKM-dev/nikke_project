@@ -1,0 +1,56 @@
+{
+  "formatVersion": 1,
+  "resourceId": 303,
+  "checkedAt": "2026-11-22",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 3
+          },
+          "target": "self",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "「通常攻撃で N 回攻撃した時」は、撃った発（残弾の減り）を戦闘開始から通算で数え、リロードで数え直さない（ソリン・ブリッドの S1 と同じ読み）。MG の撃ち始めに外れた発も数える。付き直しは残りの維持に足さない",
+            "en": "\"After performing N normal attacks\" counts shots fired (ammo spent) cumulatively from combat start, not reset by reloads (same reading as Soline's and Brid's S1). Shots that miss at the start of MG fire also count. Reapplication does not add to the remaining duration"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "everySeconds": 10,
+            "cooldown": true
+          },
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "説明文にきっかけの無いアクティブ型のスキルで、戦闘開始からクールタイムごとに発動する（撃たない間も）。クールタイムは元データに無く、10 秒と発動からヒットまでの遅れ 0 は撮る前の仮の値（同じ形のブリッドの S2 のクールタイム）。残りの HP の数値が最も低い敵 1 機は的 1 体で 1 ヒット。バーストゲージを溜めるかは確かめていない（溜めない形で書いた）",
+            "en": "An active skill with no trigger in its description, activating every cooldown from the start of combat (also while not firing). The cooldown is not in the source data; 10 s and 0 f from activation to hit are provisional values before recording (the cooldown of Brid's S2 of the same shape). The single enemy with the lowest remaining HP is the lone target, hit once. Whether it builds Burst gauge is not verified (written as not building it)"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "攻撃範囲内の敵は的 1 体で 1 ヒット。遅れの表（burst/landing.ts）にプロダクト12 の行は無く、III のタイマーの 00.00 に出す（録画で読む）",
+            "en": "Enemies within attack range are the lone target, hit once. The delay table (burst/landing.ts) has no Product 12 row, so it is dealt at 00.00 on the III timer (to be read from recordings)"
+          }
+        }
+      ]
+    }
+  }
+}
