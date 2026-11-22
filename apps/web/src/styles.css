@@ -883,18 +883,43 @@ svg.roster-revert-icon {
   text-align: inherit;
   cursor: pointer;
 }
+/* 狭い画面では、5 つの編成の番号を上に横に並べ、その下にスロットの行を並べる（オーナーの指示）。行の箱はほどき（display: contents）、
+   番号を 1 段目の真ん中の 5 列に、スロットの並びを 2 段目から 1 段ずつ横いっぱいに置く。番号は 4em の正方形で、幅が足りなければ縮める */
 @media (max-width: 699px) {
+  .modern-slots-area {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) repeat(5, minmax(0, 4em)) minmax(0, 1fr);
+    gap: 4px;
+  }
   .modern-party-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 2px;
+    display: contents;
   }
   .modern-party-row-label {
-    justify-self: center;
-    margin-inline: auto;
+    grid-row: 1;
+    grid-template-columns: minmax(0, 1fr);
+    margin-bottom: 4px;
+  }
+  .modern-party-row:nth-child(1) > .modern-party-row-label {
+    grid-column: 2;
+  }
+  .modern-party-row:nth-child(2) > .modern-party-row-label {
+    grid-column: 3;
+  }
+  .modern-party-row:nth-child(3) > .modern-party-row-label {
+    grid-column: 4;
+  }
+  .modern-party-row:nth-child(4) > .modern-party-row-label {
+    grid-column: 5;
+  }
+  .modern-party-row:nth-child(5) > .modern-party-row-label {
+    grid-column: 6;
   }
   .modern-party-row > .modern-slots-grid {
-    flex: none;
+    grid-column: 1 / -1;
+  }
+  /* 持ち上げた番号は、持ち上げた番号の大きさ（DragOverlay の箱）に合わせる */
+  .party-label-drag-overlay {
+    width: 100%;
   }
 }
 /* カードの幅は絵（正方形の枠と 1px の枠線）と左右の余白（.modern-slot-card の padding）だけにして、スロットの間を詰める */
