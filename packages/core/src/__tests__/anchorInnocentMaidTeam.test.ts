@@ -48,7 +48,10 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     // リロード速度▲は 15 秒。切れる前に付き直すと区間がつながるので、付いている間（区間の和）で比べる
     const duration = gameSecondsToFrames(15);
     const expected = mergeRanges(
-      ends.slice(2).filter((e) => e < plan.frames).map((e) => [e, Math.min(e + duration, plan.frames)] as const),
+      ends
+        .slice(2)
+        .filter((e) => e < plan.frames)
+        .map((e) => [e, Math.min(e + duration, plan.frames)] as const),
     );
     const reload = s2.filter((p) => p.effect.stat === 'reloadSpeed' && p.slotIndex === 0);
     expect(mergeRanges(reload.map((p) => [p.start, p.end] as const))).toEqual(expected);

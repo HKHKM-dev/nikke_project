@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { DEFAULT_WEAPON_MODEL } from '../../weapons.ts';
 import { firingParams, ZERO_FIRING_BUFFS } from '../firing.ts';
-import { initialShooter, refillAmmo, stepShooter } from '../shooter.ts';
+import { drainAmmo, initialShooter, reaimShooter, refillAmmo, stepShooter } from '../shooter.ts';
 
 const model = DEFAULT_WEAPON_MODEL;
 // クラウンと同じ CDN の値（毎分 60 → 4,200 発・1 発ごとに +100・リセット 1 秒・リロード 2.5 秒）。マガジンは短くして最高レートに届かせる
@@ -76,5 +76,27 @@ describe('MG のリロード明けのレート', () => {
       if (stepShooter(state, shot, model, params)) frames.push(f);
     }
     expect(frames[MAGAZINE + 10]! - frames[MAGAZINE]!).toBe(freshSpan());
+  });
+
+  it('残弾数減少で始まったリロードと、間に構え直しを挟んだ回は最初から（確かめていないので戻す）', () => {
+    const params = firingParams(shot, { ...ZERO_FIRING_BUFFS, reloadSpeed: 0.95 });
+    for (const interrupt of ['drain', 'reaim'] as const) {
+      const state = initialShooter(shot, model, params);
+      const frames: number[] = [];
+      let done = false;
+      for (let f = 0; frames.length < MAGAZINE + 11; f++) {
+        if (!done && interrupt === 'drain' && frames.length === MAGAZINE - 1) {
+          drainAmmo(state, 1, shot, model, params);
+          done = true;
+        }
+        if (!done && interrupt === 'reaim' && state.phase === 'reloading') {
+          reaimShooter(state, shot, 10, model, params);
+          done = true;
+        }
+        if (stepShooter(state, shot, model, params)) frames.push(f);
+      }
+      const first = interrupt === 'drain' ? MAGAZINE - 1 : MAGAZINE;
+      expect(frames[first + 10]! - frames[first]!).toBe(freshSpan());
+    }
   });
 });
