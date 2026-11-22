@@ -4,7 +4,7 @@
 - 関連: [design-target-vocab.md](design-target-vocab.md) 2.3 節（対象の絞り込み `targetSquad`。編成で決まる対象の枠）、[design-anis-star-rest.md](design-anis-star-rest.md) 3 節（`burstReentry`）、[design-skill-catalog-tooltips.md](design-skill-catalog-tooltips.md) 2・3 節（「自分の王・自分のアイドル」「バースト再突入」のツールチップ）
 - 検証: V-0857
 - 作成日: 2026-11-22
-- 状態: 実装（2.1・2.2 節。撮影待ち）
+- 状態: 実装（2.1・2.2 節）
 
 ## 0. 範囲
 
@@ -86,3 +86,4 @@
 ## 5. 経過
 
 - 2026-11-22: 起案。論点 1 は案 A、論点 2 は H1 に決め（オーナー）、`targetCharacter` を実装した（passive・timed・状態の付与）。撮影は V-0857。
+- 2026-11-22: 撮影（録画 1373〜1374）が H1 と合い、V-0857 を閉じた。

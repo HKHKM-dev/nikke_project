@@ -89,9 +89,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "バーストを撃った枠の並び（バースト欄。recipe:burst-panel）"
     },
@@ -102,9 +100,7 @@
       "args": {},
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "180 秒のフルバーストの回数"
     },
@@ -121,9 +117,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "rel": 0.005
@@ -143,9 +137,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "rel": 0.005
@@ -165,9 +157,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "rel": 0.005
@@ -187,9 +177,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "rel": 0.005
@@ -209,9 +197,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "rel": 0.005
@@ -228,9 +214,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "2 回目のチャイムのバーストの窓の中のチャイムの最大装弾数（左下の残弾の最大）"
     },
@@ -244,9 +228,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "窓の外のチャイムの最大装弾数"
     }
@@ -256,24 +238,7 @@
     "commit": "9f18cc4ae06cb09ffb36b1e8ecd28cf5d0771e7b",
     "values": {
       "H1": {
-        "order": [
-          1,
-          2,
-          3,
-          4,
-          1,
-          2,
-          3,
-          1,
-          2,
-          3,
-          4,
-          1,
-          2,
-          3,
-          1,
-          2
-        ],
+        "order": [1, 2, 3, 4, 1, 2, 3, 1, 2, 3, 4, 1, 2, 3, 1, 2],
         "fb-count": 5,
         "crown-s1": 7080.528299999999,
         "chime-base": 8139.6900000000005,
@@ -284,24 +249,7 @@
         "ammo-out": 120
       },
       "H0": {
-        "order": [
-          1,
-          2,
-          4,
-          1,
-          2,
-          1,
-          2,
-          4,
-          1,
-          2,
-          1,
-          2,
-          4,
-          1,
-          2,
-          1
-        ],
+        "order": [1, 2, 4, 1, 2, 1, 2, 4, 1, 2, 1, 2, 4, 1, 2, 1],
         "fb-count": 5,
         "crown-s1": 7080.528299999999,
         "chime-base": 8139.6900000000005,
@@ -312,24 +260,7 @@
         "ammo-out": 120
       },
       "H-all": {
-        "order": [
-          1,
-          2,
-          3,
-          1,
-          2,
-          3,
-          1,
-          2,
-          3,
-          1,
-          2,
-          3,
-          1,
-          2,
-          3,
-          1
-        ],
+        "order": [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1],
         "fb-count": 0,
         "crown-s1": 7080.528299999999,
         "chime-base": 8139.6900000000005,
@@ -340,24 +271,7 @@
         "ammo-out": 120
       },
       "H-noking": {
-        "order": [
-          1,
-          2,
-          3,
-          4,
-          1,
-          2,
-          3,
-          1,
-          2,
-          3,
-          4,
-          1,
-          2,
-          3,
-          1,
-          2
-        ],
+        "order": [1, 2, 3, 4, 1, 2, 3, 1, 2, 3, 4, 1, 2, 3, 1, 2],
         "fb-count": 5,
         "crown-s1": 4477.4445,
         "chime-base": 8139.6900000000005,

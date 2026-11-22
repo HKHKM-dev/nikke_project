@@ -13,9 +13,12 @@
           "scaling": "casterAttack",
           "ref": 1,
           "assumes": {
-            "ja": "請願（戦闘開始時・持続）のスキル発動者基準の攻撃力▲。戦闘の間ずっと続くので常時の効果で書く。「自分の王」はクラウン（用語のツールチップ）で、クラウンがいなければ誰にも付かない。撮影で未確定（V-0857）",
-            "en": "Wish (from the start of battle, continuous): ATK increase based on the skill user's ATK. It lasts the whole battle, so it is written as a passive. \"The king\" is Crown (term tooltip); without Crown nobody gets it. Not yet confirmed by recording (V-0857)"
-          }
+            "ja": "請願（戦闘開始時・持続）のスキル発動者基準の攻撃力▲。戦闘の間ずっと続くので常時の効果で書く。「自分の王」はクラウン（用語のツールチップ）で、クラウンがいなければ誰にも付かない",
+            "en": "Wish (from the start of battle, continuous): ATK increase based on the skill user's ATK. It lasts the whole battle, so it is written as a passive. \"The king\" is Crown (term tooltip); without Crown nobody gets it."
+          },
+          "claims": [
+            "C-1527"
+          ]
         }
       ]
     },
@@ -30,9 +33,12 @@
           "ref": 1,
           "durationRef": 2,
           "assumes": {
-            "ja": "日課報告。「自分の王」はクラウンで、クラウンがいなければ誰にも付かない。撮影で未確定（V-0857）",
-            "en": "Daily Report. \"The king\" is Crown; without Crown nobody gets it. Not yet confirmed by recording (V-0857)"
-          }
+            "ja": "日課報告。「自分の王」はクラウンで、クラウンがいなければ誰にも付かない",
+            "en": "Daily Report. \"The king\" is Crown; without Crown nobody gets it."
+          },
+          "claims": [
+            "C-1528"
+          ]
         }
       ]
     },
@@ -42,9 +48,12 @@
           "kind": "burstReentry",
           "step": "Step2",
           "assumes": {
-            "ja": "「バースト再突入 2 段階」。CDN の次の段階（Step2）と同じ。チャイムの II の後だけ II にとどまり、このチェーンでまだ撃っていない別の II が撃ってから III に進む。撮影で未確定（V-0857）",
-            "en": "\"Burst Re-entry Stage 2\". Same as the CDN next stage (Step2). Only after Chime's Burst II does the chain stay at II; another Burst II not yet used in this chain fires before it moves to III. Not yet confirmed by recording (V-0857)"
-          }
+            "ja": "「バースト再突入 2 段階」。CDN の次の段階（Step2）と同じ。チャイムの II の後だけ II にとどまり、このチェーンでまだ撃っていない別の II が撃ってから III に進む",
+            "en": "\"Burst Re-entry Stage 2\". Same as the CDN next stage (Step2). Only after Chime's Burst II does the chain stay at II; another Burst II not yet used in this chain fires before it moves to III."
+          },
+          "claims": [
+            "C-1529"
+          ]
         },
         {
           "kind": "timed",
@@ -53,10 +62,9 @@
           "stat": "maxAmmo",
           "ref": 1,
           "durationRef": 2,
-          "assumes": {
-            "ja": "撮影で未確定（V-0857）",
-            "en": "Not yet confirmed by recording (V-0857)"
-          }
+          "claims": [
+            "C-1530"
+          ]
         },
         {
           "kind": "timed",
@@ -67,9 +75,12 @@
           "ref": 3,
           "durationRef": 4,
           "assumes": {
-            "ja": "忠心。「自分の王」はクラウンで、クラウンがいなければ誰にも付かない。撮影で未確定（V-0857）",
-            "en": "Loyalty. \"The king\" is Crown; without Crown nobody gets it. Not yet confirmed by recording (V-0857)"
-          }
+            "ja": "忠心。「自分の王」はクラウンで、クラウンがいなければ誰にも付かない",
+            "en": "Loyalty. \"The king\" is Crown; without Crown nobody gets it."
+          },
+          "claims": [
+            "C-1531"
+          ]
         }
       ]
     }
