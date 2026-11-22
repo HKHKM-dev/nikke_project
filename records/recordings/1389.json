@@ -1,0 +1,46 @@
+{
+  "id": "1389",
+  "date": "2026-11-22",
+  "folder": "range",
+  "file": "20261122-1389_sr+ar+ar_rouge+blanc+sun_rouge-control.mp4",
+  "original": "2026-11-22_21-06-33.mp4",
+  "durationSec": 203.2,
+  "frames": 12193,
+  "fps": 60,
+  "sizeMB": 246.1,
+  "sha256": "1da5d0fb4392",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 272,
+      "name": "ルージュ",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 270,
+      "name": "ブラン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0868 の撮影（部隊あり）。ルージュ（操作・撃たない）・ブラン（AI）・I-DOLL・サン（AI）。オートバースト ON。戦闘履歴のパネルで枠順（ルージュ・ブラン・I-DOLL・サン、残り 2 枠は空）とルージュの与ダメージ 0 を確かめた。戦闘中の下の顔の欄は、空枠 2 つが左で、ルージュ・ブラン・サンが 3〜5 番目に並ぶ",
+  "backup": {
+    "at": "2026-11-22T21:11+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
