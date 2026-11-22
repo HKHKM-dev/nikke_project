@@ -33,9 +33,12 @@
           "ref": 1,
           "durationRef": 2,
           "assumes": {
-            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から一定の秒数ごとに発動する（1 回目も 1 周期後。C-0502 の形）と読む。周期の 20 秒は仮の値で未確定（録画のスキルの帯の間隔で読む）。最終攻撃力が最も高い味方 2 機は、発火のフレームの順位で、自分も候補（クエンシーの S2 の C-0878 と同じ読み。ミカで確かめていない）",
-            "en": "The description gives no trigger. Read as an active skill on a cooldown, activating at a fixed interval from the start of combat (the first also after one period; the C-0502 form). The 20 s period is a placeholder, unconfirmed (to be read from the skill banner intervals in recordings). The 2 allies with the highest final ATK are ranked on the trigger frame, self included (the same reading as Quency's S2, C-0878; not verified for Mica)"
-          }
+            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から 20 秒ごとに発動する（CT 20 秒は録画で読んだ値。1 回目も 1 周期後。左のスキルの帯の間隔は約 1,177 ティック）。最終攻撃力が最も高い味方 2 機は、発火のフレームの順位で、自分も候補。窓が切れると、残弾が最大より多ければ削る",
+            "en": "The description gives no trigger. It is an active skill on a cooldown, activating every 20 s from the start of combat (the 20 s cooldown is read from recordings; the first also after one period; the skill banners are about 1,177 ticks apart). The 2 allies with the highest final ATK are ranked on the trigger frame, self included. When the window ends, ammo above the new max is cut to the max"
+          },
+          "claims": [
+            "C-1517"
+          ]
         }
       ],
       "notes": [
@@ -54,9 +57,13 @@
           "ref": 1,
           "damageType": "skill",
           "assumes": {
-            "ja": "敵全体は単体ボスで 1 ヒット。発動からヒットまでの遅れは未測定（遅れの表に行が無く、発動と同じフレーム）。同じバーストの防御力▼（effects[1]）は乗らない（発動の時点の値。C-0795）",
-            "en": "All enemies are a lone boss, hit once. The delay from activation to hit is unmeasured (no row in the burst delay table; same frame as activation). The DEF decrease of the same Burst (effects[1]) does not apply (values at the activation; C-0795)"
-          }
+            "ja": "敵全体は単体ボス。I の発動の印の 28f 後と 63f 後の 2 ヒットで、値を 2 等分する（burst/landing.ts のミカの行）。どちらのヒットも発動の時点の値で、同じバーストの防御力▼（effects[1]）は乗らない（C-0795）",
+            "en": "All enemies are a lone boss. Two hits 28 f and 63 f after the Burst I activation mark share the value equally (Mica row in burst/landing.ts). Both hits use the values at the activation, so the DEF decrease of the same Burst (effects[1]) does not apply (C-0795)"
+          },
+          "claims": [
+            "C-1516",
+            "C-0795"
+          ]
         },
         {
           "kind": "timed",
@@ -66,9 +73,15 @@
           "ref": 2,
           "durationRef": 3,
           "assumes": {
-            "ja": "敵全体は単体ボス。▼は説明文の値で、C-0556・C-0790 の式で効かせる（射撃場の的の防御力 100 は 13.32% で 86.68 → 87）。付き始めは発動のフレーム（未測定）から 5 秒。キャラで効き方が違う例外（課題 2-46。トロニー・プロダクト23）に当たるかは確かめていない",
-            "en": "All enemies are a lone boss. The decrease uses the description value with the C-0556 and C-0790 formula (the range target's DEF 100 becomes 86.68 → 87 at 13.32%). Applies from the activation frame (unmeasured) for 5 s. Whether it falls under the per-character exception (backlog 2-46; Tronnie, Product 23) is not verified"
-          }
+            "ja": "敵全体は単体ボス。▼は説明文の値で、C-0556・C-0790 の式で効く（射撃場の的の防御力 100 は 87）。バーストの 1 ヒット目（印の 28f 後）から付き、そこから 5 秒で切れる。録画の切れ目は 2 ヒット目から 5 秒で、約 35f 遅い（2 ヒットごとに付け直す形は未対応）",
+            "en": "All enemies are a lone boss. The decrease uses the description value with the C-0556 and C-0790 formula (the range target DEF 100 becomes 87). It applies from the first Burst hit (28 f after the mark) and ends 5 s later. In recordings it ends 5 s after the second hit, about 35 frames later (re-applying on each of the 2 hits is not modeled)"
+          },
+          "claims": [
+            "C-1518",
+            "C-1519",
+            "C-0556",
+            "C-0790"
+          ]
         }
       ]
     }

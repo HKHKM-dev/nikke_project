@@ -109,6 +109,7 @@ describe('data: which burstDamage get the allEnemies mark', () => {
     expect(marked).toEqual([
       '19',
       '40',
+      '61',
       '103',
       '104',
       '161',

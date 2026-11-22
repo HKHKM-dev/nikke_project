@@ -1,0 +1,660 @@
+[
+  {
+    "id": "1365-01",
+    "recording": "1365",
+    "kind": "timing",
+    "use": "record",
+    "value": [1178.9, 2355.8, 3532.9, 4709.7, 5886, 7063.3, 8240.1, 9417.4],
+    "unit": "f",
+    "description": "ミカの S2（勇敢なお星さま）の左の帯が出たフレームの、戦闘開始からのゲーム内のティック（止まりを除く）",
+    "method": {
+      "tool": "tools/captures/banner.ts・tools/captures/timer.ts --mode ticks",
+      "note": "帯の文字（スキル2 勇敢なお星さま）は静止画で確かめた（バーストスキルの帯は別に出る）。動画のフレーム: 1956・3135・4313・5490・6668・7845・9023・10200。戦闘開始は f777"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-02",
+    "recording": "1365",
+    "kind": "timing",
+    "use": "compare",
+    "value": 1176.93,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 1176.79,
+      "high": 1177.07
+    },
+    "description": "ミカの S2 の最大装弾数▲の窓の始まりの間隔（1 回目から 8 回目までの 7 間隔の平均。ゲーム内のティック）",
+    "method": {
+      "tool": "tools/captures/banner.ts・tools/captures/timer.ts --mode ticks",
+      "note": "前の観測値の帯のティックの (8 回目 − 1 回目) ÷ 7。帯は発動の約 2 ティック後に出る（C-0453）ので、間隔は窓の始まりの間隔と同じ。幅は帯の読みの ±0.5 ティック"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowStartIntervalMean",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "maxAmmo",
+        "count": 8
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-03",
+    "recording": "1365",
+    "kind": "timing",
+    "use": "compare",
+    "value": [1176.9],
+    "unit": "f",
+    "description": "ミカの S2 の 1 回目の発動の、戦闘開始からのゲーム内のティック（1 回目の帯のティックから 2 を引いた値）。戦闘開始の直後には帯が無い",
+    "method": {
+      "tool": "tools/captures/banner.ts・tools/captures/timer.ts --mode ticks",
+      "note": "帯は発動の約 2 ティック後に出る（C-0453。1〜3 ティックを幅にした）。戦闘開始から 1 回目の帯までの間、ほかに S2 の帯は無い。幅は許容の ±2 に入れた"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "maxAmmo",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-04",
+    "recording": "1365",
+    "kind": "count",
+    "use": "compare",
+    "value": [6, 6, 8, 6, 8, 6, 7, 8, 6, 8, 6, 6, 6, 6, 8],
+    "unit": "発",
+    "description": "ミカの戦闘の始めからの 15 本のマガジンの発数（照準の左の残弾の表示）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "3 フレーム以上続いた値だけを採り、増えた所でマガジンを分けた。マガジンの初めの残弾（リロードの明け）は 6・6・8・6・8・6・8・8・6・8・6・8・6・6・8。S2 の窓の中で明けたマガジンは 8 から減る。7 本目は 8 → 7 の 1 発の後、窓の終わり（f4902。4,121.5 ティック）で残弾が 7 → 6 に削られて 7 発。12 本目は 8 で明けた後、1 発目の前に窓が切れて 8 → 6 に削られて（f8435。7,651.9 ティック）6 発。窓の始まりでは、撃っている途中のマガジンの残弾は増えない"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 1,
+        "count": 15
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-05",
+    "recording": "1365",
+    "kind": "timing",
+    "use": "record",
+    "value": [2194, 4083, 6163, 8321, 10603],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 5・25・25・25・25f"
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-06",
+    "recording": "1365",
+    "kind": "timing",
+    "use": "record",
+    "value": 13,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -28,
+      "high": 54
+    },
+    "description": "バーストの防御力▼（素 → 下）が ミカ の 1 発で替わるまでの時刻の幅（1 番目の事象 f2194 から数えた動画のフレーム）。素の最後の発は -29f、下の最初の発は 54f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 素: 枠 1（ミカ）のモデルの f1400、下: 枠 1（ミカ）のモデルの f1600。境は 素 → 下（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜200f。素 5・下 7・区別できない 0・外れ 10・食い違い（下の最初の発より後の素の発） 0"
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-07",
+    "recording": "1365",
+    "kind": "timing",
+    "use": "record",
+    "value": 71.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -28,
+      "high": 171
+    },
+    "description": "バーストの防御力▼（素 → 下）が ミカ の 1 発で替わるまでの時刻の幅（2 番目の事象 f4083 から数えた動画のフレーム）。素の最後の発は -29f、下の最初の発は 171f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 素: 枠 1（ミカ）のモデルの f1400、下: 枠 1（ミカ）のモデルの f1600。境は 素 → 下（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜200f。素 5・下 7・区別できない 0・外れ 10・食い違い（下の最初の発より後の素の発） 0"
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-08",
+    "recording": "1365",
+    "kind": "timing",
+    "use": "record",
+    "value": 13,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -28,
+      "high": 54
+    },
+    "description": "バーストの防御力▼（素 → 下）が ミカ の 1 発で替わるまでの時刻の幅（3 番目の事象 f6163 から数えた動画のフレーム）。素の最後の発は -29f、下の最初の発は 54f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 素: 枠 1（ミカ）のモデルの f1400、下: 枠 1（ミカ）のモデルの f1600。境は 素 → 下（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜200f。素 5・下 7・区別できない 0・外れ 10・食い違い（下の最初の発より後の素の発） 0"
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-09",
+    "recording": "1365",
+    "kind": "timing",
+    "use": "record",
+    "value": 72,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -28,
+      "high": 172
+    },
+    "description": "バーストの防御力▼（素 → 下）が ミカ の 1 発で替わるまでの時刻の幅（4 番目の事象 f8321 から数えた動画のフレーム）。素の最後の発は -29f、下の最初の発は 172f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 素: 枠 1（ミカ）のモデルの f1400、下: 枠 1（ミカ）のモデルの f1600。境は 素 → 下（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜200f。素 5・下 7・区別できない 0・外れ 10・食い違い（下の最初の発より後の素の発） 0"
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-10",
+    "recording": "1365",
+    "kind": "timing",
+    "use": "record",
+    "value": 14,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -27,
+      "high": 55
+    },
+    "description": "バーストの防御力▼（素 → 下）が ミカ の 1 発で替わるまでの時刻の幅（5 番目の事象 f10603 から数えた動画のフレーム）。素の最後の発は -28f、下の最初の発は 55f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 素: 枠 1（ミカ）のモデルの f1400、下: 枠 1（ミカ）のモデルの f1600。境は 素 → 下（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜200f。素 5・下 7・区別できない 0・外れ 10・食い違い（下の最初の発より後の素の発） 0"
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-11",
+    "recording": "1365",
+    "kind": "timing",
+    "use": "record",
+    "value": 13.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -27,
+      "high": 54
+    },
+    "description": "バーストの防御力▼（素 → 下）が ミカ の 1 発で替わるまでの時刻の幅の、5 回の事象（f2194・4083・6163・8321・10603）の共通部分（事象から数えた動画のフレーム）。素の最後の発の最も遅いものは -28f、下の最初の発の最も早いものは 54f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 素: 枠 1（ミカ）のモデルの f1400、下: 枠 1（ミカ）のモデルの f1600。境は 素 → 下（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜200f。素 5・下 7・区別できない 0・外れ 10・食い違い（下の最初の発より後の素の発） 0"
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-12",
+    "recording": "1365",
+    "kind": "timing",
+    "use": "record",
+    "value": 341.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 301,
+      "high": 382
+    },
+    "description": "バーストの防御力▼（下 → 素）が ミカ の 1 発で替わるまでの時刻の幅（1 番目の事象 f2194 から数えた動画のフレーム）。下の最後の発は 300f、素の最初の発は 382f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 素: 枠 1（ミカ）のモデルの f1400、下: 枠 1（ミカ）のモデルの f1600。境は 下 → 素（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 250〜480f。下 8・素 6・区別できない 0・外れ 0・食い違い（素の最初の発より後の下の発） 0"
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-13",
+    "recording": "1365",
+    "kind": "timing",
+    "use": "record",
+    "value": 381,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 336,
+      "high": 426
+    },
+    "description": "バーストの防御力▼（下 → 素）が ミカ の 1 発で替わるまでの時刻の幅（2 番目の事象 f4083 から数えた動画のフレーム）。下の最後の発は 335f、素の最初の発は 426f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 素: 枠 1（ミカ）のモデルの f1400、下: 枠 1（ミカ）のモデルの f1600。境は 下 → 素（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 250〜480f。下 8・素 6・区別できない 0・外れ 0・食い違い（素の最初の発より後の下の発） 0"
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-14",
+    "recording": "1365",
+    "kind": "timing",
+    "use": "record",
+    "value": 378,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 338,
+      "high": 418
+    },
+    "description": "バーストの防御力▼（下 → 素）が ミカ の 1 発で替わるまでの時刻の幅（3 番目の事象 f6163 から数えた動画のフレーム）。下の最後の発は 337f、素の最初の発は 418f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 素: 枠 1（ミカ）のモデルの f1400、下: 枠 1（ミカ）のモデルの f1600。境は 下 → 素（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 250〜480f。下 8・素 6・区別できない 0・外れ 0・食い違い（素の最初の発より後の下の発） 0"
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-15",
+    "recording": "1365",
+    "kind": "timing",
+    "use": "record",
+    "value": 377.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 337,
+      "high": 418
+    },
+    "description": "バーストの防御力▼（下 → 素）が ミカ の 1 発で替わるまでの時刻の幅（4 番目の事象 f8321 から数えた動画のフレーム）。下の最後の発は 336f、素の最初の発は 418f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 素: 枠 1（ミカ）のモデルの f1400、下: 枠 1（ミカ）のモデルの f1600。境は 下 → 素（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 250〜480f。下 8・素 6・区別できない 0・外れ 0・食い違い（素の最初の発より後の下の発） 0"
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-16",
+    "recording": "1365",
+    "kind": "timing",
+    "use": "record",
+    "value": 342.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 302,
+      "high": 383
+    },
+    "description": "バーストの防御力▼（下 → 素）が ミカ の 1 発で替わるまでの時刻の幅（5 番目の事象 f10603 から数えた動画のフレーム）。下の最後の発は 301f、素の最初の発は 383f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 素: 枠 1（ミカ）のモデルの f1400、下: 枠 1（ミカ）のモデルの f1600。境は 下 → 素（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 250〜480f。下 8・素 6・区別できない 0・外れ 0・食い違い（素の最初の発より後の下の発） 0"
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-17",
+    "recording": "1365",
+    "kind": "timing",
+    "use": "record",
+    "value": 360,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 338,
+      "high": 382
+    },
+    "description": "バーストの防御力▼（下 → 素）が ミカ の 1 発で替わるまでの時刻の幅の、5 回の事象（f2194・4083・6163・8321・10603）の共通部分（事象から数えた動画のフレーム）。下の最後の発の最も遅いものは 337f、素の最初の発の最も早いものは 382f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 素: 枠 1（ミカ）のモデルの f1400、下: 枠 1（ミカ）のモデルの f1600。境は 下 → 素（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 250〜480f。下 8・素 6・区別できない 0・外れ 0・食い違い（素の最初の発より後の下の発） 0"
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-18",
+    "recording": "1365",
+    "kind": "hit",
+    "use": "compare",
+    "value": 242484,
+    "unit": "ダメージ",
+    "description": "ミカのバーストの防御力▼の窓の中の、通常攻撃（フルチャージ）のコア・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子に当てた（recipe:buff-edge@9 の --opt grid。素 = 防御 100、下 = 防御 87）",
+      "note": "5 回のどの窓の中でも、コアの発は 242,484（窓の外は 242,445）。説明文どおりの防御 87（100 × (1 − 13.32%) = 86.68 の四捨五入）の値。▼が効かなければ 242,444.6、防御が 0 になる読み（課題 2-46）なら 242,751.1"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-19",
+    "recording": "1365",
+    "kind": "hit",
+    "use": "compare",
+    "value": 121242,
+    "unit": "ダメージ",
+    "description": "ミカのバーストの防御力▼の窓の中の、通常攻撃の胴体・会心なし・距離ボーナスなしの 1 ヒット",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子に当てた（recipe:buff-edge@9 の --opt grid。素 = 防御 100、下 = 防御 87）",
+      "note": "3 回目の窓の中の胴体の発（印の 54f 後）は 121,242（窓の外の胴体は 121,222）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-20",
+    "recording": "1365",
+    "kind": "timing",
+    "use": "compare",
+    "value": [27, 28, 28, 28, 28],
+    "unit": "f",
+    "description": "ミカの I の発動の印（右のバースト欄の六角形が I から II に替わったフレーム）から、バーストの 1 ヒット目（HUD の増分 60,204）までの動画のフレーム（5 回）",
+    "method": {
+      "tool": "recipe:burst-panel@4・recipe:hud-jumps@3",
+      "note": "印 2194・4083・6163・8321・10603"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 1,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-21",
+    "recording": "1365",
+    "kind": "timing",
+    "use": "compare",
+    "value": [0, 35],
+    "unit": "f",
+    "description": "ミカの 1 回目のバーストの、1 ヒット目から各ヒットまでの動画のフレーム",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "5 回の 2 ヒット目は 1 ヒット目の 35・35・35・35・36f 後。どの回も 2 ヒットの増分は 60,204 ずつ"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-22",
+    "recording": "1365",
+    "kind": "hit",
+    "use": "compare",
+    "value": 120408,
+    "unit": "ダメージ",
+    "description": "ミカの 1 回目のバーストのダメージ（会心なし。2 ヒットの増分 60,204 の和）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "5 回とも 2 ヒットが 60,204 ずつ。説明文の値 152.22% の 1 ヒット（120,407.5）の半分ずつで、防御 100 の値（2 ヒット目にも同じ発動の▼は乗らない。乗れば 1 ヒットあたり約 10 大きい）。和を比べる"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-23",
+    "recording": "1365",
+    "kind": "timing",
+    "use": "compare",
+    "value": 13.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -27,
+      "high": 54
+    },
+    "description": "ミカの 1 回目のバーストの印から、バーストの防御力▼の付き始めまでの動画のフレームの幅（5 回の共通部分。値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid。素 = 防御 100、下 = 防御 87 のミカの 1 ヒット）・recipe:burst-panel@4",
+      "note": "1365-11 の 5 回の共通部分。素の最後の発は印の −28〜−29f 後、下の最初の発は 54〜55f 後で、どの回も発の位相が同じなので狭められない。印 2194・4083・6163・8321・10603。許容は幅の半分"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 1,
+        "skill": "burst",
+        "stat": "enemyDefenseDown",
+        "from": 1,
+        "n": 0,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 40.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1365-24",
+    "recording": "1365",
+    "kind": "timing",
+    "use": "compare",
+    "value": 360,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 338,
+      "high": 382
+    },
+    "description": "ミカの 1 回目のバーストの印から、バーストの防御力▼の切れ目までの動画のフレームの幅（5 回の共通部分。値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid。素 = 防御 100、下 = 防御 87 のミカの 1 ヒット）・recipe:burst-panel@4",
+      "note": "1365-17 の 5 回の共通部分。下の最後の発の最も遅いものは印の 336f 後、素の最初の発の最も早いものは 382f 後。1 ヒット目（28f 後）から 5 秒なら約 322〜328f で、336f の発に▼が乗っているのと合わない。2 ヒット目（63f 後）から 5 秒の約 357〜363f と合う。許容は幅の半分"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 1,
+        "skill": "burst",
+        "stat": "enemyDefenseDown",
+        "from": 1,
+        "n": 0,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 22
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  }
+]

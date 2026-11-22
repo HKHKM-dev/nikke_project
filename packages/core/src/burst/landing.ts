@@ -219,6 +219,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // シグナル: II の発動の印（六角形が II から III に替わるフレーム）から 15・21・26f の 3 ヒットで、バーストスキルダメージを 3 等分する
   // （12 回とも同じ並び）。効果（敵の防御力▼）は 1 ヒット目と同じ 15f 後に付く（C-1403。V-0819）
   { resourceIds: [22], delays: { hitFrames: 15, effectFrames: 15, hitOffsets: [0, 6, 11] }, claim: 'C-1402' },
+  // ミカ: I の発動の印（六角形が I から II に替わるフレーム）から 28・63f の 2 ヒットで、バーストスキルダメージを 2 等分する（10 回とも同じ並び）。
+  // 効果（敵の防御力▼）は 1 ヒット目と同じ 28f 後に付く（付き始めは印の −27〜54f までしか挟めない。C-1518。V-0852）
+  { resourceIds: [61], delays: { hitFrames: 28, effectFrames: 28, hitOffsets: [0, 35] }, claim: 'C-1516' },
   // ラプラス：アルティメットヒーロー: III のタイマーの 00.00 の 1〜2f 前にヒット（雪子と同じく遅れ 0）。ヒットに同じ発動の攻撃力▲が乗る
   // （C-0682。ソーダ：トゥインクルバニーと同じ印）
   { resourceIds: [103], sameActivationBuffsOnHit: true, delays: { hitFrames: 0, effectFrames: 0 }, claim: 'C-0683' },

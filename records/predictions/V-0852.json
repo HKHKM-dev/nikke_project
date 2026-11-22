@@ -103,7 +103,8 @@
       "tolerance": {
         "abs": 2
       },
-      "note": "撮影 A: 1 回目のバーストスキルダメージ（会心なし）"
+      "note": "撮影 A: 1 回目のバーストスキルダメージ（会心なし）",
+      "observations": ["1364-21", "1365-22"]
     },
     {
       "id": "A-hit-before",
@@ -155,7 +156,8 @@
       "tolerance": {
         "abs": 2
       },
-      "note": "撮影 A: 1 回目のバーストの▼の窓の中の、通常攻撃の胴体・会心なしの 1 ヒット"
+      "note": "撮影 A: 1 回目のバーストの▼の窓の中の、通常攻撃の胴体・会心なしの 1 ヒット",
+      "observations": ["1365-19"]
     },
     {
       "id": "A-hit-down-core",
@@ -181,7 +183,8 @@
       "tolerance": {
         "abs": 2
       },
-      "note": "撮影 A: 同じ窓の中の、コア・会心なしの 1 ヒット"
+      "note": "撮影 A: 同じ窓の中の、コア・会心なしの 1 ヒット",
+      "observations": ["1364-18", "1365-18"]
     },
     {
       "id": "A-ammo",
@@ -235,7 +238,8 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       },
-      "note": "撮影 B: S2 の窓の中のミカ（攻撃力 2 番目）の最大装弾数"
+      "note": "撮影 B: S2 の窓の中のミカ（攻撃力 2 番目）の最大装弾数",
+      "observations": ["1366-03"]
     },
     {
       "id": "B-ammo-delta",
@@ -249,7 +253,8 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       },
-      "note": "撮影 B: S2 の窓の中のデルタ（攻撃力 3 番目のうち上）の最大装弾数"
+      "note": "撮影 B: S2 の窓の中のデルタ（攻撃力 3 番目のうち上）の最大装弾数",
+      "observations": ["1366-02"]
     },
     {
       "id": "B-ammo-flower",
@@ -263,7 +268,8 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       },
-      "note": "撮影 B: S2 の窓の中のフラワー（攻撃力が最も低い）の最大装弾数"
+      "note": "撮影 B: S2 の窓の中のフラワー（攻撃力が最も低い）の最大装弾数",
+      "observations": ["1366-01"]
     },
     {
       "id": "B-mags-mica",
