@@ -473,6 +473,12 @@ export type TargetProfile = {
   weaponChangeFirstHitFrames?: Readonly<Record<string, TargetRateRow | null>>;
   /** 命中率▼の表（省略・表に無い武器種は▼を効かせない） */
   hitRateDown?: HitRateDownTable;
+  /**
+   * 武器種ごとの、リロードの明けの撃ち始めのヒット順（1 ヒット目から）の胴体のヒットの割合（C-1554）。行のある武器種は、コア命中率の
+   * 外れをこの撃ち始めの外れとみて、命中率▲を 1 ヒットずつ当てて縮める（frame/landing.ts の startBodyHitRateUp）。省略・行の無い武器種は
+   * 表の値に C-0036 の式をそのまま当てる
+   */
+  startBodyRatios?: Readonly<Partial<Record<WeaponType, readonly number[]>>>;
   /** セルごとの出どころ（verification.md の節・claims.md の ID） */
   source: string;
 };

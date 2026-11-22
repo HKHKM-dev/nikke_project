@@ -19,6 +19,7 @@ import {
   bulletHitRateAt,
   coreHitRateAt,
   bulletHitRateWithHitRateUp,
+  coreHitRateUpFormOf,
   coreHitRateUpIsExponent,
   coreHitRateWithHitRateUp,
   distanceBonusAt,
@@ -27,11 +28,13 @@ import {
   hitRateUpRaisesBulletHitRate,
   landingBandOf,
   landingMix,
+  landingNotes,
   landingPartsWith,
   planLandings,
   projectileKeyOf,
   projectileRowListedUnmeasured,
   rateRowOf,
+  startBodyHitRateUp,
   targetRateOf,
 } from '../frame/landing.ts';
 import { runSimulation } from '../sim/engine.ts';
@@ -206,6 +209,10 @@ describe('データ（data/enemies.json の的の条件の表）', () => {
     expect(parse([{ ...p, coreHitRate: { AR: { nowhere: 0.5 } } }])).toThrow(/not a landing/);
     expect(parse([{ ...p, coreHitRate: { AR: { near: 1.5 } } }])).toThrow(/\[0, 1\]/);
     expect(parse([{ ...p, coreHitRate: { XX: { near: 0.5 } } }])).toThrow(/weapon type/);
+    expect(parse([{ ...p, startBodyRatios: { XX: [1] } }])).toThrow(/weapon type/);
+    expect(parse([{ ...p, startBodyRatios: { MG: [] } }])).toThrow(/non-empty/);
+    expect(parse([{ ...p, startBodyRatios: { MG: [1, 1.2] } }])).toThrow(/non-empty/);
+    expect(parse([{ ...p, startBodyRatios: { MG: [0, 0] } }])).toThrow(/positive/);
     const byProjectile = (by: unknown, extra: Record<string, unknown> = {}) =>
       parse([{ ...p, coreHitRate: { RL: { byProjectile: by, ...extra } } }]);
     expect(byProjectile({ 'ProjectileDirect:400': { all: 1 }, 'HomingProjectile:100': null })).not.toThrow();
@@ -426,9 +433,43 @@ describe('命中率▲（C-0036・C-0037）', () => {
       coreHitRateWithHitRateUp(0.4244, 0.42),
     );
     // 指数・和も N ≥ 1 で 1、N ≤ 0 で表の値のまま
-    expect(coreHitRateAt(0.2113, upOnly(1), undefined, true)).toBe(1);
-    expect(coreHitRateAt(0.2113, upOnly(0), undefined, true)).toBe(0.2113);
+    expect(coreHitRateAt(0.2113, upOnly(1), undefined, 'exponent')).toBe(1);
+    expect(coreHitRateAt(0.2113, upOnly(0), undefined, 'exponent')).toBe(0.2113);
     expect(exponentSumHitRateUp(0.2113, 0.42)).toBe(bulletHitRateWithHitRateUp(0.2113, 0.42));
+  });
+
+  it('shrinks the MG core misses as start-of-firing misses, applying 1/(1 − N)² hit by hit to the body ratios (C-1554)', () => {
+    // 胴体の割合 [1, 0.5]・N で 1/(1 − N)² = 2: 1 ヒット目は 1 のまま、2 ヒット目は 0 になり、外れは 1 ÷ 1.5 倍
+    const n2 = 1 - Math.SQRT1_2;
+    expect(startBodyHitRateUp(0.97, n2, [1, 0.5])).toBeCloseTo(1 - 0.03 / 1.5, 12);
+    expect(startBodyHitRateUp(0.97, 0, [1, 0.5])).toBe(0.97);
+    expect(startBodyHitRateUp(0.97, -0.2, [1, 0.5])).toBe(0.97);
+    expect(startBodyHitRateUp(0.97, 1, [1, 0.5])).toBe(1);
+    // 全部が 1（撃ち始めの外れが▲で減らない形）なら変わらない
+    expect(startBodyHitRateUp(0.97, 0.3, [1, 1, 1])).toBeCloseTo(0.97, 12);
+    // 的の表の割合: アリアの N 0.3037 で外れは約 0.799 倍（plan/design-mg-hit-rate-up.md 1 節）
+    const ratios = profile.startBodyRatios!.MG!;
+    expect((1 - startBodyHitRateUp(0.965, 0.3037, ratios)) / 0.035).toBeCloseTo(0.799, 3);
+    // 命中率▼だけの和は▼の表のまま（形によらない）
+    const at = (id: string) => profile.landings.find((l) => l.id === id)!;
+    const down = hitRateDownAt(profile.hitRateDown, MG, at('nearA'));
+    expect(coreHitRateAt(0.9626, downOnly(-0.2), down, { startBody: ratios })).toBeCloseTo(0.587, 12);
+  });
+
+  it('picks the form per weapon and landing: exponent for a single-muzzle SMG at near, start-of-firing for MG, the sum otherwise', () => {
+    const at = (id: string) => profile.landings.find((l) => l.id === id)!;
+    const ratios = profile.startBodyRatios!.MG!;
+    expect(coreHitRateUpFormOf(profile, SMG, at('nearA'))).toBe('exponent');
+    expect(coreHitRateUpFormOf(profile, SMG, at('farA'))).toBe('sum');
+    expect(coreHitRateUpFormOf(profile, AR, at('nearA'))).toBe('sum');
+    for (const id of ['nearA', 'midNear', 'midFarB', 'farB']) {
+      expect(coreHitRateUpFormOf(profile, MG, at(id))).toEqual({ startBody: ratios });
+    }
+    expect(coreHitRateUpFormOf({ ...profile, startBodyRatios: undefined }, MG, at('nearA'))).toBe('sum');
+    const mgNear = (profile.coreHitRate.MG as Record<string, number>).near!;
+    expect(autoConditionAt(profile, at('nearA'), MG, upOnly(0.3037), MANUAL).coreHitRate).toBe(
+      startBodyHitRateUp(mgNear, 0.3037, ratios),
+    );
   });
 
   it('applies to the table value only; the manual value is kept as it is', () => {
@@ -623,6 +664,20 @@ describe('編成（自動の条件）', () => {
     // 遠は銃口 1 つでも和
     const far = landingPartsWith(plan, slots[0]!, 0, 'far', n);
     for (const p of far) expect(p.condition.coreHitRate).toBe(coreHitRateWithHitRateUp(0.0342, 0.42));
+  });
+
+  it('re-derives the MG core rate with the segment N by the start-of-firing form, and notes it (C-1554)', () => {
+    const slots = [slot(MG, true)];
+    const plan = planLandings(slots, enemy(), battleSecondsToFrames(180), [null])!;
+    const ratios = profile.startBodyRatios!.MG!;
+    const mgFar = (profile.coreHitRate.MG as Record<string, number>).far!;
+    const parts = landingPartsWith(plan, slots[0]!, 0, 'far', upOnly(0.0856));
+    for (const p of parts) {
+      expect(p.coreHitRateUp).toEqual({ startBody: ratios });
+      expect(p.condition.coreHitRate).toBe(startBodyHitRateUp(mgFar, 0.0856, ratios));
+    }
+    const note = landingNotes(plan, slots[0]!, 0, enemy()).find((x) => x.code === 'auto-condition')!;
+    expect(note.message.ja).toContain('C-1554');
   });
 
   it('changes nothing for manual slots, even with the target profile attached', () => {

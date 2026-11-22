@@ -5,11 +5,11 @@
   "topic": "命中率・距離",
   "grade": "反復実測",
   "basis": "`1311-20`・`1311-21`・`1311-22`・`1311-23`・`1312-20`・`1312-21`・`1312-22`・`1312-23`・`1393-03`・`1393-04`・`1393-05`・`1393-06`・`1393-07`・`1393-08`・`1394-03`・`1394-04`・`1394-05`・`1394-06`・`1394-07`・`1394-08`・`1395-03`・`1395-04`・`1395-05`・`1395-06`・`1395-07`・`1395-08`。V-0871",
-  "model": "未実装（data/skills/432.json の burst の notes に未対応と書き、効果を定義していない。MG が受ける命中率▲の扱いは課題 2-72）",
+  "model": "反映（data/enemies.json の range-bigarms の startBodyRatios.MG（窓の外の撃ち始め 56 回のヒット順の割合）と frame/landing.ts の startBodyHitRateUp。MG の表のコア命中率の外れを、命中率▲で r = Σ max(0, 1 − (1 − m_i) ÷ (1 − N)²) ÷ Σ m_i 倍にする。plan/design-mg-hit-rate-up.md 2 節。割合の形はアリアで測ったものを、ほかの MG と着地点にも当てる）",
   "replaces": [],
   "updated": "2026-11-22",
   "subject": {
-    "places": ["data/skills/432.json の burst の notes[0]"]
+    "places": ["data/skills/432.json の burst の effects[0]"]
   },
   "decidedOn": [
     {

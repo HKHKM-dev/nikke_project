@@ -409,6 +409,21 @@ function parseHitRateDown(v: unknown, path: string, keys: ReadonlySet<string>): 
   return table;
 }
 
+/** startBodyRatios: 武器種 → ヒット順の胴体の割合（[0, 1] の空でない列。和は 0 より大きい） */
+function parseStartBodyRatios(v: unknown, path: string): NonNullable<TargetProfile['startBodyRatios']> {
+  if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
+  const table: Partial<Record<WeaponType, readonly number[]>> = {};
+  for (const [weapon, row] of Object.entries(v)) {
+    const at = `${path}.${weapon}`;
+    if (!(WEAPON_TYPES as readonly string[]).includes(weapon)) throw new TypeError(`${at}: unknown weapon type`);
+    if (!Array.isArray(row) || row.length === 0 || !row.every(isRate) || !row.some((r) => r > 0)) {
+      throw new TypeError(`${at}: must be a non-empty array of rates in [0, 1] with a positive one`);
+    }
+    table[weapon as WeaponType] = row as number[];
+  }
+  return table;
+}
+
 function parseTargetProfile(v: unknown, path: string): TargetProfile {
   if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
   const name = v.name;
@@ -461,6 +476,9 @@ function parseTargetProfile(v: unknown, path: string): TargetProfile {
     ...(v.hitRateDown === undefined
       ? {}
       : { hitRateDown: parseHitRateDown(v.hitRateDown, `${path}.hitRateDown`, keys) }),
+    ...(v.startBodyRatios === undefined
+      ? {}
+      : { startBodyRatios: parseStartBodyRatios(v.startBodyRatios, `${path}.startBodyRatios`) }),
     source: v.source,
   };
 }

@@ -83,6 +83,8 @@ export type LandingPart = {
   condition: SlotCondition;
   measuredHitRate?: boolean;
   tableCoreHitRate?: number;
+  /** tableCoreHitRate に命中率▲が効く形（coreHitRateUpFormOf。tableCoreHitRate のある部分だけ） */
+  coreHitRateUp?: CoreHitRateUpForm;
   tableBulletHitRate?: number;
   hitRateDown?: HitRateDownAt;
 };
@@ -231,18 +233,44 @@ function downOnly(hitRate: HitRateN): boolean {
 }
 
 /**
- * 的の表のコア命中率 p を、命中率の和 hitRate で出し直す。▼だけの和（downOnly）は命中率▼の値 down に N の値があればそれ
- * （plan/design-maids.md 8.2 節）、無ければ p のまま。ほかは N で▲の式（N ≤ 0 は p のまま）。式は exponent が真なら指数・和
- * （exponentSumHitRateUp。coreHitRateUpIsExponent）、偽なら和（coreHitRateWithHitRateUp）
+ * 命中率▲がコア命中率に効く形（coreHitRateUpFormOf）。sum は和（coreHitRateWithHitRateUp）、exponent は指数・和
+ * （exponentSumHitRateUp）、startBody は撃ち始めのヒット順の胴体の割合 ratios から縮める形（startBodyHitRateUp）
  */
-export function coreHitRateAt(p: number, hitRate: HitRateN, down: HitRateDownAt | undefined, exponent = false): number {
+export type CoreHitRateUpForm = 'sum' | 'exponent' | { readonly startBody: readonly number[] };
+
+/**
+ * 的の表のコア命中率 p を、命中率の和 hitRate で出し直す。▼だけの和（downOnly）は命中率▼の値 down に N の値があればそれ
+ * （plan/design-maids.md 8.2 節）、無ければ p のまま。ほかは N で▲の式（N ≤ 0 は p のまま）を form の形で当てる
+ */
+export function coreHitRateAt(
+  p: number,
+  hitRate: HitRateN,
+  down: HitRateDownAt | undefined,
+  form: CoreHitRateUpForm = 'sum',
+): number {
   if (downOnly(hitRate)) return valueAtN(down?.core, hitRate.n) ?? p;
-  return exponent ? exponentSumHitRateUp(p, hitRate.n) : coreHitRateWithHitRateUp(p, hitRate.n);
+  if (form === 'sum') return coreHitRateWithHitRateUp(p, hitRate.n);
+  if (form === 'exponent') return exponentSumHitRateUp(p, hitRate.n);
+  return startBodyHitRateUp(p, hitRate.n, form.startBody);
+}
+
+/**
+ * 着地点 landing の character のコア命中率に命中率▲が効く形。銃口 1 つの SMG の近は指数・和（coreHitRateUpIsExponent）、的に
+ * 武器種の撃ち始めの胴体の割合（TargetProfile.startBodyRatios。MG。C-1554）があればそれから縮める形、ほかは和（C-0036）
+ */
+export function coreHitRateUpFormOf(
+  profile: Pick<TargetProfile, 'startBodyRatios'>,
+  character: Pick<CharacterData, 'weaponType' | 'shot'>,
+  landing: Pick<LandingPoint, 'band'>,
+): CoreHitRateUpForm {
+  if (coreHitRateUpIsExponent(character, landing)) return 'exponent';
+  const ratios = profile.startBodyRatios?.[character.weaponType];
+  return ratios === undefined ? 'sum' : { startBody: ratios };
 }
 
 /**
  * 命中率▲がコア命中率に効く形が指数・和か。銃口 1 つの SMG の近（近 A・近 B）だけ指数・和（C-1109。仮説）で、
- * 二丁持ちの SMG・ほかの帯・ほかの武器種は和（C-0036。plan/design-smg-near-core.md 3.2 節）
+ * 二丁持ちの SMG・ほかの帯・ほかの武器種は和（C-0036。plan/design-smg-near-core.md 3.2 節）か、撃ち始めの外れを縮める形（MG）
  */
 export function coreHitRateUpIsExponent(
   character: Pick<CharacterData, 'weaponType' | 'shot'>,
@@ -268,6 +296,24 @@ export function coreHitRateWithHitRateUp(p: number, hitRateUp: number): number {
   if (hitRateUp <= 0) return p;
   if (hitRateUp >= 1) return 1;
   return Math.min(1, p / (1 - hitRateUp) ** 2);
+}
+
+/**
+ * C-1554: 表のコア命中率 p の外れ 1 − p を、リロードの明けの撃ち始めの外れとみて、命中率▲ N を 1 ヒットずつ当てて縮める。撃ち始めの
+ * ヒット順の胴体の割合 m_i（ratios）の各ヒットのコア命中率 1 − m_i に C-0036 の式（÷ (1 − N)²、上限 1）を当て、胴体の和が減る割合
+ * r = Σ max(0, 1 − (1 − m_i) ÷ (1 − N)²) ÷ Σ m_i を 1 − p に掛ける（plan/design-mg-hit-rate-up.md 2 節）。N ≥ 1 なら 1、N ≤ 0 は変えない
+ */
+export function startBodyHitRateUp(p: number, hitRateUp: number, ratios: readonly number[]): number {
+  if (hitRateUp <= 0) return p;
+  if (hitRateUp >= 1) return 1;
+  const scale = 1 / (1 - hitRateUp) ** 2;
+  let body = 0;
+  let left = 0;
+  for (const m of ratios) {
+    body += m;
+    left += Math.max(0, 1 - (1 - m) * scale);
+  }
+  return 1 - (1 - p) * (left / body);
 }
 
 /**
@@ -346,7 +392,7 @@ export function autoConditionAt(
     coreHitRate:
       core === null
         ? manual.coreHitRate
-        : coreHitRateAt(core, hitRate, down, coreHitRateUpIsExponent(character, landing)),
+        : coreHitRateAt(core, hitRate, down, coreHitRateUpFormOf(profile, character, landing)),
     distanceBonus: distanceBonusAt(character, landing),
     hitRate:
       bullet === null
@@ -438,7 +484,12 @@ export function planLandings(
                 weight,
                 condition: autoConditionAt(profile, landing, slot.character, hitRate[i]!, slot.condition, down),
                 measuredHitRate: bullet !== null,
-                ...(table === null ? {} : { tableCoreHitRate: table }),
+                ...(table === null
+                  ? {}
+                  : {
+                      tableCoreHitRate: table,
+                      coreHitRateUp: coreHitRateUpFormOf(profile, slot.character, landing),
+                    }),
                 ...(bullet === null || !hitRateUpRaisesBulletHitRate(slot.character, landing)
                   ? {}
                   : { tableBulletHitRate: bullet }),
@@ -520,12 +571,7 @@ export function landingPartsWith(
           ...p.condition,
           ...(core
             ? {
-                coreHitRate: coreHitRateAt(
-                  p.tableCoreHitRate!,
-                  hitRate,
-                  p.hitRateDown,
-                  p.landing !== null && coreHitRateUpIsExponent(slot.character, p.landing),
-                ),
+                coreHitRate: coreHitRateAt(p.tableCoreHitRate!, hitRate, p.hitRateDown, p.coreHitRateUp),
               }
             : {}),
           ...(bullet ? { hitRate: bulletHitRateAt(p.tableBulletHitRate!, hitRate, p.hitRateDown) } : {}),
@@ -919,13 +965,10 @@ export function landingNotes(
   );
   const n = plan.hitRate[slotIndex]?.n ?? 0;
   const bullet = bulletHitRateUpNote(slot.character, parts);
-  // C-1109: 計画に、コア命中率を指数・和で上げる着地点（銃口 1 つの SMG の近）があるか
-  const exponentCore = [...parts.values()]
-    .flat()
-    .some(
-      (p) =>
-        p.landing !== null && p.tableCoreHitRate !== undefined && coreHitRateUpIsExponent(slot.character, p.landing),
-    );
+  // 計画に、コア命中率を指数・和で上げる着地点（銃口 1 つの SMG の近。C-1109）と、撃ち始めの外れを縮める着地点（MG。C-1554）があるか
+  const forms = [...parts.values()].flat().map((p) => p.coreHitRateUp);
+  const exponentCore = forms.includes('exponent');
+  const startBodyCore = forms.some((f) => typeof f === 'object');
   const ja = [
     `${profile.name.ja}の表（単騎 AUTO の実測）でコア命中率・距離ボーナス・弾丸命中率を決めた`,
     ...mixes.map((id) => mixLabel(profile, id).ja),
@@ -934,6 +977,11 @@ export function landingNotes(
     ...(exponentCore
       ? [
           '近（近 A・近 B）のコア命中率は、命中率▲で 1/(1 − N)² 倍にせず、外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にした（銃口 1 つの SMG の近だけ。C-1109。仮説）',
+        ]
+      : []),
+    ...(startBodyCore
+      ? [
+          'MG のコア命中率は、命中率▲で 1/(1 − N)² 倍にせず、表の外れを撃ち始めの外れとみて、撃ち始めのヒット順の胴体の割合に 1 ヒットずつ 1/(1 − N)² を当てて縮めた（C-1554。割合はアリアの録画で測った形を、ほかの MG と着地点にも当てる）',
         ]
       : []),
     bullet.ja,
@@ -946,6 +994,11 @@ export function landingNotes(
     ...(exponentCore
       ? [
           'at near range (landings A and B), hit rate buffs turn the core miss rate 1 − p into (1 − p) ^ (1 ÷ (1 − N)²) instead of scaling core hit rate by 1/(1 − N)² (single-muzzle SMG at near range only; C-1109; hypothesis)',
+        ]
+      : []),
+    ...(startBodyCore
+      ? [
+          'for MG, hit rate buffs do not scale core hit rate by 1/(1 − N)²; the table core misses are taken as start-of-firing misses and shrunk by applying 1/(1 − N)² hit by hit to the per-hit body ratio at the start of firing (C-1554; the ratio measured on Aria is applied to other MGs and landings too)',
         ]
       : []),
     bullet.en,
