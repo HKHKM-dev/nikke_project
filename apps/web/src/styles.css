@@ -1500,9 +1500,9 @@ svg.roster-revert-icon {
 }
 /* ニケ一覧の縦長の絵は、背景も枠線と同じく上の 5 割で上へ行くほど透明にする。枠線: 上を消し、横は上の 5 割で上へ行くほど薄くして一番上で消す（下は実線）。
    枠線の太さは変えないので、絵の大きさは同じ。色は枠線の色（--char-visual-line） */
-/* 四角の立ち絵（顔の絵。ニケ一覧の四角・選んでいない編成の行・持ち上げた絵）も、縦長と同じく上を透明にする（オーナーのコメント） */
+/* 四角の立ち絵（顔の絵。ニケ一覧の四角・所持の編集の窓の一覧・選んでいない編成の行・持ち上げた絵）も、縦長と同じく上を透明にする（オーナーのコメント） */
 .char-visual-tall,
-.char-tray-square-area .char-visual-compact,
+.char-visual-compact,
 .char-visual-portrait {
   /* 塗りは基準を枠線の外側（border-box）にする。既定の padding-box だと、絵が繰り返されて上の枠線の 1px に下端の塗りの色が出る */
   background: linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
