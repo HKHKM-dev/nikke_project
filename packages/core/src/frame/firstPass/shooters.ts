@@ -4,7 +4,7 @@ import { stunSlot } from '../../burst/controller.ts';
 import { partialGaugeRatio } from '../../burst/dynamic.ts';
 import { effectFrameOf, hexagonFrameOf } from '../../burst/schedule.ts';
 import { capCritRate, ZERO_BUFFS, type ChangedWeapon } from '../../skills/buffs.ts';
-import { isChargeWeapon, lastBulletShotsOf } from '../../weapons.ts';
+import { holdFireAimShorterFrames, isChargeWeapon, lastBulletShotsOf } from '../../weapons.ts';
 import { firingParams, isZeroFiring, type FiringParams } from '../firing.ts';
 import {
   beginHide,
@@ -36,9 +36,10 @@ import type { ShotPauses } from './shotPauses.ts';
 
 /**
  * V-0605: 枠の撃たない区間。untargetable は区間の始まりが狙えない窓の始まりか（そのときだけ窓の始まりの D を待ち、部分チャージの発を撃つ。
- * holdFire の区間は待たずにハイドする。plan/design-hide-reload-detect.md 案 A）
+ * holdFire の区間は待たずにハイドする。plan/design-hide-reload-detect.md 案 A）。manualEnd は区間の終わりが holdFire の終わりで、
+ * 同じフレームに狙えない窓が明けないか（オート射撃を手で ON に戻した明け。C-1550）
  */
-type SlotBlock = FrameRange & { untargetable: boolean };
+type SlotBlock = FrameRange & { untargetable: boolean; manualEnd: boolean };
 
 /**
  * V-0605: 枠ごとの撃たない区間。狙えない窓に枠の holdFire を合わせて 1 つにする（同じフレームに始まれば狙えない窓の側）。
@@ -49,12 +50,16 @@ function slotBlockRanges(
   untargetable: readonly FrameRange[],
   holdFire: readonly HoldFire[] | undefined,
 ): (readonly SlotBlock[])[] {
-  const shared: SlotBlock[] = untargetable.map((r) => ({ start: r.start, end: r.end, untargetable: true }));
+  const shared: SlotBlock[] = untargetable.map((r) => ({ start: r.start, end: r.end, untargetable: true, manualEnd: false }));
   return Array.from({ length: slotCount }, (_, i) => {
     const holds = (holdFire ?? []).filter((h) => h.slotIndex === i).flatMap((h) => h.ranges);
     if (holds.length === 0) return shared;
-    const all = [...shared, ...holds.map((r) => ({ start: r.start, end: r.end, untargetable: false }))];
-    return unionRanges(all.sort((a, b) => a.start - b.start || Number(b.untargetable) - Number(a.untargetable)));
+    const all = [...shared, ...holds.map((r) => ({ start: r.start, end: r.end, untargetable: false, manualEnd: false }))];
+    const merged = unionRanges(all.sort((a, b) => a.start - b.start || Number(b.untargetable) - Number(a.untargetable)));
+    return merged.map((b) => ({
+      ...b,
+      manualEnd: holds.some((r) => r.end === b.end) && !untargetable.some((r) => r.end === b.end),
+    }));
   });
 }
 
@@ -219,8 +224,12 @@ export function createShooters({
         (logs[i]!.hideReloadStarts ??= []).push(f + state.hideReloadStartIn);
         delete state.hideReloadStartIn;
       }
-      if (ownBlock !== undefined && ownBlock.end === f)
-        unhideShooter(state, shot, ownBlock.end - ownBlock.start, model, params);
+      if (ownBlock !== undefined && ownBlock.end === f) {
+        // オート射撃を手で ON に戻した明けは、構えが短い（C-1550。使用武器の変更の間は確かめていないので窓の明けと同じ）
+        const shorter =
+          ownBlock.manualEnd && params.weapon === null ? holdFireAimShorterFrames(slot.character.weaponType, model) : 0;
+        unhideShooter(state, shot, ownBlock.end - ownBlock.start, model, params, shorter);
+      }
       for (const p of appliedPauses[i]!) {
         const on = lists.selfStateAt(i, p.state, f);
         if (on && !p.was) {

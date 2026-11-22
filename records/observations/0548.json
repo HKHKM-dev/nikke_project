@@ -58,5 +58,65 @@
       "source": "gauge",
       "frames": [990, 1239]
     }
+  },
+  {
+    "id": "0548-04",
+    "recording": "0548",
+    "use": "input",
+    "kind": "timing",
+    "unit": "f",
+    "value": [0, 211],
+    "description": "アニス：スター（1 枠目・操作）のオート射撃を OFF にしていた区間（[OFF, ON] のゲーム内のフレーム。戦闘開始から。比べる設定 holdFire の入力）。戦闘の始まりから OFF で、ボタンが点いた f1045 に ON にした",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "method": {
+      "tool": "ffmpeg（左上のボタンの切り出し）・timer.ts --mode changes",
+      "note": "ON は画面左上の照準の印（1920×1080 の 10,12 から 40×40）のオレンジの画素（R>180・B<110・R−B>100）が 40 個を超えたフレーム（0105-06 と同じ）。動画のフレーム − 戦闘開始（f834。timer.ts --mode changes の WARNING の演出（+319f）の次の変わり目）。ON より前にバーストは無く、止まりは引かない"
+    },
+    "source": "V-0865",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "0548-05",
+    "recording": "0548",
+    "use": "compare",
+    "kind": "interval",
+    "unit": "f",
+    "value": 62,
+    "description": "アニス：スター（RL・押下チャージ型・操作）のオート射撃を手で ON にした（0548-04）の、ボタンが点いたフレームから最初の発までの動画のフレーム数",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "method": {
+      "tool": "ffmpeg（左上のボタンの切り出し）・reticle-ammo.ts --mode series",
+      "note": "ON は画面左上の照準の印（1920×1080 の 10,12 から 40×40）のオレンジの画素（R>180・B<110・R−B>100）が 40 個を超えたフレーム（0105-06 と同じ）。最初の発は 0548-02 の最初の発射（照準の横の残弾が 6 → 5。f1107）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "holdFireEndToNextShot",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "holdFire": [
+          {
+            "slot": 1,
+            "frames": "0548-04"
+          }
+        ]
+      }
+    },
+    "source": "V-0865",
+    "readAt": "2026-11-22"
   }
 ]

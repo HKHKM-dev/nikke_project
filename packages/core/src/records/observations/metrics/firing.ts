@@ -41,6 +41,11 @@ export const firingMetrics: Readonly<Record<string, Metric>> = {
     args: ['slot', 'n'],
     sim: fullBurstEndToNextShot,
   },
+  holdFireEndToNextShot: {
+    description: '枠の holdFire の n 回目（0 始まり）の区間の終わり（オート射撃を ON に戻したフレーム）から、枠の次の発までの動画のフレーム',
+    args: ['slot', 'n'],
+    sim: holdFireEndToNextShot,
+  },
   shotCount: {
     description: '枠の [from, to) の発の数（モデルのフレーム。burst を書くとその回の発動からの相対）',
     optional: ['from', 'to', 'burst'],
@@ -632,6 +637,26 @@ function weaponChangeShotToNextShot(result: SimResult, ctx: MetricContext): numb
     const shot = log.frames.find((f) => f > from && !changed.includes(f));
     if (shot === undefined) throw new Error(`${n} 回目の変更後の武器の発の後に基礎の武器の発が無い`);
     return videoFrameOf(schedule, shot) - videoFrameOf(schedule, from);
+  };
+  return eachOrOne(ctx.args.n, at);
+}
+
+/**
+ * 枠の比べる設定 holdFire の n 回目（0 始まり）の区間の終わり（オート射撃を ON に戻したフレーム）から、その後の枠の最初の発
+ * （終わりのフレームを含む）までの、録画の動画のフレーム（バーストの時刻表が無ければゲーム内のフレームの差）。n はカンマ区切りの
+ * 並びも書ける。ボタンが点いてから最初の発までを、照準の横の残弾か HUD の増分で比べる
+ */
+function holdFireEndToNextShot(result: SimResult, ctx: MetricContext): number | number[] {
+  const slotIndex = slotIndexOf(ctx);
+  const ranges = (ctx.input.holdFire ?? []).filter((h) => h.slotIndex === slotIndex).flatMap((h) => h.ranges);
+  const frames = slotOf(result.shots, ctx).frames;
+  const video = (f: number): number => (result.schedule === null ? f : videoFrameOf(result.schedule, f));
+  const at = (n: number): number => {
+    const range = ranges[n];
+    if (range === undefined) throw new Error(`枠の holdFire の ${n} 回目の区間が無い`);
+    const shot = frames.find((f) => f >= range.end);
+    if (shot === undefined) throw new Error(`holdFire の ${n} 回目の区間の終わりの後に発が無い`);
+    return video(shot) - video(range.end);
   };
   return eachOrOne(ctx.args.n, at);
 }

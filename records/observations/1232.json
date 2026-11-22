@@ -148,5 +148,68 @@
       "slot": "all",
       "source": "target"
     }
+  },
+  {
+    "id": "1232-07",
+    "recording": "1232",
+    "use": "input",
+    "kind": "timing",
+    "unit": "f",
+    "value": [1704, 2101, 8102, 8475],
+    "description": "エード：エージェントバニー（2 枠目・操作）のオート射撃を手で OFF・ON にしたゲーム内のフレーム（戦闘開始から。[OFF, ON, OFF, ON]。比べる設定 holdFire の入力）。1232-01 の ON を、ボタンが点いたフレーム（f2879・f9255）で読み直した",
+    "scope": {
+      "slot": 2,
+      "source": "firing"
+    },
+    "method": {
+      "tool": "ffmpeg（左上のボタンの切り出し）・timer.ts --mode changes・recipe:burst-panel@4",
+      "note": "ON は画面左上の照準の印（1920×1080 の 10,12 から 40×40）のオレンジの画素（R>180・B<110・R−B>100）が 40 個を超えたフレーム（0105-06 と同じ）。2 回とも 0 個から 1〜3f で点いた。ゲーム内のフレームは 1232-01 と同じく動画のフレーム − 戦闘開始 f776 − その前の I・II の発動の止まり（1 回目の ON の前 2f・2 回目の前 4f）。OFF は 1232-01 のまま（ジャンプの前の最後の発の 8f 後。ジャンプの間は撃てないので発に効かない）"
+    },
+    "source": "V-0865",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1232-08",
+    "recording": "1232",
+    "use": "compare",
+    "kind": "interval",
+    "unit": "f",
+    "value": [64, 65],
+    "description": "エード：エージェントバニー（SR・2 枠目・操作）のオート射撃を手で ON にした（1232-07）2 回の、ボタンが点いたフレームから最初の発までの動画のフレーム数",
+    "scope": {
+      "slot": 2,
+      "source": "firing"
+    },
+    "method": {
+      "tool": "ffmpeg（左上のボタンの切り出し）・hud.ts --mode jumps",
+      "note": "ON は画面左上の照準の印（1920×1080 の 10,12 から 40×40）のオレンジの画素（R>180・B<110・R−B>100）が 40 個を超えたフレーム（0105-06 と同じ）。最初の発は 1232-04・1232-05 の 1 発目（f2943・f9320。即着弾なので HUD の増分が発のフレーム）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "holdFireEndToNextShot",
+      "args": {
+        "slot": 2,
+        "n": "0,1"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "manualBursts": "1232-02",
+        "jumpWindows": "1232-03",
+        "nearLanding": ["A", "B"],
+        "holdFire": [
+          {
+            "slot": 2,
+            "frames": "1232-07"
+          }
+        ]
+      }
+    },
+    "source": "V-0865",
+    "readAt": "2026-11-22"
   }
 ]
