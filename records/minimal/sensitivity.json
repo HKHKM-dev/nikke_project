@@ -32248,7 +32248,7 @@
     {
       "observation": "1188-09",
       "element": "エレグ skill1.effects[0]",
-      "key": "f580bcb0aad45489",
+      "key": "62d0d819f379a7d4",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32256,7 +32256,7 @@
     {
       "observation": "1188-09",
       "element": "ジャッカル burst.effects[0]",
-      "key": "f580bcb0aad45489",
+      "key": "62d0d819f379a7d4",
       "effective": true,
       "minus": -122996.78428950004,
       "plus": 0
@@ -32264,7 +32264,7 @@
     {
       "observation": "1188-10",
       "element": "エレグ skill1.effects[0]",
-      "key": "adc0c7cb16b054c2",
+      "key": "f21b640e8addc29f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32272,7 +32272,7 @@
     {
       "observation": "1188-10",
       "element": "ジャッカル burst.effects[0]",
-      "key": "adc0c7cb16b054c2",
+      "key": "f21b640e8addc29f",
       "effective": true,
       "minus": -122996.78428950004,
       "plus": 0
@@ -32280,7 +32280,7 @@
     {
       "observation": "1188-11",
       "element": "エレグ skill1.effects[0]",
-      "key": "f5f41b628ed5580b",
+      "key": "abb2003392e92256",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32288,7 +32288,7 @@
     {
       "observation": "1188-11",
       "element": "ジャッカル burst.effects[0]",
-      "key": "f5f41b628ed5580b",
+      "key": "abb2003392e92256",
       "effective": true,
       "minus": -122996.78428950004,
       "plus": 0
@@ -32296,7 +32296,7 @@
     {
       "observation": "1188-12",
       "element": "エレグ skill1.effects[0]",
-      "key": "b6cc14bc99293d7d",
+      "key": "f603467ddefd0d40",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32304,7 +32304,7 @@
     {
       "observation": "1188-12",
       "element": "ジャッカル burst.effects[0]",
-      "key": "b6cc14bc99293d7d",
+      "key": "f603467ddefd0d40",
       "effective": true,
       "minus": -122996.78428950004,
       "plus": 0
@@ -32312,7 +32312,7 @@
     {
       "observation": "1188-13",
       "element": "エレグ skill1.effects[0]",
-      "key": "8c0a895ea3c3bfdf",
+      "key": "ea88aa87ad31ed42",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32320,7 +32320,7 @@
     {
       "observation": "1188-13",
       "element": "ジャッカル burst.effects[0]",
-      "key": "8c0a895ea3c3bfdf",
+      "key": "ea88aa87ad31ed42",
       "effective": true,
       "minus": -122996.78428950004,
       "plus": 0
@@ -32328,7 +32328,7 @@
     {
       "observation": "1188-14",
       "element": "エレグ skill1.effects[0]",
-      "key": "5fca8d6878e53f71",
+      "key": "abc64661bae0d96c",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32336,7 +32336,7 @@
     {
       "observation": "1188-14",
       "element": "ジャッカル burst.effects[0]",
-      "key": "5fca8d6878e53f71",
+      "key": "abc64661bae0d96c",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -32344,7 +32344,7 @@
     {
       "observation": "1188-15",
       "element": "エレグ skill1.effects[0]",
-      "key": "412db7049d67af2b",
+      "key": "493577b515acfdf6",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32352,7 +32352,7 @@
     {
       "observation": "1188-15",
       "element": "ジャッカル burst.effects[0]",
-      "key": "412db7049d67af2b",
+      "key": "493577b515acfdf6",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -32360,7 +32360,7 @@
     {
       "observation": "1188-16",
       "element": "エレグ skill1.effects[0]",
-      "key": "a357f434d1b0bd45",
+      "key": "d08e21855d149978",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32368,7 +32368,7 @@
     {
       "observation": "1188-16",
       "element": "ジャッカル burst.effects[0]",
-      "key": "a357f434d1b0bd45",
+      "key": "d08e21855d149978",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -32376,7 +32376,7 @@
     {
       "observation": "1189-08",
       "element": "エレグ skill1.effects[0]",
-      "key": "5fc9934e4d91c57d",
+      "key": "4eb46f575b075540",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32384,7 +32384,7 @@
     {
       "observation": "1189-08",
       "element": "ジャッカル burst.effects[0]",
-      "key": "5fc9934e4d91c57d",
+      "key": "4eb46f575b075540",
       "effective": true,
       "minus": -122996.78428950004,
       "plus": 0
@@ -32392,7 +32392,7 @@
     {
       "observation": "1189-09",
       "element": "エレグ skill1.effects[0]",
-      "key": "8574fc65f11b4346",
+      "key": "342a45d85f04acab",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32400,7 +32400,7 @@
     {
       "observation": "1189-09",
       "element": "ジャッカル burst.effects[0]",
-      "key": "8574fc65f11b4346",
+      "key": "342a45d85f04acab",
       "effective": true,
       "minus": -122996.78428950004,
       "plus": 0
@@ -32408,7 +32408,7 @@
     {
       "observation": "1189-10",
       "element": "エレグ skill1.effects[0]",
-      "key": "0e869b6c582c47df",
+      "key": "0e858d8d293c3542",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32416,7 +32416,7 @@
     {
       "observation": "1189-10",
       "element": "ジャッカル burst.effects[0]",
-      "key": "0e869b6c582c47df",
+      "key": "0e858d8d293c3542",
       "effective": true,
       "minus": -122996.78428950004,
       "plus": 0
@@ -32424,7 +32424,7 @@
     {
       "observation": "1189-11",
       "element": "エレグ skill1.effects[0]",
-      "key": "37246b20433de00b",
+      "key": "e2ab56e90ef36a56",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32432,7 +32432,7 @@
     {
       "observation": "1189-11",
       "element": "ジャッカル burst.effects[0]",
-      "key": "37246b20433de00b",
+      "key": "e2ab56e90ef36a56",
       "effective": true,
       "minus": -122996.78428950004,
       "plus": 0
@@ -32440,7 +32440,7 @@
     {
       "observation": "1189-12",
       "element": "エレグ skill1.effects[0]",
-      "key": "0d5ad9e6eee58f95",
+      "key": "92d4deff54298768",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32448,7 +32448,7 @@
     {
       "observation": "1189-12",
       "element": "ジャッカル burst.effects[0]",
-      "key": "0d5ad9e6eee58f95",
+      "key": "92d4deff54298768",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -32456,7 +32456,7 @@
     {
       "observation": "1189-13",
       "element": "エレグ skill1.effects[0]",
-      "key": "3b617e5ff8591d5c",
+      "key": "2835c36af4ba8031",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32464,7 +32464,7 @@
     {
       "observation": "1189-13",
       "element": "ジャッカル burst.effects[0]",
-      "key": "3b617e5ff8591d5c",
+      "key": "2835c36af4ba8031",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -32472,7 +32472,7 @@
     {
       "observation": "1189-14",
       "element": "エレグ skill1.effects[0]",
-      "key": "0e73c9fdbdf5cd5e",
+      "key": "46e442603ea2ca53",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32480,7 +32480,7 @@
     {
       "observation": "1189-14",
       "element": "ジャッカル burst.effects[0]",
-      "key": "0e73c9fdbdf5cd5e",
+      "key": "46e442603ea2ca53",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -32488,7 +32488,7 @@
     {
       "observation": "1189-15",
       "element": "エレグ skill1.effects[0]",
-      "key": "137d65753e8755d6",
+      "key": "12a343c84575785b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -32496,7 +32496,7 @@
     {
       "observation": "1189-15",
       "element": "ジャッカル burst.effects[0]",
-      "key": "137d65753e8755d6",
+      "key": "12a343c84575785b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -37658,6 +37658,120 @@
       "observation": "1384-04",
       "element": "ハラン skill2.effects[1]",
       "key": "3ac01c89b06e5712",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1390-09",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "b4e4e73653ddc4dd",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1390-09",
+      "element": "マナ burst.effects[0]",
+      "key": "b4e4e73653ddc4dd",
+      "effective": true,
+      "minus": -832373.0553600001,
+      "plus": 0
+    },
+    {
+      "observation": "1390-09",
+      "element": "マナ burst.effects[1]",
+      "key": "b4e4e73653ddc4dd",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 4 回目の持続ダメージの tick が無い"
+    },
+    {
+      "observation": "1390-10",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "e033d1ad3f7989f2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1390-10",
+      "element": "マナ burst.effects[0]",
+      "key": "e033d1ad3f7989f2",
+      "effective": true,
+      "minus": -1109830.7404800002,
+      "plus": 0
+    },
+    {
+      "observation": "1390-10",
+      "element": "マナ burst.effects[1]",
+      "key": "e033d1ad3f7989f2",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 4 回目の持続ダメージの tick が無い"
+    },
+    {
+      "observation": "1391-09",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "7b42b23966d2e380",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1391-09",
+      "element": "紅蓮：神殺 skill1.effects[0]",
+      "key": "7b42b23966d2e380",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1391-10",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "a5c096c35457460c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1391-10",
+      "element": "紅蓮：神殺 skill1.effects[0]",
+      "key": "a5c096c35457460c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1392-09",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "a0383cb2ab4c299b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1392-09",
+      "element": "紅蓮：神殺 skill1.effects[0]",
+      "key": "a0383cb2ab4c299b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1392-10",
+      "element": "ジャッカル burst.effects[0]",
+      "key": "d2adb95fdaa62416",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1392-10",
+      "element": "紅蓮：神殺 skill1.effects[0]",
+      "key": "d2adb95fdaa62416",
       "effective": false,
       "minus": 0,
       "plus": 0
