@@ -37057,6 +37057,106 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "1370-01",
+      "element": "プロダクト12 skill2.effects[0]",
+      "key": "c9406f597daa99d6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1370-02",
+      "element": "プロダクト12 skill2.effects[0]",
+      "key": "da15b686bb8c2e03",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1370-03",
+      "element": "プロダクト12 skill2.effects[0]",
+      "key": "93a0dbc0e74e01df",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1370-04",
+      "element": "プロダクト12 skill2.effects[0]",
+      "key": "32a024518f5f0a3e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1370-05",
+      "element": "プロダクト12 skill2.effects[0]",
+      "key": "32be5df8d7f8dce7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1370-06",
+      "element": "プロダクト12 skill2.effects[0]",
+      "key": "61c8d6f6c9f84983",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1370-08",
+      "element": "プロダクト12 skill2.effects[0]",
+      "key": "4026329129995afc",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "1370-09",
+      "element": "プロダクト12 skill2.effects[0]",
+      "key": "206b1bc2bf76d941",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1371-01",
+      "element": "プロダクト12 skill2.effects[0]",
+      "key": "b4b34933ac08d736",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "1371-02",
+      "element": "プロダクト12 skill2.effects[0]",
+      "key": "a5ccb85d3e998044",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1372-01",
+      "element": "プロダクト12 skill2.effects[0]",
+      "key": "f16558844331cfc7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1372-02",
+      "element": "プロダクト12 skill2.effects[0]",
+      "key": "807370689a1e8dcb",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }

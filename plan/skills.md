@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 173・効果 1213（根拠あり 1191）・notes 383（根拠あり 160）
+件数: キャラ 174・効果 1216（根拠あり 1194）・notes 383（根拠あり 160）
 
 notes の種類: 未対応 37・前提の外 129・計算に無関係 78・補足 43・間接 96
 
-スロット: supported 477・partial 24・unsupported 9・noEffect 66
+スロット: supported 480・partial 24・unsupported 9・noEffect 66
 
 ## 10 ラピ
 
@@ -1517,6 +1517,15 @@ notes の種類: 未対応 37・前提の外 129・計算に無関係 78・補�
   - effects[0] timed・17 秒ごと・critRate: C-0496（確定）
 - **burst**: supported
   - effects[0] timed・burstUse・attack: C-0684（確定）
+
+## 303 プロダクト12
+
+- **skill1**: supported
+  - effects[0] timed・normalShot・attack: C-1523（確定）
+- **skill2**: supported
+  - effects[0] damage・10 秒ごと・skill: C-1524（確定）、C-1525（仮説）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1526（確定）
 
 ## 304 I-DOLL・フラワー
 
