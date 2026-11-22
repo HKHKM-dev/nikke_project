@@ -163,5 +163,46 @@
         ]
       }
     }
+  },
+  {
+    "id": "0390-07",
+    "recording": "0390",
+    "source": "V-0867",
+    "readAt": "2026-11-22",
+    "kind": "interval",
+    "use": "compare",
+    "value": 124,
+    "unit": "f",
+    "description": "プリバティ：アンカインド・メイド（SG・操作・手動）単騎・スペック固定 OFF（S2 は Lv4）の、2 区間目（近）のマガジンの最終弾から次のマガジンの 1 発目まで（4 回とも 124f）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "S1 のヒット（816,383・会心 1,224,575）を除いたトリガーの増分のフレーム: 3191→3315・3629→3753・4067→4191・4505→4629"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "reloadToNextShotAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "pelletHits": [
+          {
+            "slot": 1,
+            "counts": "0390-02"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   }
 ]

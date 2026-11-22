@@ -212,6 +212,8 @@ export type ResolvedShotCountTrigger = {
    * 回数の量が正の射撃のたびに発火する（skills/triggers.ts）。窓の値は skills/chance.ts が期待値にする
    */
   chance?: number;
+  /** その発の当たったペレットの数がこの数以上の発だけを数える（plan/design-privaty-um-s2.md 2.1 節） */
+  minPellets?: number;
 };
 
 /** 確率のきっかけ（解決済み）か */
@@ -263,6 +265,14 @@ export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: n
   const every = trigger.everyRef === undefined ? (trigger.every ?? 1) : skillValue(skill, trigger.everyRef, level);
   if (!Number.isInteger(every) || every < 1) {
     throw new RangeError(`skill ${skill.id}: count trigger must be a positive integer, got ${every}`);
+  }
+  // 1 発の当たったペレットの数のしきい値は、数える窓・発火の窓・スタック・確率と組まない（skills/parse/trigger.ts）
+  if (trigger.minPellets !== undefined || trigger.minPelletsRef !== undefined) {
+    const minPellets = trigger.minPellets ?? skillValue(skill, trigger.minPelletsRef!, level);
+    if (!Number.isFinite(minPellets) || minPellets <= 0) {
+      throw new RangeError(`skill ${skill.id}: minPellets must be positive, got ${minPellets}`);
+    }
+    return { count: trigger.count, every, minPellets };
   }
   if (isStateCountWindow(trigger.during)) {
     // phase は即値の every より小さいことを読み込みで確かめてある（skills/parse/trigger.ts の parsePhase）
