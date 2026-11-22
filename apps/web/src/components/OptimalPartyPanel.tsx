@@ -7,7 +7,14 @@ import { InertButton } from './InertButton.tsx';
 import { buildCalcView, type CalcDeps } from '../calcView.ts';
 import { ComputeCache } from '../compute.ts';
 import { formatCompact, formatDamage } from '../format.ts';
-import { OPTIMAL_TOP_COUNT, candidateEntries, swappedTeam, topRows } from '../optimalParty.ts';
+import {
+  OPTIMAL_TOP_COUNT,
+  candidateEntries,
+  canFullBurst,
+  swappedTeam,
+  topRows,
+  type BurstMember,
+} from '../optimalParty.ts';
 import type { TeamState } from '../team.ts';
 import { batchWorkerCount, useBatchComputation } from '../useBatchComputation.ts';
 import { useCharacterCache } from '../useCharacterCache.ts';
@@ -57,7 +64,7 @@ export function OptimalPartyPanel({
   const slotLabel = (i: number) => `スロット ${i + 1}（${nameOf(team.slots[i]!.resourceId) || '空'}）`;
 
   const candidates = useMemo(
-    () => (active === null ? [] : candidateEntries(index, team, otherPartyIds, active)),
+    () => (active === null ? [] : candidateEntries(index, team, otherPartyIds)),
     [active, index, team, otherPartyIds],
   );
   const teamIds = useMemo(() => team.slots.map((s) => s.resourceId), [team.slots]);
@@ -70,9 +77,20 @@ export function OptimalPartyPanel({
   const { characters: loadedCharacters, errors: characterErrors } = useCharacterCache(wantedIds, baseUrl);
   const skills = useSkillDefinitions(wantedIds, baseUrl);
 
-  // 読み込みの状況。キャラかスキル定義が読み込み中のものがあるうちは計算しない（スキル定義が無い・読めないニケは候補から除く）
+  // 読み込みの状況。キャラかスキル定義が読み込み中のものがあるうちは計算しない（スキル定義が無い・読めないニケは候補から除く）。
+  // 読み込みが済んだら、入れるとフルバーストが起きなくなるニケも候補から省く（計算と同じ編成での段で見る。optimalParty.ts の canFullBurst）
   const status = useMemo(() => {
-    const ready: CharacterIndexEntry[] = [];
+    const memberOf = (id: number): BurstMember | null => {
+      const character = loadedCharacters.get(id);
+      if (character === undefined) return null;
+      const skill = slotSkillsStatus(skills, id);
+      return { character, definition: skill.kind === 'ready' ? skill.definition : null };
+    };
+    const teamLoading = teamIds.some(
+      (id) => id !== null && (!loadedCharacters.has(id) || slotSkillsStatus(skills, id).kind === 'loading'),
+    );
+    const teamMembers = teamIds.map((id) => (id === null ? null : memberOf(id)));
+    let ready: CharacterIndexEntry[] = [];
     let loading = 0;
     let excluded = 0;
     for (const c of candidates) {
@@ -82,11 +100,11 @@ export function OptimalPartyPanel({
       else if (!loadedCharacters.has(id) || skill.kind === 'loading') loading++;
       else ready.push(c);
     }
-    const teamLoading = teamIds.some(
-      (id) => id !== null && (!loadedCharacters.has(id) || slotSkillsStatus(skills, id).kind === 'loading'),
-    );
+    if (!teamLoading && active !== null) {
+      ready = ready.filter((c) => canFullBurst(teamMembers.map((m, i) => (i === active ? memberOf(c.resourceId) : m))));
+    }
     return { ready, loading, excluded, teamLoading };
-  }, [candidates, skills, loadedCharacters, characterErrors, teamIds]);
+  }, [candidates, skills, loadedCharacters, characterErrors, teamIds, active]);
 
   const settled = active !== null && status.loading === 0 && !status.teamLoading && masters !== null;
 
