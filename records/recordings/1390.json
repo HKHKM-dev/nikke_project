@@ -1,0 +1,46 @@
+{
+  "id": "1390",
+  "date": "2026-11-22",
+  "folder": "range",
+  "file": "20261122-1390_jackal-mana.mp4",
+  "original": "2026-11-22_21-10-50.mp4",
+  "durationSec": 209.4,
+  "frames": 12565,
+  "fps": 60,
+  "sizeMB": 253.7,
+  "sha256": "1bd9f7802825",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 111,
+      "name": "ジャッカル",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": true
+    },
+    {
+      "slot": 3,
+      "rid": 290,
+      "name": "マナ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0869 の撮影。ジャッカル（I・AI）・デルタ（II・操作・オート射撃 ON）・マナ（III・AI）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-22T21:22+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
