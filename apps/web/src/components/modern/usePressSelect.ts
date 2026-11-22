@@ -3,8 +3,8 @@
 // （押した物の上で離したかは問わない）。押した位置から動かして離したときは、持ち上げた（ドラッグ）ので選ばない
 import { useLayoutEffect, useRef, type MouseEvent, type PointerEvent } from 'react';
 
-/** 押した位置からこの距離（px）以上動いたら、押したのではなくドラッグ（useSlotDrag の activationConstraint.distance と同じ） */
-const CLICK_SLOP = 4;
+/** マウスで、押した位置からこの距離（px）以上動いたら、押したのではなくドラッグ（useSlotDrag が持ち上げる距離にも使う） */
+export const DRAG_START_DISTANCE = 4;
 
 export function usePressSelect(onSelect: () => void): {
   onPointerDown: (event: PointerEvent) => void;
@@ -24,7 +24,7 @@ export function usePressSelect(onSelect: () => void): {
       const done = (up: globalThis.PointerEvent) => {
         window.removeEventListener('pointerup', done, true);
         window.removeEventListener('pointercancel', done, true);
-        if (up.type === 'pointerup' && Math.hypot(up.clientX - clientX, up.clientY - clientY) < CLICK_SLOP)
+        if (up.type === 'pointerup' && Math.hypot(up.clientX - clientX, up.clientY - clientY) < DRAG_START_DISTANCE)
           latest.current();
       };
       window.addEventListener('pointerup', done, true);

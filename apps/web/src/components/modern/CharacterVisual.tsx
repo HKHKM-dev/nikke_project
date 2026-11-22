@@ -7,15 +7,14 @@ type Props = {
   character: CharacterIndexEntry;
   /**
    * normal・compact は顔のアイコン（正方形）、portrait はスロットのカードの顔の絵（正方形。大きさは --slot-portrait-h で、狭い画面では縮む）、
+   * portrait-tall は portrait の大きさの縦長の絵（portraits。1:2 の枠。選んでいる編成のスロット。オーナーのコメント）、
    * tall は縦長の絵をニケ一覧の幅に縮めたもの（ニケ一覧の縦長の表示）
    */
-  size?: 'normal' | 'compact' | 'portrait' | 'tall';
+  size?: 'normal' | 'compact' | 'portrait' | 'portrait-tall' | 'tall';
   /** バッジの列の最後に足すバッジ（スロットのコレクション） */
   extraBadge?: Badge | null;
   /** 絵の上に重ねるもの（ニケ一覧の右上の限界突破・コア強化） */
   overlay?: ReactNode;
-  /** 縦長の絵（portraits。1:2 の枠）を出すか。portrait のときだけ使う（選んでいる編成のスロット。オーナーのコメント） */
-  tallImage?: boolean;
   /** 絵の上のバッジ（属性・武器種・バースト段階）を出すか。既定は出す。小さい絵（育成状況の編集の一覧の行）では出さない */
   badges?: boolean;
 };
@@ -67,10 +66,10 @@ export function CharacterVisual({
   size = 'normal',
   extraBadge = null,
   overlay = null,
-  tallImage = false,
   badges = true,
 }: Props) {
-  const imageSrc = characterImageSrc(character.resourceId, size === 'tall' || tallImage);
+  const portraitTall = size === 'portrait-tall';
+  const imageSrc = characterImageSrc(character.resourceId, size === 'tall' || portraitTall);
   // 画像が読めなかったキャラ（画像の無い配信・CDN に無いキャラ）は、絵の枠とバッジだけを出す。名前は絵の外（ニケ一覧の四角は絵の下、
   // 縦長は下部に重ねる名前）にあるので、絵の中には出さない（オーナーの指示）
   const failed = failedImages.has(imageSrc);
@@ -79,7 +78,7 @@ export function CharacterVisual({
 
   return (
     <div
-      className={`char-visual ${size === 'normal' ? '' : `char-visual-${size}`} ${tallImage ? 'char-visual-tall-image' : ''}`}
+      className={`char-visual ${size === 'normal' ? '' : `char-visual-${portraitTall ? 'portrait' : size}`} ${portraitTall ? 'char-visual-tall-image' : ''}`}
     >
       {!failed && (
         <img

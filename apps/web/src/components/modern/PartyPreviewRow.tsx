@@ -4,7 +4,8 @@ import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { TEAM_SIZE, type BuildSnapshot, type CharacterIndexEntry } from '@nikke/core';
 import { memo, type ReactNode } from 'react';
 import type { Party } from '../../parties.ts';
-import { partyLabel, partyNumber } from '../../parties.ts';
+import { partyLabel } from '../../parties.ts';
+import { PartyTabButton } from '../PartyTabs.tsx';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { trayGrowthMarks } from './GrowthMarks.tsx';
 import { activeDragData, type ActiveDragData, type OverDragData } from './dropIntent.ts';
@@ -83,33 +84,19 @@ function PreviewCard({
   character: CharacterIndexEntry | undefined;
   children: ReactNode;
 }) {
-  const {
-    isOver: isOverRaw,
-    active,
-    setNodeRef: setDropRef,
-  } = useDroppable({
-    id: `party-${partyIndex}-slot-${slotIndex}`,
-    data: { type: 'party-slot', partyIndex, slotIndex } satisfies OverDragData,
-  });
-  // 落とす先の青枠は、スロットに関係のないもの（部隊番号）を乗せたときは出さない。操作の印（コントローラーのアイコン）は、
-  // いまの編成のスロットにだけ置けるので、選んでいない編成の行のスロットには出さない
-  const dragType = activeDragData(active?.data.current)?.type;
-  const isOver = isOverRaw && dragType !== 'party-label' && dragType !== 'controller';
-  const {
-    listeners,
-    setNodeRef: setDragRef,
-    isDragging,
-  } = useDraggable({
-    id: `party-${partyIndex}-drag-${slotIndex}`,
-    data: { type: 'party-character', partyIndex, slotIndex, character } satisfies ActiveDragData,
-  });
-  const setCardRef = (node: HTMLDivElement | null) => {
-    setDropRef(node);
-    setDragRef(node);
-  };
+  const { setNodeRef, isOver, isDragging, listeners } = useDropAndDrag(
+    { id: `party-${partyIndex}-slot-${slotIndex}`, data: { type: 'party-slot', partyIndex, slotIndex } },
+    {
+      id: `party-${partyIndex}-drag-${slotIndex}`,
+      data: { type: 'party-character', partyIndex, slotIndex, character },
+    },
+    // 落とす先の青枠は、スロットに関係のないもの（部隊番号）を乗せたときは出さない。操作の印（コントローラーのアイコン）は、
+    // いまの編成のスロットにだけ置けるので、選んでいない編成の行のスロットには出さない
+    (type) => type !== 'party-label' && type !== 'controller',
+  );
   return (
     <div
-      ref={setCardRef}
+      ref={setNodeRef}
       className={`modern-slot-card modern-party-preview-card ${isOver ? 'modern-slot-over' : ''} ${isDragging ? 'modern-slot-dragging' : ''}`}
       {...listeners}
     >
@@ -134,43 +121,37 @@ export function PartyRowLabel({
   onSelect: () => void;
 }) {
   const press = usePressSelect(onSelect);
-  const {
-    isOver: isOverRaw,
-    active: dragActive,
-    setNodeRef: setDropRef,
-  } = useDroppable({
-    id: `party-label-drop-${partyIndex}`,
-    data: { type: 'party-label', partyIndex } satisfies OverDragData,
-  });
-  // 部隊番号の落とす先の青枠は、部隊番号を持ち上げているときだけ出す（コントローラーのアイコンやキャラの立ち絵では出さない）
-  const isOver = isOverRaw && activeDragData(dragActive?.data.current)?.type === 'party-label';
-  const {
-    listeners,
-    setNodeRef: setDragRef,
-    isDragging,
-  } = useDraggable({
-    id: `party-label-drag-${partyIndex}`,
-    data: { type: 'party-label', partyIndex } satisfies ActiveDragData,
-  });
-  const setCellRef = (node: HTMLDivElement | null) => {
-    setDropRef(node);
-    setDragRef(node);
-  };
+  const { setNodeRef, isOver, isDragging, listeners } = useDropAndDrag(
+    { id: `party-label-drop-${partyIndex}`, data: { type: 'party-label', partyIndex } },
+    { id: `party-label-drag-${partyIndex}`, data: { type: 'party-label', partyIndex } },
+    // 部隊番号の落とす先の青枠は、部隊番号を持ち上げているときだけ出す（コントローラーのアイコンやキャラの立ち絵では出さない）
+    (type) => type === 'party-label',
+  );
   return (
     <div
-      ref={setCellRef}
+      ref={setNodeRef}
       className={`party-tab-cell modern-party-row-label ${isOver ? 'party-label-over' : ''} ${isDragging ? 'party-label-dragging' : ''}`}
       {...listeners}
     >
-      <button
-        type="button"
-        className="toggle-button party-tab"
-        aria-pressed={active}
-        aria-label={partyLabel(partyIndex)}
-        {...press}
-      >
-        {partyNumber(partyIndex)}
-      </button>
+      <PartyTabButton partyIndex={partyIndex} active={active} {...press} />
     </div>
   );
+}
+
+/**
+ * 1 つの要素を、落とす先（drop）と持ち上げるもの（drag）の両方にする。isOver は、持ち上げているものの種類が showsOver を満たすときだけ立つ
+ * （落とす先の青枠を出すか）
+ */
+function useDropAndDrag(
+  drop: { id: string; data: OverDragData },
+  drag: { id: string; data: ActiveDragData },
+  showsOver: (type: ActiveDragData['type'] | undefined) => boolean,
+) {
+  const { isOver, active, setNodeRef: setDropRef } = useDroppable(drop);
+  const { listeners, setNodeRef: setDragRef, isDragging } = useDraggable(drag);
+  const setNodeRef = (node: HTMLDivElement | null) => {
+    setDropRef(node);
+    setDragRef(node);
+  };
+  return { setNodeRef, isOver: isOver && showsOver(activeDragData(active?.data.current)?.type), isDragging, listeners };
 }

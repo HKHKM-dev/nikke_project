@@ -6,7 +6,7 @@ import { BadgeSprite } from './components/modern/BadgeIcon.tsx';
 import { RosterEditModal } from './components/RosterEditModal.tsx';
 import { SettingsMenu } from './components/SettingsMenu.tsx';
 import { UnreadableSavesNotice } from './components/UnreadableSavesNotice.tsx';
-import { INITIAL_TEAM_STATE, teamReducer, type TeamAction } from './team.ts';
+import { INITIAL_TEAM_STATE, teamReducer, type TeamAction, type TeamState } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
 import {
   INITIAL_PARTIES,
@@ -67,24 +67,17 @@ export function App() {
     [index, listOrder],
   );
 
-  const selectParty = (to: number) => {
-    const next = switchParty(parties, team, to);
+  // 編成を直した結果（parties.ts の switchParty など）を、編成の一覧と選んでいる編成（team）に入れる
+  const applyPartiesChange = (next: { parties: PartiesState; team: TeamState }) => {
     setParties(next.parties);
-    dispatch({ type: 'replace', state: next.team });
+    if (next.team !== team) dispatch({ type: 'replace', state: next.team });
   };
+  const selectParty = (to: number) => applyPartiesChange(switchParty(parties, team, to));
   // 2 つのスロット（どの編成でも）の中身を入れ替える（ニケを編成の行どうしの間で移す。選んでいる編成は変えない）
-  const exchangeSlots = (a: PartySlotRef, b: PartySlotRef) => {
-    const next = exchangePartySlots(parties, team, a, b);
-    setParties(next.parties);
-    if (next.team !== team) dispatch({ type: 'replace', state: next.team });
-  };
-
+  const exchangeSlots = (a: PartySlotRef, b: PartySlotRef) =>
+    applyPartiesChange(exchangePartySlots(parties, team, a, b));
   // 編成 a と b の中身を入れ替える（選んでいる編成の番号は変えない）
-  const swapPartyContents = (a: number, b: number) => {
-    const next = swapParties(parties, team, a, b);
-    setParties(next.parties);
-    if (next.team !== team) dispatch({ type: 'replace', state: next.team });
-  };
+  const swapPartyContents = (a: number, b: number) => applyPartiesChange(swapParties(parties, team, a, b));
 
   // ほかの編成のキャラも読む（全編成の合計ダメージ）
   const resourceIds = useMemo(

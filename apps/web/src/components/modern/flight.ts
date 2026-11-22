@@ -6,6 +6,14 @@ import { slotSizeVars } from './useSlotFit.ts';
 export const FLIGHT = { duration: 250, easing: 'ease', fill: 'forwards' } as const;
 
 /**
+ * node の透明度を、FLIGHT の長さで frames のとおりに変える。速さの変化（ease）は付けない（透明になり終える時点を frames の offset のとおりにする）。
+ * fill の既定は、終わった透明度のまま残す
+ */
+function animateOpacity(node: Element, frames: Keyframe[], fill: FillMode = FLIGHT.fill): Animation {
+  return node.animate(frames, { duration: FLIGHT.duration, easing: 'linear', fill });
+}
+
+/**
  * アニメーションで動かす立ち絵の枠の写し。立ち絵の画像は遅延読み込み・非同期の描画（CharacterVisual）なので、写しのままだと
  * 動き始めの数フレームは画像が空で、立ち絵の枠（明るい背景と枠線）だけが白い枠のように見える。写しの画像はすぐ読んで描く
  */
@@ -35,13 +43,10 @@ function decodeImages(node: Element): Promise<void> {
  * （スロットへ着く・持ち上げた絵が元のスロットへ戻る）。返すアニメーションは、枠を隠し終えたら cancel する
  */
 export function fadeArrivalFace(card: Element): Animation | null {
+  const face = card.querySelector('.modern-slot-arrival-face');
   return (
-    card
-      .querySelector('.modern-slot-arrival-face')
-      ?.animate([{ opacity: 1 }, { opacity: 1, offset: 0.2 }, { opacity: 0, offset: 0.8 }, { opacity: 0 }], {
-        duration: FLIGHT.duration,
-        fill: 'forwards',
-      }) ?? null
+    face &&
+    animateOpacity(face, [{ opacity: 1 }, { opacity: 1, offset: 0.2 }, { opacity: 0, offset: 0.8 }, { opacity: 0 }])
   );
 }
 
@@ -226,15 +231,13 @@ export function flyLabel(content: Element, to: DOMRect, destination: Element | n
   const ghost = ghostOf(content, base);
   const remove = () => ghost.remove();
   const move = ghost.animate([frameAt(base, base), frameAt(to, base)], FLIGHT);
-  // 透明にする動きは、動きの速さの変化（ease）を付けず、0〜45% で透明にし、45〜55% は透明のまま、55〜100% で不透明に戻す
-  const fade = ghost.animate(
-    [{ opacity: 1 }, { opacity: 0, offset: 0.45 }, { opacity: 0, offset: 0.55 }, { opacity: 1 }],
-    {
-      duration: FLIGHT.duration,
-      easing: 'linear',
-      fill: FLIGHT.fill,
-    },
-  );
+  // 0〜45% で透明にし、45〜55% は透明のまま、55〜100% で不透明に戻す
+  const fade = animateOpacity(ghost, [
+    { opacity: 1 },
+    { opacity: 0, offset: 0.45 },
+    { opacity: 0, offset: 0.55 },
+    { opacity: 1 },
+  ]);
   let switched = false;
   const watch = () => {
     if (switched || !ghost.isConnected) return;
@@ -304,21 +307,12 @@ export function dissolveSnapshot({ ghost }: ContentSnapshot, dx: number, dy: num
   ghost
     .animate([{ transform: 'none' }, { transform: `translate(${dx}px, ${dy}px)` }], FLIGHT)
     .finished.then(undefined, () => undefined);
-  ghost
-    .animate([{ opacity: 1 }, { opacity: 0, offset: 0.5 }, { opacity: 0 }], {
-      duration: FLIGHT.duration,
-      easing: 'linear',
-      fill: FLIGHT.fill,
-    })
-    .finished.then(remove, remove);
+  animateOpacity(ghost, [{ opacity: 1 }, { opacity: 0, offset: 0.5 }, { opacity: 0 }]).finished.then(remove, remove);
 }
 
 /** 新しい枠を、動きの後半で透明から不透明にして現す。fromY が 0 でなければ、本来の位置から縦に fromY ずれた所から動かす */
 export function fadeInContent(node: Element, fromY: number): void {
-  node.animate([{ opacity: 0 }, { opacity: 0, offset: 0.5 }, { opacity: 1 }], {
-    duration: FLIGHT.duration,
-    easing: 'linear',
-  });
+  animateOpacity(node, [{ opacity: 0 }, { opacity: 0, offset: 0.5 }, { opacity: 1 }], 'none');
   if (Math.abs(fromY) < 0.5) return;
   node.animate([{ transform: `translateY(${fromY}px)` }, { transform: 'none' }], {
     duration: FLIGHT.duration,

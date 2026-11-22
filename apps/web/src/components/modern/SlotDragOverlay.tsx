@@ -97,8 +97,7 @@ export function SlotDragOverlay({
                 <div className="modern-slot-char-area">
                   <CharacterVisual
                     character={draggedCharacter}
-                    size="portrait"
-                    tallImage={!draggedPortrait.square}
+                    size={draggedPortrait.square ? 'portrait' : 'portrait-tall'}
                     extraBadge={draggedCollection}
                   />
                   <SlotCharName name={draggedCharacter.name.ja} marks={draggedMarks} />

@@ -3,7 +3,6 @@
 // 切り替えた後の描き直しで、写しを新しい枠の位置へ動かしながら消し、新しい枠を現し、行を元の位置から動かす
 import { TEAM_SIZE } from '@nikke/core';
 import { useLayoutEffect, useRef } from 'react';
-import { partyCardAt } from './dropAnimation.ts';
 import {
   dissolveSnapshot,
   dropSnapshot,
@@ -12,6 +11,7 @@ import {
   snapshotContent,
   type ContentSnapshot,
 } from './flight.ts';
+import { partyCardAt, partyRows, rowLabelOf } from './partyRows.ts';
 
 /** 切り替えが起きなかったときに、取っておいた写しを消すまでの時間（ms） */
 const STALE_MS = 1000;
@@ -25,8 +25,6 @@ type Pending = {
   timer: ReturnType<typeof setTimeout>;
 };
 
-const rowsOf = () => [...document.querySelectorAll<HTMLElement>('.modern-party-row')];
-const labelOf = (row: HTMLElement) => row.querySelector<HTMLElement>('.modern-party-row-label');
 const contentAt = (party: number, index: number) =>
   partyCardAt(party, index)?.querySelector('.modern-slot-char-area') ?? null;
 
@@ -42,9 +40,9 @@ function capture(from: number, to: number): Pending {
   const timer = setTimeout(() => snapshots.forEach(({ snapshot }) => dropSnapshot(snapshot)), STALE_MS);
   return {
     to,
-    tops: rowsOf().map((row) => ({
+    tops: partyRows().map((row) => ({
       row: row.getBoundingClientRect().top,
-      label: labelOf(row)?.getBoundingClientRect().top ?? null,
+      label: rowLabelOf(row)?.getBoundingClientRect().top ?? null,
     })),
     snapshots,
     timer,
@@ -67,9 +65,9 @@ function alignedMotion(from: DOMRect, to: DOMRect): { ghostY: number; newFromY: 
 function play({ tops, snapshots }: Pending): void {
   const timing = { duration: FLIGHT.duration, easing: FLIGHT.easing };
   // 位置は、動きを付ける前にすべて測る（動きを付けると、動き始めの位置が測った値に入る）
-  const rows = rowsOf().map((row, i) => {
+  const rows = partyRows().map((row, i) => {
     const before = tops[i];
-    const label = labelOf(row);
+    const label = rowLabelOf(row);
     return {
       row,
       label,

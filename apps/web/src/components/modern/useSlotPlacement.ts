@@ -1,7 +1,7 @@
 // モダン UI で、一覧のニケをスロットに置く・スロットから外す操作と、そのときに絵を飛ばすアニメーション（flight.ts）
 import { useLayoutEffect, useRef, type Dispatch } from 'react';
 import { placeCharacterAction, type TeamAction, type TeamState } from '../../team.ts';
-import { slotCardAt } from './dropAnimation.ts';
+import { slotCardAt } from './partyRows.ts';
 import { flyIntoSlot, flyToTray, stopArrival } from './flight.ts';
 
 /** 一覧のそのニケの絵（一覧に出ていなければ null） */
