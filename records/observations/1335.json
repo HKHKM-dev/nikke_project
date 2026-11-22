@@ -170,5 +170,39 @@
     },
     "source": "V-0843",
     "readAt": "2026-11-21"
+  },
+  {
+    "id": "1335-06",
+    "recording": "1335",
+    "use": "compare",
+    "kind": "gauge",
+    "value": 0.75,
+    "unit": "%",
+    "description": "ネヴェ単騎・操作の録画で、S1 の 1 回目のヒット 1 回が溜めるゲージ（本当の量）の範囲の中央（0.05〜1.45%）",
+    "method": {
+      "tool": "gauge.ts --mode series --subpixel と hud.ts --mode jumps",
+      "note": "右の BURST バーは整数の px でしか動かず、発と発の間はどの区間も 1 つの値にそろう。S1 のヒット（HUD の増分 227,832（会心）・f1413）の前（通常攻撃の発 f1404 の後）は 35px、後（次の発 f1444 の前）は 36px で、ヒットのフレームちょうどで 1px 伸びた（前後に撃っていない）。量は、発（増分を 1 ペレット 21,042 の単位数 u にし、ペレットの数 n を ceil(u ÷ 2.5)〜min(10, floor(u)) とみる。1 ペレット 4,000）と S1 のヒット（1 回 g）の並びの後の px に、floor((累計 + ずれ) ÷ 1px の量) を 1px の量 6,800〜7,800 で総当たりで合わせた。合う g は 500〜14,500（0 と 15,000 以上は合わない）。ペレットの数の幅が大きく、g をこれより絞れない。2 回目の S1（f2002）はバーに別の表示が重なる区間で読めず、3 回目からは満タン（バー消失）の後"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "timerGauge",
+      "args": {
+        "slot": 1,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 0.7
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0866",
+    "readAt": "2026-11-22"
   }
 ]
