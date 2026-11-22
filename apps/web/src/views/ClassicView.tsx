@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { ClassicBurstFilter, ClassicFilter, useClassicFilter } from '../components/ClassicFilter.tsx';
 import { DamageTotalPanel } from '../components/DamageTotalPanel.tsx';
 import { ErrorBoundary } from '../components/ErrorBoundary.tsx';
 import { ListOrderSettings } from '../components/ListOrderSettings.tsx';
+import { OptimalPartyPanel } from '../components/OptimalPartyPanel.tsx';
 import { NotesSummary } from '../components/NotesSummary.tsx';
 import { Popover } from '../components/Popover.tsx';
 import { PartyTabs } from '../components/PartyTabs.tsx';
@@ -25,6 +27,8 @@ export function ClassicView({
   characterCache,
   fullySupported,
   masters,
+  enemyMaster,
+  baseUrl,
   mastersError,
   calc,
   shown,
@@ -39,6 +43,8 @@ export function ClassicView({
   listOrder,
 }: ViewProps) {
   const { visibleIds, ...filter } = useClassicFilter(index);
+  // 最適編成計算の画面を開いているか
+  const [optimizing, setOptimizing] = useState(false);
   return (
     <>
       <TeamSettingsForm
@@ -53,6 +59,28 @@ export function ClassicView({
       />
       {/* 全編成の合計は、編成のタブの上（どの編成を開いていても見える） */}
       <DamageTotalPanel title="合計ダメージ" value={totals.total} computing={totalsPending} />
+      <div className="party-optimize">
+        <button
+          type="button"
+          className="party-optimize-button"
+          aria-pressed={optimizing}
+          onClick={() => setOptimizing((v) => !v)}
+        >
+          最適編成計算
+        </button>
+      </div>
+      {optimizing && (
+        <OptimalPartyPanel
+          team={team}
+          roster={roster}
+          index={index}
+          otherPartyIds={otherPartyIds}
+          masters={masters}
+          enemyMaster={enemyMaster}
+          baseUrl={baseUrl}
+          onAdopt={(index, resourceId) => dispatch({ type: 'selectCharacter', index, resourceId })}
+        />
+      )}
       <PartyTabs active={parties.active} onSelect={selectParty} totals={totals.parties} />
       {/* キャラの選択肢のバースト段階の絞り込み（ClassicBurstFilter）・絞り込み（ClassicFilter）・並べ替え（ボタンで開くポップアップに「一覧の並び」を出す）。この順でスロットの上の中央に置く */}
       <div className="classic-list-order">

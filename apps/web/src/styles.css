@@ -64,8 +64,8 @@ textarea {
   outline: 2px solid Highlight;
   outline-offset: 0;
 }
+/* 画面の幅いっぱいを使う（オーナーのコメント）。左右の余白は body の padding だけ */
 .app {
-  max-width: 1440px;
   margin: 0 auto;
   padding: 12px 0 40px;
 }
@@ -524,6 +524,7 @@ svg.roster-revert-icon {
 .team-total-val {
   line-height: 1;
   font-size: 1.4rem;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 .notes {
@@ -692,12 +693,49 @@ svg.roster-revert-icon {
   font-size: 0.85rem;
   cursor: pointer;
 }
+/* 編成の切り替えの上の「最適編成計算」のボタン（クラシック） */
+.party-optimize {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+/* 最適編成計算の画面（OptimalPartyPanel。クラシック） */
+.optimal-party {
+  margin-top: 8px;
+}
+.optimal-party-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.optimal-party-list {
+  margin: 8px 0 0;
+  padding-left: 2em;
+}
+.optimal-party-row {
+  display: grid;
+  grid-template-columns: minmax(14em, 1fr) 6em 5em auto;
+  align-items: center;
+  gap: 8px;
+  max-width: 40em;
+  padding: 2px 0;
+}
+.optimal-party-total,
+.optimal-party-diff {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.optimal-party-note {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+}
 /* ソロレイドの編成 01〜05 の切り替え（PartyTabs） */
 .party-tabs {
   display: flex;
   gap: 4px;
   justify-content: center;
-  margin-top: 12px;
+  margin-top: 8px;
 }
 .party-tabs + .slots {
   margin-top: 8px;
@@ -781,7 +819,7 @@ svg.roster-revert-icon {
     pointer-events: none;
   }
   .modern-top-row > .modern-slots-area .modern-party-row {
-    --party-row-lead: calc(420px + 16px + 4em);
+    --party-row-lead: calc(420px + 16px + 4em + 24px);
   }
   .modern-top-row > .modern-slots-area .modern-party-row > * {
     pointer-events: auto;
@@ -910,6 +948,29 @@ svg.roster-revert-icon {
   outline: 2px solid Highlight;
   outline-offset: -1px;
 }
+/* 番号の左の歯車（飾り。押せない）。番号のボタン（4em の正方形）の左の真ん中に置く。狭い画面では隣の番号と重なるので、番号の左上の中に置く */
+.modern-party-row-label {
+  position: relative;
+}
+.party-label-gear {
+  position: absolute;
+  top: 2em;
+  right: 100%;
+  width: 20px;
+  margin-right: 4px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+@media (max-width: 699px) {
+  .party-label-gear {
+    top: 3px;
+    right: auto;
+    left: 3px;
+    width: 14px;
+    margin-right: 0;
+    transform: none;
+  }
+}
 /* 持ち上げた番号（DragOverlay）。行の左の番号と同じ幅 */
 .party-label-drag-overlay {
   width: 4em;
@@ -918,6 +979,10 @@ svg.roster-revert-icon {
 .modern-party-row-label .party-tab {
   aspect-ratio: 1 / 1;
   padding: 0;
+}
+/* 番号の下のダメージ。番号の枠は container-type を持たない（幅が潰れるため）ので、cqi ではなく画面の幅で小さくする */
+.modern-party-row-label .party-tab-total {
+  font-size: min(0.75rem, 2.6vw);
 }
 /* 選んでいない編成の行は、ボタンの見た目を消してスロットだけを見せる（薄くはしない） */
 .modern-slots-grid.modern-party-preview {
@@ -1543,7 +1608,7 @@ svg.roster-revert-icon {
   gap: 12px;
   padding: 12px;
 }
-/* ニケ一覧（枠線・背景なし）は、画面の幅の上限（.app の max-width）と body の左右の余白を越えて、画面の左右の端まで広げる。
+/* ニケ一覧（枠線・背景なし）は、body の左右の余白を越えて、画面の左右の端まで広げる。
    100vw はスクロールバーの幅を含むブラウザがあり、その分だけ画面の外へはみ出すので、モダン UI では横にはみ出した分を切る（スクロールさせない。
    はみ出すのは一覧の左右の余白の中なので、見える中身は欠けない） */
 .modern-view-container > .char-tray-panel {

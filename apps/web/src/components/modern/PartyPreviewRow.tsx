@@ -4,7 +4,10 @@ import { TEAM_SIZE, type BuildSnapshot, type CharacterIndexEntry } from '@nikke/
 import { memo, type ReactNode } from 'react';
 import type { Party } from '../../parties.ts';
 import { partyLabel } from '../../parties.ts';
-import { PartyTabButton } from '../PartyTabs.tsx';
+import type { PartyTotal } from '../../partyTotals.ts';
+import { PartyTabButton, PartyTabTotal } from '../PartyTabs.tsx';
+import { BadgeIcon } from './BadgeIcon.tsx';
+import { BUILD_BADGE } from './badges.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { trayGrowthMarks } from './GrowthMarks.tsx';
 import { EmptySlotFace, SlotCharName } from './ModernSlotCard.tsx';
@@ -107,16 +110,19 @@ function PreviewCard({
 }
 
 /**
- * 行の左の、編成の番号（押すとその編成を選ぶ）。PartyTabs の 1 つ分と同じ見た目。編成ごとのダメージは出さない（オーナーのコメント）。
+ * 行の左の、編成の番号（押すとその編成を選ぶ）。PartyTabs の 1 つ分と同じ見た目で、番号の下にその編成のダメージを出す（オーナーのコメント）。
  * ドラッグして別の番号に落とすと、2 つの編成の中身を入れ替える（useSlotDrag の swap-parties）
  */
 export function PartyRowLabel({
   partyIndex,
   active,
+  total,
   onSelect,
 }: {
   partyIndex: number;
   active: boolean;
+  /** その編成のダメージ（番号の下に出す。partyTotals.ts） */
+  total: PartyTotal | undefined;
   onSelect: () => void;
 }) {
   const press = usePressSelect(onSelect);
@@ -132,7 +138,10 @@ export function PartyRowLabel({
       className={`party-tab-cell modern-party-row-label ${isOver ? 'party-label-over' : ''} ${isDragging ? 'party-label-dragging' : ''}`}
       {...listeners}
     >
+      {/* 番号の左の歯車（飾り。押せない。番号のボタンの左に置く） */}
+      <BadgeIcon className="party-label-gear" name={BUILD_BADGE} />
       <PartyTabButton partyIndex={partyIndex} active={active} {...press} />
+      <PartyTabTotal total={total} />
     </div>
   );
 }

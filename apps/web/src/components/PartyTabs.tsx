@@ -11,6 +11,20 @@ type Props = {
   totals: readonly PartyTotal[];
 };
 
+/** 編成のダメージの欄（format.ts の formatDamage。出せない値は「—」）。エラーの文は読み上げにだけ渡す（名前を読ませるため role を付ける） */
+export function PartyTabTotal({ total }: { total: PartyTotal | undefined }) {
+  return (
+    <span
+      className="party-tab-total"
+      data-computing={total?.computing ?? false}
+      role={total?.error === undefined ? undefined : 'img'}
+      aria-label={total?.error === undefined ? undefined : `計算できない: ${total.error}`}
+    >
+      {formatDamage(total?.total ?? null)}
+    </span>
+  );
+}
+
 export function PartyTabs({ active, onSelect, totals }: Props) {
   return (
     <div className="party-tabs" role="group" aria-label="ソロレイドの編成">
@@ -19,15 +33,7 @@ export function PartyTabs({ active, onSelect, totals }: Props) {
         return (
           <div className="party-tab-cell" key={i}>
             <PartyTabButton partyIndex={i} active={i === active} onClick={() => onSelect(i)} />
-            {/* 値の欄（format.ts の formatDamage。出せない値は「—」）。エラーの文は読み上げにだけ渡す（名前を読ませるため role を付ける） */}
-            <span
-              className="party-tab-total"
-              data-computing={total?.computing ?? false}
-              role={total?.error === undefined ? undefined : 'img'}
-              aria-label={total?.error === undefined ? undefined : `計算できない: ${total.error}`}
-            >
-              {formatDamage(total?.total ?? null)}
-            </span>
+            <PartyTabTotal total={total} />
           </div>
         );
       })}

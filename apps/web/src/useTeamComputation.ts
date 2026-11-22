@@ -3,13 +3,8 @@
 // 結果は、その計算の元（source。画面では CalcView）と組で返す。前の入力の結果を出している間に、いまの入力の値と
 // 混ぜて描かないため（混ぜると、編成を切り替えた直後に、前の編成のキャラにいまの編成の宝物の段階を当てて落ちる）
 import { startTransition, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  LatestComputeQueue,
-  type ComputeCache,
-  type ComputeResponse,
-  type ComputeSource,
-  type Shown,
-} from './compute.ts';
+import { LatestComputeQueue, type ComputeCache, type ComputeSource, type Shown } from './compute.ts';
+import { superviseWorker } from './computeWorker.ts';
 
 /** cache: 覚えている結果（compute.ts）。同じ入力は計算せずに出し、計算した結果は覚える */
 export function useTeamComputation<T extends ComputeSource>(
@@ -21,9 +16,9 @@ export function useTeamComputation<T extends ComputeSource>(
   const queueRef = useRef<LatestComputeQueue<T> | null>(null);
 
   useEffect(() => {
-    const worker = new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
+    // queue と worker は互いを呼ぶが、呼ばれるのは両方を作り終えた後
     const queue = new LatestComputeQueue<T>(
-      (request) => worker.postMessage(request),
+      (request) => worker.post(request),
       // 結果の表は大きいので、描き直しは入力の表示より後でよい。印は結果と一緒に消す
       (computed, from) => {
         // 覚えるのは計算できた結果だけ（Worker の停止などのエラーは、その時だけのもの）
@@ -34,15 +29,17 @@ export function useTeamComputation<T extends ComputeSource>(
         });
       },
     );
-    worker.addEventListener('message', (e: MessageEvent<ComputeResponse>) => queue.receive(e.data));
-    worker.addEventListener('error', (e) =>
-      queue.stop(`計算の Worker が止まりました（画面を読み込み直してください）: ${e.message || '不明なエラー'}`),
-    );
-    worker.addEventListener('messageerror', () => queue.fail('計算の結果を受け取れませんでした'));
+    const worker = superviseWorker({
+      onMessage: (response) => queue.receive(response),
+      onMessageError: () => queue.fail('計算の結果を受け取れませんでした'),
+      // 止まった Worker に送った要求は答えが来ないので、作り直した Worker へ送り直す
+      onRestart: () => queue.resend(),
+      onGiveUp: (message) => queue.stop(message),
+    });
     queueRef.current = queue;
     return () => {
       queueRef.current = null;
-      worker.terminate();
+      worker.dispose();
     };
   }, [cache]);
 
