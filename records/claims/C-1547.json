@@ -1,0 +1,15 @@
+{
+  "id": "C-1547",
+  "text": "ネヴェの S1 の倍率ダメージのヒットは、バーストゲージを溜める。ゲージはダメージと同じヒットのフレームに溜まり、1 回の量は本当のゲージの 0.05〜1.45%（通常攻撃の 1 発の全ペレットぶん 4% より小さい）。単騎の 2 本の録画で、前後に撃っていない S1 のヒットのフレームちょうどに、右の BURST バーが 1px 伸びた",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1334-06`・`1335-06`。V-0866",
+  "model": "反映（data/skills/193.json の skill1 の effects[1]。burstGaugeHit・everySeconds: 10・delayFrames: 15）",
+  "replaces": [],
+  "updated": "2026-11-22",
+  "subject": {
+    "places": ["data/skills/193.json の skill1 の effects[1]"]
+  },
+  "decidedOn": []
+}
