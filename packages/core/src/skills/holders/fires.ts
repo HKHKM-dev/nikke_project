@@ -11,7 +11,7 @@ import {
   type ResolvedTrigger,
 } from '../resolve.ts';
 import { adjacentSlotsOf } from '../targets.ts';
-import { HP_RATIO_EPS } from './views.ts';
+import { HP_RATIO_EPS } from './hpViews.ts';
 import { createTriggerTracker, type ShotCountEveryAt, type TriggerTracker } from '../triggers.ts';
 import { isEndedTrigger, isStateCountWindow, isCounterFullTrigger, type EffectCondition } from '../types.ts';
 import { timerFramesOf } from '../timeline.ts';
