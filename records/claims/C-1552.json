@@ -4,7 +4,7 @@
   "state": "確定",
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
-  "basis": "`0827-08`・`0828-09`・`0829-09`。V-0868",
+  "basis": "`0827-08`・`0828-09`・`0829-09`（V-0587 の録画。ルドミラ（I・操作・撃たない）・ブラン（II・AI）・プリバティ：アンカインド・メイド（III・AI）。II の候補はブランだけ）。撃った枠の最初の 8 回の並びが 3 本ともいまのモデル（CT 60 秒）と合い、部隊の条件を見ずにいつも縮む読みとは 5 回目で合わない。0828 では、2 回目の II から CT の明け（`0828-04`）までがモデルと 1f で合う。V-0868",
   "model": "`data/skills/270.json` の skill2 の effects[1]（`cooldownReduction`・`fullBurstEnd`・`self`・`squad: { present: true }`）と、`skills/composition.ts` の `squadAllows`",
   "replaces": [],
   "updated": "2026-11-22",

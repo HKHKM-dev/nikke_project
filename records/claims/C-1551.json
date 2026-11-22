@@ -4,7 +4,7 @@
   "state": "確定",
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
-  "basis": "`1389-06`。V-0868",
+  "basis": "`1389-06`（ルージュ（I・操作・撃たない）・ブラン（II・AI）・I-DOLL・サン（III・AI）。II の候補はブランだけ）。撃った枠の 14 回の並びが、CT▼ を入れたモデルと一致し、CT▼ の無いモデルとは 5 回目で合わない: ブランは 2 回のフルバーストの後、どちらも次のチェーン（前の II の 1,499f・1,372f 後）で II を撃った。60 秒のままなら撃てない。並びは、縮む量が約 35 秒以上ならどれも同じなので、値は説明文による。V-0868",
   "model": "`data/skills/270.json` の skill2 の effects[1]（`cooldownReduction`・`fullBurstEnd`・`self`・`squad: { present: true }`）と、`skills/composition.ts` の `squadAllows`",
   "replaces": [],
   "updated": "2026-11-22",

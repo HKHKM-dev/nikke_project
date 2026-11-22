@@ -14,7 +14,8 @@
       "slot": 1,
       "rid": 272,
       "name": "ルージュ",
-      "controlled": true
+      "controlled": true,
+      "fires": false
     },
     {
       "slot": 2,
