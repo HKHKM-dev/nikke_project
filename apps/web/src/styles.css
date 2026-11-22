@@ -369,15 +369,41 @@ svg.roster-revert-icon {
   grid-template-columns: max-content auto;
   gap: 6px 10px;
 }
-/* 敵情報の「属性」の文字の横の属性バッジ（属性なしは空の六角形）。文字の高さに合わせる */
-.settings-element-label {
+/* 敵情報の「属性」のプルダウン（ElementSelect）。標準の select と同じ見た目のボタンと、バッジ付きの選択肢の並び */
+.element-select-button {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  padding: 2px 6px;
+  border: 1px solid var(--app-border);
+  background-color: light-dark(#f0f0f0, Field);
+  font: inherit;
 }
-.settings-element-badge {
+.element-select-badge {
   height: 1.4em;
   width: auto;
+}
+.element-select-caret {
+  margin-left: 2px;
+}
+.element-select-options {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.element-select-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  font: inherit;
+  text-align: left;
+}
+/* 選んでいる属性は、枠でなく背景色で示す（並べ替えの選んでいる並べ方と同じ） */
+.element-select-option[aria-pressed='true'] {
+  border-color: Highlight;
+  background: Highlight;
+  color: HighlightText;
 }
 /* 敵・属性のプルダウンは中身の幅にする（オーナーの指示で狭くした） */
 .settings-simple .field select {
@@ -2159,7 +2185,7 @@ html:has(.modern-view-container) {
   summary,
   select,
   label[for],
-  label:has(input[type='checkbox'], input[type='radio'], input[type='range'], select),
+  label:has(input[type='checkbox'], input[type='radio'], input[type='range']),
   a[href],
   [role='button'],
   input[type='checkbox'],

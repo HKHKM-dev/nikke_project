@@ -1,14 +1,15 @@
-import { ELEMENTS, ELEMENT_LABEL, FIXED_SPEC_LEVEL, type Element } from '@nikke/core';
+import { FIXED_SPEC_LEVEL, type Element } from '@nikke/core';
 import type { Dispatch } from 'react';
 import type { RosterCommonGrowth } from '../roster.ts';
 import { SHOOTING_RANGE_ENEMY, emptyConsole, sameConsole, type ConsoleInput, type TeamAction } from '../team.ts';
 import { ConsoleFields } from './ConsoleFields.tsx';
+import { ElementSelect } from './ElementSelect.tsx';
 import { InertButton } from './InertButton.tsx';
 import { IntInput } from './IntInput.tsx';
 import { Popover } from './Popover.tsx';
 import { ROSTER_REVERT_LABEL } from './RosterRevertButton.tsx';
 import { BadgeIcon } from './modern/BadgeIcon.tsx';
-import { ELEMENT_BADGE_KIND, EMPTY_ELEMENT_BADGE, RETURN_BADGE } from './modern/badges.ts';
+import { RETURN_BADGE } from './modern/badges.ts';
 
 /** スペック固定の間にリサイクルルームの欄に出す値（計算は研究なし） */
 const NO_CONSOLE = emptyConsole();
@@ -66,35 +67,14 @@ export function TeamSettingsForm({
               <option value="range-bigarms">射撃場BigArms</option>
             </select>
           </label>
-          <label className="field">
-            <span className="settings-element-label">
-              属性
-              {/* 選んでいる属性のバッジ。属性なしは空の六角形 */}
-              <BadgeIcon
-                name={element ? ELEMENT_BADGE_KIND.badges[element]!.name : EMPTY_ELEMENT_BADGE}
-                className="settings-element-badge"
-              />
-            </span>
-            <select
-              value={element ?? ''}
-              onChange={(e) =>
-                dispatch({
-                  type: 'setEnemy',
-                  enemy: {
-                    ...SHOOTING_RANGE_ENEMY,
-                    element: e.target.value === '' ? null : (e.target.value as Element),
-                  },
-                })
-              }
-            >
-              <option value="">なし</option>
-              {ELEMENTS.map((el) => (
-                <option key={el} value={el}>
-                  {ELEMENT_LABEL[el].ja}
-                </option>
-              ))}
-            </select>
-          </label>
+          {/* 属性は、選択肢にもバッジを出す自前のプルダウン（標準の select は選択肢に絵を入れられない）。文字の上は普通のカーソルにするので label でなく div */}
+          <div className="field">
+            <span>属性</span>
+            <ElementSelect
+              element={element}
+              onChange={(next) => dispatch({ type: 'setEnemy', enemy: { ...SHOOTING_RANGE_ENEMY, element: next } })}
+            />
+          </div>
           <Popover button="詳細設定" buttonClassName="advanced-settings-button" label="詳細設定" align="left">
             <div className="advanced-settings">
               <label className="field">
