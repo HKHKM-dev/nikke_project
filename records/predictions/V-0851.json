@@ -1,0 +1,173 @@
+{
+  "verification": "V-0851",
+  "note": "撮影（N102 の単騎・操作・オートバースト ON）の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。操作枠なのでフルチャージのゲージの倍率が乗り、モデルはバーストが 180 秒に 5 回（約 23・57・92・126・160 秒）。S1 は 1 発目（101f）の次のフレームから付きっぱなし（発ごとに付け直す）。S2 の周期は仮の 17 秒（録画で読む）で、窓は 1,001f から 1,000f ごとに 5 秒。フレームの指定は、1 本目のマガジン・2 本目のマガジン（S2 の 1 回目の窓とバーストの 1 回目の窓）",
+  "team": [
+    {
+      "rid": 120,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S1 はフルチャージの発ごとに最終攻撃力が最も高い味方 1 機（単騎では自分）に最大装弾数 3 発▲（最大だけを上げ、残弾は足さない）とクリティカルダメージ▲を 10 秒。S2 は CT ごとにチャージダメージ▲（フルチャージ倍率に足す）を 5 秒。バーストは味方全体に攻撃力▲を 10 秒）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "hit-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 437,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "S2・バーストの窓の外のコアの会心しない 1 ヒット（1 本目のマガジンの 4 発目）"
+    },
+    {
+      "id": "hit-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 437,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "同じ発のコアの会心の 1 ヒット（S1 のクリティカルダメージ▲が乗る）"
+    },
+    {
+      "id": "hit-s2",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1115,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "S2 の 1 回目の窓の中のコアの会心しない 1 ヒット（仮の周期 17 秒のとき）"
+    },
+    {
+      "id": "hit-burst",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1563,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "バーストの 1 回目の窓の中のコアの会心しない 1 ヒット"
+    },
+    {
+      "id": "max-ammo",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 437
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "S1 の窓の中の最大装弾数"
+    },
+    {
+      "id": "magazines",
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 1,
+        "count": 8
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "戦闘の始めから 8 本のマガジンの発数（1 本目は残弾が足されない）"
+    },
+    {
+      "id": "s2-fires",
+      "model": "sim",
+      "metric": "buffFireStarts",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "chargeDamage"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "S2 の窓の始まり（仮の周期 17 秒。録画で周期を読んだら定義を直して出し直す）"
+    },
+    {
+      "id": "burst-fires",
+      "model": "sim",
+      "metric": "buffFireStarts",
+      "args": {
+        "slot": 1,
+        "skill": "burst",
+        "stat": "attack"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "バーストの攻撃力▲の窓の始まり"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-22",
+    "commit": "08da9397477343a6cdd61627d510eb44a81052ca",
+    "values": {
+      "H1": {
+        "hit-base": 373364.6301,
+        "hit-crit": 486008.73900117,
+        "hit-s2": 400929.60736224,
+        "hit-burst": 470036.9982,
+        "max-ammo": 9,
+        "magazines": [6, 9, 9, 9, 9, 9, 9, 9],
+        "s2-fires": [1001, 2001, 3001, 4001, 5001, 6001, 7001, 8001, 9001, 10001],
+        "burst-fires": [1377, 3389, 5436, 7425, 9437]
+      }
+    }
+  }
+}
