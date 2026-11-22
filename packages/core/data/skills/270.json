@@ -37,20 +37,26 @@
           "claims": [
             "C-0694"
           ]
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": "fullBurstEnd",
+          "target": "self",
+          "ref": 3,
+          "squad": {
+            "present": true
+          },
+          "assumes": {
+            "ja": "同じ部隊の味方は、ゲームのデータの部隊（777: ノワール・ルージュ）が同じキャラ（ルージュのいる編成で確かめた）",
+            "en": "An ally from the same squad is a unit whose squad in the game data is the same (777: Noir, Rouge). Checked with Rouge"
+          },
+          "claims": [
+            "C-1551",
+            "C-1552"
+          ]
         }
       ],
-      "notes": [
-        {
-          "ja": "フルバーストタイム終了時、同じ部隊の味方がいれば自分のバーストスキルクールタイム▼は未対応",
-          "en": "The burst skill cooldown reduction on self when Full Burst ends, if an ally of the same squad is present, is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "cooldownReduction",
-            "target": "self",
-            "trigger": "fullBurstEnd"
-          }
-        }
-      ]
+      "notes": []
     },
     "burst": {
       "effects": [

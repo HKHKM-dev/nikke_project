@@ -246,5 +246,46 @@
       "slot": 3,
       "source": "burst"
     }
+  },
+  {
+    "id": "0829-09",
+    "recording": "0829",
+    "use": "compare",
+    "kind": "count",
+    "value": [1, 2, 3, 1, 1, 1, 2, 3],
+    "unit": "枠",
+    "description": "バーストを撃った枠の並び（最初の 8 回。1 = ルドミラ、2 = ブラン、3 = プリバティ：アンカインド・メイド）。ブランと同じ部隊（777）の味方がいない編成で、1 回目のフルバーストの後のブランの II は、2・3 回目のチェーンでは出ない",
+    "method": {
+      "tool": "V-0587 の burst-panel の替わり目から並べた",
+      "note": "I の替わり目 f1622・3128・4412・5881、II f1651・5910、III f1681・5939（0829-01〜03）を時刻の順に並べた。I・II・III の候補はどれも 1 体だけ（II はブランだけ）で、撃った枠は段で決まる（V-0587 で画で確かめた）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 8
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 190,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    },
+    "source": "V-0868",
+    "readAt": "2026-11-22"
   }
 ]

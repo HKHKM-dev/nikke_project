@@ -1,0 +1,118 @@
+[
+  {
+    "id": "1389-01",
+    "recording": "1389",
+    "kind": "timing",
+    "use": "record",
+    "value": [1510, 3009, 4363, 5686, 7123, 8495, 9783, 11186],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 6・5・25・25・25・0・25・25f"
+    },
+    "source": "V-0868",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1389-02",
+    "recording": "1389",
+    "kind": "timing",
+    "use": "record",
+    "value": [1539, 3038, 7152, 8524],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 6・6・25・0f"
+    },
+    "source": "V-0868",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1389-03",
+    "recording": "1389",
+    "kind": "timing",
+    "use": "record",
+    "value": [1568, 7182],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0868",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1389-04",
+    "recording": "1389",
+    "kind": "timing",
+    "use": "record",
+    "value": [2177, 7790],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0868",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1389-05",
+    "recording": "1389",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 608],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0868",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1389-06",
+    "recording": "1389",
+    "use": "compare",
+    "kind": "count",
+    "value": [1, 2, 3, 1, 2, 1, 1, 1, 2, 3, 1, 2, 1, 1],
+    "unit": "枠",
+    "description": "バーストを撃った枠の並び（最初の 14 回。1 = ルージュ、2 = ブラン、3 = I-DOLL・サン）。ブランと同じ部隊（777）のルージュがいる編成で、ブランはフルバーストの後の次のチェーン（1 回目の II の 1,499f 後・3 回目の II の 1,372f 後）で II を撃つ",
+    "method": {
+      "tool": "1389-01〜03 の替わり目を時刻の順に並べた",
+      "note": "I の替わり目 f1510・3009・4363・5686・7123・8495・9783・11186、II f1539・3038・7152・8524、III（00.00）f1568・7182。I・II・III の候補はどれも 1 体だけ（II はブランだけ）で、撃った枠は段で決まる。2・4 回目の II の後は、サンの CT が明けずにチェーンが切れた。ルージュは撃たないので、S1（フルチャージ 8 回ごとの CT▼）は dropEffects で外した"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 14
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 272,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    },
+    "source": "V-0868",
+    "readAt": "2026-11-22"
+  }
+]
