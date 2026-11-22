@@ -6,6 +6,7 @@ import { NotesSummary } from '../components/NotesSummary.tsx';
 import { TeamSettingsForm } from '../components/TeamSettingsForm.tsx';
 import type { ViewProps } from './ViewProps.ts';
 import { CharacterTray } from '../components/modern/CharacterTray.tsx';
+import { preloadCharacterImages } from '../components/modern/CharacterVisual.tsx';
 import { useSlotFit } from '../components/modern/useSlotFit.ts';
 import { ModernSlotCard } from '../components/modern/ModernSlotCard.tsx';
 import { PartyPreviewRow, PartyRowLabel } from '../components/modern/PartyPreviewRow.tsx';
@@ -131,6 +132,11 @@ export function ModernView({
     () => new Set(team.slots.map((s) => s.resourceId).filter((id): id is number => id !== null)),
     [team.slots],
   );
+
+  // すべての編成のニケの縦長と四角の絵を、先に読んでおく（番号の入れ替えで行が描き直されても、絵が空にならない）
+  useEffect(() => {
+    preloadCharacterImages([...allTakenIds, ...otherPartyIds.keys()]);
+  }, [allTakenIds, otherPartyIds]);
 
   const editingCalcSlot = editingSlotIndex !== null ? calc.slots[editingSlotIndex] : null;
   const editingResourceId = editingSlotIndex !== null ? team.slots[editingSlotIndex]!.resourceId : null;

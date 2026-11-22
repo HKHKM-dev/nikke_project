@@ -166,10 +166,15 @@ export function useSlotDrag({
       const grid = slotsGridOf(party);
       if (!grid) continue;
       const to = grid.getBoundingClientRect();
-      grid.animate(
-        [{ transform: `translate(${from.left - to.left}px, ${from.top - to.top}px)` }, { transform: 'none' }],
-        { duration: FLIGHT.duration, easing: FLIGHT.easing },
-      );
+      // 動く行は、動かない行より上に描く（間の行の下に潜ると、動く行が見え隠れして点滅して見えた。オーナーのコメント）
+      Object.assign(grid.style, { position: 'relative', zIndex: '1' });
+      const restore = () => Object.assign(grid.style, { position: '', zIndex: '' });
+      grid
+        .animate(
+          [{ transform: `translate(${from.left - to.left}px, ${from.top - to.top}px)` }, { transform: 'none' }],
+          { duration: FLIGHT.duration, easing: FLIGHT.easing },
+        )
+        .finished.then(restore, restore);
     }
   });
 

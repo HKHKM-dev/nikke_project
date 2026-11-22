@@ -28,6 +28,34 @@ const BASE_URL = import.meta.env.BASE_URL;
  */
 const failedImages = new Set<string>();
 
+/** ニケの絵の URL（縦長の絵は portraits、四角の絵は images） */
+const characterImageSrc = (resourceId: number, tall: boolean) =>
+  `${BASE_URL}characters/${tall ? 'portraits' : 'images'}/${characterImageFile(resourceId)}`;
+
+/** 前もって読み込み・デコードした絵（持っておき、表示するときにすぐ描けるようにする） */
+const preloadedImages = new Map<string, HTMLImageElement>();
+
+/**
+ * ids のニケの縦長と四角の絵を、表示する前に読み込み・デコードしておく。編成の番号を入れ替えると、選んでいる行へ移ったニケは縦長の絵、
+ * ほかの行へ移ったニケは四角の絵で描き直す。まだ読んでいない絵は、読み終えるまで空の枠で描かれ、入れ替えの動きの途中で絵が
+ * 出たり消えたりして見えた（オーナーのコメント）。画像の無い配信では、読めないと分かるまで壊れた画像の枠が出た。すべての編成のニケについて、
+ * 両方の絵を先に読んでおく
+ */
+export function preloadCharacterImages(ids: Iterable<number>): void {
+  for (const id of ids) {
+    for (const tall of [true, false]) {
+      const src = characterImageSrc(id, tall);
+      if (preloadedImages.has(src) || failedImages.has(src)) continue;
+      const img = new Image();
+      // 読めない絵（画像の無い配信。アーティファクトなど）は、表示する前に読めないと覚えておき、壊れた画像の枠を一瞬も出さない
+      img.onerror = () => failedImages.add(src);
+      img.src = src;
+      img.decode().catch(() => undefined);
+      preloadedImages.set(src, img);
+    }
+  }
+}
+
 function CharBadge({ badge, className = 'char-badge' }: { badge: Badge; className?: string }) {
   return (
     <BadgeIcon className={className} name={badge.name} label={badge.label} tone={badge.tone} variant={badge.variant} />
@@ -42,8 +70,7 @@ export function CharacterVisual({
   tallImage = false,
   badges = true,
 }: Props) {
-  const imageDir = size === 'tall' || tallImage ? 'portraits' : 'images';
-  const imageSrc = `${BASE_URL}characters/${imageDir}/${characterImageFile(character.resourceId)}`;
+  const imageSrc = characterImageSrc(character.resourceId, size === 'tall' || tallImage);
   // 画像が読めなかったキャラ（画像の無い配信・CDN に無いキャラ）は、絵の枠とバッジだけを出す。名前は絵の外（ニケ一覧の四角は絵の下、
   // 縦長は下部に重ねる名前）にあるので、絵の中には出さない（オーナーの指示）
   const failed = failedImages.has(imageSrc);
