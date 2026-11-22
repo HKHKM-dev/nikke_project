@@ -62,15 +62,11 @@
       ],
       "notes": [
         {
-          "ja": "「〜敵1機に」で終わるバーストスキルダメージ▲は、行の対象の句が「敵1機に」で終わるバーストの追加ダメージ・持続ダメージ（ラピ：レッドフード・マナなど）に乗るかを確かめていない。モデルは乗せない（plan/design-jackal.md 2.2 節）",
-          "en": "Whether the Burst Skill damage up for \"Affects 1 enemy unit(s)\" applies to additional damage or sustained damage on such lines (Rapi: Red Hood, Mana, etc.) is not verified. The model does not apply it",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "oneEnemyBurstDamage",
-            "target": "allies",
-            "trigger": "burstUse"
-          }
+          "ja": "「〜敵1機に」で終わるバーストスキルダメージ▲は、バーストスキルダメージ（burstDamage）にだけ乗せる。行の対象の句が「敵1機に」で終わっても、バーストの追加ダメージ・持続ダメージには乗らない（マナの持続ダメージ・紅蓮：神殺の追加ダメージで確かめた）",
+          "en": "The Burst Skill damage up for \"Affects 1 enemy unit(s)\" applies only to Burst Skill damage (burstDamage). It does not apply to additional damage or sustained damage of a burst even when the line ends with \"1 enemy unit(s)\" (checked with Mana's sustained damage and Scarlet: Goddeath's additional damage)",
+          "kind": "modeling",
+          "refers": "effects[0]",
+          "claims": ["C-1553"]
         },
         {
           "ja": "味方全体の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
