@@ -1344,6 +1344,9 @@
 | 1375 | `20261122-1375_mary-bay-goddess.mp4` | ◎メアリー：ベイゴッデス（132、SR・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1376 | `20261122-1376_mary-bay-goddess.mp4` | ◎メアリー：ベイゴッデス（132、SR・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1377 | `20261122-1377_brid-s2-timing.mp4` | ◎ブリッド（70、AR・水冷・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | OFF / ON | V-0860 の撮影: ブリッド単騎・操作。オート射撃 OFF で始め、残り時間の 1 の位が 1 に変わる瞬間に ON、RELOADING で OFF（台帳の autoFire は始めの値） |
+| 1378 | `20261122-1378_kurumi-belortapw-raven.mp4` | クルミ（862、AR・鉄甲・SR） + ベロータ：パンプキンウィッチ（63、RL・水冷・SSR） + ◎レイヴン（851、RL・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | 戦闘の終わりの約 15 秒前で録画が切れている（戦闘履歴のパネルなし） |
+| 1379 | `20261122-1379_kurumi-belortapw-raven.mp4` | クルミ（862、AR・鉄甲・SR） + ベロータ：パンプキンウィッチ（63、RL・水冷・SSR） + ◎レイヴン（851、RL・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1380 | `20261122-1380_kurumi-raven-belortapw.mp4` | クルミ（862、AR・鉄甲・SR） + レイヴン（851、RL・鉄甲・SSR） + ◎ベロータ：パンプキンウィッチ（63、RL・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 

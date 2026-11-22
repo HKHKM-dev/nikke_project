@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 175・効果 1229（根拠あり 1207）・notes 378（根拠あり 160）
+件数: キャラ 176・効果 1235（根拠あり 1213）・notes 380（根拠あり 160）
 
-notes の種類: 未対応 32・前提の外 129・計算に無関係 78・補足 43・間接 96
+notes の種類: 未対応 32・前提の外 130・計算に無関係 78・補足 43・間接 97
 
-スロット: supported 486・partial 24・unsupported 6・noEffect 66
+スロット: supported 489・partial 24・unsupported 6・noEffect 66
 
 ## 10 ラピ
 
@@ -172,7 +172,7 @@ notes の種類: 未対応 32・前提の外 129・計算に無関係 78・補�
   - notes[0] 計算に無関係: フルバーストタイムが発動した時の自分の吸収回復（攻撃ダメージの X% 回復・10 秒）は、ダメージに関係しない（自分にだけ付き、シグナルに回復を受けた時の効果は無いので、どの味方のスキルの発動も変えない）: 根拠なし
 - **burst**: supported
   - effects[0] burstDamage・skill: C-1402（確定）
-  - effects[1] timed・burstUse・enemyDefenseDown: C-1403（確定）、C-1405（仮説）
+  - effects[1] timed・burstHit・enemyDefenseDown: C-1403（確定）、C-1405（確定）
 
 ## 30 ポリ
 
@@ -281,7 +281,21 @@ notes の種類: 未対応 32・前提の外 129・計算に無関係 78・補�
   - notes[0] 間接（防御力）: 最終攻撃力が最も高い味方 2 機の防御力▲（10 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: 根拠なし
 - **burst**: supported
   - effects[0] burstDamage・skill: C-1516（確定）、C-0795（確定）
-  - effects[1] timed・burstUse・enemyDefenseDown: C-1518（確定）、C-1519（仮説）、C-0556（確定）、C-0790（確定）
+  - effects[1] timed・burstHit・enemyDefenseDown: C-1518（確定）、C-1519（確定）、C-0556（確定）、C-0790（確定）
+
+## 63 ベロータ：パンプキンウィッチ
+
+- **skill1**: supported
+  - effects[0] state・fullBurstStart・ghostCostume: C-1536（確定）
+  - effects[1] timed・fullBurstStart・attack: C-1537（確定）
+  - notes[0] 前提の外: おばけの仮装の単一攻撃の対象からの除外と、直接攻撃を受けた時の解除は起きない（被弾しない前提）: 根拠なし
+  - notes[1] 間接（HP）: フルバーストタイムが発動した時の自分の最大HP▲（イタズラ準備）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+- **skill2**: supported
+  - effects[0] state・fullChargeShot・ghostlyPrank（damageTaken）: C-1536（確定）
+  - effects[1] timed・fullChargeShot・sustainedDamage: C-1537（確定）
+- **burst**: supported
+  - effects[0] timed・burstUse・attack: C-1537（確定）
+  - effects[1] timed・burstUse・sustainedDamage: C-1537（確定）
 
 ## 70 ブリッド
 
