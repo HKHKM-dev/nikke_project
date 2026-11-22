@@ -1781,8 +1781,14 @@ html:has(.modern-view-container) {
   position: relative;
 }
 /* 置き先を待っている間のほかのニケと、ほかの編成で使っているニケ（選べない）は暗くする（待っているニケの枠は上の共通の規則） */
-.char-tray-list-pending .char-tray-item:not(.char-tray-item-pending),
-.char-tray-item.char-tray-item-other-party {
+/* P○ のバッジは暗くしない（オーナーの指示）。ボタン全体でなく、絵・重ね・枠だけを暗くする */
+.char-tray-list-pending
+  .char-tray-item:not(.char-tray-item-pending)
+  .char-tray-item-visual
+  > :not(.char-tray-item-parties),
+.char-tray-list-pending .char-tray-item:not(.char-tray-item-pending) .char-tray-item-visual::after,
+.char-tray-item.char-tray-item-other-party .char-tray-item-visual > :not(.char-tray-item-parties),
+.char-tray-item.char-tray-item-other-party .char-tray-item-visual::after {
   filter: brightness(0.4);
 }
 /* 選べないニケは、マウスを重ねても禁止の印（〇に斜線）は出さない（オーナーの指示）。押せる印（指の形）も出さない */
