@@ -11,7 +11,7 @@
 //     （skills/resolve.ts の resolveHpWhileEffects。plan/design-hp-ratio-readers.md 2.1 節）。
 //   - 枠の状態は、その枠の定義の静的な状態（staticStatesOf）から取る。静的な付与にも編成の条件を書けるので、効果を外した後の定義から
 //     集める（plan/design-named-state.md 3.4 節）。
-//   - 編成で決まる対象（targetSquad・longestChargeTime・targetState・targetAdjacent・targetBurstStep・allies の excludeSelf: always）の枠は、
+//   - 編成で決まる対象（targetSquad・targetCharacter・longestChargeTime・targetState・targetAdjacent・targetBurstStep・allies の excludeSelf: always）の枠は、
 //     効果の fixedTargets に書く（skills/targets.ts が絞る。plan/design-target-vocab.md 2.2・2.3 節）。付与（state）の対象も
 //     timed と同じに決める。
 import type { TeamInput, TeamSlotInput } from '../team.ts';
@@ -176,7 +176,8 @@ function fullCharacter(c: CompositionCharacter, index: number): Required<Composi
 /**
  * 編成で決まる対象の枠（順位の順）。編成で決まる対象かは skills/targets.ts の needsFixedTargets で見る。heal が持つのは、両隣と
  * 基本バースト段階と lowestHpRatio だけ。
- * targetSquad = 部隊が自分と同じ枠（自分を含む。枠の順）、
+ * targetSquad = 部隊が自分と同じ枠（自分を含む。枠の順）、targetCharacter = resourceId がそれの枠（「自分の王」。いなければ空。
+ * plan/design-chime.md 2.1 節）、
  * longestChargeTime = 基本チャージ時間（CharacterData.shot.chargeTime）の長い順（同値は枠の若い順。仮定）。
  * targetState = 枠の静的な状態（states[i]。枠の定義の静的な付与が付ける状態）にその id がある枠、
  * targetAdjacent = 自分の左右の枠（空枠は無し。plan/design-rouge.md 2.1 節）、
@@ -203,6 +204,7 @@ export function fixedTargetsOf(
   if (effect.kind !== 'passive' && effect.kind !== 'timed' && effect.kind !== 'state' && effect.kind !== 'heal')
     return undefined;
   const squad = 'targetSquad' in effect && effect.targetSquad !== undefined;
+  const rid = 'targetCharacter' in effect ? effect.targetCharacter : undefined;
   const longest = effect.target === 'longestChargeTime';
   if (!needsFixedTargets(effect)) return undefined;
   // 枠の決め方の無い組（読み込みが落とす。heal でない lowestHpRatio と、付与の targetLeftmost）には枠を書かない
@@ -225,6 +227,7 @@ export function fixedTargetsOf(
   characters.forEach((c, i) => {
     if (c === null) return;
     if (squad && c.squad !== self.squad) return;
+    if (rid !== undefined && c.resourceId !== rid) return;
     const own = withSelf && i === selfIndex;
     if (state !== undefined && !own && !matching.some((s) => (states[i] ?? []).includes(s))) return;
     if (adjacent !== undefined && !adjacent.includes(i)) return;

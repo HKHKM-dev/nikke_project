@@ -70,6 +70,7 @@ import {
   parseTargetClass,
   parseTargetCount,
   parseTargetElement,
+  parseTargetCharacter,
   parseTargetSquad,
   parseTargetWeapon,
   validateBurstUsersTarget,
@@ -354,7 +355,14 @@ function parseTimedTrigger(
 /** timed の対象の絞り込みの欄（足す順に並ぶ）。数（targetCount・targetCountRef）は別に返す（値の欄と名前の検査の後に足す） */
 type TimedNarrowing = Pick<
   TimedFields,
-  'targetWeapon' | 'targetElement' | 'targetClass' | 'targetSquad' | 'excludeSelf' | 'targetDefense' | 'targetLeftmost'
+  | 'targetWeapon'
+  | 'targetElement'
+  | 'targetClass'
+  | 'targetSquad'
+  | 'targetCharacter'
+  | 'excludeSelf'
+  | 'targetDefense'
+  | 'targetLeftmost'
 > &
   ReturnType<typeof parsePersonaTargetFields>;
 
@@ -387,6 +395,8 @@ function parseTimedTarget(
   if (targetClass !== undefined) narrowing.targetClass = targetClass;
   const targetSquad = parseTargetSquad(v, target, path);
   if (targetSquad !== undefined) narrowing.targetSquad = targetSquad;
+  const targetCharacter = parseTargetCharacter(v, target, path);
+  if (targetCharacter !== undefined) narrowing.targetCharacter = targetCharacter;
   const count = parseTargetCount(v, target, path);
   if (v.excludeSelf !== undefined) {
     const excludeSelf = oneOf(EXCLUDE_SELF, v.excludeSelf, `${path}.excludeSelf`);
@@ -927,6 +937,7 @@ export function parsePassiveEffect(v: Record<string, Json>, path: string): Passi
   const targetElement = parseTargetElement(v, target, path);
   const targetClass = parseTargetClass(v, target, path);
   const targetSquad = parseTargetSquad(v, target, path);
+  const targetCharacter = parseTargetCharacter(v, target, path);
   if (v.excludeSelf !== undefined) fail(`${path}.excludeSelf`, 'excludeSelf is only allowed in timed');
   // 最終防御力の比べは発火の瞬間に決めるので、常時の効果には書けない（plan/design-skill-stage7.md 1.4 節）
   if (v.targetDefense !== undefined) fail(`${path}.targetDefense`, 'targetDefense is only allowed in timed');
@@ -966,6 +977,7 @@ export function parsePassiveEffect(v: Record<string, Json>, path: string): Passi
   if (targetElement !== undefined) effect.targetElement = targetElement;
   if (targetClass !== undefined) effect.targetClass = targetClass;
   if (targetSquad !== undefined) effect.targetSquad = targetSquad;
+  if (targetCharacter !== undefined) effect.targetCharacter = targetCharacter;
   if (scaling !== undefined) effect.scaling = scaling;
   if (parseDecrease(v, scaling, path)) effect.decrease = true;
   if (v.condition !== undefined) {

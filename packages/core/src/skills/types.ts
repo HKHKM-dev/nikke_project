@@ -533,6 +533,11 @@ export type PassiveEffect = FixedTargetFields & {
   target: BuffTarget;
   /** 「同じ部隊の味方全体に」。target が 'allies' のときだけ書ける */
   targetSquad?: TargetSquad;
+  /**
+   * 「自分の王」「自分のアイドル」（特定のキャラ。plan/design-chime.md 2.1 節）。対象の枠のキャラの resourceId がこれの枠だけ。
+   * target が 'allies' のときだけ書ける。編成にいなければ誰にも付かない。編成で決まるので最上位の skills/composition.ts で枠を決める
+   */
+  targetCharacter?: number;
   /** 「〈武器〉を所持する味方」。target が 'allies' のときだけ書ける */
   targetWeapon?: WeaponType;
   /** アスカ: 「〈コード〉コードの味方」。targetWeapon と同じ場所に書ける（plan/design-asuka.md 2.2 節） */
@@ -1116,6 +1121,11 @@ export type TimedEffect = TargetCountFields &
     target: BuffTarget;
     /** 「同じ部隊の味方全体に」。target が 'allies' のときだけ書ける */
     targetSquad?: TargetSquad;
+    /**
+     * 「自分の王」「自分のアイドル」（特定のキャラ。plan/design-chime.md 2.1 節）。対象の枠のキャラの resourceId がこれの枠だけ。
+     * target が 'allies' のときだけ書ける。編成にいなければ誰にも付かない。編成で決まるので最上位の skills/composition.ts で枠を決める
+     */
+    targetCharacter?: number;
     /**
      * 「自分を除く」。target が 'topAttack' のときだけ書ける。
      * 'always' は 'allies' にも書ける（「自分を除く…味方全体」。plan/design-persona.md 3.2 節）

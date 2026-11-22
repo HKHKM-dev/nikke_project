@@ -1,72 +1,74 @@
 {
   "formatVersion": 1,
   "resourceId": 331,
-  "checkedAt": "2026-10-08",
+  "checkedAt": "2026-11-22",
   "skills": {
     "skill1": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "戦闘開始時に自分の王へ付ける、スキル発動者基準の攻撃力▲（持続）は未対応（王の決まり方を扱っていない）",
-          "en": "The caster-based attack increase given to her king at the start of combat (permanent) is not modeled (how the king is chosen is not modeled)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "unknown",
-            "trigger": "battleStart"
+          "kind": "passive",
+          "target": "allies",
+          "targetCharacter": 330,
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 1,
+          "assumes": {
+            "ja": "請願（戦闘開始時・持続）のスキル発動者基準の攻撃力▲。戦闘の間ずっと続くので常時の効果で書く。「自分の王」はクラウン（用語のツールチップ）で、クラウンがいなければ誰にも付かない。撮影で未確定（V-0857）",
+            "en": "Wish (from the start of battle, continuous): ATK increase based on the skill user's ATK. It lasts the whole battle, so it is written as a passive. \"The king\" is Crown (term tooltip); without Crown nobody gets it. Not yet confirmed by recording (V-0857)"
           }
         }
       ]
     },
     "skill2": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "フルバーストタイムの発動時に自分の王へ付ける通常攻撃ダメージ倍率▲（10 秒）は未対応",
-          "en": "The normal attack damage multiplier increase given to her king when Full Burst starts (10 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "normalAttackDamage",
-            "target": "unknown",
-            "trigger": "fullBurstStart"
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "targetCharacter": 330,
+          "stat": "normalAttackDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "日課報告。「自分の王」はクラウンで、クラウンがいなければ誰にも付かない。撮影で未確定（V-0857）",
+            "en": "Daily Report. \"The king\" is Crown; without Crown nobody gets it. Not yet confirmed by recording (V-0857)"
           }
         }
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "味方全体のバースト再突入 2 段階は未対応",
-          "en": "Burst re-entry to stage 2 for all allies is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "burstReentry",
-            "trigger": "burstUse"
+          "kind": "burstReentry",
+          "step": "Step2",
+          "assumes": {
+            "ja": "「バースト再突入 2 段階」。CDN の次の段階（Step2）と同じ。チャイムの II の後だけ II にとどまり、このチェーンでまだ撃っていない別の II が撃ってから III に進む。撮影で未確定（V-0857）",
+            "en": "\"Burst Re-entry Stage 2\". Same as the CDN next stage (Step2). Only after Chime's Burst II does the chain stay at II; another Burst II not yet used in this chain fires before it moves to III. Not yet confirmed by recording (V-0857)"
           }
         },
         {
-          "ja": "味方全体の最大装弾数▲（10 秒）は未対応",
-          "en": "The max ammo increase on all allies (10 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "maxAmmo",
-            "target": "allies",
-            "trigger": "burstUse"
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "maxAmmo",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "撮影で未確定（V-0857）",
+            "en": "Not yet confirmed by recording (V-0857)"
           }
         },
         {
-          "ja": "自分の王への攻撃ダメージ▲（10 秒）は未対応",
-          "en": "The attack damage increase on her king (10 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attackDamage",
-            "target": "unknown",
-            "trigger": "burstUse"
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "targetCharacter": 330,
+          "stat": "attackDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "忠心。「自分の王」はクラウンで、クラウンがいなければ誰にも付かない。撮影で未確定（V-0857）",
+            "en": "Loyalty. \"The king\" is Crown; without Crown nobody gets it. Not yet confirmed by recording (V-0857)"
           }
         }
       ]

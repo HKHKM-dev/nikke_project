@@ -388,11 +388,12 @@ const FILTER_TARGET_KEYS = ['targetWeapon', 'targetElement', 'targetClass'] as c
  */
 const TARGET_KEYS = {
   /** 常時の効果（passiveValueOf） */
-  passive: [...FILTER_TARGET_KEYS, 'targetSquad', 'fixedTargets'],
+  passive: [...FILTER_TARGET_KEYS, 'targetSquad', 'targetCharacter', 'fixedTargets'],
   /** timed と状態の付与（resolveItemFields）。N（targetCount）は Lv の値に解いて、この後に書く */
   item: [
     ...FILTER_TARGET_KEYS,
     'targetSquad',
+    'targetCharacter',
     'excludeSelf',
     'targetState',
     'includeSelf',
@@ -411,6 +412,7 @@ const TARGET_KEYS = {
     ...FILTER_TARGET_KEYS,
     'targetCount',
     'targetSquad',
+    'targetCharacter',
     'excludeSelf',
     'targetState',
     'includeSelf',

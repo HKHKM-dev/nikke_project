@@ -140,3 +140,4 @@
 | フルバーストタイムが終了した時、味方全体に〈名前〉解除 | `removeState` の `target: "allies"`（味方全体のその状態の件を、出どころを問わず外す） | K の S2 の正義の実現 | [design-k.md](design-k.md) 2.1 節 |
 | ペレットごとのクリティカル攻撃が N 回命中した時（1 発で何回も） | 回数の種類 `critPelletHit`（当たったペレット × 会心率。使用武器変更の `shotCount` の発は銃口の数を掛けない。damage だけ） | K の S1 の追加ダメージ | [design-k.md](design-k.md) 2.2 節 |
 | 最後の弾丸で攻撃した時（二丁持ちでもマガジンに 1 回） | 回数の種類 `lastShotOnce`（既定の `lastShot` は二丁持ちの銃口ごと。C-1400） | K の S1 の傾く天秤 | 同 2.4 節 |
+| 自分の王・自分のアイドル（特定のキャラ） | `target: "allies"` と `targetCharacter: <resourceId>`（passive・timed・状態の付与。編成にいなければ誰にも付かない） | チャイムの S1・S2・バースト（クラウン 330） | [design-chime.md](design-chime.md) 2.1 節 |
