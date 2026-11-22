@@ -79,8 +79,8 @@ describe('pushBundle', () => {
   it('pushes the rebased branch from a shallow checkout of main', () => {
     const s = setup();
     fetchMain(s.shallow, s.remote);
-    const o = { bundle: s.bundle, number: 7, head: s.head, branch: 'claude/x', sha: s.sha, remote: s.remote };
-    expect(pushBundle(runIn(s.shallow), o)).toBe('pushed');
+    const o = { bundle: s.bundle, number: 7, branch: 'claude/x', sha: s.sha, remote: s.remote };
+    expect(pushBundle(runIn(s.shallow), o)).toEqual({ head: s.head, outcome: 'pushed' });
     expect(gitIn(s.origin)(['rev-parse', 'refs/heads/claude/x'])).toBe(s.head);
     // bundle には main の先頭からの commit だけが入る（前提は main の先頭の 1 つ）
     const header = readFileSync(s.bundle, 'latin1').split('\n\n')[0]!.split('\n');
@@ -95,21 +95,14 @@ describe('pushBundle', () => {
     gitIn(s.work)(['push', '-q', 'origin', 'HEAD:refs/heads/claude/x']);
     const moved = gitIn(s.work)(['rev-parse', 'HEAD']);
     fetchMain(s.shallow, s.remote);
-    const o = { bundle: s.bundle, number: 7, head: s.head, branch: 'claude/x', sha: s.sha, remote: s.remote };
-    expect(pushBundle(runIn(s.shallow), o)).toBe('stale');
+    const o = { bundle: s.bundle, number: 7, branch: 'claude/x', sha: s.sha, remote: s.remote };
+    expect(pushBundle(runIn(s.shallow), o)).toEqual({ head: s.head, outcome: 'stale' });
     expect(gitIn(s.origin)(['rev-parse', 'refs/heads/claude/x'])).toBe(moved);
-  });
-  it('throws when the bundle head is not the head in the manifest', () => {
-    const s = setup();
-    fetchMain(s.shallow, s.remote);
-    const o = { bundle: s.bundle, number: 7, head: s.sha, branch: 'claude/x', sha: s.sha, remote: s.remote };
-    expect(() => pushBundle(runIn(s.shallow), o)).toThrow('manifest の head と違う');
-    expect(gitIn(s.origin)(['rev-parse', 'refs/heads/claude/x'])).toBe(s.sha);
   });
   it('throws when the prerequisite commit of the bundle is missing', () => {
     const s = setup();
     // main を取らないと、bundle の前提（prepare の時の main の先頭）が無い
-    const o = { bundle: s.bundle, number: 7, head: s.head, branch: 'claude/x', sha: s.sha, remote: s.remote };
+    const o = { bundle: s.bundle, number: 7, branch: 'claude/x', sha: s.sha, remote: s.remote };
     expect(() => pushBundle(runIn(s.shallow), o)).toThrow('bundle を取り込めない');
   });
 });

@@ -9,7 +9,6 @@ import {
   mark,
   parsePrepManifest,
   pollMergeable,
-  prepBundle,
   type Pull,
   pushOutcome,
   fixedComment,
@@ -162,8 +161,6 @@ describe('parsePrepManifest', () => {
     number: 12,
     sha: A,
     kind: 'ready',
-    head: B,
-    bundle: prepBundle(12),
     renumbered: [{ from: 'C-0001', to: 'C-0002' }],
   };
   it('reads ready and failed entries', () => {
@@ -177,8 +174,6 @@ describe('parsePrepManifest', () => {
     expect(() => parsePrepManifest('{}')).toThrow('配列でない');
     expect(() => parsePrepManifest(JSON.stringify([{ ...ready, number: 0 }]))).toThrow('number');
     expect(() => parsePrepManifest(JSON.stringify([{ ...ready, sha: 'main' }]))).toThrow('sha');
-    expect(() => parsePrepManifest(JSON.stringify([{ ...ready, head: 'HEAD' }]))).toThrow('head');
-    expect(() => parsePrepManifest(JSON.stringify([{ ...ready, bundle: '../x.bundle' }]))).toThrow('bundle');
     expect(() => parsePrepManifest(JSON.stringify([{ ...ready, kind: 'push' }]))).toThrow('kind');
     expect(() =>
       parsePrepManifest(JSON.stringify([{ ...ready, renumbered: [{ from: 'C-0001', to: 'refs/heads/main' }] }])),

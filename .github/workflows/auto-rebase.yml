@@ -45,6 +45,8 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
+    outputs:
+      entries: ${{ steps.prepare.outputs.entries }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -62,7 +64,8 @@ jobs:
           path: node_modules/.cache/residuals
           key: residuals-${{ hashFiles('packages/core/src/**', 'packages/core/data/**', 'packages/core/scripts/records-data.ts', 'packages/core/scripts/residual-cache.ts') }}
           restore-keys: residuals-
-      - run: node tools/git/auto-rebase.ts --prepare "$RUNNER_TEMP/auto-rebase"
+      - id: prepare
+        run: node tools/git/auto-rebase.ts --prepare "$RUNNER_TEMP/auto-rebase"
         env:
           GITHUB_TOKEN: ${{ github.token }}
           TARGETS: ${{ needs.find.outputs.targets }}
@@ -75,8 +78,8 @@ jobs:
 
   # main の版を取り出しただけの作業ツリーで、prepare の bundle を PR のブランチに push し、コメントする（npm ci もしない）
   push:
-    needs: [find, prepare]
-    if: needs.find.outputs.targets != ''
+    needs: prepare
+    if: needs.prepare.outputs.entries != '0'
     runs-on: ubuntu-latest
     permissions:
       contents: read

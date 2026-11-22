@@ -4,22 +4,6 @@
 /** 書き込みのできるデプロイキーの秘密鍵を置く secret の名前 */
 export const DEPLOY_KEY_SECRET = 'GENERATED_DEPLOY_KEY';
 
-/** 確認のジョブが鍵のジョブに渡す、作り直した生成物の一覧のファイルの名前（artifact の中） */
-export const GENERATED_MANIFEST = 'generated.json';
-
-/**
- * 確認のジョブが渡した生成物の一覧を読む。確認のジョブは依存のパッケージを入れて回すので、生成物でないパスが入っていたら投げる
- * （鍵のジョブは生成物のほかを書き換えない）
- */
-export function parseGeneratedManifest(text: string, allowed: readonly string[]): string[] {
-  const data: unknown = JSON.parse(text);
-  if (!Array.isArray(data) || data.some((p) => typeof p !== 'string'))
-    throw new Error(`${GENERATED_MANIFEST} が文字列の配列でない`);
-  const other = (data as string[]).filter((p) => !allowed.includes(p));
-  if (other.length > 0) throw new Error(`${GENERATED_MANIFEST} に生成物でないパスがある: ${other.join('・')}`);
-  return data as string[];
-}
-
 export type GitRun = { status: number; stdout: string; stderr: string };
 
 export type CommitGeneratedInput = {

@@ -26,8 +26,8 @@ environment の secret は、その environment を指したジョブにしか�
 
 - 鍵を使うジョブには `environment: { name: main-push, deployment: false }` を付ける（`deployment: false` で、Deployments の一覧に記録を作らない）。
 - **CI（`ci.yml`）**: 生成物の commit を `commit` のジョブに分ける。
-  - `check` のジョブ（依存のパッケージを入れて確認を回す）は、作り直した生成物を `ci-generated.ts --export` で写し、artifact で渡すだけにする。
-  - `commit` のジョブは、main の版を取り出しただけの作業ツリーで（`npm ci` もしない）、`ci-generated.ts --commit --from` が生成物を戻して commit し、push する。生成物でないパスが一覧にあれば止める。
+  - `check` のジョブ（依存のパッケージを入れて確認を回す）は、作り直した生成物を全部 `ci-generated.ts --export` で写し、artifact で渡すだけにする。
+  - `commit` のジョブは、main の版を取り出しただけの作業ツリーで（`npm ci` もしない）、`ci-generated.ts --commit` が生成物のパスのものだけを戻して commit し、push する（artifact にほかのファイルがあっても読まない）。
 - **衝突の直し（`auto-rebase.yml`）**: 3 つのジョブに分ける。
   - `find`: 今のまま（API だけ。鍵なし）。
   - `prepare`: 鍵なし、token は読むだけ。PR のブランチの版の道具で振り直し・まとめ・`pr:prep` を回し、main の先頭からの commit を git bundle にして、結果の一覧（`manifest.json`）と一緒に artifact で渡す。観測値のモデルの予測値の覚え（キャッシュ）は戻すだけで、保存しない。

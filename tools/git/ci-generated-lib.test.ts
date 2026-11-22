@@ -1,12 +1,6 @@
 // main への push の CI で生成物を commit して push する決まりごと。git は呼ばず、コマンドごとの結果を決めた偽物で分かれ道を見る。
 import { describe, expect, it } from 'vitest';
-import {
-  commitGenerated,
-  DEPLOY_KEY_SECRET,
-  isNotFastForward,
-  parseGeneratedManifest,
-  type GitRun,
-} from './ci-generated-lib.ts';
+import { commitGenerated, DEPLOY_KEY_SECRET, isNotFastForward, type GitRun } from './ci-generated-lib.ts';
 
 const SHA = 'a'.repeat(40);
 const OTHER = 'b'.repeat(40);
@@ -130,21 +124,5 @@ describe('isNotFastForward', () => {
     expect(isNotFastForward(' ! [rejected]        HEAD -> main (non-fast-forward)')).toBe(true);
     expect(isNotFastForward(' ! [remote rejected] HEAD -> main (protected branch hook declined)')).toBe(false);
     expect(isNotFastForward('fatal: Could not read from remote repository.')).toBe(false);
-  });
-});
-
-describe('parseGeneratedManifest', () => {
-  const allowed = ['plan/claims.md', 'packages/core/data/skills/support.json'];
-  it('reads the list of generated files', () => {
-    expect(parseGeneratedManifest('["plan/claims.md"]', allowed)).toEqual(['plan/claims.md']);
-    expect(parseGeneratedManifest('[]', allowed)).toEqual([]);
-  });
-  it('rejects paths that are not generated files', () => {
-    expect(() => parseGeneratedManifest('["plan/claims.md", ".github/workflows/ci.yml"]', allowed)).toThrow(
-      '.github/workflows/ci.yml',
-    );
-    expect(() => parseGeneratedManifest('["../plan/claims.md"]', allowed)).toThrow('生成物でない');
-    expect(() => parseGeneratedManifest('{"a":1}', allowed)).toThrow('文字列の配列でない');
-    expect(() => parseGeneratedManifest('[1]', allowed)).toThrow('文字列の配列でない');
   });
 });

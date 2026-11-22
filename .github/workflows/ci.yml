@@ -73,6 +73,6 @@ jobs:
         with:
           name: generated
           path: ${{ runner.temp }}/generated
-      - run: node tools/git/ci-generated.ts --commit --from "$RUNNER_TEMP/generated"
+      - run: node tools/git/ci-generated.ts --commit "$RUNNER_TEMP/generated"
         env:
           DEPLOY_KEY: ${{ secrets.GENERATED_DEPLOY_KEY }}

@@ -44,11 +44,14 @@ import {
   pushBundle,
   type Renumber,
   fixedComment,
+  type GitRun,
+  NO_HOOKS,
   splitCollisions,
   transientFailure,
   worthFixing,
 } from './auto-rebase-lib.ts';
 import { cliArgs } from '../../packages/core/scripts/cli.ts';
+import { renumberInText } from '../../packages/core/src/records/renumber.ts';
 
 const { values } = cliArgs(import.meta.url, {
   options: {
@@ -95,7 +98,11 @@ async function comment(n: number, kind: MarkKind, sha: string, body: string): Pr
   console.log(`#${n}: コメントした（${kind}）`);
 }
 
-type Run = { status: number; output: string };
+type Run = ReturnType<GitRun>;
+
+/** 文の中の振り直した ID を、新しい ID に書き換える */
+const replaceIds = (text: string, pairs: readonly Renumber[]) =>
+  pairs.reduce((t, r) => renumberInText(t, r.from, r.to).text, text);
 
 function run(cmd: string, args: readonly string[], env?: Record<string, string>): Run {
   const r = spawnSync(cmd, args, { cwd: ROOT, encoding: 'utf8', env: { ...process.env, ...env } });
@@ -137,13 +144,10 @@ async function prepare(dir: string): Promise<void> {
   // ここからは npm ci の後（core を読む）
   const { AUTO_REBASE_COMMITTER, AUTO_REBASE_ENV, branchCollisions, nulPaths, pathListArgs, squashBranch } =
     await import('./pr-prep-lib.ts');
-  const { renumberInText } = await import('../../packages/core/src/records/renumber.ts');
   const { idsInBranches } = await import('../../packages/core/scripts/records-data.ts');
 
   const gitPaths = (args: readonly string[]): string[] =>
     nulPaths(execFileSync('git', pathListArgs(args), { cwd: ROOT, encoding: 'utf8' }));
-  const replaceIds = (text: string, pairs: readonly Renumber[]) =>
-    pairs.reduce((t, r) => renumberInText(t, r.from, r.to).text, text);
 
   // PR を先に全部引き、token を子に渡さない（このジョブの token は読むだけだが、PR のブランチの道具には要らない）
   const prs: Pull[] = [];
@@ -259,14 +263,7 @@ async function prepare(dir: string): Promise<void> {
     if (outcome.kind === 'skip') continue;
     if (outcome.kind === 'ready') {
       console.log(`#${n}: 直した（${outcome.head.slice(0, 8)}）。push は次のジョブ`);
-      entries.push({
-        number: n,
-        sha: pr.head.sha,
-        kind: 'ready',
-        head: outcome.head,
-        bundle: prepBundle(n),
-        renumbered: outcome.renumbered,
-      });
+      entries.push({ number: n, sha: pr.head.sha, kind: 'ready', renumbered: outcome.renumbered });
       continue;
     }
     failures++;
@@ -281,6 +278,9 @@ async function prepare(dir: string): Promise<void> {
     });
   }
   writeFileSync(join(dir, PREP_MANIFEST), `${JSON.stringify(entries, null, 2)}\n`);
+  // push とコメントのするものが無ければ、push のジョブを立ち上げない
+  const out = process.env['GITHUB_OUTPUT'];
+  if (out) appendFileSync(out, `entries=${entries.length}\n`);
   console.log(failures > 0 ? `直せなかった PR が ${failures} 本` : '終わった');
 }
 
@@ -302,7 +302,7 @@ async function push(dir: string): Promise<void> {
   }
   // bundle は --prepare の時の main の先頭を前提にするので、main を取る（浅い取り出しでも、先頭までの commit が入る）
   // このジョブの作業ツリーは main の版を取り出しただけなので、フックは無い。念のため git にフックを読ませない
-  const gitRun = (args: readonly string[]) => run('git', ['-c', 'core.hooksPath=/dev/null', ...args], ssh);
+  const gitRun: GitRun = (args) => run('git', [...NO_HOOKS, ...args], ssh);
   if (gitRun(['fetch', '--quiet', '--no-tags', remote, '+refs/heads/main:refs/remotes/origin/main']).status !== 0)
     throw new Error('デプロイキーで main を取れない');
 
@@ -322,10 +322,9 @@ async function push(dir: string): Promise<void> {
         continue;
       }
       const branch = pr.head.ref;
-      const outcome = pushBundle(gitRun, {
-        bundle: join(dir, entry.bundle),
+      const { head, outcome } = pushBundle(gitRun, {
+        bundle: join(dir, prepBundle(n)),
         number: n,
-        head: entry.head,
         branch,
         sha: entry.sha,
         remote,
@@ -340,18 +339,14 @@ async function push(dir: string): Promise<void> {
         console.log(`#${n}: push の間にブランチが進んだ（セッションが直した）。何もしない`);
         continue;
       }
-      console.log(`#${n}: 直して push した（${entry.head.slice(0, 8)}）`);
-      pushed.push({ n, head: entry.head });
-      if (entry.renumbered.length > 0) {
-        const { renumberInText } = await import('../../packages/core/src/records/renumber.ts');
-        const replaceIds = (text: string) =>
-          entry.renumbered.reduce((t, r) => renumberInText(t, r.from, r.to).text, text);
+      console.log(`#${n}: 直して push した（${head.slice(0, 8)}）`);
+      pushed.push({ n, head });
+      if (entry.renumbered.length > 0)
         await api(`/pulls/${n}`, {
           method: 'PATCH',
-          body: { title: replaceIds(pr.title), body: replaceIds(pr.body ?? '') },
+          body: { title: replaceIds(pr.title, entry.renumbered), body: replaceIds(pr.body ?? '', entry.renumbered) },
         });
-      }
-      await comment(n, 'fixed', entry.head, fixedComment(entry.head, branch, entry.renumbered));
+      await comment(n, 'fixed', head, fixedComment(head, branch, entry.renumbered));
     } catch (e) {
       console.log(`::error::#${n}: ${(e as Error).message}`);
       errors++;

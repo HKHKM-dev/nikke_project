@@ -3,9 +3,8 @@
 //   node tools/git/ci-generated.ts            作り直しで生成物でないファイルが変わったら落とす（PR。records:check の書き換えを
 //                                             ブランチが入れていない。npm run pr:prep が入れる）。main への push では知らせるだけ
 //   node tools/git/ci-generated.ts --export <dir>
-//                                             main への push で、確認が通った後: 作り直しで変わった生成物を <dir> に写し、一覧を
-//                                             generated.json に書く（artifact で鍵のジョブに渡す）
-//   node tools/git/ci-generated.ts --commit --from <dir>
+//                                             main への push で、確認が通った後: 生成物を全部 <dir> に写す（artifact で鍵のジョブに渡す）
+//   node tools/git/ci-generated.ts --commit <dir>
 //                                             鍵のジョブ（main の版を取り出しただけで、npm ci もしない）で: <dir> の生成物を作業ツリーに
 //                                             戻し、差分が無くてもデプロイキーで origin を読み書きできるか（ls-remote と push --dry-run）を
 //                                             確かめ、生成物の差分を commit し、origin/main がまだこの commit なら push する（進んでいれば、
@@ -14,16 +13,16 @@
 // 使う。main は PR 必須で、GITHUB_TOKEN（github-actions[bot]）は ruleset の bypass に足せないので、デプロイキーを bypass に足してある。
 // 鍵を使うジョブを確認のジョブと分けるのは、確認で回すコード（依存のパッケージを含む）に鍵を見せないため（plan/design-deploy-key-scope.md 2 節）。
 import { spawnSync } from 'node:child_process';
-import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { GENERATED_PATHS, ROOT } from '../../packages/core/scripts/records-data.ts';
-import { commitGenerated, GENERATED_MANIFEST, type GitRun, parseGeneratedManifest } from './ci-generated-lib.ts';
+import { commitGenerated, type GitRun } from './ci-generated-lib.ts';
 import { sshEnv } from './deploy-key.ts';
 import { nulPaths, pathListArgs, splitGenerated } from './pr-prep-lib.ts';
 import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
 const { values } = cliArgs(import.meta.url, {
-  options: { commit: { type: 'boolean', default: false }, from: { type: 'string' }, export: { type: 'string' } },
+  options: { commit: { type: 'string' }, export: { type: 'string' } },
 });
 
 /** git を呼ぶ（0 以外で終わっても投げない。標準エラーは結果に入れる） */
@@ -46,19 +45,16 @@ function changedFiles(): { generated: string[]; other: string[] } {
 const onMain = process.env['GITHUB_EVENT_NAME'] === 'push';
 
 if (values.export !== undefined) {
-  const dir = values.export;
-  const { generated } = changedFiles();
-  for (const p of generated) {
-    mkdirSync(dirname(join(dir, p)), { recursive: true });
-    copyFileSync(join(ROOT, p), join(dir, p));
+  // 変わったものだけでなく全部を写す（artifact が空にならない。鍵のジョブは差分を自分で取る）
+  for (const p of GENERATED_PATHS) {
+    mkdirSync(dirname(join(values.export, p)), { recursive: true });
+    copyFileSync(join(ROOT, p), join(values.export, p));
   }
-  mkdirSync(dir, { recursive: true });
-  writeFileSync(join(dir, GENERATED_MANIFEST), `${JSON.stringify(generated)}\n`);
-  console.log(`鍵のジョブに渡す生成物: ${generated.join('・') || 'なし'}`);
+  console.log(`鍵のジョブに渡す生成物のうち、作り直しで変わったもの: ${changedFiles().generated.join('・') || 'なし'}`);
   process.exit(0);
 }
 
-if (!values.commit) {
+if (values.commit === undefined) {
   const changed = changedFiles();
   console.log(`作り直しで変わった生成物: ${changed.generated.join('・') || 'なし'}`);
   if (changed.other.length > 0) {
@@ -70,12 +66,10 @@ if (!values.commit) {
 }
 
 if (!onMain) throw new Error('--commit は main への push の CI でだけ回す');
-if (values.from === undefined)
-  throw new Error('--commit には --from <dir>（確認のジョブが --export で写した生成物）が要る');
 try {
-  const from = values.from;
-  for (const p of parseGeneratedManifest(readFileSync(join(from, GENERATED_MANIFEST), 'utf8'), GENERATED_PATHS))
-    copyFileSync(join(from, p), join(ROOT, p));
+  // 生成物のパスのものだけを戻す（ほかのファイルは artifact にあっても読まない）
+  const from = values.commit;
+  for (const p of GENERATED_PATHS) if (existsSync(join(from, p))) copyFileSync(join(from, p), join(ROOT, p));
   console.log(
     commitGenerated({
       generated: changedFiles().generated,

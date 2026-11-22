@@ -115,19 +115,19 @@ export function transientFailure(output: string): boolean {
  * failed はコメントする。飛ばしたものと一時の失敗は入れない
  */
 export type PrepEntry =
-  | { number: number; sha: string; kind: 'ready'; head: string; bundle: string; renumbered: Renumber[] }
+  | { number: number; sha: string; kind: 'ready'; renumbered: Renumber[] }
   | { number: number; sha: string; kind: 'failed'; reason: string; output?: string };
 
 /** 結果の一覧を置くファイルの名前（artifact の中） */
 export const PREP_MANIFEST = 'manifest.json';
 
-/** PR の bundle のファイルの名前（artifact の中） */
+/** PR の bundle のファイルの名前（artifact の中。番号から決める） */
 export const prepBundle = (n: number): string => `${n}.bundle`;
 
 const SHA = /^[0-9a-f]{40}$/;
 
 /**
- * --prepare の結果の一覧を読む。--prepare は PR のブランチの道具を回すジョブなので、形を確かめてから使う（番号・sha・bundle の名前・
+ * --prepare の結果の一覧を読む。--prepare は PR のブランチの道具を回すジョブなので、形を確かめてから使う（番号・sha・
  * 振り直しの ID の形。合わなければ投げる）。push の先は、--push が GitHub の API で引き直したブランチにする
  */
 export function parsePrepManifest(text: string): PrepEntry[] {
@@ -152,9 +152,7 @@ export function parsePrepManifest(text: string): PrepEntry[] {
       };
     }
     if (kind !== 'ready') throw bad('kind が ready でも failed でもない');
-    const { head, bundle, renumbered } = o;
-    if (typeof head !== 'string' || !SHA.test(head)) throw bad('head が 40 桁の 16 進でない');
-    if (bundle !== prepBundle(number)) throw bad(`bundle が ${prepBundle(number)} でない`);
+    const { renumbered } = o;
     if (!Array.isArray(renumbered)) throw bad('renumbered が配列でない');
     const pairs = renumbered.map((r: unknown): Renumber => {
       const p = (typeof r === 'object' && r !== null ? r : {}) as Record<string, unknown>;
@@ -162,7 +160,7 @@ export function parsePrepManifest(text: string): PrepEntry[] {
       if (!ok(p['from']) || !ok(p['to'])) throw bad('renumbered に検証記録・結論の ID でないものがある');
       return { from: p['from'], to: p['to'] };
     });
-    return { number, sha, kind, head, bundle, renumbered: pairs };
+    return { number, sha, kind, renumbered: pairs };
   });
 }
 
@@ -172,30 +170,28 @@ export type GitRun = (args: readonly string[]) => { status: number; output: stri
 /** --prepare が bundle を作る git の引数: main の先頭（pr:prep が取り込んだもの）からの commit だけを入れる */
 export const bundleArgs = (file: string): string[] => ['bundle', 'create', '--quiet', file, 'HEAD', '^origin/main'];
 
-/** git にフックを読ませない（--push のジョブで使う） */
-const NO_HOOKS = ['-c', 'core.hooksPath=/dev/null'];
+/** git にフックを読ませない引数（--push のジョブの git の全部に付ける） */
+export const NO_HOOKS = ['-c', 'core.hooksPath=/dev/null'];
 
 /**
- * --push: bundle を取り込み、先頭が head か確かめ、覚えておいた head（sha）を期待値にして remote の branch にだけ push する。bundle の
- * 前提の commit（--prepare の時の main の先頭）は、先に main を取って入れておく。取り込めないか先頭が違えば投げる
+ * --push: bundle を取り込み、覚えておいた head（sha）を期待値にして remote の branch にだけ push する。push した先頭（bundle の先頭）と
+ * 結果を返す。bundle の前提の commit（--prepare の時の main の先頭）は、先に main を取って入れておく。取り込めなければ投げる
  */
 export function pushBundle(
   git: GitRun,
-  o: { bundle: string; number: number; head: string; branch: string; sha: string; remote: string },
-): 'pushed' | 'stale' | 'error' {
+  o: { bundle: string; number: number; branch: string; sha: string; remote: string },
+): { head: string; outcome: 'pushed' | 'stale' | 'error' } {
   const ref = `refs/auto-rebase/${o.number}`;
-  const fetched = git([...NO_HOOKS, 'fetch', '--quiet', '--no-tags', o.bundle, `+HEAD:${ref}`]);
+  const fetched = git(['fetch', '--quiet', '--no-tags', o.bundle, `+HEAD:${ref}`]);
   if (fetched.status !== 0) throw new Error(`bundle を取り込めない\n${fetched.output.trim()}`);
-  const got = git(['rev-parse', ref]).output.trim();
-  if (got !== o.head) throw new Error(`bundle の先頭（${got.slice(0, 8)}）が manifest の head と違う`);
+  const head = git(['rev-parse', ref]).output.trim();
   const pushed = git([
-    ...NO_HOOKS,
     'push',
     `--force-with-lease=refs/heads/${o.branch}:${o.sha}`,
     o.remote,
     `${ref}:refs/heads/${o.branch}`,
   ]);
-  return pushOutcome(pushed.status, pushed.output);
+  return { head, outcome: pushOutcome(pushed.status, pushed.output) };
 }
 
 /** 出力の末尾の n 行 */
