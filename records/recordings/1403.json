@@ -1,0 +1,46 @@
+{
+  "id": "1403",
+  "date": "2026-11-23",
+  "folder": "range",
+  "file": "20261123-1403_team_sakura-delta-privaty-unkind-maid_fb.mp4",
+  "original": "2026-11-23_00-09-37.mp4",
+  "durationSec": 223.9,
+  "frames": 13432,
+  "fps": 60,
+  "sizeMB": 270.9,
+  "sha256": "e04cc5aec58a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "鈴原サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 313,
+      "name": "プリバティ：アンカインド・メイド",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "鈴原サクラ（I）+ デルタ（II）+ プリバティ：アンカインド・メイド（III・操作）。V-0875 の撮影の依頼",
+  "backup": {
+    "at": "2026-11-23T00:14+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
