@@ -2,7 +2,7 @@
 // 一覧のニケ・ほかの行のニケを落とせる（どれも選んでいる編成は変えない。useSlotDrag）。行を押すと、その編成を選ぶ（ModernView の selectParty）
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
-import type { ReactNode } from 'react';
+import { memo, type ReactNode } from 'react';
 import type { Party } from '../../parties.ts';
 import { partyLabel, partyNumber } from '../../parties.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
@@ -35,24 +35,39 @@ export function PartyPreviewRow({ partyIndex, party, indexMap, roster, fixedSpec
         const entry = resourceId === null ? undefined : indexMap.get(resourceId);
         return (
           <PreviewCard key={i} partyIndex={partyIndex} slotIndex={i} character={entry}>
-            {entry ? (
-              <>
-                <CharacterVisual character={entry} size="portrait" />
-                <SlotCharName name={entry.name.ja} marks={trayGrowthMarks(entry, roster, fixedSpec)} />
-                {/* 持ち上げている間・戻る間と、ニケが動いてくる間は、絵の代わりに空のスロットの枠を出す（選んでいる編成のスロットと同じ） */}
-                <div className="modern-slot-arrival-face" aria-hidden="true">
-                  <EmptySlotFace />
-                </div>
-              </>
-            ) : (
-              <EmptySlotFace />
-            )}
+            <PreviewFace entry={entry} roster={roster} fixedSpec={fixedSpec} />
           </PreviewCard>
         );
       })}
     </button>
   );
 }
+
+/**
+ * スロットの中身（絵と名前、空の枠）。持ち上げている間は、ドラッグの状態（useDroppable・useDraggable）が動くたびに PreviewCard が
+ * 描き直されるので、memo で中身まで描き直さないようにする（持ち上がるまでの時間を縮める）
+ */
+const PreviewFace = memo(function PreviewFace({
+  entry,
+  roster,
+  fixedSpec,
+}: {
+  entry: CharacterIndexEntry | undefined;
+  roster: BuildSnapshot | null;
+  fixedSpec: boolean;
+}) {
+  if (!entry) return <EmptySlotFace />;
+  return (
+    <>
+      <CharacterVisual character={entry} size="portrait" />
+      <SlotCharName name={entry.name.ja} marks={trayGrowthMarks(entry, roster, fixedSpec)} />
+      {/* 持ち上げている間・戻る間と、ニケが動いてくる間は、絵の代わりに空のスロットの枠を出す（選んでいる編成のスロットと同じ） */}
+      <div className="modern-slot-arrival-face" aria-hidden="true">
+        <EmptySlotFace />
+      </div>
+    </>
+  );
+});
 
 /**
  * 選んでいない編成のスロット 1 枚。ニケを落とせ（useSlotDrag の place-party・exchange）、持ち上げられる（空のスロットも）。

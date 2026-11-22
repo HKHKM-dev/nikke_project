@@ -374,17 +374,33 @@ svg.roster-revert-icon {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 2px 6px;
+  padding: 3px 6px;
+  font: inherit;
+  font-size: 0.88rem;
+  line-height: 1.35;
+  /* 標準の select と同じく、フォーカスの枠は外へ広げない */
+  outline-offset: 0;
+}
+.element-select-button:focus-visible {
+  outline-offset: 0;
+}
+/* 枠と背景は、モダン UI では全部のボタン・select に共通の規則（丸み・地の色）に任せる。従来の UI では標準の select と同じにする */
+:root:not([data-app-ui='modern']) .element-select-button {
   border: 1px solid var(--app-border);
   background-color: light-dark(#f0f0f0, Field);
-  font: inherit;
 }
 .element-select-badge {
-  height: 1.4em;
+  height: 1.1em;
   width: auto;
 }
+/* 右端の矢印は、標準の select の矢印と同じ形の下向きの山形（枠線の 2 辺を回して描く） */
 .element-select-caret {
-  margin-left: 2px;
+  width: 0.4em;
+  height: 0.4em;
+  margin: -0.2em 2px 0 4px;
+  border: solid currentColor;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 .element-select-options {
   display: flex;
@@ -749,8 +765,8 @@ svg.roster-revert-icon {
 }
 /* 開いている編成もほかの編成も、同じ大きさで出す */
 .party-tab-total {
-  height: 1.3em;
-  line-height: 1.3;
+  height: 1.1em;
+  line-height: 1.35;
   overflow: hidden;
   /* 狭い画面では、「2201.38万」が枠の幅に収まるまで小さくする（cqi は枠の幅の 1%） */
   font-size: min(0.9rem, 19cqi);

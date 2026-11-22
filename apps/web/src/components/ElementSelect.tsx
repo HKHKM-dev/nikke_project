@@ -26,9 +26,7 @@ export function ElementSelect({
         <>
           <BadgeIcon name={current.badge} className="element-select-badge" />
           <span>{current.label}</span>
-          <span className="element-select-caret" aria-hidden="true">
-            ▾
-          </span>
+          <span className="element-select-caret" aria-hidden="true" />
         </>
       }
       buttonClassName="element-select-button"
