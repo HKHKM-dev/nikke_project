@@ -2,7 +2,7 @@
 // バーストの 2 ヒットと敵の防御力▼（5 秒）が意図どおりに出るか。射撃場の 3 分モード（条件は自動）で見る
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { hexagonFrameOf, hitFrameOf } from '../burst/schedule.ts';
+import { hexagonFrameOf, hitFrameOf, hitFramesOf } from '../burst/schedule.ts';
 import { burstHitBuffs, burstSnapshotState, planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
@@ -70,11 +70,14 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, [input, candidates, b
     }
   });
 
-  it('gives the Burst DEF down on the enemy for 5 s from the first Burst hit (C-1518)', () => {
+  it('gives the Burst DEF down on the enemy from the first Burst hit until 5 s after the second hit (C-1518, C-1519)', () => {
     const mine = plan.schedule!.activations.filter((a) => a.slotIndex === s);
     const down = items({ kind: 'timed', skill: 'burst', stat: 'enemyDefenseDown' });
     expect(down.map((w) => w.start)).toEqual(mine.map((a) => hitFrameOf(a)));
-    for (const w of down) if (w.end < plan.frames) expect(w.end - w.start).toBe(gameSecondsToFrames(5));
+    // 2 ヒットのそれぞれが付け直す（トリガー burstHit）
+    down.forEach((w, k) => {
+      if (w.end < plan.frames) expect(w.end).toBe(hitFramesOf(mine[k]!).at(-1)! + gameSecondsToFrames(5));
+    });
   });
 });
 

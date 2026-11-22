@@ -606,9 +606,10 @@ export type WhileCondition =
  * burstStageNEnter = バースト N 段階突入時。1 はゲージ満タン（とリエントリー）、2 / 3 は発動の結果その段階に進んだ時
  * （通常は I / II の発動フレーム）。固定サイクルでは 3 つとも発動フレーム。
  * healed = 自分に回復効果が適用された時（heal 効果の対象になった時。HP は持たず、満タンでも適用とみなす）。
- * burstHit = 自分のバーストの倍率ダメージのヒット（遅れの表の hitFrames のフレーム。
- * 分かれたヒットは 1 ヒット目。plan/design-elegg.md 8.9 節）。burst スロットの timed・付与にだけ書ける（validateBurstHitTriggers）。burstUse の効果の発火
- * （effectFrames）とヒットが違うフレームのキャラで、ヒットから付く効果（ブームインストール）を書く
+ * burstHit = 自分のバーストの倍率ダメージのヒット（遅れの表の hitFrames のフレーム。分かれたヒット（hitOffsets）はそれぞれのヒットで
+ * 発火し、同じ効果は上書き延長で付け直す。plan/design-elegg.md 8.9 節・plan/design-burst-hit-reapply.md 5 節）。burst スロットの timed・付与に
+ * だけ書ける（validateBurstHitTriggers）。burstUse の効果の発火（effectFrames）とヒットが違うフレームのキャラで、ヒットから付く効果
+ * （ブームインストール）と、分かれたヒットのそれぞれが付け直す効果（シグナル・ミカの防御力▼）を書く
  */
 export type BuffTrigger =
   | 'battleStart'

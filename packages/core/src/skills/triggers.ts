@@ -7,7 +7,7 @@
 // フルバーストの開始 / 終了の出来事は、そのフルバーストを開いたチェーンの枠（burstUsers。発火の文脈）も持つ（plan/design-stage11.md 3 節）。
 import {
   effectFrameOf,
-  hitFrameOf,
+  hitFramesOf,
   stageEnterFrameOf,
   type BurstActivation,
   type BurstSchedule,
@@ -233,8 +233,8 @@ export type FrameEvents = {
    */
   burstEffects: readonly BurstActivation[];
   /**
-   * このフレームにバーストの倍率ダメージがヒットした発動（hitFrameOf がこのフレーム。
-   * 分かれたヒットは 1 ヒット目。plan/design-elegg.md 8.9 節）。トリガー burstHit が見る。省略は無し
+   * このフレームにバーストの倍率ダメージがヒットした発動（hitFramesOf のどれかがこのフレーム。分かれたヒットはそれぞれ。
+   * plan/design-elegg.md 8.9 節・plan/design-burst-hit-reapply.md 5 節）。トリガー burstHit が見る。省略は無し
    */
   burstHits?: readonly BurstActivation[];
   fullBurstStart: boolean;
@@ -660,13 +660,13 @@ export function replayEvents(
       const f = effectFrameOf(a);
       if (f < frames) (at(f).burstEffects as BurstActivation[]).push(a);
     }
-    // ヒットのフレーム（トリガー burstHit）
-    for (const a of schedule.activations) {
-      const f = hitFrameOf(a);
-      if (f >= frames) continue;
-      const ev = at(f);
-      ev.burstHits = [...(ev.burstHits ?? []), a];
-    }
+    // ヒットのフレーム（トリガー burstHit。分かれたヒットはそれぞれ。plan/design-burst-hit-reapply.md 5 節）
+    for (const a of schedule.activations)
+      for (const f of hitFramesOf(a)) {
+        if (f >= frames) continue;
+        const ev = at(f);
+        ev.burstHits = [...(ev.burstHits ?? []), a];
+      }
     for (const w of schedule.fullBurstWindows) {
       if (w.start < frames) {
         const ev = at(w.start);

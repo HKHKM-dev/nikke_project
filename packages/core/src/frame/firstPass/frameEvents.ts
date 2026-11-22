@@ -3,7 +3,7 @@
 // 出来事を集め（手順 3 の頭）、回復と遮蔽物 HP 回復を件の登録の前に当てる。
 import {
   effectFrameOf,
-  hitFrameOf,
+  hitFramesOf,
   stageEnterFrameOf,
   type BurstActivation,
   type BurstStepKey,
@@ -39,7 +39,7 @@ export function createFrameEvents({
 }: FirstPassBase & InstantSources & BurstScheduleLayer & ShotPauses & Pick<GaugeEffects, 'skillFiredBefore'>) {
   /** 先のフレームに効果が発火するバーストの発動（フレーム → 発動） */
   const pendingBurstEffects = new Map<number, BurstActivation[]>();
-  /** 先のフレームのバーストのヒット（トリガー burstHit。plan/design-elegg.md 8.9 節） */
+  /** 先のフレームのバーストのヒット（トリガー burstHit。分かれたヒットはそれぞれ。plan/design-elegg.md 8.9 節） */
   const pendingBurstHits = new Map<number, BurstActivation[]>();
   /** 先のフレームの段階のきっかけ（stageEnterFrameOf。段階 3 は替わり目） */
   const pendingStageEntries = new Map<number, BurstStepKey[]>();
@@ -81,11 +81,10 @@ export function createFrameEvents({
       if (at === f) burstEffects.push(a);
       else if (at < frames) pendingBurstEffects.set(at, [...(pendingBurstEffects.get(at) ?? []), a]);
     }
-    // ヒットのフレームも同じに積む（遅れの無いキャラは本当の発動か、III なら 00.00。hitFrameOf）
-    for (const a of now) {
-      const at = hitFrameOf(a);
-      if (at < frames) pendingBurstHits.set(at, [...(pendingBurstHits.get(at) ?? []), a]);
-    }
+    // ヒットのフレームも同じに積む（遅れの無いキャラは本当の発動か、III なら 00.00。分かれたヒットはそれぞれ。hitFramesOf）
+    for (const a of now)
+      for (const at of hitFramesOf(a))
+        if (at < frames) pendingBurstHits.set(at, [...(pendingBurstHits.get(at) ?? []), a]);
     const burstHits = pendingBurstHits.get(f);
     if (burstHits !== undefined) pendingBurstHits.delete(f);
     for (const a of now) {

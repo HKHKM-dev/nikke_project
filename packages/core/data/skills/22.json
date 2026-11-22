@@ -58,14 +58,14 @@
         },
         {
           "kind": "timed",
-          "trigger": "burstUse",
+          "trigger": "burstHit",
           "target": "allies",
           "stat": "enemyDefenseDown",
           "ref": 2,
           "durationRef": 3,
           "assumes": {
-            "ja": "攻撃範囲内の敵は単体ボス。1 ヒット目と同じフレームから付き、そこから 10 秒で切れる。録画の切れ目は 3 ヒット目から 10 秒で、約 11f 遅い（3 ヒットごとに付け直す形は未対応）",
-            "en": "Enemies in range are a lone boss. It applies from the frame of the first hit and ends 10 s later. In recordings it ends 10 s after the third hit, about 11 frames later (re-applying on each of the 3 hits is not modeled)"
+            "ja": "攻撃範囲内の敵は単体ボス。3 ヒットのそれぞれが付け直す（1 ヒット目のフレームから付き、3 ヒット目から 10 秒で切れる）",
+            "en": "Enemies in range are a lone boss. Each of the 3 hits re-applies it (it applies from the frame of the first hit and ends 10 s after the third hit)"
           },
           "claims": [
             "C-1403",
