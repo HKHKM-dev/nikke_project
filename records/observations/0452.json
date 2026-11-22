@@ -36,5 +36,38 @@
       "slot": 1,
       "source": "normal"
     }
+  },
+  {
+    "id": "0452-03",
+    "recording": "0452",
+    "use": "record",
+    "kind": "hit",
+    "unit": "ヒット",
+    "value": [
+      [1384, 1, "BBBBBBBBBBCCCCCC"],
+      [1978, 1, "BBBBBCBBBCCCCCCC"],
+      [3188, 2, "BCBBBBBBBBBCCCCC"],
+      [3745, 2, "BBBBBCCCBCCCCCCC"],
+      [4302, 2, "CBBBBBBBBBCBCCCC"],
+      [5090, 3, "BBBBBBBBBCCCCCCC"],
+      [5624, 3, "BBBBBBBBBBBBCCCC"],
+      [6204, 3, "BBBBBBBBBBBCCCCC"],
+      [7502, 4, "BBBBBBCBCCCCCCCC"],
+      [8082, 4, "BBBBBBBBBBBCCCCC"],
+      [9800, 5, "BBBBBBBBBBBCCCCC"],
+      [10357, 5, "BBBBBBBBBBCCCCCC"],
+      [10914, 5, "BBBBBBBBBBBBCCCC"]
+    ],
+    "description": "クラウン（単騎・操作）のリロードの明けの撃ち始め 13 回の、[最初のヒットのフレーム, 区間（1 中近・2 近・3 遠・4 中遠・5 近・6 遠）, 1〜16 ヒット目のコア（C）・胴体（B）の並び]",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/reticle-ammo.ts --mode series と使い捨てのスクリプト",
+      "note": "V-0873「読み方」。並びは最初の 14 ヒット以上を分けられた回（15・16 ヒット目は分けられた所まで）。除いた撃ち始め: 16 ヒットの前に止まった 1・分けられない増分 2・ジャンプが重なった 1。区間はジャンプ（増分の 90f 以上の空きで残弾が戻らない所・最大に戻ってから初めて撃つまで 30f を超えたリロード・照準の y が 12px 以上跳んだリロード）で数えた"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0873",
+    "readAt": "2026-11-22"
   }
 ]

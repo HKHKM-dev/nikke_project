@@ -218,5 +218,38 @@
         "jumpWindows": "0444-03"
       }
     }
+  },
+  {
+    "id": "0444-09",
+    "recording": "0444",
+    "use": "record",
+    "kind": "hit",
+    "unit": "ヒット",
+    "value": [
+      [1364, 1, "BBBBBCBBBBBCCCCC"],
+      [1921, 1, "BBBBBBBBBBCCCCCC"],
+      [3167, 2, "BBCBBBBBBCCCCCCC"],
+      [4281, 2, "BBBBBBBBBBCCCCCC"],
+      [5069, 3, "BBBBBBBBCCCCCCCC"],
+      [5603, 3, "BBBBBBBCBCBCCCCC"],
+      [6160, 3, "BBBBBBBBBBBCCCCC"],
+      [6763, 3, "BBBBBBBBCCCCCCCC"],
+      [7482, 4, "BBBBBBBBBCCCCCCC"],
+      [8039, 4, "BBBBBBBBBBBCCCCC"],
+      [9779, 5, "BBBBBBBBBBCCCCCC"],
+      [10336, 5, "BBCBBBBCCBCCCCCC"],
+      [10893, 5, "BBBBBBBBBBCCCCCC"]
+    ],
+    "description": "エマ（単騎・操作）のリロードの明けの撃ち始め 13 回の、[最初のヒットのフレーム, 区間（1 中近・2 近・3 遠・4 中遠・5 近・6 遠）, 1〜16 ヒット目のコア（C）・胴体（B）の並び]",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/reticle-ammo.ts --mode series と使い捨てのスクリプト",
+      "note": "V-0873「読み方」。並びは最初の 14 ヒット以上を分けられた回（15・16 ヒット目は分けられた所まで）。除いた撃ち始め: 16 ヒットの前に止まった 1・分けられない増分 2・ジャンプが重なった 1。区間はジャンプ（増分の 90f 以上の空きで残弾が戻らない所・最大に戻ってから初めて撃つまで 30f を超えたリロード・照準の y が 12px 以上跳んだリロード）で数えた"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0873",
+    "readAt": "2026-11-22"
   }
 ]

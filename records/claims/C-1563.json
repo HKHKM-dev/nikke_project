@@ -11,5 +11,13 @@
   "subject": {
     "mechanism": "targetTable"
   },
-  "decidedOn": []
+  "decidedOn": [],
+  "minimal": [
+    {
+      "observations": ["0440-04", "0441-04", "0442-04"],
+      "element": "ルドミラ：ウィンターオーナー skill1.effects[0]",
+      "reason": "受けるダメージ▲は 1 ヒットの値の格子を変えるだけで、ヒットがコアか胴体かを変えない。格子には▲あり・なしを入れて分けた（V-0873「読み方」。V-0415 と同じ）",
+      "decided": "2026-11-22"
+    }
+  ]
 }
