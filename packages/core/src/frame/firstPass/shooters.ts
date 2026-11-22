@@ -186,18 +186,19 @@ export function createShooters({
     const ended = heldWeapon[i];
     heldWeapon[i] = params.weapon;
     if (params.weapon !== null) {
-      changedShooters[i] = weaponChangeShooter(params.weapon.shot, model, params);
+      const changed = weaponChangeShooter(params.weapon.shot, model, params);
+      changedShooters[i] = changed;
       const firstHit = weaponChangeFirstHitAt(i, params.weapon.id, f);
-      if (firstHit !== null) changedShooters[i]!.wait = Math.max(0, firstHit - f);
+      if (firstHit !== null) changed.wait = Math.max(0, firstHit - f);
       // 定義の即値の待ち（録画で読む。plan/design-skill-stage11.md 2.1 節）
       else if (params.weapon.firstShotDelayFrames !== undefined) {
-        changedShooters[i]!.wait = params.weapon.firstShotDelayFrames;
+        changed.wait = params.weapon.firstShotDelayFrames;
       }
       // 持ち替え（フルバーストに入る発動なら窓の始まり）の時の
       // 基礎の武器の状態で、最初の発を決める（plan/design-red-hood.md 7.1 節の論点 13。V-0639）
       else if (params.weapon.firstShotAfterSwapFrames !== undefined) {
         const first = firstShotAfterSwap(i, f, params.weapon.firstShotAfterSwapFrames);
-        changedShooters[i]!.wait = Math.max(0, first - f);
+        changed.wait = Math.max(0, first - f);
       }
     } else {
       changedShooters[i] = null;
@@ -233,11 +234,11 @@ export function createShooters({
     ownBlock: SlotBlock | undefined,
     slotBlocked: boolean,
   ): number | null => {
-    const slotHideNow = slotBlocked && ownBlock!.start === f;
+    const slotHideNow = slotBlocked && ownBlock?.start === f;
     // 狙えない窓（plan/design-hide-reload-detect.md 案 A）: 入るフレームにチャージが満ちていればふだんの刻みの時刻に撃って
     // ハイドし（同 11 節）、ほかの枠は D まで待つ（チャージの途中なら D の H 後に部分チャージで撃つ）。holdFire の区間は待たずにハイドする（V-0605）
     let windowShot: number | null = null;
-    if (slotHideNow && ownBlock!.untargetable) windowShot = beginHide(state, shot, model, params);
+    if (slotHideNow && ownBlock?.untargetable === true) windowShot = beginHide(state, shot, model, params);
     else if (slotHideNow) hideShooter(state, shot, model, params);
     else if (slotBlocked) windowShot = stepHide(state, shot, model, params);
     if (state.hideReloadStartIn !== undefined) {
@@ -275,8 +276,8 @@ export function createShooters({
     return true;
   };
   /**
-   * 射手を 1 フレーム進め、チャージの見張り・撃ち切りのクールタイムの待ち・リロードの込め終わりを書く。ふだんの発を撃ったら true
-   * （partial は、狙えない窓で撃った部分チャージの発の進み）
+   * 射手を 1 フレーム進め、チャージの見張り・撃ち切りのクールタイムの待ち・リロードの込め終わりを書く。このフレームに撃ったら
+   * true（ふだんの発か、partial の狙えない窓で撃った部分チャージの発）
    */
   const advanceShooter = (
     i: number,
@@ -294,13 +295,13 @@ export function createShooters({
         ? chargeProgressFrames(state, params, model)
         : null;
     const fired = stepShooter(state, shot, model, params, slotBlocked);
+    const shotNow = fired || partial !== null;
     // 撃ち切りで終わる変更の最後の弾丸から、この枠のクールタイムの周期の発動を待たせる（plan/design-snow-white.md 8.3 節の論点 7）。
     // 敵のジャンプの始まりの部分チャージの発で撃ち切った回も同じ（V-0840）
-    if ((fired || partial !== null) && params.weapon?.returnCooldownFrames !== undefined && state.ammo === 0) {
+    if (shotNow && params.weapon?.returnCooldownFrames !== undefined && state.ammo === 0) {
       cooldownHoldUntil[i] = f + params.weapon.returnCooldownFrames;
     }
     if (chargeWatches[i] !== null) {
-      const shotNow = fired || partial !== null;
       const fullShot = shotNow && isChargeWeapon(shot) && (partial === null || partial >= 1);
       watchCharge(i, f, progress, shotNow, fullShot, params.chargeFrames);
     }
@@ -315,7 +316,7 @@ export function createShooters({
       (reloading || (fired && state.lastShot))
     )
       (logs[i]!.reloadEnds ??= []).push(f + 1);
-    return fired;
+    return shotNow;
   };
   /**
    * 発のクリティカルのペレット（plan/design-k.md 2.2 節。V-0848）。ペレット数を替える使用武器変更の発は、変更後のペレット数で
@@ -342,14 +343,15 @@ export function createShooters({
           : (shot.shotCount * hits) / muzzleHits[i]!)
     );
   };
-  /** 発のゲージ（着地のフレームに足す分）。partial は部分チャージの発の進み（フルチャージの発・チャージしない武器は null） */
-  const shotGauge = (i: number, slot: Slot, f: number, uncharged: boolean, partial: number | null): number => {
+  /** 発のゲージ（着地のフレームに足す分）。partialProgress は 1 未満の部分チャージの発の進み（ほかの発は null） */
+  const shotGauge = (i: number, slot: Slot, f: number, uncharged: boolean, partialProgress: number | null): number => {
     const shotEnergy = energyAt(i, f);
     // チャージしない変更後の武器の発には、基礎の武器のフルチャージ倍率を掛けない（変更後の武器の発のゲージは確かめていない。
     // V-0528）。ヒットの数（gaugeHitsOf）は 1 発 1 ヒットのまま
     const gainEnergy = uncharged ? shotEnergy / chargeGaugeOf(i) : shotEnergy;
     const energy =
-      gainEnergy * (partial !== null ? partialGaugeRatio(slot.character.shot, i === controlledSlot, partial) : 1) +
+      gainEnergy *
+        (partialProgress !== null ? partialGaugeRatio(slot.character.shot, i === controlledSlot, partialProgress) : 1) +
       (obstacles[i]!.get(shotCounts[i]!) ?? 0) * obstacleEnergyAt(i);
     return landingGauge(i, f + shotFlightAt(i, f), f, energy, gaugeHitsOf(i, shotEnergy));
   };
@@ -438,8 +440,7 @@ export function createShooters({
       const slotBlocked = ownBlock !== undefined && ownBlock.start <= f && f < ownBlock.end;
       const partial = stepBlock(i, slot, state, shot, params, f, ownBlock, slotBlocked);
       if (stepPause(i, state, shot, params, f)) return;
-      const fired = advanceShooter(i, state, shot, params, f, slotBlocked, partial);
-      if (!fired && partial === null) return;
+      if (!advanceShooter(i, state, shot, params, f, slotBlocked, partial)) return;
       gauge += recordShot(i, slot, state, shot, params, f, partial);
     });
     return gauge;
