@@ -1,6 +1,6 @@
 // モダン UI の持ち上げた絵（DragOverlay）。操作の印・スロットから持ち上げた立ち絵・一覧から持ち上げた絵のどれか
 import { DragOverlay, useDndMonitor } from '@dnd-kit/core';
-import { useState, type CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { partyNumber } from '../../parties.ts';
 import type { TrayShape } from '../../trayShape.ts';
 import { TrayItemFace } from './CharacterTrayItem.tsx';
@@ -11,7 +11,7 @@ import type { DragOverlayState } from './useSlotDrag.ts';
 
 /**
  * ドラッグ中だけ敷く、画面いっぱいの透明な膜。どこの上でも人差し指のカーソルにする（styles.css の .drag-cursor-shield）。
- * 持ち上げている間に動く状態（over など）では描き直さないよう、始まりと終わりの知らせだけで出し入れする
+ * 持ち上げている間に動く状態（over など）では描き直さないよう、始まりと終わりの知らせだけで出し入れする（知らせが届かないときの外し方は下）
  */
 function DragCursorShield() {
   const [dragging, setDragging] = useState(false);
@@ -20,6 +20,16 @@ function DragCursorShield() {
     onDragEnd: () => setDragging(false),
     onDragCancel: () => setDragging(false),
   });
+  // 終わりの知らせが届かないときも、膜が残って画面全体を押せなくならないよう、指（マウス）を離した・ウィンドウを離れたときに外す
+  useEffect(() => {
+    if (!dragging) return;
+    const release = () => setDragging(false);
+    const events = ['pointerup', 'pointercancel', 'blur'] as const;
+    for (const name of events) window.addEventListener(name, release);
+    return () => {
+      for (const name of events) window.removeEventListener(name, release);
+    };
+  }, [dragging]);
   return dragging ? <div className="drag-cursor-shield" aria-hidden="true" /> : null;
 }
 
