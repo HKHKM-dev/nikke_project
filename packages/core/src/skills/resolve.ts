@@ -269,8 +269,8 @@ export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: n
   // 1 発の当たったペレットの数のしきい値は、数える窓・発火の窓・スタック・確率と組まない（skills/parse/trigger.ts）
   if (trigger.minPellets !== undefined || trigger.minPelletsRef !== undefined) {
     const minPellets = trigger.minPellets ?? skillValue(skill, trigger.minPelletsRef!, level);
-    if (!Number.isFinite(minPellets) || minPellets <= 0) {
-      throw new RangeError(`skill ${skill.id}: minPellets must be positive, got ${minPellets}`);
+    if (!Number.isInteger(minPellets) || minPellets < 1) {
+      throw new RangeError(`skill ${skill.id}: minPellets must be a positive integer, got ${minPellets}`);
     }
     return { count: trigger.count, every, minPellets };
   }

@@ -164,6 +164,19 @@ describe('data/skills', () => {
       }
     });
 
+    // 1 発の当たったペレットの数のしきい値（plan/design-privaty-um-s2.md 2.1 節）は、1 発に複数のペレットを撃つ武器のキャラにだけ
+    // （1 ペレットの武器では一度も届かない。読み込みは武器を知らない）
+    it('writes minPellets only for a character whose shot has several pellets', () => {
+      for (const slot of SKILL_SLOTS) {
+        for (const effect of def.skills[slot].effects) {
+          const t = 'trigger' in effect ? effect.trigger : undefined;
+          if (typeof t !== 'object' || t === null || !('count' in t)) continue;
+          if (t.minPellets === undefined && t.minPelletsRef === undefined) continue;
+          expect(character.shot.shotCount, `${slot}: minPellets needs a pellet weapon`).toBeGreaterThan(1);
+        }
+      }
+    });
+
     // A2 の B モード編（plan/design-a2-bmode-stance.md 3.1 節）: 射撃の姿勢の長さの倍率は、射撃姿勢維持型の武器のキャラにだけ効く
     it('writes fireStanceScale only for a fire-stance character', () => {
       for (const slot of SKILL_SLOTS) {
