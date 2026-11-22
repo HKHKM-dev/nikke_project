@@ -1349,6 +1349,7 @@
 | 1380 | `20261122-1380_kurumi-raven-belortapw.mp4` | クルミ（862、AR・鉄甲・SR） + レイヴン（851、RL・鉄甲・SSR） + ◎ベロータ：パンプキンウィッチ（63、RL・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1381 | `20261122-1381_anis-star+crown+snowwhite-ha+dorothy-sd+privaty_auto.mp4` | アニス：スター（17、RL・電撃・SSR） + クラウン（330、MG・鉄甲・SSR） + ◎スノーホワイト：ヘビーアームズ（471、SR・水冷・SSR） + ドロシー：セレンディピティ（234、SG・水冷・SSR） + プリバティ（170、AR・水冷・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1387 | `20261122-1387_moran+crown+mast-rm+sun+eg_auto.mp4` | モラン（281、AR・電撃・SSR、宝物 3） + クラウン（330、MG・鉄甲・SSR） + ◎マスト：ロマンチックメイド（354、MG・水冷・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ソルジャーE.G.（300、AR・電撃・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1388 | `20261122-1388_moran+crown+mast-rm+sun+eg_auto.mp4` | モラン（281、AR・電撃・SSR、宝物 3） + クラウン（330、MG・鉄甲・SSR） + ◎マスト：ロマンチックメイド（354、MG・水冷・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ソルジャーE.G.（300、AR・電撃・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
