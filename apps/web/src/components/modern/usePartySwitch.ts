@@ -20,13 +20,14 @@ const STALE_MS = 1000;
 type Pending = {
   /** 切り替える先の編成（0 から） */
   to: number;
-  /** 切り替える前の、各行（編成の番号の順）の上端 */
-  tops: number[];
+  /** 切り替える前の、各行（編成の番号の順）の上端と、行の左の番号の枠の上端 */
+  tops: { row: number; label: number | null }[];
   snapshots: { party: number; index: number; snapshot: ContentSnapshot }[];
   timer: ReturnType<typeof setTimeout>;
 };
 
 const rowsOf = () => [...document.querySelectorAll<HTMLElement>('.modern-party-row')];
+const labelOf = (row: HTMLElement) => row.querySelector<HTMLElement>('.modern-party-row-label');
 const contentAt = (party: number, index: number) =>
   partyCardAt(party, index)?.querySelector('.modern-slot-char-area') ?? null;
 
@@ -40,18 +41,35 @@ function capture(from: number, to: number): Pending {
     }
   }
   const timer = setTimeout(() => snapshots.forEach(({ snapshot }) => dropSnapshot(snapshot)), STALE_MS);
-  return { to, tops: rowsOf().map((row) => row.getBoundingClientRect().top), snapshots, timer };
+  return {
+    to,
+    tops: rowsOf().map((row) => ({
+      row: row.getBoundingClientRect().top,
+      label: labelOf(row)?.getBoundingClientRect().top ?? null,
+    })),
+    snapshots,
+    timer,
+  };
 }
 
 /** 切り替えた後の描き直しで、行を元の位置から動かし、写しを新しい枠へ動かして消し、新しい枠を現す */
 function play({ tops, snapshots }: Pending): void {
+  const timing = { duration: FLIGHT.duration, easing: FLIGHT.easing };
   rowsOf().forEach((row, i) => {
-    const delta = (tops[i] ?? 0) - row.getBoundingClientRect().top;
-    if (Math.abs(delta) < 0.5) return;
-    row.animate([{ transform: `translateY(${delta}px)` }, { transform: 'none' }], {
-      duration: FLIGHT.duration,
-      easing: FLIGHT.easing,
-    });
+    const before = tops[i];
+    if (!before) return;
+    // 位置は、動きを付ける前に測る（動きを付けると、動き始めの位置が測った値に入る）
+    const rowDelta = before.row - row.getBoundingClientRect().top;
+    const label = labelOf(row);
+    const labelTop = label?.getBoundingClientRect().top;
+    if (Math.abs(rowDelta) >= 0.5)
+      row.animate([{ transform: `translateY(${rowDelta}px)` }, { transform: 'none' }], timing);
+    // 左の番号は、行の高さが変わると行の中の位置も変わる（行の中で縦の中央）。番号は行の動きに乗って動くので、行の動きの分を引いて、
+    // 番号が切り替える前にあった場所から動き出すようにする
+    if (!label || labelTop === undefined || before.label === null) return;
+    const labelDelta = before.label - labelTop - rowDelta;
+    if (Math.abs(labelDelta) >= 0.5)
+      label.animate([{ transform: `translateY(${labelDelta}px)` }, { transform: 'none' }], timing);
   });
   for (const { party, index, snapshot } of snapshots) {
     const content = contentAt(party, index);
