@@ -121,13 +121,15 @@ describe('変更後の武器の発の命中の期待値（1 パス目）', () =>
     expect(changed.size).toBeGreaterThan(0);
     const changedAt = k.frames.flatMap((f, i) => (changed.has(f) ? [i] : []));
     const baseAt = k.frames.flatMap((f, i) => (changed.has(f) ? [] : [i]));
-    // 中近の 1 回目のフルバースト: 行の 0.75・0.01（二丁持ちで 2 ヒット）
+    // 中近の 1 回目のフルバースト: 行の中近の値（二丁持ちで 2 ヒット）
     const first = changedAt[0]!;
-    expect(k.hits![first]).toBeCloseTo(0.75 * 2, 12);
-    expect(k.coreHits![first]).toBeCloseTo(0.75 * 0.01 * 2, 12);
+    const bullet = target.bulletHitRate.weaponChanges!['41:burst']!.midNear!;
+    const core = target.coreHitRate.weaponChanges!['41:burst']!.midNear!;
+    expect(k.hits![first]).toBeCloseTo(bullet * 2, 12);
+    expect(k.coreHits![first]).toBeCloseTo(bullet * core * 2, 12);
     expect(kOff.hits![first]).toBeGreaterThan(k.hits![first]!);
     // 当たったペレットのクリティカルは shotCount（10）× 弾丸命中率 × 会心率
-    expect(k.critPellets![first] / kOff.critPellets![first]!).toBeCloseTo(k.hits![first]! / kOff.hits![first]!, 12);
+    expect(k.critPellets![first]! / kOff.critPellets![first]!).toBeCloseTo(k.hits![first]! / kOff.hits![first]!, 12);
     for (const i of baseAt) expect(k.hits![i]).toBe(kOff.hits![i]);
   });
 });
