@@ -50,12 +50,22 @@ function slotBlockRanges(
   untargetable: readonly FrameRange[],
   holdFire: readonly HoldFire[] | undefined,
 ): (readonly SlotBlock[])[] {
-  const shared: SlotBlock[] = untargetable.map((r) => ({ start: r.start, end: r.end, untargetable: true, manualEnd: false }));
+  const shared: SlotBlock[] = untargetable.map((r) => ({
+    start: r.start,
+    end: r.end,
+    untargetable: true,
+    manualEnd: false,
+  }));
   return Array.from({ length: slotCount }, (_, i) => {
     const holds = (holdFire ?? []).filter((h) => h.slotIndex === i).flatMap((h) => h.ranges);
     if (holds.length === 0) return shared;
-    const all = [...shared, ...holds.map((r) => ({ start: r.start, end: r.end, untargetable: false, manualEnd: false }))];
-    const merged = unionRanges(all.sort((a, b) => a.start - b.start || Number(b.untargetable) - Number(a.untargetable)));
+    const all = [
+      ...shared,
+      ...holds.map((r) => ({ start: r.start, end: r.end, untargetable: false, manualEnd: false })),
+    ];
+    const merged = unionRanges(
+      all.sort((a, b) => a.start - b.start || Number(b.untargetable) - Number(a.untargetable)),
+    );
     return merged.map((b) => ({
       ...b,
       manualEnd: holds.some((r) => r.end === b.end) && !untargetable.some((r) => r.end === b.end),
@@ -242,7 +252,8 @@ export function createShooters({
       // V-0534: 射撃の止まりの間は射手を進めない（撃たず、待ち・リロードも進めない）
       if (pauseLeft[i]! > 0) {
         pauseLeft[i]! -= 1;
-        // バーストの発動の止まりの明けは、狙えない窓の明けと同じく構え直す（plan/design-privaty-burst-pause.md 3 節の論点 4）
+        // バーストの発動の止まりの明けは、狙えない窓の明けと同じく構え直す（plan/design-privaty-burst-pause.md 3 節の論点 4）。
+        // 止まりの中でオート射撃を手で ON に戻した枠も、ここで窓の明けと同じ待ちになる（C-1550 の短さは止まりの中では確かめていない）
         if (pauseLeft[i] === 0 && burstPauseAim[i]! > 0) {
           reaimShooter(state, shot, burstPauseAim[i]!, model, params);
           burstPauseAim[i] = 0;

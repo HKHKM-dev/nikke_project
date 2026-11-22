@@ -718,7 +718,7 @@ function settleHide(state: ShooterState, shot: ShotParams, model: WeaponModel, p
  */
 /**
  * 窓の明けに、止まっていた（ready の）枠が 1 発目を撃つまで（フレーム）。チャージ武器は構え + チャージ（入力が UP の RL は 1f 短い。
- * C-0229）、そうでない武器は構え（C-0114）。unhideShooter と、着地の後の照準の注記（frame/landing.ts。plan/design-landing-aim.md）で使う
+ * C-0229）、そうでない武器は構え（C-0114）。unhideShooter（reaimShooter）で使う
  */
 export function windowEndFirstShotFrames(
   shot: ShotParams,
