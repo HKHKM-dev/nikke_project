@@ -104,7 +104,9 @@ export function CharacterTray({
     id: 'tray-drop',
     data: { type: 'tray' } satisfies OverDragData,
   });
-  const returning = isOver && activeDragData(active?.data.current)?.type === 'slot-character';
+  // 選んでいる編成のスロットのキャラも、選んでいない編成の行のスロットのキャラも、一覧の上に来たら破線を出す
+  const dragType = activeDragData(active?.data.current)?.type;
+  const returning = isOver && (dragType === 'slot-character' || dragType === 'party-character');
 
   return (
     <section

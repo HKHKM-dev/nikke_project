@@ -1557,7 +1557,7 @@ html:has(.modern-view-container) {
   justify-content: center;
   gap: 8px;
 }
-/* スロットのキャラを持ち上げてトレイの上に来たとき（離すとそのスロットを外す） */
+/* スロットのキャラ（選んでいない編成の行のも）を持ち上げてトレイの上に来たとき（離すとそのスロットを外す） */
 .char-tray-panel.char-tray-returning {
   outline: 2px dashed Highlight;
   outline-offset: -2px;
