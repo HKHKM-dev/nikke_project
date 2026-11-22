@@ -242,6 +242,9 @@ describe('特定のキャラ（targetCharacter。自分の王）', () => {
     expect(() => parse({ ...passive, target: 'self' })).toThrow(/targetCharacter: only allowed with target "allies"/);
     expect(() => parse({ ...passive, targetCharacter: 0 })).toThrow(/targetCharacter/);
     expect(() => parse({ ...passive, targetCharacter: '330' })).toThrow(/targetCharacter/);
+    for (const extra of [{ targetAdjacent: true }, { targetLeftmost: true }, { targetDefense: 'lowerThanSelf' }]) {
+      expect(() => parse({ ...timed, target: 'allies', targetCharacter: 330, ...extra })).toThrow(/targetCharacter/);
+    }
     expect(() => parse({ ...timed, target: 'allies', targetCharacter: 330, stat: 'damageTaken' })).toThrow(
       /targetCharacter/,
     );

@@ -63,7 +63,7 @@ export function parsePersonaTargetFields(
   if (v.targetAdjacent !== undefined) {
     if (v.targetAdjacent !== true) fail(`${path}.targetAdjacent`, 'must be true');
     if (target !== 'allies') fail(`${path}.targetAdjacent`, `only allowed with target "allies", got "${target}"`);
-    for (const key of ['targetState', 'targetBurstStep', 'targetSquad', 'excludeSelf'] as const) {
+    for (const key of ['targetState', 'targetBurstStep', 'targetSquad', 'targetCharacter', 'excludeSelf'] as const) {
       if (v[key] !== undefined) fail(`${path}.targetAdjacent`, `cannot be combined with ${key}`);
     }
     out.targetAdjacent = true;

@@ -421,6 +421,7 @@ function parseTimedTarget(
       'targetAdjacent',
       'targetBurstStep',
       'targetSquad',
+      'targetCharacter',
       'excludeSelf',
       'targetDefense',
     ] as const) {
@@ -433,7 +434,14 @@ function parseTimedTarget(
   if (v.targetDefense !== undefined) {
     const targetDefense = oneOf(TARGET_DEFENSES, v.targetDefense, `${path}.targetDefense`);
     if (target !== 'allies') fail(`${path}.targetDefense`, `only allowed with target "allies", got "${target}"`);
-    for (const key of ['excludeSelf', 'targetState', 'targetAdjacent', 'targetBurstStep', 'targetSquad'] as const) {
+    for (const key of [
+      'excludeSelf',
+      'targetState',
+      'targetAdjacent',
+      'targetBurstStep',
+      'targetSquad',
+      'targetCharacter',
+    ] as const) {
       if (v[key] !== undefined) fail(`${path}.targetDefense`, `cannot be combined with ${key}`);
     }
     narrowing.targetDefense = targetDefense;
