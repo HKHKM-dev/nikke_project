@@ -125,7 +125,7 @@
 - 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは 3 節
 - 戦闘力による一覧の並び替え（2026-11-07 起票）→ 一部完了: [design-combat-power-sort.md](design-combat-power-sort.md)。残りは 4 節
 - モダン UI の編成の行を作り直さず、同じ要素のまま動かす（行の入れ替えで grid が作り直されるのをやめ、FLIP にする。これで useSlotFit の remountKey・立ち絵の先読み・liftedRects の WeakSet・ghostOf の SQUARE_SOURCES/LIFT_SHADOW_SOURCES の一覧が要らなくなるか見る）。あわせて PartyPreviewRow の memo 化と、ドロップ先・ドラッグ元の購読を減らす（2026-11-22 起票）→ 保留（作り直しはしない。オーナーの判断）: [design-modern-ui.md](design-modern-ui.md)
-- plan/design-modern-ui.md（目安の 50KB の約 2 倍。大半は経過）を分ける。設計書として要らない記述を消して縮めるだけで足りるか（[design-design-doc-trim.md](design-design-doc-trim.md) 3 節）も見る（2026-11-22 起票）→ 保留: [design-modern-ui.md](design-modern-ui.md)
+- plan/design-modern-ui.md（目安の 50KB の約 2 倍。大半は経過）を分ける。設計書として要らない記述を消して縮めるだけで足りるか（[design-design-doc-trim.md](design-design-doc-trim.md) 3 節）も見る（2026-11-22 起票）→ 完了（2026-11-23。消して縮めた。振る舞いは 2.6 節）: [design-modern-ui.md](design-modern-ui.md)
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
