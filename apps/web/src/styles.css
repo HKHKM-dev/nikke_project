@@ -893,6 +893,10 @@ svg.roster-revert-icon {
 .modern-party-row-label.party-label-dragging .party-tab {
   visibility: hidden;
 }
+/* どこにも落とさずに元へ戻る間も、元の番号は隠したままにする（オーナーのコメント。drag-source-returning は dropAnimation.ts が付ける） */
+.modern-party-row-label.drag-source-returning .party-tab {
+  visibility: hidden;
+}
 .modern-party-row-label.party-label-over .party-tab {
   outline: 3px solid Highlight;
   outline-offset: -1px;

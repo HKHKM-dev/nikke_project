@@ -218,13 +218,13 @@ export function flyToTray(content: Element, to: DOMRect | null): void {
 
 /**
  * 持ち上げた絵（content）を、その位置から to の位置・大きさへ動かし、着く前の終わりの 2 割で消す（編成の番号を別の番号に落とした。
- * 番号は動かないので、持ち上げた番号は落とした先の番号の上で消える）
+ * 番号は動かないので、持ち上げた番号は落とした先の番号の上で消える）。動き終えたら（取り消されても）返す Promise が済む
  */
-export function flyOnto(content: Element, to: DOMRect): void {
+export function flyOnto(content: Element, to: DOMRect): Promise<void> {
   const base = content.getBoundingClientRect();
   const ghost = ghostOf(content, base);
   const remove = () => ghost.remove();
-  ghost
+  return ghost
     .animate(
       [
         { ...frameAt(base, base), opacity: 1 },

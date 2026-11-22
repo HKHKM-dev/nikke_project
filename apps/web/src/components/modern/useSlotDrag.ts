@@ -99,6 +99,10 @@ type Params = {
 const slotsGridOf = (party: number) =>
   document.querySelectorAll('.modern-party-row')[party]?.querySelector<HTMLElement>('.modern-slots-grid') ?? null;
 
+/** 編成 party の行の、左の番号の枠（持ち上げた番号の DragOverlay は含まない） */
+const partyLabelOf = (party: number) =>
+  document.querySelectorAll('.modern-party-row')[party]?.querySelector<HTMLElement>('.modern-party-row-label') ?? null;
+
 function suppressNextClick(): void {
   const stop = (event: MouseEvent) => {
     event.stopPropagation();
@@ -290,14 +294,28 @@ export function useSlotDrag({
         break;
       }
       case 'swap-parties': {
-        // 番号は動かず、中身（スロットの並び）が入れ替わる。持ち上げた番号は、離した位置から落とした先の番号の場所へ動かして消す
+        // 番号は動かず、中身（スロットの並び）が入れ替わる。持ち上げた番号は、離した位置から落とした先の番号の場所へ、落とした先の番号は、
+        // 持ち上げた番号の元の場所へ動かして消す（オーナーのコメント）。動いている間は、2 つの元の番号を隠し、動き終えたら出す。
+        // 隠すのは番号のボタンの style（React は番号の枠の class を描き直すが、ボタンの style は触らない）
         const rectOf = (party: number) => slotsGridOf(party)?.getBoundingClientRect();
         const fromA = rectOf(intent.a);
         const fromB = rectOf(intent.b);
         const dragged = document.querySelector('.party-label-drag-overlay');
-        const target = document.querySelectorAll('.modern-party-row-label')[intent.b]?.getBoundingClientRect();
+        const labelA = partyLabelOf(intent.a);
+        const labelB = partyLabelOf(intent.b);
         setDropPlaced(true);
-        if (dragged && target) flyOnto(dragged, target);
+        if (dragged && labelA && labelB) {
+          const tabs = [labelA, labelB].map((label) => label.querySelector<HTMLElement>('.party-tab'));
+          const targetRect = labelB.getBoundingClientRect();
+          const originRect = labelA.getBoundingClientRect();
+          // 落とした先の番号の写しは、落とす先の印（枠の線）を付けずに動かす
+          labelB.classList.remove('party-label-over');
+          const flights = [flyOnto(dragged, targetRect), flyOnto(labelB, originRect)];
+          for (const tab of tabs) if (tab) tab.style.visibility = 'hidden';
+          void Promise.all(flights).then(() => {
+            for (const tab of tabs) if (tab) tab.style.visibility = '';
+          });
+        }
         if (fromA && fromB) {
           rowFlipRef.current = {
             before: parties,
