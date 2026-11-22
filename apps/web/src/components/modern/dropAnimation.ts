@@ -1,6 +1,6 @@
 // モダン UI のスロットと一覧の間のドラッグで、離したときのアニメーション（DragOverlay の dropAnimation）と、その材料
 import { defaultDropAnimationSideEffects, type DropAnimation } from '@dnd-kit/core';
-import { FLIGHT, LIFT_SHADOW_SOURCES, fadeArrivalFace } from './flight.ts';
+import { FLIGHT, LIFT_SHADOW_SOURCES, fadeArrivalFace, snapPx } from './flight.ts';
 
 /**
  * 離したときのアニメーション。dnd-kit の既定は、戻る間ドラッグ元（スロットのカード・一覧の項目）を透明にして消すので、
@@ -37,11 +37,20 @@ export const DROP_ANIMATION: DropAnimation = {
   // 長さは flight.ts の動きと同じ（空のスロットの枠を透明にする fadeArrivalFace も、この長さで動く）
   duration: FLIGHT.duration,
   // 行き先が決まったとき（dropPlaced）は動かさない（始めと終わりが同じなら、dnd-kit はアニメーションをしない）
-  keyframes: ({ transform: { initial, final } }) => {
+  keyframes: ({ dragOverlay, transform: { initial, final } }) => {
     const at = (t: typeof initial) => ({
       transform: `translate3d(${t.x}px, ${t.y}px, 0) scaleX(${t.scaleX}) scaleY(${t.scaleY})`,
     });
-    return [at(initial), at(dropPlaced ? initial : final)];
+    if (dropPlaced) return [at(initial), at(initial)];
+    // 戻り着く位置は、持ち上げた絵（影を付けている要素）の左上が画素の格子に乗るよう丸める。端数のまま着くと、持ち上げた絵が消えて
+    // ドラッグ元が見えた瞬間に、絵の枠が 1px 足らずずれて見える（flight.ts の snapPx）
+    const picture = (dragOverlay.node.querySelector(LIFT_SHADOW_SOURCES) ?? dragOverlay.node).getBoundingClientRect();
+    const endLeft = picture.left - initial.x + final.x;
+    const endTop = picture.top - initial.y + final.y;
+    return [
+      at(initial),
+      at({ ...final, x: final.x + snapPx(endLeft) - endLeft, y: final.y + snapPx(endTop) - endTop }),
+    ];
   },
   // 元のスロットへ戻るときは、着くときと同じく、元の場所に出している空のスロットの枠を動きの後半で少しずつ透明にする。
   // 持ち上げた影は、戻るにつれて少しずつ薄くする。影を薄くしたアニメーションは終わりに取り消さない（取り消すと、持ち上げた絵が
