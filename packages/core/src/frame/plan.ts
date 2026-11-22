@@ -129,6 +129,7 @@ import {
   slotDistanceRatesOf,
   slotFlightsOf,
   slotWeaponChangeFirstHitsOf,
+  weaponChangeHitRateWith,
   weaponChangeParts,
   type FlightFrameSpan,
   type LandingHitRateSpan,
@@ -304,6 +305,13 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
       : {
           hitRateWith: (slotIndex: number, span: LandingHitRateSpan, timed: HitRateN) =>
             hitRateSpanWith(landing, slots[slotIndex]!, slotIndex, span, timed),
+        }),
+    // plan/design-k.md 2.5 節: 使用武器の変更の発の命中・コアの命中の期待値も、2 パス目と同じ的の表の変更後の武器の行から引く
+    ...(landing === null
+      ? {}
+      : {
+          weaponChangeHitRateWith: (slotIndex: number, span: LandingHitRateSpan, rowKey: string, timed: HitRateN) =>
+            weaponChangeHitRateWith(landing, enemy, slots[slotIndex]!, slotIndex, span, rowKey, timed),
         }),
     // 条件「適正射程距離内なら」（着地点の計画が無ければ手入力の距離ボーナス。plan/design-agent-bunny.md 2.2 節）
     effectiveRangeAt: (slotIndex: number, frame: number, range: RangeUp) =>

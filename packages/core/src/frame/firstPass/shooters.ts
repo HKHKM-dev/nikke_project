@@ -289,7 +289,7 @@ export function createShooters({
       }
       const isPartial = partial !== null && partial < 1;
       if (isPartial) (log.partialShots ??= []).push({ frame: f, progress: partial });
-      const { hits, coreHits } = hitsAt(i, f);
+      const { hits, coreHits } = hitsAt(i, f, params.weapon?.targetRowKey);
       const pelletCount = pelletsAt(i, f, shotCounts[i]!, hits);
       log.hits!.push(hits);
       log.coreHits!.push(coreHits);

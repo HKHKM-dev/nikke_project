@@ -4,10 +4,10 @@
   "state": "仮説",
   "topic": "スキル・キャラ固有",
   "grade": "単独実測",
-  "basis": "`1350-02`・`1350-03`・`1350-04`・`1350-05`。V-0848",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "basis": "`1350-12`・`1350-15`・`1350-18`・`1350-21`。V-0848・V-0854",
+  "model": "`data/skills/41.json` の skill1 の effects[2]（回数の種類 `critPelletHit`。1 パス目の `frame/firstPass/shooters.ts` が、発ごとに当たったペレットの数 × 会心率を数える。変更後の武器の発の弾丸命中率は的の表の `41:burst` の行。C-1510）",
   "replaces": [],
-  "updated": "2026-11-21",
+  "updated": "2026-11-22",
   "subject": {
     "places": ["data/skills/41.json の skill1 の effects[2]"]
   },

@@ -180,31 +180,6 @@ function hasSelfStackingGrant(
 }
 
 /**
- * 即着弾に替える使用武器の変更（instantFire）と、コアの命中の回数のきっかけ（coreHit）は同じ定義に持てない。変更後の武器の発のコア命中率は、
- * 2 パス目が的の表の変更後の武器の行（frame/landing.ts の weaponChangeParts）に替えるが、きっかけを数える 1 パス目（frame/firstPass.ts の
- * hitsAt）は基礎の武器の値のままなので、数がずれる。使うキャラが無いので拒否する
- */
-function validateInstantFireCoreHits(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
-  const effects = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []);
-  if (!effects.some((e) => e.kind === 'weaponChange' && e.instantFire === true)) return;
-  for (const slot of SKILL_SLOTS) {
-    entries[slot]?.effects.forEach((e, i) => {
-      if (
-        'trigger' in e &&
-        !isEndedTrigger(e.trigger) &&
-        isShotCountTrigger(e.trigger) &&
-        (e.trigger.count === 'coreHit' || e.trigger.count === 'nonCoreHit')
-      ) {
-        fail(
-          `${root}.${slot}.effects[${i}].trigger`,
-          'a coreHit or nonCoreHit count trigger cannot be combined with an instantFire weapon change',
-        );
-      }
-    });
-  }
-}
-
-/**
  * 同じきっかけの使用武器の変更が 2 つ以上なら（「段階別の効果」「各段階の効果のみ適用」。plan/design-maxwell-om.md 2.2 節）、
  * どの 2 つも、同じフレームに付かないことが条件から分かる（射手は変更の武器を 1 つしか持てない）。スロットをまたいでも見る。
  * 分かるのは、使った段階（burstStep）が両方にあって違うときと、同じ状態のスタック数の条件（stacks の数か stacksBelow。
@@ -792,7 +767,6 @@ export function validateCrossChecks(entries: Partial<Record<SkillSlot, SkillEntr
     validateCycles,
     validateFixedChargeTimeCount,
     validateLockCount,
-    validateInstantFireCoreHits,
     validateWeaponChangeStages,
     validateStateGrants,
     validateStackChanges,

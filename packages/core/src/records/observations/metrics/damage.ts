@@ -76,8 +76,19 @@ export const damageMetrics: Readonly<Record<string, Metric>> = {
       hitDamage(r, { ...c, args: { ...c.args, crit: true } }) /
       hitDamage(r, { ...c, args: { ...c.args, crit: false } }),
   },
-  coreHitRate: { description: 'そのフレームの区間の、通常攻撃のコア命中率', args: ['slot', 'frame'], sim: coreHitRate },
-  bulletHitRate: { description: 'そのフレームの区間の、弾丸命中率', args: ['slot', 'frame'], sim: bulletHitRate },
+  coreHitRate: {
+    description:
+      'そのフレームの区間の、通常攻撃のコア命中率（fullBurst を与えれば、その回のフルバーストの始まりからのフレーム）',
+    optional: ['fullBurst'],
+    args: ['slot', 'frame'],
+    sim: coreHitRate,
+  },
+  bulletHitRate: {
+    description: 'そのフレームの区間の、弾丸命中率（fullBurst を与えれば、その回のフルバーストの始まりからのフレーム）',
+    optional: ['fullBurst'],
+    args: ['slot', 'frame'],
+    sim: bulletHitRate,
+  },
   coreHitRateDiff: {
     description: 'frame と baseFrame の区間のコア命中率の差',
     args: ['slot', 'frame', 'baseFrame'],
@@ -218,7 +229,7 @@ function coreHitRate(result: SimResult, ctx: MetricContext): number {
   if (!ctx.input.enemy.hasCore) return 0;
   const slot = slotOf(result.slots, ctx);
   const input = slotOf(ctx.input.slots, ctx);
-  const frame = Number(ctx.args.frame);
+  const frame = frameArgOf(result, ctx);
   const segment = slot.segments.find((s) => s.start <= frame && frame < s.end);
   if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
   const t = segment.trigger;
@@ -229,7 +240,7 @@ function coreHitRate(result: SimResult, ctx: MetricContext): number {
 /** その時点の区間の弾丸命中率（1 トリガーの命中の期待値。条件が自動なら的の表と着地点の値） */
 function bulletHitRate(result: SimResult, ctx: MetricContext): number {
   const slot = slotOf(result.slots, ctx);
-  const frame = Number(ctx.args.frame);
+  const frame = frameArgOf(result, ctx);
   const segment = slot.segments.find((s) => s.start <= frame && frame < s.end);
   if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
   return segment.trigger.hitRate;
