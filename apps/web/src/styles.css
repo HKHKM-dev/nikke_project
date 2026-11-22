@@ -823,11 +823,11 @@ svg.roster-revert-icon {
 }
 
 /* 5スロットグリッド */
-/* 5 枚を 1 段に並べ、左に寄せる（オーナーのコメント）。幅が足りなければ立ち絵を縮めて収める（useSlotFit.ts が --slot-portrait-h を置く） */
+/* 5 枚を 1 段に並べ、中央に寄せる（オーナーの指示）。幅が足りなければ立ち絵を縮めて収める（useSlotFit.ts が --slot-portrait-h を置く） */
 .modern-slots-grid {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: center;
   /* 立ち絵どうしの横の間は 4px（カードの左右の余白 2px ×2 だけ）。落とす先の枠（立ち絵の外へ 2px 出る）が、隣どうしでちょうど重ならない */
   gap: 12px 0;
 }
@@ -835,7 +835,7 @@ svg.roster-revert-icon {
    ほかの行（PartyPreviewRow）は押すとその編成を選ぶ。狭い画面では、番号とダメージをスロットの上に置く */
 .modern-party-row {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   gap: 12px;
 }
@@ -883,15 +883,8 @@ svg.roster-revert-icon {
   text-align: inherit;
   cursor: pointer;
 }
-/* 敵情報などの列がスロットの上に回る幅（1079px 以下）では、スロットの行を中央に寄せる（オーナーの指示）。
-   横に並ぶ幅では、敵情報などの列の隣から左に寄せる（オーナーのコメント） */
-@media (max-width: 1079px) {
-  .modern-party-row {
-    justify-content: center;
-  }
-}
 /* 狭い画面では、5 つの編成の番号を上に横に並べ、その下にスロットの行を並べる（オーナーの指示）。行の箱はほどき（display: contents）、
-   番号を 1 段目の真ん中の 5 列に、スロットの並びを 2 段目から 1 段ずつ横いっぱいに置く。広い画面と違い、番号もスロットも中央に寄せる（オーナーのコメント）。
+   番号を 1 段目の真ん中の 5 列に、スロットの並びを 2 段目から 1 段ずつ横いっぱいに置く。番号もスロットも中央に寄せる（オーナーの指示）。
    番号は 4em の正方形で、幅が足りなければ縮める */
 @media (max-width: 699px) {
   .modern-slots-area {
@@ -924,7 +917,6 @@ svg.roster-revert-icon {
   }
   .modern-party-row > .modern-slots-grid {
     grid-column: 1 / -1;
-    justify-content: center;
   }
   /* 持ち上げた番号は、持ち上げた番号の大きさ（DragOverlay の箱）に合わせる */
   .party-label-drag-overlay {
