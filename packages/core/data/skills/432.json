@@ -53,7 +53,8 @@
             "trigger": "burstUse"
           },
           "claims": [
-            "C-1454"
+            "C-1454",
+            "C-1554"
           ]
         },
         {
