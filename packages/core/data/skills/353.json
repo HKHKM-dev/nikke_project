@@ -74,8 +74,8 @@
           "damageType": "skill",
           "delayFrames": 13,
           "assumes": {
-            "ja": "戦闘開始から 4 秒ごと（ceil の周期 236f。CT 4 秒は外部の資料の値で、録画で確かめた）。発動からヒットまで 13f。「ランダムに敵 1 機」は、敵 1 体の前提ではその敵",
-            "en": "Every 4 s from the start of combat (ceil period of 236 f; the 4 s cooldown is from external sources and confirmed by recordings). 13 f from activation to hit. \"1 random enemy\" is that enemy under the single-enemy premise"
+            "ja": "戦闘開始から 4 秒ごと（ceil の周期 236f。CT 4 秒は外部の資料の値で、録画で確かめた）。発動からヒットまで 13f。「ランダムに敵 1 機」は、敵 1 体の前提ではその敵。値（撃つ側のバフ・フルバースト補正）を発動の時とヒットの時のどちらで決めるかは確かめていない（モデルはヒットの時。周期の倍率ダメージのラピ・イサベル・スノーホワイトは発動の時。C-1509・C-0864・C-1417）",
+            "en": "Every 4 s from the start of combat (ceil period of 236 f; the 4 s cooldown is from external sources and confirmed by recordings). 13 f from activation to hit. \"1 random enemy\" is that enemy under the single-enemy premise. Whether the value (shooter buffs and the Full Burst bonus) is fixed at activation or at the hit is not verified (the model uses the hit; the periodic skill damage of Rapi, Isabel and Snow White is fixed at activation: C-1509, C-0864, C-1417)"
           },
           "claims": [
             "C-1058"

@@ -11,6 +11,11 @@
   "subject": {
     "places": ["data/skills/193.json の skill1 の effects[0]"]
   },
-  "decidedOn": [],
+  "decidedOn": [
+    {
+      "recording": "1336",
+      "role": "仮説の出どころ"
+    }
+  ],
   "parameterFree": "値を決めるフレームは S1 の発動の直前（ラピの S2 の C-1509・イサベルの S2 の C-0864 と同じ形）。発動からヒットまでの 15f は C-1492。合わせた定数は無い"
 }

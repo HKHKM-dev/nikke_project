@@ -3,7 +3,7 @@
 - 関連: [design-delayed-skill-hit.md](design-delayed-skill-hit.md)（倍率ダメージの遅れ `delayFrames`）、[design-timer-ceil.md](design-timer-ceil.md) 6 節（周期の倍率ダメージの遅れ）、課題 2-74（ネヴェの S1）・2-70（ブリッドの S2）
 - 検証: V-0853
 - 作成日: 2026-11-22
-- 状態: 起案（論点 1 をオーナーが決める）
+- 状態: 実装（論点 1 は案 A）
 
 ## 1. 何が困っているか
 
@@ -67,7 +67,7 @@
 ## 4. 実装の順（論点 1 が決まったら。案 A の場合）
 
 1. `data/skills/10.json` の skill2 の effects[0] に `valueBeforeFire` を付け、`assumes` に値の時点（C-1509）を足す。C-1509 の model を「反映」にし、確定にできる条件を見直す（`parameterFree`。0221 の出どころも再現に数える）。
-2. ネヴェ: `1336-12` の 2 回を比べる観測値にし（`skillHitDamage` の 1 回目は会心なし、2 回目は会心）、ネヴェの S1 の値の時点の結論（仮説）を作って、`data/skills/193.json` の skill1 の effects[0] に `valueBeforeFire` と `assumes` を足す。
+2. ネヴェ: `1336-12` の 2 回を比べる観測値にし（`skillHitDamage` の 1 回目は会心なし、2 回目は会心）、ネヴェの S1 の値の時点の結論を作って、`data/skills/193.json` の skill1 の effects[0] に `valueBeforeFire` と `assumes` を足す。
 3. ブリッド: `data/skills/70.json` の skill2 の effects[0] の `assumes` を 3.1 節の文に書き換える。
 4. C-0453 の model の「ヒットはそのフレームのバフで出る」に、発動の時の値で出す効果（C-0864・C-1509）の例外を足す。
 5. `npm test` と `npm run records:residual -- --all --base origin/main`（変わる行が V-0853 とネヴェの観測値だけか）。
@@ -84,6 +84,11 @@
 
 - 論点 1（3.1 節）: 案 A（推奨）・案 B・案 C のどれにするか。
 
+## 7. 決めたこと
+
+- 論点 1: 案 A（2026-11-22 のオーナーの判断。推奨どおり）。値の根拠のあるラピの S2（C-1509）とネヴェの S1（C-1511）にだけ `valueBeforeFire` を付け、ほかの周期の 12 件はヒットの時のまま、`assumes` に確かめていないことを書く。
+
 ## 経過
 
 - 2026-11-22: 起案（V-0853 の読み直しの後）。
+- 2026-11-22: 論点 1 を案 A に決め、4 節の 1〜6 を実装した。
