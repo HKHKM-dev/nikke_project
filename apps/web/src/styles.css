@@ -369,57 +369,15 @@ svg.roster-revert-icon {
   grid-template-columns: max-content auto;
   gap: 6px 10px;
 }
-/* 敵情報の「属性」のプルダウン（ElementSelect）。標準の select と同じ見た目のボタンと、バッジ付きの選択肢の並び */
-.element-select-button {
+/* 敵情報の「属性」の文字の横の属性バッジ（属性なしは空の六角形）。文字の高さに合わせる */
+.settings-element-label {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 6px;
-  font: inherit;
-  font-size: 0.88rem;
-  line-height: 1.35;
-  /* 標準の select と同じく、フォーカスの枠は外へ広げない */
-  outline-offset: 0;
-}
-.element-select-button:focus-visible {
-  outline-offset: 0;
-}
-/* 枠と背景は、モダン UI では全部のボタン・select に共通の規則（丸み・地の色）に任せる。従来の UI では標準の select と同じにする */
-:root:not([data-app-ui='modern']) .element-select-button {
-  border: 1px solid var(--app-border);
-  background-color: light-dark(#f0f0f0, Field);
-}
-.element-select-badge {
-  height: 1.1em;
-  width: auto;
-}
-/* 右端の矢印は、標準の select の矢印と同じ形の下向きの山形（枠線の 2 辺を回して描く） */
-.element-select-caret {
-  width: 0.4em;
-  height: 0.4em;
-  margin: -0.2em 2px 0 4px;
-  border: solid currentColor;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
-}
-.element-select-options {
-  display: flex;
-  flex-direction: column;
   gap: 4px;
 }
-.element-select-option {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 2px 8px;
-  font: inherit;
-  text-align: left;
-}
-/* 選んでいる属性は、枠でなく背景色で示す（並べ替えの選んでいる並べ方と同じ） */
-.element-select-option[aria-pressed='true'] {
-  border-color: Highlight;
-  background: Highlight;
-  color: HighlightText;
+.settings-element-badge {
+  height: 1.4em;
+  width: auto;
 }
 /* 敵・属性のプルダウンは中身の幅にする（オーナーの指示で狭くした） */
 .settings-simple .field select {
