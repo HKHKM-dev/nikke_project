@@ -2160,3 +2160,8 @@ html:has(.modern-view-container) {
 :is(button, summary, select, label[for], a[href], [role='button'], input)[aria-disabled='true'] {
   cursor: default;
 }
+/* ドラッグ中は、どこの上でも、つかんだ元の印と同じ人差し指のままにする（オーナーの指示）。持ち上げた絵（DragOverlay）がある間だけ */
+:root:has(.slot-drag-overlay > *),
+:root:has(.slot-drag-overlay > *) * {
+  cursor: pointer !important;
+}

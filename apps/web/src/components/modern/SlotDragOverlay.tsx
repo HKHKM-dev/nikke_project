@@ -26,7 +26,7 @@ export function SlotDragOverlay({
   trayShape: TrayShape;
 }) {
   return (
-    <DragOverlay dropAnimation={DROP_ANIMATION}>
+    <DragOverlay dropAnimation={DROP_ANIMATION} className="slot-drag-overlay">
       {draggingController ? (
         <span className="controller-drag-overlay">
           <ControllerIcon />
