@@ -1,0 +1,379 @@
+[
+  {
+    "id": "1362-01",
+    "recording": "1362",
+    "kind": "timing",
+    "use": "record",
+    "value": [2039, 3816, 5761, 7743, 9758],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25・24f"
+    },
+    "source": "V-0851",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1362-02",
+    "recording": "1362",
+    "use": "record",
+    "kind": "timing",
+    "value": [886, 1770, 2653, 3537, 4420, 5304, 6187, 7071, 7954, 8837, 9722],
+    "unit": "f",
+    "description": "N102 の単騎（操作）で、左の「スキル2 蘇る記憶」の帯が出たフレーム。戦闘開始（タイマーが出た f768）からの数。11 回",
+    "method": {
+      "tool": "tools/captures/banner.ts",
+      "note": "帯の欄の明るさの立ち上がり − 戦闘開始（timer.ts の最初の大きな変わり目の次の変わり目）。間隔は 884・883・884・883・884・883・884・883・883・885f（ゲーム内の 15 秒は ceil(15 ÷ 0.017) = 883 ティック）。1 回目も戦闘開始から 1 周期後"
+    },
+    "source": "V-0851",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1362-03",
+    "recording": "1362",
+    "use": "compare",
+    "kind": "timing",
+    "value": [911, 1795, 2678, 3562, 4445, 5329, 6212, 7096, 7979, 8862, 9746],
+    "unit": "f",
+    "description": "同じ録画の、S2 のチャージダメージ▲のアイコンが N102 のバフの列に出たフレーム。戦闘開始（f768）からの数。どの回も帯の 24〜25f 後に出て、294f 後に消える",
+    "method": {
+      "tool": "tools/captures/still.ts",
+      "note": "バフの列（1920×1080 で x 900〜1010・y 1035〜1075）の並べ画を目で読んだ。出たフレーム 1679・2563・3446・4330・5213・6097・6980・7864・8747・9630・10514。消えたのは、1 回目と 3 回目で読んで、出たフレームの 294f 後（ゲーム内の 5 秒）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffFireStarts",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "chargeDamage",
+        "video": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0851",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1362-04",
+    "recording": "1362",
+    "use": "compare",
+    "kind": "hit",
+    "value": 373365,
+    "unit": "ダメージ",
+    "description": "同じ録画の、S2・バーストの窓の外のコアの会心しない 1 ヒット",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f883・995・1107・1219 ほか 27 回（31 回）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 437,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0851",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1362-05",
+    "recording": "1362",
+    "use": "compare",
+    "kind": "hit",
+    "value": 486009,
+    "unit": "ダメージ",
+    "description": "同じ録画の、S2・バーストの窓の外のコアの会心の 1 ヒット（S1 のクリティカルダメージ▲の乗った値。▲が無ければ 466,706）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f1674・3787・7714・8388 ほか 3 回（7 回）。戦闘の最初の発（S1 の付く前）は会心しなかった"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 437,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0851",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1362-06",
+    "recording": "1362",
+    "use": "compare",
+    "kind": "hit",
+    "value": 400930,
+    "unit": "ダメージ",
+    "description": "同じ録画の、S2 の窓の中（バーストの窓の外）のコアの会心しない 1 ヒット",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f3563・3675・4578・5508 ほか 5 回（9 回）。胴体の 200,465（S2 の窓の中の胴体）も出る。アイコンの出たフレームの 18f 前〜9f 後のヒット（アイコンより前に撃った発。RL のヒットは撃った 10〜27f 後に出る）には乗らず、24f 後からのヒットには乗る（2 本の 22 回の窓で同じ）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1000,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0851",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1362-07",
+    "recording": "1362",
+    "use": "compare",
+    "kind": "hit",
+    "value": 521890,
+    "unit": "ダメージ",
+    "description": "同じ録画の、S2 の窓の中のコアの会心の 1 ヒット",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f1786・1898・4466（3 回）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1000,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0851",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1362-08",
+    "recording": "1362",
+    "use": "compare",
+    "kind": "hit",
+    "value": 470037,
+    "unit": "ダメージ",
+    "description": "同じ録画の、バーストの窓の中（S2 の窓の外）のコアの会心しない 1 ヒット",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f2124・2348・2572・4130 ほか 8 回（12 回）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1563,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0851",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1362-09",
+    "recording": "1362",
+    "use": "compare",
+    "kind": "hit",
+    "value": 611847,
+    "unit": "ダメージ",
+    "description": "同じ録画の、バーストの窓の中（S2 の窓の外）のコアの会心の 1 ヒット",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f2236・4019・4242・10297（4 回）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1563,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0851",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1362-10",
+    "recording": "1362",
+    "use": "compare",
+    "kind": "hit",
+    "value": 504739,
+    "unit": "ダメージ",
+    "description": "同じ録画の、バーストと S2 の窓の重なりのコアの会心しない 1 ヒット",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f4354・6181・7940・8052 ほか 1 回（5 回）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0851",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1362-11",
+    "recording": "1362",
+    "use": "compare",
+    "kind": "count",
+    "value": [6, 9, 9, 9, 9, 9, 9, 9, 9],
+    "unit": "発",
+    "description": "同じ録画の、N102 のマガジンごとの発の数（戦闘の始めから、リロードで区切った 9 本）。1 本目は 6 発で、S1 の最大装弾数▲（1 発目の後に付く）は残弾を足さない。2 本目から 9 発。的のジャンプで撃たない間を挟むマガジンは、前と後の発の和",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "増分の間が 150f を越えた所をリロードかジャンプの区切りとした: 883〜1444 の 6 発 → リロード → 1674〜2572 の 9 発 → 2891〜3787 → 4019〜4803 の 8 発（的のジャンプで撃たない）と 5054 の 1 発 → 5284〜6181 → 6412〜7175 の 8 発（ジャンプ）と 7372 の 1 発 → 7603〜8500 → 8729〜9289 の 6 発（ジャンプ）と 9504〜9729 の 3 発 → 9960〜10856。最後は 11086 から 3 発で戦闘が終わる。ジャンプの間（撃たない約 2 秒）でリロードしない"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 1,
+        "count": 9
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0851",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1362-12",
+    "recording": "1362",
+    "use": "record",
+    "kind": "timing",
+    "value": "付き始め: 乗らない −57・−54・−38・−35・−21・−20・−2f、乗る +17・+42・+58・+74・+77f。切れ目: 乗る −53・−28・−12・−9f、乗らない +7・+22・+27・+28・+59f",
+    "description": "同じ録画の、S2 の窓の境の発を撃ったフレーム（照準の左の残弾が減ったフレーム）の、アイコンが出たフレーム（付き始め）と、その 294f 後（切れ目）からの差と、その発のヒットに S2 の▲が乗ったか。▲はアイコンが出てから 294f の間に撃った発にだけ乗る",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "11 回の窓の前後 ±60f の発。11 回目の付き始めの 1 発（残弾の読みが 15f 欠け、−3〜+12f のどこか。乗った）と、切れ目の 1 発（読みが 51f 欠けた）は数えない。ヒットは撃った 2〜31f 後に出て、▲の有無は HUD の増分の格子（1362-06 などの値）で決めた"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0851",
+    "readAt": "2026-11-22"
+  }
+]

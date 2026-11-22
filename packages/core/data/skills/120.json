@@ -7,7 +7,9 @@
       "effects": [
         {
           "kind": "timed",
-          "trigger": { "count": "fullChargeShot" },
+          "trigger": {
+            "count": "fullChargeShot"
+          },
           "target": "topAttack",
           "targetCountRef": 1,
           "stat": "maxAmmo",
@@ -15,13 +17,18 @@
           "ref": 2,
           "durationRef": 3,
           "assumes": {
-            "ja": "フルチャージの発ごとに、発のフレームの最終攻撃力が最も高い味方 1 機（自分も候補）に付け直す。最大だけを上げ、残弾は足さない（次のリロードで最大まで込め、切れたら残弾を削る。C-0017 の形）。どちらも N102 では確かめていない",
-            "en": "Reapplied on every Full Charge shot to the 1 ally with the highest final ATK at the shot frame (self included). It raises only the maximum and does not add ammo (the next reload fills to the new maximum, and expiry trims the ammo; the form of C-0017). Neither is checked for N102"
-          }
+            "ja": "フルチャージの発ごとに、発のフレームの最終攻撃力が最も高い味方 1 機（自分も候補）に付け直す。最大だけを上げ、残弾は足さない（次のリロードで最大まで込め、切れたら残弾を削る。C-0017 の形）。単騎では 1 本目のマガジンが 6 発、2 本目から 9 発",
+            "en": "Reapplied on every Full Charge shot to the 1 ally with the highest final ATK at the shot frame (self included). It raises only the maximum and does not add ammo (the next reload fills to the new maximum, and expiry trims the ammo; the form of C-0017). Solo, the first magazine has 6 shots and the later ones 9"
+          },
+          "claims": [
+            "C-1512"
+          ]
         },
         {
           "kind": "timed",
-          "trigger": { "count": "fullChargeShot" },
+          "trigger": {
+            "count": "fullChargeShot"
+          },
           "target": "topAttack",
           "targetCountRef": 1,
           "stat": "critDamage",
@@ -30,7 +37,10 @@
           "assumes": {
             "ja": "effects[0] と同じ発・同じ対象に付け直す",
             "en": "Reapplied on the same shots to the same target as effects[0]"
-          }
+          },
+          "claims": [
+            "C-1513"
+          ]
         }
       ]
     },
@@ -38,16 +48,23 @@
       "effects": [
         {
           "kind": "timed",
-          "trigger": { "everySeconds": 17, "cooldown": true },
+          "trigger": {
+            "everySeconds": 15,
+            "cooldown": true
+          },
           "target": "topAttack",
           "targetCountRef": 1,
           "stat": "chargeDamage",
           "ref": 2,
           "durationRef": 3,
+          "delayFrames": 28,
           "assumes": {
-            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から CT ごとに発動する（撃たない間も。1 回目も 1 周期後）とみる。CT はデータにも外部の資料にも無く、17 秒は同じ形の説明文のプロダクト08 の S2（C-0496）から借りた仮の値（録画で読む。未確定）。チャージダメージ▲はチャージ武器の味方にだけ効く",
-            "en": "The description gives no trigger. Assumed to be an active skill on a cooldown, activating every cooldown from the start of combat (even while not firing; the first after one period). The cooldown is in neither the data nor external references; 17 s is a provisional value borrowed from Product 08's S2 with the same description (C-0496), to be read from recordings (unconfirmed). Charge Damage only affects allies with charge weapons"
-          }
+            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から 15 秒ごとに発動する（1 回目も 15 秒。左の「スキル2」の帯の間隔は 883〜885f）。CT は録画で読んだ値。チャージダメージ▲は帯の 24〜25f 後（モデルでは発動の 28f 後）から 5 秒付き、その間に撃った発のフルチャージ倍率に足す（帯の後、付く前に撃った発には乗らない）。チャージ武器の味方にだけ効く",
+            "en": "The description gives no trigger. An active skill on a cooldown, activating every 15 s from the start of combat (the first also at 15 s; the \"Skill 2\" banners are 883-885 frames apart). The cooldown is read from recordings. Charge Damage is applied from 24-25 frames after the banner (28 frames after activation in the model) for 5 s and adds to the Full Charge multiplier of shots fired in that time (shots fired after the banner but before it is applied get none). It only affects allies with charge weapons"
+          },
+          "claims": [
+            "C-1514"
+          ]
         }
       ]
     },
@@ -61,9 +78,12 @@
           "ref": 1,
           "durationRef": 2,
           "assumes": {
-            "ja": "付き始めと長さは、ほかのバーストの効果と同じとみなす（N102 では確かめていない）",
-            "en": "Assumed to start and last like other Burst effects (not checked for N102)"
-          }
+            "ja": "付き始めと長さは、ほかのバーストの効果と同じとみなす（窓の中の 1 ヒットの値だけを確かめた）",
+            "en": "Assumed to start and last like other Burst effects (only the hit values inside the window are checked)"
+          },
+          "claims": [
+            "C-1515"
+          ]
         }
       ]
     }
