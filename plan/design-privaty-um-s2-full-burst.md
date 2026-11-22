@@ -4,7 +4,7 @@
 - 関連: [design-privaty-um-s2.md](design-privaty-um-s2.md)（S2 の 1 つめ。2.2 節で 2 つめを残した）、[design-pellet-hit.md](design-pellet-hit.md)（当たったペレットの数え方 `pelletHit`）、[design-kurumi-s2.md](design-kurumi-s2.md) 2.1 節（フルバースト中だけ数える `during`・`reset`）、[design-ludmilla-wo.md](design-ludmilla-wo.md) 2.1 節（発数の弾丸チャージ `scaling: "flat"`）、[design-fortune-mate.md](design-fortune-mate.md) 2.2 節（弾丸チャージの数える窓）
 - 検証: V-0875
 - 作成日: 2026-11-22
-- 状態: 起案（論点はオーナーの判断待ち。7 節）
+- 状態: 撮影済み（読み取りと実装。6 節）
 
 ## 0. 範囲
 
@@ -98,6 +98,9 @@
 
 ## 8. 決めたこと
 
+- 論点 1〜3 はどれも推奨どおり（2026-11-22 のオーナーの判断）。数え方は H1・スタックは既定（`'all'`）を予測の主にして録画で見分け、弾丸チャージには案 A でフルバーストの窓を許す。H1 は同じ言い回しの先例（C-0580・C-0751）と同じ形で、案 A は既存の追い手の窓をそのまま使える（2.1〜2.3 節）。
+
 ## 経過
 
 - 2026-11-22: 起案。
+- 2026-11-23: 論点を推奨どおりに決めた。録画 1403 を撮った。
