@@ -142,6 +142,26 @@ describe('TeamSettingsForm の「育成状況の値に戻す」（共通育成�
     expect(screen.queryByRole('button', { name: '育成状況の値に戻す' })).toBeNull();
   });
 
+  it('アイコンのボタン（モダン UI）は、育成状況が無くても押せない状態で出す', () => {
+    const dispatch = vi.fn();
+    render(
+      <TeamSettingsForm
+        element={team.enemy.element}
+        fixedSpec={false}
+        consoleInput={team.console}
+        synchroLevel={200}
+        durationSeconds={team.durationSeconds}
+        rangeJump={team.rangeJump}
+        rosterCommon={null}
+        revertIcon
+        dispatch={dispatch}
+      />,
+    );
+    expect(inert('育成状況の値に戻す')).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: '育成状況の値に戻す' }));
+    expect(dispatch).not.toHaveBeenCalled();
+  });
+
   it('共通育成が育成状況と違うときに押せ、シンクロ LV とリサイクルルームを育成状況の値にする', () => {
     const dispatch = form(200);
     fireEvent.click(screen.getByRole('button', { name: '育成状況の値に戻す' }));

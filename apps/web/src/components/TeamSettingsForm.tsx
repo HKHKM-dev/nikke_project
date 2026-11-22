@@ -142,12 +142,14 @@ export function TeamSettingsForm({
               />
             </fieldset>
           </Popover>
-          {rosterCommon !== null && (
+          {/* アイコンのボタン（モダン UI）は、育成状況が無くても薄く（押せない状態で）出しておく（オーナーのコメント） */}
+          {(rosterCommon !== null || revertIcon) && (
             <InertButton
               className={revertIcon ? 'roster-revert-icon-button' : undefined}
               label={revertIcon ? ROSTER_REVERT_LABEL : undefined}
               enabled={canRevert}
               onPress={() => {
+                if (rosterCommon === null) return;
                 dispatch({ type: 'setSynchroLevel', synchroLevel: rosterCommon.synchroLevel });
                 dispatch({ type: 'setConsole', console: rosterCommon.console });
               }}
