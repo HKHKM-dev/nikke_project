@@ -55,7 +55,8 @@ export type ChangedWeapon = {
  * - 'effect': ▲を効果ごとに四捨五入してから足す（同じスキルの同じ値の効果＝スタックは 1 つにまとめる）
  * - 'skill': ▲を出どころのスキル（キャラ × スロット）ごとに足して四捨五入してから足す
  * - 'self': 対象が自分（target self）の▲だけ効果ごとに四捨五入し、ほかの▲と合わせた最終攻撃力を四捨五入する（V-0266）
- * - 'selfCaster': 'self' に加えて、発動者基準の▲（scaling casterAttack）も効果ごとに四捨五入する（C-1538）
+ * - 'selfCaster': 'self' に加えて、発動者基準の▲（scaling casterAttack）も効果ごとに四捨五入する（C-1538）。実数で足すほかの▲
+ *   （copyTopAttack・casterFinalMaxHp）は、確かめた録画が無いので合算に入れる
  * 'effect'・'skill'・'self' は検証の予測の仮説（records/predictions の setup）だけが使う。利用者の計算には出さない
  */
 export type AttackRounding = 'total' | 'effect' | 'skill' | 'self' | 'selfCaster';

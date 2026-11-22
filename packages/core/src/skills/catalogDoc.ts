@@ -468,6 +468,7 @@ const TGT_INFO: Record<string, Info> = {
   'ally:lowestHpValue': ['残りの HP の値が最も低い味方 N 機', 'gap'],
   'ally:topOther': ['最大HP・防御力が最も高い味方', 'gap'],
   'ally:neighbors': ['両隣の味方', 'ok'],
+  'ally:rightNeighbor': ['右隣の味方 1 機', 'ok'],
   'ally:random': ['ランダムな味方', 'check'],
   'ally:debuffed': [
     'デバフのかかった味方のうちランダムな N 機（デバフの印の付いた状態か timed の▼のある味方から選ぶ。removeDebuff の target debuffedRandom。N 機より多いときの選び方は未確認）',
