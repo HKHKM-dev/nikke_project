@@ -1,0 +1,83 @@
+{
+  "verification": "V-0861",
+  "note": "ハラン単騎・AUTO（オートバースト OFF）。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。S1 の tick の 1 回の値と、tick の数の期待値（確率 25% の起点ごとの tick の重みの和）。tick の時刻の形（付いた瞬間か 1 秒後か）は、この指標では見分けられないので、検証記録の「予測」に書いた読み方で見る",
+  "team": [
+    {
+      "rid": 230,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（firstTick atApplication）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "tick",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "S1 の tick の 1 回の値（会心なし）"
+    },
+    {
+      "id": "tick-crit",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "S1 の tick の 1 回の値（会心）"
+    },
+    {
+      "id": "tick-count",
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 1,
+        "skill": "skill1"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.25
+      },
+      "note": "S1 の tick の数の期待値。録画ごとの揺れは大きい（付く回の数が 1 本で約 25 回）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-22",
+    "commit": "5520a72468c13d4cfdba64bddc796b370d399e8d",
+    "values": {
+      "H1": {
+        "tick": 20838.643200000002,
+        "tick-crit": 31257.9648,
+        "tick-count": 91.52593434625153
+      }
+    }
+  }
+}
