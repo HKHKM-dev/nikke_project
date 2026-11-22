@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 174・効果 1221（根拠あり 1199）・notes 378（根拠あり 160）
+件数: キャラ 175・効果 1229（根拠あり 1207）・notes 378（根拠あり 160）
 
 notes の種類: 未対応 32・前提の外 129・計算に無関係 78・補足 43・間接 96
 
-スロット: supported 483・partial 24・unsupported 6・noEffect 66
+スロット: supported 486・partial 24・unsupported 6・noEffect 66
 
 ## 10 ラピ
 
@@ -685,6 +685,20 @@ notes の種類: 未対応 32・前提の外 129・計算に無関係 78・補�
   - effects[0] burstDamage・skill: C-1463（確定）
   - effects[1] stackChange・burstUse・スタック可能バフの全部: C-1464（確定）
   - effects[2] heal・burstUse: C-1465（仮説）
+
+## 132 メアリー：ベイゴッデス
+
+- **skill1**: supported
+  - effects[0] heal・fullBurstStart: C-1534（仮説）
+  - effects[1] heal・fullBurstStart: C-1534（仮説）
+  - effects[2] heal・fullBurstStart: C-1534（仮説）
+- **skill2**: supported
+  - effects[0] timed・burstUse・elementDamage: C-1532（確定）
+  - effects[1] timed・burstUse・elementDamage: C-1532（確定）
+  - effects[2] timed・burstUse・elementDamage: C-1532（確定）
+- **burst**: supported
+  - effects[0] timed・burstUse・attack: C-1533（確定）
+  - effects[1] timed・burstUse・maxHp: C-1534（仮説）
 
 ## 140 シュガー
 
