@@ -61,13 +61,12 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, neve }) => {
   const s1Hits = plan.skillHits.filter((h) => h.slotIndex === neve && h.effect.source.skill === 'skill1');
 
   it('hits the target with S1 every 10 s from the start of battle, the defined delay after each activation', () => {
-    const hits = s1Hits;
     const period = gameSecondsToFirstFrame(10);
     const delay = (parseSkillDefinition(rawDefinition(NEVE)).skills.skill1.effects[0] as { delayFrames?: number })
       .delayFrames!;
     expect(delay).toBeGreaterThan(0);
-    expect(hits.length).toBeGreaterThan(10);
-    hits.forEach((h, k) => expect(h.frame).toBe((k + 1) * period + delay));
+    expect(s1Hits.length).toBeGreaterThan(10);
+    s1Hits.forEach((h, k) => expect(h.frame).toBe((k + 1) * period + delay));
   });
 
   it('charges one shooter hit of gauge (4,000) on the frame of every S1 hit (C-1547・C-1548)', () => {

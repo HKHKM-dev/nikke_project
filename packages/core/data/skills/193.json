@@ -30,8 +30,8 @@
           },
           "delayFrames": 15,
           "assumes": {
-            "ja": "S1 のヒットは、ダメージと同じく発動の 15f 後のヒットのフレームにバーストゲージを溜める（C-1547）。量は射手の 1 ヒットぶん（target_burst_energy_pershot。4,000）で回す（ほかの周期のスキルのヒットと同じ形。録画で決まるのは 1 回 0.05〜1.45% まで。C-1548）",
-            "en": "The S1 hit builds Burst gauge on the hit frame, 15 f after activation like the damage (C-1547). The amount is run as one shooter hit (target_burst_energy_pershot, 4,000), the same form as other periodic skill hits (recordings only bound it to 0.05–1.45% per hit; C-1548)"
+            "ja": "S1 のヒットは、ダメージと同じく発動の 15f 後のヒットのフレームにバーストゲージを溜める（C-1547）。量は射手の 1 ヒットぶん（target_burst_energy_pershot）で回す（ほかの周期のスキルのヒットと同じ形。録画では量を絞れていない。C-1548）",
+            "en": "The S1 hit builds Burst gauge on the hit frame, 15 f after activation like the damage (C-1547). The amount is run as one shooter hit (target_burst_energy_pershot), the same form as other periodic skill hits (the recordings do not pin the amount down; C-1548)"
           },
           "claims": [
             "C-1547",
