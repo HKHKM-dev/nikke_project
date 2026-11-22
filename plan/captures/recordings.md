@@ -1343,6 +1343,7 @@
 | 1374 | `20261122-1374_chime-team.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ◎チャイム（331、SMG・鉄甲・SSR） + クラウン（330、MG・鉄甲・SSR） + クロウ（110、SMG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0857。I-DOLL・フラワー（I）+ チャイム（II・操作）+ クラウン（II）+ クロウ（III）。スペック固定 ON・オート射撃 ON・オートバースト ON |
 | 1375 | `20261122-1375_mary-bay-goddess.mp4` | ◎メアリー：ベイゴッデス（132、SR・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1376 | `20261122-1376_mary-bay-goddess.mp4` | ◎メアリー：ベイゴッデス（132、SR・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1377 | `20261122-1377_brid-s2-timing.mp4` | ◎ブリッド（70、AR・水冷・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | OFF / ON | V-0860 の撮影: ブリッド単騎・操作。オート射撃 OFF で始め、残り時間の 1 の位が 1 に変わる瞬間に ON、RELOADING で OFF（台帳の autoFire は始めの値） |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 

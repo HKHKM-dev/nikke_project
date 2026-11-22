@@ -288,7 +288,7 @@ notes の種類: 未対応 32・前提の外 129・計算に無関係 78・補�
 - **skill1**: supported
   - effects[0] timed・normalShot・attack: C-1406（確定）
 - **skill2**: supported
-  - effects[0] damage・10 秒ごと・skill: C-1407（確定）
+  - effects[0] damage・10 秒ごと・skill: C-1407（確定）、C-1535（確定）
   - effects[1] burstGaugeHit・10 秒ごと: C-1431（確定）、C-1407（確定）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-1408（確定）
