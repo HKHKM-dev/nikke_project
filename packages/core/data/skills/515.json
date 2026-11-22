@@ -26,8 +26,8 @@
           "damageType": "skill",
           "delayFrames": 6,
           "assumes": {
-            "ja": "戦闘開始から 5 秒ごと（5 秒・10 秒…）に、照準線に最も近い敵 1 機（敵 1 体の前提ではその敵）に 1 ヒット。ヒットは発動のフレームで、バーストゲージは溜めない",
-            "en": "Every 5 s from the start of battle (5 s, 10 s, ...), one hit on the enemy nearest to the crosshair (that enemy under the single-enemy premise). The hit lands on the activation frame and does not charge the Burst Gauge"
+            "ja": "戦闘開始から 5 秒ごと（5 秒・10 秒…）に、照準線に最も近い敵 1 機（敵 1 体の前提ではその敵）に 1 ヒット。ヒットは発動のフレームで、バーストゲージは溜めない。値（撃つ側のバフ・フルバースト補正）を発動の時とヒットの時のどちらで決めるかは確かめていない（モデルはヒットの時。周期の倍率ダメージのラピ・イサベル・スノーホワイトは発動の時。C-1509・C-0864・C-1417）",
+            "en": "Every 5 s from the start of battle (5 s, 10 s, ...), one hit on the enemy nearest to the crosshair (that enemy under the single-enemy premise). The hit lands on the activation frame and does not charge the Burst Gauge. Whether the value (shooter buffs and the Full Burst bonus) is fixed at activation or at the hit is not verified (the model uses the hit; the periodic skill damage of Rapi, Isabel and Snow White is fixed at activation: C-1509, C-0864, C-1417)"
           },
           "claims": [
             "C-1249"

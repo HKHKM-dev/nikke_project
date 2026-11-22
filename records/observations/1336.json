@@ -244,5 +244,77 @@
     },
     "source": "V-0843",
     "readAt": "2026-11-21"
+  },
+  {
+    "id": "1336-13",
+    "recording": "1336",
+    "use": "compare",
+    "kind": "hit",
+    "value": 151888,
+    "unit": "ダメージ",
+    "description": "ネヴェの S1 の 1 回目のヒット（f1516。1 回目のフルバーストの 00.00 f1490 の 26f 後で、発動（ヒットの 15f 前）は入りの止まりの前）の値。フルバースト補正も S2 の攻撃力▲も乗らない、会心なしの値",
+    "method": {
+      "tool": "recipe:hud-jumps@3・tools/captures/timer.ts --mode ticks",
+      "note": "`1336-12` の 1 つ目を比べる指定つきで書き直した（読みは V-0843）。ヒットの時の値なら、フルバースト補正と S2 の攻撃力▲の乗った 512,466 になる"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill1"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0853",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1336-14",
+    "recording": "1336",
+    "use": "compare",
+    "kind": "hit",
+    "value": 303776,
+    "unit": "ダメージ",
+    "description": "ネヴェの S1 の 2 回目のヒット（f2102。1 回目のフルバーストの終わり f2098 の 4f 後で、発動（ヒットの 15f 前）は終わりの前）の値。フルバースト補正の乗った会心の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3・tools/captures/timer.ts --mode ticks",
+      "note": "`1336-12` の 2 つ目を比べる指定つきで書き直した（読みは V-0843）。ヒットの時の値なら、補正の無い会心の 227,832 になる"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": true,
+        "skill": "skill1"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0853",
+    "readAt": "2026-11-22"
   }
 ]

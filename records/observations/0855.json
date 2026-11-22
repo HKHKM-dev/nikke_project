@@ -317,5 +317,132 @@
       "slot": 2,
       "source": "normal"
     }
+  },
+  {
+    "id": "0855-15",
+    "recording": "0855",
+    "use": "compare",
+    "kind": "hit",
+    "value": 1211336,
+    "unit": "ダメージ",
+    "description": "ラピの S2 の 1 回目のヒット（f2168。フルバーストの終わり f2104 の 64f 後で、発動（ヒットの 101f 前）は終わりの 37f 前）の値。ラピのバーストの攻撃力▲とフルバースト補正の乗った、会心なしの値",
+    "method": {
+      "tool": "recipe:buff-edge@9（grid B=3@skill@1278:skill2;B2=3@skill@2455:skill2;A=3@skill@1278:skill2/*2.4122170373）",
+      "note": "増分を、モデルのラピの S2 の 1 ヒットの格子（ヒットの時の値 502,167・会心 753,251 と、攻撃力▲とフルバースト補正の乗った 1,211,336・会心 1,615,115）に ±1 で当てた。フルバーストの終わりは、III のタイマーの 00.00（0855-05）の 610f 後（f2104・f4482・f6859・f9237）。"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0853",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "0855-16",
+    "recording": "0855",
+    "use": "compare",
+    "kind": "hit",
+    "value": 1211336,
+    "unit": "ダメージ",
+    "description": "ラピの S2 の 3 回目のヒット（f4547。フルバーストの終わり f4482 の 65f 後で、発動（ヒットの 101f 前）は終わりの 36f 前）の値（同じフレームのラピの通常攻撃との和から読んだ）。ラピのバーストの攻撃力▲とフルバースト補正の乗った、会心なしの値",
+    "method": {
+      "tool": "recipe:buff-edge@9（grid A=3@skill@1278:skill2/*2.4122170373;R=3@3700;AR=A+R）",
+      "note": "増分を、モデルのラピの S2 の 1 ヒットの格子（ヒットの時の値 502,167・会心 753,251 と、攻撃力▲とフルバースト補正の乗った 1,211,336・会心 1,615,115）に ±1 で当てた。増分は 1,243,732 で、S2 の 1,211,336 と、同じフレームのラピの通常攻撃（遠・コア・会心 32,396）の和の格子（AR）だけに合う。値は S2 の分。フルバーストの終わりは、III のタイマーの 00.00（0855-05）の 610f 後（f4482）。"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0853",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "0855-17",
+    "recording": "0855",
+    "use": "compare",
+    "kind": "hit",
+    "value": 1211336,
+    "unit": "ダメージ",
+    "description": "ラピの S2 の 7 回目のヒット（f9303。フルバーストの終わり f9237 の 66f 後で、発動（ヒットの 101f 前）は終わりの 35f 前）の値。ラピのバーストの攻撃力▲とフルバースト補正の乗った、会心なしの値",
+    "method": {
+      "tool": "recipe:buff-edge@9（grid B=3@skill@1278:skill2;B2=3@skill@2455:skill2;A=3@skill@1278:skill2/*2.4122170373）",
+      "note": "増分を、モデルのラピの S2 の 1 ヒットの格子（ヒットの時の値 502,167・会心 753,251 と、攻撃力▲とフルバースト補正の乗った 1,211,336・会心 1,615,115）に ±1 で当てた。フルバーストの終わりは、III のタイマーの 00.00（0855-05）の 610f 後（f2104・f4482・f6859・f9237）。"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 6,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0853",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "0855-18",
+    "recording": "0855",
+    "use": "record",
+    "kind": "hit",
+    "value": 1375795,
+    "unit": "ダメージ",
+    "description": "ラピの S2 の 5 回目のヒット（f6925。フルバーストの終わり f6859 の 66f 後で、発動は終わりの 35f 前）の値。攻撃力▲・フルバースト補正と、S1（被弾の攻撃力▲。モデルに無い）の乗った会心なしの値",
+    "method": {
+      "tool": "recipe:buff-edge@9（grid B=3@skill@1278:skill2;B2=3@skill@2455:skill2;A=3@skill@1278:skill2/*2.4122170373）",
+      "note": "格子のどれにも合わない。S1 の乗った S2 の値 611,807（`0073-19`。▲の無い値 502,167 との差は攻撃力の項で 20,727）を、攻撃力▲とフルバースト補正の乗った値に足すと 1,375,796 で、±1 で合う。ヒットの時の値なら、S1 の乗った 611,807・会心 917,711 か、乗らない 502,167・753,251 になる"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0853",
+    "readAt": "2026-11-22"
   }
 ]

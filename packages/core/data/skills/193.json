@@ -14,12 +14,14 @@
           "damageType": "skill",
           "delayFrames": 15,
           "assumes": {
-            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から 10 秒ごとに発動する（1 回目も 10 秒。戦闘開始時には発動しない）。「残りの HP の割合が最も低い敵 1 機」は、射撃場の的 1 体に 1 ヒット。発動からヒットまで 15f。ヒットは会心しうる",
-            "en": "The description gives no trigger. It is an active skill on a cooldown, activating every 10 s from the start of combat (the first also at 10 s; not at the start of combat). \"1 enemy with the lowest remaining HP ratio\" is one hit on the single range target. 15 f from activation to hit. The hit can be critical"
+            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から 10 秒ごとに発動する（1 回目も 10 秒。戦闘開始時には発動しない）。「残りの HP の割合が最も低い敵 1 機」は、射撃場の的 1 体に 1 ヒット。発動からヒットまで 15f。値（撃つ側のバフ・フルバースト補正）は発動の直前で決める（録画 1336 の 2 回。ラピの S2 の C-1509 と同じ形）。ヒットは会心しうる",
+            "en": "The description gives no trigger. It is an active skill on a cooldown, activating every 10 s from the start of combat (the first also at 10 s; not at the start of combat). \"1 enemy with the lowest remaining HP ratio\" is one hit on the single range target. 15 f from activation to hit. The value (shooter buffs and the Full Burst bonus) is fixed just before activation (two hits in recording 1336; the same form as Rapi S2, C-1509). The hit can be critical"
           },
           "claims": [
-            "C-1492"
-          ]
+            "C-1492",
+            "C-1511"
+          ],
+          "valueBeforeFire": true
         }
       ],
       "notes": [
