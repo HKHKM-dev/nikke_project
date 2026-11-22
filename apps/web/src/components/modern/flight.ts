@@ -279,3 +279,50 @@ export function flyControllerInto(
     );
   });
 }
+
+/** 編成を切り替える前の、立ち絵の枠の写し（元と同じ位置・見た目で重ねてある）と、その位置 */
+export type ContentSnapshot = { ghost: HTMLElement; rect: DOMRect };
+
+/**
+ * 立ち絵の枠（content）の写しを、いまの位置にそのまま重ねて取る。編成を切り替える前に取っておくと、切り替えた後の描き直しで
+ * 元の枠が消えても、写しが残って動きの始まりになる（dissolveSnapshot）
+ */
+export function snapshotContent(content: Element): ContentSnapshot {
+  const rect = content.getBoundingClientRect();
+  return { ghost: ghostOf(content, rect), rect };
+}
+
+/** 写しを、待たずに消す */
+export function dropSnapshot({ ghost }: ContentSnapshot): void {
+  ghost.remove();
+}
+
+/**
+ * 写しを、to の位置へ動かしながら、動きの後半で透明にして消す（編成を切り替えて、立ち絵の枠が四角と縦長で入れ替わる）。
+ * 縦長から四角へ縮むときは、frameAt で下を切って四角にする。四角から縦長へ伸びるときは、切らずに上をそろえる。
+ * to が無いときは、その場で透明にする。透明にするのは、動きの後半（新しい枠を現す fadeIn が前半で現れ終えた後）
+ */
+export function dissolveSnapshot({ ghost, rect }: ContentSnapshot, to: DOMRect | null): void {
+  const end = to ?? rect;
+  const grows = end.height > rect.height * 1.01;
+  const goal: Keyframe = grows
+    ? { transform: `translate(${end.left - rect.left}px, ${end.top - rect.top}px) scale(${end.width / rect.width})` }
+    : frameAt(end, rect);
+  const remove = () => ghost.remove();
+  ghost.animate([{ ...frameAt(rect, rect) }, goal], FLIGHT).finished.then(undefined, () => undefined);
+  ghost
+    .animate([{ opacity: 1 }, { opacity: 1, offset: 0.5 }, { opacity: 0 }], {
+      duration: FLIGHT.duration,
+      easing: 'linear',
+      fill: FLIGHT.fill,
+    })
+    .finished.then(remove, remove);
+}
+
+/** 新しい枠を、動きの前半で透明から不透明にして現す（dissolveSnapshot の写しが、後半で消える） */
+export function fadeInContent(node: Element): void {
+  node.animate([{ opacity: 0 }, { opacity: 1, offset: 0.6 }, { opacity: 1 }], {
+    duration: FLIGHT.duration,
+    easing: 'linear',
+  });
+}

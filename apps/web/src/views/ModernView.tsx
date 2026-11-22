@@ -18,6 +18,7 @@ import { useSlotPlacement } from '../components/modern/useSlotPlacement.ts';
 import { commonGrowthOf, rosterGrowthOf } from '../roster.ts';
 import { useTrayShape } from '../trayShape.ts';
 import { favoriteMarksOf, FavoritesContext, useFavorites } from '../favorites.ts';
+import { usePartySwitchAnimation } from '../components/modern/usePartySwitch.ts';
 
 export function ModernView({
   team,
@@ -47,6 +48,9 @@ export function ModernView({
   // ニケ一覧の立ち絵の形（四角・縦長）。ブラウザに覚える
   const [trayShape, toggleTrayShape] = useTrayShape();
   const [favorites, toggleFavorite] = useFavorites();
+
+  // 編成の番号を押して切り替えたとき、立ち絵が四角と縦長で入れ替わり、行と番号が動くアニメーションを付ける
+  const switchParty = usePartySwitchAnimation(parties.active, selectParty);
 
   // 枠が埋まっているときに一覧でクリックしたニケ。次にクリックしたスロットに置く（null なら待っていない）
   const [pendingId, setPendingId] = useState<number | null>(null);
@@ -180,7 +184,7 @@ export function ModernView({
             <div className="modern-slots-area">
               {parties.parties.map((party, p) => (
                 <div key={p} className={`modern-party-row ${p === parties.active ? 'modern-party-row-active' : ''}`}>
-                  <PartyRowLabel partyIndex={p} active={p === parties.active} onSelect={() => selectParty(p)} />
+                  <PartyRowLabel partyIndex={p} active={p === parties.active} onSelect={() => switchParty(p)} />
                   {p === parties.active ? (
                     <section ref={slotsGridRef} className="modern-slots-grid" aria-label="編成スロット一覧">
                       {team.slots.map((slot, i) => {
@@ -210,7 +214,7 @@ export function ModernView({
                       indexMap={indexMap}
                       roster={roster}
                       fixedSpec={team.fixedSpec}
-                      onSelect={() => selectParty(p)}
+                      onSelect={() => switchParty(p)}
                     />
                   )}
                 </div>
