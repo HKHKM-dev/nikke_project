@@ -452,7 +452,7 @@ describe('命中率▲（C-0036・C-0037）', () => {
     expect((1 - startBodyHitRateUp(0.965, 0.3037, ratios)) / 0.035).toBeCloseTo(0.799, 3);
     // 命中率▼だけの和は▼の表のまま（形によらない）
     const at = (id: string) => profile.landings.find((l) => l.id === id)!;
-    const down = hitRateDownAt(profile.hitRateDown, MG, at('nearA'));
+    const down = hitRateDownAt(profile, MG, at('nearA'));
     expect(coreHitRateAt(0.9626, downOnly(-0.2), down, { startBody: ratios })).toBeCloseTo(0.587, 12);
   });
 
