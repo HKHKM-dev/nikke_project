@@ -1,0 +1,135 @@
+{
+  "formatVersion": 1,
+  "resourceId": 132,
+  "checkedAt": "2026-11-22",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "heal",
+          "trigger": {
+            "count": "fullBurstStart",
+            "atLeast": 1
+          },
+          "target": "allies",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "開始回数別の効果（下位効果のスタック適用）の 1 回目の段。フルバーストの開始ごとに、味方全体へ持続回復（1 秒間隔・値 02 秒間維持）。回数は編成のフルバーストを戦闘開始から通算して数える。2・3 回目の段（effects[1]・[2]）と別に付いて足される。付いた時に 1 回だけ「回復効果が適用された時」を起こし、1 秒ごとの刻みでは起こさない（トリナの S1 と同じ）。満タンの味方にも付く。回復量はダメージに関係しない（回復で HP の割合が戻る分は扱わない）",
+            "en": "The first tier of the effects by activation count (lower tiers stack). On each Full Burst start, a heal over time on all allies (every 1 s for value 02 s). The count is the team's Full Bursts since battle start. It is applied separately from the second and third tiers (effects[1], [2]) and adds to them. It triggers \"when healed\" once when applied, not on each tick (as Trina's S1). It also lands on allies at full HP. The healed amount does not affect damage (the rise of the HP ratio from heals is not modeled)"
+          }
+        },
+        {
+          "kind": "heal",
+          "trigger": {
+            "count": "fullBurstStart",
+            "atLeast": 2
+          },
+          "target": "allies",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "2 回目の段。1 回目の段（effects[0]）の持続回復も付いて足される",
+            "en": "The second tier. The first-tier heal over time (effects[0]) is also applied and adds to it"
+          }
+        },
+        {
+          "kind": "heal",
+          "trigger": {
+            "count": "fullBurstStart",
+            "atLeast": 3
+          },
+          "target": "allies",
+          "ref": 5,
+          "durationRef": 6,
+          "assumes": {
+            "ja": "3 回目の段。1・2 回目の段（effects[0]・[1]）の持続回復も付いて足される（3 回目以降は 3 つの和）",
+            "en": "The third tier. The first- and second-tier heals over time (effects[0], [1]) are also applied and add to it (the sum of the three from the third time on)"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 1
+          },
+          "target": "allies",
+          "targetElement": "Water",
+          "stat": "elementDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "開始回数別の効果（下位効果のスタック適用）の 1 回目の段。自分のバーストの使用回数で数える（ドラー・ボリュームの S2 と同じ）。「水冷コードの味方全体」は自分（水冷）を含む。段ごとに長さの違う別の▲で、2・3 回目の段（effects[1]・[2]）と足す。有利の敵にだけ、属性の倍率に足す",
+            "en": "The first tier of the effects by activation count (lower tiers stack). Counted by this unit's own Burst uses (as Dorah's and Volume's S2). \"All Water Code allies\" includes herself (Water). Each tier is a separate buff with its own duration that adds to the second and third tiers (effects[1], [2]). It adds to the element multiplier only against an enemy at a disadvantage"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 2
+          },
+          "target": "allies",
+          "targetElement": "Water",
+          "stat": "elementDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "2 回目の段。1 回目の段（effects[0]）の▲も付いて足される（使用から値 02 秒は 2 つの和、その後は値 04 秒までこの段だけ）",
+            "en": "The second tier. The first-tier buff (effects[0]) is also applied and adds to it (the sum of the two for value 02 s from the use, then this tier alone until value 04 s)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 3
+          },
+          "target": "allies",
+          "targetElement": "Water",
+          "stat": "elementDamage",
+          "ref": 5,
+          "durationRef": 6,
+          "assumes": {
+            "ja": "3 回目の段。1・2 回目の段（effects[0]・[1]）の▲も付いて足される（3 回目以降の使用から、値 02 秒は 3 つの和、値 04 秒までは 2・3 回目の段の和、値 06 秒まではこの段だけ）。4 回目以降の使用では、どの段も付け直すだけで値は変わらない",
+            "en": "The third tier. The first- and second-tier buffs (effects[0], [1]) are also applied and add to it (from the third use on: the sum of the three for value 02 s, the second and third tiers until value 04 s, and this tier alone until value 06 s). Later uses only reapply each tier without changing the value"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "targetElement": "Water",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "「水冷コードの味方全体」は自分（水冷）を含む。付き始めはほかのバーストの効果と同じとみなす",
+            "en": "\"All Water Code allies\" includes herself (Water). It is assumed to start like other Burst effects"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "maxHp",
+          "scaling": "casterMaxHp",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "「スキル発動者の最終最大HP基準」の量は、メアリー：ベイゴッデスのバフ前の最大HP × 値 03 を対象の最大HP に足す（エード・マストの発動者基準と同じ形）。「最終」との差（発動者にほかの最大HP▲が付いている時）は扱わない。最大HP のみ▲ でないので HP も上がり、HP の割合は変わらないとみなす。読むのは HP の割合と最終最大HP だけ",
+            "en": "The amount \"based on the skill user's final max HP\" adds Mary: Bay Goddess's pre-buff max HP × value 03 to the target's max HP (caster-based as Ade and Mast). The difference from \"final\" (when the caster has other max HP ups) is not modeled. It is not a max-HP-only up, so HP rises too and the HP ratio is assumed unchanged. Only the HP ratio and the final max HP read it"
+          }
+        }
+      ]
+    }
+  }
+}
