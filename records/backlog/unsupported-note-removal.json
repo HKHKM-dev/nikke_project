@@ -1,5 +1,0 @@
-{
-  "section": "8",
-  "order": 170,
-  "text": "使われていない unsupportedNoteOf と UnsupportedNote・UnsupportedLevel・テストを消す（呼ぶ側は無い。SkillDefinitionCache の supportGaps とその読み込みが要るかも見る。ⓘ の印を戻すなら消さずに使う）（2026-11-22 起票）→ 保留: [design-modern-ui.md](design-modern-ui.md)"
-}
