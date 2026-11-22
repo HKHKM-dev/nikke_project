@@ -206,20 +206,21 @@ function valueAtN(values: ValuesByN | undefined, n: number): number | undefined 
 
 /**
  * plan/design-maids.md 8.2・8.3・8.6 節（V-0683・V-0870）: 武器種と着地点の命中率▼の値。コア命中率は着地点の最初の段の値 × N の倍率
- * （最初の段の値を持たない行は、N の倍率だけを coreRatio に置く）、弾丸命中率は N の行の値（行に無い着地点は持たない）。
- * 的の▼の表にその武器種が無ければ undefined
+ * （最初の段の値を持たない行は、N の倍率だけを coreRatio に置く。測ったのは武器種の行のキャラだけなので、コア命中率を弾の種類・
+ * 二丁持ちの行で引くキャラには置かない）、弾丸命中率は N の行の値（行に無い着地点は持たない）。的の▼の表にその武器種が無ければ undefined
  */
 export function hitRateDownAt(
-  table: HitRateDownTable | undefined,
-  character: Pick<CharacterData, 'weaponType'>,
+  profile: Pick<TargetProfile, 'hitRateDown' | 'coreHitRate'>,
+  character: CharacterData,
   landing: Pick<LandingPoint, 'id' | 'band'>,
 ): HitRateDownAt | undefined {
-  const entry = table?.[character.weaponType];
+  const entry = profile.hitRateDown?.[character.weaponType];
   if (entry === undefined) return undefined;
   const core: [number, number][] = [];
   const coreRatio: [number, number][] = [];
   if (entry.core !== undefined && entry.core.base === undefined) {
-    for (const [n, r] of Object.entries(entry.core.ratio)) coreRatio.push([Number(n), r]);
+    if (rateRowOf(profile.coreHitRate, character) === profile.coreHitRate[character.weaponType])
+      for (const [n, r] of Object.entries(entry.core.ratio)) coreRatio.push([Number(n), r]);
   } else if (entry.core?.base !== undefined) {
     const base = rateAtLanding(entry.core.base, landing);
     if (base !== undefined) for (const [n, r] of Object.entries(entry.core.ratio)) core.push([Number(n), base * r]);
@@ -394,7 +395,7 @@ export function autoConditionAt(
   character: CharacterData,
   hitRate: HitRateN,
   manual: SlotCondition,
-  down: HitRateDownAt | undefined = hitRateDownAt(profile.hitRateDown, character, landing),
+  down: HitRateDownAt | undefined = hitRateDownAt(profile, character, landing),
 ): SlotCondition {
   const core = targetRateOf(profile.coreHitRate, character, landing);
   const bullet = targetRateOf(profile.bulletHitRate, character, landing);
@@ -490,7 +491,7 @@ export function planLandings(
           : landingMix(profile, id).map(({ landing, weight }) => {
               const table = targetRateOf(profile.coreHitRate, slot.character, landing);
               const bullet = targetRateOf(profile.bulletHitRate, slot.character, landing);
-              const down = hitRateDownAt(profile.hitRateDown, slot.character, landing);
+              const down = hitRateDownAt(profile, slot.character, landing);
               return {
                 landing,
                 weight,

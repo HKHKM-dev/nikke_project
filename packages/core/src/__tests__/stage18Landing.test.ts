@@ -488,7 +488,7 @@ describe('命中率▲（C-0036・C-0037）', () => {
 
 describe('命中率▼の表（C-0974・C-0975。plan/design-maids.md 8 節）', () => {
   const at = (id: string) => profile.landings.find((l) => l.id === id)!;
-  const down = (id: string) => hitRateDownAt(profile.hitRateDown, MG, at(id))!;
+  const down = (id: string) => hitRateDownAt(profile, MG, at(id))!;
 
   it('gives the MG core hit rate as the landing base × the ratio of N, for the N in the table only', () => {
     expect(coreHitRateAt(0.9626, downOnly(-0.2), down('nearA'))).toBeCloseTo(0.587, 12);
@@ -509,7 +509,7 @@ describe('命中率▼の表（C-0974・C-0975。plan/design-maids.md 8 節）',
   });
 
   it('has no rows for other weapon types, and autoConditionAt reads the table', () => {
-    expect(hitRateDownAt(profile.hitRateDown, SG, at('nearA'))).toBeUndefined();
+    expect(hitRateDownAt(profile, SG, at('nearA'))).toBeUndefined();
     // AR の行は N = −100% だけ（8.6 節）。表に無い N は変えない
     expect(autoConditionAt(profile, at('nearA'), AR, downOnly(-0.2), MANUAL).coreHitRate).toBe(0.4244);
     const mg = autoConditionAt(profile, at('farA'), MG, downOnly(-0.4), MANUAL);
@@ -525,15 +525,22 @@ describe('命中率▼の表（C-0974・C-0975。plan/design-maids.md 8 節）',
       [AR, 'nearB', 0.4244],
       [AR, 'farA', 0.0626],
     ] as const) {
-      const d = hitRateDownAt(profile.hitRateDown, w, at(id))!;
+      const d = hitRateDownAt(profile, w, at(id))!;
       expect(d.core).toEqual([]);
       expect(coreHitRateAt(p, downOnly(-1), d)).toBeCloseTo(p * 0.25, 12);
       expect(coreHitRateAt(p, downOnly(-0.6), d)).toBe(p);
       expect(bulletHitRateAt(0.99, downOnly(-1), d)).toBe(0.99);
       expect(autoConditionAt(profile, at(id), w, downOnly(-1), MANUAL).coreHitRate).toBeCloseTo(p * 0.25, 12);
     }
+    // コア命中率を二丁持ち・弾の種類の行で引くキャラには倍率を置かない（測っていない）
+    const instantAr = weapon('AR', { min: 25, max: 45 }, 1, { fireType: 'InstantBox' });
+    for (const w of [DUAL_SMG, instantAr]) {
+      const d = hitRateDownAt(profile, w, at('nearA'));
+      expect(d?.coreRatio ?? []).toEqual([]);
+      expect(coreHitRateAt(0.5, downOnly(-1), d)).toBe(0.5);
+    }
     // ▲と同時の区間は表を使わない（和の N が −1 でも）
-    const d = hitRateDownAt(profile.hitRateDown, SMG, at('midNear'))!;
+    const d = hitRateDownAt(profile, SMG, at('midNear'))!;
     expect(coreHitRateAt(0.1179, { n: 0.2 - 1.2, up: 0.2 }, d)).toBe(0.1179);
   });
 

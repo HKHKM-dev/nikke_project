@@ -231,8 +231,8 @@
             }
           ],
           "assumes": {
-            "ja": "消音（騒音公害免疫）はパーツの破壊でしか付かないので、射撃場では常に効く。命中率▼は、条件が自動の枠で射撃場の的のとき、的の▼の表（SMG・AR は N = −100% でコア命中率を表の値の 1/4。V-0870）で効かせる。弾丸命中率と、SMG・AR 以外の武器種・ほかの的・▲と同時の区間は効かせない（未実装）",
-            "en": "Mute (immunity to Noise Pollution) only comes from part destruction, so on the range it always applies. With automatic conditions on the Shooting range target, the Hit Rate decrease applies via the target's hit-rate-down table (for SMG and AR at N = −100%, core hit rate becomes 1/4 of the table value; V-0870). It does not change bullet hit rate, nor apply to weapon types other than SMG and AR, to other targets, or while a Hit Rate increase is also active (not implemented)"
+            "ja": "消音（騒音公害免疫）はパーツの破壊でしか付かないので、射撃場では常に効く。命中率▼は、条件が自動の枠で射撃場の的のとき、的の▼の表（SMG・AR は N = −100% でコア命中率を表の値の 1/4。V-0870）で効かせる。弾丸命中率と、二丁持ち・弾の種類の行の SMG・AR、SMG・AR 以外の武器種・ほかの的・▲と同時の区間は効かせない（未実装）",
+            "en": "Mute (immunity to Noise Pollution) only comes from part destruction, so on the range it always applies. With automatic conditions on the Shooting range target, the Hit Rate decrease applies via the target's hit-rate-down table (for SMG and AR at N = −100%, core hit rate becomes 1/4 of the table value; V-0870). It does not change bullet hit rate, nor apply to dual-wield SMG or AR read from a fire-type row, to weapon types other than SMG and AR, to other targets, or while a Hit Rate increase is also active (not implemented)"
           },
           "claims": [
             "C-1558"
