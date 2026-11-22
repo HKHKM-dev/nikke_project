@@ -1369,7 +1369,6 @@
 | 1400 | `20261122-1400_rl_diesel-winter-sweets-sun-uni.mp4` | リター（82、SMG・鉄甲・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ディーゼル：ウィンタースイーツ（75、RL・灼熱・SSR） + ユニ（160、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0870。リター（I）・I-DOLL・サン（III）・ディーゼル：ウィンタースイーツ（III・操作）・ユニ（II）（オート射撃 ON・オートバースト ON）。火の的 |
 | 1401 | `20261122-1401_rl_diesel-winter-sweets-sun-uni.mp4` | リター（82、SMG・鉄甲・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ディーゼル：ウィンタースイーツ（75、RL・灼熱・SSR） + ユニ（160、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0870。リター（I）・I-DOLL・サン（III）・ディーゼル：ウィンタースイーツ（III・操作）・ユニ（II）（オート射撃 ON・オートバースト ON）。火の的 |
 | 1402 | `20261122-1402_rl_diesel-winter-sweets-sun-uni.mp4` | リター（82、SMG・鉄甲・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ディーゼル：ウィンタースイーツ（75、RL・灼熱・SSR） + ユニ（160、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0870。リター（I）・I-DOLL・サン（III）・ディーゼル：ウィンタースイーツ（III・操作）・ユニ（II）（オート射撃 ON・オートバースト ON）。火の的 |
-| 1403 | `20261123-1403_team_sakura-delta-privaty-unkind-maid_fb.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + デルタ（20、SR・風圧・SR） + ◎プリバティ：アンカインド・メイド（313、SG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | 鈴原サクラ（I）+ デルタ（II）+ プリバティ：アンカインド・メイド（III・操作）。V-0875 の撮影の依頼 |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
