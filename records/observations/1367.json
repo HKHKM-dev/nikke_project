@@ -1,0 +1,139 @@
+[
+  {
+    "id": "1367-01",
+    "recording": "1367",
+    "kind": "timing",
+    "use": "record",
+    "value": [1484, 2902, 4107, 5528, 7055, 8511, 9955, 11233],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・15・16・17・24・25・25・14f"
+    },
+    "source": "V-0856",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1367-02",
+    "recording": "1367",
+    "use": "compare",
+    "kind": "hit",
+    "value": 418421,
+    "unit": "ダメージ",
+    "description": "ネオン単騎（操作）・オートバースト ON で、ネオンのバーストの会心しない 1 ヒット（I → II の替わり目（`1367-01`）の 4〜8f 後の増分。どの回も同じ値）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid。hud.ts --mode jumps）",
+      "note": "8 回のうち 7 回が 418,421（f1489・2907・5536・7060・8516・9960・11247 ほか）で、4107 の回だけ会心の 627,631（× 1.5）。どれもネオンの通常攻撃の格子（ペレット 10 個までの和）に合わない単独の増分"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0856",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1367-03",
+    "recording": "1367",
+    "use": "compare",
+    "kind": "count",
+    "value": 12,
+    "unit": "発",
+    "description": "同じ録画の、ネオンのバーストの窓の中で込め終えたマガジンの発の数（最大装弾数。自分への最大装弾数▲）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid。hud.ts --mode jumps）",
+      "note": "ネオンの通常攻撃の増分（約 39f おき）を、リロードの間（約 167f）で区切って数えた。窓の中で込め終えたマガジンは、1 回目（f1741〜2173）・2 回目（3322〜3754）・4 回目（5710〜6141。間に的のジャンプ）・5 回目（7284〜7716）・6 回目（8846〜9278）がどれも 12 発。3・7 回目は的のジャンプとリロードが重なって区切れず、8 回目は録画の終わりで切れるので数えない"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 1000
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0856",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1367-04",
+    "recording": "1367",
+    "use": "compare",
+    "kind": "count",
+    "value": 9,
+    "unit": "発",
+    "description": "同じ録画の、ネオンのバーストの窓の外で込めたマガジンの発の数（最大装弾数）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid。hud.ts --mode jumps）",
+      "note": "窓の前と後のマガジン（f817〜1091・2340〜2654・6309〜6623・7883〜8197 ほか）はどれも 9 発"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 1500
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0856",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1367-05",
+    "recording": "1367",
+    "use": "record",
+    "kind": "count",
+    "value": [9, 9, 9],
+    "unit": "発",
+    "description": "同じ録画の、ネオンのバーストが撃っている途中に付いたマガジンの発の数（1・2・3 回目。最大装弾数▲が付いた時に残弾が足されるか）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid。hud.ts --mode jumps）",
+      "note": "f1258〜1573（バーストの 1 ヒットは 1489）・2833〜3148（2907）・3921〜4236（4112）。どれもバーストの前と後の発を合わせて 9 発で、付いた時に残弾は足されない（足されれば 12 発）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0856",
+    "readAt": "2026-11-22"
+  }
+]

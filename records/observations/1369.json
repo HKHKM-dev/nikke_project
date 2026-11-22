@@ -1,0 +1,346 @@
+[
+  {
+    "id": "1369-01",
+    "recording": "1369",
+    "kind": "timing",
+    "use": "record",
+    "value": [1145, 2346, 3526, 4727, 5906, 7107, 8286, 9520, 10700],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・24・6・25・0・25・0・24f"
+    },
+    "source": "V-0856",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1369-02",
+    "recording": "1369",
+    "kind": "timing",
+    "use": "record",
+    "value": [1174, 2376, 3555, 4756, 5935, 7136, 8315, 9550, 10729],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・6・24・0・25・0・25・6・24f"
+    },
+    "source": "V-0856",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1369-03",
+    "recording": "1369",
+    "kind": "timing",
+    "use": "record",
+    "value": [1203, 3584, 5964, 8344, 10758],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0856",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1369-04",
+    "recording": "1369",
+    "kind": "timing",
+    "use": "record",
+    "value": [1812, 4193, 6573, 8953, 11367],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0856",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1369-05",
+    "recording": "1369",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0856",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1369-06",
+    "recording": "1369",
+    "kind": "timing",
+    "use": "record",
+    "value": [2340, 3519, 5900, 7101, 8280, 10693],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f9481"
+    },
+    "source": "V-0856",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1369-07",
+    "recording": "1369",
+    "kind": "timing",
+    "use": "record",
+    "value": [2369, 3548, 4749, 5929, 7130, 8309, 10722],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0856",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1369-08",
+    "recording": "1369",
+    "kind": "timing",
+    "use": "record",
+    "value": [3576, 5957, 8337],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0856",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1369-09",
+    "recording": "1369",
+    "use": "compare",
+    "kind": "hit",
+    "value": 418421,
+    "unit": "ダメージ",
+    "description": "ネオン（I）+ ソルジャーF.A.（II）+ ソルジャーE.G.（III・操作）・オートバースト ON で、ネオンのバーストの会心しない 1 ヒット（I → II の替わり目（`1369-01`）の 4〜5f 後の増分）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid。hud.ts --mode jumps）",
+      "note": "9 回のうち 6 回が 418,421（I → II の替わり目の 4〜5f 後。f1150・3530・4731・7112・9525・10705）、2346 の回は会心の 627,631 とソルジャーE.G. の 1 ヒットの和（655,931 = 627,631 + 28,300）、5906・8286 の回はソルジャーE.G. の 1 ヒットとの和（430,725 = 418,421 + 12,304、434,417 = 418,421 + 15,996）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0856",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1369-10",
+    "recording": "1369",
+    "use": "compare",
+    "kind": "count",
+    "value": 12,
+    "unit": "発",
+    "description": "同じ録画の、ネオンのバーストの窓の中のソルジャーF.A. の最大装弾数（枠アイコンの上の「残弾/最大」の右）",
+    "method": {
+      "tool": "tools/captures/ammo.ts --card 2 --max 9,12 --mode series",
+      "note": "窓が付いた後の最初の発で表示の最大が 12 になり、残弾は前の残弾 − 1（f1116 0/9 → 1153 0/12・2311 8/9 → 2352 7/12・3541 5/12）。窓の中で込め終えたマガジンは 12/12 から撃つ（1276〜1714・2763〜・3897〜・7657〜 ほか）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 2,
+        "frame": 600
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0856",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1369-11",
+    "recording": "1369",
+    "use": "compare",
+    "kind": "count",
+    "value": 9,
+    "unit": "発",
+    "description": "同じ録画の、ネオンのバーストの窓の外のソルジャーF.A. の最大装弾数",
+    "method": {
+      "tool": "tools/captures/ammo.ts --card 2 --max 9,12 --mode series",
+      "note": "窓の外で込めたマガジンは 9/9 から撃つ（f1850〜2169・3417〜・4472〜 ほか）。窓が切れた時に残弾が 9 より多ければ 9 に削る（7662 11/12 → 7693 9/9。I → II の替わり目 7107 の 586f 後）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 2,
+        "frame": 1000
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0856",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1369-12",
+    "recording": "1369",
+    "use": "compare",
+    "kind": "count",
+    "value": 12,
+    "unit": "発",
+    "description": "同じ録画の、ネオンのバーストの窓の中のネオン自身の最大装弾数（枠アイコンの上の「残弾/最大」の右）",
+    "method": {
+      "tool": "tools/captures/ammo.ts --card 1 --max 9,12 --mode series",
+      "note": "窓が付いた後の最初の発で最大が 12 になり（f1202 4/12。残弾は足されない）、込め終えたマガジンは 12/12 から 0 まで 12 発（1295〜1739・2413〜・3783〜 ほか）。ネオンの表示は、SG の分割リロードの途中と、バーストの演出の重なるフレームで字を取り違えるので、マガジンの始めと終わりの値で読んだ"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0856",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1369-13",
+    "recording": "1369",
+    "use": "compare",
+    "kind": "rate",
+    "value": 0.667,
+    "unit": "割合",
+    "description": "同じ録画の、フルバーストの始まりの後のソルジャーE.G.（AR）の 1・2 発目の会心の割合（6 / 9 発。5 回のフルバースト）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）",
+      "note": "フルバーストの始まり（`1369-03`）の後のソルジャーE.G. の 1・2 発目（会心 / 発）: 1 回目 +27・+30 で 1・1、2 回目 +54 で 0（2 発目は SG の発との和に隠れて読めない）、3 回目 +27・+29 で 1・1（+29 はバーストの 1 ヒットとの和 656,956 = 632,347 + 24,609）、4 回目 +27・+116 で 1・0（間にリロード）、5 回目 +26・+30 で 0・1。1 増分がソルジャーE.G. の 1 ヒットで、胴体・コア・会心・距離ボーナス・S1 の有無 × フルバーストの有無の格子で数えた（grid=N=1@300/x10;Nf=1@500/x10;F=2@300/x10;Ff=2@500/x10;E0=3@5;E1=3@5/*1.079298;Ef0=3@391/*0.934495;Ef1=3@391/*1.008598）。2 つの値の和の増分は、ほかの格子の値を引いて当てた。9 発の 95% の幅は ±0.32"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 3,
+        "frame": 394
+      },
+      "tolerance": {
+        "abs": 0.32
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0856",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1369-14",
+    "recording": "1369",
+    "use": "compare",
+    "kind": "rate",
+    "value": 0.201,
+    "unit": "割合",
+    "description": "同じ録画の、フルバーストの窓の中の、ソルジャーE.G. の 3 発目から後の会心の割合（91 / 453 発）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）",
+      "note": "フルバーストの始まりの 20f 後から 609f までのソルジャーE.G. の発のうち、上の 1・2 発目を除いたもの。窓ごとの会心の割合は 0.15〜0.28 で揺れる（フルバーストの外の 1,200f ごとの区間でも 0.07〜0.26）。フルバーストの外の発は 178/1090 = 0.163。格子は上と同じ。許容は、発の数の 95% の幅（±0.034）に、区間ごとの揺れを見込んだ ±0.06"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 3,
+        "frame": 404
+      },
+      "tolerance": {
+        "abs": 0.06
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0856",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1369-15",
+    "recording": "1369",
+    "use": "record",
+    "kind": "rate",
+    "value": 2.16,
+    "unit": "ペレットの胴体（フルバーストの外）の単位",
+    "description": "同じ録画の、フルバーストの窓の中の SG の受け手（ネオン・ソルジャーF.A.）の 1 発の和の、1・2 発目の平均 − 3 発目から後の平均（窓と受け手ごとの差の平均）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）",
+      "note": "1 発の和をフルバーストの外のペレットの胴体（ネオン 17,758.17・ソルジャーF.A. 11,618.49）で割った値。射撃の間隔（約 39f）で受け手の発を並べ、ほかの発との和に隠れた発は数えずに順番だけ進めた。SG の 1 発は当たったペレットの数と会心の数を分けられないので、会心の割合は出さない。1・2 発目にだけクリティカル確率 45.93%▲が乗るなら、当たったペレット約 9 個で約 2.1、乗らなければ 0"
+    },
+    "scope": {
+      "slot": [1, 2],
+      "source": "normal"
+    },
+    "source": "V-0856",
+    "readAt": "2026-11-22"
+  }
+]

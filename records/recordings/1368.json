@@ -1,0 +1,46 @@
+{
+  "id": "1368",
+  "date": "2026-11-22",
+  "folder": "range",
+  "file": "20261122-1368_neon-soldier-fa-eg.mp4",
+  "original": "2026-11-22_15-43-56.mp4",
+  "durationSec": 205.2,
+  "frames": 12314,
+  "fps": 60,
+  "sizeMB": 248.7,
+  "sha256": "6a83ae74bd1c",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 11,
+      "name": "ネオン",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 300,
+      "name": "ソルジャーE.G.",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-22T15:53+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
