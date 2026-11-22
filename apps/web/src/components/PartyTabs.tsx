@@ -1,4 +1,5 @@
 // ソロレイド用の編成 01〜05 の切り替えボタン（parties.ts）。スロットの並びの上に置き、各ボタンの下にその編成のダメージを小さく出す
+import type { MouseEvent, PointerEvent } from 'react';
 import { formatDamage } from '../format.ts';
 import { PARTY_COUNT, partyLabel, partyNumber } from '../parties.ts';
 import type { PartyTotal } from '../partyTotals.ts';
@@ -17,15 +18,7 @@ export function PartyTabs({ active, onSelect, totals }: Props) {
         const total = totals[i];
         return (
           <div className="party-tab-cell" key={i}>
-            <button
-              type="button"
-              className="toggle-button party-tab"
-              aria-pressed={i === active}
-              aria-label={partyLabel(i)}
-              onClick={() => onSelect(i)}
-            >
-              {partyNumber(i)}
-            </button>
+            <PartyTabButton partyIndex={i} active={i === active} onClick={() => onSelect(i)} />
             {/* 値の欄（format.ts の formatDamage。出せない値は「—」）。エラーの文は読み上げにだけ渡す（名前を読ませるため role を付ける） */}
             <span
               className="party-tab-total"
@@ -39,5 +32,31 @@ export function PartyTabs({ active, onSelect, totals }: Props) {
         );
       })}
     </div>
+  );
+}
+
+/** 編成の番号のボタン 1 つ（ここの切り替えと、モダン UI の行の左の番号。PartyPreviewRow の PartyRowLabel） */
+export function PartyTabButton({
+  partyIndex,
+  active,
+  onClick,
+  onPointerDown,
+}: {
+  partyIndex: number;
+  active: boolean;
+  onClick: (event: MouseEvent) => void;
+  onPointerDown?: (event: PointerEvent) => void;
+}) {
+  return (
+    <button
+      type="button"
+      className="toggle-button party-tab"
+      aria-pressed={active}
+      aria-label={partyLabel(partyIndex)}
+      onClick={onClick}
+      onPointerDown={onPointerDown}
+    >
+      {partyNumber(partyIndex)}
+    </button>
   );
 }

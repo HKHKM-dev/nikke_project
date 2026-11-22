@@ -14,6 +14,7 @@ import {
   selfStateLookupsForTeam,
   type CompositionConditions,
 } from '../../src/skills/composition.ts';
+import { expectedHitCount } from '../../src/skills/burstDamage.ts';
 import { itemsOf } from '../../src/skills/holders.ts';
 import { SKILL_SLOTS, type SkillEffect } from '../../src/skills/types.ts';
 import type { TeamInput, TeamResult, TeamSlotInput, TeamSlotResult } from '../../src/team.ts';
@@ -283,7 +284,7 @@ export function summaryRows(sim: SimResult, result: TeamResult, slots: Slots) {
       segments: c.segments.length,
       'burst skill': `${fmt(s.burst.damage)} (${s.burst.activations.length}× ${fmt(s.burst.hit?.perActivation ?? 0)})`,
       // トリガー付きの倍率ダメージ（damage）
-      'skill hits': `${fmt(s.skillHits.damage)} (${s.skillHits.frames.length}×)`,
+      'skill hits': `${fmt(s.skillHits.damage)} (${fmt(s.skillHits.count)}×)`,
       total: fmt(c.totalDamage),
       share: pct(c.share),
     };
@@ -462,9 +463,10 @@ export function dotLines(c: TeamSlotResult): string[] {
       maxStacks: a.effect.dot!.maxStacks,
       label: a.effect.dot!.autoAttack ? 'autoAttack' : 'dot',
     };
-    d.n += 1;
+    // 確率のきっかけの持続ダメージは、起点ごとの tick を出る確率で数え、時刻は並べない（期待値の tick の時刻はどの付き方の時刻でもない）
+    d.n += expectedHitCount(a.hit);
     d.damage += a.hit.perActivation;
-    d.seconds.push(a.seconds);
+    if (a.hit.chance === undefined) d.seconds.push(a.seconds);
     // スタックする持続ダメージは tick ごとのスタックの数も出す
     if (a.stacks !== undefined) d.stacks.push(a.stacks);
     byEffect.set(key, d);
@@ -472,7 +474,7 @@ export function dotLines(c: TeamSlotResult): string[] {
   return [...byEffect].map(([key, d]) => {
     const perStack = d.maxStacks > 1 ? `/stack (max ${d.maxStacks})` : '';
     const stacks = d.stacks.length > 0 ? ` (stacks ${d.stacks.join(', ')})` : '';
-    return `${d.label} ${key}: ${(d.multiplier * 100).toFixed(2)}%${perStack} ×${d.n} ticks = ${fmt(d.damage)} (ticks at ${d.seconds.map((x) => x.toFixed(2)).join(', ')}s)${stacks}`;
+    return `${d.label} ${key}: ${(d.multiplier * 100).toFixed(2)}%${perStack} ×${fmt(d.n)} ticks = ${fmt(d.damage)} (ticks at ${d.seconds.map((x) => x.toFixed(2)).join(', ')}s)${stacks}`;
   });
 }
 

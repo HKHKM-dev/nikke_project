@@ -1,0 +1,20 @@
+{
+  "id": "C-1540",
+  "text": "ハランの S1 のウイルス転移の tick は、付いた発と同じフレーム（発と同じ HUD の増分）に 1 回目が出て、その後は付いた時から約 1.5 秒・2.5 秒・3.5 秒・4.5 秒後（動画で 89・148・206・265f 後。C-0101 の刻みと 1f の中）の計 5 回。維持の途中で付け直すと、付け直した発のフレームに tick が出て刻みをそこから数え直し、前の付与の残りの tick は出ない（C-0129 のクルミのハッキングと違い、刻みは保たれない）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1382-07`・`1382-08`・`1383-07`。V-0861",
+  "model": "data/skills/230.json の skill1 の effects[0] の restartOnReapply（frame/dot.ts の restartDotTicks と chanceDotTicks の restart）",
+  "replaces": [],
+  "updated": "2026-11-22",
+  "subject": {
+    "places": ["data/skills/230.json の skill1 の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1382",
+      "role": "仮説の出どころ"
+    }
+  ]
+}

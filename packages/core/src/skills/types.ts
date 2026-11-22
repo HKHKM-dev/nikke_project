@@ -752,8 +752,10 @@ export type ShotCountTrigger = {
   /**
    * 「〜した時、p% の確率で」の p（%。0 より大きく 100 以下の即値。plan/design-soldier-eg.md 3.1 節）。
    * 1 発ごとに確率 p × その発の回数の量（normalShot は 1、normalHit はその発の弾丸命中率）で付く。モデルは期待値で持ち、
-   * 窓の値を「付いている確率 × 値」にする（skills/chance.ts）。count は normalShot か normalHit、timed にだけ書ける。
-   * every・everyRef・stacksRef・during とは組み合わせない。chanceRef とどちらか片方。書ける stat の制限は validateChanceTimed
+   * 窓の値を「付いている確率 × 値」にする（skills/chance.ts）。count は normalShot か normalHit。timed・状態の付与と、dot（起点ごとの tick に
+   * 出る確率の重み。frame/dot.ts の chanceDotTicks）・damage（射撃ごとの倍率ダメージに確率を掛けて畳み込む。damage.ts の perShot）に書ける
+   * （plan/design-chance-dot-damage.md 3.1・3.2 節）。every・everyRef・stacksRef・during とは組み合わせない。chanceRef とどちらか片方。
+   * 書ける stat の制限は validateChanceTimed、dot と damage の欄の制限は parse/dot.ts・parse/damage.ts
    */
   chance?: number;
   /** 確率（%）の description_value_NN */
@@ -2304,6 +2306,12 @@ export type DotEffect = {
    */
   firstTick?: DotFirstTick;
   /**
+   * 付け直しのたびに、付けた時から刻みを数え直す（前の付与の残りの tick は出ない。付けた時の tick は firstTick のとおり）。
+   * 省略は C-0129 の形（刻みを変えずに終わりを延ばす）。ハランのウイルス転移（plan/design-chance-dot-damage.md 9 節）。firstTick は
+   * atApplication か afterInterval で、名前の付いた状態・スタック・持続の維持・刻みの遅れ・数・遅れ・ゲージ・条件とは組まない
+   */
+  restartOnReapply?: true;
+  /**
    * 同: tick の間隔の実測（ゲーム内のティック。端数を持ち越す）。チェーンバインドの 59.25 は、説明文の「1秒間隔」（58.82 ティック）より長い
    * （V-0326・V-0546）。firstTick: halfAfterLatest のときだけ書ける
    */
@@ -3190,9 +3198,4 @@ export type SkillSupportIndex = {
   formatVersion: 1;
   /** すべてのスロットに未実装が無いキャラ（昇順） */
   fullySupported: number[];
-  /** 完全対応でないキャラ（resourceId の文字列）の、未対応・仮定の件数 */
-  gaps: Record<string, SkillSupportGap>;
 };
-
-/** 完全対応でないキャラの、未対応（unimplemented の notes）と仮定（assumes のある効果）の件数（skills/support.ts） */
-export type SkillSupportGap = { unimplemented: number; assumed: number };

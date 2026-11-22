@@ -340,7 +340,11 @@ function parseFiringWindow(
 /** 確率のきっかけ（chance か chanceRef のちょうど片方。plan/design-soldier-eg.md 3.1 節） */
 function parseChance(v: Record<string, Json>, trigger: ShotCountTrigger, path: string, options: TriggerOptions): void {
   if (v.chance === undefined && v.chanceRef === undefined) return;
-  if (!options.chance) fail(`${path}.chance`, 'a chance trigger (chance / chanceRef) is only allowed in timed');
+  if (!options.chance)
+    fail(
+      `${path}.chance`,
+      'a chance trigger (chance / chanceRef) is only allowed in timed, state grants, dot and damage',
+    );
   if (v.chance !== undefined && v.chanceRef !== undefined) fail(path, 'at most one of chance and chanceRef');
   if (!(CHANCE_COUNT_KINDS as readonly string[]).includes(trigger.count)) {
     fail(`${path}.count`, `a chance trigger needs count ${CHANCE_COUNT_KINDS.join(' or ')}, got "${trigger.count}"`);
@@ -511,7 +515,14 @@ export function parseDamageTrigger(v: Json, path: string): EffectTrigger {
     parseSummonAttackTrigger(v, path) ??
     parseCounterFullTrigger(v, path) ??
     parseAppliedTrigger(v, path) ??
-    parseTrigger(v, path, { timer: true, during: 'withState', teamAmmo: true, critPelletHit: true, fullStack: true })
+    parseTrigger(v, path, {
+      timer: true,
+      during: 'withState',
+      teamAmmo: true,
+      critPelletHit: true,
+      fullStack: true,
+      chance: true,
+    })
   );
 }
 

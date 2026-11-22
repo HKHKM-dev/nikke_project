@@ -15,7 +15,8 @@ import type { CalcView } from '../../calcView.ts';
 import type { PartiesState, PartySlotRef } from '../../parties.ts';
 import type { TeamAction, TeamState } from '../../team.ts';
 import { trayCollectionBadge, type Badge } from './badges.ts';
-import { partyCardAt, setDropPlaced, slotCardAt } from './dropAnimation.ts';
+import { setDropPlaced } from './dropAnimation.ts';
+import { partyCardAt, partyContentAt, partyLabelAt, slotCardAt, slotsGridAt } from './partyRows.ts';
 import {
   dissolveSnapshot,
   dropSnapshot,
@@ -30,7 +31,7 @@ import {
   snapshotContent,
   type ContentSnapshot,
 } from './flight.ts';
-import { activeDragData, dropIntentOf, type SlotRef } from './dropIntent.ts';
+import { activeDragData, DRAG_START_DISTANCE, dropIntentOf, type SlotRef } from './dropIntent.ts';
 import { trayGrowthMarks, type GrowthMarks } from './GrowthMarks.tsx';
 import { slotCollectionBadge, slotGrowthMarks } from './slotBadges.ts';
 import { slotSizeVars } from './useSlotFit.ts';
@@ -108,14 +109,6 @@ type Params = {
  * ドラッグを離した直後のクリックを 1 回だけ止める。選んでいない編成の行は、押すとその編成を選ぶボタンで、同じ行の中で持ち上げて
  * 離すと、離した後にそのボタンのクリックが届く（押した所と離した所の共通の親）。クリックは離した直後に届くので、次のタスクで外す
  */
-/** 編成 party（0 から）の行のスロットの並び（無ければ null） */
-const slotsGridOf = (party: number) =>
-  document.querySelectorAll('.modern-party-row')[party]?.querySelector<HTMLElement>('.modern-slots-grid') ?? null;
-
-/** 編成 party の行の、左の番号の枠（持ち上げた番号の DragOverlay は含まない） */
-const partyLabelOf = (party: number) =>
-  document.querySelectorAll('.modern-party-row')[party]?.querySelector<HTMLElement>('.modern-party-row-label') ?? null;
-
 function suppressNextClick(): void {
   const stop = (event: MouseEvent) => {
     event.stopPropagation();
@@ -148,10 +141,10 @@ export function useSlotDrag({
     collection: null,
   });
 
-  // マウスは 4px 動かして初めてドラッグと判定（通常のクリック操作との共存。時間の条件は無く、動かしたらすぐ持ち上がる。オーナーの指示）。タッチは 250ms の長押しで持ち上げ、
+  // マウスは DRAG_START_DISTANCE 動かして初めてドラッグと判定（通常のクリック操作との共存。時間の条件は無く、動かしたらすぐ持ち上がる。オーナーの指示）。タッチは 250ms の長押しで持ち上げ、
   // それまでに 8px より動いたらスクロールにする（すぐ持ち上げると、トレイの上でページをスクロールできない）
   const sensors = useSensors(
-    useSensor(LeftButtonMouseSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(LeftButtonMouseSensor, { activationConstraint: { distance: DRAG_START_DISTANCE } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
   );
 
@@ -186,7 +179,7 @@ export function useSlotDrag({
     // 位置は、動きを付ける前にすべて測る（動きを付けると、動き始めの位置が測った値に入る）
     const [rowA, rowB] = flip.rows.map(({ party }) => party);
     const crossfades = flip.looks.map(({ party, index, snapshot }) => {
-      const content = partyCardAt(party === rowA ? rowB! : rowA!, index)?.querySelector('.modern-slot-char-area');
+      const content = partyContentAt(party === rowA ? rowB! : rowA!, index);
       return { snapshot, content, rect: content?.getBoundingClientRect() };
     });
     for (const { snapshot, content, rect } of crossfades) {
@@ -198,7 +191,7 @@ export function useSlotDrag({
       fadeInContent(content, 0);
     }
     for (const { party, from } of flip.rows) {
-      const grid = slotsGridOf(party);
+      const grid = slotsGridAt(party);
       if (!grid) continue;
       const to = grid.getBoundingClientRect();
       // 動く行は、動かない行より上に描く（間の行の下に潜ると、動く行が見え隠れして点滅して見えた。オーナーのコメント）
@@ -280,9 +273,7 @@ export function useSlotDrag({
   const partyOf = (ref: SlotRef) => ref.party ?? parties.active;
   /** スロットの立ち絵の枠（ニケがいなければ null） */
   const areaAt = (party: number, index: number) =>
-    resourceIdAt(party, index) === null
-      ? null
-      : (partyCardAt(party, index)?.querySelector('.modern-slot-char-area') ?? null);
+    resourceIdAt(party, index) === null ? null : (partyContentAt(party, index) ?? null);
   /** 編成 party のスロット index へ、from から絵を動かす（描き直しの後に、そのカードへ） */
   const arriveAt = (party: number, index: number, from: DOMRect | undefined) =>
     placement.queueArrivalAt(`party-${party}-${index}`, () => partyCardAt(party, index), from);
@@ -317,7 +308,7 @@ export function useSlotDrag({
         // 持ち上げた絵は、離した位置から選んでいない編成の行のスロットへ、そこにいたニケは一覧へ動かす
         const from = liftedRectOf(document.querySelector('.char-drag-overlay .char-tray-item-visual'));
         const replaced = resourceIdAt(intent.party, intent.index);
-        const content = partyCardAt(intent.party, intent.index)?.querySelector('.modern-slot-char-area');
+        const content = partyContentAt(intent.party, intent.index);
         setDropPlaced(true);
         if (replaced !== null && content) flyToTray(content, trayVisualAt(replaced)?.getBoundingClientRect() ?? null);
         arriveAt(intent.party, intent.index, from);
@@ -337,12 +328,12 @@ export function useSlotDrag({
         // 番号は動かず、中身（スロットの並び）が入れ替わる。持ち上げた番号は、離した位置から落とした先の番号の場所へ、落とした先の番号は、
         // 持ち上げた番号の元の場所へ動かす。どちらも動きの最初の 45% で透明にし、半分で動く先の番号の表示に切り替え、後半の 55% から不透明に戻す（オーナーの指示）。動いている間は、2 つの元の番号を隠し、動き終えたら出す。
         // 隠すのは番号のボタンの style（React は番号の枠の class を描き直すが、ボタンの style は触らない）
-        const rectOf = (party: number) => slotsGridOf(party)?.getBoundingClientRect();
+        const rectOf = (party: number) => slotsGridAt(party)?.getBoundingClientRect();
         const fromA = rectOf(intent.a);
         const fromB = rectOf(intent.b);
         const dragged = document.querySelector('.party-label-drag-overlay');
-        const labelA = partyLabelOf(intent.a);
-        const labelB = partyLabelOf(intent.b);
+        const labelA = partyLabelAt(intent.a);
+        const labelB = partyLabelAt(intent.b);
         setDropPlaced(true);
         if (dragged && labelA && labelB) {
           const tabs = [labelA, labelB].map((label) => label.querySelector<HTMLElement>('.party-tab'));
@@ -363,7 +354,7 @@ export function useSlotDrag({
           }
           const looks = [intent.a, intent.b].flatMap((party) =>
             Array.from({ length: 5 }, (_, index) => {
-              const content = partyCardAt(party, index)?.querySelector('.modern-slot-char-area');
+              const content = partyContentAt(party, index);
               return content ? { party, index, snapshot: snapshotContent(content) } : null;
             }).filter((look) => look !== null),
           );

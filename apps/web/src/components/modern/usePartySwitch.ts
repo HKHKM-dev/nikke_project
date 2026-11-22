@@ -3,7 +3,6 @@
 // 切り替えた後の描き直しで、写しを新しい枠の位置へ動かしながら消し、新しい枠を現し、行を元の位置から動かす
 import { TEAM_SIZE } from '@nikke/core';
 import { useLayoutEffect, useRef } from 'react';
-import { partyCardAt } from './dropAnimation.ts';
 import {
   dissolveSnapshot,
   dropSnapshot,
@@ -12,6 +11,7 @@ import {
   snapshotContent,
   type ContentSnapshot,
 } from './flight.ts';
+import { partyContentAt, partyRows, rowLabelOf } from './partyRows.ts';
 
 /** 切り替えが起きなかったときに、取っておいた写しを消すまでの時間（ms） */
 const STALE_MS = 1000;
@@ -25,26 +25,21 @@ type Pending = {
   timer: ReturnType<typeof setTimeout>;
 };
 
-const rowsOf = () => [...document.querySelectorAll<HTMLElement>('.modern-party-row')];
-const labelOf = (row: HTMLElement) => row.querySelector<HTMLElement>('.modern-party-row-label');
-const contentAt = (party: number, index: number) =>
-  partyCardAt(party, index)?.querySelector('.modern-slot-char-area') ?? null;
-
 /** 切り替える前の行の位置と、2 つの行（from・to）の立ち絵の枠の写しを取る */
 function capture(from: number, to: number): Pending {
   const snapshots: Pending['snapshots'] = [];
   for (const party of [from, to]) {
     for (let index = 0; index < TEAM_SIZE; index++) {
-      const content = contentAt(party, index);
+      const content = partyContentAt(party, index);
       if (content) snapshots.push({ party, index, snapshot: snapshotContent(content) });
     }
   }
   const timer = setTimeout(() => snapshots.forEach(({ snapshot }) => dropSnapshot(snapshot)), STALE_MS);
   return {
     to,
-    tops: rowsOf().map((row) => ({
+    tops: partyRows().map((row) => ({
       row: row.getBoundingClientRect().top,
-      label: labelOf(row)?.getBoundingClientRect().top ?? null,
+      label: rowLabelOf(row)?.getBoundingClientRect().top ?? null,
     })),
     snapshots,
     timer,
@@ -67,9 +62,9 @@ function alignedMotion(from: DOMRect, to: DOMRect): { ghostY: number; newFromY: 
 function play({ tops, snapshots }: Pending): void {
   const timing = { duration: FLIGHT.duration, easing: FLIGHT.easing };
   // 位置は、動きを付ける前にすべて測る（動きを付けると、動き始めの位置が測った値に入る）
-  const rows = rowsOf().map((row, i) => {
+  const rows = partyRows().map((row, i) => {
     const before = tops[i];
-    const label = labelOf(row);
+    const label = rowLabelOf(row);
     return {
       row,
       label,
@@ -79,7 +74,7 @@ function play({ tops, snapshots }: Pending): void {
     };
   });
   const targets = snapshots.map(({ party, index }) => {
-    const content = contentAt(party, index);
+    const content = partyContentAt(party, index);
     return { content, rect: content?.getBoundingClientRect() };
   });
   for (const { row, label, rowDelta, labelTop, beforeLabel } of rows) {

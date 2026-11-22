@@ -1,0 +1,16 @@
+{
+  "id": "C-1542",
+  "text": "ハランのバーストのバーストスキルダメージは、最終攻撃力の 999%（Lv10。説明文の値）の 1 ヒットで、式はほかのバーストスキルダメージと同じ（鈴原サクラの S1 の敵の受けるダメージ▲が乗る。5 回とも会心なしの 1,411,707）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1384-03`。V-0862",
+  "model": "data/skills/230.json の burst の effects[0]（burstDamage の ref 1）",
+  "replaces": [],
+  "updated": "2026-11-22",
+  "subject": {
+    "places": ["data/skills/230.json の burst の effects[0]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "倍率（999%）は説明文の値、式はバーストスキルダメージの式"
+}

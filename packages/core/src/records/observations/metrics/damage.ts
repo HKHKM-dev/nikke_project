@@ -1,7 +1,9 @@
 // 指標: 与ダメージと 1 ヒットの値・命中率（plan/design-stage19.md 2.3.1 節）
 import { hitFrameOf } from '../../../burst/schedule.ts';
 import { DISTANCE_BONUS, PER_SHOT_DAMAGE_CORE, SKILL_HIT_FULL_BURST_BONUS } from '../../../damage.ts';
+import { perShotDamageOf } from '../../../frame/plan.ts';
 import type { SimResult } from '../../../sim/engine.ts';
+import type { TeamSlotInput } from '../../../team.ts';
 import { applyCritBuffs, capCritRate, pelletsPerShot } from '../../../skills/buffs.ts';
 import { oneHitValue } from '../../../skills/burstDamage.ts';
 import type { CharacterData } from '../../../types.ts';
@@ -99,6 +101,13 @@ export const damageMetrics: Readonly<Record<string, Metric>> = {
     optional: ['fullBurst'],
     args: ['slot', 'frame', 'crit'],
     sim: perShotHitDamage,
+  },
+  // 確率のきっかけの射撃ごとの倍率ダメージの回数の期待値（plan/design-chance-dot-damage.md 5.3 節）。区間ごとの発数 × 弾丸命中率 × 確率の和。
+  // 録画では、射撃ごとの倍率ダメージの値の増分が出た回数と比べる
+  perShotChanceCount: {
+    description: '確率のきっかけの射撃ごとの倍率ダメージの回数の期待値',
+    args: ['slot'],
+    sim: perShotChanceCount,
   },
   burstHitDamage: {
     description: 'バーストの倍率ダメージの n 回目（0 始まり）の 1 発動の値',
@@ -247,6 +256,23 @@ function bulletHitRate(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
+ * 枠の射撃ごとの倍率ダメージに掛けた確率（確率のきっかけ。plan/design-chance-dot-damage.md 3.2 節）。無ければ undefined。
+ * 確率の違う効果が混ざると 1 回の値に割り戻せないので落とす
+ */
+function perShotChanceOf(input: TeamSlotInput): number | undefined {
+  const chances = new Set(perShotDamageOf(input).map((e) => e.chance));
+  if (chances.size > 1) throw new Error('確率の違う射撃ごとの倍率ダメージが混ざっている');
+  return [...chances][0];
+}
+
+/** 確率のきっかけの射撃ごとの倍率ダメージの回数の期待値（区間ごとの発数 × 弾丸命中率 × 確率の和）。確率のきっかけが無ければ落とす */
+function perShotChanceCount(result: SimResult, ctx: MetricContext): number {
+  const chance = perShotChanceOf(slotOf(ctx.input.slots, ctx));
+  if (chance === undefined) throw new Error('確率のきっかけの射撃ごとの倍率ダメージが無い');
+  return chance * slotOf(result.slots, ctx).segments.reduce((sum, s) => sum + s.triggers * s.trigger.hitRate, 0);
+}
+
+/**
  * 射撃ごとの倍率ダメージ（perShot。「フルチャージ攻撃が命中した時、最終攻撃力の X% の追加ダメージ」など）の 1 回の値。
  * hitDamage と同じく、その時点の区間の 1 トリガーの perShot から、倍率グループ（1 + 会心 + フルバースト）だけをパターンに差し替えて
  * 組み直す。枠に射撃ごとの倍率ダメージが複数あれば合計の値になる
@@ -264,7 +290,7 @@ function perShotHitDamage(result: SimResult, ctx: MetricContext): number {
   const fullBurst = SKILL_HIT_FULL_BURST_BONUS ? t.boost.fullBurst : 0;
   const expected = 1 + crit.rate * (crit.damage - 1) + fullBurst;
   const pattern = 1 + (ctx.args.crit === true ? crit.damage - 1 : 0) + fullBurst;
-  return (t.perShot / t.hitRate / expected) * pattern;
+  return (t.perShot / t.hitRate / (perShotChanceOf(input) ?? 1) / expected) * pattern;
 }
 
 /**

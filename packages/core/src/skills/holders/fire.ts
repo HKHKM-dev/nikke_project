@@ -13,7 +13,7 @@ import { namedStateGroup, namedStateIsDebuff, statesMatching, type NamedStateId 
 import { isEffectTarget, type FireContext } from '../targets.ts';
 
 const buffKey = (holder: number, stat: BuffStat): string => `${holder}:${stat}`;
-import { shotCountWeight, type ShotEvent } from '../triggers.ts';
+import { chanceQ, type ShotEvent } from '../triggers.ts';
 import { type BuffStat, isAllyDecrease, type EffectCondition } from '../types.ts';
 import type { AppliedRecord } from '../timeline.ts';
 import {
@@ -87,8 +87,8 @@ export function createFire({
     f: number,
   ): void => {
     if (!opportunities || !shot || f + 1 >= frames) return;
-    const weight = shotCountWeight(trigger.count, shot);
-    if (weight > 0) opportunities.push({ start: f + 1, q: Math.min(1, trigger.chance * weight) });
+    const q = chanceQ(trigger, shot);
+    if (q > 0) opportunities.push({ start: f + 1, q });
   };
   // ---- 登録 ----
   /** timed の発火 1 つを、対象の持ち主の件の列に足す。対象になった枠を返す */
