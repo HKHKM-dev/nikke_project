@@ -298,8 +298,8 @@ export function dropSnapshot({ ghost }: ContentSnapshot): void {
 }
 
 /**
- * 写しを、(dx, dy) だけ動かしながら、動きの後半で透明にして消す（編成を切り替えて、立ち絵の枠が四角と縦長で入れ替わる）。
- * 動かす量は、usePartySwitch が上端・下端をそろえる位置から決める。透明にするのは、新しい枠を現す fadeInContent が前半で現れ終えた後
+ * 写しを、(dx, dy) だけ動かしながら、動きの前半で透明にして消す（編成を切り替えて、立ち絵の枠が四角と縦長で入れ替わる）。
+ * 動かす量は、usePartySwitch が上端・下端をそろえる位置から決める。前半で透明になり終え、真ん中で新しい枠に切り替わる（後半で fadeInContent が現す）
  */
 export function dissolveSnapshot({ ghost }: ContentSnapshot, dx: number, dy: number): void {
   const remove = () => ghost.remove();
@@ -307,7 +307,7 @@ export function dissolveSnapshot({ ghost }: ContentSnapshot, dx: number, dy: num
     .animate([{ transform: 'none' }, { transform: `translate(${dx}px, ${dy}px)` }], FLIGHT)
     .finished.then(undefined, () => undefined);
   ghost
-    .animate([{ opacity: 1 }, { opacity: 1, offset: 0.5 }, { opacity: 0 }], {
+    .animate([{ opacity: 1 }, { opacity: 0, offset: 0.5 }, { opacity: 0 }], {
       duration: FLIGHT.duration,
       easing: 'linear',
       fill: FLIGHT.fill,
@@ -315,9 +315,9 @@ export function dissolveSnapshot({ ghost }: ContentSnapshot, dx: number, dy: num
     .finished.then(remove, remove);
 }
 
-/** 新しい枠を、動きの前半で透明から不透明にして現す。fromY が 0 でなければ、本来の位置から縦に fromY ずれた所から動かす */
+/** 新しい枠を、動きの後半で透明から不透明にして現す。fromY が 0 でなければ、本来の位置から縦に fromY ずれた所から動かす */
 export function fadeInContent(node: Element, fromY: number): void {
-  node.animate([{ opacity: 0 }, { opacity: 1, offset: 0.6 }, { opacity: 1 }], {
+  node.animate([{ opacity: 0 }, { opacity: 0, offset: 0.5 }, { opacity: 1 }], {
     duration: FLIGHT.duration,
     easing: 'linear',
   });
