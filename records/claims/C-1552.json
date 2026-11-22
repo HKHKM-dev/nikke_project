@@ -1,0 +1,15 @@
+{
+  "id": "C-1552",
+  "text": "ブランの S2 の「フルバーストタイム終了時、同じ部隊の味方がいれば自分のバーストスキルクールタイム▼」は、同じ部隊（777）の味方がいない編成では起きない（ブランのバーストスキルクールタイムは 60 秒のまま）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0827-08`・`0828-09`・`0829-09`。V-0868",
+  "model": "`data/skills/270.json` の skill2 の effects[1]（`cooldownReduction`・`fullBurstEnd`・`self`・`squad: { present: true }`）と、`skills/composition.ts` の `squadAllows`",
+  "replaces": [],
+  "updated": "2026-11-22",
+  "subject": {
+    "places": ["data/skills/270.json の skill2 の effects[1]"]
+  },
+  "decidedOn": []
+}
