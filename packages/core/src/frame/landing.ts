@@ -45,7 +45,6 @@ import type {
   LandingPoint,
   SkillSlot,
   TargetProfile,
-  HitRateDownTable,
   TargetRateByProjectile,
   TargetRateRow,
   TargetRateTable,
