@@ -33,12 +33,14 @@
           "damageType": "skill",
           "delayFrames": 49,
           "assumes": {
-            "ja": "説明文にきっかけの無いアクティブ型のスキルで、戦闘開始からクールタイム 10 秒ごとに発動し（撃たない間も）、発動からヒットまで 49f（録画 1283 で読み、1282 で再現。C-1407）。値（撃つ側のバフ・フルバースト補正）を発動の時とヒットの時のどちらで決めるかは確かめていない（モデルはヒットの時。周期の倍率ダメージのラピ・イサベル・スノーホワイトは発動の時。C-1509・C-0864・C-1417）。ゲージは effects[1]。最終防御力が最も高い敵 1 機は的 1 体で 1 ヒット",
-            "en": "An active skill with no trigger in its description, activating every 10 s cooldown from the start of combat (also while not firing), with 49 f from activation to hit (read in recording 1283, reproduced in 1282; C-1407). Whether the value (shooter buffs and the Full Burst bonus) is fixed at activation or at the hit is not verified (the model uses the hit; the periodic skill damage of Rapi, Isabel and Snow White is fixed at activation: C-1509, C-0864, C-1417). The gauge is effects[1]. The single highest-DEF enemy is the lone target, hit once"
+            "ja": "説明文にきっかけの無いアクティブ型のスキルで、戦闘開始からクールタイム 10 秒ごとに発動し（撃たない間も）、発動からヒットまで 49f（録画 1283 で読み、1282 で再現。C-1407）。値（撃つ側のバフ）は発動の直前で決める（C-1535。発動の後・ヒットの前に S1 の攻撃力▲が付いても乗らない）。ゲージは effects[1]。最終防御力が最も高い敵 1 機は的 1 体で 1 ヒット",
+            "en": "An active skill with no trigger in its description, activating every 10 s cooldown from the start of combat (also while not firing), with 49 f from activation to hit (read in recording 1283, reproduced in 1282; C-1407). The value (shooter buffs) is fixed just before activation (C-1535; an S1 ATK up that starts between activation and the hit does not apply). The gauge is effects[1]. The single highest-DEF enemy is the lone target, hit once"
           },
           "claims": [
-            "C-1407"
-          ]
+            "C-1407",
+            "C-1535"
+          ],
+          "valueBeforeFire": true
         },
         {
           "kind": "burstGaugeHit",
