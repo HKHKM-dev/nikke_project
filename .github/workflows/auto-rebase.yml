@@ -25,6 +25,7 @@ jobs:
       issues: read
     outputs:
       targets: ${{ steps.find.outputs.targets }}
+      prs: ${{ steps.find.outputs.prs }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -37,14 +38,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-  # PR のブランチを取り出して、そのブランチの版の records:renumber・pr:prep を回す。鍵は無く、token は読むだけ
+  # PR のブランチを取り出して、そのブランチの版の records:renumber・pr:prep を回す。鍵も token も渡さない（PR は find が渡す）
   prepare:
     needs: find
     if: needs.find.outputs.targets != ''
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: read
     outputs:
       entries: ${{ steps.prepare.outputs.entries }}
     steps:
@@ -67,8 +67,7 @@ jobs:
       - id: prepare
         run: node tools/git/auto-rebase.ts --prepare "$RUNNER_TEMP/auto-rebase"
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-          TARGETS: ${{ needs.find.outputs.targets }}
+          PRS: ${{ needs.find.outputs.prs }}
       - uses: actions/upload-artifact@v7
         with:
           name: auto-rebase
@@ -78,16 +77,14 @@ jobs:
 
   # main の版を取り出しただけの作業ツリーで、prepare の bundle を PR のブランチに push し、コメントする（npm ci もしない）
   push:
-    needs: prepare
+    needs: [find, prepare]
     if: needs.prepare.outputs.entries != '0'
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: write
       issues: write
-    environment:
-      name: main-push
-      deployment: false
+    environment: main-push
     steps:
       - uses: actions/checkout@v7
         with:
@@ -103,3 +100,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           DEPLOY_KEY: ${{ secrets.GENERATED_DEPLOY_KEY }}
+          TARGETS: ${{ needs.find.outputs.targets }}

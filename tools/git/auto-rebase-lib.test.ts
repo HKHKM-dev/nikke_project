@@ -148,6 +148,18 @@ describe('transientFailure', () => {
       true,
     );
   });
+  it('looks only at the last lines, where the reason for stopping is', () => {
+    const warnings = [
+      "warning: unable to access '/root/.config/git/attributes': Permission denied",
+      'npm warn ECONNRESET retry',
+    ];
+    expect(
+      transientFailure([...warnings, 'a', 'b', 'c', 'd', 'CONFLICT (content): Merge conflict in plan/x.md'].join('\n')),
+    ).toBe(false);
+    expect(
+      transientFailure("fatal: unable to access 'https://github.com/o/r/': The requested URL returned error: 403"),
+    ).toBe(false);
+  });
   it('does not treat conflicts and tool errors as transient', () => {
     expect(transientFailure('CONFLICT (content): Merge conflict in plan/design-x.md')).toBe(false);
     expect(transientFailure('Error: records:check が止まった')).toBe(false);
@@ -175,6 +187,9 @@ describe('parsePrepManifest', () => {
     expect(() => parsePrepManifest(JSON.stringify([{ ...ready, number: 0 }]))).toThrow('number');
     expect(() => parsePrepManifest(JSON.stringify([{ ...ready, sha: 'main' }]))).toThrow('sha');
     expect(() => parsePrepManifest(JSON.stringify([{ ...ready, kind: 'push' }]))).toThrow('kind');
+    expect(() =>
+      parsePrepManifest(JSON.stringify([ready, { number: 12, sha: B, kind: 'failed', reason: 'r' }])),
+    ).toThrow('2 回ある');
     expect(() =>
       parsePrepManifest(JSON.stringify([{ ...ready, renumbered: [{ from: 'C-0001', to: 'refs/heads/main' }] }])),
     ).toThrow('renumbered');

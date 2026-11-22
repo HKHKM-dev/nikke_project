@@ -59,9 +59,7 @@ jobs:
     needs: check
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
-    environment:
-      name: main-push
-      deployment: false
+    environment: main-push
     steps:
       - uses: actions/checkout@v7
         with:

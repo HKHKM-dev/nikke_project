@@ -40,7 +40,7 @@ export function addsRecords(files: readonly PullFile[]): boolean {
 
 /**
  * 直してみる PR か。衝突（mergeable が false）か、決まらなかった（null）か、ID の重なりうる記録を足したもの（検証記録はファイル名に
- * 名前が付くので、番号が重なっても Git の衝突にならない。重なりは --fix が git で確かめる）
+ * 名前が付くので、番号が重なっても Git の衝突にならない。重なりは --prepare が git で確かめる）
  */
 export function worthFixing(mergeable: boolean | null, files: readonly PullFile[]): boolean {
   return mergeable !== true || addsRecords(files);
@@ -101,12 +101,13 @@ export function pushOutcome(status: number, stderr: string): 'pushed' | 'stale' 
 }
 
 /**
- * 道具の出力が、通信などの一時の失敗で止まったものか（fetch・npm の取得の失敗）。一時の失敗はコメントせず、次の実行で直し直す
+ * 道具の出力が、通信などの一時の失敗で止まったものか（fetch・npm の取得の失敗）。止まった理由は出力の終わりに出るので、末尾の 5 行
+ * だけを見る（途中の警告やテストの出力の語に当たらないように）。一時の失敗はコメントせず、次の実行で直し直す
  * （コメントすると --find がこの head を飛ばし続ける）
  */
 export function transientFailure(output: string): boolean {
-  return /Could not resolve host|unable to access|Connection (?:reset|timed out|refused)|early EOF|RPC failed|ECONNRESET|ETIMEDOUT|EAI_AGAIN|ENOTFOUND|socket hang up|npm (?:ERR!|error) network/i.test(
-    output,
+  return /Could not resolve host|Connection (?:reset|timed out|refused)|early EOF|RPC failed|ECONNRESET|ETIMEDOUT|EAI_AGAIN|socket hang up|npm (?:ERR!|error) network/i.test(
+    tail(output, 5),
   );
 }
 
@@ -133,12 +134,15 @@ const SHA = /^[0-9a-f]{40}$/;
 export function parsePrepManifest(text: string): PrepEntry[] {
   const data: unknown = JSON.parse(text);
   if (!Array.isArray(data)) throw new Error(`${PREP_MANIFEST} が配列でない`);
+  const seen = new Set<number>();
   return data.map((e: unknown, i): PrepEntry => {
     const bad = (what: string) => new Error(`${PREP_MANIFEST} の ${i} 番目: ${what}`);
     if (typeof e !== 'object' || e === null) throw bad('オブジェクトでない');
     const o = e as Record<string, unknown>;
     const { number, sha, kind } = o;
     if (typeof number !== 'number' || !Number.isInteger(number) || number <= 0) throw bad('number が正の整数でない');
+    if (seen.has(number)) throw bad(`#${number} が 2 回ある`);
+    seen.add(number);
     if (typeof sha !== 'string' || !SHA.test(sha)) throw bad('sha が 40 桁の 16 進でない');
     if (kind === 'failed') {
       if (typeof o['reason'] !== 'string') throw bad('reason が文字列でない');

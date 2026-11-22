@@ -1,10 +1,12 @@
 // 自動マージを待つ PR の衝突を直す（plan/design-auto-conflict-fix.md 2 節の案 A）。main への push で .github/workflows/auto-rebase.yml が
 // 3 つのジョブで回す。PR のブランチの道具を回すジョブ（--prepare）と、デプロイキーを持つジョブ（--push）を分ける
 // （plan/design-deploy-key-scope.md 2 節）。
-//   node tools/git/auto-rebase.ts --find             自動マージを予約した PR のうち、直してみるものの番号を GITHUB_OUTPUT の targets に書く
-//                                                    （mergeable が決まるまで問い直す。npm ci の前に回るので node のほかは読まない）
-//   node tools/git/auto-rebase.ts --prepare <dir>    鍵を持たないジョブで、環境変数 TARGETS の PR を 1 本ずつ次のように直し、結果を
-//                                                    <dir> に置く（PR ごとの bundle と manifest.json。artifact で --push に渡す）
+//   node tools/git/auto-rebase.ts --find             自動マージを予約した PR のうち、直してみるものの番号を GITHUB_OUTPUT の targets に、
+//                                                    その PR（mergeable を入れた JSON）を prs に書く（mergeable が決まるまで問い直す。
+//                                                    npm ci の前に回るので node のほかは読まない）
+//   node tools/git/auto-rebase.ts --prepare <dir>    鍵も token も持たないジョブで、環境変数 PRS（--find の prs）の PR を 1 本ずつ次の
+//                                                    ように直し、結果を <dir> に置く（PR ごとの bundle と manifest.json。artifact で
+//                                                    --push に渡す）
 // 1. origin のブランチが、問い合わせた head のままか確かめる（進んでいれば、次の実行に任せる）。
 // 2. ブランチで足した ID が main と重なっていれば（pr:prep と同じ判定）、検証記録・結論は records:renumber で振り直す。振り直しも
 //    main の新しい commit も無ければ飛ばす。ブランチを 1 つの commit にまとめる（振り直す前の ID のファイルを足した commit が、
@@ -14,8 +16,9 @@
 //    コメントに回す。型・テスト・ビルドは、push で起きる PR の CI に任せる。
 // 4. main の先頭からの commit を bundle にする。
 //   node tools/git/auto-rebase.ts --push <dir>       デプロイキーを持つジョブで、--prepare の結果を受けて push とコメントをする。PR の
-//                                                    ブランチの道具は何も回さない（main の版のこの道具と git だけ。npm ci もしない）
-// 5. GitHub の API で PR を引き直し、対象のままで head が --prepare の時と同じなら、bundle を取り込み、問い合わせた head を期待値に
+//                                                    ブランチの道具は何も回さない（main の版のこの道具と git だけ。npm ci もしない）。
+//                                                    結果は環境変数 TARGETS（--find の targets）の PR に限る
+// 5. 直せなかった PR に先にコメントする（鍵が要らない）。GitHub の API で PR を引き直し、対象のままで head が --prepare の時と同じなら、bundle を取り込み、問い合わせた head を期待値に
 //    して --force-with-lease でそのブランチにだけ push する（セッションが先に push していたら断られて何もしない）。
 // 6. 振り直したら PR の題名・本文の ID を書き換え、手元を揃えてもらうコメントを書く。push の後に自動マージが外れていたらコメントする
 //    （予約し直さない。GITHUB_TOKEN で予約すると、マージの push で main の CI が起きない）。
@@ -51,7 +54,6 @@ import {
   worthFixing,
 } from './auto-rebase-lib.ts';
 import { cliArgs } from '../../packages/core/scripts/cli.ts';
-import { renumberInText } from '../../packages/core/src/records/renumber.ts';
 
 const { values } = cliArgs(import.meta.url, {
   options: {
@@ -64,9 +66,10 @@ const { values } = cliArgs(import.meta.url, {
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const repo = process.env['GITHUB_REPOSITORY'];
 const token = process.env['GITHUB_TOKEN'];
-if (!repo || !token) throw new Error('GITHUB_REPOSITORY・GITHUB_TOKEN が要る');
+if (!repo) throw new Error('GITHUB_REPOSITORY が要る');
 
 async function api<T>(path: string, init?: { method: string; body: unknown }): Promise<T> {
+  if (!token) throw new Error('GITHUB_TOKEN が要る');
   const r = await fetch(`https://api.github.com/repos/${repo}${path}`, {
     method: init?.method ?? 'GET',
     headers: {
@@ -100,9 +103,14 @@ async function comment(n: number, kind: MarkKind, sha: string, body: string): Pr
 
 type Run = ReturnType<GitRun>;
 
-/** 文の中の振り直した ID を、新しい ID に書き換える */
-const replaceIds = (text: string, pairs: readonly Renumber[]) =>
-  pairs.reduce((t, r) => renumberInText(t, r.from, r.to).text, text);
+/**
+ * 文の中の振り直した ID を新しい ID に書き換える関数（renumber.ts は core を広く読むので、--find では読まない。core が npm の
+ * パッケージを読むようになっても --find が落ちないように）
+ */
+async function idReplacer(): Promise<(text: string, pairs: readonly Renumber[]) => string> {
+  const { renumberInText } = await import('../../packages/core/src/records/renumber.ts');
+  return (text, pairs) => pairs.reduce((t, r) => renumberInText(t, r.from, r.to).text, text);
+}
 
 function run(cmd: string, args: readonly string[], env?: Record<string, string>): Run {
   const r = spawnSync(cmd, args, { cwd: ROOT, encoding: 'utf8', env: { ...process.env, ...env } });
@@ -125,13 +133,14 @@ if (values.find) {
       const files = mergeable === true ? await api<PullFile[]>(`/pulls/${p.number}/files?per_page=100`) : [];
       const failed = worthFixing(mergeable, files) && commented(await commentBodies(p.number), 'failed', p.head.sha);
       console.log(`#${p.number} ${p.head.ref}: mergeable=${mergeable}${failed ? '（この head は直せなかった）' : ''}`);
-      return !failed && worthFixing(mergeable, files) ? [p.number] : [];
+      return !failed && worthFixing(mergeable, files) ? [{ ...p, mergeable }] : [];
     }),
   );
   const targets = picked.flat();
-  console.log(`直してみる PR: ${targets.map((n) => `#${n}`).join('・') || 'なし'}`);
+  console.log(`直してみる PR: ${targets.map((p) => `#${p.number}`).join('・') || 'なし'}`);
   const out = process.env['GITHUB_OUTPUT'];
-  if (out) appendFileSync(out, `targets=${targets.join(' ')}\n`);
+  // prs は 1 行の JSON（--prepare は token を持たないので、PR はここで渡す）
+  if (out) appendFileSync(out, `targets=${targets.map((p) => p.number).join(' ')}\nprs=${JSON.stringify(targets)}\n`);
   process.exit(0);
 }
 
@@ -145,14 +154,12 @@ async function prepare(dir: string): Promise<void> {
   const { AUTO_REBASE_COMMITTER, AUTO_REBASE_ENV, branchCollisions, nulPaths, pathListArgs, squashBranch } =
     await import('./pr-prep-lib.ts');
   const { idsInBranches } = await import('../../packages/core/scripts/records-data.ts');
+  const replaceIds = await idReplacer();
 
   const gitPaths = (args: readonly string[]): string[] =>
     nulPaths(execFileSync('git', pathListArgs(args), { cwd: ROOT, encoding: 'utf8' }));
 
-  // PR を先に全部引き、token を子に渡さない（このジョブの token は読むだけだが、PR のブランチの道具には要らない）
-  const prs: Pull[] = [];
-  for (const n of targetNumbers()) prs.push(await pull(n));
-  delete process.env['GITHUB_TOKEN'];
+  const prs = JSON.parse(process.env['PRS'] ?? '[]') as Pull[];
   // 子の pr:prep・records:renumber の commit も同じ身元にする。子の pr:prep は、origin のブランチをこの身元が直していても止めない
   Object.assign(process.env, {
     GIT_AUTHOR_NAME: AUTO_REBASE_COMMITTER.name,
@@ -289,24 +296,37 @@ async function prepare(dir: string): Promise<void> {
  * 失敗は、残りの PR を続けてから 1 で終わる
  */
 async function push(dir: string): Promise<void> {
-  const { sshEnv, sshRemote } = await import('./deploy-key.ts');
-  const key = process.env['DEPLOY_KEY'];
-  if (!key) throw new Error('environment の secret の GENERATED_DEPLOY_KEY（環境変数 DEPLOY_KEY）が要る');
-  const ssh = sshEnv(key);
-  const remote = sshRemote(repo!);
-
-  const entries = parsePrepManifest(readFileSync(join(dir, PREP_MANIFEST), 'utf8'));
-  if (entries.length === 0) {
-    console.log('push するものもコメントするものも無い');
-    return;
-  }
-  // bundle は --prepare の時の main の先頭を前提にするので、main を取る（浅い取り出しでも、先頭までの commit が入る）
-  // このジョブの作業ツリーは main の版を取り出しただけなので、フックは無い。念のため git にフックを読ませない
-  const gitRun: GitRun = (args) => run('git', [...NO_HOOKS, ...args], ssh);
-  if (gitRun(['fetch', '--quiet', '--no-tags', remote, '+refs/heads/main:refs/remotes/origin/main']).status !== 0)
-    throw new Error('デプロイキーで main を取れない');
-
   let errors = 0;
+  // --prepare のジョブの中身は PR のブランチの道具が書き換えうるので、--find が選んだ PR に限る（直せなかった PR を先に回す）
+  const targets = new Set(targetNumbers());
+  const entries = parsePrepManifest(readFileSync(join(dir, PREP_MANIFEST), 'utf8'))
+    .filter((e) => {
+      if (targets.has(e.number)) return true;
+      console.log(`::error::#${e.number}: --find が選んでいない PR が結果にある。読まない`);
+      errors++;
+      return false;
+    })
+    .sort((a, b) => Number(b.kind === 'failed') - Number(a.kind === 'failed'));
+
+  /** 鍵で git を回す準備（初めて push する時に 1 回だけ。鍵が無いか main を取れなければ投げる） */
+  let keyed: { gitRun: GitRun; remote: string } | undefined;
+  async function withKey(): Promise<{ gitRun: GitRun; remote: string }> {
+    if (keyed) return keyed;
+    const { sshEnv, sshRemote } = await import('./deploy-key.ts');
+    const key = process.env['DEPLOY_KEY'];
+    if (!key)
+      throw new Error('environment の main-push の secret の GENERATED_DEPLOY_KEY（環境変数 DEPLOY_KEY）が要る');
+    const ssh = sshEnv(key);
+    const remote = sshRemote(repo!);
+    // このジョブの作業ツリーは main の版を取り出しただけなので、フックは無い。念のため git にフックを読ませない
+    const gitRun: GitRun = (args) => run('git', [...NO_HOOKS, ...args], ssh);
+    // bundle は --prepare の時の main の先頭を前提にするので、main を取る（浅い取り出しでも、先頭までの commit が入る）
+    if (gitRun(['fetch', '--quiet', '--no-tags', remote, '+refs/heads/main:refs/remotes/origin/main']).status !== 0)
+      throw new Error('デプロイキーで main を取れない');
+    keyed = { gitRun, remote };
+    return keyed;
+  }
+
   const pushed: { n: number; head: string }[] = [];
   for (const entry of entries) {
     const n = entry.number;
@@ -322,6 +342,7 @@ async function push(dir: string): Promise<void> {
         continue;
       }
       const branch = pr.head.ref;
+      const { gitRun, remote } = await withKey();
       const { head, outcome } = pushBundle(gitRun, {
         bundle: join(dir, prepBundle(n)),
         number: n,
@@ -341,11 +362,13 @@ async function push(dir: string): Promise<void> {
       }
       console.log(`#${n}: 直して push した（${head.slice(0, 8)}）`);
       pushed.push({ n, head });
-      if (entry.renumbered.length > 0)
+      if (entry.renumbered.length > 0) {
+        const replaceIds = await idReplacer();
         await api(`/pulls/${n}`, {
           method: 'PATCH',
           body: { title: replaceIds(pr.title, entry.renumbered), body: replaceIds(pr.body ?? '', entry.renumbered) },
         });
+      }
       await comment(n, 'fixed', head, fixedComment(head, branch, entry.renumbered));
     } catch (e) {
       console.log(`::error::#${n}: ${(e as Error).message}`);

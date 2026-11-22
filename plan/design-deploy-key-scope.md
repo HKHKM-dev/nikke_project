@@ -24,14 +24,14 @@ environment の secret は、その environment を指したジョブにしか�
 
 ### 2.2 ワークフローと道具
 
-- 鍵を使うジョブには `environment: { name: main-push, deployment: false }` を付ける（`deployment: false` で、Deployments の一覧に記録を作らない）。
+- 鍵を使うジョブには `environment: main-push` を付ける。`deployment: false`（Deployments の一覧に記録を作らない指定）は付けない。この指定のジョブにもブランチの制限がかかるかを、文書と手元で確かめられなかったため（記録が増えるだけで、制限は確実にかかる）。
 - **CI（`ci.yml`）**: 生成物の commit を `commit` のジョブに分ける。
   - `check` のジョブ（依存のパッケージを入れて確認を回す）は、作り直した生成物を全部 `ci-generated.ts --export` で写し、artifact で渡すだけにする。
   - `commit` のジョブは、main の版を取り出しただけの作業ツリーで（`npm ci` もしない）、`ci-generated.ts --commit` が生成物のパスのものだけを戻して commit し、push する（artifact にほかのファイルがあっても読まない）。
 - **衝突の直し（`auto-rebase.yml`）**: 3 つのジョブに分ける。
   - `find`: 今のまま（API だけ。鍵なし）。
-  - `prepare`: 鍵なし、token は読むだけ。PR のブランチの版の道具で振り直し・まとめ・`pr:prep` を回し、main の先頭からの commit を git bundle にして、結果の一覧（`manifest.json`）と一緒に artifact で渡す。観測値のモデルの予測値の覚え（キャッシュ）は戻すだけで、保存しない。
-  - `push`: 鍵あり。main の版を取り出しただけの作業ツリーで（`npm ci` もしない）、`auto-rebase.ts --push` が一覧の形を確かめ、PR を API で引き直し、対象のままで head が `prepare` の時と同じなら、bundle を取り込んで、そのブランチにだけ lease つきで push する。題名の書き換えとコメントもここで行う。
+  - `prepare`: 鍵も token も渡さない（PR は `find` が出力で渡す）。PR のブランチの版の道具で振り直し・まとめ・`pr:prep` を回し、main の先頭からの commit を git bundle にして、結果の一覧（`manifest.json`）と一緒に artifact で渡す。観測値のモデルの予測値の覚え（キャッシュ）は戻すだけで、保存しない。
+  - `push`: 鍵あり。main の版を取り出しただけの作業ツリーで（`npm ci` もしない）、`auto-rebase.ts --push` が一覧の形を確かめて `find` の選んだ PR に限り、直せなかった PR に先にコメントしてから、PR を API で引き直し、対象のままで head が `prepare` の時と同じなら、bundle を取り込んで、そのブランチにだけ lease つきで push する。題名の書き換えとコメントもここで行う。
   - bundle と一覧の中身は、PR のブランチの道具が決められる。ただし push の先は、API で引き直した `claude/`・`antigrav/` のブランチだけなので、そのブランチに書き込める者ができることは増えない。
 - あわせて直したもの（同じ所の組み替えで済むもの）:
   - 振り直しも main の新しい commit も無い PR は、まとめて push し直さない（前は `mergeable` が決まらなかった PR を、直すものが無くてもまとめて push し直した）。
