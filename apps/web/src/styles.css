@@ -1412,7 +1412,10 @@ svg.roster-revert-icon {
   justify-content: center;
   --badge-w: 20px;
 }
+/* 四角の顔の絵（ニケ一覧の四角・所持の編集の一覧）。枠線を含めて --tray-visual-w に収める（縦長の絵 .char-visual-tall・スロットの絵と同じ幅。
+   含めないと、枠線の分だけ左右に 1px ずつはみ出し、縦長より 2px 広く見え、配置中の水色の枠からも出る。オーナーの指示） */
 .char-visual-compact {
+  box-sizing: border-box;
   max-width: var(--tray-visual-w);
 }
 /* ニケ一覧の縦長の絵（portraits を一覧の幅に縮める。元の絵と同じ 1:2 の枠）。見た目はスロットの立ち絵（.char-visual-portrait）と同じで、
