@@ -1,11 +1,5 @@
 // クラシックのスロットの上の「並べ替え」で開く「一覧の並び」の欄（ClassicView）: 並びと向き（plan/design-combat-power-sort.md 6 節）
-import {
-  LIST_DIRECTION_LABEL,
-  LIST_DIRECTION_MARK,
-  LIST_ORDERS,
-  LIST_ORDER_LABEL,
-  OVERLOAD_WITHOUT_ROSTER_HINT,
-} from '../listOrder.ts';
+import { LIST_DIRECTION_MARK, LIST_ORDERS, LIST_ORDER_LABEL, OVERLOAD_WITHOUT_ROSTER_HINT } from '../listOrder.ts';
 import type { ListOrderControls } from '../useListOrder.ts';
 
 /** 知らせの文が長いとメニューが横に広がるので、幅を抑える */
@@ -37,12 +31,7 @@ export function ListOrderSettings({
           />
           <span>
             {LIST_ORDER_LABEL[o]}
-            {order === o && (
-              <span title={`${LIST_DIRECTION_LABEL[direction]}（押すと入れ替える）`}>
-                {' '}
-                {LIST_DIRECTION_MARK[direction]}
-              </span>
-            )}
+            {order === o && <span> {LIST_DIRECTION_MARK[direction]}</span>}
           </span>
         </label>
       ))}

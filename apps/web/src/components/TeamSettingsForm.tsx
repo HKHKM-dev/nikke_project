@@ -8,7 +8,7 @@ import { IntInput } from './IntInput.tsx';
 import { Popover } from './Popover.tsx';
 import { ROSTER_REVERT_LABEL } from './RosterRevertButton.tsx';
 import { BadgeIcon } from './modern/BadgeIcon.tsx';
-import { RETURN_BADGE } from './modern/badges.ts';
+import { ELEMENT_BADGE_KIND, EMPTY_ELEMENT_BADGE, RETURN_BADGE } from './modern/badges.ts';
 
 /** スペック固定の間にリサイクルルームの欄に出す値（計算は研究なし） */
 const NO_CONSOLE = emptyConsole();
@@ -66,8 +66,15 @@ export function TeamSettingsForm({
               <option value="range-bigarms">射撃場BigArms</option>
             </select>
           </label>
+          {/* 属性の文字の横に、選んでいる属性のバッジを出す（属性なしは空の六角形）。バッジは選択欄の外 */}
           <label className="field">
-            <span>属性</span>
+            <span className="settings-element-label">
+              属性
+              <BadgeIcon
+                name={element ? ELEMENT_BADGE_KIND.badges[element]!.name : EMPTY_ELEMENT_BADGE}
+                className="settings-element-badge"
+              />
+            </span>
             <select
               value={element ?? ''}
               onChange={(e) =>
@@ -142,12 +149,14 @@ export function TeamSettingsForm({
               />
             </fieldset>
           </Popover>
-          {rosterCommon !== null && (
+          {/* アイコンのボタン（モダン UI）は、育成状況が無くても薄く（押せない状態で）出しておく（オーナーのコメント） */}
+          {(rosterCommon !== null || revertIcon) && (
             <InertButton
               className={revertIcon ? 'roster-revert-icon-button' : undefined}
               label={revertIcon ? ROSTER_REVERT_LABEL : undefined}
               enabled={canRevert}
               onPress={() => {
+                if (rosterCommon === null) return;
                 dispatch({ type: 'setSynchroLevel', synchroLevel: rosterCommon.synchroLevel });
                 dispatch({ type: 'setConsole', console: rosterCommon.console });
               }}

@@ -343,37 +343,6 @@ export function placeCharacterAction(state: TeamState, resourceId: number, index
   return { type: 'selectCharacter', index, resourceId };
 }
 
-/** スロットごとのニケ（null は空き）。スロットのニケの並び */
-export type Arrangement = readonly (number | null)[];
-export const arrangementOf = (team: Pick<TeamState, 'slots'>): Arrangement => team.slots.map((s) => s.resourceId);
-
-/**
- * スロットのニケの並びを current から target（どちらもスロットごとのニケ。null は空き）にする操作の列（スロットの並びを元に戻す。
- * useSlotUndo）。target にいないニケを外し、いるニケは入れ替えで target の位置へ動かし（育成・設定もニケと一緒に動く）、
- * いないニケを選ぶ。target は同じニケを 2 回持たない
- */
-export function rearrangeActions(current: Arrangement, target: Arrangement): TeamAction[] {
-  const actions: TeamAction[] = [];
-  const now = [...current];
-  now.forEach((id, i) => {
-    if (id !== null && !target.includes(id)) {
-      actions.push({ type: 'clearSlot', index: i });
-      now[i] = null;
-    }
-  });
-  target.forEach((id, i) => {
-    if (id === null || now[i] === id) return;
-    const from = now.indexOf(id);
-    if (from === -1) return;
-    actions.push({ type: 'swapSlots', fromIndex: from, toIndex: i });
-    [now[from], now[i]] = [now[i]!, id];
-  });
-  target.forEach((id, i) => {
-    if (id !== null && now[i] !== id) actions.push({ type: 'selectCharacter', index: i, resourceId: id });
-  });
-  return actions;
-}
-
 /** 他の枠で選択中のニケ（index の枠自身は除く） */
 export function takenResourceIds(state: TeamState, index: number): Set<number> {
   const ids = new Set<number>();

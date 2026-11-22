@@ -213,16 +213,15 @@ header h1 {
   align-items: center;
   gap: 8px;
 }
-/* 枠と地を出さず、絵だけのボタン（育成と設定・元に戻す・スロットの右上・絞り込みのクリア・共通育成の「育成状況の値に戻す」） */
+/* 枠と地を出さず、絵だけのボタン（アカウントと設定・スロットの右上・絞り込みのクリア） */
 .settings-menu-button,
-.modern-slot-undo-button,
 .modern-slot-icon-button,
 .char-tray-filter-clear {
   border: none;
   background: none;
   box-shadow: none;
 }
-/* 共通育成の「育成状況の値に戻す」（モダン UI。絵だけのボタン。バッジ ui_return）。戻せないときは、元に戻すのボタンと同じく薄くする */
+/* 共通育成の「育成状況の値に戻す」（モダン UI。絵だけのボタン。バッジ ui_return）。戻せないときは薄くする */
 .roster-revert-icon-button {
   display: inline-flex;
   padding: 0 4px;
@@ -240,7 +239,7 @@ header h1 {
   width: 26px;
   height: 26px;
 }
-/* 育成と設定のボタン（モダン UI。絵はバッジ ui_account・ui_window の正方形） */
+/* アカウントと設定のボタン（モダン UI。絵はバッジ ui_account・ui_window の正方形） */
 .settings-menu-button {
   display: grid;
   place-items: center;
@@ -259,14 +258,12 @@ header h1 {
   display: block;
   width: 22px;
 }
-/* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。育成と設定のボタン・設定のメニューの選択肢の絵・未対応の印 ⓘ・
-   元に戻す・やり直すのボタン・ニケ一覧の絞り込みのクリア・共通育成の「育成状況の値に戻す」 */
-.settings-menu-icon,
-.settings-option-icon,
-.char-unsupported-icon,
-.modern-slot-undo-icon,
-.char-tray-filter-clear-icon,
-.roster-revert-icon {
+/* ライトでは色を反転する（地を白、縁と図柄を暗い色、外の線を白）。育成と設定のボタン・設定のメニューの選択肢の絵・
+   ニケ一覧の絞り込みのクリア・共通育成の「育成状況の値に戻す」。図柄を白にするバッジごとの規則より強くするため、要素名や親を付ける */
+svg.settings-menu-icon,
+svg.settings-option-icon,
+svg.char-tray-filter-clear-icon,
+svg.roster-revert-icon {
   --badge-ground: light-dark(#ffffff, #1a1a1a);
   --badge-main: light-dark(#1a1a1a, #ffffff);
   --badge-accent: light-dark(#1a1a1a, #ffffff);
@@ -292,15 +289,18 @@ header h1 {
 /* 使えない入力欄・選択欄・ラジオボタン（disabled でなく aria-disabled。components/inertControl.ts） */
 :is(input, select, textarea)[aria-disabled='true'] {
   opacity: 0.5;
-  cursor: not-allowed;
+  cursor: default;
 }
 /* 使えないとき（育成状況が無いときの「書き出す」「消す」など）は色を変えて、押せないと分かるようにする */
 .advanced-settings-button[aria-disabled='true'],
-.advanced-settings-button[aria-disabled='true']:hover {
+.advanced-settings-button[aria-disabled='true']:hover,
+.slot-button[aria-disabled='true'],
+.classic-filter-button[aria-disabled='true'],
+.classic-filter-clear[aria-disabled='true'] {
   color: color-mix(in srgb, var(--app-fg) 35%, transparent);
   background: color-mix(in srgb, var(--app-fg) 6%, var(--app-bg));
   border-color: color-mix(in srgb, var(--app-fg) 12%, transparent);
-  cursor: not-allowed;
+  cursor: default;
 }
 .advanced-settings {
   width: 20em;
@@ -368,6 +368,16 @@ header h1 {
   margin: 2px 0;
   grid-template-columns: max-content auto;
   gap: 6px 10px;
+}
+/* 敵情報の「属性」の文字の横の属性バッジ（属性なしは空の六角形）。文字の高さに合わせる */
+.settings-element-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.settings-element-badge {
+  height: 1.4em;
+  width: auto;
 }
 /* 敵・属性のプルダウンは中身の幅にする（オーナーの指示で狭くした） */
 .settings-simple .field select {
@@ -727,6 +737,89 @@ header h1 {
   display: grid;
   gap: 16px;
 }
+/* 左に敵情報・共通育成・合計ダメージの列、右に編成のスロット（オーナーのコメント）。並べる幅が無いときは折り返して上下にする */
+.modern-top-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px;
+}
+.modern-top-row > .modern-summary-row {
+  flex: 0 0 420px;
+  min-width: 0;
+}
+/* 横に並べる幅（420px・間・スロットの列）が無いときは、枠の列を横いっぱいにしてスロットの上に置く */
+@media (max-width: 1079px) {
+  .modern-top-row > .modern-summary-row {
+    flex-basis: 100%;
+  }
+}
+/* スロットの列は、編成の番号（4em）・間 12px・元の大きさの絵 5 枚の幅まで広がる */
+.modern-top-row > .modern-slots-area {
+  flex: 1 1 calc(4em + 12px + 5 * (256px / 3 + 2px + 2 * 2px) + 1px);
+  min-width: 0;
+}
+/* 横に並べる幅では、スロットを画面の中央に置く（オーナーの指示）。スロットの列を左の枠の列の下まで横いっぱいに広げ（同じ格子の升に重ねる）、
+   編成の行の左の列を、枠の列・間・番号の幅より狭くしない（.modern-party-row の --party-row-lead）。幅が足りなければ、スロットは枠の列に
+   重ならない所まで右に寄る。重ねたスロットの列の空いた所は、下の枠の列の操作を邪魔しない（pointer-events） */
+@media (min-width: 1080px) {
+  .modern-top-row {
+    display: grid;
+    grid-template-columns: 420px minmax(0, 1fr);
+  }
+  .modern-top-row > .modern-summary-row {
+    grid-row: 1;
+    grid-column: 1;
+    position: relative;
+    /* スロットの中の重ねの順（バッジ・操作の印・◎ など。最大 4）より上に置く。枠の列の中のポップアップ（詳細設定）とその幕が、
+       スロットのバッジなどと重ならず、スロットも暗くなるように */
+    z-index: 10;
+  }
+  .modern-top-row > .modern-slots-area {
+    grid-row: 1;
+    grid-column: 1 / -1;
+    pointer-events: none;
+  }
+  .modern-top-row > .modern-slots-area .modern-party-row {
+    --party-row-lead: calc(420px + 16px + 4em);
+  }
+  .modern-top-row > .modern-slots-area .modern-party-row > * {
+    pointer-events: auto;
+  }
+}
+/* 敵情報・共通育成・合計ダメージの枠は縦に 1 列に並べる（オーナーのコメント）。敵情報と共通育成の枠（TeamSettingsForm の .settings-row）はほどいて、この並びの中に置く */
+.modern-summary-row {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+}
+.modern-summary-row > .settings-row {
+  display: contents;
+}
+/* 共通育成の 1 行は、間を詰めて折り返さずに 1 行に並べる（オーナーのコメント）。シンクロ LV の欄は、増減のボタンがあっても 4 桁の数字が全部見える幅 */
+.modern-summary-row .common-growth-row {
+  flex-wrap: nowrap;
+  gap: 4px 8px;
+}
+.modern-summary-row .common-growth-row .field {
+  gap: 4px 6px;
+  grid-template-columns: max-content 5.5em;
+}
+.modern-summary-row .common-growth-row .field.checkbox {
+  gap: 4px;
+  grid-template-columns: auto auto;
+}
+/* 合計ダメージの帯は、ほかの枠の入力欄の行と同じくらいの高さにする */
+.modern-summary-row > .damage-total {
+  margin-top: 0;
+}
+.modern-summary-row .team-total-bar {
+  box-sizing: border-box;
+  height: 34px;
+  padding: 0 12px;
+  margin: 2px 0;
+}
 .modern-badge-banner {
   padding: 6px 12px;
   background: color-mix(in srgb, Highlight 15%, transparent);
@@ -742,9 +835,9 @@ header h1 {
   --placing-blue: light-dark(#0ea5e9, #38bdf8);
   /* ニケ一覧のコア強化のアイコンの幅（左上のバッジ .char-visual の --badge-w と同じ）。P○ のバッジの幅と位置もこれで決める */
   --tray-core-w: 20px;
-  /* スロットのカードの縦長の絵の高さ（枠線の内側。.char-visual-portrait と空のスロットの枠）。立ち絵（256×512）の 1/2。狭い画面では
-     useSlotFit が並びに縮めた値を置く（上限は useSlotFit.ts の PORTRAIT_MAX_H と同じ） */
-  --slot-portrait-h: 256px;
+  /* スロットのカードの絵の高さ（＝幅。枠線の内側。.char-visual-portrait と空のスロットの枠）。四角の顔の絵で、ニケ一覧の四角の絵
+     （.char-visual-compact）と同じ大きさ。狭い画面では useSlotFit が並びに縮めた値を置く（上限は useSlotFit.ts の PORTRAIT_MAX_H と同じ） */
+  --slot-portrait-h: calc(256px / 3);
 }
 /* 置き先待ちのスロットの立ち絵と、いまの編成にいるニケ・置き先待ちのニケの絵に重ねる箱（枠は下の .char-tray-item-visual の後の規則） */
 .modern-slot-card.modern-slot-awaiting .modern-slot-char-area::after,
@@ -752,7 +845,8 @@ header h1 {
 .char-tray-item-pending .char-tray-item-visual::after {
   content: '';
   position: absolute;
-  inset: 0;
+  /* 水色の枠（2px）は、絵の外側の線に中心をそろえ、内側に 1px・外側に 1px 描く（オーナーの指示） */
+  inset: -1px;
   border-radius: inherit;
   pointer-events: none;
   z-index: 2;
@@ -762,42 +856,9 @@ header h1 {
 .char-tray-item-taken .char-tray-item-visual::after {
   background: color-mix(in srgb, var(--placing-blue) 30%, transparent);
 }
-/* 置き先待ちの間は、スロットの ✕・⚙ のボタンを反応させず、立ち絵の枠のクリック（置く）にする */
-.modern-slot-card.modern-slot-awaiting .modern-slot-icon-button {
-  pointer-events: none;
-}
 
 /* 5スロットグリッド */
-/* 5 枚を 1 段に並べ、余った幅は左右に分けて中央に寄せる。幅が足りなければ立ち絵を縮めて収める（useSlotFit.ts が --slot-portrait-h を置く） */
-/* スロットの並びと、その上の端の中央の「元に戻す」「やり直す」のボタン（useSlotUndo）。ボタンの段の高さはいつも空けておく */
-.modern-slots-area {
-  position: relative;
-  padding-top: 30px;
-}
-.modern-slot-history {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  translate: -50%;
-  z-index: 3;
-  display: flex;
-  gap: 4px;
-}
-.modern-slot-undo-button {
-  display: inline-flex;
-  padding: 3px 4px;
-  cursor: pointer;
-}
-/* 戻せる・やり直せる並びが無いときは、薄くして押せなくする */
-.modern-slot-undo-button:disabled {
-  cursor: default;
-  opacity: 0.3;
-}
-.modern-slot-undo-icon {
-  display: block;
-  width: 26px;
-  height: 26px;
-}
+/* 5 枚を 1 段に並べ、中央に寄せる（オーナーの指示）。幅が足りなければ立ち絵を縮めて収める（useSlotFit.ts が --slot-portrait-h を置く） */
 .modern-slots-grid {
   display: flex;
   flex-wrap: wrap;
@@ -805,10 +866,117 @@ header h1 {
   /* 立ち絵どうしの横の間は 4px（カードの左右の余白 2px ×2 だけ）。落とす先の枠（立ち絵の外へ 2px 出る）が、隣どうしでちょうど重ならない */
   gap: 12px 0;
 }
-/* カードの幅は立ち絵（1:2 の枠と 1px の枠線）と左右の余白（.modern-slot-card の padding）だけにして、スロットの間を詰める */
+/* 5 つの編成の行（モダン UI。ModernView）。左に編成の番号とダメージ（PartyRowLabel）、右にスロット 5 枚。選んでいる編成の行だけ操作でき、
+   ほかの行（PartyPreviewRow）は押すとその編成を選ぶ。狭い画面では、番号とダメージをスロットの上に置く。
+   スロット 5 枚を行の中央に置く（オーナーの指示）。真ん中の列にスロット、左右に同じ幅の列を置き、番号は左の列の右端に寄せる。
+   左の列は --party-row-lead（番号の幅）より狭くしない。スロットの列は、元の大きさの絵 5 枚（幅 256/3 px・枠線 2px・左右の余白）の幅まで広がり、
+   足りなければ縮む（縮んだ幅に useSlotFit が絵を合わせる）。1px は端数のぶん（useSlotFit は幅を切り下げて測るので、ちょうどの幅では上限より少し小さくなる） */
+.modern-party-row {
+  --party-row-lead: 4em;
+  display: grid;
+  grid-template-columns:
+    minmax(var(--party-row-lead), 1fr) minmax(0, calc(5 * (256px / 3 + 2px + 2 * 2px) + 1px))
+    minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+.modern-party-row + .modern-party-row {
+  margin-top: 4px;
+}
+.modern-party-row > .modern-party-row-label {
+  grid-column: 1;
+  justify-self: end;
+}
+.modern-party-row > .modern-slots-grid {
+  grid-column: 2;
+  min-width: 0;
+}
+.modern-party-row-label {
+  flex: none;
+  max-width: none;
+  container-type: normal;
+  grid-template-columns: 4em;
+  align-items: center;
+}
+/* 編成の番号を持ち上げている間は、元の番号を隠す。持ち上げた番号を重ねている番号（落とす先）には、スロットと同じ印を付ける */
+.modern-party-row-label.party-label-dragging .party-tab {
+  visibility: hidden;
+}
+/* どこにも落とさずに元へ戻る間も、元の番号は隠したままにする（オーナーのコメント。drag-source-returning は dropAnimation.ts が付ける） */
+.modern-party-row-label.drag-source-returning .party-tab {
+  visibility: hidden;
+}
+.modern-party-row-label.party-label-over .party-tab {
+  outline: 2px solid Highlight;
+  outline-offset: -1px;
+}
+/* 持ち上げた番号（DragOverlay）。行の左の番号と同じ幅 */
+.party-label-drag-overlay {
+  width: 4em;
+}
+/* 編成の番号のボタンは、幅（4em）はそのままで正方形にする（オーナーのコメント） */
+.modern-party-row-label .party-tab {
+  aspect-ratio: 1 / 1;
+  padding: 0;
+}
+/* 選んでいない編成の行は、ボタンの見た目を消してスロットだけを見せる（薄くはしない） */
+.modern-slots-grid.modern-party-preview {
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+/* 狭い画面では、5 つの編成の番号を上に横に並べ、その下にスロットの行を並べる（オーナーの指示）。行の箱はほどき（display: contents）、
+   番号を 1 段目の真ん中の 5 列に、スロットの並びを 2 段目から 1 段ずつ横いっぱいに置く。番号もスロットも中央に寄せる（オーナーの指示）。
+   番号は 4em の正方形で、幅が足りなければ縮める */
+@media (max-width: 699px) {
+  .modern-slots-area {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) repeat(5, minmax(0, 4em)) minmax(0, 1fr);
+    gap: 4px;
+  }
+  .modern-party-row {
+    display: contents;
+  }
+  .modern-party-row-label {
+    grid-row: 1;
+    grid-template-columns: minmax(0, 1fr);
+    margin-bottom: 4px;
+  }
+  .modern-party-row > .modern-party-row-label {
+    justify-self: stretch;
+  }
+  .modern-party-row:nth-child(1) > .modern-party-row-label {
+    grid-column: 2;
+  }
+  .modern-party-row:nth-child(2) > .modern-party-row-label {
+    grid-column: 3;
+  }
+  .modern-party-row:nth-child(3) > .modern-party-row-label {
+    grid-column: 4;
+  }
+  .modern-party-row:nth-child(4) > .modern-party-row-label {
+    grid-column: 5;
+  }
+  .modern-party-row:nth-child(5) > .modern-party-row-label {
+    grid-column: 6;
+  }
+  .modern-party-row > .modern-slots-grid {
+    grid-column: 1 / -1;
+  }
+  /* 持ち上げた番号は、持ち上げた番号の大きさ（DragOverlay の箱）に合わせる */
+  .party-label-drag-overlay {
+    width: 100%;
+  }
+}
+/* カードの幅は絵（正方形の枠と 1px の枠線）と左右の余白（.modern-slot-card の padding）だけにして、スロットの間を詰める */
 .modern-slots-grid > .modern-slot-card {
   box-sizing: border-box;
-  width: calc(var(--slot-portrait-h) / 2 + 2px + 2 * var(--slot-card-pad-x));
+  width: calc(var(--slot-portrait-h) + 2px + 2 * var(--slot-card-pad-x));
 }
 
 /* モダンカード。カードの枠と背景は出さない（立ち絵とダメージの欄だけを並べる） */
@@ -817,8 +985,9 @@ header h1 {
   flex-direction: column;
   /* 左右は、置き先待ちの水色の枠（立ち絵の外へ 2px 出る）が収まるだけ空ける */
   --slot-card-pad-x: 2px;
-  padding: 8px var(--slot-card-pad-x);
-  gap: 8px;
+  /* 5 つの編成を縦に並べるので、上下は詰める */
+  padding: 4px var(--slot-card-pad-x);
+  gap: 4px;
   position: relative;
 }
 /* 一覧でクリックしたニケの置き先を待っている間は、どのスロットも立ち絵の枠のクリックで置ける。
@@ -828,12 +997,12 @@ header h1 {
 }
 .modern-slot-target {
   position: absolute;
-  /* 立ち絵（.modern-slot-char-area の先頭、高さ --slot-portrait-h）の中央 */
-  top: calc(var(--slot-portrait-h) / 2);
+  /* 立ち絵（.modern-slot-char-area の先頭。縦長で、高さは --slot-portrait-h の 2 倍）の中央 */
+  top: var(--slot-portrait-h);
   left: 50%;
-  /* 外の輪の外径が立ち絵の幅の 3/4 × 0.84（元の大きさで約 81px）。絵は外の輪が枠の端まで描かれている。立ち絵が縮むと一緒に縮む */
-  width: calc(var(--slot-portrait-h) * 3 / 8 * 0.84);
-  height: calc(var(--slot-portrait-h) * 3 / 8 * 0.84);
+  /* 外の輪の外径が絵の幅の 3/4 × 0.84（元の大きさで約 54px）。絵は外の輪が枠の端まで描かれている。絵が縮むと一緒に縮む */
+  width: calc(var(--slot-portrait-h) * 3 / 4 * 0.84);
+  height: calc(var(--slot-portrait-h) * 3 / 4 * 0.84);
   transform: translate(-50%, -50%) scale(0.92);
   filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.35));
   pointer-events: none;
@@ -854,11 +1023,11 @@ header h1 {
 /* ◎ の上の ▼（ui_selection_triangle.svg）。◎ が縮むときに上へ、広がるときに下へ動く（◎ と同じ周期と緩急） */
 .modern-slot-target-arrow {
   position: absolute;
-  /* ◎ の外の輪の少し上（立ち絵の中央から、立ち絵の高さの 3/16 + 3/40 だけ上）。枠の上 19% は絵の空き */
-  top: calc(var(--slot-portrait-h) / 2 - var(--slot-portrait-h) * 3 / 16 - var(--slot-portrait-h) * 3 / 40);
+  /* ◎ の外の輪の少し上（縦長の絵の中央から、絵の幅の 3/8 + 3/20 だけ上）。枠の上 19% は絵の空き */
+  top: calc(var(--slot-portrait-h) - var(--slot-portrait-h) * 3 / 8 - var(--slot-portrait-h) * 3 / 20);
   left: 50%;
-  /* 絵の三角は枠の幅の 76%（左右 12% ずつ空き）。三角の幅を立ち絵の高さの 3/32 にする */
-  width: calc(var(--slot-portrait-h) * 3 / 32 / 0.76);
+  /* 絵の三角は枠の幅の 76%（左右 12% ずつ空き）。三角の幅を絵の幅の 3/16 にする */
+  width: calc(var(--slot-portrait-h) * 3 / 16 / 0.76);
   filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.35));
   pointer-events: none;
   z-index: 3;
@@ -882,7 +1051,7 @@ header h1 {
 }
 /* 持ち上げたものを重ねているスロット（落とす先）は、カードでなく立ち絵の枠に印を付ける */
 .modern-slot-card.modern-slot-over .modern-slot-char-area {
-  outline: 3px solid Highlight;
+  outline: 2px solid Highlight;
   outline-offset: -1px;
 }
 /* 置いた・入れ替えた後、動く絵が着くまで、行き先のスロットの立ち絵の枠全体（名前・限界突破・✕ などを含む）を隠す（flight.ts の flyIntoSlot）。
@@ -893,17 +1062,20 @@ header h1 {
   visibility: hidden;
 }
 /* 着くまでと、持ち上げている間・戻る間は、立ち絵の場所に空のスロットの枠を出す（ModernSlotCard。動く写しの中では出さない） */
+/* 枠は、立ち絵の枠と同じ幅の箱の中で flex で真ん中に置く。left: 50% と translate で寄せると、端数の位置のまま描かれ、
+   手を離して元の空のスロットの枠に替わったときに、枠が 1px ほど横にずれて見える（オーナーの指摘） */
 .modern-slot-arrival-face {
   display: none;
   position: absolute;
   top: 0;
-  left: 50%;
-  translate: -50% 0;
+  left: 0;
+  right: 0;
+  justify-content: center;
 }
 .modern-slot-card.modern-slot-arriving .modern-slot-arrival-face,
 .modern-slot-card.modern-slot-dragging .modern-slot-arrival-face,
 .modern-slot-card.drag-source-returning .modern-slot-arrival-face {
-  display: block;
+  display: flex;
   visibility: visible;
 }
 /* 空のスロットを持ち上げている間と戻る間は、元の場所に空のスロットの枠をそのまま出す */
@@ -940,25 +1112,21 @@ header h1 {
 .modern-slot-focus-handle {
   display: inline-flex;
   border-radius: 4px;
-  cursor: grab;
+  cursor: pointer;
   touch-action: none;
-}
-/* マウスを載せると水色の枠で囲む（載せ続けると title の「操作」が出る） */
-.modern-slot-focus-handle:hover {
-  outline: 2px solid var(--placing-blue);
 }
 .modern-slot-focus-dragging {
   opacity: 0.3;
 }
 .controller-drag-overlay {
   display: inline-flex;
-  cursor: grabbing;
+  cursor: pointer;
 }
 /* 立ち絵の右上に重ねるボタン（上から、空にする（バッジ ui_delete）・育成と設定（バッジ ui_setting））。置き先待ちの水色の重ね・◎ より上。
    絵はバッジ（八角形で縦横 130:130）。大きさは左上のバッジの幅（.char-visual-portrait の --badge-w）と同じで、立ち絵が縮むと一緒に縮める。
    押すボタンなので 18px より小さくしない（狭い画面では左上のバッジより大きくなる） */
 .modern-slot-icon-button {
-  --slot-icon-w: max(18px, var(--slot-portrait-h) * 24 / 256);
+  --slot-icon-w: max(18px, var(--slot-portrait-h) * 60 / 256);
   position: absolute;
   right: 2px;
   z-index: 4;
@@ -979,6 +1147,7 @@ header h1 {
   top: 2px;
 }
 .modern-slot-build-button {
+  /* ✕ の下に縦に並べる（オーナーのコメント） */
   top: calc(2px + var(--slot-icon-w) + 2px);
 }
 /* 育成を変えたスロットは、歯車を青にする */
@@ -989,7 +1158,6 @@ header h1 {
 /* カードボディ・キャラ表示 */
 .modern-slot-body {
   position: relative;
-  min-height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1007,17 +1175,20 @@ header h1 {
   left: 1px;
   right: 1px;
   bottom: 1px;
-  padding: 10px 6px 3px;
+  /* 文字の大きさと余白は、スロットとニケ一覧（四角・縦長）で同じ */
+  padding: 6px 4px 2px;
   /* 横だけ切る（流れる名前）。上は切らない（限界突破・コア強化の行から上にはみ出すコア強化の印を出す） */
   overflow-x: clip;
   overflow-y: visible;
   white-space: nowrap;
   text-align: right;
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #fff;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+  /* 名前の後ろの影は、欄の下端から高さ 20px だけに描き、上端の透明から下端の黒 85% へ変える（オーナーの指示）。欄の高さ（文字と余白）は変えない。
+     縦長の絵も四角の絵も同じ */
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.85)) bottom / 100% 20px no-repeat;
   /* マウスの操作は受ける（アーティファクトのコメントで名前と限界突破を選べるように）。押したときのドラッグ・クリックはカードに届く */
   z-index: 1;
 }
@@ -1033,9 +1204,11 @@ header h1 {
   font-size: 0.8rem;
   line-height: 1.1;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
-  /* 限界突破の星とコア強化の印は、バッジの絵（assets/badges の grade_star・core_plain）。大きさは置き場所で変える */
-  --growth-star-w: 13px;
-  --growth-core-w: 24px;
+  /* 限界突破の星とコア強化の印は、バッジの絵（assets/badges の grade_star・core_plain）。大きさはスロットとニケ一覧で同じ */
+  --growth-star-w: 9px;
+  --growth-core-w: var(--tray-core-w);
+  /* 右端から 2px に置く（名前の右の余白より 2px 右へ。ⓘ・右上の P○ のバッジと右端をそろえる） */
+  margin-right: -2px;
 }
 /* 星の色は色の役の変数で決める。上の差し色（--badge-accent）から下の主の色（--badge-main）への
    グラデーションになる。突破していない星は灰、突破した星（.is-filled）は金。テーマで変えるときは light-dark(ライト, ダーク) で書く */
@@ -1148,21 +1321,6 @@ header h1 {
 .growth-marks-core .growth-marks-core-max {
   letter-spacing: -0.06em;
 }
-.char-tray-growth {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  z-index: 2;
-  font-size: 0.65rem;
-  /* ニケ一覧の絵は小さいので、星とコアの印も小さくする（.growth-marks の既定より後に置いて上書きする） */
-  --growth-star-w: 9px;
-  --growth-core-w: var(--tray-core-w);
-}
-.char-tray-growth .growth-marks-core {
-  /* 四角の絵の右上（上端に寄せてある）では、はみ出しを下へ */
-  margin-top: 0;
-  margin-bottom: calc(var(--growth-star-w) - var(--growth-core-w));
-}
 .scrolling-name {
   text-align: left;
 }
@@ -1194,22 +1352,22 @@ header h1 {
   gap: 0.25em;
   opacity: 0.5;
   /* 中の文字の大きさの基準（元の大きさで 16px。立ち絵の高さに比べて縮める。中の文字と余白は em で書く） */
-  font-size: calc(var(--slot-portrait-h) / 16);
+  font-size: calc(var(--slot-portrait-h) / 8);
   /* ニケがいるときの絵（.char-visual-portrait）と同じ大きさ（大きさは下の .char-visual-portrait と共通の規則） */
   box-sizing: content-box;
   /* ＋ を枠の真ん中に置く基準 */
   position: relative;
 }
-/* 空のスロットの文字は選べる文字にしない（マウスを載せても I の形のカーソルにしない）。置き先待ちの間は押せる印のカーソル */
+/* 空のスロットの文字は選べる文字にしない（マウスを載せても I の形のカーソルにしない）。空のスロットは常に人差し指（オーナーの指示） */
 .modern-slot-empty-area {
-  cursor: default;
+  cursor: pointer;
   user-select: none;
 }
 .modern-slot-card.modern-slot-awaiting .modern-slot-empty-area {
   cursor: pointer;
 }
 .modern-slot-empty-plus {
-  font-size: 3.6em;
+  font-size: 3em;
   line-height: 1;
   /* ＋ は枠の真ん中に置く（ほかの文字の並びからは外す） */
   position: absolute;
@@ -1217,81 +1375,10 @@ header h1 {
   left: 50%;
   translate: -50% -50%;
 }
-/* 空のスロットの ＋ の下: 番号（01〜05）・FRONT / REAR・EMPTY SLOT・位置（○○●○○） */
-.modern-slot-empty-number {
-  font-size: 1.8em;
-  font-weight: bold;
-  line-height: 1.1;
-  /* 番号から下の文字を中央より下げる。中身の列は上下の中央に置いているので、上の余白を 77px 足すと 38px 下がる（位置の印 ○ が枠の下からはみ出ない高さ）。
-     ＋ は並びの外（枠の真ん中）にあるので、＋ の高さ 3em と間 0.25em（枠の文字の大きさが基準）の分も足して、番号を ＋ より下に置く */
-  margin-top: calc(var(--slot-portrait-h) * 0.3 + var(--slot-portrait-h) * 3.25 / 16 + 0.8em);
-}
-.modern-slot-empty-row {
-  font-size: 0.75em;
-  font-weight: bold;
-  letter-spacing: 0.08em;
-  /* 番号に少し近づける */
-  margin-top: -0.55em;
-}
-.modern-slot-empty-label {
-  /* EMPTY SLOT と位置の組を少し下げる */
-  margin-top: calc(var(--slot-portrait-h) / 64 + 0.8em);
-  font-size: 0.7em;
-  font-weight: bold;
-  letter-spacing: 0.06em;
-}
-.modern-slot-empty-position {
-  font-size: 0.7em;
-  letter-spacing: 0.1em;
-  /* EMPTY SLOT に少し近づける */
-  margin-top: -0.45em;
-}
 .modern-slot-error {
   color: #e53935;
   font-size: 0.75rem;
   margin: 0;
-}
-
-/* ダメージ表示 & 割合バー（文字の大きさと余白は em で書き、立ち絵の高さに比べて縮める。空のスロットの文字も同じ） */
-/* 幅は立ち絵（.char-visual-portrait。1:2 の枠と 1px の枠線）と同じにし、中央にそろえる */
-.modern-slot-damage-section {
-  box-sizing: border-box;
-  width: calc(var(--slot-portrait-h) / 2 + 2px);
-  align-self: center;
-  display: flex;
-  flex-direction: column;
-  gap: 0.1875em;
-  padding: 0.25em 0.375em;
-  font-size: calc(var(--slot-portrait-h) / 16);
-  background: color-mix(in srgb, var(--app-fg) 5%, transparent);
-  border: 1px solid color-mix(in srgb, var(--app-fg) 10%, transparent);
-}
-.modern-slot-damage-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-.modern-slot-damage-value {
-  font-size: 0.95em;
-  font-weight: bold;
-  font-variant-numeric: tabular-nums;
-}
-.modern-slot-damage-percent {
-  font-size: 0.75em;
-  opacity: 0.7;
-}
-.modern-slot-damage-bar-track {
-  height: 4px;
-  background: color-mix(in srgb, var(--app-fg) 12%, transparent);
-  overflow: hidden;
-}
-/* 割合のバー。色はバーの長さでなく枠の位置で決める（左から水色・黄色、50% で赤、その先は赤のまま）。
-   塗る部分の背景の大きさを枠の幅にそろえる（ModernSlotCard.tsx が background-size を 100 / 割合 倍にする） */
-.modern-slot-damage-bar-fill {
-  height: 100%;
-  background-image: linear-gradient(90deg, #38bdf8 0%, #facc15 25%, #ef4444 50%, #ef4444 100%);
-  background-repeat: no-repeat;
-  transition: width 0.2s ease-out;
 }
 
 /* 絵の枠と空のスロットの枠の塗りの色 */
@@ -1316,7 +1403,10 @@ header h1 {
   justify-content: center;
   --badge-w: 20px;
 }
+/* 四角の顔の絵（ニケ一覧の四角・所持の編集の一覧）。枠線を含めて --tray-visual-w に収める（縦長の絵 .char-visual-tall・スロットの絵と同じ幅。
+   含めないと、枠線の分だけ左右に 1px ずつはみ出し、縦長より 2px 広く見え、配置中の水色の枠からも出る。オーナーの指示） */
 .char-visual-compact {
+  box-sizing: border-box;
   max-width: var(--tray-visual-w);
 }
 /* ニケ一覧の縦長の絵（portraits を一覧の幅に縮める。元の絵と同じ 1:2 の枠）。見た目はスロットの立ち絵（.char-visual-portrait）と同じで、
@@ -1328,51 +1418,100 @@ header h1 {
   /* 絵の部分（枠線の内側）を 1:2 にする（枠線込みの箱を 1:2 にすると、絵の部分が 2px 縦に長くなる） */
   height: calc((var(--tray-visual-w) - 2px) * 2 + 2px);
 }
-/* 「未」の札は、下部に重ねる名前の行の上に出す */
-.char-visual-tall .char-unsupported-tag {
-  bottom: 46px;
-}
 .char-tray-tall-area {
   width: 100%;
 }
-.char-tray-tall-area .modern-slot-char-name {
-  padding: 6px 4px 2px;
-  font-size: 0.8rem;
+/* 四角の絵（顔の絵）の名前 */
+.char-tray-square-area .modern-slot-char-name,
+.modern-party-preview-card .modern-slot-char-name,
+.slot-drag-overlay-square .modern-slot-char-name,
+.flight-ghost-square .modern-slot-char-name {
+  /* 四角の絵は低いので、名前の文字を少し小さくする */
+  font-size: 0.7rem;
 }
-/* 限界突破・コア強化の大きさは、四角の表示（.char-tray-growth）と同じ */
-.char-tray-tall-area .growth-marks {
-  --growth-star-w: 9px;
-  --growth-core-w: var(--tray-core-w);
-  /* 右端からの距離を四角の表示（.char-tray-growth）とそろえる（名前の右の余白より 2px 右へ） */
-  margin-right: -2px;
-}
-/* スロットのカードの縦長の絵（portraits）。元の絵（256×512）と同じ 1:2 の枠に、切らずに出す。高さで大きさを決める。
-   空のスロットの枠も同じ大きさにする */
+/* スロットのカードの絵（顔の絵。ニケ一覧の四角の絵と同じ正方形）。高さで大きさを決める。空のスロットの枠も同じ大きさにする */
 .char-visual-portrait,
 .modern-slot-empty-area {
   height: var(--slot-portrait-h);
   width: auto;
+  aspect-ratio: 1 / 1;
+}
+/* 選んでいる編成のスロットは、縦長の絵（1:2。ニケ一覧の縦長の絵と同じ作り）にする（オーナーのコメント）。幅は四角の絵と同じで、高さを 2 倍にする */
+.char-visual-portrait.char-visual-tall-image,
+.modern-slot-empty-area.modern-slot-empty-tall {
+  height: calc(var(--slot-portrait-h) * 2);
   aspect-ratio: 1 / 2;
+  /* 以前の見た目（オーナーのコメント）: 背景も枠線と同じく上の 5 割で上へ行くほど透明にする（ニケ一覧の縦長の絵と同じ） */
+  background: linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
+  border-image: linear-gradient(to bottom, transparent, var(--char-visual-line) 50%) 1;
+}
+/* 縦長の空のスロットは、シルエットの絵（256×512。立ち絵と同じ 1:2）を枠いっぱいに出す */
+.modern-slot-empty-area.modern-slot-empty-tall {
+  background:
+    url(./assets/portrait_silhouette.webp) center / 100% 100% no-repeat,
+    linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
+}
+/* 四角の空のスロット（選んでいない編成の行・持ち上げた絵）は、縦長の空のスロットと同じ意匠にする（オーナーのコメント）:
+   シルエットの絵（256×256）を枠いっぱいに出し、背景と枠線は上の 5 割で上へ行くほど透明にし、＋ は縦長と同じ大きさにする */
+.modern-slot-empty-area:not(.modern-slot-empty-tall) {
+  background:
+    url(./assets/square_silhouette.webp) center / 100% 100% no-repeat,
+    linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
+  border-image: linear-gradient(to bottom, transparent, var(--char-visual-line) 50%) 1;
+}
+.modern-slot-empty-area:not(.modern-slot-empty-tall) .modern-slot-empty-plus {
+  font-size: 3.6em;
+}
+.modern-slot-empty-tall .modern-slot-empty-plus {
+  font-size: 3.6em;
+}
+/* 縦長の空のスロットの ＋ の下: 番号（01〜05）・FRONT / REAR・EMPTY SLOT・位置（○○●○○）。H は枠の高さ（--slot-portrait-h の 2 倍） */
+.modern-slot-empty-number {
+  font-size: 1.8em;
+  font-weight: bold;
+  line-height: 1.1;
+  /* 番号から下の文字を中央より下げる。＋ は並びの外（枠の真ん中）にあるので、＋ の高さと間の分も足して、番号を ＋ より下に置く */
+  margin-top: calc(var(--slot-portrait-h) * 2 * 0.3 + var(--slot-portrait-h) * 2 * 3.25 / 16 + 0.8em);
+}
+.modern-slot-empty-row {
+  font-size: 0.75em;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  /* 番号に少し近づける */
+  margin-top: -0.55em;
+}
+.modern-slot-empty-label {
+  /* EMPTY SLOT と位置の組を少し下げる */
+  margin-top: calc(var(--slot-portrait-h) * 2 / 64 + 0.8em);
+  font-size: 0.7em;
+  font-weight: bold;
+  letter-spacing: 0.06em;
+}
+.modern-slot-empty-position {
+  font-size: 0.7em;
+  letter-spacing: 0.1em;
+  /* EMPTY SLOT に少し近づける */
+  margin-top: -0.45em;
 }
 .char-visual-portrait {
   max-width: none;
-  /* 左上のバッジの幅。立ち絵の高さ 256px で 24px にし、立ち絵が縮むと一緒に縮める（右上のボタンも同じ大きさ） */
-  --badge-w: calc(var(--slot-portrait-h) * 24 / 256);
+  /* 左上のバッジの幅。元の大きさ（ニケ一覧の四角と同じ 256/3 px）でニケ一覧と同じ 20px にし、立ち絵が縮むと一緒に縮める（右上のボタンも同じ大きさ） */
+  --badge-w: calc(var(--slot-portrait-h) * 60 / 256);
 }
-/* スロットの立ち絵とニケ一覧の縦長の絵は、背景も枠線と同じく上の 5 割で上へ行くほど透明にする。枠線: 上を消し、横は上の 5 割で上へ行くほど薄くして一番上で消す（下は実線）。
+/* ニケ一覧の縦長の絵は、背景も枠線と同じく上の 5 割で上へ行くほど透明にする。枠線: 上を消し、横は上の 5 割で上へ行くほど薄くして一番上で消す（下は実線）。
    枠線の太さは変えないので、絵の大きさは同じ。色は枠線の色（--char-visual-line） */
-.char-visual-portrait,
+/* 四角の立ち絵（顔の絵。ニケ一覧の四角・所持の編集の窓の一覧・選んでいない編成の行・持ち上げた絵）も、縦長と同じく上を透明にする（オーナーのコメント） */
 .char-visual-tall,
-.modern-slot-empty-area {
+.char-visual-compact,
+.char-visual-portrait {
   /* 塗りは基準を枠線の外側（border-box）にする。既定の padding-box だと、絵が繰り返されて上の枠線の 1px に下端の塗りの色が出る */
   background: linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
   border-image: linear-gradient(to bottom, transparent, var(--char-visual-line) 50%) 1;
 }
-/* 空のスロットだけ、立ち絵の代わりにシルエットの絵（256×512。立ち絵と同じ 1:2）を枠いっぱいに出す（ニケがいるスロットには出さない） */
+/* 空のスロットの枠は、透明にせず、塗りと枠線を上から下まで同じ色にする（オーナーのコメント） */
 .modern-slot-empty-area {
-  background:
-    url('./assets/portrait_silhouette.webp') center / 100% 100% no-repeat,
-    linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
+  background: var(--char-visual-fill);
+  border-color: var(--char-visual-line);
 }
 .char-visual-img {
   width: 100%;
@@ -1381,61 +1520,22 @@ header h1 {
   position: absolute;
   inset: 0;
 }
-/* 属性・バースト段階・クラス・武器種のバッジ（130×150 の六角形）を左上に縦に並べる。幅は --badge-w */
+/* 属性・バースト段階・クラス・武器種・コレクションのバッジ（130×150 の六角形）を左上に縦に並べる。幅は --badge-w。
+   絵の枠線（1px）からさらに 1px 内側に置く。水色の枠（2px。いまの編成にいるニケ・置き先待ちのニケ・置き先待ちのスロット）を重ねても
+   隠れない位置で、枠の有無で位置を変えない（オーナーの指示） */
 .char-visual-badges {
   position: absolute;
-  top: 2px;
-  left: 2px;
+  top: 1px;
+  left: 1px;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 0;
   z-index: 2;
 }
 .char-badge {
   display: block;
   width: var(--badge-w);
 }
-/* ニケ一覧の正方形の絵では、属性のバッジを右下に出す */
-.char-visual-corner-badge {
-  position: absolute;
-  right: 2px;
-  bottom: 2px;
-  z-index: 2;
-}
-/* そのため「未」の札は左下に出す */
-.char-visual-compact .char-unsupported-tag {
-  right: auto;
-  left: 2px;
-}
-/* スロットの立ち絵では、下部に重ねる名前と限界突破・コア強化の行（.modern-slot-char-name）の上に出す（行の上にはみ出すコア強化の印にも掛けない） */
-.char-visual-portrait .char-unsupported-tag {
-  bottom: 54px;
-}
-/* 未対応の印（ⓘ。CharacterVisual）。バッジ ui_information を出す。マウスを載せると件数が出る */
-.char-unsupported-tag {
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
-  display: inline-flex;
-  width: 16px;
-  height: 16px;
-  z-index: 2;
-  cursor: help;
-}
-.char-unsupported-tag > svg {
-  width: 100%;
-  height: 100%;
-}
-/* ニケ一覧の印は、押しやすいように大きくする（四角 18px・縦長 20px） */
-.char-visual-compact .char-unsupported-tag {
-  width: 18px;
-  height: 18px;
-}
-.char-visual-tall .char-unsupported-tag {
-  width: 20px;
-  height: 20px;
-}
-
 /* CharacterTray (パレット) */
 .char-tray-panel {
   display: flex;
@@ -1460,7 +1560,7 @@ html:has(.modern-view-container) {
   justify-content: center;
   gap: 8px;
 }
-/* スロットのキャラを持ち上げてトレイの上に来たとき（離すとそのスロットを外す） */
+/* スロットのキャラ（選んでいない編成の行のも）を持ち上げてトレイの上に来たとき（離すとそのスロットを外す） */
 .char-tray-panel.char-tray-returning {
   outline: 2px dashed Highlight;
   outline-offset: -2px;
@@ -1507,6 +1607,8 @@ html:has(.modern-view-container) {
 }
 .char-tray-sort-label > span {
   grid-area: 1 / 1;
+  /* 英字だけの名前（ID）は、日本語の名前より行の高さが低いフォントがある。マスの上に張り付かず、縦の中央に置く */
+  align-self: center;
   visibility: hidden;
 }
 .char-tray-sort-label > .char-tray-sort-current {
@@ -1538,8 +1640,11 @@ html:has(.modern-view-container) {
 .char-tray-sort-option {
   justify-content: space-between;
 }
+/* 選んでいる並べ方は、枠でなく背景色で示す（編成のタブの選んでいるものと同じ塗り。モダンのアプリの青は modern.css） */
 .char-tray-sort-option[aria-pressed='true'] {
-  outline: 2px solid var(--placing-blue);
+  border-color: Highlight;
+  background: Highlight;
+  color: HighlightText;
 }
 .char-tray-sort-option[aria-pressed='false'] .char-tray-sort-mark {
   visibility: hidden;
@@ -1677,7 +1782,7 @@ html:has(.modern-view-container) {
 /* ニケ一覧の行に元の大きさの絵が 5 枚入らない狭い画面（data-tray-fit。useSlotFit）では、一覧の絵の幅をスロットの立ち絵（枠線込み）と同じにし、
    1 行に 5 枚並べる。列の幅（絵と左右の余白 2px ずつ）がスロットのカードの幅と同じで、列どうしの間も同じ 0 なので、一覧の行はスロットの並びと同じ幅になる */
 .modern-view-container[data-tray-fit] {
-  --tray-visual-w: calc(var(--slot-portrait-h) / 2 + 2px);
+  --tray-visual-w: calc(var(--slot-portrait-h) + 2px);
 }
 .modern-view-container[data-tray-fit] .char-tray-list {
   grid-template-columns: repeat(5, calc(var(--tray-visual-w) + 4px));
@@ -1702,24 +1807,19 @@ html:has(.modern-view-container) {
   position: relative;
 }
 /* 置き先を待っている間のほかのニケと、ほかの編成で使っているニケ（選べない）は暗くする（待っているニケの枠は上の共通の規則） */
-.char-tray-list-pending .char-tray-item:not(.char-tray-item-pending),
-.char-tray-item.char-tray-item-other-party {
+/* P○ のバッジは暗くしない（オーナーの指示）。ボタン全体でなく、絵・重ね・枠だけを暗くする */
+.char-tray-list-pending
+  .char-tray-item:not(.char-tray-item-pending)
+  .char-tray-item-visual
+  > :not(.char-tray-item-parties),
+.char-tray-list-pending .char-tray-item:not(.char-tray-item-pending) .char-tray-item-visual::after,
+.char-tray-item.char-tray-item-other-party .char-tray-item-visual > :not(.char-tray-item-parties),
+.char-tray-item.char-tray-item-other-party .char-tray-item-visual::after {
   filter: brightness(0.4);
 }
 /* 選べないニケは、マウスを重ねても禁止の印（〇に斜線）は出さない（オーナーの指示）。押せる印（指の形）も出さない */
 .char-tray-item.char-tray-item-other-party {
   cursor: default;
-}
-/* 四角の絵の下の名前。収まらない名前は流す（.scrolling-name。useScrollingName.tsx） */
-.char-tray-item-name {
-  font-size: 0.75rem;
-  line-height: 1.2;
-  text-align: center;
-  width: 100%;
-  white-space: nowrap;
-  /* 横だけ切る（上下も切ると、流れる名前ごとに合成の層の組み直しが重くなり、ドラッグが重い。縦長の名前の .modern-slot-char-name と同じ） */
-  overflow-x: clip;
-  overflow-y: visible;
 }
 /* 絵の枠。いまの編成にいるニケは、実機の部隊編成と同じく水色の枠・薄い水色の重ね・✓ を絵に重ねる */
 .char-tray-item-visual {
@@ -1734,7 +1834,7 @@ html:has(.modern-view-container) {
 .modern-slot-card.modern-slot-awaiting .modern-slot-char-area::after,
 .char-tray-item-taken .char-tray-item-visual::after,
 .char-tray-item-pending .char-tray-item-visual::after {
-  /* 絵の枠（1px の枠線）と外形がそろうように、絵の箱と同じ大きさに描く */
+  /* 絵の枠線（1px）をまたいで、内側に 1px・外側に 1px */
   border: 2px solid var(--placing-blue);
 }
 .char-tray-item-check {
@@ -1765,21 +1865,19 @@ html:has(.modern-view-container) {
   flex: 1;
   color: var(--placing-blue);
 }
-/* ニケを選んでいる編成の番号（P1・P2）。絵の右上に縦に並べ、四角の絵で限界突破・コア強化を出すときはその下に置く */
+/* ニケを選んでいる編成の番号（P1・P2）。絵の右上に縦に並べる */
 .char-tray-item-parties {
   position: absolute;
-  top: 2px;
-  right: 2px;
-  z-index: 2;
+  /* 項目の余白は 2px。絵の角から 1px ずつ右上へ（外側の 1px にはみ出す。オーナーの指示） */
+  top: 1px;
+  right: 1px;
+  /* 水色の重ね（::after は 2）・✓（3）より上に出す（オーナーの指示。バッジに水色が掛からない） */
+  z-index: 4;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 1px;
   pointer-events: none;
-}
-.char-tray-item-parties-below-growth {
-  /* .char-tray-growth（top 2px）のコアの印（高さ --tray-core-w）の下に 2px 空ける */
-  top: calc(var(--tray-core-w) + 4px);
 }
 .party-number-badge {
   background: var(--placing-blue);
@@ -1870,53 +1968,6 @@ html:has(.modern-view-container) {
 .favorite-badge-club.favorite-badge-on {
   --badge-accent: #2fc25b;
 }
-/* 立ち絵の上端の中央に下げるお気に入りのバッジ（FavoriteRibbons）。絵の幅に合わせて縮む */
-.char-visual-favorites {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 1px;
-  pointer-events: none;
-  z-index: 1;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
-}
-.char-visual-favorites .favorite-badge {
-  width: 10px;
-}
-.char-visual-portrait .char-visual-favorites .favorite-badge {
-  width: 14px;
-}
-/* ニケ一覧の四角の絵では、右下の属性のバッジ（高さ --badge-w × 150/130）の上に 1 つだけ出す。幅は属性のバッジと同じ。
-   上の P○ のバッジと重ならないように、帯の下の切れ込み（深さは幅の 27.7%）に六角形の上の角を収めるところまで下げる */
-.char-visual-favorite-corner {
-  position: absolute;
-  right: 2px;
-  bottom: calc(2px + var(--badge-w) * 150 / 130 - var(--badge-w) * 0.277 + 1px);
-  z-index: 2;
-  width: var(--badge-w);
-  pointer-events: none;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
-}
-.char-visual-favorite-corner .favorite-badge {
-  width: 100%;
-}
-/* 2 つ以上のときに無地の ui_blank_main に重ねる数（帯の切れ込みより上の、四角の部分の中央） */
-.char-visual-favorite-count {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 75%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 0.75rem;
-  font-weight: bold;
-  line-height: 1;
-}
 .modal-close-button {
   background: transparent;
   border: none;
@@ -1957,8 +2008,15 @@ html:has(.modern-view-container) {
   padding: 2px;
   pointer-events: none;
 }
-.char-drag-overlay .char-visual {
+/* 持ち上げた絵の影。離した後に動く写しの下にも、同じ影を描いて少しずつ薄くする（.flight-lift-shadow。flight.ts の fadeLiftShadow） */
+.char-drag-overlay .char-visual,
+.slot-drag-overlay-portrait,
+.flight-lift-shadow {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+}
+/* 持ち上げた絵の外側の箱（DragOverlay）。押せない箱にして、下の膜（.drag-cursor-shield）の人差し指のカーソルを絵の上でも出す */
+.drag-overlay-root {
+  pointer-events: none;
 }
 /* スロットから持ち上げた立ち絵（スロットの絵と同じ大きさ。位置はカードの中の絵の位置に合わせる） */
 .slot-drag-overlay {
@@ -1967,7 +2025,6 @@ html:has(.modern-view-container) {
 }
 .slot-drag-overlay-portrait {
   position: absolute;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
 }
 
 /* 読めなかった編成の保存の知らせ（components/UnreadableSavesNotice.tsx） */
@@ -2030,9 +2087,6 @@ html:has(.modern-view-container) {
   font: inherit;
   text-align: left;
   cursor: pointer;
-}
-.roster-edit-row:hover {
-  background: color-mix(in srgb, var(--app-fg) 6%, transparent);
 }
 .roster-edit-row[aria-current='true'] {
   background: color-mix(in srgb, var(--app-fg) 14%, transparent);
@@ -2116,4 +2170,34 @@ html:has(.modern-view-container) {
   .roster-edit-back {
     display: inline-block;
   }
+}
+
+/* マウスを重ねたときのカーソルは統一する（オーナーの指示）。押して反応する場所は人差し指（pointer）、それ以外は既定の矢印。
+   押せない状態（aria-disabled）は既定に戻す。禁止の印（not-allowed）と掴む手（grab）は使わない */
+:where(
+  button,
+  summary,
+  select,
+  label[for],
+  label:has(input[type='checkbox'], input[type='radio'], input[type='range']),
+  a[href],
+  [role='button'],
+  input[type='checkbox'],
+  input[type='radio'],
+  input[type='range']
+) {
+  cursor: pointer;
+}
+:is(button, summary, select, label[for], a[href], [role='button'], input)[aria-disabled='true'],
+label:has([aria-disabled='true']) {
+  cursor: default;
+}
+/* ドラッグ中は、どこの上でも、つかんだ元の印と同じ人差し指のままにする（オーナーの指示）。画面いっぱいの透明な膜を 1 枚だけ敷く
+   （全部の要素の cursor を :has で切り替えると、持ち上げた瞬間に全要素の描き直しが起きて、持ち上がるまでに遅れが出る） */
+.drag-cursor-shield {
+  position: fixed;
+  inset: 0;
+  /* 持ち上げた絵（DragOverlay。z-index 999）の下、ほかのすべての上 */
+  z-index: 998;
+  cursor: pointer;
 }

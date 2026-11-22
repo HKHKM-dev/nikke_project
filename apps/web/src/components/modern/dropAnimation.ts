@@ -1,6 +1,6 @@
 // モダン UI のスロットと一覧の間のドラッグで、離したときのアニメーション（DragOverlay の dropAnimation）と、その材料
 import { defaultDropAnimationSideEffects, type DropAnimation } from '@dnd-kit/core';
-import { FLIGHT, fadeArrivalFace } from './flight.ts';
+import { FLIGHT, LIFT_SHADOW_SOURCES, fadeArrivalFace } from './flight.ts';
 
 /**
  * 離したときのアニメーション。dnd-kit の既定は、戻る間ドラッグ元（スロットのカード・一覧の項目）を透明にして消すので、
@@ -23,7 +23,14 @@ export function setDropPlaced(placed: boolean): void {
 export const slotCardAt = (index: number | null) =>
   index === null
     ? null
-    : (document.querySelectorAll<HTMLElement>('.modern-slots-grid > .modern-slot-card')[index] ?? null);
+    : (document.querySelectorAll<HTMLElement>('.modern-slots-grid:not(.modern-party-preview) > .modern-slot-card')[
+        index
+      ] ?? null);
+
+/** 編成 party（0 から。選んでいる編成も）の行の、スロット index のカード（無ければ null）。行は編成の番号の順に並ぶ（ModernView） */
+export const partyCardAt = (party: number, index: number) =>
+  document.querySelectorAll('.modern-party-row')[party]?.querySelectorAll<HTMLElement>('.modern-slot-card')[index] ??
+  null;
 
 /** 離したときのアニメーション。行き先が決まらなかったときだけ、持ち上げた絵をドラッグ元へ戻す */
 export const DROP_ANIMATION: DropAnimation = {
@@ -34,12 +41,23 @@ export const DROP_ANIMATION: DropAnimation = {
     const at = (t: typeof initial) => ({
       transform: `translate3d(${t.x}px, ${t.y}px, 0) scaleX(${t.scaleX}) scaleY(${t.scaleY})`,
     });
-    return [at(initial), at(dropPlaced ? initial : final)];
+    if (dropPlaced) return [at(initial), at(initial)];
+    // 戻り着く位置は、丸めず端数のまま（オーナーの指示）
+    return [at(initial), at(final)];
   },
-  // 元のスロットへ戻るときは、着くときと同じく、元の場所に出している空のスロットの枠を動きの後半で少しずつ透明にする
+  // 元のスロットへ戻るときは、着くときと同じく、元の場所に出している空のスロットの枠を動きの後半で少しずつ透明にする。
+  // 持ち上げた影は、戻るにつれて少しずつ薄くする。影を薄くしたアニメーションは終わりに取り消さない（取り消すと、持ち上げた絵が
+  // 消えるまでの 1 描画だけ影が元の濃さで出る。持ち上げた絵は戻った後に消えるので、そのままでよい）
   sideEffects: (params) => {
     const cleanup = returnSideEffects(params);
     const fade = dropPlaced ? null : fadeArrivalFace(params.active.node);
+    const shadow = params.dragOverlay.node.querySelector(LIFT_SHADOW_SOURCES);
+    if (!dropPlaced)
+      shadow?.animate([{ boxShadow: getComputedStyle(shadow).boxShadow }, { boxShadow: 'none' }], {
+        duration: FLIGHT.duration,
+        easing: FLIGHT.easing,
+        fill: 'forwards',
+      });
     return () => {
       cleanup?.();
       fade?.cancel();

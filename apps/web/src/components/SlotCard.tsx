@@ -1,5 +1,6 @@
 import type { BuildMasters, CharacterData, CharacterIndexEntry } from '@nikke/core';
 import type { Dispatch } from 'react';
+import { InertButton } from './InertButton.tsx';
 import type { SlotResultView } from '../calcView.ts';
 import { formatDamage } from '../format.ts';
 import { growthFieldsActions, type SlotGrowthFields, type SlotState, type TeamAction } from '../team.ts';
@@ -94,14 +95,13 @@ export function SlotCard({
         onClear={() => dispatch({ type: 'clearSlot', index: slotIndex })}
       />
       <div className="slot-buttons">
-        <button
-          type="button"
+        <InertButton
           className="slot-button"
-          disabled={slot.resourceId === null}
-          onClick={() => dispatch({ type: 'clearSlot', index: slotIndex })}
+          enabled={slot.resourceId !== null}
+          onPress={() => dispatch({ type: 'clearSlot', index: slotIndex })}
         >
           外す
-        </button>
+        </InertButton>
         {/* 枠の育成（好感度・限界突破・コア強化／スキル LV／装備・キューブ・コレクション）のポップアップ。
             見出しの横に対応状況の印は出さない（未対応はキャラ名の「（未）」と「未対応・近似・仮定の一覧」に出る） */}
         {character ? (

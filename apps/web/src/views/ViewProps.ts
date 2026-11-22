@@ -2,7 +2,7 @@ import type { BuildMasters, BuildSnapshot, CharacterData, CharacterIndexEntry } 
 import type { Dispatch } from 'react';
 import type { CalcView, NotesSummarySlot, SlotResultView } from '../calcView.ts';
 import type { Shown } from '../compute.ts';
-import type { OtherParties, PartiesState } from '../parties.ts';
+import type { OtherParties, PartiesState, PartySlotRef } from '../parties.ts';
 import type { PartyTotal } from '../partyTotals.ts';
 import type { TeamAction, TeamState } from '../team.ts';
 import type { ListOrderControls } from '../useListOrder.ts';
@@ -16,8 +16,6 @@ export type ViewProps = {
     errors: ReadonlyMap<number, string>;
   };
   fullySupported: ReadonlySet<number> | null;
-  /** 未対応の印（モダン UI）にマウスを載せたときの知らせ（useSkillDefinitions の unsupportedNoteOf。完全対応なら null） */
-  unsupportedNote: (resourceId: number) => string | null;
   masters: BuildMasters | null;
   mastersError: string | null;
   calc: CalcView;
@@ -27,6 +25,14 @@ export type ViewProps = {
   /** ほかの編成で選んでいるニケ（parties.ts の otherPartyResourceIds） */
   otherPartyIds: OtherParties;
   selectParty: (to: number) => void;
+  /** 一覧のニケを、ほかの編成 party のスロット index に置く（選んでいる編成は変えない） */
+  placeInParty: (resourceId: number, party: number, index: number) => void;
+  /** ほかの編成 party のスロット index を空にする */
+  clearPartySlot: (party: number, index: number) => void;
+  /** 2 つのスロット（どの編成でも）の中身を入れ替える（選んでいる編成は変えない） */
+  exchangeSlots: (a: PartySlotRef, b: PartySlotRef) => void;
+  /** 編成 a と b の中身を入れ替える（選んでいる編成の番号は変えない） */
+  swapPartyContents: (a: number, b: number) => void;
   totals: { parties: PartyTotal[]; total: number | null };
   totalsPending: boolean;
   summarySlots: readonly (NotesSummarySlot | null)[];

@@ -66,8 +66,7 @@ function badgeName(name: string): string {
  */
 export const GROWTH_BADGES = { star: badgeName('grade_star'), core: badgeName('core_plain') } as const;
 
-/** 未対応の印（ⓘ。CharacterVisual）と、操作キャラの印（ModernSlotCard の ControllerIcon）のバッジ */
-export const UNSUPPORTED_BADGE = badgeName('ui_information');
+/** 操作キャラの印（ModernSlotCard の ControllerIcon）のバッジ */
 export const CONTROLLER_BADGE = badgeName('ui_controller');
 /** 右上の設定のメニューのボタンのバッジ（モダン UI の SettingsMenu） */
 export const SETTING_BADGE = badgeName('ui_window');
@@ -92,13 +91,12 @@ export const FAVORITE_BADGES = {
   diamond: badgeName('main_diamond'),
   club: badgeName('main_club'),
 } as const;
-export const FAVORITE_COUNT_BADGE = badgeName('ui_blank_main');
+
+/** 属性が「なし」のときの、空の六角形のバッジ（敵情報の属性の横。TeamSettingsForm）。属性のバッジと同じ六角形 */
+export const EMPTY_ELEMENT_BADGE = badgeName('ui_blank_hexagon');
 
 /** ニケ一覧の絞り込みを外すボタン（CharacterTray）のバッジ */
 export const RETURN_BADGE = badgeName('ui_return');
-/** スロットの並びの元に戻す・やり直すのボタン（ModernView）のバッジ */
-export const UNDO_BADGE = badgeName('ui_undo');
-export const REDO_BADGE = badgeName('ui_redo');
 /** スロットの立ち絵の右上の、空にするボタンと育成・設定のボタン（ModernSlotCard）のバッジ */
 export const DELETE_BADGE = badgeName('ui_delete');
 export const BUILD_BADGE = badgeName('ui_setting');
@@ -188,8 +186,7 @@ export const CLASSIC_FILTER_KINDS: readonly BadgeKind[] = [
 /** キャラの絵の左上に縦に出すバッジの順（属性・武器種・バースト段階。クラスは出さず、トレイの絞り込みにだけ使う） */
 export const VISUAL_BADGE_KINDS: readonly BadgeKind[] = [kindOf('element'), kindOf('weaponType'), kindOf('burstStep')];
 
-/** ニケ一覧の正方形の絵の左上に縦に出すバッジの順（武器種・バースト段階）。属性は右下に別に出す（ELEMENT_BADGE_KIND） */
-export const COMPACT_BADGE_KINDS: readonly BadgeKind[] = [kindOf('weaponType'), kindOf('burstStep')];
+/** ニケ一覧の正方形の絵の右下に出す属性のバッジ */
 export const ELEMENT_BADGE_KIND: BadgeKind = kindOf('element');
 /** バースト段階のバッジの種類（クラシックの Ⅰ・Ⅱ・Ⅲ の絞り込み） */
 export const BURST_STEP_BADGE_KIND: BadgeKind = kindOf('burstStep');

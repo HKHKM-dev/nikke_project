@@ -13,6 +13,7 @@ import { BadgeFilters } from './BadgeFilter.tsx';
 import { FavoriteButtons } from './FavoriteBadge.tsx';
 import { filterByFavorites, FavoritesContext, toggleFavoriteMark, type FavoriteMark } from '../../favorites.ts';
 import { BadgeIcon } from './BadgeIcon.tsx';
+import { InertButton } from '../InertButton.tsx';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
 import { activeDragData, type OverDragData } from './dropIntent.ts';
 import { trayGrowthMarks } from './GrowthMarks.tsx';
@@ -58,8 +59,6 @@ type Props = {
   otherPartyIds: OtherParties;
   /** いまの編成の番号（1 から。いまの編成にいるニケに P○ のバッジを出す） */
   activeParty: number;
-  /** 未対応の印の知らせ（useSkillDefinitions の unsupportedNoteOf。完全対応なら null） */
-  unsupportedNote: (resourceId: number) => string | null;
   /** 置くスロットのクリックを待っているニケ */
   pendingId: number | null;
   /** 読み込んだ育成状況（各ニケの限界突破・コア強化を出す。無ければ出さない） */
@@ -79,7 +78,6 @@ export function CharacterTray({
   takenIds,
   otherPartyIds,
   activeParty,
-  unsupportedNote,
   pendingId,
   roster,
   fixedSpec,
@@ -106,7 +104,9 @@ export function CharacterTray({
     id: 'tray-drop',
     data: { type: 'tray' } satisfies OverDragData,
   });
-  const returning = isOver && activeDragData(active?.data.current)?.type === 'slot-character';
+  // 選んでいる編成のスロットのキャラも、選んでいない編成の行のスロットのキャラも、一覧の上に来たら破線を出す
+  const dragType = activeDragData(active?.data.current)?.type;
+  const returning = isOver && (dragType === 'slot-character' || dragType === 'party-character');
 
   return (
     <section
@@ -149,7 +149,6 @@ export function CharacterTray({
         takenIds={takenIds}
         otherPartyIds={otherPartyIds}
         activeParty={activeParty}
-        unsupportedNote={unsupportedNote}
         pendingId={pendingId}
         roster={roster}
         fixedSpec={fixedSpec}
@@ -162,15 +161,7 @@ export function CharacterTray({
 
 type TrayListProps = Pick<
   Props,
-  | 'takenIds'
-  | 'otherPartyIds'
-  | 'activeParty'
-  | 'unsupportedNote'
-  | 'pendingId'
-  | 'roster'
-  | 'fixedSpec'
-  | 'shape'
-  | 'onSelectCharacter'
+  'takenIds' | 'otherPartyIds' | 'activeParty' | 'pendingId' | 'roster' | 'fixedSpec' | 'shape' | 'onSelectCharacter'
 > & { characters: readonly CharacterIndexEntry[] };
 
 /**
@@ -182,7 +173,6 @@ const TrayList = memo(function TrayList({
   takenIds,
   otherPartyIds,
   activeParty,
-  unsupportedNote,
   pendingId,
   roster,
   fixedSpec,
@@ -206,7 +196,6 @@ const TrayList = memo(function TrayList({
               isTaken={isTaken}
               inOtherParty={otherParties.length > 0}
               partyNumbers={isTaken ? activeParties : otherParties}
-              unsupportedNote={unsupportedNote(char.resourceId)}
               isPending={pendingId === char.resourceId}
               growthMarks={trayGrowthMarks(char, roster, fixedSpec)}
               // コレクションのバッジは縦長の絵にだけ出す
@@ -272,7 +261,6 @@ function TrayFilters({
         className="char-tray-action-button char-tray-filter-clear"
         aria-disabled={!filtering}
         aria-label="クリア"
-        title="クリア"
         onClick={() => {
           if (!filtering) return;
           onFiltersChange({});
@@ -399,14 +387,9 @@ function TrayFilterMenu({
             <p className="hint">表を読み終えるまで、名前のほかでは絞らない</p>
           )}
           <div className="char-tray-filter-footer">
-            <button
-              type="button"
-              className="classic-filter-button"
-              disabled={!active}
-              onClick={() => onChange(EMPTY_TRAY_FILTER)}
-            >
+            <InertButton className="classic-filter-button" enabled={active} onPress={() => onChange(EMPTY_TRAY_FILTER)}>
               すべて外す
-            </button>
+            </InertButton>
           </div>
         </div>
       </Popover>
@@ -488,7 +471,6 @@ function TraySortMenu({ listOrder }: { listOrder: ListOrderControls }) {
                   type="button"
                   className="char-tray-action-button char-tray-sort-option"
                   aria-pressed={current}
-                  title={current ? `${LIST_DIRECTION_LABEL[listOrder.direction]}（押すと入れ替える）` : undefined}
                   onClick={() => (current ? listOrder.toggleDirection() : listOrder.select(o))}
                 >
                   {LIST_ORDER_LABEL[o]}
@@ -505,7 +487,6 @@ function TraySortMenu({ listOrder }: { listOrder: ListOrderControls }) {
           type="button"
           className="char-tray-action-button char-tray-sort-direction"
           aria-label={`${LIST_DIRECTION_LABEL[listOrder.direction]}（押すと入れ替える）`}
-          title={`${LIST_DIRECTION_LABEL[listOrder.direction]}（押すと入れ替える）`}
           onClick={listOrder.toggleDirection}
         >
           {LIST_DIRECTION_MARK[listOrder.direction]}

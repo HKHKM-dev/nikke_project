@@ -3,6 +3,7 @@
 // 同じ種類は OR、種類どうしと宝物は AND（matchesBadgeFilters。全段階のニケは、どの段階で絞っても出す）
 import type { CharacterIndexEntry } from '@nikke/core';
 import { useMemo } from 'react';
+import { InertButton } from './InertButton.tsx';
 import { useCharacterFilter } from './useCharacterFilter.ts';
 import { BURST_STEP_LABEL } from '../skillLabels.ts';
 import { BURST_STEP_BADGE_KIND, CLASSIC_FILTER_KINDS, filterButtonValues, toggleBadgeFilter } from './modern/badges.ts';
@@ -62,18 +63,17 @@ export function ClassicFilter({
             宝もの
           </button>
         </div>
-        <button
-          type="button"
+        <InertButton
           className="classic-filter-clear"
-          disabled={!active}
-          onClick={() => {
+          enabled={active}
+          onPress={() => {
             // バースト段階（ポップアップの外のボタン）は残す
             setFilters(({ burstStep }) => (burstStep ? { burstStep } : {}));
             setTreasureOnly(false);
           }}
         >
           クリア
-        </button>
+        </InertButton>
       </div>
     </Popover>
   );

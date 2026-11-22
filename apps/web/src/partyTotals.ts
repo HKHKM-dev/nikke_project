@@ -39,7 +39,12 @@ export function partyInputs(state: PartiesState, shared: SharedSettings, deps: P
  * 編成ごとの合計ダメージ。値が無い（空・読み込み中・計算中で前の結果も無い・エラー）は null。
  * computing は、出している値が前の入力のもの（いまの入力を計算中）
  */
-export type PartyTotal = { kind: PartyInput['kind']; total: number | null; computing: boolean; error?: string };
+export type PartyTotal = {
+  kind: PartyInput['kind'];
+  total: number | null;
+  computing: boolean;
+  error?: string;
+};
 
 /** 計算の結果と、それがいまの入力のものでないか */
 export type PartyComputed = { computed: Computed | null; computing: boolean };

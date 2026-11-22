@@ -11,7 +11,9 @@ import {
   isRecord,
   parseTeamObject,
   readVersionedJson,
+  teamReducer,
   type SlotState,
+  type TeamAction,
   type TeamState,
 } from './team.ts';
 
@@ -124,6 +126,84 @@ export function switchParty(
   const next = withParty(team, parties[to] ?? null);
   parties[to] = null;
   return { parties: { active: to, parties }, team: next };
+}
+
+/**
+ * ほかの編成 to のスロットを、編成の操作 action で変える（一覧のニケを選んでいない編成の行に置く。モダン UI）。選んでいる編成は変えない。
+ * to が選んでいる編成・範囲の外なら何もしない
+ */
+export function updateOtherParty(state: PartiesState, team: TeamState, to: number, action: TeamAction): PartiesState {
+  if (to === state.active || to < 0 || to >= PARTY_COUNT) return state;
+  const before = withParty(team, state.parties[to] ?? null);
+  const after = teamReducer(before, action);
+  if (after === before) return state;
+  const parties = state.parties.slice();
+  parties[to] = partyOf(after);
+  return { ...state, parties };
+}
+
+/** 編成 party のスロット index（選んでいる編成も含む） */
+export type PartySlotRef = { party: number; index: number };
+
+/**
+ * 2 つのスロット a・b の中身を入れ替える（モダン UI のドラッグで、編成の行どうしの間でニケを移す）。どちらも、選んでいる編成（中身は team）・
+ * ほかの編成のどちらでもよく、同じ編成の中でもよい。育成・スキル・スロットの詳細設定はニケと一緒に動く（スロットの中身ごと入れ替える）。
+ * 選んでいる編成は変えない。同じスロット・範囲の外なら何もしない
+ */
+export function exchangePartySlots(
+  state: PartiesState,
+  team: TeamState,
+  a: PartySlotRef,
+  b: PartySlotRef,
+): { parties: PartiesState; team: TeamState } {
+  const unchanged = { parties: state, team };
+  if (a.party === b.party && a.index === b.index) return unchanged;
+  const slotsOf = (party: number) =>
+    party === state.active ? team.slots : (state.parties[party] ?? partyOf(INITIAL_TEAM_STATE)).slots;
+  const inRange = (r: PartySlotRef) => r.party >= 0 && r.party < PARTY_COUNT && slotsOf(r.party)[r.index] !== undefined;
+  if (!inRange(a) || !inRange(b)) return unchanged;
+  const slotA = slotsOf(a.party)[a.index]!;
+  const slotB = slotsOf(b.party)[b.index]!;
+  // 書き換えた編成のスロット（a と b が同じ編成なら、続けて書き換える）
+  const changed = new Map<number, SlotState[]>();
+  const put = (r: PartySlotRef, slot: SlotState) => {
+    const slots = changed.get(r.party) ?? slotsOf(r.party).slice();
+    slots[r.index] = slot;
+    changed.set(r.party, slots);
+  };
+  put(a, slotB);
+  put(b, slotA);
+  let nextTeam = team;
+  const parties = state.parties.slice();
+  for (const [party, slots] of changed) {
+    if (party === state.active) nextTeam = { ...team, slots };
+    else parties[party] = { ...(state.parties[party] ?? partyOf(INITIAL_TEAM_STATE)), slots };
+  }
+  return { parties: { ...state, parties }, team: nextTeam };
+}
+
+/**
+ * 編成 a と b の中身（スロットと操作キャラ）を入れ替える（モダン UI で、編成の番号をドラッグして入れ替える）。選んでいる編成の番号は変えず、
+ * 選んでいる編成が入れ替わるなら、画面の編成（team）の中身を入れ替えた先のものにする。同じ編成・範囲の外なら何もしない
+ */
+export function swapParties(
+  state: PartiesState,
+  team: TeamState,
+  a: number,
+  b: number,
+): { parties: PartiesState; team: TeamState } {
+  const inRange = (i: number) => i >= 0 && i < PARTY_COUNT;
+  if (a === b || !inRange(a) || !inRange(b)) return { parties: state, team };
+  const contentOf = (i: number) => (i === state.active ? partyOf(team) : (state.parties[i] ?? null));
+  const parties = state.parties.slice();
+  const nextA = contentOf(b);
+  const nextB = contentOf(a);
+  parties[a] = nextA;
+  parties[b] = nextB;
+  const active = parties[state.active] ?? null;
+  const nextTeam = a === state.active || b === state.active ? withParty(team, active) : team;
+  parties[state.active] = null;
+  return { parties: { ...state, parties }, team: nextTeam };
 }
 
 export function serializeParties(state: PartiesState): string {

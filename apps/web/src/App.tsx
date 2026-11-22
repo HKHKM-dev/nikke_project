@@ -8,12 +8,22 @@ import { SettingsMenu } from './components/SettingsMenu.tsx';
 import { UnreadableSavesNotice } from './components/UnreadableSavesNotice.tsx';
 import { INITIAL_TEAM_STATE, teamReducer, type TeamAction } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
-import { INITIAL_PARTIES, otherPartyResourceIds, switchParty, type PartiesState } from './parties.ts';
-import { slotSkillsStatus, unsupportedNoteOf, useSkillDefinitions } from './useSkillDefinitions.ts';
+import {
+  INITIAL_PARTIES,
+  exchangePartySlots,
+  otherPartyResourceIds,
+  swapParties,
+  switchParty,
+  updateOtherParty,
+  type PartiesState,
+  type PartySlotRef,
+} from './parties.ts';
+import { slotSkillsStatus, useSkillDefinitions } from './useSkillDefinitions.ts';
 import { orderCharacters } from './listOrder.ts';
 import { ListOrderContext, useListOrder } from './useListOrder.ts';
 import { useMasters } from './useMasters.ts';
 import { usePartyTotals } from './usePartyTotals.ts';
+import { withRosterFields } from './roster.ts';
 import { useRoster } from './useRoster.ts';
 import { useSavedTeam } from './useSavedTeam.ts';
 import { useTeamComputation } from './useTeamComputation.ts';
@@ -62,6 +72,19 @@ export function App() {
     setParties(next.parties);
     dispatch({ type: 'replace', state: next.team });
   };
+  // 2 つのスロット（どの編成でも）の中身を入れ替える（ニケを編成の行どうしの間で移す。選んでいる編成は変えない）
+  const exchangeSlots = (a: PartySlotRef, b: PartySlotRef) => {
+    const next = exchangePartySlots(parties, team, a, b);
+    setParties(next.parties);
+    if (next.team !== team) dispatch({ type: 'replace', state: next.team });
+  };
+
+  // 編成 a と b の中身を入れ替える（選んでいる編成の番号は変えない）
+  const swapPartyContents = (a: number, b: number) => {
+    const next = swapParties(parties, team, a, b);
+    setParties(next.parties);
+    if (next.team !== team) dispatch({ type: 'replace', state: next.team });
+  };
 
   // ほかの編成のキャラも読む（全編成の合計ダメージ）
   const resourceIds = useMemo(
@@ -70,12 +93,6 @@ export function App() {
   );
   const cache = useCharacterCache(resourceIds, BASE_URL);
   const skills = useSkillDefinitions(resourceIds, BASE_URL);
-  // 印の知らせは索引だけで決まる（スロットの定義の読み込みでは作り直さない）
-  const { index: skillIndex, fullySupported, supportGaps } = skills;
-  const unsupportedNote = useCallback(
-    (resourceId: number) => unsupportedNoteOf({ index: skillIndex, fullySupported, supportGaps }, resourceId),
-    [skillIndex, fullySupported, supportGaps],
-  );
 
   // 枠ごとのスキル定義の状態（未選択は null）
   const skillsStatuses = useMemo(
@@ -120,6 +137,16 @@ export function App() {
   const summarySlots = useMemo(() => notesSummarySlots(calc, slotResults), [calc, slotResults]);
 
   const otherPartyIds = useMemo(() => otherPartyResourceIds(parties), [parties]);
+  // 一覧のニケを、ほかの編成 party のスロット index に置く（育成状況の育成を付ける。選んでいる編成は変えない）。
+  // どこかの編成にいるニケは置かない（ソロレイドでは同じニケを 2 つの編成に入れられない）
+  const placeInParty = (resourceId: number, party: number, index: number) => {
+    if (otherPartyIds.has(resourceId) || team.slots.some((s) => s.resourceId === resourceId)) return;
+    const action = withRosterFields({ type: 'selectCharacter', index, resourceId }, rosterControls.roster);
+    setParties(updateOtherParty(parties, team, party, action));
+  };
+  // ほかの編成 party のスロット index を空にする（ニケを一覧へ戻す）
+  const clearPartySlot = (party: number, index: number) =>
+    setParties(updateOtherParty(parties, team, party, { type: 'clearSlot', index }));
   // ほかの編成で使っているニケは、いまの編成に入れない（ソロレイドでは同じニケを 2 つの編成に入れられない）。
   // 一覧と選択肢でも選べなくしてあるが、編成を変える操作はすべてここを通るので、ここで止める
   const dispatchToTeam = useCallback(
@@ -137,7 +164,6 @@ export function App() {
         index: orderedIndex,
         characterCache: cache,
         fullySupported: skills.fullySupported,
-        unsupportedNote,
         masters,
         mastersError,
         calc,
@@ -146,6 +172,10 @@ export function App() {
         parties,
         otherPartyIds,
         selectParty,
+        placeInParty,
+        clearPartySlot,
+        exchangeSlots,
+        swapPartyContents,
         totals,
         totalsPending,
         summarySlots,

@@ -70,13 +70,10 @@
 }
 :where(:root[data-app-ui='modern']) button {
   cursor: pointer;
+  /* マウスを乗せても、枠で囲む・枠の色を変えるといった表示はしない（オーナーの指示） */
   transition:
     border-color 0.15s,
     background 0.15s;
-}
-/* 一覧のニケと編成のタブは、マウスを重ねても枠を変えない */
-:where(:root[data-app-ui='modern']) button:where(:not(.char-tray-item, .party-tab)):hover {
-  border-color: var(--m-accent);
 }
 :root[data-app-ui='modern'] :where(button, select, textarea, input, summary):focus-visible {
   outline: 2px solid var(--m-accent);
@@ -91,6 +88,7 @@
   color: var(--m-accent-fg);
 }
 /* 押している絞り込みの文字のボタンは、編成のタブの選んでいるもの（.toggle-button）と同じアプリの青で塗る */
+:root[data-app-ui='modern'] .char-tray-sort-option[aria-pressed='true'],
 :root[data-app-ui='modern'] .classic-filter-button[aria-pressed='true'] {
   border-color: var(--m-accent);
   background: var(--m-accent);
@@ -121,6 +119,7 @@
 }
 
 /* 落とす先の枠は、置き先待ちの枠と同じ水色 */
+:root[data-app-ui='modern'] .modern-party-row-label.party-label-over .party-tab,
 :root[data-app-ui='modern'] .modern-slot-card.modern-slot-over .modern-slot-char-area {
   outline-color: var(--placing-blue);
 }
@@ -131,10 +130,16 @@
   border-width: 1px;
   border-style: solid;
   --char-visual-line: var(--slot-frame-line);
-  /* 文字は、シルエットの絵（ライトで約 #b0b0b0・ダークで約 #505050）の上で読めるよう、ライトでは白より 20% 暗い灰色・ダークでは黒より 20% 明るい灰色にする（＋ は 10%） */
-  color: light-dark(#cccccc, #333333);
+  /* 中の ＋ は、枠の塗り（文字の色を 8% 混ぜた色）の上で薄く見える灰色にする */
+  color: color-mix(in srgb, var(--app-fg) 30%, transparent);
   opacity: 1;
 }
+/* 縦長の空のスロット（選んでいる編成。以前の見た目）の文字は、シルエットの絵（ライトで約 #b0b0b0・ダークで約 #505050）の上で読めるよう、
+   ライトでは白より 20% 暗い灰色・ダークでは黒より 20% 明るい灰色にする（＋ は 10%） */
+:root[data-app-ui='modern'] .modern-slot-empty-area.modern-slot-empty-tall {
+  color: light-dark(#cccccc, #333333);
+}
+/* 四角の空のスロットの ＋ も、縦長と同じ色にする（オーナーのコメント） */
 :root[data-app-ui='modern'] .modern-slot-empty-plus {
   color: light-dark(#e6e6e6, #1a1a1a);
 }
@@ -142,21 +147,6 @@
 :root[data-app-ui='modern'] .char-visual {
   --char-visual-line: var(--slot-frame-line);
 }
-:root[data-app-ui='modern'] .modern-slot-damage-section {
-  border: none;
-  border-radius: 8px;
-  background: var(--m-surface-2);
-}
-:root[data-app-ui='modern'] .modern-slot-damage-value {
-  color: var(--m-gold);
-}
-:root[data-app-ui='modern'] .modern-slot-damage-bar-track {
-  border-radius: 999px;
-}
-:root[data-app-ui='modern'] .modern-slot-damage-bar-fill {
-  border-radius: 999px;
-}
-
 /* ニケ一覧（トレイ）。一覧のニケは角を丸めない（上のボタンの共通の角丸を打ち消す） */
 :root[data-app-ui='modern'] .char-tray-item {
   border-radius: 0;

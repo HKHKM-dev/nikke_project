@@ -78,11 +78,54 @@ export function frameAt(target: Box, base: Box): Keyframe {
   };
 }
 
+/** 持ち上げた絵のうち、影を付けている要素（styles.css）。離したときのアニメーションで、影を少しずつ薄くする */
+export const LIFT_SHADOW_SOURCES = '.slot-drag-overlay-portrait, .char-drag-overlay .char-visual';
+
+/**
+ * 持ち上げた絵（DragOverlay）から測った位置。離したときに、絵がそこからスロットへ動く写し（flyIntoSlot）に、持ち上げた影を付けて
+ * 少しずつ薄くする。位置（DOMRect）だけを受け渡す道筋（useSlotPlacement の待ち）を変えずに、持ち上げた絵からかを伝える
+ */
+const liftedRects = new WeakSet<DOMRect>();
+
+/** 持ち上げた絵 node の位置（node が無ければ undefined）。flyIntoSlot は、この位置から動く写しに持ち上げた影を付ける */
+export function liftedRectOf(node: Element | null): DOMRect | undefined {
+  if (!node) return undefined;
+  const rect = node.getBoundingClientRect();
+  liftedRects.add(rect);
+  return rect;
+}
+
+/**
+ * 持ち上げた影を、from から to へ写しと一緒に動かしながら、少しずつ薄くして消す。写しは四角に切り抜く（frameAt の clip-path）と
+ * 下の影も切れるので、影は写しの下に置く別の箱（.flight-lift-shadow。影だけを描き、中は透ける）で描く。返す関数は、待たずに消す
+ */
+function fadeLiftShadow(from: Box, to: Box): () => void {
+  const box = document.createElement('div');
+  box.className = 'flight-lift-shadow';
+  Object.assign(box.style, { position: 'fixed', margin: '0', zIndex: '9998', pointerEvents: 'none' });
+  document.body.appendChild(box);
+  const at = (r: Box, opacity: number): Keyframe => ({
+    left: `${r.left}px`,
+    top: `${r.top}px`,
+    width: `${r.width}px`,
+    height: `${r.height}px`,
+    opacity,
+  });
+  const remove = () => box.remove();
+  box.animate([at(from, 1), at(to, 0)], FLIGHT).finished.then(remove, remove);
+  return remove;
+}
+
+/** 名前を小さい文字で出す、四角の絵の入れ物 */
+const SQUARE_SOURCES = '.modern-party-preview-card, .char-tray-square-area, .slot-drag-overlay-square';
+
 /** node の写しを、いまの node の位置・大きさで画面に重ねる */
 function ghostOf(node: Element, base: DOMRect): HTMLElement {
   const ghost = cloneForAnimation(node);
   // スロットの立ち絵は並びの幅で縮む（useSlotFit）。写しを置く body の外でも同じ大きさにする
   for (const [name, value] of Object.entries(slotSizeVars(node))) ghost.style.setProperty(name, value);
+  // 四角の絵（選んでいない編成の行・ニケ一覧の四角・持ち上げた四角の絵）の名前は小さい文字（styles.css）。写しは body に置くので、印を付けてそろえる
+  if (node.closest(SQUARE_SOURCES)) ghost.classList.add('flight-ghost-square');
   Object.assign(ghost.style, {
     position: 'fixed',
     left: `${base.left}px`,
@@ -110,6 +153,7 @@ export function flyIntoSlot(from: DOMRect, card: Element): () => void {
   card.classList.add('modern-slot-arriving');
   let ghost: HTMLElement | null = null;
   let fade: Animation | null = null;
+  let removeShadow: (() => void) | null = null;
   let ready: Promise<void> = Promise.resolve();
   let stopped = false;
   // 隠しを外すのは、このスロットへ動いている写しがこれのときだけ（後から別の写しが来ていれば、それが外す）
@@ -117,6 +161,7 @@ export function flyIntoSlot(from: DOMRect, card: Element): () => void {
     stopped = true;
     ghost?.remove();
     fade?.cancel();
+    removeShadow?.();
     if (arrivals.get(card) !== remove) return;
     arrivals.delete(card);
     card.classList.remove('modern-slot-arriving');
@@ -141,6 +186,8 @@ export function flyIntoSlot(from: DOMRect, card: Element): () => void {
     const base = content.getBoundingClientRect();
     ghost = ghostOf(content, base);
     ghost.animate([frameAt(from, base), frameAt(base, base)], FLIGHT).finished.then(done, done);
+    // 持ち上げた絵から動くときは、持ち上げた影も一緒に動かしながら薄くする
+    if (liftedRects.has(from)) removeShadow = fadeLiftShadow(from, base);
     fade = fadeArrivalFace(card);
   });
   return done;
@@ -148,7 +195,8 @@ export function flyIntoSlot(from: DOMRect, card: Element): () => void {
 
 /**
  * 外したニケの立ち絵の枠（content。外す前のスロットか持ち上げた絵）を、その位置から一覧のそのニケの絵（to）へ動かし、
- * 少し薄くして消す（一覧の絵が四角なら、四角に切り抜きながら動かす。frameAt）。一覧に出ていない（絞り込みで外れた）ときは、その場で縮めながら消す
+ * 少し薄くして消す（一覧の絵が四角なら、四角に切り抜きながら動かす。frameAt）。一覧に出ていない（絞り込みで外れた）ときは、その場で縮めながら消す。
+ * 持ち上げた絵から動くときは、持ち上げた影も一緒に動かしながら薄くする
  */
 export function flyToTray(content: Element, to: DOMRect | null): void {
   const base = content.getBoundingClientRect();
@@ -156,6 +204,7 @@ export function flyToTray(content: Element, to: DOMRect | null): void {
     to ?? new DOMRect(base.left + base.width * 0.1, base.top + base.height * 0.1, base.width * 0.8, base.height * 0.8);
   const ghost = ghostOf(content, base);
   const remove = () => ghost.remove();
+  if (content.closest(LIFT_SHADOW_SOURCES)) fadeLiftShadow(base, end);
   ghost
     .animate(
       [
@@ -165,6 +214,44 @@ export function flyToTray(content: Element, to: DOMRect | null): void {
       FLIGHT,
     )
     .finished.then(remove, remove);
+}
+
+/**
+ * 持ち上げた番号（content）を、その位置から to の位置・大きさへ動かす（編成の番号を別の番号に落とした）。動きの最初の 45% で透明にし、
+ * 透明の間（半分）に動く先の番号の表示（destination のいまの中身）に切り替え、後半の 55% から不透明に戻す。動き終えたら（取り消されても）返す Promise が済む。
+ * 動く先の番号は、落とした後の描き直しで中身が変わりうるので、切り替えるときに読む
+ */
+export function flyLabel(content: Element, to: DOMRect, destination: Element | null): Promise<void> {
+  const base = content.getBoundingClientRect();
+  const ghost = ghostOf(content, base);
+  const remove = () => ghost.remove();
+  const move = ghost.animate([frameAt(base, base), frameAt(to, base)], FLIGHT);
+  // 透明にする動きは、動きの速さの変化（ease）を付けず、0〜45% で透明にし、45〜55% は透明のまま、55〜100% で不透明に戻す
+  const fade = ghost.animate(
+    [{ opacity: 1 }, { opacity: 0, offset: 0.45 }, { opacity: 0, offset: 0.55 }, { opacity: 1 }],
+    {
+      duration: FLIGHT.duration,
+      easing: 'linear',
+      fill: FLIGHT.fill,
+    },
+  );
+  let switched = false;
+  const watch = () => {
+    if (switched || !ghost.isConnected) return;
+    if (Number(fade.currentTime ?? 0) >= FLIGHT.duration / 2) {
+      switched = true;
+      const shown = destination?.cloneNode(true) as HTMLElement | undefined;
+      if (shown) {
+        // 動く先の番号のボタンは、動いている間は隠している（style）。写しでは見せる
+        for (const el of shown.querySelectorAll<HTMLElement>('*')) el.style.visibility = '';
+        ghost.replaceChildren(...shown.childNodes);
+      }
+      return;
+    }
+    requestAnimationFrame(watch);
+  };
+  requestAnimationFrame(watch);
+  return Promise.all([move.finished, fade.finished]).then(remove, remove);
 }
 
 /**
@@ -188,5 +275,53 @@ export function flyControllerInto(
       [{ transform: `translate(${from.left - to.left}px, ${from.top - to.top}px)` }, { transform: 'none' }],
       { duration: FLIGHT.duration, easing: FLIGHT.easing },
     );
+  });
+}
+
+/** 編成を切り替える前の、立ち絵の枠の写し（元と同じ位置・見た目で重ねてある）と、その位置 */
+export type ContentSnapshot = { ghost: HTMLElement; rect: DOMRect };
+
+/**
+ * 立ち絵の枠（content）の写しを、いまの位置にそのまま重ねて取る。編成を切り替える前に取っておくと、切り替えた後の描き直しで
+ * 元の枠が消えても、写しが残って動きの始まりになる（dissolveSnapshot）
+ */
+export function snapshotContent(content: Element): ContentSnapshot {
+  const rect = content.getBoundingClientRect();
+  return { ghost: ghostOf(content, rect), rect };
+}
+
+/** 写しを、待たずに消す */
+export function dropSnapshot({ ghost }: ContentSnapshot): void {
+  ghost.remove();
+}
+
+/**
+ * 写しを、(dx, dy) だけ動かしながら、動きの前半で透明にして消す（編成を切り替えて、立ち絵の枠が四角と縦長で入れ替わる）。
+ * 動かす量は、usePartySwitch が上端・下端をそろえる位置から決める。前半で透明になり終え、真ん中で新しい枠に切り替わる（後半で fadeInContent が現す）
+ */
+export function dissolveSnapshot({ ghost }: ContentSnapshot, dx: number, dy: number): void {
+  const remove = () => ghost.remove();
+  ghost
+    .animate([{ transform: 'none' }, { transform: `translate(${dx}px, ${dy}px)` }], FLIGHT)
+    .finished.then(undefined, () => undefined);
+  ghost
+    .animate([{ opacity: 1 }, { opacity: 0, offset: 0.5 }, { opacity: 0 }], {
+      duration: FLIGHT.duration,
+      easing: 'linear',
+      fill: FLIGHT.fill,
+    })
+    .finished.then(remove, remove);
+}
+
+/** 新しい枠を、動きの後半で透明から不透明にして現す。fromY が 0 でなければ、本来の位置から縦に fromY ずれた所から動かす */
+export function fadeInContent(node: Element, fromY: number): void {
+  node.animate([{ opacity: 0 }, { opacity: 0, offset: 0.5 }, { opacity: 1 }], {
+    duration: FLIGHT.duration,
+    easing: 'linear',
+  });
+  if (Math.abs(fromY) < 0.5) return;
+  node.animate([{ transform: `translateY(${fromY}px)` }, { transform: 'none' }], {
+    duration: FLIGHT.duration,
+    easing: FLIGHT.easing,
   });
 }
