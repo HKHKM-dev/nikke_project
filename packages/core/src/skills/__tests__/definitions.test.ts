@@ -30,6 +30,7 @@ import { ATTACK_SPEED_WEAPONS } from '../parse/timed.ts';
 import { applyTreasure, TREASURE_PHASE_MAX } from '../treasure.ts';
 import { parseSkillDefinition, parseSkillIndex } from '../parse/definition.ts';
 import {
+  isShotCountTrigger,
   isMaxStacksUpContent,
   isSkillCooldownDownContent,
   SKILL_SLOTS,
@@ -170,7 +171,7 @@ describe('data/skills', () => {
       for (const slot of SKILL_SLOTS) {
         for (const effect of def.skills[slot].effects) {
           const t = 'trigger' in effect ? effect.trigger : undefined;
-          if (typeof t !== 'object' || t === null || !('count' in t)) continue;
+          if (t === undefined || !isShotCountTrigger(t)) continue;
           if (t.minPellets === undefined && t.minPelletsRef === undefined) continue;
           expect(character.shot.shotCount, `${slot}: minPellets needs a pellet weapon`).toBeGreaterThan(1);
         }

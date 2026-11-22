@@ -1347,6 +1347,11 @@
 | 1378 | `20261122-1378_kurumi-belortapw-raven.mp4` | クルミ（862、AR・鉄甲・SR） + ベロータ：パンプキンウィッチ（63、RL・水冷・SSR） + ◎レイヴン（851、RL・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | 戦闘の終わりの約 15 秒前で録画が切れている（戦闘履歴のパネルなし） |
 | 1379 | `20261122-1379_kurumi-belortapw-raven.mp4` | クルミ（862、AR・鉄甲・SR） + ベロータ：パンプキンウィッチ（63、RL・水冷・SSR） + ◎レイヴン（851、RL・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1380 | `20261122-1380_kurumi-raven-belortapw.mp4` | クルミ（862、AR・鉄甲・SR） + レイヴン（851、RL・鉄甲・SSR） + ◎ベロータ：パンプキンウィッチ（63、RL・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1382 | `20261122-1382_haran.mp4` | ◎ハラン（230、SR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1383 | `20261122-1383_haran.mp4` | ◎ハラン（230、SR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1384 | `20261122-1384_sakura-delta-haran.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + デルタ（20、SR・風圧・SR） + ◎ハラン（230、SR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1385 | `20261122-1385_soldier-ow.mp4` | ◎ソルジャーO.W.（306、SMG・灼熱・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1386 | `20261122-1386_soldier-ow.mp4` | ◎ソルジャーO.W.（306、SMG・灼熱・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
