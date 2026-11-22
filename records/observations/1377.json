@@ -1,0 +1,829 @@
+[
+  {
+    "id": "1377-01",
+    "recording": "1377",
+    "use": "record",
+    "kind": "timing",
+    "value": [1248, 1582, 2433, 2755, 4197, 4540, 6552, 6872, 8901, 9230, 10665, 10983],
+    "unit": "f",
+    "description": "オート射撃のボタンを ON にしたフレームと OFF にしたフレーム（[ON, OFF, …] の 6 往復。戦闘開始は f772）",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "method": {
+      "tool": "ffmpeg（左上のボタンの切り出し）",
+      "note": "画面左上の照準の印（1920×1080 の 10,12 から 40×40）のオレンジの画素（R>180・B<110・R−B>100）が 40 個を超えたフレームを ON とした（0105-06 と同じ）。ON の間に 10〜20f だけ数が落ちるフレーム（ボタンの演出）は続きとみた。戦闘開始は timer.ts --mode changes の WARNING の演出（+319f）の次の変わり目"
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-02",
+    "recording": "1377",
+    "use": "input",
+    "kind": "timing",
+    "value": [0, 476, 810, 1661, 1983, 3425, 3768, 5780, 6100, 8129, 8458, 9893, 10211, 10589],
+    "unit": "f",
+    "description": "同じ OFF・ON のゲーム内のフレーム（戦闘開始から。比べる設定 holdFire の入力。最後の 10589 は戦闘の終わり）",
+    "method": {
+      "tool": "timer.ts --mode changes",
+      "note": "動画のフレーム − 戦闘開始（f772）。単騎でバーストが無いので、止まりは引かない"
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-03",
+    "recording": "1377",
+    "use": "input",
+    "kind": "timing",
+    "value": [18.921, 20.921, 55.301, 57.301, 94.911, 96.911, 127.721, 129.721, 160.871, 162.871],
+    "unit": "秒",
+    "description": "敵のジャンプの窓（ゲーム内の秒。始まり・終わりの組を順に並べる）。照合の setup.jumpWindows で、モデルの狙えない窓と着地点の区間の切れ目をこれに置き換える。5 回ともオート射撃が OFF の間で、ブリッドは撃っていない",
+    "method": {
+      "tool": "still.ts（10f おきの並べ画）・aim.ts（的の幅）",
+      "note": "始まりは、的が地面を離れて浮いたフレーム（10f おきの並べ画で、立ち上がった最後のこまと浮いた最初のこまの間。f1885・4025・6355・8285・10235。±5f）から戦闘開始 f772 を引き、1f = 0.017 秒で秒にした。終わりは始まりの 2 秒後（C-0546）。1 回目の 18.92 秒は、的に当てない単騎の 1 回目 約 19.0 秒（C-0552。的が浮いた時刻）と合う。着地はそれぞれ浮いてから約 60〜65f（近・中遠に降りた 1・3・4 回目の画）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-04",
+    "recording": "1377",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": [
+      [1248, 1396, 1401, 1361, 1410],
+      [2433, 2583, 2588, 2539, 2588],
+      [4197, 4346, 4351, 4306, 4355],
+      [6552, 6701, null, 6662, 6711],
+      [8901, 9050, 9055, 9018, 9067],
+      [10665, 10812, 10817, 10785, 10834]
+    ],
+    "description": "6 回の試しごとの [ON（ボタン）, その回の 30 発目, 31 発目, S2 の発動 A = ヒット − 49f, S2 のヒット H] の動画のフレーム。付き始め b = 30 発目 + 1 は、6 回とも A + 28〜45f・H − 4〜21f で、数える条件（A + 3f ≤ b ≤ H − 3f）に入る",
+    "method": {
+      "tool": "hud.ts --mode jumps・ffmpeg（ボタン）",
+      "note": "発は増分を通常攻撃の格子に当て、ON からの発を数えた（6 回とも 30 発目までは▲なしの格子、31 発目からは▲ありの格子）。増分の無い 10f の間（f4218→4228・4238→4248・4277→4287・10733→10743）は外れた 1 発と数えた（外れても 30 発に数えないと、▲の付き始めが格子と合わない）。4 回目の 31 発目と H は HUD の読めなかった間（f6702〜6720）で、H は周期から。ON から最初の発は 6・6・6・6・6・4f。60 発目の後のリロードの間に OFF にし、1・2・4・5 回目の発は 60 と数えた（HUD の読めなかった間のまとまりは、間のフレーム数と値で発の数を決めた）。3・6 回目は、読めなかった間のまとまりの発の数が値だけでは決まらない（3 回目の後も、4 回目の 30 発目の次から▲の格子に移るので、発の数は 30 の倍数のまま。6 回目は最後の回）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-05",
+    "recording": "1377",
+    "use": "compare",
+    "kind": "hit",
+    "value": 253009,
+    "unit": "ダメージ",
+    "description": "S2 の 1 回目のヒット（f1410）の値。1 回目の試し（オート射撃を ON にして 30 発目）で、S1 の攻撃力▲の付き始めが f1397（30 発目 f1396 の次。発動 f1361 の 36f 後・ヒットの 13f 前）。▲の乗らない会心なしの値",
+    "scope": {
+      "slot": 1,
+      "source": "skill",
+      "frames": [1410, 1410]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分を、S2 の 4 つの値（253,009・299,906・379,514・449,859）と、ブリッドの通常攻撃の格子（▲なしは 17,119 × 1・1.3・1.5・1.8・2・2.3・2.5・2.8、▲ありはその 1.18535 倍。同じフレームの発との和も）に ±3 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "jumpWindows": "1377-03",
+        "holdFire": [
+          {
+            "slot": 1,
+            "frames": "1377-02"
+          }
+        ]
+      }
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-06",
+    "recording": "1377",
+    "use": "compare",
+    "kind": "hit",
+    "value": 299906,
+    "unit": "ダメージ",
+    "description": "S2 の 2 回目のヒット（f1999）の値。1 回目の試しの 60 発目の▲が残っている間の発動で、▲の乗った会心なしの値",
+    "scope": {
+      "slot": 1,
+      "source": "skill",
+      "frames": [1999, 1999]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分を、S2 の 4 つの値（253,009・299,906・379,514・449,859）と、ブリッドの通常攻撃の格子（▲なしは 17,119 × 1・1.3・1.5・1.8・2・2.3・2.5・2.8、▲ありはその 1.18535 倍。同じフレームの発との和も）に ±3 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 1,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "jumpWindows": "1377-03",
+        "holdFire": [
+          {
+            "slot": 1,
+            "frames": "1377-02"
+          }
+        ]
+      }
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-07",
+    "recording": "1377",
+    "use": "compare",
+    "kind": "hit",
+    "value": 253009,
+    "unit": "ダメージ",
+    "description": "S2 の 3 回目のヒット（f2588）の値。2 回目の試し（オート射撃を ON にして 30 発目）で、S1 の攻撃力▲の付き始めが f2584（発動 f2539 の 45f 後・ヒットの 4f 前。ヒットと同じフレームのブリッドの発は▲あり）。▲の乗らない会心なしの値。モデルは ON から最初の発を 12f（ハイドの明けの構え。C-0114）で撃つので、モデルの付き始めはヒットの 1f 後になり、どちらの説明でも▲なしと出る（この回は、録画の付き始めがヒットの 4f 前で、同じフレームの発に▲が乗っていることで見分けた）",
+    "scope": {
+      "slot": 1,
+      "source": "skill",
+      "frames": [2588, 2588]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分を、S2 の 4 つの値（253,009・299,906・379,514・449,859）と、ブリッドの通常攻撃の格子（▲なしは 17,119 × 1・1.3・1.5・1.8・2・2.3・2.5・2.8、▲ありはその 1.18535 倍。同じフレームの発との和も）に ±3 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 2,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "jumpWindows": "1377-03",
+        "holdFire": [
+          {
+            "slot": 1,
+            "frames": "1377-02"
+          }
+        ]
+      }
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-08",
+    "recording": "1377",
+    "use": "compare",
+    "kind": "hit",
+    "value": 299906,
+    "unit": "ダメージ",
+    "description": "S2 の 4 回目のヒット（f3177）の値。2 回目の試しの 60 発目の▲が残っている間の発動で、▲の乗った会心なしの値",
+    "scope": {
+      "slot": 1,
+      "source": "skill",
+      "frames": [3177, 3177]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分を、S2 の 4 つの値（253,009・299,906・379,514・449,859）と、ブリッドの通常攻撃の格子（▲なしは 17,119 × 1・1.3・1.5・1.8・2・2.3・2.5・2.8、▲ありはその 1.18535 倍。同じフレームの発との和も）に ±3 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 3,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "jumpWindows": "1377-03",
+        "holdFire": [
+          {
+            "slot": 1,
+            "frames": "1377-02"
+          }
+        ]
+      }
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-09",
+    "recording": "1377",
+    "use": "compare",
+    "kind": "hit",
+    "value": 253009,
+    "unit": "ダメージ",
+    "description": "S2 の 5 回目のヒット（f3766）の値。前の▲が切れた後の、撃っていない間の発動で、▲の乗らない会心なしの値",
+    "scope": {
+      "slot": 1,
+      "source": "skill",
+      "frames": [3766, 3766]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分を、S2 の 4 つの値（253,009・299,906・379,514・449,859）と、ブリッドの通常攻撃の格子（▲なしは 17,119 × 1・1.3・1.5・1.8・2・2.3・2.5・2.8、▲ありはその 1.18535 倍。同じフレームの発との和も）に ±3 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 4,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "jumpWindows": "1377-03",
+        "holdFire": [
+          {
+            "slot": 1,
+            "frames": "1377-02"
+          }
+        ]
+      }
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-10",
+    "recording": "1377",
+    "use": "compare",
+    "kind": "hit",
+    "value": 253009,
+    "unit": "ダメージ",
+    "description": "S2 の 6 回目のヒット（f4355）の値。3 回目の試し（オート射撃を ON にして 30 発目）で、S1 の攻撃力▲の付き始めが f4347（発動 f4306 の 41f 後・ヒットの 8f 前。ヒットと同じフレームのブリッドの発は▲あり）。▲の乗らない会心なしの値",
+    "scope": {
+      "slot": 1,
+      "source": "skill",
+      "frames": [4355, 4355]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分を、S2 の 4 つの値（253,009・299,906・379,514・449,859）と、ブリッドの通常攻撃の格子（▲なしは 17,119 × 1・1.3・1.5・1.8・2・2.3・2.5・2.8、▲ありはその 1.18535 倍。同じフレームの発との和も）に ±3 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 5,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "jumpWindows": "1377-03",
+        "holdFire": [
+          {
+            "slot": 1,
+            "frames": "1377-02"
+          }
+        ]
+      }
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-11",
+    "recording": "1377",
+    "use": "compare",
+    "kind": "hit",
+    "value": 299906,
+    "unit": "ダメージ",
+    "description": "S2 の 7 回目のヒット（f4944）の値。3 回目の試しの 60 発目の▲が残っている間の発動で、▲の乗った会心なしの値",
+    "scope": {
+      "slot": 1,
+      "source": "skill",
+      "frames": [4944, 4944]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分を、S2 の 4 つの値（253,009・299,906・379,514・449,859）と、ブリッドの通常攻撃の格子（▲なしは 17,119 × 1・1.3・1.5・1.8・2・2.3・2.5・2.8、▲ありはその 1.18535 倍。同じフレームの発との和も）に ±3 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 6,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "jumpWindows": "1377-03",
+        "holdFire": [
+          {
+            "slot": 1,
+            "frames": "1377-02"
+          }
+        ]
+      }
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-12",
+    "recording": "1377",
+    "use": "compare",
+    "kind": "hit",
+    "value": 253009,
+    "unit": "ダメージ",
+    "description": "S2 の 8 回目のヒット（f5533）の値。前の▲が切れた後の、撃っていない間の発動で、▲の乗らない会心なしの値",
+    "scope": {
+      "slot": 1,
+      "source": "skill",
+      "frames": [5533, 5533]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分を、S2 の 4 つの値（253,009・299,906・379,514・449,859）と、ブリッドの通常攻撃の格子（▲なしは 17,119 × 1・1.3・1.5・1.8・2・2.3・2.5・2.8、▲ありはその 1.18535 倍。同じフレームの発との和も）に ±3 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 7,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "jumpWindows": "1377-03",
+        "holdFire": [
+          {
+            "slot": 1,
+            "frames": "1377-02"
+          }
+        ]
+      }
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-13",
+    "recording": "1377",
+    "use": "compare",
+    "kind": "hit",
+    "value": 253009,
+    "unit": "ダメージ",
+    "description": "S2 の 9 回目のヒット（f6122）の値。前の▲が切れた後の、撃っていない間の発動で、▲の乗らない会心なしの値",
+    "scope": {
+      "slot": 1,
+      "source": "skill",
+      "frames": [6122, 6122]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分を、S2 の 4 つの値（253,009・299,906・379,514・449,859）と、ブリッドの通常攻撃の格子（▲なしは 17,119 × 1・1.3・1.5・1.8・2・2.3・2.5・2.8、▲ありはその 1.18535 倍。同じフレームの発との和も）に ±3 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 8,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "jumpWindows": "1377-03",
+        "holdFire": [
+          {
+            "slot": 1,
+            "frames": "1377-02"
+          }
+        ]
+      }
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-14",
+    "recording": "1377",
+    "use": "compare",
+    "kind": "hit",
+    "value": 253009,
+    "unit": "ダメージ",
+    "description": "S2 の 10 回目のヒット（f6711）の値。4 回目の試し（オート射撃を ON にして 30 発目）で、S1 の攻撃力▲の付き始めが f6702（発動 f6662 の 40f 後・ヒットの 9f 前）。▲の乗らない会心なしの値",
+    "scope": {
+      "slot": 1,
+      "source": "skill",
+      "frames": [6711, 6711]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f6702〜6720 の HUD が読めず、f6721 の増分 388,965 は S2 のヒットとブリッドの発 4 つの和。発は 30 発目 f6701 の後の 31〜34 発目で▲が乗り、▲の乗った発 4 つの和は 135,956（26,380・36,525・46,671・56,817 の組）と S2 の▲なし 253,009 の和で合う。S2 の▲あり 299,906 と発 2〜5 つの和は、どの組でも合わない。ヒットのフレームは前後の S2（f6122・f7301）の 589・590f の周期から"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 9,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "jumpWindows": "1377-03",
+        "holdFire": [
+          {
+            "slot": 1,
+            "frames": "1377-02"
+          }
+        ]
+      }
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-15",
+    "recording": "1377",
+    "use": "compare",
+    "kind": "hit",
+    "value": 449859,
+    "unit": "ダメージ",
+    "description": "S2 の 11 回目のヒット（f7301）の値。4 回目の試しの 60 発目の▲が残っている間の発動で、▲の乗った会心の値",
+    "scope": {
+      "slot": 1,
+      "source": "skill",
+      "frames": [7301, 7301]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分を、S2 の 4 つの値（253,009・299,906・379,514・449,859）と、ブリッドの通常攻撃の格子（▲なしは 17,119 × 1・1.3・1.5・1.8・2・2.3・2.5・2.8、▲ありはその 1.18535 倍。同じフレームの発との和も）に ±3 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 10,
+        "crit": true,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "jumpWindows": "1377-03",
+        "holdFire": [
+          {
+            "slot": 1,
+            "frames": "1377-02"
+          }
+        ]
+      }
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-16",
+    "recording": "1377",
+    "use": "compare",
+    "kind": "hit",
+    "value": 253009,
+    "unit": "ダメージ",
+    "description": "S2 の 12 回目のヒット（f7890）の値。前の▲が切れた後の、撃っていない間の発動で、▲の乗らない会心なしの値",
+    "scope": {
+      "slot": 1,
+      "source": "skill",
+      "frames": [7890, 7890]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分を、S2 の 4 つの値（253,009・299,906・379,514・449,859）と、ブリッドの通常攻撃の格子（▲なしは 17,119 × 1・1.3・1.5・1.8・2・2.3・2.5・2.8、▲ありはその 1.18535 倍。同じフレームの発との和も）に ±3 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 11,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "jumpWindows": "1377-03",
+        "holdFire": [
+          {
+            "slot": 1,
+            "frames": "1377-02"
+          }
+        ]
+      }
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-17",
+    "recording": "1377",
+    "use": "compare",
+    "kind": "hit",
+    "value": 253009,
+    "unit": "ダメージ",
+    "description": "S2 の 13 回目のヒット（f8478）の値。前の▲が切れた後の、撃っていない間の発動で、▲の乗らない会心なしの値",
+    "scope": {
+      "slot": 1,
+      "source": "skill",
+      "frames": [8478, 8478]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分を、S2 の 4 つの値（253,009・299,906・379,514・449,859）と、ブリッドの通常攻撃の格子（▲なしは 17,119 × 1・1.3・1.5・1.8・2・2.3・2.5・2.8、▲ありはその 1.18535 倍。同じフレームの発との和も）に ±3 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 12,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "jumpWindows": "1377-03",
+        "holdFire": [
+          {
+            "slot": 1,
+            "frames": "1377-02"
+          }
+        ]
+      }
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-18",
+    "recording": "1377",
+    "use": "compare",
+    "kind": "hit",
+    "value": 253009,
+    "unit": "ダメージ",
+    "description": "S2 の 14 回目のヒット（f9067）の値。5 回目の試し（オート射撃を ON にして 30 発目）で、S1 の攻撃力▲の付き始めが f9051（発動 f9018 の 33f 後・ヒットの 16f 前）。▲の乗らない会心なしの値",
+    "scope": {
+      "slot": 1,
+      "source": "skill",
+      "frames": [9067, 9067]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分を、S2 の 4 つの値（253,009・299,906・379,514・449,859）と、ブリッドの通常攻撃の格子（▲なしは 17,119 × 1・1.3・1.5・1.8・2・2.3・2.5・2.8、▲ありはその 1.18535 倍。同じフレームの発との和も）に ±3 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 13,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "jumpWindows": "1377-03",
+        "holdFire": [
+          {
+            "slot": 1,
+            "frames": "1377-02"
+          }
+        ]
+      }
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-19",
+    "recording": "1377",
+    "use": "compare",
+    "kind": "hit",
+    "value": 299906,
+    "unit": "ダメージ",
+    "description": "S2 の 15 回目のヒット（f9656）の値。5 回目の試しの 60 発目の▲が残っている間の発動で、▲の乗った会心なしの値",
+    "scope": {
+      "slot": 1,
+      "source": "skill",
+      "frames": [9656, 9656]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分を、S2 の 4 つの値（253,009・299,906・379,514・449,859）と、ブリッドの通常攻撃の格子（▲なしは 17,119 × 1・1.3・1.5・1.8・2・2.3・2.5・2.8、▲ありはその 1.18535 倍。同じフレームの発との和も）に ±3 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 14,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "jumpWindows": "1377-03",
+        "holdFire": [
+          {
+            "slot": 1,
+            "frames": "1377-02"
+          }
+        ]
+      }
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-20",
+    "recording": "1377",
+    "use": "compare",
+    "kind": "hit",
+    "value": 379514,
+    "unit": "ダメージ",
+    "description": "S2 の 16 回目のヒット（f10245）の値。前の▲が切れた後の、撃っていない間の発動で、▲の乗らない会心の値",
+    "scope": {
+      "slot": 1,
+      "source": "skill",
+      "frames": [10245, 10245]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分を、S2 の 4 つの値（253,009・299,906・379,514・449,859）と、ブリッドの通常攻撃の格子（▲なしは 17,119 × 1・1.3・1.5・1.8・2・2.3・2.5・2.8、▲ありはその 1.18535 倍。同じフレームの発との和も）に ±3 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 15,
+        "crit": true,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "jumpWindows": "1377-03",
+        "holdFire": [
+          {
+            "slot": 1,
+            "frames": "1377-02"
+          }
+        ]
+      }
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-21",
+    "recording": "1377",
+    "use": "compare",
+    "kind": "hit",
+    "value": 253009,
+    "unit": "ダメージ",
+    "description": "S2 の 17 回目のヒット（f10834）の値。6 回目の試し（オート射撃を ON にして 30 発目）で、S1 の攻撃力▲の付き始めが f10813（発動 f10785 の 28f 後・ヒットの 21f 前）。▲の乗らない会心なしの値",
+    "scope": {
+      "slot": 1,
+      "source": "skill",
+      "frames": [10834, 10834]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分を、S2 の 4 つの値（253,009・299,906・379,514・449,859）と、ブリッドの通常攻撃の格子（▲なしは 17,119 × 1・1.3・1.5・1.8・2・2.3・2.5・2.8、▲ありはその 1.18535 倍。同じフレームの発との和も）に ±3 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 16,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "jumpWindows": "1377-03",
+        "holdFire": [
+          {
+            "slot": 1,
+            "frames": "1377-02"
+          }
+        ]
+      }
+    },
+    "source": "V-0860",
+    "readAt": "2026-11-22"
+  }
+]
