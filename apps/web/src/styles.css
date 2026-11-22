@@ -1856,8 +1856,9 @@ html:has(.modern-view-container) {
 /* ニケを選んでいる編成の番号（P1・P2）。絵の右上に縦に並べる */
 .char-tray-item-parties {
   position: absolute;
-  top: 2px;
-  right: 2px;
+  /* 項目の余白は 2px。絵の角から 1px ずつ右上へ（外側の 1px にはみ出す。オーナーの指示） */
+  top: 1px;
+  right: 1px;
   z-index: 2;
   display: flex;
   flex-direction: column;
