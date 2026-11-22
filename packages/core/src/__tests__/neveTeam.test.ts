@@ -1,5 +1,5 @@
 // ネヴェ編（V-0843）: ネヴェ（193）を含む編成で、S1 の CT ごとのダメージ、S2 のフルバーストの始まりの後の 2 発の貫通特化と攻撃力▲、
-// バーストの会心率▲・命中率▲（20 秒）が意図どおりに出るか
+// バーストの会心率▲・命中率▲（20 秒）と、S1 のヒットのゲージ（ヒットのフレームに射手の 1 ヒットぶん。C-1547・C-1548）が意図どおりに出るか
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -19,10 +19,11 @@ const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: '
 describe('ネヴェの定義', () => {
   const def = parseSkillDefinition(rawDefinition(NEVE));
 
-  it('defines the S1 cooldown damage, the 2-round Pierce and ATK up of S2, and the burst Crit Rate and Hit Rate up', () => {
-    expect(def.skills.skill1.support).toBe('partial');
+  it('defines the S1 cooldown damage and its gauge, the 2-round Pierce and ATK up of S2, and the burst Crit Rate and Hit Rate up', () => {
+    expect(def.skills.skill1.support).toBe('supported');
     expect(def.skills.skill1.effects).toMatchObject([
       { kind: 'damage', trigger: { everySeconds: 10 }, damageType: 'skill' },
+      { kind: 'burstGaugeHit', trigger: { everySeconds: 10 } },
     ]);
     expect(def.skills.skill2.support).toBe('supported');
     expect(def.skills.skill2.effects).toMatchObject([
@@ -57,14 +58,22 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, neve }) => {
   const s2 = (stat: 'pierce' | 'attack') =>
     itemsOf(plan.history, { sourceSlotIndex: neve, holder: neve, kind: 'timed', skill: 'skill2', stat });
 
+  const s1Hits = plan.skillHits.filter((h) => h.slotIndex === neve && h.effect.source.skill === 'skill1');
+
   it('hits the target with S1 every 10 s from the start of battle, the defined delay after each activation', () => {
-    const hits = plan.skillHits.filter((h) => h.slotIndex === neve && h.effect.source.skill === 'skill1');
+    const hits = s1Hits;
     const period = gameSecondsToFirstFrame(10);
     const delay = (parseSkillDefinition(rawDefinition(NEVE)).skills.skill1.effects[0] as { delayFrames?: number })
       .delayFrames!;
     expect(delay).toBeGreaterThan(0);
     expect(hits.length).toBeGreaterThan(10);
     hits.forEach((h, k) => expect(h.frame).toBe((k + 1) * period + delay));
+  });
+
+  it('charges one shooter hit of gauge (4,000) on the frame of every S1 hit (C-1547・C-1548)', () => {
+    const gauges = plan.timerGauges.filter((g) => g.slotIndex === neve);
+    expect(gauges.map((g) => g.frame)).toEqual(s1Hits.map((h) => h.frame));
+    for (const g of gauges) expect(g.energy).toBe(4000);
   });
 
   it('gives Pierce and ATK up on her first 2 shots after every Full Burst start', () => {
