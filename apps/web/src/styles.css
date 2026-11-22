@@ -1593,6 +1593,8 @@ html:has(.modern-view-container) {
 }
 .char-tray-sort-label > span {
   grid-area: 1 / 1;
+  /* 英字だけの名前（ID）は、日本語の名前より行の高さが低いフォントがある。マスの上に張り付かず、縦の中央に置く */
+  align-self: center;
   visibility: hidden;
 }
 .char-tray-sort-label > .char-tray-sort-current {
