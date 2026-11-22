@@ -1,4 +1,4 @@
-import type { BuildMasters, BuildSnapshot, CharacterData, CharacterIndexEntry } from '@nikke/core';
+import type { BuildMasters, BuildSnapshot, CharacterData, CharacterIndexEntry, EnemyPresetMaster } from '@nikke/core';
 import type { Dispatch } from 'react';
 import type { CalcView, NotesSummarySlot, SlotResultView } from '../calcView.ts';
 import type { Shown } from '../compute.ts';
@@ -17,6 +17,10 @@ export type ViewProps = {
   };
   fullySupported: ReadonlySet<number> | null;
   masters: BuildMasters | null;
+  /** 敵のプリセット（最適編成計算が編成の入力を作るのに使う） */
+  enemyMaster: EnemyPresetMaster | null;
+  /** データの置き場所（最適編成計算が候補のキャラを読む） */
+  baseUrl: string;
   mastersError: string | null;
   calc: CalcView;
   shown: Shown<CalcView> | null;

@@ -166,6 +166,8 @@ export function App() {
         characterCache: cache,
         fullySupported: skills.fullySupported,
         masters,
+        enemyMaster,
+        baseUrl: BASE_URL,
         mastersError,
         calc,
         shown,

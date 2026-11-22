@@ -30,6 +30,8 @@ type Props = {
   rosterCommon: RosterCommonGrowth | null;
   /** 「育成状況の値に戻す」を文字でなく戻る矢印のアイコン（バッジ ui_return）で出す（モダン UI） */
   revertIcon?: boolean;
+  /** 属性の文字の横に属性のバッジ（画像）を出す（モダン UI。クラシックは画像を出さない） */
+  elementBadge?: boolean;
   dispatch: Dispatch<TeamAction>;
 };
 
@@ -47,6 +49,7 @@ export function TeamSettingsForm({
   rangeJump,
   rosterCommon,
   revertIcon = false,
+  elementBadge = false,
   dispatch,
 }: Props) {
   // 育成状況の値に戻せるか: スペック固定の間と、いまの値が育成状況と同じときは押せない
@@ -66,14 +69,16 @@ export function TeamSettingsForm({
               <option value="range-bigarms">射撃場BigArms</option>
             </select>
           </label>
-          {/* 属性の文字の横に、選んでいる属性のバッジを出す（属性なしは空の六角形）。バッジは選択欄の外 */}
+          {/* 属性の文字の横に、選んでいる属性のバッジを出す（属性なしは空の六角形。モダン UI だけ）。バッジは選択欄の外 */}
           <label className="field">
             <span className="settings-element-label">
               属性
-              <BadgeIcon
-                name={element ? ELEMENT_BADGE_KIND.badges[element]!.name : EMPTY_ELEMENT_BADGE}
-                className="settings-element-badge"
-              />
+              {elementBadge && (
+                <BadgeIcon
+                  name={element ? ELEMENT_BADGE_KIND.badges[element]!.name : EMPTY_ELEMENT_BADGE}
+                  className="settings-element-badge"
+                />
+              )}
             </span>
             <select
               value={element ?? ''}

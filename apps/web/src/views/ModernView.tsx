@@ -174,6 +174,7 @@ export function ModernView({
                 rangeJump={team.rangeJump}
                 rosterCommon={roster && commonGrowthOf(roster)}
                 revertIcon
+                elementBadge
                 dispatch={dispatch}
               />
 
@@ -184,7 +185,12 @@ export function ModernView({
             <div className="modern-slots-area">
               {parties.parties.map((party, p) => (
                 <div key={p} className={`modern-party-row ${p === parties.active ? 'modern-party-row-active' : ''}`}>
-                  <PartyRowLabel partyIndex={p} active={p === parties.active} onSelect={() => switchParty(p)} />
+                  <PartyRowLabel
+                    partyIndex={p}
+                    active={p === parties.active}
+                    total={totals.parties[p]}
+                    onSelect={() => switchParty(p)}
+                  />
                   {p === parties.active ? (
                     <section ref={slotsGridRef} className="modern-slots-grid" aria-label="編成スロット一覧">
                       {team.slots.map((slot, i) => {

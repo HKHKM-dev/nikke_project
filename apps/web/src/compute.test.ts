@@ -234,6 +234,48 @@ describe('LatestComputeQueue (B-2)', () => {
   });
 });
 
+describe('LatestComputeQueue.resend', () => {
+  const input = (durationSeconds: number) => ({ input: { ...MAIN, slots: [], durationSeconds } satisfies TeamInput });
+  function setup() {
+    const sent: ComputeRequest[] = [];
+    const delivered: Computed[] = [];
+    const queue = new LatestComputeQueue<ReturnType<typeof input>>(
+      (r) => sent.push(r),
+      (c) => delivered.push(c),
+    );
+    return { sent, delivered, queue };
+  }
+
+  it('sends the request in flight again with a new seq, and ignores the answer to the old one', () => {
+    const { sent, delivered, queue } = setup();
+    queue.request(input(1));
+    queue.resend();
+    expect(sent.map((r) => r.input.durationSeconds)).toEqual([1, 1]);
+    expect(sent[1]!.seq).not.toBe(sent[0]!.seq);
+    queue.receive({ seq: sent[0]!.seq, computed: { ok: false, error: 'old' } });
+    expect(delivered).toEqual([]);
+    queue.receive({ seq: sent[1]!.seq, computed: { ok: false, error: 'new' } });
+    expect(delivered.map((c) => !c.ok && c.error)).toEqual(['new']);
+  });
+
+  it('sends the waiting input instead of the one in flight, because it is newer', () => {
+    const { sent, queue } = setup();
+    queue.request(input(1));
+    queue.request(input(2));
+    queue.resend();
+    expect(sent.map((r) => r.input.durationSeconds)).toEqual([1, 2]);
+  });
+
+  it('sends nothing when nothing is waiting, or when the request in flight was answered from the cache', () => {
+    const { sent, queue } = setup();
+    queue.resend();
+    queue.request(input(1));
+    queue.resolve(input(2), { ok: false, error: 'remembered' });
+    queue.resend();
+    expect(sent.map((r) => r.input.durationSeconds)).toEqual([1]);
+  });
+});
+
 describe('ComputeCache', () => {
   const input = (over: Partial<TeamInput>): TeamInput => ({ ...MAIN, ...over });
   const result = (error: string): Computed => ({ ok: false, error });

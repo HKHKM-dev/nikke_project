@@ -37,6 +37,14 @@ export function compute(input: TeamInput): Computed {
   }
 }
 
+/**
+ * 計算の Worker が止まったとき（読み込みの失敗・異常終了・答えが来ない）に、作り直して送り直す回数の上限と、作り直す前に待つ長さ（ms。回数をかける）、
+ * 答えが来ないと見なす長さ（ms）。上限を超えたら、止まったままにしてエラーを出す（LatestComputeQueue.stop）
+ */
+export const WORKER_MAX_RESTARTS = 3;
+export const WORKER_RESTART_DELAY_MS = 300;
+export const WORKER_HANG_MS = 30_000;
+
 /** 画面 → Worker。seq は要求の通し番号 */
 export type ComputeRequest = { seq: number; input: TeamInput };
 /** Worker → 画面。seq は答えた要求の通し番号 */
@@ -192,6 +200,17 @@ export class LatestComputeQueue<T extends ComputeSource = ComputeSource> {
   stop(error: string): void {
     this.#stopped = error;
     this.fail(error);
+  }
+
+  /**
+   * Worker を作り直したとき。止まった Worker に送った要求は答えが来ないので、新しい Worker へ送り直す。待っている入力があれば（そちらが新しい）それを、
+   * 無ければ計算中だった要求の元を送る。resolve で答えを出し済みの要求（stale）は送らない
+   */
+  resend(): void {
+    const flight = this.#inFlight;
+    this.#inFlight = null;
+    if (flight !== null && !flight.stale) this.#pending ??= flight.source;
+    if (this.#pending !== null) this.#flush();
   }
 
   #flush(): void {
