@@ -38,6 +38,7 @@ import {
   toStrip,
   decodeTemplates,
   encodeTemplates,
+  ncc,
   type InterceptionTemplatesFile,
   type Strip,
 } from './hud-interception.ts';
@@ -158,29 +159,6 @@ function normalize(c: Component): number[] {
     }
   }
   return Array.from(grid, (v, i) => (count[i]! > 0 ? v / count[i]! : 0));
-}
-
-function ncc(a: readonly number[], b: readonly number[]): number {
-  const n = a.length;
-  let ma = 0;
-  let mb = 0;
-  for (let i = 0; i < n; i++) {
-    ma += a[i]!;
-    mb += b[i]!;
-  }
-  ma /= n;
-  mb /= n;
-  let s = 0;
-  let sa = 0;
-  let sb = 0;
-  for (let i = 0; i < n; i++) {
-    const da = a[i]! - ma;
-    const db = b[i]! - mb;
-    s += da * db;
-    sa += da * da;
-    sb += db * db;
-  }
-  return sa > 0 && sb > 0 ? s / Math.sqrt(sa * sb) : 0;
 }
 
 type Glyph = { kind: 'digit'; c: Component } | { kind: 'comma'; c: Component };

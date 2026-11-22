@@ -245,3 +245,4 @@
 
 - 2026-11-22: 起案した。オーナーが論点 1 を案 A・B・C・G、論点 2 を案 a で承認した（5.1 節）。
 - 2026-11-22: 案 A を実装した。枠ごとの手順は `switchWeapon`・`blockAt`・`stepBlock`・`stepPause`・`advanceShooter`・`recordShot`（`critPelletsOf`・`shotGauge` を呼ぶ）を順に呼ぶ形になり、複雑度 93 → 11、192 行 → 17 行。段の複雑度は `recordShot` 27・`advanceShooter` 21・`stepBlock` 14・`switchWeapon` 12 ほか。いちばん大きい段は `recordShot`（71 行）で、見積もり（40 行前後）より長い。出来事と記録が命中・クリティカルの値を分け合い、これ以上分けると渡す値が 10 を超えるので止めた。撃たない区間を引く所は、毎フレームの所でオブジェクトを返さないよう、区間を返す `blockAt` と hide・unhide の `stepBlock` に分けた。
+- 2026-11-22: 案 G を実装した。`hud.ts`・`reticle-ammo.ts` は `hud-interception.ts` の `ncc` を読む（入っている見本はどれも 160 = 10×16 で、測った値と長さが同じなので結果は変わらない）。`far-landing.ts` は `midfar-landing.ts` の `measureTargetRows`・`intOption`・`BG_STEP` を読む（派生物の名前の頭 `far-`・`midfar-` は変えていない）。

@@ -2,15 +2,12 @@
 // 上端の y・高さ・幅（外接矩形。的だけが取れたコマの中央値）と、遠の着地点（C-0477 の遠 A・遠 B）を出す（V-0491）。
 // V-0228「読み方」の 3 と V-0423 の `0423-10` で、aim.ts と使い捨てのスクリプトにしていた読み方をレシピにしたもの。
 //
-// 測る範囲を step ごとに aim.ts と同じ部品（aim-lib.ts）で測り、derived/<録画 id>/ にキャッシュする。背景は midfar-landing と同じ
-// （録画の全体の 120f ごとの、戦闘中のフレームの中央値）。
-import { buildBackground, findAim, findTarget, readFrames, toHalfField } from '../aim-lib.ts';
-import { derived } from './cache.ts';
-import { formatMidfarTsv, parseMidfarTsv, quartiles, type MidfarRow } from './midfar.ts';
+// 測る範囲を step ごとに midfar-landing の測り（measureTargetRows。aim.ts と同じ部品）で測り、derived/<録画 id>/ にキャッシュする。
+// 背景は録画の全体の 120f ごとの、戦闘中のフレームの中央値。
+import { quartiles, type MidfarRow } from './midfar.ts';
+import { BG_STEP, intOption, measureTargetRows } from './midfar-landing.ts';
 import { median } from './triggers.ts';
-import { observation, type Recipe, type RecipeContext } from './types.ts';
-
-const BG_STEP = 120;
+import { observation, type Recipe } from './types.ts';
 
 /** V-0228「読み方」の 3 のコマの選び方（録画 0161 の試しの読みで決めた。中遠 C の足元 561 と、中遠の高さ 195px 以上を除く） */
 export const FAR_FRAME = {
@@ -77,42 +74,6 @@ export function summarizeFar(rows: readonly MidfarRow[]): FarSummary {
   };
 }
 
-function intOption(ctx: RecipeContext, key: string, fallback: number | undefined): number | undefined {
-  const raw = ctx.options[key];
-  if (raw === undefined) return fallback;
-  const v = Number(raw);
-  if (!Number.isInteger(v) || v < 0) throw new Error(`--opt ${key} は 0 以上の整数: ${raw}`);
-  return v;
-}
-
-async function measure(ctx: RecipeContext, from: number, to: number, step: number): Promise<MidfarRow[]> {
-  const sha = 'sha256' in ctx.recording ? ctx.recording.sha256 : undefined;
-  const text = await derived(
-    ctx.derivedDir,
-    `far-target@1_f${from}-${to}_s${step}`,
-    ctx.video,
-    sha,
-    async () => {
-      ctx.log(`背景を作る（録画の全体、${BG_STEP}f ごと）…`);
-      const { bg, used, seen } = await buildBackground(ctx.video, 0, undefined, BG_STEP);
-      ctx.log(`背景: 戦闘中のフレーム ${used} / ${seen} の中央値`);
-      const rows: MidfarRow[] = [];
-      for await (const { frame, img } of readFrames(ctx.video, from, to, step)) {
-        const { aim } = findAim(img);
-        const t = aim ? findTarget(toHalfField(img, 0), bg, aim) : null;
-        rows.push(
-          t
-            ? { frame, x0: t.x0, y0: t.y0, x1: t.x1, y1: t.y1, clipped: t.clipped, fx: Number(t.fx.toFixed(2)) }
-            : { frame },
-        );
-      }
-      return formatMidfarTsv(rows);
-    },
-    ctx.log,
-  );
-  return parseMidfarTsv(text);
-}
-
 export const farLanding: Recipe = {
   name: 'far-landing',
   version: 1,
@@ -131,7 +92,7 @@ export const farLanding: Recipe = {
     if (from === undefined || to === undefined) throw new Error('--opt from=<f> と to=<f> が要る（遠の区間）');
     if (to <= from || step <= 0) throw new Error(`測る範囲が空: f${from}〜${to}・${step}f ごと`);
     const label = ctx.options.segment ?? '遠';
-    const s = summarizeFar(await measure(ctx, from, to, step));
+    const s = summarizeFar(await measureTargetRows(ctx, 'far', from, to, step));
     ctx.log(
       `使えたコマ ${s.used} / ${s.measured}・足元 ${s.foot ?? '-'}・上端 ${s.top ?? '-'}・高さ ${s.height ?? '-'}・幅 ${s.width ?? '-'}・着地点 ${s.landing}`,
     );

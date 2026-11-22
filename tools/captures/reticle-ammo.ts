@@ -32,6 +32,7 @@ import {
   type TemplateSample,
 } from './reticle-ammo-lib.ts';
 import { cliArgs, fail } from '../../packages/core/scripts/cli.ts';
+import { ncc } from './hud-interception.ts';
 
 const TEMPLATE_FILE = new URL('./reticle-ammo-templates.json', import.meta.url);
 /** --style box（照準の下の「AMMO | 008」の表示）の見本 */
@@ -168,29 +169,6 @@ function cellPatch(gray: Uint8Array, cx: number, top: number): number[] {
     }
   }
   return out;
-}
-
-function ncc(a: number[], b: number[]): number {
-  const n = a.length;
-  let ma = 0;
-  let mb = 0;
-  for (let i = 0; i < n; i++) {
-    ma += a[i]!;
-    mb += b[i]!;
-  }
-  ma /= n;
-  mb /= n;
-  let s = 0;
-  let sa = 0;
-  let sb = 0;
-  for (let i = 0; i < n; i++) {
-    const da = a[i]! - ma;
-    const db = b[i]! - mb;
-    s += da * db;
-    sa += da * da;
-    sb += db * db;
-  }
-  return sa > 0 && sb > 0 ? s / Math.sqrt(sa * sb) : 0;
 }
 
 /** 1 フレームの 3 桁の枠（読めなければ null） */
