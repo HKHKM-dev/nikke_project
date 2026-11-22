@@ -646,7 +646,7 @@ function weaponChangeShotToNextShot(result: SimResult, ctx: MetricContext): numb
  * 枠の比べる設定 holdFire の n 回目（0 始まり）の区間の終わり（オート射撃を ON に戻したフレーム）から、その後の枠の最初の発
  * （終わりのフレームを含む）までの、録画の動画のフレーム（バーストの時刻表が無ければゲーム内のフレームの差）。n はカンマ区切りの
  * 並びも書ける。ボタンが点いてから最初の発までを、照準の横の残弾か HUD の増分で比べる。区間の終わりが狙えない窓の中なら、
- * 窓の明けまでの待ちも含む（モデルは窓の明けから撃つ。課題 2-77）
+ * 窓の明けまでの待ちも含む（オート射撃を ON のままにしていたときと同じく、窓の明けから撃つ。C-1562）
  */
 function holdFireEndToNextShot(result: SimResult, ctx: MetricContext): number | number[] {
   const slotIndex = slotIndexOf(ctx);

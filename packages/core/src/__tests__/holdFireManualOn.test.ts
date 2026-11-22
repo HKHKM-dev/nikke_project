@@ -10,8 +10,8 @@ import { characterOf } from './teamHelpers.ts';
 
 const SHORTER = DEFAULT_WEAPON_MODEL.manualOnAimShorterFrames;
 
-/** 単騎で [0, on) を撃たずに隠れ、on 以後の最初の発のフレーム */
-function firstShotAfter(rid: number, hold: FrameRange, events: EnemyEvent[] = []): number {
+/** 単騎で [0, on) を撃たずに隠れ、from（既定は on）以後の最初の発のフレーム */
+function firstShotAfter(rid: number, hold: FrameRange, events: EnemyEvent[] = [], from = hold.end): number {
   const sim = runSimulation({
     slots: [
       {
@@ -25,7 +25,7 @@ function firstShotAfter(rid: number, hold: FrameRange, events: EnemyEvent[] = []
     burst: false,
     holdFire: [{ slotIndex: 0, ranges: [hold] }],
   });
-  return sim.shots[0]!.frames.find((f) => f >= hold.end)!;
+  return sim.shots[0]!.frames.find((f) => f >= from)!;
 }
 
 describe('manual auto-fire ON (holdFire end, C-1550)', () => {
@@ -55,5 +55,28 @@ describe('manual auto-fire ON (holdFire end, C-1550)', () => {
       { kind: 'untargetable', start: framesToGameSeconds(200), end: framesToGameSeconds(hold.end) },
     ];
     expect(firstShotAfter(70, hold, events) - hold.end).toBe(windowEndFirstShotFrames(characterOf(70).shot));
+  });
+
+  // C-1562: ジャンプの窓の中で ON にした枠は、オート射撃を ON のままにしていたときと同じく窓の明けから撃ち、
+  // 窓の明けの後に ON にした枠は ON から C-1550 の長さで撃つ（エード：エージェントバニー。1094・1229）
+  describe('with a jump window (C-1562)', () => {
+    const rid = 315;
+    const windowEnd = 400;
+    const events: EnemyEvent[] = [
+      { kind: 'untargetable', start: framesToGameSeconds(windowEnd - 118), end: framesToGameSeconds(windowEnd) },
+    ];
+
+    it('fires on the same frame as with auto-fire left on when turned on inside the window', () => {
+      const shot = firstShotAfter(rid, { start: 0, end: windowEnd - 62 }, events);
+      // オート射撃を ON のままにしていた枠（holdFire の区間を戦闘の始まりの 1 フレームだけにする）の、窓の明けの後の最初の発
+      const autoOn = firstShotAfter(rid, { start: 0, end: 1 }, events, windowEnd);
+      expect(shot).toBe(autoOn);
+      expect(shot - windowEnd).toBe(windowEndFirstShotFrames(characterOf(rid).shot));
+    });
+
+    it('fires as C-1550 when turned on after the window end', () => {
+      const on = windowEnd + 18;
+      expect(firstShotAfter(rid, { start: 0, end: on }, events) - on).toBe(63);
+    });
   });
 });
