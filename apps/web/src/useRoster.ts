@@ -3,7 +3,7 @@
 import { readBuildSnapshot, type BuildSnapshot, type CharacterIndexEntry } from '@nikke/core';
 import { useCallback, useMemo, useState, type Dispatch } from 'react';
 import { downloadText } from './download.ts';
-import type { PartiesState } from './parties.ts';
+import type { PartiesChange, PartiesState } from './parties.ts';
 import {
   ROSTER_STORAGE_KEY,
   applyRoster,
@@ -92,14 +92,15 @@ type Args = {
   team: TeamState;
   parties: PartiesState;
   dispatch: Dispatch<TeamAction>;
-  setParties: (parties: PartiesState) => void;
+  /** 編成を直した結果を、編成の一覧と選んでいる編成に入れる（App の applyPartiesChange） */
+  applyPartiesChange: (next: PartiesChange) => void;
 };
 
 /** 編集をブラウザに保存できなかったときの知らせ */
 const SAVE_FAILED = 'この編集をブラウザに保存できなかった（再読み込みすると、保存できた所まで戻る）';
 
 /** 育成状況と、キャラをスロットに入れたときに育成状況の育成を写す dispatch */
-export function useRoster({ index, team, parties, dispatch, setParties }: Args): {
+export function useRoster({ index, team, parties, dispatch, applyPartiesChange }: Args): {
   controls: RosterControls;
   dispatchWithRoster: Dispatch<TeamAction>;
 } {
@@ -143,11 +144,6 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
     [dispatch, roster],
   );
 
-  const replaceTeam = (next: { team: TeamState; parties: PartiesState }) => {
-    dispatch({ type: 'replace', state: next.team });
-    setParties(next.parties);
-  };
-
   /** 重ねを保存する（null はキーごと消す）。書けたか */
   const saveEdits = (json: string | null): boolean => {
     setEditsJson(json);
@@ -175,7 +171,7 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
     writeStorage(ROSTER_STORAGE_KEY, text);
     setSaved(text);
     dropEdits();
-    replaceTeam(applyRoster(team, parties, read.snapshot));
+    applyPartiesChange(applyRoster(team, parties, read.snapshot));
     const lines = importSummary(read.snapshot, read.notices);
     setMessage(lines.length > 0 ? { kind: 'ok', lines } : null);
   };
@@ -189,7 +185,7 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
 
   const confirmClear = () => {
     // 育成状況から写したもの（シンクロ LV・コンソール・スロットの育成）も既定に戻す
-    replaceTeam(clearRosterFromTeam(team, parties, roster));
+    applyPartiesChange(clearRosterFromTeam(team, parties, roster));
     removeStorage(ROSTER_STORAGE_KEY);
     setSaved(null);
     dropEdits();
@@ -199,7 +195,7 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
   const confirmRevertAll = () => {
     dropEdits();
     setMessage(null);
-    if (baseline !== null) replaceTeam(applyRoster(team, parties, baseline));
+    if (baseline !== null) applyPartiesChange(applyRoster(team, parties, baseline));
   };
 
   /**
@@ -208,7 +204,7 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
    */
   const commit = (
     change: (edits: RosterEdits | null, baseline: BuildSnapshot, now: string) => RosterEdits | null,
-    copy: (roster: BuildSnapshot) => { team: TeamState; parties: PartiesState },
+    copy: (roster: BuildSnapshot) => PartiesChange,
   ) => {
     if (index === null || saved === null || baseline === null) return;
     const next = change(edits, baseline, new Date().toISOString());
@@ -220,7 +216,7 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
     const written = saveEdits(next && JSON.stringify(next));
     setEditProblem(written ? null : [SAVE_FAILED]);
     setMessage(null);
-    replaceTeam(copy(read?.snapshot ?? baseline));
+    applyPartiesChange(copy(read?.snapshot ?? baseline));
   };
 
   const editCharacter = (resourceId: number, edit: RosterCharacterEdit | null) =>

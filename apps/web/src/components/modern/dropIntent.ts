@@ -3,7 +3,7 @@
 import type { Data } from '@dnd-kit/core';
 import type { CharacterIndexEntry } from '@nikke/core';
 
-/** 持ち上げるものの data（useDraggable の data。作る側は satisfies でこの形にそろえる） */
+/** 持ち上げるものの data（useDraggable の data。作る側は satisfies か useDropAndDrag の引数の型でこの形にそろえる） */
 export type ActiveDragData =
   /** 操作の印（ModernSlotCard） */
   | { type: 'controller'; slotIndex: number }
@@ -25,7 +25,7 @@ export type OverDragData =
   | { type: 'tray' };
 
 /**
- * dnd-kit の data（Active・Over の data.current）に型を付け直す。中身は確かめない（形は作る側の satisfies が保つ。
+ * dnd-kit の data（Active・Over の data.current）に型を付け直す。中身は確かめない（形は作る側の satisfies か useDropAndDrag の引数の型が保つ。
  * 型に無い形の data は、dropIntentOf では何もしない）
  */
 export const activeDragData = (data: Data | undefined) => data as ActiveDragData | undefined;

@@ -1,6 +1,5 @@
 // モダン UI の、選んでいない編成の行（スロット 5 枚。四角の絵）。✕・⚙ はない。ニケは持ち上げて、ほかのスロット（どの行でも）・一覧へ移せ、
 // 一覧のニケ・ほかの行のニケを落とせる（どれも選んでいる編成は変えない。useSlotDrag）。行を押すと、その編成を選ぶ（ModernView の selectParty）
-import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { TEAM_SIZE, type BuildSnapshot, type CharacterIndexEntry } from '@nikke/core';
 import { memo, type ReactNode } from 'react';
 import type { Party } from '../../parties.ts';
@@ -8,8 +7,8 @@ import { partyLabel } from '../../parties.ts';
 import { PartyTabButton } from '../PartyTabs.tsx';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { trayGrowthMarks } from './GrowthMarks.tsx';
-import { activeDragData, type ActiveDragData, type OverDragData } from './dropIntent.ts';
 import { EmptySlotFace, SlotCharName } from './ModernSlotCard.tsx';
+import { useDropAndDrag } from './useDropAndDrag.ts';
 import { usePressSelect } from './usePressSelect.ts';
 
 type Props = {
@@ -136,22 +135,4 @@ export function PartyRowLabel({
       <PartyTabButton partyIndex={partyIndex} active={active} {...press} />
     </div>
   );
-}
-
-/**
- * 1 つの要素を、落とす先（drop）と持ち上げるもの（drag）の両方にする。isOver は、持ち上げているものの種類が showsOver を満たすときだけ立つ
- * （落とす先の青枠を出すか）
- */
-function useDropAndDrag(
-  drop: { id: string; data: OverDragData },
-  drag: { id: string; data: ActiveDragData },
-  showsOver: (type: ActiveDragData['type'] | undefined) => boolean,
-) {
-  const { isOver, active, setNodeRef: setDropRef } = useDroppable(drop);
-  const { listeners, setNodeRef: setDragRef, isDragging } = useDraggable(drag);
-  const setNodeRef = (node: HTMLDivElement | null) => {
-    setDropRef(node);
-    setDragRef(node);
-  };
-  return { setNodeRef, isOver: isOver && showsOver(activeDragData(active?.data.current)?.type), isDragging, listeners };
 }

@@ -1,7 +1,7 @@
 // モダン UI で、一覧のニケをスロットに置く・スロットから外す操作と、そのときに絵を飛ばすアニメーション（flight.ts）
 import { useLayoutEffect, useRef, type Dispatch } from 'react';
 import { placeCharacterAction, type TeamAction, type TeamState } from '../../team.ts';
-import { slotCardAt } from './partyRows.ts';
+import { slotCardAt, slotContentAt } from './partyRows.ts';
 import { flyIntoSlot, flyToTray, stopArrival } from './flight.ts';
 
 /** 一覧のそのニケの絵（一覧に出ていなければ null） */
@@ -9,7 +9,6 @@ export const trayVisualAt = (resourceId: number) =>
   document.querySelector(`.char-tray-item[data-resource-id="${resourceId}"] .char-tray-item-visual`);
 
 /** スロット index の立ち絵の枠（無ければ null） */
-const slotAreaAt = (index: number) => slotCardAt(index)?.querySelector('.modern-slot-char-area') ?? null;
 
 /** 置いたニケのスロットに絵が入るのを待つ長さ（ms） */
 const ARRIVAL_WAIT_MS = 1000;
@@ -65,7 +64,7 @@ export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>
    * スロット index のニケを外す直前に、その立ち絵を一覧のそのニケの絵へ動かす。content は動かす絵（無ければスロットの立ち絵の枠。
    * 持ち上げて一覧へ落としたときは、持ち上げた絵）
    */
-  const sendToTray = (index: number, content = slotAreaAt(index)) => {
+  const sendToTray = (index: number, content = slotContentAt(index)) => {
     const id = team.slots[index]?.resourceId;
     if (id === null || id === undefined || !content) return;
     flyToTray(content, trayVisualAt(id)?.getBoundingClientRect() ?? null);
@@ -94,7 +93,7 @@ export function useSlotPlacement(team: TeamState, dispatch: Dispatch<TeamAction>
     // スロットの位置は入れ替えても変わらないので、落とした先の立ち絵の枠の位置が、入れ替わるものの元の位置。
     // 動かすのはニケだけ（空のスロットの枠は動かさず、その場で入れ替わる）
     const isEmpty = (index: number) => (team.slots[index]?.resourceId ?? null) === null;
-    queueArrival(fromIndex, isEmpty(toIndex) ? undefined : slotAreaAt(toIndex)?.getBoundingClientRect());
+    queueArrival(fromIndex, isEmpty(toIndex) ? undefined : slotContentAt(toIndex)?.getBoundingClientRect());
     queueArrival(toIndex, isEmpty(fromIndex) ? undefined : dragged);
     dispatch({ type: 'swapSlots', fromIndex, toIndex });
   };

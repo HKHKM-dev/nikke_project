@@ -16,8 +16,7 @@ import type { PartiesState, PartySlotRef } from '../../parties.ts';
 import type { TeamAction, TeamState } from '../../team.ts';
 import { trayCollectionBadge, type Badge } from './badges.ts';
 import { setDropPlaced } from './dropAnimation.ts';
-import { partyCardAt, partyLabelAt, slotCardAt, slotsGridAt } from './partyRows.ts';
-import { DRAG_START_DISTANCE } from './usePressSelect.ts';
+import { partyCardAt, partyContentAt, partyLabelAt, slotCardAt, slotsGridAt } from './partyRows.ts';
 import { FLIGHT, flyControllerInto, flyLabel, flyToTray, liftedRectOf } from './flight.ts';
 import { activeDragData, dropIntentOf, type SlotRef } from './dropIntent.ts';
 import { trayGrowthMarks, type GrowthMarks } from './GrowthMarks.tsx';
@@ -93,6 +92,9 @@ type Params = {
   onDragStart: () => void;
 };
 
+/** マウスで、押した位置からこの距離（px）動いたら持ち上げる（usePressSelect は、これより動かずに離したときだけ押したとする） */
+export const DRAG_START_DISTANCE = 4;
+
 /**
  * ドラッグを離した直後のクリックを 1 回だけ止める。選んでいない編成の行は、押すとその編成を選ぶボタンで、同じ行の中で持ち上げて
  * 離すと、離した後にそのボタンのクリックが届く（押した所と離した所の共通の親）。クリックは離した直後に届くので、次のタスクで外す
@@ -129,7 +131,7 @@ export function useSlotDrag({
     collection: null,
   });
 
-  // マウスは DRAG_START_DISTANCE（4px）動かして初めてドラッグと判定（通常のクリック操作との共存。時間の条件は無く、動かしたらすぐ持ち上がる。オーナーの指示）。タッチは 250ms の長押しで持ち上げ、
+  // マウスは DRAG_START_DISTANCE 動かして初めてドラッグと判定（通常のクリック操作との共存。時間の条件は無く、動かしたらすぐ持ち上がる。オーナーの指示）。タッチは 250ms の長押しで持ち上げ、
   // それまでに 8px より動いたらスクロールにする（すぐ持ち上げると、トレイの上でページをスクロールできない）
   const sensors = useSensors(
     useSensor(LeftButtonMouseSensor, { activationConstraint: { distance: DRAG_START_DISTANCE } }),
@@ -239,9 +241,7 @@ export function useSlotDrag({
   const partyOf = (ref: SlotRef) => ref.party ?? parties.active;
   /** スロットの立ち絵の枠の位置（ニケがいなければ undefined） */
   const areaRectAt = (party: number, index: number) =>
-    resourceIdAt(party, index) === null
-      ? undefined
-      : partyCardAt(party, index)?.querySelector('.modern-slot-char-area')?.getBoundingClientRect();
+    resourceIdAt(party, index) === null ? undefined : partyContentAt(party, index)?.getBoundingClientRect();
   /** 編成 party のスロット index へ、from から絵を動かす（描き直しの後に、そのカードへ） */
   const arriveAt = (party: number, index: number, from: DOMRect | undefined) =>
     placement.queueArrivalAt(`party-${party}-${index}`, () => partyCardAt(party, index), from);
@@ -276,7 +276,7 @@ export function useSlotDrag({
         // 持ち上げた絵は、離した位置から選んでいない編成の行のスロットへ、そこにいたニケは一覧へ動かす
         const from = liftedRectOf(document.querySelector('.char-drag-overlay .char-tray-item-visual'));
         const replaced = resourceIdAt(intent.party, intent.index);
-        const content = partyCardAt(intent.party, intent.index)?.querySelector('.modern-slot-char-area');
+        const content = partyContentAt(intent.party, intent.index);
         setDropPlaced(true);
         if (replaced !== null && content) flyToTray(content, trayVisualAt(replaced)?.getBoundingClientRect() ?? null);
         arriveAt(intent.party, intent.index, from);

@@ -21,6 +21,15 @@ type Props = {
 
 const BASE_URL = import.meta.env.BASE_URL;
 
+/** 大きさごとの class（portrait-tall は portrait の大きさに、縦長の絵の枠の class を足す。styles.css） */
+const SIZE_CLASS = {
+  normal: '',
+  compact: 'char-visual-compact',
+  portrait: 'char-visual-portrait',
+  'portrait-tall': 'char-visual-portrait char-visual-tall-image',
+  tall: 'char-visual-tall',
+} satisfies Record<NonNullable<Props['size']>, string>;
+
 /**
  * 読めなかった画像（画像の無い配信。アーティファクトなど）。同じ絵を出し直すたびに読みに行くと、読めないと分かるまでの数フレームは
  * 壊れた画像の枠になる（スロットを入れ替えた瞬間に、枠が一瞬見える）ので、覚えておいて 2 回目からは読みに行かない
@@ -68,8 +77,7 @@ export function CharacterVisual({
   overlay = null,
   badges = true,
 }: Props) {
-  const portraitTall = size === 'portrait-tall';
-  const imageSrc = characterImageSrc(character.resourceId, size === 'tall' || portraitTall);
+  const imageSrc = characterImageSrc(character.resourceId, size === 'tall' || size === 'portrait-tall');
   // 画像が読めなかったキャラ（画像の無い配信・CDN に無いキャラ）は、絵の枠とバッジだけを出す。名前は絵の外（ニケ一覧の四角は絵の下、
   // 縦長は下部に重ねる名前）にあるので、絵の中には出さない（オーナーの指示）
   const failed = failedImages.has(imageSrc);
@@ -77,9 +85,7 @@ export function CharacterVisual({
   const [, rerender] = useReducer((n: number) => n + 1, 0);
 
   return (
-    <div
-      className={`char-visual ${size === 'normal' ? '' : `char-visual-${portraitTall ? 'portrait' : size}`} ${portraitTall ? 'char-visual-tall-image' : ''}`}
-    >
+    <div className={`char-visual ${SIZE_CLASS[size]}`}>
       {!failed && (
         <img
           src={imageSrc}

@@ -10,7 +10,7 @@ import {
 } from '@nikke/core';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { INITIAL_PARTIES, type PartiesState } from './parties.ts';
+import { INITIAL_PARTIES, type PartiesChange, type PartiesState } from './parties.ts';
 import {
   ROSTER_STORAGE_KEY,
   applyRoster,
@@ -74,7 +74,12 @@ const TEAM = teamReducer(initialTeamState(), { type: 'selectCharacter', index: 0
 function render(index: readonly CharacterIndexEntry[] | null = INDEX) {
   const dispatch = vi.fn<(action: TeamAction) => void>();
   const setParties = vi.fn<(parties: PartiesState) => void>();
-  const props = { index, team: TEAM, parties: INITIAL_PARTIES, dispatch, setParties };
+  // App の applyPartiesChange と同じく、編成の一覧と選んでいる編成に入れる（どちらに何を入れたかを見る）
+  const applyPartiesChange = (next: PartiesChange) => {
+    setParties(next.parties);
+    dispatch({ type: 'replace', state: next.team });
+  };
+  const props = { index, team: TEAM, parties: INITIAL_PARTIES, dispatch, applyPartiesChange };
   const { result, rerender } = renderHook(useRoster, { initialProps: props });
   return { result, rerender, dispatch, setParties, props };
 }

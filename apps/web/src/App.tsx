@@ -6,7 +6,7 @@ import { BadgeSprite } from './components/modern/BadgeIcon.tsx';
 import { RosterEditModal } from './components/RosterEditModal.tsx';
 import { SettingsMenu } from './components/SettingsMenu.tsx';
 import { UnreadableSavesNotice } from './components/UnreadableSavesNotice.tsx';
-import { INITIAL_TEAM_STATE, teamReducer, type TeamAction, type TeamState } from './team.ts';
+import { INITIAL_TEAM_STATE, teamReducer, type TeamAction } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
 import {
   INITIAL_PARTIES,
@@ -15,6 +15,7 @@ import {
   swapParties,
   switchParty,
   updateOtherParty,
+  type PartiesChange,
   type PartiesState,
   type PartySlotRef,
 } from './parties.ts';
@@ -50,8 +51,20 @@ export function App() {
     setParties,
   });
 
+  // 編成を直した結果（parties.ts の switchParty など）を、編成の一覧と選んでいる編成（team）に入れる
+  const applyPartiesChange = (next: PartiesChange) => {
+    setParties(next.parties);
+    if (next.team !== team) dispatch({ type: 'replace', state: next.team });
+  };
+
   // 育成状況（roster.ts）。キャラをスロットに入れる操作は、育成状況の育成を写す dispatch を通す
-  const { controls: rosterControls, dispatchWithRoster } = useRoster({ index, team, parties, dispatch, setParties });
+  const { controls: rosterControls, dispatchWithRoster } = useRoster({
+    index,
+    team,
+    parties,
+    dispatch,
+    applyPartiesChange,
+  });
   // 育成状況の編集画面を開いているか（育成のメニューの「編集」。plan/design-roster-edit.md 6 節）
   const [rosterEditing, setRosterEditing] = useState(false);
   const closeRosterEdit = useCallback(() => setRosterEditing(false), []);
@@ -67,11 +80,6 @@ export function App() {
     [index, listOrder],
   );
 
-  // 編成を直した結果（parties.ts の switchParty など）を、編成の一覧と選んでいる編成（team）に入れる
-  const applyPartiesChange = (next: { parties: PartiesState; team: TeamState }) => {
-    setParties(next.parties);
-    if (next.team !== team) dispatch({ type: 'replace', state: next.team });
-  };
   const selectParty = (to: number) => applyPartiesChange(switchParty(parties, team, to));
   // 2 つのスロット（どの編成でも）の中身を入れ替える（ニケを編成の行どうしの間で移す。選んでいる編成は変えない）
   const exchangeSlots = (a: PartySlotRef, b: PartySlotRef) =>

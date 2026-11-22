@@ -11,7 +11,7 @@ import {
   snapshotContent,
   type ContentSnapshot,
 } from './flight.ts';
-import { partyCardAt, partyRows, rowLabelOf } from './partyRows.ts';
+import { partyContentAt, partyRows, rowLabelOf } from './partyRows.ts';
 
 /** 切り替えが起きなかったときに、取っておいた写しを消すまでの時間（ms） */
 const STALE_MS = 1000;
@@ -25,15 +25,12 @@ type Pending = {
   timer: ReturnType<typeof setTimeout>;
 };
 
-const contentAt = (party: number, index: number) =>
-  partyCardAt(party, index)?.querySelector('.modern-slot-char-area') ?? null;
-
 /** 切り替える前の行の位置と、2 つの行（from・to）の立ち絵の枠の写しを取る */
 function capture(from: number, to: number): Pending {
   const snapshots: Pending['snapshots'] = [];
   for (const party of [from, to]) {
     for (let index = 0; index < TEAM_SIZE; index++) {
-      const content = contentAt(party, index);
+      const content = partyContentAt(party, index);
       if (content) snapshots.push({ party, index, snapshot: snapshotContent(content) });
     }
   }
@@ -77,7 +74,7 @@ function play({ tops, snapshots }: Pending): void {
     };
   });
   const targets = snapshots.map(({ party, index }) => {
-    const content = contentAt(party, index);
+    const content = partyContentAt(party, index);
     return { content, rect: content?.getBoundingClientRect() };
   });
   for (const { row, label, rowDelta, labelTop, beforeLabel } of rows) {

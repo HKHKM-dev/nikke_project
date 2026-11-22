@@ -1,4 +1,4 @@
-import { useDraggable, useDroppable } from '@dnd-kit/core';
+import { useDraggable } from '@dnd-kit/core';
 import type { CharacterIndexEntry } from '@nikke/core';
 import { BadgeIcon } from './BadgeIcon.tsx';
 import { BUILD_BADGE, CONTROLLER_BADGE, DELETE_BADGE } from './badges.ts';
@@ -6,7 +6,8 @@ import selectionCircle from '../../assets/badges/ui_selection_circle.svg';
 import selectionTriangle from '../../assets/badges/ui_selection_triangle.svg';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
-import { activeDragData, type ActiveDragData, type OverDragData } from './dropIntent.ts';
+import type { ActiveDragData } from './dropIntent.ts';
+import { useDropAndDrag } from './useDropAndDrag.ts';
 import { useScrollingName } from './useScrollingName.tsx';
 import type { Badge } from './badges.ts';
 
@@ -69,41 +70,17 @@ export function ModernSlotCard({
 }: Props) {
   const awaitingPlacement = onPlacePending !== undefined;
 
-  // ドロップ受け入れ（トレイからの配置、または他スロットからのスワップ）
-  const {
-    isOver: isOverRaw,
-    active,
-    setNodeRef: setDropRef,
-  } = useDroppable({
-    id: `slot-drop-${slotIndex}`,
-    data: { type: 'slot', slotIndex } satisfies OverDragData,
-  });
-  // 落とす先の青枠は、スロットに関係のないもの（部隊番号）を乗せたときは出さない
-  const isOver = isOverRaw && activeDragData(active?.data.current)?.type !== 'party-label';
-
-  // スロット間の入れ替えのドラッグ（空のスロットも持ち上げて入れ替えられる）
-  const {
-    attributes,
-    listeners,
-    setNodeRef: setDragRef,
-    isDragging,
-  } = useDraggable({
-    id: `slot-drag-${slotIndex}`,
-    data: {
-      type: 'slot-character',
-      slotIndex,
-      character: characterEntry,
-    } satisfies ActiveDragData,
-  });
-
-  const setCardRef = (node: HTMLDivElement | null) => {
-    setDropRef(node);
-    setDragRef(node);
-  };
+  // 落とす先（一覧からの配置・ほかのスロットとの入れ替え）で、持ち上げられる（空のスロットも持ち上げて入れ替えられる）
+  const { setNodeRef, isOver, isDragging, attributes, listeners } = useDropAndDrag(
+    { id: `slot-drop-${slotIndex}`, data: { type: 'slot', slotIndex } },
+    { id: `slot-drag-${slotIndex}`, data: { type: 'slot-character', slotIndex, character: characterEntry } },
+    // 落とす先の青枠は、スロットに関係のないもの（部隊番号）を乗せたときは出さない
+    (type) => type !== 'party-label',
+  );
 
   return (
     <div
-      ref={setCardRef}
+      ref={setNodeRef}
       className={`modern-slot-card ${awaitingPlacement ? 'modern-slot-awaiting' : ''} ${isOver ? 'modern-slot-over' : ''} ${isDragging ? 'modern-slot-dragging' : ''}`}
       {...attributes}
       {...listeners}
