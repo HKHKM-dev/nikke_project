@@ -29,6 +29,9 @@ export type Party = Pick<TeamState, 'slots' | 'controlledSlot'>;
  */
 export type PartiesState = { active: number; parties: (Party | null)[] };
 
+/** 編成を直した結果（編成の一覧と、選んでいる編成の中身） */
+export type PartiesChange = { parties: PartiesState; team: TeamState };
+
 export const INITIAL_PARTIES: PartiesState = { active: 0, parties: Array.from({ length: PARTY_COUNT }, () => null) };
 
 export function partyOf(team: TeamState): Party {
@@ -65,10 +68,7 @@ export function otherPartyResourceIds(state: PartiesState): OtherParties {
  * ソロレイドでは同じニケを 2 つの編成に入れられない）。選んでいる編成（state.active）の中身は team。
  * 外したものが無ければ、受け取ったものをそのまま返す
  */
-export function withoutCrossPartyDuplicates(
-  state: PartiesState,
-  team: TeamState,
-): { parties: PartiesState; team: TeamState } {
+export function withoutCrossPartyDuplicates(state: PartiesState, team: TeamState): PartiesChange {
   const seen = new Set<number>();
   const dedupe = (slots: readonly SlotState[]): SlotState[] | null => {
     let changed = false;
@@ -115,11 +115,7 @@ export function withParty(team: SharedSettings, party: Party | null): TeamState 
 }
 
 /** 編成 to に切り替える。いまの画面の編成を active に書き戻し、to の中身を画面の編成にする */
-export function switchParty(
-  state: PartiesState,
-  team: TeamState,
-  to: number,
-): { parties: PartiesState; team: TeamState } {
+export function switchParty(state: PartiesState, team: TeamState, to: number): PartiesChange {
   if (to === state.active || to < 0 || to >= PARTY_COUNT) return { parties: state, team };
   const parties = state.parties.slice();
   parties[state.active] = partyOf(team);
@@ -155,7 +151,7 @@ export function exchangePartySlots(
   team: TeamState,
   a: PartySlotRef,
   b: PartySlotRef,
-): { parties: PartiesState; team: TeamState } {
+): PartiesChange {
   const unchanged = { parties: state, team };
   if (a.party === b.party && a.index === b.index) return unchanged;
   const slotsOf = (party: number) =>
@@ -186,12 +182,7 @@ export function exchangePartySlots(
  * 編成 a と b の中身（スロットと操作キャラ）を入れ替える（モダン UI で、編成の番号をドラッグして入れ替える）。選んでいる編成の番号は変えず、
  * 選んでいる編成が入れ替わるなら、画面の編成（team）の中身を入れ替えた先のものにする。同じ編成・範囲の外なら何もしない
  */
-export function swapParties(
-  state: PartiesState,
-  team: TeamState,
-  a: number,
-  b: number,
-): { parties: PartiesState; team: TeamState } {
+export function swapParties(state: PartiesState, team: TeamState, a: number, b: number): PartiesChange {
   const inRange = (i: number) => i >= 0 && i < PARTY_COUNT;
   if (a === b || !inRange(a) || !inRange(b)) return { parties: state, team };
   const contentOf = (i: number) => (i === state.active ? partyOf(team) : (state.parties[i] ?? null));

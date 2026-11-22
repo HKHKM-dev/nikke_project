@@ -16,7 +16,7 @@ import {
   type CharacterIndexEntry,
   type SnapshotCharacter,
 } from '@nikke/core';
-import type { PartiesState } from './parties.ts';
+import type { PartiesChange, PartiesState } from './parties.ts';
 import {
   CONSOLE_CLASSES,
   CONSOLE_CORPORATIONS,
@@ -135,7 +135,7 @@ export function applyRosterSlots(
   parties: PartiesState,
   roster: BuildSnapshot,
   only?: number,
-): { team: TeamState; parties: PartiesState } {
+): PartiesChange {
   const slots = applyToSlots(team.slots, roster, only);
   const others = parties.parties.map((p) => {
     if (p === null) return p;
@@ -161,11 +161,7 @@ export function applyRosterAccount(team: TeamState, roster: BuildSnapshot): Team
 }
 
 /** 読み込んだときに写す: シンクロ LV・コンソールと、全部の編成のスロットのうち育成状況にいるキャラの育成 */
-export function applyRoster(
-  team: TeamState,
-  parties: PartiesState,
-  roster: BuildSnapshot,
-): { team: TeamState; parties: PartiesState } {
+export function applyRoster(team: TeamState, parties: PartiesState, roster: BuildSnapshot): PartiesChange {
   return applyRosterSlots(applyRosterAccount(team, roster), parties, roster);
 }
 
@@ -184,7 +180,7 @@ export function clearRosterFromTeam(
   team: TeamState,
   parties: PartiesState,
   roster: BuildSnapshot | null,
-): { team: TeamState; parties: PartiesState } {
+): PartiesChange {
   const reset = (slots: SlotState[]) =>
     slots.map((s) => (entryOf(roster, s.resourceId) === undefined ? s : { ...s, ...defaultFields() }));
   return {

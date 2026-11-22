@@ -1,14 +1,14 @@
 // モダン UI の、選んでいない編成の行（スロット 5 枚。四角の絵）。✕・⚙ はない。ニケは持ち上げて、ほかのスロット（どの行でも）・一覧へ移せ、
 // 一覧のニケ・ほかの行のニケを落とせる（どれも選んでいる編成は変えない。useSlotDrag）。行を押すと、その編成を選ぶ（ModernView の selectParty）
-import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { TEAM_SIZE, type BuildSnapshot, type CharacterIndexEntry } from '@nikke/core';
 import { memo, type ReactNode } from 'react';
 import type { Party } from '../../parties.ts';
-import { partyLabel, partyNumber } from '../../parties.ts';
+import { partyLabel } from '../../parties.ts';
+import { PartyTabButton } from '../PartyTabs.tsx';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { trayGrowthMarks } from './GrowthMarks.tsx';
-import { activeDragData, type ActiveDragData, type OverDragData } from './dropIntent.ts';
 import { EmptySlotFace, SlotCharName } from './ModernSlotCard.tsx';
+import { useDropAndDrag } from './useDropAndDrag.ts';
 import { usePressSelect } from './usePressSelect.ts';
 
 type Props = {
@@ -83,33 +83,19 @@ function PreviewCard({
   character: CharacterIndexEntry | undefined;
   children: ReactNode;
 }) {
-  const {
-    isOver: isOverRaw,
-    active,
-    setNodeRef: setDropRef,
-  } = useDroppable({
-    id: `party-${partyIndex}-slot-${slotIndex}`,
-    data: { type: 'party-slot', partyIndex, slotIndex } satisfies OverDragData,
-  });
-  // 落とす先の青枠は、スロットに関係のないもの（部隊番号）を乗せたときは出さない。操作の印（コントローラーのアイコン）は、
-  // いまの編成のスロットにだけ置けるので、選んでいない編成の行のスロットには出さない
-  const dragType = activeDragData(active?.data.current)?.type;
-  const isOver = isOverRaw && dragType !== 'party-label' && dragType !== 'controller';
-  const {
-    listeners,
-    setNodeRef: setDragRef,
-    isDragging,
-  } = useDraggable({
-    id: `party-${partyIndex}-drag-${slotIndex}`,
-    data: { type: 'party-character', partyIndex, slotIndex, character } satisfies ActiveDragData,
-  });
-  const setCardRef = (node: HTMLDivElement | null) => {
-    setDropRef(node);
-    setDragRef(node);
-  };
+  const { setNodeRef, isOver, isDragging, listeners } = useDropAndDrag(
+    { id: `party-${partyIndex}-slot-${slotIndex}`, data: { type: 'party-slot', partyIndex, slotIndex } },
+    {
+      id: `party-${partyIndex}-drag-${slotIndex}`,
+      data: { type: 'party-character', partyIndex, slotIndex, character },
+    },
+    // 落とす先の青枠は、スロットに関係のないもの（部隊番号）を乗せたときは出さない。操作の印（コントローラーのアイコン）は、
+    // いまの編成のスロットにだけ置けるので、選んでいない編成の行のスロットには出さない
+    (type) => type !== 'party-label' && type !== 'controller',
+  );
   return (
     <div
-      ref={setCardRef}
+      ref={setNodeRef}
       className={`modern-slot-card modern-party-preview-card ${isOver ? 'modern-slot-over' : ''} ${isDragging ? 'modern-slot-dragging' : ''}`}
       {...listeners}
     >
@@ -134,43 +120,19 @@ export function PartyRowLabel({
   onSelect: () => void;
 }) {
   const press = usePressSelect(onSelect);
-  const {
-    isOver: isOverRaw,
-    active: dragActive,
-    setNodeRef: setDropRef,
-  } = useDroppable({
-    id: `party-label-drop-${partyIndex}`,
-    data: { type: 'party-label', partyIndex } satisfies OverDragData,
-  });
-  // 部隊番号の落とす先の青枠は、部隊番号を持ち上げているときだけ出す（コントローラーのアイコンやキャラの立ち絵では出さない）
-  const isOver = isOverRaw && activeDragData(dragActive?.data.current)?.type === 'party-label';
-  const {
-    listeners,
-    setNodeRef: setDragRef,
-    isDragging,
-  } = useDraggable({
-    id: `party-label-drag-${partyIndex}`,
-    data: { type: 'party-label', partyIndex } satisfies ActiveDragData,
-  });
-  const setCellRef = (node: HTMLDivElement | null) => {
-    setDropRef(node);
-    setDragRef(node);
-  };
+  const { setNodeRef, isOver, isDragging, listeners } = useDropAndDrag(
+    { id: `party-label-drop-${partyIndex}`, data: { type: 'party-label', partyIndex } },
+    { id: `party-label-drag-${partyIndex}`, data: { type: 'party-label', partyIndex } },
+    // 部隊番号の落とす先の青枠は、部隊番号を持ち上げているときだけ出す（コントローラーのアイコンやキャラの立ち絵では出さない）
+    (type) => type === 'party-label',
+  );
   return (
     <div
-      ref={setCellRef}
+      ref={setNodeRef}
       className={`party-tab-cell modern-party-row-label ${isOver ? 'party-label-over' : ''} ${isDragging ? 'party-label-dragging' : ''}`}
       {...listeners}
     >
-      <button
-        type="button"
-        className="toggle-button party-tab"
-        aria-pressed={active}
-        aria-label={partyLabel(partyIndex)}
-        {...press}
-      >
-        {partyNumber(partyIndex)}
-      </button>
+      <PartyTabButton partyIndex={partyIndex} active={active} {...press} />
     </div>
   );
 }
