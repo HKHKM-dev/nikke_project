@@ -92,12 +92,16 @@ describe('functionComplexities', () => {
     '}',
     "describe('x', () => {", // 29
     '  if (Box) {}',
-    "  it('y', () => { const f = () => (Box ? 1 : 2); f(); });", // 31
+    "  it('y', () => {", // 31
+    '    const f = () => (Box ? 1 : 2);', // 32
+    '    f();',
+    '  });',
     '});',
   );
 
+  const found = functionComplexities('a.ts', parseSource('a.ts', text));
+
   it('counts like the ESLint complexity rule', () => {
-    const found = functionComplexities('a.ts', parseSource('a.ts', text));
     const messages = new Linter({ configType: 'flat' }).verify(
       text,
       {
@@ -107,18 +111,15 @@ describe('functionComplexities', () => {
       },
       'a.ts',
     );
-    // ESLint は vitest の枠に渡す関数（29・31 行）も出す。こちらはそれを出さず、その中の f（31 行）だけを出す。ESLint の報告は
-    // 位置の順なので、31 行の 1 つ目が it に渡す関数
+    // ESLint は vitest の枠に渡す関数（29・31 行）も出す。こちらはそれを出さず、その中の f（32 行）だけを出す
     const eslint = messages
-      .filter((m) => m.ruleId === 'complexity' && m.line !== 29)
-      .map((m): [number, number] => [m.line, Number(/complexity of (\d+)/.exec(m.message)?.[1])])
-      .filter(([line], i, all) => line !== 31 || all.findIndex(([l]) => l === 31) < i);
+      .filter((m) => m.ruleId === 'complexity' && m.line !== 29 && m.line !== 31)
+      .map((m): [number, number] => [m.line, Number(/complexity of (\d+)/.exec(m.message)?.[1])]);
     const sorted = (rows: [number, number][]) => [...rows].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
     expect(sorted(found.map((f): [number, number] => [f.line, f.complexity]))).toEqual(sorted(eslint));
   });
 
   it('names each function, field initializer and static block', () => {
-    const found = functionComplexities('a.ts', parseSource('a.ts', text));
     expect(found.map((f) => [f.name, f.line, f.complexity])).toEqual([
       ['plain', 1, 1],
       ['branches', 4, 30],
@@ -126,7 +127,7 @@ describe('functionComplexities', () => {
       ['Box.size の初期化子', 25, 2],
       ['Box.static ブロック', 26, 2],
       ['Box.area', 27, 2],
-      ['f', 31, 2],
+      ['f', 32, 2],
     ]);
   });
 });
