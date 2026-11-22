@@ -765,7 +765,9 @@ svg.roster-revert-icon {
     grid-row: 1;
     grid-column: 1;
     position: relative;
-    z-index: 1;
+    /* スロットの中の重ねの順（バッジ・操作の印・◎ など。最大 4）より上に置く。枠の列の中のポップアップ（詳細設定）とその幕が、
+       スロットのバッジなどと重ならず、スロットも暗くなるように */
+    z-index: 10;
   }
   .modern-top-row > .modern-slots-area {
     grid-row: 1;
