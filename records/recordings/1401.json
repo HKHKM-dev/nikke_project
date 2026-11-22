@@ -1,0 +1,52 @@
+{
+  "id": "1401",
+  "date": "2026-11-22",
+  "folder": "range",
+  "file": "20261122-1401_rl_diesel-winter-sweets-sun-uni.mp4",
+  "original": "2026-11-22_22-03-43.mp4",
+  "durationSec": 204.9,
+  "frames": 12293,
+  "fps": 60,
+  "sizeMB": 248.2,
+  "sha256": "5a8dc52fc6df",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 75,
+      "name": "ディーゼル：ウィンタースイーツ",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 160,
+      "name": "ユニ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0870。リター（I）・I-DOLL・サン（III）・ディーゼル：ウィンタースイーツ（III・操作）・ユニ（II）（オート射撃 ON・オートバースト ON）。火の的",
+  "backup": {
+    "at": "2026-11-22T22:13+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
