@@ -12,7 +12,6 @@ import { ModernSlotCard } from '../components/modern/ModernSlotCard.tsx';
 import { PartyPreviewRow, PartyRowLabel } from '../components/modern/PartyPreviewRow.tsx';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
 import { SlotDragOverlay } from '../components/modern/SlotDragOverlay.tsx';
-import { snapOverlayToPixels } from '../components/modern/flight.ts';
 import { slotCollectionBadge, slotGrowthEdited, slotGrowthMarks } from '../components/modern/slotBadges.ts';
 import { useSlotDrag } from '../components/modern/useSlotDrag.ts';
 import { useSlotPlacement } from '../components/modern/useSlotPlacement.ts';
@@ -149,8 +148,6 @@ export function ModernView({
         sensors={drag.sensors}
         // 落とす先は、カーソル（指）の下の受け口で決める（既定は持ち上げた絵の外枠＝カード 1 枚分との重なりで、隣に少し掛かっただけで入れ替わる）
         collisionDetection={pointerWithin}
-        // 持ち上げた絵の位置は、ドラッグ中も画素の格子に丸める（並びの中の絵と太さがそろう。flight.ts）
-        modifiers={[snapOverlayToPixels]}
         onDragStart={drag.handleDragStart}
         // ドラッグ中の画面端の自動スクロールは使わない（画面は、ホイールやタッチのスクロールで動かす）
         autoScroll={false}
