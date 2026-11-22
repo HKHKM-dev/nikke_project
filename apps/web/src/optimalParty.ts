@@ -1,38 +1,48 @@
 // 最適編成計算（クラシックの「最適編成計算」）: 選んだ 1 つのスロットのニケを、ほかのニケに入れ替えて、
 // 編成のダメージがいちばん大きくなるニケの上位を出す。入れ替え先は、いまの編成にも、ほかの編成にもいないニケ
 // （ソロレイドでは同じニケを 2 つの編成に入れられない）。育成は、育成状況にいるニケはその育成、いなければ既定（別のニケに変えたときと同じ）
-import { assignBurstSteps, type BuildSnapshot, type CharacterIndexEntry } from '@nikke/core';
+import {
+  assignBurstSteps,
+  burstStepInTeam,
+  type BuildSnapshot,
+  type CharacterData,
+  type CharacterIndexEntry,
+  type SkillDefinition,
+} from '@nikke/core';
 import { withRosterFields } from './roster.ts';
 import { teamReducer, type TeamState } from './team.ts';
 
 /** 上位として出す人数 */
 export const OPTIMAL_TOP_COUNT = 10;
 
-/** バースト I・II・III がそろう（フルバーストが起きる）か。全段階（AllStep）のニケは、足りない段階に充てる（assignBurstSteps） */
-export function canFullBurst(members: readonly (CharacterIndexEntry | null)[]): boolean {
-  const a = assignBurstSteps(members);
+/** 編成の 1 枠（読み込んだキャラと、そのスキル定義。定義が無い・読めないときは null） */
+export type BurstMember = { character: CharacterData; definition: SkillDefinition | null };
+
+/**
+ * バースト I・II・III がそろう（フルバーストが起きる）か。各枠の段は、計算と同じ編成での段（burstStepInTeam。
+ * 編成の条件で付くバースト段階の変更の後）。全段階（AllStep）のニケは、足りない段階に充てる（assignBurstSteps）
+ */
+export function canFullBurst(members: readonly (BurstMember | null)[]): boolean {
+  const characters = members.map((m) => m?.character ?? null);
+  const a = assignBurstSteps(
+    members.map((m, i) =>
+      m === null ? null : { burstStep: burstStepInTeam(m.character, m.definition, characters, i) },
+    ),
+  );
   return a.Step1 !== null && a.Step2 !== null && a.Step3 !== null;
 }
 
 /**
  * 入れ替え先のニケ（一覧の順のまま）。いまの編成のニケと、ほかの編成のニケは入れない。
- * スロット slotIndex に入れるとフルバーストが起きなくなる（段階 I・II・III がそろわない）ニケも入れない（計算を減らすため。
- * 段階の判定は一覧の基本バースト段階で、編成の条件で段階が変わるスキルは見ない）
+ * フルバーストが起きなくなるニケを省く判定（canFullBurst）は、スキル定義を読んだ後に呼ぶ側がする
  */
 export function candidateEntries(
   index: readonly CharacterIndexEntry[],
   team: TeamState,
   otherPartyIds: ReadonlyMap<number, unknown>,
-  slotIndex: number,
 ): CharacterIndexEntry[] {
   const used = new Set(team.slots.flatMap((s) => (s.resourceId === null ? [] : [s.resourceId])));
-  const members = team.slots.map((s) => index.find((c) => c.resourceId === s.resourceId) ?? null);
-  return index.filter(
-    (c) =>
-      !used.has(c.resourceId) &&
-      !otherPartyIds.has(c.resourceId) &&
-      canFullBurst(members.map((m, i) => (i === slotIndex ? c : m))),
-  );
+  return index.filter((c) => !used.has(c.resourceId) && !otherPartyIds.has(c.resourceId));
 }
 
 /** スロット slotIndex のニケを resourceId に入れ替えた編成（別のニケに変えたときと同じ。育成状況のニケはその育成を写す） */

@@ -1,6 +1,7 @@
-import type { BurstStep, CharacterIndexEntry } from '@nikke/core';
+import { readFileSync } from 'node:fs';
+import { parseSkillDefinition, type BurstStep, type CharacterData, type CharacterIndexEntry } from '@nikke/core';
 import { describe, expect, it } from 'vitest';
-import { candidateEntries, canFullBurst, swappedTeam, topRows } from './optimalParty.ts';
+import { candidateEntries, canFullBurst, swappedTeam, topRows, type BurstMember } from './optimalParty.ts';
 import { INITIAL_TEAM_STATE, teamReducer } from './team.ts';
 
 const entry = (resourceId: number, burstStep: BurstStep = 'Step1') =>
@@ -20,35 +21,34 @@ describe('candidateEntries', () => {
       entry(5, 'Step1'),
       entry(6, 'Step3'),
     ];
-    const rows = candidateEntries(index, team, others, 0);
+    const rows = candidateEntries(index, team, others);
     expect(rows.map((r) => r.resourceId)).toEqual([4, 5]);
   });
 });
 
-describe('canFullBurst', () => {
-  it('needs steps I, II and III, and lets an all-step character fill a missing one', () => {
-    expect(canFullBurst([entry(1, 'Step1'), entry(2, 'Step2'), entry(3, 'Step3'), null])).toBe(true);
-    expect(canFullBurst([entry(1, 'Step1'), entry(2, 'Step1'), entry(3, 'Step3')])).toBe(false);
-    expect(canFullBurst([entry(1, 'Step1'), entry(2, 'Step1'), entry(3, 'Step3'), entry(4, 'AllStep')])).toBe(true);
-    expect(canFullBurst([entry(1, 'AllStep'), entry(2, 'Step2'), entry(3, 'Step3')])).toBe(true);
-  });
+const dataJson = <T>(path: string) =>
+  JSON.parse(readFileSync(new URL(`../../../packages/core/data/${path}`, import.meta.url), 'utf8')) as T;
+const character = (id: number) => dataJson<CharacterData>(`characters/${id}.json`);
+const member = (id: number, withDefinition = false): BurstMember => ({
+  character: character(id),
+  definition: withDefinition ? parseSkillDefinition(dataJson(`skills/${id}.json`)) : null,
 });
 
-describe('candidateEntries (full burst)', () => {
-  it('leaves out the characters that stop the full burst when put in the slot', () => {
-    let team = teamReducer(INITIAL_TEAM_STATE, { type: 'selectCharacter', index: 0, resourceId: 1 });
-    team = teamReducer(team, { type: 'selectCharacter', index: 1, resourceId: 2 });
-    team = teamReducer(team, { type: 'selectCharacter', index: 2, resourceId: 3 });
-    const index = [
-      entry(1, 'Step1'),
-      entry(2, 'Step2'),
-      entry(3, 'Step3'),
-      entry(4, 'Step1'),
-      entry(5, 'Step3'),
-      entry(6, 'AllStep'),
-    ];
-    // スロット 1（段階 I）を入れ替える: 段階 I の 4 と、全段階の 6 は入れる。段階 III の 5 は、段階 I がなくなるので入れない
-    expect(candidateEntries(index, team, new Map(), 0).map((r) => r.resourceId)).toEqual([4, 6]);
+describe('canFullBurst', () => {
+  // ラピ：レッドフード（16）は基本が III で、基本の段が I の味方がいなければ I に変わる（戦闘補助）
+  const RAPI_RH = 16;
+  const [II, III, III2] = [105, 10, 100];
+
+  it('needs steps I, II and III', () => {
+    expect([RAPI_RH, II, III, III2].map((id) => character(id).burstStep)).toEqual(['Step3', 'Step2', 'Step3', 'Step3']);
+    expect(canFullBurst([member(II), member(III), null])).toBe(false);
+  });
+
+  it('counts the burst stage a character takes in this team, not the base one', () => {
+    // I の味方がいない編成では、ラピ：レッドフードが I になる（スキル定義を読んでいれば）
+    expect(canFullBurst([member(RAPI_RH, true), member(II), member(III), member(III2)])).toBe(true);
+    // 定義が無いときは基本の III のまま
+    expect(canFullBurst([member(RAPI_RH), member(II), member(III), member(III2)])).toBe(false);
   });
 });
 
