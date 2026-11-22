@@ -7,12 +7,15 @@ import {
   failureComment,
   isTarget,
   mark,
+  parsePrepManifest,
   pollMergeable,
+  prepBundle,
   type Pull,
   pushOutcome,
   fixedComment,
   splitCollisions,
   tail,
+  transientFailure,
   worthFixing,
 } from './auto-rebase-lib.ts';
 
@@ -131,5 +134,57 @@ describe('comments', () => {
   });
   it('keeps the last lines of the output', () => {
     expect(tail('1\n2\n3\n', 2)).toBe('2\n3');
+  });
+});
+
+describe('transientFailure', () => {
+  it('treats network failures of git and npm as transient', () => {
+    expect(
+      transientFailure("fatal: unable to access 'https://github.com/o/r/': Could not resolve host: github.com"),
+    ).toBe(true);
+    expect(
+      transientFailure('npm error network request to https://registry.npmjs.org/x failed, reason: ECONNRESET'),
+    ).toBe(true);
+    expect(transientFailure('fetch-pack: unexpected disconnect while reading sideband packet\nfatal: early EOF')).toBe(
+      true,
+    );
+  });
+  it('does not treat conflicts and tool errors as transient', () => {
+    expect(transientFailure('CONFLICT (content): Merge conflict in plan/design-x.md')).toBe(false);
+    expect(transientFailure('Error: records:check が止まった')).toBe(false);
+  });
+});
+
+describe('parsePrepManifest', () => {
+  const A = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+  const B = 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+  const ready = {
+    number: 12,
+    sha: A,
+    kind: 'ready',
+    head: B,
+    bundle: prepBundle(12),
+    renumbered: [{ from: 'C-0001', to: 'C-0002' }],
+  };
+  it('reads ready and failed entries', () => {
+    const failed = { number: 13, sha: B, kind: 'failed', reason: 'r', output: 'o' };
+    expect(parsePrepManifest(JSON.stringify([ready, failed]))).toEqual([ready, failed]);
+    expect(parsePrepManifest(JSON.stringify([{ number: 13, sha: B, kind: 'failed', reason: 'r' }]))).toEqual([
+      { number: 13, sha: B, kind: 'failed', reason: 'r' },
+    ]);
+  });
+  it('rejects entries of an unexpected shape', () => {
+    expect(() => parsePrepManifest('{}')).toThrow('配列でない');
+    expect(() => parsePrepManifest(JSON.stringify([{ ...ready, number: 0 }]))).toThrow('number');
+    expect(() => parsePrepManifest(JSON.stringify([{ ...ready, sha: 'main' }]))).toThrow('sha');
+    expect(() => parsePrepManifest(JSON.stringify([{ ...ready, head: 'HEAD' }]))).toThrow('head');
+    expect(() => parsePrepManifest(JSON.stringify([{ ...ready, bundle: '../x.bundle' }]))).toThrow('bundle');
+    expect(() => parsePrepManifest(JSON.stringify([{ ...ready, kind: 'push' }]))).toThrow('kind');
+    expect(() =>
+      parsePrepManifest(JSON.stringify([{ ...ready, renumbered: [{ from: 'C-0001', to: 'refs/heads/main' }] }])),
+    ).toThrow('renumbered');
+    expect(() => parsePrepManifest(JSON.stringify([{ number: 1, sha: A, kind: 'failed', reason: 1 }]))).toThrow(
+      'reason',
+    );
   });
 });

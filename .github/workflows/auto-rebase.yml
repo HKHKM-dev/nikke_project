@@ -1,17 +1,15 @@
 name: 衝突の直し
 
 # 自動マージを予約した PR が、main が進んで衝突になったか、足した ID が main と重なったら、main を取り込んで push し直す
-# （plan/design-auto-conflict-fix.md。中身は tools/git/auto-rebase.ts）。PR のブランチへの push はデプロイキー（secret の
-# GENERATED_DEPLOY_KEY）で行うので、PR の CI が起きる。GITHUB_TOKEN は PR を読み、題名・本文を直し、コメントを書くだけ
+# （plan/design-auto-conflict-fix.md。中身は tools/git/auto-rebase.ts）。PR のブランチへの push はデプロイキー（environment の
+# main-push の secret の GENERATED_DEPLOY_KEY）で行うので、PR の CI が起きる。PR のブランチの道具を回す prepare のジョブには鍵を
+# 渡さず、鍵を持つ push のジョブは main の版の道具と git だけを使う（plan/design-deploy-key-scope.md 2 節）
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pull-requests: write
-  issues: write
+permissions: {}
 
 # 1 本ずつ回す。走っている実行は止めない（直している途中で止めない）。待っている古い実行は後の実行に置き換わり、後の実行が全部を見直す
 concurrency:
@@ -19,8 +17,14 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  fix:
+  find:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+    outputs:
+      targets: ${{ steps.find.outputs.targets }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -32,21 +36,67 @@ jobs:
         run: node tools/git/auto-rebase.ts --find
         env:
           GITHUB_TOKEN: ${{ github.token }}
+
+  # PR のブランチを取り出して、そのブランチの版の records:renumber・pr:prep を回す。鍵は無く、token は読むだけ
+  prepare:
+    needs: find
+    if: needs.find.outputs.targets != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
       # ID の空きはどのブランチも足していない番号から選び、PR のブランチを取り出すので、全部のブランチの履歴を取る
-      - if: steps.find.outputs.targets != ''
-        run: git fetch --quiet --unshallow origin '+refs/heads/*:refs/remotes/origin/*'
-      - if: steps.find.outputs.targets != ''
-        run: npm ci
-      # pr:prep の records:minimal が使う、観測値のモデルの予測値の覚え（ci.yml と同じキー）
-      - if: steps.find.outputs.targets != ''
-        uses: actions/cache@v6
+      - run: git fetch --quiet --unshallow origin '+refs/heads/*:refs/remotes/origin/*'
+      - run: npm ci
+      # pr:prep の records:minimal が使う、観測値のモデルの予測値の覚え（ci.yml と同じキー）。PR のブランチの道具が書いた覚えは
+      # main の覚えに入れない（戻すだけで、保存しない）
+      - uses: actions/cache/restore@v6
         with:
           path: node_modules/.cache/residuals
           key: residuals-${{ hashFiles('packages/core/src/**', 'packages/core/data/**', 'packages/core/scripts/records-data.ts', 'packages/core/scripts/residual-cache.ts') }}
           restore-keys: residuals-
-      - if: steps.find.outputs.targets != ''
-        run: node tools/git/auto-rebase.ts --fix
+      - run: node tools/git/auto-rebase.ts --prepare "$RUNNER_TEMP/auto-rebase"
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          TARGETS: ${{ needs.find.outputs.targets }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: auto-rebase
+          path: ${{ runner.temp }}/auto-rebase
+          if-no-files-found: error
+          retention-days: 1
+
+  # main の版を取り出しただけの作業ツリーで、prepare の bundle を PR のブランチに push し、コメントする（npm ci もしない）
+  push:
+    needs: [find, prepare]
+    if: needs.find.outputs.targets != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    environment:
+      name: main-push
+      deployment: false
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - uses: actions/download-artifact@v8
+        with:
+          name: auto-rebase
+          path: ${{ runner.temp }}/auto-rebase
+      - run: node tools/git/auto-rebase.ts --push "$RUNNER_TEMP/auto-rebase"
         env:
           GITHUB_TOKEN: ${{ github.token }}
           DEPLOY_KEY: ${{ secrets.GENERATED_DEPLOY_KEY }}
-          TARGETS: ${{ steps.find.outputs.targets }}

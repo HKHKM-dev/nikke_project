@@ -4,6 +4,22 @@
 /** 書き込みのできるデプロイキーの秘密鍵を置く secret の名前 */
 export const DEPLOY_KEY_SECRET = 'GENERATED_DEPLOY_KEY';
 
+/** 確認のジョブが鍵のジョブに渡す、作り直した生成物の一覧のファイルの名前（artifact の中） */
+export const GENERATED_MANIFEST = 'generated.json';
+
+/**
+ * 確認のジョブが渡した生成物の一覧を読む。確認のジョブは依存のパッケージを入れて回すので、生成物でないパスが入っていたら投げる
+ * （鍵のジョブは生成物のほかを書き換えない）
+ */
+export function parseGeneratedManifest(text: string, allowed: readonly string[]): string[] {
+  const data: unknown = JSON.parse(text);
+  if (!Array.isArray(data) || data.some((p) => typeof p !== 'string'))
+    throw new Error(`${GENERATED_MANIFEST} が文字列の配列でない`);
+  const other = (data as string[]).filter((p) => !allowed.includes(p));
+  if (other.length > 0) throw new Error(`${GENERATED_MANIFEST} に生成物でないパスがある: ${other.join('・')}`);
+  return data as string[];
+}
+
 export type GitRun = { status: number; stdout: string; stderr: string };
 
 export type CommitGeneratedInput = {
@@ -21,7 +37,10 @@ export type CommitGeneratedInput = {
   git: (args: readonly string[], env?: Readonly<Record<string, string>>) => GitRun;
 };
 
-const KEY_HELP = `鍵の組を作り直し、公開鍵を Settings → Deploy keys に「Allow write access」つきで、秘密鍵を Settings → Secrets and variables → Actions の ${DEPLOY_KEY_SECRET} に登録し直す（plan/design-pr-conflicts.md 5 節）`;
+/** 鍵を置く environment の名前（使えるブランチを main に限る。plan/design-deploy-key-scope.md 2 節） */
+export const DEPLOY_KEY_ENVIRONMENT = 'main-push';
+
+const KEY_HELP = `鍵の組を作り直し、公開鍵を Settings → Deploy keys に「Allow write access」つきで、秘密鍵を Settings → Environments → ${DEPLOY_KEY_ENVIRONMENT} の secret の ${DEPLOY_KEY_SECRET} に登録し直す（plan/design-pr-conflicts.md 5 節・plan/design-deploy-key-scope.md 2 節）`;
 
 /**
  * 生成物の差分を commit して main に push し、出すメッセージを返す。直す必要のある失敗（鍵が無い・鍵で origin に届かない・鍵で

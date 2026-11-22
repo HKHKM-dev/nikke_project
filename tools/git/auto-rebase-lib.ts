@@ -1,5 +1,5 @@
 // 自動マージを待つ PR の衝突を直す GitHub Actions（auto-rebase.ts）の決まりごと（plan/design-auto-conflict-fix.md 2 節の案 A）。
-// GitHub と git を呼ぶ部分と分けてテストする。--find は npm ci の前に回るので、node と import の無い ids.ts のほかは読まない（型だけ読む）。
+// GitHub と git を呼ぶ部分と分けてテストする。--find と --push は npm ci の前・無しで回るので、node と import の無い ids.ts のほかは読まない（型だけ読む）。
 import { C_ID, ID_RECORD_DIRS, V_ID } from '../../packages/core/src/records/ids.ts';
 import type { Collision } from './pr-prep-lib.ts';
 
@@ -98,6 +98,104 @@ export function splitCollisions(found: readonly Collision[]): { renumber: Renumb
 export function pushOutcome(status: number, stderr: string): 'pushed' | 'stale' | 'error' {
   if (status === 0) return 'pushed';
   return /\(stale info\)|\[rejected\]/.test(stderr) ? 'stale' : 'error';
+}
+
+/**
+ * 道具の出力が、通信などの一時の失敗で止まったものか（fetch・npm の取得の失敗）。一時の失敗はコメントせず、次の実行で直し直す
+ * （コメントすると --find がこの head を飛ばし続ける）
+ */
+export function transientFailure(output: string): boolean {
+  return /Could not resolve host|unable to access|Connection (?:reset|timed out|refused)|early EOF|RPC failed|ECONNRESET|ETIMEDOUT|EAI_AGAIN|ENOTFOUND|socket hang up|npm (?:ERR!|error) network/i.test(
+    output,
+  );
+}
+
+/**
+ * --prepare（鍵の無いジョブ）が --push（鍵のあるジョブ）に渡す、PR ごとの結果。ready は bundle（main の先頭からの commit）を push する。
+ * failed はコメントする。飛ばしたものと一時の失敗は入れない
+ */
+export type PrepEntry =
+  | { number: number; sha: string; kind: 'ready'; head: string; bundle: string; renumbered: Renumber[] }
+  | { number: number; sha: string; kind: 'failed'; reason: string; output?: string };
+
+/** 結果の一覧を置くファイルの名前（artifact の中） */
+export const PREP_MANIFEST = 'manifest.json';
+
+/** PR の bundle のファイルの名前（artifact の中） */
+export const prepBundle = (n: number): string => `${n}.bundle`;
+
+const SHA = /^[0-9a-f]{40}$/;
+
+/**
+ * --prepare の結果の一覧を読む。--prepare は PR のブランチの道具を回すジョブなので、形を確かめてから使う（番号・sha・bundle の名前・
+ * 振り直しの ID の形。合わなければ投げる）。push の先は、--push が GitHub の API で引き直したブランチにする
+ */
+export function parsePrepManifest(text: string): PrepEntry[] {
+  const data: unknown = JSON.parse(text);
+  if (!Array.isArray(data)) throw new Error(`${PREP_MANIFEST} が配列でない`);
+  return data.map((e: unknown, i): PrepEntry => {
+    const bad = (what: string) => new Error(`${PREP_MANIFEST} の ${i} 番目: ${what}`);
+    if (typeof e !== 'object' || e === null) throw bad('オブジェクトでない');
+    const o = e as Record<string, unknown>;
+    const { number, sha, kind } = o;
+    if (typeof number !== 'number' || !Number.isInteger(number) || number <= 0) throw bad('number が正の整数でない');
+    if (typeof sha !== 'string' || !SHA.test(sha)) throw bad('sha が 40 桁の 16 進でない');
+    if (kind === 'failed') {
+      if (typeof o['reason'] !== 'string') throw bad('reason が文字列でない');
+      if (o['output'] !== undefined && typeof o['output'] !== 'string') throw bad('output が文字列でない');
+      return {
+        number,
+        sha,
+        kind,
+        reason: o['reason'],
+        ...(typeof o['output'] === 'string' ? { output: o['output'] } : {}),
+      };
+    }
+    if (kind !== 'ready') throw bad('kind が ready でも failed でもない');
+    const { head, bundle, renumbered } = o;
+    if (typeof head !== 'string' || !SHA.test(head)) throw bad('head が 40 桁の 16 進でない');
+    if (bundle !== prepBundle(number)) throw bad(`bundle が ${prepBundle(number)} でない`);
+    if (!Array.isArray(renumbered)) throw bad('renumbered が配列でない');
+    const pairs = renumbered.map((r: unknown): Renumber => {
+      const p = (typeof r === 'object' && r !== null ? r : {}) as Record<string, unknown>;
+      const ok = (id: unknown): id is string => typeof id === 'string' && (V_ID.test(id) || C_ID.test(id));
+      if (!ok(p['from']) || !ok(p['to'])) throw bad('renumbered に検証記録・結論の ID でないものがある');
+      return { from: p['from'], to: p['to'] };
+    });
+    return { number, sha, kind, head, bundle, renumbered: pairs };
+  });
+}
+
+/** git を引数で呼び、終了コードと出力（標準出力と標準エラー）を返す（0 以外で終わっても投げない） */
+export type GitRun = (args: readonly string[]) => { status: number; output: string };
+
+/** --prepare が bundle を作る git の引数: main の先頭（pr:prep が取り込んだもの）からの commit だけを入れる */
+export const bundleArgs = (file: string): string[] => ['bundle', 'create', '--quiet', file, 'HEAD', '^origin/main'];
+
+/** git にフックを読ませない（--push のジョブで使う） */
+const NO_HOOKS = ['-c', 'core.hooksPath=/dev/null'];
+
+/**
+ * --push: bundle を取り込み、先頭が head か確かめ、覚えておいた head（sha）を期待値にして remote の branch にだけ push する。bundle の
+ * 前提の commit（--prepare の時の main の先頭）は、先に main を取って入れておく。取り込めないか先頭が違えば投げる
+ */
+export function pushBundle(
+  git: GitRun,
+  o: { bundle: string; number: number; head: string; branch: string; sha: string; remote: string },
+): 'pushed' | 'stale' | 'error' {
+  const ref = `refs/auto-rebase/${o.number}`;
+  const fetched = git([...NO_HOOKS, 'fetch', '--quiet', '--no-tags', o.bundle, `+HEAD:${ref}`]);
+  if (fetched.status !== 0) throw new Error(`bundle を取り込めない\n${fetched.output.trim()}`);
+  const got = git(['rev-parse', ref]).output.trim();
+  if (got !== o.head) throw new Error(`bundle の先頭（${got.slice(0, 8)}）が manifest の head と違う`);
+  const pushed = git([
+    ...NO_HOOKS,
+    'push',
+    `--force-with-lease=refs/heads/${o.branch}:${o.sha}`,
+    o.remote,
+    `${ref}:refs/heads/${o.branch}`,
+  ]);
+  return pushOutcome(pushed.status, pushed.output);
 }
 
 /** 出力の末尾の n 行 */
