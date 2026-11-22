@@ -1451,11 +1451,16 @@ svg.roster-revert-icon {
     url(./assets/portrait_silhouette.webp) center / 100% 100% no-repeat,
     linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
 }
-/* 四角の空のスロット（選んでいない編成の行・持ち上げた絵）も、シルエットの絵（256×256）を枠いっぱいに出す */
+/* 四角の空のスロット（選んでいない編成の行・持ち上げた絵）は、縦長の空のスロットと同じ意匠にする（オーナーのコメント）:
+   シルエットの絵（256×256）を枠いっぱいに出し、背景と枠線は上の 5 割で上へ行くほど透明にし、＋ は縦長と同じ大きさにする */
 .modern-slot-empty-area:not(.modern-slot-empty-tall) {
   background:
     url(./assets/square_silhouette.webp) center / 100% 100% no-repeat,
-    var(--char-visual-fill);
+    linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
+  border-image: linear-gradient(to bottom, transparent, var(--char-visual-line) 50%) 1;
+}
+.modern-slot-empty-area:not(.modern-slot-empty-tall) .modern-slot-empty-plus {
+  font-size: 3.6em;
 }
 .modern-slot-empty-tall .modern-slot-empty-plus {
   font-size: 3.6em;
