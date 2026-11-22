@@ -3,6 +3,7 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 import { observationIdsIn, toClaims, type ClaimFile, type ClaimState } from '../claims.ts';
 import {
   claimsCiting,
+  claimsCitingResetup,
   draftShapeErrors,
   invalidatedObservation,
   replacedObservation,
@@ -72,6 +73,15 @@ describe('claimsCiting（--replace が止める結論）', () => {
   it('lists the hypothesis and confirmed claims citing the observation, including inside a range', () => {
     expect(claimsCiting(claims, ['0101-02']).map((c) => c.id)).toEqual(['C-0501', 'C-0502']);
     expect(claimsCiting(claims, ['0101-09'])).toEqual([]);
+  });
+
+  it('lists the claims citing a comparison whose setup was repointed, except the claims already repointed', () => {
+    // --invalidate 0101-01 --by 0101-09 で、0101-02（比べ）と 0101-04（比べ）の setup を付け替え、C-0501 は根拠を付け替えた
+    expect(claimsCitingResetup(claims, ['0101-02', '0101-04'], new Set(['C-0501'])).map((c) => c.id)).toEqual([
+      'C-0502',
+      'C-0505',
+    ]);
+    expect(claimsCitingResetup(claims, [], new Set())).toEqual([]);
   });
 });
 
