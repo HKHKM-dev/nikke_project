@@ -56,4 +56,25 @@ describe('manual auto-fire ON (holdFire end, C-1550)', () => {
     ];
     expect(firstShotAfter(70, hold, events) - hold.end).toBe(windowEndFirstShotFrames(characterOf(70).shot));
   });
+
+  // C-1562: ジャンプの窓の中で ON にした枠は、オート射撃を ON のままにしていたときと同じく窓の明けから撃ち、
+  // 窓の明けの後に ON にした枠は ON から C-1550 の長さで撃つ（エード：エージェントバニー。1094・1229）
+  describe('with a jump window (C-1562)', () => {
+    const rid = 315;
+    const windowEnd = 400;
+    const events: EnemyEvent[] = [
+      { kind: 'untargetable', start: framesToGameSeconds(windowEnd - 118), end: framesToGameSeconds(windowEnd) },
+    ];
+
+    it('fires at the window end + the usual first shot when turned on inside the window', () => {
+      const shot = firstShotAfter(rid, { start: 0, end: windowEnd - 62 }, events);
+      expect(shot - windowEnd).toBe(windowEndFirstShotFrames(characterOf(rid).shot));
+      expect(shot - windowEnd).toBe(70);
+    });
+
+    it('fires as C-1550 when turned on after the window end', () => {
+      const on = windowEnd + 18;
+      expect(firstShotAfter(rid, { start: 0, end: on }, events) - on).toBe(63);
+    });
+  });
 });
