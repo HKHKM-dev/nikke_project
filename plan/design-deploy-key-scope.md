@@ -15,6 +15,8 @@
 
 決定（2026-11-22、オーナー）: 案 A。鍵は替えない。コードの直しを先に main に入れる準備をし（自動マージを予約しない）、オーナーが GitHub の設定を変えてからマージする。
 
+決定（2026-11-22、オーナー）: 鍵は作り直す。GitHub の secret は値を読み出せず、前の秘密鍵の値が手元に無かったため。新しい鍵を Deploy keys と environment の secret に置いてからマージし、main の CI が新しい鍵で動くのを見てから、古い鍵とリポジトリの secret を消す（止まる時間を作らない）。
+
 ### 2.1 GitHub の設定（オーナー）
 
 1. Settings → Environments に environment `main-push` を作り、「Deployment branches and tags」を「Selected branches and tags」にして `main` だけを足す。
@@ -52,3 +54,4 @@ environment の secret は、その environment を指したジョブにしか�
 ## 経過
 
 - 2026-11-22: 起案し、案 A をオーナーが承認した。ワークフローと道具を直した（2.2 節）。GitHub の設定（2.1 節）は、マージの前にオーナーが行う。
+- 2026-11-22: オーナーが 2.1 節の設定をし（鍵は作り直した）、マージした。main の CI の `commit` のジョブは、古い鍵とリポジトリの secret を消した後の実行でも、environment の secret の鍵で origin を読み書きできた（ls-remote と push --dry-run）。衝突の直しの `prepare`・`push` は、直す PR が無く、まだ回っていない。
