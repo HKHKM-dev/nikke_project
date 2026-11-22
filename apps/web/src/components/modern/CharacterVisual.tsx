@@ -76,8 +76,6 @@ export function CharacterVisual({
   const failed = failedImages.has(imageSrc);
   // 読めなかったときに描き直す（読めたかどうかは failedImages が持つ）
   const [, rerender] = useReducer((n: number) => n + 1, 0);
-  // バッジは、どの絵でも左上に属性・武器種・バースト段階の順に縦に並べる（2.5 節）
-  const columnKinds = VISUAL_BADGE_KINDS;
 
   return (
     <div
@@ -99,7 +97,7 @@ export function CharacterVisual({
       )}
       {badges && (
         <div className="char-visual-badges">
-          {columnKinds.map(({ key, badges: kindBadges }) => {
+          {VISUAL_BADGE_KINDS.map(({ key, badges: kindBadges }) => {
             const badge = kindBadges[character[key]];
             return badge && <CharBadge key={key} badge={badge} />;
           })}

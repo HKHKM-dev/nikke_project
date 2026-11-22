@@ -1,7 +1,7 @@
 // モダン UI の、選んでいない編成の行（スロット 5 枚。四角の絵）。✕・⚙ はない。ニケは持ち上げて、ほかのスロット（どの行でも）・一覧へ移せ、
 // 一覧のニケ・ほかの行のニケを落とせる（どれも選んでいる編成は変えない。useSlotDrag）。行を押すと、その編成を選ぶ（ModernView の selectParty）
 import { useDraggable, useDroppable } from '@dnd-kit/core';
-import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
+import { TEAM_SIZE, type BuildSnapshot, type CharacterIndexEntry } from '@nikke/core';
 import { memo, type ReactNode } from 'react';
 import type { Party } from '../../parties.ts';
 import { partyLabel, partyNumber } from '../../parties.ts';
@@ -20,9 +20,6 @@ type Props = {
   onSelect: () => void;
 };
 
-/** 編成のスロットの数（parties.ts の Party の slots と同じ 5） */
-const SLOT_COUNT = 5;
-
 export function PartyPreviewRow({ partyIndex, party, indexMap, roster, fixedSpec, onSelect }: Props) {
   const press = usePressSelect(onSelect);
   return (
@@ -32,7 +29,7 @@ export function PartyPreviewRow({ partyIndex, party, indexMap, roster, fixedSpec
       aria-label={`${partyLabel(partyIndex)}を選ぶ`}
       {...press}
     >
-      {Array.from({ length: SLOT_COUNT }, (_, i) => {
+      {Array.from({ length: TEAM_SIZE }, (_, i) => {
         const resourceId = party?.slots[i]?.resourceId ?? null;
         const entry = resourceId === null ? undefined : indexMap.get(resourceId);
         return (

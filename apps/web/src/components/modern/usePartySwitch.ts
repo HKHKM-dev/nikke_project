@@ -1,6 +1,7 @@
 // 編成の番号を押して、選んでいる編成を切り替えたときのアニメーション。選んだ行は縦長の立ち絵に、それまで選んでいた行は四角の立ち絵に
 // 入れ替わり、行の高さが変わって、番号と下の行が動く。切り替える前に、2 つの行の立ち絵の枠の写しと行の位置を取っておき、
 // 切り替えた後の描き直しで、写しを新しい枠の位置へ動かしながら消し、新しい枠を現し、行を元の位置から動かす
+import { TEAM_SIZE } from '@nikke/core';
 import { useLayoutEffect, useRef } from 'react';
 import { partyCardAt } from './dropAnimation.ts';
 import {
@@ -12,8 +13,6 @@ import {
   type ContentSnapshot,
 } from './flight.ts';
 
-/** 編成のスロットの数（parties.ts の Party の slots と同じ 5） */
-const SLOT_COUNT = 5;
 /** 切り替えが起きなかったときに、取っておいた写しを消すまでの時間（ms） */
 const STALE_MS = 1000;
 
@@ -35,7 +34,7 @@ const contentAt = (party: number, index: number) =>
 function capture(from: number, to: number): Pending {
   const snapshots: Pending['snapshots'] = [];
   for (const party of [from, to]) {
-    for (let index = 0; index < SLOT_COUNT; index++) {
+    for (let index = 0; index < TEAM_SIZE; index++) {
       const content = contentAt(party, index);
       if (content) snapshots.push({ party, index, snapshot: snapshotContent(content) });
     }

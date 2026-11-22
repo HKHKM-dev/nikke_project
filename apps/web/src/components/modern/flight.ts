@@ -200,9 +200,8 @@ export function flyIntoSlot(from: DOMRect, card: Element): () => void {
  */
 export function flyToTray(content: Element, to: DOMRect | null): void {
   const base = content.getBoundingClientRect();
-  const end = to
-    ? to
-    : new DOMRect(base.left + base.width * 0.1, base.top + base.height * 0.1, base.width * 0.8, base.height * 0.8);
+  const end =
+    to ?? new DOMRect(base.left + base.width * 0.1, base.top + base.height * 0.1, base.width * 0.8, base.height * 0.8);
   const ghost = ghostOf(content, base);
   const remove = () => ghost.remove();
   if (content.closest(LIFT_SHADOW_SOURCES)) fadeLiftShadow(base, end);
@@ -224,10 +223,9 @@ export function flyToTray(content: Element, to: DOMRect | null): void {
  */
 export function flyLabel(content: Element, to: DOMRect, destination: Element | null): Promise<void> {
   const base = content.getBoundingClientRect();
-  const end = to;
   const ghost = ghostOf(content, base);
   const remove = () => ghost.remove();
-  const move = ghost.animate([frameAt(base, base), frameAt(end, base)], FLIGHT);
+  const move = ghost.animate([frameAt(base, base), frameAt(to, base)], FLIGHT);
   // 透明にする動きは、動きの速さの変化（ease）を付けず、0〜45% で透明にし、45〜55% は透明のまま、55〜100% で不透明に戻す
   const fade = ghost.animate(
     [{ opacity: 1 }, { opacity: 0, offset: 0.45 }, { opacity: 0, offset: 0.55 }, { opacity: 1 }],
