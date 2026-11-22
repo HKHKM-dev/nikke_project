@@ -14718,6 +14718,150 @@
       "plus": null
     },
     {
+      "observation": "0547-05",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "88f589f32f6ca770",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0547-05",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "88f589f32f6ca770",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0547-05",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "88f589f32f6ca770",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0547-05",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "88f589f32f6ca770",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0548-05",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "a1f1a2f3c8e4ce08",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0548-05",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "a1f1a2f3c8e4ce08",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0548-05",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "a1f1a2f3c8e4ce08",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0548-05",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "a1f1a2f3c8e4ce08",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0549-05",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "2d07887e00dc05b5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0549-05",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "2d07887e00dc05b5",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0549-05",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "2d07887e00dc05b5",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0549-05",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "2d07887e00dc05b5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0581-01",
       "element": "エマ burst.effects[0]",
       "key": "d2023482893c73cf",
@@ -15166,6 +15310,46 @@
       "plus": 0
     },
     {
+      "observation": "0659-07",
+      "element": "アスカ burst.effects[0]",
+      "key": "763f95b7bfcc6dac",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0659-07",
+      "element": "アスカ burst.effects[2]",
+      "key": "763f95b7bfcc6dac",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0659-07",
+      "element": "ミサト burst.effects[0]",
+      "key": "763f95b7bfcc6dac",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0659-07",
+      "element": "ミサト skill1.effects[0]",
+      "key": "763f95b7bfcc6dac",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "0660-03",
       "element": "アスカ burst.effects[0]",
       "key": "b3ce755968557e12",
@@ -15281,6 +15465,46 @@
       "observation": "0660-05",
       "element": "ミサト skill1.effects[0]",
       "key": "638b424e83253c07",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0660-07",
+      "element": "アスカ burst.effects[0]",
+      "key": "c03f7f36d017abe5",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0660-07",
+      "element": "アスカ burst.effects[2]",
+      "key": "c03f7f36d017abe5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0660-07",
+      "element": "ミサト burst.effects[0]",
+      "key": "c03f7f36d017abe5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0660-07",
+      "element": "ミサト skill1.effects[0]",
+      "key": "c03f7f36d017abe5",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -18194,6 +18418,38 @@
       "plus": 0
     },
     {
+      "observation": "0780-09",
+      "element": "I-DOLL・オーシャン burst.effects[0]",
+      "key": "851bc6d374fc1a62",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0780-09",
+      "element": "アスカ burst.effects[0]",
+      "key": "851bc6d374fc1a62",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0780-09",
+      "element": "アスカ burst.effects[2]",
+      "key": "851bc6d374fc1a62",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "0781-05",
       "element": "I-DOLL・オーシャン burst.effects[0]",
       "key": "e668fad1a160947c",
@@ -18285,6 +18541,38 @@
       "observation": "0781-07",
       "element": "アスカ burst.effects[2]",
       "key": "b85132b056da0775",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0781-09",
+      "element": "I-DOLL・オーシャン burst.effects[0]",
+      "key": "9ba2b6fe99ea3579",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0781-09",
+      "element": "アスカ burst.effects[0]",
+      "key": "9ba2b6fe99ea3579",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0781-09",
+      "element": "アスカ burst.effects[2]",
+      "key": "9ba2b6fe99ea3579",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -21328,7 +21616,7 @@
     {
       "observation": "0860-09",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
-      "key": "49a4c37b305597c4",
+      "key": "bb14e757e0e53b3e",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -21336,7 +21624,7 @@
     {
       "observation": "0860-10",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
-      "key": "90f853b93bc7306c",
+      "key": "fba75d34c763bcdd",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -21344,7 +21632,7 @@
     {
       "observation": "0860-11",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
-      "key": "fb82e09c11b5b005",
+      "key": "e43f823707dda854",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -21352,7 +21640,7 @@
     {
       "observation": "0860-13",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
-      "key": "423be3866955b4a7",
+      "key": "b069246f4357e094",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -21360,7 +21648,7 @@
     {
       "observation": "0860-14",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
-      "key": "38d5f904837ea0c9",
+      "key": "eb2d3888695fc9b3",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -21368,7 +21656,15 @@
     {
       "observation": "0860-15",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
-      "key": "490157bad52c567d",
+      "key": "4b91d075a647956a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0860-17",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "b4b6e92f57cdccf6",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -21376,7 +21672,7 @@
     {
       "observation": "0861-09",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
-      "key": "d92466ef3e934c84",
+      "key": "5d259d922e1ef393",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -21384,7 +21680,7 @@
     {
       "observation": "0861-10",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
-      "key": "44e221778c69fb54",
+      "key": "68b6e06a95767695",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -21392,7 +21688,7 @@
     {
       "observation": "0861-12",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
-      "key": "814227a76ffa3732",
+      "key": "d5a2193bf16385a4",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -21400,7 +21696,7 @@
     {
       "observation": "0861-13",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
-      "key": "10ef2abb43c4e1ec",
+      "key": "d0f72846537af10b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -21408,7 +21704,15 @@
     {
       "observation": "0861-14",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
-      "key": "fc98ee2ce9c4574d",
+      "key": "098b9f13fb1c2f5a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0861-17",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "5fd7199f6156cc76",
       "effective": false,
       "minus": 0,
       "plus": 0
