@@ -86,6 +86,7 @@ export const SPRITE_GROUPS: ReadonlySet<string> = new Set([
  */
 export const SPRITE_NAMES: Readonly<Record<string, 'monochrome' | 'color'>> = {
   ui_blank_main: 'color',
+  ui_blank_hexagon: 'monochrome',
   ui_information: 'monochrome',
   ui_controller: 'monochrome',
   ui_window: 'monochrome',

@@ -369,6 +369,16 @@ svg.roster-revert-icon {
   grid-template-columns: max-content auto;
   gap: 6px 10px;
 }
+/* 敵情報の「属性」の文字の横の属性バッジ（属性なしは空の六角形）。文字の高さに合わせる */
+.settings-element-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.settings-element-badge {
+  height: 1.4em;
+  width: auto;
+}
 /* 敵・属性のプルダウンは中身の幅にする（オーナーの指示で狭くした） */
 .settings-simple .field select {
   width: auto;

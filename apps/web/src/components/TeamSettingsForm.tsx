@@ -8,7 +8,7 @@ import { IntInput } from './IntInput.tsx';
 import { Popover } from './Popover.tsx';
 import { ROSTER_REVERT_LABEL } from './RosterRevertButton.tsx';
 import { BadgeIcon } from './modern/BadgeIcon.tsx';
-import { RETURN_BADGE } from './modern/badges.ts';
+import { ELEMENT_BADGE_KIND, EMPTY_ELEMENT_BADGE, RETURN_BADGE } from './modern/badges.ts';
 
 /** スペック固定の間にリサイクルルームの欄に出す値（計算は研究なし） */
 const NO_CONSOLE = emptyConsole();
@@ -67,7 +67,14 @@ export function TeamSettingsForm({
             </select>
           </label>
           <label className="field">
-            <span>属性</span>
+            <span className="settings-element-label">
+              属性
+              {/* 選んでいる属性のバッジ。属性なしは空の六角形 */}
+              <BadgeIcon
+                name={element ? ELEMENT_BADGE_KIND.badges[element]!.name : EMPTY_ELEMENT_BADGE}
+                className="settings-element-badge"
+              />
+            </span>
             <select
               value={element ?? ''}
               onChange={(e) =>

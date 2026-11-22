@@ -92,6 +92,9 @@ export const FAVORITE_BADGES = {
   club: badgeName('main_club'),
 } as const;
 
+/** 属性が「なし」のときの、空の六角形のバッジ（敵情報の属性の横。TeamSettingsForm）。属性のバッジと同じ六角形 */
+export const EMPTY_ELEMENT_BADGE = badgeName('ui_blank_hexagon');
+
 /** ニケ一覧の絞り込みを外すボタン（CharacterTray）のバッジ */
 export const RETURN_BADGE = badgeName('ui_return');
 /** スロットの立ち絵の右上の、空にするボタンと育成・設定のボタン（ModernSlotCard）のバッジ */
