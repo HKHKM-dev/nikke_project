@@ -7,7 +7,13 @@ import { Popover } from '../components/Popover.tsx';
 import { PartyTabs } from '../components/PartyTabs.tsx';
 import { SlotCard } from '../components/SlotCard.tsx';
 import { TeamSettingsForm } from '../components/TeamSettingsForm.tsx';
-import { LIST_DIRECTION_MARK, LIST_ORDER_LABEL, listOrderLabel } from '../listOrder.ts';
+import {
+  LIST_DIRECTION_LABEL,
+  LIST_DIRECTION_MARK,
+  LIST_ORDERS,
+  LIST_ORDER_LABEL,
+  listOrderLabel,
+} from '../listOrder.ts';
 import { commonGrowthOf, rosterGrowthOf } from '../roster.ts';
 import { takenResourceIds } from '../team.ts';
 import type { ViewProps } from './ViewProps.ts';
@@ -52,18 +58,35 @@ export function ClassicView({
       <div className="classic-list-order">
         <ClassicBurstFilter {...filter} />
         <ClassicFilter {...filter} />
-        <Popover
-          button={
-            <>
-              並べ替え: {LIST_ORDER_LABEL[listOrder.order]} {LIST_DIRECTION_MARK[listOrder.direction]}
-            </>
-          }
-          buttonClassName="classic-list-order-button"
-          label={listOrderLabel(listOrder.order, listOrder.direction)}
-          align="left"
-        >
-          <ListOrderSettings {...listOrder} />
-        </Popover>
+        {/* 並べ替えのボタンと昇順・降順の三角のボタンは、くっつけて 1 つの枠にし、縦線で仕切る（モダン UI のニケ一覧の並べ替えと同じ。
+            styles.css の .char-tray-sort-group）。三角は押すたびに昇順・降順を入れ替える */}
+        <div className="char-tray-sort-group">
+          <Popover
+            button={
+              // 全部の並びの名前を同じ所に重ね、いまの並びだけを見せる（ボタンの幅を一番長い名前に合わせ、切り替えても変えない）
+              <span className="char-tray-sort-label">
+                {LIST_ORDERS.map((o) => (
+                  <span key={o} className={o === listOrder.order ? 'char-tray-sort-current' : undefined}>
+                    並べ替え: {LIST_ORDER_LABEL[o]}
+                  </span>
+                ))}
+              </span>
+            }
+            buttonClassName="classic-list-order-button"
+            label={listOrderLabel(listOrder.order, listOrder.direction)}
+            align="left"
+          >
+            <ListOrderSettings {...listOrder} />
+          </Popover>
+          <button
+            type="button"
+            className="classic-list-order-button char-tray-sort-direction"
+            aria-label={`${LIST_DIRECTION_LABEL[listOrder.direction]}（押すと入れ替える）`}
+            onClick={listOrder.toggleDirection}
+          >
+            {LIST_DIRECTION_MARK[listOrder.direction]}
+          </button>
+        </div>
       </div>
       <section className="slots" aria-label="編成">
         {team.slots.map((slot, i) => {
