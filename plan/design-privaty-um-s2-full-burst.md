@@ -4,7 +4,7 @@
 - 関連: [design-privaty-um-s2.md](design-privaty-um-s2.md)（S2 の 1 つめ。2.2 節で 2 つめを残した）、[design-pellet-hit.md](design-pellet-hit.md)（当たったペレットの数え方 `pelletHit`）、[design-kurumi-s2.md](design-kurumi-s2.md) 2.1 節（フルバースト中だけ数える `during`・`reset`）、[design-ludmilla-wo.md](design-ludmilla-wo.md) 2.1 節（発数の弾丸チャージ `scaling: "flat"`）、[design-fortune-mate.md](design-fortune-mate.md) 2.2 節（弾丸チャージの数える窓）
 - 検証: V-0875
 - 作成日: 2026-11-22
-- 状態: 撮影済み（読み取りと実装。6 節）
+- 状態: 完了
 
 ## 0. 範囲
 
@@ -104,3 +104,4 @@
 
 - 2026-11-22: 起案。
 - 2026-11-23: 論点を推奨どおりに決めた。録画 1403 を撮った。
+- 2026-11-23: 案 A と H1 の定義（3 節）を実装した。V-0875 で H1 が合い、C-1561・C-1560 にした。スタックの維持の形は見分けられず、既定（`'all'`）のまま `assumes` に書いた。

@@ -75,8 +75,8 @@ export type TriggerOptions = {
   timer?: boolean | 'withStart';
   /**
    * 回数のきっかけの数える窓（during）と発火の窓（firesDuring）。'withState' なら自分の状態の窓
-   * （during: { state }）も書ける（状態の付与と damage。plan/design-grave.md 2.4 節・plan/design-elegg-bs.md 2.2 節）。'stateOnly' なら
-   * 自分の状態の窓だけ（弾丸チャージ・カウンタの増減・解除。plan/design-fortune-mate.md 2.2 節・plan/design-elegg-bs.md 2.2 節）
+   * （during: { state }）も書ける（状態の付与・damage・弾丸チャージ。plan/design-grave.md 2.4 節・plan/design-elegg-bs.md 2.2 節・
+   * plan/design-privaty-um-s2-full-burst.md 2.2 節）。'stateOnly' なら自分の状態の窓だけ（カウンタの増減・解除。plan/design-elegg-bs.md 2.2 節）
    */
   during?: boolean | 'withState' | 'stateOnly';
   /** 確率のきっかけ（chance・chanceRef） */
@@ -343,7 +343,10 @@ function parseFiringWindow(
 ): void {
   if (v.firesDuring !== undefined) {
     if (!options.during || options.during === 'stateOnly') {
-      fail(`${path}.firesDuring`, 'a firing window (firesDuring) is only allowed in damage, timed and state');
+      fail(
+        `${path}.firesDuring`,
+        'a firing window (firesDuring) is only allowed in damage, timed, state and ammoRefill',
+      );
     }
     if (v.during !== undefined) fail(`${path}.firesDuring`, 'firesDuring cannot be used with during');
     trigger.firesDuring = oneOf(FIRING_WINDOWS, v.firesDuring, `${path}.firesDuring`);

@@ -80,7 +80,7 @@ describe('firesDuring の読み込み', () => {
     expect(parseSkillDefinition(definition(trigger)).skills.skill1.effects[0]).toMatchObject({ trigger });
   });
 
-  it('rejects it with during, stacksRef, lastShot, chance, an unknown window and outside damage, timed and state', () => {
+  it('rejects it with during, stacksRef, lastShot, chance, an unknown window and outside damage, timed, state and ammoRefill', () => {
     const base = { count: 'normalShot', every: 3, firesDuring: 'fullBurst' };
     expect(() => parseSkillDefinition(definition({ ...base, during: 'fullBurst', reset: 'never' }))).toThrow(
       /firesDuring cannot be used with during/,
@@ -96,7 +96,7 @@ describe('firesDuring の読み込み', () => {
     ).toThrow(/cannot be combined with firesDuring/);
     expect(() => parseSkillDefinition(definition({ ...base, firesDuring: 'burst' }))).toThrow(/firesDuring/);
     expect(() => parseSkillDefinition(definition(base, 'cooldownReduction'))).toThrow(
-      /only allowed in damage, timed and state/,
+      /only allowed in damage, timed, state and ammoRefill/,
     );
   });
 });

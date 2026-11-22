@@ -1,6 +1,7 @@
 // プリバティ：アンカインド・メイド（313）を含む編成: S1 のペレット 30 個ごとの倍率ダメージ（回数トリガー pelletHit。
 // plan/design-pellet-hit.md、C-0408）。S1 の発火が当たったペレットの期待値の累計で決まること。S2 のリロード速度▲（1 発の当たった
 // ペレットの数のしきい値 minPellets。plan/design-privaty-um-s2.md、C-1549）が、撃っている間ずっと付いてリロードの始まりに効くこと。
+// S2 のフルバースト中の弾丸チャージと攻撃力▲（発火の窓 firesDuring。plan/design-privaty-um-s2-full-burst.md、C-1561・C-1560）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -55,3 +56,34 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, privaty }) =
 });
 
 describeEveryShotInOneGroup(Object.fromEntries(Object.entries(TEAMS).map(([name, { input }]) => [name, input])));
+
+// S2 の 2 つめは、撮影の編成（鈴原サクラ + デルタ + プリバティ：アンカインド・メイド。V-0875）で見る
+describe('S2 のフルバースト中のペレット 30 回ごとの弾丸チャージと攻撃力▲', () => {
+  const privaty = 2;
+  const plan = planTeamRun(team([fixedSlot(836), fixedSlot(20), fixedSlot(PRIVATY_UM)], privaty));
+  const windows = plan.schedule!.fullBurstWindows;
+  const inFullBurst = (f: number) => windows.some((w) => w.start <= f && f < w.end);
+  const refills = plan.instants
+    .filter((i) => i.sourceSlotIndex === privaty && i.effect.kind === 'ammoRefill')
+    .map((i) => i.frame);
+  // S1 のヒットは発の 6f 後（C-0659）。その発のフレーム
+  const s1Shots = plan.skillHits
+    .filter((h) => h.slotIndex === privaty && h.effect.source.skill === 'skill1')
+    .map((h) => h.frame - 6);
+
+  it('adds a round only inside full bursts, on the shots that fire S1 (C-1561)', () => {
+    expect(windows.length).toBeGreaterThan(3);
+    expect(refills.length).toBeGreaterThan(windows.length);
+    expect(refills.every(inFullBurst)).toBe(true);
+    // 戦闘の始めから S1 と同じ量で数えるので、窓の中の S1 の発と弾丸チャージの発は同じ（窓の外の S1 の発では付かない）
+    expect(refills).toEqual(s1Shots.filter(inFullBurst));
+    expect(s1Shots.some((f) => !inFullBurst(f))).toBe(true);
+  });
+
+  it('stacks the attack increase on the same shots (C-1560)', () => {
+    const attack = itemsOf(plan.history, { holder: privaty, skill: 'skill2', stat: 'attack' });
+    const starts = [...new Set(attack.map((w) => w.start))].sort((a, b) => a - b);
+    expect(starts.length).toBeGreaterThan(0);
+    for (const s of starts) expect(refills.some((f) => s - f >= 0 && s - f <= 1)).toBe(true);
+  });
+});

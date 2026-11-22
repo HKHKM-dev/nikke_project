@@ -46,21 +46,48 @@
           "claims": [
             "C-1549"
           ]
+        },
+        {
+          "kind": "ammoRefill",
+          "trigger": {
+            "count": "pelletHit",
+            "everyRef": 4,
+            "firesDuring": "fullBurst"
+          },
+          "target": "self",
+          "ref": 5,
+          "scaling": "flat",
+          "assumes": {
+            "ja": "当たったペレットを S1 と同じ量（期待値か録画で数えた数）で戦闘の始めからフルバーストの外も通して数え、30 の倍数に届いた発がフルバーストの窓の中のときだけ 1 発を足す（窓の外で届いた回は付かずに過ぎ、フルバーストの始まりで数え直さない。窓の中で付く発は S1 が出る発と同じ）",
+            "en": "Counts pellet hits with the same amount as S1 (expected values or the counts from a recording) from the start of the battle, including outside Full Burst, and adds 1 round only on a shot that reaches a multiple of 30 inside the Full Burst window (a multiple reached outside passes without effect, and the count is not reset when Full Burst starts; inside the window it lands on the same shots as S1)"
+          },
+          "claims": [
+            "C-1561"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "pelletHit",
+            "everyRef": 4,
+            "firesDuring": "fullBurst"
+          },
+          "target": "self",
+          "stat": "attack",
+          "ref": 6,
+          "maxStacksRef": 7,
+          "durationRef": 8,
+          "assumes": {
+            "ja": "きっかけは弾丸チャージ（effects[1]）と同じ。スタックの維持はモデルの既定（発火のたびに全スタックの 2 秒を数え直す）で、スタックごとの維持との見分けと 5 スタックの上限は撮っていない（前の発火から 117f 後の発火で 2 スタックに積んだのは見た）",
+            "en": "Same trigger as the ammo charge (effects[1]). Stack duration uses the model default (every application restarts the 2 s of all stacks); per-stack duration and the 5-stack cap have not been told apart or recorded (2 stacks were seen on an application 117 frames after the previous one)"
+          },
+          "claims": [
+            "C-1560",
+            "C-1561"
+          ]
         }
       ],
-      "notes": [
-        {
-          "ja": "フルバーストタイム中のペレット 30 回命中ごとの、自分の弾丸チャージと攻撃力▲（5 スタック・2 秒）は未対応（フルバーストの中を撮っていない。弾丸チャージはフルバースト中だけ数える窓を書けない）",
-          "en": "The ammo charge and attack increase on self (5 stacks, 2 s) every 30 pellet hits during Full Burst are not modeled (Full Burst has not been recorded, and an ammo charge cannot count only during Full Burst)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "self",
-            "trigger": "normalHit"
-          }
-        }
-      ]
+      "notes": []
     },
     "burst": {
       "effects": [

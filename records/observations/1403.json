@@ -1,0 +1,142 @@
+[
+  {
+    "id": "1403-01",
+    "recording": "1403",
+    "kind": "timing",
+    "use": "record",
+    "value": [
+      [1486, 1507],
+      [3863, 3884],
+      [6241, 6262],
+      [8619, 8640],
+      [10996, 11017]
+    ],
+    "unit": "フレーム（動画）",
+    "description": "プリバティ：アンカインド・メイドのバーストのヒット（21f 離れた 2 ヒット）のフレーム。5 回のフルバーストの窓の目印（窓はおよそ 1 ヒット目の 26f 前から 600f）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "値は 827,732（1・5 回目）、827,732 と 842,598（2 回目）、1,682,377（3 回目。会心）、1,694,765 と 1,682,377（4 回目）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0875",
+    "readAt": "2026-11-23"
+  },
+  {
+    "id": "1403-02",
+    "recording": "1403",
+    "kind": "timing",
+    "use": "record",
+    "value": [
+      { "fullBurst": 1, "refillShots": [1648, 1843, 2000], "s1Hits": [1654, 1849, 2006] },
+      { "fullBurst": 2, "refillShots": [3934, 4052, 4169, 4365], "s1Hits": [3940, 4058, 4175, 4371] },
+      { "fullBurst": 3, "refillShots": [6415, 6572, 6729], "s1Hits": [6421, 6578, 6735] },
+      { "fullBurst": 4, "refillShots": [8750, 8907, 9157], "s1Hits": [8756, 8913, 9163] },
+      { "fullBurst": 5, "refillShots": [11269, 11426], "s1Hits": [11275, 11432] }
+    ],
+    "unit": "フレーム（動画）",
+    "description": "フルバーストの窓の中で、プリバティ：アンカインド・メイドの照準の左の残弾が減らなかった発（弾丸チャージ）と、S1 のヒット（発の 6f 後）。弾丸チャージの発は、どれも S1 のヒットが出た発で、窓の中の S1 のヒットの発はどれも弾丸チャージの発だった",
+    "method": {
+      "tool": "reticle-ammo.ts --mode series と hud.ts --mode jumps",
+      "note": "残弾は、窓の中のほかの発ではどれも 1 ずつ減った。5 回目の窓の 11269 は、11230 の 5 から 11315 の 4 まで、11269 と 11308 の 2 発で 1 しか減らず、S1 のヒットが 11275 に出たので 11269 とした。S1 のヒットの 6735（1,101,035）と 11275（465,853）は、ほかのヒットと同じフレームに重なった増分。窓の外の S1 のヒットの発は 1403-03"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "source": "V-0875",
+    "readAt": "2026-11-23"
+  },
+  {
+    "id": "1403-03",
+    "recording": "1403",
+    "kind": "count",
+    "use": "record",
+    "value": { "decreased": 24, "notDecreased": 0, "unread": 3 },
+    "unit": "発",
+    "description": "フルバーストの窓の外の S1 のヒット（242,994・284,741・364,491・427,111）が出た発で、照準の左の残弾が 1 減った発の数（弾丸チャージが付かない）",
+    "method": {
+      "tool": "reticle-ammo.ts --mode series と hud.ts --mode jumps",
+      "note": "S1 のヒットの 6〜7f 前の発の前後の残弾を比べた。unread は前後の残弾が読めなかった発"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "source": "V-0875",
+    "readAt": "2026-11-23"
+  },
+  {
+    "id": "1403-04",
+    "recording": "1403",
+    "kind": "hit",
+    "use": "record",
+    "value": [
+      { "frame": 1654, "value": 448233, "stacks": 1 },
+      { "frame": 1849, "value": 525239, "stacks": 1, "sakura": true },
+      { "frame": 2006, "value": 448233, "stacks": 1 },
+      { "frame": 3940, "value": 448233, "stacks": 1 },
+      { "frame": 4058, "value": 525239, "stacks": 1, "sakura": true },
+      { "frame": 4175, "value": 578268, "stacks": 2, "sakura": true },
+      { "frame": 4371, "value": 448233, "stacks": 1 },
+      { "frame": 6421, "value": 525239, "stacks": 1, "sakura": true },
+      { "frame": 6578, "value": 1009054, "stacks": 1, "sakura": true, "crit": true },
+      { "frame": 8756, "value": 525239, "stacks": 1, "sakura": true },
+      { "frame": 8913, "value": 448233, "stacks": 1 },
+      { "frame": 9163, "value": 525239, "stacks": 1, "sakura": true },
+      { "frame": 11432, "value": 448233, "stacks": 1 }
+    ],
+    "unit": "ダメージ",
+    "description": "フルバーストの窓の中の S1 のヒットの値と、モデルの格子から決めた攻撃力▲のスタック数（sakura は鈴原サクラの S1 の敵の受けるダメージ▲、crit は会心）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "格子は 0 スタック・▲なし・非会心の 403,015 × (1 + 0.1122 × スタック数) × 1.1718（サクラ）× 1.9211（会心）で、どの値も 0.2% の中に 1 つだけ当たる。1 スタックの 448,233・525,239・1,009,054 は、モデルの値と端数まで同じ。0 スタックの値（403,015・472,26x）の S1 のヒットは窓の中に無い。4175 の 2 スタックは、前の発火（4052）から 117f 後の発火"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0875",
+    "readAt": "2026-11-23"
+  },
+  {
+    "id": "1403-05",
+    "recording": "1403",
+    "kind": "hit",
+    "use": "compare",
+    "value": 525239,
+    "unit": "ダメージ",
+    "description": "フルバーストの窓の中の、攻撃力▲ 1 スタックと鈴原サクラの S1 の敵の受けるダメージ▲が乗った S1 のヒット（非会心。1 回目の窓の f1849 と、2〜4 回目の窓の 4 回が同じ値）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "1403-04 の 1 スタック・sakura の 5 回（1849・4058・6421・8756・9163）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill1",
+        "frame": 0,
+        "fullBurst": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0875",
+    "readAt": "2026-11-23"
+  }
+]

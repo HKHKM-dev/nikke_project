@@ -43,13 +43,14 @@ describe('語彙の検証', () => {
     ).toThrow(/phase needs an immediate every/);
   });
 
-  it('takes only a counting window of an own state on ammoRefill', () => {
+  it('takes a counting window of an own state or a full-burst window on ammoRefill', () => {
+    // フルバーストの窓（plan/design-privaty-um-s2-full-burst.md 2.2 節）
     expect(
       patched('skill2', REFILL, { trigger: { count: 'normalShot', every: 6, during: 'fullBurst', reset: 'never' } }),
-    ).toThrow(/only a counting window of a state/);
-    expect(patched('skill2', REFILL, { trigger: { count: 'normalShot', every: 6, firesDuring: 'fullBurst' } })).toThrow(
-      /firesDuring/,
-    );
+    ).not.toThrow();
+    expect(
+      patched('skill2', REFILL, { trigger: { count: 'normalShot', every: 6, firesDuring: 'fullBurst' } }),
+    ).not.toThrow();
     expect(patched('skill2', REFILL, { trigger: { ...window, during: { state: 'modeB' } } })).toThrow(
       /needs a grant of the same state on self/,
     );
