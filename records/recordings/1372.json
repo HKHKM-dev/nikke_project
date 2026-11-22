@@ -1,0 +1,46 @@
+{
+  "id": "1372",
+  "date": "2026-11-22",
+  "folder": "range",
+  "file": "20261122-1372_product12-c.mp4",
+  "original": "2026-11-22_16-01-12.mp4",
+  "durationSec": 200.4,
+  "frames": 12021,
+  "fps": 60,
+  "sizeMB": 242.8,
+  "sha256": "f5b92feb89b0",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 303,
+      "name": "プロダクト12",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-22T16:08+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

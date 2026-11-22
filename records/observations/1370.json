@@ -1,0 +1,332 @@
+[
+  {
+    "id": "1370-01",
+    "recording": "1370",
+    "kind": "hit",
+    "use": "compare",
+    "value": 9228,
+    "unit": "ダメージ",
+    "description": "プロダクト12 の 200 発目（f1076。照準の左の残弾 100）のコア・会心なしの 1 ヒット。1〜200 発目の増分は、どれも S1 の攻撃力▲の無い格子（胴体 4,614 × 1.0〜2.5 の 0.1 刻み。コア 9,228・コア会心 11,535 など）に乗る",
+    "method": {
+      "tool": "hud-jumps@3 の増分と reticle-ammo.ts --mode series",
+      "note": "単騎の HUD の総ダメージの増分と、照準の左の残弾を同じフレームで並べた（残弾の減りと増分のフレームは一致し、表示の遅れは無い）。発の番号はマガジン（残弾が増えた所で区切る）と残弾から数えた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1370-02",
+    "recording": "1370",
+    "kind": "hit",
+    "use": "compare",
+    "value": 9993,
+    "unit": "ダメージ",
+    "description": "プロダクト12 の 201 発目（f1077）のコア・会心なしの 1 ヒット（S1 の攻撃力 8.28%▲が乗る。▲の格子は胴体 4,996.5 × 1.0〜2.5）。200 発目までに撃った発のうち 4 発は外れ（残弾が減ったのに増分が無い）で、命中は 196。命中の回数で数えるなら、付き始めは 204 発目の後になる",
+    "method": {
+      "tool": "hud-jumps@3 の増分と reticle-ammo.ts --mode series",
+      "note": "1370-01 と同じ。外れは撃ち始め（戦闘開始の 1〜11 発目）に集まる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 201,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1370-03",
+    "recording": "1370",
+    "kind": "hit",
+    "use": "compare",
+    "value": [9228, 9228, 9228, 9228, 9228, 9228, 9228, 9228, 9228, 9228, 9228, 9228, 9228, 9228, 9228],
+    "unit": "ダメージ",
+    "description": "▲の無い格子から▲の乗った格子に移る直前の発（▲の無い最後の発）の番号は、残りの 15 回もちょうど 200 の倍数（400・800・1000・1400・1600・2000・2200・2600・2800・3200・3400・3800・4000・4400・5000 発目。f1543〜f10706。どれもマガジンの残弾 200 か 100 の発）。値はその発の状態（▲なし）をコア・会心なしの格子で書いた。200 の倍数のうち 600 の倍数（マガジンの最後の発）は、前の▲の窓の中で付き直すので段が見えない。4600 発目は HUD が読めない間（f10017〜f10024）に入り、挟めない。2 回目（400 発目）までの命中は 393（外れ 7）で、外れは付き始めをずらさない",
+    "method": {
+      "tool": "hud-jumps@3 の増分と reticle-ammo.ts --mode series",
+      "note": "増分ごとに▲の無い格子・▲の乗った格子・S2 との和に当て、状態が替わる所の前後の発の番号を読んだ（使い捨てのスクリプト）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": "400,800,1000,1400,1600,2000,2200,2600,2800,3200,3400,3800,4000,4400,5000",
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1370-04",
+    "recording": "1370",
+    "kind": "hit",
+    "use": "compare",
+    "value": [9993, 9993, 9993, 9993, 9993, 9993, 9993, 9993, 9993, 9993, 9993, 9993, 9993, 9993, 9993],
+    "unit": "ダメージ",
+    "description": "1370-03 の 15 回の、次の発（▲の乗った最初の発。401・801・1001・1401・1601・2001・2201・2601・2801・3201・3401・3801・4001・4401・5001 発目）の状態（▲あり）をコア・会心なしの格子で書いた。どれも 200 の倍数の発の次のフレームの発",
+    "method": {
+      "tool": "hud-jumps@3 の増分と reticle-ammo.ts --mode series",
+      "note": "1370-03 と同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": "401,801,1001,1401,1601,2001,2201,2601,2801,3201,3401,3801,4001,4401,5001",
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1370-05",
+    "recording": "1370",
+    "kind": "timing",
+    "use": "compare",
+    "value": 295,
+    "unit": "f",
+    "description": "600 発目（マガジン 2 の最後の発。f1743）から、▲の無い格子に戻る最初の発（f2038）までの動画のフレーム。▲の乗った最後の発は f2037。400 発目で付いた▲（f1544〜）は、600 発目で付き直して 600 発目から 5 秒で切れる（400 発目からの 5 秒の f1838 では切れない）",
+    "method": {
+      "tool": "hud-jumps@3 の増分と reticle-ammo.ts --mode series",
+      "note": "最後の発は残弾 1 の次の発（リロードの前の増分）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "attack",
+        "from": 1,
+        "shot": 600,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1370-06",
+    "recording": "1370",
+    "kind": "timing",
+    "use": "compare",
+    "value": 295,
+    "unit": "f",
+    "description": "2000 発目（f4581）から、▲の無い格子に戻る最初の発（f4876）までの動画のフレーム。▲の乗った最後の発は f4875",
+    "method": {
+      "tool": "hud-jumps@3 の増分と reticle-ammo.ts --mode series"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "attack",
+        "from": 1,
+        "shot": 2000,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1370-07",
+    "recording": "1370",
+    "kind": "interval",
+    "use": "record",
+    "value": [295, 295, 295, 295, 295, 294, 296],
+    "unit": "f",
+    "description": "撃ち続けている間に切れた残りの 7 回の、付き直した 200 の倍数の発から▲の無い格子に戻る最初の発までの動画のフレーム（1200・1800・3000・3600・4200・4800 発目と、2000 発目の後の 2400 発目は窓の端がリロードに入るので除く。並びは 1200 発目 f2980→f3275、1800 発目 f4114→f4409、3000 発目 f6589→f6884、3600 発目 f7930→f8225、4200 発目 f9065→f9359、4800 発目 f10238→f10534 と、1370-06 と同じ 2000 発目）。ほかの切れ目（f1176→f1380 など）はリロードかジャンプの間に入り、5 秒の後の最初の発で▲が無い",
+    "method": {
+      "tool": "hud-jumps@3 の増分と reticle-ammo.ts --mode series",
+      "note": "マガジンの最後の発のフレームは、残弾 1 の次の増分"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1370-08",
+    "recording": "1370",
+    "kind": "timing",
+    "use": "compare",
+    "value": [621, 1210, 1799, 2388, 2977, 3566, 4155, 4744, 5333, 5922, 6511, 7100, 7689, 8278],
+    "unit": "f",
+    "description": "S2 の倍率ダメージ（88,770・96,129 とその会心 ×1.5、か同じフレームの通常攻撃の 1 ヒットとの和）の最初の 14 回の、戦闘開始（タイマーの 02:59 が出た f778）からの動画のフレーム。間はどれも 589f。15〜17 回目（f9652・f10249・f10835）はモデルより 7〜15f 遅い。この間はタイマーの変わり目の間隔が 56〜120f に乱れ（描画が重く、動画のフレームとゲームの時間がずれる）、15 回目から間が 596・597・586f になる",
+    "method": {
+      "tool": "hud-jumps@3 の増分",
+      "note": "戦闘開始は timer.ts --mode changes の WARNING の演出の次の変わり目"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "count": 14
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1370-09",
+    "recording": "1370",
+    "kind": "hit",
+    "use": "compare",
+    "value": 96129,
+    "unit": "ダメージ",
+    "description": "S2 の倍率ダメージの 1 回目（f1399）の値（会心なし。S1 の攻撃力▲が乗る）。▲の無い回は 88,770（f2577）、会心の回は 144,194・133,155（×1.5）",
+    "method": {
+      "tool": "hud-jumps@3 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1370-10",
+    "recording": "1370",
+    "kind": "hit",
+    "use": "record",
+    "value": 98763,
+    "unit": "ダメージ",
+    "description": "S2 の 11 回目（f7289）の増分は 98,763 で、S1 の▲の無い S2（88,770）と、▲の乗ったコア・会心なしの 1 ヒット（9,993）の和。S1 の▲は 3200 発目（f7263）の次の f7264 から乗り、S2 のヒットの 25f 前に付いている。S2 の発動（帯の立ち上がりはヒットの 29f 前の f7260。モデルの発動は 32f 前）の時点では付いていない。ヒットの時の▲なら 106,122（96,129 + 9,993）になる。ほかの 16 回は、発動とヒットの間に S1 の▲の端が無い",
+    "method": {
+      "tool": "hud-jumps@3 の増分と reticle-ammo.ts --mode series"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "id": "C-1525",
+  "text": "プロダクト12 の S2 の倍率ダメージのヒット（発動の 32f 後）は、発動の時の値（撃つ側のバフ）で計算する。発動の後・ヒットの前に S1 の攻撃力▲が付いても、ヒットには乗らない",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`1370-10`。V-0855",
+  "model": "反映（data/skills/303.json の skill2 の effects[0] の valueBeforeFire）",
+  "replaces": [],
+  "updated": "2026-11-22",
+  "subject": {
+    "places": ["data/skills/303.json の skill2 の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1370",
+      "role": "仮説の出どころ"
+    }
+  ]
+}

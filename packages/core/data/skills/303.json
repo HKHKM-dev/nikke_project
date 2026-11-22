@@ -1,0 +1,68 @@
+{
+  "formatVersion": 1,
+  "resourceId": 303,
+  "checkedAt": "2026-11-22",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 3
+          },
+          "target": "self",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "「通常攻撃で N 回攻撃した時」は、撃った発（残弾の減り）を戦闘開始から通算で数え、リロードで数え直さない。MG の撃ち始めに外れた発も数える。付くのはその発の次のフレームから。付き直しは維持を付け直し、残りに足さない",
+            "en": "\"After performing N normal attacks\" counts shots fired (ammo spent) cumulatively from combat start, not reset by reloads. Shots that miss at the start of MG fire also count. It applies from the frame after that shot. Reapplication refreshes the duration and does not add to the remainder"
+          },
+          "claims": [
+            "C-1523"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "everySeconds": 10,
+            "cooldown": true
+          },
+          "ref": 1,
+          "damageType": "skill",
+          "delayFrames": 32,
+          "assumes": {
+            "ja": "説明文にきっかけの無いアクティブ型のスキルで、戦闘開始からクールタイム 10 秒ごとに発動し（撃たない間も）、発動からヒットまで 32f（録画 1371 で読み、1370 で再現）。値（撃つ側のバフ・フルバースト補正）は発動の直前で決める（録画 1370 の 1 回。ラピの S2 の C-1509 と同じ）。残りの HP の数値が最も低い敵 1 機は的 1 体で 1 ヒット。バーストゲージを溜めるかは確かめていない（溜めない形で書いた）",
+            "en": "An active skill with no trigger in its description, activating every 10 s cooldown from the start of combat (also while not firing), with 32 f from activation to hit (read in recording 1371, reproduced in 1370). The value (shooter buffs and the Full Burst bonus) is fixed just before activation (one case in recording 1370; same as Rapi S2, C-1509). The single enemy with the lowest remaining HP is the lone target, hit once. Whether it builds Burst gauge is not verified (written as not building it)"
+          },
+          "valueBeforeFire": true,
+          "claims": [
+            "C-1524",
+            "C-1525"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "攻撃範囲内の敵は的 1 体で 1 ヒット。遅れの表（burst/landing.ts）のプロダクト12 の行の時刻に出る",
+            "en": "Enemies within attack range are the lone target, hit once, at the time in the Product 12 row of the delay table (burst/landing.ts)"
+          },
+          "claims": [
+            "C-1526"
+          ]
+        }
+      ]
+    }
+  }
+}

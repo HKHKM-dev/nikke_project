@@ -1,0 +1,246 @@
+{
+  "verification": "V-0855",
+  "note": "撮影 A の予測。プロダクト12 の単騎（操作）、射撃場の BigArms（灼熱）・3 分モード・スペック固定 ON（スキル Lv10）・オート射撃 ON。撮影 B（撃たない単騎）と C（ココア・ソルジャーF.A.・プロダクト12）の値は sim で出して検証記録に手で書いた",
+  "team": [
+    {
+      "rid": 303,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S1 は撃った発の通算 200 発ごとに攻撃力▲ 5 秒。S2 はクールタイム 10 秒（仮の値）・遅れ 0 の倍率ダメージ）",
+      "override": {}
+    },
+    {
+      "id": "H-hit",
+      "note": "S1 を命中の回数（命中の期待値の通算 200 ごと。外れた発を数えない）で数える",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 303,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "normalHit",
+                "everyRef": 3
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "a-hit-before-s1",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 150,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 150 発目のコア・会心なしの 1 ヒット（S1 の攻撃力▲が付く前）"
+    },
+    {
+      "id": "a-hit-after-s1",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 250,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 250 発目のコア・会心なしの 1 ヒット（S1 の攻撃力 8.28%▲が付いた後）"
+    },
+    {
+      "id": "a-s1-edge-shots",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": "201,401,601,801,1001,1201,1401,1601",
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 200 の倍数の次の発のコア・会心なしの 1 ヒット。撃った回数（H1）なら▲が乗り、命中の回数（H-hit）なら外れの数だけ付くのが遅れて乗らない発が出る"
+    },
+    {
+      "id": "a-s1-on-shots",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": "401,801,1001,1401,1601,2001,2201,2601,2801,3201,3401,3801,4001,4401,5001",
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮った後に足した指標（2026-11-22）。撮影 A の 200 の倍数の次の発のうち、録画で▲の段が読めた 15 発（a-s1-edge-shots の 601・1201 発目は、録画では外れか▲の窓の中で段が見えない）。値は撮る前の版と同じ S1 の定義で、仮説ごとに records:model で出して書いた"
+    },
+    {
+      "id": "a-s1-starts",
+      "model": "sim",
+      "metric": "buffFireStarts",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "attack",
+        "count": 8,
+        "video": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "撮影 A: S1 の攻撃力▲の最初の 8 回の発火の動画のフレーム"
+    },
+    {
+      "id": "a-s1-ends",
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "attack",
+        "count": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "撮影 A: S1 の攻撃力▲の窓の最初の 4 回の終わりのフレーム（5 秒で切れる）"
+    },
+    {
+      "id": "a-s2-hit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "撮影 A: S2 の倍率ダメージの 1 回目の値（会心なし。109.09%。S1 の▲が乗るかは発動の時刻による）"
+    },
+    {
+      "id": "a-s2-frames",
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "count": 8
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "撮影 A: S2 の倍率ダメージの最初の 8 回の動画のフレーム（クールタイム 10 秒・遅れ 0 は仮の値）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-22",
+    "commit": "963b7dbb8779753efe00efbf9d9794b54fc267c3",
+    "values": {
+      "H1": {
+        "a-hit-before-s1": 9227.6982,
+        "a-hit-after-s1": 9992.694599999999,
+        "a-s1-edge-shots": [
+          9992.694599999999, 9992.694599999999, 9992.694599999999, 9992.694599999999, 9992.694599999999,
+          9992.694599999999, 9992.694599999999, 9992.694599999999
+        ],
+        "a-s1-starts": [301, 770, 970, 1439, 1908, 2319, 2788, 3257],
+        "a-s1-ends": [595, 1264, 1733, 2202],
+        "a-s2-hit": 96129.01710000001,
+        "a-s2-frames": [589, 1178, 1767, 2356, 2945, 3534, 4123, 4712],
+        "a-s1-on-shots": [
+          9992.694599999999, 9992.694599999999, 9992.694599999999, 9992.694599999999, 9992.694599999999,
+          9992.694599999999, 9992.6946, 9992.6946, 9992.6946, 9992.6946, 9992.6946, 9992.6946, 9992.6946, 9992.6946,
+          9992.694599999999
+        ]
+      },
+      "H-hit": {
+        "a-hit-before-s1": 9227.6982,
+        "a-hit-after-s1": 9992.694599999999,
+        "a-s1-edge-shots": [
+          9227.6982, 9227.6982, 9227.6982, 9992.694599999999, 9227.6982, 9227.6982, 9992.694599999999, 9227.6982
+        ],
+        "a-s1-starts": [302, 771, 1174, 1441, 1910, 2536, 2791, 3261],
+        "a-s1-ends": [596, 1065, 1735, 2204],
+        "a-s2-hit": 96129.01710000001,
+        "a-s2-frames": [589, 1178, 1767, 2356, 2945, 3534, 4123, 4712],
+        "a-s1-on-shots": [
+          9227.6982, 9992.694599999999, 9227.6982, 9992.694599999999, 9227.6982, 9992.694599999999, 9227.698199999999,
+          9992.6946, 9227.698199999999, 9992.6946, 9227.698199999999, 9992.6946, 9227.698199999999, 9992.6946,
+          9992.694599999999
+        ]
+      }
+    }
+  }
+}
