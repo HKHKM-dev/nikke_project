@@ -1,0 +1,46 @@
+{
+  "id": "1366",
+  "date": "2026-11-22",
+  "folder": "range",
+  "file": "20261122-1366_idoll-flower-delta-mica.mp4",
+  "original": "2026-11-22_15-36-30.mp4",
+  "durationSec": 211.9,
+  "frames": 12713,
+  "fps": 60,
+  "sizeMB": 256.5,
+  "sha256": "c64edd652358",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 61,
+      "name": "ミカ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-22T15:43+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
