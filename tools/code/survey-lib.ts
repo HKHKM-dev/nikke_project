@@ -41,9 +41,17 @@ const oneLine = (text: string, max: number): string => {
   return flat.length > max ? `${flat.slice(0, max - 1)}…` : flat;
 };
 
+/** クラスの中の宣言なら「<クラスの名前>.」 */
+const classPrefix = (node: ts.Node): string =>
+  ts.isClassLike(node.parent) ? `${node.parent.name?.text ?? '(無名のクラス)'}.` : '';
+
+/** 本体のある関数か（宣言だけのもの・型の上の関数は除く） */
+const hasBody = (node: ts.Node): node is ts.FunctionLikeDeclaration & { body: ts.Node } =>
+  ts.isFunctionLike(node) && 'body' in node && node.body !== undefined;
+
 /** 関数の呼び名（宣言の名前・代入先・メソッドならクラスの名前を前に付ける・呼び出しに渡すなら「<呼ぶ先>(…) の引数」） */
 function functionName(fn: ts.FunctionLikeDeclaration, source: ts.SourceFile): string {
-  const owner = ts.isClassLike(fn.parent) ? `${fn.parent.name?.text ?? '(無名のクラス)'}.` : '';
+  const owner = classPrefix(fn);
   if (ts.isConstructorDeclaration(fn)) return `${owner}constructor`;
   if (fn.name !== undefined) return `${owner}${fn.name.getText(source)}`;
   let parent = fn.parent;
@@ -58,7 +66,8 @@ function functionName(fn: ts.FunctionLikeDeclaration, source: ts.SourceFile): st
     ts.isBinaryExpression(parent)
   ) {
     const target = ts.isBinaryExpression(parent) ? parent.left : parent.name;
-    return oneLine(target.getText(source), 40);
+    const field = ts.isPropertyDeclaration(parent) ? classPrefix(parent) : '';
+    return `${field}${oneLine(target.getText(source), 40)}`;
   }
   if (ts.isExportAssignment(parent)) return 'default';
   if (ts.isCallExpression(parent) || ts.isNewExpression(parent)) {
@@ -76,7 +85,7 @@ export function functionLengths(file: string, source: ts.SourceFile): FunctionLe
   /** outer は外の関数の数えている所（covered は、中の関数だけが使う行） */
   type Frame = { fn: FunctionLength; covered: Set<number> };
   const visit = (node: ts.Node, outer: Frame | undefined): void => {
-    if (ts.isFunctionLike(node) && 'body' in node && node.body !== undefined && testCallbackFrame(node) === undefined) {
+    if (hasBody(node) && testCallbackFrame(node) === undefined) {
       const line = startLine(node, source);
       const end = endLine(node, source);
       const frame: Frame = {
@@ -90,6 +99,107 @@ export function functionLengths(file: string, source: ts.SourceFile): FunctionLe
       return;
     }
     ts.forEachChild(node, (child) => visit(child, outer));
+  };
+  visit(source, undefined);
+  return out;
+}
+
+// ---- 分岐の多さ ----
+
+/** 関数の循環的複雑度（数え方は functionComplexities） */
+export type FunctionComplexity = { file: string; name: string; line: number; complexity: number };
+
+const LOGICAL_OPERATORS = new Set<ts.SyntaxKind>([
+  ts.SyntaxKind.AmpersandAmpersandToken,
+  ts.SyntaxKind.BarBarToken,
+  ts.SyntaxKind.QuestionQuestionToken,
+  ts.SyntaxKind.AmpersandAmpersandEqualsToken,
+  ts.SyntaxKind.BarBarEqualsToken,
+  ts.SyntaxKind.QuestionQuestionEqualsToken,
+]);
+
+/** 分割代入の式の左辺（`[a, b] = …`・`({ a } = …)`・`for ([a] of …)`）の中の節か */
+function inAssignmentTarget(node: ts.Node): boolean {
+  let child = node;
+  let parent = node.parent;
+  while (
+    ts.isArrayLiteralExpression(parent) ||
+    ts.isObjectLiteralExpression(parent) ||
+    ts.isPropertyAssignment(parent) ||
+    ts.isSpreadElement(parent) ||
+    ts.isSpreadAssignment(parent) ||
+    ts.isParenthesizedExpression(parent)
+  ) {
+    child = parent;
+    parent = parent.parent;
+  }
+  if (child === node) return false;
+  if (ts.isBinaryExpression(parent))
+    return parent.operatorToken.kind === ts.SyntaxKind.EqualsToken && parent.left === child;
+  return (ts.isForOfStatement(parent) || ts.isForInStatement(parent)) && parent.initializer === child;
+}
+
+/** その節が、いまの関数の複雑度に足す分岐か（ESLint の complexity の classic と同じ決まり） */
+function isBranch(node: ts.Node): boolean {
+  switch (node.kind) {
+    case ts.SyntaxKind.IfStatement:
+    case ts.SyntaxKind.ConditionalExpression:
+    case ts.SyntaxKind.ForStatement:
+    case ts.SyntaxKind.ForInStatement:
+    case ts.SyntaxKind.ForOfStatement:
+    case ts.SyntaxKind.WhileStatement:
+    case ts.SyntaxKind.DoStatement:
+    case ts.SyntaxKind.CatchClause:
+    case ts.SyntaxKind.CaseClause:
+      return true;
+  }
+  if (ts.isBinaryExpression(node)) {
+    if (LOGICAL_OPERATORS.has(node.operatorToken.kind)) return true;
+    // 分割代入の式の既定値（`[a = 1] = …`）
+    return node.operatorToken.kind === ts.SyntaxKind.EqualsToken && inAssignmentTarget(node);
+  }
+  // 既定値（引数・分割の宣言・`({ a = 1 } = …)`）
+  if (ts.isParameter(node) || ts.isBindingElement(node)) return node.initializer !== undefined;
+  if (ts.isShorthandPropertyAssignment(node)) return node.objectAssignmentInitializer !== undefined;
+  // ?. の 1 つずつ（`a?.b?.()` は 2）
+  if (ts.isPropertyAccessExpression(node) || ts.isElementAccessExpression(node) || ts.isCallExpression(node)) {
+    return node.questionDotToken !== undefined;
+  }
+  return false;
+}
+
+/**
+ * 本体のある関数ごとの循環的複雑度。数え方は ESLint の complexity ルール（variant は classic）と同じ（決まりは survey.ts の冒頭の
+ * branch）。クラスのフィールドの初期化子と static ブロックも 1 つの関数として出す。functionLengths と同じく、vitest の枠に渡す
+ * 関数は出さない（その中の分岐は、どの関数にも数えない）
+ */
+export function functionComplexities(file: string, source: ts.SourceFile): FunctionComplexity[] {
+  const out: FunctionComplexity[] = [];
+  const open = (name: string, node: ts.Node): FunctionComplexity => {
+    const fn = { file, name, line: startLine(node, source), complexity: 1 };
+    out.push(fn);
+    return fn;
+  };
+  /** current は数えている関数（undefined はファイルの直下か、vitest の枠に渡す関数の中） */
+  const visit = (node: ts.Node, current: FunctionComplexity | undefined): void => {
+    let frame = current;
+    if (hasBody(node)) {
+      frame = testCallbackFrame(node) === undefined ? open(functionName(node, source), node) : undefined;
+    } else if (ts.isClassStaticBlockDeclaration(node)) {
+      frame = open(`${classPrefix(node)}static ブロック`, node);
+    } else if (frame !== undefined && isBranch(node)) {
+      frame.complexity++;
+    }
+    ts.forEachChild(node, (child) => {
+      // クラスのフィールドの初期化子は、外の関数と分けて数える（行は値の始め）
+      if (ts.isPropertyDeclaration(node) && child === node.initializer) {
+        visit(child, open(`${classPrefix(node)}${node.name.getText(source)} の初期化子`, child));
+        return;
+      }
+      // 関数の名前（[k ?? 'x']() {}）とデコレーターは、外の関数に数える
+      const outside = hasBody(node) && (child === node.name || node.modifiers?.some((m) => m === child));
+      visit(child, outside ? current : frame);
+    });
   };
   visit(source, undefined);
   return out;

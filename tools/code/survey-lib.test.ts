@@ -1,8 +1,11 @@
 // コードの作り替えの候補を測る道具の、ファイルと git を読まない部分（plan/design-workflow-simplification-17.md 10 節）
+import { Linter } from 'eslint';
+import tseslint from 'typescript-eslint';
 import { describe, expect, it } from 'vitest';
 import {
   coChangePairs,
   findDuplicates,
+  functionComplexities,
   functionLengths,
   parseNameOnlyLog,
   readModule,
@@ -53,6 +56,86 @@ describe('functionLengths', () => {
       '});',
     );
     expect(functionLengths('a.test.ts', parseSource('a.test.ts', text)).map((f) => f.name)).toEqual(['helper']);
+  });
+});
+
+describe('functionComplexities', () => {
+  // 関数ごとに 1 行目を分けて置き、ESLint の報告（関数の頭の行）と始めの行で突き合わせる
+  const text = lines(
+    'export function plain(): number {', // 1
+    '  return 1;',
+    '}',
+    'export function branches(a: number, b?: { c?: () => number; d: number[] }, e = 2): number {', // 4
+    '  if (a > 0 && b) return 1;',
+    '  else if (a < 0 || e) return 2;',
+    '  const x = b?.c?.() ?? b?.d[0] ?? 0;',
+    '  let y = a > 1 ? 1 : 0;',
+    '  y ||= 1; y &&= 2; y ??= 3; y += 1;',
+    '  for (let i = 0; i < 1; i++) {}',
+    '  for (const k in b) {}',
+    '  for (const { v = 1 } of [{ v: 0 }]) {}',
+    '  while (a-- > 0) {}',
+    '  do {} while (false);',
+    '  try { y++; } catch { y--; } finally { y = 0; }',
+    '  switch (a) { case 1: case 2: break; default: break; }',
+    '  const [p = 1, { q = 2 } = {}] = [0];',
+    '  let r = 0, t = 0;',
+    '  [r = 1] = [];',
+    '  ({ r = 2, t: t = 3 } = {});',
+    '  const inner = (n = 1) => n || 2;', // 21
+    '  return x + y + p + q + r + t + inner();',
+    '}',
+    'class Box {', // 24
+    '  size = Math.random() > 0.5 ? 1 : 0;', // 25
+    '  static { if (Box) {} }', // 26
+    '  get area(): number { return this.size || 1; }', // 27
+    "  [Math.random() ? 'p' : 'q'](a = 1): number { return a; }", // 28
+    '  @dec(Box ?? 1) m(): void {}', // 29
+    '  @dec(Box ?? 2) g = () => (Box ? 1 : 2);', // 30
+    '}',
+    "describe('x', () => {", // 32
+    '  if (Box) {}',
+    "  it('y', () => {", // 34
+    '    const f = () => (Box ? 1 : 2);', // 35
+    '    f();',
+    '  });',
+    '});',
+  );
+
+  const found = functionComplexities('a.ts', parseSource('a.ts', text));
+
+  it('counts like the ESLint complexity rule', () => {
+    const messages = new Linter({ configType: 'flat' }).verify(
+      text,
+      {
+        files: ['**/*.ts'],
+        languageOptions: { parser: tseslint.parser },
+        rules: { complexity: ['warn', 0] },
+      },
+      'a.ts',
+    );
+    // ESLint は vitest の枠に渡す関数（32・34 行）も出す。こちらはそれを出さず、その中の f（35 行）だけを出す
+    const eslint = messages
+      .filter((m) => m.ruleId === 'complexity' && m.line !== 32 && m.line !== 34)
+      .map((m): [number, number] => [m.line, Number(/complexity of (\d+)/.exec(m.message)?.[1])]);
+    const sorted = (rows: [number, number][]) => [...rows].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    expect(sorted(found.map((f): [number, number] => [f.line, f.complexity]))).toEqual(sorted(eslint));
+  });
+
+  it('names each function, field initializer and static block', () => {
+    expect(found.map((f) => [f.name, f.line, f.complexity])).toEqual([
+      ['plain', 1, 1],
+      ['branches', 4, 30],
+      ['inner', 21, 3],
+      ['Box.size の初期化子', 25, 2],
+      ['Box.static ブロック', 26, 2],
+      ['Box.area', 27, 2],
+      ["Box.[Math.random() ? 'p' : 'q']", 28, 2],
+      ['Box.m', 29, 1],
+      ['Box.g の初期化子', 30, 1],
+      ['Box.g', 30, 2],
+      ['f', 35, 2],
+    ]);
   });
 });
 
