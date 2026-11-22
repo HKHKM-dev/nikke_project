@@ -265,7 +265,7 @@ export function createShooters({
       p.was = on;
     }
     // V-0534: 射撃の止まりの間は射手を進めない（撃たず、待ち・リロードも進めない）
-    if (pauseLeft[i]! <= 0) return false;
+    if (!(pauseLeft[i]! > 0)) return false;
     pauseLeft[i]! -= 1;
     // バーストの発動の止まりの明けは、狙えない窓の明けと同じく構え直す（plan/design-privaty-burst-pause.md 3 節の論点 4）。
     // 止まりの中でオート射撃を手で ON に戻した枠も、ここで窓の明けと同じ待ちになる（C-1550 の短さは止まりの中では確かめていない）
