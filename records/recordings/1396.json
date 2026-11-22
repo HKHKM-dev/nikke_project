@@ -1,0 +1,46 @@
+{
+  "id": "1396",
+  "date": "2026-11-22",
+  "folder": "range",
+  "file": "20261122-1396_vesti-mc-1.mp4",
+  "original": "2026-11-22_21-42-43.mp4",
+  "durationSec": 201,
+  "frames": 12062,
+  "fps": 60,
+  "sizeMB": 243.7,
+  "sha256": "8f0e0c5e0236",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 91,
+      "name": "ベスティー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Water"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0872 の撮影。編成は戦闘履歴のパネルで確かめた",
+  "backup": {
+    "at": "2026-11-22T21:57+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
