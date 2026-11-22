@@ -31,10 +31,10 @@ function skillDotOf(ctx: MetricContext): ResolvedDamageEffect {
 /** 録画で読んだ付いたフレームから、枠の skill スロットの持続ダメージ（1 つ）の規則で出る tick のフレーム（until より前） */
 function dotTicksFromApplications(ctx: MetricContext): number[] {
   const dot = skillDotOf(ctx).dot!;
-  const applications = String(ctx.args.applications)
-    .split(',')
-    .map(Number)
-    .sort((a, b) => a - b);
+  const parts = String(ctx.args.applications).split(',');
+  if (parts.some((p) => p.trim() === ''))
+    throw new Error('applications は整数のフレームを , で並べる（空の要素は書かない）');
+  const applications = parts.map(Number).sort((a, b) => a - b);
   if (applications.some((f) => !Number.isInteger(f))) throw new Error('applications は整数のフレームを , で並べる');
   const until = Number(ctx.args.until);
   return dot.restartOnReapply === true
