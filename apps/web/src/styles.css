@@ -1348,9 +1348,9 @@ svg.roster-revert-icon {
   /* ＋ を枠の真ん中に置く基準 */
   position: relative;
 }
-/* 空のスロットの文字は選べる文字にしない（マウスを載せても I の形のカーソルにしない）。置き先待ちの間は押せる印のカーソル */
+/* 空のスロットの文字は選べる文字にしない（マウスを載せても I の形のカーソルにしない）。空のスロットは常に人差し指（オーナーの指示） */
 .modern-slot-empty-area {
-  cursor: default;
+  cursor: pointer;
   user-select: none;
 }
 .modern-slot-card.modern-slot-awaiting .modern-slot-empty-area {
