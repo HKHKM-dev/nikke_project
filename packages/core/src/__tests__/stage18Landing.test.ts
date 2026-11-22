@@ -509,11 +509,32 @@ describe('命中率▼の表（C-0974・C-0975。plan/design-maids.md 8 節）',
   });
 
   it('has no rows for other weapon types, and autoConditionAt reads the table', () => {
-    expect(hitRateDownAt(profile.hitRateDown, AR, at('nearA'))).toBeUndefined();
+    expect(hitRateDownAt(profile.hitRateDown, SG, at('nearA'))).toBeUndefined();
+    // AR の行は N = −100% だけ（8.6 節）。表に無い N は変えない
     expect(autoConditionAt(profile, at('nearA'), AR, downOnly(-0.2), MANUAL).coreHitRate).toBe(0.4244);
     const mg = autoConditionAt(profile, at('farA'), MG, downOnly(-0.4), MANUAL);
     expect(mg.coreHitRate).toBeCloseTo(0.086 * 0.46, 12);
     expect(mg.hitRate).toBe(0.74);
+  });
+
+  // 8.6 節（C-1559）: SMG・AR の N = −100% は、的のコア命中率の表の値 p × 0.25。弾丸命中率の行は無い（表のまま）
+  it('quarters the SMG and AR core hit rate of the target table at N = −100% only', () => {
+    for (const [w, id, p] of [
+      [SMG, 'nearA', 0.2113],
+      [SMG, 'midNear', 0.1179],
+      [AR, 'nearB', 0.4244],
+      [AR, 'farA', 0.0626],
+    ] as const) {
+      const d = hitRateDownAt(profile.hitRateDown, w, at(id))!;
+      expect(d.core).toEqual([]);
+      expect(coreHitRateAt(p, downOnly(-1), d)).toBeCloseTo(p * 0.25, 12);
+      expect(coreHitRateAt(p, downOnly(-0.6), d)).toBe(p);
+      expect(bulletHitRateAt(0.99, downOnly(-1), d)).toBe(0.99);
+      expect(autoConditionAt(profile, at(id), w, downOnly(-1), MANUAL).coreHitRate).toBeCloseTo(p * 0.25, 12);
+    }
+    // ▲と同時の区間は表を使わない（和の N が −1 でも）
+    const d = hitRateDownAt(profile.hitRateDown, SMG, at('midNear'))!;
+    expect(coreHitRateAt(0.1179, { n: 0.2 - 1.2, up: 0.2 }, d)).toBe(0.1179);
   });
 
   it('does not use the table while a Hit Rate increase is also active (8.4 節: the sum N goes through the ▲ formula)', () => {
@@ -542,11 +563,12 @@ describe('命中率▼の表（C-0974・C-0975。plan/design-maids.md 8 節）',
     expect(parse({ XX: { core } })).toThrow(/hitRateDown\.XX: unknown weapon type/);
     expect(parse({ MG: 1 })).toThrow(/hitRateDown\.MG: must be an object/);
     expect(parse({ MG: { core, extra: {} } })).toThrow(/hitRateDown\.MG\.extra: unknown key/);
-    // core は { base, ratio } だけ
-    expect(parse({ MG: { core: 1 } })).toThrow(/MG\.core: must be \{ base, ratio \}/);
-    expect(parse({ MG: { core: { base: { near: 0.5 } } } })).toThrow(/MG\.core: must be \{ base, ratio \}/);
-    expect(parse({ MG: { core: { ...core, extra: 1 } } })).toThrow(/MG\.core: must be \{ base, ratio \}/);
-    expect(parse({ MG: { core: { base: { near: 0.5 }, ratio: 1 } } })).toThrow(/MG\.core: must be \{ base, ratio \}/);
+    // core は { base?, ratio } だけ（base を書かない行は、的のコア命中率の表に ratio を掛ける）
+    expect(parse({ SMG: { core: { ratio: { '-1': 0.25 } } } })).not.toThrow();
+    expect(parse({ MG: { core: 1 } })).toThrow(/MG\.core: must be \{ base\?, ratio \}/);
+    expect(parse({ MG: { core: { base: { near: 0.5 } } } })).toThrow(/MG\.core: must be \{ base\?, ratio \}/);
+    expect(parse({ MG: { core: { ...core, extra: 1 } } })).toThrow(/MG\.core: must be \{ base\?, ratio \}/);
+    expect(parse({ MG: { core: { base: { near: 0.5 }, ratio: 1 } } })).toThrow(/MG\.core: must be \{ base\?, ratio \}/);
     // 和 N のキーは負の数
     for (const key of ['0.2', '0', '', ' ', 'x', 'Infinity']) {
       expect(parse({ MG: { core: { ...core, ratio: { [key]: 1 } } } })).toThrow(/key must be a negative number/);

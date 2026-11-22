@@ -152,7 +152,7 @@ describe('ほろ酔いの命中率▼（的の▼の表）', () => {
       const key = Object.keys(table.core!.ratio).find((k) => close(Number(k), n))!;
       seen.add(Math.round(-n / 0.2));
       const core = s.trigger.boost.core / (slot.character.shot.coreDamageRate - 1 + s.buffs.coreDamage);
-      expect(core).toBeCloseTo(table.core!.base[band]! * table.core!.ratio[key]!, 9);
+      expect(core).toBeCloseTo(table.core!.base![band]! * table.core!.ratio[key]!, 9);
       const bullet = table.bullet![key]?.[band];
       if (bullet !== undefined) expect(s.trigger.hitRate).toBeCloseTo(bullet, 9);
     }

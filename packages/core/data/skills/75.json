@@ -212,20 +212,34 @@
           "claims": [
             "C-1018"
           ]
+        },
+        {
+          "kind": "state",
+          "state": "noisePollution",
+          "trigger": "burstUse",
+          "condition": {
+            "selfState": "highlight"
+          },
+          "target": "allies",
+          "excludeSelf": "always",
+          "durationRef": 4,
+          "contents": [
+            {
+              "stat": "hitRate",
+              "decrease": true,
+              "ref": 3
+            }
+          ],
+          "assumes": {
+            "ja": "消音（騒音公害免疫）はパーツの破壊でしか付かないので、射撃場では常に効く。命中率▼は、条件が自動の枠で射撃場の的のとき、的の▼の表（SMG・AR は N = −100% でコア命中率を表の値の 1/4。V-0870）で効かせる。弾丸命中率と、SMG・AR 以外の武器種・ほかの的・▲と同時の区間は効かせない（未実装）",
+            "en": "Mute (immunity to Noise Pollution) only comes from part destruction, so on the range it always applies. With automatic conditions on the Shooting range target, the Hit Rate decrease applies via the target's hit-rate-down table (for SMG and AR at N = −100%, core hit rate becomes 1/4 of the table value; V-0870). It does not change bullet hit rate, nor apply to weapon types other than SMG and AR, to other targets, or while a Hit Rate increase is also active (not implemented)"
+          },
+          "claims": [
+            "C-1558"
+          ]
         }
       ],
       "notes": [
-        {
-          "ja": "自分がクライマックス状態なら、自分を除く味方全体に「騒音公害：命中率 100%▼」（1 秒）は未対応。命中率▼の効き方は MG のほろ酔い（−20% × 1〜3 スタック）しか測っておらず、ほかの武器種と −100% の効き方が無い（plan/design-diesel-ws.md 2.4 節）。消音（免疫）はパーツの破壊でしか付かないので、射撃場では常に効く",
-          "en": "Noise Pollution (hit rate ▼100% for 1 s) on all allies except self while she is in Highlight is not implemented. Hit rate down is measured only for MG Drunken (−20% × 1–3 stacks); there is no table for other weapon types or for −100% (plan/design-diesel-ws.md 2.4). Mute (the immunity) only comes from part destruction, so on the range it always applies",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "state",
-            "stat": "hitRate",
-            "target": "allies",
-            "trigger": "burstUse"
-          }
-        },
         {
           "ja": "自分がクライマックス状態なら、味方全体の消音スタック量 1 個▼は、消音がパーツの破壊でしか付かず射撃場では無いので、何もしない",
           "en": "Mute stacks ▼1 for all allies while she is in Highlight does nothing: Mute only comes from part destruction, which never happens on the range",
