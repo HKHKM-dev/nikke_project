@@ -2,7 +2,7 @@
 
 - 何のための文書か: `npm run code:survey` の分岐の多さ（`branch`）・長い関数（`long`）・同じ形の文の並び（`dup`）・一緒に変わるファイル（`cochange`）・読まれない export（`unused`）の結果から、作り替えの候補を選び、候補ごとのいまの形・読みにくさ・分け方・効果・危うさ・規模と、どれをするかの論点を書く
 - 対象: 3 節の候補（`frame/firstPass/shooters.ts`・`frame/firstPass/gaugeEffects.ts`・`skills/holders/views.ts`・`skills/holders/fire.ts`・`skills/burstDamage.ts`・`tools/captures/aim-lib.ts`・`tools/captures/` の重なり）。計算の中身と結果は変えない
-- 状態: 実装中（5.1 節の決定。段は 6 節）
+- 状態: 完了（5.1 節の決定）
 - 関連: [design-split-first-pass.md](design-split-first-pass.md)（1 パス目の分割。確かめ方の 6 節をこの文書の段でも使う）、[design-split-long-functions.md](design-split-long-functions.md)（パーサと画面の分割）、[design-catalog-doc-split.md](design-catalog-doc-split.md)、[design-unused-code-cleanup.md](design-unused-code-cleanup.md)（読まれない export の決定）、[design-workflow-simplification-17.md](design-workflow-simplification-17.md) 10 節（`code:survey`）
 - 作成日: 2026-11-22
 - 調べた時点: main の ad1a288d に、分岐の多さの節を足したブランチ（`claude/survey-complexity`）の道具で測った。行番号はその時点のファイルの行
