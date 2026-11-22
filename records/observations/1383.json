@@ -1,0 +1,231 @@
+[
+  {
+    "id": "1383-01",
+    "recording": "1383",
+    "kind": "total",
+    "use": "record",
+    "value": 49071344,
+    "description": "ハラン の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11381。増分は 171 個"
+    },
+    "source": "V-0861",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1383-02",
+    "recording": "1383",
+    "kind": "count",
+    "use": "record",
+    "value": 136,
+    "unit": "トリガー",
+    "description": "ハラン のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 171 個。前の増分から 30f 未満の増分（35 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 58f）から発の数を決めた（2 発になった組 0 個）"
+    },
+    "source": "V-0861",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1383-03",
+    "recording": "1383",
+    "kind": "hit",
+    "use": "compare",
+    "value": 20839,
+    "unit": "ダメージ",
+    "description": "ハランの S1 のウイルス転移（持続ダメージ）の 1 tick（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（発 8 通り・tick 2 通り・その和）に当てた（使い捨てのスクリプト。V-0861「読み方」）",
+      "note": "tick だけの増分 60 回がどれも 20,839"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0861",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1383-04",
+    "recording": "1383",
+    "kind": "hit",
+    "use": "compare",
+    "value": 31258,
+    "unit": "ダメージ",
+    "description": "ハランの S1 のウイルス転移（持続ダメージ）の 1 tick（会心）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（発 8 通り・tick 2 通り・その和）に当てた（使い捨てのスクリプト。V-0861「読み方」）",
+      "note": "tick だけの増分 11 回がどれも 31,258"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0861",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1383-05",
+    "recording": "1383",
+    "kind": "count",
+    "use": "compare",
+    "value": 24,
+    "unit": "回",
+    "description": "ハランの S1 のウイルス転移が付いた発の数（180 秒。発は 100 発）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（発 8 通り・tick 2 通り・その和）に当てた（使い捨てのスクリプト。V-0861「読み方」）",
+      "note": "付いた発 = 発と tick の和の増分のフレーム（付いた瞬間の tick が発と同じ増分に乗る）と、格子に合わない増分のうち 89f 後に tick が続くもの: 869,1579,1661,1907,2125,2207,2289,2494,2712,3040,3586,4132,5059,5905,6151,6233,7243,7489,7871,8745,9103,10074,10620,11234"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "chanceDotApplyCount",
+      "args": {
+        "slot": 1,
+        "skill": "skill1"
+      },
+      "tolerance": {
+        "abs": 10
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0861",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1383-06",
+    "recording": "1383",
+    "kind": "count",
+    "use": "compare",
+    "value": 95,
+    "unit": "回",
+    "description": "ハランの S1 のウイルス転移の tick の数（180 秒。付いた瞬間の tick を含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（発 8 通り・tick 2 通り・その和）に当てた（使い捨てのスクリプト。V-0861「読み方」）",
+      "note": "会心なし・会心の tick だけの増分と、発と tick の和の増分の数（f11381 までの戦闘の中）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 1,
+        "skill": "skill1"
+      },
+      "tolerance": {
+        "rel": 0.25
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0861",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1383-07",
+    "recording": "1383",
+    "kind": "timing",
+    "use": "compare",
+    "value": [
+      869, 957, 1016, 1074, 1133, 1579, 1661, 1749, 1809, 1867, 1907, 1996, 2055, 2113, 2125, 2207, 2289, 2378, 2437,
+      2494, 2583, 2642, 2700, 2712, 2801, 2860, 2918, 2977, 3040, 3129, 3188, 3246, 3305, 3586, 3675, 3734, 3792, 3851,
+      4132, 4221, 4280, 4338, 4397, 5059, 5148, 5207, 5265, 5324, 5905, 5994, 6053, 6111, 6151, 6233, 6322, 6381, 6439,
+      6498, 7243, 7332, 7391, 7449, 7489, 7578, 7637, 7695, 7754, 7871, 7960, 8019, 8077, 8136, 8745, 8834, 8893, 8951,
+      9010, 9103, 9192, 9251, 9309, 9368, 10074, 10163, 10222, 10280, 10339, 10620, 10709, 10768, 10826, 10885, 11234,
+      11322, 11381
+    ],
+    "unit": "フレーム（動画）",
+    "description": "ハランの S1 のウイルス転移の tick のフレーム（f0〜f11381。付いた発は録画から決めた 24 回）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（発 8 通り・tick 2 通り・その和）に当てた（使い捨てのスクリプト。V-0861「読み方」）",
+      "note": "付いた発ごとに、付いた瞬間・89・148・206・265f 後（次の付与の前まで）に tick が出た。モデルの刻み（C-0101 の形。付いた瞬間・88・147・205・264f）より 1f 遅い tick が多い"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotTicksFromApplications",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "applications": "869,1579,1661,1907,2125,2207,2289,2494,2712,3040,3586,4132,5059,5905,6151,6233,7243,7489,7871,8745,9103,10074,10620,11234",
+        "until": 11382
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0861",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1383-08",
+    "recording": "1383",
+    "kind": "rate",
+    "use": "record",
+    "value": 0.229,
+    "unit": "割合",
+    "description": "ハランの通常攻撃（フルチャージの発）の会心の割合（96 発中 22 発）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子に当てた（使い捨てのスクリプト。V-0861「読み方」）",
+      "note": "発だけの増分と、発と tick の和の増分（格子に合う 96 発）のうち、会心の格子に合うもの。モデルの会心率は素の 15% + S2 の 2.95%（戦闘の最初の発のほか）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0861",
+    "readAt": "2026-11-22"
+  }
+]

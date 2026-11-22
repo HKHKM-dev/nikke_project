@@ -1,0 +1,100 @@
+[
+  {
+    "id": "1384-01",
+    "recording": "1384",
+    "kind": "total",
+    "use": "record",
+    "value": 129148402,
+    "description": "鈴原サクラ・デルタ・ハラン の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11538。増分は 3172 個"
+    },
+    "source": "V-0862",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1384-02",
+    "recording": "1384",
+    "kind": "count",
+    "use": "record",
+    "value": 251,
+    "unit": "トリガー",
+    "description": "鈴原サクラ・デルタ・ハラン のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 3172 個。前の増分から 30f 未満の増分（3133 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 40f）から発の数を決めた（2 発になった組 29 個）"
+    },
+    "source": "V-0862",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1384-03",
+    "recording": "1384",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1411707,
+    "unit": "ダメージ",
+    "description": "ハランのバーストのバーストスキルダメージの 1 ヒット（会心なし。鈴原サクラの S1 の敵の受けるダメージ▲が乗る）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "5 回のバーストとも、III のタイマーの 00.00 の 45f 後の増分が 1,411,707（f1282・3659・6036・8414・10792）。5 回とも会心なし"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0862",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1384-04",
+    "recording": "1384",
+    "kind": "timing",
+    "use": "compare",
+    "value": [45, 45, 45, 45, 45],
+    "unit": "フレーム（動画）",
+    "description": "ハランのバーストの、III の発動（右のバースト欄の III のタイマーが 00.00 になったフレーム）からヒットまでの動画のフレーム（5 回）",
+    "method": {
+      "tool": "recipe:burst-panel@4 の 00.00 のフレームと、recipe:hud-jumps@3 のヒットの増分のフレームの差",
+      "note": "00.00 は f1237・3614・5991・8369・10747、ヒットは f1282・3659・6036・8414・10792（フルバーストの入りの止まり 22f を含む）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0862",
+    "readAt": "2026-11-22"
+  }
+]

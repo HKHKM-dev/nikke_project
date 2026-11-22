@@ -1,0 +1,320 @@
+[
+  {
+    "id": "1385-01",
+    "recording": "1385",
+    "kind": "total",
+    "use": "record",
+    "value": 40496578,
+    "description": "ソルジャーO.W. の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11362。増分は 2671 個"
+    },
+    "source": "V-0863",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1385-02",
+    "recording": "1385",
+    "kind": "count",
+    "use": "record",
+    "value": 205,
+    "unit": "トリガー",
+    "description": "ソルジャーO.W. のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 2671 個。前の増分から 30f 未満の増分（2647 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 40f）から発の数を決めた（2 発になった組 24 個）"
+    },
+    "source": "V-0863",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1385-03",
+    "recording": "1385",
+    "kind": "hit",
+    "use": "compare",
+    "value": 51253,
+    "unit": "ダメージ",
+    "description": "ソルジャーO.W. の S1 の追加ダメージの 1 回（会心なし）。発の胴体と同じ増分に乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（発 8 通り・追加ダメージ 2 通り・その和）に当てた（使い捨てのスクリプト。V-0863「読み方」）",
+      "note": "発と追加ダメージの和の増分 59,502（胴体・距離あり 8,249 + 51,253）が 91 回、57,599（胴体 6,346 + 51,253）が 81 回。追加ダメージだけの増分は無い"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0863",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1385-04",
+    "recording": "1385",
+    "kind": "hit",
+    "use": "compare",
+    "value": 76880,
+    "unit": "ダメージ",
+    "description": "ソルジャーO.W. の S1 の追加ダメージの 1 回（会心）。発の胴体と同じ増分に乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（発 8 通り・追加ダメージ 2 通り・その和）に当てた（使い捨てのスクリプト。V-0863「読み方」）",
+      "note": "発と追加ダメージの和の増分 85,129（8,249 + 76,880）が 20 回、83,226（6,346 + 76,880）が 18 回"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0863",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1385-05",
+    "recording": "1385",
+    "kind": "count",
+    "use": "compare",
+    "value": 285,
+    "unit": "回",
+    "description": "ソルジャーO.W. の S1 の追加ダメージの回数（180 秒。命中は 2694 回）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、モデルの 1 ヒットの格子（発 8 通り・追加ダメージ 2 通り・その和）に当てた（使い捨てのスクリプト。V-0863「読み方」）",
+      "note": "発と追加ダメージの和に合う増分（会心 54 回）と、格子に合わない増分を最大 6 発 + 3 回に分けた分（+9 回。分けられない増分は 5 個）。追加ダメージだけの増分（外れた発に出たもの）は 0。追加ダメージどうしの間の命中の数の分布は確率 10% の幾何分布と矛盾しない（V-0863「結果」）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "perShotChanceCount",
+      "args": {
+        "slot": 1
+      },
+      "tolerance": {
+        "rel": 0.15
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0863",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1385-06",
+    "recording": "1385",
+    "kind": "count",
+    "use": "compare",
+    "value": 456,
+    "unit": "発",
+    "description": "ソルジャーO.W. のバーストの最大装弾数▲の窓の中の最大装弾数（リロードで込めた数）",
+    "method": {
+      "tool": "node tools/captures/reticle-ammo.ts --mode mags --max 500",
+      "note": "4 回のバーストとも、窓の中のリロードの明けに 456 を込めた（f2645・4924・7694・9851）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 1900
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0863",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1385-07",
+    "recording": "1385",
+    "kind": "timing",
+    "use": "compare",
+    "value": 587,
+    "unit": "フレーム（動画）",
+    "description": "ソルジャーO.W. の 1 回目のバーストの、発動の印（右のバースト欄の六角形が I から II に替わったフレーム）から、最大装弾数▲が切れて残弾が 120 以下に削られたフレームまで",
+    "method": {
+      "tool": "node tools/captures/reticle-ammo.ts --mode series --max 500 と recipe:burst-panel@4",
+      "note": "六角形の替わり目 f2485、残弾の表示が 120 以下になった最初のフレーム f3072（前のフレームまでは 456 から減った値）。モデル（発動の 6f 前から 588f の窓）より約 4f 遅い。付き始めはリロードまで表示に出ないので、付く遅れか維持の長さかは分けていない"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 1,
+        "from": 1,
+        "n": 0,
+        "edge": "end",
+        "skill": "burst",
+        "stat": "maxAmmo"
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0863",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1385-08",
+    "recording": "1385",
+    "kind": "timing",
+    "use": "compare",
+    "value": 587,
+    "unit": "フレーム（動画）",
+    "description": "ソルジャーO.W. の 2 回目のバーストの、発動の印（右のバースト欄の六角形が I から II に替わったフレーム）から、最大装弾数▲が切れて残弾が 120 以下に削られたフレームまで",
+    "method": {
+      "tool": "node tools/captures/reticle-ammo.ts --mode series --max 500 と recipe:burst-panel@4",
+      "note": "六角形の替わり目 f4812、残弾の表示が 120 以下になった最初のフレーム f5399（前のフレームまでは 456 から減った値）。モデル（発動の 6f 前から 588f の窓）より約 4f 遅い。付き始めはリロードまで表示に出ないので、付く遅れか維持の長さかは分けていない"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 1,
+        "from": 1,
+        "n": 1,
+        "edge": "end",
+        "skill": "burst",
+        "stat": "maxAmmo"
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0863",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1385-09",
+    "recording": "1385",
+    "kind": "timing",
+    "use": "compare",
+    "value": 587,
+    "unit": "フレーム（動画）",
+    "description": "ソルジャーO.W. の 3 回目のバーストの、発動の印（右のバースト欄の六角形が I から II に替わったフレーム）から、最大装弾数▲が切れて残弾が 120 以下に削られたフレームまで",
+    "method": {
+      "tool": "node tools/captures/reticle-ammo.ts --mode series --max 500 と recipe:burst-panel@4",
+      "note": "六角形の替わり目 f7521、残弾の表示が 120 以下になった最初のフレーム f8108（前のフレームまでは 456 から減った値）。モデル（発動の 6f 前から 588f の窓）より約 4f 遅い。付き始めはリロードまで表示に出ないので、付く遅れか維持の長さかは分けていない"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 1,
+        "from": 1,
+        "n": 2,
+        "edge": "end",
+        "skill": "burst",
+        "stat": "maxAmmo"
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0863",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1385-10",
+    "recording": "1385",
+    "kind": "timing",
+    "use": "compare",
+    "value": 587,
+    "unit": "フレーム（動画）",
+    "description": "ソルジャーO.W. の 4 回目のバーストの、発動の印（右のバースト欄の六角形が I から II に替わったフレーム）から、最大装弾数▲が切れて残弾が 120 以下に削られたフレームまで",
+    "method": {
+      "tool": "node tools/captures/reticle-ammo.ts --mode series --max 500 と recipe:burst-panel@4",
+      "note": "六角形の替わり目 f9732、残弾の表示が 120 以下になった最初のフレーム f10319（前のフレームまでは 456 から減った値）。モデル（発動の 6f 前から 588f の窓）より約 4f 遅い。付き始めはリロードまで表示に出ないので、付く遅れか維持の長さかは分けていない"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 1,
+        "from": 1,
+        "n": 3,
+        "edge": "end",
+        "skill": "burst",
+        "stat": "maxAmmo"
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0863",
+    "readAt": "2026-11-22"
+  }
+]

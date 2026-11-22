@@ -1,0 +1,114 @@
+{
+  "formatVersion": 1,
+  "resourceId": 230,
+  "checkedAt": "2026-11-22",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "dot",
+          "trigger": {
+            "count": "normalShot",
+            "chanceRef": 7
+          },
+          "ref": 1,
+          "intervalSeconds": 1,
+          "durationRef": 2,
+          "restartOnReapply": true,
+          "assumes": {
+            "ja": "確率で付く持続ダメージを期待値で持つ（1 発ごとに値 7 の % で付く。plan/design-chance-dot-damage.md 3.1 節）。付いた発のフレームに tick が出て、1.5 秒後から 1 秒ごとに計 5 回（C-0101 の形）。付け直すたびに刻みを付けた時から数え直し、前の付与の残りの tick は出ない（C-1540）。起点ごとの tick に、その tick が出る確率を掛ける。tick がゲージを溜めるかは確かめていない（モデルは溜めない）",
+            "en": "The chance-based sustained damage is modelled as an expectation (each shot applies it with value 7 %; plan/design-chance-dot-damage.md 3.1). A tick lands on the applying shot frame, then from 1.5 s on every second, 5 in total (as in C-0101). Each reapplication restarts the tick grid from that time, and the remaining ticks of the previous application do not occur (C-1540). Each tick of each application is weighted by the probability that it occurs. Whether ticks charge the Burst gauge is unverified (the model charges none)"
+          },
+          "claims": [
+            "C-1539",
+            "C-1540"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "敵が撃破された時の、最も近い敵へのウイルス転移の広がりは、射撃場の敵が倒れないので起きない（敵 1 体の前提。要件 4.2 節）",
+          "en": "Spreading Virus Transfer to the nearest enemies when an enemy is brought down does not occur, since the range enemy is never defeated (a single enemy; requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "dot",
+            "trigger": "unknown"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "self",
+          "stat": "pierce",
+          "durationShotsRef": 2,
+          "assumes": {
+            "ja": "貫通特化（1 発間維持）。フルチャージの発の後に付いて次の 1 発に乗る（C-0868 の形）。それ自体は与ダメージを変えず、味方の貫通ダメージ▲の乗る発にする",
+            "en": "Pierce (lasts 1 round). Applied after a Full Charge shot and rides on the next shot (as in C-0868). It does not change damage by itself; it makes the shot one that allies' Pierce Damage ups apply to"
+          },
+          "claims": [
+            "C-1541"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "self",
+          "stat": "critRate",
+          "ref": 1,
+          "durationShotsRef": 2,
+          "assumes": {
+            "ja": "クリティカル確率▲（1 発間維持）。フルチャージの発の後に付いて次の 1 発の会心率に足す（C-0868 の形）。オート射撃ではどの発もフルチャージなので、戦闘の最初の発の後のどの発にも乗る",
+            "en": "Crit Rate up (lasts 1 round). Applied after a Full Charge shot and added to the next shot's crit rate (as in C-0868). With auto fire every shot is a Full Charge shot, so it applies to every shot after the first"
+          },
+          "claims": [
+            "C-1541"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "敵を倒した時の自分の攻撃力▲（スタック）は、射撃場の敵が倒れないので起きない（敵 1 体の前提。要件 4.2 節）",
+          "en": "ATK up on self when defeating an enemy (stacking) does not occur, since the range enemy is never defeated (a single enemy; requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "unknown"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "敵全体は単体ボスで 1 ヒット。ヒットは遅れの表（burst/landing.ts）の時刻（III のタイマーの 00.00 から 23f）に出す",
+            "en": "All enemies are a lone boss, so it lands once. The hit lands at the time in the delay table (burst/landing.ts; 23 frames after the III timer reaches 00.00)"
+          },
+          "claims": [
+            "C-1542",
+            "C-1543"
+          ]
+        }
+      ]
+    }
+  }
+}

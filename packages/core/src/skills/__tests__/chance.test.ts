@@ -50,12 +50,14 @@ describe('chance / chanceRef の検証', () => {
     );
   });
 
-  it('cannot be combined with counting fields, and only appears in timed', () => {
+  it('cannot be combined with counting fields, and only appears in timed, state grants, dot and damage', () => {
     expect(() =>
       parseSkillDefinition(withSkill1([{ ...S1, trigger: { count: 'normalHit', chanceRef: 3, every: 2 } }])),
     ).toThrow(/cannot be combined with every/);
-    const damage = { kind: 'damage', trigger: { count: 'normalHit', chanceRef: 3 }, ref: 1, damageType: 'skill' };
-    expect(() => parseSkillDefinition(withSkill1([damage]))).toThrow(/only allowed in timed/);
+    const refill = { kind: 'ammoRefill', trigger: { count: 'normalHit', chanceRef: 3 }, ref: 1 };
+    expect(() => parseSkillDefinition(withSkill1([refill]))).toThrow(
+      /only allowed in timed, state grants, dot and damage/,
+    );
   });
 
   it('rejects stats that do not add up linearly and the fields whose meaning is undecided', () => {

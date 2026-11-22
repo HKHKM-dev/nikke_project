@@ -1,0 +1,100 @@
+{
+  "verification": "V-0863",
+  "note": "ソルジャーO.W. 単騎・AUTO・オートバースト ON。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。S1 の追加ダメージの 1 回の値（会心なし・会心。戦闘の始めの区間）と、回数の期待値（区間ごとの発数 × 弾丸命中率 × 10%）、バーストの最大装弾数▲の窓の中の最大装弾数",
+  "team": [
+    {
+      "rid": 306,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（外れた発には出ない追加ダメージ。最大装弾数 280%▲・10 秒）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "extra",
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "S1 の追加ダメージの 1 回の値（会心なし）"
+    },
+    {
+      "id": "extra-crit",
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "S1 の追加ダメージの 1 回の値（会心）"
+    },
+    {
+      "id": "extra-count",
+      "model": "sim",
+      "metric": "perShotChanceCount",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.15
+      },
+      "note": "S1 の追加ダメージの回数の期待値。録画ごとの揺れは約 ±6%（1 本で約 280 回）"
+    },
+    {
+      "id": "burst-max-ammo",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 1900
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "1 回目のバーストの窓の中の最大装弾数"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-22",
+    "commit": "5520a72468c13d4cfdba64bddc796b370d399e8d",
+    "values": {
+      "H1": {
+        "extra": 51253.02,
+        "extra-crit": 76879.53,
+        "extra-count": 295.8,
+        "burst-max-ammo": 456
+      }
+    }
+  }
+}

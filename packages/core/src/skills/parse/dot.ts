@@ -5,6 +5,9 @@ import {
   DOT_FIRST_TICKS,
   type DotEffect,
   type DotFirstTick,
+  type EffectTrigger,
+  isAppliedTrigger,
+  isChanceTrigger,
   isCounterFullTrigger,
   isShotCountTrigger,
   isTimerTrigger,
@@ -76,6 +79,40 @@ function validateAppliedDot(
     if (v[key] !== undefined) fail(`${path}.${key}`, `a dot on { applied } cannot have ${key}`);
 }
 
+/**
+ * 確率のきっかけの dot（plan/design-chance-dot-damage.md 3.1 節）は、付いた記録の無い 1 つの持続ダメージとして、起点ごとの tick に
+ * 出る確率の重みを持たせる（frame/dot.ts の chanceDotTicks）。名前の付いた状態・スタック・付け直しの形の違う刻み・数・遅れ・ゲージ・条件とは
+ * 組まない（使い手がいない。ゲージの期待値はバーストの時刻表を動かす。同 3.3 節）
+ */
+function validateChanceDot(v: Record<string, Json>, trigger: EffectTrigger, path: string): void {
+  if (isChanceTrigger(trigger)) rejectPlainOnlyKeys(v, path, 'a dot on a chance trigger');
+}
+
+/**
+ * 確率のきっかけの dot と restartOnReapply の dot が書けない欄（付いている間・スタック・刻みの遅れ・数・遅れ・ゲージ・条件を追う欄）。
+ * firstTick halfAfterLatest は durationUntil: battleEnd と組むので、durationUntil を書けなければ書けない（parseDotTickShape）
+ */
+const PLAIN_DOT_REJECTED_KEYS = [
+  'state',
+  'maxStacksRef',
+  'durationUntil',
+  'gaugeOnApply',
+  'gaugeOnApplyDelayFrames',
+  'tickDelayFrames',
+  'gaugeOnTick',
+  'perCount',
+  'perCountIntervalFrames',
+  'delayFrames',
+  'stacksFrom',
+  'copyEachTick',
+  'condition',
+] as const;
+
+function rejectPlainOnlyKeys(v: Record<string, Json>, path: string, what: string): void {
+  for (const key of PLAIN_DOT_REJECTED_KEYS)
+    if (v[key] !== undefined) fail(`${path}.${key}`, `${what} cannot have ${key}`);
+}
+
 /** dot に書ける欄 */
 const DOT_KEYS: readonly string[] = [
   'kind',
@@ -94,6 +131,7 @@ const DOT_KEYS: readonly string[] = [
   'durationUntil',
   'tickIntervalFrames',
   'hitOnApply',
+  'restartOnReapply',
   'perCount',
   'perCountIntervalFrames',
   'delayFrames',
@@ -121,17 +159,19 @@ export function parseDotEffect(v: Record<string, Json>, path: string): DotEffect
   const stateEnd = typeof durationUntil === 'object' ? durationUntil : undefined;
   const effect: DotEffect = {
     kind: 'dot',
-    trigger: counterFull ?? applied ?? parseTrigger(v.trigger, `${path}.trigger`, { timer: true }),
+    trigger: counterFull ?? applied ?? parseTrigger(v.trigger, `${path}.trigger`, { timer: true, chance: true }),
     ref: parseRef(v.ref, `${path}.ref`),
     intervalSeconds: interval,
     ...(durationUntil !== undefined ? { durationUntil } : parseDuration(v, path)),
   };
   validateAppliedDot(v, applied, stateEnd, path);
+  validateChanceDot(v, effect.trigger, path);
   parseDotCondition(v, effect, path);
   parseDotIntervalAndFirstTick(v, effect, path);
   // 状態異常の名前。目録の id（持ち主が敵の状態）
   if (v.state !== undefined) effect.state = parseNamedStateId(v.state, `${path}.state`, 'enemy');
   parseDotTickShape(v, effect, path);
+  parseDotRestart(v, effect, path);
   parseDotCounter(v, effect, path);
   parseDotStacks(v, effect, path);
   parseDotGauge(v, effect, path);
@@ -191,6 +231,19 @@ function parseDotTickShape(v: Record<string, Json>, effect: DotEffect, path: str
     if (!latest) fail(`${path}.hitOnApply`, 'needs firstTick halfAfterLatest');
     effect.hitOnApply = true;
   }
+}
+
+/**
+ * 付け直しのたびに刻みを数え直す形（restartOnReapply。plan/design-chance-dot-damage.md 9 節）。刻みは付けた時からの atApplication か
+ * afterInterval で、付いている間・スタック・ゲージを追う欄とは組まない（使い手がいない）
+ */
+function parseDotRestart(v: Record<string, Json>, effect: DotEffect, path: string): void {
+  if (v.restartOnReapply === undefined) return;
+  if (v.restartOnReapply !== true) fail(`${path}.restartOnReapply`, 'expected true');
+  rejectPlainOnlyKeys(v, path, 'a dot with restartOnReapply');
+  if (isCounterFullTrigger(effect.trigger) || isAppliedTrigger(effect.trigger))
+    fail(`${path}.trigger`, 'a dot with restartOnReapply cannot use { counterFull } or { applied }');
+  effect.restartOnReapply = true;
 }
 
 /** { counterFull } のきっかけの dot: カウンタの値だけのヒット（perCount・perCountIntervalFrames）と遅れ（delayFrames） */

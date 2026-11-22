@@ -7,6 +7,7 @@ import {
   type DamageEffect,
   type EffectTrigger,
   isAppliedTrigger,
+  isChanceTrigger,
   isCounterFullTrigger,
   isEndedTrigger,
   isFullStackTrigger,
@@ -80,6 +81,7 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
     fail(path, 'onSkillCrit cannot be used with fixedShare, summon attacks or accumulate');
   if (damageType === 'fixedShare') return parseFixedShareDamage(v, effect, path);
   if (isSummonAttackTrigger(trigger)) return parseSummonDamage(v, effect, path);
+  if (isChanceTrigger(trigger)) return parseChanceDamage(v, effect, path);
   if (v.accumulate !== undefined) return parseAccumulateDamage(v, effect, path);
   parseGaugeHitsAndCondition(v, effect, path);
   parseDamageDelay(v, effect, path);
@@ -121,6 +123,23 @@ function parseFixedShareDamage(v: Record<string, Json>, effect: DamageEffect, pa
       fail(`${path}.gaugeHits`, 'fixedShare takes only gaugeHits [0] (the fixed damage lands with the shot)');
     effect.gaugeHits = hits;
   }
+  parseAssumes(v, effect, path);
+  return effect;
+}
+
+/**
+ * 確率のきっかけの倍率ダメージ（plan/design-chance-dot-damage.md 3.2 節）は、射撃ごとの倍率ダメージ（perShot）に確率を掛けて畳み込むので、
+ * 畳み込めない欄（条件・遅れ・数のヒット・ゲージ・値の時点）と防御力無視とは組まない。SG は畳み込みと同じく解決で落とす
+ */
+function parseChanceDamage(v: Record<string, Json>, effect: DamageEffect, path: string): DamageEffect {
+  rejectUnknownKeys(
+    v,
+    ['kind', 'trigger', 'ref', 'damageType', 'assumes', 'claims', 'reads'],
+    path,
+    'not allowed with a chance trigger',
+  );
+  if (effect.damageType === 'true')
+    fail(`${path}.damageType`, 'a chance trigger cannot be used with the damageType "true"');
   parseAssumes(v, effect, path);
   return effect;
 }

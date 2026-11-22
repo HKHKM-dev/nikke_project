@@ -1,0 +1,104 @@
+{
+  "verification": "V-0862",
+  "note": "鈴原サクラ（I）+ デルタ（II）+ ハラン（III・操作）。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オート射撃 ON・オートバースト ON。ハランのバーストのヒットの値（会心なし・会心）と、発動からヒットまでの動画のフレーム（遅れの表に無いので、いまのモデルは発動と同じフレーム）、フルバーストの窓の始まり（tick がゲージを溜めないとき）",
+  "team": [
+    {
+      "rid": 836
+    },
+    {
+      "rid": 20
+    },
+    {
+      "rid": 230,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（敵全体の 999% のバーストスキルダメージ。持続ダメージの tick はゲージを溜めない）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "burst-hit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "1 回目のバーストのヒット（会心なし）"
+    },
+    {
+      "id": "burst-hit-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "1 回目のバーストのヒット（会心）"
+    },
+    {
+      "id": "burst-delays",
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "発動からヒットまでの動画のフレーム（いまのモデルは遅れ 0）"
+    },
+    {
+      "id": "full-burst-starts",
+      "model": "sim",
+      "metric": "fullBurstStarts",
+      "args": {},
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 60
+      },
+      "note": "フルバーストの窓の始まり（ゲージに tick の分が入るとずれる。3.3 節）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-22",
+    "commit": "5520a72468c13d4cfdba64bddc796b370d399e8d",
+    "values": {
+      "H1": {
+        "burst-hit": 1411707.371508,
+        "burst-hit-crit": 2117561.0572619997,
+        "burst-delays": [0, 0, 0, 0],
+        "full-burst-starts": [401, 2753, 5105, 7457, 9809]
+      }
+    }
+  }
+}
