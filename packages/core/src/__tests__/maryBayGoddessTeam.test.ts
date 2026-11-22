@@ -49,9 +49,9 @@ const CASES: Record<string, { input: TeamInput; mary: number }> = {
     input: fixedTeam([MARY_BG], 0, { enemy: rangeEnemyWithEvents() }),
     mary: 0,
   },
-  '実戦寄り（メアリー：ベイゴッデス + アニス：スター + レム + ヘルム（操作） + ネオン：ブルーオーシャン）・灼熱の敵': {
-    input: fixedTeam([MARY_BG, 17, 820, 352, 14], 3, { enemy: rangeEnemyWithEvents() }),
-    mary: 0,
+  '実戦寄り（アニス：スター + メアリー：ベイゴッデス + レム + ヘルム（操作） + ネオン：ブルーオーシャン）・灼熱の敵': {
+    input: fixedTeam([17, MARY_BG, 820, 352, 14], 3, { enemy: rangeEnemyWithEvents() }),
+    mary: 1,
   },
 };
 const TEAMS = Object.fromEntries(Object.entries(CASES).map(([name, c]) => [name, c.input]));
@@ -63,7 +63,9 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, mary }) => {
     .filter((a) => a.slotIndex === mary)
     .map((a) => effectFrameOf(a))
     .filter((f) => f < plan.frames);
-  const water = [...input.slots.keys()].filter((i) => characterOf(input.slots[i]!.character.resourceId).element === 'Water');
+  const water = [...input.slots.keys()].filter(
+    (i) => characterOf(input.slots[i]!.character.resourceId).element === 'Water',
+  );
   const others = [...input.slots.keys()].filter((i) => !water.includes(i));
 
   it('adds one S2 tier from each of her first three Burst uses, for 3, 5 and 10 seconds (C-1532)', () => {
@@ -74,7 +76,8 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, mary }) => {
         const tier = tiers.filter((w) => w.origin.kind === 'timed' && w.origin.effect.effectIndex === k);
         // k 段目は、自分の k + 1 回目以降のバーストの使用のたびに付く（編成のほかの I・II・III の使用は数えない）
         expect(tier.map((w) => w.start)).toEqual(uses.slice(k));
-        for (const w of tier) expect(w.end).toBe(Math.min(w.start + gameSecondsToFrames(TIER_SECONDS[k]!), plan.frames));
+        for (const w of tier)
+          expect(w.end).toBe(Math.min(w.start + gameSecondsToFrames(TIER_SECONDS[k]!), plan.frames));
       }
     }
     for (const holder of others)
@@ -83,7 +86,13 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, mary }) => {
 
   it('gives the Burst ATK up only to Water allies for 3 seconds from each use (C-1533)', () => {
     for (const holder of water) {
-      const items = itemsOf(plan.history, { sourceSlotIndex: mary, holder, kind: 'timed', skill: 'burst', stat: 'attack' });
+      const items = itemsOf(plan.history, {
+        sourceSlotIndex: mary,
+        holder,
+        kind: 'timed',
+        skill: 'burst',
+        stat: 'attack',
+      });
       expect(items.map((w) => w.start)).toEqual(uses);
       for (const w of items) expect(w.end).toBe(Math.min(w.start + gameSecondsToFrames(3), plan.frames));
     }
