@@ -6,6 +6,10 @@
 // 見る範囲は packages・apps・tools の .ts・.tsx（node_modules・dist・名前が . で始まるフォルダ・.d.ts を除く）。節:
 //   long: 長い関数（中に置いた関数の行を除いた行数の順。宣言の始めから終わりまでの行数も出す。vitest の describe・it などに渡す
 //         関数は数えない。long だけなら --path の下のファイルだけを読む）
+//   branch: 分岐の多さ（循環的複雑度の順。ESLint の complexity ルールの classic と同じ数え方: 関数ごとに 1 から始め、if・?:・
+//           &&・||・??・&&=・||=・??=・for・for…in・for…of・while・do…while・catch・default でない case・既定値・?. の 1 つずつに
+//           1 を足す。中に置いた関数の分岐はその関数にだけ数え、クラスのフィールドの初期化子と static ブロックも 1 つに数える。
+//           long と同じく vitest の枠に渡す関数は出さない。long・branch だけなら --path の下のファイルだけを読む）
 //   dup: 同じ形の文の並び（名前と値を区別しない構文木の形）。import・型の宣言・describe・it などの呼び出しを区切りにし、テストの
 //        本体（it などに渡す関数の中）は見ない。--min-lines（既定 8）に満たない所は数えない
 //   unused: 読まれない export（どこからも・テストからだけ）。テストと、どのファイルも読まないファイル（スクリプト・設定・画面の
@@ -31,6 +35,7 @@ import {
 import {
   coChangePairs,
   findDuplicates,
+  functionComplexities,
   functionLengths,
   linkedTargets,
   occurrenceKey,
@@ -40,7 +45,7 @@ import {
   type ModuleInfo,
 } from './survey-lib.ts';
 
-const SECTIONS = ['long', 'dup', 'unused', 'cycles', 'cochange'] as const;
+const SECTIONS = ['long', 'branch', 'dup', 'unused', 'cycles', 'cochange'] as const;
 type Section = (typeof SECTIONS)[number];
 /** これを超えるファイルを変えた commit（一括の書き換え）は、一緒に変わった回数に数えない */
 const MAX_FILES_PER_COMMIT = 30;
@@ -72,12 +77,12 @@ const inPath = (file: string): boolean =>
 
 const started = performance.now();
 const root = fileURLToPath(new URL('../../', import.meta.url));
-// 長い関数だけなら、出すファイルだけを読む（ほかの節は、全部のファイルの関係を見る）
-const onlyLong = only.every((section) => section === 'long');
+// 長い関数・分岐の多さだけなら、出すファイルだけを読む（ほかの節は、全部のファイルの関係を見る）
+const onlyPerFunction = only.every((section) => section === 'long' || section === 'branch');
 const sources = REPO_IMPORT_GRAPH.dirs
   .flatMap((dir) => sourceFilesUnder(join(root, dir)))
   .map((path) => ({ path, file: repoKey(root, path) }))
-  .filter(({ file }) => !onlyLong || inPath(file))
+  .filter(({ file }) => !onlyPerFunction || inPath(file))
   .map(({ path, file }) => ({ path, file, source: parseSource(file, readFileSync(path, 'utf8')) }));
 
 /** 辿れない指定（import-cycles.test.ts は実行時の import しか見ないので、import() や型の import('…') で出うる） */
@@ -118,6 +123,15 @@ if (shown('long')) {
     .sort((a, b) => b.own - a.own || b.lines - a.lines || a.file.localeCompare(b.file) || a.line - b.line);
   const rows = all.slice(0, top).map((f) => [f.own, f.lines, f.name, `${f.file}:${f.line}`]);
   table('長い関数', all.length, ['行数（中の関数を除く）', '全体', '関数', '場所'], rows);
+}
+
+if (shown('branch')) {
+  const all = sources
+    .filter(({ file }) => inPath(file))
+    .flatMap(({ file, source }) => functionComplexities(file, source))
+    .sort((a, b) => b.complexity - a.complexity || a.file.localeCompare(b.file) || a.line - b.line);
+  const rows = all.slice(0, top).map((f) => [f.complexity, f.name, `${f.file}:${f.line}`]);
+  table('分岐の多い関数', all.length, ['複雑度', '関数', '場所'], rows);
 }
 
 if (shown('dup')) {

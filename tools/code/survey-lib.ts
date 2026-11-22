@@ -42,8 +42,12 @@ const oneLine = (text: string, max: number): string => {
 };
 
 /** 関数の呼び名（宣言の名前・代入先・メソッドならクラスの名前を前に付ける・呼び出しに渡すなら「<呼ぶ先>(…) の引数」） */
+/** クラスの中の宣言なら「<クラスの名前>.」 */
+const classPrefix = (node: ts.Node): string =>
+  ts.isClassLike(node.parent) ? `${node.parent.name?.text ?? '(無名のクラス)'}.` : '';
+
 function functionName(fn: ts.FunctionLikeDeclaration, source: ts.SourceFile): string {
-  const owner = ts.isClassLike(fn.parent) ? `${fn.parent.name?.text ?? '(無名のクラス)'}.` : '';
+  const owner = classPrefix(fn);
   if (ts.isConstructorDeclaration(fn)) return `${owner}constructor`;
   if (fn.name !== undefined) return `${owner}${fn.name.getText(source)}`;
   let parent = fn.parent;
@@ -90,6 +94,115 @@ export function functionLengths(file: string, source: ts.SourceFile): FunctionLe
       return;
     }
     ts.forEachChild(node, (child) => visit(child, outer));
+  };
+  visit(source, undefined);
+  return out;
+}
+
+// ---- 分岐の多さ ----
+
+/** 関数の循環的複雑度（数え方は functionComplexities） */
+export type FunctionComplexity = { file: string; name: string; line: number; complexity: number };
+
+const LOGICAL_OPERATORS = new Set<ts.SyntaxKind>([
+  ts.SyntaxKind.AmpersandAmpersandToken,
+  ts.SyntaxKind.BarBarToken,
+  ts.SyntaxKind.QuestionQuestionToken,
+  ts.SyntaxKind.AmpersandAmpersandEqualsToken,
+  ts.SyntaxKind.BarBarEqualsToken,
+  ts.SyntaxKind.QuestionQuestionEqualsToken,
+]);
+
+/** 分割代入の式の左辺（`[a, b] = …`・`({ a } = …)`・`for ([a] of …)`）の中の節か */
+function inAssignmentTarget(node: ts.Node): boolean {
+  let child = node;
+  let parent = node.parent;
+  while (
+    ts.isArrayLiteralExpression(parent) ||
+    ts.isObjectLiteralExpression(parent) ||
+    ts.isPropertyAssignment(parent) ||
+    ts.isSpreadElement(parent) ||
+    ts.isSpreadAssignment(parent) ||
+    ts.isParenthesizedExpression(parent)
+  ) {
+    child = parent;
+    parent = parent.parent;
+  }
+  if (child === node) return false;
+  if (ts.isBinaryExpression(parent))
+    return parent.operatorToken.kind === ts.SyntaxKind.EqualsToken && parent.left === child;
+  return (ts.isForOfStatement(parent) || ts.isForInStatement(parent)) && parent.initializer === child;
+}
+
+/** その節が、いまの関数の複雑度に足す分岐か（ESLint の complexity の classic と同じ決まり） */
+function isBranch(node: ts.Node): boolean {
+  switch (node.kind) {
+    case ts.SyntaxKind.IfStatement:
+    case ts.SyntaxKind.ConditionalExpression:
+    case ts.SyntaxKind.ForStatement:
+    case ts.SyntaxKind.ForInStatement:
+    case ts.SyntaxKind.ForOfStatement:
+    case ts.SyntaxKind.WhileStatement:
+    case ts.SyntaxKind.DoStatement:
+    case ts.SyntaxKind.CatchClause:
+    case ts.SyntaxKind.CaseClause:
+      return true;
+  }
+  if (ts.isBinaryExpression(node)) {
+    if (LOGICAL_OPERATORS.has(node.operatorToken.kind)) return true;
+    // 分割代入の式の既定値（`[a = 1] = …`）
+    return node.operatorToken.kind === ts.SyntaxKind.EqualsToken && inAssignmentTarget(node);
+  }
+  // 既定値（引数・分割の宣言・`({ a = 1 } = …)`）
+  if (ts.isParameter(node) || ts.isBindingElement(node)) return node.initializer !== undefined;
+  if (ts.isShorthandPropertyAssignment(node)) return node.objectAssignmentInitializer !== undefined;
+  // ?. の 1 つずつ（`a?.b?.()` は 2）
+  if (ts.isPropertyAccessExpression(node) || ts.isElementAccessExpression(node) || ts.isCallExpression(node)) {
+    return node.questionDotToken !== undefined;
+  }
+  return false;
+}
+
+/**
+ * 本体のある関数ごとの循環的複雑度。ESLint の complexity ルール（variant は classic）と同じ数え方で、1 から始め、
+ * if・?:・&&・||・??・&&=・||=・??=・for・for…in・for…of・while・do…while・catch・default でない case・既定値・?. の
+ * 1 つずつに 1 を足す。中に置いた関数の分岐は、その関数にだけ数える。クラスのフィールドの初期化子と static ブロックも
+ * 1 つの関数として数える（中に置いた関数のうち、ここに出すのは本体のある関数・初期化子・static ブロック）。functionLengths と
+ * 同じく、vitest の枠に渡す関数は出さない（その中の分岐は、どの関数にも数えない）
+ */
+export function functionComplexities(file: string, source: ts.SourceFile): FunctionComplexity[] {
+  const out: FunctionComplexity[] = [];
+  /** current は数えている関数（undefined はファイルの直下か、vitest の枠に渡す関数の中） */
+  const visit = (node: ts.Node, current: FunctionComplexity | undefined): void => {
+    let frame = current;
+    let own: FunctionComplexity | undefined;
+    if (ts.isFunctionLike(node) && 'body' in node && node.body !== undefined) {
+      const name = testCallbackFrame(node) === undefined ? functionName(node, source) : undefined;
+      own = name === undefined ? undefined : { file, name, line: startLine(node, source), complexity: 1 };
+      frame = own;
+    } else if (ts.isClassStaticBlockDeclaration(node)) {
+      own = { file, name: `${classPrefix(node)}static ブロック`, line: startLine(node, source), complexity: 1 };
+      frame = own;
+    } else if (frame !== undefined && isBranch(node)) {
+      frame.complexity++;
+    }
+    if (own !== undefined) out.push(own);
+    // クラスのフィールドの初期化子は、外の関数と分けて数える
+    if (ts.isPropertyDeclaration(node) && node.initializer !== undefined) {
+      ts.forEachChild(node, (child) => {
+        if (child !== node.initializer) visit(child, frame);
+      });
+      const field: FunctionComplexity = {
+        file,
+        name: `${classPrefix(node)}${node.name.getText(source)} の初期化子`,
+        line: startLine(node, source),
+        complexity: 1,
+      };
+      out.push(field);
+      visit(node.initializer, field);
+      return;
+    }
+    ts.forEachChild(node, (child) => visit(child, frame));
   };
   visit(source, undefined);
   return out;
