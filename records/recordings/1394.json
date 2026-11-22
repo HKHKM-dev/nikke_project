@@ -1,0 +1,40 @@
+{
+  "id": "1394",
+  "date": "2026-11-22",
+  "folder": "range",
+  "file": "20261122-1394_aria-cocoa.mp4",
+  "original": "2026-11-22_21-35-01.mp4",
+  "durationSec": 198.6,
+  "frames": 11917,
+  "fps": 60,
+  "sizeMB": 240.7,
+  "sha256": "b60025e0f962",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 432,
+      "name": "アリア",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0871 の撮影（III なしでフルバーストを起こさない編成）",
+  "backup": {
+    "at": "2026-11-22T21:44+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
