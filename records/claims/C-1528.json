@@ -1,0 +1,15 @@
+{
+  "id": "C-1528",
+  "text": "チャイムの S2 の日課報告（フルバーストタイムが発動した時、自分の王に、通常攻撃ダメージ倍率 46.22%▲・10 秒）は、クラウンに付き、フルバーストの中のクラウンの 1 ヒットに乗る",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1373-18`・`1374-17`。V-0857",
+  "model": "data/skills/331.json の skill2 の timed（fullBurstStart・allies・targetCharacter 330・normalAttackDamage）",
+  "replaces": [],
+  "updated": "2026-11-22",
+  "subject": {
+    "places": ["data/skills/331.json の skill2 の effects[0]"]
+  },
+  "decidedOn": []
+}

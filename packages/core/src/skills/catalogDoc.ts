@@ -473,7 +473,7 @@ const TGT_INFO: Record<string, Info> = {
     'デバフのかかった味方のうちランダムな N 機（デバフの印の付いた状態か timed の▼のある味方から選ぶ。removeDebuff の target debuffedRandom。N 機より多いときの選び方は未確認）',
     'check',
   ],
-  'ally:specific': ['特定のキャラ（自分の王＝クラウン・自分のアイドル＝アニス：スター）', 'gap'],
+  'ally:specific': ['特定のキャラ（自分の王＝クラウン・自分のアイドル＝アニス：スター）', 'ok', 'targetCharacter'],
   cover: ['遮蔽物', 'damaged'],
   'enemy:all': ['敵全体・攻撃範囲内の敵', 'ok'],
   'enemy:hit': ['対象（命中した敵）', 'ok'],

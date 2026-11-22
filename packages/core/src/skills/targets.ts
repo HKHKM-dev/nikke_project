@@ -53,6 +53,8 @@ export type TargetFields = {
   targetCount?: number;
   /** 「同じ部隊の味方全体に」 */
   targetSquad?: TargetSquad;
+  /** 「自分の王」「自分のアイドル」（キャラの resourceId。plan/design-chime.md 2.1 節）。枠は skills/composition.ts が fixedTargets に書く */
+  targetCharacter?: number;
   /** 「自分を除く」（topAttack と、allies の always） */
   excludeSelf?: ExcludeSelf;
   /** 「〈名前〉状態の」（目録の id） */
@@ -89,11 +91,18 @@ export type TargetedEffect = { target: BuffTarget } & TargetFields;
 export function needsFixedTargets(
   effect: { target: string } & Pick<
     TargetFields,
-    'targetSquad' | 'targetState' | 'targetAdjacent' | 'targetBurstStep' | 'targetLeftmost' | 'excludeSelf'
+    | 'targetSquad'
+    | 'targetCharacter'
+    | 'targetState'
+    | 'targetAdjacent'
+    | 'targetBurstStep'
+    | 'targetLeftmost'
+    | 'excludeSelf'
   >,
 ): boolean {
   return (
     effect.targetSquad !== undefined ||
+    effect.targetCharacter !== undefined ||
     effect.target === 'longestChargeTime' ||
     effect.target === 'lowestHpRatio' ||
     effect.targetState !== undefined ||

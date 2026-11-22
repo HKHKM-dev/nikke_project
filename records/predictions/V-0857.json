@@ -1,0 +1,286 @@
+{
+  "verification": "V-0857",
+  "note": "撮影（I-DOLL・フラワー（I）+ チャイム（II・操作）+ クラウン（II）+ クロウ（III）・オートバースト ON）の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。H1 では、どのチェーンも I → チャイムの II → クラウンの II と進み、クロウの CT（40 秒）が明けている回だけ III とフルバーストに入る（フルバーストと時間切れが交互）。フレームの指定は、1 回目のバーストより前（S1 だけ）・1 回目のフルバーストの中・2 回目のチェーン（時間切れ）でチャイムの忠心とクラウンのバーストが重なる区間と、クラウンのバーストだけの区間",
+  "team": [
+    {
+      "rid": 304
+    },
+    {
+      "rid": 331,
+      "controlled": true
+    },
+    {
+      "rid": 330
+    },
+    {
+      "rid": 110
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S1: クラウンにチャイムの攻撃力の 46.46% の攻撃力▲（持続）。S2: フルバースト開始時にクラウンに通常攻撃ダメージ倍率 46.22%▲（10 秒）。バースト: チャイムの II の後は II にとどまり、別の II（クラウン）が撃ってから III へ。味方全体に最大装弾数 20%▲・クラウンに攻撃ダメージ 92.44%▲（10 秒））"
+    },
+    {
+      "id": "H0",
+      "note": "再突入しない（チャイムの II の後すぐ III。クラウンはバーストを撃たない）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 331,
+            "skill": "burst",
+            "replace": 0,
+            "effect": {
+              "kind": "burstReentry",
+              "step": "Step3"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-all",
+      "note": "「味方全体に」を、チャイムの後のほかの II の発動にも再突入が付くと読む（クラウンの II の後も II にとどまり、ほかに II がいないので時間切れ。フルバーストに入らない）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 330,
+            "skill": "burst",
+            "effect": {
+              "kind": "burstReentry",
+              "step": "Step2"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-noking",
+      "note": "王への効果（S1・S2・バーストの忠心）が誰にも付かない（クラウンを王と読まない対照）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 331,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 331,
+            "skill": "skill2",
+            "index": 0
+          },
+          {
+            "rid": 331,
+            "skill": "burst",
+            "index": 2
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "order",
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 16
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "バーストを撃った枠の並び（バースト欄。recipe:burst-panel）"
+    },
+    {
+      "id": "fb-count",
+      "model": "sim",
+      "metric": "fullBurstCount",
+      "args": {},
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "180 秒のフルバーストの回数"
+    },
+    {
+      "id": "crown-s1",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "1 回目のバーストより前のクラウンの胴体・会心しない 1 ヒット（王への効果は S1 だけ）"
+    },
+    {
+      "id": "chime-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "同じ区間のチャイムの 1 ヒット（S1 はチャイム自身に付かない）"
+    },
+    {
+      "id": "crown-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "1 回目のフルバーストの中のクラウンの 1 ヒット（S2・忠心・クラウンのバースト・クラウンの S1 が乗る）"
+    },
+    {
+      "id": "crown-loyalty",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1950,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "2 回目のチェーン（時間切れ）の、チャイムの忠心とクラウンのバーストの攻撃ダメージ▲が重なる区間のクラウンの 1 ヒット"
+    },
+    {
+      "id": "crown-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "同じチェーンの、忠心が切れてクラウンのバーストの▲だけの区間のクラウンの 1 ヒット（crown-loyalty との比が忠心）"
+    },
+    {
+      "id": "ammo-in",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 2,
+        "frame": 1800
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目のチャイムのバーストの窓の中のチャイムの最大装弾数（左下の残弾の最大）"
+    },
+    {
+      "id": "ammo-out",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 2,
+        "frame": 2300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "窓の外のチャイムの最大装弾数"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-22",
+    "commit": "9f18cc4ae06cb09ffb36b1e8ecd28cf5d0771e7b",
+    "values": {
+      "H1": {
+        "order": [1, 2, 3, 4, 1, 2, 3, 1, 2, 3, 4, 1, 2, 3, 1, 2],
+        "fb-count": 5,
+        "crown-s1": 7080.528299999999,
+        "chime-base": 8139.6900000000005,
+        "crown-fb": 49991.2408512,
+        "crown-loyalty": 16191.752116439999,
+        "crown-after": 9646.51175592,
+        "ammo-in": 144,
+        "ammo-out": 120
+      },
+      "H0": {
+        "order": [1, 2, 4, 1, 2, 1, 2, 4, 1, 2, 1, 2, 4, 1, 2, 1],
+        "fb-count": 5,
+        "crown-s1": 7080.528299999999,
+        "chime-base": 8139.6900000000005,
+        "crown-fb": 29869.054819559995,
+        "crown-loyalty": 13625.768660519998,
+        "crown-after": 7080.528299999999,
+        "ammo-in": 144,
+        "ammo-out": 120
+      },
+      "H-all": {
+        "order": [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1],
+        "fb-count": 0,
+        "crown-s1": 7080.528299999999,
+        "chime-base": 8139.6900000000005,
+        "crown-fb": 16191.752116439999,
+        "crown-loyalty": 16191.752116439999,
+        "crown-after": 9646.51175592,
+        "ammo-in": 144,
+        "ammo-out": 120
+      },
+      "H-noking": {
+        "order": [1, 2, 3, 4, 1, 2, 3, 1, 2, 3, 4, 1, 2, 3, 1, 2],
+        "fb-count": 5,
+        "crown-s1": 4477.4445,
+        "chime-base": 8139.6900000000005,
+        "crown-fb": 15060.19616712,
+        "crown-loyalty": 6100.070386799999,
+        "crown-after": 6100.070386799999,
+        "ammo-in": 144,
+        "ammo-out": 120
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "C-1529",
+  "text": "チャイムのバーストの「バースト再突入 2 段階」は、チャイムが II を撃った後も段は II のままで、このチェーンでまだ撃っていない別の II（クラウン）が撃ってから III に進む（I → II → II → III）。クラウンの II の後は III に進む（再突入はチャイムの発動の後だけ）。CDN の次の段階（Step2）と同じ",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1373-09`・`1374-09`。V-0857",
+  "model": "data/skills/331.json の burst の burstReentry（Step2）。burst/dynamic.ts の burstUnitOf（定義の再突入の段階で nextStep を差し替える）",
+  "replaces": [],
+  "updated": "2026-11-22",
+  "subject": {
+    "places": ["data/skills/331.json の burst の effects[0]"]
+  },
+  "decidedOn": []
+}

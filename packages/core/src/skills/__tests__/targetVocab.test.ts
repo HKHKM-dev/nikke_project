@@ -1,5 +1,5 @@
 // 対象の語彙編（plan/design-target-vocab.md 2 節）: 自分を除く（excludeSelf）・基本チャージ時間の順位（longestChargeTime）・
-// 同じ部隊に絞る（targetSquad）と、「チャージ時間 X 秒▼」（chargeSpeed の scaling 'flat'）
+// 同じ部隊に絞る（targetSquad）・特定のキャラ（targetCharacter。plan/design-chime.md 2.1 節）と、「チャージ時間 X 秒▼」（chargeSpeed の scaling 'flat'）
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { applyResolvedEffect, ZERO_BUFFS } from '../buffs.ts';
@@ -189,6 +189,64 @@ describe('同じ部隊に絞る（targetSquad）', () => {
     expect(() => parse({ ...passive, targetSquad: 'other' })).toThrow(/targetSquad/);
     expect(() => parse({ ...passive, stat: 'damageTaken' })).toThrow(
       /cannot narrow its target by weapon, element, class or squad/,
+    );
+  });
+});
+
+describe('特定のキャラ（targetCharacter。自分の王）', () => {
+  const chime = makeCharacter({}, { resourceId: 331, weaponType: 'SMG' });
+  const crown = makeCharacter({}, { resourceId: 330, weaponType: 'MG' });
+  const other = makeCharacter({}, { resourceId: 304 });
+  const passive = {
+    kind: 'passive',
+    target: 'allies',
+    targetCharacter: 330,
+    stat: 'attack',
+    scaling: 'casterAttack',
+    ref: 1,
+  };
+
+  it('targets only the slot of that character', () => {
+    const chars = [other, chime, crown];
+    const def = applyComposition(parseSkillDefinition(definitionWith(passive)), chars, 1);
+    const effect = def.skills.skill1.effects[0] as unknown as { target: 'allies'; fixedTargets: number[] };
+    expect(effect.fixedTargets).toEqual([2]);
+    expect([0, 1, 2].filter((i) => isEffectTarget(effect, 1, i, chars[i]!))).toEqual([2]);
+    expect([0, 1, 2].filter((i) => canEverTarget(effect, 1, i, chars[i]!))).toEqual([2]);
+  });
+
+  it('targets nobody, the caster included, without that character', () => {
+    expect(fixedTargetsOf(parse(passive), [other, chime], 1)).toEqual([]);
+    expect(fixedTargetsOf(parse({ ...timed, target: 'allies', targetCharacter: 330 }), [chime], 0)).toEqual([]);
+  });
+
+  it('narrows a state grant the same way', () => {
+    const grant = {
+      kind: 'state',
+      state: 'persona',
+      trigger: 'burstUse',
+      target: 'allies',
+      targetCharacter: 330,
+      durationRef: 2,
+      contents: [{ stat: 'attack', ref: 1 }],
+    };
+    expect(fixedTargetsOf(parse(grant), [other, chime, crown], 1)).toEqual([2]);
+  });
+
+  it('refuses to target without the composition step', () => {
+    expect(() => isEffectTarget({ target: 'allies', targetCharacter: 330 }, 1, 2, crown)).toThrow(/fixedTargets/);
+  });
+
+  it('parses only a positive integer on allies, and not on damageTaken', () => {
+    expect(parse({ ...timed, target: 'allies', targetCharacter: 330 })).toMatchObject({ targetCharacter: 330 });
+    expect(() => parse({ ...passive, target: 'self' })).toThrow(/targetCharacter: only allowed with target "allies"/);
+    expect(() => parse({ ...passive, targetCharacter: 0 })).toThrow(/targetCharacter/);
+    expect(() => parse({ ...passive, targetCharacter: '330' })).toThrow(/targetCharacter/);
+    for (const extra of [{ targetAdjacent: true }, { targetLeftmost: true }, { targetDefense: 'lowerThanSelf' }]) {
+      expect(() => parse({ ...timed, target: 'allies', targetCharacter: 330, ...extra })).toThrow(/targetCharacter/);
+    }
+    expect(() => parse({ ...timed, target: 'allies', targetCharacter: 330, stat: 'damageTaken' })).toThrow(
+      /targetCharacter/,
     );
   });
 });

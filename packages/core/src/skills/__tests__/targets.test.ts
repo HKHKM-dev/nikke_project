@@ -33,6 +33,7 @@ describe('needsFixedTargets', () => {
     expect(needsFixedTargets({ target: 'longestChargeTime' })).toBe(true);
     expect(needsFixedTargets({ target: 'lowestHpRatio' })).toBe(true);
     expect(needsFixedTargets({ target: 'allies', targetSquad: 'same' })).toBe(true);
+    expect(needsFixedTargets({ target: 'allies', targetCharacter: 330 })).toBe(true);
     expect(needsFixedTargets({ target: 'allies', targetState: 'camouflage' })).toBe(true);
     expect(needsFixedTargets({ target: 'allies', targetAdjacent: true })).toBe(true);
     expect(needsFixedTargets({ target: 'allies', targetBurstStep: 'Step3' })).toBe(true);

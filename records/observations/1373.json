@@ -1,0 +1,559 @@
+[
+  {
+    "id": "1373-01",
+    "recording": "1373",
+    "kind": "timing",
+    "use": "record",
+    "value": [1218, 2421, 3602, 4804, 5985, 7187, 8368, 9620, 10800],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・26・0・26・0・26・0・26f"
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-02",
+    "recording": "1373",
+    "kind": "timing",
+    "use": "record",
+    "value": [1279, 2481, 3662, 4864, 6044, 7247, 8428, 9680, 10861],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・24・0・25・6・25・0・24f"
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-03",
+    "recording": "1373",
+    "kind": "timing",
+    "use": "record",
+    "value": [1308, 3691, 6073, 8457, 10889],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-04",
+    "recording": "1373",
+    "kind": "timing",
+    "use": "record",
+    "value": [1917, 4300, 6682, 9066, 11498],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-05",
+    "recording": "1373",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-06",
+    "recording": "1373",
+    "kind": "timing",
+    "use": "record",
+    "value": [2415, 3595, 4798, 5978, 7181, 8361, 10794],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f9564"
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-07",
+    "recording": "1373",
+    "kind": "timing",
+    "use": "record",
+    "value": [1276, 2478, 3659, 4861, 6041, 7243, 8425, 9677, 10858],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f2444・f3624・f4827・f6007・f7210・f8391・f10823"
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-08",
+    "recording": "1373",
+    "kind": "timing",
+    "use": "record",
+    "value": [3684, 6066, 8449],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f3452"
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-09",
+    "recording": "1373",
+    "kind": "count",
+    "use": "compare",
+    "value": [1, 2, 3, 4, 1, 2, 3, 1, 2, 3, 4, 1, 2, 3, 1, 2, 3, 4, 1, 2, 3, 1, 2, 3, 4, 1, 2, 3, 1, 2, 3, 4],
+    "unit": "枠",
+    "description": "最初の 32 回のバーストの発動の枠（1 始まり。9 回のチェーン）。奇数回目のチェーンは I-DOLL・フラワー（1）→ チャイム（2）→ クラウン（3）→ クロウ（4）でフルバースト、偶数回目はフラワー → チャイム → クラウンで、クロウ（CT 40 秒）が明けておらず時間切れ",
+    "method": {
+      "tool": "目視（バースト欄の切り出し）と burst-panel@4",
+      "note": "どのチェーンも I → II の替わり目（1373-01）から II → III の替わり目（1373-02）まで 60〜61f で、II の段の発動が 2 回（段の間隔は約 30f。C-0201）。II はチャイムとクラウンだけで、クラウンが先に撃てば次の段階（III）にすぐ進むので、どの回もチャイム → クラウンの順。1 回目のチェーンは画で確かめた（チャイムの発動の後に II のタイマーが 09.97 に戻り、II の段にチャイムとクラウンの顔が並んでから、両方の顔に CT が出て III に替わる）。フルバースト（1373-03）は 5 回で奇数回目のチェーンだけ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 32
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burst"
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-10",
+    "recording": "1373",
+    "kind": "timing",
+    "use": "record",
+    "value": 556.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 556,
+      "high": 557
+    },
+    "description": "チャイムの忠心（クラウンの攻撃ダメージ 92.44%▲）（L・LCh・LCw・LChCw → N・NCh・NCw・NChCw）が クラウン・チャイム・クロウ の 1 発で替わるまでの時刻の幅（1 番目の事象 f2481 から数えた動画のフレーム）。L・LCh・LCw・LChCwの最後の発は 555f、N・NCh・NCw・NChCwの最初の発は 557f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 3（クラウン）のモデルの f4000、N: 枠 3（クラウン）のモデルの f4500、Ch: 枠 2（チャイム）のモデルの f4000、Cw: 枠 4（クロウ）のモデルの f4000のペレット 2 個までの和、LCh: L と Ch の和、LCw: L と Cw の和、LChCw: L と Ch と Cw の和、NCh: N と Ch の和、NCw: N と Cw の和、NChCw: N と Ch と Cw の和。境は L・LCh・LCw・LChCw → N・NCh・NCw・NChCw（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 400〜800f。L・LCh・LCw・LChCw 384・N・NCh・NCw・NChCw 358・区別できない 98・外れ 425・食い違い（N・NCh・NCw・NChCwの最初の発より後のL・LCh・LCw・LChCwの発） 4"
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-11",
+    "recording": "1373",
+    "kind": "timing",
+    "use": "record",
+    "value": 556.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 556,
+      "high": 557
+    },
+    "description": "チャイムの忠心（クラウンの攻撃ダメージ 92.44%▲）（L・LCh・LCw・LChCw → N・NCh・NCw・NChCw）が クラウン・チャイム・クロウ の 1 発で替わるまでの時刻の幅（2 番目の事象 f4864 から数えた動画のフレーム）。L・LCh・LCw・LChCwの最後の発は 555f、N・NCh・NCw・NChCwの最初の発は 557f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 3（クラウン）のモデルの f4000、N: 枠 3（クラウン）のモデルの f4500、Ch: 枠 2（チャイム）のモデルの f4000、Cw: 枠 4（クロウ）のモデルの f4000のペレット 2 個までの和、LCh: L と Ch の和、LCw: L と Cw の和、LChCw: L と Ch と Cw の和、NCh: N と Ch の和、NCw: N と Cw の和、NChCw: N と Ch と Cw の和。境は L・LCh・LCw・LChCw → N・NCh・NCw・NChCw（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 400〜800f。L・LCh・LCw・LChCw 384・N・NCh・NCw・NChCw 358・区別できない 98・外れ 425・食い違い（N・NCh・NCw・NChCwの最初の発より後のL・LCh・LCw・LChCwの発） 4"
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-12",
+    "recording": "1373",
+    "kind": "timing",
+    "use": "record",
+    "value": 557,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 557,
+      "high": 557
+    },
+    "description": "チャイムの忠心（クラウンの攻撃ダメージ 92.44%▲）（L・LCh・LCw・LChCw → N・NCh・NCw・NChCw）が クラウン・チャイム・クロウ の 1 発で替わるまでの時刻の幅（3 番目の事象 f7247 から数えた動画のフレーム）。L・LCh・LCw・LChCwの最後の発は 556f、N・NCh・NCw・NChCwの最初の発は 557f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 3（クラウン）のモデルの f4000、N: 枠 3（クラウン）のモデルの f4500、Ch: 枠 2（チャイム）のモデルの f4000、Cw: 枠 4（クロウ）のモデルの f4000のペレット 2 個までの和、LCh: L と Ch の和、LCw: L と Cw の和、LChCw: L と Ch と Cw の和、NCh: N と Ch の和、NCw: N と Cw の和、NChCw: N と Ch と Cw の和。境は L・LCh・LCw・LChCw → N・NCh・NCw・NChCw（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 400〜800f。L・LCh・LCw・LChCw 384・N・NCh・NCw・NChCw 358・区別できない 98・外れ 425・食い違い（N・NCh・NCw・NChCwの最初の発より後のL・LCh・LCw・LChCwの発） 4"
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-13",
+    "recording": "1373",
+    "kind": "timing",
+    "use": "record",
+    "value": 557,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 557,
+      "high": 557
+    },
+    "description": "チャイムの忠心（クラウンの攻撃ダメージ 92.44%▲）（L・LCh・LCw・LChCw → N・NCh・NCw・NChCw）が クラウン・チャイム・クロウ の 1 発で替わるまでの時刻の幅（4 番目の事象 f9680 から数えた動画のフレーム）。L・LCh・LCw・LChCwの最後の発は 556f、N・NCh・NCw・NChCwの最初の発は 557f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 3（クラウン）のモデルの f4000、N: 枠 3（クラウン）のモデルの f4500、Ch: 枠 2（チャイム）のモデルの f4000、Cw: 枠 4（クロウ）のモデルの f4000のペレット 2 個までの和、LCh: L と Ch の和、LCw: L と Cw の和、LChCw: L と Ch と Cw の和、NCh: N と Ch の和、NCw: N と Cw の和、NChCw: N と Ch と Cw の和。境は L・LCh・LCw・LChCw → N・NCh・NCw・NChCw（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 400〜800f。L・LCh・LCw・LChCw 384・N・NCh・NCw・NChCw 358・区別できない 98・外れ 425・食い違い（N・NCh・NCw・NChCwの最初の発より後のL・LCh・LCw・LChCwの発） 4"
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-14",
+    "recording": "1373",
+    "kind": "timing",
+    "use": "record",
+    "value": 557,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 557,
+      "high": 557
+    },
+    "description": "チャイムの忠心（クラウンの攻撃ダメージ 92.44%▲）（L・LCh・LCw・LChCw → N・NCh・NCw・NChCw）が クラウン・チャイム・クロウ の 1 発で替わるまでの時刻の幅の、4 回の事象（f2481・4864・7247・9680）の共通部分（事象から数えた動画のフレーム）。L・LCh・LCw・LChCwの最後の発の最も遅いものは 556f、N・NCh・NCw・NChCwの最初の発の最も早いものは 557f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は L: 枠 3（クラウン）のモデルの f4000、N: 枠 3（クラウン）のモデルの f4500、Ch: 枠 2（チャイム）のモデルの f4000、Cw: 枠 4（クロウ）のモデルの f4000のペレット 2 個までの和、LCh: L と Ch の和、LCw: L と Cw の和、LChCw: L と Ch と Cw の和、NCh: N と Ch の和、NCw: N と Cw の和、NChCw: N と Ch と Cw の和。境は L・LCh・LCw・LChCw → N・NCh・NCw・NChCw（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 400〜800f。L・LCh・LCw・LChCw 384・N・NCh・NCw・NChCw 358・区別できない 98・外れ 425・食い違い（N・NCh・NCw・NChCwの最初の発より後のL・LCh・LCw・LChCwの発） 4"
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-15",
+    "recording": "1373",
+    "kind": "hit",
+    "use": "compare",
+    "value": 7080.5,
+    "unit": "ダメージ",
+    "spread": {
+      "kind": "range",
+      "low": 7080.3,
+      "high": 7080.6
+    },
+    "description": "クラウンの 1 ヒット（胴体・会心なし・距離ボーナスなし。1 回目のバーストより前。チャイムの王への効果は S1 の請願だけ）",
+    "method": {
+      "tool": "recipe:buff-edge@9 の grid と、増分ごとの当て方（derived/<録画>/buff-edge-grid.tsv）の数え上げ",
+      "note": "格子はクラウン・チャイム・クロウ（2 ヒットまでの和）・フラワーのモデルの 1 ヒットと、同じフレームの和。±1.5 で当てた。0〜1210 の増分 262 個のうち 255 個が格子に合い、クラウンだけの増分 140 個はどれも 7,081・14,161（2 倍）・17,701（2.5 倍）。王への効果が無い読みの胴体（4,477.4）の格子とは、どの値も合わない。値は 3 つの増分の HUD の丸めの共通部分"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-16",
+    "recording": "1373",
+    "kind": "hit",
+    "use": "compare",
+    "value": 16191.8,
+    "unit": "ダメージ",
+    "spread": {
+      "kind": "range",
+      "low": 16191.7,
+      "high": 16192
+    },
+    "description": "クラウンの 1 ヒット（胴体・会心なし・距離ボーナスなし。時間切れのチェーンの、チャイムの忠心とクラウンのバーストの攻撃ダメージ▲が重なる区間）",
+    "method": {
+      "tool": "recipe:buff-edge@9 の grid と、増分ごとの当て方（derived/<録画>/buff-edge-grid.tsv）の数え上げ",
+      "note": "格子はクラウン・チャイム・クロウ（2 ヒットまでの和）・フラワーのモデルの 1 ヒットと、同じフレームの和。±1.5 で当てた。時間切れのチェーン（2・4・6・8 回目）の、II → III の替わり目から 400〜556f の増分。クラウンだけの増分は 16,192・32,384（2 倍）・37,241（2.3 倍）・40,479（2.5 倍）。値は増分の HUD の丸めの共通部分"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1950,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-17",
+    "recording": "1373",
+    "kind": "hit",
+    "use": "compare",
+    "value": 9646.5,
+    "unit": "ダメージ",
+    "spread": {
+      "kind": "range",
+      "low": 9646.4,
+      "high": 9646.6
+    },
+    "description": "クラウンの 1 ヒット（胴体・会心なし・距離ボーナスなし。同じチェーンの、忠心が切れてクラウンのバーストの攻撃ダメージ▲だけの区間）",
+    "method": {
+      "tool": "recipe:buff-edge@9 の grid と、増分ごとの当て方（derived/<録画>/buff-edge-grid.tsv）の数え上げ",
+      "note": "格子はクラウン・チャイム・クロウ（2 ヒットまでの和）・フラワーのモデルの 1 ヒットと、同じフレームの和。±1.5 で当てた。同じチェーンの 557〜800f。クラウンだけの増分は 19,293（2 倍）・22,187〜22,188（2.3 倍）・24,116（2.5 倍）・27,010（2.8 倍）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-18",
+    "recording": "1373",
+    "kind": "hit",
+    "use": "compare",
+    "value": 49991.2,
+    "unit": "ダメージ",
+    "spread": {
+      "kind": "range",
+      "low": 49991,
+      "high": 49991.5
+    },
+    "description": "クラウンの 1 ヒット（胴体・会心なし・距離ボーナスなし・フルバースト補正込み。フルバーストの中の、S2 の日課報告・忠心・クラウンのバーストとクラウンの S1 が乗る区間）",
+    "method": {
+      "tool": "recipe:buff-edge@9 の grid と、増分ごとの当て方（derived/<録画>/buff-edge-grid.tsv）の数え上げ",
+      "note": "格子はクラウン・チャイム・クロウ（2 ヒットまでの和）・フラワーのモデルの 1 ヒットと、同じフレームの和。±1.5 で当てた。5 回のフルバーストの 00.00 から約 390f の増分。クラウンだけの増分 325 個が 59,989（1.2 倍。胴体の値はフルバースト補正込み）・83,319・93,317・99,982（2 倍）などに合う。王への効果が無い読みの値（15,060）とは 3 倍以上離れる"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-19",
+    "recording": "1373",
+    "kind": "count",
+    "use": "compare",
+    "value": 360,
+    "unit": "発",
+    "description": "クラウンの最大装弾数（チャイムのバーストの窓の中。時間切れのチェーン）",
+    "method": {
+      "tool": "目視（画面下のカードの残弾の表示）",
+      "note": "2 回目のチェーン（II → III は f2481）の後の f2700・2900（クラウン 334/360・220/360、クロウ 106/144・59/144、フラワー 5/7）。分母が最大装弾数"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 1800
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-20",
+    "recording": "1373",
+    "kind": "count",
+    "use": "compare",
+    "value": 144,
+    "unit": "発",
+    "description": "クロウの最大装弾数（チャイムのバーストの窓の中。時間切れのチェーン）",
+    "method": {
+      "tool": "目視（画面下のカードの残弾の表示）",
+      "note": "2 回目のチェーン（II → III は f2481）の後の f2700・2900（クラウン 334/360・220/360、クロウ 106/144・59/144、フラワー 5/7）"
+    },
+    "scope": {
+      "slot": 4,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 4,
+        "frame": 1800
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-21",
+    "recording": "1373",
+    "kind": "count",
+    "use": "compare",
+    "value": 7,
+    "unit": "発",
+    "description": "I-DOLL・フラワーの最大装弾数（チャイムのバーストの窓の中。6 × 1.2 = 7.2 の端数を捨てた値）",
+    "method": {
+      "tool": "目視（画面下のカードの残弾の表示）",
+      "note": "2 回目のチェーン（II → III は f2481）の後の f2700・2900（クラウン 334/360・220/360、クロウ 106/144・59/144、フラワー 5/7）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 1800
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1373-22",
+    "recording": "1373",
+    "kind": "count",
+    "use": "compare",
+    "value": 300,
+    "unit": "発",
+    "description": "クラウンの最大装弾数（チャイムのバーストの窓が切れた後）",
+    "method": {
+      "tool": "目視（画面下のカードの残弾の表示）",
+      "note": "2 回目のチェーン（II → III は f2481）の後の f3080・3300（クラウン 162/300、クロウ 1/120・80/120、フラワー 3/6・1/6）。窓が切れると、マガジンの途中でも分母が 300 に戻る"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 2300
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0857",
+    "readAt": "2026-11-22"
+  }
+]

@@ -30,6 +30,16 @@ export function parseTargetSquad(v: Record<string, Json>, target: BuffTarget, pa
   return squad;
 }
 
+/**
+ * 「自分の王」「自分のアイドル」（plan/design-chime.md 2.1 節）。キャラの resourceId（正の整数）で、target が allies のときだけ
+ */
+export function parseTargetCharacter(v: Record<string, Json>, target: BuffTarget, path: string): number | undefined {
+  if (v.targetCharacter === undefined) return undefined;
+  const rid = parsePositiveInt(v.targetCharacter, `${path}.targetCharacter`);
+  if (target !== 'allies') fail(`${path}.targetCharacter`, `only allowed with target "allies", got "${target}"`);
+  return rid;
+}
+
 /** 編成の枠で決まる対象の絞り込み（〈状態〉の味方・自分と・両隣・基本バースト段階） */
 export type PersonaTargetFields = {
   targetState?: NamedStateId;
@@ -53,7 +63,7 @@ export function parsePersonaTargetFields(
   if (v.targetAdjacent !== undefined) {
     if (v.targetAdjacent !== true) fail(`${path}.targetAdjacent`, 'must be true');
     if (target !== 'allies') fail(`${path}.targetAdjacent`, `only allowed with target "allies", got "${target}"`);
-    for (const key of ['targetState', 'targetBurstStep', 'targetSquad', 'excludeSelf'] as const) {
+    for (const key of ['targetState', 'targetBurstStep', 'targetSquad', 'targetCharacter', 'excludeSelf'] as const) {
       if (v[key] !== undefined) fail(`${path}.targetAdjacent`, `cannot be combined with ${key}`);
     }
     out.targetAdjacent = true;
@@ -110,6 +120,7 @@ export function validateDamageTaken(stat: BuffStat, target: BuffTarget, v: Recor
     'includeSelf',
     'targetAdjacent',
     'targetBurstStep',
+    'targetCharacter',
     'durationShots',
     'durationShotsRef',
   ] as const) {
