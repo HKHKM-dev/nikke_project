@@ -92,17 +92,15 @@ describe('minPellets の語彙', () => {
 
 describe('プリバティ：アンカインド・メイド（313）の S2 のリロード速度▲（C-1549）', () => {
   it('is a reload speed on self on shots with 5 or more pellet hits (description_value_01), 2 s', () => {
-    expect(def.skills.skill2.support).toBe('partial');
-    expect(def.skills.skill2.effects).toMatchObject([
-      {
-        kind: 'timed',
-        trigger: { count: 'normalShot', minPelletsRef: 1 },
-        target: 'self',
-        stat: 'reloadSpeed',
-        ref: 2,
-        durationRef: 3,
-      },
-    ]);
+    expect(def.skills.skill2.support).toBe('supported');
+    expect(def.skills.skill2.effects[0]).toMatchObject({
+      kind: 'timed',
+      trigger: { count: 'normalShot', minPelletsRef: 1 },
+      target: 'self',
+      stat: 'reloadSpeed',
+      ref: 2,
+      durationRef: 3,
+    });
   });
 
   // 最終弾 → 次のマガジンの 1 発目は、リロード 2 秒をゲーム内の時計で数えた 117.6f × (1 − 速度) + 24f（C-0148・C-0013）

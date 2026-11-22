@@ -173,11 +173,15 @@ function parseInstantTrigger(v: Record<string, Json>, kind: InstantKind, path: s
       weaponChangeEnd: kind === 'ammoDecrease',
       // 味方が消費した弾の合計（plan/design-cinderella-cw.md 2.3 節）
       teamAmmo: kind === 'burstGauge',
-      // 弾丸チャージは自分の状態の窓で数える回数も（plan/design-fortune-mate.md 2.2 節）
-      during: kind === 'ammoRefill' ? 'stateOnly' : false,
+      // 弾丸チャージは自分の状態の窓で数える回数（plan/design-fortune-mate.md 2.2 節）と、フルバーストの窓（during・firesDuring。
+      // plan/design-privaty-um-s2-full-burst.md 2.2 節）も
+      during: kind === 'ammoRefill' ? 'withState' : false,
       // 勇者レベルアップの効果（plan/design-guillotine-ws.md 2.2 節）
       counterUp: kind === 'heal' || kind === 'ammoRefill',
     });
+  // 弾丸チャージの発火の窓はフルバーストだけ（plan/design-privaty-um-s2-full-burst.md 2.2 節）
+  if (kind === 'ammoRefill' && isShotCountTrigger(trigger) && trigger.firesDuring === 'weaponChange')
+    fail(`${path}.trigger.firesDuring`, 'ammoRefill takes only the firing window "fullBurst"');
   // 残弾数減少は自分にだけ。きっかけは使用武器の変更の終わり（plan/design-skill-stage11.md 2.2 節）と、
   // バースト使用時（ジルのバースト。100% で残弾 0 になり、リロードを始める。plan/design-skill-stage17.md 2.2 節）
   if (

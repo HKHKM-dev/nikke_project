@@ -726,7 +726,8 @@ export type ShotCountTrigger = {
   stacksRef?: number;
   /**
    * plan/design-kurumi-s2.md 2.1 節: 'fullBurst' ならフルバーストの窓（isInFullBurst と同じ [start, end)）の中の
-   * 射撃だけを数える。damage にだけ書ける（gaugeHits・射撃ごとの畳み込み（every = 1）・stacksRef とは組み合わせない）
+   * 射撃だけを数える。damage・timed・状態の付与・弾丸チャージ（plan/design-privaty-um-s2-full-burst.md 2.2 節）に書ける（damage の
+   * gaugeHits・射撃ごとの畳み込み（every = 1）・stacksRef とは組み合わせない）
    */
   during?: ShotCountWindow | StateCountWindow;
   /**
@@ -737,7 +738,7 @@ export type ShotCountTrigger = {
   /**
    * ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 'fullBurst' なら、射撃は窓の外も含めて戦闘中ずっと数え、N の倍数に届いた発が
    * フルバーストの窓（[start, end)）の中のときだけ発火する（窓の外で届いた回は発火せずに過ぎる）。during・reset・stacksRef・
-   * chance とは組み合わせない。書ける効果は during と同じ（damage・timed・付与）。
+   * chance とは組み合わせない。書ける効果は during と同じ（damage・timed・付与・弾丸チャージ）。
    * 'weaponChange' なら、N の倍数に届いた発が使用武器の変更で
    * 持ち替えた武器の発のときだけ発火する（モラン S1「自分が武器変更状態の場合、通常攻撃が N 回命中した時」。plan/design-skill-stage11.md 2.3 節の H1。V-0530）
    */
