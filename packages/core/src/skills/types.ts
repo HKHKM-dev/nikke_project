@@ -760,6 +760,14 @@ export type ShotCountTrigger = {
   chance?: number;
   /** 確率（%）の description_value_NN */
   chanceRef?: number;
+  /**
+   * 「通常攻撃 1 回でペレットが N 個以上命中した時」の N（即値。plan/design-privaty-um-s2.md 2.1 節）。その発の当たったペレットの数
+   * （ShotEvent.pellets。期待値か録画で数えた数）が N 以上の発だけを数える。期待値はそのまま N と比べる。count は normalShot、
+   * timed にだけ書け、数える窓・発火の窓・スタック・確率とは組まない。minPelletsRef とどちらか片方
+   */
+  minPellets?: number;
+  /** minPellets の description_value_NN */
+  minPelletsRef?: number;
 };
 
 /** 確率のきっかけを書ける回数の種類 */

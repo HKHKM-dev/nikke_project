@@ -86,5 +86,46 @@
         ]
       }
     }
+  },
+  {
+    "id": "0857-04",
+    "recording": "0857",
+    "source": "V-0867",
+    "readAt": "2026-11-22",
+    "kind": "interval",
+    "use": "compare",
+    "value": 117,
+    "unit": "f",
+    "description": "同じ録画（スペック固定 ON。S2 は Lv10）の、2 区間目と 5 区間目のマガジンの最終弾から次のマガジンの 1 発目まで（8 回とも 117f）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "S1 のヒット（242,994・会心 364,491）を除いたトリガーの増分のフレーム: 2366→2483・2797→2914・3228→3345・3659→3776・8972→9089・9403→9520・9834→9951・10265→10382"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "reloadToNextShotAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "pelletHits": [
+          {
+            "slot": 1,
+            "counts": "0857-01"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   }
 ]

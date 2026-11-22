@@ -70,6 +70,8 @@ export function triggerLabel(t: ResolvedTrigger): string {
   // フルバースト中だけ数える回数トリガー（normalHit/36@fullBurst、数え直しなら @fullBurst!）
   // 確率のきっかけ（normalHit@5%。窓は期待値の小片）
   if ('every' in t && t.chance !== undefined) return `${t.count}@${+(t.chance * 100).toFixed(4)}%`;
+  // 1 発の当たったペレットの数のしきい値（normalShot/1 pellets>=5）
+  if ('every' in t && t.minPellets !== undefined) return `${t.count}/${t.every} pellets>=${t.minPellets}`;
   if ('every' in t)
     return `${t.count}/${t.every}${t.during ? `@${typeof t.during === 'object' ? t.during.state : t.during}${t.reset === 'fullBurstStart' ? '!' : ''}` : ''}`;
   return `${t.count}≥${t.atLeast}${t.atMost !== undefined ? `≤${t.atMost}` : ''}`;

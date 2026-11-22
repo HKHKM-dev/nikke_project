@@ -93,6 +93,8 @@ export type TriggerOptions = {
   teamAmmo?: boolean;
   /** カウンタが上がった時（{ counterUp }。ammoRefill・heal・timed だけ。plan/design-guillotine-ws.md 2.2 節） */
   counterUp?: boolean;
+  /** 1 発の当たったペレットの数のしきい値（minPellets・minPelletsRef。timed だけ。plan/design-privaty-um-s2.md 2.1 節） */
+  minPellets?: boolean;
 };
 
 /**
@@ -211,6 +213,8 @@ function parseShotCountTrigger(v: Record<string, Json>, path: string, options: T
       'firesOutside',
       'chance',
       'chanceRef',
+      'minPellets',
+      'minPelletsRef',
     ],
     path,
   );
@@ -245,7 +249,29 @@ function parseShotCountTrigger(v: Record<string, Json>, path: string, options: T
   parsePhase(v, trigger, path);
   parseFiringWindow(v, trigger, path, options);
   parseChance(v, trigger, path, options);
+  parseMinPellets(v, trigger, path, options);
   return trigger;
+}
+
+/**
+ * 「通常攻撃 1 回でペレットが N 個以上命中した時」の N（plan/design-privaty-um-s2.md 2.1 節）。count は normalShot、timed だけ。
+ * 数える窓・発火の窓・スタック・確率とは組まない
+ */
+function parseMinPellets(
+  v: Record<string, Json>,
+  trigger: ShotCountTrigger,
+  path: string,
+  options: TriggerOptions,
+): void {
+  if (v.minPellets === undefined && v.minPelletsRef === undefined) return;
+  if (!options.minPellets) fail(`${path}.minPellets`, 'minPellets is only allowed in timed');
+  if (v.minPellets !== undefined && v.minPelletsRef !== undefined)
+    fail(path, 'at most one of minPellets and minPelletsRef');
+  if (trigger.count !== 'normalShot') fail(`${path}.count`, 'minPellets needs count "normalShot"');
+  for (const key of WINDOW_AND_CHANCE_KEYS)
+    if (v[key] !== undefined) fail(`${path}.${key}`, `${key} cannot be used with minPellets`);
+  if (v.minPellets !== undefined) trigger.minPellets = parsePositiveInt(v.minPellets, `${path}.minPellets`);
+  if (v.minPelletsRef !== undefined) trigger.minPelletsRef = parseRef(v.minPelletsRef, `${path}.minPelletsRef`);
 }
 
 /** フルバースト中だけ数える回数トリガー（plan/design-kurumi-s2.md 2.1 節）。数える窓 during と、数え直す reset */

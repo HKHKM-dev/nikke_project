@@ -415,6 +415,8 @@ function trackerBody(
       }
       const shot = ev.shots[slotIndex];
       if (!shot) return false;
+      // 1 発の当たったペレットの数がしきい値に届かない発は数えない（期待値もそのまま比べる。plan/design-privaty-um-s2.md 2.1 節）
+      if (t.minPellets !== undefined && shotCountWeight('pelletHit', shot) < t.minPellets - COUNT_EPSILON) return false;
       // 確率のきっかけは、回数の量が正の射撃のたびに引く（付く確率は skills/chance.ts。plan/design-soldier-eg.md 3.1 節）
       if (t.chance !== undefined) return shotCountWeight(t.count, shot) > 0;
       // 当たったペレットのクリティカルは、1 発で N の倍数をまたいだ数だけ発火する（plan/design-k.md 2.2 節。窓は組まない）

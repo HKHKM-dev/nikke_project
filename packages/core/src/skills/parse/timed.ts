@@ -348,6 +348,8 @@ function parseTimedTrigger(
       fullStack: true,
       // 「〈カウンタ〉が上がった時」は timed だけ（plan/design-guillotine-ws.md 2.2 節）
       counterUp: stat !== undefined,
+      // 「通常攻撃 1 回でペレットが N 個以上命中した時」も timed だけ（plan/design-privaty-um-s2.md 2.1 節）
+      minPellets: stat !== undefined,
     })
   );
 }

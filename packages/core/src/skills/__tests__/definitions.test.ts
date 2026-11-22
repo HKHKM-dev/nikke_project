@@ -30,6 +30,7 @@ import { ATTACK_SPEED_WEAPONS } from '../parse/timed.ts';
 import { applyTreasure, TREASURE_PHASE_MAX } from '../treasure.ts';
 import { parseSkillDefinition, parseSkillIndex } from '../parse/definition.ts';
 import {
+  isShotCountTrigger,
   isMaxStacksUpContent,
   isSkillCooldownDownContent,
   SKILL_SLOTS,
@@ -160,6 +161,19 @@ describe('data/skills', () => {
           expect(ATTACK_SPEED_WEAPONS as readonly string[], `${slot}: attackSpeed on self`).toContain(
             character.weaponType,
           );
+        }
+      }
+    });
+
+    // 1 発の当たったペレットの数のしきい値（plan/design-privaty-um-s2.md 2.1 節）は、1 発に複数のペレットを撃つ武器のキャラにだけ
+    // （1 ペレットの武器では一度も届かない。読み込みは武器を知らない）
+    it('writes minPellets only for a character whose shot has several pellets', () => {
+      for (const slot of SKILL_SLOTS) {
+        for (const effect of def.skills[slot].effects) {
+          const t = 'trigger' in effect ? effect.trigger : undefined;
+          if (t === undefined || !isShotCountTrigger(t)) continue;
+          if (t.minPellets === undefined && t.minPelletsRef === undefined) continue;
+          expect(character.shot.shotCount, `${slot}: minPellets needs a pellet weapon`).toBeGreaterThan(1);
         }
       }
     });
