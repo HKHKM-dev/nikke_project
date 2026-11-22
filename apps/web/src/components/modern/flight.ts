@@ -298,18 +298,14 @@ export function dropSnapshot({ ghost }: ContentSnapshot): void {
 }
 
 /**
- * 写しを、to の位置へ動かしながら、動きの後半で透明にして消す（編成を切り替えて、立ち絵の枠が四角と縦長で入れ替わる）。
- * 縦長から四角へ縮むときは、frameAt で下を切って四角にする。四角から縦長へ伸びるときは、切らずに上をそろえる。
- * to が無いときは、その場で透明にする。透明にするのは、動きの後半（新しい枠を現す fadeIn が前半で現れ終えた後）
+ * 写しを、(dx, dy) だけ動かしながら、動きの後半で透明にして消す（編成を切り替えて、立ち絵の枠が四角と縦長で入れ替わる）。
+ * 動かす量は、usePartySwitch が上端・下端をそろえる位置から決める。透明にするのは、新しい枠を現す fadeInContent が前半で現れ終えた後
  */
-export function dissolveSnapshot({ ghost, rect }: ContentSnapshot, to: DOMRect | null): void {
-  const end = to ?? rect;
-  const grows = end.height > rect.height * 1.01;
-  const goal: Keyframe = grows
-    ? { transform: `translate(${end.left - rect.left}px, ${end.top - rect.top}px) scale(${end.width / rect.width})` }
-    : frameAt(end, rect);
+export function dissolveSnapshot({ ghost }: ContentSnapshot, dx: number, dy: number): void {
   const remove = () => ghost.remove();
-  ghost.animate([{ ...frameAt(rect, rect) }, goal], FLIGHT).finished.then(undefined, () => undefined);
+  ghost
+    .animate([{ transform: 'none' }, { transform: `translate(${dx}px, ${dy}px)` }], FLIGHT)
+    .finished.then(undefined, () => undefined);
   ghost
     .animate([{ opacity: 1 }, { opacity: 1, offset: 0.5 }, { opacity: 0 }], {
       duration: FLIGHT.duration,
@@ -319,10 +315,15 @@ export function dissolveSnapshot({ ghost, rect }: ContentSnapshot, to: DOMRect |
     .finished.then(remove, remove);
 }
 
-/** 新しい枠を、動きの前半で透明から不透明にして現す（dissolveSnapshot の写しが、後半で消える） */
-export function fadeInContent(node: Element): void {
+/** 新しい枠を、動きの前半で透明から不透明にして現す。fromY が 0 でなければ、本来の位置から縦に fromY ずれた所から動かす */
+export function fadeInContent(node: Element, fromY: number): void {
   node.animate([{ opacity: 0 }, { opacity: 1, offset: 0.6 }, { opacity: 1 }], {
     duration: FLIGHT.duration,
     easing: 'linear',
+  });
+  if (Math.abs(fromY) < 0.5) return;
+  node.animate([{ transform: `translateY(${fromY}px)` }, { transform: 'none' }], {
+    duration: FLIGHT.duration,
+    easing: FLIGHT.easing,
   });
 }

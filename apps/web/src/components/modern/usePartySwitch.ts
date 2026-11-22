@@ -52,30 +52,58 @@ function capture(from: number, to: number): Pending {
   };
 }
 
+/**
+ * 立ち絵の枠が四角と縦長で入れ替わるときの、写し（元の枠）の動く量 ghostY と、新しい枠が本来の位置からずれて動き出す量 newFromY。
+ * 枠の中心が下がるとき: 上端をそろえた位置から始め、下端をそろえた位置で終わる（新しい枠は元の上端から、写しは新しい下端まで）。
+ * 上がるとき: 下端をそろえた位置から始め、上端をそろえた位置で終わる（新しい枠は元の下端から、写しは新しい上端まで）
+ */
+function alignedMotion(from: DOMRect, to: DOMRect): { ghostY: number; newFromY: number } {
+  const shift = to.top + to.bottom - (from.top + from.bottom);
+  if (shift > 1) return { ghostY: to.bottom - from.bottom, newFromY: from.top - to.top };
+  if (shift < -1) return { ghostY: to.top - from.top, newFromY: from.bottom - to.bottom };
+  return { ghostY: 0, newFromY: 0 };
+}
+
 /** 切り替えた後の描き直しで、行を元の位置から動かし、写しを新しい枠へ動かして消し、新しい枠を現す */
 function play({ tops, snapshots }: Pending): void {
   const timing = { duration: FLIGHT.duration, easing: FLIGHT.easing };
-  rowsOf().forEach((row, i) => {
+  // 位置は、動きを付ける前にすべて測る（動きを付けると、動き始めの位置が測った値に入る）
+  const rows = rowsOf().map((row, i) => {
     const before = tops[i];
-    if (!before) return;
-    // 位置は、動きを付ける前に測る（動きを付けると、動き始めの位置が測った値に入る）
-    const rowDelta = before.row - row.getBoundingClientRect().top;
     const label = labelOf(row);
-    const labelTop = label?.getBoundingClientRect().top;
+    return {
+      row,
+      label,
+      rowDelta: before ? before.row - row.getBoundingClientRect().top : 0,
+      labelTop: label?.getBoundingClientRect().top,
+      beforeLabel: before?.label ?? null,
+    };
+  });
+  const targets = snapshots.map(({ party, index }) => {
+    const content = contentAt(party, index);
+    return { content, rect: content?.getBoundingClientRect() };
+  });
+  for (const { row, label, rowDelta, labelTop, beforeLabel } of rows) {
     if (Math.abs(rowDelta) >= 0.5)
       row.animate([{ transform: `translateY(${rowDelta}px)` }, { transform: 'none' }], timing);
     // 左の番号は、行の高さが変わると行の中の位置も変わる（行の中で縦の中央）。番号は行の動きに乗って動くので、行の動きの分を引いて、
     // 番号が切り替える前にあった場所から動き出すようにする
-    if (!label || labelTop === undefined || before.label === null) return;
-    const labelDelta = before.label - labelTop - rowDelta;
+    if (!label || labelTop === undefined || beforeLabel === null) continue;
+    const labelDelta = beforeLabel - labelTop - rowDelta;
     if (Math.abs(labelDelta) >= 0.5)
       label.animate([{ transform: `translateY(${labelDelta}px)` }, { transform: 'none' }], timing);
-  });
-  for (const { party, index, snapshot } of snapshots) {
-    const content = contentAt(party, index);
-    dissolveSnapshot(snapshot, content?.getBoundingClientRect() ?? null);
-    if (content) fadeInContent(content);
   }
+  snapshots.forEach(({ party, snapshot }, i) => {
+    const { content, rect } = targets[i]!;
+    if (!content || !rect) {
+      dissolveSnapshot(snapshot, 0, 0);
+      return;
+    }
+    const { ghostY, newFromY } = alignedMotion(snapshot.rect, rect);
+    dissolveSnapshot(snapshot, rect.left - snapshot.rect.left, ghostY);
+    // 新しい枠は行の動き（rowDelta）に乗るので、その分を引いて、動き出しの位置を合わせる
+    fadeInContent(content, newFromY - (rows[party]?.rowDelta ?? 0));
+  });
 }
 
 /**
