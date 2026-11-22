@@ -14,13 +14,15 @@ const NOIR = 271;
 const ROUGE = 272;
 const enemy = fixedEnemy();
 
-// 録画 1389 の編成（ルージュ + ブラン + I-DOLL・サン）と、0827〜0829 の編成（ルドミラ + ブラン + プリバティ：アンカインド・メイド）。
-// どちらも II はブランだけなので、ブランの CT がチェーンの回りを決める
-const TEAMS: Record<string, { input: TeamInput; blanc: number; sameSquad: boolean }> = {
+// 録画 1389 の編成（ルージュ + ブラン + I-DOLL・サン）と、0827〜0829 の編成（ルドミラ + ブラン + プリバティ：アンカインド・メイド）は、
+// II がブランだけで、ブランの CT がチェーンの回りを決める（appliesCut）。ノワールのいる編成（V-0219 の録画 A）は II をデルタが撃ち、
+// ブランは撃たないので、CT▼ は付くが縮む CT が無い
+const TEAMS: Record<string, { input: TeamInput; blanc: number; sameSquad: boolean; appliesCut?: boolean }> = {
   '同じ部隊（ルージュ + ブラン + I-DOLL・サン）': {
     input: fixedTeam([fixedSlot(ROUGE), fixedSlot(BLANC), fixedSlot(308)], 0, { enemy }),
     blanc: 1,
     sameSquad: true,
+    appliesCut: true,
   },
   '同じ部隊（鈴原サクラ + デルタ + ブラン + ノワール）': {
     input: fixedTeam([fixedSlot(836), fixedSlot(20), fixedSlot(BLANC), fixedSlot(NOIR)], 2, { enemy }),
@@ -57,7 +59,7 @@ describe('ブランの定義', () => {
   });
 });
 
-describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, blanc, sameSquad }) => {
+describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, blanc, sameSquad, appliesCut }) => {
   const sim = runSimulation(input);
   const plan = planTeamRun(input);
 
@@ -76,5 +78,6 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, blanc, sameS
     const cuts = sim.schedule!.cooldownReductions.filter((r) => r.sourceSlotIndex === blanc);
     expect(cuts.map((r) => r.frame)).toEqual(ends);
     expect(cuts.every((r) => r.slotIndex === blanc && r.frames === gameSecondsToFrames(40.76))).toBe(true);
+    if (appliesCut === true) expect(cuts.some((r) => r.applied > 0)).toBe(true);
   });
 });
