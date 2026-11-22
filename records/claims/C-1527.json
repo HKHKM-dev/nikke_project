@@ -1,0 +1,15 @@
+{
+  "id": "C-1527",
+  "text": "チャイムの S1 の請願（戦闘開始時、自分の王に、スキル発動者基準で攻撃力 46.46%▲・持続）は、編成のクラウンに戦闘開始から付き、チャイムの攻撃力の 46.46% がクラウンの攻撃力に足される。クラウンのいない編成では、チャイム自身にも付かない（自分の王はクラウン。用語のツールチップ）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1373-15`・`1374-14`・`0098-22`。V-0857",
+  "model": "data/skills/331.json の skill1 の passive（allies・targetCharacter 330・casterAttack）。skills/composition.ts の fixedTargetsOf（resourceId が targetCharacter の枠）",
+  "replaces": [],
+  "updated": "2026-11-22",
+  "subject": {
+    "places": ["data/skills/331.json の skill1 の effects[0]"]
+  },
+  "decidedOn": []
+}
