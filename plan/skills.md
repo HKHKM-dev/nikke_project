@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 170・効果 1203（根拠あり 1181）・notes 380（根拠あり 159）
+件数: キャラ 171・効果 1207（根拠あり 1185）・notes 380（根拠あり 159）
 
 notes の種類: 未対応 37・前提の外 127・計算に無関係 78・補足 43・間接 95
 
-スロット: supported 470・partial 24・unsupported 9・noEffect 64
+スロット: supported 473・partial 24・unsupported 9・noEffect 64
 
 ## 10 ラピ
 
@@ -628,6 +628,16 @@ notes の種類: 未対応 37・前提の外 127・計算に無関係 78・補�
   - effects[0] weaponChange・burstUse: C-1388（確定）、C-1389（仮説）、C-1390（確定）
   - effects[1] timed・burstUse・attack: C-1391（確定）
   - notes[0] 前提の外: 自家製弾倉が 2 本以上のときの最大装弾数（2 発以上）は、弾倉が 1 本で止まる前提（S1 の notes）の外: C-1387（確定）
+
+## 120 N102
+
+- **skill1**: supported
+  - effects[0] timed・fullChargeShot・maxAmmo: C-1512（確定）
+  - effects[1] timed・fullChargeShot・critDamage: C-1513（確定）
+- **skill2**: supported
+  - effects[0] timed・15 秒ごと・chargeDamage: C-1514（確定）
+- **burst**: supported
+  - effects[0] timed・burstUse・attack: C-1515（確定）
 
 ## 121 エヌ : ミラクルフェアリー
 
