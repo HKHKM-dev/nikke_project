@@ -16,7 +16,7 @@ import type { PartiesState, PartySlotRef } from '../../parties.ts';
 import type { TeamAction, TeamState } from '../../team.ts';
 import { trayCollectionBadge, type Badge } from './badges.ts';
 import { partyCardAt, setDropPlaced, slotCardAt } from './dropAnimation.ts';
-import { FLIGHT, flyControllerInto, flyOnto, flyToTray, liftedRectOf } from './flight.ts';
+import { FLIGHT, flyControllerInto, flyLabel, flyToTray, liftedRectOf } from './flight.ts';
 import { activeDragData, dropIntentOf, type SlotRef } from './dropIntent.ts';
 import { trayGrowthMarks, type GrowthMarks } from './GrowthMarks.tsx';
 import { slotCollectionBadge, slotGrowthMarks } from './slotBadges.ts';
@@ -300,7 +300,7 @@ export function useSlotDrag({
       }
       case 'swap-parties': {
         // 番号は動かず、中身（スロットの並び）が入れ替わる。持ち上げた番号は、離した位置から落とした先の番号の場所へ、落とした先の番号は、
-        // 持ち上げた番号の元の場所へ動かして消す（オーナーのコメント）。動いている間は、2 つの元の番号を隠し、動き終えたら出す。
+        // 持ち上げた番号の元の場所へ動かす。どちらも動きの前半で透明にし、半分で動く先の番号の表示に切り替え、後半で透明を解く（オーナーの指示）。動いている間は、2 つの元の番号を隠し、動き終えたら出す。
         // 隠すのは番号のボタンの style（React は番号の枠の class を描き直すが、ボタンの style は触らない）
         const rectOf = (party: number) => slotsGridOf(party)?.getBoundingClientRect();
         const fromA = rectOf(intent.a);
@@ -315,7 +315,7 @@ export function useSlotDrag({
           const originRect = labelA.getBoundingClientRect();
           // 落とした先の番号の写しは、落とす先の印（枠の線）を付けずに動かす
           labelB.classList.remove('party-label-over');
-          const flights = [flyOnto(dragged, targetRect), flyOnto(labelB, originRect)];
+          const flights = [flyLabel(dragged, targetRect, labelB), flyLabel(labelB, originRect, labelA)];
           for (const tab of tabs) if (tab) tab.style.visibility = 'hidden';
           void Promise.all(flights).then(() => {
             for (const tab of tabs) if (tab) tab.style.visibility = '';

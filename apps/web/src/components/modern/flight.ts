@@ -229,24 +229,39 @@ export function flyToTray(content: Element, to: DOMRect | null): void {
 }
 
 /**
- * 持ち上げた絵（content）を、その位置から to の位置・大きさへ動かし、着く前の終わりの 2 割で消す（編成の番号を別の番号に落とした。
- * 番号は動かないので、持ち上げた番号は落とした先の番号の上で消える）。動き終えたら（取り消されても）返す Promise が済む
+ * 持ち上げた番号（content）を、その位置から to の位置・大きさへ動かす（編成の番号を別の番号に落とした）。動きの前半 50% で透明にし、
+ * 半分で動く先の番号の表示（destination のいまの中身）に切り替え、後半 50% で透明を解く。動き終えたら（取り消されても）返す Promise が済む。
+ * 動く先の番号は、落とした後の描き直しで中身が変わりうるので、切り替えるときに読む
  */
-export function flyOnto(content: Element, to: DOMRect): Promise<void> {
+export function flyLabel(content: Element, to: DOMRect, destination: Element | null): Promise<void> {
   const base = snapped(content.getBoundingClientRect());
   const end = snapped(to);
   const ghost = ghostOf(content, base);
   const remove = () => ghost.remove();
-  return ghost
-    .animate(
-      [
-        { ...frameAt(base, base), opacity: 1 },
-        { ...frameAt(end, base), opacity: 1, offset: 0.8 },
-        { ...frameAt(end, base), opacity: 0 },
-      ],
-      FLIGHT,
-    )
-    .finished.then(remove, remove);
+  const move = ghost.animate([frameAt(base, base), frameAt(end, base)], FLIGHT);
+  // 透明にする動きは、動きの速さの変化（ease）を付けず、前半・後半をちょうど 50% ずつにする
+  const fade = ghost.animate([{ opacity: 1 }, { opacity: 0, offset: 0.5 }, { opacity: 1 }], {
+    duration: FLIGHT.duration,
+    easing: 'linear',
+    fill: FLIGHT.fill,
+  });
+  let switched = false;
+  const watch = () => {
+    if (switched || !ghost.isConnected) return;
+    if (Number(fade.currentTime ?? 0) >= FLIGHT.duration / 2) {
+      switched = true;
+      const shown = destination?.cloneNode(true) as HTMLElement | undefined;
+      if (shown) {
+        // 動く先の番号のボタンは、動いている間は隠している（style）。写しでは見せる
+        for (const el of shown.querySelectorAll<HTMLElement>('*')) el.style.visibility = '';
+        ghost.replaceChildren(...shown.childNodes);
+      }
+      return;
+    }
+    requestAnimationFrame(watch);
+  };
+  requestAnimationFrame(watch);
+  return Promise.all([move.finished, fade.finished]).then(remove, remove);
 }
 
 /**
