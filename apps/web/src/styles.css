@@ -746,7 +746,7 @@ svg.roster-revert-icon {
 }
 /* スロットの列は、編成の番号（4em）・間 12px・元の大きさの絵 5 枚の幅まで広がる */
 .modern-top-row > .modern-slots-area {
-  flex: 1 1 calc(4em + 12px + 5 * (86px + 2px + 2 * 2px) + 1px);
+  flex: 1 1 calc(4em + 12px + 5 * (256px / 3 + 2px + 2 * 2px) + 1px);
   min-width: 0;
 }
 /* 横に並べる幅では、スロットを画面の中央に置く（オーナーの指示）。スロットの列を左の枠の列の下まで横いっぱいに広げ（同じ格子の升に重ねる）、
@@ -820,14 +820,14 @@ svg.roster-revert-icon {
 :root {
   /* ニケ一覧の立ち絵の幅（枠線 1px ずつを含む。.char-visual-compact と縦長）。絵の部分は縦長の立ち絵（256×512）の 1/3、
      四角の顔の絵（128×128）の 2/3 で、どちらも 256/3 px。3 倍の画面で立ち絵が、1.5 倍の画面で顔の絵が画素どおりになるので、端数は丸めない */
-  --tray-visual-w: calc(86px + 2px);
+  --tray-visual-w: calc(256px / 3 + 2px);
   /* 置き先待ち・配置中の印の水色（実機の部隊編成の色） */
   --placing-blue: light-dark(#0ea5e9, #38bdf8);
   /* ニケ一覧のコア強化のアイコンの幅（左上のバッジ .char-visual の --badge-w と同じ）。P○ のバッジの幅と位置もこれで決める */
   --tray-core-w: 20px;
   /* スロットのカードの絵の高さ（＝幅。枠線の内側。.char-visual-portrait と空のスロットの枠）。四角の顔の絵で、ニケ一覧の四角の絵
      （.char-visual-compact）と同じ大きさ。狭い画面では useSlotFit が並びに縮めた値を置く（上限は useSlotFit.ts の PORTRAIT_MAX_H と同じ） */
-  --slot-portrait-h: 86px;
+  --slot-portrait-h: calc(256px / 3);
 }
 /* 置き先待ちのスロットの立ち絵と、いまの編成にいるニケ・置き先待ちのニケの絵に重ねる箱（枠は下の .char-tray-item-visual の後の規則） */
 .modern-slot-card.modern-slot-awaiting .modern-slot-char-area::after,
@@ -865,7 +865,7 @@ svg.roster-revert-icon {
   --party-row-lead: 4em;
   display: grid;
   grid-template-columns:
-    minmax(var(--party-row-lead), 1fr) minmax(0, calc(5 * (86px + 2px + 2 * 2px) + 1px))
+    minmax(var(--party-row-lead), 1fr) minmax(0, calc(5 * (256px / 3 + 2px + 2 * 2px) + 1px))
     minmax(0, 1fr);
   align-items: center;
   gap: 12px;
@@ -1116,7 +1116,7 @@ svg.roster-revert-icon {
    絵はバッジ（八角形で縦横 130:130）。大きさは左上のバッジの幅（.char-visual-portrait の --badge-w）と同じで、立ち絵が縮むと一緒に縮める。
    押すボタンなので 18px より小さくしない（狭い画面では左上のバッジより大きくなる） */
 .modern-slot-icon-button {
-  --slot-icon-w: max(18px, round(nearest, var(--slot-portrait-h) * 60 / 256, 1px));
+  --slot-icon-w: max(18px, var(--slot-portrait-h) * 60 / 256);
   position: absolute;
   right: 2px;
   z-index: 4;
@@ -1474,8 +1474,8 @@ svg.roster-revert-icon {
 }
 .char-visual-portrait {
   max-width: none;
-  /* 左上のバッジの幅。元の大きさ（ニケ一覧の四角と同じ 86px）でニケ一覧と同じ 20px にし（整数の px に丸める）、立ち絵が縮むと一緒に縮める（右上のボタンも同じ大きさ） */
-  --badge-w: round(nearest, var(--slot-portrait-h) * 60 / 256, 1px);
+  /* 左上のバッジの幅。元の大きさ（ニケ一覧の四角と同じ 256/3 px）でニケ一覧と同じ 20px にし、立ち絵が縮むと一緒に縮める（右上のボタンも同じ大きさ） */
+  --badge-w: calc(var(--slot-portrait-h) * 60 / 256);
 }
 /* ニケ一覧の縦長の絵は、背景も枠線と同じく上の 5 割で上へ行くほど透明にする。枠線: 上を消し、横は上の 5 割で上へ行くほど薄くして一番上で消す（下は実線）。
    枠線の太さは変えないので、絵の大きさは同じ。色は枠線の色（--char-visual-line） */
