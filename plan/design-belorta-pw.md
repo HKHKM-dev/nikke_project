@@ -4,7 +4,7 @@
 - 関連: [design-rouge.md](design-rouge.md) 2.1 節・[design-adjacent-allies.md](design-adjacent-allies.md) 2.1 節（両隣の対象 `targetAdjacent`）、[design-trina.md](design-trina.md) 2.2 節（左端の対象 `targetLeftmost`。枠の番号の若い方が左）、[design-named-state.md](design-named-state.md)（名前の付いた状態）
 - 検証: V-0859
 - 作成日: 2026-11-22
-- 状態: 承認待ち（論点 1）
+- 状態: 実装（論点 1 は案 A）
 
 ## 0. 範囲
 
@@ -33,7 +33,6 @@
   - 右隣 = 編成の枠の順で自分の次の枠（枠の番号 + 1）。左端（`targetLeftmost`）が枠の番号の若い方なので、右は番号の大きい方と読む。両隣と同じく、空枠と最後の枠の外側は無し（その先の枠へは飛ばない）。右端の発動者では誰にも付かない。
   - 書けるのは、いまの `targetAdjacent` と同じ効果（timed・付与・回復）で、`target: "allies"` のときだけ。`includeSelf` とは組まない（「自分と右隣」の使い手がいない）。
   - 枠は編成の組み立て（`skills/composition.ts`）が `fixedTargets` に書く（両隣と同じ流れ。`skills/targets.ts` の `adjacentSlotsOf` に向きを足す）。
-  - 手元で試した形（コミットしていない）: クルミ・ベロータ：パンプキンウィッチ・レイヴンの編成で、S1・S2・バーストの右隣の効果がレイヴン（3 枠目）にだけ付き、クルミ（1 枠目）には付かなかった。
 - 案 B: 別の欄（`targetRight: true` など）を足す。両隣と同じ組み立ての流れを使うのに、欄と組み合わせの検査が 2 組になる。採らない。
 - 案 C: 語彙を足さず、右隣の 4 つの効果を未対応の notes にする（S1・S2・バーストが `partial`）。右隣の味方の攻撃力▲と持続ダメージ▲が抜け、モデルは与ダメージを低く出す。採らない。
 
@@ -64,6 +63,11 @@
 
 - 論点 1（2.1 節）: 右隣の対象を `targetAdjacent: "right"` で書くか。推奨は案 A。
 
+## 8. 決めたこと
+
+- 論点 1 は案 A（2026-11-22 のオーナーの判断）。両隣と同じ組み立ての流れ（`fixedTargets`）で書け、既存の両隣の定義の数値は変わらない（2.1 節）。
+
 ## 経過
 
 - 2026-11-22: 起案。
+- 2026-11-22: 論点 1 を案 A で実装した（`targetAdjacent: "right"`・定義の下書き・編成のテスト）。撮影は V-0859。

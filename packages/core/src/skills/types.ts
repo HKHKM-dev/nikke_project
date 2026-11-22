@@ -359,6 +359,12 @@ export function lostHpScaled<E extends { scaling?: BuffScaling; value: number }>
   return { ...effect, scaling: 'ratio', value: effect.value * lostHpSteps(ratioOf()) };
 }
 
+/**
+ * 編成の枠の左右の味方（targetAdjacent）。true = 両隣（自分の左右の枠。plan/design-rouge.md 2.1 節）、
+ * 'right' = 右隣（自分の次の枠だけ。plan/design-belorta-pw.md 2.1 節）
+ */
+export type TargetAdjacent = true | 'right';
+
 /** 攻撃力に実数を固定加算するスケーリング（比率で足さない。stat は attack だけ） */
 export function isFixedAttackScaling(scaling: BuffScaling | undefined): boolean {
   return scaling === 'casterAttack' || scaling === 'copyTopAttack' || scaling === 'casterFinalMaxHp';
@@ -1146,9 +1152,10 @@ export type TimedEffect = TargetCountFields &
     /**
      * 「両隣の味方」（plan/design-rouge.md 2.1 節）。編成の枠の順で自分の左右の枠（空枠と、1・5 枠目の外側は無し）だけ。
      * includeSelf で自分を足す（「自分と両隣にいる味方 2 機」）。target が 'allies' のときだけ書け、targetState・targetBurstStep・
-     * targetSquad・excludeSelf・targetDefense とは組まない（値は true だけ）
+     * targetSquad・excludeSelf・targetDefense とは組まない。'right' は「自分の右隣の味方 1 機」（編成の枠の順で自分の次の枠だけ。
+     * 空枠と 5 枠目の外側は無し。includeSelf とは組まない。plan/design-belorta-pw.md 2.1 節）
      */
-    targetAdjacent?: true;
+    targetAdjacent?: TargetAdjacent;
     /**
      * 「部隊の一番左側にいる〈絞り込み〉の味方 1 機」（plan/design-trina.md 2.2 節）。武器種・コード・クラスの絞り込み（自分も候補）に
      * 合う枠のうち、編成の枠の順でいちばん左（添字の最も小さい枠。空枠は数えない）の 1 枠だけ。編成で決まるので最上位の
@@ -1938,7 +1945,7 @@ export type HealEffect = TargetCountFields &
      * 「両隣の味方」（timed の targetAdjacent と同じ。target が 'allies' のときだけ。plan/design-rouge.md 2.1 節・
      * plan/design-adjacent-allies.md 2.1 節）
      */
-    targetAdjacent?: true;
+    targetAdjacent?: TargetAdjacent;
     /** 「自分と両隣」（targetAdjacent と組むときだけ） */
     includeSelf?: true;
     /** 回復量（%）の description_value_NN */

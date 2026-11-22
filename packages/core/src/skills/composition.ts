@@ -220,7 +220,8 @@ export function fixedTargetsOf(
   // 家族の根なら家族のどの状態でも当たる（plan/design-new-chars-1029.md 5.1 節）。「自分と」は自分の枠を足す
   const matching = state === undefined ? [] : statesMatching(state);
   const withSelf = persona?.includeSelf === true;
-  const adjacent = persona?.targetAdjacent === true ? adjacentSlotsOf(characters, selfIndex, withSelf) : undefined;
+  const side = persona?.targetAdjacent;
+  const adjacent = side === undefined ? undefined : adjacentSlotsOf(characters, selfIndex, withSelf, side);
   const step = persona?.targetBurstStep;
   const excludeSelf = windowed && effect.target === 'allies' && effect.excludeSelf !== undefined;
   const candidates: number[] = [];
@@ -539,7 +540,7 @@ function withAdjacentStates(
     if (!definition) return;
     for (const slot of SKILL_SLOTS) {
       for (const e of definition.skills[slot].effects) {
-        if (e.kind !== 'state' || e.targetAdjacent !== true || !isBattleLongGrant(e)) continue;
+        if (e.kind !== 'state' || e.targetAdjacent === undefined || !isBattleLongGrant(e)) continue;
         // 外す効果のある状態は戦闘中ずっと付いているとは限らない（staticStatesOf と同じ規則）
         if (removedStatesOf(definition).has(e.state)) continue;
         // 付与の対象と同じ枠（武器種・コード・クラスの絞り込みも。fixedTargetsOf）
