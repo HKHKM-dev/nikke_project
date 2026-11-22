@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 178・効果 1244（根拠あり 1222）・notes 380（根拠あり 163）
+件数: キャラ 178・効果 1244（根拠あり 1222）・notes 380（根拠あり 164）
 
-notes の種類: 未対応 28・前提の外 132・計算に無関係 78・補足 44・間接 98
+notes の種類: 未対応 27・前提の外 133・計算に無関係 78・補足 44・間接 98
 
-スロット: supported 497・partial 22・unsupported 5・noEffect 67
+スロット: supported 498・partial 21・unsupported 5・noEffect 67
 
 ## 10 ラピ
 
@@ -441,11 +441,11 @@ notes の種類: 未対応 28・前提の外 132・計算に無関係 78・補�
   - effects[0] state・burstUse・survivalInstinct1（attack）: C-1442（確定）
   - effects[1] state・burstUse・survivalInstinct2（critDamage）: C-1442（確定）
   - effects[2] state・burstUse・survivalInstinct3（critRate）: C-1442（確定）
-- **burst**: partial
+- **burst**: supported
   - effects[0] damage・burstUse・additional: C-1441（確定）
   - effects[1] damage・burstUse・additional: C-1441（確定）
   - effects[2] damage・burstUse・additional: C-1441（確定）
-  - notes[0] 未対応: ミサイルコンテナ 2 機の攻撃（最終攻撃力の 15.56% のダメージ・攻撃間隔 1 秒・18 秒）は未対応。1 ヒットの値は式どおりだが、射撃場の的では 1 回のバーストのヒットの数が 1 秒に 2 回の 34〜36 回にならず、録画とバーストで大きく違う（V-0825）: 根拠なし
+  - notes[0] 前提の外: ミサイルコンテナ 2 機の攻撃（最終攻撃力の 15.56% のダメージ・攻撃間隔 1 秒・18 秒）は、ヒットの数が射撃場の的の着地点とコンテナが出てからの時刻で決まり、説明文の 1 秒に 2 回にならない。1 回の攻撃のミサイルの数が分からず、静止した単体ボスでの数を決められないので、モデルに入れない（1 ヒットの値は式どおり。V-0825）: C-1555（確定）、C-1556（確定）
   - notes[1] 補足: フルバーストタイム 5 秒▼は burst_duration（5 秒）から時刻表に入る: C-0011（確定）
 
 ## 92 ウンファ
