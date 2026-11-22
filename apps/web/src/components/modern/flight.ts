@@ -229,8 +229,8 @@ export function flyToTray(content: Element, to: DOMRect | null): void {
 }
 
 /**
- * 持ち上げた番号（content）を、その位置から to の位置・大きさへ動かす（編成の番号を別の番号に落とした）。動きの前半 50% で透明にし、
- * 半分で動く先の番号の表示（destination のいまの中身）に切り替え、後半 50% で透明を解く。動き終えたら（取り消されても）返す Promise が済む。
+ * 持ち上げた番号（content）を、その位置から to の位置・大きさへ動かす（編成の番号を別の番号に落とした）。動きの最初の 45% で透明にし、
+ * 透明の間（半分）に動く先の番号の表示（destination のいまの中身）に切り替え、後半の 55% から不透明に戻す。動き終えたら（取り消されても）返す Promise が済む。
  * 動く先の番号は、落とした後の描き直しで中身が変わりうるので、切り替えるときに読む
  */
 export function flyLabel(content: Element, to: DOMRect, destination: Element | null): Promise<void> {
@@ -239,12 +239,15 @@ export function flyLabel(content: Element, to: DOMRect, destination: Element | n
   const ghost = ghostOf(content, base);
   const remove = () => ghost.remove();
   const move = ghost.animate([frameAt(base, base), frameAt(end, base)], FLIGHT);
-  // 透明にする動きは、動きの速さの変化（ease）を付けず、前半・後半をちょうど 50% ずつにする
-  const fade = ghost.animate([{ opacity: 1 }, { opacity: 0, offset: 0.5 }, { opacity: 1 }], {
-    duration: FLIGHT.duration,
-    easing: 'linear',
-    fill: FLIGHT.fill,
-  });
+  // 透明にする動きは、動きの速さの変化（ease）を付けず、0〜45% で透明にし、45〜55% は透明のまま、55〜100% で不透明に戻す
+  const fade = ghost.animate(
+    [{ opacity: 1 }, { opacity: 0, offset: 0.45 }, { opacity: 0, offset: 0.55 }, { opacity: 1 }],
+    {
+      duration: FLIGHT.duration,
+      easing: 'linear',
+      fill: FLIGHT.fill,
+    },
+  );
   let switched = false;
   const watch = () => {
     if (switched || !ghost.isConnected) return;
