@@ -1,0 +1,134 @@
+{
+  "verification": "V-0868",
+  "note": "部隊あり（ルージュ（777）がいる）の撮影の予測。ルージュ（I・操作・撃たない）・ブラン（II・AI）・I-DOLL・サン（III・AI）。II はブランだけなので、ブランのクールタイム（60 秒）がチェーンの回りを決める。ルージュは撃たないので、S1（フルチャージ 8 回ごとの味方全体のクールタイム▼）は起きない（モデルの撃たない枠は射撃の回数のきっかけが残るので、dropEffects で外す）",
+  "team": [
+    {
+      "rid": 272,
+      "controlled": true
+    },
+    {
+      "rid": 270,
+      "controlled": false
+    },
+    {
+      "rid": 308,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "クールタイム▼は起きない（いまの定義。skill2 の notes[0] が未対応のまま）。ブランのクールタイムは 60 秒のまま"
+    },
+    {
+      "id": "H1",
+      "note": "ラムの S1（C-0080・C-0235）と同じ読み: フルバースト終了時に、同じ部隊の味方（ルージュ）がいれば、ブランの残りのクールタイムを説明文の値 3（40.76 秒）だけ縮める（0 未満にしない。C-0202 の当て方）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 270,
+            "skill": "skill2",
+            "effect": {
+              "kind": "cooldownReduction",
+              "trigger": "fullBurstEnd",
+              "target": "self",
+              "ref": 3,
+              "squad": {
+                "present": true
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "blanc-squad-slots",
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 12
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 272,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      },
+      "note": "バーストを撃った枠の並び（最初の 12 回）。2 がブランの II"
+    },
+    {
+      "id": "blanc-squad-frames",
+      "model": "sim",
+      "metric": "burstActivationVideoFrames",
+      "args": {
+        "n": 12
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 272,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "note": "最初の 12 回の発動の段の表示の動画のフレーム"
+    },
+    {
+      "id": "blanc-ct-end",
+      "model": "sim",
+      "metric": "activationToCtEnd",
+      "args": {
+        "slot": 2,
+        "n": "0,1,2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 272,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "note": "ブランの 1〜3 回目の II の替わり目から、その CT の明け（右のバースト欄のブランの顔の CT の秒の表示が消えたフレーム）までの動画のフレーム"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-22",
+    "commit": "61dc8a2d943047053a03a3482cbddba3f9596c75",
+    "values": {
+      "H0": {
+        "blanc-squad-slots": [1, 2, 3, 1, 1, 1, 2, 3, 1, 1, 1, 2],
+        "blanc-squad-frames": [678, 707, 736, 2170, 3504, 4862, 4891, 4920, 6235, 7579, 8948, 8977],
+        "blanc-ct-end": [3548, 3548, 3547]
+      },
+      "H1": {
+        "blanc-squad-slots": [1, 2, 3, 1, 2, 1, 1, 1, 2, 3, 1, 2],
+        "blanc-squad-frames": [678, 707, 736, 2170, 2199, 3505, 4863, 6176, 6205, 6234, 7545, 7574],
+        "blanc-ct-end": [1149, 3526, 1149]
+      }
+    }
+  }
+}
