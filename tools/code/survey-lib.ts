@@ -66,7 +66,8 @@ function functionName(fn: ts.FunctionLikeDeclaration, source: ts.SourceFile): st
     ts.isBinaryExpression(parent)
   ) {
     const target = ts.isBinaryExpression(parent) ? parent.left : parent.name;
-    return oneLine(target.getText(source), 40);
+    const field = ts.isPropertyDeclaration(parent) ? classPrefix(parent) : '';
+    return `${field}${oneLine(target.getText(source), 40)}`;
   }
   if (ts.isExportAssignment(parent)) return 'default';
   if (ts.isCallExpression(parent) || ts.isNewExpression(parent)) {
@@ -190,9 +191,14 @@ export function functionComplexities(file: string, source: ts.SourceFile): Funct
       frame.complexity++;
     }
     ts.forEachChild(node, (child) => {
-      // クラスのフィールドの初期化子は、外の関数と分けて数える
-      const field = ts.isPropertyDeclaration(node) && child === node.initializer;
-      visit(child, field ? open(`${classPrefix(node)}${node.name.getText(source)} の初期化子`, node) : frame);
+      // クラスのフィールドの初期化子は、外の関数と分けて数える（行は値の始め）
+      if (ts.isPropertyDeclaration(node) && child === node.initializer) {
+        visit(child, open(`${classPrefix(node)}${node.name.getText(source)} の初期化子`, child));
+        return;
+      }
+      // 関数の名前（[k ?? 'x']() {}）とデコレーターは、外の関数に数える
+      const outside = hasBody(node) && (child === node.name || node.modifiers?.some((m) => m === child));
+      visit(child, outside ? current : frame);
     });
   };
   visit(source, undefined);

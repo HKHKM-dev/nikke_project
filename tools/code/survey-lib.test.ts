@@ -89,11 +89,14 @@ describe('functionComplexities', () => {
     '  size = Math.random() > 0.5 ? 1 : 0;', // 25
     '  static { if (Box) {} }', // 26
     '  get area(): number { return this.size || 1; }', // 27
+    "  [Math.random() ? 'p' : 'q'](a = 1): number { return a; }", // 28
+    '  @dec(Box ?? 1) m(): void {}', // 29
+    '  @dec(Box ?? 2) g = () => (Box ? 1 : 2);', // 30
     '}',
-    "describe('x', () => {", // 29
+    "describe('x', () => {", // 32
     '  if (Box) {}',
-    "  it('y', () => {", // 31
-    '    const f = () => (Box ? 1 : 2);', // 32
+    "  it('y', () => {", // 34
+    '    const f = () => (Box ? 1 : 2);', // 35
     '    f();',
     '  });',
     '});',
@@ -111,9 +114,9 @@ describe('functionComplexities', () => {
       },
       'a.ts',
     );
-    // ESLint は vitest の枠に渡す関数（29・31 行）も出す。こちらはそれを出さず、その中の f（32 行）だけを出す
+    // ESLint は vitest の枠に渡す関数（32・34 行）も出す。こちらはそれを出さず、その中の f（35 行）だけを出す
     const eslint = messages
-      .filter((m) => m.ruleId === 'complexity' && m.line !== 29 && m.line !== 31)
+      .filter((m) => m.ruleId === 'complexity' && m.line !== 32 && m.line !== 34)
       .map((m): [number, number] => [m.line, Number(/complexity of (\d+)/.exec(m.message)?.[1])]);
     const sorted = (rows: [number, number][]) => [...rows].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
     expect(sorted(found.map((f): [number, number] => [f.line, f.complexity]))).toEqual(sorted(eslint));
@@ -127,7 +130,11 @@ describe('functionComplexities', () => {
       ['Box.size の初期化子', 25, 2],
       ['Box.static ブロック', 26, 2],
       ['Box.area', 27, 2],
-      ['f', 32, 2],
+      ["Box.[Math.random() ? 'p' : 'q']", 28, 2],
+      ['Box.m', 29, 1],
+      ['Box.g の初期化子', 30, 1],
+      ['Box.g', 30, 2],
+      ['f', 35, 2],
     ]);
   });
 });
