@@ -238,19 +238,9 @@ export function restartDotTicks(
   frames: number,
   firstTick: DotFirstTick = 'atApplication',
 ): number[] {
-  if (firstTick === 'halfAfterLatest') throw new RangeError('restartOnReapply cannot use halfAfterLatest');
-  const { offset, lastOffset } = dotTickShape(intervalSeconds, durationSeconds, firstTick);
-  const out: number[] = [];
-  fires.forEach((f, i) => {
-    const next = Math.min(fires[i + 1] ?? frames, frames);
-    for (let k = 0; ; k++) {
-      const o = offset(k);
-      const tick = f + o;
-      if (o > lastOffset || tick >= next) break;
-      out.push(tick);
-    }
-  });
-  return out;
+  // 確率 1 の期待値の tick と同じ（後の発火が tick 以前にあると重みが 0 になって打ち切る）
+  const sure = fires.map((frame) => ({ frame, q: 1 }));
+  return chanceDotTicks(sure, intervalSeconds, durationSeconds, frames, firstTick, true).map((t) => t.frame);
 }
 
 /** 確率のきっかけの dot の 1 回の機会（発火のフレームと、その発で付く確率） */
@@ -268,7 +258,7 @@ const CHANCE_DOT_EPSILON = 1e-12;
  * 「その tick が出る確率」の重みを付けて返す（フレームの昇順。同じフレームに起点の違う tick が並ぶ）。
  * 発 a が起点になる確率は q_a × Π (1 − qⱼ)（a の前の維持のフレームの中の機会）。起点 a のまとまりは、最後に付いた発 j の後の維持の
  * フレームの中の発 i で確率 qᵢ × Π_{j < m < i} (1 − q_m) で延び、どれも付かなければ j で終わる。起点 a の k 回目の tick（τ）は、最後の付与 j が
- * τ ≤ fⱼ + lastOffset のとき出る。生きている確率の和が CHANCE_DOT_EPSILON を切ったら、その起点を追うのをやめる。halfAfterLatest は書けない
+ * τ ≤ fⱼ + lastOffset のとき出る。起点になる確率 × 生きている確率の和が CHANCE_DOT_EPSILON を切ったら、その起点を追うのをやめる。halfAfterLatest は書けない
  */
 export function chanceDotTicks(
   fires: readonly ChanceDotFire[],
@@ -298,7 +288,7 @@ export function chanceDotTicks(
       // i より前に維持が切れた最後の付与は、そこで終わる（alive は付与の昇順なので前から）
       let gone = 0;
       while (gone < alive.length && fi >= live[alive[gone]!.j]!.frame + durationFrames) ended.push(alive[gone++]!);
-      if (gone > 0) alive = alive.slice(gone);
+      if (gone > 0) alive.splice(0, gone);
       if (alive.length === 0) break;
       const q = live[i]!.q;
       let joined = 0;
@@ -309,7 +299,8 @@ export function chanceDotTicks(
         total += s.p;
       }
       if (joined > 0) alive.push({ j: i, p: joined });
-      if (total + joined < CHANCE_DOT_EPSILON) alive = [];
+      // 起点になる確率を掛けた、この起点の残りの tick の重みが誤差の幅を切ったら追うのをやめる
+      if (start * (total + joined) < CHANCE_DOT_EPSILON) alive = [];
     }
     ended.push(...alive);
     // tick τ が出る確率 = 最後の付与 j が τ − lastOffset ≤ fⱼ の確率の和（後ろからの累積）

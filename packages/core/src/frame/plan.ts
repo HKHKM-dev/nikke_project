@@ -117,7 +117,7 @@ import {
 } from '../team.ts';
 import { untargetableRanges } from './events.ts';
 import type { FrameRange } from '../skills/timeline.ts';
-import { chanceDotTicks, dotStacksAt, dotTicks, groupDotsByState, restartDotTicks } from './dot.ts';
+import { chanceDotTicks, dotStacksAt, dotTicks, groupDotsByState } from './dot.ts';
 export { DOT_LATER_TICK_DELAY_SECONDS, dotTickFrames, dotTickTracker, dotTicks, groupDotsByState } from './dot.ts';
 import { runFirstPass, type FirstPassResult, type InstantApplication } from './firstPass.ts';
 import {
@@ -952,21 +952,26 @@ function dotHits(ctx: SkillHitsContext, s: SlotReaders): void {
   };
   for (const { dot, fires, cancels } of dotGroups) {
     const { maxStacks } = dot;
-    // 確率のきっかけ（名前の付いた状態を持たないので 1 つの効果だけのまとまり）は、起点ごとの tick に出る確率の重みを掛ける
-    // （plan/design-chance-dot-damage.md 3.1 節）
-    const chanceEffect = fires[0]?.effect;
-    if (chanceEffect !== undefined && isResolvedChance(chanceEffect.trigger)) {
-      const opportunities = chanceFires(chanceEffect.trigger, schedule, slotIndex, frames, shots);
+    // 確率のきっかけは起点ごとの tick に出る確率の重みを掛け（plan/design-chance-dot-damage.md 3.1 節）、付け直しのたびに刻みを
+    // 数え直す形（同 9 節）は確率 1 の同じ計算で出す。どちらも名前の付いた状態を持たないので、1 つの効果だけのまとまり
+    const single = fires[0]?.effect;
+    const chance = single !== undefined && isResolvedChance(single.trigger) ? single.trigger : undefined;
+    if (single !== undefined && (chance !== undefined || dot.restartOnReapply === true)) {
+      const opportunities =
+        chance !== undefined
+          ? chanceFires(chance, schedule, slotIndex, frames, shots)
+          : fires.map((x) => ({ frame: x.f, q: 1 }));
+      const restart = dot.restartOnReapply === true;
       for (const tick of chanceDotTicks(
         opportunities,
         dot.intervalSeconds,
         dot.durationSeconds,
         frames,
         dot.firstTick,
-        dot.restartOnReapply === true,
+        restart,
       )) {
-        const { event } = push(tick.frame, chanceEffect, false);
-        event.hit = withChanceWeight(event.hit, tick.weight);
+        const { event } = push(tick.frame, single, false);
+        if (chance !== undefined) event.hit = withChanceWeight(event.hit, tick.weight);
       }
       continue;
     }
@@ -1001,16 +1006,6 @@ function dotHits(ctx: SkillHitsContext, s: SlotReaders): void {
         const end = Math.min(frames, item.end);
         for (const tick of dotTicks([first.f], dot.intervalSeconds, dot.durationSeconds, end, dot.firstTick))
           push(tick.frame, first.effect, false);
-      }
-      continue;
-    }
-    // 付け直しのたびに刻みを数え直す形（plan/design-chance-dot-damage.md 9 節。スタック・刻みの遅れとは組まない）
-    if (dot.restartOnReapply === true) {
-      const at = fires.map((x) => x.f);
-      let last = 0;
-      for (const frame of restartDotTicks(at, dot.intervalSeconds, dot.durationSeconds, frames, dot.firstTick)) {
-        while (last + 1 < at.length && at[last + 1]! <= frame) last += 1;
-        push(frame, fires[last]!.effect, false);
       }
       continue;
     }

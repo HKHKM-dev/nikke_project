@@ -939,6 +939,11 @@ export type BurstHitResult = {
   chance?: number;
 };
 
+/** 1 回の結果のヒットの回数の期待値（確率のきっかけの持続ダメージの tick は出る確率。ほかは 1） */
+export function expectedHitCount(hit: BurstHitResult): number {
+  return hit.chance ?? 1;
+}
+
 /** 1 回の結果に、出る確率 weight（0 より大きく 1 以下）を掛けた期待値の結果（確率のきっかけの持続ダメージの tick） */
 export function withChanceWeight(hit: BurstHitResult, weight: number): BurstHitResult {
   return {

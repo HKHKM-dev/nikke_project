@@ -36,7 +36,13 @@ import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect, type Ite
 import { valuePiecesOf, type RemoveDebuffGuessRecord } from '../skills/holders.ts';
 import { namedStateName, type NamedStateId } from '../skills/states.ts';
 import { isStateStat, type InstantKind } from '../skills/types.ts';
-import { combineBurstHitParts, slotBurstHit, withSkillHitValue, type BurstHitResult } from '../skills/burstDamage.ts';
+import {
+  combineBurstHitParts,
+  expectedHitCount,
+  slotBurstHit,
+  withSkillHitValue,
+  type BurstHitResult,
+} from '../skills/burstDamage.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import type { BuffTotals } from '../skills/buffs.ts';
@@ -270,7 +276,7 @@ export function runSimulation(simInput: SimInput): SimResult {
     if (!runner) return;
     runner.result.skillHits.frames.push(h.frame);
     runner.result.skillHits.damage += h.hit.perActivation;
-    runner.result.skillHits.count += h.hit.chance ?? 1;
+    runner.result.skillHits.count += expectedHitCount(h.hit);
     addPerSecond(h.slotIndex, h.frame, h.hit.perActivation);
   };
   // 倍率ダメージ（damage）。値は 1 パス目で計算済み（フレーム順）。蓄積して爆発するダメージは、ほかのヒットの後に決める

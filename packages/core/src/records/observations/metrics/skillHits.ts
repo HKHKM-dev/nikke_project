@@ -6,10 +6,9 @@ import {
   hitFramesOf,
   videoFrameOf,
 } from '../../../burst/schedule.ts';
-import { restartDotTicks } from '../../../frame/dot.ts';
-import { dotTicks } from '../../../frame/plan.ts';
+import { dotTickFrames, restartDotTicks } from '../../../frame/dot.ts';
 import type { SimResult } from '../../../sim/engine.ts';
-import { resolveDotEffects } from '../../../skills/burstDamage.ts';
+import { expectedHitCount, resolveDotEffects, type ResolvedDamageEffect } from '../../../skills/burstDamage.ts';
 import { MAX_SKILL_LEVELS, isResolvedChance, isResolvedShotCount } from '../../../skills/resolve.ts';
 import { chanceFires } from '../../../skills/timeline.ts';
 import { hpRatioStepIndexOf, itemsOf, stateEndFrames } from '../../../skills/holders.ts';
@@ -17,8 +16,8 @@ import type { NamedStateId } from '../../../skills/states.ts';
 import type { CompareSpec } from '../types.ts';
 import { firstCount, type Metric, type MetricContext, slotIndexOf, slotOf, withArgs } from './context.ts';
 
-/** 録画で読んだ付いたフレームから、枠の skill スロットの持続ダメージ（1 つ）の規則で出る tick のフレーム（until より前） */
-function dotTicksFromApplications(ctx: MetricContext): number[] {
+/** 枠の skill スロットのただ 1 つの持続ダメージ（解決したもの） */
+function skillDotOf(ctx: MetricContext): ResolvedDamageEffect {
   const slot = slotOf(ctx.input.slots, ctx);
   const definition = slot.skills?.definition;
   if (!definition) throw new Error('枠にスキル定義が無い');
@@ -26,7 +25,12 @@ function dotTicksFromApplications(ctx: MetricContext): number[] {
     (e) => e.source.skill === ctx.args.skill,
   );
   if (dots.length !== 1) throw new Error(`${String(ctx.args.skill)} の持続ダメージが 1 つでない（${dots.length}）`);
-  const dot = dots[0]!.dot!;
+  return dots[0]!;
+}
+
+/** 録画で読んだ付いたフレームから、枠の skill スロットの持続ダメージ（1 つ）の規則で出る tick のフレーム（until より前） */
+function dotTicksFromApplications(ctx: MetricContext): number[] {
+  const dot = skillDotOf(ctx).dot!;
   const applications = String(ctx.args.applications)
     .split(',')
     .map(Number)
@@ -35,21 +39,13 @@ function dotTicksFromApplications(ctx: MetricContext): number[] {
   const until = Number(ctx.args.until);
   return dot.restartOnReapply === true
     ? restartDotTicks(applications, dot.intervalSeconds, dot.durationSeconds, until, dot.firstTick)
-    : dotTicks(applications, dot.intervalSeconds, dot.durationSeconds, until, dot.firstTick).map((t) => t.frame);
+    : dotTickFrames(applications, dot.intervalSeconds, dot.durationSeconds, until, dot.firstTick);
 }
 
 /** 枠の skill スロットの確率のきっかけの持続ダメージ（1 つ）が付く回数の期待値（発ごとの確率の和） */
 function chanceDotApplyCount(result: SimResult, ctx: MetricContext): number {
-  const slot = slotOf(ctx.input.slots, ctx);
-  const definition = slot.skills?.definition;
-  if (!definition) throw new Error('枠にスキル定義が無い');
-  const dots = resolveDotEffects(definition, slot.character, slot.skills?.levels ?? MAX_SKILL_LEVELS).filter(
-    (e) => e.source.skill === ctx.args.skill && isResolvedChance(e.trigger),
-  );
-  if (dots.length !== 1)
-    throw new Error(`${String(ctx.args.skill)} の確率の持続ダメージが 1 つでない（${dots.length}）`);
-  const trigger = dots[0]!.trigger;
-  if (!isResolvedChance(trigger)) throw new Error('確率のきっかけでない');
+  const { trigger } = skillDotOf(ctx);
+  if (!isResolvedChance(trigger)) throw new Error(`${String(ctx.args.skill)} の持続ダメージが確率のきっかけでない`);
   return chanceFires(trigger, result.schedule, slotIndexOf(ctx), result.frames, result.shots).reduce(
     (s, x) => s + x.q,
     0,
@@ -73,7 +69,7 @@ export const skillHitsMetrics: Readonly<Record<string, Metric>> = {
         ? slotOf(r.slots, c).skillHits.count
         : r.skillHits
             .filter((h) => h.slotIndex === slotIndexOf(c) && h.effect.source.skill === c.args.skill)
-            .reduce((sum, h) => sum + (h.hit.chance ?? 1), 0),
+            .reduce((sum, h) => sum + expectedHitCount(h.hit), 0),
   },
   // 録画で読んだ付いたフレーム（applications。動画のフレームを , で並べる）を入れたときの、定義の持続ダメージの tick のフレーム
   // （until より前。付け直しの規則は定義のとおり）。確率のきっかけの持続ダメージの付け直しの形を、付いた発を録画から決めて比べる

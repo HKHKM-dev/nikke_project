@@ -85,27 +85,32 @@ function validateAppliedDot(
  * 組まない（使い手がいない。ゲージの期待値はバーストの時刻表を動かす。同 3.3 節）
  */
 function validateChanceDot(v: Record<string, Json>, trigger: EffectTrigger, path: string): void {
-  if (!isChanceTrigger(trigger)) return;
-  for (const key of [
-    'state',
-    'maxStacksRef',
-    'durationUntil',
-    'tickIntervalFrames',
-    'hitOnApply',
-    'gaugeOnApply',
-    'gaugeOnApplyDelayFrames',
-    'tickDelayFrames',
-    'gaugeOnTick',
-    'perCount',
-    'perCountIntervalFrames',
-    'delayFrames',
-    'stacksFrom',
-    'copyEachTick',
-    'condition',
-  ])
-    if (v[key] !== undefined) fail(`${path}.${key}`, `a dot on a chance trigger cannot have ${key}`);
-  if (v.firstTick === 'halfAfterLatest')
-    fail(`${path}.firstTick`, 'a dot on a chance trigger cannot use halfAfterLatest');
+  if (isChanceTrigger(trigger)) rejectPlainOnlyKeys(v, path, 'a dot on a chance trigger');
+}
+
+/**
+ * 確率のきっかけの dot と restartOnReapply の dot が書けない欄（付いている間・スタック・刻みの遅れ・数・遅れ・ゲージ・条件を追う欄）。
+ * firstTick halfAfterLatest は durationUntil: battleEnd と組むので、durationUntil を書けなければ書けない（parseDotTickShape）
+ */
+const PLAIN_DOT_REJECTED_KEYS = [
+  'state',
+  'maxStacksRef',
+  'durationUntil',
+  'gaugeOnApply',
+  'gaugeOnApplyDelayFrames',
+  'tickDelayFrames',
+  'gaugeOnTick',
+  'perCount',
+  'perCountIntervalFrames',
+  'delayFrames',
+  'stacksFrom',
+  'copyEachTick',
+  'condition',
+] as const;
+
+function rejectPlainOnlyKeys(v: Record<string, Json>, path: string, what: string): void {
+  for (const key of PLAIN_DOT_REJECTED_KEYS)
+    if (v[key] !== undefined) fail(`${path}.${key}`, `${what} cannot have ${key}`);
 }
 
 /** dot に書ける欄 */
@@ -235,23 +240,7 @@ function parseDotTickShape(v: Record<string, Json>, effect: DotEffect, path: str
 function parseDotRestart(v: Record<string, Json>, effect: DotEffect, path: string): void {
   if (v.restartOnReapply === undefined) return;
   if (v.restartOnReapply !== true) fail(`${path}.restartOnReapply`, 'expected true');
-  if (effect.firstTick === 'halfAfterLatest') fail(`${path}.restartOnReapply`, 'cannot be used with halfAfterLatest');
-  for (const key of [
-    'state',
-    'maxStacksRef',
-    'durationUntil',
-    'gaugeOnApply',
-    'gaugeOnApplyDelayFrames',
-    'tickDelayFrames',
-    'gaugeOnTick',
-    'perCount',
-    'perCountIntervalFrames',
-    'delayFrames',
-    'stacksFrom',
-    'copyEachTick',
-    'condition',
-  ])
-    if (v[key] !== undefined) fail(`${path}.${key}`, `a dot with restartOnReapply cannot have ${key}`);
+  rejectPlainOnlyKeys(v, path, 'a dot with restartOnReapply');
   if (isCounterFullTrigger(effect.trigger) || isAppliedTrigger(effect.trigger))
     fail(`${path}.trigger`, 'a dot with restartOnReapply cannot use { counterFull } or { applied }');
   effect.restartOnReapply = true;

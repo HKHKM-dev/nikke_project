@@ -93,6 +93,15 @@ export type ShotEvent = {
   ammo?: number;
 };
 
+/**
+ * 確率のきっかけの 1 発で付く確率 min(1, 確率 × その発の回数の量)。回数の量が 0 の発は 0（機会にしない）。
+ * plan/design-soldier-eg.md 3.1 節
+ */
+export function chanceQ(trigger: { count: ShotCountKind; chance: number }, shot: ShotEvent): number {
+  const weight = shotCountWeight(trigger.count, shot);
+  return weight > 0 ? Math.min(1, trigger.chance * weight) : 0;
+}
+
 /** 1 回の射撃が、その回数トリガーの回数に足す量（plan/design-ludmilla-wo.md 2.2・2.3 節） */
 export function shotCountWeight(kind: ShotCountKind, shot: ShotEvent): number {
   switch (kind) {

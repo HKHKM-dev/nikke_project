@@ -44,7 +44,7 @@ import { isEffectTarget } from './targets.ts';
 import {
   createStateWindowTracker,
   replayEvents,
-  shotCountWeight,
+  chanceQ,
   trackTriggerFires,
   type FrameEvents,
   type HealRecord,
@@ -366,8 +366,8 @@ export function chanceFires(
   for (const ev of eventsOf(schedule, shots, frames)) {
     const shot = ev.shots[slotIndex];
     if (!shot) continue;
-    const weight = shotCountWeight(trigger.count, shot);
-    if (weight > 0) out.push({ frame: ev.frame, q: Math.min(1, trigger.chance * weight) });
+    const q = chanceQ(trigger, shot);
+    if (q > 0) out.push({ frame: ev.frame, q });
   }
   return out;
 }

@@ -256,22 +256,20 @@ function bulletHitRate(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
- * 枠の射撃ごとの倍率ダメージに掛けた確率（確率のきっかけ。plan/design-chance-dot-damage.md 3.2 節）。無ければ 1。
+ * 枠の射撃ごとの倍率ダメージに掛けた確率（確率のきっかけ。plan/design-chance-dot-damage.md 3.2 節）。無ければ undefined。
  * 確率の違う効果が混ざると 1 回の値に割り戻せないので落とす
  */
-function perShotChanceOf(input: TeamSlotInput): number {
-  const chances = new Set(perShotDamageOf(input).map((e) => e.chance ?? 1));
+function perShotChanceOf(input: TeamSlotInput): number | undefined {
+  const chances = new Set(perShotDamageOf(input).map((e) => e.chance));
   if (chances.size > 1) throw new Error('確率の違う射撃ごとの倍率ダメージが混ざっている');
-  return [...chances][0] ?? 1;
+  return [...chances][0];
 }
 
 /** 確率のきっかけの射撃ごとの倍率ダメージの回数の期待値（区間ごとの発数 × 弾丸命中率 × 確率の和）。確率のきっかけが無ければ落とす */
 function perShotChanceCount(result: SimResult, ctx: MetricContext): number {
-  const input = slotOf(ctx.input.slots, ctx);
-  if (!perShotDamageOf(input).some((e) => e.chance !== undefined))
-    throw new Error('確率のきっかけの射撃ごとの倍率ダメージが無い');
-  const chance = perShotChanceOf(input);
-  return slotOf(result.slots, ctx).segments.reduce((sum, s) => sum + s.triggers * s.trigger.hitRate * chance, 0);
+  const chance = perShotChanceOf(slotOf(ctx.input.slots, ctx));
+  if (chance === undefined) throw new Error('確率のきっかけの射撃ごとの倍率ダメージが無い');
+  return chance * slotOf(result.slots, ctx).segments.reduce((sum, s) => sum + s.triggers * s.trigger.hitRate, 0);
 }
 
 /**
@@ -292,7 +290,7 @@ function perShotHitDamage(result: SimResult, ctx: MetricContext): number {
   const fullBurst = SKILL_HIT_FULL_BURST_BONUS ? t.boost.fullBurst : 0;
   const expected = 1 + crit.rate * (crit.damage - 1) + fullBurst;
   const pattern = 1 + (ctx.args.crit === true ? crit.damage - 1 : 0) + fullBurst;
-  return (t.perShot / t.hitRate / perShotChanceOf(input) / expected) * pattern;
+  return (t.perShot / t.hitRate / (perShotChanceOf(input) ?? 1) / expected) * pattern;
 }
 
 /**
