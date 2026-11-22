@@ -21,6 +21,17 @@ const TEAMS: Record<string, TeamInput> = {
   '実戦寄り（リター + アンカー：IM + アリス + ドレイク + クラウン）': team([82, ANCHOR, 191, 101, 330]),
 };
 
+/** 区間 [start, end) の並びを、重なりと接したものをまとめた昇順の並びにする */
+function mergeRanges(ranges: readonly (readonly [number, number])[]): [number, number][] {
+  const out: [number, number][] = [];
+  for (const [start, end] of [...ranges].sort((x, y) => x[0] - y[0])) {
+    const last = out.at(-1);
+    if (last !== undefined && start <= last[1]) last[1] = Math.max(last[1], end);
+    else out.push([start, end]);
+  }
+  return out;
+}
+
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   const plan = planTeamRun(input);
   const windows = plan.schedule!.fullBurstWindows;
@@ -34,10 +45,13 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     const ends = windows.map((w) => w.end);
     expect(startsOf('hitRate')).toEqual(ends.filter((e) => e < plan.frames));
     expect(startsOf('attack')).toEqual(ends.slice(1).filter((e) => e < plan.frames));
-    expect(startsOf('reloadSpeed')).toEqual(ends.slice(2).filter((e) => e < plan.frames));
-    // リロード速度▲は 15 秒
-    const reload = s2.find((p) => p.effect.stat === 'reloadSpeed' && p.slotIndex === 0)!;
-    expect(reload.end - reload.start).toBe(Math.min(gameSecondsToFrames(15), plan.frames - reload.start));
+    // リロード速度▲は 15 秒。切れる前に付き直すと区間がつながるので、付いている間（区間の和）で比べる
+    const duration = gameSecondsToFrames(15);
+    const expected = mergeRanges(
+      ends.slice(2).filter((e) => e < plan.frames).map((e) => [e, Math.min(e + duration, plan.frames)] as const),
+    );
+    const reload = s2.filter((p) => p.effect.stat === 'reloadSpeed' && p.slotIndex === 0);
+    expect(mergeRanges(reload.map((p) => [p.start, p.end] as const))).toEqual(expected);
   });
 
   it('gives the S1 Distributed Damage from the 2nd full burst start onward', () => {

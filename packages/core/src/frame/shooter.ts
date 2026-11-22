@@ -34,7 +34,7 @@ import {
   reloadFirstShotFrames,
   reloadStartOffset,
 } from '../cadence.ts';
-import { FRAMES_PER_GAME_SECOND } from '../time.ts';
+import { FRAMES_PER_GAME_SECOND, GAME_SECONDS_PER_FRAME } from '../time.ts';
 import type { ShotParams } from '../types.ts';
 import {
   DEFAULT_WEAPON_MODEL,
@@ -72,10 +72,15 @@ export type ShooterState = {
   /** このマガジンで撃った数（1 発目の判定と、押下チャージ型の発射レートに使う） */
   shotsInMagazine: number;
   /**
-   * このマガジンの立ち上がりの進み（MG のレート上昇に使う）。発ごとに、その発の立ち上げ速度 (1 + Σ)（FiringParams.spinUpScale）を
+   * 立ち上がりの進み（MG のレート上昇に使う）。マガジンの 1 発目で 0 に戻し、リロード明けは最終弾の後から下げた分から始める（restartSpin）。
+   * 発ごとに、その発の立ち上げ速度 (1 + Σ)（FiringParams.spinUpScale）を
    * 足す。立ち上げ速度 100%▼ の間の発は進めない（緊急修復。plan/design-asuka-wille.md 決めたこと）。スピンアップの無い武器は発の数と同じ
    */
   spunShots: number;
+  /** 前の発からのフレーム数（stepShooter が進めたフレーム。バーストの発動の止まりの間は進まない）。リロード明けの MG のレート（restartSpin） */
+  idleFrames: number;
+  /** リロードで込め終えて 1 発目を待っている（loadChunks が付け、マガジンを戻すときに消す）。弾丸チャージで満タンになった回は付かない。無ければキーごと無い */
+  reloaded?: true;
   /** 次に何かが起きるまでの残りフレーム（初弾遅延・チャージ・リロードの 1 回分） */
   wait: number;
   /** レート蓄積（非チャージ武器の 2 発目以降） */
@@ -140,6 +145,7 @@ export function initialShooter(
     ammo: params.maxAmmo,
     shotsInMagazine: 0,
     spunShots: 0,
+    idleFrames: 0,
     wait: firstShotFrames(shot, model, params),
     acc: 0,
     lastShot: false,
@@ -199,6 +205,7 @@ function loadChunks(state: ShooterState, shot: ShotParams, model: WeaponModel, p
       continue;
     }
     state.phase = 'priming';
+    state.reloaded = true;
     // ハイド中のリロードは込め終わりを遅らせた分だけ 1 発目の待ちを縮める（ふだんのリロードと同じ和。hideReloadExtraFrames）
     const first = Math.max(
       0,
@@ -220,6 +227,7 @@ export function spunBeforeLastShot(state: ShooterState, params: FiringParams): n
 
 /** 撃つ（残弾・マガジンの状態を進め、次の待ちを決める） */
 function fire(state: ShooterState, shot: ShotParams, model: WeaponModel, params: FiringParams): void {
+  state.idleFrames = 0;
   state.shotsInMagazine += 1;
   state.spunShots += params.spinUpScale;
   if (params.infiniteAmmo) {
@@ -257,12 +265,30 @@ function fire(state: ShooterState, shot: ShotParams, model: WeaponModel, params:
   }
 }
 
-/** マガジンを戻す（込め終えて 1 発目を撃つフレーム。MG のレートもここで戻す） */
+/** マガジンを戻す（込め終えて 1 発目を撃つフレーム。MG のレートもここで最初に戻す） */
 function startMagazine(state: ShooterState): void {
+  delete state.reloaded;
   state.phase = 'ready';
   state.shotsInMagazine = 0;
   state.spunShots = 0;
   state.acc = 0;
+}
+
+/**
+ * 込め終えて 1 発目を撃つフレームにマガジンを戻す。リロードで込め終えた回（reloaded）の MG のレートは最初に戻さず、最終弾から構え（込め終わりから 1 発目まで。
+ * WeaponModel.reloadCompleteToShotFrames）の前までの間、(endRateOfFire − rateOfFire) ÷ rateOfFireResetTime 毎秒で
+ * 最終弾の後のレートから下げ、rateOfFire で止める（C-1546。V-0864）。弾丸チャージで満タンになった回は確かめていないので最初から
+ */
+function restartSpin(state: ShooterState, shot: ShotParams, model: WeaponModel): void {
+  const spun = state.spunShots;
+  const reloaded = state.reloaded === true;
+  startMagazine(state);
+  if (!reloaded || !hasSpinUp(shot) || shot.rateOfFireResetTime <= 0) return;
+  const lastRpm = Math.min(shot.endRateOfFire, shot.rateOfFire + spun * shot.rateOfFireChangePerShot);
+  const dropPerFrame = ((shot.endRateOfFire - shot.rateOfFire) / shot.rateOfFireResetTime) * GAME_SECONDS_PER_FRAME;
+  const decayFrames = Math.max(0, state.idleFrames - model.reloadCompleteToShotFrames);
+  const rpm = Math.max(shot.rateOfFire, lastRpm - dropPerFrame * decayFrames);
+  state.spunShots = (rpm - shot.rateOfFire) / shot.rateOfFireChangePerShot;
 }
 
 /**
@@ -278,6 +304,7 @@ export function stepShooter(
   params: FiringParams = firingParams(shot),
   blocked = false,
 ): boolean {
+  state.idleFrames += 1;
   clampAmmoToMax(state, params);
   // 基礎の武器で込めている間に装弾数無限が付いたら、このフレームで込め終える（最大装弾数のリロード完了（V-0735。C-1124）。1 発目の
   // 遅延に入る。弾丸チャージで満タンに届いたときと同じ）。グレイブのバーストで、込めの途中で ∞ に替わった後の撃ち始めと、
@@ -309,7 +336,7 @@ export function stepShooter(
     if (!loadChunks(state, shot, model, params)) return false;
   }
   if (blocked && !firesUntilDetect(state, shot)) return false;
-  if (state.phase === 'priming') startMagazine(state);
+  if (state.phase === 'priming') restartSpin(state, shot, model);
   if (state.shotsInMagazine > 0 && !isChargeWeapon(shot)) {
     // simulateShotFrames と同じ: 前の発射の翌フレームから毎フレーム蓄積し、1 発分たまったフレームで撃つ。
     // 攻撃速度▲はこのフレームのレートに掛ける（params.rateScale。C-0600）。立ち上げ速度は発ごとに積んだ進み（spunShots）で効かせる
