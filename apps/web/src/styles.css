@@ -2149,6 +2149,7 @@ html:has(.modern-view-container) {
   summary,
   select,
   label[for],
+  label:has(input[type='checkbox'], input[type='radio'], input[type='range'], select),
   a[href],
   [role='button'],
   input[type='checkbox'],
@@ -2157,11 +2158,16 @@ html:has(.modern-view-container) {
 ) {
   cursor: pointer;
 }
-:is(button, summary, select, label[for], a[href], [role='button'], input)[aria-disabled='true'] {
+:is(button, summary, select, label[for], a[href], [role='button'], input)[aria-disabled='true'],
+label:has([aria-disabled='true']) {
   cursor: default;
 }
-/* ドラッグ中は、どこの上でも、つかんだ元の印と同じ人差し指のままにする（オーナーの指示）。持ち上げた絵（DragOverlay）がある間だけ */
-:root:has(.slot-drag-overlay > *),
-:root:has(.slot-drag-overlay > *) * {
-  cursor: pointer !important;
+/* ドラッグ中は、どこの上でも、つかんだ元の印と同じ人差し指のままにする（オーナーの指示）。画面いっぱいの透明な膜を 1 枚だけ敷く
+   （全部の要素の cursor を :has で切り替えると、持ち上げた瞬間に全要素の描き直しが起きて、持ち上がるまでに遅れが出る） */
+.drag-cursor-shield {
+  position: fixed;
+  inset: 0;
+  /* 持ち上げた絵（DragOverlay。z-index 999）の下、ほかのすべての上 */
+  z-index: 998;
+  cursor: pointer;
 }

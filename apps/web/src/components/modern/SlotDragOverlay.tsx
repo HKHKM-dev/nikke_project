@@ -1,5 +1,5 @@
 // モダン UI の持ち上げた絵（DragOverlay）。操作の印・スロットから持ち上げた立ち絵・一覧から持ち上げた絵のどれか
-import { DragOverlay } from '@dnd-kit/core';
+import { DragOverlay, useDndContext } from '@dnd-kit/core';
 import type { CSSProperties } from 'react';
 import { partyNumber } from '../../parties.ts';
 import type { TrayShape } from '../../trayShape.ts';
@@ -25,74 +25,78 @@ export function SlotDragOverlay({
   /** 一覧の立ち絵の形（一覧から持ち上げた絵の大きさを一覧とそろえる） */
   trayShape: TrayShape;
 }) {
+  const { active } = useDndContext();
   return (
-    <DragOverlay dropAnimation={DROP_ANIMATION} className="slot-drag-overlay">
-      {draggingController ? (
-        <span className="controller-drag-overlay">
-          <ControllerIcon />
-        </span>
-      ) : draggedPartyLabel ? (
-        // 編成の番号（行の左のボタン）と同じ見た目
-        <div className="party-tab-cell modern-party-row-label party-label-drag-overlay" aria-hidden="true">
-          {/* 見た目を番号のボタンとそろえるため button で描く（持ち上げた絵なので、押せず、フォーカスも受けない） */}
-          <button
-            type="button"
-            tabIndex={-1}
-            className="toggle-button party-tab"
-            aria-pressed={draggedPartyLabel.active}
-          >
-            {partyNumber(draggedPartyLabel.index)}
-          </button>
-        </div>
-      ) : (draggedCharacter || draggedEmptyIndex !== null) && draggedPortrait ? (
-        // 離したときのアニメーションは、この外側の箱をドラッグ元（カード）の位置へ戻す。外側をカードと同じ大きさにし、
-        // 立ち絵をカードの中と同じ位置に置くと、立ち絵が元あった場所へ戻る
-        <div
-          className={`slot-drag-overlay ${draggedPortrait.square ? 'slot-drag-overlay-square' : ''}`}
-          style={
-            {
-              width: draggedPortrait.cardWidth,
-              height: draggedPortrait.cardHeight,
-              ...draggedPortrait.sizeVars,
-            } as CSSProperties
-          }
-        >
-          <div
-            className="slot-drag-overlay-portrait"
-            style={{
-              width: draggedPortrait.width,
-              height: draggedPortrait.height,
-              left: draggedPortrait.left,
-              top: draggedPortrait.top,
-            }}
-          >
-            {draggedCharacter ? (
-              // スロットと同じく、名前と限界突破・コア強化も一緒に持ち上げる
-              <div className="modern-slot-char-area">
-                <CharacterVisual
-                  character={draggedCharacter}
-                  size="portrait"
-                  tallImage={!draggedPortrait.square}
-                  extraBadge={draggedCollection}
-                />
-                <SlotCharName name={draggedCharacter.name.ja} marks={draggedMarks} />
-              </div>
-            ) : (
-              <EmptySlotFace tall={!draggedPortrait.square} slotIndex={draggedEmptyIndex!} />
-            )}
+    <>
+      {active && <div className="drag-cursor-shield" aria-hidden="true" />}
+      <DragOverlay dropAnimation={DROP_ANIMATION} className="slot-drag-overlay">
+        {draggingController ? (
+          <span className="controller-drag-overlay">
+            <ControllerIcon />
+          </span>
+        ) : draggedPartyLabel ? (
+          // 編成の番号（行の左のボタン）と同じ見た目
+          <div className="party-tab-cell modern-party-row-label party-label-drag-overlay" aria-hidden="true">
+            {/* 見た目を番号のボタンとそろえるため button で描く（持ち上げた絵なので、押せず、フォーカスも受けない） */}
+            <button
+              type="button"
+              tabIndex={-1}
+              className="toggle-button party-tab"
+              aria-pressed={draggedPartyLabel.active}
+            >
+              {partyNumber(draggedPartyLabel.index)}
+            </button>
           </div>
-        </div>
-      ) : draggedCharacter ? (
-        <div className="char-drag-overlay">
-          {/* 一覧の項目と同じ入れ物で包み、絵の大きさを一覧とそろえる */}
-          <TrayItemFace
-            character={draggedCharacter}
-            growthMarks={draggedMarks}
-            collectionBadge={draggedCollection}
-            shape={trayShape}
-          />
-        </div>
-      ) : null}
-    </DragOverlay>
+        ) : (draggedCharacter || draggedEmptyIndex !== null) && draggedPortrait ? (
+          // 離したときのアニメーションは、この外側の箱をドラッグ元（カード）の位置へ戻す。外側をカードと同じ大きさにし、
+          // 立ち絵をカードの中と同じ位置に置くと、立ち絵が元あった場所へ戻る
+          <div
+            className={`slot-drag-overlay ${draggedPortrait.square ? 'slot-drag-overlay-square' : ''}`}
+            style={
+              {
+                width: draggedPortrait.cardWidth,
+                height: draggedPortrait.cardHeight,
+                ...draggedPortrait.sizeVars,
+              } as CSSProperties
+            }
+          >
+            <div
+              className="slot-drag-overlay-portrait"
+              style={{
+                width: draggedPortrait.width,
+                height: draggedPortrait.height,
+                left: draggedPortrait.left,
+                top: draggedPortrait.top,
+              }}
+            >
+              {draggedCharacter ? (
+                // スロットと同じく、名前と限界突破・コア強化も一緒に持ち上げる
+                <div className="modern-slot-char-area">
+                  <CharacterVisual
+                    character={draggedCharacter}
+                    size="portrait"
+                    tallImage={!draggedPortrait.square}
+                    extraBadge={draggedCollection}
+                  />
+                  <SlotCharName name={draggedCharacter.name.ja} marks={draggedMarks} />
+                </div>
+              ) : (
+                <EmptySlotFace tall={!draggedPortrait.square} slotIndex={draggedEmptyIndex!} />
+              )}
+            </div>
+          </div>
+        ) : draggedCharacter ? (
+          <div className="char-drag-overlay">
+            {/* 一覧の項目と同じ入れ物で包み、絵の大きさを一覧とそろえる */}
+            <TrayItemFace
+              character={draggedCharacter}
+              growthMarks={draggedMarks}
+              collectionBadge={draggedCollection}
+              shape={trayShape}
+            />
+          </div>
+        ) : null}
+      </DragOverlay>
+    </>
   );
 }
