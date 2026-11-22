@@ -23,6 +23,7 @@ import type {
   ResolvedCounterWhileEffect,
   ResolvedHpWhileEffect,
   ResolvedShotCountTrigger,
+  ItemEffect,
 } from '../resolve.ts';
 import type { attackRankFor, RankingRecord } from '../ranking.ts';
 import { counterMax, type CounterId } from '../counters.ts';
@@ -596,3 +597,8 @@ export type HolderLists = {
   /** ループの後の履歴 */
   history(): HolderHistory;
 };
+
+/** 見る側の索引の 1 つ（持ち主の件と、その件の効果のうち見る stat の 1 つ） */
+export type View = { track: HeldTrack; effect: ItemEffect };
+/** 持ち主ごとに、test に合う効果の見る索引を作った順に並べる（views.ts の createViews の viewsOf） */
+export type ViewsOf = (test: (track: HeldTrack, effect: ItemEffect) => boolean) => View[][];

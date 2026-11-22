@@ -2,7 +2,7 @@
 
 - 何のための文書か: `npm run code:survey` の分岐の多さ（`branch`）・長い関数（`long`）・同じ形の文の並び（`dup`）・一緒に変わるファイル（`cochange`）・読まれない export（`unused`）の結果から、作り替えの候補を選び、候補ごとのいまの形・読みにくさ・分け方・効果・危うさ・規模と、どれをするかの論点を書く
 - 対象: 3 節の候補（`frame/firstPass/shooters.ts`・`frame/firstPass/gaugeEffects.ts`・`skills/holders/views.ts`・`skills/holders/fire.ts`・`skills/burstDamage.ts`・`tools/captures/aim-lib.ts`・`tools/captures/` の重なり）。計算の中身と結果は変えない
-- 状態: 実装中（5.1 節の決定。段は 6 節）
+- 状態: 完了（5.1 節の決定）
 - 関連: [design-split-first-pass.md](design-split-first-pass.md)（1 パス目の分割。確かめ方の 6 節をこの文書の段でも使う）、[design-split-long-functions.md](design-split-long-functions.md)（パーサと画面の分割）、[design-catalog-doc-split.md](design-catalog-doc-split.md)、[design-unused-code-cleanup.md](design-unused-code-cleanup.md)（読まれない export の決定）、[design-workflow-simplification-17.md](design-workflow-simplification-17.md) 10 節（`code:survey`）
 - 作成日: 2026-11-22
 - 調べた時点: main の ad1a288d に、分岐の多さの節を足したブランチ（`claude/survey-complexity`）の道具で測った。行番号はその時点のファイルの行
@@ -247,3 +247,4 @@
 - 2026-11-22: 案 A を実装した。枠ごとの手順は `switchWeapon`・`blockAt`・`stepBlock`・`stepPause`・`advanceShooter`・`recordShot`（`critPelletsOf`・`shotGauge` を呼ぶ）を順に呼ぶ形になり、複雑度 93 → 11、192 行 → 17 行。段の複雑度は `recordShot` 27・`advanceShooter` 21・`stepBlock` 14・`switchWeapon` 12 ほか。いちばん大きい段は `recordShot`（71 行）で、見積もり（40 行前後）より長い。出来事と記録が命中・クリティカルの値を分け合い、これ以上分けると渡す値が 10 を超えるので止めた。撃たない区間を引く所は、毎フレームの所でオブジェクトを返さないよう、区間を返す `blockAt` と hide・unhide の `stepBlock` に分けた。
 - 2026-11-22: 案 G を実装した。`hud.ts`・`reticle-ammo.ts` は `hud-interception.ts` の `ncc` を読む（入っている見本はどれも 160 = 10×16 で、測った値と長さが同じなので結果は変わらない）。`far-landing.ts` は `midfar-landing.ts` の `measureTargetRows`・`intOption`・`BG_STEP` を読む（派生物の名前の頭 `far-`・`midfar-` は変えていない）。
 - 2026-11-22: 案 B を実装した。`createGaugeEffects` は、`gaugeEffects/` の作り手（`reserve.ts` 予約の表と周期のゲージの記録・`dot.ts` 持続ダメージ・`landing.ts` 着弾のフレームに入れる口と味方のゲージ・`cooldown.ts` クールタイムの印のある周期・`timer.ts` 印の無い周期のゲージ・`damage.ts` 倍率ダメージのヒットごとのゲージ・`shotCount.ts` 射撃の回数のゲージ）を今の文の順に呼んで組む形になった。3.2 節の案との違い: 着弾の口は味方のゲージの回数を数えるので味方のゲージと同じ作り手に置き、射撃の回数の追跡を作る `createShotGaugeTrackers` も `shotCount.ts` に移した（入口から再公開する）。いちばん長い作り手は 202 行 → 63 行（`createDotGauges`）。ゲージを足す順は、仕組みの関数に `gauge` を渡して返す形で保った。
+- 2026-11-22: 案 C を実装した。HP の系（最大 HP▲・現在の HP▼・回復・HP の割合）と `HP_RATIO_EPS` を `skills/holders/hpViews.ts` の `createHpViews` に移し、`createViews` が今の位置で呼んで返す。見る側の索引の型（`View`・`ViewsOf`）は `holders/types.ts` に置いた。`createViews` 252 行 → 158 行、`createHpViews` 96 行。HP の系を入口（`createHolderLists`）から呼ぶ 1 つの層にする形は、前の層が後で読む口（`LateReaders`）の作りが変わるので採らなかった。
