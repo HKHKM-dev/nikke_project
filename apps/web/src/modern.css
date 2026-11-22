@@ -139,12 +139,9 @@
 :root[data-app-ui='modern'] .modern-slot-empty-area.modern-slot-empty-tall {
   color: light-dark(#cccccc, #333333);
 }
-:root[data-app-ui='modern'] .modern-slot-empty-tall .modern-slot-empty-plus {
+/* 四角の空のスロットの ＋ も、縦長と同じ色にする（オーナーのコメント） */
+:root[data-app-ui='modern'] .modern-slot-empty-plus {
   color: light-dark(#e6e6e6, #1a1a1a);
-}
-/* 四角の空のスロットの ＋ は黒（オーナーのコメント） */
-:root[data-app-ui='modern'] .modern-slot-empty-area:not(.modern-slot-empty-tall) .modern-slot-empty-plus {
-  color: #000;
 }
 /* ニケがいるときの立ち絵とニケ一覧の絵の枠も、空のスロットの枠と同じ色にする */
 :root[data-app-ui='modern'] .char-visual {
