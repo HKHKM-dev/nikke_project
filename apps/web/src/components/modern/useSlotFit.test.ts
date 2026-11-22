@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { PORTRAIT_MAX_H, fitPortraitHeight } from './useSlotFit.ts';
 
 describe('fitPortraitHeight', () => {
-  it('広い並びでは元の高さ（ニケ一覧の四角の絵と同じ 256/3 px）のまま', () => {
-    expect(PORTRAIT_MAX_H).toBeCloseTo(85.33, 2);
+  it('広い並びでは元の高さ（ニケ一覧の四角の絵と同じ 86px。偶数の整数）のまま', () => {
+    expect(PORTRAIT_MAX_H).toBe(86);
     expect(fitPortraitHeight(1284, 5, 4, 4)).toBe(PORTRAIT_MAX_H);
   });
   it('幅 420px の画面（並びの幅 404px）では 5 枚が 1 段に収まる高さに縮める', () => {

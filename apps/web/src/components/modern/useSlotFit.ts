@@ -5,14 +5,14 @@
 // 並びの外に写す絵（ドラッグ中の重ねる絵・動くアニメーションの写し）は、この値を写して同じ大きさにする（slotSizeVars）
 import { useLayoutEffect, type RefObject } from 'react';
 
-/** 絵の高さ（＝幅）の上限（顔の絵 128×128 の 2/3 で、ニケ一覧の四角の絵と同じ。styles.css の :root の --slot-portrait-h と同じ） */
-export const PORTRAIT_MAX_H = 256 / 3;
+/** 絵の高さ（＝幅）の上限（顔の絵 128×128 の 2/3 に近い偶数の整数で、ニケ一覧の四角の絵と同じ。端数だと、並びの位置によって描かれる幅が 1 画素ずれる。styles.css の :root の --slot-portrait-h と同じ） */
+export const PORTRAIT_MAX_H = 86;
 /** 立ち絵の枠線（左右 1px ずつ） */
 const PORTRAIT_BORDER_X = 2;
 const SLOT_SIZE_VAR = '--slot-portrait-h';
 /** ニケ一覧の 1 行の枚数（スロットの数とそろえる）と、元の絵の幅（枠線込み。styles.css の :root の --tray-visual-w と同じ）・項目の左右の余白 */
 const TRAY_COLUMNS = 5;
-const TRAY_VISUAL_W = 256 / 3 + 2;
+const TRAY_VISUAL_W = PORTRAIT_MAX_H + 2;
 const TRAY_ITEM_PADDING_X = 4;
 
 /** 並びの幅 width に count 枚を 1 段で収める立ち絵の高さ（上限 PORTRAIT_MAX_H。縮めるときは偶数の px に切り下げる） */
@@ -20,7 +20,7 @@ export function fitPortraitHeight(width: number, count: number, gap: number, car
   if (count <= 0) return PORTRAIT_MAX_H;
   const cardWidth = (width - gap * (count - 1)) / count;
   const h = cardWidth - cardPaddingX - PORTRAIT_BORDER_X;
-  // 上限（端数のある 512/3）まで入るなら上限のまま（偶数に切り下げると、入るのに上限より小さくなる）
+  // 上限まで入るなら上限のまま（偶数に切り下げると、入るのに上限より小さくなる）
   if (h >= PORTRAIT_MAX_H) return PORTRAIT_MAX_H;
   return Math.max(0, Math.floor(h / 2) * 2);
 }

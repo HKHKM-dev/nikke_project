@@ -1,6 +1,7 @@
 // スロットとニケ一覧の間を立ち絵が動くアニメーション（置く・外す・入れ替える）。動くのは立ち絵の枠の写しで、本物の上に重ねて動かし、
 // 着いたら消す。どれも同じ長さ・動き方（離したときの DragOverlay の動きとそろえる。ModernView の DROP_ANIMATION）
 import { slotSizeVars } from './useSlotFit.ts';
+import type { Modifier } from '@dnd-kit/core';
 
 /** 動く時間（ms）と動き方 */
 export const FLIGHT = { duration: 250, easing: 'ease', fill: 'forwards' } as const;
@@ -290,3 +291,23 @@ export function flyControllerInto(
     );
   });
 }
+
+/**
+ * 持ち上げた絵（DragOverlay）の位置を、ドラッグ中も画面の画素の格子に丸める（DndContext の modifiers）。
+ * 丸めないと、持ち上げた絵は端数の位置（線が 2 つの画素にまたがる）で描かれ、並びの中の絵と太さが変わって見える。
+ * dnd-kit は動かす量（transform）を整数の px に丸めて書くので、端数の分は、外側の箱の translate（transform と重ねて効く別の指定）で足す
+ */
+export const snapOverlayToPixels: Modifier = ({ transform, draggingNodeRect }) => {
+  if (!draggingNodeRect) return transform;
+  // 画素に乗せるのは、外側の箱でなく、影を付けた絵の左上（箱の中での絵の位置は端数のことがある。箱と絵は同じ動きなので、差は動いても変わらない）
+  const picture = document.querySelector(LIFT_SHADOW_SOURCES);
+  const box = picture?.closest<HTMLElement>('[style*="position: fixed"]');
+  if (!picture || !box) return transform;
+  const inside = picture.getBoundingClientRect();
+  const outer = box.getBoundingClientRect();
+  // 絵の左上の、箱の translate を除いた位置（draggingNodeRect は動かす前の箱の位置。箱の位置 + 箱の中の位置 + 動かす量）
+  const left = draggingNodeRect.left + (inside.left - outer.left) + Math.round(transform.x);
+  const top = draggingNodeRect.top + (inside.top - outer.top) + Math.round(transform.y);
+  box.style.translate = `${snapPx(left) - left}px ${snapPx(top) - top}px`;
+  return transform;
+};
