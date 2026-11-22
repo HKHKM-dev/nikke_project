@@ -6,6 +6,8 @@
   --app-fg: CanvasText;
   /* 枠線の色（入力欄のブラウザ既定の灰色と同じ値。パネル・ポップアップ・入力欄で共通） */
   --app-border: light-dark(#767676, #858585);
+  /* クリックできる要素にマウスを乗せたときの枠の色（モダン UI のアプリの青 --m-accent と同じ値） */
+  --hover-outline: light-dark(#0284c7, #38bdf8);
   /* スクロールバーを常に出し、ページが縦長になっても表示が横に動かないようにする。幅を空けるだけ（scrollbar-gutter）だと、
      スクロールバーが無い間の空きがブラウザによってテーマと違う色で塗られた */
   overflow-y: scroll;
@@ -19,6 +21,23 @@
     'Noto Sans JP',
     sans-serif;
   line-height: 1.45;
+}
+/* クリックできる要素は、マウスを乗せると細い青枠（1px）で要素の縁を囲む（オーナーの指示。画面全体で統一）。押せない（aria-disabled）
+   ものは囲まない。ドラッグの間は囲まない（落とす先の印と重ねない）。:where で詳細度を 0 にし、落とす先の印やフォーカスの枠など、
+   ほかの outline の規則には負ける。枠は要素の内側に描き（outline-offset: -1px）、隣の要素や、スクロールする一覧の端で切れない */
+:where(:root:not(:has(.slot-drag-overlay, .char-drag-overlay, .party-label-drag-overlay, .controller-drag-overlay)))
+  :where(
+    button,
+    select,
+    textarea,
+    summary,
+    a[href],
+    [role='button'],
+    input:not([type='hidden']),
+    .modern-slot-focus-handle
+  ):where(:not([aria-disabled='true'])):hover {
+  outline: 1px solid var(--hover-outline);
+  outline-offset: -1px;
 }
 /* 右上の設定のテーマ（theme.ts）。値は各テーマの Canvas・CanvasText。入力欄などの部品の色はルート要素の style の
    color-scheme（theme.ts）で決め、body にも当てて表示枠のテーマより強くする */
@@ -1106,10 +1125,6 @@ svg.roster-revert-icon {
   cursor: grab;
   touch-action: none;
 }
-/* マウスを載せると水色の枠で囲む（載せ続けると title の「操作」が出る） */
-.modern-slot-focus-handle:hover {
-  outline: 2px solid var(--placing-blue);
-}
 .modern-slot-focus-dragging {
   opacity: 0.3;
 }
@@ -2070,9 +2085,6 @@ html:has(.modern-view-container) {
   font: inherit;
   text-align: left;
   cursor: pointer;
-}
-.roster-edit-row:hover {
-  background: color-mix(in srgb, var(--app-fg) 6%, transparent);
 }
 .roster-edit-row[aria-current='true'] {
   background: color-mix(in srgb, var(--app-fg) 14%, transparent);

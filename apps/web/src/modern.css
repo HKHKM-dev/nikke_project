@@ -70,13 +70,10 @@
 }
 :where(:root[data-app-ui='modern']) button {
   cursor: pointer;
+  /* マウスを乗せたときは、枠の色を変えず、細い青枠で囲む（styles.css の --hover-outline） */
   transition:
     border-color 0.15s,
     background 0.15s;
-}
-/* 一覧のニケと編成のタブは、マウスを重ねても枠を変えない */
-:where(:root[data-app-ui='modern']) button:where(:not(.char-tray-item, .party-tab)):hover {
-  border-color: var(--m-accent);
 }
 :root[data-app-ui='modern'] :where(button, select, textarea, input, summary):focus-visible {
   outline: 2px solid var(--m-accent);
