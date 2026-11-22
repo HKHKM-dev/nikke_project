@@ -1,13 +1,24 @@
 // ディーゼル：ウィンタースイーツ編（plan/design-diesel-ws.md）: 出来事の回数のきっかけの atMost（「初めて〈出来事〉が発動した時」）・
 // 条件 usedBurst: false（「直前に自分がバーストを使用していなければ」）の読み込みと、ディーゼル：ウィンタースイーツ（75）を含む編成で、
-// イントロ・クライマックスの付き方、S1・S2 の持続ダメージ▲、3 つの持続ダメージ、受けるダメージ▲が意図どおりに出るか
+// イントロ・クライマックスの付き方、S1・S2 の持続ダメージ▲、3 つの持続ダメージ、受けるダメージ▲、騒音公害（命中率▼。C-1558・C-1559）が
+// 意図どおりに出るか
 import { describe, expect, it } from 'vitest';
+import { enemyEventsOf, enemyLandingsOf } from '../enemies.ts';
 import { planTeamRun } from '../frame/plan.ts';
+import { runSimulation } from '../sim/engine.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedTeam, rawDefinition, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
+import { stateItemsOf } from './historyHelpers.ts';
+import {
+  describeEveryShotInOneGroup,
+  ENEMY_PRESETS,
+  fixedTeam,
+  RANGE_BIGARMS,
+  rawDefinition,
+  SHOOTING_RANGE_ENEMY,
+} from './teamHelpers.ts';
 
 type RawEffect = Record<string, unknown>;
 type Raw = { skills: Record<'skill1' | 'skill2' | 'burst', { effects: RawEffect[] }> };
@@ -109,6 +120,73 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, diesel, clim
     const items = itemsOf(plan.history, { sourceSlotIndex: diesel, stat: 'damageTaken' });
     const starts = new Set(items.map((i) => i.start));
     expect(starts.size).toBe(used.filter((u) => u).length);
+  });
+
+  it('puts Noise Pollution (1 s) on every ally but herself at her own Burst, only in Highlight', () => {
+    const noise = stateItemsOf(plan).filter((i) => i.state === 'noisePollution');
+    if (!climax) {
+      expect(noise).toEqual([]);
+      return;
+    }
+    const allies = input.slots.flatMap((s, i) => (s === null || i === diesel ? [] : [i]));
+    const bursts = new Set(itemsOf(plan.history, { sourceSlotIndex: diesel, stat: 'damageTaken' }).map((i) => i.start));
+    expect(bursts.size).toBeGreaterThan(0);
+    expect(noise.length).toBe(bursts.size * allies.length);
+    for (const i of noise) {
+      expect(allies).toContain(i.slotIndex);
+      expect(bursts.has(i.start)).toBe(true);
+      // 戦闘の終わりにかかる回は、そこで切れる
+      if (i.start < Math.max(...bursts)) expect(i.end - i.start).toBe(gameSecondsToFrames(1));
+      else expect(i.end - i.start).toBeLessThanOrEqual(gameSecondsToFrames(1));
+    }
+  });
+});
+
+// plan/design-maids.md 8.6 節（C-1559）: 条件が自動の枠で射撃場の的なら、騒音公害の区間（N = −100%）の SMG・AR のコア命中率は
+// 的の表の値の 1/4。RL（ユニ）と、騒音公害の外の区間は変わらない
+describe('騒音公害の命中率▼（的の▼の表）', () => {
+  const base = TEAMS['撮影 B（リター・I-DOLL・サン・ディーゼル：ウィンタースイーツ・ユニ）']!.input;
+  const input: TeamInput = {
+    ...base,
+    slots: base.slots.map((s) => (s === null ? null : { ...s, conditionMode: 'auto' as const })),
+    enemy: {
+      ...base.enemy,
+      events: enemyEventsOf(ENEMY_PRESETS, ['range-3min-jump'], 180),
+      target: RANGE_BIGARMS,
+      landings: enemyLandingsOf(ENEMY_PRESETS, ['range-3min-jump'], 180, RANGE_BIGARMS),
+    },
+  };
+  const result = runSimulation(input);
+  const { hitRateDown: _, ...noTable } = RANGE_BIGARMS;
+  const off = runSimulation({ ...input, enemy: { ...input.enemy, target: noTable } });
+  const coreOf = (r: typeof result, slotIndex: number, frame: number) => {
+    const slot = r.slots[slotIndex]!;
+    const s = slot.segments.find((x) => x.start <= frame && frame < x.end)!;
+    return s.trigger.boost.core / (slot.character.shot.coreDamageRate - 1 + s.buffs.coreDamage);
+  };
+  const noise = stateItemsOf(result).filter((i) => i.state === 'noisePollution' && i.slotIndex === 0);
+
+  it('quarters the SMG and AR core hit rate inside the window, and leaves the RL and the frames outside as they are', () => {
+    expect(noise.length).toBeGreaterThan(0);
+    for (const { start, end } of noise) {
+      const mid = Math.floor((start + end) / 2);
+      for (const slot of [0, 1]) {
+        expect(coreOf(result, slot, mid)).toBeCloseTo(coreOf(off, slot, mid) / 4, 9);
+        expect(coreOf(result, slot, end + 1)).toBeCloseTo(coreOf(off, slot, end + 1), 9);
+      }
+      expect(coreOf(result, 3, mid)).toBeCloseTo(coreOf(off, 3, mid), 9);
+    }
+  });
+
+  it('does not change the bullet hit rate (not measured)', () => {
+    for (const { start, end } of noise) {
+      const mid = Math.floor((start + end) / 2);
+      for (const slot of [0, 1]) {
+        const at = (r: typeof result) =>
+          r.slots[slot]!.segments.find((x) => x.start <= mid && mid < x.end)!.trigger.hitRate;
+        expect(at(result)).toBe(at(off));
+      }
+    }
   });
 });
 

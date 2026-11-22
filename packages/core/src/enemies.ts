@@ -384,8 +384,8 @@ function parseHitRateDown(v: unknown, path: string, keys: ReadonlySet<string>): 
     const out: NonNullable<HitRateDownTable[WeaponType]> = {};
     if (entry.core !== undefined) {
       const core = entry.core;
-      if (!isRecord(core) || !isRecord(core.ratio) || Object.keys(core).length !== 2) {
-        throw new TypeError(`${at}.core: must be { base, ratio }`);
+      if (!isRecord(core) || !isRecord(core.ratio) || Object.keys(core).some((k) => k !== 'base' && k !== 'ratio')) {
+        throw new TypeError(`${at}.core: must be { base?, ratio }`);
       }
       const ratio: Record<string, number> = {};
       for (const [key, r] of Object.entries(core.ratio)) {
@@ -393,7 +393,8 @@ function parseHitRateDown(v: unknown, path: string, keys: ReadonlySet<string>): 
         if (!isRate(r)) throw new TypeError(`${at}.core.ratio.${key}: must be in [0, 1]`);
         ratio[key] = r;
       }
-      out.core = { base: parseRateRow(core.base, `${at}.core.base`, keys, RATE), ratio };
+      out.core =
+        core.base === undefined ? { ratio } : { base: parseRateRow(core.base, `${at}.core.base`, keys, RATE), ratio };
     }
     if (entry.bullet !== undefined) {
       if (!isRecord(entry.bullet)) throw new TypeError(`${at}.bullet: must be an object`);

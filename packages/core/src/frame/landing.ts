@@ -11,7 +11,8 @@
 //   SG は近（近 A・近 B）だけ同じ式にし（C-0631）、中近・中遠・遠は表の値のまま（C-0527）。
 //   コア命中率と同じく、計画は常時の N で出し、持続の▲の区間は landingPartsWith で出し直す（1 パス目のゲージは計画の値のまま）。
 // - 命中率▼（N < 0）: ▼だけが効く区間で、的の▼の表（TargetProfile.hitRateDown。MG・N = −20%・−40%・−60%。plan/design-maids.md 8 節）にある
-//   N だけ、コア命中率を「着地点の最初の段の値 × N の倍率」に、弾丸命中率を表の行の値にする。表に無い N・武器種は変えない。
+//   N だけ、コア命中率を「着地点の最初の段の値 × N の倍率」に、弾丸命中率を表の行の値にする。最初の段の値を持たない行（SMG・AR の
+//   N = −100%。C-0036 の式 p ÷ (1 − N)²。V-0870）は、的の表の値 p × N の倍率にする。表に無い N・武器種は変えない。
 //   ▲と同時に効く区間は、和の N が表のキーに当たっても表を使わず、表に無い N と同じ扱い（和の N で▲の式。N ≤ 0 は変えない。8.4 節）。
 // - 表が null（未測定）の項目・的の表の無い敵・並びより後の区間は、手入力の値（slot.condition）を使い、注記を出す。
 // - 配分（中遠の 3 か所）の区間は、着地点ごとの 1 トリガーの値を重みで足す（Σ w_k × T_k）。
@@ -44,7 +45,6 @@ import type {
   LandingPoint,
   SkillSlot,
   TargetProfile,
-  HitRateDownTable,
   TargetRateByProjectile,
   TargetRateRow,
   TargetRateTable,
@@ -192,8 +192,11 @@ export function targetRateOf(table: RateTableLookup, character: CharacterData, l
 /** 命中率の和 N と値の組の列 */
 type ValuesByN = readonly (readonly [n: number, value: number])[];
 
-/** 1 か所の着地点の命中率▼の値。core はコア命中率、bullet は弾丸命中率 */
-export type HitRateDownAt = { core: ValuesByN; bullet: ValuesByN };
+/**
+ * 1 か所の着地点の命中率▼の値。core はコア命中率、coreRatio は的の表のコア命中率に掛ける倍率（最初の段の値 base を持たない行）、
+ * bullet は弾丸命中率
+ */
+export type HitRateDownAt = { core: ValuesByN; coreRatio: ValuesByN; bullet: ValuesByN };
 
 /** N の値（浮動小数の和のずれを見込んで 1e-9 で比べる）。無ければ undefined */
 function valueAtN(values: ValuesByN | undefined, n: number): number | undefined {
@@ -201,27 +204,32 @@ function valueAtN(values: ValuesByN | undefined, n: number): number | undefined 
 }
 
 /**
- * plan/design-maids.md 8.2・8.3 節（V-0683）: 武器種と着地点の命中率▼の値。コア命中率は着地点の最初の段の値 × N の倍率、
- * 弾丸命中率は N の行の値（行に無い着地点は持たない）。的の▼の表にその武器種が無ければ undefined
+ * plan/design-maids.md 8.2・8.3・8.6 節（V-0683・V-0870）: 武器種と着地点の命中率▼の値。コア命中率は着地点の最初の段の値 × N の倍率
+ * （最初の段の値を持たない行は、N の倍率だけを coreRatio に置く。測ったのは武器種の行のキャラだけなので、コア命中率を弾の種類・
+ * 二丁持ちの行で引くキャラには置かない）、弾丸命中率は N の行の値（行に無い着地点は持たない）。的の▼の表にその武器種が無ければ undefined
  */
 export function hitRateDownAt(
-  table: HitRateDownTable | undefined,
-  character: Pick<CharacterData, 'weaponType'>,
+  profile: Pick<TargetProfile, 'hitRateDown' | 'coreHitRate'>,
+  character: CharacterData,
   landing: Pick<LandingPoint, 'id' | 'band'>,
 ): HitRateDownAt | undefined {
-  const entry = table?.[character.weaponType];
+  const entry = profile.hitRateDown?.[character.weaponType];
   if (entry === undefined) return undefined;
   const core: [number, number][] = [];
-  const base = entry.core === undefined ? undefined : rateAtLanding(entry.core.base, landing);
-  if (entry.core !== undefined && base !== undefined) {
-    for (const [n, r] of Object.entries(entry.core.ratio)) core.push([Number(n), base * r]);
+  const coreRatio: [number, number][] = [];
+  if (entry.core !== undefined && entry.core.base === undefined) {
+    if (rateRowOf(profile.coreHitRate, character) === profile.coreHitRate[character.weaponType])
+      for (const [n, r] of Object.entries(entry.core.ratio)) coreRatio.push([Number(n), r]);
+  } else if (entry.core?.base !== undefined) {
+    const base = rateAtLanding(entry.core.base, landing);
+    if (base !== undefined) for (const [n, r] of Object.entries(entry.core.ratio)) core.push([Number(n), base * r]);
   }
   const bullet: [number, number][] = [];
   for (const [n, row] of Object.entries(entry.bullet ?? {})) {
     const v = rateAtLanding(row, landing);
     if (v !== undefined) bullet.push([Number(n), v]);
   }
-  return core.length === 0 && bullet.length === 0 ? undefined : { core, bullet };
+  return core.length === 0 && coreRatio.length === 0 && bullet.length === 0 ? undefined : { core, coreRatio, bullet };
 }
 
 /**
@@ -240,7 +248,8 @@ export type CoreHitRateUpForm = 'sum' | 'exponent' | { readonly startBody: reado
 
 /**
  * 的の表のコア命中率 p を、命中率の和 hitRate で出し直す。▼だけの和（downOnly）は命中率▼の値 down に N の値があればそれ
- * （plan/design-maids.md 8.2 節）、無ければ p のまま。ほかは N で▲の式（N ≤ 0 は p のまま）を form の形で当てる
+ * （plan/design-maids.md 8.2 節）、N の倍率（coreRatio）があれば p × 倍率（同 8.6 節）、どちらも無ければ p のまま。ほかは N で▲の式
+ * （N ≤ 0 は p のまま）を form の形で当てる
  */
 export function coreHitRateAt(
   p: number,
@@ -248,7 +257,10 @@ export function coreHitRateAt(
   down: HitRateDownAt | undefined,
   form: CoreHitRateUpForm = 'sum',
 ): number {
-  if (downOnly(hitRate)) return valueAtN(down?.core, hitRate.n) ?? p;
+  if (downOnly(hitRate)) {
+    const ratio = valueAtN(down?.coreRatio, hitRate.n);
+    return valueAtN(down?.core, hitRate.n) ?? (ratio === undefined ? p : p * ratio);
+  }
   if (form === 'sum') return coreHitRateWithHitRateUp(p, hitRate.n);
   if (form === 'exponent') return exponentSumHitRateUp(p, hitRate.n);
   return startBodyHitRateUp(p, hitRate.n, form.startBody);
@@ -382,7 +394,7 @@ export function autoConditionAt(
   character: CharacterData,
   hitRate: HitRateN,
   manual: SlotCondition,
-  down: HitRateDownAt | undefined = hitRateDownAt(profile.hitRateDown, character, landing),
+  down: HitRateDownAt | undefined = hitRateDownAt(profile, character, landing),
 ): SlotCondition {
   const core = targetRateOf(profile.coreHitRate, character, landing);
   const bullet = targetRateOf(profile.bulletHitRate, character, landing);
@@ -478,7 +490,7 @@ export function planLandings(
           : landingMix(profile, id).map(({ landing, weight }) => {
               const table = targetRateOf(profile.coreHitRate, slot.character, landing);
               const bullet = targetRateOf(profile.bulletHitRate, slot.character, landing);
-              const down = hitRateDownAt(profile.hitRateDown, slot.character, landing);
+              const down = hitRateDownAt(profile, slot.character, landing);
               return {
                 landing,
                 weight,

@@ -1,0 +1,210 @@
+[
+  {
+    "id": "1400-01",
+    "recording": "1400",
+    "kind": "timing",
+    "use": "record",
+    "value": [1300, 2437, 3535, 4665, 5822, 6997, 8112, 9270, 10368, 11510],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・6・5・0・0・0・0・0・0f"
+    },
+    "source": "V-0870",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1400-02",
+    "recording": "1400",
+    "kind": "timing",
+    "use": "record",
+    "value": [1329, 2466, 3564, 4694, 5851, 7026, 8141, 9299, 10397, 11635],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・6・6・0・0・0・0・0・0f"
+    },
+    "source": "V-0870",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1400-03",
+    "recording": "1400",
+    "kind": "timing",
+    "use": "record",
+    "value": [1358, 2495, 3593, 4723, 5880, 7055, 8170, 9328, 10426],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0870",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1400-06",
+    "recording": "1400",
+    "kind": "timing",
+    "use": "record",
+    "value": [4720],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0870",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1400-07",
+    "recording": "1400",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0,
+    "description": "4 回目のフルバースト（00.00 は f4723。`1400-03`。ディーゼルがバーストを撃った回。近）の、騒音公害の窓の中（00.00 から +26〜+71f）のリター（SMG）の通常攻撃の当たりのうちコアの割合（コア 0 / 当たり 12）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分と recipe:burst-panel@4",
+      "note": "使い捨てのスクリプトで、増分をモデルの 1 ヒットの値（records:model の hitDamage。枠 1・2・4 × コア・会心・距離ボーナス。その回のその時刻の値。サンはその 1.0548 倍の値も候補にした）に ±2 で当て、当たらない増分はリターとサンの 2 ヒットの和に ±3 で当てた（組が 1 通りのときだけ）。胴体とコアのどちらにも当たる増分と、どれにも当たらない増分は数えない。許容は、モデルの値 p と当たりの数 n の 2√(p(1 − p)/n) を 0.01 に切り上げた幅（V-0870 の「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "fullBurst": 3,
+        "frame": 30
+      },
+      "tolerance": {
+        "abs": 0.14
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [4749, 4794]
+    },
+    "source": "V-0870",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1400-08",
+    "recording": "1400",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0,
+    "description": "2 回目のフルバースト（00.00 は f2495。`1400-03`。ディーゼルがバーストを撃った回。中近）の、騒音公害の窓の中（00.00 から +26〜+71f）のリター（SMG）の通常攻撃の当たりのうちコアの割合（コア 0 / 当たり 16）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分と recipe:burst-panel@4",
+      "note": "使い捨てのスクリプトで、増分をモデルの 1 ヒットの値（records:model の hitDamage。枠 1・2・4 × コア・会心・距離ボーナス。その回のその時刻の値。サンはその 1.0548 倍の値も候補にした）に ±2 で当て、当たらない増分はリターとサンの 2 ヒットの和に ±3 で当てた（組が 1 通りのときだけ）。胴体とコアのどちらにも当たる増分と、どれにも当たらない増分は数えない。許容は、モデルの値 p と当たりの数 n の 2√(p(1 − p)/n) を 0.01 に切り上げた幅（V-0870 の「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "fullBurst": 1,
+        "frame": 30
+      },
+      "tolerance": {
+        "abs": 0.09
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [2521, 2566]
+    },
+    "source": "V-0870",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1400-09",
+    "recording": "1400",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0,
+    "description": "4 回目のフルバースト（00.00 は f4723。`1400-03`。ディーゼルがバーストを撃った回。近）の、騒音公害の窓の中（00.00 から +26〜+71f）のI-DOLL・サン（AR）の通常攻撃の当たりのうちコアの割合（コア 0 / 当たり 9）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分と recipe:burst-panel@4",
+      "note": "使い捨てのスクリプトで、増分をモデルの 1 ヒットの値（records:model の hitDamage。枠 1・2・4 × コア・会心・距離ボーナス。その回のその時刻の値。サンはその 1.0548 倍の値も候補にした）に ±2 で当て、当たらない増分はリターとサンの 2 ヒットの和に ±3 で当てた（組が 1 通りのときだけ）。胴体とコアのどちらにも当たる増分と、どれにも当たらない増分は数えない。許容は、モデルの値 p と当たりの数 n の 2√(p(1 − p)/n) を 0.01 に切り上げた幅（V-0870 の「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 2,
+        "fullBurst": 3,
+        "frame": 30
+      },
+      "tolerance": {
+        "abs": 0.21
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal",
+      "frames": [4749, 4794]
+    },
+    "source": "V-0870",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1400-10",
+    "recording": "1400",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.1,
+    "description": "2 回目のフルバースト（00.00 は f2495。`1400-03`。ディーゼルがバーストを撃った回。中近）の、騒音公害の窓の中（00.00 から +26〜+71f）のI-DOLL・サン（AR）の通常攻撃の当たりのうちコアの割合（コア 1 / 当たり 10）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分と recipe:burst-panel@4",
+      "note": "使い捨てのスクリプトで、増分をモデルの 1 ヒットの値（records:model の hitDamage。枠 1・2・4 × コア・会心・距離ボーナス。その回のその時刻の値。サンはその 1.0548 倍の値も候補にした）に ±2 で当て、当たらない増分はリターとサンの 2 ヒットの和に ±3 で当てた（組が 1 通りのときだけ）。胴体とコアのどちらにも当たる増分と、どれにも当たらない増分は数えない。許容は、モデルの値 p と当たりの数 n の 2√(p(1 − p)/n) を 0.01 に切り上げた幅（V-0870 の「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 2,
+        "fullBurst": 1,
+        "frame": 30
+      },
+      "tolerance": {
+        "abs": 0.15
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal",
+      "frames": [2521, 2566]
+    },
+    "source": "V-0870",
+    "readAt": "2026-11-22"
+  }
+]

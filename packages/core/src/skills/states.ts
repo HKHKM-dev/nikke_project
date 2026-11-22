@@ -306,6 +306,8 @@ export const NAMED_STATES = {
   intro: { name: { ja: 'イントロ', en: 'Intro' }, holder: 'ally' },
   /** 同: クライマックス（S1。使っていなければ付く。S1 とバーストの「クライマックス状態なら」が見る） */
   highlight: { name: { ja: 'クライマックス', en: 'Highlight' }, holder: 'ally' },
+  /** 同: 騒音公害（バースト。クライマックス状態なら自分を除く味方全体に。中身は命中率▼・1 秒。V-0870） */
+  noisePollution: { name: { ja: '騒音公害', en: 'Noise Pollution' }, holder: 'ally' },
   /**
    * 隠しレンズ（エード：エージェントバニーの S1。フルチャージの発ごとに 1 スタック・10 スタック・5 秒。
    * 中身は適正最小射程距離▲。S2 の「隠しレンズのフルスタック状態時のみ」が見る。plan/design-agent-bunny.md 1 節）
