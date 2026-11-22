@@ -12,7 +12,11 @@
       "note": "戦闘開始は f776（timer.ts の +319f の次の変わり目。C-0078）。ゲーム内のフレームは動画のフレーム − 776 − その前の I・II の発動の止まり（1 回 1f）。OFF はジャンプの前のエード：AB の最後の発（f2472・f8872）の 8f 後とした（ジャンプの間は撃てないので、OFF の本当の時刻は発に効かない）。ON は ON に戻した後の最初の発（f2943・f9320）の 60f 前（チャージ 1 秒）とした。オート射撃のボタンの画は、リロードの間にも暗くなり、ON・OFF を見分けられなかった"
     },
     "source": "V-0796",
-    "readAt": "2026-11-15"
+    "readAt": "2026-11-15",
+    "invalid": {
+      "reason": "ON を最初の発の 60f 前としていた。ボタンが点いたフレームで読み直した（V-0865。ON から最初の発は 63〜65f）",
+      "date": "2026-11-22"
+    }
   },
   {
     "id": "1232-02",
@@ -77,7 +81,7 @@
         "holdFire": [
           {
             "slot": 2,
-            "frames": "1232-01"
+            "frames": "1232-07"
           }
         ],
         "jumpWindows": "1232-03",
@@ -120,7 +124,7 @@
         "holdFire": [
           {
             "slot": 2,
-            "frames": "1232-01"
+            "frames": "1232-07"
           }
         ],
         "jumpWindows": "1232-03",
@@ -197,10 +201,8 @@
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
-        "condition": "auto",
         "manualBursts": "1232-02",
         "jumpWindows": "1232-03",
-        "nearLanding": ["A", "B"],
         "holdFire": [
           {
             "slot": 2,

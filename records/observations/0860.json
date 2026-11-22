@@ -138,8 +138,8 @@
       "metric": "shotIntervals",
       "args": {
         "slot": 3,
-        "from": 1108,
-        "to": 1203
+        "from": 1101,
+        "to": 1196
       },
       "tolerance": {
         "abs": 1
@@ -179,7 +179,7 @@
       "metric": "hitDamage",
       "args": {
         "slot": 3,
-        "frame": 1108,
+        "frame": 1101,
         "core": true,
         "crit": false,
         "distance": false
@@ -222,7 +222,7 @@
       "metric": "hitDamage",
       "args": {
         "slot": 3,
-        "frame": 1202,
+        "frame": 1195,
         "core": true,
         "crit": false,
         "distance": false
@@ -285,8 +285,8 @@
       "metric": "shotIntervals",
       "args": {
         "slot": 3,
-        "from": 3363,
-        "to": 3458
+        "from": 3356,
+        "to": 3451
       },
       "tolerance": {
         "abs": 1
@@ -326,7 +326,7 @@
       "metric": "hitDamage",
       "args": {
         "slot": 3,
-        "frame": 3363,
+        "frame": 3356,
         "core": true,
         "crit": false,
         "distance": false
@@ -369,7 +369,7 @@
       "metric": "hitDamage",
       "args": {
         "slot": 3,
-        "frame": 3457,
+        "frame": 3450,
         "core": true,
         "crit": false,
         "distance": false
