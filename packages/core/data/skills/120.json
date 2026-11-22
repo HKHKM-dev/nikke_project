@@ -1,0 +1,71 @@
+{
+  "formatVersion": 1,
+  "resourceId": 120,
+  "checkedAt": "2026-11-22",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": { "count": "fullChargeShot" },
+          "target": "topAttack",
+          "targetCountRef": 1,
+          "stat": "maxAmmo",
+          "scaling": "flat",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "フルチャージの発ごとに、発のフレームの最終攻撃力が最も高い味方 1 機（自分も候補）に付け直す。最大だけを上げ、残弾は足さない（次のリロードで最大まで込め、切れたら残弾を削る。C-0017 の形）。どちらも N102 では確かめていない",
+            "en": "Reapplied on every Full Charge shot to the 1 ally with the highest final ATK at the shot frame (self included). It raises only the maximum and does not add ammo (the next reload fills to the new maximum, and expiry trims the ammo; the form of C-0017). Neither is checked for N102"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": { "count": "fullChargeShot" },
+          "target": "topAttack",
+          "targetCountRef": 1,
+          "stat": "critDamage",
+          "ref": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "effects[0] と同じ発・同じ対象に付け直す",
+            "en": "Reapplied on the same shots to the same target as effects[0]"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": { "everySeconds": 17, "cooldown": true },
+          "target": "topAttack",
+          "targetCountRef": 1,
+          "stat": "chargeDamage",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から CT ごとに発動する（撃たない間も。1 回目も 1 周期後）とみる。CT はデータにも外部の資料にも無く、17 秒は同じ形の説明文のプロダクト08 の S2（C-0496）から借りた仮の値（録画で読む。未確定）。チャージダメージ▲はチャージ武器の味方にだけ効く",
+            "en": "The description gives no trigger. Assumed to be an active skill on a cooldown, activating every cooldown from the start of combat (even while not firing; the first after one period). The cooldown is in neither the data nor external references; 17 s is a provisional value borrowed from Product 08's S2 with the same description (C-0496), to be read from recordings (unconfirmed). Charge Damage only affects allies with charge weapons"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "付き始めと長さは、ほかのバーストの効果と同じとみなす（N102 では確かめていない）",
+            "en": "Assumed to start and last like other Burst effects (not checked for N102)"
+          }
+        }
+      ]
+    }
+  }
+}
