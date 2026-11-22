@@ -1,7 +1,7 @@
 // ネオン（11。V-0856）を含む編成で、バーストのバーストスキルダメージと SG の味方（自分も入る）への最大装弾数▲、
 // S2 のフルバーストの始まりの後の受け手ごとの 2 発のクリティカル確率▲が意図どおりに出るか
 import { describe, expect, it } from 'vitest';
-import { effectFrameOf } from '../burst/schedule.ts';
+import { burstHitsOfSlot, effectFrameOf } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { itemsOf } from '../skills/holders.ts';
@@ -53,6 +53,15 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, neon }) => {
   const starts = uses.map((a) => effectFrameOf(a)).filter((f) => f < sim.frames);
   const fullBursts = sim.schedule!.fullBurstWindows.map((w) => w.start).filter((f) => f < sim.frames);
   const isSg = (slot: number): boolean => input.slots[slot]!.character.weaponType === 'SG';
+
+  it('lands one burst damage hit on the target per Neon burst (C-1520)', () => {
+    const landed = burstHitsOfSlot(sim.schedule!, neon, sim.frames);
+    expect(landed.length).toBeGreaterThan(2);
+    expect(landed.map((h) => h.activationFrame)).toEqual(uses.map((a) => a.frame).slice(0, landed.length));
+    const hits = sim.slots[neon]!.burst.hits;
+    expect(hits).toHaveLength(landed.length);
+    for (const h of hits) expect(h.baseHit).toBeGreaterThan(0);
+  });
 
   it('gives every SG ally, Neon included, Max Ammo up for 10 s on each Neon burst (C-1521)', () => {
     expect(uses.length).toBeGreaterThan(2);
