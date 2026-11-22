@@ -119,10 +119,16 @@ export function PartyRowLabel({
   active: boolean;
   onSelect: () => void;
 }) {
-  const { isOver, setNodeRef: setDropRef } = useDroppable({
+  const {
+    isOver: isOverRaw,
+    active: dragActive,
+    setNodeRef: setDropRef,
+  } = useDroppable({
     id: `party-label-drop-${partyIndex}`,
     data: { type: 'party-label', partyIndex } satisfies OverDragData,
   });
+  // 部隊番号の落とす先の青枠は、部隊番号を持ち上げているときだけ出す（コントローラーのアイコンやキャラの立ち絵では出さない）
+  const isOver = isOverRaw && activeDragData(dragActive?.data.current)?.type === 'party-label';
   const {
     listeners,
     setNodeRef: setDragRef,
