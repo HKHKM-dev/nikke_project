@@ -823,11 +823,11 @@ svg.roster-revert-icon {
 }
 
 /* 5スロットグリッド */
-/* 5 枚を 1 段に並べ、余った幅は左右に分けて中央に寄せる。幅が足りなければ立ち絵を縮めて収める（useSlotFit.ts が --slot-portrait-h を置く） */
+/* 5 枚を 1 段に並べ、左に寄せる（オーナーのコメント）。幅が足りなければ立ち絵を縮めて収める（useSlotFit.ts が --slot-portrait-h を置く） */
 .modern-slots-grid {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   /* 立ち絵どうしの横の間は 4px（カードの左右の余白 2px ×2 だけ）。落とす先の枠（立ち絵の外へ 2px 出る）が、隣どうしでちょうど重ならない */
   gap: 12px 0;
 }
@@ -835,7 +835,7 @@ svg.roster-revert-icon {
    ほかの行（PartyPreviewRow）は押すとその編成を選ぶ。狭い画面では、番号とダメージをスロットの上に置く */
 .modern-party-row {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 12px;
 }
@@ -884,11 +884,12 @@ svg.roster-revert-icon {
   cursor: pointer;
 }
 /* 狭い画面では、5 つの編成の番号を上に横に並べ、その下にスロットの行を並べる（オーナーの指示）。行の箱はほどき（display: contents）、
-   番号を 1 段目の真ん中の 5 列に、スロットの並びを 2 段目から 1 段ずつ横いっぱいに置く。番号は 4em の正方形で、幅が足りなければ縮める */
+   番号を 1 段目の左の 5 列に、スロットの並びを 2 段目から 1 段ずつ横いっぱいに置く。スロットと同じく左に寄せる（オーナーのコメント）。
+   番号は 4em の正方形で、幅が足りなければ縮める */
 @media (max-width: 699px) {
   .modern-slots-area {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) repeat(5, minmax(0, 4em)) minmax(0, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 4em)) minmax(0, 1fr);
     gap: 4px;
   }
   .modern-party-row {
@@ -900,19 +901,19 @@ svg.roster-revert-icon {
     margin-bottom: 4px;
   }
   .modern-party-row:nth-child(1) > .modern-party-row-label {
-    grid-column: 2;
+    grid-column: 1;
   }
   .modern-party-row:nth-child(2) > .modern-party-row-label {
-    grid-column: 3;
+    grid-column: 2;
   }
   .modern-party-row:nth-child(3) > .modern-party-row-label {
-    grid-column: 4;
+    grid-column: 3;
   }
   .modern-party-row:nth-child(4) > .modern-party-row-label {
-    grid-column: 5;
+    grid-column: 4;
   }
   .modern-party-row:nth-child(5) > .modern-party-row-label {
-    grid-column: 6;
+    grid-column: 5;
   }
   .modern-party-row > .modern-slots-grid {
     grid-column: 1 / -1;
