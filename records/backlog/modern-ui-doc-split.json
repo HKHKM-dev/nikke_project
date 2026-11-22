@@ -1,5 +1,5 @@
 {
   "section": "8",
   "order": 180,
-  "text": "plan/design-modern-ui.md（目安の 50KB の約 2 倍。大半は経過）を分ける。設計書として要らない記述を消して縮めるだけで足りるか（[design-design-doc-trim.md](design-design-doc-trim.md) 3 節）も見る（2026-11-22 起票）→ 保留: [design-modern-ui.md](design-modern-ui.md)"
+  "text": "plan/design-modern-ui.md（目安の 50KB の約 2 倍。大半は経過）を分ける。設計書として要らない記述を消して縮めるだけで足りるか（[design-design-doc-trim.md](design-design-doc-trim.md) 3 節）も見る（2026-11-22 起票）→ 完了（2026-11-23。消して縮めた。振る舞いは 2.6 節）: [design-modern-ui.md](design-modern-ui.md)"
 }
