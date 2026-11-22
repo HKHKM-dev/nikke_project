@@ -765,8 +765,8 @@ svg.roster-revert-icon {
 }
 /* 開いている編成もほかの編成も、同じ大きさで出す */
 .party-tab-total {
-  height: 1.1em;
-  line-height: 1.35;
+  height: 1.3em;
+  line-height: 1.3;
   overflow: hidden;
   /* 狭い画面では、「2201.38万」が枠の幅に収まるまで小さくする（cqi は枠の幅の 1%） */
   font-size: min(0.9rem, 19cqi);
@@ -2039,6 +2039,10 @@ html:has(.modern-view-container) {
 .slot-drag-overlay-portrait,
 .flight-lift-shadow {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+}
+/* 持ち上げた絵の外側の箱（DragOverlay）。押せない箱にして、下の膜（.drag-cursor-shield）の人差し指のカーソルを絵の上でも出す */
+.drag-overlay-root {
+  pointer-events: none;
 }
 /* スロットから持ち上げた立ち絵（スロットの絵と同じ大きさ。位置はカードの中の絵の位置に合わせる） */
 .slot-drag-overlay {

@@ -135,7 +135,7 @@ export function useSlotDrag({
     collection: null,
   });
 
-  // マウスは 4px 動かして初めてドラッグと判定（時間の条件は無く、動かしたらすぐ持ち上がる。オーナーの指示）（通常のクリック操作との共存）。タッチは 250ms の長押しで持ち上げ、
+  // マウスは 4px 動かして初めてドラッグと判定（通常のクリック操作との共存。時間の条件は無く、動かしたらすぐ持ち上がる。オーナーの指示）。タッチは 250ms の長押しで持ち上げ、
   // それまでに 8px より動いたらスクロールにする（すぐ持ち上げると、トレイの上でページをスクロールできない）
   const sensors = useSensors(
     useSensor(LeftButtonMouseSensor, { activationConstraint: { distance: 4 } }),

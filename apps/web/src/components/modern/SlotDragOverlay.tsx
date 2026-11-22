@@ -1,6 +1,6 @@
 // モダン UI の持ち上げた絵（DragOverlay）。操作の印・スロットから持ち上げた立ち絵・一覧から持ち上げた絵のどれか
-import { DragOverlay, useDndContext } from '@dnd-kit/core';
-import type { CSSProperties } from 'react';
+import { DragOverlay, useDndMonitor } from '@dnd-kit/core';
+import { useState, type CSSProperties } from 'react';
 import { partyNumber } from '../../parties.ts';
 import type { TrayShape } from '../../trayShape.ts';
 import { TrayItemFace } from './CharacterTrayItem.tsx';
@@ -8,6 +8,20 @@ import { CharacterVisual } from './CharacterVisual.tsx';
 import { DROP_ANIMATION } from './dropAnimation.ts';
 import { ControllerIcon, EmptySlotFace, SlotCharName } from './ModernSlotCard.tsx';
 import type { DragOverlayState } from './useSlotDrag.ts';
+
+/**
+ * ドラッグ中だけ敷く、画面いっぱいの透明な膜。どこの上でも人差し指のカーソルにする（styles.css の .drag-cursor-shield）。
+ * 持ち上げている間に動く状態（over など）では描き直さないよう、始まりと終わりの知らせだけで出し入れする
+ */
+function DragCursorShield() {
+  const [dragging, setDragging] = useState(false);
+  useDndMonitor({
+    onDragStart: () => setDragging(true),
+    onDragEnd: () => setDragging(false),
+    onDragCancel: () => setDragging(false),
+  });
+  return dragging ? <div className="drag-cursor-shield" aria-hidden="true" /> : null;
+}
 
 export function SlotDragOverlay({
   overlay: {
@@ -25,11 +39,10 @@ export function SlotDragOverlay({
   /** 一覧の立ち絵の形（一覧から持ち上げた絵の大きさを一覧とそろえる） */
   trayShape: TrayShape;
 }) {
-  const { active } = useDndContext();
   return (
     <>
-      {active && <div className="drag-cursor-shield" aria-hidden="true" />}
-      <DragOverlay dropAnimation={DROP_ANIMATION} className="slot-drag-overlay">
+      <DragCursorShield />
+      <DragOverlay dropAnimation={DROP_ANIMATION} className="drag-overlay-root">
         {draggingController ? (
           <span className="controller-drag-overlay">
             <ControllerIcon />

@@ -30,7 +30,8 @@ export function ElementSelect({
         </>
       }
       buttonClassName="element-select-button"
-      label="属性"
+      // 読み上げで、いま選んでいる属性が分かるように名前に含める（標準の select は選んでいる値を読み上げる）
+      label={`属性（${current.label}）`}
       align="left"
     >
       {(close) => (
