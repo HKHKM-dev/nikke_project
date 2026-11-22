@@ -1,0 +1,195 @@
+[
+  {
+    "id": "1372-01",
+    "recording": "1372",
+    "kind": "timing",
+    "use": "compare",
+    "value": [29, 29, 29, 29],
+    "unit": "f",
+    "description": "1〜4 回目のフルバーストの始まり（III のタイマーの 00.00。1372-07 の f1460・f4040・f6629・f9337）から、プロダクト12 のバーストのダメージの増分（f1489・f4069・f6658・f9366）までの動画のフレーム数（フルバーストの入りの止まりを含む）。どの回も 1 ヒット",
+    "method": {
+      "tool": "recipe:burst-panel@4 と hud-jumps@3 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 4
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1372-02",
+    "recording": "1372",
+    "kind": "hit",
+    "use": "compare",
+    "value": 585886,
+    "unit": "ダメージ",
+    "description": "1 回目のバーストのダメージ（会心なし。f1489 の増分で、ほかの発と重ならない）。720% で、フルバースト補正も S1 の▲も乗らない",
+    "method": {
+      "tool": "hud-jumps@3 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1372-03",
+    "recording": "1372",
+    "kind": "hit",
+    "use": "record",
+    "value": [585886, 585886, 634457, 585886],
+    "unit": "ダメージ",
+    "description": "1〜4 回目のバーストのダメージ（どれも会心なし）。2 回目は f4069 の増分 599,728 から同じフレームのプロダクト12 のフルバーストの中の 1 ヒット 13,842 を、4 回目は f9366 の 598,805 から 12,919 を引いた値。3 回目（f6658）は S1 の▲が乗った 720%（634,457。f6669 まで▲の乗った格子の発が続く）。どの回もフルバースト補正は乗らない",
+    "method": {
+      "tool": "hud-jumps@3 の増分"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1372-04",
+    "recording": "1372",
+    "kind": "hit",
+    "use": "record",
+    "value": [192258, 192258, 144194, 133155],
+    "unit": "ダメージ",
+    "description": "フルバーストの窓の中の S2 の倍率ダメージ（f2021・f4403・f6786・f9756）。96,129 × 2（フルバースト補正と会心）・同・96,129 × 1.5・88,770 × 1.5 で、フルバースト補正が乗る（窓の外の会心の回も × 1.5 なので、f6786・f9756 は会心なしにフルバースト補正が乗った値と読んだ）。窓の端を発動とヒットの間に跨いだ S2 は無い",
+    "method": {
+      "tool": "hud-jumps@3 の増分と recipe:burst-panel@4"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1372-05",
+    "recording": "1372",
+    "kind": "timing",
+    "use": "record",
+    "value": [1402, 2699, 3951, 5304, 6571, 8040, 9278, 10504],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・5・24・0・25・5f"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1372-06",
+    "recording": "1372",
+    "kind": "timing",
+    "use": "record",
+    "value": [1431, 2832, 4011, 5333, 6600, 8069, 9307, 10533],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・15・6・25・0・26・0f"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1372-07",
+    "recording": "1372",
+    "kind": "timing",
+    "use": "record",
+    "value": [1460, 4040, 6629, 9337],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1372-08",
+    "recording": "1372",
+    "kind": "timing",
+    "use": "record",
+    "value": [2069, 4649, 7237, 9946],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1372-09",
+    "recording": "1372",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 608, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1372-10",
+    "recording": "1372",
+    "kind": "timing",
+    "use": "record",
+    "value": [4005],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  }
+]

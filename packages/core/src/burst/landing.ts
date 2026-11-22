@@ -291,6 +291,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   { resourceIds: [810], delays: { hitFrames: 15, effectFrames: 15 }, claim: 'C-1375' },
   // キロ: III のタイマーの 00.00 から「敵全体に」のバーストスキルダメージの 1 ヒットまで 16f（動画で 38〜39f。止まり 22f を含む）
   { resourceIds: [361], delays: { hitFrames: 16, effectFrames: 0 }, claim: 'C-1382' },
+  // プロダクト12: III のタイマーの 00.00 から「攻撃範囲内の敵に」のバーストスキルダメージの 1 ヒットまで 7f（動画で 29f。止まり 22f を含む）。
+  // バースト使用時の効果は無い
+  { resourceIds: [303], delays: { hitFrames: 7, effectFrames: 0 }, claim: 'C-1526' },
   // クロウ: III のタイマーの 00.00 からバーストスキルダメージの 1 ヒット（分かれない）まで 5f（動画で 27f。止まり 22f を含む）。
   // バースト使用時の効果は無い
   { resourceIds: [110], delays: { hitFrames: 5, effectFrames: 0 }, claim: 'C-1401' },

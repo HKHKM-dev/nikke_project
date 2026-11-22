@@ -1,0 +1,106 @@
+[
+  {
+    "id": "1371-01",
+    "recording": "1371",
+    "kind": "timing",
+    "use": "compare",
+    "value": [621, 1210, 1799, 2388, 2977, 3566, 4155, 4744, 5333, 5922, 6511, 7100, 7689, 8278, 8867, 9456, 10045],
+    "unit": "f",
+    "description": "撃たない単騎の S2 の倍率ダメージの 17 回の、戦闘開始（タイマーの 02:59 が出た f762）からの動画のフレーム。間はどれも 589f。1 回目は 10 秒の ceil の周期 589f の 32f 後。撃たない間も発動する",
+    "method": {
+      "tool": "hud-jumps@3 の増分",
+      "note": "増分は 88,770（14 回）と会心の 133,155（3 回）だけ。戦闘開始は timer.ts --mode changes の WARNING の演出の次の変わり目"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "count": 17
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 303,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1371-02",
+    "recording": "1371",
+    "kind": "hit",
+    "use": "compare",
+    "value": 88770,
+    "unit": "ダメージ",
+    "description": "S2 の倍率ダメージの 1 回目（f1383）の値（会心なし。S1 の▲は乗らない）。会心の回は 133,155（×1.5）",
+    "method": {
+      "tool": "hud-jumps@3 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 303,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1371-03",
+    "recording": "1371",
+    "kind": "interval",
+    "use": "record",
+    "value": 29,
+    "unit": "f",
+    "description": "S2 のスキルの帯の立ち上がりから、ヒットの増分までの動画のフレーム。2〜17 回目はどれも 29f（1 回目は立ち上がりが 2 つ拾われ 36f と 27f）",
+    "method": {
+      "tool": "banner.ts --hits"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0855",
+    "readAt": "2026-11-22"
+  }
+]
