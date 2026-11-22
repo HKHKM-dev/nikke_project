@@ -969,10 +969,18 @@ export function landingNotes(
   const forms = [...parts.values()].flat().map((p) => p.coreHitRateUp);
   const exponentCore = forms.includes('exponent');
   const startBodyCore = forms.some((f) => typeof f === 'object');
+  // 和（1/(1 − N)² 倍）で上げる着地点が無い（MG だけの計画）なら、常時の▲の文に倍率を書かない
+  const sumCore = forms.includes('sum');
   const ja = [
     `${profile.name.ja}の表（単騎 AUTO の実測）でコア命中率・距離ボーナス・弾丸命中率を決めた`,
     ...mixes.map((id) => mixLabel(profile, id).ja),
-    ...(n > 0 ? [`常時の命中率▲ ${pct(n)} でコア命中率を 1/(1 − N)² 倍（上限 1）`] : []),
+    ...(n > 0
+      ? [
+          sumCore
+            ? `常時の命中率▲ ${pct(n)} でコア命中率を 1/(1 − N)² 倍（上限 1）`
+            : `常時の命中率▲ ${pct(n)} をコア命中率に効かせた`,
+        ]
+      : []),
     'フルバースト中などに配られる持続の命中率▲も、効いている区間で N に足してコア命中率に効かせた（C-0170。仮説）',
     ...(exponentCore
       ? [
@@ -981,7 +989,7 @@ export function landingNotes(
       : []),
     ...(startBodyCore
       ? [
-          'MG のコア命中率は、命中率▲で 1/(1 − N)² 倍にせず、表の外れを撃ち始めの外れとみて、撃ち始めのヒット順の胴体の割合に 1 ヒットずつ 1/(1 − N)² を当てて縮めた（C-1554。割合はアリアの録画で測った形を、ほかの MG と着地点にも当てる）',
+          'MG のコア命中率は、命中率▲が効くとき 1/(1 − N)² 倍にせず、表の外れを撃ち始めの外れとみて、撃ち始めのヒット順の胴体の割合に 1 ヒットずつ 1/(1 − N)² を当てて縮める（C-1554。割合はアリアの録画で測った形を、ほかの MG と着地点にも当てる）',
         ]
       : []),
     bullet.ja,
@@ -989,7 +997,13 @@ export function landingNotes(
   const en = [
     `Core hit rate, distance bonus and bullet hit rate come from the ${profile.name.en} table (solo AUTO recordings)`,
     ...mixes.map((id) => mixLabel(profile, id).en),
-    ...(n > 0 ? [`constant hit rate up ${pct(n)} scales core hit rate by 1/(1 − N)² (max 1)`] : []),
+    ...(n > 0
+      ? [
+          sumCore
+            ? `constant hit rate up ${pct(n)} scales core hit rate by 1/(1 − N)² (max 1)`
+            : `constant hit rate up ${pct(n)} is applied to core hit rate`,
+        ]
+      : []),
     'timed hit rate buffs (e.g. given at full burst) are added to N while active and change core hit rate (C-0170; hypothesis)',
     ...(exponentCore
       ? [
@@ -998,7 +1012,7 @@ export function landingNotes(
       : []),
     ...(startBodyCore
       ? [
-          'for MG, hit rate buffs do not scale core hit rate by 1/(1 − N)²; the table core misses are taken as start-of-firing misses and shrunk by applying 1/(1 − N)² hit by hit to the per-hit body ratio at the start of firing (C-1554; the ratio measured on Aria is applied to other MGs and landings too)',
+          'for MG, hit rate buffs, when active, do not scale core hit rate by 1/(1 − N)²; the table core misses are taken as start-of-firing misses and shrunk by applying 1/(1 − N)² hit by hit to the per-hit body ratio at the start of firing (C-1554; the ratio measured on Aria is applied to other MGs and landings too)',
         ]
       : []),
     bullet.en,

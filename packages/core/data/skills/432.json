@@ -30,8 +30,8 @@
           "ref": 1,
           "durationRef": 2,
           "assumes": {
-            "ja": "「最後の弾丸」はマガジンの最後の 1 発で、いつも命中する（MG の外れは撃ち始めに集まり、最後の発には無いとみる。C-0780・C-1454）。付き直すと 5 秒から数え直す",
-            "en": "\"The last bullet\" is the last round of the magazine and always hits (MG misses cluster at the start of firing, not the last round; C-0780, C-1454). Re-applying restarts the 5 s"
+            "ja": "「最後の弾丸」はマガジンの最後の 1 発で、いつも命中する（MG の外れは撃ち始めに集まり、最後の発には無いとみる。C-0780・C-1557）。付き直すと 5 秒から数え直す",
+            "en": "\"The last bullet\" is the last round of the magazine and always hits (MG misses cluster at the start of firing, not the last round; C-0780, C-1557). Re-applying restarts the 5 s"
           },
           "claims": [
             "C-1453"
@@ -48,6 +48,10 @@
           "stat": "hitRate",
           "ref": 4,
           "durationRef": 5,
+          "assumes": {
+            "ja": "コア命中率は、MG の表の外れを撃ち始めの外れとみて縮める形（C-1554）。弾丸命中率は H2（C-0192）で上げる（MG の表は 0.998 前後で、上がりは 0.2% 以下。撃ち始めの外れた発が窓の中で減るかは見分けていない。C-1557）",
+            "en": "Core hit rate shrinks the MG table misses as start-of-firing misses (C-1554). Bullet hit rate rises by H2 (C-0192; the MG table is about 0.998, so the rise is 0.2% or less; whether missed shots at the start of firing drop inside the window is not determined; C-1557)"
+          },
           "claims": [
             "C-1554",
             "C-1557"

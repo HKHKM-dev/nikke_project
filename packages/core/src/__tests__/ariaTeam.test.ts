@@ -1,6 +1,6 @@
 // アリア（432。V-0834）を含む編成で、S1 のフルバーストの始まりからの味方全体の会心ダメージ▲（10 秒）、S2 のマガジンの最後の 1 発からの
-// 味方全体の会心率▲（5 秒）が意図どおりに出るか。バーストの自分の命中率▲は MG のアリアではモデルの形と合わず未対応（V-0834）、味方へのバリアは
-// 間接（barrier）の notes
+// 味方全体の会心率▲（5 秒）、バーストの自分の命中率▲（15 秒。MG のコア命中率は撃ち始めの外れを縮める形。C-1554）が意図どおりに出るか。
+// 味方へのバリアは間接（barrier）の notes
 import { describe, expect, it } from 'vitest';
 import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -14,12 +14,12 @@ const ARIA = 432;
 describe('アリアの定義', () => {
   const def = parseSkillDefinition(rawDefinition(ARIA));
 
-  it('defines the two buffs, leaves her Hit Rate up unimplemented and keeps the ally barrier as an indirect note', () => {
+  it('defines the three buffs and keeps the ally barrier as an indirect note', () => {
     expect(def.skills.skill1.support).toBe('supported');
     expect(def.skills.skill2.support).toBe('supported');
-    expect(def.skills.burst.support).toBe('unsupported');
-    expect(def.skills.burst.effects).toEqual([]);
-    expect(def.skills.burst.notes?.map((n) => n.kind)).toEqual(['unimplemented', 'indirect']);
+    expect(def.skills.burst.support).toBe('supported');
+    expect(def.skills.burst.effects.map((e) => [e.kind, 'stat' in e ? e.stat : null])).toEqual([['timed', 'hitRate']]);
+    expect(def.skills.burst.notes?.map((n) => n.kind)).toEqual(['indirect']);
   });
 });
 
@@ -51,12 +51,15 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
       expect(windows(holder, 'skill2', 'critRate')).toEqual(windowsFrom(starts, 5, plan.frames));
   });
 
-  it('gives no Hit Rate up from her Burst (unimplemented)', () => {
+  it('gives herself Hit Rate up for 15 s from each Burst use, and no one else', () => {
     expect(uses.length).toBeGreaterThan(2);
+    const hitRate = (holder: number) =>
+      itemsOf(plan.history, { sourceSlotIndex: aria, holder, kind: 'timed', skill: 'burst', stat: 'hitRate' }).map(
+        ({ start, end }) => ({ start, end }),
+      );
+    expect(hitRate(aria)).toEqual(windowsFrom(uses, 15, plan.frames));
     for (let holder = 0; holder < input.slots.length; holder++)
-      expect(
-        itemsOf(plan.history, { sourceSlotIndex: aria, holder, kind: 'timed', skill: 'burst', stat: 'hitRate' }),
-      ).toEqual([]);
+      if (holder !== aria) expect(hitRate(holder)).toEqual([]);
   });
 });
 
