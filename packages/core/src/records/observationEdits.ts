@@ -151,6 +151,18 @@ export function claimsCiting(claims: readonly Claim[], ids: readonly string[]): 
 }
 
 /**
+ * --invalidate --by で、setup の参照を付け替えた比べ resetup を根拠にしている、仮説か確定の結論（根拠を付け替えた結論 repointed は除く）。
+ * 根拠の文は変わらないが、比べの入力が変わって残差が変わりうるので、等級・状態・許容内かを出し直す
+ */
+export function claimsCitingResetup(
+  claims: readonly Claim[],
+  resetup: readonly string[],
+  repointed: ReadonlySet<string>,
+): Claim[] {
+  return claimsCiting(claims, resetup).filter((c) => !repointed.has(c.id));
+}
+
+/**
  * 付け替えた結論の、出し直しに使う根拠の観測値（根拠の文にある観測値）。無効にした観測値 invalidated は外す（範囲の中にあって
  * 根拠の文に残っても、付け替え先に置き換えたものとみる）
  */

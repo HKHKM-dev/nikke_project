@@ -20,8 +20,9 @@ import {
   stepHide,
   unhideShooter,
 } from '../frame/shooter.ts';
-import { firingParams } from '../frame/firing.ts';
+import { firingParams, ZERO_FIRING_BUFFS } from '../frame/firing.ts';
 import { runSimulation } from '../sim/engine.ts';
+import type { ChangedWeapon } from '../skills/buffs.ts';
 import type { FrameRange } from '../skills/timeline.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import type { ShotParams } from '../types.ts';
@@ -354,6 +355,26 @@ describe('射手（ハイドとリロード）', () => {
     hideShooter(full, shot);
     expect(full.phase).toBe('ready');
     expect(full.hideReload).toBeUndefined();
+  });
+
+  it('C-1427: does not reload a changed weapon that ends when its magazine is empty (any character)', () => {
+    // 撃ち切りで終わる変更後の武器（untilEmpty）は、残弾が減っていても窓で込め直さない。同じ武器で untilEmpty が無ければ込め直す
+    const base = makeCharacter({}).shot;
+    const changed: ChangedWeapon = { id: 'test.0.0', hits: 1, shot: { ...base, maxAmmo: 6 } };
+    const hidden = (weapon: ChangedWeapon) => {
+      const params = firingParams(base, { ...ZERO_FIRING_BUFFS, weapon });
+      const state = initialShooter(weapon.shot, DEFAULT_WEAPON_MODEL, params);
+      state.ammo = 3;
+      hideShooter(state, weapon.shot, DEFAULT_WEAPON_MODEL, params);
+      return state;
+    };
+    const kept = hidden({ ...changed, untilEmpty: true });
+    expect(kept.hideReload).toBeUndefined();
+    expect(kept.phase).toBe('ready');
+    expect(kept.ammo).toBe(3);
+    const reloaded = hidden(changed);
+    expect(reloaded.hideReload).toBe(true);
+    expect(reloaded.phase).not.toBe('ready');
   });
 });
 

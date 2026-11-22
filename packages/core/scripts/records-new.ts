@@ -40,7 +40,8 @@
 //   --invalidate は、観測値に invalid（理由と今日の日付）を付ける。--by を書くと、それを根拠にしている結論の根拠と、それを setup で指して
 //   いる比べ（jumpWindows など）の参照を新しい観測値に付け替える（--by が 1 つなら全部をそれに、並びなら同じ順の組で）。入力を読み直した
 //   ときは、比べを写さずにこれで付け替える（plan/design-workflow-simplification-18.md 1 節）。付け替えた結論は、等級・状態・許容内かを
-//   claim --update と同じく出し直す（確定にできる条件がそろわなければ仮説に戻し、理由を出す。仮説は確定に上げない。予測とは比べない）。observation はどれも commit しない。
+//   claim --update と同じく出し直す（確定にできる条件がそろわなければ仮説に戻し、理由を出す。仮説は確定に上げない。予測とは比べない）。
+//   setup の参照を付け替えた比べを根拠にしている結論も、根拠の文はそのままで同じく出し直す（入力が変わって残差が変わりうる）。observation はどれも commit しない。
 //   npm run records:new -- backlog --section <節> [--name <名前>] (--text "<本文>" | --cell "<列>=<文>" …) [--first]
 // backlog: records/backlog/<名前>.json を作る（plan/backlog.md の冒頭の書き方）。2 節など # の列のある節は、名前を次の番号（2-NN。ほかの
 //   ブランチが使った番号も避ける）にし、ほかの節は --name の名前で、order を節の末尾（--first なら先頭）にする。箇条の節は --text、表の節は
@@ -86,6 +87,7 @@ import {
 } from '../src/records/drafts.ts';
 import {
   claimsCiting,
+  claimsCitingResetup,
   draftShapeErrors,
   repointedClaimOwn,
   invalidatedObservation,
@@ -661,8 +663,16 @@ if (kind === 'verification') {
     const changedById = new Map(changed.map((o) => [o.id, o]));
     const withChanged = (o: Observation) => changedById.get(o.id) ?? o;
     const afterAll = all.map(withChanged);
+    // setup の参照を付け替えた比べを根拠にしている結論も、入力が変わったので出し直す（根拠の文はそのまま）
+    const reinput = new Map<string, ClaimFile>();
+    for (const { observations: _o, ...c } of claimsCitingResetup(
+      claims,
+      [...resetup.keys()],
+      new Set(repointed.keys()),
+    ))
+      reinput.set(c.id, c);
     const rewritten = new Map<string, ClaimDraft>();
-    for (const [cid, c] of repointed) {
+    for (const [cid, c] of [...repointed, ...reinput]) {
       const own = repointedClaimOwn(c, afterAll, ids);
       const result = rewriteClaim(
         c,
@@ -694,7 +704,7 @@ if (kind === 'verification') {
       );
     for (const [cid, result] of rewritten)
       reportRewrite(
-        `根拠を付け替えた結論 ${cid}`,
+        reinput.has(cid) ? `入力を付け替えた比べを根拠にしている結論 ${cid}` : `根拠を付け替えた結論 ${cid}`,
         claims.find((c) => c.id === cid)!,
         result,
       );
