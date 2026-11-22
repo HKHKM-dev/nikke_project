@@ -77,8 +77,10 @@ function PreviewCard({
     id: `party-${partyIndex}-slot-${slotIndex}`,
     data: { type: 'party-slot', partyIndex, slotIndex } satisfies OverDragData,
   });
-  // 落とす先の青枠は、スロットに関係のないもの（部隊番号）を乗せたときは出さない
-  const isOver = isOverRaw && activeDragData(active?.data.current)?.type !== 'party-label';
+  // 落とす先の青枠は、スロットに関係のないもの（部隊番号）を乗せたときは出さない。操作の印（コントローラーのアイコン）は、
+  // いまの編成のスロットにだけ置けるので、選んでいない編成の行のスロットには出さない
+  const dragType = activeDragData(active?.data.current)?.type;
+  const isOver = isOverRaw && dragType !== 'party-label' && dragType !== 'controller';
   const {
     listeners,
     setNodeRef: setDragRef,
