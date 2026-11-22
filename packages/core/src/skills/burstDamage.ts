@@ -40,6 +40,7 @@ import {
 } from './types.ts';
 import {
   durationSecondsOf,
+  isResolvedChance,
   isResolvedShotCount,
   isResolvedTimer,
   resolveCondition,
@@ -83,6 +84,11 @@ export type ResolvedSkillDamage = {
   damageType: SkillDamageType;
   /** X/100。3.5164 など */
   multiplier: number;
+  /**
+   * 確率のきっかけの射撃ごとの倍率ダメージ（damage。plan/design-chance-dot-damage.md 3.2 節）の確率（0 より大きく 1 以下）。
+   * 1 トリガーの値（damage.ts の perShot）に、弾丸命中率と一緒に掛ける（期待値）
+   */
+  chance?: number;
   /** 発射体の爆発のヒット（自動攻撃の projectileExplosion）。発射体爆発ダメージ▲を掛ける（V-0124） */
   projectileExplosion?: true;
   /** 持続ダメージ（dot。autoAttack は除く）の tick。持続ダメージ▲（sustainedDamage）を掛ける */
@@ -805,6 +811,8 @@ export function resolvePerShotDamage(
       damageType: effect.damageType,
       multiplier: skillValue(skill, effect.ref, levels[slot]) / 100,
     };
+    const trigger = resolveTrigger(effect.trigger, skill, levels[slot]);
+    if (isResolvedChance(trigger)) r.chance = trigger.chance;
     if (isShotCountTrigger(effect.trigger) && effect.trigger.count === 'fullChargeShot') r.fullChargeOnly = true;
     if (effect.assumes) r.assumes = effect.assumes;
     resolved.push(r);
@@ -921,7 +929,22 @@ export type BurstHitResult = {
    * これを外して組み直す。onSkillCrit の効果だけのヒットにある
    */
   onSkillCritRate?: number;
+  /**
+   * 確率のきっかけの持続ダメージの tick が出る確率（期待値の perActivation・perEffect に掛けた重み。plan/design-chance-dot-damage.md 3.1 節）。
+   * 1 ヒットの値（oneHitValue）はこれを外して組み直す
+   */
+  chance?: number;
 };
+
+/** 1 回の結果に、出る確率 weight（0 より大きく 1 以下）を掛けた期待値の結果（確率のきっかけの持続ダメージの tick） */
+export function withChanceWeight(hit: BurstHitResult, weight: number): BurstHitResult {
+  return {
+    ...hit,
+    perEffect: hit.perEffect.map((p) => ({ ...p, expected: p.expected * weight })),
+    perActivation: hit.perActivation * weight,
+    chance: weight,
+  };
+}
 
 export type SkillHitResult = BurstHitResult;
 
@@ -1044,12 +1067,10 @@ export function oneHitValue(hit: BurstHitResult, crit: boolean, core = false, di
   const distanceTerm = distance ? hit.boost.distanceBonus : 0;
   const expectedGroup = hit.boost.total + hit.boost.sustained;
   // 倍率ダメージの会心をきっかけにするヒットは、出た時の値（会心率を掛けない。会心率 0 なら出ないので 0）
+  // 確率のきっかけの持続ダメージの tick も、出た時の値（出る確率を掛けない）
+  const weighted = hit.chance === undefined ? hit.perActivation : hit.perActivation / hit.chance;
   const fired =
-    hit.onSkillCritRate === undefined
-      ? hit.perActivation
-      : hit.onSkillCritRate > 0
-        ? hit.perActivation / hit.onSkillCritRate
-        : 0;
+    hit.onSkillCritRate === undefined ? weighted : hit.onSkillCritRate > 0 ? weighted / hit.onSkillCritRate : 0;
   return (fired / expectedGroup) * (1 + critTerm + hit.boost.fullBurst + hit.boost.sustained + coreTerm + distanceTerm);
 }
 

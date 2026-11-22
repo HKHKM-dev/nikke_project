@@ -1,0 +1,52 @@
+{
+  "formatVersion": 1,
+  "resourceId": 306,
+  "checkedAt": "2026-11-22",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalShot",
+            "chanceRef": 1
+          },
+          "damageType": "additional",
+          "ref": 2,
+          "assumes": {
+            "ja": "確率で出る追加ダメージを期待値で持つ（plan/design-chance-dot-damage.md 3.2 節）。射撃ごとの倍率ダメージとして、通常攻撃の 1 トリガーの値に、弾丸命中率 × 値 1 の % を掛けて足す（外れた発には出ない）。ヒットは発と同じフレーム、会心は期待値、フルバースト補正はその発の区間の値で、コアは乗せない。外れた発の扱い・ヒットのフレーム・補正は確かめていない",
+            "en": "The chance-based additional damage is modelled as an expectation (plan/design-chance-dot-damage.md 3.2). As per-shot skill damage it is added to the normal attack's per-trigger value, multiplied by the bullet hit rate × value 1 % (it does not occur on misses). The hit lands on the shot frame, crit is an expectation, the Full Burst bonus is the shot's segment value, and no core bonus applies. The handling of misses, the hit frame and the bonuses are unverified"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "最終攻撃力が最も高い味方 3 機への遮蔽物防御力▲は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）",
+          "en": "Cover DEF up for the 3 allies with the highest final ATK does not change damage by itself (it matters only with an effect reading cover in the team)",
+          "kind": "indirect",
+          "path": "cover"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "targetElement": "Fire",
+          "stat": "maxAmmo",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "灼熱コードの味方全体（自分を含む）の最大装弾数▲。C-0017 の形（加算して四捨五入。残弾は増やさず、リロードで新しい最大まで込め、切れたら削る）。付き始めは発動と同じフレーム（遅れは撮っていない）",
+            "en": "Max Ammunition Capacity up for all Fire Code allies (including self), following C-0017 (additive ratio, rounded; current ammo is not increased, a reload fills to the new maximum, and it is trimmed when the buff ends). It starts on the activation frame (the delay is not measured)"
+          }
+        }
+      ]
+    }
+  }
+}

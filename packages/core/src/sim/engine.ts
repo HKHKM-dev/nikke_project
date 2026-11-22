@@ -71,7 +71,15 @@ export type SimEvent =
   | { frame: number; kind: 'burst'; slot: number; step: BurstStepKey; damage: number }
   | { frame: number; kind: 'fullBurstStart' | 'fullBurstEnd' | 'gaugeFull' | 'chainTimeout' }
   | { frame: number; kind: 'buffStart' | 'buffEnd'; slot: number; effect: ItemEffect }
-  | { frame: number; kind: 'skillHit'; slot: number; effect: SkillHitEvent['effect']; damage: number }
+  | {
+      frame: number;
+      kind: 'skillHit';
+      slot: number;
+      effect: SkillHitEvent['effect'];
+      damage: number;
+      /** 確率のきっかけの持続ダメージの tick が出る確率（damage はこれを掛けた期待値。plan/design-chance-dot-damage.md 3.4 節） */
+      chance?: number;
+    }
   | {
       frame: number;
       kind: InstantKind;
@@ -122,8 +130,11 @@ export type SimSlotResult = {
     damage: number;
     /** 発動ごとの内訳（activations と同じ順） */ hits: BurstHitResult[];
   };
-  /** 倍率ダメージ（damage）の発動フレームと合計 */
-  skillHits: { frames: number[]; damage: number };
+  /**
+   * 倍率ダメージ（damage）の発動フレームと合計。count はヒットの回数の期待値（確率のきっかけの持続ダメージの tick は出る確率で数える。
+   * plan/design-chance-dot-damage.md 3.4 節。ほかは frames の数と同じ）
+   */
+  skillHits: { frames: number[]; damage: number; count: number };
   totalDamage: number;
   /** 条件が自動の枠で使った条件の平均（発数の重み）。手入力の枠は null */
   autoCondition: AutoConditionSummary | null;
@@ -259,6 +270,7 @@ export function runSimulation(simInput: SimInput): SimResult {
     if (!runner) return;
     runner.result.skillHits.frames.push(h.frame);
     runner.result.skillHits.damage += h.hit.perActivation;
+    runner.result.skillHits.count += h.hit.chance ?? 1;
     addPerSecond(h.slotIndex, h.frame, h.hit.perActivation);
   };
   // 倍率ダメージ（damage）。値は 1 パス目で計算済み（フレーム順）。蓄積して爆発するダメージは、ほかのヒットの後に決める
@@ -434,7 +446,7 @@ function createRunner(c: RunnerContext, slot: SimInput['slots'][number], index: 
         damage: 0,
         hits: [],
       },
-      skillHits: { frames: [], damage: 0 },
+      skillHits: { frames: [], damage: 0, count: 0 },
       totalDamage: 0,
       autoCondition,
     },
@@ -674,7 +686,14 @@ function traceEvents(
       const h = skillHits[nextSkillHit]!;
       nextSkillHit += 1;
       if (!runners[h.slotIndex]) continue;
-      events.push({ frame: f, kind: 'skillHit', slot: h.slotIndex, effect: h.effect, damage: h.hit.perActivation });
+      events.push({
+        frame: f,
+        kind: 'skillHit',
+        slot: h.slotIndex,
+        effect: h.effect,
+        damage: h.hit.perActivation,
+        ...(h.hit.chance === undefined ? {} : { chance: h.hit.chance }),
+      });
     }
     while (instants[nextInstant]?.frame === f) {
       const x = instants[nextInstant]!;

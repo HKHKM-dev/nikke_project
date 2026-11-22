@@ -5,6 +5,8 @@ import {
   DOT_FIRST_TICKS,
   type DotEffect,
   type DotFirstTick,
+  type EffectTrigger,
+  isChanceTrigger,
   isCounterFullTrigger,
   isShotCountTrigger,
   isTimerTrigger,
@@ -76,6 +78,35 @@ function validateAppliedDot(
     if (v[key] !== undefined) fail(`${path}.${key}`, `a dot on { applied } cannot have ${key}`);
 }
 
+/**
+ * 確率のきっかけの dot（plan/design-chance-dot-damage.md 3.1 節）は、付いた記録の無い 1 つの持続ダメージとして、起点ごとの tick に
+ * 出る確率の重みを持たせる（frame/dot.ts の chanceDotTicks）。名前の付いた状態・スタック・付け直しの形の違う刻み・数・遅れ・ゲージ・条件とは
+ * 組まない（使い手がいない。ゲージの期待値はバーストの時刻表を動かす。同 3.3 節）
+ */
+function validateChanceDot(v: Record<string, Json>, trigger: EffectTrigger, path: string): void {
+  if (!isChanceTrigger(trigger)) return;
+  for (const key of [
+    'state',
+    'maxStacksRef',
+    'durationUntil',
+    'tickIntervalFrames',
+    'hitOnApply',
+    'gaugeOnApply',
+    'gaugeOnApplyDelayFrames',
+    'tickDelayFrames',
+    'gaugeOnTick',
+    'perCount',
+    'perCountIntervalFrames',
+    'delayFrames',
+    'stacksFrom',
+    'copyEachTick',
+    'condition',
+  ])
+    if (v[key] !== undefined) fail(`${path}.${key}`, `a dot on a chance trigger cannot have ${key}`);
+  if (v.firstTick === 'halfAfterLatest')
+    fail(`${path}.firstTick`, 'a dot on a chance trigger cannot use halfAfterLatest');
+}
+
 /** dot に書ける欄 */
 const DOT_KEYS: readonly string[] = [
   'kind',
@@ -121,12 +152,13 @@ export function parseDotEffect(v: Record<string, Json>, path: string): DotEffect
   const stateEnd = typeof durationUntil === 'object' ? durationUntil : undefined;
   const effect: DotEffect = {
     kind: 'dot',
-    trigger: counterFull ?? applied ?? parseTrigger(v.trigger, `${path}.trigger`, { timer: true }),
+    trigger: counterFull ?? applied ?? parseTrigger(v.trigger, `${path}.trigger`, { timer: true, chance: true }),
     ref: parseRef(v.ref, `${path}.ref`),
     intervalSeconds: interval,
     ...(durationUntil !== undefined ? { durationUntil } : parseDuration(v, path)),
   };
   validateAppliedDot(v, applied, stateEnd, path);
+  validateChanceDot(v, effect.trigger, path);
   parseDotCondition(v, effect, path);
   parseDotIntervalAndFirstTick(v, effect, path);
   // 状態異常の名前。目録の id（持ち主が敵の状態）

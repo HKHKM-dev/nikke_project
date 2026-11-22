@@ -44,6 +44,7 @@ import { isEffectTarget } from './targets.ts';
 import {
   createStateWindowTracker,
   replayEvents,
+  shotCountWeight,
   trackTriggerFires,
   type FrameEvents,
   type HealRecord,
@@ -348,6 +349,27 @@ export function triggerFires(
     return all.map((frame) => ({ frame, context: null }));
   }
   return trackTriggerFires(trigger, slotIndex, schedule, eventsOf(schedule, shots, frames, heals), everyAt);
+}
+
+/**
+ * 確率のきっかけの発火の機会（plan/design-chance-dot-damage.md 3.1 節）。triggerFrames と同じ発火のフレーム（回数の量が正の自分の射撃）と、
+ * その発で付く確率 min(1, 確率 × 回数の量)（skills/holders/fire.ts の pushChanceOpportunity と同じ量）
+ */
+export function chanceFires(
+  trigger: ResolvedShotCountTrigger & { chance: number },
+  schedule: BurstSchedule | null,
+  slotIndex: number,
+  frames: number,
+  shots: readonly (ShotLog | null)[],
+): { frame: number; q: number }[] {
+  const out: { frame: number; q: number }[] = [];
+  for (const ev of eventsOf(schedule, shots, frames)) {
+    const shot = ev.shots[slotIndex];
+    if (!shot) continue;
+    const weight = shotCountWeight(trigger.count, shot);
+    if (weight > 0) out.push({ frame: ev.frame, q: Math.min(1, trigger.chance * weight) });
+  }
+  return out;
 }
 
 /**

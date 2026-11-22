@@ -283,7 +283,7 @@ export function summaryRows(sim: SimResult, result: TeamResult, slots: Slots) {
       segments: c.segments.length,
       'burst skill': `${fmt(s.burst.damage)} (${s.burst.activations.length}× ${fmt(s.burst.hit?.perActivation ?? 0)})`,
       // トリガー付きの倍率ダメージ（damage）
-      'skill hits': `${fmt(s.skillHits.damage)} (${s.skillHits.frames.length}×)`,
+      'skill hits': `${fmt(s.skillHits.damage)} (${fmt(s.skillHits.count)}×)`,
       total: fmt(c.totalDamage),
       share: pct(c.share),
     };

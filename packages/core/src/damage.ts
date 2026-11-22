@@ -641,7 +641,8 @@ export function partialChargeTriggerDamage<T extends TriggerDamage>(trigger: T, 
 
 /**
  * 射撃ごとの倍率ダメージ。式は倍率ダメージ（skills/burstDamage.ts の computeBurstHit）と同じ:
- * max(1, 攻撃力 − 防御力) × X × (1 + 会心期待値 + フルバースト補正) × (1 + Σ攻撃ダメージ) × 属性。距離は乗らず、コアは PER_SHOT_DAMAGE_CORE
+ * max(1, 攻撃力 − 防御力) × X × (1 + 会心期待値 + フルバースト補正) × (1 + Σ攻撃ダメージ) × 属性。距離は乗らず、コアは PER_SHOT_DAMAGE_CORE。
+ * 確率のきっかけの効果は確率を掛ける（期待値。plan/design-chance-dot-damage.md 3.2 節）
  */
 function perShotDamage(
   effects: readonly ResolvedSkillDamage[] | undefined,
@@ -658,6 +659,7 @@ function perShotDamage(
   const common = baseHit * boost * applyAttackDamageBuffs(buffs) * (1 + buffs.damageTaken) * element;
   const distributed = distributedHitMultiplier(1 + buffs.distributedDamage, 1 + buffs.damageTaken);
   let total = 0;
-  for (const e of effects) total += common * e.multiplier * (e.damageType === 'distributed' ? distributed : 1);
+  for (const e of effects)
+    total += common * e.multiplier * (e.damageType === 'distributed' ? distributed : 1) * (e.chance ?? 1);
   return total;
 }

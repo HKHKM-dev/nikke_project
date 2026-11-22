@@ -206,6 +206,99 @@ export function dotStacksAt(
   return Math.min(fires.filter((f) => f > since && f < frame).length, maxStacks);
 }
 
+/**
+ * まとまりの刻みの形（halfAfterLatest を除く）。offset(k) は起点から k 回目（0 始まり）の tick までのフレーム、lastOffset は 1 つの付与の
+ * 最後の tick までのフレーム、durationFrames は付け直しの判定の維持のフレーム（前の付与からこれ未満なら同じまとまり。C-0129）
+ */
+function dotTickShape(
+  intervalSeconds: number,
+  durationSeconds: number,
+  firstTick: DotFirstTick,
+): { offset: (k: number) => number; lastOffset: number; durationFrames: number } {
+  const count = Math.floor(durationSeconds / intervalSeconds + 1e-9);
+  // afterInterval は付いた 1 間隔後から間隔ごと（k + 1 間隔後。C-0130）。どちらも時刻に達した最初のフレーム（C-0454）
+  const offset = (k: number): number =>
+    firstTick === 'afterInterval'
+      ? gameSecondsToFirstFrame((k + 1) * intervalSeconds)
+      : k === 0
+        ? 0
+        : gameSecondsToFirstFrame(k * intervalSeconds + DOT_LATER_TICK_DELAY_SECONDS) - 1;
+  return { offset, lastOffset: offset(count - 1), durationFrames: gameSecondsToFrame(durationSeconds) };
+}
+
+/** 確率のきっかけの dot の 1 回の機会（発火のフレームと、その発で付く確率） */
+export type ChanceDotFire = { frame: number; q: number };
+
+/** 確率のきっかけの dot の重みつきの tick（フレームと、その tick が出る確率） */
+export type ChanceDotTick = { frame: number; weight: number };
+
+/** 起点のまとまりを追うのをやめる、生きている確率の和（切り捨てた tick の確率の誤差はこれ以下） */
+const CHANCE_DOT_EPSILON = 1e-12;
+
+/**
+ * 確率のきっかけの dot の期待値の tick（plan/design-chance-dot-damage.md 3.1 節）。機会 i（fᵢ・qᵢ。昇順）で独立に付くとき、
+ * dotTicks と同じ規則（維持の途中の付け直しは刻みを変えず終わりを延ばす。C-0129）で出る tick の期待値を、起点ごとの tick に
+ * 「その tick が出る確率」の重みを付けて返す（フレームの昇順。同じフレームに起点の違う tick が並ぶ）。
+ * 発 a が起点になる確率は q_a × Π (1 − qⱼ)（a の前の維持のフレームの中の機会）。起点 a のまとまりは、最後に付いた発 j の後の維持の
+ * フレームの中の発 i で確率 qᵢ × Π_{j < m < i} (1 − q_m) で延び、どれも付かなければ j で終わる。起点 a の k 回目の tick（τ）は、最後の付与 j が
+ * τ ≤ fⱼ + lastOffset のとき出る。生きている確率の和が CHANCE_DOT_EPSILON を切ったら、その起点を追うのをやめる。halfAfterLatest は書けない
+ */
+export function chanceDotTicks(
+  fires: readonly ChanceDotFire[],
+  intervalSeconds: number,
+  durationSeconds: number,
+  frames: number,
+  firstTick: DotFirstTick = 'atApplication',
+): ChanceDotTick[] {
+  if (firstTick === 'halfAfterLatest') throw new RangeError('a chance dot cannot use halfAfterLatest');
+  const { offset, lastOffset, durationFrames } = dotTickShape(intervalSeconds, durationSeconds, firstTick);
+  const live = fires.filter((x) => x.frame < frames && x.q > 0);
+  const out: ChanceDotTick[] = [];
+  for (let a = 0; a < live.length; a++) {
+    const fa = live[a]!.frame;
+    // 起点になる確率: a で付き、a の前の維持のフレームの中の機会でどれも付かない（付け直しの判定は前の付与からの経過だけで決まる）
+    let start = live[a]!.q;
+    for (let j = a - 1; j >= 0 && fa < live[j]!.frame + durationFrames; j--) start *= 1 - live[j]!.q;
+    if (start <= CHANCE_DOT_EPSILON) continue;
+    // まとまりの最後の付与の分布（添字 → 確率）。alive は延びうるもの、ended は終わったもの（最後の付与の昇順）
+    let alive: { j: number; p: number }[] = [{ j: a, p: 1 }];
+    const ended: { j: number; p: number }[] = [];
+    for (let i = a + 1; i < live.length && alive.length > 0; i++) {
+      const fi = live[i]!.frame;
+      // i より前に維持が切れた最後の付与は、そこで終わる（alive は付与の昇順なので前から）
+      let gone = 0;
+      while (gone < alive.length && fi >= live[alive[gone]!.j]!.frame + durationFrames) ended.push(alive[gone++]!);
+      if (gone > 0) alive = alive.slice(gone);
+      if (alive.length === 0) break;
+      const q = live[i]!.q;
+      let joined = 0;
+      let total = 0;
+      for (const s of alive) {
+        joined += s.p * q;
+        s.p *= 1 - q;
+        total += s.p;
+      }
+      if (joined > 0) alive.push({ j: i, p: joined });
+      if (total + joined < CHANCE_DOT_EPSILON) alive = [];
+    }
+    ended.push(...alive);
+    // tick τ が出る確率 = 最後の付与 j が τ − lastOffset ≤ fⱼ の確率の和（後ろからの累積）
+    const lastFrames = ended.map((s) => live[s.j]!.frame);
+    const suffix = new Array<number>(ended.length + 1).fill(0);
+    for (let m = ended.length - 1; m >= 0; m--) suffix[m] = suffix[m + 1]! + ended[m]!.p;
+    let m = 0;
+    for (let k = 0; ; k++) {
+      const tick = fa + offset(k);
+      if (tick >= frames) break;
+      while (m < ended.length && lastFrames[m]! + lastOffset < tick) m++;
+      if (m >= ended.length) break;
+      const weight = start * suffix[m]!;
+      if (weight > CHANCE_DOT_EPSILON) out.push({ frame: tick, weight });
+    }
+  }
+  return out.sort((x, y) => x.frame - y.frame);
+}
+
 /** 発火を 1 つずつ受けて、新しく決まった tick のフレームを返す（newGroup は新しいまとまりの最初の発火か） */
 export type DotTickTracker = { fire(frame: number): { ticks: number[]; newGroup: boolean } };
 
@@ -222,16 +315,7 @@ export function dotTickTracker(
   frames: number,
   firstTick: DotFirstTick = 'atApplication',
 ): DotTickTracker {
-  const count = Math.floor(durationSeconds / intervalSeconds + 1e-9);
-  // afterInterval は付いた 1 間隔後から間隔ごと（k + 1 間隔後。C-0130）。どちらも時刻に達した最初のフレーム（C-0454）
-  const offset = (k: number): number =>
-    firstTick === 'afterInterval'
-      ? gameSecondsToFirstFrame((k + 1) * intervalSeconds)
-      : k === 0
-        ? 0
-        : gameSecondsToFirstFrame(k * intervalSeconds + DOT_LATER_TICK_DELAY_SECONDS) - 1;
-  const lastOffset = offset(count - 1);
-  const durationFrames = gameSecondsToFrame(durationSeconds);
+  const { offset, lastOffset, durationFrames } = dotTickShape(intervalSeconds, durationSeconds, firstTick);
   let active = false;
   let anchor = 0;
   let last = 0;

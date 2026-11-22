@@ -21,13 +21,16 @@ const EVENT_FILTERS = ['anchor', 'within', 'from', 'skip', 'count', 'modulo', 's
 export const skillHitsMetrics: Readonly<Record<string, Metric>> = {
   // skill（'skill1' | 'skill2' | 'burst'）を書けば、そのスロットの倍率ダメージだけを数える（任意）
   skillHitCount: {
-    description: '枠の倍率ダメージの回数（skill でスロットを絞る）',
+    description:
+      '枠の倍率ダメージの回数（確率のきっかけの持続ダメージの tick は出る確率で数えた期待値。skill でスロットを絞る）',
     optional: ['skill'],
     args: ['slot'],
     sim: (r, c) =>
       c.args.skill === undefined
-        ? slotOf(r.slots, c).skillHits.frames.length
-        : r.skillHits.filter((h) => h.slotIndex === slotIndexOf(c) && h.effect.source.skill === c.args.skill).length,
+        ? slotOf(r.slots, c).skillHits.count
+        : r.skillHits
+            .filter((h) => h.slotIndex === slotIndexOf(c) && h.effect.source.skill === c.args.skill)
+            .reduce((sum, h) => sum + (h.hit.chance ?? 1), 0),
   },
   healHitCounts: {
     description: '回復ごとの、前の回復からその回復までの通常攻撃の命中の期待値',

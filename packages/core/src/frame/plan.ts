@@ -22,6 +22,7 @@ import {
   resolveDotEffects,
   resolveFixedShare,
   resolvePerShotDamage,
+  withChanceWeight,
   type ResolvedDamageEffect,
   type ResolvedSkillDamage,
   type SkillHitResult,
@@ -31,6 +32,7 @@ import { cycleFires, cycleShotFrames, resolveCycles } from '../skills/cycles.ts'
 import {
   MAX_SKILL_LEVELS,
   isResolvedApplied,
+  isResolvedChance,
   isResolvedFullStack,
   isResolvedTimer,
   isResolvedEventCount,
@@ -43,6 +45,7 @@ import {
 import {
   EMPTY_BUFF_STATE,
   appliedFrames,
+  chanceFires,
   timerDamageFrames,
   resolvePassiveStates,
   segmentIndexAt,
@@ -114,7 +117,7 @@ import {
 } from '../team.ts';
 import { untargetableRanges } from './events.ts';
 import type { FrameRange } from '../skills/timeline.ts';
-import { dotStacksAt, dotTicks, groupDotsByState } from './dot.ts';
+import { chanceDotTicks, dotStacksAt, dotTicks, groupDotsByState } from './dot.ts';
 export { DOT_LATER_TICK_DELAY_SECONDS, dotTickFrames, dotTickTracker, dotTicks, groupDotsByState } from './dot.ts';
 import { runFirstPass, type FirstPassResult, type InstantApplication } from './firstPass.ts';
 import {
@@ -949,6 +952,23 @@ function dotHits(ctx: SkillHitsContext, s: SlotReaders): void {
   };
   for (const { dot, fires, cancels } of dotGroups) {
     const { maxStacks } = dot;
+    // 確率のきっかけ（名前の付いた状態を持たないので 1 つの効果だけのまとまり）は、起点ごとの tick に出る確率の重みを掛ける
+    // （plan/design-chance-dot-damage.md 3.1 節）
+    const chanceEffect = fires[0]?.effect;
+    if (chanceEffect !== undefined && isResolvedChance(chanceEffect.trigger)) {
+      const opportunities = chanceFires(chanceEffect.trigger, schedule, slotIndex, frames, shots);
+      for (const tick of chanceDotTicks(
+        opportunities,
+        dot.intervalSeconds,
+        dot.durationSeconds,
+        frames,
+        dot.firstTick,
+      )) {
+        const { event } = push(tick.frame, chanceEffect, false);
+        event.hit = withChanceWeight(event.hit, tick.weight);
+      }
+      continue;
+    }
     // スタックコピー。付けた時に元の持続ダメージのスタックの数を写し、その数の tick を出す（0 なら付かない）。
     // 自分のカウンタの値を数にする形（× 〈カウンタ〉数分。plan/design-guillotine-ws.md 2.4 節）も同じ道筋
     const from = dot.stacksFrom;

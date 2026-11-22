@@ -3,7 +3,7 @@
 - 関連: [design-soldier-eg.md](design-soldier-eg.md) 3.1 節（確率のきっかけ・期待値の窓。C-0372）、[design-stage16.md](design-stage16.md) 10.0.2 節（乱数を起点にする効果。16-C の乱数と分布は凍結）、[design-tove-base.md](design-tove-base.md) 論点 4（射撃の列を変える確率の効果は期待値で持てない）、[design-nihilister.md](design-nihilister.md) 2.1 節（持続ダメージの tick）、[design-skill-stage17-inventory.md](design-skill-stage17-inventory.md) 0.3 節・[design-skill-stage18-inventory.md](design-skill-stage18-inventory.md) 0.7 節（候補 7）
 - 作成日: 2026-11-22
 - 根拠: 持続ダメージの付け直し（C-0129）、tick の時刻（C-0101・C-0130・C-0454）、確率のきっかけの期待値の窓（C-0372）、フルチャージの 1 発間維持（C-0868・C-1091）、I の単騎のバースト（C-0504）、単騎の III はバーストを撃てない（C-0250 の根拠）
-- 状態: 起案（オーナーの承認待ち。論点は 7 節）
+- 状態: 承認済み（7 節の 6 点とも推奨案）。実装済み・撮影待ち（5 節）
 
 ## 1. 何が困っているか
 
@@ -196,4 +196,4 @@
 
 ## 経過
 
-- 2026-11-22: 起案。
+- 2026-11-22: 起案。同じ日にオーナーが 7 節の 6 点とも推奨どおりで承認（「推奨どおりで進めて」）。

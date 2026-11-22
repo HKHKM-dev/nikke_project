@@ -752,8 +752,10 @@ export type ShotCountTrigger = {
   /**
    * 「〜した時、p% の確率で」の p（%。0 より大きく 100 以下の即値。plan/design-soldier-eg.md 3.1 節）。
    * 1 発ごとに確率 p × その発の回数の量（normalShot は 1、normalHit はその発の弾丸命中率）で付く。モデルは期待値で持ち、
-   * 窓の値を「付いている確率 × 値」にする（skills/chance.ts）。count は normalShot か normalHit、timed にだけ書ける。
-   * every・everyRef・stacksRef・during とは組み合わせない。chanceRef とどちらか片方。書ける stat の制限は validateChanceTimed
+   * 窓の値を「付いている確率 × 値」にする（skills/chance.ts）。count は normalShot か normalHit。timed・状態の付与と、dot（起点ごとの tick に
+   * 出る確率の重み。frame/dot.ts の chanceDotTicks）・damage（射撃ごとの倍率ダメージに確率を掛けて畳み込む。damage.ts の perShot）に書ける
+   * （plan/design-chance-dot-damage.md 3.1・3.2 節）。every・everyRef・stacksRef・during とは組み合わせない。chanceRef とどちらか片方。
+   * 書ける stat の制限は validateChanceTimed、dot と damage の欄の制限は parse/dot.ts・parse/damage.ts
    */
   chance?: number;
   /** 確率（%）の description_value_NN */
