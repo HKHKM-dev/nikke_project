@@ -6,7 +6,7 @@ import selectionCircle from '../../assets/badges/ui_selection_circle.svg';
 import selectionTriangle from '../../assets/badges/ui_selection_triangle.svg';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
-import type { ActiveDragData, OverDragData } from './dropIntent.ts';
+import { activeDragData, type ActiveDragData, type OverDragData } from './dropIntent.ts';
 import { useScrollingName } from './useScrollingName.tsx';
 import type { Badge } from './badges.ts';
 
@@ -70,10 +70,16 @@ export function ModernSlotCard({
   const awaitingPlacement = onPlacePending !== undefined;
 
   // ドロップ受け入れ（トレイからの配置、または他スロットからのスワップ）
-  const { isOver, setNodeRef: setDropRef } = useDroppable({
+  const {
+    isOver: isOverRaw,
+    active,
+    setNodeRef: setDropRef,
+  } = useDroppable({
     id: `slot-drop-${slotIndex}`,
     data: { type: 'slot', slotIndex } satisfies OverDragData,
   });
+  // 落とす先の青枠は、スロットに関係のないもの（部隊番号）を乗せたときは出さない
+  const isOver = isOverRaw && activeDragData(active?.data.current)?.type !== 'party-label';
 
   // スロット間の入れ替えのドラッグ（空のスロットも持ち上げて入れ替えられる）
   const {

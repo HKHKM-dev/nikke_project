@@ -7,7 +7,7 @@ import type { Party } from '../../parties.ts';
 import { partyLabel, partyNumber } from '../../parties.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { trayGrowthMarks } from './GrowthMarks.tsx';
-import type { ActiveDragData, OverDragData } from './dropIntent.ts';
+import { activeDragData, type ActiveDragData, type OverDragData } from './dropIntent.ts';
 import { EmptySlotFace, SlotCharName } from './ModernSlotCard.tsx';
 
 type Props = {
@@ -69,10 +69,16 @@ function PreviewCard({
   character: CharacterIndexEntry | undefined;
   children: ReactNode;
 }) {
-  const { isOver, setNodeRef: setDropRef } = useDroppable({
+  const {
+    isOver: isOverRaw,
+    active,
+    setNodeRef: setDropRef,
+  } = useDroppable({
     id: `party-${partyIndex}-slot-${slotIndex}`,
     data: { type: 'party-slot', partyIndex, slotIndex } satisfies OverDragData,
   });
+  // 落とす先の青枠は、スロットに関係のないもの（部隊番号）を乗せたときは出さない
+  const isOver = isOverRaw && activeDragData(active?.data.current)?.type !== 'party-label';
   const {
     listeners,
     setNodeRef: setDragRef,
