@@ -124,6 +124,9 @@
 - アニス：スター（17）のバーストのコアの経路（2026-10-05）→ 一部完了: [design-anis-star-core-path.md](design-anis-star-core-path.md)。残りは 6 節
 - 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは 3 節
 - 戦闘力による一覧の並び替え（2026-11-07 起票）→ 一部完了: [design-combat-power-sort.md](design-combat-power-sort.md)。残りは 4 節
+- モダン UI の編成の行を作り直さず、同じ要素のまま動かす（行の入れ替えで grid が作り直されるのをやめ、FLIP にする。これで useSlotFit の remountKey・立ち絵の先読み・liftedRects の WeakSet・ghostOf の SQUARE_SOURCES/LIFT_SHADOW_SOURCES の一覧が要らなくなるか見る）。あわせて PartyPreviewRow の memo 化と、ドロップ先・ドラッグ元の購読を減らす（2026-11-22 起票）→ 保留: [design-modern-ui.md](design-modern-ui.md)
+- モダン UI の重複を 1 つにまとめる（PartyTabs と PartyRowLabel の番号ボタン、App.tsx の編成を直す 3 つの関数の applyPartiesChange、行・番号の DOM を引く partyCardAt・slotsGridOf・partyLabelOf・rowsOf・labelOf、ドラッグを始める距離 4px と CLICK_SLOP、PreviewCard と PartyRowLabel のドロップ・ドラッグの配線、size と tallImage の二重、flight.ts の透明にする動きの重複）（2026-11-22 起票）→ 保留: [design-modern-ui.md](design-modern-ui.md)
+- 使われていない unsupportedNoteOf と UnsupportedNote・UnsupportedLevel・テストを消す（呼ぶ側は無い。SkillDefinitionCache の supportGaps とその読み込みが要るかも見る。ⓘ の印を戻すなら消さずに使う）（2026-11-22 起票）→ 保留: [design-modern-ui.md](design-modern-ui.md)
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
