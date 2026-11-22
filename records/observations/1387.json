@@ -1,0 +1,392 @@
+[
+  {
+    "id": "1387-01",
+    "recording": "1387",
+    "kind": "timing",
+    "use": "record",
+    "value": [1144, 2104, 3027, 5158, 6090, 8272, 9285, 11278],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・0・0・0・5・0・5f"
+    },
+    "source": "V-0864",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1387-02",
+    "recording": "1387",
+    "kind": "timing",
+    "use": "record",
+    "value": [1174, 2134, 3056, 5188, 6119, 8301, 9315, 11307],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 6・0・0・6・0・0・6・0f"
+    },
+    "source": "V-0864",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1387-03",
+    "recording": "1387",
+    "kind": "timing",
+    "use": "record",
+    "value": [1202, 2163, 3085, 5216, 6148, 8330, 9343, 11336],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0864",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1387-04",
+    "recording": "1387",
+    "kind": "timing",
+    "use": "record",
+    "value": [1811, 2772, 3694, 5825, 6756, 8939, 9952],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム。8 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0864",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1387-05",
+    "recording": "1387",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609, 609, 608, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差。8 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0864",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1387-06",
+    "recording": "1387",
+    "kind": "total",
+    "use": "record",
+    "value": 876261954,
+    "description": "モラン・クラウン・マスト：ロマンチックメイド・I-DOLL・サン・ソルジャーE.G. の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11711。増分は 7056 個"
+    },
+    "source": "V-0864",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1387-07",
+    "recording": "1387",
+    "kind": "count",
+    "use": "record",
+    "value": 243,
+    "unit": "トリガー",
+    "description": "モラン・クラウン・マスト：ロマンチックメイド・I-DOLL・サン・ソルジャーE.G. のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 7056 個。前の増分から 30f 未満の増分（7048 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 40f）から発の数を決めた（2 発になった組 8 個）"
+    },
+    "source": "V-0864",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1387-08",
+    "recording": "1387",
+    "use": "compare",
+    "kind": "total",
+    "value": 301751058,
+    "unit": "ダメージ",
+    "description": "モラン（1 枠）の与ダメージ（戦闘履歴。5 人・スペック固定 ON・AUTO・オートバースト ON・180 秒）",
+    "method": {
+      "tool": "目視（戦闘履歴の画面 f12150 前後）",
+      "note": "5 人の和 876,261,954 は HUD の総ダメージの最後の値（1387-06）と 1 の位まで一致"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 1
+      },
+      "tolerance": {
+        "rel": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0864",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1387-09",
+    "recording": "1387",
+    "use": "compare",
+    "kind": "total",
+    "value": 233633513,
+    "unit": "ダメージ",
+    "description": "クラウン（2 枠）の与ダメージ（戦闘履歴。5 人・スペック固定 ON・AUTO・オートバースト ON・180 秒）",
+    "method": {
+      "tool": "目視（戦闘履歴の画面 f12150 前後）",
+      "note": "5 人の和 876,261,954 は HUD の総ダメージの最後の値（1387-06）と 1 の位まで一致"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 2
+      },
+      "tolerance": {
+        "rel": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0864",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1387-10",
+    "recording": "1387",
+    "use": "compare",
+    "kind": "total",
+    "value": 127183504,
+    "unit": "ダメージ",
+    "description": "マスト：ロマンチックメイド（3 枠）の与ダメージ（戦闘履歴。5 人・スペック固定 ON・AUTO・オートバースト ON・180 秒）",
+    "method": {
+      "tool": "目視（戦闘履歴の画面 f12150 前後）",
+      "note": "5 人の和 876,261,954 は HUD の総ダメージの最後の値（1387-06）と 1 の位まで一致"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 3
+      },
+      "tolerance": {
+        "rel": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0864",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1387-11",
+    "recording": "1387",
+    "use": "compare",
+    "kind": "total",
+    "value": 98136890,
+    "unit": "ダメージ",
+    "description": "I-DOLL・サン（4 枠）の与ダメージ（戦闘履歴。5 人・スペック固定 ON・AUTO・オートバースト ON・180 秒）",
+    "method": {
+      "tool": "目視（戦闘履歴の画面 f12150 前後）",
+      "note": "5 人の和 876,261,954 は HUD の総ダメージの最後の値（1387-06）と 1 の位まで一致"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 4
+      },
+      "tolerance": {
+        "rel": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0864",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1387-12",
+    "recording": "1387",
+    "use": "compare",
+    "kind": "total",
+    "value": 115556989,
+    "unit": "ダメージ",
+    "description": "ソルジャーE.G.（5 枠）の与ダメージ（戦闘履歴。5 人・スペック固定 ON・AUTO・オートバースト ON・180 秒）",
+    "method": {
+      "tool": "目視（戦闘履歴の画面 f12150 前後）",
+      "note": "5 人の和 876,261,954 は HUD の総ダメージの最後の値（1387-06）と 1 の位まで一致"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "slotTotalDamage",
+      "args": {
+        "slot": 5
+      },
+      "tolerance": {
+        "rel": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0864",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1387-13",
+    "recording": "1387",
+    "use": "compare",
+    "kind": "count",
+    "value": 6899,
+    "unit": "発",
+    "description": "クラウン（2 枠・AI）が 180 秒で撃った発の数（顔のカードの残弾の減りの和）",
+    "method": {
+      "tool": "tools/captures/ammo.ts --card 2 --mode series",
+      "note": "最大が同じフレームどうしの残弾の減りだけを足した（この録画では最大は 300 のまま）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 2
+      },
+      "tolerance": {
+        "abs": 40
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0864",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1387-14",
+    "recording": "1387",
+    "use": "compare",
+    "kind": "count",
+    "value": 5787,
+    "unit": "発",
+    "description": "マスト：ロマンチックメイド（3 枠・操作）が 180 秒で撃った発の数（照準の横の残弾の減りの和）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "最大が同じフレームどうしの残弾の減りだけを足した（この録画では最大は 300 のまま）。読めないフレームは飛ばし、前後の読みの差を減りに数えた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3
+      },
+      "tolerance": {
+        "abs": 40
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0864",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1387-15",
+    "recording": "1387",
+    "use": "record",
+    "kind": "interval",
+    "unit": "f",
+    "value": [
+      [1284, 1362, 1368, 81],
+      [1754, 1832, 1838, 81],
+      [2249, 2305, 2311, 35],
+      [2605, 2655, 2726, 81],
+      [3138, 3166, 3178, 14],
+      [3481, 3513, 3521, 14],
+      [3730, 3942, 3943, 95],
+      [4340, 4418, 4424, 81],
+      [4795, 4890, 4916, 81],
+      [5328, 5383, 5389, 35],
+      [5722, 5777, 5784, 35],
+      [6119, 6175, 6181, 14],
+      [6484, 6516, 6524, 14],
+      [6826, 6933, 6934, 80],
+      [7550, 7627, 7634, 81],
+      [8021, 8121, 8127, 81],
+      [8538, 8593, 8600, 35],
+      [8932, 9032, 9038, 81],
+      [9388, 9414, 9507, 81],
+      [9894, 9922, 9933, 14],
+      [10235, 10373, 10374, 87],
+      [10753, 10831, 10837, 81],
+      [11223, 11326, 11333, 248],
+      [11376, 11437, 11507, 81]
+    ],
+    "description": "クラウンのリロードごとの [最終弾のフレーム, 残弾が満タンに戻ったフレーム, 次のマガジンの 1 発目のフレーム, 1 発目から 11 発目までのフレーム数]",
+    "method": {
+      "tool": "tools/captures/ammo.ts --card 2 --mode series",
+      "note": "最終弾から 1 発目まで 39〜40f の 5 回は 14f、61〜62f の 5 回は 35f が 4 回と 14f が 1 回（f6119。間にフルバーストの入り f6148 がある）、84f の 5 回は 81f、105f 以上は 80〜95f（1 発目が満タンの 1f 後の回は 87・95f。f11333 の 248f は途中で撃たない間を挟む）"
+    },
+    "source": "V-0864",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1387-16",
+    "recording": "1387",
+    "use": "record",
+    "kind": "interval",
+    "unit": "f",
+    "value": [
+      [1283, 1356, 1368, 81],
+      [1753, 1826, 1838, 81],
+      [2247, 2299, 2311, 35],
+      [2605, 2655, 2726, 81],
+      [3137, 3166, 3178, 14],
+      [3480, 3509, 3521, 14],
+      [4533, 4607, 4619, 81],
+      [4795, 4889, 4916, 81],
+      [5326, 5378, 5389, 35],
+      [5721, 5772, 5784, 35],
+      [6118, 6176, 6181, 14],
+      [6483, 6512, 6524, 14],
+      [7536, 7609, 7621, 81],
+      [8007, 8102, 8114, 81],
+      [8524, 8575, 8587, 35],
+      [8918, 9013, 9025, 81],
+      [9386, 9414, 9507, 81],
+      [9891, 9921, 9933, 14],
+      [10837, 11020, 11032, 80],
+      [11280, 11436, 11507, 81]
+    ],
+    "description": "マスト：ロマンチックメイドのリロードごとの [最終弾のフレーム, 残弾が満タンに戻ったフレーム, 次のマガジンの 1 発目のフレーム, 1 発目から 11 発目までのフレーム数]",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "最終弾から 1 発目まで 41〜42f の 4 回は 14f、63〜64f の 4 回は 35f が 3 回と 14f が 1 回（f6181。間にフルバーストの入り f6148 がある）、85〜86f の 3 回は 81f、107f 以上は 80〜81f。満タンから 1 発目まではふつう 12f（C-0115）で、f6181 の回だけ 5f"
+    },
+    "source": "V-0864",
+    "readAt": "2026-11-22"
+  }
+]

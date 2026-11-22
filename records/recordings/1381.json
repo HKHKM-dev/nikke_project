@@ -1,0 +1,59 @@
+{
+  "id": "1381",
+  "date": "2026-11-22",
+  "folder": "range",
+  "file": "20261122-1381_anis-star+crown+snowwhite-ha+dorothy-sd+privaty_auto.mp4",
+  "original": "2026-11-22_18-14-32.mp4",
+  "durationSec": 206.1,
+  "frames": 12363,
+  "fps": 60,
+  "sizeMB": 249.8,
+  "sha256": "f66e08ce2d75",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 330,
+      "name": "クラウン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 471,
+      "name": "スノーホワイト：ヘビーアームズ",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 234,
+      "name": "ドロシー：セレンディピティ",
+      "controlled": false
+    },
+    {
+      "slot": 5,
+      "rid": 170,
+      "name": "プリバティ",
+      "controlled": false,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-22T18:31+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
