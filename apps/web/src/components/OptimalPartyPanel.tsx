@@ -49,7 +49,7 @@ export function OptimalPartyPanel({
   // この画面だけの、計算の結果の覚え（画面の計算の覚えは 16 件なので、数百件を入れて追い出さない）
   const [computeCache] = useState(() => new ComputeCache(512));
   // 候補は数百通りなので、Worker を複数にして並列で回す
-  const workerCount = useMemo(batchWorkerCount, []);
+  const [workerCount] = useState(batchWorkerCount);
 
   const nameOf = (id: number | null) => index.find((c) => c.resourceId === id)?.name.ja ?? '';
   // 空のスロットにも、ニケを入れて計算できる（そのときの「現在」は、空のまま）
