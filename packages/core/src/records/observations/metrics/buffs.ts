@@ -195,17 +195,19 @@ function orderedStarts(starts: readonly number[], result: SimResult, ctx: Metric
 /**
  * その枠が受ける timed の効果の、発火ごとの件の始まり（モデルのフレーム。昇順。skill と stat で絞る。plan/design-centi.md）。
  * buffWindowStarts（値の小片の始まり）と違い、スタックが上限のまま付き直した発火も入る（CT ごとのアクティブの発動を全部数える）。
- * count・video は buffWindowStarts と同じ
+ * effect・count・video は buffWindowStarts と同じ
  */
 function buffFireStarts(result: SimResult, ctx: MetricContext): number[] {
   const slotIndex = slotIndexOf(ctx);
+  const effect = ctx.args.effect === undefined ? undefined : Number(ctx.args.effect);
   const starts = result.history.tracks
     .filter(
       (t) =>
         t.holder === slotIndex &&
         t.origin.kind === 'timed' &&
         t.origin.effect.source.skill === ctx.args.skill &&
-        t.origin.effect.stat === ctx.args.stat,
+        t.origin.effect.stat === ctx.args.stat &&
+        (effect === undefined || t.origin.effect.effectIndex === effect),
     )
     .flatMap((t) => t.starts);
   return orderedStarts(starts, result, ctx);
