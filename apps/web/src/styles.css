@@ -837,7 +837,8 @@ svg.roster-revert-icon {
 .char-tray-item-pending .char-tray-item-visual::after {
   content: '';
   position: absolute;
-  inset: 0;
+  /* 水色の枠（2px）は、絵の外側の線に中心をそろえ、内側に 1px・外側に 1px 描く（オーナーの指示） */
+  inset: -1px;
   border-radius: inherit;
   pointer-events: none;
   z-index: 2;
@@ -898,7 +899,7 @@ svg.roster-revert-icon {
   visibility: hidden;
 }
 .modern-party-row-label.party-label-over .party-tab {
-  outline: 3px solid Highlight;
+  outline: 2px solid Highlight;
   outline-offset: -1px;
 }
 /* 持ち上げた番号（DragOverlay）。行の左の番号と同じ幅 */
@@ -1042,7 +1043,7 @@ svg.roster-revert-icon {
 }
 /* 持ち上げたものを重ねているスロット（落とす先）は、カードでなく立ち絵の枠に印を付ける */
 .modern-slot-card.modern-slot-over .modern-slot-char-area {
-  outline: 3px solid Highlight;
+  outline: 2px solid Highlight;
   outline-offset: -1px;
 }
 /* 置いた・入れ替えた後、動く絵が着くまで、行き先のスロットの立ち絵の枠全体（名前・限界突破・✕ などを含む）を隠す（flight.ts の flyIntoSlot）。
@@ -1820,7 +1821,7 @@ html:has(.modern-view-container) {
 .modern-slot-card.modern-slot-awaiting .modern-slot-char-area::after,
 .char-tray-item-taken .char-tray-item-visual::after,
 .char-tray-item-pending .char-tray-item-visual::after {
-  /* 絵の枠（1px の枠線）と外形がそろうように、絵の箱と同じ大きさに描く */
+  /* 絵の枠線（1px）をまたいで、内側に 1px・外側に 1px */
   border: 2px solid var(--placing-blue);
 }
 .char-tray-item-check {
