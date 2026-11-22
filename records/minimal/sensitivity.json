@@ -6385,7 +6385,7 @@
     {
       "observation": "0246-34",
       "element": "ノワール burst.effects[1]",
-      "key": "7ca2a194808ab2c9",
+      "key": "6263cfa01e5c43fd",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6393,7 +6393,7 @@
     {
       "observation": "0246-34",
       "element": "ノワール burst.effects[2]",
-      "key": "7ca2a194808ab2c9",
+      "key": "6263cfa01e5c43fd",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6401,7 +6401,7 @@
     {
       "observation": "0246-35",
       "element": "ノワール burst.effects[1]",
-      "key": "484acd357ecf5148",
+      "key": "a2ca4731797ffa74",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -6409,7 +6409,7 @@
     {
       "observation": "0246-35",
       "element": "ノワール burst.effects[2]",
-      "key": "484acd357ecf5148",
+      "key": "a2ca4731797ffa74",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -7193,7 +7193,7 @@
     {
       "observation": "0267-11",
       "element": "ノワール burst.effects[1]",
-      "key": "4f02e83bbaaef68a",
+      "key": "2bb702771f500886",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -7201,7 +7201,7 @@
     {
       "observation": "0267-11",
       "element": "ノワール burst.effects[2]",
-      "key": "4f02e83bbaaef68a",
+      "key": "2bb702771f500886",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -7209,7 +7209,7 @@
     {
       "observation": "0267-12",
       "element": "ノワール burst.effects[1]",
-      "key": "b522c3e4dc50ed7b",
+      "key": "3a5476f020b2c03f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -7217,7 +7217,7 @@
     {
       "observation": "0267-12",
       "element": "ノワール burst.effects[2]",
-      "key": "b522c3e4dc50ed7b",
+      "key": "3a5476f020b2c03f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -7225,7 +7225,7 @@
     {
       "observation": "0269-11",
       "element": "ノワール burst.effects[1]",
-      "key": "19f467cd6126fd06",
+      "key": "1ccf2489b45ca03a",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -7233,7 +7233,7 @@
     {
       "observation": "0269-11",
       "element": "ノワール burst.effects[2]",
-      "key": "19f467cd6126fd06",
+      "key": "1ccf2489b45ca03a",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -7241,7 +7241,7 @@
     {
       "observation": "0269-12",
       "element": "ノワール burst.effects[1]",
-      "key": "21e0e5c3b5c6e6d8",
+      "key": "56c9ddff73262544",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -7249,7 +7249,7 @@
     {
       "observation": "0269-12",
       "element": "ノワール burst.effects[2]",
-      "key": "21e0e5c3b5c6e6d8",
+      "key": "56c9ddff73262544",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -7257,7 +7257,7 @@
     {
       "observation": "0269-15",
       "element": "ノワール burst.effects[1]",
-      "key": "cfb4ef26c99145bb",
+      "key": "2788b83aac37d37f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -7265,7 +7265,7 @@
     {
       "observation": "0269-15",
       "element": "ノワール burst.effects[2]",
-      "key": "cfb4ef26c99145bb",
+      "key": "2788b83aac37d37f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -7985,7 +7985,7 @@
     {
       "observation": "0310-16",
       "element": "ノワール burst.effects[1]",
-      "key": "572d6cf11cc988c6",
+      "key": "da4f1e35f72bb5fa",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -7993,7 +7993,7 @@
     {
       "observation": "0310-16",
       "element": "ノワール burst.effects[2]",
-      "key": "572d6cf11cc988c6",
+      "key": "da4f1e35f72bb5fa",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -8001,7 +8001,7 @@
     {
       "observation": "0310-17",
       "element": "ノワール burst.effects[1]",
-      "key": "76e8e17e429f14fb",
+      "key": "52f369922b3b13bf",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -8009,7 +8009,7 @@
     {
       "observation": "0310-17",
       "element": "ノワール burst.effects[2]",
-      "key": "76e8e17e429f14fb",
+      "key": "52f369922b3b13bf",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -8017,7 +8017,7 @@
     {
       "observation": "0310-20",
       "element": "ノワール burst.effects[1]",
-      "key": "3eb05eb4c04782a1",
+      "key": "622d1980c8ea6435",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -8025,7 +8025,7 @@
     {
       "observation": "0310-20",
       "element": "ノワール burst.effects[2]",
-      "key": "3eb05eb4c04782a1",
+      "key": "622d1980c8ea6435",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -8033,7 +8033,7 @@
     {
       "observation": "0312-08",
       "element": "ノワール burst.effects[1]",
-      "key": "43ff4ad31b8d0660",
+      "key": "483383cf8e9d068c",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -8041,7 +8041,7 @@
     {
       "observation": "0312-08",
       "element": "ノワール burst.effects[2]",
-      "key": "43ff4ad31b8d0660",
+      "key": "483383cf8e9d068c",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -8049,7 +8049,7 @@
     {
       "observation": "0312-09",
       "element": "ノワール burst.effects[1]",
-      "key": "30b468bc1b802949",
+      "key": "0747c4680fb83e7d",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -8057,7 +8057,7 @@
     {
       "observation": "0312-09",
       "element": "ノワール burst.effects[2]",
-      "key": "30b468bc1b802949",
+      "key": "0747c4680fb83e7d",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -8177,7 +8177,7 @@
     {
       "observation": "0319-09",
       "element": "ノワール burst.effects[1]",
-      "key": "384ebbe19240cc20",
+      "key": "3b2944656fb4274c",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -8185,7 +8185,7 @@
     {
       "observation": "0319-09",
       "element": "ノワール burst.effects[2]",
-      "key": "384ebbe19240cc20",
+      "key": "3b2944656fb4274c",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -8193,7 +8193,7 @@
     {
       "observation": "0319-10",
       "element": "ノワール burst.effects[1]",
-      "key": "3d89ab6811ea7663",
+      "key": "78363a6c3ecd9927",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -8201,7 +8201,7 @@
     {
       "observation": "0319-10",
       "element": "ノワール burst.effects[2]",
-      "key": "3d89ab6811ea7663",
+      "key": "78363a6c3ecd9927",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -8209,7 +8209,7 @@
     {
       "observation": "0319-13",
       "element": "ノワール burst.effects[1]",
-      "key": "a1204ebc1aba446d",
+      "key": "a536fa681d601bf9",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -8217,7 +8217,7 @@
     {
       "observation": "0319-13",
       "element": "ノワール burst.effects[2]",
-      "key": "a1204ebc1aba446d",
+      "key": "a536fa681d601bf9",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -15888,7 +15888,7 @@
     {
       "observation": "0708-05",
       "element": "アスカ burst.effects[0]",
-      "key": "1f151a5169987ee0",
+      "key": "f3fe017d192d2144",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15904,7 +15904,7 @@
     {
       "observation": "0708-05",
       "element": "アスカ burst.effects[2]",
-      "key": "1f151a5169987ee0",
+      "key": "f3fe017d192d2144",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -15912,7 +15912,7 @@
     {
       "observation": "0708-06",
       "element": "アスカ burst.effects[0]",
-      "key": "2375b988e1bc1dd9",
+      "key": "f6a5b94c81b8f965",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15928,7 +15928,7 @@
     {
       "observation": "0708-06",
       "element": "アスカ burst.effects[2]",
-      "key": "2375b988e1bc1dd9",
+      "key": "f6a5b94c81b8f965",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -15936,7 +15936,7 @@
     {
       "observation": "0708-07",
       "element": "アスカ burst.effects[0]",
-      "key": "ed30fb4ceb2ce5b9",
+      "key": "bb36b35809a32505",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15952,7 +15952,7 @@
     {
       "observation": "0708-07",
       "element": "アスカ burst.effects[2]",
-      "key": "ed30fb4ceb2ce5b9",
+      "key": "bb36b35809a32505",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -15960,7 +15960,7 @@
     {
       "observation": "0709-05",
       "element": "アスカ burst.effects[0]",
-      "key": "a98b639668562a57",
+      "key": "fb476eba16e1510b",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15976,7 +15976,7 @@
     {
       "observation": "0709-05",
       "element": "アスカ burst.effects[2]",
-      "key": "a98b639668562a57",
+      "key": "fb476eba16e1510b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -15984,7 +15984,7 @@
     {
       "observation": "0709-06",
       "element": "アスカ burst.effects[0]",
-      "key": "53056305fc676272",
+      "key": "ec67bd7915597366",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -16000,7 +16000,7 @@
     {
       "observation": "0709-06",
       "element": "アスカ burst.effects[2]",
-      "key": "53056305fc676272",
+      "key": "ec67bd7915597366",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -16008,7 +16008,7 @@
     {
       "observation": "0709-07",
       "element": "アスカ burst.effects[0]",
-      "key": "cf1dfbc9df4730e2",
+      "key": "e7bead75d8b36556",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -16024,7 +16024,7 @@
     {
       "observation": "0709-07",
       "element": "アスカ burst.effects[2]",
-      "key": "cf1dfbc9df4730e2",
+      "key": "e7bead75d8b36556",
       "effective": false,
       "minus": 0,
       "plus": 0

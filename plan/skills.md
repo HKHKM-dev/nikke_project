@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 178・効果 1243（根拠あり 1221）・notes 381（根拠あり 162）
+件数: キャラ 178・効果 1244（根拠あり 1222）・notes 380（根拠あり 162）
 
-notes の種類: 未対応 30・前提の外 132・計算に無関係 78・補足 43・間接 98
+notes の種類: 未対応 29・前提の外 132・計算に無関係 78・補足 43・間接 98
 
-スロット: supported 495・partial 24・unsupported 5・noEffect 67
+スロット: supported 496・partial 23・unsupported 5・noEffect 67
 
 ## 10 ラピ
 
@@ -1381,9 +1381,9 @@ notes の種類: 未対応 30・前提の外 132・計算に無関係 78・補�
 
 - **skill1**: noEffect
   - notes[0] 間接（バリア）: 通常攻撃 120 回ごとの味方共用バリアは、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは味方がバリア適用状態にならない。バリアの量は要件 5.2 節の外）: C-0443（範囲外）
-- **skill2**: partial
+- **skill2**: supported
   - effects[0] heal・fullBurstEnd: C-0694（確定）
-  - notes[0] 未対応: フルバーストタイム終了時、同じ部隊の味方がいれば自分のバーストスキルクールタイム▼は未対応: 根拠なし
+  - effects[1] cooldownReduction・fullBurstEnd: C-1551（確定）、C-1552（確定）
 - **burst**: supported
   - effects[0] heal・burstUse: C-0693（確定）
   - effects[1] timed・burstUse・damageTaken: C-0692（確定）
