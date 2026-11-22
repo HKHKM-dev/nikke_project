@@ -527,5 +527,41 @@
       "slot": "all",
       "source": "burstChain"
     }
+  },
+  {
+    "id": "0221-22",
+    "recording": "0221",
+    "use": "compare",
+    "kind": "hit",
+    "value": 1211336,
+    "unit": "ダメージ",
+    "description": "ラピの S2 の 1 回目のヒット（f2093。フルバーストの終わり f2000 の 93f 後で、発動（ヒットの 101f 前）は終わりの 8f 前）の値。ラピのバーストの攻撃力▲とフルバースト補正の乗った、会心なしの値",
+    "method": {
+      "tool": "recipe:buff-edge@9（grid A=3@skill@5986:skill2;B=3@skill@1278:skill2）",
+      "note": "増分を、モデルのラピの S2 の 1 ヒットの格子（ヒットの時の値 502,167・会心 753,251 と、攻撃力▲とフルバースト補正の乗った 1,211,336・会心 1,615,115）に ±1 で当てた。フルバーストの終わりは、III のタイマーの 00.00（0221-01 の f1390）の 610f 後（f2000）。値は V-0271 で読んだ `0221-09` の 1 つ目と同じ。ラピの通常攻撃は f1993 まで▲と補正の乗った格子、f2022 から乗らない格子（`0221-16`・`0221-17`）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0853",
+    "readAt": "2026-11-22"
   }
 ]

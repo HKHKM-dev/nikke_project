@@ -789,5 +789,149 @@
       "slot": "all",
       "source": "burstChain"
     }
+  },
+  {
+    "id": "0018-35",
+    "recording": "0018",
+    "use": "compare",
+    "kind": "hit",
+    "value": 1211336,
+    "unit": "ダメージ",
+    "description": "ラピの S2 の 1 回目のヒット（f2154。フルバーストの終わり f2076 の 78f 後で、発動（ヒットの 101f 前）は終わりの 23f 前）の値。ラピのバーストの攻撃力▲とフルバースト補正の乗った、会心なしの値",
+    "method": {
+      "tool": "recipe:buff-edge@9（grid B=3@skill@1278:skill2;B2=3@skill@2455:skill2;A=3@skill@1278:skill2/*2.4122170373）",
+      "note": "増分を、モデルのラピの S2 の 1 ヒットの格子（ヒットの時の値 502,167・会心 753,251 と、攻撃力▲とフルバースト補正の乗った 1,211,336・会心 1,615,115）に ±1 で当てた。フルバーストの終わりは、III のタイマーの 00.00（0018-29）の 610f 後（f2076・f4453・f6832・f9209）。前後の数 f のラピの通常攻撃は▲も補正も無い格子（12,958・16,846 など）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0853",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "0018-36",
+    "recording": "0018",
+    "use": "compare",
+    "kind": "hit",
+    "value": 1211336,
+    "unit": "ダメージ",
+    "description": "ラピの S2 の 3 回目のヒット（f4532。フルバーストの終わり f4453 の 79f 後で、発動（ヒットの 101f 前）は終わりの 22f 前）の値。ラピのバーストの攻撃力▲とフルバースト補正の乗った、会心なしの値",
+    "method": {
+      "tool": "recipe:buff-edge@9（grid B=3@skill@1278:skill2;B2=3@skill@2455:skill2;A=3@skill@1278:skill2/*2.4122170373）",
+      "note": "増分を、モデルのラピの S2 の 1 ヒットの格子（ヒットの時の値 502,167・会心 753,251 と、攻撃力▲とフルバースト補正の乗った 1,211,336・会心 1,615,115）に ±1 で当てた。フルバーストの終わりは、III のタイマーの 00.00（0018-29）の 610f 後（f2076・f4453・f6832・f9209）。前後の数 f のラピの通常攻撃は▲も補正も無い格子（12,958・16,846 など）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0853",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "0018-37",
+    "recording": "0018",
+    "use": "compare",
+    "kind": "hit",
+    "value": 1211336,
+    "unit": "ダメージ",
+    "description": "ラピの S2 の 5 回目のヒット（f6912。フルバーストの終わり f6832 の 80f 後で、発動（ヒットの 101f 前）は終わりの 21f 前）の値。ラピのバーストの攻撃力▲とフルバースト補正の乗った、会心なしの値",
+    "method": {
+      "tool": "recipe:buff-edge@9（grid B=3@skill@1278:skill2;B2=3@skill@2455:skill2;A=3@skill@1278:skill2/*2.4122170373）",
+      "note": "増分を、モデルのラピの S2 の 1 ヒットの格子（ヒットの時の値 502,167・会心 753,251 と、攻撃力▲とフルバースト補正の乗った 1,211,336・会心 1,615,115）に ±1 で当てた。フルバーストの終わりは、III のタイマーの 00.00（0018-29）の 610f 後（f2076・f4453・f6832・f9209）。前後の数 f のラピの通常攻撃は▲も補正も無い格子（12,958・16,846 など）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0853",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "0018-38",
+    "recording": "0018",
+    "use": "compare",
+    "kind": "hit",
+    "value": 1211336,
+    "unit": "ダメージ",
+    "description": "ラピの S2 の 7 回目のヒット（f9291。フルバーストの終わり f9209 の 82f 後で、発動（ヒットの 101f 前）は終わりの 19f 前）の値。ラピのバーストの攻撃力▲とフルバースト補正の乗った、会心なしの値",
+    "method": {
+      "tool": "recipe:buff-edge@9（grid B=3@skill@1278:skill2;B2=3@skill@2455:skill2;A=3@skill@1278:skill2/*2.4122170373）",
+      "note": "増分を、モデルのラピの S2 の 1 ヒットの格子（ヒットの時の値 502,167・会心 753,251 と、攻撃力▲とフルバースト補正の乗った 1,211,336・会心 1,615,115）に ±1 で当てた。フルバーストの終わりは、III のタイマーの 00.00（0018-29）の 610f 後（f2076・f4453・f6832・f9209）。前後の数 f のラピの通常攻撃は▲も補正も無い格子（12,958・16,846 など）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 6,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0853",
+    "readAt": "2026-11-22"
   }
 ]
