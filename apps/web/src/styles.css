@@ -1451,6 +1451,12 @@ svg.roster-revert-icon {
     url(./assets/portrait_silhouette.webp) center / 100% 100% no-repeat,
     linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
 }
+/* 四角の空のスロット（選んでいない編成の行・持ち上げた絵）も、シルエットの絵（256×256）を枠いっぱいに出す */
+.modern-slot-empty-area:not(.modern-slot-empty-tall) {
+  background:
+    url(./assets/square_silhouette.webp) center / 100% 100% no-repeat,
+    var(--char-visual-fill);
+}
 .modern-slot-empty-tall .modern-slot-empty-plus {
   font-size: 3.6em;
 }
