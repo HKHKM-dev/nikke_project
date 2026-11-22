@@ -119,7 +119,7 @@ export const BUFF_STATS = [
   // atMost と、passive の条件 selfHp（割合が動きうる枠）と対象の lowestHpRatio（回復の発火の時。plan/design-hp-ratio-readers.md）が読む
   'maxHpOnly',
   // 与える HP 回復量▲（比率。plan/design-heal-amount-up.md 2.1 節）。持つ枠が出す、量で追う回復（heal の scaling 'casterFinalMaxHp'）の
-  // 量に (1 + Σ) を掛ける（回復の発火のフレームより前に付いた件と常時の分。skills/holders/views.ts の restoreAmountOf）。与ダメージの式・
+  // 量に (1 + Σ) を掛ける（回復の発火のフレームより前に付いた件と常時の分。skills/holders/hpViews.ts の restoreAmountOf）。与ダメージの式・
   // 射撃は読まず、HP の割合を通して効く
   'healDealt',
   // 防御力▲（比率。plan/design-skill-stage7.md 1.3 節）。与ダメージの式は読まず、対象の絞り込み
@@ -315,7 +315,7 @@ export function isAllyDecrease(effect: { stat: string; decrease?: true }): boole
  * perFinalMaxAmmo = 「自分の最終最大装弾数 1 発ごとに X%▲」（stat が chargeDamage の timed の self だけ。plan/design-emilia.md 2.1 節）。
  * 値は比率 × その発の時点の最終最大装弾数（上限 50 発）で、damage.ts がフルチャージの発の 1 トリガーの値を出すときに掛ける、
  * perLostHp = 「失った HP 1% ごとに X%▲」（stat が attack の timed の self だけ。plan/design-guillotine.md 2.1 節）。値は比率 ×
- * 失った HP の 1% 刻みの段の数（lostHpSteps）。HP の割合（skills/holders/views.ts の selfHpRatioAt）が変わるたびに付け直す。
+ * 失った HP の 1% 刻みの段の数（lostHpSteps）。HP の割合（skills/holders/hpViews.ts の selfHpRatioAt）が変わるたびに付け直す。
  * 2 パス目は値の小片を持ち主の HP の割合の段で切り（skills/holders/history.ts の valuePiecesOf）、1 パス目は読むフレームの割合で出す
  */
 export type BuffScaling =
@@ -380,7 +380,7 @@ export function isFixedAttackScaling(scaling: BuffScaling | undefined): boolean 
  * （CharacterData.shot.chargeTime の長い順。同値は枠の若い順。編成で決まるので最上位の skills/composition.ts
  * で対象の枠を決める。plan/design-target-vocab.md 2.2 節）。N は topAttack と同じ欄。timed にだけ書ける。
  * lowestHpRatio = 「残りの HP の割合が最も低い味方 N 機」（回復の発火のフレームの HP の割合（枠の想定 TeamSlotInput.hpRatio を
- * 最大HP のみ▲・現在の HP▼ で下げ、量で追う回復で戻した割合。skills/holders/views.ts の selfHpRatioAt）の低い順。
+ * 最大HP のみ▲・現在の HP▼ で下げ、量で追う回復で戻した割合。skills/holders/hpViews.ts の selfHpRatioAt）の低い順。
  * 同値は枠の若い順（C-0567）。自分も候補。候補の枠は skills/composition.ts が決める。
  * plan/design-skill-stage8.md 1.1 節・plan/design-hp-ratio-readers.md 2.2 節）。N は topAttack と同じ欄。heal にだけ書ける。
  * 定義を書くときの決まり: 被弾した味方が選ばれうることと、持続回復・吸収回復では割合が戻らないことを assumes に書く。
@@ -1014,7 +1014,7 @@ export function isSkillFiredTrigger(t: unknown): t is SkillFiredTrigger {
 /**
  * 「両隣の味方のうち 1 機が HP X% 以下になった時」（plan/design-adjacent-allies.md 2.3 節）。発動者の左右の枠（空枠は数えない）の
  * どちらかの HP の割合が閾値（description_value_NN の X%）以下に下がったフレームに発火する（同じフレームに 2 機とも下がっても 1 回）。
- * 割合は { selfHpAtMostRef } と同じ（skills/holders/views.ts の selfHpRatioAt。回復で戻る分も入れる）。1 パス目の件の一覧が追う。
+ * 割合は { selfHpAtMostRef } と同じ（skills/holders/hpViews.ts の selfHpRatioAt。回復で戻る分も入れる）。1 パス目の件の一覧が追う。
  * 秒の維持の timed と状態の付与にだけ書け、最大HP▲・最大HP のみ▲ は書けない
  */
 export type AdjacentHpAtMostTrigger = { adjacentHpAtMostRef: number };
@@ -1328,7 +1328,7 @@ export type CounterEmptyUntil = { counterEmpty: CounterId };
 
 /**
  * 状態の付与の維持の「自分の HP が X% 以下の時、〈状態〉解除」（plan/design-hp-down-interval.md 2.2 節）。X は % の
- * description_value_NN。付いたフレームの次のフレームから、持ち主（自分）の HP の割合（skills/holders/views.ts の selfHpRatioAt。現在の HP▼ は
+ * description_value_NN。付いたフレームの次のフレームから、持ち主（自分）の HP の割合（skills/holders/hpViews.ts の selfHpRatioAt。現在の HP▼ は
  * 発火の次のフレームから読む）が閾値以下と読めたフレーム g に、件を g + 1 で閉じる（g には付いている。解除 removeState と同じ）。それまでは
  * 戦闘の終わりまで。発火のフレームにすでに閾値以下なら付かない（V-0729）。自分にだけ付き、スタックせず、条件を持たない
  */
@@ -1407,7 +1407,7 @@ export type SelfCounterCondition = { counter: CounterId; atLeast?: number; below
  * atLeast = 説明文に即値で書かれた X（% 表記。ミルクの基礎版の S2 の
  * 「自分の HP が 80% 以上の時のみ」。plan/design-skill-stage15.md 2.1 節）。atLeastRef とちょうど 1 つ。
  * atMostRef・atMost = 「自分の HP が X% 以下の場合」（timed だけ。発火のフレームの HP の割合
- * （skills/holders/views.ts の selfHpRatioAt）で見る。付いた後は維持の終わりまで続く。編成の段では決めない。1 パス目で窓を追う stat には
+ * （skills/holders/hpViews.ts の selfHpRatioAt）で見る。付いた後は維持の終わりまで続く。編成の段では決めない。1 パス目で窓を追う stat には
  * 書けない。plan/design-scarlet.md 2.2 節）。
  * passive は atLeast の形だけ、timed は atMost の形だけ書ける。
  * damage は両方の形を書ける（「自分の HP が最大の場合」は atLeast 100。発火のフレームで見る。plan/design-soline.md 2.1 節・
@@ -1963,7 +1963,7 @@ export type HealEffect = TargetCountFields &
     ref: number;
     /**
      * 「スキル発動者の最終最大HP の X% 回復」（維持の無い回復だけ）。発動者の最終最大HP（発火のフレームより前に付いた最大HP の件）× X を
-     * 対象の現在の HP に足し、HP の割合を上げる（skills/holders/views.ts の selfHpRatioAt。plan/design-hp-heal-restore.md 2.2 節）
+     * 対象の現在の HP に足し、HP の割合を上げる（skills/holders/hpViews.ts の selfHpRatioAt。plan/design-hp-heal-restore.md 2.2 節）
      */
     scaling?: 'casterFinalMaxHp';
     /** 維持秒数の description_value_NN（任意。durationSeconds と両方は書けない） */
@@ -2028,7 +2028,7 @@ export type AmmoDecreaseEffect = TargetCountFields & {
 /**
  * 「現在のHP X%▼」（plan/design-scarlet.md 2.1 節）。発火のたびに、自分の現在の HP を X% 下げる（HP の割合に (1 − X) を掛ける。
  * 最大HP は変えない。即時効果）。自分の HP の割合を読む効果（きっかけ { selfHpAtMostRef }・条件 selfHp の atMost）が、発火の次のフレーム
- * から読む（skills/holders/views.ts の selfHpRatioAt）。回復（heal の scaling 'casterFinalMaxHp'）で戻る。対象は自分だけ。
+ * から読む（skills/holders/hpViews.ts の selfHpRatioAt）。回復（heal の scaling 'casterFinalMaxHp'）で戻る。対象は自分だけ。
  * 「1 秒間隔」は、状態の付いた時から数える周期 { everySeconds, since } で書く
  * （付いたフレームにも起きるなら atStart。plan/design-hp-down-interval.md 2.1 節。V-0729）
  */

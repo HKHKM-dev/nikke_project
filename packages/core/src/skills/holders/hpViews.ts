@@ -1,12 +1,11 @@
-// 件の一覧の層 5（見る側。views.ts の createViews が作る）のうち、HP の系: 最大 HP▲・現在の HP▼・回復・HP の割合。
+// 件の一覧の層 5: 見る側（plan/design-split-first-pass.md 3.3 節・9.2 節）のうち、HP の系（最大 HP▲・現在の HP▼・回復・HP の割合）。
+// views.ts の createViews が作り、そこから返す。
 import { lowerBound } from '../../frame/shots.ts';
-import type { ItemEffect } from '../resolve.ts';
 import { isMaxHpStat, isSelfHpAtMost, selfHpHolds, type SelfHpCondition } from '../types.ts';
-import type { HeldTrack, HolderLists, HpRatioSteps } from './types.ts';
+import type { HolderLists, HpRatioSteps, ViewsOf } from './types.ts';
 import { valueOf } from './items.ts';
 import type { HolderBase, Records } from './records.ts';
 import type { Read } from './read.ts';
-import type { View } from './views.ts';
 
 /** HP の割合の閾値の比べで許す浮動小数の誤差（selfHpAtMostAt。「HP が最大」の判定も同じ幅を使う。skills/holders/fires.ts） */
 export const HP_RATIO_EPS = 1e-9;
@@ -19,7 +18,7 @@ export function createHpViews({
   recordHeal,
   slots,
   viewsOf,
-}: HolderBase & Records & Read & { viewsOf: (test: (track: HeldTrack, effect: ItemEffect) => boolean) => View[][] }) {
+}: HolderBase & Records & Read & { viewsOf: ViewsOf }) {
   // 枠のそのフレームの最終最大HP（常時 + 効いている最大HP▲ の件。plan/design-skill-stage6.md 2.4 節）。
   // 発動者の最終最大HP 基準の攻撃力▲（casterFinalMaxHp）の順位の値が読む
   const maxHpViews = viewsOf((_, e) => isMaxHpStat(e.stat));
@@ -209,6 +208,5 @@ export function createHpViews({
   /** 枠の HP の割合がフレーム frame に閾値 threshold（割合）以下か（きっかけ { selfHpAtMost } と維持 { selfHpAtMostRef } が読む） */
   const selfHpAtMostAt = (slotIndex: number, frame: number, threshold: number): boolean =>
     selfHpRatioAt(slotIndex, frame) <= threshold + HP_RATIO_EPS;
-  // 枠のそのフレームの最終防御力（常時 + 効いている防御力▲ の件）と、
   return { applyHeal, finalMaxHpAt, hpRatioStepsOf, lowerCurrentHp, selfHpAtMostAt, selfHpAtMostHolds, selfHpRatioAt };
 }

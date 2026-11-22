@@ -166,7 +166,7 @@ export type BuffTotals = {
   maxHpRatio: number;
   /**
    * 与える HP 回復量▲ の比率の加算（plan/design-heal-amount-up.md 2.1 節）。ダメージの式は読まず、その枠が出す量で追う回復の量
-   * （skills/holders/views.ts の restoreAmountOf）だけが読む
+   * （skills/holders/hpViews.ts の restoreAmountOf）だけが読む
    */
   healDealt: number;
   /**

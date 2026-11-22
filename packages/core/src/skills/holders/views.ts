@@ -1,7 +1,7 @@
 // 件の一覧の層 5: 見る側（plan/design-split-first-pass.md 3.3 節・9.2 節）。stat ごとの見る列（射撃・ダメージ・当たり・射程・会心・ペレット・
 // 条件・順位・ゲージ・CT）、状態の件のスタックの段と敵の状態、登録が閉じる件の列（カウンタの 0・HP の割合・見る状態の終わり）、
 // 最終防御力・最終攻撃力と順位。HP の系（最大 HP▲・現在の HP▼・回復・HP の割合）は hpViews.ts の createHpViews が作り、ここから返す。
-// 見る列を読む問い合わせ（射手の実効値・当たり・与ダメージの値・状態のスタック数・現在の HP▼）も返す。
+// 見る列を読む問い合わせ（射手の実効値・当たり・与ダメージの値・状態のスタック数）も返す。
 import {
   ZERO_HIT_RATE,
   applyResolvedEffect,
@@ -15,13 +15,12 @@ import {
 } from '../buffs.ts';
 import { chanceStackLevelsAt } from '../chance.ts';
 import { createSpanMemo } from '../spanMemo.ts';
-import type { ItemEffect } from '../resolve.ts';
 import { attackRankFor, finalAttacksAt, type AttackItem } from '../ranking.ts';
 import { stateMatches, statesMatching, type NamedStateId } from '../states.ts';
 import { dependsOnRank } from '../targets.ts';
 import { isFiringStat, HIT_STATE_STATS, isStateStat, lostHpScaled, staticStatesOf, type BuffStat } from '../types.ts';
 import { rankSlotsOf } from '../timeline.ts';
-import { ENEMY, type HeldItem, type HeldTrack, type HolderLists } from './types.ts';
+import { ENEMY, type HeldItem, type HeldTrack, type HolderLists, type View, type ViewsOf } from './types.ts';
 import { STAGE_RANK, scaledEffect, valueOf } from './items.ts';
 import { alliesOf } from './history.ts';
 import type { HolderBase, Records } from './records.ts';
@@ -30,14 +29,11 @@ import type { Sources } from './sources.ts';
 import type { Read } from './read.ts';
 import { createHpViews } from './hpViews.ts';
 
-/** 見る側の索引の 1 つ（持ち主の件と、その件の効果のうち見る stat の 1 つ） */
-export type View = { track: HeldTrack; effect: ItemEffect };
-
 /** stat ごとの見る列・状態の件・HP・防御力・順位を読む */
 export function createViews(layers: HolderBase & Records & Fires & Sources & Read) {
   const { activeAt, counterKey, passive, readItems, slots, stateTracks, tracks, updateHpAtLeast } = layers;
   // ---- 読む側の索引（持ち主ごと。並びは作った順） ----
-  const viewsOf = (test: (track: HeldTrack, effect: ItemEffect) => boolean): View[][] =>
+  const viewsOf: ViewsOf = (test) =>
     slots.map((_, holder) => {
       const views: View[] = [];
       for (const track of tracks) {
@@ -264,6 +260,7 @@ export function createViews(layers: HolderBase & Records & Fires & Sources & Rea
   // HP の系（最大 HP▲・現在の HP▼・回復・HP の割合）
   const { applyHeal, finalMaxHpAt, hpRatioStepsOf, lowerCurrentHp, selfHpAtMostAt, selfHpAtMostHolds, selfHpRatioAt } =
     createHpViews({ ...layers, viewsOf });
+  // 枠のそのフレームの最終防御力（常時 + 効いている防御力▲ の件）と、
   // 発動者より低い枠（同値は含まない）と発動者自身（plan/design-skill-stage7.md 1.2・1.4 節）
   const defenseViews = viewsOf((_, e) => e.stat === 'defense');
   const finalDefenceAt = (slotIndex: number, frame: number): number => {
