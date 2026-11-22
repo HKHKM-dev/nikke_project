@@ -1,0 +1,15 @@
+{
+  "id": "C-1553",
+  "text": "ジャッカルのバーストの「スキル対象の説明部分が『〜敵1機に』で終わるバーストスキルダメージ 38.91%▲」（Lv10・15 秒）は、説明文の対象の句が「敵1機に」で終わる行でも、バーストの持続ダメージ（マナの「照準線に最も近い敵1機に」の持続ダメージ）と追加ダメージ（紅蓮：神殺の「照準線に最も近い敵1機に」の追加ダメージ）には乗らない。乗るのはバーストスキルダメージだけ（C-1229）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1390-09`・`1390-10`・`1391-09`・`1391-10`・`1392-09`・`1392-10`。V-0869",
+  "model": "反映（data/skills/111.json の burst の notes[0]（modeling）。印 oneEnemy は skills/burstDamage.ts の resolveBurstDamage が burst スロットの burstDamage にだけ付け、damage・dot には付けない）",
+  "replaces": [],
+  "updated": "2026-11-22",
+  "subject": {
+    "places": ["data/skills/111.json の burst の notes[0]"]
+  },
+  "decidedOn": []
+}
