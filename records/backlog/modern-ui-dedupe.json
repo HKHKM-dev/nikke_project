@@ -1,0 +1,5 @@
+{
+  "section": "8",
+  "order": 160,
+  "text": "モダン UI の重複を 1 つにまとめる（PartyTabs と PartyRowLabel の番号ボタン、App.tsx の編成を直す 3 つの関数の applyPartiesChange、行・番号の DOM を引く partyCardAt・slotsGridOf・partyLabelOf・rowsOf・labelOf、ドラッグを始める距離 4px と CLICK_SLOP、PreviewCard と PartyRowLabel のドロップ・ドラッグの配線、size と tallImage の二重、flight.ts の透明にする動きの重複）（2026-11-22 起票）→ 保留: [design-modern-ui.md](design-modern-ui.md)"
+}
