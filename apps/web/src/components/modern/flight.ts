@@ -59,17 +59,6 @@ const CLIP_OUTSET = 40;
 type Box = Pick<DOMRect, 'left' | 'top' | 'width' | 'height'>;
 
 /**
- * 位置 v を画面の画素の格子に丸める。並びの中の要素は、端数の位置でも画素に丸めて描かれる。動く写しや持ち上げた絵は、端数の位置のまま
- * （線が 2 つの画素にまたがって）描かれる。端数のまま着くと、着いた写しが本物に替わる瞬間に、枠が 1px 足らず横や縦にずれて見える
- */
-export const snapPx = (v: number): number => Math.round(v * devicePixelRatio) / devicePixelRatio;
-
-/** r の左上を画素の格子に丸めた位置（大きさはそのまま）。写しの置き場所と行き先に使う */
-function snapped(r: Box): DOMRect {
-  return new DOMRect(snapPx(r.left), snapPx(r.top), r.width, r.height);
-}
-
-/**
  * base の位置・大きさに置いた立ち絵の写しを、rect の位置・大きさに見せるキーフレーム。幅をそろえて縮め、rect が写しより横長なら
  * （ニケ一覧の四角の絵）、写しの上から rect の形の分だけを残して下を切る（顔のある上の部分を四角に切り抜く）。
  * 写しのほうが横長なら、切らずに上下の中央をそろえる。切るのは下だけで、ほかの 3 辺は枠の外（影など）も見せる（CLIP_OUTSET）。
@@ -194,7 +183,7 @@ export function flyIntoSlot(from: DOMRect, card: Element): () => void {
       return;
     }
     ready = decodeImages(card);
-    const base = snapped(content.getBoundingClientRect());
+    const base = content.getBoundingClientRect();
     ghost = ghostOf(content, base);
     ghost.animate([frameAt(from, base), frameAt(base, base)], FLIGHT).finished.then(done, done);
     // 持ち上げた絵から動くときは、持ち上げた影も一緒に動かしながら薄くする
@@ -210,9 +199,9 @@ export function flyIntoSlot(from: DOMRect, card: Element): () => void {
  * 持ち上げた絵から動くときは、持ち上げた影も一緒に動かしながら薄くする
  */
 export function flyToTray(content: Element, to: DOMRect | null): void {
-  const base = snapped(content.getBoundingClientRect());
+  const base = content.getBoundingClientRect();
   const end = to
-    ? snapped(to)
+    ? to
     : new DOMRect(base.left + base.width * 0.1, base.top + base.height * 0.1, base.width * 0.8, base.height * 0.8);
   const ghost = ghostOf(content, base);
   const remove = () => ghost.remove();
@@ -234,8 +223,8 @@ export function flyToTray(content: Element, to: DOMRect | null): void {
  * 動く先の番号は、落とした後の描き直しで中身が変わりうるので、切り替えるときに読む
  */
 export function flyLabel(content: Element, to: DOMRect, destination: Element | null): Promise<void> {
-  const base = snapped(content.getBoundingClientRect());
-  const end = snapped(to);
+  const base = content.getBoundingClientRect();
+  const end = to;
   const ghost = ghostOf(content, base);
   const remove = () => ghost.remove();
   const move = ghost.animate([frameAt(base, base), frameAt(end, base)], FLIGHT);
