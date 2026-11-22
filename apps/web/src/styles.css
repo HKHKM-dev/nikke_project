@@ -289,7 +289,7 @@ svg.roster-revert-icon {
 /* 使えない入力欄・選択欄・ラジオボタン（disabled でなく aria-disabled。components/inertControl.ts） */
 :is(input, select, textarea)[aria-disabled='true'] {
   opacity: 0.5;
-  cursor: not-allowed;
+  cursor: default;
 }
 /* 使えないとき（育成状況が無いときの「書き出す」「消す」など）は色を変えて、押せないと分かるようにする */
 .advanced-settings-button[aria-disabled='true'],
@@ -300,7 +300,7 @@ svg.roster-revert-icon {
   color: color-mix(in srgb, var(--app-fg) 35%, transparent);
   background: color-mix(in srgb, var(--app-fg) 6%, var(--app-bg));
   border-color: color-mix(in srgb, var(--app-fg) 12%, transparent);
-  cursor: not-allowed;
+  cursor: default;
 }
 .advanced-settings {
   width: 20em;
@@ -1102,7 +1102,7 @@ svg.roster-revert-icon {
 .modern-slot-focus-handle {
   display: inline-flex;
   border-radius: 4px;
-  cursor: grab;
+  cursor: pointer;
   touch-action: none;
 }
 .modern-slot-focus-dragging {
@@ -1110,7 +1110,7 @@ svg.roster-revert-icon {
 }
 .controller-drag-overlay {
   display: inline-flex;
-  cursor: grabbing;
+  cursor: pointer;
 }
 /* 立ち絵の右上に重ねるボタン（上から、空にする（バッジ ui_delete）・育成と設定（バッジ ui_setting））。置き先待ちの水色の重ね・◎ より上。
    絵はバッジ（八角形で縦横 130:130）。大きさは左上のバッジの幅（.char-visual-portrait の --badge-w）と同じで、立ち絵が縮むと一緒に縮める。
@@ -2140,4 +2140,23 @@ html:has(.modern-view-container) {
   .roster-edit-back {
     display: inline-block;
   }
+}
+
+/* マウスを重ねたときのカーソルは統一する（オーナーの指示）。押して反応する場所は人差し指（pointer）、それ以外は既定の矢印。
+   押せない状態（aria-disabled）は既定に戻す。禁止の印（not-allowed）と掴む手（grab）は使わない */
+:where(
+  button,
+  summary,
+  select,
+  label[for],
+  a[href],
+  [role='button'],
+  input[type='checkbox'],
+  input[type='radio'],
+  input[type='range']
+) {
+  cursor: pointer;
+}
+:is(button, summary, select, label[for], a[href], [role='button'], input)[aria-disabled='true'] {
+  cursor: default;
 }
