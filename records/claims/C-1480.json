@@ -1,0 +1,29 @@
+{
+  "id": "C-1480",
+  "text": "ファントムの撮っていない行は、撮った版と同じ文の読みで書く: 基礎版の S1（宝物版の S1 から通算の命中の行を除いたもの。敵 1 体では、予告状と短剣が同じ命中で付いて同じフレームに切れるので、短剣は 2 段に届かない）、基礎版の S2（宝物版の S2 から分配ダメージの行を除いたもの。敵 1 体では発火しない。10 回攻撃の行は同じ）、S2 の分配ダメージ▲のスタックのバーストスキル使用時の解除、宝物版のバースト（基礎版の分配ダメージに、灼熱コードのターゲット（射撃場の敵。C-0662・C-0963）への受けるダメージ 値 04 %▲（値 05 秒）と、自分の最大装弾数 値 02 %▲（値 03 秒）が足される）。値はどれも説明文の値",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "推論: 基礎版の S1・S2 と宝物版のバーストは、宝物の段階（2）で撮れない。S2 の分配ダメージ▲のバーストでの解除は、バーストの後の S2 の分配ダメージの段を読んでいない。撮った版は C-1477〜C-1479。V-0839",
+  "model": "反映（data/skills/580.json の skill1・skill2 の効果、treasureSkills.skill2 の effects[3]、treasureSkills.burst の効果）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": [
+      "data/skills/580.json の skill1 の effects[0]",
+      "data/skills/580.json の skill1 の effects[1]",
+      "data/skills/580.json の skill1 の effects[2]",
+      "data/skills/580.json の skill2 の effects[0]",
+      "data/skills/580.json の skill2 の effects[1]",
+      "data/skills/580.json の skill2 の effects[2]",
+      "data/skills/580.json の skill2 の effects[3]",
+      "data/skills/580.json の skill2 の effects[4]",
+      "data/skills/580.json の skill2 の effects[5]",
+      "data/skills/580.json の treasureSkills.skill2 の effects[3]",
+      "data/skills/580.json の treasureSkills.burst の effects[0]",
+      "data/skills/580.json の treasureSkills.burst の effects[1]",
+      "data/skills/580.json の treasureSkills.burst の effects[2]"
+    ]
+  },
+  "decidedOn": []
+}

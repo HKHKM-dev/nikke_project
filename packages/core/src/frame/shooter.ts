@@ -398,20 +398,24 @@ export function resumeAfterLastShotRefill(
  */
 export const WEAPON_CHANGE_RESTORE = 'refill' as const;
 
-/** 使用武器の変更が終わった枠の基礎の武器の状態を戻す（state を書き換える） */
+/**
+ * 使用武器の変更が終わった枠の基礎の武器の状態を戻す（state を書き換える）。wait を渡すと、新しいマガジンの 1 発目を、このフレームから
+ * wait フレーム後に撃つ（撃ち切りで戻った後の待ち。WeaponChangeEffect.returnFirstShotFrames。plan/design-snow-white.md 8.1 節の論点 4）
+ */
 export function resumeShooter(
   state: ShooterState,
   shot: ShotParams,
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
+  wait?: number,
 ): void {
-  // リロード中・込め終えて 1 発目を待っていた枠は、込め終えたマガジンの 1 発目から（スピンアップも最初から）
-  if (state.phase !== 'ready') startMagazine(state);
+  // リロード中・込め終えて 1 発目を待っていた枠と、待ちを渡した枠は、込め終えたマガジンの 1 発目から（スピンアップも最初から）
+  if (state.phase !== 'ready' || wait !== undefined) startMagazine(state);
   delete state.reloadLead;
   delete state.chargeElapsed;
   state.ammo = params.maxAmmo;
   state.lastShot = false;
-  state.wait = reloadFirstShotFrames(shot, model, params);
+  state.wait = wait ?? reloadFirstShotFrames(shot, model, params);
 }
 
 /**
@@ -497,7 +501,8 @@ export function weaponFreeFrameAtSwap(
  *   ほかのチャージ武器は H = 1 で、満ちた次のフレームで撃つ。射撃姿勢維持型は満ちてから H フレーム待つので、その間は p = 1。
  *   plan/design-fire-stance-cadence.md 3.2 節）。0 以下は構え解除・構えの間（撃たない）。k = 0（このフレームに撃つはずだった）は p = 1。
  * - 押下チャージ型（DOWN_Charge）・チャージの無い武器は null（design-stage22.md 0.4 節。アニス：スター単騎の録画 0161 でも、
- *   的のジャンプの前にフルチャージでない発は無い。V-0134）。
+ *   的のジャンプの前にフルチャージでない発は無い。V-0134）。ただし、チャージしない基礎の武器から替えた変更後の武器
+ *   （ShotParams.jumpPartialCharge）は、入力が UP のチャージ武器と同じに撃つ（V-0840）。
  * - リロード中は null。込め終えて 1 発目を待っている（priming）枠は、そのマガジンの 1 発目の溜めの進み
  */
 export function partialChargeProgress(
@@ -506,7 +511,7 @@ export function partialChargeProgress(
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
 ): number | null {
-  if (!isChargeWeapon(shot) || shot.inputType === 'DOWN_Charge') return null;
+  if (!isChargeWeapon(shot) || (shot.inputType === 'DOWN_Charge' && shot.jumpPartialCharge !== true)) return null;
   if (state.phase === 'reloading') return null;
   const charge = params.chargeFrames;
   return charge <= 0 ? 1 : Math.min(1, chargeProgressFrames(state, params, model) / charge);
@@ -539,7 +544,7 @@ function hideReloadExtraFrames(model: WeaponModel, params: FiringParams): number
 /**
  * 敵を狙えなくなった（窓の最初のフレーム、stepShooter の前に呼ぶ）。
  * 撃てる状態で残弾が減っていれば、ハイド中のリロードを始める（チャージ中の分は捨てる）。
- * リロード中（弾切れ）・込め終えて 1 発目を待っている・装弾数無限・満タンならそのまま。
+ * リロード中（弾切れ）・込め終えて 1 発目を待っている・装弾数無限・満タン・撃ち切りで終わる変更後の武器（C-1427）ならそのまま。
  * C-0841（plan/design-hide-reload.md）: 込め終わりは hideReloadExtraFrames だけ遅い。
  * plan/design-hide-reload-detect.md 案 A: 射撃姿勢維持型は、前の発の姿勢の終わり（撃ってから ⌈S⌉ − H）より前には始めない。
  * startedFramesAgo は、このフレームより前に始まっていたとみなすフレーム数（射撃姿勢維持型でない武器が D の H 後に部分チャージで
@@ -552,7 +557,8 @@ export function hideShooter(
   params: FiringParams = firingParams(shot),
   startedFramesAgo = 0,
 ): void {
-  if (state.phase !== 'ready' || params.infiniteAmmo || state.ammo >= params.maxAmmo) return;
+  if (state.phase !== 'ready' || params.infiniteAmmo || state.ammo >= params.maxAmmo || params.weapon?.untilEmpty)
+    return;
   state.hideReload = true;
   // 射撃姿勢維持型: 前の発からの経過（chargeElapsed）が姿勢の終わりに届くまで待つ
   const stance = params.stance;

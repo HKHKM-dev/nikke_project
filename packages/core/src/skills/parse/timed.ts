@@ -10,6 +10,7 @@ import {
   type BuffStat,
   type BuffTarget,
   type GrantDurationUntil,
+  isCounterUpTrigger,
   DURATION_UNTILS,
   type EffectTrigger,
   EXCLUDE_SELF,
@@ -308,7 +309,7 @@ export function parseTimedFields(
  * 「チャージ中の時、N 秒ごとに」（{ chargeTick }）と
  * 「フルチャージした時」（{ chargeFull }）も書ける（plan/design-skill-stage14.md 2.1・2.6 節）
  * 「遮蔽物の HP を回復した時」（{ coverHealed }）は timed だけ（plan/design-skill-stage17.md 2.1 節）
- * 「〈名前〉のフルスタック状態の時、スタック解除後」（{ fullStack }）も timed だけ（plan/design-diesel.md 2.1 節）
+ * 「〈名前〉のフルスタック状態の時、スタック解除後」（{ fullStack }）も（plan/design-diesel.md 2.1 節・plan/design-phantom.md 2.2 節）
  * 「〈カウンタ〉が 100% になった時」（{ counterFull }）は状態の付与だけ
  * （validateCounterGrant。plan/design-skill-stage19.md 2.1 節）
  */
@@ -343,7 +344,9 @@ function parseTimedTrigger(
       during: stat === undefined ? 'withState' : true,
       chance: allowChance,
       reloadEnd: true,
-      fullStack: stat !== undefined,
+      fullStack: true,
+      // 「〈カウンタ〉が上がった時」は timed だけ（plan/design-guillotine-ws.md 2.2 節）
+      counterUp: stat !== undefined,
     })
   );
 }
@@ -428,9 +431,17 @@ function parseTimedTarget(
   if (stat === 'trueDamageConversion' && target !== 'self') {
     fail(`${path}.target`, 'trueDamageConversion is only allowed with target "self"');
   }
-  // ペレットの数の stat は自分にだけ（1 パス目が持ち主の発の数え方とゲージに読む）
-  if (stat !== undefined && isPelletStat(stat) && target !== 'self') {
-    fail(`${path}.target`, `${stat} is only allowed with target "self"`);
+  // ペレットの数の stat は、1 パス目が持ち主の発の数え方とゲージに読む。ペレット数▲は自分・味方全体・順位の対象（topAttack）に
+  // 書ける（plan/design-leona.md 2.2 節）。ペレットの数の固定は自分にだけ
+  if (stat === 'pelletCount' && target !== 'self' && target !== 'allies' && target !== 'topAttack') {
+    fail(`${path}.target`, `pelletCount is only allowed with target "self", "allies" or "topAttack"`);
+  }
+  // 自分以外へのペレット数▲は SG の味方にだけ（ペレットを持たない武器の 1 発を分けない）
+  if (stat === 'pelletCount' && target !== 'self' && narrowing.targetWeapon !== 'SG') {
+    fail(`${path}.targetWeapon`, 'pelletCount on allies needs targetWeapon "SG"');
+  }
+  if (stat === 'singlePellet' && target !== 'self') {
+    fail(`${path}.target`, 'singlePellet is only allowed with target "self"');
   }
   return { target, narrowing, count };
 }
@@ -523,10 +534,15 @@ function parseTimedStacks(
   const byShots = effect.durationShots !== undefined || effect.durationShotsRef !== undefined;
   // 発数の維持のスタックは、付き直すたびに 1 段増え、持ち主の N 発目で全部切れる（timed だけ。
   // 状態の付与は parse/state.ts が弾く。plan/design-zwei.md 2.3 節）
-  // 条件は自分の状態（selfState）だけ組める（発火のフレームで判定し、窓は
-  // 発数で切る。「フルアクティブ状態の場合のみ、フルチャージした時」の 1 発間の▲。plan/design-skill-stage14.md 2.7 節）
-  if (byShots && isRecord(v.condition) && Object.keys(v.condition).some((key) => key !== 'selfState'))
-    fail(`${path}.condition`, 'a duration in shots can only have the condition selfState');
+  // 条件は自分の状態（selfState）と敵の状態（enemyState）だけ組める（発火のフレームで判定し、窓は
+  // 発数で切る。「フルアクティブ状態の場合のみ、フルチャージした時」の 1 発間の▲。plan/design-skill-stage14.md 2.7 節。
+  // 「対象が予告状状態なら」の 1 発間の▲。plan/design-phantom.md 2.1 節）
+  if (
+    byShots &&
+    isRecord(v.condition) &&
+    Object.keys(v.condition).some((key) => key !== 'selfState' && key !== 'enemyState')
+  )
+    fail(`${path}.condition`, 'a duration in shots can only have the conditions selfState and enemyState');
   if ((effect.durationUntil === 'fullBurstEnd' || effect.durationUntil === 'reloadEnd') && stacks) {
     fail(path, 'a duration until an event cannot stack');
   }
@@ -598,7 +614,8 @@ function parseTimedDelay(
     effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
   } else if (isTimerTrigger(trigger)) {
     // V-0602: 時間の周期のきっかけの timed も、周期の発火の delayFrames 後から（エーテルの S2 の防御力▼は、S2 のヒットから。
-    // C-0453・C-0832）。窓は 2 パス目の件（skills/holders/items.ts の startOfFire）で作るので、1 パス目で窓を追う stat には書けない
+    // C-0453・C-0832）。窓は 2 パス目の件（skills/holders/items.ts の startOfFire）で作るので、1 パス目で窓を追う stat には書けない。
+    // クールタイムの印のある周期も同じ制限で、遅れは発動のフレームから数える（plan/design-cooldown-timed-delay.md 1 節）
     if (isFirstPassTrackedStat(stat)) {
       fail(
         `${path}.delayFrames`,
@@ -609,7 +626,10 @@ function parseTimedDelay(
   } else effect.delayFrames = parseShotCountDelay(v.delayFrames, trigger, `${path}.delayFrames`);
 }
 
-/** 値 × 自分の状態のスタック数（perCount。plan/design-maids.md 2.1 節）。出来事のきっかけだけ */
+/**
+ * 値 × 自分の状態のスタック数かカウンタの値（perCount。plan/design-maids.md 2.1 節・plan/design-guillotine-ws.md 2.3 節）。出来事の
+ * きっかけだけ（{ counter } は { counterUp } も。維持は戦闘の終わりまでも書ける）
+ */
 function parseTimedPerCount(
   v: Record<string, Json>,
   effect: GrantTimedFields,
@@ -620,21 +640,24 @@ function parseTimedPerCount(
   const at = `${path}.perCount`;
   if (stat === undefined) fail(at, 'perCount in a state grant is not supported (use stacksFrom)');
   const per = v.perCount;
-  if (!isRecord(per) || Object.keys(per).length !== 1 || per.state === undefined) fail(at, 'expected { state }');
+  if (!isRecord(per) || Object.keys(per).length !== 1 || (per.state === undefined && per.counter === undefined))
+    fail(at, 'expected { state } or { counter }');
+  const byCounter = per.counter !== undefined;
   const { trigger } = effect;
-  if (typeof trigger !== 'string' || !PER_COUNT_TIMED_TRIGGERS.includes(trigger))
-    fail(at, `perCount needs one of the triggers ${PER_COUNT_TIMED_TRIGGERS.join(', ')}`);
-  for (const key of [
-    'maxStacks',
-    'maxStacksRef',
-    'amplifies',
-    'durationShots',
-    'durationShotsRef',
-    'durationUntil',
-  ] as const) {
+  const eventTrigger = typeof trigger === 'string' && PER_COUNT_TIMED_TRIGGERS.includes(trigger);
+  if (!eventTrigger && !(byCounter && isCounterUpTrigger(trigger)))
+    fail(
+      at,
+      `perCount needs one of the triggers ${PER_COUNT_TIMED_TRIGGERS.join(', ')}${byCounter ? ' or { counterUp }' : ''}`,
+    );
+  for (const key of ['maxStacks', 'maxStacksRef', 'amplifies', 'durationShots', 'durationShotsRef'] as const) {
     if (v[key] !== undefined) fail(at, `perCount cannot be combined with ${key}`);
   }
-  effect.perCount = { state: parseNamedStateId(per.state, `${at}.state`, 'ally') };
+  if (v.durationUntil !== undefined && !(byCounter && v.durationUntil === 'battleEnd'))
+    fail(at, 'perCount cannot be combined with durationUntil (only { counter } with "battleEnd")');
+  effect.perCount = byCounter
+    ? { counter: oneOf(COUNTER_IDS, per.counter, `${at}.counter`) }
+    : { state: parseNamedStateId(per.state, `${at}.state`, 'ally') };
 }
 
 /** 「〈状態〉の対象に命中させた味方に」（holderHit。plan/design-killer-wife.md 2.2 節） */
@@ -839,10 +862,15 @@ function parseTimedDuration(
   // （発数の維持の件は射撃の記録が伸びるたびに作り直す。skills/holders/items.ts の trackReadsOf。
   // plan/design-skill-stage15.md 2.3 節。V-0569）ので書ける。溜めの途中で付いても、それまでに
   // 溜めたフレームは残り、伸びたチャージ時間まで溜める（frame/shooter.ts の chargeProgressFrames。エイダの特殊改造）
-  // 命中率▲・貫通特化・ペレットの数の固定も、同じ件の列の閉じ方で書ける（plan/design-dorothy-serendipity.md 2.3 節）
+  // 命中率▲・貫通特化・ペレットの数の固定も、同じ件の列の閉じ方で書ける（plan/design-dorothy-serendipity.md 2.3 節）。
+  // 攻撃力も同じ閉じ方で書ける。攻撃力は射撃の時刻を変えないので、件の列の作り直しで窓が後から変わらない（plan/design-neve.md 2.1 節）
+  // 攻撃力の発数の維持は、順位の対象（topAttack。2 段目で窓を切る）には書けない（使い手がいない。plan/design-neve.md 2.1 節）
+  if (stat === 'attack' && target === 'topAttack')
+    fail(`${path}.stat`, 'a duration in shots on "attack" is not supported with target "topAttack"');
+  const tracked = stat !== undefined && SHOT_DURATION_TRACKED_STATS.includes(stat);
   if (
     stat !== undefined &&
-    !SHOT_DURATION_TRACKED_STATS.includes(stat) &&
+    !tracked &&
     (stat === 'attack' || isFiringStat(stat) || isStateStat(stat) || isFlagStat(stat) || isPelletStat(stat))
   ) {
     fail(
@@ -859,7 +887,7 @@ function parseTimedDuration(
  * 1 パス目で窓を追う stat のうち、発数の維持を書けるもの。どれも 1 パス目の件の列が持ち主の発で窓を閉じる。同じ閉じ方で書ける stat は
  * ほかにもある（ペレット数▲・適正最小射程距離▲など）が、使い手のいるものだけ許す（plan/design-dorothy-serendipity.md 2.3 節）
  */
-const SHOT_DURATION_TRACKED_STATS: readonly BuffStat[] = ['chargeSpeed', 'hitRate', 'pierce', 'singlePellet'];
+const SHOT_DURATION_TRACKED_STATS: readonly BuffStat[] = ['chargeSpeed', 'hitRate', 'pierce', 'singlePellet', 'attack'];
 
 /**
  * 1 パス目のループで窓を追う stat か（攻撃力・射撃に効く stat・状態の stat）。追う stat には、durationShots・durationUntil・

@@ -2,13 +2,16 @@
 // 生成物は PR に入れない（main の版に戻して push する。マージの後に GitHub の CI が main で作り直して commit する。plan/design-pr-conflicts.md 3.1 節）。
 //   npm run pr:prep [-- --push] [--no-ci] [--allow-progress]
 // 1. 作業中の変更が無いこと（生成物だけの変更は HEAD の版へ戻して進む）と、main の上でないことを確かめ、git fetch origin。
+//    origin の同じ名前のブランチを、自動マージを待つ PR の衝突を直す Actions が直していたら止める（plan/design-auto-conflict-fix.md）。
 // 2. ブランチで足した検証記録・結論・録画の ID が main と重なっていたら、リベースの前に止めて records:renumber のコマンドを出す。
 //    課題のファイルで足した 2 節の番号（records/backlog/2-NN.json）が main と重なっていたら、止めて空いた番号を出す。
 //    8 節・8.2 節の課題のファイル（records/backlog/）・段の一覧の経過・設計書の「状態」の行に進み具合を書き写していたら、止めて行を
 //    出す（--allow-progress で通す。plan/design-workflow-simplification-6.md 2 節・plan/design-backlog-files.md 2.8 節）。
 //    plan/backlog.md（生成物）を手で直していたら（足した行も消した行も）、止めて行を出す（直しは生成物を main の版に戻すと消えるので。
 //    同 2.11 節）。
-// 3. git rebase origin/main。衝突したファイルが全部生成物（records-data.ts の GENERATED_PATHS）なら main の版を取って続ける。
+// 3. ブランチの途中の commit で足して HEAD には無いファイル（振り直す前の番号のファイルなど）が main にあれば、ブランチを 1 つの commit に
+//    まとめる（足した commit を当て直すと main のファイルと衝突するので。題名は最初の commit のもの。plan/design-auto-conflict-fix.md 8 節）。
+//    git rebase origin/main。衝突したファイルが全部生成物（records-data.ts の GENERATED_PATHS）なら main の版を取って続ける。
 //    設計書（plan/design-*.md）・手引き（plan/*-guide.md）・状態の目録（packages/core/src/skills/states.ts）の、両方が同じ所に行を
 //    足しただけの衝突は、main の行・ブランチの行の順に両方残して続ける（plan/design-workflow-simplification-14.md 5 節・-15.md 8 節）。
 //    生成物でないファイルが 1 つでもあれば、そこで止めてファイルを出す（人が直して git add し、もう一度 npm run pr:prep を回すと続きから）。
@@ -48,7 +51,11 @@ import {
   handEditedLines,
   handRemovedLines,
   checkSteps,
-  collisions,
+  branchCollisions,
+  branchStaleAdds,
+  squashBranch,
+  fixedByAutoRebase,
+  AUTO_REBASE_ENV,
   finishRebase,
   nulPaths,
   pathListArgs,
@@ -129,22 +136,24 @@ if (!rebasing()) {
     console.log(`作業中の生成物の変更を HEAD の版に戻した: ${dirty.generated.join('・')}`);
   }
   if (tryGit(['fetch', '--quiet', 'origin']) !== 0) fail('git fetch origin が落ちた');
+  const upstream = `origin/${branch}`;
+  // Actions の中（auto-rebase.ts）は自分の直しの上に直すので見ない
+  if (
+    process.env[AUTO_REBASE_ENV] !== '1' &&
+    spawnSync('git', ['rev-parse', '--verify', '--quiet', `refs/remotes/${upstream}`], { cwd: ROOT }).status === 0
+  ) {
+    const inHead = tryGit(['merge-base', '--is-ancestor', upstream, 'HEAD']) === 0;
+    if (fixedByAutoRebase(inHead, git(['log', '-1', '--format=%ce', upstream])))
+      fail(
+        `${upstream} は、自動マージを待つ PR の衝突を直す Actions が直して push した（plan/design-auto-conflict-fix.md）。手元の変更が push 済みなら git reset --hard ${upstream} で取ってから回し直す（push していない commit があれば、取った上に cherry-pick する）`,
+      );
+  }
 
-  const added = gitPaths(['diff', '--name-only', '--diff-filter=AR', 'origin/main...HEAD', '--', 'records']);
-  const mainFiles = gitPaths([
-    'ls-tree',
-    '-r',
-    '--name-only',
-    'origin/main',
-    '--',
-    'records/verifications',
-    'records/claims',
-    'records/recordings',
-    'records/backlog',
-  ]);
-  const found = collisions(added, mainFiles, idsInBranches().ids);
+  const { found, mainFiles } = branchCollisions(gitPaths, idsInBranches().ids);
   if (found.length > 0) {
-    console.error('ブランチで足した番号が main と重なっている。振り直して commit してから、もう一度回す:');
+    console.error(
+      'ブランチで足した番号が main と重なっている。振り直して commit してから、もう一度回す（振り直す前の番号のファイルを足した commit は、もう一度回したときに、リベースの前にブランチを 1 つの commit にまとめて消す）:',
+    );
     for (const c of found)
       console.error(
         backlogNumber(c.id) === undefined
@@ -216,6 +225,18 @@ if (!rebasing()) {
   const behind = git(['rev-list', '--count', 'HEAD..origin/main']);
   if (behind !== '0') {
     console.log(`origin/main が ${behind} 件進んでいる。リベースする`);
+    const stale = branchStaleAdds(gitPaths);
+    if (stale.length > 0) {
+      const first = git(['log', '--reverse', '--format=%s', 'origin/main..HEAD']).split('\n')[0]!;
+      squashBranch(
+        git,
+        first,
+        `pr:prep で、main を取り込む前に 1 つにまとめた（途中の commit で足して後で消したファイルが main にあり、リベースで衝突するので: ${stale.join('・')}）`,
+      );
+      console.log(
+        `途中の commit で足して後で消したファイルが main にあるので、ブランチを 1 つの commit にまとめた: ${stale.join('・')}（題名は最初の commit のもの。振り直す前の番号が題名にあれば、PR の題名で直す）`,
+      );
+    }
     const outcome = startRebase(ROOT, gitDir, true);
     if (outcome === 'clean') console.log('衝突なしで取り込んだ');
     else if (outcome === 'notStarted')

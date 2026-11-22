@@ -65,13 +65,16 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * minEffectiveRange = 適正最小射程距離▲（比率。plan/design-agent-bunny.md 2.1・2.3 節）。
  * 状態だけの stat（STATE_STATS）。適正射程距離（bonusRange）の下端を 下端 × (1 − Σ) に
  * 縮める（C-1043。式は R1 の仮説 C-1033）。条件が自動の枠の距離ボーナス（frame/landing.ts の distanceBonusAt）と、条件 inEffectiveRange が読む。射撃は変えない。
+ * maxEffectiveRange = 適正最大射程距離▲（比率。plan/design-leona.md 2.1 節）。状態だけの stat（STATE_STATS）。適正射程距離の上端を
+ * 上端 × (1 + Σ) に広げる（M1）。読む所と書ける所は minEffectiveRange と同じ（対象は自分に限らない）。
  * pierce = 貫通特化。値を持たないフラグ（ref を書かない）。それ自体は与ダメージを変えず、pierceDamage の乗る発にする。
  * pierceDamage = 貫通ダメージ▲（比率）。貫通特化（pierce）の効いている枠の通常攻撃にだけ、攻撃ダメージ▲と同じ和に足す（P1。C-1031）。
  * 倍率ダメージには足さない（C-1243）。バーストのダメージにも足さない（確かめていない）。定義を書くときの決まり: この効果に読む側の印 reads: ["pierce"] を書く
  * pelletCount = ペレット数 N 個▲（scaling 'flat'。値は個の数。plan/design-dorothy-serendipity.md 2.1・2.2 節）。
  * singlePellet = 「ペレットの数を 1 個に固定」。値を持たないフラグ
- * （ref を書かない）。効いていれば 1 発のペレットは 1 個で、▲より勝つ（C-1077）。どちらも self だけ（PELLET_STATS）で、singlePellet は
- * timed だけ、pelletCount は自分に付く状態の中身にも書ける（スタックの値は 1 スタックあたり。plan/design-fortune-mate.md 2.3 節）
+ * （ref を書かない）。効いていれば 1 発のペレットは 1 個で、▲より勝つ（C-1077）。singlePellet は timed の self だけ。pelletCount は
+ * timed の self・allies・topAttack（plan/design-leona.md 2.2 節）と、自分に付く状態の中身に書ける（スタックの値は 1 スタックあたり。
+ * plan/design-fortune-mate.md 2.3 節）
  */
 export const BUFF_STATS = [
   'attack',
@@ -150,6 +153,7 @@ export const BUFF_STATS = [
   'accumulateRatio',
   // 適正最小射程距離▲・貫通特化（フラグ）・貫通ダメージ▲（plan/design-agent-bunny.md 2.1・2.3 節）
   'minEffectiveRange',
+  'maxEffectiveRange',
   'pierce',
   'pierceDamage',
   // ペレット数▲（個。flat）・ペレットの数を 1 個に固定（フラグ。plan/design-dorothy-serendipity.md 2.1・2.2 節）
@@ -184,7 +188,7 @@ export function isFiringStat(stat: BuffStat | 'weapon'): boolean {
  * 状態だけを表す stat（射撃に効かない）。timed の件は区間の timedEffects に入れない。区間を割り、区間の
  * buffs と鍵に入るのは、着地点の計画（条件が自動の枠）があるときだけ（C-0170。手入力の枠の区間・グループは変わらない）
  */
-export const STATE_STATS = ['hitRate', 'minEffectiveRange'] as const satisfies readonly BuffStat[];
+export const STATE_STATS = ['hitRate', 'minEffectiveRange', 'maxEffectiveRange'] as const satisfies readonly BuffStat[];
 
 export function isStateStat(stat: BuffStat | 'weapon'): boolean {
   return (STATE_STATS as readonly string[]).includes(stat);
@@ -626,8 +630,11 @@ export const BURST_USERS_TRIGGERS = ['fullBurstStart', 'fullBurstEnd'] as const 
  * normalHit は命中の期待値（plan/design-ludmilla-wo.md 2.2・2.3 節。1 発ごとにその発の弾丸命中率。
  * SG は 1 トリガーを 1 回）、coreHit はコアの命中の期待値（弾丸命中率 × コア命中率）を足し、累計が N の倍数を越えた発で発火する
  * （skills/triggers.ts）。弾丸命中率が 1 の枠では normalHit は normalShot と同じ列になる。
+ * nonCoreHit はコアでない命中の期待値（命中の期待値 − コアの命中の期待値。plan/design-guillotine-ws.md 2.1 節）を、coreHit と同じく足す。
  * カウンタはリロードでも戦闘中ずっとリセットしない（every: 10 は通算 10・20・30…回目）。
  * lastShot = 残弾を 0 にした射撃（「最後の弾丸で攻撃した時 / 命中した時」）。最大装弾数▲で遅れ、弾丸チャージで出なくなる。
+ * 二丁持ちは銃口ごとに最後の 2 発のそれぞれ（C-1400）。lastShotOnce は二丁持ちでもマガジンの最後の発の 1 回だけ（K の S1。
+ * plan/design-k.md 2.4 節。V-0848）。
  * weaponChangeShot = 使用武器の変更
  * （weaponChange）で持ち替えた武器で撃った射撃（「命中した敵に」付く徹甲炸裂弾の受けるダメージ▲。
  * その発自身には乗らない。plan/design-true-damage-element.md 9.6 節の論点 12）。循環（cycle）と during には書けない。
@@ -646,19 +653,24 @@ export type ShotCountKind =
   | 'normalShot'
   | 'normalHit'
   | 'coreHit'
+  | 'nonCoreHit'
   | 'fullChargeShot'
   | 'lastShot'
+  | 'lastShotOnce'
   | 'weaponChangeShot'
   | 'pelletHit'
   | 'critHit'
+  | 'critPelletHit'
   | 'teamAmmo'
   | 'teamHit';
 export const SHOT_COUNT_KINDS = [
   'normalShot',
   'normalHit',
   'coreHit',
+  'nonCoreHit',
   'fullChargeShot',
   'lastShot',
+  'lastShotOnce',
   'weaponChangeShot',
   'pelletHit',
   // critHit = クリティカルの命中の期待値（1 発ごとに命中の期待値 ×
@@ -666,9 +678,19 @@ export const SHOT_COUNT_KINDS = [
   // 累計が N の倍数を越えた発で発火する（coreHit と同じ持ち越し）。乱数の
   // きっかけを期待値で持つ（確率のきっかけ chance と同じ考え方）
   'critHit',
+  // critPelletHit = 当たったペレットのクリティカルの期待値（1 発ごとに当たったペレットの数 × その発の会心率。二丁持ちの基礎の武器は
+  // ヒットごとに 1 ペレットで critHit と同じ量、使用武器変更の shotCount の武器は shotCount × 弾丸命中率で銃口の数を掛けない。
+  // plan/design-k.md 2.2 節。V-0848）。1 発の量が N を超えてよく、累計が N の倍数をまたいだ数だけその発で発火する。damage にだけ書け、
+  // every か everyRef が要り、数える窓・発火の窓・スタック・確率・ゲージとは組まない
+  'critPelletHit',
   'teamAmmo',
   'teamHit',
 ] as const satisfies readonly ShotCountKind[];
+
+/** 最後の弾丸の系の回数の種類か（循環・数える窓・発火の窓に書けず、射撃ごとの倍率ダメージに畳み込まない） */
+export function isLastShotCount(count: ShotCountKind): boolean {
+  return count === 'lastShot' || count === 'lastShotOnce';
+}
 
 /** 自分を含む編成の全員の発を数える回数の種類（自分が撃たないフレームでも、味方の発で起きる） */
 export const TEAM_COUNT_KINDS = ['teamAmmo', 'teamHit'] as const satisfies readonly ShotCountKind[];
@@ -759,13 +781,16 @@ export const SHOT_COUNT_RESETS = ['fullBurstStart', 'never'] as const satisfies 
  * 発動の回数の段階（「使用回数別の効果」「開始回数別の効果」、下位効果のスタック適用）。
  * atLeast 回目以降の発動のたびに発火する。burstUse = 自分がバーストスキルを使った回数、fullBurstStart = フルバーストの回数（編成全体）。
  * fullBurstEnd = フルバーストタイムが終了した回数（編成全体。終わりのフレームで発火する。plan/design-maids.md 2.3 節）。
+ * burstStage3Enter = バースト 3 段階に突入した回数（編成全体。文字列のきっかけ burstStage3Enter と同じ II → III の替わり目のフレームで
+ * 発火し、III の CT が明けずに II で切れたチェーンも数える。plan/design-neon-bo.md 2.1 節）。
  * 回数は戦闘中ずっと数え、リセットしない（resetAfterSeconds を書いたものを除く）。
  */
-export type EventCountKind = 'burstUse' | 'fullBurstStart' | 'fullBurstEnd';
+export type EventCountKind = 'burstUse' | 'fullBurstStart' | 'fullBurstEnd' | 'burstStage3Enter';
 export const EVENT_COUNT_KINDS = [
   'burstUse',
   'fullBurstStart',
   'fullBurstEnd',
+  'burstStage3Enter',
 ] as const satisfies readonly EventCountKind[];
 
 export type EventCountTrigger = {
@@ -860,7 +885,8 @@ export type BuffAppliedTrigger = { buffApplied: BuffStat };
 /**
  * 「〈名前〉のフルスタック状態の時、スタック解除後」（plan/design-skill-stage3.md 1.3 節）。持ち主（自分）のその状態の件が
  * フルスタックになったフレームに発火し、その状態のスタックを全部外す（次のフレームで閉じる。同じフレームに付いた件も外す）。
- * 回復（heal）・使用武器の変更・弾丸チャージ（ammoRefill）・timed に書ける（1 パス目が回復の前にフルスタックを見つける。
+ * 回復（heal）・使用武器の変更・弾丸チャージ（ammoRefill）・timed・状態の付与・解除（removeState）・倍率ダメージ（damage。2 パス目は
+ * 1 パス目の履歴の消費の記録 fullStacks のフレームで発火する。plan/design-phantom.md 2.2 節）に書ける（1 パス目が回復の前にフルスタックを見つける。
  * frame/firstPass.ts。弾丸チャージは外した後の最大装弾数で数える。plan/design-diesel.md 2.1 節）。その状態は、同じ定義の付与で
  * 自分にスタックで付き、付与はどれも射撃の回数のきっかけ（フルスタックになる件が前のフレームまでに登録される）
  */
@@ -954,7 +980,8 @@ export function isSelfHpAtMostTrigger(t: unknown): t is SelfHpAtMostTrigger {
  * 発動（1 パス目がフレームの順に追った記録。縮んだ発動も入る）の次のフレームに発火する（1 パス目の FrameEvents.skillFired。発動を決めるのが
  * 件の登録の後なので）。流し直し（replayEvents）では作らないので、1 パス目が件を登録する timed にだけ書ける。同じ定義のそのスロットに
  * 印のある周期が要る（parse/crossChecks.ts の validateCooldownTimers）。印のある周期の timed は、解決で自分のスロットのこのきっかけに
- * 置き換わる（skills/resolve.ts の resolveTimedTrigger）
+ * 置き換わり、遅れ（delayFrames）を発動のフレームから数える（skills/resolve.ts の resolveTimedTrigger・skills/holders/items.ts の startOfFire）。
+ * このきっかけを直に書いた timed には遅れを書けない
  */
 export type SkillFiredTrigger = { skillFired: 'skill1' | 'skill2' };
 
@@ -985,6 +1012,28 @@ export function isAdjacentHpFullTrigger(t: unknown): t is AdjacentHpFullTrigger 
   return typeof t === 'object' && t !== null && 'adjacentHpFull' in t;
 }
 
+/**
+ * 「〈状態〉N スタックごとに」（plan/design-guillotine-ws.md 2.2 節）。自分のその状態のスタック数（条件 selfState と同じ件の段の最大）が
+ * N の倍数を越えたフレームに発火する（1 つのフレームで 2 つの倍数を越えても 1 回）。スタックが減って越え直しても発火する。
+ * counterChange にだけ書ける。その状態は、同じ定義の付与で自分にスタックで付く（parse/crossChecks.ts の validateOwnStateTriggers）
+ */
+export type StateStacksTrigger = { stateStacks: NamedStateId; everyRef: number };
+
+export function isStateStacksTrigger(t: unknown): t is StateStacksTrigger {
+  return typeof t === 'object' && t !== null && 'stateStacks' in t;
+}
+
+/**
+ * 「〈カウンタ〉が上がった時」（勇者レベルアップ時。plan/design-guillotine-ws.md 2.2 節）。自分のそのカウンタが増えたフレームの次の
+ * フレームに発火する（{ counterFull } と同じく、前のフレームの終わりの値を見る。perCount の { counter } は上がった後の値を読む）。
+ * 上限で止まって増えなかったフレームと、戦闘開始時の増減では発火しない。弾丸チャージ・回復・timed（stat のあるもの）に書ける
+ */
+export type CounterUpTrigger = { counterUp: CounterId };
+
+export function isCounterUpTrigger(t: unknown): t is CounterUpTrigger {
+  return typeof t === 'object' && t !== null && 'counterUp' in t;
+}
+
 /** JSON に書くトリガー。文字列は BuffTrigger、オブジェクトは回数トリガー・時間の周期のトリガー・効果名のトリガーなど */
 export type EffectTrigger =
   | BuffTrigger
@@ -1010,6 +1059,9 @@ export type EffectTrigger =
   | AdjacentHpFullTrigger
   // { counterFull }（damage・dot・counterChange・状態の付与だけが受ける。parseCounterFullTrigger）
   | CounterFullTrigger
+  // { counterUp }（ammoRefill・heal・timed だけが受ける）・{ stateStacks }（counterChange だけが受ける）
+  | CounterUpTrigger
+  | StateStacksTrigger
   // { summon }（damage だけが受ける。parseSummonAttackTrigger）
   | SummonAttackTrigger
   // { ended }（counterChange・ammoDecrease・状態の付与・damage・timed・敵の状態の消去だけが受ける。plan/design-grave.md 2.1 節・
@@ -1145,10 +1197,12 @@ export type TimedEffect = TargetCountFields &
     /**
      * 「X% × 〈状態〉のスタック数」（plan/design-maids.md 2.1 節）。値に、発火のフレームの自分のその状態のスタック数（発火の
      * フレームより前に付いた件。条件 selfState と同じ見え方。damage の perCount と同じ）を掛ける。0 なら出さない。掛けた値は付いた時に
-     * 決まり、維持の間は変えない。出来事のきっかけ（burstUse・バースト N 段階突入時・フルバーストの始まりと終わり）だけに書け、スタック・
-     * 確率・発数や出来事の維持・amplifies とは組まない
+     * 決まり、維持の間は変えない（次の発火で前の件を切る）。出来事のきっかけ（burstUse・バースト N 段階突入時・フルバーストの始まりと
+     * 終わり）だけに書け、スタック・確率・発数や出来事の維持・amplifies とは組まない。
+     * { counter } は「X% × 〈カウンタ〉数分」（plan/design-guillotine-ws.md 2.3 節）。発火のフレームの自分のそのカウンタの値（前のフレームの
+     * 終わり。条件 selfCounter と同じ見え方）を掛ける。きっかけは出来事のきっかけと { counterUp }。維持は durationUntil: battleEnd も書ける
      */
-    perCount?: { state: NamedStateId };
+    perCount?: { state: NamedStateId } | { counter: CounterId };
     /** 編成に特定のキャラがいる条件 */
     withCharacter?: WithCharacterCondition;
     /** 敵の属性の条件 */
@@ -1164,9 +1218,9 @@ export type TimedEffect = TargetCountFields &
      * きっかけの発の次の発から数える（きっかけの発自身には付かない）。
      * 対象ごとにその枠の射撃を数え、維持中にまた付いたら数え直す。スタック（timed だけ）は付くたびに 1 段増え、持ち主の N 発目で全部
      * 切れる（plan/design-zwei.md 2.3 節）。条件は selfState だけ組める。窓は 1 パス目の射撃の列で決まるので、
-     * 1 パス目のループの中で窓を追う stat（攻撃力・射撃に効く stat・状態の stat）には書けない。
+     * 1 パス目のループの中で窓を追う stat（攻撃力・射撃に効く stat・状態の stat）には、次の例外のほかは書けない。
      * 例外は、1 パス目の件の列が持ち主の発で窓を閉じる stat（チャージ速度、命中率▲・貫通特化・
-     * ペレットの数の固定。plan/design-dorothy-serendipity.md 2.3 節）。チャージ速度は、溜めの途中で付いても、それまでに溜めたフレームは
+     * ペレットの数の固定。plan/design-dorothy-serendipity.md 2.3 節。攻撃力（状態の中身と topAttack を除く）。plan/design-neve.md 2.1 節）。チャージ速度は、溜めの途中で付いても、それまでに溜めたフレームは
      * 残る（plan/design-skill-stage15.md 2.3 節）
      */
     durationShots?: number;
@@ -1199,8 +1253,9 @@ export type TimedEffect = TargetCountFields &
      * 書かなければ次のフレームから。plan/design-shot-count-trigger-frame.md 6 節）。測った遅れを即値で書き、
      * 根拠の結論を claims に結ぶ。
      * 確率のきっかけ・付与には書けない。V-0602: 時間の周期のきっかけ（{ everySeconds }）にも書け、窓を周期の発火の delayFrames 後から
-     * 始める（書かなければ発火のフレームから）。1 パス目で窓を追う stat には書けない。周期のスキルのヒットから付く効果で、ヒットその
-     * ものに乗らないなら、ヒットの遅れ + 1 を書く
+     * 始める（書かなければ発火のフレームから）。クールタイムの印（cooldown）のある周期では、窓を発動の delayFrames 後から始める
+     * （書かなければ発動の次のフレームから。plan/design-cooldown-timed-delay.md 1 節）。1 パス目で窓を追う stat には書けない。周期のスキルの
+     * ヒットから付く効果で、ヒットそのものに乗らないなら、ヒットの遅れ + 1 を書く
      */
     delayFrames?: number;
     /**
@@ -1276,7 +1331,8 @@ export function isStateEndUntil(u: unknown): u is StateEndUntil {
  * enemyState = 敵（1 体の前提）にその状態が付いているなら（damage。付いている区間は
  * 同じ状態の dot の最初の発火から最後の tick まで。編成のどの枠の dot でもよい）。
  * timed・付与にも書け、敵に付く状態の付与（エレグのブームインストール）の窓も見る（damage も同じ。そのフレームに付いた件も入れる。
- * plan/design-elegg-s3.md 3.2 節）。
+ * plan/design-elegg-s3.md 3.2 節）。{ state, present: false } は「敵が〈状態〉でなければ」（plan/design-phantom.md 2.1 節。同じフレームの見え方は
+ * 付いている形と同じ）。
  * selfState = 自分（効果を出した枠）にその状態が付いているか（plan/design-skill-stage1.md 1.1 節。timed・付与・damage）。
  * usedBurst = 直前に自分がバーストスキルを使用していれば（同 1.5 節。timed・付与・解除・damage（plan/design-cinderella-cw.md 2.4 節。C-1252）。フルバーストの開始・終了のきっかけだけ。
  * 発火の文脈の burstUsers に自分がいるか。件を見ないので、これだけの条件は効果の段を上げない）。
@@ -1290,8 +1346,8 @@ export function isStateEndUntil(u: unknown): u is StateEndUntil {
  * burstStep = この発動を撃った段階が N なら（plan/design-red-hood.md 2.1 節。『バーストⅠで使用時』など）。burstUse の
  * きっかけの timed・付与・cooldownReduction・weaponChange にだけ書ける。発火の文脈（このフレームの自分の発動の段階）だけで決まるので、
  * usedBurst と同じく件を見ず、効果の段を上げない。書けるのは burstStep が AllStep のキャラの定義だけ（definitions.test.ts）
- * inEffectiveRange = 発火のフレームの自分の着地点が、適正最小射程距離▲（minEffectiveRange）で縮めた適正射程距離の中なら
- * （plan/design-agent-bunny.md 2.2 節。距離ボーナスが乗る着地点と同じ判定。timed だけ）。条件が手入力の枠は、
+ * inEffectiveRange = 発火のフレームの自分の着地点が、適正最小射程距離▲（minEffectiveRange）・適正最大射程距離▲
+ * （maxEffectiveRange）で動かした適正射程距離の中なら（plan/design-agent-bunny.md 2.2 節・plan/design-leona.md 2.1 節。距離ボーナスが乗る着地点と同じ判定。timed だけ）。条件が手入力の枠は、
  * 手入力の距離ボーナスの有無で決める
  */
 export type EffectCondition = {
@@ -1302,7 +1358,7 @@ export type EffectCondition = {
    * 外なら（counterChange・removeState・stat のある timed。plan/design-skill-stage12.md 2.2 節・plan/design-velvet.md 2.1 節）
    */
   inFullBurst?: boolean;
-  enemyState?: NamedStateId;
+  enemyState?: NamedStateId | { state: NamedStateId; present: false } | EnemySameFiring;
   selfState?: SelfStateCondition;
   usedBurst?: boolean;
   selfHp?: SelfHpCondition;
@@ -1390,7 +1446,8 @@ export type SelfStateCondition = {
   /**
    * 「下位効果のスタック適用」の段階（plan/design-quency-eq.md 2 節の論点 3）。同じ発火で、同じスロットの
    * 前に書いた同じきっかけの付与が付ける分も数えてスタックを見る（下の段階が満ちた発火で上の段階も付く）。状態の付与の、スタックの
-   * 条件にだけ書ける（parse/crossChecks.ts の validateSameFiring）
+   * 条件に書ける。timed には、スタック数の無い形（付いていれば）で書け、同じ発で付いた状態も見る（プリムの宝物版 S2「自分が起きた状態なら」。
+   * plan/design-frima.md 2 節）。どちらも、次のフレームに効いている件を見る（parse/crossChecks.ts の validateSameFiring）
    */
   sameFiring?: true;
 };
@@ -1404,6 +1461,35 @@ export function isStacksCondition(self: SelfStateCondition | undefined): boolean
 
 /** 条件のキー */
 export type ConditionKey = keyof EffectCondition;
+
+/**
+ * 条件 enemyState の「同じ発の付与の後に、敵が〈状態〉なら」（plan/design-phantom.md 2.6 節）。selfState の sameFiring と同じく、
+ * 次のフレームに効いている敵の件を見る（同じ発で付いた件が入り、同じ発で外れる件も次のフレームまでは入る）。射撃の回数のきっかけの timed だけ
+ */
+export type EnemySameFiring = { state: NamedStateId; present: true; sameFiring: true };
+
+/** 条件 enemyState の状態と、付いていることを求めるか（present。「でなければ」は false）と sameFiring */
+export type EnemyStateCheck = { state: NamedStateId; present: boolean; sameFiring?: true };
+
+/** 条件 enemyState を EnemyStateCheck の形にする。無ければ undefined */
+export function enemyStateOf(condition: EffectCondition | undefined): EnemyStateCheck | undefined {
+  const c = condition?.enemyState;
+  if (c === undefined) return undefined;
+  return typeof c === 'string' ? { state: c, present: true } : c;
+}
+
+/**
+ * 条件 enemyState がフレーム frame に成り立つか（無ければ成り立つ）。at は敵がその状態を持つか。sameFiring は次のフレームの件を見る
+ * （plan/design-phantom.md 2.6 節）
+ */
+export function enemyStateHolds(
+  check: EnemyStateCheck | undefined,
+  frame: number,
+  at: (state: NamedStateId, frame: number) => boolean,
+): boolean {
+  if (check === undefined) return true;
+  return at(check.state, check.sameFiring === true ? frame + 1 : frame) === check.present;
+}
 
 /** 条件 selfBuffed の stat と、増加状態を求めるか（present。「でなければ」は false）。無ければ undefined */
 export function selfBuffedOf(condition: EffectCondition | undefined): { stat: BuffStat; present: boolean } | undefined {
@@ -2028,7 +2114,8 @@ export type WeaponChangeEffect = {
   chargeReleaseSeconds?: number;
   /**
    * 同: 変更後の武器の最大装弾数の description_value_NN。書いたら維持の欄（durationRef・durationSeconds）は書かず、
-   * 変更後の武器はリロードせず、最後の弾丸を撃ったフレームの次のフレームに基礎の武器に戻る（撃ち切り。論点 8）
+   * 変更後の武器はリロードせず（狙えない窓のハイドでも込め直さない。C-1427）、最後の弾丸を撃ったフレームの次のフレームに基礎の武器に戻る
+   * （撃ち切り。論点 8）
    */
   maxAmmoRef?: number;
   /**
@@ -2062,6 +2149,19 @@ export type WeaponChangeEffect = {
    * 構え直し・チャージの途中なら構え解除 1 回分（aimOutFrames）を足す（frame/firstPass.ts）。firstShotDelayFrames とは組まない
    */
   firstShotAfterSwapFrames?: number;
+  /**
+   * 撃ち切りで終わる変更（maxAmmoRef）の、変更後の武器の最後の弾丸を撃ったフレームから、基礎の武器の最初の発までのフレーム
+   * （即値。録画で読む。plan/design-snow-white.md 8.1 節の論点 4）。基礎の武器は満タンで戻る（frame/shooter.ts の resumeShooter）のは
+   * 同じで、待ちだけを替える。省略は resumeShooter の待ち（リロードの明けの 1 発目の遅延）。maxAmmoRef の変更にだけ書ける
+   */
+  returnFirstShotFrames?: number;
+  /**
+   * 同 8.3 節の論点 7: 撃ち切りで終わる変更（maxAmmoRef）の、変更後の武器の最後の弾丸を撃ったフレームから、同じ枠のクールタイムの印のある
+   * 周期（TimerTrigger の cooldown）の発動の待ちが明けるまでのフレーム（即値。録画で読む）。その間に予定の来た発動は明けたフレームに
+   * 発動し、周期はそこから数え直す（frame/firstPass/gaugeEffects.ts の countCooldownTimers）。チャージの間（撃つ前）は待たせない。
+   * maxAmmoRef の変更にだけ書ける
+   */
+  returnCooldownFrames?: number;
   /**
    * 変更後の武器は撃っても残弾を減らさない（維持の間リロードしない。plan/design-skill-stage11.md 3.4 節）。
    * 説明文に「装弾数無限」の行が無い変更で、録画で読む（たきなのバースト。C-0708）。維持の欄（durationRef・durationSeconds）の変更にだけ書ける
@@ -2201,13 +2301,19 @@ export type DotEffect = {
    */
   perCount?: { counter: CounterId };
   perCountIntervalFrames?: number;
+  /**
+   * 付く（1 回目の tick の）フレームの、発火からの遅れ（1 以上の整数の実測）。{ counterFull } の perCount と、burstUse（ゲージを溜めない・
+   * 名前の付いた状態でない dot）に書ける。ギロチン：ウィンタースレイヤーのバーストは 5（III の 00.00 の 1f 前。plan/design-guillotine-ws.md 8.2 節）
+   */
   delayFrames?: number;
   /**
    * 「個別対象ごとに〈名前〉スタックコピー」（plan/design-skill-stage13.md 2.5 節）。付けた時の tick のスタックの数を、
    * 発火のフレームに敵に付いている、同じ枠の別の dot（その state）のスタックの数にする（0 なら付かない。後で元が増減しても変わらない）。
-   * tick の値は 1 スタックの倍率 × その数（ミハラ：ボンディングチェーンのプリング・チェーン）
+   * tick の値は 1 スタックの倍率 × その数（ミハラ：ボンディングチェーンのプリング・チェーン）。
+   * { counter } は「× 〈カウンタ〉数分の持続ダメージ」（plan/design-guillotine-ws.md 2.4 節）。数を、付いたフレーム（発火の delayFrames 後）の
+   * 自分のそのカウンタの値（前のフレームの終わり）にする（copyEachTick なら tick のフレームの値）
    */
-  stacksFrom?: { enemyState: NamedStateId };
+  stacksFrom?: { enemyState: NamedStateId } | { counter: CounterId };
   /**
    * stacksFrom の数を、付けた時に 1 回だけでなく tick ごとに写し直す（その tick のフレームの判定で
    * 敵に付いている元のスタックの数。0 の tick は出さない。plan/design-mast.md 2.3 節）。stacksFrom のときだけ書ける。写す時刻を撮影で
@@ -2233,12 +2339,14 @@ export type DotEffect = {
   maxStacksRef?: number;
   /**
    * 発火（付けた）ごとに、射手の 1 ヒットぶんのバーストゲージ（targetBurstEnergyPerShot。フルチャージ
-   * 倍率なし）を発火のフレームに足す（C-0181）。トリガーは射撃の回数トリガーだけ
+   * 倍率なし）を発火のフレームに足す（C-0181）。トリガーは射撃の回数トリガーか、クールタイムの印・since の無い周期のトリガー（状態の名前は組まない）
+   * （C-1504。plan/design-rosanna-co.md 7 節）
    */
   gaugeOnApply?: true;
   /**
    * 付けたときのゲージ（gaugeOnApply）を、発火の
-   * フレームの delayFrames 後に足す（1 以上の整数。レイヴンは 6。C-0181・C-0661。plan/design-shot-count-trigger-frame.md 6.6 節）。tick の時刻は動かさない
+   * フレームの delayFrames 後に足す（1 以上の整数。レイヴンは 6。C-0181・C-0661。plan/design-shot-count-trigger-frame.md 6.6 節。
+   * ロザンナ：シックオーシャンは付くまでの遅れと同じ 8。C-1504）。tick の時刻は動かさない
    */
   gaugeOnApplyDelayFrames?: number;
   /**
@@ -2251,8 +2359,8 @@ export type DotEffect = {
   /**
    * tick ごとに、射手の 1 ヒットぶんのバーストゲージを tick のフレームに足す。スタックの数によらない
    * （C-0181）。firstTick: afterInterval で、維持が間隔の整数倍のときだけ（8 節の 2。解決のときに見る）。トリガーは射撃の回数トリガーか、
-   * burstUse（クルミのハッキング。C-0196。plan/design-raven-s1.md 10 節）。同じ state の効果は、どれも同じ値にする（tick は持続ダメージ
-   * 1 つの性質なので）
+   * burstUse（クルミのハッキング。C-0196。plan/design-raven-s1.md 10 節）か、gaugeOnApply と同じ周期のトリガー（firstTick は atApplication も
+   * 書ける。C-1504。plan/design-rosanna-co.md 7 節）。同じ state の効果は、どれも同じ値にする（tick は持続ダメージ 1 つの性質なので）
    */
   gaugeOnTick?: true;
   assumes?: LocalizedText;
@@ -2551,15 +2659,20 @@ export type StacksFrom = { counter: CounterId } | { state: NamedStateId };
  * 「〈名前〉解除」（Removes。plan/design-skill-stage1.md 1.2 節）。発火のフレーム f に、持ち主（自分）のその状態の件
  * （出どころは問わない。スタックはすべて）を f + 1 で閉じる（f の判定には付いている）。解除不可の件（付与の undispellable）は
  * 閉じない。同じフレーム f に同じ状態が付いた件の列は閉じない（付与が勝つ）。段は、条件なし（と usedBurst だけ）は 1、件を見る
- * 条件つきは 1.5。消去（Cancels。解除不可の件も閉じる）は、使い手を定義する時に別の種類で足す（分類の設計書の論点 8）
+ * 条件つきは 1.5。消去（Cancels。解除不可の件も閉じる）は別の種類（cancelState）。
+ * きっかけに「〈名前〉のフルスタック状態の時」（{ fullStack }）も書ける（plan/design-phantom.md 2.3 節）
  */
 export type RemoveStateEffect = {
   kind: 'removeState';
-  /** 目録の id（持ち主が味方の状態） */
+  /** 目録の id（持ち主が味方の状態。target が enemy なら持ち主が敵の状態） */
   state: NamedStateId;
   trigger: EffectTrigger;
-  /** 説明文の例はどれも自分なので、自分だけ（味方の状態を外す例が出たら広げる） */
-  target: 'self';
+  /**
+   * self は自分の状態。allies は味方全体（敵を除くどの枠）の状態（plan/design-k.md 2.1 節）: その状態の件の列（出どころは問わない）を
+   * 自分と同じく f + 1 で閉じる。enemy は敵の状態（plan/design-phantom.md 2.3 節）: 同じ定義の付与で敵に付ける状態の、敵の件の列
+   * （出どころは問わない）を同じく f + 1 で閉じる。どれも解除不可の件は閉じない
+   */
+  target: 'self' | 'allies' | 'enemy';
   condition?: EffectCondition;
   assumes?: LocalizedText;
 };
@@ -2637,9 +2750,14 @@ export type StateExtendEffect = {
 /** スタック量の増減。自分か敵の 1 つの状態（OwnStackChangeEffect）か、味方の全部のスタック可能バフ（AllStackableChangeEffect） */
 export type StackChangeEffect = OwnStackChangeEffect | AllStackableChangeEffect;
 
+/** 味方の全部のスタック可能バフへのスタック量▲か（対象は allies か self） */
+export function isAllStackableChange(effect: StackChangeEffect): effect is AllStackableChangeEffect {
+  return 'allStackable' in effect;
+}
+
 /**
  * 「〈味方〉に、スタック可能バフ効果のスタック量 N 個▲」（plan/design-adjacent-allies.md 2.5 節）。対象の枠（allies を
- * targetWeapon・targetElement・targetClass で絞った枠）が持つ、上限のある状態の付与の件の列（敵に付く状態・stackImmutable を除く）と、
+ * targetWeapon・targetElement・targetClass で絞った枠。self なら自分の枠だけ。plan/design-diesel.md 9 節）が持つ、上限のある状態の付与の件の列（敵に付く状態・stackImmutable を除く）と、
  * 上限のある timed の件の列（確率のきっかけを除く）の全部に、足す段の始まりのフレーム（射撃の回数のきっかけは発の次のフレーム）に
  * 件が付いていれば始まりを amount 個足す（付いていなければ足さない。OwnStackChangeEffect の existingOnly と同じ。C-1182）。
  * どの枠の定義から付いた件でもよい。増加だけ。段は 1.5（件を読む）
@@ -2648,7 +2766,8 @@ export type AllStackableChangeEffect = FixedTargetFields & {
   kind: 'stackChange';
   allStackable: true;
   trigger: EffectTrigger;
-  target: 'allies';
+  /** self は絞り込み（targetWeapon・targetElement・targetClass）と組まない */
+  target: 'allies' | 'self';
   targetWeapon?: WeaponType;
   targetElement?: Element;
   targetClass?: NikkeClass;

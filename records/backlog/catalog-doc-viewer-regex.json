@@ -1,0 +1,5 @@
+{
+  "section": "8.2",
+  "order": -36,
+  "text": "`catalogDoc.ts` の 4.3 節（状態を見る側）に残る正規表現の写しを無くす（2026-11-21 起票）→ 完了（2026-11-21。4.3 節は `condKeys` と、効果ごとの `tgtKeys` を使う。生成物は変わらない）: [design-catalog-doc-split.md](design-catalog-doc-split.md) 10 節"
+}

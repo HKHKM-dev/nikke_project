@@ -1,0 +1,381 @@
+{
+  "verification": "V-0818",
+  "note": "撮影の予測。ココア（I）+ ソルジャーF.A.（II）+ ドレイク：グレイトヴィラン（III・操作）、オートバースト ON。射撃場の BigArms（灼熱）・3 分モード・スペック固定 ON（スキル Lv10）。オーバーオーバードライブの最初の発の待ちと当たり、バーストの遅れの表の行は撮る前の仮の形。フルバーストの終わりで戻る読み（H-fb）と、1 発の値が 1 ペレットの値の読み（H-pellet）は予測ファイルにできないので、検証記録に手で書く",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 301
+    },
+    {
+      "rid": 104,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（撃ち切りで戻る・1 トリガーの値をペレットで割る・遅刻が最大HP のみ▲ を追う・バーストスキルダメージに同じ発動の▲は乗らない）",
+      "override": {}
+    },
+    {
+      "id": "H-fixed",
+      "note": "遅刻が戦闘開始の最終最大HP で固まり、後の最大HP のみ▲ を追わない（S2 の最大HP のみ▲ を落として近似する。自分の与ダメージで最大HP を読むのは遅刻だけなので同じ値になる）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 104,
+            "skill": "skill2",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-same",
+      "note": "バーストスキルダメージに同じ発動の攻撃ダメージ▲が乗る（遅れの表に 00.00 に 1 ヒット・sameActivationBuffsOnHit の行を入れる）",
+      "override": {
+        "burstDelays": [
+          {
+            "rid": 104,
+            "row": {
+              "hitFrames": 0,
+              "effectFrames": 0,
+              "sameActivationBuffsOnHit": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "shot-s0",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "1 回目のフルバーストより前の基礎の SG の 1 ペレット（胴体・会心なし・距離ボーナスなし）。最大HP のみ▲ 0 スタック"
+    },
+    {
+      "id": "shot-ad1",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "1 回目のフルバーストの後、バーストの攻撃ダメージ▲（25 秒）の中の 1 ペレット。1 スタック"
+    },
+    {
+      "id": "shot-s1",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "バーストの攻撃ダメージ▲が切れた後（2 回目のフルバーストより前）の 1 ペレット。1 スタック"
+    },
+    {
+      "id": "shot-s2",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 5000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "2 回目のフルバーストの後、攻撃ダメージ▲が切れた後の 1 ペレット。2 スタック"
+    },
+    {
+      "id": "shot-s3",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 7500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "3 回目の後、攻撃ダメージ▲が切れた後の 1 ペレット。3 スタック"
+    },
+    {
+      "id": "shot-s4",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 10000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "4 回目の後、攻撃ダメージ▲が切れた後の 1 ペレット。4 スタック"
+    },
+    {
+      "id": "ood-1",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 900,
+        "core": false,
+        "crit": false,
+        "distance": false,
+        "fullBurst": true
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "1 回目のフルバーストのオーバーオーバードライブの 1 ペレット（胴体・会心なし・距離ボーナスなし。フルチャージ・フルバースト補正）"
+    },
+    {
+      "id": "burst-1",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "1 回目のバーストスキルダメージ（会心なし。00.00 に 1 ヒットの仮の形）"
+    },
+    {
+      "id": "burst-2",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "2 回目のバーストスキルダメージ（会心なし。00.00 に 1 ヒットの仮の形）"
+    },
+    {
+      "id": "burst-3",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "3 回目のバーストスキルダメージ（会心なし。00.00 に 1 ヒットの仮の形）"
+    },
+    {
+      "id": "burst-4",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "4 回目のバーストスキルダメージ（会心なし。00.00 に 1 ヒットの仮の形）"
+    },
+    {
+      "id": "ood-first",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "fullBurstToWeaponChangeShot",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "1 回目のフルバーストの窓の始まりから、オーバーオーバードライブの最初の発まで（動画のフレーム）"
+    },
+    {
+      "id": "fb-end-next",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "fullBurstEndToNextShot",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "1 回目のフルバーストの窓の終わりから、基礎の SG の次の発まで（動画のフレーム）。撃ち切りで戻る（H1）か、フルバーストの終わりで戻るかで分かれる"
+    },
+    {
+      "id": "fb-count",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "fullBurstCount",
+      "args": {},
+      "note": "フルバーストの回数"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "942c338639782e14f6da2a6bbd1cb86ab8f3c71f",
+    "values": {
+      "H1": {
+        "shot-s0": 57585.073,
+        "shot-ad1": 78976.1870625,
+        "shot-s1": 61942.1075,
+        "shot-s2": 66298.9405,
+        "shot-s3": 70655.975,
+        "shot-s4": 75012.80799999999,
+        "ood-1": 84531.14913749999,
+        "burst-1": 3858056.9999999995,
+        "burst-2": 4149967.5,
+        "burst-3": 4441864.5,
+        "burst-4": 4733775,
+        "ood-first": 122,
+        "fb-end-next": 70,
+        "fb-count": 4
+      },
+      "H-fixed": {
+        "shot-s0": 57585.073,
+        "shot-ad1": 73420.968075,
+        "shot-s1": 57585.073,
+        "shot-s2": 57585.07300000001,
+        "shot-s3": 57585.073,
+        "shot-s4": 57585.073,
+        "ood-1": 73420.968075,
+        "burst-1": 3858056.9999999995,
+        "burst-2": 3858056.9999999995,
+        "burst-3": 3858056.9999999995,
+        "burst-4": 3858056.9999999995,
+        "ood-first": 122,
+        "fb-end-next": 70,
+        "fb-count": 4
+      },
+      "H-same": {
+        "shot-s0": 57585.073,
+        "shot-ad1": 78976.1870625,
+        "shot-s1": 61942.1075,
+        "shot-s2": 66298.9405,
+        "shot-s3": 70655.975,
+        "shot-s4": 75012.80799999999,
+        "ood-1": 84531.14913749999,
+        "burst-1": 4919022.675,
+        "burst-2": 5291208.5625,
+        "burst-3": 5663377.237499999,
+        "burst-4": 6035563.124999999,
+        "ood-first": 122,
+        "fb-end-next": 70,
+        "fb-count": 4
+      }
+    }
+  }
+}

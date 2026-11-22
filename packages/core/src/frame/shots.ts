@@ -1,7 +1,7 @@
 // 各枠の射撃の列（純関数）。射撃の列の型（ShotLog）、バフなし（基礎値）の列を作る planShots、区間の発数を二分探索で数える
 // countShotsInRanges を置く。1 パス目の列は frame/firstPass.ts が作る（planShots と同じになる条件は、その冒頭）。
 import type { CharacterData } from '../types.ts';
-import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
+import { DEFAULT_WEAPON_MODEL, isChargeWeapon, lastBulletShotsOf, type WeaponModel } from '../weapons.ts';
 import { firingParams } from './firing.ts';
 import { initialShooter, stepShooter } from './shooter.ts';
 
@@ -17,8 +17,13 @@ export type ShotLog = {
    * 省略・空は無し（C-1001）
    */
   partialShots?: PartialShot[];
-  /** 残弾を 0 にした射撃のフレーム（frames の部分列。「最後の弾丸」）。省略は無し（手で作る列のため） */
+  /** 残弾を 0 にした射撃のフレーム（frames の部分列。マガジンの最後の発）。省略は無し（手で作る列のため） */
   lastShotFrames?: number[];
+  /**
+   * 「最後の弾丸」のきっかけ（回数の種類 lastShot）になる発のフレーム（frames の部分列）。最後の弾丸の発が 1 発でない武器
+   * （二丁持ち。weapons.ts の lastBulletShotsOf）だけが書き、省略は lastShotFrames と同じ
+   */
+  lastBulletFrames?: number[];
   /**
    * 残弾数減少で残弾が 0 になってリロードを始めた時の、その前の最後の発のフレーム（frames の部分列。昇順。V-0735）。
    * 1 パス目が書き、照合の指標のリロードの回（records/observations/metrics/firing.ts の reloadsAt）が最後の弾丸の発と同じに読む。省略は無し
@@ -79,6 +84,11 @@ export type ShotLog = {
    */
   critHits?: number[];
   /**
+   * frames と同じ並びの、発ごとの当たったペレットのクリティカルの期待値（当たったペレットの数 × その発の会心率。1 パス目が書く。
+   * plan/design-k.md 2.2 節）。省略は 0
+   */
+  critPellets?: number[];
+  /**
    * frames と同じ並びの、発ごとに的に当たったペレットの数（期待値か、録画で
    * 数えた入力。1 パス目が書く。plan/design-pellet-hit.md 2 節）。省略は hits
    */
@@ -114,12 +124,17 @@ export function planShots(
     const state = initialShooter(shot, model, params);
     const fired: number[] = [];
     const lastShotFrames: number[] = [];
+    const bullets = lastBulletShotsOf(slot.character.weaponType, shot);
+    const lastBulletFrames: number[] = [];
     for (let f = 0; f < frames; f++) {
       if (!stepShooter(state, shot, model, params)) continue;
       fired.push(f);
       if (state.lastShot) lastShotFrames.push(f);
+      if (state.lastShot || state.ammo < bullets) lastBulletFrames.push(f);
     }
-    return { frames: fired, fullCharge: isChargeWeapon(shot), lastShotFrames };
+    const log: ShotLog = { frames: fired, fullCharge: isChargeWeapon(shot), lastShotFrames };
+    if (bullets > 1) log.lastBulletFrames = lastBulletFrames;
+    return log;
   });
 }
 

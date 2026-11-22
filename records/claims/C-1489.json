@@ -1,0 +1,16 @@
+{
+  "id": "C-1489",
+  "text": "レムのバーストの「自分に鬼の気：クリティカル確率 37.8%▲（Lv10・10 秒）」は、レムの通常攻撃の会心率を 15% から 52.8% にする",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1332-08`・`1332-09`・`1333-08`・`1333-09`。V-0844",
+  "model": "反映（data/skills/820.json の burst の effects[0]。状態 demonsBreath の中身 critRate）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/820.json の burst の effects[0]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値（バーストの値 01）と、会心率の和（通常攻撃の会心率 15% に足す）"
+}

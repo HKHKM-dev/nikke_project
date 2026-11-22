@@ -10,7 +10,7 @@ import {
   computeFixedSpecHp,
   FIXED_SPEC_ENEMY_DEFENCE,
 } from '../fixedSpec.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
+import { countShotsInRanges, type ShotLog } from '../frame/shots.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { simTeamResult } from '../sim/teamResult.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
@@ -223,6 +223,12 @@ export function fullBurstCooldownCuts(schedule: BurstSchedule, sourceSlot: numbe
         cut.set(r.slotIndex, (cut.get(r.slotIndex) ?? 0) + r.applied);
     return cut.size === 0 ? 0 : Math.max(...cut.values());
   });
+}
+
+/** フルチャージの発（部分チャージの発を除く）のフレーム */
+export function fullChargeFrames(log: ShotLog): number[] {
+  const partial = new Set((log.partialShots ?? []).filter((p) => p.progress < 1).map((p) => p.frame));
+  return log.frames.filter((f) => !partial.has(f));
 }
 
 /** 編成ごとに、射撃の列が、どの枠でもどれか 1 つのグループに 1 回ずつ入る（start ≤ shot < end）ことを確かめる */

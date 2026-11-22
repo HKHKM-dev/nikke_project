@@ -129,6 +129,82 @@ describe('manualBursts（手で撃ったバースト）', () => {
   });
 });
 
+describe('manualStep3Slots（手で撃ったチェーンの III の枠。9 節）', () => {
+  // 録画 1346: ソルジャーE.G.・クロウ・メイデン（III が 3 体）+ ココア（I）+ ソルジャーF.A.（II）。I の時刻はオートの時刻表のもの
+  const auto = run('1346').result.schedule!;
+  const firsts = auto.activations.filter((a) => a.step === 'Step1').map((a) => a.frame);
+  const thirds = (r: ReturnType<typeof run>) =>
+    r.result.schedule!.activations.filter((a) => a.startsFullBurst).map((a) => a.slotIndex);
+
+  it('fires the III of each chain from the given slot, and leaves 0 to the model', () => {
+    const values = new Map<string, number | number[]>([
+      ['m', firsts],
+      ['s', [1, 2, 1, 2, 1, 2, 1, 2, 3]],
+    ]);
+    const chosen = thirds(run('1346', { manualBursts: 'm', manualStep3Slots: 's' }, values));
+    expect(chosen).toEqual([0, 1, 0, 1, 0, 1, 0, 1, 2]);
+    // 指定が無いチェーンはオートと同じ選び方（CT の明けた左の枠）
+    const leftmost = thirds(run('1346', { manualBursts: 'm' }, values));
+    expect(leftmost.at(-1)).toBe(0);
+    const partial = thirds(run('1346', { manualBursts: 'm', manualStep3Slots: 's' }, new Map([...values, ['s', [0]]])));
+    expect(partial).toEqual(leftmost);
+  });
+
+  it('does not fall back to another slot while the given slot is on CT', () => {
+    // 2 回目のチェーンもソルジャーE.G.（枠 1）にすると、CT が明ける前にチェーンが時間切れになり、クロウ・メイデンは撃たない
+    const values = new Map<string, number | number[]>([
+      ['m', firsts.slice(0, 2)],
+      ['s', [1, 1]],
+    ]);
+    const schedule = run('1346', { manualBursts: 'm', manualStep3Slots: 's' }, values).result.schedule!;
+    expect(schedule.activations.filter((a) => a.startsFullBurst).map((a) => a.slotIndex)).toEqual([0]);
+    expect(schedule.chainTimeouts).toHaveLength(1);
+  });
+
+  it('checks the setup and the referenced observation', () => {
+    const base: Observation = {
+      id: '1346-91',
+      recording: '1346',
+      kind: 'hit',
+      use: 'compare',
+      value: 1,
+      description: 'x',
+      source: 'V-0001',
+      compare: {
+        model: 'sim',
+        metric: 'teamTotalDamage',
+        args: {},
+        tolerance: { abs: 1 },
+        setup: { ...setup, manualStep3Slots: '1346-90' },
+      },
+    };
+    const ref: Observation = {
+      id: '1346-90',
+      recording: '1346',
+      kind: 'timing',
+      use: 'input',
+      value: [1, -1],
+      description: 'x',
+      source: 'V-0001',
+    };
+    const errors = validateObservations([ref, base], recordings, data.enemies);
+    expect(errors).toContain('1346-91: manualStep3Slots は manualBursts があるときだけ書く');
+    expect(errors).toContain(
+      '1346-91: manualStep3Slots の観測値 1346-90 の値は 0 以上の整数の配列（チェーンごとの III の枠。0 はモデルに任せる）',
+    );
+    // 枠が編成の外・並びがチェーンの数より長い
+    const chains: Observation = { ...ref, id: '1346-89', value: [100] };
+    const wide: Observation = { ...ref, value: [6, 1] };
+    const both: Observation = {
+      ...base,
+      compare: { ...base.compare!, setup: { ...base.compare!.setup, manualBursts: '1346-89' } },
+    };
+    const errors2 = validateObservations([chains, wide, both], recordings, data.enemies);
+    expect(errors2).toContain('1346-91: manualStep3Slots の枠 6 が編成の外');
+    expect(errors2).toContain('1346-91: manualStep3Slots の並びが manualBursts のチェーンの数より長い');
+  });
+});
+
 describe('holdFire（オート射撃を手で OFF にした時間。V-0605）', () => {
   it('passes the [OFF, ON, …] frames to the slot as ranges', () => {
     const { input } = run('0860', { holdFire: [{ slot: 3, frames: 'x' }] }, new Map([['x', [248, 908, 2482, 3163]]]));

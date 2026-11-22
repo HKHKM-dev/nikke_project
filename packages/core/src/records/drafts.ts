@@ -4,6 +4,7 @@ import {
   CLAIM_TOPICS,
   CONFIRMABLE_GRADES,
   JUDGMENT_OVERRIDES,
+  gradeAboveCandidate,
   validateJudgment,
   type ClaimFile,
   type ClaimGrade,
@@ -249,6 +250,42 @@ export function appendBasis(basis: string, added: readonly string[], verificatio
   return `${basis.replace(/[。\s]+$/, '')}。${basisIdsText(added)}${basis.includes(verification) ? '' : `。${verification}`}`;
 }
 
+/**
+ * records:new claim の根拠の観測値。--observations で選んだもの（無ければ検証記録の観測値）のうち、無効（invalid）でないもの。
+ * 無効の観測値は excluded に返す（新しい結論も --update も、無効の観測値を根拠に足さない）
+ */
+export function claimBasisObservations(
+  observations: readonly Observation[],
+  verification: string,
+  picked: readonly Observation[] | undefined,
+): { given: Observation[]; excluded: Observation[] } {
+  const all = picked ?? observations.filter((o) => o.source === verification);
+  return {
+    given: all.filter((o) => o.invalid === undefined),
+    excluded: all.filter((o) => o.invalid !== undefined),
+  };
+}
+
+/**
+ * --update で前の結論の根拠に足す観測値（前の根拠に無いもの）と、書き足した根拠の文と、評価に使う根拠の観測値（前の根拠と足した根拠。
+ * 前の根拠の観測値は、無効になっていてもそのまま入れる）
+ */
+export function claimUpdateBasis(
+  existing: { basis: string; observations: readonly string[] },
+  given: readonly Observation[],
+  verification: string,
+  observations: readonly Observation[],
+): { added: string[]; basis: string; own: Observation[] } {
+  const before = new Set(existing.observations);
+  const added = given.filter((o) => !before.has(o.id)).map((o) => o.id);
+  const ownIds = new Set([...before, ...added]);
+  return {
+    added,
+    basis: appendBasis(existing.basis, added, verification),
+    own: observations.filter((o) => ownIds.has(o.id)),
+  };
+}
+
 /** 根拠の文の観測値の並び（`ID`・`ID`） */
 export function basisIdsText(ids: readonly string[]): string {
   return ids.map((id) => `\`${id}\``).join('・');
@@ -281,6 +318,35 @@ export function mergeClaimUpdate(existing: ClaimFile, update: ClaimUpdate): Clai
     judgment: update.judgment ?? existing.judgment,
   };
   return Object.fromEntries(Object.entries(merged).filter(([, v]) => v !== undefined)) as ClaimUpdate;
+}
+
+/**
+ * 前からある結論を出し直すとき（--update・観測値の --invalidate --by の付け替え）に残す、人が決めた等級（claimDraft の grade）。候補が
+ * 無ければ前の等級のまま（records:close の確定と同じ）。候補があれば、gradeReason を書いて候補より上にしたものだけを残す
+ * （records:close と違い、gradeReason の無い等級は前の候補とみて、新しい候補に合わせる）
+ */
+export function keptClaimGrade(
+  existing: Pick<ClaimFile, 'grade' | 'gradeReason'>,
+  candidate: ClaimGrade | undefined,
+): ClaimGrade | undefined {
+  if (existing.grade === undefined) return undefined;
+  if (candidate === undefined) return existing.grade;
+  return existing.gradeReason !== undefined && gradeAboveCandidate(existing.grade, candidate)
+    ? existing.grade
+    : undefined;
+}
+
+/** keepHypothesis が仮説のままにしたときの理由 */
+export const KEPT_HYPOTHESIS_REASON =
+  '付け替えでは仮説を確定にしない（確定にできる条件はそろった。claim --update で確かめる）';
+
+/**
+ * 観測値の --invalidate --by の付け替えで出し直した結論。前が仮説なら、確定にできる条件がそろっても仮説のままにする（仮説に残すと
+ * 人が決めた結論もあり、その印は結論の側に無い）
+ */
+export function keepHypothesis(before: ClaimFile['state'], result: ClaimDraft): ClaimDraft {
+  if (before !== '仮説' || result.file.state !== '確定') return result;
+  return { file: { ...result.file, state: '仮説' }, reasons: [...result.reasons, KEPT_HYPOTHESIS_REASON] };
 }
 
 /**

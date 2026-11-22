@@ -81,7 +81,7 @@ export const THEME_BADGES: Readonly<Record<Theme, string>> = {
   dark: badgeName('ui_dark'),
   system: badgeName('ui_system'),
 };
-/** 右上のアカウントのメニューのボタンのバッジ（モダン UI の AccountMenu） */
+/** 右上の育成のメニューのボタンのバッジ（モダン UI の AccountMenu） */
 export const ACCOUNT_BADGE = badgeName('ui_account');
 /** お気に入りのバッジ（favorites.ts の FAVORITE_MARKS ごと）と、2 つ以上押したときに数を重ねる無地のバッジ */
 export const FAVORITE_BADGES = {

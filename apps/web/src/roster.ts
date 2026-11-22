@@ -205,7 +205,7 @@ export function clearConfirmText(slotCount: number, edited = false): string {
   );
 }
 
-/** 「全部を読み込んだ値に戻す」のボタンの名前（アカウントのメニューと編集画面で同じ） */
+/** 「全部を読み込んだ値に戻す」のボタンの名前（育成のメニューと編集画面で同じ） */
 export const REVERT_ALL_LABEL = '全部を読み込んだ値に戻す';
 
 /**

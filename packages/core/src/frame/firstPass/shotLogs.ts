@@ -21,6 +21,7 @@ export function createShotLogs({ slots }: { slots: readonly TimelineSlot[] }) {
           hits: [],
           coreHits: [],
           critHits: [],
+          critPellets: [],
           pelletHits: [],
         },
   );

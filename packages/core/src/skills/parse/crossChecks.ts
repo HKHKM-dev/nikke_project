@@ -16,10 +16,14 @@ import {
   isStateCountWindow,
   isStateEndUntil,
   isStatContent,
+  isStacksCondition,
+  isAllStackableChange,
   isStaticStateGrant,
   isSummonAttackTrigger,
   isSkillFiredTrigger,
+  isStateStacksTrigger,
   isTimerTrigger,
+  type SelfStateCondition,
   type ShotCountTrigger,
   SKILL_SLOTS,
   type SkillEffect,
@@ -164,13 +168,14 @@ function hasSelfStackingGrant(
   entries: Partial<Record<SkillSlot, SkillEntry>>,
   state: NamedStateId,
   holder: 'self' | 'enemy' = 'self',
+  stacking = true,
 ): boolean {
   return SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).some(
     (g) =>
       g.kind === 'state' &&
       g.state === state &&
       (holder === 'enemy' ? g.enemy === true : g.target === 'self') &&
-      (g.maxStacks !== undefined || g.maxStacksRef !== undefined),
+      (!stacking || g.maxStacks !== undefined || g.maxStacksRef !== undefined),
   );
 }
 
@@ -188,11 +193,11 @@ function validateInstantFireCoreHits(entries: Partial<Record<SkillSlot, SkillEnt
         'trigger' in e &&
         !isEndedTrigger(e.trigger) &&
         isShotCountTrigger(e.trigger) &&
-        e.trigger.count === 'coreHit'
+        (e.trigger.count === 'coreHit' || e.trigger.count === 'nonCoreHit')
       ) {
         fail(
           `${root}.${slot}.effects[${i}].trigger`,
-          'a coreHit count trigger cannot be combined with an instantFire weapon change',
+          'a coreHit or nonCoreHit count trigger cannot be combined with an instantFire weapon change',
         );
       }
     });
@@ -257,6 +262,35 @@ function validateFullStackTriggers(entries: Partial<Record<SkillSlot, SkillEntry
 }
 
 /**
+ * 敵の状態の解除（removeState の enemy）は、同じ定義にその状態を敵に付ける付与が要る（plan/design-phantom.md 2.3 節）。味方全体の解除
+ * （allies）は、同じ定義にその状態を味方全体に付ける付与が要る（plan/design-k.md 2.1 節。静的な状態の決め方が同じ定義の解除だけを見るので、
+ * ほかの枠の定義が付ける状態は外せない）
+ */
+function validateEnemyRemoves(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (e.kind === 'removeState' && e.target === 'allies') {
+        const granted = SKILL_SLOTS.flatMap((s) => entries[s]?.effects ?? []).some(
+          (g) => g.kind === 'state' && g.state === e.state && g.target === 'allies' && g.enemy !== true,
+        );
+        if (!granted)
+          fail(
+            `${root}.${slot}.effects[${i}].state`,
+            `a remove on all allies needs a grant of "${e.state}" on all allies in the definition`,
+          );
+        return;
+      }
+      if (e.kind !== 'removeState' || e.target !== 'enemy') return;
+      if (!hasSelfStackingGrant(entries, e.state, 'enemy', false))
+        fail(
+          `${root}.${slot}.effects[${i}].state`,
+          `a remove on the enemy needs a grant of "${e.state}" on the enemy in the definition`,
+        );
+    });
+  }
+}
+
+/**
  * timed・付与の { applied } は連鎖させない（plan/design-skill-stage4.md 1.1 節）。同じ定義の中で、{ applied } の付与が
  * 付ける状態を、ほかの timed・付与の { applied } が見ない（damage の { applied } は見てよい。ダメージは記録を作らないので閉じる）
  */
@@ -304,10 +338,26 @@ function validateSameFiring(entries: Partial<Record<SkillSlot, SkillEntry>>, roo
       const path = `${root}.${slot}.effects[${i}]`;
       if (e.kind === 'passive' && e.while !== undefined && 'selfState' in e.while && e.while.selfState.sameFiring)
         fail(`${path}.while.selfState.sameFiring`, 'sameFiring is not allowed in while');
+      // 敵の状態の sameFiring は、射撃の回数のきっかけの timed だけ（plan/design-phantom.md 2.6 節）
+      const enemy = 'condition' in e ? e.condition?.enemyState : undefined;
+      if (typeof enemy === 'object' && 'sameFiring' in enemy && (e.kind !== 'timed' || !isShotCountTrigger(e.trigger)))
+        fail(
+          `${path}.condition.enemyState.sameFiring`,
+          'sameFiring of enemyState is allowed only in timed with a shot count trigger',
+        );
       const self = 'condition' in e ? e.condition?.selfState : undefined;
       if (self?.sameFiring !== true) return;
+      if (e.kind === 'timed') {
+        validateTimedSameFiring(entries, e.trigger, self, `${path}.condition.selfState.sameFiring`);
+        return;
+      }
       if (e.kind !== 'state')
-        fail(`${path}.condition.selfState.sameFiring`, 'sameFiring is allowed only in a state grant');
+        fail(`${path}.condition.selfState.sameFiring`, 'sameFiring is allowed only in a state grant or timed');
+      if (!isStacksCondition(self))
+        fail(
+          `${path}.condition.selfState.sameFiring`,
+          'needs a stack count (stacks, stacksRef or stacksBelow) in a state grant',
+        );
       const trigger = JSON.stringify(e.trigger);
       const lower = effects
         .slice(0, i)
@@ -332,7 +382,28 @@ function validateSameFiring(entries: Partial<Record<SkillSlot, SkillEntry>>, roo
 }
 
 /**
- * counterChange・dot の { applied } と、周期の since が見る状態は、同じ定義にその状態を
+ * timed の sameFiring（plan/design-frima.md 2 節）: スタック数の無い形か、上の端（stacksBelow）だけの形（plan/design-phantom.md 2.6 節）で、きっかけは射撃の回数。見る状態を自分に付ける付与が同じ定義にあり、
+ * そのきっかけが同じ回数の種類であること（同じ発で付いた件を、次のフレームの件で見る）
+ */
+function validateTimedSameFiring(
+  entries: Partial<Record<SkillSlot, SkillEntry>>,
+  trigger: EffectTrigger,
+  self: SelfStateCondition,
+  at: string,
+): void {
+  // スタックの上の端（stacksBelow）だけは書ける（「同じ発の後に〈状態〉が N 段未満なら」。plan/design-phantom.md 2.6 節）
+  if (self.stacks !== undefined || self.stacksRef !== undefined)
+    fail(at, 'sameFiring in timed is only for a presence condition or stacksBelow');
+  if (!isShotCountTrigger(trigger)) fail(at, 'sameFiring in timed needs a shot count trigger');
+  const grants = SKILL_SLOTS.flatMap((x) => entries[x]?.effects ?? []).filter(
+    (g): g is StateGrantEffect => g.kind === 'state' && g.state === self.state && g.target === 'self',
+  );
+  if (!grants.some((g) => isShotCountTrigger(g.trigger) && g.trigger.count === trigger.count))
+    fail(at, `needs a grant of "${self.state}" on self with a "${trigger.count}" trigger in the same definition`);
+}
+
+/**
+ * counterChange・dot の { applied } と、周期の since と、counterChange の { stateStacks } が見る状態は、同じ定義にその状態を
  * 自分に付ける付与が要る（自分に付いた記録と、自分の件の終わりを読む。plan/design-skill-stage19.md 2.1 節）。currentHpDown の since も同じ
  */
 function validateOwnStateTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
@@ -364,6 +435,15 @@ function validateOwnStateTriggers(entries: Partial<Record<SkillSlot, SkillEntry>
       }
       if (e.kind !== 'counterChange' && e.kind !== 'dot' && e.kind !== 'currentHpDown') return;
       const t = e.trigger;
+      // 「〈状態〉N スタックごとに」（counterChange。plan/design-guillotine-ws.md 2.2 節）は、スタックで付ける付与が要る
+      if (isStateStacksTrigger(t)) {
+        if (!hasSelfStackingGrant(entries, t.stateStacks))
+          fail(
+            `${at}.trigger`,
+            `a { stateStacks } on "${t.stateStacks}" needs a grant of the same state on self with stacks`,
+          );
+        return;
+      }
       const state = isAppliedTrigger(t) ? t.applied : isTimerTrigger(t) ? t.since?.applied : undefined;
       if (state === undefined) return;
       needGrant(state, `${at}.trigger`, e.kind);
@@ -384,8 +464,8 @@ function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEntry>>, r
   );
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
-      // 味方の全部のスタック可能バフへの▲（allies）は、ほかの枠の付与にも足すので同じ定義の付与は要らない
-      if (e.kind !== 'stackChange' || e.target === 'enemy' || e.target === 'allies') return;
+      // 味方の全部のスタック可能バフへの▲（allStackable）は、ほかの枠の付与にも足すので同じ定義の付与は要らない
+      if (e.kind !== 'stackChange' || isAllStackableChange(e) || e.target === 'enemy') return;
       if (!hasSelfStackingGrant(entries, e.state)) {
         fail(
           `${root}.${slot}.effects[${i}]`,
@@ -428,8 +508,9 @@ function validateStateContentKinds(entries: Partial<Record<SkillSlot, SkillEntry
  * 周期のクールタイムの印（cooldown）は damage・burstGaugeHit・timed にだけ書け、
  * carry・atStart・periodShorten・gaugePerHit とは組まない（plan/design-arcana-magician.md 2.2 節・plan/design-centi.md 2.3 節）。
  * burstGaugeHit は遅れ（delayFrames）が要る（1 パス目が発火のフレームの
- * 後で予約するので、発火と同じフレームのゲージには足せない）。timed は遅れを書けない（解決で { skillFired } に置き換わり、窓は発動の次の
- * フレームから）。同じスロットの印のある周期は同じ秒（1 つのスキルのクールタイム）。
+ * 後で予約するので、発火と同じフレームのゲージには足せない）。timed の遅れは発動のフレームから数える（解決で { skillFired } に置き換わり、
+ * 窓は発動の delayFrames 後から。書かなければ発動の次のフレームから。plan/design-cooldown-timed-delay.md 1 節）。同じスロットの印のある周期は
+ * 同じ秒（1 つのスキルのクールタイム）。
  * { skillFired } のきっかけと skillCooldownReduction は、相手のスロットに印のある周期が要る（plan/design-centi.md 2.1・2.2 節）
  */
 function validateCooldownTimers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
@@ -447,7 +528,6 @@ function validateCooldownTimers(entries: Partial<Record<SkillSlot, SkillEntry>>,
         fail(path, 'cooldown cannot be used with periodShorten or gaugePerHit');
       if (e.kind === 'burstGaugeHit' && e.delayFrames === undefined)
         fail(path, 'cooldown in burstGaugeHit needs delayFrames');
-      if (e.kind === 'timed' && e.delayFrames !== undefined) fail(path, 'cooldown in timed cannot have delayFrames');
       if (slot === 'burst') fail(path, 'cooldown is only allowed in skill1 and skill2');
       if (seconds !== undefined && seconds !== e.trigger.everySeconds)
         fail(path, `cooldown timers in one slot need the same everySeconds (${seconds} and ${e.trigger.everySeconds})`);
@@ -528,7 +608,10 @@ function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, r
           `${e.kind} of "${e.state}" needs a dot of the same state with firstTick halfAfterLatest in the definition`,
         );
       // 元は、同じ定義の dot の状態か、敵にスタックで付く状態の付与（海風。plan/design-mast.md 2.3 節）
-      const from = e.kind === 'dot' ? e.stacksFrom?.enemyState : undefined;
+      const from =
+        e.kind === 'dot' && e.stacksFrom !== undefined && 'enemyState' in e.stacksFrom
+          ? e.stacksFrom.enemyState
+          : undefined;
       if (from !== undefined && !dots.some((d) => d.state === from) && !hasSelfStackingGrant(entries, from, 'enemy'))
         fail(
           `${root}.${slot}.effects[${i}].stacksFrom`,
@@ -715,6 +798,7 @@ export function validateCrossChecks(entries: Partial<Record<SkillSlot, SkillEntr
     validateStackChanges,
     validateStateContentKinds,
     validateFullStackTriggers,
+    validateEnemyRemoves,
     validateAppliedTriggers,
     validateSameFiring,
     validateOwnStateTriggers,

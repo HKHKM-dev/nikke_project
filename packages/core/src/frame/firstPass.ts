@@ -35,7 +35,7 @@
 import { finishSchedule, type BurstTiming } from '../burst/controller.ts';
 import type { ResolvedDamageEffect } from '../skills/burstDamage.ts';
 import type { BurstSchedule, BurstScheduleModel } from '../burst/schedule.ts';
-import type { BuffTotals, HitRateN } from '../skills/buffs.ts';
+import type { BuffTotals, HitRateN, RangeUp } from '../skills/buffs.ts';
 import type { ResolvedInstantEffect } from '../skills/resolve.ts';
 import { createHolderLists, type HolderHistory, type LeadShots } from '../skills/holders.ts';
 import { resolvePassiveStates, type FrameRange, type TimelineSlot } from '../skills/timeline.ts';
@@ -73,6 +73,8 @@ export type FirstPassOptions = {
    * （TeamInput.manualBursts）。動的サイクルだけ。省略はオートバースト
    */
   manualBursts?: readonly number[];
+  /** 同 9 節: manualBursts の各チェーンで III を撃った枠（0 始まり。TeamInput.manualStep3Slots）。省略はオートと同じ選び方 */
+  manualStep3Slots?: readonly (number | null)[];
   /** バーストを使わない枠（0 始まり。TeamInput.noBurstSlots）。動的サイクルだけ。省略は全員使う */
   noBurstSlots?: readonly number[];
   /** 敵を狙えない窓（昇順・重なりなし。frame/events.ts の untargetableRanges）。省略・空なら今までと同じ */
@@ -119,7 +121,7 @@ export type FirstPassOptions = {
    * 条件 inEffectiveRange の判定（skills/holders.ts の
    * HolderListsOptions.effectiveRangeAt にそのまま渡す。frame/landing.ts の inEffectiveRangeAt。plan/design-agent-bunny.md 2.2 節）
    */
-  effectiveRangeAt?: (slotIndex: number, frame: number, minRange: number) => boolean;
+  effectiveRangeAt?: (slotIndex: number, frame: number, range: RangeUp) => boolean;
   /**
    * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 枠 slotIndex がフレーム frame に撃った 1 発の値（2 パス目と同じ
    * 関数。progress は部分チャージの発の進み）と、そのフレームの最終攻撃力。buffs は、そのフレームに効いている件を常時の値に足した合計。

@@ -1,8 +1,8 @@
-# 比べる設定の拡張: 遅れの表の上書き・手で撃ったバースト・予測の複数の編成・表示の時刻の指標
+# 比べる設定の拡張: 遅れの表の上書き・手で撃ったバースト・予測の複数の編成・表示の時刻の指標・III の枠
 
 - 関連: [backlog.md](backlog.md) 5 節の 5-11、[design-investigation-review.md](design-investigation-review.md) 2.2 節・8 節、[design-burst-landing.md](design-burst-landing.md)（遅れの表）、[design-burst-hit-origin.md](design-burst-hit-origin.md) 8 節（発動の印と III の起点）、[design-records-automation.md](design-records-automation.md) 3.2 節（予測ファイル）、[design-minimal-relevance.md](design-minimal-relevance.md) 11.7 節（比べる指標の無い観測値）
 - 作成日: 2026-10-17
-- 状態: **実装済み（2026-10-17）**（承認は 2026-10-17。7 節の論点はすべて推奨どおり。実施の記録は 8 節）
+- 状態: **実装済み**（2〜5 節は 8 節、9 節は 9.3 節）
 
 ## 1. 何が困っているか
 
@@ -122,3 +122,21 @@ manualBursts?: string;
 - `manualBursts`: `0263-01`・`0293-01` を use: input にし、`0263-02`〜`0263-07`・`0293-02`〜`0293-07` の比べる設定に足した。`frame` は、オートの発動の時刻に合わせて選んでいた値（4700・7300 など）を、各観測値の注記にある録画のゲーム内のフレームの範囲の中に直した。比べた値と判定は変わらない（`0263-02`・`0263-03`・`0293-02`・`0293-03` の許容外は前と同じ差で、手で撃った時刻とは別の話）。
 - 比べる設定を変えたので、予測ファイル V-0230・V-0251 の指標が観測値と結び付かなくなった（自動の結び付けは metric・args・setup が同じもの）。予測は出し直さず、手書きの部分の `observations` に観測値の ID を書いて、前と同じ結び付けに戻した。
 - 遅れの表の上書きと予測の複数の編成は、既存の観測値・予測ファイルでは使っていない（単体テストだけ）。
+
+## 9. 手で撃ったチェーンの III の枠（`CompareSetup.manualStep3Slots`）
+
+### 9.1 何が困っているか
+
+- 3.2 節の決定（7 節の論点 4 の (a)）では、手で撃つのはチェーンの始まり（I）の時刻だけで、III はオートと同じく CT の明けた左の枠から選ぶ。
+- V-0849 は、III が 3 体（ソルジャーE.G.・クロウ・メイデン：アイスローズ）の編成で、1〜8 回目をソルジャーE.G. とクロウが交互に撃ち、9 回目をメイデンが撃った（MP を 9 まで溜めるため）。I の間隔はココアの CT 20 秒で決まり、2 回前に撃った III の CT 40 秒が明けているので、モデルは 9 回目もソルジャーE.G. を選ぶ。メイデンの連続攻撃をモデルと比べられない。
+
+### 9.2 決定（2026-11-21。オーナーの判断）
+
+- 比べる設定に `manualStep3Slots`（観測値の ID）を足す。値はチェーンごとの III の枠（1 始まり）の並びで、0 はモデルに任せる（左側優先）。長さは `manualBursts` 以下で、足りないチェーンもモデルに任せる。`manualBursts` があるときだけ書ける。値を観測値に置くのは `manualBursts` と同じ（3.1 節）。
+- `TeamInput.manualStep3Slots`（0 始まり・null はモデルに任せる）を足し、動的サイクルの制御（`burst/controller.ts` の `pickCandidate`）は、枠の決まったチェーンの III ではその枠だけを候補にする。CT が明けていなければ待ち、その間にチェーンが時間切れになれば切れる（ほかの枠に替えない。録画でその枠が撃ったので）。
+- 理由: 時刻だけでは III の枠が決まらない編成が、録画にある。I・II は 1 体ずつなので、III だけで足りる。
+- 採らない案: 7 節の論点 4 の (b)（段ごとに時刻を書く）。III の時刻は II の 28f 後と CT の明けで決まり、合っている（C-0515）ので、要るのは枠だけ。
+
+### 9.3 経過
+
+- 2026-11-21: 9.2 節を実装した（`burst/controller.ts`・`frame/firstPass.ts`・`frame/firstPass/burst.ts`・`frame/plan.ts`・`team.ts`・`records/observations/` の `setup.ts`・`validate.ts`・`teamInput.ts`・`render.ts`）。枠を書かないときのモデルの値は変わらない。テストは `records/__tests__/compareSetupExtension.test.ts`。V-0849 の録画 1346・1347 で使う。

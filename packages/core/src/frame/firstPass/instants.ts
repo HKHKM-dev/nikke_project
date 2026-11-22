@@ -6,6 +6,7 @@ import type { BurstScheduleModel } from '../../burst/schedule.ts';
 import {
   isResolvedShotCount,
   isResolvedApplied,
+  isResolvedCounterUp,
   isResolvedFullStack,
   isResolvedTimer,
   isResolvedWeaponChangeEnd,
@@ -31,6 +32,7 @@ import type { HolderLists } from '../../skills/holders.ts';
 import type { ShooterStates } from './shooters.ts';
 import type { BurstScheduleLayer, BurstStep } from './burst.ts';
 import { WEAPON_CHANGE_END_DELAY } from './shotLogs.ts';
+import { lastBulletShotsOf } from '../../weapons.ts';
 
 type InstantSource = {
   sourceSlotIndex: number;
@@ -60,7 +62,7 @@ export function createInstantSources({
   frames: number;
   scheduleModel: BurstScheduleModel | null;
   /** 件の一覧（出どころの後に作るので、発火の時に読む） */
-  listsOf: () => Pick<HolderLists, 'appliedAt' | 'endedAt' | 'sinceFires' | 'stateWindowFires'>;
+  listsOf: () => Pick<HolderLists, 'appliedAt' | 'counterUpFiresAt' | 'endedAt' | 'sinceFires' | 'stateWindowFires'>;
 }) {
   const instant: InstantSource[] = [];
   /** 発火の文脈 context のとき、効果 e が掛かる枠（burstUsers は発火ごとに変わる） */
@@ -80,6 +82,9 @@ export function createInstantSources({
     // 「〈状態〉が終了した時」（ammoDecrease）は件の一覧の endedAt で決める（plan/design-grave.md 2.1 節）
     const trigger = effect.trigger;
     if (isEndedTrigger(trigger)) return (ev) => listsOf().endedAt(sourceSlotIndex, trigger.ended, ev.frame);
+    // 「〈カウンタ〉が上がった時」（弾丸チャージ・回復）は件の一覧のカウンタの記録で決める（plan/design-guillotine-ws.md 2.2 節）
+    if (isResolvedCounterUp(trigger))
+      return (ev) => listsOf().counterUpFiresAt(sourceSlotIndex, trigger.counterUp, ev.frame);
     // 自分の状態の窓で数える回数（弾丸チャージ）は、件の一覧の状態の付与と同じ数え方で決める（plan/design-fortune-mate.md 2.2 節）
     if (isResolvedShotCount(trigger) && isStateCountWindow(trigger.during)) {
       const window = trigger.during.state;
@@ -336,6 +341,19 @@ export function createInstants({
           fired.lastShot = false;
           const log = logs[target]!;
           if (log.lastShotFrames![log.lastShotFrames!.length - 1] === f) log.lastShotFrames!.pop();
+          if (fired.lastBullet === true) {
+            fired.lastBullet = false;
+            if (log.lastBulletFrames!.at(-1) === f) log.lastBulletFrames!.pop();
+          }
+        } else if (
+          // 二丁持ちの最後の弾丸の前の発（残弾 1）と同じ発の弾丸チャージも、同じくその発を最後の弾丸に数えない
+          fired?.lastBullet === true &&
+          !fired.lastShot &&
+          state.ammo >= lastBulletShotsOf(slot.character.weaponType, slot.character.shot)
+        ) {
+          fired.lastBullet = false;
+          const log = logs[target]!;
+          if (log.lastBulletFrames!.at(-1) === f) log.lastBulletFrames!.pop();
         }
         instants.push({
           frame: f,

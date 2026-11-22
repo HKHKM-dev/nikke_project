@@ -1,0 +1,46 @@
+{
+  "id": "1316",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1316_ludmilla+leona+anis-ss_auto.mp4",
+  "original": "2026-11-21_17-46-22.mp4",
+  "durationSec": 200.3,
+  "frames": 12017,
+  "fps": 60,
+  "sizeMB": 242.8,
+  "sha256": "c76111ecac30",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 190,
+      "name": "ルドミラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 382,
+      "name": "レオナ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 15,
+      "name": "アニス：スパークリングサマー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0826。ルドミラ + レオナ + アニス：スパークリングサマー（操作）・オートバースト ON",
+  "backup": {
+    "at": "2026-11-21T17:54+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

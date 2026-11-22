@@ -77,6 +77,12 @@ export type ShotParams = {
   /** コアヒット倍率（通常 2.0） */
   coreDamageRate: number;
   inputType: ShotInputType;
+  /**
+   * 押下チャージ型（DOWN_Charge）でも、敵のジャンプの始まりにチャージの途中なら、入力が UP のチャージ武器と同じく部分チャージで
+   * 撃つ（frame/shooter.ts の partialChargeProgress）。チャージしない基礎の武器から替えた変更後の武器（skills/resolve.ts の
+   * chargeInput）だけが持つ（V-0840。plan/design-weapon-change-jump-partial.md）
+   */
+  jumpPartialCharge?: boolean;
   /** 弾の種類（CDN の fire_type）。Instant（即着弾。RL 以外の全武器）・ProjectileDirect（直進弾）・HomingProjectile（誘導弾）・ProjectileCurve（曲射）・InstantBox（紅蓮：神殺の AR。中身は未確認。構えとコア命中率は V-0675） */
   fireType: string;
   penetration: number;

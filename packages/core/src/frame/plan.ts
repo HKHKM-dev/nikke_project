@@ -31,6 +31,7 @@ import { cycleFires, cycleShotFrames, resolveCycles } from '../skills/cycles.ts'
 import {
   MAX_SKILL_LEVELS,
   isResolvedApplied,
+  isResolvedFullStack,
   isResolvedTimer,
   isResolvedEventCount,
   isResolvedShotCount,
@@ -71,9 +72,11 @@ import {
   applyResolvedEffect,
   fixedAttackBaseOf,
   hitRateNOf,
+  rangeUpOf,
   type AttackRounding,
   type BuffTotals,
   type HitRateN,
+  type RangeUp,
 } from '../skills/buffs.ts';
 import type { CounterId } from '../skills/counters.ts';
 import { stateMatches, statesMatching, type NamedStateId } from '../skills/states.ts';
@@ -92,6 +95,8 @@ import {
   selfHpHolds,
   splitsPerCount,
   staticStatesOf,
+  enemyStateHolds,
+  enemyStateOf,
   type EffectCondition,
   type SelfStateCondition,
   type SkillDefinition,
@@ -195,7 +200,7 @@ export function slotTriggerDamage(
     // 変更の区間は、的の表の変更後の武器の行のコア命中率。適正最小射程距離▲ の区間は距離ボーナスも出し直す
     weaponChangeParts(
       enemy,
-      landingPartsWith(landing, slot, index, segmentLanding, hitRateNOf(buffs), buffs.minEffectiveRange),
+      landingPartsWith(landing, slot, index, segmentLanding, hitRateNOf(buffs), rangeUpOf(buffs)),
       buffs.weapon?.targetRowKey,
     ),
     fullBurst,
@@ -281,6 +286,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     burstModel: input.burstModel ?? 'dynamic',
     controlledSlot: input.controlledSlot ?? null,
     ...(input.manualBursts === undefined ? {} : { manualBursts: input.manualBursts }),
+    ...(input.manualStep3Slots === undefined ? {} : { manualStep3Slots: input.manualStep3Slots }),
     ...(input.noBurstSlots === undefined ? {} : { noBurstSlots: input.noBurstSlots }),
     untargetable,
     ...(input.holdFire === undefined ? {} : { holdFire: input.holdFire }),
@@ -300,8 +306,8 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
             hitRateSpanWith(landing, slots[slotIndex]!, slotIndex, span, timed),
         }),
     // 条件「適正射程距離内なら」（着地点の計画が無ければ手入力の距離ボーナス。plan/design-agent-bunny.md 2.2 節）
-    effectiveRangeAt: (slotIndex: number, frame: number, minRange: number) =>
-      inEffectiveRangeAt(landing, slots[slotIndex]!, slotIndex, frame, minRange),
+    effectiveRangeAt: (slotIndex: number, frame: number, range: RangeUp) =>
+      inEffectiveRangeAt(landing, slots[slotIndex]!, slotIndex, frame, range),
     // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 蓄積爆破の発の値は、2 パス目の区間と同じ関数で数える
     shotValueAt: (slotIndex, frame, buffs, fullBurst, progress) => {
       const slot = slots[slotIndex]!;
@@ -440,7 +446,7 @@ export function planSkillHits(input: SkillHitsInput): SkillHitEvent[] {
 /** planSkillHits が読む 1 パス目の履歴 */
 type SkillHitsHistory = Pick<
   HolderHistory,
-  'tracks' | 'amplified' | 'slots' | 'applications' | 'counters' | 'hpRatios'
+  'tracks' | 'amplified' | 'slots' | 'applications' | 'counters' | 'hpRatios' | 'fullStacks'
 >;
 
 /**
@@ -770,7 +776,12 @@ function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
               : // 自分の状態の間だけ数える回数は、1 パス目の履歴の件で窓を見る（plan/design-elegg-bs.md 2.2 節）
                 isResolvedShotCount(t) && isStateCountWindow(t.during)
                 ? stateWindowTriggerFrames(t, t.during.state, slotIndex, schedule, frames, shots, ownStartOfHeld)
-                : triggerFrames(t, schedule, slotIndex, frames, shots, undefined, everyAtFor(effect.source.skill));
+                : // フルスタックの消費は 1 パス目の記録のフレーム（plan/design-phantom.md 2.2 節）
+                  isResolvedFullStack(t)
+                  ? history.fullStacks
+                      .filter((x) => x.slotIndex === slotIndex && x.state === t.fullStack)
+                      .map((x) => x.frame)
+                  : triggerFrames(t, schedule, slotIndex, frames, shots, undefined, everyAtFor(effect.source.skill));
     for (const frame of fires) {
       if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, self)) continue;
       if (!usedBurstHolds(effect.condition, t, frame, schedule, slotIndex)) continue;
@@ -868,9 +879,13 @@ function dotHits(ctx: SkillHitsContext, s: SlotReaders): void {
     if (isResolvedApplied(t)) return appliedFrames(history, t.applied, slotIndex);
     if (!isCounterFullTrigger(t)) {
       const at = triggerFrames(t, schedule, slotIndex, frames, shots);
-      return effect.condition === undefined
-        ? at
-        : at.filter((f) => damageConditionHolds(effect.condition, f, schedule, enemySpans, self));
+      const held =
+        effect.condition === undefined
+          ? at
+          : at.filter((f) => damageConditionHolds(effect.condition, f, schedule, enemySpans, self));
+      // バースト使用時の付く時刻の遅れ（plan/design-guillotine-ws.md 8.2 節）。条件は発火のフレーム、tick の値は tick のフレームで読む
+      const delay = effect.dot!.applyDelayFrames ?? 0;
+      return delay === 0 ? held : held.map((f) => f + delay).filter((f) => f < frames);
     }
     const per = effect.perCount;
     if (per === undefined || !('counter' in per) || effect.perCountIntervalFrames === undefined)
@@ -912,18 +927,25 @@ function dotHits(ctx: SkillHitsContext, s: SlotReaders): void {
     }
     return { dot, fires, cancels };
   });
+  // 写す数の読み口: 自分のカウンタの値か、敵に付いた状態のスタックの数（元は同じ定義の dot か、敵にスタックで付く状態の付与。
+  // skills/parse/crossChecks.ts の validateDotStateRefs）
+  const stacksSourceAt = (
+    from: NonNullable<NonNullable<ResolvedDamageEffect['dot']>['stacksFrom']>,
+  ): ((frame: number) => number) => {
+    if ('counter' in from) return (frame) => self.counterAt(from.counter, frame);
+    const state = from.enemyState;
+    const source = dotGroups.find((g) => g.dot.state === state);
+    if (source === undefined) return (frame) => enemyGrantStacksAt(slotIndex, state, frame);
+    const sourceFires = source.fires.map((x) => x.f);
+    return (frame) => dotStacksAt(sourceFires, source.cancels, source.dot.maxStacks, frame);
+  };
   for (const { dot, fires, cancels } of dotGroups) {
     const { maxStacks } = dot;
-    // スタックコピー。付けた時に元の持続ダメージのスタックの数を写し、その数の tick を出す（0 なら付かない）
+    // スタックコピー。付けた時に元の持続ダメージのスタックの数を写し、その数の tick を出す（0 なら付かない）。
+    // 自分のカウンタの値を数にする形（× 〈カウンタ〉数分。plan/design-guillotine-ws.md 2.4 節）も同じ道筋
     const from = dot.stacksFrom;
     if (from !== undefined) {
-      // 元は同じ定義の dot か、敵にスタックで付く状態の付与（skills/parse/crossChecks.ts の validateDotStateRefs）
-      const source = dotGroups.find((g) => g.dot.state === from);
-      const sourceFires = source?.fires.map((x) => x.f) ?? [];
-      const stacksAt = (frame: number): number =>
-        source !== undefined
-          ? dotStacksAt(sourceFires, source.cancels, source.dot.maxStacks, frame)
-          : enemyGrantStacksAt(slotIndex, from, frame);
+      const stacksAt = stacksSourceAt(from);
       for (const { f, effect } of fires) {
         const copied = stacksAt(f);
         if (copied === 0) continue;
@@ -1022,7 +1044,7 @@ function damageConditionHolds(
     if (below !== undefined && value >= below) return false;
   }
   if (condition.inFullBurst === true && (schedule === null || !isInFullBurst(schedule, frame))) return false;
-  if (condition.enemyState !== undefined && !enemyStateSpansHold(enemySpans, condition.enemyState, frame)) return false;
+  if (!enemyStateHolds(enemyStateOf(condition), frame, (s, f) => enemyStateSpansHold(enemySpans, s, f))) return false;
   return true;
 }
 

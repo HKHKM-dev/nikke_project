@@ -21,11 +21,13 @@ import {
 import { gameSecondsToFrames } from '../time.ts';
 import type { CharacterData, LocalizedText } from '../types.ts';
 import { applyAttackDamageBuffs, applyCritBuffs, type BuffTotals } from './buffs.ts';
+import type { CounterId } from './counters.ts';
 import type { NamedStateId } from './states.ts';
 import {
   isAppliedTrigger,
   isShotCountTrigger,
   isTimerTrigger,
+  isLastShotCount,
   SKILL_SLOTS,
   splitsPerCount,
   type DamageEffect,
@@ -219,9 +221,10 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
     applyDelayFrames?: number;
     /**
      * tick のスタックの数を写す、敵に付いた別の dot の state（プリング・チェーン）か、
-     * 敵にスタックで付く状態の付与の state（海風。plan/design-mast.md 2.3 節）
+     * 敵にスタックで付く状態の付与の state（海風。plan/design-mast.md 2.3 節）か、自分のカウンタ（× 〈カウンタ〉数分。
+     * plan/design-guillotine-ws.md 2.4 節）
      */
-    stacksFrom?: NamedStateId;
+    stacksFrom?: { enemyState: NamedStateId } | { counter: CounterId };
     /** stacksFrom を tick ごとに写し直す（skills/types.ts の DotEffect.copyEachTick） */
     copyEachTick?: true;
     /**
@@ -362,6 +365,9 @@ function foldsIntoShot(effect: DamageEffect, trigger: ResolvedTrigger, def: Skil
       trigger.count === 'fullChargeShot' &&
       firesUnchargedShots(def)
     ) &&
+    // 変更後の武器の発ごとの倍率ダメージは基礎の武器の発に乗らないので、畳み込まず変更後の武器の発にだけ 1 件ずつ出す
+    // （plan/design-neon-bo.md 2.4 節）
+    !(typeof trigger === 'object' && 'count' in trigger && trigger.count === 'weaponChangeShot') &&
     effect.damageType !== 'true' &&
     effect.condition === undefined &&
     effect.delayFrames === undefined &&
@@ -678,8 +684,9 @@ export function resolveDotEffects(
         throw new RangeError(`skill ${skill.id}: dot max stacks must be a positive integer, got ${maxStacks}`);
       }
       // tick のゲージは 1 パス目で発火のたびに後の tick を予約するので、
-      // 付け直しで延びた tick が付け直しより後に出る形（afterInterval で、維持が間隔の整数倍）だけを許す（plan/design-raven-s1.md 8 節の 2）
-      if (gaugeOnTick) {
+      // 付け直しで延びた tick が付け直しより後に出る形（afterInterval で、維持が間隔の整数倍）だけを許す（plan/design-raven-s1.md 8 節の 2）。
+      // 周期のきっかけは発火のフレームで刻みを決めるので見ない（plan/design-rosanna-co.md 7 節）
+      if (gaugeOnTick && !isTimerTrigger(effect.trigger)) {
         const ratio = durationSeconds / effect.intervalSeconds;
         if (Math.abs(ratio - Math.round(ratio)) > 1e-9) {
           throw new RangeError(
@@ -711,7 +718,7 @@ export function resolveDotEffects(
             : {}),
           ...(!auto && effect.hitOnApply === true ? { hitOnApply: true as const } : {}),
           ...(!auto && effect.delayFrames !== undefined ? { applyDelayFrames: effect.delayFrames } : {}),
-          ...(!auto && effect.stacksFrom !== undefined ? { stacksFrom: effect.stacksFrom.enemyState } : {}),
+          ...(!auto && effect.stacksFrom !== undefined ? { stacksFrom: effect.stacksFrom } : {}),
           ...(!auto && effect.copyEachTick === true ? { copyEachTick: true as const } : {}),
           ...(typeof until === 'object' ? { untilStateEnd: until.stateEnd } : {}),
         },
@@ -743,7 +750,9 @@ export function isPerShotTrigger(trigger: ResolvedTrigger): boolean {
     typeof trigger === 'object' &&
     'every' in trigger &&
     trigger.every === 1 &&
-    trigger.count !== 'lastShot' &&
+    !isLastShotCount(trigger.count) &&
+    // 1 発で何回も発火しうる（plan/design-k.md 2.2 節）
+    trigger.count !== 'critPelletHit' &&
     trigger.during === undefined &&
     trigger.firesDuring === undefined
   );

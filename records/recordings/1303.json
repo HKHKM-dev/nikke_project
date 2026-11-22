@@ -1,0 +1,46 @@
+{
+  "id": "1303",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1303_vesti-2.mp4",
+  "original": "2026-11-21_17-35-19.mp4",
+  "durationSec": 199.9,
+  "frames": 11994,
+  "fps": 60,
+  "sizeMB": 242.3,
+  "sha256": "5c261b165325",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 91,
+      "name": "ベスティー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Water"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0825 の撮影の依頼の 2 行目（手動のバースト）。オートバーストは OFF で、ベスティーの 2 回目と 3 回目の III の 00.00 の間は 3,127f（1303-03）。編成は戦闘履歴のパネルで確かめた",
+  "backup": {
+    "at": "2026-11-21T17:44+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

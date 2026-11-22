@@ -11,6 +11,9 @@ export const V_ID = new RegExp(`^V-${ID_DIGITS}$`);
 /** 結論の ID（C-NNNN） */
 export const C_ID = new RegExp(`^C-${ID_DIGITS}$`);
 
+/** ID が重なりうる記録（検証記録・結論・録画・課題の番号）のフォルダ。pr:prep と自動の衝突の直しが、ブランチと main の重なりを見る */
+export const ID_RECORD_DIRS = ['records/verifications', 'records/claims', 'records/recordings', 'records/backlog'];
+
 /** 文の中に検証記録の ID があるか（前後は見ない） */
 export const V_ID_IN_TEXT = new RegExp(`V-${ID_DIGITS}`);
 

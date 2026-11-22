@@ -278,6 +278,10 @@ export type NormalGridSpec = {
   scales: number[];
   /** 版 6: 会心なし（false）・あり（true）の片方だけ。省略は両方 */
   crit?: boolean;
+  /** 版 8: 距離ボーナスなし（false）・あり（true）の片方だけ。省略は両方 */
+  distance?: boolean;
+  /** 版 9: コアなし（false）・あり（true）の片方だけ。省略は両方 */
+  core?: boolean;
 };
 export type HitGridSpec = {
   kind: 'skill' | 'dot' | 'shot';
@@ -300,7 +304,7 @@ export type GridSpec = NormalGridSpec | HitGridSpec | SumGridSpec;
 
 const GRID_FORMS =
   '<名前>=<枠>@<f>[+<f>...][/x<ペレット数>][/*<倍率>]・<名前>=<枠>@skill@<f>[:<スキル>][/h<ヒット数>][/p<倍率 %>]・<名前>=<枠>@shot@<f>・' +
-  '<名前>=<枠>@dot@<f>[:<スキル>][/s<スタック数>]・<名前>=<格子>+<格子>[+<格子>]。どの形にも /c0（会心なしだけ）・/c1（会心ありだけ）';
+  '<名前>=<枠>@dot@<f>[:<スキル>][/s<スタック数>]・<名前>=<格子>+<格子>[+<格子>]。どの形にも /c0（会心なしだけ）・/c1（会心ありだけ）。通常攻撃の格子に /d0（距離ボーナスなしだけ）・/d1（ありだけ）・/k0（コアなしだけ）・/k1（コアだけ）';
 
 export function parseGrids(text: string): GridSpec[] {
   const specs = text
@@ -308,7 +312,7 @@ export function parseGrids(text: string): GridSpec[] {
     .map((t) => t.trim())
     .filter((t) => t !== '')
     .map((t): GridSpec => {
-      const [, rawName, body, tail] = /^([^=]+)=([^/]+)((?:\/[xsh*pc][\d.,]+)*)$/.exec(t) ?? [];
+      const [, rawName, body, tail] = /^([^=]+)=([^/]+)((?:\/[xsh*pcdk][\d.,]+)*)$/.exec(t) ?? [];
       if (rawName === undefined || body === undefined) throw new Error(`--opt grid の形が違う（${GRID_FORMS}）: ${t}`);
       const mods = tail!.split('/').filter((x) => x !== '');
       const take = (c: string) => mods.filter((x) => x.startsWith(c)).map((x) => x.slice(1));
@@ -320,10 +324,19 @@ export function parseGrids(text: string): GridSpec[] {
       if (moreHits.length > 0) throw new Error(`--opt grid のヒット数が 2 つある: ${t}`);
       const [percentText, ...morePercents] = take('p');
       if (morePercents.length > 0) throw new Error(`--opt grid の倍率（/p）が 2 つある: ${t}`);
-      const [critText, ...moreCrits] = take('c');
-      if (moreCrits.length > 0 || (critText !== undefined && critText !== '0' && critText !== '1'))
-        throw new Error(`--opt grid の /c は /c0 か /c1 を 1 つ: ${t}`);
-      const crit = critText === undefined ? {} : { crit: critText === '1' };
+      /** 片方だけに絞る 0 / 1 の指定（/c・/d・/k）。無ければ undefined */
+      const flagOf = (c: string): boolean | undefined => {
+        const [text, ...more] = take(c);
+        if (more.length > 0 || (text !== undefined && text !== '0' && text !== '1'))
+          throw new Error(`--opt grid の /${c} は /${c}0 か /${c}1 を 1 つ: ${t}`);
+        return text === undefined ? undefined : text === '1';
+      };
+      const critFlag = flagOf('c');
+      const distanceFlag = flagOf('d');
+      const crit = critFlag === undefined ? {} : { crit: critFlag };
+      const distance = distanceFlag === undefined ? {} : { distance: distanceFlag };
+      const coreFlag = flagOf('k');
+      const core = coreFlag === undefined ? {} : { core: coreFlag };
       const only = (ok: boolean, what: string) => {
         if (!ok) throw new Error(`--opt grid の ${what}: ${t}`);
       };
@@ -334,7 +347,7 @@ export function parseGrids(text: string): GridSpec[] {
       only(stacks.length === 0 || hit?.[2] === 'dot', '/s は dot の格子だけ');
       only(hitCount === undefined || hit?.[2] === 'skill', '/h は倍率ダメージの格子だけ');
       only(percentText === undefined || hit?.[2] === 'skill', '/p は倍率ダメージの格子だけ');
-      only(critText === undefined || sum === null, '/c は和の格子には書かない');
+      only(critFlag === undefined || sum === null, '/c は和の格子には書かない');
       if (normal !== null) {
         const frames = normal[2]!.split('+').map(Number);
         return {
@@ -345,9 +358,13 @@ export function parseGrids(text: string): GridSpec[] {
           pellets: Number(pellets ?? 1),
           scales,
           ...crit,
+          ...distance,
+          ...core,
         };
       }
       only(pellets === undefined, '/x は通常攻撃の格子だけ');
+      only(distanceFlag === undefined, '/d は通常攻撃の格子だけ');
+      only(coreFlag === undefined, '/k は通常攻撃の格子だけ');
       if (hit !== null) {
         const kind = hit[2] as 'skill' | 'dot' | 'shot';
         only(kind !== 'shot' || hit[4] === undefined, 'shot の格子にスキルは書かない');
@@ -426,7 +443,12 @@ export function gridsOf(specs: readonly GridSpec[], m: Pick<Model, 'cells' | 'hi
     if (spec.kind === 'normal') {
       const cells = spec.frames
         .flatMap((f) => m.cells(spec.slot, f))
-        .filter((c) => spec.crit === undefined || c.crit === spec.crit);
+        .filter(
+          (c) =>
+            (spec.crit === undefined || c.crit === spec.crit) &&
+            (spec.distance === undefined || c.distance === spec.distance) &&
+            (spec.core === undefined || c.core === spec.core),
+        );
       make(spec, spec.pellets === 1 ? distinct(cells.map((c) => c.value)) : pelletSums(cells, spec.pellets));
     } else if (spec.kind !== 'sum') make(spec, distinct(m.hits(spec)));
   }
@@ -579,7 +601,7 @@ function edgeObservations(
 
 export const buffEdge: Recipe = {
   name: 'buff-edge',
-  version: 7,
+  version: 9,
   describe:
     '味方の 1 発の HUD の増分をモデルの 1 ヒットの格子に当てる。事象（II の発動など）の前後で、▲の無い最後の発と▲の乗った最初の発で付き始め（か切れ目）を挟んだ幅（事象ごとと全回の共通部分。timing）。' +
     '--opt grid で何人かの格子に当て、増分ごとに合う格子を出す（--opt pair で境を挟む。--opt count で区間ごとに数える）',

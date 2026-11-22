@@ -1,0 +1,262 @@
+[
+  {
+    "id": "1286-01",
+    "recording": "1286",
+    "kind": "timing",
+    "use": "record",
+    "value": [1434, 2734, 4024, 5370, 6708, 8004, 9227, 10535],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・0・25・0・25・5f"
+    },
+    "source": "V-0817",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1286-02",
+    "recording": "1286",
+    "kind": "timing",
+    "use": "record",
+    "value": [1463, 2864, 4053, 5399, 6737, 8033, 9256, 10564],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・25・0・25・0・25・6f"
+    },
+    "source": "V-0817",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1286-03",
+    "recording": "1286",
+    "kind": "timing",
+    "use": "record",
+    "value": [1493, 4082, 6766, 9285],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0817",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1286-04",
+    "recording": "1286",
+    "kind": "timing",
+    "use": "record",
+    "value": [2101, 4691, 7375, 9894],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0817",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1286-05",
+    "recording": "1286",
+    "kind": "interval",
+    "use": "record",
+    "value": [608, 609, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0817",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1286-06",
+    "recording": "1286",
+    "kind": "total",
+    "use": "record",
+    "value": 131779806,
+    "description": "ココア・ソルジャーF.A.・ネオン：ブルーオーシャン の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11507。増分は 4706 個"
+    },
+    "source": "V-0817",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1286-07",
+    "recording": "1286",
+    "kind": "count",
+    "use": "record",
+    "value": 260,
+    "unit": "トリガー",
+    "description": "ココア・ソルジャーF.A.・ネオン：ブルーオーシャン のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 4706 個。前の増分から 30f 未満の増分（4639 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 39f）から発の数を決めた（2 発になった組 31 個）"
+    },
+    "source": "V-0817",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1286-08",
+    "recording": "1286",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 13345,
+    "description": "ネオン：ブルーオーシャンの通常攻撃の 1 ヒット（コア・会心なし・距離ボーナスなし）。水冷の敵（有利コードなし）で、1 回目の段階 3 への突入の前",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "バースト 3 段階への最初の突入より前の値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0817",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1286-09",
+    "recording": "1286",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 13345,
+    "description": "同じ 1 ヒットの、3 回目以降の突入の後（水冷の敵には S2 の有利コードの攻撃ダメージ▲が効かない）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "3 回目以降の突入の替わり目から 588f の中も、▲の無い値のまま"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 4600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0817",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1286-10",
+    "recording": "1286",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 98832,
+    "description": "バーストの変更後の武器の 1 発（最終攻撃力の 33%・コア・会心なし・フルバースト補正）。水冷の敵では追加ダメージが出ず、この値だけ",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "2 回目のバーストの窓の中"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3400,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0817",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1286-11",
+    "recording": "1286",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [57, 45, 86, 62],
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "description": "ネオン：ブルーオーシャンのバーストの変更後の武器の最初の発（HUD の増分）の、III のタイマーの 00.00 からの動画のフレーム（1〜4 回目。入りの止まり 22f を含む）。的の距離帯は 1 回目が中近・2 回目が近・3 回目が遠・4 回目が中遠（4 回目は途中で的がジャンプする）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 は f1493・4082・6766・9285。発は 1 発の値（33% のコアか胴体・会心・距離ボーナスの格子）で拾った"
+    },
+    "source": "V-0817",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1286-12",
+    "recording": "1286",
+    "kind": "count",
+    "use": "record",
+    "unit": "発",
+    "value": [11, 11, 11, 9],
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "description": "バーストごとの変更後の武器の発の数（HUD の増分で拾えた数。1〜4 回目。4 回目は的のジャンプで撃てない間がある）。発と発の間は 38〜41f（毎分 90 発）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "HUD の読めなかったフレーム・ほかの枠の発と重なった増分の発は数えていない"
+    },
+    "source": "V-0817",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1286-13",
+    "recording": "1286",
+    "kind": "count",
+    "use": "record",
+    "unit": "発",
+    "value": [11, 11, 6, 10, 0, 11, 3, 4, 4, 5],
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "description": "変更後の武器の発のうちコアの値の数と、拾えた発の数の組（近: 2 回目のバースト、中近: 1 回目、遠: 3 回目、中遠: 4 回目のジャンプの前、近（着地の後）: 4 回目のジャンプの後）。遠と中遠の胴体の発には距離ボーナスが乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00",
+      "note": "並びは [近のコア, 近の発, 中近のコア, 中近の発, 遠のコア, 遠の発, 中遠のコア, 中遠の発, 近（着地の後）のコア, 近（着地の後）の発]"
+    },
+    "source": "V-0817",
+    "readAt": "2026-11-21"
+  }
+]

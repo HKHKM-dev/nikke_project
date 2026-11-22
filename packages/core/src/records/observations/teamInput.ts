@@ -24,6 +24,7 @@ import {
   jumpWindowsOf,
   landingFixed,
   manualBurstsOf,
+  manualStep3SlotsOf,
   withAddedEffects,
 } from './setup.ts';
 import type { ObservationValue } from './types.ts';
@@ -230,6 +231,14 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     if (manualBursts === undefined)
       throw new Error(`manualBursts の観測値 ${setup.manualBursts} が無いか、昇順のフレームの並びでない`);
   }
+  let manualStep3Slots: (number | null)[] | undefined;
+  if (setup.manualStep3Slots !== undefined) {
+    if (manualBursts === undefined) throw new Error('manualStep3Slots は manualBursts があるときだけ書く');
+    const slots = manualStep3SlotsOf(data.observationValues?.get(setup.manualStep3Slots));
+    if (slots === undefined)
+      throw new Error(`manualStep3Slots の観測値 ${setup.manualStep3Slots} が無いか、0 以上の整数の並びでない`);
+    manualStep3Slots = slots.map((s) => (s === 0 ? null : s - 1));
+  }
   const holdFire = (setup.holdFire ?? []).map((h) => {
     const ranges = holdFireRangesOf(data.observationValues?.get(h.frames));
     if (ranges === undefined)
@@ -282,6 +291,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
       : { sustainedDamagePlacement: setup.sustainedDamagePlacement }),
     ...(setup.attackRounding === undefined ? {} : { attackRounding: setup.attackRounding }),
     ...(manualBursts === undefined ? {} : { manualBursts }),
+    ...(manualStep3Slots === undefined ? {} : { manualStep3Slots }),
     ...(setup.noBurstSlots === undefined ? {} : { noBurstSlots: setup.noBurstSlots.map((s) => s - 1) }),
     ...(holdFire.length === 0 ? {} : { holdFire }),
   };

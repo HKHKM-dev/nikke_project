@@ -12,6 +12,7 @@ import {
   SKILL_SLOTS,
   contentStatOf,
   isCoverHealedTrigger,
+  isAllStackableChange,
   isAllyDecrease,
   type BuffStat,
   type IndirectPath,
@@ -110,8 +111,9 @@ const STAT_CLASS: Record<BuffStat, ElementClass> = {
   // 防御力▲ は、対象の絞り込み（自分より最終防御力が低い味方）を通して値に効く（防御力▲ だけの効果は、経路 defense の
   // 間接の要素と同じに見る。notRelevantReason）
   defense: 'damageValue',
-  // 適正最小射程距離▲（距離ボーナスと、適正射程距離内のきっかけ）・貫通特化・貫通ダメージ▲は 1 ヒットの値に効く
+  // 適正最小射程距離▲・適正最大射程距離▲（距離ボーナスと、適正射程距離内のきっかけ）・貫通特化・貫通ダメージ▲は 1 ヒットの値に効く
   minEffectiveRange: 'damageValue',
+  maxEffectiveRange: 'damageValue',
   pierce: 'damageValue',
   pierceDamage: 'damageValue',
   // ペレットの数は、1 ペレットの値（hit）・ペレットの命中の回数（count）・ゲージ（gauge）のどれにも効くので、
@@ -249,7 +251,7 @@ function shapeOfEffect(e: SkillEffect, def: SkillDefinition): NonNullable<Minima
     // 自分の状態の消去（cancelState の self）と状態の維持の延長（stateExtend）も、解除と同じく相手の状態の中身
     ...(e.kind === 'state' ||
     e.kind === 'removeState' ||
-    (e.kind === 'stackChange' && e.target !== 'allies') ||
+    (e.kind === 'stackChange' && !isAllStackableChange(e)) ||
     e.kind === 'stateExtend' ||
     (e.kind === 'cancelState' && e.target === 'self')
       ? { stats: stateStatsOf(def, e.state) }

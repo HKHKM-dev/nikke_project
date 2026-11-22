@@ -1,0 +1,500 @@
+{
+  "verification": "V-0843",
+  "note": "撮影 S（ネヴェ単騎・操作）・B（ココア（I）+ ソルジャーF.A.（II）+ ネヴェ（III・操作））・P（ツバイ（I・宝物 3 段階）+ ソルジャーF.A.（II）+ ネヴェ（III・操作））の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オート射撃 ON・オートバースト ON。S1 の CT は外部の資料の 10 秒。発の番号（B の 15〜17 発目・P の 10〜12 発目）は、いまのモデルのフルバーストの始まりの後の 1〜3 発目で、録画では始まりの後の発で読む",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 301
+    },
+    {
+      "rid": 193,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S1 は CT 10 秒で 1 回目も 10 秒・遅れ 0。S2 の貫通特化と攻撃力▲はフルバーストの始まりの後の 2 発。バーストの会心率▲・命中率▲は 20 秒）"
+    },
+    {
+      "id": "H-noatk",
+      "note": "S2 の攻撃力▲が乗らない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 193,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-atk3",
+      "note": "S2 の攻撃力▲がフルバーストの始まりの後の 3 発に乗る（数え方が 1 発ずれる）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 193,
+            "skill": "skill2",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "self",
+              "stat": "attack",
+              "ref": 2,
+              "durationShots": 3
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-nopierce",
+      "note": "S2 の貫通特化が付かない（射撃場の的で効かない）。撮影 P の S2 の 2 発にツバイの貫通ダメージ▲が乗らない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 193,
+            "skill": "skill2",
+            "index": 0
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "S-s1-first",
+      "model": "sim",
+      "metric": "skillHitVideoFrame",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "n": 0
+      },
+      "team": [
+        {
+          "rid": 193,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 10
+      },
+      "note": "撮影 S（ネヴェ単騎）: S1 の 1 回目のヒットの動画のフレーム（戦闘開始の 0 から）。録画では HUD の増分と、左の「スキル1 ホッキョクグマの力」の帯の立ち上がり"
+    },
+    {
+      "id": "S-s1-second",
+      "model": "sim",
+      "metric": "skillHitVideoFrame",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "n": 1
+      },
+      "team": [
+        {
+          "rid": 193,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 10
+      },
+      "note": "撮影 S: S1 の 2 回目のヒットの動画のフレーム"
+    },
+    {
+      "id": "S-s1-interval",
+      "model": "sim",
+      "metric": "skillHitMeanInterval",
+      "args": {
+        "slot": 1,
+        "skill": "skill1"
+      },
+      "team": [
+        {
+          "rid": 193,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 S: S1 のヒットの間隔の平均（動画のフレーム。的のジャンプの止まりを含む）"
+    },
+    {
+      "id": "S-s1-hit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "team": [
+        {
+          "rid": 193,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 S: S1 の 1 回目のヒットの値（最終攻撃力の 145.45%・会心なし）"
+    },
+    {
+      "id": "S-pellet",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 193,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 S: ネヴェの 1 ペレット（胴体・会心なし・距離なし）"
+    },
+    {
+      "id": "B-pellet-before",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 5,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B（ココア・ソルジャーF.A.・ネヴェ）: 1 回目のフルバーストより前のネヴェの 1 ペレット（胴体）"
+    },
+    {
+      "id": "B-s2-shot1",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 15,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 1 回目のフルバーストの始まりの後のネヴェの 1 発目の 1 ペレット（S2 の攻撃力▲と貫通特化の 1 発目。フルバースト補正）"
+    },
+    {
+      "id": "B-s2-shot2",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 16,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 同じ 2 発目の 1 ペレット（S2 の 2 発目）"
+    },
+    {
+      "id": "B-s2-shot3",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 17,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 同じ 3 発目の 1 ペレット（S2 の窓の後。フルバースト補正だけ）"
+    },
+    {
+      "id": "B-crit-rate",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 3,
+        "frame": 1300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.05
+      },
+      "note": "撮影 B: 1 回目のバーストの窓の中（フルバーストの後）のネヴェの会心率（15% + 31.95%）。増分から会心のペレットが数えられるときだけ読む"
+    },
+    {
+      "id": "B-hit-rate-burst",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 3,
+        "frame": 1300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.03
+      },
+      "note": "撮影 B: 1 回目のバーストの窓の中（フルバーストの後・中近）のネヴェの弾丸命中率。いまのモデルは SG の命中率▲を中近では効かせない（C-0527。仮説）"
+    },
+    {
+      "id": "B-hit-rate-before",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 3,
+        "frame": 300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.03
+      },
+      "note": "撮影 B: 1 回目のバーストより前（中近）のネヴェの弾丸命中率（対照）"
+    },
+    {
+      "id": "P-s2-shot1",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 10,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 301
+        },
+        {
+          "rid": 193,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 P（ツバイ・ソルジャーF.A.・ネヴェ）: 1 回目のフルバーストの始まりの後のネヴェの 1 発目の 1 ペレット。貫通特化が効けば、ツバイの貫通ダメージ▲（S1・バーストの貫通学概論・宝物版 S1 の発ごとのスタック）が攻撃ダメージ▲の和に乗る（C-1031 の形）"
+    },
+    {
+      "id": "P-s2-shot2",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 11,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 301
+        },
+        {
+          "rid": 193,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 P: 同じ 2 発目の 1 ペレット"
+    },
+    {
+      "id": "P-s2-shot3",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 12,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 301
+        },
+        {
+          "rid": 193,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 P: 同じ 3 発目の 1 ペレット（貫通特化の後。貫通ダメージ▲は乗らない）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "04b60434fd23e4b3e98521a6f453029bce50cca1",
+    "values": {
+      "H1": {
+        "S-s1-first": 589,
+        "S-s1-second": 1178,
+        "S-s1-interval": 589,
+        "S-s1-hit": 151888.05334999997,
+        "S-pellet": 21041.899450000004,
+        "B-pellet-before": 21041.899450000004,
+        "B-s2-shot1": 70994.71665,
+        "B-s2-shot2": 70994.71665,
+        "B-s2-shot3": 31562.849175000003,
+        "B-crit-rate": 0.46950000000000003,
+        "B-hit-rate-burst": 0.778,
+        "B-hit-rate-before": 0.778,
+        "P-s2-shot1": 127939.57887496501,
+        "P-s2-shot2": 113648.34241332002,
+        "P-s2-shot3": 31562.84917500001
+      },
+      "H-noatk": {
+        "S-s1-first": 589,
+        "S-s1-second": 1178,
+        "S-s1-interval": 589,
+        "S-s1-hit": 151888.05334999997,
+        "S-pellet": 21041.899450000004,
+        "B-pellet-before": 21041.899450000004,
+        "B-s2-shot1": 31562.849175000003,
+        "B-s2-shot2": 31562.849175000003,
+        "B-s2-shot3": 31562.849175000003,
+        "B-crit-rate": 0.46950000000000003,
+        "B-hit-rate-burst": 0.778,
+        "B-hit-rate-before": 0.778,
+        "P-s2-shot1": 56879.41049826752,
+        "P-s2-shot2": 50525.80895934,
+        "P-s2-shot3": 31562.84917500001
+      },
+      "H-atk3": {
+        "S-s1-first": 589,
+        "S-s1-second": 1178,
+        "S-s1-interval": 589,
+        "S-s1-hit": 151888.05334999997,
+        "S-pellet": 21041.899450000004,
+        "B-pellet-before": 21041.899450000004,
+        "B-s2-shot1": 70994.71665,
+        "B-s2-shot2": 70994.71665,
+        "B-s2-shot3": 70994.71665,
+        "B-crit-rate": 0.46950000000000003,
+        "B-hit-rate-burst": 0.778,
+        "B-hit-rate-before": 0.778,
+        "P-s2-shot1": 127939.57887496501,
+        "P-s2-shot2": 113648.34241332002,
+        "P-s2-shot3": 70994.71665
+      },
+      "H-nopierce": {
+        "S-s1-first": 589,
+        "S-s1-second": 1178,
+        "S-s1-interval": 589,
+        "S-s1-hit": 151888.05334999997,
+        "S-pellet": 21041.899450000004,
+        "B-pellet-before": 21041.899450000004,
+        "B-s2-shot1": 70994.71665,
+        "B-s2-shot2": 70994.71665,
+        "B-s2-shot3": 31562.849175000003,
+        "B-crit-rate": 0.46950000000000003,
+        "B-hit-rate-burst": 0.778,
+        "B-hit-rate-before": 0.778,
+        "P-s2-shot1": 70994.71665,
+        "P-s2-shot2": 70994.71665,
+        "P-s2-shot3": 31562.84917500001
+      }
+    }
+  }
+}

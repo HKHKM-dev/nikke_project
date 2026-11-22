@@ -1,0 +1,308 @@
+{
+  "verification": "V-0844",
+  "note": "撮影（I-DOLL・フラワー（I）+ レム（II・操作）・オートバースト ON）の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。III がいないので、レムのバーストのたびにチェーンが切れる（フルバーストにならない）。モデルはフラワーのバーストが 180 秒に 5 回（約 22・56・87・121・152 秒）で、レムのバーストの効果はその 9f 後から 10 秒。フレームの指定は 1 回目の窓（1,307〜1,895f）の前・中・後",
+  "team": [
+    {
+      "rid": 304
+    },
+    {
+      "rid": 820,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（鬼の気はクリティカル確率▲・10 秒。RL の味方の攻撃力▲はレムのバフ前の攻撃力の割合を足す。最大装弾数▲は最大だけを上げ、残弾は足さない。S1 は通算の命中 15 回ごとに、鬼の気なら 1 スタック・付くたびに全部を付け直す）"
+    },
+    {
+      "id": "H2",
+      "note": "RL の味方の攻撃力▲が、受ける側（フラワー）自身の攻撃力の割合（「スキル発動者基準」を読まない）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 820,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "targetWeapon": "RL",
+              "stat": "attack",
+              "ref": 3,
+              "durationRef": 4
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "rl-hit-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1091,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "窓の前のフラワーのコアの会心しない 1 ヒット（射撃の 12 発目）"
+    },
+    {
+      "id": "rl-hit-in",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1373,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "窓の中のフラワーのコアの会心しない 1 ヒット（14 発目）。H1 はレムの攻撃力 × 50.78% を足し、H2 はフラワー自身の攻撃力 × 50.78%"
+    },
+    {
+      "id": "rl-max-ammo-in",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 1600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "窓の中のフラワーの最大装弾数（6 + 5）。録画ではフラワーの枠アイコンの上の「残弾/最大」"
+    },
+    {
+      "id": "rl-max-ammo-after",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 2000
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "窓の後のフラワーの最大装弾数"
+    },
+    {
+      "id": "rl-magazines",
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 1,
+        "count": 15
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "戦闘の始めから 15 本のマガジンの発数。窓に掛かったマガジンだけが 6 発より多くなりうる（窓の中で込め終えたマガジンは 11 発まで込め、窓が切れた時に残弾が 6 より多ければ 6 に削る）"
+    },
+    {
+      "id": "rem-crit-before",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 2,
+        "frame": 1200
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "note": "窓の前のレムの通常攻撃の会心率"
+    },
+    {
+      "id": "rem-crit-in",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 2,
+        "frame": 1600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "note": "窓の中のレムの通常攻撃の会心率（15% + 37.8%）"
+    },
+    {
+      "id": "rem-hit-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.002
+      },
+      "note": "窓の前のレムのコアの会心しない 1 ヒット（S1 のスタックなし）"
+    },
+    {
+      "id": "rem-hit-in",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.002
+      },
+      "note": "窓の中のレムのコアの会心しない 1 ヒット（モデルは S1 が 14 スタック）"
+    },
+    {
+      "id": "rem-hit-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 2400,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.002
+      },
+      "note": "窓が切れた後のレムの 1 ヒット（モデルは最後のスタックの 10 秒の中で、窓の終わりのスタック数のまま）"
+    },
+    {
+      "id": "rem-hit-expired",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 2550,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.002
+      },
+      "note": "最後のスタックから 10 秒の後のレムの 1 ヒット（スタックが全部外れて、窓の前と同じ）"
+    },
+    {
+      "id": "rem-s1-fires",
+      "model": "sim",
+      "metric": "buffFireStarts",
+      "args": {
+        "slot": 2,
+        "skill": "skill1",
+        "stat": "attack",
+        "count": 22
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "1 回目の窓の中の S1 のスタックの付いたフレーム（22 回）。録画ではレムの 1 ヒットの段が上がるフレーム"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "76aefc2497940fbc90f87a68d7a266a7b38d5b6e",
+    "values": {
+      "H1": {
+        "rl-hit-before": 166172.03999999998,
+        "rl-hit-in": 321696.27,
+        "rl-max-ammo-in": 11,
+        "rl-max-ammo-after": 6,
+        "rl-magazines": [6, 6, 6, 6, 6, 6, 7, 6, 11, 6, 6, 9, 6, 11, 6],
+        "rem-crit-before": 0.15,
+        "rem-crit-in": 0.5279999999999999,
+        "rem-hit-before": 12232.5555,
+        "rem-hit-in": 19983.578120000006,
+        "rem-hit-after": 23600.5913,
+        "rem-hit-expired": 12232.5555,
+        "rem-s1-fires": [
+          1309, 1324, 1339, 1354, 1369, 1384, 1399, 1414, 1429, 1444, 1459, 1474, 1489, 1504, 1519, 1783, 1807, 1823,
+          1838, 1853, 1868, 1883
+        ]
+      },
+      "H2": {
+        "rl-hit-before": 166172.03999999998,
+        "rl-hit-in": 250710.87,
+        "rl-max-ammo-in": 11,
+        "rl-max-ammo-after": 6,
+        "rl-magazines": [6, 6, 6, 6, 6, 6, 7, 6, 11, 6, 6, 9, 6, 11, 6],
+        "rem-crit-before": 0.15,
+        "rem-crit-in": 0.5279999999999999,
+        "rem-hit-before": 12232.5555,
+        "rem-hit-in": 19983.578120000006,
+        "rem-hit-after": 23600.5913,
+        "rem-hit-expired": 12232.5555,
+        "rem-s1-fires": [
+          1309, 1324, 1339, 1354, 1369, 1384, 1399, 1414, 1429, 1444, 1459, 1474, 1489, 1504, 1519, 1783, 1807, 1823,
+          1838, 1853, 1868, 1883
+        ]
+      }
+    }
+  }
+}

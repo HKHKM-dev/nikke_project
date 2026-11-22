@@ -8,21 +8,15 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { SkillDefinition } from '../skills/types.ts';
 import { runTeam } from './runTeam.ts';
 import { dotTicks, planTeamRun } from '../frame/plan.ts';
-import { countShotsInRanges, type ShotLog } from '../frame/shots.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { characterOf, rawDefinition, readObservations } from './data.ts';
-import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, fullChargeFrames } from './teamHelpers.ts';
 const definitionOf = (id: number) => parseSkillDefinition(rawDefinition(id));
 const enemy: EnemyInput = fixedEnemy();
 
 function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
   return fixedTeam(slots, controlledSlot, { enemy });
-}
-
-/** フルチャージの発（部分チャージの発を除く）のフレーム */
-function fullChargeFrames(log: ShotLog): number[] {
-  const partial = new Set((log.partialShots ?? []).filter((p) => p.progress < 1).map((p) => p.frame));
-  return log.frames.filter((f) => !partial.has(f));
 }
 
 const RAVEN = 851;

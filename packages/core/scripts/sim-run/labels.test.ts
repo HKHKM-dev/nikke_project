@@ -34,6 +34,9 @@ describe('triggerLabel', () => {
     [{ adjacentHpAtMost: 0.905 }, 'adjacentHp<=90.5%'],
     [{ adjacentHpFull: true }, 'adjacentHpFull'],
     [{ ended: 'firepowerCharge' }, 'ended:firepowerCharge'],
+    [{ counterUp: 'heroLevel' }, 'counterUp:heroLevel'],
+    [{ stateStacks: 'exp', step: 10 }, 'stateStacks:exp/10'],
+    [{ count: 'nonCoreHit', every: 6 }, 'nonCoreHit/6'],
     [{ summon: 'nearFeather', intervalSeconds: { 1: 6.7 }, startDelaySeconds: 0.67 }, 'summon:nearFeather'],
     [{ count: 'lastShot', every: 1 }, 'lastShot/1'],
     [{ count: 'normalShot', every: 1, chance: 0.05 }, 'normalShot@5%'],
@@ -101,6 +104,9 @@ describe('stateLabelOf', () => {
   it('adds the state id to the effects that name a state, and nothing to the others', () => {
     expect(stateLabelOf(effect({ kind: 'state', state: 'camouflage' }))).toBe(' camouflage');
     expect(stateLabelOf(effect({ kind: 'removeState', state: 'metalSigma' }))).toBe(' metalSigma');
+    expect(stateLabelOf(effect({ kind: 'removeState', state: 'callingCard', target: 'enemy' }))).toBe(
+      ' callingCard(enemy)',
+    );
     expect(stateLabelOf(effect({ kind: 'stackChange', state: 'relax', target: 'self' }))).toBe(' relax');
     // 味方の全部のスタック可能バフへの増減は、状態を名指ししない
     expect(stateLabelOf(effect({ kind: 'stackChange', target: 'allies', allStackable: true }))).toBe(' allStackable');

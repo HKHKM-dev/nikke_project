@@ -328,5 +328,39 @@
       "slot": 2,
       "source": "skill"
     }
+  },
+  {
+    "id": "0084-15",
+    "recording": "0084",
+    "use": "compare",
+    "kind": "gauge",
+    "value": 5.5,
+    "unit": "%",
+    "description": "ココア + ニヒリスター（II・操作）+ 紅蓮：ブラックシャドウで、ニヒリスターの S2 の倍率ダメージ（135,837）だけが出たフレームに溜まったゲージ（本当の量。5 回の平均）",
+    "method": {
+      "tool": "gauge.ts --mode series --subpixel（BURST バーの充填の px を、境目の画素の中間の明るさまで足して 1px 未満まで読む。V-0483「読み方」）と hud.ts --mode jumps",
+      "note": "S2 のヒットのフレーム（0084-14。戦闘開始 f911 から）のうち、HUD の増分が S2 だけで（前 3f・後 2f にほかの増分が無い）、前 3f と後 3f のバーが読めて揺れが 0.3px 以内のもの。中央値の差は f2128 +7.50・f3308 +7.56・f4510 +7.39・f5689 +7.25・f9274 +7.46px（平均 7.43px）。C-0084 の 1px ≈ 0.74% で本当の量にした。ほかの回はバーが出ていない（チェーン中・フルバースト中）か、同じフレームのまわりにほかの発がある"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "timerGauge",
+      "args": {
+        "slot": 2,
+        "n": 2
+      },
+      "tolerance": {
+        "abs": 0.3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    },
+    "source": "V-0846",
+    "readAt": "2026-11-21"
   }
 ]

@@ -21,7 +21,7 @@
 | 〈名前〉解除／直前に自分がバーストを使用していれば | `kind: "removeState"`／`condition.usedBurst: true` | マナの S2 | 同 1.2・1.4・1.5 節 |
 | 初めてフルバーストタイムが発動した時／直前に自分がバーストを使用していなければ | 出来事の回数のきっかけ `{ "count": "fullBurstStart", "atLeast": 1, "atMost": 1 }`／`condition.usedBurst: false` | ディーゼル：ウィンタースイーツの S1 | [design-diesel-ws.md](design-diesel-ws.md) 2.1・2.2 節 |
 | 〈名前〉のスタック量 N 個▲ | `kind: "stackChange"` | — | [design-skill-stage3.md](design-skill-stage3.md) 1.1 節 |
-| スタック可能バフ効果のスタック量 N 個▲（付いているバフだけを増やす） | `stackChange` の `existingOnly: true` | ディーゼルの宝物版 S1（C-1182） | [design-diesel.md](design-diesel.md) 8.1 節 |
+| 〈味方〉に・自分にスタック可能バフ効果のスタック量 N 個▲（付いているバフだけを増やす） | `stackChange` の `allStackable: true` と `target: "allies"`（`targetElement` などで絞る）か `"self"`（自分の 1 つの状態だけに足すなら `state` と `existingOnly: true`） | フローラの S1・ルピーの S1・ディーゼルの宝物版 S1（C-1182） | [design-adjacent-allies.md](design-adjacent-allies.md) 2.5 節・[design-diesel.md](design-diesel.md) 8.1・9 節 |
 | フルバーストタイム持続中に N 回／窓の外の発も数え、付くのは窓の中だけ | 回数のきっかけの `during: "fullBurst"` と `reset`／`firesDuring: "fullBurst"` | ソーダ：トゥインクルバニーの S1 | 同 1.2・1.6 節 |
 | 〈名前〉のフルスタック状態の時、スタック解除後（回復） | トリガー `{ "fullStack": "<id>" }` | クラウンの S2 | 同 1.3 節 |
 | 〈名前〉のフルスタック状態ならスタック解除後、弾丸チャージ・▲▼（N 秒間維持） | `ammoRefill`・timed のトリガー `{ "fullStack": "<id>" }` | ディーゼルの S2 | [design-diesel.md](design-diesel.md) 2.1 節 |
@@ -61,18 +61,22 @@
 | 「スタック量増減効果無効」 | 付与の `stackImmutable: true` | ナユタの記憶吸収 | [design-nayuta.md](design-nayuta.md) 2.5 節 |
 | 「〈名前〉：使用武器変更」（自分が〈名前〉状態なら） | `weaponChange` の `state` と、読む側の `condition.selfState` | — | 同上 |
 | チャージしない武器から、チャージ時間 N 秒のチャージ武器への使用武器変更 | `weaponChange` の `chargeTimeSeconds`（基礎の武器がチャージしなくても書ける）と、最初の発の `firstShotDelayFrames`・的の表の `coreHitRate.weaponChanges`・`bulletHitRate.weaponChanges` の行 | ナユタの記憶燃焼 | 同 2.6 節 |
+| 使用武器変更の「最大装弾数：N 発」で撃ち切って戻った後の、基礎の武器の 1 発目までの待ち（説明文に無く、録画で読む） | `weaponChange` の `returnFirstShotFrames`（`maxAmmoRef` の変更だけ）と、その後の同じ枠のクールタイムの周期の発動の待ち `returnCooldownFrames` | スノーホワイトのバースト | [design-snow-white.md](design-snow-white.md) 8.1 節の論点 4・8.3 節の論点 7 |
 | 「チャージ時間：N 秒固定」（使用武器変更の武器） | `weaponChange` の `chargeTimeFixed: true` | ナユタの記憶燃焼 | 同 2.4 節 |
 | 使用武器変更の「チャージ時間：N 秒」（N が説明文の値） | `weaponChange` の `chargeTimeRef` | マクスウェル：オーディナリーメカニックのバースト | [design-maxwell-om.md](design-maxwell-om.md) 2.1 節 |
 | 〈状態〉の段階別の効果・各段階の効果のみ適用（使用武器変更のチャージ時間） | 段階ごとの `weaponChange` と、条件 `selfState` の `stacks`・`stacksBelow`（N スタック未満） | マクスウェル：オーディナリーメカニックのバーストの過電流 | 同 2.2 節 |
 | 現在のHP X%▼ | 即時効果 `kind: "currentHpDown"`（自分だけ） | 紅蓮の S1 | [design-scarlet.md](design-scarlet.md) 2.1 節 |
 | 自分の HP が X% 以下の場合（発火で付く効果） | timed の `condition.selfHp: { "atMostRef": N }`（即値は `atMost`） | 紅蓮のバースト | 同 2.2 節 |
 | 段階別の効果・下位効果のスタック適用（N 段階：N−1 段階フルスタック状態なら） | 段階ごとの状態の付与（同じきっかけ）と、上の段階の条件 `selfState` の `stacks: "full"`・`sameFiring: true` | クエンシー：エスケープクイーンの S2 | [design-quency-eq.md](design-quency-eq.md) 2 節の論点 3 |
+| 〈攻撃〉した時、自分が〈状態〉なら（同じ攻撃で別のスキルが〈状態〉を付ける） | timed の条件 `selfState` の `present: true`・`sameFiring: true`（同じ発で付いた状態も見る。きっかけは射撃の回数で、状態の付与と同じ回数の種類） | プリムの宝物版 S2 | [design-frima.md](design-frima.md) 2 節 |
 | 適正最小射程距離 X%▲／フルチャージ攻撃が適正射程距離内の対象に命中した時 | stat `minEffectiveRange`（状態だけの stat）／fullChargeShot の timed の `condition.inEffectiveRange: true` | エード：エージェントバニーの S1・S2・バースト | [design-agent-bunny.md](design-agent-bunny.md) 2.1・2.2 節 |
+| 適正最大射程距離 X%▲ | stat `maxEffectiveRange`（状態だけの stat。上端 × (1 + Σ)）。対象は自分に限らない（`targetWeapon` で絞れる） | レオナの S1 | [design-leona.md](design-leona.md) 2.1 節 |
 | 貫通特化／貫通ダメージ X%▲ | フラグの stat `pierce`（timed・passive（`while` も書ける）・状態の中身）／stat `pierceDamage` | エード：エージェントバニーの S2・バースト | 同 2.3 節 |
 | 使用武器変更の「追加効果：貫通特化」／変更後の武器の 1 発の弾の数（説明文に無く、録画で読む） | `weaponChange` の `pierce: true`／`shotCount` | ツバイのバースト | [design-zwei.md](design-zwei.md) 2.1・2.2 節 |
 | 「N スタック」「N 発間維持」 | timed の `maxStacksRef` と `durationShotsRef` | ツバイの宝物版 S1 | 同 2.3 節 |
+| 攻撃力 X%▲「N 発間維持」 | timed の `stat: "attack"` と `durationShotsRef` | ネヴェの S2 | [design-neve.md](design-neve.md) 2.1 節 |
 | デバフ効果解除 N 個（味方全体／デバフのかかった味方からランダムに N 機） | `removeDebuff`（`target: "allies"`／`"debuffedRandom"` と `targetCount`） | ココアの S1・バースト | [design-debuff-removal.md](design-debuff-removal.md) 2.2 節・[design-debuff-removal-timed.md](design-debuff-removal-timed.md) 2.1 節 |
-| ペレットの数を 1 個に固定／ペレット数 N 個▲（N 発間維持の貫通特化・命中率▲） | フラグの stat `singlePellet`／stat `pelletCount` と `scaling: "flat"`（どちらも timed の self。`pelletCount` は自分に付く状態の中身にも）／`durationShotsRef` を `hitRate`・`pierce`・`singlePellet` にも書ける | ドロシー：セレンディピティの S1・バースト、アルカナ：フォーチュンメイトの S2 の幸せな思い出 | [design-dorothy-serendipity.md](design-dorothy-serendipity.md) 2 節・[design-fortune-mate.md](design-fortune-mate.md) 2.3 節 |
+| ペレットの数を 1 個に固定／ペレット数 N 個▲（N 発間維持の貫通特化・命中率▲） | フラグの stat `singlePellet`／stat `pelletCount` と `scaling: "flat"`（`singlePellet` は timed の self。`pelletCount` は timed の self・allies・topAttack と、自分に付く状態の中身）／`durationShotsRef` を `hitRate`・`pierce`・`singlePellet` にも書ける | ドロシー：セレンディピティの S1・バースト、アルカナ：フォーチュンメイトの S2 の幸せな思い出、レオナの S2（SG の上位 2 機） | [design-dorothy-serendipity.md](design-dorothy-serendipity.md) 2 節・[design-fortune-mate.md](design-fortune-mate.md) 2.3 節・[design-leona.md](design-leona.md) 2.2 節 |
 | 〈状態〉が終了した時（残弾数減少・状態の付与） | きっかけ `{ "ended": 〈状態〉 }`（counterChange・ammoDecrease・状態の付与） | グレイブの S1 | [design-grave.md](design-grave.md) 2.1 節 |
 | 〈状態〉：…「最大装弾リロード完了時に解除」 | 状態の付与の `durationUntil: "reloadEnd"` | グレイブの S2 の過熱I | 同 2.2 節 |
 | 〈状態〉が終了した時（倍率ダメージ・timed・敵の状態の消去）／終了の N f 後のヒット | きっかけ `{ ended }`／damage と敵の消去の `delayFrames` | アスカ：WILLE の殲滅・緊急修復 | [design-asuka-wille.md](design-asuka-wille.md) 2.1 節・決めたこと |
@@ -123,3 +127,16 @@
 | 〈カウンタ〉を N 個回収した時（N は上限）、〈別のカウンタ〉が M 本未満なら「〈カウンタ〉数リセット」「〈別のカウンタ〉1 本増加」／「X% × 〈別のカウンタ〉の数▲」「持続」 | `counterChange` 2 つ（きっかけ `{ "counterFull": 〈カウンタ〉 }`・条件 `selfCounter` の `below: M`）／閾値ごとの `passive`（`while.selfCounter`）。前提の中で届かない段は前提の外の notes | E.H. の S1 の廃品・自家製弾倉 | [design-eh.md](design-eh.md) 2.2 節 |
 | 使用武器変更の「最大装弾数：N 発 × 〈カウンタ〉の数」（説明文に番号の無い装弾数） | `weaponChange` の即値の `maxAmmo`（`maxAmmoRef` とちょうど片方。撃ち切りで終わる） | E.H. のバースト | 同 2.3 節 |
 | 使用武器変更の武器のコアの倍率（説明文に無く、録画で読む） | `weaponChange` の `coreDamageRate`（即値。省略は基礎の武器のまま） | E.H. のバースト（×2.0） | [design-eh.md](design-eh.md) 8.1 節 |
+| 通常攻撃が N 回命中した時、コアでなければ | 回数の種類 `nonCoreHit`（コアでない命中の期待値を通算で数える） | ギロチン：ウィンタースレイヤーの S2 の経験値 | [design-guillotine-ws.md](design-guillotine-ws.md) 2.1 節 |
+| 〈状態〉N スタックごとに（〈カウンタ〉が上がる） | `counterChange` のきっかけ `{ "stateStacks": 〈状態〉, "everyRef": N }` | ギロチン：ウィンタースレイヤーの S1 の勇者レベル | 同 2.2 節 |
+| 〈カウンタ〉アップ時（〈カウンタ〉が上がった時） | 弾丸チャージ・回復・timed のきっかけ `{ "counterUp": 〈カウンタ〉 }`（戦闘開始時の増減では起きない） | 同上の勇者レベルアップ効果 | 同 2.2 節 |
+| X% × 〈カウンタ〉数分▲「持続」（上がるたびに付け直す） | timed の `perCount: { "counter": 〈カウンタ〉 }` と `durationUntil: "battleEnd"` | ギロチン：ウィンタースレイヤーの S1 | 同 2.3 節 |
+| 最終攻撃力の X% × 〈カウンタ〉数分の持続ダメージ | dot の `stacksFrom: { "counter": 〈カウンタ〉 }`（付けた時の値。tick ごとに読むなら `copyEachTick`）。付く時刻の遅れの実測は `delayFrames`（ゲージを溜めない `burstUse` の dot にも書ける） | ギロチン：ウィンタースレイヤーのバースト | 同 2.4・8.2 節 |
+| バースト 3 段階突入時、「開始回数別の効果」「下位効果のスタック適用」 | 段ごとの効果に、出来事の回数のきっかけ `{ "count": "burstStage3Enter", "atLeast": N }`（編成の段階 3 への突入を数える。II で切れたチェーンも数える） | ネオン：ブルーオーシャンの S2 | [design-neon-bo.md](design-neon-bo.md) 2.1 節 |
+| 使用武器変更の後の「対象が〈コード〉なら対象に追加ダメージ」（変更後の武器の発ごと） | damage のきっかけ `{ "count": "weaponChangeShot" }` と `enemyElement`（1 トリガーの値に畳み込まず、変更後の武器の発にだけ出す） | ネオン：ブルーオーシャンのバースト | 同 2.4 節 |
+| 対象が〈状態〉状態ではないなら（敵の状態の否定。敵への付与・自分への付与）／対象が〈状態〉状態なら「N 発間維持」 | 条件 `enemyState: { "state": "<id>", "present": false }`（敵への付与にも書ける）／発数の維持の timed の条件 `enemyState`（同じ発で付いた状態も見るなら `{ "state": "<id>", "present": true, "sameFiring": true }`。同じ発で S2 が外す時を除くなら、timed の `selfState` の `stacksBelow` と `sameFiring`） | ファントムの S1 の予告状・怪盗の短剣・攻撃ダメージ▲ | [design-phantom.md](design-phantom.md) 2.1・2.6 節 |
+| 〈名前〉フルスタック状態なら、対象に追加ダメージ・効果発動後〈敵の状態〉解除・スタック解除後自分に〈状態〉・敵全体に分配ダメージ | damage・状態の付与・解除のきっかけ `{ "fullStack": "<id>" }`／敵の状態の解除は `removeState` の `target: "enemy"`（同じフレームに付いた件も外す） | ファントムの S2 | 同 2.2・2.3 節 |
+| 「持続」「バーストスキル使用時スタック解除」 | 状態の付与の `durationUntil: "battleEnd"` と、`removeState` のきっかけ `burstUse` | ファントムの S2 の分配ダメージ▲ | 同 1 節 |
+| フルバーストタイムが終了した時、味方全体に〈名前〉解除 | `removeState` の `target: "allies"`（味方全体のその状態の件を、出どころを問わず外す） | K の S2 の正義の実現 | [design-k.md](design-k.md) 2.1 節 |
+| ペレットごとのクリティカル攻撃が N 回命中した時（1 発で何回も） | 回数の種類 `critPelletHit`（当たったペレット × 会心率。使用武器変更の `shotCount` の発は銃口の数を掛けない。damage だけ） | K の S1 の追加ダメージ | [design-k.md](design-k.md) 2.2 節 |
+| 最後の弾丸で攻撃した時（二丁持ちでもマガジンに 1 回） | 回数の種類 `lastShotOnce`（既定の `lastShot` は二丁持ちの銃口ごと。C-1400） | K の S1 の傾く天秤 | 同 2.4 節 |

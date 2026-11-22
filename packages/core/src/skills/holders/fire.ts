@@ -4,6 +4,7 @@ import type { ChanceOpportunity } from '../chance.ts';
 import {
   isRecordTriggered,
   isResolvedApplied,
+  isResolvedFullStack,
   type ResolvedEffect,
   type ResolvedShotCountTrigger,
 } from '../resolve.ts';
@@ -93,9 +94,15 @@ export function createFire({
   /** timed の発火 1 つを、対象の持ち主の件の列に足す。対象になった枠を返す */
   const fireTimed = (src: TimedSource, start: number, context: FireContext): number[] => {
     if (start >= frames) return [];
-    // 値 × 発火のフレームの自分のその状態のスタック数（0 なら出さない。plan/design-maids.md 2.1 節）
+    // 値 × 発火のフレームの自分のその状態のスタック数（0 なら出さない。plan/design-maids.md 2.1 節）か、自分のカウンタの値
+    // （前のフレームの終わりの値。plan/design-guillotine-ws.md 2.3 節）
     const per = src.effect.perCount;
-    const scale = per === undefined ? undefined : stackLevelAt(src.sourceSlotIndex, per.state, start);
+    const scale =
+      per === undefined
+        ? undefined
+        : 'counter' in per
+          ? counterValue(src.sourceSlotIndex, per.counter)
+          : stackLevelAt(src.sourceSlotIndex, per.state, start);
     if (scale !== undefined && scale <= 0) return [];
     const targets: number[] = [];
     slots.forEach((target, holder) => {
@@ -215,15 +222,22 @@ export function createFire({
   };
   /**
    * 解除の発火 1 つ（plan/design-skill-stage1.md 1.2 節）。持ち主（自分）のその状態の件の列（出どころは問わない）に、
-   * 閉じるフレームを足す。解除不可の件の列は閉じない
+   * 閉じるフレームを足す（きっかけがフルスタックの消費なら、同じフレームに付いた件も外す）。解除不可の件の列は閉じない。敵の状態の解除は、敵のその状態の件の列（出どころは問わない。
+   * plan/design-phantom.md 2.3 節）、味方全体の解除は、敵を除くどの枠のその状態の件の列（plan/design-k.md 2.1 節）
    */
   const fireRemove = (src: RemoveSource, frame: number): void => {
+    const holder = src.effect.enemy === true ? ENEMY : src.sourceSlotIndex;
+    const holds = (h: number): boolean => (src.effect.allies === true ? h !== ENEMY : h === holder);
+    const consume = isResolvedFullStack(src.effect.trigger);
     for (const track of tracks) {
       const o = track.origin;
-      if (track.holder !== src.sourceSlotIndex || o.kind !== 'state' || o.state !== src.effect.state) continue;
+      if (!holds(track.holder) || o.kind !== 'state' || o.state !== src.effect.state) continue;
       // 消去（cancel）は解除不可の件も閉じる（plan/design-mint-prika.md 2.1 節）
       if (o.grant.undispellable === true && src.effect.cancel !== true) continue;
-      closeTrack(track, frame);
+      // フルスタックの消費のきっかけの解除は、消費と同じく同じフレームに付いた件も外す（短剣が満ちた命中で付いた予告状。
+      // plan/design-phantom.md 2.3 節）
+      if (consume) consumeTrack(track, frame);
+      else closeTrack(track, frame);
     }
   };
   /**

@@ -1,10 +1,18 @@
 // 件の一覧の層 6: 判定（plan/design-split-first-pass.md 3.3 節・9.2 節）。効果の条件（holdsAt）・発火の文脈・{ ended } の発火・
 // カウンタの増減の条件。
-import { statTotal } from '../buffs.ts';
+import { ZERO_BUFFS, addRangeUp, rangeUpOf, statTotal } from '../buffs.ts';
 import type { ResolvedTrigger } from '../resolve.ts';
 import { statesMatching, type NamedStateId } from '../states.ts';
 import { fireContextOf, burstStepHolds, type FrameEvents } from '../triggers.ts';
-import { type BuffStat, isStacksCondition, selfBuffedOf, type EndedTrigger, type EffectCondition } from '../types.ts';
+import {
+  type BuffStat,
+  isStacksCondition,
+  selfBuffedOf,
+  enemyStateHolds,
+  enemyStateOf,
+  type EndedTrigger,
+  type EffectCondition,
+} from '../types.ts';
 import type { HeldItem, HeldTrack } from './types.ts';
 import { stacksHold, valueOf } from './items.ts';
 import { isStateOrigin } from './history.ts';
@@ -21,9 +29,9 @@ export function createConditions({
   counterValue,
   enemyStateAt,
   inFullBurstAt,
-  minEffectiveRangeAt,
   options,
   passive,
+  rangeUpAt,
   readItems,
   selfHpAtMostHolds,
   selfHpRatioAt,
@@ -60,7 +68,15 @@ export function createConditions({
     if (condition.selfState !== undefined) {
       const { state, present, sameFiring } = condition.selfState;
       if (!isStacksCondition(condition.selfState)) {
-        if (hasStateAt(sourceSlotIndex, state, frame) !== present) return false;
+        // timed の sameFiring（plan/design-frima.md 2 節）は、発のフレームに付いている件に加えて、同じ発で付いた件（射撃の回数の
+        // きっかけの件は次のフレームから。段 1.5 の付与は同じフレームの段 1.5 の timed より先に登録される）も見る
+        const has =
+          hasStateAt(sourceSlotIndex, state, frame) ||
+          (sameFiring === true &&
+            statesMatching(state).some((s) =>
+              (stateTracks[sourceSlotIndex]?.get(s) ?? []).some((t) => activeAt(t, frame + 1).length > 0),
+            ));
+        if (has !== present) return false;
       } else {
         const family = statesMatching(state);
         const isStatic = family.some((s) => staticStates[sourceSlotIndex]?.has(s) === true);
@@ -84,9 +100,10 @@ export function createConditions({
     if (buffed !== undefined && buffedAt(sourceSlotIndex, buffed.stat, frame) !== buffed.present) return false;
     // 解除の「フルバースト状態でなければ」（inFullBurst: false）も
     if (condition.inFullBurst !== undefined && inFullBurstAt(frame) !== condition.inFullBurst) return false;
-    if (condition.enemyState !== undefined && !enemyStateAt(condition.enemyState, frame)) return false;
+    // 敵の状態の条件（sameFiring は、次のフレームに効いている件。同じ発で付いた件も入る。plan/design-phantom.md 2.6 節）
+    if (!enemyStateHolds(enemyStateOf(condition), frame, enemyStateAt)) return false;
     // 適正射程距離内なら（発火のフレームの着地点と、常時の値とそのフレームに
-    // 効いている件の適正最小射程距離▲。射撃の回数のきっかけの付与は次のフレームから効くので、
+    // 効いている件の適正射程距離の▲。射撃の回数のきっかけの付与は次のフレームから効くので、
     // その発自身のスタックは入らない。plan/design-agent-bunny.md 2.2 節）
     if (
       condition.inEffectiveRange === true &&
@@ -94,7 +111,7 @@ export function createConditions({
       !options.effectiveRangeAt(
         sourceSlotIndex,
         frame,
-        (passive[sourceSlotIndex]?.buffs.minEffectiveRange ?? 0) + minEffectiveRangeAt(sourceSlotIndex, frame),
+        addRangeUp(rangeUpOf(passive[sourceSlotIndex]?.buffs ?? ZERO_BUFFS), rangeUpAt(sourceSlotIndex, frame)),
       )
     )
       return false;

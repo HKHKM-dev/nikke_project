@@ -1,0 +1,40 @@
+{
+  "id": "1333",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1333_idoll-flower-rem.mp4",
+  "original": "2026-11-21_22-21-03.mp4",
+  "durationSec": 200.7,
+  "frames": 12039,
+  "fps": 60,
+  "sizeMB": 243.1,
+  "sha256": "4b677da2419a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 820,
+      "name": "レム",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-21T22:26+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

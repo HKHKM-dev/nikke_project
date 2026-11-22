@@ -1,0 +1,20 @@
+{
+  "id": "C-1458",
+  "text": "プリムの宝物版 S2 の防御力無視ダメージ▲（値 03 %・値 04 秒）は、自分が起きた状態のフルチャージの発ごとに味方全体に付く。起きたが付いた発（フルチャージの 6 回目）の S2 も、同じ発で付いた起きたを見て付き、次の発（7 回目。防御力無視の最初の発）から乗る。防御力無視の通常攻撃の 1 ヒットに、ほかの防御力無視ダメージ▲と同じ和で × (1 + 値 03 %) で乗る（422,291 = 329,503 × 1.2816）。7 回目の発の S2 がその発自身に乗る読みとは、単騎の録画では見分けていない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1307-03`・`1308-03`。V-0831",
+  "model": "反映（data/skills/142.json の treasureSkills.skill2 の effects[0]。条件 selfState の sameFiring（skills/holders/conditions.ts の holdsAt。plan/design-frima.md 2 節））",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/142.json の treasureSkills.skill2 の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1307",
+      "role": "仮説の出どころ"
+    }
+  ]
+}

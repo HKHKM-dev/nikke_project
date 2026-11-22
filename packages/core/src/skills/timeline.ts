@@ -274,8 +274,9 @@ function keyOf(fullBurst: boolean, state: SlotBuffState, landing?: string | null
   if (landing !== undefined) {
     parts.push(`L:${landing ?? '?'}`, `N:${state.buffs.hitRate.toFixed(KEY_DIGITS)}`);
     if (state.buffs.hitRateUp !== 0) parts.push(`U:${state.buffs.hitRateUp.toFixed(KEY_DIGITS)}`);
-    // 適正最小射程距離▲ も距離ボーナスを変える（frame/landing.ts の landingPartsWith）
+    // 適正射程距離の▲も距離ボーナスを変える（frame/landing.ts の landingPartsWith）
     if (state.buffs.minEffectiveRange !== 0) parts.push(`R:${state.buffs.minEffectiveRange.toFixed(KEY_DIGITS)}`);
+    if (state.buffs.maxEffectiveRange !== 0) parts.push(`X:${state.buffs.maxEffectiveRange.toFixed(KEY_DIGITS)}`);
   }
   return parts.join('|');
 }
@@ -310,7 +311,8 @@ function eventsOf(
 }
 
 /**
- * トリガーが起きたフレーム列（昇順）。schedule が null（バーストなし）なら battleStart と射撃の回数だけ発火する。
+ * トリガーが起きたフレーム列（昇順）。1 発で何回も発火する critPelletHit は、同じフレームを回数だけ並べる（plan/design-k.md 2.2 節。
+ * 倍率ダメージにだけ書け、フレームごとに 1 回の前提の蓄積・バーストごとのヒットとは、きっかけの決まりで組めない）。schedule が null（バーストなし）なら battleStart と射撃の回数だけ発火する。
  * burstUse はその枠が実際に撃った発動のフレーム（動的サイクルでは段階ごとに別フレーム、同じ段階の 2 体は交互になりうる）。
  * 射撃の回数は shots[slotIndex] の every・2 × every…番目の射撃のフレーム。件の始まりは skills/holders/items.ts の startOfFire が 1 つ後ろにずらす。
  * 判定は skills/triggers.ts の TriggerTracker（1 パス目のフレームループと共通）に出来事の列を流し直して行う。
@@ -506,15 +508,17 @@ export function elapsedShortenedTimerFrames(
  * 同じフレームは始まりを先に見る。窓の終わりを越えた発動も、窓の中の発動から縮めた周期で
  * 来る（T4 の「終わっても残りは戻らず」。C-0848・C-1055）。
  * keep はそのフレームに残り（次の発動 − f）に掛ける割合（即時の「スキル N のクールタイム X%▼」の 1 − X / 100。plan/design-centi.md 2.1 節）。
+ * hold が true のフレームは発動しない（予定は残り、明けた最初のフレームに発動する。使用武器の変更の撃ち切りの後の待ち。
+ * plan/design-snow-white.md 8.3 節の論点 7）。
  * そのフレームの発動の後に当てる。残りは端数を持ち、発動は次の発動の時刻に達した最初のフレーム
  */
 export function cooldownTimer(
   long: number,
-): (f: number, started: number | undefined, held: () => number | undefined, keep?: number) => boolean {
+): (f: number, started: number | undefined, held: () => number | undefined, keep?: number, hold?: boolean) => boolean {
   let next = long;
-  return (f, started, held, keep) => {
+  return (f, started, held, keep, hold) => {
     if (started !== undefined) next = Math.min(next, f + started);
-    const fired = f >= next;
+    const fired = hold !== true && f >= next;
     if (fired) next = f + (held() ?? long);
     if (keep !== undefined) next = f + (next - f) * keep;
     return fired;
@@ -836,7 +840,7 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
         e.lock !== true && locked.has(e.stat) ? { ...e, appliedAmount: 0 } : e,
       );
     }
-    // 状態だけの stat の小片は timedEffects には入れない（表示は履歴の値の小片から作る）。buffs.hitRate・minEffectiveRange だけを足す
+    // 状態だけの stat の小片は timedEffects には入れない（表示は履歴の値の小片から作る）。buffs.hitRate・minEffectiveRange・maxEffectiveRange だけを足す
     for (const p of stateActive(start)) {
       const state = slotStates[p.slotIndex];
       if (!state) continue;

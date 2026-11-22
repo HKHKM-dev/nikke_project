@@ -1,0 +1,130 @@
+{
+  "formatVersion": 1,
+  "resourceId": 832,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "coreHit"
+          },
+          "target": "allies",
+          "stat": "pierceDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "reads": [
+            "pierce"
+          ],
+          "assumes": {
+            "ja": "コアの命中（期待値。1 発ごとに弾丸命中率 × コア命中率を足し、累計が整数を越えた発）ごとに付き直す。射撃場の的では SR のコア命中率が 1 なので、どの発でも付き直す。付くのは発の次のフレームから。乗るのは貫通特化の効いている味方の発だけ（マリ自身の S2 の間の発）",
+            "en": "Re-applied on each core hit (expected value: each shot adds bullet hit rate × core hit rate; fires on the shot where the total passes an integer). On the range target an SR's core hit rate is 1, so every shot re-applies it. Applies from the frame after the shot. It only adds to shots of allies with Pierce (Mari herself during S2)"
+          },
+          "claims": [
+            "C-1482"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルチャージして攻撃した時の味方全体のバリアに与えるダメージ▲（3 秒）は、射撃場の敵にバリアが無いのでダメージに関係しない",
+          "en": "Damage dealt to shields up for all allies on a Full Charge attack (3 s) does not affect damage (the shooting range enemy has no shield)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "fullChargeShot"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 10,
+            "cooldown": true
+          },
+          "target": "self",
+          "stat": "pierce",
+          "durationRef": 1,
+          "assumes": {
+            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から 10 秒ごとに発動する（CT 10 秒は外部の資料の値で、録画で確かめた。撃たない間も数え、1 回目も 10 秒。左の「スキル2」の帯の間隔は 589f）",
+            "en": "The description gives no trigger. It is an active skill on a cooldown, activating every 10 s from the start of combat (the 10 s cooldown is from external sources and confirmed by recordings; it counts while not firing, and the first is also at 10 s; the skill banners are 589 f apart)"
+          },
+          "claims": [
+            "C-1481"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 10,
+            "cooldown": true
+          },
+          "target": "self",
+          "stat": "attack",
+          "ref": 4,
+          "durationRef": 5,
+          "claims": [
+            "C-1481"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 10,
+            "cooldown": true
+          },
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "味方全体はマリ自身を含む。マリには、自分への攻撃力▲（効果 2）とこの発動者基準の▲の両方が乗る",
+            "en": "All allies include Mari herself. Mari receives both the self ATK up (effect 2) and this caster-based ATK up"
+          },
+          "claims": [
+            "C-1481"
+          ]
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "敵全体は、敵 1 体の前提でその敵。1 ヒットで、II の発動の印の 69f 後に出る（burst/landing.ts のマリの行）。ヒットには発動の時点の▲が乗り、同じ発動の攻撃ダメージ▲（効果 2）は乗らない",
+            "en": "All enemies are that enemy, given one enemy. One hit, 69 f after the II activation mark (Mari row in burst/landing.ts). The hit takes the buffs at activation, not the Attack Damage up of the same activation (effect 2)"
+          },
+          "claims": [
+            "C-1483"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 2,
+          "durationRef": 3,
+          "claims": [
+            "C-1483"
+          ]
+        }
+      ],
+      "notes": []
+    }
+  }
+}

@@ -1,0 +1,216 @@
+[
+  {
+    "id": "1299-01",
+    "recording": "1299",
+    "kind": "hit",
+    "use": "compare",
+    "value": 166172,
+    "unit": "ダメージ",
+    "description": "I-DOLL・フラワー + デルタ + ユルハ（171。操作）・オートバースト ON で、S2 の窓とフルバーストの外の、I-DOLL・フラワーのコアに当たった会心しない 1 ヒット（距離ボーナスなし。対照）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、3 人の 1 ヒットの格子（モデルの hitDamage の胴体 × (1 + コア・会心・距離の組み合わせ + フルバースト 0.5) × 攻撃力（1 か S2 の▲あり））に ±2 で当てた",
+      "note": "フラワーの窓の外の増分は 166,172（コア）と 207,715（コア・会心）で、モデルの胴体 83,086.02 の 2・2.5 倍"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0823",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1299-02",
+    "recording": "1299",
+    "kind": "hit",
+    "use": "compare",
+    "value": 317252,
+    "unit": "ダメージ",
+    "description": "I-DOLL・フラワー + デルタ + ユルハ（171。操作）・オートバースト ON で、ユルハの S2 の窓の中（フルバーストの外）の、I-DOLL・フラワーのコアに当たった会心しない 1 ヒット（距離ボーナスなし。攻撃力 90.75%▲）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、3 人の 1 ヒットの格子（モデルの hitDamage の胴体 × (1 + コア・会心・距離の組み合わせ + フルバースト 0.5) × 攻撃力（1 か S2 の▲あり））に ±2 で当てた",
+      "note": "窓の中（帯の f2605・4395・7954・9744 から 0〜290f）のフラワーの増分はどれも▲ありの格子（317,252・396,565）に合い、窓の外には▲ありが無い（13 個）。S2 は味方にも付く"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1900,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0823",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1299-03",
+    "recording": "1299",
+    "kind": "hit",
+    "use": "compare",
+    "value": 398252,
+    "unit": "ダメージ",
+    "description": "I-DOLL・フラワー + デルタ + ユルハ（171。操作）・オートバースト ON で、ユルハの S2 の窓の中（フルバーストの外）の、デルタのコアに当たった会心しない 1 ヒット（距離ボーナスなし。攻撃力 90.75%▲）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、3 人の 1 ヒットの格子（モデルの hitDamage の胴体 × (1 + コア・会心・距離の組み合わせ + フルバースト 0.5) × 攻撃力（1 か S2 の▲あり））に ±2 で当てた",
+      "note": "窓の中のデルタの増分はどれも▲ありの格子（398,252・497,815）に合う（14 個）。窓の外は 208,626（コア）。モデルの胴体は▲なし 104,313.12・▲あり 199,126.13"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1900,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0823",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1299-04",
+    "recording": "1299",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [138, 138, 138, 138, 138],
+    "description": "I-DOLL・フラワー + デルタ + ユルハ（171。操作）・オートバースト ON で、III のタイマーの 00.00 から、ユルハのバーストの 1 ヒット目（HUD の増分）までの動画のフレーム（5 回）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、ユルハのバーストの 1 ヒット（説明文の値の 2 分の 1）の値で拾った。III の 00.00 は recipe:burst-panel@4 の「00.00 になったフレーム」（1293・3672・6052・8430・10809）",
+      "note": "1 ヒット目は f1431・3810・6190・8568・10947。どの回も 1 ヒット目と 2 ヒット目は 274,255 ずつで、ほかの増分と重ならない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0823",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1299-05",
+    "recording": "1299",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [0, 7],
+    "description": "I-DOLL・フラワー + デルタ + ユルハ（171。操作）・オートバースト ON で、ユルハの 1 回目のバーストの 1 ヒット目から各ヒットまでの動画のフレーム",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、ユルハのバーストの 1 ヒット（説明文の値の 2 分の 1）の値で拾った。III の 00.00 は recipe:burst-panel@4 の「00.00 になったフレーム」（1293・3672・6052・8430・10809）",
+      "note": "5 回とも 0・7f の 2 ヒットで、2 ヒットの値はどの回も同じ（2 つとも会心なし）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0823",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1299-06",
+    "recording": "1299",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 548510,
+    "description": "I-DOLL・フラワー + デルタ + ユルハ（171。操作）・オートバースト ON で、ユルハの 2 回目のバーストの 2 ヒットの和（会心なし。S2 の窓の外）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分を、ユルハのバーストの 1 ヒット（説明文の値の 2 分の 1）の値で拾った。III の 00.00 は recipe:burst-panel@4 の「00.00 になったフレーム」（1293・3672・6052・8430・10809）",
+      "note": "f3810・3817 の 2 ヒット（274,255 ずつ）。5 回とも同じ値で、追加ダメージ（平常心のとき）の増分はどの回にも無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0823",
+    "readAt": "2026-11-21"
+  }
+]

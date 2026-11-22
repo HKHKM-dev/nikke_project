@@ -1,0 +1,131 @@
+{
+  "formatVersion": 1,
+  "resourceId": 212,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "everySeconds": 10,
+            "cooldown": true
+          },
+          "ref": 2,
+          "damageType": "skill",
+          "delayFrames": 64,
+          "assumes": {
+            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から 10 秒ごとに発動する（CT 10 秒は録画で読んだ値。1 回目も 10 秒。左のスキルの帯の間隔は約 589 ティック）。最終防御力が最も高い敵 3 機は敵 1 体で 1 ヒット。発動からヒットまで 64f。同じ発動の防御力▼（effects[1]）は乗らない",
+            "en": "The description gives no trigger. It is an active skill on a cooldown, activating every 10 s from the start of combat (the 10 s cooldown is read from recordings; the first also at 10 s; the skill banners are about 589 ticks apart). The 3 highest-DEF enemies are the lone enemy, hit once. 64 f from activation to hit. The DEF decrease of the same activation (effects[1]) does not apply"
+          },
+          "claims": [
+            "C-1448"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 10,
+            "cooldown": true
+          },
+          "target": "allies",
+          "stat": "enemyDefenseDown",
+          "ref": 3,
+          "durationRef": 4,
+          "delayFrames": 65,
+          "assumes": {
+            "ja": "最終防御力が最も高い敵 3 機は敵 1 体。窓は S1 のヒット（発動の 64f 後）の次のフレーム（発動の 65f 後）から維持の秒数。周期は effects[0] と同じ CT の発動なので、CT を縮める効果ではヒットとともに動く",
+            "en": "The 3 highest-DEF enemies are the lone enemy. The window starts the frame after the S1 hit (65 f after activation, the hit being at 64 f) and lasts the duration. It follows the same cooldown activations as effects[0], so cooldown reductions move it with the hit"
+          },
+          "claims": [
+            "C-1448",
+            "C-0556",
+            "C-0790"
+          ]
+        },
+        {
+          "kind": "burstGaugeHit",
+          "trigger": {
+            "everySeconds": 10,
+            "cooldown": true
+          },
+          "delayFrames": 64,
+          "assumes": {
+            "ja": "S1 のヒットは、射手の 1 ヒットぶん（target_burst_energy_pershot）のバーストゲージを、ダメージと同じく発動の 64f 後のヒットのフレームに溜める",
+            "en": "The S1 hit builds Burst gauge equal to one shooter hit (target_burst_energy_pershot) on the hit frame, 64 f after activation like the damage"
+          },
+          "claims": [
+            "C-1503",
+            "C-1448"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "collectEvidence",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "self",
+          "maxStacksRef": 3,
+          "durationRef": 4,
+          "contents": [
+            {
+              "stat": "defense",
+              "ref": 2
+            }
+          ],
+          "assumes": {
+            "ja": "通常攻撃の命中は期待値で数える（1 発ごとに弾丸命中率を足す）。付くたびに全部のスタックの維持を付け直す（撃ち続ければ約 27 秒で 5 スタックに届く）。防御力▲はそれ自体は与ダメージを変えない（バーストのフルスタックの条件が状態を読む）",
+            "en": "Normal-attack hits are counted as expected hits (each shot adds its bullet hit rate). Each application refreshes the duration of all stacks (with continuous fire, 5 stacks in about 27 s). The DEF increase does not change damage by itself (the Burst full-stack condition reads the state)"
+          },
+          "claims": [
+            "C-1449"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "最終攻撃力が最も高い敵 1 機は敵 1 体。II の発動の 80f 後に 1 ヒット（burst/landing.ts のノベルの行）。同じ発動の受けるダメージ▲（effects[1]）は乗らない（発動の時点の値。C-0795）",
+            "en": "The enemy with the highest final ATK is the lone enemy. One hit 80 f after the Burst II activation (Novel row in burst/landing.ts). The damage-taken increase of the same Burst (effects[1]) does not apply (values at the activation; C-0795)"
+          },
+          "claims": [
+            "C-1450",
+            "C-0795"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 4,
+          "durationRef": 5,
+          "condition": {
+            "selfState": {
+              "state": "collectEvidence",
+              "stacks": "full"
+            }
+          },
+          "assumes": {
+            "ja": "敵 1 機は敵 1 体。バーストスキルダメージのヒット（発動の 80f 後）のフレームから 5 秒。それより前に発動した味方のバーストのヒットには乗らない（発動の時点の値）。フルスタックの条件もヒットのフレームで見る（発動とヒットの間の 80f に 5 スタックに届いた回を、ゲームが発動の時点で見るかは撮っていない）",
+            "en": "The one enemy is the lone enemy. Lasts 5 s from the frame of the Burst skill damage hit (80 f after the activation). Bursts of allies activated earlier do not get it (values at their activation). The full-stack condition is also checked on the hit frame (whether the game checks it at the activation, for stacks reaching 5 within the 80 f between activation and hit, is not recorded)"
+          },
+          "claims": [
+            "C-1449"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 13,
-  "text": "`npm run sim` の編成の条件の表（`packages/core/scripts/sim-run/tables.ts` の `compositionRows`）は、効果から編成の条件（`burstStepMix`・`squad`・`withCharacter`・`enemyElement`・`row`）を取り出す所が、`skills/composition.ts` の `compositionAllows` の写しになっている。編成の条件の種類を足しても表には出ず、型もテストも気づかない。条件を返す関数を `composition.ts` に置き、両方が使う形にする（[design-sim-run-split.md](design-sim-run-split.md) 9 節。2026-11-19 起票）"
-}

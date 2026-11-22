@@ -1,0 +1,23 @@
+{
+  "id": "C-1505",
+  "text": "アリス：ワンダーランドバニーの S1 の「通常攻撃で 90 回攻撃した時、水冷コードの味方全体にスタック可能バフ効果のスタック量 1 個▲」は、撃った発の通算 90 の倍数の発の次から、自分に付いたほかの味方のスキルのスタック可能バフ（センチの宝物版 S2 の攻撃力▲）にも 1 段足す（付いていない 90 発目では足さない）。上限の 10 段で止まる",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1356-01`。V-0850",
+  "model": "data/skills/195.json の skill1 の effects[2]（stackChange・allStackable・targetElement Water・{ count: \"normalShot\", everyRef: 6 }）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/195.json の skill1 の effects[2]"]
+  },
+  "decidedOn": [],
+  "runs": [
+    {
+      "recording": "1356",
+      "reproduced": "2〜6 回目（270・360・450・540・630 発目の後）",
+      "observations": ["1356-01"]
+    }
+  ],
+  "parameterFree": "回数（値 06 の 90）と足す段（値 07 の 1）は 195 の説明文、足される攻撃力▲の 1 段の値・上限・維持はセンチの C-1218"
+}

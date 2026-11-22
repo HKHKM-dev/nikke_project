@@ -268,13 +268,28 @@ describe('計算の結果から作る行', () => {
     }
   });
 
-  it('merges the instant effects of the same frame, kind and slot, keeping the total amount', () => {
+  it('merges the instant effects of the same frame, kind, source and slot, keeping the total amount', () => {
     const rows = instantRows(sim.instants, slots);
     expect(rows.length).toBeGreaterThan(0);
     expect(rows.length).toBeLessThan(sim.instants.length);
-    expect(new Set(rows.map((r) => `${r.time} ${r.kind} ${r.to}`)).size).toBe(rows.length);
+    expect(new Set(rows.map((r) => `${r.time} ${r.kind} ${r.from} ${r.to}`)).size).toBe(rows.length);
     const total = (list: readonly { amount: number }[]) => list.reduce((sum, x) => sum + x.amount, 0);
     expect(total(rows)).toBeCloseTo(total(sim.instants), 6);
+
+    // 同じフレームに同じ枠へ効く同じ種類の効果も、出どころの枠が違えば行を分ける
+    const effect = sim.instants[0]!.effect;
+    const at = (sourceSlotIndex: number, amount: number) => ({
+      frame: 60,
+      sourceSlotIndex,
+      slotIndex: 0,
+      effect,
+      amount,
+    });
+    const split = instantRows([at(1, 3), at(2, 5), at(1, 4)], slots);
+    expect(split.map((r) => [r.from, r.amount])).toEqual([
+      ['slot 2', 7],
+      ['slot 3', 5],
+    ]);
   });
 
   it('writes one summary row per slot, and the total', () => {
@@ -345,10 +360,14 @@ describe('計算の結果から作る行', () => {
       for (const row of rows) {
         expect(row.ranges).toMatch(/^\d+\.\d-\d+\.\ds( \d+\.\d-\d+\.\ds)*$/);
         expect(row.damage).toMatch(NUMBER);
-        expect(row.perTrigger).toMatch(/^\d[\d,]*( \(\d[\d,]*(\+\d[\d,.]*)+\))?$/);
+        // 内訳の項も、整数に丸める
+        expect(row.perTrigger).toMatch(/^\d[\d,]*( \(\d[\d,]*(\+\d[\d,]*)+\))?$/);
         expect(row.timed).not.toMatch(/undefined|NaN|\[object/);
       }
     }
+    // 内訳のある行（射撃ごとの倍率ダメージか固定ダメージのある区間）がある
+    const perTriggers = slots.flatMap((slot, i) => segmentRows(slot, result.slots[i]!).map((r) => r.perTrigger));
+    expect(perTriggers.some((t) => /\+/.test(t))).toBe(true);
     const timed = slots.flatMap((slot, i) => segmentRows(slot, result.slots[i]!).map((r) => r.timed));
     // 持続バフはきっかけ、同じ効果の段は ×N
     expect(timed.some((t) => /(^|, )burstUse \w+[+-]\d/.test(t))).toBe(true);

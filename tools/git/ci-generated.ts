@@ -8,11 +8,9 @@
 // push には、書き込みのできるデプロイキーの秘密鍵（環境変数 DEPLOY_KEY。secret の GENERATED_DEPLOY_KEY）を使う。main は PR 必須で、
 // GITHUB_TOKEN（github-actions[bot]）は ruleset の bypass に足せないので、デプロイキーを bypass に足してある。
 import { spawnSync } from 'node:child_process';
-import { writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
 import { GENERATED_PATHS, ROOT } from '../../packages/core/scripts/records-data.ts';
 import { commitGenerated, type GitRun } from './ci-generated-lib.ts';
+import { sshEnv } from './deploy-key.ts';
 import { nulPaths, pathListArgs, splitGenerated } from './pr-prep-lib.ts';
 import { cliArgs } from '../../packages/core/scripts/cli.ts';
 
@@ -27,13 +25,6 @@ function git(args: readonly string[], env?: Readonly<Record<string, string>>): G
     env: { ...process.env, ...env },
   });
   return { status: r.status ?? 1, stdout: r.stdout ?? '', stderr: r.stderr ?? r.error?.message ?? '' };
-}
-
-/** 鍵をファイルに置き、git の ssh に渡す環境変数を返す */
-function sshEnv(key: string): Record<string, string> {
-  const keyPath = join(process.env['RUNNER_TEMP'] ?? tmpdir(), 'generated-deploy-key');
-  writeFileSync(keyPath, key.endsWith('\n') ? key : `${key}\n`, { mode: 0o600 });
-  return { GIT_SSH_COMMAND: `ssh -i ${keyPath} -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new` };
 }
 
 const diff = git(pathListArgs(['diff', '--name-only', 'HEAD']));

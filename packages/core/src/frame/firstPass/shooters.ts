@@ -3,8 +3,8 @@
 import { stunSlot } from '../../burst/controller.ts';
 import { partialGaugeRatio } from '../../burst/dynamic.ts';
 import { effectFrameOf, hexagonFrameOf } from '../../burst/schedule.ts';
-import { capCritRate, ZERO_BUFFS } from '../../skills/buffs.ts';
-import { isChargeWeapon } from '../../weapons.ts';
+import { capCritRate, ZERO_BUFFS, type ChangedWeapon } from '../../skills/buffs.ts';
+import { isChargeWeapon, lastBulletShotsOf } from '../../weapons.ts';
 import { firingParams, isZeroFiring, type FiringParams } from '../firing.ts';
 import {
   beginHide,
@@ -98,6 +98,7 @@ export function createShooters({
   chargeGaugeOf,
   chargeWatches,
   controlledSlot,
+  cooldownHoldUntil,
   controller,
   energyAt,
   gaugeHitsOf,
@@ -112,6 +113,7 @@ export function createShooters({
   paramsAt,
   passiveFiring,
   pauseLeft,
+  muzzleHits,
   pelletsAt,
   shooters,
   shotEvents,
@@ -125,6 +127,8 @@ export function createShooters({
   /** 使用武器の変更中の射手の状態と、その武器の識別子（変更していなければ null） */
   const changedShooters: (ShooterState | null)[] = slots.map(() => null);
   const activeWeapon: (string | null)[] = slots.map(() => null);
+  // 枠がいま持っている変更後の武器（戻る時に、戻りの待ちの欄を読む）
+  const heldWeapon: (ChangedWeapon | null)[] = slots.map(() => null);
   const shotCounts = slots.map(() => 0);
   /**
    * フレーム f に始まった枠 i の使用武器変更（識別子
@@ -166,6 +170,8 @@ export function createShooters({
       const weaponId = params.weapon?.id ?? null;
       if (weaponId !== activeWeapon[i]) {
         activeWeapon[i] = weaponId;
+        const ended = heldWeapon[i];
+        heldWeapon[i] = params.weapon;
         if (params.weapon !== null) {
           changedShooters[i] = weaponChangeShooter(params.weapon.shot, model, params);
           const firstHit = weaponChangeFirstHitAt(i, params.weapon.id, f);
@@ -182,7 +188,14 @@ export function createShooters({
           }
         } else {
           changedShooters[i] = null;
-          resumeShooter(shooters[i]!, slot.character.shot, model, params);
+          // 撃ち切りで戻った後の待ち（録画で読む即値。plan/design-snow-white.md 8.1 節の論点 4）は、変更後の武器の最後の弾丸
+          // （枠の最後の発）から数える（戻るフレームは最後の弾丸の次のフレームより遅れることがある）
+          const lastShot = logs[i]?.frames.at(-1);
+          const wait =
+            ended?.returnFirstShotFrames !== undefined && lastShot !== undefined
+              ? Math.max(0, lastShot + ended.returnFirstShotFrames - f)
+              : undefined;
+          resumeShooter(shooters[i]!, slot.character.shot, model, params, wait);
         }
       }
       const state = params.weapon !== null ? changedShooters[i]! : shooters[i]!;
@@ -234,6 +247,11 @@ export function createShooters({
           ? chargeProgressFrames(state, params, model)
           : null;
       const fired = stepShooter(state, shot, model, params, slotBlocked);
+      // 撃ち切りで終わる変更の最後の弾丸から、この枠のクールタイムの周期の発動を待たせる（plan/design-snow-white.md 8.3 節の論点 7）。
+      // 敵のジャンプの始まりの部分チャージの発で撃ち切った回も同じ（V-0840）
+      if ((fired || partial !== null) && params.weapon?.returnCooldownFrames !== undefined && state.ammo === 0) {
+        cooldownHoldUntil[i] = f + params.weapon.returnCooldownFrames;
+      }
       const log = logs[i]!;
       if (chargeWatches[i] !== null) {
         const shotNow = fired || partial !== null;
@@ -282,6 +300,19 @@ export function createShooters({
       );
       const critHits = hits * critRate;
       log.critHits!.push(critHits);
+      // 当たったペレットのクリティカル（plan/design-k.md 2.2 節。V-0848）。ペレット数を替える使用武器変更の発は、変更後のペレット数で
+      // 数える。SG でない基礎の武器は変更後のペレット数 × 1 銃口の命中の期待値（二丁持ちの銃口の数を掛けない）、SG の基礎の武器は当たった
+      // ペレットの数を変更後のペレット数の比で直す。ほかは当たったペレットの数
+      const base = slot.character.shot;
+      const changedPellets = params.weapon !== null && shot.shotCount !== base.shotCount;
+      const critPellets =
+        critRate *
+        (!changedPellets
+          ? pelletCount
+          : slot.character.weaponType === 'SG'
+            ? (pelletCount * shot.shotCount) / base.shotCount
+            : (shot.shotCount * hits) / muzzleHits[i]!);
+      log.critPellets!.push(critPellets);
       log.pelletHits!.push(pelletCount);
       shotEvents[i] = {
         lastShot: state.lastShot,
@@ -289,9 +320,19 @@ export function createShooters({
         hits,
         coreHits,
         critHits,
+        critPellets,
         pellets: pelletCount,
       };
       if (params.weapon !== null) shotEvents[i]!.weaponChange = true;
+      // 「最後の弾丸」が最後の 1 発でない武器（二丁持ち）は、撃った後の残弾がその発の数より少ない発がきっかけ
+      // （基礎の武器だけ。装弾数無限の発は残弾が減らないので起きない）
+      const bullets = params.weapon === null ? lastBulletShotsOf(slot.character.weaponType, shot) : 1;
+      if (bullets > 1) {
+        const lastBullet = state.lastShot || (!params.infiniteAmmo && state.ammo < bullets);
+        shotEvents[i]!.lastBullet = lastBullet;
+        log.lastBulletFrames ??= [];
+        if (lastBullet) log.lastBulletFrames.push(f);
+      }
       // 装弾数無限の発は残弾を減らさないので、味方が消費した弾の合計（teamAmmo）に数えない（plan/design-cinderella-cw.md 2.3 節）。
       // 流し直し（replayEvents）も同じに数えるよう、射撃の列にも残す
       if (params.infiniteAmmo) {

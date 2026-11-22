@@ -31,6 +31,11 @@ export const firingMetrics: Readonly<Record<string, Metric>> = {
     args: ['slot', 'n'],
     sim: fullBurstToWeaponChangeShot,
   },
+  weaponChangeShotToNextShot: {
+    description: '枠の変更後の武器の n 回目の発から、その後の基礎の武器の最初の発までの動画のフレーム',
+    args: ['slot', 'n'],
+    sim: weaponChangeShotToNextShot,
+  },
   fullBurstEndToNextShot: {
     description: 'n 回目のフルバーストの窓の終わりから、枠の次の発までの動画のフレーム',
     args: ['slot', 'n'],
@@ -609,6 +614,26 @@ function fullBurstToWeaponChangeShot(result: SimResult, ctx: MetricContext): num
     },
     60,
   );
+}
+
+/**
+ * 枠の変更後の武器の n 回目（0 始まり）の発から、その後の基礎の武器の最初の発（変更後の武器の発でない、後の発）までの、録画の動画の
+ * フレーム（videoFrameOf）。n はカンマ区切りの並びも書け、そのときは回ごとの列。撃ち切りで戻った後の待ち（returnFirstShotFrames。
+ * plan/design-snow-white.md 8.1 節の論点 4）を、HUD の増分の空きで比べる
+ */
+function weaponChangeShotToNextShot(result: SimResult, ctx: MetricContext): number | number[] {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const log = slotOf(result.shots, ctx);
+  const changed = log.weaponChangeShotFrames ?? [];
+  const at = (n: number): number => {
+    const from = changed[n];
+    if (from === undefined) throw new Error(`${n} 回目の変更後の武器の発が無い`);
+    const shot = log.frames.find((f) => f > from && !changed.includes(f));
+    if (shot === undefined) throw new Error(`${n} 回目の変更後の武器の発の後に基礎の武器の発が無い`);
+    return videoFrameOf(schedule, shot) - videoFrameOf(schedule, from);
+  };
+  return eachOrOne(ctx.args.n, at);
 }
 
 /**

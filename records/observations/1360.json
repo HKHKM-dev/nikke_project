@@ -1,0 +1,278 @@
+[
+  {
+    "id": "1360-01",
+    "recording": "1360",
+    "kind": "count",
+    "use": "compare",
+    "value": [120, 59, 59, 59],
+    "unit": "発",
+    "description": "K の戦闘の始めから 4 本のマガジンの発数（正義の実現の最大装弾数▼が、2 本目から 59 発にする）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps と使い捨てのスクリプト（格子の当て方・マガジンごとの最尤）",
+      "note": "60 フレームを超える空きでマガジンに分けた。1 本目の増分は 120 個で 293 フレーム、2〜4 本目は 59 個（外れの発を除く）でどれも 143 フレーム（59 発の刻み）。左下の照準の残弾の表示も 2 本目から 59 から減る。5 本目からも、的のジャンプで切れたマガジンのほかは 59 発で、120 発に戻ったマガジンは無い（正義の実現が最後の弾丸ごとに付き直す）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 1,
+        "count": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0
+      }
+    },
+    "source": "V-0848",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1360-02",
+    "recording": "1360",
+    "kind": "hit",
+    "use": "compare",
+    "value": 5450.77,
+    "unit": "ダメージ",
+    "spread": {
+      "kind": "range",
+      "low": 5450.6,
+      "high": 5450.9
+    },
+    "description": "K の 1 ヒット（胴体・会心なし・距離ボーナスなし。1 本目のマガジン。正義の実現の前）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps と使い捨てのスクリプト（格子の当て方・マガジンごとの最尤）",
+      "note": "2 ヒットとも胴体・距離 0.3・会心なしの増分（14,172）を 2 × 1.3 で割った値。増分を、モデルの 1 ヒット（胴体・会心なし・距離なし 5,450.718）× (2 ヒットのそれぞれの 1 + 距離 0 か 0.3 + コア 1 + 会心 0.5。外れは 0) × 攻撃ダメージの項（1 か、正義の実現の 1.1062）+ 追加ダメージ（28,631.244 × 攻撃ダメージの項 × 1 か会心の 1.5。0〜2 回）の格子に ±3 で当てた。幅は HUD の 1 の丸め"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 150,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0848",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1360-03",
+    "recording": "1360",
+    "kind": "hit",
+    "use": "compare",
+    "value": 6029.6,
+    "unit": "ダメージ",
+    "spread": {
+      "kind": "range",
+      "low": 6029.4,
+      "high": 6029.8
+    },
+    "description": "K の 1 ヒット（胴体・会心なし・距離ボーナスなし。2 本目のマガジン。正義の実現の攻撃ダメージ▲の中）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps と使い捨てのスクリプト（格子の当て方・マガジンごとの最尤）",
+      "note": "2 ヒットとも胴体・距離 0.3・会心なしの増分（15,677）を 2 × 1.3 で割った値（5,450.77 の 1.1062 倍）。増分を、モデルの 1 ヒット（胴体・会心なし・距離なし 5,450.718）× (2 ヒットのそれぞれの 1 + 距離 0 か 0.3 + コア 1 + 会心 0.5。外れは 0) × 攻撃ダメージの項（1 か、正義の実現の 1.1062）+ 追加ダメージ（28,631.244 × 攻撃ダメージの項 × 1 か会心の 1.5。0〜2 回）の格子に ±3 で当てた。2 本目から終わりまで、増分はどれも攻撃ダメージの項 1.1062 の格子に合い、1 の格子だけに合う増分は無い"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0848",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1360-04",
+    "recording": "1360",
+    "kind": "hit",
+    "use": "compare",
+    "value": 28630.8,
+    "unit": "ダメージ",
+    "spread": {
+      "kind": "range",
+      "low": 28630.3,
+      "high": 28631.3
+    },
+    "description": "K の S1 の追加ダメージの 1 回（会心なし。1 本目のマガジン）。きっかけの発と同じフレームの増分に合わさって出る",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps と使い捨てのスクリプト（格子の当て方・マガジンごとの最尤）",
+      "note": "増分を、モデルの 1 ヒット（胴体・会心なし・距離なし 5,450.718）× (2 ヒットのそれぞれの 1 + 距離 0 か 0.3 + コア 1 + 会心 0.5。外れは 0) × 攻撃ダメージの項（1 か、正義の実現の 1.1062）+ 追加ダメージ（28,631.244 × 攻撃ダメージの項 × 1 か会心の 1.5。0〜2 回）の格子に ±3 で当てた。追加ダメージを含む増分から 2 ヒットの格子の値を引いた残り（1 本目のマガジンの会心なしの回の平均）。追加ダメージは別のフレームに出ず、会心を含む発の増分に乗る"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false,
+        "skill": "skill1"
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0848",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1360-05",
+    "recording": "1360",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.35,
+    "unit": "比",
+    "description": "K の 2 本目のマガジンの通常攻撃の会心率（傾く天秤のスタックの数を映す）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps と使い捨てのスクリプト（格子の当て方・マガジンごとの最尤）",
+      "note": "増分を、モデルの 1 ヒット（胴体・会心なし・距離なし 5,450.718）× (2 ヒットのそれぞれの 1 + 距離 0 か 0.3 + コア 1 + 会心 0.5。外れは 0) × 攻撃ダメージの項（1 か、正義の実現の 1.1062）+ 追加ダメージ（28,631.244 × 攻撃ダメージの項 × 1 か会心の 1.5。0〜2 回）の格子に ±3 で当てた。マガジンの増分ごとに、候補の格子の分け方の確率（ヒットごとに命中率 h・コア率 q・会心率 p。追加ダメージの会心も p）の和を取り、p・q・h の最尤を格子の探索で求めた。幅は p のプロファイル尤度の 95%（差 1.92）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 400
+      },
+      "tolerance": {
+        "abs": 0.1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "spread": {
+      "kind": "range",
+      "low": 0.26,
+      "high": 0.44
+    },
+    "source": "V-0848",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1360-06",
+    "recording": "1360",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.66,
+    "unit": "比",
+    "description": "K の 3 本目のマガジンの通常攻撃の会心率（傾く天秤のスタックの数を映す）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps と使い捨てのスクリプト（格子の当て方・マガジンごとの最尤）",
+      "note": "増分を、モデルの 1 ヒット（胴体・会心なし・距離なし 5,450.718）× (2 ヒットのそれぞれの 1 + 距離 0 か 0.3 + コア 1 + 会心 0.5。外れは 0) × 攻撃ダメージの項（1 か、正義の実現の 1.1062）+ 追加ダメージ（28,631.244 × 攻撃ダメージの項 × 1 か会心の 1.5。0〜2 回）の格子に ±3 で当てた。マガジンの増分ごとに、候補の格子の分け方の確率（ヒットごとに命中率 h・コア率 q・会心率 p。追加ダメージの会心も p）の和を取り、p・q・h の最尤を格子の探索で求めた。幅は p のプロファイル尤度の 95%（差 1.92）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 700
+      },
+      "tolerance": {
+        "abs": 0.1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "spread": {
+      "kind": "range",
+      "low": 0.57,
+      "high": 0.73
+    },
+    "source": "V-0848",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1360-07",
+    "recording": "1360",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.83,
+    "unit": "比",
+    "description": "K の 5 本目のマガジンの通常攻撃の会心率（傾く天秤のスタックの数を映す）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps と使い捨てのスクリプト（格子の当て方・マガジンごとの最尤）",
+      "note": "増分を、モデルの 1 ヒット（胴体・会心なし・距離なし 5,450.718）× (2 ヒットのそれぞれの 1 + 距離 0 か 0.3 + コア 1 + 会心 0.5。外れは 0) × 攻撃ダメージの項（1 か、正義の実現の 1.1062）+ 追加ダメージ（28,631.244 × 攻撃ダメージの項 × 1 か会心の 1.5。0〜2 回）の格子に ±3 で当てた。マガジンの増分ごとに、候補の格子の分け方の確率（ヒットごとに命中率 h・コア率 q・会心率 p。追加ダメージの会心も p）の和を取り、p・q・h の最尤を格子の探索で求めた。幅は p のプロファイル尤度の 95%（差 1.92）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 1200
+      },
+      "tolerance": {
+        "abs": 0.1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "spread": {
+      "kind": "range",
+      "low": 0.76,
+      "high": 0.88
+    },
+    "source": "V-0848",
+    "readAt": "2026-11-21"
+  }
+]

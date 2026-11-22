@@ -17,6 +17,8 @@ import {
 import { fullChargeFrameSet, type ShotLog } from '../frame/shots.ts';
 import {
   isResolvedApplied,
+  isResolvedCounterUp,
+  isResolvedStacks,
   isResolvedBuffApplied,
   isResolvedEventCount,
   isResolvedFullStack,
@@ -48,8 +50,13 @@ import { GAME_SECONDS_PER_FRAME } from '../time.ts';
 
 /** 1 枠の 1 回の射撃 */
 export type ShotEvent = {
-  /** この射撃で残弾が 0 になったか（「最後の弾丸」） */
+  /** この射撃で残弾が 0 になったか（マガジンの最後の発） */
   lastShot: boolean;
+  /**
+   * 「最後の弾丸」のきっかけ（回数の種類 lastShot）になる発か。二丁持ちはマガジンの最後の銃口の数の発
+   * （weapons.ts の lastBulletShotsOf）。省略は lastShot と同じ
+   */
+  lastBullet?: boolean;
   /** チャージ武器の射撃か（常にフルチャージのモデルなので fullChargeShot になる） */
   fullCharge: boolean;
   /**
@@ -64,6 +71,11 @@ export type ShotEvent = {
    * 通常攻撃の会心率。上限 1。plan/design-new-chars-1029.md 5.7 節）。critHit の回数に足す。省略は 0
    */
   critHits?: number;
+  /**
+   * この射撃の当たったペレットのクリティカルの期待値（当たったペレットの数 × その発の通常攻撃の会心率。plan/design-k.md 2.2 節）。
+   * critPelletHit の回数に足す。省略は 0
+   */
+  critPellets?: number;
   /**
    * この射撃で的に当たったペレットの数（期待値か、録画で数えた入力。plan/design-pellet-hit.md 2 節）。
    * pelletHit の回数に足す。省略は hits（1 ペレットの武器）
@@ -90,11 +102,19 @@ export function shotCountWeight(kind: ShotCountKind, shot: ShotEvent): number {
       return shot.hits;
     case 'coreHit':
       return shot.coreHits;
+    // コアでない命中（plan/design-guillotine-ws.md 2.1 節）
+    case 'nonCoreHit':
+      return Math.max(0, shot.hits - shot.coreHits);
     case 'critHit':
       return shot.critHits ?? 0;
+    case 'critPelletHit':
+      return shot.critPellets ?? 0;
     case 'fullChargeShot':
       return shot.fullCharge ? 1 : 0;
     case 'lastShot':
+      return (shot.lastBullet ?? shot.lastShot) ? 1 : 0;
+    // 二丁持ちでもマガジンの最後の発だけ（plan/design-k.md 2.4 節）
+    case 'lastShotOnce':
       return shot.lastShot ? 1 : 0;
     case 'weaponChangeShot':
       return shot.weaponChange === true ? 1 : 0;
@@ -168,9 +188,7 @@ export function createStateWindowTracker(
     if (conditionState !== undefined && startOfHeld(conditionState, ev.frame, ev.frame + 1) === undefined) return false;
     // 全員の発の和は 1 フレームで N を超えうるので、teamAmmo と同じく、N の倍数を越えたら 1 回だけ発火する
     if (team) {
-      const fired =
-        Math.floor((count + weight) / trigger.every + COUNT_EPSILON) >
-        Math.floor(count / trigger.every + COUNT_EPSILON);
+      const fired = crossedMultiples(count, weight, trigger.every) > 0;
       count += weight;
       return fired;
     }
@@ -194,9 +212,12 @@ export function advanceShotCount(count: number, weight: number, every: number): 
   if (weight > every + COUNT_EPSILON) {
     throw new RangeError(`a count trigger got ${weight} in one shot, more than every (${every})`);
   }
-  const next = count + weight;
-  const fired = Math.floor(next / every + COUNT_EPSILON) > Math.floor(count / every + COUNT_EPSILON);
-  return { count: next, fired };
+  return { count: count + weight, fired: crossedMultiples(count, weight, every) > 0 };
+}
+
+/** 累計 count に weight を足すと、N（every）の倍数をいくつまたぐか（端数の誤差は COUNT_EPSILON で許す） */
+export function crossedMultiples(count: number, weight: number, every: number): number {
+  return Math.floor((count + weight) / every + COUNT_EPSILON) - Math.floor(count / every + COUNT_EPSILON);
 }
 
 /** 1 フレームの出来事 */
@@ -227,9 +248,9 @@ export type FrameEvents = {
   healed: readonly boolean[];
   /**
    * このフレームにフルスタックになって外れた状態（持ち主の枠と状態。plan/design-skill-stage3.md 1.3 節）。1 パス目が
-   * 回復の前に件の一覧から出す（skills/holders/read.ts の consumeFullStacks）。流し直し（replayEvents）では作らないので、
-   * フルスタックの消費のきっかけは 1 パス目で当てる効果（回復・使用武器の変更・弾丸チャージ・1 パス目が件を登録する timed）にだけ書ける。
-   * 省略は無し
+   * 回復の前に件の一覧から出す（skills/holders/read.ts の consumeFullStacks）。流し直し（replayEvents）では作らない。1 パス目で当てる
+   * 効果（回復・使用武器の変更・弾丸チャージ・timed・状態の付与・解除）はこれを見て、2 パス目の倍率ダメージは 1 パス目の履歴の
+   * fullStacks のフレームで発火する（frame/plan.ts。plan/design-phantom.md 2.2 節）。省略は無し
    */
   fullStacks?: readonly FullStackEvent[];
   /**
@@ -273,6 +294,9 @@ export type ChargeTickEvent = { slotIndex: number; everySeconds: number };
 
 /** フルスタックになって外れた状態 */
 export type FullStackEvent = { slotIndex: number; state: NamedStateId };
+
+/** フルスタックの消費の記録（1 パス目の履歴。2 パス目の倍率ダメージのきっかけ { fullStack } が読む。plan/design-phantom.md 2.2 節） */
+export type FullStackRecord = FullStackEvent & { frame: number };
 
 /** 回復の記録。frame に slotIndex の枠が sourceSlotIndex の heal 効果で回復を受けた */
 export type HealRecord = {
@@ -322,6 +346,31 @@ export function createTriggerTracker(
   scheduleModel: BurstScheduleModel | null,
   everyAt?: ShotCountEveryAt,
 ): TriggerTracker {
+  const fires = trackerBody(trigger, slotIndex, scheduleModel, everyAt);
+  return (ev) => Number(fires(ev)) > 0;
+}
+
+/**
+ * createTriggerTracker の、そのフレームの発火の数を返す版。1 発で何回も発火するのは critPelletHit だけ（plan/design-k.md 2.2 節）で、
+ * ほかは 0 か 1。倍率ダメージの発動（trackTriggerFires）が、その数だけ同じフレームに並べる
+ */
+export function createFireCounter(
+  trigger: ResolvedTrigger,
+  slotIndex: number,
+  scheduleModel: BurstScheduleModel | null,
+  everyAt?: ShotCountEveryAt,
+): (ev: FrameEvents) => number {
+  const fires = trackerBody(trigger, slotIndex, scheduleModel, everyAt);
+  return (ev) => Number(fires(ev));
+}
+
+/** 追い手の中身。critPelletHit の発火の数のほかは真偽を返す */
+function trackerBody(
+  trigger: ResolvedTrigger,
+  slotIndex: number,
+  scheduleModel: BurstScheduleModel | null,
+  everyAt?: ShotCountEveryAt,
+): (ev: FrameEvents) => boolean | number {
   let count = 0;
   let lastEventFrame: number | undefined;
   const t = trigger;
@@ -351,7 +400,7 @@ export function createTriggerTracker(
       if (t.count === 'teamAmmo') {
         const weight = teamShotWeight('teamAmmo', ev.shots);
         const every = t.every;
-        const fired = Math.floor((count + weight) / every) > Math.floor(count / every);
+        const fired = crossedMultiples(count, weight, every) > 0;
         count += weight;
         return fired;
       }
@@ -359,6 +408,13 @@ export function createTriggerTracker(
       if (!shot) return false;
       // 確率のきっかけは、回数の量が正の射撃のたびに引く（付く確率は skills/chance.ts。plan/design-soldier-eg.md 3.1 節）
       if (t.chance !== undefined) return shotCountWeight(t.count, shot) > 0;
+      // 当たったペレットのクリティカルは、1 発で N の倍数をまたいだ数だけ発火する（plan/design-k.md 2.2 節。窓は組まない）
+      if (t.count === 'critPelletHit') {
+        const weight = shotCountWeight(t.count, shot);
+        const fires = crossedMultiples(count, weight, everyAt?.(ev.frame) ?? t.every);
+        count += weight;
+        return fires;
+      }
       const next = advanceShotCount(count, shotCountWeight(t.count, shot), everyAt?.(ev.frame) ?? t.every);
       count = next.count;
       // ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 窓の外の発も数え、窓の外で届いた回は発火せずに過ぎる
@@ -411,6 +467,15 @@ export function createTriggerTracker(
   if (isCounterFullTrigger(t)) {
     throw new RangeError(`a counterFull trigger (${t.counterFull}) is not tracked per event; use counterFullFrames`);
   }
+  // カウンタが増えた時と、状態のスタック数の N ごとも 1 パス目の件の一覧が追う（skills/holders/fires.ts の firesOf）
+  if (isResolvedCounterUp(t)) {
+    throw new RangeError(`a counterUp trigger (${t.counterUp}) is not tracked per event; the holder lists track it`);
+  }
+  if (isResolvedStacks(t)) {
+    throw new RangeError(
+      `a stateStacks trigger (${t.stateStacks}) is not tracked per event; the holder lists track it`,
+    );
+  }
   // 状態の終わりは 1 パス目の件の一覧が追う（skills/holders/conditions.ts の endedAt。plan/design-grave.md 2.1 節）。出来事の列では追わない
   if (isEndedTrigger(t)) {
     throw new RangeError(`an ended trigger (${t.ended}) is not tracked per event; the holder lists track it`);
@@ -426,7 +491,9 @@ export function createTriggerTracker(
           ? ev.burstEffects.some((a) => a.slotIndex === slotIndex)
           : t.count === 'fullBurstStart'
             ? ev.fullBurstStart
-            : ev.fullBurstEnd;
+            : t.count === 'burstStage3Enter'
+              ? ev.stageEntries?.includes('Step3') === true
+              : ev.fullBurstEnd;
       if (!happened) return false;
       // 回数は戦闘中ずっと数える。atLeast 回目以降の発動のたびに発火する（下位効果のスタック適用）。
       // V-0631: resetAfterSeconds を書いたものは、前の発動から N 秒より後の発動で数え直す
@@ -530,6 +597,7 @@ export function replayEvents(
   shots.forEach((log, slotIndex) => {
     if (!log) return;
     const last = new Set(log.lastShotFrames ?? []);
+    const lastBullets = log.lastBulletFrames === undefined ? null : new Set(log.lastBulletFrames);
     const changed = new Set(log.weaponChangeShotFrames ?? []);
     const infinite = new Set(log.infiniteAmmoShotFrames ?? []);
     const full = fullChargeFrameSet(log);
@@ -543,8 +611,11 @@ export function replayEvents(
       };
       const critHits = log.critHits?.[k];
       if (critHits !== undefined) shot.critHits = critHits;
+      const critPellets = log.critPellets?.[k];
+      if (critPellets !== undefined) shot.critPellets = critPellets;
       const pellets = log.pelletHits?.[k];
       if (pellets !== undefined) shot.pellets = pellets;
+      if (lastBullets !== null) shot.lastBullet = lastBullets.has(f);
       if (changed.has(f)) shot.weaponChange = true;
       if (infinite.has(f)) shot.ammo = 0;
       (at(f).shots as (ShotEvent | null)[])[slotIndex] = shot;
@@ -630,8 +701,14 @@ export function trackTriggerFires(
   events: readonly FrameEvents[],
   everyAt?: ShotCountEveryAt,
 ): TriggerFire[] {
-  const fires = createTriggerTracker(trigger, slotIndex, schedule?.model ?? null, everyAt);
+  const fires = createFireCounter(trigger, slotIndex, schedule?.model ?? null, everyAt);
   const fired: TriggerFire[] = [];
-  for (const ev of events) if (fires(ev)) fired.push({ frame: ev.frame, context: fireContextOf(trigger, ev) });
+  for (const ev of events) {
+    // 1 発で何回も発火したら、同じフレームに数だけ並べる（critPelletHit。plan/design-k.md 2.2 節）
+    const n = fires(ev);
+    if (n === 0) continue;
+    const fire = { frame: ev.frame, context: fireContextOf(trigger, ev) };
+    for (let k = 0; k < n; k++) fired.push(fire);
+  }
   return fired;
 }

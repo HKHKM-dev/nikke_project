@@ -1,0 +1,40 @@
+{
+  "id": "1289",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1289_flower+signal_auto.mp4",
+  "original": "2026-11-21_16-20-39.mp4",
+  "durationSec": 211.2,
+  "frames": 12673,
+  "fps": 60,
+  "sizeMB": 255.8,
+  "sha256": "205bbf9387c1",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 22,
+      "name": "シグナル",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0819。I-DOLL・フラワー + シグナル（操作）・オートバースト ON",
+  "backup": {
+    "at": "2026-11-21T16:29+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

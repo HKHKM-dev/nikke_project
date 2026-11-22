@@ -1,0 +1,16 @@
+{
+  "id": "C-1502",
+  "text": "K の S1 の傾く天秤と S2 の正義の実現は、フルバーストタイムが終わった時に外れる（その後のマガジンの会心率は 15% に戻る）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`1350-06`・`1350-07`・`1350-08`・`1350-09`。V-0848",
+  "model": "（モデル側を書く。未反映ならそう書く）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/41.json の skill1 の effects[3]", "data/skills/41.json の skill2 の effects[1]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "フルバーストタイムの終わりの解除は説明文。録画に合わせた値は無い"
+}

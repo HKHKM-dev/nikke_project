@@ -1,0 +1,46 @@
+{
+  "id": "1350",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1350_rl+sr+smg_i-doll-flower+delta+k_fire.mp4",
+  "original": "2026-11-21_23-27-08.mp4",
+  "durationSec": 204.6,
+  "frames": 12275,
+  "fps": 60,
+  "sizeMB": 248,
+  "sha256": "ef10c43d843d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 41,
+      "name": "K",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0848。I-DOLL・フラワー + デルタ + K（操作）（撮影 B）",
+  "backup": {
+    "at": "2026-11-21T23:42+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

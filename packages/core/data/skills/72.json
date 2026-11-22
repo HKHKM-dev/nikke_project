@@ -92,7 +92,7 @@
       "effects": [
         {
           "kind": "stackChange",
-          "state": "strawberryCandy",
+          "allStackable": true,
           "trigger": {
             "count": "normalHit",
             "everyRef": 4
@@ -102,14 +102,14 @@
           },
           "target": "self",
           "amountRef": 5,
-          "existingOnly": true,
           "assumes": {
-            "ja": "スタック可能バフ効果のスタック量▲は、自分のイチゴキャンディに足す分だけ。命中は戦闘を通して数え、150 回目にヘイト状態で、イチゴキャンディが付いていれば足す",
-            "en": "Only the part added to own Strawberry Candy. Hits are counted through the battle; on the 150th hit, a stack is added if in the Attract state and Strawberry Candy is present"
+            "ja": "命中は戦闘を通して数え、150 回目にヘイト状態なら、自分が持つ、上限のある状態と timed のスタックのバフの全部（イチゴキャンディと、ほかの味方のスキルで自分に付いたもの）に、付いていれば 1 段足す（付いていなければ足さない。C-1182）。イチゴキャンディに足す分は C-1180・C-1182、ほかの味方のスキルで付いたバフに足す分は C-1508 で確かめた。足すと全部の段の維持を付け直す（付与と同じに数える。C-1507 は仮説）",
+            "en": "Hits are counted through the battle; on the 150th hit, if in the Attract state, adds one stack to every stackable buff (states and timed buffs with a stack cap) held by self (Strawberry Candy and those from other allies' skills), only if present (not when absent; C-1182). The part added to Strawberry Candy is verified by C-1180 and C-1182, and the part added to buffs from other allies' skills by C-1508. Adding refreshes the duration of all stacks (counted like an application; C-1507 is a hypothesis)"
           },
           "claims": [
             "C-1180",
-            "C-1182"
+            "C-1182",
+            "C-1508"
           ]
         }
       ],
@@ -128,16 +128,6 @@
             "kind": "heal",
             "target": "self",
             "trigger": "damaged"
-          }
-        },
-        {
-          "ja": "通常攻撃が 150 回命中した時（ヘイト状態なら）のスタック量▲のうち、ほかの味方のスキルで自分に付いたスタック可能バフに足す分は未対応（自分のイチゴキャンディの分だけ扱う）",
-          "en": "Of the stack count increase after 150 hits in the Attract state, the part added to stackable buffs from other allies' skills is not modeled (only own Strawberry Candy is handled)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "stackChange",
-            "target": "self",
-            "trigger": "normalHit"
           }
         }
       ]

@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-// アカウントのメニューの育成状況の欄（RosterSettings.tsx）と、スロット・共通育成の「育成状況の値に戻す」
+// 育成のメニューの育成状況の欄（RosterSettings.tsx）と、スロット・共通育成の「育成状況の値に戻す」
 // （plan/design-roster-edit.md 6.1 節・7 節）。データは作った値
 import { BUILD_SNAPSHOT_FORMAT_VERSION, type BuildSnapshot } from '@nikke/core';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
@@ -120,7 +120,7 @@ describe('RosterRevertButton（スロットの「育成状況の値に戻す」�
 
 describe('TeamSettingsForm の「育成状況の値に戻す」（共通育成）', () => {
   const team = initialTeamState();
-  const form = (synchroLevel: number, withRoster = true, fixedSpec = false) => {
+  const form = (synchroLevel: number, withRoster = true, fixedSpec = false, revertIcon = false) => {
     const dispatch = vi.fn();
     render(
       <TeamSettingsForm
@@ -131,6 +131,7 @@ describe('TeamSettingsForm の「育成状況の値に戻す」（共通育成�
         durationSeconds={team.durationSeconds}
         rangeJump={team.rangeJump}
         rosterCommon={withRoster ? commonGrowthOf(ROSTER) : null}
+        revertIcon={revertIcon}
         dispatch={dispatch}
       />,
     );
@@ -178,5 +179,15 @@ describe('TeamSettingsForm の「育成状況の値に戻す」（共通育成�
     const fixed = form(200, true, true);
     fireEvent.click(screen.getByRole('button', { name: '育成状況の値に戻す' }));
     expect(fixed).not.toHaveBeenCalled();
+  });
+
+  it('モダン UI ではアイコンのボタンにし、名前は同じ「育成状況の値に戻す」', () => {
+    const dispatch = form(200, true, false, true);
+    const button = screen.getByRole('button', { name: '育成状況の値に戻す' });
+    expect(button.textContent).toBe('');
+    // マウスを重ねたときの文字（title）は出さない（オーナーの指示）
+    expect(button.getAttribute('title')).toBeNull();
+    fireEvent.click(button);
+    expect(dispatch).toHaveBeenCalledWith({ type: 'setSynchroLevel', synchroLevel: 300 });
   });
 });

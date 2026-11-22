@@ -7,7 +7,7 @@ import type { ResolvedShotCountTrigger } from '../resolve.ts';
 import type { RankingRecord } from '../ranking.ts';
 import type { CounterId } from '../counters.ts';
 import type { NamedStateId } from '../states.ts';
-import type { HealRecord, TriggerTracker } from '../triggers.ts';
+import type { FullStackRecord, HealRecord, TriggerTracker } from '../triggers.ts';
 import { resolvePassiveStates, type AppliedRecord, type ConditionSkip, type TimelineSlot } from '../timeline.ts';
 import type {
   AmplifierSource,
@@ -43,6 +43,8 @@ export type LateReaders = {
   readItems: (track: HeldTrack) => HeldItem[];
   /** 層 4（read）: 件の列のうち、そのフレームに効いている件 */
   activeAt: (track: HeldTrack, frame: number) => HeldItem[];
+  /** 層 5（views）: 枠のその状態の、フレームのスタックの段の最大（{ stateStacks } の発火） */
+  stackLevelAt: (holder: number, state: NamedStateId, frame: number) => number;
 };
 
 /** 層の作り手が共通に受けるもの */
@@ -63,6 +65,7 @@ export function createRecords({ options, slots }: HolderBase) {
   const removeDebuffGuesses: RemoveDebuffGuessRecord[] = [];
   const stateEndGuesses: StateEndGuessRecord[] = [];
   const heals: HealRecord[] = [];
+  const fullStacks: FullStackRecord[] = [];
   const amplifiers: AmplifierSource[] = [];
   /**
    * 件の列ごとの、件を作る関数が読む入力（trackReadsOf）と、件を作った時の入力の長さ（始まり・機会・射撃・使用武器の変更の終わり・
@@ -120,6 +123,11 @@ export function createRecords({ options, slots }: HolderBase) {
   };
   /** 枠のカウンタが上限に届いたフレームの次のフレーム（{ counterFull } の発火。届くたびに書き替える） */
   const counterFullAt = new Map<string, number>();
+  /** 枠のカウンタが増えたフレームの次のフレーム（{ counterUp } の発火。戦闘開始時の増減は入れない。plan/design-guillotine-ws.md 2.2 節） */
+  const counterUpAt = new Map<string, Set<number>>();
+  /** 枠のカウンタの { counterUp } が、フレーム frame に発火するか */
+  const counterUpFiresAt = (slotIndex: number, counter: CounterId, frame: number): boolean =>
+    counterUpAt.get(counterKey(slotIndex, counter))?.has(frame) === true;
   return {
     amplifiers,
     applications,
@@ -129,7 +137,10 @@ export function createRecords({ options, slots }: HolderBase) {
     consumeTrack,
     counterFullAt,
     counterKey,
+    counterUpAt,
+    counterUpFiresAt,
     frames,
+    fullStacks,
     heals,
     itemsSeen,
     logs,

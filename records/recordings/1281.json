@@ -1,0 +1,46 @@
+{
+  "id": "1281",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1281_crow-b-1.mp4",
+  "original": "2026-11-21_15-49-04.mp4",
+  "durationSec": 212.4,
+  "frames": 12744,
+  "fps": 60,
+  "sizeMB": 257.2,
+  "sha256": "2451f2ec18e1",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 110,
+      "name": "クロウ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0816 の撮影 B: ココア（I）・ソルジャーF.A.（II）・クロウ（III・操作）、オートバースト ON",
+  "backup": {
+    "at": "2026-11-21T15:55+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

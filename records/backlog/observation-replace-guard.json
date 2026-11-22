@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 30,
-  "text": "`npm run records:new -- observation --replace` は、確定の結論の根拠になっている観測値でも、値や `compare.tolerance` をそのまま差し替え、影響する結論を出さない（`--invalidate` は出す）。下書きの検査（`packages/core/src/records/observationEdits.ts` の `draftShapeErrors`）は `invalid` の欄を止めないので、`--reason` 無し・付け替え無しで無効にもできる。また `--invalidate --by` は結論の根拠を付け替えるが、等級・状態・許容内かを出し直さない（止まるのは後の `records:check` か許容幅のテスト）。根拠に使われている観測値を差し替えるときは影響する結論を出して止める（通す引数を足す）、`invalid` を予約した欄に入れる、付け替えの後に等級と状態を出し直す、のどこまで入れるかはオーナーの判断（[design-workflow-simplification-17.md](design-workflow-simplification-17.md) 3 節。2026-11-20 起票）"
-}

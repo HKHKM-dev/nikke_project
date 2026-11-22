@@ -9,6 +9,7 @@ import {
   isAppliedTrigger,
   isCounterFullTrigger,
   isEndedTrigger,
+  isFullStackTrigger,
   isShotCountTrigger,
   isSummonAttackTrigger,
   isTimerTrigger,
@@ -202,6 +203,9 @@ function parseGaugeHitsAndCondition(v: Record<string, Json>, effect: DamageEffec
     if (trigger.stacksRef !== undefined) fail(`${path}.gaugeHits`, 'gaugeHits cannot be used with stacksRef');
     // 1 パス目のゲージの予約は自分の発だけを数える（味方が消費した弾の合計とは数え方が違う）
     if (trigger.count === 'teamAmmo') fail(`${path}.gaugeHits`, 'gaugeHits cannot be used with a teamAmmo count');
+    // 1 パス目のゲージの予約は 1 発で 1 回だけ数える（plan/design-k.md 2.2 節）
+    if (trigger.count === 'critPelletHit')
+      fail(`${path}.gaugeHits`, 'gaugeHits cannot be used with a critPelletHit count');
     effect.gaugeHits = parseGaugeHits(v.gaugeHits, `${path}.gaugeHits`, 0);
   }
   // 発火の条件。timed と同じ型（鍵は inFullBurst・enemyState）
@@ -220,7 +224,7 @@ function parseGaugeHitsAndCondition(v: Record<string, Json>, effect: DamageEffec
  * 「〈効果名〉が適用された時」（クイーン（真）S1 の追撃。plan/design-persona.md 9.3 節）と、
  * 周期のスキルの発動（時間の周期のトリガー。C-0453。plan/design-timer-ceil.md 2 節の論点 4）と、
  * 射撃の回数のきっかけ（確率を除く。plan/design-shot-count-trigger-frame.md 6.6 節）と、カウンタが上限に届いた時（{ counterFull }）と、
- * 〈状態〉が終了した時（{ ended }）
+ * 〈状態〉が終了した時（{ ended }）と、フルスタックの消費（{ fullStack }。ファントムの宝物版 S2 の分配ダメージ。plan/design-phantom.md 2.4 節）
  */
 function parseDamageDelay(v: Record<string, Json>, effect: DamageEffect, path: string): void {
   if (v.delayFrames === undefined) return;
@@ -237,11 +241,12 @@ function parseDamageDelay(v: Record<string, Json>, effect: DamageEffect, path: s
     !isAppliedTrigger(trigger) &&
     !isTimerTrigger(trigger) &&
     !isCounterFullTrigger(trigger) &&
-    !isEndedTrigger(trigger)
+    !isEndedTrigger(trigger) &&
+    !isFullStackTrigger(trigger)
   ) {
     fail(
       `${path}.delayFrames`,
-      'delayFrames needs the trigger "burstUse", { applied }, { everySeconds }, { counterFull }, { ended } or a shot count trigger',
+      'delayFrames needs the trigger "burstUse", { applied }, { everySeconds }, { counterFull }, { ended }, { fullStack } or a shot count trigger',
     );
   }
   effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
@@ -405,7 +410,8 @@ function parseDamageGaugePerHit(v: Record<string, Json>, effect: DamageEffect, p
   // 味方が消費した弾の合計の倍率ダメージがゲージを溜めるかは確かめていない（plan/design-little-mermaid.md 2.1 節）
   if (isShotCountTrigger(trigger) && trigger.count === 'teamAmmo')
     fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with a teamAmmo count');
-  // 1 パス目は名前の無い窓の短縮を追わない（使い手のエイダの S2 はゲージを溜めるかを確かめていない）
+  if (isShotCountTrigger(trigger) && trigger.count === 'critPelletHit')
+    fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with a critPelletHit count');
   if (effect.periodShorten?.window !== undefined)
     fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with a periodShorten window');
   // 1 パス目は発火のフレームより後のゲージだけを予約できる。条件は 1 パス目の後に絞るので組み合わせない

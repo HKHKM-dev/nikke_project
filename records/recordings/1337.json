@@ -1,0 +1,48 @@
+{
+  "id": "1337",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1337_neve-zwei-fa.mp4",
+  "original": "2026-11-21_22-35-39.mp4",
+  "durationSec": 218.5,
+  "frames": 13110,
+  "fps": 60,
+  "sizeMB": 264.7,
+  "sha256": "e81d72337826",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 390,
+      "name": "ツバイ",
+      "controlled": false,
+      "treasurePhase": 3
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 193,
+      "name": "ネヴェ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire",
+    "level": 1
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0843 の撮影 P（ツバイ・ソルジャーF.A.・ネヴェ（操作））。戦闘履歴の画で編成を確かめた",
+  "backup": {
+    "at": "2026-11-21T22:47+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

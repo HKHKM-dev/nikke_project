@@ -1,0 +1,16 @@
+{
+  "id": "C-1393",
+  "text": "ギロチン：ウィンタースレイヤーの S1 の勇者レベルは 1 から始まり（戦闘の始めの画面の表示は「Lv 1」）、経験値が 10・20・…・100 スタックに届いた次の発から 1 ずつ上がり、11 で止まる（勇者レベルアップは 10 回）。戦闘開始時の 1 は勇者レベルアップに数えない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1273-04`・`1273-05`・`1273-06`・`1273-07`・`1273-09`・`1274-04`・`1274-05`・`1274-06`・`1274-07`・`1274-09`。V-0812",
+  "model": "反映（data/skills/182.json の skill1 の effects[0]・[1]。目録の heroLevel（上限 11）と、きっかけ { stateStacks }）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/182.json の skill1 の effects[0]", "data/skills/182.json の skill1 の effects[1]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の Lv10 の値。読み（N1・L1・U1・D1）は撮る前に決めた（plan/design-guillotine-ws.md 2.1〜2.4 節）"
+}

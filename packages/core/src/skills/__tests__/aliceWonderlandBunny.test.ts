@@ -1,7 +1,14 @@
 // アリス：ワンダーランドバニー（195）の定義（V-0766）: S1 の 60 発ごとの回復とニンジンパーティー、S2 のフルバーストの開始・終わりの
-// 効果、バーストの再突入と回復。スタック量▲（S1 の 2 行目）は未対応の notes。
+// 効果、バーストの再突入と回復。S1 の 2 行目の水冷コードの味方へのスタック量▲（V-0850）。
 import { describe, expect, it } from 'vitest';
-import { MAX_SKILL_LEVELS, resolveInstant, resolveStateGrants, resolveTimed, type SkillLevels } from '../resolve.ts';
+import {
+  MAX_SKILL_LEVELS,
+  resolveAllStackableChanges,
+  resolveInstant,
+  resolveStateGrants,
+  resolveTimed,
+  type SkillLevels,
+} from '../resolve.ts';
 import { parseSkillDefinition } from '../parse/definition.ts';
 import { burstReentryStepOf } from '../types.ts';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
@@ -13,12 +20,23 @@ const MID_LEVELS: SkillLevels = { skill1: 7, skill2: 7, burst: 4 };
 
 describe('アリス：ワンダーランドバニー（195）の定義', () => {
   it('has the slot supports from the effects and notes', () => {
-    // S1 はスタック量▲が未対応、S2 は全部、バーストは間接の notes だけが残る
-    expect(def.skills.skill1.support).toBe('partial');
+    // S1 は前提の外の notes、バーストは間接の notes だけが残る
+    expect(def.skills.skill1.support).toBe('supported');
     expect(def.skills.skill2.support).toBe('supported');
     expect(def.skills.burst.support).toBe('supported');
-    expect(def.skills.skill1.notes?.map((n) => n.kind)).toEqual(['outOfScope', 'unimplemented']);
+    expect(def.skills.skill1.notes?.map((n) => n.kind)).toEqual(['outOfScope']);
     expect(def.skills.burst.notes?.map((n) => n.kind)).toEqual(['indirect']);
+  });
+
+  it('adds one stack to the stackable buffs of Water Code allies every 90 normal attacks', () => {
+    expect(resolveAllStackableChanges(def, alice, MAX_SKILL_LEVELS)).toEqual([
+      expect.objectContaining({
+        target: 'allies',
+        targetElement: 'Water',
+        amount: 1,
+        trigger: { count: 'normalShot', every: 90 },
+      }),
+    ]);
   });
 
   it('heals all allies every 60 normal attacks and on the burst use', () => {

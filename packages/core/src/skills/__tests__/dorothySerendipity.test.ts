@@ -29,10 +29,12 @@ describe('語彙の検証', () => {
     expect(() => parseSkillDefinition(raw)).not.toThrow();
   });
 
-  it('takes Pellet count up only with scaling "flat" and target "self"', () => {
+  it('takes Pellet count up only with scaling "flat" and target "self", "allies" or "topAttack"', () => {
     const i = indexOf('burst', 'pelletCount');
     expect(patched('burst', i, { scaling: undefined })).toThrow(/pelletCount needs scaling "flat"/);
-    expect(patched('burst', i, { target: 'allies' })).toThrow(/pelletCount is only allowed with target "self"/);
+    expect(patched('burst', i, { target: 'longestChargeTime', targetCount: 1 })).toThrow(
+      /pelletCount is only allowed with target "self", "allies" or "topAttack"/,
+    );
   });
 
   it('takes the single pellet as a flag of self in timed only', () => {
@@ -44,9 +46,7 @@ describe('語彙の検証', () => {
     ).toThrow(/pelletCount is only allowed in timed/);
   });
 
-  it('allows a duration in shots on Hit Rate up, Pierce and the single pellet, but not on ATK', () => {
-    const hit = indexOf('skill1', 'hitRate');
-    expect(patched('skill1', hit, { stat: 'attack' })).toThrow(/a duration in shots is not supported for "attack"/);
+  it('allows a duration in shots on Hit Rate up, Pierce and the single pellet, but not on the Pellet count up', () => {
     expect(patched('burst', indexOf('burst', 'pelletCount'), { durationRef: undefined, durationShotsRef: 6 })).toThrow(
       /a duration in shots is not supported for "pelletCount"/,
     );

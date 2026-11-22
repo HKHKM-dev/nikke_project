@@ -50,9 +50,9 @@ export type NumericObservation = ObservationFields & { use: 'compare' | 'input';
 /** 記録だけの観測値。value は入れ子の配列・オブジェクト・文字列と、読めなかった要素の null を持つ */
 export type RecordObservation = ObservationFields & { use: 'record'; value: JsonValue };
 
-type Draft<O> = Omit<O, 'id' | 'recording' | 'source' | 'readAt'>;
+type Draft<O> = Omit<O, 'id' | 'recording' | 'source' | 'readAt' | 'invalid'>;
 
-/** 観測値の下書き（id・recording・source・readAt を除いたもの。Omit を use ごとにかけ、value の型を保つ） */
+/** 観測値の下書き（id・recording・source・readAt と invalid（無効にするのは --invalidate）を除いたもの。Omit を use ごとにかけ、value の型を保つ） */
 export type ObservationDraft = Draft<NumericObservation> | Draft<RecordObservation>;
 
 type ObservationFields = {
@@ -139,7 +139,6 @@ export const OBSERVATION_DRAFT_FIELDS = {
     required: false,
     shape: '複数の録画にまたがる値の録画 id の並び（recording も含める。compare には使わない）',
   },
-  invalid: { required: false, shape: '{ reason, date }（ふつうは records:new observation --invalidate で付ける）' },
 } as const satisfies { [K in ObservationDraftKey]-?: { required: boolean; shape: string } };
 
 /** 下書きの欄の一覧の文（records:new observation --help） */

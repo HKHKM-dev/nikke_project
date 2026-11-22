@@ -1,0 +1,180 @@
+[
+  {
+    "id": "1282-01",
+    "recording": "1282",
+    "kind": "hit",
+    "use": "compare",
+    "value": 22255,
+    "unit": "ダメージ",
+    "description": "ブリッドの 30 発目（f971）の胴体・会心なし・距離ボーナスありの 1 ヒット。1〜30 発目の増分は、どれも S1 の攻撃力▲の無い格子（22,255・30,814・39,373・47,933）に乗る",
+    "method": {
+      "tool": "hud-jumps@3 の増分と目視",
+      "note": "単騎の HUD の総ダメージの増分を、戦闘の始めの発（f828）から 1 発ずつ数えた。格子は胴体・コア（+1）・会心（+0.5）・距離ボーナス（+0.3）の和"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 30,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0821",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1282-02",
+    "recording": "1282",
+    "kind": "hit",
+    "use": "compare",
+    "value": 26380,
+    "unit": "ダメージ",
+    "description": "ブリッドの 31 発目（f976）の胴体・会心なし・距離ボーナスありの 1 ヒット（S1 の攻撃力 18.52%▲が乗る）。31 発目から戦闘の終わりまで、増分は▲の乗った格子（26,380・36,525・46,671・56,817 と距離ボーナスなしの 20,292・30,438・40,584・50,730）にだけ乗り、▲の無い格子にも、▲が重なった値にも乗らない",
+    "method": {
+      "tool": "hud-jumps@3 の増分と目視",
+      "note": "単騎の HUD の総ダメージの増分を、戦闘の始めの発（f828）から 1 発ずつ数えた。31 発目より後は、1,500 個ほどの増分の値ごとの数を見た"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 31,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0821",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1282-03",
+    "recording": "1282",
+    "kind": "timing",
+    "use": "compare",
+    "value": [639, 1227, 1816, 2405, 2994, 3583, 4172, 4761, 5350, 5939, 6528, 7117, 7706, 8295, 8884, 9473, 10061],
+    "unit": "f",
+    "description": "S2 の倍率ダメージ（299,906 か会心の 449,859。同じフレームの通常攻撃との和も含む）の 17 回の、戦闘開始（タイマーの 02:59 が出た f817）からの動画のフレーム。間は 588〜589f",
+    "method": {
+      "tool": "hud-jumps@3 の増分と目視",
+      "note": "増分のうち 299,906（会心なし）・449,859（会心）か、それと通常攻撃の 1 発の和に当たるもの。戦闘開始は timer.ts --mode changes の WARNING の演出の次の変わり目"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "count": 17
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0821",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1282-04",
+    "recording": "1282",
+    "kind": "hit",
+    "use": "compare",
+    "value": 299906,
+    "unit": "ダメージ",
+    "description": "S2 の倍率ダメージの 1 回目（f1456）の値（会心なし。S1 の攻撃力▲が乗る）。会心の回は 449,859（×1.5）",
+    "method": {
+      "tool": "hud-jumps@3 の増分と目視"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0821",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1282-05",
+    "recording": "1282",
+    "kind": "count",
+    "use": "compare",
+    "value": 248,
+    "unit": "発",
+    "description": "1 回目に BURST バーが消えた（本当の満タン。C-0083）f2429 までの、ブリッドの通常攻撃の命中の数（HUD の増分のうち、ブリッドの発を含むもの）。その前の S2 の倍率ダメージは 2 回（f1456 は S2 だけの増分、f2044 は S2 とブリッドの発の和）。命中 248 回の 992,000 では満タン（1,000,000）に届かず、S2 の 2 回が射手の 1 ヒットぶん（4,000）ずつ溜めれば、f2429 の 248 回目でちょうど届く",
+    "method": {
+      "tool": "hud-jumps@3 の増分と gauge.ts --mode events",
+      "note": "バーが消えたフレームは gauge.ts --mode events の「バー消失」。ブリッドの発は 4〜5f おきの増分で、S2 の増分（299,906・449,859 とその和）と分けて数えた。f2429 は 249 個目の増分で、S2 だけの増分（f1456）を除いて 248"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0827",
+    "readAt": "2026-11-21"
+  }
+]

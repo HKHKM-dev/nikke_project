@@ -1,0 +1,35 @@
+{
+  "id": "1334",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1334_neve-solo.mp4",
+  "original": "2026-11-21_22-25-00.mp4",
+  "durationSec": 200.7,
+  "frames": 12039,
+  "fps": 60,
+  "sizeMB": 243.2,
+  "sha256": "7b927c132807",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 193,
+      "name": "ネヴェ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire",
+    "level": 1
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0843 の撮影 S（ネヴェ単騎・操作）。戦闘履歴の画で編成を確かめた",
+  "backup": {
+    "at": "2026-11-21T22:45+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "formatVersion": 1,
+  "resourceId": 102,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "topAttack",
+          "targetCount": 2,
+          "stat": "chargeSpeed",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "対象は発火のフレームの最終攻撃力の上位 2 機（自分も候補）で、アリスの S1 と同じ読み。チャージ速度▲は受け手のチャージ速度に足す（「スキル発動者基準」の言い回しが無い）。基礎のチャージ時間がマクスウェルと同じ 1 秒の味方でしか確かめていないので、発動者基準の読みとは分けていない",
+            "en": "The targets are the top 2 allies by final ATK at the firing frame (self included), read as Alice’s S1. Charge Speed is added to the receiver’s own charge speed (no \"based on the caster\" wording). Checked only on allies whose base charge time is 1 s like Maxwell’s, so not separated from the caster-based reading"
+          },
+          "claims": [
+            "C-1432"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "topAttack",
+          "targetCount": 2,
+          "stat": "attack",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-1432"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "ニケを除いた敵が 5 機以上の時だけの自分の会心率▲・会心ダメージ▲は、敵 1 体では起きない",
+          "en": "The self Critical Rate and Critical Damage increases only while there are 5 or more enemies (excluding Nikkes) do not occur against a single enemy",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "passive",
+            "stat": "critRate",
+            "target": "self",
+            "trigger": "unknown"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "damageRef": 1,
+          "chargeTimeSeconds": 2,
+          "fullChargeDamage": 300,
+          "maxAmmoRef": 2,
+          "pierce": true,
+          "firstShotDelayFrames": 119,
+          "assumes": {
+            "ja": "基礎の SR を、チャージ 2 秒・フルチャージ 300% の 1 発（最大装弾数 1 発）に替え、撃ち切ったら基礎の SR に戻る。最初の発までの待ちは録画で読んだ即値で、III のタイマーの 00.00 から 136f（V-0824）。待ちは即値なので、モデルではチャージ速度▲で縮まない（撮った編成では、マクスウェルが自分のバーストの回にいつも受ける S1 のチャージ速度▲の分が即値に入っている）。チャージ時間に「固定」は無いが、ほかの味方のチャージ速度▲で縮むかは確かめていない。射撃場の的では、変更後の発はどれもコアに当たった。追加効果「貫通特化」は weaponChange の pierce で、変更後の発に味方の貫通ダメージ▲が乗る。変更後の発のバーストゲージは、いまのモデルの形（確かめていない）",
+            "en": "Turns the base SR into one shot (max ammo 1) with a 2 s charge and 300% full charge damage, and goes back to the base SR when spent. The wait to the first shot is read from recordings: 136 frames after 00.00 of the Burst III timer (V-0824). As the wait is a fixed value, Charge Speed ups do not shorten it in the model (in the recorded team, the S1 Charge Speed up Maxwell always had at her bursts is inside the value). The charge time has no \"fixed\", but whether other allies’ Charge Speed ups shorten it is unverified. On the range target every changed shot hit the core. The additional Pierce is the weaponChange pierce, so allies’ Pierce Damage ups apply to the changed shot. The burst gauge of the changed shot follows the current model (unverified)"
+          },
+          "claims": [
+            "C-1433"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "持ち替えの直前（III のタイマーの 00.00 の 10〜15f 前）に基礎の SR を撃った回は、変更後の武器の 1 発が 3〜8f 遅れた（V-0824）。モデルは待ちの即値で、基礎の SR の状態を見ない",
+          "en": "When the base SR fired just before the swap (10 to 15 frames before 00.00 of the Burst III timer), the changed shot came 3 to 8 frames later (V-0824). The model uses a fixed wait and does not look at the base SR state",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "weaponChange",
+            "trigger": "burstUse"
+          },
+          "claims": [
+            "C-1433"
+          ]
+        }
+      ]
+    }
+  }
+}

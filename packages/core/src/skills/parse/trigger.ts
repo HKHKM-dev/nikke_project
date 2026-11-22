@@ -10,6 +10,7 @@ import {
   type ChargeFullTrigger,
   type ChargeTickTrigger,
   type CounterFullTrigger,
+  type StateStacksTrigger,
   type CoverHealedTrigger,
   type SkillFiredTrigger,
   type EffectTrigger,
@@ -23,6 +24,7 @@ import {
   isShotCountTrigger,
   isStateCountWindow,
   noBuffStateReason,
+  isLastShotCount,
   isTimerTrigger,
   type SelfHpAtMostTrigger,
   type AdjacentHpAtMostTrigger,
@@ -85,8 +87,12 @@ export type TriggerOptions = {
   weaponChangeEnd?: boolean;
   /** リロードの込め終わり（{ reloadEnd }） */
   reloadEnd?: boolean;
+  /** 当たったペレットのクリティカル（{ count: "critPelletHit" }。damage だけ。plan/design-k.md 2.2 節） */
+  critPelletHit?: boolean;
   /** 味方が消費した弾の合計（{ count: "teamAmmo" }。burstGauge と damage だけ。plan/design-cinderella-cw.md 2.3 節・plan/design-little-mermaid.md 2.1 節） */
   teamAmmo?: boolean;
+  /** カウンタが上がった時（{ counterUp }。ammoRefill・heal・timed だけ。plan/design-guillotine-ws.md 2.2 節） */
+  counterUp?: boolean;
 };
 
 /**
@@ -108,11 +114,14 @@ export function parseTrigger(v: Json, path: string, options: TriggerOptions = {}
       'an ended trigger ({ ended }) is only allowed in counterChange, ammoDecrease, state grants, damage, timed and cancelState on the enemy',
     );
   }
-  // フルスタックの消費のきっかけは heal・weaponChange・ammoRefill・timed だけ（plan/design-skill-stage3.md 1.3 節、
-  // plan/design-skill-stage11.md 2.1 節、plan/design-diesel.md 2.1 節）
+  // フルスタックの消費のきっかけは heal・weaponChange・ammoRefill・timed・状態の付与・removeState・damage だけ
+  // （plan/design-skill-stage3.md 1.3 節、plan/design-skill-stage11.md 2.1 節、plan/design-diesel.md 2.1 節、plan/design-phantom.md 2.2 節）
   if (v.fullStack !== undefined) {
     if (!options.fullStack)
-      fail(path, 'a full-stack trigger ({ fullStack }) is only allowed in heal, weaponChange, ammoRefill and timed');
+      fail(
+        path,
+        'a full-stack trigger ({ fullStack }) is only allowed in heal, weaponChange, ammoRefill, timed, state grants, removeState and damage',
+      );
     rejectUnknownKeys(v, ['fullStack'], path);
     return { fullStack: parseNamedStateId(v.fullStack, `${path}.fullStack`, 'ally') };
   }
@@ -136,6 +145,14 @@ export function parseTrigger(v: Json, path: string, options: TriggerOptions = {}
       fail(path, 'a reload end trigger ({ reloadEnd }) is only allowed in removeState, timed and state grants');
     return parseTrueOnlyTrigger(v, 'reloadEnd', path);
   }
+  // カウンタが上がった時（plan/design-guillotine-ws.md 2.2 節）
+  if (v.counterUp !== undefined) {
+    if (!options.counterUp) fail(path, 'a { counterUp } trigger is only allowed in ammoRefill, heal and timed');
+    rejectUnknownKeys(v, ['counterUp'], path);
+    return { counterUp: oneOf(COUNTER_IDS, v.counterUp, `${path}.counterUp`) };
+  }
+  // 状態のスタック数のきっかけは counterChange だけ（parseStateStacksTrigger で先に読む）
+  if (v.stateStacks !== undefined) fail(path, 'a { stateStacks } trigger is only allowed in counterChange');
   if (v.everySeconds !== undefined) return parseTimerTrigger(v, path, options.timer ?? false);
   if ((SHOT_COUNT_KINDS as readonly string[]).includes(v.count as string))
     return parseShotCountTrigger(v, path, options);
@@ -175,6 +192,9 @@ function parseTimerTrigger(v: Record<string, Json>, path: string, allowTimer: bo
   return timer;
 }
 
+/** スタック・数える窓・発火の窓・確率の鍵（teamAmmo と critPelletHit は組まない） */
+const WINDOW_AND_CHANCE_KEYS = ['stacksRef', 'during', 'reset', 'firesDuring', 'firesOutside', 'chance', 'chanceRef'];
+
 /** 射撃の回数のきっかけ { count }（毎 N 回・スタック・数える窓・発火の窓・確率） */
 function parseShotCountTrigger(v: Record<string, Json>, path: string, options: TriggerOptions): ShotCountTrigger {
   rejectUnknownKeys(
@@ -204,8 +224,15 @@ function parseShotCountTrigger(v: Record<string, Json>, path: string, options: T
   if (v.count === 'teamAmmo') {
     if (!options.teamAmmo) fail(`${path}.count`, 'a teamAmmo count is only allowed in burstGauge and damage');
     if (v.every === undefined && v.everyRef === undefined) fail(path, 'teamAmmo needs every or everyRef');
-    for (const key of ['stacksRef', 'during', 'reset', 'firesDuring', 'firesOutside', 'chance', 'chanceRef'])
+    for (const key of WINDOW_AND_CHANCE_KEYS)
       if (v[key] !== undefined) fail(`${path}.${key}`, `${key} cannot be used with teamAmmo`);
+  }
+  // 当たったペレットのクリティカルは 1 発で何回も発火する倍率ダメージだけ（plan/design-k.md 2.2 節）。窓・スタック・確率とは組まない
+  if (v.count === 'critPelletHit') {
+    if (!options.critPelletHit) fail(`${path}.count`, 'a critPelletHit count is only allowed in damage');
+    if (v.every === undefined && v.everyRef === undefined) fail(path, 'critPelletHit needs every or everyRef');
+    for (const key of WINDOW_AND_CHANCE_KEYS)
+      if (v[key] !== undefined) fail(`${path}.${key}`, `${key} cannot be used with critPelletHit`);
   }
   const trigger: ShotCountTrigger = { count: v.count as ShotCountKind };
   if (v.every !== undefined) trigger.every = parsePositiveInt(v.every, `${path}.every`);
@@ -274,7 +301,7 @@ function parsePhase(v: Record<string, Json>, trigger: ShotCountTrigger, path: st
 /** 数える窓（during）と発火の窓（firesDuring）は、スタック・最後の発・使用武器の変更の発と組まない */
 function rejectWindowCombos(trigger: ShotCountTrigger, key: 'during' | 'firesDuring', path: string): void {
   if (trigger.stacksRef !== undefined) fail(`${path}.${key}`, `${key} cannot be used with stacksRef`);
-  if (trigger.count === 'lastShot') fail(`${path}.${key}`, `${key} cannot be used with lastShot`);
+  if (isLastShotCount(trigger.count)) fail(`${path}.${key}`, `${key} cannot be used with ${trigger.count}`);
   if (trigger.count === 'weaponChangeShot') fail(`${path}.${key}`, `${key} cannot be used with weaponChangeShot`);
 }
 
@@ -484,7 +511,7 @@ export function parseDamageTrigger(v: Json, path: string): EffectTrigger {
     parseSummonAttackTrigger(v, path) ??
     parseCounterFullTrigger(v, path) ??
     parseAppliedTrigger(v, path) ??
-    parseTrigger(v, path, { timer: true, during: 'withState', teamAmmo: true })
+    parseTrigger(v, path, { timer: true, during: 'withState', teamAmmo: true, critPelletHit: true, fullStack: true })
   );
 }
 
@@ -507,6 +534,16 @@ function parseSummonAttackTrigger(v: Json, path: string): SummonAttackTrigger | 
   if (typeof delay !== 'number' || !(delay >= 0))
     fail(`${path}.startDelaySeconds`, `expected a non-negative number, got ${JSON.stringify(delay)}`);
   return { summon, intervalSeconds, startDelaySeconds: delay };
+}
+
+/** { stateStacks, everyRef }（「〈状態〉N スタックごとに」。plan/design-guillotine-ws.md 2.2 節）。それ以外の形なら undefined */
+export function parseStateStacksTrigger(v: Json, path: string): StateStacksTrigger | undefined {
+  if (!isRecord(v) || v.stateStacks === undefined) return undefined;
+  rejectUnknownKeys(v, ['stateStacks', 'everyRef'], path);
+  return {
+    stateStacks: parseNamedStateId(v.stateStacks, `${path}.stateStacks`, 'ally'),
+    everyRef: parseRef(v.everyRef, `${path}.everyRef`),
+  };
 }
 
 /** { counterFull: カウンタ }。それ以外の形なら undefined */

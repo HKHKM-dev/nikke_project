@@ -13,6 +13,7 @@ import {
   selfHpThreshold,
   isEndedTrigger,
   isCounterFullTrigger,
+  isStateStacksTrigger,
   isFlagStat,
   isSelfHpAtMostTrigger,
   isAdjacentHpAtMostTrigger,
@@ -50,6 +51,7 @@ import {
   type EffectTrigger,
   type EndedTrigger,
   type CounterFullTrigger,
+  type CounterUpTrigger,
   type EventCountTrigger,
   type SummonAttackTrigger,
   type InstantKind,
@@ -66,6 +68,7 @@ import {
   type StacksFrom,
   type StateGrantEffect,
   type TimedEffect,
+  isAllStackableChange,
   staticStatesOf,
 } from './types.ts';
 import type { NamedStateId } from './states.ts';
@@ -95,6 +98,10 @@ export type ResolvedTrigger =
   // カウンタが上限に届いた次のフレーム。damage・dot・counterChange・状態の付与だけ。1 パス目のカウンタの記録で決まる
   // （skills/holders/types.ts の counterFullFrames）ので、出来事の列では追わない
   | CounterFullTrigger
+  // カウンタが増えた次のフレーム（ammoRefill・heal・timed）と、状態のスタック数が N の倍数を越えたフレーム（counterChange。step は N）。
+  // 1 パス目の件の一覧が追う（skills/holders/fires.ts の firesOf）ので、出来事の列では追わない。plan/design-guillotine-ws.md 2.2 節
+  | CounterUpTrigger
+  | ResolvedStacksTrigger
   // 召喚の攻撃。1 パス目が機数と進みを追って発火を決める（frame/firstPass.ts）ので、出来事の列では追わない
   | SummonAttackTrigger
   // 自分の HP の割合が閾値（比率。説明文の X% ÷ 100。plan/design-mast.md 8 節）以下に下がった時。timed だけ。1 パス目の件の一覧が
@@ -110,6 +117,19 @@ export type ResolvedTrigger =
   // その stat の▲が自分に付いた時（plan/design-bready.md 2.1 節）。状態の付与だけ。件の一覧が付いた記録から発火する
   // （skills/holders/fire.ts の dispatchApplied）ので、出来事の列では追わない
   | BuffAppliedTrigger;
+
+/** 状態のスタック数のきっかけ（解決済み。step は N。every の名前は射撃の回数のきっかけの印なので使わない） */
+export type ResolvedStacksTrigger = { stateStacks: NamedStateId; step: number };
+
+/** 状態のスタック数のきっかけ（{ stateStacks }）か */
+export function isResolvedStacks(t: ResolvedTrigger): t is ResolvedStacksTrigger {
+  return typeof t === 'object' && 'stateStacks' in t;
+}
+
+/** カウンタが増えた時のきっかけ（{ counterUp }）か */
+export function isResolvedCounterUp(t: ResolvedTrigger): t is CounterUpTrigger {
+  return typeof t === 'object' && 'counterUp' in t;
+}
 
 /** 自分の HP の割合の窓のきっかけ（{ selfHpAtMost }）か */
 export function isResolvedSelfHpAtMost(t: ResolvedTrigger): t is { selfHpAtMost: number } {
@@ -223,6 +243,14 @@ export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: n
   if (isSelfHpAtMostTrigger(trigger)) return { selfHpAtMost: selfHpRatioOfRef(skill, trigger.selfHpAtMostRef, level) };
   if (isAdjacentHpAtMostTrigger(trigger))
     return { adjacentHpAtMost: selfHpRatioOfRef(skill, trigger.adjacentHpAtMostRef, level) };
+  // 状態のスタック数の N（plan/design-guillotine-ws.md 2.2 節）
+  if (isStateStacksTrigger(trigger)) {
+    const step = skillValue(skill, trigger.everyRef, level);
+    if (!Number.isInteger(step) || step < 1) {
+      throw new RangeError(`skill ${skill.id}: stacks trigger must be a positive integer, got ${step}`);
+    }
+    return { stateStacks: trigger.stateStacks, step };
+  }
   if (!isShotCountTrigger(trigger)) return typeof trigger === 'object' ? { ...trigger } : trigger;
   // 確率のきっかけは 1 発ごとに引く（every 1）。確率は % → 比率
   if (trigger.chance !== undefined || trigger.chanceRef !== undefined) {
@@ -572,8 +600,11 @@ export type ResolvedTimedEffect = ResolvedEffect & {
   edgeShift?: EdgeShift;
   /** 定義の delayFrames を写したもの（skills/holders/items.ts の startOfFire。plan/design-shot-count-trigger-frame.md 6 節） */
   delayFrames?: number;
-  /** 定義の perCount を写したもの（値 × 発火のフレームのスタック数。skills/holders/fire.ts の fireTimed。plan/design-maids.md 2.1 節） */
-  perCount?: { state: NamedStateId };
+  /**
+   * 定義の perCount を写したもの（値 × 発火のフレームのスタック数かカウンタの値。skills/holders/fire.ts の fireTimed。
+   * plan/design-maids.md 2.1 節・plan/design-guillotine-ws.md 2.3 節）
+   */
+  perCount?: { state: NamedStateId } | { counter: CounterId };
   /**
    * 定義の decrease（▼）を写したもの（値は負にした後。plan/design-debuff-removal-timed.md 2.1 節）。味方に付く▼はデバフ
    * 解除で外れる（skills/holders/fire.ts の fireRemoveDebuff）
@@ -1149,7 +1180,7 @@ export function resolveHpWhileEffects(
 }
 
 /**
- * 解決した解除（removeState。plan/design-skill-stage1.md 1.2 節）。対象は自分。effectIndex は解除のスロットの
+ * 解決した解除（removeState。plan/design-skill-stage1.md 1.2 節）。対象は自分（印で味方全体・敵）。effectIndex は解除のスロットの
  * 何番目の効果か
  */
 export type ResolvedRemoveState = {
@@ -1160,6 +1191,10 @@ export type ResolvedRemoveState = {
   condition?: EffectCondition;
   /** 自分の状態の消去（cancelState の self。plan/design-mint-prika.md 2.1 節）。解除不可の件も閉じる */
   cancel?: true;
+  /** 敵の状態の解除（removeState の enemy。plan/design-phantom.md 2.3 節） */
+  enemy?: true;
+  /** 味方全体の状態の解除（removeState の allies。plan/design-k.md 2.1 節） */
+  allies?: true;
 };
 
 /** 定義の解除を Lv の数値に解く（解くのはトリガーの回数の参照だけ） */
@@ -1185,6 +1220,8 @@ export function resolveRemoveStates(
       };
       if (effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
       if (effect.kind === 'cancelState') r.cancel = true;
+      if (effect.target === 'enemy') r.enemy = true;
+      if (effect.target === 'allies') r.allies = true;
       out.push(r);
     });
   }
@@ -1371,7 +1408,7 @@ export function resolveStackChanges(
     const skill = character.skills[slot];
     def.skills[slot].effects.forEach((effect, effectIndex) => {
       // 敵のスタック量▲は resolveDotStackUps・resolveEnemyStackUps、味方の全部のスタック可能バフへの▲は resolveAllStackableChanges
-      if (effect.kind !== 'stackChange' || effect.target === 'enemy' || effect.target === 'allies') return;
+      if (effect.kind !== 'stackChange' || isAllStackableChange(effect) || effect.target === 'enemy') return;
       const amount = amountOf(effect, skill, levels[slot]);
       const r: ResolvedStackChange = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
@@ -1417,7 +1454,7 @@ export type ResolvedAllStackableChange = {
   source: ResolvedEffect['source'];
   effectIndex: number;
   trigger: ResolvedTrigger;
-  target: 'allies';
+  target: 'allies' | 'self';
   amount: number;
   condition?: EffectCondition;
 } & Pick<TargetFields, (typeof TARGET_KEYS.filter)[number]>;
@@ -1435,12 +1472,12 @@ export function resolveAllStackableChanges(
   for (const slot of SKILL_SLOTS) {
     const skill = character.skills[slot];
     def.skills[slot].effects.forEach((effect, effectIndex) => {
-      if (effect.kind !== 'stackChange' || effect.target !== 'allies') return;
+      if (effect.kind !== 'stackChange' || !isAllStackableChange(effect)) return;
       const r: ResolvedAllStackableChange = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
         effectIndex,
         trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
-        target: 'allies',
+        target: effect.target,
         amount: amountOf(effect, skill, levels[slot]),
       };
       copyTargetFields(r, effect, TARGET_KEYS.filter);
@@ -1574,7 +1611,8 @@ export type ChangedWeaponOverrides = {
    * チャージしない基礎の武器から、押下チャージ型のチャージ武器（入力 DOWN_Charge。chargeTime と
    * 組む。plan/design-nayuta.md 2.6 節）にする。発と発の間はチャージ時間だけで、
    * 持ち替えの後の最初の発だけ解放の分を足す（記憶燃焼の 106f おきの発と、持ち替えから 129f の
-   * 最初の発。V-0666）。フルチャージのゲージの倍率（fullChargeBurstEnergy）・精度・弾は基礎の武器のまま
+   * 最初の発。V-0666）。敵のジャンプの始まりには、入力が UP のチャージ武器と同じく部分チャージで撃つ（jumpPartialCharge。V-0840）。
+   * フルチャージのゲージの倍率（fullChargeBurstEnergy）・精度・弾は基礎の武器のまま
    */
   chargeInput?: boolean;
 };
@@ -1598,7 +1636,7 @@ export function changedWeaponShot(
     ...(overrides.maxAmmo !== undefined ? { maxAmmo: overrides.maxAmmo } : {}),
     ...(overrides.coreDamageRate !== undefined ? { coreDamageRate: overrides.coreDamageRate } : {}),
     ...(overrides.shotCount !== undefined ? { shotCount: overrides.shotCount } : {}),
-    ...(overrides.chargeInput === true ? { inputType: 'DOWN_Charge' } : {}),
+    ...(overrides.chargeInput === true ? { inputType: 'DOWN_Charge', jumpPartialCharge: true } : {}),
     // 即着弾でチャージしない（チャージ時間 0・押下型・Instant。飛ぶ弾の欄は外す）
     ...(overrides.instantFire === true
       ? { chargeTime: 0, fullChargeDamage: 1, inputType: 'DOWN', fireType: 'Instant', projectile: undefined }
@@ -1697,8 +1735,11 @@ function resolveWeaponChange(
       ...(effect.firstShotAfterSwapFrames !== undefined
         ? { firstShotAfterSwapFrames: effect.firstShotAfterSwapFrames }
         : {}),
+      ...(effect.returnFirstShotFrames !== undefined ? { returnFirstShotFrames: effect.returnFirstShotFrames } : {}),
+      ...(effect.returnCooldownFrames !== undefined ? { returnCooldownFrames: effect.returnCooldownFrames } : {}),
       ...(effect.infiniteAmmo ? { infiniteAmmo: true as const } : {}),
       ...(effect.chargeTimeFixed ? { fixedChargeTime: true as const } : {}),
+      ...(untilEmpty ? { untilEmpty: true as const } : {}),
       // 解放の秒はフレームの端数のまま渡す（射手が発ごとに持ち越す。plan/design-red-hood.md 7.1 節の論点 10）
       ...(effect.chargeReleaseSeconds !== undefined
         ? { chargeReleaseFrames: effect.chargeReleaseSeconds / GAME_SECONDS_PER_FRAME }

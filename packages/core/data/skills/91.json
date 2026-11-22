@@ -1,0 +1,158 @@
+{
+  "formatVersion": 1,
+  "resourceId": 91,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルチャージ攻撃時の自分の爆発範囲▲（10 秒）は、敵 1 体では複数の敵へのヒットを増やすだけで起きない",
+          "en": "The explosion range increase on self on fully charged attacks (10 s) only adds hits on more enemies, which does not happen against a single enemy",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "fullChargeShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "survivalInstinct1",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 1,
+            "resetAfterSeconds": 45
+          },
+          "target": "self",
+          "durationRef": 2,
+          "contents": [
+            {
+              "stat": "attack",
+              "ref": 1
+            }
+          ],
+          "assumes": {
+            "ja": "使用回数は、前の使用から 45 秒（生存本能の維持時間）より後に次の使用が来たら数え直す（その使用が 1 回目）。下位効果のスタック適用は、2 回目以降の使用でも生存本能 1 を付け直す形で書いた",
+            "en": "The use count restarts when the next use comes more than 45 s (the Survival Instinct duration) after the previous one (that use counts as the 1st). Each subsequent effect triggering the earlier ones is written as re-applying Survival Instinct 1 on the 2nd and later uses"
+          },
+          "claims": [
+            "C-1442"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "survivalInstinct2",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 2,
+            "resetAfterSeconds": 45
+          },
+          "target": "self",
+          "durationRef": 4,
+          "contents": [
+            {
+              "stat": "critDamage",
+              "ref": 3
+            }
+          ],
+          "claims": [
+            "C-1442"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "survivalInstinct3",
+          "trigger": {
+            "count": "burstUse",
+            "atLeast": 3,
+            "resetAfterSeconds": 45
+          },
+          "target": "self",
+          "durationRef": 6,
+          "contents": [
+            {
+              "stat": "critRate",
+              "ref": 5
+            }
+          ],
+          "claims": [
+            "C-1442"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 2,
+          "damageType": "additional",
+          "condition": {
+            "selfState": "survivalInstinct1"
+          },
+          "assumes": {
+            "ja": "生存本能 1 の段の追加ダメージ。同じ発動で S2 が付けた生存本能は見ない（発動の前の状態を見る）。バーストの効果のフレームに出て、フルバースト補正は乗らない",
+            "en": "Additional damage of the Survival Instinct 1 stage. It does not see the Survival Instinct applied by S2 in the same activation (it reads the state before the activation). It lands on the Burst effect frame, without the Full Burst bonus"
+          },
+          "claims": [
+            "C-1441"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 3,
+          "damageType": "additional",
+          "condition": {
+            "selfState": "survivalInstinct2"
+          },
+          "claims": [
+            "C-1441"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 4,
+          "damageType": "additional",
+          "condition": {
+            "selfState": "survivalInstinct3"
+          },
+          "claims": [
+            "C-1441"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "ミサイルコンテナ 2 機の攻撃（最終攻撃力の 15.56% のダメージ・攻撃間隔 1 秒・18 秒）は未対応。1 ヒットの値は式どおりだが、射撃場の的では 1 回のバーストのヒットの数が 1 秒に 2 回の 34〜36 回にならず、録画とバーストで大きく違う（V-0825）",
+          "en": "The attacks of the two Missile Containers (15.56% of final ATK, every 1 s, 18 s) are not modeled. One hit matches the formula, but on the range target the number of hits per Burst is not 2 per second (34–36) and varies widely between recordings and Bursts (V-0825)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "trigger": "burstUse",
+            "target": "enemy"
+          }
+        },
+        {
+          "ja": "フルバーストタイム 5 秒▼は burst_duration（5 秒）から時刻表に入る",
+          "en": "The Full Burst Time −5 s comes from burst_duration (5 s) in the schedule",
+          "kind": "modeling",
+          "effect": {
+            "kind": "unknown"
+          },
+          "claims": [
+            "C-0011"
+          ]
+        }
+      ]
+    }
+  }
+}

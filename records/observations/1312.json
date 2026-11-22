@@ -1,0 +1,413 @@
+[
+  {
+    "id": "1312-01",
+    "recording": "1312",
+    "kind": "timing",
+    "use": "record",
+    "value": [1364, 2565, 3743, 4944, 6122, 7418, 8596, 9877, 11055],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・26・0・26・0・26・0・26f"
+    },
+    "source": "V-0834",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1312-02",
+    "recording": "1312",
+    "kind": "timing",
+    "use": "record",
+    "value": [1393, 3773, 6151, 8625, 11084],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・24・25・25・26f"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    },
+    "source": "V-0834",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1312-03",
+    "recording": "1312",
+    "kind": "timing",
+    "use": "record",
+    "value": [1423, 3802, 6180, 8655, 11114],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    },
+    "source": "V-0834",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1312-04",
+    "recording": "1312",
+    "kind": "timing",
+    "use": "record",
+    "value": [2031, 4410, 6789, 9263, 11571],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム。1 回目はレシピがその後のゲージの満タン（2497）を読んだので、画（2025〜2037 のバースト欄でフルバーストの色が 2031 に消えた）で直した"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    },
+    "source": "V-0834",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1312-05",
+    "recording": "1312",
+    "kind": "interval",
+    "use": "record",
+    "value": [608, 608, 609, 608, 457],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差。1 回目はレシピがその後のゲージの満タン（2497）を読んだので、画（2025〜2037 のバースト欄でフルバーストの色が 2031 に消えた）で直した"
+    },
+    "source": "V-0834",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1312-06",
+    "recording": "1312",
+    "kind": "timing",
+    "use": "record",
+    "value": [2559, 3737, 4938, 6116, 8590, 11049],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0834",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1312-07",
+    "recording": "1312",
+    "kind": "timing",
+    "use": "record",
+    "value": [3765, 6145],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0834",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1312-08",
+    "recording": "1312",
+    "kind": "timing",
+    "use": "record",
+    "value": [3794, 6174],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0834",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1312-09",
+    "recording": "1312",
+    "kind": "hit",
+    "use": "compare",
+    "value": 23570,
+    "description": "フルバーストの中のアリアのコアの会心した 1 ヒット（距離ボーナスなし。どの回も同じ値）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/reticle-ammo.ts --mode series --max 300 と使い捨てのスクリプト",
+      "note": "前のフレームも読めた HUD の増分を、アリアの 1 ヒットの格子（胴体 7,208.13 × (1 + 1.0 × コア + 0.5 × 会心 + 0.2699 × 会心ダメージ▲ + 0.3 × 距離ボーナス + 0.5 × フルバースト)。会心ダメージ▲の有無はフルバーストの中だけ両方を試す）に ±3 で当てた。フルバーストの窓は burst-panel の 00.00 から終わりまで（1 回目の終わりは、レシピの読み（2497）がその後のゲージの満タンだったので、画で読んだ 2031）。会心しない同じ部位は 18,020（比 1.308）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 800,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0834",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1312-10",
+    "recording": "1312",
+    "kind": "count",
+    "use": "record",
+    "value": 215,
+    "description": "フルバーストの中のアリアの会心した 1 ヒット 215 のうち、会心ダメージ▲（0.2699）の乗った格子に乗った数（乗らない格子に乗ったものは 0）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/reticle-ammo.ts --mode series --max 300 と使い捨てのスクリプト",
+      "note": "前のフレームも読めた HUD の増分を、アリアの 1 ヒットの格子（胴体 7,208.13 × (1 + 1.0 × コア + 0.5 × 会心 + 0.2699 × 会心ダメージ▲ + 0.3 × 距離ボーナス + 0.5 × フルバースト)。会心ダメージ▲の有無はフルバーストの中だけ両方を試す）に ±3 で当てた。フルバーストの窓は burst-panel の 00.00 から終わりまで（1 回目の終わりは、レシピの読み（2497）がその後のゲージの満タンだったので、画で読んだ 2031）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0834",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1312-11",
+    "recording": "1312",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.2094,
+    "description": "S2 の窓（マガジンの最後の発から 300f）の中のアリアの 1 ヒットのうち会心の割合（134 ÷ 640）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/reticle-ammo.ts --mode series --max 300 と使い捨てのスクリプト",
+      "note": "前のフレームも読めた HUD の増分を、アリアの 1 ヒットの格子（胴体 7,208.13 × (1 + 1.0 × コア + 0.5 × 会心 + 0.2699 × 会心ダメージ▲ + 0.3 × 距離ボーナス + 0.5 × フルバースト)。会心ダメージ▲の有無はフルバーストの中だけ両方を試す）に ±3 で当てた。フルバーストの窓は burst-panel の 00.00 から終わりまで（1 回目の終わりは、レシピの読み（2497）がその後のゲージの満タンだったので、画で読んだ 2031）。最後の発は、残弾が 300 に戻ったフレームの 100f 以上前の最後のアリアの 1 ヒット。標準誤差 0.0161。同じ数え方は窓の外でもモデル（0.15）より高く出る（V-0469 と同じ向き）ので、窓の外との差でも見る。許容 ±0.03（0226-06 と同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 3,
+        "frame": 1200
+      },
+      "tolerance": {
+        "abs": 0.03
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0834",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1312-12",
+    "recording": "1312",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.1573,
+    "description": "S2 の窓の外のアリアの 1 ヒットのうち会心の割合（692 ÷ 4400）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/reticle-ammo.ts --mode series --max 300 と使い捨てのスクリプト",
+      "note": "前のフレームも読めた HUD の増分を、アリアの 1 ヒットの格子（胴体 7,208.13 × (1 + 1.0 × コア + 0.5 × 会心 + 0.2699 × 会心ダメージ▲ + 0.3 × 距離ボーナス + 0.5 × フルバースト)。会心ダメージ▲の有無はフルバーストの中だけ両方を試す）に ±3 で当てた。フルバーストの窓は burst-panel の 00.00 から終わりまで（1 回目の終わりは、レシピの読み（2497）がその後のゲージの満タンだったので、画で読んだ 2031）。標準誤差 0.0055。許容 ±0.03"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 3,
+        "frame": 1300
+      },
+      "tolerance": {
+        "abs": 0.03
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0834",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1312-13",
+    "recording": "1312",
+    "kind": "rate",
+    "use": "record",
+    "value": 0.1543,
+    "description": "マガジンの最後の発から 300〜450f（リロードの明けから約 2.5〜5 秒）のアリアの 1 ヒットのうち会心の割合（335 ÷ 2171）。窓がリロードの明けから 5 秒なら 0.22 前後になる所",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/reticle-ammo.ts --mode series --max 300 と使い捨てのスクリプト",
+      "note": "前のフレームも読めた HUD の増分を、アリアの 1 ヒットの格子（胴体 7,208.13 × (1 + 1.0 × コア + 0.5 × 会心 + 0.2699 × 会心ダメージ▲ + 0.3 × 距離ボーナス + 0.5 × フルバースト)。会心ダメージ▲の有無はフルバーストの中だけ両方を試す）に ±3 で当てた。フルバーストの窓は burst-panel の 00.00 から終わりまで（1 回目の終わりは、レシピの読み（2497）がその後のゲージの満タンだったので、画で読んだ 2031）。標準誤差 0.0078"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0834",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1312-14",
+    "recording": "1312",
+    "kind": "count",
+    "use": "record",
+    "value": 47,
+    "description": "アリアのバーストの命中率▲の窓（II → III の替わり目から 882f）の中のリロードの明けの撃ち始め 7 回の、各回の最初の 40 ヒット（格子に乗ったもの）のうちコアでない（胴体の）ヒットの和",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/reticle-ammo.ts --mode series --max 300 と使い捨てのスクリプト",
+      "note": "前のフレームも読めた HUD の増分を、アリアの 1 ヒットの格子（胴体 7,208.13 × (1 + 1.0 × コア + 0.5 × 会心 + 0.2699 × 会心ダメージ▲ + 0.3 × 距離ボーナス + 0.5 × フルバースト)。会心ダメージ▲の有無はフルバーストの中だけ両方を試す）に ±3 で当てた。フルバーストの窓は burst-panel の 00.00 から終わりまで（1 回目の終わりは、レシピの読み（2497）がその後のゲージの満タンだったので、画で読んだ 2031）。撃ち始めは、残弾が 300 に戻った後の最初のアリアの 1 ヒット。窓をまたぐ回は除いた。胴体のヒットは、どの回も最初の 15 ヒットの中にあった"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0834",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1312-15",
+    "recording": "1312",
+    "kind": "count",
+    "use": "record",
+    "value": 82,
+    "description": "命中率▲の窓の外のリロードの明けの撃ち始め 9 回の、同じ数え方の胴体のヒットの和",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/reticle-ammo.ts --mode series --max 300 と使い捨てのスクリプト",
+      "note": "前のフレームも読めた HUD の増分を、アリアの 1 ヒットの格子（胴体 7,208.13 × (1 + 1.0 × コア + 0.5 × 会心 + 0.2699 × 会心ダメージ▲ + 0.3 × 距離ボーナス + 0.5 × フルバースト)。会心ダメージ▲の有無はフルバーストの中だけ両方を試す）に ±3 で当てた。フルバーストの窓は burst-panel の 00.00 から終わりまで（1 回目の終わりは、レシピの読み（2497）がその後のゲージの満タンだったので、画で読んだ 2031）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0834",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1312-16",
+    "recording": "1312",
+    "kind": "count",
+    "use": "record",
+    "value": 84,
+    "description": "命中率▲の窓の中のリロードの明けの撃ち始め 7 回の、撃ち始めから 150f の間に撃った数（残弾の減り）と当たったヒットの数（HUD の増分。2 ヒット以上の増分は値で数えた）の差の和（外れた発）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/reticle-ammo.ts --mode series --max 300 と使い捨てのスクリプト",
+      "note": "残弾は撃ち始めから 156f 以後の最初の読み（表示の遅れ 6f）。増分の取りこぼしも差に入るので、窓の中と外の比べにだけ使う"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0834",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1312-17",
+    "recording": "1312",
+    "kind": "count",
+    "use": "record",
+    "value": 83,
+    "description": "命中率▲の窓の外のリロードの明けの撃ち始め 8 回（7283 の回は残弾の読みが取れず除いた）の、同じ数え方の外れた発の和",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/reticle-ammo.ts --mode series --max 300 と使い捨てのスクリプト",
+      "note": "同上"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0834",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1312-18",
+    "recording": "1312",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.9777,
+    "description": "アリアのバーストの命中率▲の窓（15 秒）の中のアリアの 1 ヒットのうちコアの割合（2060 ÷ 2107）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series と使い捨てのスクリプト",
+      "note": "前のフレームも読めた HUD の増分を、アリアの 1 ヒットの格子（V-0834「読み方」）に ±3 で当て、乗ったもののうちコアの割合。窓は II → III の替わり目（1311-02・1312-02）から 882f（15 秒）。戦闘開始より前は除く。窓の外は戦闘開始・ジャンプの明けの撃ち始めを含み、窓の中より撃ち始めの割合が多いので、窓の中と外の差には撃ち始めの数の違いも入る。許容 ±0.02（窓の外の値と的の表 0.965 の差と、撃ち始めの数の違いで動く幅）。標準誤差 0.0032"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 3,
+        "frame": 1300
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0834",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1312-19",
+    "recording": "1312",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.9608,
+    "description": "命中率▲の窓の外のアリアの 1 ヒットのうちコアの割合（2817 ÷ 2932）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series と使い捨てのスクリプト",
+      "note": "前のフレームも読めた HUD の増分を、アリアの 1 ヒットの格子（V-0834「読み方」）に ±3 で当て、乗ったもののうちコアの割合。窓は II → III の替わり目（1311-02・1312-02）から 882f（15 秒）。戦闘開始より前は除く。窓の外は戦闘開始・ジャンプの明けの撃ち始めを含み、窓の中より撃ち始めの割合が多いので、窓の中と外の差には撃ち始めの数の違いも入る。許容 ±0.02（窓の外の値と的の表 0.965 の差と、撃ち始めの数の違いで動く幅）。標準誤差 0.0036"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 3,
+        "frame": 2000
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0834",
+    "readAt": "2026-11-21"
+  }
+]

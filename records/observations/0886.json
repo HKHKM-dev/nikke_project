@@ -281,5 +281,36 @@
         "jumpWindows": "0886-09"
       }
     }
+  },
+  {
+    "id": "0886-11",
+    "recording": "0886",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": {
+      "battleStart": 842,
+      "battleEnd10588": 11430,
+      "lastIncrement": 11405,
+      "lastReadable": 11436,
+      "chargeShown": {
+        "11410": 100,
+        "11426": 100,
+        "11431": "約 110",
+        "11436": "約 113"
+      },
+      "incrementsAfterLastShot": 0
+    },
+    "description": "レイヴン単騎（RL・入力 UP・射撃姿勢維持型・フルチャージ 250%）の戦闘の終わり。最後の発（f11405）の後にチャージを始めたところ（表示 約 113%。f11436）で画面が切り替わり、HUD は増えない。戦闘の終わりに部分チャージの発は出ない",
+    "method": {
+      "tool": "tools/captures/hud.ts・timer.ts・still.ts",
+      "note": "戦闘開始は timer.ts --mode changes の、最初の 250f 以上の間隔の次の変わり目（C-0078）。HUD の増分は hud.ts --mode series（最後の 2300f）の値の増え。チャージの表示は照準の右の数字を still.ts で拡大して読んだ（f11431 から先は数字の頭が的に重なり、百の位が読みにくい）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "source": "V-0840",
+    "readAt": "2026-11-21"
   }
 ]

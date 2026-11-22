@@ -57,9 +57,9 @@ describe('語彙の検証', () => {
     expect(patched('burst', CANCEL, { trigger: 'burstUse' })).toThrow(/delayFrames of a cancel needs the trigger/);
   });
 
-  it('takes only the condition selfState on a grant on the enemy', () => {
+  it('takes only the conditions selfState and enemyState on a grant on the enemy', () => {
     expect(patched('skill1', FIELD, { condition: { inFullBurst: true } })).toThrow(
-      /a grant on the enemy can only have the condition selfState/,
+      /a grant on the enemy can only have the conditions selfState and enemyState/,
     );
   });
 });

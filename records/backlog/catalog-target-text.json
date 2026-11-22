@@ -1,0 +1,5 @@
+{
+  "section": "8.2",
+  "order": -37,
+  "text": "スキルの効果の分類で、句の途中や項目の後ろから決めた絞った味方の対象を、`tgtKeys` が小項目の頭か行の頭から読み、絞り方を取り違える（2026-11-21 起票）→ 完了（2026-11-21。効果に対象を決めた文 `targetText` を持たせ、`tgtKeys` はそれを読む。句の前の文は最後の「、」の後ろから対象を読む）: [design-catalog-doc-split.md](design-catalog-doc-split.md) 11 節"
+}

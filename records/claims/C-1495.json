@@ -1,0 +1,16 @@
+{
+  "id": "C-1495",
+  "text": "ネヴェのバーストの「自分にクリティカル確率 31.95%▲（20 秒）」「命中率 22.04%▲（20 秒）」（Lv10）は、説明文どおりにバーストの使用から 20 秒付く（会心の割合とペレットの当たりの割合は、録画では見分けていない。SG の命中率▲は近だけ弾丸命中率に効かせる C-0631・C-0527 の扱い）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文（`data/characters/193.json` の burst）。録画 1336・1337 で、バーストの窓の中のネヴェの増分は会心とコアのペレットの組が分けられず（会心 2 個とコア 1 個が同じ値）、ペレットの当たりの数も組で決まらないので、会心の割合と当たりの割合は読んでいない（シュガーの C-1007 と同じ）。V-0843",
+  "model": "data/skills/193.json の burst の effects[0]（timed・burstUse・self・critRate）と effects[1]（timed・burstUse・self・hitRate。SG は近でだけ弾丸命中率を上げる。frame/landing.ts。C-0631・C-0527）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/193.json の burst の effects[0]"]
+  },
+  "decidedOn": [],
+  "gradeReason": "録画で見分けていない（会心の割合・ペレットの当たりの割合は、窓の中の増分から決まらない）"
+}

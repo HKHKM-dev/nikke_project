@@ -1,0 +1,16 @@
+{
+  "id": "C-1394",
+  "text": "ギロチン：ウィンタースレイヤーの S1 の勇者レベルアップの弾丸チャージ（Lv10 で 10.26%）は、最大装弾数 60 で 6 発（四捨五入）で、勇者レベルが上がった時に残弾に足される",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1273-10`・`1274-10`。V-0812",
+  "model": "反映（data/skills/182.json の skill1 の effects[2]。きっかけ { counterUp }）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/182.json の skill1 の effects[2]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の Lv10 の値。読み（N1・L1・U1・D1）は撮る前に決めた（plan/design-guillotine-ws.md 2.1〜2.4 節）。弾丸チャージの四捨五入は既存の扱い（frame/firstPass/instants.ts の AMMO_REFILL_ROUNDING）"
+}

@@ -1,0 +1,46 @@
+{
+  "id": "1285",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1285_brid-c-2.mp4",
+  "original": "2026-11-21_16-05-28.mp4",
+  "durationSec": 201.4,
+  "frames": 12081,
+  "fps": 60,
+  "sizeMB": 244.1,
+  "sha256": "8c2f6232f2cd",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 70,
+      "name": "ブリッド",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Water"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0821 の撮影 C: ココア（I）・ソルジャーF.A.（II）・ブリッド（III・操作）、オートバースト ON",
+  "backup": {
+    "at": "2026-11-21T16:13+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

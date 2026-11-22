@@ -22,6 +22,7 @@ import {
 } from './resolve.ts';
 import {
   SKILL_SLOTS,
+  isLastShotCount,
   isShotCountTrigger,
   type CycleEffect,
   type EffectTrigger,
@@ -191,7 +192,7 @@ export function cycleShotFrames(log: ShotLog | null | undefined, trigger: Resolv
     const full = fullChargeFrameSet(log);
     return log.frames.filter(full);
   }
-  if (trigger.count === 'lastShot') return log.lastShotFrames ?? [];
+  if (isLastShotCount(trigger.count)) return log.lastShotFrames ?? [];
   // 循環には書けない（skills/parse/cycle.ts の parseCycleEffect）が、型のために列を返す
   if (trigger.count === 'weaponChangeShot') return log.weaponChangeShotFrames ?? [];
   return log.frames;

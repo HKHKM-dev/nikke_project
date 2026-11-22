@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 14,
-  "text": "`npm run sim` の即時効果の表（`packages/core/scripts/sim-run/tables.ts` の `instantRows`）は、同じフレーム・同じ種類・同じ枠の効果を 1 行にまとめ、`from` には最初の 1 件の出どころの枠だけを出す。出どころの違う効果（同じフレームに、2 つの枠が同じ枠へ弾丸チャージをするなど）もまとまり、量の和が 1 つの出どころのものに見える。まとめのキーに出どころの枠を足すか、`from` に出どころを全部並べる（出力が変わる。[design-sim-run-split.md](design-sim-run-split.md) 9 節。2026-11-19 起票）"
-}

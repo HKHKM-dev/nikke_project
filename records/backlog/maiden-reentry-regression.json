@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 90,
-  "text": "1 パス目（`packages/core/src/frame/firstPass/burst.ts`）は、メイデン：アイスローズが MP 0 でバーストを撃つ形を、計算全体を止める例外（`RangeError`）で止める。いまの定義では 1 段階突入で MP が回復するので起きないが、再突入（`burstStepChange`）を持つキャラと組む編成の回帰テストが無い。再突入の定義が変わって起きるようになると、画面では英語のメッセージが出て、編成の結果が全部消える。再突入を持つキャラと組んで MP が 0 にならないことを確かめるテストを足す（[design-maiden-ice-rose.md](design-maiden-ice-rose.md) 9 節。2026-11-20 起票）"
-}

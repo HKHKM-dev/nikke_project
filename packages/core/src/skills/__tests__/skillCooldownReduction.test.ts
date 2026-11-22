@@ -72,14 +72,20 @@ describe('読み込み', () => {
     fails([{ ...cut, trigger: { count: 'fullChargeShot', stacksRef: 1 } }], [s2Attack], /only takes count, every/);
   });
 
-  it('keeps skillFired to timed, and the cooldown timed without a delay', () => {
+  it('keeps skillFired to timed without a delay, and the cooldown timed delay off first-pass stats', () => {
     fails(
       [{ kind: 'damage', trigger: { skillFired: 'skill2' }, ref: 1, damageType: 'skill' }],
       [s2Attack],
       /only allowed in timed/,
     );
     fails([{ ...onS2, trigger: { skillFired: 'burst' } }], [s2Attack], /skillFired/);
-    fails([], [{ ...s2Attack, stat: 'critRate', delayFrames: 3 }], /cannot have delayFrames/);
+    fails([{ ...onS2, delayFrames: 3 }], [s2Attack], /delayFrames needs a shot count trigger/);
+    fails([], [{ ...s2Attack, delayFrames: 3 }], /tracked inside the first pass/);
+    expect(
+      parseSkillDefinition(def([], [{ ...s2Attack, stat: 'attackDamage', delayFrames: 3 }])).skills.skill2.effects[0],
+    ).toMatchObject({
+      delayFrames: 3,
+    });
     expect(() =>
       parseSkillDefinition({ ...def([], []), skills: { ...def([], []).skills, burst: { effects: [s2Attack] } } }),
     ).toThrow(/only allowed in skill1 and skill2/);
@@ -131,6 +137,27 @@ describe('1 パス目の発動と窓（センチの単騎・仮の周期）', ()
     );
   });
 
+  it('starts the delayed cooldown timed delayFrames after the fire, and drops windows past the battle end', () => {
+    const plain = runSimulation(teamOf([]));
+    const fires = Array.from({ length: Math.floor((plain.frames - 2) / long) }, (_, k) => (k + 1) * long);
+    const startsWith = (delayFrames: number) =>
+      effectWindows(
+        runSimulation(
+          fixedTeam([], 0, {
+            slots: [fixedSlot(CENTI, { definition: def([], [{ ...s2Attack, stat: 'attackDamage', delayFrames }]) })],
+          }),
+        ),
+        0,
+        { resourceId: CENTI, skill: 'skill2', stat: 'attackDamage' },
+      ).map((w) => w.start);
+    // 遅れ 1 は遅れ無しと同じ（発動の次のフレーム）
+    expect(startsWith(1)).toEqual(fires.map((f) => f + 1));
+    // 最後の発動の遅れの後が戦闘の外になる遅れ
+    const late = plain.frames - fires.at(-1)! + 5;
+    expect(late).toBeLessThan(long);
+    expect(startsWith(late)).toEqual(fires.slice(0, -1).map((f) => f + late));
+  });
+
   it('multiplies the remaining by (1 − 9.16%) on every full charge shot', () => {
     const sim = runSimulation(teamOf([cut, onS2]));
     const shots = new Set(sim.shots[0]!.frames);
@@ -140,5 +167,24 @@ describe('1 パス目の発動と窓（センチの単騎・仮の周期）', ()
       if (tick(f, undefined, () => undefined, shots.has(f) ? 1 - 9.16 / 100 : undefined)) fires.push(f);
     expect(fires.length).toBeGreaterThan(Math.floor(sim.frames / long));
     expect(s2Starts(sim)).toEqual(fires.map((f) => f + 1));
+  });
+});
+
+describe('発動の待ち（cooldownTimer の hold。plan/design-snow-white.md 8.3 節の論点 7）', () => {
+  /** [from, to) のフレームを待たせて、1 から frames − 1 まで回した発動 */
+  const run = (long: number, from: number, to: number, frames: number) => {
+    const tick = cooldownTimer(long);
+    const out: number[] = [];
+    for (let f = 1; f < frames; f++)
+      if (tick(f, undefined, () => undefined, undefined, from <= f && f < to)) out.push(f);
+    return out;
+  };
+
+  it('fires on the first frame after the wait and counts the next period from there', () => {
+    expect(run(589, 500, 650, 1500)).toEqual([650, 1239]);
+  });
+
+  it('leaves the schedule as it is when no fire falls in the wait', () => {
+    expect(run(589, 600, 700, 1500)).toEqual([589, 1178]);
   });
 });

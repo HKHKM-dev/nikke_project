@@ -26,6 +26,10 @@ export type ChangedWeapon = {
   firstShotDelayFrames?: number;
   /** 持ち替えから最初の発まで（WeaponChangeEffect.firstShotAfterSwapFrames） */
   firstShotAfterSwapFrames?: number;
+  /** 撃ち切りの最後の弾丸から基礎の武器の最初の発まで（WeaponChangeEffect.returnFirstShotFrames） */
+  returnFirstShotFrames?: number;
+  /** 撃ち切りの最後の弾丸から、同じ枠のクールタイムの周期の発動の待ちが明けるまで（WeaponChangeEffect.returnCooldownFrames） */
+  returnCooldownFrames?: number;
   /** 変更後の武器は撃っても残弾を減らさない（WeaponChangeEffect.infiniteAmmo） */
   infiniteAmmo?: true;
   /** 変更後の武器の解放の長さ（フレーム。端数あり。WeaponChangeEffect.chargeReleaseSeconds） */
@@ -38,6 +42,11 @@ export type ChangedWeapon = {
   targetRowKey?: string;
   /** チャージ時間の固定（WeaponChangeEffect.chargeTimeFixed。plan/design-nayuta.md 2.4 節）。shot.chargeTime がチャージ速度▲を受けない */
   fixedChargeTime?: true;
+  /**
+   * 撃ち切りで終わる変更（WeaponChangeEffect.maxAmmoRef・maxAmmo）。変更後の武器はリロードせず、狙えない窓のハイドでも込め直さない
+   * （frame/shooter.ts の hideShooter。C-1427）
+   */
+  untilEmpty?: true;
 };
 
 /**
@@ -238,6 +247,8 @@ export type BuffTotals = {
    * 距離ボーナスを出し直すのに使う（frame/landing.ts の landingPartsWith）
    */
   minEffectiveRange: number;
+  /** 適正最大射程距離▲の和（plan/design-leona.md 2.1 節）。minEffectiveRange と同じく距離ボーナスの出し直しに使う */
+  maxEffectiveRange: number;
   /** 同 2.3 節: 貫通特化の窓の数（> 0 なら通常攻撃に pierceDamage を攻撃ダメージ▲の和に足す） */
   pierce: number;
   /** 同: 貫通ダメージ▲の和（貫通特化の効いている通常攻撃にだけ。damage.ts） */
@@ -316,6 +327,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   trueDamage: 0,
   trueDamageConversion: 0,
   minEffectiveRange: 0,
+  maxEffectiveRange: 0,
   pierce: 0,
   pierceDamage: 0,
   pelletCount: 0,
@@ -664,4 +676,34 @@ export function chargeSpeedOverflowDamage(buffs: Pick<BuffTotals, 'chargeSpeedPa
     (part) => part.ratio * 100,
   );
   return (Math.max(0, percent - 100) / 100) * buffs.chargeSpeedOverflow;
+}
+
+/** 適正射程距離の▲の和（比率）。min = 適正最小射程距離▲（minEffectiveRange）・max = 適正最大射程距離▲（maxEffectiveRange） */
+export type RangeUp = { min: number; max: number };
+
+/** 2 つの▲の和 */
+export function addRangeUp(a: RangeUp, b: RangeUp): RangeUp {
+  if (isNoRangeUp(b)) return a;
+  if (isNoRangeUp(a)) return b;
+  return { min: a.min + b.min, max: a.max + b.max };
+}
+
+/** ▲の無い適正射程距離 */
+export const NO_RANGE_UP: RangeUp = { min: 0, max: 0 };
+
+/** バフの和の適正射程距離の▲ */
+export function rangeUpOf(buffs: Pick<BuffTotals, 'minEffectiveRange' | 'maxEffectiveRange'>): RangeUp {
+  return buffs.minEffectiveRange === 0 && buffs.maxEffectiveRange === 0
+    ? NO_RANGE_UP
+    : { min: buffs.minEffectiveRange, max: buffs.maxEffectiveRange };
+}
+
+/** ▲も▼も無いか（和の近道に使う。▼だけの値も和に入れる） */
+export function isNoRangeUp(range: RangeUp): boolean {
+  return range.min === 0 && range.max === 0;
+}
+
+/** 適正射程距離の▲があるか */
+export function hasRangeUp(range: RangeUp): boolean {
+  return range.min > 0 || range.max > 0;
 }

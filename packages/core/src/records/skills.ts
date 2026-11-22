@@ -7,6 +7,7 @@ import {
   INDIRECT_PATH_NAMES,
   SKILL_NOTE_KINDS,
   SKILL_SLOTS,
+  isAllStackableChange,
   contentStatOf,
   type IndirectPath,
   type SkillDefinition,
@@ -261,6 +262,8 @@ function triggerLabel(e: SkillEffect): string | undefined {
   if ('reloadEnd' in t) return '最大弾数のリロードが完了した時';
   if ('coverHealed' in t) return '遮蔽物の HP を回復した時';
   if ('counterFull' in t) return `${t.counterFull} が最大になった時`;
+  if ('counterUp' in t) return `${t.counterUp} が上がった時`;
+  if ('stateStacks' in t) return `${t.stateStacks} の値 ${String(t.everyRef).padStart(2, '0')} スタックごと`;
   if ('chargeTick' in t) return `チャージ中の ${t.chargeTick.everySeconds} 秒ごと`;
   if ('chargeFull' in t) return 'フルチャージした時';
   // 下がったフレームに発火する（続く長さは維持で決まる。selfHpAbove なら閾値以下の間、秒の維持なら N 秒）
@@ -296,7 +299,7 @@ export function effectLabel(e: SkillEffect): string {
         : e.kind === 'removeDebuff'
           ? `デバフ ${e.count} 個${e.target === 'debuffedRandom' ? `（デバフのかかった味方 ${e.targetCount ?? `値 ${e.targetCountRef}`} 機）` : ''}`
           : e.kind === 'stackChange'
-            ? e.target === 'allies'
+            ? isAllStackableChange(e)
               ? 'スタック可能バフの全部'
               : `${e.state}${e.decrease ? '（減少）' : ''}`
             : e.kind === 'counterChange'

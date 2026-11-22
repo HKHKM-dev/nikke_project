@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 60,
-  "text": "`eslint.config.js` の `@typescript-eslint/consistent-type-imports` の `fixStyle: 'inline-type-imports'` は、型だけの import を `import { type A }` に直す。これを `@typescript-eslint/no-import-type-side-effects` が違反とする。`eslint --fix` では最後に揃うが、エディタのクイックフィックスを 1 回当てただけでは lint のエラーが残る。`fixStyle: 'separate-type-imports'` にすれば 2 つの規則が揃う（[design-unused-code-cleanup.md](design-unused-code-cleanup.md) 9 節。2026-11-20 起票）"
-}

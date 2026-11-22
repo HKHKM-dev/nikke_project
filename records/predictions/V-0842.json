@@ -1,0 +1,410 @@
+{
+  "verification": "V-0842",
+  "note": "撮影 A（マリ単騎・操作）と撮影 B（ココア（I）+ マリ（II・操作）・オートバースト ON）の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。編成は B で書き、A の指標は setup の burst: false で出す（マリの 1 ヒットに効くのはマリ自身の効果だけなので、ココアの有無で変わらない）。S2 の CT は外部の資料の 10 秒（H1）で、録画の左の帯と 1 ヒットの値で読む。B は III がいないので、マリのバーストのたびにチェーンが切れる",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 832,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S1 の貫通ダメージ▲はコア命中ごとに付き、貫通特化の効いているマリの発に攻撃ダメージ▲と同じ和で乗る。S2 は CT 10 秒ごとで 1 回目も 10 秒。マリには自分への攻撃力▲と発動者基準の攻撃力▲の両方が乗る。バーストの攻撃ダメージ▲は使用から 10 秒、マリとココアに乗る）"
+    },
+    {
+      "id": "H-nopierce",
+      "note": "S1 の貫通ダメージ▲が、S2 の貫通特化の間のマリの発に乗らない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 832,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-oneatk",
+      "note": "S2 の攻撃力▲は、マリには 1 つだけ乗る（自分への▲と発動者基準の▲が重ならない）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 832,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-ct15",
+      "note": "S2 の CT が 15 秒（1 回目も 15 秒）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 832,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 15,
+                "cooldown": true
+              },
+              "target": "self",
+              "stat": "pierce",
+              "durationRef": 1
+            }
+          },
+          {
+            "rid": 832,
+            "skill": "skill2",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 15,
+                "cooldown": true
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 4,
+              "durationRef": 5
+            }
+          },
+          {
+            "rid": 832,
+            "skill": "skill2",
+            "replace": 2,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 15,
+                "cooldown": true
+              },
+              "target": "allies",
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 2,
+              "durationRef": 3
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-ct20",
+      "note": "S2 の CT が 20 秒（1 回目も 20 秒）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 832,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 20,
+                "cooldown": true
+              },
+              "target": "self",
+              "stat": "pierce",
+              "durationRef": 1
+            }
+          },
+          {
+            "rid": 832,
+            "skill": "skill2",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 20,
+                "cooldown": true
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 4,
+              "durationRef": 5
+            }
+          },
+          {
+            "rid": 832,
+            "skill": "skill2",
+            "replace": 2,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 20,
+                "cooldown": true
+              },
+              "target": "allies",
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 2,
+              "durationRef": 3
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "rel": 0.002
+      },
+      "note": "撮影 A: S2 の 1 回目より前のマリのコアの会心しない 1 ヒット（S1 の貫通ダメージ▲は付いているが、貫通特化が無いので乗らない）",
+      "observations": ["1327-03", "1328-03"]
+    },
+    {
+      "id": "A-s2-10s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "rel": 0.002
+      },
+      "note": "撮影 A: 戦闘開始から約 11.9 秒のマリの 1 ヒット。CT 10 秒なら S2 の 1 回目の窓（10〜15 秒）の中",
+      "observations": ["1327-04", "1328-04"]
+    },
+    {
+      "id": "A-s2-15s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 950,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "rel": 0.002
+      },
+      "note": "撮影 A: 約 16.2 秒のマリの 1 ヒット。CT 15 秒なら 1 回目の窓（15〜20 秒）の中、CT 10 秒・20 秒なら窓の外"
+    },
+    {
+      "id": "A-s2-20s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1250,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "rel": 0.002
+      },
+      "note": "撮影 A: 約 21.3 秒のマリの 1 ヒット。CT 10 秒（2 回目）と 20 秒（1 回目）なら窓（20〜25 秒）の中、CT 15 秒なら窓の外"
+    },
+    {
+      "id": "B-burst-hit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "撮影 B: マリの 1 回目のバーストスキルダメージ（会心なし。1 ヒットとみなす）",
+      "observations": ["1329-05"]
+    },
+    {
+      "id": "B-cocoa-s2",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1250,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.002
+      },
+      "note": "撮影 B: 約 21.3 秒（バーストの窓の外）のココアの 1 ヒット。CT 10 秒・20 秒なら S2 の発動者基準の攻撃力▲が乗る",
+      "observations": ["1329-07"]
+    },
+    {
+      "id": "B-cocoa-burst",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.002
+      },
+      "note": "撮影 B: 2 回目のバーストの窓の中で、どの CT でも S2 の窓の外のココアの 1 ヒット（攻撃ダメージ▲だけ）",
+      "observations": ["1329-08"]
+    },
+    {
+      "id": "B-mari-burst",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 2200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.002
+      },
+      "note": "撮影 B: B-cocoa-burst と同じフレームのマリの 1 ヒット（攻撃ダメージ▲だけ。貫通特化が無いので貫通ダメージ▲は乗らない）",
+      "observations": ["1329-09"]
+    },
+    {
+      "id": "B-mari-burst-s2",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1850,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.002
+      },
+      "note": "撮影 B: 2 回目のバーストの窓の中で、CT 10 秒・15 秒なら S2 の窓（30〜35 秒）の中のマリの 1 ヒット（攻撃ダメージ▲と貫通ダメージ▲が同じ和に入る）",
+      "observations": ["1329-10"]
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-21",
+    "commit": "95609858df559c00eedd5f5c7688ce79754a0293",
+    "values": {
+      "H1": {
+        "A-base": 344595.9,
+        "A-s2-10s": 785232.8472572,
+        "A-s2-15s": 344595.9,
+        "A-s2-20s": 785232.8472572,
+        "B-burst-hit": 638241.12,
+        "B-cocoa-s2": 450769.064,
+        "B-cocoa-burst": 485845.75941000006,
+        "B-mari-burst": 485845.75941000006,
+        "B-mari-burst-s2": 1013523.4665144
+      },
+      "H-nopierce": {
+        "A-base": 344595.9,
+        "A-s2-10s": 556942.228,
+        "A-s2-15s": 344595.9,
+        "A-s2-20s": 556942.228,
+        "B-burst-hit": 638241.12,
+        "B-cocoa-s2": 450769.064,
+        "B-cocoa-burst": 485845.75941000006,
+        "B-mari-burst": 485845.75941000006,
+        "B-mari-burst-s2": 785232.8472572
+      },
+      "H-oneatk": {
+        "A-base": 344595.9,
+        "A-s2-10s": 635539.3033336,
+        "A-s2-15s": 344595.9,
+        "A-s2-20s": 635539.3033336,
+        "B-burst-hit": 638241.12,
+        "B-cocoa-s2": 450769.064,
+        "B-cocoa-burst": 485845.75941000006,
+        "B-mari-burst": 485845.75941000006,
+        "B-mari-burst-s2": 820309.5426671999
+      },
+      "H-ct15": {
+        "A-base": 344595.9,
+        "A-s2-10s": 344595.9,
+        "A-s2-15s": 785232.8472572,
+        "A-s2-20s": 344595.9,
+        "B-burst-hit": 638241.12,
+        "B-cocoa-s2": 344595.9,
+        "B-cocoa-burst": 485845.75941000006,
+        "B-mari-burst": 485845.75941000006,
+        "B-mari-burst-s2": 1013523.4665144
+      },
+      "H-ct20": {
+        "A-base": 344595.9,
+        "A-s2-10s": 344595.9,
+        "A-s2-15s": 344595.9,
+        "A-s2-20s": 785232.8472572,
+        "B-burst-hit": 638241.12,
+        "B-cocoa-s2": 450769.064,
+        "B-cocoa-burst": 485845.75941000006,
+        "B-mari-burst": 485845.75941000006,
+        "B-mari-burst-s2": 485845.75941000006
+      }
+    }
+  }
+}

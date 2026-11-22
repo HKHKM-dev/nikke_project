@@ -2,39 +2,60 @@
   "formatVersion": 1,
   "fullySupported": [
     10,
+    14,
     15,
     16,
     17,
+    18,
     19,
     20,
+    22,
     30,
     32,
     40,
+    41,
     43,
+    60,
+    70,
     71,
+    72,
     73,
     74,
     80,
     90,
     92,
     93,
+    94,
     95,
+    100,
     101,
     105,
+    110,
+    113,
     121,
+    131,
     140,
+    142,
     143,
     160,
     161,
     162,
+    171,
     172,
     180,
+    181,
+    182,
     183,
     190,
     191,
     194,
+    195,
+    200,
+    201,
     202,
     210,
+    212,
+    220,
     222,
     224,
     225,
@@ -45,10 +66,13 @@
     240,
     241,
     242,
+    261,
     271,
     272,
     280,
     281,
+    282,
+    283,
     290,
     291,
     300,
@@ -59,6 +83,7 @@
     308,
     310,
     311,
+    312,
     316,
     321,
     322,
@@ -70,8 +95,10 @@
     355,
     361,
     381,
+    382,
     390,
     391,
+    400,
     401,
     402,
     403,
@@ -91,14 +118,19 @@
     515,
     520,
     570,
+    580,
     581,
     583,
     600,
     601,
     810,
+    811,
+    820,
+    821,
     822,
     830,
     831,
+    832,
     833,
     834,
     835,
@@ -114,18 +146,6 @@
     871
   ],
   "gaps": {
-    "18": {
-      "unimplemented": 1,
-      "assumed": 4
-    },
-    "60": {
-      "unimplemented": 1,
-      "assumed": 1
-    },
-    "72": {
-      "unimplemented": 1,
-      "assumed": 4
-    },
     "75": {
       "unimplemented": 1,
       "assumed": 9
@@ -134,15 +154,19 @@
       "unimplemented": 1,
       "assumed": 1
     },
-    "94": {
+    "91": {
       "unimplemented": 1,
       "assumed": 2
     },
-    "100": {
+    "102": {
       "unimplemented": 1,
-      "assumed": 8
+      "assumed": 2
     },
     "103": {
+      "unimplemented": 1,
+      "assumed": 5
+    },
+    "104": {
       "unimplemented": 1,
       "assumed": 5
     },
@@ -166,9 +190,9 @@
       "unimplemented": 3,
       "assumed": 5
     },
-    "195": {
+    "193": {
       "unimplemented": 1,
-      "assumed": 7
+      "assumed": 4
     },
     "223": {
       "unimplemented": 1,
@@ -182,10 +206,6 @@
       "unimplemented": 1,
       "assumed": 3
     },
-    "261": {
-      "unimplemented": 1,
-      "assumed": 5
-    },
     "262": {
       "unimplemented": 1,
       "assumed": 5
@@ -193,10 +213,6 @@
     "270": {
       "unimplemented": 1,
       "assumed": 3
-    },
-    "283": {
-      "unimplemented": 1,
-      "assumed": 2
     },
     "307": {
       "unimplemented": 1,
@@ -218,10 +234,6 @@
       "unimplemented": 5,
       "assumed": 0
     },
-    "400": {
-      "unimplemented": 1,
-      "assumed": 4
-    },
     "412": {
       "unimplemented": 1,
       "assumed": 6
@@ -230,17 +242,13 @@
       "unimplemented": 1,
       "assumed": 1
     },
+    "432": {
+      "unimplemented": 1,
+      "assumed": 1
+    },
     "501": {
       "unimplemented": 2,
       "assumed": 1
-    },
-    "811": {
-      "unimplemented": 1,
-      "assumed": 3
-    },
-    "821": {
-      "unimplemented": 1,
-      "assumed": 3
     },
     "861": {
       "unimplemented": 1,

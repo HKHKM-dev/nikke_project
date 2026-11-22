@@ -2,7 +2,7 @@
 
 - 何のための文書か: ヘッドレスの実行口 `packages/core/scripts/sim-run.ts` に直に書いてある表示（きっかけ・効果の値のラベル、表の行、`--trace` の行）を、行を作る関数に分けてテストを書く変更の、今の構造・案と得失・論点・段・確かめ方
 - 対象: `packages/core/scripts/sim-run.ts` と、新しく置く `packages/core/scripts/sim-run/` の下のファイルとテスト。計算（`runSimulation`・`simTeamResult`）と、出力の中身は変えない
-- 状態: 完了（9 節）
+- 状態: 完了（9・10 節）
 - 関連: [verification-guide.md](verification-guide.md)・[skills-guide.md](skills-guide.md)（`npm run sim` を使う手順）、[design-workflow-simplification-15.md](design-workflow-simplification-15.md) 6 節（`--trace`）、[design-workflow-simplification-16.md](design-workflow-simplification-16.md) 2 節（引数の読み取り `cli.ts`）
 - 作成日: 2026-11-19
 - 調べた時点: main の 8be26a23
@@ -159,7 +159,17 @@
 - **出力の突き合わせ**: 655 組で、標準出力・標準エラー・終了コードが基の版と一字も違わない（スタックトレースの行は、行番号が変わるので比べていない）。内訳は、定義のある全部のキャラの単騎とその `--trace all`（276 組）、10 編成 × オプションの組（約 320 組）、宝物の段階（24 組）、誤った引数と `--help`（35 組）。終了コードは 0 が 606 組、1 が 23 組、2 が 26 組。基の版は 2 回回して、出力が同じことを先に確かめた（パイプでなくファイルに受けた。上の `process.exit` のため）。
 - **分かれ道**: 出力の分かれ道（表・行・列に出る印 54 種類）を、突き合わせの組が通っているかを数えた。通らなかったのは 2 つで、「左端の味方」の印は編成を足して突き合わせ（3 組。同じ）、測っていない着地点（`unmeasured`）は単体テストで見ている。
 
-## 10. 経過
+## 10. 9 節の課題の直し（2026-11-21）
+
+9 節で起票した 4 件の課題を直した。どれも、課題の文をコードで確かめてから直した。
+
+- **引数の検査**（`sim-run-duration-check.json`）: `sim-run.ts` で、`--duration` が 0 より大きい数でなければ、エラーの 1 行を出して終了コード 2 で終える（空・`x`・`0`・負の数。検査は `--from`・`--to` と同じ関数）。`--trace` は、種類と範囲（`--from`・`--to`）の検査を計算の前に移し、知らない種類に加えて、種類が 1 つも無い値（`""`・`,`）も終了コード 2 で止める。大きすぎる戦闘時間（`--duration 1e9` など）は止めない（上限の値に根拠が無い）。テストは `sim-run.test.ts`（起動して見る）。
+- **`perTrigger` の内訳の桁**（`sim-run-per-trigger-digits.json`）: 意図した桁ではないと判断した。根拠: 桁は `filter` で 0 の項を省いた後の位置で決まり、項の種類に結び付かない（射撃ごとの倍率ダメージが 0 で固定ダメージがある区間では、固定ダメージが小数 1 桁になる）。ほかのダメージの数は、どの表も整数に丸めている。`.map((v) => fmt(v))` に直し、内訳の項も整数で出る（出力が変わる）。テストは `tables.test.ts`（内訳のある行が、整数だけで書かれること）。
+- **編成の条件の取り出し**（`composition-condition-rows.json`）: `skills/composition.ts` に `compositionConditionsOf`（効果の 5 つの編成の条件。型は `CompositionConditions`）を置き、`compositionAllows` と `tables.ts` の `compositionRows` がそれを読む。表の文は、`CompositionConditions` の項目を全部持つ表（`COMPOSITION_CONDITION_TEXTS`）から作るので、`CompositionConditions` に条件を足すと、表の文を書くまで型の検査が通らない（`compositionAllows` が `compositionConditionsOf` を通さずに効果の欄を読むと、この守りは効かない）。テストは `composition.test.ts`（全部の条件を返すこと）。表の行は変わらない。
+- **即時効果の表の出どころ**（`sim-run-instant-from.json`）: まとめのキーに出どころの枠を足した（同じフレーム・同じ種類・同じ出どころの枠・同じ枠を 1 行にまとめる）。`from` に出どころを全部並べる案は選ばなかった。理由: 並べても量は和のままで、出どころごとの量が読めない。キーに足せば、1 行の量が 1 つの出どころのものになり、`from` の列の形（1 つの枠）も変わらない。行は増えるが、同じフレームに 2 つの枠が同じ枠へ同じ種類の効果をする所だけ。テストは `tables.test.ts`（出どころの違う効果を分け、同じ出どころの効果を足すこと）。
+
+## 11. 経過
 
 - 2026-11-19: 起案。
 - 2026-11-19: 承認。実装した（9 節）。
+- 2026-11-21: 9 節で起票した課題 4 件を直した（10 節）。

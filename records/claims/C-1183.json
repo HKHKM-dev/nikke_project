@@ -16,9 +16,9 @@
   "minimal": [
     {
       "observations": ["1133-15"],
-      "element": ["ディーゼル treasureSkills.skill1.notes[2]"],
-      "reason": "ほかの味方のスキルでディーゼルに付くスタック可能バフは、この編成（I-DOLL・フラワーの S2 はゲージのチャージ、バーストはダメージだけ）には無い",
-      "decided": "2026-11-14"
+      "element": ["ディーゼル treasureSkills.skill1.effects[0]"],
+      "reason": "宝物版 S1 のスタック量▲のうち確かめていないのは、ほかの味方のスキルでディーゼルに付いたスタック可能バフに足す分で、この編成（I-DOLL・フラワーの S2 はゲージのチャージ、バーストはダメージだけ）にはそのバフが無い",
+      "decided": "2026-11-21"
     },
     {
       "observations": ["1133-15"],

@@ -1,0 +1,20 @@
+{
+  "id": "C-1407",
+  "text": "ブリッドの S2 は、説明文にきっかけの無いアクティブ型のスキルで、戦闘開始からクールタイム 10 秒ごとに（撃たない間も）発動し、発動の 49f 後（帯の立ち上がりから動画で 47f 後）に、最終防御力が最も高い敵 1 機（的 1 体）へ最終攻撃力の 211.2% の倍率ダメージを 1 ヒット出す",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1282-03`・`1282-04`・`1283-01`・`1283-02`・`1283-03`。V-0821",
+  "model": "反映（data/skills/70.json の skill2 の effects[0]。周期 everySeconds: 10・cooldown: true、delayFrames: 49）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": ["data/skills/70.json の skill2 の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1283",
+      "role": "値を合わせた"
+    }
+  ]
+}

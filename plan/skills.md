@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 144・効果 1049（根拠あり 1027）・notes 352（根拠あり 147）
+件数: キャラ 170・効果 1203（根拠あり 1181）・notes 380（根拠あり 159）
 
-notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補足 42・間接 87
+notes の種類: 未対応 37・前提の外 127・計算に無関係 78・補足 43・間接 95
 
-スロット: supported 390・partial 31・unsupported 9・noEffect 53
+スロット: supported 470・partial 24・unsupported 9・noEffect 64
 
 ## 10 ラピ
 
@@ -23,6 +23,18 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0227（確定）
   - effects[1] timed・burstUse・attack: C-0457（確定）、C-0469（確定）、C-0513（仮説）、C-0611（確定）
+
+## 14 ネオン：ブルーオーシャン
+
+- **skill1**: noEffect
+  - notes[0] 前提の外: バーストスキルを使用した時の開始回数別のパーツダメージ▲（1〜3 回目の段）は、射撃場の的にパーツが無いので効かない: C-0443（範囲外）
+- **skill2**: supported
+  - effects[0] timed・burstStage3Enter・elementDamage: C-1409（確定）
+  - effects[1] timed・burstStage3Enter・elementDamage: C-1409（確定）
+  - effects[2] timed・burstStage3Enter・elementDamage: C-1409（確定）
+- **burst**: supported
+  - effects[0] weaponChange・burstUse: C-1411（確定）、C-1413（仮説）、C-1414（仮説）
+  - effects[1] damage・weaponChangeShot・additional: C-1412（確定）
 
 ## 15 アニス：スパークリングサマー
 
@@ -105,13 +117,12 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[3] counterChange・firepowerCharge が終了した時・firepowerGauge: C-0667（確定）
   - effects[4] state・fullBurstEnd・superFirepowerCharge（burstGaugeSpeed）: C-0666（確定）
   - effects[5] timed・fullBurstStart・attack: C-0665（確定）
-- **burst**: partial
+- **burst**: supported
   - effects[0] timed・burstUse・attackDamage: C-0665（確定）
   - effects[1] state・burstUse・firepowerCharge: C-0667（確定）
   - effects[2] counterChange・burstUse・firepowerGauge: C-0667（確定）
   - effects[3] state・burstUse・superFirepower（attackDamage）: C-0667（確定）、C-0665（確定）
   - effects[4] counterChange・burstUse・firepowerGauge（減少）: C-0667（確定）
-  - notes[0] 未対応: 爆発範囲▲は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）: 根拠なし
 
 ## 19 マリアン：クイーン
 
@@ -141,6 +152,17 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
 - **burst**: noEffect
   - notes[0] 間接（デコイ）: デコイ（分身）は、それ自体は与ダメージを変えない（デコイを読む効果のある編成でだけ効く）: C-0081（確定）
   - notes[1] 計算に無関係: 挑発はダメージに関係しない: C-0081（確定）
+
+## 22 シグナル
+
+- **skill1**: supported
+  - effects[0] timed・normalHit・enemyDefenseDown: C-1404（確定）
+  - notes[0] 計算に無関係: 通常攻撃で 60 回命中した時の対象の攻撃力▼はダメージに関係しない: 根拠なし
+- **skill2**: noEffect
+  - notes[0] 計算に無関係: フルバーストタイムが発動した時の自分の吸収回復（攻撃ダメージの X% 回復・10 秒）は、ダメージに関係しない（自分にだけ付き、シグナルに回復を受けた時の効果は無いので、どの味方のスキルの発動も変えない）: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1402（確定）
+  - effects[1] timed・burstUse・enemyDefenseDown: C-1403（確定）、C-1405（仮説）
 
 ## 30 ポリ
 
@@ -201,6 +223,21 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[1] fullBurstExtend・burstUse: C-0886（確定）
   - notes[0] 前提の外: 火力型の味方全体へのパーツダメージ▲は、パーツを扱わないので効かない（要件の前提の外）: C-0443（範囲外）
 
+## 41 K
+
+- **skill1**: supported
+  - effects[0] state・lastShotOnce・tiltedScale（critRate）: C-1498（確定）
+  - effects[1] stackChange・lastShotOnce・tiltedScale: C-1498（確定）
+  - effects[2] damage・critPelletHit・additional: C-1499（確定）、C-1501（仮説）
+  - effects[3] removeState・fullBurstEnd・tiltedScale: C-1502（仮説）
+- **skill2**: supported
+  - effects[0] state・tiltedScale が適用された時・fulfillmentOfRighteousness（maxAmmo・attackDamage）: C-1497（確定）
+  - effects[1] removeState・fullBurstEnd・fulfillmentOfRighteousness: C-1502（仮説）
+- **burst**: supported
+  - effects[0] weaponChange・burstUse: C-1500（確定）
+  - effects[1] timed・burstUse・attack: C-1500（確定）
+  - effects[2] timed・burstUse・attackDamage: C-1500（確定）
+
 ## 43 D：キラーワイフ
 
 - **skill1**: supported
@@ -217,13 +254,24 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
 
 ## 60 ベロータ
 
-- **skill1**: unsupported
-  - notes[0] 未対応: フルチャージ攻撃時の自分の爆発範囲▲（5 秒）は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）: 根拠なし
+- **skill1**: noEffect
+  - notes[0] 前提の外: フルチャージ攻撃時の自分の爆発範囲▲（5 秒）は、敵 1 体では複数の敵へのヒットを増やすだけで起きない: 根拠なし
 - **skill2**: noEffect
   - notes[0] 前提の外: 4 機以上に同時に命中した時の防御力▼と追加ダメージは、敵 1 体では起きない: C-0443（範囲外）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0676（確定）、C-0677（確定）
   - effects[1] timed・burstUse・chargeSpeed: C-0678（確定）
+
+## 70 ブリッド
+
+- **skill1**: supported
+  - effects[0] timed・normalShot・attack: C-1406（確定）
+- **skill2**: supported
+  - effects[0] damage・10 秒ごと・skill: C-1407（確定）
+  - effects[1] burstGaugeHit・10 秒ごと: C-1431（確定）、C-1407（確定）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1408（確定）
+  - effects[1] damage・burstUse・additional（読む: HP）: C-1410（確定）
 
 ## 71 ソリン
 
@@ -247,11 +295,10 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
 - **burst**: supported
   - effects[0] burstDamage・skill: C-1185（確定）
   - notes[0] 計算に無関係: 同じ敵への挑発はダメージに関係しない（付けるのはチェーンの間）: 根拠なし
-- **宝物版 skill1**: partial
-  - effects[0] stackChange・normalHit・strawberryCandy: C-1180（確定）、C-1182（確定）
+- **宝物版 skill1**: supported
+  - effects[0] stackChange・normalHit・スタック可能バフの全部: C-1180（確定）、C-1182（確定）、C-1508（確定）
   - notes[0] 間接（防御力）: フルバーストタイムが発動した時の自分の防御力▲（10 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: 根拠なし
   - notes[1] 前提の外: 攻撃を受けた時（自分がヘイト状態なら）の自分の回復は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは敵の攻撃で起きうる（C-0551）: 根拠なし
-  - notes[2] 未対応: 通常攻撃が 150 回命中した時（ヘイト状態なら）のスタック量▲のうち、ほかの味方のスキルで自分に付いたスタック可能バフに足す分は未対応（自分のイチゴキャンディの分だけ扱う）: 根拠なし
 - **宝物版 skill2**: supported
   - effects[0] state・normalHit・strawberryCandy（maxAmmo）: C-1179（確定）
   - effects[1] ammoRefill・strawberryCandy のフルスタック: C-1184（仮説）
@@ -351,6 +398,21 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
 - **burst**: supported
   - effects[0] heal・burstUse: C-0686（確定）、C-0687（仮説）
 
+## 91 ベスティー
+
+- **skill1**: noEffect
+  - notes[0] 前提の外: フルチャージ攻撃時の自分の爆発範囲▲（10 秒）は、敵 1 体では複数の敵へのヒットを増やすだけで起きない: 根拠なし
+- **skill2**: supported
+  - effects[0] state・burstUse・survivalInstinct1（attack）: C-1442（確定）
+  - effects[1] state・burstUse・survivalInstinct2（critDamage）: C-1442（確定）
+  - effects[2] state・burstUse・survivalInstinct3（critRate）: C-1442（確定）
+- **burst**: partial
+  - effects[0] damage・burstUse・additional: C-1441（確定）
+  - effects[1] damage・burstUse・additional: C-1441（確定）
+  - effects[2] damage・burstUse・additional: C-1441（確定）
+  - notes[0] 未対応: ミサイルコンテナ 2 機の攻撃（最終攻撃力の 15.56% のダメージ・攻撃間隔 1 秒・18 秒）は未対応。1 ヒットの値は式どおりだが、射撃場の的では 1 回のバーストのヒットの数が 1 秒に 2 回の 34〜36 回にならず、録画とバーストで大きく違う（V-0825）: 根拠なし
+  - notes[1] 補足: フルバーストタイム 5 秒▼は burst_duration（5 秒）から時刻表に入る: C-0011（確定）
+
 ## 92 ウンファ
 
 - **skill1**: supported
@@ -392,10 +454,9 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[0] damage・fullChargeShot・true: C-0805（確定）、C-0806（確定）
   - effects[1] timed・fullChargeShot・attack: C-0809（確定）
   - effects[2] timed・fullChargeShot・projectileExplosionDamage: C-0809（確定）
-- **burst**: partial
+- **burst**: supported
   - effects[0] timed・burstUse・trueDamage: C-0808（確定）
   - effects[1] burstDamage・true: C-0807（確定）
-  - notes[0] 未対応: 爆発範囲▲は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）: 根拠なし
 
 ## 95 ウンファ：タクティカル・アップ
 
@@ -416,9 +477,8 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
 
 ## 100 ラプラス
 
-- **skill1**: partial
+- **skill1**: supported
   - effects[0] state・fullChargeShot・heroVision: C-1202（確定）、C-1206（確定）
-  - notes[0] 未対応: ヒーロービジョンの爆発範囲▲は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）: 根拠なし
 - **skill2**: supported
   - effects[0] damage・lastShot・additional: C-1203（仮説）
   - notes[0] 前提の外: 対象のパーツに命中した時の本体への追加ダメージは、射撃場の敵にパーツが無いので起きない（要件 4.2 節）: C-0443（範囲外）
@@ -429,9 +489,8 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[3] damage・burstUse・true: C-1202（確定）、C-1205（確定）
   - effects[4] damage・burstUse・true: C-1202（確定）、C-1205（確定）
   - notes[0] 計算に無関係: バーストスキル発動中はハイド不可は、ダメージに関係しない（被弾を扱わない）: 根拠なし
-- **宝物版 skill1**: partial
+- **宝物版 skill1**: supported
   - effects[0] state・fullChargeShot・heroVision: C-1206（確定）
-  - notes[0] 未対応: ヒーロービジョンの爆発範囲▲は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）: 根拠なし
 - **宝物版 skill2**: supported
   - effects[0] damage・fullChargeShot・additional: C-1201（確定）
   - notes[0] 前提の外: 対象のパーツに命中した時の本体への追加ダメージは、射撃場の敵にパーツが無いので起きない（要件 4.2 節）: C-0443（範囲外）
@@ -467,6 +526,17 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[1] timed・burstUse・attackDamage: C-0420（確定）
   - effects[2] timed・burstUse・maxAmmo: C-0420（確定）
 
+## 102 マクスウェル
+
+- **skill1**: supported
+  - effects[0] timed・fullBurstStart・chargeSpeed: C-1432（確定）
+  - effects[1] timed・fullBurstStart・attack: C-1432（確定）
+- **skill2**: noEffect
+  - notes[0] 前提の外: ニケを除いた敵が 5 機以上の時だけの自分の会心率▲・会心ダメージ▲は、敵 1 体では起きない: C-0443（範囲外）
+- **burst**: partial
+  - effects[0] weaponChange・burstUse: C-1433（確定）
+  - notes[0] 未対応: 持ち替えの直前（III のタイマーの 00.00 の 10〜15f 前）に基礎の SR を撃った回は、変更後の武器の 1 発が 3〜8f 遅れた（V-0824）。モデルは待ちの即値で、基礎の SR の状態を見ない: C-1433（確定）
+
 ## 103 ラプラス：アルティメットヒーロー
 
 - **skill1**: partial
@@ -489,6 +559,19 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[1] burstDamage・skill: C-0682（確定）、C-0683（確定）
   - effects[2] damage・burstUse・additional: C-0707（確定）
 
+## 104 ドレイク：グレイトヴィラン
+
+- **skill1**: partial
+  - effects[0] weaponChange・fullBurstStart: C-1427（確定）
+  - effects[1] ammoDecrease・使用武器の変更が終了した時: C-1428（確定）
+  - notes[0] 未対応: 持ち替えの時に元の SG がリロード中だった回は、オーバーオーバードライブの最初の発が、撃っている途中だった回より 7〜12f 早い（V-0818 の 4 回目のフルバースト）。モデルはどの回も同じ待ち（firstShotDelayFrames）で、元の SG の状態による違いは扱っていない: C-1427（確定）
+- **skill2**: supported
+  - effects[0] timed・fullBurstEnd・maxHpOnly: C-1429（確定）
+  - effects[1] timed・battleStart・attack（読む: HP）: C-1429（確定）
+- **burst**: supported
+  - effects[0] timed・burstUse・attackDamage: C-1430（確定）
+  - effects[1] burstDamage・skill: C-1430（確定）
+
 ## 105 マクスウェル：オーディナリーメカニック
 
 - **skill1**: supported
@@ -507,6 +590,16 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[4] weaponChange・burstUse: C-1157（確定）
   - effects[5] timed・burstUse・attackDamage: C-1158（確定）
 
+## 110 クロウ
+
+- **skill1**: noEffect
+  - notes[0] 計算に無関係: フルバーストタイムが発動した時の、敵全体の攻撃力▼はダメージに関係しない: 根拠なし
+- **skill2**: supported
+  - effects[0] damage・lastShot・additional: C-1400（確定）
+  - notes[0] 間接（防御力）: 最後の弾丸が命中した時の、自分の防御力▲（5 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1401（確定）
+
 ## 111 ジャッカル
 
 - **skill1**: noEffect
@@ -520,6 +613,22 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - notes[0] 未対応: 「〜敵1機に」で終わるバーストスキルダメージ▲は、行の対象の句が「敵1機に」で終わるバーストの追加ダメージ・持続ダメージ（ラピ：レッドフード・マナなど）に乗るかを確かめていない。モデルは乗せない（plan/design-jackal.md 2.2 節）: 根拠なし
   - notes[1] 間接（防御力）: 味方全体の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: 根拠なし
 
+## 113 E.H.
+
+- **skill1**: supported
+  - effects[0] counterChange・scrap が最大になった時・scrap（減少）: C-1387（確定）
+  - effects[1] counterChange・scrap が最大になった時・homemadeMagazine: C-1387（確定）
+  - effects[2] passive・homemadeMagazine 1 以上の間・attack: C-1387（確定）
+  - notes[0] 前提の外: 自家製弾倉の 2〜4 本目と、その分の攻撃力▲は、廃品が戦闘開始時の 10 個のほかに増えない前提（発射体・パーツ・敵の破壊が起きない。要件 4.2 節）では起きない: C-1387（確定）
+- **skill2**: supported
+  - effects[0] counterChange・battleStart・scrap: C-1387（確定）
+  - effects[1] timed・battleStart・elementDamage: C-1387（確定）
+  - notes[0] 前提の外: 味方が破壊可能な発射体を破壊した時（1 個）・パーツを破壊した時（5 個）・敵が破壊された時（2 個）の廃品▲と、その回収の有利コードの攻撃ダメージ▲は、敵の発射体・パーツ・敵の破壊を扱わない前提（要件 4.2 節）の外: C-1387（確定）
+- **burst**: supported
+  - effects[0] weaponChange・burstUse: C-1388（確定）、C-1389（仮説）、C-1390（確定）
+  - effects[1] timed・burstUse・attack: C-1391（確定）
+  - notes[0] 前提の外: 自家製弾倉が 2 本以上のときの最大装弾数（2 発以上）は、弾倉が 1 本で止まる前提（S1 の notes）の外: C-1387（確定）
+
 ## 121 エヌ : ミラクルフェアリー
 
 - **skill1**: supported
@@ -531,6 +640,20 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[0] heal・burstUse: C-0618（確定）、C-0845（確定）、C-0846（仮説）
   - effects[1] timed・burstUse・attack: C-0595（確定）、C-0596（確定）
   - notes[0] 前提の外: 戦闘不能の火力型の味方の復活は、味方が倒れないので起きない（要件 5.2 節）: C-0443（範囲外）
+
+## 131 ペッパー
+
+- **skill1**: supported
+  - effects[0] heal・lastShot: C-1465（仮説）
+  - effects[1] state・lastShot・refreshHeart: C-1465（仮説）
+  - notes[0] 間接（HP）: リフレッシュハートの中身の、味方全体の受けるHP回復量▲（5 スタック・15 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く。受けるHP回復量▲は語彙に無い。plan/design-heal-amount-up.md 2.3 節）: 根拠なし
+- **skill2**: supported
+  - effects[0] damage・10 秒ごと・skill: C-1462（確定）
+  - notes[0] 計算に無関係: 敵の攻撃力▼（5 秒）はダメージに関係しない: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1463（確定）
+  - effects[1] stackChange・burstUse・スタック可能バフの全部: C-1464（確定）
+  - effects[2] heal・burstUse: C-1465（仮説）
 
 ## 140 シュガー
 
@@ -581,6 +704,28 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[0] burstDamage・skill: C-0771（確定）
   - effects[1] heal・burstUse: 根拠なし
   - notes[0] 間接（HP）: 味方全体の受ける HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+
+## 142 プリム
+
+- **skill1**: supported
+  - effects[0] timed・normalHit・enemyDefenseDown: C-1461（仮説）
+- **skill2**: noEffect
+  - notes[0] 間接（HP）: フルチャージして攻撃した時の味方全体の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1461（仮説）
+  - effects[1] timed・burstUse・enemyDefenseDown: C-1461（仮説）
+  - notes[0] 間接（HP）: 味方全体の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+- **宝物版 skill1**: supported
+  - effects[0] state・fullChargeShot・sleepy（enemyDefenseDown）: C-1459（確定）
+  - effects[1] state・fullChargeShot・wakeUp（trueDamageConversion）: C-1459（確定）
+- **宝物版 skill2**: supported
+  - effects[0] timed・fullChargeShot・trueDamage: C-1458（確定）
+  - notes[0] 間接（HP）: フルチャージして攻撃した時の味方全体の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+- **宝物版 burst**: supported
+  - effects[0] burstDamage・skill: C-1460（確定）
+  - effects[1] timed・burstUse・enemyDefenseDown: C-1461（仮説）
+  - effects[2] timed・burstUse・trueDamage: C-1460（確定）
+  - notes[0] 間接（HP）: 味方全体の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
 
 ## 143 ミルク：ブルーミングバニー
 
@@ -695,6 +840,17 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[3] shotPause・burstUse: C-0925（確定）
   - notes[0] 計算に無関係: 敵全体の気絶と、ターゲット指定の攻撃力▼はダメージに関係しない: 根拠なし
 
+## 171 ユルハ
+
+- **skill1**: noEffect
+  - notes[0] 前提の外: 30 回攻撃を受けた時の、自分の平常心（クリティカル確率▲・20 秒）は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは、操作キャラが的の攻撃を受けると数えられうる（C-0551）: 根拠なし
+- **skill2**: supported
+  - effects[0] timed・30 秒ごと・attack: C-1436（確定）
+  - notes[0] 計算に無関係: 味方全体の受けるダメージ均等分配（10 秒）は防御系でダメージに関係しない: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1437（確定）
+  - notes[0] 前提の外: 自分が平常心状態のときの追加ダメージ（最終攻撃力の X%）は、平常心が被弾でしか付かない（S1）ので起きない（要件 4.2 節）: 根拠なし
+
 ## 172 アドミ
 
 - **skill1**: noEffect
@@ -717,6 +873,36 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[0] burstDamage・skill: C-1372（確定）
   - effects[1] damage・burstUse・additional: C-1373（確定）、C-1368（確定）、C-1372（確定）
 
+## 181 メイデン
+
+- **skill1**: noEffect
+  - notes[0] 前提の外: 20 回攻撃を受けた時の、自分の復讐（攻撃力▲・20 秒）は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは、操作キャラが的の攻撃を受けると数えられうる（C-0551）: 根拠なし
+- **skill2**: supported
+  - effects[0] timed・30 秒ごと・critDamage: C-1484（確定）、C-0506（確定）
+  - effects[1] burstGaugeHit・30 秒ごと: C-0506（確定）
+  - notes[0] 計算に無関係: 敵全体への挑発（10 秒）そのものはダメージに関係しない（ゲージは effects[1]）: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1485（確定）
+  - notes[0] 前提の外: 自分が復讐状態のときの、同じ敵への追加ダメージ（最終攻撃力の X%）は、復讐が被弾でしか付かない（S1）ので起きない（要件 4.2 節）: 根拠なし
+
+## 182 ギロチン：ウィンタースレイヤー
+
+- **skill1**: supported
+  - effects[0] counterChange・battleStart・heroLevel: C-1393（確定）
+  - effects[1] counterChange・exp の値 01 スタックごと・heroLevel: C-1393（確定）
+  - effects[2] ammoRefill・heroLevel が上がった時: C-1394（確定）
+  - effects[3] heal・heroLevel が上がった時: C-1395（仮説）
+  - effects[4] timed・heroLevel が上がった時・elementDamage: C-1396（確定）
+  - effects[5] timed・heroLevel が上がった時・attack: C-1396（確定）
+- **skill2**: supported
+  - effects[0] state・nonCoreHit・exp（attack）: C-1392（確定）
+  - effects[1] state・coreHit・exp: C-1392（確定）
+  - effects[2] passive・heroLevel 2 以上の間・elementDamage: C-1396（確定）
+- **burst**: supported
+  - effects[0] timed・burstUse・attackDamage: C-1397（確定）
+  - effects[1] timed・burstUse・elementDamage: C-1397（確定）
+  - effects[2] dot・burstUse: C-1398（確定）
+
 ## 183 メイデン：アイスローズ
 
 - **skill1**: supported
@@ -731,7 +917,7 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[3] timed・burstUse・attack: C-1346（確定）
   - effects[4] damage・fullChargeShot・skill: C-1348（確定）
 - **burst**: supported
-  - effects[0] burstDamage・skill: C-1343（確定）、C-1344（確定）、C-1345（確定）
+  - effects[0] burstDamage・skill: C-1343（確定）、C-1344（確定）、C-1496（確定）
 
 ## 190 ルドミラ
 
@@ -781,6 +967,18 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[0] state・burstUse・miracleOfMakeshifts（attack）: C-0668（確定）、C-0669（確定）、C-0670（確定）
   - effects[1] state・burstUse・miracleOfMakeshiftsShotgun（attack）: C-0669（確定）、C-0670（確定）
 
+## 193 ネヴェ
+
+- **skill1**: partial
+  - effects[0] damage・10 秒ごと・skill: C-1492（確定）
+  - notes[0] 未対応: S1 のヒットがバーストゲージを溜めるかは確かめていない（イサベル・エーテル・ラピの S2 の CT ごとのヒットは溜める。C-0404・C-0409）。モデルは溜めない: 根拠なし
+- **skill2**: supported
+  - effects[0] timed・fullBurstStart・pierce: C-1494（確定）
+  - effects[1] timed・fullBurstStart・attack: C-1493（確定）
+- **burst**: supported
+  - effects[0] timed・burstUse・critRate: C-1495（仮説）
+  - effects[1] timed・burstUse・hitRate: C-1495（仮説）
+
 ## 194 ルドミラ：ウィンターオーナー
 
 - **skill1**: supported
@@ -796,11 +994,11 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
 
 ## 195 アリス：ワンダーランドバニー
 
-- **skill1**: partial
+- **skill1**: supported
   - effects[0] heal・normalShot: C-1166（確定）
   - effects[1] state・normalShot・carrotParty: C-1166（確定）
+  - effects[2] stackChange・normalShot・スタック可能バフの全部: C-1505（確定）、C-1507（仮説）
   - notes[0] 前提の外: ニンジンパーティーの阻止部位の攻撃ダメージ▲は、射撃場の敵に阻止部位が無いのでダメージに関係しない（要件 5.2 節）: C-0443（範囲外）
-  - notes[1] 未対応: 通常攻撃 90 回ごとの、水冷コードの味方全体（自分を含む）のスタック可能バフ効果のスタック量▲は未対応（stackChange は同じ定義で自分に付けた状態にしか書けず、ほかの味方のどのバフのスタックを足すかを読む語彙が無い。自分のニンジンパーティーの分はダメージに効かない）: 根拠なし
 - **skill2**: supported
   - effects[0] timed・fullBurstEnd・burstGaugeSpeed: C-1168（仮説）
   - effects[1] timed・fullBurstStart・maxAmmo: C-1167（確定）
@@ -809,6 +1007,28 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[0] burstReentry: C-1169（確定）
   - effects[1] heal・burstUse: C-1170（仮説）
   - notes[0] 間接（HP）: 自分がニンジンパーティーのフルスタック状態の時の、味方全体の受ける HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+
+## 200 ルピー
+
+- **skill1**: supported
+  - effects[0] stackChange・normalHit・スタック可能バフの全部: C-1423（確定）
+  - effects[1] timed・normalHit・critRate: C-1467（仮説）
+- **skill2**: supported
+  - effects[0] state・normalShot・mileage（attack）: C-1422（確定）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1421（確定）
+  - effects[1] timed・burstUse・attack: C-1424（確定）
+
+## 201 ヤン
+
+- **skill1**: supported
+  - effects[0] timed・fullBurstStart・chargeDamage: C-1456（確定）
+- **skill2**: supported
+  - effects[0] timed・fullChargeShot・attack: C-1455（確定）
+  - effects[1] timed・fullChargeShot・critRate: C-1455（確定）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1457（確定）
+  - notes[0] 前提の外: 攻撃範囲の中心への強制移動（2 秒）は、静止した単体ボスの前提では与ダメージを変えない（敵が複数のとき、範囲攻撃に入る敵の数が変わりうる）: 根拠なし
 
 ## 202 ドラー
 
@@ -847,6 +1067,29 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[1] timed・burstUse・enemyDefenseDown: C-1190（確定）
   - effects[2] damage・burstUse・additional: C-1190（確定）
   - effects[3] timed・burstUse・damageTaken: C-1190（確定）
+
+## 212 ノベル
+
+- **skill1**: supported
+  - effects[0] damage・10 秒ごと・skill: C-1448（確定）
+  - effects[1] timed・10 秒ごと・enemyDefenseDown: C-1448（確定）、C-0556（確定）、C-0790（確定）
+  - effects[2] burstGaugeHit・10 秒ごと: C-1503（確定）、C-1448（確定）
+- **skill2**: supported
+  - effects[0] state・normalHit・collectEvidence（defense）: C-1449（確定）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1450（確定）、C-0795（確定）
+  - effects[1] timed・burstUse・damageTaken: C-1449（確定）
+
+## 220 スノーホワイト
+
+- **skill1**: supported
+  - effects[0] damage・normalHit・additional: C-1415（確定）
+  - effects[1] timed・normalHit・attack: C-1415（確定）
+- **skill2**: supported
+  - effects[0] damage・15 秒ごと・skill: C-1416（確定）、C-1417（仮説）、C-1420（確定）
+  - effects[1] timed・15 秒ごと・critRate: C-1418（確定）
+- **burst**: supported
+  - effects[0] weaponChange・burstUse: C-1419（確定）、C-1420（確定）
 
 ## 222 紅蓮
 
@@ -1036,9 +1279,9 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[0] timed・fullChargeShot・pierce: C-1091（確定）
   - notes[0] 前提の外: 2 機以上に同時に命中した時の追加ダメージは、敵 1 体では起きない: C-0088（確定）
   - notes[1] 前提の外: フルチャージ攻撃時の貫通範囲の拡張は、敵 1 体ではダメージに関係しない: C-0088（確定）
-- **skill2**: partial
+- **skill2**: supported
   - effects[0] damage・10 秒ごと・skill: C-0102（確定）、C-0401（確定）、C-0453（確定）
-  - notes[0] 未対応: S2 のヒットがバーストゲージを溜めるかは確かめていない（イサベル・エーテル・ラピの S2 は溜める。C-0404・C-0409）。モデルは溜めない: 根拠なし
+  - effects[1] burstGaugeHit・10 秒ごと: C-1486（確定）、C-0401（確定）、C-0453（確定）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0089（確定）、C-0219（確定）
   - effects[1] dot・burstUse: C-0100（確定）、C-0101（確定）、C-0111（確定）、C-0112（確定）、C-0129（確定）、C-0219（確定）
@@ -1165,15 +1408,26 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - notes[1] 計算に無関係: 敵全体への挑発（ヘイト）と、味方全体への受けるダメージ▼はダメージに関係しない: 根拠なし
   - notes[2] 間接（防御力）: 味方全体への発動者基準の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: 根拠なし
 
+## 282 サクラ
+
+- **skill1**: noEffect
+  - notes[0] 間接（防御力）: 通常攻撃 3 回ごとの、味方全体への桜茶（防御力▲・10 スタック・15 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く。フルスタックはバーストの阻止部位の行の条件で、その行は前提の外）: 根拠なし
+- **skill2**: supported
+  - effects[0] cooldownReduction・fullBurstStart: C-1468（確定）
+  - notes[0] 前提の外: 味方全体の、敵の発射体に与えるダメージ▲（持続）は、敵の発射体を撃つ場面を扱わないのでダメージに関係しない（要件 5.2 節）: C-0443（範囲外）
+- **burst**: supported
+  - effects[0] timed・burstUse・attack: C-1469（確定）、C-1470（確定）
+  - notes[0] 計算に無関係: 味方全体への、風圧コードの敵から受けるダメージ▼（30 秒・戦闘中 1 回）はダメージに関係しない: 根拠なし
+  - notes[1] 前提の外: 自分が桜茶のフルスタックの時の、味方全体への阻止部位の攻撃ダメージ▲は、射撃場の敵に阻止部位が無いのでダメージに関係しない（要件 5.2 節）: C-0443（範囲外）
+
 ## 283 ロザンナ：シックオーシャン
 
 - **skill1**: noEffect
   - notes[0] 前提の外: 戦闘開始時の味方全体のパーツダメージ▲は、射撃場の的にパーツが無いので効かない: C-0443（範囲外）
   - notes[1] 前提の外: 味方の誰かがパーツを破壊した時の、味方全体へのスキル発動者基準の攻撃力▲（5 スタック・30 秒）は、射撃場の的にパーツが無いので起きない: C-0443（範囲外）
-- **skill2**: partial
-  - effects[0] dot・30 秒ごと: C-1196（確定）
+- **skill2**: supported
+  - effects[0] dot・30 秒ごと: C-1196（確定）、C-1504（確定）
   - notes[0] 前提の外: 味方全体のパーツダメージ▲は、射撃場の的にパーツが無いので効かない: C-0443（範囲外）
-  - notes[1] 未対応: 持続ダメージの tick がバーストゲージを溜めるかは確かめていない（単騎の 1 回目の満タンは最初の発動より前）。モデルは溜めない: 根拠なし
 - **burst**: supported
   - effects[0] timed・burstUse・sustainedDamage: C-1198（確定）
   - effects[1] timed・burstUse・damageTaken: C-1198（確定）
@@ -1294,6 +1548,18 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
 - **burst**: supported
   - effects[0] removeDebuff・burstUse・デバフ 1 個: C-0976（確定）、C-0979（確定）、C-1088（確定）
   - notes[0] 計算に無関係: プロケチャップがフルスタックのときの敵全体の攻撃力▼は、ダメージに関係しない: C-0977（確定）
+
+## 312 ソーダ
+
+- **skill1**: supported
+  - effects[0] state・normalShot・maidSpirit（maxHp）: C-1474（仮説）
+- **skill2**: supported
+  - effects[0] heal・12 秒ごと: C-1471（確定）
+  - effects[1] heal・12 秒ごと: C-1471（確定）、C-1474（仮説）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1472（確定）
+  - effects[1] stackChange・burstUse・スタック可能バフの全部: C-1473（仮説）、C-1474（仮説）
+  - notes[0] 計算に無関係: 敵の気絶（1 秒）はダメージに関係しない: 根拠なし
 
 ## 313 プリバティ：アンカインド・メイド
 
@@ -1534,6 +1800,18 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[1] heal・burstUse: C-1225（仮説）
   - notes[0] 前提の外: 遮蔽物が破壊された味方ランダムに 2 機への遮蔽物の復活は、被弾を扱わないので遮蔽物が壊れず、起きない（要件 5.2 節）: 根拠なし
 
+## 382 レオナ
+
+- **skill1**: supported
+  - effects[0] state・normalShot・roar（critRate）: C-1443（確定）
+  - effects[1] timed・normalShot・maxEffectiveRange: C-1447（確定）、C-1451（仮説）
+- **skill2**: supported
+  - effects[0] timed・fullBurstStart・hitRate: C-1466（仮説）
+  - effects[1] timed・fullBurstStart・pelletCount: C-1444（確定）
+- **burst**: supported
+  - effects[0] timed・burstUse・critDamage: C-1445（確定）
+  - effects[1] timed・burstUse・critRate: C-1446（確定）
+
 ## 390 ツバイ
 
 - **skill1**: supported
@@ -1575,10 +1853,9 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
 
 - **skill1**: supported
   - effects[0] state・normalShot・mindIfIBorrowThis（attack）: C-0873（確定）
-- **skill2**: partial
-  - effects[0] stackChange・normalShot・mindIfIBorrowThis: C-0873（確定）
+- **skill2**: supported
+  - effects[0] stackChange・normalShot・スタック可能バフの全部: C-0873（確定）、C-1506（確定）、C-1507（仮説）
   - effects[1] timed・normalShot・attack: C-0873（確定）
-  - notes[0] 未対応: 風圧コードのほかの味方のスタック可能バフ効果のスタック量▲は未対応（自分の借りていくよぉ…の分だけ扱う）: 根拠なし
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0874（確定）
   - effects[1] timed・burstUse・enemyDefenseDown: C-0874（確定）
@@ -1695,6 +1972,16 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[5] timed・burstUse・critDamage: C-1172（確定）
 - **burst**: supported
   - effects[0] timed・burstUse・critRate: C-1173（確定）
+
+## 432 アリア
+
+- **skill1**: supported
+  - effects[0] timed・fullBurstStart・critDamage: C-1452（確定）
+- **skill2**: supported
+  - effects[0] timed・lastShot・critRate: C-1453（確定）
+- **burst**: unsupported
+  - notes[0] 未対応: 自分の命中率▲（15 秒）は定義していない。MG のアリアでは、窓の中でもリロードの明けの撃ち始めのコアの外れと外れた発が残り、命中率▲をコア命中率（C-0036 の式）と弾丸命中率（H2。C-0192）に効かせるモデルの形（窓の中はほぼ全部の発がコアに当たる）と合わない。どれだけ減らすかは決まっていない: C-1454（確定）
+  - notes[1] 間接（バリア）: 味方全体へのバリア（スキル発動者の最終最大HP の X%・10 秒）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは味方がバリア適用状態にならない。バリアの量は要件 5.2 節の外）: 根拠なし
 
 ## 450 ナガ
 
@@ -1964,6 +2251,39 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[3] timed・burstUse・sustainedDamage: C-0867（確定）
   - notes[0] 前提の外: 自分が変身状態ならバッテリー 50%▲は、射撃場では起きない。変身状態でバーストを使うには、バースト以外でバッテリーを満たす（味方のパーツの破壊。的にパーツが無い）必要がある。バーストの緊急チャージで付いた変身は約 10 秒で外れ、バーストの CT（40 秒）より短い: C-0443（範囲外）
 
+## 580 ファントム
+
+- **skill1**: supported
+  - effects[0] state・normalHit・callingCard（enemyDefenseDown）: C-1480（仮説）
+  - effects[1] state・normalHit・thiefsDagger（hitRate）: C-1480（仮説）
+  - effects[2] timed・normalHit・attackDamage: C-1480（仮説）
+- **skill2**: supported
+  - effects[0] damage・thiefsDagger のフルスタック・additional: C-1480（仮説）
+  - effects[1] removeState・thiefsDagger のフルスタック・callingCard: C-1480（仮説）
+  - effects[2] state・thiefsDagger のフルスタック・thiefsVision（distributedDamage）: C-1480（仮説）
+  - effects[3] removeState・burstUse・thiefsVision: C-1480（仮説）
+  - effects[4] timed・normalShot・attack: C-1480（仮説）
+  - effects[5] timed・normalShot・distributedDamage: C-1480（仮説）
+- **burst**: supported
+  - effects[0] burstDamage・distributed: C-1479（確定）
+- **宝物版 skill1**: supported
+  - effects[0] state・normalHit・callingCard（enemyDefenseDown）: C-1477（確定）
+  - effects[1] state・normalHit・thiefsDagger（hitRate）: C-1477（確定）
+  - effects[2] state・normalHit・thiefsDagger: C-1477（確定）
+  - effects[3] timed・normalHit・attackDamage: C-1477（確定）
+- **宝物版 skill2**: supported
+  - effects[0] damage・thiefsDagger のフルスタック・additional: C-1478（確定）
+  - effects[1] removeState・thiefsDagger のフルスタック・callingCard: C-1478（確定）
+  - effects[2] state・thiefsDagger のフルスタック・thiefsVision（distributedDamage）: C-1478（確定）
+  - effects[3] removeState・burstUse・thiefsVision: C-1480（仮説）
+  - effects[4] damage・thiefsDagger のフルスタック・distributed: C-1478（確定）
+  - effects[5] timed・normalShot・attack: C-1478（確定）
+  - effects[6] timed・normalShot・distributedDamage: C-1478（確定）
+- **宝物版 burst**: supported
+  - effects[0] burstDamage・distributed: C-1480（仮説）
+  - effects[1] timed・burstUse・damageTaken: C-1480（仮説）
+  - effects[2] timed・burstUse・maxAmmo: C-1480（仮説）
+
 ## 581 アルカナ
 
 - **skill1**: supported
@@ -2049,7 +2369,7 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[1] timed・burstUse・maxHp: C-1374（確定）
   - effects[2] timed・burstUse・maxHp: C-1374（確定）
 - **skill2**: supported
-  - effects[0] damage・normalShot・skill: C-1377（確定）
+  - effects[0] damage・normalShot・skill: C-1377（確定）、C-1439（確定）
   - effects[1] timed・battleStart・attack（読む: HP）: C-1374（確定）
 - **burst**: supported
   - effects[0] burstDamage・distributed: C-1375（確定）
@@ -2057,9 +2377,8 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
 
 ## 811 A2
 
-- **skill1**: partial
+- **skill1**: supported
   - effects[0] timed・burstUse・chargeDamage: C-1102（確定）
-  - notes[0] 未対応: バーストスキルを使用した時の爆発範囲▲は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）: 根拠なし
 - **skill2**: supported
   - effects[0] damage・fullChargeShot・additional: C-0407（仮説）
   - notes[0] 前提の外: パーツダメージ▲はパーツを扱わないので効かない: C-0443（範囲外）
@@ -2067,6 +2386,19 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[0] state・burstUse・modeB（attack・chargeSpeed・fireStanceScale）: C-1100（確定）
     - contents[2] fireStanceScale: C-1155（仮説）
   - effects[1] currentHpDown・modeB の間 1 秒ごと（付いた時から）: C-1101（確定）
+
+## 820 レム
+
+- **skill1**: supported
+  - effects[0] timed・normalHit・attack: C-1490（確定）
+  - notes[0] 前提の外: バーストスキルを使用した時の、味方全体への HP 回復均等分配（10 秒）は、被弾で HP が減った時に効く（被弾なしの前提の外）: 根拠なし
+- **skill2**: noEffect
+  - notes[0] 計算に無関係: 戦闘開始時の自分の吸収回復（攻撃ダメージの X% 回復・持続）は、ダメージに関係しない（自分にだけ付き、レムに回復を受けた時の効果は無いので、どの味方のスキルの発動も変えない。味方への分け合いは notes[1] で、前提の外）: 根拠なし
+  - notes[1] 前提の外: 戦闘開始時の、自分と最終攻撃力が最も高い RL の味方 2 機への HP 回復均等分配（持続）は、被弾で HP が減った時に効く（被弾なしの前提の外）: 根拠なし
+- **burst**: supported
+  - effects[0] state・burstUse・demonsBreath（critRate）: C-1489（確定）
+  - effects[1] timed・burstUse・attack: C-1487（確定）
+  - effects[2] timed・burstUse・maxAmmo: C-1488（確定）、C-1491（仮説）
 
 ## 821 エミリア
 
@@ -2076,9 +2408,8 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
 - **skill2**: supported
   - effects[0] damage・fullChargeShot・fixedShare: C-1255（確定）、C-1333（確定）
   - effects[1] timed・fullBurstStart・maxAmmo: C-1256（確定）
-- **burst**: partial
+- **burst**: supported
   - effects[0] state・burstUse・freezingWitch（chargeSpeed・chargeDamage）: C-1257（確定）
-  - notes[0] 未対応: 爆発範囲▲は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）: 根拠なし
 
 ## 822 ラム
 
@@ -2119,6 +2450,19 @@ notes の種類: 未対応 44・前提の外 110・計算に無関係 69・補�
   - effects[0] burstDamage・skill: C-1067（確定）
   - effects[1] timed・burstUse・attackDamage: C-1065（確定）
   - notes[0] 間接（バリア）: 灼熱コードの味方全体へのバリア（最終最大HP の X%）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは味方がバリア適用状態にならない。バリアの量は要件 5.2 節の外）: C-0443（範囲外）
+
+## 832 マリ
+
+- **skill1**: supported
+  - effects[0] timed・coreHit・pierceDamage（読む: 貫通）: C-1482（確定）
+  - notes[0] 前提の外: フルチャージして攻撃した時の味方全体のバリアに与えるダメージ▲（3 秒）は、射撃場の敵にバリアが無いのでダメージに関係しない: C-0443（範囲外）
+- **skill2**: supported
+  - effects[0] timed・10 秒ごと・pierce: C-1481（確定）
+  - effects[1] timed・10 秒ごと・attack: C-1481（確定）
+  - effects[2] timed・10 秒ごと・attack: C-1481（確定）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1483（確定）
+  - effects[1] timed・burstUse・attackDamage: C-1483（確定）
 
 ## 833 ミサト
 

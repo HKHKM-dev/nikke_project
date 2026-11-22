@@ -1,0 +1,46 @@
+{
+  "id": "1305",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1305_2b-s2-gauge.mp4",
+  "original": "2026-11-21_17-50-14.mp4",
+  "durationSec": 201.3,
+  "frames": 12076,
+  "fps": 60,
+  "sizeMB": 243.8,
+  "sha256": "8140719d8d37",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 810,
+      "name": "2B",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "デルタ（操作）はオート射撃 OFF で撃たない（V-0830）",
+  "backup": {
+    "at": "2026-11-21T17:54+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

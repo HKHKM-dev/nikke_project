@@ -1,0 +1,776 @@
+[
+  {
+    "id": "1314-01",
+    "recording": "1314",
+    "kind": "timing",
+    "use": "record",
+    "value": [1308, 2509, 3688, 4891, 6070, 7271, 8472, 9718, 10906],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・0・14・0・25・0・25f"
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-02",
+    "recording": "1314",
+    "kind": "timing",
+    "use": "record",
+    "value": [1337, 2538, 3717, 4920, 6099, 7394, 8573, 9775, 10954],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・25・0・25・0・25・0・25f"
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-03",
+    "recording": "1314",
+    "kind": "timing",
+    "use": "record",
+    "value": [1366, 3746, 6128, 8603, 10983],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-04",
+    "recording": "1314",
+    "kind": "timing",
+    "use": "record",
+    "value": [1975, 4356, 6736, 9211],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム。5 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-05",
+    "recording": "1314",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 610, 608, 608],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差。5 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-06",
+    "recording": "1314",
+    "kind": "timing",
+    "use": "record",
+    "value": [2503, 3682, 4885, 7265],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-07",
+    "recording": "1314",
+    "kind": "timing",
+    "use": "record",
+    "value": [2532, 3711, 4914, 6093, 8567, 9769, 10948],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f7294"
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-08",
+    "recording": "1314",
+    "kind": "timing",
+    "use": "record",
+    "value": [3740, 6121, 10976],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f5324・f10891"
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-09",
+    "recording": "1314",
+    "kind": "total",
+    "use": "record",
+    "value": 378498687,
+    "description": "ソルジャーF.A.・レイヴン・ヤン の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11520。増分は 536 個"
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-10",
+    "recording": "1314",
+    "kind": "count",
+    "use": "record",
+    "value": 264,
+    "unit": "トリガー",
+    "description": "ソルジャーF.A.・レイヴン・ヤン のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 536 個。前の増分から 30f 未満の増分（395 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 39f）から発の数を決めた（2 発になった組 79 個）"
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-11",
+    "recording": "1314",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 428349,
+    "description": "ヤンの戦闘の最初の発の 1 発（S2 の▲なし）（コア・会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@7 の grid（Y0=3@101;Y=3@300;YFB=3@600;R0=2@90;R=2@300;RFB=2@600）",
+      "note": "f943 の増分 428,349。モデルの 1 発目（ジャンプの後の発はモデルでも同じ番号）"
+    },
+    "scope": {
+      "slot": [3],
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 1,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-12",
+    "recording": "1314",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 214175,
+    "description": "ヤンの 1 回目の的のジャンプの後の最初の発の 1 発（S2 の▲が切れた後）（胴体・会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@7 の grid（Y0=3@101;Y=3@300;YFB=3@600;R0=2@90;R=2@300;RFB=2@600）",
+      "note": "f5163 の増分 214,175。モデルの 31 発目（ジャンプの後の発はモデルでも同じ番号）"
+    },
+    "scope": {
+      "slot": [3],
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 31,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-13",
+    "recording": "1314",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 220113,
+    "description": "ヤンの 1 回目の的のジャンプの後の 2 発目の 1 発（S2 の▲あり）（胴体・会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@7 の grid（Y0=3@101;Y=3@300;YFB=3@600;R0=2@90;R=2@300;RFB=2@600）",
+      "note": "f5275 の増分 220,113。モデルの 32 発目（ジャンプの後の発はモデルでも同じ番号）"
+    },
+    "scope": {
+      "slot": [3],
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 32,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-14",
+    "recording": "1314",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 214175,
+    "description": "ヤンの 2 回目の的のジャンプの後の最初の発の 1 発（S2 の▲が切れた後）（胴体・会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@7 の grid（Y0=3@101;Y=3@300;YFB=3@600;R0=2@90;R=2@300;RFB=2@600）",
+      "note": "f7531 の増分 214,175。モデルの 49 発目（ジャンプの後の発はモデルでも同じ番号）"
+    },
+    "scope": {
+      "slot": [3],
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 49,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-15",
+    "recording": "1314",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 440227,
+    "description": "ヤンの 2 回目の的のジャンプの後の 2 発目の 1 発（S2 の▲あり）（コア・会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@7 の grid（Y0=3@101;Y=3@300;YFB=3@600;R0=2@90;R=2@300;RFB=2@600）",
+      "note": "f7643 の増分 440,227。モデルの 50 発目（ジャンプの後の発はモデルでも同じ番号）"
+    },
+    "scope": {
+      "slot": [3],
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 50,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-16",
+    "recording": "1314",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 428349,
+    "description": "ヤンの 3 回目の的のジャンプの後の最初の発の 1 発（S2 の▲が切れた後）（コア・会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@7 の grid（Y0=3@101;Y=3@300;YFB=3@600;R0=2@90;R=2@300;RFB=2@600）",
+      "note": "f9662 の増分 428,349。モデルの 65 発目（ジャンプの後の発はモデルでも同じ番号）"
+    },
+    "scope": {
+      "slot": [3],
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 65,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-17",
+    "recording": "1314",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 440227,
+    "description": "ヤンの 3 回目の的のジャンプの後の 2 発目の 1 発（S2 の▲あり）（コア・会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@7 の grid（Y0=3@101;Y=3@300;YFB=3@600;R0=2@90;R=2@300;RFB=2@600）",
+      "note": "f9776 の増分 440,227。モデルの 66 発目（ジャンプの後の発はモデルでも同じ番号）"
+    },
+    "scope": {
+      "slot": [3],
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 66,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-18",
+    "recording": "1314",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 440227,
+    "description": "ヤンの 1 回目のフルバーストより前の、2 発目からの 1 発（S2 の▲あり・コア・会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@7 の grid（Y0=3@101;Y=3@300;YFB=3@600;R0=2@90;R=2@300;RFB=2@600）",
+      "note": "f1055 ほか、1 回目のフルバーストより前の 2 発目からのヤンの発はどれも 440,227（コア・会心なし）"
+    },
+    "scope": {
+      "slot": [3],
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-19",
+    "recording": "1314",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 367175,
+    "description": "レイヴンの戦闘の最初の発の 1 発（ヤンの最初の発より前。S2 の▲なし・コア・会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@7 の grid（Y0=3@101;Y=3@300;YFB=3@600;R0=2@90;R=2@300;RFB=2@600）",
+      "note": "f918 の増分 367,175"
+    },
+    "scope": {
+      "slot": [2],
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 2,
+        "shot": 1,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-20",
+    "recording": "1314",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 357773,
+    "description": "ヤンのバーストの 1 ヒット（バーストスキルダメージ。会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@7 の grid（Y0=3@101;Y=3@300;YFB=3@600;R0=2@90;R=2@300;RFB=2@600）",
+      "note": "I の六角形の替わり目の 0〜1f 後の増分。f1309 が 357,773（会心なし）。会心の回は 536,659、ヤンの発やソルジャーF.A. のペレットと同じフレームの回は和"
+    },
+    "scope": {
+      "slot": [3],
+      "source": "burst"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-21",
+    "recording": "1314",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 584165,
+    "description": "ヤンのフルバーストの中の 1 発（S1・S2 の▲とフルバースト補正・コア・会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@7 の grid（Y0=3@101;Y=3@300;YFB=3@600;R0=2@90;R=2@300;RFB=2@600）",
+      "note": "f1415 ほか、どのフルバーストの中も 584,165（コア・会心なし）"
+    },
+    "scope": {
+      "slot": [3],
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-22",
+    "recording": "1314",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 440227,
+    "description": "ヤンの 1 回目のフルバーストの後の 1 発（S1 の▲が切れた後。S2 の▲あり・コア・会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@7 の grid（Y0=3@101;Y=3@300;YFB=3@600;R0=2@90;R=2@300;RFB=2@600）",
+      "note": "1 回目のフルバーストの終わりの後のヤンの最初のコアの発 f2094 の増分 440,227。どのフルバーストの後の発も、S1 の▲の無い格子に合う"
+    },
+    "scope": {
+      "slot": [3],
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-23",
+    "recording": "1314",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 377354,
+    "description": "レイヴンの 1 回目のフルバーストより前の 1 発（S2 の▲あり。受け手の攻撃力に対する割合・コア・会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@7 の grid（Y0=3@101;Y=3@300;YFB=3@600;R0=2@90;R=2@300;RFB=2@600）",
+      "note": "f1156 ほか 377,354（コア・会心なし）。ヤンの攻撃力基準（H-caster）の 375,659 の発は無い"
+    },
+    "scope": {
+      "slot": [2],
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-24",
+    "recording": "1314",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 749453,
+    "description": "レイヴンのフルバーストの中の 1 発（S1 のチャージダメージ▲・S2 の▲・レイヴンの S1 とフルバースト補正・コア・会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@7 の grid（Y0=3@101;Y=3@300;YFB=3@600;R0=2@90;R=2@300;RFB=2@600）",
+      "note": "f1418 ほか 749,453（コア・会心なし）"
+    },
+    "scope": {
+      "slot": [2],
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-25",
+    "recording": "1314",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [1],
+    "description": "ヤンの 1 回目のバーストの、I の六角形の替わり目（1314-01）からバーストスキルダメージのヒットまでの動画のフレーム",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の I → II の替わり目",
+      "note": "替わり目 f1308、ヒットの増分 f1309（357,773）。どの回も 1 ヒットで、替わり目の 0〜1f 後（どの回も 1f（2 回目の替わり目 f2509 は 1f 後の f2510））"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "burstHit",
+        "anchor": "activation:0",
+        "within": "untilNext"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-26",
+    "recording": "1314",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [1],
+    "description": "ヤンの 3 回目のバーストの、I の六角形の替わり目（1314-01）からバーストスキルダメージのヒットまでの動画のフレーム",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の I → II の替わり目",
+      "note": "替わり目 f3688、ヒットの増分 f3689（357,773）。どの回も 1 ヒットで、替わり目の 0〜1f 後（どの回も 1f（2 回目の替わり目 f2509 は 1f 後の f2510））"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "burstHit",
+        "anchor": "activation:2",
+        "within": "untilNext"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1314-27",
+    "recording": "1314",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [1],
+    "description": "ヤンの 6 回目のバーストの、I の六角形の替わり目（1314-01）からバーストスキルダメージのヒットまでの動画のフレーム",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の I → II の替わり目",
+      "note": "替わり目 f7271、ヒットの増分 f7272（536,659（会心））。どの回も 1 ヒットで、替わり目の 0〜1f 後（どの回も 1f（2 回目の替わり目 f2509 は 1f 後の f2510））"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "burstHit",
+        "anchor": "activation:5",
+        "within": "untilNext"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0836",
+    "readAt": "2026-11-21"
+  }
+]

@@ -193,6 +193,6 @@ describe('エミリア（821）の定義', () => {
     expect(d.skills.skill1.effects.map((e) => e.kind)).toEqual(['timed', 'timed']);
     expect(d.skills.skill2.effects.map((e) => e.kind)).toEqual(['damage', 'timed']);
     expect(d.skills.burst.effects.map((e) => e.kind)).toEqual(['state']);
-    expect(d.skills.burst.support).toBe('partial');
+    expect(d.skills.burst.support).toBe('supported');
   });
 });

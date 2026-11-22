@@ -9,6 +9,7 @@ import {
   holdFireRangesOf,
   jumpWindowsOf,
   manualBurstsOf,
+  manualStep3SlotsOf,
   mapSetupRefs,
   MID_FAR_LANDINGS,
   NEAR_LANDINGS,
@@ -196,6 +197,21 @@ function setupErrors(
     errors.push(`${at}: noFireSlots は condition が auto のときには書かない`);
   if (setup.manualBursts !== undefined && setup.burst === false)
     errors.push(`${at}: manualBursts は burst が false のときには書かない`);
+  if (setup.manualStep3Slots !== undefined && setup.manualBursts === undefined)
+    errors.push(`${at}: manualStep3Slots は manualBursts があるときだけ書く`);
+  const valueOf = (id: string | undefined) => {
+    const v = id === undefined ? undefined : byId.get(id)?.value;
+    return v !== undefined && isObservationValue(v) ? v : undefined;
+  };
+  const step3Slots = manualStep3SlotsOf(valueOf(setup.manualStep3Slots));
+  if (step3Slots !== undefined) {
+    for (const s of step3Slots)
+      if (s !== 0 && filled !== undefined && !filled.has(s))
+        errors.push(`${at}: manualStep3Slots の枠 ${s} が編成の外`);
+    const chains = manualBurstsOf(valueOf(setup.manualBursts));
+    if (chains !== undefined && step3Slots.length > chains.length)
+      errors.push(`${at}: manualStep3Slots の並びが manualBursts のチェーンの数より長い`);
+  }
   if (new Set(holdFireSlots).size !== holdFireSlots.length) errors.push(`${at}: holdFire の枠が重なっている`);
   // ID で指す観測値（欄の一覧は setup.ts の mapSetupRefs）
   mapSetupRefs(setup, (id, field) => {
@@ -228,6 +244,11 @@ const MANUAL_BURSTS: RefRule = {
   valueOk: (v) => manualBurstsOf(v) !== undefined,
   shape: 'の値は昇順の 0 以上の整数の配列',
 };
+const MANUAL_STEP3_SLOTS: RefRule = {
+  input: true,
+  valueOk: (v) => manualStep3SlotsOf(v) !== undefined,
+  shape: 'の値は 0 以上の整数の配列（チェーンごとの III の枠。0 はモデルに任せる）',
+};
 const HOLD_FIRE: RefRule = {
   input: true,
   valueOk: (v) => holdFireRangesOf(v) !== undefined,
@@ -238,6 +259,7 @@ const REF_RULES: Readonly<Record<SetupRefField, RefRule>> = {
   obstacles: OBSTACLES,
   pelletHits: PELLET_HITS,
   manualBursts: MANUAL_BURSTS,
+  manualStep3Slots: MANUAL_STEP3_SLOTS,
   holdFire: HOLD_FIRE,
 };
 

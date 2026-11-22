@@ -159,3 +159,8 @@ export function outputs(out: string, frames: readonly number[], cells?: number):
   if (groups.length === 1) return [{ path: out, frames: groups[0]! }];
   return groups.map((g) => ({ path: withSuffix(out, `_f${g[0]}-${g[g.length - 1]}`), frames: g }));
 }
+
+/** 録画の終わりを越えた番号（frames は昇順。番号は 0 から、録画は nbFrames フレーム）。フレーム数が分からない（0 以下）ときは空 */
+export function framesBeyond(frames: readonly number[], nbFrames: number): number[] {
+  return nbFrames > 0 ? frames.filter((n) => n >= nbFrames) : [];
+}

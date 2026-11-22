@@ -1,0 +1,214 @@
+{
+  "formatVersion": 1,
+  "resourceId": 142,
+  "checkedAt": "2026-11-21",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "allies",
+          "stat": "enemyDefenseDown",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "対象（命中した敵）は敵 1 体。命中は戦闘中ずっと通算で数え（コアと胴体を分けない）、4 の倍数に届いた命中の発から付く。付いている間に次の 4 回目が来たら、維持を付け直す（重ならない）。基礎版は撮っていない（推論の仮説）",
+            "en": "The target (the enemy hit) is the lone enemy. Hits are counted throughout the battle (core and body alike), and it applies from the shot that reaches a multiple of 4. If the next 4th hit comes while it is active, the duration is refreshed (it does not stack). The base version is not recorded (an inferred hypothesis)"
+          },
+          "claims": [
+            "C-1461"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルチャージして攻撃した時の味方全体の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Max HP up on all allies after a Full Charge attack does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "「最終防御力が最も高い敵 10 機」は単体ボス。1 ヒットで、発動の時点の▼で出る（同じ発動の▼（effects[1]）は乗らない）。基礎版は撮っていない（宝物版と同じ読み。推論の仮説）",
+            "en": "\"The 10 enemies with the highest final DEF\" is the single boss. One hit, using the DEF decreases at the activation (the DEF decrease of the same Burst, effects[1], does not apply). The base version is not recorded (read the same way as the Treasure version; an inferred hypothesis)"
+          },
+          "claims": [
+            "C-1461"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "enemyDefenseDown",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-1461"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "味方全体の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Max HP up on all allies does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    }
+  },
+  "treasureSkills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "sleepy",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "enemy",
+          "maxStacksRef": 2,
+          "durationRef": 3,
+          "contents": [
+            {
+              "stat": "enemyDefenseDown",
+              "ref": 1
+            }
+          ],
+          "assumes": {
+            "ja": "フルチャージ攻撃はいつも命中する（外れた時に付かないのは入れない）。対象は敵 1 体。フルチャージの発ごとに 1 スタック足し、付くたびにすべてのスタックの維持を付け直す（いまの既定）",
+            "en": "Full Charge attacks always hit (not applying on a miss is not modeled). The target is the lone enemy. One stack per Full Charge shot; each new stack refreshes the duration of all stacks (the current default)"
+          },
+          "claims": [
+            "C-1459"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "wakeUp",
+          "trigger": {
+            "count": "fullChargeShot",
+            "everyRef": 4
+          },
+          "condition": {
+            "enemyState": "sleepy"
+          },
+          "target": "self",
+          "durationRef": 5,
+          "contents": [
+            {
+              "stat": "trueDamageConversion"
+            }
+          ],
+          "assumes": {
+            "ja": "フルチャージ攻撃の命中は戦闘中ずっと通算で数え、6 の倍数に届いた発で付く（付いている間に届いたら維持を付け直す）。「対象が眠いのフルスタック状態なら」は、眠いが付いていればフルスタックとみなす（フルチャージの発の間は 10 秒より短いので、6 回目までに 5 スタックに届き、切れない）。窓の中の通常攻撃の 1 発の基礎を、防御力を引かない最終攻撃力にする（C-0311・C-0525 の式）",
+            "en": "Full Charge hits are counted throughout the battle; it applies on the shot that reaches a multiple of 6 (refreshing the duration if it is active). \"If the target is at max stacks of Sleepy\" is treated as met whenever Sleepy is active (Full Charge shots are less than 10 s apart, so it reaches 5 stacks by the 6th and never lapses). Normal attacks in the window use final ATK without subtracting DEF (the C-0311 / C-0525 formula)"
+          },
+          "claims": [
+            "C-1459"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "condition": {
+            "selfState": {
+              "state": "wakeUp",
+              "present": true,
+              "sameFiring": true
+            }
+          },
+          "target": "allies",
+          "stat": "trueDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "フルチャージの発ごとに、その時に起きた状態なら付く（付いている間は維持を付け直す）。起きたが付いた発の S2 は、同じ発で付いた起きたを見て付く（次の発から乗る。V-0831。その発自身に乗る読みとは単騎の録画で見分けられない）",
+            "en": "Applies on each Full Charge shot while in the Wake Up state (refreshing the duration while active). The S2 of the shot that grants Wake Up sees the Wake Up granted by the same shot (it reaches the next shot; V-0831. Not distinguishable in solo recordings from the reading where it applies to that shot itself)"
+          },
+          "claims": [
+            "C-1458"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルチャージして攻撃した時の味方全体の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Max HP up on all allies after a Full Charge attack does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "「最終防御力が最も高い敵 10 機」は単体ボス。1 ヒットで、発動の時点の▼で出る（同じ発動の▼（effects[1]）は乗らない）",
+            "en": "\"The 10 enemies with the highest final DEF\" is the single boss. One hit, using the DEF decreases at the activation (the DEF decrease of the same Burst, effects[1], does not apply)"
+          },
+          "claims": [
+            "C-1460"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "enemyDefenseDown",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-1461"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "condition": {
+            "selfState": "wakeUp"
+          },
+          "target": "allies",
+          "stat": "trueDamage",
+          "ref": 7,
+          "durationRef": 8,
+          "claims": [
+            "C-1460"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "味方全体の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Max HP up on all allies does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    }
+  }
+}

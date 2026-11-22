@@ -1,0 +1,46 @@
+{
+  "id": "1345",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1345_sr+sr+rl_ram+delta+maiden-ir_fb-core.mp4",
+  "original": "2026-11-21_23-05-55.mp4",
+  "durationSec": 202.9,
+  "frames": 12171,
+  "fps": 60,
+  "sizeMB": 245.7,
+  "sha256": "aa2a8cf1e687",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 183,
+      "name": "メイデン：アイスローズ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0845 の撮影 B。ラム（I）・デルタ（II）・メイデン：アイスローズ（III・操作・オート射撃 ON）・オートバースト ON",
+  "backup": {
+    "at": "2026-11-21T23:13+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

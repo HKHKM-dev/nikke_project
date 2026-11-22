@@ -15,13 +15,5 @@
       "data/skills/311.json の burst の notes[0]"
     ]
   },
-  "decidedOn": [],
-  "minimal": [
-    {
-      "observations": ["0081-04"],
-      "element": "ニヒリスター skill2.notes[0]",
-      "reason": "観測量はココアの通常攻撃の 1 ヒットの値で、ニヒリスターの S2 のヒットがバーストゲージを溜めるか（ゲージの時刻）に依らない",
-      "decided": "2026-11-07"
-    }
-  ]
+  "decidedOn": []
 }

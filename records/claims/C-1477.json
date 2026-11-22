@@ -1,0 +1,25 @@
+{
+  "id": "C-1477",
+  "text": "ファントムの宝物版 S1: 予告状（防御力 値 01 %▼・値 02 秒）は、予告状の付いていない敵への通常攻撃の命中で付き（射撃場の敵はラプチャー。C-0706・C-1291）、同じ命中で自分に怪盗の短剣（値 04 スタック・値 05 秒）が 1 段付く。短剣は、通算 値 06 回の命中ごとにも 1 段付く（射撃場の敵はターゲット。C-0662・C-0963）。攻撃ダメージ 値 10 %▲は、予告状の付いた敵への命中（同じ命中で付いた予告状も入る。同じ命中で S2 が予告状を外す時は入らない）で付き、次の発まで続く（次の発と、その間のバーストに乗る。S2 のダメージには乗らない）。1 発目は▲なし、2 発目から▲が乗り、S2 の次の発は乗らず、その次の発から乗る",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1324-01`・`1324-02`・`1324-03`・`1324-04`・`1325-01`・`1325-02`・`1325-03`・`1325-04`・`1326-01`。V-0839",
+  "model": "反映（data/skills/580.json の treasureSkills.skill1。条件 enemyState の否定形と sameFiring・selfState の stacksBelow の sameFiring は skills/holders/conditions.ts、敵の状態の解除は skills/holders/fire.ts の fireRemove）",
+  "replaces": [],
+  "updated": "2026-11-21",
+  "subject": {
+    "places": [
+      "data/skills/580.json の treasureSkills.skill1 の effects[0]",
+      "data/skills/580.json の treasureSkills.skill1 の effects[1]",
+      "data/skills/580.json の treasureSkills.skill1 の effects[2]",
+      "data/skills/580.json の treasureSkills.skill1 の effects[3]"
+    ]
+  },
+  "decidedOn": [
+    {
+      "recording": "1324",
+      "role": "読み方を合わせた"
+    }
+  ]
+}

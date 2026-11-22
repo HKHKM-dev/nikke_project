@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 12,
-  "text": "`npm run sim` の区間の表の `perTrigger` の内訳（通常攻撃 + 射撃ごとの倍率ダメージ + 固定ダメージ）で、2 つ目の項に小数 1 桁、3 つ目の項に小数 2 桁までが出る（例 `22,880 (18,933+3,946.9)`）。`packages/core/scripts/sim-run/tables.ts` の `segmentRows` が `.map(fmt)` と書いていて、`map` が渡す添字が `fmt` の桁の引数に入っている。意図した桁でなければ `.map((v) => fmt(v))` に直す（出力が変わる。[design-sim-run-split.md](design-sim-run-split.md) 9 節。2026-11-19 起票）"
-}

@@ -1,0 +1,47 @@
+{
+  "id": "1326",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1326_ar_liter_delta_phantom.mp4",
+  "original": "2026-11-21_20-47-44.mp4",
+  "durationSec": 204.4,
+  "frames": 12260,
+  "fps": 60,
+  "sizeMB": 247.6,
+  "sha256": "9e32071a3483",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 580,
+      "name": "ファントム",
+      "controlled": true,
+      "treasurePhase": 2
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-21T20:54+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

@@ -72,6 +72,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     readItems: layers.readItems,
     selfHpAtMostAt: layers.selfHpAtMostAt,
     selfHpRatioAt: layers.selfHpRatioAt,
+    stackLevelAt: layers.stackLevelAt,
     stateWindowFires: layers.stateWindowFires,
   } satisfies LateReaders);
   const {
@@ -100,7 +101,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     holdsAt,
     leadShots,
     lowerCurrentHp,
-    minEffectiveRangeAt,
+    rangeUpAt,
     openWeaponChange,
     ownStateActive,
     ownUnchainedApplied,
@@ -149,7 +150,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       singlePellet: sumAt(singlePelletViews[holder], frame),
     }),
     hasPelletTracks: (holder) => hasPellets[holder] === true,
-    minEffectiveRangeAt,
+    rangeUpAt,
     rankContext,
     applyHeal,
     openWeaponChange,
@@ -182,6 +183,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     selfStackCountAt,
     enemyStateAt,
     counterFullFiresAt: (holder, counter, frame) => counterFullAt.get(counterKey(holder, counter)) === frame,
+    counterUpFiresAt: layers.counterUpFiresAt,
     counterValueAt: (holder, counter) => layers.counterValue(holder, counter),
     instantConditionHolds(effect, sourceSlotIndex, frame) {
       if (holdsAt(effect.condition, sourceSlotIndex, frame)) return true;

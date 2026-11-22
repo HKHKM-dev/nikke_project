@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 261,
-  "checkedAt": "2026-09-28",
+  "checkedAt": "2026-11-21",
   "skills": {
     "skill1": {
       "effects": [
@@ -67,16 +67,22 @@
             "C-0401",
             "C-0453"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "S2 のヒットがバーストゲージを溜めるかは確かめていない（イサベル・エーテル・ラピの S2 は溜める。C-0404・C-0409）。モデルは溜めない",
-          "en": "Whether the S2 hit builds burst gauge has not been verified (the S2 hits of Isabel, Ether and Rapi do; C-0404, C-0409). The model does not add gauge",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "burstGaugeHit"
-          }
+          "kind": "burstGaugeHit",
+          "trigger": {
+            "everySeconds": 10
+          },
+          "delayFrames": 15,
+          "assumes": {
+            "ja": "S2 のヒットは、射手の 1 ヒットぶん（target_burst_energy_pershot。フルチャージ倍率は乗らない）のバーストゲージを、ダメージと同じく発動の 15f 後のヒットのフレームに溜める",
+            "en": "The S2 hit builds Burst gauge equal to one shooter hit (target_burst_energy_pershot, without the full-charge multiplier) on the hit frame, 15 f after activation like the damage"
+          },
+          "claims": [
+            "C-1486",
+            "C-0401",
+            "C-0453"
+          ]
         }
       ]
     },

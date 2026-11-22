@@ -9,6 +9,7 @@ import {
   isResolvedBuffApplied,
   isRecordTriggered,
   isResolvedShotCount,
+  isResolvedSkillFired,
   isResolvedTimer,
   resolveStackChanges,
   resolveStateContents,
@@ -23,7 +24,14 @@ import { stackItems, STACK_REFRESH, type MaxStacksAt, type StackDecrease } from 
 import type { NamedStateId } from '../states.ts';
 import { dependsOnDefense, dependsOnRank } from '../targets.ts';
 import type { ShotCountEveryAt, TriggerTracker } from '../triggers.ts';
-import { type BuffStat, conditionReadsItems, SKILL_SLOTS, type EdgeShift, type EffectCondition } from '../types.ts';
+import {
+  type BuffStat,
+  conditionReadsItems,
+  isAllStackableChange,
+  SKILL_SLOTS,
+  type EdgeShift,
+  type EffectCondition,
+} from '../types.ts';
 import {
   effectItems,
   holderHitStarts,
@@ -39,10 +47,12 @@ import { ENEMY, type HeldItem, type HeldOrigin, type HeldStage, type HeldTrack, 
 /**
  * 窓の始まり。射撃の回数のきっかけは次のフレームから。timed の delayFrames があれば、きっかけの delayFrames 後から（ナガ S2 は 6。
  * C-0593・C-0653。plan/design-shot-count-trigger-frame.md 6 節）。時間の周期のきっかけの付与の delayFrames は、周期の発火の
- * delayFrames 後から（C-0736。plan/design-new-chars-1029.md 10.2 節の e）
+ * delayFrames 後から（C-0736。plan/design-new-chars-1029.md 10.2 節の e）。{ skillFired } は、出来事のフレーム（発動の次のフレーム）から。
+ * delayFrames があれば発動の delayFrames 後から（クールタイムの印のある周期の timed の遅れ。plan/design-cooldown-timed-delay.md 1 節の案 A）
  */
 export function startOfFire(trigger: ResolvedTrigger, frame: number, delayFrames?: number): number {
   if (isResolvedTimer(trigger)) return frame + (delayFrames ?? 0);
+  if (isResolvedSkillFired(trigger)) return frame - 1 + (delayFrames ?? 1);
   if (!isResolvedShotCount(trigger)) return frame;
   return frame + (delayFrames ?? 1);
 }
@@ -653,7 +663,9 @@ export function appliedStagesOf(slots: readonly TimelineSlot[]): (state: NamedSt
         bump(effect.state, stageOfStackChange(effect));
       }
       const def = slot.definition;
-      if (SKILL_SLOTS.some((s) => def.skills[s].effects.some((e) => e.kind === 'stackChange' && e.target === 'allies')))
+      if (
+        SKILL_SLOTS.some((s) => def.skills[s].effects.some((e) => e.kind === 'stackChange' && isAllStackableChange(e)))
+      )
         allStackable = true;
     }
     // 味方の全部のスタック可能バフへの▲（段 1.5）は、編成のどの上限のある状態にも足しうる（plan/design-adjacent-allies.md 2.5 節）

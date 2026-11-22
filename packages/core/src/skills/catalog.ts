@@ -34,7 +34,7 @@ export type CatalogLine = {
   slot: string;
   /** スロットの中の行の番号 */
   li: number;
-  /** 最初の「 か「機能」より前（きっかけ・条件・対象） */
+  /** 条件の節の中にない最初の「 か「機能」より前（きっかけ・条件・対象） */
   head: string;
   /** 改行を除いた行の全体 */
   flat: string;
@@ -61,7 +61,8 @@ export type CatalogEffect = QuoteReading & {
   side: CatalogSide;
   quote: string;
   head: string;
-  subHead: string;
+  /** 対象を決めた文（行の頭・小項目の頭・項目の後ろの「の対象：…」・句の前の文のどれか） */
+  targetText: string;
 };
 
 type Rules = readonly (readonly [RegExp, string])[];
@@ -476,6 +477,67 @@ function normTargets(t: string[]): string[] {
   return out;
 }
 
+/** 条件の節の終わり（「〜の場合、」「〜時、」「〜なら、」など） */
+const CONDITION_CLAUSE_END = /(場合|時|時のみ|時に限り|なら|なければ|限り)$/;
+
+/**
+ * 条件の節を終える「、」の位置。後ろから探し、括弧の中の「、」（「（対象が足りない場合、…）」）は飛ばす。
+ * 条件の節の後ろで「、」で並べた対象（「〜時、自分、及び〜」）は、その「、」の前が条件の節の終わりでないので越える。無ければ -1
+ */
+function conditionClauseEnd(text: string): number {
+  let depth = 0;
+  for (let i = text.length - 1; i >= 0; i--) {
+    const ch = text[i];
+    if (ch === '）' || ch === ')') depth++;
+    else if (ch === '（' || ch === '(') depth = Math.max(0, depth - 1);
+    else if (ch === '、' && depth === 0 && CONDITION_CLAUSE_END.test(text.slice(0, i))) return i;
+  }
+  return -1;
+}
+
+/**
+ * 文の対象と、対象を決めた文。条件の節の後ろに対象があれば、そこだけを読む
+ * （条件の節の「〈状態〉状態の味方が…」「遮蔽物が攻撃を受けた時」を対象に数えない）。
+ * 後ろが「対象に」なら、その対象は条件の節に書かれた自分以外の対象を指す（「防御型の味方の誰かのHPがX％以下なら、対象に」。
+ * 「自分に〈状態〉が適用中なら、対象に」の対象は命中した敵）
+ */
+function targetsIn(text: string): { targets: string[]; text: string } {
+  const ci = conditionClauseEnd(text);
+  if (ci >= 0) {
+    const clause = text.slice(ci + 1);
+    if (clause.startsWith('対象に')) {
+      const cond = text.slice(0, ci);
+      const condTargets = normTargets(tagsOf(TARGETS, cond)).filter((t) => t !== 'self');
+      if (condTargets.length > 0) return { targets: condTargets, text: cond };
+    }
+    const targets = normTargets(tagsOf(TARGETS, clause));
+    if (targets.length > 0) return { targets, text: clause };
+  }
+  return { targets: normTargets(tagsOf(TARGETS, text)), text };
+}
+
+/**
+ * 句が条件の節の中にあるか: 句の後ろが「の」「状態」で句に続き、次の「 までの最初の「、」の前で条件の節を終える
+ * （「自分が「応急改造」のフルスタック状態の時のみ、味方全体に」の「応急改造」）。その句は状態の名前で、効果に数えない。
+ * 句の後ろで別の文が始まる形（「…「解除不可」基本バースト段階がⅠの味方がいる場合、」）は、句が節の外にある
+ */
+function inConditionClause(part: string, end: number): boolean {
+  const next = part.indexOf('「', end);
+  const after = part.slice(end, next >= 0 ? next : part.length);
+  const ci = after.indexOf('、');
+  return /^(の|状態)/.test(after) && ci >= 0 && CONDITION_CLAUSE_END.test(after.slice(0, ci));
+}
+
+/** 行の最初の効果の句の「 の位置（条件の節の中の句を飛ばす。閉じていない「 はそこを句の始まりとみる）。無ければ -1 */
+function effectQuoteStart(flat: string): number {
+  for (let i = flat.indexOf('「'); i >= 0; i = flat.indexOf('「', i + 1)) {
+    const close = flat.indexOf('」', i);
+    if (close < 0 || !inConditionClause(flat, close + 1)) return i;
+    i = close;
+  }
+  return -1;
+}
+
 function sideOf(targets: readonly string[]): CatalogSide {
   if (targets.length === 0) return 'unknown';
   if (targets.every((t) => t.startsWith('enemy'))) return 'enemy';
@@ -518,12 +580,18 @@ export function classifyCharacters(
         .filter(Boolean);
       raw.forEach((line, li) => {
         const flat = line.replace(/\n/g, '');
-        // 頭: 最初の「 か「機能」の前
-        const cut = Math.min(...[flat.indexOf('「'), flat.indexOf('機能')].filter((i) => i >= 0), flat.length);
+        // 頭: 条件の節の中にない最初の「 か「機能」の前
+        const cut = Math.min(...[effectQuoteStart(flat), flat.indexOf('機能')].filter((i) => i >= 0), flat.length);
         const head = flat.slice(0, cut);
-        const triggers = lineTriggers(head);
-        const conditions = tagsOf(CONDITIONS, head);
-        const lineTargets = normTargets(tagsOf(TARGETS, head));
+        // 条件の節の句の中身（状態の名前）は、きっかけ・条件・対象の規則にかけない
+        const headTags = head.replace(/「[^」]*」/g, '「」');
+        const triggers = lineTriggers(headTags);
+        const conditions = tagsOf(CONDITIONS, headTags);
+        // 頭の対象は条件の節の後ろから読む。対象を決めた文は、頭の全部を読んだときは句の中身を伏せない頭にし、
+        // 一部を読んだときは句の中身を伏せた文（「「」状態の味方全体に」）にする
+        const lineRead = targetsIn(headTags);
+        const lineTargets = lineRead.targets;
+        const lineTargetText = lineRead.text === headTags ? head : lineRead.text;
         const lineRec: CatalogLine = {
           rid: c.resourceId,
           name: c.name.ja,
@@ -542,22 +610,29 @@ export function classifyCharacters(
         for (const part of flat.slice(cut).split(/効果\d+：|追加効果\d*：?(?=「)/)) {
           const q = part.indexOf('「');
           const subHead = q >= 0 ? part.slice(0, q) : part;
-          const subTargets = normTargets(tagsOf(TARGETS, subHead));
+          const subRead = targetsIn(subHead);
+          const subTargets = subRead.targets;
           const subTriggers = tagsOf(TRIGGERS, subHead);
           let targets = subTargets.length > 0 ? subTargets : lineTargets;
+          let targetText = subTargets.length > 0 ? subRead.text : lineTargetText;
           // 「効果N の対象：敵全体」のように、対象が項目の後ろに書かれている形
           const trailing = /の対象：(.+)$/.exec(part)?.[1];
           if (trailing !== undefined) {
-            const t = normTargets(tagsOf(TARGETS, `${trailing.replace(/（.*$/, '')}に`));
-            if (t.length > 0) targets = t;
+            const text = `${trailing.replace(/（.*$/, '')}に`;
+            const t = normTargets(tagsOf(TARGETS, text));
+            if (t.length > 0) {
+              targets = t;
+              targetText = text;
+            }
           }
           let prevEnd = q;
           for (const m of part.matchAll(/「([^」]*)」/g)) {
             // 項目の途中で対象が変わる形（「自分に：「…」命中した敵に：「…」」）
             const between = part.slice(prevEnd, m.index);
             prevEnd = m.index + m[0].length;
-            const midTargets = normTargets(tagsOf(TARGETS, between));
-            if (between.length > 0 && midTargets.length > 0) targets = midTargets;
+            const mid = targetsIn(between);
+            if (between.length > 0 && mid.targets.length > 0) ({ targets, text: targetText } = mid);
+            if (inConditionClause(part, prevEnd)) continue;
             const quote = m[1] ?? '';
             const reading = classifyQuote(quote);
             if (reading.kind === 'meta:weaponProp') continue;
@@ -581,7 +656,7 @@ export function classifyCharacters(
               side: sideOf(targets),
               quote,
               head,
-              subHead,
+              targetText,
             };
             effects.push(rec);
             last = rec;

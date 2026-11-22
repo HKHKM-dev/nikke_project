@@ -1,0 +1,299 @@
+[
+  {
+    "id": "1302-01",
+    "recording": "1302",
+    "kind": "timing",
+    "use": "record",
+    "value": [1367, 2568, 3747, 4949, 6258, 7460, 8668, 9869, 11085],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 5・0・25・0・25・5・25・0・24f"
+    },
+    "source": "V-0825",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1302-02",
+    "recording": "1302",
+    "kind": "timing",
+    "use": "record",
+    "value": [1396, 2597, 3776, 5081, 6287, 7489, 8698, 9899, 11114],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 6・0・25・0・25・6・24・6・24f"
+    },
+    "source": "V-0825",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1302-03",
+    "recording": "1302",
+    "kind": "timing",
+    "use": "record",
+    "value": [1425, 3805, 6316, 8727, 11143],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0825",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1302-04",
+    "recording": "1302",
+    "kind": "timing",
+    "use": "record",
+    "value": [2282, 4120, 6631, 9041, 11457],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0825",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1302-05",
+    "recording": "1302",
+    "kind": "interval",
+    "use": "record",
+    "value": [857, 315, 315, 314, 314],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0825",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1302-06",
+    "recording": "1302",
+    "kind": "timing",
+    "use": "record",
+    "value": [2562, 3741, 4943, 7453, 9863],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0825",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1302-07",
+    "recording": "1302",
+    "kind": "timing",
+    "use": "record",
+    "value": [2591, 3770, 7482, 9892],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f4972"
+    },
+    "source": "V-0825",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1302-08",
+    "recording": "1302",
+    "kind": "timing",
+    "use": "record",
+    "value": [3798],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0825",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1302-09",
+    "recording": "1302",
+    "kind": "hit",
+    "use": "compare",
+    "value": 367175,
+    "unit": "ダメージ",
+    "description": "ベスティーの RL のフルチャージの 1 ヒット（コア・会心なし・距離ボーナスなし）。1 回目のバーストより前",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "HUD の増分のうち、ベスティーのコアの格子に合う値（ココアのコアは 344,596 で分かれる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0825",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1302-10",
+    "recording": "1302",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": 9,
+    "description": "ベスティーのバーストの追加ダメージのヒットの数（180 秒）。5 回のバーストで 0・1・2・3・3 ヒット",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "III の 00.00（`1302-03`）の 5〜6f 前の増分を、生存本能の段ごとの追加ダメージ（210.62%・247.25%・302.19%）の会心あり・なしの和に当てた: 1 回目は無し、2 回目 265,824（1 ヒット）、3 回目 803,618（265,824 + 312,053 の会心）、4・5 回目 959,272（3 ヒットとも会心なし）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0825",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1302-11",
+    "recording": "1302",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 265824,
+    "description": "ベスティーのバーストの生存本能 1 の追加ダメージ（210.62%）の 1 ヒット（会心なし）。2 回目のバースト。1 回目に付いた生存本能 1 の攻撃力▲が乗り、フルバースト補正は乗らない",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "III の 00.00 の 5f 前の増分がそのまま 1 ヒット。4・5 回目の 959,272 の中の同じ段の分も同じ値"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0825",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1302-12",
+    "recording": "1302",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 537794,
+    "description": "ベスティーのバーストの生存本能 2 の追加ダメージ（247.25%）の 1 ヒット（会心）。3 回目のバースト。2 回目に付いた生存本能 2 のクリティカルダメージ▲が乗る",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "3 回目の III の 00.00 の 5f 前の増分 803,618 から、同じフレームの生存本能 1 の分（265,824。会心なし）を引いた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": true,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0825",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1302-13",
+    "recording": "1302",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [-5, -5, -5, -5],
+    "description": "ベスティーのバーストの追加ダメージの増分の、III のタイマーの 00.00（`1302-03`）からの動画のフレーム（2〜5 回目）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "モデルはバーストの効果のフレーム（00.00 の 6f 前）に出す"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0825",
+    "readAt": "2026-11-21"
+  },
+  {
+    "id": "1302-14",
+    "recording": "1302",
+    "kind": "count",
+    "use": "record",
+    "unit": "回",
+    "value": [30, 38, 95, 57],
+    "description": "ミサイルコンテナの 1 ヒット（会心・フルバーストの有無の格子）に合う増分のヒットの数（1〜4 回目のバースト。同じフレームの 2・3 ヒットの和も数えた）",
+    "method": {
+      "tool": "recipe:buff-edge@7 の grid",
+      "note": "1 ヒットは 19,638（会心なし・フルバースト補正なし・生存本能 1 の攻撃力▲込み。最終攻撃力の 15.56% の式どおり）。最初のヒットは 00.00 の約 200f 後、最後は約 1,260f 後。1 秒あたりの数は一定でなく、3 回目のバーストは 3〜13 秒に 1 秒 6〜11 回、2 回目は 1 秒 2〜3 回。的の位置（射撃場のジャンプ）で変わるように見える。ほかの枠の発と同じフレームに重なったヒットは数えていないので少なめ"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0825",
+    "readAt": "2026-11-21"
+  }
+]

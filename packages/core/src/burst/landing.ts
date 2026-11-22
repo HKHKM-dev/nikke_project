@@ -145,6 +145,10 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // 味方の会心の発で挟んだ 16〜22f の真ん中の 19f（止まりより前なので動画のフレームと同じ）。窓は遅れた始まりから数える。
   // バーストの倍率ダメージは無い。録画 0042 の読み直しで値を出し、録画 0400（撮る前に予測を固定。V-0388）で再現した
   { resourceIds: [172], delays: { hitFrames: 0, effectFrames: 19 }, claim: 'C-0479' },
+  // サクラ: I の発動（六角形が I から II に替わるフレーム）から効果（味方全体の発動者基準の攻撃力▲）の発火まで 49f。▲は次のフレームの
+  // 発から乗る（味方の発で挟んだ付き始めは、2 本の共通部分で 50〜51f。III のタイマーの 00.00 より前なので動画のフレームと同じ）。窓は遅れた始まりから
+  // 数える（切れ目は 660f。入りの止まりを含む）。バーストの倍率ダメージは無い
+  { resourceIds: [282], delays: { hitFrames: 0, effectFrames: 49 }, claim: 'C-1470' },
   // グレイブ: II の発動（六角形が II から III に替わるフレーム）の 1f 前から効果（完全計算・装弾数無限・貫通特化・▲）。六角形の 2f 前の発には
   // 乗らず、1f 前の発には乗る（C-1119）。バーストの倍率ダメージは無い
   { resourceIds: [514], delays: { hitFrames: 0, effectFrames: -1 }, claim: 'C-1119' },
@@ -170,6 +174,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // ソリン: III のタイマーの 00.00 から 1 ヒット目まで 17f（動画で 38〜39f。止まり 22f を含む）、2・3 ヒット目は 20f・51f 後で、
   // バーストの倍率ダメージを 3 等分する。追加ダメージ（burst の effects[1]）は perBurstHit で 3 ヒットのそれぞれに出る。効果の遅れは無い（バースト使用時の効果が無い）
   { resourceIds: [71], delays: { hitFrames: 17, effectFrames: 0, hitOffsets: [0, 20, 51] }, claim: 'C-1113' },
+  // ブリッド: III のタイマーの 00.00 からヒットまで 41f（動画で 62〜63f の最も多い 63f。止まり 22f を含む）の 1 ヒット。追加ダメージ（burst の
+  // effects[1]）は perBurstHit で同じフレームに出る。効果の遅れは無い（バースト使用時の効果が無い）
+  { resourceIds: [70], delays: { hitFrames: 41, effectFrames: 0 }, claim: 'C-1408' },
   // プリバティ（宝物あり）: III のタイマーの 00.00 から 1 ヒット目まで 40f（動画で 62〜63f。止まり 22f を含む）、2・3 ヒット目は
   // 25f・55f 後で、バーストスキルダメージを 3 等分する。ヒットに同じ発動の有利コードの攻撃ダメージ▲が乗る。宝物なしは未測定
   {
@@ -201,13 +208,24 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // ウンファ: II の発動の印（六角形が II から III に替わるフレーム）の動画で 1f 前にヒット（9 回のうち 8 回。1 回は 2f 前）。
   // 効果（敵の防御力▼・味方全体のクリティカル確率▲）の付き始めは発の値で挟めるだけで、遅れ 0 と合う（V-0809）
   { resourceIds: [92], delays: { hitFrames: -1, effectFrames: 0 }, claim: 'C-1379' },
+  // ルピー: II の発動の印（六角形が II から III に替わるフレーム）の動画で 89f 後にヒット（18 回とも）。値は発動の直前のバフで、
+  // 同じ発動の味方全体の攻撃力▲は乗らない。攻撃力▲の付き始めは印の 6〜5f 前で、遅れ 0 と合う（V-0820）
+  { resourceIds: [200], delays: { hitFrames: 89, effectFrames: 0 }, claim: 'C-1421' },
   // ベロータ: II の発動（六角形が II から III に替わるフレーム）からヒットまで 15〜16f。効果（味方全体のチャージ速度▲）の遅れは未測定（V-0510）
   { resourceIds: [60], delays: { hitFrames: 16, effectFrames: 0 }, claim: 'C-0677' },
+  // プリム（基礎版・宝物版）: I の発動の印（六角形が I から II に替わるフレーム）から 8・25・47f の 3 ヒットで、バーストのダメージを 3 等分する。
+  // 撮ったのは宝物版（C-1460）で、基礎版は同じとみなす（C-1461）。効果（防御力▼・防御力無視ダメージ▲）の発火のフレームは確かめていない（V-0831）
+  { resourceIds: [142], delays: { hitFrames: 8, effectFrames: 0, hitOffsets: [0, 17, 39] }, claim: 'C-1460' },
+  // シグナル: II の発動の印（六角形が II から III に替わるフレーム）から 15・21・26f の 3 ヒットで、バーストスキルダメージを 3 等分する
+  // （12 回とも同じ並び）。効果（敵の防御力▼）は 1 ヒット目と同じ 15f 後に付く（C-1403。V-0819）
+  { resourceIds: [22], delays: { hitFrames: 15, effectFrames: 15, hitOffsets: [0, 6, 11] }, claim: 'C-1402' },
   // ラプラス：アルティメットヒーロー: III のタイマーの 00.00 の 1〜2f 前にヒット（雪子と同じく遅れ 0）。ヒットに同じ発動の攻撃力▲が乗る
   // （C-0682。ソーダ：トゥインクルバニーと同じ印）
   { resourceIds: [103], sameActivationBuffsOnHit: true, delays: { hitFrames: 0, effectFrames: 0 }, claim: 'C-0683' },
   // シンデレラ：クリスタルウェーブ: III のタイマーの 00.00 の 0〜2f 前にヒット（遅れ 0）。ヒットに同じ発動の攻撃力▲・攻撃ダメージ▲が乗る（V-0782）
   { resourceIds: [515], sameActivationBuffsOnHit: true, delays: { hitFrames: 0, effectFrames: 0 }, claim: 'C-1251' },
+  // ドレイク：グレイトヴィラン: III のタイマーの 00.00 から 68f に 1 ヒット（動画で 89〜90f。止まり 22f を含む）。ヒットに同じ発動の攻撃ダメージ▲が乗る（V-0818）
+  { resourceIds: [104], sameActivationBuffsOnHit: true, delays: { hitFrames: 68, effectFrames: 0 }, claim: 'C-1430' },
   // プリバティ：アンカインド・メイド: III のタイマーの 00.00 から 1 ヒット目まで 26f（動画で 48〜49f。止まり 22f を含む）、2 ヒット目は 21f 後で、
   // バーストスキルダメージを 2 等分する。ヒットに同じ発動の攻撃ダメージ▲・クリティカルダメージ▲が乗る（C-0679）
   {
@@ -256,12 +274,12 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
     claim: 'C-1329',
   },
   // メイデン：アイスローズ: III のタイマーの 00.00 から「所持 MP 分の連続攻撃」の 1 ヒット目まで 40f（動画で 61〜62f。止まり 22f を含む）。
-  // k 個目は 1 ヒット目から 5.5k f（四捨五入。動画で 0・6・10〜11・16〜17f）。ヒットの数は MP（burstDamage の hitsFrom）で、表は上限の 12 個。
-  // 5 個目からは読んでいない（同じ間隔とみた）
+  // k 個目は 1 ヒット目から 0・6・11・17f と、そこから 6f おき（動画でも同じ。MP 9 の 9 個目まで読んだ）。ヒットの数は MP（burstDamage の
+  // hitsFrom）で、表は上限の 12 個。10 個目からは読んでいない（6f おきとみた）
   {
     resourceIds: [183],
-    delays: { hitFrames: 40, effectFrames: 0, hitOffsets: [0, 6, 11, 17, 22, 28, 33, 39, 44, 50, 55, 61] },
-    claim: 'C-1345',
+    delays: { hitFrames: 40, effectFrames: 0, hitOffsets: [0, 6, 11, 17, 23, 29, 35, 41, 47, 53, 59, 65] },
+    claim: 'C-1496',
   },
   // エピネル: III のタイマーの 00.00 から「敵全体に」のバーストスキルダメージの 1 ヒットまで 39f（動画で 60〜61f。止まり 22f を含む）
   { resourceIds: [241], delays: { hitFrames: 39, effectFrames: 0 }, claim: 'C-1361' },
@@ -270,6 +288,29 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   { resourceIds: [810], delays: { hitFrames: 15, effectFrames: 15 }, claim: 'C-1375' },
   // キロ: III のタイマーの 00.00 から「敵全体に」のバーストスキルダメージの 1 ヒットまで 16f（動画で 38〜39f。止まり 22f を含む）
   { resourceIds: [361], delays: { hitFrames: 16, effectFrames: 0 }, claim: 'C-1382' },
+  // クロウ: III のタイマーの 00.00 からバーストスキルダメージの 1 ヒット（分かれない）まで 5f（動画で 27f。止まり 22f を含む）。
+  // バースト使用時の効果は無い
+  { resourceIds: [110], delays: { hitFrames: 5, effectFrames: 0 }, claim: 'C-1401' },
+  // ユルハ: III のタイマーの 00.00 から「敵全体に」のバーストスキルダメージの 1 ヒット目まで 116f（動画で 138f。止まり 22f を含む）。
+  // 倍率を 2 等分した 2 ヒットで、2 ヒット目は 7f 後。バースト使用時の効果は無い
+  { resourceIds: [171], delays: { hitFrames: 116, effectFrames: 0, hitOffsets: [0, 7] }, claim: 'C-1437' },
+  // メイデン: III のタイマーの 00.00 から「敵全体に」のバーストスキルダメージまで 20f（動画で 42f。止まり 22f を含む）の 1 ヒット。
+  // バースト使用時の効果は無い
+  { resourceIds: [181], delays: { hitFrames: 20, effectFrames: 0 }, claim: 'C-1485' },
+  // ノベル: II の発動（六角形の替わり目）からバーストスキルダメージのヒットまで 80f（フルバーストに入る回は、III の 00.00 の後の入りの止まりを
+  // 挟んで動画で 100〜101f）。フルスタックの時の受けるダメージ▲（burst の effects[1]。burstUse）もヒットと同じフレームから付く
+  { resourceIds: [212], delays: { hitFrames: 80, effectFrames: 80 }, claim: 'C-1450' },
+  // ヤン: I の六角形の替わり目からバーストスキルダメージの 1 ヒットまで 1f（動画で 0〜1f）。バースト使用時の効果は無い
+  { resourceIds: [201], delays: { hitFrames: 1, effectFrames: 0 }, claim: 'C-1457' },
+  // ペッパー: I の発動（六角形が I から II に替わるフレーム）からバーストスキルダメージのヒットまで 84f（単騎の 2 本と、ギロチン：
+  // ウィンタースレイヤーとの 1 本の 23 回のうち 21 回。2 回は 83f）。バースト使用時の効果（スタック量▲）は遅れ 0
+  { resourceIds: [131], delays: { hitFrames: 84, effectFrames: 0 }, claim: 'C-1463' },
+  // ソーダ: I の発動（六角形が I から II に替わるフレーム）からバーストスキルダメージのヒットまで 65f（ギロチン：ウィンタースレイヤーとの
+  // 2 本の 14 回のうち 13 回。1 回は 64f）。バースト使用時の効果（スタック量▲）は遅れ 0（確かめていない）
+  { resourceIds: [312], delays: { hitFrames: 65, effectFrames: 0 }, claim: 'C-1472' },
+  // マリ: II の発動（六角形が II から III に替わるフレーム）からバーストスキルダメージの 1 ヒットまで 69f（ココアとの 1 本の、読めた 8 回のうち
+  // 6 回。68f・70f が 1 回ずつ）。ヒットに同じ発動の攻撃ダメージ▲は乗らない。攻撃ダメージ▲（burstUse）は遅れ 0 で付く
+  { resourceIds: [832], delays: { hitFrames: 69, effectFrames: 0 }, claim: 'C-1483' },
 ];
 
 /**

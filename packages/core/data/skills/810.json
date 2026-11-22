@@ -72,12 +72,14 @@
           "damageType": "skill",
           "ref": 2,
           "assumes": {
-            "ja": "撃った発を戦闘開始から通算して数え（リロードで数え直さない）、300 の倍数に届いた発の 45f 後に 1 ヒット。値はヒットのフレームのバフで出て、フルバースト補正が乗る。敵全体は単体ボス。バーストゲージを溜めるかは確かめていない（溜めない形で回す）",
-            "en": "Counts shots fired from the start of battle (not reset by reloading) and hits once 45f after the shot reaching each multiple of 300. The value uses the buffs on the hit frame and takes the Full Burst bonus. All enemies is the single boss. Whether it charges the Burst Gauge is unverified (it is run without charging)"
+            "ja": "撃った発を戦闘開始から通算して数え（リロードで数え直さない）、300 の倍数に届いた発の 45f 後に 1 ヒット。値はヒットのフレームのバフで出て、フルバースト補正が乗る。敵全体は単体ボス。1 回ごとに射手の 1 ヒットぶんのバーストゲージを、ヒットのフレームに溜める",
+            "en": "Counts shots fired from the start of battle (not reset by reloading) and hits once 45f after the shot reaching each multiple of 300. The value uses the buffs on the hit frame and takes the Full Burst bonus. All enemies is the single boss. Each hit also charges the shooter's per-hit Burst Gauge on the hit frame"
           },
           "delayFrames": 45,
+          "gaugePerHit": true,
           "claims": [
-            "C-1377"
+            "C-1377",
+            "C-1439"
           ]
         },
         {

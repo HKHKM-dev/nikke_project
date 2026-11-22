@@ -1,0 +1,34 @@
+{
+  "id": "1349",
+  "date": "2026-11-21",
+  "folder": "range",
+  "file": "20261121-1349_smg_k_fire.mp4",
+  "original": "2026-11-21_23-23-39.mp4",
+  "durationSec": 199.5,
+  "frames": 11969,
+  "fps": 60,
+  "sizeMB": 241.7,
+  "sha256": "731a78904b08",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 41,
+      "name": "K",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0848。K 単騎（操作）（撮影 A の 2 本目）",
+  "backup": {
+    "at": "2026-11-21T23:42+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

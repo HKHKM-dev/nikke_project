@@ -141,6 +141,8 @@ export const NAMED_STATES = {
   heroVision: { name: { ja: 'ヒーロービジョン', en: 'Hero Vision' }, holder: 'ally' },
   /** クレッシェンド（ジュリアの S2。クリティカルダメージ▲のスタック。バーストの「クレッシェンドのフルスタック状態なら」。plan/design-julia.md 1 節） */
   crescendo: { name: { ja: 'クレッシェンド', en: 'Crescendo' }, holder: 'ally' },
+  /** マイレージ（ルピーの S2。攻撃力▲のスタック。バーストの「マイレージのフルスタック状態なら」。plan/design-rupee.md 1 節） */
+  mileage: { name: { ja: 'マイレージ', en: 'Mileage' }, holder: 'ally' },
   /**
    * 熱血（モランの宝物版の S1。ラプチャーが出現した時・持続・
    * バーストスキルのクールタイム▼。宝物版の S2 の「熱血状態なら」。plan/design-skill-stage11.md 3.3 節。V-0530）
@@ -481,6 +483,63 @@ export const NAMED_STATES = {
    * plan/design-heal-amount-up.md 2.2 節）
    */
   shootingManual: { name: { ja: '射撃マニュアル', en: 'Shooting Manual' }, holder: 'ally' },
+  /**
+   * 経験値（ギロチン：ウィンタースレイヤーの S2。攻撃力▲のスタック。100 スタック・持続。S1 の勇者レベルは 10 スタックごとに上がる。
+   * plan/design-guillotine-ws.md 2.2 節）
+   */
+  exp: { name: { ja: '経験値', en: 'EXP' }, holder: 'ally' },
+  /**
+   * 生存本能 1（ベスティーの S2。バーストの使用 1 回目から。前の使用から 45 秒より後の使用で数え直す。攻撃力▲・45 秒。バーストの
+   * 「生存本能1」の追加ダメージ）
+   */
+  survivalInstinct1: { name: { ja: '生存本能1', en: 'Survival Instinct 1' }, holder: 'ally' },
+  /** 生存本能 2（同。使用 2 回目から。クリティカルダメージ▲・45 秒） */
+  survivalInstinct2: { name: { ja: '生存本能2', en: 'Survival Instinct 2' }, holder: 'ally' },
+  /** 生存本能 3（同。使用 3 回目から。クリティカル確率▲・45 秒） */
+  survivalInstinct3: { name: { ja: '生存本能3', en: 'Survival Instinct 3' }, holder: 'ally' },
+  /** 証拠品収集（ノベルの S2。防御力▲のスタック。バーストの「証拠品収集のフルスタック状態なら」の受けるダメージ▲が見る） */
+  collectEvidence: { name: { ja: '証拠品収集', en: 'Collecting Evidence' }, holder: 'ally' },
+  /** 眠い（プリムの宝物版 S1。敵の防御力▼のスタック。フルスタックが起きたのきっかけの条件） */
+  sleepy: { name: { ja: '眠い', en: 'Sleepy' }, holder: 'enemy' },
+  /** 起きた（プリムの宝物版 S1。通常攻撃を防御力無視ダメージに。S2・バーストの防御力無視ダメージ▲の条件） */
+  wakeUp: { name: { ja: '起きた', en: 'Wake Up' }, holder: 'ally' },
+  /** 予告状（ファントムの S1。敵の防御力▼・5 秒。付いていない時の命中で付き、S2 の追加ダメージの後に解除される） */
+  callingCard: { name: { ja: '予告状', en: 'Calling Card' }, holder: 'enemy' },
+  /** 怪盗の短剣（ファントムの S1。命中率▲・3 スタック・5 秒。フルスタックで S2 が発火し、スタックを外す） */
+  thiefsDagger: { name: { ja: '怪盗の短剣', en: "Thief's Dagger" }, holder: 'ally' },
+  /**
+   * 怪盗の鑑定眼（ファントムの S2 の分配ダメージ▲のスタック。説明文に状態の名前が無いので、スロットの名前で呼ぶ。3 スタック・持続。
+   * バーストスキル使用時に解除する）
+   */
+  thiefsVision: { name: { ja: '怪盗の鑑定眼', en: "Thief's Vision" }, holder: 'ally' },
+  /**
+   * リフレッシュハート（ペッパーの S1。味方全体・5 スタック・15 秒。中身の受けるHP回復量▲は語彙に無いので書かず、間接の notes。
+   * バーストの「自分がリフレッシュハートのフルスタック状態なら」の回復が読む）
+   */
+  refreshHeart: { name: { ja: 'リフレッシュハート', en: 'Refresh Heart' }, holder: 'ally' },
+  /**
+  /**
+   * 咆哮（レオナの S1。通常攻撃 5 回ごとに味方全体に 1 スタック・5 スタック・5 秒。中身は会心率▲。バーストの「咆哮のフルスタック状態なら」が
+   * 見る。plan/design-leona.md 2.3 節）
+   */
+  roar: { name: { ja: '咆哮', en: 'Roar' }, holder: 'ally' },
+  /**
+   * メイド精神（ソーダの S1。通常攻撃 180 回ごとに自分に 1 スタック・5 スタック・10 秒・最大HP▲。S2 の「メイド精神のフルスタック状態なら」が
+   * 読む）
+   */
+  maidSpirit: { name: { ja: 'メイド精神', en: 'Maid Spirit' }, holder: 'ally' },
+  /**
+   * 鬼の気（レムのバースト。自分に 10 秒・クリティカル確率▲。S1 の「自分が鬼の気状態なら、通常攻撃が N 回命中した時」の攻撃力▲が
+   * 読む）
+   */
+  demonsBreath: { name: { ja: '鬼の気', en: "Demon's Breath" }, holder: 'ally' },
+  /**
+   * 傾く天秤（K の S1。最後の弾丸で自分にクリティカル確率▲のスタック・持続。フルバーストタイムの終わりに解除。S2 の「傾く天秤が付与された時」が
+   * 読む）
+   */
+  tiltedScale: { name: { ja: '傾く天秤', en: 'Tilted Scale' }, holder: 'ally' },
+  /** 正義の実現（K の S2。味方全体に最大装弾数▼・攻撃ダメージ▲・10 秒。フルバーストタイムの終わりに解除） */
+  fulfillmentOfRighteousness: { name: { ja: '正義の実現', en: 'Fulfillment of Righteousness' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

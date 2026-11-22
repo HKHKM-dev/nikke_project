@@ -14,15 +14,14 @@
    - `App.tsx` の状態管理（`team`, `parties`, `calc`, `shown`, `batch`, `totals` 等）を維持し、表示層を `<ClassicView />` と `<ModernView />` に分離する。
    - クラシックUIの既存コード・動作・テストには影響を与えず、独立性を保証する。
 2. **段階的な導入ステップ**:
-   - **Step 1**: UIモード切り替え基盤（`classic` / `modern`）と `ClassicView` への切り出し、`ModernView` の受け皿作成（PR #945 完了）。
+   - **Step 1**: UIモード切り替え基盤（`classic` / `modern`）と `ClassicView` への切り出し、`ModernView` の受け皿作成。
    - **Step 2**: 画像アセット配置構造とフォールバック表示（属性・バースト・武器・キャラ名）。
-   - **Step 3**: モダン編成カード ＆ キャラトレイ（クリック配置＋育成詳細モーダル、PR #946 完了）。
+   - **Step 3**: モダン編成カード ＆ キャラトレイ（クリック配置＋育成詳細モーダル）。
    - **Step 4**: `@dnd-kit/core` によるドラッグ＆ドロップ（トレイ→スロット、スロット間スワップ）。
    - **Step 5**: スタイリングとデザインのブラッシュアップ。
 3. **画像アセット**:
-   - 自前静的アセット配信。現時点では画像が未取得のため、画像がない状態でもフォールバック表示によりすべての機能が完全に動作する設計とする。
-   - 2026-11-04（オーナーの指示）: 画像を取得して同梱した。Blablalink の公開 CDN の顔のアイコン（`/character/si/si_c{resourceId 3 桁}_00_s.webp`、128×128。`.char-visual` の正方形の枠に合う）を、`npm run fetch-images`（`packages/core/scripts/fetch-images.ts`）が `packages/core/data/characters/images/{resourceId}.webp` に置く。新しいキャラを取り込んだ（`fetch-data`）後に回す。画像の権利は README の「ライセンス」のとおり本リポジトリのライセンスの対象外。
-   - 画像が読めたキャラにはフォールバックの札（属性・名前）を重ねず、読めなかったキャラだけ札を出す（`CharacterVisual.tsx`）。
+   - Blablalink の公開 CDN の顔のアイコン（`/character/si/si_c{resourceId 3 桁}_00_s.webp`、128×128。`.char-visual` の正方形の枠に合う）を、`npm run fetch-images`（`packages/core/scripts/fetch-images.ts`）が `packages/core/data/characters/images/` に置き、同梱する。新しいキャラを取り込んだ（`fetch-data`）後に回す。画像の権利は README の「ライセンス」のとおり本リポジトリのライセンスの対象外。
+   - 画像が読めたキャラにはフォールバックの札を重ねず、読めなかったキャラだけ札を出す（`CharacterVisual.tsx`）。
    - アーティファクト（`npm run artifact:build`）からは `characters/images` を除く（1 版 511 ファイルまでで、データだけで 300 近い）。アーティファクトでは札で出る。
 4. **ドラッグ＆ドロップ**:
    - `@dnd-kit/core` を採用（モバイル/タッチ対応、React 19親和性）。
@@ -39,64 +38,52 @@
 
 ### 2.2 Step 2 & 3: モダン編成カードとキャラトレイ
 
-- `CharacterVisual.tsx`: キャラクター画像（将来のアセット）および画像不在時のフォールバックCSSカード表示（属性グラデーション、バースト段階、武器種、キャラ名）。
+- `CharacterVisual.tsx`: キャラクター画像と、画像不在時のフォールバック表示。
 - `ModernSlotCard.tsx`: 5枠並びの編成カード。ダメージ量、ダメージ寄与度バー、フォーカス表示、空きスロット表示、育成・詳細設定ボタン。
-- `CharacterTray.tsx`: 属性・バースト段階・武器種・完全対応・検索キーワードによる絞り込みが可能なキャラクター選択パレット。クリックで対象スロットに配置。
+- `CharacterTray.tsx`: 絞り込みができるキャラクター選択パレット。クリックで対象スロットに配置。
 - `SlotBuildModal.tsx`: モーダルダイアログによる育成設定（好感度、限界突破、コア強化、スキルLv、装備、キューブ、コレクション、宝物）およびスロット詳細設定（フォーカス、撃たない、バーストしない）の編集。
 
 ### 2.3 Step 4: @dnd-kit/core によるドラッグ＆ドロップ
 
-- `apps/web/package.json`: `@dnd-kit/core` を導入。
 - `CharacterTrayItem.tsx`: 各キャラアイテムを `useDraggable` でドラッグ可能に。
 - `ModernSlotCard.tsx`: `useDroppable` によるドロップ受け入れ（`isOver` 時のハイライト）と、配置済みキャラの `useDraggable`（スロット間スワップ用）。
-- `team.ts`: `swapSlots` アクション（スロット間の入れ替え、操作キャラの追従）を追加。
-- `ModernView.tsx`: `DndContext`、PointerSensor（8pxのしきい値でクリック操作と共存）、`DragOverlay`（カーソル追従プレビュー）を統合。
-- 2026-11-04: PointerSensor はタッチでもスワイプした瞬間に持ち上げるので、スマホでトレイの上をスワイプしてもページがスクロールしなかった（Playwright のタッチで確認）。MouseSensor（8px）と TouchSensor（250ms の長押しで持ち上げ、それまでに 8px より動いたらスクロール）に分けた。
+- `team.ts`: `swapSlots` アクション（スロット間の入れ替え、操作キャラの追従）。
+- `ModernView.tsx`: `DndContext`、`DragOverlay`（カーソル追従プレビュー）を統合。センサーは MouseSensor（8px のしきい値でクリック操作と共存）と TouchSensor（250ms の長押しで持ち上げ、それまでに 8px より動いたらスクロール）に分ける。PointerSensor はタッチでもスワイプした瞬間に持ち上げるので、スマホでトレイの上をスワイプしてもページがスクロールしない。
 
 ---
 
-### 2.4 2 つのセッションの作業の統合（Step 5 を含む）
+### 2.4 Step 5 と、別の作りから取り込んだもの
 
-- 経緯: 2026-11-03〜04 に、このモダン UI（Antigravity）と同じ機能を、Claude Code の別のセッションも別の作り（自前のドラッグ・ゲーム風の見た目・縦長の絵）で作っていた。オーナーは、こちらの作り（View の分離・`@dnd-kit`）を土台にし、別のセッションの版から次の 4 点を取り込むと決めた（2026-11-04）。別のセッションの版のほかの部分は使わない。
-- 配置済みのキャラを動かす: ほかのスロットにいるキャラをトレイからドラッグ・クリックすると、そのスロットからの移動（`swapSlots`）にする（`team.ts` の `placeCharacterAction`）。それまでは、同じニケは 1 枠までなので reducer が無視して何も起きなかった。
+Claude Code の別のセッションが同じ機能を別の作りで作っていた。オーナーは、この設計（View の分離・`@dnd-kit`）を土台にし、別の作りからは次の点だけを取り込むと決めた。
+
+- 配置済みのキャラを動かす: ほかのスロットにいるキャラをトレイからドラッグ・クリックすると、そのスロットからの移動（`swapSlots`）にする（`team.ts` の `placeCharacterAction`）。
 - トレイへ戻して外す: トレイ（`CharacterTray.tsx`）を落とし先（`useDroppable`）にし、スロットのキャラを落とすと `clearSlot`（`ModernView.tsx` の `handleDragEnd`）。
-- クラスの絞り込み: トレイの select に「クラス」を足した。
-- ゲーム風の見た目（Step 5）: `uiMode.ts` がモダンのときにルート要素へ `data-app-ui="modern"` を付け、`modern.css` が `styles.css` の素の見た目の上に色と形を重ねる（暗い背景・角丸・影・属性の色の上の縁・合計ダメージの強調）。色は `light-dark()` でテーマの切り替えに従う。クラシックには効かない。
-- スロットの縦長の絵: CDN の mi（256×512）を `npm run fetch-images` が `packages/core/data/characters/portraits/{resourceId}.webp` に置き（同梱）、`CharacterVisual` の `size="portrait"` がスロットのカードで出す。アーティファクトからは `images` と同じく除く。
+- クラスの絞り込み。
+- ゲーム風の見た目（Step 5）: `uiMode.ts` がモダンのときにルート要素へ `data-app-ui="modern"` を付け、`modern.css` が `styles.css` の素の見た目の上に色と形を重ねる。色は `light-dark()` でテーマの切り替えに従う。クラシックには効かない。
+- スロットの縦長の絵: CDN の mi（256×512）を `npm run fetch-images` が `packages/core/data/characters/portraits/` に置き（同梱）、`CharacterVisual` の `size="portrait"` がスロットのカードで出す。アーティファクトからは `images` と同じく除く。
 
 ### 2.5 属性・バースト段階・クラス・武器のバッジ
 
 - 目的: モダン UI の文字の札（バースト段階のⅠ〜Ⅲ・属性名・武器種の略号）と色の札を、旧プロジェクト（old_nikkecalc）のバッジの画像に置き換える。
-- 出どころ: 旧プロジェクトの `resources/バッジ`（Inkscape で描いたベクター）。ローカルには 40 個あり、GitHub の版（34 個）との差は、`misc_collection` が `collection` に改名されたことと、`collection*` の 6 個（R・SR・SSR の色違いと、中が明るいものと暗いもの）が増えたこと。`collection*` と `misc_*` はこの変更では使わない。
-- 調べたこと（40 個すべて）:
-  - 埋め込みの画像（`<image>`）とグラデーションは無い。`collection*`・企業の一部・武器の一部はマスク、`collectionSSR*` はフィルタを使う。
-  - どれも 130×150 の六角形で、縦横の比が同じ（属性の 5 個だけ `viewBox` の単位が mm だが比は同じ）。
-  - 六角形の中が `#1a1a1a` で縁と外側の黒い線を持つので、ライト（#ffffff）とダーク（#0b0f17）のどちらでも見え方が変わらない。20×23 の小ささでも図柄を見分けられる。
-  - データの値との対応: `element`（5）・`burstStep`（4。`AllStep` は `burst_4special`）・`class`（3）・`weaponType`（6）・`rarity`（3）・`corporation`（5）は、どれもバッジと 1 対 1 に対応する。`bursttrigger_*`（AUTO/MANUAL/NONE）に対応するキャラのデータの項目は無い。
-- 小さくする: `svgo@3.3.2 --multipass` の `preset-default` のうち `convertTransform` を切る。切らないと `corp_3tetra` の反転を含む `matrix(-1,0,-0.447,0.894)` が 180° 回った別の変換に書き換わり、図柄が崩れる。切った設定で、元と小さくした後を白・#0b0f17・灰の背景で 260×300 に描いて画素を比べ、見て分かる差が無い（残る差は縁のアンチエイリアス）ことを確かめた。合計 165KB が 59KB、1 個の最大は 3.1KB（`rarity_1SSR`）。
-- 置き場所と読み方: 使う 18 個（属性 5・バースト段階 4・クラス 3・武器 6）だけを `apps/web/src/assets/badges/` に置き、`<img>` で読む。多色で背景を自前で持つので `currentColor` や CSS の `mask` は要らず、`<img>` なら `id` の重なりも起きない。どれも 4KB 未満なので Vite が束の中に埋め込み、アーティファクト（1 版 511 ファイルまで）のファイル数を使わない。レア度・企業・`misc_*`・`collection*` は、出す場所ができたときに同じ手順で足す。
-- 対応表: キャラの項目（`element`・`burstStep`・`class`・`weaponType`）ごとに、値からバッジとラベルを引く表を `apps/web/src/components/modern/badges.ts` の `BADGE_KINDS` 1 つに置き、絵とトレイの絞り込みが共有する。ラベルは既存の表（`ELEMENT_LABEL`・`WEAPON_LABEL`・`CLASS_LABEL`・`BURST_STEP_LABEL`）を引く。置いたファイルをどれも使うことと、属性の色がバッジの図柄の色であることは `badges.test.ts` が見る。
-- 置き換えた先: `CharacterVisual.tsx` の札（バースト段階・武器種の文字）を、属性・バースト段階・クラス・武器種の 4 つのバッジを左上に縦に並べたものにした。画像が読めないときの札は名前だけにした（属性はバッジで分かる）。`CharacterTray.tsx` の絞り込みの select 4 つを、バッジのボタン（押すと絞り、もう一度押すと解除）にした。`ModernSlotCard.tsx` の縁の色は下の決定 1 の色。クラシックの画面は変えない。
-- 決定 1（属性の色。2026-11-06、オーナー）: 属性の色の定義が 3 つあり、どれも違った（バッジ、`CharacterVisual.tsx` の `ELEMENT_COLOR`（札と絵の枠）、`modern.css` の `--el`（スロットのカードの縁））。バッジの図柄の色（`#ff0000`・`#007cff`・`#00ff00`・`#feba02`・`#ff02de`）にそろえ、定義を `styles.css` の `[data-element]`（CSS 変数 `--el`）1 か所にした。キャラの絵とスロットのカードが `data-element` を持つ。
-- 決定 2（公開。2026-11-06、オーナー）: 企業のロゴや、クラス・武器・属性の図柄はゲームのアイコンと同じに見えるが、公開リポジトリに入れてよい。キャラ画像と同じく README の「ライセンス」で本リポジトリのライセンスの対象外とする。
-- 決定 3（使っていないバッジも置く。2026-11-08、オーナー）: 旧プロジェクトの 40 個を全部 `apps/web/src/assets/badges/` に置く。足した 22 個（レア度・企業・`bursttrigger_*`・`collection*`・`misc_*`）は上の「小さくする」と同じ設定で小さくした（この設定で、置いてあった 18 個がバイト単位で同じに出ることを確かめた）。Vite は読み込んだ画像だけを束に入れるので、使っていないファイルは束にもアーティファクトにも出ない。`badges.test.ts` の「置いたファイルをどれも使う」の検査はやめ、どれも `assetsInlineLimit` 未満であることの検査は残す（使い始めたときも束に埋め込まれる）。
-- 決定 4（元の SVG もリポジトリに置く。2026-11-08、オーナー）: 旧プロジェクトのフォルダが残る保証は無いので、元の 40 個（Inkscape の SVG。ローカルのパスなどの個人の情報は入っていない）を `apps/web/badges-src/` にそのまま置く。`src/` の外なので画面のコードからは読まれない。`npm run badges:build`（`apps/web/scripts/badges.ts`）が上の「小さくする」の設定で `src/assets/badges/` に書き出し、元の無い書き出しは消す。svgo は開発用の依存にした。書き出しが元を小さくしたものと同じことは `apps/web/scripts/badges.test.ts` が見る。バッジを直すときは `badges-src/` を Inkscape で直してこれを回す。
-- 決定 5（命名規則。2026-11-08、オーナー）: 旧プロジェクトの名前は、データの値と違う（`element_3electric` と `Electronic`、`burst_4special` と `AllStep`）、並びの番号を含む、大文字と小文字が混ざる、`collection*` の番号の意味が名前から分からない、の 4 点で足しにくかったので、`<グループ>_<値>[-<変種>].svg` に付け直した。グループと値は、キャラのデータにある項目なら項目名と値をそのまま使う。規則の全文は `apps/web/scripts/badges.ts` の冒頭に置く。`collection` は白背景が 1〜14、黒背景が 15（上限）なので、黒背景を `-max` にした（レア度ごとに上限の数が違うので数字にしない）。`badges.ts` は個別の import をやめ、使う項目のバッジを `import.meta.glob` で読んで `<項目名>_<値>.svg` を引く（同じ項目にバッジを足すときは、ファイルを置けばよい）。旧の名前との対応:
-  - `element_1fire`〜`element_5wind` → `element_Fire`・`element_Water`・`element_Electronic`・`element_Iron`・`element_Wind`
-  - `burst_1I`〜`burst_3III`・`burst_4special` → `burstStep_Step1`〜`burstStep_Step3`・`burstStep_AllStep`
-  - `class_1attacker`〜`class_3supporter` → `class_Attacker`・`class_Defender`・`class_Supporter`
-  - `weapon_1AR`〜`weapon_6MG` → `weaponType_AR`・`weaponType_SMG`・`weaponType_SG`・`weaponType_SR`・`weaponType_RL`・`weaponType_MG`
-  - `rarity_1SSR`〜`rarity_3R` → `rarity_SSR`・`rarity_SR`・`rarity_R`
-  - `corp_1elysion`〜`corp_5abnormal` → `corporation_ELYSION`・`corporation_MISSILIS`・`corporation_TETRA`・`corporation_PILGRIM`・`corporation_ABNORMAL`
-  - `bursttrigger_1AUTO`・`2MANUAL`・`3NONE` → `burst_auto`・`burst_manual`・`burst_none`
-  - `collection` → `collection_plain`。`collectionR14`・`R15` → `collection_R`・`collection_R-max`（`SR14`・`SR15` と `SSR2`・`SSR3` も同じ形）
-  - `misc_130x150badge`・`misc_delete`・`misc_favorite`・`misc_ring` → `ui_blank`・`ui_delete`・`ui_main`・`ui_ring`
-- 決定 6（属性の色をやめる。2026-11-08、オーナー）: キャラの絵の枠と背景、スロットのカードの縁と上の線に属性の色を使うのをやめ、どれも属性によらない色にした。属性は左上のバッジで分かる。使う所が無くなったので、決定 1 の `[data-element]`（`--el`）と、それを見る `badges.test.ts` の検査を消した。
-- 決定 7（クラスのバッジを絵に出さない。2026-11-08、オーナー）: キャラの絵（縦長・正方形とも）の左上のバッジから、クラスを外した。クラスのバッジは一覧の絞り込みにだけ使う。
-- 決定 8（バッジを足し、命名規則を広げる。2026-11-09、オーナー）: オーナーが Inkscape で描いた 17 個を `badges-src/` に足し、置いてあった 12 個（`collection_*`・`rarity_*`・`ui_delete`・`ui_main`）の直しを取り込んだ。どれもまだ画面では使わない。足した名前と、決定 5 の規則に足したこと:
-  - 画面の部品のアイコン 10 個は `ui` に入れた: `ui_account`・`ui_caution`・`ui_check`・`ui_controller`・`ui_filter`・`ui_information`・`ui_selection`（白い二重の円）・`ui_setting`・`ui_sort`・`ui_window`
-  - 限界突破の星とコア強化の印は、キャラのデータ（`CharacterIndexEntry`）には項目が無いが、育成の入力（`GrowthInput`）に項目（`grade`・`core`）があるので、その項目名をグループにした（`ui` に入れる案もあったが、画面のコードが育成の値から属性やクラスと同じ形で引けるほうを選んだ）。星は回数そのものでなく 1 回分が埋まっているかを表すので、値は小文字の英語にした: `grade_empty`（灰の星）・`grade_filled`（金の星）・`core_plain`
-  - 背景の六角形（130×150）を付けた版を変種 `-badge` にした: `rarity_R-badge`・`rarity_SR-badge`・`rarity_SSR-badge`・`ui_main-badge`（元の版は文字や図柄だけで、六角形を持たない）
+- 調べたこと:
+  - 埋め込みの画像（`<image>`）とグラデーションは無い。一部はマスク・フィルタを使う。
+  - どれも 130×150 の六角形で、縦横の比が同じ。
+  - 六角形の中が `#1a1a1a` で縁と外側の黒い線を持つので、ライトとダークのどちらでも見え方が変わらない。20×23 の小ささでも図柄を見分けられる。
+  - データの値との対応: `element`・`burstStep`・`class`・`weaponType`・`rarity`・`corporation` は、どれもバッジと 1 対 1 に対応する。
+- 小さくする: `svgo@3.3.2 --multipass` の `preset-default` のうち `convertTransform` を切る。切らないと `corporation_TETRA` の反転を含む `matrix(-1,0,-0.447,0.894)` が 180° 回った別の変換に書き換わり、図柄が崩れる。切った設定で、元と小さくした後を白・#0b0f17・灰の背景で描いて画素を比べ、見て分かる差が無い（残る差は縁のアンチエイリアス）ことを確かめた。
+- 対応表: キャラの項目（`element`・`burstStep`・`class`・`weaponType`）ごとに、値からバッジとラベルを引く表を `apps/web/src/components/modern/badges.ts` の `BADGE_KINDS` 1 つに置き、絵とトレイの絞り込みが共有する。ラベルは既存の表（`ELEMENT_LABEL`・`WEAPON_LABEL`・`CLASS_LABEL`・`BURST_STEP_LABEL`）を引く。
+- 置き換えた先: `CharacterVisual.tsx` の札を左上に縦に並べたバッジにし、画像が読めないときの札は名前だけにした。`CharacterTray.tsx` の絞り込みの select を、バッジのボタン（押すと絞り、もう一度押すと解除）にした。クラシックの画面は変えない。
+- 決定 2（公開。オーナー）: 企業のロゴや、クラス・武器・属性の図柄はゲームのアイコンと同じに見えるが、公開リポジトリに入れてよい。キャラ画像と同じく README の「ライセンス」で本リポジトリのライセンスの対象外とする。
+- 決定 3（使っていないバッジも置く。オーナー）: バッジは全部 `apps/web/src/assets/badges/` に書き出す。Vite は読み込んだ画像だけを束に入れるので、使っていないファイルは束にもアーティファクトにも出ない。どれも `assetsInlineLimit` 未満であることは `badges.test.ts` が見る（使い始めたときも束に埋め込まれ、アーティファクトのファイル数を使わない）。
+- 決定 4（元の SVG もリポジトリに置く。オーナー）: 旧プロジェクトのフォルダが残る保証は無いので、元（Inkscape の SVG）を `apps/web/badges-src/` に置く。`npm run badges:build`（`apps/web/scripts/badges.ts`）が上の「小さくする」の設定で `src/assets/badges/` に書き出し、元の無い書き出しは消す。書き出しが元を小さくしたものと同じことは `apps/web/scripts/badges.test.ts` が見る。バッジを直すときは `badges-src/` を Inkscape で直してこれを回す。
+- 決定 5（命名規則。オーナー）: `<グループ>_<値>[-<変種>].svg`。グループと値は、キャラのデータにある項目なら項目名と値をそのまま使う。規則の全文は `apps/web/scripts/badges.ts` の冒頭に置く。`badges.ts` は使う項目のバッジを `import.meta.glob` で読んで `<項目名>_<値>.svg` を引く（同じ項目にバッジを足すときは、ファイルを置けばよい）。
+- 決定 6（属性の色を使わない。オーナー）: キャラの絵の枠と背景、スロットのカードの縁は、属性によらない色にする。属性は左上のバッジで分かる。
+- 決定 7（クラスのバッジを絵に出さない。オーナー）: クラスのバッジは一覧の絞り込みにだけ使う。
+- 決定 8（命名規則を広げる。オーナー）:
+  - 画面の部品のアイコンは `ui` に入れる。
+  - 限界突破の星とコア強化の印は、育成の入力（`GrowthInput`）の項目名（`grade`・`core`）をグループにする（画面のコードが育成の値から属性やクラスと同じ形で引けるため）。
+  - 背景の六角形を付けた版は変種 `-badge` にする。
+  - 枠の無い図柄だけの部品は `badges-src/parts/` に置き、書き出さない。
 
 ## 経過
 
@@ -333,3 +320,24 @@
 - 2026-11-22: オーナーの指示で、操作の印（コントローラーのアイコン）をドラッグしたときの落とす先の青枠は、いまの編成のスロットにだけ出すようにした（選んでいない編成の行のスロットには出さない。PartyPreviewRow の isOver を、持ち上げているものが controller のときも偽にする）
 - 2026-11-22: オーナーの指示で、部隊番号の落とす先の青枠（party-label-over）は、部隊番号を持ち上げているときだけ出すようにした（コントローラーのアイコン・キャラの立ち絵を乗せても出さない。PartyRowLabel の isOver を、持ち上げているものが party-label のときだけ真にする）
 - 2026-11-22: オーナーの指摘（横長の画面で「詳細設定」のポップアップを開くと、スロットのバッジなどと重なって見える）を直した。原因は、横に並べる幅で枠の列（.modern-summary-row）の重ねの順が 1 で、スロットの中の重ね（バッジ・操作の印などの 2〜4）の下になり、枠の列の中のポップアップとその幕がスロットの部品の下に回っていたこと。枠の列の重ねの順を 10 にした
+- 2026-11-03: 設計方針を承認し、Step 1（PR #945）と Step 2・3（PR #946）を実装した。
+- 2026-11-04: Step 4、キャラ画像の同梱（1 節 3）、タッチの長押しでのドラッグ（2.3 節）を実装した。2 つのセッションの作業を統合し、Step 5 を含めて実装した（2.4 節）。
+- 2026-11-06: 属性・バースト段階・クラス・武器の表示を旧プロジェクトのバッジに置き換えた（2.5 節）。
+- 2026-11-08: バッジを全部置き、元の SVG と書き出しのコマンド・命名規則を足した。属性の色と、絵のクラスのバッジをやめた（2.5 節の決定 3〜7）。
+- 2026-11-09: バッジを足し、命名規則を広げた（2.5 節の決定 8）。限界突破の星とコア強化の印をバッジにした。ニケ一覧の名前の検索と「完全対応のみ」を外し、企業の絞り込みと立ち絵の形の切り替え（縦長 / 四角。ブラウザに覚える）を足した。マウスを重ねたときのポップアップ（`title`）を外した（読み上げの名前は `aria-label`・`alt` に残す）。
+- 2026-11-11: 立ち絵の未対応の印をインフォメーションのアイコンにし、マウスを載せると未対応の内容（件数は support.json）を出すようにした。ニケ一覧に宝物のあるニケの絞り込み（index.json の hasTreasure）を足した。
+- 2026-11-12: キャラの画像にコスチューム違いを足した（[design-costume-images.md](design-costume-images.md)）。
+- 2026-11-14: 置き先待ちの間は、スロットをクリックしたらそこに置き、ほか（一覧のニケ・スロットのほかの部品・画面のほかの所）をクリックしたら、その部品は反応させずに待つのをやめるだけにした。同じニケを 2 つ以上の編成に入れられないので、P○ のバッジはニケ一覧にだけ出す。ニケ一覧からのドラッグが重い件を直した（一覧の並びと項目の中身を memo にした）。
+- 2026-11-15: スロットの並びに「元に戻す」を足した。スロットのニケの並びだけを戻す（並びを変える操作ごとに前の並びを積む。育成・設定はニケと一緒に動き、操作のアイコンの位置は戻さない。編成を切り替えたら積んだものは捨てる。useSlotUndo.ts）。
+- 2026-11-15: お気に入り（育成・設定の窓のバッジ 5 個。ニケごとにブラウザに覚える。favorites.ts）と、ニケ一覧のお気に入りの絞り込み（保存しない）を足した。
+- 2026-11-15: オーナーがバッジの元を組み替えた（部品 parts_* を足し、コレクションは collection_plain の 1 枚にして、レア度の色は CSS の色の役で塗る）。右上の設定・アカウントのボタン、スロットの右上のボタン、元に戻すと絞り込みのクリアのボタンを、枠と地の無いバッジの絵のボタンにした。育成・設定のボタンの歯車は、育成状況にいるニケが育成状況と違うときだけ青にする（育成状況にいないニケのスロットには前のニケの育成が残るので、既定と比べない）。
+- 2026-11-16: キャラデータを画面全体で 1 つに持って使い回すようにした（useCharacterCache）。コア強化の数字を印の SVG の中の text に移した（ニケ一覧の絵の位置が画素の半端でもずれない）。
+- 2026-11-17: ニケ一覧の「絞り込み」の窓を作った（plan/design-character-filter.md）。
+- 2026-11-18: 空のスロットの枠は、入れ替えでは動かさない（動くのはニケだけ）。
+- 2026-11-19: ニケ一覧の立ち絵の形の切り替えのボタンを、バッジ ui_cu・ui_mcu の絵にした。書き出しは、外の `<svg>` の塗りの属性を `<g>` に写して包む（スプライトの symbol で塗りが落ちないように）。
+- 2026-11-20: 設定のメニューのテーマと表示モードの選択肢の前に、バッジの絵を出した。スロットの並びに「やり直す」を足した。
+- 2026-11-21: 空のスロットの枠に、シルエットの絵（apps/web/src/assets/portrait_silhouette.webp。アーティファクトにも届ける）を出した。
+- 2026-11-21: スロットの立ち絵を画面の幅に合わせて縮め（useSlotFit）、右上のボタンは押しやすいように 18px より小さくしない。元の大きさの絵が 1 行に 5 枚入らない狭い画面では、ニケ一覧の絵をスロットの立ち絵と同じ幅にして 1 行 5 枚に並べる（data-tray-fit）。
+- 2026-11-21: バッジの既定の色の規則を `:where` で包んで詳細度を 0 にし、BadgeIcon がグループのクラス（`badge-group-<グループ>`）と、viewBox から作る `aspect-ratio` を付けるようにした。
+- 2026-11-21: ニケ一覧の並べ替えに、昇順・降順を入れ替える三角のボタンを足した。
+- 2026-11-21: 右上の育成状況のメニューのボタンの名前を「育成」にした。モダン UI の共通育成の「育成状況の値に戻す」を、戻る矢印のアイコンのボタンにした（クラシックは文字のまま）。

@@ -1,5 +1,5 @@
 // 番号の振り直し（plan/design-investigation-review.md 4.3・5 節）。
-//   npm run records:renumber -- <古い ID> <新しい ID> [--dry-run]
+//   npm run records:renumber -- <古い ID> <新しい ID> [--dry-run] [--fail-on-ranges]
 // 検証記録（V-NNNN）・結論（C-NNNN）・観測値（<録画>-NN）の番号を、ファイル名と、作業ツリーの文書・データ・コードの中の参照ごと
 // 置き換える（追跡しているファイルと、まだ追跡していない無視されないファイル）。
 // - 検証記録は records/verifications/V-NNNN-<短い名前>.md と records/predictions/V-NNNN.json を、結論は records/claims/C-NNNN.json を
@@ -18,6 +18,8 @@
 //   Drive の名前を受け口（tools/drive/gateway.ts の move）で変える（plan/design-cloud-environment.md 6.3 節）。
 // - リベース・マージの途中では動かない（main と自分のブランチが同じ番号を足していると、どちらの参照か見分けられない）。リベースを
 //   中止し（git rebase --abort）、自分のブランチで振り直してから取り込み直す。
+// --fail-on-ranges は、人が直す範囲の書き方があれば、置き換えた後に終了コード 3 で終わる（呼ぶ側が置き換えを捨てる。自動の振り直し
+// tools/git/auto-rebase.ts）。
 // 振り直した後は npm run records:check（生成物を作り直して検査する）。
 import { execFileSync, spawnSync } from 'node:child_process';
 import { appendFileSync, existsSync, readdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
@@ -54,7 +56,7 @@ import { cliArgs, fail } from './cli.ts';
 
 const { values, positionals } = cliArgs(import.meta.url, {
   allowPositionals: true,
-  options: { 'dry-run': { type: 'boolean', default: false } },
+  options: { 'dry-run': { type: 'boolean', default: false }, 'fail-on-ranges': { type: 'boolean', default: false } },
 });
 
 const git = (args: string[]): string =>
@@ -369,3 +371,4 @@ if (capture !== undefined) {
 if (changed.some((c) => /\.(ts|tsx|mts|cts|js|mjs|cjs)$/.test(c.path)))
   console.log('コードの中も置き換えた。テストが例として使っている ID なら戻す（npm test で確かめる）');
 if (!dryRun) console.log('次に npm run records:check（生成物を作り直して検査する）');
+if (values['fail-on-ranges'] && ranges.length > 0) process.exit(3);

@@ -41,9 +41,15 @@ describe('バッジの対応表', () => {
   // 名前を変えたり打ち間違えたりすると、そのバッジは差し色の既定の灰のままになる
   const css = readFileSync(fileURLToPath(new URL('../../styles.css', import.meta.url)), 'utf8');
   it('styles.css の値ごとの色（.badge-<名前>）は、スプライトにあるバッジを指す', () => {
-    const named = [...css.matchAll(/\.badge-(?!tone-|variant-)([\w-]+)/g)].map(([, name]) => name);
+    const named = [...css.matchAll(/\.badge-(?!tone-|variant-|group-)([\w-]+)/g)].map(([, name]) => name);
     expect(named).toContain('element_Fire');
     expect(named.filter((name) => !BADGE_SYMBOLS.includes(`id="badge-${name}"`))).toEqual([]);
+  });
+
+  it('styles.css のグループの色（.badge-group-<グループ>）は、スプライトにあるバッジのグループを指す', () => {
+    const groups = [...css.matchAll(/\.badge-group-(\w+)/g)].map(([, group]) => group);
+    expect(groups).toContain('ui');
+    expect(groups.filter((group) => !BADGE_SYMBOLS.includes(`id="badge-${group}_`))).toEqual([]);
   });
 
   it('styles.css の tone・variant の色（.badge-tone-<値>・.badge-variant-<値>）は、コレクションのバッジの出すものと同じ', () => {
