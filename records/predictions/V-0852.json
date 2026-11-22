@@ -1,0 +1,379 @@
+{
+  "verification": "V-0852",
+  "note": "撮影 A（ミカ単騎・操作）と撮影 B（I-DOLL・フラワー（I）+ デルタ（II）+ ミカ（I・操作）・オートバースト ON。I はフラワーが先に撃つ）の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。S2 の周期は仮の 20 秒なので、S2 の窓のフレーム（maxAmmoAt の frame）は仮の窓の中を指す。読むときは、スキルの帯で読んだ窓の中の発で比べる。H-user（▼をミカの防御力から数える読み。課題 2-46 の仮説）は、ミカの防御力 × 13.32% が的の防御力 100 を超え、▼の後の防御が 0 になる。▼の値に S2 の値 01 の 152.22% を借りて（▼は 100% で止まる）書く",
+  "team": [
+    {
+      "rid": 304
+    },
+    {
+      "rid": 20
+    },
+    {
+      "rid": 61,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S2: 20 秒（仮）ごとに、最終攻撃力が最も高い味方 2 機（自分も候補）に最大装弾数 2 発▲・10 秒。バースト: バーストスキルダメージ 152.22%（1 ヒット・同じ発動の▼は乗らない）と、味方全体の攻撃に敵の防御力 13.32%▼・5 秒。▼の後の防御力は四捨五入で 87）"
+    },
+    {
+      "id": "H-excl",
+      "note": "S2 の対象から自分を除く（最終攻撃力が最も高い、自分以外の味方 2 機）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 61,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 20
+              },
+              "target": "topAttack",
+              "targetCount": 2,
+              "excludeSelf": "always",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-noDown",
+      "note": "バーストの防御力▼が通常攻撃に効かない（対照）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 61,
+            "skill": "burst",
+            "index": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-user",
+      "note": "▼をミカの防御力から数える（課題 2-46 の仮説。function_standard が User）。ミカの防御力 × 13.32% が 100 を超え、▼の後の的の防御が 0 になる",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 61,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "enemyDefenseDown",
+              "ref": 1,
+              "durationRef": 3
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-burst-hit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "team": [
+        {
+          "rid": 61,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 A: 1 回目のバーストスキルダメージ（会心なし）",
+      "observations": ["1364-21", "1365-22"]
+    },
+    {
+      "id": "A-hit-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 61,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 1400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 A: 1 回目のバーストの前の、通常攻撃（フルチャージ）の胴体・会心なしの 1 ヒット（▼なし）"
+    },
+    {
+      "id": "A-hit-down",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 61,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 A: 1 回目のバーストの▼の窓の中の、通常攻撃の胴体・会心なしの 1 ヒット",
+      "observations": ["1365-19"]
+    },
+    {
+      "id": "A-hit-down-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 61,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 1600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 A: 同じ窓の中の、コア・会心なしの 1 ヒット",
+      "observations": ["1364-18", "1365-18"]
+    },
+    {
+      "id": "A-ammo",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "team": [
+        {
+          "rid": 61,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 1300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "撮影 A: S2 の窓の中のミカの最大装弾数（単騎では自分だけが候補）"
+    },
+    {
+      "id": "A-mags",
+      "model": "sim",
+      "metric": "magazineShots",
+      "team": [
+        {
+          "rid": 61,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "count": 8
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "撮影 A: ミカの戦闘の始めからの 8 本のマガジンの発数（左下の残弾の表示でも読める）"
+    },
+    {
+      "id": "B-ammo-mica",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 1300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "撮影 B: S2 の窓の中のミカ（攻撃力 2 番目）の最大装弾数",
+      "observations": ["1366-03"]
+    },
+    {
+      "id": "B-ammo-delta",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 2,
+        "frame": 1300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "撮影 B: S2 の窓の中のデルタ（攻撃力 3 番目のうち上）の最大装弾数",
+      "observations": ["1366-02"]
+    },
+    {
+      "id": "B-ammo-flower",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 1300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "撮影 B: S2 の窓の中のフラワー（攻撃力が最も低い）の最大装弾数",
+      "observations": ["1366-01"]
+    },
+    {
+      "id": "B-mags-mica",
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 3,
+        "count": 8
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "撮影 B: ミカの 8 本のマガジンの発数（左下の残弾の表示でも読める）"
+    },
+    {
+      "id": "B-mags-delta",
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 2,
+        "count": 8
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "撮影 B: デルタの戦闘の始めからの 8 本のマガジンの発数（HUD の増分の格子と、リロードの空きで読む）"
+    },
+    {
+      "id": "B-mags-flower",
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 1,
+        "count": 8
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "撮影 B: フラワーの 8 本のマガジンの発数"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-22",
+    "commit": "1fe0808e8f8c85d7b729cfae0f3f69a806ff7e8b",
+    "values": {
+      "H1": {
+        "A-burst-hit": 120407.5422,
+        "A-hit-before": 121222.2825,
+        "A-hit-down": 121242.20499999999,
+        "A-hit-down-core": 242484.40999999997,
+        "A-ammo": 8,
+        "A-mags": [6, 6, 8, 6, 8, 6, 7, 8],
+        "B-ammo-mica": 8,
+        "B-ammo-delta": 8,
+        "B-ammo-flower": 6,
+        "B-mags-mica": [6, 6, 8, 6, 8, 6, 7, 8],
+        "B-mags-delta": [6, 6, 6, 8, 8, 6, 8, 8],
+        "B-mags-flower": [6, 6, 6, 6, 6, 6, 6, 6]
+      },
+      "H-excl": {
+        "A-burst-hit": 120407.5422,
+        "A-hit-before": 121222.2825,
+        "A-hit-down": 121242.20499999999,
+        "A-hit-down-core": 242484.40999999997,
+        "A-ammo": 6,
+        "A-mags": [6, 6, 6, 6, 6, 6, 6, 6],
+        "B-ammo-mica": 6,
+        "B-ammo-delta": 8,
+        "B-ammo-flower": 8,
+        "B-mags-mica": [6, 6, 6, 6, 6, 6, 6, 6],
+        "B-mags-delta": [6, 6, 6, 8, 8, 6, 8, 8],
+        "B-mags-flower": [6, 6, 8, 6, 8, 6, 7, 8]
+      },
+      "H-noDown": {
+        "A-burst-hit": 120407.5422,
+        "A-hit-before": 121222.2825,
+        "A-hit-down": 121222.2825,
+        "A-hit-down-core": 242444.565,
+        "A-ammo": 8,
+        "A-mags": [6, 6, 8, 6, 8, 6, 7, 8],
+        "B-ammo-mica": 8,
+        "B-ammo-delta": 8,
+        "B-ammo-flower": 6,
+        "B-mags-mica": [6, 6, 8, 6, 8, 6, 7, 8],
+        "B-mags-delta": [6, 6, 6, 8, 8, 6, 8, 8],
+        "B-mags-flower": [6, 6, 6, 6, 6, 6, 6, 6]
+      },
+      "H-user": {
+        "A-burst-hit": 120407.5422,
+        "A-hit-before": 121222.2825,
+        "A-hit-down": 121375.53249999999,
+        "A-hit-down-core": 242751.06499999997,
+        "A-ammo": 8,
+        "A-mags": [6, 6, 8, 6, 8, 6, 7, 8],
+        "B-ammo-mica": 8,
+        "B-ammo-delta": 8,
+        "B-ammo-flower": 6,
+        "B-mags-mica": [6, 6, 8, 6, 8, 6, 7, 8],
+        "B-mags-delta": [6, 6, 6, 8, 8, 6, 8, 8],
+        "B-mags-flower": [6, 6, 6, 6, 6, 6, 6, 6]
+      }
+    }
+  }
+}

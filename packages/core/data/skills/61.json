@@ -1,0 +1,89 @@
+{
+  "formatVersion": 1,
+  "resourceId": 61,
+  "checkedAt": "2026-11-22",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "攻撃を 20 回受けた時の自分の防御力▲（10 秒）は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは的の攻撃で起きうる（C-0551）。起きても防御力▲で、それ自体は与ダメージを変えない",
+          "en": "The DEF up on self after being attacked 20 times (10 s) does not occur because taking hits is not modeled (requirements 4.2). In the 3-minute range mode it can occur from the target's attacks (C-0551). Even then it is a DEF increase and does not change damage by itself",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "defense",
+            "target": "self",
+            "trigger": "damaged"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 20
+          },
+          "target": "topAttack",
+          "targetCount": 2,
+          "stat": "maxAmmo",
+          "scaling": "flat",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から 20 秒ごとに発動する（CT 20 秒は録画で読んだ値。1 回目も 1 周期後。左のスキルの帯の間隔は約 1,177 ティック）。最終攻撃力が最も高い味方 2 機は、発火のフレームの順位で、自分も候補。窓が切れると、残弾が最大より多ければ削る",
+            "en": "The description gives no trigger. It is an active skill on a cooldown, activating every 20 s from the start of combat (the 20 s cooldown is read from recordings; the first also after one period; the skill banners are about 1,177 ticks apart). The 2 allies with the highest final ATK are ranked on the trigger frame, self included. When the window ends, ammo above the new max is cut to the max"
+          },
+          "claims": [
+            "C-1517"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "最終攻撃力が最も高い味方 2 機の防御力▲（10 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "The DEF up on the 2 allies with the highest final ATK (10 s) does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "敵全体は単体ボス。I の発動の印の 28f 後と 63f 後の 2 ヒットで、値を 2 等分する（burst/landing.ts のミカの行）。どちらのヒットも発動の時点の値で、同じバーストの防御力▼（effects[1]）は乗らない（C-0795）",
+            "en": "All enemies are a lone boss. Two hits 28 f and 63 f after the Burst I activation mark share the value equally (Mica row in burst/landing.ts). Both hits use the values at the activation, so the DEF decrease of the same Burst (effects[1]) does not apply (C-0795)"
+          },
+          "claims": [
+            "C-1516",
+            "C-0795"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "enemyDefenseDown",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "敵全体は単体ボス。▼は説明文の値で、C-0556・C-0790 の式で効く（射撃場の的の防御力 100 は 87）。バーストの 1 ヒット目（印の 28f 後）から付き、そこから 5 秒で切れる。録画の切れ目は 2 ヒット目から 5 秒で、約 35f 遅い（2 ヒットごとに付け直す形は未対応）",
+            "en": "All enemies are a lone boss. The decrease uses the description value with the C-0556 and C-0790 formula (the range target DEF 100 becomes 87). It applies from the first Burst hit (28 f after the mark) and ends 5 s later. In recordings it ends 5 s after the second hit, about 35 frames later (re-applying on each of the 2 hits is not modeled)"
+          },
+          "claims": [
+            "C-1518",
+            "C-1519",
+            "C-0556",
+            "C-0790"
+          ]
+        }
+      ]
+    }
+  }
+}

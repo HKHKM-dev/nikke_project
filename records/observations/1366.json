@@ -1,0 +1,142 @@
+[
+  {
+    "id": "1366-01",
+    "recording": "1366",
+    "kind": "count",
+    "use": "compare",
+    "value": 6,
+    "unit": "発",
+    "description": "I-DOLL・フラワーの、ミカの S2 の 1 回目の窓の中の最大装弾数",
+    "method": {
+      "tool": "tools/captures/ammo.ts --mode mags",
+      "note": "枠アイコンの上の残弾/最大（1 つ目の置き場所）。18 本のマガジンのどれも残弾 6 から 1 発ずつ減って 6 発（S2 の窓の中で明けた f2031・f3354 などのマガジンも 6 から）。道具は最大の字を 8 と読んだ（明るい背景で 6 と 8 を取り違える。ammo.ts の冒頭）が、残弾の並びが 6・5・4・3・2・1 なので最大は 6"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 1500
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 0
+      }
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1366-02",
+    "recording": "1366",
+    "kind": "count",
+    "use": "compare",
+    "value": 8,
+    "unit": "発",
+    "description": "デルタの、ミカの S2 の 1 回目の窓の中の最大装弾数",
+    "method": {
+      "tool": "tools/captures/ammo.ts --mode mags",
+      "note": "枠アイコンの上の残弾/最大（2 つ目の置き場所）。S2 の窓の中で明けたマガジン（f3403・f4732・f5546・f6877・f9428 など）は 7・6・5…と 8 発。窓の外で明けたマガジンは 6 発。f2553 は 8 で明けた直後に窓が切れて 6 に削られた"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 2,
+        "frame": 1500
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 0
+      }
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1366-03",
+    "recording": "1366",
+    "kind": "count",
+    "use": "compare",
+    "value": 8,
+    "unit": "発",
+    "description": "ミカの、ミカの S2 の 1 回目の窓の中の最大装弾数",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "照準の左の残弾。マガジンの初めの残弾は 6・6・8・6・8・6・8・8・6・8・6・8・6・6・8 で、1364・1365 と同じ並び"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 1500
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 0
+      }
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1366-04",
+    "recording": "1366",
+    "kind": "count",
+    "use": "compare",
+    "value": [6, 6, 8, 6, 8, 6, 7, 8, 6, 8, 6, 6, 6, 6, 8],
+    "unit": "発",
+    "description": "3 人の編成のミカ（3 枠目）の 15 本のマガジンの発数（照準の左の残弾の表示）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "3 フレーム以上続いた値だけを採り、増えた所でマガジンを分けた。マガジンの初めの残弾（リロードの明け）は 6・6・8・6・8・6・8・8・6・8・6・8・6・6・8。S2 の窓の中で明けたマガジンは 8 から減る。7 本目は 8 → 7 の 1 発の後、窓の終わり（f4928）で残弾が 7 → 6 に削られて 7 発。12 本目は 8 で明けた後、1 発目の前に窓が切れて 8 → 6 に削られて（f8464）6 発。窓の始まりでは、撃っている途中のマガジンの残弾は増えない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 3,
+        "count": 15
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0852",
+    "readAt": "2026-11-22"
+  }
+]

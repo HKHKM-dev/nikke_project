@@ -1,0 +1,36 @@
+{
+  "id": "C-1516",
+  "text": "ミカのバーストのダメージ（最終攻撃力の 値 01 %）は、I の発動の印（右のバースト欄の六角形が I から II に替わるフレーム）の 28f 後と 63f 後の 2 ヒットに分かれ、説明文の値を 2 等分する（2 本の 10 回とも同じ並び。1 回だけ 27f・62f）。2 ヒットとも発動の時点の値で出て、同じ発動の防御力▼は乗らない（C-0795 の形）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1364-19`・`1364-20`・`1364-21`・`1365-20`・`1365-21`・`1365-22`。V-0852",
+  "model": "反映（data/skills/61.json の burst の effects[0]、burst/landing.ts のミカの行の hitFrames・hitOffsets）",
+  "replaces": [],
+  "updated": "2026-11-22",
+  "subject": {
+    "places": ["data/skills/61.json の burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1364",
+      "role": "値を合わせた"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "1364",
+      "decided": "1 回目",
+      "reproduced": "2〜5 回目",
+      "observations": ["1364-19"]
+    }
+  ],
+  "minimal": [
+    {
+      "observations": ["1364-21", "1365-22"],
+      "element": ["ミカ skill1.notes[0]"],
+      "reason": "ミカの S1 は、3 分モードの的の攻撃 20 回で自分に付く防御力▲で、ダメージの式は敵の防御力だけを引く（C-0556）ので、ミカの通常攻撃とバーストの 1 ヒットに効かない",
+      "decided": "2026-11-22"
+    }
+  ]
+}
