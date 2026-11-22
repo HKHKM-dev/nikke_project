@@ -17,7 +17,7 @@ notes の種類: 未対応 37・前提の外 127・計算に無関係 78・補�
 - **skill1**: noEffect
   - notes[0] 前提の外: 被弾 N 回で自分に攻撃力▲（維持型）は、被弾を扱わないので起きない（要件 5.2 節）。射撃場の 3 分モードでは的の攻撃で起きる（C-0551）: 根拠なし
 - **skill2**: supported
-  - effects[0] damage・20 秒ごと・skill: C-0403（確定）、C-0102（確定）、C-0453（確定）
+  - effects[0] damage・20 秒ごと・skill: C-0403（確定）、C-0102（確定）、C-0453（確定）、C-1509（確定）
   - effects[1] burstGaugeHit・20 秒ごと: C-0409（仮説）、C-0403（確定）、C-0453（確定）
   - notes[0] 計算に無関係: 挑発はダメージに関係しない: 根拠なし
 - **burst**: supported
@@ -234,7 +234,7 @@ notes の種類: 未対応 37・前提の外 127・計算に無関係 78・補�
   - effects[0] state・tiltedScale が適用された時・fulfillmentOfRighteousness（maxAmmo・attackDamage）: C-1497（確定）
   - effects[1] removeState・fullBurstEnd・fulfillmentOfRighteousness: C-1502（仮説）
 - **burst**: supported
-  - effects[0] weaponChange・burstUse: C-1500（確定）
+  - effects[0] weaponChange・burstUse: C-1500（確定）、C-1510（仮説）
   - effects[1] timed・burstUse・attack: C-1500（確定）
   - effects[2] timed・burstUse・attackDamage: C-1500（確定）
 
@@ -970,7 +970,7 @@ notes の種類: 未対応 37・前提の外 127・計算に無関係 78・補�
 ## 193 ネヴェ
 
 - **skill1**: partial
-  - effects[0] damage・10 秒ごと・skill: C-1492（確定）
+  - effects[0] damage・10 秒ごと・skill: C-1492（確定）、C-1511（確定）
   - notes[0] 未対応: S1 のヒットがバーストゲージを溜めるかは確かめていない（イサベル・エーテル・ラピの S2 の CT ごとのヒットは溜める。C-0404・C-0409）。モデルは溜めない: 根拠なし
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・pierce: C-1494（確定）
