@@ -53,6 +53,7 @@
     183,
     190,
     191,
+    193,
     194,
     195,
     200,
@@ -65,6 +66,7 @@
     224,
     225,
     226,
+    230,
     231,
     232,
     234,
@@ -86,6 +88,7 @@
     303,
     304,
     305,
+    306,
     308,
     310,
     311,
@@ -151,111 +154,5 @@
     862,
     870,
     871
-  ],
-  "gaps": {
-    "75": {
-      "unimplemented": 1,
-      "assumed": 9
-    },
-    "82": {
-      "unimplemented": 1,
-      "assumed": 1
-    },
-    "91": {
-      "unimplemented": 1,
-      "assumed": 2
-    },
-    "102": {
-      "unimplemented": 1,
-      "assumed": 2
-    },
-    "103": {
-      "unimplemented": 1,
-      "assumed": 5
-    },
-    "104": {
-      "unimplemented": 1,
-      "assumed": 5
-    },
-    "111": {
-      "unimplemented": 1,
-      "assumed": 0
-    },
-    "141": {
-      "unimplemented": 1,
-      "assumed": 3
-    },
-    "150": {
-      "unimplemented": 1,
-      "assumed": 3
-    },
-    "170": {
-      "unimplemented": 2,
-      "assumed": 5
-    },
-    "192": {
-      "unimplemented": 3,
-      "assumed": 5
-    },
-    "193": {
-      "unimplemented": 1,
-      "assumed": 4
-    },
-    "223": {
-      "unimplemented": 1,
-      "assumed": 11
-    },
-    "233": {
-      "unimplemented": 1,
-      "assumed": 2
-    },
-    "260": {
-      "unimplemented": 1,
-      "assumed": 3
-    },
-    "262": {
-      "unimplemented": 1,
-      "assumed": 5
-    },
-    "270": {
-      "unimplemented": 1,
-      "assumed": 3
-    },
-    "307": {
-      "unimplemented": 1,
-      "assumed": 0
-    },
-    "313": {
-      "unimplemented": 2,
-      "assumed": 2
-    },
-    "314": {
-      "unimplemented": 1,
-      "assumed": 6
-    },
-    "315": {
-      "unimplemented": 2,
-      "assumed": 3
-    },
-    "412": {
-      "unimplemented": 1,
-      "assumed": 6
-    },
-    "430": {
-      "unimplemented": 1,
-      "assumed": 1
-    },
-    "432": {
-      "unimplemented": 1,
-      "assumed": 1
-    },
-    "501": {
-      "unimplemented": 2,
-      "assumed": 1
-    },
-    "861": {
-      "unimplemented": 1,
-      "assumed": 6
-    }
-  }
+  ]
 }

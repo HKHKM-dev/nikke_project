@@ -36495,9 +36495,107 @@
       "plus": 5
     },
     {
+      "observation": "1334-01",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "2b445a1111e621e2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1334-02",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "4968889298be89b7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1334-03",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "84022f1bded9a8d4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1334-04",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "474d93ef1805ba94",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1334-05",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "6b3eb93e0d9ca68f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1334-06",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "7a345c51a9a39af0",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 枠 1 の 1 回目の周期のゲージが無い"
+    },
+    {
+      "observation": "1335-01",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "e0fc2d1588d4f04e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1335-02",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "3607a2a68583db33",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1335-03",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "802090d75579f468",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1335-04",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "a47e36bb470fd428",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1335-05",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "07f83072efaac793",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1335-06",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "119781ed06dbc83c",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 枠 1 の 1 回目の周期のゲージが無い"
+    },
+    {
       "observation": "1336-09",
       "element": "ネヴェ burst.effects[0]",
-      "key": "212d9d04d4f17a13",
+      "key": "cc0846a62bbe6303",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -36505,15 +36603,23 @@
     {
       "observation": "1336-09",
       "element": "ネヴェ burst.effects[1]",
-      "key": "212d9d04d4f17a13",
+      "key": "cc0846a62bbe6303",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
+      "observation": "1336-09",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "cc0846a62bbe6303",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "1336-10",
       "element": "ネヴェ burst.effects[0]",
-      "key": "00610e979afc04f0",
+      "key": "3c972683a986fae4",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -36521,15 +36627,23 @@
     {
       "observation": "1336-10",
       "element": "ネヴェ burst.effects[1]",
-      "key": "00610e979afc04f0",
+      "key": "3c972683a986fae4",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "1336-10",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "3c972683a986fae4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "1336-11",
       "element": "ネヴェ burst.effects[0]",
-      "key": "a9e7d10a4578b6b1",
+      "key": "9fc89440c8158679",
       "effective": false,
       "minus": 7.275957614183426e-12,
       "plus": 0
@@ -36537,15 +36651,23 @@
     {
       "observation": "1336-11",
       "element": "ネヴェ burst.effects[1]",
-      "key": "a9e7d10a4578b6b1",
+      "key": "9fc89440c8158679",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
+      "observation": "1336-11",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "9fc89440c8158679",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "1336-13",
       "element": "ネヴェ burst.effects[0]",
-      "key": "3d7b877908f8665a",
+      "key": "51925891fd31b986",
       "effective": false,
       "minus": 0,
       "plus": 2.9103830456733704e-11
@@ -36553,15 +36675,23 @@
     {
       "observation": "1336-13",
       "element": "ネヴェ burst.effects[1]",
-      "key": "3d7b877908f8665a",
+      "key": "51925891fd31b986",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
+      "observation": "1336-13",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "51925891fd31b986",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "1336-14",
       "element": "ネヴェ burst.effects[0]",
-      "key": "080f5a0b8a4dccbc",
+      "key": "3c8e570f6b0284d0",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -36569,15 +36699,23 @@
     {
       "observation": "1336-14",
       "element": "ネヴェ burst.effects[1]",
-      "key": "080f5a0b8a4dccbc",
+      "key": "3c8e570f6b0284d0",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
+      "observation": "1336-14",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "3c8e570f6b0284d0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "1337-09",
       "element": "ネヴェ burst.effects[0]",
-      "key": "3231dd088f695c31",
+      "key": "59373dd4ca5bb215",
       "effective": false,
       "minus": 2.9103830456733704e-11,
       "plus": 0
@@ -36585,15 +36723,23 @@
     {
       "observation": "1337-09",
       "element": "ネヴェ burst.effects[1]",
-      "key": "3231dd088f695c31",
+      "key": "59373dd4ca5bb215",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
+      "observation": "1337-09",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "59373dd4ca5bb215",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "1337-10",
       "element": "ネヴェ burst.effects[0]",
-      "key": "6935463522394818",
+      "key": "093b5c3fd1c153c8",
       "effective": false,
       "minus": -1.4551915228366852e-11,
       "plus": 0
@@ -36601,15 +36747,23 @@
     {
       "observation": "1337-10",
       "element": "ネヴェ burst.effects[1]",
-      "key": "6935463522394818",
+      "key": "093b5c3fd1c153c8",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
+      "observation": "1337-10",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "093b5c3fd1c153c8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "1337-11",
       "element": "ネヴェ burst.effects[0]",
-      "key": "e9047b80a43c9f0d",
+      "key": "eb25ff8c3e407e91",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -36617,15 +36771,23 @@
     {
       "observation": "1337-11",
       "element": "ネヴェ burst.effects[1]",
-      "key": "e9047b80a43c9f0d",
+      "key": "eb25ff8c3e407e91",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
+      "observation": "1337-11",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "eb25ff8c3e407e91",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "1337-12",
       "element": "ネヴェ burst.effects[0]",
-      "key": "a44c5fbaa9f58013",
+      "key": "ec82f4c23ea8899f",
       "effective": false,
       "minus": -7.275957614183426e-12,
       "plus": 0
@@ -36633,10 +36795,18 @@
     {
       "observation": "1337-12",
       "element": "ネヴェ burst.effects[1]",
-      "key": "a44c5fbaa9f58013",
+      "key": "ec82f4c23ea8899f",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "1337-12",
+      "element": "ネヴェ skill1.effects[1]",
+      "key": "ec82f4c23ea8899f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "1349-01",
@@ -36979,6 +37149,214 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "1382-03",
+      "element": "ハラン skill2.effects[0]",
+      "key": "d1b76c93a135b960",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1382-03",
+      "element": "ハラン skill2.effects[1]",
+      "key": "d1b76c93a135b960",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1382-04",
+      "element": "ハラン skill2.effects[0]",
+      "key": "34a1004493bcbb07",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1382-04",
+      "element": "ハラン skill2.effects[1]",
+      "key": "34a1004493bcbb07",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1382-05",
+      "element": "ハラン skill2.effects[0]",
+      "key": "5c682e60ad89f11b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1382-05",
+      "element": "ハラン skill2.effects[1]",
+      "key": "5c682e60ad89f11b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1382-06",
+      "element": "ハラン skill2.effects[0]",
+      "key": "5a909564a009ca51",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1382-06",
+      "element": "ハラン skill2.effects[1]",
+      "key": "5a909564a009ca51",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1382-07",
+      "element": "ハラン skill2.effects[0]",
+      "key": "2dd4d71a5a19f35f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1382-07",
+      "element": "ハラン skill2.effects[1]",
+      "key": "2dd4d71a5a19f35f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1382-08",
+      "element": "ハラン skill2.effects[0]",
+      "key": "74b4e06608a6ebc1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1382-08",
+      "element": "ハラン skill2.effects[1]",
+      "key": "74b4e06608a6ebc1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1383-03",
+      "element": "ハラン skill2.effects[0]",
+      "key": "a3e1cc216f3eb1e2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1383-03",
+      "element": "ハラン skill2.effects[1]",
+      "key": "a3e1cc216f3eb1e2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1383-04",
+      "element": "ハラン skill2.effects[0]",
+      "key": "8e8f84328b4b12bd",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1383-04",
+      "element": "ハラン skill2.effects[1]",
+      "key": "8e8f84328b4b12bd",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1383-05",
+      "element": "ハラン skill2.effects[0]",
+      "key": "e540e5da91d7c349",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1383-05",
+      "element": "ハラン skill2.effects[1]",
+      "key": "e540e5da91d7c349",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1383-06",
+      "element": "ハラン skill2.effects[0]",
+      "key": "2c9b6b2262eeb0a3",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1383-06",
+      "element": "ハラン skill2.effects[1]",
+      "key": "2c9b6b2262eeb0a3",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1383-07",
+      "element": "ハラン skill2.effects[0]",
+      "key": "5465b16314f3b650",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1383-07",
+      "element": "ハラン skill2.effects[1]",
+      "key": "5465b16314f3b650",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1384-03",
+      "element": "ハラン skill2.effects[0]",
+      "key": "63736cf728906194",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1384-03",
+      "element": "ハラン skill2.effects[1]",
+      "key": "63736cf728906194",
+      "effective": false,
+      "minus": 4.656612873077393e-10,
+      "plus": 0
+    },
+    {
+      "observation": "1384-04",
+      "element": "ハラン skill2.effects[0]",
+      "key": "3ac01c89b06e5712",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1384-04",
+      "element": "ハラン skill2.effects[1]",
+      "key": "3ac01c89b06e5712",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }

@@ -125,11 +125,11 @@
 - 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは 3 節
 - 戦闘力による一覧の並び替え（2026-11-07 起票）→ 一部完了: [design-combat-power-sort.md](design-combat-power-sort.md)。残りは 4 節
 - モダン UI の編成の行を作り直さず、同じ要素のまま動かす（行の入れ替えで grid が作り直されるのをやめ、FLIP にする。これで useSlotFit の remountKey・立ち絵の先読み・liftedRects の WeakSet・ghostOf の SQUARE_SOURCES/LIFT_SHADOW_SOURCES の一覧が要らなくなるか見る）。あわせて PartyPreviewRow の memo 化と、ドロップ先・ドラッグ元の購読を減らす（2026-11-22 起票）→ 保留: [design-modern-ui.md](design-modern-ui.md)
-- モダン UI の重複を 1 つにまとめる（PartyTabs と PartyRowLabel の番号ボタン、App.tsx の編成を直す 3 つの関数の applyPartiesChange、行・番号の DOM を引く partyCardAt・slotsGridOf・partyLabelOf・rowsOf・labelOf、ドラッグを始める距離 4px と CLICK_SLOP、PreviewCard と PartyRowLabel のドロップ・ドラッグの配線、size と tallImage の二重、flight.ts の透明にする動きの重複）（2026-11-22 起票）→ 保留: [design-modern-ui.md](design-modern-ui.md)
-- 使われていない unsupportedNoteOf と UnsupportedNote・UnsupportedLevel・テストを消す（呼ぶ側は無い。SkillDefinitionCache の supportGaps とその読み込みが要るかも見る。ⓘ の印を戻すなら消さずに使う）（2026-11-22 起票）→ 保留: [design-modern-ui.md](design-modern-ui.md)
+- plan/design-modern-ui.md（目安の 50KB の約 2 倍。大半は経過）を分ける。設計書として要らない記述を消して縮めるだけで足りるか（[design-design-doc-trim.md](design-design-doc-trim.md) 3 節）も見る（2026-11-22 起票）→ 保留: [design-modern-ui.md](design-modern-ui.md)
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
+- モダン UI の重複を 1 つにまとめる（PartyTabs と PartyRowLabel の番号ボタン、App.tsx の編成を直す 3 つの関数の applyPartiesChange、行・番号の DOM を引く partyCardAt・slotsGridOf・partyLabelOf・rowsOf・labelOf、ドラッグを始める距離 4px と CLICK_SLOP、PreviewCard と PartyRowLabel のドロップ・ドラッグの配線、size と tallImage の二重、flight.ts の透明にする動きの重複）（2026-11-22 起票）→ 完了（2026-11-22）: [design-modern-ui.md](design-modern-ui.md)
 - 50KB を超えた設計書を、設計書として要らない記述を消して縮める（2026-11-21 起票）→ 完了（2026-11-21）: [design-design-doc-trim.md](design-design-doc-trim.md)
 - スキルの効果の分類（`catalog.ts`）で、行の頭や「効果N：」の小項目の頭から対象を決めるとき、条件の節（「〈状態〉状態の味方がいる場合、」など）に書かれた対象も読む（2026-11-21 起票）→ 完了（2026-11-21。行の頭と小項目の頭も条件の節の後ろから対象を読む。条件の節を終える「、」は後ろから探して括弧の中と並べた対象の「、」を越え、後ろが「対象に」なら条件の節の対象を読む）: [design-catalog-doc-split.md](design-catalog-doc-split.md) 13 節
 - スキルの効果の分類（`catalog.ts`）で、条件の中の「」で囲んだ状態の名前（トーブ S2 の「自分が「応急改造」のフルスタック状態の時のみ」）を効果の句として読み、「名前だけの付与」の効果にする（2026-11-21 起票）→ 完了（2026-11-21。句の後ろが「の」「状態」で続き、最初の「、」の前で条件の節を終える句は効果に数えず、行の頭もその句で切らない）: [design-catalog-doc-split.md](design-catalog-doc-split.md) 12 節
