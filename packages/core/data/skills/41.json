@@ -119,11 +119,12 @@
           "durationRef": 2,
           "shotCount": 10,
           "assumes": {
-            "ja": "変更後の武器のレートは CDN の changeWeapon（144rpm。説明文の攻撃速度 90%▼ と同じ）。1 発のダメージは説明文の値 × 二丁持ちの 2 ヒットの和で、ゲームでは 10 ペレット（1 ペレットは値 × 2 ÷ 10）が独立に会心・コアを決める（V-0848 のフルバーストの中の発の分解。モデルは 2 ヒット × 10 ペレットで持ち、期待値は同じ）。残弾・リロード・コアに当たる割合・最初の発の待ちは基礎の武器の扱いのまま（確かめていない）",
-            "en": "The changed weapon fires at the CDN changeWeapon rate (144 rpm, matching Attack Speed ▼ 90% in the text). The damage per shot is the text value times two dual-wield hits, and in the game 10 pellets (each value × 2 ÷ 10) roll critical and core independently (the decomposition of the shots in Full Burst in V-0848; the model holds 2 hits × 10 pellets with the same expectation). Ammo, reload, core hit rate and the first-shot wait follow the base weapon (unchecked)"
+            "ja": "変更後の武器のレートは CDN の changeWeapon（144rpm。説明文の攻撃速度 90%▼ と同じ）。1 発のダメージは説明文の値 × 二丁持ちの 2 ヒットの和で、ゲームでは 10 ペレット（1 ペレットは値 × 2 ÷ 10）が独立に会心・コアを決める（V-0848 のフルバーストの中の発の分解。モデルは 2 ヒット × 10 ペレットで持ち、期待値は同じ）。ペレットの当たりとコアに当たる割合は的の表の変更後の武器の行（41:burst。C-1510）。残弾・リロード・最初の発の待ちは基礎の武器の扱いのまま（確かめていない）",
+            "en": "The changed weapon fires at the CDN changeWeapon rate (144 rpm, matching Attack Speed ▼ 90% in the text). The damage per shot is the text value times two dual-wield hits, and in the game 10 pellets (each value × 2 ÷ 10) roll critical and core independently (the decomposition of the shots in Full Burst in V-0848; the model holds 2 hits × 10 pellets with the same expectation). The pellet hit rate and the core hit rate come from the changed-weapon row of the target table (41:burst; C-1510). Ammo, reload and the first-shot wait follow the base weapon (unchecked)"
           },
           "claims": [
-            "C-1500"
+            "C-1500",
+            "C-1510"
           ]
         },
         {

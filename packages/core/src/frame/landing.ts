@@ -663,6 +663,36 @@ export function hitRateSpanWith(
 }
 
 /**
+ * 区間 span の使用武器の変更の発（的の表の変更後の武器の行の鍵 rowKey）の弾丸命中率とコアの命中の期待値。hitRateSpanWith の配分を
+ * weaponChangeParts で変更後の武器の行に替える（2 パス目の slotTriggerDamage と同じ式。plan/design-k.md 2.5 節）。行の無い変更は undefined
+ */
+export function weaponChangeHitRateWith(
+  plan: LandingPlan,
+  enemy: EnemyInput,
+  slot: Pick<TeamSlotInput, 'condition' | 'character'>,
+  slotIndex: number,
+  span: LandingHitRateSpan,
+  rowKey: string,
+  timed: HitRateN,
+): { hitRate: number; coreHits: number } | undefined {
+  if (
+    (enemy.target?.coreHitRate.weaponChanges?.[rowKey] ?? null) === null &&
+    (enemy.target?.bulletHitRate.weaponChanges?.[rowKey] ?? null) === null
+  )
+    return undefined;
+  const constant = plan.hitRate[slotIndex] ?? ZERO_HIT_RATE;
+  const parts = weaponChangeParts(
+    enemy,
+    landingPartsWith(plan, slot, slotIndex, span.landing ?? null, {
+      n: constant.n + timed.n,
+      up: constant.up + timed.up,
+    }),
+    rowKey,
+  );
+  return { hitRate: mixedHitRate(parts), coreHits: mixedCoreHits(parts) };
+}
+
+/**
  * 条件の配分で 1 トリガーの値を出す。配分が 1 つならそのまま computeTriggerDamage（手入力と 1 の位まで同じ）、
  * 複数なら Σ w_k × T_k（攻撃力・バフなど条件に依らない項目は同じ値）
  */

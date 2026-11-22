@@ -1,7 +1,7 @@
 // 1 パス目（../firstPass.ts の runFirstPassOnce）のゲージの量（plan/design-split-first-pass.md 3.4 節）: 枠ごとのゲージ速度（時間で変わる
 // 速度の枠はフレームごとに出し直す）・発のゲージ・命中とコアの命中・ペレット・障害物のゲージ・ヒットごとのゲージの 1 ヒットの量。
 import { SG_PELLET_GAUGE_HIT_RATE, energyPerTrigger, fullChargeGaugeOf } from '../../burst/dynamic.ts';
-import { pelletsPerShot } from '../../skills/buffs.ts';
+import { ZERO_HIT_RATE, pelletsPerShot } from '../../skills/buffs.ts';
 import { muzzleHitsOf } from '../../weapons.ts';
 import type { LandingHitRateSpan } from '../landing.ts';
 import type { FirstPassBase } from './base.ts';
@@ -105,10 +105,21 @@ export function createGauge({ controlledSlot, lists, options, passive, slots }: 
     timedGauge[i] ? obstacleBases[i]! * gaugeScale[i]! : obstacleEnergies[i]!;
   // 発ごとの命中・コアの命中の期待値（plan/design-ludmilla-wo.md 2.2・2.3 節）。
   // 区間はゲージと同じ値（常時の命中率▲ + 効いている持続の▲）。SG の命中は 1 トリガーを 1 回（ペレットのどれかが当たる）
+  // 使用武器の変更の発（rowKey は的の表の変更後の武器の行の鍵）は、行があればその値（plan/design-k.md 2.5 節）
   const enemyHasCore = options.enemyHasCore ?? true;
-  const hitsAt = (i: number, f: number): { hits: number; coreHits: number } => {
+  const weaponChangeSpanAt = (
+    i: number,
+    f: number,
+    rowKey: string,
+  ): { hitRate: number; coreHits: number } | undefined => {
+    const span = spanAt(i, f);
+    if (span === undefined || options.weaponChangeHitRateWith === undefined) return undefined;
+    const timed = options.hitRateWith !== undefined && lists.hasHitTracks ? lists.hitRateAt(i, f) : ZERO_HIT_RATE;
+    return options.weaponChangeHitRateWith(i, span, rowKey, timed);
+  };
+  const hitsAt = (i: number, f: number, rowKey?: string): { hits: number; coreHits: number } => {
     const slot = slots[i]!;
-    const span = spanValueAt(i, f);
+    const span = (rowKey === undefined ? undefined : weaponChangeSpanAt(i, f, rowKey)) ?? spanValueAt(i, f);
     const hitRate = span?.hitRate ?? slot.hitRate ?? 1;
     const coreHits = span !== undefined ? span.coreHits : (slot.hitRate ?? 1) * (slot.coreHitRate ?? 0);
     // 二丁持ちは 1 発 2 ヒット（命中・コアの命中の期待値もヒットごと）

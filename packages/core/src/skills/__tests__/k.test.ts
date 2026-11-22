@@ -1,6 +1,9 @@
 // K の編（plan/design-k.md 2.2・2.4 節）: 当たったペレットのクリティカルの回数 critPelletHit（1 発で何回も発火する）と、二丁持ちでも
-// マガジンに 1 回の最後の弾丸 lastShotOnce の読み込みと数え方
+// マガジンに 1 回の最後の弾丸 lastShotOnce の読み込みと数え方、的の表の変更後の武器の行を 1 パス目の数えにも使うこと（2.5 節）
 import { describe, expect, it } from 'vitest';
+import type { EnemyInput } from '../../damage.ts';
+import { planTeamRun } from '../../frame/plan.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from '../../__tests__/teamHelpers.ts';
 import { parseSkillDefinition } from '../parse/definition.ts';
 import { createFireCounter, shotCountWeight, type FrameEvents, type ShotEvent } from '../triggers.ts';
 
@@ -90,5 +93,43 @@ describe('lastShotOnce', () => {
     expect(() => parse([{ ...timed, trigger: { count: 'lastShotOnce', firesDuring: 'fullBurst' } }])).toThrow(
       /cannot be used with lastShotOnce/,
     );
+  });
+});
+
+// 的の表の変更後の武器の行（41:burst）を、1 パス目の発の命中・コアの命中の期待値も引く（plan/design-k.md 2.5 節）
+describe('変更後の武器の発の命中の期待値（1 パス目）', () => {
+  const auto = { conditionMode: 'auto' } as const;
+  const team = (enemy: EnemyInput) =>
+    fixedTeam([fixedSlot(304, auto), fixedSlot(20, auto), fixedSlot(41, auto)], 2, { enemy });
+  const withRow = rangeEnemyWithEvents();
+  const target = withRow.target!;
+  const dropRow = <T extends { weaponChanges?: Readonly<Record<string, unknown>> }>(table: T): T => {
+    const { '41:burst': _, ...rest } = table.weaponChanges ?? {};
+    return { ...table, weaponChanges: rest };
+  };
+  const withoutRow = rangeEnemyWithEvents({
+    target: { ...target, coreHitRate: dropRow(target.coreHitRate), bulletHitRate: dropRow(target.bulletHitRate) },
+  });
+  const on = planTeamRun(team(withRow));
+  const off = planTeamRun(team(withoutRow));
+  const k = on.shots[2]!;
+  const kOff = off.shots[2]!;
+  const changed = new Set(k.weaponChangeShotFrames);
+
+  it('takes the hits and core hits of the changed weapon from the row, and leaves the base weapon as it was', () => {
+    expect(k.frames).toEqual(kOff.frames);
+    expect(changed.size).toBeGreaterThan(0);
+    const changedAt = k.frames.flatMap((f, i) => (changed.has(f) ? [i] : []));
+    const baseAt = k.frames.flatMap((f, i) => (changed.has(f) ? [] : [i]));
+    // 中近の 1 回目のフルバースト: 行の中近の値（二丁持ちで 2 ヒット）
+    const first = changedAt[0]!;
+    const bullet = target.bulletHitRate.weaponChanges!['41:burst']!.midNear!;
+    const core = target.coreHitRate.weaponChanges!['41:burst']!.midNear!;
+    expect(k.hits![first]).toBeCloseTo(bullet * 2, 12);
+    expect(k.coreHits![first]).toBeCloseTo(bullet * core * 2, 12);
+    expect(kOff.hits![first]).toBeGreaterThan(k.hits![first]!);
+    // 当たったペレットのクリティカルは shotCount（10）× 弾丸命中率 × 会心率
+    expect(k.critPellets![first]! / kOff.critPellets![first]!).toBeCloseTo(k.hits![first]! / kOff.hits![first]!, 12);
+    for (const i of baseAt) expect(k.hits![i]).toBe(kOff.hits![i]);
   });
 });

@@ -118,6 +118,17 @@ export type FirstPassOptions = {
    */
   hitRateWith?: (slotIndex: number, span: LandingHitRateSpan, timed: HitRateN) => { hitRate: number; coreHits: number };
   /**
+   * plan/design-k.md 2.5 節: 枠 slotIndex の区間 span の使用武器の変更の発（的の表の変更後の武器の行の鍵 rowKey）の弾丸命中率とコアの
+   * 命中の期待値（frame/landing.ts の weaponChangeHitRateWith。timed は持続の命中率▲▼の和）。行の無い変更は undefined（区間の値のまま）。
+   * 省略なら変更後の武器の発も区間の値のまま
+   */
+  weaponChangeHitRateWith?: (
+    slotIndex: number,
+    span: LandingHitRateSpan,
+    rowKey: string,
+    timed: HitRateN,
+  ) => { hitRate: number; coreHits: number } | undefined;
+  /**
    * 条件 inEffectiveRange の判定（skills/holders.ts の
    * HolderListsOptions.effectiveRangeAt にそのまま渡す。frame/landing.ts の inEffectiveRangeAt。plan/design-agent-bunny.md 2.2 節）
    */
