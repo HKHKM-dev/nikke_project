@@ -26,7 +26,6 @@ function deps(over: Partial<PartyInputDeps> = {}): PartyInputDeps {
       index: new Set(),
       indexError: null,
       fullySupported: null,
-      supportGaps: null,
       definitions: new Map(),
       errors: new Map(),
     },

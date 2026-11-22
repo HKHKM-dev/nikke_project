@@ -3190,9 +3190,4 @@ export type SkillSupportIndex = {
   formatVersion: 1;
   /** すべてのスロットに未実装が無いキャラ（昇順） */
   fullySupported: number[];
-  /** 完全対応でないキャラ（resourceId の文字列）の、未対応・仮定の件数 */
-  gaps: Record<string, SkillSupportGap>;
 };
-
-/** 完全対応でないキャラの、未対応（unimplemented の notes）と仮定（assumes のある効果）の件数（skills/support.ts） */
-export type SkillSupportGap = { unimplemented: number; assumed: number };
