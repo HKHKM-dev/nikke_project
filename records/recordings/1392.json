@@ -1,0 +1,46 @@
+{
+  "id": "1392",
+  "date": "2026-11-22",
+  "folder": "range",
+  "file": "20261122-1392_jackal-guren-gd.mp4",
+  "original": "2026-11-22_21-18-02.mp4",
+  "durationSec": 201.4,
+  "frames": 12083,
+  "fps": 60,
+  "sizeMB": 244.1,
+  "sha256": "4dc4391410db",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 111,
+      "name": "ジャッカル",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": true
+    },
+    {
+      "slot": 3,
+      "rid": 472,
+      "name": "紅蓮：神殺",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0869 の撮影。ジャッカル（I・AI）・デルタ（II・操作・オート射撃 ON）・紅蓮：神殺（III・AI）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-22T21:24+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
