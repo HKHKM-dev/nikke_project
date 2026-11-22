@@ -1,0 +1,46 @@
+{
+  "id": "1378",
+  "date": "2026-11-22",
+  "folder": "range",
+  "file": "20261122-1378_kurumi-belortapw-raven.mp4",
+  "original": "2026-11-22_17-14-19.mp4",
+  "durationSec": 177.9,
+  "frames": null,
+  "fps": 60,
+  "sizeMB": 215.9,
+  "sha256": "75244fb26c88",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 862,
+      "name": "クルミ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 63,
+      "name": "ベロータ：パンプキンウィッチ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 851,
+      "name": "レイヴン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "戦闘の終わりの約 15 秒前で録画が切れている（戦闘履歴のパネルなし）",
+  "backup": {
+    "at": "2026-11-22T17:27+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
