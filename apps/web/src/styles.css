@@ -1053,17 +1053,20 @@ svg.roster-revert-icon {
   visibility: hidden;
 }
 /* 着くまでと、持ち上げている間・戻る間は、立ち絵の場所に空のスロットの枠を出す（ModernSlotCard。動く写しの中では出さない） */
+/* 枠は、立ち絵の枠と同じ幅の箱の中で flex で真ん中に置く。left: 50% と translate で寄せると、端数の位置のまま描かれ、
+   手を離して元の空のスロットの枠に替わったときに、枠が 1px ほど横にずれて見える（オーナーの指摘） */
 .modern-slot-arrival-face {
   display: none;
   position: absolute;
   top: 0;
-  left: 50%;
-  translate: -50% 0;
+  left: 0;
+  right: 0;
+  justify-content: center;
 }
 .modern-slot-card.modern-slot-arriving .modern-slot-arrival-face,
 .modern-slot-card.modern-slot-dragging .modern-slot-arrival-face,
 .modern-slot-card.drag-source-returning .modern-slot-arrival-face {
-  display: block;
+  display: flex;
   visibility: visible;
 }
 /* 空のスロットを持ち上げている間と戻る間は、元の場所に空のスロットの枠をそのまま出す */
