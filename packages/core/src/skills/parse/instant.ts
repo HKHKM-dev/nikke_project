@@ -179,6 +179,9 @@ function parseInstantTrigger(v: Record<string, Json>, kind: InstantKind, path: s
       // 勇者レベルアップの効果（plan/design-guillotine-ws.md 2.2 節）
       counterUp: kind === 'heal' || kind === 'ammoRefill',
     });
+  // 弾丸チャージの発火の窓はフルバーストだけ（plan/design-privaty-um-s2-full-burst.md 2.2 節）
+  if (kind === 'ammoRefill' && isShotCountTrigger(trigger) && trigger.firesDuring === 'weaponChange')
+    fail(`${path}.trigger.firesDuring`, 'ammoRefill takes only the firing window "fullBurst"');
   // 残弾数減少は自分にだけ。きっかけは使用武器の変更の終わり（plan/design-skill-stage11.md 2.2 節）と、
   // バースト使用時（ジルのバースト。100% で残弾 0 になり、リロードを始める。plan/design-skill-stage17.md 2.2 節）
   if (

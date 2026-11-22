@@ -51,6 +51,9 @@ describe('語彙の検証', () => {
     expect(
       patched('skill2', REFILL, { trigger: { count: 'normalShot', every: 6, firesDuring: 'fullBurst' } }),
     ).not.toThrow();
+    expect(
+      patched('skill2', REFILL, { trigger: { count: 'normalShot', every: 6, firesDuring: 'weaponChange' } }),
+    ).toThrow(/only the firing window "fullBurst"/);
     expect(patched('skill2', REFILL, { trigger: { ...window, during: { state: 'modeB' } } })).toThrow(
       /needs a grant of the same state on self/,
     );

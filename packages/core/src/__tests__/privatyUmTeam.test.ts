@@ -85,5 +85,6 @@ describe('S2 のフルバースト中のペレット 30 回ごとの弾丸チャ
     const starts = [...new Set(attack.map((w) => w.start))].sort((a, b) => a - b);
     expect(starts.length).toBeGreaterThan(0);
     for (const s of starts) expect(refills.some((f) => s - f >= 0 && s - f <= 1)).toBe(true);
+    for (const f of refills) expect(starts.some((s) => s - f >= 0 && s - f <= 1)).toBe(true);
   });
 });
