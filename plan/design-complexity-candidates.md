@@ -2,7 +2,7 @@
 
 - 何のための文書か: `npm run code:survey` の分岐の多さ（`branch`）・長い関数（`long`）・同じ形の文の並び（`dup`）・一緒に変わるファイル（`cochange`）・読まれない export（`unused`）の結果から、作り替えの候補を選び、候補ごとのいまの形・読みにくさ・分け方・効果・危うさ・規模と、どれをするかの論点を書く
 - 対象: 3 節の候補（`frame/firstPass/shooters.ts`・`frame/firstPass/gaugeEffects.ts`・`skills/holders/views.ts`・`skills/holders/fire.ts`・`skills/burstDamage.ts`・`tools/captures/aim-lib.ts`・`tools/captures/` の重なり）。計算の中身と結果は変えない
-- 状態: 起案（5 節の論点がオーナーの判断待ち）
+- 状態: 実装中（5.1 節の決定。段は 6 節）
 - 関連: [design-split-first-pass.md](design-split-first-pass.md)（1 パス目の分割。確かめ方の 6 節をこの文書の段でも使う）、[design-split-long-functions.md](design-split-long-functions.md)（パーサと画面の分割）、[design-catalog-doc-split.md](design-catalog-doc-split.md)、[design-unused-code-cleanup.md](design-unused-code-cleanup.md)（読まれない export の決定）、[design-workflow-simplification-17.md](design-workflow-simplification-17.md) 10 節（`code:survey`）
 - 作成日: 2026-11-22
 - 調べた時点: main の ad1a288d に、分岐の多さの節を足したブランチ（`claude/survey-complexity`）の道具で測った。行番号はその時点のファイルの行
@@ -226,6 +226,11 @@
 | 1 | どの候補をするか | 3 節の案 A〜G から選ぶ | **推奨: 案 A・B・C・G**（この順に PR を分ける）。A は分岐も行数も上位で、語彙を足す PR が毎月触る所。B・C は閉包が長いだけで分岐は少ないが、仕組みの境目がはっきりしていて、分けると読む範囲が半分以下になる。G は小さく危うさがほとんど無い。D は分けても 100 行近く残り、E は数字ほど読みにくくなく衝突が増え、F は確かめに録画が要るわりに変更が少ないので見送る |
 | 2 | 案 A〜C の確かめ方 | a: [design-split-first-pass.md](design-split-first-pass.md) 6 節と同じ（結果の一致・エラーの一致・速さ・移したことの確かめ）・b: テストの全件と生成物の差分なしだけ | **推奨: 案 a**。1 パス目の毎フレームの所を動かすので、`SimResult` の JSON の一致と速さを見る。脚本はコミットせず、結果を PR の本文に書く |
 
+### 5.1 決めたこと（2026-11-22、オーナー）
+
+- 論点 1: 案 A・B・C・G をする（この順に PR を分ける）。案 D・E・F はしない。
+- 論点 2: 案 a（[design-split-first-pass.md](design-split-first-pass.md) 6 節と同じ確かめ方）。
+
 ## 6. 段
 
 承認された候補ごとに PR を 1 本ずつ出す（5 節の論点 1 の順）。各 PR の始めに、並行する PR とブランチを見て、同じファイルを書き換えている PR が無いかを確かめる。
@@ -238,4 +243,5 @@
 
 ## 8. 経過
 
-- 2026-11-22: 起案した。
+- 2026-11-22: 起案した。オーナーが論点 1 を案 A・B・C・G、論点 2 を案 a で承認した（5.1 節）。
+- 2026-11-22: 案 A を実装した。枠ごとの手順は `switchWeapon`・`blockAt`・`stepBlock`・`stepPause`・`advanceShooter`・`recordShot`（`critPelletsOf`・`shotGauge` を呼ぶ）を順に呼ぶ形になり、複雑度 93 → 11、192 行 → 18 行。いちばん大きい段は `recordShot`（71 行・27）で、見積もり（40 行前後）より長い。出来事と記録が命中・クリティカルの値を分け合い、これ以上分けると渡す値が 10 を超えるので止めた。撃たない区間を引く所は、毎フレームの所でオブジェクトを返さないよう、区間を返す `blockAt` と hide・unhide の `stepBlock` に分けた。
