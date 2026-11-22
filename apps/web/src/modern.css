@@ -70,7 +70,7 @@
 }
 :where(:root[data-app-ui='modern']) button {
   cursor: pointer;
-  /* マウスを乗せたときは、枠の色を変えず、細い青枠で囲む（styles.css の --hover-outline） */
+  /* マウスを乗せても、枠で囲む・枠の色を変えるといった表示はしない（オーナーの指示） */
   transition:
     border-color 0.15s,
     background 0.15s;
