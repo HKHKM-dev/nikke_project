@@ -28,9 +28,10 @@ import {
 import { observation, type Recipe, type RecipeContext } from './types.ts';
 
 /** 背景の作り方（aim.ts の既定） */
-const BG_STEP = 120;
+export const BG_STEP = 120;
 
-function intOption(ctx: RecipeContext, key: string, fallback: number | undefined): number | undefined {
+/** --opt の 0 以上の整数（無ければ fallback） */
+export function intOption(ctx: RecipeContext, key: string, fallback: number | undefined): number | undefined {
   const raw = ctx.options[key];
   if (raw === undefined) return fallback;
   const v = Number(raw);
@@ -38,11 +39,21 @@ function intOption(ctx: RecipeContext, key: string, fallback: number | undefined
   return v;
 }
 
-async function measure(ctx: RecipeContext, from: number, to: number, step: number): Promise<MidfarRow[]> {
+/**
+ * 測る範囲を step ごとに aim.ts と同じ部品で測り、的の外接矩形の列を返す（far-landing も使う）。測定は
+ * derived/<録画 id>/<prefix>-target@1_… にキャッシュする
+ */
+export async function measureTargetRows(
+  ctx: RecipeContext,
+  prefix: string,
+  from: number,
+  to: number,
+  step: number,
+): Promise<MidfarRow[]> {
   const sha = 'sha256' in ctx.recording ? ctx.recording.sha256 : undefined;
   const text = await derived(
     ctx.derivedDir,
-    `midfar-target@1_f${from}-${to}_s${step}`,
+    `${prefix}-target@1_f${from}-${to}_s${step}`,
     ctx.video,
     sha,
     async () => {
@@ -83,7 +94,7 @@ export const midfarLanding: Recipe = {
     const step = intOption(ctx, 'step', 30)!;
     const start = intOption(ctx, 'start', undefined);
     if (to <= from || step <= 0) throw new Error(`測る範囲が空: f${from}〜${to}・${step}f ごと`);
-    const rows = await measure(ctx, from, to, step);
+    const rows = await measureTargetRows(ctx, 'midfar', from, to, step);
     const s = summarizeMidfar(rows, start ?? undefined);
     if (start === undefined && s.start === undefined)
       throw new Error(`足元が ${FOOT.min}〜${FOOT.max} のコマが 3 つ続かない`);
