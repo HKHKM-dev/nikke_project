@@ -1,0 +1,52 @@
+{
+  "id": "1373",
+  "date": "2026-11-22",
+  "folder": "range",
+  "file": "20261122-1373_chime-team.mp4",
+  "original": "2026-11-22_16-27-11.mp4",
+  "durationSec": 201.3,
+  "frames": 12076,
+  "fps": 60,
+  "sizeMB": 244,
+  "sha256": "d6cc65c6fdbf",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 331,
+      "name": "チャイム",
+      "controlled": true
+    },
+    {
+      "slot": 3,
+      "rid": 330,
+      "name": "クラウン",
+      "controlled": false
+    },
+    {
+      "slot": 4,
+      "rid": 110,
+      "name": "クロウ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0857。I-DOLL・フラワー（I）+ チャイム（II・操作）+ クラウン（II）+ クロウ（III）。スペック固定 ON・オート射撃 ON・オートバースト ON",
+  "backup": {
+    "at": "2026-11-22T16:35+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
