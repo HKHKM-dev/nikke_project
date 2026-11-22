@@ -507,8 +507,9 @@ describe('オート射撃 OFF の時間（holdFire。V-0605 の撮影の形）',
   it('keeps both uses through Full Burst, then removes Fully Active on the first shot outside it (S1 line 6)', () => {
     const own = fa.filter((i) => i.start === 299);
     expect(own.map((i) => i.end)).toEqual([after[0]! + 2, after[0]! + 2]);
-    // ハイドの明けから構え 11f + 3.2 秒のチャージ 189f（C-0232 の形）。外れた後は 1.2 秒の溜め
-    expect([after[0]! - 908, after[1]! - after[0]!, after[2]! - after[1]!]).toEqual([200, 94, 94]);
+    // ハイドの明けから構え 11f + 3.2 秒のチャージ 189f（C-0232 の形）を、手で ON に戻した明けは 7f 短くする（C-1550。
+    // 録画は 194f。0860-09 の説明）。外れた後は 1.2 秒の溜め
+    expect([after[0]! - 908, after[1]! - after[0]!, after[2]! - after[1]!]).toEqual([193, 94, 94]);
   });
 
   it('keeps Fully Active for the second shot when S1 line 6 is dropped (H0 of V-0605: 212 f)', () => {

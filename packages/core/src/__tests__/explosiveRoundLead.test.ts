@@ -95,9 +95,9 @@ describe('leadFrames in the first pass (Bestie: Tactical Upgrade S2 on Explosive
     runSimulation({ ...input, holdFire: [{ slotIndex: BESTIE, ranges: [{ start: 0, end: frames }] }] });
 
   it.each([
-    { hold: 5, lead: 3, up: 0 },
-    { hold: 6, lead: 2, up: PROJECTILE_UP },
-    { hold: 7, lead: 1, up: PROJECTILE_UP },
+    { hold: 12, lead: 3, up: 0 },
+    { hold: 13, lead: 2, up: PROJECTILE_UP },
+    { hold: 14, lead: 1, up: PROJECTILE_UP },
   ])('a full charge $lead frames before the round gets the up: $up', ({ hold, lead, up }) => {
     const r = shifted(hold);
     const round = r.shots[EUNHWA]!.weaponChangeShotFrames![0]!;

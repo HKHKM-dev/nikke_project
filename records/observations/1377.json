@@ -825,5 +825,46 @@
     },
     "source": "V-0860",
     "readAt": "2026-11-22"
+  },
+  {
+    "id": "1377-22",
+    "recording": "1377",
+    "use": "compare",
+    "kind": "interval",
+    "unit": "f",
+    "value": [6, 6, 6, 6, 6, 4],
+    "description": "ブリッド（AR・単騎・操作）のオート射撃を手で ON にした（1377-02）6 回の、ボタンが点いたフレームから最初の発までの動画のフレーム数",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "method": {
+      "tool": "ffmpeg（左上のボタンの切り出し）・hud.ts --mode jumps",
+      "note": "ON は画面左上の照準の印（1920×1080 の 10,12 から 40×40）のオレンジの画素（R>180・B<110・R−B>100）が 40 個を超えたフレーム（0105-06 と同じ）。ON は 1377-01、最初の発は 1377-04 の読み（ON から数えた 1 発目の HUD の増分。単騎なので発と同じフレーム）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "holdFireEndToNextShot",
+      "args": {
+        "slot": 1,
+        "n": "0,1,2,3,4,5"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "jumpWindows": "1377-03",
+        "holdFire": [
+          {
+            "slot": 1,
+            "frames": "1377-02"
+          }
+        ]
+      }
+    },
+    "source": "V-0865",
+    "readAt": "2026-11-22"
   }
 ]

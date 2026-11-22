@@ -713,11 +713,12 @@ function settleHide(state: ShooterState, shot: ShotParams, model: WeaponModel, p
  *   チャージ武器は戦闘開始と同じ待ち）の長いほう。入力が UP のチャージ武器は、ゲームのリロードの完了がモデルの完了より構え解除のぶん遅く、
  *   完了からも戦闘開始と同じ待ちで撃つ（C-0537）。完了が窓の終わりの構え解除の長さより前なら明けから、近ければ残りの待ちで撃つ
  *   （V-0135。071 の 1 回目の明け）。
+ * - オート射撃を手で ON に戻した明け（holdFire の区間の終わり）は、明けからの待ちを shorterFrames だけ短くする（C-1550）。
  * - 弾切れのリロード中はそのまま続ける
  */
 /**
  * 窓の明けに、止まっていた（ready の）枠が 1 発目を撃つまで（フレーム）。チャージ武器は構え + チャージ（入力が UP の RL は 1f 短い。
- * C-0229）、そうでない武器は構え（C-0114）。unhideShooter と、着地の後の照準の注記（frame/landing.ts。plan/design-landing-aim.md）で使う
+ * C-0229）、そうでない武器は構え（C-0114）。unhideShooter（reaimShooter）で使う
  */
 export function windowEndFirstShotFrames(
   shot: ShotParams,
@@ -734,6 +735,7 @@ export function unhideShooter(
   stoppedFrames: number,
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
+  shorterFrames = 0,
 ): void {
   delete state.hidePending;
   if (state.hideReload) {
@@ -744,12 +746,13 @@ export function unhideShooter(
       state.wait = 0;
     }
   }
-  reaimShooter(state, shot, stoppedFrames, model, params);
+  reaimShooter(state, shot, stoppedFrames, model, params, shorterFrames);
 }
 
 /**
  * 止まっていた射手の構え直し（狙えない窓の明けの後半と、バーストの発動の止まりの明け。plan/design-privaty-burst-pause.md
- * 論点 4）。リロード中なら何もしない。止まりが長ければレートの蓄積を戻し、チャージ武器はチャージし直し、ほかは構えから撃つ
+ * 論点 4）。リロード中なら何もしない。止まりが長ければレートの蓄積を戻し、チャージ武器はチャージし直し、ほかは構えから撃つ。
+ * shorterFrames は 1 発目を窓の明けより早く撃つフレーム（オート射撃を手で ON に戻した明け。weapons.ts の holdFireAimShorterFrames。C-1550）
  */
 export function reaimShooter(
   state: ShooterState,
@@ -757,6 +760,7 @@ export function reaimShooter(
   stoppedFrames: number,
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
+  shorterFrames = 0,
 ): void {
   delete state.lastShotReload;
   if (state.phase === 'reloading') return;
@@ -769,7 +773,7 @@ export function reaimShooter(
   // リロードの完了が窓の終わりに近く、残りの待ちのほうが長ければそちら。C-0537。押下チャージ型は確かめていない）
   delete state.chargeElapsed;
   // 入力が UP の RL は、明けの構えが戦闘開始より 1f 短い（C-0229。V-0143）。チャージの無い武器は構え（C-0114）
-  const first = windowEndFirstShotFrames(shot, model, params);
+  const first = Math.max(0, windowEndFirstShotFrames(shot, model, params) - shorterFrames);
   const keep = isChargeWeapon(shot)
     ? state.phase === 'priming' && shot.inputType !== 'DOWN_Charge'
     : state.phase !== 'ready';
