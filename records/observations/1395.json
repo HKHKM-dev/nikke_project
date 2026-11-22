@@ -1,0 +1,172 @@
+[
+  {
+    "id": "1395-01",
+    "recording": "1395",
+    "kind": "timing",
+    "use": "record",
+    "value": [1713, 3456, 5180, 6718, 8272, 10001],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25・25・25f"
+    },
+    "source": "V-0871",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1395-02",
+    "recording": "1395",
+    "kind": "timing",
+    "use": "record",
+    "value": [1742, 5209, 8301],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25f"
+    },
+    "source": "V-0871",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1395-03",
+    "recording": "1395",
+    "kind": "count",
+    "use": "record",
+    "value": [7, 9, 7],
+    "description": "アリアのバーストの命中率▲の窓の中のリロードの明けの撃ち始め 3 回の、1 回ごとの最初の 40 ヒット（格子に乗ったもの）のうち胴体のヒットの数（撃ち始めのフレーム順: 1946・5561・8544）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/reticle-ammo.ts --mode series --max 300 と使い捨てのスクリプト",
+      "note": "V-0871「読み方」。窓は 1395-02（II → III の替わり目）から 882f"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0871",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1395-04",
+    "recording": "1395",
+    "kind": "count",
+    "use": "record",
+    "value": [8, 9, 11, 11, 7, 11, 9, 11, 10, 10, 9, 10],
+    "description": "命中率▲の窓の外のリロードの明けの撃ち始め 12 回の、1 回ごとの同じ数え方の胴体のヒットの数（撃ち始めのフレーム順: 1397・3200・3748・4295・5012・6108・6691・7410・7957・9803・10351・10898）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/reticle-ammo.ts --mode series --max 300 と使い捨てのスクリプト",
+      "note": "V-0871「読み方」。窓は 1395-02（II → III の替わり目）から 882f。窓をまたぐ回（2493・9055）は除いた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0871",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1395-05",
+    "recording": "1395",
+    "kind": "count",
+    "use": "record",
+    "value": [12, 11, 12, 12, 12, 10, 11, 8, 9, 8, 8, 2, 0, 1, 0, 0],
+    "description": "命中率▲の窓の外のリロードの明けの撃ち始め 12 回の、ヒット順（1〜16 ヒット目）ごとの胴体のヒットの回数",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/reticle-ammo.ts --mode series --max 300 と使い捨てのスクリプト",
+      "note": "V-0871「読み方」。窓は 1395-02（II → III の替わり目）から 882f"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0871",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1395-06",
+    "recording": "1395",
+    "kind": "count",
+    "use": "record",
+    "value": [3, 3, 3, 3, 3, 2, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0],
+    "description": "命中率▲の窓の中のリロードの明けの撃ち始め 3 回の、ヒット順（1〜16 ヒット目）ごとの胴体のヒットの回数",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/reticle-ammo.ts --mode series --max 300 と使い捨てのスクリプト",
+      "note": "V-0871「読み方」。窓は 1395-02（II → III の替わり目）から 882f"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0871",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1395-07",
+    "recording": "1395",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.9723,
+    "description": "アリアのバーストの命中率▲の窓（15 秒）の中のアリアの 1 ヒットのうちコアの割合（1124 ÷ 1156）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series と使い捨てのスクリプト",
+      "note": "前のフレームも読めた HUD の増分を、アリアの 1 ヒットの格子（V-0871「読み方」）に ±3 で当て、乗ったもののうちコアの割合。V-0871「読み方」。窓は 1395-02（II → III の替わり目）から 882f。許容 ±0.02（V-0834 の 1311-18 と同じ）。標準誤差 0.0048"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 3,
+        "frame": 1300
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0871",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1395-08",
+    "recording": "1395",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.9579,
+    "description": "命中率▲の窓の外のアリアの 1 ヒットのうちコアの割合（3821 ÷ 3989）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series と使い捨てのスクリプト",
+      "note": "同じ格子で窓の外（戦闘開始とジャンプの明けの撃ち始めを含む）。許容 ±0.02。標準誤差 0.0032"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 3,
+        "frame": 2400
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0871",
+    "readAt": "2026-11-22"
+  }
+]

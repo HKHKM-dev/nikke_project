@@ -5,7 +5,7 @@
   "topic": "命中率・距離",
   "grade": "反復実測",
   "basis": "verification.md Stage 18-B「撮影 1」（クルミ・N = 0.0509。倍率 1.076、95% 信頼区間 1.013〜1.144）・Stage 18-A「照準円と命中率▲」（旧のクエンシー：エスケープクイーン・N = 0.494 で 0.514 と 0.520）",
-  "model": "`frame/landing.ts` の `coreHitRateWithHitRateUp`（条件が自動の枠。持続の▲は C-0170 で `landingPartsWith` が区間ごとに足す）。銃口 1 つの SMG の近（近 A・近 B）は、この式ではなく指数・和（1 − (1 − p)^(1 ÷ (1 − N)²)。C-1109。仮説。`frame/landing.ts` の `coreHitRateUpIsExponent`）で上げる（plan/design-smg-near-core.md 4 節の案 3A。この結論の文は変えない）",
+  "model": "`frame/landing.ts` の `coreHitRateWithHitRateUp`（条件が自動の枠。持続の▲は C-0170 で `landingPartsWith` が区間ごとに足す）。銃口 1 つの SMG の近（近 A・近 B）は、この式ではなく指数・和（1 − (1 − p)^(1 ÷ (1 − N)²)。C-1109。仮説。`frame/landing.ts` の `coreHitRateUpIsExponent`）で上げる（plan/design-smg-near-core.md 4 節の案 3A。この結論の文は変えない）。MG は、表の外れを撃ち始めの外れとみて、撃ち始めのヒット順の胴体の割合に 1 ヒットずつこの式を当てて縮める（C-1554。`frame/landing.ts` の `startBodyHitRateUp`。plan/design-mg-hit-rate-up.md 2 節）",
   "replaces": [],
   "updated": "2026-11-14",
   "subject": {

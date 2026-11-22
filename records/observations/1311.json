@@ -409,5 +409,77 @@
     },
     "source": "V-0834",
     "readAt": "2026-11-21"
+  },
+  {
+    "id": "1311-20",
+    "recording": "1311",
+    "kind": "count",
+    "use": "record",
+    "value": [9, 8, 8, 7, 5, 10, 8],
+    "description": "アリアのバーストの命中率▲の窓の中のリロードの明けの撃ち始め 7 回の、1 回ごとの最初の 40 ヒットのうち胴体のヒットの数（撃ち始めのフレーム順: 1437・2006・3880・4450・6188・6757・9111）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/reticle-ammo.ts --mode series --max 300 と使い捨てのスクリプト",
+      "note": "V-0834 の読み方（1311-14 と同じ格子・撃ち始め・窓）。和は 1311-14・1311-15 と同じになる"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0871",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1311-21",
+    "recording": "1311",
+    "kind": "count",
+    "use": "record",
+    "value": [11, 8, 8, 8, 10, 7, 11, 11, 10],
+    "description": "命中率▲の窓の外のリロードの明けの撃ち始め 9 回の、1 回ごとの同じ数え方の胴体のヒットの数（撃ち始めのフレーム順: 2553・3354・5138・5662・7446・7993・9842・10390・10938）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/reticle-ammo.ts --mode series --max 300 と使い捨てのスクリプト",
+      "note": "V-0834 の読み方（1311-14 と同じ格子・撃ち始め・窓）。和は 1311-14・1311-15 と同じになる"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0871",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1311-22",
+    "recording": "1311",
+    "kind": "count",
+    "use": "record",
+    "value": [9, 9, 9, 7, 9, 8, 9, 8, 6, 5, 3, 2, 0, 0],
+    "description": "命中率▲の窓の外のリロードの明けの撃ち始め 9 回の、ヒット順（1〜14 ヒット目）ごとの胴体のヒットの回数。15 ヒット目から後は 0",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/reticle-ammo.ts --mode series --max 300 と使い捨てのスクリプト",
+      "note": "V-0834 の読み方（1311-14 と同じ格子・撃ち始め・窓）。和は 1311-14・1311-15 と同じになる"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0871",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1311-23",
+    "recording": "1311",
+    "kind": "count",
+    "use": "record",
+    "value": [6, 7, 7, 7, 7, 6, 5, 4, 5, 1, 0, 0, 0, 0],
+    "description": "命中率▲の窓の中のリロードの明けの撃ち始め 7 回の、ヒット順（1〜14 ヒット目）ごとの胴体のヒットの回数。15 ヒット目から後は 0",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/reticle-ammo.ts --mode series --max 300 と使い捨てのスクリプト",
+      "note": "V-0834 の読み方（1311-14 と同じ格子・撃ち始め・窓）。和は 1311-14・1311-15 と同じになる"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0871",
+    "readAt": "2026-11-22"
   }
 ]

@@ -1,0 +1,142 @@
+{
+  "verification": "V-0871",
+  "note": "撮影（ココア（1 枠目・I）+ 空き + アリア（3 枠目・II・操作）・III なし・オートバースト ON・灼熱の BigArms・3 分モード・スペック固定 ON）の予測。III がいないので、I → II のバーストの後に鎖が時間切れになり、フルバーストは起きない。撃ち始めの胴体のヒットの数はモデルが持たないので、検証記録の「予測」に手で書いた",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311
+    },
+    {
+      "slot": 3,
+      "rid": 432,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（バーストの自分の命中率▲は未対応で効かせない）"
+    },
+    {
+      "id": "H-hit",
+      "note": "バーストの自分の命中率▲（15 秒）を、コア命中率は C-0036 の式、弾丸命中率は H2 で、的の表の帯の平均に効かせる（V-0834 の撮る前の定義）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 432,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "hitRate",
+              "ref": 4,
+              "durationRef": 5
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "activation-slots",
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 9
+      },
+      "note": "バーストを撃った枠の並び（1 = ココア、3 = アリア）",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    {
+      "id": "activation-frames",
+      "model": "sim",
+      "metric": "burstActivationVideoFrames",
+      "args": {
+        "n": 9
+      },
+      "note": "発動の段の表示（六角形の替わり目）の動画のフレーム",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    {
+      "id": "aria-bursts",
+      "model": "sim",
+      "metric": "burstActivationCount",
+      "args": {
+        "slot": 3
+      },
+      "note": "アリアのバーストの回数（▲の窓の数）",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    {
+      "id": "hit-core-in",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 3,
+        "frame": 1300
+      },
+      "note": "アリアの 1 回目のバーストの▲の窓の中のコア命中率",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.02
+      }
+    },
+    {
+      "id": "hit-core-out",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 3,
+        "frame": 2400
+      },
+      "note": "▲の窓の外のコア命中率",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.02
+      }
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-22",
+    "commit": "ae5a78a031dd8334b1952cbfa877b859b4b969ca",
+    "values": {
+      "H1": {
+        "activation-slots": [1, 3, 1, 1, 3, 1, 1, 3, 1],
+        "activation-frames": [875, 904, 2666, 4322, 4351, 5959, 7376, 7405, 9162],
+        "aria-bursts": 3,
+        "hit-core-in": 0.965,
+        "hit-core-out": 0.9626
+      },
+      "H-hit": {
+        "activation-slots": [1, 3, 1, 1, 3, 1, 1, 3, 1],
+        "activation-frames": [875, 904, 2666, 4322, 4351, 5956, 7376, 7405, 9162],
+        "aria-bursts": 3,
+        "hit-core-in": 1,
+        "hit-core-out": 0.9626
+      }
+    }
+  }
+}

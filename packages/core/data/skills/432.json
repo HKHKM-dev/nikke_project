@@ -30,8 +30,8 @@
           "ref": 1,
           "durationRef": 2,
           "assumes": {
-            "ja": "「最後の弾丸」はマガジンの最後の 1 発で、いつも命中する（MG の外れは撃ち始めに集まり、最後の発には無いとみる。C-0780・C-1454）。付き直すと 5 秒から数え直す",
-            "en": "\"The last bullet\" is the last round of the magazine and always hits (MG misses cluster at the start of firing, not the last round; C-0780, C-1454). Re-applying restarts the 5 s"
+            "ja": "「最後の弾丸」はマガジンの最後の 1 発で、いつも命中する（MG の外れは撃ち始めに集まり、最後の発には無いとみる。C-0780・C-1557）。付き直すと 5 秒から数え直す",
+            "en": "\"The last bullet\" is the last round of the magazine and always hits (MG misses cluster at the start of firing, not the last round; C-0780, C-1557). Re-applying restarts the 5 s"
           },
           "claims": [
             "C-1453"
@@ -40,22 +40,25 @@
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "自分の命中率▲（15 秒）は定義していない。MG のアリアでは、窓の中でもリロードの明けの撃ち始めのコアの外れと外れた発が残り、命中率▲をコア命中率（C-0036 の式）と弾丸命中率（H2。C-0192）に効かせるモデルの形（窓の中はほぼ全部の発がコアに当たる）と合わない。どれだけ減らすかは決まっていない",
-          "en": "Hit Rate up on self (15 s) is not defined. On Aria (MG), core misses and missed shots at the start of firing after a reload remain inside the window, which does not match the model form applying Hit Rate up to core hit rate (C-0036) and bullet hit rate (H2; C-0192) (nearly every shot on the core inside the window). How much it reduces them is not determined",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "hitRate",
-            "target": "self",
-            "trigger": "burstUse"
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "hitRate",
+          "ref": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "コア命中率は、MG の表の外れを撃ち始めの外れとみて縮める形（C-1554）。弾丸命中率は H2（C-0192）で上げる（MG の表は 0.998 前後で、上がりは 0.2% 以下。撃ち始めの外れた発が窓の中で減るかは見分けていない。C-1557）",
+            "en": "Core hit rate shrinks the MG table misses as start-of-firing misses (C-1554). Bullet hit rate rises by H2 (C-0192; the MG table is about 0.998, so the rise is 0.2% or less; whether missed shots at the start of firing drop inside the window is not determined; C-1557)"
           },
           "claims": [
-            "C-1454"
+            "C-1554",
+            "C-1557"
           ]
-        },
+        }
+      ],
+      "notes": [
         {
           "ja": "味方全体へのバリア（スキル発動者の最終最大HP の X%・10 秒）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは味方がバリア適用状態にならない。バリアの量は要件 5.2 節の外）",
           "en": "The barrier on all allies (X% of the caster's final max HP, 10 s) does not change damage by itself (it matters only with an effect reading barriers in the team; this grant is not defined, so the model does not put allies in a barrier state; the barrier amount is out of scope, requirements 5.2)",
