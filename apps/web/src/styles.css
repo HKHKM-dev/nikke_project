@@ -1516,22 +1516,16 @@ svg.roster-revert-icon {
   inset: 0;
 }
 /* 属性・バースト段階・クラス・武器種・コレクションのバッジ（130×150 の六角形）を左上に縦に並べる。幅は --badge-w。
-   絵の枠（1px の枠線）に重ならないところまで左上に寄せる（枠線の内側の角に置く。オーナーの指示） */
+   絵の枠線（1px）からさらに 1px 内側に置く。水色の枠（2px。いまの編成にいるニケ・置き先待ちのニケ・置き先待ちのスロット）を重ねても
+   隠れない位置で、枠の有無で位置を変えない（オーナーの指示） */
 .char-visual-badges {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 1px;
+  left: 1px;
   display: flex;
   flex-direction: column;
   gap: 0;
   z-index: 2;
-}
-/* 水色の枠（2px。いまの編成にいるニケ・置き先待ちのニケ・置き先待ちのスロット）を重ねている間は、その枠の内側に置く */
-.char-tray-item-taken .char-visual-badges,
-.char-tray-item-pending .char-visual-badges,
-.modern-slot-card.modern-slot-awaiting .char-visual-badges {
-  top: 1px;
-  left: 1px;
 }
 .char-badge {
   display: block;
