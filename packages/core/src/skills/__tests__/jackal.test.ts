@@ -142,6 +142,7 @@ describe('data: which burstDamage get the oneEnemy mark', () => {
     }
     expect(marked).toEqual([
       '10',
+      '11',
       '70',
       '110',
       '131',

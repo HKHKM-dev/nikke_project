@@ -1,0 +1,68 @@
+{
+  "formatVersion": 1,
+  "resourceId": 11,
+  "checkedAt": "2026-11-22",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "敵を倒した時の、最終攻撃力が最も高い味方 2 機へのクリティカル確率▲（5 秒）は、射撃場の的が倒れないので起きない（敵 1 体の前提。要件 4.2 節）",
+          "en": "Crit Rate up for the 2 allies with the highest final ATK (5 s) when defeating an enemy does not occur, since the range target is never defeated (a single enemy; requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "critRate",
+            "target": "topAttack",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "critRate",
+          "ref": 1,
+          "durationShotsRef": 2,
+          "assumes": {
+            "ja": "「2 発間維持」は受け手ごとに、受け手の通常攻撃の 2 発目まで（ツバイの S1 の 1 発間維持と同じ数え方）。SG の受け手では、1 発の全部のペレットに乗る",
+            "en": "\"For 2 rounds\" is counted per recipient, lasting until the recipient's 2nd normal attack (the same counting as Zwei's S1 1-round duration). For an SG recipient, it applies to all pellets of the shot"
+          }
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "最終防御力が最も高い敵 1 機は、敵 1 体の前提でその敵",
+            "en": "The enemy with the highest final DEF is that enemy, given one enemy"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "targetWeapon": "SG",
+          "stat": "maxAmmo",
+          "scaling": "flat",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "SG を持つ味方全体に自分も入る（シュガーの S2 と同じ）。最大装弾数だけを上げ、付いた時に残弾は足さない（窓の中のリロードで上げた最大装弾数まで込め、切れた時に残弾が多ければ削る。C-0017 の形。レムのバーストと同じ）",
+            "en": "\"All allies with shotguns\" includes self (as Sugar's S2). Only the max ammo is raised and no rounds are added when it is applied (a reload inside the window fills up to the raised max, and when it ends the remaining ammo is clipped if above the max; the form of C-0017, as Rem's Burst)"
+          }
+        }
+      ],
+      "notes": []
+    }
+  }
+}

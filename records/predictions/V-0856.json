@@ -1,0 +1,317 @@
+{
+  "verification": "V-0856",
+  "note": "撮影の行 2（ネオン（I）+ ソルジャーF.A.（II）+ ソルジャーE.G.（III・操作）・オートバースト ON）の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。モデルはネオンのバーストが 180 秒に 9 回、フルバーストはソルジャーE.G. の CT（40 秒）で 1 回おきの 5 回（約 6.3・46.3・86.3・126.3・167.7 秒）。フレームの指定は 1 回目のネオンのバースト（310f）と 1 回目のフルバースト（372f〜）。ネオンのバーストの 1 ヒットは、単騎（行 1）でも同じ値",
+  "team": [
+    {
+      "rid": 11
+    },
+    {
+      "rid": 301
+    },
+    {
+      "rid": 300,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（バーストのバーストスキルダメージ。SG の味方全体（自分も入る）に最大装弾数 3 発▲・10 秒で、残弾は足さない。S2 はフルバーストの発動で味方全体にクリティカル確率 45.93%▲、受け手ごとに受け手の 2 発目の通常攻撃まで）"
+    },
+    {
+      "id": "H2",
+      "note": "最大装弾数▲が自分に付かない（SG の味方全体から自分を除く）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 11,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "excludeSelf": "always",
+              "targetWeapon": "SG",
+              "stat": "maxAmmo",
+              "scaling": "flat",
+              "ref": 3,
+              "durationRef": 4
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H3",
+      "note": "S2 のクリティカル確率▲が発数で切れず、フルバーストの 10 秒続く（「2 発間維持」を読まない）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 11,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "allies",
+              "stat": "critRate",
+              "ref": 1,
+              "durationSeconds": 10
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "neon-burst-hit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "rel": 0.005
+      },
+      "note": "ネオンのバーストの会心しない 1 ヒット（最終攻撃力の 528.97%）"
+    },
+    {
+      "id": "neon-max-ammo-in",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "窓の中のネオンの最大装弾数（H1 は 9 + 3、H2 は 9）。録画ではネオンの枠アイコンの上の「残弾/最大」"
+    },
+    {
+      "id": "fa-max-ammo-in",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 2,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "窓の中のソルジャーF.A. の最大装弾数（9 + 3）。録画ではソルジャーF.A. の枠アイコンの上の「残弾/最大」"
+    },
+    {
+      "id": "fa-max-ammo-after",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 2,
+        "frame": 1000
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "窓の後のソルジャーF.A. の最大装弾数"
+    },
+    {
+      "id": "neon-magazines",
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 1,
+        "count": 12
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "ネオンのマガジンの発数。窓の中で込め終えたマガジンだけが 9 発より多くなる"
+    },
+    {
+      "id": "fa-magazines",
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 2,
+        "count": 12
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "ソルジャーF.A. のマガジンの発数"
+    },
+    {
+      "id": "neon-crit-fb-1st",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 494
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.1
+      },
+      "note": "フルバーストの後のネオンの 1 発目（494f）の会心率（ペレットの会心の割合）"
+    },
+    {
+      "id": "neon-crit-fb-3rd",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 573
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.1
+      },
+      "note": "フルバーストの後のネオンの 3 発目（573f）の会心率"
+    },
+    {
+      "id": "fa-crit-fb-1st",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 2,
+        "frame": 468
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.1
+      },
+      "note": "フルバーストの後のソルジャーF.A. の 1 発目（468f）の会心率（ペレットの会心の割合）"
+    },
+    {
+      "id": "fa-crit-fb-3rd",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 2,
+        "frame": 547
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.1
+      },
+      "note": "フルバーストの後のソルジャーF.A. の 3 発目（547f）の会心率"
+    },
+    {
+      "id": "eg-crit-fb-1st",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 3,
+        "frame": 394
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.1
+      },
+      "note": "フルバーストの後のソルジャーE.G. の 1 発目（394f）の会心率"
+    },
+    {
+      "id": "eg-crit-fb-3rd",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 3,
+        "frame": 404
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.1
+      },
+      "note": "フルバーストの後のソルジャーE.G. の 3 発目（404f）の会心率"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-22",
+    "commit": "1959c5c156726ae66e0e4700ee0e56a8de841acd",
+    "values": {
+      "H1": {
+        "neon-burst-hit": 418420.5597,
+        "neon-max-ammo-in": 12,
+        "fa-max-ammo-in": 12,
+        "fa-max-ammo-after": 9,
+        "neon-magazines": [9, 12, 9, 18, 9, 12, 9, 12, 9, 12, 9, 14],
+        "fa-magazines": [9, 12, 9, 9, 11, 9, 12, 9, 12, 9, 12, 9],
+        "neon-crit-fb-1st": 0.6093,
+        "neon-crit-fb-3rd": 0.15,
+        "fa-crit-fb-1st": 0.6093,
+        "fa-crit-fb-3rd": 0.15,
+        "eg-crit-fb-1st": 0.6093,
+        "eg-crit-fb-3rd": 0.15
+      },
+      "H2": {
+        "neon-burst-hit": 418420.5597,
+        "neon-max-ammo-in": 9,
+        "fa-max-ammo-in": 12,
+        "fa-max-ammo-after": 9,
+        "neon-magazines": [9, 9, 9, 9, 9, 9, 9, 9, 12, 9, 9, 9],
+        "fa-magazines": [9, 12, 9, 9, 11, 9, 12, 9, 12, 9, 12, 9],
+        "neon-crit-fb-1st": 0.6093,
+        "neon-crit-fb-3rd": 0.15,
+        "fa-crit-fb-1st": 0.6093,
+        "fa-crit-fb-3rd": 0.15,
+        "eg-crit-fb-1st": 0.6093,
+        "eg-crit-fb-3rd": 0.15
+      },
+      "H3": {
+        "neon-burst-hit": 418420.5597,
+        "neon-max-ammo-in": 12,
+        "fa-max-ammo-in": 12,
+        "fa-max-ammo-after": 9,
+        "neon-magazines": [9, 12, 9, 18, 9, 12, 9, 12, 9, 12, 9, 14],
+        "fa-magazines": [9, 12, 9, 9, 11, 9, 12, 9, 12, 9, 12, 9],
+        "neon-crit-fb-1st": 0.6093,
+        "neon-crit-fb-3rd": 0.6093,
+        "fa-crit-fb-1st": 0.6093,
+        "fa-crit-fb-3rd": 0.6093,
+        "eg-crit-fb-1st": 0.6093,
+        "eg-crit-fb-3rd": 0.6093
+      }
+    }
+  }
+}
