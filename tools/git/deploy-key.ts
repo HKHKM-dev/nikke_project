@@ -1,4 +1,5 @@
-// 書き込みのできるデプロイキー（secret の GENERATED_DEPLOY_KEY。plan/design-pr-conflicts.md 5 節）で git の ssh を回す環境変数。
+// 書き込みのできるデプロイキー（environment の main-push の secret の GENERATED_DEPLOY_KEY。plan/design-pr-conflicts.md 5 節・
+// plan/design-deploy-key-scope.md 2 節）で git の ssh を回す環境変数。
 // CI の生成物の commit（ci-generated.ts）と、自動マージを待つ PR の衝突の直し（auto-rebase.ts）が使う。
 import { writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';

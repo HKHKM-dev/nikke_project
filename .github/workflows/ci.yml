@@ -5,8 +5,9 @@ on:
     branches: [main]
   pull_request:
 
-# main への push では、作り直した生成物を commit して main に push する。push はデプロイキー（secret の GENERATED_DEPLOY_KEY。
-# ruleset の bypass に足してある）で行うので、GITHUB_TOKEN は読むだけ
+# main への push では、作り直した生成物を commit して main に push する。push はデプロイキー（environment の main-push の secret の
+# GENERATED_DEPLOY_KEY。ruleset の bypass に足してある）で行うので、GITHUB_TOKEN は読むだけ。鍵は commit のジョブだけが持つ。check の
+# ジョブ（依存のパッケージを入れて回す）は、作り直した生成物を artifact で渡すだけ（plan/design-deploy-key-scope.md 2 節）
 permissions:
   contents: read
 
@@ -44,6 +45,32 @@ jobs:
       - run: npm test
       - run: npm run build
       - if: github.event_name == 'push'
-        run: node tools/git/ci-generated.ts --commit
+        run: node tools/git/ci-generated.ts --export "$RUNNER_TEMP/generated"
+      - if: github.event_name == 'push'
+        uses: actions/upload-artifact@v7
+        with:
+          name: generated
+          path: ${{ runner.temp }}/generated
+          if-no-files-found: error
+          retention-days: 1
+
+  # main の版を取り出しただけの作業ツリーで、check の生成物を commit して push する（npm ci も、check で回したコードも使わない）
+  commit:
+    needs: check
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: main-push
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - uses: actions/download-artifact@v8
+        with:
+          name: generated
+          path: ${{ runner.temp }}/generated
+      - run: node tools/git/ci-generated.ts --commit "$RUNNER_TEMP/generated"
         env:
           DEPLOY_KEY: ${{ secrets.GENERATED_DEPLOY_KEY }}

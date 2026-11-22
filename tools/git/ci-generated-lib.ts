@@ -21,7 +21,10 @@ export type CommitGeneratedInput = {
   git: (args: readonly string[], env?: Readonly<Record<string, string>>) => GitRun;
 };
 
-const KEY_HELP = `鍵の組を作り直し、公開鍵を Settings → Deploy keys に「Allow write access」つきで、秘密鍵を Settings → Secrets and variables → Actions の ${DEPLOY_KEY_SECRET} に登録し直す（plan/design-pr-conflicts.md 5 節）`;
+/** 鍵を置く environment の名前（使えるブランチを main に限る。plan/design-deploy-key-scope.md 2 節） */
+export const DEPLOY_KEY_ENVIRONMENT = 'main-push';
+
+const KEY_HELP = `鍵の組を作り直し、公開鍵を Settings → Deploy keys に「Allow write access」つきで、秘密鍵を Settings → Environments → ${DEPLOY_KEY_ENVIRONMENT} の secret の ${DEPLOY_KEY_SECRET} に登録し直す（plan/design-pr-conflicts.md 5 節・plan/design-deploy-key-scope.md 2 節）`;
 
 /**
  * 生成物の差分を commit して main に push し、出すメッセージを返す。直す必要のある失敗（鍵が無い・鍵で origin に届かない・鍵で
