@@ -37025,6 +37025,38 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "1366-01",
+      "element": "ミカ burst.effects[1]",
+      "key": "fdfaa4bbf6819bbc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1366-02",
+      "element": "ミカ burst.effects[1]",
+      "key": "9ba12fba78682b8b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1366-03",
+      "element": "ミカ burst.effects[1]",
+      "key": "3ea3a8b1338f5c56",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1366-04",
+      "element": "ミカ burst.effects[1]",
+      "key": "79c9ca737d6d886a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }

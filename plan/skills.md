@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 171・効果 1207（根拠あり 1185）・notes 380（根拠あり 159）
+件数: キャラ 173・効果 1213（根拠あり 1191）・notes 383（根拠あり 160）
 
-notes の種類: 未対応 37・前提の外 127・計算に無関係 78・補足 43・間接 95
+notes の種類: 未対応 37・前提の外 129・計算に無関係 78・補足 43・間接 96
 
-スロット: supported 473・partial 24・unsupported 9・noEffect 64
+スロット: supported 477・partial 24・unsupported 9・noEffect 66
 
 ## 10 ラピ
 
@@ -23,6 +23,16 @@ notes の種類: 未対応 37・前提の外 127・計算に無関係 78・補�
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0227（確定）
   - effects[1] timed・burstUse・attack: C-0457（確定）、C-0469（確定）、C-0513（仮説）、C-0611（確定）
+
+## 11 ネオン
+
+- **skill1**: noEffect
+  - notes[0] 前提の外: 敵を倒した時の、最終攻撃力が最も高い味方 2 機へのクリティカル確率▲（5 秒）は、射撃場の的が倒れないので起きない（敵 1 体の前提。要件 4.2 節）: C-0443（範囲外）
+- **skill2**: supported
+  - effects[0] timed・fullBurstStart・critRate: C-1522（確定）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1520（確定）
+  - effects[1] timed・burstUse・maxAmmo: C-1521（確定）
 
 ## 14 ネオン：ブルーオーシャン
 
@@ -261,6 +271,17 @@ notes の種類: 未対応 37・前提の外 127・計算に無関係 78・補�
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0676（確定）、C-0677（確定）
   - effects[1] timed・burstUse・chargeSpeed: C-0678（確定）
+
+## 61 ミカ
+
+- **skill1**: noEffect
+  - notes[0] 前提の外: 攻撃を 20 回受けた時の自分の防御力▲（10 秒）は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは的の攻撃で起きうる（C-0551）。起きても防御力▲で、それ自体は与ダメージを変えない: 根拠なし
+- **skill2**: supported
+  - effects[0] timed・20 秒ごと・maxAmmo: C-1517（確定）
+  - notes[0] 間接（防御力）: 最終攻撃力が最も高い味方 2 機の防御力▲（10 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1516（確定）、C-0795（確定）
+  - effects[1] timed・burstUse・enemyDefenseDown: C-1518（確定）、C-1519（仮説）、C-0556（確定）、C-0790（確定）
 
 ## 70 ブリッド
 

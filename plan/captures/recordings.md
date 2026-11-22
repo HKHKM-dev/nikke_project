@@ -1330,6 +1330,12 @@
 | 1361 | `20261122-1361_idoll-flower-diesel-centi.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ディーゼル（72、MG・風圧・SSR、宝物 3） + ◎センチ（80、RL・鉄甲・SSR、宝物 3） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
 | 1362 | `20261122-1362_n102.mp4` | ◎N102（120、RL・水冷・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1363 | `20261122-1363_n102.mp4` | ◎N102（120、RL・水冷・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1364 | `20261122-1364_rl_mica_fire.mp4` | ◎ミカ（61、RL・風圧・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1365 | `20261122-1365_rl_mica_fire.mp4` | ◎ミカ（61、RL・風圧・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1366 | `20261122-1366_idoll-flower-delta-mica.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎ミカ（61、RL・風圧・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1367 | `20261122-1367_neon.mp4` | ◎ネオン（11、SG・灼熱・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1368 | `20261122-1368_neon-soldier-fa-eg.mp4` | ネオン（11、SG・灼熱・SR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎ソルジャーE.G.（300、AR・電撃・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1369 | `20261122-1369_neon-soldier-fa-eg.mp4` | ネオン（11、SG・灼熱・SR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎ソルジャーE.G.（300、AR・電撃・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
