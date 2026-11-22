@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 174・効果 1216（根拠あり 1194）・notes 383（根拠あり 160）
+件数: キャラ 174・効果 1221（根拠あり 1199）・notes 378（根拠あり 160）
 
-notes の種類: 未対応 37・前提の外 129・計算に無関係 78・補足 43・間接 96
+notes の種類: 未対応 32・前提の外 129・計算に無関係 78・補足 43・間接 96
 
-スロット: supported 480・partial 24・unsupported 9・noEffect 66
+スロット: supported 483・partial 24・unsupported 6・noEffect 66
 
 ## 10 ラピ
 
@@ -1717,14 +1717,14 @@ notes の種類: 未対応 37・前提の外 129・計算に無関係 78・補�
 
 ## 331 チャイム
 
-- **skill1**: unsupported
-  - notes[0] 未対応: 戦闘開始時に自分の王へ付ける、スキル発動者基準の攻撃力▲（持続）は未対応（王の決まり方を扱っていない）: 根拠なし
-- **skill2**: unsupported
-  - notes[0] 未対応: フルバーストタイムの発動時に自分の王へ付ける通常攻撃ダメージ倍率▲（10 秒）は未対応: 根拠なし
-- **burst**: unsupported
-  - notes[0] 未対応: 味方全体のバースト再突入 2 段階は未対応: 根拠なし
-  - notes[1] 未対応: 味方全体の最大装弾数▲（10 秒）は未対応: 根拠なし
-  - notes[2] 未対応: 自分の王への攻撃ダメージ▲（10 秒）は未対応: 根拠なし
+- **skill1**: supported
+  - effects[0] passive・attack: C-1527（確定）
+- **skill2**: supported
+  - effects[0] timed・fullBurstStart・normalAttackDamage: C-1528（確定）
+- **burst**: supported
+  - effects[0] burstReentry: C-1529（確定）
+  - effects[1] timed・burstUse・maxAmmo: C-1530（確定）
+  - effects[2] timed・burstUse・attackDamage: C-1531（確定）
 
 ## 350 マスト
 
