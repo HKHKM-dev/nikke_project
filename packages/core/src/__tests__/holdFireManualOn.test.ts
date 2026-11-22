@@ -10,8 +10,8 @@ import { characterOf } from './teamHelpers.ts';
 
 const SHORTER = DEFAULT_WEAPON_MODEL.manualOnAimShorterFrames;
 
-/** 単騎で [0, on) を撃たずに隠れ、on 以後の最初の発のフレーム */
-function firstShotAfter(rid: number, hold: FrameRange, events: EnemyEvent[] = []): number {
+/** 単騎で [0, on) を撃たずに隠れ、from（既定は on）以後の最初の発のフレーム */
+function firstShotAfter(rid: number, hold: FrameRange, events: EnemyEvent[] = [], from = hold.end): number {
   const sim = runSimulation({
     slots: [
       {
@@ -25,7 +25,7 @@ function firstShotAfter(rid: number, hold: FrameRange, events: EnemyEvent[] = []
     burst: false,
     holdFire: [{ slotIndex: 0, ranges: [hold] }],
   });
-  return sim.shots[0]!.frames.find((f) => f >= hold.end)!;
+  return sim.shots[0]!.frames.find((f) => f >= from)!;
 }
 
 describe('manual auto-fire ON (holdFire end, C-1550)', () => {
@@ -66,10 +66,12 @@ describe('manual auto-fire ON (holdFire end, C-1550)', () => {
       { kind: 'untargetable', start: framesToGameSeconds(windowEnd - 118), end: framesToGameSeconds(windowEnd) },
     ];
 
-    it('fires at the window end + the usual first shot when turned on inside the window', () => {
+    it('fires on the same frame as with auto-fire left on when turned on inside the window', () => {
       const shot = firstShotAfter(rid, { start: 0, end: windowEnd - 62 }, events);
+      // オート射撃を ON のままにしていた枠（holdFire の区間を戦闘の始まりの 1 フレームだけにする）の、窓の明けの後の最初の発
+      const autoOn = firstShotAfter(rid, { start: 0, end: 1 }, events, windowEnd);
+      expect(shot).toBe(autoOn);
       expect(shot - windowEnd).toBe(windowEndFirstShotFrames(characterOf(rid).shot));
-      expect(shot - windowEnd).toBe(70);
     });
 
     it('fires as C-1550 when turned on after the window end', () => {
