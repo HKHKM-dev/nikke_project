@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 178・効果 1246（根拠あり 1224）・notes 378（根拠あり 163）
+件数: キャラ 178・効果 1248（根拠あり 1226）・notes 377（根拠あり 163）
 
-notes の種類: 未対応 25・前提の外 133・計算に無関係 78・補足 44・間接 98
+notes の種類: 未対応 24・前提の外 133・計算に無関係 78・補足 44・間接 98
 
-スロット: supported 500・partial 20・unsupported 4・noEffect 67
+スロット: supported 501・partial 19・unsupported 4・noEffect 67
 
 ## 10 ラピ
 
@@ -1654,9 +1654,10 @@ notes の種類: 未対応 25・前提の外 133・計算に無関係 78・補�
 
 - **skill1**: supported
   - effects[0] damage・pelletHit・skill: C-0408（確定）、C-0659（確定）、C-0830（確定）、C-0831（確定）
-- **skill2**: partial
+- **skill2**: supported
   - effects[0] timed・normalShot・reloadSpeed: C-1549（確定）
-  - notes[0] 未対応: フルバーストタイム中のペレット 30 回命中ごとの、自分の弾丸チャージと攻撃力▲（5 スタック・2 秒）は未対応（フルバーストの中を撮っていない。弾丸チャージはフルバースト中だけ数える窓を書けない）: 根拠なし
+  - effects[1] ammoRefill・pelletHit: C-1561（確定）
+  - effects[2] timed・pelletHit・attack: C-1560（確定）、C-1561（確定）
 - **burst**: supported
   - effects[0] timed・burstUse・attackDamage: C-0679（確定）
   - effects[1] timed・burstUse・critDamage: C-0679（確定）
