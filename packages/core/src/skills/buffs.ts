@@ -55,18 +55,19 @@ export type ChangedWeapon = {
  * - 'effect': ▲を効果ごとに四捨五入してから足す（同じスキルの同じ値の効果＝スタックは 1 つにまとめる）
  * - 'skill': ▲を出どころのスキル（キャラ × スロット）ごとに足して四捨五入してから足す
  * - 'self': 対象が自分（target self）の▲だけ効果ごとに四捨五入し、ほかの▲と合わせた最終攻撃力を四捨五入する（V-0266）
- * 'effect'・'skill' は検証の予測の仮説（records/predictions の setup）だけが使う。利用者の計算には出さない
+ * - 'selfCaster': 'self' に加えて、発動者基準の▲（scaling casterAttack）も効果ごとに四捨五入する（C-1538）
+ * 'effect'・'skill'・'self' は検証の予測の仮説（records/predictions の setup）だけが使う。利用者の計算には出さない
  */
-export type AttackRounding = 'total' | 'effect' | 'skill' | 'self';
+export type AttackRounding = 'total' | 'effect' | 'skill' | 'self' | 'selfCaster';
 
-/** いまのモデルの攻撃力▲の丸め（C-0027・C-0400） */
-export const ATTACK_ROUNDING: AttackRounding = 'self';
+/** いまのモデルの攻撃力▲の丸め（C-0027・C-1538） */
+export const ATTACK_ROUNDING: AttackRounding = 'selfCaster';
 
 /**
  * 攻撃力▲の 1 件（丸めの仮説用）。source は出どころ（`<resourceId>.<スロット>`。育成の効果層は `build`）。
- * self は対象が自分（target self）の効果
+ * self は対象が自分（target self）の効果、caster は発動者基準の▲（scaling casterAttack）
  */
-export type AttackPart = { source: string; ratio: number; flat: number; self?: true };
+export type AttackPart = { source: string; ratio: number; flat: number; self?: true; caster?: true };
 
 /** チャージ速度▲の 1 件（超過分の変換の丸め用。V-0640）。source は出どころ（`<resourceId>.<スロット>`。育成の効果層は `build`） */
 export type ChargeSpeedPart = Pick<AttackPart, 'source' | 'ratio'>;
@@ -398,12 +399,15 @@ function sumRoundedGroups<T>(parts: readonly T[], keyOf: (part: T) => string, am
 const attackEffectKey = (part: AttackPart): string => `${part.source}|${part.ratio}|${part.flat}`;
 
 /** 攻撃力の固定加算（実数）。新しいオブジェクトを返す。内訳にも出どころ source で足す */
-export function addFlatAttack(totals: BuffTotals, amount: number, source = 'build', self = false): BuffTotals {
-  return {
-    ...totals,
-    attackFlat: totals.attackFlat + amount,
-    attackParts: [...totals.attackParts, { source, ratio: 0, flat: amount, ...(self ? { self } : {}) }],
-  };
+export function addFlatAttack(
+  totals: BuffTotals,
+  amount: number,
+  source = 'build',
+  self = false,
+  caster = false,
+): BuffTotals {
+  const part: AttackPart = { source, ratio: 0, flat: amount, ...(self ? { self } : {}), ...(caster ? { caster } : {}) };
+  return { ...totals, attackFlat: totals.attackFlat + amount, attackParts: [...totals.attackParts, part] };
 }
 
 /** 効果の出どころ（AttackPart.source） */
@@ -492,8 +496,9 @@ export function applyResolvedEffect(
   // copyTopAttack は呼ぶ側が写す元の値を casterBaseAttack に渡す（fixedAttackBaseOf）
   if (effect.scaling === 'casterAttack' || effect.scaling === 'copyTopAttack') {
     const appliedAmount = casterBaseAttack * effect.value;
+    const caster = effect.scaling === 'casterAttack';
     return {
-      totals: addFlatAttack(totals, appliedAmount, sourceKeyOf(effect), effect.target === 'self'),
+      totals: addFlatAttack(totals, appliedAmount, sourceKeyOf(effect), effect.target === 'self', caster),
       appliedAmount,
     };
   }
@@ -583,16 +588,13 @@ export function roundedAttack(
   rounding: AttackRounding = ATTACK_ROUNDING,
 ): number {
   if (rounding === 'total') return Math.round(applyAttackBuffs(baseAttack, buffs));
-  if (rounding === 'self') {
+  if (rounding === 'self' || rounding === 'selfCaster') {
     if (buffs.attackParts.length === 0) return Math.round(applyAttackBuffs(baseAttack, buffs));
     const amountOf = (part: AttackPart) => baseAttack * part.ratio + part.flat;
+    const each = (part: AttackPart) => part.self === true || (rounding === 'selfCaster' && part.caster === true);
     let rest = baseAttack;
-    for (const part of buffs.attackParts) if (part.self !== true) rest += amountOf(part);
-    rest += sumRoundedGroups(
-      buffs.attackParts.filter((part) => part.self === true),
-      attackEffectKey,
-      amountOf,
-    );
+    for (const part of buffs.attackParts) if (!each(part)) rest += amountOf(part);
+    rest += sumRoundedGroups(buffs.attackParts.filter(each), attackEffectKey, amountOf);
     return Math.round(rest);
   }
   const keyOf = rounding === 'skill' ? (part: AttackPart) => part.source : attackEffectKey;

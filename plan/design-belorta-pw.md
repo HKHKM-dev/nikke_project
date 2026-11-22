@@ -4,7 +4,7 @@
 - 関連: [design-rouge.md](design-rouge.md) 2.1 節・[design-adjacent-allies.md](design-adjacent-allies.md) 2.1 節（両隣の対象 `targetAdjacent`）、[design-trina.md](design-trina.md) 2.2 節（左端の対象 `targetLeftmost`。枠の番号の若い方が左）、[design-named-state.md](design-named-state.md)（名前の付いた状態）
 - 検証: V-0859
 - 作成日: 2026-11-22
-- 状態: 実装（論点 1 は案 A）
+- 状態: 完了
 
 ## 0. 範囲
 
@@ -71,3 +71,4 @@
 
 - 2026-11-22: 起案。
 - 2026-11-22: 論点 1 を案 A で実装した（`targetAdjacent: "right"`・定義の下書き・編成のテスト）。撮影は V-0859。
+- 2026-11-22: 撮影（V-0859。録画 1378〜1380）を読み、右隣の対象とおばけのイタズラを確かめた。発動者基準の攻撃力▲も効果ごとに丸める形を既定にした（C-1538）。

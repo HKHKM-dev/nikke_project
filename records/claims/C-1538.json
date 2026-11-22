@@ -5,8 +5,8 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`1379-01`・`1379-08`・`1378-01`・`1378-08`・`0259-12`・`0259-13`・`0302-10`・`0302-11`・`0302-12`。V-0859",
-  "model": "実装済み（damage.ts の computeTriggerDamage → skills/buffs.ts の roundedAttack。既定 ATTACK_ROUNDING = 'selfCaster'）。対象が自分の▲だけを効果ごとに丸める形（self）は予測の仮説にだけ使う。発動者基準の▲を効果ごとに四捨五入するか切り捨てるかは、根拠の▲の端数（.34・.36・.87）では見分けられない",
-  "replaces": [],
+  "model": "実装済み（damage.ts の computeTriggerDamage → skills/buffs.ts の roundedAttack。既定 ATTACK_ROUNDING = 'selfCaster'）。対象が自分の▲だけを効果ごとに丸める形（self）は予測の仮説にだけ使う。発動者基準の▲を切り捨てる形は、クラウンの▲（51,920.87）が切り上がった値と合う C-0400 の根拠（0302-10〜0302-12）で外れる",
+  "replaces": ["C-0400"],
   "updated": "2026-11-22",
   "subject": {
     "mechanism": "damageFormula"
@@ -15,6 +15,14 @@
     {
       "recording": "1379",
       "role": "仮説の出どころ"
+    }
+  ],
+  "minimal": [
+    {
+      "observations": ["0302-10", "0302-11", "0302-12"],
+      "element": "クラウン burst.effects[0]",
+      "reason": "仮説の C-0499 は▲の付き始めの数 f（II の発動の 6f 前まで）だけで、▲の値と窓は C-0393 で確定。0302-10・0302-11 はフルバーストの中、0302-12 は II の発動の 59f 以上前の▲の外のヒットで、付き始めの数 f に効かない",
+      "decided": "2026-10-09"
     }
   ]
 }

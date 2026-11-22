@@ -165,6 +165,33 @@ describe('roundedAttack (self)', () => {
       }))
       .reduce((t, e) => applyResolvedEffect(t, e, 119896).totals, ZERO_BUFFS);
     expect(roundedAttack(119896, drake, 'self')).toBe(210693);
+    expect(roundedAttack(119896, drake)).toBe(210693);
+  });
+
+  it('also rounds caster-based effects one by one by default (V-0859)', () => {
+    // レイヴン（119,896）: S1（自分）47.52% = 56,974.58 と、ベロータ：パンプキンウィッチ（99,925）の発動者基準の
+    // S1 44.88% = 44,846.34・バースト 47.52% = 47,484.36。119,896 + 56,975 + 44,846 + 47,484 = 269,201
+    const raven = [
+      {
+        stat: 'attack' as const,
+        scaling: 'ratio' as const,
+        value: 0.4752,
+        source: source(851, 'skill1'),
+        target: 'self' as const,
+      },
+    ].reduce((t, e) => applyResolvedEffect(t, e, 119896).totals, ZERO_BUFFS);
+    const totals = (['skill1', 'burst'] as const)
+      .map((skill, i) => ({
+        stat: 'attack' as const,
+        scaling: 'casterAttack' as const,
+        value: [0.4488, 0.4752][i]!,
+        source: source(63, skill),
+        target: 'allies' as const,
+      }))
+      .reduce((t, e) => applyResolvedEffect(t, e, 99925).totals, raven);
+    expect(roundedAttack(119896, totals, 'self')).toBe(269202);
+    expect(roundedAttack(119896, totals, 'selfCaster')).toBe(269201);
+    expect(roundedAttack(119896, totals)).toBe(269201);
   });
 });
 
