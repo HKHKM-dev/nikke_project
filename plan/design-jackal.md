@@ -2,7 +2,7 @@
 
 - 手順: [skills-guide.md](skills-guide.md)（1.1 選ぶ → 1.2 説明文を分解する → 1.3 設計書 → 1.4 実装する）
 - 関連: [design-skill-catalog-classes.md](design-skill-catalog-classes.md)（説明文の効果の分類。「対象の書き方で絞ったバーストスキルダメージ」）、[design-sustained-damage-up.md](design-sustained-damage-up.md) 3 節（ダメージの種類で絞った▲の式の置き場所）、[design-new-chars-1029.md](design-new-chars-1029.md) 5.5 節（順番攻撃ダメージ▲。印の付いたヒットにだけ掛ける▲）
-- 検証: V-0778
+- 検証: V-0778、V-0869
 - 作成日: 2026-11-14
 - 状態: 完了（6 節）
 
