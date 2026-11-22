@@ -117,7 +117,7 @@ import {
 } from '../team.ts';
 import { untargetableRanges } from './events.ts';
 import type { FrameRange } from '../skills/timeline.ts';
-import { chanceDotTicks, dotStacksAt, dotTicks, groupDotsByState } from './dot.ts';
+import { chanceDotTicks, dotStacksAt, dotTicks, groupDotsByState, restartDotTicks } from './dot.ts';
 export { DOT_LATER_TICK_DELAY_SECONDS, dotTickFrames, dotTickTracker, dotTicks, groupDotsByState } from './dot.ts';
 import { runFirstPass, type FirstPassResult, type InstantApplication } from './firstPass.ts';
 import {
@@ -963,6 +963,7 @@ function dotHits(ctx: SkillHitsContext, s: SlotReaders): void {
         dot.durationSeconds,
         frames,
         dot.firstTick,
+        dot.restartOnReapply === true,
       )) {
         const { event } = push(tick.frame, chanceEffect, false);
         event.hit = withChanceWeight(event.hit, tick.weight);
@@ -1000,6 +1001,16 @@ function dotHits(ctx: SkillHitsContext, s: SlotReaders): void {
         const end = Math.min(frames, item.end);
         for (const tick of dotTicks([first.f], dot.intervalSeconds, dot.durationSeconds, end, dot.firstTick))
           push(tick.frame, first.effect, false);
+      }
+      continue;
+    }
+    // 付け直しのたびに刻みを数え直す形（plan/design-chance-dot-damage.md 9 節。スタック・刻みの遅れとは組まない）
+    if (dot.restartOnReapply === true) {
+      const at = fires.map((x) => x.f);
+      let last = 0;
+      for (const frame of restartDotTicks(at, dot.intervalSeconds, dot.durationSeconds, frames, dot.firstTick)) {
+        while (last + 1 < at.length && at[last + 1]! <= frame) last += 1;
+        push(frame, fires[last]!.effect, false);
       }
       continue;
     }

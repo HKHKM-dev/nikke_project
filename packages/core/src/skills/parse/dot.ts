@@ -6,6 +6,7 @@ import {
   type DotEffect,
   type DotFirstTick,
   type EffectTrigger,
+  isAppliedTrigger,
   isChanceTrigger,
   isCounterFullTrigger,
   isShotCountTrigger,
@@ -125,6 +126,7 @@ const DOT_KEYS: readonly string[] = [
   'durationUntil',
   'tickIntervalFrames',
   'hitOnApply',
+  'restartOnReapply',
   'perCount',
   'perCountIntervalFrames',
   'delayFrames',
@@ -164,6 +166,7 @@ export function parseDotEffect(v: Record<string, Json>, path: string): DotEffect
   // 状態異常の名前。目録の id（持ち主が敵の状態）
   if (v.state !== undefined) effect.state = parseNamedStateId(v.state, `${path}.state`, 'enemy');
   parseDotTickShape(v, effect, path);
+  parseDotRestart(v, effect, path);
   parseDotCounter(v, effect, path);
   parseDotStacks(v, effect, path);
   parseDotGauge(v, effect, path);
@@ -223,6 +226,35 @@ function parseDotTickShape(v: Record<string, Json>, effect: DotEffect, path: str
     if (!latest) fail(`${path}.hitOnApply`, 'needs firstTick halfAfterLatest');
     effect.hitOnApply = true;
   }
+}
+
+/**
+ * 付け直しのたびに刻みを数え直す形（restartOnReapply。plan/design-chance-dot-damage.md 9 節）。刻みは付けた時からの atApplication か
+ * afterInterval で、付いている間・スタック・ゲージを追う欄とは組まない（使い手がいない）
+ */
+function parseDotRestart(v: Record<string, Json>, effect: DotEffect, path: string): void {
+  if (v.restartOnReapply === undefined) return;
+  if (v.restartOnReapply !== true) fail(`${path}.restartOnReapply`, 'expected true');
+  if (effect.firstTick === 'halfAfterLatest') fail(`${path}.restartOnReapply`, 'cannot be used with halfAfterLatest');
+  for (const key of [
+    'state',
+    'maxStacksRef',
+    'durationUntil',
+    'gaugeOnApply',
+    'gaugeOnApplyDelayFrames',
+    'tickDelayFrames',
+    'gaugeOnTick',
+    'perCount',
+    'perCountIntervalFrames',
+    'delayFrames',
+    'stacksFrom',
+    'copyEachTick',
+    'condition',
+  ])
+    if (v[key] !== undefined) fail(`${path}.${key}`, `a dot with restartOnReapply cannot have ${key}`);
+  if (isCounterFullTrigger(effect.trigger) || isAppliedTrigger(effect.trigger))
+    fail(`${path}.trigger`, 'a dot with restartOnReapply cannot use { counterFull } or { applied }');
+  effect.restartOnReapply = true;
 }
 
 /** { counterFull } のきっかけの dot: カウンタの値だけのヒット（perCount・perCountIntervalFrames）と遅れ（delayFrames） */

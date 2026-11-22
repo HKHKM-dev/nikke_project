@@ -143,3 +143,4 @@
 | 自分の王・自分のアイドル（特定のキャラ） | `target: "allies"` と `targetCharacter: <resourceId>`（passive・timed・状態の付与。編成にいなければ誰にも付かない） | チャイムの S1・S2・バースト（クラウン 330） | [design-chime.md](design-chime.md) 2.1 節 |
 | 自分の右隣の味方 1 機 | `target: "allies"` と `targetAdjacent: "right"`（編成の枠の順で自分の次の枠。右端・空枠なら誰にも付かない。`includeSelf` とは組まない） | ベロータ：パンプキンウィッチの S1・S2・バースト | [design-belorta-pw.md](design-belorta-pw.md) 2.1 節 |
 | 〈きっかけ〉時、p% の確率で（攻撃した時・通常攻撃をした時は `normalShot`、命中した時は `normalHit`） | 回数のきっかけの `chance`・`chanceRef`（timed・状態の付与・dot・damage。期待値で持つ） | ソルジャーE.G. の S1・ハランの S1・ソルジャーO.W. の S1 | [design-soldier-eg.md](design-soldier-eg.md) 3.1 節・[design-chance-dot-damage.md](design-chance-dot-damage.md) 3.1・3.2 節 |
+| 付け直すと刻みを付けた時から数え直す持続ダメージ（説明文に出ない。録画で読む） | dot の `restartOnReapply: true`（省略は C-0129 の形） | ハランの S1 のウイルス転移 | [design-chance-dot-damage.md](design-chance-dot-damage.md) 9 節 |

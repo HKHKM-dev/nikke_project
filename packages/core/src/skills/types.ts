@@ -2306,6 +2306,12 @@ export type DotEffect = {
    */
   firstTick?: DotFirstTick;
   /**
+   * 付け直しのたびに、付けた時から刻みを数え直す（前の付与の残りの tick は出ない。付けた時の tick は firstTick のとおり）。
+   * 省略は C-0129 の形（刻みを変えずに終わりを延ばす）。ハランのウイルス転移（plan/design-chance-dot-damage.md 9 節）。firstTick は
+   * atApplication か afterInterval で、名前の付いた状態・スタック・持続の維持・刻みの遅れ・数・遅れ・ゲージ・条件とは組まない
+   */
+  restartOnReapply?: true;
+  /**
    * 同: tick の間隔の実測（ゲーム内のティック。端数を持ち越す）。チェーンバインドの 59.25 は、説明文の「1秒間隔」（58.82 ティック）より長い
    * （V-0326・V-0546）。firstTick: halfAfterLatest のときだけ書ける
    */

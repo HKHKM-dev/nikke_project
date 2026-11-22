@@ -226,6 +226,33 @@ function dotTickShape(
   return { offset, lastOffset: offset(count - 1), durationFrames: gameSecondsToFrame(durationSeconds) };
 }
 
+/**
+ * 付け直しのたびに刻みを数え直す持続ダメージ（restartOnReapply。plan/design-chance-dot-damage.md 9 節）の tick のフレーム。発火 f ごとに
+ * f + offset(k)（k = 0 … floor(維持 ÷ 間隔) − 1。dotTickTracker と同じ刻み）を、次の発火のフレームより前と戦闘の終わりより前だけ出す
+ * （次の発火と同じフレームの tick は、次の発火の tick の 1 つ）。fires は昇順
+ */
+export function restartDotTicks(
+  fires: readonly number[],
+  intervalSeconds: number,
+  durationSeconds: number,
+  frames: number,
+  firstTick: DotFirstTick = 'atApplication',
+): number[] {
+  if (firstTick === 'halfAfterLatest') throw new RangeError('restartOnReapply cannot use halfAfterLatest');
+  const { offset, lastOffset } = dotTickShape(intervalSeconds, durationSeconds, firstTick);
+  const out: number[] = [];
+  fires.forEach((f, i) => {
+    const next = Math.min(fires[i + 1] ?? frames, frames);
+    for (let k = 0; ; k++) {
+      const o = offset(k);
+      const tick = f + o;
+      if (o > lastOffset || tick >= next) break;
+      out.push(tick);
+    }
+  });
+  return out;
+}
+
 /** 確率のきっかけの dot の 1 回の機会（発火のフレームと、その発で付く確率） */
 export type ChanceDotFire = { frame: number; q: number };
 
@@ -249,10 +276,13 @@ export function chanceDotTicks(
   durationSeconds: number,
   frames: number,
   firstTick: DotFirstTick = 'atApplication',
+  /** 付け直しのたびに刻みを数え直す（restartOnReapply）。省略は C-0129 の形 */
+  restart = false,
 ): ChanceDotTick[] {
   if (firstTick === 'halfAfterLatest') throw new RangeError('a chance dot cannot use halfAfterLatest');
   const { offset, lastOffset, durationFrames } = dotTickShape(intervalSeconds, durationSeconds, firstTick);
   const live = fires.filter((x) => x.frame < frames && x.q > 0);
+  if (restart) return restartChanceDotTicks(live, offset, lastOffset, frames);
   const out: ChanceDotTick[] = [];
   for (let a = 0; a < live.length; a++) {
     const fa = live[a]!.frame;
@@ -297,6 +327,32 @@ export function chanceDotTicks(
     }
   }
   return out.sort((x, y) => x.frame - y.frame);
+}
+
+/**
+ * 付け直しのたびに刻みを数え直す形の期待値の tick: 機会 a の k 回目の tick（τ = f_a + offset(k)）は、a で付き、a の後で τ 以前の
+ * 機会でどれも付かないとき出る。重みは q_a × Π_{i > a, fᵢ ≤ τ} (1 − qᵢ)
+ */
+function restartChanceDotTicks(
+  live: readonly ChanceDotFire[],
+  offset: (k: number) => number,
+  lastOffset: number,
+  frames: number,
+): ChanceDotTick[] {
+  const out: ChanceDotTick[] = [];
+  live.forEach((x, a) => {
+    let weight = x.q;
+    let i = a + 1;
+    for (let k = 0; ; k++) {
+      const o = offset(k);
+      const tick = x.frame + o;
+      if (o > lastOffset || tick >= frames) break;
+      for (; i < live.length && live[i]!.frame <= tick; i++) weight *= 1 - live[i]!.q;
+      if (weight <= CHANCE_DOT_EPSILON) break;
+      out.push({ frame: tick, weight });
+    }
+  });
+  return out.sort((p, q) => p.frame - q.frame);
 }
 
 /** 発火を 1 つずつ受けて、新しく決まった tick のフレームを返す（newGroup は新しいまとまりの最初の発火か） */

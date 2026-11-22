@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "単独実測",
   "basis": "`1382-09`・`1383-08`。V-0861",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "data/skills/230.json の skill2 の effects[0]・effects[1]（fullChargeShot の timed。durationShotsRef 2）",
   "replaces": [],
   "updated": "2026-11-22",
   "subject": {

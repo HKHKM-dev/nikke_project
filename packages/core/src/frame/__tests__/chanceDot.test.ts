@@ -2,7 +2,7 @@
 // 確率 1 なら確率の無い dot（dotTicks）と同じ tick を重み 1 で出すこと（退化）と、付き方を振って dotTicks を回した平均（モンテカルロ）と
 // フレームごとに合うこと
 import { describe, expect, it } from 'vitest';
-import { chanceDotTicks, dotTicks, type ChanceDotFire, type ChanceDotTick } from '../dot.ts';
+import { chanceDotTicks, dotTicks, restartDotTicks, type ChanceDotFire, type ChanceDotTick } from '../dot.ts';
 import type { DotFirstTick } from '../../skills/types.ts';
 
 const FRAMES = 3000;
@@ -76,6 +76,40 @@ describe('chanceDotTicks', () => {
       }
     });
   }
+
+  for (const firstTick of ['atApplication', 'afterInterval'] as DotFirstTick[]) {
+    it(`restarts the grid on each application and gives restartDotTicks with weight 1 when every chance is 1 (${firstTick})`, () => {
+      const fires = firesOf(4, () => 1);
+      const at = fires.map((x) => x.frame);
+      const ticks = chanceDotTicks(fires, 1, 5, FRAMES, firstTick, true);
+      expect(ticks.map((t) => t.frame)).toEqual(restartDotTicks(at, 1, 5, FRAMES, firstTick));
+      expect(ticks.every((t) => t.weight === 1)).toBe(true);
+    });
+
+    it(`matches the Monte Carlo mean of restartDotTicks per frame (${firstTick})`, () => {
+      const fires = firesOf(5, (i) => [0.25, 0.6, 0.1][i % 3]!);
+      const model = byFrame(chanceDotTicks(fires, 1, 5, FRAMES, firstTick, true));
+      const r = rng(6);
+      const trials = 20_000;
+      const counts = new Map<number, number>();
+      for (let n = 0; n < trials; n++) {
+        const applied = fires.filter((x) => r() < x.q).map((x) => x.frame);
+        for (const t of restartDotTicks(applied, 1, 5, FRAMES, firstTick)) counts.set(t, (counts.get(t) ?? 0) + 1);
+      }
+      for (const frame of new Set([...model.keys(), ...counts.keys()])) {
+        const p = model.get(frame) ?? 0;
+        const observed = (counts.get(frame) ?? 0) / trials;
+        const se = Math.sqrt(Math.max(p * (1 - p), 1e-4) / trials);
+        expect(Math.abs(observed - p)).toBeLessThan(5 * se);
+      }
+    });
+  }
+
+  it('restartDotTicks drops the rest of the previous ticks at a reapplication (C-0101 grid from each application)', () => {
+    // 付いた 0f の刻みは 0・88・147・205・264。100f の付け直しで 147 から後は出ず、100 から数え直す
+    expect(restartDotTicks([0, 100], 1, 5, FRAMES)).toEqual([0, 88, 100, 188, 247, 305, 364]);
+    expect(restartDotTicks([0, 88], 1, 5, FRAMES)).toEqual([0, 88, 176, 235, 293, 352]);
+  });
 
   it('drops fires at or after the end of the battle and ticks at or after it', () => {
     const ticks: ChanceDotTick[] = chanceDotTicks(

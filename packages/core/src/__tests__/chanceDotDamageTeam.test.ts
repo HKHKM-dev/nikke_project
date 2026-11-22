@@ -35,6 +35,7 @@ describe('定義', () => {
       kind: 'dot',
       trigger: { count: 'normalShot', chanceRef: 7 },
       intervalSeconds: 1,
+      restartOnReapply: true,
     });
     expect(def.skills.skill2.effects).toMatchObject([
       { kind: 'timed', trigger: { count: 'fullChargeShot' }, stat: 'pierce', durationShotsRef: 2 },
@@ -64,7 +65,14 @@ describe('定義', () => {
       /a dot on a chance trigger cannot have maxStacksRef/,
     );
     expect(withS1(HARAN, { gaugeOnTick: true })).toThrow(/a dot on a chance trigger cannot have gaugeOnTick/);
-    expect(withS1(HARAN, { state: 'hacking' })).toThrow(/a dot on a chance trigger cannot have state/);
+    expect(
+      withS1(HARAN, { firstTick: 'halfAfterLatest', durationUntil: 'battleEnd', durationRef: undefined }),
+    ).toThrow();
+    expect(withS1(HARAN, { trigger: { count: 'normalShot' }, state: 'hacked' })).toThrow(
+      /a dot with restartOnReapply cannot have state/,
+    );
+    expect(withS1(HARAN, { trigger: { count: 'normalShot' }, restartOnReapply: false })).toThrow(/expected true/);
+    expect(withS1(HARAN, { state: 'hacked' })).toThrow(/a dot on a chance trigger cannot have state/);
     expect(withS1(SOLDIER_OW, { delayFrames: 2 })).toThrow(/not allowed with a chance trigger/);
     expect(withS1(SOLDIER_OW, { damageType: 'true' })).toThrow(/cannot be used with the damageType "true"/);
   });
@@ -75,9 +83,9 @@ describe('ハラン単騎: 確率の持続ダメージ', () => {
   const plan = planTeamRun(input);
   const ticks = plan.skillHits.filter((h) => h.slotIndex === 0 && h.effect.dot !== undefined);
 
-  it('weights the ticks of every possible first application by the probability that they occur (25% per shot)', () => {
+  it('weights the ticks of every application, restarting the grid on reapplication, by the probability that they occur (25% per shot)', () => {
     const fires = plan.shots[0]!.frames.map((frame) => ({ frame, q: 0.25 }));
-    const expected = chanceDotTicks(fires, 1, 5, plan.frames);
+    const expected = chanceDotTicks(fires, 1, 5, plan.frames, 'atApplication', true);
     expect(ticks.map((h) => ({ frame: h.frame, weight: h.hit.chance }))).toEqual(expected);
     expect(ticks.length).toBeGreaterThan(plan.shots[0]!.frames.length);
   });

@@ -215,6 +215,8 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
     gaugeOnApply?: true;
     /** 付けたときのゲージを発火の何フレーム後に足すか（レイヴンは 6。frame/firstPass.ts） */
     gaugeOnApplyDelayFrames?: number;
+    /** 付け直しのたびに刻みを数え直す（skills/types.ts の DotEffect.restartOnReapply） */
+    restartOnReapply?: true;
     /** tick の刻みを発火の何フレーム後から数えるか（skills/types.ts の DotEffect.tickDelayFrames） */
     tickDelayFrames?: number;
     gaugeOnTick?: true;
@@ -723,6 +725,7 @@ export function resolveDotEffects(
             ? { tickIntervalFrames: effect.tickIntervalFrames }
             : {}),
           ...(!auto && effect.hitOnApply === true ? { hitOnApply: true as const } : {}),
+          ...(!auto && effect.restartOnReapply === true ? { restartOnReapply: true as const } : {}),
           ...(!auto && effect.delayFrames !== undefined ? { applyDelayFrames: effect.delayFrames } : {}),
           ...(!auto && effect.stacksFrom !== undefined ? { stacksFrom: effect.stacksFrom } : {}),
           ...(!auto && effect.copyEachTick === true ? { copyEachTick: true as const } : {}),
