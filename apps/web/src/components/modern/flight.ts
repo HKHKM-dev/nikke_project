@@ -100,6 +100,46 @@ export function liftedRectOf(node: Element | null): DOMRect | undefined {
   return rect;
 }
 
+/** 入れ替える前の立ち絵の姿の写し。位置（DOMRect）だけを受け渡す道筋を変えずに、from の位置に添えて、flyIntoSlot へ伝える */
+const looks = new Map<DOMRect, { snapshot: ContentSnapshot; timer: ReturnType<typeof setTimeout> }>();
+/** 受け取られなかった姿の写しを消すまでの時間（ms） */
+const LOOK_STALE_MS = 1500;
+
+/**
+ * 立ち絵の枠 content の、入れ替える前の姿の写しを重ねて取り、その位置を返す。この位置を from にして flyIntoSlot に渡すと、
+ * 動く先の枠と形（縦長・四角）が違うときに、元の姿を前半で透明にし、真ん中で新しい姿に切り替え、後半で不透明にする。
+ * lifted が true なら、持ち上げた絵なので影も付ける（liftedRectOf と同じ）
+ */
+export function lookRectOf(content: Element | null, lifted = false): DOMRect | undefined {
+  if (!content) return undefined;
+  const snapshot = snapshotContent(content);
+  const timer = setTimeout(() => {
+    looks.delete(snapshot.rect);
+    dropSnapshot(snapshot);
+  }, LOOK_STALE_MS);
+  looks.set(snapshot.rect, { snapshot, timer });
+  if (lifted) liftedRects.add(snapshot.rect);
+  return snapshot.rect;
+}
+
+/** from に添えた姿の写しを受け取る（無ければ undefined）。受け取った写しを消すのは受け取った側 */
+function takeLook(from: DOMRect): ContentSnapshot | undefined {
+  const look = looks.get(from);
+  if (!look) return undefined;
+  clearTimeout(look.timer);
+  looks.delete(from);
+  return look.snapshot;
+}
+
+/** 形（縦横の比）が違うか。縦長の絵と四角の絵 */
+export const shapeDiffers = (a: Box, b: Box) => Math.abs(a.height / a.width - b.height / b.width) > 0.15;
+
+/** a の中心から b の中心への動き */
+const centerShift = (a: Box, b: Box) => ({
+  x: b.left + b.width / 2 - (a.left + a.width / 2),
+  y: b.top + b.height / 2 - (a.top + a.height / 2),
+});
+
 /**
  * 持ち上げた影を、from から to へ写しと一緒に動かしながら、少しずつ薄くして消す。写しは四角に切り抜く（frameAt の clip-path）と
  * 下の影も切れるので、影は写しの下に置く別の箱（.flight-lift-shadow。影だけを描き、中は透ける）で描く。返す関数は、待たずに消す
@@ -157,6 +197,8 @@ export function flyIntoSlot(from: DOMRect, card: Element): () => void {
   stopArrival(card);
   card.classList.add('modern-slot-arriving');
   let ghost: HTMLElement | null = null;
+  // 動く前の姿の写し（形が変わるときだけ使う）。from に添えてあるものを、すぐ受け取る
+  const look = takeLook(from);
   let fade: Animation | null = null;
   let removeShadow: (() => void) | null = null;
   let ready: Promise<void> = Promise.resolve();
@@ -165,6 +207,7 @@ export function flyIntoSlot(from: DOMRect, card: Element): () => void {
   const remove = () => {
     stopped = true;
     ghost?.remove();
+    if (look) dropSnapshot(look);
     fade?.cancel();
     removeShadow?.();
     if (arrivals.get(card) !== remove) return;
@@ -190,7 +233,20 @@ export function flyIntoSlot(from: DOMRect, card: Element): () => void {
     ready = decodeImages(card);
     const base = content.getBoundingClientRect();
     ghost = ghostOf(content, base);
-    ghost.animate([frameAt(from, base), frameAt(base, base)], FLIGHT).finished.then(done, done);
+    if (look && shapeDiffers(from, base)) {
+      // 形が変わるとき: 元の姿は前半で透明になり、真ん中で新しい姿に切り替わり、後半で新しい姿が不透明になる（どちらも同じ道を中心で動く）
+      const { x, y } = centerShift(from, base);
+      const fadeOpts = { duration: FLIGHT.duration, easing: 'linear', fill: FLIGHT.fill } as const;
+      look.ghost.animate([{ transform: 'none' }, { transform: `translate(${x}px, ${y}px)` }], FLIGHT);
+      look.ghost.animate([{ opacity: 1 }, { opacity: 0, offset: 0.5 }, { opacity: 0 }], fadeOpts);
+      ghost
+        .animate([{ transform: `translate(${-x}px, ${-y}px)` }, { transform: 'none' }], FLIGHT)
+        .finished.then(done, done);
+      ghost.animate([{ opacity: 0 }, { opacity: 0, offset: 0.5 }, { opacity: 1 }], fadeOpts);
+    } else {
+      if (look) dropSnapshot(look);
+      ghost.animate([frameAt(from, base), frameAt(base, base)], FLIGHT).finished.then(done, done);
+    }
     // 持ち上げた絵から動くときは、持ち上げた影も一緒に動かしながら薄くする
     if (liftedRects.has(from)) removeShadow = fadeLiftShadow(from, base);
     fade = fadeArrivalFace(card);

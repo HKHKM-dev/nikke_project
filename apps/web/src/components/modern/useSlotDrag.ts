@@ -17,7 +17,20 @@ import type { TeamAction, TeamState } from '../../team.ts';
 import { trayCollectionBadge, type Badge } from './badges.ts';
 import { setDropPlaced } from './dropAnimation.ts';
 import { partyCardAt, partyContentAt, partyLabelAt, slotCardAt, slotsGridAt } from './partyRows.ts';
-import { FLIGHT, flyControllerInto, flyLabel, flyToTray, liftedRectOf } from './flight.ts';
+import {
+  dissolveSnapshot,
+  dropSnapshot,
+  fadeInContent,
+  FLIGHT,
+  flyControllerInto,
+  flyLabel,
+  flyToTray,
+  liftedRectOf,
+  lookRectOf,
+  shapeDiffers,
+  snapshotContent,
+  type ContentSnapshot,
+} from './flight.ts';
 import { activeDragData, DRAG_START_DISTANCE, dropIntentOf, type SlotRef } from './dropIntent.ts';
 import { trayGrowthMarks, type GrowthMarks } from './GrowthMarks.tsx';
 import { slotCollectionBadge, slotGrowthMarks } from './slotBadges.ts';
@@ -150,11 +163,33 @@ export function useSlotDrag({
 
   // 編成を入れ替えたら、入れ替えた 2 つの行のスロットの並びを、入れ替える前の相手の行の位置から自分の行の位置へ動かす。
   // 入れ替えの後の描画（編成の一覧が変わった描画）で動かし始める
-  const rowFlipRef = useRef<{ before: PartiesState; rows: { party: number; from: DOMRect }[] } | null>(null);
+  // 縦長の行と四角の行の中身が入れ替わるときは、スロットごとに、元の姿の写し（looks）を前半で透明にし、真ん中で新しい姿に切り替え、後半で新しい姿を不透明にする。
+  // 写しは、新しい姿が来る相手の行のスロットへ動かして消す
+  const rowFlipRef = useRef<{
+    before: PartiesState;
+    rows: { party: number; from: DOMRect }[];
+    looks: { party: number; index: number; snapshot: ContentSnapshot }[];
+    timer: ReturnType<typeof setTimeout>;
+  } | null>(null);
   useLayoutEffect(() => {
     const flip = rowFlipRef.current;
     if (!flip || flip.before === parties) return;
     rowFlipRef.current = null;
+    clearTimeout(flip.timer);
+    // 位置は、動きを付ける前にすべて測る（動きを付けると、動き始めの位置が測った値に入る）
+    const [rowA, rowB] = flip.rows.map(({ party }) => party);
+    const crossfades = flip.looks.map(({ party, index, snapshot }) => {
+      const content = partyContentAt(party === rowA ? rowB! : rowA!, index);
+      return { snapshot, content, rect: content?.getBoundingClientRect() };
+    });
+    for (const { snapshot, content, rect } of crossfades) {
+      if (!content || !rect || !shapeDiffers(snapshot.rect, rect)) {
+        dropSnapshot(snapshot);
+        continue;
+      }
+      dissolveSnapshot(snapshot, rect.left - snapshot.rect.left, rect.top - snapshot.rect.top);
+      fadeInContent(content, 0);
+    }
     for (const { party, from } of flip.rows) {
       const grid = slotsGridAt(party);
       if (!grid) continue;
@@ -236,9 +271,9 @@ export function useSlotDrag({
     (party === parties.active ? team.slots[index] : parties.parties[party]?.slots[index])?.resourceId ?? null;
   /** 場所の編成の番号（null は選んでいる編成） */
   const partyOf = (ref: SlotRef) => ref.party ?? parties.active;
-  /** スロットの立ち絵の枠の位置（ニケがいなければ undefined） */
-  const areaRectAt = (party: number, index: number) =>
-    resourceIdAt(party, index) === null ? undefined : partyContentAt(party, index)?.getBoundingClientRect();
+  /** スロットの立ち絵の枠（ニケがいなければ null） */
+  const areaAt = (party: number, index: number) =>
+    resourceIdAt(party, index) === null ? null : (partyContentAt(party, index) ?? null);
   /** 編成 party のスロット index へ、from から絵を動かす（描き直しの後に、そのカードへ） */
   const arriveAt = (party: number, index: number, from: DOMRect | undefined) =>
     placement.queueArrivalAt(`party-${party}-${index}`, () => partyCardAt(party, index), from);
@@ -313,12 +348,28 @@ export function useSlotDrag({
           });
         }
         if (fromA && fromB) {
+          if (rowFlipRef.current) {
+            clearTimeout(rowFlipRef.current.timer);
+            for (const { snapshot } of rowFlipRef.current.looks) dropSnapshot(snapshot);
+          }
+          const looks = [intent.a, intent.b].flatMap((party) =>
+            Array.from({ length: 5 }, (_, index) => {
+              const content = partyContentAt(party, index);
+              return content ? { party, index, snapshot: snapshotContent(content) } : null;
+            }).filter((look) => look !== null),
+          );
+          // 入れ替えが起きなかったとき（描き直しが来ないとき）に、写しが残らないよう消す
+          const timer = setTimeout(() => {
+            for (const { snapshot } of looks) dropSnapshot(snapshot);
+          }, 1500);
           rowFlipRef.current = {
             before: parties,
             rows: [
               { party: intent.a, from: fromB },
               { party: intent.b, from: fromA },
             ],
+            looks,
+            timer,
           };
         }
         swapPartyContents(intent.a, intent.b);
@@ -328,8 +379,11 @@ export function useSlotDrag({
         // 持ち上げた絵は、離した位置から落とした先へ、落とした先にいたニケは、その元の位置から持ち上げた元のスロットへ動かす
         const from = { party: partyOf(intent.from), index: intent.from.index };
         const to = { party: partyOf(intent.to), index: intent.to.index };
-        const dragged = liftedRectOf(document.querySelector('.slot-drag-overlay-portrait'));
-        const displaced = areaRectAt(to.party, to.index);
+        // 縦長と四角が入れ替わるときは、元の姿の写しを添えて、動きの中間で新しい姿に切り替える（lookRectOf）
+        const dragged =
+          lookRectOf(document.querySelector('.slot-drag-overlay-portrait .modern-slot-char-area'), true) ??
+          liftedRectOf(document.querySelector('.slot-drag-overlay-portrait'));
+        const displaced = lookRectOf(areaAt(to.party, to.index));
         setDropPlaced(true);
         // 空のスロットは動かさない（その場で入れ替わる）
         arriveAt(to.party, to.index, resourceIdAt(from.party, from.index) === null ? undefined : dragged);
