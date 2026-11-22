@@ -753,6 +753,32 @@ svg.roster-revert-icon {
   flex: 1 1 calc(4em + 12px + 5 * (256px / 3 + 2px + 2 * 2px) + 1px);
   min-width: 0;
 }
+/* 横に並べる幅では、スロットを画面の中央に置く（オーナーの指示）。スロットの列を左の枠の列の下まで横いっぱいに広げ（同じ格子の升に重ねる）、
+   編成の行の左の列を、枠の列・間・番号の幅より狭くしない（.modern-party-row の --party-row-lead）。幅が足りなければ、スロットは枠の列に
+   重ならない所まで右に寄る。重ねたスロットの列の空いた所は、下の枠の列の操作を邪魔しない（pointer-events） */
+@media (min-width: 1080px) {
+  .modern-top-row {
+    display: grid;
+    grid-template-columns: 420px minmax(0, 1fr);
+  }
+  .modern-top-row > .modern-summary-row {
+    grid-row: 1;
+    grid-column: 1;
+    position: relative;
+    z-index: 1;
+  }
+  .modern-top-row > .modern-slots-area {
+    grid-row: 1;
+    grid-column: 1 / -1;
+    pointer-events: none;
+  }
+  .modern-top-row > .modern-slots-area .modern-party-row {
+    --party-row-lead: calc(420px + 16px + 4em);
+  }
+  .modern-top-row > .modern-slots-area .modern-party-row > * {
+    pointer-events: auto;
+  }
+}
 /* 敵情報・共通育成・合計ダメージの枠は縦に 1 列に並べる（オーナーのコメント）。敵情報と共通育成の枠（TeamSettingsForm の .settings-row）はほどいて、この並びの中に置く */
 .modern-summary-row {
   display: grid;
@@ -832,20 +858,28 @@ svg.roster-revert-icon {
   gap: 12px 0;
 }
 /* 5 つの編成の行（モダン UI。ModernView）。左に編成の番号とダメージ（PartyRowLabel）、右にスロット 5 枚。選んでいる編成の行だけ操作でき、
-   ほかの行（PartyPreviewRow）は押すとその編成を選ぶ。狭い画面では、番号とダメージをスロットの上に置く */
+   ほかの行（PartyPreviewRow）は押すとその編成を選ぶ。狭い画面では、番号とダメージをスロットの上に置く。
+   スロット 5 枚を行の中央に置く（オーナーの指示）。真ん中の列にスロット、左右に同じ幅の列を置き、番号は左の列の右端に寄せる。
+   左の列は --party-row-lead（番号の幅）より狭くしない。スロットの列は、元の大きさの絵 5 枚（幅 256/3 px・枠線 2px・左右の余白）の幅まで広がり、
+   足りなければ縮む（縮んだ幅に useSlotFit が絵を合わせる）。1px は端数のぶん（useSlotFit は幅を切り下げて測るので、ちょうどの幅では上限より少し小さくなる） */
 .modern-party-row {
-  display: flex;
-  justify-content: center;
+  --party-row-lead: 4em;
+  display: grid;
+  grid-template-columns:
+    minmax(var(--party-row-lead), 1fr) minmax(0, calc(5 * (256px / 3 + 2px + 2 * 2px) + 1px))
+    minmax(0, 1fr);
   align-items: center;
   gap: 12px;
 }
 .modern-party-row + .modern-party-row {
   margin-top: 4px;
 }
-/* スロットの並びは、元の大きさの絵 5 枚（幅 256/3 px・枠線 2px・左右の余白）の幅まで広がり、足りなければ縮む（縮んだ幅に useSlotFit が絵を合わせる）。
-   1px は端数のぶん（useSlotFit は幅を切り下げて測るので、ちょうどの幅では上限より少し小さくなる） */
+.modern-party-row > .modern-party-row-label {
+  grid-column: 1;
+  justify-self: end;
+}
 .modern-party-row > .modern-slots-grid {
-  flex: 0 1 calc(5 * (256px / 3 + 2px + 2 * 2px) + 1px);
+  grid-column: 2;
   min-width: 0;
 }
 .modern-party-row-label {
@@ -899,6 +933,9 @@ svg.roster-revert-icon {
     grid-row: 1;
     grid-template-columns: minmax(0, 1fr);
     margin-bottom: 4px;
+  }
+  .modern-party-row > .modern-party-row-label {
+    justify-self: stretch;
   }
   .modern-party-row:nth-child(1) > .modern-party-row-label {
     grid-column: 2;
