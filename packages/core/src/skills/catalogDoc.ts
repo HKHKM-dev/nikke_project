@@ -334,6 +334,7 @@ const TRIG_INFO: Record<string, Info> = {
   normalHit: ['通常攻撃が N 回命中した時', 'ok'],
   coreHit: ['コアに命中した時', 'ok'],
   pelletHit: ['ペレットが命中した時', 'ok'],
+  pelletThreshold: ['通常攻撃 1 回でペレットが N 個以上命中した時（minPellets）', 'ok'],
   lastShot: ['最後の弾丸', 'ok'],
   timer: ['N 秒ごと', 'ok'],
   // ミハラ：ボンディングチェーンのチェーンの攻撃は、カウンタが上限に届いた時 { counterFull } で書いた（敵の出現は無い）

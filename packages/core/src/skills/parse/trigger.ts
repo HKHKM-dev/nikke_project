@@ -257,7 +257,12 @@ function parseShotCountTrigger(v: Record<string, Json>, path: string, options: T
  * 「通常攻撃 1 回でペレットが N 個以上命中した時」の N（plan/design-privaty-um-s2.md 2.1 節）。count は normalShot、timed だけ。
  * 数える窓・発火の窓・スタック・確率とは組まない
  */
-function parseMinPellets(v: Record<string, Json>, trigger: ShotCountTrigger, path: string, options: TriggerOptions): void {
+function parseMinPellets(
+  v: Record<string, Json>,
+  trigger: ShotCountTrigger,
+  path: string,
+  options: TriggerOptions,
+): void {
   if (v.minPellets === undefined && v.minPelletsRef === undefined) return;
   if (!options.minPellets) fail(`${path}.minPellets`, 'minPellets is only allowed in timed');
   if (v.minPellets !== undefined && v.minPelletsRef !== undefined)

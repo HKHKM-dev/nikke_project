@@ -44,7 +44,7 @@
             "en": "The pellets that hit in one shot are an expected value (SG: 10 × the share of pellets that hit; the range target table gives the share per segment, manual input uses hit rate × 0.75) compared with 5 as is (it applies on every shot if reached, never otherwise). Every segment of the range target table exceeds 5. The boundary (shots with 4 or fewer hits) has not been recorded"
           },
           "claims": [
-            "C-9999"
+            "C-1549"
           ]
         }
       ],
