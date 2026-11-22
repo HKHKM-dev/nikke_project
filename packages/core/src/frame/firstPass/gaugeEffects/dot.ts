@@ -40,7 +40,7 @@ export function createDotGauges({
     flight: FlightFrameSpan[] | null;
   }[] = [];
   // 周期で付く持続ダメージのゲージ（V-0847。plan/design-rosanna-co.md 7 節）。発火は射撃に依らないので、発火のフレーム → 付けた
-  // 持続ダメージの並び（同じまとまりは同じ追跡）を前もって作り、そのフレームの頭（reserveTimerGauges）で付けたときと tick の分を予約する
+  // 持続ダメージの並び（同じまとまりは同じ追跡）を前もって作り、そのフレームの頭（reserveTimerDots）で付けたときと tick の分を予約する
   const timerDotFires = new Map<
     number,
     {
@@ -152,7 +152,11 @@ export function createDotGauges({
     }
     return gauge;
   };
-  /** 周期で付く持続ダメージの、フレーム f の発火の分を予約する（../gaugeEffects.ts の reserveTimerGauges） */
+  /**
+   * 周期で付く持続ダメージの、フレーム f の発火の分を予約する（../gaugeEffects.ts の reserveTimerGauges）。付けたときの分を発火の
+   * applyDelay 後に、tick の分を発火の tickDelay 後を起点にした刻みに予約する（どれも発火のフレームより前にはならない。このフレームの
+   * 分は、このすぐ後の takeReservedGauge が取る）。時間で変わるゲージ速度は、発火のフレームの速度で tick の分も決める
+   */
   const reserveTimerDots = (f: number): void => {
     for (const t of timerDotFires.get(f) ?? []) {
       const energy = hitGaugeEnergy(t.slotIndex);

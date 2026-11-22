@@ -1,14 +1,12 @@
-// 1 パス目のゲージを溜める効果（../gaugeEffects.ts の createGaugeEffects）のうち、周期のゲージ（burstGaugeHit）と、倍率ダメージの
-// ヒットごとのゲージ（gaugePerHit）。
+// 1 パス目のゲージを溜める効果（../gaugeEffects.ts の createGaugeEffects）のうち、倍率ダメージのヒットごとのゲージ（gaugePerHit）。
 import {
   damageHitFramesOf,
   effectHitFrames,
-  resolveTimerGauges,
   type ResolvedDamageEffect,
   resolveDamageEffects,
 } from '../../../skills/burstDamage.ts';
 import { isResolvedShotCount, isResolvedTimer } from '../../../skills/resolve.ts';
-import { shortenedTimer, timerFramesOf } from '../../../skills/timeline.ts';
+import { shortenedTimer } from '../../../skills/timeline.ts';
 import { advanceShotCount, type ShotCountEveryAt, shotCountWeight } from '../../../skills/triggers.ts';
 import {
   enemyStateHolds,
@@ -22,7 +20,7 @@ import type { Gauge } from '../gauge.ts';
 import type { LandingGauge } from './landing.ts';
 import type { GaugeReserve } from './reserve.ts';
 
-/** 周期のゲージと、倍率ダメージのヒットごとのゲージを追って予約する */
+/** 倍率ダメージのヒットごとのゲージを追って予約する */
 export function createDamageGauges({
   frames,
   hitGaugeEnergy,
@@ -32,26 +30,7 @@ export function createDamageGauges({
   reserveTimerGauge,
   shotEvents,
   slots,
-  timedGauge,
 }: FirstPassBase & Gauge & GaugeReserve & LandingGauge) {
-  // 周期のゲージ（burstGaugeHit）。射撃に依らないので、発火のフレームにループの前に予約する。
-  // delayFrames があれば発火の後のヒットのフレームに足し、戦闘の終わりを越えるものは足さない（C-0453。plan/design-timer-ceil.md 7 節）
-  // 時間で変わるゲージ速度の枠の周期のゲージは、発火のフレームの頭でその速度で予約する（発火のフレーム → 枠と遅れ）
-  const timedTimerGauges = new Map<number, { slotIndex: number; delayFrames: number }[]>();
-  slots.forEach((slot, i) => {
-    if (slot === null || slot.definition === null) return;
-    for (const { delayFrames, ...timer } of resolveTimerGauges(slot.definition)) {
-      // クールタイムの印のある周期は、ループの中で発火を追って予約する（countCooldownTimers）
-      if (timer.cooldown === true) continue;
-      for (const fire of timerFramesOf(timer, frames)) {
-        const at = fire + delayFrames;
-        if (at >= frames) continue;
-        if (timedGauge[i])
-          timedTimerGauges.set(fire, [...(timedTimerGauges.get(fire) ?? []), { slotIndex: i, delayFrames }]);
-        else reserveTimerGauge(i, fire, at, hitGaugeEnergy(i));
-      }
-    }
-  });
   // V-0545（plan/design-new-chars-1029.md 11.2 節の b）: 周期の倍率ダメージのヒットごとのゲージ（gaugePerHit）。発火をフレームの順に
   // 追い（periodShorten の短縮は、そのフレームまでに登録した自分の状態で決める。2 パス目の shortenedTimerFrames と同じ規則）、
   // N ヒットのフレームのゲージに予約する（delayFrames は 1 以上なので、どのヒットも発火より後のフレーム）
@@ -124,11 +103,5 @@ export function createDamageGauges({
       for (const hit of effectHitFrames(t.effect, f, count, frames)) landingGauge(t.slotIndex, hit, f, energy, 1);
     }
   };
-  /** 時間で変わる速度の枠の、フレーム f に発火する周期のゲージを予約する（../gaugeEffects.ts の reserveTimerGauges） */
-  const reserveTimedTimerGauges = (f: number): void => {
-    for (const t of timedTimerGauges.get(f) ?? []) {
-      reserveTimerGauge(t.slotIndex, f, f + t.delayFrames, hitGaugeEnergy(t.slotIndex));
-    }
-  };
-  return { countDamageHitGauges, damageEffects, reserveTimedTimerGauges };
+  return { countDamageHitGauges, damageEffects };
 }
