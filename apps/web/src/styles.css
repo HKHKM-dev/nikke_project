@@ -1634,8 +1634,11 @@ html:has(.modern-view-container) {
 .char-tray-sort-option {
   justify-content: space-between;
 }
+/* 選んでいる並べ方は、枠でなく背景色で示す（編成のタブの選んでいるものと同じ塗り。モダンのアプリの青は modern.css） */
 .char-tray-sort-option[aria-pressed='true'] {
-  outline: 2px solid var(--placing-blue);
+  border-color: Highlight;
+  background: Highlight;
+  color: HighlightText;
 }
 .char-tray-sort-option[aria-pressed='false'] .char-tray-sort-mark {
   visibility: hidden;
