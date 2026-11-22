@@ -1,7 +1,10 @@
-// モダン UI のドラッグの data の形と、離したときに何をするか（ModernView の handleDragEnd）。持ち上げたもの（active）と離した所（over）の
+// モダン UI のドラッグの data の形・持ち上げる距離と、離したときに何をするか（ModernView の handleDragEnd）。持ち上げたもの（active）と離した所（over）の
 // dnd-kit の data だけから決める純関数。アニメーション・DOM の読みと dispatch は ModernView が行う
 import type { Data } from '@dnd-kit/core';
 import type { CharacterIndexEntry } from '@nikke/core';
+
+/** マウスで、押した位置からこの距離（px）動いたら持ち上げる（usePressSelect は、これより動かずに離したときだけ押したとする） */
+export const DRAG_START_DISTANCE = 4;
 
 /** 持ち上げるものの data（useDraggable の data。作る側は satisfies か useDropAndDrag の引数の型でこの形にそろえる） */
 export type ActiveDragData =

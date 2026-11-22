@@ -18,7 +18,7 @@ import { trayCollectionBadge, type Badge } from './badges.ts';
 import { setDropPlaced } from './dropAnimation.ts';
 import { partyCardAt, partyContentAt, partyLabelAt, slotCardAt, slotsGridAt } from './partyRows.ts';
 import { FLIGHT, flyControllerInto, flyLabel, flyToTray, liftedRectOf } from './flight.ts';
-import { activeDragData, dropIntentOf, type SlotRef } from './dropIntent.ts';
+import { activeDragData, DRAG_START_DISTANCE, dropIntentOf, type SlotRef } from './dropIntent.ts';
 import { trayGrowthMarks, type GrowthMarks } from './GrowthMarks.tsx';
 import { slotCollectionBadge, slotGrowthMarks } from './slotBadges.ts';
 import { slotSizeVars } from './useSlotFit.ts';
@@ -91,9 +91,6 @@ type Params = {
   /** ドラッグを始めたとき */
   onDragStart: () => void;
 };
-
-/** マウスで、押した位置からこの距離（px）動いたら持ち上げる（usePressSelect は、これより動かずに離したときだけ押したとする） */
-export const DRAG_START_DISTANCE = 4;
 
 /**
  * ドラッグを離した直後のクリックを 1 回だけ止める。選んでいない編成の行は、押すとその編成を選ぶボタンで、同じ行の中で持ち上げて

@@ -74,10 +74,10 @@ const TEAM = teamReducer(initialTeamState(), { type: 'selectCharacter', index: 0
 function render(index: readonly CharacterIndexEntry[] | null = INDEX) {
   const dispatch = vi.fn<(action: TeamAction) => void>();
   const setParties = vi.fn<(parties: PartiesState) => void>();
-  // App の applyPartiesChange と同じく、編成の一覧と選んでいる編成に入れる（どちらに何を入れたかを見る）
+  // App の applyPartiesChange と同じく、編成の一覧と、変わったときだけ選んでいる編成に入れる（どちらに何を入れたかを見る）
   const applyPartiesChange = (next: PartiesChange) => {
     setParties(next.parties);
-    dispatch({ type: 'replace', state: next.team });
+    if (next.team !== TEAM) dispatch({ type: 'replace', state: next.team });
   };
   const props = { index, team: TEAM, parties: INITIAL_PARTIES, dispatch, applyPartiesChange };
   const { result, rerender } = renderHook(useRoster, { initialProps: props });

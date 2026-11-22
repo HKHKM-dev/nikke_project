@@ -8,8 +8,6 @@ import { flyIntoSlot, flyToTray, stopArrival } from './flight.ts';
 export const trayVisualAt = (resourceId: number) =>
   document.querySelector(`.char-tray-item[data-resource-id="${resourceId}"] .char-tray-item-visual`);
 
-/** スロット index の立ち絵の枠（無ければ null） */
-
 /** 置いたニケのスロットに絵が入るのを待つ長さ（ms） */
 const ARRIVAL_WAIT_MS = 1000;
 const arrivalDeadline = () => performance.now() + ARRIVAL_WAIT_MS;

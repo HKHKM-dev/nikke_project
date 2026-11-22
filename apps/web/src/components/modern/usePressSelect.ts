@@ -2,7 +2,7 @@
 // 押してから離すまでに押した物が動くと click が起きず、続けて切り替えようとすると効かないことがあるため、click を待たない
 // （押した物の上で離したかは問わない）。押した位置から動かして離したときは、持ち上げた（ドラッグ）ので選ばない
 import { useLayoutEffect, useRef, type MouseEvent, type PointerEvent } from 'react';
-import { DRAG_START_DISTANCE } from './useSlotDrag.ts';
+import { DRAG_START_DISTANCE } from './dropIntent.ts';
 
 export function usePressSelect(onSelect: () => void): {
   onPointerDown: (event: PointerEvent) => void;
