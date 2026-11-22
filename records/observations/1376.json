@@ -28,5 +28,596 @@
     },
     "source": "V-0858",
     "readAt": "2026-11-22"
+  },
+  {
+    "id": "1376-03",
+    "recording": "1376",
+    "use": "compare",
+    "kind": "hit",
+    "value": 362090,
+    "unit": "ダメージ",
+    "description": "同じ録画の、バーストの窓の外のコアの会心しない 1 ヒット",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f862・f944・f1026・f1108 ほか 47 回（51 回）。回の番号と差は、右のバースト欄の I → II の替わり目（1376-01）から"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 651,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0858",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1376-04",
+    "recording": "1376",
+    "use": "compare",
+    "kind": "hit",
+    "value": 452613,
+    "unit": "ダメージ",
+    "description": "同じ録画の、バーストの窓の外のコアの会心の 1 ヒット",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f3367・f4283・f7840・f8257・f9154（5 回）。回の番号と差は、右のバースト欄の I → II の替わり目（1376-01）から"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 651,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0858",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1376-05",
+    "recording": "1376",
+    "use": "compare",
+    "kind": "hit",
+    "value": 416404,
+    "unit": "ダメージ",
+    "description": "同じ録画の、バーストの窓の外のコアの会心しない 1 ヒット（距離ボーナスあり）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f4927・f5009・f5180・f5262 ほか 10 回（14 回）。回の番号と差は、右のバースト欄の I → II の替わり目（1376-01）から"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 651,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0858",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1376-06",
+    "recording": "1376",
+    "use": "compare",
+    "kind": "hit",
+    "value": 506926,
+    "unit": "ダメージ",
+    "description": "同じ録画の、バーストの窓の外のコアの会心の 1 ヒット（距離ボーナスあり）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f5426（1 回）。回の番号と差は、右のバースト欄の I → II の替わり目（1376-01）から"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 651,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0858",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1376-07",
+    "recording": "1376",
+    "use": "compare",
+    "kind": "hit",
+    "value": 663602,
+    "unit": "ダメージ",
+    "description": "同じ録画の、1 回目のバーストの 3 秒の中のコアの会心の 1 ヒット（攻撃力▲・S2 の 1 回目の段）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f1690（1 回目の +136f）（1 回）。回の番号と差は、右のバースト欄の I → II の替わり目（1376-01）から"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 815,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0858",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1376-08",
+    "recording": "1376",
+    "use": "compare",
+    "kind": "hit",
+    "value": 587195,
+    "unit": "ダメージ",
+    "description": "同じ録画の、2 回目のバーストの 3 秒の中のコアの会心しない 1 ヒット（攻撃力▲・S2 の 1・2 回目の段）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f3039（2 回目の +143f）（1 回）。回の番号と差は、右のバースト欄の I → II の替わり目（1376-01）から"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2255,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0858",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1376-09",
+    "recording": "1376",
+    "use": "compare",
+    "kind": "hit",
+    "value": 407779,
+    "unit": "ダメージ",
+    "description": "同じ録画の、2 回目のバーストの 3〜5 秒のコアの会心しない 1 ヒット（S2 の 2 回目の段だけ）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f3121（2 回目の +225f）（1 回）。回の番号と差は、右のバースト欄の I → II の替わり目（1376-01）から"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2419,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0858",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1376-10",
+    "recording": "1376",
+    "use": "compare",
+    "kind": "hit",
+    "value": 621113,
+    "unit": "ダメージ",
+    "description": "同じ録画の、3 回目から先のバーストの 3 秒の中のコアの会心しない 1 ヒット（攻撃力▲・S2 の 1〜3 回目の段）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f4366（3 回目の +54f）・f7177（5 回目の +54f）・f7259（5 回目の +136f）・f8504（6 回目の +54f）・f9818（7 回目の +54f）・f9900（7 回目の +136f）（6 回）。回の番号と差は、右のバースト欄の I → II の替わり目（1376-01）から"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3581,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0858",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1376-11",
+    "recording": "1376",
+    "use": "compare",
+    "kind": "hit",
+    "value": 714280,
+    "unit": "ダメージ",
+    "description": "同じ録画の、3 回目から先のバーストの 3 秒の中のコアの会心しない 1 ヒット（攻撃力▲・S2 の 1〜3 回目の段。距離ボーナスあり）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f5926（4 回目の +136f）・f11271（8 回目の +54f）・f11353（8 回目の +136f）（3 回）。回の番号と差は、右のバースト欄の I → II の替わり目（1376-01）から"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3581,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0858",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1376-12",
+    "recording": "1376",
+    "use": "compare",
+    "kind": "hit",
+    "value": 435298,
+    "unit": "ダメージ",
+    "description": "同じ録画の、3 回目から先のバーストの 3〜5 秒のコアの会心しない 1 ヒット（S2 の 2・3 回目の段）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f7341（5 回目の +218f）・f8675（6 回目の +225f）・f9997（7 回目の +233f）（3 回）。回の番号と差は、右のバースト欄の I → II の替わり目（1376-01）から"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 5137,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0858",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1376-13",
+    "recording": "1376",
+    "use": "compare",
+    "kind": "hit",
+    "value": 500593,
+    "unit": "ダメージ",
+    "description": "同じ録画の、3 回目から先のバーストの 3〜5 秒のコアの会心しない 1 ヒット（S2 の 2・3 回目の段。距離ボーナスあり）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f4599（3 回目の +287f）・f6008（4 回目の +218f）（2 回）。回の番号と差は、右のバースト欄の I → II の替わり目（1376-01）から"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 5137,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0858",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1376-14",
+    "recording": "1376",
+    "use": "compare",
+    "kind": "hit",
+    "value": 389609,
+    "unit": "ダメージ",
+    "description": "同じ録画の、3 回目から先のバーストの 5〜10 秒のコアの会心しない 1 ヒット（S2 の 3 回目の段だけ）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f7512（5 回目の +389f）・f7594（5 回目の +471f）・f7691（5 回目の +568f）・f8839（6 回目の +389f） ほか 3 回（7 回）。回の番号と差は、右のバースト欄の I → II の替わり目（1376-01）から"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3834,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0858",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1376-15",
+    "recording": "1376",
+    "use": "compare",
+    "kind": "hit",
+    "value": 448050,
+    "unit": "ダメージ",
+    "description": "同じ録画の、3 回目から先のバーストの 5〜10 秒のコアの会心しない 1 ヒット（S2 の 3 回目の段だけ。距離ボーナスあり）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f4763（3 回目の +451f）・f4845（3 回目の +533f）・f6090（4 回目の +300f）・f6172（4 回目の +382f）・f6343（4 回目の +553f）（5 回）。回の番号と差は、右のバースト欄の I → II の替わり目（1376-01）から"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3834,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0858",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1376-16",
+    "recording": "1376",
+    "use": "compare",
+    "kind": "hit",
+    "value": 487011,
+    "unit": "ダメージ",
+    "description": "同じ録画の、3 回目から先のバーストの 5〜10 秒のコアの会心の 1 ヒット（S2 の 3 回目の段だけ）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f8757（6 回目の +307f）（1 回）。回の番号と差は、右のバースト欄の I → II の替わり目（1376-01）から"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3834,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0858",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1376-17",
+    "recording": "1376",
+    "use": "compare",
+    "kind": "hit",
+    "value": 545453,
+    "unit": "ダメージ",
+    "description": "同じ録画の、3 回目から先のバーストの 5〜10 秒のコアの会心の 1 ヒット（S2 の 3 回目の段だけ。距離ボーナスあり）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f4681（3 回目の +369f）（1 回）。回の番号と差は、右のバースト欄の I → II の替わり目（1376-01）から"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3834,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0858",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1376-18",
+    "recording": "1376",
+    "use": "record",
+    "kind": "timing",
+    "value": "攻撃力▲・1 回目の段: 乗る +136・+143f、乗らない +218・+225・+233f。2 回目の段: 乗る +218・+225・+233・+287f、乗らない +300・+307f。3 回目の段: 乗る +553・+568f、乗らない +615・+622・+635f。どの回もバーストの後の最初の発（+54〜+143f）から乗る",
+    "description": "同じ録画の、バースト（右のバースト欄の I → II の替わり目。1376-01）からのヒットのフレームの差と、そのヒットに攻撃力▲と S2 の各段が乗ったか（窓の端の前後の発）。どの窓もバーストの使用から始まり、攻撃力▲と 1 回目の段は 3 秒（176f）、2 回目の段は 5 秒（294f）、3 回目の段は 10 秒（588f）で切れる形と合う",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "▲の有無は HUD の増分を格子（1376-03〜1376-17 の値）に当てて決めた。発の間は約 82f なので、端は差の間のどこか"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0858",
+    "readAt": "2026-11-22"
+  },
+  {
+    "id": "1376-19",
+    "recording": "1376",
+    "use": "record",
+    "kind": "hit",
+    "value": "f4420（3 回目の +108f）556,052・f6751 404,411・f8893 279,038・f10845 208,745",
+    "description": "同じ録画の、格子に当たらない増分。3 回目のバーストの +108f の発は、前の発の 54f 後に出た（ふだんは約 82f おき）。ほかの 3 つは 2 本とも同じ頃（的のジャンプの頃）に出た",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "556,052 は会心で、会心しない値は 444,841（同じ窓の 621,113 の 0.716 倍）。4 回目の +70f の 714,080 と +72f の 200 は 1 発（714,280）を 2 回に分けて読んだもの（1376-11 に入れていない）（フルチャージでない発とみられる。確かめていない）。比べに使っていない"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0858",
+    "readAt": "2026-11-22"
   }
 ]
