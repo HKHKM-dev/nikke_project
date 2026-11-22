@@ -2,9 +2,9 @@
 
 - 関連: [design-burst-split-hits.md](design-burst-split-hits.md)（分かれたヒット）、[design-elegg.md](design-elegg.md) 8.9 節（トリガー `burstHit`）、[design-burst-landing.md](design-burst-landing.md)（遅れの表）、課題 `records/backlog/burst-hit-reapply.json`（[backlog.md](backlog.md) 6 節）
 - 検証記録: V-0819（シグナル）、V-0852（ミカ）
-- 結論: C-1405（シグナル）、C-1519（ミカ）。どちらも仮説
+- 結論: C-1405（シグナル）、C-1519（ミカ）
 - 起案: 2026-11-22
-- 状態: 承認待ち
+- 状態: 実装済み（9 節・10 節）
 
 ## 0. 要約
 
@@ -110,13 +110,24 @@
   - 戦闘の終わりを過ぎたヒットでは発火しない。
 - `npm run records:check`・`npm run records:residual` で、6 節の 4 件だけが変わることを確かめる。
 
-## 9. 論点（オーナーに決めてほしいこと）
+## 9. 論点と決めたこと
+
+2026-11-22 にオーナーが 1〜4 を推奨どおりに決めた（「１～４全て推奨通りでOK」）。
 
 1. **語彙の形**: 案 A / B / C / D / E。**推奨: 案 A**（4 節）。
 2. **センチ**: (a) 変えない（▼は 2 ヒット目の 28f から付く） / (b) `burstHit` に替える（付き始めが 12f になり、切れ目は同じ）。**推奨: (a)**。センチの付き始めは読んでおらず、替える根拠が無い（3 節）。撮るなら、替わり目の 12〜28f の間のセンチか味方の発に▼が乗るかで分かる。
 3. **仮説のまま入れるか**: (a) いま入れる / (b) 2 体のどちらかを撮り足して確定してから。**推奨: (a)**（7 節）。
 4. **結論の状態**: 実装の後、等級の候補（機械）と最小構成の検査を見て決め直す。許容外が消えるので、確定の条件（verification-guide.md 2.2 節）を満たすかを見る。満たさなければ仮説のまま（新しい録画は足していない）。
 
+## 10. 実装（2026-11-22）
+
+- 発火の列: `frame/firstPass/frameEvents.ts`（1 パス目）と `skills/triggers.ts` の `replayEvents` が、`burstHit` を `hitFramesOf` の各ヒットに積む。
+- 定義: シグナル（`data/skills/22.json`）・ミカ（`data/skills/61.json`）の burst の effects[1] を `trigger: "burstHit"` にした。
+- 予測の変わり方は 6 節の 4 件だけ（実装の後に `records:residual -- --all --base origin/main` で確かめた）。
+- 結論の状態（論点 4）: 根拠の観測値（`1289-14`・`1290-14`、`1364-23`・`1365-24`）で `records:new -- claim --update` の判定を出し直し、確定の条件を満たしたので、C-1405 を確定（厳密一致。確定したヒットの時刻 C-1402 と説明文の 10 秒だけから出る）、C-1519 を確定（反復実測。2 本の録画）にした。
+- テスト: `skills/__tests__/burstHitReapply.test.ts`。
+
 ## 経過
 
 - 2026-11-22: 起案。
+- 2026-11-22: 論点 1〜4 は推奨どおり（オーナーの承認）。実装し、C-1405・C-1519 を確定にした（10 節）。
