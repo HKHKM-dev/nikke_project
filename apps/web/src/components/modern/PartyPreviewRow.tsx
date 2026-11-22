@@ -9,6 +9,7 @@ import { CharacterVisual } from './CharacterVisual.tsx';
 import { trayGrowthMarks } from './GrowthMarks.tsx';
 import { activeDragData, type ActiveDragData, type OverDragData } from './dropIntent.ts';
 import { EmptySlotFace, SlotCharName } from './ModernSlotCard.tsx';
+import { usePressSelect } from './usePressSelect.ts';
 
 type Props = {
   partyIndex: number;
@@ -23,12 +24,13 @@ type Props = {
 const SLOT_COUNT = 5;
 
 export function PartyPreviewRow({ partyIndex, party, indexMap, roster, fixedSpec, onSelect }: Props) {
+  const press = usePressSelect(onSelect);
   return (
     <button
       type="button"
       className="modern-slots-grid modern-party-preview"
       aria-label={`${partyLabel(partyIndex)}を選ぶ`}
-      onClick={onSelect}
+      {...press}
     >
       {Array.from({ length: SLOT_COUNT }, (_, i) => {
         const resourceId = party?.slots[i]?.resourceId ?? null;
@@ -134,6 +136,7 @@ export function PartyRowLabel({
   active: boolean;
   onSelect: () => void;
 }) {
+  const press = usePressSelect(onSelect);
   const {
     isOver: isOverRaw,
     active: dragActive,
@@ -167,7 +170,7 @@ export function PartyRowLabel({
         className="toggle-button party-tab"
         aria-pressed={active}
         aria-label={partyLabel(partyIndex)}
-        onClick={onSelect}
+        {...press}
       >
         {partyNumber(partyIndex)}
       </button>
