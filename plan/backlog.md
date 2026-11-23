@@ -84,7 +84,8 @@
 
 ## 4. オーナーの判断待ち
 
-（なし）
+- 最適編成を効率よく探す方法: 全スロットをまとめて最適化する（座標降下と並べ方。案 F）と、並べ方だけの最適化（案 G）を入れるか（2026-11-23 起票）→ 承認待ち: [design-optimal-party-search.md](design-optimal-party-search.md) 5 節
+- 最適編成計算で、入れるとフルバーストが起きなくなる候補を省く判定を外すか（2026-11-23 起票）→ 判断待ち: [design-optimal-party-speed.md](design-optimal-party-speed.md) 4 節
 
 ## 5. 道具・記録の整備
 

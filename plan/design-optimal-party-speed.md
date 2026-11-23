@@ -1,7 +1,7 @@
 # 設計書: 最適編成計算を速くする（候補は全員計算する）
 
 - 状態: **案 B を実装（5 節の決定 1）。4 節は判断待ち**
-- 関連: [design-modern-ui.md](design-modern-ui.md)（最適編成計算の振る舞いと経過）、[design-first-pass-perf.md](design-first-pass-perf.md)（1 パス目の最適化。3.4 節の「段 3 の候補」）
+- 関連: [design-optimal-party-search.md](design-optimal-party-search.md)（全スロットの探し方）、[design-modern-ui.md](design-modern-ui.md)（最適編成計算の振る舞いと経過）、[design-first-pass-perf.md](design-first-pass-perf.md)（1 パス目の最適化。3.4 節の「段 3 の候補」）
 - 作成日: 2026-11-23
 - 調べた時点: main の 27cda9a4（#1393）
 - この文書の数値は実行時間と、モデルどうしの一致の確かめで、実測ではない。検証記録・結論は作らない。時間はクラウドのコンテナ（Node 22.23、Xeon 2.1 GHz の 4 コア、画面はヘッドレスの Chromium）で取った。デスクトップは design-first-pass-perf.md 1.2 節の比で、およそ 2 倍速い
