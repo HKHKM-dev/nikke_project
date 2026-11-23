@@ -94,10 +94,6 @@ export type ShotEvent = {
 };
 
 /**
- * 確率のきっかけの 1 発で付く確率 min(1, 確率 × その発の回数の量)。回数の量が 0 の発は 0（機会にしない）。
- * plan/design-soldier-eg.md 3.1 節
- */
-/**
  * 発の出来事。ShotEvent はどれもここで作る（任意の欄も省かずに undefined で型の順に書き、1 パス目の発と流し直しの発の形を 1 つにする）
  */
 export function shotEventOf(
@@ -126,6 +122,10 @@ export function shotEventOf(
   };
 }
 
+/**
+ * 確率のきっかけの 1 発で付く確率 min(1, 確率 × その発の回数の量)。回数の量が 0 の発は 0（機会にしない）。
+ * plan/design-soldier-eg.md 3.1 節
+ */
 export function chanceQ(trigger: { count: ShotCountKind; chance: number }, shot: ShotEvent): number {
   const weight = shotCountWeight(trigger.count, shot);
   return weight > 0 ? Math.min(1, trigger.chance * weight) : 0;
@@ -332,18 +332,20 @@ const NO_USERS: readonly number[] = Object.freeze([]);
 
 /**
  * 出来事の無いフレームの FrameEvents。FrameEvents はどれもここで作り、欄は後から代入する（任意の欄も省かずに undefined で
- * 書くので、作る所によらず形が 1 つになり、毎フレーム読む側の最適化を崩さない）。activations・burstEffects は作るたびに新しい列
+ * 書くので、作る所によらず形が 1 つになり、毎フレーム読む側の最適化を崩さない）。activations・burstEffects は省くと作るたびに新しい列
  */
 export function emptyFrameEvents(
   frame: number,
   shots: readonly (ShotEvent | null)[],
   healed: readonly boolean[],
+  activations: readonly BurstActivation[] = [],
+  burstEffects: readonly BurstActivation[] = [],
 ): FrameEvents {
   return {
     frame,
     shots,
-    activations: [],
-    burstEffects: [],
+    activations,
+    burstEffects,
     burstHits: undefined,
     fullBurstStart: false,
     fullBurstEnd: false,
@@ -644,13 +646,15 @@ export function replayEvents(
   heals: readonly HealRecord[] = [],
 ): FrameEvents[] {
   if (frames <= 0) return [];
+  if (!Number.isInteger(frames)) throw new RangeError(`replayEvents: frames ${frames} is not an integer`);
   const slotCount = shots.length;
   // 出来事のあるフレームは射撃ごとにできるので、空の列は共有し、回復が起きたフレームだけ配列を作る
   const noHeal: readonly boolean[] = Array.from({ length: slotCount }, () => false);
   // フレーム → 出来事（0 以上 frames 未満のフレームだけ。添字の順に拾うと昇順になる）
   const byFrame: (FrameEvents | undefined)[] = new Array<FrameEvents | undefined>(frames);
   const at = (frame: number): FrameEvents => {
-    if (frame < 0) throw new RangeError(`replayEvents: negative frame ${frame}`);
+    if (!Number.isInteger(frame) || frame < 0)
+      throw new RangeError(`replayEvents: frame ${frame} is not a non-negative integer`);
     return (byFrame[frame] ??= emptyFrameEvents(frame, new Array<ShotEvent | null>(slotCount).fill(null), noHeal));
   };
   /** フレーム f（frames 未満のときだけ）の出来事の、列の欄 key に value を足す（欄が無ければ列を作る） */

@@ -172,9 +172,7 @@ export function createFrameEvents({
       pendingCoverHeals.delete(f);
     }
     // 空の出来事（skills/triggers.ts の emptyFrameEvents）に欄を代入する（形を 1 つに保つ）
-    const ev = emptyFrameEvents(f, shotEvents, healed);
-    ev.activations = now;
-    ev.burstEffects = burstEffects;
+    const ev = emptyFrameEvents(f, shotEvents, healed, now, burstEffects);
     ev.burstHits = burstHits;
     ev.fullBurstStart = fullBurstStart;
     ev.fullBurstEnd = fullBurstEnd;
