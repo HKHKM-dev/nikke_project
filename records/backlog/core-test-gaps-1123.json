@@ -1,0 +1,5 @@
+{
+  "section": "5",
+  "order": 30,
+  "text": "計算の変更で、テストが通っていない道（2026-11-23 のコミットの見直し）: (1) 持続の命中率▲の区間の値を枠ごとに使い回す `frame/plan.ts` の `lastValueBySlot`。鍵は区間の参照と▲の和（n・up）だけなので、`frame/landing.ts` の `hitRateSpanWith` がほかの入力を読むようになると古い値を返す。使い回しの有無で 1 パス目の結果が同じことを確かめるテストが無い（全件の合計が同じことは bench を手で回して見ただけ）。(2) `skills/triggers.ts` の `replayEvents` は、整数でないか負のフレームで RangeError を投げる（前は黙って出来事を作った）。発動の分かれたヒット（`hitOffsets`）や観測値の比べる設定から、そうしたフレームが来うるかを確かめ、来うるなら読み込みで弾くか、テストで押さえる。(3) ジャンプの窓の中で ON にした枠を窓の明けから撃つ扱い（C-1565。`frame/firstPass/shooters.ts` の `slotBlockRanges`）のテストは SR（`__tests__/holdFireManualOn.test.ts` の C-1562 の場合）だけで、C-1565 で確かめた SMG・SG（I-DOLL・オーシャン、ノワール）の場合が無い。パスは `packages/core/src/` から"
+}
