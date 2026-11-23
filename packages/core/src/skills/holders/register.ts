@@ -5,7 +5,7 @@ import { isRecordTriggered, isResolvedApplied, isResolvedChance, type ResolvedTr
 import { attackRankFor } from '../ranking.ts';
 import { counterMax, type CounterId } from '../counters.ts';
 import { dependsOnDefense, type FireContext } from '../targets.ts';
-import { fireContextOf, type FrameEvents } from '../triggers.ts';
+import { emptyFrameEvents, fireContextOf, type FrameEvents } from '../triggers.ts';
 import { isEndedTrigger } from '../types.ts';
 import { ENEMY, type GrantSource, type HeldStage, type HolderLists, type TimedSource, leadShotKey } from './types.ts';
 import { atBattleStart, grantStartOf, insertSorted, lastAtOrBefore, startOfFire } from './items.ts';
@@ -510,18 +510,12 @@ export function createRegister({
     // カウンタの増減は、このフレームのすべての判定の後
     registerCounters(step);
   };
-  const emptyEvents = (frame: number): FrameEvents => ({
-    frame,
-    shots: slots.map(() => null),
-    activations: [],
-    burstEffects: [],
-    fullBurstStart: false,
-    fullBurstEnd: false,
-    gaugeFull: false,
-    fullBurstStartUsers: [],
-    fullBurstEndUsers: [],
-    healed: slots.map(() => false),
-  });
+  const emptyEvents = (frame: number): FrameEvents =>
+    emptyFrameEvents(
+      frame,
+      slots.map(() => null),
+      slots.map(() => false),
+    );
   const registerBattleStart: HolderLists['registerBattleStart'] = () => {
     if (frames <= 0) return;
     register(emptyEvents(0), true);

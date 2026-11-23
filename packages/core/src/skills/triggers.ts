@@ -94,6 +94,35 @@ export type ShotEvent = {
 };
 
 /**
+ * 発の出来事。ShotEvent はどれもここで作る（任意の欄も省かずに undefined で型の順に書き、1 パス目の発と流し直しの発の形を 1 つにする）
+ */
+export function shotEventOf(
+  lastShot: boolean,
+  lastBullet: boolean | undefined,
+  fullCharge: boolean,
+  hits: number,
+  coreHits: number,
+  critHits: number | undefined,
+  critPellets: number | undefined,
+  pellets: number | undefined,
+  weaponChange: boolean,
+  infiniteAmmo: boolean,
+): ShotEvent {
+  return {
+    lastShot,
+    lastBullet,
+    fullCharge,
+    hits,
+    coreHits,
+    critHits,
+    critPellets,
+    pellets,
+    weaponChange: weaponChange ? true : undefined,
+    ammo: infiniteAmmo ? 0 : undefined,
+  };
+}
+
+/**
  * 確率のきっかけの 1 発で付く確率 min(1, 確率 × その発の回数の量)。回数の量が 0 の発は 0（機会にしない）。
  * plan/design-soldier-eg.md 3.1 節
  */
@@ -297,6 +326,43 @@ export type FrameEvents = {
   /** 同 2.6 節: このフレームに溜めが満ちた枠（ShotLog.chargeFullFrames）。トリガー { chargeFull } が見る。省略は無し */
   chargeFulls?: readonly number[];
 };
+
+/** 開いた・閉じたチェーンの枠が無いときの、共有の空の列 */
+const NO_USERS: readonly number[] = Object.freeze([]);
+
+/**
+ * 出来事の無いフレームの FrameEvents。FrameEvents はどれもここで作り、欄は後から代入する（任意の欄も省かずに undefined で
+ * 書くので、作る所によらず形が 1 つになり、毎フレーム読む側の最適化を崩さない）。activations・burstEffects は省くと作るたびに新しい列
+ */
+export function emptyFrameEvents(
+  frame: number,
+  shots: readonly (ShotEvent | null)[],
+  healed: readonly boolean[],
+  activations: readonly BurstActivation[] = [],
+  burstEffects: readonly BurstActivation[] = [],
+): FrameEvents {
+  return {
+    frame,
+    shots,
+    activations,
+    burstEffects,
+    burstHits: undefined,
+    fullBurstStart: false,
+    fullBurstEnd: false,
+    gaugeFull: false,
+    fullBurstStartUsers: NO_USERS,
+    fullBurstEndUsers: NO_USERS,
+    healed,
+    fullStacks: undefined,
+    weaponChangeEnds: undefined,
+    reloadEnds: undefined,
+    coverHealed: undefined,
+    skillFired: undefined,
+    stageEntries: undefined,
+    chargeTicks: undefined,
+    chargeFulls: undefined,
+  };
+}
 
 /** 溜めの周期の発火（枠と間隔の秒） */
 export type ChargeTickEvent = { slotIndex: number; everySeconds: number };
@@ -580,29 +646,23 @@ export function replayEvents(
   heals: readonly HealRecord[] = [],
 ): FrameEvents[] {
   if (frames <= 0) return [];
+  if (!Number.isInteger(frames)) throw new RangeError(`replayEvents: frames ${frames} is not an integer`);
   const slotCount = shots.length;
   // 出来事のあるフレームは射撃ごとにできるので、空の列は共有し、回復が起きたフレームだけ配列を作る
-  const noUsers: readonly number[] = [];
   const noHeal: readonly boolean[] = Array.from({ length: slotCount }, () => false);
-  const byFrame = new Map<number, FrameEvents>();
+  // フレーム → 出来事（0 以上 frames 未満のフレームだけ。添字の順に拾うと昇順になる）
+  const byFrame: (FrameEvents | undefined)[] = new Array<FrameEvents | undefined>(frames);
   const at = (frame: number): FrameEvents => {
-    let ev = byFrame.get(frame);
-    if (ev === undefined) {
-      ev = {
-        frame,
-        shots: Array.from({ length: slotCount }, () => null),
-        activations: [],
-        burstEffects: [],
-        fullBurstStart: false,
-        fullBurstEnd: false,
-        gaugeFull: false,
-        fullBurstStartUsers: noUsers,
-        fullBurstEndUsers: noUsers,
-        healed: noHeal,
-      };
-      byFrame.set(frame, ev);
-    }
-    return ev;
+    if (!Number.isInteger(frame) || frame < 0)
+      throw new RangeError(`replayEvents: frame ${frame} is not a non-negative integer`);
+    return (byFrame[frame] ??= emptyFrameEvents(frame, new Array<ShotEvent | null>(slotCount).fill(null), noHeal));
+  };
+  /** フレーム f（frames 未満のときだけ）の出来事の、列の欄 key に value を足す（欄が無ければ列を作る） */
+  type ListKey = 'weaponChangeEnds' | 'reloadEnds' | 'chargeTicks' | 'chargeFulls' | 'stageEntries' | 'burstHits';
+  const pushAt = <K extends ListKey>(f: number, key: K, value: NonNullable<FrameEvents[K]>[number]): void => {
+    if (f >= frames) return;
+    const ev = at(f);
+    ((ev[key] ??= []) as unknown[]).push(value);
   };
   at(0);
   shots.forEach((log, slotIndex) => {
@@ -614,70 +674,40 @@ export function replayEvents(
     const full = fullChargeFrameSet(log);
     log.frames.forEach((f, k) => {
       if (f >= frames) return;
-      const shot: ShotEvent = {
-        lastShot: last.has(f),
-        fullCharge: full(f),
-        hits: log.hits?.[k] ?? 1,
-        coreHits: log.coreHits?.[k] ?? 0,
-      };
-      const critHits = log.critHits?.[k];
-      if (critHits !== undefined) shot.critHits = critHits;
-      const critPellets = log.critPellets?.[k];
-      if (critPellets !== undefined) shot.critPellets = critPellets;
-      const pellets = log.pelletHits?.[k];
-      if (pellets !== undefined) shot.pellets = pellets;
-      if (lastBullets !== null) shot.lastBullet = lastBullets.has(f);
-      if (changed.has(f)) shot.weaponChange = true;
-      if (infinite.has(f)) shot.ammo = 0;
-      (at(f).shots as (ShotEvent | null)[])[slotIndex] = shot;
+      (at(f).shots as (ShotEvent | null)[])[slotIndex] = shotEventOf(
+        last.has(f),
+        lastBullets === null ? undefined : lastBullets.has(f),
+        full(f),
+        log.hits?.[k] ?? 1,
+        log.coreHits?.[k] ?? 0,
+        log.critHits?.[k],
+        log.critPellets?.[k],
+        log.pelletHits?.[k],
+        changed.has(f),
+        infinite.has(f),
+      );
     });
     // 使用武器の変更の終わり（トリガー { weaponChangeEnd }）
-    for (const f of log.weaponChangeEnds ?? []) {
-      if (f >= frames) continue;
-      const ev = at(f);
-      ev.weaponChangeEnds = [...(ev.weaponChangeEnds ?? []), slotIndex];
-    }
+    for (const f of log.weaponChangeEnds ?? []) pushAt(f, 'weaponChangeEnds', slotIndex);
     // リロードの込め終わり（トリガー { reloadEnd }）
-    for (const f of log.reloadEnds ?? []) {
-      if (f >= frames) continue;
-      const ev = at(f);
-      ev.reloadEnds = [...(ev.reloadEnds ?? []), slotIndex];
-    }
+    for (const f of log.reloadEnds ?? []) pushAt(f, 'reloadEnds', slotIndex);
     // 溜めの周期（{ chargeTick }）と溜めが満ちた時（{ chargeFull }）
-    for (const { everySeconds, frames: ticks } of log.chargeTicks ?? []) {
-      for (const f of ticks) {
-        if (f >= frames) continue;
-        const ev = at(f);
-        ev.chargeTicks = [...(ev.chargeTicks ?? []), { slotIndex, everySeconds }];
-      }
-    }
-    for (const f of log.chargeFullFrames ?? []) {
-      if (f >= frames) continue;
-      const ev = at(f);
-      ev.chargeFulls = [...(ev.chargeFulls ?? []), slotIndex];
-    }
+    for (const { everySeconds, frames: ticks } of log.chargeTicks ?? [])
+      for (const f of ticks) pushAt(f, 'chargeTicks', { slotIndex, everySeconds });
+    for (const f of log.chargeFullFrames ?? []) pushAt(f, 'chargeFulls', slotIndex);
   });
   if (schedule !== null) {
     for (const a of schedule.activations) if (a.frame < frames) (at(a.frame).activations as BurstActivation[]).push(a);
     // 段階のきっかけは stageEnterFrameOf のフレーム（段階 3 は替わり目）
-    for (const a of schedule.activations) {
-      const f = stageEnterFrameOf(a, schedule.model);
-      if (a.enteredStep === null || f >= frames) continue;
-      const ev = at(f);
-      ev.stageEntries = [...(ev.stageEntries ?? []), a.enteredStep];
-    }
+    for (const a of schedule.activations)
+      if (a.enteredStep !== null) pushAt(stageEnterFrameOf(a, schedule.model), 'stageEntries', a.enteredStep);
     // 効果の発火は発動 + 遅れのフレーム（同じフレームなら時刻表の順）
     for (const a of schedule.activations) {
       const f = effectFrameOf(a);
       if (f < frames) (at(f).burstEffects as BurstActivation[]).push(a);
     }
     // ヒットのフレーム（トリガー burstHit。分かれたヒットはそれぞれ。plan/design-burst-hit-reapply.md 5 節）
-    for (const a of schedule.activations)
-      for (const f of hitFramesOf(a)) {
-        if (f >= frames) continue;
-        const ev = at(f);
-        ev.burstHits = [...(ev.burstHits ?? []), a];
-      }
+    for (const a of schedule.activations) for (const f of hitFramesOf(a)) pushAt(f, 'burstHits', a);
     for (const w of schedule.fullBurstWindows) {
       if (w.start < frames) {
         const ev = at(w.start);
@@ -698,7 +728,7 @@ export function replayEvents(
     if (ev.healed === noHeal) ev.healed = [...noHeal];
     (ev.healed as boolean[])[h.slotIndex] = true;
   }
-  return [...byFrame.values()].sort((a, b) => a.frame - b.frame);
+  return byFrame.filter((ev) => ev !== undefined);
 }
 
 /** トリガーの発火（フレームと文脈） */

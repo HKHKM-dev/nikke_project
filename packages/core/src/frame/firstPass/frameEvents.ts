@@ -10,7 +10,7 @@ import {
 } from '../../burst/schedule.ts';
 import type { ResolvedInstantEffect } from '../../skills/resolve.ts';
 import { healFrameOf } from '../../skills/heals.ts';
-import { fireContextOf, type FrameEvents } from '../../skills/triggers.ts';
+import { emptyFrameEvents, fireContextOf, type ChargeTickEvent, type FrameEvents } from '../../skills/triggers.ts';
 import type { FirstPassBase } from './base.ts';
 import type { InstantSources } from './instants.ts';
 import type { BurstScheduleLayer } from './burst.ts';
@@ -96,7 +96,7 @@ export function createFrameEvents({
     if (stageEntries !== undefined) pendingStageEntries.delete(f);
     const windows = windowsOf();
     let fullBurstStart = false;
-    let fullBurstStartUsers: readonly number[] = [];
+    let fullBurstStartUsers: readonly number[] | undefined;
     while (nextWindowStart < windows.length && windows[nextWindowStart]!.start <= f) {
       if (windows[nextWindowStart]!.start === f) {
         fullBurstStart = true;
@@ -105,7 +105,7 @@ export function createFrameEvents({
       nextWindowStart += 1;
     }
     let fullBurstEnd = false;
-    let fullBurstEndUsers: readonly number[] = [];
+    let fullBurstEndUsers: readonly number[] | undefined;
     while (nextWindowEnd < windows.length && windows[nextWindowEnd]!.end <= f) {
       if (windows[nextWindowEnd]!.end === f) {
         fullBurstEnd = true;
@@ -141,18 +141,23 @@ export function createFrameEvents({
     // このフレームにフルスタックになった状態を消費する（回復のきっかけ { fullStack }。plan/design-skill-stage3.md 1.3 節）。
     // フルスタックになる件は、射撃の回数のきっかけの付与なので前のフレームまでに登録済み
     const fullStacks = lists.consumeFullStacks(f);
-    // このフレームに使用武器の変更（撃ち切り）が終わった枠（plan/design-skill-stage11.md 2.2.1 節）
-    const weaponChangeEnds = logs.flatMap((log, i) => (log?.weaponChangeEnds?.at(-1) === f ? [i] : []));
-    // このフレームがリロードの込め終わりの次のフレームの枠（plan/design-skill-stage16.md 2.2 節）
-    const reloadEnds = logs.flatMap((log, i) => (log?.reloadEnds?.at(-1) === f ? [i] : []));
-    // このフレームの溜めの周期と満ちた時（手順 1 の射手が射撃の記録に書いた）
-    const chargeTicks = logs.flatMap(
-      (log, i) =>
-        log?.chargeTicks?.flatMap((t) =>
-          t.frames.at(-1) === f ? [{ slotIndex: i, everySeconds: t.everySeconds }] : [],
-        ) ?? [],
-    );
-    const chargeFulls = logs.flatMap((log, i) => (log?.chargeFullFrames?.at(-1) === f ? [i] : []));
+    // 射撃の記録から、このフレームの出来事の枠を拾う（毎フレーム呼ぶので、拾うものがあったときだけ配列を作る）:
+    // 使用武器の変更（撃ち切り）が終わった枠（plan/design-skill-stage11.md 2.2.1 節）・リロードの込め終わりの次のフレームの枠
+    // （plan/design-skill-stage16.md 2.2 節）・溜めの周期と満ちた時（手順 1 の射手が射撃の記録に書いた）
+    let weaponChangeEnds: number[] | undefined;
+    let reloadEnds: number[] | undefined;
+    let chargeTicks: ChargeTickEvent[] | undefined;
+    let chargeFulls: number[] | undefined;
+    for (let i = 0; i < logs.length; i++) {
+      const log = logs[i];
+      if (log == null) continue;
+      if (lastIs(log.weaponChangeEnds, f)) (weaponChangeEnds ??= []).push(i);
+      if (lastIs(log.reloadEnds, f)) (reloadEnds ??= []).push(i);
+      if (log.chargeTicks !== undefined)
+        for (const t of log.chargeTicks)
+          if (lastIs(t.frames, f)) (chargeTicks ??= []).push({ slotIndex: i, everySeconds: t.everySeconds });
+      if (lastIs(log.chargeFullFrames, f)) (chargeFulls ??= []).push(i);
+    }
     // 前のフレームの自分のスロットの発動（クールタイムの印のある周期。1 パス目の記録。きっかけ { skillFired }。plan/design-centi.md 2.2 節）
     const skillFired = skillFiredBefore();
     // このフレームに遮蔽物 HP 回復を受けた枠（前のフレームの射撃で起きたものから。このフレームの分は下で足す）
@@ -166,27 +171,22 @@ export function createFrameEvents({
       coverHealedDirty = true;
       pendingCoverHeals.delete(f);
     }
-    const ev: FrameEvents = {
-      frame: f,
-      shots: shotEvents,
-      activations: now,
-      burstEffects,
-      ...(burstHits !== undefined ? { burstHits } : {}),
-      fullBurstStart,
-      fullBurstEnd,
-      gaugeFull,
-      fullBurstStartUsers,
-      fullBurstEndUsers,
-      healed,
-      ...(fullStacks.length > 0 ? { fullStacks } : {}),
-      ...(weaponChangeEnds.length > 0 ? { weaponChangeEnds } : {}),
-      ...(reloadEnds.length > 0 ? { reloadEnds } : {}),
-      ...(coverHeals.length > 0 ? { coverHealed } : {}),
-      ...(chargeTicks.length > 0 ? { chargeTicks } : {}),
-      ...(chargeFulls.length > 0 ? { chargeFulls } : {}),
-      ...(skillFired.length > 0 ? { skillFired } : {}),
-      ...(stageEntries !== undefined ? { stageEntries } : {}),
-    };
+    // 空の出来事（skills/triggers.ts の emptyFrameEvents）に欄を代入する（形を 1 つに保つ）
+    const ev = emptyFrameEvents(f, shotEvents, healed, now, burstEffects);
+    ev.burstHits = burstHits;
+    ev.fullBurstStart = fullBurstStart;
+    ev.fullBurstEnd = fullBurstEnd;
+    ev.gaugeFull = gaugeFull;
+    if (fullBurstStartUsers !== undefined) ev.fullBurstStartUsers = fullBurstStartUsers;
+    if (fullBurstEndUsers !== undefined) ev.fullBurstEndUsers = fullBurstEndUsers;
+    if (fullStacks.length > 0) ev.fullStacks = fullStacks;
+    ev.weaponChangeEnds = weaponChangeEnds;
+    ev.reloadEnds = reloadEnds;
+    if (coverHeals.length > 0) ev.coverHealed = coverHealed;
+    if (skillFired.length > 0) ev.skillFired = skillFired;
+    ev.stageEntries = stageEntries;
+    ev.chargeTicks = chargeTicks;
+    ev.chargeFulls = chargeFulls;
     return ev;
   };
   /** 回復と遮蔽物 HP 回復を、件の登録の前に当てる */
@@ -237,4 +237,9 @@ export function createFrameEvents({
     }
   };
   return { applyHeals, collectFrameEvents };
+}
+
+/** 昇順の列の最後がフレーム f か（列が無い・空なら false） */
+function lastIs(list: readonly number[] | undefined, f: number): boolean {
+  return list !== undefined && list.length > 0 && list[list.length - 1] === f;
 }

@@ -21,6 +21,7 @@ import { triggerFrames, type TimelineSlot } from '../../skills/timeline.ts';
 import {
   burstStepHolds,
   createTriggerTracker,
+  emptyFrameEvents,
   fireContextOf,
   type FrameEvents,
   type TriggerTracker,
@@ -185,18 +186,7 @@ export function createInstants({
     pendingGaugeCharges.delete(f);
     if (shotGaugeCharges.length > 0) {
       // 射撃の回数トリガーの判定（skills/triggers.ts）は射撃だけを見る。手順 3 の出来事はまだ無いので空で渡す
-      const ev: FrameEvents = {
-        frame: f,
-        shots: shotEvents,
-        activations: [],
-        burstEffects: [],
-        fullBurstStart: false,
-        fullBurstEnd: false,
-        gaugeFull: false,
-        fullBurstStartUsers: [],
-        fullBurstEndUsers: [],
-        healed: [],
-      };
+      const ev = emptyFrameEvents(f, shotEvents, []);
       for (const src of shotGaugeCharges) {
         if (src.fires(ev) && controller !== null) charges.push(src);
       }

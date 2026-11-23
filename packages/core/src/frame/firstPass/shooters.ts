@@ -27,6 +27,7 @@ import { reloadStartOffset } from '../../cadence.ts';
 import type { FrameRange, TimelineSlot } from '../../skills/timeline.ts';
 import type { HoldFire } from '../../team.ts';
 import { unionRanges } from '../events.ts';
+import { shotEventOf } from '../../skills/triggers.ts';
 import type { FirstPassBase } from './base.ts';
 import type { Gauge } from './gauge.ts';
 import type { GaugeEffects } from './gaugeEffects.ts';
@@ -399,31 +400,30 @@ export function createShooters({
     const critPellets = critPelletsOf(i, slot, shot, params, critRate, hits, pelletCount);
     log.critPellets!.push(critPellets);
     log.pelletHits!.push(pelletCount);
-    shotEvents[i] = {
-      lastShot: state.lastShot,
-      fullCharge: log.fullCharge && !isPartial && !uncharged,
-      hits,
-      coreHits,
-      critHits,
-      critPellets,
-      pellets: pelletCount,
-    };
-    if (params.weapon !== null) shotEvents[i]!.weaponChange = true;
     // 「最後の弾丸」が最後の 1 発でない武器（二丁持ち）は、撃った後の残弾がその発の数より少ない発がきっかけ
     // （基礎の武器だけ。装弾数無限の発は残弾が減らないので起きない）
     const bullets = params.weapon === null ? lastBulletShotsOf(slot.character.weaponType, shot) : 1;
+    let lastBullet: boolean | undefined;
     if (bullets > 1) {
-      const lastBullet = state.lastShot || (!params.infiniteAmmo && state.ammo < bullets);
-      shotEvents[i]!.lastBullet = lastBullet;
+      lastBullet = state.lastShot || (!params.infiniteAmmo && state.ammo < bullets);
       log.lastBulletFrames ??= [];
       if (lastBullet) log.lastBulletFrames.push(f);
     }
     // 装弾数無限の発は残弾を減らさないので、味方が消費した弾の合計（teamAmmo）に数えない（plan/design-cinderella-cw.md 2.3 節）。
     // 流し直し（replayEvents）も同じに数えるよう、射撃の列にも残す
-    if (params.infiniteAmmo) {
-      shotEvents[i]!.ammo = 0;
-      (log.infiniteAmmoShotFrames ??= []).push(f);
-    }
+    if (params.infiniteAmmo) (log.infiniteAmmoShotFrames ??= []).push(f);
+    shotEvents[i] = shotEventOf(
+      state.lastShot,
+      lastBullet,
+      log.fullCharge && !isPartial && !uncharged,
+      hits,
+      coreHits,
+      critHits,
+      critPellets,
+      pelletCount,
+      params.weapon !== null,
+      params.infiniteAmmo,
+    );
     shotCounts[i]! += 1;
     return shotGauge(i, slot, f, uncharged, isPartial ? partial : null);
   };

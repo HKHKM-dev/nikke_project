@@ -263,6 +263,32 @@ export type TeamPlan = {
 };
 
 /**
+ * 持続の命中率▲で出し直す区間の値（hitRateSpanWith）を、枠ごとに前の値で使い回す関数にする。値は区間と▲の和（n・up）だけで
+ * 決まり、1 パス目は発ごとに同じ区間・同じ和で読む（plan/design-optimal-party-speed.md 3.2 節）
+ */
+function lastValueBySlot(
+  slotCount: number,
+  compute: (slotIndex: number, span: LandingHitRateSpan, timed: HitRateN) => { hitRate: number; coreHits: number },
+): (slotIndex: number, span: LandingHitRateSpan, timed: HitRateN) => { hitRate: number; coreHits: number } {
+  const last = Array.from({ length: slotCount }, () => ({
+    span: null as LandingHitRateSpan | null,
+    n: 0,
+    up: 0,
+    value: { hitRate: 0, coreHits: 0 },
+  }));
+  return (slotIndex, span, timed) => {
+    const l = last[slotIndex]!;
+    if (l.span !== span || l.n !== timed.n || l.up !== timed.up) {
+      l.span = span;
+      l.n = timed.n;
+      l.up = timed.up;
+      l.value = compute(slotIndex, span, timed);
+    }
+    return l.value;
+  };
+}
+
+/**
  * 1 パス目。射撃の列 → 時刻表（常時のゲージ速度込み）→ バフの区間（射撃の回数トリガー込み）→ 倍率ダメージの発動。
  * 射撃の列と時刻表は runFirstPass のフレームループで同時に作る（射撃に効くバフ・CT 短縮・弾丸チャージ込み）。
  * バフの区間と倍率ダメージは、確定した射撃の列と時刻表から作る。バフの区間は 1 パス目の履歴から作る。
@@ -306,8 +332,9 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     ...(landing === null || input.sustainedHitRateUp === false
       ? {}
       : {
-          hitRateWith: (slotIndex: number, span: LandingHitRateSpan, timed: HitRateN) =>
+          hitRateWith: lastValueBySlot(slots.length, (slotIndex: number, span: LandingHitRateSpan, timed: HitRateN) =>
             hitRateSpanWith(landing, slots[slotIndex]!, slotIndex, span, timed),
+          ),
         }),
     // plan/design-k.md 2.5 節: 使用武器の変更の発の命中・コアの命中の期待値も、2 パス目と同じ的の表の変更後の武器の行から引く
     ...(landing === null
