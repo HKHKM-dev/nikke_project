@@ -1,0 +1,5 @@
+{
+  "section": "8",
+  "order": 200,
+  "text": "衝突の直しの `prepare` のジョブから、Actions のキャッシュを通して main の生成物を書き換えうる点を扱うか決める。`prepare` はブランチの道具を main の push の実行の中で回すので、その中のコードが main のスコープのキャッシュを書ければ、`.github/workflows/ci.yml` の main の check が `restore-keys: residuals-` で戻し、`records:minimal` を通って生成物に入り、`commit` のジョブが main に push する（鍵は漏れない）。main の push の check で `restore-keys` を使わないか、受け入れて 4 節に書くか。同じジョブで続けて回す PR どうしで、`cleanUp` が無視されたファイル・`~/.gitconfig`・`.git/hooks` を戻さない点もあわせて扱う（2026-11-23 起票）→ オーナーの判断待ち: [design-deploy-key-scope.md](design-deploy-key-scope.md) 4 節"
+}

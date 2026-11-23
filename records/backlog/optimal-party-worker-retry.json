@@ -1,0 +1,5 @@
+{
+  "section": "8",
+  "order": 210,
+  "text": "最適編成計算の Worker のやり直しを、件ごとに数える。`apps/web/src/computeWorker.ts` は失敗の数を Worker ごとに数え、`apps/web/src/useBatchComputation.ts` は落ちた件をやり直しの列の先頭に戻すので、Worker を落とす件は上限なく Worker を替えて送り直される（答えが来ない件では 1 回 30 秒）。続けて落ちた Worker は dead になり、パネルを開き直すまで作り直さない。件ごとのやり直しに上限を設けてその件を失敗にし、新しい計算を始めるときに dead の Worker を作り直す。作り直しの `new Worker` が投げたときに計算中のまま止まる点も直す。`superviseWorker` と、割り振り（取り戻し・やり直し・全部 dead）のテストが無いので足す（2026-11-23 起票）→ 未着手: [design-modern-ui.md](design-modern-ui.md)"
+}
