@@ -1,0 +1,5 @@
+{
+  "section": "8",
+  "order": 190,
+  "text": "衝突の直し（auto-rebase）の `PRS` を、使う欄だけにする。`tools/git/auto-rebase.ts` の `--find` は REST の PR オブジェクトを丸ごと（1 本で約 18KB）JSON にして、`prepare` のジョブに環境変数 `PRS` で渡す。Linux では環境変数 1 つは 128KiB までなので、直す対象の PR が 7 本ほどになると node が起動できず（E2BIG）、どの PR も直らない。number・title・body・head・auto_merge・mergeable に絞るか、ファイルで渡す。あわせて、`prepare()`・`push()` の組み立て（TARGETS に無い番号を弾く・head が進んでいたら飛ばす・振り直したときだけ題名を直す）と、`tools/git/ci-generated.ts` の `--export`・`--commit` の本体のテストを足す（2026-11-23 起票）→ 未着手: [design-deploy-key-scope.md](design-deploy-key-scope.md)"
+}
