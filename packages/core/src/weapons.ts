@@ -156,7 +156,7 @@ export type WeaponModel = {
   /**
    * オート射撃を手で OFF にしていた枠（TeamInput.holdFire）が、狙える間に ON に戻したときの構えが、ハイドからのふつうの構え
    * （aimInFrames。戦闘開始・窓の明け）より何フレーム短いか。ボタンが点いてから約 5f で構え終え、チャージ武器はそこからチャージする
-   * （C-1550。AR・SR・RL で同じ）。確かめた武器種だけに使う（holdFireAimShorterFrames）
+   * （C-1550・C-1564。武器種によらない）
    */
   manualOnAimShorterFrames: number;
 };
@@ -226,20 +226,6 @@ export function hideAimShorterFrames(
   return isChargeWeapon(shot) && shot.inputType === 'UP' && shot.fireType === 'Instant'
     ? model.srHideAimShorterFrames
     : 0;
-}
-
-/** 手で戻した構えの短さを確かめた武器種（C-1550）。SMG・SG・MG は確かめていない（課題 2-76） */
-const MANUAL_ON_CHECKED_WEAPONS: readonly WeaponType[] = ['AR', 'SR', 'RL'];
-
-/**
- * オート射撃を手で ON に戻した（holdFire の区間の明け）枠の 1 発目を、窓の明け（windowEndFirstShotFrames）より何フレーム早く撃つか。
- * 確かめた武器種（AR・SR・RL）だけ WeaponModel.manualOnAimShorterFrames（C-1550）。ほかは 0（窓の明けと同じ）
- */
-export function holdFireAimShorterFrames(
-  weaponType: WeaponType,
-  model: Pick<WeaponModel, 'manualOnAimShorterFrames'>,
-): number {
-  return MANUAL_ON_CHECKED_WEAPONS.includes(weaponType) ? model.manualOnAimShorterFrames : 0;
 }
 
 /**
