@@ -298,6 +298,39 @@ export type FrameEvents = {
   chargeFulls?: readonly number[];
 };
 
+/**
+ * 出来事の無いフレームの FrameEvents。任意の欄も省かずに undefined で、型の順に書く（作る所どうしで形を 1 つにして、
+ * 毎フレーム読む側の最適化を崩さない。1 パス目の frame/firstPass/frameEvents.ts の collectFrameEvents も同じ順に書く）
+ */
+export function emptyFrameEvents(
+  frame: number,
+  shots: readonly (ShotEvent | null)[],
+  healed: readonly boolean[],
+  users: readonly number[] = [],
+): FrameEvents {
+  return {
+    frame,
+    shots,
+    activations: [],
+    burstEffects: [],
+    burstHits: undefined,
+    fullBurstStart: false,
+    fullBurstEnd: false,
+    gaugeFull: false,
+    fullBurstStartUsers: users,
+    fullBurstEndUsers: users,
+    healed,
+    fullStacks: undefined,
+    weaponChangeEnds: undefined,
+    reloadEnds: undefined,
+    coverHealed: undefined,
+    skillFired: undefined,
+    stageEntries: undefined,
+    chargeTicks: undefined,
+    chargeFulls: undefined,
+  };
+}
+
 /** 溜めの周期の発火（枠と間隔の秒） */
 export type ChargeTickEvent = { slotIndex: number; everySeconds: number };
 
@@ -584,25 +617,16 @@ export function replayEvents(
   // 出来事のあるフレームは射撃ごとにできるので、空の列は共有し、回復が起きたフレームだけ配列を作る
   const noUsers: readonly number[] = [];
   const noHeal: readonly boolean[] = Array.from({ length: slotCount }, () => false);
-  const byFrame = new Map<number, FrameEvents>();
+  // フレーム → 出来事（0 以上 frames 未満のフレームだけ。添字の順に拾うと昇順になる）
+  const byFrame: (FrameEvents | undefined)[] = new Array<FrameEvents | undefined>(frames);
   const at = (frame: number): FrameEvents => {
-    let ev = byFrame.get(frame);
-    if (ev === undefined) {
-      ev = {
-        frame,
-        shots: Array.from({ length: slotCount }, () => null),
-        activations: [],
-        burstEffects: [],
-        fullBurstStart: false,
-        fullBurstEnd: false,
-        gaugeFull: false,
-        fullBurstStartUsers: noUsers,
-        fullBurstEndUsers: noUsers,
-        healed: noHeal,
-      };
-      byFrame.set(frame, ev);
-    }
-    return ev;
+    if (frame < 0) throw new RangeError(`replayEvents: negative frame ${frame}`);
+    return (byFrame[frame] ??= emptyFrameEvents(
+      frame,
+      Array.from({ length: slotCount }, () => null),
+      noHeal,
+      noUsers,
+    ));
   };
   at(0);
   shots.forEach((log, slotIndex) => {
@@ -614,47 +638,45 @@ export function replayEvents(
     const full = fullChargeFrameSet(log);
     log.frames.forEach((f, k) => {
       if (f >= frames) return;
+      // 欄は 1 パス目の発（frame/firstPass/shooters.ts の recordShot）と同じく、型の順に全部書く（無いものは undefined）
       const shot: ShotEvent = {
         lastShot: last.has(f),
+        lastBullet: lastBullets === null ? undefined : lastBullets.has(f),
         fullCharge: full(f),
         hits: log.hits?.[k] ?? 1,
         coreHits: log.coreHits?.[k] ?? 0,
+        critHits: log.critHits?.[k],
+        critPellets: log.critPellets?.[k],
+        pellets: log.pelletHits?.[k],
+        weaponChange: changed.has(f) ? true : undefined,
+        ammo: infinite.has(f) ? 0 : undefined,
       };
-      const critHits = log.critHits?.[k];
-      if (critHits !== undefined) shot.critHits = critHits;
-      const critPellets = log.critPellets?.[k];
-      if (critPellets !== undefined) shot.critPellets = critPellets;
-      const pellets = log.pelletHits?.[k];
-      if (pellets !== undefined) shot.pellets = pellets;
-      if (lastBullets !== null) shot.lastBullet = lastBullets.has(f);
-      if (changed.has(f)) shot.weaponChange = true;
-      if (infinite.has(f)) shot.ammo = 0;
       (at(f).shots as (ShotEvent | null)[])[slotIndex] = shot;
     });
     // 使用武器の変更の終わり（トリガー { weaponChangeEnd }）
     for (const f of log.weaponChangeEnds ?? []) {
       if (f >= frames) continue;
       const ev = at(f);
-      ev.weaponChangeEnds = [...(ev.weaponChangeEnds ?? []), slotIndex];
+      ((ev.weaponChangeEnds ??= []) as number[]).push(slotIndex);
     }
     // リロードの込め終わり（トリガー { reloadEnd }）
     for (const f of log.reloadEnds ?? []) {
       if (f >= frames) continue;
       const ev = at(f);
-      ev.reloadEnds = [...(ev.reloadEnds ?? []), slotIndex];
+      ((ev.reloadEnds ??= []) as number[]).push(slotIndex);
     }
     // 溜めの周期（{ chargeTick }）と溜めが満ちた時（{ chargeFull }）
     for (const { everySeconds, frames: ticks } of log.chargeTicks ?? []) {
       for (const f of ticks) {
         if (f >= frames) continue;
         const ev = at(f);
-        ev.chargeTicks = [...(ev.chargeTicks ?? []), { slotIndex, everySeconds }];
+        ((ev.chargeTicks ??= []) as ChargeTickEvent[]).push({ slotIndex, everySeconds });
       }
     }
     for (const f of log.chargeFullFrames ?? []) {
       if (f >= frames) continue;
       const ev = at(f);
-      ev.chargeFulls = [...(ev.chargeFulls ?? []), slotIndex];
+      ((ev.chargeFulls ??= []) as number[]).push(slotIndex);
     }
   });
   if (schedule !== null) {
@@ -664,7 +686,7 @@ export function replayEvents(
       const f = stageEnterFrameOf(a, schedule.model);
       if (a.enteredStep === null || f >= frames) continue;
       const ev = at(f);
-      ev.stageEntries = [...(ev.stageEntries ?? []), a.enteredStep];
+      ((ev.stageEntries ??= []) as BurstStepKey[]).push(a.enteredStep);
     }
     // 効果の発火は発動 + 遅れのフレーム（同じフレームなら時刻表の順）
     for (const a of schedule.activations) {
@@ -676,7 +698,7 @@ export function replayEvents(
       for (const f of hitFramesOf(a)) {
         if (f >= frames) continue;
         const ev = at(f);
-        ev.burstHits = [...(ev.burstHits ?? []), a];
+        ((ev.burstHits ??= []) as BurstActivation[]).push(a);
       }
     for (const w of schedule.fullBurstWindows) {
       if (w.start < frames) {
@@ -698,7 +720,7 @@ export function replayEvents(
     if (ev.healed === noHeal) ev.healed = [...noHeal];
     (ev.healed as boolean[])[h.slotIndex] = true;
   }
-  return [...byFrame.values()].sort((a, b) => a.frame - b.frame);
+  return byFrame.filter((ev) => ev !== undefined);
 }
 
 /** トリガーの発火（フレームと文脈） */

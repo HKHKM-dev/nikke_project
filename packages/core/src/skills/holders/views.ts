@@ -10,6 +10,7 @@ import {
   rangeUpOf,
   statLockOf,
   type BuffTotals,
+  type HitRateN,
   type RangeUp,
   type StatLock,
 } from '../buffs.ts';
@@ -146,18 +147,39 @@ export function createViews(layers: HolderBase & Records & Fires & Sources & Rea
   // 当たり: 順位の対象でない timed の当たりの stat と、状態の中身。条件つき（段 1.5）の
   // 命中率▲（ソーダ：トゥインクルバニーのバースト）も、区間（2 パス目）と同じ N にするため入れる（plan/design-skill-stage3.md 経過）
   const hitViews = hitStageViewsOf(...HIT_STATE_STATS);
-  // 件の scale（perCount のスタック数・確率）は 2 パス目と同じく値に掛ける
-  const hitRateAt: HolderLists['hitRateAt'] = (holder, frame) => {
-    let n = 0;
-    let up = 0;
-    for (const v of hitViews[holder] ?? []) {
-      for (const it of activeAt(v.track, frame)) {
-        const value = valueOf(v.effect, it);
-        n += value;
-        if (v.effect.value > 0) up += value;
-      }
-    }
-    return n === 0 && up === 0 ? ZERO_HIT_RATE : { n, up };
+  // 件の scale（perCount のスタック数・確率）は 2 パス目と同じく値に掛ける。毎発 × 枠で読むので、件の境目まで使い回す
+  const hitRates = hitViews.map((views) =>
+    createSpanMemo(
+      views.length,
+      (i) => readItems(views[i]!.track),
+      (frame, _base: null): HitRateN => {
+        let n = 0;
+        let up = 0;
+        for (const v of views) {
+          for (const it of activeAt(v.track, frame)) {
+            const value = valueOf(v.effect, it);
+            n += value;
+            if (v.effect.value > 0) up += value;
+          }
+        }
+        return n === 0 && up === 0 ? ZERO_HIT_RATE : { n, up };
+      },
+    ),
+  );
+  const hitRateAt: HolderLists['hitRateAt'] = (holder, frame) => hitRates[holder]?.(frame, null) ?? ZERO_HIT_RATE;
+  /**
+   * 持ち主ごとの views の、フレーム frame に効いている値の和（sumAt）。毎発 × 枠で読む会心・ペレット・ゲージ速度に使い、
+   * 件の境目まで前の和を使い回す（plan/design-optimal-party-speed.md 3.2 節）
+   */
+  const spanSumsOf = (viewsByHolder: readonly View[][]) => {
+    const memos = viewsByHolder.map((views) =>
+      createSpanMemo(
+        views.length,
+        (i) => readItems(views[i]!.track),
+        (frame, _base: null) => sumAt(views, frame),
+      ),
+    );
+    return (holder: number, frame: number): number => memos[holder]?.(frame, null) ?? 0;
   };
   // 条件 inEffectiveRange が読む適正射程距離の▲（plan/design-agent-bunny.md 2.2 節・plan/design-leona.md 2.1 節）。順位の材料で
   // ないので、順位の対象（段 2）の件も入れる（2 パス目の区間と同じ件）
@@ -175,6 +197,9 @@ export function createViews(layers: HolderBase & Records & Fires & Sources & Rea
   const pelletCountViews = viewsOf((track, e) => e.stat === 'pelletCount');
   const singlePelletViews = hitStageViewsOf('singlePellet');
   const hasPellets = slots.map((_, h) => pelletCountViews[h]!.length > 0 || singlePelletViews[h]!.length > 0);
+  const critUpAt = spanSumsOf(critViews);
+  const pelletCountAt = spanSumsOf(pelletCountViews);
+  const singlePelletAt = spanSumsOf(singlePelletViews);
   // 条件 selfBuffed: 段 1 の件
   const conditionViews = viewsOf((track) => track.stage === 1);
   // 順位: 段 1・1.5 の攻撃力の件
@@ -247,6 +272,7 @@ export function createViews(layers: HolderBase & Records & Fires & Sources & Rea
     );
   // ゲージ: 時間で変わるバーストゲージのチャージ速度の件（plan/design-skill-stage1.md 1.6 節。段によらない。状態の中身も）
   const gaugeViews = viewsOf((_, e) => e.stat === 'burstGaugeSpeed');
+  const gaugeSpeedAt = spanSumsOf(gaugeViews);
   // バーストスキルのクールタイム▼ の維持の付いた形（T4）の件
   const cooldownViews = viewsOf((_, e) => e.stat === 'burstCooldown');
   /** 枠 holder の T4 の▼ の件のうち、pick に合うものの秒の和 */
@@ -326,11 +352,12 @@ export function createViews(layers: HolderBase & Records & Fires & Sources & Rea
     cooldownSum,
     cooldownViews,
     counterEmptyTracks,
-    critViews,
+    critUpAt,
     damageBuffsAt,
     enemyStateAt,
     finalAttacksAtFrame,
     firingBuffsAt,
+    gaugeSpeedAt,
     gaugeViews,
     hasFiring,
     hasPellets,
@@ -340,7 +367,7 @@ export function createViews(layers: HolderBase & Records & Fires & Sources & Rea
     lowerCurrentHp,
     lowerDefenseAt,
     rangeUpAt,
-    pelletCountViews,
+    pelletCountAt,
     rankContext,
     rankSlots,
     selfHpAtMostAt,
@@ -349,11 +376,10 @@ export function createViews(layers: HolderBase & Records & Fires & Sources & Rea
     selfHpUntilTracks,
     selfStackCountAt,
     selfStateItemsAt,
-    singlePelletViews,
+    singlePelletAt,
     stackLevelAt,
     stateEndTracks,
     staticStates,
-    sumAt,
   };
 }
 export type Views = ReturnType<typeof createViews>;
