@@ -50,29 +50,14 @@ export function createGauge({ controlledSlot, lists, options, passive, slots }: 
     while (hitRateAt[i]! + 1 < spans.length && spans[hitRateAt[i]!]!.end <= f) hitRateAt[i]! += 1;
     return spans[hitRateAt[i]!];
   };
-  /**
-   * 枠 i がフレーム f の区間の値（持続の命中率▲が効いていれば出し直した値。▲は件の一覧の当たりの件。スタックは段の数だけ）。
-   * 出し直した値は区間と▲の和（hitRateAt は件の境目まで同じものを返す）で決まるので、同じ組の間は前の値を使い回す（発ごとに読む）
-   */
-  const lastSpanValue = slots.map(() => ({
-    span: undefined as LandingHitRateSpan | undefined,
-    timed: ZERO_HIT_RATE,
-    value: undefined as { hitRate: number; coreHits: number } | undefined,
-  }));
+  /** 枠 i がフレーム f の区間の値（持続の命中率▲が効いていれば出し直した値。▲は件の一覧の当たりの件。スタックは段の数だけ） */
   const spanValueAt = (
     i: number,
     f: number,
   ): LandingHitRateSpan | { hitRate: number; coreHits: number } | undefined => {
     const span = spanAt(i, f);
     if (span === undefined || options.hitRateWith === undefined || !lists.hasHitTracks) return span;
-    const timed = lists.hitRateAt(i, f);
-    const last = lastSpanValue[i]!;
-    if (last.value === undefined || last.span !== span || last.timed !== timed) {
-      last.span = span;
-      last.timed = timed;
-      last.value = options.hitRateWith(i, span, timed);
-    }
-    return last.value;
+    return options.hitRateWith(i, span, lists.hitRateAt(i, f));
   };
   /**
    * 枠 i のフレーム f の発の、基礎のペレットの数に対する実効のペレットの数の比（固定なら 1 ÷ 基礎、▲なら (基礎 + Σ) ÷ 基礎。

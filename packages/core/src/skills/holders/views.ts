@@ -55,42 +55,48 @@ export function createViews(layers: HolderBase & Records & Fires & Sources & Rea
     for (const v of views ?? []) for (const it of activeAt(v.track, frame)) sum += valueOf(v.effect, it);
     return sum;
   };
+  /**
+   * 持ち主ごとの views で決まる値 compute(views, frame, base) を、件の境目まで使い回す関数の列（skills/spanMemo.ts。
+   * 毎フレームか毎発 × 枠で読む射手の実効値・当たり・会心・ペレット・ゲージ速度。plan/design-first-pass-perf.md 3.2 節）
+   */
+  const spanMemosOf = <B, T>(
+    viewsByHolder: readonly View[][],
+    compute: (views: readonly View[], frame: number, base: B) => T,
+  ): ((frame: number, base: B) => T)[] =>
+    viewsByHolder.map((views) =>
+      createSpanMemo(
+        views.length,
+        (i) => readItems(views[i]!.track),
+        (frame, base: B) => compute(views, frame, base),
+      ),
+    );
   // 射手: 射撃に効く stat（timed は段によらない。状態の中身も）
   const firingViews = viewsOf((_, e) => isFiringStat(e.stat));
   const hasFiring = slots.map((_, i) => (firingViews[i] ?? []).length > 0);
-  /**
-   * 射手の実効値（持ち主ごと）。毎フレーム × 枠で読まれるので、効いている件の組が変わらない間（件の境目まで）は前の値を使い回す
-   * （plan/design-first-pass-perf.md 3.2 節）
-   */
-  const firingBuffs = firingViews.map((views) =>
-    createSpanMemo(
-      views.length,
-      (i) => readItems(views[i]!.track),
-      (frame, base: BuffTotals): BuffTotals | null => {
-        let buffs = base;
-        let changed = false;
-        // 値の固定は、ほかの件を全部足した後に和を上書きする（常時の値も。plan/design-stat-lock.md 3.4 節）
-        const locks: StatLock[] = [];
-        for (const v of views) {
-          // 和集合の窓は重ならないので効いているのは多くて 1 つ。スタックする効果は効いている段の数だけ足す。件の scale（perCount の
-          // スタック数）は 2 パス目（piecesOfTrack）と同じく値に掛ける
-          for (const it of activeAt(v.track, frame)) {
-            const effect = scaledEffect(v.effect, it);
-            const lock = statLockOf(effect);
-            if (lock !== null) locks.push(lock);
-            buffs = applyResolvedEffect(
-              buffs,
-              effect,
-              fixedAttackBaseOf(effect, v.track.casterBaseAttack, slots),
-              v.track.casterMaxHp,
-            ).totals;
-            changed = true;
-          }
-        }
-        return changed ? applyStatLocks(buffs, locks) : null;
-      },
-    ),
-  );
+  /** 射手の実効値（持ち主ごと）。効いている件の組が変わらない間（件の境目まで）は前の値を使い回す */
+  const firingBuffs = spanMemosOf(firingViews, (views, frame, base: BuffTotals): BuffTotals | null => {
+    let buffs = base;
+    let changed = false;
+    // 値の固定は、ほかの件を全部足した後に和を上書きする（常時の値も。plan/design-stat-lock.md 3.4 節）
+    const locks: StatLock[] = [];
+    for (const v of views) {
+      // 和集合の窓は重ならないので効いているのは多くて 1 つ。スタックする効果は効いている段の数だけ足す。件の scale（perCount の
+      // スタック数）は 2 パス目（piecesOfTrack）と同じく値に掛ける
+      for (const it of activeAt(v.track, frame)) {
+        const effect = scaledEffect(v.effect, it);
+        const lock = statLockOf(effect);
+        if (lock !== null) locks.push(lock);
+        buffs = applyResolvedEffect(
+          buffs,
+          effect,
+          fixedAttackBaseOf(effect, v.track.casterBaseAttack, slots),
+          v.track.casterMaxHp,
+        ).totals;
+        changed = true;
+      }
+    }
+    return changed ? applyStatLocks(buffs, locks) : null;
+  });
   const firingBuffsAt: HolderLists['firingBuffsAt'] = (holder, frame, base) =>
     hasFiring[holder] ? firingBuffs[holder]!(frame, base) : null;
   // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 与ダメージの値に効く件（piecesOfTrack と同じ持ち主の写し方）。
@@ -148,37 +154,22 @@ export function createViews(layers: HolderBase & Records & Fires & Sources & Rea
   // 命中率▲（ソーダ：トゥインクルバニーのバースト）も、区間（2 パス目）と同じ N にするため入れる（plan/design-skill-stage3.md 経過）
   const hitViews = hitStageViewsOf(...HIT_STATE_STATS);
   // 件の scale（perCount のスタック数・確率）は 2 パス目と同じく値に掛ける。毎発 × 枠で読むので、件の境目まで使い回す
-  const hitRates = hitViews.map((views) =>
-    createSpanMemo(
-      views.length,
-      (i) => readItems(views[i]!.track),
-      (frame, _base: null): HitRateN => {
-        let n = 0;
-        let up = 0;
-        for (const v of views) {
-          for (const it of activeAt(v.track, frame)) {
-            const value = valueOf(v.effect, it);
-            n += value;
-            if (v.effect.value > 0) up += value;
-          }
-        }
-        return n === 0 && up === 0 ? ZERO_HIT_RATE : { n, up };
-      },
-    ),
-  );
+  const hitRates = spanMemosOf(hitViews, (views, frame, _base: null): HitRateN => {
+    let n = 0;
+    let up = 0;
+    for (const v of views) {
+      for (const it of activeAt(v.track, frame)) {
+        const value = valueOf(v.effect, it);
+        n += value;
+        if (v.effect.value > 0) up += value;
+      }
+    }
+    return n === 0 && up === 0 ? ZERO_HIT_RATE : { n, up };
+  });
   const hitRateAt: HolderLists['hitRateAt'] = (holder, frame) => hitRates[holder]?.(frame, null) ?? ZERO_HIT_RATE;
-  /**
-   * 持ち主ごとの views の、フレーム frame に効いている値の和（sumAt）。毎発 × 枠で読む会心・ペレット・ゲージ速度に使い、
-   * 件の境目まで前の和を使い回す（plan/design-optimal-party-speed.md 3.2 節）
-   */
+  /** 持ち主ごとの views の、フレーム frame に効いている値の和（sumAt）を件の境目まで使い回す */
   const spanSumsOf = (viewsByHolder: readonly View[][]) => {
-    const memos = viewsByHolder.map((views) =>
-      createSpanMemo(
-        views.length,
-        (i) => readItems(views[i]!.track),
-        (frame, _base: null) => sumAt(views, frame),
-      ),
-    );
+    const memos = spanMemosOf(viewsByHolder, (views, frame, _base: null) => sumAt(views, frame));
     return (holder: number, frame: number): number => memos[holder]?.(frame, null) ?? 0;
   };
   // 条件 inEffectiveRange が読む適正射程距離の▲（plan/design-agent-bunny.md 2.2 節・plan/design-leona.md 2.1 節）。順位の材料で

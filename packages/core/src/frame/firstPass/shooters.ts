@@ -27,6 +27,7 @@ import { reloadStartOffset } from '../../cadence.ts';
 import type { FrameRange, TimelineSlot } from '../../skills/timeline.ts';
 import type { HoldFire } from '../../team.ts';
 import { unionRanges } from '../events.ts';
+import { shotEventOf } from '../../skills/triggers.ts';
 import type { FirstPassBase } from './base.ts';
 import type { Gauge } from './gauge.ts';
 import type { GaugeEffects } from './gaugeEffects.ts';
@@ -411,19 +412,18 @@ export function createShooters({
     // 装弾数無限の発は残弾を減らさないので、味方が消費した弾の合計（teamAmmo）に数えない（plan/design-cinderella-cw.md 2.3 節）。
     // 流し直し（replayEvents）も同じに数えるよう、射撃の列にも残す
     if (params.infiniteAmmo) (log.infiniteAmmoShotFrames ??= []).push(f);
-    // 欄は流し直し（skills/triggers.ts の replayEvents）と同じく、型の順に全部書く（無いものは undefined。形を 1 つにする）
-    shotEvents[i] = {
-      lastShot: state.lastShot,
+    shotEvents[i] = shotEventOf(
+      state.lastShot,
       lastBullet,
-      fullCharge: log.fullCharge && !isPartial && !uncharged,
+      log.fullCharge && !isPartial && !uncharged,
       hits,
       coreHits,
       critHits,
       critPellets,
-      pellets: pelletCount,
-      weaponChange: params.weapon !== null ? true : undefined,
-      ammo: params.infiniteAmmo ? 0 : undefined,
-    };
+      pelletCount,
+      params.weapon !== null,
+      params.infiniteAmmo,
+    );
     shotCounts[i]! += 1;
     return shotGauge(i, slot, f, uncharged, isPartial ? partial : null);
   };

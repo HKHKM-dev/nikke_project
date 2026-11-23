@@ -10,7 +10,7 @@ import {
 } from '../../burst/schedule.ts';
 import type { ResolvedInstantEffect } from '../../skills/resolve.ts';
 import { healFrameOf } from '../../skills/heals.ts';
-import { fireContextOf, type ChargeTickEvent, type FrameEvents } from '../../skills/triggers.ts';
+import { emptyFrameEvents, fireContextOf, type ChargeTickEvent, type FrameEvents } from '../../skills/triggers.ts';
 import type { FirstPassBase } from './base.ts';
 import type { InstantSources } from './instants.ts';
 import type { BurstScheduleLayer } from './burst.ts';
@@ -96,7 +96,7 @@ export function createFrameEvents({
     if (stageEntries !== undefined) pendingStageEntries.delete(f);
     const windows = windowsOf();
     let fullBurstStart = false;
-    let fullBurstStartUsers: readonly number[] = [];
+    let fullBurstStartUsers: readonly number[] | undefined;
     while (nextWindowStart < windows.length && windows[nextWindowStart]!.start <= f) {
       if (windows[nextWindowStart]!.start === f) {
         fullBurstStart = true;
@@ -105,7 +105,7 @@ export function createFrameEvents({
       nextWindowStart += 1;
     }
     let fullBurstEnd = false;
-    let fullBurstEndUsers: readonly number[] = [];
+    let fullBurstEndUsers: readonly number[] | undefined;
     while (nextWindowEnd < windows.length && windows[nextWindowEnd]!.end <= f) {
       if (windows[nextWindowEnd]!.end === f) {
         fullBurstEnd = true;
@@ -171,28 +171,25 @@ export function createFrameEvents({
       coverHealedDirty = true;
       pendingCoverHeals.delete(f);
     }
-    // 欄は毎フレーム同じ順に全部書き、無いものは undefined にする（形を 1 つにして、読む側の最適化を崩さない）
-    return {
-      frame: f,
-      shots: shotEvents,
-      activations: now,
-      burstEffects,
-      burstHits,
-      fullBurstStart,
-      fullBurstEnd,
-      gaugeFull,
-      fullBurstStartUsers,
-      fullBurstEndUsers,
-      healed,
-      fullStacks: fullStacks.length > 0 ? fullStacks : undefined,
-      weaponChangeEnds,
-      reloadEnds,
-      coverHealed: coverHeals.length > 0 ? coverHealed : undefined,
-      skillFired: skillFired.length > 0 ? skillFired : undefined,
-      stageEntries,
-      chargeTicks,
-      chargeFulls,
-    };
+    // 空の出来事（skills/triggers.ts の emptyFrameEvents）に欄を代入する（形を 1 つに保つ）
+    const ev = emptyFrameEvents(f, shotEvents, healed);
+    ev.activations = now;
+    ev.burstEffects = burstEffects;
+    ev.burstHits = burstHits;
+    ev.fullBurstStart = fullBurstStart;
+    ev.fullBurstEnd = fullBurstEnd;
+    ev.gaugeFull = gaugeFull;
+    if (fullBurstStartUsers !== undefined) ev.fullBurstStartUsers = fullBurstStartUsers;
+    if (fullBurstEndUsers !== undefined) ev.fullBurstEndUsers = fullBurstEndUsers;
+    if (fullStacks.length > 0) ev.fullStacks = fullStacks;
+    ev.weaponChangeEnds = weaponChangeEnds;
+    ev.reloadEnds = reloadEnds;
+    if (coverHeals.length > 0) ev.coverHealed = coverHealed;
+    if (skillFired.length > 0) ev.skillFired = skillFired;
+    ev.stageEntries = stageEntries;
+    ev.chargeTicks = chargeTicks;
+    ev.chargeFulls = chargeFulls;
+    return ev;
   };
   /** 回復と遮蔽物 HP 回復を、件の登録の前に当てる */
   const applyHeals = (ev: FrameEvents, f: number): void => {
