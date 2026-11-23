@@ -4,7 +4,7 @@ import { stunSlot } from '../../burst/controller.ts';
 import { partialGaugeRatio } from '../../burst/dynamic.ts';
 import { effectFrameOf, hexagonFrameOf } from '../../burst/schedule.ts';
 import { capCritRate, ZERO_BUFFS, type ChangedWeapon } from '../../skills/buffs.ts';
-import { holdFireAimShorterFrames, isChargeWeapon, lastBulletShotsOf } from '../../weapons.ts';
+import { isChargeWeapon, lastBulletShotsOf } from '../../weapons.ts';
 import { firingParams, isZeroFiring, type FiringParams } from '../firing.ts';
 import {
   beginHide,
@@ -227,7 +227,6 @@ export function createShooters({
    */
   const stepBlock = (
     i: number,
-    slot: Slot,
     state: ShooterState,
     shot: ShotParams,
     params: FiringParams,
@@ -247,9 +246,8 @@ export function createShooters({
       delete state.hideReloadStartIn;
     }
     if (ownBlock !== undefined && ownBlock.end === f) {
-      // オート射撃を手で ON に戻した明けは、構えが短い（C-1550。使用武器の変更の間は確かめていないので窓の明けと同じ）
-      const shorter =
-        ownBlock.manualEnd && params.weapon === null ? holdFireAimShorterFrames(slot.character.weaponType, model) : 0;
+      // オート射撃を手で ON に戻した明けは、構えが短い（C-1550・C-1564。使用武器の変更の間は確かめていないので窓の明けと同じ）
+      const shorter = ownBlock.manualEnd && params.weapon === null ? model.manualOnAimShorterFrames : 0;
       unhideShooter(state, shot, ownBlock.end - ownBlock.start, model, params, shorter);
     }
     return windowShot;
@@ -438,7 +436,7 @@ export function createShooters({
       const shot = params.weapon?.shot ?? slot.character.shot;
       const ownBlock = blockAt(i, f);
       const slotBlocked = ownBlock !== undefined && ownBlock.start <= f && f < ownBlock.end;
-      const partial = stepBlock(i, slot, state, shot, params, f, ownBlock, slotBlocked);
+      const partial = stepBlock(i, state, shot, params, f, ownBlock, slotBlocked);
       if (stepPause(i, state, shot, params, f)) return;
       if (!advanceShooter(i, state, shot, params, f, slotBlocked, partial)) return;
       gauge += recordShot(i, slot, state, shot, params, f, partial);

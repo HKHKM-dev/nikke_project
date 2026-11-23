@@ -1,9 +1,9 @@
 {
   "id": "C-1564",
   "text": "オート射撃を手で OFF にしていた枠は、SMG・SG・MG でも、狙える間に ON に戻すと、ボタンが点いてから約 5f（実測 4〜7f）で最初の発を撃ち、窓の明けからの 1 発目（C-0114 の構えの後）より 7f 早い（C-1550 の AR・SR・RL と同じ）。I-DOLL・オーシャン（SMG）・ノワール（SG）・エマ（MG）の単騎で、照準が敵に掛かっている ON で確かめた",
-  "state": "仮説",
+  "state": "確定",
   "topic": "射撃（間隔・リロード・チャージ）",
-  "grade": "単独実測",
+  "grade": "反復実測",
   "basis": "`1404-05`・`1405-05`・`1406-05`。V-0874",
   "model": "frame/firstPass/shooters.ts の slotBlockRanges（区間の終わりが holdFire か）と、unhideShooter の shorterFrames（weapons.ts の WeaponModel.manualOnAimShorterFrames = 7。武器種によらない。使用武器の変更の間は 0）",
   "replaces": [],

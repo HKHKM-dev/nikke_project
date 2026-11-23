@@ -752,7 +752,7 @@ export function unhideShooter(
 /**
  * 止まっていた射手の構え直し（狙えない窓の明けの後半と、バーストの発動の止まりの明け。plan/design-privaty-burst-pause.md
  * 論点 4）。リロード中なら何もしない。止まりが長ければレートの蓄積を戻し、チャージ武器はチャージし直し、ほかは構えから撃つ。
- * shorterFrames は 1 発目を窓の明けより早く撃つフレーム（オート射撃を手で ON に戻した明け。weapons.ts の holdFireAimShorterFrames。C-1550）
+ * shorterFrames は 1 発目を窓の明けより早く撃つフレーム（オート射撃を手で ON に戻した明け。WeaponModel.manualOnAimShorterFrames。C-1550・C-1564）
  */
 export function reaimShooter(
   state: ShooterState,
