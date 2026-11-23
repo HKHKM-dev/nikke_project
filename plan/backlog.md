@@ -84,8 +84,7 @@
 
 ## 4. オーナーの判断待ち
 
-- 最適編成計算で、入れるとフルバーストが起きなくなる候補を省く判定を外すか（2026-11-23 起票）→ 判断待ち: [design-optimal-party-speed.md](design-optimal-party-speed.md) 4 節
-- 最適編成計算（1 スロットの総当たり）の、案 B の後の効率化（案 H・案 C ほか）を入れるか（2026-11-23 起票）→ 判断待ち: [design-optimal-party-speed.md](design-optimal-party-speed.md) 7 節
+（なし）
 
 ## 5. 道具・記録の整備
 

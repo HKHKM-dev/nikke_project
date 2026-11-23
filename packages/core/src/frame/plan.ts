@@ -264,7 +264,7 @@ export type TeamPlan = {
 
 /**
  * 持続の命中率▲で出し直す区間の値（hitRateSpanWith）を、枠ごとに前の値で使い回す関数にする。値は区間と▲の和（n・up）だけで
- * 決まり、1 パス目は発ごとに同じ区間・同じ和で読む（plan/design-optimal-party-speed.md 3.2 節）
+ * 決まり、1 パス目は発ごとに同じ区間・同じ和で読む
  */
 function lastValueBySlot(
   slotCount: number,
