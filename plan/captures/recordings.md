@@ -1370,9 +1370,6 @@
 | 1401 | `20261122-1401_rl_diesel-winter-sweets-sun-uni.mp4` | リター（82、SMG・鉄甲・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ディーゼル：ウィンタースイーツ（75、RL・灼熱・SSR） + ユニ（160、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0870。リター（I）・I-DOLL・サン（III）・ディーゼル：ウィンタースイーツ（III・操作）・ユニ（II）（オート射撃 ON・オートバースト ON）。火の的 |
 | 1402 | `20261122-1402_rl_diesel-winter-sweets-sun-uni.mp4` | リター（82、SMG・鉄甲・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ディーゼル：ウィンタースイーツ（75、RL・灼熱・SSR） + ユニ（160、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0870。リター（I）・I-DOLL・サン（III）・ディーゼル：ウィンタースイーツ（III・操作）・ユニ（II）（オート射撃 ON・オートバースト ON）。火の的 |
 | 1403 | `20261123-1403_team_sakura-delta-privaty-unkind-maid_fb.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + デルタ（20、SR・風圧・SR） + ◎プリバティ：アンカインド・メイド（313、SG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | 鈴原サクラ（I）+ デルタ（II）+ プリバティ：アンカインド・メイド（III・操作）。V-0875 の撮影の依頼 |
-| 1404 | `20261124-1404_smg_idoll-ocean_holdfire-on.mp4` | ◎I-DOLL・オーシャン（305、SMG・水冷・R） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | V-0874 の撮影: 単騎・操作。オート射撃 OFF で始め、RELOADING で OFF・5 秒以上おいて ON を繰り返し、OFF の間に敵が浮いたら見てすぐ ON（台帳の autoFire は始めの値） |
-| 1405 | `20261124-1405_sg_noir_holdfire-on.mp4` | ◎ノワール（271、SG・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | V-0874 の撮影: 単騎・操作。オート射撃 OFF で始め、RELOADING で OFF・5 秒以上おいて ON を繰り返し、OFF の間に敵が浮いたら見てすぐ ON（台帳の autoFire は始めの値） |
-| 1406 | `20261124-1406_mg_emma_holdfire-on.mp4` | ◎エマ（90、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | V-0874 の撮影: 単騎・操作。オート射撃 OFF で始め、RELOADING で OFF・5 秒以上おいて ON を繰り返し、OFF の間に敵が浮いたら見てすぐ ON（台帳の autoFire は始めの値） |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
