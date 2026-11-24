@@ -1,0 +1,5 @@
+{
+  "section": "5",
+  "order": 40,
+  "text": "画面の変更で、テストが通っていない道（2026-11-24 のコミットの見直し）: (1) ボタンで開くポップアップ `components/Popover.tsx` にテストが無い（7 つの部品が使う）。幕を押す・Esc・ボタンの押し直しで閉じること、中身を関数で渡したときに受ける関数で閉じること、`align` が `center` のときは横にずらさないことを押さえる。(2) 最適編成計算をポップアップに移した `views/ClassicView.tsx` で、閉じると `OptimalPartyPanel` が外れて計算の Worker を捨てる（`useBatchComputation.ts` の後片付け）こと、「採用」を押しても閉じないことは、手元の headless で見ただけで、テストが無い。パスは `apps/web/src/` から"
+}
