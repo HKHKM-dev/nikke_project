@@ -23,9 +23,9 @@
      inkscape:deskcolor="#505050"
      inkscape:current-layer="content"
      showguides="true"
-     inkscape:zoom="1.5519231"
-     inkscape:cx="28.35192"
-     inkscape:cy="95.687731"
+     inkscape:zoom="2.1947507"
+     inkscape:cx="16.402774"
+     inkscape:cy="63.105117"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
@@ -68,11 +68,11 @@
      style="display:inline"><path
        id="arrow-right-1"
        inkscape:label="arrow-left"
-       d="M 71.00021,115 V 15 h 15 v 65 l 22.5,-5 z"
+       d="M 71.00021,115 V 15 h 15 v 60 l 30,-10 z"
        style="display:inline;stroke-width:1"
        sodipodi:nodetypes="cccccc" /><path
        id="arrow-right"
        inkscape:label="arrow-right"
-       d="m 51.00021,15 v 100 h -15 V 55 l -25,5 z"
+       d="m 51.00021,15 v 100 h -15 V 60 l -30,10 z"
        style="display:inline;stroke-width:1"
        sodipodi:nodetypes="cccccc" /></g></svg>
