@@ -154,11 +154,12 @@ export function TeamSettingsForm({
               />
             </fieldset>
           </Popover>
-          {/* アイコンのボタン（モダン UI）は、育成状況が無くても薄く（押せない状態で）出しておく（オーナーのコメント） */}
+          {/* アイコンのボタン（モダン UI）は、育成状況が無くても薄く（押せない状態で）出しておく（オーナーのコメント）。
+              文字のボタン（クラシック）は「戻す」とだけ出し、読み上げの名前は「育成状況の値に戻す」にする（オーナーのコメント） */}
           {(rosterCommon !== null || revertIcon) && (
             <InertButton
               className={revertIcon ? 'roster-revert-icon-button' : undefined}
-              label={revertIcon ? ROSTER_REVERT_LABEL : undefined}
+              label={ROSTER_REVERT_LABEL}
               enabled={canRevert}
               onPress={() => {
                 if (rosterCommon === null) return;
@@ -166,7 +167,7 @@ export function TeamSettingsForm({
                 dispatch({ type: 'setConsole', console: rosterCommon.console });
               }}
             >
-              {revertIcon ? <BadgeIcon className="roster-revert-icon" name={RETURN_BADGE} /> : ROSTER_REVERT_LABEL}
+              {revertIcon ? <BadgeIcon className="roster-revert-icon" name={RETURN_BADGE} /> : '戻す'}
             </InertButton>
           )}
         </div>
