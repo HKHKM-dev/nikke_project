@@ -1,6 +1,7 @@
 // 最適編成計算（クラシック）。入れ替えるスロットを 1 つ選んで「計算」を押すと、そのスロットを、いまの編成にもほかの編成にもいない
 // ニケに 1 人ずつ入れ替えて編成のダメージを計算し、いちばん大きい上位 10 人を出す（optimalParty.ts）。
-// 候補のキャラとスキル定義は、計算を始めたときに読む（200 人ぶん）。計算は専用の Worker（useBatchComputation）で回し、画面の計算とは別
+// 候補のキャラとスキル定義は、計算を始めたときに読む（200 人ぶん）。計算は専用の Worker（useBatchComputation）で回し、画面の計算とは別。
+// 「最適編成計算」のボタンで開くポップアップの中身（ClassicView の Popover）
 import type { BuildMasters, BuildSnapshot, CharacterIndexEntry, EnemyPresetMaster } from '@nikke/core';
 import { useMemo, useState } from 'react';
 import { InertButton } from './InertButton.tsx';
@@ -137,7 +138,7 @@ export function OptimalPartyPanel({
   }, [done, batch.results, status.ready]);
 
   return (
-    <fieldset className="panel optimal-party">
+    <fieldset className="popover-group optimal-party">
       <legend>最適編成計算</legend>
       <div className="optimal-party-controls">
         <label className="field">
