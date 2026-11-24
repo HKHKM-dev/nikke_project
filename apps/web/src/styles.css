@@ -703,9 +703,19 @@ svg.roster-revert-icon {
   justify-content: center;
   margin-top: 12px;
 }
-/* 最適編成計算のポップアップの中身（OptimalPartyPanel。クラシック）。計算の前後で幅が変わって枠が動かないように、一覧の幅を先に取る */
+/* 最適編成計算のポップアップ（ClassicView）。計算の前後で、スロットの選択欄と「計算」のボタンが動かないようにする。
+   上下: 中央にそろえると結果が出て背が伸びたときに上へずれるので、上端を決めて下へ伸ばす。
+   左右: 中身の幅を一覧の幅（.optimal-party-list の左の余白 2em ＋ 行の最大 40em）に先に決める */
+.popover-panel-center.optimal-party-popover {
+  top: min(10vh, 80px);
+  translate: -50% 0;
+  max-height: calc(100vh - min(10vh, 80px) - 16px);
+  max-height: calc(100dvh - min(10vh, 80px) - 16px);
+}
 .optimal-party {
-  min-width: min(36em, calc(100vw - 58px));
+  width: min(42em, calc(100vw - 58px));
+  /* fieldset は既定で中身の最小幅まで広がる。狭い画面で一覧の行に押し広げられないように、上の幅に留める */
+  min-width: 0;
 }
 .optimal-party-controls {
   display: flex;
@@ -717,9 +727,10 @@ svg.roster-revert-icon {
   margin: 8px 0 0;
   padding-left: 2em;
 }
+/* 名前の列は残りの幅（狭い画面では折り返す）。数値の列は幅を決めて、行どうしでそろえる */
 .optimal-party-row {
   display: grid;
-  grid-template-columns: minmax(14em, 1fr) 6em 5em auto;
+  grid-template-columns: minmax(0, 1fr) 6em 5em auto;
   align-items: center;
   gap: 8px;
   max-width: 40em;
@@ -733,6 +744,32 @@ svg.roster-revert-icon {
 .optimal-party-note {
   margin: 8px 0 0;
   font-size: 0.85rem;
+}
+/* 狭い画面（スマートフォン）では、名前を 1 行目に出し、ダメージ・差・採用を 2 行目の右に寄せる（1 行に並べると名前の列が細くなり、何行にも折り返す） */
+@media (max-width: 479px) {
+  .optimal-party-list {
+    padding-left: 1.5em;
+  }
+  .optimal-party-row {
+    grid-template-columns: minmax(0, 1fr) 6em 5em auto;
+    grid-template-areas:
+      'name name name name'
+      '. total diff adopt';
+    row-gap: 0;
+    padding: 4px 0;
+  }
+  .optimal-party-name {
+    grid-area: name;
+  }
+  .optimal-party-total {
+    grid-area: total;
+  }
+  .optimal-party-diff {
+    grid-area: diff;
+  }
+  .optimal-party-adopt {
+    grid-area: adopt;
+  }
 }
 /* ソロレイドの編成 01〜05 の切り替え（PartyTabs） */
 .party-tabs {
