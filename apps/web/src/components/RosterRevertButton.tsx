@@ -15,16 +15,18 @@ type Props = {
   onRevert: (fields: SlotGrowthFields) => void;
 };
 
-/** スペック固定の間と、スロットの値が育成状況と同じときは押せない。確かめずに戻す */
+/** スペック固定の間と、スロットの値が育成状況と同じときは押せない。確かめずに戻す。
+ *  表記は「戻す」とだけ出し、読み上げの名前は「育成状況の値に戻す」にする（オーナーのコメント） */
 export function RosterRevertButton({ fields, rosterGrowth, fixedSpec, onRevert }: Props) {
   if (rosterGrowth === null) return null;
   return (
     <InertButton
       className="advanced-settings-button roster-revert-button"
+      label={ROSTER_REVERT_LABEL}
       enabled={!fixedSpec && !sameGrowthFields(fields, rosterGrowth)}
       onPress={() => onRevert(rosterGrowth)}
     >
-      {ROSTER_REVERT_LABEL}
+      戻す
     </InertButton>
   );
 }

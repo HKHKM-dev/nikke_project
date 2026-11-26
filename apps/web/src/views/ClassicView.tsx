@@ -56,9 +56,15 @@ export function ClassicView({
       />
       {/* 全編成の合計は、編成のタブの上（どの編成を開いていても見える） */}
       <DamageTotalPanel title="合計ダメージ" value={totals.total} computing={totalsPending} />
-      {/* 最適編成計算は、ボタンで開くポップアップ（画面の中央）に出す。閉じると、計算の途中でも結果ごと捨てる */}
+      {/* 最適編成計算は、ボタンで開くポップアップ（画面の上寄りの中央）に出す。閉じると、計算の途中でも結果ごと捨てる */}
       <div className="party-optimize">
-        <Popover button="最適編成計算" buttonClassName="party-optimize-button" label="最適編成計算" align="center">
+        <Popover
+          button="最適編成計算"
+          buttonClassName="party-optimize-button"
+          label="最適編成計算"
+          align="center"
+          panelClassName="optimal-party-popover"
+        >
           <OptimalPartyPanel
             team={team}
             roster={roster}
