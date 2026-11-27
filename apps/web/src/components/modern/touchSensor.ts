@@ -48,6 +48,10 @@ class TrackedTouchSensorImpl implements SensorInstance {
   private touchActionBefore: string | null = null;
   /** ほかの指の前の位置（持ち上げている間、その指の動きの分だけ画面をスクロールする） */
   private readonly others = new Map<number, Point>();
+  /** 持ち上げ前から付けるリスナー（終えたら外す） */
+  private readonly listeners = new AbortController();
+  /** 持ち上げた後に付ける、離した直後のクリックと文字の選択を止めるリスナー（終えて少し後に外す） */
+  private readonly afterStart = new AbortController();
   /** window（capture）と触れた要素の両方で受けるので、同じ知らせを 2 度扱わない */
   private lastEvent: Event | null = null;
 
@@ -57,19 +61,19 @@ class TrackedTouchSensorImpl implements SensorInstance {
     this.touchId = touch.identifier;
     this.initial = { x: touch.clientX, y: touch.clientY };
     this.target = props.event.target;
+    const { signal } = this.listeners;
     for (const name of TOUCH_EVENTS) {
-      window.addEventListener(name, this.onTouch, { capture: true, passive: false });
-      if (name !== 'touchstart') this.target?.addEventListener(name, this.onTouch, { passive: false });
+      window.addEventListener(name, this.onTouch, { capture: true, passive: false, signal });
+      if (name !== 'touchstart') this.target?.addEventListener(name, this.onTouch, { passive: false, signal });
     }
-    window.addEventListener('resize', this.cancel);
-    window.addEventListener('dragstart', preventDefault);
-    window.addEventListener('visibilitychange', this.cancel);
-    window.addEventListener('contextmenu', preventDefault);
-    document.addEventListener('keydown', this.onKeydown);
+    window.addEventListener('resize', this.cancel, { signal });
+    window.addEventListener('dragstart', preventDefault, { signal });
+    window.addEventListener('visibilitychange', this.cancel, { signal });
+    window.addEventListener('contextmenu', preventDefault, { signal });
+    document.addEventListener('keydown', this.onKeydown, { signal });
     touchLog(`センサー 指${this.touchId}`);
-    const { delay, tolerance } = props.options;
-    this.timer = setTimeout(this.start, delay);
-    props.onPending(props.active, { delay, tolerance }, this.initial);
+    this.timer = setTimeout(this.start, props.options.delay);
+    props.onPending(props.active, props.options, this.initial);
   }
 
   private readonly onTouch = (event: Event) => {
@@ -96,7 +100,9 @@ class TrackedTouchSensorImpl implements SensorInstance {
   private onOtherFingers(event: TouchEvent) {
     let dx = 0;
     let dy = 0;
-    for (const touch of Array.from(event.changedTouches)) {
+    const { changedTouches } = event;
+    for (let i = 0; i < changedTouches.length; i++) {
+      const touch = changedTouches[i]!;
       if (touch.identifier === this.touchId) continue;
       const point = { x: touch.clientX, y: touch.clientY };
       const last = this.others.get(touch.identifier);
@@ -117,9 +123,8 @@ class TrackedTouchSensorImpl implements SensorInstance {
     const point = { x: touch.clientX, y: touch.clientY };
     const offset = { x: this.initial.x - point.x, y: this.initial.y - point.y };
     if (!this.activated) {
-      const { delay, tolerance } = this.props.options;
-      if (Math.hypot(offset.x, offset.y) > tolerance) this.finish('cancel', '動いた');
-      else this.props.onPending(this.props.active, { delay, tolerance }, this.initial, offset);
+      if (Math.hypot(offset.x, offset.y) > this.props.options.tolerance) this.finish('cancel', '動いた');
+      else this.props.onPending(this.props.active, this.props.options, this.initial, offset);
       return;
     }
     if (event.cancelable) event.preventDefault();
@@ -131,9 +136,10 @@ class TrackedTouchSensorImpl implements SensorInstance {
     if (this.done) return;
     this.activated = true;
     // 持ち上げた後は、離した後に届くクリックと文字の選択を止める（dnd-kit の TouchSensor と同じ）
-    document.addEventListener('click', stopClick, { capture: true });
+    const { signal } = this.afterStart;
+    document.addEventListener('click', stopClick, { capture: true, signal });
     document.getSelection()?.removeAllRanges();
-    document.addEventListener('selectionchange', this.removeSelection);
+    document.addEventListener('selectionchange', this.removeSelection, { signal });
     const root = document.documentElement.style;
     this.touchActionBefore = root.touchAction;
     root.touchAction = 'none';
@@ -155,21 +161,10 @@ class TrackedTouchSensorImpl implements SensorInstance {
     this.done = true;
     touchLog(`センサー終わり ${kind} ${reason}${this.activated ? '' : '（持ち上げ前）'}`);
     if (this.timer !== null) clearTimeout(this.timer);
-    for (const name of TOUCH_EVENTS) {
-      window.removeEventListener(name, this.onTouch, { capture: true });
-      this.target?.removeEventListener(name, this.onTouch);
-    }
-    window.removeEventListener('resize', this.cancel);
-    window.removeEventListener('dragstart', preventDefault);
-    window.removeEventListener('visibilitychange', this.cancel);
-    window.removeEventListener('contextmenu', preventDefault);
-    document.removeEventListener('keydown', this.onKeydown);
+    this.listeners.abort();
     if (this.touchActionBefore !== null) document.documentElement.style.touchAction = this.touchActionBefore;
     // 離した直後に届くクリックまで止めてから外す
-    setTimeout(() => {
-      document.removeEventListener('click', stopClick, { capture: true });
-      document.removeEventListener('selectionchange', this.removeSelection);
-    }, 50);
+    setTimeout(() => this.afterStart.abort(), 50);
     if (!this.activated) this.props.onAbort(this.props.active);
     if (kind === 'end') this.props.onEnd();
     else this.props.onCancel();
@@ -183,7 +178,10 @@ export const TrackedTouchSensor: Sensor<TrackedTouchSensorOptions> = Object.assi
     {
       eventName: 'onTouchStart' as const,
       // 新しく触れた指が 1 本のときに始める（ほかの指が触れていても始める）
+      // dnd-kit は、ほかのドラッグが続いている（終わりを受けていない）か、知らせが preventDefault 済みなら、これを呼ばない。
+      // ?touchlog の記録で、触れたのにこの行が無ければ、そのどちらかで持ち上げられていない
       handler: ({ nativeEvent }: ReactTouchEvent) => {
+        touchLog(`始まりの判定 指${nativeEvent.changedTouches[0]?.identifier} ${nativeEvent.changedTouches.length}本`);
         if (nativeEvent.changedTouches.length !== 1) return false;
         // dnd-kit は落とす先の判定に、始めの知らせ（activatorEvent）の touches の 1 本目の位置を使う。
         // ほかの指（離したのに数え続けられている指も）が 1 本目に来ないよう、この知らせの touches をこの指だけにする

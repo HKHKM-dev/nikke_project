@@ -167,9 +167,9 @@ describe('TrackedTouchSensor', () => {
   it('始めの知らせの touches を、触れた指だけにする（dnd-kit が落とす先の判定に 1 本目の位置を使う）', () => {
     const activator = TrackedTouchSensor.activators[0]!;
     const nativeEvent = touchEvent('touchstart', [touch(3, 10, 20)], [touch(1, 5, 5), touch(3, 10, 20)]);
-    expect(activator.handler({ nativeEvent }, props?.options, { active: {} as never })).toBe(true);
+    expect(activator.handler({ nativeEvent } as never, {} as never, {} as never)).toBe(true);
     expect((nativeEvent as TouchEvent).touches[0]!.identifier).toBe(3);
     const two = touchEvent('touchstart', [touch(4, 0, 0), touch(5, 0, 0)], [touch(4, 0, 0), touch(5, 0, 0)]);
-    expect(activator.handler({ nativeEvent: two }, props?.options, { active: {} as never })).toBe(false);
+    expect(activator.handler({ nativeEvent: two } as never, {} as never, {} as never)).toBe(false);
   });
 });

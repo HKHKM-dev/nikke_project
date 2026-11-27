@@ -1,6 +1,7 @@
 // タッチの知らせを画面の下に書き出す（実機でしか起きないタッチの不具合を調べるため）。URL に ?touchlog を付けたとき（か、VITE_TOUCHLOG=1 で作ったとき）だけ動く。
 // 1 行は「経過秒 知らせ 変わった指[identifier] 触れている指[identifier] c=cancelable P=preventDefault 済み 触れた要素」。
-// 続けて届いた同じ形の touchmove は 1 行にまとめて回数を付ける。ページの処理が終わった後（window の bubble）の値を書く。
+// 続けて届いた同じ形の touchmove は 1 行にまとめて回数を付ける。触れている指は、ページの処理の前（window の capture）の値を書く
+// （タッチのセンサーは持ち上げを始める知らせの touches を書き換える。touchSensor.ts）。c と P は、処理が終わった後（window の bubble）の値。
 // 触れた要素が消えていて window まで届かなかった知らせは「window に届かず」と書く
 // 確かめ用のアーティファクト（claude.ai の中に埋め込まれ、URL の ?touchlog が届かない）には、VITE_TOUCHLOG=1 で作ると初めから出す
 const enabled =
@@ -12,9 +13,18 @@ const lines: string[] = [];
 let box: HTMLElement | null = null;
 let lastMoveKey: string | null = null;
 let lastMoveCount = 0;
-const startedAt = typeof performance !== 'undefined' ? performance.now() : 0;
+const startedAt = performance.now();
+/** 描き直しを 1 フレームに 1 回にまとめる（touchmove は 1 フレームに何度も届く） */
+let renderQueued = false;
 
 function render() {
+  if (renderQueued) return;
+  renderQueued = true;
+  requestAnimationFrame(draw);
+}
+
+function draw() {
+  renderQueued = false;
   if (!box) {
     box = document.createElement('div');
     box.setAttribute('aria-hidden', 'true');
@@ -61,10 +71,11 @@ function targetName(target: EventTarget | null) {
   return `${target.tagName.toLowerCase()}${cls ? `.${cls}` : ''}`;
 }
 
-function describe(event: TouchEvent, note = '') {
+/** touches は capture で写した、触れている指の identifier */
+function describe(event: TouchEvent, touches: string, note = '') {
   const name = event.type.replace('touch', '');
   const flags = `${event.cancelable ? 'c' : '-'}${event.defaultPrevented ? 'P' : '-'}`;
-  const key = `${name} [${ids(event.changedTouches)}] [${ids(event.touches)}] ${flags}`;
+  const key = `${name} [${ids(event.changedTouches)}] [${touches}] ${flags}`;
   if (name === 'move' && !note) {
     if (key === lastMoveKey) {
       lastMoveCount++;
@@ -85,8 +96,9 @@ export function installTouchLog() {
   if (!enabled) return;
   // capture で受けた知らせが bubble で window まで届いたかを見る
   let pending: TouchEvent | null = null;
+  let pendingTouches = '';
   const flush = () => {
-    if (pending) describe(pending, ' window に届かず');
+    if (pending) describe(pending, pendingTouches, ' window に届かず');
     pending = null;
   };
   for (const type of ['touchstart', 'touchmove', 'touchend', 'touchcancel'] as const) {
@@ -95,14 +107,16 @@ export function installTouchLog() {
       (event) => {
         flush();
         pending = event;
+        pendingTouches = ids(event.touches);
       },
       { capture: true, passive: true },
     );
     window.addEventListener(
       type,
       (event) => {
-        if (pending === event) pending = null;
-        describe(event);
+        if (pending !== event) return;
+        pending = null;
+        describe(event, pendingTouches);
       },
       { passive: true },
     );
