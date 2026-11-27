@@ -2,7 +2,6 @@
 // 状態（DragOverlay に出す絵）と、始め・終わり・取りやめの処理を持つ
 import {
   MouseSensor,
-  TouchSensor,
   useSensor,
   useSensors,
   type DragEndEvent,
@@ -35,6 +34,7 @@ import { activeDragData, DRAG_START_DISTANCE, dropIntentOf, type SlotRef } from 
 import { trayGrowthMarks, type GrowthMarks } from './GrowthMarks.tsx';
 import { slotCollectionBadge, slotGrowthMarks } from './slotBadges.ts';
 import { slotSizeVars } from './useSlotFit.ts';
+import { TrackedTouchSensor } from './touchSensor.ts';
 import { trayVisualAt, type SlotPlacement } from './useSlotPlacement.ts';
 
 /**
@@ -142,10 +142,10 @@ export function useSlotDrag({
   });
 
   // マウスは DRAG_START_DISTANCE 動かして初めてドラッグと判定（通常のクリック操作との共存。時間の条件は無く、動かしたらすぐ持ち上がる。オーナーの指示）。タッチは 250ms の長押しで持ち上げ、
-  // それまでに 8px より動いたらスクロールにする（すぐ持ち上げると、トレイの上でページをスクロールできない）
+  // それまでに 8px より動いたらスクロールにする（すぐ持ち上げると、トレイの上でページをスクロールできない）。タッチは持ち上げた指を追う自前のセンサー（touchSensor.ts）
   const sensors = useSensors(
     useSensor(LeftButtonMouseSensor, { activationConstraint: { distance: DRAG_START_DISTANCE } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
+    useSensor(TrackedTouchSensor, { delay: 250, tolerance: 8 }),
   );
 
   // 離したときのアニメーション（DragOverlay）は、ドラッグ元が画面の外にあると、ドラッグ元の要素に scrollIntoView して画面を動かす（dnd-kit の既定）。

@@ -1,0 +1,156 @@
+// モダン UI のタッチのドラッグのセンサー。長押し（delay）で持ち上げ、それまでに tolerance より動いたらスクロールにする。
+// 持ち上げた指を identifier で追う。dnd-kit の TouchSensor は、触れている指の数（touches）で持ち上げを始めるかを決め、
+// 指の位置を touches の 1 本目から取り、離した知らせを触れた要素でだけ待つ。Android の Chrome では、持ち上げている間に
+// 2 本目の指で画面をスクロールした後、再読み込みまで長押しで持ち上げられなくなることがあった（オーナーの報告）。
+// ここでは指の数を見ず、持ち上げた指の知らせだけを使い、その指の離した知らせを取りこぼしても、ほかの指の知らせで
+// その指がもう触れていないと分かった時点で取りやめる
+import type { Sensor, SensorInstance, SensorProps } from '@dnd-kit/core';
+import type { TouchEvent as ReactTouchEvent } from 'react';
+
+export type TrackedTouchSensorOptions = {
+  /** 長押しで持ち上げるまでの時間（ms） */
+  delay: number;
+  /** 持ち上げるまでに、これより動いたら（px）スクロールとみなして取りやめる */
+  tolerance: number;
+};
+
+type Point = { x: number; y: number };
+
+const TOUCH_EVENTS = ['touchstart', 'touchmove', 'touchend', 'touchcancel'] as const;
+
+function findTouch(list: TouchList | undefined, id: number): Touch | undefined {
+  if (!list) return undefined;
+  for (let i = 0; i < list.length; i++) if (list[i]!.identifier === id) return list[i];
+  return undefined;
+}
+
+const stopClick = (event: Event) => event.stopPropagation();
+const preventDefault = (event: Event) => event.preventDefault();
+
+class TrackedTouchSensorImpl implements SensorInstance {
+  autoScrollEnabled = true;
+  private readonly props: SensorProps<TrackedTouchSensorOptions>;
+  private readonly touchId: number;
+  private readonly initial: Point;
+  /** 触れた要素（要素が消えても知らせはここに届くので、window とは別に聞く） */
+  private readonly target: EventTarget | null;
+  private activated = false;
+  private done = false;
+  private timer: ReturnType<typeof setTimeout> | null = null;
+  /** window（capture）と触れた要素の両方で受けるので、同じ知らせを 2 度扱わない */
+  private lastEvent: Event | null = null;
+
+  constructor(props: SensorProps<TrackedTouchSensorOptions>) {
+    this.props = props;
+    const touch = (props.event as TouchEvent).changedTouches[0]!;
+    this.touchId = touch.identifier;
+    this.initial = { x: touch.clientX, y: touch.clientY };
+    this.target = props.event.target;
+    for (const name of TOUCH_EVENTS) {
+      window.addEventListener(name, this.onTouch, { capture: true, passive: false });
+      if (name !== 'touchstart') this.target?.addEventListener(name, this.onTouch, { passive: false });
+    }
+    window.addEventListener('resize', this.cancel);
+    window.addEventListener('dragstart', preventDefault);
+    window.addEventListener('visibilitychange', this.cancel);
+    window.addEventListener('contextmenu', preventDefault);
+    document.addEventListener('keydown', this.onKeydown);
+    const { delay, tolerance } = props.options;
+    this.timer = setTimeout(this.start, delay);
+    props.onPending(props.active, { delay, tolerance }, this.initial);
+  }
+
+  private readonly onTouch = (event: Event) => {
+    if (this.done || event === this.lastEvent) return;
+    this.lastEvent = event;
+    const { changedTouches, touches } = event as TouchEvent;
+    const own = findTouch(changedTouches, this.touchId);
+    if (own) {
+      if (event.type === 'touchmove') this.move(event, own);
+      else if (event.type === 'touchend') this.finish('end');
+      // 離した知らせ（touchcancel）か、同じ identifier の指が新しく触れた（前の指の離した知らせを取りこぼした）
+      else this.finish('cancel');
+      return;
+    }
+    // ほかの指の知らせ。持ち上げた指がもう触れていなければ、その指の離した知らせを取りこぼしたので取りやめる
+    if (!findTouch(touches, this.touchId)) this.finish('cancel');
+  };
+
+  private move(event: Event, touch: Touch) {
+    const point = { x: touch.clientX, y: touch.clientY };
+    const offset = { x: this.initial.x - point.x, y: this.initial.y - point.y };
+    if (!this.activated) {
+      const { delay, tolerance } = this.props.options;
+      if (Math.hypot(offset.x, offset.y) > tolerance) this.finish('cancel');
+      else this.props.onPending(this.props.active, { delay, tolerance }, this.initial, offset);
+      return;
+    }
+    if (event.cancelable) event.preventDefault();
+    this.props.onMove(point);
+  }
+
+  private readonly start = () => {
+    this.timer = null;
+    if (this.done) return;
+    this.activated = true;
+    // 持ち上げた後は、離した後に届くクリックと文字の選択を止める（dnd-kit の TouchSensor と同じ）
+    document.addEventListener('click', stopClick, { capture: true });
+    document.getSelection()?.removeAllRanges();
+    document.addEventListener('selectionchange', this.removeSelection);
+    this.props.onStart(this.initial);
+  };
+
+  private readonly removeSelection = () => document.getSelection()?.removeAllRanges();
+
+  private readonly cancel = () => this.finish('cancel');
+
+  private readonly onKeydown = (event: KeyboardEvent) => {
+    if (event.code === 'Escape') this.finish('cancel');
+  };
+
+  private finish(kind: 'end' | 'cancel') {
+    if (this.done) return;
+    this.done = true;
+    if (this.timer !== null) clearTimeout(this.timer);
+    for (const name of TOUCH_EVENTS) {
+      window.removeEventListener(name, this.onTouch, { capture: true });
+      this.target?.removeEventListener(name, this.onTouch);
+    }
+    window.removeEventListener('resize', this.cancel);
+    window.removeEventListener('dragstart', preventDefault);
+    window.removeEventListener('visibilitychange', this.cancel);
+    window.removeEventListener('contextmenu', preventDefault);
+    document.removeEventListener('keydown', this.onKeydown);
+    // 離した直後に届くクリックまで止めてから外す
+    setTimeout(() => {
+      document.removeEventListener('click', stopClick, { capture: true });
+      document.removeEventListener('selectionchange', this.removeSelection);
+    }, 50);
+    if (!this.activated) this.props.onAbort(this.props.active);
+    if (kind === 'end') this.props.onEnd();
+    else this.props.onCancel();
+  }
+}
+
+const noop = () => {};
+
+export const TrackedTouchSensor: Sensor<TrackedTouchSensorOptions> = Object.assign(TrackedTouchSensorImpl, {
+  activators: [
+    {
+      eventName: 'onTouchStart' as const,
+      // 新しく触れた指が 1 本のときに始める（ほかの指が触れていても始める）
+      handler: ({ nativeEvent }: ReactTouchEvent) => {
+        if (nativeEvent.changedTouches.length !== 1) return false;
+        // dnd-kit は落とす先の判定に、始めの知らせ（activatorEvent）の touches の 1 本目の位置を使う。
+        // ほかの指（離したのに数え続けられている指も）が 1 本目に来ないよう、この知らせの touches をこの指だけにする
+        Object.defineProperty(nativeEvent, 'touches', { value: nativeEvent.changedTouches, configurable: true });
+        return true;
+      },
+    },
+  ],
+  setup() {
+    // iOS の Safari で、後から付けた touchmove の preventDefault を効かせるため、passive でない touchmove を window に付けておく
+    window.addEventListener('touchmove', noop, { passive: false });
+    return () => window.removeEventListener('touchmove', noop);
+  },
+});

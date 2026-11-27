@@ -11,12 +11,13 @@ import type { DragOverlayState } from './useSlotDrag.ts';
 
 /**
  * ドラッグ中だけ敷く、画面いっぱいの透明な膜。どこの上でも人差し指のカーソルにする（styles.css の .drag-cursor-shield）。
- * 持ち上げている間に動く状態（over など）では描き直さないよう、始まりと終わりの知らせだけで出し入れする（知らせが届かないときの外し方は下）
+ * 持ち上げている間に動く状態（over など）では描き直さないよう、始まりと終わりの知らせだけで出し入れする（知らせが届かないときの外し方は下）。
+ * タッチで持ち上げたときは敷かない（カーソルが無い。膜に触れたほかの指の下で膜が消えると、その指の離した知らせが届かないことがある）
  */
 function DragCursorShield() {
   const [dragging, setDragging] = useState(false);
   useDndMonitor({
-    onDragStart: () => setDragging(true),
+    onDragStart: ({ activatorEvent }) => setDragging(!activatorEvent?.type.startsWith('touch')),
     onDragEnd: () => setDragging(false),
     onDragCancel: () => setDragging(false),
   });
