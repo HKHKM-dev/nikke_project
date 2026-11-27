@@ -12,6 +12,7 @@
 // ページ全体の touch-action を none にし、新しく触れた指でブラウザーがスクロール・ズームを始めないようにする
 import type { Sensor, SensorInstance, SensorProps } from '@dnd-kit/core';
 import type { TouchEvent as ReactTouchEvent } from 'react';
+import { touchLog } from '../../touchLog.ts';
 
 export type TrackedTouchSensorOptions = {
   /** 長押しで持ち上げるまでの時間（ms） */
@@ -65,6 +66,7 @@ class TrackedTouchSensorImpl implements SensorInstance {
     window.addEventListener('visibilitychange', this.cancel);
     window.addEventListener('contextmenu', preventDefault);
     document.addEventListener('keydown', this.onKeydown);
+    touchLog(`センサー 指${this.touchId}`);
     const { delay, tolerance } = props.options;
     this.timer = setTimeout(this.start, delay);
     props.onPending(props.active, { delay, tolerance }, this.initial);
@@ -77,16 +79,16 @@ class TrackedTouchSensorImpl implements SensorInstance {
     const own = findTouch(changedTouches, this.touchId);
     // ほかの指の知らせ。持ち上げた指がもう触れていなければ、その指の離した知らせを取りこぼしたので取りやめる
     if (!own && !findTouch(touches, this.touchId)) {
-      this.finish('cancel');
+      this.finish('cancel', '指がいない');
       return;
     }
     // 持ち上げた指とほかの指が一緒に動くと、1 つの知らせに両方が入るので、ほかの指の動きも見る
     this.onOtherFingers(event as TouchEvent);
     if (own) {
       if (event.type === 'touchmove') this.move(event, own);
-      else if (event.type === 'touchend') this.finish('end');
+      else if (event.type === 'touchend') this.finish('end', '離した');
       // 離した知らせ（touchcancel）か、同じ identifier の指が新しく触れた（前の指の離した知らせを取りこぼした）
-      else this.finish('cancel');
+      else this.finish('cancel', event.type);
     }
   };
 
@@ -116,7 +118,7 @@ class TrackedTouchSensorImpl implements SensorInstance {
     const offset = { x: this.initial.x - point.x, y: this.initial.y - point.y };
     if (!this.activated) {
       const { delay, tolerance } = this.props.options;
-      if (Math.hypot(offset.x, offset.y) > tolerance) this.finish('cancel');
+      if (Math.hypot(offset.x, offset.y) > tolerance) this.finish('cancel', '動いた');
       else this.props.onPending(this.props.active, { delay, tolerance }, this.initial, offset);
       return;
     }
@@ -135,20 +137,23 @@ class TrackedTouchSensorImpl implements SensorInstance {
     const root = document.documentElement.style;
     this.touchActionBefore = root.touchAction;
     root.touchAction = 'none';
+    touchLog('持ち上げ');
     this.props.onStart(this.initial);
   };
 
   private readonly removeSelection = () => document.getSelection()?.removeAllRanges();
 
-  private readonly cancel = () => this.finish('cancel');
+  private readonly cancel = (event: Event) => this.finish('cancel', event.type);
 
   private readonly onKeydown = (event: KeyboardEvent) => {
-    if (event.code === 'Escape') this.finish('cancel');
+    if (event.code === 'Escape') this.finish('cancel', 'Esc');
   };
 
-  private finish(kind: 'end' | 'cancel') {
+  /** reason は ?touchlog の記録に書く終わった理由 */
+  private finish(kind: 'end' | 'cancel', reason: string) {
     if (this.done) return;
     this.done = true;
+    touchLog(`センサー終わり ${kind} ${reason}${this.activated ? '' : '（持ち上げ前）'}`);
     if (this.timer !== null) clearTimeout(this.timer);
     for (const name of TOUCH_EVENTS) {
       window.removeEventListener(name, this.onTouch, { capture: true });

@@ -4,6 +4,10 @@ import { App } from './App.tsx';
 import { ErrorBoundary } from './components/ErrorBoundary.tsx';
 import './styles.css';
 import './modern.css';
+import { installTouchLog } from './touchLog.ts';
+
+// ?touchlog を付けたときだけ、タッチの知らせを画面の下に書き出す（touchLog.ts）
+installTouchLog();
 
 const container = document.getElementById('root');
 if (!container) throw new Error('#root not found');
