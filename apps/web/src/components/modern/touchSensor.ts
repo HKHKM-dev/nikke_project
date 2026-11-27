@@ -113,6 +113,8 @@ class TrackedTouchSensorImpl implements SensorInstance {
         dy += last.y - point.y;
       }
     }
+    // 離した知らせを取りこぼした指は、もう触れていない（touches にいない）ので忘れる（残ると 1 本でもスクロールしなくなる）
+    for (const id of this.others.keys()) if (!findTouch(event.touches, id)) this.others.delete(id);
     // 持ち上げる前に始まったブラウザーのスクロールは止められない（cancelable でない）ので、二重に動かさない
     if (!this.activated || event.type !== 'touchmove' || !event.cancelable) return;
     event.preventDefault();

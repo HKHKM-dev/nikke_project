@@ -2,7 +2,7 @@
 // 1 行は「経過秒 知らせ 変わった指[identifier] 触れている指[identifier] c=cancelable P=preventDefault 済み 触れた要素」。
 // 続けて届いた同じ形の touchmove は 1 行にまとめて回数を付ける。触れている指は、ページの処理の前（window の capture）の値を書く
 // （タッチのセンサーは持ち上げを始める知らせの touches を書き換える。touchSensor.ts）。c と P は、処理が終わった後（window の bubble）の値。
-// 触れた要素が消えていて window まで届かなかった知らせは「window に届かず」と書く
+// window の bubble まで届かなかった知らせ（触れた要素が消えたか、途中で伝わるのを止めた）は「window の bubble に届かず」と書く
 // 確かめ用のアーティファクト（claude.ai の中に埋め込まれ、URL の ?touchlog が届かない）には、VITE_TOUCHLOG=1 で作ると初めから出す
 const enabled =
   import.meta.env.VITE_TOUCHLOG === '1' ||
@@ -98,7 +98,7 @@ export function installTouchLog() {
   let pending: TouchEvent | null = null;
   let pendingTouches = '';
   const flush = () => {
-    if (pending) describe(pending, pendingTouches, ' window に届かず');
+    if (pending) describe(pending, pendingTouches, ' window の bubble に届かず');
     pending = null;
   };
   for (const type of ['touchstart', 'touchmove', 'touchend', 'touchcancel'] as const) {

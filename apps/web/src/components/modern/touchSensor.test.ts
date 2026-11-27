@@ -107,6 +107,18 @@ describe('TrackedTouchSensor', () => {
     scrollBy.mockRestore();
   });
 
+  it('ほかの指の離した知らせを取りこぼしても、触れていない指を忘れて、残った 1 本でスクロールする', () => {
+    const scrollBy = vi.spyOn(window, 'scrollBy').mockImplementation(() => {});
+    begin();
+    vi.advanceTimersByTime(250);
+    window.dispatchEvent(touchEvent('touchstart', [touch(1, 300, 300)], [touch(0, 100, 100), touch(1, 300, 300)]));
+    // 指 1 の touchend が届かないまま、指 2 が触れて動く（touches に指 1 がいない）
+    window.dispatchEvent(touchEvent('touchstart', [touch(2, 200, 300)], [touch(0, 100, 100), touch(2, 200, 300)]));
+    window.dispatchEvent(touchEvent('touchmove', [touch(2, 200, 290)], [touch(0, 100, 100), touch(2, 200, 290)]));
+    expect(scrollBy).toHaveBeenLastCalledWith(0, 10);
+    scrollBy.mockRestore();
+  });
+
   it('持ち上げた指とほかの指が 1 つの知らせで一緒に動いても、ほかの指の分だけスクロールし、持ち上げた指で動かす', () => {
     const scrollBy = vi.spyOn(window, 'scrollBy').mockImplementation(() => {});
     begin();
