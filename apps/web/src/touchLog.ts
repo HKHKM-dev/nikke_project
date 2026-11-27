@@ -1,8 +1,11 @@
-// タッチの知らせを画面の下に書き出す（実機でしか起きないタッチの不具合を調べるため）。URL に ?touchlog を付けたときだけ動く。
+// タッチの知らせを画面の下に書き出す（実機でしか起きないタッチの不具合を調べるため）。URL に ?touchlog を付けたとき（か、VITE_TOUCHLOG=1 で作ったとき）だけ動く。
 // 1 行は「経過秒 知らせ 変わった指[identifier] 触れている指[identifier] c=cancelable P=preventDefault 済み 触れた要素」。
 // 続けて届いた同じ形の touchmove は 1 行にまとめて回数を付ける。ページの処理が終わった後（window の bubble）の値を書く。
 // 触れた要素が消えていて window まで届かなかった知らせは「window に届かず」と書く
-const enabled = typeof location !== 'undefined' && new URLSearchParams(location.search).has('touchlog');
+// 確かめ用のアーティファクト（claude.ai の中に埋め込まれ、URL の ?touchlog が届かない）には、VITE_TOUCHLOG=1 で作ると初めから出す
+const enabled =
+  import.meta.env.VITE_TOUCHLOG === '1' ||
+  (typeof location !== 'undefined' && new URLSearchParams(location.search).has('touchlog'));
 
 const MAX_LINES = 40;
 const lines: string[] = [];
