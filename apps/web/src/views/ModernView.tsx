@@ -60,22 +60,23 @@ export function ModernView({
 
   // 待っている間に、スロットのほか（一覧のニケ・ボタン・アイコン・プルダウンメニュー・入力欄・何もないところ）をクリックしたら、
   // 待つのをやめるだけにする（クリックした部品は反応させない。先に document で受けて止める。プルダウンメニューが開く・入力欄に
-  // フォーカスが移るのは押した時（mousedown）なので、それも止める）。スロットのクリックは置く（handlePlacePending）
+  // フォーカスが移るのは押した時（mousedown）なので、それも止める。編成の番号と選んでいない編成の行は、マウスでは離した時（pointerup）に
+  // 選ぶので、押した時（pointerdown）も止める）。置けるのは選んでいる編成のスロット（待っている印の付いたカード）だけで、そのクリックは置く
+  // （handlePlacePending）。選んでいない編成の行のカードは、押すとその編成を選ぶので止める
   useEffect(() => {
     if (pendingId === null) return;
     // 待ち始めたクリック（一覧のニケ）は、document の capture の段を過ぎてから付けるので、ここには来ない
     const blockOutsideSlots = (event: MouseEvent) => {
       const target = event.target;
-      if (target instanceof Element && target.closest('.modern-slot-card')) return;
+      if (target instanceof Element && target.closest('.modern-slot-awaiting')) return;
       event.preventDefault();
       event.stopPropagation();
       if (event.type === 'click') setPendingId(null);
     };
-    document.addEventListener('mousedown', blockOutsideSlots, true);
-    document.addEventListener('click', blockOutsideSlots, true);
+    const types = ['pointerdown', 'mousedown', 'click'] as const;
+    for (const type of types) document.addEventListener(type, blockOutsideSlots, true);
     return () => {
-      document.removeEventListener('mousedown', blockOutsideSlots, true);
-      document.removeEventListener('click', blockOutsideSlots, true);
+      for (const type of types) document.removeEventListener(type, blockOutsideSlots, true);
     };
   }, [pendingId]);
 
