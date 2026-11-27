@@ -107,6 +107,35 @@ describe('TrackedTouchSensor', () => {
     scrollBy.mockRestore();
   });
 
+  it('持ち上げた指とほかの指が 1 つの知らせで一緒に動いても、ほかの指の分だけスクロールし、持ち上げた指で動かす', () => {
+    const scrollBy = vi.spyOn(window, 'scrollBy').mockImplementation(() => {});
+    begin();
+    vi.advanceTimersByTime(250);
+    window.dispatchEvent(touchEvent('touchstart', [touch(1, 300, 300)], [touch(0, 100, 100), touch(1, 300, 300)]));
+    const both = touchEvent(
+      'touchmove',
+      [touch(0, 100, 110), touch(1, 300, 280)],
+      [touch(0, 100, 110), touch(1, 300, 280)],
+    );
+    target.dispatchEvent(both);
+    expect(both.defaultPrevented).toBe(true);
+    expect(scrollBy).toHaveBeenLastCalledWith(0, 20);
+    expect(calls.at(-1)).toBe('move 100,110');
+    scrollBy.mockRestore();
+  });
+
+  it('持ち上げている間はページの touch-action を none にし、終えたら戻す（新しく触れた指でブラウザーがスクロール・ズームしない）', () => {
+    const root = document.documentElement.style;
+    root.touchAction = 'pan-y';
+    begin();
+    expect(root.touchAction).toBe('pan-y');
+    vi.advanceTimersByTime(250);
+    expect(root.touchAction).toBe('none');
+    target.dispatchEvent(touchEvent('touchend', [touch(0, 100, 100)], []));
+    expect(root.touchAction).toBe('pan-y');
+    root.touchAction = '';
+  });
+
   it('持ち上げる前に tolerance より動いたら取りやめる（スクロール）', () => {
     begin();
     target.dispatchEvent(touchEvent('touchmove', [touch(0, 100, 120)], [touch(0, 100, 120)]));

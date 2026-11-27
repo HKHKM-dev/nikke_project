@@ -6,7 +6,10 @@
 // その指がもう触れていないと分かった時点で取りやめる。
 // 持ち上げている間のほかの指の動きは、ブラウザーに渡さず、ここで画面をスクロールする。渡すと、ブラウザーがその指で
 // スクロールやズームを始め、そこからは持ち上げた指の動きも止められず（touchmove が cancelable でなくなる）、
-// 持ち上げた指を動かすと画面ごと動いた（オーナーの報告。持ち上げたままズームした後）。ズームは持ち上げている間はしない
+// 持ち上げた指を動かすと画面ごと動いた（オーナーの報告。持ち上げたままズームした後）。ズームは持ち上げている間はしない。
+// 実機（Android の Chrome）では touchmove を止めても、持ち上げた指とほかの指の動きがズームになった（オーナーの報告）。
+// ブラウザーは、指が触れた時点の touch-action でその指にスクロール・ズームを許すかを決めるので、持ち上げている間は
+// ページ全体の touch-action を none にし、新しく触れた指でブラウザーがスクロール・ズームを始めないようにする
 import type { Sensor, SensorInstance, SensorProps } from '@dnd-kit/core';
 import type { TouchEvent as ReactTouchEvent } from 'react';
 
@@ -40,6 +43,8 @@ class TrackedTouchSensorImpl implements SensorInstance {
   private activated = false;
   private done = false;
   private timer: ReturnType<typeof setTimeout> | null = null;
+  /** 持ち上げる前のページの touch-action（持ち上げている間は none にし、終えたら戻す） */
+  private touchActionBefore: string | null = null;
   /** ほかの指の前の位置（持ち上げている間、その指の動きの分だけ画面をスクロールする） */
   private readonly others = new Map<number, Point>();
   /** window（capture）と触れた要素の両方で受けるので、同じ知らせを 2 度扱わない */
@@ -70,16 +75,19 @@ class TrackedTouchSensorImpl implements SensorInstance {
     this.lastEvent = event;
     const { changedTouches, touches } = event as TouchEvent;
     const own = findTouch(changedTouches, this.touchId);
+    // ほかの指の知らせ。持ち上げた指がもう触れていなければ、その指の離した知らせを取りこぼしたので取りやめる
+    if (!own && !findTouch(touches, this.touchId)) {
+      this.finish('cancel');
+      return;
+    }
+    // 持ち上げた指とほかの指が一緒に動くと、1 つの知らせに両方が入るので、ほかの指の動きも見る
+    this.onOtherFingers(event as TouchEvent);
     if (own) {
       if (event.type === 'touchmove') this.move(event, own);
       else if (event.type === 'touchend') this.finish('end');
       // 離した知らせ（touchcancel）か、同じ identifier の指が新しく触れた（前の指の離した知らせを取りこぼした）
       else this.finish('cancel');
-      return;
     }
-    // ほかの指の知らせ。持ち上げた指がもう触れていなければ、その指の離した知らせを取りこぼしたので取りやめる
-    if (!findTouch(touches, this.touchId)) this.finish('cancel');
-    else this.onOtherFingers(event as TouchEvent);
   };
 
   /** ほかの指の知らせ。持ち上げた後は、その指の動きをブラウザーに渡さず、1 本ならその分だけ画面をスクロールする（2 本以上はズームなので動かさない） */
@@ -87,6 +95,7 @@ class TrackedTouchSensorImpl implements SensorInstance {
     let dx = 0;
     let dy = 0;
     for (const touch of Array.from(event.changedTouches)) {
+      if (touch.identifier === this.touchId) continue;
       const point = { x: touch.clientX, y: touch.clientY };
       const last = this.others.get(touch.identifier);
       if (event.type === 'touchend' || event.type === 'touchcancel') this.others.delete(touch.identifier);
@@ -99,7 +108,7 @@ class TrackedTouchSensorImpl implements SensorInstance {
     // 持ち上げる前に始まったブラウザーのスクロールは止められない（cancelable でない）ので、二重に動かさない
     if (!this.activated || event.type !== 'touchmove' || !event.cancelable) return;
     event.preventDefault();
-    if (this.others.size === 1) window.scrollBy(dx, dy);
+    if (this.others.size === 1 && (dx !== 0 || dy !== 0)) window.scrollBy(dx, dy);
   }
 
   private move(event: Event, touch: Touch) {
@@ -123,6 +132,9 @@ class TrackedTouchSensorImpl implements SensorInstance {
     document.addEventListener('click', stopClick, { capture: true });
     document.getSelection()?.removeAllRanges();
     document.addEventListener('selectionchange', this.removeSelection);
+    const root = document.documentElement.style;
+    this.touchActionBefore = root.touchAction;
+    root.touchAction = 'none';
     this.props.onStart(this.initial);
   };
 
@@ -147,6 +159,7 @@ class TrackedTouchSensorImpl implements SensorInstance {
     window.removeEventListener('visibilitychange', this.cancel);
     window.removeEventListener('contextmenu', preventDefault);
     document.removeEventListener('keydown', this.onKeydown);
+    if (this.touchActionBefore !== null) document.documentElement.style.touchAction = this.touchActionBefore;
     // 離した直後に届くクリックまで止めてから外す
     setTimeout(() => {
       document.removeEventListener('click', stopClick, { capture: true });
