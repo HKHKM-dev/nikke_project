@@ -88,8 +88,14 @@ describe('TrackedTouchSensor', () => {
     expect(move.defaultPrevented).toBe(true);
     expect(scrollBy).toHaveBeenLastCalledWith(0, 32);
     // 2 本目が触れたら（ズーム）、止めるだけで動かさない
-    window.dispatchEvent(touchEvent('touchstart', [touch(2, 200, 300)], [touch(0, 100, 100), touch(1, 300, 270), touch(2, 200, 300)]));
-    const pinch = touchEvent('touchmove', [touch(1, 320, 270), touch(2, 180, 300)], [touch(0, 100, 100), touch(1, 320, 270), touch(2, 180, 300)]);
+    window.dispatchEvent(
+      touchEvent('touchstart', [touch(2, 200, 300)], [touch(0, 100, 100), touch(1, 300, 270), touch(2, 200, 300)]),
+    );
+    const pinch = touchEvent(
+      'touchmove',
+      [touch(1, 320, 270), touch(2, 180, 300)],
+      [touch(0, 100, 100), touch(1, 320, 270), touch(2, 180, 300)],
+    );
     window.dispatchEvent(pinch);
     expect(pinch.defaultPrevented).toBe(true);
     expect(scrollBy).toHaveBeenCalledTimes(1);
