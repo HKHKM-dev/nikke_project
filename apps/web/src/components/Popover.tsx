@@ -66,7 +66,9 @@ export function Popover({ button, buttonClassName, label, align, panelClassName,
       </button>
       {open && (
         <>
-          <div className="popover-backdrop" aria-hidden="true" onPointerDown={() => setOpen(false)} />
+          {/* 幕は click で閉じる。押した瞬間（pointerdown）に閉じると、タッチでは離した後のクリックが、幕の消えた下の部品（編成の番号など）に届く。
+              ポップアップの中で押して幕の上で離したときは、click が幕に届かない（押した所と離した所の共通の親に届く）ので閉じない */}
+          <div className="popover-backdrop" aria-hidden="true" onClick={() => setOpen(false)} />
           <div
             ref={panelRef}
             className={['popover-panel', `popover-panel-${align}`, panelClassName].filter(Boolean).join(' ')}
