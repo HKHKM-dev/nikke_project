@@ -74,6 +74,33 @@ describe('TrackedTouchSensor', () => {
     expect(calls).toEqual(['pending', 'start 100,100']);
   });
 
+  it('持ち上げた後のほかの指の動きは、ブラウザーに渡さず、1 本ならその分だけ画面をスクロールする（2 本はズームなので動かさない）', () => {
+    const scrollBy = vi.spyOn(window, 'scrollBy').mockImplementation(() => {});
+    begin();
+    // 持ち上げる前のほかの指の動きは、ブラウザーに任せる
+    window.dispatchEvent(touchEvent('touchstart', [touch(1, 300, 300)], [touch(0, 100, 100), touch(1, 300, 300)]));
+    const early = touchEvent('touchmove', [touch(1, 300, 302)], [touch(0, 100, 100), touch(1, 300, 302)]);
+    window.dispatchEvent(early);
+    expect(early.defaultPrevented).toBe(false);
+    vi.advanceTimersByTime(250);
+    const move = touchEvent('touchmove', [touch(1, 300, 270)], [touch(0, 100, 100), touch(1, 300, 270)]);
+    window.dispatchEvent(move);
+    expect(move.defaultPrevented).toBe(true);
+    expect(scrollBy).toHaveBeenLastCalledWith(0, 32);
+    // 2 本目が触れたら（ズーム）、止めるだけで動かさない
+    window.dispatchEvent(touchEvent('touchstart', [touch(2, 200, 300)], [touch(0, 100, 100), touch(1, 300, 270), touch(2, 200, 300)]));
+    const pinch = touchEvent('touchmove', [touch(1, 320, 270), touch(2, 180, 300)], [touch(0, 100, 100), touch(1, 320, 270), touch(2, 180, 300)]);
+    window.dispatchEvent(pinch);
+    expect(pinch.defaultPrevented).toBe(true);
+    expect(scrollBy).toHaveBeenCalledTimes(1);
+    // ズームの指を離せば、残った 1 本でまたスクロールする
+    window.dispatchEvent(touchEvent('touchend', [touch(2, 180, 300)], [touch(0, 100, 100), touch(1, 320, 270)]));
+    window.dispatchEvent(touchEvent('touchmove', [touch(1, 320, 280)], [touch(0, 100, 100), touch(1, 320, 280)]));
+    expect(scrollBy).toHaveBeenLastCalledWith(0, -10);
+    expect(calls.filter((c) => c.startsWith('move'))).toEqual([]);
+    scrollBy.mockRestore();
+  });
+
   it('持ち上げる前に tolerance より動いたら取りやめる（スクロール）', () => {
     begin();
     target.dispatchEvent(touchEvent('touchmove', [touch(0, 100, 120)], [touch(0, 100, 120)]));

@@ -3,7 +3,10 @@
 // 指の位置を touches の 1 本目から取り、離した知らせを触れた要素でだけ待つ。Android の Chrome では、持ち上げている間に
 // 2 本目の指で画面をスクロールした後、再読み込みまで長押しで持ち上げられなくなることがあった（オーナーの報告）。
 // ここでは指の数を見ず、持ち上げた指の知らせだけを使い、その指の離した知らせを取りこぼしても、ほかの指の知らせで
-// その指がもう触れていないと分かった時点で取りやめる
+// その指がもう触れていないと分かった時点で取りやめる。
+// 持ち上げている間のほかの指の動きは、ブラウザーに渡さず、ここで画面をスクロールする。渡すと、ブラウザーがその指で
+// スクロールやズームを始め、そこからは持ち上げた指の動きも止められず（touchmove が cancelable でなくなる）、
+// 持ち上げた指を動かすと画面ごと動いた（オーナーの報告。持ち上げたままズームした後）。ズームは持ち上げている間はしない
 import type { Sensor, SensorInstance, SensorProps } from '@dnd-kit/core';
 import type { TouchEvent as ReactTouchEvent } from 'react';
 
@@ -37,6 +40,8 @@ class TrackedTouchSensorImpl implements SensorInstance {
   private activated = false;
   private done = false;
   private timer: ReturnType<typeof setTimeout> | null = null;
+  /** ほかの指の前の位置（持ち上げている間、その指の動きの分だけ画面をスクロールする） */
+  private readonly others = new Map<number, Point>();
   /** window（capture）と触れた要素の両方で受けるので、同じ知らせを 2 度扱わない */
   private lastEvent: Event | null = null;
 
@@ -74,7 +79,28 @@ class TrackedTouchSensorImpl implements SensorInstance {
     }
     // ほかの指の知らせ。持ち上げた指がもう触れていなければ、その指の離した知らせを取りこぼしたので取りやめる
     if (!findTouch(touches, this.touchId)) this.finish('cancel');
+    else this.onOtherFingers(event as TouchEvent);
   };
+
+  /** ほかの指の知らせ。持ち上げた後は、その指の動きをブラウザーに渡さず、1 本ならその分だけ画面をスクロールする（2 本以上はズームなので動かさない） */
+  private onOtherFingers(event: TouchEvent) {
+    let dx = 0;
+    let dy = 0;
+    for (const touch of Array.from(event.changedTouches)) {
+      const point = { x: touch.clientX, y: touch.clientY };
+      const last = this.others.get(touch.identifier);
+      if (event.type === 'touchend' || event.type === 'touchcancel') this.others.delete(touch.identifier);
+      else this.others.set(touch.identifier, point);
+      if (event.type === 'touchmove' && last) {
+        dx += last.x - point.x;
+        dy += last.y - point.y;
+      }
+    }
+    // 持ち上げる前に始まったブラウザーのスクロールは止められない（cancelable でない）ので、二重に動かさない
+    if (!this.activated || event.type !== 'touchmove' || !event.cancelable) return;
+    event.preventDefault();
+    if (this.others.size === 1) window.scrollBy(dx, dy);
+  }
 
   private move(event: Event, touch: Touch) {
     const point = { x: touch.clientX, y: touch.clientY };
