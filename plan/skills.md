@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 180・効果 1250（根拠あり 1228）・notes 383（根拠あり 164）
+件数: キャラ 181・効果 1254（根拠あり 1232）・notes 386（根拠あり 164）
 
-notes の種類: 未対応 23・前提の外 134・計算に無関係 82・補足 44・間接 100
+notes の種類: 未対応 23・前提の外 134・計算に無関係 84・補足 44・間接 101
 
-スロット: supported 504・partial 18・unsupported 4・noEffect 71
+スロット: supported 506・partial 18・unsupported 4・noEffect 72
 
 ## 10 ラピ
 
@@ -1101,6 +1101,19 @@ notes の種類: 未対応 23・前提の外 134・計算に無関係 82・補�
   - effects[5] timed・burstUse・critDamage: C-1215（確定）、C-1217（確定）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-1217（確定）
+
+## 203 ルピー：ウィンターショッパー
+
+- **skill1**: noEffect
+  - notes[0] 間接（防御力）: 最後の弾丸が命中した時の、味方全体への防御力▲（5 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: 根拠なし
+- **skill2**: supported
+  - effects[0] state・allyBurstUse・shopping（defense）: C-1575（確定）
+  - effects[1] timed・fullBurstEnd・burstGaugeSpeed: C-1575（確定）
+- **burst**: supported
+  - effects[0] burstReentry: C-1576（確定）
+  - effects[1] timed・burstUse・reloadSpeed: C-1577（確定）
+  - notes[0] 計算に無関係: 自分への「ヘイト：敵全体を挑発」（5 秒）はダメージに関係しない（ティアの S2・シンの S1 の「自分にヘイト：敵全体を挑発」はゲージを溜めない。この挑発はチェーンの間に付き、その間はバーが見えないので、ゲージを溜めないかは確かめていない）: 根拠なし
+  - notes[1] 計算に無関係: 自分の吸収回復（攻撃ダメージの X% 回復・10 秒）は、ダメージに関係しない（自分にだけ付き、ルピー：ウィンターショッパーに回復を受けた時の効果は無いので、どの味方のスキルの発動も変えない）: 根拠なし
 
 ## 210 エクシア
 

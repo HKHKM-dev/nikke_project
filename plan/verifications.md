@@ -5,7 +5,7 @@
 - 観測値は、観測値の `source` にその検証記録の ID を書いたもの。止めている検証・派生した検証・訂正された記録は、相手の冒頭から逆に引いたもの。
 - 2026-09-26 までの実測は [verification.md](verification.md)（凍結）にある。
 
-件数: 調査中 0・保留 0・完了 814・打ち切り 28（計 842）
+件数: 調査中 0・保留 0・完了 815・打ち切り 28（計 843）
 
 ## 開いている検証
 
@@ -8367,3 +8367,21 @@
     - full-2-shots（chainTimeoutToGaugeFullShots）: 実測なし。Model 414
     - full-3-shots（chainTimeoutToGaugeFullShots）: 実測なし。Model 414
     - full-1-frame（gaugeFullFrame）: 実測なし。Model 1,429
+- **[V-0881](../records/verifications/V-0881-rupee-ws.md)** ルピー：ウィンターショッパーのスキル（味方のバースト使用時のショッピングのスタック、フルスタックならのゲージ速度▲、リロード速度▲、バースト再突入 1 段階）
+  - 問い: ルピー：ウィンターショッパーのスキルを説明文どおり（味方（自分を含む）のバーストのたびに味方全体へショッピングを 1 段、フルバーストの終わりに自分がフルスタックなら味方全体の弾のゲージに × 1.079（5 秒）、バーストで味方全体のリロード速度▲（10 秒）とバースト再突入 1 段階）と読んで、モデルは実測と合うか
+  - 話題: スキル・キャラ固有・日付: 2026-11-28・状態: 完了
+  - 録画: 1409、1410
+  - 観測値: 1409-01、1409-02、1409-03、1409-04、1409-05、1409-06、1409-07、1409-08、1409-09、1409-10、1409-11、1409-12、1409-13、1409-14、1409-15、1409-16、1410-01、1410-02、1410-03、1410-04、1410-05、1410-06、1410-07、1410-08、1410-09、1410-10、1410-11、1410-12、1410-13、1410-14、1410-15、1410-16
+  - 結論: C-1575、C-1576、C-1577
+  - 予測（2026-11-28、commit 06e4b04）との比べ:
+    - order（burstActivationSlots）: 実測なし。H1 [3, 4, 1, 2, 3, 4, 3, 4, 1, 2, 3, 4, 3, 4]、H0 [3, 1, 2, 4, 3, 1, 2, 3, 4, 1, 2, 3, 4, 1]、H-nogauge [3, 4, 1, 2, 3, 4, 3, 4, 1, 2, 3, 4, 3, 4]、H-noreload [3, 4, 1, 2, 3, 4, 3, 4, 1, 2, 3, 4, 3, 4]
+    - fb-count（fullBurstCount）: 実測なし。H1 5、H0 5、H-nogauge 5、H-noreload 5
+    - p08-gauge-after-fb（shotGaugeRatioAfterFullBurst）: 実測なし。H1 1.079、H0 1.047、H-nogauge 1、H-noreload 1.079
+    - delta-gauge-after-fb（shotGaugeRatioAfterFullBurst）: 実測なし。H1 1.079、H0 1.047、H-nogauge 1、H-noreload 1.079
+    - alice-gauge-after-fb（shotGaugeRatioAfterFullBurst）: 実測なし。H1 1.079、H0 1.056、H-nogauge 1、H-noreload 1.079
+    - fb0-to-gauge-full（fullBurstToGaugeFull）: 実測なし。H1 1,003、H0 1,031、H-nogauge 1,025、H-noreload 1,048
+    - fb1-to-gauge-full（fullBurstToGaugeFull）: 実測なし。H1 1,063、H0 1,078、H-nogauge 1,105、H-noreload 1,083
+    - p08-reload-base（reloadFramesAt）: 実測なし。H1 129、H0 129、H-nogauge 129、H-noreload 129
+    - delta-reload-base（reloadFramesAt）: 実測なし。H1 100、H0 100、H-nogauge 100、H-noreload 100
+    - delta-reload-in（reloadFramesAt）: 実測なし。H1 44、H0 44、H-nogauge 44、H-noreload 100
+    - alice-reload-in（reloadFramesAt）: 実測なし。H1 55、H0 55、H-nogauge 55、H-noreload 129
