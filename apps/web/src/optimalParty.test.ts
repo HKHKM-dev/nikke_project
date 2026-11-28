@@ -1,7 +1,14 @@
 import { readFileSync } from 'node:fs';
 import { parseSkillDefinition, type BurstStep, type CharacterData, type CharacterIndexEntry } from '@nikke/core';
 import { describe, expect, it } from 'vitest';
-import { candidateEntries, canFullBurst, swappedTeam, topRows, type BurstMember } from './optimalParty.ts';
+import {
+  candidateEntries,
+  canFullBurst,
+  fullBurstCandidates,
+  swappedTeam,
+  topRows,
+  type BurstMember,
+} from './optimalParty.ts';
 import { INITIAL_TEAM_STATE, teamReducer } from './team.ts';
 
 const entry = (resourceId: number, burstStep: BurstStep = 'Step1') =>
@@ -49,6 +56,37 @@ describe('canFullBurst', () => {
     expect(canFullBurst([member(RAPI_RH, true), member(II), member(III), member(III2)])).toBe(true);
     // 定義が無いときは基本の III のまま
     expect(canFullBurst([member(RAPI_RH), member(II), member(III), member(III2)])).toBe(false);
+  });
+});
+
+describe('fullBurstCandidates', () => {
+  // 基本の段のまま変わらないニケ: ネオン（I）、デルタ（II）、ラピ（III）、D（III）
+  const [I, II, III, III2] = [11, 20, 10, 40];
+  const membersWith = (team: readonly (number | null)[], slot: number) => (id: number) =>
+    team.map((m, i) => (i === slot ? member(id, true) : m === null ? null : member(m, true)));
+
+  it('keeps only the candidates that make a full burst, in a team with empty slots', () => {
+    expect([I, II, III, III2].map((id) => character(id).burstStep)).toEqual(['Step1', 'Step2', 'Step3', 'Step3']);
+    const team = [II, III, null, null, null];
+    expect(fullBurstCandidates([I, III2], membersWith(team, 2))).toEqual({
+      kept: [I],
+      dropped: 1,
+      noneFullBurst: false,
+    });
+  });
+
+  it('keeps every candidate when none of them makes a full burst', () => {
+    // 1 人だけの編成は、1 人足しても I・II・III がそろわない
+    const team = [III, null, null, null, null];
+    expect(fullBurstCandidates([I, II, III2], membersWith(team, 1))).toEqual({
+      kept: [I, II, III2],
+      dropped: 0,
+      noneFullBurst: true,
+    });
+  });
+
+  it('has nothing to keep when there are no candidates', () => {
+    expect(fullBurstCandidates([], membersWith([III], 1))).toEqual({ kept: [], dropped: 0, noneFullBurst: false });
   });
 });
 

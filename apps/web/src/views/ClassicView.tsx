@@ -2,7 +2,7 @@ import { ClassicBurstFilter, ClassicFilter, useClassicFilter } from '../componen
 import { DamageTotalPanel } from '../components/DamageTotalPanel.tsx';
 import { ErrorBoundary } from '../components/ErrorBoundary.tsx';
 import { ListOrderSettings } from '../components/ListOrderSettings.tsx';
-import { OptimalPartyPanel } from '../components/OptimalPartyPanel.tsx';
+import { OptimalPartyPopover } from '../components/OptimalPartyPanel.tsx';
 import { NotesSummary } from '../components/NotesSummary.tsx';
 import { Popover } from '../components/Popover.tsx';
 import { PartyTabs } from '../components/PartyTabs.tsx';
@@ -58,24 +58,16 @@ export function ClassicView({
       <DamageTotalPanel title="合計ダメージ" value={totals.total} computing={totalsPending} />
       {/* 最適編成計算は、ボタンで開くポップアップ（画面の上寄りの中央）に出す。閉じると、計算の途中でも結果ごと捨てる */}
       <div className="party-optimize">
-        <Popover
-          button="最適編成計算"
-          buttonClassName="party-optimize-button"
-          label="最適編成計算"
-          align="center"
-          panelClassName="optimal-party-popover"
-        >
-          <OptimalPartyPanel
-            team={team}
-            roster={roster}
-            index={index}
-            otherPartyIds={otherPartyIds}
-            masters={masters}
-            enemyMaster={enemyMaster}
-            baseUrl={baseUrl}
-            onAdopt={(index, resourceId) => dispatch({ type: 'selectCharacter', index, resourceId })}
-          />
-        </Popover>
+        <OptimalPartyPopover
+          team={team}
+          roster={roster}
+          index={index}
+          otherPartyIds={otherPartyIds}
+          masters={masters}
+          enemyMaster={enemyMaster}
+          baseUrl={baseUrl}
+          onAdopt={(index, resourceId) => dispatch({ type: 'selectCharacter', index, resourceId })}
+        />
       </div>
       <PartyTabs active={parties.active} onSelect={selectParty} totals={totals.parties} />
       {/* キャラの選択肢のバースト段階の絞り込み（ClassicBurstFilter）・絞り込み（ClassicFilter）・並べ替え（ボタンで開くポップアップに「一覧の並び」を出す）。この順でスロットの上の中央に置く */}

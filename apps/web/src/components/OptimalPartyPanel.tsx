@@ -1,17 +1,19 @@
 // 最適編成計算（クラシック）。入れ替えるスロットを 1 つ選んで「計算」を押すと、そのスロットを、いまの編成にもほかの編成にもいない
 // ニケに 1 人ずつ入れ替えて編成のダメージを計算し、いちばん大きい上位 10 人を出す（optimalParty.ts）。
 // 候補のキャラとスキル定義は、計算を始めたときに読む（200 人ぶん）。計算は専用の Worker（useBatchComputation）で回し、画面の計算とは別。
-// 「最適編成計算」のボタンで開くポップアップの中身（ClassicView の Popover）
-import type { BuildMasters, BuildSnapshot, CharacterIndexEntry, EnemyPresetMaster } from '@nikke/core';
+// 「最適編成計算」のボタンで開くポップアップ（OptimalPartyPopover。クラシックの ClassicView が置く）の中身。
+// ポップアップを閉じるとパネルが外れ、計算の途中でも Worker と結果を捨てる。「採用」を押しても閉じない（ほかの候補も続けて試せる）
+import type { BuildMasters, BuildSnapshot, CharacterIndexEntry, EnemyPresetMaster, TeamInput } from '@nikke/core';
 import { useMemo, useState } from 'react';
 import { InertButton } from './InertButton.tsx';
+import { Popover } from './Popover.tsx';
 import { buildCalcView, type CalcDeps } from '../calcView.ts';
 import { ComputeCache } from '../compute.ts';
 import { formatCompact, formatDamage } from '../format.ts';
 import {
   OPTIMAL_TOP_COUNT,
   candidateEntries,
-  canFullBurst,
+  fullBurstCandidates,
   swappedTeam,
   topRows,
   type BurstMember,
@@ -20,6 +22,9 @@ import type { TeamState } from '../team.ts';
 import { batchWorkerCount, useBatchComputation } from '../useBatchComputation.ts';
 import { useCharacterCache } from '../useCharacterCache.ts';
 import { slotSkillsStatus, useSkillDefinitions } from '../useSkillDefinitions.ts';
+
+/** 計算しないときの入力。描くたびに同じ配列を渡す（新しい空の配列だと、useBatchComputation が空の計算を始め直して描き直し続ける） */
+const NO_INPUTS: readonly TeamInput[] = [];
 
 type Props = {
   team: TeamState;
@@ -79,7 +84,8 @@ export function OptimalPartyPanel({
   const skills = useSkillDefinitions(wantedIds, baseUrl);
 
   // 読み込みの状況。キャラかスキル定義が読み込み中のものがあるうちは計算しない（スキル定義が無い・読めないニケは候補から除く）。
-  // 読み込みが済んだら、入れるとフルバーストが起きなくなるニケも候補から省く（計算と同じ編成での段で見る。optimalParty.ts の canFullBurst）
+  // 読み込みが済んだら、入れるとフルバーストが起きなくなるニケも候補から省く（計算と同じ編成での段で見る。どの候補でも起きない編成では省かない。
+  // optimalParty.ts の fullBurstCandidates）
   const status = useMemo(() => {
     const memberOf = (id: number): BurstMember | null => {
       const character = loadedCharacters.get(id);
@@ -91,7 +97,7 @@ export function OptimalPartyPanel({
       (id) => id !== null && (!loadedCharacters.has(id) || slotSkillsStatus(skills, id).kind === 'loading'),
     );
     const teamMembers = teamIds.map((id) => (id === null ? null : memberOf(id)));
-    let ready: CharacterIndexEntry[] = [];
+    const ready: CharacterIndexEntry[] = [];
     let loading = 0;
     let excluded = 0;
     for (const c of candidates) {
@@ -101,17 +107,18 @@ export function OptimalPartyPanel({
       else if (!loadedCharacters.has(id) || skill.kind === 'loading') loading++;
       else ready.push(c);
     }
-    if (!teamLoading && active !== null) {
-      ready = ready.filter((c) => canFullBurst(teamMembers.map((m, i) => (i === active ? memberOf(c.resourceId) : m))));
-    }
-    return { ready, loading, excluded, teamLoading };
+    const { kept, dropped, noneFullBurst } =
+      teamLoading || active === null
+        ? { kept: ready, dropped: 0, noneFullBurst: false }
+        : fullBurstCandidates(ready, (c) => teamMembers.map((m, i) => (i === active ? memberOf(c.resourceId) : m)));
+    return { ready: kept, loading, excluded, teamLoading, dropped, noneFullBurst };
   }, [candidates, skills, loadedCharacters, characterErrors, teamIds, active]);
 
   const settled = active !== null && status.loading === 0 && !status.teamLoading && masters !== null;
 
   // 計算の入力: 先頭が「いまの編成」、続いて 1 人ずつ入れ替えた編成
   const inputs = useMemo(() => {
-    if (!settled || active === null) return [];
+    if (!settled || active === null) return NO_INPUTS;
     const deps = (t: TeamState): CalcDeps => ({
       characters: loadedCharacters,
       skillsStatuses: t.slots.map((s) => (s.resourceId === null ? null : slotSkillsStatus(skills, s.resourceId))),
@@ -193,12 +200,34 @@ export function OptimalPartyPanel({
               スキル定義が無い・読めない・計算できないため除いたニケ: {status.excluded + view.failed} 人
             </p>
           )}
+          {status.dropped > 0 && (
+            <p className="optimal-party-note">入れるとフルバーストが起きなくなるため除いたニケ: {status.dropped} 人</p>
+          )}
+          {status.noneFullBurst && (
+            <p className="optimal-party-note">
+              どのニケを入れてもフルバーストが起きない編成なので、フルバーストが起きるかでは絞っていません。
+            </p>
+          )}
           <p className="optimal-party-note">
-            上位 {OPTIMAL_TOP_COUNT}{' '}
-            人。いまの編成とほかの編成にいるニケと、入れるとフルバーストが起きなくなるニケは入れません。
+            上位 {OPTIMAL_TOP_COUNT} 人。いまの編成とほかの編成にいるニケは入れません。
           </p>
         </>
       )}
     </fieldset>
+  );
+}
+
+/** 「最適編成計算」のボタンと、それで開くポップアップ（画面の上寄りの中央） */
+export function OptimalPartyPopover(props: Props) {
+  return (
+    <Popover
+      button="最適編成計算"
+      buttonClassName="party-optimize-button"
+      label="最適編成計算"
+      align="center"
+      panelClassName="optimal-party-popover"
+    >
+      <OptimalPartyPanel {...props} />
+    </Popover>
   );
 }

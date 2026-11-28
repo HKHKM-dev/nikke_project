@@ -2,20 +2,25 @@
 // 入力が変わったら、計算中の件の答えは待って捨て、新しい入力の分を始めからやり直す（Worker に待ちの列を積まない）。
 // 全部の答えが揃うまでは前の結果を出したまま computing を立てる。null の入力（空の編成・読み込み中）は計算せず、結果も null。
 // 覚えている結果（ComputeCache）がある入力は計算しない（編成を切り替えた・今の編成だけ変えたときに、ほかの編成を計算し直さない）
-// 覚えている結果は、入力が変わった最初の描画から出す
+// 覚えている結果は、入力が変わった最初の描画から出す。
+// Worker が止まったときに送っていた件は、ほかの Worker（か作り直した Worker）でやり直す。同じ件で BATCH_MAX_RETRIES 回より多く止まったら、
+// その件を失敗にする（Worker を落とす件を、Worker を替えて送り続けない）。作り直してもだめだった Worker（dead）は、次の計算を始めるときに作り直す
 import type { TeamInput } from '@nikke/core';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { superviseWorker, type SupervisedWorker } from './computeWorker.ts';
 import { errorMessage, type ComputeCache, type Computed } from './compute.ts';
 
 type Inputs = readonly (TeamInput | null)[];
-/** next: 次に見る入力の位置。retry: 止まった Worker から取り戻した件（先にやり直す） */
-type Job = { inputs: Inputs; results: (Computed | null)[]; next: number; retry: number[] };
+/** next: 次に見る入力の位置。retry: 止まった Worker から取り戻した件（先にやり直す）。stops: 件ごとの、Worker が止まった回数 */
+type Job = { inputs: Inputs; results: (Computed | null)[]; next: number; retry: number[]; stops: Map<number, number> };
 type Slot = {
   worker: SupervisedWorker | null;
   inFlight: { seq: number; job: Job; index: number } | null;
   dead: boolean;
 };
+
+/** 1 つの件で Worker が止まったときに、やり直す回数の上限 */
+export const BATCH_MAX_RETRIES = 1;
 
 /** 最適編成計算のように数百件を回すときの Worker の数。画面の分に 1 コア残し、最大 8 */
 export function batchWorkerCount(): number {
@@ -73,14 +78,21 @@ export function useBatchComputation(
             exhausted = true;
             break;
           }
-          slot.inFlight = { seq: ++seq, job, index };
+          const request = { seq: ++seq, input: job.inputs[index]! };
+          let sent: boolean;
           try {
-            slot.worker!.post({ seq: slot.inFlight.seq, input: job.inputs[index]! });
+            sent = slot.worker!.post(request);
           } catch (e) {
             // 構造化複製できない入力（DataCloneError）など
             job.results[index] = { ok: false, error: errorMessage(e) };
-            slot.inFlight = null;
+            continue;
           }
+          if (!sent) {
+            // この Worker は作り直しを待っている（作り直したら onRestart から pump が呼ばれる）。その件はほかの Worker に回す
+            job.retry.unshift(index);
+            break;
+          }
+          slot.inFlight = { seq: request.seq, job, index };
         }
       }
       if (allDead) {
@@ -96,14 +108,20 @@ export function useBatchComputation(
       }
     };
 
-    slots.forEach((slot) => {
-      // 動いていた 1 件を取り戻して、やり直しの列に積む
-      const reclaim = () => {
+    const supervise = (slot: Slot): SupervisedWorker => {
+      // 動いていた 1 件を取り戻して、やり直しの列に積む。同じ件で止まるのが上限を超えたら、その件を失敗にする
+      const reclaim = (reason: string) => {
         if (slot.inFlight === null) return;
-        if (slot.inFlight.job === current) slot.inFlight.job.retry.push(slot.inFlight.index);
+        const { job, index } = slot.inFlight;
         slot.inFlight = null;
+        if (job !== current) return;
+        const stops = (job.stops.get(index) ?? 0) + 1;
+        job.stops.set(index, stops);
+        if (stops > BATCH_MAX_RETRIES)
+          job.results[index] = { ok: false, error: `この編成の計算で Worker が ${stops} 回止まりました: ${reason}` };
+        else job.retry.push(index);
       };
-      slot.worker = superviseWorker({
+      return superviseWorker({
         onMessage: (data) => {
           if (slot.inFlight === null || data.seq !== slot.inFlight.seq) return;
           const { job, index } = slot.inFlight;
@@ -119,22 +137,29 @@ export function useBatchComputation(
           pump();
         },
         // 止まった Worker に送った 1 件は答えが来ないので、その件を取り戻して、作り直した Worker（かほかの Worker）でやり直す
-        onRestart: () => {
-          reclaim();
+        onRestart: (reason) => {
+          reclaim(reason);
           pump();
         },
         // この Worker はもう使えない。その件はほかの Worker に回す（全部使えなければ pump が失敗にして終える）
         onGiveUp: (message) => {
           giveUpMessage = message;
           slot.dead = true;
-          reclaim();
+          reclaim(message);
           pump();
         },
       });
-    });
+    };
+    for (const slot of slots) slot.worker = supervise(slot);
 
     startRef.current = (job) => {
       current = job;
+      for (const slot of slots) {
+        if (!slot.dead) continue;
+        slot.worker?.dispose();
+        slot.dead = false;
+        slot.worker = supervise(slot);
+      }
       pump();
     };
     return () => {
@@ -144,7 +169,7 @@ export function useBatchComputation(
   }, [cache, workers]);
 
   useEffect(() => {
-    startRef.current?.({ inputs, results: inputs.map(() => null), next: 0, retry: [] });
+    startRef.current?.({ inputs, results: inputs.map(() => null), next: 0, retry: [], stops: new Map() });
   }, [inputs]);
 
   // 入力が変わった直後の描画では、覚えている結果をその場で出す（effect を待つと、前の入力の結果を別の並びに当てて描く）。

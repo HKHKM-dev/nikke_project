@@ -33,8 +33,22 @@ export function canFullBurst(members: readonly (BurstMember | null)[]): boolean 
 }
 
 /**
+ * 候補のうち、入れるとフルバーストが起きる（canFullBurst）ものだけを残す。membersWith: その候補を入れた編成の枠。
+ * どの候補を入れても起きない編成（1 人だけの編成など）では、省くと候補が残らないので、省かずに全部を残す（noneFullBurst）。
+ * dropped: 省いた人数
+ */
+export function fullBurstCandidates<T>(
+  candidates: readonly T[],
+  membersWith: (candidate: T) => readonly (BurstMember | null)[],
+): { kept: T[]; dropped: number; noneFullBurst: boolean } {
+  const kept = candidates.filter((c) => canFullBurst(membersWith(c)));
+  if (kept.length === 0 && candidates.length > 0) return { kept: [...candidates], dropped: 0, noneFullBurst: true };
+  return { kept, dropped: candidates.length - kept.length, noneFullBurst: false };
+}
+
+/**
  * 入れ替え先のニケ（一覧の順のまま）。いまの編成のニケと、ほかの編成のニケは入れない。
- * フルバーストが起きなくなるニケを省く判定（canFullBurst）は、スキル定義を読んだ後に呼ぶ側がする
+ * フルバーストが起きなくなるニケを省く判定（fullBurstCandidates）は、スキル定義を読んだ後に呼ぶ側がする
  */
 export function candidateEntries(
   index: readonly CharacterIndexEntry[],
