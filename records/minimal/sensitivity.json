@@ -37939,6 +37939,230 @@
       "plus": 0
     },
     {
+      "observation": "1411-01",
+      "element": "キリ burst.effects[0]",
+      "key": "0b11a28fd43d749c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1411-01",
+      "element": "キリ skill1.effects[0]",
+      "key": "0b11a28fd43d749c",
+      "effective": true,
+      "minus": -19145.285000000033,
+      "plus": 0
+    },
+    {
+      "observation": "1411-02",
+      "element": "キリ burst.effects[0]",
+      "key": "8abe7d41ddc86a84",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1411-02",
+      "element": "キリ skill1.effects[0]",
+      "key": "8abe7d41ddc86a84",
+      "effective": true,
+      "minus": 0,
+      "plus": 19145.285000000033
+    },
+    {
+      "observation": "1412-01",
+      "element": "キリ burst.effects[0]",
+      "key": "a1ff14dd48134ca2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1412-01",
+      "element": "キリ skill1.effects[0]",
+      "key": "a1ff14dd48134ca2",
+      "effective": true,
+      "minus": -19145.285000000033,
+      "plus": 0
+    },
+    {
+      "observation": "1412-02",
+      "element": "キリ burst.effects[0]",
+      "key": "4e1aac8b6602df92",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1412-02",
+      "element": "キリ skill1.effects[0]",
+      "key": "4e1aac8b6602df92",
+      "effective": true,
+      "minus": 0,
+      "plus": 19145.285000000033
+    },
+    {
+      "observation": "1413-01",
+      "element": "キリ burst.effects[0]",
+      "key": "8c893d2e02e49eb1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1413-01",
+      "element": "キリ skill1.effects[0]",
+      "key": "8c893d2e02e49eb1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1413-02",
+      "element": "キリ burst.effects[0]",
+      "key": "fe6e229c898bc2a9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1413-02",
+      "element": "キリ skill1.effects[0]",
+      "key": "fe6e229c898bc2a9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1413-03",
+      "element": "キリ burst.effects[0]",
+      "key": "0eca962e60706ec5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1413-03",
+      "element": "キリ skill1.effects[0]",
+      "key": "0eca962e60706ec5",
+      "effective": true,
+      "minus": -599.1791999999987,
+      "plus": 0
+    },
+    {
+      "observation": "1413-04",
+      "element": "キリ burst.effects[0]",
+      "key": "ab940a61e6694bd2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1413-04",
+      "element": "キリ skill1.effects[0]",
+      "key": "ab940a61e6694bd2",
+      "effective": true,
+      "minus": 0,
+      "plus": 599.1791999999987
+    },
+    {
+      "observation": "1413-05",
+      "element": "キリ burst.effects[0]",
+      "key": "3f3bf26e4718e931",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1413-05",
+      "element": "キリ skill1.effects[0]",
+      "key": "3f3bf26e4718e931",
+      "effective": true,
+      "minus": -19145.285000000003,
+      "plus": 0
+    },
+    {
+      "observation": "1414-01",
+      "element": "キリ burst.effects[0]",
+      "key": "7e9de855643b573e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1414-01",
+      "element": "キリ skill1.effects[0]",
+      "key": "7e9de855643b573e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1414-02",
+      "element": "キリ burst.effects[0]",
+      "key": "f6a23631ea53ea8c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1414-02",
+      "element": "キリ skill1.effects[0]",
+      "key": "f6a23631ea53ea8c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1414-03",
+      "element": "キリ burst.effects[0]",
+      "key": "b3f87e2335ff4748",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1414-03",
+      "element": "キリ skill1.effects[0]",
+      "key": "b3f87e2335ff4748",
+      "effective": true,
+      "minus": -599.1791999999987,
+      "plus": 0
+    },
+    {
+      "observation": "1414-04",
+      "element": "キリ burst.effects[0]",
+      "key": "d74cb714a038153f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1414-04",
+      "element": "キリ skill1.effects[0]",
+      "key": "d74cb714a038153f",
+      "effective": true,
+      "minus": 0,
+      "plus": 599.1791999999987
+    },
+    {
+      "observation": "1414-05",
+      "element": "キリ burst.effects[0]",
+      "key": "8b4754897102d720",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1414-05",
+      "element": "キリ skill1.effects[0]",
+      "key": "8b4754897102d720",
+      "effective": true,
+      "minus": -19145.285000000003,
+      "plus": 0
+    },
+    {
       "observation": "1416-09",
       "element": "リバーレリオ skill2.effects[1]",
       "key": "933e13ec0f505d97",
