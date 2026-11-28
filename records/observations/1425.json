@@ -1,0 +1,415 @@
+[
+  {
+    "id": "1425-01",
+    "recording": "1425",
+    "kind": "timing",
+    "use": "record",
+    "value": [1232, 2291, 3470, 4403, 5582, 6618, 7797, 8859, 10038, 10980],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・6・25・0・25・0・25・5f"
+    },
+    "source": "V-0887",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1425-02",
+    "recording": "1425",
+    "kind": "timing",
+    "use": "record",
+    "value": [1261, 3499, 5611, 7826, 10067],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25・25f"
+    },
+    "source": "V-0887",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1425-03",
+    "recording": "1425",
+    "kind": "timing",
+    "use": "record",
+    "value": [1290, 3529, 5640, 7855, 10096],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0887",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1425-04",
+    "recording": "1425",
+    "kind": "timing",
+    "use": "record",
+    "value": [1899, 4138, 6249, 8397, 10705],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0887",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1425-05",
+    "recording": "1425",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609, 542, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0887",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1425-06",
+    "recording": "1425",
+    "kind": "timing",
+    "use": "record",
+    "value": [1229, 2288, 3467, 4400, 5579, 6615, 7794, 8856, 10035, 10976],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f3434・f5545・f7761・f10001"
+    },
+    "source": "V-0887",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1425-07",
+    "recording": "1425",
+    "kind": "count",
+    "use": "compare",
+    "value": [1, 2, 3, 4, 1, 2, 1, 2, 3, 4, 1, 2, 1, 2],
+    "unit": "枠",
+    "description": "最初の 14 回のバーストの発動の枠（1 始まり。5 回のチェーン）。奇数回目のチェーンはアビスタ（1）→ アニス：スター（2）→ デルタ（3）→ アリス（4）でフルバースト、偶数回目はアビスタ → アニス：スターで、デルタ（CT 40 秒）が明けておらず時間切れ",
+    "method": {
+      "tool": "目視（バースト欄の切り出し）と burst-panel@4",
+      "note": "最初の 5 回のチェーンのどれも、I → II の替わり目（1425-01）の 40f 前の画で I の段にアビスタとアニス：スターの顔が並び、12f 前の画でアビスタの顔に CT の「20」が出て I のタイマーが 09.64〜09.68 に戻り（再突入）、その下にアニス：スターの顔が残っている。替わり目の 4f 後の II の段はデルタの顔で、2・4 回目のチェーンは CT（15・17）が出ていて撃てない。I の候補はこの 2 人だけなので、どのチェーンもアビスタ → アニス：スターの順で I を撃ってから II に替わる。1 回目のチェーンは f1100〜1259 の 8f おきの画でも確かめた。II → III（1425-02）とフルバースト（1425-03）は 5 回で、奇数回目のチェーンだけ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 14
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burst"
+    },
+    "source": "V-0887",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1425-08",
+    "recording": "1425",
+    "kind": "hit",
+    "use": "compare",
+    "value": 172539.6,
+    "description": "1 回目のフルバーストより前（アニス：スターのバーストより前）の、アニス：スターの胴体の 1 ヒット（会心なし）。アビスタの効果は無い",
+    "method": {
+      "tool": "recipe:buff-edge@9（hud-jumps@3 の増分）",
+      "note": "f1021 の 480,330（f1139・f1200 は同じフレームのアビスタの MG の 11,121 との和 491,451）。追加ダメージ 135,250.8 を引いた。アニス：スターのフルチャージの 1 発（胴体 2 ヒット + S1 の追加ダメージ）の HUD の増分から、モデルの追加ダメージ（会心なし）を引いた半分。差の 1〜2 は最終攻撃力の端数の丸め（V-0124）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0887",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1425-09",
+    "recording": "1425",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1135945.7,
+    "description": "1 回目のフルバーストの中の、アニス：スターの胴体の 1 ヒット（会心なし）。アビスタの S2 の発射体爆発ダメージ▲・攻撃ダメージ▲が乗る",
+    "method": {
+      "tool": "recipe:buff-edge@9（hud-jumps@3 の増分）",
+      "note": "f1492・f1534 の 2,802,860（フルバーストの始まり 1425-03 の f1290 から 202・244f）。追加ダメージ 530,968.7 を引いた。S2 の▲が無ければ 1 発は 2,167,110。ほかの増分はシューティングスター・アビスタの弾との和で、1 発だけの増分はこの 2 つ。アニス：スターのフルチャージの 1 発（胴体 2 ヒット + S1 の追加ダメージ）の HUD の増分から、モデルの追加ダメージ（会心なし）を引いた半分。差の 1〜2 は最終攻撃力の端数の丸め（V-0124）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false,
+        "fullBurst": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0887",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1425-10",
+    "recording": "1425",
+    "kind": "hit",
+    "use": "compare",
+    "value": 295446,
+    "description": "1 回目のフルバーストの後（アニス：スターの次のバーストより前）の、アニス：スターの胴体の 1 ヒット（会心なし）。アフターショーが乗り、S2 の▲は乗らない",
+    "method": {
+      "tool": "recipe:buff-edge@9（hud-jumps@3 の増分）",
+      "note": "f1953・f2071・f2130・f2189 の 822,487（フルバーストの終わり 1425-04 の f1899 から 54〜290f）。追加ダメージ 231,595.0 を引いた。S2 の▲が「持続」で残るなら 1 発は 1,389,676、アフターショーが無ければ 480,330 と同じ形。アニス：スターのフルチャージの 1 発（胴体 2 ヒット + S1 の追加ダメージ）の HUD の増分から、モデルの追加ダメージ（会心なし）を引いた半分。差の 1〜2 は最終攻撃力の端数の丸め（V-0124）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0887",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1425-11",
+    "recording": "1425",
+    "kind": "hit",
+    "use": "compare",
+    "value": 295446,
+    "description": "1 回目のフルバーストの後、アニス：スターの 2 回目のバーストの▲が切れた後から、2 回目のフルバーストより前の、アニス：スターの胴体の 1 ヒット（会心なし）。アフターショーが次のフルバーストまで残る",
+    "method": {
+      "tool": "recipe:buff-edge@9（hud-jumps@3 の増分）",
+      "note": "f3058・f3377 の 822,487（2 回目のフルバーストの始まり f3529 の 471・152f 前）。追加ダメージ 231,595.0 を引いた。アニス：スターのフルチャージの 1 発（胴体 2 ヒット + S1 の追加ダメージ）の HUD の増分から、モデルの追加ダメージ（会心なし）を引いた半分。差の 1〜2 は最終攻撃力の端数の丸め（V-0124）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 2200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0887",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1425-12",
+    "recording": "1425",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1135945.7,
+    "description": "2 回目のフルバーストの中の、アニス：スターの胴体の 1 ヒット（会心なし）。アフターショーは外れ、S2 の▲が乗る",
+    "method": {
+      "tool": "recipe:buff-edge@9（hud-jumps@3 の増分）",
+      "note": "f3896 の 2,802,860（フルバーストの始まり f3529 から 367f）。1 回目のフルバーストの中（1425-09）と同じ値。アフターショーが外れなければ 1 発はおよそ 4,100,000。追加ダメージ 530,968.7 を引いた。アニス：スターのフルチャージの 1 発（胴体 2 ヒット + S1 の追加ダメージ）の HUD の増分から、モデルの追加ダメージ（会心なし）を引いた半分。差の 1〜2 は最終攻撃力の端数の丸め（V-0124）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false,
+        "fullBurst": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0887",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1425-13",
+    "recording": "1425",
+    "kind": "hit",
+    "use": "compare",
+    "value": 295446,
+    "description": "2 回目のフルバーストの後の、アニス：スターの胴体の 1 ヒット（会心なし）",
+    "method": {
+      "tool": "recipe:buff-edge@9（hud-jumps@3 の増分）",
+      "note": "f4224 の 833,608 = 822,487 + アビスタの MG の 11,121（f4283 は + 13,901 の 836,388）。フルバーストの終わり f4138 から 86f。追加ダメージ 231,595.0 を引いた。アニス：スターのフルチャージの 1 発（胴体 2 ヒット + S1 の追加ダメージ）の HUD の増分から、モデルの追加ダメージ（会心なし）を引いた半分。差の 1〜2 は最終攻撃力の端数の丸め（V-0124）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 3300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0887",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1425-14",
+    "recording": "1425",
+    "kind": "hit",
+    "use": "compare",
+    "value": 295446,
+    "description": "3 回目のフルバーストの後の、アニス：スターの胴体の 1 ヒット（会心なし）",
+    "method": {
+      "tool": "recipe:buff-edge@9（hud-jumps@3 の増分）",
+      "note": "f6294・f6353 の 822,487（フルバーストの終わり f6249 から 45・104f）。追加ダメージ 231,595.0 を引いた。アニス：スターのフルチャージの 1 発（胴体 2 ヒット + S1 の追加ダメージ）の HUD の増分から、モデルの追加ダメージ（会心なし）を引いた半分。差の 1〜2 は最終攻撃力の端数の丸め（V-0124）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 5400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0887",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1425-15",
+    "recording": "1425",
+    "kind": "hit",
+    "use": "compare",
+    "value": 295446,
+    "description": "4 回目のフルバーストの後の、アニス：スターの胴体の 1 ヒット（会心なし）",
+    "method": {
+      "tool": "recipe:buff-edge@9（hud-jumps@3 の増分）",
+      "note": "f8524 の 822,487（フルバーストの終わり f8397 から 127f）。5 回目の後も f10752 に 836,388 = 822,487 + 13,901。追加ダメージ 231,595.0 を引いた。アニス：スターのフルチャージの 1 発（胴体 2 ヒット + S1 の追加ダメージ）の HUD の増分から、モデルの追加ダメージ（会心なし）を引いた半分。差の 1〜2 は最終攻撃力の端数の丸め（V-0124）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 7600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0887",
+    "readAt": "2026-11-28"
+  }
+]

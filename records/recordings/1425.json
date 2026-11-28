@@ -1,0 +1,52 @@
+{
+  "id": "1425",
+  "date": "2026-11-28",
+  "folder": "range",
+  "file": "20261128-1425_mg_avistar.mp4",
+  "original": "2026-11-28_18-06-35.mp4",
+  "durationSec": 209.5,
+  "frames": 12569,
+  "fps": 60,
+  "sizeMB": 253.9,
+  "sha256": "39ae70610242",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 441,
+      "name": "アビスタ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true
+    },
+    {
+      "slot": 3,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 4,
+      "rid": 191,
+      "name": "アリス",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0887。アビスタ・アニス：スター（操作）・デルタ・アリス（終わりの戦闘履歴の並び。依頼の並び（デルタ・アリス・アビスタ・アニス：スター）と違うが、アビスタはアニス：スターより左）",
+  "backup": {
+    "at": "2026-11-28T18:12+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

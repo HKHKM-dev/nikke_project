@@ -1,0 +1,33 @@
+{
+  "id": "C-1592",
+  "text": "アビスタの S2 の、自分のアイドル（アニス：スター）への発射体爆発ダメージ▲・攻撃ダメージ▲は、自分がスターゲイザー状態（バーストで付き、S1 がフルバーストの終わりに外す）のフルバーストの発動で付き、そのフルバーストの終わりで切れる（説明文は「持続」だが、フルバーストの後の窓のアニス：スターの発には乗らない）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1425-08`・`1425-09`・`1425-10`・`1425-12`・`1425-13`。V-0887",
+  "model": "data/skills/441.json の skill2 の timed（durationUntil: fullBurstEnd・条件 selfState: stargazer）、burst の stargazer の付与、skill1 の removeState",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": [
+      "data/skills/441.json の skill2 の effects[0]",
+      "data/skills/441.json の skill2 の effects[1]",
+      "data/skills/441.json の burst の effects[1]",
+      "data/skills/441.json の skill1 の effects[2]"
+    ]
+  },
+  "decidedOn": [
+    {
+      "recording": "1425",
+      "role": "仮説の出どころ"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "1425",
+      "decided": "1 回目のフルバーストとその後",
+      "reproduced": "2 回目のフルバーストとその後",
+      "observations": ["1425-12", "1425-13"]
+    }
+  ]
+}
