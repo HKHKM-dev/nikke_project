@@ -1,0 +1,80 @@
+{
+  "formatVersion": 1,
+  "resourceId": 380,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "回復効果が適用された時の、その対象への受けるダメージ▼（5 秒）は防御系でダメージに関係しない",
+          "en": "The damage taken decrease on the healed target when a heal is applied (5 s) is defensive and does not affect damage",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "回復効果が適用された時の、自分へのネコの恩返し（受けるダメージ▼・5 スタック・5 秒）は防御系でダメージに関係しない。フルスタックかを読むのは、バーストの受ける HP 回復量▲の条件だけ",
+          "en": "Cat's Repayment on self when a heal is applied (damage taken decrease, 5 stacks, 5 s) is defensive and does not affect damage. Only the condition of the Burst's HP recovery taken increase reads whether it is at max stacks",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "攻撃を受けた時、30% の確率の、対象への受けるダメージ▲（5 秒）は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは的の攻撃で起きうる（C-0551）",
+          "en": "The 30% chance damage taken increase on the target when attacked (5 s) does not occur because taking hits is not modeled (requirements 4.2). In the 3-minute range mode it can occur from the target's attacks",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "damageTaken",
+            "target": "enemy",
+            "trigger": "damaged"
+          }
+        },
+        {
+          "ja": "大きくて乱暴なネコ状態で攻撃を受けた時、30% の確率の、対象への追加ダメージは、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは的の攻撃で起きうる（C-0551）",
+          "en": "The 30% chance additional damage on the target when attacked in the Big and Rough Cat state does not occur because taking hits is not modeled (requirements 4.2). In the 3-minute range mode it can occur from the target's attacks",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "damage",
+            "target": "enemy",
+            "trigger": "damaged"
+          }
+        },
+        {
+          "ja": "戦闘開始時の、自分の最大HP▲（持続）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "The max HP increase on self at the start of battle (continuous) does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "残りHP の値が最も高い敵 1 機は敵 1 体で 1 ヒット",
+            "en": "The single enemy with the highest remaining HP is the lone enemy, hit once"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "自分への「ヘイト：敵全体を挑発」（15 秒）はダメージに関係しない（ティアの S2・シンの S1 の「自分にヘイト：敵全体を挑発」はゲージを溜めない）",
+          "en": "The \"Hate: taunt all enemies\" on self (15 s) does not affect damage (the same self taunt of Tia S2 and Sin S1 does not charge the gauge)",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "自分がネコの恩返しのフルスタック状態の時の、自分への大きなネコ（受ける HP 回復量▲・15 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く。ネコの恩返しは回復を受けた時に付くので、回復の無い編成では付かない）",
+          "en": "Big Cat on self (HP recovery taken increase, 15 s) when she has Cat's Repayment at max stacks does not change damage by itself (it matters only with an effect reading HP in the team; Cat's Repayment is applied on being healed, so it is not applied in a team without heals)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "formatVersion": 1,
+  "resourceId": 12,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "40 回攻撃を受けた時の、自分の防御力▲（10 秒）は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは的の攻撃で数えられうる（C-0551）",
+          "en": "The DEF increase on self after taking 40 hits (10 s) does not occur because taking hits is not modeled (requirements 4.2). In the 3-minute range mode the target's attacks can count toward it",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "defense",
+            "target": "self",
+            "trigger": "damaged"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分と、自分を除く最終攻撃力が最も高い味方 2 機への防御力▲（5 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く。説明文にきっかけが無く、この付与は定義していない）",
+          "en": "The DEF increase on self and the 2 allies with the highest final ATK (excluding self, 5 s) does not change damage by itself (it matters only with an effect reading DEF in the team; the description has no trigger, and this buff is not defined)",
+          "kind": "indirect",
+          "path": "defense"
+        },
+        {
+          "ja": "自分と、自分を除く最終攻撃力が最も高い味方 2 機への受けるダメージ均等分配（10 秒）は防御系でダメージに関係しない",
+          "en": "Equal sharing of damage taken among self and the 2 allies with the highest final ATK (excluding self, 10 s) is defensive and does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "攻撃範囲内の敵は敵 1 体で 1 ヒット。同じバーストの防御力▼（effects[1]）は乗らない（発動の時点の値。C-0795）",
+            "en": "The enemies in range are the lone enemy, hit once. The DEF decrease of the same Burst (effects[1]) does not apply (values at the activation; C-0795)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "enemyDefenseDown",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "敵 1 体への防御力▼を、味方全体の与ダメージの式で効かせる（敵の防御力を説明文の値の割合だけ下げる。C-0556・C-0790）",
+            "en": "The DEF decrease on the lone enemy applies in the damage formula of all allies (lowers the enemy's DEF by the described ratio; C-0556, C-0790)"
+          }
+        }
+      ]
+    }
+  }
+}
