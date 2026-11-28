@@ -1,0 +1,75 @@
+{
+  "formatVersion": 1,
+  "resourceId": 800,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "20 回攻撃を受けた時の、味方全体のリロード速度▲・防御力▲（10 秒）は、被弾を扱わないので起きない（要件 5.2 節）。射撃場の 3 分モードでは的の攻撃で起きうる（C-0551）",
+          "en": "The reload speed and DEF up (10 s) on all allies after being attacked 20 times never occurs because taking hits is not modeled (requirements 5.2). On the range's 3-minute mode it can occur from the target's attacks (C-0551)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "reloadSpeed",
+            "target": "allies",
+            "trigger": "damaged"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "通常攻撃で 120 回攻撃した時の、自分へのヘイト（敵全体を挑発・3 秒）は未対応（付けた時にバーストゲージを溜めるかを撮っていない。撮影の機会が無い。同じ形のティアの S2・デルタ：ニンジャシーフの S2 は溜めない（C-0505・C-1583））",
+          "en": "The taunt on self (taunt all enemies, 3 s) after 120 normal attacks is not modeled (whether applying it charges the burst gauge has not been recorded; there has been no chance to record it. The same form on Tia's S2 and Delta: Ninja Thief's S2 does not charge it (C-0505, C-1583))",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "burstGauge",
+            "target": "self",
+            "trigger": "normalShot"
+          }
+        },
+        {
+          "ja": "戦闘不能に至る攻撃を受けた時の、自分への不屈（7 秒・戦闘中 1 回）とバーストスキルのクールタイム▼は、被弾を扱わず味方が倒れない前提なので起きない（要件 4.2 節）",
+          "en": "The indomitability on self (7 s, once per battle) and the burst skill cooldown reduction upon a lethal hit never occur because taking hits is not modeled and allies are assumed not to fall (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "cooldownReduction",
+            "target": "self",
+            "trigger": "damaged"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分への貫通特化（10 秒）は、それ自体は与ダメージを変えない（貫通を読む効果のある編成でだけ効く）",
+          "en": "Pierce on self (10 s) does not change damage by itself (it matters only with an effect reading pierce in the team)",
+          "kind": "indirect",
+          "path": "pierce"
+        },
+        {
+          "ja": "自分の吸収回復（攻撃ダメージの X% 回復・10 秒）は、ダメージに関係しない（自分にだけ付き、マキマに回復を受けた時の効果は無いので、どの味方のスキルの発動も変えない）",
+          "en": "The lifesteal on self (restore X% of attack damage, 10 s) does not affect damage (it applies only to self, and Makima has no effects that trigger on being healed, so it never changes any ally's skill activation)",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "自分が不屈状態の時の、自分の受ける HP 回復量▲（10 秒）は、不屈が起きない（S2 の notes）ので効かない（要件 4.2 節）",
+          "en": "The HP recovery received up on self (10 s) while indomitable never applies because indomitability never occurs (S2 notes; requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

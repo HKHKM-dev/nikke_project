@@ -1,0 +1,77 @@
+{
+  "formatVersion": 1,
+  "resourceId": 802,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルチャージ攻撃が命中した時の、対象への防御力▼（3 秒）は未対応（撮影の機会が無い）",
+          "en": "The DEF down (3 s) on the target when a full-charge attack hits is not modeled (there has been no chance to record it)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "enemyDefenseDown",
+            "target": "enemy",
+            "trigger": "fullChargeShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "スナイパーライフルを持つ味方全体への攻撃力▲（10 秒）は未対応（きっかけの書かれていないクールタイムごとのアクティブで、周期を録画で読んでいない。撮影の機会が無い）",
+          "en": "The ATK up (10 s) on all allies with a sniper rifle is not modeled (an active skill on its own cooldown with no trigger written; its interval has not been read from a recording, and there has been no chance to record it)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "unknown"
+          }
+        },
+        {
+          "ja": "同じ発動の、スナイパーライフルを持つ味方全体への最大装弾数▲（10 秒）は未対応（攻撃力▲と同じ理由）",
+          "en": "The max ammo up (10 s) on all allies with a sniper rifle from the same activation is not modeled (same reason as the ATK up)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "maxAmmo",
+            "target": "allies",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分を除く最終攻撃力が最も高い味方 1 機への、チャージダメージ▲（10 秒）は未対応（撮影の機会が無い）",
+          "en": "The charge damage up (10 s) on the 1 ally other than self with the highest final ATK is not modeled (there has been no chance to record it)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "chargeDamage",
+            "target": "topAttack",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "同じ味方へのクリティカル確率▲（10 秒）は未対応（撮影の機会が無い）",
+          "en": "The crit rate up (10 s) on the same ally is not modeled (there has been no chance to record it)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "critRate",
+            "target": "topAttack",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}
