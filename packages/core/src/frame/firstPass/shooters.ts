@@ -414,6 +414,7 @@ export function createShooters({
       state.lastShot,
       lastBullet,
       log.fullCharge && !isPartial && !uncharged,
+      isPartial,
       hits,
       coreHits,
       critHits,

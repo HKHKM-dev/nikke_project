@@ -780,7 +780,7 @@ export function parseRemoveDebuffEffect(v: Record<string, Json>, path: string): 
     ['kind', 'trigger', 'target', 'count', 'targetCount', 'targetCountRef', 'delayFrames', 'assumes', 'claims'],
     path,
   );
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`, { timer: true });
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, { timer: true, partialChargeShot: true });
   const target = oneOf(['allies', 'debuffedRandom'] as const, v.target, `${path}.target`);
   const effect: RemoveDebuffEffect = {
     kind: 'removeDebuff',

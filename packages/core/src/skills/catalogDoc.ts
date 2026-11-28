@@ -351,7 +351,11 @@ const TRIG_INFO: Record<string, Info> = {
   critHit: ['クリティカル命中した時', 'ok'],
   // オートの射撃はフルチャージを保たない（C-0839。要件 4.2 節）
   chargeHold: ['フルチャージを N 秒以上維持した時', 'premise', 'オートの射撃では起きない（C-0839）'],
-  partialChargeShot: ['フルチャージでない通常攻撃', 'gap'],
+  partialChargeShot: [
+    'フルチャージでない通常攻撃',
+    'ok',
+    '{ count: "partialChargeShot" }（敵のジャンプの始まりの部分チャージの発。timed・状態の付与・removeDebuff だけ。plan/design-crust.md 2.1 節）',
+  ],
   reloadComplete: [
     'リロード完了時',
     'check',
@@ -650,7 +654,7 @@ function tgtKeys(e: CatalogEffect): string[] {
     if (/型の味方/.test(h)) out.push('ally:filter:class');
     if (/同じ部隊の/.test(h)) out.push('ally:filter:squad');
     if (/基本バースト段階が/.test(h)) out.push('ally:filter:burstStep');
-    if (/状態の味方|状態ではない味方/.test(h)) out.push('ally:filter:state');
+    if (/状態の味方|状態ではない味方|メイラードまたはブランチング状態の対象/.test(h)) out.push('ally:filter:state');
     return out.length > 0 ? out : ['ally:alliesFiltered'];
   });
 }

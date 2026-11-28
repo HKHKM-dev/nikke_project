@@ -662,7 +662,9 @@ export const BURST_USERS_TRIGGERS = ['fullBurstStart', 'fullBurstEnd'] as const 
 
 /**
  * 自分の射撃の回数で発火するトリガー。1 回 = 弾薬を 1 消費する 1 トリガー（SG もペレットではなくトリガー）。
- * fullChargeShot はチャージ武器の射撃のうち、部分チャージの発を除いたもの。
+ * fullChargeShot はチャージ武器の射撃のうち、部分チャージの発を除いたもの。partialChargeShot はチャージ武器の部分チャージの発
+ * （射撃の列の partialShots。敵のジャンプの始まりの発。C-1001）だけ（「フルチャージではない通常攻撃」。plan/design-crust.md 2.1 節）。
+ * timed・状態の付与・removeDebuff にだけ書け、数える窓・発火の窓・スタック・確率とは組まない。
  * normalHit は命中の期待値（plan/design-ludmilla-wo.md 2.2・2.3 節。1 発ごとにその発の弾丸命中率。
  * SG は 1 トリガーを 1 回）、coreHit はコアの命中の期待値（弾丸命中率 × コア命中率）を足し、累計が N の倍数を越えた発で発火する
  * （skills/triggers.ts）。弾丸命中率が 1 の枠では normalHit は normalShot と同じ列になる。
@@ -691,6 +693,7 @@ export type ShotCountKind =
   | 'coreHit'
   | 'nonCoreHit'
   | 'fullChargeShot'
+  | 'partialChargeShot'
   | 'lastShot'
   | 'lastShotOnce'
   | 'weaponChangeShot'
@@ -705,6 +708,7 @@ export const SHOT_COUNT_KINDS = [
   'coreHit',
   'nonCoreHit',
   'fullChargeShot',
+  'partialChargeShot',
   'lastShot',
   'lastShotOnce',
   'weaponChangeShot',

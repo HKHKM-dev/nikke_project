@@ -1,0 +1,282 @@
+{
+  "verification": "V-0889",
+  "note": "撮影 A（クラスト単騎・3 枠目・操作）と撮影 B（I-DOLL・フラワー・ギロチン・クラスト（3 枠目・操作））。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オート射撃 ON・オートバースト ON。モデルでは、クラストの部分チャージの発（敵のジャンプの始まり）は 68.9 秒・108.5 秒・144.8 秒の 3 回で、3 回目の次のフレームにメイラードが付く（A も B も同じ。B の味方はクラストの発の刻みに効かない）",
+  "team": [
+    {
+      "rid": 521,
+      "slot": 3,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（部分チャージの発の 3 回目で味方全体にメイラード（攻撃力 10%▲・10 秒）、フルチャージの発ごとに 2.5 秒延びる。メイラードの後のフルバースト発動時にメイラードの味方へ攻撃力 20%▲）"
+    },
+    {
+      "id": "H-B",
+      "note": "部分チャージの発を「フルチャージではない通常攻撃」に数えない（メイラードが付かない。設計書の論点 1 の案 B）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 521,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-noext",
+      "note": "フルチャージの発で延びない（メイラードは付いてから 10 秒で切れる）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 521,
+            "skill": "skill1",
+            "index": 1
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "a-maillard-start",
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "attack"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "撮影 A: メイラード（とたっぷりクッキング）のアイコンが付いたフレーム。3 回目の部分チャージの発（HUD の増分がふだんの発より小さい発）の次のフレームのはず。録画ではジャンプの時刻が揺れるので、値そのものより、3 回目の部分チャージの発からの差で比べる"
+    },
+    {
+      "id": "a-maillard-end",
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "attack"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "撮影 A: メイラードのアイコンが消えたフレーム（H1 は戦闘の終わりまで消えない。H-noext は付いてから 10 秒）"
+    },
+    {
+      "id": "a-hit-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 8400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "rel": 0.002
+      },
+      "note": "撮影 A: メイラードの前（3 回目の部分チャージの発の直前のマガジン）のクラストの 1 発の値（会心でない・胴体）"
+    },
+    {
+      "id": "a-hit-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 9500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "rel": 0.002
+      },
+      "note": "撮影 A: メイラードが付いて 16 秒ほど後（同じ着地点）のクラストの 1 発の値。H1 は攻撃力 10%▲の分だけ a-hit-before より大きい。H-B・H-noext は a-hit-before と同じ"
+    },
+    {
+      "id": "b-fullburst-starts",
+      "model": "sim",
+      "metric": "fullBurstStarts",
+      "args": {},
+      "team": [
+        {
+          "rid": 304,
+          "slot": 1
+        },
+        {
+          "rid": 180,
+          "slot": 2
+        },
+        {
+          "rid": 521,
+          "slot": 3,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "撮影 B: フルバーストの始まりのフレーム"
+    },
+    {
+      "id": "b-maillard-start",
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "attack"
+      },
+      "team": [
+        {
+          "rid": 304,
+          "slot": 1
+        },
+        {
+          "rid": 180,
+          "slot": 2
+        },
+        {
+          "rid": 521,
+          "slot": 3,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "撮影 B: メイラードのアイコンが付いたフレーム"
+    },
+    {
+      "id": "b-fullburst-atk-starts",
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "stat": "attack"
+      },
+      "team": [
+        {
+          "rid": 304,
+          "slot": 1
+        },
+        {
+          "rid": 180,
+          "slot": 2
+        },
+        {
+          "rid": 521,
+          "slot": 3,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "撮影 B: フルバースト発動時の攻撃力▲（S2）の始まり。H1 はメイラードの後のフルバースト（4 回目）だけ。H-B は無し"
+    },
+    {
+      "id": "b-burst-attack-damage-starts",
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "attackDamage"
+      },
+      "team": [
+        {
+          "rid": 304,
+          "slot": 1
+        },
+        {
+          "rid": 180,
+          "slot": 2
+        },
+        {
+          "rid": 521,
+          "slot": 3,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "撮影 B: クラストのバーストの攻撃ダメージ▲（10 秒）の始まり（どの仮説も同じ）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-28",
+    "commit": "a1eb5b9b7105313ddd0974125e9b377a4061a3ca",
+    "values": {
+      "H1": {
+        "a-maillard-start": [8521],
+        "a-maillard-end": [10589],
+        "a-hit-before": 168279.99375000002,
+        "a-hit-after": 185125.6935,
+        "b-fullburst-starts": [781, 3485, 6254, 9152],
+        "b-maillard-start": [8521],
+        "b-fullburst-atk-starts": [9152],
+        "b-burst-attack-damage-starts": [747, 2149, 3451, 4918, 6220, 7689, 9118, 10423]
+      },
+      "H-B": {
+        "a-maillard-start": [],
+        "a-maillard-end": [],
+        "a-hit-before": 168279.99375000002,
+        "a-hit-after": 168279.99375,
+        "b-fullburst-starts": [781, 3485, 6254, 9152],
+        "b-maillard-start": [],
+        "b-fullburst-atk-starts": [],
+        "b-burst-attack-damage-starts": [747, 2149, 3451, 4918, 6220, 7689, 9118, 10423]
+      },
+      "H-noext": {
+        "a-maillard-start": [8521],
+        "a-maillard-end": [9109],
+        "a-hit-before": 168279.99375000002,
+        "a-hit-after": 168279.99375,
+        "b-fullburst-starts": [781, 3485, 6254, 9152],
+        "b-maillard-start": [8521],
+        "b-fullburst-atk-starts": [],
+        "b-burst-attack-damage-starts": [747, 2149, 3451, 4918, 6220, 7689, 9118, 10423]
+      }
+    }
+  }
+}

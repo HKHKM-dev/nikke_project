@@ -1,0 +1,137 @@
+{
+  "formatVersion": 1,
+  "resourceId": 521,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "maillard",
+          "trigger": {
+            "count": "partialChargeShot",
+            "everyRef": 4
+          },
+          "target": "allies",
+          "durationRef": 6,
+          "contents": [
+            {
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 5
+            }
+          ]
+        },
+        {
+          "kind": "stateExtend",
+          "state": "maillard",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "allies",
+          "secondsRef": 2,
+          "condition": {
+            "selfState": "maillard"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルチャージ状態を 1 秒以上 3 回維持した時の味方全体のブランチング（スキル発動者基準の攻撃力▲・メイラード解除）と、フルチャージして攻撃した時のブランチングの維持時間▲・メイラードの付与に付いたブランチング解除は、オートの射撃ではフルチャージを保たず、ブランチングが付かないので起きない（要件 4.2 節）",
+          "en": "Blanching on all allies (ATK up based on the caster, removing Maillard) when full charge is held for 1 s or more 3 times, Blanching's duration up on Full Charge attacks, and the Blanching removal attached to Maillard never happen, since auto fire does not hold full charge and Blanching is never applied (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "unknown"
+          },
+          "claims": ["C-0839"]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "removeDebuff",
+          "trigger": {
+            "count": "partialChargeShot",
+            "everyRef": 2
+          },
+          "target": "allies",
+          "count": 1,
+          "assumes": {
+            "ja": "たっぷりクッキング状態の味方はいないとみなし、味方全体から外す（付くのはフルチャージではない通常攻撃の 3 回ごとで、その間は維持の 10 秒より長い。plan/design-crust.md 5 節の論点 4）",
+            "en": "Treats no ally as being in Reliable Cooking and removes from all allies (it is applied every 3 normal attacks not at Full Charge, which are more than its 10-second duration apart; plan/design-crust.md 5, issue 4)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "targetState": "maillard",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 9,
+          "durationRef": 10
+        }
+      ],
+      "notes": [
+        {
+          "ja": "たっぷりクッキングのスキル発動者基準の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "Reliable Cooking's DEF up based on the caster does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
+        },
+        {
+          "ja": "フルチャージ状態を 1 秒以上維持して 3 回攻撃した時のたっぷりクッキング（防御力▲・デバフ効果解除 1 個）は、オートの射撃ではフルチャージを保たないので起きない（要件 4.2 節）",
+          "en": "Reliable Cooking (DEF up, removing 1 debuff) after attacking 3 times with full charge held for 1 s or more never happens, since auto fire does not hold full charge (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "removeDebuff",
+            "target": "allies",
+            "trigger": "unknown"
+          },
+          "claims": ["C-0839"]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 1,
+          "durationRef": 2
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "distributedDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "condition": {
+            "selfState": "maillard"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "ブランチング状態の時の味方全体の持続ダメージ▲は、ブランチングが付かない（フルチャージ状態を 1 秒以上維持するきっかけがオートの射撃で起きない）ので起きない（要件 4.2 節）",
+          "en": "Sustained Damage up on all allies while in Blanching never happens, since Blanching is never applied (its trigger, holding full charge for 1 s or more, does not occur with auto fire; requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "sustainedDamage",
+            "target": "allies",
+            "trigger": "burstUse"
+          },
+          "claims": ["C-0839"]
+        }
+      ]
+    }
+  }
+}

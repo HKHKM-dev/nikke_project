@@ -299,6 +299,8 @@ export const NAMED_STATES = {
   lingeringTaste: { name: { ja: 'やみつきの味', en: 'Lingering Taste' }, holder: 'ally', group: 'taste' },
   /** オススメの味（ブレッディの S1） */
   recommendedTaste: { name: { ja: 'オススメの味', en: 'Recommended Taste' }, holder: 'ally', group: 'taste' },
+  /** メイラード（クラストの S1） */
+  maillard: { name: { ja: 'メイラード', en: 'Maillard' }, holder: 'ally' },
   /** 思い出作り（アルカナ：フォーチュンメイトのバースト） */
   memoryMaking: { name: { ja: '思い出作り', en: 'Making Memories' }, holder: 'ally' },
   /** 幸せな思い出（アルカナ：フォーチュンメイトの S2） */
