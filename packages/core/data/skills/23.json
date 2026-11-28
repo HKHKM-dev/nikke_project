@@ -15,7 +15,10 @@
           "assumes": {
             "ja": "敵全体は敵 1 体。忍法アシッドボムの受けるダメージ▲を、味方全体の与ダメージの乗数として持つ。忍法ハイパーアシッドボム（effects[2]）とは名前の違う別の効果で、ほかの受けるダメージ▲と 1 つの和で掛かる",
             "en": "All enemies is the lone enemy. The Damage Taken up of Ninja Acid Bomb is held as a multiplier on all allies' damage. It is a separate effect from Ninja Hyper Acid Bomb (effects[2]) under a different name, and joins the other Damage Taken ups in one sum"
-          }
+          },
+          "claims": [
+            "C-1580"
+          ]
         },
         {
           "kind": "timed",
@@ -23,7 +26,14 @@
           "target": "self",
           "stat": "attack",
           "ref": 3,
-          "durationRef": 4
+          "durationRef": 4,
+          "assumes": {
+            "ja": "バースト使用時の効果は発動の印（II の六角形の替わり目）の 1〜2f 後から乗る（遅れの表の行）。切れ目はバーストの効果より数 f 遅い（数 f の差は直さない）",
+            "en": "Burst-use effects apply from 1-2 frames after the activation mark (the II hexagon change; the burst delay table row). It ends a few frames later than the Burst effects (a few frames are not modeled)"
+          },
+          "claims": [
+            "C-1580"
+          ]
         },
         {
           "kind": "timed",
@@ -33,9 +43,12 @@
           "ref": 5,
           "durationRef": 6,
           "assumes": {
-            "ja": "照準線に最も近い攻撃範囲内の敵は敵 1 体。忍法ハイパーアシッドボムの受けるダメージ▲を、味方全体の与ダメージの乗数として持つ。忍法アシッドボム（effects[0]）と同時に付けば、2 つの値の和で掛かる",
-            "en": "The enemy closest to the crosshair within range is the lone enemy. The Damage Taken up of Ninja Hyper Acid Bomb is held as a multiplier on all allies' damage. When it overlaps Ninja Acid Bomb (effects[0]), the two values are summed"
-          }
+            "ja": "照準線に最も近い攻撃範囲内の敵は敵 1 体。忍法ハイパーアシッドボムの受けるダメージ▲を、味方全体の与ダメージの乗数として持つ。忍法アシッドボム（effects[0]）と同時に付けば、2 つの値の和で掛かる。実機では発動の印の 7f 後から乗る（攻撃力▲より約 6f 遅い）が、モデルは effects[1] と同じフレームに付ける（数 f の差は直さない）",
+            "en": "The enemy closest to the crosshair within range is the lone enemy. The Damage Taken up of Ninja Hyper Acid Bomb is held as a multiplier on all allies' damage. When it overlaps Ninja Acid Bomb (effects[0]), the two values are summed. In game it applies from 7 frames after the activation mark (about 6 frames later than the ATK up); the model applies it on the same frame as effects[1] (a few frames are not modeled)"
+          },
+          "claims": [
+            "C-1580"
+          ]
         }
       ],
       "notes": []
@@ -44,9 +57,12 @@
       "effects": [],
       "notes": [
         {
-          "ja": "戦闘開始時、味方に自分を除く防御型がいない場合の、自分へのヘイト（敵全体を挑発・持続）はダメージに関係しない（ティアの S2 の「自分にヘイト：敵全体を挑発」はゲージを溜めない。C-0505）",
-          "en": "Hate (taunting all enemies, continuous) on self at the start of battle when there is no other Defender in the team does not affect damage (the same self taunt of Tia's Skill 2 does not charge the gauge; C-0505)",
-          "kind": "noDamage"
+          "ja": "戦闘開始時、味方に自分を除く防御型がいない場合の、自分へのヘイト（敵全体を挑発・持続）はダメージに関係しない（付けた時にゲージを溜めない。ティアの S2 と同じ形）",
+          "en": "Hate (taunting all enemies, continuous) on self at the start of battle when there is no other Defender in the team does not affect damage (it charges no gauge when applied, as with Tia's Skill 2)",
+          "kind": "noDamage",
+          "claims": [
+            "C-1583"
+          ]
         },
         {
           "ja": "戦闘開始時、味方に自分を除く防御型がいない場合の自分へのバリア（10 秒）と、通常攻撃で 200 回攻撃した時、ヘイト状態なら自分に付くバリア（10 秒）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは自分がバリア適用状態にならない。バリアの量は要件 5.2 節の外）",
@@ -91,7 +107,10 @@
           "target": "allies",
           "stat": "distributedDamage",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-1581"
+          ]
         },
         {
           "kind": "timed",
@@ -100,16 +119,22 @@
           "stat": "attack",
           "scaling": "casterAttack",
           "ref": 3,
-          "durationRef": 4
+          "durationRef": 4,
+          "claims": [
+            "C-1581"
+          ]
         },
         {
           "kind": "burstDamage",
           "ref": 5,
           "damageType": "distributed",
           "assumes": {
-            "ja": "敵全体への分配ダメージは、敵 1 体では全額が当たる",
-            "en": "The distributed damage to all enemies lands in full on the lone enemy"
-          }
+            "ja": "敵全体への分配ダメージは、敵 1 体では全額が当たる。発動の印の 3f 後に 1 ヒットで出て、同じ発動の effects[0]・[1] が乗る（遅れの表の行）",
+            "en": "The distributed damage to all enemies lands in full on the lone enemy. It lands as one hit 3 frames after the activation mark and carries effects[0] and [1] of the same activation (the burst delay table row)"
+          },
+          "claims": [
+            "C-1582"
+          ]
         }
       ],
       "notes": [
