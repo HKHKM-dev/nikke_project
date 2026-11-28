@@ -9,6 +9,8 @@
 //     先頭 targetCount 枠に掛ける（plan/design-skill-stage8.md 1.1 節）。
 //   - 「〈絞り込み〉の味方 N 機」（allies と targetCount）は、fixedTargets（絞り込みに合う枠の順）の先頭 targetCount 枠に掛ける
 //     （候補が N 機より多い時、実機は発ごとに選び直す（C-1579）。枠の若い順は決め打ち。plan/design-kiri.md 6.1 節）。
+//   - 「ランダムな味方 N 機」（allies と targetCount と targetRandom）は、fixedTargets の全員に掛ける（値は解決で N / 候補の数を
+//     掛けた期待値。plan/design-lily.md 2 節）。
 import type { Element, NikkeClass, WeaponType } from '../types.ts';
 import type { NamedStateId } from './states.ts';
 import {
@@ -83,6 +85,8 @@ export type TargetFields = {
   targetBurstStep?: BasicBurstStep;
   /** 「部隊の一番左側にいる〈絞り込み〉の味方 1 機」（plan/design-trina.md 2.2 節）。枠は skills/composition.ts が fixedTargets に書く */
   targetLeftmost?: true;
+  /** 「ランダムな味方 N 機」（plan/design-lily.md 2 節）。allies と targetCount の候補の全員に、期待値の値で掛ける */
+  targetRandom?: true;
   /** 「自分と自分より最終防御力が低い味方」。発火の文脈の lowerDefense で決める */
   targetDefense?: TargetDefense;
   /** 編成で決まる対象の枠（skills/composition.ts が定義に書いたもの） */
@@ -128,7 +132,7 @@ export function needsFixedTargets(
 
 /**
  * 編成で決まる対象の絞り込み。fixedTargets が有ればその枠だけ（longestChargeTime は順位の順の先頭 targetCount 枠、allies の
- * targetCount は枠の順の先頭 targetCount 枠）。
+ * targetCount は枠の順の先頭 targetCount 枠。targetRandom なら候補の全員）。
  * targetSquad・longestChargeTime なのに
  * fixedTargets が無いのは、最上位の applyCompositionToTeam を通していない呼び出しなので落とす（黙って全員へ掛けない）
  */
@@ -143,7 +147,7 @@ function fixedTargetOk(effect: TargetedEffect, targetSlotIndex: number): boolean
   const ranked =
     effect.target === 'longestChargeTime' ||
     effect.target === 'lowestHpRatio' ||
-    (effect.target === 'allies' && effect.targetCount !== undefined);
+    (effect.target === 'allies' && effect.targetCount !== undefined && effect.targetRandom !== true);
   const candidates = ranked ? effect.fixedTargets.slice(0, effect.targetCount ?? 1) : effect.fixedTargets;
   return candidates.includes(targetSlotIndex);
 }

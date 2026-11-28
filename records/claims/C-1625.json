@@ -1,0 +1,15 @@
+{
+  "id": "C-1625",
+  "text": "リリー（852）の S1 とバーストの「ランダムな味方 1 機」は、発動ごとに候補（リリー自身を含む味方）から 1 機を選び直す。2 機の編成で、30 回の発動（S1 22 回・バースト 8 回）のどれも片方の枠だけに付き、ルドミラ 16 回・リリー 14 回で、1/2 ずつと矛盾しない（一様なランダムかは、回数の分布の幅までしか見ていない）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`1448-03`・`1449-05`・`1449-06`・`1450-07`・`1450-08`。V-0898",
+  "model": "近似（data/skills/852.json の skill1・burst の effects[0] の targetRandom。発動ごとの選び方を期待値で持ち、候補の全員に値の 1/候補の数を付ける（skills/resolve.ts の randomShareOf）。sim の枠の注記 random-allies-expected で知らせる。plan/design-lily.md 2 節）",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/852.json の skill1 の effects[0]", "data/skills/852.json の burst の effects[0]"]
+  },
+  "decidedOn": []
+}

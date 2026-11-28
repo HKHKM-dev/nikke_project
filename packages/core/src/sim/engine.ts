@@ -635,9 +635,9 @@ function removeDebuffNotes(history: TeamPlan['history'], slotIndex: number): Mod
 }
 
 /**
- * この枠の「〈絞り込み〉の味方 N 機」（timed の allies と targetCount）で、編成の中で絞り込みに合う枠が N 機より多く、実機は発ごとに
- * 選び直す（C-1579）のに、付く時は決め打ち（枠の若い順）で対象を選ぶ注記（効果ごとに 1 つ。発動したかは見ない。
- * plan/design-kiri.md 6.1 節）
+ * この枠の「〈絞り込み〉の味方 N 機」（timed の allies と targetCount）で、編成の中で絞り込みに合う枠が N 機より多いときの注記（効果ごとに
+ * 1 つ。発動したかは見ない）。決め打ちの対象（実機は発ごとに選び直す（C-1579）のに、枠の若い順で選ぶ。plan/design-kiri.md 6.1 節）と、
+ * 「ランダムな味方 N 機」（targetRandom。候補の全員に N / 候補の数で配る期待値。plan/design-lily.md 2 節）
  */
 function countedAlliesNotes(slot: SimInput['slots'][number]): ModelNote[] {
   const definition = slot?.skills?.definition;
@@ -647,14 +647,20 @@ function countedAlliesNotes(slot: SimInput['slots'][number]): ModelNote[] {
     const candidates = effect.fixedTargets?.length ?? 0;
     if (n === undefined || candidates <= n) return [];
     const { ja: nameJa, en: nameEn } = effect.source.name;
+    const random = effect.targetRandom === true;
     return [
       {
         level: 'approx' as const,
-        code: 'counted-allies-pick',
-        message: {
-          ja: `${nameJa}の対象に合う味方が ${candidates} 機いて、${n} 機より多い。実機は発ごとに ${n} 機を選び直すが、モデルは付く時に枠の若い順の ${n} 機に決め打ちで付ける`,
-          en: `${candidates} allies match the target of ${nameEn}, more than ${n}. The game picks ${n} again on each trigger; the model gives it to the first ${n} slots when it applies`,
-        },
+        code: random ? 'random-allies-expected' : 'counted-allies-pick',
+        message: random
+          ? {
+              ja: `${nameJa}は、実機では発動のたびに対象に合う味方 ${candidates} 機から ${n} 機をランダムに選ぶ。モデルは ${candidates} 機の全員に、値の ${n}/${candidates} を付ける（期待値）`,
+              en: `${nameEn} picks ${n} of the ${candidates} matching allies at random on each activation in the game. The model gives ${n}/${candidates} of the value to all ${candidates} (expected value)`,
+            }
+          : {
+              ja: `${nameJa}の対象に合う味方が ${candidates} 機いて、${n} 機より多い。実機は発ごとに ${n} 機を選び直すが、モデルは付く時に枠の若い順の ${n} 機に決め打ちで付ける`,
+              en: `${candidates} allies match the target of ${nameEn}, more than ${n}. The game picks ${n} again on each trigger; the model gives it to the first ${n} slots when it applies`,
+            },
       },
     ];
   });

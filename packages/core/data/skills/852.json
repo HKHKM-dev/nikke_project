@@ -1,0 +1,80 @@
+{
+  "formatVersion": 1,
+  "resourceId": 852,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 15,
+            "cooldown": true
+          },
+          "target": "allies",
+          "targetCount": 1,
+          "targetRandom": true,
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "説明文にきっかけの無いクールタイムごとのアクティブで、クールタイムは録画で読んだ 15 秒（戦闘開始から）。ランダムな味方 1 機（自分も候補）に、リリーのバフ前の攻撃力 × 説明文の値を足す（5 秒）。モデルは期待値で、候補が k 機なら全員に値の 1/k を付ける",
+            "en": "A cooldown-based active skill with no trigger in its description; the cooldown read from recordings is 15 s (from the start of battle). Lily's pre-buff ATK × the value is added to 1 random ally (herself included) for 5 s. The model uses the expected value: with k candidates, each gets 1/k of the value"
+          },
+          "claims": [
+            "C-1623",
+            "C-1625"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "味方全体への遮蔽物 HP 回復は、それ自体は与ダメージを変えない（遮蔽物の HP の回復を読む効果のある編成でだけ効く。きっかけが説明文に無く、時刻を撮っていない）",
+          "en": "Restoring the cover HP of all allies does not change damage by itself (it matters only in squads with effects that read cover HP restoration; the trigger is not in its description and its timing has not been recorded)",
+          "kind": "indirect",
+          "path": "cover"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "targetCount": 1,
+          "targetRandom": true,
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "遮蔽物が破壊された味方がいない時の枝（射撃場の敵の攻撃では遮蔽物は壊れない前提で、いつもこちら）。ランダムな味方 1 機（自分も候補）に、リリーのバフ前の攻撃力 × 説明文の値を足す（10 秒）。モデルは期待値で、候補が k 機なら全員に値の 1/k を付ける",
+            "en": "The branch for when no ally's cover has been destroyed (always this one, assuming the shooting range enemy's attacks never break cover). Lily's pre-buff ATK × the value is added to 1 random ally (herself included) for 10 s. The model uses the expected value: with k candidates, each gets 1/k of the value"
+          },
+          "claims": [
+            "C-1624",
+            "C-1625"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "遮蔽物が破壊されたランダムな味方 1 機への遮蔽物の復活と発動者基準の攻撃力▲（10 秒）は、被弾を扱わないので遮蔽物が壊れず、起きない",
+          "en": "Rebuilding the cover of 1 random ally whose cover has been destroyed, with a caster-based ATK up (10 s), does not occur, since damage taken is not modeled and cover is never destroyed",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

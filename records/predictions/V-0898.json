@@ -1,0 +1,137 @@
+{
+  "verification": "V-0898",
+  "note": "撮影 B（2 枠目ルドミラ（I）・3 枠目リリー（II・操作）・オートバースト ON）のバーストの予測。電撃の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。リリーのバーストはモデルでは f701・3607・6709・9504（III がいないのでフルバーストは無い）。S1 は撮る前の定義に無い（周期を読んでいない）ので、S1 の格子と撮影 A（リリー単騎）の見え方は検証記録の「予測」に手で書いた。期待値の 1 発は実機の 1 発と比べられないので、▲の乗った発は randomTargetSlot でランダムの対象を 1 枠に決めたモデルと比べる（plan/design-lily.md 2.2 節）",
+  "team": [
+    {
+      "rid": 190,
+      "slot": 2
+    },
+    {
+      "rid": 852,
+      "slot": 3,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（バーストは遮蔽物が壊れていない時の枝で、ランダムな味方 1 機（自分も候補）にリリーのバフ前の攻撃力 × 40% を 10 秒）"
+    },
+    {
+      "id": "H0-burst",
+      "note": "バーストの攻撃力▲（burst の effects[0]）が無い",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 852,
+            "skill": "burst",
+            "index": 0
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "ludmilla-hit-burst",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 900,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "randomTargetSlot": 2
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のリリーのバーストの窓の中で、▲がルドミラに付いた時のルドミラの胴体の 1 ヒット（会心・距離ボーナスなし）"
+    },
+    {
+      "id": "lily-hit-burst",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 900,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "randomTargetSlot": 3
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のリリーのバーストの窓の中で、▲がリリーに付いた時のリリーの胴体の 1 ヒット（会心・距離ボーナスなし）"
+    },
+    {
+      "id": "ludmilla-hit-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "バーストの前（ルドミラの S1 の敵の防御力▼は付いている）のルドミラの胴体の 1 ヒット"
+    },
+    {
+      "id": "lily-hit-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "バーストの前のリリーの胴体の 1 ヒット"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-28",
+    "commit": "222f9c622601fa670cea7a2a8c851be0f4387e29",
+    "values": {
+      "H1": {
+        "ludmilla-hit-burst": 11511.1344,
+        "lily-hit-burst": 8973.909,
+        "ludmilla-hit-before": 8241.7584,
+        "lily-hit-before": 6407.829000000001
+      },
+      "H0-burst": {
+        "ludmilla-hit-burst": 8241.7584,
+        "lily-hit-burst": 6407.829000000001,
+        "ludmilla-hit-before": 8241.7584,
+        "lily-hit-before": 6407.829000000001
+      }
+    }
+  }
+}

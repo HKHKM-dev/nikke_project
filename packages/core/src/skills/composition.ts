@@ -184,7 +184,8 @@ function fullCharacter(c: CompositionCharacter, index: number): Required<Composi
  * targetBurstStep = 基本バースト段階が N の枠（countsAsBurstStep。再突入するキャラは除く）、allies の excludeSelf = 自分の枠を外す。
  * targetLeftmost = 絞り込みに合う枠のうち、いちばん左の 1 枠（plan/design-trina.md 2.2 節）。
  * allies の targetCount（「〈絞り込み〉の味方 N 機」）= 絞り込みに合う枠（自分も候補。枠の順）。先頭の N 枠は skills/targets.ts が取る
- * （plan/design-kiri.md 2 節）。
+ * （plan/design-kiri.md 2 節）。targetRandom（「ランダムな味方 N 機」）も同じ候補で、値は解決で N / 候補の数を掛ける
+ * （plan/design-lily.md 2 節）。
  * targetState・targetAdjacent の includeSelf は自分の枠を足す。
  * どれも targetWeapon・targetElement で絞った後。どれでもない効果は undefined。付与（state）も timed と同じ
  */
@@ -600,9 +601,35 @@ export function applyCompositionToTeam<T extends TeamInput>(input: T): T {
   );
   const others = otherGrantedStates(filtered);
   const moves = hpRatioMovesOf(filtered);
-  const slots = input.slots.map((slot, i) =>
-    slot === null ? null : applyCompositionToSlot(slot, characters, i, enemyElement, states, others[i]!, moves[i]!),
-  );
+  const pin = input.randomTargetSlot;
+  const slots = input.slots.map((slot, i) => {
+    if (slot === null) return null;
+    const composed = applyCompositionToSlot(slot, characters, i, enemyElement, states, others[i]!, moves[i]!);
+    return pin === undefined ? composed : pinRandomTargets(composed, pin);
+  });
   if (slots.every((slot, i) => slot === input.slots[i])) return input;
   return { ...input, slots };
+}
+
+/**
+ * 「ランダムな味方 N 機」（timed の targetRandom）の候補（fixedTargets）を、枠 pin（TeamInput.randomTargetSlot）だけに絞る（候補に無ければ空）。
+ * 候補が 1 機になるので、解決は値のまま付ける（plan/design-lily.md 2.2 節）。録画の照合だけが使う
+ */
+function pinRandomTargets(slot: TeamSlotInput, pin: number): TeamSlotInput {
+  const definition = slot.skills?.definition;
+  if (slot.skills === undefined || !definition) return slot;
+  let changed = false;
+  const skills = { ...definition.skills };
+  for (const key of SKILL_SLOTS) {
+    const entry = definition.skills[key];
+    if (!entry.effects.some((e) => e.kind === 'timed' && e.targetRandom === true)) continue;
+    changed = true;
+    const effects = entry.effects.map((e) =>
+      e.kind === 'timed' && e.targetRandom === true
+        ? { ...e, fixedTargets: (e.fixedTargets ?? []).filter((i) => i === pin) }
+        : e,
+    );
+    skills[key] = { ...entry, effects };
+  }
+  return changed ? { ...slot, skills: { ...slot.skills, definition: { ...definition, skills } } } : slot;
 }

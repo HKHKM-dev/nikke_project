@@ -1,0 +1,40 @@
+{
+  "id": "1449",
+  "date": "2026-11-28",
+  "folder": "range",
+  "file": "20261128-1449_ludmilla-lily.mp4",
+  "original": "2026-11-28_22-35-22.mp4",
+  "durationSec": 199.2,
+  "frames": 11953,
+  "fps": 60,
+  "sizeMB": 241.6,
+  "sha256": "364059140866",
+  "team": [
+    {
+      "slot": 2,
+      "rid": 190,
+      "name": "ルドミラ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 852,
+      "name": "リリー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Electronic"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0898 撮影 B（2 枠目ルドミラ・3 枠目リリーを操作・オートバースト ON）",
+  "backup": {
+    "at": "2026-11-28T22:45+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

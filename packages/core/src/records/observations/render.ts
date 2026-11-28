@@ -48,6 +48,7 @@ function fmtArgs(args: CompareSpec['args'], setup?: CompareSetup): string {
   if (setup?.manualStep3Slots !== undefined) entries.push(['manualStep3Slots', setup.manualStep3Slots]);
   if (setup?.noBurstSlots !== undefined) entries.push(['noBurstSlots', setup.noBurstSlots.join('・')]);
   if (setup?.noFireSlots !== undefined) entries.push(['noFireSlots', setup.noFireSlots.join('・')]);
+  if (setup?.randomTargetSlot !== undefined) entries.push(['randomTarget', setup.randomTargetSlot]);
   for (const h of setup?.holdFire ?? []) entries.push([`holdFire[${h.slot}]`, h.frames]);
   for (const d of setup?.burstDelays ?? []) {
     const r = d.row;

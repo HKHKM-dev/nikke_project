@@ -410,6 +410,7 @@ const TARGET_KEYS = {
     'targetAdjacent',
     'targetBurstStep',
     'targetLeftmost',
+    'targetRandom',
     'targetDefense',
     'fixedTargets',
     'targetStateHeld',
@@ -722,6 +723,17 @@ export type AppliedTimedEffect = ItemEffect & {
   appliedAmount: number;
 };
 
+/**
+ * 「ランダムな味方 N 機」（targetRandom）の期待値の割合 N / 候補の数（plan/design-lily.md 2 節）。候補（fixedTargets）が N 機以下なら 1。
+ * targetRandom でない効果と、候補の決まっていない効果（skills/targets.ts の fixedTargetOk が落とす）も 1
+ */
+function randomShareOf(effect: Pick<ResolvedTimedEffect, 'targetRandom' | 'targetCount' | 'fixedTargets'>): number {
+  const n = effect.targetCount;
+  const k = effect.fixedTargets?.length;
+  if (effect.targetRandom !== true || n === undefined || k === undefined || k <= n) return 1;
+  return n / k;
+}
+
 /** 定義の各 timed 効果を Lv の数値に解決する。support が 'unsupported' のスキルは空 */
 export function resolveTimed(
   def: SkillDefinition,
@@ -748,7 +760,7 @@ export function resolveTimed(
           ? effect.amplifies.percent / 100 // 参照する効果の値に掛ける割合（窓ごとの値は skills/holders/history.ts の amplify）
           : effect.lock === true && effect.ref === undefined
             ? 0 // 「増加効果無効」「減少効果無効」の組は値 0 の固定
-            : contentValue(effect, character, slot, levels[slot], 'timed');
+            : contentValue(effect, character, slot, levels[slot], 'timed') * randomShareOf(window);
       const r: ResolvedTimedEffect = { ...window, stat: effect.stat, scaling: effect.scaling ?? 'ratio', value };
       if (effect.amplifies !== undefined) r.amplifies = effect.amplifies;
       if (effect.edgeShift !== undefined) r.edgeShift = effect.edgeShift;

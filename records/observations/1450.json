@@ -1,0 +1,268 @@
+[
+  {
+    "id": "1450-01",
+    "recording": "1450",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 12839,
+    "description": "リリーのS1 だけの▲がルドミラに付いた窓の中の、ルドミラの胴体の 1 ヒット（距離ボーナスあり・会心なし）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、ランダムの対象を 1 枠に決めたモデル（setup の randomTargetSlot。ルドミラに決めた回とリリーに決めた回の 2 回）の 1 ヒットの格子（ルドミラ・リリーの▲なし（モデルの f500）・S1 だけ（f1900）・バーストだけ（f750）・両方（f1000））に ±1.5 で当てた。2 回の当て方を増分ごとに合わせ、どちらかの枠の格子に合ったものを使った"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1900,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "randomTargetSlot": 2
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0898",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1450-02",
+    "recording": "1450",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 14964,
+    "description": "リリーのバーストだけの▲がルドミラに付いた窓の中の、ルドミラの胴体の 1 ヒット（距離ボーナスあり・会心なし）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、ランダムの対象を 1 枠に決めたモデル（setup の randomTargetSlot。ルドミラに決めた回とリリーに決めた回の 2 回）の 1 ヒットの格子（ルドミラ・リリーの▲なし（モデルの f500）・S1 だけ（f1900）・バーストだけ（f750）・両方（f1000））に ±1.5 で当てた。2 回の当て方を増分ごとに合わせ、どちらかの枠の格子に合ったものを使った"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 750,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "randomTargetSlot": 2
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0898",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1450-03",
+    "recording": "1450",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 13146,
+    "description": "リリーのS1 とバーストの両方の▲がルドミラに付いた窓の中の、ルドミラの胴体の 1 ヒット（距離ボーナスなし・会心なし）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、ランダムの対象を 1 枠に決めたモデル（setup の randomTargetSlot。ルドミラに決めた回とリリーに決めた回の 2 回）の 1 ヒットの格子（ルドミラ・リリーの▲なし（モデルの f500）・S1 だけ（f1900）・バーストだけ（f750）・両方（f1000））に ±1.5 で当てた。2 回の当て方を増分ごとに合わせ、どちらかの枠の格子に合ったものを使った"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "randomTargetSlot": 2
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0898",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1450-04",
+    "recording": "1450",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 9998,
+    "description": "リリーのS1 だけの▲がリリーに付いた窓の中の、リリーの胴体の 1 ヒット（距離ボーナスあり・会心なし）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、ランダムの対象を 1 枠に決めたモデル（setup の randomTargetSlot。ルドミラに決めた回とリリーに決めた回の 2 回）の 1 ヒットの格子（ルドミラ・リリーの▲なし（モデルの f500）・S1 だけ（f1900）・バーストだけ（f750）・両方（f1000））に ±1.5 で当てた。2 回の当て方を増分ごとに合わせ、どちらかの枠の格子に合ったものを使った"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1900,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "randomTargetSlot": 3
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0898",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1450-05",
+    "recording": "1450",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 11666,
+    "description": "リリーのバーストだけの▲がリリーに付いた窓の中の、リリーの胴体の 1 ヒット（距離ボーナスあり・会心なし）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、ランダムの対象を 1 枠に決めたモデル（setup の randomTargetSlot。ルドミラに決めた回とリリーに決めた回の 2 回）の 1 ヒットの格子（ルドミラ・リリーの▲なし（モデルの f500）・S1 だけ（f1900）・バーストだけ（f750）・両方（f1000））に ±1.5 で当てた。2 回の当て方を増分ごとに合わせ、どちらかの枠の格子に合ったものを使った"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 750,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "randomTargetSlot": 3
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0898",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1450-06",
+    "recording": "1450",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 13334,
+    "description": "リリーのS1 とバーストの両方の▲がリリーに付いた窓の中の、リリーの胴体の 1 ヒット（距離ボーナスあり・会心なし）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、ランダムの対象を 1 枠に決めたモデル（setup の randomTargetSlot。ルドミラに決めた回とリリーに決めた回の 2 回）の 1 ヒットの格子（ルドミラ・リリーの▲なし（モデルの f500）・S1 だけ（f1900）・バーストだけ（f750）・両方（f1000））に ±1.5 で当てた。2 回の当て方を増分ごとに合わせ、どちらかの枠の格子に合ったものを使った"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1000,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "randomTargetSlot": 3
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0898",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1450-07",
+    "recording": "1450",
+    "kind": "count",
+    "use": "record",
+    "unit": "枠",
+    "value": [3, 3, 3, 2, 3, 2, 3, 2, 3, 2, 3],
+    "description": "S1 の 11 回の発動（1719f から 883f おき）ごとに、▲が付いた枠（2 = ルドミラ、3 = リリー）。どの回も片方の枠だけに付いた（4 回がルドミラ・7 回がリリー）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、ランダムの対象を 1 枠に決めたモデル（setup の randomTargetSlot。ルドミラに決めた回とリリーに決めた回の 2 回）の 1 ヒットの格子（ルドミラ・リリーの▲なし（モデルの f500）・S1 だけ（f1900）・バーストだけ（f750）・両方（f1000））に ±1.5 で当てた。2 回の当て方を増分ごとに合わせ、どちらかの枠の格子に合ったものを使った。発動ごとに、始まりの 15f 前から 290f の間に、S1 を含む格子（S1 だけ・両方）に合った発を枠ごとに数え、片方の枠にだけ出た（もう片方の枠は同じ間に撃った発がどれも S1 を含まない格子）"
+    },
+    "scope": {
+      "slot": [2, 3],
+      "source": "normal"
+    },
+    "source": "V-0898",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1450-08",
+    "recording": "1450",
+    "kind": "count",
+    "use": "record",
+    "unit": "枠",
+    "value": [2, 2, 2, 3],
+    "description": "リリーのバースト（右のバースト欄の II → III の替わり目 1535・4460・7616・10417f）ごとに、▲が付いた枠（2 = ルドミラ、3 = リリー）。どの回も片方の枠だけに付いた（3 回がルドミラ・1 回がリリー）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、ランダムの対象を 1 枠に決めたモデル（setup の randomTargetSlot。ルドミラに決めた回とリリーに決めた回の 2 回）の 1 ヒットの格子（ルドミラ・リリーの▲なし（モデルの f500）・S1 だけ（f1900）・バーストだけ（f750）・両方（f1000））に ±1.5 で当てた。2 回の当て方を増分ごとに合わせ、どちらかの枠の格子に合ったものを使った。替わり目の直後から 10 秒の間に、バーストを含む格子（バーストだけ・両方）に合った発が出た枠"
+    },
+    "scope": {
+      "slot": [2, 3],
+      "source": "normal"
+    },
+    "source": "V-0898",
+    "readAt": "2026-11-28"
+  }
+]

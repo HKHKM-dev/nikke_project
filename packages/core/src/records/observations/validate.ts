@@ -186,6 +186,7 @@ function setupErrors(
     noBurstSlots: setup.noBurstSlots ?? [],
     noFireSlots: setup.noFireSlots ?? [],
     holdFire: holdFireSlots,
+    randomTargetSlot: setup.randomTargetSlot === undefined ? [] : [setup.randomTargetSlot],
   };
   for (const [key, list] of Object.entries(slotLists))
     for (const s of list)

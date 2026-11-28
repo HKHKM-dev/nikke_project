@@ -1,0 +1,42 @@
+{
+  "id": "C-1623",
+  "text": "リリー（852）の S1 は、説明文にきっかけの無いクールタイム 15 秒のアクティブで、戦闘開始から 15 秒ごとに（撃たない間も）発動し、ランダムな味方 1 機（リリー自身も候補）に、リリーのバフ前の攻撃力 × 説明文の値（スペック固定の Lv10 で 20%）を攻撃力に足して 5 秒続く（窓の端の数 f は確かめていない）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1448-01`・`1448-02`・`1448-03`・`1448-04`・`1448-05`・`1449-01`・`1449-03`・`1449-05`・`1450-01`・`1450-04`・`1450-07`。V-0898",
+  "model": "反映（data/skills/852.json の skill1 の effects[0]（timed・{ everySeconds: 15, cooldown: true }・allies・targetCount 1・targetRandom・attack・casterAttack）。ランダムな対象は期待値で配る（skills/resolve.ts の randomShareOf。plan/design-lily.md 2 節）",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/852.json の skill1 の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1448",
+      "role": "値を合わせた"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "1448",
+      "decided": "3〜5 回目の窓（1448-04）",
+      "reproduced": "8〜11 回目の窓（1448-05）",
+      "observations": ["1448-04", "1448-05"]
+    }
+  ],
+  "minimal": [
+    {
+      "observations": "*",
+      "element": "リリー burst.notes[0]",
+      "reason": "遮蔽物が破壊された時の枝（攻撃力▲ 20% と遮蔽物の復活）は、射撃場の敵の攻撃で遮蔽物が壊れないので起きない。撮影 B のリリーのバースト 8 回は、どれも▲が 40% の格子（もう一方の枝）に合った（1449-06・1450-08）",
+      "decided": "2026-11-28"
+    },
+    {
+      "observations": ["1449-01", "1449-03", "1450-01", "1450-04"],
+      "element": "リリー burst.effects[0]",
+      "reason": "比べた発は S1 だけの格子に合った発（バーストの▲を含む格子とは 1 割以上離れる）で、比べたモデルのフレーム f1900 もリリーのバーストの窓（f701〜1290・f3607〜4196）の外",
+      "decided": "2026-11-28"
+    }
+  ]
+}
