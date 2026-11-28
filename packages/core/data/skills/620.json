@@ -45,7 +45,10 @@
           "assumes": {
             "ja": "「回復独占誓約状態の味方全体」は、シラツルが誓約解除にならない間は自分を含む味方全体（S1 の回復独占誓約が付いたまま）。誓約解除は未対応（notes）なので、モデルではずっと味方全体に付く",
             "en": "\"All allies in Healing Monopoly Oath\" are all allies, including this unit, while Snow Crane is not in Oath Released (S1's oath stays on). Oath Released is not implemented (notes), so in the model it always goes to all allies"
-          }
+          },
+          "claims": [
+            "C-1622"
+          ]
         }
       ],
       "notes": [
@@ -85,7 +88,10 @@
           "trigger": "burstUse",
           "target": "allies",
           "ref": 1,
-          "scaling": "casterFinalMaxHp"
+          "scaling": "casterFinalMaxHp",
+          "claims": [
+            "C-1622"
+          ]
         },
         {
           "kind": "timed",
@@ -96,7 +102,10 @@
           "assumes": {
             "ja": "それ自体は与ダメージを変えない。窓の中の自分の通常攻撃に、味方の貫通ダメージ▲を攻撃ダメージ▲と同じ和で乗せる（C-1031 の形）",
             "en": "It does not change damage by itself. It makes allies' Pierce Damage ups apply to this unit's normal attacks in the window, summed with Attack Damage ups (the C-1031 form)"
-          }
+          },
+          "claims": [
+            "C-1621"
+          ]
         }
       ]
     }
