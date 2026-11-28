@@ -2,6 +2,7 @@
 // （付与 kind: 'state'・トリガー { applied }・対象の絞り込み targetState・条件 enemyState・dot の state）。
 // 目録が持つのは、どの状態か（同一性）・画面の名前・持ち主の側と、中身を書かない敵の状態の印（withoutContents）だけ。スタックの上限・維持・中身は付与に書く（同 3.5 節）。
 // id は英語版の説明文の状態名の lowerCamelCase（同 5.1 節の id の付け方）。一度付けた id は変えない
+// 状態ごとの注記は、状態名とキャラ・スロットと、定義から読めないことだけ（中身・秒数・スタックは定義。一覧は plan/skill-catalog.md 4.1 節）
 import type { LocalizedText } from '../types.ts';
 
 /** 状態を持つ側。ally = 味方の枠、enemy = 敵（1 体の前提） */
@@ -39,517 +40,319 @@ export type NamedStateInfo = {
 };
 
 export const NAMED_STATES = {
-  /** ペルソナ（クイーン（真）・雪子の S1。C-0354） */
+  /** ペルソナ（クイーン（真）・雪子の S1） */
   persona: { name: { ja: 'ペルソナ', en: 'Persona' }, holder: 'ally' },
-  /** 追撃（雪子の S2。クイーン（真）の S1 の「追撃が適用された時」。C-0355） */
+  /** 追撃（雪子の S2） */
   followUp: { name: { ja: '追撃', en: 'Follow Up' }, holder: 'ally' },
-  /** バトンタッチ（クイーン（真）の S2。C-0357） */
+  /** バトンタッチ（クイーン（真）の S2） */
   batonPass: { name: { ja: 'バトンタッチ', en: 'Baton Pass' }, holder: 'ally' },
-  /** カモフラージュ（ウンファ：タクティカル・アップの S1。C-0311・C-0314） */
+  /** カモフラージュ（ウンファ：タクティカル・アップの S1） */
   camouflage: { name: { ja: 'カモフラージュ', en: 'Camouflage' }, holder: 'ally' },
-  /** ハッキング（クルミの S1 の持続ダメージ。S2 の「対象がハッキング状態なら」。C-0136・C-0276） */
+  /** ハッキング（クルミの S1） */
   hacked: { name: { ja: 'ハッキング', en: 'Hacked' }, holder: 'enemy' },
-  /**
-   * 私だけの星（アニス：スターの S1。自分を除く基本バースト段階 I の味方が
-   * いない時。S2・バーストの「私だけの星状態なら」。C-0189・C-0203・C-0555。plan/design-skill-stage1.md 2.1 節）
-   */
+  /** 私だけの星（アニス：スターの S1） */
   myOwnStar: { name: { ja: '私だけの星', en: 'My Own Star' }, holder: 'ally' },
-  /** 同: みんなの星（アニス：スターの S1。自分を除く基本バースト段階 I の味方がいる時。C-0201・C-0555） */
+  /** みんなの星（アニス：スターの S1） */
   everyonesStar: { name: { ja: 'みんなの星', en: "Everyone's Star" }, holder: 'ally' },
-  /** 同: シューティングスター（アニス：スターのバーストの自動攻撃の呼び名。10 秒。C-0211） */
+  /** シューティングスター（アニス：スターのバースト）。バーストの自動攻撃の呼び名 */
   shootingStar: { name: { ja: 'シューティングスター', en: 'Shooting Star' }, holder: 'ally' },
-  /** マターガンマ（マナの S1。戦闘開始時・持続・攻撃力▲。C-0020。plan/design-skill-stage1.md 2.2 節） */
+  /** マターガンマ（マナの S1） */
   metalGamma: { name: { ja: 'マターガンマ', en: 'Metal γ' }, holder: 'ally' },
-  /**
-   * 同: マターシグマ（マナの S2。戦闘開始時とフルバーストの終わり（直前に自分がバーストを使用していれば）に付き、フルバーストの
-   * 開始で解除。バーストゲージのチャージ速度▲。C-0269。S2 の「マターシグマ状態なら」。C-0281）
-   */
+  /** マターシグマ（マナの S2） */
   metalSigma: { name: { ja: 'マターシグマ', en: 'Metal σ' }, holder: 'ally' },
-  /** 同（2.3 節）: ペインロード 1（ミハラの S2。バーストの使用 1 回目から。攻撃力▲・45 秒） */
+  /** ペインロード1（ミハラの S2） */
   highwayToHell1: { name: { ja: 'ペインロード1', en: 'Highway to Hell 1' }, holder: 'ally' },
-  /** 同: ペインロード 2（ミハラの S2。バーストの使用 2 回目から。クリティカル確率▲・45 秒。バーストの「ペインロード2の状態なら」） */
+  /** ペインロード2（ミハラの S2） */
   highwayToHell2: { name: { ja: 'ペインロード2', en: 'Highway to Hell 2' }, holder: 'ally' },
-  /**
-   * ゴールデンチップ（ソーダ：トゥインクルバニーの S1。戦闘開始時に 50 個、
-   * フルバースト中の通常攻撃 3 回ごとに 1 個。最大 50 スタック・持続・クリティカルダメージ▲。C-0128。plan/design-skill-stage3.md 2.1 節）
-   */
+  /** ゴールデンチップ（ソーダ：トゥインクルバニーの S1） */
   goldenChip: { name: { ja: 'ゴールデンチップ', en: 'Golden Chip' }, holder: 'ally' },
-  /** 同（2.2 節）: リラックス（クラウンの S2。通常攻撃 43 回ごとに 1 スタック・20 スタック・持続。フルスタックで外れて回復。C-0271） */
+  /** リラックス（クラウンの S2） */
   relax: { name: { ja: 'リラックス', en: 'Relax' }, holder: 'ally' },
   /**
-   * バリア（名前の無いバリア・共用バリアの付与。家族の根。「バリア適用状態なら」は
-   * 家族のどのバリアにも当たる。ラムのバースト・アスカ S2。plan/design-skill-stage5.md 1.1 節）
+   * バリア（名前の無いバリア・共用バリアの付与。多くのキャラが付ける）。家族の根で、「バリア適用状態なら」は家族のどのバリアにも当たる
+   * （plan/design-skill-stage5.md 1.1 節）
    */
   barrier: { name: { ja: 'バリア', en: 'Barrier' }, holder: 'ally', family: 'barrier' },
-  /**
-   * ナノコーティング（キロの S1。自分へのバリア・持続。家族 barrier。被弾で減って壊れる分は扱わない。plan/design-kilo.md 2.1 節）
-   */
+  /** ナノコーティング（キロの S1）。被弾で減って壊れる分は扱わない（plan/design-kilo.md 2.1 節） */
   nanoCoating: { name: { ja: 'ナノコーティング', en: 'Nano Coating' }, holder: 'ally', family: 'barrier' },
-  /**
-   * デコイ（シンデレラの S2 の分身。中身なし・持続。被弾で壊れる分は
-   * 扱わない。plan/design-skill-stage6.md 2.4 節）。「デコイが存在する時」（selfState）が読む。判定は自分のデコイだけ
-   */
+  /** デコイ（シンデレラの S2）。被弾で壊れる分は扱わない（plan/design-skill-stage6.md 2.4 節）。判定は自分のデコイだけ */
   decoy: { name: { ja: 'デコイ', en: 'Decoy' }, holder: 'ally' },
-  /**
-   * 同: 美しさ（シンデレラの S2。デコイがある間 3 秒ごとに 1 スタック・中身は最大HP▲・12 スタック・持続）。S1 の最終最大HP 基準の
-   * 攻撃力▲が、上がった最終最大HP を読み直す
-   */
+  /** 美しさ（シンデレラの S2） */
   beauty: { name: { ja: '美しさ', en: 'Beautiful' }, holder: 'ally' },
   /**
-   * 代用弾丸（トーブの S1。弾丸チャージの即時効果の呼び名。維持 0 秒の付与で、
-   * 付いた記録だけを作る。「代用弾丸が適用される時」の { applied } が読む。plan/design-skill-stage4.md 2.1 節）
+   * 代用弾丸（トーブの S1）。弾丸チャージの即時効果の呼び名。維持 0 秒の付与で、付いた記録だけを作る
+   * （plan/design-skill-stage4.md 2.1 節）
    */
   emergencyCraftedBullets: { name: { ja: '代用弾丸', en: 'Emergency-Crafted Bullets' }, holder: 'ally' },
-  /** 同: 応急改造（トーブの S1。代用弾丸が適用される時に味方全体。最大装弾数▲・3 スタック・5 秒。S2・バーストが見る） */
+  /** 応急改造（トーブの S1） */
   temporaryModification: { name: { ja: '応急改造', en: 'Temporary Modification' }, holder: 'ally' },
-  /**
-   * その場しのぎの奇跡（トーブの宝物版のバースト。味方全体。スキル発動者
-   * 基準の攻撃力▲・応急改造スタックコピー・15 秒。plan/design-skill-stage10.md 3.3 節）。付いた時のトーブの応急改造のスタック数で付く（V-0523）
-   */
+  /** その場しのぎの奇跡（トーブの宝物版のバースト） */
   miracleOfMakeshifts: { name: { ja: 'その場しのぎの奇跡', en: 'Miracle of Makeshifts' }, holder: 'ally' },
   /**
-   * 同: ショットガンを所持する味方全体へのその場しのぎの奇跡。ゲームでは同じ名前の 2 つ目の効果で、ショットガンの味方には味方全体の分と
-   * 重なって乗る（V-0523）。同じ状態の付与は 1 つの件の列にまとまり中身も 1 つなので、別の状態にする
+   * その場しのぎの奇跡（トーブの宝物版のバースト）のショットガンを所持する味方全体への分。ゲームでは同じ名前の 2 つ目の効果で、
+   * ショットガンの味方には味方全体の分と重なって乗る。同じ状態の付与は 1 つの件の列にまとまり中身も 1 つなので、別の状態にする
    */
   miracleOfMakeshiftsShotgun: {
     name: { ja: 'その場しのぎの奇跡（ショットガン）', en: 'Miracle of Makeshifts (Shotgun)' },
     holder: 'ally',
   },
-  /**
-   * 火力チャージ（ネオン：ビジョン・アイのバースト。火力ゲージが 100 未満の時。
-   * 10 秒・解除不可。その間の通常攻撃と終わりに火力ゲージをチャージする。V-0503。plan/design-skill-stage10.md 3.2 節）
-   */
+  /** 火力チャージ（ネオン：ビジョン・アイのバースト） */
   firepowerCharge: { name: { ja: '火力チャージ', en: 'Firepower Charge' }, holder: 'ally' },
-  /** 同: 超火力（ネオン：ビジョン・アイのバースト。火力ゲージが 100 の時。攻撃ダメージ▲・10 秒。S1・S2 の超火力の追加効果が見る） */
+  /** 超火力（ネオン：ビジョン・アイのバースト） */
   superFirepower: { name: { ja: '超火力', en: 'Super Firepower' }, holder: 'ally' },
-  /**
-   * 同: 超火力チャージ（ネオン：ビジョン・アイの S2。フルバーストの終わりに、火力ゲージの値をスタック数にして付く。1 スタックが
-   * バーストゲージのチャージ速度▲。5 秒。画面の適用中の効果の名前。V-0503）
-   */
+  /** 超火力チャージ（ネオン：ビジョン・アイの S2）。名前は画面の適用中の効果の名前 */
   superFirepowerCharge: { name: { ja: '超火力チャージ', en: 'Super Firepower Charge' }, holder: 'ally' },
-  /**
-   * ブームインストール（エレグのバースト。敵に付く。中身は防御力▼・10 秒。
-   * バーストのヒットから付く。V-0521。S1・S2 の「対象がブームインストール状態なら」が見る（段 3）。plan/design-elegg.md 8.2 節）
-   */
+  /** ブームインストール（エレグのバースト） */
   boomInstall: { name: { ja: 'ブームインストール', en: 'BOOM Install' }, holder: 'enemy' },
-  /**
-   * ウォームアップ（ラプラス：アルティメットヒーローの S1。フルチャージして攻撃した
-   * 時にチャージ速度▲のスタック。フルスタックで外して使用武器の変更。plan/design-skill-stage11.md 2.1 節）
-   */
+  /** ウォームアップ（ラプラス：アルティメットヒーローの S1） */
   warmUp: { name: { ja: 'ウォームアップ', en: 'Warm Up' }, holder: 'ally' },
-  /** ヒーロービジョン（ラプラスの S1。バーストの「ヒーロービジョンのフルスタック状態なら」。plan/design-laplace.md 2.3 節） */
+  /** ヒーロービジョン（ラプラスの S1） */
   heroVision: { name: { ja: 'ヒーロービジョン', en: 'Hero Vision' }, holder: 'ally' },
-  /** クレッシェンド（ジュリアの S2。クリティカルダメージ▲のスタック。バーストの「クレッシェンドのフルスタック状態なら」。plan/design-julia.md 1 節） */
+  /** クレッシェンド（ジュリアの S2） */
   crescendo: { name: { ja: 'クレッシェンド', en: 'Crescendo' }, holder: 'ally' },
-  /** マイレージ（ルピーの S2。攻撃力▲のスタック。バーストの「マイレージのフルスタック状態なら」。plan/design-rupee.md 1 節） */
+  /** マイレージ（ルピーの S2） */
   mileage: { name: { ja: 'マイレージ', en: 'Mileage' }, holder: 'ally' },
-  /** ショッピング（ルピー：ウィンターショッパーの S2。味方全体の防御力▲のスタック。同じ S2 の「ショッピングのフルスタック状態なら」。plan/design-rupee-ws.md 1 節） */
+  /** ショッピング（ルピー：ウィンターショッパーの S2） */
   shopping: { name: { ja: 'ショッピング', en: 'Shopping' }, holder: 'ally' },
-  /**
-   * 熱血（モランの宝物版の S1。ラプチャーが出現した時・持続・
-   * バーストスキルのクールタイム▼。宝物版の S2 の「熱血状態なら」。plan/design-skill-stage11.md 3.3 節。V-0530）
-   */
+  /** 熱血（モランの宝物版の S1） */
   fervor: { name: { ja: '熱血', en: 'Fervor' }, holder: 'ally' },
   /**
-   * 臨戦の家族（plan/design-new-chars-1029.md 5.1 節）。根（「臨戦状態の味方」が指す）と、マリアン：クイーン（19）・
-   * 紅蓮：神殺（472）の臨戦。ラプンツェル：サンクチュアリ（473）の「自分と臨戦状態の味方」が根を指す
+   * 臨戦（家族の根。ラプンツェル：サンクチュアリの「臨戦状態の味方」が指す）。家族のどの臨戦（マリアン：クイーン・紅蓮：神殺）にも当たる
+   * （plan/design-new-chars-1029.md 5.1 節）
    */
   intoTheFray: { name: { ja: '臨戦', en: 'Into the Fray' }, holder: 'ally', family: 'intoTheFray' },
-  /** 同: 臨戦：意思の鋭槍（マリアン：クイーンの S1。戦闘開始時・持続） */
+  /** 臨戦：意思の鋭槍（マリアン：クイーンの S1） */
   intoTheFraySharpenedResolve: {
     name: { ja: '臨戦：意思の鋭槍', en: 'Into the Fray: Sharpened Resolve' },
     holder: 'ally',
     family: 'intoTheFray',
   },
-  /** 同: 臨戦：胸を刺す願い（マリアン：クイーンの S2。バースト使用時・10 秒） */
+  /** 臨戦：胸を刺す願い（マリアン：クイーンの S2） */
   intoTheFrayPenetrantWish: {
     name: { ja: '臨戦：胸を刺す願い', en: 'Into the Fray: Penetrant Wish' },
     holder: 'ally',
     family: 'intoTheFray',
   },
-  /** 同: 臨戦：明鏡止水（紅蓮：神殺の S1。戦闘開始時・持続） */
+  /** 臨戦：明鏡止水（紅蓮：神殺の S1） */
   intoTheFraySereneMind: {
     name: { ja: '臨戦：明鏡止水', en: 'Into the Fray: Serene Mind' },
     holder: 'ally',
     family: 'intoTheFray',
   },
-  /** 同: 臨戦：身剣合一（紅蓮：神殺の S2。バースト使用時・10 秒） */
+  /** 臨戦：身剣合一（紅蓮：神殺の S2） */
   intoTheFrayAtOneWithTheSword: {
     name: { ja: '臨戦：身剣合一', en: 'Into the Fray: At One With the Sword' },
     holder: 'ally',
     family: 'intoTheFray',
   },
-  /** 同: 弱点露出（マリアン：クイーンの S1。敵に付く。中身は受けるダメージ▲） */
+  /** 弱点露出（マリアン：クイーンの S1） */
   openWounds: { name: { ja: '弱点露出', en: 'Open Wounds' }, holder: 'enemy' },
-  /**
-   * チェーンバインド（ミハラ：ボンディングチェーンの S1 の持続ダメージ。敵に付く。
-   * キャプチャーチェーンの攻撃 1 回ごとに 1 スタック・20 スタック・持続・解除不可。V-0546。plan/design-skill-stage13.md 2.3 節）
-   */
+  /** チェーンバインド（ミハラ：ボンディングチェーンの S1） */
   ensnaringChains: { name: { ja: 'チェーンバインド', en: 'Ensnaring Chains' }, holder: 'enemy' },
-  /**
-   * プリング・チェーン（ミハラ：ボンディングチェーンのバーストの持続ダメージ。敵に付く。
-   * チェーンバインドのスタック数を写す・10 秒・解除不可。付けた後にチェーンバインドを消去する。V-0547。plan/design-skill-stage13.md 2.5 節）
-   */
+  /** プリング・チェーン（ミハラ：ボンディングチェーンのバースト） */
   draggingChain: { name: { ja: 'プリング・チェーン', en: 'Dragging Chain' }, holder: 'enemy' },
-  /**
-   * オートファイア準備（スノーホワイト：ヘビーアームズの S1。チャージ中の
-   * 0.2 秒ごとに 1 スタック・最大装填数（スタック）5・持続・解除条件は通常攻撃時。中身の防御力▲は間接。装填数がオートファイアの
-   * 順番の攻撃の数（perCount）になる。plan/design-skill-stage14.md 2.2 節）
-   */
+  /** オートファイア準備（スノーホワイト：ヘビーアームズの S1） */
   autoFireReady: { name: { ja: 'オートファイア準備', en: 'Auto Fire Ready' }, holder: 'ally' },
-  /**
-   * セブンスドワーフ・フルアクティブ（スノーホワイト：ヘビーアームズの
-   * バースト。使用回数（スタック）2 回・持続。中身はチャージ時間 3.2 秒の固定（S2 の 1.2 秒の固定より勝つ）とオートファイア準備の最大装填数
-   * 10▲。最大ロックオン対象数 10▲は敵 1 体では効かない。S1 の「フルチャージして攻撃した時」に使用回数 1 回▼、使い切ったら解除。
-   * 通常攻撃をした時、フルバースト状態でなければ解除。plan/design-skill-stage14.md 2.7 節。論点 5・6）
-   */
+  /** セブンスドワーフ・フルアクティブ（スノーホワイト：ヘビーアームズのバースト）。最大ロックオン対象数▲は敵 1 体では効かない */
   sevenDwarvesFullyActive: {
     name: { ja: 'セブンスドワーフ・フルアクティブ', en: 'Seven Dwarves Fully Active' },
     holder: 'ally',
   },
-  /**
-   * 特殊改造（エイダのバースト。自分・1 発間維持。中身はチャージ速度▼と
-   * チャージダメージ▲。V-0569。plan/design-skill-stage15.md 2.3 節。論点 9）
-   */
+  /** 特殊改造（エイダのバースト） */
   specialModification: { name: { ja: '特殊改造', en: 'Special Modification' }, holder: 'ally' },
-  /**
-   * ミサイルガイド（ベスティー：タクティカル・アップの S1。フルチャージして攻撃した時、
-   * ミサイルガイド状態でなければ自分に付く。中身はチャージ速度▲とチャージダメージ▲・3 発間維持。
-   * 最大弾数のリロードが完了した時に解除。plan/design-skill-stage16.md 2.2 節）
-   */
+  /** ミサイルガイド（ベスティー：タクティカル・アップの S1） */
   missileGuide: { name: { ja: 'ミサイルガイド', en: 'Missile Guide' }, holder: 'ally' },
-  /**
-   * 氷結の魔女（エミリアのバースト。自分・1 発間維持。中身はチャージ速度 300%▼とチャージダメージ▲。特殊改造と同じ形。
-   * plan/design-emilia.md 2.3 節）
-   */
+  /** 氷結の魔女（エミリアのバースト） */
   freezingWitch: { name: { ja: '氷結の魔女', en: 'Freezing Witch' }, holder: 'ally' },
-  /**
-   * 同: 戦場コントロール（エマ：タクティカル・アップのバースト。味方全体に付く。中身は発動者の攻撃力の▲・10 秒。ベスティー：タクティカル・アップの
-   * S2 の「自分が戦場コントロール状態なら」が見る）
-   */
+  /** 戦場コントロール（エマ：タクティカル・アップのバースト） */
   battlefieldFormation: { name: { ja: '戦場コントロール', en: 'Battle Formation' }, holder: 'ally' },
-  /**
-   * 同: 徹甲炸裂弾（ウンファ：タクティカル・アップのバースト。敵に付く。中身は受けるダメージ▲・10 秒。ベスティー：タクティカル・アップの S2 の
-   * 「対象が徹甲炸裂弾状態なら」が見る）
-   */
+  /** 徹甲炸裂弾（ウンファ：タクティカル・アップのバースト） */
   explosiveRound: { name: { ja: '徹甲炸裂弾', en: 'Explosive Round' }, holder: 'enemy' },
-  /**
-   * 硫酸弾（ジルの S2。戦闘開始時と最大弾数のリロード完了時に自分に付く。
-   * 中身は無く、次の通常攻撃で対象に持続ダメージを付けて外れる。plan/design-skill-stage17.md 2.2 節。論点 4）
-   */
+  /** 硫酸弾（ジルの S2） */
   acidRound: { name: { ja: '硫酸弾', en: 'Acid Round' }, holder: 'ally' },
-  /**
-   * 海風（マストの S1。通常攻撃のクリティカルの命中 2 回ごとに敵に 1 スタック・50 スタック・3 秒。
-   * 中身は発動者基準の防御力▼（casterDefence）。バーストの暴風が写すスタックの元。plan/design-mast.md 2.1・2.2 節）
-   */
+  /** 海風（マストの S1） */
   seaBreeze: { name: { ja: '海風', en: 'Sea Breeze' }, holder: 'enemy' },
-  /**
-   * ターゲット指定（プリバティの宝物版バースト。敵全体に 10 秒。中身の攻撃力▼はダメージに関係しないので中身なし（withoutContents）。
-   * 宝物版 S2 の「対象がターゲット指定状態なら」の追加ダメージが見る）
-   */
+  /** ターゲット指定（プリバティの宝物版のバースト） */
   designatedTarget: { name: { ja: 'ターゲット指定', en: 'Designated Target' }, holder: 'enemy', withoutContents: true },
-  /** 同 2.3 節: 暴風（マストのバースト。海風のスタック数を写す 1 秒ごとのダメージ・7 秒。持続ダメージではない） */
+  /** 暴風（マストのバースト）。持続ダメージではない（plan/design-mast.md 2.3 節） */
   storm: { name: { ja: '暴風', en: 'Storm' }, holder: 'enemy' },
-  /**
-   * 変身（アークレンジャー・ブラックの S1。バッテリーが 100 になった時に自分に付き、
-   * 0 になった時に外れる。解除不可。中身は攻撃力▲。付いている間 0.2 秒ごとにバッテリーが 1 減る。
-   * S2 の持続ダメージ・バーストの「変身状態なら」が見る。plan/design-skill-stage19.md 2.1 節。論点 2）
-   */
+  /** 変身（アークレンジャー・ブラックの S1） */
   transformation: { name: { ja: '変身', en: 'Transformation' }, holder: 'ally' },
-  /**
-   * 借りていくよぉ…（ギルティの S1。通常攻撃 6 回ごとに自分に 1 スタック・
-   * 5 スタック・10 秒。中身は攻撃力のコピー。S2 のスタック量▲が足し、バーストの「フルスタックなら」が見る。plan/design-skill-stage19.md 2.2 節。論点 5）
-   */
+  /** 借りていくよぉ…（ギルティの S1） */
   mindIfIBorrowThis: { name: { ja: '借りていくよぉ…', en: 'Mind If I Borrow This?' }, holder: 'ally' },
-  /**
-   * 時間延長 I・II（ソーダ：トゥインクルバニーの S2。バースト 3 段階突入時に
-   * ゴールデンチップの数で味方全体に付き、フルバーストタイムの間続く。延長の秒は同じきっかけの fullBurstExtend が足す（C-0877）。中身なし。
-   * S2 の「自分が時間延長 I（II）状態なら」のダメージが見る。plan/design-skill-stage21.md 2.2・2.3 節）
-   */
+  /** 時間延長I・II（ソーダ：トゥインクルバニーの S2） */
   timeExtension1: { name: { ja: '時間延長I', en: 'Time Extension I' }, holder: 'ally' },
   timeExtension2: { name: { ja: '時間延長II', en: 'Time Extension II' }, holder: 'ally' },
-  /**
-   * 気絶免疫（D の S2。ターゲットが出現した時（戦闘開始時）に味方全体に付く。
-   * 射撃場には防ぐ気絶が無いので中身なし。D のバーストの「自分が気絶免疫状態なら」のフルバーストタイムの延長が見る。plan/design-skill-stage21.md 2.4 節）
-   */
+  /** 気絶免疫（D の S2）。射撃場には防ぐ気絶が無いので中身なし */
   stunImmunity: { name: { ja: '気絶免疫', en: 'Stun Immunity' }, holder: 'ally' },
   /**
-   * バーストの使った段階ごとのモードの名前（『バーストⅠで使用時：ビーストケージ』など。plan/design-red-hood.md 2.2 節）。
-   * バーストの発動に維持 0 秒で付き（記録だけ）、S2 の「〈モード〉を適用時」「レッドウルフを発動した時」の { applied } が見る
+   * レッドフードのバーストの使った段階ごとのモードの名前（ビーストケージ・ハウリングエンド・レッドウルフ）。維持 0 秒の付与で、
+   * 付いた記録だけを作る（plan/design-red-hood.md 2.2 節）
    */
   beastCage: { name: { ja: 'ビーストケージ', en: 'Beast Cage' }, holder: 'ally' },
   theLastHowl: { name: { ja: 'ハウリングエンド', en: 'The Last Howl' }, holder: 'ally' },
   redWolf: { name: { ja: 'レッドウルフ', en: 'Red Wolf' }, holder: 'ally' },
-  /**
-   * ナユタの S2 の記憶吸収（3 秒ごとに 1 スタック・スタック量増減効果無効。plan/design-nayuta.md 1 節）。S1 の「記憶吸収が適用される時」
-   * の { applied } と、S2 のスタック量別の効果の条件が見る
-   */
+  /** 記憶吸収（ナユタの S2） */
   memoryAbsorption: { name: { ja: '記憶吸収', en: 'Memory Absorption' }, holder: 'ally' },
-  /** ナユタのバーストの「記憶燃焼：使用武器変更」の変更の窓の間の状態（weaponChange の state）。S1 の「記憶燃焼状態なら」が見る */
+  /** 記憶燃焼（ナユタのバースト） */
   memoryIncineration: { name: { ja: '記憶燃焼', en: 'Memory Incineration' }, holder: 'ally' },
-  /**
-   * ほろ酔い（マスト：ロマンチックメイドの S1。バースト 1 段階突入時に自分に付く命中率▼・3 スタック・持続。
-   * S1 の「ほろ酔い状態の時に限り」・S2 とバーストの「× ほろ酔いのスタック数」が見る。plan/design-maids.md 2.4 節）
-   */
+  /** ほろ酔い（マスト：ロマンチックメイドの S1） */
   drunken: { name: { ja: 'ほろ酔い', en: 'Drunken' }, holder: 'ally', debuff: true },
-  /** 同: 二日酔い（マスト：ロマンチックメイドの S2。ほろ酔いのフルスタックのフルバーストの終わりに付く気絶。10 秒。射撃を止める shotPause が見る） */
+  /** 二日酔い（マスト：ロマンチックメイドの S2） */
   hangover: { name: { ja: '二日酔い', en: 'Hangover' }, holder: 'ally' },
-  /**
-   * ルート探索 1〜3 段階（クエンシー：エスケープクイーンの S2。通常攻撃 2 回ごとに付く命中率▲・攻撃力▲のスタック。2 段階は 1 段階の、
-   * 3 段階は 2 段階のフルスタックの時だけ付く。S1 の「ルート探索 N 段階フルスタック状態の時のみ」が見る）
-   */
+  /** ルート探索1〜3段階（クエンシー：エスケープクイーンの S2） */
   exploreRouteStage1: { name: { ja: 'ルート探索1段階', en: 'Explore Route Stage 1' }, holder: 'ally' },
   exploreRouteStage2: { name: { ja: 'ルート探索2段階', en: 'Explore Route Stage 2' }, holder: 'ally' },
   exploreRouteStage3: { name: { ja: 'ルート探索3段階', en: 'Explore Route Stage 3' }, holder: 'ally' },
-  /**
-   * イントロ（ディーゼル：ウィンタースイーツの S1。初めてのフルバーストで、直前に自分がバーストを使っていれば
-   * 付く。クリティカルダメージ▲・持続・解除不可。S1 の「イントロ状態なら」が見る。plan/design-diesel-ws.md 1 節）
-   */
+  /** イントロ（ディーゼル：ウィンタースイーツの S1） */
   intro: { name: { ja: 'イントロ', en: 'Intro' }, holder: 'ally' },
-  /** 同: クライマックス（S1。使っていなければ付く。S1 とバーストの「クライマックス状態なら」が見る） */
+  /** クライマックス（ディーゼル：ウィンタースイーツの S1） */
   highlight: { name: { ja: 'クライマックス', en: 'Highlight' }, holder: 'ally' },
-  /** 同: 騒音公害（バースト。クライマックス状態なら自分を除く味方全体に。中身は命中率▼・1 秒。V-0870） */
+  /** 騒音公害（ディーゼル：ウィンタースイーツのバースト） */
   noisePollution: { name: { ja: '騒音公害', en: 'Noise Pollution' }, holder: 'ally' },
-  /**
-   * 隠しレンズ（エード：エージェントバニーの S1。フルチャージの発ごとに 1 スタック・10 スタック・5 秒。
-   * 中身は適正最小射程距離▲。S2 の「隠しレンズのフルスタック状態時のみ」が見る。plan/design-agent-bunny.md 1 節）
-   */
+  /** 隠しレンズ（エード：エージェントバニーの S1） */
   spyLens: { name: { ja: '隠しレンズ', en: 'Spy Lens' }, holder: 'ally' },
-  /**
-   * アルカナ（V-0713）: 運命の輪のカード（バースト。電撃コードの味方全体に付く攻撃ダメージ▲・10 秒。S1・S2 の「自分が運命の輪のカード状態なら」が見る。C-1050・C-1054）
-   */
+  /** 運命の輪のカード（アルカナのバースト） */
   wheelOfFortune: { name: { ja: '運命の輪のカード', en: 'Wheel of Fortune' }, holder: 'ally' },
-  /** 同: 審判のカード（バースト。敵全体に付く受けるダメージ▲・10 秒。C-1050） */
+  /** 審判のカード（アルカナのバースト） */
   judgment: { name: { ja: '審判のカード', en: 'Judgment' }, holder: 'enemy' },
-  /** 同: 力のカード（S2。直前にバーストを使った III の電撃コードの味方に付くスキル発動者基準の攻撃力▲・15 秒。C-1053） */
+  /** 力のカード（アルカナの S2） */
   strength: { name: { ja: '力のカード', en: 'Strength' }, holder: 'ally' },
-  /** 同: 死神のカード（S2。味方全体に付くバーストスキルクールタイム▼とスキル発動者基準の攻撃力▲・5 秒。C-1053） */
+  /** 死神のカード（アルカナの S2） */
   death: { name: { ja: '死神のカード', en: 'Death' }, holder: 'ally' },
-  /**
-   * 同: 魔術師のカード（S1。直前にバーストを使った III の電撃コードの味方に付くスキル 2 クールタイム▼・15 秒。中身は skillCooldownDown。
-   * C-1055。plan/design-arcana-magician.md）
-   */
+  /** 魔術師のカード（アルカナの S1） */
   magician: { name: { ja: '魔術師のカード', en: 'The Magician' }, holder: 'ally' },
-  /**
-   * ツバイの宝物版のバースト「貫通学概論：貫通ダメージ▲」（味方全体・10 秒。plan/design-zwei.md 2.5 節）。
-   * 中身は貫通ダメージ▲。宝物版 S2 の「自分が貫通学概論状態なら」が見る
-   */
+  /** 貫通学概論（ツバイの宝物版のバースト） */
   pierceAttacks101: { name: { ja: '貫通学概論', en: 'Pierce Attacks 101' }, holder: 'ally' },
-  /**
-   * A2 のバースト「B モード」（plan/design-hp-down-interval.md。自分。中身は攻撃力▲・チャージ速度▲。付いている間 1 秒ごとに
-   * 現在の HP▼、HP が 40% 以下で解除）
-   */
+  /** Bモード（A2 のバースト） */
   modeB: { name: { ja: 'Bモード', en: 'Mode B' }, holder: 'ally' },
-  /**
-   * グレイブのバーストの「完全計算」（自分・10 秒。中身は無い。plan/design-grave.md）。S1 の「完全計算状態が終了した時」（{ ended }）、S2 の
-   * 「完全計算状態なら…攻撃命中回数別の効果」の数える窓と、過熱II・III の維持の終わり（{ stateEnd }）が見る
-   */
+  /** 完全計算（グレイブのバースト） */
   prediction: { name: { ja: '完全計算', en: 'Prediction' }, holder: 'ally' },
-  /** 同: S1 の「放熱」（自分。中身はリロード比率▼。最大装弾数のリロード完了で解除。V-0735）。S1 の「放熱状態の時に限り」が見る */
+  /** 放熱（グレイブの S1） */
   heatEmission: { name: { ja: '放熱', en: 'Heat Emission' }, holder: 'ally' },
-  /** 同: S2 の「過熱I」（自分。中身は攻撃力▲。最大装弾リロード完了時に解除）。過熱II の「過熱I 状態の時に限り」が見る */
+  /** 過熱I（グレイブの S2） */
   overheatI: { name: { ja: '過熱I', en: 'Overheat I' }, holder: 'ally' },
-  /** 同: S2 の「過熱II」（自分。中身は攻撃力▲。完全計算の終わりまで）。過熱III の「過熱II 状態の時に限り」が見る */
+  /** 過熱II（グレイブの S2） */
   overheatII: { name: { ja: '過熱II', en: 'Overheat II' }, holder: 'ally' },
-  /** 同: S2 の「過熱III」（自分。中身は攻撃ダメージ▲。完全計算の終わりまで） */
+  /** 過熱III（グレイブの S2） */
   overheatIII: { name: { ja: '過熱III', en: 'Overheat III' }, holder: 'ally' },
-  /**
-   * ステージパート：ボーカル（ミントのバースト。プリカの S2 のアンコールがシンガロングの
-   * スキル発動者に付ける。持続・解除不可。ダンスと入れ替わる。ミントの S1・S2 の「ボーカル状態なら」が見る。plan/design-mint-prika.md 1 節）
-   */
+  /** ステージパート：ボーカル（ミントのバースト・プリカの S2。2 人が付ける） */
   assignedPartSinging: {
     name: { ja: 'ステージパート：ボーカル', en: 'Assigned Part: Singing' },
     holder: 'ally',
     group: 'assignedPart',
   },
-  /** 同: ステージパート：ダンス（ミントのバースト。持続・解除不可。ボーカルと入れ替わる。ミントのバースト・S1 の「ダンス状態なら」が見る） */
+  /** ステージパート：ダンス（ミントのバースト） */
   assignedPartDancing: {
     name: { ja: 'ステージパート：ダンス', en: 'Assigned Part: Dancing' },
     holder: 'ally',
     group: 'assignedPart',
   },
-  /** 同: ボーカルエフェクト（ミントの S1。味方全体・3 秒。中身はスキル発動者基準の攻撃力▲） */
+  /** ボーカルエフェクト（ミントの S1） */
   singingEffect: { name: { ja: 'ボーカルエフェクト', en: 'Singing Effect' }, holder: 'ally' },
-  /** 同: ダンスエフェクト（ミントの S1。味方全体・3 秒。中身は持続回復で、ダメージに関係しない） */
+  /** ダンスエフェクト（ミントの S1） */
   dancingEffect: { name: { ja: 'ダンスエフェクト', en: 'Dancing Effect' }, holder: 'ally' },
-  /**
-   * 同: シンガロング（ミントのバースト。味方全体・10 秒。中身は攻撃ダメージ▲・最大装弾数▲・クリティカルダメージ▲。ミントの S2 の
-   * 「シンガロング状態でなければ」とプリカの S2 の「シンガロングが適用された時」が見る）
-   */
+  /** シンガロング（ミントのバースト） */
   singAlong: { name: { ja: 'シンガロング', en: 'Sing Along' }, holder: 'ally' },
-  /**
-   * 同: パフォーマンス（プリカのバースト。味方全体・25 秒・解除不可。中身はチャージダメージ▲。プリカの S1・S2 の「パフォーマンス状態なら」が
-   * 見る。アンコールで維持が延びる）
-   */
+  /** パフォーマンス（プリカのバースト） */
   performance: { name: { ja: 'パフォーマンス', en: 'Performance' }, holder: 'ally' },
-  /** 同: アンコール（プリカの S2。項目ごとに対象が違うので、付いた記録だけの名前） */
+  /** アンコール（プリカの S2）。項目ごとに対象が違うので、付いた記録だけの名前 */
   encore: { name: { ja: 'アンコール', en: 'Encore' }, holder: 'ally' },
-  /**
-   * 過電流（マクスウェル：オーディナリーメカニックの S2。バースト使用時に自分に付く攻撃力▲・最大 5 段階・持続）。バーストの
-   * 使用武器の変更の「過電流の段階別の効果」（チャージ時間）が見る（plan/design-maxwell-om.md 2.2 節）
-   */
+  /** 過電流（マクスウェル：オーディナリーメカニックの S2） */
   overcurrent: { name: { ja: '過電流', en: 'Overcurrent' }, holder: 'ally' },
   /**
-   * アリス：ワンダーランドバニーの S1 のニンジンパーティー（味方全体・5 スタック・5 秒。中身の阻止部位の攻撃ダメージ▲は前提の外なので
-   * 書かない。付いた記録だけの名前で、読む効果（S1 のスタック量▲・バーストのフルスタックの条件）は未対応か間接の notes）
+   * ニンジンパーティー（アリス：ワンダーランドバニーの S1）。中身の阻止部位の攻撃ダメージ▲は前提の外なので書かず、
+   * 付いた記録だけの名前
    */
   carrotParty: { name: { ja: 'ニンジンパーティー', en: 'Carrot Party' }, holder: 'ally' },
-  /**
-   * ハッキングコード収集（エクシアの S2。自分に 5 スタック・中身は攻撃力▲。S1・宝物版 S2 の「ハッキングコード収集状態なら」と、
-   * バーストの「フルスタック状態なら」が見る）
-   */
+  /** ハッキングコード収集（エクシアの S2） */
   collectHackingCode: { name: { ja: 'ハッキングコード収集', en: 'Collect Hacking Code' }, holder: 'ally' },
-  /**
-   * イチゴキャンディ（ディーゼルの S2。命中 N 回ごとに 1 スタック・10 スタック・10 秒。中身は最大装弾数▲。フルスタックで外れ、
-   * 弾丸チャージ（宝物版は貫通ダメージ▲も）が出る。宝物版 S1 のスタック量▲が足す。plan/design-diesel.md 1 節）
-   */
+  /** イチゴキャンディ（ディーゼルの S2） */
   strawberryCandy: { name: { ja: 'イチゴキャンディ', en: 'Strawberry Candy' }, holder: 'ally' },
-  /**
-   * 心の平和（フローラの宝物版 S1。戦闘開始時に自分と両隣の味方に付く・戦闘の終わりまで。中身は持続回復（定義では別の heal）。
-   * 宝物版 S1・S2 の「心の平和状態の味方全体」が見る。plan/design-adjacent-allies.md 2.2 節）
-   */
+  /** 心の平和（フローラの宝物版の S1） */
   heartOfPeace: { name: { ja: '心の平和', en: 'Peace of Mind' }, holder: 'ally' },
-  /** ヘイト（敵全体を挑発。ディーゼルの宝物版バースト。自分・10 秒・中身なし。宝物版 S1 の「自分がヘイト状態なら」が見る） */
+  /** ヘイト（ディーゼルの宝物版のバースト） */
   attract: { name: { ja: 'ヘイト', en: 'Attract' }, holder: 'ally' },
-  /**
-   * 隠れ身（ロザンナの S1（命中 N 回ごと）・S2（戦闘開始時）。自分・中身なし。バーストの「自分が隠れ身の状態なら」が見る。
-   * 単一攻撃対象からの除外と、直接攻撃を受けた時の解除は前提の外）
-   */
+  /** 隠れ身（ロザンナの S1・S2）。単一攻撃対象からの除外と、直接攻撃を受けた時の解除は前提の外 */
   concealment: { name: { ja: '隠れ身', en: 'Concealment' }, holder: 'ally' },
-  /** 狂気（ロザンナの S2。宝物版の命中 N 回ごとの付与。攻撃力▲・10 スタック・30 秒。味方の戦闘不能時の付与は前提の外） */
+  /** 狂気（ロザンナの宝物版の S2）。味方の戦闘不能時の付与は前提の外 */
   frenzy: { name: { ja: '狂気', en: 'Frenzy' }, holder: 'ally' },
-  /** ソードコイン（ルージュの S2。戦闘開始時に後列なら自分と両隣に付く。攻撃ダメージ▲・持続。plan/design-rouge.md 2.3 節） */
+  /** ソードコイン（ルージュの S2） */
   swordCoin: { name: { ja: 'ソードコイン', en: 'Sword Coin' }, holder: 'ally' },
   /**
-   * 激流（リバーレリオの S2。フルチャージ攻撃が「ターゲット」に命中した時に自分に付く。攻撃ダメージ▲・持続。対になる緩流
-   * （ターゲットでないラプチャーに命中した時）は前提の外で付かないので、目録に置かない）
+   * 激流（リバーレリオの S2）。対になる緩流（ターゲットでないラプチャーに命中した時）は前提の外で付かないので、目録に置かない
    */
   ragingCurrent: { name: { ja: '激流', en: 'Raging Current' }, holder: 'ally' },
-  /**
-   * 何見てんだよお前ら！！（ミルク：ブルーミングバニーのバースト。自分・10 秒・中身なし（攻撃力▲・貫通ダメージ▲は同じ窓の timed）。
-   * S2 の「何見てんだよお前ら！！状態の時のみ、2 秒ごとに」が見る）
-   */
+  /** 何見てんだよお前ら！！（ミルク：ブルーミングバニーのバースト） */
   overconfidentHuh: { name: { ja: '何見てんだよお前ら！！', en: 'Overconfident, Huh?!' }, holder: 'ally' },
-  /**
-   * 殲滅態勢（アスカ：WILLE のバースト。自分・中身なし・9 秒。S1 の 10 発ごとの効果の条件、S2 の「フルバーストが発動した時、殲滅態勢
-   * なら」、殲滅と緊急修復の「殲滅態勢が終了した時」が見る。plan/design-asuka-wille.md 1 節）
-   */
+  /** 殲滅態勢（アスカ：WILLE のバースト） */
   annihilationState: { name: { ja: '殲滅態勢', en: 'Annihilation State' }, holder: 'ally' },
-  /**
-   * アンチA.T.フィールド（アスカ：WILLE の S1。殲滅態勢の間の 10 発ごとに敵に 1 スタック・30 スタック・30 秒。中身は受けるダメージ▲。
-   * バーストの殲滅がスタックを写し、その後に消す。plan/design-asuka-wille.md 2.2・2.3 節）
-   */
+  /** アンチA.T.フィールド（アスカ：WILLE の S1） */
   antiATField: { name: { ja: 'アンチA.T.フィールド', en: 'Anti A.T. Field' }, holder: 'enemy' },
-  /**
-   * 攻撃態勢（レイ（仮称）のバースト。自分・10 秒・中身は攻撃ダメージ▲と発動者基準の攻撃力▲。S1 の「自分が攻撃態勢状態なら、通常攻撃が
-   * 7 回命中した時」が見る。plan/design-rei-tentative.md 1 節）
-   */
+  /** 攻撃態勢（レイ（仮称）のバースト） */
   attackState: { name: { ja: '攻撃態勢', en: 'Attack State' }, holder: 'ally' },
-  /**
-   * バブル（リトルマーメイドの S2。敵が出現した時に敵に付く。受けるダメージ▲・持続。通常攻撃の命中 50 回目でバブルバーストに替わる。
-   * plan/design-little-mermaid.md 2.2 節）
-   */
+  /** バブル（リトルマーメイドの S2） */
   bubble: { name: { ja: 'バブル', en: 'Bubble' }, holder: 'enemy' },
-  /**
-   * やみつきの味（ブレッディの S1。持続ダメージ増加効果が適用された時に自分に付く。チャージ速度▼・解除不可。付くとオススメの味を
-   * 消去する。S2・バーストの「やみつきの味状態なら」が見る。plan/design-bready.md 2.3 節）
-   */
+  /** やみつきの味（ブレッディの S1） */
   lingeringTaste: { name: { ja: 'やみつきの味', en: 'Lingering Taste' }, holder: 'ally', group: 'taste' },
-  /** 同: オススメの味（分配ダメージ増加効果が適用された時。付くとやみつきの味を消去する） */
+  /** オススメの味（ブレッディの S1） */
   recommendedTaste: { name: { ja: 'オススメの味', en: 'Recommended Taste' }, holder: 'ally', group: 'taste' },
-  /**
-   * 思い出作り（アルカナ：フォーチュンメイトのバースト。自分・持続。中身はクリティカル確率▲・攻撃ダメージ▲。S1 がフルバースト終了で外し、
-   * S2 の攻撃回数別の効果がこの間の射撃を数える。plan/design-fortune-mate.md 1 節）
-   */
+  /** 思い出作り（アルカナ：フォーチュンメイトのバースト） */
   memoryMaking: { name: { ja: '思い出作り', en: 'Making Memories' }, holder: 'ally' },
-  /** 幸せな思い出（同 S2 の攻撃回数別の効果の 4 回目。自分・3 スタック・持続。中身はペレット数▲。S1 の青春の記録のきっかけ） */
+  /** 幸せな思い出（アルカナ：フォーチュンメイトの S2） */
   happyMemory: { name: { ja: '幸せな思い出', en: 'Happy Memories' }, holder: 'ally' },
-  /** 大切な思い出（同 6 回目。自分・3 スタック・持続。中身は攻撃力▲。S1 のフルバースト終了の攻撃力▲がスタック数を掛ける） */
+  /** 大切な思い出（アルカナ：フォーチュンメイトの S2） */
   preciousMemory: { name: { ja: '大切な思い出', en: 'Precious Moments' }, holder: 'ally' },
-  /** 青春の記録（同 S1。幸せな思い出が付くたびに自分に 1 スタック・3 スタック・持続。中身は通常攻撃ダメージ倍率▲。フルバースト終了で外れる） */
+  /** 青春の記録（アルカナ：フォーチュンメイトの S1） */
   youthRecord: { name: { ja: '青春の記録', en: 'Snapshots of Youth' }, holder: 'ally' },
-  /** ホイッスル（マルチャーナ：マリンスタディの S2。自分・5 スタック・持続。中身は攻撃力▲。戦闘開始時に付き、同じ時にスタック量 4 個▲） */
+  /** ホイッスル（マルチャーナ：マリンスタディの S2） */
   whistle: { name: { ja: 'ホイッスル', en: 'Whistle' }, holder: 'ally' },
-  /** 高リスク対象（同バースト。電撃コードの敵全体・20 秒。中身は防御力▼。S1 の「対象が高リスク対象状態なら」の追加ダメージが見る） */
+  /** 高リスク対象（マルチャーナ：マリンスタディのバースト） */
   highRiskTarget: { name: { ja: '高リスク対象', en: 'High-Risk Target' }, holder: 'enemy' },
   /**
-   * 憑依（エレグ：ブーム・アンド・ショックの S1。戦闘開始時と 6 秒ごとに 6 秒。中身なし。plan/design-elegg-bs.md 2.4 節）。説明文では敵に付くが、
-   * モデルが要るのはキャプチャーの命中を数える窓だけなので、敵 1 体の前提で自分の状態として持つ
+   * 憑依（エレグ：ブーム・アンド・ショックの S1）。説明文では敵に付くが、モデルが要るのはキャプチャーの命中を数える窓だけなので、
+   * 敵 1 体の前提で自分の状態として持つ（plan/design-elegg-bs.md 2.4 節）
    */
   ghostPossession: { name: { ja: '憑依', en: 'Possession' }, holder: 'ally' },
-  /**
-   * エグゾスパインMk2（イヴのバースト。自分・バースト使用時から維持。中身なし。S1 の不安定エネルギーの倍率と S2 のイーグルアイエグゾスパインの
-   * 攻撃力▲の倍率を倍にする効果は、それぞれのスロットの効果の条件・while が見る）
-   */
+  /** エグゾスパインMk2（イヴのバースト） */
   exospineMk2: { name: { ja: 'エグゾスパインMk2', en: 'Exospine Mk2' }, holder: 'ally' },
-  /**
-   * 射撃マニュアル（ミサトの S1。命中率▲のスタック。S2 の「射撃マニュアルのフルスタック状態の時のみ」の与える HP 回復量▲。
-   * plan/design-heal-amount-up.md 2.2 節）
-   */
+  /** 射撃マニュアル（ミサトの S1） */
   shootingManual: { name: { ja: '射撃マニュアル', en: 'Shooting Manual' }, holder: 'ally' },
-  /**
-   * 経験値（ギロチン：ウィンタースレイヤーの S2。攻撃力▲のスタック。100 スタック・持続。S1 の勇者レベルは 10 スタックごとに上がる。
-   * plan/design-guillotine-ws.md 2.2 節）
-   */
+  /** 経験値（ギロチン：ウィンタースレイヤーの S2） */
   exp: { name: { ja: '経験値', en: 'EXP' }, holder: 'ally' },
-  /**
-   * 生存本能 1（ベスティーの S2。バーストの使用 1 回目から。前の使用から 45 秒より後の使用で数え直す。攻撃力▲・45 秒。バーストの
-   * 「生存本能1」の追加ダメージ）
-   */
+  /** 生存本能1（ベスティーの S2） */
   survivalInstinct1: { name: { ja: '生存本能1', en: 'Survival Instinct 1' }, holder: 'ally' },
-  /** 生存本能 2（同。使用 2 回目から。クリティカルダメージ▲・45 秒） */
+  /** 生存本能2（ベスティーの S2） */
   survivalInstinct2: { name: { ja: '生存本能2', en: 'Survival Instinct 2' }, holder: 'ally' },
-  /** 生存本能 3（同。使用 3 回目から。クリティカル確率▲・45 秒） */
+  /** 生存本能3（ベスティーの S2） */
   survivalInstinct3: { name: { ja: '生存本能3', en: 'Survival Instinct 3' }, holder: 'ally' },
-  /** 証拠品収集（ノベルの S2。防御力▲のスタック。バーストの「証拠品収集のフルスタック状態なら」の受けるダメージ▲が見る） */
+  /** 証拠品収集（ノベルの S2） */
   collectEvidence: { name: { ja: '証拠品収集', en: 'Collecting Evidence' }, holder: 'ally' },
-  /** 眠い（プリムの宝物版 S1。敵の防御力▼のスタック。フルスタックが起きたのきっかけの条件） */
+  /** 眠い（プリムの宝物版の S1） */
   sleepy: { name: { ja: '眠い', en: 'Sleepy' }, holder: 'enemy' },
-  /** 起きた（プリムの宝物版 S1。通常攻撃を防御力無視ダメージに。S2・バーストの防御力無視ダメージ▲の条件） */
+  /** 起きた（プリムの宝物版の S1） */
   wakeUp: { name: { ja: '起きた', en: 'Wake Up' }, holder: 'ally' },
-  /**
-   * おばけの仮装（ベロータ：パンプキンウィッチの S1。フルバーストタイムの始まりに自分に 10 秒。単一攻撃の対象からの除外と被弾での解除は
-   * 前提の外なので中身なし。S2 の「自分がおばけの仮装状態なら」が見る）
-   */
+  /** おばけの仮装（ベロータ：パンプキンウィッチの S1）。単一攻撃の対象からの除外と被弾での解除は前提の外なので中身なし */
   ghostCostume: { name: { ja: 'おばけの仮装', en: 'Ghost Costume' }, holder: 'ally' },
-  /** おばけのイタズラ（ベロータ：パンプキンウィッチの S2。敵の受けるダメージ▲・10 秒） */
+  /** おばけのイタズラ（ベロータ：パンプキンウィッチの S2） */
   ghostlyPrank: { name: { ja: 'おばけのイタズラ', en: 'Ghostly Prank' }, holder: 'enemy' },
-  /** 予告状（ファントムの S1。敵の防御力▼・5 秒。付いていない時の命中で付き、S2 の追加ダメージの後に解除される） */
+  /** 予告状（ファントムの S1） */
   callingCard: { name: { ja: '予告状', en: 'Calling Card' }, holder: 'enemy' },
-  /** 怪盗の短剣（ファントムの S1。命中率▲・3 スタック・5 秒。フルスタックで S2 が発火し、スタックを外す） */
+  /** 怪盗の短剣（ファントムの S1） */
   thiefsDagger: { name: { ja: '怪盗の短剣', en: "Thief's Dagger" }, holder: 'ally' },
-  /**
-   * 怪盗の鑑定眼（ファントムの S2 の分配ダメージ▲のスタック。説明文に状態の名前が無いので、スロットの名前で呼ぶ。3 スタック・持続。
-   * バーストスキル使用時に解除する）
-   */
+  /** 怪盗の鑑定眼（ファントムの S2）。説明文に状態の名前が無いので、スロットの名前で呼ぶ */
   thiefsVision: { name: { ja: '怪盗の鑑定眼', en: "Thief's Vision" }, holder: 'ally' },
-  /**
-   * リフレッシュハート（ペッパーの S1。味方全体・5 スタック・15 秒。中身の受けるHP回復量▲は語彙に無いので書かず、間接の notes。
-   * バーストの「自分がリフレッシュハートのフルスタック状態なら」の回復が読む）
-   */
+  /** リフレッシュハート（ペッパーの S1）。中身の受けるHP回復量▲は語彙に無いので書かない */
   refreshHeart: { name: { ja: 'リフレッシュハート', en: 'Refresh Heart' }, holder: 'ally' },
-  /**
-  /**
-   * 咆哮（レオナの S1。通常攻撃 5 回ごとに味方全体に 1 スタック・5 スタック・5 秒。中身は会心率▲。バーストの「咆哮のフルスタック状態なら」が
-   * 見る。plan/design-leona.md 2.3 節）
-   */
+  /** 咆哮（レオナの S1） */
   roar: { name: { ja: '咆哮', en: 'Roar' }, holder: 'ally' },
-  /**
-   * メイド精神（ソーダの S1。通常攻撃 180 回ごとに自分に 1 スタック・5 スタック・10 秒・最大HP▲。S2 の「メイド精神のフルスタック状態なら」が
-   * 読む）
-   */
+  /** メイド精神（ソーダの S1） */
   maidSpirit: { name: { ja: 'メイド精神', en: 'Maid Spirit' }, holder: 'ally' },
-  /**
-   * 鬼の気（レムのバースト。自分に 10 秒・クリティカル確率▲。S1 の「自分が鬼の気状態なら、通常攻撃が N 回命中した時」の攻撃力▲が
-   * 読む）
-   */
+  /** 鬼の気（レムのバースト） */
   demonsBreath: { name: { ja: '鬼の気', en: "Demon's Breath" }, holder: 'ally' },
-  /**
-   * 傾く天秤（K の S1。最後の弾丸で自分にクリティカル確率▲のスタック・持続。フルバーストタイムの終わりに解除。S2 の「傾く天秤が付与された時」が
-   * 読む）
-   */
+  /** 傾く天秤（K の S1） */
   tiltedScale: { name: { ja: '傾く天秤', en: 'Tilted Scale' }, holder: 'ally' },
-  /** 正義の実現（K の S2。味方全体に最大装弾数▼・攻撃ダメージ▲・10 秒。フルバーストタイムの終わりに解除） */
+  /** 正義の実現（K の S2） */
   fulfillmentOfRighteousness: { name: { ja: '正義の実現', en: 'Fulfillment of Righteousness' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
