@@ -1,0 +1,46 @@
+{
+  "id": "1417",
+  "date": "2026-11-28",
+  "folder": "range",
+  "file": "20261128-1417_sakura-bis-team.mp4",
+  "original": "2026-11-28_17-35-32.mp4",
+  "durationSec": 203,
+  "frames": 12182,
+  "fps": 60,
+  "sizeMB": 246.4,
+  "sha256": "7f1862554fe1",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 284,
+      "name": "サクラ：ブルーム・イン・サマー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-28T17:49+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
