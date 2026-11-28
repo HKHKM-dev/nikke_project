@@ -1,0 +1,47 @@
+{
+  "id": "1452",
+  "date": "2026-11-29",
+  "folder": "range",
+  "file": "20261129-1452_sg_naga-zwei-asuka-tie.mp4",
+  "original": "2026-11-29_00-02-04.mp4",
+  "durationSec": 228.9,
+  "frames": 13736,
+  "fps": 60,
+  "sizeMB": 276.9,
+  "sha256": "bcbda67a0ed5",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 450,
+      "name": "ナガ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 390,
+      "name": "ツバイ",
+      "controlled": false,
+      "treasurePhase": 3
+    },
+    {
+      "slot": 3,
+      "rid": 830,
+      "name": "アスカ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0901 の撮影 B（ナガ 1 枠目・ツバイ 2 枠目・アスカ 3 枠目・操作。画面下のカードの位置で確かめた）",
+  "backup": {
+    "at": "2026-11-29T00:08+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
