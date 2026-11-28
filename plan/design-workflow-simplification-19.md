@@ -91,3 +91,4 @@
 - 2026-11-27: 起案した。
 - 2026-11-28: オーナーが 1・2 の案 A・3 を承認した。
 - 2026-11-28: 1・3 を実装した。Node の側は `scripts/defined-skills.ts` の `definedSkillIds`、画面は `support.json` の `defined` を読む。衝突の直しで index.json が戻らないよう、`data/skills/` に定義と `support.json` のほかが無いことをテストが見る。
+- 2026-11-28: 2 を案 A で実装した。遅れの表（landing.ts）は 408 行 → 337 行、状態の目録（states.ts）は 47KB → 28KB。動画のフレームからの換算は遅れの表の冒頭に 1 回だけ書いた。
