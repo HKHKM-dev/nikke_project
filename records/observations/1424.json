@@ -1,0 +1,305 @@
+[
+  {
+    "id": "1424-01",
+    "recording": "1424",
+    "kind": "timing",
+    "use": "record",
+    "value": [1297, 2499, 3678, 4879, 6059, 7260, 8439, 9641, 10820],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・24・0・24・0・25・0・25f"
+    },
+    "source": "V-0885",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1424-02",
+    "recording": "1424",
+    "kind": "timing",
+    "use": "record",
+    "value": [1327, 2528, 3707, 4908, 6088, 7289, 8469, 9670, 10850],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 6・0・25・0・24・0・24・0・24f"
+    },
+    "source": "V-0885",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1424-03",
+    "recording": "1424",
+    "kind": "timing",
+    "use": "record",
+    "value": [1356, 3736, 6117, 8497, 10879],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0885",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1424-04",
+    "recording": "1424",
+    "kind": "timing",
+    "use": "record",
+    "value": [1965, 4345, 6726, 9106, 11488],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0885",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1424-05",
+    "recording": "1424",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0885",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1424-06",
+    "recording": "1424",
+    "kind": "timing",
+    "use": "record",
+    "value": [2493, 3672, 4873, 6052, 7254, 8433, 9635, 10813],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0885",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1424-07",
+    "recording": "1424",
+    "kind": "timing",
+    "use": "record",
+    "value": [2522, 3701, 4902, 6081, 7283, 8462, 9663, 10843],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0885",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1424-08",
+    "recording": "1424",
+    "kind": "timing",
+    "use": "record",
+    "value": [3729, 6109, 8490, 10871],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0885",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1424-09",
+    "recording": "1424",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1066611,
+    "unit": "ダメージ",
+    "description": "レイヴン（S1 の持続ダメージ）の、フルバーストの外で、クルミのバーストの受けるダメージ▲とモリーのバーストの持続ダメージ▲が乗る間の 1 tick（会心なし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分を、モデルの tick の値に当てた（V-0859 の 1378-08〜10 と同じ読み方）",
+      "note": "30 回（f2550・f2609・f2727・f4929・f4988・f7308 ほか）。どれも 1,066,611。時間切れの回（I → II の替わり目 1424-01 の 2 回目など）と、フルバーストの前のクルミとモリーのバーストの後"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 4100,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0885",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1424-10",
+    "recording": "1424",
+    "kind": "hit",
+    "use": "compare",
+    "value": 820123,
+    "unit": "ダメージ",
+    "description": "レイヴン（S1 の持続ダメージ）の、クルミとモリーの▲が切れた後の 1 tick（会心なし。対照）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分を、モデルの tick の値に当てた（V-0859 の 1378-08〜10 と同じ読み方）",
+      "note": "60 回（f2195・f2253・f3138・f3197・f4398 ほか）。どれも 820,123。時間切れの回の後は、f3080 の 1,066,611 の次の f3138 から 820,123"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 3700,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0885",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1424-11",
+    "recording": "1424",
+    "kind": "hit",
+    "use": "compare",
+    "value": 53742,
+    "unit": "ダメージ",
+    "description": "クルミ（S1 のハッキング）の、フルバーストの外で、クルミのバーストの受けるダメージ▲とモリーのバーストの持続ダメージ▲が乗る間の 1 tick（会心なし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分を、モデルの tick の値に当てた（V-0859 の 1378-08〜10 と同じ読み方）",
+      "note": "27 回（f2585・f2643・f2701・f2760・f4909・f5026 ほか）。どれも 53,742"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "frame": 4100,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0885",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1424-12",
+    "recording": "1424",
+    "kind": "hit",
+    "use": "compare",
+    "value": 4277623,
+    "unit": "ダメージ",
+    "description": "レイヴン（S1 の持続ダメージ）の、2 回目のフルバーストの中（レイヴンのバーストの持続ダメージ▲・クルミの受けるダメージ▲・モリーの持続ダメージ▲）の 1 tick（会心なし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分を、モデルの tick の値に当てた（V-0859 の 1378-08〜10 と同じ読み方）",
+      "note": "26 回（f3810・f3927・f3986・f6188・f6247・f8568 ほか）。どれも 4,277,623"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 300,
+        "crit": false,
+        "fullBurst": 1
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0885",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1424-13",
+    "recording": "1424",
+    "kind": "hit",
+    "use": "record",
+    "value": [48785, 48785, 45521],
+    "unit": "ダメージ",
+    "description": "クルミ（S1 のハッキング）の 1 tick のうち、クルミの▲だけが乗る（モリーのバーストの前）2 回と、モリーの▲だけが乗る（クルミの▲が切れた後）1 回（会心なし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "f2526・f8438 の 48,785 は、I → II の替わり目（f2499・f8439）と II → III の替わり目（f2528・f8469。モリーのバースト）の間で、41,322 × 1.1806（クルミの受けるダメージ▲だけ）。次の tick（f2585 など）から 53,742。f10228 の 45,521 は 41,322 × 1.1016（モリーの▲だけ）で、クルミの▲の切れ目とモリーの▲の切れ目の間（モデルでは約 28f）。レイヴンの tick には、片方だけが乗る値（968,238・903,447）は出ない"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "dot"
+    },
+    "source": "V-0885",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1424-14",
+    "recording": "1424",
+    "kind": "count",
+    "use": "record",
+    "unit": "コマ",
+    "value": [5, 5],
+    "description": "モリー（枠 2）の体力の表示の右端に水色の帯（バリア。必死の抵抗）が見えたコマの数と、見たコマの数（f1000〜f11300）",
+    "method": {
+      "tool": "目視",
+      "note": "f1000・3000・6000・9000・11300 の画面下の顔のカードの体力の表示（1920×1080 の y 約 1010〜1060）を切り出して並べた。どのコマもモリーの帯の右端に水色の帯があり、クルミとレイヴンには無い。キロのナノコーティング（1270-14）と同じ見え方"
+    },
+    "scope": {
+      "slot": [2],
+      "source": "burst"
+    },
+    "source": "V-0885",
+    "readAt": "2026-11-28"
+  }
+]

@@ -14,7 +14,10 @@
           "assumes": {
             "ja": "必死の抵抗（自分へのバリア）は、中身なしの持続の状態とみなし、被弾でバリアの HP が尽きて切れる分は扱わない（要件 4.2 節）。家族はバリアなので、「バリア適用状態」を読む効果はモリーをバリア適用状態とみる。バリアの量はダメージに関係しない",
             "en": "Struggle (a shield on self) is taken as a continuous state without contents; running out from enemy hits is not modeled (requirements 4.2). It is in the barrier family, so effects reading the barrier state see Mori as shielded. The shield amount does not affect damage"
-          }
+          },
+          "claims": [
+            "C-1590"
+          ]
         }
       ],
       "notes": [
@@ -22,46 +25,47 @@
           "ja": "バーストを使った時、必死の抵抗状態でなければ自分に付く必死の抵抗は、被弾で必死の抵抗が切れたときだけ起きるので、被弾を扱わないモデルでは起きない（要件 4.2 節）",
           "en": "The Struggle applied on self on Burst use while not in Struggle happens only after hits have broken Struggle, so it never happens in the model, which has no damage taken (requirements 4.2)",
           "kind": "outOfScope",
-          "reads": ["barrier"],
+          "reads": [
+            "barrier"
+          ],
           "effect": {
             "kind": "state",
             "target": "self",
             "trigger": "burstUse"
-          }
+          },
+          "claims": [
+            "C-1590"
+          ]
         },
         {
           "ja": "必死の抵抗が終了した時の自分の最大HP▲（5 スタック・持続）は、被弾で必死の抵抗が切れたときだけ起きるので、被弾を扱わないモデルでは起きない（要件 4.2 節）。起きても、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
           "en": "The Max HP up on self when Struggle ends (5 stacks, continuous) happens only after hits have broken Struggle, so it never happens in the model, which has no damage taken (requirements 4.2). Even then it would not change damage by itself (it matters only with an effect reading HP in the team)",
           "kind": "outOfScope",
-          "reads": ["barrier"],
+          "reads": [
+            "barrier"
+          ],
           "effect": {
             "kind": "timed",
             "stat": "maxHp",
             "target": "self",
             "trigger": "damaged"
-          }
+          },
+          "claims": [
+            "C-1590"
+          ]
         }
       ]
     },
     "skill2": {
-      "effects": [
-        {
-          "kind": "burstGaugeHit",
-          "trigger": {
-            "count": "normalHit",
-            "everyRef": 1
-          },
-          "assumes": {
-            "ja": "「自分が必死の抵抗状態なら」は、被弾が無ければ必死の抵抗が切れないので、いつも満たす。通常攻撃の命中（期待値）を戦闘を通して数え、60 回ごとに対象（敵 1 体）へ挑発を付け、付けるたびに射手の 1 ヒットぶん（target_burst_energy_pershot）のゲージを、命中した発のフレームに 1 回溜める（敵 1〜3 機に付ける挑発が付けたときに溜める形。C-0422・C-0480）",
-            "en": "\"If in Struggle\" always holds, since Struggle never breaks without damage taken. Normal-attack hits (expected) are counted through the battle; every 60 hits the target (one enemy) is taunted, and each taunt charges the shooter's per-hit gauge (target_burst_energy_pershot) once on the frame of that hit (the form where a taunt on 1-3 enemies charges when applied; C-0422, C-0480)"
-          }
-        }
-      ],
+      "effects": [],
       "notes": [
         {
-          "ja": "通常攻撃が 60 回命中した時の対象への挑発（4 秒）そのものはダメージに関係しない（ゲージは effects[0]）",
-          "en": "The taunt itself (4 s) on the target after 60 normal-attack hits does not affect damage (the gauge is effects[0])",
-          "kind": "noDamage"
+          "ja": "通常攻撃が 60 回命中した時の、必死の抵抗状態なら対象に付く挑発（4 秒）は、ダメージに関係せず、付けたときにもバーストゲージを溜めない",
+          "en": "The taunt (4 s) on the target after 60 normal-attack hits while in Struggle does not affect damage and does not charge the burst gauge when applied",
+          "kind": "noDamage",
+          "claims": [
+            "C-1589"
+          ]
         },
         {
           "ja": "味方（自分を含む）がパーツを破壊した時の、味方全体への持続ダメージ▲（5 スタック・15 秒）と、攻撃力が最も高い敵 1 機への持続ダメージ（1 秒間隔・15 秒）は、射撃場の敵にパーツが無いので起きない",
@@ -73,7 +77,9 @@
             "target": "allies",
             "trigger": "unknown"
           },
-          "claims": ["C-0443"]
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     },
@@ -89,7 +95,10 @@
           "assumes": {
             "ja": "持続ダメージ▲は、味方全体の持続ダメージの tick に効く（ほかの持続ダメージ▲と同じ和に足す）",
             "en": "Sustained Damage up affects all allies' damage-over-time ticks (added to the same sum as other Sustained Damage ups)"
-          }
+          },
+          "claims": [
+            "C-1588"
+          ]
         }
       ],
       "notes": [
@@ -97,24 +106,34 @@
           "ja": "必死の抵抗状態の時の、自分のバリアの HP の回復は、被弾で減ったバリアを戻して必死の抵抗を保つだけで、被弾を扱わないモデルでは何も変えない（要件 4.2 節）",
           "en": "The shield HP restore on self while in Struggle only refills a shield worn down by hits to keep Struggle, so it changes nothing in the model, which has no damage taken (requirements 4.2)",
           "kind": "outOfScope",
-          "reads": ["barrier"],
+          "reads": [
+            "barrier"
+          ],
           "effect": {
             "kind": "heal",
             "target": "self",
             "trigger": "burstUse"
-          }
+          },
+          "claims": [
+            "C-1590"
+          ]
         },
         {
           "ja": "必死の抵抗状態でなければ自分に付く最大HP▲（10 秒）は、被弾で必死の抵抗が切れたときだけ起きるので、被弾を扱わないモデルでは起きない（要件 4.2 節）",
           "en": "The Max HP up on self (10 s) while not in Struggle happens only after hits have broken Struggle, so it never happens in the model, which has no damage taken (requirements 4.2)",
           "kind": "outOfScope",
-          "reads": ["barrier"],
+          "reads": [
+            "barrier"
+          ],
           "effect": {
             "kind": "timed",
             "stat": "maxHp",
             "target": "self",
             "trigger": "burstUse"
-          }
+          },
+          "claims": [
+            "C-1590"
+          ]
         }
       ]
     }
