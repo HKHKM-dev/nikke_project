@@ -5,9 +5,9 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`1300-15`・`1300-18`・`1301-15`・`1301-18`。V-0824",
-  "model": "反映（data/skills/102.json の burst の effects[0]（weaponChange・burstUse・chargeTimeSeconds 2・fullChargeDamage 300・maxAmmoRef 2・pierce・firstShotDelayFrames 119）。持ち替えの直前に基礎の SR を撃った回の遅れ（1300-19・1301-19）は未対応（burst の notes））",
+  "model": "反映（data/skills/102.json の burst の effects[0]（weaponChange・burstUse・chargeTimeSeconds 2・fullChargeDamage 300・maxAmmoRef 2・pierce・firstShotAfterSwapFrames 119・aimedSwapNoAimOut・swapAtActivation）。持ち替えの時の基礎の SR の状態による違いは C-1598）",
   "replaces": [],
-  "updated": "2026-11-21",
+  "updated": "2026-11-28",
   "subject": {
     "places": ["data/skills/102.json の burst の effects[0]"]
   },
@@ -23,14 +23,6 @@
       "decided": "1",
       "reproduced": "2,3,4",
       "observations": ["1300-18"]
-    }
-  ],
-  "minimal": [
-    {
-      "observations": ["1300-18", "1301-18"],
-      "element": "マクスウェル burst.notes[0]",
-      "reason": "この観測値の回は、持ち替えの時に基礎の SR の構え解除が終わっていたか、残りが 2f（1300 の 6 回目。137f で許容の中）。notes[0] の遅れがはっきり出た回は別の観測値（1300-19・1301-19。記録）に分けた（C-1567）",
-      "decided": "2026-11-28"
     }
   ]
 }

@@ -515,7 +515,8 @@ function startNextCharge(
  * 基礎の武器から持ち替えるフレーム swap に、武器が空くフレーム（plan/design-red-hood.md 7.1 節の論点 13。C-0897・C-1566）。
  * 構え解除（最後の発 lastShot から aimOutFrames）は、チャージ武器なら毎発の後、チャージの無い武器ならマガジンの最後の発の後
  * （リロードに入る）にだけある。構え解除の途中なら構え解除の終わり、そうでなくリロード中なら swap、構えたまま（チャージの途中・
- * チャージの無い武器の撃っている途中・まだ撃っていない射手）なら構え解除 1 回分の後
+ * チャージの無い武器の撃っている途中・まだ撃っていない射手）なら構え解除 1 回分の後。aimedNoAimOut なら、構えたままでも swap
+ * （WeaponChangeEffect.aimedSwapNoAimOut。C-1598）
  */
 export function weaponFreeFrameAtSwap(
   state: ShooterState,
@@ -523,11 +524,12 @@ export function weaponFreeFrameAtSwap(
   swap: number,
   model: Pick<WeaponModel, 'aimOutFrames'>,
   chargeWeapon: boolean,
+  aimedNoAimOut = false,
 ): number {
   const reloading = state.phase === 'reloading';
   const aimOutEnd = lastShot === undefined || !(chargeWeapon || reloading) ? -Infinity : lastShot + model.aimOutFrames;
   if (aimOutEnd > swap) return aimOutEnd;
-  return reloading ? swap : swap + model.aimOutFrames;
+  return reloading || aimedNoAimOut ? swap : swap + model.aimOutFrames;
 }
 
 /**
