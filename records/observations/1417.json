@@ -158,5 +158,136 @@
     },
     "source": "V-0884",
     "readAt": "2026-11-28"
+  },
+  {
+    "id": "1417-06",
+    "recording": "1417",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 24583,
+    "description": "サクラ：ブルーム・イン・サマーの胴体・会心なし・距離ボーナスありの 1 ヒット（戦闘開始から 5 秒。花の舞の攻撃ダメージ▲あり（戦闘開始時の強制使用））",
+    "method": {
+      "tool": "hud.ts --mode jumps の増分",
+      "note": "戦闘開始（最初の桜かんむりの tick のフレーム）からその秒の前後のサクラの発の増分。どの回も同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0884",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1417-07",
+    "recording": "1417",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 21258,
+    "description": "サクラ：ブルーム・イン・サマーの胴体・会心なし・距離ボーナスありの 1 ヒット（戦闘開始から 20 秒。花の舞の攻撃ダメージ▲なし（15 秒で切れ、クールタイム 20 秒なら付いている時刻））",
+    "method": {
+      "tool": "hud.ts --mode jumps の増分",
+      "note": "戦闘開始（最初の桜かんむりの tick のフレーム）からその秒の前後のサクラの発の増分。どの回も同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1200,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0884",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1417-08",
+    "recording": "1417",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 18910,
+    "description": "サクラ：ブルーム・イン・サマーの胴体・会心なし・距離ボーナスなしの 1 ヒット（戦闘開始から 35 秒。花の舞の攻撃ダメージ▲あり（30 秒の発動））",
+    "method": {
+      "tool": "hud.ts --mode jumps の増分",
+      "note": "戦闘開始（最初の桜かんむりの tick のフレーム）からその秒の前後のサクラの発の増分。どの回も同じ値（1 回目のジャンプの後で、距離ボーナスが付かない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0884",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1417-09",
+    "recording": "1417",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [0, 88, 147, 205, 264, 323, 382, 441],
+    "description": "戦闘開始（最初の桜かんむりの tick）から、1 回目の S2（戦闘開始時の強制使用）の桜かんむりの頭の 8 tick までの動画のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps の増分",
+      "note": "354,642 か 531,963 の増分。147f の tick はココアの発と同じ増分に合わさる（699,238 = 354,642 + 344,596）。9 tick 目からは動画が 1〜3f 遅れていく（1419 は遅れない）ので比べない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "dot",
+        "skill": "skill2",
+        "count": 8
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0884",
+    "readAt": "2026-11-28"
   }
 ]
