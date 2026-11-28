@@ -15,6 +15,7 @@ import {
   mergeClaimUpdate,
   nextId,
   parseJudgment,
+  unchangedButUpdated,
   updatedClaim,
   RESULTS_MARKERS,
   verificationFileName,
@@ -475,6 +476,26 @@ describe('records:new claim --update の欄', () => {
     expect(raised.reasons).toEqual([KEPT_HYPOTHESIS_REASON]);
     expect(keepHypothesis('確定', rewrite(true, '反復実測')).file.state).toBe('確定');
     expect(keepHypothesis('仮説', outside)).toBe(outside);
+  });
+
+  // records:new observation --invalidate --by で、setup の参照を付け替えた比べを根拠にしている結論は、更新日のほかに変わらなければ書かない
+  it('unchangedButUpdated skips a claim that differs only in the update date, in any key order', () => {
+    const { updated: _u, ...rest } = existing;
+    const reordered = { updated: '2026-11-28', ...rest } as ClaimFile;
+    expect(unchangedButUpdated(existing, reordered)).toBe(true);
+    expect(unchangedButUpdated(existing, existing)).toBe(true);
+    expect(unchangedButUpdated(existing, { ...existing, updated: '2026-11-28', state: '確定' })).toBe(false);
+    expect(unchangedButUpdated(existing, { ...existing, updated: '2026-11-28', grade: '反復実測' })).toBe(false);
+    expect(
+      unchangedButUpdated(existing, {
+        ...existing,
+        minimal: [{ ...existing.minimal![0]!, decided: '2026-11-28' }],
+      }),
+    ).toBe(false);
+    // 書き出す JSON で比べる: 値が undefined の欄は無い欄と同じ。欄が消えたものは変わったとみる
+    expect(unchangedButUpdated(existing, { ...existing, updated: '2026-11-28', judgment: undefined })).toBe(true);
+    const { decidedOn: _d, ...withoutDecided } = existing;
+    expect(unchangedButUpdated(existing, withoutDecided as ClaimFile)).toBe(false);
   });
 });
 

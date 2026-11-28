@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 20,
-  "text": "計算の変更で、テストが通っていない道: (1) 即着弾の使用武器の変更で、`coreHit` の回数のきっかけを変更後の武器の行のコア命中率で数えること（`skills/parse/crossChecks.ts` の検査を消した代わり。`frame/landing.ts` の `weaponChangeHitRateWith`）。(2) オート射撃を手で ON に戻したときの構えの短縮で、使用武器の変更の間と、バーストの発動の止まりの中で ON にした場合（`frame/firstPass/shooters.ts`）。(3) MG の回転をリロードの後も保つ形で、ハイド中のリロード・立ち上げ速度▲が付いている間・`rateOfFireResetTime <= 0`（`frame/shooter.ts`）。(4) 弾丸チャージに `during: 'fullBurst'` と reset を書いた場合の読み込み。(5) 分かれたバーストのヒットが同じフレームに重なる場合の 1 パス目（`frame/firstPass/frameEvents.ts`）。(6) 確率・付け直しの持続ダメージの専用の道（`frame/plan.ts`）が見ない欄（hitOnApply・cancels・maxStacks など）を、読み込みの拒否のほかに検査かテストで守る。(7) `records:new --invalidate --by` で、変わらない結論を書かずに飛ばす道（`packages/core/scripts/records-new.ts`）。パスは `packages/core/src/` から"
-}

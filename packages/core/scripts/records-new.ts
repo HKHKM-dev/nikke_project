@@ -49,7 +49,6 @@
 // verification・claim（--update と --dry-run を除く）・backlog は、作ったファイルだけを commit して git push -u origin HEAD する（番号を
 //   ほかのブランチから見えるようにする。reserve.ts）。--no-push でしない。
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { isDeepStrictEqual } from 'node:util';
 import { backlogPlacement, parseBacklogTemplate, validateBacklog, type BacklogFile } from '../src/records/backlog.ts';
 import {
   CLAIM_MECHANISMS,
@@ -79,6 +78,7 @@ import {
   keptClaimGrade,
   mergeClaimUpdate,
   nextId,
+  unchangedButUpdated,
   parseJudgment,
   updatedClaim,
   verificationFileName,
@@ -683,7 +683,7 @@ if (kind === 'verification') {
       );
       const kept = keepHypothesis(c.state, result);
       // 入力を付け替えた比べを根拠にしている結論は、更新日のほかに変わらなければ書かない（根拠の文は変えていない）
-      if (reinput.has(cid) && isDeepStrictEqual({ ...kept.file, updated: c.updated }, c)) {
+      if (reinput.has(cid) && unchangedButUpdated(c, kept.file)) {
         console.log(`入力を付け替えた比べを根拠にしている結論 ${cid}: 出し直しても変わらない`);
         continue;
       }

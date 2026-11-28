@@ -55,26 +55,34 @@ describe('manual auto-fire ON (holdFire end, C-1550, C-1564)', () => {
     expect(firstShotAfter(70, hold, events) - hold.end).toBe(windowEndFirstShotFrames(characterOf(70).shot));
   });
 
-  // C-1562: ジャンプの窓の中で ON にした枠は、オート射撃を ON のままにしていたときと同じく窓の明けから撃ち、
-  // 窓の明けの後に ON にした枠は ON から C-1550 の長さで撃つ（エード：エージェントバニー。1094・1229）
-  describe('with a jump window (C-1562)', () => {
-    const rid = 315;
+  // C-1562・C-1565: ジャンプの窓の中で ON にした枠は、武器種によらず、オート射撃を ON のままにしていたときと同じく窓の明けから撃ち、
+  // 窓の明けの後に ON にした枠は ON から C-1550・C-1564 の長さで撃つ
+  // （SR はエード：エージェントバニー。1094・1229。SMG・SG は I-DOLL・オーシャン、ノワール。1404〜1406）
+  describe.each([
+    ['SR (エード：エージェントバニー, C-1562)', 315, 63],
+    ['SMG (I-DOLL・オーシャン, C-1565)', 305, 5],
+    ['SG (ノワール, C-1565)', 271, 5],
+  ])('with a jump window, %s', (_, rid, afterOn) => {
     const windowEnd = 400;
     const events: EnemyEvent[] = [
       { kind: 'untargetable', start: framesToGameSeconds(windowEnd - 118), end: framesToGameSeconds(windowEnd) },
     ];
 
-    it('fires on the same frame as with auto-fire left on when turned on inside the window', () => {
-      const shot = firstShotAfter(rid, { start: 0, end: windowEnd - 62 }, events);
-      // オート射撃を ON のままにしていた枠（holdFire の区間を戦闘の始まりの 1 フレームだけにする）の、窓の明けの後の最初の発
-      const autoOn = firstShotAfter(rid, { start: 0, end: 1 }, events, windowEnd);
-      expect(shot).toBe(autoOn);
-      expect(shot - windowEnd).toBe(windowEndFirstShotFrames(characterOf(rid).shot));
-    });
+    // C-1565 の ON の時刻（敵が浮く 10f 前〜浮いた 40f 後）の両端と、C-1562 の SR の時刻
+    it.each([windowEnd - 118 + 1, windowEnd - 62, windowEnd - 118 + 40])(
+      'fires on the same frame as with auto-fire left on when turned on inside the window (on at %i)',
+      (on) => {
+        const shot = firstShotAfter(rid, { start: 0, end: on }, events);
+        // オート射撃を ON のままにしていた枠（holdFire の区間を戦闘の始まりの 1 フレームだけにする）の、窓の明けの後の最初の発
+        const autoOn = firstShotAfter(rid, { start: 0, end: 1 }, events, windowEnd);
+        expect(shot).toBe(autoOn);
+        expect(shot - windowEnd).toBe(windowEndFirstShotFrames(characterOf(rid).shot));
+      },
+    );
 
     it('fires as C-1550 when turned on after the window end', () => {
       const on = windowEnd + 18;
-      expect(firstShotAfter(rid, { start: 0, end: on }, events) - on).toBe(63);
+      expect(firstShotAfter(rid, { start: 0, end: on }, events) - on).toBe(afterOn);
     });
   });
 });
