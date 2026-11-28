@@ -1,0 +1,56 @@
+[
+  {
+    "id": "1422-01",
+    "recording": "1422",
+    "kind": "count",
+    "use": "compare",
+    "value": 250,
+    "unit": "ヒット",
+    "description": "モリー（AR・操作・AUTO 射撃 ON）単騎で、戦闘の最初のヒットから数えて、1 回目に BURST バーが消えた（本当の満タン）ヒットの番号",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode events",
+      "note": "最初のヒットは f810。バーが消えたのは f2348 で、そのフレームのヒットが 250 番目（113px の満タンは f2216 = 239 番目）。増分は 250 個とも 1 ヒットの格子の 4 つの値（14,170・19,620・25,070・30,520）で、読めないフレームを挟んだ増分は無い。マガジンは 1〜60・61〜120・121〜179（3 マガジン目の 1 発は増分が無く、外れた）・180〜239・240 番目から。外れた発は数えない（総ダメージが増えない）。250 × 4,000 = 1,000,000 で、通常攻撃のほかのゲージは入っていない。gauge.ts の溜め始め・満タン（最初のヒットより前）は戦闘の前の表示なので数えない"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge",
+      "frames": [810, 2348]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0885",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1422-02",
+    "recording": "1422",
+    "kind": "gauge",
+    "use": "record",
+    "value": 0,
+    "unit": "px",
+    "description": "モリー単騎で、60 回目と 120 回目のヒット（マガジンの最後の発）の後のリロードの間の BURST バーの伸び（端数つきの px）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series --subpixel・hud.ts --mode jumps",
+      "note": "リロードの間（ヒットの無い約 80f）の最小と最大: 60 回目の後 14.97〜15.00・120 回目の後 47.98〜48.00。4,000 は約 0.55px（同じ録画のマガジン 1 つぶん 60 ヒットで 33px）。モランの挑発（C-0480）のような、最後の発の数 f 後の段差は無い。180・240 回目はマガジンの最初の発（3 マガジン目の 1 発が外れた）で、その発の伸びは 1 発ずつ読めない。左下のスキルの帯は出ない。HUD の上のバリアのバーは、バーが消えるまで残る（画で確かめた。戦闘の始めの前後に被弾の赤い画面が 1 回ある）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    },
+    "source": "V-0885",
+    "readAt": "2026-11-28"
+  }
+]
