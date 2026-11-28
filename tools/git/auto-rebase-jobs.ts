@@ -99,7 +99,7 @@ export type PushDeps = {
   targets: ReadonlySet<number>;
   pull: (n: number) => Promise<Pull>;
   /** PR の題名と本文を書き換える */
-  editPull: (n: number, fields: { title: string; body: string }) => Promise<void>;
+  editPull: (n: number, fields: { title: string; body: string }) => Promise<unknown>;
   /** 同じ head に同じ印のコメントが無ければ書く */
   comment: (n: number, kind: MarkKind, sha: string, body: string) => Promise<void>;
   /** 鍵で git を回す準備（初めて push する時に呼ぶ。鍵が無いか main を取れなければ投げる） */

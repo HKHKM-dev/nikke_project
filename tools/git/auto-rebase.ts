@@ -243,7 +243,7 @@ async function prepare(dir: string): Promise<void> {
     // main の先頭（pr:prep が取り込んだもの）からの commit だけを入れる。--push は main を取ってから取り込む
     bundle: (n) => git(bundleArgs(join(dir, prepBundle(n)))),
     cleanUp,
-    log: (line) => console.log(line),
+    log: console.log,
   });
   writeFileSync(join(dir, PREP_MANIFEST), `${JSON.stringify(entries, null, 2)}\n`);
   // push とコメントのするものが無ければ、push のジョブを立ち上げない
@@ -282,15 +282,13 @@ async function push(dir: string): Promise<void> {
     repo: repo!,
     targets: new Set(targetNumbers()),
     pull,
-    editPull: async (n, fields) => {
-      await api(`/pulls/${n}`, { method: 'PATCH', body: fields });
-    },
+    editPull: (n, fields) => api(`/pulls/${n}`, { method: 'PATCH', body: fields }),
     comment,
     withKey,
     bundlePath: (n) => join(dir, prepBundle(n)),
     idReplacer,
     sleep,
-    log: (line) => console.log(line),
+    log: console.log,
   });
   console.log(errors > 0 ? `失敗が ${errors} 件（上の注釈）` : '終わった');
   if (errors > 0) process.exitCode = 1;

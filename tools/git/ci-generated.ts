@@ -61,7 +61,7 @@ if (values.commit === undefined) {
 
 if (!onMain) throw new Error('--commit は main への push の CI でだけ回す');
 try {
-  restoreGenerated(values.commit, ROOT, GENERATED_PATHS);
+  console.log(`artifact から戻した生成物: ${restoreGenerated(values.commit, ROOT, GENERATED_PATHS).length} 件`);
   console.log(
     commitGenerated({
       generated: changedFiles().generated,

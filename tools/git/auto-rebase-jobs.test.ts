@@ -2,22 +2,29 @@
 // 呼んだものの列を見る
 import { describe, expect, it } from 'vitest';
 import { type FixOutcome, prepareEntries, type PushDeps, pushEntries } from './auto-rebase-jobs.ts';
-import { type GitRun, mark, type PrepEntry, type PrepPull, type Pull } from './auto-rebase-lib.ts';
+import { type GitRun, mark, type PrepEntry, prepPull, type PrepPull, type Pull } from './auto-rebase-lib.ts';
 
 const REPO = 'owner/repo';
 const sha = (c: string) => c.repeat(40);
-const prepPull = (number: number, over: Partial<PrepPull> = {}): PrepPull => ({
+/** API が返す PR（head の sha は番号の数字を並べたもの） */
+const apiPull = (number: number, over: Partial<Pull> = {}): Pull => ({
   number,
   state: 'open',
-  title: `PR ${number}`,
+  title: `V-0001 の検証 #${number}`,
+  body: '本文の V-0001',
   mergeable: false,
-  auto_merge: true,
-  head: { ref: `claude/b${number}`, sha: sha(String(number % 10)), repo: { full_name: REPO } },
+  auto_merge: { merge_method: 'squash' },
+  head: { ref: `claude/b${number}`, sha: sha(String(number)), repo: { full_name: REPO } },
   ...over,
 });
+/** --find が --prepare に渡す形 */
+const found = (number: number, over: Partial<Pull> = {}): PrepPull => prepPull(apiPull(number, over));
 
 describe('prepareEntries', () => {
-  function run(prs: PrepPull[], o: { origin?: Record<string, string | null>; fix?: Record<number, FixOutcome> } = {}) {
+  function run(
+    prs: PrepPull[],
+    o: { origin?: Record<string, string | null>; fix?: Record<number, FixOutcome | Error> } = {},
+  ) {
     const calls: string[] = [];
     const result = prepareEntries(prs, {
       repo: REPO,
@@ -28,8 +35,8 @@ describe('prepareEntries', () => {
       },
       fix: (pr) => {
         calls.push(`fix #${pr.number}`);
-        const out = o.fix?.[pr.number];
-        if (out === undefined) throw new Error('fatal: 道具が落ちた');
+        const out = o.fix?.[pr.number] ?? new Error('fatal: 道具が落ちた');
+        if (out instanceof Error) throw out;
         return out;
       },
       bundle: (n) => calls.push(`bundle #${n}`),
@@ -40,7 +47,7 @@ describe('prepareEntries', () => {
   }
 
   it('fixes each PR, bundles the ready ones and cleans up after every PR', () => {
-    const { entries, failures, calls } = run([prepPull(1), prepPull(2)], {
+    const { entries, failures, calls } = run([found(1), found(2)], {
       fix: {
         1: { kind: 'ready', head: sha('e'), renumbered: [{ from: 'V-0001', to: 'V-0009' }] },
         2: { kind: 'skip' },
@@ -53,20 +60,20 @@ describe('prepareEntries', () => {
     expect(failures).toBe(0);
   });
   it('skips a PR whose branch moved on origin, without fixing it', () => {
-    const { entries, calls } = run([prepPull(1)], { origin: { 'claude/b1': sha('f') } });
+    const { entries, calls } = run([found(1)], { origin: { 'claude/b1': sha('f') } });
     expect(calls).toEqual(['head claude/b1', 'clean']);
     expect(entries).toEqual([]);
   });
   it('skips PRs that are not targets without touching git', () => {
     const { entries, calls } = run([
-      prepPull(1, { auto_merge: null }),
-      prepPull(2, { head: { ref: 'feature/x', sha: sha('2'), repo: { full_name: REPO } } }),
+      found(1, { auto_merge: null }),
+      found(2, { head: { ref: 'feature/x', sha: sha('2'), repo: { full_name: REPO } } }),
     ]);
     expect(calls).toEqual([]);
     expect(entries).toEqual([]);
   });
   it('lists failures for a comment, but not the transient ones', () => {
-    const { entries, failures } = run([prepPull(1), prepPull(2), prepPull(3), prepPull(4)], {
+    const { entries, failures } = run([found(1), found(2), found(3), found(4)], {
       origin: { 'claude/b4': null },
       fix: {
         1: { kind: 'failed', reason: 'r', output: 'o' },
@@ -81,16 +88,8 @@ describe('prepareEntries', () => {
     expect(failures).toBe(4);
   });
   it('treats a thrown network error as transient', () => {
-    const prs = [prepPull(1)];
-    const { entries, failures } = prepareEntries(prs, {
-      repo: REPO,
-      originHead: () => prs[0]!.head.sha,
-      fix: () => {
-        throw new Error('fatal: unable to access: Could not resolve host: github.com');
-      },
-      bundle: () => {},
-      cleanUp: () => {},
-      log: () => {},
+    const { entries, failures } = run([found(1)], {
+      fix: { 1: new Error('fatal: unable to access: Could not resolve host: github.com') },
     });
     expect(entries).toEqual([]);
     expect(failures).toBe(1);
@@ -110,27 +109,16 @@ describe('pushEntries', () => {
     kind: 'failed',
     reason: 'r',
   });
-  const apiPull = (number: number, over: Partial<Pull> = {}): Pull => ({
-    number,
-    state: 'open',
-    title: `V-0001 の検証 #${number}`,
-    body: '本文の V-0001',
-    mergeable: false,
-    auto_merge: { merge_method: 'squash' },
-    head: { ref: `claude/b${number}`, sha: sha(String(number)), repo: { full_name: REPO } },
-    ...over,
-  });
   const HEAD = sha('e');
 
-  /** 偽物の依存。gitRun は push の結果（status と出力）だけを決める */
+  /** 偽物の依存。pulls は呼ぶたびに先頭から返す（最後の 1 件は残す）。gitRun は push の結果（status と出力）だけを決める */
   function deps(o: {
     targets: number[];
-    pulls?: Record<number, Pull | Pull[]>;
+    pulls?: Record<number, Pull[]>;
     push?: { status: number; output: string };
     withKeyFails?: boolean;
   }) {
     const calls: string[] = [];
-    const counts: Record<number, number> = {};
     const gitRun: GitRun = (args) => {
       if (args[0] === 'push') {
         calls.push(`push ${args.at(-1)}`);
@@ -143,11 +131,9 @@ describe('pushEntries', () => {
       repo: REPO,
       targets: new Set(o.targets),
       pull: async (n) => {
-        const got = o.pulls?.[n] ?? apiPull(n);
-        const list = Array.isArray(got) ? got : [got];
-        const i = counts[n] ?? 0;
-        counts[n] = i + 1;
-        return list[Math.min(i, list.length - 1)]!;
+        const list = o.pulls?.[n];
+        if (!list) return apiPull(n);
+        return list.length > 1 ? list.shift()! : list[0]!;
       },
       editPull: async (n, fields) => {
         calls.push(`edit #${n} ${fields.title} / ${fields.body}`);
@@ -190,9 +176,9 @@ describe('pushEntries', () => {
     const { d, calls } = deps({
       targets: [1, 2, 3],
       pulls: {
-        1: apiPull(1, { head: { ref: 'claude/b1', sha: sha('f'), repo: { full_name: REPO } } }),
-        2: apiPull(2, { auto_merge: null }),
-        3: apiPull(3, { head: { ref: 'claude/b3', sha: sha('f'), repo: { full_name: REPO } } }),
+        1: [apiPull(1, { head: { ref: 'claude/b1', sha: sha('f'), repo: { full_name: REPO } } })],
+        2: [apiPull(2, { auto_merge: null })],
+        3: [apiPull(3, { head: { ref: 'claude/b3', sha: sha('f'), repo: { full_name: REPO } } })],
       },
     });
     expect(await pushEntries([readyEntry(1), readyEntry(2), failedEntry(3)], d)).toBe(0);

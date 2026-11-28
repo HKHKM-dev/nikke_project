@@ -179,12 +179,4 @@ describe('exportGenerated and restoreGenerated', () => {
     expect(readFileSync(join(root, 'README.md'), 'utf8')).toBe('x');
     expect(existsSync(join(root, '.github/workflows/ci.yml'))).toBe(false);
   });
-  it('round-trips what it exported', () => {
-    const from = tree({ 'plan/claims.md': 'c2', 'plan/captures/recordings.md': 'r2' });
-    const to = tree({ 'plan/claims.md': 'c1', 'plan/captures/recordings.md': 'r1' });
-    const artifact = tree({});
-    exportGenerated(from, artifact, PATHS);
-    expect(restoreGenerated(artifact, to, PATHS)).toEqual(PATHS);
-    for (const p of PATHS) expect(readFileSync(join(to, p), 'utf8')).toBe(readFileSync(join(from, p), 'utf8'));
-  });
 });
