@@ -218,8 +218,10 @@ export function isEffectTarget(
     case 'lowestHp':
     case 'topDefense': {
       const rank = context?.targetRank;
-      // 閾値のある回復は、閾値で絞った文脈の並びが要る（閾値を見ずに掛けない）
-      if (rank === undefined) return effect.targetHpAtMost === undefined && weaponOk;
+      // 文脈の無い呼び出しは、枠の想定の順（fixedTargets）で決まる lowestHpRatio だけ掛ける。HP の値と最終防御力の順位は発火の時の
+      // 値でしか決まらず、閾値のある回復は閾値で絞った並びが要るので、どちらも掛けない
+      if (rank === undefined)
+        return effect.target === 'lowestHpRatio' && effect.targetHpAtMost === undefined && weaponOk;
       return (
         matchesTargetFilter(effect, targetSlot) && rank.slice(0, effect.targetCount ?? 1).includes(targetSlotIndex)
       );

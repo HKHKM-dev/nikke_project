@@ -176,7 +176,8 @@ function fullCharacter(c: CompositionCharacter, index: number): Required<Composi
 
 /**
  * 編成で決まる対象の枠（順位の順）。編成で決まる対象かは skills/targets.ts の needsFixedTargets で見る。heal が持つのは、両隣と
- * 基本バースト段階と lowestHpRatio だけ。
+ * 基本バースト段階と allies の excludeSelf と、heal にだけ書ける対象（HEAL_ONLY_TARGETS。空でない全部の枠。lowestHpRatio は HP の割合の
+ * 想定の順、lowestHp・topDefense は枠の順で、並びは発火の時に skills/holders/views.ts の rankContext が決める）だけ。
  * targetSquad = 部隊が自分と同じ枠（自分を含む。枠の順）、targetCharacter = resourceId がそれの枠（「自分の王」。いなければ空。
  * plan/design-chime.md 2.1 節）、
  * longestChargeTime = 基本チャージ時間（CharacterData.shot.chargeTime）の長い順（同値は枠の若い順。仮定）。
