@@ -59,7 +59,10 @@
           "assumes": {
             "ja": "残りHP の値が最も高い敵 1 機は敵 1 体で 1 ヒット",
             "en": "The single enemy with the highest remaining HP is the lone enemy, hit once"
-          }
+          },
+          "claims": [
+            "C-1616"
+          ]
         }
       ],
       "notes": [

@@ -25,13 +25,13 @@
   ],
   "target": {
     "name": "BigArms",
-    "element": "Fire"
+    "element": "Electric"
   },
   "mode": "range-3min",
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "V-0891。I-DOLL・フラワー（1 枠目・AI）+ アニス（3 枠目・操作）。オート射撃 ON・オートバースト ON。戦闘の終わりに戦闘履歴のパネルで枠順とキャラ名を確かめた",
+  "conditionNote": "V-0891。敵は電撃タブ（依頼は灼熱。出撃画面で確かめた）。I-DOLL・フラワー（1 枠目・AI）+ アニス（3 枠目・操作）。オート射撃 ON・オートバースト ON。戦闘の終わりに戦闘履歴のパネルで枠順とキャラ名を確かめた",
   "backup": {
     "at": "2026-11-28T20:18+09:00",
     "via": "cloud-move",

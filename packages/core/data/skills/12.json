@@ -44,7 +44,10 @@
           "assumes": {
             "ja": "攻撃範囲内の敵は敵 1 体で 1 ヒット。同じバーストの防御力▼（effects[1]）は乗らない（発動の時点の値。C-0795）",
             "en": "The enemies in range are the lone enemy, hit once. The DEF decrease of the same Burst (effects[1]) does not apply (values at the activation; C-0795)"
-          }
+          },
+          "claims": [
+            "C-1615"
+          ]
         },
         {
           "kind": "timed",
@@ -54,9 +57,12 @@
           "ref": 2,
           "durationRef": 3,
           "assumes": {
-            "ja": "敵 1 体への防御力▼を、味方全体の与ダメージの式で効かせる（敵の防御力を説明文の値の割合だけ下げる。C-0556・C-0790）",
-            "en": "The DEF decrease on the lone enemy applies in the damage formula of all allies (lowers the enemy's DEF by the described ratio; C-0556, C-0790)"
-          }
+            "ja": "敵 1 体への防御力▼を、味方全体の与ダメージの式で効かせる（敵の防御力を説明文の値の割合だけ下げる。C-0556・C-0790）。バーストのヒットと同じ頃から付く",
+            "en": "The DEF decrease on the lone enemy applies in the damage formula of all allies (lowers the enemy DEF by the described ratio; C-0556, C-0790). It is applied around the Burst hit"
+          },
+          "claims": [
+            "C-1617"
+          ]
         }
       ]
     }

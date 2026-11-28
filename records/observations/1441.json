@@ -1,0 +1,487 @@
+[
+  {
+    "id": "1441-01",
+    "recording": "1441",
+    "kind": "timing",
+    "use": "record",
+    "value": [1252, 2431, 3610, 4789, 5997, 7176, 8356, 9638, 10817],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 5・25・25・25・24・25・24・25・26f"
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1441-02",
+    "recording": "1441",
+    "kind": "timing",
+    "use": "record",
+    "value": [1281, 2460, 3639, 4818, 6026, 7310, 8490, 9668, 10847],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25・25・25・24・25・25f"
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1441-03",
+    "recording": "1441",
+    "kind": "timing",
+    "use": "record",
+    "value": [2425, 3604, 4783, 7170, 8349, 10811],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1441-04",
+    "recording": "1441",
+    "kind": "timing",
+    "use": "record",
+    "value": [2454, 3633, 4812, 8484, 9662, 10841],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f7199"
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1441-05",
+    "recording": "1441",
+    "use": "compare",
+    "kind": "hit",
+    "value": 109076,
+    "description": "アニスのバーストのダメージの 1 発動の値（会心なし。1 ヒット）",
+    "method": {
+      "tool": "recipe:burst-panel@4・recipe:hud-jumps@3（キャッシュ）",
+      "note": "II → III の替わり目（1441-02）の後の大きな増分は、どの発動も 1 つだけ。会心なしの 109,076 は 9 回のうち 8 回（f1374・2553・3732・4911・6119・7402・8583・10940）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1441-06",
+    "recording": "1441",
+    "use": "compare",
+    "kind": "hit",
+    "value": 163614,
+    "description": "アニスのバーストのダメージの 1 発動の値（会心。1 ヒット）",
+    "method": {
+      "tool": "recipe:burst-panel@4・recipe:hud-jumps@3（キャッシュ）",
+      "note": "8 回目の発動（II → III の替わり目 f9668）の 93f 後の f9761 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 7,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1441-07",
+    "recording": "1441",
+    "use": "compare",
+    "kind": "timing",
+    "unit": "f",
+    "value": [93, 93, 93, 93, 93, 92, 93, 93, 93],
+    "description": "アニスのバーストの、右のバースト欄の六角形が II から III に替わったフレーム（1441-02）から、バーストのダメージのヒットまでの動画のフレーム（9 回）",
+    "method": {
+      "tool": "recipe:burst-panel@4・recipe:hud-jumps@3（キャッシュ）",
+      "note": "ヒットは f1374・2553・3732・4911・6119・7402・8583・9761・10940。6 回目は I → II から II → III までが 134f（ほかの回は 29f）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 9
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1441-08",
+    "recording": "1441",
+    "kind": "timing",
+    "use": "record",
+    "value": 107,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 89,
+      "high": 125
+    },
+    "description": "アニスのバーストの防御力▼（A・F → A▼・F▼）が アニス・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（3 番目の事象 f3639 から数えた動画のフレーム）。A・Fの最後の発は 88f、A▼・F▼の最初の発は 125f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は A: 枠 3（アニス）のモデルの f300、A▼: 枠 3（アニス）のモデルの f600、F: 枠 1（I-DOLL・フラワー）のモデルの f300、F▼: 枠 1（I-DOLL・フラワー）のモデルの f600。境は A・F → A▼・F▼（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 0〜200f。A・F 14・A▼・F▼ 14・区別できない 0・外れ 13・食い違い（A▼・F▼の最初の発より後のA・Fの発） 0"
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1441-09",
+    "recording": "1441",
+    "kind": "timing",
+    "use": "record",
+    "value": 64.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 26,
+      "high": 103
+    },
+    "description": "アニスのバーストの防御力▼（A・F → A▼・F▼）が アニス・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（5 番目の事象 f6026 から数えた動画のフレーム）。A・Fの最後の発は 25f、A▼・F▼の最初の発は 103f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は A: 枠 3（アニス）のモデルの f300、A▼: 枠 3（アニス）のモデルの f600、F: 枠 1（I-DOLL・フラワー）のモデルの f300、F▼: 枠 1（I-DOLL・フラワー）のモデルの f600。境は A・F → A▼・F▼（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 0〜200f。A・F 14・A▼・F▼ 14・区別できない 0・外れ 13・食い違い（A▼・F▼の最初の発より後のA・Fの発） 0"
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1441-10",
+    "recording": "1441",
+    "kind": "timing",
+    "use": "record",
+    "value": 86.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 47,
+      "high": 126
+    },
+    "description": "アニスのバーストの防御力▼（A・F → A▼・F▼）が アニス・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（7 番目の事象 f8490 から数えた動画のフレーム）。A・Fの最後の発は 46f、A▼・F▼の最初の発は 126f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は A: 枠 3（アニス）のモデルの f300、A▼: 枠 3（アニス）のモデルの f600、F: 枠 1（I-DOLL・フラワー）のモデルの f300、F▼: 枠 1（I-DOLL・フラワー）のモデルの f600。境は A・F → A▼・F▼（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 0〜200f。A・F 14・A▼・F▼ 14・区別できない 0・外れ 13・食い違い（A▼・F▼の最初の発より後のA・Fの発） 0"
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1441-11",
+    "recording": "1441",
+    "kind": "timing",
+    "use": "record",
+    "value": 84.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 62,
+      "high": 107
+    },
+    "description": "アニスのバーストの防御力▼（A・F → A▼・F▼）が アニス・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（8 番目の事象 f9668 から数えた動画のフレーム）。A・Fの最後の発は 61f、A▼・F▼の最初の発は 107f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は A: 枠 3（アニス）のモデルの f300、A▼: 枠 3（アニス）のモデルの f600、F: 枠 1（I-DOLL・フラワー）のモデルの f300、F▼: 枠 1（I-DOLL・フラワー）のモデルの f600。境は A・F → A▼・F▼（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 0〜200f。A・F 14・A▼・F▼ 14・区別できない 0・外れ 13・食い違い（A▼・F▼の最初の発より後のA・Fの発） 0"
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1441-12",
+    "recording": "1441",
+    "kind": "timing",
+    "use": "record",
+    "value": 88,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 71,
+      "high": 105
+    },
+    "description": "アニスのバーストの防御力▼（A・F → A▼・F▼）が アニス・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（9 番目の事象 f10847 から数えた動画のフレーム）。A・Fの最後の発は 70f、A▼・F▼の最初の発は 105f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は A: 枠 3（アニス）のモデルの f300、A▼: 枠 3（アニス）のモデルの f600、F: 枠 1（I-DOLL・フラワー）のモデルの f300、F▼: 枠 1（I-DOLL・フラワー）のモデルの f600。境は A・F → A▼・F▼（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 0〜200f。A・F 14・A▼・F▼ 14・区別できない 0・外れ 13・食い違い（A▼・F▼の最初の発より後のA・Fの発） 0"
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1441-13",
+    "recording": "1441",
+    "kind": "timing",
+    "use": "record",
+    "value": 96,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 89,
+      "high": 103
+    },
+    "description": "アニスのバーストの防御力▼（A・F → A▼・F▼）が アニス・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅の、9 回の事象（f1281・2460・3639・4818・6026・7310・8490・9668・10847）の共通部分（事象から数えた動画のフレーム）。A・Fの最後の発の最も遅いものは 88f、A▼・F▼の最初の発の最も早いものは 103f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は A: 枠 3（アニス）のモデルの f300、A▼: 枠 3（アニス）のモデルの f600、F: 枠 1（I-DOLL・フラワー）のモデルの f300、F▼: 枠 1（I-DOLL・フラワー）のモデルの f600。境は A・F → A▼・F▼（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 0〜200f。A・F 14・A▼・F▼ 14・区別できない 0・外れ 13・食い違い（A▼・F▼の最初の発より後のA・Fの発） 0"
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1441-14",
+    "recording": "1441",
+    "kind": "timing",
+    "use": "record",
+    "value": 370.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 350,
+      "high": 391
+    },
+    "description": "アニスのバーストの防御力▼（A▼・F▼ → A・F）が アニス・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（1 番目の事象 f1281 から数えた動画のフレーム）。A▼・F▼の最後の発は 349f、A・Fの最初の発は 391f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は A: 枠 3（アニス）のモデルの f300、A▼: 枠 3（アニス）のモデルの f600、F: 枠 1（I-DOLL・フラワー）のモデルの f300、F▼: 枠 1（I-DOLL・フラワー）のモデルの f600。境は A▼・F▼ → A・F（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 250〜420f。A▼・F▼ 19・A・F 4・区別できない 0・外れ 2・食い違い（A・Fの最初の発より後のA▼・F▼の発） 0"
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1441-15",
+    "recording": "1441",
+    "kind": "timing",
+    "use": "record",
+    "value": 370.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 334,
+      "high": 407
+    },
+    "description": "アニスのバーストの防御力▼（A▼・F▼ → A・F）が アニス・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（3 番目の事象 f3639 から数えた動画のフレーム）。A▼・F▼の最後の発は 333f、A・Fの最初の発は 407f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は A: 枠 3（アニス）のモデルの f300、A▼: 枠 3（アニス）のモデルの f600、F: 枠 1（I-DOLL・フラワー）のモデルの f300、F▼: 枠 1（I-DOLL・フラワー）のモデルの f600。境は A▼・F▼ → A・F（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 250〜420f。A▼・F▼ 19・A・F 4・区別できない 0・外れ 2・食い違い（A・Fの最初の発より後のA▼・F▼の発） 0"
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1441-16",
+    "recording": "1441",
+    "kind": "timing",
+    "use": "record",
+    "value": 348.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 308,
+      "high": 389
+    },
+    "description": "アニスのバーストの防御力▼（A▼・F▼ → A・F）が アニス・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅（8 番目の事象 f9668 から数えた動画のフレーム）。A▼・F▼の最後の発は 307f、A・Fの最初の発は 389f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は A: 枠 3（アニス）のモデルの f300、A▼: 枠 3（アニス）のモデルの f600、F: 枠 1（I-DOLL・フラワー）のモデルの f300、F▼: 枠 1（I-DOLL・フラワー）のモデルの f600。境は A▼・F▼ → A・F（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 250〜420f。A▼・F▼ 19・A・F 4・区別できない 0・外れ 2・食い違い（A・Fの最初の発より後のA▼・F▼の発） 0"
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1441-17",
+    "recording": "1441",
+    "kind": "timing",
+    "use": "record",
+    "value": 382.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 376,
+      "high": 389
+    },
+    "description": "アニスのバーストの防御力▼（A▼・F▼ → A・F）が アニス・I-DOLL・フラワー の 1 発で替わるまでの時刻の幅の、9 回の事象（f1281・2460・3639・4818・6026・7310・8490・9668・10847）の共通部分（事象から数えた動画のフレーム）。A▼・F▼の最後の発の最も遅いものは 375f、A・Fの最初の発の最も早いものは 389f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-electric\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は A: 枠 3（アニス）のモデルの f300、A▼: 枠 3（アニス）のモデルの f600、F: 枠 1（I-DOLL・フラワー）のモデルの f300、F▼: 枠 1（I-DOLL・フラワー）のモデルの f600。境は A▼・F▼ → A・F（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 250〜420f。A▼・F▼ 19・A・F 4・区別できない 0・外れ 2・食い違い（A・Fの最初の発より後のA▼・F▼の発） 0"
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1441-18",
+    "recording": "1441",
+    "use": "compare",
+    "kind": "hit",
+    "value": 113184,
+    "description": "アニスのバーストの防御力▼の窓の、アニスのフルチャージの 1 ヒット（胴体・会心なし）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）・recipe:hud-jumps@3（キャッシュ）",
+      "note": "II → III の替わり目（1441-02）から 267・108・375f（f1548・6134・8865）の 3 回。▼の無い 113,126（1441-21）から 58 増え、敵の防御力 100 を 68 にした値（H1）と合い、0 にした値（H2。113,305）は録画に 1 回も無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1441-19",
+    "recording": "1441",
+    "use": "compare",
+    "kind": "hit",
+    "value": 226367,
+    "description": "アニスのバーストの防御力▼の窓の、アニスのフルチャージの 1 ヒット（コア・会心なし）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）・recipe:hud-jumps@3（キャッシュ）",
+      "note": "▼の窓に 14 回（替わり目から 107〜349f）。H2 の値（226,610）は録画に 1 回も無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1441-20",
+    "recording": "1441",
+    "use": "compare",
+    "kind": "hit",
+    "value": 166270,
+    "description": "アニスのバーストの防御力▼の窓の、I-DOLL・フラワーのフルチャージの 1 ヒット（コア・会心なし）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）・recipe:hud-jumps@3（キャッシュ）",
+      "note": "▼の窓に 15 回。▼の無い 166,172 から 98 増え、H1 と合い、H2 の値（166,478）は録画に 1 回も無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1441-21",
+    "recording": "1441",
+    "use": "compare",
+    "kind": "hit",
+    "value": 113126,
+    "description": "▼の無い区間の、アニスのフルチャージの 1 ヒット（胴体・会心なし）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）・recipe:hud-jumps@3（キャッシュ）",
+      "note": "II → III の替わり目 f4818 の 51f 後（バーストのヒットの前）。電撃の敵で、鉄甲のアニスは有利コードの 1.1 倍"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "source": "V-0891",
+    "readAt": "2026-11-28"
+  }
+]
