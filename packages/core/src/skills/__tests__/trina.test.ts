@@ -1,7 +1,7 @@
 // トリナ（412）の語彙（plan/design-trina.md 2 節）: 「スキル対象の説明部分が『敵全体に』で終わるバーストスキルダメージ▲」
 // （allEnemiesBurstDamage と印 allEnemies）と、対象「部隊の一番左側にいる〈絞り込み〉の味方 1 機」（targetLeftmost）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { characterOf, DEFINED_IDS, rawDefinition } from '../../__tests__/data.ts';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import type { EnemyInput } from '../../damage.ts';
 import type { CharacterData, SkillRaw } from '../../types.ts';
@@ -91,13 +91,10 @@ describe('computeBurstHit: allEnemiesBurstDamage', () => {
 describe('data: which burstDamage get the allEnemies mark', () => {
   // 説明文を取り込み直して対象の句が変わったら、ここで気づく（宝物版は宝物の説明文で決まる）
   it('marks the 敵全体に bursts of the defined characters, base and treasure', () => {
-    const dir = new URL('../../../data/', import.meta.url);
-    const read = (path: string): unknown => JSON.parse(readFileSync(new URL(path, dir), 'utf8'));
-    const ids = (read('skills/index.json') as { resourceIds: number[] }).resourceIds;
     const marked: string[] = [];
-    for (const id of ids) {
-      const def = parseSkillDefinition(read(`skills/${id}.json`));
-      const character = read(`characters/${id}.json`) as CharacterData;
+    for (const id of DEFINED_IDS) {
+      const def = parseSkillDefinition(rawDefinition(id));
+      const character = characterOf(id);
       const variants: [string, SkillDefinition, CharacterData][] = [[`${id}`, def, character]];
       if (def.treasureSkills !== undefined && character.treasure !== null) {
         const applied = applyTreasure(character, def, TREASURE_PHASE_MAX);
@@ -106,39 +103,41 @@ describe('data: which burstDamage get the allEnemies mark', () => {
       for (const [label, d, c] of variants)
         if (resolveBurstDamage(d, c, MAX_SKILL_LEVELS).some((r) => r.allEnemies === true)) marked.push(label);
     }
-    expect(marked).toEqual([
-      '19',
-      '40',
-      '61',
-      '103',
-      '104',
-      '161',
-      '170',
-      '170t',
-      '171',
-      '181',
-      '222',
-      '223',
-      '230',
-      '231',
-      '241',
-      '271',
-      '313',
-      '351',
-      '353',
-      '361',
-      '403',
-      '580',
-      '580t',
-      '581',
-      '583',
-      '810',
-      '831',
-      '832',
-      '834',
-      '870',
-      '871',
-    ]);
+    expect(marked).toMatchInlineSnapshot(`
+      [
+        "19",
+        "40",
+        "61",
+        "103",
+        "104",
+        "161",
+        "170",
+        "170t",
+        "171",
+        "181",
+        "222",
+        "223",
+        "230",
+        "231",
+        "241",
+        "271",
+        "313",
+        "351",
+        "353",
+        "361",
+        "403",
+        "580",
+        "580t",
+        "581",
+        "583",
+        "810",
+        "831",
+        "832",
+        "834",
+        "870",
+        "871",
+      ]
+    `);
   });
 });
 

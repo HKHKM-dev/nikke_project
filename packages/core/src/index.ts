@@ -22,7 +22,7 @@ export * from './shiftypad.ts';
 export * from './team.ts';
 export * from './frame/plan.ts';
 export * from './skills/types.ts';
-export { parseSkillDefinition, parseSkillIndex, parseSkillSupportIndex } from './skills/parse/definition.ts';
+export { parseSkillDefinition, parseSkillSupportIndex } from './skills/parse/definition.ts';
 export * from './skills/states.ts';
 export * from './skills/counters.ts';
 export * from './skills/summons.ts';

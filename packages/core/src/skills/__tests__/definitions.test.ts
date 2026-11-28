@@ -1,7 +1,6 @@
 // data/skills/ の手書き定義がキャラデータと整合していることを固定する。
 // Stage 9: 宝物版の定義（treasureSkills）は、宝物の全段階（3）で差し替えたキャラデータ・定義に同じ検査を掛ける。
 import { readdirSync } from 'node:fs';
-import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { burstDelaysOf } from '../../burst/landing.ts';
 import { stanceFrames } from '../../frame/firing.ts';
@@ -28,7 +27,7 @@ import { counterMax } from '../counters.ts';
 import { SKILL_LEVEL_MAX, targetPhraseOf } from '../resolve.ts';
 import { ATTACK_SPEED_WEAPONS } from '../parse/timed.ts';
 import { applyTreasure, TREASURE_PHASE_MAX } from '../treasure.ts';
-import { parseSkillDefinition, parseSkillIndex } from '../parse/definition.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import {
   isShotCountTrigger,
   isMaxStacksUpContent,
@@ -38,15 +37,10 @@ import {
   type StateContentItem,
   statContentsOf,
 } from '../types.ts';
-import { characterOf, rawDefinition, readData } from '../../__tests__/data.ts';
+import { definedSkillIds } from '../../../scripts/defined-skills.ts';
+import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 
-const DATA_DIR = join(import.meta.dirname, '../../../data');
-const SKILLS_DIR = join(DATA_DIR, 'skills');
-const index = parseSkillIndex(readData('skills/index.json'));
-const files = readdirSync(SKILLS_DIR)
-  .filter((f) => /^\d+\.json$/.test(f))
-  .map((f) => Number(f.replace('.json', '')))
-  .sort((a, b) => a - b);
+const files = definedSkillIds();
 
 /**
  * 維持の秒が Lv で変わる付与（resourceId:スロット:durationRef）。説明文の値がそうなっているものだけ（D の S2 の気絶免疫、アスカの
@@ -106,10 +100,10 @@ function contentRefsOf(c: StateContentItem): number[] {
 }
 
 describe('data/skills', () => {
-  it('index lists exactly the definition files, sorted and without duplicates', () => {
-    expect([...index.resourceIds].sort((a, b) => a - b)).toEqual(files);
-    expect(index.resourceIds).toEqual([...index.resourceIds].sort((a, b) => a - b));
-    expect(new Set(index.resourceIds).size).toBe(index.resourceIds.length);
+  // 定義のあるキャラの一覧はディレクトリから決まる（scripts/defined-skills.ts）。ほかに置くのは生成物の support.json だけ
+  it('holds only the definitions and support.json', () => {
+    const others = readdirSync(new URL('../../../data/skills/', import.meta.url)).filter((n) => !/^\d+\.json$/.test(n));
+    expect(others).toEqual(['support.json']);
   });
 
   // 基礎版と、treasureSkills があれば宝物版（全段階で差し替えたもの）

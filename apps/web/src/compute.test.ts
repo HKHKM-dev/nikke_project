@@ -16,6 +16,7 @@ import {
 } from '@nikke/core';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { definedSkillIds } from '../../../packages/core/scripts/defined-skills.ts';
 import {
   ComputeCache,
   LatestComputeQueue,
@@ -33,9 +34,7 @@ function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
 }
 
-const DEFINED = new Set(
-  readJson<{ resourceIds: number[] }>('../../../packages/core/data/skills/index.json').resourceIds,
-);
+const DEFINED = new Set(definedSkillIds());
 
 // 画面のスペック固定の枠（calcView.ts の buildCalcView）と同じ作り方。条件は既定の自動
 function fixedSpecSlot(id: number): TeamSlotInput {

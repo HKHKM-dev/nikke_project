@@ -24,7 +24,7 @@ export type SkillRoot = 'skills' | 'treasureSkills';
 const SKILL_ROOTS: readonly SkillRoot[] = ['skills', 'treasureSkills'];
 
 /**
- * 定義済みのキャラ（data/skills/index.json の順）。treasureSlots は宝物の全段階で宝物版になるスロット（宝物が無ければ空か省略）。
+ * 定義済みのキャラ（resourceId の昇順）。treasureSlots は宝物の全段階で宝物版になるスロット（宝物が無ければ空か省略）。
  * plan/skills.md は、そのうち宝物版の定義が無いスロットを、計算と同じく unsupported として出す（skills/treasure.ts）
  */
 export type DefinedCharacter = {
@@ -333,7 +333,7 @@ function claimList(ids: readonly string[] | undefined, states: ReadonlyMap<strin
   return ids.map((id) => `${id}（${states.get(id) ?? '不明'}）`).join('、');
 }
 
-/** plan/skills.md の全文。キャラは index.json の順、スロットは基礎版 → 宝物版の順 */
+/** plan/skills.md の全文。キャラは resourceId の昇順、スロットは基礎版 → 宝物版の順 */
 export function renderSkills(characters: readonly DefinedCharacter[], claims: readonly Claim[]): string {
   const states = new Map(claims.map((c) => [c.id, c.state]));
   let effects = 0;

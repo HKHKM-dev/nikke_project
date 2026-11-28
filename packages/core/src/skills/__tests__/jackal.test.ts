@@ -1,7 +1,7 @@
 // plan/design-jackal.md 2 節: 「スキル対象の説明部分が『〜敵1機に』で終わるバーストスキルダメージ▲」（oneEnemyBurstDamage）。
 // 説明文の対象の句から burstDamage に印 oneEnemy を付け、印の付いたヒットにだけ攻撃ダメージ▲と同じ和で掛ける
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { characterOf, DEFINED_IDS, rawDefinition } from '../../__tests__/data.ts';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import type { EnemyInput } from '../../damage.ts';
 import type { CharacterData, SkillRaw } from '../../types.ts';
@@ -125,13 +125,10 @@ describe('computeBurstHit: oneEnemyBurstDamage', () => {
 describe('data: which burstDamage get the oneEnemy mark', () => {
   // 説明文を取り込み直して対象の句が変わったら、ここで気づく（plan/design-jackal.md 2.2 節。宝物版は宝物の説明文で決まる）
   it('marks the 敵1機に bursts of the defined characters, base and treasure', () => {
-    const dir = new URL('../../../data/', import.meta.url);
-    const read = (path: string): unknown => JSON.parse(readFileSync(new URL(path, dir), 'utf8'));
-    const ids = (read('skills/index.json') as { resourceIds: number[] }).resourceIds;
     const marked: string[] = [];
-    for (const id of ids) {
-      const def = parseSkillDefinition(read(`skills/${id}.json`));
-      const character = read(`characters/${id}.json`) as CharacterData;
+    for (const id of DEFINED_IDS) {
+      const def = parseSkillDefinition(rawDefinition(id));
+      const character = characterOf(id);
       const variants: [string, SkillDefinition, CharacterData][] = [[`${id}`, def, character]];
       if (def.treasureSkills !== undefined && character.treasure !== null) {
         const applied = applyTreasure(character, def, TREASURE_PHASE_MAX);
@@ -140,24 +137,26 @@ describe('data: which burstDamage get the oneEnemy mark', () => {
       for (const [label, d, c] of variants)
         if (resolveBurstDamage(d, c, MAX_SKILL_LEVELS).some((r) => r.oneEnemy === true)) marked.push(label);
     }
-    expect(marked).toEqual([
-      '10',
-      '11',
-      '70',
-      '110',
-      '131',
-      '141',
-      '141t',
-      '180',
-      '183',
-      '202',
-      '212',
-      '304',
-      '352',
-      '352t',
-      '400',
-      '500',
-      '515',
-    ]);
+    expect(marked).toMatchInlineSnapshot(`
+      [
+        "10",
+        "11",
+        "70",
+        "110",
+        "131",
+        "141",
+        "141t",
+        "180",
+        "183",
+        "202",
+        "212",
+        "304",
+        "352",
+        "352t",
+        "400",
+        "500",
+        "515",
+      ]
+    `);
   });
 });

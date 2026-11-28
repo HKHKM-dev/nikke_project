@@ -1,6 +1,5 @@
 import {
   loadSkillDefinition,
-  loadSkillIndex,
   loadSkillSupportIndex,
   type SkillDefinition,
   type SkillLevels,
@@ -10,12 +9,12 @@ import {
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 export type SkillDefinitionCache = {
-  /** 定義済み resourceId の一覧。読み込み前は null */
+  /** 定義済み resourceId の一覧（data/skills/support.json の defined）。読み込み前は null */
   index: ReadonlySet<number> | null;
   indexError: string | null;
   /**
-   * すべてのスロットに未実装が無いキャラ（data/skills/support.json）。キャラの選択肢の印に使う。読み込み前と、読めなかったときは null
-   * （印を付けない。計算には使わない）
+   * すべてのスロットに未実装が無いキャラ（data/skills/support.json の fullySupported）。キャラの選択肢の印に使う。読み込み前と、
+   * 読めなかったときは null（印を付けない。計算には使わない）
    */
   fullySupported: ReadonlySet<number> | null;
   definitions: ReadonlyMap<number, SkillDefinition>;
@@ -35,7 +34,7 @@ function wantedKeyOf(resourceIds: readonly (number | null)[]): string {
   return [...new Set(resourceIds.filter((id): id is number => id !== null))].sort((a, b) => a - b).join(',');
 }
 
-/** 定義一覧を 1 回読み、枠が参照している定義済みニケの定義をまとめて読み込んでキャッシュする。 */
+/** 定義一覧（support.json）を 1 回読み、枠が参照している定義済みニケの定義をまとめて読み込んでキャッシュする。 */
 export function useSkillDefinitions(resourceIds: readonly (number | null)[], baseUrl: string): SkillDefinitionCache {
   const [index, setIndex] = useState<ReadonlySet<number> | null>(null);
   const [indexError, setIndexError] = useState<string | null>(null);
@@ -46,12 +45,12 @@ export function useSkillDefinitions(resourceIds: readonly (number | null)[], bas
   const requested = useRef(new Set<number>());
 
   useEffect(() => {
-    loadSkillIndex({ baseUrl })
-      .then((i) => setIndex(new Set(i.resourceIds)))
-      .catch((e: unknown) => setIndexError(e instanceof Error ? e.message : String(e)));
     loadSkillSupportIndex({ baseUrl })
-      .then((s) => setFullySupported(new Set(s.fullySupported)))
-      .catch(() => {}); // 読めなければ null のまま（印を付けない）
+      .then((s) => {
+        setIndex(new Set(s.defined));
+        setFullySupported(new Set(s.fullySupported));
+      })
+      .catch((e: unknown) => setIndexError(e instanceof Error ? e.message : String(e)));
   }, [baseUrl]);
 
   const wantedKey = useMemo(() => wantedKeyOf(resourceIds), [resourceIds]);

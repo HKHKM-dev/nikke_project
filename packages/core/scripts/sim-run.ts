@@ -44,10 +44,11 @@ import { runSimulation, type SimEvent } from '../src/sim/engine.ts';
 import { simTeamResult } from '../src/sim/teamResult.ts';
 import { MAX_SKILL_LEVELS, type SkillLevels } from '../src/skills/resolve.ts';
 import type { TreasurePhase } from '../src/skills/treasure.ts';
-import { parseSkillDefinition, parseSkillIndex } from '../src/skills/parse/definition.ts';
+import { parseSkillDefinition } from '../src/skills/parse/definition.ts';
 import { TEAM_SIZE, type TeamSlotInput } from '../src/team.ts';
 import type { BuildMasters, CharacterData, CharacterIndex, Element } from '../src/types.ts';
 import type { EnemyInput } from '../src/damage.ts';
+import { definedSkillIds } from './defined-skills.ts';
 import { gameSecondsToFrame } from '../src/time.ts';
 import { cliArgs, fail } from './cli.ts';
 import {
@@ -191,7 +192,7 @@ for (const entry of values['skill-levels']?.split(',') ?? []) {
 function readJson(path: string): unknown {
   return JSON.parse(readFileSync(path, 'utf8'));
 }
-const skillIndex = parseSkillIndex(readJson(join(DATA_DIR, 'skills/index.json')));
+const definedIds = new Set(definedSkillIds());
 const fixedSpec = values['fixed-spec'];
 
 // 育成入力。ファイルは { "<resourceId>": { growth?, affectionRank?, gear?, cube?, collection?, recycleRoom?, extraAttack? } }
@@ -263,7 +264,7 @@ if (values.enemy !== undefined && enemyPreset === undefined) {
 
 const slots: TeamSlotInput[] = ids.map((id) => {
   const character = readJson(join(DATA_DIR, `characters/${id}.json`)) as CharacterData;
-  const definition = skillIndex.resourceIds.includes(id)
+  const definition = definedIds.has(id)
     ? parseSkillDefinition(readJson(join(DATA_DIR, `skills/${id}.json`)))
     : null;
   // 段階の範囲・宝物の有無は runSimulation が検証する（RangeError）

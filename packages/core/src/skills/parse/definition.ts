@@ -7,7 +7,6 @@ import {
   SKILL_SLOTS,
   type SkillDefinition,
   type SkillEntry,
-  type SkillIndex,
   type SkillNote,
   type SkillSlot,
   type SkillSupportIndex,
@@ -144,22 +143,16 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   return def;
 }
 
-export function parseSkillIndex(raw: Json): SkillIndex {
-  if (!isRecord(raw)) fail('index', 'expected an object');
-  if (raw.formatVersion !== 1) fail('index.formatVersion', `expected 1, got ${JSON.stringify(raw.formatVersion)}`);
-  if (!Array.isArray(raw.resourceIds) || !raw.resourceIds.every((id) => Number.isInteger(id) && (id as number) > 0)) {
-    fail('index.resourceIds', 'expected an array of positive integers');
-  }
-  return { formatVersion: 1, resourceIds: raw.resourceIds as number[] };
-}
-
 /** 対応状況の索引（生成物。skills/support.ts）。不正なら Error */
 export function parseSkillSupportIndex(raw: Json): SkillSupportIndex {
   if (!isRecord(raw)) fail('support', 'expected an object');
   if (raw.formatVersion !== 1) fail('support.formatVersion', `expected 1, got ${JSON.stringify(raw.formatVersion)}`);
-  const ids = raw.fullySupported;
-  if (!Array.isArray(ids) || !ids.every((id) => Number.isInteger(id) && (id as number) > 0)) {
-    fail('support.fullySupported', 'expected an array of positive integers');
-  }
-  return { formatVersion: 1, fullySupported: ids as number[] };
+  const ids = (key: 'defined' | 'fullySupported'): number[] => {
+    const list = raw[key];
+    if (!Array.isArray(list) || !list.every((id) => Number.isInteger(id) && (id as number) > 0)) {
+      fail(`support.${key}`, 'expected an array of positive integers');
+    }
+    return list as number[];
+  };
+  return { formatVersion: 1, defined: ids('defined'), fullySupported: ids('fullySupported') };
 }

@@ -20,12 +20,13 @@ import { ROOT, SKILL_SUPPORT_PATH } from './records-data.ts';
 export const RESIDUAL_CACHE_DIR = `${ROOT}node_modules/.cache/residuals/`;
 /**
  * モデルの入力（コードとデータ）の置き場所。/ で終わるものはディレクトリ、ほかはファイル。scripts からは、どのキャラ・スキル・マスタを
- * 読むかを決める records-data.ts と、覚えを引くこれ自身（ここから import で辿れるファイルが全部入ることは residual-cache.test.ts が見る）
+ * 読むかを決める records-data.ts（と、それが読む defined-skills.ts）と、覚えを引くこれ自身（ここから import で辿れるファイルが全部入ることは residual-cache.test.ts が見る）
  */
 export const MODEL_ROOTS = [
   `${ROOT}packages/core/src/`,
   `${ROOT}packages/core/data/`,
   `${ROOT}packages/core/scripts/records-data.ts`,
+  `${ROOT}packages/core/scripts/defined-skills.ts`,
   `${ROOT}packages/core/scripts/residual-cache.ts`,
 ];
 /**

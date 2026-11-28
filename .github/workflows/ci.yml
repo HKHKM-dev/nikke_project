@@ -36,7 +36,7 @@ jobs:
       - uses: actions/cache@v6
         with:
           path: node_modules/.cache/residuals
-          key: residuals-${{ hashFiles('packages/core/src/**', 'packages/core/data/**', 'packages/core/scripts/records-data.ts', 'packages/core/scripts/residual-cache.ts') }}
+          key: residuals-${{ hashFiles('packages/core/src/**', 'packages/core/data/**', 'packages/core/scripts/records-data.ts', 'packages/core/scripts/defined-skills.ts', 'packages/core/scripts/residual-cache.ts') }}
           restore-keys: residuals-
       # PR は生成物を入れない（main の版のまま）。確認の前に作り直す（plan/design-pr-conflicts.md 3.1 節）
       - run: npm run records:minimal

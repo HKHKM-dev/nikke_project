@@ -3215,15 +3215,11 @@ export type SkillDefinition = {
   treasureSkills?: Partial<Record<SkillSlot, SkillEntry>>;
 };
 
-/** 定義済みキャラの一覧（data/skills/index.json） */
-export type SkillIndex = {
-  formatVersion: 1;
-  resourceIds: number[];
-};
-
 /** スキル定義の対応状況の索引（data/skills/support.json。生成物。skills/support.ts） */
 export type SkillSupportIndex = {
   formatVersion: 1;
+  /** 定義のあるキャラ（昇順） */
+  defined: number[];
   /** すべてのスロットに未実装が無いキャラ（昇順） */
   fullySupported: number[];
 };
