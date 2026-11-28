@@ -7,9 +7,10 @@ const WORKFLOW = new URL('../../.github/workflows/auto-rebase.yml', import.meta.
 
 /** ジョブの名前と、そのジョブの cache-mode（ジョブに無ければワークフローの値。どちらにも無ければ GitHub の既定の write） */
 function cacheModes(yaml: string): Record<string, string> {
-  const lines = yaml.split('\n');
-  const top = lines.find((l) => /^cache-mode:/.test(l))?.replace(/^cache-mode:\s*/, '') ?? 'write';
-  const start = lines.indexOf('jobs:');
+  const lines = yaml.split(/\r?\n/);
+  const top = lines.map((l) => /^cache-mode:\s*(\S+)/.exec(l)?.[1]).find((m) => m !== undefined) ?? 'write';
+  const start = lines.findIndex((l) => /^jobs:\s*(#.*)?$/.test(l));
+  if (start < 0) throw new Error('jobs: が無い');
   const modes: Record<string, string> = {};
   let job: string | undefined;
   for (const line of lines.slice(start + 1)) {
@@ -32,6 +33,10 @@ describe('auto-rebase.yml の cache-mode', () => {
 
   it('読み方: ジョブの値はワークフローの値より優先し、どちらも無ければ write', () => {
     expect(cacheModes('jobs:\n  a:\n    runs-on: x\n  b:\n    cache-mode: read\n')).toEqual({ a: 'write', b: 'read' });
-    expect(cacheModes('cache-mode: none\njobs:\n  a:\n    steps:\n      - run: x\n')).toEqual({ a: 'none' });
+    expect(
+      cacheModes('cache-mode: none # 既定\non:\n  push:\njobs: # ジョブ\n  a:\n    steps:\n      - run: x\n'),
+    ).toEqual({
+      a: 'none',
+    });
   });
 });

@@ -86,7 +86,7 @@ environment の secret は、その environment を指したジョブにしか�
 
 決定（2026-11-28、オーナー）: `prepare` のジョブにキャッシュを書かせない。`auto-rebase.yml` は、ワークフローの既定を `cache-mode: none` にし、`prepare` だけを `cache-mode: read` にする（覚えは戻すだけ）。
 
-- `cache-mode` は、ジョブのトークンに与えるキャッシュの権限で、GitHub がトークンの側で強制する。`cache-mode: read` のジョブから保存すると、この設定を読まない版の `actions/cache/save`（v4）でも、サーバーが「cache write denied: token has no writable scopes」で断った（2026-11-28 にトピックブランチで回した試しのワークフロー。付けないジョブからは保存できた）。
+- `cache-mode` は、ジョブのトークンに与えるキャッシュの権限で、GitHub がトークンの側で強制する。`cache-mode: read` のジョブから保存すると、この設定を読まない版の `actions/cache/save`（v4）でも、サーバーが「cache write denied: token has no writable scopes」で断った（2026-11-28 にトピックブランチで回した試しのワークフロー。付けないジョブからは保存できた）。artifact の受け渡しは変わらない（`read` のジョブの upload と `none` のジョブの download が通った）。
 - 書けるトークンを、ブランチの道具を回すジョブに渡さなくなるので、どのキャッシュの経路にも効く。main のスコープに書けて、ブランチのコードを回すジョブはほかに無い（PR の CI は PR のスコープに書き、Pages は `workflow_run` で動くので既定で読むだけ）。
 - ジョブごとの権限は `tools/git/auto-rebase-workflow.test.ts` が見る（ジョブを足したら、そこで権限を決める）。
 
