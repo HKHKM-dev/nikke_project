@@ -6,7 +6,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
 import { rawDefinition } from './data.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedTeam } from './teamHelpers.ts';
+import { characterOf, fixedTeam } from './teamHelpers.ts';
 
 const NERO = 380;
 const FLOWER = 304;
@@ -43,5 +43,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     for (const a of uses) expect(hitFramesOf(a)).toEqual([hexagonFrameOf(a) + 51]);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

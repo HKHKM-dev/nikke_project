@@ -26,7 +26,7 @@
   ],
   "target": {
     "name": "BigArms",
-    "element": "Electric"
+    "element": "Electronic"
   },
   "mode": "range-3min",
   "fixedSpec": true,

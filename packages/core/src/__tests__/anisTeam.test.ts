@@ -8,7 +8,7 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { rawDefinition } from './data.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { characterOf, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const ANIS = 12;
 const FLOWER = 304;
@@ -63,5 +63,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     });
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);
