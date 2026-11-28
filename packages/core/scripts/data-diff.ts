@@ -10,6 +10,7 @@ import { characterDataPath, characterIndexPath } from '../src/load.ts';
 import type { CharacterData, CharacterIndex, CollectionMaster, CubeMaster } from '../src/types.ts';
 import { diffCharacters, diffJson, renderReport, type UnmappedSkill } from './data-diff/compare.ts';
 import { cliArgs } from './cli.ts';
+import { definedSkillIds } from './defined-skills.ts';
 
 const PACKAGE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const MASTERS = 'data/masters';
@@ -46,10 +47,7 @@ function characters(ref?: string): Map<number, CharacterData> {
   return map;
 }
 
-const defined = new Set(
-  (JSON.parse(readFileSync(path.join(PACKAGE_ROOT, 'data/skills/index.json'), 'utf8')) as { resourceIds: number[] })
-    .resourceIds,
-);
+const defined = new Set(definedSkillIds());
 
 const baseMasters = new Set(jsonFiles(MASTERS, base));
 const masters = jsonFiles(MASTERS).map((name) => {

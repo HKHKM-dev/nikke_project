@@ -1,7 +1,6 @@
 // data/skills/ の手書き定義がキャラデータと整合していることを固定する。
 // Stage 9: 宝物版の定義（treasureSkills）は、宝物の全段階（3）で差し替えたキャラデータ・定義に同じ検査を掛ける。
 import { readdirSync } from 'node:fs';
-import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { burstDelaysOf } from '../../burst/landing.ts';
 import { stanceFrames } from '../../frame/firing.ts';
@@ -28,7 +27,7 @@ import { counterMax } from '../counters.ts';
 import { SKILL_LEVEL_MAX, targetPhraseOf } from '../resolve.ts';
 import { ATTACK_SPEED_WEAPONS } from '../parse/timed.ts';
 import { applyTreasure, TREASURE_PHASE_MAX } from '../treasure.ts';
-import { parseSkillDefinition, parseSkillIndex } from '../parse/definition.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import {
   isShotCountTrigger,
   isMaxStacksUpContent,
@@ -38,15 +37,10 @@ import {
   type StateContentItem,
   statContentsOf,
 } from '../types.ts';
-import { characterOf, rawDefinition, readData } from '../../__tests__/data.ts';
+import { RESOURCE_FILE, SKILLS_DIR } from '../../../scripts/defined-skills.ts';
+import { characterOf, DEFINED_IDS, rawDefinition } from '../../__tests__/data.ts';
 
-const DATA_DIR = join(import.meta.dirname, '../../../data');
-const SKILLS_DIR = join(DATA_DIR, 'skills');
-const index = parseSkillIndex(readData('skills/index.json'));
-const files = readdirSync(SKILLS_DIR)
-  .filter((f) => /^\d+\.json$/.test(f))
-  .map((f) => Number(f.replace('.json', '')))
-  .sort((a, b) => a - b);
+const definedIds = [...DEFINED_IDS];
 
 /**
  * 維持の秒が Lv で変わる付与（resourceId:スロット:durationRef）。説明文の値がそうなっているものだけ（D の S2 の気絶免疫、アスカの
@@ -106,14 +100,15 @@ function contentRefsOf(c: StateContentItem): number[] {
 }
 
 describe('data/skills', () => {
-  it('index lists exactly the definition files, sorted and without duplicates', () => {
-    expect([...index.resourceIds].sort((a, b) => a - b)).toEqual(files);
-    expect(index.resourceIds).toEqual([...index.resourceIds].sort((a, b) => a - b));
-    expect(new Set(index.resourceIds).size).toBe(index.resourceIds.length);
+  // 定義のあるキャラの一覧は <resourceId>.json の名前から決まる（scripts/defined-skills.ts）。名前を誤った定義（一覧から黙って
+  // 抜ける）と、一覧のファイルを置いていないかを見る。ほかに置く JSON は生成物の support.json だけ（OS の置くファイルは見ない）
+  it('holds no JSON but the definitions and support.json', () => {
+    const others = readdirSync(SKILLS_DIR).filter((n) => /\.json$/i.test(n) && !RESOURCE_FILE.test(n));
+    expect(others).toEqual(['support.json']);
   });
 
   // 基礎版と、treasureSkills があれば宝物版（全段階で差し替えたもの）
-  const variants = files.flatMap((resourceId) => {
+  const variants = definedIds.flatMap((resourceId) => {
     const def = parseSkillDefinition(rawDefinition(resourceId));
     const character = characterOf(resourceId);
     const base = { label: `${resourceId}`, resourceId, def, character };
@@ -125,7 +120,7 @@ describe('data/skills', () => {
     ];
   });
 
-  describe.each(files)('treasure definition %i (Stage 9)', (resourceId) => {
+  describe.each(definedIds)('treasure definition %i (Stage 9)', (resourceId) => {
     const def = parseSkillDefinition(rawDefinition(resourceId));
     const character = characterOf(resourceId);
 

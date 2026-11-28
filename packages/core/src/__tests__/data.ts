@@ -1,6 +1,7 @@
-// テストの共通の道具: データ（packages/core/data/）と観測値（records/observations/）を読む。import は node:fs と型だけにする
+// テストの共通の道具: データ（packages/core/data/）と観測値（records/observations/）を読む。import は node:fs・型・scripts/defined-skills.ts だけにする
 // （計算の本体を読み込まないので、定義の読み込みだけを見る単体テストも軽いまま使える）。枠・編成・敵を作る道具は teamHelpers.ts
 import { readFileSync } from 'node:fs';
+import { definedSkillIds } from '../../scripts/defined-skills.ts';
 import type { CharacterData } from '../types.ts';
 
 const DATA_DIR = new URL('../../data/', import.meta.url);
@@ -24,10 +25,8 @@ export function rawDefinition<T = unknown>(id: number): T {
   return readData<T>(`skills/${id}.json`);
 }
 
-/** data/skills に定義のあるキャラ（index.json の resourceIds） */
-export const DEFINED_IDS: ReadonlySet<number> = new Set(
-  readData<{ resourceIds: number[] }>('skills/index.json').resourceIds,
-);
+/** data/skills に定義のあるキャラ（昇順） */
+export const DEFINED_IDS: ReadonlySet<number> = new Set(definedSkillIds());
 
 /** records/observations/<録画 id>.json（その録画の観測値の列） */
 export function readObservations<T>(recording: string): T {

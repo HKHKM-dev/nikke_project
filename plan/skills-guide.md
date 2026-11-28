@@ -54,7 +54,7 @@
   3. **既存のテストが数値を変えずに通る**ことを確かめる（退化）。
   4. CLI の表示（`packages/core/scripts/sim-run/` のラベル `labels.ts` と表 `tables.ts`。足した形はテストにも足す）。画面には効果の一覧を出さない（受けているバフとスキルの説明の欄は 2026-10-31 に消した）。
 - **定義を書く**
-  - `data/skills/{resourceId}.json` と `index.json`。
+  - `data/skills/{resourceId}.json` を置く。定義のあるキャラの一覧はディレクトリから決まる（道具とテストは `scripts/defined-skills.ts`、画面は生成物の `data/skills/support.json`）。手元の画面で新しい定義を読むには `npm run records:minimal` を回す（生成物を作り直したまま残す。`records:check` は PR のブランチの版に戻す）。
   - 数値は書かず、`ref` で説明文の値を指す。
   - スロットの対応状況（`support`）は書かない。効果の有無と、未対応（`unimplemented`）の notes の有無から読み込みで決まる（`supported`・`partial`・`unsupported`・`noEffect`。[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.2 節）。効果の無いスロットには、理由の notes が要る。
   - いつも満たすとみなした条件は、効果の `assumes` に書く。
@@ -63,6 +63,7 @@
   - `checkedAt` は説明文を読んだ日。
 - **テスト**
   - DSL の単体テストは `skills/__tests__/<名前>.test.ts`。定義の検証エラーと、Lv ごとの解決値を見る。
+  - 定義済みのキャラ全部を見て ID を並べるテスト（`trina.test.ts`・`jackal.test.ts` の印の付くバースト）は、インラインのスナップショット。キャラを足して落ちたら、出た差分が意図どおりかを見て `npx vitest run <ファイル> -u` で書き換える。
   - 編成のテストは `__tests__/<名前>Team.test.ts`。そのキャラを含む実戦的な編成で、そのキャラの効果（窓・発動・付与）と、射撃の列がどのグループにも 1 回ずつ入ること（`partitions every shot`）を見る（`describeEveryShotInOneGroup`。例は `a2Team.test.ts`）。
   - データの読み込み（キャラ・定義・マスタ）は `__tests__/data.ts`（`characterOf`・`rawDefinition`・`readData`）、枠・編成・敵は `__tests__/teamHelpers.ts`（`fixedSlot`・`fixedTeam`・`fixedEnemy`・`rangeEnemyWithEvents`）の道具を使い、テストの中に同じ道具の写しを作らない。そのテストの枠が既定と違う所は、`fixedSlot` の options に書く。
   - **テストに実測値を直書きしない**。実測との比較は観測値と照合ランナーで行う（[verification-guide.md](verification-guide.md) 6・7 節）。

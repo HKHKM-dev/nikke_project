@@ -1,6 +1,5 @@
 import {
   loadSkillDefinition,
-  loadSkillIndex,
   loadSkillSupportIndex,
   type SkillDefinition,
   type SkillLevels,
@@ -10,12 +9,12 @@ import {
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 export type SkillDefinitionCache = {
-  /** 定義済み resourceId の一覧。読み込み前は null */
+  /** 定義済み resourceId の一覧（data/skills/support.json の defined）。読み込み前は null */
   index: ReadonlySet<number> | null;
   indexError: string | null;
   /**
-   * すべてのスロットに未実装が無いキャラ（data/skills/support.json）。キャラの選択肢の印に使う。読み込み前と、読めなかったときは null
-   * （印を付けない。計算には使わない）
+   * すべてのスロットに未実装が無いキャラ（data/skills/support.json の fullySupported）。キャラの選択肢の印に使う。読み込み前と、
+   * 読めなかったときは null（印を付けない。計算には使わない）
    */
   fullySupported: ReadonlySet<number> | null;
   definitions: ReadonlyMap<number, SkillDefinition>;
@@ -35,26 +34,26 @@ function wantedKeyOf(resourceIds: readonly (number | null)[]): string {
   return [...new Set(resourceIds.filter((id): id is number => id !== null))].sort((a, b) => a - b).join(',');
 }
 
-/** 定義一覧を 1 回読み、枠が参照している定義済みニケの定義をまとめて読み込んでキャッシュする。 */
+/** 定義一覧（support.json）を 1 回読み、枠が参照している定義済みニケの定義をまとめて読み込んでキャッシュする。 */
 export function useSkillDefinitions(resourceIds: readonly (number | null)[], baseUrl: string): SkillDefinitionCache {
-  const [index, setIndex] = useState<ReadonlySet<number> | null>(null);
+  // support.json の 2 つの一覧（読み込み前と、読めなかったときは null）
+  const [support, setSupport] = useState<{ defined: ReadonlySet<number>; fullySupported: ReadonlySet<number> } | null>(
+    null,
+  );
   const [indexError, setIndexError] = useState<string | null>(null);
-  const [fullySupported, setFullySupported] = useState<ReadonlySet<number> | null>(null);
   const [definitions, setDefinitions] = useState<ReadonlyMap<number, SkillDefinition>>(() => new Map());
   const [errors, setErrors] = useState<ReadonlyMap<number, string>>(() => new Map());
   // 取得を開始した id（完了・失敗も含む）。state ではなく ref に持ち、取得完了で Effect を再実行させない
   const requested = useRef(new Set<number>());
 
   useEffect(() => {
-    loadSkillIndex({ baseUrl })
-      .then((i) => setIndex(new Set(i.resourceIds)))
-      .catch((e: unknown) => setIndexError(e instanceof Error ? e.message : String(e)));
     loadSkillSupportIndex({ baseUrl })
-      .then((s) => setFullySupported(new Set(s.fullySupported)))
-      .catch(() => {}); // 読めなければ null のまま（印を付けない）
+      .then((s) => setSupport({ defined: new Set(s.defined), fullySupported: new Set(s.fullySupported) }))
+      .catch((e: unknown) => setIndexError(e instanceof Error ? e.message : String(e)));
   }, [baseUrl]);
 
   const wantedKey = useMemo(() => wantedKeyOf(resourceIds), [resourceIds]);
+  const index = support?.defined ?? null;
 
   useEffect(() => {
     if (index === null || wantedKey === '') return;
@@ -72,8 +71,8 @@ export function useSkillDefinitions(resourceIds: readonly (number | null)[], bas
   // 返す物は中身が変わるまで同じにする。App.tsx の計算の入力（teamInput）がこれに依存し、毎回作り直すと、計算の結果が
   // 届いて描き直すたびに入力が変わって計算を出し直し続ける
   return useMemo(
-    () => ({ index, indexError, fullySupported, definitions, errors }),
-    [index, indexError, fullySupported, definitions, errors],
+    () => ({ index, indexError, fullySupported: support?.fullySupported ?? null, definitions, errors }),
+    [index, indexError, support, definitions, errors],
   );
 }
 

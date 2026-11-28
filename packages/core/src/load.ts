@@ -1,8 +1,8 @@
 import { COMBAT_TABLE_FILE, parseCombatPowerTable, type CombatPowerTable } from './combatTable.ts';
 import { parseEnemyPresets } from './enemies.ts';
 import { FILTER_TABLE_FILE, parseFilterTable, type FilterTable } from './filterTable.ts';
-import { parseSkillDefinition, parseSkillIndex, parseSkillSupportIndex } from './skills/parse/definition.ts';
-import type { SkillDefinition, SkillIndex, SkillSupportIndex } from './skills/types.ts';
+import { parseSkillDefinition, parseSkillSupportIndex } from './skills/parse/definition.ts';
+import type { SkillDefinition, SkillSupportIndex } from './skills/types.ts';
 import type {
   AffectionMaster,
   BuildMasters,
@@ -48,10 +48,6 @@ export function combatTablePath(): string {
 /** 絞り込みの表（filterTable.ts） */
 export function filterTablePath(): string {
   return `${CHARACTER_DATA_DIR}/${FILTER_TABLE_FILE}`;
-}
-
-export function skillIndexPath(): string {
-  return `${SKILL_DATA_DIR}/index.json`;
 }
 
 /** スキル定義の対応状況の索引（生成物。skills/support.ts） */
@@ -103,13 +99,7 @@ export async function loadFilterTable(options: LoadOptions = {}): Promise<Filter
   return parseFilterTable(await fetchJson<unknown>(joinUrl(baseUrl, filterTablePath()), fetchImpl));
 }
 
-/** 定義済みキャラの一覧。手書き JSON なので読み込み時に検証する */
-export async function loadSkillIndex(options: LoadOptions = {}): Promise<SkillIndex> {
-  const { baseUrl = '/', fetchImpl = fetch } = options;
-  return parseSkillIndex(await fetchJson<unknown>(joinUrl(baseUrl, skillIndexPath()), fetchImpl));
-}
-
-/** スキル定義の対応状況の索引（完全対応のキャラの一覧）。不正なら Error */
+/** スキル定義の対応状況の索引（定義のあるキャラと完全対応のキャラの一覧）。不正なら Error */
 export async function loadSkillSupportIndex(options: LoadOptions = {}): Promise<SkillSupportIndex> {
   const { baseUrl = '/', fetchImpl = fetch } = options;
   return parseSkillSupportIndex(await fetchJson<unknown>(joinUrl(baseUrl, skillSupportPath()), fetchImpl));

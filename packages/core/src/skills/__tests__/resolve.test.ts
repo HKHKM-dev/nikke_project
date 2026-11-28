@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import type { SkillRaw } from '../../types.ts';
 import { MAX_SKILL_LEVELS, renderSkillDescription, resolvePassives, resolveTimed, skillValue } from '../resolve.ts';
-import { parseSkillDefinition, parseSkillIndex } from '../parse/definition.ts';
+import { parseSkillDefinition } from '../parse/definition.ts';
 import type { SkillDefinition } from '../types.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 
@@ -224,14 +224,6 @@ describe('parseSkillDefinition', () => {
     expect(() => slot({ effects: [], notes: [{ ja: '-', en: '-' }] })).toThrow(/kind/);
     expect(() => slot({ effects: [], notes: [note('todo')] })).toThrow(/kind/);
     expect(() => slot({ support: 'supported', effects })).toThrow(/support is derived/);
-  });
-
-  it('parses the index', () => {
-    expect(parseSkillIndex({ formatVersion: 1, resourceIds: [1, 2] })).toEqual({
-      formatVersion: 1,
-      resourceIds: [1, 2],
-    });
-    expect(() => parseSkillIndex({ formatVersion: 1, resourceIds: ['1'] })).toThrow(/resourceIds/);
   });
 });
 

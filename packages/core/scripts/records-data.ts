@@ -25,9 +25,10 @@ import { idsInPaths } from '../src/records/drafts.ts';
 import { parseVerification, sortVerifications, type Verification } from '../src/records/verifications.ts';
 import { buildSkillSupportIndex } from '../src/skills/support.ts';
 import { TREASURE_PHASE_MAX, treasureSlots } from '../src/skills/treasure.ts';
-import { parseSkillDefinition, parseSkillIndex } from '../src/skills/parse/definition.ts';
+import { parseSkillDefinition } from '../src/skills/parse/definition.ts';
 import type { SkillDefinition, SkillSupportIndex } from '../src/skills/types.ts';
 import type { BuildMasters, CharacterData } from '../src/types.ts';
+import { definedSkillIds, resourceIdsIn } from './defined-skills.ts';
 
 export const ROOT = fileURLToPath(new URL('../../../', import.meta.url));
 const DATA = `${ROOT}packages/core/data/`;
@@ -240,11 +241,7 @@ export function misplacedObservations(): string[] {
 }
 
 export function knownRids(): Set<number> {
-  return new Set(
-    readdirSync(`${DATA}characters`)
-      .filter((name) => /^\d+\.json$/.test(name))
-      .map((name) => Number(name.replace('.json', ''))),
-  );
+  return new Set(resourceIdsIn(`${DATA}characters`));
 }
 
 /** 敵のプリセットと出来事のセット（data/enemies.json） */
@@ -314,7 +311,7 @@ export function backlogContext(...idLists: readonly Iterable<string>[]): Backlog
 /** 録画（と予測の編成）に出てくるキャラと、その定義・敵のプリセット */
 export function loadRecordsData(file: RecordingsFile, extraRids: readonly number[] = []): RecordsData {
   const known = knownRids();
-  const defined = new Set(parseSkillIndex(readJson<unknown>(`${DATA}skills/index.json`)).resourceIds);
+  const defined = new Set(definedSkillIds());
   const characters = new Map<number, CharacterData>();
   const skills = new Map<number, SkillDefinition>();
   const rids = [...file.recordings.flatMap((entry) => entry.team.map((m) => m.rid)), ...extraRids];
@@ -343,19 +340,19 @@ export function loadRecordsData(file: RecordingsFile, extraRids: readonly number
 export function loadCatalogInput(): { characters: CharacterData[]; defined: Set<number> } {
   return {
     characters: [...knownRids()].map((rid) => readJson<CharacterData>(`${DATA}characters/${rid}.json`)),
-    defined: new Set(parseSkillIndex(readJson<unknown>(`${DATA}skills/index.json`)).resourceIds),
+    defined: new Set(definedSkillIds()),
   };
 }
 
-/** data/skills/index.json に載った定義と、そのキャラデータ（index.json の順） */
+/** data/skills の定義と、そのキャラデータ（resourceId の昇順） */
 function loadDefinitionsWithCharacters(): { definition: SkillDefinition; character: CharacterData }[] {
-  return parseSkillIndex(readJson<unknown>(`${DATA}skills/index.json`)).resourceIds.map((rid) => ({
+  return definedSkillIds().map((rid) => ({
     definition: parseSkillDefinition(readJson<unknown>(`${DATA}skills/${rid}.json`)),
     character: readJson<CharacterData>(`${DATA}characters/${rid}.json`),
   }));
 }
 
-/** data/skills/index.json に載った定義と、キャラの名前（index.json の順） */
+/** data/skills の定義と、キャラの名前（resourceId の昇順） */
 export function loadSkillDefinitions(): DefinedCharacter[] {
   return loadDefinitionsWithCharacters().map(({ definition, character }) => ({
     definition,
@@ -364,7 +361,7 @@ export function loadSkillDefinitions(): DefinedCharacter[] {
   }));
 }
 
-/** data/skills/index.json に載った定義とキャラデータから作った、対応状況の索引（records:check が書く） */
+/** data/skills の定義とキャラデータから作った、対応状況の索引（records:check が書く） */
 export function skillSupportIndexOfData(): SkillSupportIndex {
   return buildSkillSupportIndex(loadDefinitionsWithCharacters());
 }

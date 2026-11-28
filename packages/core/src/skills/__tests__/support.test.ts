@@ -44,7 +44,7 @@ function character(resourceId: number, treasure: boolean): CharacterData {
 }
 
 describe('buildSkillSupportIndex', () => {
-  it('lists only characters with no partial or unsupported slot, in the base and the treasure version', () => {
+  it('lists every defined character, and as fully supported only those with no partial or unsupported slot in the base and the treasure version', () => {
     const index = buildSkillSupportIndex([
       // 効果の無いスロット（noEffect）は完全対応に数える
       { definition: definition(30), character: character(30, false) },
@@ -71,14 +71,19 @@ describe('buildSkillSupportIndex', () => {
         character: character(50, true),
       },
     ]);
-    expect(index).toEqual({ formatVersion: 1, fullySupported: [20, 30] });
+    expect(index).toEqual({ formatVersion: 1, defined: [10, 20, 30, 40, 50], fullySupported: [20, 30] });
   });
 
   it('round-trips through the file and rejects a malformed index', () => {
-    const index = { formatVersion: 1 as const, fullySupported: [3, 7] };
+    const index = { formatVersion: 1 as const, defined: [3, 5, 7], fullySupported: [3, 7] };
     expect(parseSkillSupportIndex(JSON.parse(renderSkillSupportIndex(index)))).toEqual(index);
-    expect(() => parseSkillSupportIndex({ formatVersion: 2, fullySupported: [] })).toThrow(/formatVersion/);
-    expect(() => parseSkillSupportIndex({ formatVersion: 1, fullySupported: [0] })).toThrow(/positive integers/);
+    expect(() => parseSkillSupportIndex({ formatVersion: 2, defined: [], fullySupported: [] })).toThrow(
+      /formatVersion/,
+    );
+    expect(() => parseSkillSupportIndex({ formatVersion: 1, defined: [], fullySupported: [0] })).toThrow(
+      /positive integers/,
+    );
+    expect(() => parseSkillSupportIndex({ formatVersion: 1, fullySupported: [] })).toThrow(/support.defined/);
     expect(() => parseSkillSupportIndex([])).toThrow(/object/);
   });
 });

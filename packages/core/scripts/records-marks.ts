@@ -33,7 +33,7 @@ export function renumberMarksFromGit(): { changes: string[]; problems: string[] 
     .split('\n')
     .filter((p) => /\/\d+\.json$/.test(p));
   if (changed.length === 0) return { changes, problems };
-  // 今の版は読み込みの検査を通した定義（消した定義・index.json に無い定義は付け替えない）
+  // 今の版は読み込みの検査を通した定義（消した定義は付け替えない）
   const defined = new Map(loadSkillDefinitions().map((d) => [d.definition.resourceId, d]));
   const moves = new Map<string, NoteMoves>();
   for (const path of changed) {
