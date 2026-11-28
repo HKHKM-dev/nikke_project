@@ -4,7 +4,13 @@
 // 倍率ダメージの発動は、確定した射撃の列と時刻表から作る。
 import { burstDelaysOf, isSplit, sameActivationBuffsOnHit } from '../burst/landing.ts';
 import { battleSecondsToFrames } from '../time.ts';
-import { effectFrameOf, hitFramesOf, isInFullBurst, type BurstSchedule } from '../burst/schedule.ts';
+import {
+  effectFrameOf,
+  hitFramesOf,
+  isInFullBurst,
+  type BurstActivation,
+  type BurstSchedule,
+} from '../burst/schedule.ts';
 import {
   computeTriggerDamage,
   partialChargeTriggerDamage,
@@ -543,6 +549,11 @@ type SlotReaders = {
   self: SelfReaders;
   selfStackCount: (state: NamedStateId, frame: number) => number;
   everyWindows: (target: 'cycle' | 'shotCounts', skill: SkillSlot) => { start: number; end: number; every: number }[];
+  /**
+   * 発火のフレームの自分のバーストの発動。perBurstHit の効果（damage と dot）が、その発動の分かれたヒットのフレームを引く
+   * （plan/design-mihara-burst-hits.md 3.2 節・plan/design-sakura-bis.md 2.2 節）
+   */
+  perBurstHitActivation: (fireFrame: number) => BurstActivation;
   push: PushHit;
 };
 
@@ -619,11 +630,20 @@ function slotReadersOf(ctx: SkillHitsContext, slot: TeamSlotInput | null, slotIn
         ? [{ start: i.start, end: i.end, every: i.origin.effect.every }]
         : [],
     );
+  const mine = (ctx.schedule?.activations ?? []).filter((a) => a.slotIndex === slotIndex);
+  const perBurstHitActivation = (fireFrame: number): BurstActivation => {
+    // 同じ発動の効果の順を、分かれたヒットにどう当てるかの根拠が無い（分かれたヒットと同じ）
+    if (sequential) throw new RangeError('a sequential burst cannot have perBurstHit effects');
+    const activation = mine.find((a) => effectFrameOf(a) === fireFrame);
+    if (activation === undefined) throw new RangeError(`no burst activation fires at frame ${fireFrame}`);
+    return activation;
+  };
   return {
     slot,
     slotIndex,
     definition,
     everyWindows,
+    perBurstHitActivation,
     levels,
     ownCounters,
     ownStateItems,
@@ -738,7 +758,7 @@ function slotHitPusherOf(
 function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
   const { history, schedule, frames, shots, summonHits, accumulateReleases, enemySpans, enemyGrantStacksAt } = ctx;
   const { cooldownTimerFires } = ctx;
-  const { slot, slotIndex, definition, levels, sequential, selfStackCount, ownCounters, self, push, everyWindows } = s;
+  const { slot, slotIndex, definition, levels, selfStackCount, ownCounters, self, push, everyWindows } = s;
   const { ownStateItems } = s;
   // 自分の状態の窓で数える回数の窓（件の一覧の stateWindowFires と同じ見え方）。状態ごとの件は 1 回だけ絞る
   const ownItemsByState = new Map<NamedStateId, HeldItemView[]>();
@@ -750,17 +770,12 @@ function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
     }
     return earliestHeldStart(items, frame, maxStart);
   };
-  // 自分の発動（perBurstHit の damage が、発火のフレームからヒットのフレームの列を引く）
-  const mine = (schedule?.activations ?? []).filter((a) => a.slotIndex === slotIndex);
   const everyAtFor = (skill: SkillSlot): ShotCountEveryAt | undefined => everyAtOf(everyWindows('shotCounts', skill));
   for (const effect of resolveDamageEffects(definition, slot.character, levels)) {
     // delayFrames があれば、きっかけの後のフレームに
     // そのフレームのバフで出す（発動の直前のバフで固定しない。plan/design-delayed-skill-hit.md 3.1 節）。戦闘の終わりを越えるヒットは出さない
     const delay = effect.delayFrames ?? 0;
     const pre = delay === 0 && isBurstUseTrigger(effect.trigger) && BURST_HIT_USES_PRE_ACTIVATION_BUFFS;
-    // 同じ発動の効果の順を、分かれたヒットにどう当てるかの根拠が無い（分かれたヒットと同じ）
-    if (sequential && effect.perBurstHit === true)
-      throw new RangeError('a sequential burst cannot have perBurstHit damage');
     // 「〈状態名〉が適用された時」は、その状態がこの枠に付いたフレーム
     // （時刻表の applications。plan/design-persona.md 3.3 節・plan/design-named-state.md 5.3 節）
     // 状態の間だけ縮む周期は、前の発動のフレームの自分の状態で
@@ -865,8 +880,7 @@ function damageEffectHits(ctx: SkillHitsContext, s: SlotReaders): void {
       if (effect.perBurstHit === true) {
         // 条件は発火のフレームで 1 回判定し（C-0566）、
         // その発動のバーストの倍率ダメージのヒットのそれぞれに、等分しない倍率で出す（C-0565。plan/design-mihara-burst-hits.md 3.2 節）
-        const activation = mine.find((a) => effectFrameOf(a) === frame);
-        if (activation === undefined) throw new RangeError(`no burst activation fires at frame ${frame}`);
+        const activation = s.perBurstHitActivation(frame);
         for (const hit of hitFramesOf(activation)) {
           if (hit < frames) push(hit, effect, pre, copied, activation.frame, true);
         }
@@ -912,8 +926,7 @@ function cooldownFiresOf(
 /** 枠の持続ダメージ（dot）の tick を積む */
 function dotHits(ctx: SkillHitsContext, s: SlotReaders): void {
   const { history, schedule, frames, shots, enemySpans, enemyGrantStacksAt, cooldownTimerFires } = ctx;
-  const { slot, slotIndex, definition, levels, ownStateItems, self, ownCounters, push, sequential } = s;
-  const mine = (schedule?.activations ?? []).filter((a) => a.slotIndex === slotIndex);
+  const { slot, slotIndex, definition, levels, ownStateItems, self, ownCounters, push } = s;
   // 持続ダメージの付くフレーム（plan/design-skill-stage13.md 2.3 節）。{ counterFull } の perCount は、発火の
   // applyDelayFrames 後から間隔ごとに、カウンタの数だけ 1 つずつ付く（キャプチャーチェーンの攻撃ごとのチェーンバインド）
   const dotApplicationFrames = (effect: ResolvedDamageEffect): number[] => {
@@ -933,14 +946,8 @@ function dotHits(ctx: SkillHitsContext, s: SlotReaders): void {
           : at.filter((f) => damageConditionHolds(effect.condition, f, schedule, enemySpans, self));
       // バーストのヒットごとに付ける dot は、条件を発火のフレームで 1 回判定し、その発動の分かれたヒットのフレームのそれぞれで付ける
       // （damage の perBurstHit と同じ見え方。plan/design-sakura-bis.md 2.2 節）
-      if (effect.perBurstHit === true) {
-        if (sequential) throw new RangeError('a sequential burst cannot have a perBurstHit dot');
-        return held.flatMap((f) => {
-          const activation = mine.find((a) => effectFrameOf(a) === f);
-          if (activation === undefined) throw new RangeError(`no burst activation fires at frame ${f}`);
-          return hitFramesOf(activation).filter((hit) => hit < frames);
-        });
-      }
+      if (effect.perBurstHit === true)
+        return held.flatMap((f) => hitFramesOf(s.perBurstHitActivation(f)).filter((hit) => hit < frames));
       // バースト使用時の付く時刻の遅れ（plan/design-guillotine-ws.md 8.2 節）。条件は発火のフレーム、tick の値は tick のフレームで読む
       const delay = effect.dot!.applyDelayFrames ?? 0;
       return delay === 0 ? held : held.map((f) => f + delay).filter((f) => f < frames);

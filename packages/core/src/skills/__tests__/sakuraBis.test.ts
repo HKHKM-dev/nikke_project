@@ -32,7 +32,7 @@ describe('語彙の検証', () => {
 
   it('rejects a dot on a cooldown timer that applies a state', () => {
     expect(() => parseSkillDefinition(patched('skill2', cooldownDot, { state: 'hacked' }))).toThrow(
-      /a dot on a cooldown timer cannot apply a state/,
+      /cooldown in dot cannot be used with state/,
     );
   });
 

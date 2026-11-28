@@ -501,6 +501,9 @@ function validateCooldownTimers(entries: Partial<Record<SkillSlot, SkillEntry>>,
         fail(path, 'cooldown cannot be used with carry or atStart');
       if (e.kind === 'damage' && (e.periodShorten !== undefined || e.gaugePerHit !== undefined))
         fail(path, 'cooldown cannot be used with periodShorten or gaugePerHit');
+      // dot の付くフレームは frame/plan.ts が 1 パス目の記録で決める。名前の付いた状態の件の一覧は別に追うので組まない
+      // （ゲージは parse/dot.ts の validateTimerDotGauge が弾く。plan/design-sakura-bis.md 2.1 節）
+      if (e.kind === 'dot' && e.state !== undefined) fail(path, 'cooldown in dot cannot be used with state');
       if (e.kind === 'burstGaugeHit' && e.delayFrames === undefined)
         fail(path, 'cooldown in burstGaugeHit needs delayFrames');
       if (slot === 'burst') fail(path, 'cooldown is only allowed in skill1 and skill2');
