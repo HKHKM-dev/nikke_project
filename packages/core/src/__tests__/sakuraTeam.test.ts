@@ -8,7 +8,7 @@ import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { piecesOf } from './historyHelpers.ts';
 import { rawDefinition } from './data.ts';
-import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, describeRuns } from './teamHelpers.ts';
 
 const SAKURA = 836;
 const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false };
@@ -79,3 +79,17 @@ describe('鈴原サクラ単騎（手入力の条件）', () => {
     windows.slice(1).forEach((w, k) => expect(w.start).toBeGreaterThanOrEqual(windows[k]!.end));
   });
 });
+
+// V-0200 の録画 A の編成（鈴原サクラ I・デルタ II・ブラン II・ノワール III）と、実戦寄りの編成
+const TEAMS: Record<string, TeamInput> = {
+  'V-0200 の録画 A（鈴原サクラ + デルタ + ブラン + ノワール）': team(
+    [fixedSlot(SAKURA), fixedSlot(20), fixedSlot(270), fixedSlot(271)],
+    2,
+  ),
+  '実戦寄り（鈴原サクラ + クラウン + リター + アリス + モダニア）': team(
+    [fixedSlot(SAKURA), fixedSlot(330), fixedSlot(82), fixedSlot(191), fixedSlot(260)],
+    3,
+  ),
+};
+
+describeRuns(TEAMS);

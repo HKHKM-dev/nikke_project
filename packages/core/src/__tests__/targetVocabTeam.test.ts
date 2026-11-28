@@ -7,7 +7,7 @@ import { runSimulation } from '../sim/engine.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, describeRuns } from './teamHelpers.ts';
 
 const enemy: EnemyInput = fixedEnemy();
 
@@ -69,3 +69,16 @@ describe('基本チャージ時間が一番長い味方（longestChargeTime）',
     expect(windows.every((w) => w.slotIndex === 2)).toBe(true);
   });
 });
+
+const TEAMS: Record<string, TeamInput> = {
+  'エマ：TU + ウンファ：TU + デルタ + 紅蓮BS': team(
+    [fixedSlot(EMMA), fixedSlot(EUNHWA), fixedSlot(20), fixedSlot(225)],
+    3,
+  ),
+  '録画 0043 の編成（フラワー + クラウン + アリス + マナ + アドミ）': team(
+    [fixedSlot(304), fixedSlot(330), fixedSlot(191), fixedSlot(MANA), fixedSlot(172)],
+    2,
+  ),
+};
+
+describeRuns(TEAMS);

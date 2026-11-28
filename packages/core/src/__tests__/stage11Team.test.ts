@@ -8,7 +8,7 @@ import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput, SlotSegmentResult } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam, describeRuns } from './teamHelpers.ts';
 
 /** このテストの枠の、既定と違う所 */
 const SLOT_OPTIONS: FixedSlotOptions = { condition: { coreHitRate: 0, distanceBonus: false } };
@@ -29,6 +29,17 @@ const REC41 = team(
   ],
   2,
 );
+const TEAMS: Record<string, TeamInput> = {
+  '実戦寄り（リター + クラウン + ドレイク宝物 3 + ラピ）': team(
+    [
+      fixedSlot(82, SLOT_OPTIONS),
+      fixedSlot(330, SLOT_OPTIONS),
+      fixedSlot(101, { ...SLOT_OPTIONS, treasurePhase: 3 }),
+      fixedSlot(10, SLOT_OPTIONS),
+    ],
+    2,
+  ),
+};
 
 /**
  * 1 ヒットの表示値（非会心）。倍率グループ = 1 + コア + 距離 + フルバースト（+ 会心 0.5）。
@@ -112,3 +123,5 @@ describe('録画 0041: クラウンの S1・S2・バースト（7.5）', () => {
     expect(delta.every((s) => Math.abs(s.buffs.reloadSpeed - 0.4435) < 1e-9)).toBe(true);
   });
 });
+
+describeRuns(TEAMS);

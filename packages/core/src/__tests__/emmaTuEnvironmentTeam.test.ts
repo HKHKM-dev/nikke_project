@@ -7,7 +7,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFirstFrame, gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, describeRuns } from './teamHelpers.ts';
 
 const enemy: EnemyInput = fixedEnemy();
 
@@ -76,3 +76,12 @@ describe('環境コントロールの持続回復（C-0578）', () => {
     for (const w of s1.slice(0, -1)) expect(w.end - w.start).toBe(gameSecondsToFrames(25));
   });
 });
+
+const TEAMS: Record<string, TeamInput> = {
+  '実戦寄り（エマ：TU + ウンファ：TU + クラウン + アリス + リター）': team(
+    [fixedSlot(EMMA), fixedSlot(EUNHWA), fixedSlot(330), fixedSlot(191), fixedSlot(82)],
+    3,
+  ),
+};
+
+describeRuns(TEAMS);

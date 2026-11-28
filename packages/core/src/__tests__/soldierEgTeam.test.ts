@@ -10,7 +10,7 @@ import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { piecesOf } from './historyHelpers.ts';
 import { rawDefinition } from './data.ts';
-import { fixedEnemy, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, rangeEnemyWithEvents, describeRuns } from './teamHelpers.ts';
 
 const SOLDIER = 300;
 const VALUE = 0.0792;
@@ -104,3 +104,25 @@ describe('順位（アリスの S1。フルバースト時に最終攻撃力が�
     }
   });
 });
+
+const TEAMS: Record<string, TeamInput> = {
+  // V-0247 の撮影と同じ編成（鈴原サクラ I・デルタ II・ソルジャーE.G. III。オートバースト）
+  '鈴原サクラ + デルタ + ソルジャーE.G.（射撃場・条件は自動）': team(
+    [
+      fixedSlot(836, { conditionMode: 'auto' }),
+      fixedSlot(20, { conditionMode: 'auto' }),
+      fixedSlot(SOLDIER, { conditionMode: 'auto' }),
+    ],
+    rangeEnemy,
+    true,
+    2,
+  ),
+  '順位あり（鈴原サクラ + デルタ + アリス + ソルジャーE.G.）': team(
+    [fixedSlot(836), fixedSlot(20), fixedSlot(191), fixedSlot(SOLDIER)],
+    plainEnemy,
+    true,
+    2,
+  ),
+};
+
+describeRuns(TEAMS);

@@ -10,7 +10,7 @@ import { runSimulation } from '../sim/engine.ts';
 import { hitRateNOf } from '../skills/buffs.ts';
 import type { TeamInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { fixedEnemy, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, rangeEnemyWithEvents, describeRuns } from './teamHelpers.ts';
 
 const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 const plainEnemy: EnemyInput = fixedEnemy();
@@ -24,6 +24,13 @@ const SOLO: TeamInput = {
   burst: false,
   controlledSlot: 0,
 };
+// 実戦寄り（リター + ミサト + デルタ + アリス + モダニア）。手入力の条件とバーストあり。クラウンはミサトが居なくても
+// 2026-10-27 までの calc との差が 5% を超えた（クラウン側の差）ので入れていない
+const PRACTICAL: TeamInput = fixedTeam(
+  [fixedSlot(82), fixedSlot(833), fixedSlot(20), fixedSlot(191), fixedSlot(260)],
+  1,
+  { enemy: plainEnemy },
+);
 
 // ミサト（I）+ デルタ（II）+ アスカ（III・操作）。ミサトを 1 枠目にして、S1 の回復（HP の割合で選ぶ 1 機。C-0567）は
 // ミサト自身に当て、アスカの回復を受けた時の S1 にはバーストの持続回復だけが効くようにする
@@ -92,4 +99,8 @@ describe('射撃マニュアルのスタック（ミサト単騎・条件は自�
     expect(summary.hitRateUp).toBeGreaterThan(2 * STACK);
     expect(summary.hitRateUp).toBeLessThan(3 * STACK);
   });
+});
+
+describeRuns({
+  '実戦寄り（リター + ミサト + デルタ + アリス + モダニア）': PRACTICAL,
 });

@@ -14,6 +14,7 @@ import { runSimulation } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';
 import { slotPieces, stateItemsOf } from './historyHelpers.ts';
 import {
+  describeRuns,
   effectWindows,
   fixedSlot,
   fixedTeam,
@@ -190,3 +191,9 @@ describe('エマ：タクティカル・アップ + ウンファ：タクティ�
     });
   });
 });
+
+const TEAMS = {
+  'ベスティー：タクティカル・アップ + ユニ': withYuni,
+};
+
+describeRuns(TEAMS);

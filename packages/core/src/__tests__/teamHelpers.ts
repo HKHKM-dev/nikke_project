@@ -1,4 +1,6 @@
-// 編成のテスト（plan/skills-guide.md 1 節の「テスト」）の共通の道具: スペック固定・Lv 10 の枠、射撃場の的の編成、効果の窓
+// 編成のテスト（plan/skills-guide.md 1 節の「テスト」）の共通の道具: スペック固定・Lv 10 の枠、射撃場の的の編成、効果の窓、
+// 計算を通ることだけを見る編成（describeRuns）
+import { describe, expect, it } from 'vitest';
 import type { BurstSchedule } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
@@ -18,6 +20,7 @@ import { gameSecondsToFrames } from '../time.ts';
 import type { TargetProfile } from '../types.ts';
 import { characterOf, DEFINED_IDS, rawDefinition, type RawDefinition, readData } from './data.ts';
 import { slotPieces } from './historyHelpers.ts';
+import { runTeam } from './runTeam.ts';
 
 export { characterOf, rawDefinition };
 
@@ -225,4 +228,16 @@ export function fullBurstCooldownCuts(schedule: BurstSchedule, sourceSlot: numbe
 export function fullChargeFrames(log: ShotLog): number[] {
   const partial = new Set((log.partialShots ?? []).filter((p) => p.progress < 1).map((p) => p.frame));
   return log.frames.filter((f) => !partial.has(f));
+}
+
+/**
+ * 効果を見るテストの無い編成が、計算を通ること（runSimulation・simTeamResult の射撃の列の確かめで投げないこと）を見る。
+ * ほかのテストで回している編成は渡さない（同じ計算を 2 回回さない。plan/design-workflow-simplification-20.md 1 節）
+ */
+export function describeRuns(teams: Record<string, TeamInput>): void {
+  describe.each(Object.entries(teams))('編成: %s', (_name, input) => {
+    it('runs through the shot checks of runSimulation and simTeamResult', () => {
+      expect(() => runTeam(input)).not.toThrow();
+    });
+  });
 }

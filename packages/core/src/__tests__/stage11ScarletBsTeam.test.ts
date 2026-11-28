@@ -11,7 +11,7 @@ import type { TeamInput, TeamSlotInput, TeamResult } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { cycleItemsOf, piecesOf } from './historyHelpers.ts';
 import { characterOf } from './data.ts';
-import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, describeRuns } from './teamHelpers.ts';
 
 const enemy: EnemyInput = fixedEnemy();
 
@@ -21,6 +21,10 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
 
 const REC46 = team([fixedSlot(225)], 0);
 const REC47 = team([fixedSlot(822), fixedSlot(20), fixedSlot(225)], 2);
+const PRACTICAL = team([fixedSlot(82), fixedSlot(330), fixedSlot(225), fixedSlot(191), fixedSlot(172)], 2);
+const TEAMS: Record<string, TeamInput> = {
+  '実戦寄り（リター + クラウン + 紅蓮BS + アリス + アドミ）': PRACTICAL,
+};
 
 function segmentAt(result: TeamResult, slotIndex: number, frame: number) {
   return result.slots[slotIndex]!.segments.find((g) => g.ranges.some((r) => r.start <= frame && frame < r.end))!;
@@ -186,3 +190,5 @@ describe('録画 0046・0047 の実測（1 発の数値、2026-09-24）', () => 
     expect(crit(of(inside, 0))).toBe(1469135);
   });
 });
+
+describeRuns(TEAMS);

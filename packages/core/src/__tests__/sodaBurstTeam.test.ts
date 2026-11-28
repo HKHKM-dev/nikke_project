@@ -11,7 +11,7 @@ import { runSimulation } from '../sim/engine.ts';
 import { itemsOf, valuePiecesOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { characterOf, rawDefinition, type RawDefinition } from './data.ts';
-import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, describeRuns } from './teamHelpers.ts';
 
 const SODA = 314;
 const enemy: EnemyInput = fixedEnemy({ element: 'Fire' });
@@ -175,3 +175,12 @@ describe('スタックの指標（records/observations/metrics/buffs.ts。V-0437
     expect(residues).toEqual([0, 0, 0, 0, 0]);
   });
 });
+
+const TEAMS: Record<string, TeamInput> = {
+  '実戦寄り（リター + クラウン + ソーダ：TB + アリス + アドミ）': team(
+    [fixedSlot(82), fixedSlot(330), fixedSlot(SODA), fixedSlot(191), fixedSlot(172)],
+    2,
+  ),
+};
+
+describeRuns(TEAMS);

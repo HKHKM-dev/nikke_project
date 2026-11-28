@@ -9,7 +9,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
 import { rawDefinition } from './data.ts';
-import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, describeRuns } from './teamHelpers.ts';
 
 const LUDMILLA = 194;
 const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: false };
@@ -90,3 +90,14 @@ describe('ルドミラ：ウィンターオーナー単騎（手入力の条件�
     expect(hitFrames(solo(MANUAL, { ...enemy, hasCore: false }), 'skill2')).toEqual([]);
   });
 });
+
+// 段 B の編成（ラム I・デルタ II はこの編成でダメージに効く効果を起こさない）と、実戦寄りの編成
+const TEAMS: Record<string, TeamInput> = {
+  '段 B（ラム + デルタ + ルドミラ）': team([fixedSlot(822), fixedSlot(20), fixedSlot(LUDMILLA)], 2),
+  '実戦寄り（リター + クラウン + ルドミラ + アリス + ユニ）': team(
+    [fixedSlot(82), fixedSlot(330), fixedSlot(LUDMILLA), fixedSlot(191), fixedSlot(160)],
+    3,
+  ),
+};
+
+describeRuns(TEAMS);

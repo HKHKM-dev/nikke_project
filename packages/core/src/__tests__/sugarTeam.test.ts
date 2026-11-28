@@ -15,6 +15,7 @@ import type { TeamInput } from '../team.ts';
 import type { Element } from '../types.ts';
 import {
   characterOf,
+  describeRuns,
   effectWindows,
   fixedTeam,
   ENEMY_PRESETS,
@@ -41,6 +42,10 @@ const TRIO = [COCOA, SOLDIER_FA, SUGAR] as const;
 const TREASURE_FIRE = team(TRIO, SUGAR_SLOT, 'Fire', 3);
 const TREASURE_ELECTRONIC = team(TRIO, SUGAR_SLOT, 'Electronic', 3);
 const BASE_FIRE = team(TRIO, SUGAR_SLOT, 'Fire', 0);
+
+const TEAMS = {
+  '単騎（宝物版・灼熱）': team([SUGAR], 0, 'Fire', 3),
+};
 
 // 1 パス目は編成ごとに 1 回だけ回す（下の 2 つの describe が同じ編成を使う）
 const plans = new Map<TeamInput, ReturnType<typeof planTeamRun>>();
@@ -149,3 +154,5 @@ describe('バーストの命中率▲（射撃場の敵・条件は自動）', (
     expect(result.slots[FA_SLOT]!.autoCondition!.hitRateUp).toBe(0);
   });
 });
+
+describeRuns(TEAMS);

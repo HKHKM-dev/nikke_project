@@ -7,7 +7,7 @@ import { itemsOf, valuePiecesOf } from '../skills/holders.ts';
 import { appliedFrames } from '../skills/timeline.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { fixedEnemy, fixedSlot } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, describeRuns } from './teamHelpers.ts';
 
 const TORB = 192;
 const RAPI = 10;
@@ -244,3 +244,15 @@ describe('トーブの宝物版 S1（代用弾丸・応急改造）', () => {
     expect([ends[0], ends[1]! - ends[0]!]).toEqual([94, 110]);
   });
 });
+
+const TEAMS: Record<string, TeamInput> = {
+  'トーブ単騎（宝物の段階 3）': teamOf([fixedSlot(TORB, { treasurePhase: 3 })], false, 0, 180),
+  'トーブ（宝物の段階 3）+ クラウン + ソーダ：トゥインクルバニー': teamOf(
+    [fixedSlot(TORB, { treasurePhase: 3 }), fixedSlot(330), fixedSlot(314)],
+    true,
+    0,
+    180,
+  ),
+};
+
+describeRuns(TEAMS);

@@ -12,9 +12,10 @@ import { runSimulation } from '../sim/engine.ts';
 import { hitRateNOf } from '../skills/buffs.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import type { TeamInput } from '../team.ts';
-import { fixedSlot, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, rangeEnemyWithEvents, describeRuns } from './teamHelpers.ts';
 
 const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
+const plainEnemy: EnemyInput = fixedEnemy();
 const N = 0.0544 + 0.0379;
 
 // V-0114 の撮影と同じ: ミランダ単騎（宝物 3 段階）・AUTO（条件は自動）・オートバースト OFF・BigArms 灼熱の 3 分モード
@@ -23,6 +24,14 @@ const SOLO: TeamInput = {
   enemy: rangeEnemy,
   durationSeconds: 180,
   burst: false,
+  controlledSlot: 0,
+};
+// 実戦寄り（ミランダ + リター + デルタ + アリス + モダニア）。手入力の条件とバーストあり。SMG はミランダとリター
+const PRACTICAL: TeamInput = {
+  slots: [fixedSlot(32, { treasurePhase: 3 }), fixedSlot(82), fixedSlot(20), fixedSlot(191), fixedSlot(260)],
+  enemy: plainEnemy,
+  durationSeconds: 180,
+  burst: true,
   controlledSlot: 0,
 };
 
@@ -170,4 +179,8 @@ describe('ヘルスアップ！の命中率▲（ミランダ単騎・条件は�
     expect(atk(shots[5]!)).toBe(0);
     expect(atk(shots[300]!)).toBeCloseTo(0.5006, 12);
   });
+});
+
+describeRuns({
+  '実戦寄り（ミランダ + リター + デルタ + アリス + モダニア）': PRACTICAL,
 });

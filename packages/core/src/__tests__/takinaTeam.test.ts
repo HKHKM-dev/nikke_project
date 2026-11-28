@@ -9,7 +9,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { slotPieces } from './historyHelpers.ts';
 import { rawDefinition } from './data.ts';
-import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, describeRuns } from './teamHelpers.ts';
 
 const TAKINA = 861;
 const enemy: EnemyInput = fixedEnemy();
@@ -91,3 +91,13 @@ describe('たきな単騎', () => {
     expect(pieces[0]).toMatchObject({ start: 0, end: 294 });
   });
 });
+
+const TEAMS: Record<string, TeamInput> = {
+  'ラム + デルタ + たきな + I-DOLL・サン': team(
+    [fixedSlot(822), fixedSlot(20), fixedSlot(TAKINA), fixedSlot(308)],
+    2,
+    true,
+  ),
+};
+
+describeRuns(TEAMS);

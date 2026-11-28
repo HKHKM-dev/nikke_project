@@ -6,9 +6,10 @@ import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';
-import { fixedSlot, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, rangeEnemyWithEvents, describeRuns } from './teamHelpers.ts';
 
 const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
+const plainEnemy: EnemyInput = fixedEnemy();
 const QUENCY = 403;
 // Lv10 の値（説明文の値 02〜07 と S1 の値 01〜03）
 const HIT = [0.0136, 0.0271, 0.0408];
@@ -35,6 +36,12 @@ const BURST: TeamInput = {
   burst: true,
   controlledSlot: 2,
 };
+// 実戦寄り（リター + デルタ + クエンシー：エスケープクイーン + アリス + モダニア）。手入力の条件
+const PRACTICAL: TeamInput = fixedTeam(
+  [fixedSlot(82), fixedSlot(20), fixedSlot(QUENCY), fixedSlot(191), fixedSlot(260)],
+  2,
+  { enemy: plainEnemy },
+);
 
 describe('ルート探索の段（単騎）', () => {
   const plan = planTeamRun(SOLO);
@@ -90,4 +97,8 @@ describe('バースト（リター + デルタ + クエンシー：エスケー�
     expect(hits.length).toBeGreaterThan(1);
     for (const hit of hits) expect(hit.distributedDamageMultiplier).toBeCloseTo(1.4958, 12);
   });
+});
+
+describeRuns({
+  '実戦寄り（リター + デルタ + クエンシー：エスケープクイーン + アリス + モダニア）': PRACTICAL,
 });

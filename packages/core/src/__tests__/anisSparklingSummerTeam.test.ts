@@ -8,8 +8,10 @@ import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { timerFramesOf } from '../skills/timeline.ts';
+import type { TeamInput } from '../team.ts';
 import {
   characterOf,
+  describeRuns,
   effectWindows,
   fixedTeam,
   rawDefinition,
@@ -26,6 +28,14 @@ const ANIS_SLOT = 2;
 
 const WATER = { enemy: { ...SHOOTING_RANGE_ENEMY, element: 'Water' as const } };
 const RECORDED = fixedTeam([COCOA, SIN, ANIS], ANIS_SLOT, WATER);
+const TEAMS: Record<string, TeamInput> = {
+  '単騎（灼熱）': fixedTeam([ANIS], 0, { enemy: { ...SHOOTING_RANGE_ENEMY, element: 'Fire' } }),
+  '実戦寄り（リター + シン + アニス：スパークリングサマー + クエンシー + ナガ・水冷）': fixedTeam(
+    [82, SIN, ANIS, 402, 450],
+    ANIS_SLOT,
+    WATER,
+  ),
+};
 
 // ココアの S1 のデバフ解除の効くフレーム（CT ごとの発動の delayFrames 後。C-0822）
 const cocoaS1 = rawDefinition<{
@@ -156,3 +166,5 @@ describe('味方の▼の定義の検証（課題 2-64）', () => {
     expect(patched({ perCount: { state: 'drunken' } })).toThrow(/ally decrease/);
   });
 });
+
+describeRuns(TEAMS);

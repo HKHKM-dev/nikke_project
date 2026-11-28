@@ -8,7 +8,7 @@ import { timerFrames } from '../skills/timeline.ts';
 import { gameSecondsToFirstFrame, gameSecondsToFrames } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, describeRuns } from './teamHelpers.ts';
 
 const enemy: EnemyInput = fixedEnemy({ element: 'Wind' });
 
@@ -20,6 +20,7 @@ const YUKIKO = 871;
 const RAM = 822;
 const DELTA = 20;
 const ASUKA = 830;
+const CROWN = 330;
 
 const period = gameSecondsToFirstFrame(3);
 
@@ -58,3 +59,12 @@ describe('ペルソナ - コノハナサクヤのメディア（C-0647）', () =
     expect(s1.every((w) => w.start >= period && w.end > period + gameSecondsToFrames(3))).toBe(true);
   });
 });
+
+const TEAMS: Record<string, TeamInput> = {
+  '実戦寄り（ラム + デルタ + 雪子 + クラウン + アスカ）': team(
+    [fixedSlot(RAM), fixedSlot(DELTA), fixedSlot(YUKIKO), fixedSlot(CROWN), fixedSlot(ASUKA)],
+    4,
+  ),
+};
+
+describeRuns(TEAMS);

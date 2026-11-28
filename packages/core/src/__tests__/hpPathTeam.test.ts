@@ -10,7 +10,7 @@ import { applyResolvedEffect, ZERO_BUFFS } from '../skills/buffs.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { characterOf, rawDefinition } from './data.ts';
-import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam, describeRuns } from './teamHelpers.ts';
 
 const LAPLACE = 103;
 const NOIR = 271;
@@ -170,4 +170,11 @@ describe('自分の HP の割合の条件（selfHp）', () => {
     expect(() => attackUp(0)).toThrow(/hpRatio/);
     expect(() => attackUp(1.01)).toThrow(/hpRatio/);
   });
+});
+
+describeRuns({
+  'ノワール + デルタ（HP の割合 0.5）': team(
+    [fixedSlot(NOIR, { ...SLOT_OPTIONS, extra: { hpRatio: 0.5 } }), fixedSlot(DELTA, SLOT_OPTIONS)],
+    true,
+  ),
 });
