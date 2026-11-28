@@ -7,6 +7,8 @@
 //     それ以外の「自分を除く」（excludeSelf）は順位（skills/ranking.ts）で外す。
 //   - 「残りの HP の割合が最も低い味方 N 機」（lowestHpRatio）は、fixedTargets（HP の割合の想定の低い順。同値は枠の若い順）の
 //     先頭 targetCount 枠に掛ける（plan/design-skill-stage8.md 1.1 節）。
+//   - 「〈絞り込み〉の味方 N 機」（allies と targetCount）は、fixedTargets（絞り込みに合う枠の順）の先頭 targetCount 枠に掛ける
+//     （候補が N 機より多い時の選び方は確かめていない。plan/design-kiri.md 2 節）。
 import type { Element, NikkeClass, WeaponType } from '../types.ts';
 import type { NamedStateId } from './states.ts';
 import {
@@ -58,7 +60,7 @@ export type TargetFields = {
   targetElement?: Element;
   /** 「〈クラス〉型の味方」（plan/design-skill-stage9.md 1.1 節） */
   targetClass?: NikkeClass;
-  /** N 機を選ぶ対象（topAttack・lowestAttack・longestChargeTime・lowestHpRatio）の N（解決済み） */
+  /** N 機を選ぶ対象（topAttack・lowestAttack・longestChargeTime・lowestHpRatio と、allies の「〈絞り込み〉の味方 N 機」）の N（解決済み） */
   targetCount?: number;
   /** 「同じ部隊の味方全体に」 */
   targetSquad?: TargetSquad;
@@ -107,7 +109,8 @@ export function needsFixedTargets(
     | 'targetBurstStep'
     | 'targetLeftmost'
     | 'excludeSelf'
-  >,
+    | 'targetCount'
+  > & { targetCountRef?: number },
 ): boolean {
   return (
     effect.targetSquad !== undefined ||
@@ -118,12 +121,14 @@ export function needsFixedTargets(
     effect.targetAdjacent !== undefined ||
     effect.targetBurstStep !== undefined ||
     effect.targetLeftmost !== undefined ||
-    (effect.target === 'allies' && effect.excludeSelf !== undefined)
+    (effect.target === 'allies' && effect.excludeSelf !== undefined) ||
+    (effect.target === 'allies' && (effect.targetCount !== undefined || effect.targetCountRef !== undefined))
   );
 }
 
 /**
- * 編成で決まる対象の絞り込み。fixedTargets が有ればその枠だけ（longestChargeTime は順位の順の先頭 targetCount 枠）。
+ * 編成で決まる対象の絞り込み。fixedTargets が有ればその枠だけ（longestChargeTime は順位の順の先頭 targetCount 枠、allies の
+ * targetCount は枠の順の先頭 targetCount 枠）。
  * targetSquad・longestChargeTime なのに
  * fixedTargets が無いのは、最上位の applyCompositionToTeam を通していない呼び出しなので落とす（黙って全員へ掛けない）
  */
@@ -134,8 +139,11 @@ function fixedTargetOk(effect: TargetedEffect, targetSlotIndex: number): boolean
     }
     return true;
   }
-  // 順位の順の対象（基本チャージ時間・HP の割合）は先頭の targetCount 枠
-  const ranked = effect.target === 'longestChargeTime' || effect.target === 'lowestHpRatio';
+  // 順位の順の対象（基本チャージ時間・HP の割合）と「〈絞り込み〉の味方 N 機」は先頭の targetCount 枠
+  const ranked =
+    effect.target === 'longestChargeTime' ||
+    effect.target === 'lowestHpRatio' ||
+    (effect.target === 'allies' && effect.targetCount !== undefined);
   const candidates = ranked ? effect.fixedTargets.slice(0, effect.targetCount ?? 1) : effect.fixedTargets;
   return candidates.includes(targetSlotIndex);
 }

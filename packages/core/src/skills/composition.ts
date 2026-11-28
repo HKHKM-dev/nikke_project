@@ -11,7 +11,7 @@
 //     （skills/resolve.ts の resolveHpWhileEffects。plan/design-hp-ratio-readers.md 2.1 節）。
 //   - 枠の状態は、その枠の定義の静的な状態（staticStatesOf）から取る。静的な付与にも編成の条件を書けるので、効果を外した後の定義から
 //     集める（plan/design-named-state.md 3.4 節）。
-//   - 編成で決まる対象（targetSquad・targetCharacter・longestChargeTime・targetState・targetAdjacent・targetBurstStep・allies の excludeSelf: always）の枠は、
+//   - 編成で決まる対象（targetSquad・targetCharacter・longestChargeTime・targetState・targetAdjacent・targetBurstStep・allies の excludeSelf: always・allies の targetCount）の枠は、
 //     効果の fixedTargets に書く（skills/targets.ts が絞る。plan/design-target-vocab.md 2.2・2.3 節）。付与（state）の対象も
 //     timed と同じに決める。
 import type { TeamInput, TeamSlotInput } from '../team.ts';
@@ -183,6 +183,8 @@ function fullCharacter(c: CompositionCharacter, index: number): Required<Composi
  * targetAdjacent = 自分の左右の枠（空枠は無し。plan/design-rouge.md 2.1 節）、
  * targetBurstStep = 基本バースト段階が N の枠（countsAsBurstStep。再突入するキャラは除く）、allies の excludeSelf = 自分の枠を外す。
  * targetLeftmost = 絞り込みに合う枠のうち、いちばん左の 1 枠（plan/design-trina.md 2.2 節）。
+ * allies の targetCount（「〈絞り込み〉の味方 N 機」）= 絞り込みに合う枠（自分も候補。枠の順）。先頭の N 枠は skills/targets.ts が取る
+ * （plan/design-kiri.md 2 節）。
  * targetState・targetAdjacent の includeSelf は自分の枠を足す。
  * どれも targetWeapon・targetElement で絞った後。どれでもない効果は undefined。付与（state）も timed と同じ
  */

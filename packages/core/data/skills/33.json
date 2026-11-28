@@ -1,0 +1,84 @@
+{
+  "formatVersion": 1,
+  "resourceId": 33,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "allies",
+          "targetClass": "Defender",
+          "targetCountRef": 3,
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "フルチャージの発ごとに、その発の次のフレームから防御型の味方 2 機（自分は支援型なので入らない）の攻撃力に、キリのバフ前の攻撃力 × 説明文の値を足し直す（3 秒）。防御型が 2 機以下なら全員に付く。3 機以上なら枠の若い順の 2 機に付く（選び方は確かめていない）",
+            "en": "On each Full Charge shot, from the frame after that shot, Quiry's pre-buff ATK × the value is added again to the ATK of 2 Defender allies (not herself, a Supporter) for 3 s. With 2 or fewer Defenders, all of them get it. With 3 or more, the first 2 slots get it (the rule is unverified)"
+          },
+          "claims": [
+            "C-1568",
+            "C-1569"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルチャージ攻撃が命中した時の、対象への攻撃力▼（3 秒）はダメージに関係しない",
+          "en": "The ATK down on the target when a Full Charge attack hits (3 s) does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "戦闘開始時の、防御型の味方 2 機への最大HP▲（持続）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "The max HP up on 2 Defender allies at the start of battle (permanent) does not change damage by itself (it matters only in squads with effects that read HP)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "味方全体への持続回復（スキル発動者の最終最大HP の X%・1 秒間隔・10 秒）は、付いた時に 1 回だけ「回復効果が適用された時」を起こし、1 秒ごとの刻みでは起こさない（ノイズのバーストと同じ読み）。自分を含む味方全体に、満タンの味方にも付く。回復量はダメージに関係しない",
+            "en": "The heal over time on all allies (X% of the caster's final max HP every 1 s for 10 s) triggers \"when healed\" once when applied, not on each 1-second tick (as with Noise's Burst). It lands on all allies including herself, also at full HP. The healed amount does not affect damage"
+          },
+          "claims": [
+            "C-1571"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "targetClass": "Defender",
+          "stat": "critRate",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "防御型の味方全体（自分は支援型なので入らない）の会心率に説明文の値を足す（10 秒）",
+            "en": "The value is added to the critical rate of all Defender allies (not herself, a Supporter) for 10 s"
+          },
+          "claims": [
+            "C-1570"
+          ]
+        }
+      ]
+    }
+  }
+}

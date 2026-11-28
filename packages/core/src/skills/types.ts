@@ -474,7 +474,12 @@ export type FixedTargetFields = {
   targetStateHeld?: true;
 };
 
-/** N 機を選ぶ対象（isCountedTarget）の N。ちょうど片方 */
+/**
+ * N 機を選ぶ対象の N。isCountedTarget の対象ではちょうど片方。timed の allies には省略可で、書けば「〈絞り込み〉の味方 N 機」
+ * （武器種・コード・クラスの絞り込みに合う枠（自分も候補）から N 機。候補が N 機以下なら全員、多いときは枠の若い順（選び方は
+ * 確かめていないので、sim の枠の注記を出す）。部隊・特定のキャラ・〈状態〉・両隣・基本バースト段階・一番左側・自分を除く・
+ * 最終防御力の比べとは組まない。plan/design-kiri.md 2 節）
+ */
 export type TargetCountFields = {
   /** N の即値 */
   targetCount?: number;

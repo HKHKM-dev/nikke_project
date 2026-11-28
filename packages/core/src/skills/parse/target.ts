@@ -196,5 +196,31 @@ export function parseTargetCount(
     : { targetCountRef: parseRef(v.targetCountRef, `${path}.targetCountRef`) };
 }
 
+/**
+ * timed の「〈絞り込み〉の味方 N 機」の N（target が allies のときだけ。省略可。plan/design-kiri.md 2 節）。書けばちょうど片方。
+ * 部隊・特定のキャラ・〈状態〉・両隣・基本バースト段階・一番左側・自分を除く・最終防御力の比べとは組まない
+ */
+export function parseAlliesCount(v: Record<string, Json>, path: string): TargetCountFields {
+  if (v.targetCount === undefined && v.targetCountRef === undefined) return {};
+  for (const key of [
+    'targetSquad',
+    'targetCharacter',
+    'targetState',
+    'includeSelf',
+    'targetAdjacent',
+    'targetBurstStep',
+    'targetLeftmost',
+    'excludeSelf',
+    'targetDefense',
+  ] as const) {
+    if (v[key] !== undefined) fail(path, `targetCount / targetCountRef on "allies" cannot be combined with ${key}`);
+  }
+  if ((v.targetCount === undefined) === (v.targetCountRef === undefined))
+    fail(path, 'exactly one of targetCount and targetCountRef is allowed with target "allies"');
+  return v.targetCount !== undefined
+    ? { targetCount: parsePositiveInt(v.targetCount, `${path}.targetCount`) }
+    : { targetCountRef: parseRef(v.targetCountRef, `${path}.targetCountRef`) };
+}
+
 /** HP の割合の低い順の対象は、使い手のいる heal にだけ書ける（plan/design-skill-stage8.md 1.1 節） */
 export const LOWEST_HP_RATIO_HEAL_ONLY = 'lowestHpRatio is only allowed in heal';

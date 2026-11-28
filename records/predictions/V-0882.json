@@ -1,0 +1,172 @@
+{
+  "verification": "V-0882",
+  "note": "撮影 B（ルドミラ（I）・デルタ（II）・キリ（III・操作）・オートバースト ON）の予測。電撃の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。キリのバーストはモデルでは f559・2911・5265…（フルバーストは 10.1 秒から）。撮影 A（キリ + デルタ）と撮影 C（防御型 3 機 + キリ）の見え方は、編成が違うので検証記録の「予測」に手で書いた",
+  "team": [
+    {
+      "rid": 190
+    },
+    {
+      "rid": 20
+    },
+    {
+      "rid": 33,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S1 はフルチャージの発ごとに防御型の味方 2 機（ルドミラ・デルタ）に発動者基準の攻撃力▲ 3 秒、バーストは防御型の味方全体（ルドミラ・デルタ）にクリティカル確率▲ 10 秒）"
+    },
+    {
+      "id": "H0-s1",
+      "note": "S1 の攻撃力▲（skill1 の effects[0]）が無い",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 33,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-burst-crit",
+      "note": "バーストのクリティカル確率▲（burst の effects[1]）が無い",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 33,
+            "skill": "burst",
+            "index": 1
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "ludmilla-crit-burst",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 800
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.03
+      },
+      "note": "1 回目のキリのバーストの窓の中のルドミラの通常攻撃の会心率（素の 15% + 19.9%）。許容は会心の割合を数える時の揺れの見込み"
+    },
+    {
+      "id": "ludmilla-crit-outside",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 1500
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.03
+      },
+      "note": "キリのバーストの窓の外のルドミラの会心率（比べの基準）"
+    },
+    {
+      "id": "ludmilla-hit-s1",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "キリの S1 の窓の中（最初のフルチャージの発の後・バーストの前）のルドミラの胴体の 1 ヒット"
+    },
+    {
+      "id": "ludmilla-hit-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 30,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "キリの最初のフルチャージの発の前のルドミラの胴体の 1 ヒット（比べの基準）"
+    },
+    {
+      "id": "delta-hit-s1",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "キリの S1 の窓の中のデルタのコアの 1 ヒット（SR はコア命中率 1）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-28",
+    "commit": "b38a4c8441f8b0374b1a65d0f873289816731aaa",
+    "values": {
+      "H1": {
+        "ludmilla-crit-burst": 0.349,
+        "ludmilla-crit-outside": 0.15,
+        "ludmilla-hit-s1": 8840.112,
+        "ludmilla-hit-before": 8240.9328,
+        "delta-hit-s1": 227771.515
+      },
+      "H0-s1": {
+        "ludmilla-crit-burst": 0.349,
+        "ludmilla-crit-outside": 0.15,
+        "ludmilla-hit-s1": 8240.9328,
+        "ludmilla-hit-before": 8240.9328,
+        "delta-hit-s1": 208626.22999999998
+      },
+      "H0-burst-crit": {
+        "ludmilla-crit-burst": 0.15,
+        "ludmilla-crit-outside": 0.15,
+        "ludmilla-hit-s1": 8840.112,
+        "ludmilla-hit-before": 8240.9328,
+        "delta-hit-s1": 227771.515
+      }
+    }
+  }
+}

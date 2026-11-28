@@ -32,7 +32,13 @@ import {
   type AutoConditionSummary,
   type LandingFrameSpan,
 } from '../frame/landing.ts';
-import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect, type ItemEffect } from '../skills/resolve.ts';
+import {
+  MAX_SKILL_LEVELS,
+  resolveTimed,
+  type AppliedEffect,
+  type AppliedTimedEffect,
+  type ItemEffect,
+} from '../skills/resolve.ts';
 import { valuePiecesOf, type RemoveDebuffGuessRecord } from '../skills/holders.ts';
 import { namedStateName, type NamedStateId } from '../skills/states.ts';
 import { isStateStat, type InstantKind } from '../skills/types.ts';
@@ -431,6 +437,7 @@ function createRunner(c: RunnerContext, slot: SimInput['slots'][number], index: 
         ...autoAttackCoreRowNotes(slot, enemy),
         ...removeDebuffNotes(history, index),
         ...stateEndNotes(history, index),
+        ...countedAlliesNotes(slot),
       ],
       passiveBuffs: passive.buffs,
       passiveEffects: passive.passiveEffects,
@@ -612,6 +619,31 @@ function removeDebuffNotes(history: TeamPlan['history'], slotIndex: number): Mod
               en: `Debuff removal (${nameEn}) found an ally with more than ${limit} debuffs ${times} time(s). The rule is unverified; the model removes the ${limit} earliest`,
             },
     };
+  });
+}
+
+/**
+ * この枠の「〈絞り込み〉の味方 N 機」（timed の allies と targetCount）で、絞り込みに合う枠が N 機より多く、選び方を確かめていない
+ * 決め打ち（枠の若い順）で対象を選んだ注記（効果ごとに 1 つ。plan/design-kiri.md 2 節）
+ */
+function countedAlliesNotes(slot: SimInput['slots'][number]): ModelNote[] {
+  const definition = slot?.skills?.definition;
+  if (!slot || !definition) return [];
+  return resolveTimed(definition, slot.character, slot.skills?.levels ?? MAX_SKILL_LEVELS).flatMap((effect) => {
+    const n = effect.target === 'allies' ? effect.targetCount : undefined;
+    const candidates = effect.fixedTargets?.length ?? 0;
+    if (n === undefined || candidates <= n) return [];
+    const { ja: nameJa, en: nameEn } = effect.source.name;
+    return [
+      {
+        level: 'approx' as const,
+        code: 'counted-allies-pick',
+        message: {
+          ja: `${nameJa}の対象に合う味方が ${candidates} 機いて、${n} 機より多い。選び方を確かめていないので、枠の若い順に ${n} 機を選んだ`,
+          en: `${candidates} allies match the target of ${nameEn}, more than ${n}. The rule is unverified; the model picks the first ${n} slots`,
+        },
+      },
+    ];
   });
 }
 

@@ -67,6 +67,7 @@ import {
 } from './condition.ts';
 import {
   LOWEST_HP_RATIO_HEAL_ONLY,
+  parseAlliesCount,
   parsePersonaTargetFields,
   parseTargetClass,
   parseTargetCount,
@@ -400,7 +401,8 @@ function parseTimedTarget(
   if (targetSquad !== undefined) narrowing.targetSquad = targetSquad;
   const targetCharacter = parseTargetCharacter(v, target, path);
   if (targetCharacter !== undefined) narrowing.targetCharacter = targetCharacter;
-  const count = parseTargetCount(v, target, path);
+  // 「〈絞り込み〉の味方 N 機」は allies に N を書く（plan/design-kiri.md 2 節）
+  const count = target === 'allies' ? parseAlliesCount(v, path) : parseTargetCount(v, target, path);
   if (v.excludeSelf !== undefined) {
     const excludeSelf = oneOf(EXCLUDE_SELF, v.excludeSelf, `${path}.excludeSelf`);
     // 「自分を除く…味方全体」は allies の always
@@ -957,6 +959,10 @@ export function parsePassiveEffect(v: Record<string, Json>, path: string): Passi
   // 最終防御力の比べは発火の瞬間に決めるので、常時の効果には書けない（plan/design-skill-stage7.md 1.4 節）
   if (v.targetDefense !== undefined) fail(`${path}.targetDefense`, 'targetDefense is only allowed in timed');
   if (v.targetLeftmost !== undefined) fail(`${path}.targetLeftmost`, 'targetLeftmost is only allowed in timed');
+  // 「〈絞り込み〉の味方 N 機」は timed だけ（plan/design-kiri.md 2 節）
+  for (const key of ['targetCount', 'targetCountRef'] as const) {
+    if (v[key] !== undefined) fail(`${path}.${key}`, `${key} is not allowed in passive`);
+  }
   for (const key of ['targetState', 'includeSelf', 'targetAdjacent', 'targetBurstStep'] as const) {
     if (v[key] !== undefined) fail(`${path}.${key}`, `${key} is only allowed in timed and state`);
   }
