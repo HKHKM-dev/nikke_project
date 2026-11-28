@@ -1,0 +1,15 @@
+{
+  "id": "C-1570",
+  "text": "キリ（33）のバーストのクリティカル確率▲は、バーストの使用時に防御型の味方全体（キリ自身は支援型で入らない）に付き、10 秒、会心率に説明文の値（スペック固定の Lv10 で 19.9%）を足す",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "V-0882",
+  "model": "反映（data/skills/33.json の burst の effects[1]（timed・burstUse・allies・targetClass: \"Defender\"・critRate））",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/33.json の burst の effects[1]"]
+  },
+  "decidedOn": []
+}
