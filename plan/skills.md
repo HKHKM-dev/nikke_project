@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 206・効果 1340（根拠あり 1318）・notes 496（根拠あり 188）
+件数: キャラ 206・効果 1341（根拠あり 1319）・notes 495（根拠あり 187）
 
-notes の種類: 未対応 46・前提の外 171・計算に無関係 106・補足 45・間接 128
+notes の種類: 未対応 45・前提の外 171・計算に無関係 106・補足 45・間接 128
 
-スロット: supported 553・partial 18・unsupported 18・noEffect 92
+スロット: supported 554・partial 17・unsupported 18・noEffect 92
 
 ## 10 ラピ
 
@@ -1683,7 +1683,7 @@ notes の種類: 未対応 46・前提の外 171・計算に無関係 106・補�
 - **skill1**: noEffect
   - notes[0] 間接（防御力）: 通常攻撃命中時（確率 20%）の、残りの HP が最も低い味方 1 機の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: C-0072（確定）
 - **skill2**: supported
-  - effects[0] timed・17 秒ごと・critRate: C-0496（確定）
+  - effects[0] timed・17 秒ごと・critRate: C-0496（確定）、C-1628（確定）
 - **burst**: supported
   - effects[0] timed・burstUse・attack: C-0684（確定）
 
@@ -1794,12 +1794,12 @@ notes の種類: 未対応 46・前提の外 171・計算に無関係 106・補�
 
 ## 314 ソーダ：トゥインクルバニー
 
-- **skill1**: partial
+- **skill1**: supported
   - effects[0] stackChange・battleStart・goldenChip: C-0128（確定）
   - effects[1] state・normalShot・goldenChip（critDamage）: C-0580（確定）
     - contents[0] critDamage: C-0128（確定）
   - effects[2] timed・normalShot・attackDamage: C-0881（確定）
-  - notes[0] 未対応: 同じきっかけの、自分を除く最終攻撃力が最も高い味方 1 機への攻撃ダメージ▲（2 秒）は未対応。ラム・デルタ（スペック固定の攻撃力が同じ）との編成の録画では▲はデルタに乗り、ラムには乗らない（V-0634）。モデルの順位（最終攻撃力。同値は枠の若い順）ではラムになり、選び方が決まらない: C-0882（確定）
+  - effects[3] timed・normalShot・attackDamage: C-0882（確定）
 - **skill2**: supported
   - effects[0] fullBurstExtend・burstStage3Enter: C-0877（確定）
   - effects[1] fullBurstExtend・burstStage3Enter: C-0877（確定）
@@ -2295,7 +2295,7 @@ notes の種類: 未対応 46・前提の外 171・計算に無関係 106・補�
   - effects[0] timed・barrier が適用された時・coreDamage（読む: バリア）: C-0671（確定）
   - effects[1] coverHeal・normalShot: C-0826（確定）
 - **skill2**: supported
-  - effects[0] timed・normalShot・coreDamage: C-0592（確定）、C-0593（確定）、C-0653（確定）
+  - effects[0] timed・normalShot・coreDamage: C-0592（確定）、C-0593（確定）、C-0653（確定）、C-1627（確定）
   - effects[1] heal・normalShot: C-0673（確定）
 - **burst**: supported
   - effects[0] timed・burstUse・attack: C-0672（確定）
