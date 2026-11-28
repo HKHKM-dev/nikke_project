@@ -354,6 +354,8 @@ export const NAMED_STATES = {
   roar: { name: { ja: '咆哮', en: 'Roar' }, holder: 'ally' },
   /** メイド精神（ソーダの S1） */
   maidSpirit: { name: { ja: 'メイド精神', en: 'Maid Spirit' }, holder: 'ally' },
+  /** ヴィクトリークライ（クレイの S1） */
+  victoriousBattleCry: { name: { ja: 'ヴィクトリークライ', en: 'Victorious Battle Cry' }, holder: 'ally' },
   /** 鬼の気（レムのバースト） */
   demonsBreath: { name: { ja: '鬼の気', en: "Demon's Breath" }, holder: 'ally' },
   /** 傾く天秤（K の S1） */

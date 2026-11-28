@@ -1,0 +1,15 @@
+{
+  "id": "C-1602",
+  "text": "クレイ（551）の S1 のヴィクトリークライは、クレイの通常攻撃の発を戦闘の始めからフルバーストの外も通して数え、60 の倍数に届いた発がフルバーストの窓の中のときだけ、クレイを含む味方全体に 1 スタック付く（ソーダ：トゥインクルバニーの S1 と同じ数え方）。1 スタックごとに防御力無視ダメージ 6.45%（Lv10）が、クレイ自身とほかの味方（ジル）の防御無視の発の▲の和に足される。付くたびに全スタックの 6 秒の維持を数え直す",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1432-09`・`1432-13`・`1432-14`・`1432-15`・`1432-18`・`1432-19`・`1432-20`・`1432-21`・`1432-22`。V-0893",
+  "model": "`data/skills/551.json` の skill1 の effects[0]（状態の付与 `victoriousBattleCry`・`allies`・回数のきっかけ `{ count: normalShot, everyRef: 1, firesDuring: fullBurst }`・中身 `trueDamage`）と、状態の目録（`skills/states.ts`）の `victoriousBattleCry`",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/551.json の skill1 の effects[0]"]
+  },
+  "decidedOn": []
+}

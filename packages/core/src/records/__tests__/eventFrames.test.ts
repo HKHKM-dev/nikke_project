@@ -159,3 +159,24 @@ describe('eventFrames の stateEnd・modulo・from', () => {
     expect(claire.length).toBeGreaterThan(1);
   });
 });
+
+// V-0893: 出来事 stateStart（状態が付いた・スタックが足されたフレーム）。録画 1432（ココア + ジル + クレイ（操作））のモデルで、
+// クレイの S1 のヴィクトリークライが付いた発の、戦闘の始めからの通しの発の数
+describe('eventTallies の stateStart', () => {
+  const team = buildTeamInput(recordingMap(file).get('1432')!, setup, data);
+  const run = runSimulation(team);
+  const ev = (name: string, args: Record<string, number | string | boolean>) =>
+    METRICS[name]!.sim(run, {
+      args: { slot: 3, event: 'stateStart', state: 'victoriousBattleCry', ...args },
+      input: team,
+    });
+
+  it('lists the frames where Victorious Battle Cry is stacked, each after a 60th shot', () => {
+    const starts = ev('eventFrames', {}) as number[];
+    expect(starts.length).toBeGreaterThan(5);
+    expect(starts).toEqual([...new Set(starts)].sort((a, b) => a - b));
+    const shots = ev('eventTallies', { tally: 'shots' }) as number[];
+    expect(shots.length).toBe(starts.length);
+    expect(shots.every((s) => s > 0 && s % 60 === 0)).toBe(true);
+  });
+});

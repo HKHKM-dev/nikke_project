@@ -1,0 +1,113 @@
+{
+  "formatVersion": 1,
+  "resourceId": 551,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "victoriousBattleCry",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1,
+            "firesDuring": "fullBurst"
+          },
+          "target": "allies",
+          "maxStacksRef": 3,
+          "durationRef": 4,
+          "contents": [
+            {
+              "stat": "trueDamage",
+              "ref": 2
+            }
+          ],
+          "assumes": {
+            "ja": "通常攻撃の発を戦闘の始めからフルバーストの外も通して数え、{01} の倍数に届いた発がフルバーストの窓の中のときだけ、自分を含む味方全体に 1 スタック付く（ソーダ：トゥインクルバニーの S1 と同じ数え方）。付くたびに全スタックの維持を付け直す。中身の防御力無視ダメージ▲は防御力無視の発にだけ乗る。3 スタックの上限は撮っていない（フルバーストの中で 4 回目に付いた後の防御無視の発が無かった）",
+            "en": "Counts normal attack shots from the start of the battle, including outside Full Burst, and adds one stack to all allies, including this unit, only on a shot that reaches a multiple of {01} inside the Full Burst window (the same counting as Soda: Twinkling Bunny S1). Each application refreshes the duration of all stacks. The True Damage increase applies only to true-damage hits. The 3-stack cap has not been recorded (no true-damage hit followed a fourth application inside Full Burst)"
+          },
+          "claims": [
+            "C-1602"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "ヴィクトリークライと同時に付く、敵の発射体を攻撃する時の発射体に与えるダメージ▲は、敵の発射体を撃つ場面を扱わないのでダメージに関係しない（要件 5.2 節）",
+          "en": "The damage increase against enemy projectiles applied with Victorious Battle Cry does not affect damage, since shooting enemy projectiles is not modeled (requirements 5.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "normalShot"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "passive",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 2,
+          "while": {
+            "selfState": "victoriousBattleCry"
+          },
+          "assumes": {
+            "ja": "自分（クレイ）にヴィクトリークライが付いている間だけ、自分を含む味方全体に、自分の攻撃力の {02}% を足す。スタック数によらない",
+            "en": "Only while this unit (Clay) has Victorious Battle Cry, adds {02}% of this unit's ATK to all allies, including this unit. Independent of the number of stacks"
+          },
+          "claims": [
+            "C-1603"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "バースト 1 段階突入時の、味方全体へのデバフ効果免疫は、ダメージに関係しない",
+          "en": "The debuff immunity given to all allies on entering Burst Stage 1 does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "trueDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "乗るのは防御力無視の発（防御力無視として適用した通常攻撃と、防御力無視ダメージの倍率ダメージ）だけ",
+            "en": "Applies only to true-damage hits (normal attacks applied as true damage and true-damage skill hits)"
+          },
+          "claims": [
+            "C-1604"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "trueDamageConversion",
+          "durationRef": 3,
+          "assumes": {
+            "ja": "窓の中の通常攻撃の 1 発の基礎を、防御力を引かない最終攻撃力にする（C-0311・C-0525 の式）",
+            "en": "Normal attacks in the window use final ATK without subtracting DEF (the C-0311 / C-0525 formula)"
+          },
+          "claims": [
+            "C-1604"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "id": "1432",
+  "date": "2026-11-28",
+  "folder": "range",
+  "file": "20261128-1432_clay-team.mp4",
+  "original": "2026-11-28_19-21-38.mp4",
+  "durationSec": 429.3,
+  "frames": 25758,
+  "fps": 60,
+  "sizeMB": 516.7,
+  "sha256": "cbb353596a81",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 841,
+      "name": "ジル",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 551,
+      "name": "クレイ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-28T19:31+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
