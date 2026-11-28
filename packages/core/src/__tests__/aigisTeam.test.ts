@@ -14,7 +14,7 @@ import { staticStatesOf } from '../skills/types.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { toTimelineSlots, type TeamInput, type TeamSlotInput } from '../team.ts';
 import { battleSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedEnemy, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const AIGIS = 872;
 const REI = 392;
@@ -27,8 +27,11 @@ const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: '
 
 const TEAMS: Record<string, TeamInput> = {
   'ライ + アイギス + アリス（撮影の編成）': fixedTeam([REI, AIGIS, ALICE].map(autoSlot), 1, { enemy: rangeEnemy }),
-  // ペルソナの 3 体。クイーン（真）の S2 のバトンタッチと雪子の S2 の追撃は III のペルソナ状態の味方に絞るので、II のアイギスには付かない
-  '実戦寄り（ライ + アイギス + クイーン（真）+ 雪子）': fixedTeam([REI, AIGIS, QUEEN_TRUE, YUKIKO], 2),
+  // ペルソナの 3 体（1more の起きる風圧の敵）。クイーン（真）の S2 のバトンタッチと雪子の S2 の追撃は III のペルソナ状態の味方に絞るので、
+  // II のアイギスには付かない
+  '実戦寄り（ライ + アイギス + クイーン（真）+ 雪子）': fixedTeam([REI, AIGIS, QUEEN_TRUE, YUKIKO], 2, {
+    enemy: fixedEnemy({ element: 'Wind' }),
+  }),
 };
 
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
@@ -95,7 +98,9 @@ describe('ライ + アイギス + アリス（撮影の編成）', () => {
 describe('実戦寄り（ライ + アイギス + クイーン（真）+ 雪子）', () => {
   const plan = planTeamRun(TEAMS['実戦寄り（ライ + アイギス + クイーン（真）+ 雪子）']!);
 
-  it('does not give Baton Pass or Follow Up to her (Burst II)', () => {
+  it('gives Baton Pass to Yukiko and Follow Up to Queen (True), but neither to her (Burst II)', () => {
+    expect(itemsOf(plan.history, { holder: 3, kind: 'state', state: 'batonPass' }).length).toBeGreaterThan(0);
+    expect(itemsOf(plan.history, { holder: 2, kind: 'state', state: 'followUp' }).length).toBeGreaterThan(0);
     for (const state of ['batonPass', 'followUp'] as const)
       expect(itemsOf(plan.history, { holder: 1, kind: 'state', state })).toEqual([]);
   });
