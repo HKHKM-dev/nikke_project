@@ -102,7 +102,10 @@ describe('RosterRevertButton（スロットの「育成状況の値に戻す」�
 
   it('スロットの値が育成状況と違うときに押せ、育成状況の値を渡す', () => {
     const onRevert = show(slot, rosterGrowth);
-    fireEvent.click(screen.getByRole('button', { name: '育成状況の値に戻す' }));
+    const button = screen.getByRole('button', { name: '育成状況の値に戻す' });
+    // 見える表記は「戻す」とだけ出す（読み上げの名前とは別）
+    expect(button.textContent).toBe('戻す');
+    fireEvent.click(button);
     expect(onRevert).toHaveBeenCalledWith(rosterGrowth);
   });
 
@@ -165,7 +168,10 @@ describe('TeamSettingsForm の「育成状況の値に戻す」（共通育成�
 
   it('共通育成が育成状況と違うときに押せ、シンクロ LV とリサイクルルームを育成状況の値にする', () => {
     const dispatch = form(200);
-    fireEvent.click(screen.getByRole('button', { name: '育成状況の値に戻す' }));
+    const button = screen.getByRole('button', { name: '育成状況の値に戻す' });
+    // 文字のボタン（クラシック）の見える表記は「戻す」とだけ出す（読み上げの名前とは別）
+    expect(button.textContent).toBe('戻す');
+    fireEvent.click(button);
     expect(dispatch).toHaveBeenCalledWith({ type: 'setSynchroLevel', synchroLevel: 300 });
     expect(dispatch).toHaveBeenCalledWith({ type: 'setConsole', console: commonGrowthOf(ROSTER).console });
   });

@@ -98,6 +98,13 @@ const rowNames = (dialog: HTMLElement) =>
   [...dialog.querySelectorAll('.optimal-party-name')].map((e) => e.textContent).sort();
 
 describe('OptimalPartyPopover', () => {
+  // 計算の前後で選択欄と「計算」のボタンが動かないことは、この枠と中身のクラスに当たる styles.css の規則で決まる（styles.test.ts）
+  it('puts the classes the fixed-position rules in styles.css select on', () => {
+    const { dialog } = renderPopover(withCharacters([II, III]));
+    expect([...dialog.classList]).toEqual(expect.arrayContaining(['popover-panel-center', 'optimal-party-popover']));
+    expect(dialog.querySelector(':scope > fieldset.optimal-party > .optimal-party-controls')).not.toBeNull();
+  });
+
   it('leaves out the candidates that stop the full burst, in a team with empty slots', async () => {
     const { dialog } = renderPopover(withCharacters([II, III]));
     // 空のスロット 3 に入れる。ネオン（I）なら I・II・III がそろい、D（III）ではそろわない
