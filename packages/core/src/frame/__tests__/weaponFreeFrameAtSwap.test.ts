@@ -33,4 +33,14 @@ describe('weaponFreeFrameAtSwap', () => {
       expect(weaponFreeFrameAtSwap(state('reloading'), swap - 47, swap, DEFAULT_WEAPON_MODEL, charge)).toBe(swap);
     }
   });
+
+  it('aimedNoAimOut（マクスウェル）は、構えたままでも持ち替えのフレームで、構え解除の途中なら構え解除の終わり（C-1598。1428-08・1429-09）', () => {
+    const at = (phase: ShooterState['phase'], last: number | undefined) =>
+      weaponFreeFrameAtSwap(state(phase), last, swap, DEFAULT_WEAPON_MODEL, true, true);
+    expect(at('ready', swap - 20)).toBe(swap);
+    expect(at('ready', undefined)).toBe(swap);
+    expect(at('ready', swap - 5)).toBe(swap - 5 + aimOut);
+    expect(at('reloading', swap - 16)).toBe(swap);
+    expect(at('reloading', swap - 9)).toBe(swap - 9 + aimOut);
+  });
 });

@@ -59,6 +59,18 @@ describe('語彙の検証', () => {
     );
   });
 
+  it('accepts aimedSwapNoAimOut only as true with firstShotAfterSwapFrames', () => {
+    const { firstShotDelayFrames: _delay, ...base } = change;
+    const swap = { ...base, firstShotAfterSwapFrames: 114 };
+    expect(() => parseSkillDefinition(withSkill1(warmUp, { ...swap, aimedSwapNoAimOut: true }))).not.toThrow();
+    expect(() => parseSkillDefinition(withSkill1(warmUp, { ...base, aimedSwapNoAimOut: true }))).toThrow(
+      /aimedSwapNoAimOut needs firstShotAfterSwapFrames/,
+    );
+    expect(() => parseSkillDefinition(withSkill1(warmUp, { ...swap, aimedSwapNoAimOut: false }))).toThrow(
+      /aimedSwapNoAimOut/,
+    );
+  });
+
   it('allows { weaponChangeEnd } only in ammoDecrease, which targets self only', () => {
     const decrease = { kind: 'ammoDecrease', trigger: { weaponChangeEnd: true }, target: 'self', ref: 7 };
     expect(() => parseSkillDefinition(withSkill1(warmUp, change, decrease))).not.toThrow();

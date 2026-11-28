@@ -26,6 +26,8 @@ export type ChangedWeapon = {
   firstShotDelayFrames?: number;
   /** 持ち替えから最初の発まで（WeaponChangeEffect.firstShotAfterSwapFrames） */
   firstShotAfterSwapFrames?: number;
+  /** 構えたままの持ち替えで構え解除 1 回分を待たない（WeaponChangeEffect.aimedSwapNoAimOut） */
+  aimedSwapNoAimOut?: true;
   /** 撃ち切りの最後の弾丸から基礎の武器の最初の発まで（WeaponChangeEffect.returnFirstShotFrames） */
   returnFirstShotFrames?: number;
   /** 撃ち切りの最後の弾丸から、同じ枠のクールタイムの周期の発動の待ちが明けるまで（WeaponChangeEffect.returnCooldownFrames） */

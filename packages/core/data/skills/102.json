@@ -64,29 +64,15 @@
           "fullChargeDamage": 300,
           "maxAmmoRef": 2,
           "pierce": true,
-          "firstShotDelayFrames": 119,
+          "firstShotAfterSwapFrames": 114,
+          "aimedSwapNoAimOut": true,
           "assumes": {
-            "ja": "基礎の SR を、チャージ 2 秒・フルチャージ 300% の 1 発（最大装弾数 1 発）に替え、撃ち切ったら基礎の SR に戻る。最初の発までの待ちは録画で読んだ即値で、III のタイマーの 00.00 から 136f（V-0824）。待ちは即値なので、モデルではチャージ速度▲で縮まない（撮った編成では、マクスウェルが自分のバーストの回にいつも受ける S1 のチャージ速度▲の分が即値に入っている）。チャージ時間に「固定」は無いが、ほかの味方のチャージ速度▲で縮むかは確かめていない。射撃場の的では、変更後の発はどれもコアに当たった。追加効果「貫通特化」は weaponChange の pierce で、変更後の発に味方の貫通ダメージ▲が乗る。変更後の発のバーストゲージは、いまのモデルの形（確かめていない）",
-            "en": "Turns the base SR into one shot (max ammo 1) with a 2 s charge and 300% full charge damage, and goes back to the base SR when spent. The wait to the first shot is read from recordings: 136 frames after 00.00 of the Burst III timer (V-0824). As the wait is a fixed value, Charge Speed ups do not shorten it in the model (in the recorded team, the S1 Charge Speed up Maxwell always had at her bursts is inside the value). The charge time has no \"fixed\", but whether other allies’ Charge Speed ups shorten it is unverified. On the range target every changed shot hit the core. The additional Pierce is the weaponChange pierce, so allies’ Pierce Damage ups apply to the changed shot. The burst gauge of the changed shot follows the current model (unverified)"
+            "ja": "基礎の SR を、チャージ 2 秒・フルチャージ 300% の 1 発（最大装弾数 1 発）に替え、撃ち切ったら基礎の SR に戻る。最初の発は、持ち替え（III のタイマーの 00.00 の 4〜5f 前）の時に基礎の SR が構え解除の途中なら構え解除の終わりから、構えたまま（チャージの途中）でもリロード中でも持ち替えから数え（C-1598。構えたままでも構え解除 1 回分を待たないのは aimedSwapNoAimOut）、チャージの途中なら III のタイマーの 00.00 から 136f（V-0824・V-0888）。待ちは録画で読んだ即値なので、モデルではチャージ速度▲で縮まない（撮った編成では、マクスウェルが自分のバーストの回にいつも受ける S1 のチャージ速度▲の分が即値に入っている）。チャージ時間に「固定」は無いが、ほかの味方のチャージ速度▲で縮むかは確かめていない。射撃場の的では、変更後の発はどれもコアに当たった。追加効果「貫通特化」は weaponChange の pierce で、変更後の発に味方の貫通ダメージ▲が乗る。変更後の発のバーストゲージは、いまのモデルの形（確かめていない）",
+            "en": "Turns the base SR into one shot (max ammo 1) with a 2 s charge and 300% full charge damage, and goes back to the base SR when spent. The first shot counts from the end of the base SR aim-out if the swap (4-5 frames before 00.00 of the Burst III timer) falls in it, and from the swap otherwise, whether the SR was aimed (charging) or reloading (C-1598; not waiting one aim-out even when aimed is aimedSwapNoAimOut). When charging, it comes 136 frames after 00.00 (V-0824, V-0888). As the wait is a fixed value read from recordings, Charge Speed ups do not shorten it in the model (in the recorded team, the S1 Charge Speed up Maxwell always had at her bursts is inside the value). The charge time has no \"fixed\", but whether other allies’ Charge Speed ups shorten it is unverified. On the range target every changed shot hit the core. The additional Pierce is the weaponChange pierce, so allies’ Pierce Damage ups apply to the changed shot. The burst gauge of the changed shot follows the current model (unverified)"
           },
           "claims": [
             "C-1433",
-            "C-1567"
-          ]
-        }
-      ],
-      "notes": [
-        {
-          "ja": "持ち替えの時に基礎の SR の構え解除がまだ終わっていない回は、変更後の武器の 1 発がその残りだけ遅れる（C-1567）。モデルは待ちの即値で、基礎の SR の状態を見ない。構え解除の途中で早くなるレッドフード（C-0897）の規則と向きが逆で、共通の規則にできていない",
-          "en": "When the base SR was still in its aim-out at the swap, the changed shot came later by the rest of the aim-out (C-1567). The model uses a fixed wait and does not look at the base SR state. This goes the opposite way from Red Hood (C-0897), whose first shot is earlier when swapping during the aim-out, so no common rule covers both",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "weaponChange",
-            "trigger": "burstUse"
-          },
-          "claims": [
-            "C-1433",
-            "C-1567"
+            "C-1598"
           ]
         }
       ]
