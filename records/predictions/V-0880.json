@@ -1,0 +1,102 @@
+{
+  "verification": "V-0880",
+  "note": "ライ単騎（操作）。射撃場 3 分・灼熱タブの BigArms・スペック固定 ON（スキル Lv10）・オート射撃 ON・オートバースト ON（I のバーストを使い、II がいないのでチェーンが切れ、ゲージがまた溜まる）。命中で数える読み（H2）とチャージの無い対照（H0）はモデルの定義を替えないと表せないので、値は検証記録の「予測」に手で書いた",
+  "team": [
+    {
+      "rid": 392,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "Model",
+      "note": "いまの定義（H1）。撃った発の 60 の倍数の発で、その発と同じフレームに 2.47% を足す。リロードをまたいで数え続ける"
+    }
+  ],
+  "targets": [
+    {
+      "id": "full-1-shots",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "戦闘開始から、1 回目にゲージが満タンになった（BURST バーが消えた）フレームまでのライの当たった発の数（撃った発から外れを引く。モデルは全部の発が当たる。枠アイコンの上の残弾の減りとリロードで数える）。幅 3 は残弾の読みの 1〜2 発と、満タンのフレームの読みの 1 発"
+    },
+    {
+      "id": "full-2-shots",
+      "model": "sim",
+      "metric": "chainTimeoutToGaugeFullShots",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "1 回目のチェーン切れ（右のバースト欄が BURST のバーに戻ったフレーム）から、2 回目の満タンまでのライの発の数。読み方は full-1-shots と同じ"
+    },
+    {
+      "id": "full-3-shots",
+      "model": "sim",
+      "metric": "chainTimeoutToGaugeFullShots",
+      "args": {
+        "slot": 1,
+        "n": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "2 回目のチェーン切れから、3 回目の満タンまでのライの発の数。読み方は full-1-shots と同じ"
+    },
+    {
+      "id": "full-1-frame",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "note": "戦闘開始（残り時間の 02:59 が出たフレーム。C-0078）から 1 回目の満タンまでの動画のフレーム。記録のために読む（見分けは発の数で行う）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-28",
+    "commit": "2f8c83c3fc72173a833bc2fce81971415f16e65e",
+    "values": {
+      "Model": {
+        "full-1-shots": 420,
+        "full-2-shots": 414,
+        "full-3-shots": 414,
+        "full-1-frame": 1429
+      }
+    }
+  }
+}
