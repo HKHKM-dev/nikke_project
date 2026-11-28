@@ -1,0 +1,275 @@
+[
+  {
+    "id": "1407-01",
+    "recording": "1407",
+    "use": "compare",
+    "kind": "count",
+    "value": 420,
+    "unit": "発",
+    "description": "ライ単騎（3 枠目・操作）の、戦闘の始まりから 1 回目にゲージが満タンになった（BURST バーが消えた f2255）発までに撃った発の数（外れも数える）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series・mags --max 120（照準の左の残弾）・tools/captures/gauge.ts --mode events",
+      "note": "1〜3 本目のマガジンは 120 発ずつ撃ち切り（0 の表示はリロードで暗くなり読めないので、1 の後の 1 発を足す）、4 本目のマガジンはバー消失の f2255 に表示が 60 になった（60 発目）。360 + 60。チャージは撃った発で起き、通常攻撃のゲージは当たった発で溜まるので、モデルの弾丸命中率に、同じ区間の当たった発 ÷ 撃った発（1407-04 の 414 ÷ 420 = 0.9857）を入れ、撃った発の数と比べる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "hitRate": 0.9857
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "gauge",
+      "frames": [826, 2255]
+    },
+    "source": "V-0880",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1407-02",
+    "recording": "1407",
+    "use": "compare",
+    "kind": "count",
+    "value": 982,
+    "unit": "発",
+    "description": "ライ単騎（3 枠目・操作）の、戦闘の始まりから 2 回目にゲージが満タンになった（BURST バーが消えた f4407）発までに撃った発の数（外れも数える）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series・mags --max 120（照準の左の残弾）・tools/captures/gauge.ts --mode events・tools/captures/hud.ts --mode jumps --from 820 --to 4410",
+      "note": "1〜8 本目のマガジンは 120 発ずつ撃ち切り（弾が残ったままのリロードは無い）、9 本目のマガジンはバー消失の f4407 に表示が 98（22 発目）。960 + 22。モデルの弾丸命中率には、同じ区間の当たった発 ÷ 撃った発（974 ÷ 982 = 0.9919）を入れた。当たった発は、HUD の増分（読めない間は無かった）を 1407-04 と同じ格子に当てた数（どれも 1 ヒット）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 3,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "hitRate": 0.9919
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "gauge",
+      "frames": [826, 4407]
+    },
+    "source": "V-0880",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1407-03",
+    "recording": "1407",
+    "use": "record",
+    "kind": "gauge",
+    "value": [
+      {
+        "frame": 983,
+        "jump": 2,
+        "ammo": 60
+      },
+      {
+        "frame": 1130,
+        "jump": 3,
+        "ammo": 0
+      },
+      {
+        "frame": 1406,
+        "jump": 4,
+        "ammo": 60
+      },
+      {
+        "frame": 1554,
+        "jump": 3,
+        "ammo": 0
+      },
+      {
+        "frame": 1830,
+        "jump": 3,
+        "ammo": 60
+      },
+      {
+        "frame": 1978,
+        "jump": 4,
+        "ammo": 0
+      },
+      {
+        "frame": 2255,
+        "jump": null,
+        "ammo": 60
+      },
+      {
+        "frame": 3228,
+        "jump": 3.07,
+        "ammo": 60
+      },
+      {
+        "frame": 3375,
+        "jump": 4,
+        "ammo": 0
+      },
+      {
+        "frame": 3652,
+        "jump": 3,
+        "ammo": 60
+      },
+      {
+        "frame": 3799,
+        "jump": 4,
+        "ammo": 0
+      },
+      {
+        "frame": 4075,
+        "jump": 3,
+        "ammo": 60
+      },
+      {
+        "frame": 4223,
+        "jump": 4,
+        "ammo": 0
+      },
+      {
+        "frame": 5193,
+        "jump": 3.01,
+        "ammo": 0
+      },
+      {
+        "frame": 5470,
+        "jump": 4,
+        "ammo": 60
+      },
+      {
+        "frame": 5617,
+        "jump": 2.98,
+        "ammo": 0
+      },
+      {
+        "frame": 5893,
+        "jump": 4,
+        "ammo": 60
+      },
+      {
+        "frame": 6040,
+        "jump": 3,
+        "ammo": 0
+      },
+      {
+        "frame": 6316,
+        "jump": 2.98,
+        "ammo": 60
+      },
+      {
+        "frame": 6463,
+        "jump": 4,
+        "ammo": 0
+      },
+      {
+        "frame": 7855,
+        "jump": 3,
+        "ammo": 0
+      },
+      {
+        "frame": 8131,
+        "jump": 3,
+        "ammo": 60
+      },
+      {
+        "frame": 8278,
+        "jump": 4,
+        "ammo": 0
+      },
+      {
+        "frame": 8555,
+        "jump": 4,
+        "ammo": 60
+      },
+      {
+        "frame": 8702,
+        "jump": 4,
+        "ammo": 0
+      },
+      {
+        "frame": 9948,
+        "jump": 2.95,
+        "ammo": 60
+      },
+      {
+        "frame": 10095,
+        "jump": 4,
+        "ammo": 0
+      },
+      {
+        "frame": 10372,
+        "jump": 2.98,
+        "ammo": 60
+      },
+      {
+        "frame": 10519,
+        "jump": 4,
+        "ammo": 0
+      },
+      {
+        "frame": 10796,
+        "jump": 3,
+        "ammo": 60
+      },
+      {
+        "frame": 11062,
+        "jump": 3,
+        "ammo": 0
+      }
+    ],
+    "unit": "px",
+    "description": "BURST バーが 1 フレームで 2.5px 以上跳んだフレームと跳んだ量（px）と、そのフレームのライの残弾の表示（0 はマガジンの最後の発。表示は 1 のまま）。f2255 は跳んだ発でバーが消えた（満タン）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series --subpixel・tools/captures/reticle-ammo.ts --mode series --max 120",
+      "note": "1 発のゲージ（約 0.27px）のほかに、前のフレームから 2.5〜6px 増えたフレームを拾った。f983 は 0px（本当の 12.6% 未満）から 2.0px に出たフレーム。どの跳びも、残弾の表示が 60 になったフレームか、1 の表示の後のマガジンの最後の発（120 発目）のフレームにある。バーが 0px の間（各周の始め）と満タンの後の跳びは見えない。弾が残ったままのリロードは録画の全部で無かった（どのマガジンも 120 発）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "gauge",
+      "frames": [826, 11420]
+    },
+    "source": "V-0880",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1407-04",
+    "recording": "1407",
+    "use": "record",
+    "kind": "hit",
+    "value": {
+      "shots": 420,
+      "hits": 414,
+      "missFrames": [959, 968, 981, 1685, 1747, 2253]
+    },
+    "description": "戦闘の始まりから 1 回目の満タン（f2255）までのライの撃った発・当たった発の数と、外れた発のフレーム",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps --from 820 --to 2260・tools/captures/reticle-ammo.ts --mode series",
+      "note": "HUD の増分（読めない間は無かった）を、1 ヒットの格子（胴体 8,037 × 距離 1.3・会心 1.8・コア 2.3・コアと会心 2.8。±3）に当て、どの増分も 1 ヒットだった（414 回）。残弾が減ったフレームの ±1f に増分の無い発を外れとした（6 発。SMG の発は 2〜3f ごとなので、外れのフレームは ±1f ずれうる）。外れのうち 3 発は 1 回目のチャージ（f983）より前"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [826, 2255]
+    },
+    "source": "V-0880",
+    "readAt": "2026-11-28"
+  }
+]

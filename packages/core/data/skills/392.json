@@ -1,0 +1,60 @@
+{
+  "formatVersion": 1,
+  "resourceId": 392,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "burstGauge",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "allies",
+          "ref": 2,
+          "assumes": {
+            "ja": "通常攻撃で 60 回攻撃した時は、撃った発（外れも 1 回）の 60 の倍数の発。チェーンをまたいで数え続け、届いた発と同じフレームに、編成の 1 本のゲージに足す。リロードをまたいでも数え続けるとみなす（撃ち切りのリロードしか起きない編成では、120 発が 60 の倍数なので結果は同じ。弾が残ったままのリロードの後は確かめていない）",
+            "en": "Attacking 60 times with normal attacks means every shot fired (misses count, one per shot) that reaches a multiple of 60. The count carries over chains, and the charge is added to the team's single gauge on the frame of that shot. The count is assumed to carry over reloads too (the result is the same when reloads happen only on an empty magazine, as 120 is a multiple of 60; reloads with rounds left are not verified)"
+          },
+          "claims": [
+            "C-1572"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "デコイが存在する時の自分へのデコイ回復は、デコイの HP を回復するだけで、与ダメージを変えない",
+          "en": "The decoy heal on self while a decoy exists only restores the decoy's HP and does not change damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "戦闘開始時のデコイ（分身）は、それ自体は与ダメージを変えない（デコイを読む効果のある編成でだけ効く）",
+          "en": "The decoy (clone) at the start of battle does not change damage by itself (it matters only with an effect reading decoys in the team)",
+          "kind": "indirect",
+          "path": "decoy"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分へのヘイト（敵全体を挑発）と受けるダメージ▼はダメージに関係しない。挑発はバースト使用時のチェーンの中で付くので、ゲージを入れたとしても、ゲージの溜まらない間で効かない（入れるかは確かめていない）",
+          "en": "Hate (taunting all enemies) and the damage-taken decrease on self do not affect damage. The taunt is applied inside the chain on Burst use, where the gauge does not charge, so it would not matter even if it added gauge (whether it does is not verified)",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "デコイが存在する時の自分へのデコイ持続回復は、デコイの HP を回復するだけで、与ダメージを変えない",
+          "en": "The decoy heal over time on self while a decoy exists only restores the decoy's HP and does not change damage",
+          "kind": "noDamage"
+        }
+      ]
+    }
+  }
+}
