@@ -1,15 +1,12 @@
 {
   "id": "C-1569",
   "text": "防御型の味方が 2 機より多い編成では、キリ（33）の S1 の攻撃力▲は、防御型の枠のうち枠の若い順の 2 機に付く",
-  "state": "仮説",
+  "state": "棄却",
   "topic": "スキル・キャラ固有",
   "grade": "推論",
-  "basis": "V-0882",
-  "model": "反映（skills/targets.ts の fixedTargetOk が、allies の targetCount の効果を fixedTargets の先頭の N 枠に絞る。選んだ時は sim の枠の注記 counted-allies-pick）",
+  "basis": "V-0882 2026-11-28 棄却: 防御型が 3 機の編成（録画 1415）で、3 機ともに▲ありの発が 7〜8 割あり、続けて撃つ間にもどの 1 機も▲なしになる時があった（`1415-01`）。発ごとに選び直す形で、枠の若い順の決め打ちとは合わない。C-1579 に置き換えた",
+  "model": "—（決め打ちは近似として残した。C-1579）",
   "replaces": [],
   "updated": "2026-11-28",
-  "subject": {
-    "places": ["data/skills/33.json の skill1 の effects[0]"]
-  },
   "decidedOn": []
 }

@@ -8,7 +8,7 @@
 //   - 「残りの HP の割合が最も低い味方 N 機」（lowestHpRatio）は、fixedTargets（HP の割合の想定の低い順。同値は枠の若い順）の
 //     先頭 targetCount 枠に掛ける（plan/design-skill-stage8.md 1.1 節）。
 //   - 「〈絞り込み〉の味方 N 機」（allies と targetCount）は、fixedTargets（絞り込みに合う枠の順）の先頭 targetCount 枠に掛ける
-//     （候補が N 機より多い時の選び方は確かめていない。plan/design-kiri.md 2 節）。
+//     （候補が N 機より多い時、実機は発ごとに選び直す（C-1579）。枠の若い順は決め打ち。plan/design-kiri.md 6.1 節）。
 import type { Element, NikkeClass, WeaponType } from '../types.ts';
 import type { NamedStateId } from './states.ts';
 import {

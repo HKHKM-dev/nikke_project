@@ -16,25 +16,19 @@ const CROW = 110;
 
 const enemy: EnemyInput = fixedEnemy({ element: 'Electronic' });
 
-// 撮影 A: キリ（操作）・デルタ（防御型・II）。バースト I がいないのでバーストは起きない
-const KIRI_DELTA: TeamInput = fixedTeam(
-  [KIRI, DELTA].map((id) => fixedSlot(id)),
-  0,
-  { enemy },
-);
+// 撮影 A（録画 1411・1412 の並び）: デルタ（防御型・II。2 枠目）・キリ（3 枠目・操作）。バースト I がいないのでバーストは起きない
+const KIRI_DELTA: TeamInput = fixedTeam([null, fixedSlot(DELTA), fixedSlot(KIRI)], 2, { enemy });
 // 撮影 B: ルドミラ（防御型・I）・デルタ（防御型・II）・キリ（III・操作）
 const CHAIN: TeamInput = fixedTeam(
   [LUDMILLA, DELTA, KIRI].map((id) => fixedSlot(id)),
   2,
   { enemy },
 );
-// 撮影 C: 防御型 3 機（ルドミラ・デルタ・クロウ）・キリ（操作）
+// 撮影 C（録画 1415 の並び）: クロウ（2 枠目）・キリ（3 枠目・操作）・デルタ（4 枠目）・ルドミラ（5 枠目）。バーストなし
 const THREE_DEFENDERS: TeamInput = fixedTeam(
-  [LUDMILLA, DELTA, CROW, KIRI].map((id) => fixedSlot(id)),
-  3,
-  {
-    enemy,
-  },
+  [null, fixedSlot(CROW), fixedSlot(KIRI), fixedSlot(DELTA), fixedSlot(LUDMILLA)],
+  2,
+  { enemy, burst: false },
 );
 
 const BATTLE_END = battleSecondsToFrames(KIRI_DELTA.durationSeconds);
@@ -46,15 +40,15 @@ const fromSlot = (team: TeamInput, source: number, stat: string) =>
 
 describe('キリ + デルタ（撮影 A）', () => {
   const plan = planTeamRun(KIRI_DELTA);
-  const ups = fromSlot(KIRI_DELTA, 0, 'attack');
+  const ups = fromSlot(KIRI_DELTA, 2, 'attack');
 
   it('gives the attack up of S1 to the Defender only, from each Full Charge shot for 3 s', () => {
     expect(new Set(ups.map((p) => p.slotIndex))).toEqual(new Set([1]));
     expect(ups[0]!.effect).toMatchObject({ scaling: 'casterAttack', value: 0.0581 });
     // 窓はフルチャージの発の次のフレームから付き（その発自身には乗らない）、発の間が 3 秒より短い間は付け直しで続き、
     // マガジンの最後の発から 3 秒で切れる
-    const shots = new Set(plan.shots[0]!.frames);
-    expect(ups[0]!.start).toBe(plan.shots[0]!.frames[0]! + 1);
+    const shots = new Set(plan.shots[2]!.frames);
+    expect(ups[0]!.start).toBe(plan.shots[2]!.frames[0]! + 1);
     expect(ups.every((p) => shots.has(p.start - 1))).toBe(true);
     expect(ups.filter((p) => p.end < BATTLE_END).every((p) => shots.has(p.end - 1 - THREE_SECONDS))).toBe(true);
     expect(ups.every((p) => p.end <= BATTLE_END)).toBe(true);
@@ -90,10 +84,11 @@ describe('ルドミラ + デルタ + キリ（撮影 B）', () => {
 });
 
 describe('防御型 3 機 + キリ（撮影 C）', () => {
-  it('gives the attack up of S1 to the first 2 Defender slots, and notes the unverified pick', () => {
-    expect(new Set(fromSlot(THREE_DEFENDERS, 3, 'attack').map((p) => p.slotIndex))).toEqual(new Set([0, 1]));
+  // 実機は発ごとに 2 機を選び直す（C-1579）。モデルは枠の若い順の 2 機（クロウ・デルタ）に決め打ちで付け、注記で知らせる
+  it('gives the attack up of S1 to the first 2 Defender slots, and notes the fixed pick', () => {
+    expect(new Set(fromSlot(THREE_DEFENDERS, 2, 'attack').map((p) => p.slotIndex))).toEqual(new Set([1, 3]));
     const codes = (team: TeamInput, slot: number) => runSimulation(team).slots[slot]!.notes.map((n) => n.code);
-    expect(codes(THREE_DEFENDERS, 3)).toContain('counted-allies-pick');
+    expect(codes(THREE_DEFENDERS, 2)).toContain('counted-allies-pick');
     expect(codes(CHAIN, 2)).not.toContain('counted-allies-pick');
   });
 });

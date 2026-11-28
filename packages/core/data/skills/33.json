@@ -18,12 +18,12 @@
           "ref": 4,
           "durationRef": 5,
           "assumes": {
-            "ja": "フルチャージの発ごとに、その発の次のフレームから防御型の味方 2 機（自分は支援型なので入らない）の攻撃力に、キリのバフ前の攻撃力 × 説明文の値を足し直す（3 秒）。防御型が 2 機以下なら全員に付く。3 機以上なら枠の若い順の 2 機に付く（選び方は確かめていない）",
-            "en": "On each Full Charge shot, from the frame after that shot, Quiry's pre-buff ATK × the value is added again to the ATK of 2 Defender allies (not herself, a Supporter) for 3 s. With 2 or fewer Defenders, all of them get it. With 3 or more, the first 2 slots get it (the rule is unverified)"
+            "ja": "フルチャージの発ごとに、その発の次のフレームから防御型の味方 2 機（自分は支援型なので入らない）の攻撃力に、キリのバフ前の攻撃力 × 説明文の値を足し直す（3 秒）。防御型が 2 機以下なら全員に付く。3 機以上の時、実機は発ごとに 2 機を選び直す（ランダムとみられる）が、モデルは枠の若い順の 2 機に決め打ちで付ける（sim の枠の注記で知らせる）",
+            "en": "On each Full Charge shot, from the frame after that shot, Quiry's pre-buff ATK × the value is added again to the ATK of 2 Defender allies (not herself, a Supporter) for 3 s. With 2 or fewer Defenders, all of them get it. With 3 or more, the game picks 2 again on each shot (apparently at random), but the model always gives it to the first 2 slots (noted in the sim slot notes)"
           },
           "claims": [
             "C-1568",
-            "C-1569"
+            "C-1579"
           ]
         }
       ],

@@ -623,8 +623,8 @@ function removeDebuffNotes(history: TeamPlan['history'], slotIndex: number): Mod
 }
 
 /**
- * この枠の「〈絞り込み〉の味方 N 機」（timed の allies と targetCount）で、絞り込みに合う枠が N 機より多く、選び方を確かめていない
- * 決め打ち（枠の若い順）で対象を選んだ注記（効果ごとに 1 つ。plan/design-kiri.md 2 節）
+ * この枠の「〈絞り込み〉の味方 N 機」（timed の allies と targetCount）で、絞り込みに合う枠が N 機より多く、実機は発ごとに選び直す
+ * （C-1579）のに、決め打ち（枠の若い順）で対象を選んだ注記（効果ごとに 1 つ。plan/design-kiri.md 6.1 節）
  */
 function countedAlliesNotes(slot: SimInput['slots'][number]): ModelNote[] {
   const definition = slot?.skills?.definition;
@@ -639,8 +639,8 @@ function countedAlliesNotes(slot: SimInput['slots'][number]): ModelNote[] {
         level: 'approx' as const,
         code: 'counted-allies-pick',
         message: {
-          ja: `${nameJa}の対象に合う味方が ${candidates} 機いて、${n} 機より多い。選び方を確かめていないので、枠の若い順に ${n} 機を選んだ`,
-          en: `${candidates} allies match the target of ${nameEn}, more than ${n}. The rule is unverified; the model picks the first ${n} slots`,
+          ja: `${nameJa}の対象に合う味方が ${candidates} 機いて、${n} 機より多い。実機は発ごとに ${n} 機を選び直すが、モデルは枠の若い順の ${n} 機に決め打ちで付けた`,
+          en: `${candidates} allies match the target of ${nameEn}, more than ${n}. The game picks ${n} again on each trigger; the model always gives it to the first ${n} slots`,
         },
       },
     ];

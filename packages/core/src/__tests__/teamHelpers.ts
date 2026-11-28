@@ -237,7 +237,9 @@ export function describeEveryShotInOneGroup(teams: Record<string, TeamInput>): v
     it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
       const sim = runSimulation(input);
       const calc = simTeamResult(input, sim);
-      input.slots.forEach((_, i) => {
+      input.slots.forEach((slot, i) => {
+        // 空枠は撃たない
+        if (slot === null) return;
         const frames = sim.shots[i]!.frames;
         const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
         expect(total).toBe(frames.length);
