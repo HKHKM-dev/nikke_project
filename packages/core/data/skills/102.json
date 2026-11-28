@@ -77,8 +77,8 @@
       ],
       "notes": [
         {
-          "ja": "持ち替え（III のタイマーの 00.00 の 4〜5f 前）の時に基礎の SR の構え解除（最後の発から 13f）が終わっていない回は、変更後の武器の 1 発がその残りだけ遅れる（1〜8f。C-1567）。モデルは待ちの即値で、基礎の SR の状態を見ない。構え解除の途中で早くなるレッドフード（C-0897）の規則と向きが逆で、共通の規則にできていない",
-          "en": "When the base SR was still in its aim-out (13 frames after its last shot) at the swap (4 to 5 frames before 00.00 of the Burst III timer), the changed shot came later by the rest of the aim-out (1 to 8 frames. C-1567). The model uses a fixed wait and does not look at the base SR state. This goes the opposite way from Red Hood (C-0897), whose first shot is earlier when swapping during the aim-out, so no common rule covers both",
+          "ja": "持ち替えの時に基礎の SR の構え解除がまだ終わっていない回は、変更後の武器の 1 発がその残りだけ遅れる（C-1567）。モデルは待ちの即値で、基礎の SR の状態を見ない。構え解除の途中で早くなるレッドフード（C-0897）の規則と向きが逆で、共通の規則にできていない",
+          "en": "When the base SR was still in its aim-out at the swap, the changed shot came later by the rest of the aim-out (C-1567). The model uses a fixed wait and does not look at the base SR state. This goes the opposite way from Red Hood (C-0897), whose first shot is earlier when swapping during the aim-out, so no common rule covers both",
           "kind": "unimplemented",
           "effect": {
             "kind": "weaponChange",

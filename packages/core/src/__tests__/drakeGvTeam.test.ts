@@ -47,6 +47,8 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
       const start = windows.filter((w) => w.start <= run[0]!).at(-1)!.start;
       expect(run[0]! - start).toBeGreaterThanOrEqual(100);
       expect(run[0]! - start).toBeLessThanOrEqual(113);
+      // 撮った編成（V-0818）の 1 回目は、元の SG を撃っている途中で持ち替える（1295-22）
+      if (_name.startsWith('撮影の編成') && k === 0) expect(run[0]! - start).toBe(113);
       expect(ends[k]).toBe(run.at(-1)! + 1);
       // 味方の最大装弾数▲が無ければ 6 発（的のジャンプでハイドしても込め直さない）
       if (input.slots.every((s) => s === null || [311, 301, DRAKE_GV].includes(s.character.resourceId)))
