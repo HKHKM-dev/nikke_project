@@ -1,0 +1,46 @@
+{
+  "id": "1413",
+  "date": "2026-11-28",
+  "folder": "range",
+  "file": "20261128-1413_ludmilla-delta-kiri-1.mp4",
+  "original": "2026-11-28_16-54-01.mp4",
+  "durationSec": 203.9,
+  "frames": 12232,
+  "fps": 60,
+  "sizeMB": 247.1,
+  "sha256": "befc72b903b5",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 190,
+      "name": "ルドミラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 33,
+      "name": "キリ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Electronic"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0882 撮影 B: ルドミラ（I）・デルタ（II）・キリ（III・操作）・オートバースト ON",
+  "backup": {
+    "at": "2026-11-28T17:08+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "1411",
+  "date": "2026-11-28",
+  "folder": "range",
+  "file": "20261128-1411_kiri-delta-1.mp4",
+  "original": "2026-11-28_16-46-54.mp4",
+  "durationSec": 212.6,
+  "frames": 12757,
+  "fps": 60,
+  "sizeMB": 257.5,
+  "sha256": "bcaed5c7ac94",
+  "team": [
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 33,
+      "name": "キリ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Electronic"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0882 撮影 A: デルタ（2 枠目）・キリ（3 枠目・操作）。バースト I がいないのでバーストは起きない",
+  "backup": {
+    "at": "2026-11-28T17:07+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
