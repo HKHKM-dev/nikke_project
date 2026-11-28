@@ -1,0 +1,156 @@
+{
+  "verification": "V-0902",
+  "note": "撮影 2（クラウン（1 枠目）+ パスカル（2 枠目）+ ラピ（3 枠目・操作）+ アスカ（4 枠目）。灼熱の BigArms・3 分モード・スペック固定 ON・オート射撃 ON・オートバースト OFF でパスカルのバーストだけを撃つ）の予測。モデルではパスカルのバーストを CT とゲージの明けしだいに撃つ（撮った後は手で撃った時刻を入れる）。frame は戦闘の始めからのモデルのフレーム",
+  "team": [
+    {
+      "rid": 330
+    },
+    {
+      "rid": 812
+    },
+    {
+      "rid": 10,
+      "controlled": true
+    },
+    {
+      "rid": 830
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S1 は最終防御力が最も高いクラウンに、バーストは残りの HP の値が最も低いラピ・パスカル・アスカに回復）"
+    },
+    {
+      "id": "H-ratio",
+      "note": "バーストの回復の対象を HP の割合で並べる（満タンで並ぶので枠の若い 3 機 = クラウン・パスカル・ラピ）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 812,
+            "skill": "burst",
+            "effect": {
+              "kind": "heal",
+              "trigger": "burstUse",
+              "target": "lowestHpRatio",
+              "targetCountRef": 1,
+              "ref": 2,
+              "scaling": "casterFinalMaxHp"
+            },
+            "replace": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-noS1",
+      "note": "S1 の回復が無い（対照）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 812,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-noBurst",
+      "note": "バーストの回復が無い（対照）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 812,
+            "skill": "burst",
+            "index": 0
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "crown-s2-starts",
+      "model": "sim",
+      "metric": "buffFireStarts",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "attackDamage",
+        "effect": 1,
+        "count": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [1, 3, 4]
+      },
+      "note": "パスカルが受けるクラウンの S2（回復効果が適用された時の味方全体の攻撃ダメージ▲・7 秒）の、最初の 3 回の発火のフレーム。H1 ではパスカルの 10・20・30 発目のすぐ後"
+    },
+    {
+      "id": "asuka-s1-first",
+      "model": "sim",
+      "metric": "buffFireStarts",
+      "args": {
+        "slot": 4,
+        "skill": "skill1",
+        "stat": "attack",
+        "effect": 0,
+        "count": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [1, 3, 4]
+      },
+      "note": "アスカの S1（回復効果が適用された時の自分の攻撃力▲・25 秒）の最初の発火のフレーム。H1 ではパスカルの 1 回目のバーストのフレーム。H-ratio・H-noBurst では付かない"
+    },
+    {
+      "id": "pascal-burst-first",
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 2,
+        "event": "activation",
+        "count": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [1, 3, 4]
+      },
+      "note": "パスカルの 1 回目のバーストの動画のフレーム（アスカの S1 の付き始めと比べる）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-28",
+    "commit": "88298a496ca45de38dcb5b961b322bf3997cf511",
+    "values": {
+      "H1": {
+        "crown-s2-starts": [499, 1157, 1479],
+        "asuka-s1-first": [422],
+        "pascal-burst-first": [428]
+      },
+      "H-ratio": {
+        "crown-s2-starts": [422, 499, 1157],
+        "asuka-s1-first": [],
+        "pascal-burst-first": [428]
+      },
+      "H-noS1": {
+        "crown-s2-starts": [1479, 3327, 4998],
+        "asuka-s1-first": [422],
+        "pascal-burst-first": [428]
+      },
+      "H-noBurst": {
+        "crown-s2-starts": [499, 1157, 1479],
+        "asuka-s1-first": [],
+        "pascal-burst-first": [428]
+      }
+    }
+  }
+}

@@ -596,6 +596,7 @@
         "slot": 3,
         "event": "heal",
         "anchor": "fullBurst:0",
+        "within": "afterWindow",
         "count": 1
       },
       "tolerance": {

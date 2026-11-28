@@ -3,6 +3,6 @@
   "order": 30,
   "cells": {
     "要るもの": "語彙（持続回復・吸収回復で HP の割合が戻る分と、受けるHP回復量▲。[design-hp-heal-restore.md](design-hp-heal-restore.md) 2.5 節、[design-heal-amount-up.md](design-heal-amount-up.md) 2.3 節）",
-    "対象": "HP の割合を読む効果と「残りの HP の割合が最も低い味方」の並び（量で追う 1 回の回復と、与えるHP回復量▲は済み）。持続回復は刻みの時刻、受けるHP回復量▲は量と、与える▲との重ね方を確かめていない"
+    "対象": "HP の割合を読む効果と「残りの HP の割合が最も低い味方」の並び（量で追う 1 回の回復と、与えるHP回復量▲は済み）。持続回復は刻みの時刻、受けるHP回復量▲は量と、与える▲との重ね方を確かめていない。トリナの S1 の持続回復が割合を戻さないので、閾値の回復（[design-heal-target-rank.md](design-heal-target-rank.md) 2.5 節）が実機より長く続きうる"
   }
 }

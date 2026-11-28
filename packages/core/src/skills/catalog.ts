@@ -458,7 +458,8 @@ const TARGETS: Rules = [
   [/残りの?HPの割合が最も低い味方/, 'ally:lowestHpRatio'],
   [/残りの?HPの(数値|値)が最も低い味方/, 'ally:lowestHpValue'],
   [/基本チャージ時間が一番長い味方/, 'ally:longestChargeTime'],
-  [/最大HPが最も高い味方|最終防御力が最も高い味方/, 'ally:topOther'],
+  [/最終防御力が最も高い味方/, 'ally:topDefense'],
+  [/最大HPが最も高い味方/, 'ally:topOther'],
   // 「デバフ効果がかけられている味方のうち、ランダムに N 機に」（ココア）は条件ではなく対象の絞り込み
   [/デバフ効果がかけられている味方/, 'ally:debuffed'],
   [/ランダムな味方|ランダムに[XN\d]+機/, 'ally:random'],

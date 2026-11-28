@@ -386,6 +386,10 @@ export function isFixedAttackScaling(scaling: BuffScaling | undefined): boolean 
  * 同値は枠の若い順（C-0567）。自分も候補。候補の枠は skills/composition.ts が決める。
  * plan/design-skill-stage8.md 1.1 節・plan/design-hp-ratio-readers.md 2.2 節）。N は topAttack と同じ欄。heal にだけ書ける。
  * 定義を書くときの決まり: 被弾した味方が選ばれうることと、持続回復・吸収回復では割合が戻らないことを assumes に書く。
+ * lowestHp = 「残りの HP の値が最も低い味方 N 機」（回復の発火のフレームの HP の割合 × 最終最大HP の低い順。時点は lowestHpRatio と
+ * 同じ。同値は枠の若い順・確かめていない）。topDefense = 「最終防御力が最も高い味方 N 機」（発火のフレームの最終防御力の高い順。
+ * 同値は枠の若い順・確かめていない）。どちらも自分も候補で、N は topAttack と同じ欄。heal にだけ書ける
+ * （plan/design-heal-target-rank.md 2.2・2.3 節）。
  * appliedCaster = 「〈状態〉のスキル発動者に」（そのフレームにきっかけの状態を付けた枠。plan/design-mint-prika.md 2.4 節）。
  * { applied } のきっかけの timed・付与にだけ書ける
  */
@@ -397,6 +401,8 @@ export type BuffTarget =
   | 'lowestAttack'
   | 'longestChargeTime'
   | 'lowestHpRatio'
+  | 'lowestHp'
+  | 'topDefense'
   | 'appliedCaster';
 export const BUFF_TARGETS = [
   'self',
@@ -406,8 +412,20 @@ export const BUFF_TARGETS = [
   'lowestAttack',
   'longestChargeTime',
   'lowestHpRatio',
+  'lowestHp',
+  'topDefense',
   'appliedCaster',
 ] as const satisfies readonly BuffTarget[];
+
+/**
+ * heal にだけ書ける対象（plan/design-heal-target-rank.md 2.2・2.3 節）。lowestHpRatio = 残りの HP の割合が最も低い味方、
+ * lowestHp = 残りの HP の値が最も低い味方、topDefense = 最終防御力が最も高い味方。どれも発火のフレームの値で並べ、同値は枠の若い順
+ */
+export const HEAL_ONLY_TARGETS = ['lowestHpRatio', 'lowestHp', 'topDefense'] as const satisfies readonly BuffTarget[];
+export type HealOnlyTarget = (typeof HEAL_ONLY_TARGETS)[number];
+export function isHealOnlyTarget(target: string): target is HealOnlyTarget {
+  return (HEAL_ONLY_TARGETS as readonly string[]).includes(target);
+}
 
 /** 発火のフレームの最終攻撃力の順位で対象を決めるか（topAttack・lowestAttack。skills/ranking.ts） */
 export function isAttackRanked(target: string): target is 'topAttack' | 'lowestAttack' {
@@ -421,7 +439,7 @@ export function isCountedTarget(
   return (
     isAttackRanked(target) ||
     target === 'longestChargeTime' ||
-    target === 'lowestHpRatio' ||
+    isHealOnlyTarget(target) ||
     target === 'lowestCoverHp' ||
     target === 'debuffedRandom'
   );
@@ -1990,8 +2008,19 @@ export type HealEffect = TargetCountFields &
   FixedTargetFields & {
     kind: 'heal';
     trigger: EffectTrigger;
-    /** lowestHpRatio（残りの HP の割合が最も低い味方 N 機。N は targetCount / targetCountRef）も書ける */
+    /**
+     * heal にだけ書ける対象（HEAL_ONLY_TARGETS。N 機を選ぶ。N は targetCount / targetCountRef）も書ける。lowestHpRatio = 残りの HP の
+     * 割合、lowestHp = 残りの HP の値（割合 × 最終最大HP）の低い順、topDefense = 最終防御力の高い順（plan/design-heal-target-rank.md
+     * 2.2・2.3 節）。どれも発火のフレームの値で並べ、同値は枠の若い順。自分も候補。武器種・コード・クラスの絞り込みとは組まない
+     */
     target: BuffTarget;
+    /** 「自分を除く味方全体」。target が allies のときだけ書け、値は always だけ（plan/design-heal-target-rank.md 2.1 節） */
+    excludeSelf?: 'always';
+    /**
+     * 「残りの HP の割合が最も低い味方 N 機が HP X% 以下なら、対象に」の X の description_value_NN（target が lowestHpRatio の
+     * ときだけ）。選んだ N 機のうち、発火のフレームの HP の割合が X% 以下の枠だけに回復する（plan/design-heal-target-rank.md 2.4 節）
+     */
+    targetHpAtMostRef?: number;
     targetWeapon?: WeaponType;
     targetElement?: Element;
     /** 「〈クラス〉型の味方」（エヌ：ミラクルフェアリーの S1・バースト） */

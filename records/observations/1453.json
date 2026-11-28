@@ -1,0 +1,178 @@
+[
+  {
+    "id": "1453-01",
+    "recording": "1453",
+    "kind": "total",
+    "use": "compare",
+    "value": 95745412,
+    "description": "ベイ・アスカ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11335。増分は 1217 個"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "teamTotalDamage",
+      "args": {},
+      "tolerance": {
+        "rel": 0.05
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1453-02",
+    "recording": "1453",
+    "kind": "timing",
+    "use": "record",
+    "value": -7,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -9,
+      "high": -5
+    },
+    "description": "アスカの S1（ベイの回復で付く攻撃力▲）（アスカ → アスカ▲）が アスカ の 1 発で替わるまでの時刻の幅（1 番目の事象 f945 から数えた動画のフレーム）。アスカの最後の発は -10f、アスカ▲の最初の発は -5f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":false,\"condition\":\"auto\"}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は アスカ: 枠 2（アスカ）のモデルの f30、アスカ▲: 枠 2（アスカ）のモデルの f1000、ベイ: 枠 1（ベイ）のモデルの f1000。境は アスカ → アスカ▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -120〜30f。アスカ 14・アスカ▲ 5・区別できない 0・外れ 1・食い違い（アスカ▲の最初の発より後のアスカの発） 0"
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1453-03",
+    "recording": "1453",
+    "kind": "timing",
+    "use": "record",
+    "value": -7,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -9,
+      "high": -5
+    },
+    "description": "アスカの S1（ベイの回復で付く攻撃力▲）（アスカ → アスカ▲）が アスカ の 1 発で替わるまでの時刻の幅の、1 回の事象（f945）の共通部分（事象から数えた動画のフレーム）。アスカの最後の発の最も遅いものは -10f、アスカ▲の最初の発の最も早いものは -5f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":false,\"condition\":\"auto\"}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は アスカ: 枠 2（アスカ）のモデルの f30、アスカ▲: 枠 2（アスカ）のモデルの f1000、ベイ: 枠 1（ベイ）のモデルの f1000。境は アスカ → アスカ▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -120〜30f。アスカ 14・アスカ▲ 5・区別できない 0・外れ 1・食い違い（アスカ▲の最初の発より後のアスカの発） 0"
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1453-04",
+    "recording": "1453",
+    "kind": "count",
+    "use": "record",
+    "value": [14, 0],
+    "unit": "回",
+    "description": "アスカの格子だけに合う HUD の増分の数（区間 f0〜939・f940〜12400）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデルの 1 ヒットの格子に ±1.5 で当て、アスカの格子だけに合う増分を数えた。格子は アスカ: 枠 2（アスカ）のモデルの f30、アスカ▲: 枠 2（アスカ）のモデルの f1000、ベイ: 枠 1（ベイ）のモデルの f1000。アスカとほかの格子の両方に合う増分は数えない（区間ごとに 0・0）。ほかの枠の発と同じフレームに重なった発は格子に合わないので、数は少なめに出る"
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1453-05",
+    "recording": "1453",
+    "kind": "count",
+    "use": "record",
+    "value": [0, 1099],
+    "unit": "回",
+    "description": "アスカ▲の格子だけに合う HUD の増分の数（区間 f0〜939・f940〜12400）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデルの 1 ヒットの格子に ±1.5 で当て、アスカ▲の格子だけに合う増分を数えた。格子は アスカ: 枠 2（アスカ）のモデルの f30、アスカ▲: 枠 2（アスカ）のモデルの f1000、ベイ: 枠 1（ベイ）のモデルの f1000。アスカ▲とほかの格子の両方に合う増分は数えない（区間ごとに 0・0）。ほかの枠の発と同じフレームに重なった発は格子に合わないので、数は少なめに出る"
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1453-06",
+    "recording": "1453",
+    "use": "compare",
+    "kind": "hit",
+    "value": 29216,
+    "description": "アスカ（操作）の通常攻撃の 1 ヒット（胴体・会心なし・距離ボーナスあり）。ベイの最初のフルチャージの射撃の前（S1 の攻撃力▲なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@9 の grid（アスカ=2@30;アスカ▲=2@1000;ベイ=1@1000）",
+      "note": "動画の f876〜930 の増分 10 個。この前後のアスカの増分は、どれもこの値か会心・コアの格子（51,690・40,453）に乗る（1453-04）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal",
+      "frames": [876, 930]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 30,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1453-07",
+    "recording": "1453",
+    "use": "compare",
+    "kind": "hit",
+    "value": 44287,
+    "description": "アスカ（操作）の通常攻撃の 1 ヒット（胴体・会心なし・距離ボーナスなし）。ベイの最初のフルチャージの射撃の後（S1 の攻撃力▲あり）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@9 の grid（アスカ=2@30;アスカ▲=2@1000;ベイ=1@1000）",
+      "note": "動画の f2891〜11322 の増分 401 個。f940 より後のアスカの増分 1,099 個は、どれも S1 の攻撃力▲の乗った格子に乗り、▲の無い格子に乗る増分は無い（1453-04・1453-05）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal",
+      "frames": [2891, 11322]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  }
+]

@@ -185,7 +185,7 @@ export function parseTargetCount(
     if (hasCount || hasRef)
       fail(
         path,
-        `targetCount / targetCountRef are only allowed with target "topAttack", "lowestAttack", "longestChargeTime", "lowestHpRatio", "lowestCoverHp" or "debuffedRandom", got "${target}"`,
+        `targetCount / targetCountRef are only allowed with target "topAttack", "lowestAttack", "longestChargeTime", "lowestHpRatio", "lowestHp", "topDefense", "lowestCoverHp" or "debuffedRandom", got "${target}"`,
       );
     return {};
   }
@@ -222,5 +222,8 @@ export function parseAlliesCount(v: Record<string, Json>, path: string): TargetC
     : { targetCountRef: parseRef(v.targetCountRef, `${path}.targetCountRef`) };
 }
 
-/** HP の割合の低い順の対象は、使い手のいる heal にだけ書ける（plan/design-skill-stage8.md 1.1 節） */
-export const LOWEST_HP_RATIO_HEAL_ONLY = 'lowestHpRatio is only allowed in heal';
+/**
+ * HP の割合・値の低い順と最終防御力の高い順の対象（HEAL_ONLY_TARGETS）は、使い手のいる heal にだけ書ける（plan/design-skill-stage8.md
+ * 1.1 節・plan/design-heal-target-rank.md 2.2・2.3 節）
+ */
+export const HEAL_ONLY_TARGET = (target: string): string => `${target} is only allowed in heal`;

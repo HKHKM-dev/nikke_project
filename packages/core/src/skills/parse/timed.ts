@@ -17,6 +17,7 @@ import {
   RANK_TIES,
   isAppliedTrigger,
   isAttackRanked,
+  isHealOnlyTarget,
   isAllyDecrease,
   isEnemyHeldStat,
   isChanceTrigger,
@@ -67,7 +68,7 @@ import {
   validateUsedBurst,
 } from './condition.ts';
 import {
-  LOWEST_HP_RATIO_HEAL_ONLY,
+  HEAL_ONLY_TARGET,
   parseAlliesCount,
   parsePersonaTargetFields,
   parseTargetClass,
@@ -407,7 +408,7 @@ function parseTimedTarget(
   path: string,
 ): { target: BuffTarget; narrowing: TimedNarrowing; count: ReturnType<typeof parseTargetCount> } {
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
-  if (target === 'lowestHpRatio') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);
+  if (isHealOnlyTarget(target)) fail(`${path}.target`, HEAL_ONLY_TARGET(target));
   // { applied } の効果は順位の対象・強化を書けない（使い手がいない。plan/design-skill-stage4.md 論点 6）。条件は
   // 自分の状態（selfState）だけ書ける（parseTimedCondition が CONDITION_KEYS_OF.selfStateOnly で見る。
   // plan/design-mint-prika.md 2.3 節）
@@ -999,7 +1000,7 @@ export function parsePassiveEffect(v: Record<string, Json>, path: string): Passi
   if (isAttackRanked(target))
     fail(`${path}.target`, `${target} is not allowed in passive (the ranking changes during battle)`);
   if (target === 'longestChargeTime') fail(`${path}.target`, 'longestChargeTime is only allowed in timed');
-  if (target === 'lowestHpRatio') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);
+  if (isHealOnlyTarget(target)) fail(`${path}.target`, HEAL_ONLY_TARGET(target));
   const targetWeapon = parseTargetWeapon(v, target, path);
   const targetElement = parseTargetElement(v, target, path);
   const targetClass = parseTargetClass(v, target, path);

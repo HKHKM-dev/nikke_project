@@ -54,7 +54,25 @@
   },
   "treasureSkills": {
     "skill1": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "heal",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "allies",
+          "excludeSelf": "always",
+          "ref": 2,
+          "scaling": "casterFinalMaxHp",
+          "assumes": {
+            "ja": "フルチャージして攻撃した時、自分を除く味方全体への 1 回の回復（スキル発動者の最終最大HP の X%）。受けた味方の「回復効果が適用された時」を起こす。満タンの味方にも起きる。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く（与えるHP回復量▲・受けるHP回復量▲は掛けない。plan/design-hp-heal-restore.md 2.2 節）",
+            "en": "On a fully charged attack, a one-off heal on all allies except this unit (X% of the caster's final max HP), triggering \"when healed\" on the allies that receive it, also at full HP. The amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs (Outgoing/Incoming Healing ups are not applied; plan/design-hp-heal-restore.md 2.2)"
+          },
+          "claims": [
+            "C-1631"
+          ]
+        }
+      ],
       "notes": [
         {
           "ja": "バーストスキル使用時の、味方全体の受けるダメージ偏差分配（自分が生存している限り持続）は、防御系でダメージに関係しない",
@@ -66,16 +84,6 @@
           "en": "The DEF increase on all allies based on the caster's DEF on Burst use (continuous while this unit is alive) does not change damage by itself (it matters only with an effect reading DEF in the team)",
           "kind": "indirect",
           "path": "defense"
-        },
-        {
-          "ja": "フルチャージして攻撃した時の、自分を除く味方全体の回復（スキル発動者の最終最大HP の X%）は未対応（回復の対象に「自分を除く」の語彙が無い）。受けた味方の「回復効果が適用された時」を起こすので、その効果を持つ味方のいる編成では与ダメージに効きうる",
-          "en": "The heal on all allies except this unit (X% of the caster's final max HP) after a fully charged attack is not modeled (heal targets have no vocabulary for \"except self\"). It triggers \"when healed\" on the allies that receive it, so it can affect damage in a team with such an effect",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "heal",
-            "target": "allies",
-            "trigger": "fullChargeShot"
-          }
         }
       ]
     },
