@@ -62,7 +62,9 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     input.slots.forEach((_, i) => {
       expect(startsOf(i, 'skill1', 'damageTaken', ACID)).toEqual(fullBursts.map((w) => w.start));
     });
-    const acid = slotPieces(sim, d).filter((p) => p.effect.stat === 'damageTaken' && p.effect.value === ACID);
+    const acid = slotPieces(sim, d).filter(
+      (p) => p.effect.stat === 'damageTaken' && Math.abs(p.effect.value - ACID) < 1e-12,
+    );
     expect(acid.map((p) => ({ start: p.start, end: p.end }))).toEqual(
       windowsFrom(
         fullBursts.map((w) => w.start),
