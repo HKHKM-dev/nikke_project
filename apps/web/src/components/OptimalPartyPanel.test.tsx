@@ -1,7 +1,9 @@
 // @vitest-environment happy-dom
 // 最適編成計算のポップアップ（OptimalPartyPanel.tsx の OptimalPartyPopover。クラシックの ClassicView が置く）:
 // フルバーストでの候補の絞り込みと、ポップアップを閉じると計算の Worker を捨てること、「採用」で閉じないこと。
-// キャラとスキル定義は packages/core/data から読み（fetch の代わり）、計算は偽の Worker が答える
+// キャラとスキル定義は packages/core/data から読み（fetch の代わり）、計算は偽の Worker が答える。
+// ファイルごとに隔離しないので、ほかのテストが @nikke/core を差し替えて読んだ部品（useCharacterCache など）を使わないように、
+// 前後でモジュールを読み直す
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
@@ -13,11 +15,11 @@ import {
   type EnemyPresetMaster,
 } from '@nikke/core';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { FakeWorker, installFakeWorker, liveWorkers } from '../__tests__/fakeWorker.ts';
 import { withCharacters } from '../__tests__/team.ts';
 import type { TeamState } from '../team.ts';
-import { OptimalPartyPopover } from './OptimalPartyPanel.tsx';
+import type { OptimalPartyPopover as Popover } from './OptimalPartyPanel.tsx';
 
 // ほかのテストの読み込みの覚え（useCharacterCache・useSkillDefinitions）と混ざらない置き場所
 const BASE_URL = '/optimal-party-test/';
@@ -37,13 +39,18 @@ const [I, II, III, III2] = [11, 20, 10, 40];
 let masters: BuildMasters;
 let enemyMaster: EnemyPresetMaster;
 let index: CharacterIndex['characters'];
+let OptimalPartyPopover: typeof Popover;
 
 beforeAll(async () => {
+  vi.resetModules();
+  ({ OptimalPartyPopover } = await import('./OptimalPartyPanel.tsx'));
   masters = await loadBuildMasters({ baseUrl: BASE_URL, fetchImpl: dataFetch as typeof fetch });
   enemyMaster = await loadEnemyPresets({ baseUrl: BASE_URL, fetchImpl: dataFetch as typeof fetch });
   const all = await loadCharacterIndex({ baseUrl: BASE_URL, fetchImpl: dataFetch as typeof fetch });
   index = all.characters.filter((c) => [I, II, III, III2].includes(c.resourceId));
 });
+
+afterAll(() => vi.resetModules());
 
 beforeEach(() => {
   installFakeWorker();
