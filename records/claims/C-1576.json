@@ -1,0 +1,15 @@
+{
+  "id": "C-1576",
+  "text": "ルピー：ウィンターショッパーのバーストの「バースト再突入 1 段階」は、ルピーが I を撃った後も段は I のままで（I のタイマーが戻る）、このチェーンでまだ撃っていない別の I（プロダクト08）が撃ってから II に進む。CDN の次の段階（Step1）と同じ（アニス：スターのみんなの星の C-0201 と同じ形）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1409-12`・`1410-12`。V-0881",
+  "model": "data/skills/203.json の burst の burstReentry（Step1）。burst/dynamic.ts の burstUnitOf",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/203.json の burst の effects[0]"]
+  },
+  "decidedOn": []
+}
