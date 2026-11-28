@@ -1,0 +1,15 @@
+{
+  "id": "C-1604",
+  "text": "クレイ（551）のバーストは、使用から 10 秒、味方全体に防御力無視ダメージ 12.56%（Lv10）を付け、クレイの通常攻撃を防御無視の発にする（1 発の基礎は防御力を引かない攻撃力。▲は攻撃ダメージ▲と 1 つの和。C-0311・C-0525 の式）。防御力無視ダメージ▲はジルの防御無視の発にも乗る",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1432-10`・`1432-11`・`1432-12`・`1432-18`・`1432-19`・`1432-20`・`1432-21`。V-0893",
+  "model": "`data/skills/551.json` の burst の effects[0]（timed・`allies`・`trueDamage`）と effects[1]（timed・`self`・`trueDamageConversion`）。1 発の式は `damage.ts` の `isTrueDamageShot`・`trueDamageMultiplier`",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/551.json の burst の effects[0]", "data/skills/551.json の burst の effects[1]"]
+  },
+  "decidedOn": []
+}
