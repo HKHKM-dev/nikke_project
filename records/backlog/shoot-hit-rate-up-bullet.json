@@ -1,5 +1,5 @@
 {
   "section": "1.1",
   "order": 10,
-  "text": "SG の中近・中遠・遠で、大きい命中率▲が当たったペレットの割合を上げる式（C-0527・C-1074・C-1079・C-0396）。手元の録画（V-0263・V-0719）で読めるかを先に調べ、足りなければ撮影の依頼の型で起案する（[design-hit-rate-up-bullet-h2.md](design-hit-rate-up-bullet-h2.md) 7 節）。行は 2-1"
+  "text": "SG の中近で、中くらいの命中率▲（N 0.05〜0.4 の間）が当たったペレットを上げる大きさ（C-0527・C-1626）。撮影の依頼を起案してオーナーに確かめる（[design-hit-rate-up-bullet-h2.md](design-hit-rate-up-bullet-h2.md) 7 節）。行は 2-1"
 }
