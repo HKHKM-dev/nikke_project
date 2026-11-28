@@ -87,6 +87,24 @@
       "note": "最初の満タンのフレーム（BURST バーが消えたフレーム）"
     },
     {
+      "id": "gauge-shots-0",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "戦闘の始まりから 1 回目の満タンまでに撃った発の数（読んだ後に足した指標。観測値 1430-03・1431-03 と同じ形）"
+    },
+    {
       "id": "refill-1",
       "model": "sim",
       "metric": "chainTimeoutToGaugeFullShots",
@@ -141,7 +159,8 @@
       "tolerance": {
         "rel": 0.01
       },
-      "note": "バーストの前の胴体・会心なしの 1 ヒット"
+      "note": "バーストの前の胴体・会心なしの 1 ヒット",
+      "observations": ["1430-07", "1431-06"]
     },
     {
       "id": "hit-in",
@@ -162,16 +181,18 @@
       "tolerance": {
         "rel": 0.01
       },
-      "note": "1 回目のバーストの攻撃力▲の窓の中の、胴体・会心なしの 1 ヒット"
+      "note": "1 回目のバーストの攻撃力▲の窓の中の、胴体・会心なしの 1 ヒット",
+      "observations": ["1430-08", "1431-07"]
     }
   ],
   "predicted": {
     "at": "2026-11-28",
-    "commit": "b16c4f9befac1b59d048c2219dae45d024806f87",
+    "commit": "30571c2b866226f888446a27adfba074a978fabc",
     "values": {
       "H1": {
         "magazines": [120, 120, 120, 120, 120, 120, 120, 168, 168, 168, 168, 168, 168, 168],
         "gauge-full-0": 461,
+        "gauge-shots-0": 127,
         "refill-1": 126,
         "refill-2": 126,
         "hit-out": 11679.525000000001,
@@ -180,6 +201,7 @@
       "H-nostack": {
         "magazines": [120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 168, 168, 168],
         "gauge-full-0": 461,
+        "gauge-shots-0": 127,
         "refill-1": 126,
         "refill-2": 126,
         "hit-out": 11679.525000000001,
@@ -188,6 +210,7 @@
       "H-nogauge": {
         "magazines": [120, 120, 120, 120, 120, 120, 120, 168, 168, 168, 168, 168, 168, 168],
         "gauge-full-0": 1807,
+        "gauge-shots-0": 505,
         "refill-1": 610,
         "refill-2": 515,
         "hit-out": 11679.525000000001,
@@ -196,6 +219,7 @@
       "H-noatk": {
         "magazines": [120, 120, 120, 120, 120, 120, 120, 168, 168, 168, 168, 168, 168, 168],
         "gauge-full-0": 461,
+        "gauge-shots-0": 127,
         "refill-1": 126,
         "refill-2": 126,
         "hit-out": 11679.525000000001,

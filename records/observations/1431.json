@@ -1,0 +1,260 @@
+[
+  {
+    "id": "1431-01",
+    "recording": "1431",
+    "use": "compare",
+    "kind": "count",
+    "value": [120, 120, 120, 120, 120, 120, 120, 168, 168, 168, 168, 168, 168, 168],
+    "unit": "発",
+    "description": "ミカ：スノーバディ単騎（1 枠目・操作）の、戦闘の始まりから 14 本のマガジンの発数。リロード明けの残弾は 1〜7 本目が 120、8 本目（f3999）から 168。マガジンの始まり f820・f1251・f1686・f2120・f2691・f3125・f3562・f3999・f4550・f5114・f5665・f6217・f6769・f7444",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series --max 200（照準の左の残弾）",
+      "note": "残弾の表示が 1 の後に満ちたフレームをマガジンの切れ目とした（0 はリロードで暗くなり読めない）。弾が残ったままのリロードは無い。8 本目から後は 20 本目まで、どのマガジンも 168"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 1,
+        "count": 14
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0890",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1431-02",
+    "recording": "1431",
+    "use": "record",
+    "kind": "count",
+    "value": 693,
+    "unit": "個",
+    "description": "7 本目のマガジンの始まり（f3562）より前の、HUD の総ダメージの増分の数。撃った発は 720（6 本 × 120）。増分は 693 個（うち 3 個は読めないフレームをまたぐ増分）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "SMG の発は 1 フレームに 1 発までで、前のフレームも読めた増分は 1 ヒット（V-0200）。読めないフレームをまたぐ増分を 1 ヒットの値で割って足しても 720 に届かない（外れがある）ので、命中 720 回目は 7 本目のマガジンの中で、▲は 8 本目のリロードから効く（モデルは 726 発目）"
+    },
+    "source": "V-0890",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1431-03",
+    "recording": "1431",
+    "use": "compare",
+    "kind": "count",
+    "value": 126,
+    "unit": "発",
+    "description": "戦闘の始まりから 1 回目にゲージが満タンになった（BURST バーが消えた f1276）発までに撃った発の数（外れも数える）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series・tools/captures/gauge.ts --mode events",
+      "note": "1 本目のマガジンは 120 発、2 本目はバー消失の f1276 に表示が 114（6 発目）。120 + 6。ゲージのチャージ速度▲が無ければ 500 発を超える（予測 V-0890 の H-nogauge）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge",
+      "frames": [820, 1276]
+    },
+    "source": "V-0890",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1431-04",
+    "recording": "1431",
+    "use": "record",
+    "kind": "gauge",
+    "value": [
+      {
+        "frame": 1276,
+        "shots": 126
+      },
+      {
+        "frame": 2482,
+        "shots": 448
+      },
+      {
+        "frame": 3591,
+        "shots": 727
+      },
+      {
+        "frame": 5974,
+        "shots": 1466
+      },
+      {
+        "frame": 7221,
+        "shots": 1810
+      },
+      {
+        "frame": 8294,
+        "shots": 2134
+      },
+      {
+        "frame": 9493,
+        "shots": 2456
+      },
+      {
+        "frame": 10642,
+        "shots": 2776
+      }
+    ],
+    "description": "満タン（BURST バーが消えたフレーム）ごとの、戦闘の始まりからの撃った発の数。4 回目はバーの消失を読めなかった（gauge.ts の events に出ない）ので除いた",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode events・tools/captures/reticle-ammo.ts --mode series",
+      "note": "モデル（H1）は 127・446・726・1070・1421・1787・2077・2441・2759 発。1〜3 回目は ±2 発で合い、4 回目から後は録画が 20〜60 発多い（満タンから次の満タンまでは、チェーンの 10 秒と CT 20 秒の待ちと的のジャンプで決まり、ゲージの溜まる速さだけでは決まらない）"
+    },
+    "source": "V-0890",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1431-05",
+    "recording": "1431",
+    "use": "record",
+    "kind": "timing",
+    "value": [
+      {
+        "first": 1304,
+        "last": 1556,
+        "nextBase": 1701
+      },
+      {
+        "first": 2510,
+        "last": 2802,
+        "nextBase": 2804
+      },
+      {
+        "first": 3688,
+        "last": 3869,
+        "nextBase": 4011
+      },
+      {
+        "first": 4867,
+        "last": 5146,
+        "nextBase": 5168
+      },
+      {
+        "first": 6044,
+        "last": 6337,
+        "nextBase": 6340
+      },
+      {
+        "first": 7249,
+        "last": 7542,
+        "nextBase": 7545
+      },
+      {
+        "first": 8559,
+        "last": 8719,
+        "nextBase": 8721
+      },
+      {
+        "first": 9606,
+        "last": 9898,
+        "nextBase": 9900
+      },
+      {
+        "first": 10994,
+        "last": 11075,
+        "nextBase": 11078
+      }
+    ],
+    "unit": "f",
+    "description": "バーストごとの、1 ヒットが攻撃力▲の値（窓の外の 1.3997 倍）になった最初と最後の増分のフレームと、その後の最初の窓の外の値の増分のフレーム",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "増分を、胴体 11,679.5 の格子（距離ボーナス 0.3・会心 0.5・コア 1.0）と、その 1.3997 倍の格子に分けた。マガジンの途中で切れた窓（nextBase が last の 2〜3f 後）は、どれも最初の増分から 291〜296f（5 秒 = 294f）で窓の外の値に戻る。始まりは、満タンの後の最初の発の直前の窓の外の発から 2〜4f 後"
+    },
+    "source": "V-0890",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1431-06",
+    "recording": "1431",
+    "use": "compare",
+    "kind": "hit",
+    "value": 11680,
+    "unit": "ダメージ",
+    "description": "攻撃力▲の窓の外の、距離ボーナスの無い所の胴体・会心なしの 1 ヒット（増分 4573〜4841（76 個）。4 回目のバーストの前）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "モデルのフレームは、録画の増分の時刻に近い 4 回目のバーストの前の 3900（窓の外）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3900,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0890",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1431-07",
+    "recording": "1431",
+    "use": "compare",
+    "kind": "hit",
+    "value": 16348,
+    "unit": "ダメージ",
+    "description": "4 回目のバーストの攻撃力▲の窓の中の、距離ボーナスの無い所の胴体・会心なしの 1 ヒット（増分 4867〜4984（31 個））",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "窓の外（-07）の 1.3997 倍。ほかの窓の、距離ボーナスのある所の値（21,252 = 15,183 × 1.3997）も同じ比。モデルのフレームは 4 回目のバーストの窓の中の 4100"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 4100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0890",
+    "readAt": "2026-11-28"
+  }
+]
