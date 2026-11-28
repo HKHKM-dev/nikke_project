@@ -124,6 +124,11 @@ export type CompareSetup = {
    */
   noBurstSlots?: number[];
   /**
+   * 「ランダムな味方 N 機」（timed の targetRandom）の対象を決める枠（1 始まり。TeamInput.randomTargetSlot。plan/design-lily.md 2.2 節）。
+   * 決めた枠が候補なら値のまま付き、ほかの枠には付かない。省略は期待値（候補の全員に N / 候補の数）
+   */
+  randomTargetSlot?: number;
+  /**
    * 録画で撃たなかった枠（1 始まり。台帳の fires: false の枠。V-0541）。モデルには撃たない枠が無いので、
    * 代わりに弾丸命中率を 0 にする（通常攻撃のダメージもゲージも出ない）。射撃の回数のきっかけは残るので、要れば dropEffects で外す
    * （撃たない枠をモデルに足せば要らなくなる。V-0605 の holdFire がその形で、戦闘の全体の区間にすれば置き換えられるが、移すのは後）。

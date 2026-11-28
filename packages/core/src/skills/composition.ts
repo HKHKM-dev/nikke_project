@@ -184,7 +184,8 @@ function fullCharacter(c: CompositionCharacter, index: number): Required<Composi
  * targetBurstStep = 基本バースト段階が N の枠（countsAsBurstStep。再突入するキャラは除く）、allies の excludeSelf = 自分の枠を外す。
  * targetLeftmost = 絞り込みに合う枠のうち、いちばん左の 1 枠（plan/design-trina.md 2.2 節）。
  * allies の targetCount（「〈絞り込み〉の味方 N 機」）= 絞り込みに合う枠（自分も候補。枠の順）。先頭の N 枠は skills/targets.ts が取る
- * （plan/design-kiri.md 2 節）。
+ * （plan/design-kiri.md 2 節）。targetRandom（「ランダムな味方 N 機」）も同じ候補で、値は解決で N / 候補の数を掛ける
+ * （plan/design-lily.md 2 節）。randomTargetSlot（TeamInput.randomTargetSlot）が有れば、候補をその枠だけにする（候補に無ければ空）。
  * targetState・targetAdjacent の includeSelf は自分の枠を足す。
  * どれも targetWeapon・targetElement で絞った後。どれでもない効果は undefined。付与（state）も timed と同じ
  */
@@ -195,6 +196,7 @@ export function fixedTargetsOf(
   states: readonly (readonly NamedStateId[] | undefined)[] = [],
   /** targetState が時間で変わる状態なら true（isHeldTargetState）。状態で絞らず、発火のフレームに絞る */
   held = false,
+  randomTargetSlot?: number,
 ): number[] | undefined {
   // 「残りの HP の割合が最も低い味方 N 機」（heal の lowestHpRatio）は、枠の HP の
   // 割合の想定（省略は満タン）の低い順・同値は枠の若い順（C-0567。plan/design-skill-stage8.md 1.1 節）。自分も候補。先頭の N 枠は skills/targets.ts が取る
@@ -241,6 +243,8 @@ export function fixedTargetsOf(
     candidates.push(i);
   });
   if (effect.kind === 'timed' && effect.targetLeftmost === true) return candidates.slice(0, 1);
+  if (effect.kind === 'timed' && effect.targetRandom === true && randomTargetSlot !== undefined)
+    return candidates.filter((i) => i === randomTargetSlot);
   if (!longest) return candidates;
   const seconds = (i: number) => fullCharacter(characters[i]!, i).shot.chargeTime;
   return candidates.sort((a, b) => seconds(b) - seconds(a) || a - b);
@@ -420,6 +424,8 @@ export function applyComposition(
   /** 枠ごとの静的な状態（編成の条件を当てた後の定義の静的な付与。定義の無い枠は undefined） */
   states: readonly (readonly NamedStateId[] | undefined)[] = [],
   others: ReadonlySet<NamedStateId> = new Set(),
+  /** ランダムな味方 N 機（targetRandom）の候補を決める枠（TeamInput.randomTargetSlot） */
+  randomTargetSlot?: number,
 ): SkillDefinition {
   const allowed = filterComposition(definition, characters, selfIndex, enemyElement);
   const lookup = selfStateLookupOf(allowed, others);
@@ -439,7 +445,7 @@ export function applyComposition(
       .filter((e): e is SkillEffect => e !== null)
       .map((e) => {
         const held = isHeldTargetState(e, states, granted);
-        const fixed = fixedTargetsOf(e, characters, selfIndex, states, held);
+        const fixed = fixedTargetsOf(e, characters, selfIndex, states, held, randomTargetSlot);
         const prev = e as { fixedTargets?: readonly number[]; targetStateHeld?: true };
         if (
           fixed === undefined ||
@@ -487,10 +493,11 @@ function applyCompositionToSlot(
   states: readonly (readonly NamedStateId[] | undefined)[],
   others: ReadonlySet<NamedStateId>,
   hpRatioMoves: boolean,
+  randomTargetSlot: number | undefined,
 ): TeamSlotInput {
   const definition = slot.skills?.definition;
   if (slot.skills === undefined || !definition) return slot;
-  const composed = applyComposition(definition, characters, selfIndex, enemyElement, states, others);
+  const composed = applyComposition(definition, characters, selfIndex, enemyElement, states, others, randomTargetSlot);
   // 自分の HP の割合の条件は、枠の HP の割合の想定（省略は満タン）で決める。割合が動きうる枠は
   // 決めずに残す（件の一覧が区間の件にする。plan/design-hp-ratio-readers.md 2.1 節）
   const applied = hpRatioMoves
@@ -601,7 +608,18 @@ export function applyCompositionToTeam<T extends TeamInput>(input: T): T {
   const others = otherGrantedStates(filtered);
   const moves = hpRatioMovesOf(filtered);
   const slots = input.slots.map((slot, i) =>
-    slot === null ? null : applyCompositionToSlot(slot, characters, i, enemyElement, states, others[i]!, moves[i]!),
+    slot === null
+      ? null
+      : applyCompositionToSlot(
+          slot,
+          characters,
+          i,
+          enemyElement,
+          states,
+          others[i]!,
+          moves[i]!,
+          input.randomTargetSlot,
+        ),
   );
   if (slots.every((slot, i) => slot === input.slots[i])) return input;
   return { ...input, slots };

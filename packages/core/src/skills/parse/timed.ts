@@ -369,8 +369,33 @@ type TimedNarrowing = Pick<
   | 'excludeSelf'
   | 'targetDefense'
   | 'targetLeftmost'
+  | 'targetRandom'
 > &
   ReturnType<typeof parsePersonaTargetFields>;
+
+/**
+ * 「ランダムな味方 N 機」（plan/design-lily.md 2 節）。allies と N（targetCount・targetCountRef）の timed だけに書ける。値を候補の数で
+ * 割った期待値で持つので、値を足し合わせて意味のある stat（射撃に効かない・状態でない・フラグでない・当たりの stat でない）だけ。
+ * 確率のきっかけ（同じく期待値で持つ）とは組まない
+ */
+function parseTargetRandom(
+  v: Record<string, Json>,
+  trigger: EffectTrigger,
+  stat: BuffStat | undefined,
+  target: BuffTarget,
+  count: ReturnType<typeof parseTargetCount>,
+  path: string,
+): true {
+  const at = `${path}.targetRandom`;
+  if (v.targetRandom !== true) fail(at, 'must be true');
+  if (target !== 'allies' || (count.targetCount === undefined && count.targetCountRef === undefined))
+    fail(at, 'only allowed with target "allies" and targetCount / targetCountRef');
+  if (stat === undefined) fail(at, 'targetRandom is only allowed in timed');
+  if (isFiringStat(stat) || isStateStat(stat) || isFlagStat(stat) || isHitStateStat(stat) || isPelletStat(stat))
+    fail(at, `targetRandom is not supported for "${stat}" (it needs a value that adds up linearly)`);
+  if (isChanceTrigger(trigger)) fail(at, 'targetRandom cannot be combined with a chance trigger');
+  return true;
+}
 
 /** 対象と絞り込み。対象ときっかけ・stat の組の検査もここで見る */
 function parseTimedTarget(
@@ -457,6 +482,7 @@ function parseTimedTarget(
     }
     narrowing.targetDefense = targetDefense;
   }
+  if (v.targetRandom !== undefined) narrowing.targetRandom = parseTargetRandom(v, trigger, stat, target, count, path);
   if (stat === 'trueDamageConversion' && target !== 'self') {
     fail(`${path}.target`, 'trueDamageConversion is only allowed with target "self"');
   }
@@ -969,6 +995,7 @@ export function parsePassiveEffect(v: Record<string, Json>, path: string): Passi
   // 最終防御力の比べは発火の瞬間に決めるので、常時の効果には書けない（plan/design-skill-stage7.md 1.4 節）
   if (v.targetDefense !== undefined) fail(`${path}.targetDefense`, 'targetDefense is only allowed in timed');
   if (v.targetLeftmost !== undefined) fail(`${path}.targetLeftmost`, 'targetLeftmost is only allowed in timed');
+  if (v.targetRandom !== undefined) fail(`${path}.targetRandom`, 'targetRandom is only allowed in timed');
   // 「〈絞り込み〉の味方 N 機」は timed だけ（plan/design-kiri.md 2 節）
   for (const key of ['targetCount', 'targetCountRef'] as const) {
     if (v[key] !== undefined) fail(`${path}.${key}`, `${key} is not allowed in passive`);

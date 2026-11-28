@@ -155,6 +155,12 @@ export type TeamInput = {
    * 録画の照合（records/observations/teamInput.ts）だけが使う。利用者の計算には出さない
    */
   holdFire?: readonly HoldFire[];
+  /**
+   * 「ランダムな味方 N 機」（timed の targetRandom）の対象を、この枠（0 始まり）に決める（plan/design-lily.md 2.2 節）。決めると、その枠が
+   * 候補なら値のまま付き、ほかの枠には付かない（期待値で配らない）。省略は期待値。録画の照合（records/observations/teamInput.ts）だけが
+   * 使う。利用者の計算には出さない
+   */
+  randomTargetSlot?: number;
 };
 
 /** V-0605: 枠 slotIndex（0 始まり）が撃たずにハイドしていた時間 */

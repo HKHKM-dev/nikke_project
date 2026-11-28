@@ -1206,6 +1206,13 @@ export type TimedEffect = TargetCountFields &
      * targetSquad・excludeSelf・targetDefense とは組まない（値は true だけ）
      */
     targetLeftmost?: true;
+    /**
+     * 「ランダムな味方 N 機」（plan/design-lily.md 2 節）。「〈絞り込み〉の味方 N 機」（target が allies と targetCount・targetCountRef）の
+     * 候補（自分も候補）から、発動のたびに N 機をランダムに選ぶ。モデルは期待値で持つ: 候補が k 機（> N）なら、候補の全員に値 × N / k で
+     * 付ける（skills/resolve.ts の resolveTimed。k ≤ N なら全員に値のまま）。同じ効果の窓が重なる所は少なめになる（窓の和集合は N / k の
+     * まま）ので、窓が重ならないきっかけに書く。値を足し合わせて意味のある stat だけに書け、確率のきっかけとは組まない（値は true だけ）
+     */
+    targetRandom?: true;
     /** 「基本バースト段階が N の」。対象の枠の CharacterData.burstStep が N の枠だけ。target が 'allies' のときだけ書ける */
     targetBurstStep?: BasicBurstStep;
     /**

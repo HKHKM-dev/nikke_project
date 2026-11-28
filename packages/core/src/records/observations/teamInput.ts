@@ -294,5 +294,6 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     ...(manualStep3Slots === undefined ? {} : { manualStep3Slots }),
     ...(setup.noBurstSlots === undefined ? {} : { noBurstSlots: setup.noBurstSlots.map((s) => s - 1) }),
     ...(holdFire.length === 0 ? {} : { holdFire }),
+    ...(setup.randomTargetSlot === undefined ? {} : { randomTargetSlot: setup.randomTargetSlot - 1 }),
   };
 }
