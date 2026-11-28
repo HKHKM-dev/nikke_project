@@ -376,8 +376,8 @@ function eventPointsOf(result: SimResult, ctx: MetricContext): EventPoint[] {
         String(ctx.args.state) as NamedStateId,
         result.frames,
       ).map(at);
-    // 状態（引数 state。家族の根なら家族のどれか）が付いた（スタックが足された・付き直した）フレーム。その状態の件の始まりの、重ならない列。
-    // 録画では、その状態の▲が乗った発の値が上がったフレーム（V-0893）
+    // 状態（引数 state。家族の根なら家族のどれか）の件が始まったフレーム（付いた・スタックが足された）の、重ならない列。上限のスタックでの
+    // 付き直しは件を足さずに維持を延ばすので入らない。録画では、その状態の▲が乗った発の値が上がったフレーム（V-0893）
     case 'stateStart':
       return [
         ...new Set(

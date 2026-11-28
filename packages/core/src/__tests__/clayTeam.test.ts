@@ -57,7 +57,11 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
       // 付くたびに全スタックの維持を数え直すので、塊の終わりは、その塊で最後に付いたフレームから同じ長さ（6 秒）
       const blocks = union(mine).filter(([, e]) => e < plan.frames);
       expect(blocks.length).toBeGreaterThan(2);
-      const lengths = blocks.map(([s, e]) => e - expected.filter((g) => s <= g && g < e).at(-1)!);
+      const lengths = blocks.map(([s, e]) => {
+        const last = expected.filter((g) => s <= g && g < e).at(-1);
+        expect(last).toBeDefined();
+        return e - last!;
+      });
       expect(new Set(lengths).size).toBe(1);
       for (const g of expected) expect(mine.some((w) => w.start <= g && g < w.end)).toBe(true);
     }
