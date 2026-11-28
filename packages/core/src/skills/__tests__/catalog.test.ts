@@ -109,6 +109,15 @@ describe('skill catalog', () => {
     expect(quotesOf('■敵全体に「丙」：機能：丙が終了した時、追加でダメージ').map(([q]) => q)).toEqual(['丙']);
   });
 
+  it('tells an ally Burst use from her own Burst use', () => {
+    const triggersOf = (rid: number, slot: string, li: number) =>
+      lines.find((l) => l.rid === rid && l.slot === slot && l.li === li)?.triggers;
+    // ルピー：ウィンターショッパーの S2「味方がバーストスキルを使用した時」（plan/design-rupee-ws.md 2.1 節）
+    expect(triggersOf(203, 'skill2', 0)).toEqual(['allyBurstUse']);
+    // デルタの S2「バーストスキルを使用した時、自分に」は自分のバースト
+    expect(triggersOf(20, 'skill2', 0)).toEqual(['burstUse']);
+  });
+
   it('reads the targets of a line head and a sub-item head after the condition clause', () => {
     const targetsOf = (name: string, slot: string, li: number) =>
       effects.filter((e) => e.name === name && e.slot === slot && e.li === li).map((e) => e.targets);

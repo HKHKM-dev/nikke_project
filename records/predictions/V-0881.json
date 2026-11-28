@@ -1,0 +1,288 @@
+{
+  "verification": "V-0881",
+  "note": "撮影（デルタ（II）・アリス（III）・ルピー：ウィンターショッパー（I・3 枠目・操作）・プロダクト08（I・4 枠目）。I の撃てる候補は枠の若い順なので、ルピーをプロダクト08 より左に置く・オートバースト ON）の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。H1 では、チェーンは I（ルピー）→ I（プロダクト08）→ II → III でフルバースト、と I → I で時間切れ（デルタ・アリスの CT 40 秒）を交互に繰り返す。H-noself（ショッピングが自分のバーストでは付かない）は語彙で書けないので手で書く: 1 回目のフルバーストの終わりだけ 3 段でフルスタックでなく H-nogauge と同じ、2 回目からは H1 と同じ（検証記録の予測）",
+  "team": [
+    {
+      "rid": 20
+    },
+    {
+      "rid": 191
+    },
+    {
+      "rid": 203,
+      "controlled": true
+    },
+    {
+      "rid": 302
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（味方（自分を含む）のバーストのたびにショッピングを 1 段（4 段・20 秒）、フルバーストの終わりにフルスタックなら味方全体のゲージ速度 7.9%▲（5 秒）、バーストで味方全体のリロード速度 63.17%▲（10 秒）とバースト再突入 1 段階）"
+    },
+    {
+      "id": "H0",
+      "note": "再突入しない（ルピーの I の後すぐ II。プロダクト08 はバーストを撃たない）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 203,
+            "skill": "burst",
+            "replace": 0,
+            "effect": {
+              "kind": "burstReentry",
+              "step": "Step2"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-nogauge",
+      "note": "フルバーストの終わりのゲージ速度▲が付かない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 203,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-noreload",
+      "note": "リロード速度▲が付かない（対照）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 203,
+            "skill": "burst",
+            "index": 1
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "order",
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 14
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "バーストを撃った枠の並び（バースト欄。recipe:burst-panel）"
+    },
+    {
+      "id": "fb-count",
+      "model": "sim",
+      "metric": "fullBurstCount",
+      "args": {},
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "フルバーストの回数"
+    },
+    {
+      "id": "p08-gauge-after-fb",
+      "model": "sim",
+      "metric": "shotGaugeRatioAfterFullBurst",
+      "args": {
+        "slot": 4,
+        "frames": 294
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "プロダクト08 の 1 ヒットのゲージの、フルバーストの終わりから 5 秒の、ほかの時に対する比（BURST バーの段。V-0638 の読み方）"
+    },
+    {
+      "id": "delta-gauge-after-fb",
+      "model": "sim",
+      "metric": "shotGaugeRatioAfterFullBurst",
+      "args": {
+        "slot": 1,
+        "frames": 294
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "デルタの 1 ヒットのゲージの、フルバーストの終わりから 5 秒の比"
+    },
+    {
+      "id": "alice-gauge-after-fb",
+      "model": "sim",
+      "metric": "shotGaugeRatioAfterFullBurst",
+      "args": {
+        "slot": 2,
+        "frames": 294
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "アリスの 1 ヒットのゲージの、フルバーストの終わりから 5 秒の比"
+    },
+    {
+      "id": "fb0-to-gauge-full",
+      "model": "sim",
+      "metric": "fullBurstToGaugeFull",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のフルバーストの入りから次の満タンまで（動画のフレーム。補い。▲の有無の差がモデルのずれと同じ大きさになりうる。C-1168）"
+    },
+    {
+      "id": "fb1-to-gauge-full",
+      "model": "sim",
+      "metric": "fullBurstToGaugeFull",
+      "args": {
+        "n": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "2 回目のフルバーストの入りから次の満タンまで（補い）"
+    },
+    {
+      "id": "p08-reload-base",
+      "model": "sim",
+      "metric": "reloadFramesAt",
+      "args": {
+        "slot": 4,
+        "frame": 4660
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "プロダクト08 のリロード 1 回の長さ（モデルのフレーム。recipe:reload-segments）。リロード速度▲の外"
+    },
+    {
+      "id": "delta-reload-base",
+      "model": "sim",
+      "metric": "reloadFramesAt",
+      "args": {
+        "slot": 1,
+        "frame": 3500
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "デルタのリロード 1 回の長さ。リロード速度▲の外"
+    },
+    {
+      "id": "delta-reload-in",
+      "model": "sim",
+      "metric": "reloadFramesAt",
+      "args": {
+        "slot": 1,
+        "frame": 1020
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "ルピーの 1 回目のバーストのリロード速度▲の中のデルタのリロード 1 回の長さ"
+    },
+    {
+      "id": "alice-reload-in",
+      "model": "sim",
+      "metric": "reloadFramesAt",
+      "args": {
+        "slot": 2,
+        "frame": 580
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "ルピーの 1 回目のバーストのリロード速度▲の中のアリスのリロード 1 回の長さ"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-28",
+    "commit": "06e4b0446cce5cf4769a1cfc61f60f3bf6e00893",
+    "values": {
+      "H1": {
+        "order": [3, 4, 1, 2, 3, 4, 3, 4, 1, 2, 3, 4, 3, 4],
+        "fb-count": 5,
+        "p08-gauge-after-fb": 1.079,
+        "delta-gauge-after-fb": 1.079,
+        "alice-gauge-after-fb": 1.079,
+        "fb0-to-gauge-full": 1003,
+        "fb1-to-gauge-full": 1063,
+        "p08-reload-base": 129,
+        "delta-reload-base": 100,
+        "delta-reload-in": 44,
+        "alice-reload-in": 55
+      },
+      "H0": {
+        "order": [3, 1, 2, 4, 3, 1, 2, 3, 4, 1, 2, 3, 4, 1],
+        "fb-count": 5,
+        "p08-gauge-after-fb": 1.0474,
+        "delta-gauge-after-fb": 1.0474,
+        "alice-gauge-after-fb": 1.0564,
+        "fb0-to-gauge-full": 1031,
+        "fb1-to-gauge-full": 1078,
+        "p08-reload-base": 129,
+        "delta-reload-base": 100,
+        "delta-reload-in": 44,
+        "alice-reload-in": 55
+      },
+      "H-nogauge": {
+        "order": [3, 4, 1, 2, 3, 4, 3, 4, 1, 2, 3, 4, 3, 4],
+        "fb-count": 5,
+        "p08-gauge-after-fb": 1,
+        "delta-gauge-after-fb": 1,
+        "alice-gauge-after-fb": 1,
+        "fb0-to-gauge-full": 1025,
+        "fb1-to-gauge-full": 1105,
+        "p08-reload-base": 129,
+        "delta-reload-base": 100,
+        "delta-reload-in": 44,
+        "alice-reload-in": 55
+      },
+      "H-noreload": {
+        "order": [3, 4, 1, 2, 3, 4, 3, 4, 1, 2, 3, 4, 3, 4],
+        "fb-count": 5,
+        "p08-gauge-after-fb": 1.079,
+        "delta-gauge-after-fb": 1.079,
+        "alice-gauge-after-fb": 1.079,
+        "fb0-to-gauge-full": 1048,
+        "fb1-to-gauge-full": 1083,
+        "p08-reload-base": 129,
+        "delta-reload-base": 100,
+        "delta-reload-in": 100,
+        "alice-reload-in": 129
+      }
+    }
+  }
+}

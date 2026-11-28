@@ -143,6 +143,8 @@ export const NAMED_STATES = {
   crescendo: { name: { ja: 'クレッシェンド', en: 'Crescendo' }, holder: 'ally' },
   /** マイレージ（ルピーの S2。攻撃力▲のスタック。バーストの「マイレージのフルスタック状態なら」。plan/design-rupee.md 1 節） */
   mileage: { name: { ja: 'マイレージ', en: 'Mileage' }, holder: 'ally' },
+  /** ショッピング（ルピー：ウィンターショッパーの S2。味方全体の防御力▲のスタック。同じ S2 の「ショッピングのフルスタック状態なら」。plan/design-rupee-ws.md 1 節） */
+  shopping: { name: { ja: 'ショッピング', en: 'Shopping' }, holder: 'ally' },
   /**
    * 熱血（モランの宝物版の S1。ラプチャーが出現した時・持続・
    * バーストスキルのクールタイム▼。宝物版の S2 の「熱血状態なら」。plan/design-skill-stage11.md 3.3 節。V-0530）

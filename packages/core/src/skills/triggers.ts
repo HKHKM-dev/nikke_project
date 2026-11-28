@@ -591,6 +591,8 @@ function trackerBody(
       return (ev) => ev.frame === 0;
     case 'burstUse':
       return (ev) => ev.burstEffects.some((a) => a.slotIndex === slotIndex);
+    case 'allyBurstUse':
+      return (ev) => ev.burstEffects.length > 0;
     case 'burstHit':
       return (ev) => (ev.burstHits ?? []).some((a) => a.slotIndex === slotIndex);
     case 'fullBurstStart':

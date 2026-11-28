@@ -327,6 +327,7 @@ const TRIG_INFO: Record<string, Info> = {
   fullBurstStart: ['フルバーストタイム発動時', 'ok'],
   fullBurstEnd: ['フルバーストタイム終了時', 'ok'],
   burstUse: ['バーストスキル使用時（回数の段を含む）', 'ok'],
+  allyBurstUse: ['味方がバーストスキルを使用した時', 'ok'],
   burstStageEnter: ['バースト N 段階突入時', 'ok'],
   fullChargeShot: ['フルチャージして攻撃した時', 'ok'],
   fullChargeHit: ['フルチャージ攻撃が命中した時（fullChargeShot で書き、命中を仮定）', 'ok'],

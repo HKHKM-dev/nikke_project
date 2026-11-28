@@ -1,0 +1,21 @@
+{
+  "id": "C-1575",
+  "text": "ルピー：ウィンターショッパーの S2 のショッピング（味方がバーストスキルを使用した時、味方全体に 1 段・4 スタック・20 秒）は、自分のバーストでも付く（自分を含む味方のどのバーストでも 1 段）。フルバーストタイムの終了時に自分がショッピングのフルスタック状態なら、味方全体にバーストゲージのチャージ速度 値 04 %▲（Lv10 で 7.9%・5 秒）が付き、対象の枠の射撃で溜まる 1 ヒットのゲージを × 1.079 にする。1 回目のフルバーストの終わりで、自分を含む 4 回の発動でフルスタックになっている",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1409-13`・`1409-14`・`1410-13`・`1410-14`。V-0881",
+  "model": "data/skills/203.json の skill2 の state（shopping・allyBurstUse・allies・4 スタック・20 秒）と timed（fullBurstEnd・allies・burstGaugeSpeed・条件 selfState の shopping の full）。skills/triggers.ts の allyBurstUse",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/203.json の skill2 の effects[0]", "data/skills/203.json の skill2 の effects[1]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "値（7.9%・5 秒・4 スタック）は説明文。効き方（対象の枠の 1 ヒットのゲージに掛かる）はシンの S2 の C-0892",
+  "judgment": {
+    "decided": "2026-11-28",
+    "overrides": ["合う仮説が 2 つ以上"],
+    "reason": "予測の比べで H1 と合う H-noreload は、ルピーのバーストのリロード速度▲だけを外した対照で、ゲージの段と並びの指標では H1 と同じ値になる。H-noreload はルピーのリロードの観測値（1409-15・1410-15。▲の中 33f、H-noreload なら 70f）で外れる（オーナーの判断。2026-11-28）"
+  }
+}
