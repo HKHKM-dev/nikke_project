@@ -1,0 +1,32 @@
+{
+  "id": "C-1586",
+  "text": "サクラ：ブルーム・イン・サマーのバーストの「10 回順番に攻撃」は、III のタイマーの 00.00 から動画で 42f 後と、その 12・24・35・47・59・71・82・94・106f 後の 10 ヒットで、1 ヒットは最終攻撃力の 457.14%（Lv10）。フルバースト補正は乗らない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1417-01`・`1417-03`・`1418-01`。V-0884",
+  "model": "data/skills/284.json の burst の effects[0]（burstDamage の hitsRef）と burst/landing.ts の遅れの表の行（hitFrames 20・hitOffsets）",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/284.json の burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1417",
+      "role": "値を合わせた"
+    }
+  ],
+  "minimal": [
+    {
+      "observations": "*",
+      "element": [
+        "サクラ：ブルーム・イン・サマー skill1.notes[1]",
+        "サクラ：ブルーム・イン・サマー skill1.notes[2]",
+        "サクラ：ブルーム・イン・サマー skill1.notes[3]"
+      ],
+      "reason": "S1 の持続ダメージ▲・花の舞と桜かんむりの維持時間▲は、味方がパーツを破壊した時に付く。射撃場の敵にパーツが無いので起きない",
+      "decided": "2026-11-28"
+    }
+  ]
+}

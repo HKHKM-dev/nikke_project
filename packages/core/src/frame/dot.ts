@@ -77,7 +77,8 @@ export type DotTick = { frame: number; stacks: number };
  * 持続ダメージの tick のフレームと、その時点のスタックの数（plan/design-raven-s1.md 4 節・8 節の 1）。
  * フレームの規則は dotTickTracker（dotTickFrames と同じ）。スタックの数は、いまのまとまり（維持の途中の再発火として
  * まとめた発火の列）のうち tick のフレームまでの発火の数（同じフレームの発火も数える）で、maxStacks で止める。
- * 既定の 1 なら、スタックしない持続ダメージ（どの tick も 1）。fires は昇順
+ * 既定の 1 なら、スタックしない持続ダメージ（どの tick も 1）。halfAfterLatest は latestDotTicks、スタックする atApplication は
+ * stackingApplicationTicks（付けるたびに刻みを数え直す）。fires は昇順
  */
 export function dotTicks(
   fires: readonly number[],
@@ -99,6 +100,8 @@ export function dotTicks(
       latestTickIntervalFrames(intervalSeconds, tickIntervalFrames),
       cancels,
     );
+  if (firstTick === 'atApplication' && maxStacks > 1)
+    return stackingApplicationTicks(fires, intervalSeconds, durationSeconds, frames, maxStacks);
   const tracker = dotTickTracker(intervalSeconds, durationSeconds, frames, firstTick);
   const out: DotTick[] = [];
   let groupFires: number[] = [];
@@ -224,6 +227,30 @@ function dotTickShape(
         ? 0
         : gameSecondsToFirstFrame(k * intervalSeconds + DOT_LATER_TICK_DELAY_SECONDS) - 1;
   return { offset, lastOffset: offset(count - 1), durationFrames: gameSecondsToFrame(durationSeconds) };
+}
+
+/**
+ * スタックする atApplication の tick（サクラ：ブルーム・イン・サマーのバーストの持続ダメージ。plan/design-sakura-bis.md 8.3 節）。
+ * フレームは付けるたびに刻みを数え直す形（restartDotTicks）で、付けたフレームの tick は付けた 1 スタックぶん、ほかの tick はその時点の
+ * スタックの数（前の付与から維持のフレーム以上空いた付与は 1 スタックから数える。maxStacks で止める）。fires は昇順
+ */
+function stackingApplicationTicks(
+  fires: readonly number[],
+  intervalSeconds: number,
+  durationSeconds: number,
+  frames: number,
+  maxStacks: number,
+): DotTick[] {
+  const { durationFrames } = dotTickShape(intervalSeconds, durationSeconds, 'atApplication');
+  const stacksAfter: number[] = [];
+  fires.forEach((f, i) =>
+    stacksAfter.push(i > 0 && f - fires[i - 1]! < durationFrames ? Math.min(stacksAfter[i - 1]! + 1, maxStacks) : 1),
+  );
+  let i = -1;
+  return restartDotTicks(fires, intervalSeconds, durationSeconds, frames, 'atApplication').map((frame) => {
+    while (i + 1 < fires.length && fires[i + 1]! <= frame) i += 1;
+    return { frame, stacks: fires[i] === frame ? 1 : stacksAfter[i]! };
+  });
 }
 
 /**

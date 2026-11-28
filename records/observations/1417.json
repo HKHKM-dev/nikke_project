@@ -1,0 +1,293 @@
+[
+  {
+    "id": "1417-01",
+    "recording": "1417",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [42, 54, 66, 77, 89, 101, 113, 124, 136, 148],
+    "description": "1 回目のバーストの、III のタイマーの 00.00 から「10 回順番に攻撃」の各ヒットまでの動画のフレーム（入りの止まり 22f を含む）",
+    "method": {
+      "tool": "hud.ts --mode jumps の増分と recipe:burst-panel@4 の 00.00",
+      "note": "00.00 の 40〜150f 後の 60 万を超える増分（バーストの倍率ダメージと、同じフレームの持続ダメージの 1 スタックの tick の和。42・66f はほかの発と同じ増分に合わさる）。5 回のバーストのどれも同じ並び（±1f）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "burstHit",
+        "anchor": "fullBurst:0",
+        "within": "window"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0884",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1417-02",
+    "recording": "1417",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [42, 54, 66, 77, 89, 101, 113, 124, 136, 148, 236, 295, 353, 412, 471, 530, 589, 647, 706],
+    "description": "1 回目のバーストの、III のタイマーの 00.00 から持続ダメージの tick（ヒットごとの 1 スタックの tick 10 個と、その後のスタックの tick）までの動画のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps の増分と recipe:burst-panel@4 の 00.00",
+      "note": "ヒットの増分（倍率ダメージ + 1 スタックの tick）と、42,120（1 スタック）× 10 の倍数（▲あり × 1.1564、フルバースト × 1.5、会心 + 0.5）の増分。最後のヒットの 88f 後から 59f おきに 9 個。最初のヒットの 88f 後（130f）には無い。765f の 10 個目は無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "dot",
+        "skill": "burst",
+        "anchor": "fullBurst:0",
+        "count": 19
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0884",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1417-03",
+    "recording": "1417",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 6332850,
+    "description": "1 回目のバーストの倍率ダメージの 10 ヒットの和（会心なし・花の舞の▲あり・フルバースト補正なし。どのヒットも 633,285）",
+    "method": {
+      "tool": "hud.ts --mode jumps の増分",
+      "note": "1 回目のバーストのヒットの増分 706,348 から、同じフレームの持続ダメージの 1 スタックの tick（48,708 × 1.5 = 73,062）を引いた残り。会心のヒット 1,022,990（= 949,927 + 73,062）、▲の無いヒット 610,815（= 547,635 + 63,180）、tick が会心のヒット 730,702（= 633,285 + 97,416）も同じ分け方で合う"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 20
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0884",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1417-04",
+    "recording": "1417",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 73062,
+    "description": "バーストのヒットのフレームに出る、持続ダメージの 1 スタックの tick（会心なし・花の舞の▲あり・フルバースト補正あり）",
+    "method": {
+      "tool": "hud.ts --mode jumps の増分",
+      "note": "ヒットの増分 706,348 から倍率ダメージ 633,285 を引いた残り（上の観測値の分け方）。10 回のヒットのどれも同じ（スタックの数によらず 1 スタック）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0884",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1417-05",
+    "recording": "1417",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 730618,
+    "description": "1 回目のバーストの、最後のヒットの後の最初の持続ダメージの tick（10 スタック・会心なし・花の舞の▲あり・フルバースト補正あり）",
+    "method": {
+      "tool": "hud.ts --mode jumps の増分",
+      "note": "00.00 の 236f 後の増分（48,708 × 10 × 1.5）。▲の切れた後は 631,804（42,120 × 10 × 1.5）、フルバーストの後は 421,203（× 10）、会心は 842,405（× 10 × 2）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 10,
+        "crit": false,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0884",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1417-06",
+    "recording": "1417",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 24583,
+    "description": "サクラ：ブルーム・イン・サマーの胴体・会心なし・距離ボーナスありの 1 ヒット（戦闘開始から 5 秒。花の舞の攻撃ダメージ▲あり（戦闘開始時の強制使用））",
+    "method": {
+      "tool": "hud.ts --mode jumps の増分",
+      "note": "戦闘開始（最初の桜かんむりの tick のフレーム）からその秒の前後のサクラの発の増分。どの回も同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0884",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1417-07",
+    "recording": "1417",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 21258,
+    "description": "サクラ：ブルーム・イン・サマーの胴体・会心なし・距離ボーナスありの 1 ヒット（戦闘開始から 20 秒。花の舞の攻撃ダメージ▲なし（15 秒で切れ、クールタイム 20 秒なら付いている時刻））",
+    "method": {
+      "tool": "hud.ts --mode jumps の増分",
+      "note": "戦闘開始（最初の桜かんむりの tick のフレーム）からその秒の前後のサクラの発の増分。どの回も同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1200,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0884",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1417-08",
+    "recording": "1417",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 18910,
+    "description": "サクラ：ブルーム・イン・サマーの胴体・会心なし・距離ボーナスなしの 1 ヒット（戦闘開始から 35 秒。花の舞の攻撃ダメージ▲あり（30 秒の発動））",
+    "method": {
+      "tool": "hud.ts --mode jumps の増分",
+      "note": "戦闘開始（最初の桜かんむりの tick のフレーム）からその秒の前後のサクラの発の増分。どの回も同じ値（1 回目のジャンプの後で、距離ボーナスが付かない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0884",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1417-09",
+    "recording": "1417",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [0, 88, 147, 205, 264, 323, 382, 441],
+    "description": "戦闘開始（最初の桜かんむりの tick）から、1 回目の S2（戦闘開始時の強制使用）の桜かんむりの頭の 8 tick までの動画のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps の増分",
+      "note": "354,642 か 531,963 の増分。147f の tick はココアの発と同じ増分に合わさる（699,238 = 354,642 + 344,596）。9 tick 目からは動画が 1〜3f 遅れていく（1419 は遅れない）ので比べない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "dot",
+        "skill": "skill2",
+        "count": 8
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0884",
+    "readAt": "2026-11-28"
+  }
+]

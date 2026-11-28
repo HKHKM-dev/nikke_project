@@ -480,8 +480,9 @@ function validateStateContentKinds(entries: Partial<Record<SkillSlot, SkillEntry
 }
 
 /**
- * 周期のクールタイムの印（cooldown）は damage・burstGaugeHit・timed にだけ書け、
+ * 周期のクールタイムの印（cooldown）は damage・burstGaugeHit・timed・dot にだけ書け、
  * carry・atStart・periodShorten・gaugePerHit とは組まない（plan/design-arcana-magician.md 2.2 節・plan/design-centi.md 2.3 節）。
+ * dot は名前の付いた状態と組まない（plan/design-sakura-bis.md 2.1 節）。
  * burstGaugeHit は遅れ（delayFrames）が要る（1 パス目が発火のフレームの
  * 後で予約するので、発火と同じフレームのゲージには足せない）。timed の遅れは発動のフレームから数える（解決で { skillFired } に置き換わり、
  * 窓は発動の delayFrames 後から。書かなければ発動の次のフレームから。plan/design-cooldown-timed-delay.md 1 節）。同じスロットの印のある周期は
@@ -495,12 +496,15 @@ function validateCooldownTimers(entries: Partial<Record<SkillSlot, SkillEntry>>,
     entries[slot]?.effects.forEach((e, i) => {
       if (!('trigger' in e) || !isTimerTrigger(e.trigger) || e.trigger.cooldown !== true) return;
       const path = `${root}.${slot}.effects[${i}].trigger.cooldown`;
-      if (e.kind !== 'damage' && e.kind !== 'burstGaugeHit' && e.kind !== 'timed')
-        fail(path, `cooldown is only allowed in damage, burstGaugeHit and timed, got ${e.kind}`);
+      if (e.kind !== 'damage' && e.kind !== 'burstGaugeHit' && e.kind !== 'timed' && e.kind !== 'dot')
+        fail(path, `cooldown is only allowed in damage, burstGaugeHit, timed and dot, got ${e.kind}`);
       if (e.trigger.carry === true || e.trigger.atStart === true)
         fail(path, 'cooldown cannot be used with carry or atStart');
       if (e.kind === 'damage' && (e.periodShorten !== undefined || e.gaugePerHit !== undefined))
         fail(path, 'cooldown cannot be used with periodShorten or gaugePerHit');
+      // dot の付くフレームは frame/plan.ts が 1 パス目の記録で決める。名前の付いた状態の件の一覧は別に追うので組まない
+      // （ゲージは parse/dot.ts の validateTimerDotGauge が弾く。plan/design-sakura-bis.md 2.1 節）
+      if (e.kind === 'dot' && e.state !== undefined) fail(path, 'cooldown in dot cannot be used with state');
       if (e.kind === 'burstGaugeHit' && e.delayFrames === undefined)
         fail(path, 'cooldown in burstGaugeHit needs delayFrames');
       if (slot === 'burst') fail(path, 'cooldown is only allowed in skill1 and skill2');

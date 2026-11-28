@@ -1,0 +1,46 @@
+{
+  "id": "1419",
+  "date": "2026-11-28",
+  "folder": "range",
+  "file": "20261128-1419_sakura-bis-hold.mp4",
+  "original": "2026-11-28_17-42-39.mp4",
+  "durationSec": 201.4,
+  "frames": 12082,
+  "fps": 60,
+  "sizeMB": 244.4,
+  "sha256": "be0925acf772",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 284,
+      "name": "サクラ：ブルーム・イン・サマー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "撮影の依頼（オート射撃 OFF）と違い、オート射撃 ON・オートバースト OFF で撮った（左上の照準のボタンがオレンジ、AUTO のボタンが灰色。右のバースト欄に I のカードが残り、バーストは 1 回も起きない）。識別子の hold はバーストを使わない意味で読む",
+  "backup": {
+    "at": "2026-11-28T17:50+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

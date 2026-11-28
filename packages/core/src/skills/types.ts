@@ -889,8 +889,9 @@ export type TimerTrigger = {
   /**
    * この周期は、説明文にきっかけの無いアクティブ型のスキルのクールタイム
    * （録画で読んだ周期。plan/design-arcana-magician.md 2.2 節）。状態の中身の skillCooldownDown が縮めるのは、
-   * この印のある周期だけ（即時の skillCooldownReduction も。plan/design-centi.md 2.1 節）。damage・burstGaugeHit・timed にだけ書け
-   * （timed は解決で自分のスロットの { skillFired } に置き換わる。同 2.3 節）、
+   * この印のある周期だけ（即時の skillCooldownReduction も。plan/design-centi.md 2.1 節）。damage・burstGaugeHit・timed・dot にだけ書け
+   * （timed は解決で自分のスロットの { skillFired } に置き換わる。同 2.3 節。dot は名前の付いた状態・ゲージとは組まない。
+   * plan/design-sakura-bis.md 2.1 節）、
    * carry・atStart・since・periodShorten・gaugePerHit とは組まない。同じスロットの印のある周期は同じ秒
    */
   cooldown?: true;
@@ -2393,9 +2394,17 @@ export type DotEffect = {
   /**
    * 最大スタック数の description_value_NN（plan/design-raven-s1.md 2.1 節）。有れば発火のたびに 1 スタック足し
    * （上限で止める）、tick の値は 1 スタックの倍率 × その tick の時点のスタックの数（C-0182）。付け直しで全スタックの時間が
-   * 付け直され、まとまりが終われば次は 1 スタックから。firstTick: atApplication とは組み合わせられない
+   * 付け直され、まとまりが終われば次は 1 スタックから。firstTick: atApplication（省略も）なら、付けるたびに付けたフレームに付けた
+   * 1 スタックぶんの tick を出し、刻みを付けたフレームから数え直す（1.5 秒後から間隔ごと、スタックの数の tick。維持は最後の付与から。
+   * 名前の付いた状態・ゲージとは組まない。plan/design-sakura-bis.md 8.3 節）
    */
   maxStacksRef?: number;
+  /**
+   * バーストの倍率ダメージの分かれたヒットのそれぞれのフレームで 1 回ずつ付ける（maxStacksRef があれば 1 スタックずつ。damage の
+   * perBurstHit と同じ見え方で、条件は発火のフレームで 1 回判定する。plan/design-sakura-bis.md 2.2 節）。trigger が burstUse のときだけ書け、
+   * 名前の付いた状態・遅れ・刻みの遅れ・数・スタックコピー・付け直しの形・ゲージとは組まない
+   */
+  perBurstHit?: true;
   /**
    * 発火（付けた）ごとに、射手の 1 ヒットぶんのバーストゲージ（targetBurstEnergyPerShot。フルチャージ
    * 倍率なし）を発火のフレームに足す（C-0181）。トリガーは射撃の回数トリガーか、クールタイムの印・since の無い周期のトリガー（状態の名前は組まない）

@@ -1,0 +1,5 @@
+{
+  "section": "5",
+  "order": 20,
+  "text": "スタックする dot の `atApplication`（付けるたびに 1 スタックぶんの tick と、刻みの数え直し。`frame/dot.ts` の `stackingApplicationTicks`）は、2 パス目の tick だけが持ち、付いている区間（`dotActiveSpans`）と 1 パス目のゲージ（`firstPass/gaugeEffects/dot.ts` の `dotTickTracker`）は前の刻みの規則のままなので、名前の付いた状態・ゲージとは組ませていない（`skills/parse/dot.ts`）。この形で名前の付いた状態かゲージを持つ使い手が出たら、刻みの規則を `dotTickTracker` に入れて 3 か所で揃える（[design-sakura-bis.md](design-sakura-bis.md) 8.3 節）"
+}

@@ -24,6 +24,7 @@ import {
   parseNamedStateId,
   parsePositiveInt,
   parseRef,
+  parseTrue,
   rejectUnknownKeys,
 } from './common.ts';
 import { CONDITION_KEYS_OF, parseCondition } from './condition.ts';
@@ -129,6 +130,7 @@ export const PLAIN_DOT_REJECTED_KEYS = [
   'condition',
   'tickIntervalFrames',
   'hitOnApply',
+  'perBurstHit',
 ] as const;
 
 function rejectPlainOnlyKeys(v: Record<string, Json>, path: string, what: string): void {
@@ -171,6 +173,7 @@ export function parseDotEffect(v: Record<string, Json>, path: string): DotEffect
   parseDotCounter(v, effect, path);
   parseDotStacks(v, effect, path);
   parseDotGauge(v, effect, path);
+  parseDotPerBurstHit(v, effect, path);
   parseAssumes(v, effect, path);
   return effect;
 }
@@ -203,14 +206,24 @@ function parseDotIntervalAndFirstTick(v: Record<string, Json>, effect: DotEffect
 }
 
 /**
+ * 付くフレームを frame/plan.ts の dot の付くフレームとは別に追う欄（名前の付いた状態は件の一覧、ゲージは 1 パス目）。付くフレームか刻みを
+ * frame/plan.ts と frame/dot.ts だけが決める形（スタックする atApplication・perBurstHit）とは組まない
+ */
+const APPLICATION_TRACKED_ELSEWHERE_KEYS = ['state', 'gaugeOnApply', 'gaugeOnApplyDelayFrames', 'gaugeOnTick'] as const;
+
+/**
  * 刻みの形: スタックの上限（maxStacksRef）と、チェーンバインドの形
  * （plan/design-skill-stage13.md 2.3 節。付けるたびに刻みを付け直す持続。halfAfterLatest・刻みのフレーム・付けた時のヒット）
  */
 function parseDotTickShape(v: Record<string, Json>, effect: DotEffect, path: string): void {
   if (v.maxStacksRef !== undefined) {
     effect.maxStacksRef = parseRef(v.maxStacksRef, `${path}.maxStacksRef`);
-    if (effect.firstTick !== 'afterInterval' && effect.firstTick !== 'halfAfterLatest')
-      fail(`${path}.maxStacksRef`, 'needs firstTick afterInterval or halfAfterLatest');
+    // スタックする atApplication（付けるたびに 1 スタックぶんの tick と、刻みの数え直し。frame/dot.ts の stackingApplicationTicks。
+    // plan/design-sakura-bis.md 8.3 節）
+    if ((effect.firstTick ?? 'atApplication') === 'atApplication')
+      for (const key of APPLICATION_TRACKED_ELSEWHERE_KEYS)
+        if (v[key] !== undefined)
+          fail(`${path}.${key}`, `a stacking dot with firstTick atApplication cannot have ${key}`);
   }
   const latest = effect.firstTick === 'halfAfterLatest';
   if (latest !== (effect.durationUntil === 'battleEnd'))
@@ -362,6 +375,25 @@ function parseDotGauge(v: Record<string, Json>, effect: DotEffect, path: string)
       timer ? 'needs firstTick atApplication or afterInterval' : 'needs firstTick afterInterval',
     );
   }
+}
+
+/**
+ * バーストのヒットごとに付ける（perBurstHit。plan/design-sakura-bis.md 2.2 節）。付くフレームをほかで追う欄と、付くフレームを動かす欄とは組まない
+ */
+function parseDotPerBurstHit(v: Record<string, Json>, effect: DotEffect, path: string): void {
+  if (v.perBurstHit === undefined) return;
+  const key = `${path}.perBurstHit`;
+  parseTrue(v.perBurstHit, key);
+  if (effect.trigger !== 'burstUse') fail(key, 'perBurstHit needs the trigger "burstUse"');
+  for (const other of [
+    ...APPLICATION_TRACKED_ELSEWHERE_KEYS,
+    'delayFrames',
+    'tickDelayFrames',
+    'stacksFrom',
+    'restartOnReapply',
+  ])
+    if (v[other] !== undefined) fail(key, `perBurstHit cannot be used with ${other}`);
+  effect.perBurstHit = true;
 }
 
 /** 周期のきっかけの dot のゲージの形（parseDotGauge）。1 パス目の frame/firstPass/gaugeEffects.ts が発火のフレームで予約する */

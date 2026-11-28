@@ -1,0 +1,154 @@
+{
+  "formatVersion": 1,
+  "resourceId": 284,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "「戦闘開始時、自分にスキル 2 強制使用」は、S2 の戦闘開始時の効果（skill2 の effects[2]・[3]）で入れた",
+          "en": "\"At the start of battle, force-use Skill 2 on self\" is applied via the S2 start-of-battle effects (skill2 effects[2] and [3])",
+          "kind": "modeling",
+          "effect": {
+            "kind": "timed",
+            "stat": "attackDamage",
+            "target": "self",
+            "trigger": "battleStart"
+          },
+          "claims": [
+            "C-1584"
+          ]
+        },
+        {
+          "ja": "味方の誰かがパーツを破壊した時の、自分への持続ダメージ▲（30 秒）は、敵がパーツを持たない前提（要件 4.2 節）の外",
+          "en": "The Sustained Damage ▲ on self (30 s) when an ally destroys a part is outside the assumptions (the enemy has no parts; requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "sustainedDamage",
+            "target": "self",
+            "trigger": "unknown"
+          }
+        },
+        {
+          "ja": "味方の誰かがパーツを破壊した時の、花の舞の維持時間▲は、敵がパーツを持たない前提（要件 4.2 節）の外",
+          "en": "The Dancing Flower duration ▲ when an ally destroys a part is outside the assumptions (the enemy has no parts; requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "stateExtend",
+            "target": "self",
+            "trigger": "unknown"
+          }
+        },
+        {
+          "ja": "味方の誰かがパーツを破壊した時の、桜かんむり状態の敵への桜かんむりの維持時間▲は、敵がパーツを持たない前提（要件 4.2 節）の外",
+          "en": "The Sakura Petals duration ▲ on enemies in the Sakura Petals state when an ally destroys a part is outside the assumptions (the enemy has no parts; requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "stateExtend",
+            "target": "enemy",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 30,
+            "cooldown": true
+          },
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "花の舞。S2 は説明文にきっかけの無いクールタイムごとのアクティブで、クールタイムは録画で読んだ 30 秒（戦闘開始から）。花の舞の名前を読むのは S1 のパーツの破壊の行（前提の外）だけなので、名前の無い▲で書いた",
+            "en": "Dancing Flower. S2 is a cooldown-based active skill with no trigger in its description; the cooldown read from recordings is 30 s (from the start of battle). Only the S1 part-destruction lines (outside the assumptions) read the Dancing Flower name, so it is written as an unnamed ▲"
+          },
+          "claims": [
+            "C-1584"
+          ]
+        },
+        {
+          "kind": "dot",
+          "trigger": {
+            "everySeconds": 30,
+            "cooldown": true
+          },
+          "ref": 3,
+          "intervalSeconds": 1,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "桜かんむり。「最終攻撃力が最も高い敵 1 機」は単体ボス。付いた瞬間と、1.5 秒後から 1 秒おきの tick（1 回の付与で 15 tick）",
+            "en": "Sakura Petals. \"The enemy with the highest final ATK\" is the single boss. Ticks on application and every second from 1.5 s later (15 ticks per application)"
+          },
+          "claims": [
+            "C-1585"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "S1 の「戦闘開始時、自分にスキル 2 強制使用」を、S2 の 2 つの効果を戦闘開始時にも付ける形で書いた（この効果と次の効果）。クールタイムは戦闘開始から数える（強制使用で数え直しても同じ時刻）",
+            "en": "The S1 \"at the start of battle, force-use Skill 2 on self\" is written as the two S2 effects also applied at the start of battle (this effect and the next). The cooldown counts from the start of battle (the same timing even if the forced use restarts it)"
+          },
+          "claims": [
+            "C-1584"
+          ]
+        },
+        {
+          "kind": "dot",
+          "trigger": "battleStart",
+          "ref": 3,
+          "intervalSeconds": 1,
+          "durationRef": 4,
+          "claims": [
+            "C-1585"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "hitsRef": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "ランダムの敵への 10 回の順番の攻撃は、敵 1 体の前提ではすべてその敵に当たる。1 ヒットは説明文の値で、ヒットの時刻は遅れの表の分かれたヒット（録画で読む）",
+            "en": "With a single enemy, all 10 sequential attacks on random enemies hit that enemy. Each hit is the description value, timed by the split hits of the delay table (to be read from recordings)"
+          },
+          "claims": [
+            "C-1586"
+          ]
+        },
+        {
+          "kind": "dot",
+          "trigger": "burstUse",
+          "ref": 3,
+          "intervalSeconds": 1,
+          "maxStacksRef": 4,
+          "durationRef": 5,
+          "perBurstHit": true,
+          "assumes": {
+            "ja": "「同じ敵に」は単体ボス。10 回の攻撃のヒットごとに 1 スタック付け（上限 10）、付けたフレームに付けた 1 スタックぶんの tick を出す。刻みは付けるたびに数え直し、最後のヒットの 1.5 秒後から 1 秒おきにスタックの数の tick（維持は最後のヒットから 10 秒で 9 tick）",
+            "en": "\"The same enemy\" is the single boss. Each of the 10 attack hits adds one stack (up to 10) and deals one stack's tick on that frame. The cadence restarts on each application: ticks of all stacks every second from 1.5 s after the last hit (lasting 10 s from the last hit; 9 ticks)"
+          },
+          "claims": [
+            "C-1587"
+          ]
+        }
+      ]
+    }
+  }
+}

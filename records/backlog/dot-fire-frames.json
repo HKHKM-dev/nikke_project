@@ -1,0 +1,5 @@
+{
+  "section": "5",
+  "order": 10,
+  "text": "2 パス目の倍率ダメージ（`frame/plan.ts` の `damageEffectHits`）と持続ダメージ（`dotHits` の `dotApplicationFrames`）は、発火のフレームをきっかけの種類ごとに別々に選んでいる（持続ダメージは〈状態〉の終わり・フルスタックの消費・数える窓の `everyAt` を受けない）。いまの dot の定義はどれも、受ける種類のきっかけだけを使う。dot に新しいきっかけを書く使い手が出たら、発火のフレームを選ぶ関数を 1 つにして両方から呼ぶ（[design-sakura-bis.md](design-sakura-bis.md) 8.3 節）"
+}

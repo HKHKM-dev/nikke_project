@@ -1,0 +1,32 @@
+{
+  "id": "C-1585",
+  "text": "サクラ：ブルーム・イン・サマーの S2 の桜かんむりは、付いた瞬間と、1.5 秒後から 1 秒おきに tick を出し（1 回の付与で 15 tick）、1 tick は最終攻撃力の 256%（Lv10）で、花の舞の攻撃ダメージ▲が乗る",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1419-01`・`1419-02`・`1419-03`・`1417-09`・`1418-06`。V-0884",
+  "model": "data/skills/284.json の skill2 の effects[1]・effects[3]（firstTick を省いた atApplication の dot。クールタイムの印は frame/plan.ts の dot の付くフレームが 1 パス目の記録を読む）",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/284.json の skill2 の effects[1]", "data/skills/284.json の skill2 の effects[3]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1419",
+      "role": "仮説の出どころ"
+    }
+  ],
+  "minimal": [
+    {
+      "observations": "*",
+      "element": [
+        "サクラ：ブルーム・イン・サマー skill1.notes[1]",
+        "サクラ：ブルーム・イン・サマー skill1.notes[2]",
+        "サクラ：ブルーム・イン・サマー skill1.notes[3]"
+      ],
+      "reason": "S1 の持続ダメージ▲・花の舞と桜かんむりの維持時間▲は、味方がパーツを破壊した時に付く。射撃場の敵にパーツが無いので起きない",
+      "decided": "2026-11-28"
+    }
+  ]
+}
