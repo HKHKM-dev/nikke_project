@@ -4,8 +4,8 @@
 import type { TeamInput } from '@nikke/core';
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { FakeWorker, installFakeWorker, liveWorkers } from './__tests__/fakeWorker.ts';
-import { ComputeCache, WORKER_MAX_RESTARTS, WORKER_RESTART_DELAY_MS, type Computed } from './compute.ts';
+import { FakeWorker, installFakeWorker, liveWorkers, requestTotal } from './__tests__/fakeWorker.ts';
+import { ComputeCache, WORKER_RESTART_DELAY_MS, type Computed } from './compute.ts';
 import { BATCH_MAX_RETRIES, useBatchComputation } from './useBatchComputation.ts';
 
 const inputsOf = (...totals: number[]) => totals.map((total) => ({ total }) as unknown as TeamInput);
@@ -16,19 +16,12 @@ function renderBatch(inputs: readonly TeamInput[], workers: number) {
 }
 
 /** 送られた件（入力の total）を Worker ごとに */
-const postedTotals = () =>
-  FakeWorker.instances.map((w) => w.posted.map((r) => (r.input as unknown as { total: number }).total));
+const postedTotals = () => FakeWorker.instances.map((w) => w.posted.map(requestTotal));
 
 const totalOf = (c: Computed | null) => (c?.ok ? c.result.totalDamage : c === null ? null : c.error);
 
-/** 止まった Worker の作り直しを、上限の回数ぶん待つ */
-const waitRestarts = () =>
-  act(() => {
-    for (let n = 1; n <= WORKER_MAX_RESTARTS; n++) vi.advanceTimersByTime(WORKER_RESTART_DELAY_MS * n);
-  });
-
-/** いま件を抱えている（答えていない）Worker の、受けた件の total */
-const busyTotal = (w: FakeWorker) => (w.last?.input as unknown as { total: number }).total;
+/** 止まった Worker の作り直しを、あきらめるまで待つ */
+const waitRestarts = () => act(() => vi.runAllTimers());
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -69,10 +62,10 @@ describe('useBatchComputation', () => {
     // 1 を受けた Worker は落ち、ほかの件には答える（答えると Worker の失敗の数は 0 に戻る）
     for (let step = 0; step < 20 && result.current.computing; step++) {
       act(() => {
-        for (const w of liveWorkers()) if (w.posted.length > 0 && busyTotal(w) === 1) w.crash('1 で落ちた');
+        for (const w of liveWorkers()) if (w.lastTotal === 1) w.crash('1 で落ちた');
       });
       act(() => {
-        for (const w of liveWorkers()) if (w.posted.length > 0 && busyTotal(w) !== 1) w.reply();
+        for (const w of liveWorkers()) if (w.lastTotal !== undefined && w.lastTotal !== 1) w.reply();
       });
       act(() => vi.advanceTimersByTime(WORKER_RESTART_DELAY_MS));
     }

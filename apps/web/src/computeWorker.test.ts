@@ -94,7 +94,7 @@ describe('superviseWorker', () => {
     worker.post(request(1));
     FakeWorker.failCreates = Infinity;
     FakeWorker.instances[0]!.crash();
-    for (let n = 1; n <= WORKER_MAX_RESTARTS; n++) waitRestart(n);
+    vi.runAllTimers();
     expect(handlers.onRestart).not.toHaveBeenCalled();
     expect(handlers.onGiveUp).toHaveBeenCalledWith(expect.stringContaining('Worker を作れません'));
   });

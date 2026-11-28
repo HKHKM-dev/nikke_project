@@ -29,6 +29,11 @@ export class FakeWorker extends EventTarget {
     this.terminated = true;
   }
 
+  /** 最後に受けた要求の入力の total（テストの入力は { total } の形） */
+  get lastTotal(): number | undefined {
+    return requestTotal(this.last);
+  }
+
   /** 最後に受けた要求 */
   get last(): ComputeRequest | undefined {
     return this.posted.at(-1);
@@ -37,7 +42,7 @@ export class FakeWorker extends EventTarget {
   /** 最後に受けた要求に答える（computed を省くと、入力の total を総ダメージにした結果） */
   reply(computed?: Computed): void {
     const request = this.last!;
-    const total = (request.input as unknown as { total?: number }).total ?? 0;
+    const total = requestTotal(request) ?? 0;
     const data: ComputeResponse = {
       seq: request.seq,
       computed: computed ?? { ok: true, result: { totalDamage: total, slots: [], enemyNotes: [] } },
@@ -49,6 +54,11 @@ export class FakeWorker extends EventTarget {
   crash(message = '落ちた'): void {
     this.dispatchEvent(Object.assign(new Event('error'), { message }));
   }
+}
+
+/** 要求の入力の total（テストの入力は { total } の形） */
+export function requestTotal(request: ComputeRequest | undefined): number | undefined {
+  return (request?.input as unknown as { total?: number } | undefined)?.total;
 }
 
 export function installFakeWorker(): void {

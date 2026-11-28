@@ -63,6 +63,16 @@ describe('useCharacterCache', () => {
     expect(a.result.current.errors.has(5)).toBe(false);
   });
 
+  it('returns the same table across renders until the characters loaded elsewhere are stored', async () => {
+    const a = renderHook(() => useCharacterCache([5], base));
+    await waitFor(() => expect(a.result.current.characters.has(5)).toBe(true));
+    const b = renderHook(() => useCharacterCache([5], base));
+    const first = b.result.current.characters;
+    b.rerender();
+    expect(first.get(5)).toEqual(character(5));
+    expect(b.result.current.characters).toBe(first);
+  });
+
   it('does not keep a failed load in the shared table, so the next reader loads it again', async () => {
     loadCharacter.mockRejectedValueOnce(new Error('network'));
     const a = renderHook(() => useCharacterCache([6], base));

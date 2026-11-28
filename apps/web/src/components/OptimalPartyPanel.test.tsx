@@ -6,6 +6,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   loadBuildMasters,
+  loadCharacterIndex,
   loadEnemyPresets,
   type BuildMasters,
   type CharacterIndex,
@@ -14,7 +15,8 @@ import {
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { FakeWorker, installFakeWorker, liveWorkers } from '../__tests__/fakeWorker.ts';
-import { INITIAL_TEAM_STATE, teamReducer, type TeamState } from '../team.ts';
+import { withCharacters } from '../__tests__/team.ts';
+import type { TeamState } from '../team.ts';
 import { OptimalPartyPopover } from './OptimalPartyPanel.tsx';
 
 // ほかのテストの読み込みの覚え（useCharacterCache・useSkillDefinitions）と混ざらない置き場所
@@ -39,9 +41,7 @@ let index: CharacterIndex['characters'];
 beforeAll(async () => {
   masters = await loadBuildMasters({ baseUrl: BASE_URL, fetchImpl: dataFetch as typeof fetch });
   enemyMaster = await loadEnemyPresets({ baseUrl: BASE_URL, fetchImpl: dataFetch as typeof fetch });
-  const all = JSON.parse(
-    (await (await dataFetch(`${BASE_URL}characters/index.json`)).text()) as string,
-  ) as CharacterIndex;
+  const all = await loadCharacterIndex({ baseUrl: BASE_URL, fetchImpl: dataFetch as typeof fetch });
   index = all.characters.filter((c) => [I, II, III, III2].includes(c.resourceId));
 });
 
@@ -54,12 +54,6 @@ afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
 });
-
-const teamOf = (...ids: (number | null)[]): TeamState =>
-  ids.reduce<TeamState>(
-    (state, id, i) => (id === null ? state : teamReducer(state, { type: 'selectCharacter', index: i, resourceId: id })),
-    INITIAL_TEAM_STATE,
-  );
 
 function renderPopover(team: TeamState, onAdopt = vi.fn()) {
   render(
@@ -98,7 +92,7 @@ const rowNames = (dialog: HTMLElement) =>
 
 describe('OptimalPartyPopover', () => {
   it('leaves out the candidates that stop the full burst, in a team with empty slots', async () => {
-    const { dialog } = renderPopover(teamOf(II, III));
+    const { dialog } = renderPopover(withCharacters([II, III]));
     // 空のスロット 3 に入れる。ネオン（I）なら I・II・III がそろい、D（III）ではそろわない
     await run(dialog, 2, 2);
     answerAll();
@@ -107,7 +101,7 @@ describe('OptimalPartyPopover', () => {
   });
 
   it('keeps every candidate when no candidate makes a full burst', async () => {
-    const { dialog } = renderPopover(teamOf(III));
+    const { dialog } = renderPopover(withCharacters([III]));
     // 1 人だけの編成は、誰を入れても I・II・III がそろわない
     await run(dialog, 1, 4);
     answerAll();
@@ -117,7 +111,7 @@ describe('OptimalPartyPopover', () => {
   });
 
   it('does not close on 採用', async () => {
-    const { dialog, onAdopt } = renderPopover(teamOf(II, III));
+    const { dialog, onAdopt } = renderPopover(withCharacters([II, III]));
     await run(dialog, 2, 2);
     answerAll();
     fireEvent.click(await within(dialog).findByRole('button', { name: '採用' }));
@@ -126,7 +120,7 @@ describe('OptimalPartyPopover', () => {
   });
 
   it('throws the workers away when closed, even while computing', async () => {
-    const { dialog } = renderPopover(teamOf(II, III));
+    const { dialog } = renderPopover(withCharacters([II, III]));
     await run(dialog, 2, 2);
     expect(liveWorkers().length).toBeGreaterThan(0);
     fireEvent.keyDown(document, { key: 'Escape' });

@@ -3,7 +3,7 @@
 // 候補のキャラとスキル定義は、計算を始めたときに読む（200 人ぶん）。計算は専用の Worker（useBatchComputation）で回し、画面の計算とは別。
 // 「最適編成計算」のボタンで開くポップアップ（OptimalPartyPopover。クラシックの ClassicView が置く）の中身。
 // ポップアップを閉じるとパネルが外れ、計算の途中でも Worker と結果を捨てる。「採用」を押しても閉じない（ほかの候補も続けて試せる）
-import type { BuildMasters, BuildSnapshot, CharacterIndexEntry, EnemyPresetMaster, TeamInput } from '@nikke/core';
+import type { BuildMasters, BuildSnapshot, CharacterIndexEntry, EnemyPresetMaster } from '@nikke/core';
 import { useMemo, useState } from 'react';
 import { InertButton } from './InertButton.tsx';
 import { Popover } from './Popover.tsx';
@@ -22,9 +22,6 @@ import type { TeamState } from '../team.ts';
 import { batchWorkerCount, useBatchComputation } from '../useBatchComputation.ts';
 import { useCharacterCache } from '../useCharacterCache.ts';
 import { slotSkillsStatus, useSkillDefinitions } from '../useSkillDefinitions.ts';
-
-/** 計算しないときの入力。描くたびに同じ配列を渡す（新しい空の配列だと、useBatchComputation が空の計算を始め直して描き直し続ける） */
-const NO_INPUTS: readonly TeamInput[] = [];
 
 type Props = {
   team: TeamState;
@@ -118,7 +115,7 @@ export function OptimalPartyPanel({
 
   // 計算の入力: 先頭が「いまの編成」、続いて 1 人ずつ入れ替えた編成
   const inputs = useMemo(() => {
-    if (!settled || active === null) return NO_INPUTS;
+    if (!settled || active === null) return [];
     const deps = (t: TeamState): CalcDeps => ({
       characters: loadedCharacters,
       skillsStatuses: t.slots.map((s) => (s.resourceId === null ? null : slotSkillsStatus(skills, s.resourceId))),

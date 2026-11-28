@@ -40,9 +40,9 @@ export function canFullBurst(members: readonly (BurstMember | null)[]): boolean 
 export function fullBurstCandidates<T>(
   candidates: readonly T[],
   membersWith: (candidate: T) => readonly (BurstMember | null)[],
-): { kept: T[]; dropped: number; noneFullBurst: boolean } {
+): { kept: readonly T[]; dropped: number; noneFullBurst: boolean } {
   const kept = candidates.filter((c) => canFullBurst(membersWith(c)));
-  if (kept.length === 0 && candidates.length > 0) return { kept: [...candidates], dropped: 0, noneFullBurst: true };
+  if (kept.length === 0 && candidates.length > 0) return { kept: candidates, dropped: 0, noneFullBurst: true };
   return { kept, dropped: candidates.length - kept.length, noneFullBurst: false };
 }
 

@@ -14,6 +14,7 @@ import {
 } from '@nikke/core';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { withCharacters } from './__tests__/team.ts';
 import { buildCalcView, slotResultFor, type CalcDeps, type CalcView } from './calcView.ts';
 import type { ScreenResult, Shown } from './compute.ts';
 import {
@@ -57,13 +58,6 @@ function deps(over: Partial<CalcDeps> = {}): CalcDeps {
     enemyMaster: null,
     ...over,
   };
-}
-
-function withCharacters(ids: (number | null)[]): TeamState {
-  return ids.reduce(
-    (state, id, i) => (id === null ? state : teamReducer(state, { type: 'selectCharacter', index: i, resourceId: id })),
-    initialTeamState(),
-  );
 }
 
 describe('buildCalcView: inputs removed from the screen', () => {
