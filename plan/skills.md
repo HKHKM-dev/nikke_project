@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 187・効果 1285（根拠あり 1263）・notes 408（根拠あり 173）
+件数: キャラ 190・効果 1297（根拠あり 1275）・notes 414（根拠あり 174）
 
-notes の種類: 未対応 23・前提の外 146・計算に無関係 88・補足 45・間接 106
+notes の種類: 未対応 23・前提の外 147・計算に無関係 90・補足 45・間接 109
 
-スロット: supported 521・partial 17・unsupported 5・noEffect 75
+スロット: supported 530・partial 17・unsupported 5・noEffect 75
 
 ## 10 ラピ
 
@@ -311,6 +311,19 @@ notes の種類: 未対応 23・前提の外 146・計算に無関係 88・補�
 - **burst**: supported
   - effects[0] burstDamage・skill: C-1516（確定）、C-0795（確定）
   - effects[1] timed・burstHit・enemyDefenseDown: C-1518（確定）、C-1519（確定）、C-0556（確定）、C-0790（確定）
+
+## 62 ミカ：スノーバディ
+
+- **skill1**: supported
+  - effects[0] state・normalHit・tidyingUp: C-1599（確定）
+  - effects[1] passive・tidyingUp のフルスタックの間・maxAmmo: C-1599（確定）
+  - notes[0] 計算に無関係: 整理整頓の受けるダメージ▼は、ダメージに関係しない: 根拠なし
+- **skill2**: supported
+  - effects[0] stackChange・normalHit・スタック可能バフの全部: C-1599（確定）
+  - effects[1] passive・burstGaugeSpeed: C-1600（確定）
+- **burst**: supported
+  - effects[0] timed・burstUse・attack: C-1601（確定）
+  - notes[0] 間接（デバフ）: 味方全体の「デバフ効果解除 1 個」は、それ自体は与ダメージを変えない（味方にデバフ（ほろ酔い・時間の▼）を付ける効果のいる編成でだけ効く。ミカ：スノーバディでは外す数え方・時刻を確かめていないので、モデルでは外さない）: 根拠なし
 
 ## 63 ベロータ：パンプキンウィッチ
 
@@ -2431,6 +2444,18 @@ notes の種類: 未対応 23・前提の外 146・計算に無関係 88・補�
   - effects[1] timed・burstUse・distributedDamage: C-1597（確定）
   - notes[0] 前提の外: ブランチング状態の時の味方全体の持続ダメージ▲は、ブランチングが付かない（フルチャージ状態を 1 秒以上維持するきっかけがオートの射撃で起きない）ので起きない（要件 4.2 節）: C-0839（確定）
 
+## 551 クレイ
+
+- **skill1**: supported
+  - effects[0] state・normalShot・victoriousBattleCry（trueDamage）: C-1602（確定）
+  - notes[0] 前提の外: ヴィクトリークライと同時に付く、敵の発射体を攻撃する時の発射体に与えるダメージ▲は、敵の発射体を撃つ場面を扱わないのでダメージに関係しない（要件 5.2 節）: C-0443（範囲外）
+- **skill2**: supported
+  - effects[0] passive・victoriousBattleCry の間・attack: C-1603（確定）
+  - notes[0] 計算に無関係: バースト 1 段階突入時の、味方全体へのデバフ効果免疫は、ダメージに関係しない: 根拠なし
+- **burst**: supported
+  - effects[0] timed・burstUse・trueDamage: C-1604（確定）
+  - effects[1] timed・burstUse・trueDamageConversion: C-1604（確定）
+
 ## 570 アークレンジャー・ブラック
 
 - **skill1**: supported
@@ -2887,3 +2912,14 @@ notes の種類: 未対応 23・前提の外 146・計算に無関係 88・補�
 - **burst**: supported
   - effects[0] burstDamage・distributed: C-0351（確定）
   - effects[1] timed・burstUse・attack: C-0352（確定）、C-0614（確定）
+
+## 872 アイギス
+
+- **skill1**: supported
+  - effects[0] state・battleStart・persona（attack）: C-1605（確定）
+  - notes[0] 間接（防御力）: 防御力▲（ペルソナ - パラディオンのラクカジャ）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: 根拠なし
+- **skill2**: supported
+  - effects[0] timed・burstUse・attack: C-1606（確定）
+  - notes[0] 間接（防御力）: 防御力▲（パピヨンハートのマハラクカジャ）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・distributed: C-1607（確定）
