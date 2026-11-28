@@ -337,8 +337,16 @@ export function useSlotDrag({
         setDropPlaced(true);
         if (dragged && labelA && labelB) {
           const tabs = [labelA, labelB].map((label) => label.querySelector<HTMLElement>('.party-tab'));
-          const targetRect = labelB.getBoundingClientRect();
-          const originRect = labelA.getBoundingClientRect();
+          // 番号の枠は行の高さで縦に伸び、ボタンは枠の上に寄る。枠どうしを合わせると高さの違う分だけずれるので、
+          // 写しの中のボタンが、動く先のボタンの位置に着くように写しの箱を置く
+          const onTab = (content: Element, destination: Element) => {
+            const box = content.getBoundingClientRect();
+            const tab = content.querySelector('.party-tab')?.getBoundingClientRect() ?? box;
+            const to = (destination.querySelector('.party-tab') ?? destination).getBoundingClientRect();
+            return new DOMRect(to.left - (tab.left - box.left), to.top - (tab.top - box.top), box.width, box.height);
+          };
+          const targetRect = onTab(dragged, labelB);
+          const originRect = onTab(labelB, labelA);
           // 落とした先の番号の写しは、落とす先の印（枠の線）を付けずに動かす
           labelB.classList.remove('party-label-over');
           const flights = [flyLabel(dragged, targetRect, labelB), flyLabel(labelB, originRect, labelA)];
