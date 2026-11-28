@@ -1,5 +1,5 @@
 import { loadCharacter, type CharacterData } from '@nikke/core';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 export type CharacterCache = {
   /** 読み込み済みのキャラデータ。一度読んだものは枠から外しても保持する */
@@ -70,17 +70,23 @@ export function useCharacterCache(resourceIds: readonly (number | null)[], baseU
 
   // 画面全体で読み終えているもの（ほかの所で読んだ・先に読んだ）は、表に入る前のこの描画から出す（上の読み込みはすぐ済み、次の描画で表に入る）。
   // ここで読めなかったものも、ほかの所で読み終えていれば、データを出してエラーは出さない（上の読み込みは依存が変わるまで回らない）。
-  // 足すものが無ければ、持っている表をそのまま返す
-  const extra =
+  // 足すものが無ければ、持っている表をそのまま返す。足した表は、足すものが変わるまで同じ表を返す（呼び手は表を計算の入力の依存にする。
+  // 描くたびに作り直すと、表に入るまでの描画ごとに入力を作り直す）
+  const extraKey =
     wantedKey === ''
-      ? []
+      ? ''
       : wantedKey
           .split(',')
-          .map(Number)
-          .filter((id) => !characters.has(id) && loaded.has(keyOf(baseUrl, id)));
-  if (extra.length === 0) return { characters, errors };
-  const merged = new Map(characters);
-  for (const id of extra) merged.set(id, loaded.get(keyOf(baseUrl, id))!);
+          .filter((text) => !characters.has(Number(text)) && loaded.has(keyOf(baseUrl, Number(text))))
+          .join(',');
+  const merged = useMemo(() => {
+    if (extraKey === '') return characters;
+    const next = new Map(characters);
+    for (const id of extraKey.split(',').map(Number)) next.set(id, loaded.get(keyOf(baseUrl, id))!);
+    return next;
+  }, [characters, extraKey, baseUrl]);
+  if (extraKey === '') return { characters, errors };
+  const extra = extraKey.split(',').map(Number);
   if (!extra.some((id) => errors.has(id))) return { characters: merged, errors };
   // エラーの表は持っている状態から消す（描画のたびに新しい表を返さない。React はすぐ描き直し、次の描画ではここに来ない）
   const remaining = new Map(errors);

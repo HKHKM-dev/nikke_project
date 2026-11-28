@@ -1,6 +1,7 @@
 import { parseEnemyPresets, type CharacterIndexEntry, type EnemyPresetMaster } from '@nikke/core';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { withCharacters } from './__tests__/team.ts';
 import {
   INITIAL_TEAM_STATE,
   emptyConsole,
@@ -47,13 +48,6 @@ const index = [10, 20, 30, 40, 50, 60].map(entry);
 /** 今の版を付けた JSON（手で組んだ保存データ） */
 function versioned(raw: object): string {
   return JSON.stringify({ formatVersion: TEAM_FORMAT_VERSION, ...raw });
-}
-
-function withCharacters(ids: (number | null)[]): TeamState {
-  return ids.reduce(
-    (state, id, i) => (id === null ? state : teamReducer(state, { type: 'selectCharacter', index: i, resourceId: id })),
-    initialTeamState(),
-  );
 }
 
 describe('teamReducer', () => {
