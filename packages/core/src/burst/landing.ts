@@ -314,6 +314,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // ペッパー: I の発動（六角形が I から II に替わるフレーム）からバーストスキルダメージのヒットまで 84f（単騎の 2 本と、ギロチン：
   // ウィンタースレイヤーとの 1 本の 23 回のうち 21 回。2 回は 83f）。バースト使用時の効果（スタック量▲）は遅れ 0
   { resourceIds: [131], delays: { hitFrames: 84, effectFrames: 0 }, claim: 'C-1463' },
+  // アンカー: I の発動（六角形が I から II に替わるフレーム）から 1 ヒット目まで 8f、2〜5 ヒット目は 1 ヒット目の 8・15・20・28f 後
+  // （バーストスキルダメージを 5 ヒットに等分）。バースト使用時の効果は無い
+  { resourceIds: [351], delays: { hitFrames: 8, effectFrames: 0, hitOffsets: [0, 8, 15, 20, 28] }, claim: 'C-1574' },
   // ソーダ: I の発動（六角形が I から II に替わるフレーム）からバーストスキルダメージのヒットまで 65f（ギロチン：ウィンタースレイヤーとの
   // 2 本の 14 回のうち 13 回。1 回は 64f）。バースト使用時の効果（スタック量▲）は遅れ 0（確かめていない）
   { resourceIds: [312], delays: { hitFrames: 65, effectFrames: 0 }, claim: 'C-1472' },

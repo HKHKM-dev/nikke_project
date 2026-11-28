@@ -1,0 +1,61 @@
+{
+  "formatVersion": 1,
+  "resourceId": 351,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "最後の弾丸が命中した時の、対象への挑発（5 秒）はダメージに関係しない。付けた時にバーストゲージを溜めない（モランの S2 の、敵に付ける挑発とは違う）",
+          "en": "The taunt (5 s) on the target when the last bullet hits does not affect damage. Applying it does not charge the Burst Gauge (unlike the taunt on enemies of Moran's Skill 2)",
+          "kind": "noDamage",
+          "claims": [
+            "C-1573"
+          ]
+        },
+        {
+          "ja": "最後の弾丸が命中した時の、自分の防御力▲（5 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "The DEF increase on self when the last bullet hits (5 s) does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "戦闘開始時の、敵の発射体を攻撃する時の発射体に与えるダメージ▲（持続）は、敵の発射体を撃つ場面を扱わないのでダメージに関係しない（要件 4.2 節）",
+          "en": "The damage increase against enemy projectiles from the start of combat (continuous) does not affect damage, since shooting enemy projectiles is not modeled (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "battleStart"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "敵全体は敵 1 体。倍率を 5 ヒットに等分し、遅れの表（burst/landing.ts）の時刻に出す",
+            "en": "All enemies are the lone enemy. The multiplier is split equally into 5 hits at the times in the delay table (burst/landing.ts)"
+          },
+          "claims": [
+            "C-1574"
+          ]
+        }
+      ]
+    }
+  }
+}

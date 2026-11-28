@@ -1,0 +1,485 @@
+[
+  {
+    "id": "1408-01",
+    "recording": "1408",
+    "kind": "timing",
+    "use": "record",
+    "value": [2231, 4157, 6237, 8478, 10607],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 5・25・26・25・25f"
+    },
+    "source": "V-0878",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1408-02",
+    "recording": "1408",
+    "kind": "total",
+    "use": "record",
+    "value": 18838614,
+    "description": "アンカー の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11272。増分は 126 個"
+    },
+    "source": "V-0878",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1408-03",
+    "recording": "1408",
+    "kind": "count",
+    "use": "record",
+    "value": 107,
+    "unit": "トリガー",
+    "description": "アンカー のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 126 個。前の増分から 30f 未満の増分（24 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 37f）から発の数を決めた（2 発になった組 5 個）"
+    },
+    "source": "V-0878",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1408-04",
+    "recording": "1408",
+    "use": "input",
+    "kind": "count",
+    "unit": "個",
+    "value": 1,
+    "description": "アンカーの 5 発目（f1226 の着弾）の爆発で無くなった物の数。的の右の縦長のコンテナの柱（1 個）。モデルの物のゲージの入力（plan/design-anis-star-gauge-timing.md 2.2 節）",
+    "method": {
+      "tool": "録画の画を目で見た・tools/captures/gauge.ts --mode series --subpixel",
+      "note": "f1220 と f1250 の画で、的の右の柱が爆発で崩れる。同じフレームの BURST バーの段は 14px で、1 発の 9〜10px より約 4.5px 大きい（物 1 個は約 4.7px。C-0177）"
+    },
+    "source": "V-0878",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1408-05",
+    "recording": "1408",
+    "use": "input",
+    "kind": "count",
+    "unit": "個",
+    "value": 2,
+    "description": "アンカーの 25 発目（f3437 の着弾。近の区間の 1 マガジン目の 1 発目）の爆発で無くなった物の数。モデルの物のゲージの入力",
+    "method": {
+      "tool": "録画の画を目で見た・tools/captures/gauge.ts --mode series --subpixel",
+      "note": "f3430 と f3460 の画で、的の後ろの物が爆発で崩れ、破片が飛ぶ。同じフレームの BURST バーの段は 18.9px で、1 発（9〜10px）と物 2 個（約 9.4px）の和。個数は画では数え切れず、段の大きさで決めた"
+    },
+    "source": "V-0878",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1408-06",
+    "recording": "1408",
+    "use": "input",
+    "kind": "count",
+    "unit": "個",
+    "value": 1,
+    "description": "アンカーの 27 発目（f3603 の着弾）の爆発で無くなった物の数。モデルの物のゲージの入力",
+    "method": {
+      "tool": "録画の画を目で見た・tools/captures/gauge.ts --mode series --subpixel",
+      "note": "f3598 と f3625 の画で、的の後ろで物が崩れ、破片が飛ぶ。同じフレームの BURST バーの段は 14px で、1 発より約 4.5px 大きい（物 1 個）"
+    },
+    "source": "V-0878",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1408-07",
+    "recording": "1408",
+    "use": "compare",
+    "kind": "count",
+    "unit": "発",
+    "value": 14,
+    "description": "アンカー単騎で、1 回目に BURST バーが消えた（満タンになった）発の番号（f2201 の着弾）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series --subpixel",
+      "note": "発（HUD の増分）は f898・980・1062・1144・1226・1308・1509・1590・1673・1754・1836・1919・2119・2201。バーは 13 発目の後に 110px（本当のゲージ約 94%）で、14 発目でバーが消える。5 発目の柱の物のゲージ（1408-04）のほかに余分は無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 5,
+            "count": "1408-04"
+          },
+          {
+            "slot": 1,
+            "shot": 25,
+            "count": "1408-05"
+          },
+          {
+            "slot": 1,
+            "shot": 27,
+            "count": "1408-06"
+          }
+        ]
+      }
+    },
+    "source": "V-0878",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1408-08",
+    "recording": "1408",
+    "use": "compare",
+    "kind": "count",
+    "unit": "発",
+    "value": 32,
+    "description": "同じ録画の、2 回目に BURST バーが消えた発の番号（f4128 の着弾。戦闘の始めから数える）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series --subpixel",
+      "note": "1 回目のチェーンが切れた後の発は 20 発目（f2907）から。24 発目（f3253）は HUD の増分に出るが、敵の攻撃の赤い画面の間でバーは読めない。25・27 発目の物のゲージ（1408-05・1408-06）のほかに、バーの段が 1 発より大きい所は無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 5,
+            "count": "1408-04"
+          },
+          {
+            "slot": 1,
+            "shot": 25,
+            "count": "1408-05"
+          },
+          {
+            "slot": 1,
+            "shot": 27,
+            "count": "1408-06"
+          }
+        ]
+      }
+    },
+    "source": "V-0878",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1408-09",
+    "recording": "1408",
+    "use": "compare",
+    "kind": "timing",
+    "unit": "f",
+    "value": [1418, 3344],
+    "description": "1・2 回目の I の発動の印（右のバースト欄の六角形が I から II に替わったフレーム。1408-01）の、戦闘開始（f813）からの動画のフレーム",
+    "method": {
+      "tool": "recipe:burst-panel@4・tools/captures/timer.ts --mode ticks",
+      "note": "戦闘開始は timer.ts の既定（最初の大きな変わり目の次の変わり目。C-0078）。3 回目からは、敵の攻撃の間の物と敵の発射体のゲージ（バーが読めない）でずれうるので比べない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationVideoFrames",
+      "args": {
+        "n": 2
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 5,
+            "count": "1408-04"
+          },
+          {
+            "slot": 1,
+            "shot": 25,
+            "count": "1408-05"
+          },
+          {
+            "slot": 1,
+            "shot": 27,
+            "count": "1408-06"
+          }
+        ]
+      }
+    },
+    "source": "V-0878",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1408-10",
+    "recording": "1408",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": [1308, 1919, 3848, 5152, 5762],
+    "description": "マガジンの最後の発の着弾（HUD の増分）のうち、次の発の着弾までバーが読めるもの。どれも、最後の発の段の後に次の発までバーが伸びない（挑発のゲージ 2.8% は約 3.8px）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series --subpixel",
+      "note": "段の後の px: f1308 から f1505 まで 44.0、f1919 から f2115 まで 101.0、f3848 から f4043 まで 105.0〜104.8、f5152 から f5348 まで 30.0、f5762 から f5958 まで 87.0。ほかのマガジンの終わりは、敵の攻撃の赤い画面か、チェーンの間（バーが出ない）に掛かる"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    },
+    "source": "V-0878",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1408-11",
+    "recording": "1408",
+    "use": "compare",
+    "kind": "hit",
+    "value": 192620,
+    "description": "アンカーのバーストスキルダメージの 1 発動の和（会心なし。5 ヒットの 38,524 の和）",
+    "method": {
+      "tool": "recipe:hud-jumps@3（キャッシュ）",
+      "note": "1・3 回目の発動の 5 つの増分がどれも 38,524（f2238・2246・2253・2258・2266、f6245・6253・6260・6265・6273）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 5,
+            "count": "1408-04"
+          },
+          {
+            "slot": 1,
+            "shot": 25,
+            "count": "1408-05"
+          },
+          {
+            "slot": 1,
+            "shot": 27,
+            "count": "1408-06"
+          }
+        ]
+      }
+    },
+    "source": "V-0878",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1408-12",
+    "recording": "1408",
+    "use": "compare",
+    "kind": "hit",
+    "value": 288930,
+    "description": "アンカーのバーストスキルダメージの 1 発動の和（会心。5 ヒットの 57,786 の和）",
+    "method": {
+      "tool": "recipe:hud-jumps@3（キャッシュ）",
+      "note": "2・4・5 回目の発動の 5 つの増分がどれも 57,786（会心は発動ごとにまとめて出る）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 1,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 5,
+            "count": "1408-04"
+          },
+          {
+            "slot": 1,
+            "shot": 25,
+            "count": "1408-05"
+          },
+          {
+            "slot": 1,
+            "shot": 27,
+            "count": "1408-06"
+          }
+        ]
+      }
+    },
+    "source": "V-0878",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1408-13",
+    "recording": "1408",
+    "use": "compare",
+    "kind": "timing",
+    "unit": "f",
+    "value": [7, 8, 8, 8, 8],
+    "description": "アンカーのバーストの、右のバースト欄の六角形が I から II に替わったフレーム（1408-01）から、1 ヒット目までの動画のフレーム（5 回）",
+    "method": {
+      "tool": "recipe:burst-panel@4・recipe:hud-jumps@3（キャッシュ）",
+      "note": "1 ヒット目は f2238・4165・6245・8486・10615。1 回目の替わり目の後の白い光りは 5f で、ほかの回（25〜26f）と違う"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 1,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 5,
+            "count": "1408-04"
+          },
+          {
+            "slot": 1,
+            "shot": 25,
+            "count": "1408-05"
+          },
+          {
+            "slot": 1,
+            "shot": 27,
+            "count": "1408-06"
+          }
+        ]
+      }
+    },
+    "source": "V-0878",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1408-14",
+    "recording": "1408",
+    "use": "compare",
+    "kind": "timing",
+    "unit": "f",
+    "value": [0, 8, 15, 20, 28],
+    "description": "アンカーの 1 回目のバーストの、1 ヒット目から各ヒットまでの動画のフレーム",
+    "method": {
+      "tool": "recipe:hud-jumps@3（キャッシュ）",
+      "note": "f2238・2246・2253・2258・2266"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 5,
+            "count": "1408-04"
+          },
+          {
+            "slot": 1,
+            "shot": 25,
+            "count": "1408-05"
+          },
+          {
+            "slot": 1,
+            "shot": 27,
+            "count": "1408-06"
+          }
+        ]
+      }
+    },
+    "source": "V-0878",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1408-15",
+    "recording": "1408",
+    "use": "compare",
+    "kind": "timing",
+    "unit": "f",
+    "value": [0, 8, 15, 20, 28],
+    "description": "アンカーの 5 回目のバーストの、1 ヒット目から各ヒットまでの動画のフレーム",
+    "method": {
+      "tool": "recipe:hud-jumps@3（キャッシュ）",
+      "note": "f10615・10623・10630・10635・10643。2〜4 回目も同じ間隔（f4165〜4193・6245〜6273・8486〜8514）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 1,
+        "n": 4
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 5,
+            "count": "1408-04"
+          },
+          {
+            "slot": 1,
+            "shot": 25,
+            "count": "1408-05"
+          },
+          {
+            "slot": 1,
+            "shot": 27,
+            "count": "1408-06"
+          }
+        ]
+      }
+    },
+    "source": "V-0878",
+    "readAt": "2026-11-28"
+  }
+]
