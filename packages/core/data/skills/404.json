@@ -11,7 +11,10 @@
           "target": "self",
           "stat": "attack",
           "ref": 1,
-          "durationUntil": "battleEnd"
+          "durationUntil": "battleEnd",
+          "claims": [
+            "C-1608"
+          ]
         },
         {
           "kind": "state",
@@ -22,7 +25,10 @@
           "assumes": {
             "ja": "バニーモード：スタンス（持続・解除不可）。戦闘開始時はスタンス状態でもマイティストンプ状態でもないので、スタンスが付く。もう一つのきっかけ（フルチャージ状態の維持）は起きない（notes[0]）ので、戦闘の終わりまでスタンスのまま（静的な状態）",
             "en": "Bunny Mode: Stance (continuous, cannot be removed). At the start of battle the unit is in neither Stance nor Mighty Stomp, so Stance is applied. The other trigger (holding Full Charge) never happens (notes[0]), so Stance lasts until the end of battle (a static state)"
-          }
+          },
+          "claims": [
+            "C-1608"
+          ]
         }
       ],
       "notes": [
@@ -35,7 +41,10 @@
             "target": "self",
             "trigger": "unknown"
           },
-          "claims": ["C-0839"]
+          "claims": [
+            "C-0839",
+            "C-1608"
+          ]
         },
         {
           "ja": "自分にエンゲージが付いた時の、スタンス状態の味方全体へのエンゲージと、自分にスタンスが付いた時の、エンゲージ状態の味方全体へのスタンスは、どちらも起きない（エンゲージはどの枠にも付かず、エンゲージ状態の味方がいない）",
@@ -46,7 +55,10 @@
             "target": "allies",
             "trigger": "unknown"
           },
-          "claims": ["C-0839"]
+          "claims": [
+            "C-0839",
+            "C-1608"
+          ]
         }
       ]
     },
@@ -65,7 +77,10 @@
           "assumes": {
             "ja": "チェーンエンハンスの効果 1（スタンス状態の時に限り。持続・解除不可）。スタンスは戦闘の間続く静的な状態なので、戦闘開始時から戦闘の終わりまでの効果に条件を付けて書く",
             "en": "Chain Enhance Effect 1 (only in Stance; continuous, cannot be removed). Stance is a static state lasting the whole battle, so it is written as a start-to-end effect with the condition"
-          }
+          },
+          "claims": [
+            "C-1608"
+          ]
         },
         {
           "kind": "timed",
@@ -80,7 +95,10 @@
           "assumes": {
             "ja": "チェーンエンハンスの効果 2。effects[0] と同じ書き方。マイティストンプ（使用武器の変更の発）にも乗る",
             "en": "Chain Enhance Effect 2, written like effects[0]. It also applies to Mighty Stomp (the weapon-change shot)"
-          }
+          },
+          "claims": [
+            "C-1608"
+          ]
         },
         {
           "kind": "damage",
@@ -95,7 +113,11 @@
           "assumes": {
             "ja": "チェーンエンハンスの効果 3。フルチャージの発ごとに、対象（敵 1 体の前提で的）に 1 回（命中を仮定）。マイティストンプ（チャージする使用武器の変更の発）もフルチャージの発に数える",
             "en": "Chain Enhance Effect 3. Once per Full Charge shot on the target (the single enemy; a hit is assumed). Mighty Stomp (a charging weapon-change shot) also counts as a Full Charge shot"
-          }
+          },
+          "claims": [
+            "C-1608",
+            "C-1609"
+          ]
         }
       ],
       "notes": [
@@ -109,7 +131,10 @@
             "target": "self",
             "trigger": "unknown"
           },
-          "claims": ["C-0839"]
+          "claims": [
+            "C-0839",
+            "C-1608"
+          ]
         },
         {
           "ja": "エンゲージ状態の時のチェーンリリースの効果 3（フルチャージ攻撃が命中した時の防御力無視ダメージ）は、エンゲージが付かないので起きない",
@@ -120,7 +145,10 @@
             "target": "enemy",
             "trigger": "unknown"
           },
-          "claims": ["C-0839"]
+          "claims": [
+            "C-0839",
+            "C-1608"
+          ]
         }
       ]
     },
@@ -135,9 +163,12 @@
           "fullChargeDamage": 250,
           "maxAmmoRef": 4,
           "assumes": {
-            "ja": "マイティストンプ（1 発で撃ち切り、次のフレームに基礎の SR に戻る）。チャージ時間はチャージ速度▲を受けない。変更後の武器の最初の発の待ちと、戻った後の基礎の SR の 1 発目の待ちは、いまの既定のまま（確かめていない）。CDN の変更後のレートは、チャージ武器の発の間隔には使わない。マイティストンプの発のバーストゲージは基礎の SR の 1 発と同じ量（確かめていない）",
-            "en": "Mighty Stomp (one shot, then back to the base SR on the next frame). Its charge time ignores Charge Speed up. The wait before the changed weapon's first shot and the wait before the base SR's first shot after returning use the current defaults (unverified). The CDN rate of the changed weapon is not used for the interval of a charge weapon. The burst gauge of the Mighty Stomp shot equals one base SR shot (unverified)"
-          }
+            "ja": "マイティストンプ（1 発で撃ち切り、次のフレームに基礎の SR に戻る）。チャージ時間はチャージ速度▲を受けない（チャージ速度▲を持つ味方の編成では確かめていない）。変更後の武器の最初の発と、戻った後の基礎の SR の 1 発目は、既定の待ちのまま録画と 2f 以内で合う（V-0896）。CDN の変更後のレートは、チャージ武器の発の間隔には使わない。マイティストンプの発のバーストゲージは基礎の SR の 1 発と同じ量（確かめていない）",
+            "en": "Mighty Stomp (one shot, then back to the base SR on the next frame). Its charge time ignores Charge Speed up (not checked with an ally giving Charge Speed up). The changed weapon's first shot and the base SR's first shot after returning match the recordings within 2 frames with the default waits (V-0896). The CDN rate of the changed weapon is not used for the interval of a charge weapon. The burst gauge of the Mighty Stomp shot equals one base SR shot (unverified)"
+          },
+          "claims": [
+            "C-1609"
+          ]
         },
         {
           "kind": "timed",
@@ -149,7 +180,10 @@
           "assumes": {
             "ja": "マイティストンプの追加効果 1。バースト使用時から自分の 1 発目（マイティストンプ）まで効き、その発にも乗る",
             "en": "Mighty Stomp Additional Effect 1. It lasts from Burst Skill use through this unit's first shot (Mighty Stomp) and applies to that shot"
-          }
+          },
+          "claims": [
+            "C-1609"
+          ]
         },
         {
           "kind": "timed",
@@ -157,7 +191,10 @@
           "target": "self",
           "stat": "attackDamage",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-1609"
+          ]
         }
       ],
       "notes": []

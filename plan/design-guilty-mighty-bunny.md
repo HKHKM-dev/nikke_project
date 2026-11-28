@@ -4,7 +4,7 @@
 - 関連: [design-skill-stage20-inventory.md](design-skill-stage20-inventory.md) 0.4 節（バニーモードの 2 体。C-0839）、[design-true-damage-element.md](design-true-damage-element.md) 9 節（使用武器変更の武器のパラメータ・撃ち切り）、[design-nayuta.md](design-nayuta.md) 2.4 節（チャージ時間の固定）、[design-helm.md](design-helm.md) 2.3 節（発数の維持）、[design-crust.md](design-crust.md)（同じ C-0839 のきっかけを前提の外にした手本）
 - 検証: V-0896
 - 作成日: 2026-11-28
-- 状態: 決定（7 節）・撮影待ち
+- 状態: 完了（7 節）
 
 ## 0. 範囲
 
@@ -83,7 +83,10 @@
 
 1. 論点 1〜5 は推奨のとおり。スタンスを目録の状態にして S2 の 3 つに条件を付け、フルチャージ状態の維持とエンゲージの行は前提の外にし、1 発間のチャージダメージ▲はバースト使用時からマイティストンプまでにし、マイティストンプをフルチャージの発に数え、分類を直す。
 
+2. 撮影の後（C-1608・C-1609）: 論点 3・4 は推奨のとおりで合ったので、定義を変えない。マイティストンプの前後の待ちは既定のまま録画と 2f 以内で合うので、即値（`firstShotDelayFrames`・`returnFirstShotFrames`）を足さない。HUD の増分は 1 発と追加ダメージの和で出るので、比べる指標 `hitWithPerShot`（`records/observations/metrics/damage.ts`）を足した。
+
 ## 経過
 
 - 2026-11-28: 起案
 - 2026-11-28: 決定（7 節）。定義・目録・分類・テストを実装し、撮影待ち（V-0896）
+- 2026-11-28: 撮った（V-0896。C-1608・C-1609）。定義はそのまま

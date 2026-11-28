@@ -163,11 +163,74 @@
         "abs": 6
       },
       "note": "1 回目のフルバーストの窓の始まりから、マイティストンプまでの動画のフレーム"
+    },
+    {
+      "id": "stomp-sum-crit",
+      "model": "sim",
+      "metric": "hitWithPerShot",
+      "args": {
+        "slot": 3,
+        "frame": 496,
+        "core": true,
+        "crit": false,
+        "distance": false,
+        "perShotCrit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "note": "マイティストンプ（コア・会心なし）と追加ダメージ（会心）の和（HUD の 1 つの増分）。撮った後に足した（観測値 1437-09 と同じ指定）"
+    },
+    {
+      "id": "stomp-sum",
+      "model": "sim",
+      "metric": "hitWithPerShot",
+      "args": {
+        "slot": 3,
+        "frame": 496,
+        "core": true,
+        "crit": false,
+        "distance": false,
+        "perShotCrit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "note": "マイティストンプ（コア・会心なし）と追加ダメージ（会心なし）の和。撮った後に足した（観測値 1438-09 と同じ指定）"
+    },
+    {
+      "id": "after-stomp-sum",
+      "model": "sim",
+      "metric": "hitWithPerShot",
+      "args": {
+        "slot": 3,
+        "frame": 579,
+        "core": true,
+        "crit": false,
+        "distance": false,
+        "perShotCrit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "note": "マイティストンプの次の基礎の SR の発（コア・会心なし）と追加ダメージ（会心なし）の和。撮った後に足した（観測値 1437-10 と同じ指定）"
     }
   ],
   "predicted": {
     "at": "2026-11-28",
-    "commit": "93ac3d61ff353f0c8694dde99d15d92b9a4a0de9",
+    "commit": "d89316ebb28af54b5b633f7c6f660019560bf686",
     "values": {
       "H1": {
         "base-body": 347017.4294994,
@@ -175,7 +238,10 @@
         "enhance-additional": 781489.4353447498,
         "stomp-body": 7309430.553059698,
         "stomp-to-next": 83,
-        "fb-to-stomp": 117
+        "fb-to-stomp": 117,
+        "stomp-sum-crit": 14749212.055484697,
+        "stomp-sum": 14107505.105388397,
+        "after-stomp-sum": 3349858.5770125003
       },
       "H0-enhance-ups": {
         "base-body": 248362.77000000005,
@@ -183,7 +249,10 @@
         "enhance-additional": 648808.1655,
         "stomp-body": 6398610.721383374,
         "stomp-to-next": 83,
-        "fb-to-stomp": 117
+        "fb-to-stomp": 117,
+        "stomp-sum-crit": 12965801.709880522,
+        "stomp-sum": 12390439.082986798,
+        "after-stomp-sum": 2827327.5333886743
       },
       "H0-stomp-cd": {
         "base-body": 347017.4294994,
@@ -191,7 +260,10 @@
         "enhance-additional": 781489.4353447498,
         "stomp-body": 1254280.9824776996,
         "stomp-to-next": 83,
-        "fb-to-stomp": 117
+        "fb-to-stomp": 117,
+        "stomp-sum-crit": 4657296.104514699,
+        "stomp-sum": 4015589.1544183996,
+        "after-stomp-sum": 3349858.5770125003
       }
     }
   }

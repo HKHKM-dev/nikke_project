@@ -102,6 +102,15 @@ export const damageMetrics: Readonly<Record<string, Metric>> = {
     args: ['slot', 'frame', 'crit'],
     sim: perShotHitDamage,
   },
+  // 1 ヒットと、同じ発に畳み込まれた射撃ごとの倍率ダメージの和（HUD の 1 つの増分に合わさるとき。ギルティ：マイティバニーの
+  // チェーンエンハンスの追加ダメージ。V-0896）。会心は 1 ヒット（crit）と倍率ダメージ（perShotCrit）で別に決まる
+  hitWithPerShot: {
+    description: 'hitDamage と、同じ区間の射撃ごとの倍率ダメージの 1 回の値（会心は perShotCrit）の和',
+    optional: ['fullBurst'],
+    args: ['slot', 'frame', 'core', 'crit', 'distance', 'perShotCrit'],
+    sim: (r, c) =>
+      hitDamage(r, c) + perShotHitDamage(r, { ...c, args: { ...c.args, crit: c.args.perShotCrit === true } }),
+  },
   // 確率のきっかけの射撃ごとの倍率ダメージの回数の期待値（plan/design-chance-dot-damage.md 5.3 節）。区間ごとの発数 × 弾丸命中率 × 確率の和。
   // 録画では、射撃ごとの倍率ダメージの値の増分が出た回数と比べる
   perShotChanceCount: {
