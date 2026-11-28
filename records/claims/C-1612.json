@@ -1,0 +1,19 @@
+{
+  "id": "C-1612",
+  "text": "ソラ（532）の S1 の自分の与えるHP回復量▲（戦闘開始時・持続）と、バーストの味方全体の回復（スキル発動者の最終最大HP の X%）・デバフ効果解除 1 個は、説明文どおり（与えるHP回復量▲はバーストの回復の量に掛かる。回復は受けた味方の「回復効果が適用された時」を起こす。撮っておらず、確かめていない）。回復を受けた時の効果を持つ味方・HP の割合を下げる効果・味方にデバフを付ける効果のいない編成では与ダメージに効かない",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文の読みと、既存の回復・与えるHP回復量▲・デバフ解除の語彙の確定した結論（デバフ解除は C-0979。直接は測っていない。撮っていない）。V-0897",
+  "model": "反映（data/skills/532.json の skill1 の effects[0]、burst の effects[0]・effects[1]）",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": [
+      "data/skills/532.json の skill1 の effects[0]",
+      "data/skills/532.json の burst の effects[0]",
+      "data/skills/532.json の burst の effects[1]"
+    ]
+  },
+  "decidedOn": []
+}

@@ -1,0 +1,68 @@
+{
+  "formatVersion": 1,
+  "resourceId": 532,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "healDealt",
+          "ref": 1,
+          "assumes": {
+            "ja": "戦闘開始時に付き、戦闘の間ずっと続くので常時の効果で書く。量で追う自分の回復（バーストのスキル発動者の最終最大HP の X% の回復）の量に掛かり、HP の割合を戻す分だけ効く（plan/design-heal-amount-up.md 2.1 節）",
+            "en": "Applied at the start of battle and lasting the whole battle, so it is written as a passive. It multiplies the amount of this unit's tracked heal (the Burst's heal of X% of the caster's final max HP) and matters only by raising back an HP ratio (plan/design-heal-amount-up.md 2.1)"
+          },
+          "claims": ["C-1612"]
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分を含む味方の誰かがパーツを破壊した時の、味方全体の超過HP回復量保存（5 スタック・15 秒）とスキル発動者基準の攻撃力▲（15 秒）は、パーツなしの前提では起きない（要件 4.2 節）",
+          "en": "The overflow healing storage (5 stacks, 15 s) and the ATK increase based on the caster's ATK (15 s) on all allies when any ally including this unit destroys a part do not occur, since parts are not modeled (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "unknown"
+          },
+          "claims": ["C-0443"]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 1,
+          "scaling": "casterFinalMaxHp",
+          "assumes": {
+            "ja": "味方全体への 1 回の回復（スキル発動者の最終最大HP の X%）。受けた味方の「回復効果が適用された時」を起こす。満タンの味方にも起きる。付く時刻はモデルのバーストの使用のフレーム（ソラのバーストの効果の付き始めは測っていない）。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く。S1 の与えるHP回復量▲は掛け、受けるHP回復量▲は掛けない（plan/design-heal-amount-up.md 2.1・2.3 節）",
+            "en": "A one-off heal on all allies (X% of the caster's final max HP), triggering \"when healed\" on the allies that receive it, also at full HP. Applied at the model's burst use frame (when Sora's burst effects actually start is not measured). The amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs. The S1 Outgoing Healing up is applied; Incoming Healing ups are not (plan/design-heal-amount-up.md 2.1, 2.3)"
+          },
+          "claims": ["C-1612"]
+        },
+        {
+          "kind": "removeDebuff",
+          "trigger": "burstUse",
+          "target": "allies",
+          "count": 1,
+          "assumes": {
+            "ja": "味方全体の、デバフ（デバフの印の付いた状態（ほろ酔い）か、味方に付く時間の▼）を 1 つ、スタックごと外す（同じ説明文のクレアのバーストの読み。C-0979）。発火のフレームは、バーストの効果の遅れの表に無いので発動のフレーム（ソラでは確かめていない）",
+            "en": "Removes one debuff (a debuff-flagged state (Drunken) or a timed debuff on an ally), with all its stacks, from every ally (the same reading as Claire's burst with the same description; C-0979). The firing frame is the activation frame, since she is not in the burst effect delay table (not checked for Sora)"
+          },
+          "claims": ["C-1612", "C-0979"]
+        }
+      ],
+      "notes": []
+    }
+  }
+}

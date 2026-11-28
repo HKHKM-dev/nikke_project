@@ -1,0 +1,133 @@
+{
+  "formatVersion": 1,
+  "resourceId": 550,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "バーストスキル使用時の、味方全体の受けるダメージ偏差分配（自分が生存している限り持続）は、防御系でダメージに関係しない",
+          "en": "Damage taken distribution among all allies on Burst use (continuous while this unit is alive) is defensive and does not affect damage",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "バーストスキル使用時の、味方全体のスキル発動者基準の防御力▲（自分が生存している限り持続）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "The DEF increase on all allies based on the caster's DEF on Burst use (continuous while this unit is alive) does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "バーストスキル使用時の、自分の遮蔽物の受けるダメージ偏差分配（自分が生存している限り持続）は、防御系でダメージに関係しない",
+          "en": "Damage taken distribution for this unit's cover on Burst use (continuous while this unit is alive) is defensive and does not affect damage",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "フルバーストタイムが終了した時の、自分の遮蔽物の HP 持続回復（1 秒間隔・5 秒）は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）",
+          "en": "The cover HP heal over time on this unit (every 1 s for 5 s) when Full Burst Time ends does not change damage by itself (it matters only with an effect reading cover in the team)",
+          "kind": "indirect",
+          "path": "cover"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分の遮蔽物の最大 HP▲（20 秒）は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）",
+          "en": "The cover max HP increase on this unit (20 s) does not change damage by itself (it matters only with an effect reading cover in the team)",
+          "kind": "indirect",
+          "path": "cover"
+        },
+        {
+          "ja": "味方全体の受けるダメージ▼（10 秒）は防御系でダメージに関係しない",
+          "en": "The damage-taken decrease on all allies (10 s) is defensive and does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    }
+  },
+  "treasureSkills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "バーストスキル使用時の、味方全体の受けるダメージ偏差分配（自分が生存している限り持続）は、防御系でダメージに関係しない",
+          "en": "Damage taken distribution among all allies on Burst use (continuous while this unit is alive) is defensive and does not affect damage",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "バーストスキル使用時の、味方全体のスキル発動者基準の防御力▲（自分が生存している限り持続）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "The DEF increase on all allies based on the caster's DEF on Burst use (continuous while this unit is alive) does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
+        },
+        {
+          "ja": "フルチャージして攻撃した時の、自分を除く味方全体の回復（スキル発動者の最終最大HP の X%）は未対応（回復の対象に「自分を除く」の語彙が無い）。受けた味方の「回復効果が適用された時」を起こすので、その効果を持つ味方のいる編成では与ダメージに効きうる",
+          "en": "The heal on all allies except this unit (X% of the caster's final max HP) after a fully charged attack is not modeled (heal targets have no vocabulary for \"except self\"). It triggers \"when healed\" on the allies that receive it, so it can affect damage in a team with such an effect",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "allies",
+            "trigger": "fullChargeShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "バーストスキル使用時の、自分の遮蔽物の受けるダメージ偏差分配（自分が生存している限り持続）は、防御系でダメージに関係しない",
+          "en": "Damage taken distribution for this unit's cover on Burst use (continuous while this unit is alive) is defensive and does not affect damage",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "フルバーストタイムが終了した時の、自分の遮蔽物の HP 持続回復（1 秒間隔・5 秒）は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）",
+          "en": "The cover HP heal over time on this unit (every 1 s for 5 s) when Full Burst Time ends does not change damage by itself (it matters only with an effect reading cover in the team)",
+          "kind": "indirect",
+          "path": "cover"
+        },
+        {
+          "ja": "バースト 1 段階突入時に自分の遮蔽物が破壊された状態なら自分に付く回復は、被弾を扱わないので遮蔽物が壊れず、起きない（要件 4.2 節）",
+          "en": "The heal on this unit on entering Burst Stage 1 while its cover is destroyed does not occur, because taking hits is not modeled and the cover is never destroyed (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "heal",
+            "target": "self",
+            "trigger": "burstStage1Enter"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分の遮蔽物が破壊された状態の時の遮蔽物の復活（戦闘中 1 回）は、被弾を扱わないので遮蔽物が壊れず、起きない（要件 4.2 節）",
+          "en": "Reviving this unit's cover while it is destroyed (once per battle) does not occur, because taking hits is not modeled and the cover is never destroyed (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "unknown"
+          }
+        },
+        {
+          "ja": "自分の遮蔽物の最大 HP▲（20 秒）は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）",
+          "en": "The cover max HP increase on this unit (20 s) does not change damage by itself (it matters only with an effect reading cover in the team)",
+          "kind": "indirect",
+          "path": "cover"
+        },
+        {
+          "ja": "味方全体の受けるダメージ▼（10 秒）は防御系でダメージに関係しない",
+          "en": "The damage-taken decrease on all allies (10 s) is defensive and does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    }
+  }
+}
