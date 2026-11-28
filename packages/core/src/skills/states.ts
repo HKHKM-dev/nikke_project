@@ -354,6 +354,13 @@ export const NAMED_STATES = {
   tiltedScale: { name: { ja: '傾く天秤', en: 'Tilted Scale' }, holder: 'ally' },
   /** 正義の実現（K の S2） */
   fulfillmentOfRighteousness: { name: { ja: '正義の実現', en: 'Fulfillment of Righteousness' }, holder: 'ally' },
+  /**
+   * スターゲイザー（アビスタのバースト。自分に最大HP▲・持続。S1 がフルバーストタイムの終わりに解除し、S2 の「スターゲイザー状態なら」が
+   * フルバーストタイムの発動の時に読む。V-0887）
+   */
+  stargazer: { name: { ja: 'スターゲイザー', en: 'Stargazer' }, holder: 'ally' },
+  /** アフターショー（アビスタの S1。自分のアイドルに攻撃力▲。フルバーストタイムの発動の時に解除。V-0887） */
+  aftershow: { name: { ja: 'アフターショー', en: 'Aftershow' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

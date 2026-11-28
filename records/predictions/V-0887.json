@@ -1,0 +1,336 @@
+{
+  "verification": "V-0887",
+  "note": "撮影（デルタ（II）・アリス（III）・アビスタ（I・3 枠目）・アニス：スター（I・4 枠目・操作）。I の撃てる候補は枠の若い順なので、アビスタをアニス：スターより左に置く・オートバースト ON）の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。H1 では、チェーンは I（アビスタ）→ I（アニス：スター）→ II → III でフルバースト、と I → I で時間切れ（デルタ・アリスの CT 40 秒）を交互に繰り返す。アニス：スターの 1 ヒットは、1 回目のフルバーストの前（どちらも無い）・フルバーストの中（S2 の▲）・フルバーストの後（S2 の▲とアフターショー）で見分ける",
+  "team": [
+    {
+      "rid": 20
+    },
+    {
+      "rid": 191
+    },
+    {
+      "rid": 441
+    },
+    {
+      "rid": 17,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（バースト再突入 1 段階・スターゲイザー。フルバーストの発動でスターゲイザーならアニス：スターに発射体爆発ダメージ▲・攻撃ダメージ▲（持続）、フルバーストの終わりにアニス：スターにアフターショー（アビスタの攻撃力基準の攻撃力▲。次のフルバーストの発動で解除）とスターゲイザーの解除）"
+    },
+    {
+      "id": "H0",
+      "note": "再突入しない（アビスタの I の後すぐ II。アニス：スターは I を撃たない）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 441,
+            "skill": "burst",
+            "replace": 0,
+            "effect": {
+              "kind": "burstReentry",
+              "step": "Step2"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-noS2",
+      "note": "S2 のアニス：スターへの▲が付かない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 441,
+            "skill": "skill2",
+            "index": 0
+          },
+          {
+            "rid": 441,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-noAfter",
+      "note": "アフターショーが付かない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 441,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-afterKeep",
+      "note": "アフターショーがフルバーストの発動で外れない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 441,
+            "skill": "skill1",
+            "index": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-afterSelf",
+      "note": "アフターショーの攻撃力▲が、アニス：スター自身の攻撃力の比率（スキル発動者基準でない）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 441,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "state",
+              "state": "aftershow",
+              "trigger": "fullBurstEnd",
+              "target": "allies",
+              "targetCharacter": 17,
+              "durationUntil": "battleEnd",
+              "contents": [
+                {
+                  "stat": "attack",
+                  "ref": 2
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "order",
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 14
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "バーストを撃った枠の並び（バースト欄。recipe:burst-panel）"
+    },
+    {
+      "id": "fb-count",
+      "model": "sim",
+      "metric": "fullBurstCount",
+      "args": {},
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "フルバーストの回数"
+    },
+    {
+      "id": "anis-pre",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "1 回目のフルバーストより前（アニス：スターのバーストより前）の 1 ヒット（胴体・会心なし）。アビスタの効果は無い"
+    },
+    {
+      "id": "anis-fb1",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false,
+        "fullBurst": 0
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "1 回目のフルバーストの中の 1 ヒット。S2 の▲（とアニス：スター・アリスの効果）"
+    },
+    {
+      "id": "anis-after1",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 1100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "1 回目のフルバーストの後、アニス：スターの 2 回目のバーストより前の 1 ヒット。S2 の▲とアフターショー"
+    },
+    {
+      "id": "anis-after1b",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 2200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "同じ窓の、アニス：スターの 2 回目のバーストの▲が切れた後の 1 ヒット"
+    },
+    {
+      "id": "anis-fb2",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false,
+        "fullBurst": 1
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "2 回目のフルバーストの中の 1 ヒット。S2 の▲（アフターショーは外れている）"
+    },
+    {
+      "id": "anis-after2",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 3300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "rel": 0.001
+      },
+      "note": "2 回目のフルバーストの後の 1 ヒット。S2 の▲（付け直しで重ならない）とアフターショー"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-28",
+    "commit": "441a7f92e7b1ab5648d35d5a09f8f1c9a42448f9",
+    "values": {
+      "H1": {
+        "order": [3, 4, 1, 2, 3, 4, 3, 4, 1, 2, 3, 4, 3, 4],
+        "fb-count": 5,
+        "anis-pre": 172539.5775,
+        "anis-fb1": 1135945.5959713273,
+        "anis-after1": 532571.0993015,
+        "anis-after1b": 532571.0993015,
+        "anis-fb2": 1135945.5959713273,
+        "anis-after2": 532571.0993015
+      },
+      "H0": {
+        "order": [3, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1],
+        "fb-count": 6,
+        "anis-pre": 172539.5775,
+        "anis-fb1": 1018854.9491641272,
+        "anis-after1": 532571.0993015,
+        "anis-after1b": 532571.0993015,
+        "anis-fb2": 1135945.5959713273,
+        "anis-after2": 532571.0993015
+      },
+      "H-noS2": {
+        "order": [3, 4, 1, 2, 3, 4, 3, 4, 1, 2, 3, 4, 3, 4],
+        "fb-count": 5,
+        "anis-pre": 172539.5775,
+        "anis-fb1": 868965.6154955924,
+        "anis-after1": 295446.0775,
+        "anis-after1b": 295446.0775,
+        "anis-fb2": 868965.6154955924,
+        "anis-after2": 295446.0775
+      },
+      "H-noAfter": {
+        "order": [3, 4, 1, 2, 3, 4, 3, 4, 1, 2, 3, 4, 3, 4],
+        "fb-count": 5,
+        "anis-pre": 172539.5775,
+        "anis-fb1": 1135945.5959713273,
+        "anis-after1": 311019.84240150003,
+        "anis-after1b": 311019.84240150003,
+        "anis-fb2": 1135945.5959713273,
+        "anis-after2": 311019.84240150003
+      },
+      "H-afterKeep": {
+        "order": [3, 4, 1, 2, 3, 4, 3, 4, 1, 2, 3, 4, 3, 4],
+        "fb-count": 5,
+        "anis-pre": 172539.5775,
+        "anis-fb1": 1135945.5959713273,
+        "anis-after1": 532571.0993015,
+        "anis-after1b": 532571.0993015,
+        "anis-fb2": 1783143.6693340275,
+        "anis-after2": 532571.0993015
+      },
+      "H-afterSelf": {
+        "order": [3, 4, 1, 2, 3, 4, 3, 4, 1, 2, 3, 4, 3, 4],
+        "fb-count": 5,
+        "anis-pre": 172539.5775,
+        "anis-fb1": 1135945.5959713273,
+        "anis-after1": 489468.05364799994,
+        "anis-after1b": 489468.05364799994,
+        "anis-fb2": 1135945.5959713273,
+        "anis-after2": 489468.05364799994
+      }
+    }
+  }
+}
