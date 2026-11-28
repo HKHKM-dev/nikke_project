@@ -1,0 +1,15 @@
+{
+  "id": "C-1568",
+  "text": "キリ（33）の S1 の攻撃力▲は、フルチャージの発ごとに、その発の次のフレームから防御型の味方 2 機（防御型が 2 機以下なら全員。キリ自身は支援型で入らない）に付き直し、キリのバフ前の攻撃力 × 説明文の値（スペック固定の Lv10 で 5.81%）を攻撃力に足して 3 秒続く",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "V-0882",
+  "model": "反映（data/skills/33.json の skill1 の effects[0]（timed・fullChargeShot・allies・targetClass: \"Defender\"・targetCountRef 3・attack・casterAttack）。対象の N 機は skills/composition.ts の fixedTargetsOf と skills/targets.ts）",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/33.json の skill1 の effects[0]"]
+  },
+  "decidedOn": []
+}
