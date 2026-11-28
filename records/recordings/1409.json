@@ -1,0 +1,53 @@
+{
+  "id": "1409",
+  "date": "2026-11-28",
+  "folder": "range",
+  "file": "20261128-1409_rupee-ws-team.mp4",
+  "original": "2026-11-28_16-38-15.mp4",
+  "durationSec": 218.8,
+  "frames": 13126,
+  "fps": 60,
+  "sizeMB": 264.9,
+  "sha256": "ba37a7741011",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 191,
+      "name": "アリス",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 203,
+      "name": "ルピー：ウィンターショッパー",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 302,
+      "name": "プロダクト08",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire",
+    "level": 1
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0881。デルタ（II）+ アリス（III）+ ルピー：ウィンターショッパー（I・操作）+ プロダクト08（I）。スペック固定 ON・オート射撃 ON・オートバースト ON",
+  "backup": {
+    "at": "2026-11-28T16:46+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
