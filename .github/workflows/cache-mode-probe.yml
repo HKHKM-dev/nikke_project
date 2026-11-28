@@ -1,0 +1,27 @@
+name: cache-mode probe 2 (temporary)
+on:
+  push:
+    branches: [claude/deploy-key-cache]
+permissions:
+  contents: read
+cache-mode: none
+jobs:
+  up:
+    runs-on: ubuntu-latest
+    cache-mode: read
+    steps:
+      - run: mkdir out && echo probe > out/probe.txt
+      - uses: actions/upload-artifact@v7
+        with:
+          name: probe
+          path: out
+          retention-days: 1
+  down:
+    needs: up
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: probe
+          path: got
+      - run: cat got/probe.txt
