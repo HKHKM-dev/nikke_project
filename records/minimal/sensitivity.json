@@ -38719,6 +38719,70 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "1447-07",
+      "element": "シラツル burst.effects[0]",
+      "key": "c0b1378fd24bc4ca",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1447-07",
+      "element": "シラツル skill2.effects[0]",
+      "key": "c0b1378fd24bc4ca",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1447-08",
+      "element": "シラツル burst.effects[0]",
+      "key": "55931be3b22bca5e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1447-08",
+      "element": "シラツル skill2.effects[0]",
+      "key": "55931be3b22bca5e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1447-09",
+      "element": "シラツル burst.effects[0]",
+      "key": "6a1b6ce47974fc4d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1447-09",
+      "element": "シラツル skill2.effects[0]",
+      "key": "6a1b6ce47974fc4d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1447-10",
+      "element": "シラツル burst.effects[0]",
+      "key": "58329a2e6c4957b1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1447-10",
+      "element": "シラツル skill2.effects[0]",
+      "key": "58329a2e6c4957b1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }
