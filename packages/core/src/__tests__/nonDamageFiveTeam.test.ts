@@ -6,7 +6,7 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
 import { rawDefinition } from './data.ts';
 import { stateItemsOf } from './historyHelpers.ts';
-import { describeEveryShotInOneGroup, fixedTeam } from './teamHelpers.ts';
+import { describeRuns, fixedTeam } from './teamHelpers.ts';
 
 const MARY = 130;
 const RAPUNZEL = 221;
@@ -106,4 +106,4 @@ describe('ソラ + マスト：ロマンチックメイド + アスカ', () => {
   });
 });
 
-describeEveryShotInOneGroup({ HEALERS, SORA_MAST });
+describeRuns({ HEALERS, SORA_MAST });
