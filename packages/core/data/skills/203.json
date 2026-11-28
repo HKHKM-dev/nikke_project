@@ -1,0 +1,94 @@
+{
+  "formatVersion": 1,
+  "resourceId": 203,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "最後の弾丸が命中した時の、味方全体への防御力▲（5 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "The DEF increase on all allies when the last bullet hits (5 s) does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "shopping",
+          "trigger": "allyBurstUse",
+          "target": "allies",
+          "maxStacksRef": 2,
+          "durationRef": 3,
+          "contents": [
+            {
+              "stat": "defense",
+              "ref": 1
+            }
+          ],
+          "assumes": {
+            "ja": "味方（自分を含む）のどの枠がバーストを使っても、そのバーストの効果のフレームに味方全体へ 1 段ずつ付く（4 段で止まる）。付くたびにすべてのスタックの維持を付け直す（いまの既定）。中身の防御力▲はそれ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）。effects[1] の「ショッピングのフルスタック状態なら」が読む",
+            "en": "Whenever any ally (including herself) uses a Burst, one stack is applied to all allies on that Burst's effect frame (capped at 4). Each application refreshes the duration of all stacks (the current default). The DEF increase inside does not change damage by itself (it matters only with an effect reading DEF in the team). Read by effects[1] (\"if at full stacks of Shopping\")"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstEnd",
+          "target": "allies",
+          "stat": "burstGaugeSpeed",
+          "ref": 4,
+          "durationRef": 5,
+          "condition": {
+            "selfState": {
+              "state": "shopping",
+              "stacks": "full"
+            }
+          },
+          "assumes": {
+            "ja": "フルスタックかはフルバーストの終わりのフレームに、自分のショッピングの段で見る。各味方の弾のゲージに掛かる（シンの S2 の自分への▲と同じ効き方）",
+            "en": "Full stacks are checked on the frame the Full Burst ends, by her own Shopping stacks. Applies to the gauge from each ally's own bullets (the same way as Sin's S2 on herself)"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstReentry",
+          "step": "Step1",
+          "assumes": {
+            "ja": "「バースト再突入 1 段階」。CDN の次の段階（Step1）と同じ。自分のバーストの後、チェーンはもう一度 I に入り、このチェーンで未使用の別の I の枠が撃つ",
+            "en": "\"Burst Re-entry Stage 1\". Same as the CDN next stage (Step1). After her Burst the chain re-enters Stage I, and another Burst I slot not yet used in this chain fires"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "reloadSpeed",
+          "ref": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "説明文どおり（味方全体・10 秒）",
+            "en": "As described (all allies, 10 s)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "自分への「ヘイト：敵全体を挑発」（5 秒）はダメージに関係しない（付けたときも切れるときもゲージを溜めない見込み。ティアの S2・シンの S1 と同じ形）",
+          "en": "The \"Hate: taunt all enemies\" on herself (5 s) does not affect damage (expected not to charge the gauge on application or expiry, as Tia's S2 and Sin's S1)",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "自分の吸収回復（攻撃ダメージの X% 回復・10 秒）は、ダメージに関係しない（自分にだけ付き、ルピー：ウィンターショッパーに回復を受けた時の効果は無いので、どの味方のスキルの発動も変えない）",
+          "en": "The lifesteal on herself (heals X% of damage dealt, 10 s) does not affect damage (it is applied only to herself, and Rupee: Winter Shopper has no effect on being healed, so it changes no ally's skill activation)",
+          "kind": "noDamage"
+        }
+      ]
+    }
+  }
+}

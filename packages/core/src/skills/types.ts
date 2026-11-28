@@ -620,7 +620,8 @@ export type BuffTrigger =
   | 'burstStage2Enter'
   | 'burstStage3Enter'
   | 'healed'
-  | 'burstHit';
+  | 'burstHit'
+  | 'allyBurstUse';
 export const BUFF_TRIGGERS = [
   'battleStart',
   'burstUse',
@@ -631,6 +632,7 @@ export const BUFF_TRIGGERS = [
   'burstStage3Enter',
   'healed',
   'burstHit',
+  'allyBurstUse',
 ] as const satisfies readonly BuffTrigger[];
 
 /** 対象 burstUsers を書けるトリガー */
