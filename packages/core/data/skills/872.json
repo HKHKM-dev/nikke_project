@@ -16,6 +16,9 @@
               "stat": "attack",
               "ref": 1
             }
+          ],
+          "claims": [
+            "C-1605"
           ]
         }
       ],
@@ -41,7 +44,10 @@
           "assumes": {
             "ja": "パピヨンハートのマハタルカジャ。自分（アイギス）は倒れないので、「自分が生存している限り」はいつも満たす",
             "en": "Matarukaja of Papillon Heart. Aigis never falls, so \"as long as she survives\" always holds"
-          }
+          },
+          "claims": [
+            "C-1606"
+          ]
         }
       ],
       "notes": [
@@ -62,7 +68,10 @@
           "assumes": {
             "ja": "単体ボスなので分配ダメージは全額 1 ヒット",
             "en": "Distributed damage lands in full as one hit on a lone boss"
-          }
+          },
+          "claims": [
+            "C-1607"
+          ]
         }
       ]
     }

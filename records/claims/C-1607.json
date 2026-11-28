@@ -3,7 +3,7 @@
   "text": "アイギスのバースト（敵全体への最終攻撃力の X% の分配ダメージ）は、的には全額の 1 ヒットで、II の発動の印（右のバースト欄の六角形が II から III に替わるフレーム）の動画で 1f 前に出る",
   "state": "仮説",
   "topic": "スキル・キャラ固有",
-  "grade": "単独実測",
+  "grade": "反復実測",
   "basis": "`1434-12`・`1434-13`・`1434-14`。V-0895",
   "model": "burst/landing.ts の 872 の行（hitFrames −1・effectFrames 0）と data/skills/872.json の burst の effects[0]（burstDamage・distributed）",
   "replaces": [],

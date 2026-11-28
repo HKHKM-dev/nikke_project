@@ -165,6 +165,8 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   { resourceIds: [190], delays: { hitFrames: 73, effectFrames: 0 }, claim: 'C-0675' },
   // ウンファ
   { resourceIds: [92], delays: { hitFrames: -1, effectFrames: 0 }, claim: 'C-1379' },
+  // アイギス: 効果（S2 のパピヨンハート）の遅れは未測定
+  { resourceIds: [872], delays: { hitFrames: -1, effectFrames: 0 }, claim: 'C-1607' },
   // ルピー
   { resourceIds: [200], delays: { hitFrames: 89, effectFrames: 0 }, claim: 'C-1421' },
   // ベロータ: ヒットは 15〜16f のうち 16f にした。効果（味方全体のチャージ速度▲）の遅れは未測定

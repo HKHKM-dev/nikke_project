@@ -3,7 +3,8 @@
 // 射撃場の 3 分モード（条件は自動）で見る
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { effectFrameOf } from '../burst/schedule.ts';
+import { burstDelaysOf } from '../burst/landing.ts';
+import { effectFrameOf, hexagonFrameOf, hitFramesOf } from '../burst/schedule.ts';
 import { runFirstPass } from '../frame/firstPass.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
@@ -60,6 +61,13 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
         expect(w.end === plan.frames || windows.some((x) => x.end === w.end)).toBe(true);
       }
     }
+  });
+
+  it('hits once at every Burst use of hers, 1f before the II mark (C-1607)', () => {
+    const { hitFrames } = burstDelaysOf(input.slots[a]!.character);
+    expect(hitFrames).toBe(-1);
+    const activations = plan.schedule!.activations.filter((x) => x.slotIndex === a);
+    for (const x of activations) expect(hitFramesOf(x)).toEqual([hexagonFrameOf(x) + hitFrames]);
   });
 
   it('builds the same items inside the first pass as from the final inputs (verifyItems)', () => {

@@ -4,7 +4,7 @@
 - 関連: [design-persona.md](design-persona.md)（ペルソナ状態と、クイーン（真）・雪子の対象の絞り込み）、[design-true-damage-element.md](design-true-damage-element.md) 3.2 節（`durationUntil: "fullBurstEnd"`）、[design-guillotine.md](design-guillotine.md) 2.1 節（攻撃力にだけ開いた、出来事で終わる維持）、[design-named-state.md](design-named-state.md) 4.3 節（状態として書かない「〈名前〉：機能…」）
 - 検証: V-0895
 - 作成日: 2026-11-28
-- 状態: 撮影待ち（5 節）
+- 状態: 完了（5 節）
 
 ## 0. 範囲
 
@@ -63,3 +63,4 @@
 ## 5. 経過
 
 - 2026-11-28: 起案。論点 1 は案 A、論点 2 は推奨の編成に決め（オーナー）、攻撃力の `durationUntil: "fullBurstEnd"` を実装した。撮影は V-0895。
+- 2026-11-28: 撮影（録画 1433〜1434）が H1 と合った（パピヨンハートは時間切れのチェーンでも外れず、次のフルバーストの終わりまで続く）。バーストのヒットの遅れの行を遅れの表に足した。V-0895。

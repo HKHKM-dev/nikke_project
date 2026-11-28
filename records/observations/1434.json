@@ -1,0 +1,323 @@
+[
+  {
+    "id": "1434-01",
+    "recording": "1434",
+    "kind": "timing",
+    "use": "record",
+    "value": [1280, 2481, 3661, 4863, 6042, 7255, 8434, 9768, 10947],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・6・24・0・24・0・25f"
+    },
+    "source": "V-0895",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1434-02",
+    "recording": "1434",
+    "kind": "timing",
+    "use": "record",
+    "value": [1309, 2511, 3690, 4892, 6070, 7381, 8561, 9797, 10976],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・6・25・6・25・0・24・0・25f"
+    },
+    "source": "V-0895",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1434-03",
+    "recording": "1434",
+    "kind": "timing",
+    "use": "record",
+    "value": [1338, 3719, 6100, 8590, 11005],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0895",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1434-04",
+    "recording": "1434",
+    "kind": "timing",
+    "use": "record",
+    "value": [1947, 4328, 6708, 9199, 11536],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0895",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1434-05",
+    "recording": "1434",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 608, 609, 531],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0895",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1434-06",
+    "recording": "1434",
+    "kind": "timing",
+    "use": "record",
+    "value": [2475, 3655, 4856, 6035, 8427, 10941],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0895",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1434-07",
+    "recording": "1434",
+    "kind": "timing",
+    "use": "record",
+    "value": [2504, 3684, 4885, 6064, 8554, 10970],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f7266"
+    },
+    "source": "V-0895",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1434-08",
+    "recording": "1434",
+    "kind": "timing",
+    "use": "record",
+    "value": [3712, 6093],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0895",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1434-09",
+    "recording": "1434",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 578950,
+    "description": "ライ + アイギス（操作）+ アリスで、1 回目のフルバーストの終わり（f1947）から 2 回目のアイギスの発動（II の印 f2511）までの、アリスのコアの 1 ヒット（会心なし）。f2159 の増分。2 回目のフルバーストの終わり（f4328）の後の f4428・4540・4770 も同じ値（パピヨンハートの攻撃力▲が無い）",
+    "method": {
+      "tool": "recipe:hud-jumps@3・recipe:buff-edge@9（--opt grid）",
+      "note": "HUD の増分を、アリスの 1 ヒットの格子（モデルの f300 と f2500）に ±1.5 で当てた。フルバーストの時刻は 1434-03・1434-04"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1400,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0895",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1434-10",
+    "recording": "1434",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 659788,
+    "description": "2 回目のアイギスの発動（II の印 f2511。アリスの CT 中で III が撃てず、チェーンが時間切れになった回）の後、2 回目のフルバースト（00.00 f3719）の前の、アリスのコアの 1 ヒット（会心なし）。f2616・3069・3411・3523 の 4 回とも同じ値で、時間切れ（II の印の約 600f 後）の後の f3411・3523 にもパピヨンハートの攻撃力▲が乗る。4 回目の発動（f4892。時間切れの回）の後も、f5122 からフルバーストの前まで乗った値（コア・距離ボーナスの 758,757 など）",
+    "method": {
+      "tool": "recipe:hud-jumps@3・recipe:buff-edge@9（--opt grid）",
+      "note": "HUD の増分を、アリスの 1 ヒットの格子（モデルの f300 と f2500）に ±1.5 で当てた。▲の無い値は 578,950"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0895",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1434-11",
+    "recording": "1434",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 1248446,
+    "description": "1 回目と 2 回目のフルバーストの中の、アリスのコアの 1 ヒット（会心なし）。14 回が 1,248,446（ほかは同じフレームのほかの発との和と会心）。パピヨンハート・アリスのバーストの攻撃力▲・S1 のチャージダメージ▲が乗った値",
+    "method": {
+      "tool": "recipe:hud-jumps@3・recipe:buff-edge@9（--opt grid）",
+      "note": "フルバーストの窓（1434-03・1434-04）の中の 20 万を超える増分を並べた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3000,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0895",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1434-12",
+    "recording": "1434",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 379479,
+    "description": "1 回目のアイギスのバーストの分配ダメージ（会心なし）。f1308 の 1 ヒット（II の印 f1309 の 1f 前）。同じ発動で付くパピヨンハートは乗らない（乗れば 445,650）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "II の印（1434-02）の ±12f の 10 万を超える増分は、どの回も 1 つ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0895",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1434-13",
+    "recording": "1434",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 445718,
+    "description": "9 回目のアイギスのバーストの分配ダメージ（会心なし。f10975）。前の時間切れのチェーンの発動（f9797）で付いたパピヨンハート（次のフルバーストの終わりまで続く）が乗る。3・5・7 回目（f3689・6069・8560）も同じ形で、同じフレームの SMG のヒットとの和（476,011・461,134・478,024）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "II の印（1434-02）の ±12f の 10 万を超える増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 8,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0895",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1434-14",
+    "recording": "1434",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [-1, -2, -1, -2, -1, -1, -1, -1, -1],
+    "description": "アイギスの発動の印（右のバースト欄の六角形が II から III に替わったフレーム）から、アイギスのバーストの分配ダメージのヒット（HUD の増分）までの動画のフレーム（9 回。負は印より前）",
+    "method": {
+      "tool": "recipe:hud-jumps@3・recipe:burst-panel@4",
+      "note": "ヒットは f1308・2509・3689・4890・6069・7380・8560・9796・10975。印は 1434-02（1309・2511・3690・4892・6070・7381・8561・9797・10976）。どの回も 1 ヒット"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 2,
+        "count": 9
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0895",
+    "readAt": "2026-11-28"
+  }
+]
