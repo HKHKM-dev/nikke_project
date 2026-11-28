@@ -35,9 +35,9 @@
   },
   "mode": "range-3min",
   "fixedSpec": true,
-  "autoFire": false,
-  "autoBurst": true,
-  "conditionNote": "サクラ：ブルーム・イン・サマー（3 枠目・操作）はオート射撃 OFF で撃たない",
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "撮影の依頼（オート射撃 OFF）と違い、オート射撃 ON・オートバースト OFF で撮った（左上の照準のボタンがオレンジ、AUTO のボタンが灰色。右のバースト欄に I のカードが残り、バーストは 1 回も起きない）。識別子の hold はバーストを使わない意味で読む",
   "backup": {
     "at": "2026-11-28T17:50+09:00",
     "via": "cloud-move",
