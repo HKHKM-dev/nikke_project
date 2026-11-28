@@ -5,7 +5,7 @@
 - 観測値は、観測値の `source` にその検証記録の ID を書いたもの。止めている検証・派生した検証・訂正された記録は、相手の冒頭から逆に引いたもの。
 - 2026-09-26 までの実測は [verification.md](verification.md)（凍結）にある。
 
-件数: 調査中 0・保留 0・完了 815・打ち切り 28（計 843）
+件数: 調査中 0・保留 0・完了 816・打ち切り 28（計 844）
 
 ## 開いている検証
 
@@ -8385,3 +8385,14 @@
     - delta-reload-base（reloadFramesAt）: 実測なし。H1 100、H0 100、H-nogauge 100、H-noreload 100
     - delta-reload-in（reloadFramesAt）: 実測なし。H1 44、H0 44、H-nogauge 44、H-noreload 100
     - alice-reload-in（reloadFramesAt）: 実測なし。H1 55、H0 55、H-nogauge 55、H-noreload 129
+- **[V-0883](../records/verifications/V-0883-liberalio-s1-lowest.md)** リバーレリオの S1 の「最終攻撃力が一番低い III の味方」へのチャージ速度▲
+  - 問い: リバーレリオの S1 の、フルバーストタイムの発動時に最終攻撃力が一番低い基本バースト段階 III の味方 1 機に付くスキル発動者基準のチャージ速度▲（10 秒）は、自分より最終攻撃力の低い III のチャージ武器の味方に付き、その味方のチャージをリバーレリオの基礎チャージ時間 × 12.74% だけ縮めるか
+  - 話題: スキル・キャラ固有・日付: 2026-11-28・状態: 完了
+  - 録画: 1416
+  - 観測値: 1416-01、1416-02、1416-03、1416-04、1416-05、1416-06、1416-07、1416-08、1416-09、1416-10
+  - 結論: C-1578
+  - 予測（2026-11-28、commit 70bb8cf）との比べ:
+    - diesel-fb1（fullBurstShotIntervalDiff）: 実測なし。H0 0、H1 -11
+    - diesel-fb2（fullBurstShotIntervalDiff）: 実測なし。H0 0、H1 -11
+    - diesel-fb3（fullBurstShotIntervalDiff）: 実測なし。H0 0、H1 -11
+    - liberalio-fb2（fullBurstShotIntervalDiff）: 実測なし。H0 0、H1 0

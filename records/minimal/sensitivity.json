@@ -20704,7 +20704,7 @@
     {
       "observation": "0841-02",
       "element": "リバーレリオ skill2.effects[1]",
-      "key": "6b6946119c92931a",
+      "key": "0fba3c6bf8ce2b64",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -20712,7 +20712,7 @@
     {
       "observation": "0841-04",
       "element": "リバーレリオ skill2.effects[1]",
-      "key": "f9508e7773362b6c",
+      "key": "c57e45cd9f489e12",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -20720,7 +20720,7 @@
     {
       "observation": "0841-07",
       "element": "リバーレリオ skill2.effects[1]",
-      "key": "95e1dc691a374e1a",
+      "key": "60d9f803588d6e64",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -20728,7 +20728,7 @@
     {
       "observation": "0841-08",
       "element": "リバーレリオ skill2.effects[1]",
-      "key": "4b1ae3ed77a352c4",
+      "key": "bdc1a9ff8ed9360a",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -20736,7 +20736,7 @@
     {
       "observation": "0841-09",
       "element": "リバーレリオ skill2.effects[1]",
-      "key": "bcca135a5c2f1aff",
+      "key": "e6e78270e2af6599",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -20744,7 +20744,7 @@
     {
       "observation": "0841-10",
       "element": "リバーレリオ skill2.effects[1]",
-      "key": "4c949db63c375cff",
+      "key": "fefdd8048a13d799",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -32573,7 +32573,7 @@
     {
       "observation": "1195-10",
       "element": "リバーレリオ skill2.effects[1]",
-      "key": "f905b2c98eef9acc",
+      "key": "593d05b3078d48fa",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -32581,7 +32581,7 @@
     {
       "observation": "1195-11",
       "element": "リバーレリオ skill2.effects[1]",
-      "key": "908e355f798adfe0",
+      "key": "9d9042b5c24aabe6",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -32589,7 +32589,7 @@
     {
       "observation": "1195-12",
       "element": "リバーレリオ skill2.effects[1]",
-      "key": "79e010b365921404",
+      "key": "6a2675b19cbbedd2",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -32597,7 +32597,7 @@
     {
       "observation": "1195-13",
       "element": "リバーレリオ skill2.effects[1]",
-      "key": "954dd45ff57c057c",
+      "key": "b06b59b58492c62a",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -32605,7 +32605,7 @@
     {
       "observation": "1195-14",
       "element": "リバーレリオ skill2.effects[1]",
-      "key": "10e806f282136d1d",
+      "key": "a676c770a45c5b43",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -32613,7 +32613,7 @@
     {
       "observation": "1195-15",
       "element": "リバーレリオ skill2.effects[1]",
-      "key": "652152e0128c5483",
+      "key": "9f78a82a2f64c16d",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -32621,7 +32621,7 @@
     {
       "observation": "1195-16",
       "element": "リバーレリオ skill2.effects[1]",
-      "key": "cc44f43b4bd79406",
+      "key": "752356d97ae1f400",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -32629,7 +32629,7 @@
     {
       "observation": "1195-17",
       "element": "リバーレリオ skill2.effects[1]",
-      "key": "6aa57cc9de2d74a4",
+      "key": "b0aa1fb3b22d44f2",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -32637,7 +32637,7 @@
     {
       "observation": "1195-18",
       "element": "リバーレリオ skill2.effects[1]",
-      "key": "e314f2f07c6433bb",
+      "key": "97ebe2ba6c0e3e65",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -34936,15 +34936,15 @@
     {
       "observation": "1238-09",
       "element": "リバーレリオ skill2.effects[1]",
-      "key": "305bfc25dd08c836",
+      "key": "61018f37df3a9978",
       "effective": true,
-      "minus": -8,
+      "minus": -19,
       "plus": 0
     },
     {
       "observation": "1239-09",
       "element": "リバーレリオ skill2.effects[1]",
-      "key": "1d8e16360479e4e5",
+      "key": "663a62f0aaa74b2b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -37934,6 +37934,22 @@
       "observation": "1392-10",
       "element": "紅蓮：神殺 skill1.effects[0]",
       "key": "39edf6f96e252762",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1416-09",
+      "element": "リバーレリオ skill2.effects[1]",
+      "key": "933e13ec0f505d97",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1416-10",
+      "element": "リバーレリオ skill2.effects[1]",
+      "key": "9551bf8b541727f6",
       "effective": false,
       "minus": 0,
       "plus": 0

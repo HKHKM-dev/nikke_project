@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 181・効果 1254（根拠あり 1232）・notes 386（根拠あり 164）
+件数: キャラ 181・効果 1255（根拠あり 1233）・notes 385（根拠あり 163）
 
-notes の種類: 未対応 23・前提の外 134・計算に無関係 84・補足 44・間接 101
+notes の種類: 未対応 22・前提の外 134・計算に無関係 84・補足 44・間接 101
 
-スロット: supported 506・partial 18・unsupported 4・noEffect 72
+スロット: supported 507・partial 17・unsupported 4・noEffect 72
 
 ## 10 ラピ
 
@@ -1372,7 +1372,7 @@ notes の種類: 未対応 23・前提の外 134・計算に無関係 84・補�
 
 ## 262 リバーレリオ
 
-- **skill1**: partial
+- **skill1**: supported
   - effects[0] timed・fullBurstStart・attack: C-1241（確定）
   - effects[1] timed・coreHit・attackDamage: C-1237（確定）
   - effects[2] damage・fullChargeShot・additional: C-1238（確定）、C-1239（確定）
@@ -1380,7 +1380,7 @@ notes の種類: 未対応 23・前提の外 134・計算に無関係 84・補�
   - effects[4] damage・fullChargeShot・additional: C-1238（確定）、C-1239（確定）
   - effects[5] damage・fullChargeShot・additional: C-1238（確定）、C-1239（確定）
   - effects[6] damage・fullChargeShot・additional: C-1238（確定）、C-1239（確定）
-  - notes[0] 未対応: フルバーストタイムが発動した時の、最終攻撃力が一番低い基本バースト段階 III の味方 1 機へのスキル発動者基準のチャージ速度▲（10 秒）は未対応（最終攻撃力が一番低い味方の対象の語彙が無い）。基本バースト段階 III が自分だけの編成では自分が対象で、S2 のチャージ速度増加効果無効で効かない。自分より最終攻撃力の低い III の味方（チャージ武器）のいる編成でだけ効く: C-1242（仮説）
+  - effects[7] timed・fullBurstStart・chargeSpeed: C-1578（確定）
 - **skill2**: supported
   - effects[0] state・fullChargeShot・ragingCurrent（attackDamage）: C-1237（確定）
   - effects[1] timed・battleStart・chargeSpeed: C-1242（仮説）、C-1342（確定）
