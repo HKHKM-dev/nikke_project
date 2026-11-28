@@ -1,0 +1,28 @@
+{
+  "id": "C-1593",
+  "text": "アビスタの S1 のアフターショーは、フルバーストの終わりに自分のアイドル（アニス：スター）に付き、アビスタの攻撃力を基準にした攻撃力▲（説明文の値）で、次のフルバーストの発動で外れる（その間のアニス：スターの発に乗り、フルバーストの中の発には乗らない）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1425-10`・`1425-11`・`1425-12`・`1425-13`・`1425-14`・`1425-15`。V-0887",
+  "model": "data/skills/441.json の skill1 の aftershow の付与（casterAttack・targetCharacter: 17）と removeState（fullBurstStart）",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/441.json の skill1 の effects[0]", "data/skills/441.json の skill1 の effects[1]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1425",
+      "role": "仮説の出どころ"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "1425",
+      "decided": "1 回目のフルバーストとその後",
+      "reproduced": "2〜4 回目のフルバーストとその後",
+      "observations": ["1425-12", "1425-13", "1425-14", "1425-15"]
+    }
+  ]
+}
