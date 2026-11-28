@@ -82,17 +82,24 @@ describe('durationUntil・inFullBurst・atStart の検証', () => {
     durationUntil: 'fullBurstEnd',
   };
 
-  it('parses durationUntil for a stat not tracked in the first pass', () => {
+  it('parses durationUntil for a stat not tracked in the first pass, and for attack (plan/design-aigis.md 2.1 節)', () => {
     const def = parseSkillDefinition(withSkill2([until]));
     expect(def.skills.skill2.effects[0]).toMatchObject({ durationUntil: 'fullBurstEnd' });
+    const attack = parseSkillDefinition(
+      withSkill2([{ ...until, target: 'allies', stat: 'attack', scaling: 'casterAttack' }]),
+    );
+    expect(attack.skills.skill2.effects[0]).toMatchObject({ stat: 'attack', durationUntil: 'fullBurstEnd' });
   });
 
-  it('rejects durationUntil with another duration, for first-pass stats, and with stacks', () => {
+  it('rejects durationUntil with another duration, for first-pass stats but attack, and with stacks', () => {
     expect(() => parseSkillDefinition(withSkill2([{ ...until, durationRef: 2 }]))).toThrow(
       /durationUntil cannot be combined with another duration/,
     );
-    expect(() => parseSkillDefinition(withSkill2([{ ...until, stat: 'attack' }]))).toThrow(
-      /a duration until an event is not supported for "attack"/,
+    expect(() => parseSkillDefinition(withSkill2([{ ...until, stat: 'defense' }]))).toThrow(
+      /a duration until an event is not supported for "defense"/,
+    );
+    expect(() => parseSkillDefinition(withSkill2([{ ...until, stat: 'burstGaugeSpeed' }]))).toThrow(
+      /a duration until an event is not supported for "burstGaugeSpeed"/,
     );
     expect(() => parseSkillDefinition(withSkill2([{ ...until, maxStacks: 3 }]))).toThrow(/cannot stack/);
     expect(() => parseSkillDefinition(withSkill2([{ ...until, durationUntil: 'burstEnd' }]))).toThrow(

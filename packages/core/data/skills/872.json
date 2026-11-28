@@ -1,0 +1,70 @@
+{
+  "formatVersion": 1,
+  "resourceId": 872,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "persona",
+          "trigger": "battleStart",
+          "target": "self",
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "attack",
+              "ref": 1
+            }
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "防御力▲（ペルソナ - パラディオンのラクカジャ）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "DEF up (Rakukaja of Persona - Palladion) does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 1,
+          "durationUntil": "fullBurstEnd",
+          "assumes": {
+            "ja": "パピヨンハートのマハタルカジャ。自分（アイギス）は倒れないので、「自分が生存している限り」はいつも満たす",
+            "en": "Matarukaja of Papillon Heart. Aigis never falls, so \"as long as she survives\" always holds"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "防御力▲（パピヨンハートのマハラクカジャ）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "DEF up (Marakukaja of Papillon Heart) does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "distributed",
+          "assumes": {
+            "ja": "単体ボスなので分配ダメージは全額 1 ヒット",
+            "en": "Distributed damage lands in full as one hit on a lone boss"
+          }
+        }
+      ]
+    }
+  }
+}
