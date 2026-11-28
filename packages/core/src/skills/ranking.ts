@@ -77,11 +77,7 @@ export function finalAttacksAt(
 }
 
 /** 最終攻撃力の高い順（lowest なら低い順）の枠。同値は枠の若い順（tie が lastSlot なら遅い順）。空枠は含めない */
-export function rankByFinalAttack(
-  finalAttacks: readonly (number | null)[],
-  lowest = false,
-  tie?: RankTie,
-): number[] {
+export function rankByFinalAttack(finalAttacks: readonly (number | null)[], lowest = false, tie?: RankTie): number[] {
   const indices: number[] = [];
   finalAttacks.forEach((v, i) => {
     if (v !== null) indices.push(i);
