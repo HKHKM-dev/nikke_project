@@ -1,0 +1,222 @@
+{
+  "verification": "V-0895",
+  "note": "撮影の予測。録画 1 はアイギス単騎（操作）、録画 2 はライ（I）・アイギス（II・操作）・アリス（III）。どれも灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オートバースト ON。H1 では、録画 2 のチェーンは I・II・III でフルバーストと、I・II で時間切れ（アリスの CT 40 秒）を交互に繰り返す。H-timeout（パピヨンハートがチェーンの時間切れで外れる）と H-hit（同じ発動のパピヨンハートがバーストのヒットに乗る）は語彙で書けないので手で書く（検証記録の予測）",
+  "team": [
+    {
+      "rid": 392
+    },
+    {
+      "rid": 872,
+      "controlled": true
+    },
+    {
+      "rid": 191
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（S1 は戦闘開始から自分に攻撃力 21.12%▲、S2 はバースト使用時から次のフルバーストの終わりまで味方全体に発動者基準の攻撃力 21.12%▲、バーストは分配ダメージ 396% の 1 ヒット）"
+    },
+    {
+      "id": "H-noS1",
+      "note": "S1 の攻撃力▲が付かない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 872,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-noS2",
+      "note": "S2 のパピヨンハートの攻撃力▲が付かない（対照）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 872,
+            "skill": "skill2",
+            "index": 0
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "solo-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 872,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "録画 1: アイギスの通常攻撃の 1 ヒット（コア・会心・距離なし）。HUD の増分（recipe:hud-jumps）"
+    },
+    {
+      "id": "fb-count",
+      "model": "sim",
+      "metric": "fullBurstCount",
+      "args": {},
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "録画 2: フルバーストの回数"
+    },
+    {
+      "id": "order",
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 8
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "録画 2: バーストを撃った枠の並び（バースト欄。recipe:burst-panel）"
+    },
+    {
+      "id": "alice-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "録画 2: 1 回目のアイギスのバーストの前の、アリスの 1 ヒット（コア・会心・距離なし）"
+    },
+    {
+      "id": "alice-after-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "録画 2: 1 回目のフルバーストの終わりから、2 回目のアイギスのバーストまでの、アリスの 1 ヒット"
+    },
+    {
+      "id": "alice-after-timeout",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "録画 2: 1 回目の時間切れのチェーンの後、2 回目のフルバーストの前の、アリスの 1 ヒット"
+    },
+    {
+      "id": "burst-hit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "録画 2: アイギスのバーストの分配ダメージの 1 発動の値（会心なし）"
+    },
+    {
+      "id": "burst-delays",
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 2,
+        "count": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "録画 2: アイギスのバーストの、発動の印からヒットまでの動画のフレーム"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-28",
+    "commit": "78c9e8f04dc76a5f60a7781b68f7d59b76fef407",
+    "values": {
+      "H1": {
+        "solo-hit": 4848.8968,
+        "fb-count": 5,
+        "order": [1, 2, 3, 1, 2, 1, 2, 3],
+        "alice-before": 289475.0544,
+        "alice-after-fb": 289475.0544,
+        "alice-after-timeout": 329894.17720000003,
+        "burst-hit": 379478.88,
+        "burst-delays": [-6, -6, -6, -6]
+      },
+      "H-noS1": {
+        "solo-hit": 4002.5106,
+        "fb-count": 5,
+        "order": [1, 2, 3, 1, 2, 1, 2, 3],
+        "alice-before": 289475.0544,
+        "alice-after-fb": 289475.0544,
+        "alice-after-timeout": 329894.17720000003,
+        "burst-hit": 313239.96,
+        "burst-delays": [-6, -6, -6, -6]
+      },
+      "H-noS2": {
+        "solo-hit": 4848.8968,
+        "fb-count": 5,
+        "order": [1, 2, 3, 1, 2, 1, 2, 3],
+        "alice-before": 289475.0544,
+        "alice-after-fb": 289475.0544,
+        "alice-after-timeout": 289475.0544,
+        "burst-hit": 379478.88,
+        "burst-delays": [-6, -6, -6, -6]
+      }
+    }
+  }
+}
