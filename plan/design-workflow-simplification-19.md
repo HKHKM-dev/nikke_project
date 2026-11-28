@@ -39,7 +39,7 @@
 
 **気を付けること**
 
-- PR のブランチでは生成物が main の版に戻るので、手元の画面で新しいキャラの定義を見るには `npm run records:check`（か `records:minimal`）を回す。定義のセッションは比べるときに回しているので、手順は増えない。テストは Node の側の関数を読むので、生成物に頼らない。
+- PR のブランチでは生成物が main の版に戻るので、手元の画面で新しいキャラの定義を見るには `npm run records:minimal` を回す（`records:check` は生成物を PR のブランチの版に戻す）。Node の側のテストは関数を読むので、生成物に頼らない。画面の部品のテスト（`OptimalPartyPanel.test.tsx`）は `support.json` を読むが、決まったキャラだけを使うので main の版で足りる（`pr:prep` と CI は作り直してから回す）。
 
 **採らない案**: index.json を生成物にする。Node の側がそれを読むと、PR のブランチでは main の版に戻った一覧を読み、足したキャラがテストから抜ける。
 

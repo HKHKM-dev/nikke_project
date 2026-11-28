@@ -54,7 +54,7 @@
   3. **既存のテストが数値を変えずに通る**ことを確かめる（退化）。
   4. CLI の表示（`packages/core/scripts/sim-run/` のラベル `labels.ts` と表 `tables.ts`。足した形はテストにも足す）。画面には効果の一覧を出さない（受けているバフとスキルの説明の欄は 2026-10-31 に消した）。
 - **定義を書く**
-  - `data/skills/{resourceId}.json` を置く。定義のあるキャラの一覧はディレクトリから決まる（道具とテストは `scripts/defined-skills.ts`、画面は生成物の `data/skills/support.json`）。手元の画面で新しい定義を読むには `npm run records:check` を回す。
+  - `data/skills/{resourceId}.json` を置く。定義のあるキャラの一覧はディレクトリから決まる（道具とテストは `scripts/defined-skills.ts`、画面は生成物の `data/skills/support.json`）。手元の画面で新しい定義を読むには `npm run records:minimal` を回す（生成物を作り直したまま残す。`records:check` は PR のブランチの版に戻す）。
   - 数値は書かず、`ref` で説明文の値を指す。
   - スロットの対応状況（`support`）は書かない。効果の有無と、未対応（`unimplemented`）の notes の有無から読み込みで決まる（`supported`・`partial`・`unsupported`・`noEffect`。[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.2 節）。効果の無いスロットには、理由の notes が要る。
   - いつも満たすとみなした条件は、効果の `assumes` に書く。

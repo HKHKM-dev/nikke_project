@@ -5,8 +5,8 @@ import { readdirSync } from 'node:fs';
 
 export const SKILLS_DIR = new URL('../data/skills/', import.meta.url);
 
-/** キャラごとのファイルの名前（<resourceId>.json） */
-export const RESOURCE_FILE = /^(\d+)\.json$/;
+/** キャラごとのファイルの名前（<resourceId>.json。先頭に 0 を付けない） */
+export const RESOURCE_FILE = /^([1-9]\d*)\.json$/;
 
 /** ディレクトリの <resourceId>.json の resourceId（昇順） */
 export function resourceIdsIn(dir: string | URL): number[] {

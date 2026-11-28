@@ -101,9 +101,9 @@ function contentRefsOf(c: StateContentItem): number[] {
 
 describe('data/skills', () => {
   // 定義のあるキャラの一覧は <resourceId>.json の名前から決まる（scripts/defined-skills.ts）。名前を誤った定義（一覧から黙って
-  // 抜ける）と、一覧のファイルを置いていないかを見る。ほかに置くのは生成物の support.json だけ
-  it('holds only the definitions and support.json', () => {
-    const others = readdirSync(SKILLS_DIR).filter((n) => !RESOURCE_FILE.test(n));
+  // 抜ける）と、一覧のファイルを置いていないかを見る。ほかに置く JSON は生成物の support.json だけ（OS の置くファイルは見ない）
+  it('holds no JSON but the definitions and support.json', () => {
+    const others = readdirSync(SKILLS_DIR).filter((n) => /\.json$/i.test(n) && !RESOURCE_FILE.test(n));
     expect(others).toEqual(['support.json']);
   });
 
