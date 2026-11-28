@@ -22,7 +22,10 @@
           "assumes": {
             "ja": "「自分のアイドル」はアニス：スター（用語のツールチップ）で、アニス：スターがいなければ誰にも付かない。スターゲイザーの有無に関わらず、フルバーストの終わりのフレームに付き、次のフルバーストの発動の解除（effects[1]）まで続く（戦闘の終わりまでの維持と、解除で書く）",
             "en": "\"Her favorite pop star\" is Anis: Star (term tooltip); without Anis: Star nobody gets it. Applied on the frame Full Burst ends regardless of Stargazer, and lasts until the removal on the next Full Burst entry (effects[1]) (written as lasting until the end of battle plus the removal)"
-          }
+          },
+          "claims": [
+            "C-1593"
+          ]
         },
         {
           "kind": "removeState",
@@ -32,7 +35,10 @@
           "assumes": {
             "ja": "「フルバーストタイム発動時解除」。発動のフレームの次のフレームで外れる",
             "en": "\"Removed when entering Full Burst\". It is removed on the frame after the entry"
-          }
+          },
+          "claims": [
+            "C-1593"
+          ]
         },
         {
           "kind": "removeState",
@@ -42,7 +48,10 @@
           "assumes": {
             "ja": "「スターゲイザー解除」。フルバーストの終わりに外れ、次に自分がバーストを使うまで S2 は発動しない",
             "en": "\"Removes Stargazer\". Removed when Full Burst ends; S2 does not activate until she uses her Burst again"
-          }
+          },
+          "claims": [
+            "C-1592"
+          ]
         }
       ],
       "notes": [
@@ -62,14 +71,17 @@
           "targetCharacter": 17,
           "stat": "projectileExplosionDamage",
           "ref": 3,
-          "durationUntil": "battleEnd",
+          "durationUntil": "fullBurstEnd",
           "condition": {
             "selfState": "stargazer"
           },
           "assumes": {
-            "ja": "「自分のアイドル」はアニス：スターで、アニス：スターがいなければ誰にも付かない。スターゲイザー状態かはフルバーストの発動のフレームに見る。「持続」は戦闘の終わりまで。次のフルバーストで付け直しても値は重ならない（いまの既定）",
-            "en": "\"Her favorite pop star\" is Anis: Star; without Anis: Star nobody gets it. Stargazer is checked on the Full Burst entry frame. \"Continuously\" lasts until the end of battle. Reapplying it on a later Full Burst does not add up (the current default)"
-          }
+            "ja": "「自分のアイドル」はアニス：スターで、アニス：スターがいなければ誰にも付かない。スターゲイザー状態かはフルバーストの発動のフレームに見る。説明文の「持続」は、フルバーストの終わりまで（録画では、フルバーストの後の窓のアニス：スターの発に乗らない）。同じフレームに S1 がスターゲイザーを外すので、スターゲイザーの間だけ続く読みとは見分けられない",
+            "en": "\"Her favorite pop star\" is Anis: Star; without Anis: Star nobody gets it. Stargazer is checked on the Full Burst entry frame. The described \"continuously\" lasts until Full Burst ends (in the recording it is not on Anis: Star shots in the window after Full Burst). S1 removes Stargazer on the same frame, so this cannot be told apart from lasting only while in Stargazer"
+          },
+          "claims": [
+            "C-1592"
+          ]
         },
         {
           "kind": "timed",
@@ -78,14 +90,17 @@
           "targetCharacter": 17,
           "stat": "attackDamage",
           "ref": 4,
-          "durationUntil": "battleEnd",
+          "durationUntil": "fullBurstEnd",
           "condition": {
             "selfState": "stargazer"
           },
           "assumes": {
-            "ja": "effects[0] と同じ発動と対象",
-            "en": "Same activation and recipient as effects[0]"
-          }
+            "ja": "effects[0] と同じ発動・対象・維持",
+            "en": "Same activation, recipient and duration as effects[0]"
+          },
+          "claims": [
+            "C-1592"
+          ]
         }
       ],
       "notes": [
@@ -105,7 +120,10 @@
           "assumes": {
             "ja": "「バースト再突入 1 段階」。CDN の次の段階（Step1）と同じ。自分のバーストの後、チェーンはもう一度 I に入り、このチェーンで未使用の別の I の枠が撃つ",
             "en": "\"Burst Re-entry Stage 1\". Same as the CDN next stage (Step1). After her Burst the chain re-enters Stage I, and another Burst I slot not yet used in this chain fires"
-          }
+          },
+          "claims": [
+            "C-1591"
+          ]
         },
         {
           "kind": "state",
@@ -122,7 +140,10 @@
           "assumes": {
             "ja": "「持続」は、フルバーストタイムの終わりの解除（skill1 の effects[2]）まで続く読み（戦闘の終わりまでの維持と、解除で書く）。中身の最大HP▲（自分なのでスキル発動者基準と同じ量）はそれ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）。S2 の「スターゲイザー状態なら」が読む",
             "en": "\"Continuously\" is read as lasting until the removal at the end of Full Burst (skill1 effects[2]) (written as lasting until the end of battle plus the removal). The Max HP increase inside (on herself, so the same as based on the skill user) does not change damage by itself (it matters only with an effect reading HP in the team). Read by S2 (\"while in Stargazer\")"
-          }
+          },
+          "claims": [
+            "C-1592"
+          ]
         }
       ]
     }

@@ -12,27 +12,27 @@
   "team": [
     {
       "slot": 1,
-      "rid": 20,
-      "name": "デルタ",
-      "controlled": false
-    },
-    {
-      "slot": 2,
-      "rid": 191,
-      "name": "アリス",
-      "controlled": false
-    },
-    {
-      "slot": 3,
       "rid": 441,
       "name": "アビスタ",
       "controlled": false
     },
     {
-      "slot": 4,
+      "slot": 2,
       "rid": 17,
       "name": "アニス：スター",
       "controlled": true
+    },
+    {
+      "slot": 3,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 4,
+      "rid": 191,
+      "name": "アリス",
+      "controlled": false
     }
   ],
   "target": {
@@ -43,7 +43,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "V-0887。デルタ・アリス・アビスタ・アニス：スター（操作）",
+  "conditionNote": "V-0887。アビスタ・アニス：スター（操作）・デルタ・アリス（終わりの戦闘履歴の並び。依頼の並び（デルタ・アリス・アビスタ・アニス：スター）と違うが、アビスタはアニス：スターより左）",
   "backup": {
     "at": "2026-11-28T18:12+09:00",
     "via": "cloud-move",

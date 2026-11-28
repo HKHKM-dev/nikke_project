@@ -1,5 +1,5 @@
 // アビスタ編（V-0887）: アビスタ（441）を含む編成で、バースト再突入 1 段階とスターゲイザー、S2 のフルバーストの発動の時の
-// 自分のアイドル（アニス：スター）への▲（持続）、S1 のフルバーストの終わりのアフターショー（次のフルバーストの発動で解除）と
+// 自分のアイドル（アニス：スター）への▲（フルバーストの終わりまで）、S1 のフルバーストの終わりのアフターショー（次のフルバーストの発動で解除）と
 // スターゲイザーの解除が意図どおりに出るか。射撃場の 3 分モード（条件は自動）で見る
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
@@ -18,9 +18,9 @@ const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
 const autoSlot = (id: number): TeamSlotInput => fixedSlot(id, { conditionMode: 'auto' });
 
 const TEAMS: Record<string, TeamInput> = {
-  'デルタ + アリス + アビスタ + アニス：スター（撮影の編成）': fixedTeam(
-    [DELTA, ALICE, ABYSSTA, ANIS_STAR].map(autoSlot),
-    3,
+  'アビスタ + アニス：スター + デルタ + アリス（録画 1425 の編成）': fixedTeam(
+    [ABYSSTA, ANIS_STAR, DELTA, ALICE].map(autoSlot),
+    1,
     {
       enemy: rangeEnemy,
     },
@@ -66,15 +66,13 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     }
   });
 
-  it('gives only Anis: Star projectile explosion damage and attack damage up at the first Full Burst entry in Stargazer, lasting without stacking', () => {
-    const entries = windows.map((w) => w.start).filter(stargazerAt);
-    expect(entries.length).toBeGreaterThan(2);
+  it('gives only Anis: Star projectile explosion damage and attack damage up at each Full Burst entry in Stargazer, until that Full Burst ends', () => {
+    const inStargazer = windows.filter((w) => stargazerAt(w.start));
+    expect(inStargazer.length).toBeGreaterThan(2);
     for (const stat of ['projectileExplosionDamage', 'attackDamage'] as const) {
       const up = fromAbyssta({ kind: 'timed', skill: 'skill2', stat });
       expect(new Set(up.map((w) => w.holder))).toEqual(new Set([idol]));
-      expect(up[0]!.start).toBe(entries[0]);
-      for (const f of entries) expect(up.filter((w) => w.start <= f && f < w.end)).toHaveLength(1);
-      expect(Math.max(...up.map((w) => w.end))).toBeGreaterThanOrEqual(plan.frames);
+      expect(up.map((w) => [w.start, w.end])).toEqual(inStargazer.map((w) => [w.start, Math.min(w.end, plan.frames)]));
     }
   });
 
