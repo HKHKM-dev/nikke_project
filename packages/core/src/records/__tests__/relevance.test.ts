@@ -124,7 +124,7 @@ describe('録画で起きうるか（2 節の 4）', () => {
       slot: 1,
       name: 'n',
       places: [],
-      type: 'normalCondition',
+      type: 'effect',
       claims: [],
       shape: { kind: 'buff', trigger },
     });
