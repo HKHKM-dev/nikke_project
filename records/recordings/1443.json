@@ -1,0 +1,40 @@
+{
+  "id": "1443",
+  "date": "2026-11-28",
+  "folder": "range",
+  "file": "20261128-1443_smg_nero_idoll-flower_no-fire.mp4",
+  "original": "2026-11-28_20-11-49.mp4",
+  "durationSec": 237.2,
+  "frames": 14229,
+  "fps": 60,
+  "sizeMB": 286.3,
+  "sha256": "53ea9b22a723",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 380,
+      "name": "ネロ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0892。I-DOLL・フラワー（1 枠目・AI）+ ネロ（3 枠目・操作・オート射撃 OFF で撃たない）。オートバースト ON。戦闘履歴のパネルで枠順とキャラ名を確かめた。ネロの盾の欄は 0（被弾していない）",
+  "backup": {
+    "at": "2026-11-28T20:19+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
