@@ -60,8 +60,8 @@
           "claims": ["C-0443"]
         },
         {
-          "ja": "自分の HP が 30% 以下の時の、敵全体の気絶（1 秒）はダメージに関係しない（被弾なしの前提では、条件も満たさない）",
-          "en": "Stun on all enemies (1 s) while own HP is 30% or less does not affect damage (with no damage taken, the condition does not hold either)",
+          "ja": "自分の HP が 30% 以下の時の、敵全体の気絶（1 秒）はダメージに関係しない",
+          "en": "Stun on all enemies (1 s) while own HP is 30% or less does not affect damage",
           "kind": "noDamage"
         }
       ]

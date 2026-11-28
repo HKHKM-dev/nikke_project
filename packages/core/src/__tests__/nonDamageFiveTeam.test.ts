@@ -63,7 +63,8 @@ describe('ラプンツェル + ベイ + アスカ + メアリー + パスカル'
     expect(lastShots.length).toBeGreaterThan(2);
     const s1 = healsFrom(3).filter((h) => !usesOf(3).some((a) => a.frame === h.frame));
     expect(new Set(s1.map((h) => h.slotIndex))).toEqual(new Set([0]));
-    expect(s1.map((h) => h.frame)).toEqual(expect.arrayContaining(lastShots.map((f) => f + 1)));
+    // 前の枠（1 枠目）には次のフレーム（C-0628）
+    expect(s1.map((h) => h.frame)).toEqual(lastShots.map((f) => f + 1).filter((f) => f < plan.frames));
   });
 
   it('heals all allies at each burst of Rapunzel and Mary, and Pascal heals nobody', () => {
@@ -97,7 +98,7 @@ describe('ソラ + マスト：ロマンチックメイド + アスカ', () => {
     let closed = 0;
     for (const a of uses) {
       const active = drunken.filter((s) => s.start <= a.frame && a.frame < s.end);
-      for (const s of active) expect(s.end).toBeLessThanOrEqual(a.frame + 1);
+      for (const s of active) expect(s.end).toBe(a.frame + 1);
       closed += active.length;
     }
     expect(closed).toBeGreaterThan(0);
