@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`1430-01`・`1431-01`。V-0890",
-  "model": "data/skills/62.json の skill1 の state（tidyUp・命中 120 回ごと・allies・10 スタック・15 秒）と passive（allies・maxAmmo・while の tidyUp の full）、skill2 の stackChange（allStackable・命中 150 回ごと・allies）。skills/states.ts の tidyUp",
+  "model": "data/skills/62.json の skill1 の state（tidyingUp・命中 120 回ごと・allies・10 スタック・15 秒）と passive（allies・maxAmmo・while の tidyingUp の full）、skill2 の stackChange（allStackable・命中 150 回ごと・allies）。skills/states.ts の tidyingUp",
   "replaces": [],
   "updated": "2026-11-28",
   "subject": {

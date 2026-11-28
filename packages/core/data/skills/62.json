@@ -7,7 +7,7 @@
       "effects": [
         {
           "kind": "state",
-          "state": "tidyUp",
+          "state": "tidyingUp",
           "trigger": {
             "count": "normalHit",
             "everyRef": 1
@@ -17,7 +17,7 @@
           "durationRef": 4,
           "assumes": {
             "ja": "通常攻撃の命中 値 01（120）回ごとに、味方全体へ 1 段ずつ付く（10 段で止まる）。付くたびにすべてのスタックの維持を付け直す（いまの既定）。撃ち続ける間は 15 秒の維持より短い間で付き直すので切れない。中身の受けるダメージ▼はダメージに関係しない（notes）。effects[1] の「整理整頓のフルスタック状態なら」が読む",
-            "en": "Every value 01 (120) normal-attack hits, one stack is applied to all allies (capped at 10). Each application refreshes the duration of all stacks (the current default). While she keeps firing it reapplies well within the 15-sec duration and never expires. The Damage Taken decrease inside does not affect damage (notes). Read by effects[1] (\"if at full stacks of Tidy Up\")"
+            "en": "Every value 01 (120) normal-attack hits, one stack is applied to all allies (capped at 10). Each application refreshes the duration of all stacks (the current default). While she keeps firing it reapplies well within the 15-sec duration and never expires. The Damage Taken decrease inside does not affect damage (notes). Read by effects[1] (\"if at full stacks of Tidying Up\")"
           },
           "claims": [
             "C-1599"
@@ -30,13 +30,13 @@
           "ref": 5,
           "while": {
             "selfState": {
-              "state": "tidyUp",
+              "state": "tidyingUp",
               "stacks": "full"
             }
           },
           "assumes": {
             "ja": "自分の整理整頓がフルスタックの間、味方全体の最大装弾数に足す（C-0017 の形。加算して四捨五入）。付いた時に残弾は増やさず、次のリロードで新しい最大まで込める",
-            "en": "While her own Tidy Up is at full stacks, adds to all allies' max ammo (the C-0017 form: additive, rounded). Ammo is not added when it starts; the next reload loads the new maximum"
+            "en": "While her own Tidying Up is at full stacks, adds to all allies' max ammo (the C-0017 form: additive, rounded). Ammo is not added when it starts; the next reload loads the new maximum"
           },
           "claims": [
             "C-1599"
@@ -46,7 +46,7 @@
       "notes": [
         {
           "ja": "整理整頓の受けるダメージ▼は、ダメージに関係しない",
-          "en": "The Damage Taken decrease of Tidy Up does not affect damage",
+          "en": "The Damage Taken decrease of Tidying Up does not affect damage",
           "kind": "noDamage"
         }
       ]
@@ -64,7 +64,7 @@
           "amountRef": 2,
           "assumes": {
             "ja": "通常攻撃の命中 値 01（150）回ごとに、味方全体が持つ、上限のある状態と timed のスタックのバフの全部に、付いていれば 1 段足す（付いていなければ足さない。上限で止まる。C-1182・C-1505）。足すと全部の段の維持を付け直す（C-1507）。自分の整理整頓にも足す",
-            "en": "Every value 01 (150) normal-attack hits, adds one stack to every stackable buff (states and timed buffs with a stack cap) held by all allies, only if present (stops at the cap; C-1182, C-1505). Adding refreshes the duration of all stacks (C-1507). Also adds to her own Tidy Up"
+            "en": "Every value 01 (150) normal-attack hits, adds one stack to every stackable buff (states and timed buffs with a stack cap) held by all allies, only if present (stops at the cap; C-1182, C-1505). Adding refreshes the duration of all stacks (C-1507). Also adds to her own Tidying Up"
           },
           "claims": [
             "C-1599"

@@ -56,13 +56,13 @@ const ATK_SECONDS = skillValueOf(MIKA_SB, 'burst', 3);
 type Plan = ReturnType<typeof planTeamRun>;
 
 /** 枠 holder にミカ（枠 mika）が付けた整理整頓の件 */
-const tidyUpOf = (plan: Plan, mika: number, holder: number) =>
-  stateItemsOf(plan).filter((i) => i.state === 'tidyUp' && i.sourceSlotIndex === mika && i.slotIndex === holder);
+const tidyingUpOf = (plan: Plan, mika: number, holder: number) =>
+  stateItemsOf(plan).filter((i) => i.state === 'tidyingUp' && i.sourceSlotIndex === mika && i.slotIndex === holder);
 
 /** ミカ自身の整理整頓が初めてフルスタックになったフレーム */
 const firstFullOf = (plan: Plan, mika: number) =>
   Math.min(
-    ...tidyUpOf(plan, mika, mika)
+    ...tidyingUpOf(plan, mika, mika)
       .filter((i) => i.stack === TIDY_UP_MAX)
       .map((i) => i.start),
   );
@@ -72,17 +72,23 @@ describe.each(Object.entries(TEAMS))('編成: %s', (name, input) => {
   const mika = input.slots.findIndex((s) => s?.character.resourceId === MIKA_SB);
   const holders = input.slots.map((_, i) => i);
 
-  it('gives every ally Tidy Up, raised one stack at a time (two when both counts land together), up to 10', () => {
+  it('gives every ally Tidying Up one stack at a time up to full stacks, two on the same frame at the common multiple', () => {
     for (const h of holders) {
-      const items = tidyUpOf(plan, mika, h);
-      expect(Math.max(...items.map((i) => i.stack ?? 1))).toBe(TIDY_UP_MAX);
-      // 段が上がるのは 1 段（120 回目か 150 回目）か 2 段（公倍数の 600 回目）ずつ
-      const rises = items.slice(1).map((it, k) => (it.stack ?? 1) - (items[k]!.stack ?? 1));
-      for (const d of rises) expect(d).toBeOneOf([0, 1, 2]);
+      const items = tidyingUpOf(plan, mika, h);
+      // 段は 1 段目から 1 段ずつ上がり、フルスタックの後は維持を付け直すだけ（同じ段の件）で下がらない
+      const stacks = items.map((i) => i.stack ?? 1).filter((n, k, a) => k === 0 || n !== a[k - 1]);
+      expect(stacks).toEqual(Array.from({ length: TIDY_UP_MAX }, (_, k) => k + 1));
+      // ミカ自身の段: 命中 120・150・240・300・360・450・480 回目に 1 段ずつ、600 回目（公倍数）に S1 と S2 で 2 段、720 回目で 10 段
+      // （ほかの味方の段は、その味方のスタック量▲でも上がる。アリス：ワンダーランドバニーの S1 は水冷の自分に足す）
+      if (h !== mika) continue;
+      const firstStart = (n: number) => Math.min(...items.filter((i) => i.stack === n).map((i) => i.start));
+      const starts = stacks.map(firstStart);
+      expect(starts[8]).toBe(starts[7]);
+      expect(new Set(starts).size).toBe(TIDY_UP_MAX - 1);
     }
   });
 
-  it('raises every ally’s max ammo by 40% while she is at full Tidy Up, from the frame it fills', () => {
+  it('raises every ally’s max ammo while she is at full Tidying Up, from the frame it fills', () => {
     const full = firstFullOf(plan, mika);
     for (const h of holders) {
       const windows = effectWindows(plan, h, { resourceId: MIKA_SB, skill: 'skill1', stat: 'maxAmmo' });
@@ -91,21 +97,24 @@ describe.each(Object.entries(TEAMS))('編成: %s', (name, input) => {
   });
 
   // 実戦寄りの編成は、ほかの味方の最大装弾数▲・弾丸チャージでマガジンの発数が変わるので、単騎で見る
-  it.runIf(name.startsWith('撮影'))('loads 168 rounds from the first reload after her Tidy Up fills', () => {
-    const full = firstFullOf(plan, mika);
-    // ▲の付いた後に込めたマガジンからは round(120 × 1.4) = 168 発（付いた時の残弾は増やさない）
-    const shots = plan.shots[mika]!.frames;
-    const ends = plan.shots[mika]!.lastShotFrames!;
-    const sizes = ends.map((end, k) => shots.filter((f) => (k === 0 ? 0 : ends[k - 1]!) < f && f <= end).length);
-    const before = sizes.filter((_, k) => ends[k]! < full);
-    expect(before.every((n) => n === MAX_AMMO)).toBe(true);
-    const raised = Math.round(MAX_AMMO * (1 + AMMO_UP));
-    const after = sizes.filter((_, k) => k > 0 && ends[k - 1]! > full);
-    expect(after.length).toBeGreaterThan(5);
-    expect(after.every((n) => n === raised)).toBe(true);
-  });
+  it.runIf(name.startsWith('撮影'))(
+    'loads the raised max ammo from the first reload after her Tidying Up fills',
+    () => {
+      const full = firstFullOf(plan, mika);
+      // ▲の付いた後に込めたマガジンからは round(120 × 1.4) = 168 発（付いた時の残弾は増やさない）
+      const shots = plan.shots[mika]!.frames;
+      const ends = plan.shots[mika]!.lastShotFrames!;
+      const sizes = ends.map((end, k) => shots.filter((f) => (k === 0 ? 0 : ends[k - 1]!) < f && f <= end).length);
+      const before = sizes.filter((_, k) => ends[k]! < full);
+      expect(before.every((n) => n === MAX_AMMO)).toBe(true);
+      const raised = Math.round(MAX_AMMO * (1 + AMMO_UP));
+      const after = sizes.filter((_, k) => k > 0 && ends[k - 1]! > full);
+      expect(after.length).toBeGreaterThan(5);
+      expect(after.every((n) => n === raised)).toBe(true);
+    },
+  );
 
-  it('multiplies the gauge of her own shots by 1 + 300% from the first shot, and leaves the allies’ shots alone', () => {
+  it('multiplies the gauge of her own shots by the S2 gauge speed up from the first shot, and leaves the allies’ shots alone', () => {
     const without = planTeamRun(BUILDERS[name]!(dropEffect('skill2', 1)));
     // 外す前と後で発の並びが同じ、最初の満タンまでの発で比べる
     const full = Math.min(plan.schedule!.gaugeFullFrames[0]!, without.schedule!.gaugeFullFrames[0]!);
@@ -120,7 +129,7 @@ describe.each(Object.entries(TEAMS))('編成: %s', (name, input) => {
     }
   });
 
-  it('gives every ally caster-based ATK up for 5 s on each of her Bursts', () => {
+  it('gives every ally caster-based ATK up for the Burst duration on each of her Bursts', () => {
     const mine = plan
       .schedule!.activations.filter((a) => a.slotIndex === mika)
       .map(effectFrameOf)
@@ -134,7 +143,7 @@ describe.each(Object.entries(TEAMS))('編成: %s', (name, input) => {
 });
 
 describe('ミカ：スノーバディの S2 のスタック量▲', () => {
-  it('fills her own Tidy Up earlier than S1 alone would', () => {
+  it('fills her own Tidying Up earlier than S1 alone would', () => {
     const withStack = planTeamRun(soloInput());
     const withoutStack = planTeamRun(soloInput(dropEffect('skill2', 0)));
     expect(firstFullOf(withStack, 0)).toBeLessThan(firstFullOf(withoutStack, 0));

@@ -9,14 +9,14 @@
 
 ## 条件
 
-- 型: 撮る。語彙は足さない（状態の目録に `tidyUp`（整理整頓）を 1 行足す）。定義の下書きは `data/skills/62.json`。ミカ：スノーバディの録画は無い。
+- 型: 撮る。語彙は足さない（状態の目録に `tidyingUp`（整理整頓）を 1 行足す）。定義の下書きは `data/skills/62.json`。ミカ：スノーバディの録画は無い。
 - 説明文の分解（スキル Lv10）:
 
   <!-- prettier-ignore -->
   | スロット | 説明文 | 定義 | 見るもの |
   | --- | --- | --- | --- |
-  | S1 | 通常攻撃が 120 回命中した時、味方全体に整理整頓：受けるダメージ 2%▼（10 スタック・15 秒） | 状態の付与（`tidyUp`・`{ count: normalHit, everyRef: 1 }`・`allies`・`maxStacksRef: 3`・`durationRef: 4`・中身なし）。受けるダメージ▼は notes（`noDamage`） | 段は画面に出ないので、下の行の最大装弾数▲が付く時刻で見る |
-  | S1 | 自分が整理整頓のフルスタック状態なら、味方全体に最大装弾数 40%▲（持続） | `passive`（`allies`・`maxAmmo`・`ref: 5`・`while` の `selfState`（`tidyUp`・`stacks: "full"`）） | リロード明けの残弾が 168 になる最初のマガジン |
+  | S1 | 通常攻撃が 120 回命中した時、味方全体に整理整頓：受けるダメージ 2%▼（10 スタック・15 秒） | 状態の付与（`tidyingUp`・`{ count: normalHit, everyRef: 1 }`・`allies`・`maxStacksRef: 3`・`durationRef: 4`・中身なし）。受けるダメージ▼は notes（`noDamage`） | 段は画面に出ないので、下の行の最大装弾数▲が付く時刻で見る |
+  | S1 | 自分が整理整頓のフルスタック状態なら、味方全体に最大装弾数 40%▲（持続） | `passive`（`allies`・`maxAmmo`・`ref: 5`・`while` の `selfState`（`tidyingUp`・`stacks: "full"`）） | リロード明けの残弾が 168 になる最初のマガジン |
   | S2 | 通常攻撃が 150 回命中した時、味方全体にスタック可能バフ効果のスタック量 1 個▲ | `stackChange`（`allStackable`・`{ count: normalHit, everyRef: 1 }`・`allies`・`amountRef: 2`）。付いているバフにだけ足す（C-1182・C-1505） | 自分の整理整頓に足すか（フルスタックの命中が 720 回目か 1200 回目か） |
   | S2 | 戦闘開始時、自分にバーストゲージのチャージ速度 300%▲（持続） | `passive`（`self`・`burstGaugeSpeed`・`ref: 3`） | 満タンの時刻と、チェーン切れから次の満タンまでの発の数 |
   | バースト | 味方全体にデバフ効果解除 1 個 | notes（`indirect`・`path: debuff`。モデルでは外さない） | 見ない（単騎でデバフが付かない） |
