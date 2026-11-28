@@ -1,0 +1,15 @@
+{
+  "id": "C-1594",
+  "text": "クラストの S1・S2 の「フルチャージではない通常攻撃を 3 回行った時」は、敵のジャンプの始まりに撃つ部分チャージの発（C-1001）を 1 回と数え、戦闘を通して数えた 3 回目の発（単騎・3 人の編成とも 83 発目）を撃ったフレームに、味方全体にメイラード（スキル発動者基準の攻撃力 10%▲）とたっぷりクッキング（10 秒）が付く。前の 2 回の部分チャージの発では付かない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1426-02`・`1426-03`・`1426-06`・`1427-07`。V-0889。`1426-01`・`1427-06`",
+  "model": "data/skills/521.json（回数のきっかけ { count: \"partialChargeShot\", everyRef: 4 }。skills/triggers.ts の shotCountWeight）",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/521.json の skill1 の effects[0]", "data/skills/521.json の skill2 の effects[0]"]
+  },
+  "decidedOn": []
+}

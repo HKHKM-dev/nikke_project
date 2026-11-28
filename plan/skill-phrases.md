@@ -151,3 +151,5 @@
 | 〈絞り込み〉の味方 N 機（選び方の句が無い。「防御型の味方 2 機」） | timed の `target: "allies"` と `targetCount`（`targetCountRef`）。候補が N 機より多いときは枠の若い順の決め打ち（実機は発ごとに選び直す） | キリの S1 | [design-kiri.md](design-kiri.md) 2 節 |
 | クールタイムごとのアクティブ（説明文にきっかけが無い）の持続ダメージ | dot の周期のきっかけ `{ "everySeconds": T, "cooldown": true }`（同じスロットの timed と同じ秒。名前の付いた状態・ゲージとは組まない） | サクラ：ブルーム・イン・サマーの S2 の桜かんむり | [design-sakura-bis.md](design-sakura-bis.md) 2.1 節 |
 | 「N 回順番に攻撃」の同じ敵に「持続ダメージ」「N スタック」（ヒットごとに 1 スタック） | dot の `burstUse`・`perBurstHit: true`・`maxStacksRef`（`atApplication` なら、付けるたびに 1 スタックぶんの tick と、最後の付与からの刻みの数え直し） | サクラ：ブルーム・イン・サマーのバースト | 同 2.2・8.3 節 |
+| フルチャージではない通常攻撃を N 回行った時 | きっかけ `{ "count": "partialChargeShot", "everyRef": N }`（敵のジャンプの始まりの部分チャージの発を数える。timed・状態の付与・`removeDebuff` だけ） | クラストの S1 のメイラード・S2 のデバフ効果解除 | [design-crust.md](design-crust.md) 2.1 節 |
+| 〈状態 A〉または〈状態 B〉状態の対象に（B が起きない時） | timed の `targetState: "<A>"`（時間で変わる状態の味方） | クラストの S2 の「メイラードまたはブランチング状態の対象」 | [design-crust.md](design-crust.md) 1 節・[design-rei-tentative.md](design-rei-tentative.md) 2.2 節 |

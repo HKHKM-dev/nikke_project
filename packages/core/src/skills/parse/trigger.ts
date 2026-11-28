@@ -95,6 +95,8 @@ export type TriggerOptions = {
   counterUp?: boolean;
   /** 1 発の当たったペレットの数のしきい値（minPellets・minPelletsRef。timed だけ。plan/design-privaty-um-s2.md 2.1 節） */
   minPellets?: boolean;
+  /** フルチャージではない通常攻撃（{ count: "partialChargeShot" }。timed・状態の付与・removeDebuff だけ。plan/design-crust.md 2.1 節） */
+  partialChargeShot?: boolean;
 };
 
 /**
@@ -237,6 +239,13 @@ function parseShotCountTrigger(v: Record<string, Json>, path: string, options: T
     if (v.every === undefined && v.everyRef === undefined) fail(path, 'critPelletHit needs every or everyRef');
     for (const key of WINDOW_AND_CHANCE_KEYS)
       if (v[key] !== undefined) fail(`${path}.${key}`, `${key} cannot be used with critPelletHit`);
+  }
+  // フルチャージではない通常攻撃は、timed・状態の付与・デバフ解除だけ。窓・スタック・確率とは組まない（plan/design-crust.md 2.1 節）
+  if (v.count === 'partialChargeShot') {
+    if (!options.partialChargeShot)
+      fail(`${path}.count`, 'a partialChargeShot count is only allowed in timed, state grants and removeDebuff');
+    for (const key of WINDOW_AND_CHANCE_KEYS)
+      if (v[key] !== undefined) fail(`${path}.${key}`, `${key} cannot be used with partialChargeShot`);
   }
   const trigger: ShotCountTrigger = { count: v.count as ShotCountKind };
   if (v.every !== undefined) trigger.every = parsePositiveInt(v.every, `${path}.every`);

@@ -195,6 +195,7 @@ export function cycleShotFrames(log: ShotLog | null | undefined, trigger: Resolv
   if (isLastShotCount(trigger.count)) return log.lastShotFrames ?? [];
   // 循環には書けない（skills/parse/cycle.ts の parseCycleEffect）が、型のために列を返す
   if (trigger.count === 'weaponChangeShot') return log.weaponChangeShotFrames ?? [];
+  if (trigger.count === 'partialChargeShot') return (log.partialShots ?? []).map((p) => p.frame);
   return log.frames;
 }
 

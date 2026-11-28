@@ -352,6 +352,8 @@ function parseTimedTrigger(
       counterUp: stat !== undefined,
       // 「通常攻撃 1 回でペレットが N 個以上命中した時」も timed だけ（plan/design-privaty-um-s2.md 2.1 節）
       minPellets: stat !== undefined,
+      // 「フルチャージではない通常攻撃」（plan/design-crust.md 2.1 節。状態の中身も timed の規則で確かめる）
+      partialChargeShot: true,
     })
   );
 }

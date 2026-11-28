@@ -132,6 +132,21 @@ describe('録画で起きうるか（2 節の 4）', () => {
     expect(impossibleReason(fake, r)).toBe('撃たない枠');
     expect(impossibleReason({ ...fake, slot: 1 }, r)).toBeUndefined();
   });
+
+  it('drops partial-charge-shot elements outside the 3-minute range mode (C-1001)', () => {
+    const r = rec('0248');
+    const partial: MinimalElement = {
+      slot: 1,
+      name: 'p',
+      places: [],
+      type: 'effect',
+      claims: [],
+      shape: { kind: 'state', trigger: 'partialChargeShot' },
+    };
+    expect(impossibleReason(partial, { ...r, mode: 'range-3min' })).toBeUndefined();
+    expect(impossibleReason(partial, { ...r, mode: 'range-normal' })).toBe('敵のジャンプが無い（C-1001）');
+    expect(impossibleReason(partial, { ...r, mode: null })).toBe('敵のジャンプが無い（C-1001）');
+  });
 });
 
 describe('静的な判定（4.2 節）', () => {

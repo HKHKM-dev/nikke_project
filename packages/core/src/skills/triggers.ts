@@ -57,8 +57,13 @@ export type ShotEvent = {
    * （weapons.ts の lastBulletShotsOf）。省略は lastShot と同じ
    */
   lastBullet?: boolean;
-  /** チャージ武器の射撃か（常にフルチャージのモデルなので fullChargeShot になる） */
+  /** チャージ武器のフルチャージの発か（fullChargeShot の回数に足す。部分チャージの発とチャージしない武器の発は false） */
   fullCharge: boolean;
+  /**
+   * チャージ武器の部分チャージの発か（射撃の列の partialShots。partialChargeShot の回数に足す。plan/design-crust.md 2.1 節）。
+   * 省略は false
+   */
+  partialCharge?: true;
   /**
    * この射撃の命中の期待値（弾丸命中率。SG は 1。plan/design-ludmilla-wo.md 2.3 節）。
    * normalHit の回数に足す
@@ -100,6 +105,7 @@ export function shotEventOf(
   lastShot: boolean,
   lastBullet: boolean | undefined,
   fullCharge: boolean,
+  partialCharge: boolean,
   hits: number,
   coreHits: number,
   critHits: number | undefined,
@@ -112,6 +118,7 @@ export function shotEventOf(
     lastShot,
     lastBullet,
     fullCharge,
+    partialCharge: partialCharge ? true : undefined,
     hits,
     coreHits,
     critHits,
@@ -149,6 +156,8 @@ export function shotCountWeight(kind: ShotCountKind, shot: ShotEvent): number {
       return shot.critPellets ?? 0;
     case 'fullChargeShot':
       return shot.fullCharge ? 1 : 0;
+    case 'partialChargeShot':
+      return shot.partialCharge === true ? 1 : 0;
     case 'lastShot':
       return (shot.lastBullet ?? shot.lastShot) ? 1 : 0;
     // 二丁持ちでもマガジンの最後の発だけ（plan/design-k.md 2.4 節）
@@ -674,12 +683,14 @@ export function replayEvents(
     const changed = new Set(log.weaponChangeShotFrames ?? []);
     const infinite = new Set(log.infiniteAmmoShotFrames ?? []);
     const full = fullChargeFrameSet(log);
+    const partial = new Set((log.partialShots ?? []).map((p) => p.frame));
     log.frames.forEach((f, k) => {
       if (f >= frames) return;
       (at(f).shots as (ShotEvent | null)[])[slotIndex] = shotEventOf(
         last.has(f),
         lastBullets === null ? undefined : lastBullets.has(f),
         full(f),
+        partial.has(f),
         log.hits?.[k] ?? 1,
         log.coreHits?.[k] ?? 0,
         log.critHits?.[k],

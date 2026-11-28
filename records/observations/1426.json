@@ -1,0 +1,192 @@
+[
+  {
+    "id": "1426-01",
+    "recording": "1426",
+    "kind": "count",
+    "use": "record",
+    "unit": "発目",
+    "value": [40, 62, 83],
+    "description": "クラストの部分チャージの発（敵のジャンプの始まりの、値の小さい発）が、戦闘の始めから何発目か。増分は 223,880・93,059・223,880（映像の f4872・f7222・f9353。誘導弾の着弾。撃ったのは 17f 前）。モデルも 40・62・83 発目（f4050・6383・8520）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（tools/captures/hud.ts --mode jumps）のうち、1 発の格子（胴体 168,280・コア 336,560 と会心）に乗らない増分を部分チャージの発とし、戦闘の始めからの増分の数で何発目かを数えた（どの発も当たり、増分 1 つが 1 発）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1426-02",
+    "recording": "1426",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 0,
+    "description": "83 発目（3 回目の部分チャージの発）を撃ったフレームから、メイラード（攻撃力のアイコン）とたっぷりクッキング（防御力のアイコン）が付いたフレームまで。どちらも f9336（残弾の表示が 2 → 1 に減ったフレームと同じ）",
+    "method": {
+      "tool": "照準の左の残弾の表示（tools/captures/reticle-ammo.ts --mode series）・アイコンの欄の明るさ",
+      "note": "クラストのカードの下のバフのアイコンの欄（3 枠目。x 908〜990・y 1046〜1066）の明るさ（ffmpeg の signalstats の YAVG。90〜100 を境に付き・消え）。残弾の表示は撃った発と 0〜2f ずれうるので、幅 2 にした。前の 2 回の部分チャージの発（f4855・f7205 に撃った）の後にはアイコンが付かない（f4900・f7240・f9000 の画）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "attack",
+        "from": 3,
+        "shot": 83,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1426-03",
+    "recording": "1426",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 336560,
+    "description": "メイラードの前（3 回目の部分チャージの発の前のマガジン。映像の f8448〜8776）のクラストのコアの 1 ヒット（会心なし）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "同じ区間の増分は 336,560 だけ（会心の 420,700 は無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 8400,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1426-04",
+    "recording": "1426",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 370251,
+    "description": "メイラードが付いて約 33 秒後（映像の f11026〜11271。戦闘の終わりの約 2 秒前）のクラストのコアの 1 ヒット（会心なし）。メイラードの攻撃力▲が戦闘の終わりまで続いている（付いた後の増分は、会心なし 370,251・会心 462,814 だけ）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "メイラードの後の 26 発の増分は、370,251（会心なし）か 462,814（会心）の 2 つの値だけで、336,560 には戻らない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 10400,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1426-05",
+    "recording": "1426",
+    "kind": "interval",
+    "use": "record",
+    "unit": "ティック",
+    "value": 588.2,
+    "description": "たっぷりクッキング（防御力のアイコン）が付いてから消えるまでの、戦闘開始からのゲーム内のティックの差（f9336 → f9924。8513.2 → 9101.5）。攻撃力のアイコン（メイラード）は戦闘の終わり（f11414）まで残った",
+    "method": {
+      "tool": "アイコンの欄の明るさ・tools/captures/timer.ts --mode ticks",
+      "note": "クラストのカードの下のバフのアイコンの欄（3 枠目。x 908〜990・y 1046〜1066）の明るさ（ffmpeg の signalstats の YAVG。90〜100 を境に付き・消え）。消える前の約 40f はアイコンが点滅する（f9887 から暗くなる）ので、消えたフレームは暗いままになった最初のフレーム"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1426-06",
+    "recording": "1426",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 370251,
+    "description": "メイラードが付いた直後（付いてから 10 秒の中。映像の f9524・f9724）のクラストのコアの 1 ヒット（会心なし）。付く前の 336,560 の 1.100 倍",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "メイラードの後の最初の 2 発。延長が無くても効いている時刻なので、延長（S1 の維持時間▲）に左右されない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 8700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  }
+]
