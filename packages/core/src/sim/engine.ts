@@ -647,26 +647,20 @@ function countedAlliesNotes(slot: SimInput['slots'][number]): ModelNote[] {
     const candidates = effect.fixedTargets?.length ?? 0;
     if (n === undefined || candidates <= n) return [];
     const { ja: nameJa, en: nameEn } = effect.source.name;
-    if (effect.targetRandom === true) {
-      return [
-        {
-          level: 'approx' as const,
-          code: 'random-allies-expected',
-          message: {
-            ja: `${nameJa}は、実機では発動のたびに対象に合う味方 ${candidates} 機から ${n} 機をランダムに選ぶ。モデルは ${candidates} 機の全員に、値の ${n}/${candidates} を付ける（期待値）`,
-            en: `${nameEn} picks ${n} of the ${candidates} matching allies at random on each activation in the game. The model gives ${n}/${candidates} of the value to all ${candidates} (expected value)`,
-          },
-        },
-      ];
-    }
+    const random = effect.targetRandom === true;
     return [
       {
         level: 'approx' as const,
-        code: 'counted-allies-pick',
-        message: {
-          ja: `${nameJa}の対象に合う味方が ${candidates} 機いて、${n} 機より多い。実機は発ごとに ${n} 機を選び直すが、モデルは付く時に枠の若い順の ${n} 機に決め打ちで付ける`,
-          en: `${candidates} allies match the target of ${nameEn}, more than ${n}. The game picks ${n} again on each trigger; the model gives it to the first ${n} slots when it applies`,
-        },
+        code: random ? 'random-allies-expected' : 'counted-allies-pick',
+        message: random
+          ? {
+              ja: `${nameJa}は、実機では発動のたびに対象に合う味方 ${candidates} 機から ${n} 機をランダムに選ぶ。モデルは ${candidates} 機の全員に、値の ${n}/${candidates} を付ける（期待値）`,
+              en: `${nameEn} picks ${n} of the ${candidates} matching allies at random on each activation in the game. The model gives ${n}/${candidates} of the value to all ${candidates} (expected value)`,
+            }
+          : {
+              ja: `${nameJa}の対象に合う味方が ${candidates} 機いて、${n} 機より多い。実機は発ごとに ${n} 機を選び直すが、モデルは付く時に枠の若い順の ${n} 機に決め打ちで付ける`,
+              en: `${candidates} allies match the target of ${nameEn}, more than ${n}. The game picks ${n} again on each trigger; the model gives it to the first ${n} slots when it applies`,
+            },
       },
     ];
   });

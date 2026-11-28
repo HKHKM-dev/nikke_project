@@ -723,7 +723,6 @@ export type AppliedTimedEffect = ItemEffect & {
   appliedAmount: number;
 };
 
-/** 定義の各 timed 効果を Lv の数値に解決する。support が 'unsupported' のスキルは空 */
 /**
  * 「ランダムな味方 N 機」（targetRandom）の期待値の割合 N / 候補の数（plan/design-lily.md 2 節）。候補（fixedTargets）が N 機以下なら 1。
  * targetRandom でない効果と、候補の決まっていない効果（skills/targets.ts の fixedTargetOk が落とす）も 1
@@ -735,6 +734,7 @@ function randomShareOf(effect: Pick<ResolvedTimedEffect, 'targetRandom' | 'targe
   return n / k;
 }
 
+/** 定義の各 timed 効果を Lv の数値に解決する。support が 'unsupported' のスキルは空 */
 export function resolveTimed(
   def: SkillDefinition,
   character: CharacterData,

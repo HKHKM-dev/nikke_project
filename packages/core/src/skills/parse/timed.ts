@@ -391,7 +391,7 @@ function parseTargetRandom(
   if (target !== 'allies' || (count.targetCount === undefined && count.targetCountRef === undefined))
     fail(at, 'only allowed with target "allies" and targetCount / targetCountRef');
   if (stat === undefined) fail(at, 'targetRandom is only allowed in timed');
-  if (isFiringStat(stat) || isStateStat(stat) || isFlagStat(stat) || isHitStateStat(stat) || isPelletStat(stat))
+  if (!addsUpLinearly(stat))
     fail(at, `targetRandom is not supported for "${stat}" (it needs a value that adds up linearly)`);
   if (isChanceTrigger(trigger)) fail(at, 'targetRandom cannot be combined with a chance trigger');
   return true;
@@ -740,11 +740,19 @@ function parseHolderHit(
 }
 
 /**
+ * 値を期待値（確率や候補の数の割合を掛けた値）で持てる stat か。値を足し合わせて意味のあるもの（射撃に効かない・状態でない・フラグでない・
+ * 当たりの stat でない）。確率のきっかけ（validateChanceStat）と「ランダムな味方 N 機」（parseTargetRandom）が使う
+ */
+function addsUpLinearly(stat: BuffStat): boolean {
+  return !(isFiringStat(stat) || isStateStat(stat) || isFlagStat(stat) || isHitStateStat(stat) || isPelletStat(stat));
+}
+
+/**
  * 確率で決まる件（期待値の小片）に書ける stat か。値を足し合わせて意味のあるもの（射撃に効かない・状態でない・フラグでない・当たりの
  * stat でない）だけ。確率の timed と、確率の状態を読む while・stacksFrom の中身（skills/parse/crossChecks.ts の validateChanceStates）で使う
  */
 export function validateChanceStat(stat: BuffStat, path: string): void {
-  if (isFiringStat(stat) || isStateStat(stat) || isFlagStat(stat) || isHitStateStat(stat) || isPelletStat(stat)) {
+  if (!addsUpLinearly(stat)) {
     fail(path, `a chance trigger is not supported for "${stat}" (it needs a value that adds up linearly)`);
   }
   // T4 の▼は、件の始まりごとに走っている CT を縮める（frame/firstPass.ts の burstCooldownStartedAt）。期待値の窓は機会の始まりと終わりで

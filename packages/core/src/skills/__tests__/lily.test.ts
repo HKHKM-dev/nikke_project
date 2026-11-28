@@ -2,8 +2,9 @@
 import { describe, expect, it } from 'vitest';
 import { characterOf, rawDefinition } from '../../__tests__/data.ts';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
+import { fixedSlot, fixedTeam } from '../../__tests__/teamHelpers.ts';
 import type { CharacterData } from '../../types.ts';
-import { applyComposition, fixedTargetsOf } from '../composition.ts';
+import { applyComposition, applyCompositionToTeam, fixedTargetsOf } from '../composition.ts';
 import { parseSkillDefinition } from '../parse/definition.ts';
 import { resolveTimed } from '../resolve.ts';
 import { isEffectTarget } from '../targets.ts';
@@ -41,9 +42,18 @@ const definition = parseSkillDefinition(rawDefinition(LILY));
 const levels = { skill1: 10, skill2: 10, burst: 10 };
 
 /** 編成 characters の selfIndex の枠のリリーの、バーストの攻撃力▲（解決済み） */
-function burstUpIn(characters: (CharacterData | null)[], selfIndex: number, randomTargetSlot?: number) {
-  const composed = applyComposition(definition, characters, selfIndex, null, [], new Set(), randomTargetSlot);
+function burstUpIn(characters: (CharacterData | null)[], selfIndex: number) {
+  const composed = applyComposition(definition, characters, selfIndex);
   return resolveTimed(composed, lily, levels).find((e) => e.source.skill === 'burst')!;
+}
+
+/** ルドミラ（1 枠目）・リリー（2 枠目）の編成で、randomTargetSlot を pin にして組み立てたリリーのバーストの攻撃力▲ */
+function pinnedBurstUp(pin: number) {
+  const team = applyCompositionToTeam({
+    ...fixedTeam([fixedSlot(LUDMILLA), fixedSlot(LILY)], 1),
+    randomTargetSlot: pin,
+  });
+  return resolveTimed(team.slots[1]!.skills!.definition!, lily, levels).find((e) => e.source.skill === 'burst')!;
 }
 
 describe('「ランダムな味方 N 機」（allies と targetCount と targetRandom）', () => {
@@ -53,15 +63,6 @@ describe('「ランダムな味方 N 機」（allies と targetCount と targetR
     const resolved = { target: 'allies' as const, targetCount: 1, targetRandom: true as const, fixedTargets };
     const hits = [0, 1, 2, 3].filter((i) => isEffectTarget(resolved, 2, i, someone));
     expect(hits).toEqual([0, 2, 3]);
-  });
-
-  it('narrows the candidates to randomTargetSlot when it is given (none when it is not a candidate)', () => {
-    const characters = [someone, null, someone];
-    expect(fixedTargetsOf(effectOf(timed), characters, 0, [], false, 2)).toEqual([2]);
-    expect(fixedTargetsOf(effectOf(timed), characters, 0, [], false, 1)).toEqual([]);
-    // targetRandom の無い「〈絞り込み〉の味方 N 機」は決めた枠を読まない
-    const { targetRandom: _, ...counted } = timed;
-    expect(fixedTargetsOf(effectOf(counted), characters, 0, [], false, 2)).toEqual([0, 2]);
   });
 
   it('is only allowed with allies and N, a linear stat, no chance trigger, and in timed', () => {
@@ -89,10 +90,11 @@ describe('リリーの定義（data/skills/852.json）', () => {
     expect(burstUpIn([characterOf(LUDMILLA), null, lily, someone, someone], 2).value).toBeCloseTo(0.1, 12);
   });
 
-  it('gives the whole value to randomTargetSlot when it is given', () => {
-    const pinned = burstUpIn([characterOf(LUDMILLA), lily], 1, 0);
+  it('gives the whole value only to randomTargetSlot when it is given (to none when it is not a candidate)', () => {
+    const pinned = pinnedBurstUp(0);
     expect(pinned.fixedTargets).toEqual([0]);
     expect(pinned.value).toBeCloseTo(0.4, 12);
+    expect(pinnedBurstUp(3).fixedTargets).toEqual([]);
   });
 
   it('resolves S1 to a 15-second cooldown active on the same random-ally target, 5 s', () => {
