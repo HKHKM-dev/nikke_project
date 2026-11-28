@@ -1373,8 +1373,6 @@
 | 1404 | `20261124-1404_smg_idoll-ocean_holdfire-on.mp4` | ◎I-DOLL・オーシャン（305、SMG・水冷・R） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | V-0874 の撮影: 単騎・操作。オート射撃 OFF で始め、RELOADING で OFF・5 秒以上おいて ON を繰り返し、OFF の間に敵が浮いたら見てすぐ ON（台帳の autoFire は始めの値） |
 | 1405 | `20261124-1405_sg_noir_holdfire-on.mp4` | ◎ノワール（271、SG・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | V-0874 の撮影: 単騎・操作。オート射撃 OFF で始め、RELOADING で OFF・5 秒以上おいて ON を繰り返し、OFF の間に敵が浮いたら見てすぐ ON（台帳の autoFire は始めの値） |
 | 1406 | `20261124-1406_mg_emma_holdfire-on.mp4` | ◎エマ（90、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | V-0874 の撮影: 単騎・操作。オート射撃 OFF で始め、RELOADING で OFF・5 秒以上おいて ON を繰り返し、OFF の間に敵が浮いたら見てすぐ ON（台帳の autoFire は始めの値） |
-| 1409 | `20261128-1409_rupee-ws-team.mp4` | デルタ（20、SR・風圧・SR） + アリス（191、SR・灼熱・SSR） + ◎ルピー：ウィンターショッパー（203、AR・電撃・SSR） + プロダクト08（302、SR・電撃・R） | BigArms・灼熱・Lv.1 | 射撃場 3 分 | ON | ON / ON | V-0881。デルタ（II）+ アリス（III）+ ルピー：ウィンターショッパー（I・操作）+ プロダクト08（I）。スペック固定 ON・オート射撃 ON・オートバースト ON |
-| 1410 | `20261128-1410_rupee-ws-team.mp4` | デルタ（20、SR・風圧・SR） + アリス（191、SR・灼熱・SSR） + ◎ルピー：ウィンターショッパー（203、AR・電撃・SSR） + プロダクト08（302、SR・電撃・R） | BigArms・灼熱・Lv.1 | 射撃場 3 分 | ON | ON / ON | V-0881。デルタ（II）+ アリス（III）+ ルピー：ウィンターショッパー（I・操作）+ プロダクト08（I）。スペック固定 ON・オート射撃 ON・オートバースト ON |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
