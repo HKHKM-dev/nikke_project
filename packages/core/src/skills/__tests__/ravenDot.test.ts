@@ -36,10 +36,11 @@ describe('dot の maxStacksRef・gaugeOnApply・gaugeOnTick の検証', () => {
     expect(def.skills.skill1.effects[0]).toMatchObject(SHOCK);
   });
 
-  it('needs firstTick afterInterval for the stacks and the tick gauge', () => {
+  it('needs firstTick afterInterval for the stacks with gauge and the tick gauge', () => {
     const { firstTick: _, ...atApplication } = SHOCK;
+    // スタックする atApplication は、ゲージと組まない（plan/design-sakura-bis.md 8.3 節）
     expect(() => parseSkillDefinition(withSkill1([{ ...atApplication, gaugeOnTick: undefined }]))).toThrow(
-      /maxStacksRef: needs firstTick afterInterval/,
+      /a stacking dot with firstTick atApplication cannot have gaugeOnApply/,
     );
     const { maxStacksRef: __, ...noStacks } = atApplication;
     expect(() => parseSkillDefinition(withSkill1([noStacks]))).toThrow(/gaugeOnTick: needs firstTick afterInterval/);

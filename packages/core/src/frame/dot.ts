@@ -99,6 +99,8 @@ export function dotTicks(
       latestTickIntervalFrames(intervalSeconds, tickIntervalFrames),
       cancels,
     );
+  if (firstTick === 'atApplication' && maxStacks > 1)
+    return stackingApplicationTicks(fires, intervalSeconds, durationSeconds, frames, maxStacks);
   const tracker = dotTickTracker(intervalSeconds, durationSeconds, frames, firstTick);
   const out: DotTick[] = [];
   let groupFires: number[] = [];
@@ -207,14 +209,14 @@ export function dotStacksAt(
 }
 
 /**
- * まとまりの刻みの形（halfAfterLatest を除く）。offset(k) は起点から k 回目（0 始まり）の tick までのフレーム、lastOffset は 1 つの付与の
+ * まとまりの刻みの形（halfAfterLatest を除く）。offset(k) は起点から k 回目（0 始まり）の tick までのフレーム、count は 1 つの付与の tick の数、lastOffset は 1 つの付与の
  * 最後の tick までのフレーム、durationFrames は付け直しの判定の維持のフレーム（前の付与からこれ未満なら同じまとまり。C-0129）
  */
 function dotTickShape(
   intervalSeconds: number,
   durationSeconds: number,
   firstTick: DotFirstTick,
-): { offset: (k: number) => number; lastOffset: number; durationFrames: number } {
+): { offset: (k: number) => number; count: number; lastOffset: number; durationFrames: number } {
   const count = Math.floor(durationSeconds / intervalSeconds + 1e-9);
   // afterInterval は付いた 1 間隔後から間隔ごと（k + 1 間隔後。C-0130）。どちらも時刻に達した最初のフレーム（C-0454）
   const offset = (k: number): number =>
@@ -223,7 +225,37 @@ function dotTickShape(
       : k === 0
         ? 0
         : gameSecondsToFirstFrame(k * intervalSeconds + DOT_LATER_TICK_DELAY_SECONDS) - 1;
-  return { offset, lastOffset: offset(count - 1), durationFrames: gameSecondsToFrame(durationSeconds) };
+  return { offset, count, lastOffset: offset(count - 1), durationFrames: gameSecondsToFrame(durationSeconds) };
+}
+
+/**
+ * スタックする atApplication の tick（サクラ：ブルーム・イン・サマーのバーストの持続ダメージ。plan/design-sakura-bis.md 8.3 節）。
+ * 付けるたびに、付けたフレームに付けた 1 スタックぶんの tick を出し、刻みを付けたフレームから数え直す（offset(k)。k = 1 … 1 つの付与の
+ * tick の数 − 1。スタックの数の tick）。次の付与のフレームより前と戦闘の終わりより前の tick だけが出る。前の付与から維持のフレーム以上
+ * 空いた付与は 1 スタックから数える。fires は昇順
+ */
+function stackingApplicationTicks(
+  fires: readonly number[],
+  intervalSeconds: number,
+  durationSeconds: number,
+  frames: number,
+  maxStacks: number,
+): DotTick[] {
+  const { offset, count, durationFrames } = dotTickShape(intervalSeconds, durationSeconds, 'atApplication');
+  const out: DotTick[] = [];
+  let stacks = 0;
+  fires.forEach((f, i) => {
+    if (i > 0 && f - fires[i - 1]! >= durationFrames) stacks = 0;
+    stacks = Math.min(stacks + 1, maxStacks);
+    if (f < frames) out.push({ frame: f, stacks: 1 });
+    const next = Math.min(fires[i + 1] ?? frames, frames);
+    for (let k = 1; k < count; k++) {
+      const frame = f + offset(k);
+      if (frame >= next) break;
+      out.push({ frame, stacks });
+    }
+  });
+  return out;
 }
 
 /**

@@ -149,3 +149,5 @@
 | 味方がバーストスキルを使用した時（自分を含む編成のどの枠のバースト） | 文字列のきっかけ `allyBurstUse`（その発動の効果のフレーム。同じフレームに重なっても 1 回） | ルピー：ウィンターショッパーの S2 のショッピング | [design-rupee-ws.md](design-rupee-ws.md) 2.1 節 |
 | 最終攻撃力が一番低い（基本バースト段階が N の）味方 N 機 | `target: "lowestAttack"` と `targetCount`（`targetCountRef`）。段階の絞り込みは `targetBurstStep`（順位は段階の合う枠だけで並べる。`topAttack` にも書ける）。timed だけ | リバーレリオの S1 | [design-lowest-attack.md](design-lowest-attack.md) 2 節 |
 | 〈絞り込み〉の味方 N 機（選び方の句が無い。「防御型の味方 2 機」） | timed の `target: "allies"` と `targetCount`（`targetCountRef`）。候補が N 機より多いときは枠の若い順の決め打ち（実機は発ごとに選び直す） | キリの S1 | [design-kiri.md](design-kiri.md) 2 節 |
+| クールタイムごとのアクティブ（説明文にきっかけが無い）の持続ダメージ | dot の周期のきっかけ `{ "everySeconds": T, "cooldown": true }`（同じスロットの timed と同じ秒。名前の付いた状態・ゲージとは組まない） | サクラ：ブルーム・イン・サマーの S2 の桜かんむり | [design-sakura-bis.md](design-sakura-bis.md) 2.1 節 |
+| 「N 回順番に攻撃」の同じ敵に「持続ダメージ」「N スタック」（ヒットごとに 1 スタック） | dot の `burstUse`・`perBurstHit: true`・`maxStacksRef`（`atApplication` なら、付けるたびに 1 スタックぶんの tick と、最後の付与からの刻みの数え直し） | サクラ：ブルーム・イン・サマーのバースト | 同 2.2・8.3 節 |

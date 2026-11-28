@@ -212,8 +212,12 @@ function parseDotIntervalAndFirstTick(v: Record<string, Json>, effect: DotEffect
 function parseDotTickShape(v: Record<string, Json>, effect: DotEffect, path: string): void {
   if (v.maxStacksRef !== undefined) {
     effect.maxStacksRef = parseRef(v.maxStacksRef, `${path}.maxStacksRef`);
-    if (effect.firstTick !== 'afterInterval' && effect.firstTick !== 'halfAfterLatest')
-      fail(`${path}.maxStacksRef`, 'needs firstTick afterInterval or halfAfterLatest');
+    // スタックする atApplication（付けるたびに 1 スタックぶんの tick と、刻みの数え直し。frame/dot.ts の stackingApplicationTicks。
+    // plan/design-sakura-bis.md 8.3 節）は、付いている区間を件の一覧（名前の付いた状態）と 1 パス目（ゲージ）が別の規則で追うので組まない
+    if ((effect.firstTick ?? 'atApplication') === 'atApplication')
+      for (const key of ['state', 'gaugeOnApply', 'gaugeOnApplyDelayFrames', 'gaugeOnTick'])
+        if (v[key] !== undefined)
+          fail(`${path}.${key}`, `a stacking dot with firstTick atApplication cannot have ${key}`);
   }
   const latest = effect.firstTick === 'halfAfterLatest';
   if (latest !== (effect.durationUntil === 'battleEnd'))

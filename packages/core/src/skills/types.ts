@@ -2394,7 +2394,9 @@ export type DotEffect = {
   /**
    * 最大スタック数の description_value_NN（plan/design-raven-s1.md 2.1 節）。有れば発火のたびに 1 スタック足し
    * （上限で止める）、tick の値は 1 スタックの倍率 × その tick の時点のスタックの数（C-0182）。付け直しで全スタックの時間が
-   * 付け直され、まとまりが終われば次は 1 スタックから。firstTick: atApplication とは組み合わせられない
+   * 付け直され、まとまりが終われば次は 1 スタックから。firstTick: atApplication（省略も）なら、付けるたびに付けたフレームに付けた
+   * 1 スタックぶんの tick を出し、刻みを付けたフレームから数え直す（1.5 秒後から間隔ごと、スタックの数の tick。維持は最後の付与から。
+   * 名前の付いた状態・ゲージとは組まない。plan/design-sakura-bis.md 8.3 節）
    */
   maxStacksRef?: number;
   /**

@@ -2,6 +2,8 @@
 // 付ける dot（perBurstHit。2.2 節）の検証・解決
 import { describe, expect, it } from 'vitest';
 import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
+import { dotTicks } from '../../frame/dot.ts';
+import { gameSecondsToFirstFrame } from '../../time.ts';
 import { resolveDotEffects } from '../burstDamage.ts';
 import { parseSkillDefinition } from '../parse/definition.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
@@ -50,8 +52,22 @@ describe('語彙の検証', () => {
     );
   });
 
-  it.each([{ delayFrames: 5 }, { gaugeOnTick: true }])('rejects perBurstHit on a dot with %o', (patch) => {
-    expect(() => parseSkillDefinition(patched('burst', burstDot, patch))).toThrow(/perBurstHit cannot be used with/);
+  it('rejects a stacking dot with firstTick atApplication that applies a state or charges the gauge', () => {
+    const { perBurstHit: _, ...plain } = raw.skills.burst.effects[burstDot]!;
+    const stacking = { ...plain, trigger: { count: 'normalShot', every: 60 } };
+    const copy = structuredClone(raw);
+    copy.skills.burst.effects[burstDot] = { ...stacking, state: 'hacked' };
+    expect(() => parseSkillDefinition(copy)).toThrow(/a stacking dot with firstTick atApplication cannot have state/);
+    copy.skills.burst.effects[burstDot] = { ...stacking, gaugeOnApply: true };
+    expect(() => parseSkillDefinition(copy)).toThrow(
+      /a stacking dot with firstTick atApplication cannot have gaugeOnApply/,
+    );
+  });
+
+  it('rejects perBurstHit on a dot with delayFrames', () => {
+    expect(() => parseSkillDefinition(patched('burst', burstDot, { delayFrames: 5 }))).toThrow(
+      /perBurstHit cannot be used with delayFrames/,
+    );
   });
 });
 
@@ -65,6 +81,37 @@ describe('解決', () => {
     expect(burst.perBurstHit).toBe(true);
     // Lv10: 1 スタック 35.16%・上限 10・10 秒
     expect(burst.multiplier).toBeCloseTo(0.3516, 10);
-    expect(burst.dot).toMatchObject({ maxStacks: 10, durationSeconds: 10, firstTick: 'afterInterval' });
+    expect(burst.dot).toMatchObject({ maxStacks: 10, durationSeconds: 10, firstTick: 'atApplication' });
+  });
+});
+
+// スタックする atApplication の刻み（plan/design-sakura-bis.md 8.3 節）: 付けるたびに 1 スタックぶんの tick、刻みは最後の付与から数え直す
+describe('スタックする atApplication の刻み', () => {
+  const hits = [0, 12, 24, 35, 47, 59, 71, 82, 94, 106].map((o) => 1000 + o);
+  const ticks = dotTicks(hits, 1, 10, 5000, 'atApplication', 10);
+
+  it('deals one stack on each application and restarts the cadence from the last application', () => {
+    expect(ticks.filter((t) => t.stacks === 1).map((t) => t.frame)).toEqual(hits);
+    const later = ticks.filter((t) => t.frame > hits.at(-1)!);
+    const last = hits.at(-1)!;
+    // 1.5 秒後から 1 秒おきに 9 回（維持 10 秒）。どれも 10 スタック
+    expect(later.map((t) => t.frame)).toEqual(
+      Array.from({ length: 9 }, (_, k) => last + gameSecondsToFirstFrame(k + 1.5) - 1),
+    );
+    expect(later.every((t) => t.stacks === 10)).toBe(true);
+    expect(ticks.length).toBe(19);
+  });
+
+  it('starts again from one stack after the duration and caps the stacks', () => {
+    const fires = [...Array.from({ length: 12 }, (_, k) => k * 5), 2000];
+    const out = dotTicks(fires, 1, 10, 5000, 'atApplication', 10);
+    const periodic = out.filter((t) => t.frame > 55 && t.frame < 2000);
+    expect(periodic.every((t) => t.stacks === 10)).toBe(true);
+    const after = out.filter((t) => t.frame > 2000);
+    expect(after.every((t) => t.stacks === 1)).toBe(true);
+  });
+
+  it('stops the ticks at the end of battle', () => {
+    expect(dotTicks([0, 30], 1, 10, 100, 'atApplication', 10).every((t) => t.frame < 100)).toBe(true);
   });
 });

@@ -220,6 +220,12 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
     delays: { hitFrames: 5, effectFrames: 0, hitOffsets: [0, 12, 24, 36, 47] },
     claim: 'C-1329',
   },
+  // サクラ：ブルーム・イン・サマー: 持続ダメージ（burst の effects[1]。perBurstHit）は各ヒットのフレームで 1 スタックずつ付く
+  {
+    resourceIds: [284],
+    delays: { hitFrames: 20, effectFrames: 0, hitOffsets: [0, 12, 24, 35, 47, 59, 71, 82, 94, 106] },
+    claim: 'C-1586',
+  },
   // メイデン：アイスローズ: ヒットの数は MP（burstDamage の hitsFrom）で、表は上限の 12 個。10 個目からは読んでいない（6f おきとみた）
   {
     resourceIds: [183],

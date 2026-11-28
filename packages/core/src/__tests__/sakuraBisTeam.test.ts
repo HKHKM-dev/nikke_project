@@ -67,15 +67,19 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, input) => {
     expect(next[0]).toBe(S2_PERIOD);
   });
 
-  it('stacks the Burst sustained damage once per Burst hit, up to 10', () => {
+  it('stacks the Burst sustained damage once per Burst hit and ticks all stacks from the last hit', () => {
     const ticks = hitsOf('burst');
     expect(activations.length).toBeGreaterThan(0);
-    expect(ticks.length).toBeGreaterThan(0);
-    for (const t of ticks) {
-      // 直前の発動の、tick より前のヒットの数がスタックの数（上限 10）
-      const a = activations.filter((x) => hitFramesOf(x)[0]! < t.frame).at(-1)!;
-      const before = hitFramesOf(a).filter((f) => f < t.frame).length;
-      expect(t.stacks ?? 1).toBe(Math.min(before, 10));
+    for (const a of activations) {
+      const hits = hitFramesOf(a).filter((f) => f < plan.frames);
+      if (hits.length === 0) continue;
+      const last = hits.at(-1)!;
+      const next = activations.find((x) => x.frame > a.frame);
+      const mine = ticks.filter((t) => t.frame >= hits[0]! && (next === undefined || t.frame < hitFramesOf(next)[0]!));
+      // ヒットのそれぞれのフレームに 1 スタックぶんの tick（frame/dot.ts の stackingApplicationTicks）
+      expect(mine.filter((t) => t.frame <= last).map((t) => [t.frame, t.stacks])).toEqual(hits.map((f) => [f, 1]));
+      // 最後のヒットの後は、ヒットの数（上限 10）のスタックの tick
+      for (const t of mine.filter((x) => x.frame > last)) expect(t.stacks).toBe(Math.min(hits.length, 10));
     }
   });
 });
