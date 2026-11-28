@@ -4,7 +4,7 @@
   "state": "仮説",
   "topic": "スキル・キャラ固有",
   "grade": "推論",
-  "basis": "V-0897",
+  "basis": "説明文の読みと、既存の回復・与えるHP回復量▲・デバフ解除の語彙の確定した結論（デバフ解除は C-0979。直接は測っていない。撮っていない）。V-0897",
   "model": "反映（data/skills/532.json の skill1 の effects[0]、burst の effects[0]・effects[1]）",
   "replaces": [],
   "updated": "2026-11-28",

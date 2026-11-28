@@ -4,7 +4,7 @@
   "state": "仮説",
   "topic": "スキル・キャラ固有",
   "grade": "推論",
-  "basis": "V-0897",
+  "basis": "説明文の読みと、既存の回復の語彙の確定した結論（直接は測っていない。撮っていない）。V-0897",
   "model": "反映（data/skills/130.json の skill1 の effects[0]、burst の effects[0]）",
   "replaces": [],
   "updated": "2026-11-28",

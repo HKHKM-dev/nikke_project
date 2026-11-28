@@ -1,0 +1,62 @@
+{
+  "formatVersion": 1,
+  "resourceId": 130,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "heal",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "lowestHpRatio",
+          "targetCountRef": 1,
+          "ref": 2,
+          "scaling": "casterFinalMaxHp",
+          "assumes": {
+            "ja": "「最後の弾丸が命中した時」は、残弾を 0 にした射撃で起こす（全弾命中の前提）。残りの HP の割合が最も低い味方 1 機（回復の時の HP の割合の低い順。並んだときは枠の若い順。自分も候補。C-0567）への 1 回の回復で、受けた味方の「回復効果が適用された時」を起こす。満タンの味方にも起きる。実機では被弾で HP の割合が下がった味方が選ばれうる。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く（与えるHP回復量▲・受けるHP回復量▲は掛けない。plan/design-hp-heal-restore.md 2.2 節）",
+            "en": "\"When the last bullet hits\" fires on the shot that empties the magazine (assuming every shot hits). A one-off heal on the one ally with the lowest remaining HP ratio (lowest ratio at the heal; ties go to the leftmost slot; self included; C-0567), triggering \"when healed\" on that ally, also at full HP. In game, an ally whose HP ratio dropped from damage can be chosen instead. The amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs (Outgoing/Incoming Healing ups are not applied; plan/design-hp-heal-restore.md 2.2)"
+          },
+          "claims": ["C-1610", "C-0567"]
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルバーストタイムが発動した時の、味方全体の受けるHP回復量▲（15 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "The Incoming Healing increase on all allies (15 s) when Full Burst Time begins does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 4,
+          "scaling": "casterFinalMaxHp",
+          "assumes": {
+            "ja": "味方全体への 1 回の回復（スキル発動者の最終最大HP の X%）。受けた味方の「回復効果が適用された時」を起こす。満タンの味方にも起きる。付く時刻はモデルのバーストの使用のフレーム（メアリーのバーストの効果の付き始めは測っていない）。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く（与えるHP回復量▲・受けるHP回復量▲は掛けない。plan/design-hp-heal-restore.md 2.2 節）",
+            "en": "A one-off heal on all allies (X% of the caster's final max HP), triggering \"when healed\" on the allies that receive it, also at full HP. Applied at the model's burst use frame (when Mary's burst effects actually start is not measured). The amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs (Outgoing/Incoming Healing ups are not applied; plan/design-hp-heal-restore.md 2.2)"
+          },
+          "claims": ["C-1610"]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "自分の HP が 50% 以上の時の、味方全体の防御力▲（10 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）。被弾なしの前提では、条件はいつも満たす",
+          "en": "The DEF increase on all allies (10 s) while own HP is 50% or more does not change damage by itself (it matters only with an effect reading DEF in the team). With no damage taken, the condition always holds",
+          "kind": "indirect",
+          "path": "defense"
+        }
+      ]
+    }
+  }
+}
