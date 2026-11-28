@@ -106,21 +106,23 @@
             "C-1238",
             "C-1239"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "フルバーストタイムが発動した時の、最終攻撃力が一番低い基本バースト段階 III の味方 1 機へのスキル発動者基準のチャージ速度▲（10 秒）は未対応（最終攻撃力が一番低い味方の対象の語彙が無い）。基本バースト段階 III が自分だけの編成では自分が対象で、S2 のチャージ速度増加効果無効で効かない。自分より最終攻撃力の低い III の味方（チャージ武器）のいる編成でだけ効く",
-          "en": "The charge speed increase (10 s, based on the caster) to the Burst III ally with the lowest final ATK on entering Full Burst is not modeled (no vocabulary for the lowest-final-ATK ally target). With no other Burst III ally the target is self, and the S2 charge speed increase immunity cancels it. It matters only with a Burst III ally (charge weapon) whose final ATK is lower than hers",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "chargeSpeed",
-            "target": "allies",
-            "trigger": "fullBurstStart"
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "lowestAttack",
+          "targetCountRef": 8,
+          "targetBurstStep": "Step3",
+          "stat": "chargeSpeed",
+          "scaling": "casterChargeTime",
+          "ref": 6,
+          "durationRef": 7,
+          "assumes": {
+            "ja": "対象は、基本バースト段階 III の味方（自分も候補）を、発火のフレームの最終攻撃力（同じフレームに付く自分の S1 の攻撃力▲を入れる）の低い順に並べた 1 機。同値は枠の若い順（確かめていない。高い順の同値では後ろの枠に付いた録画がある。C-0882）。順位に同じフレームの攻撃力▲を入れるかは、スペック固定ではリバーレリオより攻撃力の高い III のチャージ武器がいないので見分けていない。自分が対象なら S2 のチャージ速度増加効果無効で効かない",
+            "en": "The target is the one Burst III ally (self included) with the lowest final ATK at the fire frame (counting her own S1 ATK up that starts on the same frame). Ties go to the earlier slot (unverified; a recording with a tie in the highest-ATK ranking picked the later slot, C-0882). Whether same-frame ATK buffs enter the ranking is not distinguished: at fixed spec no Burst III charge weapon has higher ATK than her. If she is the target, the S2 charge speed increase immunity cancels it"
           },
           "claims": [
-            "C-1242"
+            "C-1578"
           ]
         }
       ]
