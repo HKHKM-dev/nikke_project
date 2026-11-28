@@ -77,6 +77,10 @@ export const NAMED_STATES = {
   nanoCoating: { name: { ja: 'ナノコーティング', en: 'Nano Coating' }, holder: 'ally', family: 'barrier' },
   /** 必死の抵抗（モリーの S1）。被弾で減って壊れる分は扱わない（C-1590） */
   struggle: { name: { ja: '必死の抵抗', en: 'Struggle' }, holder: 'ally', family: 'barrier' },
+  /** 妄想（レーベルの S1）。被弾で減って壊れる分は扱わない（plan/design-label.md 2.2 節） */
+  delusion: { name: { ja: '妄想', en: 'Delusion' }, holder: 'ally', family: 'barrier' },
+  /** 妄想共有（レーベルのバースト）。中身の無敵付与はダメージに関係しない（S2 の while が読むだけ） */
+  sharedDelusion: { name: { ja: '妄想共有', en: 'Shared Delusion' }, holder: 'ally' },
   /** デコイ（シンデレラの S2）。被弾で壊れる分は扱わない（plan/design-skill-stage6.md 2.4 節）。判定は自分のデコイだけ */
   decoy: { name: { ja: 'デコイ', en: 'Decoy' }, holder: 'ally' },
   /** 美しさ（シンデレラの S2） */
