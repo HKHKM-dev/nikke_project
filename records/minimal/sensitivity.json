@@ -38783,6 +38783,200 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "1448-01",
+      "element": "リリー skill1.effects[0]",
+      "key": "b01bbb7d54b9a6c0",
+      "effective": true,
+      "minus": -1667.9520000000011,
+      "plus": 0
+    },
+    {
+      "observation": "1448-02",
+      "element": "リリー skill1.effects[0]",
+      "key": "af6a31bbd837433c",
+      "effective": true,
+      "minus": 0,
+      "plus": 1667.9520000000011
+    },
+    {
+      "observation": "1448-04",
+      "element": "リリー skill1.effects[0]",
+      "key": "1528343030270f93",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "plus: 窓の始まりが 1 回しか無い"
+    },
+    {
+      "observation": "1448-05",
+      "element": "リリー skill1.effects[0]",
+      "key": "4707085e7442f279",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "plus: 窓の始まりが 1 回しか無い"
+    },
+    {
+      "observation": "1449-01",
+      "element": "リリー burst.effects[0]",
+      "key": "59c770b2e83963af",
+      "effective": true,
+      "minus": 0,
+      "plus": 4250.188799999998
+    },
+    {
+      "observation": "1449-01",
+      "element": "リリー skill1.effects[0]",
+      "key": "59c770b2e83963af",
+      "effective": true,
+      "minus": -2125.0944,
+      "plus": 0
+    },
+    {
+      "observation": "1449-02",
+      "element": "リリー burst.effects[0]",
+      "key": "3cdc3accb5e60f39",
+      "effective": true,
+      "minus": -4250.1888,
+      "plus": 0
+    },
+    {
+      "observation": "1449-02",
+      "element": "リリー skill1.effects[0]",
+      "key": "3cdc3accb5e60f39",
+      "effective": true,
+      "minus": 0,
+      "plus": 2125.094399999998
+    },
+    {
+      "observation": "1449-03",
+      "element": "リリー burst.effects[0]",
+      "key": "c7a9363665e6aa47",
+      "effective": true,
+      "minus": 0,
+      "plus": 3335.9040000000023
+    },
+    {
+      "observation": "1449-03",
+      "element": "リリー skill1.effects[0]",
+      "key": "c7a9363665e6aa47",
+      "effective": true,
+      "minus": -1667.9519999999975,
+      "plus": 0
+    },
+    {
+      "observation": "1449-04",
+      "element": "リリー burst.effects[0]",
+      "key": "711de1fda61618b2",
+      "effective": true,
+      "minus": -2566.079999999999,
+      "plus": 0
+    },
+    {
+      "observation": "1449-04",
+      "element": "リリー skill1.effects[0]",
+      "key": "711de1fda61618b2",
+      "effective": true,
+      "minus": 0,
+      "plus": 1283.0400000000009
+    },
+    {
+      "observation": "1450-01",
+      "element": "リリー burst.effects[0]",
+      "key": "6fbf79b353ed73a0",
+      "effective": true,
+      "minus": 0,
+      "plus": 4250.188799999998
+    },
+    {
+      "observation": "1450-01",
+      "element": "リリー skill1.effects[0]",
+      "key": "6fbf79b353ed73a0",
+      "effective": true,
+      "minus": -2125.0944,
+      "plus": 0
+    },
+    {
+      "observation": "1450-02",
+      "element": "リリー burst.effects[0]",
+      "key": "c477a2c792e0168a",
+      "effective": true,
+      "minus": -4250.1888,
+      "plus": 0
+    },
+    {
+      "observation": "1450-02",
+      "element": "リリー skill1.effects[0]",
+      "key": "c477a2c792e0168a",
+      "effective": true,
+      "minus": 0,
+      "plus": 2125.094399999998
+    },
+    {
+      "observation": "1450-03",
+      "element": "リリー burst.effects[0]",
+      "key": "e5efdbd7f2a6c65a",
+      "effective": true,
+      "minus": -3269.3759999999984,
+      "plus": 0
+    },
+    {
+      "observation": "1450-03",
+      "element": "リリー skill1.effects[0]",
+      "key": "e5efdbd7f2a6c65a",
+      "effective": true,
+      "minus": -1634.6879999999983,
+      "plus": 0
+    },
+    {
+      "observation": "1450-04",
+      "element": "リリー burst.effects[0]",
+      "key": "c67aef0f0e1d1328",
+      "effective": true,
+      "minus": 0,
+      "plus": 3335.9040000000023
+    },
+    {
+      "observation": "1450-04",
+      "element": "リリー skill1.effects[0]",
+      "key": "c67aef0f0e1d1328",
+      "effective": true,
+      "minus": -1667.9519999999975,
+      "plus": 0
+    },
+    {
+      "observation": "1450-05",
+      "element": "リリー burst.effects[0]",
+      "key": "f2f734299f6a49ce",
+      "effective": true,
+      "minus": -3335.9039999999986,
+      "plus": 0
+    },
+    {
+      "observation": "1450-05",
+      "element": "リリー skill1.effects[0]",
+      "key": "f2f734299f6a49ce",
+      "effective": true,
+      "minus": 0,
+      "plus": 1667.9520000000011
+    },
+    {
+      "observation": "1450-06",
+      "element": "リリー burst.effects[0]",
+      "key": "4b70ebaeb6fc9d81",
+      "effective": true,
+      "minus": -3335.9040000000023,
+      "plus": 0
+    },
+    {
+      "observation": "1450-06",
+      "element": "リリー skill1.effects[0]",
+      "key": "4b70ebaeb6fc9d81",
+      "effective": true,
+      "minus": -1667.9520000000011,
+      "plus": 0
     }
   ]
 }
