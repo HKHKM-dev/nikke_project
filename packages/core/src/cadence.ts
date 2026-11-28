@@ -185,7 +185,7 @@ export function fullReloadFrames(
 }
 
 /** 全弾リロードの k（射手が残弾を満たしてから込め終わりまで。fullReloadFrames） */
-function fullReloadLeadFrames(shot: ShotParams, model: WeaponModel, params: FiringParams): number {
+export function fullReloadLeadFrames(shot: ShotParams, model: WeaponModel, params: FiringParams): number {
   return reloadWaitOutsideChargeFrames(shot, model, params) - model.reloadCompleteToShotFrames;
 }
 
