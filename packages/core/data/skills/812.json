@@ -18,7 +18,10 @@
           "assumes": {
             "ja": "10 回射撃するたびに、最終防御力が最も高い味方 1 機（発火のフレームの最終防御力の高い順。自分も候補。同値は枠の若い順で、確かめていない）への 1 回の回復（スキル発動者の最終最大HP の X%）。受けた味方の「回復効果が適用された時」を起こす。満タンの味方にも起きる。回数の値 01 と機数の値 02 は Lv によらない。スペック固定ではバフ前の防御力がクラスごとに 1 つなので、防御型が 2 体以上なら同値になる。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く（与えるHP回復量▲・受けるHP回復量▲は掛けない。plan/design-hp-heal-restore.md 2.2 節）",
             "en": "Every 10 shots, a one-off heal (X% of the caster's final max HP) on the one ally with the highest final DEF (at the firing frame; self included; ties go to the leftmost slot, unverified), triggering \"when healed\" on that ally, also at full HP. The count (value 01) and the number of allies (value 02) do not depend on the level. With fixed specs the base DEF is one value per class, so two or more Defenders tie. The amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs (Outgoing/Incoming Healing ups are not applied; plan/design-hp-heal-restore.md 2.2)"
-          }
+          },
+          "claims": [
+            "C-1629"
+          ]
         }
       ],
       "notes": []
@@ -46,7 +49,10 @@
           "assumes": {
             "ja": "残りの HP の値が最も低い味方 3 機（回復の時の HP の割合 × 最終最大HP の低い順。自分も候補。同値は枠の若い順で、確かめていない）への 1 回の回復（スキル発動者の最終最大HP の X%）。受けた味方の「回復効果が適用された時」を起こす。満タンの味方にも起きる。被弾の無い射撃場では最終最大HP の低い順と同じで、スペック固定ではクラスごとに同値になる（火力型 < 支援型 < 防御型）。実機では被弾で HP が減った味方が選ばれうる。付く時刻はモデルのバーストの使用のフレーム。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く（与えるHP回復量▲・受けるHP回復量▲は掛けない。plan/design-hp-heal-restore.md 2.2 節）",
             "en": "A one-off heal (X% of the caster's final max HP) on the three allies with the lowest remaining HP (HP ratio × final max HP at the heal; self included; ties go to the leftmost slot, unverified), triggering \"when healed\" on them, also at full HP. Without hits this is the order of final max HP; with fixed specs allies of the same class tie (Attacker < Supporter < Defender). In game an ally that lost HP from hits can be chosen. Applied at the model's burst use frame. The amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs (Outgoing/Incoming Healing ups are not applied; plan/design-hp-heal-restore.md 2.2)"
-          }
+          },
+          "claims": [
+            "C-1630"
+          ]
         }
       ],
       "notes": []

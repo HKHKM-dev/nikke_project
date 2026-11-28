@@ -4,7 +4,7 @@
 - 関連: [design-heal-vocabulary.md](design-heal-vocabulary.md) 3.2 節（`lowestHpRatio`）、[design-hp-ratio-readers.md](design-hp-ratio-readers.md) 2.2 節（回復の発火のフレームで並べる）、[design-hp-heal-restore.md](design-hp-heal-restore.md) 2.5 節、[design-heal-amount-up.md](design-heal-amount-up.md) 2.3 節、[design-target-vocab.md](design-target-vocab.md) 2.1 節（`excludeSelf`）、[design-lowest-attack.md](design-lowest-attack.md) 2.3 節（順位の同値）、[design-skill-stage7.md](design-skill-stage7.md) 1.4 節（最終防御力の比べ）、V-0897
 - 検証: V-0902
 - 作成日: 2026-11-28
-- 状態: 撮影待ち（7 節は推奨どおりに決まった）
+- 状態: 完了（8 節）
 
 ## 0. 範囲
 
@@ -116,6 +116,14 @@
 5. `skill-hp-heal-restore`: この設計では片付けず、課題の「対象」の欄にトリナの閾値の回復への効き方を足す（推奨。2.5 節）。
 6. 検証: 撮影 1・2 を撮って確定にし、トリナは撮らずに仮説で入れる（推奨。4 節）。代わりの案は、V-0897 と同じく 4 行とも撮らずに仮説で入れる（撮影待ちが無くなるが、新しい対象の語彙の実装を録画で確かめられない。[skills-guide.md](skills-guide.md) 0 節は撮って確かめる決まり）。
 
+## 8. 撮った後に分かったこと（V-0902）
+
+- ベイの宝物版 S1・パスカルの S1・バーストは、2.1〜2.3 節の語彙のまま録画と合った（C-1631・C-1629・C-1630）。定義も語彙も変えない。
+- 回復は、射撃の回数のきっかけでは弾の命中でなく射撃のフレームに付く（いまの `heal` の決まり）。ベイの RL の弾の命中より前に、受けた味方の▲が乗った。
+- パスカルのバーストの対象は、HP の割合で並べる読み（`lowestHpRatio` と同じ。満タンなら枠の若い順）と合わない。HP の値の読みを採る。
+- 順位の同値の選び方は、撮影の編成に同値が無いので確かめていない（2.2・2.3 節の `assumes` のまま）。
+
 ## 経過
 
 - 2026-11-28: 起案。論点 1〜6 は推奨どおりに決まった。語彙と定義を入れ、撮影 1・2 を頼んだ（V-0902）。
+- 2026-11-28: 撮影 1・2（録画 1453・1454）を読み、ベイとパスカルの回復を確定にした（8 節）。

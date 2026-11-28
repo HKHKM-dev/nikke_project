@@ -1,0 +1,557 @@
+[
+  {
+    "id": "1454-01",
+    "recording": "1454",
+    "kind": "timing",
+    "use": "record",
+    "value": [1412, 3802, 6173, 8547],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・24・25・25f"
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1454-02",
+    "recording": "1454",
+    "use": "input",
+    "kind": "timing",
+    "unit": "f",
+    "value": [435, 2824, 5194, 7567],
+    "spread": {
+      "kind": "range",
+      "low": -2,
+      "high": 2
+    },
+    "description": "パスカルのバースト（I の本当の発動）のゲーム内のフレーム（戦闘開始から）の並び",
+    "method": {
+      "tool": "recipe:burst-panel@4 と tools/captures/timer.ts の戦闘開始",
+      "note": "戦闘開始は動画の f971（timer.ts --mode changes の 3 つ目の変わり目）。I → II の六角形の替わり目（`1454-01`）の動画のフレームから、戦闘開始・替わり目までの 5f と発動の止まり 1f・それより前の I の発動の止まり 1f ずつを引いた（1347-09 と同じ。II・III は撃たず、フルバーストは無い）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burstChain"
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1454-03",
+    "recording": "1454",
+    "kind": "total",
+    "use": "compare",
+    "value": 185702663,
+    "description": "クラウン・パスカル・ラピ・アスカ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11571。増分は 6252 個"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "teamTotalDamage",
+      "args": {},
+      "tolerance": {
+        "rel": 0.05
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [1, 3, 4],
+        "manualBursts": "1454-02",
+        "condition": "auto"
+      }
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1454-04",
+    "recording": "1454",
+    "kind": "timing",
+    "use": "record",
+    "value": 8,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 6,
+      "high": 10
+    },
+    "description": "クラウンの S2（パスカルの S1 の回復で付く攻撃ダメージ▲）（クラウン・ラピ → クラウン▲・ラピ▲）が クラウン・ラピ の 1 発で替わるまでの時刻の幅（1 番目の事象 f1471 から数えた動画のフレーム）。クラウン・ラピの最後の発は 5f、クラウン▲・ラピ▲の最初の発は 10f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true,\"noBurstSlots\":[1,3,4],\"manualBursts\":\"1454-02\",\"condition\":\"auto\"}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は クラウン: 枠 1（クラウン）のモデルの f100、クラウン▲: 枠 1（クラウン）のモデルの f600、ラピ: 枠 3（ラピ）のモデルの f100、ラピ▲: 枠 3（ラピ）のモデルの f600、パスカル: 枠 2（パスカル）のモデルの f100、パスカル▲: 枠 2（パスカル）のモデルの f600、アスカ: 枠 4（アスカ）のモデルの f100、アスカS1: 枠 4（アスカ）のモデルの f450、アスカS1C: 枠 4（アスカ）のモデルの f600、アスカC: 枠 4（アスカ）のモデルの f2000。境は クラウン・ラピ → クラウン▲・ラピ▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜60f。クラウン・ラピ 210・クラウン▲・ラピ▲ 344・区別できない 0・外れ 357・食い違い（クラウン▲・ラピ▲の最初の発より後のクラウン・ラピの発） 0"
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1454-05",
+    "recording": "1454",
+    "kind": "timing",
+    "use": "record",
+    "value": 6,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 4,
+      "high": 8
+    },
+    "description": "クラウンの S2（パスカルの S1 の回復で付く攻撃ダメージ▲）（クラウン・ラピ → クラウン▲・ラピ▲）が クラウン・ラピ の 1 発で替わるまでの時刻の幅（2 番目の事象 f2129 から数えた動画のフレーム）。クラウン・ラピの最後の発は 3f、クラウン▲・ラピ▲の最初の発は 8f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true,\"noBurstSlots\":[1,3,4],\"manualBursts\":\"1454-02\",\"condition\":\"auto\"}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は クラウン: 枠 1（クラウン）のモデルの f100、クラウン▲: 枠 1（クラウン）のモデルの f600、ラピ: 枠 3（ラピ）のモデルの f100、ラピ▲: 枠 3（ラピ）のモデルの f600、パスカル: 枠 2（パスカル）のモデルの f100、パスカル▲: 枠 2（パスカル）のモデルの f600、アスカ: 枠 4（アスカ）のモデルの f100、アスカS1: 枠 4（アスカ）のモデルの f450、アスカS1C: 枠 4（アスカ）のモデルの f600、アスカC: 枠 4（アスカ）のモデルの f2000。境は クラウン・ラピ → クラウン▲・ラピ▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜60f。クラウン・ラピ 210・クラウン▲・ラピ▲ 344・区別できない 0・外れ 357・食い違い（クラウン▲・ラピ▲の最初の発より後のクラウン・ラピの発） 0"
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1454-06",
+    "recording": "1454",
+    "kind": "timing",
+    "use": "record",
+    "value": -2,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -4,
+      "high": 0
+    },
+    "description": "クラウンの S2（パスカルの S1 の回復で付く攻撃ダメージ▲）（クラウン・ラピ → クラウン▲・ラピ▲）が クラウン・ラピ の 1 発で替わるまでの時刻の幅（3 番目の事象 f3413 から数えた動画のフレーム）。クラウン・ラピの最後の発は -5f、クラウン▲・ラピ▲の最初の発は 0f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true,\"noBurstSlots\":[1,3,4],\"manualBursts\":\"1454-02\",\"condition\":\"auto\"}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は クラウン: 枠 1（クラウン）のモデルの f100、クラウン▲: 枠 1（クラウン）のモデルの f600、ラピ: 枠 3（ラピ）のモデルの f100、ラピ▲: 枠 3（ラピ）のモデルの f600、パスカル: 枠 2（パスカル）のモデルの f100、パスカル▲: 枠 2（パスカル）のモデルの f600、アスカ: 枠 4（アスカ）のモデルの f100、アスカS1: 枠 4（アスカ）のモデルの f450、アスカS1C: 枠 4（アスカ）のモデルの f600、アスカC: 枠 4（アスカ）のモデルの f2000。境は クラウン・ラピ → クラウン▲・ラピ▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜60f。クラウン・ラピ 210・クラウン▲・ラピ▲ 344・区別できない 0・外れ 357・食い違い（クラウン▲・ラピ▲の最初の発より後のクラウン・ラピの発） 0"
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1454-07",
+    "recording": "1454",
+    "kind": "timing",
+    "use": "record",
+    "value": 3.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 0,
+      "high": 7
+    },
+    "description": "クラウンの S2（パスカルの S1 の回復で付く攻撃ダメージ▲）（クラウン・ラピ → クラウン▲・ラピ▲）が クラウン・ラピ の 1 発で替わるまでの時刻の幅（4 番目の事象 f4072 から数えた動画のフレーム）。クラウン・ラピの最後の発は -1f、クラウン▲・ラピ▲の最初の発は 7f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true,\"noBurstSlots\":[1,3,4],\"manualBursts\":\"1454-02\",\"condition\":\"auto\"}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は クラウン: 枠 1（クラウン）のモデルの f100、クラウン▲: 枠 1（クラウン）のモデルの f600、ラピ: 枠 3（ラピ）のモデルの f100、ラピ▲: 枠 3（ラピ）のモデルの f600、パスカル: 枠 2（パスカル）のモデルの f100、パスカル▲: 枠 2（パスカル）のモデルの f600、アスカ: 枠 4（アスカ）のモデルの f100、アスカS1: 枠 4（アスカ）のモデルの f450、アスカS1C: 枠 4（アスカ）のモデルの f600、アスカC: 枠 4（アスカ）のモデルの f2000。境は クラウン・ラピ → クラウン▲・ラピ▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜60f。クラウン・ラピ 210・クラウン▲・ラピ▲ 344・区別できない 0・外れ 357・食い違い（クラウン▲・ラピ▲の最初の発より後のクラウン・ラピの発） 0"
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1454-08",
+    "recording": "1454",
+    "kind": "timing",
+    "use": "record",
+    "value": 6.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 6,
+      "high": 7
+    },
+    "description": "クラウンの S2（パスカルの S1 の回復で付く攻撃ダメージ▲）（クラウン・ラピ → クラウン▲・ラピ▲）が クラウン・ラピ の 1 発で替わるまでの時刻の幅（5 番目の事象 f5262 から数えた動画のフレーム）。クラウン・ラピの最後の発は 5f、クラウン▲・ラピ▲の最初の発は 7f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true,\"noBurstSlots\":[1,3,4],\"manualBursts\":\"1454-02\",\"condition\":\"auto\"}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は クラウン: 枠 1（クラウン）のモデルの f100、クラウン▲: 枠 1（クラウン）のモデルの f600、ラピ: 枠 3（ラピ）のモデルの f100、ラピ▲: 枠 3（ラピ）のモデルの f600、パスカル: 枠 2（パスカル）のモデルの f100、パスカル▲: 枠 2（パスカル）のモデルの f600、アスカ: 枠 4（アスカ）のモデルの f100、アスカS1: 枠 4（アスカ）のモデルの f450、アスカS1C: 枠 4（アスカ）のモデルの f600、アスカC: 枠 4（アスカ）のモデルの f2000。境は クラウン・ラピ → クラウン▲・ラピ▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜60f。クラウン・ラピ 210・クラウン▲・ラピ▲ 344・区別できない 0・外れ 357・食い違い（クラウン▲・ラピ▲の最初の発より後のクラウン・ラピの発） 0"
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1454-09",
+    "recording": "1454",
+    "kind": "timing",
+    "use": "record",
+    "value": 4,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 3,
+      "high": 5
+    },
+    "description": "クラウンの S2（パスカルの S1 の回復で付く攻撃ダメージ▲）（クラウン・ラピ → クラウン▲・ラピ▲）が クラウン・ラピ の 1 発で替わるまでの時刻の幅（6 番目の事象 f5920 から数えた動画のフレーム）。クラウン・ラピの最後の発は 2f、クラウン▲・ラピ▲の最初の発は 5f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true,\"noBurstSlots\":[1,3,4],\"manualBursts\":\"1454-02\",\"condition\":\"auto\"}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は クラウン: 枠 1（クラウン）のモデルの f100、クラウン▲: 枠 1（クラウン）のモデルの f600、ラピ: 枠 3（ラピ）のモデルの f100、ラピ▲: 枠 3（ラピ）のモデルの f600、パスカル: 枠 2（パスカル）のモデルの f100、パスカル▲: 枠 2（パスカル）のモデルの f600、アスカ: 枠 4（アスカ）のモデルの f100、アスカS1: 枠 4（アスカ）のモデルの f450、アスカS1C: 枠 4（アスカ）のモデルの f600、アスカC: 枠 4（アスカ）のモデルの f2000。境は クラウン・ラピ → クラウン▲・ラピ▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜60f。クラウン・ラピ 210・クラウン▲・ラピ▲ 344・区別できない 0・外れ 357・食い違い（クラウン▲・ラピ▲の最初の発より後のクラウン・ラピの発） 0"
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1454-10",
+    "recording": "1454",
+    "kind": "timing",
+    "use": "record",
+    "value": 12,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 2,
+      "high": 22
+    },
+    "description": "クラウンの S2（パスカルの S1 の回復で付く攻撃ダメージ▲）（クラウン・ラピ → クラウン▲・ラピ▲）が クラウン・ラピ の 1 発で替わるまでの時刻の幅（7 番目の事象 f6446 から数えた動画のフレーム）。クラウン・ラピの最後の発は 1f、クラウン▲・ラピ▲の最初の発は 22f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true,\"noBurstSlots\":[1,3,4],\"manualBursts\":\"1454-02\",\"condition\":\"auto\"}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は クラウン: 枠 1（クラウン）のモデルの f100、クラウン▲: 枠 1（クラウン）のモデルの f600、ラピ: 枠 3（ラピ）のモデルの f100、ラピ▲: 枠 3（ラピ）のモデルの f600、パスカル: 枠 2（パスカル）のモデルの f100、パスカル▲: 枠 2（パスカル）のモデルの f600、アスカ: 枠 4（アスカ）のモデルの f100、アスカS1: 枠 4（アスカ）のモデルの f450、アスカS1C: 枠 4（アスカ）のモデルの f600、アスカC: 枠 4（アスカ）のモデルの f2000。境は クラウン・ラピ → クラウン▲・ラピ▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜60f。クラウン・ラピ 210・クラウン▲・ラピ▲ 344・区別できない 0・外れ 357・食い違い（クラウン▲・ラピ▲の最初の発より後のクラウン・ラピの発） 0"
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1454-11",
+    "recording": "1454",
+    "kind": "timing",
+    "use": "record",
+    "value": 2.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 2,
+      "high": 3
+    },
+    "description": "クラウンの S2（パスカルの S1 の回復で付く攻撃ダメージ▲）（クラウン・ラピ → クラウン▲・ラピ▲）が クラウン・ラピ の 1 発で替わるまでの時刻の幅（8 番目の事象 f7103 から数えた動画のフレーム）。クラウン・ラピの最後の発は 1f、クラウン▲・ラピ▲の最初の発は 3f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true,\"noBurstSlots\":[1,3,4],\"manualBursts\":\"1454-02\",\"condition\":\"auto\"}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は クラウン: 枠 1（クラウン）のモデルの f100、クラウン▲: 枠 1（クラウン）のモデルの f600、ラピ: 枠 3（ラピ）のモデルの f100、ラピ▲: 枠 3（ラピ）のモデルの f600、パスカル: 枠 2（パスカル）のモデルの f100、パスカル▲: 枠 2（パスカル）のモデルの f600、アスカ: 枠 4（アスカ）のモデルの f100、アスカS1: 枠 4（アスカ）のモデルの f450、アスカS1C: 枠 4（アスカ）のモデルの f600、アスカC: 枠 4（アスカ）のモデルの f2000。境は クラウン・ラピ → クラウン▲・ラピ▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜60f。クラウン・ラピ 210・クラウン▲・ラピ▲ 344・区別できない 0・外れ 357・食い違い（クラウン▲・ラピ▲の最初の発より後のクラウン・ラピの発） 0"
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1454-12",
+    "recording": "1454",
+    "kind": "timing",
+    "use": "record",
+    "value": 2,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -2,
+      "high": 6
+    },
+    "description": "アスカの S1（パスカルのバーストの回復で付く攻撃力▲）（アスカ・アスカC → アスカS1・アスカS1C）が アスカ の 1 発で替わるまでの時刻の幅（2 番目の事象 f3802 から数えた動画のフレーム）。アスカ・アスカCの最後の発は -3f、アスカS1・アスカS1Cの最初の発は 6f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true,\"noBurstSlots\":[1,3,4],\"manualBursts\":\"1454-02\",\"condition\":\"auto\"}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は クラウン: 枠 1（クラウン）のモデルの f100、クラウン▲: 枠 1（クラウン）のモデルの f600、ラピ: 枠 3（ラピ）のモデルの f100、ラピ▲: 枠 3（ラピ）のモデルの f600、パスカル: 枠 2（パスカル）のモデルの f100、パスカル▲: 枠 2（パスカル）のモデルの f600、アスカ: 枠 4（アスカ）のモデルの f100、アスカS1: 枠 4（アスカ）のモデルの f450、アスカS1C: 枠 4（アスカ）のモデルの f600、アスカC: 枠 4（アスカ）のモデルの f2000。境は アスカ・アスカC → アスカS1・アスカS1C（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -90〜60f。アスカ・アスカC 23・アスカS1・アスカS1C 17・区別できない 0・外れ 165・食い違い（アスカS1・アスカS1Cの最初の発より後のアスカ・アスカCの発） 0"
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1454-13",
+    "recording": "1454",
+    "kind": "timing",
+    "use": "record",
+    "value": -13.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -63,
+      "high": 36
+    },
+    "description": "アスカの S1（パスカルのバーストの回復で付く攻撃力▲）（アスカ・アスカC → アスカS1・アスカS1C）が アスカ の 1 発で替わるまでの時刻の幅（3 番目の事象 f6173 から数えた動画のフレーム）。アスカ・アスカCの最後の発は -64f、アスカS1・アスカS1Cの最初の発は 36f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true,\"noBurstSlots\":[1,3,4],\"manualBursts\":\"1454-02\",\"condition\":\"auto\"}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は クラウン: 枠 1（クラウン）のモデルの f100、クラウン▲: 枠 1（クラウン）のモデルの f600、ラピ: 枠 3（ラピ）のモデルの f100、ラピ▲: 枠 3（ラピ）のモデルの f600、パスカル: 枠 2（パスカル）のモデルの f100、パスカル▲: 枠 2（パスカル）のモデルの f600、アスカ: 枠 4（アスカ）のモデルの f100、アスカS1: 枠 4（アスカ）のモデルの f450、アスカS1C: 枠 4（アスカ）のモデルの f600、アスカC: 枠 4（アスカ）のモデルの f2000。境は アスカ・アスカC → アスカS1・アスカS1C（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -90〜60f。アスカ・アスカC 23・アスカS1・アスカS1C 17・区別できない 0・外れ 165・食い違い（アスカS1・アスカS1Cの最初の発より後のアスカ・アスカCの発） 0"
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1454-14",
+    "recording": "1454",
+    "kind": "timing",
+    "use": "record",
+    "value": 0,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -2,
+      "high": 2
+    },
+    "description": "アスカの S1（パスカルのバーストの回復で付く攻撃力▲）（アスカ・アスカC → アスカS1・アスカS1C）が アスカ の 1 発で替わるまでの時刻の幅（4 番目の事象 f8547 から数えた動画のフレーム）。アスカ・アスカCの最後の発は -3f、アスカS1・アスカS1Cの最初の発は 2f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true,\"noBurstSlots\":[1,3,4],\"manualBursts\":\"1454-02\",\"condition\":\"auto\"}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は クラウン: 枠 1（クラウン）のモデルの f100、クラウン▲: 枠 1（クラウン）のモデルの f600、ラピ: 枠 3（ラピ）のモデルの f100、ラピ▲: 枠 3（ラピ）のモデルの f600、パスカル: 枠 2（パスカル）のモデルの f100、パスカル▲: 枠 2（パスカル）のモデルの f600、アスカ: 枠 4（アスカ）のモデルの f100、アスカS1: 枠 4（アスカ）のモデルの f450、アスカS1C: 枠 4（アスカ）のモデルの f600、アスカC: 枠 4（アスカ）のモデルの f2000。境は アスカ・アスカC → アスカS1・アスカS1C（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -90〜60f。アスカ・アスカC 23・アスカS1・アスカS1C 17・区別できない 0・外れ 165・食い違い（アスカS1・アスカS1Cの最初の発より後のアスカ・アスカCの発） 0"
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1454-15",
+    "recording": "1454",
+    "kind": "timing",
+    "use": "record",
+    "value": 0,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -2,
+      "high": 2
+    },
+    "description": "アスカの S1（パスカルのバーストの回復で付く攻撃力▲）（アスカ・アスカC → アスカS1・アスカS1C）が アスカ の 1 発で替わるまでの時刻の幅の、4 回の事象（f1412・3802・6173・8547）の共通部分（事象から数えた動画のフレーム）。アスカ・アスカCの最後の発の最も遅いものは -3f、アスカS1・アスカS1Cの最初の発の最も早いものは 2f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@9",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true,\"noBurstSlots\":[1,3,4],\"manualBursts\":\"1454-02\",\"condition\":\"auto\"}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は クラウン: 枠 1（クラウン）のモデルの f100、クラウン▲: 枠 1（クラウン）のモデルの f600、ラピ: 枠 3（ラピ）のモデルの f100、ラピ▲: 枠 3（ラピ）のモデルの f600、パスカル: 枠 2（パスカル）のモデルの f100、パスカル▲: 枠 2（パスカル）のモデルの f600、アスカ: 枠 4（アスカ）のモデルの f100、アスカS1: 枠 4（アスカ）のモデルの f450、アスカS1C: 枠 4（アスカ）のモデルの f600、アスカC: 枠 4（アスカ）のモデルの f2000。境は アスカ・アスカC → アスカS1・アスカS1C（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -90〜60f。アスカ・アスカC 23・アスカS1・アスカS1C 17・区別できない 0・外れ 165・食い違い（アスカS1・アスカS1Cの最初の発より後のアスカ・アスカCの発） 0"
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1454-16",
+    "recording": "1454",
+    "use": "compare",
+    "kind": "hit",
+    "value": 22474,
+    "description": "アスカの通常攻撃の 1 ヒット（胴体・会心なし・距離ボーナスなし）。S1 の攻撃力▲もクラウンの S2 の攻撃ダメージ▲も無い時",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@9 の grid（クラウン=1@100;クラウン▲=1@600;ラピ=3@100;ラピ▲=3@600;パスカル=2@100;パスカル▲=2@600;アスカ=4@100;アスカS1=4@450;アスカS1C=4@600;アスカC=4@2000）",
+      "note": "動画の f3268〜11571 の増分 24 個（パスカルのバーストの 25 秒の後で、クラウンの S2 の窓の外）"
+    },
+    "scope": {
+      "slot": 4,
+      "source": "normal",
+      "frames": [3268, 11571]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [1, 3, 4],
+        "manualBursts": "1454-02",
+        "condition": "auto"
+      }
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1454-17",
+    "recording": "1454",
+    "use": "compare",
+    "kind": "hit",
+    "value": 57573,
+    "description": "アスカの通常攻撃の 1 ヒット（胴体・会心なし・距離ボーナスあり）。パスカルのバーストの後の S1 の攻撃力▲の窓の中で、クラウンの S2 の窓の外",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@9 の grid（クラウン=1@100;クラウン▲=1@600;ラピ=3@100;ラピ▲=3@600;パスカル=2@100;パスカル▲=2@600;アスカ=4@100;アスカS1=4@450;アスカS1C=4@600;アスカC=4@2000）",
+      "note": "動画の f1945〜8981 の増分 16 個"
+    },
+    "scope": {
+      "slot": 4,
+      "source": "normal",
+      "frames": [1945, 8981]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 450,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [1, 3, 4],
+        "manualBursts": "1454-02",
+        "condition": "auto"
+      }
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1454-18",
+    "recording": "1454",
+    "use": "compare",
+    "kind": "hit",
+    "value": 53583,
+    "description": "アスカの通常攻撃の 1 ヒット（胴体・会心なし・距離ボーナスなし）。S1 の攻撃力▲とクラウンの S2 の攻撃ダメージ▲の両方の窓の中",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@9 の grid（クラウン=1@100;クラウン▲=1@600;ラピ=3@100;ラピ▲=3@600;パスカル=2@100;パスカル▲=2@600;アスカ=4@100;アスカS1=4@450;アスカS1C=4@600;アスカC=4@2000）",
+      "note": "動画の f3808〜9981 の増分 83 個"
+    },
+    "scope": {
+      "slot": 4,
+      "source": "normal",
+      "frames": [3808, 9981]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [1, 3, 4],
+        "manualBursts": "1454-02",
+        "condition": "auto"
+      }
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1454-19",
+    "recording": "1454",
+    "use": "compare",
+    "kind": "hit",
+    "value": 27191,
+    "description": "アスカの通常攻撃の 1 ヒット（胴体・会心なし・距離ボーナスなし）。クラウンの S2 の窓の中で、S1 の攻撃力▲の窓の外",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@9 の grid（クラウン=1@100;クラウン▲=1@600;ラピ=3@100;ラピ▲=3@600;パスカル=2@100;パスカル▲=2@600;アスカ=4@100;アスカS1=4@450;アスカS1C=4@600;アスカC=4@2000）",
+      "note": "動画の f3017〜11116 の増分 48 個"
+    },
+    "scope": {
+      "slot": 4,
+      "source": "normal",
+      "frames": [3017, 11116]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 2000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [1, 3, 4],
+        "manualBursts": "1454-02",
+        "condition": "auto"
+      }
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1454-20",
+    "recording": "1454",
+    "use": "compare",
+    "kind": "hit",
+    "value": 8955,
+    "description": "クラウンの通常攻撃の 1 ヒット（コア・会心なし・距離ボーナスなし）。クラウンの S2 の攻撃ダメージ▲の窓の外",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@9 の grid（クラウン=1@100;クラウン▲=1@600;ラピ=3@100;ラピ▲=3@600;パスカル=2@100;パスカル▲=2@600;アスカ=4@100;アスカS1=4@450;アスカS1C=4@600;アスカC=4@2000）",
+      "note": "動画の f1070〜11413 の増分 589 個"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [1070, 11413]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [1, 3, 4],
+        "manualBursts": "1454-02",
+        "condition": "auto"
+      }
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1454-21",
+    "recording": "1454",
+    "use": "compare",
+    "kind": "hit",
+    "value": 10835,
+    "description": "クラウンの通常攻撃の 1 ヒット（コア・会心なし・距離ボーナスなし）。クラウンの S2 の攻撃ダメージ▲の窓の中",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@9 の grid（クラウン=1@100;クラウン▲=1@600;ラピ=3@100;ラピ▲=3@600;パスカル=2@100;パスカル▲=2@600;アスカ=4@100;アスカS1=4@450;アスカS1C=4@600;アスカC=4@2000）",
+      "note": "動画の f1630〜11274 の増分 960 個"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [1630, 11274]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [1, 3, 4],
+        "manualBursts": "1454-02",
+        "condition": "auto"
+      }
+    },
+    "source": "V-0902",
+    "readAt": "2026-11-28"
+  }
+]
