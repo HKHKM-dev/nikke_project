@@ -96,6 +96,8 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
   validateStateEndGrant(fields, v, path, onEnemy);
   validateChanceGrant(fields, v, path, onEnemy);
   validateNoSelfReference(fields, state, path);
+  // 最終攻撃力の低い順は timed だけ（使い手がいない。plan/design-lowest-attack.md 2.1 節）
+  if (fields.target === 'lowestAttack') fail(`${path}.target`, 'lowestAttack is only allowed in timed');
   const effect: StateGrantEffect = { kind: 'state', state, ...fields };
   // 「〈stat〉増加効果が適用された時」の付与は自分にだけ（使い手はブレッディの味。plan/design-bready.md 2.1 節）
   if (isBuffAppliedTrigger(fields.trigger) && fields.target !== 'self')

@@ -4,7 +4,8 @@
 - 関連: [design-stage11.md](design-stage11.md) 17〜19 節（`topAttack`・順位の決め方）、[design-ranked-shot-duration.md](design-ranked-shot-duration.md)（順位の対象の窓）、[design-target-vocab.md](design-target-vocab.md) 2.1 節（`excludeSelf`）、[design-stat-lock.md](design-stat-lock.md) 7 節の論点 5（この行を別に扱うと決めた所）、課題 `records/backlog/liberalio-s1-target.json`
 - 根拠: C-1242（III がリバーレリオだけの編成では、S1 のチャージ速度▲は発の間を変えない。仮説・単独実測）、C-1342（S2 のチャージ速度増加効果無効。確定）、C-0474（アリスの発動者基準のチャージ速度。順位の対象）、C-0882（ソーダ：トゥインクルバニーの順位の同値。V-0634）
 - 作成日: 2026-11-28
-- 状態: 承認待ち
+- 検証: V-0883
+- 状態: 撮影待ち（7 節）
 
 ## 0. 範囲
 
@@ -87,7 +88,7 @@
 }
 ```
 
-- 結論ができるまでは、notes（`unimplemented`）のまま理由を「語彙が無い」から「撮っていない」に直す（[design-ranked-shot-duration.md](design-ranked-shot-duration.md) 7 節の論点 3 と同じ流れ）。予測は `addEffects` でこの効果を足して回す。
+- 結論ができるまでは、notes（`unimplemented`）の文を変えない（文を変えると、この notes を指す最小構成の印（C-1240・C-1241・C-1341・C-1342）が外れ、撮影の後にもう一度直すことになる）。予測は `addEffects` でこの効果を足して回す（[design-ranked-shot-duration.md](design-ranked-shot-duration.md) 7 節の論点 3 と同じ流れ）。
 
 ## 4. 実装の順（承認の後。1 段ごとに `npm test`）
 
@@ -96,7 +97,7 @@
 3. `skills/ranking.ts`: `attackRankFor` が効果の対象で向きを決め、`fixedTargets` で絞る。単体テスト（低い順・同値・段階の絞り込み・自分が一番低い）。
 4. 退化: 既存のテストが数値を変えずに通ること（`topAttack` に `targetBurstStep` を書いた定義は無い）。
 5. 分類と言い回しの表（2.4 節）。
-6. `262.json` の notes の理由を直す（3 節）。撮影の後に効果を足し、notes を外す。
+6. 撮影の後に `262.json` に効果を足し、notes を外す（3 節）。
 7. 編成のテスト: ココア + ソルジャーF.A. + リバーレリオ + ディーゼル：ウィンタースイーツで、フルバーストの開始から 10 秒、ディーゼル：ウィンタースイーツのチャージが 0.1911 秒短いこと。III がリバーレリオだけの編成では値が変わらないこと。
 
 ## 5. 根拠の作り方（撮影）
@@ -123,6 +124,8 @@
 
 ## 7. 論点（推奨を先に書く）
 
+- 決定（2026-11-28・オーナー）: 5 つとも推奨の案にする。
+
 1. **語彙の形**（2.1 節）
    - 推奨: 新しい対象 `lowestAttack`。定義が説明文の言い回しと 1 対 1 で読め、分類も対象の名前で引ける。
    - 代わりの案: `topAttack` に向きの欄を足す。
@@ -141,3 +144,4 @@
 ## 経過
 
 - 2026-11-28: 起案。いまのモデルで、`targetBurstStep` の枠が順位の対象にも出ることと、スペック固定では III のチャージ武器にリバーレリオより上がいないことを確かめた。論点 1〜5 をオーナーに諮る。
+- 2026-11-28: オーナーが論点 1〜5 を推奨どおりに決めた。2 節の語彙（対象 `lowestAttack`・順位の対象の `targetBurstStep`）と分類を実装し、撮影計画（V-0883）を書いた。予測は H1 でディーゼル：ウィンタースイーツのフルバーストの間の発の間が 11f 短い。

@@ -464,6 +464,7 @@ const TGT_INFO: Record<string, Info> = {
   'ally:filter:burstStep': ['基本バースト段階が N の味方', 'ok'],
   'ally:filter:state': ['〈状態〉状態の味方', 'check'],
   'ally:topAttack': ['最終攻撃力が最も高い味方 N 機', 'ok'],
+  'ally:lowestAttack': ['最終攻撃力が一番低い味方 N 機', 'ok'],
   'ally:longestChargeTime': ['基本チャージ時間が一番長い味方', 'ok'],
   'ally:burstUsers': ['直前にバーストスキルを使用した味方', 'ok'],
   'ally:lowestHpRatio': ['残りの HP の割合が最も低い味方 N 機', 'ok'],

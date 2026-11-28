@@ -147,3 +147,4 @@
 | 通常攻撃 1 回でペレットが N 個以上命中した時 | 回数のきっかけ `{ "count": "normalShot", "minPelletsRef": N }`（その発の当たったペレットの数（期待値か録画で数えた数）が N 以上の発だけを数える。timed だけ。数える窓・発火の窓・スタック・確率とは組まない） | プリバティ：アンカインド・メイドの S2 のリロード速度▲ | [design-privaty-um-s2.md](design-privaty-um-s2.md) 2.1 節 |
 | フルバーストタイムの持続時間中、ペレットが N 回命中した時、自分に弾丸チャージ | `ammoRefill` の回数のきっかけ `{ "count": "pelletHit", "everyRef": N, "firesDuring": "fullBurst" }`（弾丸チャージにもフルバーストの窓 `during`・`firesDuring` を書ける） | プリバティ：アンカインド・メイドの S2 | [design-privaty-um-s2-full-burst.md](design-privaty-um-s2-full-burst.md) 2.1・2.2 節 |
 | 味方がバーストスキルを使用した時（自分を含む編成のどの枠のバースト） | 文字列のきっかけ `allyBurstUse`（その発動の効果のフレーム。同じフレームに重なっても 1 回） | ルピー：ウィンターショッパーの S2 のショッピング | [design-rupee-ws.md](design-rupee-ws.md) 2.1 節 |
+| 最終攻撃力が一番低い（基本バースト段階が N の）味方 N 機 | `target: "lowestAttack"` と `targetCount`（`targetCountRef`）。段階の絞り込みは `targetBurstStep`（順位は段階の合う枠だけで並べる。`topAttack` にも書ける）。timed だけ | リバーレリオの S1 | [design-lowest-attack.md](design-lowest-attack.md) 2 節 |

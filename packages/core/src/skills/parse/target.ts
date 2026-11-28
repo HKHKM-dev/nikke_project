@@ -13,6 +13,7 @@ import {
   type CoverHealEffect,
   type RemoveDebuffEffect,
   type EffectTrigger,
+  isAttackRanked,
   isCountedTarget,
   isEnemyHeldStat,
   NIKKE_CLASSES,
@@ -50,7 +51,7 @@ export type PersonaTargetFields = {
 };
 
 /**
- * targetState・targetAdjacent・targetBurstStep は target が allies のときだけ（targetBurstStep は burstUsers も）。
+ * targetState・targetAdjacent・targetBurstStep は target が allies のときだけ（targetBurstStep は burstUsers と順位の対象も）。
  * targetAdjacent は targetState・targetBurstStep・targetSquad・excludeSelf と組まない（使い手がいない。plan/design-rouge.md 2.1 節）
  */
 export function parsePersonaTargetFields(
@@ -88,7 +89,8 @@ export function parsePersonaTargetFields(
 
 /**
  * 「基本バースト段階が N の」。対象は allies と burstUsers（「直前に
- * バーストスキルを使用した基本バースト段階が N の味方全体」。エイダの S1。plan/design-skill-stage15.md 2.3 節）
+ * バーストスキルを使用した基本バースト段階が N の味方全体」。エイダの S1。plan/design-skill-stage15.md 2.3 節）と、
+ * 順位の対象（「最終攻撃力が一番低い基本バースト段階が N の味方」。順位は段階の合う枠だけで並べる。plan/design-lowest-attack.md 2.2 節）
  */
 export function parseTargetBurstStep(
   v: Record<string, Json>,
@@ -96,8 +98,11 @@ export function parseTargetBurstStep(
   path: string,
 ): BasicBurstStep | undefined {
   if (v.targetBurstStep === undefined) return undefined;
-  if (target !== 'allies' && target !== 'burstUsers')
-    fail(`${path}.targetBurstStep`, `only allowed with target "allies" or "burstUsers", got "${target}"`);
+  if (target !== 'allies' && target !== 'burstUsers' && !isAttackRanked(target))
+    fail(
+      `${path}.targetBurstStep`,
+      `only allowed with target "allies", "burstUsers", "topAttack" or "lowestAttack", got "${target}"`,
+    );
   return oneOf(BASIC_BURST_STEPS, v.targetBurstStep, `${path}.targetBurstStep`);
 }
 
@@ -168,7 +173,7 @@ export function validateBurstUsersTarget(target: BuffTarget, trigger: EffectTrig
   );
 }
 
-/** topAttack の N（targetCount / targetCountRef）。topAttack・longestChargeTime のときだけ、ちょうど片方 */
+/** N 機を選ぶ対象（isCountedTarget）の N（targetCount / targetCountRef）。ちょうど片方 */
 export function parseTargetCount(
   v: Record<string, Json>,
   target: BuffTarget | CoverHealEffect['target'] | RemoveDebuffEffect['target'],
@@ -180,7 +185,7 @@ export function parseTargetCount(
     if (hasCount || hasRef)
       fail(
         path,
-        `targetCount / targetCountRef are only allowed with target "topAttack", "longestChargeTime", "lowestHpRatio", "lowestCoverHp" or "debuffedRandom", got "${target}"`,
+        `targetCount / targetCountRef are only allowed with target "topAttack", "lowestAttack", "longestChargeTime", "lowestHpRatio", "lowestCoverHp" or "debuffedRandom", got "${target}"`,
       );
     return {};
   }
