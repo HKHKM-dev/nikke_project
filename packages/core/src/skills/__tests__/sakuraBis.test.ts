@@ -59,7 +59,7 @@ describe('解決', () => {
   it('keeps the cooldown mark and perBurstHit on the resolved dots', () => {
     const dots = resolveDotEffects(parseSkillDefinition(raw), characterOf(SAKURA_BIS), MAX_SKILL_LEVELS);
     const s2 = dots.find((d) => d.source.skill === 'skill2' && d.effectIndex === cooldownDot)!;
-    expect(s2.trigger).toEqual({ everySeconds: 20, cooldown: true });
+    expect(s2.trigger).toEqual({ everySeconds: 30, cooldown: true });
     expect(s2.perBurstHit).toBeUndefined();
     const burst = dots.find((d) => d.source.skill === 'burst')!;
     expect(burst.perBurstHit).toBe(true);

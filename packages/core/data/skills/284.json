@@ -55,7 +55,7 @@
         {
           "kind": "timed",
           "trigger": {
-            "everySeconds": 20,
+            "everySeconds": 30,
             "cooldown": true
           },
           "target": "self",
@@ -63,23 +63,22 @@
           "ref": 1,
           "durationRef": 2,
           "assumes": {
-            "ja": "花の舞。S2 は説明文にきっかけの無いクールタイムごとのアクティブで、クールタイムは撮る前の仮の値 20 秒（戦闘開始から。録画で読む）。花の舞の名前を読むのは S1 のパーツの破壊の行（前提の外）だけなので、名前の無い▲で書いた",
-            "en": "Dancing Flower. S2 is a cooldown-based active skill with no trigger in its description; the cooldown is a provisional 20 s before recording (from the start of battle; to be read from recordings). Only the S1 part-destruction lines (outside the assumptions) read the Dancing Flower name, so it is written as an unnamed ▲"
+            "ja": "花の舞。S2 は説明文にきっかけの無いクールタイムごとのアクティブで、クールタイムは録画で読んだ 30 秒（戦闘開始から）。花の舞の名前を読むのは S1 のパーツの破壊の行（前提の外）だけなので、名前の無い▲で書いた",
+            "en": "Dancing Flower. S2 is a cooldown-based active skill with no trigger in its description; the cooldown read from recordings is 30 s (from the start of battle). Only the S1 part-destruction lines (outside the assumptions) read the Dancing Flower name, so it is written as an unnamed ▲"
           }
         },
         {
           "kind": "dot",
           "trigger": {
-            "everySeconds": 20,
+            "everySeconds": 30,
             "cooldown": true
           },
           "ref": 3,
           "intervalSeconds": 1,
           "durationRef": 4,
-          "firstTick": "afterInterval",
           "assumes": {
-            "ja": "桜かんむり。「最終攻撃力が最も高い敵 1 機」は単体ボス。付いた 1 秒後から 1 秒おきの tick（撮る前の仮の形。録画で読む）。付け直しは刻みを変えずに終わりを延ばす（いまの既定）",
-            "en": "Sakura Petals. \"The enemy with the highest final ATK\" is the single boss. Ticks every second from 1 s after application (a provisional shape before recording; to be read from recordings). Reapplication extends the end without changing the tick cadence (the current default)"
+            "ja": "桜かんむり。「最終攻撃力が最も高い敵 1 機」は単体ボス。付いた瞬間と、1.5 秒後から 1 秒おきの tick（1 回の付与で 15 tick）",
+            "en": "Sakura Petals. \"The enemy with the highest final ATK\" is the single boss. Ticks on application and every second from 1.5 s later (15 ticks per application)"
           }
         },
         {
@@ -99,8 +98,7 @@
           "trigger": "battleStart",
           "ref": 3,
           "intervalSeconds": 1,
-          "durationRef": 4,
-          "firstTick": "afterInterval"
+          "durationRef": 4
         }
       ]
     },

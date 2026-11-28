@@ -4,6 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import { hitFramesOf } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
+import { dotTickFrames } from '../frame/dot.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { gameSecondsToFirstFrame } from '../time.ts';
@@ -27,9 +28,8 @@ const CASES: Record<string, TeamInput> = {
   ),
 };
 const S = 2;
-/** 定義の S2 のクールタイム（撮る前の仮の値 20 秒）。発動は時刻に達した最初のフレーム */
-const S2_PERIOD = gameSecondsToFirstFrame(20);
-const ONE_SECOND = gameSecondsToFirstFrame(1);
+/** 定義の S2 のクールタイム（録画で読んだ 30 秒）。発動は時刻に達した最初のフレーム */
+const S2_PERIOD = gameSecondsToFirstFrame(30);
 
 describe.each(Object.entries(CASES))('編成: %s', (_name, input) => {
   const plan = planTeamRun(input);
@@ -50,20 +50,21 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, input) => {
     expect(starts[0]).toBe(0);
     expect(starts[1]).toBe(S2_PERIOD + 1);
     starts.slice(2).forEach((f, k) => expect(f - starts[k + 1]!).toBe(S2_PERIOD));
-    expect(starts.length).toBeGreaterThanOrEqual(9);
+    expect(starts.length).toBe(6);
   });
 
-  it('ticks Sakura Petals every second from 1 s after the start of battle and each cooldown fire', () => {
+  it('ticks Sakura Petals on application and every second from 1.5 s later, at the start of battle and each cooldown fire', () => {
     const ticks = hitsOf('skill2').map((h) => h.frame);
-    // 戦闘開始の付与の 15 秒（15 tick）は次の発動（20 秒）より前に切れる
+    // 戦闘開始の付与の 15 秒（15 tick）は次の発動（30 秒）より前に切れる
     const first = ticks.filter((f) => f < S2_PERIOD);
     expect(first.length).toBe(15);
-    expect(first[0]).toBe(ONE_SECOND);
-    // クールタイムの発動は 1 パス目の記録のフレーム（周期の発火）から 1 秒後
+    expect(first[0]).toBe(0);
+    // 刻みは持続ダメージの atApplication の形（frame/dot.ts）
+    expect(first).toEqual(dotTickFrames([0], 1, 15, S2_PERIOD, 'atApplication'));
+    // クールタイムの発動は 1 パス目の記録のフレーム（周期の発火）に付く
     const next = ticks.filter((f) => f >= S2_PERIOD && f < 2 * S2_PERIOD);
     expect(next.length).toBe(15);
-    expect(next[0]! - S2_PERIOD).toBeGreaterThanOrEqual(ONE_SECOND - 1);
-    expect(next[0]! - S2_PERIOD).toBeLessThanOrEqual(ONE_SECOND + 1);
+    expect(next[0]).toBe(S2_PERIOD);
   });
 
   it('stacks the Burst sustained damage once per Burst hit, up to 10', () => {
