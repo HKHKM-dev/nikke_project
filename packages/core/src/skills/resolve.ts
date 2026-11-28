@@ -1748,6 +1748,7 @@ function resolveWeaponChange(
         ? { firstShotAfterSwapFrames: effect.firstShotAfterSwapFrames }
         : {}),
       ...(effect.aimedSwapNoAimOut ? { aimedSwapNoAimOut: true as const } : {}),
+      ...(effect.swapAtActivation ? { swapAtActivation: true as const } : {}),
       ...(effect.returnFirstShotFrames !== undefined ? { returnFirstShotFrames: effect.returnFirstShotFrames } : {}),
       ...(effect.returnCooldownFrames !== undefined ? { returnCooldownFrames: effect.returnCooldownFrames } : {}),
       ...(effect.infiniteAmmo ? { infiniteAmmo: true as const } : {}),

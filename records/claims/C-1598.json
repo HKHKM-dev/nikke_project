@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
   "basis": "`1428-08`・`1429-09`・`1429-10`。V-0888",
-  "model": "data/skills/102.json の burst の effects[0]（firstShotAfterSwapFrames 114・aimedSwapNoAimOut）。持ち替えの時の状態の分け方は frame/shooter.ts の weaponFreeFrameAtSwap",
+  "model": "data/skills/102.json の burst の effects[0]（firstShotAfterSwapFrames 119・aimedSwapNoAimOut・swapAtActivation）。持ち替えの時の状態の分け方は frame/shooter.ts の weaponFreeFrameAtSwap",
   "replaces": ["C-1567"],
   "updated": "2026-11-28",
   "subject": {

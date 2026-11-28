@@ -44,6 +44,7 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
       'firstShotDelayFrames',
       'firstShotAfterSwapFrames',
       'aimedSwapNoAimOut',
+      'swapAtActivation',
       'returnFirstShotFrames',
       'returnCooldownFrames',
       'infiniteAmmo',
@@ -158,6 +159,13 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
       fail(`${path}.aimedSwapNoAimOut`, 'aimedSwapNoAimOut needs firstShotAfterSwapFrames');
     }
     effect.aimedSwapNoAimOut = true;
+  }
+  if (v.swapAtActivation !== undefined) {
+    parseTrue(v.swapAtActivation, `${path}.swapAtActivation`);
+    if (effect.firstShotAfterSwapFrames === undefined) {
+      fail(`${path}.swapAtActivation`, 'swapAtActivation needs firstShotAfterSwapFrames');
+    }
+    effect.swapAtActivation = true;
   }
   // 撃ち切りで戻った後の基礎の武器の最初の発までの待ち（plan/design-snow-white.md 8.1 節の論点 4）
   if (v.returnFirstShotFrames !== undefined) {

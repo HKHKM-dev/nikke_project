@@ -2214,6 +2214,12 @@ export type WeaponChangeEffect = {
    */
   aimedSwapNoAimOut?: true;
   /**
+   * 同: 持ち替えを、この変更を起こした発動がフルバーストに入るときも窓の始まりでなく、変更の窓が射手に見える最初のフレームにする
+   * （マクスウェルのバーストは、照準の左の残弾の箱が III のタイマーの 00.00 の 4〜5f 前に変更後の武器に替わる。C-1598。
+   * plan/design-maxwell-swap.md 3 節）。firstShotAfterSwapFrames が要る
+   */
+  swapAtActivation?: true;
+  /**
    * 撃ち切りで終わる変更（maxAmmoRef）の、変更後の武器の最後の弾丸を撃ったフレームから、基礎の武器の最初の発までのフレーム
    * （即値。録画で読む。plan/design-snow-white.md 8.1 節の論点 4）。基礎の武器は満タンで戻る（frame/shooter.ts の resumeShooter）のは
    * 同じで、待ちだけを替える。省略は resumeShooter の待ち（リロードの明けの 1 発目の遅延）。maxAmmoRef の変更にだけ書ける

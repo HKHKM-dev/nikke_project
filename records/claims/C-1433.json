@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`1300-15`・`1300-18`・`1301-15`・`1301-18`。V-0824",
-  "model": "反映（data/skills/102.json の burst の effects[0]（weaponChange・burstUse・chargeTimeSeconds 2・fullChargeDamage 300・maxAmmoRef 2・pierce・firstShotAfterSwapFrames 114・aimedSwapNoAimOut）。持ち替えの時の基礎の SR の状態による違いは C-1598）",
+  "model": "反映（data/skills/102.json の burst の effects[0]（weaponChange・burstUse・chargeTimeSeconds 2・fullChargeDamage 300・maxAmmoRef 2・pierce・firstShotAfterSwapFrames 119・aimedSwapNoAimOut・swapAtActivation）。持ち替えの時の基礎の SR の状態による違いは C-1598）",
   "replaces": [],
   "updated": "2026-11-28",
   "subject": {

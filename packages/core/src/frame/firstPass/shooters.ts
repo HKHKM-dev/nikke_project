@@ -167,11 +167,14 @@ export function createShooters({
   };
   /**
    * フレーム f に始まった枠 i の使用武器変更の最初の発のフレーム（plan/design-red-hood.md 7.1 節の論点 13。V-0639）。
-   * 持ち替えは、変更を開いた発動（効果の発火が f 以前の、枠 i の最後の発動）がフルバーストに入るなら窓の始まり、ほかは f。持ち替えの時の
-   * 基礎の武器の状態で武器が空くフレーム（frame/shooter.ts の weaponFreeFrameAtSwap）から after を数える
+   * 持ち替えは、変更を開いた発動（効果の発火が f 以前の、枠 i の最後の発動）がフルバーストに入るなら窓の始まり、ほかは f
+   * （weapon.swapAtActivation ならいつも f）。持ち替えの時の基礎の武器の状態で武器が空くフレーム（frame/shooter.ts の
+   * weaponFreeFrameAtSwap）から firstShotAfterSwapFrames を数える
    */
-  const firstShotAfterSwap = (i: number, f: number, after: number, aimedNoAimOut: boolean): number => {
-    const opened = activationsOf().findLast((a) => a.slotIndex === i && effectFrameOf(a) <= f);
+  const firstShotAfterSwap = (i: number, f: number, weapon: ChangedWeapon, after: number): number => {
+    const opened = weapon.swapAtActivation
+      ? undefined
+      : activationsOf().findLast((a) => a.slotIndex === i && effectFrameOf(a) <= f);
     const swap = opened?.startsFullBurst ? Math.max(f, hexagonFrameOf(opened)) : f;
     const base = slots[i]!.character.shot;
     const free = weaponFreeFrameAtSwap(
@@ -180,7 +183,7 @@ export function createShooters({
       swap,
       model,
       isChargeWeapon(base),
-      aimedNoAimOut,
+      weapon.aimedSwapNoAimOut === true,
     );
     return free + after;
   };
@@ -206,8 +209,7 @@ export function createShooters({
       // 持ち替え（フルバーストに入る発動なら窓の始まり）の時の
       // 基礎の武器の状態で、最初の発を決める（plan/design-red-hood.md 7.1 節の論点 13。V-0639）
       else if (params.weapon.firstShotAfterSwapFrames !== undefined) {
-        const { firstShotAfterSwapFrames, aimedSwapNoAimOut } = params.weapon;
-        const first = firstShotAfterSwap(i, f, firstShotAfterSwapFrames, aimedSwapNoAimOut === true);
+        const first = firstShotAfterSwap(i, f, params.weapon, params.weapon.firstShotAfterSwapFrames);
         changed.wait = Math.max(0, first - f);
       }
     } else {

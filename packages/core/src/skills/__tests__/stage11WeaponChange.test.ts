@@ -59,16 +59,14 @@ describe('語彙の検証', () => {
     );
   });
 
-  it('accepts aimedSwapNoAimOut only as true with firstShotAfterSwapFrames', () => {
+  it.each(['aimedSwapNoAimOut', 'swapAtActivation'])('accepts %s only as true with firstShotAfterSwapFrames', (key) => {
     const { firstShotDelayFrames: _delay, ...base } = change;
-    const swap = { ...base, firstShotAfterSwapFrames: 114 };
-    expect(() => parseSkillDefinition(withSkill1(warmUp, { ...swap, aimedSwapNoAimOut: true }))).not.toThrow();
-    expect(() => parseSkillDefinition(withSkill1(warmUp, { ...base, aimedSwapNoAimOut: true }))).toThrow(
-      /aimedSwapNoAimOut needs firstShotAfterSwapFrames/,
+    const swap = { ...base, firstShotAfterSwapFrames: 119 };
+    expect(() => parseSkillDefinition(withSkill1(warmUp, { ...swap, [key]: true }))).not.toThrow();
+    expect(() => parseSkillDefinition(withSkill1(warmUp, { ...base, [key]: true }))).toThrow(
+      new RegExp(`${key} needs firstShotAfterSwapFrames`),
     );
-    expect(() => parseSkillDefinition(withSkill1(warmUp, { ...swap, aimedSwapNoAimOut: false }))).toThrow(
-      /aimedSwapNoAimOut/,
-    );
+    expect(() => parseSkillDefinition(withSkill1(warmUp, { ...swap, [key]: false }))).toThrow(new RegExp(key));
   });
 
   it('allows { weaponChangeEnd } only in ammoDecrease, which targets self only', () => {
