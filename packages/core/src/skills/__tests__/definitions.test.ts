@@ -80,7 +80,7 @@ const VALUE_LIMITS: Partial<Record<string, number>> = {
  * 上の上限を超える値（resourceId:スロット:ref → 上限）。ディーゼル：ウィンタースイーツ: S1 のクライマックスの持続ダメージ▲は
  * Lv10 で 235.03%、S2 のフルチャージの持続ダメージ▲は 318.14%。リバーレリオ: S2 の激流の攻撃ダメージ▲は Lv10 で 231%（C-1237）。
  * ミルク：ブルーミングバニー: バーストの貫通ダメージ▲は Lv10 で 117.64%・攻撃力▲は 220%。E.H.: バーストの攻撃力▲は Lv10 で 430.05%。
- * メイデン: S2 のクリティカルダメージ▲は Lv10 で 152.84%
+ * メイデン: S2 のクリティカルダメージ▲は Lv10 で 152.84%。ミカ：スノーバディ: S2 のバーストゲージのチャージ速度▲は Lv10 で 300%
  */
 const VALUE_LIMIT_EXCEPTIONS: Partial<Record<string, number>> = {
   '75:skill1:5': 300,
@@ -90,6 +90,7 @@ const VALUE_LIMIT_EXCEPTIONS: Partial<Record<string, number>> = {
   '143:burst:3': 300,
   '262:skill2:1': 300,
   '181:skill2:2': 200,
+  '62:skill2:3': 400,
 };
 
 /** 状態の中身の項目が説明文を指す ref（stat の ref・最大スタック数▲の amountRef・スキルのクールタイム▼の percentRef） */

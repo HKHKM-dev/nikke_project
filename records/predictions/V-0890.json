@@ -1,0 +1,232 @@
+{
+  "verification": "V-0890",
+  "note": "撮影（ミカ：スノーバディ単騎・操作）の予測。灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オート射撃 ON・オートバースト ON。単騎なのでバーストは I だけで、チェーンは毎回時間切れになる",
+  "team": [
+    {
+      "rid": 62,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（命中 120 回ごとに整理整頓 1 段（10 段・15 秒）、命中 150 回ごとにスタック可能バフに 1 段足す（自分の整理整頓にも足す）、整理整頓のフルスタックの間は最大装弾数 40%▲、ゲージのチャージ速度 300%▲（持続）、バーストで攻撃力▲（発動者基準 39.93%・5 秒））"
+    },
+    {
+      "id": "H-nostack",
+      "note": "スタック量▲が自分の整理整頓に足されない（フルスタックは命中 1200 回目）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 62,
+            "skill": "skill2",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-nogauge",
+      "note": "ゲージのチャージ速度▲が付かない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 62,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-noatk",
+      "note": "バーストの攻撃力▲が付かない（対照）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 62,
+            "skill": "burst",
+            "index": 0
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "magazines",
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 1,
+        "count": 14
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "戦闘の始めから 14 本のマガジンの発数（照準の横の残弾。リロード明けの残弾が 168 になる最初のマガジンで、フルスタックの時刻を見る）",
+      "observations": ["1430-01", "1431-01"]
+    },
+    {
+      "id": "gauge-full-0",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 20
+      },
+      "note": "最初の満タンのフレーム（BURST バーが消えたフレーム）"
+    },
+    {
+      "id": "gauge-shots-0",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "戦闘の始まりから 1 回目の満タンまでに撃った発の数（読んだ後に足した指標。観測値 1430-03・1431-03 と同じ形）",
+      "observations": ["1430-03", "1431-03"]
+    },
+    {
+      "id": "refill-1",
+      "model": "sim",
+      "metric": "chainTimeoutToGaugeFullShots",
+      "args": {
+        "slot": 1,
+        "n": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "note": "2 回目のチェーン切れから次の満タンまでの発の数"
+    },
+    {
+      "id": "refill-2",
+      "model": "sim",
+      "metric": "chainTimeoutToGaugeFullShots",
+      "args": {
+        "slot": 1,
+        "n": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "note": "3 回目のチェーン切れから次の満タンまでの発の数"
+    },
+    {
+      "id": "hit-out",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "rel": 0.01
+      },
+      "note": "バーストの前の胴体・会心なしの 1 ヒット",
+      "observations": ["1430-07", "1431-06"]
+    },
+    {
+      "id": "hit-in",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "rel": 0.01
+      },
+      "note": "1 回目のバーストの攻撃力▲の窓の中の、胴体・会心なしの 1 ヒット",
+      "observations": ["1430-08", "1431-07"]
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-28",
+    "commit": "30571c2b866226f888446a27adfba074a978fabc",
+    "values": {
+      "H1": {
+        "magazines": [120, 120, 120, 120, 120, 120, 120, 168, 168, 168, 168, 168, 168, 168],
+        "gauge-full-0": 461,
+        "gauge-shots-0": 127,
+        "refill-1": 126,
+        "refill-2": 126,
+        "hit-out": 11679.525000000001,
+        "hit-in": 16347.825
+      },
+      "H-nostack": {
+        "magazines": [120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 168, 168, 168],
+        "gauge-full-0": 461,
+        "gauge-shots-0": 127,
+        "refill-1": 126,
+        "refill-2": 126,
+        "hit-out": 11679.525000000001,
+        "hit-in": 16347.825
+      },
+      "H-nogauge": {
+        "magazines": [120, 120, 120, 120, 120, 120, 120, 168, 168, 168, 168, 168, 168, 168],
+        "gauge-full-0": 1807,
+        "gauge-shots-0": 505,
+        "refill-1": 610,
+        "refill-2": 515,
+        "hit-out": 11679.525000000001,
+        "hit-in": 11679.525000000001
+      },
+      "H-noatk": {
+        "magazines": [120, 120, 120, 120, 120, 120, 120, 168, 168, 168, 168, 168, 168, 168],
+        "gauge-full-0": 461,
+        "gauge-shots-0": 127,
+        "refill-1": 126,
+        "refill-2": 126,
+        "hit-out": 11679.525000000001,
+        "hit-in": 11679.525000000001
+      }
+    }
+  }
+}

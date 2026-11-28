@@ -116,6 +116,8 @@ export const NAMED_STATES = {
   mileage: { name: { ja: 'マイレージ', en: 'Mileage' }, holder: 'ally' },
   /** ショッピング（ルピー：ウィンターショッパーの S2） */
   shopping: { name: { ja: 'ショッピング', en: 'Shopping' }, holder: 'ally' },
+  /** 整理整頓（ミカ：スノーバディの S1。同じ S1 の「整理整頓のフルスタック状態なら」が読む） */
+  tidyingUp: { name: { ja: '整理整頓', en: 'Tidying Up' }, holder: 'ally' },
   /** 熱血（モランの宝物版の S1） */
   fervor: { name: { ja: '熱血', en: 'Fervor' }, holder: 'ally' },
   /**

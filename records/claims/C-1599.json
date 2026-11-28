@@ -1,0 +1,20 @@
+{
+  "id": "C-1599",
+  "text": "ミカ：スノーバディの S1 の整理整頓（通常攻撃の命中 値 01 回ごと（Lv10 で 120 回）に味方全体へ 1 段・10 スタック・15 秒）には、S2 の命中 値 01 回ごと（Lv10 で 150 回）のスタック可能バフ効果のスタック量 1 個▲が自分の整理整頓にも 1 段足し、命中 720 回目でフルスタックになる（足さなければ 1200 回目）。自分が整理整頓のフルスタックの間、最大装弾数 値 05 %▲（Lv10 で 40%。C-0017 の形で 120 → 168）が効き、付いた時の残弾は増やさず、次のリロードから 168 発を込める。単騎・オート射撃の 2 本で、外れのために命中 720 回目が 7 本目のマガジンの中に来て、8 本目のマガジンから 168 発になり、その後は切れない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1430-01`・`1431-01`。V-0890",
+  "model": "data/skills/62.json の skill1 の state（tidyingUp・命中 120 回ごと・allies・10 スタック・15 秒）と passive（allies・maxAmmo・while の tidyingUp の full）、skill2 の stackChange（allStackable・命中 150 回ごと・allies）。skills/states.ts の tidyingUp",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": [
+      "data/skills/62.json の skill1 の effects[0]",
+      "data/skills/62.json の skill1 の effects[1]",
+      "data/skills/62.json の skill2 の effects[0]"
+    ]
+  },
+  "decidedOn": [],
+  "parameterFree": "値（120 回・150 回・10 スタック・15 秒・1 個・40%）は説明文。スタック量▲の足し方は C-1182・C-1505、最大装弾数▲の丸めと付いた時の残弾は C-0017・C-0364"
+}
