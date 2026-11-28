@@ -119,6 +119,23 @@ describe('録画で起きうるか（2 節の 4）', () => {
     expect(impossibleReason(burst, solo)).toBe('単騎（C-0024）');
   });
 
+  it('drops team-burst triggers (allyBurstUse included) only in a single-unit recording (C-0024)', () => {
+    const element = (trigger: string): MinimalElement => ({
+      slot: 1,
+      name: 'n',
+      places: [],
+      type: 'effect',
+      claims: [],
+      shape: { kind: 'buff', trigger },
+    });
+    const solo = rec('0045');
+    const team = rec('0162');
+    for (const trigger of ['allyBurstUse', 'fullBurstStart', 'fullBurstEnd', 'burstStage2Enter', 'burstStage3Enter']) {
+      expect(impossibleReason(element(trigger), solo)).toBe('単騎（C-0024）');
+      expect(impossibleReason(element(trigger), team)).toBeUndefined();
+    }
+  });
+
   it('drops shot-triggered elements of a slot that did not fire', () => {
     const r = rec('0248');
     const shot = elementsOf(r, ctx).find(

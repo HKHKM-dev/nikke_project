@@ -1,5 +1,5 @@
 import { DndContext, pointerWithin } from '@dnd-kit/core';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DamageTotalPanel } from '../components/DamageTotalPanel.tsx';
 import { ErrorBoundary } from '../components/ErrorBoundary.tsx';
 import { NotesSummary } from '../components/NotesSummary.tsx';
@@ -7,6 +7,7 @@ import { TeamSettingsForm } from '../components/TeamSettingsForm.tsx';
 import type { ViewProps } from './ViewProps.ts';
 import { CharacterTray } from '../components/modern/CharacterTray.tsx';
 import { preloadCharacterImages } from '../components/modern/CharacterVisual.tsx';
+import { useAwaitingPlacement } from '../components/modern/useAwaitingPlacement.ts';
 import { useSlotFit } from '../components/modern/useSlotFit.ts';
 import { ModernSlotCard } from '../components/modern/ModernSlotCard.tsx';
 import { PartyPreviewRow, PartyRowLabel } from '../components/modern/PartyPreviewRow.tsx';
@@ -58,27 +59,10 @@ export function ModernView({
   // 育成モーダルを開いているスロット（null なら閉じた状態）
   const [editingSlotIndex, setEditingSlotIndex] = useState<number | null>(null);
 
-  // 待っている間に、スロットのほか（一覧のニケ・ボタン・アイコン・プルダウンメニュー・入力欄・何もないところ）をクリックしたら、
-  // 待つのをやめるだけにする（クリックした部品は反応させない。先に document で受けて止める。プルダウンメニューが開く・入力欄に
-  // フォーカスが移るのは押した時（mousedown）なので、それも止める。編成の番号と選んでいない編成の行は、マウスでは離した時（pointerup）に
-  // 選ぶので、押した時（pointerdown）も止める）。置けるのは選んでいる編成のスロット（待っている印の付いたカード）だけで、そのクリックは置く
-  // （handlePlacePending）。選んでいない編成の行のカードは、押すとその編成を選ぶので止める
-  useEffect(() => {
-    if (pendingId === null) return;
-    // 待ち始めたクリック（一覧のニケ）は、document の capture の段を過ぎてから付けるので、ここには来ない
-    const blockOutsideSlots = (event: MouseEvent) => {
-      const target = event.target;
-      if (target instanceof Element && target.closest('.modern-slot-awaiting')) return;
-      event.preventDefault();
-      event.stopPropagation();
-      if (event.type === 'click') setPendingId(null);
-    };
-    const types = ['pointerdown', 'mousedown', 'click'] as const;
-    for (const type of types) document.addEventListener(type, blockOutsideSlots, true);
-    return () => {
-      for (const type of types) document.removeEventListener(type, blockOutsideSlots, true);
-    };
-  }, [pendingId]);
+  // 待っている間に、スロットのほかをクリックしたら待つのをやめるだけにする。選んでいる編成のスロット（待っている印の付いたカード）の
+  // クリックは置く（handlePlacePending）
+  const cancelPending = useCallback(() => setPendingId(null), []);
+  useAwaitingPlacement(pendingId !== null, cancelPending);
 
   // スロット 5 枚を画面の幅に収める（足りなければ立ち絵を縮める）
   const slotsGridRef = useRef<HTMLElement>(null);

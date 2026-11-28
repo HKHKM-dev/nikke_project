@@ -114,6 +114,35 @@ describe('useBatchComputation', () => {
     expect(result.current.results!.map(totalOf)).toEqual([expect.stringContaining('Worker を作れません')]);
   });
 
+  it('waits out an answer of the old inputs and computes the new inputs from the start', () => {
+    const { result, rerender } = renderBatch(inputsOf(1, 2), 1);
+    expect(postedTotals()).toEqual([[1]]);
+    rerender({ inputs: inputsOf(3) });
+    // Worker は前の入力の 1 を計算中なので、新しい入力はまだ送らない（Worker に待ちの列を積まない）
+    expect(postedTotals()).toEqual([[1]]);
+    expect(result.current.computing).toBe(true);
+    // 前の入力の答えが後から届いても、新しい入力の結果にはしない。2 は送らず、3 を送る
+    act(() => FakeWorker.instances[0]!.reply());
+    expect(postedTotals()).toEqual([[1, 3]]);
+    expect(result.current.computing).toBe(true);
+    expect(result.current.results).toBeNull();
+    act(() => FakeWorker.instances[0]!.reply());
+    expect(result.current.computing).toBe(false);
+    expect(result.current.results!.map(totalOf)).toEqual([3]);
+  });
+
+  it('does not do again the input of the old inputs when its worker stops after the inputs change', () => {
+    const { result, rerender } = renderBatch(inputsOf(1), 1);
+    rerender({ inputs: inputsOf(2) });
+    act(() => FakeWorker.instances[0]!.crash());
+    act(() => vi.advanceTimersByTime(WORKER_RESTART_DELAY_MS));
+    // 作り直した Worker には、前の入力の 1 ではなく新しい入力の 2 を送る
+    expect(postedTotals()).toEqual([[1], [2]]);
+    act(() => liveWorkers()[0]!.reply());
+    expect(result.current.computing).toBe(false);
+    expect(result.current.results!.map(totalOf)).toEqual([2]);
+  });
+
   it('throws the workers away on unmount', () => {
     const { unmount } = renderBatch(inputsOf(1, 2), 2);
     expect(liveWorkers()).toHaveLength(2);
