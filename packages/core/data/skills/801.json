@@ -1,0 +1,74 @@
+{
+  "formatVersion": 1,
+  "resourceId": 801,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルチャージして攻撃した時の、自分への血の魔人（攻撃力▲・5 スタック・3 秒）は未対応（撮影の機会が無い）",
+          "en": "Blood Fiend on self (ATK up, 5 stacks, 3 s) on full-charge attacks is not modeled (there has been no chance to record it)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "fullChargeShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "通常攻撃で 18 回攻撃した時、血の魔人のフルスタック状態なら自分に付く弾丸チャージ（100%・戦闘中 1 回）は未対応（撮影の機会が無い）",
+          "en": "The ammo refill (100%, once per battle) on self after 18 normal attacks while Blood Fiend is at full stacks is not modeled (there has been no chance to record it)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "ammoRefill",
+            "target": "self",
+            "trigger": "normalShot"
+          }
+        },
+        {
+          "ja": "同じきっかけの自分の爆発範囲▲（10 秒）は、敵 1 体では複数の敵へのヒットを増やすだけで起きない",
+          "en": "The explosion range up on self (10 s) from the same trigger only adds hits on multiple enemies, so it does nothing against a single enemy",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "normalShot"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "最終攻撃力が最も高い敵 1 機へのバーストスキルダメージは未対応（撮影の機会が無い）",
+          "en": "The burst skill damage on the 1 enemy with the highest final ATK is not modeled (there has been no chance to record it)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "burstDamage",
+            "target": "enemy",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "自分が血の魔人のフルスタック状態の時の、同じ敵への追加ダメージは未対応（撮影の機会が無い）",
+          "en": "The additional damage on the same enemy while Blood Fiend is at full stacks is not modeled (there has been no chance to record it)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "target": "enemy",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

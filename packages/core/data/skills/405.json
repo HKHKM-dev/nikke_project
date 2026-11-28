@@ -1,0 +1,159 @@
+{
+  "formatVersion": 1,
+  "resourceId": 405,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "戦闘開始時の、自分への攻撃力▲（持続）は未対応（撮影の機会が無い）",
+          "en": "The ATK up on self (permanent) at battle start is not modeled (there has been no chance to record it)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "battleStart"
+          }
+        },
+        {
+          "ja": "フルチャージした時、スウィフトキャロット状態でなければ自分に付く通常攻撃ダメージ倍率▲（1 発間）は未対応（撮影の機会が無い）",
+          "en": "The normal attack damage multiplier up on self (1 shot) on full charge while not in Swift Carrot is not modeled (there has been no chance to record it)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "normalAttackDamage",
+            "target": "self",
+            "trigger": "fullChargeShot"
+          }
+        },
+        {
+          "ja": "同じきっかけの自分へのチャージダメージ▲（1 発間）は未対応（撮影の機会が無い）",
+          "en": "The charge damage up on self (1 shot) from the same trigger is not modeled (there has been no chance to record it)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "chargeDamage",
+            "target": "self",
+            "trigger": "fullChargeShot"
+          }
+        },
+        {
+          "ja": "フルチャージ状態を 1 秒以上維持した時のバニーモードの切り替えは、オートの射撃ではフルチャージを保たないので起きない（要件 4.2 節）。戦闘開始時にバニーモード：スタンスが付き、戦闘の終わりまでスタンスのまま",
+          "en": "Switching Bunny Mode after holding full charge for 1 s or more never occurs because auto fire does not hold full charge (requirements 4.2). Bunny Mode: Stance is applied at battle start and stays until the end of the battle",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "state",
+            "target": "self",
+            "trigger": "unknown"
+          },
+          "claims": ["C-0839"]
+        },
+        {
+          "ja": "自分にバニーモード：エンゲージ（スタンス）が適用された時に、スタンス（エンゲージ）状態の味方全体へ同じ状態を広げる 2 行は、エンゲージへの切り替えが起きず、エンゲージ状態の味方が現れないので起きない（要件 4.2 節）",
+          "en": "The 2 lines that spread Bunny Mode: Engage (Stance) to all allies in Stance (Engage) when it is applied to self never occur, because the switch to Engage never happens and no ally is ever in Engage (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "state",
+            "target": "allies",
+            "trigger": "applied"
+          },
+          "claims": ["C-0839"]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "バニーモード：スタンス状態の時のみの、自分へのエンハンスバレットのクリティカル確率▲（持続・解除不可）は未対応（撮影の機会が無い）",
+          "en": "The crit rate up from Enhance Bullet on self (permanent, cannot be removed) only while in Bunny Mode: Stance is not modeled (there has been no chance to record it)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "passive",
+            "stat": "critRate",
+            "target": "self"
+          }
+        },
+        {
+          "ja": "同じエンハンスバレットのクリティカルダメージ▲（持続・解除不可）は未対応（撮影の機会が無い）",
+          "en": "The crit damage up from the same Enhance Bullet (permanent, cannot be removed) is not modeled (there has been no chance to record it)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "passive",
+            "stat": "critDamage",
+            "target": "self"
+          }
+        },
+        {
+          "ja": "バーストスキル使用時の、自分へのスウィフトキャロット（使用武器変更・5 秒）は未対応（撮影の機会が無い。S2 のスロットからの変更で、変更後の武器のレートがデータに無い）",
+          "en": "Swift Carrot on self (weapon change, 5 s) on burst skill use is not modeled (there has been no chance to record it; it is a change from the S2 slot, and the data has no fire rate for the changed weapon)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "weaponChange",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "バニーモード：エンゲージ状態の時のみの、自分へのノイズバレット（通常攻撃とスウィフトキャロットを防御力無視ダメージにする）は、エンゲージにならない（S1 の notes）ので効かない（要件 4.2 節）",
+          "en": "Noise Bullet on self (turns normal attacks and Swift Carrot into DEF-ignoring damage) only while in Bunny Mode: Engage never applies because Engage never occurs (S1 notes; requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "passive",
+            "stat": "unknown",
+            "target": "self"
+          },
+          "claims": ["C-0839"]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分への攻撃力▲（5 秒）は未対応（撮影の機会が無い）",
+          "en": "The ATK up on self (5 s) is not modeled (there has been no chance to record it)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "敵全体へのバーストスキルダメージは未対応（撮影の機会が無い）",
+          "en": "The burst skill damage on all enemies is not modeled (there has been no chance to record it)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "burstDamage",
+            "target": "enemy",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "自分がバニーモード：スタンス状態の時の、同じ敵への追加ダメージは未対応（撮影の機会が無い）",
+          "en": "The additional damage on the same enemy while in Bunny Mode: Stance is not modeled (there has been no chance to record it)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "target": "enemy",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "自分がバニーモード：エンゲージ状態の時の、同じ敵への防御力無視ダメージは、エンゲージにならない（S1 の notes）ので起きない（要件 4.2 節）",
+          "en": "The DEF-ignoring damage on the same enemy while in Bunny Mode: Engage never occurs because Engage never occurs (S1 notes; requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "damage",
+            "target": "enemy",
+            "trigger": "burstUse"
+          },
+          "claims": ["C-0839"]
+        }
+      ]
+    }
+  }
+}
