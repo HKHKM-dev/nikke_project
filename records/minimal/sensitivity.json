@@ -38495,6 +38495,230 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "1439-25",
+      "element": "バイパー skill1.effects[1]",
+      "key": "940f0f181e11d577",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1439-25",
+      "element": "バイパー skill2.effects[0]",
+      "key": "940f0f181e11d577",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1439-26",
+      "element": "バイパー skill1.effects[1]",
+      "key": "94aa689972f8f0f2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1439-26",
+      "element": "バイパー skill2.effects[0]",
+      "key": "94aa689972f8f0f2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1439-27",
+      "element": "バイパー skill1.effects[1]",
+      "key": "302d2549b4de74d8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1439-27",
+      "element": "バイパー skill2.effects[0]",
+      "key": "302d2549b4de74d8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1439-28",
+      "element": "バイパー skill1.effects[1]",
+      "key": "0ef70ed07444f7d7",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1439-28",
+      "element": "バイパー skill2.effects[0]",
+      "key": "0ef70ed07444f7d7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1439-29",
+      "element": "バイパー skill1.effects[1]",
+      "key": "c6d502fddb1ee792",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1439-29",
+      "element": "バイパー skill2.effects[0]",
+      "key": "c6d502fddb1ee792",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1439-30",
+      "element": "バイパー skill1.effects[1]",
+      "key": "49426bdae445254d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1439-30",
+      "element": "バイパー skill2.effects[0]",
+      "key": "49426bdae445254d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1439-31",
+      "element": "バイパー skill1.effects[1]",
+      "key": "fa2613e9d1dbf5ea",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1439-31",
+      "element": "バイパー skill2.effects[0]",
+      "key": "fa2613e9d1dbf5ea",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1440-25",
+      "element": "バイパー skill1.effects[1]",
+      "key": "8047ec90bdbba9fb",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1440-25",
+      "element": "バイパー skill2.effects[0]",
+      "key": "8047ec90bdbba9fb",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1440-26",
+      "element": "バイパー skill1.effects[1]",
+      "key": "e90157a17cc63886",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1440-26",
+      "element": "バイパー skill2.effects[0]",
+      "key": "e90157a17cc63886",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1440-27",
+      "element": "バイパー skill1.effects[1]",
+      "key": "9e4b0ae105ead9fc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1440-27",
+      "element": "バイパー skill2.effects[0]",
+      "key": "9e4b0ae105ead9fc",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1440-28",
+      "element": "バイパー skill1.effects[1]",
+      "key": "7de76d0877689053",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1440-28",
+      "element": "バイパー skill2.effects[0]",
+      "key": "7de76d0877689053",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1440-29",
+      "element": "バイパー skill1.effects[1]",
+      "key": "9f712ee932c371a2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1440-29",
+      "element": "バイパー skill2.effects[0]",
+      "key": "9f712ee932c371a2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1440-30",
+      "element": "バイパー skill1.effects[1]",
+      "key": "2388e0a23092f355",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1440-30",
+      "element": "バイパー skill2.effects[0]",
+      "key": "2388e0a23092f355",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1440-31",
+      "element": "バイパー skill1.effects[1]",
+      "key": "3923d9d4bc11f3b1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1440-31",
+      "element": "バイパー skill2.effects[0]",
+      "key": "3923d9d4bc11f3b1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }

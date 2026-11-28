@@ -15,7 +15,7 @@
 - 根拠の `0010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 1174・仮説 216・棄却 162・範囲外 2（計 1554）
+件数: 確定 1178・仮説 220・棄却 162・範囲外 2（計 1562）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -457,7 +457,7 @@
   - モデル側: いまのまま（1 パス目のチャージ武器の射手は、発射の後にチャージと解放の待ちだけを置いて次を撃つ（1 秒チャージで 82f）。フルチャージを保つ待ちは無い。frame/shooter.ts）。きっかけ「フルチャージ状態を 1 秒以上維持した時」は語彙に足さず、使い手の notes を前提の外にした（要件 4.2 節。ラプンツェル：ピュアグレイスの skill1.notes[1]、ラプンツェル：サンクチュアリの skill2.notes[0]・[1]）
   - 決めるのに使った録画: なし
   - 検証記録: V-0614
-  - 定義: `data/skills/143.json` の skill1 の notes[0]、`data/skills/143.json` の skill1 の notes[1]、`data/skills/143.json` の skill1 の notes[2]、`data/skills/143.json` の skill1 の notes[3]、`data/skills/143.json` の skill2 の notes[1]、`data/skills/143.json` の burst の notes[0]、`data/skills/226.json` の skill1 の notes[1]、`data/skills/226.json` の skill2 の notes[1]、`data/skills/473.json` の skill2 の notes[0]、`data/skills/473.json` の skill2 の notes[1]、`data/skills/521.json` の skill1 の notes[0]、`data/skills/521.json` の skill2 の effects[1]、`data/skills/521.json` の skill2 の notes[1]、`data/skills/521.json` の burst の notes[0]
+  - 定義: `data/skills/143.json` の skill1 の notes[0]、`data/skills/143.json` の skill1 の notes[1]、`data/skills/143.json` の skill1 の notes[2]、`data/skills/143.json` の skill1 の notes[3]、`data/skills/143.json` の skill2 の notes[1]、`data/skills/143.json` の burst の notes[0]、`data/skills/226.json` の skill1 の notes[1]、`data/skills/226.json` の skill2 の notes[1]、`data/skills/404.json` の skill1 の notes[0]、`data/skills/404.json` の skill1 の notes[1]、`data/skills/404.json` の skill2 の notes[0]、`data/skills/404.json` の skill2 の notes[1]、`data/skills/473.json` の skill2 の notes[0]、`data/skills/473.json` の skill2 の notes[1]、`data/skills/521.json` の skill1 の notes[0]、`data/skills/521.json` の skill2 の effects[1]、`data/skills/521.json` の skill2 の notes[1]、`data/skills/521.json` の burst の notes[0]
 - **C-0840** 射撃場 3 分モードの敵のジャンプ（狙えない窓）の始まりにチャージの途中だった、入力が UP のチャージ武器は、窓の始まりの約 8f 後（D）に満ちたことにして、満ちてから撃つまで（H。射撃姿勢維持型は stanceFrames の holdFrames（A2 24f・レイヴン 16f・紅蓮：ブラックシャドウ 1f）、ほかは 1f）の後に部分チャージで撃つ（チャージの進みが小さくても撃つ）。窓の始まりにチャージが満ちていた（満ちてから撃つまでの間か、そのフレームに撃つはずだった）ときは、窓の始まりに撃つ。押下チャージ型は部分チャージで撃たない。部分チャージの発の値は別の結論
   - 状態: 棄却・等級: 反復実測・更新日: 2026-11-09
   - 根拠: `0862-04`・`0862-05`・`0863-04`（アドミ単騎。H 1f。録画の窓で、窓の前の発 → 部分チャージの発 → 明けの後の発がモデルと 0〜2f の差）・`0864-05`・`0864-06`・`0865-05`・`0865-06`（A2 単騎。H 24f。増分で 0〜4f の差。飛ぶ時間の分）・`0122-31`（レイヴン単騎。H 16f。D を決めた後に、撮る前に固定した予測（V-0615）で読んだ録画で、1f の差）。部分チャージの発から明けまでが 110f − H になる読み: `0862-02`・`0863-02`・`0046-37`・`0055-31`・`0070-28`・`0071-24`・`0864-03`・`0865-03`・`0123-22`・`0122-28`。窓の始まりにチャージが満ちていた回: `0863-01`（アドミの 4 回目）・`0805-18`（紅蓮：ブラックシャドウ（操作）の 3 回目の窓。撃ってから明けまで約 118f）。D（8f）はアドミ・A2 の録画と、0815・0816・0077 のバーの 0 の点から明けまでの約 110f に合わせた値。V-0609・V-0610・V-0615 2026-11-09 棄却（V-0701）: 窓の始まりにチャージが満ちていた射撃姿勢維持型の発は、窓の始まりでなく、ふだんの刻みの時刻に出た（A2 単騎 9 本の 5 回目は窓の始まりの約 20f 後で、D より後。V-0697 の 4 回は約 2f 後）。前半（チャージの途中の枠の部分チャージの発）を C-1001 に引き継ぎ、後半を直して C-1000 に置き換えた
@@ -1702,7 +1702,7 @@
   - 合わせ込みの定数なし: 式の定数は説明文の値（エレグのブームインストールの防御力▼ 35.64%・ルドミラの S1 の 8.4%）と的の防御力 100 だけ。丸めの向きは 3 つの候補（四捨五入・切り上げ・丸めない）から選び、値を合わせていない
   - 置き換え: C-0688
   - 検証記録: V-0575
-  - 定義: `data/skills/61.json` の burst の effects[1]、`data/skills/212.json` の skill1 の effects[1]、`data/skills/291.json` の skill2 の effects[2]
+  - 定義: `data/skills/61.json` の burst の effects[1]、`data/skills/112.json` の burst の effects[1]、`data/skills/212.json` の skill1 の effects[1]、`data/skills/291.json` の skill2 の effects[2]
   - 最小構成の警告: 11 / 25 組（[minimal.md](minimal.md)）
 - **C-0791** 順番攻撃ダメージ▲（攻撃ダメージ▲と同じ和。C-0752）は、受けるダメージ▲とは別の乗数 (1 + Σ攻撃ダメージ▲ + Σ順番攻撃ダメージ▲) × (1 + Σ受けるダメージ▲) で掛かる（受けるダメージ▲は和に入らない）。確かめたのは、マリアン：クイーンの S1 の槍（受けるダメージ▲は自分の弱点露出）と、スノーホワイト：ヘビーアームズのフルアクティブの順番の攻撃（受けるダメージ▲は自分の S1）
   - 状態: 確定・等級: 厳密一致・更新日: 2026-10-31
@@ -1738,7 +1738,7 @@
   - モデル側: `frame/plan.ts` の `burstHitBuffs`（バーストのヒットは、撃つ側のバフも敵の側のデバフ（受けるダメージ▲・防御力▼）も発動の直前の値で見る。I・II の受け手にも同じ規則を当てる。plan/design-burst-landing.md 11 節）。根拠の観測値の比べる指定は、ヒットに乗った▲の有無に合わせ、乗らなかった回は鈴原サクラの S1 の▲を外したモデル、乗った回は▲をいつも付いている形に替えたモデルと比べる（モデルの鈴原サクラの▲の窓は実機と違う）
   - 決めるのに使った録画: 0799（仮説の出どころ）
   - 検証記録: V-0576
-  - 定義: `data/skills/61.json` の burst の effects[0]、`data/skills/212.json` の burst の effects[0]
+  - 定義: `data/skills/61.json` の burst の effects[0]、`data/skills/112.json` の burst の effects[0]、`data/skills/212.json` の burst の effects[0]
 - **C-0796** 発射体付着ダメージ▲は、攻撃ダメージ▲と 1 つの和 (1 + Σ攻撃ダメージ▲ + Σ発射体付着ダメージ▲) で付着のヒットに掛かる（別の乗数 (1 + Σ攻撃ダメージ▲) × (1 + Σ発射体付着ダメージ▲) ではない。発射体爆発ダメージ▲（C-0205）と同じ置き場所）。確かめたのは、ラピ：レッドフードの粘着榴弾の付着（攻撃ダメージ▲はクラウンのバーストと S2、付着▲はラピ：レッドフードの S2 の常時の▲）
   - 状態: 確定・等級: 厳密一致・更新日: 2026-10-31
   - 根拠: `0821-03`・`0822-03`（クラウンのバーストの尾の付着・受けるダメージ▲あり）・`0821-04`・`0822-04`（尾の付着のコア + 距離ボーナス・受けるダメージ▲なし）・`0821-05`・`0822-05`（リラックスの後の付着）・`0821-06`・`0822-06`（攻撃ダメージ▲の乗った付着と通常攻撃の和に分かれた増分の数。E1 で 8 個ずつ、E2 で 0 個）。どれもいまのモデル（同じ枠）と 1 未満の差で、別の乗数の値（11〜19% 大きい）は出ない。V-0581
@@ -4291,7 +4291,7 @@
   - モデル側: `data/skills/190.json` の skill1 の effects[0]（`timed`・`lastShot`・`target: "allies"`・`enemyDefenseDown`）。式は `damage.ts` の `defenceAfterDown`（通常攻撃と、`skills/burstDamage.ts` の `computeSkillHit` の倍率ダメージ・持続ダメージ。端数は四捨五入で整数にする。C-0790）。敵が持つ効果（`skills/holders.ts` の `isEnemyEffect`）で、バーストのヒットは発動の時点の値（`frame/plan.ts` の `burstHitBuffs`。C-0795）。最後の弾丸が外れた時に付かないのは入れていない（効果の `assumes`）
   - 決めるのに使った録画: なし
   - 検証記録: V-0433
-  - 定義: `data/skills/61.json` の burst の effects[1]、`data/skills/190.json` の skill1 の effects[0]、`data/skills/212.json` の skill1 の effects[1]
+  - 定義: `data/skills/61.json` の burst の effects[1]、`data/skills/112.json` の burst の effects[1]、`data/skills/190.json` の skill1 の effects[0]、`data/skills/212.json` の skill1 の effects[1]
 - **C-0557** アスカの S2 の「フルバーストタイムが発動した時、自分がバリア適用状態なら自分に有利コードの攻撃ダメージ 30.02%▲（10 秒）」は、ラムのバーストの味方全体のバリア（10 秒）が付いている時のフルバースト開始で付く。有利コードの的への 1 発の有利コードの倍率 1.1 に 0.3002 を足し（1.4002 倍）、フルバーストの間ずっと乗り、フルバーストの後には残らない。ラムのバーストのバリアは、付いた味方をバリア適用状態にする
   - 状態: 確定・等級: 厳密一致・更新日: 2026-10-17
   - 根拠: ラム（操作）・デルタ・アスカの風圧のタブの 2 本（録画 0461・0462）で、5 回のフルバーストのどれも、アスカの 1 ヒットが▲ありのモデルの値と差 1 未満: 1 回目の胴体 `0461-01`・`0462-01`、コア `0461-02`・`0462-02`、2〜5 回目のコア `0461-04`〜`0461-07`・`0462-04`〜`0462-07`（距離ボーナスの外の回も含む）。フルバーストの後の 1 ヒット `0461-03`・`0462-03`（対照）も合う。▲なし（H0）の値は 2 本のどこにも出ない。アスカの体力の表示のバリアは、ラムのバーストからフルバーストの開始をまたいで付いていた（2 本とも目で見た）。仮説は説明文から立て、予測は撮る前に出した（H1 は予測ファイル、H0 は検証記録）。V-0436
@@ -4371,7 +4371,7 @@
   - モデル側: `data/skills/833.json` の skill1 の effects[1]（heal・lowestHpRatio・targetCountRef 6）。並べ方は `skills/composition.ts` の fixedTargetsOf（枠の HP の割合の想定の低い順・同値は枠の若い順）
   - 決めるのに使った録画: なし
   - 検証記録: V-0438、V-0450
-  - 定義: `data/skills/833.json` の skill1 の effects[1]
+  - 定義: `data/skills/130.json` の skill1 の effects[0]、`data/skills/221.json` の skill1 の effects[0]、`data/skills/833.json` の skill1 の effects[1]
   - 等級の候補（機械）: 厳密一致
 - **C-0570** マナの S1「通常攻撃で 10 回攻撃した時、自分がマターガンマ状態なら味方全体にスキル発動者の最終最大 HP の X% 回復」は 1 回の回復で、マナの通常攻撃 10 発ごとに、HP が満タンの味方にも「回復効果が適用された時」を起こす
   - 状態: 確定・等級: 厳密一致・更新日: 2026-10-24
@@ -6684,7 +6684,7 @@
   - モデル側: 反映（`skills/states.ts` の debuff の印と、`skills/holders.ts` の removeDebuff の発火。ココアの定義 `data/skills/311.json` の burst の effects[0] と skill1 の effects[1]）。クレアの定義 `data/skills/842.json` の burst の effects[1]
   - 決めるのに使った録画: 0969（仮説の出どころ）、0970（仮説の出どころ）
   - 検証記録: V-0684、V-0686
-  - 定義: `data/skills/311.json` の skill1 の effects[1]、`data/skills/311.json` の burst の effects[0]、`data/skills/521.json` の skill2 の effects[0]、`data/skills/842.json` の burst の effects[1]
+  - 定義: `data/skills/311.json` の skill1 の effects[1]、`data/skills/311.json` の burst の effects[0]、`data/skills/521.json` の skill2 の effects[0]、`data/skills/532.json` の burst の effects[1]、`data/skills/842.json` の burst の effects[1]
 - **C-0980** ココア（311）のバーストの効果（味方全体のデバフ効果解除）は、I の発動（右のバースト欄の六角形が I から II に替わるフレーム）の 20f 後に発火する。ほろ酔いの最後のヒットが替わり目の 19〜20f 後、ほろ酔いの無い最初のヒットが 20〜22f 後（ココアの S1 と重ならない回）
   - 状態: 確定・等級: 反復実測・更新日: 2026-11-07
   - 根拠: `0971-05`・`0972-05`・`0971-06`・`0972-06`（V-0686 の撮影 A。オートバーストで、S1 と重ならない 5 回（2 本）がどれも、最後のほろ酔いのヒットが替わり目の 20f 後、無い最初のヒットが 21f 後）。決めた録画は 0968（`0968-05`）と 0964・0965（`0964-03`・`0965-03`。V-0683 の撮影 D）。V-0686
@@ -10893,6 +10893,66 @@
   - 録画の中の反復: 1434（1 回目のバーストで決め、2〜9 回目のバーストで再現。1434-14）
   - 検証記録: V-0895
   - 定義: `data/skills/872.json` の burst の effects[0]
+- **C-1608** ギルティ：マイティバニー（404）は戦闘開始時にバニーモード：スタンスになり、オートの射撃では戦闘の終わりまでスタンスのまま（エンゲージにならず、防御力無視の追加ダメージは出ない）。S1 の攻撃力▲（スペック固定の Lv10 で 20.1%）と、スタンスの間のチェーンエンハンスの攻撃ダメージ▲ 20.45%・チャージダメージ▲ 40% は戦闘の最初の発から乗り、フルチャージの発ごとに最終攻撃力の 450.89% の追加ダメージが発と同じフレームに 1 回出る（的のジャンプの始まりの部分チャージの発には出ない）
+  - 状態: 確定・等級: 反復実測・更新日: 2026-11-28
+  - 根拠: `1435-01`・`1435-02`・`1435-03`・`1436-01`・`1436-02`。V-0896
+  - モデル側: 反映（data/skills/404.json の skill1 の effects[0]（timed・battleStart・attack）・effects[1]（bunnyModeStance の付与。静的な状態）、skill2 の effects[0]・[1]（timed・battleStart・条件 selfState）・effects[2]（damage・fullChargeShot・additional・条件 selfState））
+  - 決めるのに使った録画: なし
+  - 合わせ込みの定数なし: 説明文の S1 の値 1 と S2 の値 2・3・4（20.1%・20.45%・40%・450.89%）と、C-0839（オートの射撃はフルチャージを保たない）
+  - 検証記録: V-0896
+  - 定義: `data/skills/404.json` の skill1 の effects[0]、`data/skills/404.json` の skill1 の effects[1]、`data/skills/404.json` の skill1 の notes[0]、`data/skills/404.json` の skill1 の notes[1]、`data/skills/404.json` の skill2 の effects[0]、`data/skills/404.json` の skill2 の effects[1]、`data/skills/404.json` の skill2 の effects[2]、`data/skills/404.json` の skill2 の notes[0]、`data/skills/404.json` の skill2 の notes[1]
+- **C-1609** ギルティ：マイティバニー（404）のバーストのマイティストンプは、バースト使用時から 1 発だけ撃つ使用武器の変更で、1 発は最終攻撃力の 101.3%（スペック固定の Lv10）× フルチャージ 250% に、追加効果のチャージダメージ▲ 1400% とチェーンエンハンスのチャージダメージ▲ 40% が同じ和で乗り、バーストの攻撃ダメージ▲ 77.35% も乗る。マイティストンプもフルチャージの発に数え、チェーンエンハンスの追加ダメージが同じフレームに出る。1400% は次の基礎の SR の発には乗らない。マイティストンプはフルバーストの窓の始まり（III のタイマーの 00.00）から 118〜119 動画フレーム、戻った基礎の SR の最初の発はその 81〜82 動画フレーム後（モデルの既定の待ちの 117・83 と 2f 以内。攻撃ダメージ▲の 10 秒の窓の端は確かめていない）
+  - 状態: 確定・等級: 反復実測・更新日: 2026-11-28
+  - 根拠: `1437-09`・`1437-10`・`1437-11`・`1437-12`・`1437-13`・`1438-09`・`1438-10`・`1438-11`・`1438-12`。V-0896
+  - モデル側: 反映（data/skills/404.json の burst の effects[0]（weaponChange・chargeTimeSeconds 1.5・chargeTimeFixed・fullChargeDamage 250・maxAmmoRef 4。待ちは既定）・effects[1]（timed・burstUse・chargeDamage・durationShotsRef 6）・effects[2]（timed・burstUse・attackDamage）、skill2 の effects[2]（変更後の武器の発も fullChargeShot。frame/shots.ts の fullChargeFrameSet））
+  - 決めるのに使った録画: なし
+  - 合わせ込みの定数なし: 説明文のバーストの値 1〜6（77.35%・10 秒・101.3%・1 発・1400%・1 発）と即値（チャージ 1.5 秒・フルチャージ 250%）、使用武器の変更の撃ち切りと戻しの既定の待ち（plan/design-true-damage-element.md 9 節）
+  - 検証記録: V-0896
+  - 定義: `data/skills/404.json` の skill2 の effects[2]、`data/skills/404.json` の burst の effects[0]、`data/skills/404.json` の burst の effects[1]、`data/skills/404.json` の burst の effects[2]
+- **C-1610** メアリー（130）の S1 の最後の弾丸が命中した時の回復（残りの HP の割合が最も低い味方 1 機）と、バーストの味方全体の回復は、説明文どおり（どちらもスキル発動者の最終最大HP の X% の 1 回の回復で、受けた味方の「回復効果が適用された時」を起こす。撮っておらず、確かめていない）。回復を受けた時の効果を持つ味方と、HP の割合を下げる効果のいない編成では与ダメージに効かない
+  - 状態: 仮説・等級: 推論・更新日: 2026-11-28
+  - 根拠: 説明文の読みと、既存の回復の語彙の確定した結論（直接は測っていない。撮っていない）。V-0897
+  - モデル側: 反映（data/skills/130.json の skill1 の effects[0]、burst の effects[0]）
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0897
+  - 定義: `data/skills/130.json` の skill1 の effects[0]、`data/skills/130.json` の burst の effects[0]
+- **C-1611** ラプンツェル（221）の S1 のフルチャージして攻撃した時の回復（残りの HP の割合が最も低い味方 3 機）と、バーストの味方全体の回復は、説明文どおり（どちらもスキル発動者の最終最大HP の X% の 1 回の回復で、受けた味方の「回復効果が適用された時」を起こす。撮っておらず、確かめていない）。回復を受けた時の効果を持つ味方と、HP の割合を下げる効果のいない編成では与ダメージに効かない
+  - 状態: 仮説・等級: 推論・更新日: 2026-11-28
+  - 根拠: 説明文の読みと、既存の回復の語彙の確定した結論（直接は測っていない。撮っていない）。V-0897
+  - モデル側: 反映（data/skills/221.json の skill1 の effects[0]、burst の effects[0]）
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0897
+  - 定義: `data/skills/221.json` の skill1 の effects[0]、`data/skills/221.json` の burst の effects[0]
+- **C-1612** ソラ（532）の S1 の自分の与えるHP回復量▲（戦闘開始時・持続）と、バーストの味方全体の回復（スキル発動者の最終最大HP の X%）・デバフ効果解除 1 個は、説明文どおり（与えるHP回復量▲はバーストの回復の量に掛かる。回復は受けた味方の「回復効果が適用された時」を起こす。撮っておらず、確かめていない）。回復を受けた時の効果を持つ味方・HP の割合を下げる効果・味方にデバフを付ける効果のいない編成では与ダメージに効かない
+  - 状態: 仮説・等級: 推論・更新日: 2026-11-28
+  - 根拠: 説明文の読みと、既存の回復・与えるHP回復量▲・デバフ解除の語彙の確定した結論（デバフ解除は C-0979。直接は測っていない。撮っていない）。V-0897
+  - モデル側: 反映（data/skills/532.json の skill1 の effects[0]、burst の effects[0]・effects[1]）
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0897
+  - 定義: `data/skills/532.json` の skill1 の effects[0]、`data/skills/532.json` の burst の effects[0]、`data/skills/532.json` の burst の effects[1]
+- **C-1613** バイパーのバーストは、II の発動の印（右のバースト欄の六角形が II から III に替わるフレーム）の 58f 後の 1 ヒットで、最終攻撃力の 値 02 % のダメージを敵 1 体に与える（同じバーストの防御力▼は乗らない。C-0795 の形）。防御力 値 03 %▼ は、そのヒットから 値 04 秒、射撃場の的（ターゲット）に付き、味方全体（I-DOLL・フラワーとバイパー）の通常攻撃で的の防御力 100 を 80（100 × (1 − 19.83%) = 80.17 の四捨五入。C-0556・C-0790 の式）にする。防御が 0 になる形（トロニー・プロダクト23。課題 2-46）でも、効かない形でもない
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-28
+  - 根拠: `1439-26`・`1439-27`・`1439-28`・`1439-29`・`1439-30`・`1440-26`・`1440-27`・`1440-28`・`1440-29`・`1440-30`。V-0894
+  - モデル側: 反映（data/skills/112.json の burst の effects[0]・effects[1]、burst/landing.ts のバイパーの行の hitFrames）
+  - 決めるのに使った録画: 1439（値を合わせた）
+  - 録画の中の反復: 1439（1で決め、2-8で再現。1439-28）
+  - 検証記録: V-0894
+  - 定義: `data/skills/112.json` の burst の effects[0]、`data/skills/112.json` の burst の effects[1]、`data/skills/112.json` の treasureSkills.burst の effects[0]、`data/skills/112.json` の treasureSkills.burst の effects[1]
+- **C-1614** バイパーの撮っていない行は、説明文の読みで書く: 基礎版の S1 の味方全体の命中率 値 03 %▲（攻撃力▲と同じく戦闘開始から 値 04 秒）と S2 の自分の命中率 値 01 %▲（持続）は、いまの命中率▲の式で効く（SG ではコア命中率と近の弾丸命中率。課題 2-1）。宝物版の S1 の攻撃力▲・命中率▲、S2 の命中率▲、バーストのダメージと防御力▼は、基礎版と同じ文の読み（値は説明文の値）。宝物版にだけある行: S2 のフルバーストタイムが発動した時の愛嬌（持続）、S1 の愛嬌状態の時に限り攻撃した時の持続ダメージ 値 05 %▲・命中率 値 08 %▲（発ごとに 1 スタック、10 スタック、10 秒）、S2 のバーストスキル使用時のバースト再突入 2 段階（チャイムのバーストと同じ）、バーストの対象がターゲットなら付く持続ダメージ 値 05 %（付いた 1 秒後から 1 秒ごと。ディーゼル：ウィンタースイーツのバーストと同じ形）
+  - 状態: 仮説・等級: 推論・更新日: 2026-11-28
+  - 根拠: 説明文（`data/characters/112.json` の skills と treasure.skills）。基礎版の S1・バーストの同じ文の読みは、撮った基礎版で確かめた（C-1618・C-1613）。命中率▲は、この編成のモデルのバイパーのコア命中率が S1 の窓の中でも外でも 1 で、命中率▲の有無で予測が変わらないので見分けていない（V-0894 の予測ファイル）。宝物版は撮っていない（plan/design-viper.md 4 節の論点 2）。V-0894
+  - モデル側: 反映（data/skills/112.json の skill1 の effects[1]・skill2 の effects[0]・treasureSkills の全部の効果）。SG の中近・中遠・遠の弾丸命中率に命中率▲を効かせる式は未実装（課題 2-1）
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0894
+  - 定義: `data/skills/112.json` の skill1 の effects[1]、`data/skills/112.json` の skill2 の effects[0]、`data/skills/112.json` の treasureSkills.skill1 の effects[0]、`data/skills/112.json` の treasureSkills.skill1 の effects[1]、`data/skills/112.json` の treasureSkills.skill1 の effects[2]、`data/skills/112.json` の treasureSkills.skill1 の effects[3]、`data/skills/112.json` の treasureSkills.skill2 の effects[0]、`data/skills/112.json` の treasureSkills.skill2 の effects[1]、`data/skills/112.json` の treasureSkills.skill2 の effects[2]、`data/skills/112.json` の treasureSkills.burst の effects[0]、`data/skills/112.json` の treasureSkills.burst の effects[1]、`data/skills/112.json` の treasureSkills.burst の effects[2]
+- **C-1618** バイパーの S1 の「ターゲットが出現している場合、味方全体に攻撃力 値 01 %▲（値 02 秒）」は、射撃場（BigArms）では戦闘開始の最初の発から付き、戦闘開始から 10 秒（残り時間の 10 秒目の変わり目）の前後で切れ、付き直さない（射撃場の的はターゲットで、戦闘の始めからいる）。I-DOLL・フラワーにもバイパーにも、説明文の値で乗る
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-28
+  - 根拠: `1439-25`・`1439-31`・`1440-25`・`1440-31`。V-0894
+  - モデル側: 反映（data/skills/112.json の skill1 の effects[0]）
+  - 決めるのに使った録画: なし
+  - 合わせ込みの定数なし: 説明文の値（攻撃力 値 01 %・値 02 秒）と、ターゲットの出現を戦闘開始とみる読み（C-0662）
+  - 検証記録: V-0894
+  - 定義: `data/skills/112.json` の skill1 の effects[0]、`data/skills/112.json` の treasureSkills.skill1 の effects[0]
 
 ## 敵・的・場面
 
@@ -11055,7 +11115,7 @@
   - 状態: 範囲外・等級: 推論・更新日: 2026-10-17
   - 根拠: 要件 5.2 節（当面扱わないもの: ボスの行動パターン・パーツ破壊、被弾による HP 変動・回復・シールド、貫通・範囲攻撃の複数ヒット）と、スキル定義の notes の種類 outOfScope（design-skill-note-kinds.md 2.1 節）。最小構成の検査で、射撃場では起きない notes を未確定の要素に数えないための約束（design-minimal-relevance.md 11.2 節）。2026-10-17 に、味方に付けるバリアの部分を量に限った（2 段目の段 5 でバリアが付いている状態をモデルに入れた。plan/design-skill-stage5.md。オーナーの判断）
   - モデル側: 未反映（モデルは扱わない）。スキル定義の前提の外（outOfScope）の notes の claims にこの結論を書く
-  - 定義: `data/skills/11.json` の skill1 の notes[0]、`data/skills/14.json` の skill1 の notes[0]、`data/skills/15.json` の skill2 の notes[0]、`data/skills/16.json` の skill1 の notes[0]、`data/skills/40.json` の burst の notes[0]、`data/skills/60.json` の skill2 の notes[0]、`data/skills/75.json` の skill2 の notes[0]、`data/skills/75.json` の skill2 の notes[1]、`data/skills/75.json` の burst の notes[0]、`data/skills/80.json` の skill2 の notes[0]、`data/skills/80.json` の treasureSkills.skill2 の notes[0]、`data/skills/100.json` の skill2 の notes[0]、`data/skills/100.json` の treasureSkills.skill2 の notes[0]、`data/skills/102.json` の skill2 の notes[0]、`data/skills/121.json` の burst の notes[0]、`data/skills/162.json` の skill2 の notes[0]、`data/skills/195.json` の skill1 の notes[0]、`data/skills/226.json` の skill1 の notes[0]、`data/skills/230.json` の skill1 の notes[0]、`data/skills/230.json` の skill2 の notes[0]、`data/skills/233.json` の skill1 の notes[0]、`data/skills/241.json` の skill1 の notes[0]、`data/skills/241.json` の burst の notes[0]、`data/skills/242.json` の skill1 の notes[0]、`data/skills/242.json` の burst の notes[0]、`data/skills/260.json` の burst の notes[2]、`data/skills/270.json` の skill1 の notes[0]、`data/skills/271.json` の burst の notes[0]、`data/skills/280.json` の skill2 の notes[1]、`data/skills/280.json` の treasureSkills.skill2 の notes[1]、`data/skills/280.json` の treasureSkills.skill2 の notes[2]、`data/skills/282.json` の skill2 の notes[0]、`data/skills/282.json` の burst の notes[1]、`data/skills/283.json` の skill1 の notes[0]、`data/skills/283.json` の skill1 の notes[1]、`data/skills/283.json` の skill2 の notes[0]、`data/skills/290.json` の skill1 の notes[0]、`data/skills/322.json` の skill1 の notes[1]、`data/skills/322.json` の skill2 の notes[1]、`data/skills/351.json` の skill2 の notes[0]、`data/skills/352.json` の skill2 の notes[0]、`data/skills/352.json` の treasureSkills.skill2 の notes[0]、`data/skills/431.json` の skill1 の notes[0]、`data/skills/470.json` の burst の notes[3]、`data/skills/471.json` の skill2 の notes[0]、`data/skills/471.json` の burst の notes[0]、`data/skills/472.json` の skill1 の notes[0]、`data/skills/472.json` の burst の notes[0]、`data/skills/473.json` の skill1 の notes[0]、`data/skills/473.json` の burst の notes[0]、`data/skills/500.json` の skill1 の notes[0]、`data/skills/551.json` の skill1 の notes[0]、`data/skills/570.json` の skill1 の notes[0]、`data/skills/570.json` の skill2 の notes[0]、`data/skills/570.json` の burst の notes[0]、`data/skills/590.json` の skill2 の notes[1]、`data/skills/811.json` の skill2 の notes[0]、`data/skills/830.json` の skill1 の notes[0]、`data/skills/831.json` の skill2 の notes[0]、`data/skills/831.json` の burst の notes[0]、`data/skills/832.json` の skill1 の notes[0]
+  - 定義: `data/skills/11.json` の skill1 の notes[0]、`data/skills/14.json` の skill1 の notes[0]、`data/skills/15.json` の skill2 の notes[0]、`data/skills/16.json` の skill1 の notes[0]、`data/skills/40.json` の burst の notes[0]、`data/skills/60.json` の skill2 の notes[0]、`data/skills/75.json` の skill2 の notes[0]、`data/skills/75.json` の skill2 の notes[1]、`data/skills/75.json` の burst の notes[0]、`data/skills/80.json` の skill2 の notes[0]、`data/skills/80.json` の treasureSkills.skill2 の notes[0]、`data/skills/100.json` の skill2 の notes[0]、`data/skills/100.json` の treasureSkills.skill2 の notes[0]、`data/skills/102.json` の skill2 の notes[0]、`data/skills/121.json` の burst の notes[0]、`data/skills/162.json` の skill2 の notes[0]、`data/skills/195.json` の skill1 の notes[0]、`data/skills/221.json` の burst の notes[0]、`data/skills/226.json` の skill1 の notes[0]、`data/skills/230.json` の skill1 の notes[0]、`data/skills/230.json` の skill2 の notes[0]、`data/skills/233.json` の skill1 の notes[0]、`data/skills/241.json` の skill1 の notes[0]、`data/skills/241.json` の burst の notes[0]、`data/skills/242.json` の skill1 の notes[0]、`data/skills/242.json` の burst の notes[0]、`data/skills/260.json` の burst の notes[2]、`data/skills/270.json` の skill1 の notes[0]、`data/skills/271.json` の burst の notes[0]、`data/skills/280.json` の skill2 の notes[1]、`data/skills/280.json` の treasureSkills.skill2 の notes[1]、`data/skills/280.json` の treasureSkills.skill2 の notes[2]、`data/skills/282.json` の skill2 の notes[0]、`data/skills/282.json` の burst の notes[1]、`data/skills/283.json` の skill1 の notes[0]、`data/skills/283.json` の skill1 の notes[1]、`data/skills/283.json` の skill2 の notes[0]、`data/skills/290.json` の skill1 の notes[0]、`data/skills/322.json` の skill1 の notes[1]、`data/skills/322.json` の skill2 の notes[1]、`data/skills/351.json` の skill2 の notes[0]、`data/skills/352.json` の skill2 の notes[0]、`data/skills/352.json` の treasureSkills.skill2 の notes[0]、`data/skills/431.json` の skill1 の notes[0]、`data/skills/470.json` の burst の notes[3]、`data/skills/471.json` の skill2 の notes[0]、`data/skills/471.json` の burst の notes[0]、`data/skills/472.json` の skill1 の notes[0]、`data/skills/472.json` の burst の notes[0]、`data/skills/473.json` の skill1 の notes[0]、`data/skills/473.json` の burst の notes[0]、`data/skills/500.json` の skill1 の notes[0]、`data/skills/532.json` の skill2 の notes[0]、`data/skills/551.json` の skill1 の notes[0]、`data/skills/570.json` の skill1 の notes[0]、`data/skills/570.json` の skill2 の notes[0]、`data/skills/570.json` の burst の notes[0]、`data/skills/590.json` の skill2 の notes[1]、`data/skills/811.json` の skill2 の notes[0]、`data/skills/830.json` の skill1 の notes[0]、`data/skills/831.json` の skill2 の notes[0]、`data/skills/831.json` の burst の notes[0]、`data/skills/832.json` の skill1 の notes[0]
 - **C-0477** 射撃場 3 分モードの遠（3 区間目）の着地点は 2 か所ある。遠 A（足元の y 540〜542。近い）と遠 B（534 前後。遠い）で、遠 B の的は高さ・幅が約 8% 小さく、上端が約 4px 下に写る。単騎の 129 本では遠 A 67・遠 B 62（遠 A の割合 0.52、95% の幅 0.43〜0.60）。アニス：スターの誘導弾の飛ぶ時間は遠 A で 26〜27f（録画 0164・0211）、遠 B で 28〜29f（録画 0161）
   - 状態: 仮説・等級: 単独実測・更新日: 2026-11-08
   - 根拠: 単騎・3 分モードの 119 本の遠の的の（足元の y, 上端の y, 高さ, 幅）の中央値（113 本が読めた。6 本は使えるコマが 8 未満）。予測（V-0228 の F1・F0・F2・F3。commit 649f953）の後に読んだ。仮説の出どころの 22 本を除く新しい 92 本で、足元 534 前後 38 本・540〜542 52 本・間 2 本に分かれ、足元の高い群ほど高さ（中央値 146 / 156）・幅（130 / 142）が小さく、上端（388 / 384）が下で、F0（上端が動かない）・F2（上端が足元と同じ向き）と合わない。ただし大きさの差は F1 の見込み（地平線 459 の遠近法で高さの差 16 ± 4・上端の差 −8 ± 3）より小さく、中央値では幅をわずかに外れた（平均では高さの差 12.0）。飛ぶ時間は `0161-22`・`0164-31`・`0211-21`（211 は着地点を読む前に読んだ）。観測値: `0045-25`・`0046-36`・`0054-26`・`0055-29`・`0056-25`・`0057-12`・`0058-07`・`0060-05`・`0061-05`・`0062-05`・`0070-25`・`0071-23`・`0072-16`・`0073-18`・`0074-29`・`0075-20`・`0076-12`・`0077-41`・`0095-08`・`0098-15`・`0099-11`・`0100-04`・`0101-23`・`0102-17`・`0103-19`・`0104-10`・`0105-04`・`0109-10`・`0110-09`・`0111-09`・`0112-10`・`0121-08`・`0122-22`・`0123-15`・`0126-12`・`0127-12`・`0128-08`・`0129-08`・`0130-06`・`0131-06`・`0137-16`・`0138-14`・`0139-11`・`0140-14`・`0142-08`・`0143-13`・`0144-11`・`0145-16`・`0146-08`・`0147-14`・`0148-08`・`0149-13`・`0152-15`・`0153-03`・`0154-08`・`0155-10`・`0156-03`・`0157-05`・`0158-10`・`0159-03`・`0160-05`・`0161-25`・`0164-34`・`0166-01`・`0167-10`・`0168-04`・`0169-10`・`0170-04`・`0171-10`・`0172-04`・`0174-08`・`0175-08`・`0176-08`・`0177-08`・`0198-12`・`0199-08`・`0200-09`・`0201-08`・`0202-08`・`0203-08`・`0204-08`・`0205-08`・`0206-08`・`0207-08`・`0208-08`・`0209-08`・`0210-05`・`0211-20`・`0211-21`・`0213-06`・`0214-05`・`0215-06`・`0216-05`・`0217-05`・`0218-05`・`0219-05`・`0220-05`・`0226-04`・`0228-03`・`0231-04`・`0234-05`・`0235-05`・`0236-05`・`0237-05`・`0238-05`・`0239-05`・`0240-05`・`0241-05`・`0242-03`・`0243-10`・`0250-09`・`0251-05`・`0252-04`・`0253-02`。V-0228。V-0328 の 20 本（遠 A 6・遠 B 14。V-0228 と同じ規則で、弾丸命中率より先に読んだ）を配分の数に足した: `0329-01`・`0330-01`・`0331-01`・`0332-01`・`0333-01`・`0334-01`・`0335-01`・`0336-01`・`0339-01`・`0340-01`・`0341-01`・`0342-01`・`0343-01`・`0344-01`・`0345-01`・`0346-01`・`0347-01`・`0348-01`・`0349-01`・`0350-01`。V-0228 の配分（遠 A 0.56）なら V-0328 の 20 本で遠 A が 6 本以下になる見込みは 1.7%。C-0333 から、配分の数を V-0328 の 20 本を足した数にし、モデル側を反映にして置き換えた（2026-10-08 のオーナーの判断。plan/design-far-landings.md）。状態は C-0333 と同じく仮説（V-0228 の大きさの見込みを中央値でわずかに外した点は変わらない）
@@ -11151,7 +11211,7 @@
   - モデル側: モデルは被弾を扱わない（要件 5.2 節。2026-10-12 のオーナーの判断で案 A。plan/design-range-enemy-attacks.md）。「攻撃を受けた時」の効果は、スキル定義の notes（outOfScope）に、射撃場の 3 分モードでは起きることを書くだけ
   - 決めるのに使った録画: 0423（仮説の出どころ）、0424（仮説の出どころ）、0425（仮説の出どころ）
   - 検証記録: V-0429
-  - 定義: `data/skills/280.json` の skill1 の notes[0]、`data/skills/280.json` の skill2 の notes[0]、`data/skills/280.json` の treasureSkills.skill1 の notes[0]、`data/skills/280.json` の treasureSkills.skill2 の notes[0]
+  - 定義: `data/skills/112.json` の skill2 の notes[0]、`data/skills/112.json` の treasureSkills.skill2 の notes[0]、`data/skills/280.json` の skill1 の notes[0]、`data/skills/280.json` の skill2 の notes[0]、`data/skills/280.json` の treasureSkills.skill1 の notes[0]、`data/skills/280.json` の treasureSkills.skill2 の notes[0]
 - **C-0552** 射撃場 3 分モードの的は、読んだ録画ではどれも 180 秒に 5 回ジャンプする。1 回目のジャンプの始まりは、戦闘開始から数えて 19.0〜33.3 秒に散らばる。的に当てない単騎（撃たずに隠れたまま・空を撃つ）では、1 回目は約 19.0 秒（的が浮いた時刻）に揃う
   - 状態: 確定・等級: 反復実測・人の判断・更新日: 2026-10-12
   - 根拠: C-0533 の根拠（`0041-02`・`0046-11`・`0055-11`・`0049-03`・`0049-04`・`0050-01`・`0050-02`（5 回を読んだ録画）、`0043-01`・`0044-03`・`0048-01`・`0054-04`・`0056-06`（1 回目の散らばり・5 回目） 再現（決めるのに使っていない後の録画）: 単騎の `0070-01`・`0073-01`・`0074-01`・`0075-01`（V-0010・V-0013）・`0210-07`・`0228-04`（V-0287）・`0231-05`・`0242-04`（V-0288）と多人数の `0048-09`（V-0088）は、どれも 180 秒に 5 回ジャンプし、1 回目は 24.06〜32.33 秒で範囲の中。範囲の下の端は 046・055、上の端は 049・050（多人数）で決めた（決めた組と再現を分ける。plan/design-investigation-review.md 1.4.2 節の 2）。2026-10-11 の既存の確定の点検（plan/design-investigation-review.md 1.4 節）で、C-0056 から5 回目が戦闘の終わりの約 1.5 秒前に来る部分（C-0534）を分けた）。1 回目が約 19.0 秒の録画: `0308-05`（たきな単騎・2 発の後に隠れる）と、V-0430 で仮説を立てた `0399`・`0404`（メイデン単騎・最初の数トリガーの後に隠れる。挑発（S2）が効きうるので根拠の観測値にしない。値は 0399-06・0404-06）。再現（決めるのに使っていない 2026-10-12 の撮影。V-0430 の撮影 A・B）: `0455-01`・`0456-01`・`0457-01`（たきな単騎・撃たずに隠れたまま）・`0458-01`・`0459-01`（たきな単騎・空を撃ち続けて的に当てない）。5 本とも 1 回目は 18.97〜19.00 秒で、180 秒に 5 回ジャンプした。範囲の下の端（約 19.0 秒）は 308・399・404 で決め、455〜459 で再現した（浮いた時刻で読んだ値。C-0533 の範囲の値は停止や始まりで読んだもので、読み方が違う）
