@@ -1,0 +1,46 @@
+{
+  "id": "1462",
+  "date": "2026-11-29",
+  "folder": "range",
+  "file": "20261129-1462_sg-hit-b-sun.mp4",
+  "original": "2026-11-29_01-36-54.mp4",
+  "durationSec": 200.6,
+  "frames": 12033,
+  "fps": 60,
+  "sizeMB": 242.9,
+  "sha256": "54eb58c7048f",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0905 の撮影 B（ココア・ソルジャーF.A.・I-DOLL・サン（操作・撃たない））。戦闘履歴の画で編成を、左上の画でオート射撃 OFF・オートバースト ON を確かめた",
+  "backup": {
+    "at": "2026-11-29T01:44+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
