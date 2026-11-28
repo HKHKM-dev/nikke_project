@@ -1,0 +1,166 @@
+{
+  "formatVersion": 1,
+  "resourceId": 404,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "attack",
+          "ref": 1,
+          "durationUntil": "battleEnd"
+        },
+        {
+          "kind": "state",
+          "state": "bunnyModeStance",
+          "trigger": "battleStart",
+          "target": "self",
+          "durationUntil": "battleEnd",
+          "assumes": {
+            "ja": "バニーモード：スタンス（持続・解除不可）。戦闘開始時はスタンス状態でもマイティストンプ状態でもないので、スタンスが付く。もう一つのきっかけ（フルチャージ状態の維持）は起きない（notes[0]）ので、戦闘の終わりまでスタンスのまま（静的な状態）",
+            "en": "Bunny Mode: Stance (continuous, cannot be removed). At the start of battle the unit is in neither Stance nor Mighty Stomp, so Stance is applied. The other trigger (holding Full Charge) never happens (notes[0]), so Stance lasts until the end of battle (a static state)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルチャージ状態を 1 秒以上維持した時のバニーモードの切り替え（スタンスならエンゲージ、でなければスタンス）は、オートの射撃ではフルチャージを保たないので起きない（要件 4.2 節）。エンゲージは付かない",
+          "en": "The Bunny Mode switch when Full Charge is held for 1 s or more (Engage if in Stance, otherwise Stance) never happens, since auto fire does not hold Full Charge (requirements 4.2). Engage is never applied",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "state",
+            "target": "self",
+            "trigger": "unknown"
+          },
+          "claims": ["C-0839"]
+        },
+        {
+          "ja": "自分にエンゲージが付いた時の、スタンス状態の味方全体へのエンゲージと、自分にスタンスが付いた時の、エンゲージ状態の味方全体へのスタンスは、どちらも起きない（エンゲージはどの枠にも付かず、エンゲージ状態の味方がいない）",
+          "en": "Engage on all allies in Stance when this unit enters Engage, and Stance on all allies in Engage when this unit enters Stance, never happen (no slot ever gets Engage, so there is no ally in Engage)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "state",
+            "target": "allies",
+            "trigger": "unknown"
+          },
+          "claims": ["C-0839"]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 2,
+          "durationUntil": "battleEnd",
+          "condition": {
+            "selfState": "bunnyModeStance"
+          },
+          "assumes": {
+            "ja": "チェーンエンハンスの効果 1（スタンス状態の時に限り。持続・解除不可）。スタンスは戦闘の間続く静的な状態なので、戦闘開始時から戦闘の終わりまでの効果に条件を付けて書く",
+            "en": "Chain Enhance Effect 1 (only in Stance; continuous, cannot be removed). Stance is a static state lasting the whole battle, so it is written as a start-to-end effect with the condition"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "chargeDamage",
+          "ref": 3,
+          "durationUntil": "battleEnd",
+          "condition": {
+            "selfState": "bunnyModeStance"
+          },
+          "assumes": {
+            "ja": "チェーンエンハンスの効果 2。effects[0] と同じ書き方。マイティストンプ（使用武器の変更の発）にも乗る",
+            "en": "Chain Enhance Effect 2, written like effects[0]. It also applies to Mighty Stomp (the weapon-change shot)"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "damageType": "additional",
+          "ref": 4,
+          "condition": {
+            "selfState": "bunnyModeStance"
+          },
+          "assumes": {
+            "ja": "チェーンエンハンスの効果 3。フルチャージの発ごとに、対象（敵 1 体の前提で的）に 1 回（命中を仮定）。マイティストンプ（チャージする使用武器の変更の発）もフルチャージの発に数える",
+            "en": "Chain Enhance Effect 3. Once per Full Charge shot on the target (the single enemy; a hit is assumed). Mighty Stomp (a charging weapon-change shot) also counts as a Full Charge shot"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "エンゲージ状態の時のチェーンリリースの効果 1・2（通常攻撃とマイティストンプを防御力無視ダメージにする）は、エンゲージが付かないので起きない",
+          "en": "Chain Release Effects 1 and 2 in Engage (normal attacks and Mighty Stomp deal true damage) never happen, since Engage is never applied",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "trueDamageConversion",
+            "target": "self",
+            "trigger": "unknown"
+          },
+          "claims": ["C-0839"]
+        },
+        {
+          "ja": "エンゲージ状態の時のチェーンリリースの効果 3（フルチャージ攻撃が命中した時の防御力無視ダメージ）は、エンゲージが付かないので起きない",
+          "en": "Chain Release Effect 3 in Engage (true damage when a Full Charge attack lands) never happens, since Engage is never applied",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "damage",
+            "target": "enemy",
+            "trigger": "unknown"
+          },
+          "claims": ["C-0839"]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "damageRef": 3,
+          "chargeTimeSeconds": 1.5,
+          "chargeTimeFixed": true,
+          "fullChargeDamage": 250,
+          "maxAmmoRef": 4,
+          "assumes": {
+            "ja": "マイティストンプ（1 発で撃ち切り、次のフレームに基礎の SR に戻る）。チャージ時間はチャージ速度▲を受けない。変更後の武器の最初の発の待ちと、戻った後の基礎の SR の 1 発目の待ちは、いまの既定のまま（確かめていない）。CDN の変更後のレートは、チャージ武器の発の間隔には使わない。マイティストンプの発のバーストゲージは基礎の SR の 1 発と同じ量（確かめていない）",
+            "en": "Mighty Stomp (one shot, then back to the base SR on the next frame). Its charge time ignores Charge Speed up. The wait before the changed weapon's first shot and the wait before the base SR's first shot after returning use the current defaults (unverified). The CDN rate of the changed weapon is not used for the interval of a charge weapon. The burst gauge of the Mighty Stomp shot equals one base SR shot (unverified)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "chargeDamage",
+          "ref": 5,
+          "durationShotsRef": 6,
+          "assumes": {
+            "ja": "マイティストンプの追加効果 1。バースト使用時から自分の 1 発目（マイティストンプ）まで効き、その発にも乗る",
+            "en": "Mighty Stomp Additional Effect 1. It lasts from Burst Skill use through this unit's first shot (Mighty Stomp) and applies to that shot"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 1,
+          "durationRef": 2
+        }
+      ],
+      "notes": []
+    }
+  }
+}

@@ -306,6 +306,7 @@ const KIND_INFO: Record<string, Info> = {
   ],
   'state:grant': ['名前の付いた状態の付与（名前・中身）', 'ok', 'state（目録の id）'],
   'state:grant?': ['名前だけの付与（状態・仕組み）', 'check', 'state か、仕組みごとの語彙'],
+  'state:label': ['機能の名前（中身は後ろの効果の句で読む）', 'nodmg', '書かない（中身の効果を書く）'],
   'state:remove': [
     '状態・スタックの解除（同じスキルが外す。解除不可の状態は外さない読み）',
     'ok',
@@ -343,6 +344,12 @@ const TRIG_INFO: Record<string, Info> = {
   healed: ['回復効果が適用された時', 'ok'],
   chance: ['確率', 'check'],
   stateApplied: ['〈状態〉が適用された時', 'check'],
+  // バニーモードの 2 体の S1 の、自分に付いたモードを味方へ広げる行（plan/design-guilty-mighty-bunny.md 5 節の論点 5）
+  bunnyModeApplied: [
+    'バニーモード：〈モード〉が適用された時（味方へ広げる）',
+    'premise',
+    'エンゲージはオートの射撃では付かず、エンゲージ状態の味方もいない（C-0839）',
+  ],
   stateEnded: [
     '〈状態〉が終了した時',
     'check',
@@ -467,6 +474,11 @@ const TGT_INFO: Record<string, Info> = {
   'ally:filter:squad': ['同じ部隊の味方', 'ok'],
   'ally:filter:burstStep': ['基本バースト段階が N の味方', 'ok'],
   'ally:filter:state': ['〈状態〉状態の味方', 'check'],
+  'ally:filter:bunnyMode': [
+    'バニーモード：〈モード〉状態の味方',
+    'premise',
+    '広げる行の対象（bunnyModeApplied と同じ。C-0839）',
+  ],
   'ally:topAttack': ['最終攻撃力が最も高い味方 N 機', 'ok'],
   'ally:lowestAttack': ['最終攻撃力が一番低い味方 N 機', 'ok'],
   'ally:longestChargeTime': ['基本チャージ時間が一番長い味方', 'ok'],
@@ -654,7 +666,9 @@ function tgtKeys(e: CatalogEffect): string[] {
     if (/型の味方/.test(h)) out.push('ally:filter:class');
     if (/同じ部隊の/.test(h)) out.push('ally:filter:squad');
     if (/基本バースト段階が/.test(h)) out.push('ally:filter:burstStep');
-    if (/状態の味方|状態ではない味方|メイラードまたはブランチング状態の対象/.test(h)) out.push('ally:filter:state');
+    if (/バニーモード：(エンゲージ|スタンス)状態の味方/.test(h)) out.push('ally:filter:bunnyMode');
+    else if (/状態の味方|状態ではない味方|メイラードまたはブランチング状態の対象/.test(h))
+      out.push('ally:filter:state');
     return out.length > 0 ? out : ['ally:alliesFiltered'];
   });
 }
