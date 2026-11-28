@@ -1,0 +1,35 @@
+[
+  {
+    "id": "1418-01",
+    "recording": "1418",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [42, 54, 66, 77, 89, 101, 113, 124, 136, 148, 236, 295, 353, 412, 471, 530, 589, 647, 706],
+    "description": "1 回目のバーストの、III のタイマーの 00.00 から持続ダメージの tick（ヒットごとの 1 スタックの tick 10 個と、その後のスタックの tick）までの動画のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps の増分と recipe:burst-panel@4 の 00.00",
+      "note": "1417 の同じ観測値と同じ読み方。ヒットの増分は 706,348・730,702（tick が会心）・1,022,990（倍率ダメージが会心）と、ほかの発と合わさった値。最後のヒットの 88f 後から 59f おきに 9 個"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "dot",
+        "skill": "burst",
+        "anchor": "fullBurst:0",
+        "count": 19
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0884",
+    "readAt": "2026-11-28"
+  }
+]

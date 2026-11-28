@@ -1,0 +1,192 @@
+[
+  {
+    "id": "1419-01",
+    "recording": "1419",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [0, 88, 147, 205, 264, 323, 382, 441, 500, 558, 617, 676, 735, 794, 852],
+    "description": "戦闘開始（動画の 855f。最初の桜かんむりの tick）から、1 回目の S2（戦闘開始時の強制使用）の桜かんむりの 15 tick までの動画のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps の増分",
+      "note": "354,642（花の舞の▲ありの 1 tick）か、その会心 531,963 の増分。147f の tick はほかの発と同じ増分に合わさる（876,559）。16 tick 目は無い。録画はオートバースト OFF（バーストが起きない）なので、モデルもバーストを撃たない（setup の burst: false）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "dot",
+        "skill": "skill2",
+        "count": 15
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "source": "V-0884",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1419-02",
+    "recording": "1419",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [7062, 7150, 7209, 7267, 7326, 7385, 7444, 7503, 7562, 7620, 7679, 7737, 7796, 7855, 7915],
+    "description": "戦闘開始から、5 回目の S2（クールタイムの 4 回目の発動）の桜かんむりの 15 tick までの動画のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps の増分",
+      "note": "354,642 か 531,963 の増分。付いた瞬間の tick（7062f）は単独の増分。前の付与の tick との間は 1,765〜1,766f（2・3・4・6 回目の付与の頭の tick も同じ間隔。3・6 回目は付いた発と同じ増分に合わさる）。録画はオートバースト OFF（バーストが起きない）なので、モデルもバーストを撃たない（setup の burst: false）。付与の間は録画で 1,765〜1,766f（平均 1,765.5f）、モデルは 1,765f で、4 回の付与で 2f ずつ動画の方が遅れうるので、許容を 3f にした"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "dot",
+        "skill": "skill2",
+        "skip": 60,
+        "count": 15
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "source": "V-0884",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1419-03",
+    "recording": "1419",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 354642,
+    "description": "桜かんむりの 1 tick（会心なし・花の舞の攻撃ダメージ▲あり。戦闘開始の付いた瞬間の tick）",
+    "method": {
+      "tool": "hud.ts --mode jumps の増分",
+      "note": "動画の 855f の増分。▲の切れた後の tick は無い（▲と桜かんむりは同じ 15 秒）。録画はオートバースト OFF（バーストが起きない）なので、モデルもバーストを撃たない（setup の burst: false）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "source": "V-0884",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1419-04",
+    "recording": "1419",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 24583,
+    "description": "サクラ：ブルーム・イン・サマーの胴体・会心なし・距離ボーナスありの 1 ヒット（戦闘開始から 5 秒。花の舞の攻撃ダメージ▲あり（戦闘開始時の強制使用））",
+    "method": {
+      "tool": "hud.ts --mode jumps の増分",
+      "note": "5f おきの発の増分のうち、21,258 × 1.1564 の値。どの回も同じ値。録画はオートバースト OFF（バーストが起きない）なので、モデルもバーストを撃たない（setup の burst: false）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "source": "V-0884",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1419-05",
+    "recording": "1419",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 21258,
+    "description": "サクラ：ブルーム・イン・サマーの胴体・会心なし・距離ボーナスありの 1 ヒット（戦闘開始から 20 秒。花の舞の▲なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps の増分",
+      "note": "戦闘開始の 15 秒後から 30 秒後までの 5f おきの発の増分。どの回も同じ値。録画はオートバースト OFF（バーストが起きない）なので、モデルもバーストを撃たない（setup の burst: false）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1200,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "source": "V-0884",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1419-06",
+    "recording": "1419",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [
+      866, 1733, 1738, 2609, 2634, 3496, 3501, 4381, 4391, 5266, 5271, 6146, 6157, 7028, 7033, 7911, 7916, 8758, 8763,
+      9678, 9688, 10530, 10535
+    ],
+    "description": "花の舞の攻撃ダメージ▲の窓（動画のフレーム）。最初の▲ありの発、▲ありの最後の発と▲なしの最初の発、▲なしの最後の発と▲ありの最初の発、… の順",
+    "method": {
+      "tool": "hud.ts --mode jumps の増分",
+      "note": "サクラの 1 ヒットの格子（16,352 に距離・コア・会心を足した値）を、▲あり（× 1.1564）となしに分けた切り替わり。▲の付き始めは、その前の桜かんむりの付いた瞬間の tick（855・4386・6152・7917・9683f。2 回目は 2632f の 20f 読めなかった後の増分に合わさる）と挟む。▲ありの長さは 15 秒（約 882f）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0884",
+    "readAt": "2026-11-28"
+  }
+]
