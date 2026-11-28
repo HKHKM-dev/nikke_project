@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 182・効果 1258（根拠あり 1236）・notes 387（根拠あり 163）
+件数: キャラ 186・効果 1279（根拠あり 1257）・notes 405（根拠あり 171）
 
-notes の種類: 未対応 22・前提の外 134・計算に無関係 85・補足 44・間接 102
+notes の種類: 未対応 24・前提の外 143・計算に無関係 88・補足 45・間接 105
 
-スロット: supported 509・partial 17・unsupported 4・noEffect 73
+スロット: supported 517・partial 18・unsupported 5・noEffect 75
 
 ## 10 ラピ
 
@@ -173,6 +173,24 @@ notes の種類: 未対応 22・前提の外 134・計算に無関係 85・補�
 - **burst**: supported
   - effects[0] burstDamage・skill: C-1402（確定）
   - effects[1] timed・burstHit・enemyDefenseDown: C-1403（確定）、C-1405（確定）
+
+## 23 デルタ：ニンジャシーフ
+
+- **skill1**: supported
+  - effects[0] timed・fullBurstStart・damageTaken: C-1580（確定）
+  - effects[1] timed・burstUse・attack: C-1580（確定）
+  - effects[2] timed・burstUse・damageTaken: C-1580（確定）
+- **skill2**: unsupported
+  - notes[0] 計算に無関係: 戦闘開始時、味方に自分を除く防御型がいない場合の、自分へのヘイト（敵全体を挑発・持続）はダメージに関係しない（付けた時にゲージを溜めない。ティアの S2 と同じ形）: C-1583（確定）
+  - notes[1] 間接（バリア）: 戦闘開始時、味方に自分を除く防御型がいない場合の自分へのバリア（10 秒）と、通常攻撃で 200 回攻撃した時、ヘイト状態なら自分に付くバリア（10 秒）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは自分がバリア適用状態にならない。バリアの量は要件 5.2 節の外）: 根拠なし
+  - notes[2] 前提の外: 味方に自分を除く防御型がいる場合の忍法カモフラージュ（単一攻撃対象から除外・直接攻撃を受けると解除）は、被弾しない前提では除外も解除も起きない（10 秒続く）: 根拠なし
+  - notes[3] 未対応: 味方に自分を除く防御型がいる場合の、忍法注射器（自分の吸収回復）と、4 秒ごとに注射器状態なら自分に付く忍法救急キット（4 秒の間に受けた回復を蓄積し、終わった後に味方全体を蓄積量に応じて回復）は定義していない。蓄積した回復を放出する語彙が無い。味方全体の回復は、回復を受けた時の効果を持つ味方の発動を変えうる: 根拠なし
+- **burst**: partial
+  - effects[0] timed・burstUse・distributedDamage: C-1581（確定）
+  - effects[1] timed・burstUse・attack: C-1581（確定）
+  - effects[2] burstDamage・distributed: C-1582（確定）
+  - notes[0] 間接（バリア）: ヘイト状態の時の、自分の次のバリアの HP▲（10 秒）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く）: 根拠なし
+  - notes[1] 未対応: 忍法注射器状態の時の、忍法救急キットの最大蓄積量▲（10 秒）は、S2 の救急キット（未対応）の回復の量だけを変える: 根拠なし
 
 ## 30 ポリ
 
@@ -1526,6 +1544,22 @@ notes の種類: 未対応 22・前提の外 134・計算に無関係 85・補�
   - effects[0] timed・burstUse・sustainedDamage: C-1198（確定）
   - effects[1] timed・burstUse・damageTaken: C-1198（確定）
 
+## 284 サクラ：ブルーム・イン・サマー
+
+- **skill1**: noEffect
+  - notes[0] 補足: 「戦闘開始時、自分にスキル 2 強制使用」は、S2 の戦闘開始時の効果（skill2 の effects[2]・[3]）で入れた: C-1584（確定）
+  - notes[1] 前提の外: 味方の誰かがパーツを破壊した時の、自分への持続ダメージ▲（30 秒）は、敵がパーツを持たない前提（要件 4.2 節）の外: 根拠なし
+  - notes[2] 前提の外: 味方の誰かがパーツを破壊した時の、花の舞の維持時間▲は、敵がパーツを持たない前提（要件 4.2 節）の外: 根拠なし
+  - notes[3] 前提の外: 味方の誰かがパーツを破壊した時の、桜かんむり状態の敵への桜かんむりの維持時間▲は、敵がパーツを持たない前提（要件 4.2 節）の外: 根拠なし
+- **skill2**: supported
+  - effects[0] timed・30 秒ごと・attackDamage: C-1584（確定）
+  - effects[1] dot・30 秒ごと: C-1585（確定）
+  - effects[2] timed・battleStart・attackDamage: C-1584（確定）
+  - effects[3] dot・battleStart: C-1585（確定）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1586（確定）
+  - effects[1] dot・burstUse: C-1587（確定）
+
 ## 290 マナ
 
 - **skill1**: supported
@@ -2117,6 +2151,21 @@ notes の種類: 未対応 22・前提の外 134・計算に無関係 85・補�
   - effects[0] timed・burstUse・hitRate: C-1554（確定）、C-1557（確定）
   - notes[0] 間接（バリア）: 味方全体へのバリア（スキル発動者の最終最大HP の X%・10 秒）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは味方がバリア適用状態にならない。バリアの量は要件 5.2 節の外）: 根拠なし
 
+## 441 アビスタ
+
+- **skill1**: supported
+  - effects[0] state・fullBurstEnd・aftershow（attack）: C-1593（確定）
+  - effects[1] removeState・fullBurstStart・aftershow: C-1593（確定）
+  - effects[2] removeState・fullBurstEnd・stargazer: C-1592（確定）
+  - notes[0] 計算に無関係: フルバーストタイムの終わりの、自分の HP の持続回復（スキル発動者の最終最大HP の X%・1 秒間隔・10 秒）は、ダメージに関係しない（自分にだけ付き、アビスタに回復を受けた時の効果は無いので、どの味方のスキルの発動も変えない）: 根拠なし
+- **skill2**: supported
+  - effects[0] timed・fullBurstStart・projectileExplosionDamage: C-1592（確定）
+  - effects[1] timed・fullBurstStart・attackDamage: C-1592（確定）
+  - notes[0] 間接（HP）: フルバーストタイムの発動の時、自分の HP が 25% 以上でスターゲイザー状態なら自分に付く現在の HP 20%▼は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く。アビスタに HP を読む効果は無く、S1 の回復で戻る）: 根拠なし
+- **burst**: supported
+  - effects[0] burstReentry: C-1591（確定）
+  - effects[1] state・burstUse・stargazer（maxHp）: C-1592（確定）
+
 ## 450 ナガ
 
 - **skill1**: supported
@@ -2453,6 +2502,20 @@ notes の種類: 未対応 22・前提の外 134・計算に無関係 85・補�
   - effects[0] state・burstUse・memoryMaking（critRate・attackDamage）: C-1289（確定）、C-1290（仮説）
   - effects[1] ammoRefill・burstUse: C-1289（確定）
   - effects[2] burstDamage・skill: C-1289（確定）
+
+## 590 モリー
+
+- **skill1**: supported
+  - effects[0] state・battleStart・struggle: C-1590（仮説）
+  - notes[0] 前提の外（読む: バリア）: バーストを使った時、必死の抵抗状態でなければ自分に付く必死の抵抗は、被弾で必死の抵抗が切れたときだけ起きるので、被弾を扱わないモデルでは起きない（要件 4.2 節）: C-1590（仮説）
+  - notes[1] 前提の外（読む: バリア）: 必死の抵抗が終了した時の自分の最大HP▲（5 スタック・持続）は、被弾で必死の抵抗が切れたときだけ起きるので、被弾を扱わないモデルでは起きない（要件 4.2 節）。起きても、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: C-1590（仮説）
+- **skill2**: noEffect
+  - notes[0] 計算に無関係: 通常攻撃が 60 回命中した時の、必死の抵抗状態なら対象に付く挑発（4 秒）は、ダメージに関係せず、付けたときにもバーストゲージを溜めない: C-1589（確定）
+  - notes[1] 前提の外: 味方（自分を含む）がパーツを破壊した時の、味方全体への持続ダメージ▲（5 スタック・15 秒）と、攻撃力が最も高い敵 1 機への持続ダメージ（1 秒間隔・15 秒）は、射撃場の敵にパーツが無いので起きない: C-0443（範囲外）
+- **burst**: supported
+  - effects[0] timed・burstUse・sustainedDamage: C-1588（確定）
+  - notes[0] 前提の外（読む: バリア）: 必死の抵抗状態の時の、自分のバリアの HP の回復は、被弾で減ったバリアを戻して必死の抵抗を保つだけで、被弾を扱わないモデルでは何も変えない（要件 4.2 節）: C-1590（仮説）
+  - notes[1] 前提の外（読む: バリア）: 必死の抵抗状態でなければ自分に付く最大HP▲（10 秒）は、被弾で必死の抵抗が切れたときだけ起きるので、被弾を扱わないモデルでは起きない（要件 4.2 節）: C-1590（仮説）
 
 ## 600 ミント
 

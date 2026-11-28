@@ -89,6 +89,8 @@
 
 - 照合の指標 `perShotHitDamage`（`packages/core/src/records/observations/metrics/damage.ts`）は、引数のフレームの区間の 1 トリガーの値の `perShot` から 1 回の値を出し、その時刻の発が部分チャージの発かを見ない。2 パス目は部分チャージの発に、きっかけが `fullChargeShot` の分（`perShotFullCharge`）を乗せないので、部分チャージの発を読む観測値では、モデルに無い追加ダメージの値を出す。いまの比べる観測値は、どれも部分チャージの発から離れたフレームを指す（2026-11-15 に調べた）。部分チャージの発の 1 回の値を比べる観測値が要るときに、その発の値（`partialChargeTriggerDamage` を通した `perShot`）から出す（[design-full-charge-fold.md](design-full-charge-fold.md) 3.2 節）
 - 値の固定（timed の `lock`）は、持ち主の和を作る 3 か所（`skills/holders/views.ts` の `firingBuffs`・`damageBuffsAt`、`skills/timeline.ts` の `buildSegments`）でだけ当てている。`frame/plan.ts` の `withSameActivationEffects`・`withEarlierSequentialEffects` は固定を当て直さず、条件 `selfBuffed` と、きっかけ `{ buffApplied }` は止めた▲も付いたと数え、区間の表示は止めた常時の値（装備・キューブ）の量を 0 にしない。いまの定義にはどれも効く組が無い（固定を持つ 4 体に、自分のバーストのチャージ速度▲・リロード速度▲と、これらを読む条件・きっかけが無い）。使い手が出たら、効果の列から和を作る関数を 1 つにして（足す → `applyStatLocks`）、和を作る所がそれを使う形にする（[design-stat-lock.md](design-stat-lock.md) 3.4 節）
+- 2 パス目の倍率ダメージ（`frame/plan.ts` の `damageEffectHits`）と持続ダメージ（`dotHits` の `dotApplicationFrames`）は、発火のフレームをきっかけの種類ごとに別々に選んでいる（持続ダメージは〈状態〉の終わり・フルスタックの消費・数える窓の `everyAt` を受けない）。いまの dot の定義はどれも、受ける種類のきっかけだけを使う。dot に新しいきっかけを書く使い手が出たら、発火のフレームを選ぶ関数を 1 つにして両方から呼ぶ（[design-sakura-bis.md](design-sakura-bis.md) 8.3 節）
+- スタックする dot の `atApplication`（付けるたびに 1 スタックぶんの tick と、刻みの数え直し。`frame/dot.ts` の `stackingApplicationTicks`）は、2 パス目の tick だけが持ち、付いている区間（`dotActiveSpans`）と 1 パス目のゲージ（`firstPass/gaugeEffects/dot.ts` の `dotTickTracker`）は前の刻みの規則のままなので、名前の付いた状態・ゲージとは組ませていない（`skills/parse/dot.ts`）。この形で名前の付いた状態かゲージを持つ使い手が出たら、刻みの規則を `dotTickTracker` に入れて 3 か所で揃える（[design-sakura-bis.md](design-sakura-bis.md) 8.3 節）
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
 
