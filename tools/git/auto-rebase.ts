@@ -1,9 +1,10 @@
 // 自動マージを待つ PR の衝突を直す（plan/design-auto-conflict-fix.md 2 節の案 A）。main への push で .github/workflows/auto-rebase.yml が
 // 3 つのジョブで回す。PR のブランチの道具を回すジョブ（--prepare）と、デプロイキーを持つジョブ（--push）を分ける
-// （plan/design-deploy-key-scope.md 2 節）。
+// （plan/design-deploy-key-scope.md 2 節）。PR を 1 本ずつ回す組み立ては auto-rebase-jobs.ts。
 //   node tools/git/auto-rebase.ts --find             自動マージを予約した PR のうち、直してみるものの番号を GITHUB_OUTPUT の targets に、
-//                                                    その PR（mergeable を入れた JSON）を prs に書く（mergeable が決まるまで問い直す。
-//                                                    npm ci の前に回るので node のほかは読まない）
+//                                                    その PR（--prepare が読む欄と mergeable だけの JSON。環境変数の上限に入りきらない
+//                                                    PR は次の実行に回す）を prs に書く（mergeable が決まるまで問い直す。npm ci の前に
+//                                                    回るので node のほかは読まない）
 //   node tools/git/auto-rebase.ts --prepare <dir>    鍵も token も持たないジョブで、環境変数 PRS（--find の prs）の PR を 1 本ずつ次の
 //                                                    ように直し、結果を <dir> に置く（PR ごとの bundle と manifest.json。artifact で
 //                                                    --push に渡す）
@@ -30,25 +31,23 @@ import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
+import { type FixOutcome, prepareEntries, pushEntries } from './auto-rebase-jobs.ts';
 import {
-  autoMergeLostComment,
   bundleArgs,
   commented,
-  failureComment,
+  findOutput,
   isTarget,
+  type GitRun,
   type MarkKind,
+  NO_HOOKS,
   parsePrepManifest,
   pollMergeable,
   PREP_MANIFEST,
   prepBundle,
-  type PrepEntry,
+  type PrepPull,
   type Pull,
   type PullFile,
-  pushBundle,
   type Renumber,
-  fixedComment,
-  type GitRun,
-  NO_HOOKS,
   splitCollisions,
   transientFailure,
   worthFixing,
@@ -136,11 +135,13 @@ if (values.find) {
       return !failed && worthFixing(mergeable, files) ? [{ ...p, mergeable }] : [];
     }),
   );
-  const targets = picked.flat();
-  console.log(`直してみる PR: ${targets.map((p) => `#${p.number}`).join('・') || 'なし'}`);
+  // prs は --prepare が読む欄だけの 1 行の JSON（--prepare は token を持たないので、PR はここで渡す。環境変数の上限に収める）
+  const { targets, prs: prsJson, deferred } = findOutput(picked.flat());
+  console.log(`直してみる PR: ${targets.map((n) => `#${n}`).join('・') || 'なし'}`);
+  if (deferred.length > 0)
+    console.log(`::warning::PRS の上限を超えるので次の実行に回す PR: ${deferred.map((n) => `#${n}`).join('・')}`);
   const out = process.env['GITHUB_OUTPUT'];
-  // prs は 1 行の JSON（--prepare は token を持たないので、PR はここで渡す）
-  if (out) appendFileSync(out, `targets=${targets.map((p) => p.number).join(' ')}\nprs=${JSON.stringify(targets)}\n`);
+  if (out) appendFileSync(out, `targets=${targets.join(' ')}\nprs=${prsJson}\n`);
   process.exit(0);
 }
 
@@ -159,7 +160,7 @@ async function prepare(dir: string): Promise<void> {
   const gitPaths = (args: readonly string[]): string[] =>
     nulPaths(execFileSync('git', pathListArgs(args), { cwd: ROOT, encoding: 'utf8' }));
 
-  const prs = JSON.parse(process.env['PRS'] ?? '[]') as Pull[];
+  const prs = JSON.parse(process.env['PRS'] ?? '[]') as PrepPull[];
   // 子の pr:prep・records:renumber の commit も同じ身元にする。子の pr:prep は、origin のブランチをこの身元が直していても止めない
   Object.assign(process.env, {
     GIT_AUTHOR_NAME: AUTO_REBASE_COMMITTER.name,
@@ -176,20 +177,9 @@ async function prepare(dir: string): Promise<void> {
     run('git', ['clean', '-fdq']);
   }
 
-  type Outcome =
-    | { kind: 'skip' }
-    | { kind: 'ready'; head: string; renumbered: Renumber[] }
-    /** retry: 通信などの一時の失敗。コメントせず、次の実行で直し直す（コメントすると --find がこの head を飛ばし続ける） */
-    | { kind: 'failed'; reason: string; output?: string; retry?: true };
-
-  function fix(pr: Pull): Outcome {
-    const { ref: branch, sha } = pr.head;
-    if (!gitOk(['fetch', '--quiet', 'origin']))
-      return { kind: 'failed', reason: 'git fetch origin が落ちた', retry: true };
-    if (git(['rev-parse', `origin/${branch}`]) !== sha) {
-      console.log(`#${pr.number}: origin のブランチが進んでいる。次の実行に任せる`);
-      return { kind: 'skip' };
-    }
+  /** origin のブランチが問い合わせた head のままの PR を直す（確かめるのは prepareEntries） */
+  function fix(pr: PrepPull): FixOutcome {
+    const branch = pr.head.ref;
     git(['checkout', '--quiet', '-B', branch, `origin/${branch}`]);
 
     const { found } = branchCollisions(gitPaths, idsInBranches().ids);
@@ -246,44 +236,15 @@ async function prepare(dir: string): Promise<void> {
   }
 
   mkdirSync(dir, { recursive: true });
-  const entries: PrepEntry[] = [];
-  let failures = 0;
-  for (const pr of prs) {
-    const n = pr.number;
-    if (!isTarget(pr, repo!)) continue;
-    console.log(`::group::#${n} ${pr.head.ref}`);
-    let outcome: Outcome;
-    try {
-      outcome = fix(pr);
-      if (outcome.kind === 'ready')
-        // main の先頭（pr:prep が取り込んだもの）からの commit だけを入れる。--push は main を取ってから取り込む
-        git(bundleArgs(join(dir, prepBundle(n))));
-    } catch (e) {
-      const output = (e as Error).message;
-      outcome = transientFailure(output)
-        ? { kind: 'failed', reason: '通信の失敗', output, retry: true }
-        : { kind: 'failed', reason: '道具が落ちた', output };
-    }
-    // 次の PR のために片付ける
-    cleanUp();
-    console.log('::endgroup::');
-    if (outcome.kind === 'skip') continue;
-    if (outcome.kind === 'ready') {
-      console.log(`#${n}: 直した（${outcome.head.slice(0, 8)}）。push は次のジョブ`);
-      entries.push({ number: n, sha: pr.head.sha, kind: 'ready', renumbered: outcome.renumbered });
-      continue;
-    }
-    failures++;
-    console.log(`::warning::#${n}: ${outcome.reason}`);
-    if (outcome.retry) continue;
-    entries.push({
-      number: n,
-      sha: pr.head.sha,
-      kind: 'failed',
-      reason: outcome.reason,
-      ...(outcome.output !== undefined ? { output: outcome.output } : {}),
-    });
-  }
+  const { entries, failures } = prepareEntries(prs, {
+    repo: repo!,
+    originHead: (branch) => (gitOk(['fetch', '--quiet', 'origin']) ? git(['rev-parse', `origin/${branch}`]) : null),
+    fix,
+    // main の先頭（pr:prep が取り込んだもの）からの commit だけを入れる。--push は main を取ってから取り込む
+    bundle: (n) => git(bundleArgs(join(dir, prepBundle(n)))),
+    cleanUp,
+    log: (line) => console.log(line),
+  });
   writeFileSync(join(dir, PREP_MANIFEST), `${JSON.stringify(entries, null, 2)}\n`);
   // push とコメントのするものが無ければ、push のジョブを立ち上げない
   const out = process.env['GITHUB_OUTPUT'];
@@ -296,19 +257,9 @@ async function prepare(dir: string): Promise<void> {
  * 失敗は、残りの PR を続けてから 1 で終わる
  */
 async function push(dir: string): Promise<void> {
-  let errors = 0;
-  // --prepare のジョブの中身は PR のブランチの道具が書き換えうるので、--find が選んだ PR に限る（直せなかった PR を先に回す）
-  const targets = new Set(targetNumbers());
-  const entries = parsePrepManifest(readFileSync(join(dir, PREP_MANIFEST), 'utf8'))
-    .filter((e) => {
-      if (targets.has(e.number)) return true;
-      console.log(`::error::#${e.number}: --find が選んでいない PR が結果にある。読まない`);
-      errors++;
-      return false;
-    })
-    .sort((a, b) => Number(b.kind === 'failed') - Number(a.kind === 'failed'));
+  // --prepare のジョブの中身は PR のブランチの道具が書き換えうるので、一覧の形を確かめ、--find が選んだ PR に限る（pushEntries）
+  const manifest = parsePrepManifest(readFileSync(join(dir, PREP_MANIFEST), 'utf8'));
 
-  /** 鍵で git を回す準備（初めて push する時に 1 回だけ。鍵が無いか main を取れなければ投げる） */
   let keyed: { gitRun: GitRun; remote: string } | undefined;
   async function withKey(): Promise<{ gitRun: GitRun; remote: string }> {
     if (keyed) return keyed;
@@ -327,64 +278,20 @@ async function push(dir: string): Promise<void> {
     return keyed;
   }
 
-  const pushed: { n: number; head: string }[] = [];
-  for (const entry of entries) {
-    const n = entry.number;
-    try {
-      const pr = await pull(n);
-      // push の先は API で引き直したブランチ（対象の名前に限る）。--prepare の後に進んだ PR は、次の実行に任せる
-      if (!isTarget(pr, repo!) || pr.head.sha !== entry.sha) {
-        console.log(`#${n}: 対象でなくなったか、ブランチが進んだ。何もしない`);
-        continue;
-      }
-      if (entry.kind === 'failed') {
-        await comment(n, 'failed', entry.sha, failureComment(entry.sha, entry.reason, entry.output));
-        continue;
-      }
-      const branch = pr.head.ref;
-      const { gitRun, remote } = await withKey();
-      const { head, outcome } = pushBundle(gitRun, {
-        bundle: join(dir, prepBundle(n)),
-        number: n,
-        branch,
-        sha: entry.sha,
-        remote,
-      });
-      if (outcome === 'error') {
-        // 通信などの一時の失敗とみて、コメントせず次の実行で直し直す
-        console.log(`::warning::#${n}: push が落ちた`);
-        errors++;
-        continue;
-      }
-      if (outcome === 'stale') {
-        console.log(`#${n}: push の間にブランチが進んだ（セッションが直した）。何もしない`);
-        continue;
-      }
-      console.log(`#${n}: 直して push した（${head.slice(0, 8)}）`);
-      pushed.push({ n, head });
-      if (entry.renumbered.length > 0) {
-        const replaceIds = await idReplacer();
-        await api(`/pulls/${n}`, {
-          method: 'PATCH',
-          body: { title: replaceIds(pr.title, entry.renumbered), body: replaceIds(pr.body ?? '', entry.renumbered) },
-        });
-      }
-      await comment(n, 'fixed', head, fixedComment(head, branch, entry.renumbered));
-    } catch (e) {
-      console.log(`::error::#${n}: ${(e as Error).message}`);
-      errors++;
-    }
-  }
-  // push の後に GitHub が予約を外すかは非同期なので、少し待ってからまとめて見る
-  if (pushed.length > 0) await sleep(10_000);
-  for (const { n, head } of pushed) {
-    try {
-      if ((await pull(n)).auto_merge == null) await comment(n, 'auto-merge', head, autoMergeLostComment(head));
-    } catch (e) {
-      console.log(`::error::#${n}: ${(e as Error).message}`);
-      errors++;
-    }
-  }
+  const errors = await pushEntries(manifest, {
+    repo: repo!,
+    targets: new Set(targetNumbers()),
+    pull,
+    editPull: async (n, fields) => {
+      await api(`/pulls/${n}`, { method: 'PATCH', body: fields });
+    },
+    comment,
+    withKey,
+    bundlePath: (n) => join(dir, prepBundle(n)),
+    idReplacer,
+    sleep,
+    log: (line) => console.log(line),
+  });
   console.log(errors > 0 ? `失敗が ${errors} 件（上の注釈）` : '終わった');
   if (errors > 0) process.exitCode = 1;
 }

@@ -1,6 +1,16 @@
 // main への push の CI で生成物を commit して push する決まりごと。git は呼ばず、コマンドごとの結果を決めた偽物で分かれ道を見る。
-import { describe, expect, it } from 'vitest';
-import { commitGenerated, DEPLOY_KEY_SECRET, isNotFastForward, type GitRun } from './ci-generated-lib.ts';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
+import { afterEach, describe, expect, it } from 'vitest';
+import {
+  commitGenerated,
+  DEPLOY_KEY_SECRET,
+  exportGenerated,
+  isNotFastForward,
+  type GitRun,
+  restoreGenerated,
+} from './ci-generated-lib.ts';
 
 const SHA = 'a'.repeat(40);
 const OTHER = 'b'.repeat(40);
@@ -124,5 +134,57 @@ describe('isNotFastForward', () => {
     expect(isNotFastForward(' ! [rejected]        HEAD -> main (non-fast-forward)')).toBe(true);
     expect(isNotFastForward(' ! [remote rejected] HEAD -> main (protected branch hook declined)')).toBe(false);
     expect(isNotFastForward('fatal: Could not read from remote repository.')).toBe(false);
+  });
+});
+
+describe('exportGenerated and restoreGenerated', () => {
+  const dirs: string[] = [];
+  afterEach(() => {
+    for (const d of dirs.splice(0)) rmSync(d, { recursive: true, force: true });
+  });
+  function tree(files: Record<string, string>): string {
+    const root = mkdtempSync(join(tmpdir(), 'ci-generated-'));
+    dirs.push(root);
+    for (const [p, text] of Object.entries(files)) {
+      mkdirSync(dirname(join(root, p)), { recursive: true });
+      writeFileSync(join(root, p), text);
+    }
+    return root;
+  }
+  const PATHS = ['plan/claims.md', 'plan/captures/recordings.md'];
+
+  it('exports every generated file, creating the folders', () => {
+    const root = tree({ 'plan/claims.md': 'c', 'plan/captures/recordings.md': 'r', 'README.md': 'x' });
+    const out = join(tree({}), 'generated');
+    exportGenerated(root, out, PATHS);
+    expect(readFileSync(join(out, 'plan/claims.md'), 'utf8')).toBe('c');
+    expect(readFileSync(join(out, 'plan/captures/recordings.md'), 'utf8')).toBe('r');
+    expect(existsSync(join(out, 'README.md'))).toBe(false);
+  });
+  it('throws when a generated file is missing, so the artifact is never partial', () => {
+    const root = tree({ 'plan/claims.md': 'c' });
+    expect(() => exportGenerated(root, tree({}), PATHS)).toThrow();
+  });
+  it('restores only the generated paths, ignoring other files in the artifact', () => {
+    const artifact = tree({
+      'plan/claims.md': 'new',
+      'README.md': 'planted',
+      '.github/workflows/ci.yml': 'planted',
+    });
+    const root = tree({ 'plan/claims.md': 'old', 'plan/captures/recordings.md': 'r', 'README.md': 'x' });
+    expect(restoreGenerated(artifact, root, PATHS)).toEqual(['plan/claims.md']);
+    expect(readFileSync(join(root, 'plan/claims.md'), 'utf8')).toBe('new');
+    // artifact に無い生成物は、作業ツリーの版のまま
+    expect(readFileSync(join(root, 'plan/captures/recordings.md'), 'utf8')).toBe('r');
+    expect(readFileSync(join(root, 'README.md'), 'utf8')).toBe('x');
+    expect(existsSync(join(root, '.github/workflows/ci.yml'))).toBe(false);
+  });
+  it('round-trips what it exported', () => {
+    const from = tree({ 'plan/claims.md': 'c2', 'plan/captures/recordings.md': 'r2' });
+    const to = tree({ 'plan/claims.md': 'c1', 'plan/captures/recordings.md': 'r1' });
+    const artifact = tree({});
+    exportGenerated(from, artifact, PATHS);
+    expect(restoreGenerated(artifact, to, PATHS)).toEqual(PATHS);
+    for (const p of PATHS) expect(readFileSync(join(to, p), 'utf8')).toBe(readFileSync(join(from, p), 'utf8'));
   });
 });

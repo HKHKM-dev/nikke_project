@@ -5,10 +5,13 @@ import {
   autoMergeLostComment,
   commented,
   failureComment,
+  findOutput,
   isTarget,
   mark,
   parsePrepManifest,
   pollMergeable,
+  type PrepPull,
+  PRS_LIMIT,
   type Pull,
   pushOutcome,
   fixedComment,
@@ -196,5 +199,55 @@ describe('parsePrepManifest', () => {
     expect(() => parsePrepManifest(JSON.stringify([{ number: 1, sha: A, kind: 'failed', reason: 1 }]))).toThrow(
       'reason',
     );
+  });
+});
+
+describe('findOutput', () => {
+  /** REST の PR の、使わない大きな欄（本文・自動マージの予約の中身・ほかの欄）の代わり */
+  const bulky = (n: number): Pull =>
+    ({
+      ...pr({ number: n, mergeable: false, body: '本文'.repeat(2000) }),
+      auto_merge: { enabled_by: { login: 'x' }, commit_message: 'm'.repeat(1000) },
+      user: { login: 'x', avatar_url: 'u'.repeat(500) },
+    }) as Pull;
+
+  it('passes only the fields the prepare job reads, keeping isTarget true', () => {
+    const { targets, prs, deferred } = findOutput([bulky(3), { ...bulky(4), mergeable: null }]);
+    expect(targets).toEqual([3, 4]);
+    expect(deferred).toEqual([]);
+    const parsed = JSON.parse(prs) as PrepPull[];
+    expect(parsed[0]).toEqual({
+      number: 3,
+      state: 'open',
+      title: 't',
+      mergeable: false,
+      auto_merge: true,
+      head: { ref: 'claude/x', sha: 'abc', repo: { full_name: REPO } },
+    });
+    expect(parsed[1]!.mergeable).toBeNull();
+    expect(parsed.every((p) => isTarget(p, REPO))).toBe(true);
+  });
+  it('stays under the limit for a full page of PRs with the longest titles', () => {
+    // 1 ページ（100 本）が全部、題名が 256 文字の日本語で、ブランチの名前が長い
+    const page = Array.from({ length: 100 }, (_, i) => ({
+      ...bulky(1000 + i),
+      title: '衝'.repeat(256),
+      head: { ref: `claude/${'b'.repeat(120)}`, sha: 'f'.repeat(40), repo: { full_name: REPO } },
+    }));
+    const { targets, prs, deferred } = findOutput(page);
+    expect(deferred).toEqual([]);
+    expect(targets).toHaveLength(100);
+    expect(Buffer.byteLength(`PRS=${prs}`)).toBeLessThan(PRS_LIMIT);
+  });
+  it('defers the PRs that do not fit, keeping targets and prs in step', () => {
+    const one = Buffer.byteLength(JSON.stringify(JSON.parse(findOutput([bulky(1)]).prs)[0]));
+    const { targets, prs, deferred } = findOutput([bulky(1), bulky(2), bulky(3)], 2 + one * 2 + 1);
+    expect(targets).toEqual([1, 2]);
+    expect(deferred).toEqual([3]);
+    expect((JSON.parse(prs) as PrepPull[]).map((p) => p.number)).toEqual(targets);
+    expect(Buffer.byteLength(prs)).toBe(2 + one * 2 + 1);
+  });
+  it('writes an empty list when nothing is picked', () => {
+    expect(findOutput([])).toEqual({ targets: [], prs: '[]', deferred: [] });
   });
 });

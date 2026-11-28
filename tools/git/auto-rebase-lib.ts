@@ -21,13 +21,61 @@ export type PullFile = { filename: string; status: string };
 const BRANCH_PREFIXES = ['claude/', 'antigrav/'];
 
 /** 直す対象か: 開いていて、自動マージを予約していて、head が同じリポジトリのエージェントのブランチ */
-export function isTarget(pr: Pull, repo: string): boolean {
+export function isTarget(pr: Pick<Pull, 'state' | 'auto_merge' | 'head'>, repo: string): boolean {
   return (
     pr.state === 'open' &&
     pr.auto_merge != null &&
     pr.head.repo?.full_name === repo &&
     BRANCH_PREFIXES.some((p) => pr.head.ref.startsWith(p))
   );
+}
+
+/**
+ * --find が --prepare に渡す PR（環境変数 PRS の 1 行の JSON）。--prepare が読む欄だけにする（REST の PR は 1 本で約 18KB あり、
+ * 環境変数 1 つの上限を数本で超える。plan/design-deploy-key-scope.md 5 節）。本文は渡さない（--push が API で引き直して書き換える）。
+ * 自動マージの予約は、有無だけを true で残す
+ */
+export type PrepPull = Pick<Pull, 'number' | 'state' | 'title' | 'mergeable' | 'head'> & { auto_merge: true | null };
+
+export function prepPull(p: Pull): PrepPull {
+  return {
+    number: p.number,
+    state: p.state,
+    title: p.title,
+    mergeable: p.mergeable ?? null,
+    auto_merge: p.auto_merge == null ? null : true,
+    head: { ref: p.head.ref, sha: p.head.sha, repo: p.head.repo ? { full_name: p.head.repo.full_name } : null },
+  };
+}
+
+/**
+ * PRS の JSON の上限（バイト）。Linux の環境変数 1 つの上限（MAX_ARG_STRLEN、128KiB。「PRS=」を含む）から余裕を引いたもの。
+ * 超えると --prepare のジョブの node が起動できず（E2BIG）、どの PR も直らない
+ */
+export const PRS_LIMIT = 120 * 1024;
+
+/**
+ * --find の出力（直してみる PR の番号と PRS の JSON）を作る。PRS に入りきらない（limit を超える）PR は、次の実行に回す
+ * （deferred。番号も targets に入れない）
+ */
+export function findOutput(
+  picked: readonly Pull[],
+  limit = PRS_LIMIT,
+): { targets: number[]; prs: string; deferred: number[] } {
+  const kept: PrepPull[] = [];
+  const deferred: number[] = [];
+  let size = 2; // []
+  for (const p of picked) {
+    const slim = prepPull(p);
+    const add = Buffer.byteLength(JSON.stringify(slim)) + (kept.length > 0 ? 1 : 0);
+    if (size + add > limit) {
+      deferred.push(p.number);
+      continue;
+    }
+    kept.push(slim);
+    size += add;
+  }
+  return { targets: kept.map((p) => p.number), prs: JSON.stringify(kept), deferred };
 }
 
 /** ID が重なりうる記録（検証記録・結論・録画・課題の番号）を足したか（足したものと名前を変えたもの） */
