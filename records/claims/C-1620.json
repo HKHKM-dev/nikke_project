@@ -1,0 +1,16 @@
+{
+  "id": "C-1620",
+  "text": "レーベルのバーストの妄想共有は、バーストの使用から 10 秒付き、その間だけ S2 の攻撃力▲が、レーベルを除く味方全体に、レーベルのバフ前攻撃力の 80.36%（スキル発動者基準）として乗る。レーベル自身の 1 ヒットは変わらない",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1446-24`・`1446-25`・`1446-26`・`1446-27`・`1446-28`。V-0900",
+  "model": "data/skills/582.json（burst の妄想共有の付与と、skill2 の passive の excludeSelf・while）。packages/core/src/skills/parse/timed.ts の parsePassiveEffect・skills/composition.ts の fixedTargetsOf（passive の自分を除く）",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/582.json の skill2 の effects[2]", "data/skills/582.json の burst の effects[0]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "攻撃力▲の量は説明文の値（skill2 の {04}）とスキル発動者基準の式（casterAttack）、10 秒は説明文の値（burst の {03}）"
+}
