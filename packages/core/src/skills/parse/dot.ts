@@ -87,7 +87,7 @@ function validateAppliedDot(
  */
 function validatePlainDot(v: Record<string, Json>, trigger: EffectTrigger, path: string): void {
   if (isChanceTrigger(trigger)) rejectPlainOnlyKeys(v, path, 'a dot on a chance trigger');
-  else if (v.restartOnReapply !== undefined) rejectPlainOnlyKeys(v, path, 'a dot with restartOnReapply');
+  else if (v.restartOnReapply === true) rejectPlainOnlyKeys(v, path, 'a dot with restartOnReapply');
 }
 
 /**

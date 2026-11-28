@@ -117,7 +117,8 @@ describe('MG のリロード明けのレートの、残す道に入らない回�
     let fired = 0;
     let f = 0;
     for (; fired < 20; f++) if (stepShooter(state, shot, model, params)) fired += 1;
-    // 撃ち切っていないマガジン（20 発目まで）で窓に入り、ハイド中のリロードを窓の中で込め終える
+    // 撃ち切っていないマガジン（20 発目まで）で窓に入り、ハイド中のリロードを窓の中で込め終える（ハイドで始めたリロードは最終弾から
+    // 始めていないので残す道に入らず、明けの構え直しでも最初に戻す）
     const window = 30;
     expect(window).toBeLessThan(shot.rateOfFireResetTime * FRAMES_PER_GAME_SECOND);
     hideShooter(state, shot, model, params);
@@ -186,11 +187,24 @@ describe('MG のリロード明けのレートの、残す道に入らない回�
       const params = firingParams(noReset, { ...ZERO_FIRING_BUFFS, reloadSpeed });
       const state = initialShooter(noReset, model, params);
       const frames: number[] = [];
+      const spun: number[] = [];
       for (let f = 0; frames.length < MAGAZINE + 11; f++)
-        if (stepShooter(state, noReset, model, params)) frames.push(f);
-      return { fresh: frames[10]! - frames[0]!, restart: frames[MAGAZINE + 10]! - frames[MAGAZINE]! };
+        if (stepShooter(state, noReset, model, params)) {
+          frames.push(f);
+          spun.push(state.spunShots);
+        }
+      return {
+        fresh: frames[10]! - frames[0]!,
+        restart: frames[MAGAZINE + 10]! - frames[MAGAZINE]!,
+        spunFresh: spun[0]!,
+        spunRestart: spun[MAGAZINE]!,
+      };
     };
-    const { fresh, restart: span } = spans(0.95);
-    expect(span).toBe(fresh);
+    // 止まりのいちばん短い回（リロード速度▲ 100%）も。止まりは構え（reloadCompleteToShotFrames）より長いので、下げる間はいつも正
+    for (const reloadSpeed of [0.95, 1]) {
+      const { fresh, restart: span, spunFresh, spunRestart } = spans(reloadSpeed);
+      expect(span).toBe(fresh);
+      expect(spunRestart).toBe(spunFresh);
+    }
   });
 });

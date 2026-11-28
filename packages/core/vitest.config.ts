@@ -8,7 +8,7 @@ export default defineConfig({
     isolate: false,
     include: ['src/**/*.test.ts', 'scripts/**/*.test.ts'],
     // vi.mock を使うテストは、ファイルごとに隔離する別の project で回す（ルートの vitest.config.ts）
-    exclude: ['src/**/*.isolated.test.ts'],
+    exclude: ['**/*.isolated.test.ts'],
     testTimeout: 15000,
   },
 });

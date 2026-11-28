@@ -13,7 +13,7 @@ export default defineConfig({
           name: 'core-isolated',
           root: './packages/core',
           environment: 'node',
-          include: ['src/**/*.isolated.test.ts'],
+          include: ['src/**/*.isolated.test.ts', 'scripts/**/*.isolated.test.ts'],
           testTimeout: 15000,
         },
       },
