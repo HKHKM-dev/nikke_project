@@ -8,7 +8,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { describeEveryShotInOneGroup, fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { describeRuns, fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const VIPER = 112;
 const FLOWER = 304;
@@ -78,4 +78,4 @@ describe('宝物版のバイパー + II + III', () => {
   });
 });
 
-describeEveryShotInOneGroup({ RECORDED, TREASURE });
+describeRuns({ RECORDED, TREASURE });
