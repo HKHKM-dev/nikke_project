@@ -86,6 +86,16 @@ describe('「〈絞り込み〉の味方 N 機」（allies と targetCount）', 
       ref: 1,
     };
     expect(() => effectOf(passive)).toThrow(/targetCount is not allowed in passive/);
+    const grant = {
+      kind: 'state',
+      state: 'camouflage',
+      trigger: 'burstUse',
+      target: 'allies',
+      targetClass: 'Defender',
+      targetCount: 2,
+      durationSeconds: 3,
+    };
+    expect(() => effectOf(grant)).toThrow(/only allowed in timed/);
   });
 });
 
