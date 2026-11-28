@@ -17,6 +17,7 @@ import {
   type BasicBurstStep,
   type BuffTarget,
   type ExcludeSelf,
+  type RankTie,
   isAttackRanked,
   type TargetAdjacent,
   type TargetDefense,
@@ -70,6 +71,8 @@ export type TargetFields = {
   targetCharacter?: number;
   /** 「自分を除く」（topAttack と、allies の always） */
   excludeSelf?: ExcludeSelf;
+  /** 順位の同値の向き（topAttack・lowestAttack。skills/ranking.ts の rankByFinalAttack） */
+  rankTie?: RankTie;
   /** 「〈名前〉状態の」（目録の id） */
   targetState?: NamedStateId;
   /** targetState が時間で変わる状態なら true（skills/types.ts の FixedTargetFields）。発火の文脈の stateHolders で絞る */

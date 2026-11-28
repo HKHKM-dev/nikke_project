@@ -14,6 +14,7 @@ import {
   DURATION_UNTILS,
   type EffectTrigger,
   EXCLUDE_SELF,
+  RANK_TIES,
   isAppliedTrigger,
   isAttackRanked,
   isAllyDecrease,
@@ -367,6 +368,7 @@ type TimedNarrowing = Pick<
   | 'targetSquad'
   | 'targetCharacter'
   | 'excludeSelf'
+  | 'rankTie'
   | 'targetDefense'
   | 'targetLeftmost'
   | 'targetRandom'
@@ -441,6 +443,12 @@ function parseTimedTarget(
       );
     }
     narrowing.excludeSelf = excludeSelf;
+  }
+  // 順位の同値の向き（plan/design-rank-tie-break.md 2.1 節）
+  if (v.rankTie !== undefined) {
+    if (!isAttackRanked(target))
+      fail(`${path}.rankTie`, `only allowed with target "topAttack" or "lowestAttack", got "${target}"`);
+    narrowing.rankTie = oneOf(RANK_TIES, v.rankTie, `${path}.rankTie`);
   }
   Object.assign(narrowing, parsePersonaTargetFields(v, target, path));
   // 順位の対象の段階の絞り込みは「自分を除く」と組まない（足りないときに足す自分が段階で絞れない。使い手がいない。

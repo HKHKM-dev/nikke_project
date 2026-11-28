@@ -57,18 +57,24 @@
           "claims": [
             "C-0881"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "同じきっかけの、自分を除く最終攻撃力が最も高い味方 1 機への攻撃ダメージ▲（2 秒）は未対応。ラム・デルタ（スペック固定の攻撃力が同じ）との編成の録画では▲はデルタに乗り、ラムには乗らない（V-0634）。モデルの順位（最終攻撃力。同値は枠の若い順）ではラムになり、選び方が決まらない",
-          "en": "The attack damage increase (2 s) on the ally with the highest final ATK excluding self, from the same trigger, is not modeled. In recordings with Rumani and Delta (same fixed-spec ATK) it goes to Delta, not Rumani (V-0634). The model ranking (final ATK, ties by slot order) picks Rumani, so the selection is not determined",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attackDamage",
-            "target": "allies",
-            "trigger": "normalShot"
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 2,
+            "firesDuring": "fullBurst"
+          },
+          "target": "topAttack",
+          "targetCountRef": 7,
+          "excludeSelf": "always",
+          "rankTie": "lastSlot",
+          "stat": "attackDamage",
+          "ref": 5,
+          "durationRef": 6,
+          "assumes": {
+            "ja": "回数と付く発は自分への攻撃ダメージ▲（effects[2]）と同じ。順位は発火のフレームの最終攻撃力で、自分を除く。同値は枠の遅い方を選ぶ。確かめたのはラム 1 枠目・デルタ 2 枠目（同値）でデルタに付く並びだけ（C-0882）。並びを入れ替えたときも遅い方とみたのは、同じく通常攻撃の回数がきっかけのナガの S2 が両方の並びで遅い方を選ぶから（C-1627。未確認）",
+            "en": "Counted and applied like the self Attack Damage up (effects[2]). Ranked by final ATK at the firing frame, excluding self. Ties go to the later slot: checked only with Rumani in slot 1 and Delta in slot 2 (tied), where Delta gets it (C-0882). The swapped order is assumed to behave the same, as Naga S2 (also triggered by a normal-attack count) picks the later slot in both orders (C-1627; not checked)"
           },
           "claims": [
             "C-0882"

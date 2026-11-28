@@ -405,6 +405,7 @@ const TARGET_KEYS = {
     'targetSquad',
     'targetCharacter',
     'excludeSelf',
+    'rankTie',
     'targetState',
     'includeSelf',
     'targetAdjacent',

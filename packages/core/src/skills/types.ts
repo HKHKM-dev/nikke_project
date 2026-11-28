@@ -434,6 +434,13 @@ export function isCountedTarget(
 export type ExcludeSelf = 'always' | 'unlessShort';
 export const EXCLUDE_SELF = ['always', 'unlessShort'] as const satisfies readonly ExcludeSelf[];
 
+/**
+ * 順位の対象（topAttack・lowestAttack）の同値の向き（plan/design-rank-tie-break.md 2.1 節）。lastSlot = 同値は枠の遅い順。
+ * 書かなければ枠の若い順
+ */
+export type RankTie = 'lastSlot';
+export const RANK_TIES = ['lastSlot'] as const satisfies readonly RankTie[];
+
 /** 防御力の比べの対象の絞り込み。lowerThanSelf = 自分と、自分より最終防御力が低い味方 */
 export type TargetDefense = 'lowerThanSelf';
 export const TARGET_DEFENSES = ['lowerThanSelf'] as const satisfies readonly TargetDefense[];
@@ -1180,6 +1187,8 @@ export type TimedEffect = TargetCountFields &
      * 'always' は 'allies' にも書ける（「自分を除く…味方全体」。plan/design-persona.md 3.2 節）
      */
     excludeSelf?: ExcludeSelf;
+    /** 順位の同値の向き（RankTie）。target が 'topAttack'・'lowestAttack' のときだけ書ける */
+    rankTie?: RankTie;
     /**
      * 「〈名前〉状態の」（plan/design-named-state.md 5.4 節）。静的な状態（その枠の定義の
      * 静的な状態。staticStatesOf）を持つ枠だけ。target が 'allies' のときだけ書ける。家族の根を指せば、家族のどの状態の枠にも当たる

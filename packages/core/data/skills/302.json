@@ -30,11 +30,12 @@
           "ref": 2,
           "durationRef": 3,
           "assumes": {
-            "ja": "説明文にきっかけが無いアクティブ型のスキルで、射撃に依らず戦闘開始から 17 秒ごと（1 回目は 1 周期後）に付く（C-0496。単騎の録画 0387〜0389）。単騎では自分に付き、クリティカル確率を 5 秒間上げる。1 周期が 1000 ティックより約 0.63 ティック長い分は入れていない",
-            "en": "An active skill with no trigger in the description: applied every 17 s from combat start (first after one period) regardless of firing (C-0496; solo recordings 387-389). On solo teams it targets self, increasing Critical Rate for 5 s. The period being about 0.63 ticks longer than 1000 is not modeled"
+            "ja": "説明文にきっかけが無いアクティブ型のスキルで、射撃に依らず戦闘開始から 17 秒ごと（1 回目は 1 周期後）に付く（C-0496。単騎の録画 0387〜0389）。単騎では自分に付き、クリティカル確率を 5 秒間上げる。1 周期が 1000 ティックより約 0.63 ティック長い分は入れていない。同値の味方が並ぶと枠の若い方を選ぶ（C-1628。2 体の同値を、枠の並びを入れ替えて確かめた）",
+            "en": "An active skill with no trigger in the description: applied every 17 s from combat start (first after one period) regardless of firing (C-0496; solo recordings 387-389). On solo teams it targets self, increasing Critical Rate for 5 s. The period being about 0.63 ticks longer than 1000 is not modeled. Tied allies go to the earlier slot (C-1628; checked with two tied allies in both slot orders)"
           },
           "claims": [
-            "C-0496"
+            "C-0496",
+            "C-1628"
           ]
         }
       ]

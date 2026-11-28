@@ -14,7 +14,7 @@ import { isEffectTarget, type FireContext } from '../targets.ts';
 
 const buffKey = (holder: number, stat: BuffStat): string => `${holder}:${stat}`;
 import { chanceQ, type ShotEvent } from '../triggers.ts';
-import { type BuffStat, isAllyDecrease, type EffectCondition } from '../types.ts';
+import { type BuffStat, isAllyDecrease, type EffectCondition, type RankTie } from '../types.ts';
 import type { AppliedRecord } from '../timeline.ts';
 import {
   ENEMY,
@@ -507,7 +507,13 @@ export function createFire({
   const recordRanking = (
     frame: number,
     sourceSlotIndex: number,
-    e: { source: ResolvedEffect['source']; effectIndex: number; targetCount?: number; excludeSelf?: string },
+    e: {
+      source: ResolvedEffect['source'];
+      effectIndex: number;
+      targetCount?: number;
+      excludeSelf?: string;
+      rankTie?: RankTie;
+    },
     attackRank: readonly number[],
     finalAttacks: (number | null)[],
     targets: readonly number[],
@@ -524,6 +530,7 @@ export function createFire({
         finalAttacks,
         e.targetCount ?? 1,
       ),
+      ...(e.rankTie !== undefined && { rankTie: e.rankTie }),
     });
   };
   return {

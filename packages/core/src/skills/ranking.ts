@@ -5,12 +5,14 @@
 //     （モデルでは III の発動とフルバーストの開始が同じフレームなので、入れないとアリス自身のバーストが順位に入らない）。
 //     回復（heal）は 1 パス目の手順 3 の最初に順位を出すので、同じフレームに始まった件は入らない（plan/design-heal-top-attack.md 2 節）。
 //   - 順位で対象が決まる効果（topAttack・lowestAttack）の件は数えない（呼び出し側が渡さない）。攻撃力を配る topAttack で循環しないため。
-//   - 同値は枠の若い順（どちらの向きも仮定。未検証。高い順の同値で後ろの枠に付いた録画がある。C-0882）。
+//   - 同値は枠の若い順。効果の rankTie が lastSlot なら枠の遅い順（向きは効果ごとに違う。書いていない効果の向きは仮定。
+//     plan/design-rank-tie-break.md 2.1 節）。
 // 1 パス目のループの持ち主ごとの一覧（skills/holders.ts）が使う。
 import type { Element, WeaponType } from '../types.ts';
 import { applyAttackBuffs, applyResolvedEffect, fixedAttackBaseOf, type BuffTotals } from './buffs.ts';
 import type { ResolvedEffect } from './resolve.ts';
 import { matchesTargetFilter, type TargetedEffect } from './targets.ts';
+import type { RankTie } from './types.ts';
 
 /** 同じフレームに始まった攻撃力の件を順位に入れるか（26 節 3。録画 0043 で確かめる） */
 export const RANK_INCLUDES_SAME_FRAME = true;
@@ -74,14 +76,19 @@ export function finalAttacksAt(
   });
 }
 
-/** 最終攻撃力の高い順（lowest なら低い順）の枠。同値は枠の若い順。空枠は含めない */
-export function rankByFinalAttack(finalAttacks: readonly (number | null)[], lowest = false): number[] {
+/** 最終攻撃力の高い順（lowest なら低い順）の枠。同値は枠の若い順（tie が lastSlot なら遅い順）。空枠は含めない */
+export function rankByFinalAttack(
+  finalAttacks: readonly (number | null)[],
+  lowest = false,
+  tie?: RankTie,
+): number[] {
   const indices: number[] = [];
   finalAttacks.forEach((v, i) => {
     if (v !== null) indices.push(i);
   });
   const sign = lowest ? -1 : 1;
-  return indices.sort((a, b) => sign * (finalAttacks[b]! - finalAttacks[a]!) || a - b);
+  const slotSign = tie === 'lastSlot' ? -1 : 1;
+  return indices.sort((a, b) => sign * (finalAttacks[b]! - finalAttacks[a]!) || slotSign * (a - b));
 }
 
 /**
@@ -91,13 +98,13 @@ export function rankByFinalAttack(finalAttacks: readonly (number | null)[], lowe
  * 末尾に足す（上位 N に足りないときだけ対象に入る。plan/design-target-vocab.md 2.1 節）
  */
 export function attackRankFor(
-  effect: Pick<TargetedEffect, 'targetWeapon' | 'targetElement' | 'excludeSelf' | 'fixedTargets'> &
+  effect: Pick<TargetedEffect, 'targetWeapon' | 'targetElement' | 'excludeSelf' | 'rankTie' | 'fixedTargets'> &
     Partial<Pick<TargetedEffect, 'target'>>,
   slots: readonly RankSlot[],
   finalAttacks: readonly (number | null)[],
   sourceSlotIndex: number,
 ): number[] {
-  const rank = rankByFinalAttack(finalAttacks, effect.target === 'lowestAttack').filter((i) => {
+  const rank = rankByFinalAttack(finalAttacks, effect.target === 'lowestAttack', effect.rankTie).filter((i) => {
     const slot = slots[i];
     if (effect.excludeSelf !== undefined && i === sourceSlotIndex) return false;
     if (effect.fixedTargets !== undefined && !effect.fixedTargets.includes(i)) return false;
@@ -106,7 +113,7 @@ export function attackRankFor(
   return effect.excludeSelf === 'unlessShort' ? [...rank, sourceSlotIndex] : rank;
 }
 
-/** 順位の上位に同値があったか（N 位と N+1 位が同じ攻撃力なら、枠の順の仮定で対象が決まった） */
+/** 順位の上位に同値があったか（N 位と N+1 位が同じ攻撃力なら、同値の向き（rankByFinalAttack）で対象が決まった） */
 export function tiedAtCutoff(
   rank: readonly number[],
   finalAttacks: readonly (number | null)[],
@@ -126,6 +133,8 @@ export type RankingRecord = {
   finalAttacks: (number | null)[];
   /** 対象になった枠（順位の順） */
   targets: number[];
-  /** N 位と N+1 位が同値で、枠の若い順の仮定で決まったか */
+  /** N 位と N+1 位が同値で、枠の順で決まったか */
   tied: boolean;
+  /** 同値の向き（効果の rankTie）。無ければ枠の若い順（仮定。plan/design-rank-tie-break.md 2.2 節） */
+  rankTie?: RankTie;
 };
