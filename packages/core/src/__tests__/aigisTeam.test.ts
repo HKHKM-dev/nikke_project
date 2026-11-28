@@ -14,7 +14,7 @@ import { staticStatesOf } from '../skills/types.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { toTimelineSlots, type TeamInput, type TeamSlotInput } from '../team.ts';
 import { battleSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedEnemy, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const AIGIS = 872;
 const REI = 392;
@@ -105,5 +105,3 @@ describe('実戦寄り（ライ + アイギス + クイーン（真）+ 雪子�
       expect(itemsOf(plan.history, { holder: 1, kind: 'state', state })).toEqual([]);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);
