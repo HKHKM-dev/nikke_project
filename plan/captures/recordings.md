@@ -1373,6 +1373,8 @@
 | 1404 | `20261124-1404_smg_idoll-ocean_holdfire-on.mp4` | ◎I-DOLL・オーシャン（305、SMG・水冷・R） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | V-0874 の撮影: 単騎・操作。オート射撃 OFF で始め、RELOADING で OFF・5 秒以上おいて ON を繰り返し、OFF の間に敵が浮いたら見てすぐ ON（台帳の autoFire は始めの値） |
 | 1405 | `20261124-1405_sg_noir_holdfire-on.mp4` | ◎ノワール（271、SG・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | V-0874 の撮影: 単騎・操作。オート射撃 OFF で始め、RELOADING で OFF・5 秒以上おいて ON を繰り返し、OFF の間に敵が浮いたら見てすぐ ON（台帳の autoFire は始めの値） |
 | 1406 | `20261124-1406_mg_emma_holdfire-on.mp4` | ◎エマ（90、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | V-0874 の撮影: 単騎・操作。オート射撃 OFF で始め、RELOADING で OFF・5 秒以上おいて ON を繰り返し、OFF の間に敵が浮いたら見てすぐ ON（台帳の autoFire は始めの値） |
+| 1407 | `20261128-1407_smg_rai_solo.mp4` | ◎ライ（392、SMG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0880 の撮影: ライ単騎（3 枠目・操作）。オート射撃 ON・オートバースト ON・手動操作なし |
+| 1408 | `20261128-1408_anchor-1.mp4` | ◎アンカー（351、RL・風圧・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0878: アンカー（351）の単騎（操作）・オートバースト ON |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
