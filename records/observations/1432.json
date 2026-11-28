@@ -1,0 +1,558 @@
+[
+  {
+    "id": "1432-01",
+    "recording": "1432",
+    "kind": "timing",
+    "use": "record",
+    "value": [1316, 2518, 3697, 4897, 6075, 7324, 8502, 9704, 10882],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・26・0・25・5・25・5・26f"
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-02",
+    "recording": "1432",
+    "kind": "timing",
+    "use": "record",
+    "value": [1346, 3726, 6104, 8531, 10911],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 6・24・25・25・26f"
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-03",
+    "recording": "1432",
+    "kind": "timing",
+    "use": "record",
+    "value": [1375, 3755, 6134, 8560, 10940],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-04",
+    "recording": "1432",
+    "kind": "timing",
+    "use": "record",
+    "value": [1983, 4363, 6742, 9169, 11548],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-05",
+    "recording": "1432",
+    "kind": "interval",
+    "use": "record",
+    "value": [608, 608, 608, 609, 608],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-06",
+    "recording": "1432",
+    "kind": "timing",
+    "use": "record",
+    "value": [2512, 3690, 4891, 6069, 8496, 9697, 10876],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-07",
+    "recording": "1432",
+    "kind": "timing",
+    "use": "record",
+    "value": [3718, 6098, 10904],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-08",
+    "recording": "1432",
+    "kind": "timing",
+    "use": "record",
+    "value": [3747, 6127, 10933],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-09",
+    "recording": "1432",
+    "use": "compare",
+    "kind": "count",
+    "value": [0, -1, 0, 0, -1, 0, 0, 0, 0, -1, 0, -1, 0],
+    "unit": "発",
+    "description": "フルバーストの中でクレイとジルの防御無視の発の値が段で上がった 13 回の、上がる前の最後のクレイの発までの、戦闘の始めからのクレイの発の数を 60 で割った余り（(-30, 30] に寄せた値）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series・hud.ts --mode jumps",
+      "note": "通算の発の数は照準の左の残弾から数えた（マガジンごとに 120 発。0〜2 の表示はリロードの暗転で読めず、フルバーストの入りの間も読めないので、撃ち切ったとみなす。的のジャンプの途中で残弾を残して込めた 3 本（f2653 の 45・f4830 の 62・f9076 の 19）だけを部分のマガジンにした。残弾の読めないフレームは 2.5f に 1 発で補った）。段の上がりはクレイの防御無視の 1 ヒット（胴体の単位 11,382.6 × 段の倍率 × 距離・会心・コア・フルバーストの和）の格子で決めた。段が上がった発の通算は 180・239・300・960・1019・1680・1740・1800・2400・2459・3120・3179・3240。-1 の 4 回は、付いた発そのものが外れたか HUD で重なり、1 つ前の発が段の前の最後の発になった回"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventTallies",
+      "args": {
+        "slot": 3,
+        "event": "stateStart",
+        "state": "victoriousBattleCry",
+        "tally": "shots",
+        "modulo": 60,
+        "count": 13
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [1375, 11548]
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-10",
+    "recording": "1432",
+    "use": "compare",
+    "kind": "hit",
+    "value": 13133,
+    "description": "クレイの通常攻撃の胴体・距離ボーナスあり・非会心の 1 ヒット（バーストの前。f888〜f1324 ほか）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 400,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-11",
+    "recording": "1432",
+    "use": "compare",
+    "kind": "hit",
+    "value": 14797,
+    "description": "クレイのバーストの使用からフルバーストの入りまでの、防御無視の通常攻撃の胴体・距離ボーナスあり・非会心の 1 ヒット（f1346〜f1374）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 545,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-12",
+    "recording": "1432",
+    "use": "compare",
+    "kind": "hit",
+    "value": 20489,
+    "description": "1 回目のフルバーストの中・ヴィクトリークライの付く前の、クレイの防御無視の通常攻撃の胴体・距離ボーナスあり・非会心の 1 ヒット（f1405〜f1434）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-13",
+    "recording": "1432",
+    "use": "compare",
+    "kind": "hit",
+    "value": 26010,
+    "description": "1 回目のフルバーストの中・ヴィクトリークライ 1 スタック（と S2 の攻撃力▲）の、クレイの防御無視の通常攻撃の胴体・距離ボーナスあり・非会心の 1 ヒット（f1439〜f1581）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 800,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-14",
+    "recording": "1432",
+    "use": "compare",
+    "kind": "hit",
+    "value": 27420,
+    "description": "1 回目のフルバーストの中・ヴィクトリークライ 2 スタックの、クレイの防御無視の通常攻撃の胴体・距離ボーナスあり・非会心の 1 ヒット（f1663〜f1808）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 950,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-15",
+    "recording": "1432",
+    "use": "compare",
+    "kind": "hit",
+    "value": 28830,
+    "description": "1 回目のフルバーストの中・ヴィクトリークライ 3 スタックの、クレイの防御無視の通常攻撃の胴体・距離ボーナスあり・非会心の 1 ヒット（f1813〜f1953）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1100,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-16",
+    "recording": "1432",
+    "use": "compare",
+    "kind": "hit",
+    "value": 15771,
+    "description": "1 回目のフルバーストの後・ヴィクトリークライの間（S2 の攻撃力▲）の、クレイの通常攻撃の胴体・距離ボーナスあり・非会心の 1 ヒット（f2038〜f2309）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-17",
+    "recording": "1432",
+    "use": "compare",
+    "kind": "hit",
+    "value": 13133,
+    "description": "1 回目のフルバーストの後・ヴィクトリークライが切れた後の、クレイの通常攻撃の胴体・距離ボーナスあり・非会心の 1 ヒット（f2311〜f2416）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1500,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-18",
+    "recording": "1432",
+    "use": "compare",
+    "kind": "hit",
+    "value": 1113756,
+    "description": "1 回目のフルバーストの中・ヴィクトリークライ 1 スタックの、ジルの防御無視の通常攻撃のコア・距離ボーナスあり・非会心の 1 ヒット（f1503・f1550）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 800,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-19",
+    "recording": "1432",
+    "use": "compare",
+    "kind": "hit",
+    "value": 1145126,
+    "description": "1 回目のフルバーストの中・ヴィクトリークライ 2 スタックの、ジルの防御無視の通常攻撃のコア・距離ボーナスあり・非会心の 1 ヒット（f1621・f1645）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 950,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-20",
+    "recording": "1432",
+    "use": "compare",
+    "kind": "hit",
+    "value": 736153,
+    "description": "1 回目のフルバーストの中・ヴィクトリークライ 2 スタックの、ジルの防御無視の通常攻撃の胴体・距離ボーナスあり・非会心の 1 ヒット（f1597）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 950,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-21",
+    "recording": "1432",
+    "use": "compare",
+    "kind": "hit",
+    "value": 1176496,
+    "description": "1 回目のフルバーストの中・ヴィクトリークライ 3 スタックの、ジルの防御無視の通常攻撃のコア・距離ボーナスあり・非会心の 1 ヒット（f1809・f1856・f1880・f1951）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1100,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1432-22",
+    "recording": "1432",
+    "use": "record",
+    "kind": "interval",
+    "value": [
+      [1958, 2309, 2311],
+      [4354, 4706, 4709],
+      [6666, 7019, 7022],
+      [9143, 9423, 9505]
+    ],
+    "unit": "f",
+    "description": "1〜4 回目のフルバーストの、最後にヴィクトリークライが付いた発（通算が 60 の倍数の発）と、その後のクレイの通常攻撃で S2 の攻撃力▲（×1.2007）が乗った最後の発・乗らない最初の発の動画のフレーム",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts・hud.ts --mode jumps",
+      "note": "付いた発から▲の乗らない最初の発までは 351〜362f（4 回目はリロードを挟んで 280〜362f）。6 秒（モデルで 352f）の維持を、最後に付いた発で数え直す形（S-all）と合う。1 回目は 3 スタックの後の 4 回目の発火（f1958。フルバーストの終わり f1983 の前）で付き直している（3 回目の f1808 からでは 501f になる）"
+    },
+    "scope": {
+      "slot": [1, 2, 3],
+      "source": "normal",
+      "frames": [1375, 9505]
+    },
+    "source": "V-0893",
+    "readAt": "2026-11-28"
+  }
+]

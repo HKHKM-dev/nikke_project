@@ -11,7 +11,7 @@ import type { SimResult } from '../../../sim/engine.ts';
 import { expectedHitCount, resolveDotEffects, type ResolvedDamageEffect } from '../../../skills/burstDamage.ts';
 import { MAX_SKILL_LEVELS, isResolvedChance, isResolvedShotCount } from '../../../skills/resolve.ts';
 import { chanceFires } from '../../../skills/timeline.ts';
-import { hpRatioStepIndexOf, itemsOf, stateEndFrames } from '../../../skills/holders.ts';
+import { hpRatioStepIndexOf, isStateOrigin, itemsOf, stateEndFrames } from '../../../skills/holders.ts';
 import type { NamedStateId } from '../../../skills/states.ts';
 import type { CompareSpec } from '../types.ts';
 import { firstCount, type Metric, type MetricContext, slotIndexOf, slotOf, withArgs } from './context.ts';
@@ -376,6 +376,16 @@ function eventPointsOf(result: SimResult, ctx: MetricContext): EventPoint[] {
         String(ctx.args.state) as NamedStateId,
         result.frames,
       ).map(at);
+    // 状態（引数 state。家族の根なら家族のどれか）が付いた（スタックが足された・付き直した）フレーム。その状態の件の始まりの、重ならない列。
+    // 録画では、その状態の▲が乗った発の値が上がったフレーム（V-0893）
+    case 'stateStart':
+      return [
+        ...new Set(
+          itemsOf(result.history, { holder: slotIndex, kind: 'state' })
+            .filter((i) => isStateOrigin(i.origin, String(ctx.args.state) as NamedStateId))
+            .map((i) => i.start),
+        ),
+      ].map(at);
     // 枠の自分への現在の HP▼ のフレーム（録画では、枠の HP のバーが下がったフレーム）（V-0729）
     case 'currentHpDown':
       return result.instants
@@ -389,7 +399,7 @@ function eventPointsOf(result: SimResult, ctx: MetricContext): EventPoint[] {
       return counterUpFramesOf(result, slotIndex, String(ctx.args.counter)).map(at);
     default:
       throw new Error(
-        `event は skillHit・dot・dotApply・dotTick・burstHit・activation・heal・stateEnd・currentHpDown・shot・counterUp（${String(ctx.args.event)}）`,
+        `event は skillHit・dot・dotApply・dotTick・burstHit・activation・heal・stateStart・stateEnd・currentHpDown・shot・counterUp（${String(ctx.args.event)}）`,
       );
   }
 }
