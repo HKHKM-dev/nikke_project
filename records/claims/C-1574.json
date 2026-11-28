@@ -1,0 +1,28 @@
+{
+  "id": "C-1574",
+  "text": "アンカーのバーストスキルダメージ（最終攻撃力の 304.45%。スキル Lv10）は、説明文の倍率を 5 ヒットに等分して出る。1 ヒット目は I の発動（六角形が I から II に替わるフレーム）の 8f 後で、各ヒットは 1 ヒット目から 0・8・15・20・28f（会心なしで 1 ヒット 38,524。会心は発動ごとにまとめて出る）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`1408-11`・`1408-12`・`1408-13`・`1408-14`・`1408-15`。V-0878",
+  "model": "反映（data/skills/351.json の burst の effects[0]、burst/landing.ts のアンカーの行の hitFrames・hitOffsets）",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/351.json の burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1408",
+      "role": "値を合わせた"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "1408",
+      "decided": "1 回目",
+      "reproduced": "5 回目",
+      "observations": ["1408-15"]
+    }
+  ]
+}
