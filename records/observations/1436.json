@@ -1,0 +1,59 @@
+[
+  {
+    "id": "1436-01",
+    "recording": "1436",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 1475524,
+    "description": "戦闘の最初のギルティ：マイティバニーの発（コア・会心なし・距離ボーナスなし）と、同じフレームのチェーンエンハンスの追加ダメージ（会心なし）の和。S1 とチェーンエンハンスの▲が最初の発から乗る",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、モデルの 1 ヒットの格子（レシピ buff-edge の --opt grid。G = 枠 1 の f200 の 1 ヒット、A = 同じ区間の射撃ごとの倍率ダメージ（チェーンエンハンスの追加ダメージ）、GA = G + A）に ±1.5 で当てた。追加ダメージは発と同じフレームに出て、1 つの増分に合わさる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitWithPerShot",
+      "args": {
+        "slot": 1,
+        "frame": 70,
+        "core": true,
+        "crit": false,
+        "distance": false,
+        "perShotCrit": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0896",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1436-02",
+    "recording": "1436",
+    "kind": "count",
+    "use": "record",
+    "unit": "回",
+    "value": [97, 3],
+    "description": "HUD の増分のうち、GA（1 発 + 追加ダメージ）の格子に合った数と、外れた数（録画の全体）。外れの 3 個（301,163・886,982・247,052）は、的のジャンプの始まり（2268・6738・10830）の部分チャージの発とみられる。防御力無視の追加ダメージに合う増分は無い",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）",
+      "note": "HUD の増分を、モデルの 1 ヒットの格子（レシピ buff-edge の --opt grid。G = 枠 1 の f200 の 1 ヒット、A = 同じ区間の射撃ごとの倍率ダメージ（チェーンエンハンスの追加ダメージ）、GA = G + A）に ±1.5 で当てた。追加ダメージは発と同じフレームに出て、1 つの増分に合わさる"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0896",
+    "readAt": "2026-11-28"
+  }
+]

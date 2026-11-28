@@ -366,6 +366,8 @@ export const NAMED_STATES = {
   stargazer: { name: { ja: 'スターゲイザー', en: 'Stargazer' }, holder: 'ally' },
   /** アフターショー（アビスタの S1） */
   aftershow: { name: { ja: 'アフターショー', en: 'Aftershow' }, holder: 'ally' },
+  /** バニーモード：スタンス（ギルティ：マイティバニーの S1） */
+  bunnyModeStance: { name: { ja: 'バニーモード：スタンス', en: 'Bunny Mode: Stance' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

@@ -1,0 +1,22 @@
+{
+  "id": "C-1608",
+  "text": "ギルティ：マイティバニー（404）は戦闘開始時にバニーモード：スタンスになり、オートの射撃では戦闘の終わりまでスタンスのまま（エンゲージにならず、防御力無視の追加ダメージは出ない）。S1 の攻撃力▲（スペック固定の Lv10 で 20.1%）と、スタンスの間のチェーンエンハンスの攻撃ダメージ▲ 20.45%・チャージダメージ▲ 40% は戦闘の最初の発から乗り、フルチャージの発ごとに最終攻撃力の 450.89% の追加ダメージが発と同じフレームに 1 回出る（的のジャンプの始まりの部分チャージの発には出ない）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1435-01`・`1435-02`・`1435-03`・`1436-01`・`1436-02`。V-0896",
+  "model": "反映（data/skills/404.json の skill1 の effects[0]（timed・battleStart・attack）・effects[1]（bunnyModeStance の付与。静的な状態）、skill2 の effects[0]・[1]（timed・battleStart・条件 selfState）・effects[2]（damage・fullChargeShot・additional・条件 selfState））",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": [
+      "data/skills/404.json の skill1 の effects[0]",
+      "data/skills/404.json の skill1 の effects[1]",
+      "data/skills/404.json の skill2 の effects[0]",
+      "data/skills/404.json の skill2 の effects[1]",
+      "data/skills/404.json の skill2 の effects[2]"
+    ]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の S1 の値 1 と S2 の値 2・3・4（20.1%・20.45%・40%・450.89%）と、C-0839（オートの射撃はフルチャージを保たない）"
+}

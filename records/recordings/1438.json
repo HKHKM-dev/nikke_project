@@ -1,0 +1,46 @@
+{
+  "id": "1438",
+  "date": "2026-11-28",
+  "folder": "range",
+  "file": "20261128-1438_sr_guilty-mb-chain.mp4",
+  "original": "2026-11-28_19-51-33.mp4",
+  "durationSec": 203.1,
+  "frames": 12188,
+  "fps": 60,
+  "sizeMB": 246.1,
+  "sha256": "8401975ab520",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 190,
+      "name": "ルドミラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 404,
+      "name": "ギルティ：マイティバニー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Electronic"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0896 撮影 B。ルドミラ・デルタ・ギルティ：マイティバニー（操作）",
+  "backup": {
+    "at": "2026-11-28T19:59+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

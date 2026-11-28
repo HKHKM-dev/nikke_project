@@ -1,0 +1,21 @@
+{
+  "id": "C-1609",
+  "text": "ギルティ：マイティバニー（404）のバーストのマイティストンプは、バースト使用時から 1 発だけ撃つ使用武器の変更で、1 発は最終攻撃力の 101.3%（スペック固定の Lv10）× フルチャージ 250% に、追加効果のチャージダメージ▲ 1400% とチェーンエンハンスのチャージダメージ▲ 40% が同じ和で乗り、バーストの攻撃ダメージ▲ 77.35% も乗る。マイティストンプもフルチャージの発に数え、チェーンエンハンスの追加ダメージが同じフレームに出る。1400% は次の基礎の SR の発には乗らない。マイティストンプはフルバーストの窓の始まり（III のタイマーの 00.00）から 118〜119 動画フレーム、戻った基礎の SR の最初の発はその 81〜82 動画フレーム後（モデルの既定の待ちの 117・83 と 2f 以内。攻撃ダメージ▲の 10 秒の窓の端は確かめていない）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1437-09`・`1437-10`・`1437-11`・`1437-12`・`1437-13`・`1438-09`・`1438-10`・`1438-11`・`1438-12`。V-0896",
+  "model": "反映（data/skills/404.json の burst の effects[0]（weaponChange・chargeTimeSeconds 1.5・chargeTimeFixed・fullChargeDamage 250・maxAmmoRef 4。待ちは既定）・effects[1]（timed・burstUse・chargeDamage・durationShotsRef 6）・effects[2]（timed・burstUse・attackDamage）、skill2 の effects[2]（変更後の武器の発も fullChargeShot。frame/shots.ts の fullChargeFrameSet））",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": [
+      "data/skills/404.json の burst の effects[0]",
+      "data/skills/404.json の burst の effects[1]",
+      "data/skills/404.json の burst の effects[2]",
+      "data/skills/404.json の skill2 の effects[2]"
+    ]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文のバーストの値 1〜6（77.35%・10 秒・101.3%・1 発・1400%・1 発）と即値（チャージ 1.5 秒・フルチャージ 250%）、使用武器の変更の撃ち切りと戻しの既定の待ち（plan/design-true-damage-element.md 9 節）"
+}

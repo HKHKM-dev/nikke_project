@@ -69,11 +69,12 @@ type Rules = readonly (readonly [RegExp, string])[];
 
 /**
  * 説明文の書き損じ（読み違いの例外の表）。ロザンナ：シックオーシャンの「1秒間隔「…秒間維持」の閉じ括弧の欠けと、
- * ギルティ：マイティバニーの 1 か所だけ「：」の無い「バニーモードスタンス」
+ * ギルティ：マイティバニーの 1 か所だけ「：」の無い「バニーモードスタンス」と、バーストの追加効果 2 だけ角かっこで書かれた句
  */
 const TEXT_FIXES: readonly (readonly [RegExp, string])[] = [
   [/([XN\d.]+秒間隔)「/g, '$1」「'],
   [/バニーモードスタンス/g, 'バニーモード：スタンス'],
+  [/\[攻撃ダメージ X% ▲\] \[X秒間持続\]/g, '「攻撃ダメージX％▲」「X秒間維持」'],
 ];
 
 /** 説明文の書式（色・用語の印・値の差し込み）を除き、書き損じを直す。値は X にする */
@@ -136,6 +137,8 @@ const RESOURCE_RE =
 
 /** 効果の種類（上から順に最初に当たったもの） */
 const KINDS: Rules = [
+  // ギルティ：マイティバニーの S2 の機能の名前（中身は後ろの「効果 N：」の句で読む。plan/design-guilty-mighty-bunny.md 5 節の論点 5）
+  [/^チェーン(リリース|エンハンス)$/, 'state:label'],
   [/持続ダメージ$/, 'damage:dot'],
   [/分配ダメージ$|分配ダメージ。/, 'damage:distributed'],
   [/追加ダメージ$/, 'damage:additional'],
@@ -395,6 +398,7 @@ const TRIGGERS: Rules = [
   [/パーツを破壊|パーツに([XN\d]+回)?命中|発射体を破壊/, 'parts'],
   [/敵(が)?出現|ラプチャーが出現|ラプチャーが[XN\d]+機/, 'enemySpawn'],
   [/バリア適用時/, 'barrierApplied'],
+  [/バニーモード：(エンゲージ|スタンス)が適用時/, 'bunnyModeApplied'],
   [/が付与された時|(が|を)?適用された時|が適用される時|が適用時|適用時/, 'stateApplied'],
   [/状態が終了した時|フル・?フルチャージ状態が終了/, 'stateEnded'],
   [/HP.*(以下|以上|未満)になった時|HPが最大になった時/, 'hpThreshold'],
@@ -557,6 +561,7 @@ function lineTriggers(head: string): string[] {
   let triggers = tagsOf(TRIGGERS, head);
   if (triggers.includes('healed')) triggers = triggers.filter((t) => t !== 'stateApplied');
   if (triggers.includes('barrierApplied')) triggers = triggers.filter((t) => t !== 'stateApplied');
+  if (triggers.includes('bunnyModeApplied')) triggers = triggers.filter((t) => t !== 'stateApplied');
   if (triggers.includes('chargeHold')) triggers = triggers.filter((t) => t !== 'fullChargeShot');
   if (triggers.includes('critHit')) triggers = triggers.filter((t) => t !== 'normalHit' && t !== 'skillEvent');
   if (triggers.includes('partialChargeShot')) triggers = triggers.filter((t) => t !== 'normalShot');

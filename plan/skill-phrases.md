@@ -154,3 +154,4 @@
 | フルチャージではない通常攻撃を N 回行った時 | きっかけ `{ "count": "partialChargeShot", "everyRef": N }`（敵のジャンプの始まりの部分チャージの発を数える。timed・状態の付与・`removeDebuff` だけ） | クラストの S1 のメイラード・S2 のデバフ効果解除 | [design-crust.md](design-crust.md) 2.1 節 |
 | 〈状態 A〉または〈状態 B〉状態の対象に（B が起きない時） | timed の `targetState: "<A>"`（時間で変わる状態の味方） | クラストの S2 の「メイラードまたはブランチング状態の対象」 | [design-crust.md](design-crust.md) 1 節・[design-rei-tentative.md](design-rei-tentative.md) 2.2 節 |
 | （攻撃力▲の）解除条件：フルバーストタイムが終了した時 | timed・状態の中身の `durationUntil: "fullBurstEnd"`（1 パス目で窓を追う stat のうち攻撃力だけ） | アイギスの S2 のパピヨンハート | [design-aigis.md](design-aigis.md) 2.1 節 |
+| 戦闘開始時に付いて続く〈状態〉（静的な状態）の時に限り、自分に〈stat〉▲「持続」「解除不可」 | timed の `battleStart`・`durationUntil: "battleEnd"` と `condition.selfState`（常時の効果の `while` は静的な状態を読めない） | ギルティ：マイティバニーの S2 のチェーンエンハンス（バニーモード：スタンス） | [design-guilty-mighty-bunny.md](design-guilty-mighty-bunny.md) 0.1 節 |

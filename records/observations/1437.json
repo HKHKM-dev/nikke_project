@@ -1,0 +1,277 @@
+[
+  {
+    "id": "1437-01",
+    "recording": "1437",
+    "kind": "timing",
+    "use": "record",
+    "value": [1097, 2299, 3477, 4678, 5849, 7058, 8236, 9437, 10616],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・5・25・0・22・0・25・0・14f"
+    },
+    "source": "V-0896",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1437-02",
+    "recording": "1437",
+    "kind": "timing",
+    "use": "record",
+    "value": [1126, 3506, 5885, 8265, 10645],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・26・26・26・26f"
+    },
+    "source": "V-0896",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1437-03",
+    "recording": "1437",
+    "kind": "timing",
+    "use": "record",
+    "value": [1155, 3535, 5915, 8294, 10674],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0896",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1437-04",
+    "recording": "1437",
+    "kind": "timing",
+    "use": "record",
+    "value": [1764, 4144, 6523, 8903, 11283],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0896",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1437-05",
+    "recording": "1437",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 608, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0896",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1437-06",
+    "recording": "1437",
+    "kind": "timing",
+    "use": "record",
+    "value": [2292, 3471, 4672, 7052, 8230, 9431, 10609],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0896",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1437-07",
+    "recording": "1437",
+    "kind": "timing",
+    "use": "record",
+    "value": [3499, 5878, 8258, 10637],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0896",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1437-08",
+    "recording": "1437",
+    "kind": "timing",
+    "use": "record",
+    "value": [3528, 5907, 8287, 10666],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0896",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1437-09",
+    "recording": "1437",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 14749211,
+    "description": "1 回目のマイティストンプ（1274。コア・会心なし・距離ボーナスなし）と、同じフレームのチェーンエンハンスの追加ダメージ（会心）の和。チャージダメージ▲ 1400%・40%、バーストの攻撃ダメージ▲が乗り、マイティストンプでも追加ダメージが出る",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、モデルの 1 ヒットの格子（レシピ buff-edge の --opt grid。L = ルドミラの f1200、D = デルタの f1200、G・A・GA = ギルティ：マイティバニーの f200（バースト前）、GAF = f600（フルバーストの中）、SS = f496（マイティストンプ）の 1 ヒットと射撃ごとの倍率ダメージの和）に ±1.5 で当てた。外れの多くは、同じフレームのデルタ・ルドミラのヒットとの和"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitWithPerShot",
+      "args": {
+        "slot": 3,
+        "frame": 496,
+        "core": true,
+        "crit": false,
+        "distance": false,
+        "perShotCrit": true
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0896",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1437-10",
+    "recording": "1437",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 3349859,
+    "description": "2 回目のマイティストンプの次の基礎の SR の発（3735。コア・会心なし・距離ボーナスなし）と追加ダメージ（会心なし）の和。チャージダメージ▲ 1400% は乗らない（1 発間維持はマイティストンプで切れる）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、モデルの 1 ヒットの格子（レシピ buff-edge の --opt grid。L = ルドミラの f1200、D = デルタの f1200、G・A・GA = ギルティ：マイティバニーの f200（バースト前）、GAF = f600（フルバーストの中）、SS = f496（マイティストンプ）の 1 ヒットと射撃ごとの倍率ダメージの和）に ±1.5 で当てた。外れの多くは、同じフレームのデルタ・ルドミラのヒットとの和"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitWithPerShot",
+      "args": {
+        "slot": 3,
+        "frame": 579,
+        "core": true,
+        "crit": false,
+        "distance": false,
+        "perShotCrit": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0896",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1437-11",
+    "recording": "1437",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 119,
+    "description": "1 回目のフルバーストの窓の始まり（III のタイマーの 00.00。1437-03 の 1155）から、マイティストンプの増分（1274）までの動画のフレーム。5 回とも 118〜119（119・118・118・118・118）",
+    "method": {
+      "tool": "recipe:burst-panel@4 と recipe:buff-edge@9 の増分",
+      "note": "00.00 は 1437-03、マイティストンプは SS の格子に合った増分（3 回目はルドミラの 1 ヒットとの和）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstToWeaponChangeShot",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0896",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1437-12",
+    "recording": "1437",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 81,
+    "description": "1 回目のマイティストンプの増分（1274）から、戻った基礎の SR の最初の発の増分（1355）までの動画のフレーム。5 回で 81・82・82・82・82",
+    "method": {
+      "tool": "recipe:buff-edge@9 の増分",
+      "note": "マイティストンプの後の、100 万を超える最初の増分（ギルティ：マイティバニーの発）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "weaponChangeShotToNextShot",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0896",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1437-13",
+    "recording": "1437",
+    "kind": "count",
+    "use": "record",
+    "unit": "回",
+    "value": [5, 5],
+    "description": "マイティストンプの数（500 万を超える増分）と、そのうち SS（1 発 + 追加ダメージ。3 回目はルドミラの 1 ヒット 16,483.5 との和）に合った数。値は 14,749,211・14,749,211・15,585,874・14,107,504・14,107,504",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）",
+      "note": "HUD の増分を、モデルの 1 ヒットの格子（レシピ buff-edge の --opt grid。L = ルドミラの f1200、D = デルタの f1200、G・A・GA = ギルティ：マイティバニーの f200（バースト前）、GAF = f600（フルバーストの中）、SS = f496（マイティストンプ）の 1 ヒットと射撃ごとの倍率ダメージの和）に ±1.5 で当てた。外れの多くは、同じフレームのデルタ・ルドミラのヒットとの和"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0896",
+    "readAt": "2026-11-28"
+  }
+]

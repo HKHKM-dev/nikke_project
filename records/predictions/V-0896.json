@@ -1,0 +1,270 @@
+{
+  "verification": "V-0896",
+  "note": "撮影 B（ルドミラ（I）・デルタ（II）・ギルティ：マイティバニー（III・操作）・オートバースト ON）の予測。電撃の BigArms・3 分モード・スペック固定 ON（スキル Lv10）。撮影 A（単騎）の基礎の SR の 1 発と追加ダメージは、バーストの窓の外ではこの編成と同じ形（敵の防御力▼の有無だけ違う）なので、検証記録の「予測」に手で書いた",
+  "team": [
+    {
+      "rid": 190
+    },
+    {
+      "rid": 20
+    },
+    {
+      "rid": 404,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（戦闘の間スタンス。チェーンエンハンスの▲ 2 つと、フルチャージの発ごとの追加ダメージ。マイティストンプはチャージ 1.5 秒固定・1 発で、バースト使用時から 1 発間のチャージダメージ▲ 1400% が乗る）"
+    },
+    {
+      "id": "H0-enhance-ups",
+      "note": "チェーンエンハンスの▲ 2 つ（攻撃ダメージ▲・チャージダメージ▲）が無い。追加ダメージが無いことは、増分が出ないことで見る（この表では比べない）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 404,
+            "skill": "skill2",
+            "index": 0
+          },
+          {
+            "rid": 404,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-stomp-cd",
+      "note": "マイティストンプの追加効果 1（チャージダメージ▲ 1400%）が無い",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 404,
+            "skill": "burst",
+            "index": 1
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "base-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "バーストの前の基礎の SR のフルチャージの 1 ヒット（胴体・会心なし・距離ボーナスなし）"
+    },
+    {
+      "id": "base-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "同じ発のコア"
+    },
+    {
+      "id": "enhance-additional",
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 200,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "チェーンエンハンスの追加ダメージの 1 回（会心なし）"
+    },
+    {
+      "id": "stomp-body",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 5,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のバーストのマイティストンプ（5 発目）の 1 ヒット（胴体・会心なし・距離ボーナスなし）"
+    },
+    {
+      "id": "stomp-to-next",
+      "model": "sim",
+      "metric": "weaponChangeShotToNextShot",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "note": "マイティストンプから、戻った基礎の SR の最初の発までの動画のフレーム"
+    },
+    {
+      "id": "fb-to-stomp",
+      "model": "sim",
+      "metric": "fullBurstToWeaponChangeShot",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "note": "1 回目のフルバーストの窓の始まりから、マイティストンプまでの動画のフレーム"
+    },
+    {
+      "id": "stomp-sum-crit",
+      "model": "sim",
+      "metric": "hitWithPerShot",
+      "args": {
+        "slot": 3,
+        "frame": 496,
+        "core": true,
+        "crit": false,
+        "distance": false,
+        "perShotCrit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "note": "マイティストンプ（コア・会心なし）と追加ダメージ（会心）の和（HUD の 1 つの増分）。撮った後に足した（観測値 1437-09 と同じ指定）"
+    },
+    {
+      "id": "stomp-sum",
+      "model": "sim",
+      "metric": "hitWithPerShot",
+      "args": {
+        "slot": 3,
+        "frame": 496,
+        "core": true,
+        "crit": false,
+        "distance": false,
+        "perShotCrit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "note": "マイティストンプ（コア・会心なし）と追加ダメージ（会心なし）の和。撮った後に足した（観測値 1438-09 と同じ指定）"
+    },
+    {
+      "id": "after-stomp-sum",
+      "model": "sim",
+      "metric": "hitWithPerShot",
+      "args": {
+        "slot": 3,
+        "frame": 579,
+        "core": true,
+        "crit": false,
+        "distance": false,
+        "perShotCrit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "note": "マイティストンプの次の基礎の SR の発（コア・会心なし）と追加ダメージ（会心なし）の和。撮った後に足した（観測値 1437-10 と同じ指定）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-28",
+    "commit": "d89316ebb28af54b5b633f7c6f660019560bf686",
+    "values": {
+      "H1": {
+        "base-body": 347017.4294994,
+        "base-core": 694034.8589988,
+        "enhance-additional": 781489.4353447498,
+        "stomp-body": 7309430.553059698,
+        "stomp-to-next": 83,
+        "fb-to-stomp": 117,
+        "stomp-sum-crit": 14749212.055484697,
+        "stomp-sum": 14107505.105388397,
+        "after-stomp-sum": 3349858.5770125003
+      },
+      "H0-enhance-ups": {
+        "base-body": 248362.77000000005,
+        "base-core": 496725.5400000001,
+        "enhance-additional": 648808.1655,
+        "stomp-body": 6398610.721383374,
+        "stomp-to-next": 83,
+        "fb-to-stomp": 117,
+        "stomp-sum-crit": 12965801.709880522,
+        "stomp-sum": 12390439.082986798,
+        "after-stomp-sum": 2827327.5333886743
+      },
+      "H0-stomp-cd": {
+        "base-body": 347017.4294994,
+        "base-core": 694034.8589988,
+        "enhance-additional": 781489.4353447498,
+        "stomp-body": 1254280.9824776996,
+        "stomp-to-next": 83,
+        "fb-to-stomp": 117,
+        "stomp-sum-crit": 4657296.104514699,
+        "stomp-sum": 4015589.1544183996,
+        "after-stomp-sum": 3349858.5770125003
+      }
+    }
+  }
+}
