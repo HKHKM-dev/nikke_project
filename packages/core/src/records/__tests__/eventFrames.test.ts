@@ -166,7 +166,10 @@ describe('eventTallies の stateStart', () => {
   const team = buildTeamInput(recordingMap(file).get('1432')!, setup, data);
   const run = runSimulation(team);
   const ev = (name: string, args: Record<string, number | string | boolean>) =>
-    METRICS[name]!.sim(run, { args: { slot: 3, event: 'stateStart', state: 'victoriousBattleCry', ...args }, input: team });
+    METRICS[name]!.sim(run, {
+      args: { slot: 3, event: 'stateStart', state: 'victoriousBattleCry', ...args },
+      input: team,
+    });
 
   it('lists the frames where Victorious Battle Cry is stacked, each after a 60th shot', () => {
     const starts = ev('eventFrames', {}) as number[];
