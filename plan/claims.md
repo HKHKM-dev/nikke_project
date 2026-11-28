@@ -15,7 +15,7 @@
 - 根拠の `0010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 1178・仮説 220・棄却 162・範囲外 2（計 1562）
+件数: 確定 1181・仮説 220・棄却 162・範囲外 2（計 1565）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -10945,6 +10945,29 @@
   - 決めるのに使った録画: なし
   - 検証記録: V-0894
   - 定義: `data/skills/112.json` の skill1 の effects[1]、`data/skills/112.json` の skill2 の effects[0]、`data/skills/112.json` の treasureSkills.skill1 の effects[0]、`data/skills/112.json` の treasureSkills.skill1 の effects[1]、`data/skills/112.json` の treasureSkills.skill1 の effects[2]、`data/skills/112.json` の treasureSkills.skill1 の effects[3]、`data/skills/112.json` の treasureSkills.skill2 の effects[0]、`data/skills/112.json` の treasureSkills.skill2 の effects[1]、`data/skills/112.json` の treasureSkills.skill2 の effects[2]、`data/skills/112.json` の treasureSkills.burst の effects[0]、`data/skills/112.json` の treasureSkills.burst の effects[1]、`data/skills/112.json` の treasureSkills.burst の effects[2]
+- **C-1615** アニスのバーストのダメージ（最終攻撃力の 156.73%。スキル Lv10）は、敵 1 体に 1 ヒットで、II の発動（六角形が II から III に替わるフレーム）の 93f 後に出る。同じバーストの防御力▼は乗らない
+  - 状態: 確定・等級: 反復実測・更新日: 2026-11-28
+  - 根拠: `1441-05`・`1441-06`・`1441-07`。V-0891
+  - モデル側: 反映（data/skills/12.json の burst の effects[0]、burst/landing.ts のアニスの行の hitFrames）
+  - 決めるのに使った録画: 1441（値を合わせた）
+  - 録画の中の反復: 1441（1 回目で決め、2〜9 回目で再現。1441-07）
+  - 検証記録: V-0891
+  - 定義: `data/skills/12.json` の burst の effects[0]
+- **C-1616** ネロのバーストスキルダメージ（最終攻撃力の 1104.91%。スキル Lv10）は、敵 1 体に 1 ヒットで、II の発動（六角形が II から III に替わるフレーム）の 51f 後に出る
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-28
+  - 根拠: `1442-03`・`1442-04`・`1443-03`・`1443-04`。V-0892
+  - モデル側: 反映（data/skills/380.json の burst の effects[0]、burst/landing.ts のネロの行の hitFrames）
+  - 決めるのに使った録画: 1442（値を合わせた）
+  - 検証記録: V-0892
+  - 定義: `data/skills/380.json` の burst の effects[0]
+- **C-1617** アニスのバーストの防御力▼（32%。スキル Lv10）は説明文どおりで、敵の防御力を (1 − 32%) 倍して四捨五入した値にする（C-0556・C-0790 の式。的の防御力 100 は 68）。付ける側の防御力 × 32% を引く形（防御力が 0 になる。課題 2-46 のトロニー・プロダクト23）ではない。▼はバーストのヒットと同じ頃（II の発動の 88〜103f 後。`1441-13`）から付き、5 秒（294f）で切れる（375〜389f 後。`1441-17`）。味方の通常攻撃にも乗る
+  - 状態: 確定・等級: 反復実測・更新日: 2026-11-28
+  - 根拠: `1441-18`・`1441-19`・`1441-20`・`1441-21`。V-0891
+  - モデル側: 反映（data/skills/12.json の burst の effects[1]、burst/landing.ts のアニスの行の effectFrames）
+  - 決めるのに使った録画: 1441（値を合わせた）
+  - 録画の中の反復: 1441（1 回目で決め、2〜9 回目で再現。1441-18・1441-19・1441-20）
+  - 検証記録: V-0891
+  - 定義: `data/skills/12.json` の burst の effects[1]
 - **C-1618** バイパーの S1 の「ターゲットが出現している場合、味方全体に攻撃力 値 01 %▲（値 02 秒）」は、射撃場（BigArms）では戦闘開始の最初の発から付き、戦闘開始から 10 秒（残り時間の 10 秒目の変わり目）の前後で切れ、付き直さない（射撃場の的はターゲットで、戦闘の始めからいる）。I-DOLL・フラワーにもバイパーにも、説明文の値で乗る
   - 状態: 確定・等級: 厳密一致・更新日: 2026-11-28
   - 根拠: `1439-25`・`1439-31`・`1440-25`・`1440-31`。V-0894
