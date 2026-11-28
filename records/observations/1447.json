@@ -1,0 +1,223 @@
+[
+  {
+    "id": "1447-01",
+    "recording": "1447",
+    "kind": "total",
+    "use": "record",
+    "value": 86520414,
+    "description": "ツバイ・シラツル の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11443。増分は 305 個"
+    },
+    "source": "V-0899",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1447-02",
+    "recording": "1447",
+    "kind": "count",
+    "use": "record",
+    "value": 229,
+    "unit": "トリガー",
+    "description": "ツバイ・シラツル のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 305 個。前の増分から 30f 未満の増分（120 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 39f）から発の数を決めた（2 発になった組 43 個）"
+    },
+    "source": "V-0899",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1447-03",
+    "recording": "1447",
+    "kind": "timing",
+    "use": "record",
+    "value": [1186, 2365, 3543, 4719, 5901, 7080, 8258, 9482, 10660],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・25・25・28・24・24・25・25・25f"
+    },
+    "source": "V-0899",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1447-04",
+    "recording": "1447",
+    "kind": "timing",
+    "use": "record",
+    "value": [1215, 3572, 5929, 8287, 10689],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25・16f"
+    },
+    "source": "V-0899",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1447-05",
+    "recording": "1447",
+    "kind": "timing",
+    "use": "record",
+    "value": [2358, 3537, 4704, 5894, 7073, 8252, 10654],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f9431"
+    },
+    "source": "V-0899",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1447-06",
+    "recording": "1447",
+    "kind": "timing",
+    "use": "record",
+    "value": [3566, 5922, 8280],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0899",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1447-07",
+    "recording": "1447",
+    "use": "compare",
+    "kind": "hit",
+    "value": 275656,
+    "description": "1 回目のシラツルのバーストの前のシラツルの 1 発（コア・会心なし・距離ボーナスなし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@9 の grid（シラ=2@200;シラ▲=2@600;ツ=1@200/x10;ツ武=1@360/x2）",
+      "note": "動画の f911 の増分。1 回目の II の発動の印（f1215）の前のシラツルの発は、どれもこの値か会心（344,570）の格子に乗る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0899",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1447-08",
+    "recording": "1447",
+    "use": "compare",
+    "kind": "hit",
+    "value": 344653,
+    "description": "シラツルのバーストの貫通特化の窓の中（ツバイの貫通学概論の中）のシラツルの 1 発（コア・会心なし・距離ボーナスなし）。貫通ダメージ▲が攻撃ダメージ▲と同じ和で乗った値",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@9 の grid（シラ=2@200;シラ▲=2@600;ツ=1@200/x10;ツ武=1@360/x2）",
+      "note": "動画の f1323 の増分。5 回のシラツルの発動（II の印 f1215・3572・5929・8287・10689）の後の発 27 個は、どれも▲の乗った格子（この値・会心 430,816・距離ボーナス 396,351・会心と距離 482,514）に乗り、▲の無い格子には乗らない。▲の乗った格子に乗る発は、この 5 つの窓の外には無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0899",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1447-09",
+    "recording": "1447",
+    "use": "compare",
+    "kind": "hit",
+    "value": 275656,
+    "description": "シラツルが CT でツバイだけがバーストしたチェーンの、ツバイの貫通学概論の中のシラツルの 1 発（コア・会心なし・距離ボーナスなし）。貫通特化が無いので▲は乗らない",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@9 の grid（シラ=2@200;シラ▲=2@600;ツ=1@200/x10;ツ武=1@360/x2）",
+      "note": "動画の f2381 の増分（ツバイだけの I の印 f2365 の後）。ツバイだけのチェーン（I の印 f2365・4719・7080・9482）の後の 10 秒のシラツルの発は、どれも▲の無い格子に乗る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1800,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0899",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1447-10",
+    "recording": "1447",
+    "use": "compare",
+    "kind": "hit",
+    "value": 396351,
+    "description": "距離ボーナスの区間の、3 回目のシラツルのバーストの貫通特化の窓の中のシラツルの 1 発（コア・会心なし・距離ボーナスあり）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:buff-edge@9 の grid（シラ=2@200;シラ▲=2@600;ツ=1@200/x10;ツ武=1@360/x2）",
+      "note": "動画の f5967 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 5300,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0899",
+    "readAt": "2026-11-28"
+  }
+]
