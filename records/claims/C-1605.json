@@ -1,0 +1,15 @@
+{
+  "id": "C-1605",
+  "text": "アイギスの S1 のペルソナ - パラディオンのタルカジャ（攻撃力▲）は、戦闘の始めから自分の攻撃力に乗り、戦闘の終わりまで続く",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1433-01`。V-0895",
+  "model": "data/skills/872.json の skill1 の effects[0]（状態の付与 persona・battleStart・durationUntil battleEnd・self・中身 attack）",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/872.json の skill1 の effects[0]"]
+  },
+  "decidedOn": []
+}
