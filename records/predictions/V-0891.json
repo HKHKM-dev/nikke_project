@@ -1,0 +1,205 @@
+{
+  "verification": "V-0891",
+  "note": "I-DOLL・フラワー（1 枠目・AI）+ アニス（3 枠目・操作）・灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オート射撃 ON・オートバースト ON。III がいないので、チェーンは時間切れで戻り、I → II を繰り返す。アニスのバーストの後の 5 秒は、2 人の通常攻撃に防御力▼が乗る",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304
+    },
+    {
+      "slot": 3,
+      "rid": 12,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "撮る前の定義（バーストは発動に 1 ヒット。防御力▼は敵の防御力 100 を (1 − 32%) 倍して四捨五入した 68 にする。C-0556・C-0790）"
+    },
+    {
+      "id": "H2",
+      "note": "防御力▼は付ける側の防御力 × 32% を引く形で、敵の防御力が 0 になる（トロニーの S2・プロダクト23 のバースト。C-0851・C-0777。2-46 の仮説）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 12,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "enemyDefenseDown",
+              "scaling": "casterDefence",
+              "ref": 2,
+              "durationRef": 3
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "anis-hit-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "▼の無い区間の、アニスのフルチャージの 1 ヒット（胴体・会心なし）"
+    },
+    {
+      "id": "anis-hit-down",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "アニスのバーストの後の▼の窓の、アニスのフルチャージの 1 ヒット（胴体・会心なし）"
+    },
+    {
+      "id": "flower-hit-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "▼の無い区間の、I-DOLL・フラワーの 1 ヒット（胴体・会心なし。AI もフルチャージで撃つ）"
+    },
+    {
+      "id": "flower-hit-down",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "アニスのバーストの後の▼の窓の、I-DOLL・フラワーの 1 ヒット（胴体・会心なし）"
+    },
+    {
+      "id": "burst-hit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "アニスのバーストのダメージの 1 ヒット（会心なし。同じバーストの▼は乗らない）"
+    },
+    {
+      "id": "burst-delays",
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "アニスの発動の印（六角形の替わり目）からバーストのダメージのヒットまでの動画のフレーム"
+    },
+    {
+      "id": "burst-count",
+      "model": "sim",
+      "metric": "burstActivationCount",
+      "args": {
+        "slot": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "note": "180 秒のアニスのバーストの回数"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-28",
+    "commit": "fd7c3d1d66f0c9c5223255666a41c926e0c5bb55",
+    "values": {
+      "H1": {
+        "anis-hit-before": 102842.134,
+        "anis-hit-down": 102894.15000000001,
+        "flower-hit-before": 83086.01999999999,
+        "flower-hit-down": 83135.06,
+        "burst-hit": 99159.93639999998,
+        "burst-delays": [-6, -6, -6, -6],
+        "burst-count": 9
+      },
+      "H2": {
+        "anis-hit-before": 102842.134,
+        "anis-hit-down": 103004.684,
+        "flower-hit-before": 83086.01999999999,
+        "flower-hit-down": 83239.26999999999,
+        "burst-hit": 99159.93639999998,
+        "burst-delays": [-6, -6, -6, -6],
+        "burst-count": 9
+      }
+    }
+  }
+}

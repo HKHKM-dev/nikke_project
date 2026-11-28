@@ -1,0 +1,89 @@
+{
+  "verification": "V-0892",
+  "note": "I-DOLL・フラワー（1 枠目・AI）+ ネロ（3 枠目・操作・オート射撃 OFF で撃たない）・灼熱の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オートバースト ON。ゲージはフラワーの通常攻撃だけで溜まる。III がいないので、チェーンは時間切れで戻り、I → II を繰り返す",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304
+    },
+    {
+      "slot": 3,
+      "rid": 380,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "撮る前の定義（バーストは発動に 1 ヒットのバーストスキルダメージ。遅れの表に行が無い。ほかの効果はダメージに効かない）"
+    }
+  ],
+  "targets": [
+    {
+      "id": "burst-hit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [3]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "ネロのバーストスキルダメージの 1 ヒット（会心なし）"
+    },
+    {
+      "id": "burst-delays",
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [3]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "ネロの発動の印（六角形の替わり目）からバーストスキルダメージのヒットまでの動画のフレーム"
+    },
+    {
+      "id": "burst-count",
+      "model": "sim",
+      "metric": "burstActivationCount",
+      "args": {
+        "slot": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [3]
+      },
+      "note": "180 秒のネロのバーストの回数"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-28",
+    "commit": "fd7c3d1d66f0c9c5223255666a41c926e0c5bb55",
+    "values": {
+      "H1": {
+        "burst-hit": 882314.8314000001,
+        "burst-delays": [-6, -6],
+        "burst-count": 2
+      }
+    }
+  }
+}

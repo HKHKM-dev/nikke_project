@@ -1,0 +1,28 @@
+{
+  "id": "C-1616",
+  "text": "ネロのバーストスキルダメージ（最終攻撃力の 1104.91%。スキル Lv10）は、敵 1 体に 1 ヒットで、II の発動（六角形が II から III に替わるフレーム）の 51f 後に出る",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1442-03`・`1442-04`・`1443-03`・`1443-04`。V-0892",
+  "model": "反映（data/skills/380.json の burst の effects[0]、burst/landing.ts のネロの行の hitFrames）",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/380.json の burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1442",
+      "role": "値を合わせた"
+    }
+  ],
+  "minimal": [
+    {
+      "observations": "*",
+      "element": ["ネロ skill2.notes[0]", "ネロ skill2.notes[1]"],
+      "reason": "S2 の 2 つは攻撃を受けた時に起きる。ネロは撃たない操作枠で、的の攻撃を受けていない（2 本とも戦闘履歴の盾の欄が 0）",
+      "decided": "2026-11-28"
+    }
+  ]
+}

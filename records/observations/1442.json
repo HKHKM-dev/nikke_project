@@ -1,0 +1,96 @@
+[
+  {
+    "id": "1442-01",
+    "recording": "1442",
+    "kind": "timing",
+    "use": "record",
+    "value": [3855, 7930],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・25f"
+    },
+    "source": "V-0892",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1442-02",
+    "recording": "1442",
+    "kind": "timing",
+    "use": "record",
+    "value": [3884, 7959],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25f"
+    },
+    "source": "V-0892",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1442-03",
+    "recording": "1442",
+    "use": "compare",
+    "kind": "hit",
+    "value": 882315,
+    "description": "ネロのバーストスキルダメージの 1 発動の値（会心なし。1 ヒット）",
+    "method": {
+      "tool": "recipe:burst-panel@4・recipe:hud-jumps@3（キャッシュ）",
+      "note": "II → III の替わり目（1442-02）の後の増分は、2 回とも 882,315 の 1 つだけ（f3935・8010）。ネロは撃たないので、ほかの増分は I-DOLL・フラワーの格子"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [3]
+      }
+    },
+    "source": "V-0892",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1442-04",
+    "recording": "1442",
+    "use": "compare",
+    "kind": "timing",
+    "unit": "f",
+    "value": [51, 51],
+    "description": "ネロのバーストの、右のバースト欄の六角形が II から III に替わったフレーム（1442-02）から、バーストスキルダメージのヒットまでの動画のフレーム（2 回）",
+    "method": {
+      "tool": "recipe:burst-panel@4・recipe:hud-jumps@3（キャッシュ）",
+      "note": "ヒットは f3935・8010"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 2
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [3]
+      }
+    },
+    "source": "V-0892",
+    "readAt": "2026-11-28"
+  }
+]
