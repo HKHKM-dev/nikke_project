@@ -67,7 +67,7 @@
   - 編成のテストは `__tests__/<名前>Team.test.ts`。そのキャラを含む実戦的な編成で、そのキャラの効果（窓・発動・付与）と、射撃の列がどのグループにも 1 回ずつ入ること（`partitions every shot`）を見る（`describeEveryShotInOneGroup`。例は `a2Team.test.ts`）。
   - データの読み込み（キャラ・定義・マスタ）は `__tests__/data.ts`（`characterOf`・`rawDefinition`・`readData`）、枠・編成・敵は `__tests__/teamHelpers.ts`（`fixedSlot`・`fixedTeam`・`fixedEnemy`・`rangeEnemyWithEvents`）の道具を使い、テストの中に同じ道具の写しを作らない。そのテストの枠が既定と違う所は、`fixedSlot` の options に書く。
   - **テストに実測値を直書きしない**。実測との比較は観測値と照合ランナーで行う（[verification-guide.md](verification-guide.md) 6・7 節）。
-- **キャラ固有の分岐をコアに置かない**。実測でしか決まらない値（紅蓮BS の射撃の較正の `MEASURED_CHARGE_CADENCE` など）は、表の 1 行にして結論の ID を添える。
+- **キャラ固有の分岐をコアに置かない**。実測でしか決まらない値（紅蓮BS の射撃の較正の `MEASURED_CHARGE_CADENCE` など）は、表の 1 行にして結論の ID を添える。表の注記（遅れの表・状態の目録も）は、キャラ名（とスロット）と、値や定義から読めないこと（未測定・モデルの都合で実測と違う値にした理由など）だけにする。数値の出どころは結論で引く。
 
 ## 2. 検証の流れ（スキル定義に固有のこと）
 
