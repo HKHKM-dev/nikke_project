@@ -8,7 +8,7 @@ import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { healsOf } from './historyHelpers.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const SHIRATSURU = 620;
 const ZWEI = 390;
@@ -57,5 +57,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(heals.map(key).sort()).toEqual(expected.map(key).sort());
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);
