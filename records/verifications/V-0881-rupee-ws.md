@@ -5,7 +5,7 @@
 - 日付: 2026-11-28
 - 録画: `1409`、`1410`
 - 結論: `C-1575`、`C-1576`、`C-1577`
-- 状態: 調査中
+- 状態: 完了
 
 ## 条件
 
@@ -61,19 +61,19 @@
 
 予測は 2026-11-28（commit 06e4b04）に出した。
 
-| 指標 | 実測 | 予測 H1 | 予測 H0 | 予測 H-nogauge | 予測 H-noreload |
-| --- | --- | --- | --- | --- | --- |
-| order（burstActivationSlots） | [3, 4, 1, 2, 3, 4, 3, 4, 1, 2, 3, 4, 3, 4]（`1409-12`） | [3, 4, 1, 2, 3, 4, 3, 4, 1, 2, 3, 4, 3, 4]（+0、許容内） | [3, 1, 2, 4, 3, 1, 2, 3, 4, 1, 2, 3, 4, 1]（-3、**許容外**） | [3, 4, 1, 2, 3, 4, 3, 4, 1, 2, 3, 4, 3, 4]（+0、許容内） | [3, 4, 1, 2, 3, 4, 3, 4, 1, 2, 3, 4, 3, 4]（+0、許容内） |
-| fb-count（fullBurstCount） | （実測なし） | 5 | 5 | 5 | 5 |
-| p08-gauge-after-fb（shotGaugeRatioAfterFullBurst） | 1.099（`1409-13`） | 1.079（-0.02、許容内） | 1.047（-0.052、**許容外**） | 1（-0.099、**許容外**） | 1.079（-0.02、許容内） |
-| delta-gauge-after-fb（shotGaugeRatioAfterFullBurst） | （実測なし） | 1.079 | 1.047 | 1 | 1.079 |
-| alice-gauge-after-fb（shotGaugeRatioAfterFullBurst） | （実測なし） | 1.079 | 1.056 | 1 | 1.079 |
-| fb0-to-gauge-full（fullBurstToGaugeFull） | （実測なし） | 1,003 | 1,031 | 1,025 | 1,048 |
-| fb1-to-gauge-full（fullBurstToGaugeFull） | （実測なし） | 1,063 | 1,078 | 1,105 | 1,083 |
-| p08-reload-base（reloadFramesAt） | （実測なし） | 129 | 129 | 129 | 129 |
-| delta-reload-base（reloadFramesAt） | （実測なし） | 100 | 100 | 100 | 100 |
-| delta-reload-in（reloadFramesAt） | （実測なし） | 44 | 44 | 44 | 100 |
-| alice-reload-in（reloadFramesAt） | （実測なし） | 55 | 55 | 55 | 129 |
+| 指標                                                 | 実測         | 予測 H1                                    | 予測 H0                                    | 予測 H-nogauge                             | 予測 H-noreload                            |
+| ---------------------------------------------------- | ------------ | ------------------------------------------ | ------------------------------------------ | ------------------------------------------ | ------------------------------------------ |
+| order（burstActivationSlots）                        | （実測なし） | [3, 4, 1, 2, 3, 4, 3, 4, 1, 2, 3, 4, 3, 4] | [3, 1, 2, 4, 3, 1, 2, 3, 4, 1, 2, 3, 4, 1] | [3, 4, 1, 2, 3, 4, 3, 4, 1, 2, 3, 4, 3, 4] | [3, 4, 1, 2, 3, 4, 3, 4, 1, 2, 3, 4, 3, 4] |
+| fb-count（fullBurstCount）                           | （実測なし） | 5                                          | 5                                          | 5                                          | 5                                          |
+| p08-gauge-after-fb（shotGaugeRatioAfterFullBurst）   | （実測なし） | 1.079                                      | 1.047                                      | 1                                          | 1.079                                      |
+| delta-gauge-after-fb（shotGaugeRatioAfterFullBurst） | （実測なし） | 1.079                                      | 1.047                                      | 1                                          | 1.079                                      |
+| alice-gauge-after-fb（shotGaugeRatioAfterFullBurst） | （実測なし） | 1.079                                      | 1.056                                      | 1                                          | 1.079                                      |
+| fb0-to-gauge-full（fullBurstToGaugeFull）            | （実測なし） | 1,003                                      | 1,031                                      | 1,025                                      | 1,048                                      |
+| fb1-to-gauge-full（fullBurstToGaugeFull）            | （実測なし） | 1,063                                      | 1,078                                      | 1,105                                      | 1,083                                      |
+| p08-reload-base（reloadFramesAt）                    | （実測なし） | 129                                        | 129                                        | 129                                        | 129                                        |
+| delta-reload-base（reloadFramesAt）                  | （実測なし） | 100                                        | 100                                        | 100                                        | 100                                        |
+| delta-reload-in（reloadFramesAt）                    | （実測なし） | 44                                         | 44                                         | 44                                         | 100                                        |
+| alice-reload-in（reloadFramesAt）                    | （実測なし） | 55                                         | 55                                         | 55                                         | 129                                        |
 
 <!-- records:predictions:end -->
 
