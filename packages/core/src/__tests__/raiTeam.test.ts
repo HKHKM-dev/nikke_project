@@ -24,7 +24,7 @@ const team = (ids: number[], controlledSlot: number): TeamInput =>
   fixedTeam(ids.map(autoSlot), controlledSlot, { enemy: rangeEnemy });
 
 const TEAMS: Record<string, TeamInput> = {
-  'ライ単騎（撮影。録画 1407）': team([RAI], 0),
+  'ライ単騎（撮影の録画 1407 と同じ条件。枠の位置は結果に効かない）': team([RAI], 0),
   'ライ + クラウン + シンデレラ：クリスタルウェーブ（操作）': team([RAI, CROWN, CINDERELLA_CW], 2),
 };
 
