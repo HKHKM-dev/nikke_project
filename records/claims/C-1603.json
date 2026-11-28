@@ -1,0 +1,15 @@
+{
+  "id": "C-1603",
+  "text": "クレイ（551）の S2 の 2 つめの攻撃力▲は、クレイにヴィクトリークライが付いている間だけ（スタック数によらず）、クレイを含む味方全体の攻撃力に、クレイの攻撃力の 20.07%（Lv10）を足す。フルバーストの後もヴィクトリークライが切れるまで（最後に付いた発から 6 秒）続く",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1432-13`・`1432-16`・`1432-17`・`1432-18`・`1432-22`。V-0893",
+  "model": "`data/skills/551.json` の skill2 の effects[0]（`passive`・`allies`・`scaling: casterAttack`・`while: { selfState: victoriousBattleCry }`）",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/551.json の skill2 の effects[0]"]
+  },
+  "decidedOn": []
+}
