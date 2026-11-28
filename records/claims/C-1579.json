@@ -1,0 +1,15 @@
+{
+  "id": "C-1579",
+  "text": "防御型の味方が 2 機より多い編成では、キリ（33）の S1 の攻撃力▲は、フルチャージの発ごとに付ける 2 機を選び直す（ランダムとみられる）。枠の順・攻撃力の順では決まらない",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`1415-01`。V-0882",
+  "model": "近似（data/skills/33.json の skill1 の effects[0] は、候補が N 機より多い時に枠の若い順の N 機に決め打ちで付ける（skills/targets.ts の fixedTargetOk）。選んだ時は sim の枠の注記 counted-allies-pick で知らせる。plan/design-kiri.md 6.1 節）",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/33.json の skill1 の effects[0]"]
+  },
+  "decidedOn": []
+}
