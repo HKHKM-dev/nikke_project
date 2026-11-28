@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 10,
-  "text": "`packages/core/data/skills/19.json`（ダークマターの槍）と `513.json`（4 ヒットの順番の攻撃）の注記は「N ヒットとも発動の時点のバフで出す」と言い、続けて「値を発動の時とヒットの時のどちらで決めるかは確かめていない（モデルはヒットの時…）」と言う。順番に攻撃する効果（`hitsRef`）のモデルは発動の時の値（`packages/core/src/skills/burstDamage.ts` の `valueDelayFrames = 0`。C-0735）なので、後の文が誤り。`131.json` には同じ趣旨の文が 2 回ある。後の文を直し、重なった文を 1 つにする"
-}
