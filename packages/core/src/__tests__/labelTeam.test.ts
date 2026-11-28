@@ -62,7 +62,7 @@ const TEAMS: Record<string, TeamInput> = {
   '実戦寄り（レーベル + クラウン + レイヴン + アリス + クルミ）': fixedTeam([LABEL, 330, 851, 191, 862], 2),
 };
 
-describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
+describe.each(Object.entries(TEAMS))('編成: %s', (name, input) => {
   const l = input.slots.findIndex((x) => x?.character.resourceId === LABEL);
   const plan = planTeamRun(input);
   const starts = plan
@@ -102,7 +102,7 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     };
     const damage = (t: TeamInput) => runSimulation(t).slots.map((s) => s?.totalDamage ?? 0);
     const [withUp, withoutUp] = [damage(input), damage(without)];
-    if (_name.startsWith('撮影')) expect(withUp[l]).toBeCloseTo(withoutUp[l]!, 3);
+    if (name.startsWith('撮影')) expect(withUp[l]).toBeCloseTo(withoutUp[l]!, 3);
     input.slots.forEach((slot, holder) => {
       if (slot !== null && holder !== l) expect(withUp[holder]).toBeGreaterThan(withoutUp[holder]!);
     });

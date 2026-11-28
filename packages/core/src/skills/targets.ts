@@ -96,7 +96,7 @@ export type TargetedEffect = { target: BuffTarget } & TargetFields;
  * 編成で決まる対象か（最上位の skills/composition.ts が fixedTargets を書く）。定義の効果（composition.ts の fixedTargetsOf が
  * 枠を書くかを決める）と、解決済みの効果（fixedTargetOk が fixedTargets の無い呼び出しを落とす）の両方が同じ判定を使う。
  * 欄を書ける効果の種類は読み込み（skills/parse/）が決めるので、ここでは欄だけを見る。枠の決め方（fixedTargetsOf）は効果の種類で
- * 分かれる（excludeSelf・targetState は timed と付与、targetLeftmost は timed）ので、読み込みが欄を書ける種類を広げたら、
+ * 分かれる（excludeSelf は timed・付与・passive（allies の always）、targetState は timed と付与、targetLeftmost は timed）ので、読み込みが欄を書ける種類を広げたら、
  * fixedTargetsOf の枠の決め方も合わせる
  */
 export function needsFixedTargets(
