@@ -60,19 +60,19 @@
 
 予測は 2026-11-21（commit 2fd0f83）に出した。
 
-| 指標                                                      | 実測         | 予測 H1        | 予測 H-excl   |
-| --------------------------------------------------------- | ------------ | -------------- | ------------- |
-| maxwell-base（hitDamage）                                 | （実測なし） | 475,566.161    | 475,566.161   |
-| maxwell-fb-own（hitDamage）                               | （実測なし） | 828,685.049    | 578,950.109   |
-| maxwell-fb-raven-round（hitDamage）                       | （実測なし） | 828,685.049    | 578,950.109   |
-| maxwell-after（hitDamage）                                | （実測なし） | 475,566.161    | 475,566.161   |
-| maxwell-changed-shot（hitDamage）                         | （実測なし） | 11,716,147.029 | 8,185,334.835 |
-| raven-base（hitDamage）                                   | （実測なし） | 367,174.74     | 367,174.74    |
-| raven-fb（hitDamage）                                     | （実測なし） | 875,233.738    | 875,233.738   |
-| cocoa-base（hitDamage）                                   | （実測なし） | 396,285.285    | 396,285.285   |
-| cocoa-fb（hitDamage）                                     | （実測なし） | 482,434.26     | 690,573.29    |
-| raven-interval-maxwell-round（fullBurstShotIntervalDiff） | （実測なし） | -3             | -3            |
-| changed-shot-timing（fullBurstToWeaponChangeShot）        | （実測なし） | 146            | 146           |
+| 指標 | 実測 | 予測 H1 | 予測 H-excl |
+| --- | --- | --- | --- |
+| maxwell-base（hitDamage） | （実測なし） | 475,566.161 | 475,566.161 |
+| maxwell-fb-own（hitDamage） | （実測なし） | 828,685.049 | 578,950.109 |
+| maxwell-fb-raven-round（hitDamage） | （実測なし） | 828,685.049 | 578,950.109 |
+| maxwell-after（hitDamage） | （実測なし） | 475,566.161 | 475,566.161 |
+| maxwell-changed-shot（hitDamage） | （実測なし） | 11,716,147.029 | 8,185,334.835 |
+| raven-base（hitDamage） | （実測なし） | 367,174.74 | 367,174.74 |
+| raven-fb（hitDamage） | （実測なし） | 875,233.738 | 875,233.738 |
+| cocoa-base（hitDamage） | （実測なし） | 396,285.285 | 396,285.285 |
+| cocoa-fb（hitDamage） | （実測なし） | 482,434.26 | 690,573.29 |
+| raven-interval-maxwell-round（fullBurstShotIntervalDiff） | （実測なし） | -3 | -3 |
+| changed-shot-timing（fullBurstToWeaponChangeShot） | （実測なし） | 146 | 146 |
 
 <!-- records:predictions:end -->
 

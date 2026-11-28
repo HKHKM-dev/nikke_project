@@ -181,9 +181,10 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
     sim: fullBurstCrossingShotGauge,
   },
   shotGauge: { description: '枠の n 発目（1 始まり）が溜めたゲージ（%）', args: ['slot', 'n'], sim: shotGauge },
-  // フルバーストの終わりから frames の間に撃った発の 1 発のゲージの、ほかの時の 1 発に対する比（V-0638）
+  // フルバーストの終わりから frames の間に撃った発の 1 発のゲージの、ほかの時の 1 発に対する比（V-0638。n で n 回目の窓だけ。V-0881）
   shotGaugeRatioAfterFullBurst: {
     description: 'フルバーストの終わりから frames の間の 1 発のゲージの、ほかの時に対する比',
+    optional: ['n'],
     args: ['slot', 'frames'],
     sim: shotGaugeRatioAfterFullBurst,
   },
@@ -437,8 +438,9 @@ function shotGauge(result: SimResult, ctx: MetricContext): number {
 
 /**
  * 枠の 1 発のゲージ（同じ発の記録の合計）の平均を、フルバーストの終わりから frames の間（[終わり, 終わり + frames)）に
- * 撃った発と、ほかの時（フルバーストの間とその後の frames を除く）に撃った発で比べた比（小数 4 桁）（V-0638）。録画では、その枠だけが当たった
- * フレームの BURST バーの段の平均の比と比べる。どちらかに発が無ければ誤り
+ * 撃った発と、ほかの時（フルバーストの間とその後の frames を除く）に撃った発で比べた比（小数 4 桁）（V-0638）。n（0 始まり）を書くと、
+ * 窓は n 回目のフルバーストの後だけ（ほかの時は同じで、ほかの回の後の frames も入れない。V-0881）。録画では、その枠だけが当たったフレームの BURST バーの段の平均の比と比べる。
+ * どちらかに発が無ければ誤り
  */
 function shotGaugeRatioAfterFullBurst(result: SimResult, ctx: MetricContext): number {
   const schedule = result.schedule;
@@ -446,14 +448,17 @@ function shotGaugeRatioAfterFullBurst(result: SimResult, ctx: MetricContext): nu
   const slotIndex = slotIndexOf(ctx);
   const frames = Number(ctx.args.frames);
   const windows = schedule.fullBurstWindows;
+  const n = ctx.args.n === undefined ? undefined : Number(ctx.args.n);
+  if (n !== undefined && windows[n] === undefined) throw new Error(`${n} 回目のフルバーストが無い`);
+  const afterWindows = n === undefined ? windows : [windows[n]!];
   const perShot = new Map<number, number>();
   for (const g of result.shotGauges)
     if (g.slotIndex === slotIndex) perShot.set(g.shotFrame, (perShot.get(g.shotFrame) ?? 0) + g.energy);
   const inside: number[] = [];
   const outside: number[] = [];
   for (const [f, energy] of perShot) {
-    if (windows.some((w) => w.end <= f && f < w.end + frames)) inside.push(energy);
-    else if (!windows.some((w) => w.start <= f && f < w.end)) outside.push(energy);
+    if (afterWindows.some((w) => w.end <= f && f < w.end + frames)) inside.push(energy);
+    else if (!windows.some((w) => w.start <= f && f < w.end + frames)) outside.push(energy);
   }
   if (inside.length === 0 || outside.length === 0) throw new Error('フルバーストの後か、ほかの時の発が無い');
   const mean = (a: number[]) => a.reduce((x, y) => x + y, 0) / a.length;

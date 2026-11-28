@@ -63,23 +63,23 @@
 
 予測は 2026-11-10（commit 2f7f668）に出した。
 
-| 指標                                        | 実測                         | 予測 H-model                  |
-| ------------------------------------------- | ---------------------------- | ----------------------------- |
-| A-anis-pellet（hitDamage）                  | 25,875（`1030-03`）          | 25,874.64（-0.36、許容内）    |
-| A-anis-missile（skillHitDamage）            | 381,751（`1030-04`）         | 381,750.765（-0.235、許容内） |
+| 指標 | 実測 | 予測 H-model |
+| --- | --- | --- |
+| A-anis-pellet（hitDamage） | 25,875（`1030-03`） | 25,874.64（-0.36、許容内） |
+| A-anis-missile（skillHitDamage） | 381,751（`1030-04`） | 381,750.765（-0.235、許容内） |
 | A-anis-missile-shots（skillHitShotIndices） | [5, 10, 15, 20]（`1030-05`） | [5, 10, 15, 20]（+0、許容内） |
-| A-anis-missile-delay（skillHitShotDelay）   | 74（`1030-06`）              | 74（+0、許容内）              |
-| B-anis-pellet-before（hitDamage）           | 28,462（`1032-08`）          | 28,462.104（+0.104、許容内）  |
-| B-anis-pellet-fb（hitDamage）               | 91,802（`1032-09`）          | 91,801.553（-0.447、許容内）  |
-| B-anis-missile-fb（skillHitDamage）         | 1,354,427（`1032-10`）       | 1,354,427.08（+0.08、許容内） |
-| B-anis-max-ammo-fb（maxAmmoAt）             | 1（`1032-11`）               | 1（+0、許容内）               |
-| B-anis-reload-before（reloadToNextShotAt）  | 142（`1032-12`）             | 142（+0、許容内）             |
-| B-anis-reload-fb（reloadToNextShotAt）      | 51（`1032-13`）              | 51（+0、許容内）              |
-| B-sin-pellet-before（hitDamage）            | 11,990（`1032-14`）          | 11,990.078（+0.078、許容内）  |
-| B-sin-pellet-fb（hitDamage）                | 30,433（`1032-15`）          | 30,433.078（+0.078、許容内）  |
-| B-sin-reload-before（reloadToNextShotAt）   | 82（`1032-16`）              | 82（+0、許容内）              |
-| B-sin-reload-fb（reloadToNextShotAt）       | 53（`1032-17`）              | 53（+0、許容内）              |
-| B-cocoa-fb（hitDamage）                     | 430,745（`1032-18`）         | 430,744.875（-0.125、許容内） |
+| A-anis-missile-delay（skillHitShotDelay） | 74（`1030-06`） | 74（+0、許容内） |
+| B-anis-pellet-before（hitDamage） | 28,462（`1032-08`） | 28,462.104（+0.104、許容内） |
+| B-anis-pellet-fb（hitDamage） | 91,802（`1032-09`） | 91,801.553（-0.447、許容内） |
+| B-anis-missile-fb（skillHitDamage） | 1,354,427（`1032-10`） | 1,354,427.08（+0.08、許容内） |
+| B-anis-max-ammo-fb（maxAmmoAt） | 1（`1032-11`） | 1（+0、許容内） |
+| B-anis-reload-before（reloadToNextShotAt） | 142（`1032-12`） | 142（+0、許容内） |
+| B-anis-reload-fb（reloadToNextShotAt） | 51（`1032-13`） | 51（+0、許容内） |
+| B-sin-pellet-before（hitDamage） | 11,990（`1032-14`） | 11,990.078（+0.078、許容内） |
+| B-sin-pellet-fb（hitDamage） | 30,433（`1032-15`） | 30,433.078（+0.078、許容内） |
+| B-sin-reload-before（reloadToNextShotAt） | 82（`1032-16`） | 82（+0、許容内） |
+| B-sin-reload-fb（reloadToNextShotAt） | 53（`1032-17`） | 53（+0、許容内） |
+| B-cocoa-fb（hitDamage） | 430,745（`1032-18`） | 430,744.875（-0.125、許容内） |
 
 <!-- records:predictions:end -->
 

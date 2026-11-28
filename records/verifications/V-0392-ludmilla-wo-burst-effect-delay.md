@@ -71,18 +71,18 @@
 
 予測は 2026-10-10（commit 8a564a5）に出した。
 
-| 指標                                          | 実測         | 予測 H0 |
-| --------------------------------------------- | ------------ | ------- |
-| effect-first-1（burstEffectFirstShot）        | （実測なし） | 0       |
-| effect-first-2（burstEffectFirstShot）        | （実測なし） | 0       |
-| effect-first-3（burstEffectFirstShot）        | （実測なし） | 0       |
-| effect-first-4（burstEffectFirstShot）        | （実測なし） | 0       |
-| effect-first-5（burstEffectFirstShot）        | （実測なし） | 0       |
-| window-end-1（buffWindowEndFromFullBurstEnd） | （実測なし） | 0       |
-| window-end-2（buffWindowEndFromFullBurstEnd） | （実測なし） | 0       |
-| window-end-3（buffWindowEndFromFullBurstEnd） | （実測なし） | 0       |
-| window-end-4（buffWindowEndFromFullBurstEnd） | （実測なし） | 0       |
-| window-end-5（buffWindowEndFromFullBurstEnd） | （実測なし） | 0       |
+| 指標 | 実測 | 予測 H0 |
+| --- | --- | --- |
+| effect-first-1（burstEffectFirstShot） | （実測なし） | 0 |
+| effect-first-2（burstEffectFirstShot） | （実測なし） | 0 |
+| effect-first-3（burstEffectFirstShot） | （実測なし） | 0 |
+| effect-first-4（burstEffectFirstShot） | （実測なし） | 0 |
+| effect-first-5（burstEffectFirstShot） | （実測なし） | 0 |
+| window-end-1（buffWindowEndFromFullBurstEnd） | （実測なし） | 0 |
+| window-end-2（buffWindowEndFromFullBurstEnd） | （実測なし） | 0 |
+| window-end-3（buffWindowEndFromFullBurstEnd） | （実測なし） | 0 |
+| window-end-4（buffWindowEndFromFullBurstEnd） | （実測なし） | 0 |
+| window-end-5（buffWindowEndFromFullBurstEnd） | （実測なし） | 0 |
 
 <!-- records:predictions:end -->
 

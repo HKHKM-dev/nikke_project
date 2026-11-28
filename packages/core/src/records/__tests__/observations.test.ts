@@ -405,6 +405,28 @@ describe('照合の部品', () => {
     const value = (args: Record<string, unknown>) =>
       metric.sim(result, { args, input: {} as TeamInput } as Parameters<typeof metric.sim>[1]);
     expect(value({ slot: 1, frames: 294 })).toBe(1.15);
+    // n 回目の窓だけ（V-0881）。ほかの時は変わらない
+    expect(value({ slot: 1, frames: 294, n: 0 })).toBe(1.15);
+    expect(() => value({ slot: 1, frames: 294, n: 1 })).toThrow('1 回目のフルバーストが無い');
+    // 窓が 2 つあれば、n でない回の後の発は窓にもほかの時にも入れない
+    const two = {
+      schedule: {
+        fullBurstWindows: [
+          { start: 100, end: 700 },
+          { start: 1500, end: 2100 },
+        ],
+      },
+      shotGauges: [
+        { slotIndex: 0, shotFrame: 50, frame: 50, energy: 4000 },
+        { slotIndex: 0, shotFrame: 800, frame: 800, energy: 4400 },
+        { slotIndex: 0, shotFrame: 2200, frame: 2200, energy: 4800 },
+      ],
+    } as unknown as SimResult;
+    const valueTwo = (args: Record<string, unknown>) =>
+      metric.sim(two, { args, input: {} as TeamInput } as Parameters<typeof metric.sim>[1]);
+    expect(valueTwo({ slot: 1, frames: 294 })).toBe(1.15);
+    expect(valueTwo({ slot: 1, frames: 294, n: 0 })).toBe(1.1);
+    expect(valueTwo({ slot: 1, frames: 294, n: 1 })).toBe(1.2);
     expect(() => value({ slot: 2, frames: 294 })).toThrow('ほかの時の発が無い');
   });
 

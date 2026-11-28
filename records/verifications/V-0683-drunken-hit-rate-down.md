@@ -119,11 +119,11 @@
 
 予測は 2026-11-07（commit c5da62c）に出した。
 
-| 指標                                              | 実測         | 予測 H-model                                             |
-| ------------------------------------------------- | ------------ | -------------------------------------------------------- |
-| D-activations（burstActivationSlots）             | （実測なし） | [1, 2, 1, 1, 2, 1, 1, 2]                                 |
-| D-activation-frames（burstActivationVideoFrames） | （実測なし） | [885, 914, 2,674, 4,324, 4,353, 5,984, 7,446, 7,475]     |
-| E-activations（burstActivationSlots）             | （実測なし） | [1, 2, 1, 2, 1, 2, 1, 2]                                 |
+| 指標 | 実測 | 予測 H-model |
+| --- | --- | --- |
+| D-activations（burstActivationSlots） | （実測なし） | [1, 2, 1, 1, 2, 1, 1, 2] |
+| D-activation-frames（burstActivationVideoFrames） | （実測なし） | [885, 914, 2,674, 4,324, 4,353, 5,984, 7,446, 7,475] |
+| E-activations（burstActivationSlots） | （実測なし） | [1, 2, 1, 2, 1, 2, 1, 2] |
 | E-activation-frames（burstActivationVideoFrames） | （実測なし） | [1,285, 1,314, 3,293, 3,668, 5,460, 6,022, 7,815, 8,376] |
 
 <!-- records:predictions:end -->

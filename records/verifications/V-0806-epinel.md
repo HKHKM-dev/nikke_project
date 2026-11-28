@@ -51,15 +51,15 @@
 
 予測は 2026-11-21（commit 68c2b8b）に出した。
 
-| 指標                             | 実測         | 予測 H1     | 予測 H0-s2  |
-| -------------------------------- | ------------ | ----------- | ----------- |
-| crit-mag1（hitDamage）           | （実測なし） | 36,370.066  | 36,370.066  |
-| crit-in（hitDamage）             | （実測なし） | 37,145.96   | 36,370.066  |
-| crit-out（hitDamage）            | （実測なし） | 36,370.066  | 36,370.066  |
-| body-in（hitDamage）             | （実測なし） | 30,308.388  | 30,308.388  |
-| crit-rate-in（critRateAt）       | （実測なし） | 0.2         | 0.15        |
-| crit-rate-out（critRateAt）      | （実測なし） | 0.15        | 0.15        |
-| burst-hit（burstHitDamage）      | （実測なし） | 548,509.945 | 548,509.945 |
+| 指標 | 実測 | 予測 H1 | 予測 H0-s2 |
+| --- | --- | --- | --- |
+| crit-mag1（hitDamage） | （実測なし） | 36,370.066 | 36,370.066 |
+| crit-in（hitDamage） | （実測なし） | 37,145.96 | 36,370.066 |
+| crit-out（hitDamage） | （実測なし） | 36,370.066 | 36,370.066 |
+| body-in（hitDamage） | （実測なし） | 30,308.388 | 30,308.388 |
+| crit-rate-in（critRateAt） | （実測なし） | 0.2 | 0.15 |
+| crit-rate-out（critRateAt） | （実測なし） | 0.15 | 0.15 |
+| burst-hit（burstHitDamage） | （実測なし） | 548,509.945 | 548,509.945 |
 | burst-hit-crit（burstHitDamage） | （実測なし） | 857,869.554 | 822,764.918 |
 
 <!-- records:predictions:end -->

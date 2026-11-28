@@ -1,0 +1,347 @@
+[
+  {
+    "id": "1409-01",
+    "recording": "1409",
+    "kind": "timing",
+    "use": "record",
+    "value": [1376, 2579, 3758, 5005, 6184, 7443, 8623, 9855, 11035],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・5・15・0・24・0・25f"
+    },
+    "source": "V-0881",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1409-02",
+    "recording": "1409",
+    "kind": "timing",
+    "use": "record",
+    "value": [1405, 3788, 6213, 8652, 11064],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・10・25・24・25f"
+    },
+    "source": "V-0881",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1409-03",
+    "recording": "1409",
+    "kind": "timing",
+    "use": "record",
+    "value": [1434, 3817, 6242, 8681, 11093],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0881",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1409-04",
+    "recording": "1409",
+    "kind": "timing",
+    "use": "record",
+    "value": [2043, 4426, 6851, 9290],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム。5 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0881",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1409-05",
+    "recording": "1409",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差。5 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0881",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1409-06",
+    "recording": "1409",
+    "kind": "timing",
+    "use": "record",
+    "value": [1373, 2576, 3755, 5002, 6181, 7440, 8620, 9852, 11031],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f2541・f3721・f6148・f8585・f10998"
+    },
+    "source": "V-0881",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1409-07",
+    "recording": "1409",
+    "kind": "timing",
+    "use": "record",
+    "value": [3780],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0881",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1409-08",
+    "recording": "1409",
+    "kind": "timing",
+    "use": "record",
+    "value": [3809],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0881",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1409-09",
+    "recording": "1409",
+    "kind": "interval",
+    "use": "record",
+    "value": [70, 33, 69, 34, 70, 34, 32, 69, 32, 32, 69, 69, 33, 33, 71, 73, 33, 70, 69, 70, 33],
+    "unit": "f",
+    "description": "デルタ・アリス・ルピー：ウィンターショッパー・プロダクト08 のマガジンの最終弾（総ダメージの増分）からリロード完了（RELOADING のバーが消えたフレーム）まで（取り消し 47 回・窓をまたいだ回 5 回・最終弾の読み違い 3 回を除いた全部の回）",
+    "method": {
+      "tool": "recipe:reload-segments@2",
+      "note": "tools/captures/reload.ts --mode fit --shots（hud-jumps のキャッシュ）。完了のフレーム: 1249・1946・2318・3053・3425・3762・4120・4492・5212・5547・5919・6987・7567・7902・8274・8650・9007・9773・10482・10855・11215。窓をまたいだ回は、完了 → 次の増分がこの録画の中央値 + 5f を超える回"
+    },
+    "source": "V-0881",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1409-10",
+    "recording": "1409",
+    "kind": "interval",
+    "use": "record",
+    "value": [12, 10, 12, 12, 12, 12, 12, 8, 12, 12, 7, 10, 12, 12, 12, 8, 11, 9, 12, 12, 13, 12, 8, 12],
+    "unit": "f",
+    "description": "デルタ・アリス・ルピー：ウィンターショッパー・プロダクト08 のリロード完了から次の発（総ダメージの増分）まで（取り消し・窓をまたいだ回を除いた全部の回）",
+    "method": {
+      "tool": "recipe:reload-segments@2",
+      "note": "tools/captures/reload.ts --mode fit --shots（hud-jumps のキャッシュ）。完了のフレーム: 1249・1611・1946・2318・3053・3425・3762・4120・4492・5212・5547・5919・6280・6987・7567・7902・8274・8650・9007・9773・10110・10482・10855・11215"
+    },
+    "source": "V-0881",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1409-11",
+    "recording": "1409",
+    "kind": "interval",
+    "use": "record",
+    "value": [
+      70.66, 33.36, 33.8, 70.68, 33.61, 68.87, 35.62, 33.81, 70.66, 33.54, 33.53, 70.66, 33.04, 70.66, 33.54, 33.74,
+      70.64, 72.71, 33.54, 70.64, 32.82, 70.64, 69.84, 33.36
+    ],
+    "unit": "f",
+    "description": "デルタ・アリス・ルピー：ウィンターショッパー・プロダクト08 のリロードのバーが 0 から満ちるまでの長さ（溝の幅 ÷ バーの伸び。直線の当てはめ）",
+    "method": {
+      "tool": "recipe:reload-segments@2",
+      "note": "tools/captures/reload.ts --mode fit --shots（hud-jumps のキャッシュ）。当てはめの残差が 3px を超える回は除いた。取り消し・窓をまたいだ回も除いた"
+    },
+    "source": "V-0881",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1409-12",
+    "recording": "1409",
+    "source": "V-0881",
+    "readAt": "2026-11-28",
+    "kind": "count",
+    "use": "compare",
+    "value": [3, 4, 1, 2, 3, 4, 3, 4, 1, 2, 3, 4, 3, 4],
+    "unit": "枠",
+    "description": "最初の 14 回のバーストの発動の枠（1 始まり。5 回のチェーン）。奇数回目のチェーンはルピー：ウィンターショッパー（3）→ プロダクト08（4）→ デルタ（1）→ アリス（2）でフルバースト、偶数回目はルピー → プロダクト08 で、デルタ（CT 40 秒）が明けておらず時間切れ",
+    "method": {
+      "tool": "目視（バースト欄の切り出し）と burst-panel@4",
+      "note": "9 回のチェーンのどれも（後の 4 回も同じ繰り返し）、I → II の替わり目（1409-01）の 10f 前の画で、I の段のルピーの顔に CT の「20」が出て I のタイマーが 09.61〜09.64 に戻り（再突入）、その下にプロダクト08 の顔が残っている。I の候補はこの 2 人だけなので、どのチェーンもルピー → プロダクト08 の順で I を撃ってから II に替わる。1 回目のチェーンは前後の画（f1290〜1380）でも確かめた。II → III（1409-02）とフルバースト（1409-03）は 5 回で、奇数回目のチェーンだけ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 14
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burst"
+    }
+  },
+  {
+    "id": "1409-13",
+    "recording": "1409",
+    "source": "V-0881",
+    "readAt": "2026-11-28",
+    "kind": "gauge",
+    "use": "compare",
+    "value": 1.0994,
+    "unit": "倍",
+    "description": "SR（デルタ・アリス・プロダクト08。AI）の 1 ヒットの BURST バーの段の平均の、フルバーストの終わりから 294f（5 秒）の間と、ほかの時の比",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series --subpixel",
+      "note": "フルバーストの終わりは 1409-03（III のタイマーの 00.00）の 600f 後とし、窓は f2034〜2327・f4417〜4710・f6842〜7135・f9281〜9574・f11693〜11986（V-0638 と同じ）。HUD の総ダメージの増分が 150,000 を超えるフレーム（SR の 1 ヒット。ルピーの 1 ヒットは 30,000 未満）のうち、ほかの SR の増分が前後 6f に無く、バーが前後 3f 読めて（前の 3f と後の 3f の揺れの和が 1.2px 以下）、バーの端（1px 未満・111px 超）でないものの、後の 3f の中央値から前の 3f の中央値を引いた段で、5〜11px のもの（1 ヒットぶん。2 ヒットぶんは約 15px）。窓の中 16 個の平均 8.365px、ほか（フルバーストの間と窓の後の 30f を除く）35 個の平均 7.609px。比の標準誤差は約 0.02 で、許容はその約 2.5 倍。ほかの時をバーの高さが窓の中の段と同じ（71px 以下）ものに絞っても比は 1.096。3 人の SR の段をまとめた（モデルの比はどの SR の枠も同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotGaugeRatioAfterFullBurst",
+      "args": {
+        "slot": 4,
+        "frames": 294
+      },
+      "tolerance": {
+        "abs": 0.05
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": [1, 2, 4],
+      "source": "gauge",
+      "frames": [934, 11093]
+    }
+  },
+  {
+    "id": "1409-14",
+    "recording": "1409",
+    "source": "V-0881",
+    "readAt": "2026-11-28",
+    "kind": "gauge",
+    "use": "compare",
+    "value": 1.078,
+    "unit": "倍",
+    "description": "SR の 1 ヒットの BURST バーの段の平均の、1 回目のフルバーストの終わりから 294f の間と、ほかの時の比（自分のバーストもショッピングに数えるか）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series --subpixel",
+      "note": "1409-13 と同じ読みで、窓を 1 回目（f2034〜2327）だけにした。窓の中 5 個の平均 8.2px。比の標準誤差は約 0.03。1 回目のフルバーストの終わりは、自分のバーストを数えなければショッピングが 3 段でフルスタックでなく、▲が付かない（比 1.00）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotGaugeRatioAfterFullBurst",
+      "args": {
+        "slot": 4,
+        "frames": 294,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0.06
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": [1, 2, 4],
+      "source": "gauge",
+      "frames": [934, 2328]
+    }
+  },
+  {
+    "id": "1409-15",
+    "recording": "1409",
+    "source": "V-0881",
+    "readAt": "2026-11-28",
+    "kind": "interval",
+    "use": "compare",
+    "value": 33,
+    "unit": "f",
+    "description": "ルピー：ウィンターショッパー（操作）のリロードの、最終弾から完了までの中央値（ルピーのバーストの発動から 10 秒の間）",
+    "method": {
+      "tool": "recipe:reload-segments@2（1409-09 の回を分けた）",
+      "note": "1409-09 の回のうち、最終弾が直前のルピーの発動（I → II の替わり目（1409-01）の約 30f 前）から 590f の内のもの 11 回（32〜34f）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "reloadFramesAt",
+      "args": {
+        "slot": 3,
+        "frame": 3010
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "1409-16",
+    "recording": "1409",
+    "source": "V-0881",
+    "readAt": "2026-11-28",
+    "kind": "interval",
+    "use": "compare",
+    "value": 70,
+    "unit": "f",
+    "description": "ルピー：ウィンターショッパー（操作）のリロードの、最終弾から完了までの中央値（リロード速度▲の外）",
+    "method": {
+      "tool": "recipe:reload-segments@2（1409-09 の回を分けた）",
+      "note": "1409-09 の回のうち、1409-15 に入らないもの 10 回（69〜73f）。▲の窓の端（最終弾がルピーの発動の約 588f 後）の 1 回は 69f で、外の長さ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "reloadFramesAt",
+      "args": {
+        "slot": 3,
+        "frame": 2320
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    }
+  }
+]

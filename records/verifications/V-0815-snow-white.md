@@ -60,15 +60,15 @@
 
 予測は 2026-11-21（commit 2dd92e6）に出した。
 
-| 指標                                        | 実測         | 予測 H1                           |
-| ------------------------------------------- | ------------ | --------------------------------- |
-| a-s1-shots（skillHitShotIndices）           | （実測なし） | [31, 61, 91, 121, 151, 181]       |
-| a-s1-first（skillHitDamage）                | （実測なし） | 99,851.832                        |
-| a-s1-second（skillHitDamage）               | （実測なし） | 108,126.036                       |
-| b-s1-shots（skillHitShotIndices）           | （実測なし） | [31, 61, 91, 121, 151, 181]       |
-| b-wc-from-fb（fullBurstToWeaponChangeShot） | （実測なし） | [322, 322, 322, 322]              |
-| b-wc-hit（hitDamageAtShot）                 | （実測なし） | 9,035,505.45                      |
-| b-mags（magazineShots）                     | （実測なし） | [60, 31, 60, 60, 104, 60, 29, 60] |
+| 指標 | 実測 | 予測 H1 |
+| --- | --- | --- |
+| a-s1-shots（skillHitShotIndices） | （実測なし） | [31, 61, 91, 121, 151, 181] |
+| a-s1-first（skillHitDamage） | （実測なし） | 99,851.832 |
+| a-s1-second（skillHitDamage） | （実測なし） | 108,126.036 |
+| b-s1-shots（skillHitShotIndices） | （実測なし） | [31, 61, 91, 121, 151, 181] |
+| b-wc-from-fb（fullBurstToWeaponChangeShot） | （実測なし） | [322, 322, 322, 322] |
+| b-wc-hit（hitDamageAtShot） | （実測なし） | 9,035,505.45 |
+| b-mags（magazineShots） | （実測なし） | [60, 31, 60, 60, 104, 60, 29, 60] |
 
 <!-- records:predictions:end -->
 

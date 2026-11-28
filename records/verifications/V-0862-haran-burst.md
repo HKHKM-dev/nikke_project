@@ -44,12 +44,12 @@
 
 予測は 2026-11-22（commit 5520a72）に出した。
 
-| 指標                                 | 実測                   | 予測 H1                           |
-| ------------------------------------ | ---------------------- | --------------------------------- |
-| burst-hit（burstHitDamage）          | 1,411,707（`1384-03`） | 1,411,707.372（+0.372、許容内）   |
-| burst-hit-crit（burstHitDamage）     | （実測なし）           | 2,117,561.057                     |
-| burst-delays（burstHitDelays）       | （実測なし）           | [0, 0, 0, 0]                      |
-| full-burst-starts（fullBurstStarts） | （実測なし）           | [401, 2,753, 5,105, 7,457, 9,809] |
+| 指標 | 実測 | 予測 H1 |
+| --- | --- | --- |
+| burst-hit（burstHitDamage） | 1,411,707（`1384-03`） | 1,411,707.372（+0.372、許容内） |
+| burst-hit-crit（burstHitDamage） | （実測なし） | 2,117,561.057 |
+| burst-delays（burstHitDelays） | （実測なし） | [0, 0, 0, 0] |
+| full-burst-starts（fullBurstStarts） | （実測なし） | [401, 2,753, 5,105, 7,457, 9,809] |
 
 <!-- records:predictions:end -->
 

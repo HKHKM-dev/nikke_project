@@ -30,9 +30,12 @@
             }
           ],
           "assumes": {
-            "ja": "味方（自分を含む）のどの枠がバーストを使っても、そのバーストの効果のフレームに味方全体へ 1 段ずつ付く（4 段で止まる）。付くたびにすべてのスタックの維持を付け直す（いまの既定）。中身の防御力▲はそれ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）。effects[1] の「ショッピングのフルスタック状態なら」が読む",
-            "en": "Whenever any ally (including herself) uses a Burst, one stack is applied to all allies on that Burst's effect frame (capped at 4). Each application refreshes the duration of all stacks (the current default). The DEF increase inside does not change damage by itself (it matters only with an effect reading DEF in the team). Read by effects[1] (\"if at full stacks of Shopping\")"
-          }
+            "ja": "味方（自分を含む）のどの枠がバーストを使っても、そのバーストの効果のフレームに味方全体へ 1 段ずつ付く（4 段で止まる）。付くたびにすべてのスタックの維持を付け直す（いまの既定。チェーンが 20 秒ごとに来る録画では切れず、切れ方は確かめていない）。中身の防御力▲はそれ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）。effects[1] の「ショッピングのフルスタック状態なら」が読む",
+            "en": "Whenever any ally (including herself) uses a Burst, one stack is applied to all allies on that Burst's effect frame (capped at 4). Each application refreshes the duration of all stacks (the current default; with a chain every 20 s in the recordings it never expires, and how it expires is unverified). The DEF increase inside does not change damage by itself (it matters only with an effect reading DEF in the team). Read by effects[1] (\"if at full stacks of Shopping\")"
+          },
+          "claims": [
+            "C-1575"
+          ]
         },
         {
           "kind": "timed",
@@ -50,7 +53,10 @@
           "assumes": {
             "ja": "フルスタックかはフルバーストの終わりのフレームに、自分のショッピングの段で見る。対象の枠ごとに、その枠の射撃で溜まるゲージに掛かる（アリス：ワンダーランドバニーの S2 と同じ効き方）",
             "en": "Full stacks are checked on the frame the Full Burst ends, by her own Shopping stacks. Applies, per recipient, to the gauge charged by that unit's shots (the same way as Alice: Wonderland Bunny's S2)"
-          }
+          },
+          "claims": [
+            "C-1575"
+          ]
         }
       ]
     },
@@ -62,7 +68,10 @@
           "assumes": {
             "ja": "「バースト再突入 1 段階」。CDN の次の段階（Step1）と同じ。自分のバーストの後、チェーンはもう一度 I に入り、このチェーンで未使用の別の I の枠が撃つ",
             "en": "\"Burst Re-entry Stage 1\". Same as the CDN next stage (Step1). After her Burst the chain re-enters Stage I, and another Burst I slot not yet used in this chain fires"
-          }
+          },
+          "claims": [
+            "C-1576"
+          ]
         },
         {
           "kind": "timed",
@@ -74,13 +83,16 @@
           "assumes": {
             "ja": "説明文どおり（味方全体・10 秒）",
             "en": "As described (all allies, 10 s)"
-          }
+          },
+          "claims": [
+            "C-1577"
+          ]
         }
       ],
       "notes": [
         {
-          "ja": "自分への「ヘイト：敵全体を挑発」（5 秒）はダメージに関係しない（付けたときも切れるときもゲージを溜めない見込み。ティアの S2・シンの S1 と同じ形）",
-          "en": "The \"Hate: taunt all enemies\" on herself (5 s) does not affect damage (expected not to charge the gauge on application or expiry, as Tia's S2 and Sin's S1)",
+          "ja": "自分への「ヘイト：敵全体を挑発」（5 秒）はダメージに関係しない（ティアの S2・シンの S1 の「自分にヘイト：敵全体を挑発」はゲージを溜めない。この挑発はチェーンの間に付き、その間はバーが見えないので、ゲージを溜めないかは確かめていない）",
+          "en": "The \"Hate: taunt all enemies\" on herself (5 s) does not affect damage (the same self taunt of Tia S2 and Sin S1 does not charge the gauge; this one is applied during the chain, when the gauge bar is hidden, so whether it charges the gauge is unverified)",
           "kind": "noDamage"
         },
         {

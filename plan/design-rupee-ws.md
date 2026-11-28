@@ -4,7 +4,7 @@
 - 関連: [design-rupee.md](design-rupee.md)（別のキャラのルピー（200）。状態のスタックと「フルスタック状態なら」）、[design-chime.md](design-chime.md) 2.2 節（`burstReentry` を定義に載せる前例）、[design-anis-star-rest.md](design-anis-star-rest.md) 3 節（`burstReentry`）
 - 検証: V-0881
 - 作成日: 2026-11-28
-- 状態: 実装（2.1 節）
+- 状態: 完了（5 節）
 
 ## 0. 範囲
 
@@ -67,3 +67,4 @@
 ## 5. 経過
 
 - 2026-11-28: 起案。論点 1 は案 A、論点 2 は推奨の編成に決め（オーナー）、`allyBurstUse` を実装した。撮影は V-0881。
+- 2026-11-28: 撮影（録画 1409〜1410）が H1 と合った（自分のバーストもショッピングに数える）。V-0881。

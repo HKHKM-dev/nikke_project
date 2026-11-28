@@ -43,11 +43,11 @@
 
 予測は 2026-11-21（commit ca64f02）に出した。
 
-| 指標                             | 実測         | 予測 H1       | 予測 H-add    |
-| -------------------------------- | ------------ | ------------- | ------------- |
-| burst-hit（burstHitDamage）      | （実測なし） | 1,900,860.266 | 2,821,002.88  |
+| 指標 | 実測 | 予測 H1 | 予測 H-add |
+| --- | --- | --- | --- |
+| burst-hit（burstHitDamage） | （実測なし） | 1,900,860.266 | 2,821,002.88 |
 | burst-hit-crit（burstHitDamage） | （実測なし） | 2,851,290.399 | 4,231,504.319 |
-| burst-count（burstCount）        | （実測なし） | 4             | 4             |
+| burst-count（burstCount） | （実測なし） | 4 | 4 |
 
 <!-- records:predictions:end -->
 

@@ -53,13 +53,13 @@
 
 予測は 2026-10-04（commit 56db732）に出した。
 
-| 指標                       | 実測                 | 予測 H2M1                     |
-| -------------------------- | -------------------- | ----------------------------- |
+| 指標 | 実測 | 予測 H2M1 |
+| --- | --- | --- |
 | s1-first（skillHitDamage） | 234,994（`0099-04`） | 234,993.857（-0.143、許容内） |
 | s2-first（skillHitDamage） | 162,625（`0099-05`） | 162,625.301（+0.301、許容内） |
-| s1-count（skillHitCount）  | （実測なし）         | 96                            |
-| s2-count（skillHitCount）  | （実測なし）         | 92                            |
-| magazines（magazineShots） | （実測なし）         | [420, 421, 421, 421]          |
+| s1-count（skillHitCount） | （実測なし） | 96 |
+| s2-count（skillHitCount） | （実測なし） | 92 |
+| magazines（magazineShots） | （実測なし） | [420, 421, 421, 421] |
 
 <!-- records:predictions:end -->
 

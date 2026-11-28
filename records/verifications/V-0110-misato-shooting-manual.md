@@ -100,13 +100,13 @@
 
 予測は 2026-10-03（commit 9e5b9ff）に出した。
 
-| 指標                             | 実測                | 予測 H1                      |
-| -------------------------------- | ------------------- | ---------------------------- |
-| misato-near-body（hitDamage）    | 6,407（`0137-05`）  | 6,407.181（+0.181、許容内）  |
-| misato-near-core（hitDamage）    | 12,814（`0137-06`） | 12,814.362（+0.362、許容内） |
-| misato-near-crit（hitDamage）    | 9,611（`0137-07`）  | 9,610.772（-0.228、許容内）  |
-| misato-midnear-body（hitDamage） | 8,329（`0137-08`）  | 8,329.335（+0.335、許容内）  |
-| misato-total（slotTotalDamage）  | （実測なし）        | 28,043,846.374               |
+| 指標 | 実測 | 予測 H1 |
+| --- | --- | --- |
+| misato-near-body（hitDamage） | 6,407（`0137-05`） | 6,407.181（+0.181、許容内） |
+| misato-near-core（hitDamage） | 12,814（`0137-06`） | 12,814.362（+0.362、許容内） |
+| misato-near-crit（hitDamage） | 9,611（`0137-07`） | 9,610.772（-0.228、許容内） |
+| misato-midnear-body（hitDamage） | 8,329（`0137-08`） | 8,329.335（+0.335、許容内） |
+| misato-total（slotTotalDamage） | （実測なし） | 28,043,846.374 |
 
 <!-- records:predictions:end -->
 

@@ -41,28 +41,28 @@
 
 予測は 2026-11-09（commit 22661f6）に出した。
 
-| 指標                                               | 実測                 | 予測 H-model                  |
-| -------------------------------------------------- | -------------------- | ----------------------------- |
-| A-sugar-pellet（hitDamage）                        | 36,617（`1003-03`）  | 36,616.971（-0.029、許容内）  |
-| B-sugar-pellet-before（hitDamage）                 | 36,617（`1004-03`）  | 36,616.971（-0.029、許容内）  |
-| B-sugar-pellet-fb（hitDamage）                     | 152,115（`1004-04`） | 152,115.094（+0.094、許容内） |
-| B-fa-pellet-before（hitDamage）                    | （実測なし）         | 11,618.489                    |
-| B-fa-pellet-fb（hitDamage）                        | 17,428（`1004-06`）  | 17,427.733（-0.267、許容内）  |
-| B-sugar-max-ammo-fb（maxAmmoAt）                   | 17（`1004-07`）      | 17（+0、許容内）              |
-| B-fa-max-ammo-fb（maxAmmoAt）                      | （実測なし）         | 17                            |
-| B-sugar-attack-speed（buffWindowShotIntervalMean） | 23.7（`1004-08`）    | 23.636（-0.064、許容内）      |
-| C-fa-pellet-before（hitDamage）                    | 12,780（`1006-03`）  | 12,780.338（+0.338、許容内）  |
-| C-fa-pellet-fb（hitDamage）                        | 36,603（`1006-04`）  | 36,603.468（+0.468、許容内）  |
-| C-sugar-pellet-before（hitDamage）                 | （実測なし）         | 36,616.971                    |
-| B-sugar-pellet-after-fb（hitDamage）               | 83,910（`1004-05`）  | 83,909.691（-0.309、許容内）  |
-| B-fa-pellet-after-fb（hitDamage）                  | （実測なし）         | 11,618.489                    |
-| B-cocoa-before（hitDamage）                        | （実測なし）         | 172,297.95                    |
-| B-cocoa-fb（hitDamage）                            | （実測なし）         | 258,446.925                   |
-| C-sugar-pellet-fb（hitDamage）                     | 152,115（`1006-06`） | 152,115.094（+0.094、許容内） |
-| C-sugar-pellet-after-fb（hitDamage）               | （実測なし）         | 83,909.691                    |
-| C-fa-pellet-after-fb（hitDamage）                  | 24,402（`1006-05`）  | 24,402.312（+0.312、許容内）  |
-| C-cocoa-before（hitDamage）                        | （実測なし）         | 172,297.95                    |
-| C-cocoa-fb（hitDamage）                            | （実測なし）         | 258,446.925                   |
+| 指標 | 実測 | 予測 H-model |
+| --- | --- | --- |
+| A-sugar-pellet（hitDamage） | 36,617（`1003-03`） | 36,616.971（-0.029、許容内） |
+| B-sugar-pellet-before（hitDamage） | 36,617（`1004-03`） | 36,616.971（-0.029、許容内） |
+| B-sugar-pellet-fb（hitDamage） | 152,115（`1004-04`） | 152,115.094（+0.094、許容内） |
+| B-fa-pellet-before（hitDamage） | （実測なし） | 11,618.489 |
+| B-fa-pellet-fb（hitDamage） | 17,428（`1004-06`） | 17,427.733（-0.267、許容内） |
+| B-sugar-max-ammo-fb（maxAmmoAt） | 17（`1004-07`） | 17（+0、許容内） |
+| B-fa-max-ammo-fb（maxAmmoAt） | （実測なし） | 17 |
+| B-sugar-attack-speed（buffWindowShotIntervalMean） | 23.7（`1004-08`） | 23.636（-0.064、許容内） |
+| C-fa-pellet-before（hitDamage） | 12,780（`1006-03`） | 12,780.338（+0.338、許容内） |
+| C-fa-pellet-fb（hitDamage） | 36,603（`1006-04`） | 36,603.468（+0.468、許容内） |
+| C-sugar-pellet-before（hitDamage） | （実測なし） | 36,616.971 |
+| B-sugar-pellet-after-fb（hitDamage） | 83,910（`1004-05`） | 83,909.691（-0.309、許容内） |
+| B-fa-pellet-after-fb（hitDamage） | （実測なし） | 11,618.489 |
+| B-cocoa-before（hitDamage） | （実測なし） | 172,297.95 |
+| B-cocoa-fb（hitDamage） | （実測なし） | 258,446.925 |
+| C-sugar-pellet-fb（hitDamage） | 152,115（`1006-06`） | 152,115.094（+0.094、許容内） |
+| C-sugar-pellet-after-fb（hitDamage） | （実測なし） | 83,909.691 |
+| C-fa-pellet-after-fb（hitDamage） | 24,402（`1006-05`） | 24,402.312（+0.312、許容内） |
+| C-cocoa-before（hitDamage） | （実測なし） | 172,297.95 |
+| C-cocoa-fb（hitDamage） | （実測なし） | 258,446.925 |
 
 <!-- records:predictions:end -->
 

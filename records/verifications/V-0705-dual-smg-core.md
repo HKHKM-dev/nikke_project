@@ -53,18 +53,18 @@
 
 予測は 2026-11-10（commit 69d31e2）に出した。
 
-| 指標                          | 実測               | 予測 H-model                |
-| ----------------------------- | ------------------ | --------------------------- |
+| 指標 | 実測 | 予測 H-model |
+| --- | --- | --- |
 | Q-core-midnear（coreHitRate） | 0.119（`1011-09`） | 0.081（-0.038、**許容外**） |
-| Q-core-near（coreHitRate）    | （実測なし）       | 0.142                       |
-| Q-core-far（coreHitRate）     | 0.042（`1011-11`） | 0.019（-0.023、**許容外**） |
-| Q-core-midfar（coreHitRate）  | 0.04（`1011-10`）  | 0.046（+0.006、許容内）     |
-| Q-bullet-far（bulletHitRate） | （実測なし）       | 0.785                       |
+| Q-core-near（coreHitRate） | （実測なし） | 0.142 |
+| Q-core-far（coreHitRate） | 0.042（`1011-11`） | 0.019（-0.023、**許容外**） |
+| Q-core-midfar（coreHitRate） | 0.04（`1011-10`） | 0.046（+0.006、許容内） |
+| Q-bullet-far（bulletHitRate） | （実測なし） | 0.785 |
 | S-core-midnear（coreHitRate） | 0.127（`1013-09`） | 0.081（-0.046、**許容外**） |
-| S-core-near（coreHitRate）    | （実測なし）       | 0.142                       |
-| S-core-far（coreHitRate）     | 0.051（`1013-11`） | 0.019（-0.032、**許容外**） |
-| S-core-midfar（coreHitRate）  | 0.054（`1013-10`） | 0.046（-0.008、許容内）     |
-| S-bullet-far（bulletHitRate） | （実測なし）       | 0.785                       |
+| S-core-near（coreHitRate） | （実測なし） | 0.142 |
+| S-core-far（coreHitRate） | 0.051（`1013-11`） | 0.019（-0.032、**許容外**） |
+| S-core-midfar（coreHitRate） | 0.054（`1013-10`） | 0.046（-0.008、許容内） |
+| S-bullet-far（bulletHitRate） | （実測なし） | 0.785 |
 
 <!-- records:predictions:end -->
 

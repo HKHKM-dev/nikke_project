@@ -93,29 +93,29 @@
 
 予測は 2026-11-11（commit 81a8b87）に出した。
 
-| 指標                                    | 実測         | 予測 H1       | 予測 H0       |
-| --------------------------------------- | ------------ | ------------- | ------------- |
-| A-naga-in（hitDamageAtShot）            | （実測なし） | 95,068.976    | 59,388.416    |
-| A-naga-out（hitDamageAtShot）           | （実測なし） | 40,888.32     | 40,888.32     |
-| A-asuka-in（hitDamageAtShot）           | （実測なし） | 472,421.562   | 414,282.213   |
-| A-asuka-21s（hitDamageAtShot）          | （実測なし） | 142,035.595   | 113,601.211   |
-| A-asuka-27s（hitDamageAtShot）          | （実測なし） | 61,234.286    | 61,234.286    |
-| B-nihilister-in（hitDamageAtShot）      | （実測なし） | 856,321.19    | 534,933.277   |
-| B-nihilister-out（hitDamageAtShot）     | （実測なし） | 416,290.488   | 416,290.488   |
-| B-alice-in（hitDamageAtShot）           | （実測なし） | 1,546,832.431 | 1,145,377.587 |
-| B-alice-out（hitDamageAtShot）          | （実測なし） | 578,950.109   | 578,950.109   |
-| C-dorothy-in（hitDamageAtShot）         | （実測なし） | 75,492.18     | 63,773.267    |
-| C-dorothy-out（hitDamageAtShot）        | （実測なし） | 63,773.267    | 63,773.267    |
-| C-swha-in（hitDamageAtShot）            | （実測なし） | 818,764.266   | 691,757.575   |
-| C-swha-out（hitDamageAtShot）           | （実測なし） | 637,122.985   | 637,122.985   |
-| D-redhood-in（hitDamageAtShot）         | （実測なし） | 1,006,075.071 | 914,115.093   |
-| D-redhood-out（hitDamageAtShot）        | （実測なし） | 416,290.488   | 416,290.488   |
-| D-guren-in（hitDamageAtShot）           | （実測なし） | 519,151.309   | 324,307.415   |
-| D-guren-weapon（hitDamageAtShot）       | （実測なし） | 2,106,773.727 | 1,648,301.67  |
-| D-guren-out（hitDamageAtShot）          | （実測なし） | 259,445.932   | 259,445.932   |
-| E-laplace-weapon（hitDamageAtShot）     | （実測なし） | 54,715.105    | 46,227.699    |
-| E-laplace-weapon-out（hitDamageAtShot） | （実測なし） | 44,392.698    | 44,392.698    |
-| E-laplace-base（hitDamageAtShot）       | （実測なし） | 28,675.25     | 28,675.25     |
+| 指標 | 実測 | 予測 H1 | 予測 H0 |
+| --- | --- | --- | --- |
+| A-naga-in（hitDamageAtShot） | （実測なし） | 95,068.976 | 59,388.416 |
+| A-naga-out（hitDamageAtShot） | （実測なし） | 40,888.32 | 40,888.32 |
+| A-asuka-in（hitDamageAtShot） | （実測なし） | 472,421.562 | 414,282.213 |
+| A-asuka-21s（hitDamageAtShot） | （実測なし） | 142,035.595 | 113,601.211 |
+| A-asuka-27s（hitDamageAtShot） | （実測なし） | 61,234.286 | 61,234.286 |
+| B-nihilister-in（hitDamageAtShot） | （実測なし） | 856,321.19 | 534,933.277 |
+| B-nihilister-out（hitDamageAtShot） | （実測なし） | 416,290.488 | 416,290.488 |
+| B-alice-in（hitDamageAtShot） | （実測なし） | 1,546,832.431 | 1,145,377.587 |
+| B-alice-out（hitDamageAtShot） | （実測なし） | 578,950.109 | 578,950.109 |
+| C-dorothy-in（hitDamageAtShot） | （実測なし） | 75,492.18 | 63,773.267 |
+| C-dorothy-out（hitDamageAtShot） | （実測なし） | 63,773.267 | 63,773.267 |
+| C-swha-in（hitDamageAtShot） | （実測なし） | 818,764.266 | 691,757.575 |
+| C-swha-out（hitDamageAtShot） | （実測なし） | 637,122.985 | 637,122.985 |
+| D-redhood-in（hitDamageAtShot） | （実測なし） | 1,006,075.071 | 914,115.093 |
+| D-redhood-out（hitDamageAtShot） | （実測なし） | 416,290.488 | 416,290.488 |
+| D-guren-in（hitDamageAtShot） | （実測なし） | 519,151.309 | 324,307.415 |
+| D-guren-weapon（hitDamageAtShot） | （実測なし） | 2,106,773.727 | 1,648,301.67 |
+| D-guren-out（hitDamageAtShot） | （実測なし） | 259,445.932 | 259,445.932 |
+| E-laplace-weapon（hitDamageAtShot） | （実測なし） | 54,715.105 | 46,227.699 |
+| E-laplace-weapon-out（hitDamageAtShot） | （実測なし） | 44,392.698 | 44,392.698 |
+| E-laplace-base（hitDamageAtShot） | （実測なし） | 28,675.25 | 28,675.25 |
 
 <!-- records:predictions:end -->
 

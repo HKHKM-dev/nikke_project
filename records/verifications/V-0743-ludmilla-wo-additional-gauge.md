@@ -38,16 +38,16 @@
 
 予測は 2026-11-12（commit 9ebb22a）に出した。
 
-| 指標                                       | 実測         | 予測 H0 | 予測 H1 | 予測 H2 | 予測 H3 |
-| ------------------------------------------ | ------------ | ------- | ------- | ------- | ------- |
-| full-shot-index-0099（gaugeFullShotIndex） | （実測なし） | 1,002   | 971     | 986     | 987     |
-| full-frame-0099（gaugeFullFrame）          | （実測なし） | 1,680   | 1,649   | 1,664   | 1,665   |
-| full-shot-index-0440（gaugeFullShotIndex） | （実測なし） | 1,002   | 971     | 986     | 987     |
-| full-frame-0440（gaugeFullFrame）          | （実測なし） | 1,680   | 1,649   | 1,664   | 1,665   |
-| full-shot-index-0441（gaugeFullShotIndex） | （実測なし） | 1,002   | 971     | 986     | 987     |
-| full-frame-0441（gaugeFullFrame）          | （実測なし） | 1,680   | 1,649   | 1,664   | 1,665   |
-| full-shot-index-0442（gaugeFullShotIndex） | （実測なし） | 1,002   | 971     | 986     | 987     |
-| full-frame-0442（gaugeFullFrame）          | （実測なし） | 1,680   | 1,649   | 1,664   | 1,665   |
+| 指標 | 実測 | 予測 H0 | 予測 H1 | 予測 H2 | 予測 H3 |
+| --- | --- | --- | --- | --- | --- |
+| full-shot-index-0099（gaugeFullShotIndex） | （実測なし） | 1,002 | 971 | 986 | 987 |
+| full-frame-0099（gaugeFullFrame） | （実測なし） | 1,680 | 1,649 | 1,664 | 1,665 |
+| full-shot-index-0440（gaugeFullShotIndex） | （実測なし） | 1,002 | 971 | 986 | 987 |
+| full-frame-0440（gaugeFullFrame） | （実測なし） | 1,680 | 1,649 | 1,664 | 1,665 |
+| full-shot-index-0441（gaugeFullShotIndex） | （実測なし） | 1,002 | 971 | 986 | 987 |
+| full-frame-0441（gaugeFullFrame） | （実測なし） | 1,680 | 1,649 | 1,664 | 1,665 |
+| full-shot-index-0442（gaugeFullShotIndex） | （実測なし） | 1,002 | 971 | 986 | 987 |
+| full-frame-0442（gaugeFullFrame） | （実測なし） | 1,680 | 1,649 | 1,664 | 1,665 |
 
 <!-- records:predictions:end -->
 

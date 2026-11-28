@@ -117,18 +117,18 @@ V-0562 の案（A）から始め、ほかの案と比べた。
 
 予測は 2026-11-01（commit 04b2150）に出した。
 
-| 指標                                | 実測                   | 予測 Rs                         |
-| ----------------------------------- | ---------------------- | ------------------------------- |
-| eun-round-ad-core（hitDamage）      | （実測なし）           | 3,157,062.912                   |
-| eun-round-ad-core-dist（hitDamage） | （実測なし）           | 3,630,622.349                   |
-| eun-round-ad-core-crit（hitDamage） | （実測なし）           | 4,317,441.386                   |
-| eun-round-core（hitDamage）         | （実測なし）           | 2,746,328.784                   |
-| flower-core-pre（hitDamage）        | 222,728（`0842-03`）   | 222,727.856（-0.144、許容内）   |
-| flower-ad-core（hitDamage）         | （実測なし）           | 287,438.239                     |
-| eun-pre-core（hitDamage）           | 713,539（`0842-04`）   | 713,539.504（+0.504、許容内）   |
-| eun-camo-core（hitDamage）          | 1,848,787（`0842-06`） | 1,848,787.317（+0.317、許容内） |
-| eun-camo-ad-core（hitDamage）       | 2,139,534（`0842-07`） | 2,139,533.524（-0.476、許容内） |
-| alt-a-round-core（hitDamage）       | （実測なし）           | 2,941,270.8                     |
+| 指標 | 実測 | 予測 Rs |
+| --- | --- | --- |
+| eun-round-ad-core（hitDamage） | （実測なし） | 3,157,062.912 |
+| eun-round-ad-core-dist（hitDamage） | （実測なし） | 3,630,622.349 |
+| eun-round-ad-core-crit（hitDamage） | （実測なし） | 4,317,441.386 |
+| eun-round-core（hitDamage） | （実測なし） | 2,746,328.784 |
+| flower-core-pre（hitDamage） | 222,728（`0842-03`） | 222,727.856（-0.144、許容内） |
+| flower-ad-core（hitDamage） | （実測なし） | 287,438.239 |
+| eun-pre-core（hitDamage） | 713,539（`0842-04`） | 713,539.504（+0.504、許容内） |
+| eun-camo-core（hitDamage） | 1,848,787（`0842-06`） | 1,848,787.317（+0.317、許容内） |
+| eun-camo-ad-core（hitDamage） | 2,139,534（`0842-07`） | 2,139,533.524（-0.476、許容内） |
+| alt-a-round-core（hitDamage） | （実測なし） | 2,941,270.8 |
 
 <!-- records:predictions:end -->
 

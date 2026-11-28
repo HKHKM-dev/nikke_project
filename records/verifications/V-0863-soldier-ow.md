@@ -46,12 +46,12 @@
 
 予測は 2026-11-22（commit 5520a72）に出した。
 
-| 指標                              | 実測                | 予測 H1                    |
-| --------------------------------- | ------------------- | -------------------------- |
-| extra（perShotHitDamage）         | 51,253（`1385-03`） | 51,253.02（+0.02、許容内） |
-| extra-crit（perShotHitDamage）    | 76,880（`1385-04`） | 76,879.53（-0.47、許容内） |
-| extra-count（perShotChanceCount） | 285（`1385-05`）    | 295.8（+3.79%、許容内）    |
-| burst-max-ammo（maxAmmoAt）       | 456（`1385-06`）    | 456（+0、許容内）          |
+| 指標 | 実測 | 予測 H1 |
+| --- | --- | --- |
+| extra（perShotHitDamage） | 51,253（`1385-03`） | 51,253.02（+0.02、許容内） |
+| extra-crit（perShotHitDamage） | 76,880（`1385-04`） | 76,879.53（-0.47、許容内） |
+| extra-count（perShotChanceCount） | 285（`1385-05`） | 295.8（+3.79%、許容内） |
+| burst-max-ammo（maxAmmoAt） | 456（`1385-06`） | 456（+0、許容内） |
 
 <!-- records:predictions:end -->
 

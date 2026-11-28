@@ -54,18 +54,18 @@
 
 予測は 2026-11-10（commit 63cf4cc）に出した。
 
-| 指標                               | 実測                                          | 予測 H-model                                                       | 予測 H-taunt                                                       |
-| ---------------------------------- | --------------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------ |
-| N-hit（hitDamageAtShot）           | [64,348, 64,348, 64,348, 64,348]（`1015-03`） | [64,348.193, 64,348.193, 64,348.193, 64,348.193]（+0.192、許容内） | [64,348.193, 64,348.193, 64,348.193, 64,348.193]（+0.192、許容内） |
-| N-gauge-full（gaugeFullShotIndex） | 7（`1015-05`）                                | 14（+7、**許容外**）                                               | 10（+3、**許容外**）                                               |
-| N-core-midnear（coreHitRate）      | （実測なし）                                  | 0.885                                                              | 0.885                                                              |
-| N-core-near（coreHitRate）         | （実測なし）                                  | 0.982                                                              | 0.982                                                              |
-| N-core-far（coreHitRate）          | （実測なし）                                  | 0.591                                                              | 0.591                                                              |
-| N-core-midfar（coreHitRate）       | （実測なし）                                  | 0.742                                                              | 0.742                                                              |
-| N-flight-midnear（shotFlightAt）   | （実測なし）                                  | 15                                                                 | 15                                                                 |
-| N-flight-near（shotFlightAt）      | （実測なし）                                  | 7                                                                  | 7                                                                  |
-| N-flight-far（shotFlightAt）       | （実測なし）                                  | 29                                                                 | 29                                                                 |
-| N-flight-midfar（shotFlightAt）    | （実測なし）                                  | 21                                                                 | 21                                                                 |
+| 指標 | 実測 | 予測 H-model | 予測 H-taunt |
+| --- | --- | --- | --- |
+| N-hit（hitDamageAtShot） | [64,348, 64,348, 64,348, 64,348]（`1015-03`） | [64,348.193, 64,348.193, 64,348.193, 64,348.193]（+0.192、許容内） | [64,348.193, 64,348.193, 64,348.193, 64,348.193]（+0.192、許容内） |
+| N-gauge-full（gaugeFullShotIndex） | 7（`1015-05`） | 14（+7、**許容外**） | 10（+3、**許容外**） |
+| N-core-midnear（coreHitRate） | （実測なし） | 0.885 | 0.885 |
+| N-core-near（coreHitRate） | （実測なし） | 0.982 | 0.982 |
+| N-core-far（coreHitRate） | （実測なし） | 0.591 | 0.591 |
+| N-core-midfar（coreHitRate） | （実測なし） | 0.742 | 0.742 |
+| N-flight-midnear（shotFlightAt） | （実測なし） | 15 | 15 |
+| N-flight-near（shotFlightAt） | （実測なし） | 7 | 7 |
+| N-flight-far（shotFlightAt） | （実測なし） | 29 | 29 |
+| N-flight-midfar（shotFlightAt） | （実測なし） | 21 | 21 |
 
 <!-- records:predictions:end -->
 

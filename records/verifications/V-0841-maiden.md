@@ -57,16 +57,16 @@
 
 予測は 2026-11-21（commit 2a3a980）に出した。
 
-| 指標                                         | 実測                            | 予測 H1                        |
-| -------------------------------------------- | ------------------------------- | ------------------------------ |
-| A-s2-interval（buffWindowStartIntervalMean） | 1,764.7（`1330-01`）            | 1,765（+0.3、許容内）          |
-| A-s2-starts（buffWindowStarts）              | [1,771.5, 3,535.2]（`1330-02`） | [1,766, 3,531]（-5.5、許容内） |
-| A-base-hit（hitDamage）                      | 27,744.9（`1330-03`）           | 27,744.754（-0.146、許容内）   |
-| A-base-crit-hit（hitDamage）                 | （実測なし）                    | 41,617.13                      |
-| A-s2-crit-hit（hitDamage）                   | （実測なし）                    | 84,022.212                     |
-| B-burst-hit-1（burstHitDamage）              | 548,510（`1331-03`）            | 548,509.945（-0.055、許容内）  |
-| B-burst-crit-1（burstHitDamage）             | （実測なし）                    | 822,764.918                    |
-| B-burst-crit-3（burstHitDamage）             | （実測なし）                    | 822,764.918                    |
+| 指標 | 実測 | 予測 H1 |
+| --- | --- | --- |
+| A-s2-interval（buffWindowStartIntervalMean） | 1,764.7（`1330-01`） | 1,765（+0.3、許容内） |
+| A-s2-starts（buffWindowStarts） | [1,771.5, 3,535.2]（`1330-02`） | [1,766, 3,531]（-5.5、許容内） |
+| A-base-hit（hitDamage） | 27,744.9（`1330-03`） | 27,744.754（-0.146、許容内） |
+| A-base-crit-hit（hitDamage） | （実測なし） | 41,617.13 |
+| A-s2-crit-hit（hitDamage） | （実測なし） | 84,022.212 |
+| B-burst-hit-1（burstHitDamage） | 548,510（`1331-03`） | 548,509.945（-0.055、許容内） |
+| B-burst-crit-1（burstHitDamage） | （実測なし） | 822,764.918 |
+| B-burst-crit-3（burstHitDamage） | （実測なし） | 822,764.918 |
 
 <!-- records:predictions:end -->
 

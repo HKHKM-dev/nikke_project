@@ -68,11 +68,11 @@
 
 予測は 2026-10-06（commit 9ae1bd2）に出した。
 
-| 指標                                       | 実測             | 予測 H0                 | 予測 H1                |
-| ------------------------------------------ | ---------------- | ----------------------- | ---------------------- |
-| far-shots（chainTimeoutToGaugeFullShots）  | 547（`0266-06`） | 647（+100、**許容外**） | 581（+34、**許容外**） |
-| near-shots（chainTimeoutToGaugeFullShots） | 500（`0266-07`） | 501（+1、許容内）       | 501（+1、許容内）      |
-| far-full-frame（gaugeFullFrame）           | （実測なし）     | 6,616                   | 6,290                  |
+| 指標 | 実測 | 予測 H0 | 予測 H1 |
+| --- | --- | --- | --- |
+| far-shots（chainTimeoutToGaugeFullShots） | 547（`0266-06`） | 647（+100、**許容外**） | 581（+34、**許容外**） |
+| near-shots（chainTimeoutToGaugeFullShots） | 500（`0266-07`） | 501（+1、許容内） | 501（+1、許容内） |
+| far-full-frame（gaugeFullFrame） | （実測なし） | 6,616 | 6,290 |
 
 <!-- records:predictions:end -->
 
