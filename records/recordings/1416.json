@@ -1,0 +1,52 @@
+{
+  "id": "1416",
+  "date": "2026-11-28",
+  "folder": "range",
+  "file": "20261128-1416_cocoa-soldierfa-liberalio-dieselws.mp4",
+  "original": "2026-11-28_17-05-31.mp4",
+  "durationSec": 206.9,
+  "frames": 12412,
+  "fps": 60,
+  "sizeMB": 250.8,
+  "sha256": "7e3c490d7978",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 262,
+      "name": "リバーレリオ",
+      "controlled": false
+    },
+    {
+      "slot": 4,
+      "rid": 75,
+      "name": "ディーゼル：ウィンタースイーツ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0883 の撮影。ココア + ソルジャーF.A. + リバーレリオ + ディーゼル：ウィンタースイーツ（4 枠目・操作）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-28T17:10+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
