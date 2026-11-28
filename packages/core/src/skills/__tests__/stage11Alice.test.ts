@@ -72,7 +72,7 @@ describe('parseSkillDefinition (Stage 11 アリス編, 22.2)', () => {
     ['topAttack with both counts', { ...aliceS1, targetCount: 2 }, /exactly one of targetCount/],
     [
       'a count without topAttack',
-      { ...aliceS1, target: 'allies', targetCountRef: 1 },
+      { ...aliceS1, target: 'self', targetCountRef: 1 },
       /only allowed with target "topAttack"/,
     ],
     ['a zero count', { ...aliceS1, targetCountRef: undefined, targetCount: 0 }, /positive integer/],

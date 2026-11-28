@@ -1,0 +1,95 @@
+[
+  {
+    "id": "1411-01",
+    "recording": "1411",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 227772,
+    "description": "キリの S1 の窓の中（キリのフルチャージの発から 3 秒）のデルタのコアの 1 ヒット（会心なし）。攻撃力▲あり",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、モデルの 1 ヒットの格子（レシピ buff-edge の --opt grid。デルタはキリの S1 の▲あり（モデルの f300）・なし（f30）、キリは f300）に ±1.5 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0882",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1411-02",
+    "recording": "1411",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 208626,
+    "description": "キリの S1 の窓の外（最初の発・キリのリロードの間）のデルタのコアの 1 ヒット（会心なし）。攻撃力▲なし",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、モデルの 1 ヒットの格子（レシピ buff-edge の --opt grid。デルタはキリの S1 の▲あり（モデルの f300）・なし（f30）、キリは f300）に ±1.5 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 30,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0882",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1411-03",
+    "recording": "1411",
+    "kind": "count",
+    "use": "record",
+    "unit": "回",
+    "value": [95, 9],
+    "description": "デルタの 1 ヒットのうち、キリの S1 の▲ありの格子に合った数と、なしの格子に合った数（録画の全体）。▲なしの発は、どれもキリの最初の着弾の前か、キリの着弾から 160f 以上空いた後（キリのリロードの間）で、続けて撃っている間の発はどれも▲あり",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid・count）",
+      "note": "HUD の増分を、モデルの 1 ヒットの格子（レシピ buff-edge の --opt grid。デルタはキリの S1 の▲あり（モデルの f300）・なし（f30）、キリは f300）に ±1.5 で当てた。▲なしの発の前の、キリの 1 発に合った最後の増分からの空きを数えた（キリの発のフレームは着弾より 8〜28f 前。S1 の窓はキリの発の次のフレームから 3 秒）。モデルの▲なしの発も 1 本に 9 発"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0882",
+    "readAt": "2026-11-28"
+  }
+]
