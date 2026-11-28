@@ -14,9 +14,12 @@
           "target": "allies",
           "ref": 2,
           "assumes": {
-            "ja": "通常攻撃で 60 回攻撃した時は、撃った発（1 発 1 回）の 60 の倍数の発。リロードをまたいで数え続け、届いた発と同じフレームに、編成の 1 本のゲージに足す",
-            "en": "Attacking 60 times with normal attacks means every shot fired (one per shot) that reaches a multiple of 60. The count carries over reloads, and the charge is added to the team's single gauge on the frame of that shot"
-          }
+            "ja": "通常攻撃で 60 回攻撃した時は、撃った発（外れも 1 回）の 60 の倍数の発。リロードとチェーンをまたいで数え続け、届いた発と同じフレームに、編成の 1 本のゲージに足す",
+            "en": "Attacking 60 times with normal attacks means every shot fired (misses count, one per shot) that reaches a multiple of 60. The count carries over reloads and chains, and the charge is added to the team's single gauge on the frame of that shot"
+          },
+          "claims": [
+            "C-1572"
+          ]
         }
       ],
       "notes": [
