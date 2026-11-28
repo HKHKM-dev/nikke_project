@@ -105,7 +105,8 @@ export const damageMetrics: Readonly<Record<string, Metric>> = {
   // 1 ヒットと、同じ発に畳み込まれた射撃ごとの倍率ダメージの和（HUD の 1 つの増分に合わさるとき。ギルティ：マイティバニーの
   // チェーンエンハンスの追加ダメージ。V-0896）。会心は 1 ヒット（crit）と倍率ダメージ（perShotCrit）で別に決まる
   hitWithPerShot: {
-    description: 'hitDamage と、同じ区間の射撃ごとの倍率ダメージの 1 回の値（会心は perShotCrit）の和',
+    description:
+      'hitDamage と、同じ区間の射撃ごとの倍率ダメージの 1 回の値（会心は perShotCrit）の和（射撃ごとの倍率ダメージのある区間だけ）',
     optional: ['fullBurst'],
     args: ['slot', 'frame', 'core', 'crit', 'distance', 'perShotCrit'],
     sim: (r, c) =>

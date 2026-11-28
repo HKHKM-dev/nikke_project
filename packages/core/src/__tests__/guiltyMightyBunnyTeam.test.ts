@@ -17,8 +17,8 @@ const DELTA = 20;
 
 const enemy: EnemyInput = fixedEnemy({ element: 'Electronic' });
 
-// 撮影 A: ギルティ：マイティバニー単騎（3 枠目・操作）。バースト I がいないのでバーストは起きない
-const SOLO: TeamInput = fixedTeam([null, null, fixedSlot(GUILTY)], 2, { enemy });
+// 撮影 A（録画 1435・1436 の並び）: ギルティ：マイティバニー単騎（1 枠目・操作）。バースト I がいないのでバーストは起きない
+const SOLO: TeamInput = fixedTeam([fixedSlot(GUILTY)], 0, { enemy });
 // 撮影 B: ルドミラ（I）・デルタ（II）・ギルティ：マイティバニー（III・操作）
 const CHAIN: TeamInput = fixedTeam(
   [LUDMILLA, DELTA, GUILTY].map((id) => fixedSlot(id)),
@@ -33,9 +33,9 @@ const valueOf = (item: HeldItemView): number | undefined =>
   item.origin.kind === 'timed' ? item.origin.effect.value : undefined;
 
 describe.each([
-  ['単騎（撮影 A）', SOLO],
-  ['チェーン（撮影 B）', CHAIN],
-])('%s', (_name, team) => {
+  ['単騎（撮影 A）', SOLO, 0],
+  ['チェーン（撮影 B）', CHAIN, 2],
+] as const)('%s', (_name, team, g) => {
   const plan = planTeamRun(team);
   const end = plan.history.frames;
 
@@ -45,7 +45,7 @@ describe.each([
       ['skill2', 'attackDamage', 0.2045],
       ['skill2', 'chargeDamage', 0.4],
     ] as const) {
-      const items = itemsOf(plan.history, { holder: 2, sourceSlotIndex: 2, skill, stat });
+      const items = itemsOf(plan.history, { holder: g, sourceSlotIndex: g, skill, stat });
       expect(items.map((i) => [i.start, i.end])).toEqual([[0, end]]);
       expect(valueOf(items[0]!)).toBeCloseTo(value, 12);
     }
@@ -54,9 +54,9 @@ describe.each([
   // 追加ダメージは遅れが無いので、発の 1 トリガーの値に畳み込まれる（区間の perShot）
   it('adds the Chain Enhance additional damage to every Full Charge shot (Mighty Stomp included)', () => {
     const result = runSimulation(team);
-    const log = result.shots[2]!;
+    const log = result.shots[g]!;
     const isFull = fullChargeFrameSet(log);
-    const segments = result.slots[2]!.segments;
+    const segments = result.slots[g]!.segments;
     const segmentAt = (f: number) => segments.find((s) => s.start <= f && f < s.end)!;
     const full = log.frames.filter(isFull);
     expect(full.length).toBeGreaterThan(50);
