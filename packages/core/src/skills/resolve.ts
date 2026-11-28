@@ -435,11 +435,12 @@ const TARGET_KEYS = {
   /** スタック可能バフのスタック量の増減（resolveAllStackableChanges）と、即時効果（resolveInstant） */
   filter: FILTER_TARGET_KEYS,
   /**
-   * heal だけが持つ欄（resolveInstant）: 編成で決まる対象の枠（lowestHpRatio・両隣・基本バースト段階。skills/composition.ts が書く。
-   * plan/design-skill-stage8.md 1.1 節）と、「基本バースト段階が N の」「両隣の味方」（どちらも、fixedTargets の無い呼び出しを
-   * skills/targets.ts が落とす印。枠は fixedTargets に入るので、ほかに読む所は無い）
+   * heal だけが持つ欄（resolveInstant）: 編成で決まる対象の枠（HP の割合・値と最終防御力の順位・両隣・基本バースト段階・自分を除く。
+   * skills/composition.ts が書く。plan/design-skill-stage8.md 1.1 節）と、「基本バースト段階が N の」「両隣の味方」「自分を除く」
+   * （どれも、fixedTargets の無い呼び出しを skills/targets.ts が落とす印。枠は fixedTargets に入る）。対象の HP の割合の閾値
+   * （targetHpAtMost）は Lv の値に解いて、この後に書く
    */
-  heal: ['fixedTargets', 'targetBurstStep', 'targetAdjacent'],
+  heal: ['fixedTargets', 'targetBurstStep', 'targetAdjacent', 'excludeSelf'],
 } as const satisfies Record<string, readonly (keyof TargetFields)[]>;
 
 /**
@@ -1791,7 +1792,8 @@ function resolveWeaponChange(
  * 即時効果の対象の絞り込みの欄: 武器種・コード・クラス、N（targetCount。target が topAttack のときと、heal の lowestHpRatio）、
  * heal だけが持つ欄（TARGET_KEYS.heal）
  */
-type InstantTargetKey = (typeof TARGET_KEYS.filter)[number] | 'targetCount' | (typeof TARGET_KEYS.heal)[number];
+type InstantTargetKey =
+  (typeof TARGET_KEYS.filter)[number] | 'targetCount' | 'targetHpAtMost' | (typeof TARGET_KEYS.heal)[number];
 
 /**
  * 即時効果（CT 短縮・弾丸チャージ）。value は CT 短縮なら秒、弾丸チャージなら比率（0.3988）。
@@ -1878,6 +1880,9 @@ export function resolveInstant(
       const count = resolveTargetCount(effect, skill, levels[slot]);
       if (count !== undefined) r.targetCount = count;
       if (effect.kind === 'heal') copyTargetFields(r, effect, TARGET_KEYS.heal);
+      // 対象の HP の割合の閾値は % を割合に（plan/design-heal-target-rank.md 2.4 節）
+      if (effect.kind === 'heal' && effect.targetHpAtMostRef !== undefined)
+        r.targetHpAtMost = skillValue(skill, effect.targetHpAtMostRef, levels[slot]) / 100;
       if (effect.kind === 'heal' && (effect.durationRef !== undefined || effect.durationSeconds !== undefined)) {
         r.durationFrames = gameSecondsToFrames(durationSecondsOf(effect, skill, levels[slot]));
       }

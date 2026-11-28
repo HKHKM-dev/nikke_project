@@ -18,23 +18,41 @@
           "claims": [
             "C-1310"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "フルチャージ攻撃時の、残りの HP の割合が最も低い味方 2 機が HP 30% 以下・50% 以下の時の回復は未対応（対象の HP の割合の閾値の条件の語彙が無い）。被弾が無くても、最大HP のみ▲ で割合が下がった味方に起きうる（S2 とバーストの最大HP のみ▲ を受けた電撃 AR のアタッカーは 50% を下回りうる）。回復で、回復を受けた時を読む味方がいなければダメージに効かない",
-          "en": "The heals on full-charge attacks when the 2 allies with the lowest remaining HP ratio are at 30% or less / 50% or less are not modeled (no vocabulary for a threshold on the targets' HP ratio). They can happen without taking hits, on allies whose ratio dropped from max-HP-only ups (an Electric AR attacker under the S2 and Burst max-HP-only ups can go below 50%). They are heals and affect no damage unless an ally reads healing",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "heal",
-            "target": "lowestHpRatio",
-            "trigger": "fullChargeShot"
+          "kind": "heal",
+          "trigger": { "count": "fullChargeShot" },
+          "target": "lowestHpRatio",
+          "targetCountRef": 4,
+          "targetHpAtMostRef": 3,
+          "ref": 5,
+          "scaling": "casterFinalMaxHp",
+          "assumes": {
+            "ja": "フルチャージして攻撃した時、残りの HP の割合が最も低い味方 2 機（値 04。回復の時の HP の割合の低い順。同値は枠の若い順。自分も候補。C-0567）のうち、HP の割合が 30%（値 03）以下の味方だけへの 1 回の回復（スキル発動者の最終最大HP の X%）。2 機そろって閾値以下でなくても、閾値以下の 1 機には付く（C-1311）。受けた味方の「回復効果が適用された時」を起こす。被弾の無い射撃場で割合が閾値を下回るのは、最大HP のみ▲・現在の HP▼ を受けた味方と、HP の割合の想定を入れた味方だけ。実機では被弾で HP が減った味方も選ばれうる。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く。1 行目の持続回復は割合を戻さないので、閾値の下の味方への回復は実機より長く続きうる（与えるHP回復量▲・受けるHP回復量▲は掛けない。plan/design-hp-heal-restore.md 2.2 節）",
+            "en": "On a fully charged attack, a one-off heal (X% of the caster's final max HP) on those of the 2 allies with the lowest remaining HP ratio (value 04; lowest ratio at the heal; ties go to the leftmost slot; self included; C-0567) whose HP ratio is 30% (value 03) or less. One ally at or below the threshold is healed even if the other is not (C-1311). It triggers \"when healed\" on the allies that receive it. Without hits, the ratio drops below the threshold only for allies under max-HP-only ups or current HP downs, or with an assumed HP ratio. In game an ally that lost HP from hits can also be chosen. The amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs. The heal over time in the first line does not raise the ratio, so heals on allies below the threshold can last longer than in game (Outgoing/Incoming Healing ups are not applied; plan/design-hp-heal-restore.md 2.2)"
+          },
+          "claims": [
+            "C-1311"
+          ]
+        },
+        {
+          "kind": "heal",
+          "trigger": { "count": "fullChargeShot" },
+          "target": "lowestHpRatio",
+          "targetCountRef": 7,
+          "targetHpAtMostRef": 6,
+          "ref": 8,
+          "scaling": "casterFinalMaxHp",
+          "assumes": {
+            "ja": "フルチャージして攻撃した時、残りの HP の割合が最も低い味方 2 機（値 07。回復の時の HP の割合の低い順。同値は枠の若い順。自分も候補。C-0567）のうち、HP の割合が 50%（値 06）以下の味方だけへの 1 回の回復（スキル発動者の最終最大HP の X%）。2 機そろって閾値以下でなくても、閾値以下の 1 機には付く（C-1311）。受けた味方の「回復効果が適用された時」を起こす。被弾の無い射撃場で割合が閾値を下回るのは、最大HP のみ▲・現在の HP▼ を受けた味方と、HP の割合の想定を入れた味方だけ。実機では被弾で HP が減った味方も選ばれうる。回復量は、最大HP のみ▲・現在の HP▼ で下がった HP の割合を戻す分だけ効く。1 行目の持続回復は割合を戻さないので、閾値の下の味方への回復は実機より長く続きうる（与えるHP回復量▲・受けるHP回復量▲は掛けない。plan/design-hp-heal-restore.md 2.2 節）",
+            "en": "On a fully charged attack, a one-off heal (X% of the caster's final max HP) on those of the 2 allies with the lowest remaining HP ratio (value 07; lowest ratio at the heal; ties go to the leftmost slot; self included; C-0567) whose HP ratio is 50% (value 06) or less. One ally at or below the threshold is healed even if the other is not (C-1311). It triggers \"when healed\" on the allies that receive it. Without hits, the ratio drops below the threshold only for allies under max-HP-only ups or current HP downs, or with an assumed HP ratio. In game an ally that lost HP from hits can also be chosen. The amount matters only by raising back an HP ratio lowered by max-HP-only ups or current HP downs. The heal over time in the first line does not raise the ratio, so heals on allies below the threshold can last longer than in game (Outgoing/Incoming Healing ups are not applied; plan/design-hp-heal-restore.md 2.2)"
           },
           "claims": [
             "C-1311"
           ]
         }
-      ]
+      ],
+      "notes": []
     },
     "skill2": {
       "effects": [

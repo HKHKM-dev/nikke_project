@@ -13,6 +13,7 @@ import {
   isAppliedTrigger,
   isAttackRanked,
   isEndedTrigger,
+  isHealOnlyTarget,
   isShotCountTrigger,
   isWeaponChangeEndTrigger,
   type SkillCooldownReductionEffect,
@@ -30,7 +31,7 @@ import {
 } from './common.ts';
 import { CONDITION_KEYS_OF, parseCondition, validateBurstStep } from './condition.ts';
 import {
-  LOWEST_HP_RATIO_HEAL_ONLY,
+  HEAL_ONLY_TARGET,
   parsePersonaTargetFields,
   parseTargetClass,
   parseTargetCount,
@@ -109,6 +110,9 @@ const INSTANT_KIND_KEYS: Record<InstantKind, readonly string[]> = {
     'includeSelf',
     // 「スキル発動者の最終最大HP の X% 回復」（plan/design-hp-heal-restore.md 2.2 節）
     'scaling',
+    // 「自分を除く味方全体」と、対象の HP の割合の閾値（plan/design-heal-target-rank.md 2.1・2.4 節）
+    'excludeSelf',
+    'targetHpAtMostRef',
   ],
   burstGauge: [],
   ammoDecrease: [],
@@ -221,12 +225,13 @@ function parseInstantTarget(
   if (target === 'longestChargeTime') fail(`${path}.target`, 'longestChargeTime is only allowed in timed');
   // 最終攻撃力の低い順も timed だけ（使い手がいない。plan/design-lowest-attack.md 2.1 節）
   if (target === 'lowestAttack') fail(`${path}.target`, 'lowestAttack is only allowed in timed');
-  // HP の割合の低い順は heal だけ（plan/design-skill-stage8.md 1.1 節）。武器・コードの絞り込みとは組み合わせない
-  if (target === 'lowestHpRatio') {
-    if (kind !== 'heal') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);
+  // HP の割合・値の低い順と最終防御力の高い順は heal だけ（plan/design-skill-stage8.md 1.1 節・plan/design-heal-target-rank.md 2.2・
+  // 2.3 節）。武器・コードの絞り込みとは組み合わせない
+  if (isHealOnlyTarget(target)) {
+    if (kind !== 'heal') fail(`${path}.target`, HEAL_ONLY_TARGET(target));
     for (const key of ['targetWeapon', 'targetElement', 'targetClass']) {
       if (v[key] !== undefined)
-        fail(`${path}.${key}`, 'lowestHpRatio cannot be combined with a weapon, element or class filter');
+        fail(`${path}.${key}`, `${target} cannot be combined with a weapon, element or class filter`);
     }
   }
   // ゲージは編成で 1 本なので、対象は味方全体だけ（絞り込みも書けない）。フルバーストの窓も編成で 1 つ
@@ -256,6 +261,19 @@ function parseInstantKindFields(v: Record<string, Json>, effect: InstantEffect, 
   } else if (v.scaling !== undefined) {
     if (v.scaling !== 'flat') fail(`${path}.scaling`, `ammoRefill only takes "flat", got ${JSON.stringify(v.scaling)}`);
     (effect as AmmoRefillEffect).scaling = 'flat';
+  }
+  // 「自分を除く味方全体」（allies だけ・always だけ）と、対象の HP の割合の閾値（lowestHpRatio だけ）。heal だけ
+  // （plan/design-heal-target-rank.md 2.1・2.4 節）
+  if (v.excludeSelf !== undefined) {
+    if (v.excludeSelf !== 'always') fail(`${path}.excludeSelf`, 'heal only takes "always"');
+    if (effect.target !== 'allies')
+      fail(`${path}.excludeSelf`, `only allowed with target "allies", got "${effect.target}"`);
+    (effect as HealEffect).excludeSelf = 'always';
+  }
+  if (v.targetHpAtMostRef !== undefined) {
+    if (effect.target !== 'lowestHpRatio')
+      fail(`${path}.targetHpAtMostRef`, `only allowed with target "lowestHpRatio", got "${effect.target}"`);
+    (effect as HealEffect).targetHpAtMostRef = parseRef(v.targetHpAtMostRef, `${path}.targetHpAtMostRef`);
   }
   // heal だけ（plan/design-shot-count-trigger-frame.md 6 節）
   if (v.delayFrames !== undefined) {

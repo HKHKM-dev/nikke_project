@@ -7,6 +7,8 @@
 //     それ以外の「自分を除く」（excludeSelf）は順位（skills/ranking.ts）で外す。
 //   - 「残りの HP の割合が最も低い味方 N 機」（lowestHpRatio）は、fixedTargets（HP の割合の想定の低い順。同値は枠の若い順）の
 //     先頭 targetCount 枠に掛ける（plan/design-skill-stage8.md 1.1 節）。
+//   - 「残りの HP の値が最も低い味方 N 機」（lowestHp）と「最終防御力が最も高い味方 N 機」（topDefense）は、発火の文脈の並び
+//     （targetRank）の先頭 targetCount 枠に掛ける（plan/design-heal-target-rank.md 2.2・2.3 節）。
 //   - 「〈絞り込み〉の味方 N 機」（allies と targetCount）は、fixedTargets（絞り込みに合う枠の順）の先頭 targetCount 枠に掛ける
 //     （候補が N 機より多い時、実機は発ごとに選び直す（C-1579）。枠の若い順は決め打ち。plan/design-kiri.md 6.1 節）。
 //   - 「ランダムな味方 N 機」（allies と targetCount と targetRandom）は、fixedTargets の全員に掛ける（値は解決で N / 候補の数を
@@ -19,6 +21,7 @@ import {
   type ExcludeSelf,
   type RankTie,
   isAttackRanked,
+  isHealOnlyTarget,
   type TargetAdjacent,
   type TargetDefense,
   type TargetSquad,
@@ -40,10 +43,11 @@ export type FireContext = {
   attackRank?: readonly number[];
   lowerDefense?: readonly number[];
   /**
-   * 「残りの HP の割合が最も低い味方」の並び（発火のフレームの HP の
-   * 割合の低い順・同値は枠の若い順。fixedTargets の候補の枠だけ。plan/design-hp-ratio-readers.md 2.2 節）。無ければ fixedTargets（枠の想定の順）
+   * heal にだけ書ける対象（lowestHpRatio・lowestHp・topDefense）の並び。fixedTargets の候補の枠を、発火のフレームの HP の割合の低い順
+   * （plan/design-hp-ratio-readers.md 2.2 節）・HP の値の低い順・最終防御力の高い順（plan/design-heal-target-rank.md 2.2・2.3 節）に並べ、
+   * 同値は枠の若い順。targetHpAtMost のある効果では、割合がそれ以下の枠だけ。無ければ fixedTargets（枠の想定の順）
    */
-  hpRank?: readonly number[];
+  targetRank?: readonly number[];
   /**
    * 時間で変わる targetState（targetStateHeld）の、発火のフレームにその状態の件を持つ枠（plan/design-rei-tentative.md 2.2 節。
    * skills/holders/conditions.ts の stateHoldersAt）
@@ -92,6 +96,11 @@ export type TargetFields = {
   targetRandom?: true;
   /** 「自分と自分より最終防御力が低い味方」。発火の文脈の lowerDefense で決める */
   targetDefense?: TargetDefense;
+  /**
+   * 「…が HP X% 以下なら、対象に」の X（割合。lowestHpRatio の heal だけ）。発火の文脈の targetRank が X 以下の枠に絞り、文脈の無い
+   * 呼び出しでは誰にも掛けない（plan/design-heal-target-rank.md 2.4 節）
+   */
+  targetHpAtMost?: number;
   /** 編成で決まる対象の枠（skills/composition.ts が定義に書いたもの） */
   fixedTargets?: readonly number[];
 };
@@ -123,7 +132,7 @@ export function needsFixedTargets(
     effect.targetSquad !== undefined ||
     effect.targetCharacter !== undefined ||
     effect.target === 'longestChargeTime' ||
-    effect.target === 'lowestHpRatio' ||
+    isHealOnlyTarget(effect.target) ||
     effect.targetState !== undefined ||
     effect.targetAdjacent !== undefined ||
     effect.targetBurstStep !== undefined ||
@@ -146,10 +155,10 @@ function fixedTargetOk(effect: TargetedEffect, targetSlotIndex: number): boolean
     }
     return true;
   }
-  // 順位の順の対象（基本チャージ時間・HP の割合）と「〈絞り込み〉の味方 N 機」は先頭の targetCount 枠
+  // 順位の順の対象（基本チャージ時間・HP の割合と値・最終防御力）と「〈絞り込み〉の味方 N 機」は先頭の targetCount 枠
   const ranked =
     effect.target === 'longestChargeTime' ||
-    effect.target === 'lowestHpRatio' ||
+    isHealOnlyTarget(effect.target) ||
     (effect.target === 'allies' && effect.targetCount !== undefined && effect.targetRandom !== true);
   const candidates = ranked ? effect.fixedTargets.slice(0, effect.targetCount ?? 1) : effect.fixedTargets;
   return candidates.includes(targetSlotIndex);
@@ -205,9 +214,12 @@ export function isEffectTarget(
       return weaponOk;
     case 'longestChargeTime':
       return weaponOk;
-    case 'lowestHpRatio': {
-      const rank = context?.hpRank;
-      if (rank === undefined) return weaponOk;
+    case 'lowestHpRatio':
+    case 'lowestHp':
+    case 'topDefense': {
+      const rank = context?.targetRank;
+      // 閾値のある回復は、閾値で絞った文脈の並びが要る（閾値を見ずに掛けない）
+      if (rank === undefined) return effect.targetHpAtMost === undefined && weaponOk;
       return (
         matchesTargetFilter(effect, targetSlot) && rank.slice(0, effect.targetCount ?? 1).includes(targetSlotIndex)
       );
@@ -251,9 +263,9 @@ export function canEverTarget(
   if (effect.excludeSelf === 'always' && sourceSlotIndex === targetSlotIndex) return false;
   // 「足りなければ自分も」は、武器種・属性の条件に依らず自分に付きうる
   if (effect.excludeSelf === 'unlessShort' && sourceSlotIndex === targetSlotIndex) return true;
-  // 「残りの HP の割合が最も低い味方」は、発火の時の割合で並べるので、
+  // 「残りの HP の割合（値）が最も低い味方」「最終防御力が最も高い味方」は、発火の時の値で並べるので、
   // 候補の枠（fixedTargets の全部）のどれにも付きうる（plan/design-hp-ratio-readers.md 2.2 節）
-  if (effect.target === 'lowestHpRatio' && effect.fixedTargets !== undefined)
+  if (isHealOnlyTarget(effect.target) && effect.fixedTargets !== undefined)
     return matchesTargetFilter(effect, targetSlot) && effect.fixedTargets.includes(targetSlotIndex);
   return matchesTargetFilter(effect, targetSlot) && fixedTargetOk(effect, targetSlotIndex);
 }

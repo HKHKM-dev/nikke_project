@@ -22,6 +22,7 @@ import { adjacentSlotsOf, matchesTargetFilter, needsFixedTargets } from './targe
 import {
   SKILL_SLOTS,
   burstStepChangeOf,
+  isHealOnlyTarget,
   isSelfHpAtMostTrigger,
   isStacksCondition,
   selfHpThreshold,
@@ -197,11 +198,15 @@ export function fixedTargetsOf(
   /** targetState が時間で変わる状態なら true（isHeldTargetState）。状態で絞らず、発火のフレームに絞る */
   held = false,
 ): number[] | undefined {
-  // 「残りの HP の割合が最も低い味方 N 機」（heal の lowestHpRatio）は、枠の HP の
-  // 割合の想定（省略は満タン）の低い順・同値は枠の若い順（C-0567。plan/design-skill-stage8.md 1.1 節）。自分も候補。先頭の N 枠は skills/targets.ts が取る
-  if (effect.kind === 'heal' && effect.target === 'lowestHpRatio') {
+  // heal にだけ書ける対象（HEAL_ONLY_TARGETS）は、空でない全部の枠が候補（自分も）。並びは発火のフレームの値で
+  // skills/holders/views.ts の rankContext が決め、先頭の N 枠は skills/targets.ts が取る（plan/design-heal-target-rank.md 2.2・2.3 節）。
+  // 文脈の無い呼び出しの並びは、「残りの HP の割合が最も低い味方」なら枠の HP の割合の想定（省略は満タン）の低い順・同値は枠の若い順
+  // （C-0567。plan/design-skill-stage8.md 1.1 節）、ほかは枠の順
+  if (effect.kind === 'heal' && isHealOnlyTarget(effect.target)) {
+    const slots = characters.flatMap((c, i) => (c === null ? [] : [i]));
+    if (effect.target !== 'lowestHpRatio') return slots;
     const ratio = (i: number) => characters[i]?.hpRatio ?? 1;
-    return characters.flatMap((c, i) => (c === null ? [] : [i])).sort((a, b) => ratio(a) - ratio(b) || a - b);
+    return slots.sort((a, b) => ratio(a) - ratio(b) || a - b);
   }
   // heal の両隣と「基本バースト段階が N の」（エイダの S1 の吸収回復）は、timed と同じ枠の決め方
   if (effect.kind !== 'passive' && effect.kind !== 'timed' && effect.kind !== 'state' && effect.kind !== 'heal')
@@ -210,9 +215,9 @@ export function fixedTargetsOf(
   const rid = 'targetCharacter' in effect ? effect.targetCharacter : undefined;
   const longest = effect.target === 'longestChargeTime';
   if (!needsFixedTargets(effect)) return undefined;
-  // 枠の決め方の無い組（読み込みが落とす。heal でない lowestHpRatio と、付与の targetLeftmost）には枠を書かない
+  // 枠の決め方の無い組（読み込みが落とす。heal でない HP の割合・値と最終防御力の順位と、付与の targetLeftmost）には枠を書かない
   // （skills/targets.ts の守りが、枠の無い対象として落とす）
-  if (effect.target === 'lowestHpRatio' || (effect.kind === 'state' && effect.targetLeftmost !== undefined))
+  if (isHealOnlyTarget(effect.target) || (effect.kind === 'state' && effect.targetLeftmost !== undefined))
     return undefined;
   const self = characters[selfIndex];
   if (!self) throw new Error(`no character in slot ${selfIndex}`);
@@ -226,8 +231,8 @@ export function fixedTargetsOf(
   const side = persona?.targetAdjacent;
   const adjacent = side === undefined ? undefined : adjacentSlotsOf(characters, selfIndex, withSelf, side);
   const step = persona?.targetBurstStep;
-  const excludeSelf =
-    (windowed || effect.kind === 'passive') && effect.target === 'allies' && effect.excludeSelf !== undefined;
+  // heal の「自分を除く味方全体」も同じ（plan/design-heal-target-rank.md 2.1 節）
+  const excludeSelf = effect.target === 'allies' && effect.excludeSelf !== undefined;
   const candidates: number[] = [];
   characters.forEach((c, i) => {
     if (c === null) return;
@@ -349,7 +354,7 @@ export function resolveSelfHp<E extends SkillEffect>(
 
 /**
  * 定義のうち、枠の HP の割合の想定（TeamSlotInput.hpRatio）を読む効果があるか。self は自分の HP の割合の条件（condition.selfHp・
- * トリガー { selfHpAtMostRef }）、lowestHpRatioTarget は「残りの HP の割合が最も低い味方」が対象の回復（編成の全員の想定を読む。
+ * トリガー { selfHpAtMostRef }）、lowestHpRatioTarget は「残りの HP の割合（値）が最も低い味方」が対象の回復（lowestHpRatio・lowestHp。編成の全員の想定を読む。
  * fixedTargetsOf）。画面は、これがあるスロットにだけ想定の欄を出す（apps/web/src/calcView.ts）
  */
 export function hpRatioReadersOf(definition: SkillDefinition): { self: boolean; lowestHpRatioTarget: boolean } {
@@ -359,7 +364,9 @@ export function hpRatioReadersOf(definition: SkillDefinition): { self: boolean; 
       (e) =>
         ('condition' in e && e.condition?.selfHp !== undefined) || ('trigger' in e && isSelfHpAtMostTrigger(e.trigger)),
     ),
-    lowestHpRatioTarget: effects.some((e) => e.kind === 'heal' && e.target === 'lowestHpRatio'),
+    lowestHpRatioTarget: effects.some(
+      (e) => e.kind === 'heal' && (e.target === 'lowestHpRatio' || e.target === 'lowestHp'),
+    ),
   };
 }
 

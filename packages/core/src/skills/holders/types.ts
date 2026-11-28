@@ -448,11 +448,12 @@ export type HolderLists = {
   /** ペレットの数の stat の件の列を持ちうるか */
   hasPelletTracks(holder: number): boolean;
   /**
-   * 効果 e の発火の文脈に、フレーム frame の攻撃力の順位を足す（topAttack の効果だけ）。lowestHpRatio の効果には
-   * HP の割合の並び（hpRank）を足す
+   * 効果 e の発火の文脈に、フレーム frame の攻撃力の順位を足す（topAttack の効果だけ）。lowestHpRatio・lowestHp の効果には
+   * HP の割合・値の並びを、topDefense の効果には最終防御力の並びを、文脈の targetRank に足す
    */
   rankContext(
-    e: Parameters<typeof dependsOnRank>[0] & Parameters<typeof attackRankFor>[0] & { fixedTargets?: readonly number[] },
+    e: Parameters<typeof dependsOnRank>[0] &
+      Parameters<typeof attackRankFor>[0] & { fixedTargets?: readonly number[]; targetHpAtMost?: number },
     sourceSlotIndex: number,
     context: FireContext,
     frame: number,

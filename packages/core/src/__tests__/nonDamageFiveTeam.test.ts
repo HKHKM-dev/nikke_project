@@ -1,5 +1,5 @@
 // ダメージに効く効果のほとんどない 5 体（メアリー 130・ラプンツェル 221・ベイ 550・パスカル 812・ソラ 532。V-0897）の定義と、
-// 回復を受けた時の効果を持つアスカ（830）・デバフを持つマスト：ロマンチックメイド（354）と組む編成で、回復・デバフ解除が意図どおりに出るか
+// （ベイの宝物版 S1・パスカルの回復は plan/design-heal-target-rank.md・healTargetRankTeam.test.ts）。回復を受けた時の効果を持つアスカ（830）・デバフを持つマスト：ロマンチックメイド（354）と組む編成で、回復・デバフ解除が意図どおりに出るか
 import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
@@ -23,15 +23,13 @@ describe('定義のスロットの対応状況', () => {
     return [skills.skill1?.support, skills.skill2?.support, skills.burst?.support];
   };
 
-  it('defines the heals of Mary, Rapunzel and Sora, Sora’s Outgoing Healing up and debuff removal, and notes only for Bay and Pascal', () => {
+  it('defines the heals of Mary, Rapunzel, Sora and Pascal, Sora’s Outgoing Healing up and debuff removal, and notes only for Bay’s base skills', () => {
     expect(support(MARY)).toEqual(['supported', 'noEffect', 'supported']);
     expect(support(RAPUNZEL)).toEqual(['supported', 'noEffect', 'supported']);
     expect(support(SORA)).toEqual(['supported', 'noEffect', 'supported']);
     expect(support(BAY)).toEqual(['noEffect', 'noEffect', 'noEffect']);
-    // 宝物版 S1 の「自分を除く味方全体」の回復は語彙が無く未対応
-    expect(support(BAY, true)).toEqual(['unsupported', 'noEffect', 'noEffect']);
-    // 回復の対象（最終防御力の順位・HP の値の順位）の語彙が無く未対応
-    expect(support(PASCAL)).toEqual(['unsupported', 'noEffect', 'unsupported']);
+    expect(support(BAY, true)).toEqual(['supported', 'noEffect', 'noEffect']);
+    expect(support(PASCAL)).toEqual(['supported', 'noEffect', 'supported']);
   });
 });
 
@@ -67,7 +65,7 @@ describe('ラプンツェル + ベイ + アスカ + メアリー + パスカル'
     expect(s1.map((h) => h.frame)).toEqual(lastShots.map((f) => f + 1).filter((f) => f < plan.frames));
   });
 
-  it('heals all allies at each burst of Rapunzel and Mary, and Pascal heals nobody', () => {
+  it('heals all allies at each burst of Rapunzel and Mary, and Pascal’s S1 heals Bay (the only Defender)', () => {
     for (const slot of [0, 3]) {
       const uses = usesOf(slot);
       for (const a of uses) {
@@ -76,7 +74,9 @@ describe('ラプンツェル + ベイ + アスカ + メアリー + パスカル'
       }
     }
     expect(usesOf(0).length + usesOf(3).length).toBeGreaterThan(1);
-    expect(healsFrom(4)).toEqual([]);
+    const pascalS1 = healsFrom(4).filter((h) => !usesOf(4).some((a) => a.frame === h.frame));
+    expect(pascalS1.length).toBeGreaterThan(0);
+    expect(pascalS1.every((h) => h.slotIndex === 1)).toBe(true);
     expect(healsFrom(1)).toEqual([]);
   });
 });

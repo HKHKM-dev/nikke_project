@@ -484,8 +484,9 @@ const TGT_INFO: Record<string, Info> = {
   'ally:longestChargeTime': ['基本チャージ時間が一番長い味方', 'ok'],
   'ally:burstUsers': ['直前にバーストスキルを使用した味方', 'ok'],
   'ally:lowestHpRatio': ['残りの HP の割合が最も低い味方 N 機', 'ok'],
-  'ally:lowestHpValue': ['残りの HP の値が最も低い味方 N 機', 'gap'],
-  'ally:topOther': ['最大HP・防御力が最も高い味方', 'gap'],
+  'ally:lowestHpValue': ['残りの HP の値が最も低い味方 N 機', 'ok', 'heal の lowestHp'],
+  'ally:topDefense': ['最終防御力が最も高い味方 N 機', 'ok', 'heal の topDefense'],
+  'ally:topOther': ['最大HP が最も高い味方', 'gap'],
   'ally:neighbors': ['両隣の味方', 'ok'],
   'ally:rightNeighbor': ['右隣の味方 1 機', 'ok'],
   'ally:random': [

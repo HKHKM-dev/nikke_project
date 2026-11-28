@@ -19,7 +19,15 @@ import { createSpanMemo } from '../spanMemo.ts';
 import { attackRankFor, finalAttacksAt, type AttackItem } from '../ranking.ts';
 import { stateMatches, statesMatching, type NamedStateId } from '../states.ts';
 import { dependsOnRank } from '../targets.ts';
-import { isFiringStat, HIT_STATE_STATS, isStateStat, lostHpScaled, staticStatesOf, type BuffStat } from '../types.ts';
+import {
+  isFiringStat,
+  HIT_STATE_STATS,
+  isHealOnlyTarget,
+  isStateStat,
+  lostHpScaled,
+  staticStatesOf,
+  type BuffStat,
+} from '../types.ts';
 import { rankSlotsOf } from '../timeline.ts';
 import { ENEMY, type HeldItem, type HeldTrack, type HolderLists, type View, type ViewsOf } from './types.ts';
 import { STAGE_RANK, scaledEffect, valueOf } from './items.ts';
@@ -320,17 +328,33 @@ export function createViews(layers: HolderBase & Records & Fires & Sources & Rea
     });
     return finalAttacksAt(rankSlots, windows, frame);
   };
+  /** 枠の frame より前に付いた件の最終最大HP（残りの HP の値の並びが読む。バフ前の最大HP が無ければ並べられないので投げる） */
+  const finalMaxHpOf = (slotIndex: number, frame: number): number => {
+    const hp = finalMaxHpAt(slotIndex, frame, true);
+    if (hp === undefined) throw new RangeError(`slot ${slotIndex}: the base max HP is needed to rank remaining HP`);
+    return hp;
+  };
   const rankContext: HolderLists['rankContext'] = (e, sourceSlotIndex, context, frame) => {
     // 回復は手順 3 の最初（このフレームの登録の前）に当てるので、順位が読む HP の割合の while の可否を先に出す
     // （f より前に始まった件と前の現在の HP▼ だけを読むので、登録の始めに出すのと同じ）
     updateHpAtLeast(frame);
-    // 「残りの HP の割合が最も低い味方」は、発火のフレームの HP の割合
-    // （frame より前に始まった件と前の現在の HP▼）の低い順・同値は枠の若い順
-    // （plan/design-hp-ratio-readers.md 2.2 節）。割合が動かなければ fixedTargets（枠の想定の順）と同じ並び
-    if (e.target === 'lowestHpRatio' && e.fixedTargets !== undefined) {
-      const ratios = slots.map((_, i) => (e.fixedTargets!.includes(i) ? selfHpRatioAt(i, frame) : 0));
-      const hpRank = [...e.fixedTargets].sort((a, b) => ratios[a]! - ratios[b]! || a - b);
-      return { ...context, hpRank };
+    // heal にだけ書ける対象（HEAL_ONLY_TARGETS）は、候補の枠（fixedTargets）を発火のフレームの値の順に並べる。同値は枠の若い順。
+    // 「残りの HP の割合が最も低い味方」は HP の割合（frame より前に始まった件と前の現在の HP▼。plan/design-hp-ratio-readers.md 2.2 節）、
+    // 「残りの HP の値が最も低い味方」は割合 × 最終最大HP の低い順、「最終防御力が最も高い味方」は最終防御力の高い順
+    // （plan/design-heal-target-rank.md 2.2・2.3 節）。対象の HP の割合の閾値のある回復は、閾値以下の枠だけ（同 2.4 節）
+    if (isHealOnlyTarget(e.target) && e.fixedTargets !== undefined) {
+      const { target, targetHpAtMost } = e;
+      const candidates =
+        targetHpAtMost === undefined
+          ? e.fixedTargets
+          : e.fixedTargets.filter((i) => selfHpAtMostAt(i, frame, targetHpAtMost));
+      // 並べる値（小さいほど先）
+      const keyOf = (i: number): number =>
+        target === 'topDefense'
+          ? -finalDefenceAt(i, frame)
+          : selfHpRatioAt(i, frame) * (target === 'lowestHp' ? finalMaxHpOf(i, frame) : 1);
+      const keys = new Map(candidates.map((i) => [i, keyOf(i)]));
+      return { ...context, targetRank: [...candidates].sort((x, y) => keys.get(x)! - keys.get(y)! || x - y) };
     }
     if (!dependsOnRank(e)) return context;
     const finalAttacks = finalAttacksAtFrame(frame);
