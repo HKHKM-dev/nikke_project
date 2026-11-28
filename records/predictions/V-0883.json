@@ -1,0 +1,133 @@
+{
+  "verification": "V-0883",
+  "note": "撮影（ココア（1 枠目・I）+ ソルジャーF.A.（2 枠目・II）+ リバーレリオ（3 枠目・III）+ ディーゼル：ウィンタースイーツ（4 枠目・III・操作・オート射撃 ON）・オートバースト ON・灼熱の BigArms・3 分モード・スペック固定 ON）の予測。S1 の 4 行目の対象は、どちらの順位の読み（同じフレームの S1 の攻撃力▲を入れるか）でもディーゼル：ウィンタースイーツ（plan/design-lowest-attack.md 2.3 節）",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311
+    },
+    {
+      "slot": 2,
+      "rid": 301
+    },
+    {
+      "slot": 3,
+      "rid": 262
+    },
+    {
+      "slot": 4,
+      "rid": 75,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまの定義（S1 の 4 行目は未対応で効かせない）"
+    },
+    {
+      "id": "H1",
+      "note": "S1 の 4 行目を plan/design-lowest-attack.md 3 節の定義で効かせる（最終攻撃力が一番低い III の味方 1 機に、リバーレリオの基礎チャージ時間 1.5 秒 × 12.74% のチャージ時間▼を 10 秒）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 262,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "lowestAttack",
+              "targetCountRef": 8,
+              "targetBurstStep": "Step3",
+              "stat": "chargeSpeed",
+              "scaling": "casterChargeTime",
+              "ref": 6,
+              "durationRef": 7
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "diesel-fb1",
+      "model": "sim",
+      "metric": "fullBurstShotIntervalDiff",
+      "args": {
+        "slot": 4,
+        "n": 1
+      },
+      "note": "ディーゼル：ウィンタースイーツの、1 回目のフルバーストの窓の中の発の間の中央値から、窓の前の中央値を引いたもの",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    {
+      "id": "diesel-fb2",
+      "model": "sim",
+      "metric": "fullBurstShotIntervalDiff",
+      "args": {
+        "slot": 4,
+        "n": 2
+      },
+      "note": "同じく 2 回目のフルバースト",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    {
+      "id": "diesel-fb3",
+      "model": "sim",
+      "metric": "fullBurstShotIntervalDiff",
+      "args": {
+        "slot": 4,
+        "n": 3
+      },
+      "note": "同じく 3 回目のフルバースト",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    {
+      "id": "liberalio-fb2",
+      "model": "sim",
+      "metric": "fullBurstShotIntervalDiff",
+      "args": {
+        "slot": 3,
+        "n": 2
+      },
+      "note": "リバーレリオの 2 回目のフルバーストの差（付かないので、どちらの仮説でも同じ）",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-28",
+    "commit": "70bb8cf658d15d558eeb794b6fa6c2b10a647dc3",
+    "values": {
+      "H0": {
+        "diesel-fb1": 0,
+        "diesel-fb2": 0,
+        "diesel-fb3": 0,
+        "liberalio-fb2": 0
+      },
+      "H1": {
+        "diesel-fb1": -11,
+        "diesel-fb2": -11,
+        "diesel-fb3": -11,
+        "liberalio-fb2": 0
+      }
+    }
+  }
+}
