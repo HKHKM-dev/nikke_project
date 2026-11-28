@@ -14,7 +14,10 @@
           "assumes": {
             "ja": "妄想（自分へのバリア）は、中身なしの持続の状態とみなし、被弾でバリアの HP が尽きて切れる分は扱わない（要件 4.2 節）。家族はバリアなので、「バリア適用状態」を読む効果はレーベルをバリア適用状態とみる。バリアの量はダメージに関係しない",
             "en": "Delusion (a shield on self) is taken as a continuous state without contents; running out from enemy hits is not modeled (requirements 4.2). It is in the barrier family, so effects reading the barrier state see Label as shielded. The shield amount does not affect damage"
-          }
+          },
+          "claims": [
+            "C-1619"
+          ]
         }
       ],
       "notes": [
@@ -29,7 +32,10 @@
             "kind": "unknown",
             "target": "self",
             "trigger": "damaged"
-          }
+          },
+          "claims": [
+            "C-1619"
+          ]
         },
         {
           "ja": "通常攻撃をした時・バーストスキルを使用した時の、妄想状態でなければ自分に付く妄想は、被弾で妄想が切れたときだけ起きるので、被弾を扱わないモデルでは起きない（要件 4.2 節）",
@@ -42,7 +48,10 @@
             "kind": "state",
             "target": "self",
             "trigger": "normalShot"
-          }
+          },
+          "claims": [
+            "C-1619"
+          ]
         }
       ]
     },
@@ -61,7 +70,10 @@
           "assumes": {
             "ja": "「自分が妄想状態の時に限り」「持続」。妄想は戦闘の間続く静的な状態（被弾が無ければ切れない）なので、戦闘開始時から戦闘の終わりまでの効果に条件を付けて書く",
             "en": "\"Only while in Delusion\", continuous. Delusion is a static state lasting the whole battle (it never breaks without damage taken), so it is written as a start-to-end effect with the condition"
-          }
+          },
+          "claims": [
+            "C-1619"
+          ]
         },
         {
           "kind": "timed",
@@ -76,7 +88,10 @@
           "assumes": {
             "ja": "effects[0] と同じ書き方",
             "en": "Written like effects[0]"
-          }
+          },
+          "claims": [
+            "C-1619"
+          ]
         },
         {
           "kind": "passive",
@@ -91,7 +106,10 @@
           "assumes": {
             "ja": "自分（レーベル）に妄想共有が付いている間（バーストの使用から 10 秒）だけ、自分を除く味方全体に、自分のバフ前攻撃力の {04}% を足す",
             "en": "Only while this unit (Label) has Shared Delusion (10 s from Burst use), adds {04}% of this unit's pre-buff ATK to all allies except this unit"
-          }
+          },
+          "claims": [
+            "C-1620"
+          ]
         }
       ],
       "notes": [
@@ -113,7 +131,10 @@
           "assumes": {
             "ja": "妄想共有（自分が展開したバリアに無敵付与）は中身なしの状態とみなす。無敵付与はダメージに関係せず、S2 の攻撃力▲の条件が読むだけ",
             "en": "Shared Delusion (the shield created by Label becomes invulnerable) is taken as a state without contents. The invulnerability does not affect damage; only the S2 ATK up reads the state"
-          }
+          },
+          "claims": [
+            "C-1620"
+          ]
         }
       ],
       "notes": [
