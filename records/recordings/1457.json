@@ -1,0 +1,46 @@
+{
+  "id": "1457",
+  "date": "2026-11-29",
+  "folder": "range",
+  "file": "20261129-1457_sg-hit-a-noir.mp4",
+  "original": "2026-11-29_01-17-44.mp4",
+  "durationSec": 203.1,
+  "frames": 12187,
+  "fps": 60,
+  "sizeMB": 246,
+  "sha256": "4803ace0e488",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0905 の撮影 A（ココア・ソルジャーF.A.・ノワール（操作・撃たない））。戦闘履歴の画で編成を、左上の画でオート射撃 OFF・オートバースト ON を確かめた",
+  "backup": {
+    "at": "2026-11-29T01:29+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
