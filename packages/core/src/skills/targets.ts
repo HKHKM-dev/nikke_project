@@ -1,6 +1,7 @@
 // 効果の対象判定。対象の種類を足すときはここに述語を増やし、計算の本体（runSimulation）側は触らない。
 //   - 発火のたびに対象が変わるもの（「直前にバーストスキルを使用した味方」）は、発火の文脈を受けて決める。
-//   - 「最終攻撃力が最も高い味方 N 機」（topAttack）は、文脈（攻撃力の順位）で決める（skills/ranking.ts）。
+//   - 「最終攻撃力が最も高い味方 N 機」（topAttack）・「最終攻撃力が一番低い味方 N 機」（lowestAttack）は、文脈（攻撃力の順位）で決める
+//     （skills/ranking.ts）。
 //   - 「〈武器種〉の味方」「〈コード〉コードの味方」（targetElement）「〈クラス〉型の味方」（targetClass）は、対象の枠のキャラで絞る。
 //   - 編成で決まる対象は、最上位の skills/composition.ts が決めた枠（fixedTargets）で絞る（どれが編成で決まるかは needsFixedTargets）。
 //     それ以外の「自分を除く」（excludeSelf）は順位（skills/ranking.ts）で外す。
@@ -8,13 +9,21 @@
 //     先頭 targetCount 枠に掛ける（plan/design-skill-stage8.md 1.1 節）。
 import type { Element, NikkeClass, WeaponType } from '../types.ts';
 import type { NamedStateId } from './states.ts';
-import type { BasicBurstStep, BuffTarget, ExcludeSelf, TargetAdjacent, TargetDefense, TargetSquad } from './types.ts';
+import {
+  type BasicBurstStep,
+  type BuffTarget,
+  type ExcludeSelf,
+  isAttackRanked,
+  type TargetAdjacent,
+  type TargetDefense,
+  type TargetSquad,
+} from './types.ts';
 
 /**
  * 発火の文脈。
  * burstUsers = そのフルバーストを開いたチェーンでバーストを撃った枠（FullBurstWindow.burstUsers）。フルバーストの開始・終了のときだけ。
- * attackRank = 対象になりうる枠（効果の targetWeapon で絞った後）を発火のフレームの最終攻撃力の高い順に並べたもの。
- * topAttack の効果のときだけ（skills/ranking.ts の attackRankFor）。
+ * attackRank = 対象になりうる枠（効果の targetWeapon・fixedTargets で絞った後）を発火のフレームの最終攻撃力の順
+ * （topAttack は高い順、lowestAttack は低い順）に並べたもの。順位の対象の効果のときだけ（skills/ranking.ts の attackRankFor）。
  * lowerDefense = 発火のフレームの最終防御力が、発動者より低い枠と発動者自身
  * （同値は含まない。plan/design-skill-stage7.md 1.4 節）。targetDefense の効果のときだけ（skills/holders.ts）。
  * どれも無い発火では null
@@ -49,7 +58,7 @@ export type TargetFields = {
   targetElement?: Element;
   /** 「〈クラス〉型の味方」（plan/design-skill-stage9.md 1.1 節） */
   targetClass?: NikkeClass;
-  /** N 機を選ぶ対象（topAttack・longestChargeTime・lowestHpRatio）の N（解決済み） */
+  /** N 機を選ぶ対象（topAttack・lowestAttack・longestChargeTime・lowestHpRatio）の N（解決済み） */
   targetCount?: number;
   /** 「同じ部隊の味方全体に」 */
   targetSquad?: TargetSquad;
@@ -154,7 +163,7 @@ export function matchesTargetFilter(
  * targetWeapon（「〈武器〉を所持する味方」）があれば武器種の一致する枠だけ。アスカ: targetElement も同じ。
  * targetSlot を省略可能にしないのは、渡し忘れたときに黙って全員へ掛かるのを防ぐため。
  * burstUsers は context の枠だけ（context に無ければ誰にも掛からない。検証でフルバーストのトリガーに限っている）。
- * topAttack は context.attackRank の先頭 targetCount 枠だけ（attackRank が無ければ誰にも掛からない）
+ * topAttack・lowestAttack は context.attackRank の先頭 targetCount 枠だけ（attackRank が無ければ誰にも掛からない）
  */
 export function isEffectTarget(
   effect: TargetedEffect,
@@ -192,7 +201,8 @@ export function isEffectTarget(
       return weaponOk && context?.burstUsers?.includes(targetSlotIndex) === true;
     case 'appliedCaster':
       return weaponOk && context?.appliedCasters?.includes(targetSlotIndex) === true;
-    case 'topAttack': {
+    case 'topAttack':
+    case 'lowestAttack': {
       const rank = context?.attackRank;
       if (!weaponOk || rank === undefined) return false;
       return rank.slice(0, effect.targetCount ?? 1).includes(targetSlotIndex);
@@ -215,7 +225,7 @@ export function adjacentSlotsOf(
   return sides.filter((i) => i >= 0 && i < characters.length && characters[i] !== null && characters[i] !== undefined);
 }
 
-/** 文脈しだいで掛かりうるか（burstUsers・topAttack は武器種・属性の条件だけで見る）。1 パス目で「窓を持ちうる枠」を決めるのに使う */
+/** 文脈しだいで掛かりうるか（burstUsers・順位の対象は武器種・属性の条件と編成で決まる枠だけで見る）。1 パス目で「窓を持ちうる枠」を決めるのに使う */
 export function canEverTarget(
   effect: TargetedEffect,
   sourceSlotIndex: number,
@@ -242,7 +252,7 @@ export function dependsOnContext(effect: {
   return (
     effect.target === 'burstUsers' ||
     effect.targetStateHeld === true ||
-    effect.target === 'topAttack' ||
+    isAttackRanked(effect.target) ||
     effect.target === 'appliedCaster' ||
     dependsOnDefense(effect)
   );
@@ -255,5 +265,5 @@ export function dependsOnDefense(effect: { targetDefense?: TargetDefense }): boo
 
 /** 対象を決めるのに攻撃力の順位が要るか */
 export function dependsOnRank(effect: { target: BuffTarget }): boolean {
-  return effect.target === 'topAttack';
+  return isAttackRanked(effect.target);
 }

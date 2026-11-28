@@ -74,7 +74,7 @@ describe('語彙（V-0569）', () => {
     ]);
     expect(() =>
       parseSkillDefinition(def([grenade], [{ kind: 'heal', ...s1, target: 'self', ref: 5, durationRef: 6 }])),
-    ).toThrow(/only allowed with target "allies" or "burstUsers"/);
+    ).toThrow(/only allowed with target "allies", "burstUsers"/);
   });
 });
 

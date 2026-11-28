@@ -11,6 +11,7 @@ import {
   type InstantEffect,
   type InstantKind,
   isAppliedTrigger,
+  isAttackRanked,
   isEndedTrigger,
   isShotCountTrigger,
   isWeaponChangeEndTrigger,
@@ -151,6 +152,9 @@ export function parseInstantEffect(v: Record<string, Json>, path: string, kind: 
   if (targetClass !== undefined) effect.targetClass = targetClass;
   // heal の「基本バースト段階が N の」と「（自分と）両隣」（欄の一覧で heal だけに限ってある。timed と同じ検査）
   Object.assign(effect, parsePersonaTargetFields(v, target, path));
+  // 順位の対象の段階の絞り込みは timed だけ（使い手がいない。plan/design-lowest-attack.md 2.2 節）
+  if (v.targetBurstStep !== undefined && isAttackRanked(target))
+    fail(`${path}.targetBurstStep`, `is only allowed in timed with target "${target}"`);
   // heal も N 機の対象（lowestHpRatio）の N を持つ
   Object.assign(effect, count);
   parseInstantKindFields(v, effect, path);
@@ -215,6 +219,8 @@ function parseInstantTarget(
   validateBurstUsersTarget(target, trigger, path);
   // 基本チャージ時間の順位は timed だけ（plan/design-target-vocab.md 2.2 節）
   if (target === 'longestChargeTime') fail(`${path}.target`, 'longestChargeTime is only allowed in timed');
+  // 最終攻撃力の低い順も timed だけ（使い手がいない。plan/design-lowest-attack.md 2.1 節）
+  if (target === 'lowestAttack') fail(`${path}.target`, 'lowestAttack is only allowed in timed');
   // HP の割合の低い順は heal だけ（plan/design-skill-stage8.md 1.1 節）。武器・コードの絞り込みとは組み合わせない
   if (target === 'lowestHpRatio') {
     if (kind !== 'heal') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);

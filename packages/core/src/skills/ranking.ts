@@ -1,10 +1,11 @@
-// 「最終攻撃力が最も高い味方 N 機」（対象 topAttack）の順位（plan/design-stage11.md 18 節）。
-// 発火のフレームの各枠の最終攻撃力（ダメージの式の攻撃力と同じ）を出し、高い順に並べる。
+// 「最終攻撃力が最も高い味方 N 機」（対象 topAttack）と「最終攻撃力が一番低い味方 N 機」（対象 lowestAttack）の順位
+// （plan/design-stage11.md 18 節・plan/design-lowest-attack.md 2 節）。
+// 発火のフレームの各枠の最終攻撃力（ダメージの式の攻撃力と同じ）を出し、topAttack は高い順、lowestAttack は低い順に並べる。
 //   - 常時パッシブと、発火のフレーム f で効いている攻撃力の件（start ≤ f < end）を数える。同じフレームに始まった件も入れる
 //     （モデルでは III の発動とフルバーストの開始が同じフレームなので、入れないとアリス自身のバーストが順位に入らない）。
 //     回復（heal）は 1 パス目の手順 3 の最初に順位を出すので、同じフレームに始まった件は入らない（plan/design-heal-top-attack.md 2 節）。
-//   - 順位で対象が決まる効果（topAttack）の件は数えない（呼び出し側が渡さない）。攻撃力を配る topAttack で循環しないため。
-//   - 同値は枠の若い順（仮定。未検証）。
+//   - 順位で対象が決まる効果（topAttack・lowestAttack）の件は数えない（呼び出し側が渡さない）。攻撃力を配る topAttack で循環しないため。
+//   - 同値は枠の若い順（どちらの向きも仮定。未検証。高い順の同値で後ろの枠に付いた録画がある。C-0882）。
 // 1 パス目のループの持ち主ごとの一覧（skills/holders.ts）が使う。
 import type { Element, WeaponType } from '../types.ts';
 import { applyAttackBuffs, applyResolvedEffect, fixedAttackBaseOf, type BuffTotals } from './buffs.ts';
@@ -73,29 +74,33 @@ export function finalAttacksAt(
   });
 }
 
-/** 最終攻撃力の高い順の枠。同値は枠の若い順。空枠は含めない */
-export function rankByFinalAttack(finalAttacks: readonly (number | null)[]): number[] {
+/** 最終攻撃力の高い順（lowest なら低い順）の枠。同値は枠の若い順。空枠は含めない */
+export function rankByFinalAttack(finalAttacks: readonly (number | null)[], lowest = false): number[] {
   const indices: number[] = [];
   finalAttacks.forEach((v, i) => {
     if (v !== null) indices.push(i);
   });
-  return indices.sort((a, b) => finalAttacks[b]! - finalAttacks[a]! || a - b);
+  const sign = lowest ? -1 : 1;
+  return indices.sort((a, b) => sign * (finalAttacks[b]! - finalAttacks[a]!) || a - b);
 }
 
 /**
- * 効果の対象になりうる枠（targetWeapon・targetElement で絞る）を順位の順に。FireContext.attackRank に入れる。
+ * 効果の対象になりうる枠（targetWeapon・targetElement と、編成で決まる枠 fixedTargets（基本バースト段階）で絞る）を順位の順
+ * （lowestAttack は低い順）に。FireContext.attackRank に入れる。
  * excludeSelf なら発動者の枠（sourceSlotIndex）を外し、unlessShort なら
  * 末尾に足す（上位 N に足りないときだけ対象に入る。plan/design-target-vocab.md 2.1 節）
  */
 export function attackRankFor(
-  effect: Pick<TargetedEffect, 'targetWeapon' | 'targetElement' | 'excludeSelf'>,
+  effect: Pick<TargetedEffect, 'targetWeapon' | 'targetElement' | 'excludeSelf' | 'fixedTargets'> &
+    Partial<Pick<TargetedEffect, 'target'>>,
   slots: readonly RankSlot[],
   finalAttacks: readonly (number | null)[],
   sourceSlotIndex: number,
 ): number[] {
-  const rank = rankByFinalAttack(finalAttacks).filter((i) => {
+  const rank = rankByFinalAttack(finalAttacks, effect.target === 'lowestAttack').filter((i) => {
     const slot = slots[i];
     if (effect.excludeSelf !== undefined && i === sourceSlotIndex) return false;
+    if (effect.fixedTargets !== undefined && !effect.fixedTargets.includes(i)) return false;
     return slot !== null && slot !== undefined && matchesTargetFilter(effect, slot);
   });
   return effect.excludeSelf === 'unlessShort' ? [...rank, sourceSlotIndex] : rank;

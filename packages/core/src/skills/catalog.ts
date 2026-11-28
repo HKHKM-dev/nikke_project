@@ -449,6 +449,7 @@ const TARGETS: Rules = [
   [/右隣/, 'ally:rightNeighbor'],
   [/直前にバーストスキルを使用した/, 'ally:burstUsers'],
   [/最終攻撃力が最も高い味方|攻撃力が最も高い味方/, 'ally:topAttack'],
+  [/最終攻撃力が(一番|最も)低い/, 'ally:lowestAttack'],
   // HP の割合の順（lowestHpRatio）と値の順を分ける（plan/design-skill-stage20.md 6 節の論点 5）
   [/残りの?HPの割合が最も低い味方/, 'ally:lowestHpRatio'],
   [/残りの?HPの(数値|値)が最も低い味方/, 'ally:lowestHpValue'],

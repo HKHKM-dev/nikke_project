@@ -376,6 +376,8 @@ export function isFixedAttackScaling(scaling: BuffScaling | undefined): boolean 
  * topAttack = 「最終攻撃力が最も高い味方 N 機」（発火のフレームの最終攻撃力の順位。自分も候補。skills/ranking.ts）。
  * N は targetCount / targetCountRef。passive には書けない。heal の順位は、そのフレームに付く件を入れずに出す
  * （plan/design-heal-top-attack.md 2 節。frame/firstPass.ts）。
+ * lowestAttack = 「最終攻撃力が一番低い味方 N 機」（topAttack と同じ順位を低い順に読む。同値は枠の若い順。自分も候補。
+ * timed にだけ書ける。plan/design-lowest-attack.md 2.1 節）。N は topAttack と同じ欄。
  * longestChargeTime = 「基本チャージ時間が一番長い味方 N 機」
  * （CharacterData.shot.chargeTime の長い順。同値は枠の若い順。編成で決まるので最上位の skills/composition.ts
  * で対象の枠を決める。plan/design-target-vocab.md 2.2 節）。N は topAttack と同じ欄。timed にだけ書ける。
@@ -388,23 +390,36 @@ export function isFixedAttackScaling(scaling: BuffScaling | undefined): boolean 
  * { applied } のきっかけの timed・付与にだけ書ける
  */
 export type BuffTarget =
-  'self' | 'allies' | 'burstUsers' | 'topAttack' | 'longestChargeTime' | 'lowestHpRatio' | 'appliedCaster';
+  | 'self'
+  | 'allies'
+  | 'burstUsers'
+  | 'topAttack'
+  | 'lowestAttack'
+  | 'longestChargeTime'
+  | 'lowestHpRatio'
+  | 'appliedCaster';
 export const BUFF_TARGETS = [
   'self',
   'allies',
   'burstUsers',
   'topAttack',
+  'lowestAttack',
   'longestChargeTime',
   'lowestHpRatio',
   'appliedCaster',
 ] as const satisfies readonly BuffTarget[];
+
+/** 発火のフレームの最終攻撃力の順位で対象を決めるか（topAttack・lowestAttack。skills/ranking.ts） */
+export function isAttackRanked(target: string): target is 'topAttack' | 'lowestAttack' {
+  return target === 'topAttack' || target === 'lowestAttack';
+}
 
 /** N 機を選ぶ対象（targetCount / targetCountRef を持つ）。coverHeal の lowestCoverHp も */
 export function isCountedTarget(
   target: BuffTarget | CoverHealEffect['target'] | RemoveDebuffEffect['target'],
 ): boolean {
   return (
-    target === 'topAttack' ||
+    isAttackRanked(target) ||
     target === 'longestChargeTime' ||
     target === 'lowestHpRatio' ||
     target === 'lowestCoverHp' ||
@@ -459,7 +474,7 @@ export type FixedTargetFields = {
   targetStateHeld?: true;
 };
 
-/** 「最終攻撃力が最も高い味方 N 機」の N。target が topAttack のときだけ、ちょうど片方 */
+/** N 機を選ぶ対象（isCountedTarget）の N。ちょうど片方 */
 export type TargetCountFields = {
   /** N の即値 */
   targetCount?: number;

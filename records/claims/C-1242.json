@@ -5,11 +5,11 @@
   "topic": "スキル・キャラ固有",
   "grade": "単独実測",
   "basis": "`1195-19`（フルバーストの間の続いた 2 発の間の平均 88.92f。モデル 89f。チャージ速度▲が効けば、チャージの短縮の分だけ短い）。録画 1 本で、5 回のフルバーストの間をまとめた値。V-0780",
-  "model": "S1 のチャージ速度▲は未対応（data/skills/262.json の skill1 の notes）。S2 の無効は skill2 の effects[1]（値 0 の lock。plan/design-stat-lock.md）。編成に III がリバーレリオだけなら、どちらの読みでもチャージ速度▲は効かない",
+  "model": "S1 のチャージ速度▲（対象 lowestAttack。III がリバーレリオだけなら自分が対象。plan/design-lowest-attack.md）は効かない。S2 の無効は data/skills/262.json の skill2 の effects[1]（値 0 の lock。plan/design-stat-lock.md）",
   "replaces": [],
   "updated": "2026-11-14",
   "subject": {
-    "places": ["data/skills/262.json の skill1 の notes[0]", "data/skills/262.json の skill2 の effects[1]"]
+    "places": ["data/skills/262.json の skill2 の effects[1]"]
   },
   "decidedOn": [],
   "parameterFree": "C-0222 の押下チャージ型の発の間（89f）。チャージ速度▲を足さない",

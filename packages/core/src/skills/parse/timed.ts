@@ -15,6 +15,7 @@ import {
   type EffectTrigger,
   EXCLUDE_SELF,
   isAppliedTrigger,
+  isAttackRanked,
   isAllyDecrease,
   isEnemyHeldStat,
   isChanceTrigger,
@@ -381,7 +382,7 @@ function parseTimedTarget(
   // 自分の状態（selfState）だけ書ける（parseTimedCondition が CONDITION_KEYS_OF.selfStateOnly で見る。
   // plan/design-mint-prika.md 2.3 節）
   if (isAppliedTrigger(trigger)) {
-    if (target === 'topAttack') fail(`${path}.target`, 'an effect on an applied trigger cannot target "topAttack"');
+    if (isAttackRanked(target)) fail(`${path}.target`, `an effect on an applied trigger cannot target "${target}"`);
     if (v.amplifies !== undefined) fail(`${path}.amplifies`, 'an effect on an applied trigger cannot amplify');
   }
   validateBurstUsersTarget(target, trigger, path);
@@ -413,6 +414,10 @@ function parseTimedTarget(
     narrowing.excludeSelf = excludeSelf;
   }
   Object.assign(narrowing, parsePersonaTargetFields(v, target, path));
+  // 順位の対象の段階の絞り込みは「自分を除く」と組まない（足りないときに足す自分が段階で絞れない。使い手がいない。
+  // plan/design-lowest-attack.md 2.2 節）
+  if (narrowing.targetBurstStep !== undefined && narrowing.excludeSelf !== undefined && isAttackRanked(target))
+    fail(`${path}.targetBurstStep`, `cannot be combined with excludeSelf on target "${target}"`);
   // 「部隊の一番左側にいる〈絞り込み〉の味方 1 機」（plan/design-trina.md 2.2 節）
   if (v.targetLeftmost !== undefined) {
     if (v.targetLeftmost !== true) fail(`${path}.targetLeftmost`, 'must be true');
@@ -597,7 +602,7 @@ function parseTimedCondition(
   if (watched !== undefined && stat !== undefined && (stat === watched.stat || isStateStat(stat))) {
     fail(`${path}.stat`, `a conditional effect cannot give "${stat}" (it would feed its own condition)`);
   }
-  if (target === 'topAttack') fail(`${path}.target`, 'a conditional effect cannot target "topAttack"');
+  if (isAttackRanked(target)) fail(`${path}.target`, `a conditional effect cannot target "${target}"`);
   // timed の selfHp は「以下」の形だけ（発火のフレームの HP の割合で見る。件の一覧の
   // fireContextHolds。plan/design-scarlet.md 2.2 節）。使い手のいない形は書けない: 状態の付与（中身の stat
   // を見ない）、最終防御力の比べの対象（段 2 は fireContextHolds を
@@ -730,7 +735,7 @@ export function validateChanceStat(stat: BuffStat, path: string): void {
 function validateChanceTimed(effect: TimedEffect, path: string): void {
   if (!isChanceTrigger(effect.trigger)) return;
   validateChanceStat(effect.stat, `${path}.stat`);
-  if (effect.target === 'topAttack') fail(`${path}.target`, 'a chance trigger cannot target "topAttack"');
+  if (isAttackRanked(effect.target)) fail(`${path}.target`, `a chance trigger cannot target "${effect.target}"`);
   const forbidden: [unknown, string][] = [
     [effect.maxStacks ?? effect.maxStacksRef, 'maxStacks'],
     [effect.condition, 'condition'],
@@ -760,7 +765,7 @@ function parseAmplifies(v: Record<string, Json>, stat: BuffStat, target: BuffTar
   if (isFirstPassTrackedStat(stat) || isFlagStat(stat)) {
     fail(path, `amplifies is not supported for "${stat}" (its window is tracked inside the first pass)`);
   }
-  if (target === 'topAttack') fail(path, 'amplifies cannot target "topAttack"');
+  if (isAttackRanked(target)) fail(path, `amplifies cannot target "${target}"`);
   for (const key of [
     'ref',
     'scaling',
@@ -854,8 +859,8 @@ function parseTimedDuration(
       );
     }
     // HP の割合の窓は、窓の始まりの順位で対象を決めて窓の終わりまで続く
-    if (target === 'topAttack' && until !== 'selfHpAbove')
-      fail(`${path}.target`, 'a duration until an event cannot target "topAttack"');
+    if (isAttackRanked(target) && until !== 'selfHpAbove')
+      fail(`${path}.target`, `a duration until an event cannot target "${target}"`);
     // 攻撃力は書ける: 1 パス目の読み手（順位・蓄積して爆発するダメージ・自分が攻撃力増加状態なら）は読むフレームの件を
     // そのつど読み、窓の終わりはフレームの初め（skills/holders/register.ts の registerEnds）で決まる（plan/design-guillotine.md 2.1 節）
     if (
@@ -884,9 +889,9 @@ function parseTimedDuration(
   // 溜めたフレームは残り、伸びたチャージ時間まで溜める（frame/shooter.ts の chargeProgressFrames。エイダの特殊改造）
   // 命中率▲・貫通特化・ペレットの数の固定も、同じ件の列の閉じ方で書ける（plan/design-dorothy-serendipity.md 2.3 節）。
   // 攻撃力も同じ閉じ方で書ける。攻撃力は射撃の時刻を変えないので、件の列の作り直しで窓が後から変わらない（plan/design-neve.md 2.1 節）
-  // 攻撃力の発数の維持は、順位の対象（topAttack。2 段目で窓を切る）には書けない（使い手がいない。plan/design-neve.md 2.1 節）
-  if (stat === 'attack' && target === 'topAttack')
-    fail(`${path}.stat`, 'a duration in shots on "attack" is not supported with target "topAttack"');
+  // 攻撃力の発数の維持は、順位の対象（topAttack・lowestAttack。2 段目で窓を切る）には書けない（使い手がいない。plan/design-neve.md 2.1 節）
+  if (stat === 'attack' && isAttackRanked(target))
+    fail(`${path}.stat`, `a duration in shots on "attack" is not supported with target "${target}"`);
   const tracked = stat !== undefined && SHOT_DURATION_TRACKED_STATS.includes(stat);
   if (
     stat !== undefined &&
@@ -898,7 +903,7 @@ function parseTimedDuration(
       `a duration in shots is not supported for "${stat}" (its window is tracked inside the first pass)`,
     );
   }
-  // topAttack は 2 段目（順位）で、対象の枠の射撃で窓を切る（plan/design-ranked-shot-duration.md 2 節）
+  // 順位の対象（topAttack・lowestAttack）は 2 段目（順位）で、対象の枠の射撃で窓を切る（plan/design-ranked-shot-duration.md 2 節）
   if (hasShots) return { durationShots: parsePositiveInt(v.durationShots, `${path}.durationShots`) };
   return { durationShotsRef: parseRef(v.durationShotsRef, `${path}.durationShotsRef`) };
 }
@@ -939,8 +944,8 @@ export function parsePassiveEffect(v: Record<string, Json>, path: string): Passi
   if (target === 'appliedCaster')
     fail(`${path}.target`, 'appliedCaster is not allowed in passive (it needs an applied trigger)');
   // 常時の効果の対象が戦闘中に入れ替わるのは持続バフの窓の仕組みの外（plan/design-stage11.md 17 節）
-  if (target === 'topAttack')
-    fail(`${path}.target`, 'topAttack is not allowed in passive (the ranking changes during battle)');
+  if (isAttackRanked(target))
+    fail(`${path}.target`, `${target} is not allowed in passive (the ranking changes during battle)`);
   if (target === 'longestChargeTime') fail(`${path}.target`, 'longestChargeTime is only allowed in timed');
   if (target === 'lowestHpRatio') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);
   const targetWeapon = parseTargetWeapon(v, target, path);
