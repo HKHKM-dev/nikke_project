@@ -96,7 +96,7 @@ describe('6.3 A: a battleStart buff lasting the whole battle equals the same eff
 });
 
 describe('6.3 B: a burstUse buff lasting at least one cycle is on from the first activation to the end', () => {
-  const slot20s = skillSlot(23, {
+  const slot20s = skillSlot(20, {
     burst: supported([
       { kind: 'timed', trigger: 'burstUse', target: 'self', stat: 'attack', ref: 1, durationSeconds: 20 },
     ]),
