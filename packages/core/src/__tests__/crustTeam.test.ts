@@ -84,4 +84,20 @@ describe('ジャンプの無い敵', () => {
   });
 });
 
+// S2 のデバフ効果解除（removeDebuff の { count: "partialChargeShot" }）は、メイラードと同じ 3 回目の部分チャージの発で、味方のデバフ
+// （マスト：ロマンチックメイドのほろ酔い）を外す
+describe('デバフのある味方（マスト：ロマンチックメイド）', () => {
+  const MAST_RM = 354;
+  const plan = planTeamRun(team([I_DOLL_FLOWER, MAST_RM, CRUST, GUILLOTINE], 2));
+  const partial = (plan.shots[2]!.partialShots ?? []).map((p) => p.frame);
+  it('removes Drunken on the 3rd partial charge shot', () => {
+    const third = partial[2]!;
+    const drunken = itemsOf(plan.history, { holder: 1, state: 'drunken' });
+    const removed = drunken.find((w) => w.start <= third && third < w.end);
+    expect(removed).toBeDefined();
+    expect(removed!.end).toBe(third + 2);
+    expect(itemsOf(plan.history, { holder: 1, state: 'maillard' })[0]!.start).toBe(third + 1);
+  });
+});
+
 describeEveryShotInOneGroup(TEAMS);

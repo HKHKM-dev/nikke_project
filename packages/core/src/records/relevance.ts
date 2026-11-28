@@ -518,6 +518,8 @@ export function impossibleReason(element: MinimalElement, recording: RecordingEn
     if (trigger === 'burstUse' || trigger === 'burstHit') return why;
   }
   if (single && trigger !== undefined && TEAM_BURST_TRIGGERS.has(trigger)) return '単騎（C-0024）';
+  // 部分チャージの発は、射撃場 3 分モードの敵のジャンプの始まりにだけ出る（C-1001。plan/design-crust.md 0.1 節）
+  if (trigger === 'partialChargeShot' && recording.mode !== 'range-3min') return '敵のジャンプが無い（C-1001）';
   return undefined;
 }
 
