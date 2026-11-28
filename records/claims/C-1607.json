@@ -1,0 +1,33 @@
+{
+  "id": "C-1607",
+  "text": "アイギスのバースト（敵全体への最終攻撃力の X% の分配ダメージ）は、的には全額の 1 ヒットで、II の発動の印（右のバースト欄の六角形が II から III に替わるフレーム）の動画で 1f 前に出る",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1434-12`・`1434-13`・`1434-14`。V-0895",
+  "model": "burst/landing.ts の 872 の行（hitFrames −1・effectFrames 0）と data/skills/872.json の burst の effects[0]（burstDamage・distributed）",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/872.json の burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1434",
+      "role": "値を合わせた"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "1434",
+      "decided": "1 回目のバースト",
+      "reproduced": "2〜9 回目のバースト",
+      "observations": ["1434-14"]
+    }
+  ],
+  "judgment": {
+    "decided": "2026-11-28",
+    "overrides": ["合う仮説が 2 つ以上"],
+    "reason": "予測ファイルのアリスの指標はコアなしの 1 ヒットで、録画にコアなしのヒットが無くコアの 1 ヒットで比べたため、機械は H1 と H-noS2 を 1433-01・1434-12 だけで数える。H-noS2 は 1434-10（時間切れの後のアリスのコアの 1 ヒット。実測 659,788、H-noS2 は 578,950）で外れる（2026-11-28 のオーナーの判断）"
+  }
+}

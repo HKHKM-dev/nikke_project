@@ -1,0 +1,20 @@
+{
+  "id": "C-1605",
+  "text": "アイギスの S1 のペルソナ - パラディオンのタルカジャ（攻撃力▲）は、戦闘の始めから自分の攻撃力に乗り、戦闘の終わりまで続く",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1433-01`。V-0895",
+  "model": "data/skills/872.json の skill1 の effects[0]（状態の付与 persona・battleStart・durationUntil battleEnd・self・中身 attack）",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/872.json の skill1 の effects[0]"]
+  },
+  "decidedOn": [],
+  "judgment": {
+    "decided": "2026-11-28",
+    "overrides": ["合う仮説が 2 つ以上"],
+    "reason": "予測ファイルのアリスの指標はコアなしの 1 ヒットで、録画にコアなしのヒットが無くコアの 1 ヒットで比べたため、機械は H1 と H-noS2 を 1433-01・1434-12 だけで数える。H-noS2 は 1434-10（時間切れの後のアリスのコアの 1 ヒット。実測 659,788、H-noS2 は 578,950）で外れる（2026-11-28 のオーナーの判断）"
+  }
+}

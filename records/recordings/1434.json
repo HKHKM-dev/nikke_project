@@ -1,0 +1,47 @@
+{
+  "id": "1434",
+  "date": "2026-11-28",
+  "folder": "range",
+  "file": "20261128-1434_aigis-team.mp4",
+  "original": "2026-11-28_19-36-36.mp4",
+  "durationSec": 207.1,
+  "frames": 12427,
+  "fps": 60,
+  "sizeMB": 251,
+  "sha256": "d2e8f5edbc1f",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 392,
+      "name": "ライ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 872,
+      "name": "アイギス",
+      "controlled": true
+    },
+    {
+      "slot": 3,
+      "rid": 191,
+      "name": "アリス",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire",
+    "level": 1
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0895。ライ（I）+ アイギス（II・操作）+ アリス（III）。スペック固定 ON・オート射撃 ON・オートバースト ON",
+  "backup": {
+    "at": "2026-11-28T19:42+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

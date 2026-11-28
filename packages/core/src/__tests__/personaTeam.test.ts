@@ -138,14 +138,17 @@ describe('ペルソナの語彙の検証（parseSkillDefinition）', () => {
     );
   });
 
-  it('allows durationUntil battleEnd on attack with stacks, but not fullBurstEnd', () => {
+  it('allows durationUntil battleEnd on attack with stacks, but fullBurstEnd only without stacks (plan/design-aigis.md 2.1 節)', () => {
     const { durationRef: _, ...base } = timed;
     const e = parseSkillDefinition(definitionWith({ ...base, durationUntil: 'battleEnd', maxStacks: 3 })).skills.skill1
       .effects[0] as TimedEffect;
     expect(e).toMatchObject({ durationUntil: 'battleEnd', maxStacks: 3 });
-    expect(() => parseSkillDefinition(definitionWith({ ...base, durationUntil: 'fullBurstEnd' }))).toThrow(
-      /duration until an event/,
-    );
+    expect(
+      parseSkillDefinition(definitionWith({ ...base, durationUntil: 'fullBurstEnd' })).skills.skill1.effects[0],
+    ).toMatchObject({ durationUntil: 'fullBurstEnd' });
+    expect(() =>
+      parseSkillDefinition(definitionWith({ ...base, durationUntil: 'fullBurstEnd', maxStacks: 3 })),
+    ).toThrow(/cannot stack/);
   });
 });
 

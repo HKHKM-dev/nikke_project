@@ -856,7 +856,13 @@ function parseTimedDuration(
       };
     }
     const until = oneOf(DURATION_UNTILS, v.durationUntil, `${path}.durationUntil`);
-    if (stat !== undefined && (isFlagStat(stat) || (until === 'fullBurstEnd' && isFirstPassTrackedStat(stat)))) {
+    // フルバースト終了までは攻撃力にだけ書ける: 1 パス目のフルバーストの窓は III の発動のフレームに終わりの決まった形で足され、
+    // 終わりは足したフレームより先にある。足す前の読み手が読むのは終わりより前のフレームだけなので、窓が足されて件を作り直しても
+    // 読んだ値は変わらない（plan/design-aigis.md 2.1 節）
+    if (
+      stat !== undefined &&
+      (isFlagStat(stat) || (until === 'fullBurstEnd' && isFirstPassTrackedStat(stat) && stat !== 'attack'))
+    ) {
       fail(
         `${path}.stat`,
         `a duration until an event is not supported for "${stat}" (its window is tracked inside the first pass)`,

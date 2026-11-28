@@ -1294,7 +1294,8 @@ export type TimedEffect = TargetCountFields &
     holderHit?: { withinRef: number };
     /**
      * 「解除条件：フルバーストタイムが終了した時」（plan/design-true-damage-element.md 3.2 節）。付いたフレームから
-     * 次のフルバースト終了のフレームまで続く（無ければ戦闘の終わりまで）。1 パス目で窓を追う stat と、スタック・順位の対象には書けない
+     * 次のフルバースト終了のフレームまで続く（無ければ戦闘の終わりまで）。1 パス目で窓を追う stat（攻撃力は書ける。
+     * plan/design-aigis.md 2.1 節）と、スタック・順位の対象には書けない
      */
     durationUntil?: DurationUntil;
     /**

@@ -1,0 +1,36 @@
+[
+  {
+    "id": "1433-01",
+    "recording": "1433",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 4849,
+    "description": "アイギス単騎（操作）の通常攻撃の 1 ヒット（コア・会心・距離ボーナスなし）。180 秒を通して、HUD の増分は 4,849 とその組み合わせ（2 ヒットの 9,698 など）だけで、S1 の攻撃力▲の無い値（4,003）とその組み合わせは 1 回も出ない",
+    "method": {
+      "tool": "recipe:hud-jumps@3・recipe:buff-edge@9（--opt grid）",
+      "note": "HUD の増分 3,106 個のうち、単独の 4,849 が 251 回、9,698 が 671 回、12,122 が 271 回など、どれもモデルの格子（f300。S1 の攻撃力▲あり）の値と組み合わせ。▲の無い格子（× 1 / 1.2112）の 4,003・8,005 は無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "source": "V-0895",
+    "readAt": "2026-11-28"
+  }
+]
