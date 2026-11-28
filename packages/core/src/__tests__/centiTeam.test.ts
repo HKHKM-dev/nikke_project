@@ -13,7 +13,7 @@ import type { TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFirstFrame, gameSecondsToFrames } from '../time.ts';
 import type { Element } from '../types.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const CENTI = 80;
 const PRODUCT08 = 302;
@@ -128,5 +128,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     });
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

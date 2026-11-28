@@ -8,7 +8,7 @@ import { itemsOf } from '../skills/holders.ts';
 import type { BuffStat } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { SkillSlot } from '../types.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const DOROTHY_S = 234;
 const FLOWER = 304;
@@ -97,5 +97,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     });
   }
 });
-
-describeEveryShotInOneGroup(TEAMS);

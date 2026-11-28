@@ -1,8 +1,6 @@
 // 2 段目の段 9（plan/design-skill-stage9.md）: 対象の絞り込み「〈クラス〉型の味方」（targetClass）。エヌ：ミラクルフェアリー（121）の
-// S1（支援型の味方への吸収回復）とバースト（火力型の味方への回復と攻撃力▲）、射撃の列のグループ分け
+// S1（支援型の味方への吸収回復）とバースト（火力型の味方への回復と攻撃力▲）
 import { describe, expect, it } from 'vitest';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { matchesTargetFilter } from '../skills/targets.ts';
@@ -132,18 +130,5 @@ describe('エヌ：ミラクルフェアリーの絞り込み（防御型・支�
     expect(
       heals.filter((h) => h.slotIndex === 2).every((h) => burstFrames.has(h.frame) || burstFrames.has(h.frame - 1)),
     ).toBe(true);
-  });
-});
-
-describe('編成: 防御型・支援型・火力型・支援型の編成', () => {
-  const calc = runTeam(TEAM);
-  const plan = planTeamRun(TEAM);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    TEAM.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

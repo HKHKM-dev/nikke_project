@@ -8,7 +8,7 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { rawDefinition } from './data.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const BELORTA_PW = 63;
 const KURUMI = 862;
@@ -57,7 +57,6 @@ const CASES: Record<string, { input: TeamInput; belorta: number; right: number |
     right: 2,
   },
 };
-const TEAMS = Object.fromEntries(Object.entries(CASES).map(([name, c]) => [name, c.input]));
 
 describe.each(Object.entries(CASES))('編成: %s', (_name, { input, belorta, right }) => {
   const sim = runSimulation(input);
@@ -98,5 +97,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, belorta, rig
     for (const p of prank) expect(costume.some((c) => c.start < p.start && p.start <= c.end)).toBe(true);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

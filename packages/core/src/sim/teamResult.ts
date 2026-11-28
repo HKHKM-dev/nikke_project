@@ -3,6 +3,7 @@
 // バーストスキルと倍率ダメージは sim の発動列（1 パス目の値）をそのまま使う。
 import { summarizeSchedule } from '../burst/schedule.ts';
 import { enemyEventNotes } from '../frame/events.ts';
+import { assertEveryShotCounted, countShotsInRanges } from '../frame/shots.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import { cycleSummariesOf, effectSummariesOf, stateSummariesOf } from '../skills/summaries.ts';
@@ -49,6 +50,14 @@ export function simTeamResult(teamInput: TeamInput, sim: SimResult): TeamResult 
         ...partialChargeOf(simSegments),
       });
     }
+    // グループの区間は射撃の列を漏れなく重ねずに分ける（groupTimeline は枠の状態の無い区間を飛ばすが、sim はその区間も数える）
+    const shotFrames = sim.shots[index]?.frames ?? [];
+    assertEveryShotCounted(
+      'simTeamResult',
+      index,
+      segments.reduce((sum, g) => sum + countShotsInRanges(shotFrames, g.ranges), 0),
+      shotFrames.length,
+    );
 
     const skillHitActivations: SlotSkillHitsResult['activations'] = sim.skillHits
       .filter((h) => h.slotIndex === index)

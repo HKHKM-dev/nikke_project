@@ -7,15 +7,7 @@ import { distanceBonusAt, inEffectiveRangeAt } from '../frame/landing.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import {
-  characterOf,
-  describeEveryShotInOneGroup,
-  fixedSlot,
-  fixedTeam,
-  RANGE_BIGARMS,
-  rangeEnemyWithEvents,
-  skillValueOf,
-} from './teamHelpers.ts';
+import { characterOf, fixedSlot, fixedTeam, RANGE_BIGARMS, rangeEnemyWithEvents, skillValueOf } from './teamHelpers.ts';
 
 const ADE_AB = 315;
 const FLOWER = 304;
@@ -101,5 +93,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(pierce[0]!.start).toBe(shots[9]! + 1);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

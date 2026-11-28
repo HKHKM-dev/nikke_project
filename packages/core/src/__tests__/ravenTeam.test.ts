@@ -1,14 +1,12 @@
 // レイヴン（851）を含む編成: S1 のスタックする持続ダメージと、付けたとき・tick のゲージ（plan/design-raven-s1.md）。
-// 射撃の列のグループ分けと、tick のスタック・ゲージの予約。録画 0141 の観測値を入力にした tick・スタック・満タンの確かめ（6 節）。
+// tick のスタック・ゲージの予約。録画 0141 の観測値を入力にした tick・スタック・満タンの確かめ（6 節）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { BURST_GAUGE_MAX } from '../burst/controller.ts';
 import { energyPerTrigger } from '../burst/dynamic.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { SkillDefinition } from '../skills/types.ts';
-import { runTeam } from './runTeam.ts';
 import { dotTicks, planTeamRun } from '../frame/plan.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { characterOf, rawDefinition, readObservations } from './data.ts';
 import { fixedEnemy, fixedSlot, fixedTeam, fullChargeFrames } from './teamHelpers.ts';
@@ -55,7 +53,6 @@ describe('レイヴンの定義', () => {
 });
 
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, raven: slotIndex }) => {
-  const calc = runTeam(input);
   const plan = planTeamRun(input);
   const ticks = plan.skillHits.filter((h) => h.slotIndex === slotIndex && h.effect.dot !== undefined);
   const fires = fullChargeFrames(plan.shots[slotIndex]!);
@@ -91,14 +88,6 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, raven: slotI
     // ループの中で予約した tick は、ループの後の dotTicks と同じ列（plan/design-raven-s1.md 8 節の 2）
     expect(reserved.map((g) => g.frame)).toEqual(ticks.map((h) => h.frame));
     for (const g of own) expect(g.energy).toBe(raven.shot.targetBurstEnergyPerShot);
-  });
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });
 

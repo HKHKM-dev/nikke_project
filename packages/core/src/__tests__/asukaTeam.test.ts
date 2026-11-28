@@ -1,10 +1,8 @@
-// アスカ（830）を含む編成: バーストの吸収回復で付く S1 の窓・灼熱の味方だけのコアダメージ▲・射撃の列のグループ分け（plan/design-asuka.md 5 節）。
+// アスカ（830）を含む編成: バーストの吸収回復で付く S1 の窓・灼熱の味方だけのコアダメージ▲（plan/design-asuka.md 5 節）。
 // V-0022: 吸収回復は付いた時の 1 回の回復として扱う（命中ごとの回復では S1 は延びない）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { itemsOf } from '../skills/holders.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
@@ -20,10 +18,6 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
 const REC063 = team([fixedSlot(304), fixedSlot(20), fixedSlot(830)], 2);
 // 順位（アリスの S1。topAttack）が S1 の攻撃力▲の窓を見るので、1 パス目のループの回復も通る
 const PRACTICAL = team([fixedSlot(82), fixedSlot(330), fixedSlot(830), fixedSlot(191), fixedSlot(172)], 2);
-const TEAMS: Record<string, TeamInput> = {
-  '録画 0063 の編成（フラワー + デルタ + アスカ）': REC063,
-  '実戦寄り（リター + クラウン + アスカ + アリス + アドミ）': PRACTICAL,
-};
 
 describe('録画 0063 の編成の窓（4 節）', () => {
   const plan = planTeamRun(REC063);
@@ -69,18 +63,5 @@ describe('1 パス目のループの回復', () => {
     for (const i of items) expect(healed).toContain(i.start);
     for (const f of healed) expect(items.some((i) => i.start <= f && f < i.end)).toBe(true);
     expect(items.every((i) => i.stage === 1)).toBe(true);
-  });
-});
-
-describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

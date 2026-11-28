@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { healsOf } from './historyHelpers.ts';
-import { describeEveryShotInOneGroup, effectWindows, fixedTeam, windowsFrom } from './teamHelpers.ts';
+import { effectWindows, fixedTeam, windowsFrom } from './teamHelpers.ts';
 
 const MARCIANA = 321;
 const CROWN = 330;
@@ -97,5 +97,3 @@ describe('実戦寄りの編成（リター + マルチャーナ + クラウン 
     expect(s1[0]!.start).toBe(first);
   });
 });
-
-describeEveryShotInOneGroup({ '撮影 A': SHOOT_A, '撮影 B': SHOOT_B, 実戦寄り: PRACTICAL });

@@ -1,6 +1,6 @@
 // 確率のきっかけの持続ダメージ（ハラン 230 の S1）と倍率ダメージ（ソルジャーO.W. 306 の S1）を含む編成（plan/design-chance-dot-damage.md）。
 // dot は起点ごとの tick に出る確率の重みを掛け（frame/dot.ts の chanceDotTicks）、damage は射撃ごとの倍率ダメージ（perShot）に確率を掛けて畳み込む。
-// 確率 100% なら確率の無い効果と同じになること（退化）と、射撃の列のグループ分け
+// 確率 100% なら確率の無い効果と同じになること（退化）
 import { describe, expect, it } from 'vitest';
 import { chanceDotTicks } from '../frame/dot.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -9,7 +9,7 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { rawDefinition } from './data.ts';
 import { runTeam } from './runTeam.ts';
-import { describeEveryShotInOneGroup, fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const HARAN = 230;
 const SOLDIER_OW = 306;
@@ -124,9 +124,4 @@ describe('ソルジャーO.W. 単騎: 確率の追加ダメージ', () => {
       expect(s.trigger.normal).toBeCloseTo(full[i]!.trigger.normal, 6);
     });
   });
-});
-
-describeEveryShotInOneGroup({
-  ハラン単騎: team([fixedSlot(HARAN)]),
-  'ソルジャーO.W. 単騎': team([fixedSlot(SOLDIER_OW)]),
 });

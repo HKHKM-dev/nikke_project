@@ -5,13 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { runSimulation } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';
 import type { SkillSlot } from '../types.ts';
-import {
-  describeEveryShotInOneGroup,
-  effectWindows,
-  fixedTeam,
-  SHOOTING_RANGE_ENEMY,
-  windowsFrom,
-} from './teamHelpers.ts';
+import { effectWindows, fixedTeam, SHOOTING_RANGE_ENEMY, windowsFrom } from './teamHelpers.ts';
 
 const BRID = 73;
 const LITER = 82;
@@ -77,5 +71,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     });
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

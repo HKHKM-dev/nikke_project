@@ -1,13 +1,10 @@
 // ラム（822）を含む編成: ダメージに効く効果は S1 の「フルバースト終了時、同じ部隊の味方がいれば自分のバーストスキルクールタイム▼」
 // だけ（plan/design-ram-s1.md）。同じ部隊の味方がいない編成では起きない（C-0080。V-0026）。同じ部隊はゲーム内の部隊（C-0235。仮説）。
-// 射撃の列のグループ分け。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { characterOf, rawDefinition } from './data.ts';
@@ -91,7 +88,6 @@ describe('ラムの定義', () => {
 
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, ram, sameSquad }) => {
   const sim = runSimulation(input);
-  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it.runIf(!sameSquad)('does not cut the burst cooldown of Ram without an ally from the same squad (C-0080)', () => {
@@ -108,13 +104,5 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, ram, sameSqu
     expect(cuts.map((r) => r.frame)).toEqual(ends);
     expect(cuts.every((r) => r.slotIndex === ram && r.frames === gameSecondsToFrames(20.16))).toBe(true);
     expect(cuts.some((r) => r.applied > 0)).toBe(true);
-  });
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

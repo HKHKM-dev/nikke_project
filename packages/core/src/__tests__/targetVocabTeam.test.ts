@@ -1,11 +1,9 @@
 // 対象の語彙編（plan/design-target-vocab.md）: エマ：TU・ウンファ：TU の S2 の「同じ部隊の味方全体に」（targetSquad。C-0266・C-0268）と、
 // マナの S2 の「基本チャージ時間が一番長い味方 1 機にチャージ時間 0.18 秒▼」（longestChargeTime・chargeSpeed の flat。C-0267）を
-// 含む編成。対象の枠と、射撃の列のグループ分け
+// 含む編成の対象の枠を見る。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { runSimulation } from '../sim/engine.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
@@ -69,31 +67,5 @@ describe('基本チャージ時間が一番長い味方（longestChargeTime）',
     const windows = chargeWindows(input);
     expect(windows.length).toBeGreaterThan(0);
     expect(windows.every((w) => w.slotIndex === 2)).toBe(true);
-  });
-});
-
-const TEAMS: Record<string, TeamInput> = {
-  '録画 0022 の編成（エマ：TU + デルタ）': team([fixedSlot(EMMA), fixedSlot(20)], 1),
-  'エマ：TU + ウンファ：TU + デルタ + 紅蓮BS': team(
-    [fixedSlot(EMMA), fixedSlot(EUNHWA), fixedSlot(20), fixedSlot(225)],
-    3,
-  ),
-  '録画 0020 の編成（エーテル + デルタ + マナ）': team([fixedSlot(291), fixedSlot(20), fixedSlot(MANA)], 2),
-  '録画 0043 の編成（フラワー + クラウン + アリス + マナ + アドミ）': team(
-    [fixedSlot(304), fixedSlot(330), fixedSlot(191), fixedSlot(MANA), fixedSlot(172)],
-    2,
-  ),
-};
-
-describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

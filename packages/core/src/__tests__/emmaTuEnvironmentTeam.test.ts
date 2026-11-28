@@ -1,10 +1,8 @@
 // エマ：TU（93）の S1 の環境コントロール（敵全体の受けるダメージ▲。戦闘開始時と、そこから 30 秒ごと。C-0305）と、
-// S2 のフォーメーションAS の再発動周期 20 秒▼（編成にウンファ：TU がいれば 10 秒ごと。C-0306）。窓の時刻と、射撃の列のグループ分け。
+// S2 のフォーメーションAS の再発動周期 20 秒▼（編成にウンファ：TU がいれば 10 秒ごと。C-0306）。窓の時刻。
 // F5（plan/design-heal-vocabulary.md 3.1・3.3 節）: S1 の持続回復は、付いた時に 1 回だけ回復を起こす（C-0578。仮説）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { gameSecondsToFirstFrame, gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
@@ -76,28 +74,5 @@ describe('環境コントロールの持続回復（C-0578）', () => {
     );
     expect(s1.map((w) => w.start)).toEqual([0, 1, 2, 3, 4, 5].map((k) => k * period));
     for (const w of s1.slice(0, -1)) expect(w.end - w.start).toBe(gameSecondsToFrames(25));
-  });
-});
-
-const TEAMS: Record<string, TeamInput> = {
-  '録画 0226 の編成（エマ：TU 単騎・バーストなし）': team([fixedSlot(EMMA)], 0, false),
-  '録画 0227 の編成（エマ：TU + ウンファ：TU・バーストなし）': team([fixedSlot(EMMA), fixedSlot(EUNHWA)], 0, false),
-  'F5 の編成（エマ：TU + アスカ・バーストなし）': team([fixedSlot(EMMA), fixedSlot(ASUKA)], 1, false),
-  '実戦寄り（エマ：TU + ウンファ：TU + クラウン + アリス + リター）': team(
-    [fixedSlot(EMMA), fixedSlot(EUNHWA), fixedSlot(330), fixedSlot(191), fixedSlot(82)],
-    3,
-  ),
-};
-
-describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

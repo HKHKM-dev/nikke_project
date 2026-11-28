@@ -7,13 +7,7 @@ import { burstHitBuffs, burstSnapshotState, planTeamRun } from '../frame/plan.ts
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import {
-  describeEveryShotInOneGroup,
-  fixedSlot,
-  fixedTeam,
-  rangeEnemyWithEvents,
-  skillValueOf,
-} from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents, skillValueOf } from './teamHelpers.ts';
 
 const SIGNAL = 22;
 const FLOWER = 304;
@@ -84,5 +78,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     });
   }
 });
-
-describeEveryShotInOneGroup(TEAMS);

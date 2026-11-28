@@ -1,6 +1,6 @@
 // 使用武器変更の武器のパラメータ（plan/design-true-damage-element.md 9 節）: 変更後の武器のチャージ時間・フルチャージ倍率・最大装弾数と、
-// 撃ち切りで終わる変更。ウンファ：TU（95）のバーストの徹甲炸裂弾（C-0313）で、語彙の検証・解決・1 パス目と区間の窓の一致・
-// 射撃の列のグループ分けを見る。編成は録画 0232（I-DOLL・フラワー + ウンファ：TU。V-0207）と同じ
+// 撃ち切りで終わる変更。ウンファ：TU（95）のバーストの徹甲炸裂弾（C-0313）で、語彙の検証・解決・1 パス目と区間の窓の一致を見る。
+// 編成は録画 0232（I-DOLL・フラワー + ウンファ：TU。V-0207）と同じ
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from './fixtures.ts';
 import type { EnemyInput } from '../damage.ts';

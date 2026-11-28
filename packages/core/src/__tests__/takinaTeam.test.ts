@@ -2,12 +2,9 @@
 // S1: 戦闘開始時とフルバーストタイム終了時の自分の攻撃力▲（5 秒）、フルバーストタイム発動時の防御力無視ダメージ▲（V-0531）。
 // S2: 15 秒ごとの敵全体の受けるダメージ▲と味方全体の防御力無視ダメージ▲（V-0531。周期は C-0418）。
 // バースト: 使用武器の変更（チャージしない 150rpm・リロードしない 10 秒）と命中した敵の受けるダメージ▲（V-0531。段 11 の PR 4）。
-// 射撃の列のグループ分け。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { slotPieces } from './historyHelpers.ts';
@@ -92,27 +89,5 @@ describe('たきな単騎', () => {
     const pieces = slotPieces(plan, 0).filter((p) => p.effect.stat === 'attack');
     expect(pieces).toHaveLength(1);
     expect(pieces[0]).toMatchObject({ start: 0, end: 294 });
-  });
-});
-
-const TEAMS: Record<string, TeamInput> = {
-  単騎: team([fixedSlot(TAKINA)], 0, false),
-  'ラム + デルタ + たきな + I-DOLL・サン': team(
-    [fixedSlot(822), fixedSlot(20), fixedSlot(TAKINA), fixedSlot(308)],
-    2,
-    true,
-  ),
-};
-
-describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

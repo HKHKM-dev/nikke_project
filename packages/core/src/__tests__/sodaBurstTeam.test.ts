@@ -1,12 +1,10 @@
 // 2 段目の段 3 の PR 3（plan/design-skill-stage3.md 1.4・1.5・2.3 節）: ソーダ：トゥインクルバニー（314）のバースト。ゴールデンチップの
 // スタック量別の効果（20 スタック以上で自分に命中率▲、30 スタック以上で攻撃力▲）と、効果の後の 17 個▼。編成は撮影計画と同じ
-// ラム + デルタ + ソーダ：TB（操作）と、実戦寄りの編成。damage の条件のスタック数（frame/plan.ts）と、射撃の列のグループ分け
+// ラム + デルタ + ソーダ：TB（操作）と、実戦寄りの編成。damage の条件のスタック数（frame/plan.ts）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { hexagonFrameOf, hitFrameOf } from '../burst/schedule.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { METRICS } from '../records/observations/metrics/index.ts';
 import { runSimulation } from '../sim/engine.ts';
@@ -175,26 +173,5 @@ describe('スタックの指標（records/observations/metrics/buffs.ts。V-0437
     const restarted = recordingTeam(raw);
     const residues = metric('fullBurstStackGainResidues', args, runSimulation(restarted), restarted) as number[];
     expect(residues).toEqual([0, 0, 0, 0, 0]);
-  });
-});
-
-const TEAMS: Record<string, TeamInput> = {
-  'ラム + デルタ + ソーダ：TB（撮影計画の編成）': recordingTeam(),
-  '実戦寄り（リター + クラウン + ソーダ：TB + アリス + アドミ）': team(
-    [fixedSlot(82), fixedSlot(330), fixedSlot(SODA), fixedSlot(191), fixedSlot(172)],
-    2,
-  ),
-};
-
-describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

@@ -8,7 +8,7 @@ import { gameSecondsToFrames } from '../time.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const ZWEI = 390;
 const SUN = 308;
@@ -35,7 +35,6 @@ const CASES: Record<string, Case> = {
   },
   'ツバイ単騎（基礎版）': { input: team([ZWEI], 0, 0), delay: 101 },
 };
-const TEAMS = Object.fromEntries(Object.entries(CASES).map(([name, c]) => [name, c.input]));
 
 describe.each(Object.entries(CASES))('編成: %s', (_name, { input, delay, ade }) => {
   const plan = planTeamRun(input);
@@ -110,5 +109,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, delay, ade }
     });
   }
 });
-
-describeEveryShotInOneGroup(TEAMS);

@@ -8,7 +8,7 @@ import { runSimulation } from '../sim/engine.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { ENEMY } from '../skills/holders/types.ts';
 import type { TeamInput } from '../team.ts';
-import { describeEveryShotInOneGroup, effectWindows, fixedTeam, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
+import { effectWindows, fixedTeam, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
 
 const MARCIANA_MS = 322;
 const FLOWER = 304;
@@ -109,5 +109,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     }
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

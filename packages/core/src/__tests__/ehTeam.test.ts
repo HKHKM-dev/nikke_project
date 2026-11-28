@@ -7,7 +7,7 @@ import { effectFrameOf } from '../burst/schedule.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const EH = 113;
 const ironEnemy = rangeEnemyWithEvents({ element: 'Iron' });
@@ -77,5 +77,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, eh: E }) => 
     for (const w of buff) if (w.end <= lastShot) expect(w.end - w.start).toBe(gameSecondsToFrames(10));
   });
 });
-
-describeEveryShotInOneGroup(Object.fromEntries(Object.entries(CASES).map(([n, c]) => [n, c.input])));

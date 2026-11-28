@@ -1,11 +1,10 @@
-// ヘルム（352）を含む編成: 宝物版（段階 3）の即時のゲージのチャージ・「10 発間維持」のチャージダメージ倍率▲・射撃の列のグループ分け
+// ヘルム（352）を含む編成: 宝物版（段階 3）の即時のゲージのチャージ・「10 発間維持」のチャージダメージ倍率▲
 // （plan/design-helm.md、V-0033）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { runSimulation } from '../sim/engine.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { hexagonFrameOf } from '../burst/schedule.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { burstHitBuffs, burstSnapshotState, planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
@@ -106,7 +105,6 @@ describe('ヘルム単騎（録画 0082 の編成。V-0034）', () => {
 });
 
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, helm }) => {
-  const calc = runTeam(input);
   const plan = planTeamRun(input);
 
   it('gives the normal crit rate to allies and the charge damage multiplier only to Helm', () => {
@@ -115,13 +113,5 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, helm }) => {
     const charge = piecesOf(plan).filter((w) => w.effect.stat === 'chargeDamageMultiplier');
     expect(charge.length).toBeGreaterThan(0);
     expect(charge.every((w) => w.slotIndex === helm)).toBe(true);
-  });
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

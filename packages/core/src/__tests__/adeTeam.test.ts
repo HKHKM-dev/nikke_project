@@ -6,7 +6,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { characterOf, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 /** 防御力もスペック固定にし、コア命中率を 0.1 にした枠 */
 const slot = (id: number): TeamSlotInput => ({
@@ -68,5 +68,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     for (const w of s1) expect(w.end === battleEnd || w.end - w.start === gameSecondsToFrames(5)).toBe(true);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

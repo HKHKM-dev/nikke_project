@@ -1,10 +1,9 @@
-// Stage 11: クラウン（330）を含む編成の回帰と、射撃の列のグループ分け（plan/design-stage11.md 7.4・7.5 節）。
+// Stage 11: クラウン（330）を含む編成の回帰（plan/design-stage11.md 7.4・7.5 節）。
 // 録画 0041（I-DOLL・フラワー + クラウン + デルタ（操作）+ ラピ）の実測値を固定する。数値は plan/verification.md Stage 11 節。
 import { describe, expect, it } from 'vitest';
 import { healsOf, slotPieces } from './historyHelpers.ts';
 import type { EnemyInput, TriggerDamage } from '../damage.ts';
 import { isTimedItem } from '../skills/resolve.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput, SlotSegmentResult } from '../team.ts';
@@ -30,18 +29,6 @@ const REC41 = team(
   ],
   2,
 );
-const TEAMS: Record<string, TeamInput> = {
-  '録画 0041（I-DOLL・フラワー + クラウン + デルタ + ラピ）': REC41,
-  '実戦寄り（リター + クラウン + ドレイク宝物 3 + ラピ）': team(
-    [
-      fixedSlot(82, SLOT_OPTIONS),
-      fixedSlot(330, SLOT_OPTIONS),
-      fixedSlot(101, { ...SLOT_OPTIONS, treasurePhase: 3 }),
-      fixedSlot(10, SLOT_OPTIONS),
-    ],
-    2,
-  ),
-};
 
 /**
  * 1 ヒットの表示値（非会心）。倍率グループ = 1 + コア + 距離 + フルバースト（+ 会心 0.5）。
@@ -123,18 +110,5 @@ describe('録画 0041: クラウンの S1・S2・バースト（7.5）', () => {
     const delta = segmentsOf(2).filter((s) => s.buffs.reloadSpeed > 0);
     expect(delta.length).toBeGreaterThan(0);
     expect(delta.every((s) => Math.abs(s.buffs.reloadSpeed - 0.4435) < 1e-9)).toBe(true);
-  });
-});
-
-describe.each(Object.entries(TEAMS))('編成 (7.4): %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

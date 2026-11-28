@@ -1,9 +1,9 @@
-// Stage 10: 射撃に効くバフ・CT 短縮・弾丸チャージを含む編成の回帰と、射撃の列のグループ分け（plan/design-stage10.md 8.4・8.5 節）。
+// Stage 10: 射撃に効くバフ・CT 短縮・弾丸チャージを含む編成の回帰（plan/design-stage10.md 8.4・8.5 節）。
 // 実データのキャラ（スペック固定）で、既存の録画 0019・0037 の弾数表示と、撮影予定の録画 A・B の編成を固定する。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { firingParams } from '../frame/firing.ts';
-import { countShotsInRanges, type ShotLog } from '../frame/shots.ts';
+import type { ShotLog } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
@@ -178,18 +178,5 @@ describe('録画 0040（録画 B）: アドミのリロード速度・ユニの�
     expect(gaps.length).toBeGreaterThanOrEqual(2);
     expect(new Set(gaps)).toEqual(new Set([77]));
     expect(new Set(reloads)).toEqual(new Set([135]));
-  });
-});
-
-describe.each(Object.entries(TEAMS))('編成 (8.4): %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

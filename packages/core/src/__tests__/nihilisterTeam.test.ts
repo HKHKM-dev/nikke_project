@@ -1,4 +1,4 @@
-// ニヒリスター（261）を含む編成: バーストの倍率ダメージ・火傷（持続ダメージ dot）・最大装弾数▲。射撃の列のグループ分けと、火傷の tick（plan/design-nihilister.md）。
+// ニヒリスター（261）を含む編成: バーストの倍率ダメージ・火傷（持続ダメージ dot）・最大装弾数▲。火傷の tick（plan/design-nihilister.md）。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { MEASURED_BURST_DELAYS } from '../burst/landing.ts';
@@ -6,8 +6,6 @@ import { HEXAGON_AFTER_ACTIVATION_FRAMES, effectFrameOf, hexagonFrameOf, hitFram
 import { gameSecondsToFrames } from '../time.ts';
 import { timerFrames } from '../skills/timeline.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import { dotTickFrames, planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
@@ -46,7 +44,6 @@ describe('ニヒリスターの定義', () => {
 });
 
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, nihilister }) => {
-  const calc = runTeam(input);
   const plan = planTeamRun(input);
   const mine = plan.schedule!.activations.filter((a) => a.slotIndex === nihilister);
   // バースト使用時の効果（火傷・最大装弾数▲）は、発動の 9f 後の効果の発火から（C-0219）。戦闘の終わり以降は発火しない
@@ -91,13 +88,5 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, nihilister }
     }
     expect(windows.map((w) => [w.start, w.end])).toEqual(expected);
     for (const w of windows) expect(w.effect.value).toBe(6);
-  });
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

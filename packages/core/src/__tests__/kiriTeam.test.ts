@@ -7,7 +7,7 @@ import { runSimulation } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';
 import { battleSecondsToFrames, gameSecondsToFrames } from '../time.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { describeEveryShotInOneGroup, fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const KIRI = 33;
 const DELTA = 20;
@@ -92,5 +92,3 @@ describe('防御型 3 機 + キリ（撮影 C）', () => {
     expect(codes(CHAIN, 2)).not.toContain('counted-allies-pick');
   });
 });
-
-describeEveryShotInOneGroup({ KIRI_DELTA, CHAIN, THREE_DEFENDERS });

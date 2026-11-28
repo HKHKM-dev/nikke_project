@@ -1,11 +1,11 @@
 // スノーホワイト：ヘビーアームズ（471）を含む編成（2 段目の段 14。plan/design-skill-stage14.md）。定義・単騎とリター + デルタの編成の
 // 細かい動き（オートファイア・七つの小人：フルアクティブ）は skills/__tests__/stage14SnowWhiteHa.test.ts。ここでは味方と組んだ時に:
 // S1: チャージの 0.2 秒ごとに付く受けるダメージ▲は敵の件なので、どの味方の区間にも乗る（C-0758）。
-// バースト: 自分の攻撃ダメージ▲（10 秒）は、使うたびに付く（C-0762）。射撃の列のグループ分け。
+// バースト: 自分の攻撃ダメージ▲（10 秒）は、使うたびに付く（C-0762）。
 import { describe, expect, it } from 'vitest';
 import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { describeEveryShotInOneGroup, effectWindows, fixedTeam, windowsFrom } from './teamHelpers.ts';
+import { effectWindows, fixedTeam, windowsFrom } from './teamHelpers.ts';
 
 const SWHA = 471;
 
@@ -37,5 +37,3 @@ describe('ミルク + デルタ + スノーホワイト：ヘビーアームズ'
     for (const slot of [0, 1]) expect(fromSwha(slot, 'burst', 'attackDamage')).toEqual([]);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

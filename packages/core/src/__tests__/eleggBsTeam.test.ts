@@ -2,7 +2,6 @@
 // ここでは味方と組んだ時に: 憑依が戦闘開始時と 6 秒ごとに付き、その間の味方全体の命中が 100 に届いた発で幽霊キャプチャー数が 1 増えて
 // 憑依が外れる（憑依 1 回にキャプチャーは最大 1 回）。キャプチャー数 1 以上で水冷コードの味方に攻撃力▲、4 以上で有利コードの攻撃ダメージ▲。
 // 13 のままのキャプチャーで S2 のダメージ。バーストは 13 でなければ 6 ヒットで 6 減らし（最低 1）、13 なら 13 ヒットで 9 減らす。
-// 射撃の列のグループ分け。
 import { describe, expect, it } from 'vitest';
 import { effectFrameOf } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -10,7 +9,7 @@ import { itemsOf } from '../skills/holders.ts';
 import { counterEffectiveFrom } from '../skills/holders/types.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { slotPieces } from './historyHelpers.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rawDefinition } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rawDefinition } from './teamHelpers.ts';
 
 const ELEGG_BS = 502;
 const POSSESSION_FRAMES = gameSecondsToFrames(6);
@@ -139,5 +138,3 @@ describe('バーストのキャプチャー数の▼（下限 1）', () => {
     for (const f of low) expect(valueAt(f, true)).toBe(Math.max(1, valueAt(f, false) - 6));
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

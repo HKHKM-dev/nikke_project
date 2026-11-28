@@ -1,8 +1,7 @@
 // ミサト（833）を含む編成: S1「射撃マニュアル」のスタック（60 発ごとに自分に命中率 5.04%▲・3 スタック・5 秒）が区間の N に入り、
-// 条件が自動の枠でコア命中率を C-0036 の式で上げること（C-0183・C-0184。持続の▲の入れ方は C-0170）と、射撃の列のグループ分け。V-0110。
+// 条件が自動の枠でコア命中率を C-0036 の式で上げること（C-0183・C-0184。持続の▲の入れ方は C-0170）。V-0110。
 // バーストの味方全体の持続回復（1 秒間隔・5 秒間維持）は、付いた時に 1 回だけ回復を起こす（C-0646。仮説）。
 import { describe, expect, it } from 'vitest';
-import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { exponentSumHitRateUp, landingPartsWith } from '../frame/landing.ts';
@@ -25,13 +24,6 @@ const SOLO: TeamInput = {
   burst: false,
   controlledSlot: 0,
 };
-// 実戦寄り（リター + ミサト + デルタ + アリス + モダニア）。手入力の条件とバーストあり。クラウンはミサトが居なくても
-// 2026-10-27 までの calc との差が 5% を超えた（クラウン側の差）ので入れていない
-const PRACTICAL: TeamInput = fixedTeam(
-  [fixedSlot(82), fixedSlot(833), fixedSlot(20), fixedSlot(191), fixedSlot(260)],
-  1,
-  { enemy: plainEnemy },
-);
 
 // ミサト（I）+ デルタ（II）+ アスカ（III・操作）。ミサトを 1 枠目にして、S1 の回復（HP の割合で選ぶ 1 機。C-0567）は
 // ミサト自身に当て、アスカの回復を受けた時の S1 にはバーストの持続回復だけが効くようにする
@@ -99,22 +91,5 @@ describe('射撃マニュアルのスタック（ミサト単騎・条件は自�
     expect(summary.timedHitRateUp).toBe(true);
     expect(summary.hitRateUp).toBeGreaterThan(2 * STACK);
     expect(summary.hitRateUp).toBeLessThan(3 * STACK);
-  });
-});
-
-describe.each([
-  ['ミサト単騎（V-0110 の撮影の条件）', SOLO],
-  ['実戦寄り（リター + ミサト + デルタ + アリス + モダニア）', PRACTICAL],
-  ['バーストの持続回復（ミサト + デルタ + アスカ）', BURST_HEAL],
-] as const)('編成: %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

@@ -9,7 +9,7 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { timerFramesOf } from '../skills/timeline.ts';
 import type { TeamInput } from '../team.ts';
 import { rawDefinition, type RawDefinition } from './data.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { characterOf, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const SODA = 312;
 const GUILLOTINE_WS = 182;
@@ -100,5 +100,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(held(exp, first.frame)).toBe(held(plainExp, first.frame));
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

@@ -1,9 +1,7 @@
 // 2 段目の段 8（plan/design-skill-stage8.md）: 対象「残りの HP の割合が最も低い味方 N 機」（heal の lowestHpRatio）。枠の HP の割合の
 // 想定（TeamSlotInput.hpRatio）の低い順・同値は枠の若い順（C-0567）。ミサト（833）の S1 の回復と、回復を受けた時のアスカ（830）の S1
-// （F4 の録画 0472・0473 の編成）、射撃の列のグループ分け
+// （F4 の録画 0472・0473 の編成）
 import { describe, expect, it } from 'vitest';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { fixedTargetsOf, type CompositionCharacter } from '../skills/composition.ts';
@@ -140,21 +138,5 @@ describe('ミサトの S1 の回復と、回復を受けた時のアスカの S1
     expect(heals.length).toBeGreaterThan(0);
     expect(heals.every((h) => h.slotIndex === 1)).toBe(true);
     expect(asukaS1(lower, 0)).toEqual([]);
-  });
-});
-
-describe.each([
-  ['録画 0472 の編成（アスカ 1 枠目）', A],
-  ['録画 0473 の編成（ミサト 1 枠目）', B],
-])('編成: %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

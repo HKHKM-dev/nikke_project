@@ -1,9 +1,9 @@
 // リバーレリオ（262。V-0780）を含む編成: S2 の激流（最初のフルチャージの発の次のフレームから戦闘の終わりまで。C-1237）、S1 のコア命中の
 // 攻撃ダメージ▲（C-1237）、フルチャージの発ごとの 12・18・24・30・36f 後の 5 ヒットの追加ダメージ（C-1238）、フルバーストの入りからの
-// 攻撃力▲（3 秒）・バーストの攻撃ダメージ▲（10 秒。C-1241）と、発動の 60f 後のバーストの追加ダメージ（C-1240）。射撃の列のグループ分け
+// 攻撃力▲（3 秒）・バーストの攻撃ダメージ▲（10 秒。C-1241）と、発動の 60f 後のバーストの追加ダメージ（C-1240）。
 import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
-import { describeEveryShotInOneGroup, effectWindows, fixedTeam, skillValueOf, windowsFrom } from './teamHelpers.ts';
+import { effectWindows, fixedTeam, skillValueOf, windowsFrom } from './teamHelpers.ts';
 
 const LIBERALIO = 262;
 const COCOA = 311;
@@ -77,5 +77,3 @@ describe.each(Object.entries(WITH_BURST))('編成: %s', (_name, input) => {
     expect(burstHits.map((h) => h.frame)).toEqual(uses.map((u) => u + BURST_HIT_DELAY));
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

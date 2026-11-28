@@ -1,16 +1,14 @@
 // 2026-10-29 のアップデートのキャラ（マリアン：クイーン 19・紅蓮：神殺 472・ラプンツェル：サンクチュアリ 473）の定義を、実戦寄りの編成で回す
 // （plan/design-new-chars-1029.md。定義は仮実装で、根拠の結論は撮影の後）。臨戦の味方への▲・槍の周期と弱点露出・コア命中ダメージ・
-// 居合と身剣合一・クリティカル命中の弾丸チャージと満開の間の止まり方・射撃の列のグループ分けを見る
+// 居合と身剣合一・クリティカル命中の弾丸チャージと満開の間の止まり方を見る
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
 import { ENEMY, itemsOf } from '../skills/holders.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { piecesOf, stateItemsOf } from './historyHelpers.ts';
-import { runTeam } from './runTeam.ts';
 import { characterOf, rawDefinition } from './data.ts';
 import { fixedEnemy, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
@@ -27,7 +25,6 @@ const input: TeamInput = fixedTeam(
 );
 const [rapunzel, marian, scarlet] = [1, 2, 3];
 const plan = planTeamRun(input);
-const calc = runTeam(input);
 const uses = (slot: number) => plan.schedule!.activations.filter((a) => a.slotIndex === slot).map((a) => a.frame);
 
 describe('ラプンツェル：サンクチュアリ（473）', () => {
@@ -149,16 +146,6 @@ describe('紅蓮：神殺（472）', () => {
     const sword = stateItemsOf(plan).filter((s) => s.state === 'intoTheFrayAtOneWithTheSword');
     expect(extra.length).toBeGreaterThan(0);
     expect(extra.every((h) => sword.some((s) => s.start < h.frame && h.frame < s.end))).toBe(true);
-  });
-});
-
-describe('射撃の列', () => {
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });
 

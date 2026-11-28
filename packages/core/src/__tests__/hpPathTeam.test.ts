@@ -1,12 +1,10 @@
 // 2 段目の段 6 の PR 1（plan/design-skill-stage6.md 1・2 節）: HP の経路。
 // 発動者の最終最大HP 基準の攻撃力▲（scaling casterFinalMaxHp。ラプラス：アルティメットヒーロー（103）の S1）と、
-// 自分の HP の割合の条件（condition.selfHp。枠の HP の割合の想定 hpRatio。ノワール（271）の S1）。射撃の列のグループ分け
+// 自分の HP の割合の条件（condition.selfHp。枠の HP の割合の想定 hpRatio。ノワール（271）の S1）。
 import { describe, expect, it } from 'vitest';
-import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp } from '../fixedSpec.ts';
-import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { applyResolvedEffect, ZERO_BUFFS } from '../skills/buffs.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
@@ -171,24 +169,5 @@ describe('自分の HP の割合の条件（selfHp）', () => {
   it('rejects an hpRatio outside (0, 1]', () => {
     expect(() => attackUp(0)).toThrow(/hpRatio/);
     expect(() => attackUp(1.01)).toThrow(/hpRatio/);
-  });
-});
-
-describe.each([
-  ['ラプラス：アルティメットヒーロー単騎（録画 0121 の編成）', team([fixedSlot(LAPLACE, SLOT_OPTIONS)])],
-  [
-    'ノワール + デルタ（HP の割合 0.5）',
-    team([fixedSlot(NOIR, { ...SLOT_OPTIONS, extra: { hpRatio: 0.5 } }), fixedSlot(DELTA, SLOT_OPTIONS)], true),
-  ],
-])('編成: %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

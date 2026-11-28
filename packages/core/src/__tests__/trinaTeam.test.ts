@@ -11,14 +11,7 @@ import type { BuffStat } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { runTeam } from './runTeam.ts';
-import {
-  describeEveryShotInOneGroup,
-  fixedSlot,
-  fixedTeam,
-  rangeEnemyWithEvents,
-  skillValueOf,
-  windowsFrom,
-} from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents, skillValueOf, windowsFrom } from './teamHelpers.ts';
 
 const TRINA = 412;
 const COCOA = 311;
@@ -45,7 +38,6 @@ const CASES: Record<string, Case> = {
     leftmost: 1,
   },
 };
-const TEAMS = Object.fromEntries(Object.entries(CASES).map(([name, c]) => [name, c.input]));
 
 const ROOT = skillValueOf(TRINA, 'burst', 3) / 100;
 
@@ -117,5 +109,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, electricAr, 
     expect(marked).toBeGreaterThan(3);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

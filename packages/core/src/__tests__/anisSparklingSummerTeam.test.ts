@@ -2,16 +2,14 @@
 // S1: フルバーストの開始から、電撃の味方（自分とシン）に発動者基準の攻撃力▲・リロード速度▲（10 秒）。
 // S2: 最後の弾丸で攻撃した時の倍率ダメージ（最終弾の 74f 後）。バースト: 自分に最大装弾数▼（5 → 1）・リロード速度▲・有利コードの攻撃ダメージ▲（10 秒）。
 // 最大装弾数 1 の窓の中は毎発が最後の弾丸なので、S2 が毎発出る。ココアの S1 のデバフ解除が窓の途中に来ると、最大装弾数▼だけが外れ（▲は残る）、
-// 次に込めるマガジンから素の 5 発に戻る（C-1038。課題 2-64）。射撃の列のグループ分け。
+// 次に込めるマガジンから素の 5 発に戻る（C-1038。課題 2-64）。
 import { describe, expect, it } from 'vitest';
 import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { timerFramesOf } from '../skills/timeline.ts';
-import type { TeamInput } from '../team.ts';
 import {
   characterOf,
-  describeEveryShotInOneGroup,
   effectWindows,
   fixedTeam,
   rawDefinition,
@@ -28,15 +26,6 @@ const ANIS_SLOT = 2;
 
 const WATER = { enemy: { ...SHOOTING_RANGE_ENEMY, element: 'Water' as const } };
 const RECORDED = fixedTeam([COCOA, SIN, ANIS], ANIS_SLOT, WATER);
-const TEAMS: Record<string, TeamInput> = {
-  '撮影の編成（ココア + シン + アニス：スパークリングサマー・水冷）': RECORDED,
-  '単騎（灼熱）': fixedTeam([ANIS], 0, { enemy: { ...SHOOTING_RANGE_ENEMY, element: 'Fire' } }),
-  '実戦寄り（リター + シン + アニス：スパークリングサマー + クエンシー + ナガ・水冷）': fixedTeam(
-    [82, SIN, ANIS, 402, 450],
-    ANIS_SLOT,
-    WATER,
-  ),
-};
 
 // ココアの S1 のデバフ解除の効くフレーム（CT ごとの発動の delayFrames 後。C-0822）
 const cocoaS1 = rawDefinition<{
@@ -167,5 +156,3 @@ describe('味方の▼の定義の検証（課題 2-64）', () => {
     expect(patched({ perCount: { state: 'drunken' } })).toThrow(/ally decrease/);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

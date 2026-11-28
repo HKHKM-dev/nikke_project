@@ -1,13 +1,13 @@
 // クラスト（521）を含む編成（plan/design-crust.md）。語彙は skills/__tests__/crust.test.ts。ここでは射撃場 3 分モード（敵のジャンプあり）で:
 // 敵のジャンプの始まりの部分チャージの発の 3 回目の次のフレームに、味方全体にメイラードが付き、フルチャージの発の延長で戦闘の終わりまで続く。
 // メイラードの後のフルバースト発動時だけ、メイラードの味方に攻撃力▲が付き、バーストの分配ダメージ▲もメイラードの時だけ付く。
-// ジャンプの無い敵では部分チャージの発が無く、メイラードは付かない。射撃の列のグループ分け。
+// ジャンプの無い敵では部分チャージの発が無く、メイラードは付かない。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const CRUST = 521;
 const I_DOLL_FLOWER = 304;
@@ -99,5 +99,3 @@ describe('デバフのある味方（マスト：ロマンチックメイド）'
     expect(itemsOf(plan.history, { holder: 1, state: 'maillard' })[0]!.start).toBe(third + 1);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

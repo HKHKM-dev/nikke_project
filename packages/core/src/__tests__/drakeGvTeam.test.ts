@@ -1,14 +1,14 @@
 // ドレイク：グレイトヴィラン編（plan/design-drake-gv.md）: ドレイク：グレイトヴィラン（104）を含む編成で、S1 の使用武器変更（オーバーオーバードライブ）が
 // フルバーストの始まりに付いて撃ち切りで終わり（的のジャンプでハイドしても込め直さない）、終わるフレームに残弾数 100% 低下が元の SG に起きること、S2 の最大HP のみ▲ が
 // フルバーストの終わりごとに 1 スタック足されて 4 で止まり、遅刻の攻撃力▲がその最終最大HP を追うこと、バーストスキルダメージが 1 ヒットで
-// 出ることを見る（C-1427〜C-1430）。射撃の列のグループ分け
+// 出ることを見る（C-1427〜C-1430）。
 import { describe, expect, it } from 'vitest';
 import { hitFramesOf } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const DRAKE_GV = 104;
 const SHOTS = 6;
@@ -87,5 +87,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     for (const a of mine) expect(hitFramesOf(a)).toHaveLength(1);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

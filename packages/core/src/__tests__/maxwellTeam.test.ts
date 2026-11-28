@@ -6,7 +6,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const MAXWELL = 102;
 const COCOA = 311;
@@ -24,7 +24,6 @@ const CASES: Record<string, { input: TeamInput; maxwell: number; targets: number
     targets: [2, 3],
   },
 };
-const TEAMS = Object.fromEntries(Object.entries(CASES).map(([name, c]) => [name, c.input]));
 
 describe.each(Object.entries(CASES))('編成: %s', (_name, { input, maxwell, targets }) => {
   const plan = planTeamRun(input);
@@ -68,5 +67,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, maxwell, tar
     });
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

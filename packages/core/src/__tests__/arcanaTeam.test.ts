@@ -1,12 +1,12 @@
 // アルカナ（581）を含む編成（V-0713）: バーストの運命の輪のカード（電撃コードの味方だけ・10 秒）と、フルバースト終了時のカード。
 // フルバースト終了のフレームにアルカナに運命の輪のカードが残っていれば、直前にバーストを使った III の電撃コードの味方に攻撃ダメージ▲と
 // 力のカード（15 秒）、味方全体に死神のカード（5 秒）が付く。無条件の S1 の攻撃力▲・S2 の攻撃ダメージ▲（10 秒）は味方全体。
-// フルバーストタイムが 5 秒の III（イサベル）ではカードが残り、10 秒の III（ネオン：ビジョン・アイ）では残らない。射撃の列のグループ分け。
+// フルバーストタイムが 5 秒の III（イサベル）ではカードが残り、10 秒の III（ネオン：ビジョン・アイ）では残らない。
 import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
 import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { gameSecondsToFirstFrame } from '../time.ts';
-import { describeEveryShotInOneGroup, effectWindows, fixedTeam, windowsFrom } from './teamHelpers.ts';
+import { effectWindows, fixedTeam, windowsFrom } from './teamHelpers.ts';
 
 const ARCANA = 581;
 const LITER = 82;
@@ -138,5 +138,3 @@ describe('リター + アルカナ + ネオン：ビジョン・アイ（フル�
     }
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

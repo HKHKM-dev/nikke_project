@@ -5,7 +5,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { characterOf, describeEveryShotInOneGroup, effectWindows, fixedTeam, skillValueOf } from './teamHelpers.ts';
+import { characterOf, effectWindows, fixedTeam, skillValueOf } from './teamHelpers.ts';
 
 const POLI = 30;
 const LITER = 82;
@@ -71,5 +71,3 @@ describe.each(Object.entries(TEAMS))('%s', (_name, input) => {
     });
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

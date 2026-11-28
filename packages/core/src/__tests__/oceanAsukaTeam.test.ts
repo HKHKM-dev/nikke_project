@@ -1,10 +1,8 @@
 // I-DOLL・オーシャン（305）を含む編成: バーストの味方全体への 1 回の回復（heal・burstUse）は、
 // 使うたびに全員に healed を起こす（plan/design-heal-vocabulary.md 1 節の表の 4。C-0554 は仮説）。
-// 受け手のアスカの S1 の窓と、実戦寄りの編成での 射撃の列のグループ分けを見る。
+// 受け手のアスカの S1 の窓を見る。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput } from '../team.ts';
 import { healsOf, piecesOf } from './historyHelpers.ts';
@@ -52,18 +50,5 @@ describe('実戦寄りの編成（オーシャン + クラウン + アスカ + �
     for (const frame of uses) {
       expect(s1.some((w) => w.start <= frame && frame < w.end)).toBe(true);
     }
-  });
-});
-
-describe('編成: 実戦寄りの編成', () => {
-  const calc = runTeam(PRACTICAL);
-  const plan = planTeamRun(PRACTICAL);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    PRACTICAL.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

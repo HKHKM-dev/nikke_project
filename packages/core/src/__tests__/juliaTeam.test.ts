@@ -10,7 +10,7 @@ import { gameSecondsToFirstFrame } from '../time.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { applyTreasure, type TreasurePhase } from '../skills/treasure.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { characterOf, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const JULIA = 150;
 const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
@@ -100,5 +100,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, treasure }) 
     if (treasure) expect(full.length).toBe(activations.length);
   });
 });
-
-describeEveryShotInOneGroup(Object.fromEntries(Object.entries(CASES).map(([n, c]) => [n, c.input])));

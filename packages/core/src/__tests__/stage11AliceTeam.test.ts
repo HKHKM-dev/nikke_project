@@ -1,11 +1,10 @@
-// Stage 11 アリス編: アリス（191）を含む編成の順位・窓の一致と、射撃の列のグループ分け（plan/design-stage11.md 22.3〜22.6 節）。
+// Stage 11 アリス編: アリス（191）を含む編成の順位・窓の一致（plan/design-stage11.md 22.3〜22.6 節）。
 // 録画 0042（I-DOLL・フラワー + アドミ + アリス（操作）+ I-DOLL・サン）・録画 0043（I-DOLL・フラワー + クラウン + アリス（操作）+ マナ + アドミ）の
 // 実測値を固定する。数値は plan/verification.md Stage 11 アリス節。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { itemsOf } from '../skills/holders.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
@@ -241,17 +240,8 @@ describe('録画 0043 の代案（サン）: アドミには一度も付かな�
 
 describe.each(Object.entries(TEAMS))('編成 (22.4): %s', (_name, input) => {
   const calc = runTeam(input);
-  const plan = planTeamRun(input);
 
   it('ranks the slots for Alice’s S1', () => {
     expect(calc.history.rankings.length).toBeGreaterThan(0);
-  });
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

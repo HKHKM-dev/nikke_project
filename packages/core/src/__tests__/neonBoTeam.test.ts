@@ -1,6 +1,6 @@
 // ネオン：ブルーオーシャン編（plan/design-neon-bo.md）: ネオン：ブルーオーシャン（14）を含む編成で、S2 の有利コードの攻撃ダメージ▲が
 // 段階 3 への突入（II で切れたチェーンも数える）の 1・2・3 回目から段ごとに足され、どれも突入から 10 秒続くこと、バーストの使用武器変更が
-// 7 秒で、灼熱コードの敵にだけ変更後の武器の発ごとに追加ダメージが出ることを見る。射撃の列のグループ分け
+// 7 秒で、灼熱コードの敵にだけ変更後の武器の発ごとに追加ダメージが出ることを見る。
 import { describe, expect, it } from 'vitest';
 import { effectFrameOf, stageEnterFrameOf } from '../burst/schedule.ts';
 import type { Element } from '../types.ts';
@@ -8,7 +8,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const NEON_BO = 14;
 
@@ -74,5 +74,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (name, { input, fire }) => {
     expect(additional.map((h) => h.frame)).toEqual(fire ? changed : []);
   });
 });
-
-describeEveryShotInOneGroup(Object.fromEntries(Object.entries(TEAMS).map(([k, v]) => [k, v.input])));

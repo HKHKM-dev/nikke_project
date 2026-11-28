@@ -11,15 +11,7 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { runTeam } from './runTeam.ts';
-import {
-  describeEveryShotInOneGroup,
-  fixedSlot,
-  fixedTeam,
-  rawDefinition,
-  rangeEnemyWithEvents,
-  skillValueOf,
-  windowsFrom,
-} from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rawDefinition, rangeEnemyWithEvents, skillValueOf, windowsFrom } from './teamHelpers.ts';
 
 const JACKAL = 111;
 const ELEGG = 500;
@@ -108,5 +100,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(marked).toBeGreaterThan(3);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

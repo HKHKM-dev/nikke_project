@@ -7,7 +7,7 @@ import { effectFrameOf } from '../burst/schedule.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput } from '../team.ts';
 import { cycleItemsOf } from './historyHelpers.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const SNOW_WHITE_ID = 224;
 const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
@@ -81,5 +81,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, slot: S }) =
     expect(windows.map((w) => w.start)).toEqual(uses);
   });
 });
-
-describeEveryShotInOneGroup(Object.fromEntries(Object.entries(CASES).map(([n, c]) => [n, c.input])));

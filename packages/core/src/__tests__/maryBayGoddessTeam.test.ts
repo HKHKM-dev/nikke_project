@@ -1,6 +1,6 @@
 // メアリー：ベイゴッデス（132。V-0858）を含む編成で、S2 の有利コードの攻撃ダメージ▲が自分のバーストの使用の 1・2・3 回目から段ごとに
 // 3・5・10 秒ずつ足されること、バーストの攻撃力▲が水冷の味方にだけ 3 秒付くこと、S1 の持続回復がフルバーストの開始の
-// 1・2・3 回目から段ごとに付くことを見る。射撃の列のグループ分け
+// 1・2・3 回目から段ごとに付くことを見る。
 import { describe, expect, it } from 'vitest';
 import { effectFrameOf } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -11,7 +11,7 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { characterOf, rawDefinition } from './data.ts';
-import { describeEveryShotInOneGroup, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const MARY_BG = 132;
 const TIER_SECONDS = [3, 5, 10];
@@ -54,7 +54,6 @@ const CASES: Record<string, { input: TeamInput; mary: number }> = {
     mary: 1,
   },
 };
-const TEAMS = Object.fromEntries(Object.entries(CASES).map(([name, c]) => [name, c.input]));
 
 describe.each(Object.entries(CASES))('編成: %s', (_name, { input, mary }) => {
   const plan = planTeamRun(input);
@@ -133,5 +132,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, mary }) => {
     }
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

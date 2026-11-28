@@ -3,7 +3,7 @@
 // 宝物版 S1: 常時の攻撃ダメージ▲と、灼熱の敵への有利コードのダメージ適用（灼熱の敵のときだけ）。
 // S2: フルバーストの開始から、自分にクリティカル確率▲・攻撃力▲（10 秒）、SG の味方に最大装弾数▲・鉄甲の SG の味方に有利コードの攻撃ダメージ▲
 // （15 秒）。バースト: 使うたびに自分に攻撃速度▲・命中率▲・攻撃力▲、鉄甲の SG の味方に有利コードの攻撃ダメージ▲（15 秒）。
-// 基礎版は宝物版の部分集合（S1 は効果なし、S2 の最大装弾数▲は 10 秒）。射撃の列のグループ分け。
+// 基礎版は宝物版の部分集合（S1 は効果なし、S2 の最大装弾数▲は 10 秒）。
 import { describe, expect, it } from 'vitest';
 import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { enemyEventsOf, enemyLandingsOf } from '../enemies.ts';
@@ -15,7 +15,6 @@ import type { TeamInput } from '../team.ts';
 import type { Element } from '../types.ts';
 import {
   characterOf,
-  describeEveryShotInOneGroup,
   effectWindows,
   fixedTeam,
   ENEMY_PRESETS,
@@ -42,13 +41,6 @@ const TRIO = [COCOA, SOLDIER_FA, SUGAR] as const;
 const TREASURE_FIRE = team(TRIO, SUGAR_SLOT, 'Fire', 3);
 const TREASURE_ELECTRONIC = team(TRIO, SUGAR_SLOT, 'Electronic', 3);
 const BASE_FIRE = team(TRIO, SUGAR_SLOT, 'Fire', 0);
-
-const TEAMS = {
-  '単騎（宝物版・灼熱）': team([SUGAR], 0, 'Fire', 3),
-  'ココア + ソルジャーF.A. + シュガー（宝物版・灼熱）': TREASURE_FIRE,
-  'ココア + ソルジャーF.A. + シュガー（宝物版・電撃）': TREASURE_ELECTRONIC,
-  'ココア + ソルジャーF.A. + シュガー（基礎版・灼熱）': BASE_FIRE,
-};
 
 // 1 パス目は編成ごとに 1 回だけ回す（下の 2 つの describe が同じ編成を使う）
 const plans = new Map<TeamInput, ReturnType<typeof planTeamRun>>();
@@ -157,5 +149,3 @@ describe('バーストの命中率▲（射撃場の敵・条件は自動）', (
     expect(result.slots[FA_SLOT]!.autoCondition!.hitRateUp).toBe(0);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

@@ -5,7 +5,7 @@ import { runSimulation } from '../sim/engine.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFirstFrame, gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedTeam } from './teamHelpers.ts';
+import { fixedTeam } from './teamHelpers.ts';
 
 const ROSANNA_CO = 283;
 const WINDOW = gameSecondsToFrames(10);
@@ -78,5 +78,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     for (const g of gauges) expect(g.energy).toBeGreaterThanOrEqual(4000);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

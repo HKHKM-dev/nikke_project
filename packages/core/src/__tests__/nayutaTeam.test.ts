@@ -6,7 +6,7 @@ import { itemsOf } from '../skills/holders.ts';
 import { appliedFrames, timerFrames } from '../skills/timeline.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedTeam } from './teamHelpers.ts';
+import { fixedTeam } from './teamHelpers.ts';
 
 const NAYUTA = 223;
 const LITER = 82;
@@ -22,8 +22,6 @@ const TEAMS: Record<string, { input: TeamInput; nayuta: number }> = {
     nayuta: 3,
   },
 };
-
-describeEveryShotInOneGroup(Object.fromEntries(Object.entries(TEAMS).map(([name, t]) => [name, t.input])));
 
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, nayuta }) => {
   const plan = planTeamRun(input);

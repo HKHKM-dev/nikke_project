@@ -11,7 +11,7 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput } from '../team.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 import { rawDefinition } from './data.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const SNOW_WHITE = 220;
 const rangeEnemy: EnemyInput = rangeEnemyWithEvents();
@@ -140,5 +140,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, slot: S }) =
     });
   }
 });
-
-describeEveryShotInOneGroup(Object.fromEntries(Object.entries(CASES).map(([n, c]) => [n, c.input])));

@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const ALICE_WB = 195;
 const GUILTY = 400;
@@ -72,10 +72,4 @@ describe('I-DOLL・フラワー + ディーゼル（宝物版）+ センチ', ()
     expect(attract.some((w) => w.start <= firstAhead && firstAhead <= w.end)).toBe(true);
     expect(stackAt(onDiesel, attract[0]!.start)).toBe(stackAt(onCenti, attract[0]!.start));
   });
-});
-
-describeEveryShotInOneGroup({
-  'アリス：ワンダーランドバニー + センチ': rangeTeam([ALICE_WB, CENTI], 0),
-  'ギルティ + センチ': rangeTeam([GUILTY, CENTI], 0),
-  'I-DOLL・フラワー + ディーゼル + センチ': rangeTeam([FLOWER, DIESEL, CENTI], 1),
 });

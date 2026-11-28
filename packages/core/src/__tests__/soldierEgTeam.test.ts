@@ -1,9 +1,7 @@
 // ソルジャーE.G.（300）を含む編成（plan/design-soldier-eg.md）。S1: 通常攻撃の命中 1 発ごとに 5% の確率で自分に攻撃力▲（5 秒）を、
 // 期待値の窓（付いている確率 × 値。skills/chance.ts）で持つ（C-0372）。S2 は戦闘開始から 9 秒ごとの最大装弾数▲（C-0369）、バーストは burstDamage（C-0371）。
-// 窓の値の式と、射撃の列のグループ分け、順位（アリスの S1）に期待値の攻撃力が入ること。
+// 窓の値の式、順位（アリスの S1）に期待値の攻撃力が入ること。
 import { describe, expect, it } from 'vitest';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { chanceScaleAt, chanceValueOf } from '../skills/chance.ts';
@@ -104,40 +102,5 @@ describe('順位（アリスの S1。フルバースト時に最終攻撃力が�
         base.finalAttacks[3]! / (1 + chanceValueOf(VALUE, chanceScaleAt(opportunities, DURATION, base.frame)));
       expect(r.finalAttacks[3]! / withoutBuff).toBeCloseTo(1 + chanceValueOf(VALUE, scale), 9);
     }
-  });
-});
-
-const TEAMS: Record<string, TeamInput> = {
-  '単騎（手入力の条件）': team([fixedSlot(SOLDIER)], plainEnemy, false, 0),
-  '単騎（射撃場・条件は自動）': team([fixedSlot(SOLDIER, { conditionMode: 'auto' })], rangeEnemy, false, 0),
-  // V-0247 の撮影と同じ編成（鈴原サクラ I・デルタ II・ソルジャーE.G. III。オートバースト）
-  '鈴原サクラ + デルタ + ソルジャーE.G.（射撃場・条件は自動）': team(
-    [
-      fixedSlot(836, { conditionMode: 'auto' }),
-      fixedSlot(20, { conditionMode: 'auto' }),
-      fixedSlot(SOLDIER, { conditionMode: 'auto' }),
-    ],
-    rangeEnemy,
-    true,
-    2,
-  ),
-  '順位あり（鈴原サクラ + デルタ + アリス + ソルジャーE.G.）': team(
-    [fixedSlot(836), fixedSlot(20), fixedSlot(191), fixedSlot(SOLDIER)],
-    plainEnemy,
-    true,
-    2,
-  ),
-};
-
-describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

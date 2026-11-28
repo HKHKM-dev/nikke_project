@@ -20,17 +20,17 @@ NIKKE のダメージ計算ツール。
 - 作業はブランチで行い、PR で main にマージする。
 - PR の単位は**実装・検証が完了した時点**（動作するコード・確定した結論・テストが揃った状態）。設計起案や撮影待ちの段階では PR を出さない。
 - 設計の承認は対話で得て、実装と同じ PR に含める。
-- 撮影待ちの間は、トピックブランチを保持する（撮影計画や予測の commit もそのブランチで行う）。Claude Code では、セッションの始まりと発言のときに、作業中の変更が無ければフック（`tools/git/sync-after-merge.ts`）がトピックブランチを origin/main へリベースして push し、決まりと道具が変わったかを知らせる。衝突したら元に戻して知らせるので、`npm run pr:prep` で取り込んで直す。
+- 撮影待ちの間は、トピックブランチを保持する（撮影計画や予測の commit もそのブランチで行う）。Claude Code では、作業中の変更が無ければ、フック（`tools/git/sync-after-merge.ts` の `--catch-up` が呼ぶ `catch-up.ts`）がトピックブランチを origin/main へリベースする。衝突したら元に戻して知らせるので、`npm run pr:prep` で取り込んで直す。
 - コード（`packages/`・`apps/`・`tools/`）を変えた PR は、出す前に（テストが通った後に）差分を次の順に見直し、直しを同じ PR に入れる。文書・記録・データだけの PR と、数行の直しでは要らない（1 を絞る理由は `plan/design-review-steps.md` 2 節）。
   1. 整理の観点（再利用・簡素化・効率・深さ。バグは見ない）。構造が変わる PR（新しいモジュール・ファイルの分割・コードの追加が 100 行を超える）だけで行う。Claude Code では `/simplify`（当たらない差分では、フック `tools/git/review-flow.ts` が呼び出しを止める）。
   2. バグ（1 をしたなら、その直しを入れた後の差分）。Claude Code では `/code-review medium`（`packages/core/src/frame/`・`packages/core/src/sim/`・`tools/git/` を変えた PR は `high`。medium で呼ぶとフック `tools/git/review-flow.ts` が止める）。指摘はコードと照らして確かめてから直し、直したら直したファイルに関係するテスト（`npx vitest related --run <ファイル>`）を回す（全部は `pr:prep` が回す）。
 - 見直し（1・2）から、PR を出して自動マージを予約するまでは、途中でオーナーに確かめずに続けて進める（Claude Code では、見直しのスキルを呼んだ後、自動マージを予約する前に応答を終えようとすると、フック `tools/git/review-flow.ts` が止める）。見直しで見送った指摘と結果は、PR を出した後にまとめて報告する。規模が大きいこと（直しの範囲を超える・多くのファイルに及ぶ）を理由に見送った指摘は、`records/backlog/` に課題として起票し、同じ PR に入れる。
 - PR を出す手順:
-  1. commit してから `npm run pr:prep -- --push`: main をリベースで取り込み（マージはしない）、生成物の衝突は main の版を取って最後に 1 回だけ作り直し、CI と同じ確認（書式と lint はブランチで変えたファイルだけ。全部のファイルは GitHub の CI が見る）を通し、生成物を main の版に戻して push する（`tools/git/pr-prep.ts` の冒頭）。生成物は PR に入れず、マージの後に GitHub の CI が main で作り直して commit する（並行する PR どうしが生成物で衝突しないように。`plan/design-pr-conflicts.md` 3.1 節）。止まったら、道具が出す直し方に従い（生成物でないファイルの衝突は直して `git add` する。足した ID や録画の番号が main と重なったら、出た `npm run records:renumber` のコマンドで振り直して commit する）、もう一度回す
+  1. commit してから `npm run pr:prep -- --push`（main をリベースで取り込み（マージはしない）、生成物を作り直して CI と同じ確認を通し、生成物を main の版に戻して push する。中身は `tools/git/pr-prep.ts` の冒頭）。生成物は PR に入れず、マージの後に GitHub の CI が main で作り直す。止まったら、道具が出す直し方に従ってもう一度回す。
   2. `gh pr create`
   3. `gh pr merge --auto --squash`（作成直後に自動マージを予約する。マージ方式はスカッシュ）
-- 自動マージを予約した PR が、main が進んで衝突になったか、足した検証記録・結論の ID が main と重なったら、GitHub Actions（`.github/workflows/auto-rebase.yml`）がブランチを 1 つの commit にまとめ、振り直して main を取り込み、push し直す。直したら PR にコメントするので、手元のブランチを `git reset --hard origin/<ブランチ>` で揃える（揃えないと、マージの後にフックがブランチを origin/main に揃えない。揃える前に `pr:prep` を回すと止まる）。直せない衝突も PR へのコメントで知らせるので、`npm run pr:prep -- --push` で直して自動マージを予約し直す（`plan/design-auto-conflict-fix.md`）。
-- マージの後は、メインのチェックアウトの main を origin/main へ早送りし（メインのチェックアウトで編集してマージした作業中の変更は、中身が origin/main と同じなら片付けてから）、マージ済みのブランチを origin/main に揃える（スカッシュマージでは、揃えないと差分の表示にマージ済みの変更が残る）。Claude Code ではフック（`.claude/settings.json` → `tools/git/sync-after-merge.ts`）が、セッションの開始・発言・応答の終わりに行い、応答の終わりに自動マージを予約した PR があれば、マージと main の CI を待って行う。
+- 自動マージを待つ PR の衝突と ID の重なりは、GitHub Actions（`.github/workflows/auto-rebase.yml`）が直して PR にコメントする。直したなら手元を `git reset --hard origin/<ブランチ>` で揃え、直せないなら `npm run pr:prep -- --push` で直して自動マージを予約し直す（`plan/design-auto-conflict-fix.md`）。
+- マージの後に、メインのチェックアウトの main を origin/main へ早送りし、マージ済みのブランチを origin/main に揃える。Claude Code ではフック（`tools/git/sync-after-merge.ts`）が行う。
 - worktree では最初に `npm ci`。
 
 ## 併用ルール（Claude Code / Antigravity）

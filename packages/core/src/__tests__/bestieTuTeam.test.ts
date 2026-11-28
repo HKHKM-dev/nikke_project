@@ -2,7 +2,7 @@
 // S1: ミサイルガイドはフルチャージの発で（ミサイルガイドでないときに）付き、次の発から 3 発にチャージ速度▲・チャージダメージ▲（C-0804）。
 // 最大弾数のリロードの完了で外れるのはミサイルガイド（チャージ速度▲）だけで、チャージダメージ▲は残る（C-0818。V-0589）。
 // S2: フルチャージの発ごとの防御力無視ダメージ（C-0805）と、戦場コントロール・徹甲炸裂弾の間の▲（C-0809）。バースト: 防御力無視の
-// バーストスキルダメージと、そのヒットに乗る同じ発動の防御力無視ダメージ▲（C-0807・C-0808）。射撃の列のグループ分け。
+// バーストスキルダメージと、そのヒットに乗る同じ発動の防御力無視ダメージ▲（C-0807・C-0808）。
 import { describe, expect, it } from 'vitest';
 import { burstHitsOfSlot } from '../burst/schedule.ts';
 import { computeTriggerDamage } from '../damage.ts';
@@ -14,7 +14,6 @@ import { runSimulation } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';
 import { slotPieces, stateItemsOf } from './historyHelpers.ts';
 import {
-  describeEveryShotInOneGroup,
   effectWindows,
   fixedSlot,
   fixedTeam,
@@ -191,11 +190,3 @@ describe('エマ：タクティカル・アップ + ウンファ：タクティ�
     });
   });
 });
-
-const TEAMS = {
-  '単騎（バーストなし）': fixedTeam([BESTIE], 0, { burst: false }),
-  'ベスティー：タクティカル・アップ + ユニ': withYuni,
-  'エマ：タクティカル・アップ + ウンファ：タクティカル・アップ + ベスティー：タクティカル・アップ': tacticalUp,
-};
-
-describeEveryShotInOneGroup(TEAMS);

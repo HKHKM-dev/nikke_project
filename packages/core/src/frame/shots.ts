@@ -152,6 +152,16 @@ export function countShotsInRanges(
   return count;
 }
 
+/**
+ * 区間ごとに数えた発数の和 counted が、枠の射撃の列の発数 total と同じかを確かめ、違えば投げる。区間に隙間か重なりがあると、
+ * 発が落ちるか二重に数えられ、ダメージが誤る（plan/design-workflow-simplification-20.md 1 節）。where は確かめた所（エラーの文に出す）
+ */
+export function assertEveryShotCounted(where: string, slotIndex: number, counted: number, total: number): void {
+  if (counted !== total) {
+    throw new Error(`${where}: slot ${slotIndex} counted ${counted} shots in its ranges, but fired ${total}`);
+  }
+}
+
 /** 部分チャージの発のうち、区間の列 ranges に入るもののチャージの進み（発の順） */
 export function partialShotsInRanges(
   partial: readonly PartialShot[] | undefined,

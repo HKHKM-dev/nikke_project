@@ -15,6 +15,8 @@
 
 推奨: 1 の案 A2 と 2。効きの大きい順に 1・2。PR は 2 本に分ける（1 はコード、2 は文書）。
 
+決定: 推奨のとおり、1 の案 A2 と 2 を行う（オーナーが承認）。
+
 ## 1. 「射撃の列がどのグループにも 1 回ずつ入る」の確かめ
 
 **いま**
@@ -99,3 +101,4 @@
 
 - 2026-11-28: 起案した。
 - 2026-11-28: 見直しの指摘で直した。1 は、確かめを通るテストが減ること（171 本 → 66 本）と、records 層が `simTeamResult` を通らないことを書き、`runSimulation` でも確かめる案 A2 を足して推奨にした。2 は、撮影待ちの書き直しの形（origin/main へリベースする・「Claude Code では」）と表の誤りを直した。
+- 2026-11-28: オーナーが 1 の案 A2 と 2 を承認した。2 つを 1 つの PR で実装した（ブランチを 1 本で進めたため）。1 は、確かめを `frame/shots.ts` の `assertEveryShotCounted` にし、`runSimulation`（`createRunner`）と `simTeamResult` が呼ぶ。`describeEveryShotInOneGroup` の 112 本に加え、同じ確かめを手で書いた 41 本（`partitions every shot`）も消した（`simTeamResult` が同じ条件で投げるので重なる）。そのためだけに回していた編成・`runTeam`・`planTeamRun` も消した。`npm test` は同じ環境で約 72 秒 → 約 55 秒（CPU の user は約 3 分 38 秒 → 約 2 分 43 秒）。2 で AGENTS.md は 17,945 バイト → 16,520 バイト。

@@ -11,7 +11,7 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { rawDefinition } from './data.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { characterOf, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const YAN = 201;
 const SOLDIER_FA = 301;
@@ -44,7 +44,6 @@ const CASES: Record<string, { input: TeamInput; yan: number }> = {
     yan: 0,
   },
 };
-const TEAMS = Object.fromEntries(Object.entries(CASES).map(([name, c]) => [name, c.input]));
 
 describe.each(Object.entries(CASES))('編成: %s', (_name, { input, yan }) => {
   const plan = planTeamRun(input);
@@ -106,5 +105,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, yan }) => {
     expect(plan.skillHits.filter((h) => h.slotIndex === yan)).toEqual([]);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

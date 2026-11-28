@@ -1,10 +1,10 @@
-// Stage 11 紅蓮BS 編: 紅蓮：ブラックシャドウ（225）を含む編成の射撃の刻み・循環の段・1 発の値・射撃の列のグループ分け
+// Stage 11 紅蓮BS 編: 紅蓮：ブラックシャドウ（225）を含む編成の射撃の刻み・循環の段・1 発の値
 // （plan/design-stage11-scarlet-bs.md 7.3〜7.5 節）。実測値は録画 0046（単騎）・47（ラム + デルタ + 紅蓮BS（操作））、2026-09-24。
 import { describe, expect, it } from 'vitest';
 import { computeCadence } from '../cadence.ts';
 import type { EnemyInput } from '../damage.ts';
 import { stanceFrames } from '../frame/firing.ts';
-import { countShotsInRanges, planShots } from '../frame/shots.ts';
+import { planShots } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import { planTeamRun, type SkillHitEvent } from '../frame/plan.ts';
 import type { TeamInput, TeamSlotInput, TeamResult } from '../team.ts';
@@ -21,12 +21,6 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
 
 const REC46 = team([fixedSlot(225)], 0);
 const REC47 = team([fixedSlot(822), fixedSlot(20), fixedSlot(225)], 2);
-const PRACTICAL = team([fixedSlot(82), fixedSlot(330), fixedSlot(225), fixedSlot(191), fixedSlot(172)], 2);
-const TEAMS: Record<string, TeamInput> = {
-  '録画 0046（紅蓮BS 単騎）': REC46,
-  '録画 0047（ラム + デルタ + 紅蓮BS）': REC47,
-  '実戦寄り（リター + クラウン + 紅蓮BS + アリス + アドミ）': PRACTICAL,
-};
 
 function segmentAt(result: TeamResult, slotIndex: number, frame: number) {
   return result.slots[slotIndex]!.segments.find((g) => g.ranges.some((r) => r.start <= frame && frame < r.end))!;
@@ -190,18 +184,5 @@ describe('録画 0046・0047 の実測（1 発の数値、2026-09-24）', () => 
     expect(crit(of(outside, 0))).toBe(511976);
     expect(crit(of(outside, 2))).toBe(1534010);
     expect(crit(of(inside, 0))).toBe(1469135);
-  });
-});
-
-describe.each(Object.entries(TEAMS))('編成 (7.4): %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

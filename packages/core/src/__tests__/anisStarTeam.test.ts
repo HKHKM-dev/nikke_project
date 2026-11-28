@@ -1,7 +1,6 @@
 // アニス：スター（17）を含む編成: S1 のバースト段階の構成の分岐（私だけの星の攻撃力▲は、自分を除く基本バースト段階 1 の味方がいないときだけ。
-// plan/design-anis-star-s1.md）、フルチャージの発ごとの追加ダメージ（perShot）、フルバースト終了時の CT▼、射撃の列のグループ分け。V-0116。
+// plan/design-anis-star-s1.md）、フルチャージの発ごとの追加ダメージ（perShot）、フルバースト終了時の CT▼。V-0116。
 import { describe, expect, it } from 'vitest';
-import { countShotsInRanges } from '../frame/shots.ts';
 import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -159,15 +158,6 @@ describe.each([
 ] as const)('編成: %s', (_name, input, checkTotals) => {
   const sim = runSimulation(input);
   const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
-  });
 
   it.runIf(checkTotals)('stays within 5% per slot and 3% for the team', () => {
     expect(Math.abs(sim.totalDamage - calc.totalDamage) / calc.totalDamage).toBeLessThan(0.03);

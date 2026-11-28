@@ -7,7 +7,7 @@ import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { timerFramesOf } from '../skills/timeline.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam } from './teamHelpers.ts';
+import { characterOf, fixedSlot, fixedTeam } from './teamHelpers.ts';
 
 const slot = (id: number): TeamSlotInput => ({
   ...fixedSlot(id),
@@ -62,5 +62,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(Math.min(...gaps(window.end, uses[1]!))).toBe(before);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

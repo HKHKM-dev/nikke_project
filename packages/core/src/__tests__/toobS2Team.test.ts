@@ -1,8 +1,6 @@
 // 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.2・1.3 節）: 攻撃速度▲（attackSpeed）と、状態の間だけ効く常時の効果（while）。
-// トーブ（192・宝物の段階 3）の S2 と、ソルジャーF.A.（301・SG）の編成（V-0458 の録画 0510〜0512。C-0599〜C-0602）、射撃の列のグループ分け
+// トーブ（192・宝物の段階 3）の S2 と、ソルジャーF.A.（301・SG）の編成（V-0458 の録画 0510〜0512。C-0599〜C-0602）
 import { describe, expect, it } from 'vitest';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import { rateAfterShots, simulateShotFrames } from '../cadence.ts';
 import type { EnemyInput } from '../damage.ts';
 import { firingParams, ZERO_FIRING_BUFFS } from '../frame/firing.ts';
@@ -253,20 +251,6 @@ describe('トーブ（宝物の段階 3）+ ソルジャーF.A.', () => {
     for (const p of critRate) expect(p.effect.value).toBeLessThan(0.0332);
     const frames = base.shots[0]!.frames.slice(0, 9);
     expect(new Set(frames.slice(1).map((f, i) => f - frames[i]!))).toEqual(new Set([39, 40]));
-  });
-});
-
-describe('編成: トーブ（宝物の段階 3）+ ソルジャーF.A.', () => {
-  const TEAM = team(3);
-  const calc = runTeam(TEAM);
-  const plan = planTeamRun(TEAM);
-
-  it('partitions every shot into exactly one group', () => {
-    TEAM.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });
 

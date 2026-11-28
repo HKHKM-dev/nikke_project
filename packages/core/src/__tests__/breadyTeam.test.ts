@@ -1,11 +1,11 @@
 // ブレッディ（520）を含む編成（plan/design-bready.md。V-0785）。語彙は skills/__tests__/bready.test.ts。ここでは味方と組んだ時に:
 // 味方の持続ダメージ▲が付くたびにやみつきの味、分配ダメージ▲が付くとオススメの味（やみつきの味の外だけ）が付き、どちらもチャージ速度▼で
 // 発の間が延びる。やみつきの味の間だけ 3 発ごとにあと味（持続ダメージ）、オススメの味の間だけ発ごとに 6f 後の分配ダメージが出て、バーストの
-// あと味効果▲の 10 秒はあと味の tick に乗る。射撃の列のグループ分け。
+// あと味効果▲の 10 秒はあと味の tick に乗る。
 import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
-import { describeEveryShotInOneGroup, fixedTeam } from './teamHelpers.ts';
+import { fixedTeam } from './teamHelpers.ts';
 
 const BREADY = 520;
 const ROSANNA_CO = 283;
@@ -79,5 +79,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(Math.min(...inside)).toBe(94);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

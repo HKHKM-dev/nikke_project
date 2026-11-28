@@ -2,12 +2,10 @@
 // 攻撃力▲と吸収回復）を、撮影（V-0775）と同じ編成で見る。対象のクラスの絞り込みは targetClass（plan/design-skill-stage9.md 1.1 節）
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput } from '../team.ts';
 import { battleSecondsToFrames, gameSecondsToFrames } from '../time.ts';
 import { piecesOf } from './historyHelpers.ts';
-import { runTeam } from './runTeam.ts';
 import { fixedEnemy, fixedSlot, type FixedSlotOptions, fixedTeam } from './teamHelpers.ts';
 
 const FLOWER = 304;
@@ -74,14 +72,5 @@ describe('ビスケット（防御型・支援型・火力型・支援型の編�
     const supporterHeals = heals.filter((h) => h.slotIndex !== 2);
     expect(new Set(supporterHeals.map((h) => h.slotIndex))).toEqual(new Set([1, 3]));
     expect(supporterHeals.every((h) => burstStarts.has(h.frame) || burstStarts.has(h.frame - 1))).toBe(true);
-  });
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    const calc = runTeam(TEAM);
-    TEAM.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

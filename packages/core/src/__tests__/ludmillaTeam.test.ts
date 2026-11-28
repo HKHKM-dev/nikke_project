@@ -1,12 +1,10 @@
 // ルドミラ：ウィンターオーナー（194）を含む編成（plan/design-ludmilla-wo.md。V-0159）。
 // S1: 通常攻撃の命中 60 回ごとに受けるダメージ▲（3 秒）→ 追加ダメージ（同じ発火の▲が乗る。sequential）と、弾丸チャージ 20 発。
 // S2: コアの命中 60 回ごとに追加ダメージ、フルバースト開始時に自分のクリティカル確率▲。バースト: 自分の攻撃力▲・リロード速度▲。
-// 命中・コアの命中の回数は期待値で数える。射撃の列のグループ分け。
+// 命中・コアの命中の回数は期待値で数える。
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { parseSkillDefinition } from '../skills/parse/definition.ts';
-import { countShotsInRanges } from '../frame/shots.ts';
-import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import { piecesOf } from './historyHelpers.ts';
@@ -90,28 +88,5 @@ describe('ルドミラ：ウィンターオーナー単騎（手入力の条件�
 
   it('never fires S2 on an enemy without a core', () => {
     expect(hitFrames(solo(MANUAL, { ...enemy, hasCore: false }), 'skill2')).toEqual([]);
-  });
-});
-
-// 段 B の編成（ラム I・デルタ II はこの編成でダメージに効く効果を起こさない）と、実戦寄りの編成
-const TEAMS: Record<string, TeamInput> = {
-  単騎: solo(),
-  '段 B（ラム + デルタ + ルドミラ）': team([fixedSlot(822), fixedSlot(20), fixedSlot(LUDMILLA)], 2),
-  '実戦寄り（リター + クラウン + ルドミラ + アリス + ユニ）': team(
-    [fixedSlot(82), fixedSlot(330), fixedSlot(LUDMILLA), fixedSlot(191), fixedSlot(160)],
-    3,
-  ),
-};
-
-describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
-  const calc = runTeam(input);
-  const plan = planTeamRun(input);
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
   });
 });

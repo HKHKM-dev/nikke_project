@@ -11,7 +11,7 @@ import { skillValue } from '../skills/resolve.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import { rawDefinition } from './data.ts';
-import { characterOf, describeEveryShotInOneGroup, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
+import { characterOf, fixedSlot, fixedTeam, rangeEnemyWithEvents } from './teamHelpers.ts';
 
 const SAKURA = 282;
 const DELTA = 20;
@@ -48,7 +48,6 @@ const CASES: Record<string, { input: TeamInput; sakura: number }> = {
     sakura: 0,
   },
 };
-const TEAMS = Object.fromEntries(Object.entries(CASES).map(([name, c]) => [name, c.input]));
 
 describe.each(Object.entries(CASES))('編成: %s', (_name, { input, sakura }) => {
   const plan = planTeamRun(input);
@@ -91,5 +90,3 @@ describe.each(Object.entries(CASES))('編成: %s', (_name, { input, sakura }) =>
     }
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);

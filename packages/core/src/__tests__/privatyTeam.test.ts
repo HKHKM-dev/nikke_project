@@ -7,7 +7,7 @@ import { parseSkillDefinition } from '../skills/parse/definition.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput } from '../team.ts';
 import { piecesOf, stateItemsOf } from './historyHelpers.ts';
-import { describeEveryShotInOneGroup, fixedTeam, rawDefinition, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
+import { fixedTeam, rawDefinition, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
 
 const PRIVATY = 170;
 const PRIVATY_SLOT = 2;
@@ -94,5 +94,3 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(element.every((p) => p.slotIndex === PRIVATY_SLOT)).toBe(true);
   });
 });
-
-describeEveryShotInOneGroup(TEAMS);
