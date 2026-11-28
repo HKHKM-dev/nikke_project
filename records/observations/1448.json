@@ -1,0 +1,169 @@
+[
+  {
+    "id": "1448-01",
+    "recording": "1448",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 9997,
+    "description": "リリーの S1 の窓の中のリリーの胴体の 1 ヒット（距離ボーナスあり・会心なし）。攻撃力▲あり（リリー単騎なので、11 回の窓のどれもリリー自身に付いた）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、モデルの 1 ヒットの格子（レシピ buff-edge の --opt grid。リリーの S1 の▲なし（モデルの f500）・あり（f1000））に ±1.5 で当てた。外れは 2972 個のうち 16 個"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1000,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0898",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1448-02",
+    "recording": "1448",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 8329,
+    "description": "リリーの S1 の窓の外のリリーの胴体の 1 ヒット（距離ボーナスあり・会心なし）。攻撃力▲なし",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、モデルの 1 ヒットの格子（レシピ buff-edge の --opt grid。リリーの S1 の▲なし（モデルの f500）・あり（f1000））に ±1.5 で当てた。外れは 2972 個のうち 16 個"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 500,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0898",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1448-03",
+    "recording": "1448",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [1676, 2617, 3442, 4326, 5209, 6094, 7080, 7859, 8742, 9625, 10507],
+    "description": "S1 の▲の格子に合った増分の続きの、最初の増分の動画のフレーム（11 回。どの続きも 5 秒ほどで▲なしに戻る）。最初の増分（f800）から 876f 後に 1 回目が来て、間はほぼ 883f。2617・7080 は前の▲なしの増分が 2483・6915 で、リロードかジャンプで撃たない間に付いた（6975 前後のジャンプの間にも付いており、撃たない間も数える）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "続きの直前の▲なしの増分: 1675・2483・3439・4324・5207・6089・6915・7857・8739・9622・10505。▲なしに戻った最初の増分: 1972・2853・3745・4618・5506・6386・7268・8207・9036・9965・10801"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0898",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1448-04",
+    "recording": "1448",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 883.5,
+    "description": "S1 の窓の始まり（3〜5 回目。直前の▲なしの増分との間が 2〜3f の回）の間の平均",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "S1 の▲の格子に合った増分の続きの、最初の増分のフレーム（その前の▲なしの増分との間は 2〜3f）を窓の始まりとした。動画のフレームはゲームのフレームと同じ数え方（この録画はバーストが無く、止まりが無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowStartIntervalMean",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "attack",
+        "skip": 2,
+        "count": 3
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0898",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1448-05",
+    "recording": "1448",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 882.67,
+    "description": "S1 の窓の始まり（8〜11 回目。直前の▲なしの増分との間が 2〜3f の回）の間の平均",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "S1 の▲の格子に合った増分の続きの、最初の増分のフレーム（その前の▲なしの増分との間は 2〜3f）を窓の始まりとした。動画のフレームはゲームのフレームと同じ数え方（この録画はバーストが無く、止まりが無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowStartIntervalMean",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "attack",
+        "skip": 7,
+        "count": 4
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0898",
+    "readAt": "2026-11-28"
+  }
+]

@@ -4,18 +4,28 @@
   "checkedAt": "2026-11-28",
   "skills": {
     "skill1": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "ランダムな味方 1 機への発動者基準の攻撃力▲（5 秒）は未対応（説明文にきっかけの無いクールタイムごとのアクティブとみられ、周期を録画で読んでいない。V-0898）",
-          "en": "The caster-based ATK up on 1 random ally (5 s) is not implemented (it looks like a cooldown-based active skill with no trigger in its description, and the cooldown has not been read from recordings. V-0898)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "allies",
-            "trigger": "unknown"
-          }
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 15,
+            "cooldown": true
+          },
+          "target": "allies",
+          "targetCount": 1,
+          "targetRandom": true,
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "説明文にきっかけの無いクールタイムごとのアクティブで、クールタイムは録画で読んだ 15 秒（戦闘開始から）。ランダムな味方 1 機（自分も候補）に、リリーのバフ前の攻撃力 × 説明文の値を足す（5 秒）。モデルは期待値で、候補が k 機なら全員に値の 1/k を付ける",
+            "en": "A cooldown-based active skill with no trigger in its description; the cooldown read from recordings is 15 s (from the start of battle). Lily's pre-buff ATK × the value is added to 1 random ally (herself included) for 5 s. The model uses the expected value: with k candidates, each gets 1/k of the value"
+          },
+          "claims": [
+            "C-1623",
+            "C-1625"
+          ]
         }
       ]
     },
@@ -45,7 +55,11 @@
           "assumes": {
             "ja": "遮蔽物が破壊された味方がいない時の枝（射撃場の敵の攻撃では遮蔽物は壊れない前提で、いつもこちら）。ランダムな味方 1 機（自分も候補）に、リリーのバフ前の攻撃力 × 説明文の値を足す（10 秒）。モデルは期待値で、候補が k 機なら全員に値の 1/k を付ける",
             "en": "The branch for when no ally's cover has been destroyed (always this one, assuming the shooting range enemy's attacks never break cover). Lily's pre-buff ATK × the value is added to 1 random ally (herself included) for 10 s. The model uses the expected value: with k candidates, each gets 1/k of the value"
-          }
+          },
+          "claims": [
+            "C-1624",
+            "C-1625"
+          ]
         }
       ],
       "notes": [

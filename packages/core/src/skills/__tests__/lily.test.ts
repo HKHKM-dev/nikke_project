@@ -95,9 +95,18 @@ describe('リリーの定義（data/skills/852.json）', () => {
     expect(pinned.value).toBeCloseTo(0.4, 12);
   });
 
-  it('takes the Lv1 value of the branch without destroyed cover from the description', () => {
+  it('resolves S1 to a 15-second cooldown active on the same random-ally target, 5 s', () => {
+    const s1 = resolveTimed(applyComposition(definition, [characterOf(LUDMILLA), lily], 1), lily, levels).find(
+      (e) => e.source.skill === 'skill1',
+    )!;
+    expect(s1).toMatchObject({ target: 'allies', targetCount: 1, targetRandom: true, fixedTargets: [0, 1] });
+    expect(s1.value).toBeCloseTo(0.1, 12);
+  });
+
+  it('takes the Lv1 values of S1 and the branch without destroyed cover from the description', () => {
     const at1 = resolveTimed(applyComposition(definition, [lily], 0), lily, { skill1: 1, skill2: 1, burst: 1 });
-    expect(at1).toHaveLength(1);
-    expect(at1[0]!.value).toBeCloseTo(0.2363, 12);
+    expect(at1.map((e) => e.source.skill)).toEqual(['skill1', 'burst']);
+    expect(at1[0]!.value).toBeCloseTo(0.1182, 12);
+    expect(at1[1]!.value).toBeCloseTo(0.2363, 12);
   });
 });

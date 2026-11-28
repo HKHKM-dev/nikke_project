@@ -1,5 +1,5 @@
-// リリー（852）のバースト（遮蔽物が壊れていない時の、ランダムな味方 1 機への発動者基準の攻撃力▲）を、撮影（V-0898）と同じ編成で見る。
-// 「ランダムな味方 N 機」は plan/design-lily.md 2 節
+// リリー（852）の S1（15 秒ごとの、ランダムな味方 1 機への発動者基準の攻撃力▲。C-1623）とバースト（遮蔽物が壊れていない時の、
+// ランダムな味方 1 機への発動者基準の攻撃力▲。C-1624）を、撮影（V-0898）と同じ編成で見る。「ランダムな味方 N 機」は plan/design-lily.md 2 節
 import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
@@ -22,12 +22,16 @@ const DUO: TeamInput = fixedTeam(
   { enemy },
 );
 
+const FIVE_SECONDS = gameSecondsToFrames(5);
 const TEN_SECONDS = gameSecondsToFrames(10);
+// クールタイム 15 秒の周期は ceil(15 ÷ 0.017) フレームごと（C-1623。ココアの S1 と同じ数え方）
+const PERIOD = Math.ceil(15 / 0.017);
 
-const burstUps = (team: TeamInput) =>
+const upsOf = (team: TeamInput, skill: 'skill1' | 'burst') =>
   piecesOf(planTeamRun(team)).filter(
-    (p) => p.sourceSlotIndex === team.slots.length - 1 && p.effect.source.skill === 'burst',
+    (p) => p.sourceSlotIndex === team.slots.length - 1 && p.effect.source.skill === skill,
   );
+const burstUps = (team: TeamInput) => upsOf(team, 'burst');
 const codes = (team: TeamInput) => runSimulation(team).slots[team.slots.length - 1]!.notes.map((n) => n.code);
 
 describe('リリー単騎（撮影 A）', () => {
@@ -35,6 +39,18 @@ describe('リリー単騎（撮影 A）', () => {
     expect(planTeamRun(SOLO).schedule!.activations).toEqual([]);
     expect(burstUps(SOLO)).toEqual([]);
     expect(codes(SOLO)).not.toContain('random-allies-expected');
+  });
+
+  it('gives the whole S1 value to Lily herself every 15 s from the battle start, for 5 s', () => {
+    const ups = upsOf(SOLO, 'skill1');
+    expect(ups.length).toBeGreaterThan(10);
+    expect(Math.abs(ups[0]!.start - PERIOD)).toBeLessThanOrEqual(1);
+    ups.forEach((p, k) => {
+      expect(p.slotIndex).toBe(0);
+      expect(p.start - ups[0]!.start).toBe(PERIOD * k);
+      expect(p.end - p.start).toBe(FIVE_SECONDS);
+      expect(p.effect.value).toBeCloseTo(0.2, 12);
+    });
   });
 });
 
@@ -52,6 +68,12 @@ describe('ルドミラ + リリー（撮影 B）', () => {
       mine.forEach((p) => expect(p.effect.value).toBeCloseTo(0.2, 12));
     }
     expect(codes(DUO)).toContain('random-allies-expected');
+  });
+
+  it('gives half the S1 value to each of the 2 allies at each activation', () => {
+    const ups = upsOf(DUO, 'skill1');
+    expect(new Set(ups.map((p) => p.slotIndex))).toEqual(new Set([0, 1]));
+    ups.forEach((p) => expect(p.effect.value).toBeCloseTo(0.1, 12));
   });
 
   it('gives the whole value only to randomTargetSlot when it is given', () => {
