@@ -1,0 +1,22 @@
+{
+  "id": "C-1591",
+  "text": "アビスタのバーストの「バースト再突入 1 段階」は、アビスタが I を撃った後も段は I のままで（I のタイマーが戻る）、このチェーンでまだ撃っていない別の I（アニス：スター）が撃ってから II に進む。CDN の次の段階（Step1）と同じ",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1425-07`。V-0887",
+  "model": "data/skills/441.json の burst の burstReentry（Step1）。burst/dynamic.ts の burstUnitOf",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/441.json の burst の effects[0]"]
+  },
+  "decidedOn": [],
+  "runs": [
+    {
+      "recording": "1425",
+      "reproduced": "2〜5 回目のチェーン",
+      "observations": ["1425-07"]
+    }
+  ]
+}
