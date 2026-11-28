@@ -20,7 +20,7 @@ describe('定義のスロットの対応状況', () => {
   const support = (id: number, treasure = false) => {
     const def = parseSkillDefinition(rawDefinition(id));
     const skills = treasure ? def.treasureSkills! : def.skills;
-    return [skills.skill1.support, skills.skill2.support, skills.burst.support];
+    return [skills.skill1?.support, skills.skill2?.support, skills.burst?.support];
   };
 
   it('defines the heals of Mary, Rapunzel and Sora, Sora’s Outgoing Healing up and debuff removal, and notes only for Bay and Pascal', () => {
