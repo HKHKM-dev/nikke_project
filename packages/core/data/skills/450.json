@@ -53,18 +53,20 @@
           },
           "target": "topAttack",
           "targetCountRef": 2,
+          "rankTie": "lastSlot",
           "stat": "coreDamage",
           "ref": 3,
           "durationRef": 4,
           "delayFrames": 6,
           "assumes": {
-            "ja": "「通常攻撃で 5 回攻撃した時」は撃った発の通算（1 トリガー = 1 回。ペレットの数ではない。ドレイクの S2 の C-0458 と同じ読み）で数え、5 発ごとに発火して 5 秒を数え直す（重ならない）。「攻撃力が最も高い味方」は最終攻撃力の順位（topAttack）で読む。2 機なので、2 人以下の編成では順位に依らず全員に付く",
-            "en": "\"After performing 5 normal attacks\" counts every normal shot fired (one trigger = one attack, not pellets; read as for Drake's S2, C-0458); each 5th shot fires it and restarts the 5 s (no stacking). \"The ally with the highest ATK\" is read as the final ATK ranking (topAttack). With 2 targets, every member of a team of 2 or fewer gets it regardless of ranking"
+            "ja": "「通常攻撃で 5 回攻撃した時」は撃った発の通算（1 トリガー = 1 回。ペレットの数ではない。ドレイクの S2 の C-0458 と同じ読み）で数え、5 発ごとに発火して 5 秒を数え直す（重ならない）。「攻撃力が最も高い味方」は最終攻撃力の順位（topAttack）で読む。2 機なので、2 人以下の編成では順位に依らず全員に付く。2 位の境の同値は枠の遅い方を選ぶ（C-1627。2 体の同値を、枠の並びを入れ替えて確かめた。3 体以上の同値は見ていない）",
+            "en": "\"After performing 5 normal attacks\" counts every normal shot fired (one trigger = one attack, not pellets; read as for Drake's S2, C-0458); each 5th shot fires it and restarts the 5 s (no stacking). \"The ally with the highest ATK\" is read as the final ATK ranking (topAttack). With 2 targets, every member of a team of 2 or fewer gets it regardless of ranking. A tie at the 2nd place goes to the later slot (C-1627; checked with two tied allies in both slot orders, three or more tied allies not checked)"
           },
           "claims": [
             "C-0592",
             "C-0593",
-            "C-0653"
+            "C-0653",
+            "C-1627"
           ]
         },
         {

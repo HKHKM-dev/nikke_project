@@ -157,3 +157,4 @@
 | （攻撃力▲の）解除条件：フルバーストタイムが終了した時 | timed・状態の中身の `durationUntil: "fullBurstEnd"`（1 パス目で窓を追う stat のうち攻撃力だけ） | アイギスの S2 のパピヨンハート | [design-aigis.md](design-aigis.md) 2.1 節 |
 | 戦闘開始時に付いて続く〈状態〉（静的な状態）の時に限り、自分に〈stat〉▲「持続」「解除不可」 | timed の `battleStart`・`durationUntil: "battleEnd"` と `condition.selfState`（常時の効果の `while` は静的な状態を読めない） | ギルティ：マイティバニーの S2 のチェーンエンハンス（バニーモード：スタンス） | [design-guilty-mighty-bunny.md](design-guilty-mighty-bunny.md) 0.1 節 |
 | 自分が〈状態〉状態の時に限り、自分を除く味方全体に「スキル発動者基準で攻撃力 X%▲」「持続」 | `passive` の `target: "allies"`・`excludeSelf: "always"`・`scaling: "casterAttack"`・`while.selfState`（〈状態〉は付いたり外れたりする状態） | レーベルの S2 の妄想共有 | [design-label.md](design-label.md) 2.1 節 |
+| 最終攻撃力が最も高い／一番低い味方 N 機（説明文に無い、同値のときの選び方） | `rankTie: "lastSlot"`（`topAttack`・`lowestAttack` の timed。同値は枠の遅い順。書かなければ枠の若い順。向きは効果ごとに違うので、録画で確かめた効果にだけ書く） | ナガの S2・ソーダ：トゥインクルバニーの S1 | [design-rank-tie-break.md](design-rank-tie-break.md) 2.1 節 |

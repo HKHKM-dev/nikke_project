@@ -237,7 +237,7 @@ export function rankingRows(rankings: TeamResult['history']['rankings'], slots: 
       targets: r.targets
         .map((i) => `slot ${i + 1} ${slots[i]!.character.name.ja} ${fmt(r.finalAttacks[i]!)}`)
         .join(' / '),
-      tied: r.tied ? 'yes (slot order)' : '',
+      tied: r.tied ? (r.rankTie === 'lastSlot' ? 'yes (last slot)' : 'yes (first slot, assumed)') : '',
     });
   }
   return [...merged.values()];
