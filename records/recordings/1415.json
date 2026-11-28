@@ -42,8 +42,8 @@
   "mode": "range-3min",
   "fixedSpec": true,
   "autoFire": true,
-  "autoBurst": true,
-  "conditionNote": "V-0882 撮影 C: クロウ（2 枠目）・キリ（3 枠目・操作）・デルタ（4 枠目）・ルドミラ（5 枠目）。計画の並び（1〜3 枠目に防御型）と違う。オートバースト OFF の依頼",
+  "autoBurst": false,
+  "conditionNote": "V-0882 撮影 C: クロウ（2 枠目）・キリ（3 枠目・操作）・デルタ（4 枠目）・ルドミラ（5 枠目）・オートバースト OFF（バースト欄に替わり目なし）。計画の並び（1〜3 枠目に防御型・4 枠目にキリ）と違う",
   "backup": {
     "at": "2026-11-28T17:09+09:00",
     "via": "cloud-move",

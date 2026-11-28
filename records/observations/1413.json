@@ -1,0 +1,181 @@
+[
+  {
+    "id": "1413-01",
+    "recording": "1413",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 0.3157,
+    "description": "キリのバーストの窓（フルバーストの始まり（III のタイマーの 00.00。1344・3723・6113・8641・11064f）から終わりまで。5 回）の中の、ルドミラ（防御型）の通常攻撃の 1 ヒットのうち会心の割合（185/586）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、モデルの 1 ヒットの格子（レシピ buff-edge の --opt grid。ルドミラ・デルタはキリの S1 の▲あり（フルバーストの外は f1500、中は f800）・なし（f1280・f670）、キリは f1500・f800。会心の有無は格子の /c0・/c1 で分けた）に ±1.5 で当てた。ルドミラの 1 ヒットだけに合った増分（ほかの枠の発と同じフレームの和は数えない）を数えた。キリのバーストの窓（モデルではバーストの使用から 588f）はフルバーストの始まりの 6f 前から終わりの 6f 前までで、フルバーストの区間で代えた。許容は発の数の二項の 2σ。▲が付かないなら 0.15"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 800
+      },
+      "tolerance": {
+        "abs": 0.039
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0882",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1413-02",
+    "recording": "1413",
+    "kind": "rate",
+    "use": "compare",
+    "unit": "割合",
+    "value": 0.1548,
+    "description": "キリのバーストの窓の外（フルバーストの外）の、ルドミラの通常攻撃の 1 ヒットのうち会心の割合（260/1680）",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、モデルの 1 ヒットの格子（レシピ buff-edge の --opt grid。ルドミラ・デルタはキリの S1 の▲あり（フルバーストの外は f1500、中は f800）・なし（f1280・f670）、キリは f1500・f800。会心の有無は格子の /c0・/c1 で分けた）に ±1.5 で当てた。数え方は窓の中と同じ。許容は発の数の二項の 2σ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 1500
+      },
+      "tolerance": {
+        "abs": 0.017
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0882",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1413-03",
+    "recording": "1413",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 8841,
+    "description": "キリの S1 の窓の中・フルバーストの外のルドミラの胴体の 1 ヒット（会心なし）。攻撃力▲あり",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、モデルの 1 ヒットの格子（レシピ buff-edge の --opt grid。ルドミラ・デルタはキリの S1 の▲あり（フルバーストの外は f1500、中は f800）・なし（f1280・f670）、キリは f1500・f800。会心の有無は格子の /c0・/c1 で分けた）に ±1.5 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0882",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1413-04",
+    "recording": "1413",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 8242,
+    "description": "キリの S1 の窓の外（キリのリロードの間）・フルバーストの外のルドミラの胴体の 1 ヒット（会心なし）。攻撃力▲なし",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、モデルの 1 ヒットの格子（レシピ buff-edge の --opt grid。ルドミラ・デルタはキリの S1 の▲あり（フルバーストの外は f1500、中は f800）・なし（f1280・f670）、キリは f1500・f800。会心の有無は格子の /c0・/c1 で分けた）に ±1.5 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1280,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0882",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1413-05",
+    "recording": "1413",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 227798,
+    "description": "キリの S1 の窓の中・フルバーストの外のデルタのコアの 1 ヒット（会心なし）。攻撃力▲あり",
+    "method": {
+      "tool": "recipe:buff-edge@9（--opt grid）の増分ごとの当て方",
+      "note": "HUD の増分を、モデルの 1 ヒットの格子（レシピ buff-edge の --opt grid。ルドミラ・デルタはキリの S1 の▲あり（フルバーストの外は f1500、中は f800）・なし（f1280・f670）、キリは f1500・f800。会心の有無は格子の /c0・/c1 で分けた）に ±1.5 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1500,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0882",
+    "readAt": "2026-11-28"
+  }
+]

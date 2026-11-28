@@ -4,7 +4,7 @@
   "state": "仮説",
   "topic": "スキル・キャラ固有",
   "grade": "推論",
-  "basis": "V-0882",
+  "basis": "撮影 B（録画 1413・1414）の編成には「回復を受けた時」の効果を持つ味方がいないので、付く時と回数は見ていない。持続回復のツールチップの読みと、ノイズのバーストの C-1174 からの類推。V-0882",
   "model": "反映（data/skills/33.json の burst の effects[0]（heal・burstUse・allies・ref 1・durationRef 2））",
   "replaces": [],
   "updated": "2026-11-28",
