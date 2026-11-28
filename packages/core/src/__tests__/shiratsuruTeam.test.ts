@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
 import { effectFrameOf } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
+import { fullChargeFrameSet } from '../frame/shots.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
@@ -44,8 +45,7 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
 
   it('heals every ally at each Burst and on every 3rd full-charge shot', () => {
     const log = plan.shots[s]!;
-    const partial = new Set((log.partialShots ?? []).map((p) => p.frame));
-    const fullCharge = log.frames.filter((f) => !partial.has(f));
+    const fullCharge = log.frames.filter(fullChargeFrameSet(log));
     const third = fullCharge.filter((f, k) => (k + 1) % 3 === 0 && f + 1 < plan.frames);
     expect(third.length).toBeGreaterThan(10);
     // 射撃の回数起点の回復は、後ろの枠には発と同じフレーム、自分と前の枠には次のフレーム（skills/heals.ts の healFrameOf）
