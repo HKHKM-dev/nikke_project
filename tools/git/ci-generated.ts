@@ -13,10 +13,8 @@
 // 使う。main は PR 必須で、GITHUB_TOKEN（github-actions[bot]）は ruleset の bypass に足せないので、デプロイキーを bypass に足してある。
 // 鍵を使うジョブを確認のジョブと分けるのは、確認で回すコード（依存のパッケージを含む）に鍵を見せないため（plan/design-deploy-key-scope.md 2 節）。
 import { spawnSync } from 'node:child_process';
-import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
-import { dirname, join } from 'node:path';
 import { GENERATED_PATHS, ROOT } from '../../packages/core/scripts/records-data.ts';
-import { commitGenerated, type GitRun } from './ci-generated-lib.ts';
+import { commitGenerated, exportGenerated, type GitRun, restoreGenerated } from './ci-generated-lib.ts';
 import { sshEnv } from './deploy-key.ts';
 import { nulPaths, pathListArgs, splitGenerated } from './pr-prep-lib.ts';
 import { cliArgs } from '../../packages/core/scripts/cli.ts';
@@ -45,11 +43,7 @@ function changedFiles(): { generated: string[]; other: string[] } {
 const onMain = process.env['GITHUB_EVENT_NAME'] === 'push';
 
 if (values.export !== undefined) {
-  // 変わったものだけでなく全部を写す（artifact が空にならない。鍵のジョブは差分を自分で取る）
-  for (const p of GENERATED_PATHS) {
-    mkdirSync(dirname(join(values.export, p)), { recursive: true });
-    copyFileSync(join(ROOT, p), join(values.export, p));
-  }
+  exportGenerated(ROOT, values.export, GENERATED_PATHS);
   console.log(`鍵のジョブに渡す生成物のうち、作り直しで変わったもの: ${changedFiles().generated.join('・') || 'なし'}`);
   process.exit(0);
 }
@@ -67,9 +61,7 @@ if (values.commit === undefined) {
 
 if (!onMain) throw new Error('--commit は main への push の CI でだけ回す');
 try {
-  // 生成物のパスのものだけを戻す（ほかのファイルは artifact にあっても読まない）
-  const from = values.commit;
-  for (const p of GENERATED_PATHS) if (existsSync(join(from, p))) copyFileSync(join(from, p), join(ROOT, p));
+  console.log(`artifact から戻した生成物: ${restoreGenerated(values.commit, ROOT, GENERATED_PATHS).length} 件`);
   console.log(
     commitGenerated({
       generated: changedFiles().generated,

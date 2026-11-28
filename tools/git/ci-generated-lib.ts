@@ -1,5 +1,7 @@
 // main への push の CI で、作り直した生成物を commit して push する決まりごと（plan/design-pr-conflicts.md 5 節）。git を呼ぶ部分
 // （ci-generated.ts）と分けてテストする。
+import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 
 /** 書き込みのできるデプロイキーの秘密鍵を置く secret の名前 */
 export const DEPLOY_KEY_SECRET = 'GENERATED_DEPLOY_KEY';
@@ -81,4 +83,28 @@ export function commitGenerated(input: CommitGeneratedInput): string {
  */
 export function isNotFastForward(stderr: string): boolean {
   return /^\s*! \[rejected\].*\((?:non-fast-forward|fetch first)\)/m.test(stderr);
+}
+
+/**
+ * --export: 生成物を全部 root から dir に写す（変わったものだけでなく全部。artifact が空にならない。鍵のジョブは差分を自分で取る）
+ */
+export function exportGenerated(root: string, dir: string, paths: readonly string[]): void {
+  for (const p of paths) {
+    mkdirSync(dirname(join(dir, p)), { recursive: true });
+    copyFileSync(join(root, p), join(dir, p));
+  }
+}
+
+/**
+ * --commit: dir（artifact）にある生成物を root に戻し、戻したパスを返す。生成物のパスのものだけを読み、ほかのファイルは dir に
+ * あっても読まない（artifact は確認のジョブが書くので、そこで回るコードが何を置いても、鍵のジョブが commit するのは生成物だけ）
+ */
+export function restoreGenerated(dir: string, root: string, paths: readonly string[]): string[] {
+  const restored: string[] = [];
+  for (const p of paths) {
+    if (!existsSync(join(dir, p))) continue;
+    copyFileSync(join(dir, p), join(root, p));
+    restored.push(p);
+  }
+  return restored;
 }

@@ -1,7 +1,7 @@
 # デプロイキーを使えるジョブを main の版のコードに限る（2026-11-22）
 
 - 何のための文書か: 書き込みのできるデプロイキー（secret の `GENERATED_DEPLOY_KEY`）を使えるジョブを、main で動く、main の版のコードだけを回すジョブに限る変更の、目的・案・決定を残す。
-- 関連: デプロイキーを足した回（[design-pr-conflicts.md](design-pr-conflicts.md) 5 節）、自動マージを待つ PR の衝突の直し（[design-auto-conflict-fix.md](design-auto-conflict-fix.md)）、道具（`tools/git/auto-rebase.ts`・`tools/git/ci-generated.ts`）。
+- 関連: デプロイキーを足した回（[design-pr-conflicts.md](design-pr-conflicts.md) 5 節）、自動マージを待つ PR の衝突の直し（[design-auto-conflict-fix.md](design-auto-conflict-fix.md)）、道具（`tools/git/auto-rebase.ts`・`tools/git/auto-rebase-jobs.ts`・`tools/git/ci-generated.ts`）。
 
 ## 1. 目的
 
@@ -51,7 +51,29 @@ environment の secret は、その environment を指したジョブにしか�
 - エージェントは、CI を通るコードを自動マージで main に入れられ、そのコードは main の CI で鍵の近くで動く。この変更で変わるのは、鍵に届くコードが「main に入って CI を通り、履歴に残ったもの」に限られること。
 - `prepare` のジョブはブランチの道具を main の push の実行の中で回すので、そのジョブの中のもの（作業ツリー・artifact）はブランチの道具が書き換えうる。鍵のジョブは、それを data として形を確かめて使う（2.2 節）。
 
+## 5. find から prepare に渡す PR の大きさ
+
+### 5.1 問題
+
+- `find` は直してみる PR を、ジョブの出力 `prs` で `prepare` に渡し、`prepare` はそれを環境変数 `PRS` で受ける（`prepare` は token を持たないため。2.2 節）。
+- `find` は REST の PR オブジェクトを丸ごと（1 本で約 18KB）渡していた。Linux では環境変数 1 つは 128KiB（MAX_ARG_STRLEN）までなので、直す PR が 7 本ほどになると `prepare` の node が起動できず（E2BIG）、どの PR も直らない。
+
+### 5.2 案
+
+- **案 1（採る）: `prepare` が読む欄だけにする**。`find` の版の道具が欄を絞り、ワークフローは変えない。
+- **案 2: ファイルで渡す**。`find` が JSON を artifact に置き、`prepare` が取り出す。大きさの上限は無くなるが、ワークフローに段が 2 つ増える。
+
+### 5.3 決定と理由
+
+決定（2026-11-28）: 案 1。あわせて、上限に入りきらない PR は次の実行に回す。
+
+- `prepare` が読む欄は、番号・状態・題名・`mergeable`・自動マージの予約・head（ブランチ・sha・リポジトリの名前）だけ（`auto-rebase.ts` の `fix`、`auto-rebase-jobs.ts` の `prepareEntries`、`isTarget`）。本文は読まない（題名と本文の書き換えは、`push` が API で引き直した PR で行う）。自動マージの予約は、有無だけを残す（予約の中身にはマージの commit の文が入り、大きくなりうる）。
+- 絞ると 1 本で約 0.3KB になる（この時点の閉じた PR 30 本で 276〜397 バイト）。`find` が見るのは開いた PR の 1 ページ（100 本）までなので、題名が全部 256 文字の日本語でも、上限に収まる（テストで確かめる）。
+- ブランチの名前の長さには決まった上限が無いので、それでも超える場合に備え、`find` は上限（120KiB）に入りきらない PR を `targets` からも外して次の実行に回す（ワークフローの warning に出す）。詰める順は API の返す順なので、回される PR は毎回同じになりうる。1 本で上限を超える PR は直らないままになるが、ブランチの名前が 100KB を超えるときだけなので扱わない。
+- 案 2 を採らないのは、案 1 で上限に届かず、ワークフローの段（artifact の受け渡し）を増やす理由が無いため。`prepare` に渡すものが減るだけで、ジョブの権限・鍵の扱い（2 節）は変えない。
+
 ## 経過
 
 - 2026-11-22: 起案し、案 A をオーナーが承認した。ワークフローと道具を直した（2.2 節）。GitHub の設定（2.1 節）は、マージの前にオーナーが行う。
 - 2026-11-22: オーナーが 2.1 節の設定をし（鍵は作り直した）、マージした。main の CI の `commit` のジョブは、古い鍵とリポジトリの secret を消した後の実行でも、environment の secret の鍵で origin を読み書きできた（ls-remote と push --dry-run）。衝突の直しの `prepare`・`push` は、直す PR が無く、まだ回っていない。
+- 2026-11-28: `find` が `prepare` に渡す PR を読む欄だけにし、上限に入りきらない PR を次の実行に回すようにした（5 節）。
