@@ -5,9 +5,9 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`1295-16`・`1295-22`・`1295-23`・`1296-17`・`1296-23`・`1296-24`。V-0818",
-  "model": "data/skills/104.json（skill1 の effects[0]。firstShotDelayFrames 112）",
+  "model": "data/skills/104.json（skill1 の effects[0]。firstShotAfterSwapFrames 99。持ち替えの時の元の SG の状態による最初の発の違いは C-1566）",
   "replaces": [],
-  "updated": "2026-11-21",
+  "updated": "2026-11-28",
   "subject": {
     "places": ["data/skills/104.json の skill1 の effects[0]"]
   },
@@ -22,12 +22,6 @@
       "observations": ["1295-16", "1296-17"],
       "element": "ソルジャーF.A. burst.notes[0]",
       "reason": "ソルジャーF.A. のバーストの最大HP▲ は自分だけに付く。ドレイク：グレイトヴィランの遅刻の▲が読むのはドレイク：グレイトヴィラン自身の最終最大HP なので、その値には入らない",
-      "decided": "2026-11-21"
-    },
-    {
-      "observations": ["1295-22", "1295-23", "1296-23", "1296-24"],
-      "element": "ドレイク：グレイトヴィラン skill1.notes[0]",
-      "reason": "未対応の notes が言う違い（リロード中に持ち替えた回の最初の発が早い）そのものを読んだ観測値。結論の文に書き、モデルの待ちは撃っている途中の回の値にした",
       "decided": "2026-11-21"
     }
   ]

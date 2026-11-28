@@ -636,5 +636,59 @@
     },
     "source": "V-0818",
     "readAt": "2026-11-21"
+  },
+  {
+    "id": "1296-28",
+    "recording": "1296",
+    "use": "compare",
+    "kind": "timing",
+    "unit": "f",
+    "value": [135, 135],
+    "description": "2・3 回目のフルバーストの、III のタイマーの 00.00 からドレイク：グレイトヴィランのオーバーオーバードライブの最初の発までの動画のフレーム。どちらも元の SG を撃っている途中（最後の発は 00.00 の 19f・7f 前）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00、tools/captures/reticle-ammo.ts",
+      "note": "最初の発は 1296-24 と同じ。元の SG の発は 1295-27 と同じ読み方"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstToWeaponChangeShot",
+      "args": {
+        "slot": 3,
+        "n": "1,2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0879",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1296-29",
+    "recording": "1296",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": [
+      [38, 4, 135],
+      [19, 6, 135],
+      [7, 5, 135],
+      [7, 0, 128]
+    ],
+    "description": "フルバーストごと（1〜4 回目）の、[元の SG の最後の発が III のタイマーの 00.00 の何 f 前か, その発の後の残弾, 00.00 からオーバーオーバードライブの最初の発まで]（動画のフレーム）。4 回目はマガジンの最後の発（残弾 1 → 0）の 7f 後に 00.00 で、リロードに入った直後（構え解除の途中）。モデルの 4 回目は、最後の発が 00.00 の 18f 前で構え解除が明けている（元の SG の発の時刻の残差）ので比べない",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@4 の 00.00、tools/captures/reticle-ammo.ts",
+      "note": "1295-28 と同じ読み方"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0879",
+    "readAt": "2026-11-28"
   }
 ]

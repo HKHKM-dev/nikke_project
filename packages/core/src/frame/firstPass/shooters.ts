@@ -168,13 +168,13 @@ export function createShooters({
   /**
    * フレーム f に始まった枠 i の使用武器変更の最初の発のフレーム（plan/design-red-hood.md 7.1 節の論点 13。V-0639）。
    * 持ち替えは、変更を開いた発動（効果の発火が f 以前の、枠 i の最後の発動）がフルバーストに入るなら窓の始まり、ほかは f。持ち替えの時の
-   * 基礎の武器が、リロード中ならそのまま、構え解除の途中（最後の発から aimOutFrames 未満）なら構え解除の終わりから after を数え、
-   * 構え直し・チャージの途中（まだ撃っていない枠も）なら構え解除 1 回分を足す
+   * 基礎の武器の状態で武器が空くフレーム（frame/shooter.ts の weaponFreeFrameAtSwap）から after を数える
    */
   const firstShotAfterSwap = (i: number, f: number, after: number): number => {
     const opened = activationsOf().findLast((a) => a.slotIndex === i && effectFrameOf(a) <= f);
     const swap = opened?.startsFullBurst ? Math.max(f, hexagonFrameOf(opened)) : f;
-    return weaponFreeFrameAtSwap(shooters[i]!, logs[i]?.frames.at(-1), swap, model) + after;
+    const base = slots[i]!.character.shot;
+    return weaponFreeFrameAtSwap(shooters[i]!, logs[i]?.frames.at(-1), swap, model, isChargeWeapon(base)) + after;
   };
   // V-0605: 枠ごとの撃たない区間（狙えない窓と、その枠の holdFire を合わせたもの）と、いま見ている区間の添字
   const slotBlocks = slotBlockRanges(slots.length, untargetable, options.holdFire);
