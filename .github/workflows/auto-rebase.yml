@@ -3,13 +3,16 @@ name: 衝突の直し
 # 自動マージを予約した PR が、main が進んで衝突になったか、足した ID が main と重なったら、main を取り込んで push し直す
 # （plan/design-auto-conflict-fix.md。中身は tools/git/auto-rebase.ts）。PR のブランチへの push はデプロイキー（environment の
 # main-push の secret の GENERATED_DEPLOY_KEY）で行うので、PR の CI が起きる。PR のブランチの道具を回す prepare のジョブには鍵を
-# 渡さず、鍵を持つ push のジョブは main の版の道具と git だけを使う（plan/design-deploy-key-scope.md 2 節）
+# 渡さず、鍵を持つ push のジョブは main の版の道具と git だけを使う（plan/design-deploy-key-scope.md 2 節）。main の push の実行は main の
+# スコープのキャッシュを書けるので、どのジョブにもキャッシュを書かせない（prepare は読むだけ。6 節）
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
 permissions: {}
+
+cache-mode: none
 
 # 1 本ずつ回す。走っている実行は止めない（直している途中で止めない）。待っている古い実行は後の実行に置き換わり、後の実行が全部を見直す
 concurrency:
@@ -45,6 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    cache-mode: read
     outputs:
       entries: ${{ steps.prepare.outputs.entries }}
     steps:
@@ -57,8 +61,8 @@ jobs:
       # ID の空きはどのブランチも足していない番号から選び、PR のブランチを取り出すので、全部のブランチの履歴を取る
       - run: git fetch --quiet --unshallow origin '+refs/heads/*:refs/remotes/origin/*'
       - run: npm ci
-      # pr:prep の records:minimal が使う、観測値のモデルの予測値の覚え（ci.yml と同じキー）。PR のブランチの道具が書いた覚えは
-      # main の覚えに入れない（戻すだけで、保存しない）
+      # pr:prep の records:minimal が使う、観測値のモデルの予測値の覚え（ci.yml と同じキー）。戻すだけで、保存しない（ジョブの
+      # cache-mode: read で、このジョブのコードはキャッシュを書けない）
       - uses: actions/cache/restore@v6
         with:
           path: node_modules/.cache/residuals
