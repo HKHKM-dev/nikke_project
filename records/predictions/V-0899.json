@@ -1,0 +1,109 @@
+{
+  "verification": "V-0899",
+  "note": "撮影の予測。ツバイ（I・宝物の段階 3）+ シラツル（II・操作）。鉄甲の BigArms・3 分モード・スペック固定 ON（スキル Lv10）・オートバースト ON。III がいないので、チェーンは I・II の後に時間切れで戻る。シラツルの CT は 40 秒なので、シラツルのバーストは 2 回に 1 回のチェーンだけ（もう 1 回は I だけで時間切れ）",
+  "team": [
+    {
+      "rid": 390,
+      "treasurePhase": 3
+    },
+    {
+      "rid": 620,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（バースト使用時から 10 秒、自分に貫通特化。窓の中のシラツルの通常攻撃に、ツバイの貫通学概論の貫通ダメージ▲が攻撃ダメージ▲と同じ和で乗る）"
+    },
+    {
+      "id": "H0",
+      "note": "貫通特化を計算に入れない（バーストの effects[1] を外す）。シラツルの発に貫通ダメージ▲は乗らない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 620,
+            "skill": "burst",
+            "index": 1
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "1 回目のバーストの前のシラツルの 1 ヒット（コア・会心なし・距離なし）。仮説で変わらない"
+    },
+    {
+      "id": "in",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のシラツルのバーストの 10 秒の中（ツバイの貫通学概論の中）のシラツルの 1 ヒット"
+    },
+    {
+      "id": "no-pierce",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1800,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "シラツルが CT でツバイだけが撃ったチェーン（貫通学概論の中・貫通特化なし）のシラツルの 1 ヒット。仮説で変わらない"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-28",
+    "commit": "382a7bfe079c71a774be0d212a49fcd93a25bee5",
+    "values": {
+      "H1": {
+        "before": 275656.00800000003,
+        "in": 344652.7068024,
+        "no-pierce": 275656.00800000003
+      },
+      "H0": {
+        "before": 275656.00800000003,
+        "in": 275656.00800000003,
+        "no-pierce": 275656.00800000003
+      }
+    }
+  }
+}

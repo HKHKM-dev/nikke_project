@@ -1,0 +1,104 @@
+{
+  "formatVersion": 1,
+  "resourceId": 620,
+  "checkedAt": "2026-11-28",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分が誓約解除状態でない時の、味方全体の回復独占誓約（発動者基準の最大HP▲・持続）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Healing Monopoly Oath on all allies while this unit is not in Oath Released (caster-based Max HP up, continuous) does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp",
+          "effect": {
+            "kind": "passive",
+            "stat": "maxHp",
+            "target": "allies"
+          }
+        },
+        {
+          "ja": "自分が発動した効果でない回復効果が自分に適用された時に自分に付く誓約違反立証（与える HP 回復量▼・3 スタック・持続）は、それ自体は与ダメージを変えない（自分の回復の量だけを変える）。最大数になった時の S2 の誓約解除は未対応（S2 の notes）",
+          "en": "Oath Violation Evidence, applied to self when a healing effect not triggered by this unit is applied to this unit (outgoing healing down, 3 stacks, continuous), does not change damage by itself (it only changes the amount this unit heals). Oath Released in S2 at max stacks is not implemented (S2 notes)",
+          "kind": "indirect",
+          "path": "hp",
+          "effect": {
+            "kind": "timed",
+            "stat": "healDealt",
+            "target": "self",
+            "trigger": "healed"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "heal",
+          "trigger": {
+            "count": "fullChargeShot",
+            "everyRef": 1
+          },
+          "target": "allies",
+          "ref": 2,
+          "scaling": "casterFinalMaxHp",
+          "assumes": {
+            "ja": "「回復独占誓約状態の味方全体」は、シラツルが誓約解除にならない間は自分を含む味方全体（S1 の回復独占誓約が付いたまま）。誓約解除は未対応（notes）なので、モデルではずっと味方全体に付く",
+            "en": "\"All allies in Healing Monopoly Oath\" are all allies, including this unit, while Snow Crane is not in Oath Released (S1's oath stays on). Oath Released is not implemented (notes), so in the model it always goes to all allies"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルバーストタイムが発動した時の味方全体のバリア（10 秒）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは味方がバリア適用状態にならない。バリアの量は要件 5.2 節の外）",
+          "en": "The barrier on all allies when Full Burst starts (10 s) does not change damage by itself (it matters only with an effect reading barriers in the team; it is not defined, so the model does not put allies in a barrier state; the barrier amount is out of scope, requirements 5.2)",
+          "kind": "indirect",
+          "path": "barrier",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "fullBurstStart"
+          }
+        },
+        {
+          "ja": "自分の誓約違反立証（S1）が最大数になった時の誓約解除（誓約違反立証の免疫・持続）は定義していない。誓約解除になると、S1 の回復独占誓約が外れ、この S2 のフルチャージ 3 回ごとの回復が止まる。きっかけ（自分が発動した効果でない回復が適用された時）と「〈状態〉でない時のみ」の持続の語彙が無い。モデルは誓約解除にならない（ほかの味方の回復を受けない編成では起きない）。回復が止まると、回復を受けた時の効果を持つ味方の発動を変えうる",
+          "en": "Oath Released (immunity to Oath Violation Evidence, continuous), applied when this unit's Oath Violation Evidence (S1) reaches max stacks, is not defined. Once released, S1's Healing Monopoly Oath is removed and this S2's heal every 3 full-charge shots stops. There is no vocabulary for the trigger (a heal not triggered by this unit is applied) or for a continuous effect \"only while not in a state\". The model never enters Oath Released (it does not happen in a team where no other ally heals). Stopping the heal could change the activation of allies' effects triggered on being healed",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "allies",
+            "trigger": "healed"
+          }
+        },
+        {
+          "ja": "誓約解除の時の自分の持続回復（スキル発動者の最終最大HP の X%・1 秒間隔・持続）は、ダメージに関係しない（自分にだけ付き、自分が発動した回復はシラツルの S1 を起こさないので、どの味方のスキルの発動も変えない）",
+          "en": "The heal over time on self while in Oath Released (X% of the caster's final max HP, every 1 s, continuous) does not affect damage (it applies only to this unit, and a heal triggered by this unit does not trigger Snow Crane's S1, so it changes no ally's skill activation)",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 1,
+          "scaling": "casterFinalMaxHp"
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "pierce",
+          "durationRef": 2,
+          "assumes": {
+            "ja": "それ自体は与ダメージを変えない。窓の中の自分の通常攻撃に、味方の貫通ダメージ▲を攻撃ダメージ▲と同じ和で乗せる（C-1031 の形）",
+            "en": "It does not change damage by itself. It makes allies' Pierce Damage ups apply to this unit's normal attacks in the window, summed with Attack Damage ups (the C-1031 form)"
+          }
+        }
+      ]
+    }
+  }
+}
