@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 178・効果 1248（根拠あり 1226）・notes 377（根拠あり 163）
+件数: キャラ 178・効果 1248（根拠あり 1226）・notes 376（根拠あり 162）
 
-notes の種類: 未対応 24・前提の外 133・計算に無関係 78・補足 44・間接 98
+notes の種類: 未対応 23・前提の外 133・計算に無関係 78・補足 44・間接 98
 
-スロット: supported 501・partial 19・unsupported 4・noEffect 67
+スロット: supported 502・partial 18・unsupported 4・noEffect 67
 
 ## 10 ラピ
 
@@ -569,8 +569,8 @@ notes の種類: 未対応 24・前提の外 133・計算に無関係 78・補�
 - **skill2**: noEffect
   - notes[0] 前提の外: ニケを除いた敵が 5 機以上の時だけの自分の会心率▲・会心ダメージ▲は、敵 1 体では起きない: C-0443（範囲外）
 - **burst**: partial
-  - effects[0] weaponChange・burstUse: C-1433（確定）
-  - notes[0] 未対応: 持ち替えの直前（III のタイマーの 00.00 の 10〜15f 前）に基礎の SR を撃った回は、変更後の武器の 1 発が 3〜8f 遅れた（V-0824）。モデルは待ちの即値で、基礎の SR の状態を見ない: C-1433（確定）
+  - effects[0] weaponChange・burstUse: C-1433（確定）、C-1567（仮説）
+  - notes[0] 未対応: 持ち替えの時に基礎の SR の構え解除がまだ終わっていない回は、変更後の武器の 1 発がその残りだけ遅れる（C-1567）。モデルは待ちの即値で、基礎の SR の状態を見ない。構え解除の途中で早くなるレッドフード（C-0897）の規則と向きが逆で、共通の規則にできていない: C-1433（確定）、C-1567（仮説）
 
 ## 103 ラプラス：アルティメットヒーロー
 
@@ -596,10 +596,9 @@ notes の種類: 未対応 24・前提の外 133・計算に無関係 78・補�
 
 ## 104 ドレイク：グレイトヴィラン
 
-- **skill1**: partial
-  - effects[0] weaponChange・fullBurstStart: C-1427（確定）
+- **skill1**: supported
+  - effects[0] weaponChange・fullBurstStart: C-1427（確定）、C-1566（確定）
   - effects[1] ammoDecrease・使用武器の変更が終了した時: C-1428（確定）
-  - notes[0] 未対応: 持ち替えの時に元の SG がリロード中だった回は、オーバーオーバードライブの最初の発が、撃っている途中だった回より 7〜12f 早い（V-0818 の 4 回目のフルバースト）。モデルはどの回も同じ待ち（firstShotDelayFrames）で、元の SG の状態による違いは扱っていない: C-1427（確定）
 - **skill2**: supported
   - effects[0] timed・fullBurstEnd・maxHpOnly: C-1429（確定）
   - effects[1] timed・battleStart・attack（読む: HP）: C-1429（確定）
@@ -2117,7 +2116,7 @@ notes の種類: 未対応 24・前提の外 133・計算に無関係 78・補�
   - effects[3] state・burstUse・theLastHowl: C-0920（確定）
   - effects[4] cooldownReduction・burstUse: C-0894（確定）
   - effects[5] state・burstUse・redWolf: C-0899（確定）
-  - effects[6] weaponChange・burstUse: C-0896（確定）、C-0897（確定）
+  - effects[6] weaponChange・burstUse: C-0896（確定）、C-0897（確定）、C-1566（確定）
   - effects[7] timed・burstUse・chargeSpeed: C-0899（確定）
   - notes[0] 補足: 使用武器変更の発射レートは、CDN のバーストが使用武器の変更の形（ChangeWeapon）でないので無い。チャージ武器の発の間隔はチャージ時間と解放で決まり、レートを読まないので、基礎の武器のレート（60）を書いた: 根拠なし
   - notes[1] 計算に無関係: バーストⅡの、自分にヘイト：敵全体を挑発は、ダメージに関係しない。付けたときにゲージを溜めても、チェーンの間はゲージを足さないので効かない: 根拠なし

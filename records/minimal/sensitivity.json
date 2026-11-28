@@ -35879,6 +35879,168 @@
       "error": "minus: dropEffects: rid 200 の skill1 に 1 番目の効果が無い"
     },
     {
+      "observation": "1300-11",
+      "element": "マクスウェル burst.effects[0]",
+      "key": "6051d2be3881430f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1300-12",
+      "element": "マクスウェル burst.effects[0]",
+      "key": "d899b7b5fabc48f6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1300-13",
+      "element": "マクスウェル burst.effects[0]",
+      "key": "9c51d658ea3d0e53",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1300-14",
+      "element": "マクスウェル burst.effects[0]",
+      "key": "28ac8ab2669fc9db",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1300-15",
+      "element": "マクスウェル burst.effects[0]",
+      "key": "0930aedcf4072e99",
+      "effective": true,
+      "minus": -9720948.1965,
+      "plus": null
+    },
+    {
+      "observation": "1300-16",
+      "element": "マクスウェル burst.effects[0]",
+      "key": "b631c58babab654a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1300-17",
+      "element": "マクスウェル burst.effects[0]",
+      "key": "084fe4e84a235323",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1300-18",
+      "element": "マクスウェル burst.effects[0]",
+      "key": "b48a1ece6faa593b",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の起点の後に変更後の武器の発が無い"
+    },
+    {
+      "observation": "1300-20",
+      "element": "マクスウェル burst.effects[0]",
+      "key": "e120a59c7b363425",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1300-21",
+      "element": "マクスウェル burst.effects[0]",
+      "key": "571b24706695f939",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1301-11",
+      "element": "マクスウェル burst.effects[0]",
+      "key": "2c8c171a3a470789",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1301-12",
+      "element": "マクスウェル burst.effects[0]",
+      "key": "d0b17079ed399c98",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1301-13",
+      "element": "マクスウェル burst.effects[0]",
+      "key": "2c23b9c47603452d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1301-14",
+      "element": "マクスウェル burst.effects[0]",
+      "key": "5966e1e6ef35173d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1301-15",
+      "element": "マクスウェル burst.effects[0]",
+      "key": "eb0f0eb0e86e3e6f",
+      "effective": true,
+      "minus": -9720948.1965,
+      "plus": null
+    },
+    {
+      "observation": "1301-16",
+      "element": "マクスウェル burst.effects[0]",
+      "key": "5ef8a54f136d289c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1301-17",
+      "element": "マクスウェル burst.effects[0]",
+      "key": "ddff39f4f4fc4c8d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1301-18",
+      "element": "マクスウェル burst.effects[0]",
+      "key": "f549be5061e95f5b",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の起点の後に変更後の武器の発が無い"
+    },
+    {
+      "observation": "1301-20",
+      "element": "マクスウェル burst.effects[0]",
+      "key": "ae2d1a28654e2ff3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1301-21",
+      "element": "マクスウェル burst.effects[0]",
+      "key": "fe0fe0aa074b17bd",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "1315-12",
       "element": "レオナ skill1.effects[1]",
       "key": "984a952430fac7d5",
