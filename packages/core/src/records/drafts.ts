@@ -1,5 +1,6 @@
 // 起案と結論の下書き（plan/design-records-automation.md 3.1・3.6 節）。npm run records:new の純粋な部分。
 // 採番（最大の番号 + 1）、検証記録のひな形、結論の状態（確定にできる条件が全部そろえば確定、1 つでも欠ければ仮説と理由）。
+import { isDeepStrictEqual } from 'node:util';
 import {
   CLAIM_TOPICS,
   CONFIRMABLE_GRADES,
@@ -347,6 +348,15 @@ export const KEPT_HYPOTHESIS_REASON =
 export function keepHypothesis(before: ClaimFile['state'], result: ClaimDraft): ClaimDraft {
   if (before !== '仮説' || result.file.state !== '確定') return result;
   return { file: { ...result.file, state: '仮説' }, reasons: [...result.reasons, KEPT_HYPOTHESIS_REASON] };
+}
+
+/**
+ * 観測値の --invalidate --by で、setup の参照を付け替えた比べを根拠にしている結論（根拠の文は変えない）を出し直した結論が、更新日のほかに
+ * 前と同じか（同じなら書かない）。書き出す JSON で比べる（欄の順と、値が undefined の欄は見ない）
+ */
+export function unchangedButUpdated(before: ClaimFile, after: ClaimFile): boolean {
+  const asWritten = (c: ClaimFile): unknown => JSON.parse(JSON.stringify(c));
+  return isDeepStrictEqual(asWritten({ ...after, updated: before.updated }), asWritten(before));
 }
 
 /**

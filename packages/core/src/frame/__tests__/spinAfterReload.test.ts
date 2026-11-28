@@ -4,9 +4,18 @@
 // 84f 以上で最初からの立ち上がり（82f）（1381-17・1387-15・1387-16・1388-10・1388-11）
 import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
+import { FRAMES_PER_GAME_SECOND, GAME_SECONDS_PER_FRAME } from '../../time.ts';
 import { DEFAULT_WEAPON_MODEL } from '../../weapons.ts';
 import { firingParams, ZERO_FIRING_BUFFS } from '../firing.ts';
-import { drainAmmo, initialShooter, reaimShooter, refillAmmo, stepShooter } from '../shooter.ts';
+import {
+  drainAmmo,
+  hideShooter,
+  initialShooter,
+  reaimShooter,
+  refillAmmo,
+  stepShooter,
+  unhideShooter,
+} from '../shooter.ts';
 
 const model = DEFAULT_WEAPON_MODEL;
 // クラウンと同じ CDN の値（毎分 60 → 4,200 発・1 発ごとに +100・リセット 1 秒・リロード 2.5 秒）。マガジンは短くして最高レートに届かせる
@@ -97,6 +106,105 @@ describe('MG のリロード明けのレート', () => {
       }
       const first = interrupt === 'drain' ? MAGAZINE - 1 : MAGAZINE;
       expect(frames[first + 10]! - frames[first]!).toBe(freshSpan());
+    }
+  });
+});
+
+describe('MG のリロード明けのレートの、残す道に入らない回・▲の付いた回', () => {
+  it('ハイド中のリロードで込め終えた回は、止まりが rateOfFireResetTime より短くても最初から（確かめていないので戻す）', () => {
+    const params = firingParams(shot, { ...ZERO_FIRING_BUFFS, reloadSpeed: 0.95 });
+    const state = initialShooter(shot, model, params);
+    let fired = 0;
+    let f = 0;
+    for (; fired < 20; f++) if (stepShooter(state, shot, model, params)) fired += 1;
+    // 撃ち切っていないマガジン（20 発目まで）で窓に入り、ハイド中のリロードを窓の中で込め終える（ハイドで始めたリロードは最終弾から
+    // 始めていないので残す道に入らず、明けの構え直しでも最初に戻す）
+    const window = 30;
+    expect(window).toBeLessThan(shot.rateOfFireResetTime * FRAMES_PER_GAME_SECOND);
+    hideShooter(state, shot, model, params);
+    expect(state.hideReload).toBe(true);
+    for (let k = 0; k < window; k++, f++) stepShooter(state, shot, model, params, true);
+    expect(state.phase).toBe('priming');
+    unhideShooter(state, shot, window, model, params);
+    const frames: number[] = [];
+    for (; frames.length < 11; f++) if (stepShooter(state, shot, model, params)) frames.push(f);
+    expect(frames[10]! - frames[0]!).toBe(freshSpan());
+  });
+
+  it('立ち上げ速度▲の付いたマガジンの最終弾の後のレートは、▲で積んだ進みから下げる', () => {
+    // 最高レートに届かない短いマガジン（10 発）で、▲ の有無の差が最終弾の後のレートに出るようにする
+    const short = makeCharacter(
+      {
+        maxAmmo: 10,
+        rateOfFire: 60,
+        endRateOfFire: 4200,
+        rateOfFireChangePerShot: 100,
+        rateOfFireResetTime: 1,
+        reloadTime: 2.5,
+      },
+      { weaponType: 'MG' },
+    ).shot;
+    const restartSpun = (spinUpSpeed: number) => {
+      const params = firingParams(short, { ...ZERO_FIRING_BUFFS, reloadSpeed: 0.95, spinUpSpeed });
+      const state = initialShooter(short, model, params);
+      const frames: number[] = [];
+      let spunAfterFirst = 0;
+      for (let f = 0; frames.length < 11; f++) {
+        if (!stepShooter(state, short, model, params)) continue;
+        frames.push(f);
+        if (frames.length === 11) spunAfterFirst = state.spunShots;
+      }
+      const pause = frames[10]! - frames[9]!;
+      // 最終弾の後のレート（10 発ぶんの進み × 1 発ごとの上がり）から、構えの前までの間を毎秒 (end − rof) ÷ resetTime で下げる
+      const lastRpm = Math.min(short.endRateOfFire, short.rateOfFire + 10 * params.spinUpScale * 100);
+      const drop =
+        ((short.endRateOfFire - short.rateOfFire) / short.rateOfFireResetTime) *
+        GAME_SECONDS_PER_FRAME *
+        Math.max(0, pause - model.reloadCompleteToShotFrames);
+      const kept = (Math.max(short.rateOfFire, lastRpm - drop) - short.rateOfFire) / 100;
+      return { spun: spunAfterFirst - params.spinUpScale, kept };
+    };
+    const base = restartSpun(0);
+    const fast = restartSpun(1);
+    expect(fast.spun).toBeCloseTo(fast.kept, 9);
+    expect(base.spun).toBeCloseTo(base.kept, 9);
+    expect(fast.spun).toBeGreaterThan(base.spun);
+  });
+
+  it('rateOfFireResetTime が 0 の MG は、最終弾から込め終えた回も最初から', () => {
+    const noReset = makeCharacter(
+      {
+        maxAmmo: 60,
+        rateOfFire: 60,
+        endRateOfFire: 4200,
+        rateOfFireChangePerShot: 100,
+        rateOfFireResetTime: 0,
+        reloadTime: 2.5,
+      },
+      { weaponType: 'MG' },
+    ).shot;
+    const spans = (reloadSpeed: number) => {
+      const params = firingParams(noReset, { ...ZERO_FIRING_BUFFS, reloadSpeed });
+      const state = initialShooter(noReset, model, params);
+      const frames: number[] = [];
+      const spun: number[] = [];
+      for (let f = 0; frames.length < MAGAZINE + 11; f++)
+        if (stepShooter(state, noReset, model, params)) {
+          frames.push(f);
+          spun.push(state.spunShots);
+        }
+      return {
+        fresh: frames[10]! - frames[0]!,
+        restart: frames[MAGAZINE + 10]! - frames[MAGAZINE]!,
+        spunFresh: spun[0]!,
+        spunRestart: spun[MAGAZINE]!,
+      };
+    };
+    // 止まりのいちばん短い回（リロード速度▲ 100%）も。止まりは構え（reloadCompleteToShotFrames）より長いので、下げる間はいつも正
+    for (const reloadSpeed of [0.95, 1]) {
+      const { fresh, restart: span, spunFresh, spunRestart } = spans(reloadSpeed);
+      expect(span).toBe(fresh);
+      expect(spunRestart).toBe(spunFresh);
     }
   });
 });

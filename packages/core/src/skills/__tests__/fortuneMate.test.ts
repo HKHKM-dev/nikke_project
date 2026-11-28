@@ -1,5 +1,5 @@
 // アルカナ：フォーチュンメイト編（plan/design-fortune-mate.md 2 節）: 回数のきっかけの周期の中の位置（phase）、弾丸チャージの自分の状態の
-// 窓で数える回数（during: { state }）、状態の中身のペレット数▲の語彙の検証と解決
+// 窓・フルバーストの窓で数える回数（during: { state }・during: "fullBurst" と reset）、状態の中身のペレット数▲の語彙の検証と解決
 import { describe, expect, it } from 'vitest';
 import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { parseSkillDefinition } from '../parse/definition.ts';
@@ -57,6 +57,29 @@ describe('語彙の検証', () => {
     expect(patched('skill2', REFILL, { trigger: { ...window, during: { state: 'modeB' } } })).toThrow(
       /needs a grant of the same state on self/,
     );
+  });
+
+  it.each(['fullBurstStart', 'never'])(
+    'keeps a full-burst counting window with reset %s on ammoRefill through resolution',
+    (reset) => {
+      const trigger = { count: 'normalShot', every: 6, during: 'fullBurst', reset };
+      const refill = resolveInstant(patched('skill2', REFILL, { trigger })(), character, MAX_SKILL_LEVELS).find(
+        (e) => e.kind === 'ammoRefill' && e.source.skill === 'skill2',
+      );
+      expect(refill?.trigger).toEqual(trigger);
+    },
+  );
+
+  it('rejects a full-burst counting window on ammoRefill without reset, or reset without during', () => {
+    expect(patched('skill2', REFILL, { trigger: { count: 'normalShot', every: 6, during: 'fullBurst' } })).toThrow(
+      /during needs reset/,
+    );
+    expect(patched('skill2', REFILL, { trigger: { count: 'normalShot', every: 6, reset: 'never' } })).toThrow(
+      /reset needs during/,
+    );
+    expect(
+      patched('skill2', REFILL, { trigger: { count: 'normalShot', every: 6, during: 'fullBurst', reset: 'burstEnd' } }),
+    ).toThrow(/reset/);
   });
 
   it('takes the pellet count up in state contents, but not the single pellet', () => {
