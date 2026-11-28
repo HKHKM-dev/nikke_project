@@ -82,39 +82,20 @@ function validateAppliedDot(
 /**
  * 確率のきっかけの dot（plan/design-chance-dot-damage.md 3.1 節）は、付いた記録の無い 1 つの持続ダメージとして、起点ごとの tick に
  * 出る確率の重みを持たせる（frame/dot.ts の chanceDotTicks）。名前の付いた状態・スタック・付け直しの形の違う刻み・数・遅れ・ゲージ・条件とは
- * 組まない（使い手がいない。ゲージの期待値はバーストの時刻表を動かす。同 3.3 節）
+ * 組まない（使い手がいない。ゲージの期待値はバーストの時刻表を動かす。同 3.3 節）。restartOnReapply の dot（同 9 節）も同じ専用の道を通るので、
+ * 同じ欄を書けない（ほかの欄より先に見る）
  */
-function validateChanceDot(v: Record<string, Json>, trigger: EffectTrigger, path: string): void {
+function validatePlainDot(v: Record<string, Json>, trigger: EffectTrigger, path: string): void {
   if (isChanceTrigger(trigger)) rejectPlainOnlyKeys(v, path, 'a dot on a chance trigger');
+  else if (v.restartOnReapply !== undefined) rejectPlainOnlyKeys(v, path, 'a dot with restartOnReapply');
 }
 
 /**
- * 確率のきっかけの dot と restartOnReapply の dot が書けない欄（付いている間・スタック・刻みの遅れ・数・遅れ・ゲージ・条件を追う欄）。
- * firstTick halfAfterLatest は durationUntil: battleEnd と組むので、durationUntil を書けなければ書けない（parseDotTickShape）
+ * 確率のきっかけの dot と restartOnReapply の dot が通る専用の道（frame/plan.ts の dotGroups の確率・付け直しの分岐と、
+ * frame/dot.ts の chanceDotTicks）が読む欄。dot に欄を足すときは、専用の道が読むならここに、読まないなら PLAIN_DOT_REJECTED_KEYS に
+ * 足す（DOT_KEYS は 2 つを合わせたもの。どちらにも無い欄は書けない）
  */
-const PLAIN_DOT_REJECTED_KEYS = [
-  'state',
-  'maxStacksRef',
-  'durationUntil',
-  'gaugeOnApply',
-  'gaugeOnApplyDelayFrames',
-  'tickDelayFrames',
-  'gaugeOnTick',
-  'perCount',
-  'perCountIntervalFrames',
-  'delayFrames',
-  'stacksFrom',
-  'copyEachTick',
-  'condition',
-] as const;
-
-function rejectPlainOnlyKeys(v: Record<string, Json>, path: string, what: string): void {
-  for (const key of PLAIN_DOT_REJECTED_KEYS)
-    if (v[key] !== undefined) fail(`${path}.${key}`, `${what} cannot have ${key}`);
-}
-
-/** dot に書ける欄 */
-const DOT_KEYS: readonly string[] = [
+const PLAIN_DOT_KEYS = [
   'kind',
   'trigger',
   'ref',
@@ -122,26 +103,41 @@ const DOT_KEYS: readonly string[] = [
   'durationRef',
   'durationSeconds',
   'firstTick',
+  'restartOnReapply',
+  'sustained',
+  'assumes',
+  'claims',
+] as const;
+
+/**
+ * 確率のきっかけの dot と restartOnReapply の dot が書けない欄（付いている間・スタック・刻みの形・数・遅れ・ゲージ・条件を追う欄）。
+ * 専用の道はこれらを読まない（plan/design-chance-dot-damage.md 3.1・9 節）
+ */
+export const PLAIN_DOT_REJECTED_KEYS = [
   'state',
   'maxStacksRef',
+  'durationUntil',
   'gaugeOnApply',
   'gaugeOnApplyDelayFrames',
   'tickDelayFrames',
   'gaugeOnTick',
-  'durationUntil',
-  'tickIntervalFrames',
-  'hitOnApply',
-  'restartOnReapply',
   'perCount',
   'perCountIntervalFrames',
   'delayFrames',
   'stacksFrom',
   'copyEachTick',
-  'sustained',
   'condition',
-  'assumes',
-  'claims',
-];
+  'tickIntervalFrames',
+  'hitOnApply',
+] as const;
+
+function rejectPlainOnlyKeys(v: Record<string, Json>, path: string, what: string): void {
+  for (const key of PLAIN_DOT_REJECTED_KEYS)
+    if (v[key] !== undefined) fail(`${path}.${key}`, `${what} cannot have ${key}`);
+}
+
+/** dot に書ける欄（専用の道が読む欄と、専用の道の dot には書けない欄） */
+export const DOT_KEYS: readonly string[] = [...PLAIN_DOT_KEYS, ...PLAIN_DOT_REJECTED_KEYS];
 
 /**
  * 持続ダメージ。間隔は正の有限数。維持時間との比較（間隔 ≤ 維持）は、durationRef なら Lv で決まるので解決時に見る
@@ -165,7 +161,7 @@ export function parseDotEffect(v: Record<string, Json>, path: string): DotEffect
     ...(durationUntil !== undefined ? { durationUntil } : parseDuration(v, path)),
   };
   validateAppliedDot(v, applied, stateEnd, path);
-  validateChanceDot(v, effect.trigger, path);
+  validatePlainDot(v, effect.trigger, path);
   parseDotCondition(v, effect, path);
   parseDotIntervalAndFirstTick(v, effect, path);
   // 状態異常の名前。目録の id（持ち主が敵の状態）
@@ -235,12 +231,11 @@ function parseDotTickShape(v: Record<string, Json>, effect: DotEffect, path: str
 
 /**
  * 付け直しのたびに刻みを数え直す形（restartOnReapply。plan/design-chance-dot-damage.md 9 節）。刻みは付けた時からの atApplication か
- * afterInterval で、付いている間・スタック・ゲージを追う欄とは組まない（使い手がいない）
+ * afterInterval で、付いている間・スタック・ゲージを追う欄とは組まない（使い手がいない。validatePlainDot）
  */
 function parseDotRestart(v: Record<string, Json>, effect: DotEffect, path: string): void {
   if (v.restartOnReapply === undefined) return;
   if (v.restartOnReapply !== true) fail(`${path}.restartOnReapply`, 'expected true');
-  rejectPlainOnlyKeys(v, path, 'a dot with restartOnReapply');
   if (isCounterFullTrigger(effect.trigger) || isAppliedTrigger(effect.trigger))
     fail(`${path}.trigger`, 'a dot with restartOnReapply cannot use { counterFull } or { applied }');
   effect.restartOnReapply = true;
