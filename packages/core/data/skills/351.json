@@ -4,24 +4,15 @@
   "checkedAt": "2026-11-28",
   "skills": {
     "skill1": {
-      "effects": [
-        {
-          "kind": "burstGaugeHit",
-          "trigger": {
-            "count": "lastShot"
-          },
-          "delayFrames": 21,
-          "assumes": {
-            "ja": "最後の弾丸が命中した時の対象（敵 1 体）への挑発は、付けるたびに射手の 1 ヒットぶん（フルチャージ倍率なし）のゲージを 1 回溜める（モランの S2 の、敵に付ける挑発と同じ形。撮って確かめる）。最後の弾丸はいつも命中する。溜まるのは撃った 21f 後（中近の着地点の飛ぶ時間 15f に、モランの挑発の命中から 6f を足した仮の値。撮って読む）",
-            "en": "Each taunt applied to the target (one enemy) when the last bullet hits charges the gauge once by one hit of the shooter (no full-charge multiplier), in the same form as the taunt on enemies of Moran's Skill 2 (to be verified by capture). The last bullet is assumed to always hit. The gauge rises 21 frames after the shot (a provisional value: the 15-frame flight time at the mid-near landing plus Moran's 6 frames from hit to taunt; to be read from capture)"
-          }
-        }
-      ],
+      "effects": [],
       "notes": [
         {
-          "ja": "最後の弾丸が命中した時の、対象への挑発（5 秒）そのものはダメージに関係しない（ゲージは effects[0]）",
-          "en": "The taunt itself (5 s) on the target when the last bullet hits does not affect damage (the gauge is effects[0])",
-          "kind": "noDamage"
+          "ja": "最後の弾丸が命中した時の、対象への挑発（5 秒）はダメージに関係しない。付けた時にバーストゲージを溜めない（モランの S2 の、敵に付ける挑発とは違う）",
+          "en": "The taunt (5 s) on the target when the last bullet hits does not affect damage. Applying it does not charge the Burst Gauge (unlike the taunt on enemies of Moran's Skill 2)",
+          "kind": "noDamage",
+          "claims": [
+            "C-1573"
+          ]
         },
         {
           "ja": "最後の弾丸が命中した時の、自分の防御力▲（5 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
@@ -44,7 +35,9 @@
             "target": "self",
             "trigger": "battleStart"
           },
-          "claims": ["C-0443"]
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     },
@@ -55,9 +48,12 @@
           "ref": 1,
           "damageType": "skill",
           "assumes": {
-            "ja": "敵全体は敵 1 体",
-            "en": "All enemies are the lone enemy"
-          }
+            "ja": "敵全体は敵 1 体。倍率を 5 ヒットに等分し、遅れの表（burst/landing.ts）の時刻に出す",
+            "en": "All enemies are the lone enemy. The multiplier is split equally into 5 hits at the times in the delay table (burst/landing.ts)"
+          },
+          "claims": [
+            "C-1574"
+          ]
         }
       ]
     }
