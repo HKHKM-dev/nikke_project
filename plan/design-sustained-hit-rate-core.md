@@ -63,3 +63,4 @@
   - `landingPartsWith(plan, slot, slotIndex, landing, hitRateUp)` は、計画の常時の N と同じなら計画の配分をそのまま返し、違えば的の表の値（`LandingPart.tableCoreHitRate`）から引き直す。
   - 表示: `AutoConditionSummary.hitRateUp` を発数で重みを付けた N にし、持続の▲が効いた発があれば `timedHitRateUp` を立てる。注記と画面の要約（NotesSummary）を「持続の▲も足す（仮説）」に書き換えた。アスカのバーストの notes も書き換えた（`partial` は弾丸命中率の分で残した）。
   - 15-A の前後は V-0102（V-0065 の派生。結論は作らない）。射撃の数は変わらず、AI の 3 体（リター・クラウン・モダニア）だけが上がった。単騎の確定の照合（`npm test`）と残差の一覧は 1 つも動かなかった。
+- 2026-11-28: 課題を閉じた。残りは backlog 1.2 節の行（持続の命中率▲が 2 つ以上重なったとき）だけで、行は残す。

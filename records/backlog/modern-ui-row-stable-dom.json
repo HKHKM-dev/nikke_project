@@ -1,5 +1,5 @@
 {
-  "section": "8",
-  "order": 150,
-  "text": "モダン UI の編成の行を作り直さず、同じ要素のまま動かす（行の入れ替えで grid が作り直されるのをやめ、FLIP にする。これで useSlotFit の remountKey・立ち絵の先読み・liftedRects の WeakSet・ghostOf の SQUARE_SOURCES/LIFT_SHADOW_SOURCES の一覧が要らなくなるか見る）。あわせて PartyPreviewRow の memo 化と、ドロップ先・ドラッグ元の購読を減らす（2026-11-22 起票）→ 保留（作り直しはしない。オーナーの判断）: [design-modern-ui.md](design-modern-ui.md)"
+  "section": "8.2",
+  "order": -45,
+  "text": "モダン UI の編成の行を作り直さず、同じ要素のまま動かす（行の入れ替えで grid が作り直されるのをやめ、FLIP にする。これで useSlotFit の remountKey・立ち絵の先読み・liftedRects の WeakSet・ghostOf の SQUARE_SOURCES/LIFT_SHADOW_SOURCES の一覧が要らなくなるか見る）。あわせて PartyPreviewRow の memo 化と、ドロップ先・ドラッグ元の購読を減らす（2026-11-22 起票）→ 閉じた（2026-11-28。作り直しはしない（2026-11-22 のオーナーの判断）。挙がっていた仕組みは、行を作り直さなくても要るか、行と関係しない）: [design-modern-ui.md](design-modern-ui.md)"
 }
