@@ -71,9 +71,9 @@
 
 予測は 2026-11-12（commit 3fa103a）に出した。
 
-| 指標 | 実測 | 予測 H0 |
-| --- | --- | --- |
-| timeout-full-shots（chainTimeoutToGaugeFullShots） | （実測なし） | 228 |
+| 指標                                               | 実測         | 予測 H0 |
+| -------------------------------------------------- | ------------ | ------- |
+| timeout-full-shots（chainTimeoutToGaugeFullShots） | （実測なし） | 228     |
 
 <!-- records:predictions:end -->
 

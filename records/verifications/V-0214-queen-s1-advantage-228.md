@@ -36,14 +36,14 @@ H1 はいまのモデル（C-0296 の形。定義の skill1 の `elementDamage`�
 
 予測は 2026-10-06（commit aa657bb）に出した。
 
-| 指標 | 実測 | 予測 H1 |
-| --- | --- | --- |
-| pellet-body（hitDamage） | 58,300（`0228-01`） | 58,299.82（-0.18、許容内） |
-| pellet-crit（hitDamage） | （実測なし） | 87,449.731 |
-| pellet-core（hitDamage） | （実測なし） | 116,599.641 |
-| pellet-core-crit（hitDamage） | （実測なし） | 145,749.551 |
-| after-body（hitDamage） | 38,783.1（`0228-02`） | 38,783.237（+0.137、許容内） |
-| after-crit（hitDamage） | （実測なし） | 58,174.855 |
+| 指標                          | 実測                  | 予測 H1                      |
+| ----------------------------- | --------------------- | ---------------------------- |
+| pellet-body（hitDamage）      | 58,300（`0228-01`）   | 58,299.82（-0.18、許容内）   |
+| pellet-crit（hitDamage）      | （実測なし）          | 87,449.731                   |
+| pellet-core（hitDamage）      | （実測なし）          | 116,599.641                  |
+| pellet-core-crit（hitDamage） | （実測なし）          | 145,749.551                  |
+| after-body（hitDamage）       | 38,783.1（`0228-02`） | 38,783.237（+0.137、許容内） |
+| after-crit（hitDamage）       | （実測なし）          | 58,174.855                   |
 
 <!-- records:predictions:end -->
 

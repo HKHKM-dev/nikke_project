@@ -64,12 +64,12 @@
 
 予測は 2026-11-21（commit 8b9fe79）に出した。
 
-| 指標 | 実測 | 予測 A1 | 予測 A0 | 予測 Hb0 |
-| --- | --- | --- | --- | --- |
-| A-noncrit-before（hitDamageAtShot） | （実測なし） | 8,674.428 | 8,674.428 | 8,674.428 |
-| A-noncrit-first（hitDamageAtShot） | （実測なし） | 11,174.746 | 8,674.428 | 11,174.746 |
-| A-noncrit-late（hitDamageAtShot） | （実測なし） | 16,675.444 | 8,674.428 | 16,675.444 |
-| B-additional-count（skillHitCount） | （実測なし） | 4 | 4 | 5 |
+| 指標                                | 実測         | 予測 A1    | 予測 A0   | 予測 Hb0   |
+| ----------------------------------- | ------------ | ---------- | --------- | ---------- |
+| A-noncrit-before（hitDamageAtShot） | （実測なし） | 8,674.428  | 8,674.428 | 8,674.428  |
+| A-noncrit-first（hitDamageAtShot）  | （実測なし） | 11,174.746 | 8,674.428 | 11,174.746 |
+| A-noncrit-late（hitDamageAtShot）   | （実測なし） | 16,675.444 | 8,674.428 | 16,675.444 |
+| B-additional-count（skillHitCount） | （実測なし） | 4          | 4         | 5          |
 
 <!-- records:predictions:end -->
 

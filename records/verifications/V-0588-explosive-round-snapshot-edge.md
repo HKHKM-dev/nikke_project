@@ -75,16 +75,16 @@
 
 予測は 2026-10-31（commit 3939b11）に出した。
 
-| 指標 | 実測 | 予測 H0 | 予測 H-on |
-| --- | --- | --- | --- |
-| bestie-hit-1（burstHitDamage） | 2,004,612（`0836-06`） | 1,567,695.874（-436,916.126、**許容外**） | 2,004,612.714（+0.714、許容内） |
-| bestie-hit-2（burstHitDamage） | 2,178,748（`0836-07`） | 1,703,877.869（-474,870.131、**許容外**） | 2,178,748.631（+0.631、許容内） |
-| bestie-hit-3（burstHitDamage） | 1,703,878（`0836-08`） | 1,703,877.869（-0.131、許容内） | 2,178,748.631（+474,870.631、**許容外**） |
-| bestie-hit-4（burstHitDamage） | （実測なし） | 1,703,877.869 | 2,178,748.631 |
-| shot-delay-1（burstEffectFirstShot） | （実測なし） | 24 | 24 |
-| shot-delay-2（burstEffectFirstShot） | （実測なし） | 22 | 22 |
-| shot-delay-3（burstEffectFirstShot） | （実測なし） | 28 | 28 |
-| shot-delay-4（burstEffectFirstShot） | （実測なし） | 25 | 25 |
+| 指標                                 | 実測                   | 予測 H0                                   | 予測 H-on                                 |
+| ------------------------------------ | ---------------------- | ----------------------------------------- | ----------------------------------------- |
+| bestie-hit-1（burstHitDamage）       | 2,004,612（`0836-06`） | 1,567,695.874（-436,916.126、**許容外**） | 2,004,612.714（+0.714、許容内）           |
+| bestie-hit-2（burstHitDamage）       | 2,178,748（`0836-07`） | 1,703,877.869（-474,870.131、**許容外**） | 2,178,748.631（+0.631、許容内）           |
+| bestie-hit-3（burstHitDamage）       | 1,703,878（`0836-08`） | 1,703,877.869（-0.131、許容内）           | 2,178,748.631（+474,870.631、**許容外**） |
+| bestie-hit-4（burstHitDamage）       | （実測なし）           | 1,703,877.869                             | 2,178,748.631                             |
+| shot-delay-1（burstEffectFirstShot） | （実測なし）           | 24                                        | 24                                        |
+| shot-delay-2（burstEffectFirstShot） | （実測なし）           | 22                                        | 22                                        |
+| shot-delay-3（burstEffectFirstShot） | （実測なし）           | 28                                        | 28                                        |
+| shot-delay-4（burstEffectFirstShot） | （実測なし）           | 25                                        | 25                                        |
 
 <!-- records:predictions:end -->
 

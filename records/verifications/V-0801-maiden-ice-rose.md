@@ -58,16 +58,16 @@
 
 予測は 2026-11-16（commit 85cd594）に出した。
 
-| 指標 | 実測 | 予測 H1 | 予測 H-burstDamage | 予測 H-restore |
-| --- | --- | --- | --- | --- |
-| A-burst-hit（skillHitDamage） | （実測なし） | 11,198,620.102 | 5,921,621.295 | 11,198,620.102 |
-| A-burst-count（skillHitCount） | （実測なし） | 5 | 5 | 5 |
-| A-shot-before（hitDamage） | （実測なし） | 122,376.255 | 122,376.255 | 122,376.255 |
-| A-shot-after（hitDamage） | （実測なし） | 442,127.783 | 442,127.783 | 442,127.783 |
-| A-s2（perShotHitDamage） | （実測なし） | 437,296.475 | 437,296.475 | 437,296.475 |
-| B-burst-count（skillHitCount） | （実測なし） | 8 | 8 | 8 |
-| B-seg-pre（hitDamage） | （実測なし） | 15,877.729 | 15,877.729 | 18,921.121 |
-| B-seg-fb（hitDamage） | （実測なし） | 26,171.493 | 26,171.493 | 30,385.673 |
+| 指標                           | 実測         | 予測 H1        | 予測 H-burstDamage | 予測 H-restore |
+| ------------------------------ | ------------ | -------------- | ------------------ | -------------- |
+| A-burst-hit（skillHitDamage）  | （実測なし） | 11,198,620.102 | 5,921,621.295      | 11,198,620.102 |
+| A-burst-count（skillHitCount） | （実測なし） | 5              | 5                  | 5              |
+| A-shot-before（hitDamage）     | （実測なし） | 122,376.255    | 122,376.255        | 122,376.255    |
+| A-shot-after（hitDamage）      | （実測なし） | 442,127.783    | 442,127.783        | 442,127.783    |
+| A-s2（perShotHitDamage）       | （実測なし） | 437,296.475    | 437,296.475        | 437,296.475    |
+| B-burst-count（skillHitCount） | （実測なし） | 8              | 8                  | 8              |
+| B-seg-pre（hitDamage）         | （実測なし） | 15,877.729     | 15,877.729         | 18,921.121     |
+| B-seg-fb（hitDamage）          | （実測なし） | 26,171.493     | 26,171.493         | 30,385.673     |
 
 <!-- records:predictions:end -->
 

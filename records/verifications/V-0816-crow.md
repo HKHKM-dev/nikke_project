@@ -55,16 +55,16 @@
 
 予測は 2026-11-21（commit d7c1995）に出した。
 
-| 指標 | 実測 | 予測 H1 |
-| --- | --- | --- |
-| a-s2-shots（skillHitShotIndices） | （実測なし） | [119, 120, 239, 240, 359, 360] |
-| a-s2-count（skillHitCount） | （実測なし） | 48 |
-| a-s2-delay（skillHitShotDelay） | （実測なし） | 0 |
-| a-s2-hit（skillHitDamage） | （実測なし） | 71,141.929 |
-| b-burst-hit（burstHitDamage） | 731,263（`1281-10`） | 731,263.005（+0.005、許容内） |
-| b-burst-count（burstCount） | （実測なし） | 5 |
-| b-burst-delays（burstHitDelays） | （実測なし） | [27, 27, 27, 27] |
-| b-s2-hit-fb（skillHitDamage） | （実測なし） | 106,712.893 |
+| 指標                              | 実測                 | 予測 H1                        |
+| --------------------------------- | -------------------- | ------------------------------ |
+| a-s2-shots（skillHitShotIndices） | （実測なし）         | [119, 120, 239, 240, 359, 360] |
+| a-s2-count（skillHitCount）       | （実測なし）         | 48                             |
+| a-s2-delay（skillHitShotDelay）   | （実測なし）         | 0                              |
+| a-s2-hit（skillHitDamage）        | （実測なし）         | 71,141.929                     |
+| b-burst-hit（burstHitDamage）     | 731,263（`1281-10`） | 731,263.005（+0.005、許容内）  |
+| b-burst-count（burstCount）       | （実測なし）         | 5                              |
+| b-burst-delays（burstHitDelays）  | （実測なし）         | [27, 27, 27, 27]               |
+| b-s2-hit-fb（skillHitDamage）     | （実測なし）         | 106,712.893                    |
 
 <!-- records:predictions:end -->
 

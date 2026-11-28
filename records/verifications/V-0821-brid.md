@@ -61,15 +61,15 @@
 
 予測は 2026-11-21（commit 34fa289）に出した。
 
-| 指標 | 実測 | 予測 H1 | 予測 H-no-additional |
-| --- | --- | --- | --- |
-| c-hit-before-s1（hitDamageAtShot） | （実測なし） | 22,254.503 | 22,254.503 |
-| c-hit-after-s1（hitDamageAtShot） | （実測なし） | 26,379.526 | 26,379.526 |
-| c-s2-hit（skillHitDamage） | （実測なし） | 449,859.168 | 449,859.168 |
-| c-s2-frames（skillHitVideoFrameList） | （実測なし） | [1,201, 2,380, 3,581, 4,760, 5,961, 7,140, 8,341, 9,520] | [1,201, 2,380, 3,581, 4,760, 5,961, 7,140, 8,341, 9,520] |
-| c-burst-hit（burstHitDamage） | （実測なし） | 2,044,814.4 | 2,044,814.4 |
-| c-burst-with-additional（burstHitWithSkillHits） | （実測なし） | 5,112,036 | 2,044,814.4 |
-| c-additional-count（skillHitCount） | （実測なし） | 5 | 0 |
+| 指標                                             | 実測         | 予測 H1                                                  | 予測 H-no-additional                                     |
+| ------------------------------------------------ | ------------ | -------------------------------------------------------- | -------------------------------------------------------- |
+| c-hit-before-s1（hitDamageAtShot）               | （実測なし） | 22,254.503                                               | 22,254.503                                               |
+| c-hit-after-s1（hitDamageAtShot）                | （実測なし） | 26,379.526                                               | 26,379.526                                               |
+| c-s2-hit（skillHitDamage）                       | （実測なし） | 449,859.168                                              | 449,859.168                                              |
+| c-s2-frames（skillHitVideoFrameList）            | （実測なし） | [1,201, 2,380, 3,581, 4,760, 5,961, 7,140, 8,341, 9,520] | [1,201, 2,380, 3,581, 4,760, 5,961, 7,140, 8,341, 9,520] |
+| c-burst-hit（burstHitDamage）                    | （実測なし） | 2,044,814.4                                              | 2,044,814.4                                              |
+| c-burst-with-additional（burstHitWithSkillHits） | （実測なし） | 5,112,036                                                | 2,044,814.4                                              |
+| c-additional-count（skillHitCount）              | （実測なし） | 5                                                        | 0                                                        |
 
 <!-- records:predictions:end -->
 

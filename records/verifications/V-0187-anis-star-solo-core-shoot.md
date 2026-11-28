@@ -46,14 +46,14 @@
 
 予測は 2026-10-05（commit 26ab5d9）に出した。
 
-| 指標 | 実測 | 予測 H-add-W0 |
-| --- | --- | --- |
-| star-body（dotHitDamage） | 60,902（`0211-01`） | 60,902.298（+0.298、許容内） |
-| star-core（dotHitDamage） | 121,805（`0211-03`） | 121,804.595（-0.405、許容内） |
-| star-core-crit（dotHitDamage） | 152,256（`0211-04`） | 152,255.744（-0.256、許容内） |
-| shot-core-midnear（coreHitRate） | 0.933（`0211-07`） | 0.896（-0.037、許容内） |
-| shot-core-near（coreHitRate） | 1（`0211-08`） | 1（+0、許容内） |
-| shot-core-far（coreHitRate） | 0.556（`0211-09`） | 0.392（-0.163、許容内） |
+| 指標                             | 実測                 | 予測 H-add-W0                 |
+| -------------------------------- | -------------------- | ----------------------------- |
+| star-body（dotHitDamage）        | 60,902（`0211-01`）  | 60,902.298（+0.298、許容内）  |
+| star-core（dotHitDamage）        | 121,805（`0211-03`） | 121,804.595（-0.405、許容内） |
+| star-core-crit（dotHitDamage）   | 152,256（`0211-04`） | 152,255.744（-0.256、許容内） |
+| shot-core-midnear（coreHitRate） | 0.933（`0211-07`）   | 0.896（-0.037、許容内）       |
+| shot-core-near（coreHitRate）    | 1（`0211-08`）       | 1（+0、許容内）               |
+| shot-core-far（coreHitRate）     | 0.556（`0211-09`）   | 0.392（-0.163、許容内）       |
 
 <!-- records:predictions:end -->
 

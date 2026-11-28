@@ -124,10 +124,10 @@
 
 予測は 2026-10-04（commit 56db732）に出した。
 
-| 指標 | 実測 | 予測 N |
-| --- | --- | --- |
-| gauge-full-frame-0（gaugeFullFrame） | （実測なし） | 1,811 |
-| gauge-full-shot-0（gaugeFullShotIndex） | （実測なし） | 19 |
+| 指標                                    | 実測         | 予測 N |
+| --------------------------------------- | ------------ | ------ |
+| gauge-full-frame-0（gaugeFullFrame）    | （実測なし） | 1,811  |
+| gauge-full-shot-0（gaugeFullShotIndex） | （実測なし） | 19     |
 
 <!-- records:predictions:end -->
 

@@ -66,11 +66,11 @@
 
 予測は 2026-11-07（commit fd26376）に出した。
 
-| 指標 | 実測 | 予測 H-model |
-| --- | --- | --- |
-| A-effect-delay（burstEffectDelay） | （実測なし） | 20 |
-| B-drunk-end-phase（eventFrames） | （実測なし） | [6, 7, 9, 10, 12, 13] |
-| C-drunk-end-after-claire（eventFrames） | （実測なし） | [-4] |
+| 指標                                    | 実測         | 予測 H-model          |
+| --------------------------------------- | ------------ | --------------------- |
+| A-effect-delay（burstEffectDelay）      | （実測なし） | 20                    |
+| B-drunk-end-phase（eventFrames）        | （実測なし） | [6, 7, 9, 10, 12, 13] |
+| C-drunk-end-after-claire（eventFrames） | （実測なし） | [-4]                  |
 
 <!-- records:predictions:end -->
 

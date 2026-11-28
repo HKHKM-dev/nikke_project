@@ -65,8 +65,8 @@
 
 予測は 2026-10-07（commit 5b297b0）に出した。
 
-| 指標 | 実測 | 予測 H0 |
-| --- | --- | --- |
+| 指標                                   | 実測           | 予測 H0         |
+| -------------------------------------- | -------------- | --------------- |
 | effect-first-1（burstEffectFirstShot） | 0（`0222-08`） | 0（+0、許容内） |
 | effect-first-2（burstEffectFirstShot） | 0（`0222-09`） | 0（+0、許容内） |
 | effect-first-3（burstEffectFirstShot） | 0（`0222-10`） | 0（+0、許容内） |

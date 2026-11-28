@@ -53,17 +53,17 @@
 
 予測は 2026-11-06（commit be068e6）に出した。
 
-| 指標 | 実測 | 予測 H-model | 予測 H-noRefill | 予測 H-noCritUp |
-| --- | --- | --- | --- | --- |
-| shot-count（shotCount） | （実測なし） | 233 | 225 | 227 |
-| mags（magazineShots） | （実測なし） | [11, 12, 12] | [9, 9, 9] | [9, 10, 10] |
-| gauge-full（gaugeFullFrame） | （実測なし） | 1,259 | 1,311 | 1,310 |
-| gauge-full-shot（gaugeFullShotIndex） | （実測なし） | 30 | 30 | 30 |
-| crit-rate（critRateAt） | （実測なし） | 0.5 | 0.5 | 0.15 |
-| core-rate（coreHitRate） | （実測なし） | 0.228 | 0.228 | 0.228 |
-| normal-body（hitDamage） | （実測なし） | 168,639.856 | 168,639.856 | 168,639.856 |
-| iai（perShotHitDamage） | （実測なし） | 131,447.46 | 131,447.46 | 131,447.46 |
-| iai-crit（perShotHitDamage） | （実測なし） | 197,171.19 | 197,171.19 | 197,171.19 |
+| 指標                                  | 実測         | 予測 H-model | 予測 H-noRefill | 予測 H-noCritUp |
+| ------------------------------------- | ------------ | ------------ | --------------- | --------------- |
+| shot-count（shotCount）               | （実測なし） | 233          | 225             | 227             |
+| mags（magazineShots）                 | （実測なし） | [11, 12, 12] | [9, 9, 9]       | [9, 10, 10]     |
+| gauge-full（gaugeFullFrame）          | （実測なし） | 1,259        | 1,311           | 1,310           |
+| gauge-full-shot（gaugeFullShotIndex） | （実測なし） | 30           | 30              | 30              |
+| crit-rate（critRateAt）               | （実測なし） | 0.5          | 0.5             | 0.15            |
+| core-rate（coreHitRate）              | （実測なし） | 0.228        | 0.228           | 0.228           |
+| normal-body（hitDamage）              | （実測なし） | 168,639.856  | 168,639.856     | 168,639.856     |
+| iai（perShotHitDamage）               | （実測なし） | 131,447.46   | 131,447.46      | 131,447.46      |
+| iai-crit（perShotHitDamage）          | （実測なし） | 197,171.19   | 197,171.19      | 197,171.19      |
 
 <!-- records:predictions:end -->
 

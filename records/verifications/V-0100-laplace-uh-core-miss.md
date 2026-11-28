@@ -39,11 +39,11 @@
 
 予測は 2026-10-02（commit 3446345）に出した。
 
-| 指標 | 実測 | 予測 H0 |
-| --- | --- | --- |
-| hit-body（hitDamage） | （実測なし） | 7,487.25 |
+| 指標                       | 実測         | 予測 H0    |
+| -------------------------- | ------------ | ---------- |
+| hit-body（hitDamage）      | （実測なし） | 7,487.25   |
 | hit-body-crit（hitDamage） | （実測なし） | 11,230.875 |
-| hit-core（hitDamage） | （実測なし） | 14,974.5 |
+| hit-core（hitDamage）      | （実測なし） | 14,974.5   |
 | hit-core-crit（hitDamage） | （実測なし） | 18,718.125 |
 
 <!-- records:predictions:end -->

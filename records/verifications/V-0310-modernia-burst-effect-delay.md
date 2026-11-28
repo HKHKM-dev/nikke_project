@@ -63,16 +63,16 @@
 
 予測は 2026-10-07（commit 16e2e42）に出した。
 
-| 指標 | 実測 | 予測 H0 |
-| --- | --- | --- |
-| anni-first-1（burstEffectFirstShot） | 6（`0317-03`） | 1（-5、**許容外**） |
-| anni-first-2（burstEffectFirstShot） | 7（`0317-04`） | 1（-6、**許容外**） |
-| anni-first-3（burstEffectFirstShot） | 7（`0317-05`） | 1（-6、**許容外**） |
-| anni-first-4（burstEffectFirstShot） | 7（`0317-06`） | 1（-6、**許容外**） |
-| fb-shots-1（shotCount） | 874（`0317-07`） | 881（+7、許容内） |
-| fb-shots-2（shotCount） | （実測なし） | 881 |
-| fb-shots-3（shotCount） | （実測なし） | 881 |
-| fb-shots-4（shotCount） | （実測なし） | 881 |
+| 指標                                 | 実測             | 予測 H0             |
+| ------------------------------------ | ---------------- | ------------------- |
+| anni-first-1（burstEffectFirstShot） | 6（`0317-03`）   | 1（-5、**許容外**） |
+| anni-first-2（burstEffectFirstShot） | 7（`0317-04`）   | 1（-6、**許容外**） |
+| anni-first-3（burstEffectFirstShot） | 7（`0317-05`）   | 1（-6、**許容外**） |
+| anni-first-4（burstEffectFirstShot） | 7（`0317-06`）   | 1（-6、**許容外**） |
+| fb-shots-1（shotCount）              | 874（`0317-07`） | 881（+7、許容内）   |
+| fb-shots-2（shotCount）              | （実測なし）     | 881                 |
+| fb-shots-3（shotCount）              | （実測なし）     | 881                 |
+| fb-shots-4（shotCount）              | （実測なし）     | 881                 |
 
 <!-- records:predictions:end -->
 
