@@ -273,7 +273,7 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
     delays: { hitFrames: 3, effectFrames: 1 },
     claim: 'C-1582',
   },
-  // アニス
+  // アニス: 効果（防御力▼）の遅れの根拠は C-1617
   { resourceIds: [12], delays: { hitFrames: 93, effectFrames: 93 }, claim: 'C-1615' },
   // ネロ: 効果（挑発・受ける HP 回復量▲）の遅れは未測定
   { resourceIds: [380], delays: { hitFrames: 51, effectFrames: 0 }, claim: 'C-1616' },

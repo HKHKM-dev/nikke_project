@@ -12,8 +12,8 @@
           "kind": "noDamage"
         },
         {
-          "ja": "回復効果が適用された時の、自分へのネコの恩返し（受けるダメージ▼・5 スタック・5 秒）は防御系でダメージに関係しない。フルスタックかを読むのは、バーストの受ける HP 回復量▲の条件だけ",
-          "en": "Cat's Repayment on self when a heal is applied (damage taken decrease, 5 stacks, 5 s) is defensive and does not affect damage. Only the condition of the Burst's HP recovery taken increase reads whether it is at max stacks",
+          "ja": "回復効果が適用された時の、自分へのネコの恩返し（受けるダメージ▼・5 スタック・5 秒）は防御系でダメージに関係しない。説明文でフルスタックかを読むのは、バーストの受ける HP 回復量▲の条件だけ",
+          "en": "Cat's Repayment on self when a heal is applied (damage taken decrease, 5 stacks, 5 s) is defensive and does not affect damage. In the descriptions, only the condition of the Burst's HP recovery taken increase reads whether it is at max stacks",
           "kind": "noDamage"
         }
       ]
