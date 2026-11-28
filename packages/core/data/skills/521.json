@@ -20,6 +20,10 @@
               "scaling": "casterAttack",
               "ref": 5
             }
+          ],
+          "claims": [
+            "C-1594",
+            "C-1001"
           ]
         },
         {
@@ -32,7 +36,10 @@
           "secondsRef": 2,
           "condition": {
             "selfState": "maillard"
-          }
+          },
+          "claims": [
+            "C-1595"
+          ]
         }
       ],
       "notes": [
@@ -46,7 +53,9 @@
             "target": "allies",
             "trigger": "unknown"
           },
-          "claims": ["C-0839"]
+          "claims": [
+            "C-0839"
+          ]
         }
       ]
     },
@@ -63,7 +72,11 @@
           "assumes": {
             "ja": "たっぷりクッキング状態の味方はいないとみなし、味方全体から外す（付くのはフルチャージではない通常攻撃の 3 回ごとで、その間は維持の 10 秒より長い。plan/design-crust.md 5 節の論点 4）",
             "en": "Treats no ally as being in Reliable Cooking and removes from all allies (it is applied every 3 normal attacks not at Full Charge, which are more than its 10-second duration apart; plan/design-crust.md 5, issue 4)"
-          }
+          },
+          "claims": [
+            "C-1594",
+            "C-0979"
+          ]
         },
         {
           "kind": "timed",
@@ -73,7 +86,11 @@
           "stat": "attack",
           "scaling": "casterAttack",
           "ref": 9,
-          "durationRef": 10
+          "durationRef": 10,
+          "claims": [
+            "C-1596",
+            "C-0839"
+          ]
         }
       ],
       "notes": [
@@ -92,7 +109,9 @@
             "target": "allies",
             "trigger": "unknown"
           },
-          "claims": ["C-0839"]
+          "claims": [
+            "C-0839"
+          ]
         }
       ]
     },
@@ -104,7 +123,10 @@
           "target": "allies",
           "stat": "attackDamage",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-1597"
+          ]
         },
         {
           "kind": "timed",
@@ -115,7 +137,10 @@
           "durationRef": 4,
           "condition": {
             "selfState": "maillard"
-          }
+          },
+          "claims": [
+            "C-1597"
+          ]
         }
       ],
       "notes": [
@@ -129,7 +154,9 @@
             "target": "allies",
             "trigger": "burstUse"
           },
-          "claims": ["C-0839"]
+          "claims": [
+            "C-0839"
+          ]
         }
       ]
     }

@@ -1,0 +1,436 @@
+[
+  {
+    "id": "1427-01",
+    "recording": "1427",
+    "kind": "timing",
+    "use": "record",
+    "value": [1538, 2959, 4263, 5755, 7060, 8545, 9972, 11312],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・5・25・0・24・0f"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1427-02",
+    "recording": "1427",
+    "kind": "timing",
+    "use": "record",
+    "value": [1567, 2988, 4292, 5784, 7089, 8574, 10001, 11341],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・25・0・25・0・24・0f"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1427-03",
+    "recording": "1427",
+    "kind": "timing",
+    "use": "record",
+    "value": [1597, 4321, 7118, 10030],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1427-04",
+    "recording": "1427",
+    "kind": "timing",
+    "use": "record",
+    "value": [2206, 4929, 7727, 10638],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1427-05",
+    "recording": "1427",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 608, 609, 608],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1427-06",
+    "recording": "1427",
+    "kind": "count",
+    "use": "record",
+    "unit": "発目",
+    "value": [40, 62, 83],
+    "description": "クラストの部分チャージの発（残弾の表示の減りの間が 37〜48f と短い発。敵のジャンプの始まり）が、戦闘の始めから何発目か。撃ったのは映像の f4908・f7263・f9406。モデルも 40・62・83 発目",
+    "method": {
+      "tool": "照準の左の残弾の表示（tools/captures/reticle-ammo.ts --mode series）",
+      "note": "残弾の表示の減りを数え、0 の表示はリロードの間暗くて読めないので、マガジンごとの最後の 1 発を足した（6 発のマガジン）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1427-07",
+    "recording": "1427",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 0,
+    "description": "83 発目（3 回目の部分チャージの発）を撃ったフレームから、メイラード（攻撃力のアイコン）とたっぷりクッキング（防御力のアイコン）が付いたフレームまで。どちらも f9406（残弾の表示が 2 → 1 に減ったフレームと同じ）。3 枠とも同じ時に付いた",
+    "method": {
+      "tool": "照準の左の残弾の表示（tools/captures/reticle-ammo.ts --mode series）・アイコンの欄の明るさ",
+      "note": "クラストのカードの下のバフのアイコンの欄（3 枠目。x 908〜990・y 1046〜1066）の明るさ（ffmpeg の signalstats の YAVG。90〜100 を境に付き・消え）。幅は 1426-02 と同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "attack",
+        "from": 3,
+        "shot": 83,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1427-08",
+    "recording": "1427",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": 0,
+    "description": "1 回目のフルバースト（映像の f1597）で、クラストに S2 のフルバースト発動時の攻撃力▲（アイコンの欄の攻撃力のアイコン）が付いたか。メイラードの前のフルバースト。入りの前後でアイコンは増えない",
+    "method": {
+      "tool": "アイコンの欄の明るさ・画",
+      "note": "クラストのカードの下のバフのアイコンの欄（3 枠目。x 908〜990・y 1046〜1066）の明るさ（ffmpeg の signalstats の YAVG。90〜100 を境に付き・消え）。録画 1427-03 のフルバーストの始まりの前後 60f の画で数えた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "stat": "attack",
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 0
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1427-09",
+    "recording": "1427",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": 0,
+    "description": "2 回目のフルバースト（映像の f4321）で、クラストに S2 のフルバースト発動時の攻撃力▲（アイコンの欄の攻撃力のアイコン）が付いたか。メイラードの前のフルバースト。入りの前後でアイコンは増えない",
+    "method": {
+      "tool": "アイコンの欄の明るさ・画",
+      "note": "クラストのカードの下のバフのアイコンの欄（3 枠目。x 908〜990・y 1046〜1066）の明るさ（ffmpeg の signalstats の YAVG。90〜100 を境に付き・消え）。録画 1427-03 のフルバーストの始まりの前後 60f の画で数えた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "stat": "attack",
+        "n": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 0
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1427-10",
+    "recording": "1427",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": 0,
+    "description": "3 回目のフルバースト（映像の f7118）で、クラストに S2 のフルバースト発動時の攻撃力▲（アイコンの欄の攻撃力のアイコン）が付いたか。メイラードの前のフルバースト。入りの前後でアイコンは増えない",
+    "method": {
+      "tool": "アイコンの欄の明るさ・画",
+      "note": "クラストのカードの下のバフのアイコンの欄（3 枠目。x 908〜990・y 1046〜1066）の明るさ（ffmpeg の signalstats の YAVG。90〜100 を境に付き・消え）。録画 1427-03 のフルバーストの始まりの前後 60f の画で数えた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "stat": "attack",
+        "n": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 0
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1427-11",
+    "recording": "1427",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": 1,
+    "description": "4 回目のフルバースト（映像の f10030）で、クラストに S2 のフルバースト発動時の攻撃力▲（アイコンの欄の攻撃力のアイコン）が付いたか。メイラードの後のフルバースト。入りの止まりの明け（f10052）に 4 つ目のアイコンが付いた",
+    "method": {
+      "tool": "アイコンの欄の明るさ・画",
+      "note": "クラストのカードの下のバフのアイコンの欄（3 枠目。x 908〜990・y 1046〜1066）の明るさ（ffmpeg の signalstats の YAVG。90〜100 を境に付き・消え）。録画 1427-03 のフルバーストの始まりの前後 60f の画で数えた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstBuffApplied",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "stat": "attack",
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 0
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1427-12",
+    "recording": "1427",
+    "kind": "count",
+    "use": "compare",
+    "unit": "回",
+    "value": [0, 0, 0, 0, 0, 0, 1, 1],
+    "description": "クラストのバースト（録画 1427-02 の II → III の替わり目。8 回）ごとに、分配ダメージ▲（渦の形のアイコン）が付いたか。メイラードの後の 2 回（f10001・f11341）だけ付いた",
+    "method": {
+      "tool": "アイコンの欄の画",
+      "note": "クラストのカードの下のバフのアイコンの欄（3 枠目。x 908〜990・y 1046〜1066）の明るさ（ffmpeg の signalstats の YAVG。90〜100 を境に付き・消え）。バーストの前後 60f の画で、攻撃力のアイコン（攻撃ダメージ▲）と渦の形のアイコンを数えた。渦の形のアイコンは 1 枠目（I-DOLL・フラワー）にも同じ時に付く"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstBuffApplied",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "distributedDamage"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 0
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1427-13",
+    "recording": "1427",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 403872,
+    "description": "クラストのバーストの後 10 秒の中・フルバーストの外の、クラストのコアの 1 ヒット（会心なし）。映像の f3260（2 回目のバースト f2988 の後）と f9130（6 回目のバースト f8574 の後。メイラードの前）の 2 回とも 403,872（ほかの時の 336,560 の 1.2 倍）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "クラストの発の増分は約 82f おきに来る。同じフレームの次の増分（f3261 の 199,406・f9131 の 219,217）は I-DOLL・フラワーの発で、別のフレームに出たのでクラストの値だけを読めた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2400,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1427-14",
+    "recording": "1427",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 605808,
+    "description": "1 回目のフルバースト（映像の f1597〜2206。メイラードの前）の中の、クラストのコアの 1 ヒット（会心）。f1861 の増分（攻撃ダメージ▲とフルバーストの分だけ 336,560 より大きい）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "同じフレームにほかの枠の増分が無い発だけを読んだ。フルバーストの中のほかのクラストの発は、ギロチンのヒットと同じフレームに重なって読めない。フルバーストの中の会心なしのコアは、会心とフルバーストの補正が同じ群で足されるので、フルバーストの外の会心のコアと同じ形の値になる（モデルの格子: 1 回目は会心なし 504,840・会心 605,808、4 回目は 656,446・787,735）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1100,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  },
+  {
+    "id": "1427-15",
+    "recording": "1427",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 787735,
+    "description": "4 回目のフルバースト（映像の f10030〜10638。メイラードの後）の中の、クラストのコアの 1 ヒット（会心）。f10426 の増分。メイラードの攻撃力▲（10%）と S2 のフルバースト発動時の攻撃力▲（20%）が両方乗った値で、S2 の▲が無ければ 666,000 ほどになる",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "同じフレームにほかの枠の増分が無い発だけを読んだ（次の f10427 の 387,082 は I-DOLL・フラワーの発）。フルバーストの中の会心なしのコアは、会心とフルバーストの補正が同じ群で足されるので、フルバーストの外の会心のコアと同じ形の値になる（モデルの格子: 1 回目は会心なし 504,840・会心 605,808、4 回目は 656,446・787,735）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 9300,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0889",
+    "readAt": "2026-11-28"
+  }
+]

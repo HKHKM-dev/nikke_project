@@ -4,7 +4,7 @@
 - 関連: [design-skill-stage20-inventory.md](design-skill-stage20-inventory.md) 0.3 節（ブレッディとクラスト。C-0839）、[design-bready.md](design-bready.md) 0 節（クラストを定義しなかった理由）、[design-mint-prika.md](design-mint-prika.md) 2.5 節（状態の維持時間▲ `stateExtend`）、[design-rei-tentative.md](design-rei-tentative.md) 2.2 節（時間で変わる状態の味方 `targetState`）、[design-debuff-removal.md](design-debuff-removal.md) 2.2 節（`removeDebuff`）、[design-hide-reload-detect.md](design-hide-reload-detect.md)（敵のジャンプの始まりの部分チャージの発）
 - 検証: V-0889
 - 作成日: 2026-11-28
-- 状態: 決定（7 節）・撮影待ち
+- 状態: 完了
 
 ## 0. 範囲
 
@@ -103,3 +103,4 @@
 
 - 2026-11-28: 起案
 - 2026-11-28: 決定（7 節）。語彙・定義・テストを実装し、撮影待ち（V-0889）
+- 2026-11-28: 撮影（録画 1426・1427）で定義のとおりと確かめ、完了（V-0889）
