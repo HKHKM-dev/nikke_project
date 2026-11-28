@@ -1,0 +1,46 @@
+{
+  "id": "1427",
+  "date": "2026-11-28",
+  "folder": "range",
+  "file": "20261128-1427_crust-team.mp4",
+  "original": "2026-11-28_18-14-44.mp4",
+  "durationSec": 200.4,
+  "frames": 12022,
+  "fps": 60,
+  "sizeMB": 242.8,
+  "sha256": "89cfeb1e6587",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 180,
+      "name": "ギロチン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 521,
+      "name": "クラスト",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-28T18:21+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
