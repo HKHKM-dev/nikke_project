@@ -1,0 +1,16 @@
+{
+  "id": "C-1624",
+  "text": "リリー（852）のバーストは、遮蔽物が破壊された味方がいない時（射撃場）、ランダムな味方 1 機（リリー自身も候補）に、リリーのバフ前の攻撃力 × 説明文の値 04（スペック固定の Lv10 で 40%）を攻撃力に足して 10 秒続く（窓の端の数 f は確かめていない）。S1 の▲とは別に足し合わさる",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1449-02`・`1449-04`・`1449-06`・`1450-02`・`1450-03`・`1450-05`・`1450-06`・`1450-08`。V-0898",
+  "model": "反映（data/skills/852.json の burst の effects[0]（timed・burstUse・allies・targetCount 1・targetRandom・attack・casterAttack・ref 4）。遮蔽物が破壊された時の枝は前提の外の notes。ランダムな対象は期待値で配る（plan/design-lily.md 2 節）",
+  "replaces": [],
+  "updated": "2026-11-28",
+  "subject": {
+    "places": ["data/skills/852.json の burst の effects[0]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値 04・05（40%・10 秒）と、発動者基準の攻撃力▲の足し方（C-0020）"
+}
