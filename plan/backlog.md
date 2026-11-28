@@ -125,7 +125,6 @@
 - 戦闘力による一覧の並び替え（2026-11-07 起票）→ 一部完了: [design-combat-power-sort.md](design-combat-power-sort.md)。残りは 4 節
 - モダン UI の編成の行を作り直さず、同じ要素のまま動かす（行の入れ替えで grid が作り直されるのをやめ、FLIP にする。これで useSlotFit の remountKey・立ち絵の先読み・liftedRects の WeakSet・ghostOf の SQUARE_SOURCES/LIFT_SHADOW_SOURCES の一覧が要らなくなるか見る）。あわせて PartyPreviewRow の memo 化と、ドロップ先・ドラッグ元の購読を減らす（2026-11-22 起票）→ 保留（作り直しはしない。オーナーの判断）: [design-modern-ui.md](design-modern-ui.md)
 - plan/design-modern-ui.md（目安の 50KB の約 2 倍。大半は経過）を分ける。設計書として要らない記述を消して縮めるだけで足りるか（[design-design-doc-trim.md](design-design-doc-trim.md) 3 節）も見る（2026-11-22 起票）→ 完了（2026-11-23。消して縮めた。振る舞いは 2.6 節）: [design-modern-ui.md](design-modern-ui.md)
-- 衝突の直しの `prepare` のジョブから、Actions のキャッシュを通して main の生成物を書き換えうる点を扱うか決める。`prepare` はブランチの道具を main の push の実行の中で回すので、その中のコードが main のスコープのキャッシュを書ければ、`.github/workflows/ci.yml` の main の check が `restore-keys: residuals-` で戻し、`records:minimal` を通って生成物に入り、`commit` のジョブが main に push する（鍵は漏れない）。main の push の check で `restore-keys` を使わないか、受け入れて 4 節に書くか。同じジョブで続けて回す PR どうしで、`cleanUp` が無視されたファイル・`~/.gitconfig`・`.git/hooks` を戻さない点もあわせて扱う（2026-11-23 起票）→ オーナーの判断待ち: [design-deploy-key-scope.md](design-deploy-key-scope.md) 4 節
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
